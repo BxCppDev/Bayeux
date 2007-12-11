@@ -1,0 +1,184 @@
+#!/bin/bash
+# -*- mode: shell-script; -*-
+# mygsl-config
+#
+# Note:
+# This is a default config script provided by
+# the mkskelpack program (from the PkgTools package).
+# It suits the use of some default GNU/makefile
+# generated in the package 'gmk' directory.
+#
+# Feel free to modify this file if you use another system
+# to build/install this package (i.e. Autotools).
+#
+help=0
+
+SCRIPTNAME="mygsl-config"
+THE_SYSTEM="$(uname -s)-$(uname -m | sed -e 's/ //g')"
+
+THEPACK_ROOT=/usr/local
+if [ -n "${MYGSL_ROOT}" ]; then
+    THEPACK_ROOT="${MYGSL_ROOT}" 
+else 
+    echo "$SCRIPTNAME: error: 'MYGSL_ROOT' environment variable is not defined!" 
+    exit 1
+fi
+
+THEPACK_INCLUDEDIR="$THEPACK_ROOT/include" 
+
+THEPACK_LIBDIR="$THEPACK_ROOT/${THE_SYSTEM}/lib" 
+
+THEPACK_BINDIR="$THEPACK_ROOT/${THE_SYSTEM}/bin" 
+
+THEPACK_VERSION=0.1.0
+if [ -f "$THEPACK_ROOT/VERSION" ]; then
+    THEPACK_VERSION="$(cat $THEPACK_ROOT/VERSION)"    
+elif [ -f "$THEPACK_ROOT/pkgtools.d/package.info"  ]; then
+    version=$(cat $THEPACK_ROOT/pkgtools.d/package.info | grep "version=" | cut -d'=' -f2 )    
+    THEPACK_VERSION=$version
+fi
+
+opt=$1
+
+if [ "x$opt" = "x" ]; then
+    echo "$SCRIPTNAME: error: Missing option!" 
+    help=1
+fi
+
+if [ "x$opt" = "x--help" -o "x$opt" = "x-h" -o "x$opt" = "x-?" ]; then
+    help=1
+fi
+
+if [ $help -eq 1 ]; then
+    cat<<EOF
+Usage: $SCRIPTNAME [OPTION]
+
+Known values for OPTION are:
+
+  --prefix              show mygsl installation prefix
+  --incdir              print include directory
+  --libdir              print library directory
+  --bindir              print binary directory
+  --include             print include path pre-processor flags without dependencies 
+  --cflags              print include path pre-processor flags with dependencies
+  --libs                print library linking information, without dependencies
+  --ldflags             
+  --libs-depends        print library linking information, with dependencies
+  --help                print this help then exit
+  --version             print version information
+  --system              print system
+
+EOF
+    exit 1
+fi 
+
+if [ "x$opt" = "x--system" ]; then
+    echo "${THE_SYSTEM}"
+    exit 0
+fi 
+
+if [ "x$opt" = "x--prefix" ]; then
+    echo "${THEPACK_ROOT}"
+    exit 0
+fi 
+
+if [ "x$opt" = "x--version" ]; then
+    echo "${THEPACK_VERSION}"
+    exit 0
+fi 
+
+if [ "x$opt" = "x--incdir" ]; then
+    echo "${THEPACK_INCLUDEDIR}" 
+    exit 0
+fi
+
+if [ "x$opt" = "x--include" ]; then
+    echo "-I${THEPACK_INCLUDEDIR} " 
+    exit 0
+fi
+
+if [ "x$opt" = "x--cflags" ]; then
+    echo -n "-I${THEPACK_INCLUDEDIR} "  \
+         "`gsl-config --cflags` " 
+
+#   test -f ${root_cnf:=$ROOT_BASE_DIR/bin/root-config} || $root_cnf=`which $root-config 2>/dev/null`
+#   test ! -z $root_cnf && echo -n " `$root_cnf --cflags` " || no_pack_list="$no_pack_list $root"
+
+#   test -f ${clhep_cnf:=$CLHEP_BASE_DIR/bin/clhep-config} || $clhep_cnf=`which clhep-config 2>/dev/null`
+#   test ! -z $clhep_cnf && echo -n " `$clhep_cnf --include` " || no_pack_list="$no_pack_list clhep"
+
+#   test -f ${hdf5_cnf=`which hdf5-config 2>/dev/null`}
+#   test ! -z $hdf5_cnf && echo -n " `$hdf5_cnf --include` " || no_pack_list="$no_pack_list hdf5"
+
+#   test -f ${gsl_cnf:=`which gsl-config 2>/dev/null`}
+#   test ! -z $gsl_cnf && echo -n " `$gsl_cnf --cflags` " || no_pack_list="$no_pack_list gsl"
+
+#   test -f ${cernlib_cnf:=`which cernlib 2>/dev/null`}
+#   test ! -z $cernlib_cnf && echo -n " `-Dcfortran` " || no_pack_list="$no_pack_list cernlib"
+
+    test -z $no_pack_list || echo "warning: non found packages: $no_pack_list" 1>&2
+    echo
+
+    ################################################################
+    # Please add here some stuff in order to take into account
+    # external package dependencies; it may looks like:
+    # echo "-I${THEPACK_INCLUDEDIR} " \
+    #      "`XXX-config --include` "  (or --cflags)
+    # where XXX stands for the identifier of the external package 
+    ################################################################
+    exit 0
+fi
+
+if [ "x$opt" = "x--libdir" ]; then
+    echo "${THEPACK_LIBDIR}"
+    exit 0
+fi 
+
+if [ "x$opt" = "x--bindir" ]; then
+    echo "${THEPACK_BINDIR}"
+    exit 0
+fi 
+
+if [ "x$opt" = "x--libs" ]; then
+    echo "-L${THEPACK_LIBDIR} -lmygsl "
+    exit 0
+fi 
+
+if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
+  echo -n "-L${THEPACK_LIBDIR} -lmygsl "  \
+         "`gsl-config --libs` " \
+         " -lm"
+
+#   test -f ${root_cnf:=$ROOT_BASE_DIR/bin/root-config} || $root_cnf=`which $root-config 2>/dev/null`
+#   test ! -z $root_cnf && echo -n " `$root_cnf --libs` " || no_pack_list="$no_pack_list $root"
+
+#   test -f ${clhep_cnf:=$CLHEP_BASE_DIR/bin/clhep-config} || $clhep_cnf=`which clhep-config 2>/dev/null`
+#   test ! -z $clhep_cnf && echo -n " `$clhep_cnf --libs` " || no_pack_list="$no_pack_list clhep"
+
+#   test -f ${hdf5_cnf=`which hdf5-config 2>/dev/null`}
+#   test ! -z $hdf5_cnf && echo -n " `$hdf5_cnf --libs` " || no_pack_list="$no_pack_list hdf5"
+
+#   test -f ${gsl_cnf:=`which gsl-config 2>/dev/null`}
+#   test ! -z $gsl_cnf && echo -n " `$gsl_cnf --libs` " || no_pack_list="$no_pack_list gsl"
+
+#   test -f ${cernlib_cnf:=`which cernlib 2>/dev/null`}
+#   test ! -z $cernlib_cnf && echo -n " `$cernlib_cnf mathlib packlib kernlib graflib pawlib` " || no_pack_list="$no_pack_list $cernlib"
+
+    test -z $no_pack_list || echo "warning: non found packages: $no_pack_list" 1>&2
+    echo
+
+    ################################################################
+    # Please add here some stuff in order to take into account
+    # external package dependencies; it may looks like:
+    # echo "-L${THEPACK_LIBDIR} -lmygsl " \
+    #      "`XXX-config --libs` " 
+    # where XXX stands for the identifier of the external package 
+    ################################################################
+    exit 0
+fi 
+
+echo "$SCRIPTNAME: error: Unknown option!" 
+$0 --help
+exit 1
+
+# end of mygsl-config

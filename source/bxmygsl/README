@@ -1,0 +1,20 @@
+This is the 'mygsl' package README file
+
+1 - Description:
+
+    C++ wrapper for some components of the GSL library
+
+2 - Documentation:
+
+    Sample programs are in the 'programs/dir'
+
+3 - Maintenance and bug report:
+
+    send email to <mauger@lpccaen.in2p3.fr>
+
+    or use the Trac ticket system at http://nemo.lpc-caen.in2p3.fr/ 
+    (restricted access)
+
+--
+Last update: 2007-12-02 by Francois Mauger <mauger@lpccaen.in2p3.fr>
+
