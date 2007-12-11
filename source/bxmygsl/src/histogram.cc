@@ -67,12 +67,19 @@ namespace mygsl {
     }
   }
 
-  histogram::histogram( const histogram & h_ )
+  histogram::histogram( const histogram & h_ , int mode_ )
   {
     __h         = 0;
     __underflow = h_.__underflow;
     __overflow  = h_.__overflow;
     __h = gsl_histogram_clone(h_.__h);
+    if ( mode_ == RESET ) {
+      reset();
+    }
+    if ( mode_ > 0 ) {
+      size_t new_bins = (size_t) mode_;
+      rebin(new_bins);
+    }
   }
 
   histogram & histogram::operator=( const histogram & h_ ) 
@@ -99,6 +106,28 @@ namespace mygsl {
     return __overflow;
   }
 
+  void histogram::accumulate( double x_ , double weight_ )
+  {
+    if ( x_ < __h->range[0] ) {
+      return;
+    }
+    if ( x_ >= __h->range[__h->n] ) {
+      return;
+    }
+    gsl_histogram_accumulate(__h,x_,weight_);
+  }
+  
+  void histogram::increment( double x_ )
+  {
+    if ( x_ < __h->range[0] ) {
+      return;
+    }
+    if ( x_ >= __h->range[__h->n] ) {
+      return;
+    }
+    gsl_histogram_increment(__h,x_);
+  }
+
   void histogram::fill( double x_ , double weight_ )
   {
     if ( x_ < __h->range[0] ) {
@@ -112,6 +141,14 @@ namespace mygsl {
     gsl_histogram_accumulate(__h,x_,weight_);
   }
 
+  double histogram::at( size_t i_ ) const
+  {
+    if ( i_ < 0 ||  i_ >= __h->n) {
+      throw std::runtime_error("histogram::at: Invalid range!");
+    }
+    return gsl_histogram_get(__h,i_);   
+  }
+
   double histogram::get( size_t i_ ) const
   {
     if ( i_ < 0 ) return __underflow;
@@ -119,6 +156,23 @@ namespace mygsl {
     return gsl_histogram_get(__h,i_);
     
   }
+
+  bool histogram::find( double x_ , size_t & i_ ) const
+  {
+    return gsl_histogram_find(__h,x_,&i_) == GSL_SUCCESS;
+    /*
+    size_t s;
+    int status=gsl_histogram_find(__h,x_,s);
+    if ( status == 0 ) {
+      i_ = s;
+      return true;
+    }
+    else {
+      i_ = bins();
+      return (false);
+    }
+    */
+  } 
 
   double histogram::min() const
   {
@@ -142,21 +196,33 @@ namespace mygsl {
     return gsl_histogram_reset(__h);
   }
 
-  /*
-  void histogram::rebin( size_t new_bins_ )
+  bool histogram::can_rebin( size_t new_bins_ ) const
   {
     size_t n=gsl_histogram_bins(__h);
     if ( n<new_bins_ ) {
-      throw std::runtime_error("histogram::rebin: New number of bins is too large!");
+      return false;
     }
     if ( (n%new_bins_) != 0 ) {
-      throw std::runtime_error("histogram::rebin: Invalid new number of bins!");
+      return false;
     }
+    return true;
+  }
+
+  void histogram::rebin( size_t new_bins_ )
+  {
+    if ( ! can_rebin( new_bins_ ) ) {
+      throw std::runtime_error("histogram::rebin: New number of bins is invalid!");
+    }
+    size_t n=gsl_histogram_bins(__h);
     size_t f  = n/new_bins_;
     size_t n2 = new_bins_;
     gsl_histogram * h2 = gsl_histogram_alloc(n2);
 
-    double * range2=new double[n2+1];
+    //std::cerr << "DEBUG: histogram::rebin: f  = " << f << std::endl;
+    //std::cerr << "DEBUG: histogram::rebin: n2 = " << n2 << std::endl;
+
+    size_t nrange2  = n2+1;
+    double * range2 = new double[nrange2];
 
     //gsl_vector_const_view range2 = 
     //  gsl_vector_const_view_array_with_stride(
@@ -164,32 +230,44 @@ namespace mygsl {
     //	f,
     //	n2+1);
 
-    for ( int i=0; i< n2+1; i++ ) {
-      range2[i]=__h->range[i*f];
+    for ( int i=0; i<nrange2; i++ ) {
+      int i2=i*f;
+      //std::cerr << "DEBUG: histogram::rebin: i2 = " << i2 << std::endl;
+      range2[i]=__h->range[i2];
     }
-    gsl_histogram_set_ranges(h2,range2,n2+1);
-    delete[] range2;
+    gsl_histogram_set_ranges(h2,range2,nrange2);
     for ( int i=0; i<n2; i++ ) {
       double w=0.0;
       for ( int j=0; j<f; j++ ) {
 	w += __h->bin[f*i+j];
       }
-      gsl_histogram_accumulate(h2,__h->bin[i],w);
+      //std::cerr << "DEBUG: histogram::rebin: w = " << w << std::endl;
+      gsl_histogram_accumulate(h2,0.5*(range2[i]+range2[i+1]),w);
     }
+    delete[] range2;
     gsl_histogram_free(__h);
     __h=0;
     __h=h2;
   }
-  */
 
-  double histogram::min_value() const
+  double histogram::min_val() const
   {
     return gsl_histogram_min_val(__h);
   }
 
-  double histogram::max_value() const
+  size_t histogram::min_bin() const
+  {
+    return gsl_histogram_min_bin(__h);
+  }
+
+  double histogram::max_val() const
   {
     return gsl_histogram_max_val(__h);
+  }
+
+  size_t histogram::max_bin() const
+  {
+    return gsl_histogram_max_bin(__h);
   }
 
   double histogram::mean() const
@@ -205,16 +283,6 @@ namespace mygsl {
   double histogram::sum() const
   {
     return gsl_histogram_sum(__h);
-  }
-
-  double histogram::shift( double s_ )
-  {
-    gsl_histogram_shift(__h,s_);
-  }
-
-  double histogram::scale( double s_ )
-  {
-    gsl_histogram_scale(__h,s_);
   }
 
   void histogram::to_stream( std::ostream & out_ ) const
@@ -280,6 +348,246 @@ namespace mygsl {
 	    << std::endl; 
     }
     out_ << "# " << __underflow << ' ' << __overflow << std::endl;
+  }
+
+
+  void histogram::dump( std::ostream & out_ , int precision_ ) const
+  {
+    out_.precision(9);
+    out_ << "Histogram:" << std::endl;
+    out_ << "  Min   = " << min() << std::endl;
+    out_ << "  Max   = " << max() << std::endl;
+    out_ << "  #bins = " << bins() << std::endl;
+    out_ << "  Mean  = " << mean() << std::endl;
+    out_ << "  Sigma = " << sigma() << std::endl;
+    out_ << "  Sum   = " << sum() << std::endl;
+  }
+  
+  double histogram::operator[]( size_t i_ ) const
+  {
+    return at(i_);
+  }
+
+  std::pair<double,double> histogram::get_range( size_t i_ ) const
+  {
+    std::pair<double,double> p;
+    gsl_histogram_get_range(__h,i_,&p.first,&p.second);
+    return p;
+  }
+
+  bool histogram::has_size( size_t bins_ ) const
+  {
+    return bins_==bins();
+  }
+
+  bool histogram::same( const histogram & h_ ) const
+  {
+    return gsl_histogram_equal_bins_p(__h,h_.__h);
+  }
+
+  void histogram::shift( double s_ )
+  {
+    gsl_histogram_shift(__h,s_);
+  }
+
+  void histogram::scale( double s_ )
+  {
+    gsl_histogram_scale(__h,s_);
+  }
+
+  void histogram::negate()
+  {
+    gsl_histogram_scale(__h,-1.0);
+  }
+ 
+  void histogram::zero()
+  {
+    reset();
+  }
+ 
+  void histogram::add( const histogram & h_ )
+  {
+    gsl_histogram_add(__h,h_.__h);
+  }
+  
+  void histogram::sub( const histogram & h_ )
+  {
+    gsl_histogram_sub(__h,h_.__h);
+  }
+  
+  void histogram::mul( const histogram & h_ )
+  {
+    gsl_histogram_mul(__h,h_.__h);
+  }
+  
+  void histogram::div( const histogram & h_ )
+  {
+    gsl_histogram_div(__h,h_.__h);
+  }
+  
+  histogram & histogram::operator+=( const histogram & h_ )
+  {
+    this->add(h_);
+    return *this;
+  }
+  
+  histogram & histogram::operator-=( const histogram & h_ )
+  {
+    this->sub(h_);
+    return *this;
+  }
+  
+  histogram & histogram::operator*=( const histogram & h_ )
+  {
+    this->mul(h_);
+    return *this;
+  }
+  
+  histogram & histogram::operator/=( const histogram & h_ )
+  {
+    this->div(h_);
+    return *this;
+  }
+  
+  histogram & histogram::operator+=( double a_ )
+  {
+    shift(a_);
+    return *this;
+  }
+  
+  histogram & histogram::operator-=( double a_ )
+  {
+    shift(-a_);
+    return *this;
+  }
+  
+  histogram & histogram::operator-()
+  {
+    negate();
+    return *this;
+  }
+  
+  histogram & histogram::operator*=( double a_ )
+  {
+    scale(a_);
+    return *this;
+  }
+  
+  histogram & histogram::operator/=( double a_ )
+  {
+    scale(1./a_);
+    return *this;
+  }
+
+  histogram operator+( const histogram & h1_ , 
+		       const histogram & h2_ )
+  {
+    histogram h(h1_);
+    h+=h2_;
+    return h;
+  }
+
+  histogram operator-( const histogram & h1_ , 
+		       const histogram & h2_ )
+  {
+    histogram h(h1_);
+    h-=h2_;
+    return h;
+  }
+  
+  histogram operator*( const histogram & h1_ , 
+		       const histogram & h2_ )
+  {
+    histogram h(h1_);
+    h*=h2_;
+    return h;
+  }
+
+  histogram operator/( const histogram & h1_ , 
+		       const histogram & h2_ )
+  {
+    histogram h(h1_);
+    h/=h2_;
+    return h;
+  }
+
+  histogram operator*( const histogram & h1_ , 
+		       double a_ )
+  {
+    histogram h(h1_);
+    h.scale(a_);
+    return h;
+  }
+
+  histogram operator/( const histogram & h1_ , 
+		       double a_ )
+  {
+    histogram h(h1_);
+    h.scale(1./a_);
+    return h;
+  }
+
+  histogram operator*( double a_ , 
+		       const histogram & h1_ )
+  {
+    histogram h(h1_);
+    h.scale(a_);
+    return h;
+  }
+
+  histogram operator/( double a_ , 
+		       const histogram & h1_ )
+  {
+    histogram h(h1_);
+    h.scale(1./a_);
+    return h;
+  }
+
+  histogram::pdf::pdf( size_t n_ )
+  {
+    __pdf=0;
+  }
+  
+  histogram::pdf::pdf( const histogram & h_ )
+  {
+    __pdf=0;
+    init(h_);
+  }
+  
+  histogram::pdf::~pdf()
+  {
+    reset();
+  }
+  
+  void histogram::pdf::init( const histogram & h_ )
+  {
+    if ( __pdf != 0 ) {
+      reset(); 
+    }
+    __pdf = gsl_histogram_pdf_alloc(h_.bins());
+    if ( __pdf == 0 ) {
+      throw std::runtime_error(
+        "histogram::pdf::init: Cannot allocate histogram's PDF!");
+    }
+    gsl_histogram_pdf_init(__pdf,h_.__h);
+    /*
+    if ( __pdf != 0 && __pdf.n != h_.bins) {
+      reset(); 
+      __pdf = gsl_histogram_pdf_alloc(h_.bins());
+    }
+    gsl_histogram_pdf_init(__pdf,h_.__h);
+    */
+  }
+  
+  void histogram::pdf::reset()
+  {
+    gsl_histogram_pdf_free(__pdf);
+    __pdf=0;
+  }
+  
+  double histogram::pdf::sample( double r_ )
+  {
+    return gsl_histogram_pdf_sample(__pdf,r_);
   }
 
 }
