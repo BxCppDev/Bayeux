@@ -5,6 +5,7 @@
 
 #include <gsl/gsl_errno.h>
 
+#include <iostream>
 #include <string>
 #include <sstream>
 #include <stdexcept>
@@ -16,11 +17,11 @@ namespace mygsl {
     {
     private:
 
-      static gsl_error_handler_t * __builtin_handler;
-      static gsl_error_handler_t * __previous_handler;
-      static error * __g_error;
-
+      static bool  __active;
+      static error __singleton;
+ 
       error();
+      ~error();
 
     public:
 
@@ -29,21 +30,17 @@ namespace mygsl {
 
       static std::string to_string( const int gsl_errno_ );
 
-      /*	
-      static void throw_error( const std::string & reason_ , 
-			       int gsl_errno_ );
-
-      static void throw_error( const std::string & reason_ , 
-			       int gsl_errno_ , double value_ );
-      */
-
     public:
 
-      static void set_handler( gsl_error_handler_t * );
+      static void set_handler( gsl_error_handler_t & );
 
       static void off();
 
       static void on();
+
+      static void set_default();
+
+      static void set_gsl_default();
 
       static void default_handler( const char * reason_ ,
 				   const char * file_ ,
@@ -51,6 +48,11 @@ namespace mygsl {
 				   int gsl_errno_ );
 
     };
+
+#define MYGSL_ERROR(reason_, gsl_errno_) \
+       do { \
+       gsl_error (reason_, __FILE__, __LINE__, gsl_errno_) ; \
+       } while (0)
  
 }
 

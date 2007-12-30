@@ -21,7 +21,7 @@ namespace mygsl {
     }
     ode_system * sys = static_cast<ode_system *>(params_);
     if ( sys == 0 ) {
-      throw std::runtime_error("ode_system::gsl_ode_function: NULL!");
+      throw std::runtime_error("mygsl::ode_system::gsl_ode_function: NULL!");
     }
     return sys->compute_derivatives(t_,y_,f_);
   }
@@ -38,7 +38,7 @@ namespace mygsl {
     }
     ode_system * sys = static_cast<ode_system *>(params_);
     if ( sys == 0 ) {
-      throw std::runtime_error("ode_system::gsl_ode_function: NULL!");
+      throw std::runtime_error("mygsl::ode_system::gsl_ode_function: NULL!");
     }
     return sys->compute_jacobian(t_,y_,dfdy_,dfdt_);
   }
@@ -119,7 +119,7 @@ namespace mygsl {
   void ode_driver::set_type( const std::string & type_ ) 
   {
     if ( ! type_is_valid(type_) ) {
-      throw std::runtime_error("ode_driver::set_type: Invalid type!");
+      throw std::runtime_error("mygsl::ode_driver::set_type: Invalid type!");
     } 
     __type = type_;
   }
@@ -140,7 +140,7 @@ namespace mygsl {
     }
     __ode_sys = 0;
     if ( sys_.get_dimension() < 1 ) {
-      throw std::runtime_error("ode_driver::set_dimension: Invalid value!");
+      throw std::runtime_error("mygsl::ode_driver::set_dimension: Invalid value!");
     } 
     __ode_sys = &sys_;
 

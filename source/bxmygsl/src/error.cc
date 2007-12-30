@@ -15,36 +15,30 @@ namespace mygsl {
     return std::string(gsl_strerror(gsl_errno_));
   }
 
-  /*
-  void error::throw_error( const std::string & reason_ , int gsl_errno_ )
+  void error::set_gsl_default()
   {
-    GSL_ERROR(reason_.c_str(),gsl_errno_);
+    gsl_set_error_handler(NULL);
   }
- 
-  void throw_error( const std::string & reason_ , int gsl_errno_ , double value_ )
+
+  void error::set_default()
   {
-    GSL_ERROR_VAL(reason_.c_str(),gsl_errno_,value_);
+    error::set_handler(error::default_handler); 
   }
-  */
 
   void error::off()
   {
-    __previous_handler = gsl_set_error_handler_off();
+   error::__active = false;
   }
 
   void error::on()
   {
-    if ( __previous_handler != 0 ) {
-      gsl_set_error_handler(__previous_handler);
-      __previous_handler = 0;
-    }
+    error::__active = true;
   }
 
-  void error::set_handler( gsl_error_handler_t * handler_ )
+  void error::set_handler( gsl_error_handler_t & handler_ )
   {
-    if ( error::__builtin_handler == 0 ) {
-      error::__builtin_handler = gsl_set_error_handler(handler_); 
-    }
+    gsl_set_error_handler_off(); 
+    gsl_set_error_handler(&handler_); 
   }
 
   void error::default_handler( const char * reason_ ,
@@ -52,24 +46,30 @@ namespace mygsl {
 			       int line_ ,
 			       int gsl_errno_ ) 
   {
-    std::ostringstream message;
-    message << file_ << ':' << line_  
-	    << ": " << reason_;
-    if ( gsl_errno_ != 0 ) {
-      message << ": " << error::to_string(gsl_errno_);
+    if ( error::__active ) {
+      std::ostringstream message;
+      message << "mygsl::error::default_handler: " 
+	      << file_ << ':' << line_  
+	      << ": " << reason_;
+      if ( gsl_errno_ != 0 ) {
+	message << ": " << error::to_string(gsl_errno_);
+      }
+      throw std::runtime_error(message.str());
     }
-    throw std::runtime_error(message.str());
   }
 
-  gsl_error_handler_t * error::__builtin_handler=0;
-  gsl_error_handler_t * error::__previous_handler=0;
+
+  bool  error::__active = true;
+  error error::__singleton;
 
   error::error()
   {
-    error::set_handler(&error::default_handler); 
+    error::set_default();
   }
 
-  error * error::__g_error = new error();
+  error::~error()
+  {
+  }
 
 }
 

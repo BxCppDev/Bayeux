@@ -64,6 +64,7 @@ namespace mygsl {
   {
     if ( __h != 0 ) {
       gsl_histogram_free(__h);
+      __h=0;
     }
   }
 

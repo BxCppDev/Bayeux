@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <cmath>
 
 #include <gsl/gsl_multimin.h>
 #include <gsl/gsl_vector.h>
@@ -24,39 +25,93 @@ namespace mygsl {
       class param_entry
       {
       public:
-	static const bool FREE_PARAM  = false;
-	static const bool FIXED_PARAM = true;
+	enum limit_t
+	  {
+	    LIMIT_NO    = 0x0,
+	    LIMIT_MIN   = 0x1,
+	    LIMIT_MAX   = 0x2,
+	    LIMIT_RANGE = LIMIT_MIN|LIMIT_MAX
+	  };
+	enum type_t
+	  {
+	    TYPE_FREE=0,
+	    TYPE_FIXED=1,
+	    TYPE_AUTO=2
+	  };
 
       public:
 
+	std::string name;
 	double value;
-	bool   fixed;
+	int    type;
+	int    limit;
 	double min;
 	double max;
 	double step;
-	std::string name;
 
       private:
 
 	param_entry()
 	  {
+	    value=0.1;
+	    type =TYPE_FREE;
+	    limit=LIMIT_NO;
+	    min=0.0;
+	    max=1.0;
+	    step=0.01;
+	    name="parameter";
 	  }
 
       public:
 
+	bool is_fixed() const { return type==TYPE_FIXED; }
+
+	bool is_free() const { return type==TYPE_FREE; }
+
+	bool is_auto() const { return type==TYPE_AUTO; }
+
+	bool has_limit() const {return limit!=LIMIT_NO; }
+
+	bool has_no_limit() const {return limit==LIMIT_NO; }
+
+	bool has_min() const {return limit&LIMIT_MIN; }
+
+	bool has_max() const {return limit&LIMIT_MAX; }
+
+	bool is_in_range() const;
+
+	double get_dist_to_min() const;
+
+	double get_dist_to_max() const;
+
+	double get_dist_to_limit() const;
+
 	double get_value() const;
+
+	double get_step() const;
+
+	double get_min() const;
+
+	double get_max() const;
 
 	void set_value( double value_ );
 
 	void set_value_no_check( double value_ );
 
-	static param_entry make_param_entry(
+	static param_entry make_param_entry_auto(
+						 const std::string & name_ );
+
+	static param_entry make_param_entry_fixed(
+					    const std::string & name_ ,
+					    double value_ );
+
+	static param_entry make_param_entry_ranged(
 					    const std::string & name_ ,
 					    double value_ ,
 					    double min_ ,
 					    double max_ ,
 					    double step_ ,
-					    bool fixed_ = param_entry::FREE_PARAM );	
+					    bool fixed_ = false );	
       };
 
       // predicate:
@@ -72,17 +127,81 @@ namespace mygsl {
 	}
       };
 
+      // predicate:
+      struct param_is_free : std::unary_function<bool,param_entry>
+      {
+	param_is_free()  
+	{
+	}
+	bool operator()( const param_entry & pe_ )
+	{
+	  return pe_.is_free();
+	}
+      };
+
+      // predicate:
+      struct param_is_fixed : std::unary_function<bool,param_entry>
+      {
+	param_is_fixed()  
+	{
+	}
+	bool operator()( const param_entry & pe_ )
+	{
+	  return pe_.is_fixed();
+	}
+      };
+
+      // predicate:
+      struct param_is_auto : std::unary_function<bool,param_entry>
+      {
+	param_is_auto()  
+	{
+	}
+	bool operator()( const param_entry & pe_ )
+	{
+	  return pe_.is_auto();
+	}
+      };
+
     protected:
 
+      bool                     __lock_params;
       std::vector<param_entry> __params;
 
+    private:
+
+      size_t __free_dimension;
+      size_t __auto_dimension;
+ 
+      void __update_free_dimension();
+
+      void __update_auto_dimension();
+
+      void __update_dimensions();
+
     public:
+ 
+      void lock_params();
+
+      void unlock_params();
+
+      bool is_lock_params() const;
 
       void print_params( std::ostream & ) const;
 
-      const param_entry &  get_param( int i_ ) const;
+      void print_params2( std::ostream & ) const;
+
+      const param_entry & get_param( int i_ ) const;
 
       void set_param_value( int i_, double val_ );
+
+      void set_param_value_no_check( int i_, double val_ );
+
+       bool is_param_fixed( int i_ ) const;
+
+      bool is_param_free( int i_ ) const;
+
+      bool is_param_auto( int i_ ) const;
 
       double get_param_value( int i_ ) const;
 
@@ -98,19 +217,45 @@ namespace mygsl {
 
       size_t get_dimension() const;
 
-      virtual int eval_f( const double * x_ , double & f_ ) = 0;
+      size_t get_free_dimension() const;
 
-      virtual int eval_df( const double * x_ , double * gradient_ ) = 0;
+      size_t get_auto_dimension() const;
 
-      virtual int eval_fdf( const double * x_ , double & f_ , double * gradient_ );
+    protected:
 
-      virtual void to_double_star( double * pars_ , size_t dimension_ ) const; // = 0;
+      virtual int _prepare_values();
 
-      virtual void from_double_star( const double * pars_ , size_t dimension_ ); // = 0;
+      virtual int _auto_values();
+
+      virtual int _eval_f( double & f_ ) = 0;
+
+      virtual int _eval_df( double * gradient_ ) = 0;
+
+    public:
+
+      virtual int prepare_values();
+
+      virtual int auto_values();
+
+      virtual int eval_f( const double * x_ , double & f_ );
+
+      virtual int eval_df( const double * x_ , double * gradient_ );
+
+      virtual int eval_fdf( const double * x_ , 
+			    double & f_ , 
+			    double * gradient_ );
+
+      void to_double_star( double * pars_ , 
+			   size_t dimension_ ) const;
+
+      virtual void from_double_star( const double * pars_ , 
+				     size_t dimension_ );
 
       multimin_system();
 
       virtual ~multimin_system();
+      
+      void dump( std::ostream & out_ ) const;
 
     };
 
@@ -192,6 +337,7 @@ namespace mygsl {
       double                      __fdf_step_size;
       double                      __fdf_tol;
       size_t                      __max_iter;
+      size_t                      __n_iter;
 
       double                      __fval;
       int                         __stopping;
@@ -207,6 +353,10 @@ namespace mygsl {
     public:
 
       static void print_types( std::ostream & );
+
+      size_t get_n_iter() const;
+      
+      double get_fval() const;
       
       void unset_step_action();
       
@@ -233,9 +383,10 @@ namespace mygsl {
 
       int minimize( double epsabs_ );
 
+      void devel_dump_x() const;
+       
     };
   
-
 } // namespace mygsl
 
 #endif // __mygsl__multimin_h
