@@ -27,7 +27,7 @@ namespace mygsl {
 
   bool tabulated_function::interpolator_name_is_valid( const std::string & name_ )
   {
-    if ( name_ == "default" ) return true;
+    //if ( name_ == "default" ) return true;
     if ( name_ == "linear" ) return true;
     if ( name_ == "polynomial" ) return true;
     if ( name_ == "cspline" ) return true;
@@ -67,6 +67,10 @@ namespace mygsl {
       __interpolator_name = interp_name_;
     }
     size_t npoints = __points.size();
+    if ( g_debug ) {
+      std::cerr << "DEBUG: tabulated_function::lock_table: npoints='" 
+		<< npoints << "'" << std::endl;
+    }
     if ( npoints == 0 ) {
       return;
     }
@@ -96,7 +100,15 @@ namespace mygsl {
       if ( __interpolator_name == "akima_periodic" ) 
 	git = gsl_interp_akima_periodic;
     }
+    /*
+    std::cerr << "DEBUG: tabulated_function::lock_table: gsl_spline_alloc..."
+	      << std::endl;
+    */
     __gs             = gsl_spline_alloc(git,npoints);
+    /*
+    std::cerr << "DEBUG: tabulated_function::lock_table: gsl_spline_alloc done."
+	      << std::endl;
+    */
     size_t min_size  = gsl_spline_min_size(__gs);
     std::string name = gsl_spline_name(__gs);
     if ( g_debug ) {
@@ -174,16 +186,20 @@ namespace mygsl {
     lock_table(interp_name_);
   }
 
-  void tabulated_function::add_point( double x_ , double y_ , bool lock_after_ )
+  void tabulated_function::add_point( double x_ , 
+				      double y_ , 
+				      bool lock_after_ )
   {
-    if ( g_debug ) {
+    bool local_debug = g_debug;
+    //local_debug = false;
+    if ( local_debug ) {
       std::cerr << "DEBUG: tabulated_function::add_point: " 
 		<< '(' << x_ << ',' << y_ << ')' << std::endl;
     }
     if ( is_table_locked() ) unlock_table();
     __points[x_]=y_;
     if ( lock_after_ ) {
-      if ( g_debug ) {
+      if ( local_debug ) {
 	std::cerr << "DEBUG: tabulated_function::add_point: lock!"
 		  << std::endl;
       }

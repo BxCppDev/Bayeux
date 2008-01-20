@@ -1,9 +1,45 @@
 #!/bin/bash
 
+mode="run"
+
+while [ -n "$1" ]; do 
+    arg="$1"
+    if [ "x${arg:0:1}" = "x-" ]; then
+	if [ "x${arg}" = "x--clean" ]; then
+	    mode="clean" 
+	elif [ "x${arg}" = "x--run" ]; then
+	    mode="run" 
+	else
+	    echo "Ignoring option '$arg'!" >&2
+	fi
+    else
+	echo "Ignoring argument '$arg'!" >&2
+    fi
+    shift 1
+done
+
+function do_clean()
+{
+    rm -f *~
+    rm -f *.data
+    rm -f *.hist
+    test -f test_multimin.pars && rm -f test_multimin.pars
+    test -f test_multimin.pars.200 && rm -f test_multimin.pars.200
+    test -f test_multimin.hist && rm -f test_multimin.hist
+    test -f test_multimin.sol && rm -f test_multimin.sol
+    test -f ha.gpm && rm -f ha.gpm
+    test -f hf.gpm && rm -f hf.gpm
+    test -f hp2.gpm && rm -f hp2.gpm
+    test -f af.gpm && rm -f  af.gpm
+}
+
+if [ "x${mode}" = "xclean" ]; then
+    do_clean
+    exit 0
+fi
 
 function run()
 {
-
     local BIN=${MYGSL_ROOT}/Linux-i686/bin/test_multimin
     local OPTS=-l -d 
     #rm -f test_multimin.hist test_multimin.pars test_multimin.sol

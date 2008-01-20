@@ -175,7 +175,7 @@ uninstall :
 	@echo "ok1"
 	test -f $(BASEDIR)/$(LIBNAME).sh && $(RM) $(BASEDIR)/$(LIBNAME).sh || echo -n ""
 	@echo "ok2"
-	test -f $(BASEDIR)/$(LIBNAME).sh && $(RM) $(BASEDIR)/$(LIBNAME).csh || echo -n ""
+	test -f $(BASEDIR)/$(LIBNAME).csh && $(RM) $(BASEDIR)/$(LIBNAME).csh || echo -n ""
 	@echo "ok3"
 	@#echo "Please remove the sourcing of '$(LIBNAME).sh' or '$(LIBNAME).csh' from your startup scripts!"
 
