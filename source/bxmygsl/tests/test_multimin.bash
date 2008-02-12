@@ -1,4 +1,5 @@
 #!/bin/bash
+# -*- mode: shell-script; -*-
 
 mode="run"
 
@@ -40,7 +41,7 @@ fi
 
 function run()
 {
-    local BIN=${MYGSL_ROOT}/Linux-i686/bin/test_multimin
+    local BIN=${MYGSL_ROOT}/$(uname -s)-$(uname -m | sed 's/ //g')/bin/test_multimin
     local OPTS=-l -d 
     #rm -f test_multimin.hist test_multimin.pars test_multimin.sol
     local nloops=100

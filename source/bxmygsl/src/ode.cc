@@ -27,10 +27,10 @@ namespace mygsl {
   }
 
   int ode_system::gsl_ode_jacobian( double         t_ ,
-				      const double * y_ ,
-				      double *       dfdy_ ,
-				      double *       dfdt_ ,
-				      void   *       params_ )
+				    const double * y_ ,
+				    double *       dfdy_ ,
+				    double *       dfdt_ ,
+				    void   *       params_ )
   {
     if ( ode_system::g_debug ) {
       std::cerr << "DEBUG: gsl_ode_jacobian: " 
@@ -43,6 +43,13 @@ namespace mygsl {
     return sys->compute_jacobian(t_,y_,dfdy_,dfdt_);
   }
 
+  int ode_system::compute_jacobian( double         t_    , 
+				    const double * y_    ,
+				    double  *      dfdy_ ,
+				    double  *      dfdt_  ) 
+  {
+    return GSL_EINVAL;
+  }
 
   /*********************************************************************/
 
@@ -111,6 +118,12 @@ namespace mygsl {
     return false;
   }
 
+  bool ode_driver::type_requires_jacobian( const std::string & type_ )
+  {
+    if ( type_ == "bsimp" ) return true;
+    return false;
+  }
+
   const std::string & ode_driver::get_type() const 
   {
     return __type;
@@ -120,6 +133,10 @@ namespace mygsl {
   {
     if ( ! type_is_valid(type_) ) {
       throw std::runtime_error("mygsl::ode_driver::set_type: Invalid type!");
+    } 
+    if ( ode_driver::g_debug ) {
+      std::cerr << "DEBUG: ode_driver::set_type: type='" 
+		<< type_ << "'" << std::endl;
     } 
     __type = type_;
   }
@@ -133,7 +150,7 @@ namespace mygsl {
 			  const std::string & type_ ,
 			  double epsabs_ , 
 			  double epsrel_ ,
-			  bool   regular_  )
+			  bool   regular_ )
   {
     if ( ode_driver::g_debug ) {
       std::cerr << "DEBUG: ctor: " << " entering..." << std::endl;
@@ -141,7 +158,7 @@ namespace mygsl {
     __ode_sys = 0;
     if ( sys_.get_dimension() < 1 ) {
       throw std::runtime_error("mygsl::ode_driver::set_dimension: Invalid value!");
-    } 
+    }
     __ode_sys = &sys_;
 
     __regular = regular_;
@@ -156,7 +173,12 @@ namespace mygsl {
     __evolve    = 0;
 
     __system.function  = ode_system::gsl_ode_function;
-    __system.jacobian  = ode_system::gsl_ode_jacobian;
+    __has_jacobian = false; 
+    __system.jacobian  = 0;
+    if ( __ode_sys->has_jacobian() ) {
+      __has_jacobian     = true; 
+      __system.jacobian  = ode_system::gsl_ode_jacobian;
+    }
     __system.dimension = __ode_sys->get_dimension();
     __system.params    = __ode_sys;
 
@@ -230,6 +252,15 @@ namespace mygsl {
     if ( __type == "gear2" ) {
       __step_type = gsl_odeiv_step_gear2;
     }
+
+    if ( type_requires_jacobian(__type) &&  ! __has_jacobian ) {
+      std::ostringstream message;
+      message << "ode_driver::__init_step: " 
+	      << "ODE stepper '" << __type 
+	      << "' requires Jacobian but ODE system does not provide one!";
+      throw std::runtime_error(message.str());
+    }
+
     if ( ode_driver::g_debug ) {
       std::cerr << "DEBUG: __init_step: " 
 		<< "__step_type=" << __step_type << std::endl;

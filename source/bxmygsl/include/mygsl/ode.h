@@ -21,6 +21,11 @@ namespace mygsl {
   public:
     static bool g_debug;
 
+    virtual bool has_jacobian() const
+    {
+      return false;
+    }
+
     virtual size_t get_dimension() const = 0;
 
     virtual int compute_derivatives( double         t_ , 
@@ -30,7 +35,7 @@ namespace mygsl {
     virtual int compute_jacobian( double         t_    , 
 				  const double * y_    ,
 				  double  *      dfdy_ ,
-				  double  *      dfdt_  ) = 0;
+				  double  *      dfdt_  ); 
 
     virtual void to_double_star( double * y_ , size_t dimension_ ) const = 0;
 
@@ -91,6 +96,7 @@ namespace mygsl {
     gsl_odeiv_control *         __control;
     gsl_odeiv_evolve *          __evolve;
     gsl_odeiv_system            __system;
+    bool                        __has_jacobian;
     bool                        __regular;
     double                      __epsabs;
     double                      __epsrel;
@@ -120,6 +126,8 @@ namespace mygsl {
     void set_step_action( at_step_action & asd_ );
 
     static bool type_is_valid( const std::string & type_ );
+
+    static bool type_requires_jacobian( const std::string & type_ );
 
     static void print_types( std::ostream & );
 

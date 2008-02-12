@@ -20,8 +20,15 @@ class test_ode_system : public mygsl::ode_system
   size_t __dimension;
   double __x, __vx;
   double __omega_square;
+  bool   __use_jacobian;
 
 public:
+
+
+  virtual bool has_jacobian() const
+  {
+    return __use_jacobian;
+  }
   
   void set_omega_square( double o2_ ) 
   {
@@ -38,8 +45,9 @@ public:
     __vx = vx_;
   }
 
-  test_ode_system ( double o2_ = 1.0 )
+  test_ode_system ( double o2_ = 1.0 , bool uj_ = true )
   {
+    __use_jacobian = uj_ ;
     __dimension = 2;
     set_omega_square(o2_);
     set_xvx(1.0,0.0);
@@ -111,18 +119,52 @@ int main ( int argc_ , char ** argv_ )
     mygsl::ode_driver::g_debug = false;
     mygsl::ode_system::g_debug = false;
 
-    std::cerr << "available ODE steppers:" << std::endl;
-    mygsl::ode_driver::print_types(std::cerr);
-    std::cerr << std::endl;
+    std::string type     = "rk8pd"; // RK8 Prince-Dormand
+    std::string arg_type = ""; 
 
-    std::string type = "rk8pd"; // RK8 Prince-Dormand
+    bool debug=false;
+    bool use_jacobian=false;
+
+    int iarg=1;
+    while ( iarg < argc_ ) {
+
+      std::string arg = argv_[iarg];
+
+      if ( arg[0] == '-' ) {
+	if ( arg == "-d" || arg == "--debug" ) {
+	  debug=true;
+	}
+	if ( arg == "-j" || arg == "--use-jacobian" ) {
+	  use_jacobian=true;
+	}
+      }
+      else {
+	if ( arg_type.empty() ) {
+	  arg_type=arg;
+	}
+      }
+
+      iarg++;
+    }
+
+    if ( debug ) {
+      mygsl::ode_driver::g_debug = true;
+      std::cerr << "available ODE steppers:" << std::endl;
+      mygsl::ode_driver::print_types(std::cerr);
+      std::cerr << std::endl;
+    }
+
+    if ( !arg_type.empty() ) {
+      type = arg_type;
+    } 
+
     double epsabs    = 1.e-6;   // step relative error
     double epsrel    = 1.e-6;   // step maximum error
     bool   regular   = true;    // set regular steps
 
     double omega_square = 1.0;  // oscillator's squared pulsation
 
-    test_ode_system sys(omega_square);
+    test_ode_system sys(omega_square,use_jacobian);
 
     mygsl::ode_driver od(sys,type,epsabs,epsrel,regular);
     od.set_default_step_action(); // optional;
