@@ -67,8 +67,8 @@ namespace mygsl {
 
     public:
       virtual void action( double   t_ , 
-			  double * y_ , 
-			  size_t   dim_ ) = 0;
+			   double * y_ , 
+			   size_t   dim_ ) = 0;
 
       void operator()( double   t_ , 
 		       double * y_ , 
