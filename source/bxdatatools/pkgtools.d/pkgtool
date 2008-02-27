@@ -1,0 +1,488 @@
+#!/bin/bash
+# -*- mode: shell-script; -*-
+# pkgtool
+#
+# Note:
+# This is a default pkgtool script provided by
+# the mkskelpack program (from the PkgTools package).
+# It suits the use of some default GNU/makefile
+# generated in the package 'gmk' directory.
+#
+# Feel free to modify this file if you use another system
+# to build/install this package (i.e. Autotools,CMT).
+#
+
+APPNAME="pkgtool"
+
+pack_name=datatools
+pack_name_upper=$(echo ${pack_name} | tr "a-z" "A-Z")
+pack_name_lower=$(echo ${pack_name} | tr "A-Z" "a-z")
+# startup scripts
+
+sh_ss=${pack_name_lower}.sh
+csh_ss=${pack_name_lower}.csh
+the_base_dir=.
+
+tool_mode=""
+do_usage=0
+debug=0
+verbose=0
+###setup_dir=${HOME}
+
+function err_msg()
+{
+    echo "${APPNAME} (${pack_name}): ERROR: $@" 1>&2
+}
+
+function warning_msg()
+{
+    echo "${APPNAME} (${pack_name}): WARNING: $@" 1>&2
+}
+
+function info_msg()
+{
+    test ${verbose} = 0 & return
+    echo "${APPNAME} (${pack_name}): INFO: $@" 1>&2
+}
+
+function debug_msg()
+{
+    test ${debug} = 0 & return
+    echo "${APPNAME} (${pack_name}): DEBUG: $@"
+}
+
+function print_usage()
+{
+    cat <<EOF
+
+  $APPNAME (${pack_name})
+
+  Usage:
+
+    $APPNAME -h         : print this help then exit
+  
+  Available modes are:
+
+    $APPNAME info       : print package info
+    $APPNAME configure  : configure package (not implemented)
+    $APPNAME build      : build package
+    $APPNAME clean      : clean package
+    $APPNAME install    : install package
+    $APPNAME uninstall  : uninstall package
+
+EOF
+}
+
+#######################################################
+
+parse_switch=1
+while [ -n "$1" ]; do
+    arg="$1"
+    
+    if [ "${arg:0:1}" = "-" ]; then
+	if [ ${parse_switch} = 0 ]; then
+	    err_msg "Options (-X) must be placed before arguments!"
+	    exit 1
+	fi
+	if [ "${arg}" = "-h" -o "${arg}" = "--help" ]; then
+	    do_usage=1 
+	elif [ "${arg}" = "-d" -o "${arg}" = "--debug" ]; then
+	    debug=1 
+	elif [ "${arg}" = "-v" -o "${arg}" = "--verbose" ]; then
+	    verbose=1 
+	else
+	    err_msg "Invalid option!"
+	    exit 1
+	fi
+    else
+	parse_switch=0
+	if [ -z "${tool_mode}" ]; then
+	    if [ "$arg" = "configure" ]; then
+		tool_mode="configure"	
+	    elif [ "$arg" = "build" ]; then
+		tool_mode="build"	
+	    elif [ "$arg" = "clean" ]; then
+		tool_mode="clean"	
+	    elif [ "$arg" = "install" ]; then
+		tool_mode="install"	
+	    elif [ "$arg" = "uninstall" ]; then
+		tool_mode="uninstall"	
+	    elif [ "$arg" = "info" ]; then
+		tool_mode="info"	
+	    else
+		err_msg "Invalid argument!"
+		exit 1
+	    fi
+	else
+	    # remaining arguments on command line are kept in "$@"
+	    break
+	fi
+    fi
+    
+    shift 1
+done
+
+#######################################################
+
+if [ ${do_usage} = 1 ]; then
+    print_usage
+    exit 2
+fi
+
+if [ -z "${tool_mode}" ]; then
+    err_msg "Missing running mode!"
+    print_usage
+    exit 2
+fi
+
+bn=$(basename $(pwd))
+if [ "x$bn" = "xpkgtools.d" ]; then
+    opwd=$(pwd)
+    cd ..
+    the_base_dir=$(pwd)
+    cd $opwd
+    unset opwd
+elif [ -d ./pkgtools.d ]; then
+    the_base_dir=$(pwd)
+else 
+    err_msg "Please run 'pkgtools.d/pkgtool' from the base package directory!"
+    exit 1    
+fi
+#echo "Base package directory is '${the_base_dir}'!"
+if [ -d ${the_base_dir}/gmk ]; then
+    GMKDIR=${the_base_dir}/gmk
+else
+    err_msg "Missing gmk directory! Please run 'pkgtools.d/pkgtool' from the base package directory!"
+    exit 1    
+fi
+
+#######################################################
+
+function do_clean_gmk()
+{
+    info_msg "Clean gmk..."
+    if [ ! -d ${GMKDIR} ]; then 
+	err_msg "do_clean_gmk: Missing '${GMKDIR}' directory!"
+	return 1
+    fi
+    opwd=$(pwd)
+    cd ${GMKDIR}
+    make clean 
+    if [ $? -ne 0 ]; then 
+	cd ${opwd}
+	return 1
+    fi
+    cd ${opwd}
+    return 0
+}
+
+function do_build_gmk()
+{
+    info_msg "Build gmk..."
+    if [ ! -d ${GMKDIR} ]; then 
+	err_msg "do_build_gmk: Missing '${GMKDIR}' directory!"
+	return 1
+    fi
+    opwd=$(pwd)
+    cd ${GMKDIR}
+    mk_lib=0
+    mk_bin=0
+    mk_bin_static=0
+    if [ -z "$1" ]; then
+	mk_lib=0
+	mk_bin=1
+	mk_bin_static=0
+    else
+	if [ "$1" = "lib" -o "$1" = "libs" ]; then
+	    mk_lib=1
+	fi
+	if [ "$1" = "bin" ]; then
+	    mk_bin=1
+	fi
+	if [ "$1" = "bin_static" ]; then
+	    mk_bin_static=1
+	fi
+	if [ "$1" = "all" ]; then
+	    mk_bin=1
+	    mk_bin_static=1
+	fi
+	if [ "$1" = "all_bin" -o "$1" = "bin_all" ]; then
+	    mk_bin=1
+	    mk_bin_static=1
+	fi
+    fi
+    #
+    if [ $mk_lib = 1 ]; then
+	make || return 1
+    fi
+    if [ $mk_bin = 1 ]; then
+	make bin || return 1
+    fi
+    #if [ $mk_bin_static = 1 ]; then
+    #  make bin_static || return 1
+    #fi
+    cd ${opwd}
+    return 0
+}
+
+#######################################################
+
+function do_clean()
+{
+    info_msg "Clean package '${pack_name}'..."
+    if [ -d ${GMKDIR} ]; then
+	do_clean_gmk $@
+	return $?
+    fi 
+    return 1
+}
+
+function do_configure()
+{
+    info_msg "Configure package '${pack_name}': nothing special..."
+    echo "Configure package '${pack_name}': nothing special..."
+}
+
+function do_build()
+{
+    info_msg "Build package '${pack_name}'..."
+    if [ -d ${GMKDIR} ]; then
+	do_build_gmk $@
+	return $?
+    fi
+    return 1
+}
+
+function do_startup()
+{
+cat<<EOF
+
+Setup scripts:
+
+  '${the_base_dir}/${sh_ss}' for sh-shells
+
+and  
+
+  '${the_base_dir}/${csh_ss}' for csh-shells
+
+have been generated.
+
+You may source these scripts at startup time 
+(i.e. from your '~/.bashrc' or '~/.(t)cshrc' files).
+
+EOF
+}
+
+# function do_startup()
+# {
+#     rm -f ${the_base_dir}/${sh_ss}
+#     cat > ${the_base_dir}/${sh_ss} <<EOF
+# # Startup script for package ${pack_name}:
+
+# export ${pack_name_upper}_ROOT="$(pwd)"
+# export PATH=\${PATH}:"\${${pack_name_upper}_ROOT}/bin"
+# uname_s=\$(uname -s)
+# uname_m=\$(uname -m | sed -e 's/ //g')
+# libs="\${${pack_name_upper}_ROOT}/\${uname_s}-\${uname_m}/lib"
+
+# sysarch=\$(uname)
+# if [ "\${sysarch}" = "Linux" ]; then 
+#   if [ -n "\${LD_LIBRARY_PATH}" ]; then
+#     export LD_LIBRARY_PATH="\${LD_LIBRARY_PATH}:\${libs}"
+#   else
+#     export LD_LIBRARY_PATH="\${libs}"
+#   fi 
+# fi
+
+# if [ "\${sysarch}" = "Darwin" ]; then 
+#   if [ -n "\${DYLD_LIBRARY_PATH}" ]; then
+#     export DYLD_LIBRARY_PATH="\${DYLD_LIBRARY_PATH}:\${libs}"
+#   else
+#     export DYLD_LIBRARY_PATH="\${libs}"
+#   fi 
+# fi
+
+# # end
+# EOF
+#     rm -f ${the_base_dir}/${csh_ss}
+#     cat > ${the_base_dir}/${csh_ss} <<EOF
+# # Startup script for package ${pack_name}:
+
+# setenv ${pack_name_upper}_ROOT "$(pwd)"
+
+# setenv PATH "\${PATH}:\${${pack_name_upper}_ROOT}/bin"
+
+# set uname_s=$(echo '`')uname -s$(echo '`')
+# set uname_m=$(echo '`')uname -m | sed -e 's/ //g'$(echo '`')
+# set libs="\${${pack_name_upper}_ROOT}/\${uname_s}-\${uname_m}/lib"
+
+# set sysarch=$(echo '`')uname$(echo '`')
+# if ( \${sysarch} == Linux ) then 
+#   if (  \$?LD_LIBRARY_PATH ) then
+#     setenv LD_LIBRARY_PATH "\${LD_LIBRARY_PATH}:\${libs}"
+#   else
+#     setenv LD_LIBRARY_PATH "\${libs}"
+#   endif 
+# endif
+
+# if ( \${sysarch} == Darwin ) then 
+#   if (  \$?DYLD_LIBRARY_PATH ) then
+#     setenv DYLD_LIBRARY_PATH "\${DYLD_LIBRARY_PATH}:\${libs}"
+#   else
+#     setenv DYLD_LIBRARY_PATH "\${libs}"
+#   endif 
+# endif
+
+# # end
+# EOF
+#     return 0
+# }
+
+function kill_startup()
+{
+    cat<<EOF
+Don't forget to remove environment variables in your startup scripts.
+Particularly, you should not source the following scripts anymore
+from your '~/.bashrc' or '~/.(t)cshrc' files:
+
+  '${the_base_dir}/${sh_ss}' for sh-shells
+
+and  
+
+  '${the_base_dir}/${csh_ss}' for csh-shells
+
+EOF
+}
+
+# function kill_startup()
+# {
+#     rm -f ${the_base_dir}/${sh_ss}
+#     rm -f ${the_base_dir}/${csh_ss}
+# }
+
+function do_install()
+{
+    debug_msg "do_install: Entering..."
+    info_msg "Install package '${pack_name}'..."
+    opwd=$(pwd)
+    cd ${GMKDIR}
+    make install 
+    if [ $? -ne 0 ]; then 
+	cd ${opwd}
+	return 1
+    fi
+    cd ${opwd}
+    debug_msg "do_startup..."
+    do_startup
+    debug_msg "ok"
+    return 0
+}
+
+function do_uninstall()
+{
+    info_msg "Uninstall package '${pack_name}'... The"
+    opwd=$(pwd)
+    cd ${GMKDIR}
+    make uninstall 
+    if [ $? -ne 0 ]; then 
+	cd ${opwd}
+	return 1
+    fi
+    cd ${opwd}
+    kill_startup
+    return 0
+}
+
+function do_info()
+{
+    pkg_version="undefined"
+    pkg_lang="undefined"
+    pkg_creation="undefined"
+    pkg_authors="undefined"
+    pkg_deps="undefined"
+    if [ -f ./VERSION ]; then
+	pkg_version=$(cat ./VERSION)
+    fi
+    pkg_build="undefined"
+    if [ -d ${GMKDIR} -a -f ${GMKDIR}/GNUmakefile ]; then
+	pkg_build="GNU-make"
+    fi
+    if [ -f ./configure.ac -o -f ./configure.in ]; then
+	pkg_build="Autotools"
+    fi
+    echo "This is package '${pack_name}' (version ${pkg_version})" #1>&2
+    
+    pkgi_file="./pkgtools.d/package.info"
+    if [ -f ${pkgi_file} ]; then
+	pkg_lang=$(cat ${pkgi_file} | grep "language=" | cut -d= -f2)
+	pkg_creation=$(cat ${pkgi_file} | grep "creation=" | cut -d= -f2)
+	pkg_authors=$(cat ${pkgi_file} | grep "author=" | cut -d= -f2)
+	pkg_deps=$(cat ${pkgi_file} | grep "dependencies=" | cut -d= -f2)
+	pkg_namespace=$(cat ${pkgi_file} | grep "namespace=" | cut -d= -f2)
+	echo -e "\tName               : ${pack_name}"
+	echo -e "\tVersion            : ${pkg_version}"
+	echo -e "\tLanguage is        : ${pkg_lang}"
+	echo -e "\tDependencies are   : ${pkg_deps}"
+	echo -e "\tAuthors            : ${pkg_authors}"
+	echo -e "\tCreation date      : ${pkg_creation}"
+	if [ "${pkg_lang}" = "C++" ]; then
+	    echo -e "\tNamespace          : ${pkg_namespace}"
+	fi
+	echo -e "\tBuild method       : ${pkg_build}"
+    fi
+
+}
+
+#######################################################
+
+if [ "${tool_mode}" = "configure" ]; then
+    do_configure $@
+    if [ $? -ne 0 ]; then
+	err_msg "Configure failed!"
+	exit 1
+    fi
+fi
+
+if [ "${tool_mode}" = "build" ]; then
+    do_build $@
+    if [ $? -ne 0 ]; then
+	err_msg "Build failed!"
+	exit 1
+    fi
+fi
+
+if [ "${tool_mode}" = "clean" ]; then
+    do_clean
+    if [ $? -ne 0 ]; then
+	err_msg "Clean failed!"
+	exit 1
+    fi
+fi
+
+if [ "${tool_mode}" = "install" ]; then
+    do_install
+    if [ $? -ne 0 ]; then
+	err_msg "Install failed!"
+	exit 1
+    fi
+fi
+
+if [ "${tool_mode}" = "uninstall" ]; then
+    do_uninstall
+    if [ $? -ne 0 ]; then
+	err_msg "Uninstall failed!"
+	exit 1
+    fi
+fi
+
+if [ "${tool_mode}" = "info" ]; then
+    do_info
+    if [ $? -ne 0 ]; then
+	err_msg "Info failed!"
+	exit 1
+    fi
+fi
+
+exit 0
+
+# end of pkgtool
