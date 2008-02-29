@@ -21,10 +21,12 @@
 #include <cstdlib>
 #include <stdexcept>
 #include <iostream>
+#include <fstream>
 #include <iomanip>
 #include <sstream>
 #include <string>
 #include <vector>
+#include <list>
 #include <map>
 #include <functional>
 
@@ -74,6 +76,9 @@ namespace datatools {
 	static const char TYPE_INTEGER_SYMBOL = 'I';
 	static const char TYPE_REAL_SYMBOL    = 'R';
 	static const char TYPE_STRING_SYMBOL  = 'S';
+
+	static const int  SCALAR_DEF    = -1;
+	static const int  SCALAR_SIZE   =  1;
       
       public:
 	typedef std::vector<bool>         vbool;
@@ -88,7 +93,8 @@ namespace datatools {
 	 *  L   == lock bit
 	 *  TTT == type bits 
 	 */
-	unsigned char __desc; 
+	unsigned char __flags; 
+	std::string __description;
 	vbool    __boolean_values;
 	vint     __integer_values;
 	vdouble  __real_values;
@@ -97,9 +103,11 @@ namespace datatools {
       private:
 	void __clear_values();
 	int  __init_values( char   type_ = TYPE_INTEGER_SYMBOL ,
-			    size_t size_ = 1 );
+			    int    size_ = SCALAR_DEF );
 
       public:
+	void set_description( const std::string & );
+	const std::string & get_description() const;
 	bool has_type() const;
 	bool is_boolean() const;
 	bool is_integer() const;
@@ -112,10 +120,10 @@ namespace datatools {
 	bool is_locked() const;
 	bool is_unlocked() const;
 
-	int boolean( size_t = 1 );
-	int integer( size_t = 1 );
-	int real( size_t = 1 );
-	int string( size_t = 1 );
+	int boolean( int    size_ = SCALAR_DEF );
+	int integer( int    size_ = SCALAR_DEF );
+	int real(    int    size_ = SCALAR_DEF );
+	int string(  int    size_ = SCALAR_DEF );
 	int lock();
 	int unlock();
 	size_t      get_size() const;
@@ -143,17 +151,17 @@ namespace datatools {
 	std::string get_vector_label() const;
 
 	data( char       type_ = TYPE_INTEGER_SYMBOL ,
-	      size_t     size_ = 1);
+	      int    size_ = SCALAR_DEF );
 	data( bool       value_ ,
-	      size_t     size_ = 1);
+	      int    size_ = SCALAR_DEF );
 	data( int        value_ ,
-	      size_t     size_ = 1);
+	      int    size_ = SCALAR_DEF );
 	data( double       value_ ,
-	      size_t     size_ = 1);
+	      int    size_ = SCALAR_DEF );
 	data( const std::string & value_ ,
-	      size_t     size_ = 1);
+	      int    size_ = SCALAR_DEF );
 	data( const char * value_ ,
-	      size_t     size_ = 1);
+	      int    size_ = SCALAR_DEF );
 	virtual ~data();
 
 	void dump( std::ostream & ) const;
@@ -171,7 +179,8 @@ namespace datatools {
 	void serialize( Archive            & ar_ , 
 			const unsigned int   version_ )
 	{
-	  ar_ & boost::serialization::make_nvp("desc",__desc);
+	  ar_ & boost::serialization::make_nvp("description",__description);
+	  ar_ & boost::serialization::make_nvp("flags",__flags);
 	  if ( is_boolean() ) {
 	    ar_ & boost::serialization::make_nvp("boolean_values",__boolean_values);
 	  }
@@ -212,8 +221,9 @@ namespace datatools {
 
       // non static fields declarations:
     private: 
-      bool __debug;
-      pmap __props;
+      bool        __debug;
+      std::string __description;
+      pmap        __props;
       const basic_key_validator * __key_validator;
       bool                        __key_validator_deletion;
 
@@ -227,6 +237,8 @@ namespace datatools {
       bool is_debug() const;
       void set_debug( bool );
       size_t size() const;
+      void set_description( const std::string & );
+      const std::string & get_description() const;
   
       // ctor/dtor:
     public: 
@@ -242,13 +254,25 @@ namespace datatools {
 
       properties(); // with embedded default key validator
 
-      properties( const basic_key_validator * , bool deletion_on_destroy_ = true ); 
+      properties( const std::string & desc_ ); // with embedded default key validator
+
+      properties( const std::string & desc_ , 
+		  const basic_key_validator & );
+
+      properties( const basic_key_validator & ); 
+
       /* with external key validator (deletion_on_destroy_==false)
        * with internal key validator (deletion_on_destroy_==true) 
        *      validator is deleted in the destructor. 
        */
+      properties( const std::string & desc_ , 
+		  const basic_key_validator * , 
+		  bool deletion_on_destroy_ = true ); 
 
-      properties( const basic_key_validator & ); // with external key validator
+      properties( const basic_key_validator * , 
+		  bool deletion_on_destroy_ = true ); 
+
+
       virtual ~properties();
   
       // methods:
@@ -259,6 +283,29 @@ namespace datatools {
       void __check_key( const std::string & key_ , const data ** data_ ) const;
 
     public: 
+
+      std::list<std::string> keys() const;
+
+      void lock( const std::string & key_ );
+
+      void unlock( const std::string & key_ );
+
+      bool is_locked( const std::string & key_ ) const;
+
+      bool is_boolean( const std::string & key_ ) const;
+
+      bool is_integer( const std::string & key_ ) const;
+
+      bool is_real( const std::string & key_ ) const;
+
+      bool is_string( const std::string & key_ ) const;
+      
+      bool is_scalar( const std::string & key_ ) const;
+
+      bool is_vector( const std::string & key_ ) const;
+
+      size_t size( const std::string & key_ ) const;
+
       bool has_key( const std::string & key_ ) const;
 
       void erase( const std::string & key_ );
@@ -267,38 +314,47 @@ namespace datatools {
  
       void store( const std::string & key_ , 
 		  bool value_ , 
+		  const std::string & desc_ = "" ,
 		  bool lock_ = false );
 
       void store( const std::string & key_ , 
 		  int value_ , 
+		  const std::string & desc_ = "" ,
 		  bool lock_ = false );
 
       void store( const std::string & key_ , 
 		  double value_ , 
+		  const std::string & desc_ = "" ,
 		  bool lock_ = false );
 
       void store( const std::string & key_ , 
 		  const std::string & value_ , 
+		  const std::string & desc_ = "" ,
 		  bool lock_ = false );
 
       void store( const std::string & key_ , 
 		  const char * value_ , 
+		  const std::string & desc_ = "" ,
 		  bool lock_ = false );
 
       void store( const std::string & key_ , 
 		  const std::vector<bool> & values_ , 
+		  const std::string & desc_ = "" ,
 		  bool lock_ = false );
 
       void store( const std::string & key_ , 
 		  const std::vector<int> & values_ , 
+		  const std::string & desc_ = "" ,
 		  bool lock_ = false );
 
       void store( const std::string & key_ , 
 		  const std::vector<double> & values_ , 
+		  const std::string & desc_ = "" ,
 		  bool lock_ = false );
 
       void store( const std::string & key_ , 
 		  const std::vector<std::string> & values_ , 
+		  const std::string & desc_ = "" ,
 		  bool lock_ = false );
 
       void change( const std::string & key_ , 
@@ -382,8 +438,49 @@ namespace datatools {
       void serialize( Archive            & ar_ , 
 		      const unsigned int   version_ )
       {
+	ar_ & boost::serialization::make_nvp("description",__description);
 	ar_ & boost::serialization::make_nvp("properties",__props);
       }
+
+    public:
+      friend class config;
+
+      class config
+      {
+      public:
+	static const char DEFAULT_CONTINUATION_CHAR    = '\\';
+	static const char DEFAULT_COMMENT_CHAR = '#';
+	static const char DEFAULT_ASSIGN_CHAR  = '=';
+	static const char DEFAULT_DESC_CHAR    = ':';
+	static const char OPEN_VECTOR          = '[';
+	static const char CLOSE_VECTOR         = ']';
+      private:
+	bool   __debug;
+	int    __mode;
+	bool   __use_smart_modulo;
+	size_t __read_line_count;
+	char   __continuation_char;
+	char   __comment_char;
+	char   __assign_char;
+	char   __desc_char;
+	properties::data __data;
+      private:
+	void __read( std::istream & in_ , properties & p_ );
+      public:
+	config( bool use_smart_modulo_ = true );
+	virtual ~config();
+	void read( std::istream & in_ , properties & p_ );
+	void write( std::ostream & out_ , const properties & p_);
+       
+      };
+
+      static void write_config( const std::string & filename_ , 
+				const properties & p_ ,
+				bool use_smart_modulo_ = true );
+
+      static void read_config( const std::string & filename_ , 
+			       properties & p_ );
+
 
     };
 

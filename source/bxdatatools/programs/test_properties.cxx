@@ -7,6 +7,7 @@
 #include <exception>
 
 #include <datatools/serialization/io_factory.h>
+
 #include <datatools/utils/properties.h>
 
 int main( int argc_ , char ** argv_ )
@@ -76,23 +77,30 @@ int main( int argc_ , char ** argv_ )
     std::cout << std::endl;
 
     std::cout << "========================================" << std::endl;
+    std::cout << "========================================" << std::endl;
+    std::cout << "========================================" << std::endl;
 
-    datatools::utils::properties my_dict;
+    datatools::utils::properties my_dict("a list of user properties");
     if ( !use_validator ) {
       my_dict.unset_key_validator();
     }
     my_dict.dump(std::cout);
     std::cout << std::endl;
+    std::cout << "========================================" << std::endl;
 
+    datatools::utils::properties::g_debug=true;
     my_dict.store("name","my name");
+    std::cout << "========================================" << std::endl;
     my_dict.store("firstname","my firstname");
+
+
     try {
       my_dict.store("#number",666);
     }
     catch(std::exception & x) {
       std::cerr << "ERROR: " << x.what() << std::endl;
     }
-    my_dict.store("age",24);
+    my_dict.store("age",24,"the age of the captain");
     try {
       my_dict.store("007","James Bond");
     }
@@ -111,12 +119,13 @@ int main( int argc_ , char ** argv_ )
     vals.push_back(1.0);
     vals.push_back(2.0);
     vals.push_back(3.0);
-    my_dict.store("position",vals);
+    my_dict.store("position",vals,"the position of an object (mm)");
     my_dict.dump(std::cout);
     std::cout << std::endl;
 
     my_dict.change("position",3.14,1);
     my_dict.change("age",77);
+    my_dict.lock("age");
     my_dict.change("male",false);
 
     my_dict.erase("weight");
@@ -163,6 +172,18 @@ int main( int argc_ , char ** argv_ )
     my_dict.dump(std::cout);
     std::cout << std::endl;
     std::cout << "========================================" << std::endl;
+
+    std::string filename_cfg = "test_properties.conf";
+    datatools::utils::properties::write_config(filename_cfg,my_dict);
+    datatools::utils::properties::write_config("",my_dict);
+    my_dict.clear();
+    my_dict.dump(std::cout);
+    std::cout << std::endl;
+
+    datatools::utils::properties::read_config(filename_cfg,my_dict);
+    my_dict.dump(std::cout);
+    std::cout << std::endl;
+
  
   }
   catch(std::exception & x){
