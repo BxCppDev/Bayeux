@@ -12,6 +12,16 @@ namespace datatools {
 
     properties::default_key_validator properties::g_default_key_validator;
 
+    const bool        properties::data::DEFAULT_VALUE_BOOLEAN = false;
+    const int         properties::data::DEFAULT_VALUE_INTEGER = 0;
+    const double      properties::data::DEFAULT_VALUE_REAL    = 0.0;
+    const std::string properties::data::DEFAULT_VALUE_STRING  = "";
+
+    bool properties::data::has_forbidden_char( const std::string & str_ )
+    {
+      return str_.find_first_of(STRING_FORBIDDEN_CHAR) != str_.npos;
+    }
+
     std::string properties::data::get_error_message( int error_code_ )
     {
       if ( error_code_ == ERROR_SUCCESS ) return "success";
@@ -64,7 +74,7 @@ namespace datatools {
 	  std::cerr << "DEBUG: properties::data::__init_values: BOOLEAN..." << std::endl;
 	}
 	__flags|=TYPE_BOOLEAN;
-	if ( memsize > 0 ) __boolean_values.assign(memsize,false);
+	if ( memsize > 0 ) __boolean_values.assign(memsize,DEFAULT_VALUE_BOOLEAN);
       }
 
       if ( type_ == TYPE_INTEGER_SYMBOL ) {
@@ -73,7 +83,7 @@ namespace datatools {
 		    << " TYPE_INTEGER=" << (int) TYPE_INTEGER << std::endl;
 	}
 	__flags|=TYPE_INTEGER;
-	if ( memsize > 0 ) __integer_values.assign(memsize,0);
+	if ( memsize > 0 ) __integer_values.assign(memsize,DEFAULT_VALUE_INTEGER);
       }
 
       if ( type_ == TYPE_REAL_SYMBOL ) {
@@ -81,7 +91,7 @@ namespace datatools {
 	  std::cerr << "DEBUG: properties::data::__init_values: REAL..." << std::endl;
 	}
 	__flags|=TYPE_REAL;
-	if ( memsize > 0 ) __real_values.assign(memsize,0.0);
+	if ( memsize > 0 ) __real_values.assign(memsize,DEFAULT_VALUE_REAL);
       }
 
       if ( type_ == TYPE_STRING_SYMBOL ) {
@@ -89,7 +99,7 @@ namespace datatools {
 	  std::cerr << "DEBUG: properties::data::__init_values: STRING..." << std::endl;
 	}
 	__flags|=TYPE_STRING;
-	if ( memsize > 0 ) __string_values.assign(memsize,"");
+	if ( memsize > 0 ) __string_values.assign(memsize,DEFAULT_VALUE_STRING);
       }
 
       if ( properties::g_debug ) {
@@ -307,9 +317,16 @@ namespace datatools {
       int code=0;
       //int size = (size_<0)?SCALAR_DEF:size_;
       __init_values(TYPE_STRING_SYMBOL,size_);
+      if ( has_forbidden_char(value_) ) {
+	std::ostringstream message;
+	message << "properties::data::data(std::string): Forbidden char in string '" << value_ << "'!";
+	throw std::runtime_error(message.str());    
+      }      
       for ( int i=0; i<size(); i++ ) {
 	code=set_value(value_,i);
-	
+	if ( code != ERROR_SUCCESS ) {
+	  throw std::runtime_error("properties::data::data(std::string): failure!");   
+	}
       }
       if ( properties::g_debug ) {
 	tree_dump(std::cerr,"properties::data::data","DEBUG: ");
@@ -327,8 +344,17 @@ namespace datatools {
       __flags  = 0;
       //int size = (size_<0)?SCALAR_DEF:size_;
       __init_values(TYPE_STRING_SYMBOL,size_);
+      std::string tmp;
+      if ( value_!= 0 ) {
+	tmp = value_;
+	if ( has_forbidden_char(tmp) ) {
+	  std::ostringstream message;
+	  message << "properties::data::data(std::string): Forbidden char in string '" << tmp << "'!";
+	  throw std::runtime_error(message.str());    
+	}
+      }      
       for ( int i=0; i<size(); i++ ) {
-	set_value(std::string(value_),i);
+	set_value(tmp,i);
       }
     }
 
@@ -401,6 +427,12 @@ namespace datatools {
       if ( !index_is_valid(index_) ) {
 	return ERROR_RANGE;
       } 
+      /* special trick to forbid character '\"' in string as
+       * it is used as separator for parsing:
+       */
+      if ( has_forbidden_char(value_) ) {
+	return ERROR_FAILURE;
+      }
       __string_values[index_] = value_;
       return ERROR_SUCCESS;
     }
@@ -916,9 +948,9 @@ namespace datatools {
       __check_nokey(key_);
       __validate_key(key_);
       size_t size = values_.size();
-      if ( size < 1 ) {
-	throw std::runtime_error("properties::store: Invalid vector of booleans size!");
-      }
+//       if ( size < 0 ) {
+// 	throw std::runtime_error("properties::store: Invalid vector of booleans size!");
+//       }
       data a_data(data::TYPE_BOOLEAN_SYMBOL,size);
       a_data.set_description(desc_);
       __props[key_] = a_data;
@@ -936,9 +968,9 @@ namespace datatools {
       __check_nokey(key_);
       __validate_key(key_);
       size_t size = values_.size();
-      if ( size < 1 ) {
-	throw std::runtime_error("properties::store: Invalid vector of integers size!");
-      }
+//       if ( size < 0 ) {
+// 	throw std::runtime_error("properties::store: Invalid vector of integers size!");
+//       }
       data a_data(data::TYPE_INTEGER_SYMBOL,size);
       a_data.set_description(desc_);
       __props[key_] = a_data;
@@ -956,9 +988,9 @@ namespace datatools {
       __check_nokey(key_);
       __validate_key(key_);
       size_t size = values_.size();
-      if ( size < 1 ) {
-	throw std::runtime_error("properties::store: Invalid vector of reals size!");
-      }
+//       if ( size < 0 ) {
+// 	throw std::runtime_error("properties::store: Invalid vector of reals size!");
+//       }
       data a_data(data::TYPE_REAL_SYMBOL,size);
       a_data.set_description(desc_);
       __props[key_] = a_data;
@@ -976,9 +1008,9 @@ namespace datatools {
       __check_nokey(key_);
       __validate_key(key_);
       size_t size = values_.size();
-      if ( size < 1 ) {
-	throw std::runtime_error("properties::store: Invalid vector of string size!");
-      }
+//       if ( size < 0 ) {
+// 	throw std::runtime_error("properties::store: Invalid vector of string size!");
+//       }
       data a_data(data::TYPE_STRING_SYMBOL,size);
       a_data.set_description(desc_);
       __props[key_] = a_data;
@@ -1269,7 +1301,7 @@ namespace datatools {
 	throw std::runtime_error(message.str());
       }
       values_.resize(data_ptr->size());
-      values_.assign(data_ptr->size(),false);
+      values_.assign(data_ptr->size(),data::DEFAULT_VALUE_BOOLEAN);
       for ( int i=0; i<values_.size(); i++ ) {
 	bool val;
 	int error = data_ptr->get_value(val,i);
@@ -1296,7 +1328,7 @@ namespace datatools {
 	throw std::runtime_error(message.str());
       }
       values_.resize(data_ptr->size());
-      values_.assign(data_ptr->size(),0);
+      values_.assign(data_ptr->size(),data::DEFAULT_VALUE_INTEGER);
       for ( int i=0; i<values_.size(); i++ ) {
 	//int val;
 	//int error = data_ptr->get_value(val,i);
@@ -1324,7 +1356,7 @@ namespace datatools {
 	throw std::runtime_error(message.str());
       }
       values_.resize(data_ptr->size());
-      values_.assign(data_ptr->size(),0.0);
+      values_.assign(data_ptr->size(),data::DEFAULT_VALUE_REAL);
       for ( int i=0; i<values_.size(); i++ ) {
 	//double val;
 	//int error = data_ptr->get_value(val,i);
@@ -1352,7 +1384,7 @@ namespace datatools {
 	throw std::runtime_error(message.str());
       }
       values_.resize(data_ptr->size());
-      values_.assign(data_ptr->size(),"");
+      values_.assign(data_ptr->size(),data::DEFAULT_VALUE_STRING);
       for ( int i=0; i<values_.size(); i++ ) {
 	//std::string val;
 	//int error = data_ptr->get_value(val,i);
@@ -1467,7 +1499,7 @@ namespace datatools {
     {
       int mode=__mode;
 
-      if ( mode == 0 ) {
+      if ( mode == MODE_HEADER_FOOTER ) {
 	out_ << "# Property list" << std::endl;
 	out_ << "# This file was autogenerated by "
 	     << "'datatools::utils::properties'." << std::endl;
@@ -1500,7 +1532,7 @@ namespace datatools {
 	  }
 
 	  // type:
-	  size_t size=1;
+	  size_t size = properties::data::SCALAR_SIZE;
 	  out_ << a_data.get_type_label();
 	  if ( a_data.is_vector() ) {
 	    size=a_data.get_size();
@@ -1508,39 +1540,49 @@ namespace datatools {
 	  } 
 	  out_ << ' ';
 
-	  out_  << " = " ;
+	  out_  << "=";
 
 	  // values(s):
 	  int modulo=1;
+
 	  if ( a_data.is_boolean() ) { 
 	    modulo=10;
 	  }    
+
 	  if ( a_data.is_integer() ) { 
 	    modulo=5;
 	  }    
 
-	  for ( int i=0; i<size; i++ ) { 
-	    if (__use_smart_modulo ) {
-	      if ( (i==0) && (size>modulo) ) {
-		out_ << ' ' << __continuation_char << '\n';
-	      }
+	  if (__use_smart_modulo ) {
+	    if ( (size>1) && (size>modulo) ) {
+	      out_ << ' ' << __continuation_char << '\n';
 	    }
-	    if ( i != 0 ) out_ << ' ';  
+	  }
+
+	  for ( int i=0; i<size; i++ ) { 
+
+	    //if ( (i+1) != size ) 
+            out_ << ' ';  
+	    
 	    if ( a_data.is_boolean() ) { 
 	      out_ << a_data.get_boolean_value(i);
 	    }
+
 	    if ( a_data.is_integer() ) {
 	      out_ << a_data.get_integer_value(i);
 	    }
+
 	    if ( a_data.is_real() ) {
 	      int oldprec=out_.precision();
 	      out_.precision(16);
 	      out_ << a_data.get_real_value(i);
 	      out_.precision(oldprec);
 	    }
+
 	    if ( a_data.is_string() ) {
 	      out_ << '"' << a_data.get_string_value(i) << '"';
 	    }
+
 	    if (__use_smart_modulo ) {
 	      if ( (i<(size-1)) && ( (i+1)%modulo ) == 0 ) {
 		out_ << ' ' << __continuation_char << '\n';
@@ -1551,17 +1593,27 @@ namespace datatools {
 	  out_ << std::endl;
 	}
 
-      if ( mode == 0 ) {
+      if ( mode == MODE_HEADER_FOOTER ) {
 	out_ << "# End of property list" << std::endl;
       }
 
     }
+    
+    bool properties::config::is_debug() const
+    {
+      return __debug;
+    }
 
-    properties::config::config( bool use_smart_modulo_ )
+    void properties::config::set_debug( bool debug_ )
+    {
+      __debug=debug_;
+    }
+
+    properties::config::config( bool use_smart_modulo_ , int mode_ )
     {
       __debug           = false;
       __use_smart_modulo= use_smart_modulo_ ;
-      __mode            = 0;
+      __mode            = MODE_HEADER_FOOTER;
       __read_line_count = 0;
       __continuation_char = DEFAULT_CONTINUATION_CHAR;
       __comment_char = DEFAULT_COMMENT_CHAR;
@@ -1582,7 +1634,7 @@ namespace datatools {
     void properties::config::__read( std::istream & in_ ,
 				     properties & p_ )
     {
-      bool verbose_parsing  = __debug;
+      bool verbose_parsing  = __debug || properties::g_debug;
 
       std::string line_in;
       std::string prop_description;
@@ -1595,14 +1647,16 @@ namespace datatools {
 	}
 	std::string line_get;
 	std::getline(in_,line_get);
-	if ( !in_ ) {
+	/*
+        if ( !in_ ) {
 	  if ( verbose_parsing ) {
 	    std::cerr << "DEBUG: properties::config::read_next_property: "
-		      << "Cannot get a new line form input!"
+		      << "Cannot get a new line from input!"
 		      << std::endl;
 	  } 
 	  return;  
 	}
+	*/
 	__read_line_count++;
       
 	// check if line has a continuation mark at the end:
@@ -1737,154 +1791,273 @@ namespace datatools {
 			<< property_value_str << "'" << std::endl;
 	    }
 	    
-	    {
-	      bool scalar = true;
-	      bool locked = false;
-	      int  vsize  = -1;
-	      char type   = 0;
-	      std::string prop_key;
-
-	      int flag_pos = property_desc_str.find_first_of(__desc_char);
-	      if ( flag_pos == property_desc_str.npos ) {
-		std::istringstream key_ss(property_desc_str);
-		key_ss >> std::ws >> prop_key;
-		type = properties::data::TYPE_STRING_SYMBOL;
+	    
+	    bool scalar = true;
+	    bool locked = false;
+	    int  vsize  = -1;
+	    char type   = 0;
+	    std::string prop_key;
+	    
+	    int desc_pos = property_desc_str.find_first_of(__desc_char);
+	    if ( desc_pos == property_desc_str.npos ) {
+	      std::istringstream key_ss(property_desc_str);
+	      key_ss >> std::ws >> prop_key;
+	      type = properties::data::TYPE_STRING_SYMBOL;
+	    }
+	    else {
+	      std::string key_str = property_desc_str.substr(0,desc_pos);
+	      std::istringstream key_ss(key_str);
+	      key_ss >> std::ws >> prop_key;
+	      
+	      
+	      std::string type_str = property_desc_str.substr(desc_pos+1);
+	      
+	      //std::string vector_str =
+	      //property_desc_str.substr(0,desc_pos);
+	      std::string type_str2;
+	      
+	      int vec_pos = type_str.find_first_of(OPEN_VECTOR);
+	      if ( vec_pos != type_str.npos ) {
+		scalar = false;
+		type_str2 = type_str.substr(0,vec_pos);
+		std::string vec_str = type_str.substr(vec_pos+1);
+		std::istringstream vec_ss(vec_str);
+		vec_ss >> vsize;
+		if ( !vec_ss ) {
+		  std::ostringstream message;
+		  message << "properties::config::read_next_property: "
+			  << "Cannot find vector size!" ;
+		  throw std::runtime_error(message.str());		    
+		}
+		if ( vsize < 0 ) {
+		  std::ostringstream message;
+		  message << "properties::config::read_next_property: "
+			  << "Invalid vector size!" ;
+		  throw std::runtime_error(message.str());		    
+		}
+		char c=0;
+		if ( !vec_ss ) {
+		  std::ostringstream message;
+		  message << "properties::config::read_next_property: "
+			  << "Cannot find expected vector size closing symbol!" ;
+		  throw std::runtime_error(message.str());		    
+		}
+		vec_ss >> c;
+		if ( c != CLOSE_VECTOR ) {
+		  std::ostringstream message;
+		  message << "properties::config::read_next_property: "
+			  << "Invalid vector size closing symbol!" ;
+		  throw std::runtime_error(message.str());
+		}
 	      }
 	      else {
-		std::string key_str = property_desc_str.substr(0,flag_pos);
-		std::istringstream key_ss(key_str);
-		key_ss >> std::ws >> prop_key;
+		scalar = true;
+		type_str2 =  type_str;
+	      }
+	      
+	      std::istringstream type_ss(type_str2);
+	      std::string token;
+	      
+	      type_ss >> std::ws >> token;
+	      if ( token == "const" ) {
+		locked=true;
+		type_ss >> std::ws >> token;
+	      }
+	      
+	      if ( token == "boolean" ) {
+		type=properties::data::TYPE_BOOLEAN_SYMBOL;		  
+	      }
+	      else if ( token == "integer" ) {
+		type=properties::data::TYPE_INTEGER_SYMBOL;		  
+	      }
+	      else if ( token == "real" ) {
+		type=properties::data::TYPE_REAL_SYMBOL;		  
+	      }
+	      else if ( token == "string" ) {
+		type=properties::data::TYPE_STRING_SYMBOL;		  
+	      }
+	      else {
+		std::ostringstream message;
+		message << "properties::config::read_next_property: "
+			<< "Missing type specifier!" ;
+		throw std::runtime_error(message.str());
+	      }
+	      
+	      if ( verbose_parsing ) {
+		std::cerr << "DEBUG: properties::config::read_next_property: "
+			  << "type='" 
+			  << type << "'" << std::endl;
+		std::cerr << "DEBUG: properties::config::read_next_property: "
+			  << "locked='" 
+			  << locked << "'" << std::endl;
+		std::cerr << "DEBUG: properties::config::read_next_property: "
+			  << "vsize='" 
+			  << vsize << "'" << std::endl;
+		std::cerr << "DEBUG: properties::config::read_next_property: "
+			  << "prop_description='" 
+			  << prop_description << "'" << std::endl;
+	      }
+	      
+	      bool        a_boolean = false;
+	      int         a_integer = 0;
+	      double      a_real    = 0.0;
+	      std::string a_string  = "";
+	      std::vector<bool>        v_booleans;
+	      std::vector<int>         v_integers;
+	      std::vector<double>      v_reals;
+	      std::vector<std::string> v_strings;
+	      
+	      if ( type == properties::data::TYPE_BOOLEAN_SYMBOL && !scalar ) {
+		if ( vsize > 0 ) v_booleans.assign(vsize,
+						   properties::data::DEFAULT_VALUE_BOOLEAN);
+	      }
+	      if ( type == properties::data::TYPE_INTEGER_SYMBOL && !scalar ) {
+		if ( vsize > 0 ) v_integers.assign(vsize,
+						   properties::data::DEFAULT_VALUE_INTEGER);
+	      }
+	      if ( type == properties::data::TYPE_REAL_SYMBOL && !scalar ) {
+		if ( vsize > 0 ) v_reals.assign(vsize,
+						properties::data::DEFAULT_VALUE_REAL);
+	      }
+	      if ( type == properties::data::TYPE_STRING_SYMBOL && !scalar ) {
+		if ( vsize > 0 ) v_strings.assign(vsize,
+						  properties::data::DEFAULT_VALUE_STRING);
+	      }
+	      
+	      /*****/
 
-		
-		std::string type_str = property_desc_str.substr(flag_pos+1);
-
-		//std::string vector_str =
-		//property_desc_str.substr(0,flag_pos);
-		std::string type_str2;
-
-		int vec_pos = type_str.find_first_of(OPEN_VECTOR);
-		if ( vec_pos != type_str.npos ) {
-		  scalar = false;
-		  type_str2 = type_str.substr(0,vec_pos);
-		  std::string vec_str = type_str.substr(vec_pos+1);
-		  std::istringstream vec_ss(vec_str);
-		  vec_ss >> vsize;
-		  if ( !vec_ss ) {
+	      std::istringstream iss(property_value_str);
+	      if ( type == properties::data::TYPE_BOOLEAN_SYMBOL ) {
+		if ( scalar ) {
+		  iss >> a_boolean;
+		  if ( !iss ) {
 		    std::ostringstream message;
 		    message << "properties::config::read_next_property: "
-			    << "Cannot find vector size!" ;
-		    throw std::runtime_error(message.str());		    
-		  }
-		  if ( vsize < 0 ) {
-		    std::ostringstream message;
-		    message << "properties::config::read_next_property: "
-			    << "Invalid vector size!" ;
-		    throw std::runtime_error(message.str());		    
-		  }
-		  char c=0;
-		  if ( !vec_ss ) {
-		    std::ostringstream message;
-		    message << "properties::config::read_next_property: "
-			    << "Cannot find expected vector size closing symbol!" ;
-		    throw std::runtime_error(message.str());		    
-		  }
-		  vec_ss >> c;
-		  if ( c != CLOSE_VECTOR ) {
-		    std::ostringstream message;
-		    message << "properties::config::read_next_property: "
-			    << "Invalid vector size closing symbol!" ;
+			    << "Cannot read boolean value!" ;
 		    throw std::runtime_error(message.str());
 		  }
 		}
 		else {
-		  scalar = true;
-		  type_str2 =  type_str;
+		  for ( int i=0; i<vsize; i++ ) {
+		    bool b;
+		    iss >> b;
+		    if ( !iss ) {
+		      std::ostringstream message;
+		      message << "properties::config::read_next_property: "
+			      << "Cannot read vector boolean value!" ;
+		      throw std::runtime_error(message.str());
+		    }
+		    v_booleans[i]=b;
+		  }
 		}
+	      }
 		
-		std::istringstream type_ss(type_str2);
-		std::string token;
-		
-		type_ss >> std::ws >> token;
-		if ( token == "const" ) {
-		  locked=true;
-		  type_ss >> std::ws >> token;
-		}
-
-		if ( token == "boolean" ) {
-		  type=properties::data::TYPE_BOOLEAN_SYMBOL;		  
-		}
-		else if ( token == "integer" ) {
-		  type=properties::data::TYPE_INTEGER_SYMBOL;		  
-		}
-		else if ( token == "real" ) {
-		  type=properties::data::TYPE_REAL_SYMBOL;		  
-		}
-		else if ( token == "string" ) {
-		  type=properties::data::TYPE_STRING_SYMBOL;		  
+	      if ( type == properties::data::TYPE_INTEGER_SYMBOL ) {
+		//std::istringstream iss(property_value_str);
+		if ( scalar ) {
+		  iss >> a_integer;
+		  if ( !iss ) {
+		    std::ostringstream message;
+		    message << "properties::config::read_next_property: "
+			    << "Cannot read integer value!" ;
+		    throw std::runtime_error(message.str());
+		  }
 		}
 		else {
-		  std::ostringstream message;
-		  message << "properties::config::read_next_property: "
-			  << "Missing type specifier!" ;
-		  throw std::runtime_error(message.str());
+		  for ( int i=0; i<vsize; i++ ) {
+		    int k;
+		    iss >> k;
+		    if ( !iss ) {
+		      std::ostringstream message;
+		      message << "properties::config::read_next_property: "
+			      << "Cannot read vector integer value!" ;
+		      throw std::runtime_error(message.str());
+		    }
+		    v_integers[i]=k;
+		  }
 		}
-
+	      }
 		
-		bool        a_boolean = false;
-		int         a_integer = 0;
-		double      a_real    = 0.0;
-		std::string a_string  = "";
-		std::vector<bool>        v_booleans;
-		std::vector<int>         v_integers;
-		std::vector<double>      v_reals;
-		std::vector<std::string> v_strings;
-
-		if ( type == properties::data::TYPE_BOOLEAN_SYMBOL && !scalar ) {
-		  if ( vsize > 0 ) v_booleans.assign(vsize,false);
+	      if ( type == properties::data::TYPE_REAL_SYMBOL ) {
+		//std::istringstream iss(property_value_str);
+		if ( scalar ) {
+		  iss >> a_real;
+		  if ( !iss ) {
+		    std::ostringstream message;
+		    message << "properties::config::read_next_property: "
+			    << "Cannot read real value!" ;
+		    throw std::runtime_error(message.str());
+		  }
 		}
-		if ( type == properties::data::TYPE_INTEGER_SYMBOL && !scalar ) {
-		  if ( vsize > 0 ) v_integers.assign(vsize,false);
+		else {
+		  for ( int i=0; i<vsize; i++ ) {
+		    double x;
+		    iss >> x;
+		    if ( !iss ) {
+		      std::ostringstream message;
+		      message << "properties::config::read_next_property: "
+			      << "Cannot read vector real value!" ;
+		      throw std::runtime_error(message.str());
+		    }
+		    v_reals[i]=x;
+		  }
 		}
-		if ( type == properties::data::TYPE_REAL_SYMBOL && !scalar ) {
-		  if ( vsize > 0 ) v_reals.assign(vsize,false);
-		}
-		if ( type == properties::data::TYPE_STRING_SYMBOL && !scalar ) {
-		  if ( vsize > 0 ) v_strings.assign(vsize,false);
-		}
-
-		/*****
-
-		****/
-
-		if ( type == properties::data::TYPE_BOOLEAN_SYMBOL && scalar ) {
-		  p_.store(prop_key,a_boolean,prop_description,locked);
-		}
-		if ( type == properties::data::TYPE_INTEGER_SYMBOL && scalar ) {
-		  p_.store(prop_key,a_integer,prop_description,locked);
-		}
-		if ( type == properties::data::TYPE_REAL_SYMBOL && scalar ) {
-		  p_.store(prop_key,a_real,prop_description,locked);
-		}
-		if ( type == properties::data::TYPE_STRING_SYMBOL && scalar ) {
-		  p_.store(prop_key,a_string,prop_description,locked);
-		}
-
-		if ( type == properties::data::TYPE_BOOLEAN_SYMBOL && !scalar ) {
-		  p_.store(prop_key,v_booleans,prop_description,locked);
-		}
-		if ( type == properties::data::TYPE_INTEGER_SYMBOL && !scalar ) {
-		  p_.store(prop_key,v_integers,prop_description,locked);
-		}
-		if ( type == properties::data::TYPE_REAL_SYMBOL && !scalar ) {
-		  p_.store(prop_key,v_reals,prop_description,locked);
-		}
-		if ( type == properties::data::TYPE_STRING_SYMBOL && !scalar ) {
-		  p_.store(prop_key,v_strings,prop_description,locked);
-		}
-		prop_description="";
 
 	      }
+		
+	      if ( type == properties::data::TYPE_STRING_SYMBOL ) {
+		//std::istringstream iss(property_value_str);
+		if ( scalar ) {
+		  if ( !read_quoted_string(iss,a_string) ) {
+		    std::ostringstream message;
+		    message << "properties::config::read_next_property: "
+			    << "Cannot read string value!" ;
+		    throw std::runtime_error(message.str());
+		  }
+		}
+		else {
+		  for ( int i=0; i<vsize; i++ ) {
+		    std::string str;
+		    if ( !read_quoted_string(iss,str) ) {
+		      std::ostringstream message;
+		      message << "properties::config::read_next_property: "
+			      << "Cannot read string value!" ;
+		      throw std::runtime_error(message.str());
+		    }
+		    v_strings[i]=str;
+		  }
+		}
+	      }
 
+	      /*****/
+	      
+	      if ( type == properties::data::TYPE_BOOLEAN_SYMBOL && scalar ) {
+		p_.store(prop_key,a_boolean,prop_description,locked);
+	      }
+	      if ( type == properties::data::TYPE_INTEGER_SYMBOL && scalar ) {
+		p_.store(prop_key,a_integer,prop_description,locked);
+	      }
+	      if ( type == properties::data::TYPE_REAL_SYMBOL && scalar ) {
+		p_.store(prop_key,a_real,prop_description,locked);
+	      }
+	      if ( type == properties::data::TYPE_STRING_SYMBOL && scalar ) {
+		p_.store(prop_key,a_string,prop_description,locked);
+	      }
+	      
+	      if ( type == properties::data::TYPE_BOOLEAN_SYMBOL && !scalar ) {
+		p_.store(prop_key,v_booleans,prop_description,locked);
+	      }
+	      if ( type == properties::data::TYPE_INTEGER_SYMBOL && !scalar ) {
+		p_.store(prop_key,v_integers,prop_description,locked);
+	      }
+	      if ( type == properties::data::TYPE_REAL_SYMBOL && !scalar ) {
+		p_.store(prop_key,v_reals,prop_description,locked);
+	      }
+	      if ( type == properties::data::TYPE_STRING_SYMBOL && !scalar ) {
+		p_.store(prop_key,v_strings,prop_description,locked);
+	      }
+	      prop_description="";
+	      
 	    }
 	  } // !skip_line
 	} // if ( ! line_goon )
@@ -1893,6 +2066,68 @@ namespace datatools {
       return;
     }
 
+    bool properties::config::read_quoted_string( 
+      std::istream & in_ , 
+      std::string & str_ )
+    {
+      std::string chain="";
+      in_ >> std::ws;
+      if ( !in_ ) {
+	str_=chain;
+	return true;
+      }
+
+      bool quoted=false;
+      char lastc = 0;      
+      do {
+	char c = 0;
+	in_.get(c);
+	if ( !in_ ) break;
+	if ( c == '"' ) {
+	  if ( quoted ) {
+	    quoted=false;
+	    break;
+	    /*  
+	    if ( lastc == '\\' ) {
+	      chain += c;
+	      lastc=c;
+	    }
+	    else {
+	      quoted=false;
+	      break;
+	    }
+	    */
+	  }
+	  else {
+	    if ( lastc == 0 ) {
+	      quoted=true;
+	      continue;
+	    }
+	    else {
+	      chain += c;
+	      lastc  = c;
+	    }
+	  }
+	}
+	else {
+	  if ( isspace(c) ) {
+	    if ( !quoted ) {
+	      in_.putback(c);
+	      break;
+	    }
+	  }
+	  chain += c;
+	  lastc=c;
+	}
+
+      } while ( in_ );
+      if ( quoted) {
+	return false;
+      }
+
+      str_ = chain;
+      return true;
+    }
   
   } // end of namespace utils 
 

@@ -77,8 +77,15 @@ namespace datatools {
 	static const char TYPE_REAL_SYMBOL    = 'R';
 	static const char TYPE_STRING_SYMBOL  = 'S';
 
+	static const char STRING_FORBIDDEN_CHAR = '"';
+
 	static const int  SCALAR_DEF    = -1;
 	static const int  SCALAR_SIZE   =  1;
+
+	static const bool        DEFAULT_VALUE_BOOLEAN;
+	static const int         DEFAULT_VALUE_INTEGER;
+	static const double      DEFAULT_VALUE_REAL;
+	static const std::string DEFAULT_VALUE_STRING;
       
       public:
 	typedef std::vector<bool>         vbool;
@@ -149,6 +156,8 @@ namespace datatools {
 
 	std::string get_type_label() const;
 	std::string get_vector_label() const;
+
+	static bool has_forbidden_char( const std::string & );
 
 	data( char       type_ = TYPE_INTEGER_SYMBOL ,
 	      int    size_ = SCALAR_DEF );
@@ -454,6 +463,11 @@ namespace datatools {
 	static const char DEFAULT_DESC_CHAR    = ':';
 	static const char OPEN_VECTOR          = '[';
 	static const char CLOSE_VECTOR         = ']';
+
+	static const int MODE_BARE          = 0;
+	static const int MODE_HEADER_FOOTER = 1;
+	static const int MODE_DEFAULT       = MODE_HEADER_FOOTER;
+	
       private:
 	bool   __debug;
 	int    __mode;
@@ -463,15 +477,30 @@ namespace datatools {
 	char   __comment_char;
 	char   __assign_char;
 	char   __desc_char;
-	properties::data __data;
+	//properties::data __data;
+
       private:
+
 	void __read( std::istream & in_ , properties & p_ );
+
       public:
-	config( bool use_smart_modulo_ = true );
+
+	bool is_debug() const;
+
+	void set_debug( bool debug_ );
+
+	config( bool use_smart_modulo_ = true , int mode_ = MODE_DEFAULT );
+
 	virtual ~config();
+
 	void read( std::istream & in_ , properties & p_ );
+
 	void write( std::ostream & out_ , const properties & p_);
        
+	static bool read_quoted_string( std::istream & ,
+					std::string & );
+
+
       };
 
       static void write_config( const std::string & filename_ , 

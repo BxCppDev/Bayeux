@@ -19,6 +19,8 @@ int main( int argc_ , char ** argv_ )
   
     bool debug=false;
     bool use_validator=true;
+    long seed=12345;
+
     int iarg=1;
     while ( iarg<argc_ ) {
     
@@ -29,6 +31,8 @@ int main( int argc_ , char ** argv_ )
 
       iarg++;
     }
+
+    srand48(seed);
 
     datatools::utils::properties::g_debug = debug;
 
@@ -88,7 +92,7 @@ int main( int argc_ , char ** argv_ )
     std::cout << std::endl;
     std::cout << "========================================" << std::endl;
 
-    datatools::utils::properties::g_debug=true;
+    //datatools::utils::properties::g_debug=true;
     my_dict.store("name","my name");
     std::cout << "========================================" << std::endl;
     my_dict.store("firstname","my firstname");
@@ -101,18 +105,28 @@ int main( int argc_ , char ** argv_ )
       std::cerr << "ERROR: " << x.what() << std::endl;
     }
     my_dict.store("age",24,"the age of the captain");
+
     try {
       my_dict.store("007","James Bond");
     }
     catch(std::exception & x) {
       std::cerr << "ERROR: " << x.what() << std::endl;
     }
+
     try {
       my_dict.store("","Money Penny");
     }
     catch(std::exception & x) {
       std::cerr << "ERROR: " << x.what() << std::endl;
     }
+
+    try {
+      my_dict.store("bad_token","a bad \"char\"");
+    }
+    catch(std::exception & x) {
+      std::cerr << "ERROR: " << x.what() << std::endl;
+    }
+
     my_dict.store("weight",23.4);
     my_dict.store("male",true);
     std::vector<double> vals;
@@ -139,14 +153,37 @@ int main( int argc_ , char ** argv_ )
     std::cout << std::endl;
 
     std::vector<double> vals2;
-    vals2.push_back(10.0);
-    vals2.push_back(100.0);
-    vals2.push_back(1000.0);
-    vals2.push_back(10000.0);
+    double s=3.14159;
+    for ( int i=1; i<13; i++ ) {
+      s/=i;
+      vals2.push_back(s);
+    }
     my_dict.change("position",vals2);
+    if ( debug ) my_dict.tree_dump(std::cerr,"datatools::utils::properties","DEBUG: ");
+    std::cout << std::endl;
+
+    std::vector<bool> bits;
+    for ( int i=0; i<23; i++ ) bits.push_back(drand48()>0.6?true:false);
+    my_dict.store("bits",bits);
+    std::cout << std::endl;
+
+    std::vector<std::string> tokens;
+    for ( int i=0; i<12; i++ ) {
+      std::ostringstream tok;
+      tok << "token_" << i;
+      tokens.push_back(tok.str());
+    }
+    tokens.push_back(">DEBUG<");
+    my_dict.store("tokens",tokens);
+
+    std::vector<int> counts;
+    my_dict.store("counts",counts,"Event counts");
+
     my_dict.dump(std::cout);
     if ( debug ) my_dict.tree_dump(std::cout,"datatools::utils::properties","DEBUG: ");
     std::cout << std::endl;
+
+    std::cout << "========================================" << std::endl;
 
     std::string filename = "test_properties.xml";
     std::cout << "serialize: writing to '" << filename << "' ..." << std::endl;
@@ -154,13 +191,15 @@ int main( int argc_ , char ** argv_ )
       datatools::serialization::data_writer writer(filename);
       writer.store("__properties__",my_dict);
     }
+    std::cout << "serialize: writing done." << std::endl;
     std::cout << std::endl;
 
     my_dict.clear();
     my_dict.dump(std::cout);
     std::cout << std::endl;
     
-    std::cout << "serialize: reading from '" << filename << "'..." << std::endl;
+    std::cout << "serialize: reading from '" << filename << "'..." 
+	      << std::endl;
     {
       datatools::serialization::data_reader reader(filename);
       if ( reader.has_record_tag() ) {
@@ -169,20 +208,73 @@ int main( int argc_ , char ** argv_ )
 	}
       }
     }
+
     my_dict.dump(std::cout);
-    std::cout << std::endl;
+    std::cout << "serialize: reading done." << std::endl;
+    std::cout << std::endl; 
+
     std::cout << "========================================" << std::endl;
 
     std::string filename_cfg = "test_properties.conf";
+
     datatools::utils::properties::write_config(filename_cfg,my_dict);
     datatools::utils::properties::write_config("",my_dict);
     my_dict.clear();
     my_dict.dump(std::cout);
     std::cout << std::endl;
 
+    std::cout << "========================================" << std::endl;
+
     datatools::utils::properties::read_config(filename_cfg,my_dict);
+
     my_dict.dump(std::cout);
     std::cout << std::endl;
+
+    std::cout << "========================================" << std::endl;
+
+    std::cout << "Enter a list of strings: " << std::endl;
+    std::string as;
+    std::getline(std::cin,as);
+
+    std::string s2;
+    std::istringstream iss(as);
+
+    do {
+      iss >> std::ws;
+      if ( iss.eof() ) break;
+      s2="";
+      if ( datatools::utils::properties::config::read_quoted_string(iss,s2) ) {
+	std::cout << "String = '" << s2 << "'" << std::endl;
+      }
+      else {
+	std::cerr << "Cannot parse quoted string from '" << as 
+		  << "'!" << std::endl;
+      }
+    } while (iss);
+
+    std::cout << "========================================" << std::endl;
+
+    std::string s3;
+
+    s3 = "azerty";
+
+    if ( datatools::utils::properties::data::has_forbidden_char(s3) ) {
+      std::cout << "forbidden chars found in 's3'!" << std::endl;
+    }
+    else {
+      std::cout << "'s3' is ok!" << std::endl;
+    }
+
+    s3 = "aze\"rty";
+
+    if ( datatools::utils::properties::data::has_forbidden_char(s3) ) {
+      std::cout << "forbidden chars found in 's3'!" << std::endl;
+    }
+    else {
+      std::cout << "'s3' is ok!" << std::endl;
+    }
+
+
 
  
   }
