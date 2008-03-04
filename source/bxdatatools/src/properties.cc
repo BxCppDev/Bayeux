@@ -941,7 +941,7 @@ namespace datatools {
     }
 
     void properties::store( const std::string & key_ , 
-			    const std::vector<bool> & values_ , 
+			    const data::vbool & values_ , 
 			    const std::string & desc_ , 
 			    bool lock_  )
     {
@@ -961,7 +961,7 @@ namespace datatools {
     }
   
     void properties::store( const std::string & key_ , 
-			    const std::vector<int> & values_ , 
+			    const data::vint & values_ , 
 			    const std::string & desc_ , 
 			    bool lock_  )
     {
@@ -981,7 +981,7 @@ namespace datatools {
     }
   
     void properties::store( const std::string & key_ , 
-			    const std::vector<double> & values_ , 
+			    const data::vdouble & values_ , 
 			    const std::string & desc_ ,
 			    bool lock_  )
     {
@@ -1001,7 +1001,7 @@ namespace datatools {
     }
   
     void properties::store( const std::string & key_ , 
-			    const std::vector<std::string> & values_ ,
+			    const data::vstring & values_ ,
 			    const std::string & desc_ , 
 			    bool lock_  )
     {
@@ -1080,7 +1080,7 @@ namespace datatools {
     }
   
     void properties::change( const std::string & key_ , 
-			     const std::vector<bool> & values_ )
+			     const data::vbool & values_ )
     {
       data * data_ptr=0;
       __check_key(key_,&data_ptr);
@@ -1111,7 +1111,7 @@ namespace datatools {
     }
   
     void properties::change( const std::string & key_ , 
-			     const std::vector<int> & values_ )
+			     const data::vint & values_ )
     {
       data * data_ptr=0;
       __check_key(key_,&data_ptr);
@@ -1142,7 +1142,7 @@ namespace datatools {
     }
   
     void properties::change( const std::string & key_ , 
-			     const std::vector<double> & values_ )
+			     const data::vdouble & values_ )
     {
       data * data_ptr=0;
       __check_key(key_,&data_ptr);
@@ -1173,7 +1173,7 @@ namespace datatools {
     }
   
     void properties::change( const std::string & key_ , 
-			     const std::vector<std::string> & values_ )
+			     const data::vstring & values_ )
     {
       data * data_ptr=0;
       __check_key(key_,&data_ptr);
@@ -1290,7 +1290,7 @@ namespace datatools {
     }
 
     void properties::fetch( const std::string & key_ , 
-			    std::vector<bool> & values_ ) const
+			    data::vbool & values_ ) const
     {
       const data * data_ptr=0;
       __check_key(key_,&data_ptr);
@@ -1317,7 +1317,7 @@ namespace datatools {
     }
   
     void properties::fetch( const std::string & key_ , 
-			    std::vector<int> & values_ ) const
+			    data::vint & values_ ) const
     {
       const data * data_ptr=0;
       __check_key(key_,&data_ptr);
@@ -1345,7 +1345,7 @@ namespace datatools {
     }
   
     void properties::fetch( const std::string & key_ ,
-			    std::vector<double> & values_ ) const
+			    data::vdouble & values_ ) const
     {
       const data * data_ptr=0;
       __check_key(key_,&data_ptr);
@@ -1373,7 +1373,7 @@ namespace datatools {
     }
   
     void properties::fetch( const std::string & key_ , 
-			    std::vector<std::string> & values_ ) const
+			    data::vstring & values_ ) const
     {
       const data * data_ptr=0;
       __check_key(key_,&data_ptr);

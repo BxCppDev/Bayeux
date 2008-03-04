@@ -29,16 +29,9 @@
 #include <list>
 #include <map>
 #include <functional>
-
-// miscellaneous includes:
+#include <stdint.h>
 
 #include <datatools/serialization/serialization.h>
-/*
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/nvp.hpp>
-#include <boost/serialization/vector.hpp>
-#include <boost/serialization/map.hpp>
-*/
 
 #include <datatools/utils/i_tree_dump.h>
 #include <datatools/utils/i_clear.h>
@@ -89,7 +82,7 @@ namespace datatools {
       
       public:
 	typedef std::vector<bool>         vbool;
-	typedef std::vector<int>          vint;
+	typedef std::vector<int32_t>      vint;
 	typedef std::vector<double>       vdouble;
 	typedef std::vector<std::string>  vstring;
 
@@ -100,12 +93,12 @@ namespace datatools {
 	 *  L   == lock bit
 	 *  TTT == type bits 
 	 */
-	unsigned char __flags; 
+	uint8_t     __flags; 
 	std::string __description;
-	vbool    __boolean_values;
-	vint     __integer_values;
-	vdouble  __real_values;
-	vstring  __string_values;
+	vbool       __boolean_values;
+	vint        __integer_values;
+	vdouble     __real_values;
+	vstring     __string_values;
 
       private:
 	void __clear_values();
@@ -347,22 +340,22 @@ namespace datatools {
 		  bool lock_ = false );
 
       void store( const std::string & key_ , 
-		  const std::vector<bool> & values_ , 
+		  const data::vbool & values_ , 
 		  const std::string & desc_ = "" ,
 		  bool lock_ = false );
 
       void store( const std::string & key_ , 
-		  const std::vector<int> & values_ , 
+		  const data::vint & values_ , 
 		  const std::string & desc_ = "" ,
 		  bool lock_ = false );
 
       void store( const std::string & key_ , 
-		  const std::vector<double> & values_ , 
+		  const data::vdouble & values_ , 
 		  const std::string & desc_ = "" ,
 		  bool lock_ = false );
 
       void store( const std::string & key_ , 
-		  const std::vector<std::string> & values_ , 
+		  const data::vstring & values_ , 
 		  const std::string & desc_ = "" ,
 		  bool lock_ = false );
 
@@ -387,16 +380,16 @@ namespace datatools {
 		   int index_ = 0  );
 
       void change( const std::string & key_ , 
-		   const std::vector<bool> & values_ );
+		   const data::vbool & values_ );
 
       void change( const std::string & key_ , 
-		   const std::vector<int> & values_ );
+		   const data::vint & values_ );
 
       void change( const std::string & key_ , 
-		   const std::vector<double> & values_ );
+		   const data::vdouble & values_ );
 
       void change( const std::string & key_ , 
-		   const std::vector<std::string> & values_ );
+		   const data::vstring & values_ );
 
       void fetch( const std::string & key_ , 
 		  bool   & value_ , 
@@ -415,16 +408,16 @@ namespace datatools {
 		  int index_ = 0  ) const;
 
       void fetch( const std::string & key_ , 
-		  std::vector<bool> & values_ ) const;
+		  data::vbool & values_ ) const;
 
       void fetch( const std::string & key_ , 
-		  std::vector<int> & values_ ) const;
+		  data::vint & values_ ) const;
 
       void fetch( const std::string & key_ ,
-		  std::vector<double> & values_ ) const;
+		  data::vdouble & values_ ) const;
 
       void fetch( const std::string & key_ , 
-		  std::vector<std::string> & values_ ) const;
+		  data::vstring & values_ ) const;
 
       bool   fetch_boolean( const std::string & , int index_ = 0 ) const;
 
