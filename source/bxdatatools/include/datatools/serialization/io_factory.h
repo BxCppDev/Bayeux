@@ -265,7 +265,7 @@ namespace datatools {
 					  const Data & data_ )
 	  {
 	    iof_.store(data_);
-	    return *this;
+	    return iof_;
 	  }
 
 	template <typename Data>
@@ -273,7 +273,7 @@ namespace datatools {
 					  Data & data_ )
 	  {
 	    iof_.load(data_);
-	    return *this;
+	    return iof_;
 	  }
   
 	void dump( std::ostream & out_ ) const;
