@@ -767,6 +767,22 @@ namespace datatools {
       __clear_key_validator();
       __debug=false;
     }
+
+    properties::vkeys properties::keys() const
+    {
+      properties::vkeys lkeys;
+      keys(lkeys);
+      return lkeys;
+    }
+    
+    void properties::keys( properties::vkeys & keys_ ) const
+    {
+      for( pmap::const_iterator iter = __props.begin(); 
+	   iter != __props.end(); 
+	   iter++ ) {
+	keys_.push_back(iter->first);
+      }
+    }
     
     void properties::lock( const std::string & key_ )
     {

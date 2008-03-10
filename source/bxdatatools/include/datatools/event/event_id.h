@@ -22,6 +22,8 @@
 #include <iostream>
 #include <stdexcept>
 
+#include <boost/cstdint.hpp>
+
 #include <datatools/serialization/serialization.h>
 //#include <boost/serialization/access.hpp>
 //#include <boost/serialization/nvp.hpp>
@@ -41,8 +43,8 @@ namespace datatools {
       static const int  INVALID_EVENT_NUMBER = -1;
       static const char IO_FORMAT_SEP = '_';
     private:
-      int __run_number;
-      int __event_number;
+      int32_t __run_number;
+      int32_t __event_number;
     public:
       virtual void clear();
       int get_run_number() const;

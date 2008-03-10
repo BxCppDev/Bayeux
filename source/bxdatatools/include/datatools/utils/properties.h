@@ -29,7 +29,8 @@
 #include <list>
 #include <map>
 #include <functional>
-#include <stdint.h>
+
+#include <boost/cstdint.hpp>
 
 #include <datatools/serialization/serialization.h>
 
@@ -201,6 +202,7 @@ namespace datatools {
 
       // typedefs declarations:
     public: 
+      typedef std::list<std::string>     vkeys;
       typedef std::map<std::string,data> pmap;
   
       struct basic_key_validator : public std::unary_function<std::string,bool>
@@ -286,7 +288,9 @@ namespace datatools {
 
     public: 
 
-      std::list<std::string> keys() const;
+      vkeys keys() const;
+
+      void keys( vkeys & ) const;
 
       void lock( const std::string & key_ );
 

@@ -23,6 +23,7 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/map.hpp>
+#include <boost/cstdint.hpp>
 
 #endif // __datatools__serialization__serialization_h
 
