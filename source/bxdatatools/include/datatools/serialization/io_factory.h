@@ -373,9 +373,9 @@ namespace datatools {
 	
       public:
 	template <typename Data>
-	  void load( const std::string & tag_ , Data & data_ )
+	  void load(const std::string & tag_, Data & data_)
 	  {
-	    if ( ! has_record_tag() ) 
+	    if (! has_record_tag()) 
 	      {
 		throw std::runtime_error("data_reader::load(...): no more record tag!");
 	      }
@@ -394,7 +394,7 @@ namespace datatools {
 	  }
 
 	template <typename Data>
-	  void load( Data & data_ )
+	  void load(Data & data_)
 	  {
 	    datatools::serialization::i_serializable & i_ser=
 	      static_cast<datatools::serialization::i_serializable &>(data_);
@@ -443,7 +443,7 @@ namespace datatools {
 
       public:
 	template <typename Data>
-	  void store(const std::string & tag_ , Data & data_)
+	  void store(const std::string & tag_, Data & data_)
 	  {
 	    this->_basic_store(tag_);
 	    this->_basic_store(data_);
