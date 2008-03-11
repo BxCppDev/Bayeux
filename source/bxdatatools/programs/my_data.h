@@ -5,19 +5,21 @@
 
 #include <vector>
 
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/nvp.hpp>
-#include <boost/serialization/base_object.hpp>
-#include <boost/serialization/vector.hpp>
+#include <datatools/serialization/i_serializable.h>
+#include <datatools/serialization/serialization.h>
 
 #include <datatools/utils/i_tree_dump.h>
 
-class data_t : public datatools::utils::i_tree_dumpable
+class data_t : public datatools::utils::i_tree_dumpable,
+	       public datatools::serialization::i_serializable     
 {
-private:
-  char   __flags;
-  int    __ival;
-  double __dval;
+ public:
+  static const std::string SERIAL_TAG;
+  virtual const std::string & get_serial_tag();
+ private:
+  int8_t   __flags;
+  int32_t  __ival;
+  double   __dval;
   std::vector<double> __dvals;
 
 public:
@@ -89,10 +91,19 @@ public:
 
 };
 
+const std::string data_t::SERIAL_TAG = "__DATA__";
+const std::string & data_t::get_serial_tag()
+{
+  return data_t::SERIAL_TAG;
+}
+
 /*********************************************/
 
 class more_data_t : public data_t
 {
+public:
+  static const std::string SERIAL_TAG;
+  virtual const std::string & get_serial_tag();
 private:
   std::string __name;
 
@@ -139,6 +150,12 @@ private:
     }
 
 };
+
+const std::string more_data_t::SERIAL_TAG = "__MORE_DATA__";
+const std::string & more_data_t::get_serial_tag()
+{
+  return more_data_t::SERIAL_TAG;
+}
 
 #endif // __datatools__test__my_data_h
 

@@ -506,51 +506,59 @@ namespace datatools {
     io_writer::io_writer( int mode_ ) 
       : io_factory(io_factory::MODE_WRITE|mode_)
     {
-      if ( !is_read() ) {
-	throw std::runtime_error("io_writer::io_writer: cannot force write mode!");
-      }
+      if ( !is_read() ) 
+	{
+	  throw std::runtime_error("io_writer::io_writer: cannot force write mode!");
+	}
     }
 
-    io_writer::io_writer( const std::string & stream_name_ , 
-			  int mode_  )
+    io_writer::io_writer(const std::string & stream_name_ , 
+			 int mode_)
       : io_factory(stream_name_,io_factory::MODE_WRITE|mode_)
     {
-      if ( !is_write() ) {
-	throw std::runtime_error("io_writer::io_writer: cannot force read mode!");
-      }
+      if (!is_write()) 
+	{
+	  throw std::runtime_error("io_writer::io_writer: cannot force read mode!");
+	}
     }
 
     io_writer::~io_writer()
     {
-      if ( g_debug ) {
-	std::cerr << "DEBUG: io_writer::~io_writer." << std::endl;
-      }
+      if (g_debug) 
+	{
+	  std::cerr << "DEBUG: io_writer::~io_writer." << std::endl;
+	}
     }
 
     /***********************************************************/
 
     void data_reader::__read_next_tag()
     {
-      try {
-	std::string tag_id;
-	__reader->load(tag_id);
-	__next_tag=tag_id;
-      }
-      catch( std::exception & x ) {
-	std::cerr << "WARNING: data_reader::__read_next_tag: " << x.what() << std::endl;
-	__status=1;
-      }
+      try 
+	{
+	  std::string tag_id;
+	  this->_basic_load(tag_id);
+	  __next_tag=tag_id;
+	}
+      catch(std::exception & x) 
+	{
+	  std::cerr << "WARNING: data_reader::__read_next_tag: " 
+		    << x.what() << std::endl;
+	  __status=1;
+	}
     }
 
-    void data_reader::__init_reader( const std::string & filename_ , 
-				     int mode_ )
+    void 
+    data_reader::__init_reader( const std::string & filename_ , 
+				int mode_ )
     {
       __status=0;
       __reader = new io_reader(filename_,mode_);
       __read_next_tag();
     }
 
-    void data_reader::__reset_reader()
+    void 
+    data_reader::__reset_reader()
     {
       if ( __reader != 0 ) {
 	delete __reader;
@@ -560,29 +568,34 @@ namespace datatools {
       __status=0;
     }
 
-    const std::string & data_reader::get_record_tag() const
+    const std::string & 
+    data_reader::get_record_tag() const
     {
       return __next_tag;
     }
 
-    bool data_reader::has_record_tag() const
+    bool 
+    data_reader::has_record_tag() const
     {
       if ( __status != 0 ) return false;
       if ( __next_tag.empty() ) return false;
       return true;
     }
 
-    bool data_reader::record_tag_is( const std::string & tag_ ) const
+    bool 
+    data_reader::record_tag_is( const std::string & tag_ ) const
     {
       return __next_tag == tag_;
     }
 
-    void data_reader::reset()
+    void 
+    data_reader::reset()
     {
       __reset_reader();
     }
 
-    void data_reader::init( const std::string & filename_ )
+    void 
+    data_reader::init( const std::string & filename_ )
     {
       __reset_reader();
       int mode_guess;
@@ -596,7 +609,8 @@ namespace datatools {
       __init_reader(filename_,mode_guess);
     }
 
-    void data_reader::init( const std::string & filename_ , int mode_ )
+    void 
+    data_reader::init( const std::string & filename_ , int mode_ )
     {
       __reset_reader();
       __init_reader(filename_,mode_);
@@ -629,13 +643,15 @@ namespace datatools {
 
     /***********************************************************/
 	
-    void data_writer::__init_writer( const std::string & filename_ , 
+    void 
+    data_writer::__init_writer( const std::string & filename_ , 
 				     int mode_ )
     {
       __writer = new io_writer(filename_,mode_);
     }
 
-    void data_writer::__reset_writer()
+    void 
+    data_writer::__reset_writer()
     {
       if ( __writer != 0 ) {
 	delete __writer;
@@ -643,12 +659,14 @@ namespace datatools {
       }
     }
 
-    void data_writer::reset()
+    void 
+    data_writer::reset()
     {
       __reset_writer();
     }
 
-    void data_writer::init( const std::string & filename_ )
+    void 
+    data_writer::init( const std::string & filename_ )
     {
       __reset_writer();
       int mode_guess;
@@ -662,7 +680,8 @@ namespace datatools {
       __init_writer(filename_,mode_guess);
     }
 
-    void data_writer::init( const std::string & filename_ , int mode_ )
+    void 
+    data_writer::init( const std::string & filename_ , int mode_ )
     {
       __reset_writer();
       __init_writer(filename_,mode_);

@@ -20,21 +20,9 @@
 #include <iostream>
 #include <string>
 
-// miscellaneous includes:
-/*
-#include <boost/archive/detail/oserializer.hpp>
-#include <boost/archive/detail/iserializer.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-*/
-#include <datatools/serialization/serialization.h>
-//#include <boost/serialization/access.hpp>
-//#include <boost/serialization/nvp.hpp>
 
+#include <datatools/serialization/i_serializable.h>
+#include <datatools/serialization/serialization.h>
 #include <datatools/utils/i_tree_dump.h>
 #include <datatools/utils/i_clear.h>
 #include <datatools/utils/properties.h>
@@ -45,8 +33,12 @@ namespace datatools {
   namespace event {
     
     class basic_event : public datatools::utils::i_tree_dumpable,
-                        public datatools::utils::i_clear
+                        public datatools::utils::i_clear,
+			public datatools::serialization::i_serializable     
+
     {
+    public:
+      static const std::string SERIAL_TAG;
     private:
       event_id                     __id;
       datatools::utils::properties __properties;
@@ -78,6 +70,7 @@ namespace datatools {
 			      const std::string & indent_ = "",
 			      bool inherit_               = false ) const;
       
+      virtual const std::string & get_serial_tag();
     private:
       friend class boost::serialization::access; 
       template<class Archive>

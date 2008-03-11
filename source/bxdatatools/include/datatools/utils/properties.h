@@ -32,6 +32,7 @@
 
 #include <boost/cstdint.hpp>
 
+#include <datatools/serialization/i_serializable.h>
 #include <datatools/serialization/serialization.h>
 
 #include <datatools/utils/i_tree_dump.h>
@@ -41,15 +42,21 @@ namespace datatools {
 
   namespace utils {
 
-    class properties : public i_tree_dumpable,
-		       public i_clear
+    class properties : public datatools::utils::i_tree_dumpable,
+		       public datatools::utils::i_clear,
+		       public datatools::serialization::i_serializable     
+
     {
     public:
       static bool g_debug;
+      static const std::string SERIAL_TAG;
 
-      class data
+      class data :    
+	public datatools::serialization::i_serializable     
+
       {
       public:
+	static const std::string SERIAL_TAG;
 	static const int  ERROR_SUCCESS = 0;
 	static const int  ERROR_FAILURE = 1;
 	static const int  ERROR_BADTYPE = 2;
@@ -176,6 +183,8 @@ namespace datatools {
 				const std::string & title_  = "" ,
 				const std::string & indent_ = "",
 				bool inherit_               = false ) const;
+
+	virtual const std::string & get_serial_tag();
       private:
 	friend class boost::serialization::access; 
 	template<class Archive>
@@ -437,6 +446,8 @@ namespace datatools {
 			      const std::string & title_  = "" ,
 			      const std::string & indent_ = "",
 			      bool inherit_               = false ) const;
+
+      virtual const std::string & get_serial_tag();
 
     private:
       friend class boost::serialization::access; 

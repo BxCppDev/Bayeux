@@ -23,6 +23,8 @@
 
 #include <boost/tokenizer.hpp>
 
+#include <datatools/serialization/i_serializable.h>
+
 namespace datatools {
 
   namespace serialization {
@@ -323,7 +325,7 @@ namespace datatools {
 
 	void __read_next_tag();
 
-	void __init_reader( const std::string & filename_ , int mode_ );
+	void __init_reader(const std::string & filename_, int mode_);
 
 	void __reset_reader();
 
@@ -333,39 +335,72 @@ namespace datatools {
 
 	bool has_record_tag() const;
 
-	bool record_tag_is( const std::string & tag_ ) const;
+	bool record_tag_is(const std::string & tag_) const;
 
 	void reset();
 
-	void init( const std::string & filename_ );
+	void init(const std::string & filename_);
 
-	void init( const std::string & filename_ , int mode_ );
+	void init(const std::string & filename_ , int mode_);
 
 	data_reader();
 
-	data_reader( const std::string & filename_ );
+	data_reader(const std::string & filename_);
 
-	data_reader( const std::string & filename_ , int mode_ );
+	data_reader(const std::string & filename_, int mode_);
 	
 	virtual ~data_reader();
+
+      protected:
+	template <typename Data>
+	  void _basic_load(Data & data_)
+	  {
+	    if (__reader == 0) 
+	      {
+		throw std::runtime_error("data_reader::_basic_load(...): not initialized!");
+	      }
+	    try 
+	      {
+		__reader->load(data_);
+	      }
+	    catch(std::exception & x) 
+	      {
+		std::cerr << "data_reader::_basic_load(...): cannot read data!" 
+			  << std::endl;
+		throw;
+	      }
+	  }
+	
+      public:
+	template <typename Data>
+	  void load( const std::string & tag_ , Data & data_ )
+	  {
+	    if ( ! has_record_tag() ) 
+	      {
+		throw std::runtime_error("data_reader::load(...): no more record tag!");
+	      }
+	    
+	    if (get_record_tag() != tag_) 
+	      {
+		std::ostringstream message;
+		message << "data_reader::load(...): unexpected tag ('" 
+			<< get_record_tag() 
+			<< " != " << tag_ << "')!" ;
+		throw std::runtime_error(message.str());	      
+	      }
+	    
+	    this->_basic_load(data_);
+	    __read_next_tag();
+	  }
 
 	template <typename Data>
 	  void load( Data & data_ )
 	  {
-	    if ( __reader == 0 ) {
-	      throw std::runtime_error("data_reader::load(...): not initialized!");
-	    }
-	    try {
-	      __reader->load(data_);
-	    }
-	    catch( std::exception & x ) {
-	      std::cerr << "data_reader::load(...): cannot read data!" 
-			<< std::endl;
-	      throw;
-	    }
-	    __read_next_tag();
+	    datatools::serialization::i_serializable & i_ser=
+	      static_cast<datatools::serialization::i_serializable &>(data_);
+	    this->load(i_ser.get_serial_tag(),data_);
 	  }
-
+	
       };
 
     /***********************************************************/
@@ -376,7 +411,7 @@ namespace datatools {
 
       private:
 
-	void __init_writer( const std::string & filename_ , int mode_ );
+	void __init_writer(const std::string & filename_ , int mode_);
 
 	void __reset_writer();
 
@@ -384,26 +419,42 @@ namespace datatools {
 
 	void reset();
 
-	void init( const std::string & filename_ );
+	void init(const std::string & filename_);
 
-	void init( const std::string & filename_ , int mode_ );
+	void init(const std::string & filename_, int mode_);
 
 	data_writer();
 
-	data_writer( const std::string & filename_ );
+	data_writer(const std::string & filename_);
 
-	data_writer( const std::string & filename_ , int mode_ );
+	data_writer(const std::string & filename_, int mode_);
 
 	virtual ~data_writer();
 
+      protected:
 	template <typename Data>
-	  void store( const std::string & tag_ , Data & data_ )
+	  void _basic_store(Data & data_)
 	  {
 	    if ( __writer == 0 ) {
-	      throw std::runtime_error("data_writer::store(...): not initialized!");
+	      throw std::runtime_error("data_writer::_basic_store(...): not initialized!");
 	    }
-	    __writer->store(tag_);
 	    __writer->store(data_);
+	  }
+
+      public:
+	template <typename Data>
+	  void store(const std::string & tag_ , Data & data_)
+	  {
+	    this->_basic_store(tag_);
+	    this->_basic_store(data_);
+	  }
+
+	template <typename Data>
+	void store(Data & data_)
+	  {
+	    datatools::serialization::i_serializable & i_ser=
+	      static_cast<datatools::serialization::i_serializable &>(data_);
+	    this->store(i_ser.get_serial_tag(),data_);
 	  }
 
       };

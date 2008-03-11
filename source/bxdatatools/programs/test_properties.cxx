@@ -273,9 +273,6 @@ int main( int argc_ , char ** argv_ )
     else {
       std::cout << "'s3' is ok!" << std::endl;
     }
-
-
-
  
   }
   catch(std::exception & x){

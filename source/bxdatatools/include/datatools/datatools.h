@@ -25,7 +25,7 @@
 #include <datatools/utils/properties.h>
 
 #include <datatools/event/event_id.h>
-#include <datatools/event/basic_event.h>
+//#include <datatools/event/basic_event.h>
 
 namespace datatools {
 

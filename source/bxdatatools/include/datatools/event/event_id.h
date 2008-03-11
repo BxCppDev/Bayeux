@@ -24,6 +24,7 @@
 
 #include <boost/cstdint.hpp>
 
+#include <datatools/serialization/i_serializable.h>
 #include <datatools/serialization/serialization.h>
 //#include <boost/serialization/access.hpp>
 //#include <boost/serialization/nvp.hpp>
@@ -36,9 +37,12 @@ namespace datatools {
   namespace event {
 
     class event_id : public datatools::utils::i_tree_dumpable ,
-		     public datatools::utils::i_clear 
+		     public datatools::utils::i_clear,
+		     public datatools::serialization::i_serializable     
+ 
     {
     public:
+      static const std::string SERIAL_TAG;
       static const int  INVALID_RUN_NUMBER   = -1;
       static const int  INVALID_EVENT_NUMBER = -1;
       static const char IO_FORMAT_SEP = '_';
@@ -49,27 +53,29 @@ namespace datatools {
       virtual void clear();
       int get_run_number() const;
       int get_event_number() const;
-      void set_run_number( int );
-      void set_event_number( int );
-      void set( int , int );
+      void set_run_number(int);
+      void set_event_number(int);
+      void set(int, int);
       event_id();
-      event_id( int );
-      event_id( int , int );
+      event_id(int);
+      event_id(int, int);
       virtual ~event_id();
       bool is_valid() const;
       std::string to_string() const;
-      void from_string( const std::string & );
-      friend std::ostream & operator<<( std::ostream & , const event_id & );
-      friend std::istream & operator>>( std::istream & , event_id & );
-      virtual void tree_dump( std::ostream & out_         = std::cerr , 
-			      const std::string & title_  = "" ,
-			      const std::string & indent_ = "",
-			      bool inherit_               = false ) const;
+      void from_string(const std::string &);
+      friend std::ostream & operator<<(std::ostream &, const event_id &);
+      friend std::istream & operator>>(std::istream &, event_id &);
+      virtual void tree_dump(std::ostream & out_         = std::cerr , 
+			     const std::string & title_  = "" ,
+			     const std::string & indent_ = "",
+			     bool inherit_               = false ) const;
+
+      virtual const std::string & get_serial_tag();
     private:
       friend class boost::serialization::access; 
       template<class Archive>
-      void serialize( Archive            & ar_ , 
-		      const unsigned int   version_ )
+      void serialize(Archive            & ar_ , 
+		     const unsigned int   version_ )
       {
 	ar_ & boost::serialization::make_nvp("run_number",__run_number);
 	ar_ & boost::serialization::make_nvp("event_number",__event_number);

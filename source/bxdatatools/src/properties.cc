@@ -8,7 +8,21 @@ namespace datatools {
 
   namespace utils {
 
-    bool properties::g_debug = false;
+    bool properties::g_debug                       = false;
+    const std::string properties::SERIAL_TAG       = "__PROPERTIES__";
+    const std::string properties::data::SERIAL_TAG = "__DATA_PROPERTIES__";
+
+    const std::string & 
+    properties::get_serial_tag()
+    {
+      return properties::SERIAL_TAG;
+    }
+
+    const std::string & 
+    properties::data::get_serial_tag()
+    {
+      return properties::data::SERIAL_TAG;
+    }
 
     properties::default_key_validator properties::g_default_key_validator;
 
