@@ -51,7 +51,7 @@ int main( int argc_ , char ** argv_ )
     std::string filename = "test_basic_event.xml";
     {
       datatools::serialization::data_writer writer(filename);
-      writer.store("__event__",my_event);
+      writer.store(my_event);
     }
 
     std::cout << "reset event..." << std::endl;
@@ -61,7 +61,7 @@ int main( int argc_ , char ** argv_ )
     {
       datatools::serialization::data_reader reader(filename);
       if ( reader.has_record_tag() ) {
-	if ( reader.get_record_tag() == "__event__" ) {
+	if ( reader.get_record_tag() == "__BASIC_EVENT__" ) {
 	  reader.load(my_event);
 	}
       }

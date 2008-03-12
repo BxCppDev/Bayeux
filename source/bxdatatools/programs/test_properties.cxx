@@ -189,7 +189,7 @@ int main( int argc_ , char ** argv_ )
     std::cout << "serialize: writing to '" << filename << "' ..." << std::endl;
     {
       datatools::serialization::data_writer writer(filename);
-      writer.store("__properties__",my_dict);
+      writer.store(my_dict);
     }
     std::cout << "serialize: writing done." << std::endl;
     std::cout << std::endl;
