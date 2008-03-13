@@ -48,9 +48,9 @@ public:
     }
   }
 
-  const char   & flags() const { return __flags; }
-  const int    & ival()  const { return __ival; }
-  const double & dval()  const { return __dval; }
+  const int8_t  & flags() const { return __flags; }
+  const int32_t & ival()  const { return __ival; }
+  const double  & dval()  const { return __dval; }
   const std::vector<double> & dvals() const { return __dvals; }
   
  private:

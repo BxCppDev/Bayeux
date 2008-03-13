@@ -94,6 +94,9 @@ namespace datatools {
 	  __fin = new std::ifstream(stream_name_.c_str(),
 				    std::ios_base::in);
 	}
+	if ( !*__fin ) {
+	  throw std::runtime_error("io_factory::__init_read: Cannot open input stream!");
+	}
 	__in_fs->push(*__fin);
       }
 
@@ -200,6 +203,9 @@ namespace datatools {
 	else {
 	  __fout = new std::ofstream(stream_name_.c_str(),
 				     std::ios_base::out);
+	}
+	if ( !*__fout ) {
+	  throw std::runtime_error("io_factory::__init_write: Cannot open output stream!");
 	}
 	__out_fs->push(*__fout);
       }
