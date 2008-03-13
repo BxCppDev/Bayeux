@@ -384,7 +384,7 @@ namespace datatools {
     }
 
     int io_factory::guess_mode_from_filename( const std::string & filename_ , 
-					      int & mode_ )
+        int & mode_ )
     {
       int status = io_factory::SUCCESS;
       int mode = 0x0;
@@ -394,16 +394,16 @@ namespace datatools {
       tokenizer tokens(fn,sep);
       std::list<std::string> ltok;
       for( tokenizer::iterator i = tokens.begin() ; 
-	   i!=tokens.end() ; 
-	   ++i ) {
-	std::string token=*i;
-	if ( io_factory::g_debug ) {
-	  std::cerr << "DEBUG: io_factory::guess_mode_from_filename: token=<" 
-		    << token << ">" << std::endl;
-	}
-	ltok.push_front(token);
+          i!=tokens.end() ; 
+          ++i ) {
+        std::string token=*i;
+        if ( io_factory::g_debug ) {
+          std::cerr << "DEBUG: io_factory::guess_mode_from_filename: token=<" 
+            << token << ">" << std::endl;
+        }
+        ltok.push_front(token);
       }
-  
+
       bool gz=false;
       bool bz2=false;
       bool txt=false;
@@ -413,69 +413,70 @@ namespace datatools {
       bool format=false;
       size_t ext_count=0;
       for ( std::list<std::string>::const_iterator i=ltok.begin();
-	    i!=ltok.end();
-	    i++ ) {
-	if ( io_factory::g_debug ) {
-	  std::cerr << "DEBUG: io_factory::guess_mode_from_filename: ltok=<" 
-		    << *i << ">" << std::endl;
-	}
-	std::string ext = *i;
-	if ( !comp ) {
-	  if ( ext == "gz" || ext == "GZ" ) {
-	    comp=gz=true;
-	    if ( io_factory::g_debug ) {
-	      std::cerr << "DEBUG: io_factory::guess_mode_from_filename: mode+=GZIP" << std::endl; 
-	    }
-	  }
-	  else if ( ext == "bz2" || ext == "BZ2" ) {
-	    comp=bz2=true;
-	    if ( io_factory::g_debug ) {
-	      std::cerr << "DEBUG: io_factory::guess_mode_from_filename: mode+=BZIP2" << std::endl; 
-	    }
-	  }
-	}
-	if ( !format ) {
-	  if ( ext == "txt" || ext == "TXT" ) {
-	    format=txt=true;
-	    if ( io_factory::g_debug ) {
-	      std::cerr << "DEBUG: io_factory::guess_mode_from_filename: mode+=TEXT" << std::endl; 
-	    }
-	  }
-	  else if ( ext == "data" || ext == "DATA" ) {
-	    format=bin=true;
-	    if ( io_factory::g_debug ) {
-	      std::cerr << "DEBUG: io_factory::guess_mode_from_filename: mode+=BINARY" << std::endl; 
-	    }
-	  }
-	  else if ( ext == "xml" || ext == "XML" ) {
-	    format=xml=true;
-	    if ( io_factory::g_debug ) {
-	      std::cerr << "DEBUG: io_factory::guess_mode_from_filename: mode+=XML" << std::endl; 
-	    }
-	  }
-	}
-	if ( ! format && ! comp ) break;
-	if ( format ) break;
-	ext_count++;
-	if ( ext_count==2 ) break;
+          i!=ltok.end();
+          i++ ) {
+        if ( io_factory::g_debug ) {
+          std::cerr << "DEBUG: io_factory::guess_mode_from_filename: ltok=<" 
+            << *i << ">" << std::endl;
+        }
+        std::string ext = *i;
+        if ( !comp ) {
+          if ( ext == "gz" || ext == "GZ" ) {
+            comp=gz=true;
+            if ( io_factory::g_debug ) {
+              std::cerr << "DEBUG: io_factory::guess_mode_from_filename: mode+=GZIP" << std::endl; 
+            }
+          }
+          else if ( ext == "bz2" || ext == "BZ2" ) {
+            comp=bz2=true;
+            if ( io_factory::g_debug ) {
+              std::cerr << "DEBUG: io_factory::guess_mode_from_filename: mode+=BZIP2" << std::endl; 
+            }
+          }
+        }
+        if ( !format ) {
+          if ( ext == "txt" || ext == "TXT" ) {
+            format=txt=true;
+            if ( io_factory::g_debug ) {
+              std::cerr << "DEBUG: io_factory::guess_mode_from_filename: mode+=TEXT" << std::endl; 
+            }
+          }
+          else if ( ext == "data" || ext == "DATA" ) {
+            format=bin=true;
+            if ( io_factory::g_debug ) {
+              std::cerr << "DEBUG: io_factory::guess_mode_from_filename: mode+=BINARY" << std::endl; 
+            }
+          }
+          else if ( ext == "xml" || ext == "XML" ) {
+            format=xml=true;
+            if ( io_factory::g_debug ) {
+              std::cerr << "DEBUG: io_factory::guess_mode_from_filename: mode+=XML" << std::endl; 
+            }
+          }
+        }
+        if ( ! format && ! comp ) break;
+        if ( format ) break;
+        ext_count++;
+        if ( ext_count==2 ) break;
       }
 
       if ( ! format ) {
-	// cannot guess format from extension:
-	status=io_factory::ERROR;
+        // cannot guess format from extension:
+        status=io_factory::ERROR;
       }
       else {
-	mode &= ~ io_factory::MASK_COMPRESSION;
-	if ( comp ) {
-	  if ( gz ) mode |= io_factory::MODE_GZIP;
-	  if ( bz2 ) mode |= io_factory::MODE_BZIP2;
-	}
-    
-	mode &= ~ io_factory::MASK_FORMAT;
-	if ( format ) {
-	  if ( bin ) mode |= io_factory::MODE_BINARY;
-	  if ( xml ) mode |= io_factory::MODE_XML;
-	}
+        mode &= ~ io_factory::MASK_COMPRESSION;
+        if ( comp ) {
+          if ( gz ) mode |= io_factory::MODE_GZIP;
+          if ( bz2 ) mode |= io_factory::MODE_BZIP2;
+        }
+
+        mode &= ~ io_factory::MASK_FORMAT;
+        if ( format ) {
+          if ( bin ) mode |= io_factory::MODE_BINARY;
+          if ( txt ) mode |= io_factory::MODE_TEXT;
+          if ( xml ) mode |= io_factory::MODE_XML;
+        }
       }
       mode_ = mode;
       return status;
