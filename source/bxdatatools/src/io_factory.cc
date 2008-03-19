@@ -552,6 +552,7 @@ namespace datatools {
 	  std::cerr << "WARNING: data_reader::__read_next_tag: " 
 		    << x.what() << std::endl;
 	  __status=1;
+	  __next_tag="";
 	}
     }
 

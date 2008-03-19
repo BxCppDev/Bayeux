@@ -120,6 +120,8 @@ int main( int argc_ , char ** argv_ )
 	      writer.store(md);
 	    }
 	}
+      std::string test_str="test-failure";
+      writer.store("__TEST__", test_str);
       std::cerr << "writing done." << std::endl << std::endl;
     }
     
