@@ -43,7 +43,14 @@ int main( int argc_ , char ** argv_ )
     size_t nrecords = 3;
     bool step1=true;
     bool step2=true;
-    
+
+    enum format_t
+      {
+	FORMAT_TXT=0,
+	FORMAT_XML=1,
+      };
+    int fmt   = FORMAT_XML;
+    bool test = false;
     int iarg=1;
     while ( iarg < argc_ ) {
       std::string arg=argv_[iarg];
@@ -54,6 +61,9 @@ int main( int argc_ , char ** argv_ )
 	if ( arg == "-1000" ) nrecords = 1000;
 	if ( arg == "-nostep1" ) step1 = false;
 	if ( arg == "-nostep2" ) step2 = false;
+	if ( arg == "-xml" ) fmt=FORMAT_XML;
+	if ( arg == "-txt" ) fmt=FORMAT_TXT;
+	if ( arg == "-test" ) test=true;
       }
       else {
 	if ( filename.empty() ) {
@@ -73,7 +83,8 @@ int main( int argc_ , char ** argv_ )
     }
 
     if ( filename.empty() ) {
-      filename = "test_serialization.xml";
+      if (fmt == FORMAT_XML) filename = "test_serialization.xml";
+      if (fmt == FORMAT_TXT) filename = "test_serialization.txt";
     } 
 
     datatools::serialization::io_factory::g_debug = debug;
@@ -120,8 +131,11 @@ int main( int argc_ , char ** argv_ )
 	      writer.store(md);
 	    }
 	}
-      std::string test_str="test-failure";
-      writer.store("__TEST__", test_str);
+      if (test)
+	{
+	  std::string test_str="test-failure";
+	  writer.store("__TEST__", test_str);
+	}
       std::cerr << "writing done." << std::endl << std::endl;
     }
     

@@ -184,7 +184,7 @@ namespace datatools {
 	  void store( const Data & data_ )
 	  {
 	    if ( ! is_write() ) {
-	      throw std::runtime_error("io_factory::load: Not a writer factory!");
+	      throw std::runtime_error("io_factory::store: Not a writer factory!");
 	    }
 	    if ( __otar_ptr != 0 ) {
 	      __store_text(*__otar_ptr,data_);
@@ -231,10 +231,19 @@ namespace datatools {
 		__load_binary(*__ibar_ptr,data_);
 	      }
 	    }
-	    catch(std::exception & x) {
-	      std::cerr << "WARNING: io_factory::load: cannot load data from archive: " << x.what() << "!" 
+	    catch(std::runtime_error & x) {
+	      std::cerr << "WARNING: io_factory::load: "
+			<< "cannot load data from archive: " 
+			<< x.what() << "!" 
 			<< std::endl;	      
-	      throw;
+	      throw x;
+	    }
+	    catch(std::exception & x) {
+	      std::cerr << "WARNING: io_factory::load: "
+			<< "cannot load data from archive: " 
+			<< x.what() << "!" 
+			<< std::endl;	      
+	      throw x;
 	    }
 
 	    
@@ -317,6 +326,14 @@ namespace datatools {
 
     class data_reader 
       {
+      public:
+	enum status_t
+	  {
+	    STATUS_OK    = 0,
+	    STATUS_ERROR = 1
+	  };
+	static const std::string EMPTY_RECORD_TAG;
+      private:
 	int         __status;
 	io_reader * __reader;
 	std::string __next_tag;
@@ -363,11 +380,21 @@ namespace datatools {
 	      {
 		__reader->load(data_);
 	      }
+	    catch(std::runtime_error & x) 
+	      {
+		std::cerr << "WARNING: data_reader::_basic_load(...): "
+			  << "cannot read data: "
+			  << x.what() << '!'
+			  << std::endl;
+		throw x;
+	      }
 	    catch(std::exception & x) 
 	      {
-		std::cerr << "data_reader::_basic_load(...): cannot read data!" 
+		std::cerr << "WARNING: data_reader::_basic_load(...): "
+			  << "cannot read data: "
+			  << x.what() << '!'
 			  << std::endl;
-		throw;
+		throw x;
 	      }
 	  }
 	

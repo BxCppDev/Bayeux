@@ -547,12 +547,19 @@ namespace datatools {
 	  this->_basic_load(tag_id);
 	  __next_tag=tag_id;
 	}
+      catch(std::runtime_error & x) 
+	{
+	  std::cerr << "WARNING: data_reader::__read_next_tag: " 
+		    << x.what() << std::endl;
+	  __status   = STATUS_ERROR;
+	  __next_tag = EMPTY_RECORD_TAG;
+	}
       catch(std::exception & x) 
 	{
 	  std::cerr << "WARNING: data_reader::__read_next_tag: " 
 		    << x.what() << std::endl;
-	  __status=1;
-	  __next_tag="";
+	  __status   = STATUS_ERROR;
+	  __next_tag = EMPTY_RECORD_TAG;
 	}
     }
 
@@ -560,7 +567,7 @@ namespace datatools {
     data_reader::__init_reader( const std::string & filename_ , 
 				int mode_ )
     {
-      __status=0;
+      __status=STATUS_OK;
       __reader = new io_reader(filename_,mode_);
       __read_next_tag();
     }
@@ -573,20 +580,23 @@ namespace datatools {
 	__reader = 0;
       }
       __next_tag="";
-      __status=0;
+      __status=STATUS_OK;
     }
+
+    const std::string data_reader::EMPTY_RECORD_TAG = "";
 
     const std::string & 
     data_reader::get_record_tag() const
     {
+      if (__status != STATUS_OK) return EMPTY_RECORD_TAG;
       return __next_tag;
     }
 
     bool 
     data_reader::has_record_tag() const
     {
-      if ( __status != 0 ) return false;
-      if ( __next_tag.empty() ) return false;
+      if (__status != STATUS_OK) return false;
+      if (__next_tag.empty()) return false;
       return true;
     }
 
