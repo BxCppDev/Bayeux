@@ -208,9 +208,11 @@ namespace datatools {
 	    }
 	    if ( ! *__in_fs ) {
 	      if ( __in_fs->eof() ) {
+		//std::cerr << "DEVEL: THROW io_factory::load: input stream at EOF..." << std::endl;
 		throw std::runtime_error("io_factory::load: input stream at EOF!");
 	      }
 	      if ( __in_fs->fail() ) {
+		//std::cerr << "DEVEL: THROW io_factory::load: input stream in fail status..." << std::endl;
 		throw std::runtime_error("io_factory::load: input stream in fail status!");
 	      }
 	      if ( __in_fs->bad() ) {
@@ -231,6 +233,7 @@ namespace datatools {
 		__load_binary(*__ibar_ptr,data_);
 	      }
 	    }
+	    /*
 	    catch(std::runtime_error & x) {
 	      std::cerr << "WARNING: io_factory::load: "
 			<< "cannot load data from archive: " 
@@ -238,12 +241,21 @@ namespace datatools {
 			<< std::endl;	      
 	      throw x;
 	    }
+	    */
 	    catch(std::exception & x) {
 	      std::cerr << "WARNING: io_factory::load: "
 			<< "cannot load data from archive: " 
 			<< x.what() << "!" 
 			<< std::endl;	      
 	      throw x;
+	    }
+	 
+	    catch(...) {
+	      std::cerr << "WARNING: io_factory::load: "
+			<< "cannot load data from archive: " 
+			<< "unexpected exception" << "!" 
+			<< std::endl;	      
+	      throw std::runtime_error("io_factory::load: internal exception!");
 	    }
 
 	    
@@ -378,8 +390,10 @@ namespace datatools {
 	      }
 	    try 
 	      {
+		//std::cerr << "DEVEL: data_reader::_basic_load: load???" << std::endl;
 		__reader->load(data_);
 	      }
+	    /*
 	    catch(std::runtime_error & x) 
 	      {
 		std::cerr << "WARNING: data_reader::_basic_load(...): "
@@ -388,13 +402,27 @@ namespace datatools {
 			  << std::endl;
 		throw x;
 	      }
+	    */
 	    catch(std::exception & x) 
 	      {
 		std::cerr << "WARNING: data_reader::_basic_load(...): "
 			  << "cannot read data: "
 			  << x.what() << '!'
 			  << std::endl;
-		throw x;
+		__status   = STATUS_ERROR;
+		__next_tag = EMPTY_RECORD_TAG;
+
+		throw std::runtime_error(x.what());
+	      }
+	    catch(...) 
+	      {
+		std::cerr << "WARNING: data_reader::_basic_load(...): "
+			  << "cannot read data: "
+			  << "unexpected exception" << '!'
+			  << std::endl;
+		__status   = STATUS_ERROR;
+		__next_tag = EMPTY_RECORD_TAG;
+		throw std::runtime_error("data_reader::_basic_load: internal error!");
 	      }
 	  }
 	

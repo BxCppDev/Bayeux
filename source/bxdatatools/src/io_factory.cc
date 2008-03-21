@@ -541,11 +541,18 @@ namespace datatools {
 
     void data_reader::__read_next_tag()
     {
+      if ( __status != STATUS_OK ) 
+	{
+	  __next_tag = EMPTY_RECORD_TAG;
+	  return;
+	}
       try 
 	{
 	  std::string tag_id;
+	  tag_id = "";
+	  __next_tag = "";
 	  this->_basic_load(tag_id);
-	  __next_tag=tag_id;
+	  __next_tag = tag_id;
 	}
       catch(std::runtime_error & x) 
 	{
@@ -558,6 +565,13 @@ namespace datatools {
 	{
 	  std::cerr << "WARNING: data_reader::__read_next_tag: " 
 		    << x.what() << std::endl;
+	  __status   = STATUS_ERROR;
+	  __next_tag = EMPTY_RECORD_TAG;
+	}
+      catch(...) 
+	{
+	  std::cerr << "WARNING: data_reader::__read_next_tag: " 
+		    << "unexpected exception!" << std::endl;
 	  __status   = STATUS_ERROR;
 	  __next_tag = EMPTY_RECORD_TAG;
 	}
