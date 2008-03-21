@@ -17,7 +17,7 @@ namespace datatools {
 
 } // end of namespace datatools 
    
-BOOST_IS_ABSTRACT(datatools::utils::i_clear)
+//BOOST_IS_ABSTRACT(datatools::utils::i_clear)
 
 #endif // __datatools__utils__i_clear_h
 

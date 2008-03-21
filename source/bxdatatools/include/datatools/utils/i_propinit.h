@@ -23,7 +23,7 @@ namespace datatools {
 
 } // end of namespace datatools 
 
-BOOST_IS_ABSTRACT(datatools::utils::i_propinit)
+//BOOST_IS_ABSTRACT(datatools::utils::i_propinit)
 
 #endif // __datatools__utils__i_propinit_h
 
