@@ -35,11 +35,11 @@ int main( int argc_ , char ** argv_ )
 
       datatools::utils::properties::g_debug = debug;
 
-      std::cout << "========================================" << std::endl;
+      std::cerr << "========================================" << std::endl;
 
       datatools::utils::properties::data my_data('I',3);
-      my_data.dump(std::cout);
-      std::cout << std::endl;
+      my_data.dump(std::cerr);
+      std::cerr << std::endl;
 
       if (int error=my_data.set_value(666)) 
 	{
@@ -48,8 +48,8 @@ int main( int argc_ , char ** argv_ )
 		    << "!" << std::endl;
 	}
       my_data.lock();
-      my_data.dump(std::cout);
-      std::cout << std::endl;
+      my_data.dump(std::cerr);
+      std::cerr << std::endl;
 
       if (int error=my_data.set_value(666,2)) 
 	{
@@ -57,49 +57,49 @@ int main( int argc_ , char ** argv_ )
 		    << datatools::utils::properties::data::get_error_message(error) << "!" << std::endl;
 	}
       my_data.unlock();
-      my_data.dump(std::cout);
-      std::cout << std::endl;
+      my_data.dump(std::cerr);
+      std::cerr << std::endl;
 
       if (int error=my_data.set_value(666,2)) 
 	{
 	  std::cerr << "3 - datatools::utils::properties::data::set_value: " 
 		    << datatools::utils::properties::data::get_error_message(error) << "!" << std::endl;
 	}
-      my_data.dump(std::cout);
-      std::cout << std::endl;
+      my_data.dump(std::cerr);
+      std::cerr << std::endl;
     
       if (int error=my_data.set_value(666,8)) 
 	{
 	  std::cerr << "4 - datatools::utils::properties::data::set_value: " 
 		    << datatools::utils::properties::data::get_error_message(error) << "!" << std::endl;
 	}
-      my_data.dump(std::cout);
-      std::cout << std::endl;
+      my_data.dump(std::cerr);
+      std::cerr << std::endl;
     
       if (int error=my_data.set_value("bad value"))
 	{
 	  std::cerr << "5 - datatools::utils::properties::data::set_value: " 
 		    << datatools::utils::properties::data::get_error_message(error) << "!" << std::endl;
 	}
-      my_data.dump(std::cout);
-      std::cout << std::endl;
+      my_data.dump(std::cerr);
+      std::cerr << std::endl;
 
-      std::cout << "========================================" << std::endl;
-      std::cout << "========================================" << std::endl;
-      std::cout << "========================================" << std::endl;
+      std::cerr << "========================================" << std::endl;
+      std::cerr << "========================================" << std::endl;
+      std::cerr << "========================================" << std::endl;
 
       datatools::utils::properties my_dict("a list of user properties");
       if ( !use_validator ) 
 	{
 	  my_dict.unset_key_validator();
 	}
-      my_dict.dump(std::cout);
-      std::cout << std::endl;
-      std::cout << "========================================" << std::endl;
+      my_dict.dump(std::cerr);
+      std::cerr << std::endl;
+      std::cerr << "========================================" << std::endl;
 
       //datatools::utils::properties::g_debug=true;
       my_dict.store("name","my name");
-      std::cout << "========================================" << std::endl;
+      std::cerr << "========================================" << std::endl;
       my_dict.store("firstname","my firstname");
 
 
@@ -147,8 +147,8 @@ int main( int argc_ , char ** argv_ )
       vals.push_back(2.0);
       vals.push_back(3.0);
       my_dict.store("position",vals,"the position of an object (mm)");
-      my_dict.dump(std::cout);
-      std::cout << std::endl;
+      my_dict.dump(std::cerr);
+      std::cerr << std::endl;
 
       my_dict.change("position",3.14,1);
       my_dict.change("age",77);
@@ -156,14 +156,14 @@ int main( int argc_ , char ** argv_ )
       my_dict.change("male",false);
 
       my_dict.erase("weight");
-      my_dict.dump(std::cout);
+      my_dict.dump(std::cerr);
       bool male;
       my_dict.fetch("male",male);
       int age;
       my_dict.fetch("age",age);
       std::vector<double> vals1;
       my_dict.fetch("position",vals1);
-      std::cout << std::endl;
+      std::cerr << std::endl;
 
       std::vector<double> vals2;
       double s=3.14159;
@@ -175,12 +175,12 @@ int main( int argc_ , char ** argv_ )
       my_dict.change("position",vals2);
       if ( debug ) my_dict.tree_dump(std::cerr,
 				     "datatools::utils::properties","DEBUG: ");
-      std::cout << std::endl;
+      std::cerr << std::endl;
 
       std::vector<bool> bits;
       for ( int i=0; i<23; i++ ) bits.push_back(drand48()>0.6?true:false);
       my_dict.store("bits",bits);
-      std::cout << std::endl;
+      std::cerr << std::endl;
 
       std::vector<std::string> tokens;
       for ( int i=0; i<12; i++ ) 
@@ -195,62 +195,68 @@ int main( int argc_ , char ** argv_ )
       std::vector<int> counts;
       my_dict.store("counts",counts,"Event counts");
 
-      my_dict.dump(std::cout);
-      if ( debug ) my_dict.tree_dump(std::cout,"datatools::utils::properties","DEBUG: ");
-      std::cout << std::endl;
+      my_dict.dump(std::cerr);
+      if ( debug ) my_dict.tree_dump(std::cerr,"datatools::utils::properties","DEBUG: ");
+      std::cerr << std::endl;
 
-      std::cout << "========================================" << std::endl;
+      std::cerr << "========================================" << std::endl;
 
       std::string filename = "test_properties.xml";
-      std::cout << "serialize: writing to '" << filename << "' ..." << std::endl;
+      std::cerr << "serialize: writing to '" << filename << "' ..." << std::endl;
       {
 	datatools::serialization::data_writer writer(filename);
 	writer.store(my_dict);
       }
-      std::cout << "serialize: writing done." << std::endl;
-      std::cout << std::endl;
+      std::cerr << "serialize: writing done." << std::endl;
+      std::cerr << std::endl;
 
       my_dict.clear();
-      my_dict.dump(std::cout);
-      std::cout << std::endl;
+      my_dict.tree_dump(std::cerr,"Dict after clear:");
+      std::cerr << std::endl;
     
-      std::cout << "serialize: reading from '" << filename << "'..." 
+      std::cerr << "serialize: reading from '" << filename << "'..." 
 		<< std::endl;
       {
 	datatools::serialization::data_reader reader(filename);
 	if ( reader.has_record_tag() ) 
 	  {
-	    if (reader.get_record_tag() == "__properties__") 
+	    if (reader.get_record_tag() == datatools::utils::properties::SERIAL_TAG) 
 	      {
-		reader.load(my_dict);
+		datatools::utils::properties a_dict;
+		reader.load(a_dict);
+		my_dict = a_dict;
+	      }
+	    else 
+	      {
+		std::cerr << "Record tag : '"<< reader.get_record_tag() << "'" << std::endl;
 	      }
 	  }
       }
     
-      my_dict.dump(std::cout);
-      std::cout << "serialize: reading done." << std::endl;
-      std::cout << std::endl; 
+      std::cerr << "serialize: reading done." << std::endl;
+      std::cerr << std::endl; 
+      my_dict.tree_dump(std::cerr,"Dict after reading:");
 
-      std::cout << "========================================" << std::endl;
+      std::cerr << "========================================" << std::endl;
 
       std::string filename_cfg = "test_properties.conf";
 
       datatools::utils::properties::write_config(filename_cfg,my_dict);
       datatools::utils::properties::write_config("",my_dict);
       my_dict.clear();
-      my_dict.dump(std::cout);
-      std::cout << std::endl;
+      my_dict.dump(std::cerr);
+      std::cerr << std::endl;
 
-      std::cout << "========================================" << std::endl;
+      std::cerr << "========================================" << std::endl;
 
       datatools::utils::properties::read_config(filename_cfg,my_dict);
 
-      my_dict.dump(std::cout);
-      std::cout << std::endl;
+      my_dict.dump(std::cerr);
+      std::cerr << std::endl;
 
-      std::cout << "========================================" << std::endl;
+      std::cerr << "========================================" << std::endl;
 
-      std::cout << "Enter a list of strings (\"hello\",\"world\"): " 
+      std::cerr << "Enter a list of strings (\"hello\",\"world\"): " 
 		<< std::endl;
       std::string as;
       std::getline(std::cin,as);
@@ -265,7 +271,7 @@ int main( int argc_ , char ** argv_ )
 	  s2="";
 	  if (datatools::utils::properties::config::read_quoted_string(iss,s2))
 	    {
-	      std::cout << "String = '" << s2 << "'" << std::endl;
+	      std::cerr << "String = '" << s2 << "'" << std::endl;
 	    }
 	  else 
 	    {
@@ -274,7 +280,7 @@ int main( int argc_ , char ** argv_ )
 	    }
 	} while (iss);
     
-      std::cout << "========================================" << std::endl;
+      std::cerr << "========================================" << std::endl;
 
       std::string s3;
 
@@ -282,24 +288,24 @@ int main( int argc_ , char ** argv_ )
 
       if (datatools::utils::properties::data::has_forbidden_char(s3)) 
 	{
-	  std::cout << "ok! there are forbidden chars found in 's3'!" 
+	  std::cerr << "ok! there are forbidden chars found in 's3'!" 
 		    << std::endl;
 	}
       else 
 	{
-	  std::cout << "'s3' is ok!" << std::endl;
+	  std::cerr << "'s3' is ok!" << std::endl;
 	}
     
       std::string s4 = "aze\"rty";
 
       if (datatools::utils::properties::data::has_forbidden_char(s4))
 	{
-	  std::cout << "ok! there are forbidden chars found in 's4'!"
+	  std::cerr << "ok! there are forbidden chars found in 's4'!"
 		    << std::endl;
 	}
       else 
 	{
-	  std::cout << "'s4' is ok!" << std::endl;
+	  std::cerr << "'s4' is ok!" << std::endl;
 	}
  
     }

@@ -206,6 +206,7 @@ namespace datatools {
 	    ar_ & boost::serialization::make_nvp("string_values",__string_values);
 	  }
 	}
+	//BOOST_CLASS_EXPORT_GUID(data, "datatools::utils::properties::data")
 
       };
 
@@ -518,10 +519,14 @@ namespace datatools {
       static void read_config( const std::string & filename_ , 
 			       properties & p_ );
 
+      //BOOST_CLASS_EXPORT_GUID(properties, "datatools::utils::properties")
 
     };
 
   } // end of namespace utils 
+
+  //BOOST_CLASS_EXPORT_GUID(datatools::utils::properties, "datatools::utils::properties")
+  //BOOST_CLASS_EXPORT_GUID(datatools::utils::properties::data, "datatools::utils::properties::data")
 
 } // end of namespace datatools 
 

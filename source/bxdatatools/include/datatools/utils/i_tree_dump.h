@@ -8,12 +8,15 @@
 #include <string>
 #include <sstream>
 
+//#include <datatools/serialization/serialization.h>
+
 namespace datatools {
 
   namespace utils {
 
-    struct i_tree_dumpable
+    class i_tree_dumpable
     {
+    public:
       static const std::string TAG;
       static const std::string LAST_TAG;
       static const std::string SKIP_TAG;
@@ -49,11 +52,13 @@ namespace datatools {
 					  const inherit_skip_tag & lt_ );
       };
 
-      virtual void tree_dump( std::ostream & out_         = std::cerr , 
-			      const std::string & title_  = "" ,
-			      const std::string & indent_ = "",
-			      bool inherit_               = false ) const = 0;
+      virtual void tree_dump(std::ostream & out_         = std::cerr , 
+			     const std::string & title_  = "" ,
+			     const std::string & indent_ = "",
+			     bool inherit_               = false) const = 0;
     };
+    
+    //BOOST_IS_ABSTRACT(i_tree_dumpable)
 
   } // end of namespace utils 
 
