@@ -40,7 +40,9 @@ endif
 
 SYSTEM=$(OS)-$(ARCH)
 
-all : bin #libs bin build_special
+all : lib 
+
+#bin #libs bin build_special
 
 PACKAGENAME=datatools
 UPACKAGENAME=$(shell echo "$(PACKAGENAME)" | tr "a-z" "A-Z")
@@ -149,7 +151,7 @@ programs:= $(notdir $(shell ls $(PROGDIR)/*$(PROGEXT)))
 binaries:= $(programs:%$(PROGEXT)=%$(BINEXT))
 binaries_static:= $(programs:%$(PROGEXT)=%.static$(BINEXT))
 
-.PHONY : all clean clean_special build_special libs lib_static lib_shared \
+.PHONY : all clean clean_special build_special lib libs lib_static lib_shared \
  bin bins bin_shared bin_static system test dist install uninstall 
 
 test:
@@ -210,6 +212,8 @@ system :
 
 setup :
 	@echo "export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(PACKAGE_DIR)/$(SYSTEM)/lib"
+
+lib : lib_shared
 
 libs : lib_static lib_shared
 

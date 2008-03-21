@@ -188,39 +188,57 @@ function do_build_gmk()
     mk_lib=0
     mk_bin=0
     mk_bin_static=0
+    build_tag=""
     if [ -z "$1" ]; then
-	mk_lib=0
-	mk_bin=1
-	mk_bin_static=0
+	build_tag="lib"
     else
-	if [ "$1" = "lib" -o "$1" = "libs" ]; then
-	    mk_lib=1
-	fi
-	if [ "$1" = "bin" ]; then
+	build_tag="$1"
+    fi	
+    warning_msg "do_build_gmk: target='${build_tag}'"
+    old=0
+    if [ $old -eq 1 ]; then
+	if [ -z "$1" ]; then
+	    mk_lib=0
 	    mk_bin=1
+	    mk_bin_static=0
+	else
+	    if [ "$1" = "lib" -o "$1" = "libs" ]; then
+		mk_lib=1
+	    fi
+	    if [ "$1" = "bin" ]; then
+		mk_bin=1
+	    fi
+	    if [ "$1" = "bin_static" ]; then
+		mk_bin_static=1
+	    fi
+	    if [ "$1" = "all" ]; then
+		mk_bin=1
+		mk_bin_static=1
+	    fi
+	    if [ "$1" = "all_bin" -o "$1" = "bin_all" ]; then
+		mk_bin=1
+		mk_bin_static=1
+	    fi
 	fi
-	if [ "$1" = "bin_static" ]; then
-	    mk_bin_static=1
-	fi
-	if [ "$1" = "all" ]; then
-	    mk_bin=1
-	    mk_bin_static=1
-	fi
-	if [ "$1" = "all_bin" -o "$1" = "bin_all" ]; then
-	    mk_bin=1
-	    mk_bin_static=1
-	fi
-    fi
     #
-    if [ $mk_lib = 1 ]; then
-	make || return 1
+	if [ $mk_lib = 1 ]; then
+	    make || return 1
+	fi
+	if [ $mk_bin = 1 ]; then
+	    make bin || return 1
+	fi
+        #if [ $mk_bin_static = 1 ]; then
+        #  make bin_static || return 1
+        #fi
+    else
+	info_msg "Build target '${build_tag}'..."
+	make ${build_tag}
+	if [ $? -ne 0 ]; then
+	    cd ${opwd} 
+	    err_msg "Build target '${build_tag}' failed!"
+	    return 1
+	fi
     fi
-    if [ $mk_bin = 1 ]; then
-	make bin || return 1
-    fi
-    #if [ $mk_bin_static = 1 ]; then
-    #  make bin_static || return 1
-    #fi
     cd ${opwd}
     return 0
 }

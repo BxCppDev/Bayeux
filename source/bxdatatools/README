@@ -2,16 +2,41 @@ This is the 'datatools' package README file
 
 1 - Description:
 
-    to do...
-
+    A package that provides some tool classes
+    for data analysis.
+    
 2 - Documentation:
 
-    to do...
+ 
+3 - Quick start:
 
-3 - Maintenance and bug report:
+  Build shared library:
+  bash>$ ./pkgtools.d/pkgtool build
 
-    to do...
+  Build sample programs:
+  bash>$ ./pkgtools.d/pkgtool build bin
+
+  Installation:
+  bash>$ ./pkgtools.d/pkgtool install
+
+  Setup script:
+  bash>$ source datatools.sh
+
+  Run sample program:
+  bash>$ ./Linux-i686/bin/test_tree_dump 
+
+  Uninstall:
+  bash>$ ./pkgtools.d/pkgtool uninstall
+
+  Clean built stuff:
+  bash>$ ./pkgtools.d/pkgtool clean
+   
+
+4 - Maintenance and bug report:
+
+    Francois Mauger <mauger@lpccaen.in2p3.fr>
+    Arnaud Chapon <chapon@lpccaen.in2p3.fr>
 
 --
-Last update: 2008-02-25 by Francois Mauger <mauger@lpccaen.in2p3.fr>
+Last update: 2008-03-21 by Francois Mauger <mauger@lpccaen.in2p3.fr>
 
