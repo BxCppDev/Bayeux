@@ -8,10 +8,11 @@
 
 #include <boost/filesystem/operations.hpp>
 
-#include <datatools/serialization/io_factory.h>
 #include <my_data.h>
+#include <datatools/serialization/serialization.h>
 
-void randomize_data( data_t & data_ )
+void 
+randomize_data(data_t & data_)
 {
   const data_t d((char)(32+drand48()*90),
 		 (int) (drand48()*1000),
@@ -20,7 +21,8 @@ void randomize_data( data_t & data_ )
   data_ = d;
 }
 
-void randomize_more_data( more_data_t & data_ )
+void 
+randomize_more_data(more_data_t & data_)
 {
   std::ostringstream name_oss;
   name_oss << "data_" << (int) (drand48()*1000);
@@ -33,7 +35,8 @@ void randomize_more_data( more_data_t & data_ )
 }
 
 
-int main( int argc_ , char ** argv_ ) 
+int 
+main( int argc_ , char ** argv_ ) 
 {
   try {
 
@@ -41,8 +44,6 @@ int main( int argc_ , char ** argv_ )
     long seed  = 12345;
     std::string filename = "";
     size_t nrecords = 3;
-    bool step1=true;
-    bool step2=true;
 
     enum format_t
       {
@@ -59,8 +60,6 @@ int main( int argc_ , char ** argv_ )
 	if ( arg == "-10" ) nrecords = 10;
 	if ( arg == "-100" ) nrecords = 100;
 	if ( arg == "-1000" ) nrecords = 1000;
-	if ( arg == "-nostep1" ) step1 = false;
-	if ( arg == "-nostep2" ) step2 = false;
 	if ( arg == "-xml" ) fmt=FORMAT_XML;
 	if ( arg == "-txt" ) fmt=FORMAT_TXT;
 	if ( arg == "-test" ) test=true;
@@ -92,8 +91,9 @@ int main( int argc_ , char ** argv_ )
     std::cerr << "NOTICE: using filename '" << filename << "'" << std::endl;
 
     int mode_guess;
-    if ( datatools::serialization::io_factory::guess_mode_from_filename(filename,mode_guess) 
-	 != datatools::serialization::io_factory::SUCCESS ) {
+    if (datatools::serialization::\
+	io_factory::guess_mode_from_filename(filename,mode_guess) 
+	!= datatools::serialization::io_factory::SUCCESS ) {
       std::ostringstream message;
       message << "Cannot guess mode for file '" << filename << "'!";
       throw std::runtime_error(message.str());
@@ -110,25 +110,30 @@ int main( int argc_ , char ** argv_ )
       }
     
     {
-      std::cerr << "writing..." << std::endl;
+      std::cerr << "NOTICE: writing..." << std::endl;
       datatools::serialization::data_writer writer(filename);
+
+      // safe_serial
+      datatools::serialization::safe_serial<data_t>      ss_data;
+      datatools::serialization::safe_serial<more_data_t> ss_more_data;
+
       for ( int i=0; i<nrecords; i++ ) 
 	{
-	  std::cerr << "DEBUG: Counts = " << i << std::endl;
+	  if (debug) std::cerr << "DEBUG: Counts = " << i << std::endl;
 	  double p = 0.25+0.5*(i%2);
 	  if ( p < 0.5 ) 
 	    {
-	      data_t d;
-	      randomize_data(d);
-	      d.tree_dump(std::cerr,"data_t","<< ");
-	      writer.store(d);
+	      ss_data.make();
+	      randomize_data(ss_data.get());
+	      ss_data.get().tree_dump(std::cerr,"data_t","<< ");
+	      writer.store(ss_data.get());
 	    }
 	  else 
 	    {
-	      more_data_t md;
-	      randomize_more_data(md);
-	      md.tree_dump(std::cerr,"more_data_t","<< ");
-	      writer.store(md);
+	      ss_more_data.make();
+	      randomize_more_data(ss_more_data.get());
+	      ss_more_data.get().tree_dump(std::cerr,"more_data_t","<< ");
+	      writer.store(ss_more_data.get());
 	    }
 	}
       if (test)
@@ -136,27 +141,48 @@ int main( int argc_ , char ** argv_ )
 	  std::string test_str="test-failure";
 	  writer.store("__TEST__", test_str);
 	}
-      std::cerr << "writing done." << std::endl << std::endl;
+      std::cerr << "NOTICE: writing done." << std::endl << std::endl;
     }
     
     {
-      std::cerr << "reading..." << std::endl;
+      std::cerr << "NOTICE: reading..." << std::endl;
+
+      datatools::serialization::safe_serial<data_t>      ss_data;
+      datatools::serialization::safe_serial<more_data_t> ss_more_data;
+
       size_t counts=0;
       datatools::serialization::data_reader reader(filename);    
       while (reader.has_record_tag() ) 
 	{
-	  std::cerr << "read next record(2)..." << std::endl;
+	  if (debug) std::cerr << "DEBUG: read next record..." << std::endl;
 	  if (reader.record_tag_is(data_t::SERIAL_TAG)) 
 	    {
-	      data_t d;
-	      reader.load(d);
-	      d.tree_dump(std::cerr,"data_t",">> ");
+	      if (debug) std::cerr << "DEBUG: reading..." 
+				   << data_t::SERIAL_TAG << std::endl;
+	      if (debug) std::cerr << "DEBUG: making a new safe record..." 
+				   << std::endl;
+	      ss_data.make();
+	      if (debug) std::cerr << "DEBUG: loading the new safe record..." 
+				   << std::endl;
+	      reader.load(ss_data.get());
+	      if (debug) std::cerr << "DEBUG: loading done." 
+				   << std::endl;
+	      ss_data.get().tree_dump(std::cerr,"data_t",">> ");
 	    }
 	  else if (reader.record_tag_is(more_data_t::SERIAL_TAG)) 
 	    {
-	      more_data_t md;
-	      reader.load(md);
-	      md.tree_dump(std::cerr,"more_data_t",">> ");
+	      if (debug )std::cerr << "DEBUG: reading..." 
+				   << more_data_t::SERIAL_TAG 
+				   << std::endl;
+	      if (debug) std::cerr << "DEBUG: making a new safe record..." 
+				   << std::endl;
+	      ss_more_data.make();
+	      if (debug) std::cerr << "DEBUG: loading the new safe record..." 
+				   << std::endl;
+	      reader.load(ss_more_data.get());
+	      if (debug) std::cerr << "DEBUG: loading done." 
+				   << std::endl;
+	      ss_more_data.get().tree_dump(std::cerr,"more_data_t",">> ");
 	    }
 	  else 
 	    {
@@ -166,9 +192,9 @@ int main( int argc_ , char ** argv_ )
 	      break;
 	    }
 	  counts++;
-	  std::cerr << "DEBUG: Counts = " << counts << std::endl;
+	  if (debug) std::cerr << "DEBUG: Counts = " << counts << std::endl;
 	}
-      std::cerr << "reading done." << std::endl << std::endl;   
+      std::cerr << "NOTICE: reading done." << std::endl << std::endl;   
     } 
 
   }

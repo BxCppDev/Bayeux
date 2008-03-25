@@ -32,6 +32,10 @@
 
 #include <boost/cstdint.hpp>
 
+#include <datatools/serialization/safe_serial.h>
+#include <datatools/serialization/io_factory.h>
+#include <datatools/serialization/i_serializable.h>
+
 #endif // __datatools__serialization__serialization_h
 
 /* end of serialization.h */

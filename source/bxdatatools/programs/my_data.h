@@ -78,12 +78,13 @@ public:
       if ( !title_.empty() ) {
 	out_ << indent << title_ << std::endl;
       }
-      out_ << indent << i_tree_dumpable::tag << "flags = " << __flags << std::endl;
-      out_ << indent << i_tree_dumpable::tag << "ival  = "  << __ival << std::endl;
-      out_ << indent << i_tree_dumpable::tag << "dval  = "  
+      out_ << indent << i_tree_dumpable::tag << "Address : [" << this << ']' << std::endl;
+      out_ << indent << i_tree_dumpable::tag << "flags : " << __flags << std::endl;
+      out_ << indent << i_tree_dumpable::tag << "ival  : "  << __ival << std::endl;
+      out_ << indent << i_tree_dumpable::tag << "dval  : "  
 	   << __dval << std::endl;
       out_ << indent << i_tree_dumpable::inherit_tag(inherit_) 
-	   << "dvals[" << __dvals.size() << "] = ";
+	   << "dvals[" << __dvals.size() << "] : ";
       for ( int i=0; i<__dvals.size(); i++ ) 
 	out_ << __dvals[i] << ' ';
       out_ << std::endl;
