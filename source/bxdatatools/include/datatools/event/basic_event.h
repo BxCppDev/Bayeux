@@ -39,30 +39,39 @@ namespace datatools {
     {
     public:
       static const std::string SERIAL_TAG;
+
     private:
       event_id                     __id;
       datatools::utils::properties __properties;
 
     public: 
 
-      virtual void clear();
+      virtual void
+      clear();
 
-      void id( const event_id & id_ );
+      void
+      id(const event_id & id_);
 
-      const event_id & id() const;
+      const event_id &
+      id() const;
 
-      event_id & id();
+      event_id &
+      id();
 
-      const datatools::utils::properties & properties() const;
+      const datatools::utils::properties &
+      properties() const;
 
-      datatools::utils::properties & properties();
+      datatools::utils::properties &
+      properties();
 
     public: 
 
+      // ctor
       basic_event();
       
-      basic_event( const event_id & id_ );
+      basic_event(const event_id & id_);
       
+      // dtor
       virtual ~basic_event();
       
       virtual void tree_dump( std::ostream & out_         = std::cerr , 
@@ -71,7 +80,9 @@ namespace datatools {
 			      bool inherit_               = false ) const;
       
       virtual const std::string & get_serial_tag();
+
     private:
+
       friend class boost::serialization::access; 
       template<class Archive>
       void serialize( Archive            & ar_ , 
