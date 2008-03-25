@@ -2160,8 +2160,9 @@ namespace datatools {
       return true;
     }
  
-    std::string properties::build_property_key(const std::string & prefix_ ,
-					       const std::string & subkey_)
+    std::string 
+    properties::build_property_key(const std::string & prefix_ ,
+				   const std::string & subkey_)
     {
       std::string s(prefix_);
       s+='.';
