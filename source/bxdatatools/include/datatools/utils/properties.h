@@ -727,6 +727,10 @@ namespace datatools {
       read_config(const std::string & filename_, 
 		  properties & p_);
 
+      static std::string 
+      build_property_key(const std::string & prefix_ ,
+			 const std::string & subkey_);
+      
       //BOOST_CLASS_EXPORT_GUID(properties, "datatools::utils::properties")
 
     };

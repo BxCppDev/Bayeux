@@ -2159,7 +2159,16 @@ namespace datatools {
       str_ = chain;
       return true;
     }
-  
+ 
+    std::string properties::build_property_key(const std::string & prefix_ ,
+					       const std::string & subkey_)
+    {
+      std::string s(prefix_);
+      s+='.';
+      s+=subkey_;
+      return s;
+    }
+    
   } // end of namespace utils 
 
 } // end of namespace datatools 
