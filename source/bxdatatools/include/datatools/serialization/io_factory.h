@@ -502,7 +502,7 @@ namespace datatools {
 
 	void 
 	  init(const std::string & filename_, 
-	       bool multiple_archives_);
+	       bool multiple_archives_ = single_archive);
 
 	void 
 	  init(const std::string & filename_ , int mode_);
@@ -622,7 +622,7 @@ namespace datatools {
 
 	void 
 	  init(const std::string & filename_, 
-	       bool multiple_archives_);
+	       bool multiple_archives_ = single_archive);
 
 	void 
 	  init(const std::string & filename_, 
