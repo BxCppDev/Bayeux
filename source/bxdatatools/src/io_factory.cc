@@ -356,7 +356,7 @@ namespace datatools {
 	    }
 	  delete __otar_ptr;
 	  __otar_ptr=0;
-	  *__out << ' '; // add a white space at the end of text archive.
+	  //*__out << ' '; // add a white space at the end of text archive.
 	  *__out << std::endl; // add a new line at the end of text archive.
 	}
 

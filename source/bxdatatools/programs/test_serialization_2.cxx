@@ -96,7 +96,7 @@ main( int argc_ , char ** argv_ )
     
     {
       std::cerr << "NOTICE: writing..." << std::endl;
-      ds::data_writer writer(filename,true);
+      ds::data_writer writer(filename,ds::multi_archives);
 
       for ( int i=0; i<nrecords; i++ ) 
 	{
@@ -126,7 +126,7 @@ main( int argc_ , char ** argv_ )
       std::cerr << "NOTICE: reading..." << std::endl;
 
       size_t counts=0;
-      ds::data_reader reader(filename,true);    
+      ds::data_reader reader(filename,ds::multi_archives);    
       while (reader.has_record_tag() ) 
 	{
 	  if (debug) std::cerr << "DEBUG: read next record..." << std::endl;

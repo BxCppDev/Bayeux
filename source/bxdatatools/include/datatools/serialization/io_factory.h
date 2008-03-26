@@ -30,6 +30,10 @@
 namespace datatools {
   
   namespace serialization {
+
+    // user friendly constants used in ctors for data_reader/data_writer:
+    static const bool multi_archives = true;
+    static const bool single_archive = false;
     
     class io_factory : public datatools::utils::i_tree_dumpable
       {
@@ -507,7 +511,7 @@ namespace datatools {
 	data_reader();
 
 	data_reader(const std::string & filename_, 
-		    bool multiple_archives_ = false);
+		    bool multiple_archives_ = single_archive);
 
 	data_reader(const std::string & filename_, int mode_);
 	
@@ -601,6 +605,7 @@ namespace datatools {
     class data_writer 
       {
 	io_writer * __writer;
+      
 
       private:
 
@@ -627,7 +632,7 @@ namespace datatools {
 	data_writer();
 
 	data_writer(const std::string & filename_, 
-		    bool multiple_archives_ = false);
+		    bool multiple_archives_ = single_archive);
 
 	data_writer(const std::string & filename_, 
 		    int mode_);
