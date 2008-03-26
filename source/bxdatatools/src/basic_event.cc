@@ -11,7 +11,7 @@ namespace datatools {
 
     const std::string basic_event::SERIAL_TAG = "__BASIC_EVENT__";
 
-    const std::string & basic_event::get_serial_tag()
+    const std::string & basic_event::get_serial_tag() const
     {
       return basic_event::SERIAL_TAG;
     }

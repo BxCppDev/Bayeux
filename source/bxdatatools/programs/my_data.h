@@ -15,7 +15,7 @@ class data_t : public datatools::utils::i_tree_dumpable,
 {
  public:
   static const std::string SERIAL_TAG;
-  virtual const std::string & get_serial_tag();
+  virtual const std::string & get_serial_tag() const;
  private:
   int8_t   __flags;
   int32_t  __ival;
@@ -93,7 +93,7 @@ public:
 };
 
 const std::string data_t::SERIAL_TAG = "__DATA__";
-const std::string & data_t::get_serial_tag()
+const std::string & data_t::get_serial_tag() const
 {
   return data_t::SERIAL_TAG;
 }
@@ -104,7 +104,7 @@ class more_data_t : public data_t
 {
 public:
   static const std::string SERIAL_TAG;
-  virtual const std::string & get_serial_tag();
+  virtual const std::string & get_serial_tag() const;
 private:
   std::string __name;
 
@@ -153,9 +153,33 @@ private:
 };
 
 const std::string more_data_t::SERIAL_TAG = "__MORE_DATA__";
-const std::string & more_data_t::get_serial_tag()
+const std::string & more_data_t::get_serial_tag() const
 {
   return more_data_t::SERIAL_TAG;
+}
+
+
+void 
+randomize_data(data_t & data_)
+{
+  const data_t d((char)(32+drand48()*90),
+		 (int) (drand48()*1000),
+		 (double) drand48(),
+		 1+(size_t) (drand48()*5));
+  data_ = d;
+}
+
+void 
+randomize_more_data(more_data_t & data_)
+{
+  std::ostringstream name_oss;
+  name_oss << "data_" << (int) (drand48()*1000);
+  const more_data_t md((char)(32+drand48()*90),
+		       (int) (drand48()*1000),
+		       (double) drand48(),
+		       1+(size_t) (drand48()*5),
+		       name_oss.str());
+  data_ = md;
 }
 
 #endif // __datatools__test__my_data_h

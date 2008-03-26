@@ -79,7 +79,7 @@ namespace datatools {
 			      const std::string & indent_ = "",
 			      bool inherit_               = false ) const;
       
-      virtual const std::string & get_serial_tag();
+      virtual const std::string & get_serial_tag() const;
 
     private:
 

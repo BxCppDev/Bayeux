@@ -10,7 +10,7 @@ namespace datatools {
     class i_serializable
       {
       public:
-	virtual const std::string & get_serial_tag() = 0;
+	virtual const std::string & get_serial_tag() const = 0;
       };
     
   } // end of namespace serialization 

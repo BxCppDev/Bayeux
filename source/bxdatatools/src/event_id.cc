@@ -11,7 +11,7 @@ namespace datatools {
     const std::string event_id::SERIAL_TAG = "__EVENT_ID__";
 
     const std::string & 
-    event_id::get_serial_tag()
+    event_id::get_serial_tag() const
     {
       return  event_id::SERIAL_TAG;
     }

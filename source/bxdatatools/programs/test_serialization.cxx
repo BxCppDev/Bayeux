@@ -9,31 +9,8 @@
 #include <boost/filesystem/operations.hpp>
 
 #include <my_data.h>
+
 #include <datatools/serialization/serialization.h>
-
-void 
-randomize_data(data_t & data_)
-{
-  const data_t d((char)(32+drand48()*90),
-		 (int) (drand48()*1000),
-		 (double) drand48(),
-		 1+(size_t) (drand48()*5));
-  data_ = d;
-}
-
-void 
-randomize_more_data(more_data_t & data_)
-{
-  std::ostringstream name_oss;
-  name_oss << "data_" << (int) (drand48()*1000);
-  const more_data_t md((char)(32+drand48()*90),
-		       (int) (drand48()*1000),
-		       (double) drand48(),
-		       1+(size_t) (drand48()*5),
-		       name_oss.str());
-  data_ = md;
-}
-
 
 int 
 main( int argc_ , char ** argv_ ) 
