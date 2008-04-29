@@ -225,13 +225,11 @@ namespace datatools {
 	int
 	get_value(std::string &, int = 0) const;
 
-
 	std::string
 	get_type_label() const;
 
 	std::string
 	get_vector_label() const;
-
 
 	static bool
 	has_forbidden_char(const std::string &);

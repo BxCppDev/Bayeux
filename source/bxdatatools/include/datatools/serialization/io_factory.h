@@ -30,10 +30,6 @@
 namespace datatools {
   
   namespace serialization {
-
-    // user friendly constants used in ctors for data_reader/data_writer:
-    static const bool multi_archives = true;
-    static const bool single_archive = false;
     
     class io_factory : public datatools::utils::i_tree_dumpable
       {
@@ -67,38 +63,45 @@ namespace datatools {
 	static const int MASK_FORMAT       = 0xE;
 	static const int MASK_COMPRESSION  = 0x30;
 	static const int MASK_MULTIARCHIVE = 0x80;
+	static const int MASK_APPEND       = 0x100;
 	
 	enum mode
 	  {
 	    MODE_READ        = 0x0,
 	    MODE_WRITE       = 0x1,
-	    read        = MODE_READ,
-	    write       = MODE_WRITE,
+	    read             = MODE_READ,
+	    write            = MODE_WRITE,
 	    
 	    MODE_TEXT        = 0x0,
 	    MODE_BINARY      = 0x2,
 	    MODE_XML         = 0x4,
-	    text        = MODE_TEXT,
-	    binary      = MODE_BINARY,
-	    xml         = MODE_XML,
+	    text             = MODE_TEXT,
+	    binary           = MODE_BINARY,
+	    xml              = MODE_XML,
 	    
 	    MODE_NO_COMPRESS = 0x0,
 	    MODE_GZIP        = 0x10,
 	    MODE_BZIP2       = 0x20,
-	    no_compress = MODE_NO_COMPRESS,
-	    gzip        = MODE_GZIP,
-	    bzip2       = MODE_BZIP2,
+	    no_compress      = MODE_NO_COMPRESS,
+	    gzip             = MODE_GZIP,
+	    bzip2            = MODE_BZIP2,
 	    
 	    MODE_UNIQUE_ARCHIVE = 0x0,
 	    MODE_MULTI_ARCHIVES = 0x80,
-	    unique_archive = MODE_UNIQUE_ARCHIVE,
-	    multi_archives = MODE_MULTI_ARCHIVES,
+	    unique_archive      = MODE_UNIQUE_ARCHIVE,
+	    multi_archives      = MODE_MULTI_ARCHIVES,
+
+	    MODE_NO_APPEND = 0x0,
+	    MODE_APPEND    = 0x100,
+	    no_append      = MODE_NO_APPEND,
+	    append         = MODE_APPEND,
 	    
 	    MODE_DEFAULT = 
 	      MODE_READ | 
 	      MODE_TEXT | 
 	      MODE_NO_COMPRESS | 
-              MODE_UNIQUE_ARCHIVE,
+              MODE_UNIQUE_ARCHIVE |
+              MODE_NO_APPEND
 	  };
 	
 	
@@ -153,6 +156,12 @@ namespace datatools {
 	
 	bool 
 	  is_xml() const;
+
+	bool 
+	  is_append() const;
+
+	bool 
+	  is_no_append() const;
 
 	bool 
 	  is_single_archive() const;
@@ -366,8 +375,7 @@ namespace datatools {
 			  << std::endl;	      
 		throw std::runtime_error("io_factory::load: internal exception!");
 	      }
-	    
-	    
+	    	    
 	    if (! *__in_fs)
 	      {
 		if (__in_fs->fail())
@@ -388,9 +396,7 @@ namespace datatools {
 			      << std::endl;
 		    //throw std::runtime_error("io_factory::load: input stream in fail status!");
 		  } 
-	      
 	      }
-	    
 	  }
 
       public:
@@ -461,6 +467,13 @@ namespace datatools {
 
     /*************************************************************/
 
+    // user friendly constants used in ctors 
+    // for data_reader/data_writer:
+    static const bool using_multi_archives = true;
+    static const bool using_single_archive = false;
+    static const bool append_mode    = true;
+    static const bool no_append_mode = false;
+
     class data_reader 
       {
       public:
@@ -502,7 +515,7 @@ namespace datatools {
 
 	void 
 	  init(const std::string & filename_, 
-	       bool multiple_archives_ = single_archive);
+	       bool multiple_archives_ = using_single_archive);
 
 	void 
 	  init(const std::string & filename_ , int mode_);
@@ -511,7 +524,7 @@ namespace datatools {
 	data_reader();
 
 	data_reader(const std::string & filename_, 
-		    bool multiple_archives_ = single_archive);
+		    bool multiple_archives_ = using_single_archive);
 
 	data_reader(const std::string & filename_, int mode_);
 	
@@ -605,7 +618,6 @@ namespace datatools {
     class data_writer 
       {
 	io_writer * __writer;
-      
 
       private:
 
@@ -622,7 +634,8 @@ namespace datatools {
 
 	void 
 	  init(const std::string & filename_, 
-	       bool multiple_archives_ = single_archive);
+	       bool multiple_archives_ = using_single_archive,
+	       bool append_mode_ = no_append_mode);
 
 	void 
 	  init(const std::string & filename_, 
@@ -632,8 +645,9 @@ namespace datatools {
 	data_writer();
 
 	data_writer(const std::string & filename_, 
-		    bool multiple_archives_ = single_archive);
-
+		    bool multiple_archives_ = using_single_archive,
+		    bool append_mode_ = no_append_mode);
+	
 	data_writer(const std::string & filename_, 
 		    int mode_);
 

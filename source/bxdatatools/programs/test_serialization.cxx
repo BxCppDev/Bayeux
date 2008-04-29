@@ -24,44 +24,52 @@ main( int argc_ , char ** argv_ )
 
     enum format_t
       {
-	FORMAT_TXT=0,
-	FORMAT_XML=1,
+	FORMAT_TXT = 0,
+	FORMAT_XML = 1
       };
     int fmt   = FORMAT_XML;
     bool test = false;
-    int iarg=1;
-    while ( iarg < argc_ ) {
-      std::string arg=argv_[iarg];
-      if ( arg[0] == '-' ) {
-	if ( arg == "-d" ) debug=true;
-	if ( arg == "-10" ) nrecords = 10;
-	if ( arg == "-100" ) nrecords = 100;
-	if ( arg == "-1000" ) nrecords = 1000;
-	if ( arg == "-xml" ) fmt=FORMAT_XML;
-	if ( arg == "-txt" ) fmt=FORMAT_TXT;
-	if ( arg == "-test" ) test=true;
-      }
-      else {
-	if ( filename.empty() ) {
-	  filename = arg;
-	}
-	else {
-	  std::istringstream iss(arg);
-	  iss >> seed;
-	  if ( ! iss ) {
-	    std::ostringstream message;
-	    message << "format error for 'seed'!"; 
-	    throw std::runtime_error(message.str());
-	  }
-	}
-      }
-      iarg++;
-    }
 
-    if ( filename.empty() ) {
-      if (fmt == FORMAT_XML) filename = "test_serialization.xml";
-      if (fmt == FORMAT_TXT) filename = "test_serialization.txt";
-    } 
+    int iarg = 1;
+    while (iarg < argc_) 
+      {
+	std::string arg=argv_[iarg];
+	if ( arg[0] == '-' ) 
+	  {
+	    if ( arg == "-d" ) debug=true;
+	    if ( arg == "-10" ) nrecords = 10;
+	    if ( arg == "-100" ) nrecords = 100;
+	    if ( arg == "-1000" ) nrecords = 1000;
+	    if ( arg == "-xml" ) fmt=FORMAT_XML;
+	    if ( arg == "-txt" ) fmt=FORMAT_TXT;
+	    if ( arg == "-test" ) test=true;
+	  }
+	else 
+	  {
+	    if (filename.empty()) 
+	      {
+		filename = arg;
+	      }
+	    else 
+	      {
+		std::istringstream iss(arg);
+		iss >> seed;
+		if (! iss)
+		  {
+		    std::ostringstream message;
+		    message << "format error for 'seed'!"; 
+		    throw std::runtime_error(message.str());
+		  }
+	      }
+	  }
+	iarg++;
+      }
+
+    if (filename.empty()) 
+      {
+	if (fmt == FORMAT_XML) filename = "test_serialization.xml";
+	if (fmt == FORMAT_TXT) filename = "test_serialization.txt";
+      } 
 
     datatools::serialization::io_factory::g_debug = debug;
     srand48(seed);
@@ -70,11 +78,12 @@ main( int argc_ , char ** argv_ )
     int mode_guess;
     if (datatools::serialization::\
 	io_factory::guess_mode_from_filename(filename,mode_guess) 
-	!= datatools::serialization::io_factory::SUCCESS ) {
-      std::ostringstream message;
-      message << "Cannot guess mode for file '" << filename << "'!";
-      throw std::runtime_error(message.str());
-    }
+	!= datatools::serialization::io_factory::SUCCESS ) 
+      {
+	std::ostringstream message;
+	message << "Cannot guess mode for file '" << filename << "'!";
+	throw std::runtime_error(message.str());
+      }
     std::cerr << "mode = " << std::hex 
 	      << mode_guess
 	      << std::dec << std::endl;
@@ -94,11 +103,11 @@ main( int argc_ , char ** argv_ )
       datatools::serialization::safe_serial<data_t>      ss_data;
       datatools::serialization::safe_serial<more_data_t> ss_more_data;
 
-      for ( int i=0; i<nrecords; i++ ) 
+      for (int i=0; i<nrecords; i++) 
 	{
 	  if (debug) std::cerr << "DEBUG: Counts = " << i << std::endl;
-	  double p = 0.25+0.5*(i%2);
-	  if ( p < 0.5 ) 
+	  double p = 0.25 + 0.5 * (i % 2);
+	  if (p < 0.5) 
 	    {
 	      ss_data.make();
 	      randomize_data(ss_data.get());
@@ -115,7 +124,7 @@ main( int argc_ , char ** argv_ )
 	}
       if (test)
 	{
-	  std::string test_str="test-failure";
+	  std::string test_str = "test-failure";
 	  writer.store("__TEST__", test_str);
 	}
       std::cerr << "NOTICE: writing done." << std::endl << std::endl;
@@ -127,9 +136,9 @@ main( int argc_ , char ** argv_ )
       datatools::serialization::safe_serial<data_t>      ss_data;
       datatools::serialization::safe_serial<more_data_t> ss_more_data;
 
-      size_t counts=0;
+      size_t counts = 0;
       datatools::serialization::data_reader reader(filename);    
-      while (reader.has_record_tag() ) 
+      while (reader.has_record_tag()) 
 	{
 	  if (debug) std::cerr << "DEBUG: read next record..." << std::endl;
 	  if (reader.record_tag_is(data_t::SERIAL_TAG)) 
@@ -175,10 +184,11 @@ main( int argc_ , char ** argv_ )
     } 
 
   }
-  catch (std::exception & x) {
-    std::cerr << "test_serialization: ERROR: " << x.what() << std::endl;
-    exit(EXIT_FAILURE);
-  }
+  catch (std::exception & x) 
+    {
+      std::cerr << "test_serialization: ERROR: " << x.what() << std::endl;
+      exit(EXIT_FAILURE);
+    }
 
   return (EXIT_SUCCESS);
 }

@@ -5,7 +5,7 @@
 
 #include <vector>
 
-#include <datatools/serialization/i_serializable.h>
+//#include <datatools/serialization/i_serializable.h>
 #include <datatools/serialization/serialization.h>
 
 #include <datatools/utils/i_tree_dump.h>
@@ -16,7 +16,9 @@ class data_t : public datatools::utils::i_tree_dumpable,
  public:
   static const std::string SERIAL_TAG;
   virtual const std::string & get_serial_tag() const;
+
  private:
+
   int8_t   __flags;
   int32_t  __ival;
   double   __dval;

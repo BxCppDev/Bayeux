@@ -91,6 +91,18 @@ namespace datatools {
       return ! is_single_archive();
     }
 
+    bool 
+    io_factory::is_no_append() const
+    {
+      return (__mode & MASK_APPEND ) == MODE_NO_APPEND;
+    }
+    
+    bool 
+    io_factory::is_append() const
+    {
+      return ! is_no_append();
+    }
+
     int 
     io_factory::__init_read_archive()
     {
@@ -311,6 +323,26 @@ namespace datatools {
 	    std::cerr << "DEBUG: io_factory::__init_write: file='" 
 		      << stream_name_ << "'"<< std::endl;
 	  }
+
+	std::ios_base::openmode open_mode = std::ios_base::out;
+	if (is_compressed() || is_binary())
+	  { 
+	    open_mode |= std::ios_base::binary;
+	  }
+	if (is_append())
+	  {
+	    if (is_single_archive())
+	      {
+		std::ostringstream message;
+		message << "io_factory::__init_write: "
+			<< "append mode does not work for 'io_factory::single_archive' mode! "
+			<< "Please consider to use the 'io_factory::multi_archives' mode instead!" ;
+		throw std::runtime_error(message.str()); 
+	      }
+
+	    open_mode |= std::ios_base::app; 
+	  } 
+	/*
 	if (is_compressed() || is_binary()) 
 	  {
 	    __fout = new std::ofstream(stream_name_.c_str(),
@@ -321,6 +353,8 @@ namespace datatools {
 	    __fout = new std::ofstream(stream_name_.c_str(),
 				       std::ios_base::out);
 	  }
+	*/
+	__fout = new std::ofstream(stream_name_.c_str(), open_mode);
 	if (!*__fout) 
 	  {
 	    throw std::runtime_error("io_factory::__init_write: Cannot open output stream!");
@@ -598,7 +632,6 @@ namespace datatools {
 
       out_ << indent << du::i_tree_dumpable::inherit_tag(inherit_) 
 	   << "is_multi_archives : " << is_multi_archives() << std::endl;
-
 
     }
 
@@ -966,7 +999,8 @@ namespace datatools {
 
     void 
     data_writer::init(const std::string & filename_, 
-		      bool multiple_archives_)
+		      bool multiple_archives_,
+		      bool append_mode_)
     {
       __reset_writer();
       int mode_guess;
@@ -982,6 +1016,10 @@ namespace datatools {
       if (multiple_archives_)
 	{
 	  mode |= io_factory::multi_archives; 
+	}
+      if (append_mode_)
+	{
+	  mode |= io_factory::append; 
 	}
       __init_writer(filename_,mode);
     }
@@ -1003,10 +1041,11 @@ namespace datatools {
 
     // ctor
     data_writer::data_writer(const std::string & filename_, 
-			     bool multiple_archives_)
+			     bool multiple_archives_,
+			     bool append_mode_)
     {
       __writer=0;
-      init(filename_,multiple_archives_);
+      init(filename_,multiple_archives_,append_mode_);
     }
 
     // ctor
