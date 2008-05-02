@@ -12,7 +12,6 @@
 
 namespace mygsl {
 
-
   class error
     {
     private:
@@ -25,27 +24,35 @@ namespace mygsl {
 
     public:
 
-      static void to_string( const int gsl_errno_ , 
-			     std::string & err_string_ );
+      static void 
+	to_string(const int gsl_errno_ , 
+		  std::string & err_string_);
 
-      static std::string to_string( const int gsl_errno_ );
+      static std::string 
+	to_string(const int gsl_errno_);
 
     public:
 
-      static void set_handler( gsl_error_handler_t & );
+      static void 
+	set_handler(gsl_error_handler_t &);
 
-      static void off();
+      static void 
+	off();
 
-      static void on();
+      static void 
+	on();
 
-      static void set_default();
+      static void 
+	set_default();
 
-      static void set_gsl_default();
+      static void 
+	set_gsl_default();
 
-      static void default_handler( const char * reason_ ,
-				   const char * file_ ,
-				   int line_ ,
-				   int gsl_errno_ );
+      static void 
+	default_handler(const char * reason_ ,
+			const char * file_ ,
+			int line_ ,
+			int gsl_errno_);
 
     };
 

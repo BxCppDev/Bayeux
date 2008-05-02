@@ -1,8 +1,6 @@
 #!/bin/bash
 
-make test_fft_real
-
-./test_fft_real > test_fft_real.data
+$(mygsl-config --bindir)/test_fft_real2 > test_fft_real.data
 
 
 # end

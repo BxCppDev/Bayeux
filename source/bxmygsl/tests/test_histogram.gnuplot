@@ -11,6 +11,7 @@ plot [0:10.] \
   'test_histogram4.data' using 1:3 title "h3 rebin" with steps , \
   'test_histogram5.data' using 1:3 title "hh3" with steps , \
   'test_histogram6.data' using 1:3 title "hh4" with steps
+pause 5
 
-# end
+# end of test_histogram.gnuplot
 

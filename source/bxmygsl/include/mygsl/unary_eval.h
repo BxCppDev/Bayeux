@@ -24,9 +24,11 @@ namespace mygsl {
   struct unary_eval : public std::unary_function<double,double>
   {
 
-    virtual double eval( double x_ ) const = 0;
+    virtual double 
+    eval(double x_) const = 0;
 
-    inline double operator()( double x_ ) const
+    inline double 
+    operator()(double x_) const
     {
       return eval(x_);
     }

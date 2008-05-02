@@ -51,54 +51,72 @@ namespace mygsl {
 
   public:
 
-    const std::string & interpolator_name() const;
+    const std::string & 
+    interpolator_name() const;
 
-    const points_map_t & points() const;
+    const points_map_t & 
+    points() const;
 
-    static const std::string & default_interpolator_name();
+    static const std::string & 
+    default_interpolator_name();
 
-    static bool interpolator_name_is_valid( const std::string & name_ );
+    static bool 
+    interpolator_name_is_valid(const std::string & name_);
 
-    void scale( double s_ );
+    void 
+    scale(double s_);
 
-    size_t size() const;
+    size_t 
+    size() const;
 
-    bool is_table_locked() const;
+    bool 
+    is_table_locked() const;
 
-    void lock_table( const std::string & interp_name_ = "" );
+    void 
+    lock_table(const std::string & interp_name_ = "");
 
-    void unlock_table();
+    void 
+    unlock_table();
 
-    void relock_table( const std::string & interp_name_ = "");
+    void 
+    relock_table(const std::string & interp_name_ = "");
 
-    void add_point( double x_ , double y_ , bool lock_after_ = true );
+    void 
+    add_point(double x_ , double y_ , bool lock_after_ = true);
 
-    tabulated_function( const std::string & interp_name_ = DEFAULT_INTERP_NAME );
+    tabulated_function(const std::string & interp_name_ = DEFAULT_INTERP_NAME);
 
-    tabulated_function( const tabulated_function & tab_func_ );
+    tabulated_function(const tabulated_function & tab_func_);
 
-    tabulated_function & operator=( const tabulated_function & tab_func_ );
+    tabulated_function & operator=(const tabulated_function & tab_func_);
     
-    double x_min() const;
+    double 
+    x_min() const;
 
-    double x_max() const;
+    double 
+    x_max() const;
 
-    void reset();
+    void 
+    reset();
 
     virtual ~tabulated_function();
 
-    bool in_range( double x_ ) const;
+    bool 
+    in_range(double x_) const;
 
-    virtual double eval( double x_ ) const;
+    virtual double 
+    eval(double x_) const;
 
-    virtual void tabfunc_load( std::istream & in_ , void * context_ = 0 );
+    virtual void 
+    tabfunc_load(std::istream & in_ , void * context_ = 0);
 
-    virtual void tabfunc_store( std::ostream & out_ , void * context_ = 0 ) const;
+    virtual void 
+    tabfunc_store(std::ostream & out_ , void * context_ = 0) const;
 
-    void print_points( std::ostream & out_ , 
-		       const std::string & header_comment_ = "" ,
-		       const std::string & footer_comment_ = "" 
-		       ) const;
+    void 
+    print_points(std::ostream & out_ , 
+		 const std::string & header_comment_ = "" ,
+		 const std::string & footer_comment_ = "") const;
 
   };
 

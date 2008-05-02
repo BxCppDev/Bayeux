@@ -8,38 +8,35 @@
 
 #include <mygsl/dummy_mygsl.h>
 
-int main( int argc_ , char ** argv_ )
+int main(int argc_ , char ** argv_)
 {
-  int error_code=EXIT_SUCCESS;
-  try {
+  int error_code = EXIT_SUCCESS;
+  try 
+    {
+      std::cerr << "Hello, this is a sample program for class 'dummy_mygsl'!" << std::endl;   
+      bool debug=false;
 
-    std::cerr << "Hello, this is a sample program for class 'dummy_mygsl'!" << std::endl; 
-  
-    bool debug=false;
+      int iarg=1;
+      while (iarg < argc_) 
+	{
+	  std::string arg = argv_[iarg];
 
-    int iarg=1;
-    while ( iarg<argc_ ) {
+	  if (arg == "-d" || arg == "--debug") debug = true;
+
+	  iarg++;
+	}
     
-      std::string arg=argv_[iarg];
+      mygsl::dummy_mygsl my_dummy_mygsl;
 
-      if ( arg == "-d" || arg == "--debug" ) debug=true;
-
-      // <here you may add more switches...>
-
-      iarg++;
     }
-    
-    mygsl::dummy_mygsl my_dummy_mygsl;
-    // <here you may put stuff for testing the class>
-
-  }
-  catch(std::exception & x){
-    std::cerr << "error: " << x.what() << std::endl; 
-    error_code=EXIT_FAILURE;
-  }
+  catch(std::exception & x)
+    {
+      std::cerr << "error: " << x.what() << std::endl; 
+      error_code = EXIT_FAILURE;
+    }
   catch(...){
     std::cerr << "error: " << "unexpected error!" << std::endl; 
-    error_code=EXIT_FAILURE;
+    error_code = EXIT_FAILURE;
   }
   return error_code;
 }
