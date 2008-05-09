@@ -194,7 +194,7 @@ function do_build_gmk()
     else
 	build_tag="$1"
     fi	
-    warning_msg "do_build_gmk: target='${build_tag}'"
+    info_msg "do_build_gmk: target='${build_tag}'"
     old=0
     if [ $old -eq 1 ]; then
 	if [ -z "$1" ]; then
