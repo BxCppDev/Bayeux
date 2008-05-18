@@ -95,6 +95,15 @@ endif
 DEPCPPFLAGS+=$(shell boost-config --include)
 DEPLDFLAGS+=$(shell boost-config --ldflags serialization iostreams filesystem)
 
+ifeq ($(strip $(LIBLOCKFILE_ROOT)),)
+$(error Sorry liblockfile(_help) is not configured; please setup the liblockfile_help package!)
+endif
+ifeq ($(shell which liblockfile-config),)
+$(error Sorry liblockfile-config not found!)
+endif
+DEPCPPFLAGS+=$(shell liblockfile-config --cflags)
+DEPLDFLAGS+=$(shell liblockfile-config --ldflags)
+
 # HDF5 samples:
 #ifeq ($(strip $(HDF5_PREFIX)),)
 #$(error Sorry HDF5 is not configured!)

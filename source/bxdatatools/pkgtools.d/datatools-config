@@ -99,7 +99,8 @@ fi
 
 if [ "x$opt" = "x--cflags" ]; then
     echo -n "-I${THEPACK_INCLUDEDIR} "  \
-         "`boost-config --cflags` "  
+         "`boost-config --cflags` " \ 
+         "`liblockfile-config --cflags` "  
 
 #         "`clhep-config --include` "  
 
@@ -148,7 +149,8 @@ fi
 
 if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
   echo -n "-L${THEPACK_LIBDIR} -ldatatools "  \
-         "`boost-config --ldflags serialization iostreams filesystem` " 
+      "`boost-config --ldflags serialization iostreams filesystem` " \
+      "`liblockfile-config --ldflags` "  
 
 #         "`clhep-config --libs` "  
 

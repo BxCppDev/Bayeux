@@ -6,7 +6,7 @@
 #include <sstream>
 #include <stdexcept>
 
-#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem.hpp>
 
 #include <my_data.h>
 
