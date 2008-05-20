@@ -187,6 +187,8 @@ system :
 setup :
 	@echo "export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(PACKAGE_DIR)/$(SYSTEM)/lib"
 
+lib : lib_shared
+
 libs : lib_static lib_shared
 
 lib_static : $(LIBFILE)
