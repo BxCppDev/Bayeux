@@ -99,7 +99,7 @@ fi
 
 if [ "x$opt" = "x--cflags" ]; then
     echo -n "-I${THEPACK_INCLUDEDIR} "  \
-         "`boost-config --cflags` " \ 
+         "`boost-config --cflags` " \
          "`liblockfile-config --cflags` "  
 
 #         "`clhep-config --include` "  
