@@ -13,6 +13,13 @@ namespace datatools {
     {
     public:
       virtual std::string get_name() = 0;
+
+      /*
+      static bool 
+	is_anonymous(const i_named & named_) const
+	{  
+	}
+      */
     };
 
   } // end of namespace utils 

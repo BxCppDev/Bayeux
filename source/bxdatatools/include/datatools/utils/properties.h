@@ -536,12 +536,12 @@ namespace datatools {
 
       void
       change(const std::string & key_, 
-	     bool   value_, 
+	     bool value_, 
 	     int index_ = 0);
 
       void
       change(const std::string & key_ , 
-	     int    value_ , 
+	     int value_ , 
 	     int index_ = 0);
 
       void
@@ -575,6 +575,41 @@ namespace datatools {
       change(const std::string & key_, 
 	     const data::vstring & values_);
 
+      /*****/
+
+      void
+      update(const std::string & key_, 
+	     bool value_);
+
+      void
+      update(const std::string & key_ , 
+	     int value_);
+
+      void
+      update(const std::string & key_, 
+	     double value_);
+
+      void
+      update(const std::string & key_, 
+	     const std::string & value_);
+
+      void
+      update(const std::string & key_, 
+	     const data::vbool & values_);
+
+      void
+      update(const std::string & key_, 
+	     const data::vint & values_);
+
+      void
+      update(const std::string & key_, 
+	     const data::vdouble & values_);
+
+      void
+      update(const std::string & key_, 
+	     const data::vstring & values_);
+
+      /*****/
       void
       fetch(const std::string & key_, 
 	    bool   & value_, 
