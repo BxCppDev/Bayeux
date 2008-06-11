@@ -1429,10 +1429,12 @@ namespace datatools {
     {
       if (has_key(key_))
 	{
+	  std::cerr << "DEVEL: properties::update: change : " << key_ << " to " << value_ << std::endl;
 	  change(key_, value_);
 	}
       else
 	{
+	  std::cerr << "DEVEL: properties::update: store : " << key_ << " at " << value_ << std::endl;
 	  store(key_, value_);
 	}
     }
@@ -1454,20 +1456,6 @@ namespace datatools {
     void
     properties::update(const std::string & key_, 
 		       const std::string & value_)
-    {
-      if (has_key(key_))
-	{
-	  change(key_, value_);
-	}
-      else
-	{
-	  store(key_, value_);
-	}
-    }
-
-    void
-    properties::update(const std::string & key_, 
-		       const char * value_)
     {
       if (has_key(key_))
 	{
