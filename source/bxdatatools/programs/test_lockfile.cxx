@@ -37,6 +37,7 @@ main(int argc_ , char ** argv_)
 	  iarg++;
 	}
 
+      /*
       datatools::utils::simple_lockfile my_lockfile(lockfile_name, 
 						    0, 
 						    true, 
@@ -63,6 +64,7 @@ main(int argc_ , char ** argv_)
 	  elapsed += sec_tick;
       
 	}
+      */
 
       /*
 	my_lockfile.remove();

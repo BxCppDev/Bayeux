@@ -95,34 +95,14 @@ endif
 DEPCPPFLAGS+=$(shell boost-config --include)
 DEPLDFLAGS+=$(shell boost-config --ldflags serialization iostreams filesystem)
 
-ifeq ($(strip $(LIBLOCKFILE_ROOT)),)
-$(error Sorry liblockfile(_help) is not configured; please setup the liblockfile_help package!)
-endif
-ifeq ($(shell which liblockfile-config),)
-$(error Sorry liblockfile-config not found!)
-endif
-DEPCPPFLAGS+=$(shell liblockfile-config --cflags)
-DEPLDFLAGS+=$(shell liblockfile-config --ldflags)
-
-# HDF5 samples:
-#ifeq ($(strip $(HDF5_PREFIX)),)
-#$(error Sorry HDF5 is not configured!)
-#endif
-#ifeq ($(shell which hdf5-config),)
-#$(error Sorry hdf5-config not found!)
-#endif
-#DEPCPPFLAGS+=$(shell hdf5-config --include)
-#DEPLDFLAGS+=$(shell hdf5-config --libs)
-
-# ROOT samples:
-#ifeq ($(strip $(ROOTSYS)),)
-#$(error Sorry ROOT is not configured!)
-#endif
-#ifeq ($(shell which root-config),)
-#$(error Sorry root-config not found!)
-#endif
-#DEPCPPFLAGS+=$(shell root-config --cflags)
-#DEPLDFLAGS+=$(shell root-config --libs)
+# ifeq ($(strip $(LIBLOCKFILE_ROOT)),)
+# $(error Sorry liblockfile(_help) is not configured; please setup the liblockfile_help package!)
+# endif
+# ifeq ($(shell which liblockfile-config),)
+# $(error Sorry liblockfile-config not found!)
+# endif
+# DEPCPPFLAGS+=$(shell liblockfile-config --cflags)
+# DEPLDFLAGS+=$(shell liblockfile-config --ldflags)
 
 ### End of dependencies
 CPPFLAGS+=$(DEPCPPFLAGS) 

@@ -4,6 +4,8 @@
 
 #include <datatools/utils/simple_lockfile.h>
 
+/*
+
 namespace datatools {
 
   namespace utils {
@@ -127,5 +129,7 @@ namespace datatools {
   } // end of namespace utils
 
 } // end of namespace datatools
+
+*/
 
 // end of simple_lockfile.cc

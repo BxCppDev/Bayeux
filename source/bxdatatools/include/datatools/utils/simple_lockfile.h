@@ -19,6 +19,7 @@
 #include <string>
 #include <stdexcept>
 
+/*
 extern "C"
 {
 #include <lockfile.h>
@@ -62,6 +63,7 @@ namespace datatools {
   } // end of namespace utils
 
 } // end of namespace datatools
+*/
 
 #endif // __datatools__utils__simple_lockfile_h
 
