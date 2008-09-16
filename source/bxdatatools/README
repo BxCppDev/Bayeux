@@ -1,8 +1,8 @@
 This is the 'datatools' package README file
-
+ 
 1 - Description:
 
-  A package that provides some tool classes for data analysis.
+  This package provides some tool classes for data analysis.
     
   SVN repository:
 
@@ -10,16 +10,27 @@ This is the 'datatools' package README file
 
    * https://nemo.lpc-caen.in2p3.fr/svn/datatools/tags/datatools-1.0
     
-  This package depends on the 'boost' C++ library through 
-  the 'boost_help' package at:
+   * https://nemo.lpc-caen.in2p3.fr/svn/datatools/tags/datatools-2.0
+    
 
-    https://nemo.lpc-caen.in2p3.fr/svn/boost_help/
+  This package depends on the 'boost' C++ library through 
+  the 'boost_help' package available at:
+
+   * https://nemo.lpc-caen.in2p3.fr/svn/boost_help/
+
+
+  WARNING:
+
+  From version 2.0, 'datatools' depends also on the 'pba_help' package
+  available at:
+
+   * https://nemo.lpc-caen.in2p3.fr/svn/pba_help/
 
 
 2 - Documentation:
 
-  Nothing for now.
-
+  Nothing for now but sample programs are stored in the 'programs'
+  directory.
  
 3 - Quick start:
 
@@ -67,4 +78,3 @@ This is the 'datatools' package README file
 
 --
 Last update: 2008-09-16 by Francois Mauger <mauger@lpccaen.in2p3.fr>
-

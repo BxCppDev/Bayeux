@@ -66,7 +66,7 @@ OBJDIR=$(ARCHDIR)/obj
 LIBDIR=$(ARCHDIR)/lib
 BINDIR=$(ARCHDIR)/bin
 
-  CXXFLAGS=-fPIC
+CXXFLAGS=-fPIC
 CPPFLAGS=-I. -I$(INCDIR)
 LDFLAGS=-O -L$(LIBDIR) -l$(LIBNAME)
 
@@ -92,7 +92,7 @@ endif
 ifeq ($(shell which boost-config),)
 $(error Sorry boost-config not found!)
 endif
-DEPCPPFLAGS+=$(shell boost-config --include)
+DEPCPPFLAGS+=$(shell boost-config --cflags)
 DEPLDFLAGS+=$(shell boost-config --ldflags serialization iostreams filesystem)
 
 # ifeq ($(strip $(LIBLOCKFILE_ROOT)),)
@@ -103,6 +103,15 @@ DEPLDFLAGS+=$(shell boost-config --ldflags serialization iostreams filesystem)
 # endif
 # DEPCPPFLAGS+=$(shell liblockfile-config --cflags)
 # DEPLDFLAGS+=$(shell liblockfile-config --ldflags)
+
+ifeq ($(strip $(PBA_HELP_ROOT)),)
+$(error Sorry pba_help is not configured; please setup the pba_help package!)
+endif
+ifeq ($(shell which pba-config),)
+$(error Sorry pba-config not found!)
+endif
+DEPCPPFLAGS+=$(shell pba-config --cflags)
+DEPLDFLAGS+=$(shell pba-config --ldflags)
 
 ### End of dependencies
 CPPFLAGS+=$(DEPCPPFLAGS) 

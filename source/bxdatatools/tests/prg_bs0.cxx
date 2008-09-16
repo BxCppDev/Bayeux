@@ -41,29 +41,29 @@ public:
 
   data1(int32_t dummy_ = 0, uint32_t sz_ = 0) : __dummy(dummy_) 
   {
-    for (int i=0; i<sz_; i++) 
+    for (int i = 0; i < sz_; i++) 
       {
 	__vals.push_back(i);
       }
   }
 
-  friend std::ostream & operator<<( std::ostream & out_ , const data1 & d_ );
+  friend std::ostream & operator<<(std::ostream & out_, const data1 & d_);
 
 private:
 
   friend class boost::serialization::access; 
 
   template<class Archive>
-  void serialize(Archive          & ar_ , 
+  void serialize(Archive & ar_ , 
 		 const unsigned int version_)
   {
-    ar_ & boost::serialization::make_nvp("dummy",__dummy);
-    ar_ & boost::serialization::make_nvp("vals",__vals);
+    ar_ & boost::serialization::make_nvp("dummy", __dummy);
+    ar_ & boost::serialization::make_nvp("vals", __vals);
   }  
 
 };
 
-std::ostream & operator<<( std::ostream & out_ , const data1 & d_ )
+std::ostream & operator<<(std::ostream & out_, const data1 & d_)
 {
   out_ << "[data1.__dummy=" << d_.__dummy;
   out_ << ",data1.__vals={";

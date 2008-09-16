@@ -14,8 +14,11 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
+//#include <boost/archive/binary_iarchive.hpp>
+//#include <boost/archive/binary_oarchive.hpp>
+#include <boost/pba/portable_binary_oarchive.hpp>
+#include <boost/pba/portable_binary_iarchive.hpp>
+
 
 #include <boost/iostreams/filtering_stream.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
@@ -36,8 +39,8 @@ namespace datatools {
       public:
 	static bool g_debug;
       public:
-	static const int SUCCESS=0; 
-	static const int ERROR=1; 
+	static const int SUCCESS = 0; 
+	static const int ERROR   = 1; 
       private:
 	int            __mode;
 	std::istream * __in;
@@ -54,8 +57,10 @@ namespace datatools {
 	boost::archive::text_oarchive   * __otar_ptr;
 	boost::archive::xml_iarchive    * __ixar_ptr;
 	boost::archive::xml_oarchive    * __oxar_ptr;
-	boost::archive::binary_iarchive * __ibar_ptr;
-	boost::archive::binary_oarchive * __obar_ptr;
+	//boost::archive::binary_iarchive * __ibar_ptr;
+	//boost::archive::binary_oarchive * __obar_ptr;
+	portable_binary_iarchive * __ibar_ptr;
+	portable_binary_oarchive * __obar_ptr;
 	
       public:
 	
@@ -248,7 +253,11 @@ namespace datatools {
 	  }
 
 	template <typename Data>
-	  void __store_binary(boost::archive::binary_oarchive & ar_, 
+	  /*
+          void __store_binary(boost::archive::binary_oarchive & ar_, 
+			      const Data & data_)
+	  */
+	  void __store_binary(portable_binary_oarchive & ar_, 
 			      const Data & data_)
 	  {
 	    const Data & b = data_;
@@ -272,7 +281,11 @@ namespace datatools {
 	  }
 
 	template <typename Data>
+	  /*
 	  void __load_binary(boost::archive::binary_iarchive & ar_ , 
+			     Data & data_)
+	  */
+	  void __load_binary(portable_binary_iarchive & ar_ , 
 			     Data & data_)
 	  {
 	    Data & b = data_;

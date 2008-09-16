@@ -26,7 +26,8 @@ main(int argc_ , char ** argv_)
     enum format_t
       {
 	FORMAT_TXT = 0,
-	FORMAT_XML = 1
+	FORMAT_XML = 1,
+	FORMAT_BIN = 2
       };
     int fmt = FORMAT_XML;
 
@@ -42,6 +43,7 @@ main(int argc_ , char ** argv_)
 	    if ( arg == "-1000" ) nrecords = 1000;
 	    if ( arg == "-xml" )  fmt = FORMAT_XML;
 	    if ( arg == "-txt" )  fmt = FORMAT_TXT;
+	    if ( arg == "-bin" )  fmt = FORMAT_BIN;
 	    if ( arg == "-a" )    append = true;
 	  }
 	else 
@@ -69,6 +71,7 @@ main(int argc_ , char ** argv_)
       {
 	if (fmt == FORMAT_XML) filename = "test_serialization_2.xml";
 	if (fmt == FORMAT_TXT) filename = "test_serialization_2.txt";
+	if (fmt == FORMAT_BIN) filename = "test_serialization_2.data";
       } 
     
     namespace ds = datatools::serialization;

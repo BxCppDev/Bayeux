@@ -13,7 +13,7 @@
 #include <datatools/serialization/serialization.h>
 
 int 
-main( int argc_ , char ** argv_ ) 
+main(int argc_ , char ** argv_) 
 {
   try {
 
@@ -25,7 +25,8 @@ main( int argc_ , char ** argv_ )
     enum format_t
       {
 	FORMAT_TXT = 0,
-	FORMAT_XML = 1
+	FORMAT_XML = 1,
+	FORMAT_BIN = 2
       };
     int fmt   = FORMAT_XML;
     bool test = false;
@@ -34,15 +35,16 @@ main( int argc_ , char ** argv_ )
     while (iarg < argc_) 
       {
 	std::string arg=argv_[iarg];
-	if ( arg[0] == '-' ) 
+	if (arg[0] == '-') 
 	  {
-	    if ( arg == "-d" ) debug=true;
+	    if ( arg == "-d" ) debug = true;
 	    if ( arg == "-10" ) nrecords = 10;
 	    if ( arg == "-100" ) nrecords = 100;
 	    if ( arg == "-1000" ) nrecords = 1000;
-	    if ( arg == "-xml" ) fmt=FORMAT_XML;
-	    if ( arg == "-txt" ) fmt=FORMAT_TXT;
-	    if ( arg == "-test" ) test=true;
+	    if ( arg == "-xml" ) fmt = FORMAT_XML;
+	    if ( arg == "-txt" ) fmt = FORMAT_TXT;
+	    if ( arg == "-bin" ) fmt = FORMAT_BIN;
+	    if ( arg == "-test" ) test = true;
 	  }
 	else 
 	  {
@@ -69,6 +71,7 @@ main( int argc_ , char ** argv_ )
       {
 	if (fmt == FORMAT_XML) filename = "test_serialization.xml";
 	if (fmt == FORMAT_TXT) filename = "test_serialization.txt";
+	if (fmt == FORMAT_BIN) filename = "test_serialization.data";
       } 
 
     datatools::serialization::io_factory::g_debug = debug;
@@ -103,7 +106,7 @@ main( int argc_ , char ** argv_ )
       datatools::serialization::safe_serial<data_t>      ss_data;
       datatools::serialization::safe_serial<more_data_t> ss_more_data;
 
-      for (int i=0; i<nrecords; i++) 
+      for (int i = 0; i < nrecords; i++) 
 	{
 	  if (debug) std::cerr << "DEBUG: Counts = " << i << std::endl;
 	  double p = 0.25 + 0.5 * (i % 2);

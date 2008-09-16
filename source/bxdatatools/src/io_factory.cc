@@ -128,10 +128,11 @@ namespace datatools {
 	}
       else if (is_binary()) 
 	{
-	  __ibar_ptr = new boost::archive::binary_iarchive(*__in);
+	  //__ibar_ptr = new boost::archive::binary_iarchive(*__in);
+	  __ibar_ptr = new portable_binary_iarchive(*__in);
 	  if ( g_debug ) {
 	    std::cerr << "DEBUG: io_factory::__init_read_archive: "
-		      << "'boost::archive::binary_iarchive' library version" 
+		      << "'portable_binary_iarchive' library version" 
 		      << __ibar_ptr->get_library_version() << std::endl;
 	  }
 	}
@@ -277,11 +278,12 @@ namespace datatools {
 	}
       else if (is_binary()) 
 	{
-	  __obar_ptr = new boost::archive::binary_oarchive(*__out);
+	  //__obar_ptr = new boost::archive::binary_oarchive(*__out);
+	  __obar_ptr = new portable_binary_oarchive(*__out);
 	  if (g_debug) 
 	    {
 	      std::cerr << "DEBUG: io_factory::__init_write_archive: "
-			<< "'boost::archive::binary_oarchive' library version" 
+			<< "'portable_binary_oarchive' library version" 
 			<< __obar_ptr->get_library_version() << std::endl;
 	    }
 	}

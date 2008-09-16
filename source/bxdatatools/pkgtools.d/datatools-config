@@ -99,7 +99,8 @@ fi
 
 if [ "x$opt" = "x--cflags" ]; then
     echo -n "-I${THEPACK_INCLUDEDIR} "  \
-         "`boost-config --cflags` "
+         "`boost-config --cflags` " \
+         "`pba-config --cflags`"
     echo
 
 #    echo -n "-I${THEPACK_INCLUDEDIR} "  \
@@ -133,11 +134,9 @@ fi
 
 if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
     echo -n "-L${THEPACK_LIBDIR} -ldatatools "  \
-	"`boost-config --ldflags serialization iostreams filesystem` " 
+	"`boost-config --ldflags serialization iostreams filesystem` " \
+        "`pba-config --ldflags` " 
     echo
-
-#  echo -n "-L${THEPACK_LIBDIR} -ldatatools "  \
-#      "`boost-config --ldflags serialization iostreams filesystem` " \
 #      "`liblockfile-config --ldflags` "  
 
     ################################################################
