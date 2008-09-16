@@ -2,41 +2,69 @@ This is the 'datatools' package README file
 
 1 - Description:
 
-    A package that provides some tool classes
-    for data analysis.
+  A package that provides some tool classes for data analysis.
     
+  SVN repository:
+
+   * https://nemo.lpc-caen.in2p3.fr/svn/datatools/trunk
+
+   * https://nemo.lpc-caen.in2p3.fr/svn/datatools/tags/datatools-1.0
+    
+  This package depends on the 'boost' C++ library through 
+  the 'boost_help' package at:
+
+    https://nemo.lpc-caen.in2p3.fr/svn/boost_help/
+
+
 2 - Documentation:
+
+  Nothing for now.
 
  
 3 - Quick start:
 
+  Please install the 'boost_help' package first.
+
   Build shared library:
-  bash>$ ./pkgtools.d/pkgtool build
+
+    shell> ./pkgtools.d/pkgtool build
+
 
   Build sample programs:
-  bash>$ ./pkgtools.d/pkgtool build bin
+
+    shell> ./pkgtools.d/pkgtool build bin
+
 
   Installation:
-  bash>$ ./pkgtools.d/pkgtool install
+
+    shell> ./pkgtools.d/pkgtool install
+
 
   Setup script:
-  bash>$ source datatools.sh
+
+    shell> source datatools.(c)sh
+
 
   Run sample program:
-  bash>$ ./Linux-i686/bin/test_tree_dump 
+
+    shell> ./Linux-i686/bin/test_tree_dump 
+
 
   Uninstall:
-  bash>$ ./pkgtools.d/pkgtool uninstall
+
+    shell> ./pkgtools.d/pkgtool uninstall
+
 
   Clean built stuff:
-  bash>$ ./pkgtools.d/pkgtool clean
-   
 
+    shell> ./pkgtools.d/pkgtool clean
+
+   
 4 - Maintenance and bug report:
 
     Francois Mauger <mauger@lpccaen.in2p3.fr>
     Arnaud Chapon <chapon@lpccaen.in2p3.fr>
 
 --
-Last update: 2008-03-21 by Francois Mauger <mauger@lpccaen.in2p3.fr>
+Last update: 2008-09-16 by Francois Mauger <mauger@lpccaen.in2p3.fr>
 
