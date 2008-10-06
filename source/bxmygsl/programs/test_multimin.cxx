@@ -474,6 +474,11 @@ main (int argc_ , char ** argv_)
 		  mode = test_multimin_system::MODE_CHISQUARE;
 		}
 
+	      if (arg == "--50") 
+		{
+		  nevents = 50;   
+		}
+
 	      if (arg == "--5000") 
 		{
 		  nevents = 5000;   
