@@ -893,14 +893,31 @@ namespace datatools {
 	}
     }
   
-    properties::~properties()
+    properties::~properties ()
     {
       properties::clear();
     }
 
-    void properties::erase(const std::string & key_)
+    void properties::erase (const std::string & key_)
     {
-      __props.erase(__props.find(key_));
+      pmap::iterator found = __props.find(key_);
+      if (found == __props.end ())
+	{
+	  std::ostringstream message;
+	  message << "properties::erase: key '" << key_ << "' not known!";
+	  throw std::runtime_error (message.str ());	  
+	}
+      __props.erase(found);
+    }
+
+    void properties::clean (const std::string & key_)
+    {
+      
+      pmap::iterator found = __props.find(key_);
+      if (found != __props.end ())
+	{
+	  __props.erase(found);
+	}
     }
 
     void properties::clear()

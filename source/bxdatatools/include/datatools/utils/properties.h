@@ -472,10 +472,13 @@ namespace datatools {
       size(const std::string & key_) const;
 
       bool
-      has_key(const std::string & key_) const;
+      has_key (const std::string & key_) const;
 
       void
-      erase(const std::string & key_);
+      erase (const std::string & key_);
+
+      void
+      clean (const std::string & key_);
 
       virtual void
       clear();
