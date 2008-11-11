@@ -68,7 +68,7 @@ namespace datatools {
     }
 
     event_id::event_id(int run_number_ , 
-		       int event_number_ )
+		       int event_number_)
     {
       set(run_number_,event_number_);
     }
@@ -77,11 +77,24 @@ namespace datatools {
     {
     }
 
+    bool
+    event_id::has(int run_number_, int event_number_) const
+    {
+      return (__run_number == run_number_) 
+	&& (__event_number == event_number_);
+    }
+
     bool 
     event_id::is_valid() const
     {
       return (__run_number!=INVALID_RUN_NUMBER) 
 	&& (__event_number!=INVALID_EVENT_NUMBER);
+    }
+
+    bool
+    event_id::operator==(const event_id & id_) const
+    {
+      return has(id_.__run_number, id_.__event_number);
     }
 
     std::string 
@@ -105,32 +118,34 @@ namespace datatools {
     }
 
     std::ostream & 
-    operator<<(std::ostream & out_ , 
-	       const event_id & id_)
+    operator<< (std::ostream & out_ , 
+		const event_id & id_)
     {
-      out_ << id_.get_run_number() << event_id::IO_FORMAT_SEP 
-	   << id_.get_event_number();
+      out_ << id_.get_run_number () << event_id::IO_FORMAT_SEP 
+	   << id_.get_event_number ();
       return out_;
     }
-
+    
     std::istream & 
-    operator>>(std::istream & in_,
-	       event_id & id_)
+    operator>> (std::istream & in_,
+		event_id & id_)
     {
-      int r,e;
-      char c=0;
+      int r, e;
+      char c = 0;
       in_ >> r;
-      if ( !in_ ) return in_;
+      if (! in_) return in_;
       in_ >> c;
-      if ( !in_ ) return in_;
-      if ( c !=  event_id::IO_FORMAT_SEP ) {
-	in_.setstate(std::ios_base::failbit);
-	return in_;
-      }
+      if (! in_) return in_;
+      if (c !=  event_id::IO_FORMAT_SEP) 
+	{
+	  in_.setstate (std::ios_base::failbit);
+	  return in_;
+	}
       in_ >> e;
-      if ( in_ ) {
-	id_.set(r,e);
-      }
+      if (in_) 
+	{
+	  id_.set (r, e);
+	}
       return in_;
     }
 

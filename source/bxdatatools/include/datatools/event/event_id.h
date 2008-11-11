@@ -87,6 +87,12 @@ namespace datatools {
       bool
       is_valid() const;
 
+      bool
+      has(int, int) const;
+
+      bool
+      operator==(const event_id & id_) const;
+
       std::string
       to_string() const;
 
@@ -119,6 +125,24 @@ namespace datatools {
 	ar_ & boost::serialization::make_nvp("run_number",__run_number);
 	ar_ & boost::serialization::make_nvp("event_number",__event_number);
       }
+    };
+
+    class event_id_equal_predicate : public std::unary_function<event_id, bool>
+    {
+      event_id __id;
+      
+    public:
+      
+      event_id_equal_predicate (const event_id & id_)
+      {
+	__id = id_;
+      }
+      
+      bool operator() (const event_id & id_) const
+      {
+	return __id == id_;
+      }
+      
     };
 
   } // end of namespace event 
