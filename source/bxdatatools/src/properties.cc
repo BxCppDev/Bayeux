@@ -750,6 +750,9 @@ namespace datatools {
       if (key_arg_[key_arg_.size ()-1] == '.') return false;
       return true;
     }
+
+    /**********************************************/
+    const std::string properties::PRIVATE_PROPERTY_PREFIX = "__";
     
     void properties::__validate_key (const std::string & key_arg_) const
     {
@@ -766,7 +769,6 @@ namespace datatools {
 	}
     }
 
-    /**********************************************/
     void properties::set_description (const std::string & desc_)
     {
       __description = desc_;
@@ -964,6 +966,40 @@ namespace datatools {
       const data * data_ptr = 0;
       __check_key (key_, &data_ptr);
       return data_ptr->is_locked ();
+    }
+
+    std::string
+    properties::make_private_key(const std::string & key_)
+    {
+      if (key_is_private (key_)) return key_;
+      else
+	{
+	  std::ostringstream oss;
+	  oss << PRIVATE_PROPERTY_PREFIX << key_;
+	  return oss.str ();
+	}
+    }
+    
+    bool properties::key_is_private (const std::string & key_)
+    {
+      return key_.substr(0,PRIVATE_PROPERTY_PREFIX.size ()) == PRIVATE_PROPERTY_PREFIX;
+    }
+
+    bool properties::key_is_public (const std::string & key_)
+    {
+      return ! key_is_private (key_);
+    }
+
+    bool properties::is_private (const std::string & key_) const
+    {
+      const data * data_ptr = 0;
+      __check_key (key_, &data_ptr);
+      return key_is_private (key_);
+    }
+
+    bool properties::is_public (const std::string & key_) const
+    {
+      return ! is_private (key_);
     }
     
     bool properties::is_boolean (const std::string & key_) const
@@ -1819,8 +1855,9 @@ namespace datatools {
     }
 
     void properties::write_config (const std::string & filename_, 
-				   const properties & p_, 
-				   bool use_smart_modulo_)
+				   const properties & p_,
+				   bool use_smart_modulo_,
+				   bool write_public_only_)
     {
       std::ostream * out = &std::cout;
       std::ofstream fout;
@@ -1838,7 +1875,11 @@ namespace datatools {
 	    }
 	  out = &fout;
 	}
-      config a_cfg (use_smart_modulo_);
+      config a_cfg (use_smart_modulo_,
+		    config::mode_header_footer,
+		    (write_public_only_?
+		     config::write_public_only:
+		     config::write_private_also));
       a_cfg.write (*out, p_);
     }
 
@@ -1860,7 +1901,9 @@ namespace datatools {
       a_cfg.read (fin, p_);
     }
 
-    /*****************************************************************************/
+    /**********************************************************************/
+    const bool properties::config::write_public_only = true;
+    const bool properties::config::write_private_also = false;
 
     void properties::config::write (std::ostream & out_, 
 				    const properties & p_)
@@ -1889,6 +1932,11 @@ namespace datatools {
 	{
 	  const std::string        a_key  = i->first;
 	  const properties::data & a_data = i->second;
+
+	  if (__write_public_only)
+	    {
+	      if (key_is_private (a_key)) continue;
+	    }
 
 	  if (! a_data.get_description ().empty ()) 
 	    {
@@ -1994,11 +2042,14 @@ namespace datatools {
       __debug=debug_;
     }
 
-    properties::config::config (bool use_smart_modulo_, int mode_)
+    properties::config::config (bool use_smart_modulo_, 
+				int mode_,
+				bool write_public_only_)
     {
       __debug           = false;
       __use_smart_modulo= use_smart_modulo_ ;
       __mode            = MODE_HEADER_FOOTER;
+      __write_public_only = write_public_only_;
       __read_line_count = 0;
       __continuation_char = DEFAULT_CONTINUATION_CHAR;
       __comment_char = DEFAULT_COMMENT_CHAR;
