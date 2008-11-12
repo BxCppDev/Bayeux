@@ -643,7 +643,7 @@ namespace datatools {
     {
       std::string value;
       if ( get_value (value,index_) != ERROR_SUCCESS ) {
-	throw std::runtime_error ("properties::data::get_string_value: type is not double!");
+	throw std::runtime_error ("properties::data::get_string_value: type is not string!");
       }
       return value;
     }
@@ -669,6 +669,27 @@ namespace datatools {
     properties::data::dump (std::ostream & out_) const
     {
       tree_dump (std::cout,"datatools::utils::properties::data");
+    }
+
+    void 
+    properties::data::to_string (std::ostream & out_) const
+    {
+      out_ << '[';
+      out_ << get_type_label () << ':'
+	   << get_vector_label () << ":"
+	   << get_size () << ':';
+      for (int i = 0; i < get_size (); i++)
+	{
+	  if (i != 0) out_ << ' ';
+	  if (is_boolean ()) out_ << get_boolean_value (i);
+	  if (is_integer ()) out_ << get_integer_value (i);
+	  if (is_real ())    out_ << get_real_value (i);
+	  if (is_string ())  out_ << get_string_value (i);
+	}
+      out_ << ':'
+	   << get_description (); 
+      out_ << ']';
+	
     }
     
     void 
@@ -1795,6 +1816,29 @@ namespace datatools {
 
 
     /****************************/
+
+    std::string 
+    properties::key_to_string (const std::string & key_) const
+    {
+      if (! has_key (key_)) return "";
+      std::ostringstream oss;
+      const data * data_ptr = 0;
+      __check_key (key_, &data_ptr);
+      data_ptr->to_string (oss);
+      return oss.str ();
+    }
+
+    std::string 
+    properties::key_to_property_string (const std::string & key_) const
+    {
+      if (! has_key (key_)) return "";
+      std::ostringstream oss;
+      const data * data_ptr = 0;
+      __check_key (key_, &data_ptr);
+      oss << key_ << '=';
+      data_ptr->to_string (oss);
+      return oss.str ();
+    }
 
     void properties::tree_dump (std::ostream & out_, 
 				const std::string & title_,

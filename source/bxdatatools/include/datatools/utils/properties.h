@@ -259,7 +259,8 @@ namespace datatools {
 	void
 	dump (std::ostream &) const;
 
-	//static int create_data ( data & );
+	void 
+	to_string (std::ostream & out_) const;
 
 	static std::string
 	get_error_message (int);
@@ -281,23 +282,27 @@ namespace datatools {
 	serialize (Archive            & ar_ , 
 		  const unsigned int   version_)
 	{
-	  ar_ & boost::serialization::make_nvp ("description",__description);
-	  ar_ & boost::serialization::make_nvp ("flags",__flags);
+	  ar_ & boost::serialization::make_nvp ("description", __description);
+	  ar_ & boost::serialization::make_nvp ("flags", __flags);
 	  if (is_boolean ())
 	    {
-	      ar_ & boost::serialization::make_nvp ("boolean_values",__boolean_values);
+	      ar_ & boost::serialization::make_nvp ("boolean_values",
+						    __boolean_values);
 	    }
 	  if (is_integer ())
 	    {
-	      ar_ & boost::serialization::make_nvp ("integer_values",__integer_values);
+	      ar_ & boost::serialization::make_nvp ("integer_values",
+						    __integer_values);
 	    }
 	  if (is_real ())
 	    {
-	      ar_ & boost::serialization::make_nvp ("real_values",__real_values);
+	      ar_ & boost::serialization::make_nvp ("real_values",
+						    __real_values);
 	    }
 	  if (is_string ())
 	    {
-	      ar_ & boost::serialization::make_nvp ("string_values",__string_values);
+	      ar_ & boost::serialization::make_nvp ("string_values",
+						    __string_values);
 	    }
 	}
 
@@ -689,6 +694,13 @@ namespace datatools {
 		const std::string & title_  = "",
 		const std::string & indent_ = "",
 		bool inherit_               = false) const;
+
+      std::string 
+      key_to_string (const std::string & key_) const;
+
+      std::string 
+      key_to_property_string (const std::string & key_) const;
+
 
       virtual const std::string & 
       get_serial_tag () const;
