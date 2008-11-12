@@ -514,9 +514,18 @@ namespace datatools {
 
 	bool 
 	  record_tag_is (const std::string & tag_) const;
-
+	
 	void 
-	  reset ();
+	reset ();
+
+	bool
+	is_initialized () const;
+	
+	bool
+	is_multi_archives () const;
+
+	bool
+	is_single_archive () const;
 
 	void 
 	  init (const std::string & filename_, 

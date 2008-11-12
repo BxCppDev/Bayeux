@@ -912,6 +912,30 @@ namespace datatools {
       return __next_tag;
     }
 
+    bool
+    data_reader::is_initialized () const
+    {
+      return __reader != 0;
+    }
+
+    bool
+    data_reader::is_single_archive () const
+    {
+      return ! is_multi_archives ();
+    }
+
+    bool
+    data_reader::is_multi_archives () const
+    {
+      if (! is_initialized ())
+	{
+	  std::ostringstream message;
+	  message << "data_reader::is_multi_archives: reader is not initialized!"; 
+	  throw std::runtime_error (message.str ());
+	}
+      return __reader->is_multi_archives ();
+    }
+
     bool 
     data_reader::has_record_tag () const
     {
