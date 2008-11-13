@@ -571,10 +571,23 @@ namespace datatools {
 	    */
 	    catch (std::exception & x) 
 	      {
-		std::cerr << "WARNING: data_reader::_basic_load(...): "
-			  << "cannot read data: "
-			  << x.what () << '!'
-			  << std::endl;
+		bool warn = true;
+
+		//>>> 2008-11-13 FM: skip EOF message printing
+		std::string msg = x.what();
+		if (msg.find("EOF") != msg.npos)
+		  {
+		    warn = false;
+		  }
+		if (warn)
+		  {
+		    std::cerr << "WARNING: data_reader::_basic_load(...): "
+			      << "cannot read data: "
+			      << x.what () << '!'
+			      << std::endl;
+		  }
+		//<<<
+
 		__status   = STATUS_ERROR;
 		__next_tag = EMPTY_RECORD_TAG;
 
@@ -588,7 +601,7 @@ namespace datatools {
 			  << std::endl;
 		__status   = STATUS_ERROR;
 		__next_tag = EMPTY_RECORD_TAG;
-		throw std::runtime_error ("data_reader::_basic_load: internal error!");
+		throw std::runtime_error ("data_reader::_basic_load: unexpected error!");
 	      }
 	  }
 	

@@ -860,8 +860,19 @@ namespace datatools {
 	}
       catch (std::runtime_error & x) 
 	{
-	  std::cerr << "WARNING: data_reader::__read_next_tag: " 
-		    << x.what () << std::endl;
+	  bool warn = true;
+	  //>>> 2008-11-13 FM: skip EOF message printing
+	  std::string msg = x.what();
+	  if (msg.find("EOF") != msg.npos)
+	    {
+	      warn = false;
+	    }
+	  if (warn)
+	    {
+	      std::cerr << "WARNING: data_reader::__read_next_tag: " 
+			<< x.what () << std::endl;
+	    }
+	  //<<<
 	  __status   = STATUS_ERROR;
 	  __next_tag = EMPTY_RECORD_TAG;
 	}
