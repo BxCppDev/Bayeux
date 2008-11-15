@@ -88,10 +88,17 @@ namespace datatools {
       is_valid() const;
 
       bool
-      has(int, int) const;
+      has (int, int) const;
 
       bool
-      operator==(const event_id & id_) const;
+      operator== (const event_id & id_) const;
+
+      bool
+      operator< (const event_id & id_) const;
+
+      bool
+      operator> (const event_id & id_) const;
+
 
       std::string
       to_string() const;

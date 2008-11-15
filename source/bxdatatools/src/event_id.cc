@@ -92,9 +92,31 @@ namespace datatools {
     }
 
     bool
-    event_id::operator==(const event_id & id_) const
+    event_id::operator== (const event_id & id_) const
     {
       return has(id_.__run_number, id_.__event_number);
+    }
+
+    bool
+    event_id::operator< (const event_id & id_) const
+    {
+      if (__run_number < id_.__run_number) return true;
+      if (__run_number == id_.__run_number) 
+	{
+	  if (__event_number < id_.__event_number) return true;	  
+	}
+      return false;      
+    }
+
+    bool
+    event_id::operator> (const event_id & id_) const
+    {
+      if (__run_number > id_.__run_number) return true;
+      if (__run_number == id_.__run_number) 
+	{
+	  if (__event_number > id_.__event_number) return true;	  
+	}
+      return false;      
     }
 
     std::string 
