@@ -1116,6 +1116,13 @@ namespace datatools {
 	}
       *data_ = & (iter->second);
     }
+
+    void properties::store_flag (const std::string & key_, 
+			    const std::string & desc_, 
+			    bool lock_)
+    {
+      store (key_, true, desc_, lock_);
+    }
   
     void properties::store (const std::string & key_, 
 			    bool value_, 
@@ -1484,6 +1491,12 @@ namespace datatools {
     /********************/
 
     void
+    properties::update_flag (const std::string & key_)
+    {
+      update (key_, true);
+    }
+
+    void
     properties::update (const std::string & key_, 
 			bool value_)
     {
@@ -1598,7 +1611,7 @@ namespace datatools {
     }
 
     /********************/
-  
+ 
     void properties::fetch (const std::string & key_, 
 			    bool & value_, int index_) const
     {
@@ -1658,7 +1671,21 @@ namespace datatools {
 	  throw std::runtime_error (message.str ());
 	}    
     }
-  
+    
+    bool
+    properties::has_flag (const std::string & key_) const
+    {
+      bool flag_is_on = false;
+      try
+	{
+	  flag_is_on = fetch_boolean (key_, 0);
+	}
+      catch (std::runtime_error & e)
+	{
+	}
+      return flag_is_on;
+    }
+   
     bool properties::fetch_boolean (const std::string & key_, 
 				    int index_) const
     {

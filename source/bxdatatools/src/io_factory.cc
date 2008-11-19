@@ -1024,6 +1024,30 @@ namespace datatools {
     }
 
     /***********************************************************/
+
+    bool
+    data_writer::is_initialized () const
+    {
+      return __writer != 0;
+    }
+
+    bool
+    data_writer::is_single_archive () const
+    {
+      return ! is_multi_archives ();
+    }
+
+    bool
+    data_writer::is_multi_archives () const
+    {
+      if (! is_initialized ())
+	{
+	  std::ostringstream message;
+	  message << "data_writer::is_multi_archives: writer is not initialized!"; 
+	  throw std::runtime_error (message.str ());
+	}
+      return __writer->is_multi_archives ();
+    }
 	
     void 
     data_writer::__init_writer (const std::string & filename_ , 

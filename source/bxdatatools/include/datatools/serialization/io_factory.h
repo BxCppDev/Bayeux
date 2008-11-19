@@ -655,6 +655,14 @@ namespace datatools {
 	  __reset_writer ();
 
       public:
+	bool
+	is_initialized () const;	
+		
+	bool
+	is_multi_archives () const;
+
+	bool
+	is_single_archive () const;
 
 	void 
 	  reset ();

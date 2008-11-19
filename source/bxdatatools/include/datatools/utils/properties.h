@@ -505,10 +505,15 @@ namespace datatools {
       clear ();
  
       void
+      store_flag (const std::string & key_, 
+	     const std::string & desc_ = "",
+	     bool lock_ = false);
+
+      void
       store (const std::string & key_, 
-	    bool value_, 
-	    const std::string & desc_ = "",
-	    bool lock_ = false);
+	     bool value_, 
+	     const std::string & desc_ = "",
+	     bool lock_ = false);
 
       void
       store (const std::string & key_, 
@@ -602,6 +607,9 @@ namespace datatools {
       /*****/
 
       void
+      update_flag (const std::string & key_);
+
+      void
       update (const std::string & key_, 
 	     bool value_);
 
@@ -634,6 +642,10 @@ namespace datatools {
 	     const data::vstring & values_);
 
       /*****/
+
+      bool
+      has_flag (const std::string & key_) const;
+
       void
       fetch (const std::string & key_, 
 	    bool   & value_, 
