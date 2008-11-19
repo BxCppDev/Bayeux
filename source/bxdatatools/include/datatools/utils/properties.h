@@ -641,7 +641,7 @@ namespace datatools {
       update (const std::string & key_, 
 	     const data::vstring & values_);
 
-      /*****/
+      /*****/ 
 
       bool
       has_flag (const std::string & key_) const;
