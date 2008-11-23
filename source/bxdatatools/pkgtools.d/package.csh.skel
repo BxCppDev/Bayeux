@@ -12,6 +12,7 @@ set libs="${__PACKAGE_NAME___ROOT}/${uname_s}-${uname_m}/lib"
 set bins="${__PACKAGE_NAME___ROOT}/${uname_s}-${uname_m}/bin"
 setenv PATH ${PATH}:"${bins}"
 
+setenv __PACKAGE_NAME___NO_PBA 0
 set sysarch=`uname`
 if ( ${sysarch} == Linux ) then 
   if (  $?LD_LIBRARY_PATH ) then

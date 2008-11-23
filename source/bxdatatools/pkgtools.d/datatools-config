@@ -38,6 +38,11 @@ elif [ -f "$THEPACK_ROOT/pkgtools.d/package.info"  ]; then
     THEPACK_VERSION=$version
 fi
 
+with_boost_pba=1
+if [ "x${DATATOOLS_NO_PBA}" != "x0" ]; then
+    with_boost_pba=0
+fi
+
 opt=$1
 
 if [ "x$opt" = "x" ]; then
@@ -99,8 +104,10 @@ fi
 
 if [ "x$opt" = "x--cflags" ]; then
     echo -n "-I${THEPACK_INCLUDEDIR} "  \
-         "`boost-config --cflags` " \
-         "`pba-config --cflags`"
+	"`boost-config --cflags` "
+    if [ ${with_boost_pba} -eq 1 ]; then
+        echo -n  "`pba-config --cflags`"
+    fi
     echo
 
 #    echo -n "-I${THEPACK_INCLUDEDIR} "  \
@@ -134,8 +141,10 @@ fi
 
 if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
     echo -n "-L${THEPACK_LIBDIR} -ldatatools "  \
-	"`boost-config --ldflags serialization iostreams filesystem` " \
-        "`pba-config --ldflags` " 
+	"`boost-config --ldflags serialization iostreams filesystem` " 
+    if [ ${with_boost_pba} -eq 1 ]; then
+        echo -n  "`pba-config --ldflags` "
+    fi
     echo
 #      "`liblockfile-config --ldflags` "  
 

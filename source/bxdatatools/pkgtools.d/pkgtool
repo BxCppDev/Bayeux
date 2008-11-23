@@ -41,13 +41,13 @@ function warning_msg()
 
 function info_msg()
 {
-    test ${verbose} = 0 & return
+    test ${verbose} = 0 && return
     echo "${APPNAME} (${pack_name}): INFO: $@" 1>&2
 }
 
 function debug_msg()
 {
-    test ${debug} = 0 & return
+    test ${debug} = 0 && return
     echo "${APPNAME} (${pack_name}): DEBUG: $@"
 }
 
@@ -64,7 +64,14 @@ function print_usage()
   Available modes are:
 
     $APPNAME info       : print package info
-    $APPNAME configure  : configure package (not implemented)
+    $APPNAME configure  [OPTIONS]: configure package 
+                          OPTIONS:
+                          --with-pba (default) :
+                            depends on Portable Binary Archive boost extension
+                            from the 'pba_help' package
+                          --without-pba :
+                            do not use 'pba_help' stuff
+
     $APPNAME build      : build package
     $APPNAME clean      : clean package
     $APPNAME install    : install package
@@ -75,14 +82,17 @@ EOF
 
 #######################################################
 
+other_options=
+
 parse_switch=1
 while [ -n "$1" ]; do
     arg="$1"
     
     if [ "${arg:0:1}" = "-" ]; then
 	if [ ${parse_switch} = 0 ]; then
-	    err_msg "Options (-X) must be placed before arguments!"
-	    exit 1
+	    break
+	    #err_msg "Options (-X) must be placed before arguments!"
+	    #exit 1
 	fi
 	if [ "${arg}" = "-h" -o "${arg}" = "--help" ]; then
 	    do_usage=1 
@@ -114,6 +124,7 @@ while [ -n "$1" ]; do
 		exit 1
 	    fi
 	else
+	    other_options="${other_options} ${arg}"
 	    # remaining arguments on command line are kept in "$@"
 	    break
 	fi
@@ -149,6 +160,11 @@ else
     exit 1    
 fi
 #echo "Base package directory is '${the_base_dir}'!"
+
+without_pba_flag_file=${the_base_dir}/gmk/datatools_without_pba.config
+
+
+
 if [ -d ${the_base_dir}/gmk ]; then
     GMKDIR=${the_base_dir}/gmk
 else
@@ -257,14 +273,69 @@ function do_clean()
 
 function do_configure()
 {
-    info_msg "Configure package '${pack_name}': nothing special..."
-    echo "Configure package '${pack_name}': nothing special..."
+
+    info_msg "Configure package '${pack_name}'..."
+    #echo "do_configure: args='$@'"
+    #echo "do_configure: args0='$0'"
+    #echo "do_configure: args1='$1'"
+    #echo "do_configure: args2='$2'"
+    with_pba=1
+    for arg in $@ ; do
+	#echo "do_configure: while"
+	
+	#echo "Configure with argument '${arg}'..."
+
+	if [ "x${arg}" = "x--with-pba" ]; then
+	    with_pba=1
+	fi
+
+	if [ "x${arg}" = "x--without-pba" ]; then
+	    with_pba=0
+	fi
+    done
+
+    which boost-config > /dev/null
+    if [ $? -ne 0 ]; then
+	err_msg "The 'boost_help' package is not setup!"
+	return 1
+    else
+	info_msg "The 'boost_help' package seems ok!"
+	boost_version=$(boost-config --version)
+	if [ "${boost_version}" != "1_34_1" ]; then
+	    err_msg "Boost has no version 1.34.1!"
+	    return 1
+	fi
+    fi
+
+    if [ ${with_pba} -eq 0 ]; then
+	warning_msg "Do not use Portable Binary Archives from the 'pba_help' package!"
+
+	cat > ${without_pba_flag_file} <<EOF 
+# datatools does not use pba_help:
+export DATATOOLS_NO_PBA=1
+EOF
+    else
+	warning_msg "Use Portable Binary Archives from the 'pba_help' package!"
+	test -f ${without_pba_flag_file} && rm -f ${without_pba_flag_file}
+	which pba-config > /dev/null
+	if [ $? -ne 0 ]; then
+	    err_msg "The 'pba_help' package is not setup!"
+	    return 1
+	else
+	    info_msg "The 'pba_help' package seems ok!"
+	fi
+    fi
+
+    return 0
 }
 
 function do_build()
 {
     info_msg "Build package '${pack_name}'..."
     if [ -d ${GMKDIR} ]; then
+	if [ -f ${without_pba_flag_file} ]; then
+	    source ${without_pba_flag_file}
+	fi
 	do_build_gmk $@
 	return $?
     fi

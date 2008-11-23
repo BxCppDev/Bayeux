@@ -17,9 +17,10 @@
 #include <boost/archive/xml_oarchive.hpp>
 //#include <boost/archive/binary_iarchive.hpp>
 //#include <boost/archive/binary_oarchive.hpp>
+#ifdef DATATOOLS_USE_PBA
 #include <boost/pba/portable_binary_oarchive.hpp>
 #include <boost/pba/portable_binary_iarchive.hpp>
-
+#endif
 
 #include <boost/iostreams/filtering_stream.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
@@ -60,9 +61,10 @@ namespace datatools {
 	boost::archive::xml_oarchive    * __oxar_ptr;
 	//boost::archive::binary_iarchive * __ibar_ptr;
 	//boost::archive::binary_oarchive * __obar_ptr;
+#ifdef DATATOOLS_USE_PBA
 	portable_binary_iarchive * __ibar_ptr;
 	portable_binary_oarchive * __obar_ptr;
-	
+#endif	
       public:
 	
 	static const int MASK_RW           = 0x1;
@@ -79,10 +81,14 @@ namespace datatools {
 	    write            = MODE_WRITE,
 	    
 	    MODE_TEXT        = 0x0,
+	    //#ifdef DATATOOLS_USE_PBA
 	    MODE_BINARY      = 0x2,
+	    //#endif
 	    MODE_XML         = 0x4,
 	    text             = MODE_TEXT,
+	    //#ifdef DATATOOLS_USE_PBA
 	    binary           = MODE_BINARY,
+	    //#endif
 	    xml              = MODE_XML,
 	    
 	    MODE_NO_COMPRESS = 0x0,
@@ -124,7 +130,9 @@ namespace datatools {
 
 	static const std::string TXT_EXT;
 	static const std::string XML_EXT;
+	//#ifdef DATATOOLS_USE_PBA
 	static const std::string BIN_EXT;
+	//#endif
 	static const std::string GZ_EXT;
 	static const std::string BZIP2_EXT;
 
@@ -245,6 +253,7 @@ namespace datatools {
 	    ar_ << boost::serialization::make_nvp ("record", b);
 	  }
 
+#ifdef DATATOOLS_USE_PBA
 	template <typename Data>
 	  /*
 	    void __store_binary(boost::archive::binary_oarchive & ar_, 
@@ -256,6 +265,7 @@ namespace datatools {
 	    const Data & b = data_;
 	    ar_ << b; 
 	  }
+#endif
 
 	template <typename Data>
 	  void __load_text (boost::archive::text_iarchive & ar_, 
@@ -273,6 +283,7 @@ namespace datatools {
 	    ar_ >> boost::serialization::make_nvp ("record", b);
 	  }
 
+#ifdef DATATOOLS_USE_PBA
 	template <typename Data>
 	  /*
 	    void __load_binary(boost::archive::binary_iarchive & ar_ , 
@@ -284,6 +295,7 @@ namespace datatools {
 	    Data & b = data_;
 	    ar_ >> b; 
 	  }
+#endif
 
       public:
 
@@ -303,10 +315,12 @@ namespace datatools {
 	      {
 		__store_xml (*__oxar_ptr,data_);
 	      }
+#ifdef DATATOOLS_USE_PBA
 	    if (__obar_ptr != 0)
 	      {
 		__store_binary (*__obar_ptr,data_);
 	      }
+#endif
 	  }
 
 	template <typename Data>
@@ -361,10 +375,12 @@ namespace datatools {
 		    __load_xml (*__ixar_ptr, data_);
 		    *__in_fs >> std::ws;
 		  }
+#ifdef DATATOOLS_USE_PBA
 		if (__ibar_ptr != 0)
 		  {
 		    __load_binary (*__ibar_ptr, data_);
 		  }
+#endif
 	      }
 	    catch (std::exception & x) 
 	      {

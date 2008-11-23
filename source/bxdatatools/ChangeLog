@@ -2,3 +2,19 @@ This is the datatools package ChangeLog
 
 2008-02-25 : creation by Francois Mauger <mauger@lpccaen.in2p3.fr>
 
+2008-09 : version 1.0
+	- first release tag
+	
+2008-09 : version 2.0
+	- add Portable Binary Archive support from pba_help package
+
+2008-11-23 : version 2.1
+	- make support for Portable Binary Archive optional:
+	Build/install:
+	./pkgtools.d/pkgtool configure [--without-pba]
+	./pkgtools.d/pkgtool build
+	./pkgtools.d/pkgtool build bin
+	./pkgtools.d/pkgtool install
+	
+
+	

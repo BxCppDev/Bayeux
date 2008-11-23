@@ -12,6 +12,7 @@ libs="${__PACKAGE_NAME___ROOT}/${uname_s}-${uname_m}/lib"
 bins="${__PACKAGE_NAME___ROOT}/${uname_s}-${uname_m}/bin"
 export PATH=${PATH}:"${bins}"
 
+export __PACKAGE_NAME___NO_PBA=0
 sysarch=$(uname)
 if [ "${sysarch}" = "Linux" ]; then 
   if [ -n "${LD_LIBRARY_PATH}" ]; then

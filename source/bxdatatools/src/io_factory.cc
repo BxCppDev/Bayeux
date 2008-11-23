@@ -10,7 +10,9 @@ namespace datatools {
 
     const std::string io_factory::TXT_EXT   = "txt";
     const std::string io_factory::XML_EXT   = "xml";
+    //#ifdef DATATOOLS_USE_PBA
     const std::string io_factory::BIN_EXT   = "data";
+    //#endif
     const std::string io_factory::GZ_EXT    = "gz";
     const std::string io_factory::BZIP2_EXT = "bz2";
 
@@ -129,6 +131,7 @@ namespace datatools {
 	}
       else if (is_binary ()) 
 	{
+#ifdef DATATOOLS_USE_PBA
 	  //__ibar_ptr = new boost::archive::binary_iarchive(*__in);
 	  __ibar_ptr = new portable_binary_iarchive (*__in);
 	  if (g_debug) 
@@ -137,6 +140,9 @@ namespace datatools {
 			<< "'portable_binary_iarchive' library version" 
 			<< __ibar_ptr->get_library_version () << std::endl;
 	    }
+#else
+	  throw std::runtime_error ("io_factory::__init_read_archive: binary format is not supported!");
+#endif
 	}
       else 
 	{
@@ -166,12 +172,13 @@ namespace datatools {
 	  __ixar_ptr = 0;
 	}
 
+#ifdef DATATOOLS_USE_PBA
       if (__ibar_ptr != 0) 
 	{
 	  delete __ibar_ptr;
 	  __ibar_ptr = 0;
 	}
-
+#endif
       __read_archive_is_initialized = false;
       return 0;
     }
@@ -208,6 +215,7 @@ namespace datatools {
 	      std::cerr << "DEBUG: io_factory::__init_read: file='" 
 			<< stream_name_ << "'" << std::endl;
 	    }
+#ifdef DATATOOLS_USE_PBA
 	  if (is_compressed () || is_binary ()) 
 	    {
 	      __fin = new std::ifstream (stream_name_.c_str (),
@@ -215,9 +223,12 @@ namespace datatools {
 	    }
 	  else 
 	    {
+#endif
 	      __fin = new std::ifstream (stream_name_.c_str (),
 					 std::ios_base::in);
+#ifdef DATATOOLS_USE_PBA
 	    }
+#endif
 	  if (! *__fin) 
 	    {
 	      throw std::runtime_error ("io_factory::__init_read: Cannot open input stream!");
@@ -289,6 +300,7 @@ namespace datatools {
 	}
       else if (is_binary ()) 
 	{
+#ifdef DATATOOLS_USE_PBA
 	  //__obar_ptr = new boost::archive::binary_oarchive(*__out);
 	  __obar_ptr = new portable_binary_oarchive (*__out);
 	  if (g_debug) 
@@ -297,6 +309,9 @@ namespace datatools {
 			<< "'portable_binary_oarchive' library version" 
 			<< __obar_ptr->get_library_version () << std::endl;
 	    }
+#else
+	  throw std::runtime_error ("io_factory::__init_write_archive: binary format is not supported!");
+#endif
 	}
       else 
 	{
@@ -339,10 +354,12 @@ namespace datatools {
 	    }
 
 	  std::ios_base::openmode open_mode = std::ios_base::out;
+#ifdef DATATOOLS_USE_PBA
 	  if (is_compressed () || is_binary ())
 	    { 
 	      open_mode |= std::ios_base::binary;
 	    }
+#endif
 	  if (is_append ())
 	    {
 	      if (is_single_archive ())
@@ -419,6 +436,7 @@ namespace datatools {
 	  __oxar_ptr = 0;
 	}
 
+#ifdef DATATOOLS_USE_PBA
       if (__obar_ptr != 0) 
 	{
 	  if (g_debug) 
@@ -429,6 +447,7 @@ namespace datatools {
 	  delete __obar_ptr;
 	  __obar_ptr = 0;
 	}
+#endif
 
       __write_archive_is_initialized = false;
       return 0;
@@ -549,8 +568,10 @@ namespace datatools {
       __otar_ptr = 0;
       __ixar_ptr = 0;
       __oxar_ptr = 0;
+#ifdef DATATOOLS_USE_PBA
       __ibar_ptr = 0;
       __obar_ptr = 0;
+#endif
       __in_fs = 0;
       __out_fs = 0;
       __mode = io_factory::MODE_DEFAULT;
@@ -636,8 +657,10 @@ namespace datatools {
       out_ << indent << du::i_tree_dumpable::tag 
 	   << "is_text : " << is_text () << std::endl;
 
+#ifdef DATATOOLS_USE_PBA
       out_ << indent << du::i_tree_dumpable::tag 
 	   << "is_binary : " << is_binary () << std::endl;
+#endif
 
       out_ << indent << du::i_tree_dumpable::tag 
 	   << "is_xml : " << is_xml () << std::endl;
