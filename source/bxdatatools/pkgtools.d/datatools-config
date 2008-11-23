@@ -106,6 +106,7 @@ if [ "x$opt" = "x--cflags" ]; then
     echo -n "-I${THEPACK_INCLUDEDIR} "  \
 	"`boost-config --cflags` "
     if [ ${with_boost_pba} -eq 1 ]; then
+        echo -n  "-DDATATOOLS_USE_PBA=1 "
         echo -n  "`pba-config --cflags`"
     fi
     echo
