@@ -12,6 +12,8 @@ This is the 'datatools' package README file
     
    * https://nemo.lpc-caen.in2p3.fr/svn/datatools/tags/datatools-2.0
     
+   * https://nemo.lpc-caen.in2p3.fr/svn/datatools/tags/datatools-2.1
+    
 
   This package depends on the 'boost' C++ library through 
   the 'boost_help' package available at:
@@ -25,6 +27,9 @@ This is the 'datatools' package README file
   available at:
 
    * https://nemo.lpc-caen.in2p3.fr/svn/pba_help/
+  For version 2.1, 'datatools' depends on the 'pba_help' package
+  but this dependency can be skipped on demand at configuration stage.
+
 
 
 2 - Documentation:
@@ -35,6 +40,19 @@ This is the 'datatools' package README file
 3 - Quick start:
 
   Please install the 'boost_help' package first.
+
+  Configure:
+
+    shell> ./pkgtools.d/pkgtool configure [OPTION]
+
+    With 'pba_help' support (this is the default):
+
+	shell> ./pkgtools.d/pkgtool configure --with-pba
+
+    Without 'pba_help' support:
+
+	shell> ./pkgtools.d/pkgtool configure --without-pba
+
 
   Build shared library:
 
@@ -77,4 +95,4 @@ This is the 'datatools' package README file
     Arnaud Chapon <chapon@lpccaen.in2p3.fr>
 
 --
-Last update: 2008-09-16 by Francois Mauger <mauger@lpccaen.in2p3.fr>
+Last update: 2008-11-24 by Francois Mauger <mauger@lpccaen.in2p3.fr>
