@@ -1,7 +1,7 @@
 # -*- mode: makefile; -*- 
 # GNUmakefile (language C++)
 
-SHELL=/bin/sh
+SHELL=/bin/bash
 OS=$(shell uname -s)
 ifneq ($(OS),Linux)
 ifneq ($(OS),Darwin)
@@ -71,8 +71,25 @@ DEPLDFLAGS=
 #DEP_HOOK
 
 # GSL dependency:
-DEPCPPFLAGS+=$(shell gsl-config --cflags)
-DEPLDFLAGS+=$(shell gsl-config --libs)
+gsl_config_def=$(shell which gsl-config)
+gsl_version_def=$(shell $(gsl_config) --version)
+gsl_prefix_def=$(shell $(gsl_config) --prefix)
+gsl_test_path=$(GSL_BASE_DIR)
+#$(warning gsl_test_path=$(gsl_test_path))	
+ifneq ($(strip $(GSL_BASE_DIR)),)
+gsl_config=$(GSL_BASE_DIR)/bin/gsl-config
+$(warning Using special GSL version in $(shell $(gsl_config) --prefix) (from GSL_BASE_DIR=$(GSL_BASE_DIR))!)
+gsl_version=$(shell $(gsl_config) --version)
+gsl_prefix=$(shell $(gsl_config) --prefix)
+else
+$(warning Using default GSL version in $(shell $(gsl_config) --prefix)!)
+gsl_prefix=$(gsl_prefix_def)
+gsl_version=$(gsl_version_def)
+gsl_config=$(gsl_config_def)
+endif
+
+DEPCPPFLAGS+=$(shell $(gsl_config) --cflags)
+DEPLDFLAGS+=$(shell $(gsl_config) --libs)
 
 # CLHEP samples:
 #ifeq ($(strip $(CLHEP_BASE_DIR)),)
@@ -96,7 +113,9 @@ DEPLDFLAGS+=$(shell gsl-config --libs)
 
 # ROOT samples:
 #ifeq ($(strip $(ROOTSYS)),)
-#$(error Sorry ROOT is not configured!)
+#$(warning Sorry ROOT is not configured!)
+#else
+#$(warning ROOTSYS=$(ROOTSYS))
 #endif
 #ifeq ($(shell which root-config),)
 #$(error Sorry root-config not found!)
@@ -143,6 +162,13 @@ binaries.static:= $(programs:%$(PROGEXT)=%.static$(BINEXT))
   bin bins bin_static bin_shared system test dist install uninstall 
 
 test:
+	@echo "Default GSL version='$(gsl_version_def)'"
+	@echo "Default GSL prefix='$(gsl_prefix_def)'"
+	@echo "Default GSL config='$(gsl_config_def)'"
+	@echo "GSL_BASE_DIR='$(GSL_BASE_DIR)'"
+	@echo "Current GSL version='$(gsl_version)'"
+	@echo "Current GSL config='$(gsl_config)'"
+	@echo "Current GSL prefix='$(gsl_prefix)'"
 	@echo "PACKAGE_DIR='$(PACKAGE_DIR)'"
 	@echo "PACKAGENAME='$(PACKAGENAME)'"
 	@echo "LIBNAME='$(LIBNAME)'"
