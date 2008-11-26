@@ -26,7 +26,7 @@ the_base_dir=.
 tool_mode=""
 do_usage=0
 debug=0
-verbose=0
+verbose=1
 ###setup_dir=${HOME}
 
 function err_msg()
@@ -41,13 +41,13 @@ function warning_msg()
 
 function info_msg()
 {
-    test ${verbose} = 0 & return
+    test ${verbose} = 0 && return
     echo "${APPNAME} (${pack_name}): INFO: $@" 1>&2
 }
 
 function debug_msg()
 {
-    test ${debug} = 0 & return
+    test ${debug} = 0 && return
     echo "${APPNAME} (${pack_name}): DEBUG: $@"
 }
 
@@ -64,7 +64,7 @@ function print_usage()
   Available modes are:
 
     $APPNAME info       : print package info
-    $APPNAME configure  : configure package (not implemented)
+    $APPNAME conffigure  : configure package (not implemented)
     $APPNAME build      : build package
     $APPNAME clean      : clean package
     $APPNAME install    : install package
@@ -257,8 +257,38 @@ function do_clean()
 
 function do_configure()
 {
-    info_msg "Configure package '${pack_name}': nothing special..."
-    echo "Configure package '${pack_name}': nothing special..."
+    info_msg "Configure package '${pack_name}'..."
+
+    # check GSL version and path:
+    info_msg "Checking GSL..."
+    gsl_config_def=$(which gsl-config)
+    gsl_version_def=$(${gsl_config_def} --version)
+    if [ "x${GSL_BASE_DIR}" != "x" ]; then
+	info_msg "Found GSL_BASE_DIR='${GSL_BASE_DIR}'!"
+	if [ ! -d "${GSL_BASE_DIR}" ]; then
+	    err_msg "GSL_BASE_DIR='${GSL_BASE_DIR}' is not a valid directory! Abort!"
+	    return 1
+	fi
+	info_msg "GSL_BASE_DIR='${GSL_BASE_DIR}' is valid!"
+	gsl_config=$(find ${GSL_BASE_DIR}/bin -mindepth 1 -maxdepth 1 -name "gsl-config")
+	gsl_version=$(${gsl_config} --version)
+    else
+	gsl_config=${gsl_config_def}
+	gsl_version=${gsl_version_def}
+    fi
+    
+    gsl_major=$(echo ${gsl_version} | cut -d'.' -f1)
+    gsl_minor=$(echo ${gsl_version} | cut -d'.' -f2)
+    if [ ${gsl_major} -lt 1 ]; then
+	err_msg "GSL version ${gsl_version} is not suitable! Abort!"
+	return 1
+    elif [ ${gsl_major} -eq 1 -a ${gsl_minor} -lt 10 ]; then
+	err_msg "GSL version ${gsl_version} is not suitable! Abort!" 
+	return 1
+    fi
+    info_msg "GSL version ${gsl_version} is valid!"
+
+    info_msg "Configure package '${pack_name}' done."
 }
 
 function do_build()
@@ -454,6 +484,7 @@ function do_info()
 #######################################################
 
 if [ "${tool_mode}" = "configure" ]; then
+    #echo "TEST"
     do_configure $@
     if [ $? -ne 0 ]; then
 	err_msg "Configure failed!"
