@@ -3,6 +3,7 @@
 #ifndef __datatools__utils__utils_h
 #define __datatools__utils__utils_h 1
 
+#include <cstdlib>
 #include <string>
 #include <stdexcept>
 #include <list>
