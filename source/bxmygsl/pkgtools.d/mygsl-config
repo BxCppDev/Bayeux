@@ -93,7 +93,7 @@ gsl_minor=$(echo ${gsl_version} | cut -d'.' -f2)
 if [ ${gsl_major} -lt 1 ]; then
     echo "$SCRIPTNAME: error: GSL version ${gsl_version} is not suitable! Abort!" 1>&2
     exit 1
-elif [ ${gsl_major} -eq 1 -a ${gsl_minor} -lt 9 ]; then
+elif [ ${gsl_major} -eq 1 -a ${gsl_minor} -lt 10 ]; then
 	echo "$SCRIPTNAME: error: GSL version ${gsl_version} is not suitable! Abort!" 1>&2
 	exit 1
 fi
