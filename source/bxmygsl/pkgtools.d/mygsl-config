@@ -125,6 +125,8 @@ fi
 cat <<EOF
   Current GSL version is:        ${gsl_version}
   Current GSL config is:         ${gsl_config}
+  Current PATH is:               ${PATH}
+  Current LD_LIBRARY_PATH is:    ${LD_LIBRARY_PATH}
 EOF
     exit 0
 fi 
