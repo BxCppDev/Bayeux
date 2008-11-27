@@ -75,6 +75,7 @@ fi
 
 gsl_config_def=$(which gsl-config)
 gsl_version_def=$(${gsl_config_def} --version)
+gsl_prefix_def=$(${gsl_config_def} --prefix)
 
 if [ "x${GSL_BASE_DIR}" != "x" ]; then
     if [ ! -d "${GSL_BASE_DIR}" ]; then
@@ -83,9 +84,11 @@ if [ "x${GSL_BASE_DIR}" != "x" ]; then
     fi
     gsl_config=$(find ${GSL_BASE_DIR}/bin -mindepth 1 -maxdepth 1 -name "gsl-config")
     gsl_version=$(${gsl_config} --version)
+    gsl_prefix=$(${gsl_config} --prefix)
 else
     gsl_config=${gsl_config_def}
     gsl_version=${gsl_version_def}
+    gsl_prefix=${gsl_prefix_def}
 fi
 
 gsl_major=$(echo ${gsl_version} | cut -d'.' -f1)
@@ -99,11 +102,27 @@ elif [ ${gsl_major} -eq 1 -a ${gsl_minor} -lt 10 ]; then
 fi
 
 if [ "x$opt" = "x--test" ]; then
+    if [ "x${GSL_BASE_DIR}" != "x" ]; then
+	echo "$SCRIPTNAME: warning: a special GSL installation is forced using the GSL_BASE_DIR='${GSL_BASE_DIR}'!" 1>&2
+    fi
 cat <<EOF
 mygsl-config tests:
+  Default system GSL prefix is:  ${gsl_prefix_def}
   Default system GSL version is: ${gsl_version_def}
   Default system GSL config is:  ${gsl_config_def}
-  Current GSL base directory is: ${GSL_BASE_DIR} (from the GSL_BASE_DIR environment variable)
+EOF
+echo -n "  Current GSL base directory is: ${gsl_prefix}" 
+if [ "x${GSL_BASE_DIR}" != "x" ]; then
+cat <<EOF
+ (from the GSL_BASE_DIR environment variable)
+EOF
+else
+cat <<EOF
+ (corresponds to the system\'s default version)
+EOF
+fi
+
+cat <<EOF
   Current GSL version is:        ${gsl_version}
   Current GSL config is:         ${gsl_config}
 EOF
