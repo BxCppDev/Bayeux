@@ -176,10 +176,12 @@ namespace datatools {
 	int
 	unlock ();
 
-	size_t
+	//size_t
+	int32_t
 	get_size () const;
 
-	size_t
+	//size_t
+	int32_t
 	size () const;
 
 	bool
@@ -374,7 +376,8 @@ namespace datatools {
       void
       set_debug (bool);
 
-      size_t
+      //size_t
+      int32_t
       size () const;
 
       void
@@ -404,7 +407,7 @@ namespace datatools {
       properties (const std::string & desc_); // with embedded default key validator
 
       properties (const std::string & desc_, 
-		 const basic_key_validator &);
+		  const basic_key_validator &);
 
       properties (const basic_key_validator &); 
 
@@ -489,7 +492,8 @@ namespace datatools {
       bool
       is_vector (const std::string & key_) const;
 
-      size_t
+      //size_t
+      int32_t
       size (const std::string & key_) const;
 
       bool

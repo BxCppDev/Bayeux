@@ -299,7 +299,8 @@ namespace datatools {
 
     /******/
 
-    size_t 
+    //size_t 
+    int32_t
     properties::data::get_size () const
     {
       if (! has_type ()) 
@@ -318,9 +319,11 @@ namespace datatools {
 	{
 	  return SCALAR_SIZE;
 	}
+      return 0;
     }
 
-    size_t 
+    //size_t 
+    int32_t
     properties::data::size () const
     {
       return get_size ();
@@ -344,7 +347,7 @@ namespace datatools {
       __flags  = 0;
       //int size = (size_<0)?SCALAR_DEF:size_;
       __init_values (TYPE_BOOLEAN_SYMBOL, size_);
-      for (int i = 0; i < size (); i++) 
+      for (int i = 0; i < (int) size (); i++) 
 	{
 	  set_value (value_, i);
 	}
@@ -360,7 +363,7 @@ namespace datatools {
       __flags  = 0;
       //int size = (size_<0)?SCALAR_DEF:size_;
       __init_values (TYPE_INTEGER_SYMBOL, size_);
-      for (int i = 0; i < size (); i++) 
+      for (int i = 0; i < (int) size (); i++) 
 	{
 	  set_value (value_, i);
 	}
@@ -376,7 +379,7 @@ namespace datatools {
       __flags  = 0;
       //int size = (size_<0)?SCALAR_DEF:size_;
       __init_values (TYPE_REAL_SYMBOL, size_);
-      for (int i = 0; i < size (); i++) 
+      for (int i = 0; i < (int) size (); i++) 
 	{
 	  set_value (value_, i);
 	}
@@ -399,7 +402,7 @@ namespace datatools {
 	  message << "properties::data::data (std::string): Forbidden char in string '" << value_ << "'!";
 	  throw std::runtime_error (message.str ());    
 	}      
-      for (int i = 0; i < size (); i++) 
+      for (int i = 0; i < (int) size (); i++) 
 	{
 	  code = set_value (value_, i);
 	  if (code != ERROR_SUCCESS) 
@@ -436,7 +439,7 @@ namespace datatools {
 	      throw std::runtime_error (message.str ());    
 	    }
 	}      
-      for (int i = 0; i < size (); i++) 
+      for (int i = 0; i < (int) size (); i++) 
 	{
 	  set_value (tmp, i);
 	}
@@ -451,7 +454,7 @@ namespace datatools {
     bool 
     properties::data::index_is_valid (int index_) const
     {
-      return (index_ >= 0) && (index_ < get_size ());
+      return (index_ >= 0) && (index_ < (int) get_size ());
     }
 
     /******************************************************/
@@ -678,7 +681,7 @@ namespace datatools {
       out_ << get_type_label () << ':'
 	   << get_vector_label () << ":"
 	   << get_size () << ':';
-      for (int i = 0; i < get_size (); i++)
+      for (int i = 0; i < (int) get_size (); i++)
 	{
 	  if (i != 0) out_ << ' ';
 	  if (is_boolean ()) out_ << get_boolean_value (i);
@@ -730,23 +733,31 @@ namespace datatools {
 	out_ << indent << du::i_tree_dumpable::tag 
 	<< "Lock  : " <<  (is_locked ()?"locked":"unlocked") << std::endl;
       */
-
-      for (int i = 0; i < get_size (); i++) 
+      if (get_size () > 0)
+	{
+	  for (int i = 0; i < (int) get_size (); i++) 
+	    {
+	      out_ << indent;
+	      if (i == (int) (get_size () - 1)) out_ << du::i_tree_dumpable::inherit_tag (inherit_);
+	      else out_ << du::i_tree_dumpable::tag;
+	      out_ << "Value";
+	      if (is_vector ()) 
+		{
+		  out_ << "[" << i << "]";
+		}
+	      out_ << " : ";
+	      if (is_boolean ()) out_ << std::dec << get_boolean_value (i) << std::endl;
+	      if (is_integer ()) out_ << std::dec << get_integer_value (i) << std::endl;
+	      out_.precision (16);
+	      if (is_real ())   out_ << get_real_value (i) << std::endl;
+	      if (is_string ())  out_ << '"' <<  get_string_value (i) << '"' << std::endl;
+	    }
+	}
+      else
 	{
 	  out_ << indent;
-	  if (i == get_size () - 1) out_ << du::i_tree_dumpable::inherit_tag (inherit_);
-	  else out_ << du::i_tree_dumpable::tag;
-	  out_ << "Value";
-	  if (is_vector ()) 
-	    {
-	      out_ << "[" << i << "]";
-	    }
-	  out_ << " : ";
-	  if (is_boolean ()) out_ << std::dec << get_boolean_value (i) << std::endl;
-	  if (is_integer ()) out_ << std::dec << get_integer_value (i) << std::endl;
-	  out_.precision (16);
-	  if (is_real ())   out_ << get_real_value (i) << std::endl;
-	  if (is_string ())  out_ << '"' <<  get_string_value (i) << '"' << std::endl;
+	  out_ << du::i_tree_dumpable::inherit_tag (inherit_);
+	  out_ << "<no value>" << std::endl;
 	}
     }
     
@@ -812,7 +823,8 @@ namespace datatools {
       __debug = new_value_;
     }
 
-    size_t 
+    //size_t
+    int32_t
     properties::size () const
     {
       return __props.size ();
@@ -990,7 +1002,7 @@ namespace datatools {
     }
 
     std::string
-    properties::make_private_key(const std::string & key_)
+    properties::make_private_key (const std::string & key_)
     {
       if (key_is_private (key_)) return key_;
       else
@@ -1003,7 +1015,7 @@ namespace datatools {
     
     bool properties::key_is_private (const std::string & key_)
     {
-      return key_.substr(0,PRIVATE_PROPERTY_PREFIX.size ()) == PRIVATE_PROPERTY_PREFIX;
+      return key_.substr (0, PRIVATE_PROPERTY_PREFIX.size ()) == PRIVATE_PROPERTY_PREFIX;
     }
 
     bool properties::key_is_public (const std::string & key_)
@@ -1065,7 +1077,9 @@ namespace datatools {
       return data_ptr->is_vector ();
     }
      
-    size_t properties::size (const std::string & key_) const
+    //size_t 
+    int32_t
+    properties::size (const std::string & key_) const
     {
       const data * data_ptr = 0;
       __check_key (key_, &data_ptr);
@@ -1074,15 +1088,14 @@ namespace datatools {
 
     bool properties::has_key (const std::string & key_) const
     {
-      /*
-	const data * data_ptr;
-	return __find_key (key_,data_ptr);
-      */
-      return __props.find (key_) != __props.end ();
+      if (__props.size () == 0) return false;
+      bool hk = __props.find (key_) != __props.end ();
+      return hk;
     }
   
     void properties::__check_nokey (const std::string & key_) const
     {
+      //std::clog << "DEVEL: properties::__check_nokey: key='" << key_ << "'" << std::endl;
       if (has_key (key_)) 
 	{
 	  std::ostringstream message;
@@ -1101,7 +1114,7 @@ namespace datatools {
 	  message << "properties::__check_key: key '" << key_ << "' does not exist!";
 	  throw std::runtime_error (message.str ());
 	}
-      *data_=& (iter->second);
+      *data_ = & (iter->second);
     }
   
     void properties::__check_key (const std::string & key_, 
@@ -1191,7 +1204,7 @@ namespace datatools {
     {
       __check_nokey (key_);
       __validate_key (key_);
-      size_t size = values_.size ();
+      int size = values_.size ();
       //       if ( size < 0 ) {
       // 	throw std::runtime_error ("properties::store: Invalid vector of booleans size!");
       //       }
@@ -1212,7 +1225,7 @@ namespace datatools {
     {
       __check_nokey (key_);
       __validate_key (key_);
-      size_t size = values_.size ();
+      int size = values_.size ();
       //       if ( size < 0 ) {
       // 	throw std::runtime_error ("properties::store: Invalid vector of integers size!");
       //       }
@@ -1233,7 +1246,7 @@ namespace datatools {
     {
       __check_nokey (key_);
       __validate_key (key_);
-      size_t size = values_.size ();
+      int size = values_.size ();
       //       if ( size < 0 ) {
       // 	throw std::runtime_error ("properties::store: Invalid vector of reals size!");
       //       }
@@ -1254,7 +1267,7 @@ namespace datatools {
     {
       __check_nokey (key_);
       __validate_key (key_);
-      size_t size = values_.size ();
+      int size = values_.size ();
       //       if ( size < 0 ) {
       // 	throw std::runtime_error ("properties::store: Invalid vector of string size!");
       //       }
@@ -1356,7 +1369,7 @@ namespace datatools {
 		  << key_ << "' is not a vector of booleans!";
 	  throw std::runtime_error (message.str ());
 	}
-      if (values_.size () != data_ptr->get_size ()) 
+      if (values_.size () != (int) data_ptr->get_size ()) 
 	{
 	  int error = data_ptr->boolean (values_.size ());
 	  if (error != data::ERROR_SUCCESS) 
@@ -1367,7 +1380,7 @@ namespace datatools {
 	      throw std::runtime_error (message.str ());
 	    }    
 	}
-      for (int i = 0; i < values_.size (); i++) 
+      for (int i = 0; i < (int) values_.size (); i++) 
 	{
 	  int error = data_ptr->set_value (values_[i], i);
 	  if (error != data::ERROR_SUCCESS) 
@@ -1392,7 +1405,7 @@ namespace datatools {
 		  << key_ << "' is not a vector of integers!";
 	  throw std::runtime_error (message.str ());
 	}
-      if (values_.size () != data_ptr->get_size ()) 
+      if (values_.size () != (int) data_ptr->get_size ()) 
 	{
 	  int error = data_ptr->integer (values_.size ());
 	  if (error != data::ERROR_SUCCESS) 
@@ -1403,7 +1416,7 @@ namespace datatools {
 	      throw std::runtime_error (message.str ());
 	    }    
 	}
-      for (int i = 0; i < values_.size (); i++) 
+      for (int i = 0; i < (int)  values_.size (); i++) 
 	{
 	  int error = data_ptr->set_value (values_[i], i);
 	  if (error != data::ERROR_SUCCESS) 
@@ -1428,7 +1441,7 @@ namespace datatools {
 		  << key_ << "' is not a vector of reals!";
 	  throw std::runtime_error (message.str ());
 	}
-      if (values_.size () != data_ptr->get_size ()) 
+      if (values_.size () != (int) data_ptr->get_size ()) 
 	{
 	  int error = data_ptr->real (values_.size ());
 	  if (error != data::ERROR_SUCCESS) 
@@ -1439,7 +1452,7 @@ namespace datatools {
 	      throw std::runtime_error (message.str ());
 	    }    
 	}
-      for (int i = 0; i < values_.size (); i++) 
+      for (int i = 0; i < (int) values_.size (); i++) 
 	{
 	  int error = data_ptr->set_value (values_[i], i);
 	  if (error != data::ERROR_SUCCESS) 
@@ -1457,14 +1470,14 @@ namespace datatools {
     {
       data * data_ptr=0;
       __check_key (key_,&data_ptr);
-      if (! data_ptr->is_string () || !data_ptr->is_vector ()) 
+      if (! data_ptr->is_string () || ! data_ptr->is_vector ()) 
 	{
 	  std::ostringstream message;
 	  message << "properties::change: property '" 
 		  << key_ << "' is not a vector of strings!";
 	  throw std::runtime_error (message.str ());
 	}
-      if (values_.size () != data_ptr->get_size ()) 
+      if (values_.size () != (int) data_ptr->get_size ()) 
 	{
 	  int error = data_ptr->string (values_.size ());
 	  if (error != data::ERROR_SUCCESS) 
@@ -1475,7 +1488,7 @@ namespace datatools {
 	      throw std::runtime_error (message.str ());
 	    }    
 	}
-      for (int i = 0; i < values_.size (); i++) 
+      for (int i = 0; i < (int) values_.size (); i++) 
 	{
 	  int error = data_ptr->set_value (values_[i], i);
 	  if (error != data::ERROR_SUCCESS) 
@@ -2023,7 +2036,7 @@ namespace datatools {
 	    }
 
 	  // type:
-	  size_t size = properties::data::SCALAR_SIZE;
+	  int size = properties::data::SCALAR_SIZE;
 	  out_ << a_data.get_type_label ();
 	  if (a_data.is_vector ()) 
 	    {
