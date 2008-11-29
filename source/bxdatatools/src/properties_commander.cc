@@ -140,6 +140,16 @@ namespace datatools {
 	  return;
 	}
 
+      if (command_name == "get")
+	{
+	  if (nargs < 1) 
+	    {
+	      throw datatools::utils::missing_argument ("Missing property's key!");
+	    }
+	  throw datatools::utils::command_not_implemented ("get");
+	  return;
+	}
+
       if (command_name == "set")
 	{
 	  //clog << "DEVEL: properties_commander_i::do_invoke: set..." << endl;
@@ -583,6 +593,18 @@ namespace datatools {
       out_ << "                -r : real    property" << endl;
       out_ << "                -s : string  property (default)" << endl;
       out_ << "                -v=<size> : vector of size <size>" << endl;
+      out_ << " get <key> <action>: [NOT IMPLEMENTED YET]\n";
+      out_ << "              Actions:  " << endl;
+      out_ << "                boolean : return true/false" << endl;
+      out_ << "                integer : return true/false" << endl;
+      out_ << "                real    : return true/false" << endl;
+      out_ << "                string  : return true/false" << endl;
+      out_ << "                scalar  : return true/false" << endl;
+      out_ << "                vector  : return true/false" << endl;
+      out_ << "                size    : return vector size" << endl;
+      out_ << "                value [<index>]: \n";
+      out_ << "                          return value at vector position <index=0>"
+	   << endl;
       out_ << " unset <key>  : remove a property named '<key>' from \n"
 	   << "                the current properties object" << endl;
       out_ << " dump :         dump the current properties object" << endl;
