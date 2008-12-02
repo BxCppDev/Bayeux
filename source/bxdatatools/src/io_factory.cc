@@ -318,6 +318,7 @@ namespace datatools {
 	  throw std::runtime_error ("io_factory::__init_write_archive: format not supported!");
 	}
       __write_archive_is_initialized = true;
+      return 0;
     }
 
     int
@@ -523,9 +524,11 @@ namespace datatools {
     {
       if (is_multi_archives ())
 	{
-	  std::cerr << "DEBUG: io_factory::start_archive: multi..." 
-		    << std::endl;
-	  
+	  if (g_debug) 
+	    {
+	      std::cerr << "DEBUG: io_factory::start_archive: multi..." 
+			<< std::endl;
+	    }
 	  if(is_read ())
 	    {
 	      __init_read_archive ();
@@ -542,8 +545,11 @@ namespace datatools {
     {
       if (is_multi_archives ())
 	{
-	  std::cerr << "DEBUG: io_factory::stop_archive: multi..." 
-		    << std::endl;
+	  if (g_debug) 
+	    {
+	      std::cerr << "DEBUG: io_factory::stop_archive: multi..." 
+			<< std::endl;
+	    }
 	  if(is_read ())
 	    {
 	      __reset_read_archive ();
@@ -593,6 +599,7 @@ namespace datatools {
 	  __reset_write ();
 	}
       __ctor_defaults ();
+      return 0;
     }
 
     // ctor
