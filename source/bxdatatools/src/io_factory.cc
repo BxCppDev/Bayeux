@@ -960,6 +960,84 @@ namespace datatools {
     }
 
     bool
+    data_reader::is_uncompressed () const
+    {
+      return ! is_compressed ();
+    }
+
+    bool
+    data_reader::is_compressed () const
+    {
+      if (! is_initialized ())
+	{
+	  std::ostringstream message;
+	  message << "data_reader::is_compressed: reader is not initialized!"; 
+	  throw std::runtime_error (message.str ());
+	}
+      return __reader->is_compressed ();
+    }
+
+    bool
+    data_reader::is_gzip () const
+    {
+      if (! is_initialized ())
+	{
+	  std::ostringstream message;
+	  message << "data_reader::is_gzip: reader is not initialized!"; 
+	  throw std::runtime_error (message.str ());
+	}
+      return __reader->is_gzip ();
+    }
+
+    bool
+    data_reader::is_text () const
+    {
+      if (! is_initialized ())
+	{
+	  std::ostringstream message;
+	  message << "data_reader::is_text: reader is not initialized!"; 
+	  throw std::runtime_error (message.str ());
+	}
+      return __reader->is_text ();
+    }
+
+    bool
+    data_reader::is_binary () const
+    {
+      if (! is_initialized ())
+	{
+	  std::ostringstream message;
+	  message << "data_reader::is_binary: reader is not initialized!"; 
+	  throw std::runtime_error (message.str ());
+	}
+      return __reader->is_binary ();
+    }
+
+    bool
+    data_reader::is_xml () const
+    {
+      if (! is_initialized ())
+	{
+	  std::ostringstream message;
+	  message << "data_reader::is_xml: reader is not initialized!"; 
+	  throw std::runtime_error (message.str ());
+	}
+      return __reader->is_xml ();
+    }
+
+    bool
+    data_reader::is_bzip2 () const
+    {
+      if (! is_initialized ())
+	{
+	  std::ostringstream message;
+	  message << "data_reader::is_bzip2: reader is not initialized!"; 
+	  throw std::runtime_error (message.str ());
+	}
+      return __reader->is_bzip2 ();
+    }
+
+    bool
     data_reader::is_single_archive () const
     {
       return ! is_multi_archives ();
@@ -1059,6 +1137,84 @@ namespace datatools {
     data_writer::is_initialized () const
     {
       return __writer != 0;
+    }
+
+    bool
+    data_writer::is_uncompressed () const
+    {
+      return ! is_compressed ();
+    }
+
+    bool
+    data_writer::is_compressed () const
+    {
+      if (! is_initialized ())
+	{
+	  std::ostringstream message;
+	  message << "data_writer::is_compressed: writer is not initialized!"; 
+	  throw std::runtime_error (message.str ());
+	}
+      return __writer->is_compressed ();
+    }
+
+    bool
+    data_writer::is_gzip () const
+    {
+      if (! is_initialized ())
+	{
+	  std::ostringstream message;
+	  message << "data_writer::is_gzip: writer is not initialized!"; 
+	  throw std::runtime_error (message.str ());
+	}
+      return __writer->is_gzip ();
+    }
+
+    bool
+    data_writer::is_text () const
+    {
+      if (! is_initialized ())
+	{
+	  std::ostringstream message;
+	  message << "data_writer::is_text: writer is not initialized!"; 
+	  throw std::runtime_error (message.str ());
+	}
+      return __writer->is_text ();
+    }
+
+    bool
+    data_writer::is_binary () const
+    {
+      if (! is_initialized ())
+	{
+	  std::ostringstream message;
+	  message << "data_writer::is_binary: writer is not initialized!"; 
+	  throw std::runtime_error (message.str ());
+	}
+      return __writer->is_binary ();
+    }
+
+    bool
+    data_writer::is_xml () const
+    {
+      if (! is_initialized ())
+	{
+	  std::ostringstream message;
+	  message << "data_writer::is_xml: writer is not initialized!"; 
+	  throw std::runtime_error (message.str ());
+	}
+      return __writer->is_xml ();
+    }
+
+    bool
+    data_writer::is_bzip2 () const
+    {
+      if (! is_initialized ())
+	{
+	  std::ostringstream message;
+	  message << "data_writer::is_bzip2: writer is not initialized!"; 
+	  throw std::runtime_error (message.str ());
+	}
+      return __writer->is_bzip2 ();
     }
 
     bool

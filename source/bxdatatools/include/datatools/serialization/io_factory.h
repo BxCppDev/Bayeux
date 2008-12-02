@@ -543,6 +543,27 @@ namespace datatools {
 	bool
 	is_single_archive () const;
 
+	bool
+	is_compressed () const;
+
+	bool
+	is_uncompressed () const;
+
+	bool
+	is_gzip () const;
+
+	bool
+	is_bzip2 () const;
+
+	bool 
+	is_text () const;
+	
+	bool 
+	is_binary () const;
+	
+	bool 
+	is_xml () const;
+
 	void 
 	  init (const std::string & filename_, 
 		bool multiple_archives_ = using_single_archive);
@@ -679,6 +700,27 @@ namespace datatools {
 
 	bool
 	is_single_archive () const;
+
+	bool
+	is_compressed () const;
+
+	bool
+	is_uncompressed () const;
+
+	bool
+	is_gzip () const;
+
+	bool
+	is_bzip2 () const;
+
+	bool 
+	is_text () const;
+	
+	bool 
+	is_binary () const;
+	
+	bool 
+	is_xml () const;
 
 	void 
 	  reset ();
