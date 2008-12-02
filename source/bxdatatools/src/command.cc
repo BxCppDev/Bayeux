@@ -61,7 +61,7 @@ namespace datatools {
     command::has_option (std::string opt_) const
     {
       return (std::find (__options.begin (),
-		     __options.end (), opt_) != __options.end ());
+			 __options.end (), opt_) != __options.end ());
     }
 
     void  

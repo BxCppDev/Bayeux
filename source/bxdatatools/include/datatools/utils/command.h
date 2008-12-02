@@ -3,7 +3,8 @@
 #ifndef __datatools__utils__command_h
 #define __datatools__utils__command_h 1
 
-#include <cstdlib>
+#include <algorithm>
+#include <cstdlib> 
 #include <iostream>
 #include <stdexcept>
 #include <sstream>
