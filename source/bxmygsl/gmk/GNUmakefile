@@ -91,38 +91,6 @@ endif
 DEPCPPFLAGS+=$(shell $(gsl_config) --cflags)
 DEPLDFLAGS+=$(shell $(gsl_config) --libs)
 
-# CLHEP samples:
-#ifeq ($(strip $(CLHEP_BASE_DIR)),)
-#$(error Sorry CLHEP is not configured!)
-#endif
-#ifeq ($(shell which clhep-config),)
-#$(error Sorry clhep-config not found!)
-#endif
-#DEPCPPFLAGS+=$(shell clhep-config --include)
-#DEPLDFLAGS+=$(shell clhep-config --libs)
-
-# HDF5 samples:
-#ifeq ($(strip $(HDF5_PREFIX)),)
-#$(error Sorry HDF5 is not configured!)
-#endif
-#ifeq ($(shell which hdf5-config),)
-#$(error Sorry hdf5-config not found!)
-#endif
-#DEPCPPFLAGS+=$(shell hdf5-config --include)
-#DEPLDFLAGS+=$(shell hdf5-config --libs)
-
-# ROOT samples:
-#ifeq ($(strip $(ROOTSYS)),)
-#$(warning Sorry ROOT is not configured!)
-#else
-#$(warning ROOTSYS=$(ROOTSYS))
-#endif
-#ifeq ($(shell which root-config),)
-#$(error Sorry root-config not found!)
-#endif
-#DEPCPPFLAGS+=$(shell root-config --cflags)
-#DEPLDFLAGS+=$(shell root-config --libs)
-
 ### End of dependencies
 CPPFLAGS+=$(DEPCPPFLAGS) 
 LDFLAGS+=$(DEPLDFLAGS) 
