@@ -62,6 +62,8 @@ Known values for OPTION are:
   --include             print include path pre-processor flags without dependencies 
   --cflags              print include path pre-processor flags with dependencies
   --libs                print library linking information, without dependencies
+  --gsl-ldpath          print the path to GSL libraries             
+  --gsl-incpath         print the path to GSL headers             
   --ldflags             
   --libs-depends        print library linking information, with dependencies
   --help                print this help then exit
@@ -166,6 +168,18 @@ if [ "x$opt" = "x--libdir" ]; then
     echo "${THEPACK_LIBDIR}"
     exit 0
 fi 
+
+if [ "x$opt" = "x--gsl-incpath" ]; then
+    gsl_inc_path=$(gsl-config --cflags | tr -s ' ' | tr ' ' '\n' | grep "\-I")
+    echo "${gsl_inc_path}"
+    exit 0
+fi
+
+if [ "x$opt" = "x--gsl-ldpath" ]; then
+    gsl_ld_path=$(gsl-config --libs | tr -s ' ' | tr ' ' '\n' | grep "\-L")
+    echo "${gsl_ld_path}"
+    exit 0
+fi
 
 if [ "x$opt" = "x--bindir" ]; then
     echo "${THEPACK_BINDIR}"
