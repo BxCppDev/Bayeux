@@ -1,0 +1,38 @@
+# -*- mode: shell-script; -*-
+# sh startup sample script for package __Package_name__:
+
+if [ "x${__PACKAGE_NAME___ROOT}" != "x" ]; then
+    echo "Warning: __PACKAGE_NAME___ROOT is already defined! Check for possible conflict!"
+fi
+
+export __PACKAGE_NAME___ROOT=__PACKAGE_ROOT__
+uname_s=$(uname -s)
+uname_m=$(uname -m | sed -e 's/ //g')
+libs="${__PACKAGE_NAME___ROOT}/${uname_s}-${uname_m}/lib"
+bins="${__PACKAGE_NAME___ROOT}/${uname_s}-${uname_m}/bin"
+export PATH=${PATH}:"${bins}"
+
+sysarch=$(uname)
+if [ "${sysarch}" = "Linux" ]; then 
+  if [ -n "${LD_LIBRARY_PATH}" ]; then
+    export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${libs}"
+  else
+    export LD_LIBRARY_PATH="${libs}"
+  fi 
+fi
+
+if [ "${sysarch}" = "Darwin" ]; then 
+  if [ -n "${DYLD_LIBRARY_PATH}" ]; then
+    export DYLD_LIBRARY_PATH="${DYLD_LIBRARY_PATH}:${libs}"
+  else
+    export DYLD_LIBRARY_PATH="${libs}"
+  fi 
+fi
+
+unset -v uname_s
+unset -v uname_m
+unset -v libs
+unset -v bins
+unset -v sysarch
+
+# end

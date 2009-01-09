@@ -1,0 +1,16 @@
+# -*- mode: gnuplot; -*-
+set xrange [-5:5]
+set yrange [-5:5]
+set zrange [-5:5]
+set xlabel "x"
+set ylabel "y"
+set zlabel "z"
+splot \
+  "box.data" index 0 title "Box" with lines , \
+  "box.data" index 1 title "Initial point" with points pt 6 ps 2 , \
+  "box.data" index 3 title "Track" with lines lw 2 , \
+  "box.data" index 2 title "Final point" with points pt 6 ps 2 
+
+
+
+# end 
