@@ -95,6 +95,12 @@ namespace geomtools {
 		  int mask_    = FACE_ALL , 
 		  double skin_ = USING_PROPER_SKIN) const;
 
+    bool find_intercept (const vector_3d & from_, 
+			 const vector_3d & direction_,
+			 vector_3d & intercept_,
+			 int & face_,
+			 double skin_ = USING_PROPER_SKIN) const;
+
     friend std::ostream & 
     operator<<(std::ostream &, const sphere &);
 

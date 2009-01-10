@@ -66,45 +66,51 @@ main (int argc_, char ** argv_)
 	    }
 	}
 
-      geomtools::box my_box2 (8.0 * CLHEP::mm, 
-			      4.0 * CLHEP::mm, 
-			      1.0 * CLHEP::mm);
-      std::clog << "Box #2   = " << my_box2 << " " << std::endl;
+      {
+	geomtools::box my_box2 (8.0 * CLHEP::mm, 
+				4.0 * CLHEP::mm, 
+				1.0 * CLHEP::mm);
+	std::clog << "Box #2   = " << my_box2 << " " << std::endl;
       
-      geomtools::vector_3d pos (2.0 * CLHEP::mm, 
-				3.0 * CLHEP::mm, 
-				2.0 * CLHEP::mm);
-      geomtools::vector_3d dir (-1, -1, -1);
-      dir = -pos;
-      geomtools::vector_3d intercept;
-      int intercept_face;
-      if (my_box2.intercept (pos, dir, 
-			     intercept, 
-			     intercept_face))
-	{
-	  std::clog << "Intercept face=" << intercept_face
-		    << " at intercept=" << intercept
-		    << std::endl;
-	}
-      else
-	{
-	  std::clog << "No intercept." << std::endl;
-	}
+	geomtools::vector_3d pos (2.0 * CLHEP::mm, 
+				  3.0 * CLHEP::mm, 
+				  2.0 * CLHEP::mm);
+	geomtools::vector_3d dir (-1, -2.5, -1.5);
+	//dir = -pos;
+	geomtools::vector_3d intercept;
+	int intercept_face;
+	if (my_box2.find_intercept (pos, dir, 
+				    intercept, 
+				    intercept_face))
+	  {
+	    std::clog << "Intercept face=" << intercept_face
+		      << " at intercept=" << intercept
+		      << std::endl;
+	  }
+	else
+	  {
+	    std::clog << "No intercept." << std::endl;
+	  }
 
-      geomtools::vector_3d box_pos;
-      geomtools::rotation box_rot;
-      geomtools::create_rotation (box_rot, 0.0, 0.0, 0.0);
-      geomtools::gnuplot_draw::draw_box (std::cout, box_pos, box_rot, 
-					 pos[0], pos[1], pos[2]);
-      std::cout << std::endl << std::endl;
-      geomtools::gnuplot_draw::basic_draw_point (std::cout, pos);
-      std::cout << std::endl << std::endl;
-      geomtools::gnuplot_draw::basic_draw_point (std::cout, intercept);
-      std::cout << std::endl << std::endl;
-      geomtools::gnuplot_draw::basic_draw_point (std::cout, pos);
-      geomtools::gnuplot_draw::basic_draw_point (std::cout, pos + dir);
-      std::cout << std::endl << std::endl;
+	geomtools::vector_3d box_pos;
+	geomtools::rotation box_rot;
+	geomtools::create_rotation (box_rot, 0.0, 0.0, 0.0);
+	geomtools::gnuplot_draw::draw_box (std::cout, box_pos, box_rot, 
+					   my_box2.get_x (), 
+					   my_box2.get_y (), 
+					   my_box2.get_z ());
+	std::cout << std::endl << std::endl;
 
+	geomtools::gnuplot_draw::basic_draw_point (std::cout, pos);
+	std::cout << std::endl << std::endl;
+
+	geomtools::gnuplot_draw::basic_draw_point (std::cout, intercept);
+	std::cout << std::endl << std::endl;
+
+	geomtools::gnuplot_draw::basic_draw_point (std::cout, pos);
+	geomtools::gnuplot_draw::basic_draw_point (std::cout, pos + dir);
+	std::cout << std::endl << std::endl;
+      }
       
     }
   catch (std::exception & x)

@@ -66,7 +66,7 @@ OBJDIR=$(ARCHDIR)/obj
 LIBDIR=$(ARCHDIR)/lib
 BINDIR=$(ARCHDIR)/bin
 
-CXXFLAGS=-fPIC
+CXXFLAGS=-fPIC -Wall -Wno-sign-compare -Wno-unused 
 CPPFLAGS=-I. -I$(INCDIR)
 LDFLAGS=-O -L$(LIBDIR) -l$(LIBNAME)
 

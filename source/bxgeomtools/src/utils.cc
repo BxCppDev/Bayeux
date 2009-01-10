@@ -6,6 +6,20 @@
 
 namespace geomtools {
 
+  
+  void 
+  invalidate (vector_3d & vec_)
+  {
+    double qnan = std::numeric_limits<double>::quiet_NaN();
+    vec_.set (qnan, qnan, qnan); 
+  }
+  
+  bool 
+  is_valid (const vector_3d & vec_)
+  {
+    double qnan = std::numeric_limits<double>::quiet_NaN();
+    return (vec_.x () != qnan) && (vec_.y () != qnan) && (vec_.z () != qnan);
+  }
    
   void
   create_rotation (rotation & rot_,
@@ -18,6 +32,12 @@ namespace geomtools {
     r2.rotateY (-theta_); 
     r3.rotateZ (-delta_);
     rot_ = r3 * r2 * r1;
+  }
+
+  void
+  reset_rotation (rotation & rot_)
+  {
+    rot_ = rotation ();
   }
   
   void

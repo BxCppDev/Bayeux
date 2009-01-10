@@ -19,6 +19,7 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
+#include <limits>
 
 #include <geomtools/clhep.h>
 
@@ -32,21 +33,23 @@ namespace geomtools {
 
   enum direction_type
     {
-      BACK   = 0,
-      FRONT  = 1,
-      LEFT   = 2,
-      RIGHT  = 3,
-      TOP    = 4,
-      BOTTOM = 5
+      BACK   = 0, // -x
+      FRONT  = 1, // +x
+      LEFT   = 2, // -y
+      RIGHT  = 3, // +y
+      TOP    = 4, // -z
+      BOTTOM = 5  // +z
     };
 
   // see also CLHEP/Vector/TwoVector.h and CLHEP/Vector/ThreeVector.h
+  /*
   enum axis_type
     {
       X = 0,
       Y = 1,
       Z = 2
     };
+  */
     
   /* Initialize a rotation matrix for 
    * "World coordinates system->Local coordinates system":
@@ -58,8 +61,7 @@ namespace geomtools {
 		   double delta_);
 
   void
-  roundoff_rotation (rotation & rot_,
-		     double epsilon_);
+  reset_rotation (rotation & rot_);
   
   void
   tree_dump (const rotation & rot_,
@@ -68,10 +70,10 @@ namespace geomtools {
 	     const std::string & indent_ = "");
   
   void 
-  print (std::ostream & out_, const vector_3d & vec_);
+  invalidate (vector_3d & vec_);
   
-  void 
-  print (std::ostream & out_, const rotation & rot_);
+  bool 
+  is_valid (const vector_3d & vec_);
     
 } // end of namespace geomtools
 

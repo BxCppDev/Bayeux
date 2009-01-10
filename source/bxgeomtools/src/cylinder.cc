@@ -215,6 +215,17 @@ namespace geomtools {
     return false;
   }
   
+  bool 
+  cylinder::find_intercept (const vector_3d & from_, 
+		       const vector_3d & direction_,
+		       vector_3d & intercept_,
+		       int & face_,
+		       double skin_) const
+  {
+    face_ = 0;
+    invalidate (intercept_);
+    return false;
+  }
 
   std::ostream & operator<< (std::ostream & out_, const cylinder & c_)
   {

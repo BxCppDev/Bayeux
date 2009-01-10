@@ -65,11 +65,11 @@ namespace geomtools {
       virtual bool is_outside (const vector_3d &,
 			       double skin_ = USING_PROPER_SKIN) const; 
       
-      virtual bool intercept (const vector_3d & from_, 
-			      const vector_3d & direction_,
-			      vector_3d & intercept_,
-			      int & face_,
-			      double skin_ = USING_PROPER_SKIN) const
+      virtual bool find_intercept (const vector_3d & from_, 
+				   const vector_3d & direction_,
+				   vector_3d & intercept_,
+				   int & face_,
+				   double skin_ = USING_PROPER_SKIN) const
       {
 	// temporary:
 	// default: no intercept on any face of the 3D shape...

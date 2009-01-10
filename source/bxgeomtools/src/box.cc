@@ -228,8 +228,8 @@ namespace geomtools {
 
   bool 
   box::is_on_surface (const vector_3d & point_ , 
-		     int    mask_ ,
-		     double skin_) const
+		      int    mask_ ,
+		      double skin_) const
   {
     double skin = get_skin ();
     if (skin_ > USING_PROPER_SKIN) skin = 2 * skin_;
@@ -237,66 +237,73 @@ namespace geomtools {
     int mask = mask_;
     if (mask_ == ALL_SURFACES) mask = FACE_ALL;
 
+    double hskin = 0.5 * skin;
     if (mask & FACE_BACK) 
       {
-	if (std::abs (point_.x () + 0.5 * __x) < 0.5 * skin 
-	    && std::abs (point_.y ()) < 0.5 * __y
-	    && std::abs (point_.z ()) < 0.5 * __z) return true;
+	if ((std::abs (point_.x () + 0.5 * __x) < hskin) 
+	    && (std::abs (point_.y ()) < 0.5 * __y)
+	    && (std::abs (point_.z ()) < 0.5 * __z)) return true;
       }
     if (mask & FACE_FRONT) 
       {
-	if (std::abs (point_.x () - 0.5 * __x) < 0.5 * skin 
-	    && std::abs (point_.y ()) < 0.5 * __y
-	    && std::abs (point_.z ()) < 0.5 * __z) return true;
+	if ((std::abs (point_.x () - 0.5 * __x) < hskin)
+	     && (std::abs (point_.y ()) < 0.5 * __y)
+	    && (std::abs (point_.z ()) < 0.5 * __z)) return true;
       }
     if (mask & FACE_LEFT) 
       {
-	if (std::abs (point_.y () + 0.5 * __y) < 0.5 * skin 
-	    && std::abs (point_.x ()) < 0.5 * __x
-	    && std::abs (point_.z ()) < 0.5 * __z) return true;
+	if ((std::abs (point_.y () + 0.5 * __y) < hskin) 
+	    && (std::abs (point_.x ()) < 0.5 * __x)
+	    && (std::abs (point_.z ()) < 0.5 * __z)) return true;
       }
     if (mask & FACE_RIGHT) 
       {
-	if (std::abs (point_.y () - 0.5 * __y) < 0.5 * skin 
-	    && std::abs (point_.x ()) < 0.5 * __x
-	    && std::abs (point_.z ()) < 0.5 * __z) return true;
+	std::clog << "DEVEL: box::is_on_surface: FACE_RIGHT" << std::endl;
+	std::clog << "DEVEL: box::is_on_surface: hskin=" << hskin << std::endl;
+	std::clog << "DEVEL: box::is_on_surface: point=" << point_ << std::endl;
+	std::clog << "DEVEL: box::is_on_surface: dim x=" << 0.5 * __x << std::endl;
+	std::clog << "DEVEL: box::is_on_surface: dim y=" << 0.5 * __y << std::endl;
+	std::clog << "DEVEL: box::is_on_surface: dim z=" << 0.5 * __z << std::endl;
+	if ((std::abs (point_.y () - 0.5 * __y) < hskin) 
+	    && (std::abs (point_.x ()) < 0.5 * __x)
+	    && (std::abs (point_.z ()) < 0.5 * __z)) return true;
       }
     if (mask & FACE_BOTTOM) 
       {
-	if (std::abs (point_.z () + 0.5 * __z) < 0.5 * skin 
-	    && std::abs (point_.x ()) < 0.5 * __x
-	    && std::abs (point_.y ()) < 0.5 * __y) return true;
+	if ((std::abs (point_.z () + 0.5 * __z) < hskin) 
+	    && (std::abs (point_.x ()) < 0.5 * __x)
+	    && (std::abs (point_.y ()) < 0.5 * __y)) return true;
       }
     if (mask & FACE_TOP) 
       {
-	if (std::abs (point_.z () - 0.5 * __z) < 0.5 * skin 
-	    && std::abs (point_.x ()) < 0.5 * __x
-	    && std::abs (point_.y ()) < 0.5 * __y) return true;
+	if ((std::abs (point_.z () - 0.5 * __z) < hskin) 
+	    && (std::abs (point_.x ()) < 0.5 * __x)
+	    && (std::abs (point_.y ()) < 0.5 * __y)) return true;
       }
     return false;
   }
 
   bool 
-  box::intercept (const vector_3d & from_, 
-		  const vector_3d & direction_,
-		  vector_3d & intercept_,
-		  int & face_,
-		  double skin_) const
+  box::find_intercept (const vector_3d & from_, 
+		       const vector_3d & direction_,
+		       vector_3d & intercept_,
+		       int & face_,
+		       double skin_) const
   {
-    double t [6];
-    t [0] = -(get_half_x () + from_[vector_3d::X]) / direction_[vector_3d::X];
-    t [1] = (get_half_x () - from_[vector_3d::X]) / direction_[vector_3d::X];
-    t [2] = -(get_half_y () + from_[vector_3d::Y]) / direction_[vector_3d::Y];
-    t [3] = (get_half_y () - from_[vector_3d::Y]) / direction_[vector_3d::Y];
-    t [4] = -(get_half_z () + from_[vector_3d::Z]) / direction_[vector_3d::Z];
-    t [5] = (get_half_z () - from_[vector_3d::Z]) / direction_[vector_3d::Z];
+    const unsigned int NFACES = 6;
+    double t[NFACES];
+    t[BACK]   = -(get_half_x () + from_[vector_3d::X]) / direction_[vector_3d::X];
+    t[FRONT]  = +(get_half_x () - from_[vector_3d::X]) / direction_[vector_3d::X];
+    t[LEFT]   = -(get_half_y () + from_[vector_3d::Y]) / direction_[vector_3d::Y];
+    t[RIGHT]  = +(get_half_y () - from_[vector_3d::Y]) / direction_[vector_3d::Y];
+    t[TOP]    = -(get_half_z () + from_[vector_3d::Z]) / direction_[vector_3d::Z];
+    t[BOTTOM] = +(get_half_z () - from_[vector_3d::Z]) / direction_[vector_3d::Z];
 
     double t_min = -1.0;
-    int face_min = -1.;
-    for (int i = 0; i < 6; i++)
+    int face_min = 0;
+    for (int i = 0; i < (int) NFACES; i++)
       {
 	double ti = t[i];
-	
 	std::clog << "DEVEL: box::intercept: t[" << i << "]= "
 		  << ti << " t_min=" << t_min 
 		  << " face_min=" << face_min 
@@ -304,32 +311,26 @@ namespace geomtools {
 	
 	if (std::isnormal (ti) && (ti > 0.0))
 	  {
-	    if ((t_min < 0.0) || (ti < t_min))
+	    int face_bit = (0x1 << i); // face mask
+	    vector_3d intercept = from_ + direction_ * ti;
+	    if (is_on_surface (intercept, face_bit, skin_))
 	      {
-		t_min = ti;
-		face_min = i;
+		if ((t_min < 0.0) || (ti < t_min))
+		  {
+		    t_min = ti;
+		    face_min = face_bit;
+		  }
 	      }
 	  }
       }
-    if (face_min < 0) 
+    if (face_min > 0) 
       {
-	face_ = FACE_NONE;
-	return false;
-      }
-    int face_bit = (0x1 << face_min);
-    vector_3d intercept = from_ + direction_ * t_min;
-    
-    std::clog << "DEVEL: box::intercept: intercept= "
-	      << intercept 
-	      << " face_bit=" << face_bit 
-	      << std::endl;
-    
-    if (is_on_surface (intercept, face_bit, skin_))
-      {
-	intercept_ = intercept;
-	face_ = face_bit;
+	intercept_ = from_ + direction_ * t_min;
+	face_ = face_min;
 	return true;
       }
+    face_ = FACE_NONE;
+    invalidate (intercept_);
     return false;
   }
   

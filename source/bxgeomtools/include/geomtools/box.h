@@ -124,11 +124,11 @@ namespace geomtools {
 
       friend std::istream & operator>>( std::istream & , box & );
       
-      bool intercept (const vector_3d & from_, 
-		      const vector_3d & direction_,
-		      vector_3d & intercept_,
-		      int & face_,
-		      double skin_ = USING_PROPER_SKIN) const;
+      bool find_intercept (const vector_3d & from_, 
+			   const vector_3d & direction_,
+			   vector_3d & intercept_,
+			   int & face_,
+			   double skin_ = USING_PROPER_SKIN) const;
        
     };
     
