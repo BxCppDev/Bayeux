@@ -1,0 +1,39 @@
+# -*- mode: gnuplot; -*-
+# C++ source: ./programs/test_union_3d.cxx
+#
+
+! ${GEOMTOOLS_ROOT}/$(uname -s)-$(uname -m | sed 's/ //g')/bin/test_union_3d > test_union_3d.data
+
+max=6
+set xrange [-max:max]
+set yrange [-max:max]
+set zrange [-max:max]
+set xlabel "x"
+set ylabel "y"
+set zlabel "z"
+set title "test_union_3d.cxx - test 1"
+splot \
+  "test_union_3d.data" index 0 title "Union_3d" with lines , \
+  "test_union_3d.data" index 1 title "Initial point" with points pt 6 ps 2 , \
+  "test_union_3d.data" index 3 title "Track" with lines lw 2
+pause -1
+
+splot \
+  "test_union_3d.data" index 0 title "Union_3d" with lines , \
+  "test_union_3d.data" index 1 title "Initial point" with points pt 6 ps 2 , \
+  "test_union_3d.data" index 2 title "Final point" with points pt 6 ps 2 , \
+  "test_union_3d.data" index 3 title "Track" with lines lw 2
+pause -1
+
+splot \
+  "test_union_3d.data" index 0 title "Union_3d" with lines , \
+  "test_union_3d.data" index 4 title "Impact" with dots lt 1 
+pause -1
+
+splot \
+  "test_union_3d.data" index 4 title "Impact" with dots lt 1 
+
+
+! #rm -f test_union_3d.data
+
+# end 

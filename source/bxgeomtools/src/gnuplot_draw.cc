@@ -389,7 +389,34 @@ namespace geomtools {
     rotation inverseRotation (rotation_);
     inverseRotation.invert ();
 
-    throw std::runtime_error ("gnuplot_draw::draw_sphere: Not implemented yet!");
+    size_t phy_sample =  arc_sampling_;
+    size_t z_sample =  z_sampling_;
+    double dphi =  2 * M_PI * CLHEP::radian / phy_sample;
+    double dz   =  2 * radius_ / z_sample;
+    polyline_t polyline_meridian;
+    for (size_t i = 0; i <= phy_sample ; ++i) 
+      {
+	polyline_meridian.clear ();
+	vector_3d P,Q;
+	double phi = i * dphi;
+	for (int j = 0; j <= z_sample ; j++)
+	  {
+	    double z = -radius_ + j * dz;
+	    double theta = std::acos (z / radius_);
+	    P.set (radius_ * std::cos (phi) * std::sin (theta), 
+		   radius_ * std::sin (phi) * std::sin (theta),  
+		   z);
+	    vector_3d P2 (P);
+	    P2.transform (inverseRotation);
+	    P2 += position_;
+	    polyline_meridian.push_back (P2);
+	  }
+	basic_draw_polyline (out_, polyline_meridian);
+      }
+    //polyline_t polyline_parallel;
+    //basic_draw_polyline (out_, polyline_parallel);
+ 
+    //throw std::runtime_error ("gnuplot_draw::draw_sphere: Not implemented yet!");
   }
 
 } // end of namespace geomtools

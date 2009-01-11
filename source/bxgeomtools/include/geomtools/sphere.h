@@ -31,7 +31,7 @@ namespace geomtools {
   public:
     enum faces_mask_t
       {
-	FACE_NONE   = 0x0,
+	FACE_NONE   = face_3d::FACE_NONE_BIT,
 	FACE_SIDE   = 0x1,
 	FACE_ALL    = FACE_SIDE
       };  
@@ -44,68 +44,66 @@ namespace geomtools {
   
   public: 
     double 
-    get_r() const;
+    get_r () const;
 
     double 
-    get_radius() const;
+    get_radius () const;
 
     void 
-    set_r(double);
+    set_r (double);
 
     void 
-    set_radius(double);
+    set_radius (double);
 
     void 
-    set(double);
+    set (double);
   
     // ctor/dtor:
   public: 
 
-    sphere();
+    sphere ();
 
-    sphere(double);
+    sphere (double);
 
     virtual 
-    ~sphere();
+    ~sphere ();
   
     virtual std::string 
-    get_shape_name() const;
+    get_shape_name () const;
 
     virtual double 
-    get_parameter(const std::string &) const;
+    get_parameter (const std::string &) const;
 
     bool 
-    is_valid() const;
+    is_valid () const;
 
     void 
-    reset();
+    reset ();
 
     double 
-    get_surface(int mask_ = FACE_ALL) const;
+    get_surface (int mask_ = FACE_ALL) const;
 
     double 
-    get_volume() const;
+    get_volume () const;
 
-    virtual bool 
-    is_inside(const vector_3d &, 
-	      double skin_ = USING_PROPER_SKIN) const;
-
-    virtual bool 
-    is_on_surface(const vector_3d & , 
-		  int mask_    = FACE_ALL , 
-		  double skin_ = USING_PROPER_SKIN) const;
-
-    bool find_intercept (const vector_3d & from_, 
-			 const vector_3d & direction_,
-			 vector_3d & intercept_,
-			 int & face_,
-			 double skin_ = USING_PROPER_SKIN) const;
+    virtual bool is_inside (const vector_3d &, 
+			    double skin_ = USING_PROPER_SKIN) const;
+    
+    virtual bool is_on_surface (const vector_3d & , 
+				int mask_    = FACE_ALL , 
+				double skin_ = USING_PROPER_SKIN) const;
+    
+    virtual bool find_intercept (const vector_3d & from_, 
+				 const vector_3d & direction_,
+				 vector_3d & intercept_,
+				 int & face_,
+				 double skin_ = USING_PROPER_SKIN) const;
 
     friend std::ostream & 
-    operator<<(std::ostream &, const sphere &);
+    operator<< (std::ostream &, const sphere &);
 
     friend std::istream & 
-    operator>>(std::istream &, sphere &);
+    operator>> (std::istream &, sphere &);
 
   };
 

@@ -231,6 +231,7 @@ namespace geomtools {
 		      int    mask_ ,
 		      double skin_) const
   {
+    bool debug = false;
     double skin = get_skin ();
     if (skin_ > USING_PROPER_SKIN) skin = 2 * skin_;
 
@@ -258,12 +259,15 @@ namespace geomtools {
       }
     if (mask & FACE_RIGHT) 
       {
-	std::clog << "DEVEL: box::is_on_surface: FACE_RIGHT" << std::endl;
-	std::clog << "DEVEL: box::is_on_surface: hskin=" << hskin << std::endl;
-	std::clog << "DEVEL: box::is_on_surface: point=" << point_ << std::endl;
-	std::clog << "DEVEL: box::is_on_surface: dim x=" << 0.5 * __x << std::endl;
-	std::clog << "DEVEL: box::is_on_surface: dim y=" << 0.5 * __y << std::endl;
-	std::clog << "DEVEL: box::is_on_surface: dim z=" << 0.5 * __z << std::endl;
+	if (debug)
+	  {
+	    std::clog << "DEVEL: box::is_on_surface: FACE_RIGHT" << std::endl;
+	    std::clog << "DEVEL: box::is_on_surface: hskin=" << hskin << std::endl;
+	    std::clog << "DEVEL: box::is_on_surface: point=" << point_ << std::endl;
+	    std::clog << "DEVEL: box::is_on_surface: dim x=" << 0.5 * __x << std::endl;
+	    std::clog << "DEVEL: box::is_on_surface: dim y=" << 0.5 * __y << std::endl;
+	    std::clog << "DEVEL: box::is_on_surface: dim z=" << 0.5 * __z << std::endl;
+	  }
 	if ((std::abs (point_.y () - 0.5 * __y) < hskin) 
 	    && (std::abs (point_.x ()) < 0.5 * __x)
 	    && (std::abs (point_.z ()) < 0.5 * __z)) return true;
@@ -290,25 +294,34 @@ namespace geomtools {
 		       int & face_,
 		       double skin_) const
   {
+    bool debug = false;
     const unsigned int NFACES = 6;
     double t[NFACES];
-    t[BACK]   = -(get_half_x () + from_[vector_3d::X]) / direction_[vector_3d::X];
-    t[FRONT]  = +(get_half_x () - from_[vector_3d::X]) / direction_[vector_3d::X];
-    t[LEFT]   = -(get_half_y () + from_[vector_3d::Y]) / direction_[vector_3d::Y];
-    t[RIGHT]  = +(get_half_y () - from_[vector_3d::Y]) / direction_[vector_3d::Y];
-    t[TOP]    = -(get_half_z () + from_[vector_3d::Z]) / direction_[vector_3d::Z];
-    t[BOTTOM] = +(get_half_z () - from_[vector_3d::Z]) / direction_[vector_3d::Z];
+    t[BACK]   = -(get_half_x () + from_[vector_3d::X]) 
+      / direction_[vector_3d::X];
+    t[FRONT]  = +(get_half_x () - from_[vector_3d::X]) 
+      / direction_[vector_3d::X];
+    t[LEFT]   = -(get_half_y () + from_[vector_3d::Y]) 
+      / direction_[vector_3d::Y];
+    t[RIGHT]  = +(get_half_y () - from_[vector_3d::Y]) 
+      / direction_[vector_3d::Y];
+    t[BOTTOM] = -(get_half_z () + from_[vector_3d::Z]) 
+      / direction_[vector_3d::Z];
+    t[TOP]    = +(get_half_z () - from_[vector_3d::Z])
+      / direction_[vector_3d::Z];
 
     double t_min = -1.0;
     int face_min = 0;
     for (int i = 0; i < (int) NFACES; i++)
       {
 	double ti = t[i];
-	std::clog << "DEVEL: box::intercept: t[" << i << "]= "
-		  << ti << " t_min=" << t_min 
-		  << " face_min=" << face_min 
-		  << std::endl;
-	
+	if (debug)
+	  {
+	    std::clog << "DEVEL: box::find_intercept: t[" << i << "]= "
+		      << ti << " t_min=" << t_min 
+		      << " face_min=" << face_min 
+		      << std::endl;
+	  }
 	if (std::isnormal (ti) && (ti > 0.0))
 	  {
 	    int face_bit = (0x1 << i); // face mask

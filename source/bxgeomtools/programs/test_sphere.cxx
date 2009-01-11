@@ -1,13 +1,13 @@
 // -*- mode: c++; -*- 
-// test_cylinder.cxx
-// gnuplot macro: ./tests/test_cylinder.gpl
+// test_sphere.cxx
+// gnuplot macro: ./tests/test_sphere.gpl
 
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <stdexcept>
 
-#include <geomtools/cylinder.h>
+#include <geomtools/sphere.h>
 #include <geomtools/gnuplot_draw.h>
 
 int 
@@ -40,42 +40,33 @@ main (int argc_, char ** argv_)
       // test 1:
       if (test1) 
 	{
-	  geomtools::cylinder my_cylinder (1000 * CLHEP::mm,
-					   230 * CLHEP::mm);
+	  geomtools::sphere my_sphere (1000 * CLHEP::mm);
 
-	  std::clog << "test 1: Cylinder #1 = " << my_cylinder << " " << std::endl;
+	  std::clog << "test 1: Sphere #1 = " << my_sphere << " " << std::endl;
 
-	  std::clog << "test 1: Volume   = " << my_cylinder.get_volume () / CLHEP::m3 << " m3" << std::endl;
+	  std::clog << "test 1: Volume   = " << my_sphere.get_volume () / CLHEP::m3 << " m3" << std::endl;
 
 	  std::clog << "test 1: Side surface = " 
-		    << my_cylinder.get_surface (geomtools::cylinder::FACE_SIDE) / CLHEP::m2 
-		    << " m2" << std::endl;
-
-	  std::clog << "test 1: Top surface = " 
-		    << my_cylinder.get_surface (geomtools::cylinder::FACE_TOP) / CLHEP::m2
-		    << " m2" << std::endl;
-
-	  std::clog << "test 1: Bottom surface = "
-		    << my_cylinder.get_surface (geomtools::cylinder::FACE_BOTTOM) / CLHEP::m2 
+		    << my_sphere.get_surface (geomtools::sphere::FACE_SIDE) / CLHEP::m2 
 		    << " m2" << std::endl;
 
 	  std::clog << "test 1: Full surface = " 
-		    << my_cylinder.get_surface (geomtools::cylinder::FACE_ALL) / CLHEP::m2 
+		    << my_sphere.get_surface (geomtools::sphere::FACE_ALL) / CLHEP::m2 
 		    << " m2" << std::endl;
 
 	  {
 	    bool test_in = false;
 	    if (test_in)
 	      {
-		std::clog << "test 1: Enter a cylinder (example: '{cylinder 1000 1000}'): ";
-		std::cin >> std::ws >> my_cylinder;
+		std::clog << "test 1: Enter a sphere (example: '{sphere 1000}'): ";
+		std::cin >> std::ws >> my_sphere;
 		if (std::cin) 
 		  {
-		    std::clog << "test 1: Cylinder = " << my_cylinder << " " << std::endl;
+		    std::clog << "test 1: Sphere = " << my_sphere << " " << std::endl;
 		  }
 		else 
 		  {
-		    throw std::runtime_error ("Invalid input for cylinder!");
+		    throw std::runtime_error ("Invalid input for sphere!");
 		  }
 	      }
 	  }
@@ -84,9 +75,8 @@ main (int argc_, char ** argv_)
       // test 2:
       if (test2) 
 	{
-	  geomtools::cylinder my_cylinder (3.0 * CLHEP::mm, 
-					   10.0 * CLHEP::mm);
-	  std::clog << "test 2: Cylinder #2   = " << my_cylinder << " " << std::endl;
+	  geomtools::sphere my_sphere (3.0 * CLHEP::mm);
+	  std::clog << "test 2: Sphere #2   = " << my_sphere << " " << std::endl;
       
 	  geomtools::vector_3d pos (4.0 * CLHEP::mm, 
 				    0.0 * CLHEP::mm, 
@@ -94,9 +84,9 @@ main (int argc_, char ** argv_)
 	  geomtools::vector_3d dir (-1, 0, 0);
 	  geomtools::vector_3d intercept;
 	  int intercept_face;
-	  if (my_cylinder.find_intercept (pos, dir, 
-					  intercept, 
-					  intercept_face))
+	  if (my_sphere.find_intercept (pos, dir, 
+					intercept, 
+					intercept_face))
 	    {
 	      std::clog << "test 2: Intercept face=" << intercept_face
 			<< " at intercept=" << intercept
@@ -107,12 +97,11 @@ main (int argc_, char ** argv_)
 	      std::clog << "test 2: No intercept." << std::endl;
 	    }
 
-	  geomtools::vector_3d cylinder_pos;
-	  geomtools::rotation cylinder_rot;
-	  geomtools::create_rotation (cylinder_rot, 0.0, 0.0, 0.0);
-	  geomtools::gnuplot_draw::draw_cylinder (std::cout, cylinder_pos, cylinder_rot, 
-						  my_cylinder.get_r (), 
-						  my_cylinder.get_z ());
+	  geomtools::vector_3d sphere_pos;
+	  geomtools::rotation sphere_rot;
+	  geomtools::create_rotation (sphere_rot, 0.0, 0.0, 0.0);
+	  geomtools::gnuplot_draw::draw_sphere (std::cout, sphere_pos, sphere_rot, 
+						my_sphere.get_r ());
 	  std::cout << std::endl << std::endl;
 
 	  geomtools::gnuplot_draw::basic_draw_point (std::cout, pos);
@@ -129,18 +118,16 @@ main (int argc_, char ** argv_)
       // test 3:
       if (test3) 
 	{
-	  geomtools::cylinder my_cylinder (2.0 * CLHEP::mm, 
-					   4.0 * CLHEP::mm);
-	  std::clog << "test 3: Cylinder #3   = " << my_cylinder 
+	  geomtools::sphere my_sphere (2.0 * CLHEP::mm);
+	  std::clog << "test 3: Sphere #3   = " << my_sphere 
 		    << " " << std::endl;
-	  geomtools::vector_3d cylinder_pos;
-	  geomtools::rotation cylinder_rot;
-	  geomtools::create_rotation (cylinder_rot, 0.0, 0.0, 0.0);
-	  geomtools::gnuplot_draw::draw_cylinder (std::cout, 
-						  cylinder_pos, 
-						  cylinder_rot, 
-						  my_cylinder.get_r (), 
-						  my_cylinder.get_z ());
+	  geomtools::vector_3d sphere_pos;
+	  geomtools::rotation sphere_rot;
+	  geomtools::create_rotation (sphere_rot, 0.0, 0.0, 0.0);
+	  geomtools::gnuplot_draw::draw_sphere (std::cout, 
+						sphere_pos, 
+						sphere_rot, 
+						my_sphere.get_r ());
 	  std::cout << std::endl << std::endl;
 	
 	  size_t nshoots = 100000;
@@ -157,9 +144,9 @@ main (int argc_, char ** argv_)
 
 	      geomtools::vector_3d intercept;
 	      int intercept_face;
-	      if (my_cylinder.find_intercept (pos, dir, 
-					      intercept, 
-					      intercept_face))
+	      if (my_sphere.find_intercept (pos, dir, 
+					    intercept, 
+					    intercept_face))
 		{
 		  if (debug) std::clog << "test 3: Intercept face=" << intercept_face
 				       << " at intercept=" << intercept
@@ -188,4 +175,4 @@ main (int argc_, char ** argv_)
   return error_code;
 }
 
-// end of test_cylinder.cxx
+// end of test_sphere.cxx

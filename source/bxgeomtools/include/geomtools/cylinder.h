@@ -31,7 +31,7 @@ namespace geomtools {
 
       enum faces_mask_t
 	{
-	  FACE_NONE   = 0x0,
+	  FACE_NONE   = face_3d::FACE_NONE_BIT,
 	  FACE_SIDE   = 0x1,
 	  FACE_BOTTOM = 0x2,
 	  FACE_TOP    = 0x4,
@@ -84,7 +84,7 @@ namespace geomtools {
 
       cylinder();
 
-      cylinder(double, double);
+      cylinder(double r_, double z_);
 
       virtual ~cylinder();
   
@@ -119,11 +119,11 @@ namespace geomtools {
 		      int mask_    = FACE_ALL, 
 		      double skin_ = USING_PROPER_SKIN) const;
 
-      bool find_intercept (const vector_3d & from_, 
-			   const vector_3d & direction_,
-			   vector_3d & intercept_,
-			   int & face_,
-			   double skin_ = USING_PROPER_SKIN) const;
+      virtual bool find_intercept (const vector_3d & from_, 
+				   const vector_3d & direction_,
+				   vector_3d & intercept_,
+				   int & face_,
+				   double skin_ = USING_PROPER_SKIN) const;
 
       friend std::ostream & 
 	operator<<(std::ostream &, const cylinder &);

@@ -196,21 +196,22 @@ namespace geomtools {
     int mask = mask_;
     if (mask_ == ALL_SURFACES) mask = FACE_ALL;
 
+    double hskin = 0.5 * skin;
     double r = hypot (point_.x (), point_.y ());
     if (mask & FACE_BOTTOM) 
       {
-	if ( (std::abs (point_.z () + 0.5 * __z) < 0.5 * skin) 
-	     && (r < __r)) return true;
-      }
+	if ((std::abs (point_.z () + 0.5 * __z) < hskin) 
+	    && (r < (__r + hskin))) return true;
+      } 
     if (mask & FACE_TOP) 
       {
-	if ( ( std::abs (point_.z () - 0.5 * __z) < 0.5 * skin) 
-	     && (r < __r)) return true;
+	if ((std::abs (point_.z () - 0.5 * __z) < hskin) 
+	    && (r < (__r + hskin))) return true;
       }
     if (mask & FACE_SIDE) 
       {
-	if ( (std::abs (point_.z ()) < 0.5 * __z)   
-	     && (std::abs ( r - __r ) < 0.5 * skin)) return true;
+	if ((std::abs (point_.z ()) < (0.5 * __z + hskin))   
+	    && (std::abs (r - __r) < hskin)) return true;
       }
     return false;
   }
@@ -222,7 +223,120 @@ namespace geomtools {
 		       int & face_,
 		       double skin_) const
   {
-    face_ = 0;
+    bool debug = false;
+    //debug = true;
+    const unsigned int NFACES = 3;
+    double t[NFACES];
+    const int CYL_SIDE = 0;
+    const int CYL_BOTTOM = 1;
+    const int CYL_TOP = 2;
+    t[CYL_SIDE] = -1.0; // side
+    t[CYL_BOTTOM] = -1.0; // bottom
+    t[CYL_TOP] = -1.0; // top
+    double a, b, c;
+    double x0 = from_.x ();
+    double y0 = from_.y ();
+    double dx = direction_.x ();
+    double dy = direction_.y ();
+    a = dx * dx + dy * dy;
+    b = 2. * (dx * x0 + dy * y0);
+    c = x0 * x0 + y0 * y0 - __r * __r;
+    double delta = b * b - 4. * a * c;
+    double ts[2];
+    if (debug)
+      {
+	std::clog << "DEVEL: cylinder::find_intercept: from= "
+		  << from_
+		  << std::endl;
+	std::clog << "DEVEL: cylinder::find_intercept: direction= "
+		  << direction_
+		  << std::endl;
+	std::clog << "DEVEL: cylinder::find_intercept: a= "
+		  << a
+		  << std::endl;
+	std::clog << "DEVEL: cylinder::find_intercept: b= "
+		  << b
+		  << std::endl;
+	std::clog << "DEVEL: cylinder::find_intercept: c= "
+		  << c
+		  << std::endl;
+	std::clog << "DEVEL: cylinder::find_intercept: delta= "
+		  << delta
+		  << std::endl;
+      }
+    if (delta >= 0.0)
+      {
+	double q = std::sqrt (delta);
+	double n = a + a;
+	ts[0] = (- b + q) / n;
+	ts[1] = (- b - q) / n;
+      }
+    if (debug)
+      {
+	std::clog << "DEVEL: cylinder::find_intercept: ts[" << 0 << "]= "
+		  << ts[0]
+		  << std::endl;
+	std::clog << "DEVEL: cylinder::find_intercept: ts[" << 1 << "]= "
+		  << ts[1]
+		  << std::endl;
+      }
+    for (int i = 0; i < 2; i++)
+      {
+	double tsi = ts[i];
+	if (std::isnormal (tsi) && (tsi > 0.0))
+	  {
+	    if (t[CYL_SIDE] < 0) 
+	      {
+		t[CYL_SIDE] = tsi;
+	      }
+	    else 
+	      {
+		if (tsi < t[CYL_SIDE]) 
+		  {
+		    t[CYL_SIDE] = tsi;
+		  }
+	      }
+	  }
+      }
+    
+    double z0 = from_.z ();
+    double dz = direction_.z ();
+    t[CYL_BOTTOM] = (-0.5 * __z - z0) / dz;
+    t[CYL_TOP]    = (+0.5 * __z - z0) / dz;
+
+    double t_min = -1.0;
+    int face_min = 0;
+    for (int i = 0; i < (int) NFACES; i++)
+      {
+	double ti = t[i];
+	if (debug)
+	  {
+	    std::clog << "DEVEL: cylinder::find_intercept: t[" << i << "]= "
+		      << ti << " t_min=" << t_min 
+		      << " face_min=" << face_min 
+		      << std::endl;
+	  }
+	if (std::isnormal (ti) && (ti > 0.0))
+	  {
+	    int face_bit = (0x1 << i); // face mask
+	    vector_3d intercept = from_ + direction_ * ti;
+	    if (is_on_surface (intercept, face_bit, skin_))
+	      {
+		if ((t_min < 0.0) || (ti < t_min))
+		  {
+		    t_min = ti;
+		    face_min = face_bit;
+		  }
+	      }
+	  }
+      }
+    if (face_min > 0) 
+      {
+	intercept_ = from_ + direction_ * t_min;
+	face_ = face_min;
+	return true;
+      }
+    face_ = FACE_NONE;
     invalidate (intercept_);
     return false;
   }

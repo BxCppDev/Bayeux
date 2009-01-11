@@ -7,8 +7,8 @@
 namespace geomtools {
  
   const double i_shape_3d::DEFAULT_SKIN = 0.1 * CLHEP::micrometer;
-  const int    i_shape_3d::ALL_SURFACES = -1;
-  const int    i_shape_3d::NO_SURFACES  = 0;
+  const unsigned int i_shape_3d::ALL_SURFACES = 0xFFFFFFFF;
+  const unsigned int i_shape_3d::NO_SURFACES  = 0;
   const double i_shape_3d::USING_PROPER_SKIN = 0.0 * CLHEP::micrometer;
 
   double
@@ -50,7 +50,7 @@ namespace geomtools {
 
   bool
   i_shape_3d::is_outside (const vector_3d & pos_, 
-			 double skin_) const
+			  double skin_) const
   {
     return ! is_inside (pos_, skin_) 
       && ! is_on_surface (pos_, ALL_SURFACES, skin_);

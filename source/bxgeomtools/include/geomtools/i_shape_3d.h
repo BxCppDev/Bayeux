@@ -28,8 +28,8 @@ namespace geomtools {
     {
     public:
       static const double DEFAULT_SKIN;
-      static const int    ALL_SURFACES;
-      static const int    NO_SURFACES;
+      static const unsigned int ALL_SURFACES;
+      static const unsigned int NO_SURFACES;
       static const double USING_PROPER_SKIN;
 
     private:
@@ -52,6 +52,11 @@ namespace geomtools {
 
       virtual std::string get_shape_name () const = 0;
 
+      virtual bool is_composite () const
+      {
+	return false;
+      }
+
       //virtual double 
       //	get_parameter(const std::string &) const = 0;
 
@@ -73,7 +78,7 @@ namespace geomtools {
       {
 	// temporary:
 	// default: no intercept on any face of the 3D shape...
-	face_ = 0;
+	face_ = face_3d::FACE_NONE_BIT;
 	return false; // there is no solution
       }
 

@@ -1,5 +1,6 @@
 // -*- mode: c++; -*- 
 // test_box.cxx
+// gnuplot macro: ./tests/test_box.gpl
 
 #include <cstdlib>
 #include <iostream>
@@ -16,6 +17,7 @@ main (int argc_, char ** argv_)
   try 
     {
       bool debug = false;
+      long seed = 314159;
 
       int iarg = 1;
       while (iarg < argc_) 
@@ -27,50 +29,58 @@ main (int argc_, char ** argv_)
 	  iarg++;
 	}
     
-      geomtools::box my_box (2.0 * CLHEP::m, 
-			     3.0 * CLHEP::m, 
-			     0.5 * CLHEP::m);
-      std::clog << "Box     = " << my_box << " " << std::endl;
+      srand48 (seed);
 
-      std::clog << "Volume  = " << my_box.get_volume () / CLHEP::m3 
-		<< " m3" << std::endl;
-
-      std::clog << "Front surface = " 
-		<< my_box.get_surface (geomtools::box::FACE_FRONT) / CLHEP::m2 
-		<< " m2" << std::endl;
-
-      std::clog << "Top surface = " 
-		<< my_box.get_surface (geomtools::box::FACE_TOP) / CLHEP::m2 
-		<< " m2" << std::endl;
-
-      std::clog << "Right surface = "
-		<< my_box.get_surface (geomtools::box::FACE_RIGHT) / CLHEP::m2 
-		<< " m2" << std::endl;
-
-      std::clog << "Full surface = " 
-		<< my_box.get_surface (geomtools::box::FACE_ALL) / CLHEP::m2 
-		<< " m2" << std::endl;
-
-      bool test_in = false;
-      if (test_in)
+      // test 1:
+      {
+	geomtools::box my_box (2.0 * CLHEP::m, 
+			       3.0 * CLHEP::m, 
+			       0.5 * CLHEP::m);
+	std::clog << "test 1: Box #1  = " << my_box << " " << std::endl;
+	
+	std::clog << "test 1: Volume  = " << my_box.get_volume () / CLHEP::m3 
+		  << " m3" << std::endl;
+	
+	std::clog << "test 1: Front surface = " 
+		  << my_box.get_surface (geomtools::box::FACE_FRONT) / CLHEP::m2 
+		  << " m2" << std::endl;
+	
+	std::clog << "test 1: Top surface = " 
+		  << my_box.get_surface (geomtools::box::FACE_TOP) / CLHEP::m2 
+		  << " m2" << std::endl;
+	
+	std::clog << "test 1: Right surface = "
+		  << my_box.get_surface (geomtools::box::FACE_RIGHT) / CLHEP::m2 
+		  << " m2" << std::endl;
+	
+	std::clog << "test 1: Full surface = " 
+		  << my_box.get_surface (geomtools::box::FACE_ALL) / CLHEP::m2 
+		  << " m2" << std::endl;
+	
 	{
-	  std::clog << "Enter a box (example: '{box 1000 1000 1000}'): ";
-	  std::cin >> std::ws >> my_box;
-	  if (std::cin) 
+	  bool test_in = false;
+	  if (test_in)
 	    {
-	      std::clog << "Box     = " << my_box << " " << std::endl;
-	    }
-	  else 
-	    {
-	      throw std::runtime_error ("Invalid input for box!");
+	      std::clog << "test 1: Enter a box (example: '{box 1000 1000 1000}'): ";
+	      std::cin >> std::ws >> my_box;
+	      if (std::cin) 
+		{
+		  std::clog << "test 1: Box     = " << my_box << " " << std::endl;
+		}
+	      else 
+		{
+		  throw std::runtime_error ("Invalid input for box!");
+		}
 	    }
 	}
+      }
 
+      // test 2:
       {
-	geomtools::box my_box2 (8.0 * CLHEP::mm, 
-				4.0 * CLHEP::mm, 
-				1.0 * CLHEP::mm);
-	std::clog << "Box #2   = " << my_box2 << " " << std::endl;
+	geomtools::box my_box (8.0 * CLHEP::mm, 
+			       4.0 * CLHEP::mm, 
+			       1.0 * CLHEP::mm);
+	std::clog << "test 2: Box #2   = " << my_box << " " << std::endl;
       
 	geomtools::vector_3d pos (2.0 * CLHEP::mm, 
 				  3.0 * CLHEP::mm, 
@@ -79,26 +89,26 @@ main (int argc_, char ** argv_)
 	//dir = -pos;
 	geomtools::vector_3d intercept;
 	int intercept_face;
-	if (my_box2.find_intercept (pos, dir, 
-				    intercept, 
-				    intercept_face))
+	if (my_box.find_intercept (pos, dir, 
+				   intercept, 
+				   intercept_face))
 	  {
-	    std::clog << "Intercept face=" << intercept_face
+	    std::clog << "test 2: Intercept face=" << intercept_face
 		      << " at intercept=" << intercept
 		      << std::endl;
 	  }
 	else
 	  {
-	    std::clog << "No intercept." << std::endl;
+	    std::clog << "test 2: No intercept." << std::endl;
 	  }
 
 	geomtools::vector_3d box_pos;
 	geomtools::rotation box_rot;
 	geomtools::create_rotation (box_rot, 0.0, 0.0, 0.0);
 	geomtools::gnuplot_draw::draw_box (std::cout, box_pos, box_rot, 
-					   my_box2.get_x (), 
-					   my_box2.get_y (), 
-					   my_box2.get_z ());
+					   my_box.get_x (), 
+					   my_box.get_y (), 
+					   my_box.get_z ());
 	std::cout << std::endl << std::endl;
 
 	geomtools::gnuplot_draw::basic_draw_point (std::cout, pos);
@@ -112,6 +122,48 @@ main (int argc_, char ** argv_)
 	std::cout << std::endl << std::endl;
       }
       
+      // test 3:
+      {
+	geomtools::box my_box (5.0 * CLHEP::mm, 
+			       5.0 * CLHEP::mm, 
+			       5.0 * CLHEP::mm);
+	std::clog << "test 3: Box #3   = " << my_box << " " << std::endl;
+	geomtools::vector_3d box_pos;
+	geomtools::rotation box_rot;
+	geomtools::create_rotation (box_rot, 0.0, 0.0, 0.0);
+	geomtools::gnuplot_draw::draw_box (std::cout, box_pos, box_rot, 
+					   my_box.get_x (), 
+					   my_box.get_y (), 
+					   my_box.get_z ());
+	std::cout << std::endl << std::endl;
+      
+	size_t nshoots = 100000;
+	for (int i = 0; i < (int) nshoots; i++)
+	  {
+	    geomtools::vector_3d pos (10.* drand48 () * CLHEP::mm, 
+				      10.* drand48 () * CLHEP::mm, 
+				      10.* drand48 () * CLHEP::mm);
+	    geomtools::vector_3d dir;
+	    geomtools::randomize_direction (drand48, dir);
+
+	    geomtools::vector_3d intercept;
+	    int intercept_face;
+	    if (my_box.find_intercept (pos, dir, 
+				       intercept, 
+				       intercept_face))
+	      {
+		if (debug) std::clog << "test 3: Intercept face=" << intercept_face
+				     << " at intercept=" << intercept
+				     << std::endl;
+		geomtools::gnuplot_draw::basic_draw_point (std::cout, intercept);
+	      }
+	    else
+	      {
+		if (debug) std::clog << "test 3: No intercept." << std::endl;
+	      }
+	  }
+      }
+ 
     }
   catch (std::exception & x)
     {
