@@ -188,6 +188,27 @@ namespace geomtools {
     throw std::runtime_error ("tube::get_parameter: Unknown flag!");
   }
 
+  vector_3d 
+  tube::get_normal_on_surface (const vector_3d & position_) const
+  {
+    vector_3d normal;
+    invalidate (normal);
+    if (is_on_surface (position_, FACE_OUTER_SIDE)) 
+      {
+	double phi = position_.phi ();
+	normal.set (std::cos (phi), std::sin (phi), 0.0);
+      }
+    else if (is_on_surface (position_, FACE_INNER_SIDE)) 
+      {
+	double phi = position_.phi ();
+	normal.set (std::cos (phi), std::sin (phi), 0.0);
+	normal *= -1.;
+      }
+    else if (is_on_surface (position_, FACE_BOTTOM)) normal.set (0.0, 0.0, -1.0);
+    else if (is_on_surface (position_, FACE_TOP)) normal.set (0.0, 0.0, +1.0); 
+    return (normal);
+  }
+
   bool 
   tube::is_on_surface (const vector_3d & point_, 
 		      int mask_, 

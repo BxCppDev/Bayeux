@@ -118,6 +118,19 @@ namespace geomtools {
     throw std::runtime_error ("sphere::get_parameter: Unknown flag!");
   }
 
+  vector_3d 
+  sphere::get_normal_on_surface (const vector_3d & position_) const
+  {
+    vector_3d normal;
+    invalidate (normal);
+    if (is_on_surface (position_, FACE_SIDE)) 
+      {
+	normal = position_;
+	normal.unit ();
+      }
+    return (normal);
+  }
+
   bool 
   sphere::is_on_surface (const vector_3d & point_, 
 			 int mask_    , 

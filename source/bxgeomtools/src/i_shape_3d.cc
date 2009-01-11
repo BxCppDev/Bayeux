@@ -6,7 +6,7 @@
 
 namespace geomtools {
  
-  const double i_shape_3d::DEFAULT_SKIN = 0.1 * CLHEP::micrometer;
+  const double i_shape_3d::DEFAULT_SKIN = constants::DEFAULT_TOLERANCE;
   const unsigned int i_shape_3d::ALL_SURFACES = 0xFFFFFFFF;
   const unsigned int i_shape_3d::NO_SURFACES  = 0;
   const double i_shape_3d::USING_PROPER_SKIN = 0.0 * CLHEP::micrometer;

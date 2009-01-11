@@ -103,6 +103,18 @@ main (int argc_, char ** argv_)
 	size_t nshoots = 100000;
 	for (int i = 0; i < (int) nshoots; i++)
 	  {
+	    if ((i%1000) == 0) std::clog << "Loop #" << i << std::endl;
+	    std::clog << "DEVEL: Loop #" << i << std::endl;
+
+	    // special debug activation:
+	    int idevel = -1;
+	    geomtools::union_3d::g_devel = false;
+	    idevel = 1817;
+	    if (i == idevel)
+	      {
+		geomtools::union_3d::g_devel = true;
+	      }
+
 	    double dim = 6. * CLHEP::mm;
 	    geomtools::vector_3d pos (dim * drand48 (), 
 				      dim * drand48 (), 

@@ -13,11 +13,30 @@
 #include <CLHEP/Vector/ThreeVector.h>
 #include <CLHEP/Vector/Rotation.h>
 
+#include <CLHEP/Random/RandFlat.h>
+//#include <CLHEP/Random/RandomEngine.h>
+
 namespace geomtools {
 
   typedef CLHEP::Hep2Vector  vector_2d;
   typedef CLHEP::Hep3Vector  vector_3d;
   typedef CLHEP::HepRotation rotation;
+
+  /* basic uniform deviates generator from CLHEP
+   * used for special geometry algorithms
+   */
+  class random_tools
+  {
+  public:
+
+    static double random_flat ()
+    {
+      return RandFlat::shoot (0.0, 1.0);
+    }
+
+  };
+
+
 
 } // end of namespace geomtools
 

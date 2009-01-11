@@ -24,6 +24,7 @@ namespace geomtools {
   {
   public:
     static const std::string UNION_3D_LABEL;
+    static bool g_devel;
     
   public:
 
@@ -39,6 +40,8 @@ namespace geomtools {
     virtual bool is_on_surface (const vector_3d & position_, 
 				int mask_    = ALL_SURFACES, 
 				double skin_ = USING_PROPER_SKIN) const;
+
+    virtual vector_3d get_normal_on_surface (const vector_3d & position_) const;
     
     virtual  bool find_intercept (const vector_3d & from_, 
 				  const vector_3d & direction_,

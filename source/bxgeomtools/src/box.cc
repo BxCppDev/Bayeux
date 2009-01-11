@@ -226,6 +226,20 @@ namespace geomtools {
     return true;
   }
 
+  vector_3d 
+  box::get_normal_on_surface (const vector_3d & position_) const
+  {
+    vector_3d normal;
+    invalidate (normal);
+    if (is_on_surface (position_, FACE_BACK)) normal.set (-1.0, 0.0, 0.0);
+    else if (is_on_surface (position_, FACE_FRONT)) normal.set (+1.0, 0.0, 0.0);
+    else if (is_on_surface (position_, FACE_LEFT)) normal.set (0.0, -1.0, 0.0);
+    else if (is_on_surface (position_, FACE_RIGHT)) normal.set (0.0, +1.0, 0.0);
+    else if (is_on_surface (position_, FACE_BOTTOM)) normal.set (0.0, 0.0, -1.0);
+    else if (is_on_surface (position_, FACE_TOP)) normal.set (0.0, 0.0, +1.0); 
+    return (normal);
+  }
+
   bool 
   box::is_on_surface (const vector_3d & point_ , 
 		      int    mask_ ,

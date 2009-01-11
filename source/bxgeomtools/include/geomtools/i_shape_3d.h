@@ -67,6 +67,8 @@ namespace geomtools {
 				  int surface_mask_ = ALL_SURFACES, 
 				  double skin_ = USING_PROPER_SKIN) const = 0; 
       
+      virtual vector_3d get_normal_on_surface (const vector_3d & position_) const = 0;
+      
       virtual bool is_outside (const vector_3d &,
 			       double skin_ = USING_PROPER_SKIN) const; 
       

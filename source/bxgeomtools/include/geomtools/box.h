@@ -120,6 +120,8 @@ namespace geomtools {
 		      int mask_    = FACE_ALL , 
 		      double skin_ = USING_PROPER_SKIN) const;
 
+      virtual vector_3d get_normal_on_surface (const vector_3d & position_) const;
+
       friend std::ostream & operator<<( std::ostream & , const box & );
 
       friend std::istream & operator>>( std::istream & , box & );

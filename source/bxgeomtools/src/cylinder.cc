@@ -185,6 +185,21 @@ namespace geomtools {
     return true;
   }
 
+  vector_3d 
+  cylinder::get_normal_on_surface (const vector_3d & position_) const
+  {
+    vector_3d normal;
+    invalidate (normal);
+    if (is_on_surface (position_, FACE_SIDE)) 
+      {
+	double phi = position_.phi ();
+	normal.set (std::cos (phi), std::sin (phi), 0.0);
+      }
+    else if (is_on_surface (position_, FACE_BOTTOM)) normal.set (0.0, 0.0, -1.0);
+    else if (is_on_surface (position_, FACE_TOP)) normal.set (0.0, 0.0, +1.0); 
+    return (normal);
+  }
+
   bool 
   cylinder::is_on_surface (const vector_3d & point_ , 
 			   int    mask_ ,

@@ -6,7 +6,8 @@
 
 namespace geomtools {
 
-  
+  const double constants::DEFAULT_TOLERANCE = 1.e-14 * CLHEP::mm;
+
   void 
   invalidate (vector_3d & vec_)
   {
@@ -19,6 +20,14 @@ namespace geomtools {
   {
     double qnan = std::numeric_limits<double>::quiet_NaN();
     return (vec_.x () != qnan) && (vec_.y () != qnan) && (vec_.z () != qnan);
+  }
+
+  bool 
+  are_near (const vector_3d & vec1_, 
+	    const vector_3d & vec2_,
+	    double tolerance_)
+  {
+    return vec1_.isNear (vec2_, tolerance_); // from CLHEP
   }
    
   void
