@@ -8,22 +8,24 @@ namespace geomtools {
 
   void 
   gnuplot_draw::basic_draw_point (std::ostream & out_, 
-				  const vector_3d & point_)
+				  const vector_3d & point_,
+				  bool endl_)
   {
     out_ << point_.x () << ' ' 
 	 << point_.y () << ' ' 
-	 << point_.z () << std::endl;
+	 << point_.z ();
+    if (endl_) out_ << std::endl;
   }
 
   void 
   gnuplot_draw::basic_draw_polyline (std::ostream & out_, 
 				     const polyline_t & pl_)
   {
-    for ( polyline_t::const_iterator i = pl_.begin () ;
-	  i != pl_.end () ;
-	  ++i) 
+    for (polyline_t::const_iterator i = pl_.begin ();
+	 i != pl_.end ();
+	 ++i) 
       {
-	basic_draw_point (out_,*i);
+	basic_draw_point (out_, *i, true);
       }
     out_ << std::endl;
   }
@@ -33,8 +35,8 @@ namespace geomtools {
 			   const vector_3d & start_ , 
 			   const vector_3d & stop_)
   {
-    basic_draw_point (out_, start_);
-    basic_draw_point (out_, stop_);
+    basic_draw_point (out_, start_, true);
+    basic_draw_point (out_, stop_, true);
     out_ << std::endl;
   }
 
@@ -50,9 +52,9 @@ namespace geomtools {
     polyline_t polyline;
     vector_3d first;
     bool start = true;
-    for ( polyline_t::const_iterator i = pl_.begin ();
-	  i != pl_.end ();
-	  i++) 
+    for (polyline_t::const_iterator i = pl_.begin ();
+	 i != pl_.end ();
+	 i++) 
       {
 	vector_3d P (*i);
 	P.transform (inverseRotation);

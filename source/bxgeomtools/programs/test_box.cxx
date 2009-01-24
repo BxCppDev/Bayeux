@@ -87,14 +87,15 @@ main (int argc_, char ** argv_)
 				  2.0 * CLHEP::mm);
 	geomtools::vector_3d dir (-1, -2.5, -1.5);
 	//dir = -pos;
-	geomtools::vector_3d intercept;
+	geomtools::intercept_t intercept;
 	int intercept_face;
 	if (my_box.find_intercept (pos, dir, 
-				   intercept, 
-				   intercept_face))
+				   intercept))
 	  {
-	    std::clog << "test 2: Intercept face=" << intercept_face
-		      << " at intercept=" << intercept
+	    std::clog << "test 2: Intercept face=" 
+		      << intercept.get_face ()
+		      << " at impact=" 
+		      << intercept.get_impact ()
 		      << std::endl;
 	  }
 	else
@@ -114,7 +115,8 @@ main (int argc_, char ** argv_)
 	geomtools::gnuplot_draw::basic_draw_point (std::cout, pos);
 	std::cout << std::endl << std::endl;
 
-	geomtools::gnuplot_draw::basic_draw_point (std::cout, intercept);
+	geomtools::gnuplot_draw::basic_draw_point (std::cout, 
+						   intercept.get_impact ());
 	std::cout << std::endl << std::endl;
 
 	geomtools::gnuplot_draw::basic_draw_point (std::cout, pos);
@@ -146,16 +148,17 @@ main (int argc_, char ** argv_)
 	    geomtools::vector_3d dir;
 	    geomtools::randomize_direction (drand48, dir);
 
-	    geomtools::vector_3d intercept;
+	    geomtools::intercept_t intercept;
 	    int intercept_face;
 	    if (my_box.find_intercept (pos, dir, 
-				       intercept, 
-				       intercept_face))
+				       intercept))
 	      {
-		if (debug) std::clog << "test 3: Intercept face=" << intercept_face
-				     << " at intercept=" << intercept
+		if (debug) std::clog << "test 3: Intercept face=" 
+				     << intercept.get_face ()
+				     << " at impact=" << intercept.get_impact ()
 				     << std::endl;
-		geomtools::gnuplot_draw::basic_draw_point (std::cout, intercept);
+		geomtools::gnuplot_draw::basic_draw_point (std::cout, 
+							   intercept.get_impact ());
 	      }
 	    else
 	      {

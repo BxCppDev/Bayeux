@@ -148,13 +148,13 @@ namespace geomtools {
     double r = point_.mag ();
     if (debug)
       {
-	std::clog << "DEVEL: sphere::find_intercept: r= "
+	std::clog << "DEVEL: sphere::is_on_surface: r= "
 		  << r
 		  << std::endl;
-	std::clog << "DEVEL: sphere::find_intercept: R= "
+	std::clog << "DEVEL: sphere::is_on_surface: R= "
 		  << __r
 		  << std::endl;
-	std::clog << "DEVEL: sphere::find_intercept: hskin= "
+	std::clog << "DEVEL: sphere::is_on_surface: hskin= "
 		  << hskin
 		  << std::endl;
       }
@@ -168,8 +168,7 @@ namespace geomtools {
   bool 
   sphere::find_intercept (const vector_3d & from_, 
 			  const vector_3d & direction_,
-			  vector_3d & intercept_,
-			  int & face_,
+			  intercept_t & intercept_,
 			  double skin_) const
   {
     bool debug = false;
@@ -278,15 +277,12 @@ namespace geomtools {
 		      << std::endl;
 	  }
       }
+    intercept_.reset ();
     if (face_min > 0) 
       {
-	intercept_ = from_ + direction_ * t_min;
-	face_ = face_min;
-	return true;
+	intercept_.set (0, face_min, from_ + direction_ * t_min);
       }
-    face_ = FACE_NONE;
-    invalidate (intercept_);
-    return false;
+    return intercept_.is_ok ();
   }
 
   std::ostream & 

@@ -30,8 +30,20 @@ splot \
   "test_union_3d.data" index 4 title "Impacts" with dots lt 1 
 pause -1 "Hit return..."
 
+
+! egrep " 1\$" test_union_3d.data > tu1.data
+! egrep " 2\$" test_union_3d.data > tu2.data
+! egrep " 4\$" test_union_3d.data > tu3.data
+! egrep " 8\$" test_union_3d.data > tu4.data
+! egrep " 16\$" test_union_3d.data > tu5.data
+! egrep " 32\$" test_union_3d.data > tu6.data
 splot \
-  "test_union_3d.data" index 4 title "Impacts" with dots lt 1 
+  "tu1.data" u 1:2:3 title "Impacts" with dots lt 1, \
+  "tu2.data" u 1:2:3 title "Impacts" with dots lt 2, \
+  "tu3.data" u 1:2:3 title "Impacts" with dots lt 3, \
+  "tu4.data" u 1:2:3 title "Impacts" with dots lt 4, \
+  "tu5.data" u 1:2:3 title "Impacts" with dots lt 5, \
+  "tu6  .data" u 1:2:3 title "Impacts" with dots lt 6
 pause -1 "Hit return..."
 
 

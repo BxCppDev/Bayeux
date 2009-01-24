@@ -61,21 +61,17 @@ main (int argc_, char ** argv_)
 				  3.0 * CLHEP::mm, 
 				  5.0 * CLHEP::mm);
 	geomtools::vector_3d dir (-1., -1., -2.);
-	geomtools::vector_3d intercept;
-	invalidate (intercept);
-	int intercept_face = geomtools::face_3d::FACE_NONE_BIT;
+	geomtools::intercept_t intercept;
 	std::clog << "test 1: pos=" << pos
 		  << " dir=" << dir
-		  << " intercept=" << intercept
+		  << " impact=" << intercept.get_impact ()
 		  << std::endl;
 
 	geomtools::intersection_3d::g_devel = debug;	
-	if (inter1.find_intercept (pos, dir, 
-				   intercept, 
-				   intercept_face))
+	if (inter1.find_intercept (pos, dir, intercept))
 	  {
-	    std::clog << "test 1: Intercept face=" << intercept_face
-		      << " at intercept=" << intercept
+	    std::clog << "test 1: Intercept face=" << intercept.get_face ()
+		      << " at impact=" << intercept.get_impact ()
 		      << std::endl;
 	  }
 	else
@@ -100,14 +96,16 @@ main (int argc_, char ** argv_)
 	geomtools::gnuplot_draw::basic_draw_point (std::cout, pos);
 	std::cout << std::endl << std::endl;
 
-	geomtools::gnuplot_draw::basic_draw_point (std::cout, intercept);
+	geomtools::gnuplot_draw::basic_draw_point (std::cout, 
+						   intercept.get_impact ());
 	std::cout << std::endl << std::endl;
 
 	geomtools::gnuplot_draw::basic_draw_point (std::cout, pos);
-	std::clog << "test 1: intercept=" << intercept << std::endl;
-	if (is_valid (intercept))
+	std::clog << "test 1: intercept=" << intercept.get_impact () << std::endl;
+	if (intercept.is_valid ())
 	  {
-	    geomtools::gnuplot_draw::basic_draw_point (std::cout, intercept);
+	    geomtools::gnuplot_draw::basic_draw_point (std::cout, 
+						       intercept.get_impact ());
 	  }
 	else
 	  {
@@ -144,16 +142,18 @@ main (int argc_, char ** argv_)
 		geomtools::vector_3d dir;
 		geomtools::randomize_direction (drand48, dir);
 	    
-		geomtools::vector_3d intercept;
+		geomtools::intercept_t intercept;
 		int intercept_face;
 		if (inter1.find_intercept (pos, dir, 
-					   intercept, 
-					   intercept_face))
+					   intercept))
 		  {
-		    if (debug) std::clog << "test 1: Intercept face=" << intercept_face
-					 << " at intercept=" << intercept
+		    if (debug) std::clog << "test 1: Intercept face=" 
+					 << intercept.get_face ()
+					 << " at impact=" 
+					 << intercept.get_impact ()
 					 << std::endl;
-		    geomtools::gnuplot_draw::basic_draw_point (std::cout, intercept);
+		    geomtools::gnuplot_draw::basic_draw_point (std::cout, 
+							       intercept.get_impact ());
 		  }
 		else
 		  {
@@ -177,4 +177,4 @@ main (int argc_, char ** argv_)
   return error_code;
 }
 
-// end of test_box.cxx
+// end of test_interscetion_3d.cxx

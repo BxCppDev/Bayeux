@@ -74,6 +74,8 @@ namespace geomtools {
       std::setw (11) << std::setprecision (6) << rot_.zy () << "   " <<
       std::setw (11) << std::setprecision (6) << rot_.zz () << ") ]" << std::endl;
   }
+
+  
  
 } // end of namespace geomtools
 

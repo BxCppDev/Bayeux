@@ -30,7 +30,7 @@ namespace geomtools {
       static const std::string BOX_LABEL;
       enum faces_mask_t
       {
-	FACE_NONE   = face_3d::FACE_NONE_BIT,
+	FACE_NONE   = FACE_NONE_BIT,
 	FACE_BACK   = 0x1,
 	FACE_FRONT  = 0x2,
 	FACE_LEFT   = 0x4,
@@ -128,8 +128,7 @@ namespace geomtools {
       
       virtual bool find_intercept (const vector_3d & from_, 
 				   const vector_3d & direction_,
-				   vector_3d & intercept_,
-				   int & face_,
+				   intercept_t & intercept_,
 				   double skin_ = USING_PROPER_SKIN) const;
        
     };

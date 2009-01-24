@@ -93,6 +93,8 @@ namespace geomtools {
 
       const shape_t & get_shape2 () const;
 
+      const shape_t & get_shape (int i_) const;
+
       void dump (std::ostream & out_ = std::clog) const;
 
     private:

@@ -171,6 +171,13 @@ namespace geomtools {
     return __shape2;
   }
 
+  const i_composite_shape_3d::shape_t & 
+  i_composite_shape_3d::get_shape (int i_) const
+  {
+    if (i_ == 0) return __shape1;
+    return __shape2;
+  }
+
 } // end of namespace geomtools
 
 // end of i_composite_shape_3d.cc

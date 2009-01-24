@@ -1,8 +1,8 @@
 // -*- mode: c++; -*- 
-/* intersection_3d.h
+/* subtraction_3d.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
- * Creation date: 2009-01-11
- * Last modified: 2009-01-11
+ * Creation date: 2008-05-24
+ * Last modified: 2008-05-24
  * 
  * License: 
  * 
@@ -13,26 +13,26 @@
  * 
  */
 
-#ifndef __geomtools__intersection_3d_h
-#define __geomtools__intersection_3d_h 1
+#ifndef __geomtools__subtraction_3d_h
+#define __geomtools__subtraction_3d_h 1
 
 #include <geomtools/i_composite_shape_3d.h>
 
 namespace geomtools {
   
-  class intersection_3d : public i_composite_shape_3d 
+  class subtraction_3d : public i_composite_shape_3d 
   {
   public:
-    static const std::string INTERSECTION_3D_LABEL;
+    static const std::string SUBTRACTION_3D_LABEL;
     static bool g_devel;
     
   public:
 
     std::string get_shape_name () const;
 
-    intersection_3d ();
+    subtraction_3d ();
 
-    virtual ~intersection_3d ();
+    virtual ~subtraction_3d ();
 
     virtual bool is_inside (const vector_3d & position_, 
 			    double skin_ = USING_PROPER_SKIN) const;
@@ -52,6 +52,6 @@ namespace geomtools {
   
 } // end of namespace geomtools
 
-#endif // __geomtools__intersection_3d_h
+#endif // __geomtools__subtraction_3d_h
 
-// end of intersection_3d.h
+// end of subtraction_3d.h

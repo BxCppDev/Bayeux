@@ -92,8 +92,7 @@ namespace geomtools {
   bool 
   union_3d::find_intercept (const vector_3d & from_, 
 			    const vector_3d & direction_,
-			    vector_3d & intercept_,
-			    int & face_,
+			    intercept_t & intercept_,
 			    double skin_) const
   {
     bool debug = false;
@@ -146,7 +145,7 @@ namespace geomtools {
 	if (debug) std::clog << "DEVEL: ishape=" << ishape << std::endl;
 	invalidate (intercepts[ishape]);
 	intercept_ok[ishape] = false;
-	intercept_faces[ishape] = face_3d::FACE_NONE_BIT;
+	intercept_faces[ishape] = FACE_NONE_BIT;
 	const placement * pi = placements[ishape];
 	const placement * pj = placements[(ishape + 1) % 2];
 	const i_shape_3d * shi = shapes[ishape];
@@ -170,13 +169,11 @@ namespace geomtools {
 	    if (debug) std::clog << "DEVEL: ishape=" << ishape 
 				 << " new loop "
 				 << std::endl; 
-	    int child_face_i = 0;
 	    vector_3d child_from_i = pi->mother_to_child (from_i);
-	    vector_3d child_intercept_i;
+	    intercept_t child_intercept_i;
 	    intercept_ok[ishape] = shi->find_intercept (child_from_i, 
 							child_dir_i, 
-							child_intercept_i, 
-							child_face_i, 
+							child_intercept_i,
 							skin);
 	    if (debug)
 	      { 
@@ -196,8 +193,9 @@ namespace geomtools {
 	      }
 	    else
 	      {
-		intercepts[ishape] = pi->child_to_mother (child_intercept_i);
-		intercept_faces[ishape] = child_face_i;
+		intercepts[ishape] = 
+		  pi->child_to_mother (child_intercept_i.get_impact ());
+		intercept_faces[ishape] = child_intercept_i.get_face ();
 		if (debug) 
 		  {
 		    std::clog << "DEVEL: ishape=" << ishape 
@@ -268,7 +266,7 @@ namespace geomtools {
 		      }
 		    invalidate (intercepts[ishape]);
 		    intercept_ok[ishape] = false;
-		    intercept_faces[ishape] = face_3d::FACE_NONE_BIT;
+		    intercept_faces[ishape] = FACE_NONE_BIT;
 		  }
 	      }
 	    counter++;
@@ -297,41 +295,31 @@ namespace geomtools {
 	std::clog << "union_3d::find_intercept: ok2="
 		  << intercept_ok[1] << std::endl;
       }
+    intercept_.reset ();
     if (intercept_ok[0] && ! intercept_ok[1])
       {
-	face_ = intercept_faces[0];
-	vector_3d intercept1 = intercepts[0]; //p1.child_to_mother (intercepts[0]);
-	intercept_ = intercept1;
-	return true;
+	intercept_.set (0,intercept_faces[0], intercepts[0]); 
       }
-    if (intercept_ok[0] && ! intercept_ok[1])
+    else if (intercept_ok[1] && ! intercept_ok[0])
       {
-	face_ = intercept_faces[1];
-	vector_3d intercept2 = intercepts[1]; //p2.child_to_mother (intercepts[1]);
-	intercept_ = intercept2;
-	return true;
+	intercept_.set (1,intercept_faces[1], intercepts[1]); 
       }
     if (intercept_ok[0] && intercept_ok[1])
       {
-	vector_3d intercept1 = intercepts[0]; //p1.child_to_mother (intercepts[0]);
+	vector_3d intercept1 = intercepts[0];
 	double dist1 = (intercept1 - from_).mag ();
-	vector_3d intercept2 = intercepts[1]; //p2.child_to_mother (intercepts[1]);
+	vector_3d intercept2 = intercepts[1];
 	double dist2 = (intercept2 - from_).mag ();
 	if (dist1 < dist2)
 	  {
-	    face_ = intercept_faces[0];
-	    intercept_ = intercept1;
+	    intercept_.set (0,intercept_faces[0], intercepts[0]); 
 	  }
 	else
 	  {
-	    face_ = intercept_faces[1];
-	    intercept_ = intercept2;
+	    intercept_.set (1,intercept_faces[1], intercepts[1]); 
 	  }
-	return true;
       }
-    
-    face_ = face_3d::FACE_NONE_BIT;
-    return false; // there is no solution
+    return intercept_.is_ok ();
   }
 
 

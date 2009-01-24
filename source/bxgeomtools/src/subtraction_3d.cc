@@ -1,32 +1,32 @@
 // -*- mode: c++; -*- 
-/* intersection_3d.cc
+/* subtraction_3d.cc
  */
 
-#include <geomtools/intersection_3d.h>
+#include <geomtools/subtraction_3d.h>
 
 namespace geomtools {
 
-  const std::string intersection_3d::INTERSECTION_3D_LABEL = "intersection_3d";
+  const std::string subtraction_3d::SUBTRACTION_3D_LABEL = "subtraction_3d";
 
-  bool intersection_3d::g_devel = false;
+  bool subtraction_3d::g_devel = false;
 
   std::string 
-  intersection_3d::get_shape_name () const
+  subtraction_3d::get_shape_name () const
   {
-    return INTERSECTION_3D_LABEL;
+    return SUBTRACTION_3D_LABEL;
   }
 
-  intersection_3d::intersection_3d () : i_composite_shape_3d ()
+  subtraction_3d::subtraction_3d () : i_composite_shape_3d ()
   {
   }
   
-  intersection_3d::~intersection_3d ()
+  subtraction_3d::~subtraction_3d ()
   {
   }
   
   bool 
-  intersection_3d::is_inside (const vector_3d & position_, 
-			      double skin_) const
+  subtraction_3d::is_inside (const vector_3d & position_, 
+		       double skin_) const
   {
     const shape_t & sh1 = get_shape1 ();
     const shape_t & sh2 = get_shape2 ();
@@ -38,12 +38,12 @@ namespace geomtools {
     vector_3d pos2 = p2.mother_to_child (position_);
     bool res = false;
     res = sh3d1.is_inside (pos1, skin_) 
-      && sh3d2.is_inside (pos2, skin_);
+      || sh3d2.is_outside (pos2, skin_);
     return res;
   }
 
   vector_3d 
-  intersection_3d::get_normal_on_surface (const vector_3d & position_) const
+  subtraction_3d::get_normal_on_surface (const vector_3d & position_) const
   {
     vector_3d normal;
     invalidate (normal);
@@ -56,22 +56,22 @@ namespace geomtools {
     vector_3d pos1 = p1.mother_to_child (position_);
     vector_3d pos2 = p2.mother_to_child (position_);
     if (sh3d1.is_on_surface (pos1, ALL_SURFACES) 
-	&& ! sh3d2.is_outside (pos2))
+	&& sh3d2.is_outside (pos2))
       {
 	normal = sh3d1.get_normal_on_surface (pos1);
       }
     if (sh3d2.is_on_surface (pos2, ALL_SURFACES) 
 	&& ! sh3d1.is_outside (pos1))
       {
-	normal = sh3d2.get_normal_on_surface (pos2);
+	normal = -sh3d2.get_normal_on_surface (pos2);
       }
     return (normal);
   }
     
   bool 
-  intersection_3d::is_on_surface (const vector_3d & position_, 
-				  int mask_, 
-				  double skin_) const
+  subtraction_3d::is_on_surface (const vector_3d & position_, 
+				 int mask_, 
+				 double skin_) const
   {
     const shape_t & sh1 = get_shape1 ();
     const shape_t & sh2 = get_shape2 ();
@@ -83,24 +83,24 @@ namespace geomtools {
     vector_3d pos2 = p2.mother_to_child (position_);
     bool res = false;
     res = (sh3d1.is_on_surface (pos1, ALL_SURFACES, skin_) 
-	   && ! sh3d2.is_inside (pos2, skin_))
+	   && sh3d2.is_outside (pos2, skin_))
       || (sh3d2.is_on_surface (pos2, ALL_SURFACES, skin_)
-	  && ! sh3d1.is_inside (pos1, skin_));
+	  && ! sh3d1.is_outside (pos1, skin_));
     return res;
   }
   
   bool 
-  intersection_3d::find_intercept (const vector_3d & from_, 
-				   const vector_3d & direction_,
-				   intercept_t & intercept_,
-				   double skin_) const
+  subtraction_3d::find_intercept (const vector_3d & from_, 
+				  const vector_3d & direction_,
+				  intercept_t & intercept_,
+				  double skin_) const
   {
     bool debug = false;
     debug = g_devel;
     //debug = true;
     if (debug)
       {
-	std::clog << "intersection_3d::find_intercept: entering..." << std::endl;
+	std::clog << "subtraction_3d::find_intercept: entering..." << std::endl;
       }
     double skin = get_skin ();
     if (skin_ > USING_PROPER_SKIN) skin = skin_;
@@ -119,9 +119,9 @@ namespace geomtools {
     const i_shape_3d & sh3d2 = sh2.get_shape ();
     if (debug)
       {
-	std::clog << "intersection_3d::find_intercept: shape1 is '" 
+	std::clog << "subtraction_3d::find_intercept: shape1 is '" 
 		  << sh3d1.get_shape_name () << "'" << std::endl;
-	std::clog << "intersection_3d::find_intercept: shape2 is '" 
+	std::clog << "subtraction_3d::find_intercept: shape2 is '" 
 		  << sh3d2.get_shape_name () << "'" << std::endl;
       }
     const size_t NSHAPES = 2;
@@ -154,8 +154,8 @@ namespace geomtools {
 	vector_3d child_dir_i = pi->mother_to_child_direction (direction);
 	if (debug)
 	  {
-	    std::clog << "intersection_3d::find_intercept: from_i=" << from_i << std::endl;
-	    std::clog << "intersection_3d::find_intercept: child_dir_i=" << child_dir_i << std::endl;
+	    std::clog << "subtraction_3d::find_intercept: from_i=" << from_i << std::endl;
+	    std::clog << "subtraction_3d::find_intercept: child_dir_i=" << child_dir_i << std::endl;
 	  }
 	if (debug) std::clog << "DEVEL: ishape=" << ishape 
 		  << " start intercept find loops..."
@@ -208,27 +208,28 @@ namespace geomtools {
 			      << " intercept face=" << intercept_faces[ishape]
 			      << std::endl; 
 		  }
-		vector_3d test_outside_j 
-		  = pj->mother_to_child (intercepts[ishape]);
-		if (! shj->is_outside (test_outside_j))
+		vector_3d test_inside_j = pj->mother_to_child (intercepts[ishape]);
+		bool ok = false;
+		if (ishape == 0) ok = shj->is_outside (test_inside_j);
+		else ok = ! shj->is_outside (test_inside_j);
+		if (ok)
 		  {
 		    if (debug) std::clog << "DEVEL: ishape=" << ishape 
-					 << " intercept is valid!"
-					 << std::endl; 
+			      << " intercept is valid!"
+			      << std::endl; 
 		    break;
 		  }
 		else
 		  {
 		    if (debug) std::clog << "DEVEL: ishape=" << ishape 
-					 << " intercept is invalid! continue..."
-					 << std::endl; 
+			      << " intercept is invalid! continue..."
+			      << std::endl; 
 		    // compare this new candidate intercept with
 		    // former candidate if any:
 		    bool safety_skip = false;
 		    if (is_valid (last_intercept_i))
 		      {
-			double last_dist 
-			  = (intercepts[ishape] - last_intercept_i).mag ();
+			double last_dist = (intercepts[ishape] - last_intercept_i).mag ();
 			if (last_dist < skin)
 			  {
 			    if (debug) std::clog << "DEVEL: ishape=" << ishape 
@@ -278,7 +279,7 @@ namespace geomtools {
 			  << " stop 'infinite' loop."
 			  << std::endl; 
 		std::ostringstream message;
-		message << "intersection_3d::find_intercept: "
+		message << "subtraction_3d::find_intercept: "
 			<< "I suspect infinite loop while searching for "
 			<< "intercept point! Abort!";
 		throw std::runtime_error (message.str());
@@ -292,11 +293,12 @@ namespace geomtools {
       }
     if (debug)
       {
-	std::clog << "intersection_3d::find_intercept: ok1=" 
+	std::clog << "subtraction_3d::find_intercept: ok1=" 
 		  << intercept_ok[0] << std::endl;
-	std::clog << "intersection_3d::find_intercept: ok2="
+	std::clog << "subtraction_3d::find_intercept: ok2="
 		  << intercept_ok[1] << std::endl;
       }
+
     intercept_.reset ();
     if (intercept_ok[0] && ! intercept_ok[1])
       {
@@ -306,7 +308,7 @@ namespace geomtools {
       {
 	intercept_.set (1,intercept_faces[1], intercepts[1]); 
       }
-    else if (intercept_ok[0] && intercept_ok[1])
+    if (intercept_ok[0] && intercept_ok[1])
       {
 	vector_3d intercept1 = intercepts[0];
 	double dist1 = (intercept1 - from_).mag ();
@@ -327,4 +329,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-// end of intersection_3d.cc
+// end of subtraction_3d.cc

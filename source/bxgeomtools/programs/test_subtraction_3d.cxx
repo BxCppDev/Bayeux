@@ -1,6 +1,6 @@
 // -*- mode: c++; -*- 
-// test_union_3d.cxx
-// gnuplot macro: ./tests/test_union_3d.gpl
+// test_subtraction_3d.cxx
+// gnuplot macro: ./tests/test_subtraction_3d.gpl
 
 #include <cstdlib>
 #include <iostream>
@@ -8,7 +8,7 @@
 #include <stdexcept>
 
 #include <geomtools/box.h>
-#include <geomtools/union_3d.h>
+#include <geomtools/subtraction_3d.h>
 #include <geomtools/gnuplot_draw.h>
 
 int 
@@ -48,7 +48,7 @@ main (int argc_, char ** argv_)
 	placement p2 (vector_3d (2, 2, 2), 
 		      M_PI / 3., M_PI / 3., M_PI / 6.);
 
-	union_3d u1;
+	subtraction_3d u1;
 	u1.set_shape1 (b1, p1);
 	u1.set_shape2 (b2, p2);
 	u1.dump (std::clog);
@@ -98,19 +98,19 @@ main (int argc_, char ** argv_)
 
 	std::clog << "test 1: End." << std::endl;
 
-	size_t nshoots = 100000;
+	size_t nshoots = 500000;
 	for (int i = 0; i < (int) nshoots; i++)
 	  {
 	    if ((i%1000) == 0) std::clog << "Loop #" << i << std::endl;
-	    std::clog << "DEVEL: Loop #" << i << std::endl;
+	    //std::clog << "DEVEL: Loop #" << i << std::endl;
 
 	    // special debug activation:
 	    int idevel = -1;
-	    geomtools::union_3d::g_devel = false;
+	    geomtools::subtraction_3d::g_devel = false;
 	    idevel = 1817;
 	    if (i == idevel)
 	      {
-		geomtools::union_3d::g_devel = true;
+		geomtools::subtraction_3d::g_devel = true;
 	      }
 
 	    double dim = 6. * CLHEP::mm;
@@ -131,7 +131,17 @@ main (int argc_, char ** argv_)
 		geomtools::gnuplot_draw::basic_draw_point (std::cout, 
 							   intercept.get_impact (),
 							   false);
-		int face = intercept.get_face ();
+		int face = 0;
+		switch (intercept.get_face ())
+		  {
+		  case 0x1: face = 1; break;
+		  case 0x2: face = 2; break;
+		  case 0x4: face = 3; break;
+		  case 0x8: face = 4; break;
+		  case 0x10: face = 5; break;
+		  case 0x20: face = 6; break;
+		  }
+		if (intercept.get_shape_index () == 1) face += 6;
 		std::cout << ' ' << face;
 		std::cout << std::endl;
 	      }

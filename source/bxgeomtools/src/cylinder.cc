@@ -234,8 +234,7 @@ namespace geomtools {
   bool 
   cylinder::find_intercept (const vector_3d & from_, 
 		       const vector_3d & direction_,
-		       vector_3d & intercept_,
-		       int & face_,
+		       intercept_t & intercept_,
 		       double skin_) const
   {
     bool debug = false;
@@ -345,15 +344,12 @@ namespace geomtools {
 	      }
 	  }
       }
+    intercept_.reset ();
     if (face_min > 0) 
       {
-	intercept_ = from_ + direction_ * t_min;
-	face_ = face_min;
-	return true;
+	intercept_.set (0, face_min, from_ + direction_ * t_min);
       }
-    face_ = FACE_NONE;
-    invalidate (intercept_);
-    return false;
+    return intercept_.is_ok ();
   }
 
   std::ostream & operator<< (std::ostream & out_, const cylinder & c_)

@@ -1,4 +1,3 @@
-
 // -*- mode: c++; -*- 
 /* utils.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
@@ -43,11 +42,11 @@ namespace geomtools {
       TOP    = 5  // +z
     };
 
-  struct face_3d
-  {
-    static const int FACE_NONE_BIT = 0x0;
-    static const int FACE_ALL_BITS = 0xFFFFFFFF;
-  };
+  enum face_3d
+    {
+      FACE_NONE_BIT = 0x0,
+      FACE_ALL_BITS = 0xFFFFFFFF
+    };
   
   struct constants
   {
@@ -57,11 +56,11 @@ namespace geomtools {
 
   // see also CLHEP/Vector/TwoVector.h and CLHEP/Vector/ThreeVector.h
   /*
-  enum axis_type
+    enum axis_type
     {
-      X = 0,
-      Y = 1,
-      Z = 2
+    X = 0,
+    Y = 1,
+    Z = 2
     };
   */
     
@@ -143,6 +142,80 @@ namespace geomtools {
     ran_dir_ = v.transform (dir_inverse_rot); // XXX
   }
     
+
+  class intercept_t
+  {
+  private:
+
+    int       __shape_index;
+    int       __face;
+    vector_3d __impact;
+
+  public:
+
+    int get_shape_index () const
+    {
+      return __shape_index;
+    }
+
+    void set_shape_index (int si_)
+    {
+      __shape_index = si_;
+    }
+
+    int get_face () const
+    {
+      return __face;
+    }
+
+    void set_face (int face_)
+    {
+      __face = face_;
+    }
+
+    void set_impact (const vector_3d & point_)
+    {
+      __impact = point_;
+    }
+
+    void set (int shape_index_, int face_, const vector_3d & point_)
+    {
+      set_shape_index (shape_index_);
+      set_face (face_);
+      set_impact (point_);
+    }
+
+    const vector_3d & get_impact () const
+    {
+      return __impact;
+    }
+
+    void reset ()
+    {
+      __shape_index = -1;
+      __face = FACE_NONE_BIT;
+      invalidate (__impact);
+    }
+
+    intercept_t ()
+    {
+      __shape_index = -1;
+      __face = FACE_NONE_BIT;
+      invalidate (__impact);
+    }
+
+    bool is_valid () const
+    {
+      return __shape_index >= 0 && __face != FACE_NONE_BIT;
+    }
+
+    bool is_ok () const
+    {
+      return is_valid ();
+    }
+
+  };
+
 } // end of namespace geomtools
 
 #endif // __geomtools__utils_h
