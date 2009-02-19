@@ -31,7 +31,7 @@ namespace geomtools {
 
     static double random_flat ()
     {
-      return RandFlat::shoot (0.0, 1.0);
+      return CLHEP::RandFlat::shoot (0.0, 1.0);
     }
 
   };
