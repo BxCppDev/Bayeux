@@ -43,7 +43,7 @@ splot \
   "tu3.data" u 1:2:3 title "Impacts" with dots lt 3, \
   "tu4.data" u 1:2:3 title "Impacts" with dots lt 4, \
   "tu5.data" u 1:2:3 title "Impacts" with dots lt 5, \
-  "tu6  .data" u 1:2:3 title "Impacts" with dots lt 6
+  "tu6.data" u 1:2:3 title "Impacts" with dots lt 6
 pause -1 "Hit return..."
 
 
