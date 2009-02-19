@@ -34,9 +34,10 @@ ifeq ($(OS),Darwin)
   STATICFLAGS=
 endif
 
-COMPILER=$(CC)$(shell $(CC) --version | head -1 | cut -d ' ' -f 3)
-SYSTEM=$(OS)-$(ARCH)-$(COMPILER)
 SYSTEM_old=$(OS)-$(ARCH)
+###COMPILER=-$(CC)$(shell $(CC) --version | head -1 | cut -d ' ' -f 3)
+COMPILER=
+SYSTEM=$(OS)-$(ARCH)
 
 .PHONY : all
 all : lib
