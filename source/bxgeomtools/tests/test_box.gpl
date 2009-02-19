@@ -2,7 +2,8 @@
 # C++ source: ./programs/test_box.cxx
 #
 
-! ${GEOMTOOLS_ROOT}/$(uname -s)-$(uname -m | sed 's/ //g')/bin/test_box > test_box.data
+
+! ${GEOMTOOLS_ROOT}/$(geomtools-config --system)/bin/test_box > test_box.data
 
 set xrange [-5:5]
 set yrange [-5:5]

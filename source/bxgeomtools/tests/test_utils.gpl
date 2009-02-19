@@ -2,7 +2,7 @@
 # C++ source: ./programs/test_utils.cxx
 #
 
-! ${GEOMTOOLS_ROOT}/$(uname -s)-$(uname -m | sed 's/ //g')/bin/test_utils > test_utils.data
+! ${GEOMTOOLS_ROOT}/$(geomtools-config --system)/bin/test_utils > test_utils.data
 
 max=2.
 set grid

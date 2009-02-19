@@ -140,7 +140,7 @@ namespace geomtools {
     vector_3d direction = direction_;
     direction.unit ();
 
-    for (int ishape = 0; ishape < NSHAPES; ishape++)
+    for (int ishape = 0; ishape < (int) NSHAPES; ishape++)
       {
 	if (debug) std::clog << "DEVEL: ishape=" << ishape << std::endl;
 	invalidate (intercepts[ishape]);

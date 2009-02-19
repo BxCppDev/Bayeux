@@ -2,7 +2,7 @@
 # C++ source: ./programs/test_intersection_3d.cxx
 #
 
-! ${GEOMTOOLS_ROOT}/$(uname -s)-$(uname -m | sed 's/ //g')/bin/test_intersection_3d > test_intersection_3d.data
+! ${GEOMTOOLS_ROOT}/$(geomtools-config --system)/bin/test_intersection_3d > test_intersection_3d.data
 
 max=5
 set xrange [-max:max]

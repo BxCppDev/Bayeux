@@ -401,7 +401,7 @@ namespace geomtools {
 	polyline_meridian.clear ();
 	vector_3d P,Q;
 	double phi = i * dphi;
-	for (int j = 0; j <= z_sample ; j++)
+	for (int j = 0; j <= (int) z_sample ; j++)
 	  {
 	    double z = -radius_ + j * dz;
 	    double theta = std::acos (z / radius_);

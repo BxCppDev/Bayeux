@@ -2,7 +2,7 @@
 # C++ source: ./programs/test_cylinder.cxx
 #
 
-! ${GEOMTOOLS_ROOT}/$(uname -s)-$(uname -m | sed 's/ //g')/bin/test_cylinder > test_cylinder.data
+! ${GEOMTOOLS_ROOT}/$(geomtools-config --system)/bin/test_cylinder > test_cylinder.data
 
 set xrange [-5:5]
 set yrange [-5:5]

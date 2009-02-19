@@ -218,7 +218,7 @@ namespace geomtools {
     if (skin_ > USING_PROPER_SKIN) skin = skin_;
 
     int mask = mask_;
-    if (mask_ == ALL_SURFACES) mask = FACE_ALL;
+    if (mask_ == (int) ALL_SURFACES) mask = FACE_ALL;
 
     double r = hypot (point_.x (), point_.y ());
     if (mask & FACE_BOTTOM) 

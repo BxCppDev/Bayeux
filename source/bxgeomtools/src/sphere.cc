@@ -142,7 +142,7 @@ namespace geomtools {
     if (skin_ > USING_PROPER_SKIN) skin = skin_;
 
     int mask = mask_;
-    if (mask_ == ALL_SURFACES) mask = FACE_ALL;
+    if (mask_ == (int) ALL_SURFACES) mask = FACE_ALL;
 
     double hskin = 0.5 * skin;
     double r = point_.mag ();

@@ -114,7 +114,7 @@ namespace geomtools {
   {
     double s = 0.0;
     int mask = mask_;
-    if (mask_ == ALL_SURFACES) mask = FACE_ALL;
+    if (mask_ == (int) ALL_SURFACES) mask = FACE_ALL;
 
     if (mask & FACE_SIDE) 
       {
@@ -209,7 +209,7 @@ namespace geomtools {
     if (skin_ > USING_PROPER_SKIN) skin = skin_;
 
     int mask = mask_;
-    if (mask_ == ALL_SURFACES) mask = FACE_ALL;
+    if (mask_ == (int) ALL_SURFACES) mask = FACE_ALL;
 
     double hskin = 0.5 * skin;
     double r = hypot (point_.x (), point_.y ());
