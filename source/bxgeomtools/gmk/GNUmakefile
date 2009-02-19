@@ -117,10 +117,10 @@ OBJEXT=.o
 LIBEXT=.a
 BINEXT=
 
-CHEADEREXT=.h
-CSOURCEEXT=.c
-CPROGEXT=.c
-COBJEXT=.o
+#CHEADEREXT=.h
+#CSOURCEEXT=.c
+#CPROGEXT=.c
+#COBJEXT=.o
 
 .SUFFIXES : $(HEADEREXT) $(SOURCEEXT) $(PROGEXT) $(OBJEXT) $(LIBEXT) $(SHLIBEXT) $(BINEXT)
 
@@ -132,18 +132,18 @@ vpath %$(LIBEXT)     $(LIBDIR)
 vpath %$(SHLIBEXT)   $(LIBDIR)
 vpath %$(BINEXT)     $(BINDIR)
 
-vpath %$(CHEADEREXT)  $(INCDIR)/$(PACKAGENAME)
-vpath %$(CSOURCEEXT)  $(SRCDIR)
-vpath %$(COBJEXT)     $(OBJDIR)
-vpath %$(CPROGEXT)    $(PROGDIR)
+#vpath %$(CHEADEREXT)  $(INCDIR)/$(PACKAGENAME)
+#vpath %$(CSOURCEEXT)  $(SRCDIR)
+#vpath %$(COBJEXT)     $(OBJDIR)
+#vpath %$(CPROGEXT)    $(PROGDIR)
 
 headers := $(notdir $(shell ls $(INCDIR)/$(PACKAGENAME)/*$(HEADEREXT) 2> /dev/null))
 sources := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT) 2> /dev/null))
-csources := $(notdir $(shell ls $(SRCDIR)/*$(CSOURCEEXT) 2> /dev/null))
+#csources := $(notdir $(shell ls $(SRCDIR)/*$(CSOURCEEXT) 2> /dev/null))
 objects := $(sources:%$(SOURCEEXT)=%$(OBJEXT))
 objectsWithPath := $(sources:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT))
-cobjects := $(csources:%$(CSOURCEEXT)=%$(COBJEXT))
-cobjectsWithPath := $(csources:%$(CSOURCEEXT)=$(OBJDIR)/%$(COBJEXT))
+#cobjects := $(csources:%$(CSOURCEEXT)=%$(COBJEXT))
+#cobjectsWithPath := $(csources:%$(CSOURCEEXT)=$(OBJDIR)/%$(COBJEXT))
 programs_all:= $(notdir $(shell ls $(PROGDIR)/*$(PROGEXT) 2> /dev/null))
 
 programs_test:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep ^test_)
@@ -262,7 +262,7 @@ distclean : uninstall clean
 .PHONY : bin
 bin : bin_shared
 
-.PHONY : bin
+.PHONY : bin_test
 bin_test : bin_test_shared
 
 .PHONY : bins
@@ -275,7 +275,7 @@ bin_static : $(binaries_static)
 bin_shared : $(binaries)
 
 .PHONY : bin_test_shared
-bin_test_shared : $(binaries_test)
+bin_test_shared : ${binaries_test}
 
 $(LIBFILE) : $(objectsWithPath) 
 	@echo "Building static lib '$(@)'..."
@@ -294,12 +294,12 @@ $(OBJDIR)/%$(OBJEXT) : %$(SOURCEEXT) %$(HEADEREXT)
 	@test -d $(OBJDIR) || mkdir -p $(OBJDIR)
 	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< -o $(OBJDIR)/$(notdir $(@))
 
-%.static$(BINEXT) : %$(PROGEXT) lib_static
+%.static$(BINEXT) : %$(PROGEXT) | lib_static
 	@echo "Compiling statically linked program '$(@)'..."
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
 	$(CXX) -I. $(CPPFLAGS) $(CXXFLAGS) $< $(STATICFLAGS) $(LDFLAGS) -o $(BINDIR)/$(notdir $(@))
 
-%$(BINEXT) : %$(PROGEXT) lib_shared 
+%$(BINEXT) : %$(PROGEXT) | lib_shared 
 	@echo "Compiling program '$(@)' with shared library..."
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
 	$(CXX) -I. $(CPPFLAGS) $(CXXFLAGS) $< $(SHFLAGS) -o $(BINDIR)/$(notdir $(@))
