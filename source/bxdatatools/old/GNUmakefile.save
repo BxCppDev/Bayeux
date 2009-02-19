@@ -1,5 +1,6 @@
-# -*- mode: makefile; -*-
-# GNUmakefile (language C++)
+# -*- mode: makefile; -*- 
+# GNUmakefile (language C++)
+### 2009-02-19 old version
 
 OS=$(shell uname -s)
 ifneq ($(OS),Linux)
@@ -36,7 +37,6 @@ endif
 
 COMPILER=$(CC)$(shell $(CC) --version | head -1 | cut -d ' ' -f 3)
 SYSTEM=$(OS)-$(ARCH)-$(COMPILER)
-SYSTEM_old=$(OS)-$(ARCH)
 
 .PHONY : all
 all : lib
@@ -59,7 +59,6 @@ PROGDIR=$(BASEDIR)/programs
 SCRIPTSDIR=$(BASEDIR)/scripts
 RESDIR=$(BASEDIR)/resources
 ARCHDIR=$(BASEDIR)/$(SYSTEM)
-ARCHDIR_old=$(BASEDIR)/$(SYSTEM_old)
 OBJDIR=$(ARCHDIR)/obj
 LIBDIR=$(ARCHDIR)/lib
 BINDIR=$(ARCHDIR)/bin
@@ -70,7 +69,7 @@ LDFLAGS=-O -L$(LIBDIR) -l$(LIBNAME)
 
 DEPCPPFLAGS=
 DEPLDFLAGS=
-### Dependencies:
+### Dependencies
 #DEP_HOOK
 
 # boost dependency (from the 'boost_help' package) :
@@ -104,7 +103,7 @@ DATATOOLS_NO_PBA=1
 $(warning WARNING: datatools does not use pba_help!)
 endif
 
-### End of dependencies.
+### End of dependencies
 CPPFLAGS1+=$(PBA_FLAGS) $(DEPCPPFLAGS) 
 LDFLAGS1+=$(DEPLDFLAGS) 
 
@@ -113,6 +112,16 @@ LDFLAGS1+=-lm
 
 CPPFLAGS+=$(shell echo $(CPPFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py) 
 LDFLAGS+=$(shell echo $(LDFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r) 
+
+CXXFLAGSSHFLAGS=-Wall -v
+STATICFLAGS=-static
+
+#####################
+#CPPFLAGS+=$(PBA_FLAGS) $(DEPCPPFLAGS) 
+#LDFLAGS+=$(DEPLDFLAGS) 
+
+#LDFLAGS+=-lm 
+#####################
 
 CXXFLAGSSHFLAGS=-Wall -v
 STATICFLAGS=-static
@@ -141,13 +150,9 @@ sources := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT)))
 objects := $(sources:%$(SOURCEEXT)=%$(OBJEXT))
 objectsWithPath := $(sources:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT))
 
-##headers := $(notdir $(shell ls $(INCDIR)/$(PACKAGENAME)/*$(HEADEREXT) 2> /dev/null))
-#headers := $(notdir $(shell find $(INCDIR)/$(PACKAGENAME) -name "*$(HEADEREXT)" ))
-#sources := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT)))
-#sources := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT) 2> /dev/null))
-#objects := $(sources:%$(SOURCEEXT)=%$(OBJEXT))
-#objectsWithPath := $(sources:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT))
-
+#programs:= $(notdir $(shell ls $(PROGDIR)/*$(PROGEXT)))
+#binaries:= $(programs:%$(PROGEXT)=%$(BINEXT))
+#binaries_static:= $(programs:%$(PROGEXT)=%.static$(BINEXT))
 
 programs_all:= $(notdir $(shell ls $(PROGDIR)/*$(PROGEXT) 2> /dev/null))
 
@@ -158,6 +163,9 @@ binaries:= $(programs:%$(PROGEXT)=%$(BINEXT))
 binaries.static:= $(programs:%$(PROGEXT)=%.static$(BINEXT))
 
 binaries_test:= $(programs_test:%$(PROGEXT)=%$(BINEXT))
+
+#.PHONY : clean clean_special build_special lib libs lib_static lib_shared \
+# bin bins bin_shared bin_static system test dist install uninstall 
 
 .PHONY : help
 help :
@@ -187,38 +195,30 @@ help :
 test:
 	@echo "PACKAGE_DIR='$(PACKAGE_DIR)'"
 	@echo "PACKAGENAME='$(PACKAGENAME)'"
-	@echo "COMPILER='$(COMPILER)'"
-	@echo "SYSTEM='$(SYSTEM)'"
 	@echo "LIBNAME='$(LIBNAME)'"
-	@echo "LIBVER='$(LIBVER)'"
+	@echo "SYSTEM='$(SYSTEM)'"
 	@echo "INCDIR='$(INCDIR)'"
 	@echo "SRCDIR='$(SRCDIR)'"
+	@echo "PROGDIR='$(PROGDIR)'"
 	@echo "headers = $(headers)"
 	@echo "sources = $(sources)"
 	@echo "objects = $(objects)"
-	@echo "programs = $(programs)"
-	@echo "binaries = $(binaries)"
-	@echo "programs_test = $(programs_test)"
-	@echo "binaries_test = $(binaries_test)"
 	@echo "arch dir = $(ARCHDIR)"
+	@echo "binaries = $(binaries)"
+	@echo "binaries_static = $(binaries_static)"
 	@echo "CPPFLAGS='$(CPPFLAGS)'"
 	@echo "LDFLAGS='$(LDFLAGS)'"
 
-#########################################################################
-
+#########################################################################"
 .PHONY : build_special
 build_special :
-	@echo "Target 'build_special'..."
+	@echo "build_special..."
+	@echo "build_special done."
+	@echo ""
 
 .PHONY : install
 install : 
 	test "x$(DATATOOLS_NO_PBA)" = "x1" && make install_no_pba || make install_pba
-
-#	@echo "Installing..."
-#	@cat $(BASEDIR)/pkgtools.d/package.csh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).csh
-#	@cat $(BASEDIR)/pkgtools.d/package.sh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).sh
-#	@test -d $(BINDIR) || mkdir -p $(BINDIR)
-#	@ln -s -f $(PACKAGE_ROOT)/pkgtools.d/$(LIBNAME)-config $(BINDIR)/$(LIBNAME)-config
 
 .PHONY : install_pba
 install_pba :  
@@ -242,31 +242,33 @@ install_no_pba :
 	@echo "installing done."
 	@echo ""
 
-#########################################################################
-
+#########################################################################"
 .PHONY : clean_special
 clean_special :
-	@echo "Target 'clean_special'..."
+	@echo "clean_special..."
+	test -f $(PACKAGE_ROOT)/test_basic_event.xml && $(RM) $(PACKAGE_ROOT)/test_basic_event.xml || echo -n
+	test -f $(PACKAGE_ROOT)/test_properties.xml && $(RM) $(PACKAGE_ROOT)/test_properties.xml || echo -n
+	@echo "clean_special done."
+	@echo ""
 
 .PHONY : uninstall
 uninstall : 
-	@echo "Uninstalling..."
+	@echo "uninstalling..."
 	test -L $(BINDIR)/$(LIBNAME)-config && $(RM) $(BINDIR)/$(LIBNAME)-config || echo -n ""
 	test -f $(BASEDIR)/$(LIBNAME).sh && $(RM) $(BASEDIR)/$(LIBNAME).sh || echo -n ""
 	test -f $(BASEDIR)/$(LIBNAME).csh && $(RM) $(BASEDIR)/$(LIBNAME).csh || echo -n ""
+	@#echo "Please remove the sourcing of '$(LIBNAME).sh' or '$(LIBNAME).csh' from your startup scripts!"
 	@echo "uninstalling done."
 	@echo ""
 
-#########################################################################
-
+#########################################################################"
 .PHONY : system
 system :
 	@echo "$(SYSTEM)"
 
 .PHONY : setup
 setup :
-	@echo "export PATH=$(PACKAGE_DIR)/$(SYSTEM)/bin:$(PATH)"
-	@echo "export LD_LIBRARY_PATH=$(PACKAGE_DIR)/$(SYSTEM)/lib:$(LD_LIBRARY_PATH)"
+	@echo "export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(PACKAGE_DIR)/$(SYSTEM)/lib"
 
 .PHONY : lib
 lib : lib_shared
@@ -276,46 +278,42 @@ libs : lib_static lib_shared
 
 .PHONY : lib_static
 lib_static : $(LIBFILE)
+	@echo "Building static library done."
+	@echo
 
 .PHONY : lib_shared
 lib_shared : $(SHLIBFILE)
+	@echo "Building shared library done."
+	@echo
 
 .PHONY : clean
 clean : clean_special
 	@echo "Cleaning..."
 	find $(BASEDIR)/ -name "*~" -exec $(RM) \{\} \; 
 	test -d $(ARCHDIR)/ && $(RM) -r $(ARCHDIR) || echo -n ""
-	@#echo "ARCHDIR_old='$(ARCHDIR_old)'"
-	@#rm -fr $(ARCHDIR_old)
 	@echo "Cleaning done."
 	@echo
 
 .PHONY : distclean
 distclean : uninstall clean
-	@echo "Total cleaning..."
+	@echo "Total cleaning done."
 	@echo
 
-.PHONY : bin
+.PHONY : bin 
 bin : bin_shared
 
-.PHONY : bin
-bin_test : bin_test_shared
-
-.PHONY : bins
+.PHONY : bins 
 bins : bin_shared bin_static 
 
-.PHONY : bin_static
+.PHONY : bin_static 
 bin_static : $(binaries_static)
 	@echo "Building static binaries done."
 	@echo
 
-.PHONY : bin_shared
+.PHONY : bin_shared 
 bin_shared : $(binaries)
 	@echo "Building shared binaries done."
 	@echo
-
-.PHONY : bin_test_shared
-bin_test_shared : $(binaries_test)
 
 $(LIBFILE) : $(objectsWithPath) 
 	@echo "Building static lib '$(@)'..."
@@ -329,35 +327,32 @@ $(LIBFILE) : $(objectsWithPath)
 $(SHLIBFILE) : $(objectsWithPath) 
 	@echo "Building shared lib '$(@)'..."
 	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
-	@test -n "$(objectsWithPath)" && $(LD) $(CXXFLAGS) $(SOFLAGS) $(^) -o $(LIBDIR)/$(notdir $(@)) || echo ""
+	$(LD) $(CXXFLAGS) $(SOFLAGS) $(^) -o $(LIBDIR)/$(notdir $(@))
 	@echo "Building shared lib '$(@)' done."
 	@echo
 
-$(OBJDIR)/%$(OBJEXT) : %$(SOURCEEXT) 
+$(OBJDIR)/%$(OBJEXT) : %$(SOURCEEXT) #%$(HEADEREXT)
 	@echo "Compiling module '$(@)'..."
 	@test -d $(OBJDIR) || mkdir -p $(OBJDIR)
 	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< -o $(OBJDIR)/$(notdir $(@))
+	@echo
 
 %.static$(BINEXT) : %$(PROGEXT) lib_static
 	@echo "Compiling statically linked program '$(@)'..."
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
-	$(CXX) -I. -I$(PROGDIR) $(CPPFLAGS) $(CXXFLAGS) $< $(STATICFLAGS) $(LDFLAGS) -o $(BINDIR)/$(notdir $(@))
+	$(CXX) -I$(PROGDIR) $(CPPFLAGS) $(CXXFLAGS) $< $(STATICFLAGS) $(LDFLAGS) -o $(BINDIR)/$(notdir $(@))
+	@echo
 
 %$(BINEXT) : %$(PROGEXT) lib_shared 
 	@echo "Compiling program '$(@)' with shared library..."
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
-	$(CXX) -I. -I$(PROGDIR) $(CPPFLAGS) $(CXXFLAGS) $< $(SHFLAGS) -o $(BINDIR)/$(notdir $(@))
+	$(CXX) -I$(PROGDIR) $(CPPFLAGS) $(CXXFLAGS) $< $(SHFLAGS) -o $(BINDIR)/$(notdir $(@))
+	@echo
 
-.PHONY : dist
+.PHONY : dist 
 dist : distclean
-	echo "Making the distribution tarball '$(LIBNAME)-$(LIBVER).tar.gz'"
+	echo "Making the distribution tarball '$(LIBNAME)-$(shell cat ../VERSION |tr -d '\n').tar.gz'"
 	make clean
-	tar cvzf "../../$(LIBNAME)-$(LIBVER).tar.gz" --exclude ".svn" ../../$(PACKAGENAME)/
-
-.PHONY : bzdist
-bzdist : distclean
-	echo "Making the distribution tarball '$(LIBNAME)-$(LIBVER).tar.bz2'"
-	make clean
-	tar cvjf "../../$(LIBNAME)-$(LIBVER).tar.bz2" --exclude ".svn" ../../$(PACKAGENAME)/
+	tar cvzf "../../$(LIBNAME)-$(shell cat ../VERSION |tr -d '\n').tar.gz" ../../$(PACKAGENAME)/
 
 # end of GNUmakefile (language C++)

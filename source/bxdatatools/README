@@ -59,9 +59,14 @@ This is the 'datatools' package README file
     shell> ./pkgtools.d/pkgtool build
 
 
-  Build sample programs:
+  Build production executable programs:
 
     shell> ./pkgtools.d/pkgtool build bin
+
+
+  Build sample executable programs:
+
+    shell> ./pkgtools.d/pkgtool build bin_test
 
 
   Installation:
@@ -76,7 +81,7 @@ This is the 'datatools' package README file
 
   Run sample program:
 
-    shell> ./Linux-i686/bin/test_tree_dump 
+    shell> ./Linux-i686-gcc4.2.4/bin/test_tree_dump 
 
 
   Uninstall:
@@ -95,4 +100,4 @@ This is the 'datatools' package README file
     Arnaud Chapon <chapon@lpccaen.in2p3.fr>
 
 --
-Last update: 2008-11-24 by Francois Mauger <mauger@lpccaen.in2p3.fr>
+Last update: 2009-02-19 by Francois Mauger <mauger@lpccaen.in2p3.fr>

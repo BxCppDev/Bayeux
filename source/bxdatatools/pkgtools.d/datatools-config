@@ -14,7 +14,12 @@
 help=0
 
 SCRIPTNAME="datatools-config"
-THE_SYSTEM="$(uname -s)-$(uname -m | sed -e 's/ //g')"
+COMP=gcc
+COMPVER=$(${COMP} --version | head -1 | cut -d ' ' -f 3)
+COMPILER=${COMP}${COMPVER}
+
+THE_SYSTEM="$(uname -s)-$(uname -m | sed -e 's/ //g')-${COMPILER}"
+#THE_SYSTEM="$(uname -s)-$(uname -m | sed -e 's/ //g')"
 
 THEPACK_ROOT=/usr/local
 if [ -n "${DATATOOLS_ROOT}" ]; then

@@ -8,14 +8,11 @@
 setenv __PACKAGE_NAME___ROOT __PACKAGE_ROOT__
 set uname_s=`uname -s`
 set uname_m=`uname -m | sed -e 's/ //g'`
-set comp=gcc
-set compver=$(gcc --version | head -1 | cut -d ' ' -f 3)
-set compiler=${comp}${compver}
-set system=${uname_s}-${uname_m}-${compiler}
-set libs="${__PACKAGE_NAME___ROOT}/${system}/lib"
-set bins="${__PACKAGE_NAME___ROOT}/${system}/bin"
+set libs="${__PACKAGE_NAME___ROOT}/${uname_s}-${uname_m}/lib"
+set bins="${__PACKAGE_NAME___ROOT}/${uname_s}-${uname_m}/bin"
 setenv PATH ${PATH}:"${bins}"
 
+setenv __PACKAGE_NAME___NO_PBA 0
 set sysarch=`uname`
 if ( ${sysarch} == Linux ) then 
   if (  $?LD_LIBRARY_PATH ) then
@@ -33,10 +30,6 @@ if ( ${sysarch} == Darwin ) then
   endif 
 endif
 
-unset comp
-unset compver
-unset compiler
-unset system
 unset uname_s
 unset uname_m
 unset libs
