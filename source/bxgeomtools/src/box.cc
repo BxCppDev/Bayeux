@@ -1,5 +1,5 @@
 // -*- mode: c++; -*- 
-/* box.cc
+/* box.cc 
  */
 
 #include <geomtools/box.h>

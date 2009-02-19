@@ -1,7 +1,7 @@
 // -*- mode: c++; -*- 
 // test_box.cxx
 // gnuplot macro: ./tests/test_box.gpl
-
+ 
 #include <cstdlib>
 #include <iostream>
 #include <string>

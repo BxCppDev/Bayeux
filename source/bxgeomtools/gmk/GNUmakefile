@@ -35,7 +35,8 @@ ifeq ($(OS),Darwin)
 endif
 
 COMPILER=$(CC)$(shell $(CC) --version | head -1 | cut -d ' ' -f 3)
-SYSTEM=$(OS)-$(ARCH)-$(COMPILER)
+SYSTEM=$(OS)-$(ARCH)
+#-$(COMPILER)
 
 .PHONY : all
 all : lib

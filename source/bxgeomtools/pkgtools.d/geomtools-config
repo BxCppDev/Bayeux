@@ -18,7 +18,8 @@ COMP=gcc
 COMPVER=$(${COMP} --version | head -1 | cut -d ' ' -f 3)
 COMPILER=${COMP}${COMPVER}
 
-THE_SYSTEM="$(uname -s)-$(uname -m | sed -e 's/ //g')-${COMPILER}"
+THE_SYSTEM="$(uname -s)-$(uname -m | sed -e 's/ //g')"
+#-${COMPILER}"
 
 ##THE_SYSTEM="$(uname -s)-$(uname -m | sed -e 's/ //g')"
 
