@@ -38,7 +38,7 @@ namespace geomtools {
     vector_3d pos2 = p2.mother_to_child (position_);
     bool res = false;
     res = sh3d1.is_inside (pos1, skin_) 
-      || sh3d2.is_outside (pos2, skin_);
+      && sh3d2.is_outside (pos2, skin_);
     return res;
   }
 
