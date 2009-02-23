@@ -1,0 +1,5 @@
+Fortran routine used within genbb:
+
+rnd1
+rndm
+grndm

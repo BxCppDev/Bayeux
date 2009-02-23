@@ -1,0 +1,25 @@
+# -*- mode: gnuplot; -*-
+
+! ${GENBB_HELP_ROOT}/$(uname -s)-$(uname -m | sed 's/ //g')/bin/test_fermi > test_fermi.data
+! ${GENBB_HELP_ROOT}/$(uname -s)-$(uname -m | sed 's/ //g')/bin/test_fermi_f.f77.exe > test_fermi_cern.data
+
+set grid
+set size ratio 1
+set xrange [0:5]
+set yrange [0:10]
+
+set xlabel "Energy (MeV)"
+set ylabel "Fermi function"
+
+set title "Z=44"
+mult=1.7629992
+plot \
+  "test_fermi.data" using 1:2 title "C++ NR" with lines , \
+  "test_fermi.data" using 1:3 title "C++/GSL shape only" with lines , \
+  "test_fermi.data" using 1:4 title "C++/GSL best" with lines , \
+  "test_fermi.data" using 1:(($3)*mult) title "C++/GSL scaled" with lines , \
+  "test_fermi_cern.data" using 1:2 title "f77 C++" with lines , \
+  "test_fermi_cern.data" using 1:3 title "f77 cern" with lines  , \
+  "test_fermi_cern.data" using 1:4 title "f77 cern 2" with lines
+
+# end

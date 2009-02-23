@@ -1,0 +1,20 @@
++OPT,MAP.
++SELF.	====================================================================
++SELF.	GENERAL PATCHY COMMANDS FOR GEANT
++SELF..,DECS.  FAIT DANS DTRACK.COM
++USE, SINGLE,  IF=CDC, CRAY.
++USE, UNIX,    IF=SUN, SGI, DECS, CONVEX, IBMRT, AIX370.
++USE, IBMALL,  IF=IBM, IBMMVS, AIX370.
++USE, DOUBLE,  IF=APOLLO, IBMALL, VAX.
++USE, DOUBLE,  IF=UNIX, IF=-SINGLE.
++USE, BSLASH,  IF=SUN, SGI, DECS, IBMRT.
++USE,MONITOR.
++SELF.	====================================================================
++EXE,CRA*.
++USE,GENBBCOM.
++USE,GENBBDIA,T=EXE.
++USE,GENBBSUB,T=EXE.
++ASM, 23.
++ASM, 24.
++PAM,12,T=ATTACH,T=CARDS                 .genbb.car
++QUIT.
