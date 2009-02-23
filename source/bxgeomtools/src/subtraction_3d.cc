@@ -100,7 +100,8 @@ namespace geomtools {
     //debug = true;
     if (debug)
       {
-	std::clog << "subtraction_3d::find_intercept: entering..." << std::endl;
+	std::clog << "subtraction_3d::find_intercept: entering..." 
+		  << std::endl;
       }
     double skin = get_skin ();
     if (skin_ > USING_PROPER_SKIN) skin = skin_;
@@ -275,7 +276,7 @@ namespace geomtools {
 	    counter++;
 	    if (counter > max_counter)
 	      {
-		std::clog << "DEVEL: CRITICAL ishape=" << ishape 
+		std::clog << "CRITICAL: subtraction_3d::find_intercept: ishape=" << ishape 
 			  << " stop 'infinite' loop."
 			  << std::endl; 
 		std::ostringstream message;
@@ -283,8 +284,6 @@ namespace geomtools {
 			<< "I suspect infinite loop while searching for "
 			<< "intercept point! Abort!";
 		throw std::runtime_error (message.str());
-		//exit (1);
-		//break;
 	      }
 	  } while (1);
 	if (debug) std::clog << "DEVEL: ishape=" << ishape 
