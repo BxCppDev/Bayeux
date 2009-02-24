@@ -3,6 +3,7 @@
 #ifndef __mygsl__multimin_h
 #define __mygsl__multimin_h 1
 
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
