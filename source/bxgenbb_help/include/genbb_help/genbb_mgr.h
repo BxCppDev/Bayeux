@@ -32,9 +32,10 @@ namespace genbb {
 
   struct primary_particle
   {
-    int        type;
-    double     time;
-    Hep3Vector momentum;
+    int               type;
+    double            time;
+    CLHEP::Hep3Vector momentum;
+
     bool is_gamma () const
     {
       return type == 1;
