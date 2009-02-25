@@ -41,13 +41,17 @@ main (int argc_, char ** argv_)
       // working primary event:
       genbb::primary_event pe;
 
+      size_t count = 0;
       // main loop on primary events source:
       while (mgr.has_next ())
 	{
 	  mgr.load_next (pe);
 	  if (debug) pe.dump ();
+	  count++;
 	}
       mgr.reset ();
+
+      std::clog << "Number of loaded events: " << count << std::endl; 
       if (debug) mgr.dump ();
    
     }

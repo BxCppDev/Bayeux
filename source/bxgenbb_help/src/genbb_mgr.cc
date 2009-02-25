@@ -90,12 +90,12 @@ namespace genbb {
     __current.reset ();
     if (__in == 0)
       {
-	std::clog << "genbb_mgr::__load_next: no input stream!" << std::endl;
+	if (is_debug ()) std::clog << "genbb_mgr::__load_next: no input stream!" << std::endl;
 	std::string filename;
 
 	if (__filenames.size () == 0)
 	  { 
-	    std::clog << "genbb_mgr::__load_next: no more filenames!" << std::endl;
+	    if (is_debug ()) std::clog << "genbb_mgr::__load_next: no more filenames!" << std::endl;
 	    return;
 	  }
 

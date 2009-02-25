@@ -40,7 +40,7 @@ main (int argc_, char ** argv_)
       while (mgr.has_next ())
 	{
 	  mgr.load_next (pe);
-	  pe.dump ();
+	  if (debug) pe.dump ();
 	  double e_sum = 0.0;
 	  if (debug) std::clog << "debug: me=" 
 			       << me / CLHEP::MeV 
