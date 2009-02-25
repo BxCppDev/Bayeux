@@ -104,14 +104,17 @@ if [ ${interactive} -eq 0 ]; then
     if [ "x${nevents}" != "x" ]; then
 	echo "${appname}: NOTICE: Set 'number-of-events'..." 1>&2
 	cat ${tmp_conf}.1 | sed \
-	    -e "s/^number-of-events=.*$/number-of-events=${nevents}/g" \
+	    -e "s/^number-of-events=.*$/number-of-events=$nevents/g" \
 	    > ${tmp_conf}.2
 	mv -f ${tmp_conf}.2 ${tmp_conf}.1
     fi
+
+    ###echo "${appname}: NOTICE: =====================" 1>&2
+
     if [ "x${output_file}" != "x" ]; then
-	echo "${appname}: NOTICE: Set 'output-file'..." 1>&2
+	echo "${appname}: NOTICE: Set 'output-file' to '${output_file}'..." 1>&2
 	cat ${tmp_conf}.1 | sed \
-	    -e "s/^output-file=.*$/output-file=${output_file}/g" \
+	    -e "s@^output-file=.*@output-file=${output_file}@g" \
 	    > ${tmp_conf}.2
 	mv -f ${tmp_conf}.2 ${tmp_conf}.1
     fi
