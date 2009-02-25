@@ -48,7 +48,7 @@ main (int argc_, char ** argv_)
 	  if (debug) pe.dump ();
 	}
       mgr.reset ();
-      mgr.dump ();
+      if (debug) mgr.dump ();
    
     }
   catch (std::exception & x)
