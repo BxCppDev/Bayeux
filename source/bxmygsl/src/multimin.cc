@@ -200,7 +200,7 @@ namespace mygsl {
       throw std::runtime_error(message.str());            
     }
 
-    if ( find_if(__params.begin(),
+    if (std::find_if (__params.begin(),
 		 __params.end(),
 		 multimin_system::param_has_name(pe_.name) ) != __params.end() ) {
       std::ostringstream message;
@@ -294,13 +294,13 @@ namespace mygsl {
   void multimin_system::__update_free_dimension()
   {
     param_is_free pif;
-    __free_dimension=count_if(__params.begin(),__params.end(),pif);
+    __free_dimension=std::count_if(__params.begin(),__params.end(),pif);
   }
   
   void multimin_system::__update_auto_dimension()
   {
     param_is_auto pia;
-    __auto_dimension=count_if(__params.begin(),__params.end(),pia);
+    __auto_dimension=std::count_if(__params.begin(),__params.end(),pia);
   }
 
   void multimin_system::__update_dimensions()
