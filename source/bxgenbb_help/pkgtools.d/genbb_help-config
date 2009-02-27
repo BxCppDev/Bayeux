@@ -101,9 +101,11 @@ if [ "x$opt" = "x--cflags" ]; then
     echo -n \
         "-fPIC " \
 	"-I${THEPACK_INCLUDEDIR} "  \
-         "-I${CERN_ROOT}/include "  \
-         "`clhep-config --include` "  | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py
-    echo
+	"-I${CERN_ROOT}/include "  \
+	"`mygsl-config --include` "  \
+	"`gsl-config --cflags` "  \
+	"`clhep-config --include` " \
+	| python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py
 
     ################################################################
     # Please add here some stuff in order to take into account
@@ -131,12 +133,13 @@ if [ "x$opt" = "x--libs" ]; then
 fi 
 
 if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
-  echo -n "-L${THEPACK_LIBDIR} -lgenbb_help "  \
-         "`cernlib mathlib` "  \
-         "`clhep-config --libs` "  \
-         "-lg2c -lm " \
-      | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
-    echo
+    echo -n "-L${THEPACK_LIBDIR} -lgenbb_help "  \
+	"`cernlib mathlib` "  \
+	"`mygsl-config --libs` "  \
+	"`gsl-config --libs` "  \
+	"`clhep-config --libs` "  \
+	"-lg2c -lm " \
+	| python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
 
     ################################################################
     # Please add here some stuff in order to take into account

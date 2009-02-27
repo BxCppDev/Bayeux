@@ -25,8 +25,8 @@ namespace genbb {
     switch (type_)
       {
       case 1: return "gamma";
-      case 2: return "positron";
-      case 3: return "electron";
+      case 2: return "e+";
+      case 3: return "e-";
       case 47: return "alpha";
       }
     return "<unknown>";

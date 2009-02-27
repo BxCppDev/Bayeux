@@ -40,13 +40,13 @@ namespace genbb {
     {
       return type == 1;
     }
-    bool is_electron () const
-    {
-      return type == 3;
-    }
     bool is_positron () const
     {
       return type == 2;
+    }
+    bool is_electron () const
+    {
+      return type == 3;
     }
     bool is_alpha () const
     {
