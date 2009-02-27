@@ -1,7 +1,6 @@
 # -*- mode: makefile; -*- 
 # GNUmakefile (language C++)
 
-SHELL=/bin/bash
 OS=$(shell uname -s)
 ifneq ($(OS),Linux)
 ifneq ($(OS),Darwin)
@@ -112,11 +111,11 @@ BINEXT=
 
 vpath %$(HEADEREXT)  $(INCDIR)/$(PACKAGENAME)
 vpath %$(SOURCEEXT)  $(SRCDIR)
-vpath %$(PROGEXT)    $(PRGDIR)
+vpath %$(PROGEXT)    $(PROGDIR)
 vpath %$(OBJEXT)     $(OBJDIR)
 vpath %$(LIBEXT)     $(LIBDIR)
 vpath %$(SHLIBEXT)   $(LIBDIR)
-vpath %$(BINEXT)     $(PROGDIR)
+vpath %$(BINEXT)     $(BINDIR)
 
 headers := $(notdir $(shell ls $(INCDIR)/$(PACKAGENAME)/*$(HEADEREXT)))
 sources := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT)))
@@ -222,12 +221,12 @@ $(OBJDIR)/%$(OBJEXT) : %$(SOURCEEXT) %$(HEADEREXT)
 	@test -d $(OBJDIR) || mkdir -p $(OBJDIR)
 	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< -o $(OBJDIR)/$(notdir $(@))
 
-%.static$(BINEXT) : %$(PROGEXT) lib_static
+%.static$(BINEXT) : %$(PROGEXT) | lib_static
 	@echo "Compiling statically linked program '$(@)'..."
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $< $(STATICFLAGS) $(LDFLAGS) -o $(BINDIR)/$(notdir $(@))
 
-%$(BINEXT) : %$(PROGEXT) lib_shared 
+%$(BINEXT) : %$(PROGEXT) | lib_shared 
 	@echo "Compiling program '$(@)' with shared library..."
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $< $(SHFLAGS) -o $(BINDIR)/$(notdir $(@))
