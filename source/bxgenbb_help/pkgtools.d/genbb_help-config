@@ -101,25 +101,8 @@ if [ "x$opt" = "x--cflags" ]; then
     echo -n \
         "-fPIC " \
 	"-I${THEPACK_INCLUDEDIR} "  \
-         "[missing CERNLIB cflags] "  \
+         "-I${CERN_ROOT}/include "  \
          "`clhep-config --include` "  | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py
-
-#   test -f ${root_cnf:=$ROOT_BASE_DIR/bin/root-config} || $root_cnf=`which $root-config 2>/dev/null`
-#   test ! -z $root_cnf && echo -n " `$root_cnf --cflags` " || no_pack_list="$no_pack_list $root"
-
-#   test -f ${clhep_cnf:=$CLHEP_BASE_DIR/bin/clhep-config} || $clhep_cnf=`which clhep-config 2>/dev/null`
-#   test ! -z $clhep_cnf && echo -n " `$clhep_cnf --include` " || no_pack_list="$no_pack_list clhep"
-
-#   test -f ${hdf5_cnf=`which hdf5-config 2>/dev/null`}
-#   test ! -z $hdf5_cnf && echo -n " `$hdf5_cnf --include` " || no_pack_list="$no_pack_list hdf5"
-
-#   test -f ${gsl_cnf:=`which gsl-config 2>/dev/null`}
-#   test ! -z $gsl_cnf && echo -n " `$gsl_cnf --cflags` " || no_pack_list="$no_pack_list gsl"
-
-#   test -f ${cernlib_cnf:=`which cernlib 2>/dev/null`}
-#   test ! -z $cernlib_cnf && echo -n " `-Dcfortran` " || no_pack_list="$no_pack_list cernlib"
-
-    test -z $no_pack_list || echo "warning: non found packages: $no_pack_list" 1>&2
     echo
 
     ################################################################
@@ -149,25 +132,10 @@ fi
 
 if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
   echo -n "-L${THEPACK_LIBDIR} -lgenbb_help "  \
-         "[missing CERNLIB ldflags] "  \
-         "`clhep-config --libs` "  | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
-
-#   test -f ${root_cnf:=$ROOT_BASE_DIR/bin/root-config} || $root_cnf=`which $root-config 2>/dev/null`
-#   test ! -z $root_cnf && echo -n " `$root_cnf --libs` " || no_pack_list="$no_pack_list $root"
-
-#   test -f ${clhep_cnf:=$CLHEP_BASE_DIR/bin/clhep-config} || $clhep_cnf=`which clhep-config 2>/dev/null`
-#   test ! -z $clhep_cnf && echo -n " `$clhep_cnf --libs` " || no_pack_list="$no_pack_list clhep"
-
-#   test -f ${hdf5_cnf=`which hdf5-config 2>/dev/null`}
-#   test ! -z $hdf5_cnf && echo -n " `$hdf5_cnf --libs` " || no_pack_list="$no_pack_list hdf5"
-
-#   test -f ${gsl_cnf:=`which gsl-config 2>/dev/null`}
-#   test ! -z $gsl_cnf && echo -n " `$gsl_cnf --libs` " || no_pack_list="$no_pack_list gsl"
-
-#   test -f ${cernlib_cnf:=`which cernlib 2>/dev/null`}
-#   test ! -z $cernlib_cnf && echo -n " `$cernlib_cnf mathlib packlib kernlib graflib pawlib` " || no_pack_list="$no_pack_list $cernlib"
-
-    test -z $no_pack_list || echo "warning: non found packages: $no_pack_list" 1>&2
+         "`cernlib mathlib` "  \
+         "`clhep-config --libs` "  \
+         "-lg2c -lm " \
+      | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
     echo
 
     ################################################################
