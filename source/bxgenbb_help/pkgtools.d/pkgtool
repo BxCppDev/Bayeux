@@ -27,7 +27,10 @@ tool_mode=""
 do_usage=0
 debug=0
 verbose=0
-###setup_dir=${HOME}
+
+use_g77=0
+use_gfortran=1
+
 
 function err_msg()
 {
@@ -73,15 +76,20 @@ function print_usage()
 EOF
 }
 
-#######################################################
-
-use_g77=0
-use_gfortran=1
-
-if [ "x${F77_COMP}" = "xg77"]; then
-    use_g77=1
-    use_gfortran=0
+if [ "x${F77_COMP}" != "x" ]; then
+    if [ "x${F77_COMP}" = "xg77" ]; then
+	use_g77=1
+	use_gfortran=0
+    elif [ "x${F77_COMP}" = "xgfortran" ]; then
+	use_g77=0
+	use_gfortran=1
+    else
+	err_msg "Unsupported enforced '${F77_COMP}' F77 compiler! Abort!"
+	exit 1	
+    fi
 fi
+
+#######################################################
 
 parse_switch=1
 while [ -n "$1" ]; do
