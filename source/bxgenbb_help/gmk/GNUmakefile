@@ -19,7 +19,7 @@ ifeq ($(OS),Linux)
   MAKE=make
   CXX=g++
   CC=gcc
-  F77=g77
+  #F77=g77
   F77=gfortran
   LD=g++
   LDFLAGS=-O
@@ -31,7 +31,7 @@ ifeq ($(OS),Darwin)
   MAKE=make
   CXX=g++
   CC=gcc
-  F77=g77
+  #F77=g77
   F77=gfortran
   LD=g++
   LDFLAGS=-O
@@ -40,8 +40,9 @@ ifeq ($(OS),Darwin)
   STATICFLAGS=
 endif
 
-##F77COMP=g77
-##F77COMP=gfortran
+# Choices:
+# F77COMP=g77
+# F77COMP=gfortran
 ifneq ($(F77COMP),)
 F77=$(F77COMP)
 endif

@@ -132,13 +132,20 @@ if [ "x$opt" = "x--libs" ]; then
     exit 0
 fi 
 
+### Notes:
+###	"-lgfortran " 
+###	"-lg2c "
+
+#>>> 2009-03-01 FM:
+# Remove  -lg2c link option for we now use gfortran...
+#<<<EOF
 if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
     echo -n "-L${THEPACK_LIBDIR} -lgenbb_help "  \
 	"`cernlib mathlib` "  \
 	"`mygsl-config --libs` "  \
 	"`gsl-config --libs` "  \
 	"`clhep-config --libs` "  \
-	"-lg2c -lm " \
+	"-lm " \
 	| python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
 
     ################################################################
