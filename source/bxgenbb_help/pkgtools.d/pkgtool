@@ -78,6 +78,11 @@ EOF
 use_g77=0
 use_gfortran=1
 
+if [ "x${F77_COMP}" = "xg77"]; then
+    use_g77=1
+    use_gfortran=0
+fi
+
 parse_switch=1
 while [ -n "$1" ]; do
     arg="$1"
