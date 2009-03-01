@@ -139,7 +139,7 @@ fi
 ###	"-lg2c "
 f77_comp=$(cat ${PACK_CONF} | grep F77_COMP= | cut -d= -f2)
 
-f77_opt=
+f77_opt=-lgfortran
 if [ "x${f77_comp}" = "xg77" ]; then
     f77_opt=-lg2c
 fi

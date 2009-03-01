@@ -136,7 +136,13 @@ DEPCPPFLAGS+=-I$(CERN_ROOT)/include
 DEPLDFLAGS+=$(shell cernlib packlib mathlib kernlib geant321)
 
 # f2c dependency:
+ifeq ($(F77),g77)
 DEPLDFLAGS+=-lg2c
+endif
+
+ifeq ($(F77),gfortran)
+DEPLDFLAGS+=-lgfortran
+endif
 
 CPPFLAGS1=
 CPPFLAGS2=
