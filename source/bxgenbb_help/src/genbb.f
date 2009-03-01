@@ -13165,8 +13165,8 @@ c VIT, 15.10.1995.
 	npfull=npfull+1
 	if(npfull.gt.100) print *,
      +    'PARTICLE: in event more than 100 particles ',npfull
-d	if(np.lt.1.or.np.gt.50.or.(np.gt.32.and.np.lt.45)) print *,
-d    1     'PARTICLE: unknown particle number ',np
+c	if(np.lt.1.or.np.gt.50.or.(np.gt.32.and.np.lt.45)) print *,
+c    1     'PARTICLE: unknown particle number ',np
 	npgeant(npfull)=np
 	pmass=datamass(np)
 	phi=phi1+(phi2-phi1)*rnd1(d)
@@ -13627,7 +13627,7 @@ c spectrum with correction
 
 C***********************************************************************
 CDECK  ID>, FERMI.
-	real*4 function fermi_bad_bad(Z,E)
+	real*4 function fermi_bad(Z,E)
 c Function fermi calculates the traditional function of Fermi in
 c theory of beta decay to take into account the Coulomb correction
 c to the shape of electron/positron energy spectrum.

@@ -2,3 +2,8 @@ This is the genbb_help package ChangeLog
 
 2009-01-12 : creation by Francois Mauger <mauger@lpccaen.in2p3.fr>
 
+2009-03-01 : Francois Mauger <mauger@lpccaen.in2p3.fr>
+	enables gfortran in place of g77 by default
+
+	
+

@@ -92,9 +92,9 @@ if [ ${replace_fermi} -ne 0 ]; then
 	-e 's/function fermi/function fermi_bad/g' \
 	-e 's/fermi=p/fermi_bad=p/g' \
 	-e 's/function fermi/function fermi_bad/g' \
-	-e 's/fermi=p/fermi_bad=p/g' \
 	-e 's/call GENBBsub/ier=0\n        ! call GENBBsub/g' \
 	-e 's/rndm(d)/rnd1(d)/g' \
+	-e 's/^d/c/g' \
 	> ${GENBB_HELP_ROOT}/src/genbb.f
     
 else

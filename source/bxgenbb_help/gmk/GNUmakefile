@@ -20,6 +20,7 @@ ifeq ($(OS),Linux)
   CXX=g++
   CC=gcc
   F77=g77
+  F77=gfortran
   LD=g++
   LDFLAGS=-O
   SOFLAGS=-shared
@@ -31,11 +32,18 @@ ifeq ($(OS),Darwin)
   CXX=g++
   CC=gcc
   F77=g77
+  F77=gfortran
   LD=g++
   LDFLAGS=-O
   SOFLAGS=-dynamiclib -twolevel_namespace -undefined dynamic_lookup -dynamic -single_module
   SHLIBEXT=.dylib
   STATICFLAGS=
+endif
+
+##F77COMP=g77
+##F77COMP=gfortran
+ifneq ($(F77COMP),)
+F77=$(F77COMP)
 endif
 
 SYSTEM=$(OS)-$(ARCH)
@@ -65,9 +73,24 @@ LIBDIR=$(ARCHDIR)/lib
 BINDIR=$(ARCHDIR)/bin
 
 CXXFLAGS=-fPIC
+F77FLAGS=-fPIC
+test_f77=$(shell which $(F77))
+ifeq ($(test_f77),)
+$(error no $(F77) is available!)
+else
+$(warning found $(F77) compiler!)
+endif
+
+
 #CXXFLAGS=-fPIC -Df2cFortran
-F77FLAGS=-fPIC -fno-automatic -finit-local-zero \
-  -Wno-globals -fno-globals -fno-automatic
+
+ifeq ($(F77),g77)
+F77FLAGS+=-fno-automatic -finit-local-zero -Wno-globals -fno-globals 
+endif
+
+ifeq ($(F77),gfortran)
+F77FLAGS+= 
+endif
 
 processor=$(shell uname -p)
 ifeq ($(strip $(processor)),x86_64)
@@ -76,7 +99,6 @@ else
 CXXFLAGS+= #-malign-double
 F77FLAGS+= #-malign-double
 endif
-
 
 
 CPPFLAGS=-I. -I$(INCDIR)
@@ -117,12 +139,23 @@ DEPLDFLAGS+=-lg2c
 CPPFLAGS1=
 CPPFLAGS2=
 
+ifeq ($(F77),g77)
 CPPFLAGS1+=-Dfermi_func_shape_only=fermi_func_shape_only__
 CPPFLAGS1+=-Dfermi_wrap=fermi_wrap__
 CPPFLAGS1+=-Dfermi_func=fermi_func__
 CPPFLAGS1+=-Dfermi_func_nr_approx=fermi_func_nr_approx__
 CPPFLAGS1+=-Drng_shoot_reset=rng_shoot_reset__
 CPPFLAGS1+=-Drng_shoot_flat=rng_shoot_flat__
+endif
+
+ifeq ($(F77),gfortran)
+CPPFLAGS1+=-Dfermi_func_shape_only=fermi_func_shape_only_
+CPPFLAGS1+=-Dfermi_wrap=fermi_wrap_
+CPPFLAGS1+=-Dfermi_func=fermi_func_
+CPPFLAGS1+=-Dfermi_func_nr_approx=fermi_func_nr_approx_
+CPPFLAGS1+=-Drng_shoot_reset=rng_shoot_reset_
+CPPFLAGS1+=-Drng_shoot_flat=rng_shoot_flat_
+endif
 
 ### End of dependencies.
 CPPFLAGS1+=$(DEPCPPFLAGS) 
