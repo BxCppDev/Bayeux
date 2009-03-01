@@ -75,6 +75,9 @@ EOF
 
 #######################################################
 
+use_g77=0
+use_gfortran=1
+
 parse_switch=1
 while [ -n "$1" ]; do
     arg="$1"
@@ -90,6 +93,12 @@ while [ -n "$1" ]; do
 	    debug=1 
 	elif [ "${arg}" = "-v" -o "${arg}" = "--verbose" ]; then
 	    verbose=1 
+	elif [ "${arg}" = "--g77" ]; then
+	    use_g77=1
+	    use_gfortran=0
+	elif [ "${arg}" = "--gfortran" ]; then
+	    use_g77=0
+	    use_gfortran=1
 	else
 	    err_msg "Invalid option!"
 	    exit 1
@@ -258,13 +267,26 @@ function do_clean()
 
 function do_configure()
 {
-    info_msg "Configure package '${pack_name}': nothing special..."
-    echo "Configure package '${pack_name}': nothing special..."
+    info_msg "Configure package '${pack_name}': setting F77 compiler..."
+
+    if [ ${use_gfortran} -eq 1 ]; then
+	info_msg "Package '${pack_name}' build will use 'gfortran'"
+	F77_COMP=gfortran
+    fi
+    if [ ${use_g77} -eq 1 ]; then
+	F77_COMP=g77
+	info_msg "Package '${pack_name}' build will use 'g77'"
+    fi
+    echo "export F77_COMP=${F77_COMP}" > ${the_base_dir}/.${pack_name}.conf
 }
 
 function do_build()
 {
     info_msg "Build package '${pack_name}'..."
+    if [ -f ${the_base_dir}/.${pack_name}.conf ]; then
+	source ${the_base_dir}/.${pack_name}.conf
+	info_msg "Build procedure use the '${F77_COMP}' F77 compiler..."
+    fi
     if [ -d ${GMKDIR} ]; then
 	do_build_gmk $@
 	return $?

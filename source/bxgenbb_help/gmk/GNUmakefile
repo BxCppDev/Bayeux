@@ -41,10 +41,11 @@ ifeq ($(OS),Darwin)
 endif
 
 # Choices:
-# F77COMP=g77
-# F77COMP=gfortran
-ifneq ($(F77COMP),)
-F77=$(F77COMP)
+# F77_COMP=g77
+# F77_COMP=gfortran
+ifneq ($(F77_COMP),)
+F77=$(F77_COMP)
+$(Force $(F77_COMP) compiler!)
 endif
 
 SYSTEM=$(OS)-$(ARCH)
@@ -78,8 +79,8 @@ F77FLAGS=-fPIC
 test_f77=$(shell which $(F77))
 ifeq ($(test_f77),)
 $(error no $(F77) is available!)
-else
-$(warning found $(F77) compiler!)
+#else
+#$(warning found $(F77) compiler!)
 endif
 
 

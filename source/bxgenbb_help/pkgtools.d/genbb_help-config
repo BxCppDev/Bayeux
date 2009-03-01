@@ -24,6 +24,8 @@ else
     exit 1
 fi
 
+PACK_CONF=${GENBB_HELP_ROOT}/.genbb_help.conf
+
 THEPACK_INCLUDEDIR="${THEPACK_ROOT}/include" 
 
 THEPACK_LIBDIR="${THEPACK_ROOT}/${THE_SYSTEM}/lib" 
@@ -135,6 +137,12 @@ fi
 ### Notes:
 ###	"-lgfortran " 
 ###	"-lg2c "
+f77_comp=$(cat ${PACK_CONF} | grep F77_COMP= | cut -d= -f2)
+
+f77_opt=
+if [ "x${f77_comp}" = "xg77" ]; then
+    f77_opt=-lg2c
+fi
 
 #>>> 2009-03-01 FM:
 # Remove  -lg2c link option for we now use gfortran...
@@ -145,7 +153,7 @@ if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
 	"`mygsl-config --libs` "  \
 	"`gsl-config --libs` "  \
 	"`clhep-config --libs` "  \
-	"-lm " \
+	"${f77_opt} -lm " \
 	| python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
 
     ################################################################

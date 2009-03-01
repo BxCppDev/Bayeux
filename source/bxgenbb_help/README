@@ -28,17 +28,28 @@ This is the 'genbb_help' package README file
 
      run the pkgtool program using the 'configure' command:
 
-     shell>$ ./pkgtools.d/pkgtool configure
-     Configure package 'genbb_help': nothing special...
+     shell>$ ./pkgtools.d/pkgtool -v configure
+     pkgtool (genbb_help): INFO: Configure package 'genbb_help': setting F77 compiler...
+     pkgtool (genbb_help): INFO: Package 'genbb_help' build will use 'gfortran'
 
-     the default implementation does nothing! 
+     shell>$ cat .genbb_help.conf 
+     export F77_COMP=gfortran
+
+   Step 2':
+
+     to use g77 in place of gfortran:
+
+     shell>$ ./pkgtools.d/pkgtool -v --g77 configure
 
    Step 3:
 
      run the pkgtool program using the 'build' command to build
      the shared library provided by the package:
 
-     shell>$ ./pkgtools.d/pkgtool build
+     shell>$ ./pkgtools.d/pkgtool -v build
+     pkgtool (genbb_help): INFO: Build package 'genbb_help'...
+     pkgtool (genbb_help): INFO: Build procedure use the 'gfortran' F77 compiler...
+     pkgtool (genbb_help): INFO: Build gmk...
 
 
    Step 4:
