@@ -8,13 +8,25 @@ namespace geomtools {
 
   void 
   gnuplot_draw::basic_draw_point (std::ostream & out_, 
+				  double x_, double y_, double z_,
+				  bool endl_)
+  {
+    out_ << x_ << ' ' 
+	 << y_ << ' ' 
+	 << z_;
+    if (endl_) out_ << std::endl;
+  }
+
+  void 
+  gnuplot_draw::basic_draw_point (std::ostream & out_, 
 				  const vector_3d & point_,
 				  bool endl_)
   {
-    out_ << point_.x () << ' ' 
-	 << point_.y () << ' ' 
-	 << point_.z ();
-    if (endl_) out_ << std::endl;
+    gnuplot_draw::basic_draw_point (out_, 
+				    point_.x (), 
+				    point_.y (),
+				    point_.z (), 
+				    endl_);
   }
 
   void 

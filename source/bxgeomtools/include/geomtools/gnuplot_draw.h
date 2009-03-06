@@ -33,6 +33,11 @@ namespace geomtools {
   public: 
     static void 
     basic_draw_point (std::ostream &, 
+		      double x_, double y_, double z_,
+		      bool endl_ = true);
+
+    static void 
+    basic_draw_point (std::ostream &, 
 		      const vector_3d &,
 		      bool endl_ = true);
 
