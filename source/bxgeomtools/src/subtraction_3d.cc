@@ -211,7 +211,12 @@ namespace geomtools {
 		  }
 		vector_3d test_inside_j = pj->mother_to_child (intercepts[ishape]);
 		bool ok = false;
+		/*
 		if (ishape == 0) ok = shj->is_outside (test_inside_j);
+		else ok = ! shj->is_outside (test_inside_j);
+		*/
+		// XXX to be checked:
+		if (ishape == 0) ok = ! shj->is_inside (test_inside_j);
 		else ok = ! shj->is_outside (test_inside_j);
 		if (ok)
 		  {
