@@ -91,10 +91,11 @@ main (int argc_ , char ** argv_)
 {
   try {
     long seed = 314159;
-    string filename = "test_nans_ar.xml";
+    string filename = "test_nans_ar.txt";
     bool debug = false;
+    namespace ds = datatools::serialization;
 
-    datatools::serialization::io_factory::g_debug = debug;
+    ds::io_factory::g_debug = debug;
     srand48 (seed);
     clog << "NOTICE: using filename '" << filename << "'" << endl;
    
@@ -107,8 +108,8 @@ main (int argc_ , char ** argv_)
     
     {
       clog << "NOTICE: writing..." << endl;
-      datatools::serialization::safe_serial<data_t> ss_data;
-      datatools::serialization::data_writer writer (filename);
+      ds::safe_serial<data_t> ss_data;
+      ds::data_writer writer (filename, ds::using_multi_archives);
       int counts = 10;
       for (int i = 0; i < counts; i++) 
 	{
@@ -119,13 +120,12 @@ main (int argc_ , char ** argv_)
 	  writer.store (ss_data.get ());
 	}
       clog << "NOTICE: writing done." << endl << endl;
-      //sleep (5);
     }
     
     {
       clog << "NOTICE: reading..." << endl;
-      datatools::serialization::safe_serial<data_t> ss_data;
-      datatools::serialization::data_reader reader (filename);    
+      ds::safe_serial<data_t> ss_data;
+      ds::data_reader reader (filename, ds::using_multi_archives);    
       int counts = 0;
       while (reader.has_record_tag ()) 
 	{

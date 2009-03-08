@@ -112,9 +112,15 @@ namespace datatools {
       if (is_text ()) 
 	{
 #ifdef DATATOOLS_USE_FPU
+	  std::clog << "DEVEL: io_factory::__init_read_archive: "
+		    << "text with FPU..." 
+		    << std::endl;
 	  __itar_ptr = new boost::archive::text_iarchive (*__in, 
 							  boost::archive::no_codecvt);
 #else
+	  std::clog << "DEVEL: io_factory::__init_read_archive: "
+		    << "text with no FPU..." 
+		    << std::endl;
 	  __itar_ptr = new boost::archive::text_iarchive (*__in);
 #endif
 	  if (g_debug) 
@@ -127,9 +133,15 @@ namespace datatools {
       else if (is_xml ()) 
 	{
 #ifdef DATATOOLS_USE_FPU
+	  std::clog << "DEVEL: io_factory::__init_read_archive: "
+		    << "XML with FPU..." 
+		    << std::endl;
 	  __ixar_ptr = new boost::archive::xml_iarchive (*__in, 
 							  boost::archive::no_codecvt);
 #else
+	  std::clog << "DEVEL: io_factory::__init_read_archive: "
+		    << "XML with no FPU..." 
+		    << std::endl;
 	  __ixar_ptr = new boost::archive::xml_iarchive (*__in);
 #endif
 	  if (g_debug) 
@@ -247,7 +259,13 @@ namespace datatools {
 
       __in = __in_fs;
 #ifdef DATATOOLS_USE_FPU
-      __in->imbue (*__locale);
+      if (is_text () || is_xml ())
+	{
+	  std::clog << "DEVEL: io_factory::__init_read: "
+		    << "FPU: stream.imbue..." 
+		    << std::endl;
+	  __in->imbue (*__locale);
+	}
 #endif
 
       return 0;
@@ -293,9 +311,15 @@ namespace datatools {
       if (is_text ()) 
 	{
 #ifdef DATATOOLS_USE_FPU
+	  std::clog << "DEVEL: io_factory::__init_write_archive: "
+		    << "with FPU: text archive..." 
+		    << std::endl;
 	  __otar_ptr = new boost::archive::text_oarchive (*__out,
 							  boost::archive::no_codecvt);	  
 #else
+	  std::clog << "DEVEL: io_factory::__init_write_archive: "
+		    << "without FPU: text archive..." 
+		    << std::endl;
 	  __otar_ptr = new boost::archive::text_oarchive (*__out);
 #endif
 	  if (g_debug) 
@@ -308,9 +332,15 @@ namespace datatools {
       else if (is_xml ()) 
 	{
 #ifdef DATATOOLS_USE_FPU
+	  std::clog << "DEVEL: io_factory::__init_write_archive: "
+		    << "with FPU: XML archive..." 
+		    << std::endl;
 	  __oxar_ptr = new boost::archive::xml_oarchive (*__out,
 							  boost::archive::no_codecvt);
 #else
+	  std::clog << "DEVEL: io_factory::__init_write_archive: "
+		    << "without FPU: XML archive..." 
+		    << std::endl;
 	  __oxar_ptr = new boost::archive::xml_oarchive (*__out);
 #endif
 	  if (g_debug) 
@@ -406,8 +436,10 @@ namespace datatools {
 
       __out = __out_fs;
 #ifdef DATATOOLS_USE_FPU
-      if (! is_compressed () && ! is_binary ())
+      if (is_text () || is_xml ())
 	{ 
+	  std::clog << "DEVEL: io_factory::__init_write: stream.imbue" 
+		    << std::endl;
 	  __out->imbue (*__locale);
 	}
 #endif
@@ -616,10 +648,11 @@ namespace datatools {
 	}
       __ctor_defaults ();
 #ifdef DATATOOLS_USE_FPU
+      std::clog << "DEVEL: io_factory::__reset: Use FPU" << std::endl;
       if (__locale)
 	{
-	  delete __locale;
-	  __locale = 0;
+	  delete __locale; 
+	  __locale = 0; 
 	} 
       if (__default_locale)
 	{
