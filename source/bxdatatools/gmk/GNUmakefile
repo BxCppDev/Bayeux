@@ -105,8 +105,20 @@ DATATOOLS_NO_PBA=1
 $(warning WARNING: datatools does not use pba_help!)
 endif
 
+DATATOOLS_NO_FPU=$(shell ls -1 $(PACKAGE_DIR)/gmk/datatools_without_fpu.config 2> /dev/null)
+FPU_FLAGS=
+ifeq ($(DATATOOLS_NO_FPU),)
+DATATOOLS_NO_FPU=0
+$(warning WARNING: datatools uses FPU!)
+FPU_FLAGS=-DDATATOOLS_USE_FPU=1
+DEPCPPFLAGS+=-I$(PACKAGE_DIR)/boost/vault/fpu
+else
+DATATOOLS_NO_FPU=1
+$(warning WARNING: datatools does not use FPU!)
+endif
+
 ### End of dependencies.
-CPPFLAGS1+=$(PBA_FLAGS) $(DEPCPPFLAGS) 
+CPPFLAGS1+=$(PBA_FLAGS) $(FPU_FLAGS) $(DEPCPPFLAGS) 
 LDFLAGS1+=$(DEPLDFLAGS) 
 
 # default with libmath dependency:

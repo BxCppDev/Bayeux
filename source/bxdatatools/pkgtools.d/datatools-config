@@ -44,10 +44,14 @@ elif [ -f "$THEPACK_ROOT/pkgtools.d/package.info"  ]; then
 fi
 
 with_boost_pba=1
-if [ "x${DATATOOLS_NO_PBA}" != "x0" ]; then
+if [ "x${DATATOOLS_NO_PBA}" == "x1" ]; then
     with_boost_pba=0
 fi
-
+with_boost_fpu=1
+if [ "x${DATATOOLS_NO_FPU}" == "x1" ]; then
+    with_boost_fpu=0
+fi
+###echo "DEVEL: with_boost_pba=${with_boost_pba}" >&2
 opt=$1
 
 if [ "x$opt" = "x" ]; then
@@ -109,24 +113,20 @@ fi
 
 if [ "x$opt" = "x--cflags" ]; then
     echo -n "-I${THEPACK_INCLUDEDIR} "  \
-	"`boost-config --cflags` "
+	"`boost-config --cflags`"
     if [ ${with_boost_pba} -eq 1 ]; then
         echo -n  "-DDATATOOLS_USE_PBA=1 "
         echo -n  "`pba-config --cflags`"
+    fi
+    if [ ${with_boost_fpu} -eq 1 ]; then
+        echo -n  "-DDATATOOLS_USE_FPU=1 "
+        echo -n  "-I${THEPACK_ROOT}/boost/vault/fpu "
     fi
     echo
 
 #    echo -n "-I${THEPACK_INCLUDEDIR} "  \
 #         "`boost-config --cflags` " \
 #        "`liblockfile-config --cflags` "  
-
-    ################################################################
-    # Please add here some stuff in order to take into account
-    # external package dependencies; it may looks like:
-    # echo "-I${THEPACK_INCLUDEDIR} " \
-    #      "`XXX-config --include` "  (or --cflags)
-    # where XXX stands for the identifier of the external package 
-    ################################################################
     exit 0
 fi
 
@@ -153,14 +153,6 @@ if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
     fi
     echo
 #      "`liblockfile-config --ldflags` "  
-
-    ################################################################
-    # Please add here some stuff in order to take into account
-    # external package dependencies; it may looks like:
-    # echo "-L${THEPACK_LIBDIR} -ldatatools " \
-    #      "`XXX-config --libs` " 
-    # where XXX stands for the identifier of the external package 
-    ################################################################
     exit 0
 fi 
 

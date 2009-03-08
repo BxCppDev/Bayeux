@@ -162,6 +162,7 @@ fi
 #echo "Base package directory is '${the_base_dir}'!"
 
 without_pba_flag_file=${the_base_dir}/gmk/datatools_without_pba.config
+without_fpu_flag_file=${the_base_dir}/gmk/datatools_without_fpu.config
 
 
 
@@ -280,6 +281,7 @@ function do_configure()
     #echo "do_configure: args1='$1'"
     #echo "do_configure: args2='$2'"
     with_pba=1
+    with_fpu=1
     for arg in $@ ; do
 	#echo "do_configure: while"
 	
@@ -291,6 +293,14 @@ function do_configure()
 
 	if [ "x${arg}" = "x--without-pba" ]; then
 	    with_pba=0
+	fi
+
+	if [ "x${arg}" = "x--with-fpu" ]; then
+	    with_fpu=1
+	fi
+
+	if [ "x${arg}" = "x--without-fpu" ]; then
+	    with_fpu=0
 	fi
     done
 
@@ -326,6 +336,25 @@ EOF
 	fi
     fi
 
+    if [ ${with_fpu} -eq 0 ]; then
+	warning_msg "Do not use Floating Point Utilities from the 'Boost/vault' package!"
+
+	cat > ${without_fpu_flag_file} <<EOF 
+# datatools does not use Floating Point Utilities:
+export DATATOOLS_NO_FPU=1
+EOF
+    else
+	warning_msg "Use Floating Point Utilities from the 'Boost/vault' package!"
+	opwd=$(pwd)
+	cd ${the_base_dir}/boost/vault
+	if [ -d ${the_base_dir}/floating_point_utilities_v3/ ]; then
+	    make clean
+	fi
+	make install
+	cd ${opwd}
+    fi
+
+
     return 0
 }
 
@@ -335,6 +364,9 @@ function do_build()
     if [ -d ${GMKDIR} ]; then
 	if [ -f ${without_pba_flag_file} ]; then
 	    source ${without_pba_flag_file}
+	fi
+	if [ -f ${without_fpu_flag_file} ]; then
+	    source ${without_fpu_flag_file}
 	fi
 	do_build_gmk $@
 	return $?

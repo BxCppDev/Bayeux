@@ -10,6 +10,7 @@
 #include <sstream>
 #include <fstream>
 #include <list>
+#include <locale>
 
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -20,6 +21,9 @@
 #ifdef DATATOOLS_USE_PBA
 #include <boost/pba/portable_binary_oarchive.hpp>
 #include <boost/pba/portable_binary_iarchive.hpp>
+#endif
+#ifdef DATATOOLS_USE_FPU
+#include <boost/math/nonfinite_num_facets.hpp>
 #endif
 
 #include <boost/iostreams/filtering_stream.hpp>
@@ -52,6 +56,11 @@ namespace datatools {
 	boost::iostreams::filtering_ostream * __out_fs;
 	std::ifstream  * __fin;
 	std::ofstream  * __fout;
+#ifdef DATATOOLS_USE_FPU
+	std::locale * __default_locale;
+	std::locale * __locale;
+#endif
+
 	
 	bool                              __read_archive_is_initialized;
 	bool                              __write_archive_is_initialized;
@@ -59,6 +68,7 @@ namespace datatools {
 	boost::archive::text_oarchive   * __otar_ptr;
 	boost::archive::xml_iarchive    * __ixar_ptr;
 	boost::archive::xml_oarchive    * __oxar_ptr;
+	/* Boost native binary archives are not portable */
 	//boost::archive::binary_iarchive * __ibar_ptr;
 	//boost::archive::binary_oarchive * __obar_ptr;
 #ifdef DATATOOLS_USE_PBA
@@ -339,6 +349,8 @@ namespace datatools {
 	    //>>>
 	    if (*__in_fs) 
 	      { 
+		// 2009-03-08 FM: Is it possible to have better EOF check code
+		// here for unzipped text and XML archives?
 		char c = 0; 
 		__in_fs->get (c); 
 		if (__in_fs)  
@@ -611,15 +623,15 @@ namespace datatools {
 		bool warn = true;
 
 		//>>> 2008-11-13 FM: skip EOF message printing
-		std::string msg = x.what();
-		if (msg.find("EOF") != msg.npos)
+		std::string msg = x.what ();
+		if (msg.find ("EOF") != msg.npos)
 		  {
 		    warn = false;
 		  }
 		if (warn)
 		  {
 		    std::cerr << "WARNING: data_reader::_basic_load(...): "
-			      << "cannot read data: "
+			      << "cannot read data: exception="
 			      << x.what () << '!'
 			      << std::endl;
 		  }

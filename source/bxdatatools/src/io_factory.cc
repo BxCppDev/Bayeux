@@ -111,7 +111,12 @@ namespace datatools {
 
       if (is_text ()) 
 	{
+#ifdef DATATOOLS_USE_FPU
+	  __itar_ptr = new boost::archive::text_iarchive (*__in, 
+							  boost::archive::no_codecvt);
+#else
 	  __itar_ptr = new boost::archive::text_iarchive (*__in);
+#endif
 	  if (g_debug) 
 	    {
 	      std::cerr << "DEBUG: io_factory::__init_read_archive: " 
@@ -121,7 +126,12 @@ namespace datatools {
 	}
       else if (is_xml ()) 
 	{
+#ifdef DATATOOLS_USE_FPU
+	  __ixar_ptr = new boost::archive::xml_iarchive (*__in, 
+							  boost::archive::no_codecvt);
+#else
 	  __ixar_ptr = new boost::archive::xml_iarchive (*__in);
+#endif
 	  if (g_debug) 
 	    {
 	      std::cerr << "DEBUG: io_factory::__init_read_archive: "
@@ -188,7 +198,6 @@ namespace datatools {
     io_factory::__init_read (const std::string & stream_name_)
     {
       __in_fs = new boost::iostreams::filtering_istream;
-      
       if (is_gzip ()) 
 	{
 	  __in_fs->push (boost::iostreams::gzip_decompressor ());
@@ -237,6 +246,9 @@ namespace datatools {
 	}
 
       __in = __in_fs;
+#ifdef DATATOOLS_USE_FPU
+      __in->imbue (*__locale);
+#endif
 
       return 0;
     }
@@ -280,7 +292,12 @@ namespace datatools {
 	}
       if (is_text ()) 
 	{
+#ifdef DATATOOLS_USE_FPU
+	  __otar_ptr = new boost::archive::text_oarchive (*__out,
+							  boost::archive::no_codecvt);	  
+#else
 	  __otar_ptr = new boost::archive::text_oarchive (*__out);
+#endif
 	  if (g_debug) 
 	    {
 	      std::cerr << "DEBUG: io_factory::__init_write_archive: "
@@ -290,7 +307,12 @@ namespace datatools {
 	}
       else if (is_xml ()) 
 	{
+#ifdef DATATOOLS_USE_FPU
+	  __oxar_ptr = new boost::archive::xml_oarchive (*__out,
+							  boost::archive::no_codecvt);
+#else
 	  __oxar_ptr = new boost::archive::xml_oarchive (*__out);
+#endif
 	  if (g_debug) 
 	    {
 	      std::cerr << "DEBUG: io_factory::__init_write_archive: "
@@ -374,18 +396,6 @@ namespace datatools {
 
 	      open_mode |= std::ios_base::app; 
 	    } 
-	  /*
-	    if (is_compressed() || is_binary()) 
-	    {
-	    __fout = new std::ofstream(stream_name_.c_str(),
-	    std::ios_base::out|std::ios_base::binary);
-	    }
-	    else 
-	    {
-	    __fout = new std::ofstream(stream_name_.c_str(),
-	    std::ios_base::out);
-	    }
-	  */
 	  __fout = new std::ofstream (stream_name_.c_str (), open_mode);
 	  if (!*__fout) 
 	    {
@@ -395,6 +405,12 @@ namespace datatools {
 	}
 
       __out = __out_fs;
+#ifdef DATATOOLS_USE_FPU
+      if (! is_compressed () && ! is_binary ())
+	{ 
+	  __out->imbue (*__locale);
+	}
+#endif
 
       if (g_debug) 
 	{
@@ -487,7 +503,7 @@ namespace datatools {
     }
 
     int 
-    io_factory::__init(const std::string & stream_name_ , int mode_)
+    io_factory::__init (const std::string & stream_name_ , int mode_)
     {
       __mode = mode_;
       if (is_read ()) 
@@ -599,22 +615,68 @@ namespace datatools {
 	  __reset_write ();
 	}
       __ctor_defaults ();
+#ifdef DATATOOLS_USE_FPU
+      if (__locale)
+	{
+	  delete __locale;
+	  __locale = 0;
+	} 
+      if (__default_locale)
+	{
+	  delete __default_locale;
+	  __default_locale = 0;
+	}
+#endif      
       return 0;
     }
 
     // ctor
     io_factory::io_factory (int mode_)
     {
+#ifdef DATATOOLS_USE_FPU
+      __default_locale = 0;
+      __locale = 0;
+      __default_locale = new std::locale (std::locale::classic (), 
+					  new boost::archive::codecvt_null<char>);
+      bool write = ((mode_ & MASK_RW) != 0);
+      if (write)
+	{
+	  __locale = new std::locale (*__default_locale, 
+				      new boost::math::nonfinite_num_put<char>);
+	}
+      else
+	{
+	  __locale = new std::locale (*__default_locale, 
+				      new boost::math::nonfinite_num_get<char>);
+	}
+#endif      
       __ctor_defaults ();
-      __init("", mode_ );
+      __init ("", mode_ );
     }
 
     // ctor
     io_factory::io_factory (const std::string & stream_name_ , 
 			    int mode_ )
     {
+#ifdef DATATOOLS_USE_FPU
+      __default_locale = 0;
+      __locale = 0;
+      __default_locale = new std::locale (std::locale::classic (), 
+					  new boost::archive::codecvt_null<char>);
+      bool write = ((mode_ & MASK_RW) != 0);
+      if (write)
+	{
+	  __locale = new std::locale (*__default_locale, 
+				      new boost::math::nonfinite_num_put<char>);
+	}
+      else
+	{
+	  __locale = new std::locale (*__default_locale, 
+				      new boost::math::nonfinite_num_get<char>);
+	}
+#endif      
       __ctor_defaults ();
-      __init(stream_name_, mode_);
+      __init (stream_name_, mode_);
     }
 
     // dtor
@@ -899,7 +961,7 @@ namespace datatools {
 	    }
 	  if (warn)
 	    {
-	      std::cerr << "WARNING: data_reader::__read_next_tag: " 
+	      std::cerr << "WARNING: data_reader::__read_next_tag: runtime_error=" 
 			<< x.what () << std::endl;
 	    }
 	  //<<<
@@ -912,7 +974,7 @@ namespace datatools {
 	  warn = false;
 	  if (warn)
 	    {
-	      std::cerr << "WARNING: data_reader::__read_next_tag: " 
+	      std::cerr << "WARNING: data_reader::__read_next_tag: exception=" 
 			<< x.what () << std::endl;
 	    }
 	  __status   = STATUS_ERROR;
