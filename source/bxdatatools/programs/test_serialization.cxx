@@ -13,7 +13,7 @@
 #include <datatools/serialization/serialization.h>
 
 int 
-main(int argc_ , char ** argv_) 
+main (int argc_ , char ** argv_) 
 {
   try {
 
