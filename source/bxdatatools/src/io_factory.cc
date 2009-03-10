@@ -10,9 +10,7 @@ namespace datatools {
 
     const std::string io_factory::TXT_EXT   = "txt";
     const std::string io_factory::XML_EXT   = "xml";
-    //#ifdef DATATOOLS_USE_PBA
     const std::string io_factory::BIN_EXT   = "data";
-    //#endif
     const std::string io_factory::GZ_EXT    = "gz";
     const std::string io_factory::BZIP2_EXT = "bz2";
 
@@ -112,20 +110,20 @@ namespace datatools {
       if (is_text ()) 
 	{
 #ifdef DATATOOLS_USE_FPU
-	  std::clog << "DEVEL: io_factory::__init_read_archive: "
-		    << "text with FPU..." 
-		    << std::endl;
+	  if (g_debug) std::clog << "DEBUG: io_factory::__init_read_archive: "
+				 << "text with FPU..." 
+				 << std::endl;
 	  __itar_ptr = new boost::archive::text_iarchive (*__in, 
 							  boost::archive::no_codecvt);
 #else
-	  std::clog << "DEVEL: io_factory::__init_read_archive: "
-		    << "text with no FPU..." 
-		    << std::endl;
+	  if (g_debug) std::clog << "DEBUG: io_factory::__init_read_archive: "
+				 << "text with no FPU..." 
+				 << std::endl;
 	  __itar_ptr = new boost::archive::text_iarchive (*__in);
 #endif
 	  if (g_debug) 
 	    {
-	      std::cerr << "DEBUG: io_factory::__init_read_archive: " 
+	      std::clog << "DEBUG: io_factory::__init_read_archive: " 
 			<< "'boost::archive::text_iarchive' library version" 
 			<< __itar_ptr->get_library_version () << std::endl;
 	    }
@@ -133,20 +131,20 @@ namespace datatools {
       else if (is_xml ()) 
 	{
 #ifdef DATATOOLS_USE_FPU
-	  std::clog << "DEVEL: io_factory::__init_read_archive: "
-		    << "XML with FPU..." 
-		    << std::endl;
+	  if (g_debug) std::clog << "DEBUG: io_factory::__init_read_archive: "
+				 << "XML with FPU..." 
+				 << std::endl;
 	  __ixar_ptr = new boost::archive::xml_iarchive (*__in, 
-							  boost::archive::no_codecvt);
+							 boost::archive::no_codecvt);
 #else
-	  std::clog << "DEVEL: io_factory::__init_read_archive: "
-		    << "XML with no FPU..." 
-		    << std::endl;
+	  if (g_debug) std::clog << "DEBUG: io_factory::__init_read_archive: "
+				 << "XML with no FPU..." 
+				 << std::endl;
 	  __ixar_ptr = new boost::archive::xml_iarchive (*__in);
 #endif
 	  if (g_debug) 
 	    {
-	      std::cerr << "DEBUG: io_factory::__init_read_archive: "
+	      std::clog << "DEBUG: io_factory::__init_read_archive: "
 			<< "'boost::archive::xml_iarchive' library version" 
 			<< __ixar_ptr->get_library_version () << std::endl;
 	    }
@@ -158,7 +156,7 @@ namespace datatools {
 	  __ibar_ptr = new portable_binary_iarchive (*__in);
 	  if (g_debug) 
 	    {
-	      std::cerr << "DEBUG: io_factory::__init_read_archive: "
+	      std::clog << "DEBUG: io_factory::__init_read_archive: "
 			<< "'portable_binary_iarchive' library version" 
 			<< __ibar_ptr->get_library_version () << std::endl;
 	    }
@@ -224,7 +222,7 @@ namespace datatools {
 	{
 	  if (g_debug) 
 	    {
-	      std::cerr << "DEBUG: io_factory::__init_read: cin..." 
+	      std::clog << "DEBUG: io_factory::__init_read: cin..." 
 			<< std::endl;
 	    }
 	  __in_fs->push (std::cin);
@@ -233,7 +231,7 @@ namespace datatools {
 	{
 	  if (g_debug) 
 	    {
-	      std::cerr << "DEBUG: io_factory::__init_read: file='" 
+	      std::clog << "DEBUG: io_factory::__init_read: file='" 
 			<< stream_name_ << "'" << std::endl;
 	    }
 #ifdef DATATOOLS_USE_PBA
@@ -261,9 +259,12 @@ namespace datatools {
 #ifdef DATATOOLS_USE_FPU
       if (is_text () || is_xml ())
 	{
-	  std::clog << "DEVEL: io_factory::__init_read: "
-		    << "FPU: stream.imbue..." 
-		    << std::endl;
+	  if (g_debug)
+	    {
+	      std::clog << "DEBUG: io_factory::__init_read: "
+			<< "FPU: stream.imbue..." 
+			<< std::endl;
+	    }
 	  __in->imbue (*__locale);
 	}
 #endif
@@ -276,7 +277,7 @@ namespace datatools {
     {
       if (g_debug) 
 	{
-	  std::cerr << "DEBUG: io_factory::__reset_read:..." << std::endl;
+	  std::clog << "DEBUG: io_factory::__reset_read:..." << std::endl;
 	}
 
       if (__in != 0) 
@@ -311,20 +312,26 @@ namespace datatools {
       if (is_text ()) 
 	{
 #ifdef DATATOOLS_USE_FPU
-	  std::clog << "DEVEL: io_factory::__init_write_archive: "
-		    << "with FPU: text archive..." 
-		    << std::endl;
+	  if (g_debug) 
+	    {
+	      std::clog << "DEBUG: io_factory::__init_write_archive: "
+			<< "with FPU: text archive..." 
+			<< std::endl;
+	    }
 	  __otar_ptr = new boost::archive::text_oarchive (*__out,
 							  boost::archive::no_codecvt);	  
 #else
-	  std::clog << "DEVEL: io_factory::__init_write_archive: "
-		    << "without FPU: text archive..." 
-		    << std::endl;
+	  if (g_debug) 
+	    {
+	      std::clog << "DEBUG: io_factory::__init_write_archive: "
+			<< "without FPU: text archive..." 
+			<< std::endl;
+	    }
 	  __otar_ptr = new boost::archive::text_oarchive (*__out);
 #endif
 	  if (g_debug) 
 	    {
-	      std::cerr << "DEBUG: io_factory::__init_write_archive: "
+	      std::clog << "DEBUG: io_factory::__init_write_archive: "
 			<< "'boost::archive::text_oarchive' library version" 
 			<< __otar_ptr->get_library_version () << std::endl;
 	    }
@@ -332,20 +339,26 @@ namespace datatools {
       else if (is_xml ()) 
 	{
 #ifdef DATATOOLS_USE_FPU
-	  std::clog << "DEVEL: io_factory::__init_write_archive: "
-		    << "with FPU: XML archive..." 
-		    << std::endl;
+	  if (g_debug) 
+	    {
+	      std::clog << "DEBUG: io_factory::__init_write_archive: "
+			<< "with FPU: XML archive..." 
+			<< std::endl;
+	    }
 	  __oxar_ptr = new boost::archive::xml_oarchive (*__out,
-							  boost::archive::no_codecvt);
+							 boost::archive::no_codecvt);
 #else
-	  std::clog << "DEVEL: io_factory::__init_write_archive: "
-		    << "without FPU: XML archive..." 
-		    << std::endl;
+	  if (g_debug) 
+	    {
+	      std::clog << "DEBUG: io_factory::__init_write_archive: "
+			<< "without FPU: XML archive..." 
+			<< std::endl;
+	    }
 	  __oxar_ptr = new boost::archive::xml_oarchive (*__out);
 #endif
 	  if (g_debug) 
 	    {
-	      std::cerr << "DEBUG: io_factory::__init_write_archive: "
+	      std::clog << "DEBUG: io_factory::__init_write_archive: "
 			<< "'boost::archive::xml_oarchive' library version" 
 			<< __oxar_ptr->get_library_version () << std::endl;
 	    }
@@ -357,7 +370,7 @@ namespace datatools {
 	  __obar_ptr = new portable_binary_oarchive (*__out);
 	  if (g_debug) 
 	    {
-	      std::cerr << "DEBUG: io_factory::__init_write_archive: "
+	      std::clog << "DEBUG: io_factory::__init_write_archive: "
 			<< "'portable_binary_oarchive' library version" 
 			<< __obar_ptr->get_library_version () << std::endl;
 	    }
@@ -392,7 +405,7 @@ namespace datatools {
 	{
 	  if (g_debug)
 	    {
-	      std::cerr << "DEBUG: io_factory::__init_write: cout..." 
+	      std::clog << "DEBUG: io_factory::__init_write: cout..." 
 			<< std::endl;
 	    }
 	  __out_fs->push (std::cout);
@@ -402,7 +415,7 @@ namespace datatools {
 	{
 	  if (g_debug) 
 	    {
-	      std::cerr << "DEBUG: io_factory::__init_write: file='" 
+	      std::clog << "DEBUG: io_factory::__init_write: file='" 
 			<< stream_name_ << "'"<< std::endl;
 	    }
 
@@ -438,15 +451,18 @@ namespace datatools {
 #ifdef DATATOOLS_USE_FPU
       if (is_text () || is_xml ())
 	{ 
-	  std::clog << "DEVEL: io_factory::__init_write: stream.imbue" 
-		    << std::endl;
+	  if (g_debug) 
+	    {
+	      std::clog << "DEBUG: io_factory::__init_write: stream.imbue" 
+			<< std::endl;
+	    }
 	  __out->imbue (*__locale);
 	}
 #endif
 
       if (g_debug) 
 	{
-	  std::cerr << "DEBUG: io_factory::__init_write: mode='" 
+	  std::clog << "DEBUG: io_factory::__init_write: mode='" 
 		    << std::hex << __mode << std::dec << "'" << std::endl;
 	}
       return 0;
@@ -465,7 +481,7 @@ namespace datatools {
 	{
 	  if (g_debug) 
 	    {
-	      std::cerr << "DEBUG: io_factory::__reset_write_archive: "
+	      std::clog << "DEBUG: io_factory::__reset_write_archive: "
 			<< "delete TXT archive!" << std::endl;
 	    }
 	  delete __otar_ptr;
@@ -478,7 +494,7 @@ namespace datatools {
 	{
 	  if (g_debug) 
 	    {
-	      std::cerr << "DEBUG: io_factory::__reset_write_archive: "
+	      std::clog << "DEBUG: io_factory::__reset_write_archive: "
 			<< "delete XML archive!" << std::endl;
 	    }
 	  delete __oxar_ptr;
@@ -490,7 +506,7 @@ namespace datatools {
 	{
 	  if (g_debug) 
 	    {
-	      std::cerr << "DEBUG: io_factory::__reset_write_archive: "
+	      std::clog << "DEBUG: io_factory::__reset_write_archive: "
 			<< "delete BIN archive!" << std::endl;
 	    }
 	  delete __obar_ptr;
@@ -507,7 +523,7 @@ namespace datatools {
     {
       if (g_debug) 
 	{
-	  std::cerr << "DEBUG: io_factory::__reset_write:..." << std::endl;
+	  std::clog << "DEBUG: io_factory::__reset_write:..." << std::endl;
 	}
 
       if (__out != 0) 
@@ -542,7 +558,7 @@ namespace datatools {
 	{
 	  if (g_debug)
 	    {
-	      std::cerr << "DEBUG: io_factory::__init: read mode..." 
+	      std::clog << "DEBUG: io_factory::__init: read mode..." 
 			<< std::endl;
 	    }
 	  __init_read (stream_name_);
@@ -555,7 +571,7 @@ namespace datatools {
 	{
 	  if (g_debug) 
 	    {
-	      std::cerr << "DEBUG: io_factory::__init: write mode..." 
+	      std::clog << "DEBUG: io_factory::__init: write mode..." 
 			<< std::endl;
 	    }
 	  __init_write (stream_name_);
@@ -574,7 +590,7 @@ namespace datatools {
 	{
 	  if (g_debug) 
 	    {
-	      std::cerr << "DEBUG: io_factory::start_archive: multi..." 
+	      std::clog << "DEBUG: io_factory::start_archive: multi..." 
 			<< std::endl;
 	    }
 	  if(is_read ())
@@ -595,7 +611,7 @@ namespace datatools {
 	{
 	  if (g_debug) 
 	    {
-	      std::cerr << "DEBUG: io_factory::stop_archive: multi..." 
+	      std::clog << "DEBUG: io_factory::stop_archive: multi..." 
 			<< std::endl;
 	    }
 	  if(is_read ())
@@ -648,7 +664,7 @@ namespace datatools {
 	}
       __ctor_defaults ();
 #ifdef DATATOOLS_USE_FPU
-      std::clog << "DEVEL: io_factory::__reset: Use FPU" << std::endl;
+      if (g_debug) std::clog << "DEBUG: io_factory::__reset: Use FPU" << std::endl;
       if (__locale)
 	{
 	  delete __locale; 
@@ -718,7 +734,7 @@ namespace datatools {
       __reset ();
       if (io_factory::g_debug) 
 	{
-	  std::cerr << "DEBUG: io_factory::~io_factory." << std::endl;
+	  std::clog << "DEBUG: io_factory::~io_factory." << std::endl;
 	}
     }
 
@@ -799,7 +815,7 @@ namespace datatools {
 	  std::string token = *i;
 	  if (io_factory::g_debug) 
 	    {
-	      std::cerr << "DEBUG: io_factory::guess_mode_from_filename: token=<" 
+	      std::clog << "DEBUG: io_factory::guess_mode_from_filename: token=<" 
 			<< token << ">" << std::endl;
 	    }
 	  ltok.push_front (token);
@@ -819,7 +835,7 @@ namespace datatools {
 	{
 	  if (io_factory::g_debug) 
 	    {
-	      std::cerr << "DEBUG: io_factory::guess_mode_from_filename: ltok=<" 
+	      std::clog << "DEBUG: io_factory::guess_mode_from_filename: ltok=<" 
 			<< *i << ">" << std::endl;
 	    }
 	  std::string ext = *i;
@@ -830,7 +846,7 @@ namespace datatools {
 		  comp = gz = true;
 		  if (io_factory::g_debug) 
 		    {
-		      std::cerr << "DEBUG: io_factory::guess_mode_from_filename: "
+		      std::clog << "DEBUG: io_factory::guess_mode_from_filename: "
 				<< "mode+=GZIP" << std::endl; 
 		    }
 		}
@@ -839,7 +855,7 @@ namespace datatools {
 		  comp = bz2 = true;
 		  if (io_factory::g_debug) 
 		    {
-		      std::cerr << "DEBUG: io_factory::guess_mode_from_filename: "  
+		      std::clog << "DEBUG: io_factory::guess_mode_from_filename: "  
 				<< "mode+=BZIP2" << std::endl; 
 		    }
 		}
@@ -851,7 +867,7 @@ namespace datatools {
 		  format = txt = true;
 		  if (io_factory::g_debug) 
 		    {
-		      std::cerr << "DEBUG: io_factory::guess_mode_from_filename: " 
+		      std::clog << "DEBUG: io_factory::guess_mode_from_filename: " 
 				<< "mode+=TEXT" << std::endl; 
 		    }
 		}
@@ -860,7 +876,7 @@ namespace datatools {
 		  format = bin = true;
 		  if (io_factory::g_debug) 
 		    {
-		      std::cerr << "DEBUG: io_factory::guess_mode_from_filename: " 
+		      std::clog << "DEBUG: io_factory::guess_mode_from_filename: " 
 				<< "mode+=BINARY" << std::endl; 
 		    }
 		}
@@ -869,7 +885,7 @@ namespace datatools {
 		  format=xml=true;
 		  if (io_factory::g_debug) 
 		    {
-		      std::cerr << "DEBUG: io_factory::guess_mode_from_filename: " 
+		      std::clog << "DEBUG: io_factory::guess_mode_from_filename: " 
 				<< "mode+=XML" << std::endl; 
 		    }
 		}
@@ -931,7 +947,7 @@ namespace datatools {
     {
       if (g_debug) 
 	{
-	  std::cerr << "DEBUG: io_reader::~io_reader." << std::endl;
+	  std::clog << "DEBUG: io_reader::~io_reader." << std::endl;
 	}
     }
 
@@ -946,8 +962,8 @@ namespace datatools {
 	}
     }
 
-    io_writer::io_writer(const std::string & stream_name_, 
-			 int mode_)
+    io_writer::io_writer (const std::string & stream_name_, 
+			  int mode_)
       : io_factory (stream_name_, io_factory::MODE_WRITE | mode_)
     {
       if (! is_write ()) 
@@ -960,7 +976,7 @@ namespace datatools {
     {
       if (g_debug) 
 	{
-	  std::cerr << "DEBUG: io_writer::~io_writer." << std::endl;
+	  std::clog << "DEBUG: io_writer::~io_writer." << std::endl;
 	}
     }
 
@@ -994,7 +1010,7 @@ namespace datatools {
 	    }
 	  if (warn)
 	    {
-	      std::cerr << "WARNING: data_reader::__read_next_tag: runtime_error=" 
+	      std::clog << "WARNING: data_reader::__read_next_tag: runtime_error=" 
 			<< x.what () << std::endl;
 	    }
 	  //<<<
@@ -1007,7 +1023,7 @@ namespace datatools {
 	  warn = false;
 	  if (warn)
 	    {
-	      std::cerr << "WARNING: data_reader::__read_next_tag: exception=" 
+	      std::clog << "WARNING: data_reader::__read_next_tag: exception=" 
 			<< x.what () << std::endl;
 	    }
 	  __status   = STATUS_ERROR;
@@ -1015,7 +1031,7 @@ namespace datatools {
 	}
       catch (...) 
 	{
-	  std::cerr << "WARNING: data_reader::__read_next_tag: " 
+	  std::clog << "WARNING: data_reader::__read_next_tag: " 
 		    << "unexpected exception!" << std::endl;
 	  __status   = STATUS_ERROR;
 	  __next_tag = EMPTY_RECORD_TAG;
@@ -1227,7 +1243,7 @@ namespace datatools {
       reset ();
       if (io_factory::g_debug) 
 	{
-	  std::cerr << "DEBUG: data_reader::~data_reader." << std::endl;
+	  std::clog << "DEBUG: data_reader::~data_reader: Done." << std::endl;
 	}
     }
 
@@ -1422,7 +1438,7 @@ namespace datatools {
       reset ();
       if (io_factory::g_debug) 
 	{
-	  std::cerr << "DEBUG: data_writer::~data_writer." << std::endl;
+	  std::clog << "DEBUG: data_writer::~data_writer." << std::endl;
 	}
     }
  
