@@ -1,5 +1,5 @@
 // -*- mode: c++; -*- 
-/* io_factory.cc
+/* io_factory.cc  
  */
 
 #include <datatools/serialization/io_factory.h>
@@ -125,7 +125,7 @@ namespace datatools {
 	  if (g_debug) 
 	    {
 	      std::clog << "DEBUG: io_factory::__init_read_archive: " 
-			<< "'boost::archive::text_iarchive' library version" 
+			<< "'boost::archive::text_iarchive' library version " 
 			<< __itar_ptr->get_library_version () << std::endl;
 	    }
 	}
@@ -145,8 +145,8 @@ namespace datatools {
 #endif // IOFACTORY_USE_FPU
 	  if (g_debug) 
 	    {
-	      std::clog << "DEBUG: io_factory::__init_read_archive: "
-			<< "'boost::archive::xml_iarchive' library version" 
+	      std::clog << "DEBUG: io_factory::__init_read_archive: " 
+			<< "'boost::archive::xml_iarchive' library version " 
 			<< __ixar_ptr->get_library_version () << std::endl;
 	    }
 	}
@@ -157,7 +157,7 @@ namespace datatools {
 	  if (g_debug) 
 	    {
 	      std::clog << "DEBUG: io_factory::__init_read_archive: "
-			<< "'eos::portable_iarchive' library version" 
+			<< "'eos::portable_iarchive' library version " 
 			<< __ibar_ptr->get_library_version () << std::endl;
 	    }
 #else
@@ -237,7 +237,7 @@ namespace datatools {
 	  if (is_compressed () || is_binary ()) 
 	    {
 	      __fin = new std::ifstream (stream_name_.c_str (), 
-					 std::ios_base::in|std::ios_base::binary);
+					 std::ios_base::in | std::ios_base::binary);
 	    }
 	  else 
 	    {
@@ -331,7 +331,7 @@ namespace datatools {
 	  if (g_debug) 
 	    {
 	      std::clog << "DEBUG: io_factory::__init_write_archive: "
-			<< "'boost::archive::text_oarchive' library version" 
+			<< "'boost::archive::text_oarchive' library version " 
 			<< __otar_ptr->get_library_version () << std::endl;
 	    }
 	}
@@ -358,7 +358,7 @@ namespace datatools {
 	  if (g_debug) 
 	    {
 	      std::clog << "DEBUG: io_factory::__init_write_archive: "
-			<< "'boost::archive::xml_oarchive' library version" 
+			<< "'boost::archive::xml_oarchive' library version " 
 			<< __oxar_ptr->get_library_version () << std::endl;
 	    }
 	}
@@ -369,7 +369,7 @@ namespace datatools {
 	  if (g_debug) 
 	    {
 	      std::clog << "DEBUG: io_factory::__init_write_archive: "
-			<< "'eos::portable_oarchive' library version" 
+			<< "'eos::portable_oarchive' library version " 
 			<< __obar_ptr->get_library_version () << std::endl;
 	    }
 #else
@@ -634,10 +634,8 @@ namespace datatools {
       __otar_ptr = 0;
       __ixar_ptr = 0;
       __oxar_ptr = 0;
-#ifdef IOFACTORY_USE_EOS_PBA
       __ibar_ptr = 0;
       __obar_ptr = 0;
-#endif // IOFACTORY_USE_EOS_PBA
       __in_fs = 0;
       __out_fs = 0;
       __mode = io_factory::MODE_DEFAULT;

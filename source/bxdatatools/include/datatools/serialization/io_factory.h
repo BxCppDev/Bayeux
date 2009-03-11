@@ -295,15 +295,15 @@ namespace datatools {
 	  }
 	if (__otar_ptr != 0)
 	  {
-	    __store_text (*__otar_ptr, data_);
+	    __store_text<Data> (*__otar_ptr, data_);
 	  }
-	if (__oxar_ptr != 0)
+	else if (__oxar_ptr != 0)
 	  {
-	    __store_xml (*__oxar_ptr, data_);
+	    __store_xml<Data> (*__oxar_ptr, data_);
 	  }
-	if (__obar_ptr != 0)
+	else if (__obar_ptr != 0)
 	  {
-	    __store_binary (*__obar_ptr, data_);
+	    __store_binary<Data> (*__obar_ptr, data_);
 	  }
       }
 
@@ -352,17 +352,17 @@ namespace datatools {
 	  {
 	    if (__itar_ptr != 0)
 	      {
-		__load_text (*__itar_ptr, data_);
+		__load_text<Data> (*__itar_ptr, data_);
 		*__in_fs >> std::ws;
 	      }
-	    if (__ixar_ptr != 0)
+	    else if (__ixar_ptr != 0)
 	      {
-		__load_xml (*__ixar_ptr, data_);
+		__load_xml<Data> (*__ixar_ptr, data_);
 		*__in_fs >> std::ws;
 	      }
-	    if (__ibar_ptr != 0)
+	    else if (__ibar_ptr != 0)
 	      {
-		__load_binary (*__ibar_ptr, data_);
+		__load_binary<Data> (*__ibar_ptr, data_);
 	      }
 	  }
 	catch (std::exception & x) 
@@ -686,7 +686,7 @@ namespace datatools {
 	  {
 	    throw std::runtime_error ("data_writer::_basic_store(...): not initialized!");
 	  }
-	__writer->store (data_);
+	__writer->store<Data> (data_);
       }
 
     public:
@@ -694,8 +694,8 @@ namespace datatools {
       void store (const std::string & tag_, const Data & data_)
       {
 	if (__writer->is_multi_archives ()) __writer->start_archive ();
-	this->_basic_store (tag_);
-	this->_basic_store (data_);
+	this->_basic_store<std::string> (tag_);
+	this->_basic_store<Data> (data_);
 	if (__writer->is_multi_archives ()) __writer->stop_archive ();
       }
 
