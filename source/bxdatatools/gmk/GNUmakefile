@@ -220,6 +220,7 @@ test:
 .PHONY : build_special
 build_special :
 	@echo "Target 'build_special'..."
+	@#cd $(BASEDIR)/boost/vault; make 
 
 .PHONY : install
 install : 
@@ -252,6 +253,7 @@ install_no_eos_pba :
 .PHONY : clean_special
 clean_special :
 	@echo "Target 'clean_special'..."
+	@#cd $(BASEDIR)/boost/vault; make clean
 
 .PHONY : uninstall
 uninstall : 
