@@ -2,7 +2,9 @@ This is the 'datatools' package README file
  
 1 - Description:
 
-  This package provides some tool classes for data analysis.
+  This package provides some tool classes for data analysis
+  and a powerful I/O system based on the Boost serialization library.
+
     
   SVN repository:
 
@@ -13,7 +15,9 @@ This is the 'datatools' package README file
    * https://nemo.lpc-caen.in2p3.fr/svn/datatools/tags/datatools-2.0
     
    * https://nemo.lpc-caen.in2p3.fr/svn/datatools/tags/datatools-2.1
-    
+
+   * https://nemo.lpc-caen.in2p3.fr/svn/datatools/tags/datatools-2.2
+        
 
   This package depends on the 'boost' C++ library through 
   the 'boost_help' package available at:
@@ -23,14 +27,18 @@ This is the 'datatools' package README file
 
   WARNING:
 
-  From version 2.0, 'datatools' depends also on the 'pba_help' package
+  For versions 2.0 and 2.1, 'datatools' depends also on the 'pba_help' package
   available at:
 
    * https://nemo.lpc-caen.in2p3.fr/svn/pba_help/
+
   For version 2.1, 'datatools' depends on the 'pba_help' package
   but this dependency can be skipped on demand at configuration stage.
 
-
+  Version 2.2 is recommended (mandatory!) and does not depend anymore 
+  on 'pba_help'.
+  
+  Version 1.0, 2.0 and 2.1 are now obsolete.
 
 2 - Documentation:
 
@@ -45,13 +53,13 @@ This is the 'datatools' package README file
 
     shell> ./pkgtools.d/pkgtool configure [OPTION]
 
-    With 'pba_help' support (this is the default):
+    With 'Portable Binary Archive' support (this is the default):
 
-	shell> ./pkgtools.d/pkgtool configure --with-pba
+	shell> ./pkgtools.d/pkgtool configure --with-eos-pba
 
-    Without 'pba_help' support:
+    Without 'Portable Binary Archive' support:
 
-	shell> ./pkgtools.d/pkgtool configure --without-pba
+	shell> ./pkgtools.d/pkgtool configure --without-eos-pba
 
 
   Build shared library:
@@ -79,7 +87,7 @@ This is the 'datatools' package README file
     shell> source datatools.(c)sh
 
 
-  Run sample program:
+  Run sample program (the correct binary path depends on your system):
 
     shell> ./Linux-i686-gcc4.2.4/bin/test_tree_dump 
 
@@ -100,4 +108,4 @@ This is the 'datatools' package README file
     Arnaud Chapon <chapon@lpccaen.in2p3.fr>
 
 --
-Last update: 2009-02-19 by Francois Mauger <mauger@lpccaen.in2p3.fr>
+Last update: 2009-03-11 by Francois Mauger <mauger@lpccaen.in2p3.fr>
