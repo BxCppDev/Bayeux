@@ -66,11 +66,14 @@ function print_usage()
     $APPNAME info       : print package info
     $APPNAME configure  [OPTIONS]: configure package 
                           OPTIONS:
-                          --with-pba (default) :
-                            depends on Portable Binary Archive boost extension
-                            from the 'pba_help' package
-                          --without-pba :
-                            do not use 'pba_help' stuff
+                          --with-eos-pba (default) :
+                            depends on Portable Binary Archive boost vault extension
+                          --without-eos-pba :
+                            do not use Portable Binary Archive boost vault extension
+                          --with-fpu (default) :
+                            depends on Floating Point Utilities boost vault extension
+                          --without-fpu :
+                            do not use Floating Point Utilities boost vault extension
 
     $APPNAME build      : build package
     $APPNAME clean      : clean package
@@ -161,7 +164,7 @@ else
 fi
 #echo "Base package directory is '${the_base_dir}'!"
 
-without_pba_flag_file=${the_base_dir}/gmk/datatools_without_pba.config
+without_eos_pba_flag_file=${the_base_dir}/gmk/datatools_without_eos_pba.config
 without_fpu_flag_file=${the_base_dir}/gmk/datatools_without_fpu.config
 
 
@@ -280,19 +283,20 @@ function do_configure()
     #echo "do_configure: args0='$0'"
     #echo "do_configure: args1='$1'"
     #echo "do_configure: args2='$2'"
-    with_pba=1
+    with_eos_pba=1
     with_fpu=1
     for arg in $@ ; do
 	#echo "do_configure: while"
 	
 	#echo "Configure with argument '${arg}'..."
 
-	if [ "x${arg}" = "x--with-pba" ]; then
-	    with_pba=1
+	if [ "x${arg}" = "x--with-eos-pba" ]; then
+	    with_eos_pba=1
+	    with_fpu=1
 	fi
 
-	if [ "x${arg}" = "x--without-pba" ]; then
-	    with_pba=0
+	if [ "x${arg}" = "x--without-eos-pba" ]; then
+	    with_eos_pba=0
 	fi
 
 	if [ "x${arg}" = "x--with-fpu" ]; then
@@ -301,6 +305,7 @@ function do_configure()
 
 	if [ "x${arg}" = "x--without-fpu" ]; then
 	    with_fpu=0
+	    with_eos_pba=0
 	fi
     done
 
@@ -317,16 +322,16 @@ function do_configure()
 	fi
     fi
 
-    if [ ${with_pba} -eq 0 ]; then
-	warning_msg "Do not use Portable Binary Archives from the 'pba_help' package!"
+    if [ ${with_eos_pba} -eq 0 ]; then
+	warning_msg "Do not use Portable Binary Archives from the Boost vault!"
 
-	cat > ${without_pba_flag_file} <<EOF 
+	cat > ${without_eos_pba_flag_file} <<EOF 
 # datatools does not use pba_help:
-export DATATOOLS_NO_PBA=1
+export DATATOOLS_NO_EOS_PBA=1
 EOF
     else
-	warning_msg "Use Portable Binary Archives from the 'pba_help' package!"
-	test -f ${without_pba_flag_file} && rm -f ${without_pba_flag_file}
+	warning_msg "Use Portable Binary Archives from the Boost vault!"
+	test -f ${without_eos_pba_flag_file} && rm -f ${without_eos_pba_flag_file}
 	which pba-config > /dev/null
 	if [ $? -ne 0 ]; then
 	    err_msg "The 'pba_help' package is not setup!"
@@ -347,9 +352,7 @@ EOF
 	warning_msg "Use Floating Point Utilities from the 'Boost/vault' package!"
 	opwd=$(pwd)
 	cd ${the_base_dir}/boost/vault
-	if [ -d ${the_base_dir}/floating_point_utilities_v3/ ]; then
-	    make clean
-	fi
+	make clean
 	make install
 	cd ${opwd}
     fi
@@ -362,8 +365,8 @@ function do_build()
 {
     info_msg "Build package '${pack_name}'..."
     if [ -d ${GMKDIR} ]; then
-	if [ -f ${without_pba_flag_file} ]; then
-	    source ${without_pba_flag_file}
+	if [ -f ${without_eos_pba_flag_file} ]; then
+	    source ${without_eos_pba_flag_file}
 	fi
 	if [ -f ${without_fpu_flag_file} ]; then
 	    source ${without_fpu_flag_file}

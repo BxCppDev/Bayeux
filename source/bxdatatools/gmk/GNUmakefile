@@ -84,41 +84,39 @@ endif
 DEPCPPFLAGS+=$(shell boost-config --cflags)
 DEPLDFLAGS+=$(shell boost-config --ldflags serialization iostreams filesystem)
 
-DATATOOLS_NO_PBA=$(shell ls -1 $(PACKAGE_DIR)/gmk/datatools_without_pba.config 2> /dev/null)
-$(warning WARNING: DATATOOLS_NO_PBA=$(DATATOOLS_NO_PBA))
+### depends on Endian:
+DEPCPPFLAGS+=-I$(PACKAGE_DIR)/boost/vault/endian
 
-PBA_FLAGS=
-ifeq ($(DATATOOLS_NO_PBA),)
-DATATOOLS_NO_PBA=0
-$(warning WARNING: datatools uses pba_help!)
-PBA_FLAGS=-DDATATOOLS_USE_PBA=1
-ifeq ($(strip $(PBA_HELP_ROOT)),)
-$(error Sorry pba_help is not configured; please setup the pba_help package!)
-endif
-ifeq ($(shell which pba-config),)
-$(error Sorry pba-config not found!)
-endif
-DEPCPPFLAGS+=$(shell pba-config --cflags)
-DEPLDFLAGS+=$(shell pba-config --ldflags)
-else
-DATATOOLS_NO_PBA=1
-$(warning WARNING: datatools does not use pba_help!)
-endif
-
+### depends on Floating point utility:
 DATATOOLS_NO_FPU=$(shell ls -1 $(PACKAGE_DIR)/gmk/datatools_without_fpu.config 2> /dev/null)
 FPU_FLAGS=
 ifeq ($(DATATOOLS_NO_FPU),)
 DATATOOLS_NO_FPU=0
-$(warning WARNING: datatools uses FPU!)
-FPU_FLAGS=-DDATATOOLS_USE_FPU=1
+$(warning WARNING: datatools uses 'Floating point utilities' (FPU)!)
+FPU_FLAGS=-DIOFACTORY_USE_FPU=1
 DEPCPPFLAGS+=-I$(PACKAGE_DIR)/boost/vault/fpu
 else
 DATATOOLS_NO_FPU=1
 $(warning WARNING: datatools does not use FPU!)
 endif
 
+
+DATATOOLS_NO_EOS_PBA=$(shell ls -1 $(PACKAGE_DIR)/gmk/datatools_without_eos_pba.config 2> /dev/null)
+EOS_PBA_FLAGS=
+ifeq ($(DATATOOLS_NO_EOS_PBA),)
+DATATOOLS_NO_EOS_PBA=0
+$(warning WARNING: datatools uses 'Portable Binary Archive' (PBA from eos)!) 
+EOS_PBA_FLAGS=-DIOFACTORY_USE_EOS_PBA=1
+DEPCPPFLAGS+=-I$(PACKAGE_DIR)/boost/vault/eos_pba
+else
+DATATOOLS_NO_EOS_PBA=1
+$(warning WARNING: datatools does not use EOS_PBA!)
+endif
+
+CPPFLAGS1+=-DDATATOOLS_USE_TREE_DUMP=1
+
 ### End of dependencies.
-CPPFLAGS1+=$(PBA_FLAGS) $(FPU_FLAGS) $(DEPCPPFLAGS) 
+CPPFLAGS1+=$(EOS_PBA_FLAGS) $(FPU_FLAGS) $(DEPCPPFLAGS) 
 LDFLAGS1+=$(DEPLDFLAGS) 
 
 # default with libmath dependency:
@@ -225,17 +223,11 @@ build_special :
 
 .PHONY : install
 install : 
-	test "x$(DATATOOLS_NO_PBA)" = "x1" && make install_no_pba || make install_pba
+	test "x$(DATATOOLS_NO_EOS_PBA)" = "x1" && make install_no_eos_pba || make install_eos_pba
 
-#	@echo "Installing..."
-#	@cat $(BASEDIR)/pkgtools.d/package.csh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).csh
-#	@cat $(BASEDIR)/pkgtools.d/package.sh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).sh
-#	@test -d $(BINDIR) || mkdir -p $(BINDIR)
-#	@ln -s -f $(PACKAGE_ROOT)/pkgtools.d/$(LIBNAME)-config $(BINDIR)/$(LIBNAME)-config
-
-.PHONY : install_pba
-install_pba :  
-	@echo "installing with PBA..."
+.PHONY : install_eos_pba
+install_eos_pba :  
+	@echo "installing with EOS_PBA..."
 	@cat $(BASEDIR)/pkgtools.d/package.csh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).csh
 	@cat $(BASEDIR)/pkgtools.d/package.sh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).sh
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
@@ -244,11 +236,11 @@ install_pba :
 	@echo "installing done."
 	@echo ""
 
-.PHONY : install_no_pba
-install_no_pba : 
-	@echo "installing without PBA..."
-	@cat $(BASEDIR)/pkgtools.d/package.csh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" -e "s@NO_PBA 0@NO_PBA 1@g" > $(BASEDIR)/$(LIBNAME).csh
-	@cat $(BASEDIR)/pkgtools.d/package.sh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" -e "s@NO_PBA=0@NO_PBA=1@g" > $(BASEDIR)/$(LIBNAME).sh
+.PHONY : install_no_eos_pba
+install_no_eos_pba : 
+	@echo "installing without EOS_PBA..."
+	@cat $(BASEDIR)/pkgtools.d/package.csh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" -e "s@NO_EOS_PBA 0@NO_EOS_PBA 1@g" > $(BASEDIR)/$(LIBNAME).csh
+	@cat $(BASEDIR)/pkgtools.d/package.sh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" -e "s@NO_EOS_PBA=0@NO_EOS_PBA=1@g" > $(BASEDIR)/$(LIBNAME).sh
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
 	@ln -s -f $(PACKAGE_ROOT)/pkgtools.d/$(LIBNAME)-config $(BINDIR)/$(LIBNAME)-config
 
@@ -298,8 +290,6 @@ clean : clean_special
 	@echo "Cleaning..."
 	find $(BASEDIR)/ -name "*~" -exec $(RM) \{\} \; 
 	test -d $(ARCHDIR)/ && $(RM) -r $(ARCHDIR) || echo -n ""
-	@#echo "ARCHDIR_old='$(ARCHDIR_old)'"
-	@#rm -fr $(ARCHDIR_old)
 	@echo "Cleaning done."
 	@echo
 

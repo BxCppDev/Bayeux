@@ -22,7 +22,7 @@ class data_t : public datatools::serialization::i_serializable
  private:
   friend class boost::serialization::access; 
   template<class Archive>
-  void serialize (Archive & ar_ , 
+  void serialize (Archive & ar_, 
 		  const unsigned int version_)
   {
     ar_ & boost::serialization::make_nvp ("value", value);
@@ -39,7 +39,7 @@ data_t::get_serial_tag () const
 }
 
 int 
-main (int argc_ , char ** argv_) 
+main (int argc_, char ** argv_) 
 {
   try 
     {
@@ -51,8 +51,8 @@ main (int argc_ , char ** argv_)
 
     enum format_t
       {
-	FORMAT_TXT = 0,
-	FORMAT_XML = 1,
+	FORMAT_TXT = 0, 
+	FORMAT_XML = 1, 
 	FORMAT_BIN = 2
       };
     int fmt   = FORMAT_XML;
@@ -64,8 +64,8 @@ main (int argc_ , char ** argv_)
 	std::string arg = argv_[iarg];
 	if (arg[0] == '-') 
 	  {
-	    if ( arg == "-d" ) debug = true;
-	    if ( arg == "-test" ) test = true;
+	    if (arg == "-d") debug = true;
+	    if (arg == "-test") test = true;
 	  }
 	else 
 	  {
@@ -83,7 +83,7 @@ main (int argc_ , char ** argv_)
       } 
 
     datatools::serialization::io_factory::g_debug = debug;
-    std::cerr << "NOTICE: using filename '" << filename << "'" << std::endl;
+    std::clog << "NOTICE: using filename '" << filename << "'" << std::endl;
 
     int mode_guess;
     if (datatools::serialization::\
@@ -94,7 +94,7 @@ main (int argc_ , char ** argv_)
 	message << "Cannot guess mode for file '" << filename << "'!";
 	throw std::runtime_error (message.str ());
       }
-    std::cerr << "mode = " << std::hex 
+    std::clog << "mode = " << std::hex 
 	      << mode_guess
 	      << std::dec << std::endl;
     
@@ -102,11 +102,11 @@ main (int argc_ , char ** argv_)
       {
 	std::ostringstream message;
 	message << "File '" << filename << "' already exists!";
-	throw std::runtime_error(message.str ());
+	throw std::runtime_error (message.str ());
       }
     
     {
-      std::cerr << "NOTICE: writing..." << std::endl;
+      std::clog << "NOTICE: writing..." << std::endl;
       datatools::serialization::data_writer writer (filename);
 
       // safe_serial
@@ -114,22 +114,22 @@ main (int argc_ , char ** argv_)
 
       for (int i = 0; i < nrecords; i++) 
 	{
-	  if (debug) std::cerr << "DEBUG: Counts = " << i << std::endl;
+	  if (debug) std::clog << "DEBUG: Counts = " << i << std::endl;
 	  ss_data.make ();
 	  ss_data.get ().value = i;
-	  std::cerr << "Value = '" << ss_data.get ().value << "'" << std::endl;
-	  writer.store(ss_data.get());
+	  std::clog << "Value = '" << ss_data.get ().value << "'" << std::endl;
+	  writer.store (ss_data.get ());
 	}
       if (test)
 	{
 	  std::string test_str = "test-failure";
-	  writer.store("__TEST__", test_str);
+	  writer.store ("__TEST__", test_str);
 	}
-      std::cerr << "NOTICE: writing done." << std::endl << std::endl;
+      std::clog << "NOTICE: writing done." << std::endl << std::endl;
     }
     
     {
-      std::cerr << "NOTICE: reading..." << std::endl;
+      std::clog << "NOTICE: reading..." << std::endl;
 
       datatools::serialization::safe_serial<data_t> ss_data;
 
@@ -137,32 +137,32 @@ main (int argc_ , char ** argv_)
       datatools::serialization::data_reader reader (filename);    
       while (reader.has_record_tag ()) 
 	{
-	  if (debug) std::cerr << "DEBUG: read next record..." << std::endl;
+	  if (debug) std::clog << "DEBUG: read next record..." << std::endl;
 	  if (reader.record_tag_is (data_t::SERIAL_TAG)) 
 	    {
-	      if (debug) std::cerr << "DEBUG: reading..." 
+	      if (debug) std::clog << "DEBUG: reading..." 
 				   << data_t::SERIAL_TAG << std::endl;
-	      if (debug) std::cerr << "DEBUG: making a new safe record..." 
+	      if (debug) std::clog << "DEBUG: making a new safe record..." 
 				   << std::endl;
 	      ss_data.make ();
-	      if (debug) std::cerr << "DEBUG: loading the new safe record..." 
+	      if (debug) std::clog << "DEBUG: loading the new safe record..." 
 				   << std::endl;
 	      reader.load (ss_data.get ());
-	      if (debug) std::cerr << "DEBUG: loading done." 
+	      if (debug) std::clog << "DEBUG: loading done." 
 				   << std::endl;
-	      std::cerr << "DEBUG: Value=" << ss_data.get ().value << std::endl;
+	      std::clog << "DEBUG: Value=" << ss_data.get ().value << std::endl;
 	    }
 	  else 
 	    {
 	      std::string bad_tag = reader.get_record_tag ();
-	      std::cerr << "ERROR: unknown data tag '" 
+	      std::clog << "ERROR: unknown data tag '" 
 			<< bad_tag << "'!" << std::endl; 
 	      break;
 	    }
 	  counts++;
-	  if (debug) std::cerr << "DEBUG: Counts = " << counts << std::endl;
+	  if (debug) std::clog << "DEBUG: Counts = " << counts << std::endl;
 	}
-      std::cerr << "NOTICE: reading done." << std::endl << std::endl;   
+      std::clog << "NOTICE: reading done." << std::endl << std::endl;   
     } 
 
   }

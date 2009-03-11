@@ -8,6 +8,7 @@ namespace datatools {
   
   namespace serialization {
 
+    // file extensions recognized by the library:
     const std::string io_factory::TXT_EXT   = "txt";
     const std::string io_factory::XML_EXT   = "xml";
     const std::string io_factory::BIN_EXT   = "data";
@@ -21,7 +22,7 @@ namespace datatools {
     io_factory::eof () const
     {
       if (is_write ()) return false;
-      if ( __in != 0 && __in->eof () ) return true;
+      if (__in != 0 && __in->eof ()) return true;
       return false;
     }
 
@@ -109,7 +110,7 @@ namespace datatools {
 
       if (is_text ()) 
 	{
-#ifdef DATATOOLS_USE_FPU
+#ifdef IOFACTORY_USE_FPU
 	  if (g_debug) std::clog << "DEBUG: io_factory::__init_read_archive: "
 				 << "text with FPU..." 
 				 << std::endl;
@@ -120,7 +121,7 @@ namespace datatools {
 				 << "text with no FPU..." 
 				 << std::endl;
 	  __itar_ptr = new boost::archive::text_iarchive (*__in);
-#endif
+#endif // IOFACTORY_USE_FPU
 	  if (g_debug) 
 	    {
 	      std::clog << "DEBUG: io_factory::__init_read_archive: " 
@@ -130,7 +131,7 @@ namespace datatools {
 	}
       else if (is_xml ()) 
 	{
-#ifdef DATATOOLS_USE_FPU
+#ifdef IOFACTORY_USE_FPU
 	  if (g_debug) std::clog << "DEBUG: io_factory::__init_read_archive: "
 				 << "XML with FPU..." 
 				 << std::endl;
@@ -141,7 +142,7 @@ namespace datatools {
 				 << "XML with no FPU..." 
 				 << std::endl;
 	  __ixar_ptr = new boost::archive::xml_iarchive (*__in);
-#endif
+#endif // IOFACTORY_USE_FPU
 	  if (g_debug) 
 	    {
 	      std::clog << "DEBUG: io_factory::__init_read_archive: "
@@ -151,18 +152,17 @@ namespace datatools {
 	}
       else if (is_binary ()) 
 	{
-#ifdef DATATOOLS_USE_PBA
-	  //__ibar_ptr = new boost::archive::binary_iarchive(*__in);
-	  __ibar_ptr = new portable_binary_iarchive (*__in);
+#ifdef IOFACTORY_USE_EOS_PBA
+	  __ibar_ptr = new eos::portable_iarchive (*__in);
 	  if (g_debug) 
 	    {
 	      std::clog << "DEBUG: io_factory::__init_read_archive: "
-			<< "'portable_binary_iarchive' library version" 
+			<< "'eos::portable_iarchive' library version" 
 			<< __ibar_ptr->get_library_version () << std::endl;
 	    }
 #else
-	  throw std::runtime_error ("io_factory::__init_read_archive: binary format is not supported!");
-#endif
+	  __ibar_ptr = new boost::archive::binary_iarchive (*__in);
+#endif // IOFACTORY_USE_EOS_PBA
 	}
       else 
 	{
@@ -192,13 +192,12 @@ namespace datatools {
 	  __ixar_ptr = 0;
 	}
 
-#ifdef DATATOOLS_USE_PBA
       if (__ibar_ptr != 0) 
 	{
 	  delete __ibar_ptr;
 	  __ibar_ptr = 0;
 	}
-#endif
+
       __read_archive_is_initialized = false;
       return 0;
     }
@@ -234,20 +233,20 @@ namespace datatools {
 	      std::clog << "DEBUG: io_factory::__init_read: file='" 
 			<< stream_name_ << "'" << std::endl;
 	    }
-#ifdef DATATOOLS_USE_PBA
+#ifdef IOFACTORY_USE_EOS_PBA
 	  if (is_compressed () || is_binary ()) 
 	    {
-	      __fin = new std::ifstream (stream_name_.c_str (),
+	      __fin = new std::ifstream (stream_name_.c_str (), 
 					 std::ios_base::in|std::ios_base::binary);
 	    }
 	  else 
 	    {
-#endif
-	      __fin = new std::ifstream (stream_name_.c_str (),
+#endif // IOFACTORY_USE_EOS_PBA
+	      __fin = new std::ifstream (stream_name_.c_str (), 
 					 std::ios_base::in);
-#ifdef DATATOOLS_USE_PBA
+#ifdef IOFACTORY_USE_EOS_PBA
 	    }
-#endif
+#endif // IOFACTORY_USE_EOS_PBA
 	  if (! *__fin) 
 	    {
 	      throw std::runtime_error ("io_factory::__init_read: Cannot open input stream!");
@@ -256,7 +255,7 @@ namespace datatools {
 	}
 
       __in = __in_fs;
-#ifdef DATATOOLS_USE_FPU
+#ifdef IOFACTORY_USE_FPU
       if (is_text () || is_xml ())
 	{
 	  if (g_debug)
@@ -267,7 +266,7 @@ namespace datatools {
 	    }
 	  __in->imbue (*__locale);
 	}
-#endif
+#endif // IOFACTORY_USE_FPU
 
       return 0;
     }
@@ -311,14 +310,14 @@ namespace datatools {
 	}
       if (is_text ()) 
 	{
-#ifdef DATATOOLS_USE_FPU
+#ifdef IOFACTORY_USE_FPU
 	  if (g_debug) 
 	    {
 	      std::clog << "DEBUG: io_factory::__init_write_archive: "
 			<< "with FPU: text archive..." 
 			<< std::endl;
 	    }
-	  __otar_ptr = new boost::archive::text_oarchive (*__out,
+	  __otar_ptr = new boost::archive::text_oarchive (*__out, 
 							  boost::archive::no_codecvt);	  
 #else
 	  if (g_debug) 
@@ -328,7 +327,7 @@ namespace datatools {
 			<< std::endl;
 	    }
 	  __otar_ptr = new boost::archive::text_oarchive (*__out);
-#endif
+#endif // IOFACTORY_USE_FPU
 	  if (g_debug) 
 	    {
 	      std::clog << "DEBUG: io_factory::__init_write_archive: "
@@ -338,14 +337,14 @@ namespace datatools {
 	}
       else if (is_xml ()) 
 	{
-#ifdef DATATOOLS_USE_FPU
+#ifdef IOFACTORY_USE_FPU
 	  if (g_debug) 
 	    {
 	      std::clog << "DEBUG: io_factory::__init_write_archive: "
 			<< "with FPU: XML archive..." 
 			<< std::endl;
 	    }
-	  __oxar_ptr = new boost::archive::xml_oarchive (*__out,
+	  __oxar_ptr = new boost::archive::xml_oarchive (*__out, 
 							 boost::archive::no_codecvt);
 #else
 	  if (g_debug) 
@@ -355,7 +354,7 @@ namespace datatools {
 			<< std::endl;
 	    }
 	  __oxar_ptr = new boost::archive::xml_oarchive (*__out);
-#endif
+#endif // IOFACTORY_USE_FPU
 	  if (g_debug) 
 	    {
 	      std::clog << "DEBUG: io_factory::__init_write_archive: "
@@ -365,18 +364,17 @@ namespace datatools {
 	}
       else if (is_binary ()) 
 	{
-#ifdef DATATOOLS_USE_PBA
-	  //__obar_ptr = new boost::archive::binary_oarchive(*__out);
-	  __obar_ptr = new portable_binary_oarchive (*__out);
+#ifdef IOFACTORY_USE_EOS_PBA
+	  __obar_ptr = new eos::portable_oarchive (*__out);
 	  if (g_debug) 
 	    {
 	      std::clog << "DEBUG: io_factory::__init_write_archive: "
-			<< "'portable_binary_oarchive' library version" 
+			<< "'eos::portable_oarchive' library version" 
 			<< __obar_ptr->get_library_version () << std::endl;
 	    }
 #else
-	  throw std::runtime_error ("io_factory::__init_write_archive: binary format is not supported!");
-#endif
+	  __obar_ptr = new boost::archive::binary_oarchive (*__out);
+#endif // IOFACTORY_USE_EOS_PBA
 	}
       else 
 	{
@@ -420,12 +418,12 @@ namespace datatools {
 	    }
 
 	  std::ios_base::openmode open_mode = std::ios_base::out;
-#ifdef DATATOOLS_USE_PBA
+#ifdef IOFACTORY_USE_EOS_PBA
 	  if (is_compressed () || is_binary ())
 	    { 
 	      open_mode |= std::ios_base::binary;
 	    }
-#endif
+#endif // IOFACTORY_USE_EOS_PBA
 	  if (is_append ())
 	    {
 	      if (is_single_archive ())
@@ -448,7 +446,7 @@ namespace datatools {
 	}
 
       __out = __out_fs;
-#ifdef DATATOOLS_USE_FPU
+#ifdef IOFACTORY_USE_FPU
       if (is_text () || is_xml ())
 	{ 
 	  if (g_debug) 
@@ -458,7 +456,7 @@ namespace datatools {
 	    }
 	  __out->imbue (*__locale);
 	}
-#endif
+#endif // IOFACTORY_USE_FPU
 
       if (g_debug) 
 	{
@@ -501,18 +499,16 @@ namespace datatools {
 	  __oxar_ptr = 0;
 	}
 
-#ifdef DATATOOLS_USE_PBA
       if (__obar_ptr != 0) 
 	{
 	  if (g_debug) 
 	    {
 	      std::clog << "DEBUG: io_factory::__reset_write_archive: "
-			<< "delete BIN archive!" << std::endl;
+			<< "delete binary archive!" << std::endl;
 	    }
 	  delete __obar_ptr;
 	  __obar_ptr = 0;
 	}
-#endif
 
       __write_archive_is_initialized = false;
       return 0;
@@ -551,7 +547,7 @@ namespace datatools {
     }
 
     int 
-    io_factory::__init (const std::string & stream_name_ , int mode_)
+    io_factory::__init (const std::string & stream_name_, int mode_)
     {
       __mode = mode_;
       if (is_read ()) 
@@ -638,10 +634,10 @@ namespace datatools {
       __otar_ptr = 0;
       __ixar_ptr = 0;
       __oxar_ptr = 0;
-#ifdef DATATOOLS_USE_PBA
+#ifdef IOFACTORY_USE_EOS_PBA
       __ibar_ptr = 0;
       __obar_ptr = 0;
-#endif
+#endif // IOFACTORY_USE_EOS_PBA
       __in_fs = 0;
       __out_fs = 0;
       __mode = io_factory::MODE_DEFAULT;
@@ -663,7 +659,7 @@ namespace datatools {
 	  __reset_write ();
 	}
       __ctor_defaults ();
-#ifdef DATATOOLS_USE_FPU
+#ifdef IOFACTORY_USE_FPU
       if (g_debug) std::clog << "DEBUG: io_factory::__reset: Use FPU" << std::endl;
       if (__locale)
 	{
@@ -675,14 +671,14 @@ namespace datatools {
 	  delete __default_locale;
 	  __default_locale = 0;
 	}
-#endif      
+#endif // IOFACTORY_USE_FPU     
       return 0;
     }
 
     // ctor
     io_factory::io_factory (int mode_)
     {
-#ifdef DATATOOLS_USE_FPU
+#ifdef IOFACTORY_USE_FPU
       __default_locale = 0;
       __locale = 0;
       __default_locale = new std::locale (std::locale::classic (), 
@@ -698,16 +694,16 @@ namespace datatools {
 	  __locale = new std::locale (*__default_locale, 
 				      new boost::math::nonfinite_num_get<char>);
 	}
-#endif      
+#endif // IOFACTORY_USE_FPU         
       __ctor_defaults ();
-      __init ("", mode_ );
+      __init ("", mode_);
     }
 
     // ctor
-    io_factory::io_factory (const std::string & stream_name_ , 
-			    int mode_ )
+    io_factory::io_factory (const std::string & stream_name_, 
+			    int mode_)
     {
-#ifdef DATATOOLS_USE_FPU
+#ifdef IOFACTORY_USE_FPU
       __default_locale = 0;
       __locale = 0;
       __default_locale = new std::locale (std::locale::classic (), 
@@ -723,7 +719,7 @@ namespace datatools {
 	  __locale = new std::locale (*__default_locale, 
 				      new boost::math::nonfinite_num_get<char>);
 	}
-#endif      
+#endif // IOFACTORY_USE_FPU         
       __ctor_defaults ();
       __init (stream_name_, mode_);
     }
@@ -738,12 +734,25 @@ namespace datatools {
 	}
     }
 
-    void io_factory::tree_dump(std::ostream & out_, 
-			       const std::string & title_,
-			       const std::string & indent_,
-			       bool inherit_) const
+    void 
+    io_factory::tree_dump (std::ostream & out_, 
+			   const std::string & title_, 
+			   const std::string & indent_, 
+			   bool inherit_) const
     {
-      namespace du = datatools::utils;
+#ifdef DATATOOLS_USE_TREE_DUMP // tree_trick
+      namespace du = datatools::utils; // tree_trick
+      std::ostringstream tag_ss, last_tag_ss; // tree_trick
+      tag_ss << du::i_tree_dumpable::tag; // tree_trick
+      last_tag_ss << du::i_tree_dumpable::inherit_tag (inherit_); // tree_trick
+      std::string tag = tag_ss.str (); // tree_trick
+      std::string last_tag = last_tag_ss.str (); // tree_trick
+#else // tree_trick
+      std::string tag = "|-- ";
+      std::string last_tag = "`-- ";
+      if (inherit_) last_tag = tag;
+#endif //DATATOOLS_USE_TREE_DUMP // tree_trick
+
       std::string indent;
       if (! indent_.empty ()) indent = indent_;
       if (! title_.empty()) 
@@ -751,42 +760,42 @@ namespace datatools {
 	  out_ << indent << title_ << std::endl;
 	}
 
-      out_ << indent << du::i_tree_dumpable::tag 
+      out_ << indent << tag 
 	   << "Mode  : " << std::hex << __mode << std::dec << std::endl;
 
-      out_ << indent << du::i_tree_dumpable::tag 
+      out_ << indent << tag 
 	   << "is_read  : " << is_read() << std::endl;
 
-      out_ << indent << du::i_tree_dumpable::tag 
+      out_ << indent << tag 
 	   << "is_write : " << is_write() << std::endl;
 
-      out_ << indent << du::i_tree_dumpable::tag 
+      out_ << indent << tag 
 	   << "is_compressed : " << is_compressed () << std::endl;
 
-      out_ << indent << du::i_tree_dumpable::tag 
+      out_ << indent << tag 
 	   << "is_uncompressed : " << is_uncompressed () << std::endl;
 
-      out_ << indent << du::i_tree_dumpable::tag 
+      out_ << indent << tag 
 	   << "is_gzip : " << is_gzip () << std::endl;
 
-      out_ << indent << du::i_tree_dumpable::tag 
+      out_ << indent << tag 
 	   << "is_bzip2 : " << is_bzip2 () << std::endl;
 
-      out_ << indent << du::i_tree_dumpable::tag 
+      out_ << indent << tag 
 	   << "is_text : " << is_text () << std::endl;
 
-#ifdef DATATOOLS_USE_PBA
-      out_ << indent << du::i_tree_dumpable::tag 
+#ifdef IOFACTORY_USE_EOS_PBA
+      out_ << indent << tag 
 	   << "is_binary : " << is_binary () << std::endl;
-#endif
+#endif // IOFACTORY_USE_EOS_PBA    
 
-      out_ << indent << du::i_tree_dumpable::tag 
+      out_ << indent << tag 
 	   << "is_xml : " << is_xml () << std::endl;
 
-      out_ << indent << du::i_tree_dumpable::tag 
+      out_ << indent << tag 
 	   << "is_single_archive : " << is_single_archive () << std::endl;
 
-      out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_) 
+      out_ << indent << last_tag 
 	   << "is_multi_archives : " << is_multi_archives () << std::endl;
 
     }
@@ -799,7 +808,7 @@ namespace datatools {
 
     int 
     io_factory::guess_mode_from_filename (const std::string & filename_, 
-					  int & mode_ )
+					  int & mode_)
     {
       int status = io_factory::SUCCESS;
       int mode = 0x0;
@@ -891,7 +900,7 @@ namespace datatools {
 		}
 	    }
 	  if (! format && ! comp) break;
-	  if (format ) break;
+	  if (format) break;
 	  ext_count++;
 	  if (ext_count == 2) break;
 	}
@@ -933,7 +942,7 @@ namespace datatools {
 	}
     }
 
-    io_reader::io_reader (const std::string & stream_name_ , 
+    io_reader::io_reader (const std::string & stream_name_, 
 			  int mode_)
       : io_factory (stream_name_, io_factory::MODE_READ|mode_)
     {
@@ -1352,7 +1361,7 @@ namespace datatools {
     }
 	
     void 
-    data_writer::__init_writer (const std::string & filename_ , 
+    data_writer::__init_writer (const std::string & filename_, 
 				int mode_)
     {
       __writer = new io_writer (filename_, mode_);
@@ -1376,7 +1385,7 @@ namespace datatools {
 
     void 
     data_writer::init (const std::string & filename_, 
-		       bool multiple_archives_,
+		       bool multiple_archives_, 
 		       bool append_mode_)
     {
       __reset_writer ();
@@ -1418,7 +1427,7 @@ namespace datatools {
 
     // ctor
     data_writer::data_writer (const std::string & filename_, 
-			      bool multiple_archives_,
+			      bool multiple_archives_, 
 			      bool append_mode_)
     {
       __writer = 0;
