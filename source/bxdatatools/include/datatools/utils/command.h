@@ -11,6 +11,8 @@
 #include <string>
 #include <list>
 
+//#include <boost/python.hpp>
+
 namespace datatools {
 
   namespace utils {
@@ -187,8 +189,12 @@ namespace datatools {
 	void  
 	  force_with_options ();
 
-	command (const std::string & command_line_ = "", 
-		 bool with_options_ = false);
+	command ();
+
+	command (const std::string & command_line_);
+
+	command (const std::string & command_line_, 
+		 bool with_options_);
 
 	~command ();
 
@@ -199,21 +205,44 @@ namespace datatools {
 	  reset ();
   
 	void 
-	  init (const std::string & command_line_, bool with_options_ = false);
+	  init (const std::string & command_line_);
+  
+	/*
+	void 
+	  init_s (const std::string & command_line_)
+	  {
+	    init (command_line_);
+	  }
+	*/
+  
+	void 
+	  init (const std::string & command_line_, bool with_options_);
+
+	/*
+	void 
+	  init_sb (const std::string & command_line_, bool with_options_)
+	  {
+	    init (command_line_, with_options_);
+	  }
+	*/
 
 	void 
-	  shift (int = 1);
+	  shift ();
+
+	void 
+	  shift (int);
 
 	void 
 	  shift_one ();
 
 	void 
-	  dump (std::ostream & out_ = std::cerr);
+	  dump (std::ostream & out_ = std::clog) const;
 
-	/*
-	  static int
-	  command_invoke (i_run_command & source_, const command & command_);
-	*/
+	void 
+	  dump_def () const
+	  {
+	    dump (std::cout);
+	  }
       };
 
   } // end of namespace utils 

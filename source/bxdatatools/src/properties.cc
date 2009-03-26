@@ -1360,7 +1360,7 @@ namespace datatools {
     void properties::change (const std::string & key_, 
 			     const data::vbool & values_)
     {
-      data * data_ptr=0;
+      data * data_ptr = 0;
       __check_key (key_,&data_ptr);
       if (! data_ptr->is_boolean () || ! data_ptr->is_vector ()) 
 	{
@@ -1369,7 +1369,7 @@ namespace datatools {
 		  << key_ << "' is not a vector of booleans!";
 	  throw std::runtime_error (message.str ());
 	}
-      if (values_.size () != (int) data_ptr->get_size ()) 
+      if ((int) values_.size () != data_ptr->get_size ()) 
 	{
 	  int error = data_ptr->boolean (values_.size ());
 	  if (error != data::ERROR_SUCCESS) 
@@ -1405,7 +1405,7 @@ namespace datatools {
 		  << key_ << "' is not a vector of integers!";
 	  throw std::runtime_error (message.str ());
 	}
-      if (values_.size () != (int) data_ptr->get_size ()) 
+      if ((int) values_.size () != data_ptr->get_size ()) 
 	{
 	  int error = data_ptr->integer (values_.size ());
 	  if (error != data::ERROR_SUCCESS) 
@@ -1441,7 +1441,7 @@ namespace datatools {
 		  << key_ << "' is not a vector of reals!";
 	  throw std::runtime_error (message.str ());
 	}
-      if (values_.size () != (int) data_ptr->get_size ()) 
+      if ((int) values_.size () != data_ptr->get_size ()) 
 	{
 	  int error = data_ptr->real (values_.size ());
 	  if (error != data::ERROR_SUCCESS) 
@@ -1477,7 +1477,7 @@ namespace datatools {
 		  << key_ << "' is not a vector of strings!";
 	  throw std::runtime_error (message.str ());
 	}
-      if (values_.size () != (int) data_ptr->get_size ()) 
+      if ((int) values_.size () != data_ptr->get_size ()) 
 	{
 	  int error = data_ptr->string (values_.size ());
 	  if (error != data::ERROR_SUCCESS) 
@@ -1745,7 +1745,7 @@ namespace datatools {
 	}
       values_.resize (data_ptr->size ());
       values_.assign (data_ptr->size (), data::DEFAULT_VALUE_BOOLEAN);
-      for (int i = 0; i < values_.size (); i++) 
+      for (int i = 0; i < (int) values_.size (); i++) 
 	{
 	  bool val;
 	  int error = data_ptr->get_value (val, i);
@@ -1775,7 +1775,7 @@ namespace datatools {
 	}
       values_.resize (data_ptr->size ());
       values_.assign (data_ptr->size (), data::DEFAULT_VALUE_INTEGER);
-      for (int i = 0; i < values_.size (); i++) 
+      for (int i = 0; i < (int) values_.size (); i++) 
 	{
 	  //int val;
 	  //int error = data_ptr->get_value (val,i);
@@ -1806,7 +1806,7 @@ namespace datatools {
 	}
       values_.resize (data_ptr->size ());
       values_.assign (data_ptr->size (), data::DEFAULT_VALUE_REAL);
-      for (int i = 0; i < values_.size (); i++) 
+      for (int i = 0; i < (int) values_.size (); i++) 
 	{
 	  //double val;
 	  //int error = data_ptr->get_value (val,i);
@@ -1837,7 +1837,7 @@ namespace datatools {
 	}
       values_.resize (data_ptr->size ());
       values_.assign (data_ptr->size (),data::DEFAULT_VALUE_STRING);
-      for (int i = 0; i < values_.size (); i++) 
+      for (int i = 0; i < (int) values_.size (); i++) 
 	{
 	  //std::string val;
 	  //int error = data_ptr->get_value (val,i);
@@ -2309,7 +2309,7 @@ namespace datatools {
 	    
 	    
 		  int flag_pos = line_parsing.find_first_of (__assign_char);
-		  if (flag_pos >= line_parsing.size ()) 
+		  if (flag_pos >= (int) line_parsing.size ()) 
 		    {
 		      std::ostringstream message;
 		      message << "properties::config::read_next_property: "
@@ -2343,7 +2343,7 @@ namespace datatools {
 		  std::string prop_key;
 	    
 		  int desc_pos = property_desc_str.find_first_of (__desc_char);
-		  if (desc_pos == property_desc_str.npos) 
+		  if (desc_pos == (int) property_desc_str.npos) 
 		    {
 		      std::istringstream key_ss (property_desc_str);
 		      key_ss >> std::ws >> prop_key;
@@ -2363,7 +2363,7 @@ namespace datatools {
 		      std::string type_str2;
 	      
 		      int vec_pos = type_str.find_first_of (OPEN_VECTOR);
-		      if (vec_pos != type_str.npos) 
+		      if (vec_pos != (int) type_str.npos) 
 			{
 			  scalar = false;
 			  type_str2 = type_str.substr (0, vec_pos);

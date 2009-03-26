@@ -27,7 +27,7 @@ namespace datatools {
     command::is_long_option (std::string str_)
     {
       if (! is_option (str_)) return false;
-      if (str_.substr(0, 2) == LONG_OPTION_PREFIX) return true;
+      if (str_.substr (0, 2) == LONG_OPTION_PREFIX) return true;
       return false;
     }
 
@@ -191,7 +191,7 @@ namespace datatools {
     std::string 
     command::get_argument (int i_) const
     {
-      if ((i_ < 0) || (i_ >= (int) __arguments.size ())) 
+      if ( (i_ < 0) || (i_ >= (int) __arguments.size ())) 
 	{
 	  return std::string ("");
 	}
@@ -223,9 +223,9 @@ namespace datatools {
       std::string 
       command::get_argument (int i_) const
       {
-      if (i_ < 0 || i_ >= __arguments.size())
+      if (i_ < 0 || i_ >= __arguments.size ())
       {
-      return std::string();
+      return std::string ();
       }
       else 
       {
@@ -252,6 +252,28 @@ namespace datatools {
       reset_output ();
     }
 
+    command::command ()
+    {
+      __with_options = false;
+      __name = "";
+      __returns = "";
+      __error_code = SUCCESS;
+      __error_message = "";
+    }
+
+    command::command (const std::string & command_line_)
+    {
+      __with_options = false;
+      __name = "";
+      __returns = "";
+      __error_code = SUCCESS;
+      __error_message = "";
+      if (! command_line_.empty ())
+	{
+	  init (command_line_, __with_options);
+	}
+    }
+
     command::command (const std::string & command_line_, 
 		      bool with_options_)
     {
@@ -274,7 +296,7 @@ namespace datatools {
     std::string 
     command::get_option (int i_) const
     {
-      if ((i_ < 0) || (i_ >= (int) __options.size ())) 
+      if ( (i_ < 0) || (i_ >= (int) __options.size ())) 
 	{
 	  return std::string ("");
 	}
@@ -314,13 +336,19 @@ namespace datatools {
 	}
       return std::string ("");
     }
+
+    void 
+    command::init (const std::string & command_line_)
+    {
+      this->init (command_line_, false);
+    }
   
     void 
     command::init (const std::string & command_line_, bool with_options_)
     {
-      reset();
+      reset ();
       __with_options = with_options_;
-      std::istringstream iss(command_line_);
+      std::istringstream iss (command_line_);
       std::string a_command;
       iss >> a_command;
       set_name (a_command);
@@ -345,14 +373,20 @@ namespace datatools {
     }
 
     void 
-    command::shift(int pos_)
+    command::shift (int pos_)
     {
       if (pos_<1) return;
       for (int i=0; i<pos_; i++)
 	{
-	  __name = __arguments.front();
-	  __arguments.pop_front();  
+	  __name = __arguments.front ();
+	  __arguments.pop_front ();  
 	}
+    }
+  
+    void 
+    command::shift ()
+    {
+      shift_one ();
     }
   
     void 
@@ -362,7 +396,7 @@ namespace datatools {
     }
 
     void 
-    command::dump(std::ostream & out_)
+    command::dump (std::ostream & out_) const
     {
       out_ << "Command: " << std::endl;
       out_ << "|--" << "Name : " << __name << std::endl;
@@ -372,8 +406,8 @@ namespace datatools {
       if (is_with_options ())
 	{
 	  for (std::list<std::string>::const_iterator it = 
-		 __options.begin();
-	       it != __options.end();
+		 __options.begin ();
+	       it != __options.end ();
 	       it++)
 	    {
 	      out_ << "|--" << "Options #" << i 
@@ -383,8 +417,8 @@ namespace datatools {
 	  i = 0;
 	}
       for (std::list<std::string>::const_iterator it = 
-	     __arguments.begin();
-	   it != __arguments.end();
+	     __arguments.begin ();
+	   it != __arguments.end ();
 	   it++)
 	{
 	  out_ << "|--" << "Argument #" << i 
@@ -397,13 +431,13 @@ namespace datatools {
 
     /* 
        int
-       command::command_invoke(i_run_command & source_, const command & command_)
+       command::command_invoke (i_run_command & source_, const command & command_)
        {
        try
        {
-       source_.run_command(command_);
+       source_.run_command (command_);
        }
-       catch(...)
+       catch (...)
        {
        }
        return 0;
@@ -413,7 +447,7 @@ namespace datatools {
     /*****************************************************/
 
     command_error::command_error (const std::string & message_) :
-      std::runtime_error("command: error: " + message_)
+      std::runtime_error ("command: error: " + message_)
     {
     }
 

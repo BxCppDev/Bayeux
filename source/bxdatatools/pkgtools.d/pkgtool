@@ -173,6 +173,7 @@ else
     err_msg "Missing gmk directory! Please run 'pkgtools.d/pkgtool' from the base package directory!"
     exit 1    
 fi
+python_dir=${the_base_dir}/python
 
 #######################################################
 
@@ -190,6 +191,13 @@ function do_clean_gmk()
 	cd ${opwd}
 	return 1
     fi
+
+    ### special Python wrapper/program:
+    cd ${python_dir}
+    #make clean
+    cd ${GMKDIR}
+    ###
+
     cd ${opwd}
     return 0
 }
@@ -257,6 +265,18 @@ function do_build_gmk()
 	    return 1
 	fi
     fi
+
+    ### special Python wrapper/program:
+    cd ${python_dir}
+#    make
+#    if [ $? -ne 0 ]; then
+#	cd ${opwd} 
+#	err_msg "Build Python stuff failed!"
+#	return 1
+#    fi
+    cd ${GMKDIR}
+    ###
+
     cd ${opwd}
     return 0
 }
@@ -485,6 +505,13 @@ function do_install()
 	cd ${opwd}
 	return 1
     fi
+
+    ### special Python wrapper/program:
+    cd ${python_dir}
+    #make install
+    cd ${GMKDIR}
+    ###
+
     cd ${opwd}
     debug_msg "do_startup..."
     do_startup
@@ -502,6 +529,13 @@ function do_uninstall()
 	cd ${opwd}
 	return 1
     fi
+
+    ### special Python wrapper/program:
+    cd ${python_dir}
+    #make install
+    cd ${GMKDIR}
+    ###
+
     cd ${opwd}
     kill_startup
     return 0
