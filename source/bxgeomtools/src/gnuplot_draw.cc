@@ -55,11 +55,11 @@ namespace geomtools {
   void 
   gnuplot_draw::draw_polyline (std::ostream & out_, 
 			       const vector_3d & position_, 
-			       const rotation & rotation_,
+			       const rotation_3d & rotation_,
 			       const polyline_t & pl_, 
 			       bool  more_)
   {
-    rotation inverseRotation (rotation_);
+    rotation_3d inverseRotation (rotation_);
     inverseRotation.invert ();
     polyline_t polyline;
     vector_3d first;
@@ -85,11 +85,11 @@ namespace geomtools {
   void 
   gnuplot_draw::draw_segment (std::ostream & out_, 
 			      const vector_3d & position_, 
-			      const rotation & rotation_,  
+			      const rotation_3d & rotation_,  
 			      const vector_3d & start_, 
 			      const vector_3d & stop_)
   {
-    rotation inverseRotation (rotation_);
+    rotation_3d inverseRotation (rotation_);
     inverseRotation.invert ();
     vector_3d A (start_);
     A.transform (inverseRotation);
@@ -106,7 +106,7 @@ namespace geomtools {
   void 
   gnuplot_draw::draw_rectangle (std::ostream & out_, 
 				const vector_3d & position_, 
-				const rotation & rotation_, 
+				const rotation_3d & rotation_, 
 				double length_, 
 				double width_, 
 				bool more_)
@@ -116,7 +116,7 @@ namespace geomtools {
     vector_3d C (-0.5 * length_, -0.5 * width_, 0.);
     vector_3d D (-0.5 * length_,  0.5 * width_, 0.);
 
-    rotation inverseRotation (rotation_);
+    rotation_3d inverseRotation (rotation_);
     inverseRotation.invert ();
 
     vector_3d A2 (A);
@@ -148,7 +148,7 @@ namespace geomtools {
   void 
   gnuplot_draw::draw_box (std::ostream & out_,
 			  const vector_3d & position_, 
-			  const rotation & rotation_,
+			  const rotation_3d & rotation_,
 			  double length_, 
 			  double width_, 
 			  double height_)
@@ -162,7 +162,7 @@ namespace geomtools {
     vector_3d R (-0.5 * length_, -0.5 * width_, -0.5 * height_);
     vector_3d S (-0.5 * length_,  0.5 * width_, -0.5 * height_);
 
-    rotation inverseRotation (rotation_);
+    rotation_3d inverseRotation (rotation_);
     inverseRotation.invert ();
 
     vector_3d A2 (A);
@@ -238,12 +238,12 @@ namespace geomtools {
   void 
   gnuplot_draw::draw_cylinder (std::ostream & out_,
 			       const vector_3d & position_, 
-			       const rotation & rotation_,
+			       const rotation_3d & rotation_,
 			       double radius_, 
 			       double height_,
 			       size_t arc_sampling_)
   {
-    rotation inverseRotation (rotation_);
+    rotation_3d inverseRotation (rotation_);
     inverseRotation.invert ();
 
     size_t sample =  arc_sampling_;
@@ -282,13 +282,13 @@ namespace geomtools {
   void 
   gnuplot_draw::draw_tube (std::ostream & out_,
 			   const vector_3d & position_, 
-			   const rotation & rotation_,
+			   const rotation_3d & rotation_,
 			   double inner_radius_, 
 			   double outer_radius_, 
 			   double height_,
 			   size_t arc_sampling_)
   {
-    rotation inverseRotation (rotation_);
+    rotation_3d inverseRotation (rotation_);
     inverseRotation.invert ();
 
     size_t sample = arc_sampling_;
@@ -367,11 +367,11 @@ namespace geomtools {
   void 
   gnuplot_draw::draw_circle (std::ostream & out_, 
 			     const vector_3d & position_, 
-			     const rotation & rotation_, 
+			     const rotation_3d & rotation_, 
 			     double radius_,
 			     size_t arc_sampling_)
   {
-    rotation inverseRotation (rotation_);
+    rotation_3d inverseRotation (rotation_);
     inverseRotation.invert ();
 
     size_t sample =  arc_sampling_;
@@ -395,16 +395,16 @@ namespace geomtools {
   void 
   gnuplot_draw::draw_sphere (std::ostream & out_,
 			     const vector_3d & position_, 
-			     const rotation & rotation_,
+			     const rotation_3d & rotation_,
 			     double radius_, 
 			     size_t arc_sampling_,
 			     size_t z_sampling_)
   {
-    rotation inverseRotation (rotation_);
+    rotation_3d inverseRotation (rotation_);
     inverseRotation.invert ();
 
-    size_t phy_sample =  arc_sampling_;
-    size_t z_sample =  z_sampling_;
+    size_t phy_sample = arc_sampling_;
+    size_t z_sample = z_sampling_;
     double dphi =  2 * M_PI * CLHEP::radian / phy_sample;
     double dz   =  2 * radius_ / z_sample;
     polyline_t polyline_meridian;

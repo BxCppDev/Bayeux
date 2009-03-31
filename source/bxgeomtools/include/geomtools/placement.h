@@ -27,9 +27,9 @@ namespace geomtools {
   class placement
     {
     private: 
-      vector_3d __translation;
-      rotation  __rotation;         // mother->child frame
-      rotation  __inverse_rotation; // child->mother frame
+      vector_3d    __translation;      // absolute position in mother frame
+      rotation_3d  __rotation;         // mother->child frame coord. transformation
+      rotation_3d  __inverse_rotation; // child->mother frame coord. transformation
       
     public: 
       const vector_3d & get_translation () const;
@@ -38,11 +38,11 @@ namespace geomtools {
 
       void set_translation (const vector_3d &);
 
-      const rotation & get_rotation () const;
+      const rotation_3d & get_rotation () const;
 
-      const rotation & get_inverse_rotation () const;
+      const rotation_3d & get_inverse_rotation () const;
 
-      void set_orientation (const rotation &);
+      void set_orientation (const rotation_3d &);
 
       void set_orientation (double , double , double);
 

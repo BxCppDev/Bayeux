@@ -19,7 +19,6 @@
 #include <cmath>
 #include <stdexcept>
 #include <iostream>
-#include <list>
 
 #include <geomtools/utils.h>
 
@@ -28,7 +27,7 @@ namespace geomtools {
   class gnuplot_draw
   {
   public: 
-    typedef std::list<vector_3d> polyline_t;
+    typedef basic_polyline_t polyline_t;
   
   public: 
     static void 
@@ -53,21 +52,21 @@ namespace geomtools {
     static void 
     draw_polyline  (std::ostream &, 
 		    const vector_3d &, 
-		    const rotation &,  
+		    const rotation_3d &,  
 		    const polyline_t &, 
 		    bool = false);
     
     static void 
     draw_segment  (std::ostream &, 
 		   const vector_3d &, 
-		   const rotation &,  
+		   const rotation_3d &,  
 		   const vector_3d &, 
 		   const vector_3d & );
     
     static void 
     draw_rectangle (std::ostream &, 
 		    const vector_3d &, 
-		    const rotation &,  
+		    const rotation_3d &,  
 		    double, 
 		    double, 
 		    bool = false);
@@ -75,14 +74,14 @@ namespace geomtools {
     static void 
     draw_circle (std::ostream &, 
 		 const vector_3d &, 
-		 const rotation &,
+		 const rotation_3d &,
 		 double, 
 		 size_t = 36 );
     
     static void 
     draw_box (std::ostream &, 
 	      const vector_3d &, 
-	      const rotation &,
+	      const rotation_3d &,
 	      double, 
 	      double, 
 	      double);
@@ -90,7 +89,7 @@ namespace geomtools {
     static void 
     draw_cylinder (std::ostream &, 
 		   const vector_3d &, 
-		   const rotation &,
+		   const rotation_3d &,
 		   double, 
 		   double, 
 		   size_t = 36);
@@ -98,7 +97,7 @@ namespace geomtools {
     static void 
     draw_tube (std::ostream &, 
 	       const vector_3d &, 
-	       const rotation &,
+	       const rotation_3d &,
 	       double, 
 	       double, 
 	       double, 
@@ -107,7 +106,7 @@ namespace geomtools {
     static void 
     draw_sphere (std::ostream &, 
 		 const vector_3d &, 
-		 const rotation &,
+		 const rotation_3d &,
 		 double, 
 		 size_t = 36,
 		 size_t = 10);

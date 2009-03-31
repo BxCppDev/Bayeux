@@ -8,6 +8,7 @@
 
 #include <geomtools/utils.h>
 #include <geomtools/gnuplot_draw.h>
+#include <datatools/serialization/serialization.h>
 
 int 
 main (int argc_, char ** argv_)
@@ -50,6 +51,105 @@ main (int argc_, char ** argv_)
 	  std::cout << std::endl;
 	}
       std::cout << std::endl;
+
+      {
+	namespace ds = datatools::serialization;
+	ds::data_writer writer;
+	writer.init ("test_utils.txt", 
+		     ds::using_multi_archives);
+	
+	for (int i = 0; i < 5; i++)
+	  {
+	    geomtools::vector_3d v (geomtools::random_tools::random_flat (),
+				    geomtools::random_tools::random_flat (),
+				    geomtools::random_tools::random_flat ());
+	    std::clog << "v[" << i << "] = " << v << std::endl;
+	    writer.store ("__vector_3d__", v);
+	  }
+	writer.reset ();
+      }
+
+      {
+	namespace ds = datatools::serialization;
+	ds::data_reader reader;
+	reader.init ("test_utils.txt", 
+		     ds::using_multi_archives);
+	int i = 0;
+	while (reader.has_record_tag ())
+	  {
+	    if (reader.get_record_tag () == "__vector_3d__")
+	      {
+		geomtools::vector_3d v;
+		reader.load ("__vector_3d__", v);
+		std::clog << "v[" << i << "] = " << v << std::endl;
+	      }
+	    i++;
+	  }
+	reader.reset ();
+      }
+
+      {
+	namespace ds = datatools::serialization;
+	ds::data_writer writer;
+	writer.init ("test_utils2.txt", 
+		     ds::using_multi_archives);
+	
+	for (int i = 0; i < 4; i++)
+	  {
+	    geomtools::rotation r;
+	    if (i == 3) 
+	      {
+		geomtools::invalidate (r);
+	      }
+	    else 
+	      {
+		geomtools::create_rotation (r, 
+					    2. * M_PI * geomtools::random_tools::random_flat (),
+					    0.25 * M_PI * geomtools::random_tools::random_flat (),
+					    0.0);
+	      }
+	    std::clog << "r[" << i << "] = " << r << std::endl;
+	    geomtools::tree_dump (r, 
+				  std::clog, 
+				  "Rotation matrix (saved):");
+	    writer.store ("__rotation__", r);
+	  }
+	writer.reset ();
+      }
+
+      {
+	namespace ds = datatools::serialization;
+	ds::data_reader reader;
+	reader.init ("test_utils2.txt", 
+		     ds::using_multi_archives);
+	int i = 0;
+	while (reader.has_record_tag ())
+	  {
+	    if (reader.get_record_tag () == "__rotation__")
+	      {
+		geomtools::rotation r;
+		reader.load ("__rotation__", r);
+		geomtools::tree_dump (r, 
+				      std::clog, 
+				      "Rotation matrix (loaded):");
+		std::clog << std::endl;
+	      }
+	    i++;
+	  }
+	reader.reset ();
+      }
+
+      geomtools::create_rotation(rot, 
+				 30.0 * CLHEP::degree, 
+				 45. * CLHEP::degree,
+				 0.0);
+      geomtools::tree_dump (rot, std::clog, "Rotation matrix (valid):"); 
+      std::clog << "colX=" << rot.colX() << std::endl;
+      std::clog << "colY=" << rot.colY() << std::endl;
+      std::clog << "colZ=" << rot.colZ() << std::endl;
+      geomtools::invalidate (rot);
+      geomtools::tree_dump (rot, std::clog, "Rotation matrix (invalid):");
+ 
     }
   catch (std::exception & x)
     {

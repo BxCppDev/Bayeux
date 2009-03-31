@@ -20,7 +20,12 @@ namespace geomtools {
 
   typedef CLHEP::Hep2Vector  vector_2d;
   typedef CLHEP::Hep3Vector  vector_3d;
-  typedef CLHEP::HepRotation rotation;
+  typedef CLHEP::HepRotation rotation_3d;
+  typedef rotation_3d        rotation;
+
+}
+
+namespace geomtools {
 
   /* basic uniform deviates generator from CLHEP
    * used for special geometry algorithms
@@ -35,8 +40,6 @@ namespace geomtools {
     }
 
   };
-
-
 
 } // end of namespace geomtools
 

@@ -104,7 +104,7 @@ main (int argc_, char ** argv_)
 	  }
 
 	geomtools::vector_3d box_pos;
-	geomtools::rotation box_rot;
+	geomtools::rotation_3d box_rot;
 	geomtools::create_rotation (box_rot, 0.0, 0.0, 0.0);
 	geomtools::gnuplot_draw::draw_box (std::cout, box_pos, box_rot, 
 					   my_box.get_x (), 
@@ -131,7 +131,7 @@ main (int argc_, char ** argv_)
 			       5.0 * CLHEP::mm);
 	std::clog << "test 3: Box #3   = " << my_box << " " << std::endl;
 	geomtools::vector_3d box_pos;
-	geomtools::rotation box_rot;
+	geomtools::rotation_3d box_rot;
 	geomtools::create_rotation (box_rot, 0.0, 0.0, 0.0);
 	geomtools::gnuplot_draw::draw_box (std::cout, box_pos, box_rot, 
 					   my_box.get_x (), 

@@ -24,14 +24,14 @@ namespace geomtools {
     __translation = new_value_;
   }
   
-  const rotation & 
+  const rotation_3d & 
   placement::get_rotation () const
   {
     return __rotation;
   }
   
   void 
-  placement::set_orientation (const rotation & new_value_)
+  placement::set_orientation (const rotation_3d & new_value_)
   {
     __rotation = new_value_;
     __inverse_rotation = __rotation.inverse ();
@@ -40,12 +40,12 @@ namespace geomtools {
   void 
   placement::set_orientation (double phi_, double theta_, double delta_)
   {
-    rotation r;
+    rotation_3d r;
     geomtools::create_rotation (r, phi_, theta_, delta_);
     set_orientation (r);
   }
   
-  const rotation & 
+  const rotation_3d & 
   placement::get_inverse_rotation () const
   {
     return __inverse_rotation;
