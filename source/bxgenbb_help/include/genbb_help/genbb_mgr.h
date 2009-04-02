@@ -55,7 +55,8 @@ namespace genbb {
 
     static std::string get_label (int type_);
 
-    void dump (std::ostream & out_ = std::clog) const;
+    void dump (std::ostream & out_ = std::clog, 
+	       const std::string & indent_ = "") const;
 
   };
   
@@ -65,6 +66,50 @@ namespace genbb {
 
     double          time;
     particles_col_t particles;
+    std::string     classification;
+
+    const std::string & get_classification () const
+    {
+      return classification;
+    }
+
+    void set_classification (const std::string & c_)
+    {
+      classification = c_;
+    }
+
+    void reset_classification ()
+    {
+      classification = "";
+    }
+
+    void compute_classification ()
+    {
+      size_t n_eminus = 0;
+      size_t n_eplus = 0;
+      size_t n_gamma = 0;
+      size_t n_alpha = 0;
+      size_t n_others = 0;
+      for (particles_col_t::const_iterator i = particles.begin ();
+	   i != particles.end ();
+	   i++)
+	{
+	  const primary_particle & p = *i;
+	  if (p.is_electron ()) n_eminus++;
+	  else if (p.is_positron ()) n_eplus++;
+	  else if (p.is_gamma ()) n_gamma++;
+	  else if (p.is_alpha ()) n_alpha++;
+	  else n_others++;
+	}
+      std::ostringstream cl_ss;
+      
+      cl_ss << n_eminus << 'e' 
+	    << n_eplus << 'p' 
+	    << n_gamma << 'g' 
+	    << n_alpha << 'a' 
+	    << n_others << 'X'; 
+      set_classification (cl_ss.str ());
+    }
 
     primary_event ()
     {
@@ -80,9 +125,11 @@ namespace genbb {
     {
       time = -1.;
       particles.clear ();
+      classification = "";
     }
 
-    void dump (std::ostream & out_ = std::clog) const;
+    void dump (std::ostream & out_ = std::clog,
+	       const std::string & indent_ = "") const;
 
   };
 
@@ -120,7 +167,7 @@ namespace genbb {
 
     bool has_next ();
 
-    void load_next (primary_event & event_);
+    void load_next (primary_event & event_, bool compute_classification_ = true);
 
     void dump (std::ostream & out_ = std::clog) const;
 

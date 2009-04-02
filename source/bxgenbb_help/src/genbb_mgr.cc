@@ -7,14 +7,17 @@
 namespace genbb {
 
   void 
-  primary_particle::dump (std::ostream & out_) const
+  primary_particle::dump (std::ostream & out_,
+			  const std::string & indent_) const
   {
-    out_ << "genbb::primary_particle:" << std::endl;
-    out_ << "|-- type: " << type << " (" << get_label (type) << ')'
+    std::string indent = indent_;
+    
+    out_ << indent << "genbb::primary_particle:" << std::endl;
+    out_ << indent<< "|-- type: " << type << " (" << get_label (type) << ')'
 	 << std::endl;
-    out_ << "|-- time: " << time / CLHEP::ns 
+    out_ << indent<< "|-- time: " << time / CLHEP::ns 
 	 << " ns" << std::endl;
-    out_ << "`-- momentum: " 
+    out_ << indent<< "`-- momentum: " 
 	 << momentum / CLHEP::MeV 
 	 << " MeV" << std::endl;
   }
@@ -36,18 +39,20 @@ namespace genbb {
   //#include <unistd.h>
 
   void 
-  primary_event::dump (std::ostream & out_) const
+  primary_event::dump (std::ostream & out_,
+		       const std::string & indent_) const
   {
-    out_ << "genbb::primary_event:" << std::endl;
-    out_ << "|-- time: " << time << std::endl;
-    out_ << "|-- #particles: " << particles.size () << std::endl;
+    std::string indent = indent_;
+    out_ << indent << "genbb::primary_event:" << std::endl;
+    out_ << indent << "|-- time: " << time << std::endl;
+    out_ << indent << "|-- #particles: " << particles.size () << std::endl;
     for (particles_col_t::const_iterator it = particles.begin ();
 	 it != particles.end ();
 	 it++)
       {
-	it->dump (out_); 
+	it->dump (out_, (indent + "|   ")); 
       }
-    out_ << "`----------------------------- " << std::endl;
+    out_ << indent << "`-- classification: " << get_classification () << std::endl;
   }
  
   /************************************************************/
@@ -78,9 +83,11 @@ namespace genbb {
   }
   
   void 
-  genbb_mgr::load_next (primary_event & event_)
+  genbb_mgr::load_next (primary_event & event_, 
+			bool compute_classification_)
   {
     event_ = __current;
+    if (compute_classification_) event_.compute_classification ();
     __load_next ();
   }
 
@@ -181,7 +188,7 @@ namespace genbb {
     out_ << "|-- *in : " << std::hex << __in 
 	 << std::dec << std::endl;
     out_ << "`-- current : " << std::endl;
-    __current.dump (out_); 
+    __current.dump (out_, "    "); 
 
   }
 
