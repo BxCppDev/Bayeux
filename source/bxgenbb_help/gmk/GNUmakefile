@@ -111,18 +111,27 @@ DEPLDFLAGS=
 ### Dependencies:
 #DEP_HOOK
 
-# CLHEP dependency:
-#ifeq ($(shell which clhep-config),)
-#$(error Sorry clhep-config not found!)
+# datatools dependency:
+#ifeq ($(shell which datatools-config),)
+#$(error Sorry datatools-config not found!)
 #endif
+#DEPCPPFLAGS+=$(shell datatools-config --include)
+#DEPLDFLAGS+=$(shell datatools-config --libs)
+
+# CLHEP dependency:
+ifeq ($(shell which clhep-config),)
+$(error Sorry clhep-config not found!)
+endif
 DEPCPPFLAGS+=$(shell clhep-config --include)
 DEPLDFLAGS+=$(shell clhep-config --libs)
 
-DEPCPPFLAGS+=$(shell gsl-config --cflags)
-DEPLDFLAGS+=$(shell gsl-config --libs)
-
+# mygsl dependency:
 DEPCPPFLAGS+=$(shell mygsl-config --cflags)
 DEPLDFLAGS+=$(shell mygsl-config --ldflags)
+
+# gsl dependency:
+DEPCPPFLAGS+=$(shell gsl-config --cflags)
+DEPLDFLAGS+=$(shell gsl-config --libs)
 
 #Here you should add stuff for 'CERNLIB':
 #DEPCPPFLAGS+=

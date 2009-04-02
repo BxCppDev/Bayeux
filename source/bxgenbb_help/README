@@ -1,5 +1,6 @@
 This is the 'genbb_help' package README file
 
+
 1 - Description:
 
     GENBB wrapper package.
@@ -10,12 +11,21 @@ This is the 'genbb_help' package README file
     Some reader C++ class (genbb_mgr) enables to use the output
     data file from 'genbb'.
 
+
 2 - Documentation:
 
     Please use the 'scripts/genbb' script:
 
     shell>$ genbb --help
-
+    See also section 5 of this file.
+    
+    Note:
+    2009-04-02 FM:
+    We met some unexplained problems with some no 
+    mandatory Fortran part of the library. 
+    This has been removed.
+    
+    
 
 3 - Installation:
 
@@ -90,6 +100,7 @@ This is the 'genbb_help' package README file
 
      shell>$ genbb_help-config
 
+
 4 - Uninstallation:
 
    To uninstall:
@@ -104,7 +115,28 @@ This is the 'genbb_help' package README file
 
      it will remove object/executable and other dummy files (*~).
 
-5 - Maintenance and bug report:
+
+5 - Usage:
+
+   A configuration file is needed to make genbb generate
+   primary simulation events from the genbb library:
+
+   Typical usage is:
+
+     shell>$ genbb \
+         bipo212.conf \
+         314159 \
+         100 \
+         bipo212_out.data
+
+   Where:
+
+      bipo212.conf      is the configuration file
+      314159            is the random seed
+      100               is the number of generated events
+      bipo212_out.data  is the output data file
+
+6 - Maintenance and bug report:
 
    Francois Mauger <mauger@lpccaen.in2p3.fr>
 

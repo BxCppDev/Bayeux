@@ -117,7 +117,7 @@ float fermi_func_shape_only (float z_, float e_)
 
 float fermi_wrap (float z_, float e_)
 {
-  return fermi_func(z_,e_,false);
+  return fermi_func (z_, e_, false);
 }
 
 // end
