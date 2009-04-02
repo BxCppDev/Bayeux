@@ -1,10 +1,10 @@
 // -*- mode: c++; -*- 
 /* io_factory.cc  
- */
-
+ */ 
+ 
 #include <datatools/serialization/io_factory.h>
 
-namespace datatools {
+namespace datatools { 
   
   namespace serialization {
 

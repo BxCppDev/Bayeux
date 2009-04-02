@@ -224,7 +224,7 @@ build_special :
 
 .PHONY : install
 install : 
-	test "x$(DATATOOLS_NO_EOS_PBA)" = "x1" && make install_no_eos_pba || make install_eos_pba
+	@test "x$(DATATOOLS_NO_EOS_PBA)" = "x1" && make install_no_eos_pba || make install_eos_pba
 
 .PHONY : install_eos_pba
 install_eos_pba :  
@@ -234,7 +234,7 @@ install_eos_pba :
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
 	@ln -s -f $(PACKAGE_ROOT)/pkgtools.d/$(LIBNAME)-config $(BINDIR)/$(LIBNAME)-config
 
-	@echo "installing done."
+	@echo "installing with EOS_PBA done."
 	@echo ""
 
 .PHONY : install_no_eos_pba
@@ -245,7 +245,7 @@ install_no_eos_pba :
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
 	@ln -s -f $(PACKAGE_ROOT)/pkgtools.d/$(LIBNAME)-config $(BINDIR)/$(LIBNAME)-config
 
-	@echo "installing done."
+	@echo "installing without EOS_PBA done."
 	@echo ""
 
 #########################################################################

@@ -1,4 +1,4 @@
-// command.cc
+// command.cc 
   
 #include <datatools/utils/command.h>
 
@@ -10,43 +10,43 @@ namespace datatools {
     const std::string command::LONG_OPTION_PREFIX = "--";
 
     bool 
-    command::is_option (std::string str_)
+    command::token_is_option (const std::string & str_)
     {
       if (str_.empty ()) return false;
       return  (str_[0] == OPTION_PREFIX);
     }
 
     bool 
-    command::is_short_option (std::string str_)
+    command::token_is_short_option (const std::string & str_)
     {
-      if (! is_option (str_)) return false;
-      return ! is_long_option (str_);
+      if (! token_is_option (str_)) return false;
+      return ! token_is_long_option (str_);
     }
 
     bool 
-    command::is_long_option (std::string str_)
+    command::token_is_long_option (const std::string & str_)
     {
-      if (! is_option (str_)) return false;
+      if (! token_is_option (str_)) return false;
       if (str_.substr (0, 2) == LONG_OPTION_PREFIX) return true;
       return false;
     }
 
-    bool command::is_pass (int code_)
+    bool command::code_is_pass (int code_)
     {
       return code_ == PASS;
     }
     
-    bool command::is_error (int code_)
+    bool command::code_is_error (int code_)
     {
-      return (! is_pass (code_)) && (! is_success (code_));
+      return (! code_is_pass (code_)) && (! code_is_success (code_));
     }
     
-    bool command::is_failure (int code_)
+    bool command::code_is_failure (int code_)
     {
-      return is_error (code_);
+      return code_is_error (code_);
     }
     
-    bool command::is_success (int code_)
+    bool command::code_is_success (int code_)
     {
       return code_ == SUCCESS;
     }
@@ -58,7 +58,7 @@ namespace datatools {
     }
 
     bool 
-    command::has_option (std::string opt_) const
+    command::has_option (const std::string & opt_) const
     {
       return (std::find (__options.begin (),
 			 __options.end (), opt_) != __options.end ());
@@ -75,7 +75,7 @@ namespace datatools {
 	   i != arg_tmp.end ();
 	   i++)
 	{
-	  if (is_option (*i))
+	  if (token_is_option (*i))
 	    {
 	      add_option (*i);
 	    }
@@ -123,7 +123,7 @@ namespace datatools {
     }
 
     void 
-    command::set_returns (std::string ret_)
+    command::set_returns (const std::string & ret_)
     {
       __returns = ret_;
     }
@@ -153,10 +153,18 @@ namespace datatools {
     }
   
     void 
-    command::set_error_message (std::string msg_)
+    command::set_error_message (const std::string & msg_)
     {
       __error_message = msg_;
     }
+
+    /*
+    void 
+    command::set_error_message (const char * msg_)
+    {
+      set_error_message (std::string (msg_));
+    }
+    */
 
     int 
     command::get_error_code () const
@@ -171,7 +179,7 @@ namespace datatools {
     }
 
     void 
-    command::set_name (std::string name_)
+    command::set_name (const std::string & name_)
     {
       __name = name_;
     }
@@ -183,7 +191,7 @@ namespace datatools {
     }
 
     void 
-    command::add_argument (std::string arg_)
+    command::add_argument (const std::string & arg_)
     {
       __arguments.push_back (arg_);
     }
@@ -320,9 +328,16 @@ namespace datatools {
     }
     
     void 
-    command::add_option (std::string opt_)
+    command::add_option (const std::string & opt_)
     {
-      __options.push_back (opt_);
+      if (is_with_options ())
+	{
+	  __options.push_back (opt_);
+	}
+      else
+	{
+	  throw std::runtime_error ("command::add_option: Options are not allowed!");
+	}
     }
     
     std::string 
@@ -359,7 +374,7 @@ namespace datatools {
 	  iss >> a_token;
 	  if (iss) 
 	    {
-	      if (is_option (a_token) && is_with_options ()) 
+	      if (token_is_option (a_token) && is_with_options ()) 
 		{
 		  add_option (a_token);
 		}
@@ -383,12 +398,32 @@ namespace datatools {
 	}
     }
   
+    /* 
+    void 
+    command::shift_option (int pos_)
+    {
+      if (pos_<1) return;
+      for (int i=0; i<pos_; i++)
+	{
+	  __options.pop_front ();  
+	}
+    }
+    */
+
     void 
     command::shift ()
     {
       shift_one ();
     }
   
+    /*
+    void 
+    command::shift_option ()
+    {
+      shift_option (0);
+    }
+    */
+
     void 
     command::shift_one ()
     {
@@ -398,7 +433,7 @@ namespace datatools {
     void 
     command::dump (std::ostream & out_) const
     {
-      out_ << "Command: " << std::endl;
+      out_ << "datatools::utils::command: " << std::endl;
       out_ << "|--" << "Name : " << __name << std::endl;
       int i = 0;
       out_ << "|--" << "With options : " 

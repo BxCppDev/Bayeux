@@ -1,5 +1,5 @@
 // -*- mode: c++; -*- 
-/* properties.cc
+/* properties.cc 
  */
 
 #include <datatools/utils/properties.h>
@@ -1140,7 +1140,7 @@ namespace datatools {
     void properties::store (const std::string & key_, 
 			    bool value_, 
 			    const std::string & desc_, 
-			    bool lock_)
+			    bool lock_) 
     {
       __check_nokey (key_);
       __validate_key (key_);
@@ -1935,7 +1935,7 @@ namespace datatools {
 
     void properties::dump (std::ostream & out_) const
     {
-      tree_dump (std::cout, "datatools::utils::properties");
+      tree_dump (out_, "datatools::utils::properties");
     }
 
     void properties::write_config (const std::string & filename_, 

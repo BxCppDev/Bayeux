@@ -27,6 +27,8 @@ tool_mode=""
 do_usage=0
 debug=0
 verbose=0
+
+with_python=1
 ###setup_dir=${HOME}
 
 function err_msg()
@@ -74,6 +76,10 @@ function print_usage()
                             depends on Floating Point Utilities boost vault extension
                           --without-fpu :
                             do not use Floating Point Utilities boost vault extension
+                          --with-python :
+                            with Python wrapper module (default)
+                          --without-python :
+                            without Python wrapper module
 
     $APPNAME build      : build package
     $APPNAME clean      : clean package
@@ -166,6 +172,7 @@ fi
 
 without_eos_pba_flag_file=${the_base_dir}/gmk/datatools_without_eos_pba.config
 without_fpu_flag_file=${the_base_dir}/gmk/datatools_without_fpu.config
+without_python_flag_file=${the_base_dir}/gmk/datatools_without_python.config
 
 if [ -d ${the_base_dir}/gmk ]; then
     GMKDIR=${the_base_dir}/gmk
@@ -177,7 +184,7 @@ python_dir=${the_base_dir}/python
 
 #######################################################
 
-function do_clean_gmk()
+function do_clean_gmk ()
 {
     info_msg "Clean gmk..."
     if [ ! -d ${GMKDIR} ]; then 
@@ -194,7 +201,7 @@ function do_clean_gmk()
 
     ### special Python wrapper/program:
     cd ${python_dir}
-    #make clean
+    make clean
     cd ${GMKDIR}
     ###
 
@@ -267,14 +274,16 @@ function do_build_gmk()
     fi
 
     ### special Python wrapper/program:
-    cd ${python_dir}
-#    make
-#    if [ $? -ne 0 ]; then
-#	cd ${opwd} 
-#	err_msg "Build Python stuff failed!"
-#	return 1
-#    fi
-    cd ${GMKDIR}
+    if [ ! -f ${without_python_flag_file} ]; then
+	cd ${python_dir}
+	make
+	if [ $? -ne 0 ]; then
+	    cd ${opwd} 
+	    err_msg "Build Python stuff failed!"
+	    return 1
+	fi
+	cd ${GMKDIR}
+    fi
     ###
 
     cd ${opwd}
@@ -288,13 +297,23 @@ function do_clean()
     info_msg "Clean package '${pack_name}'..."
     if [ -d ${GMKDIR} ]; then
 	do_clean_gmk $@
-	return $?
+	if [ $? -ne 0 ]; then
+	    error_msg "Clean package '${pack_name}' failed!"
+	    return $?
+	fi
     fi 
+
     opwd=$(pwd)
     cd ${the_base_dir}/boost/vault
+    info_msg "Clean Boost vault contribution ($pwd)..."
     make clean
+    if [ $? -ne 0 ]; then
+	error_msg "Clean Boost vault contribution from '${pack_name}' failed!"
+	return $?
+    fi
+    #read TEST
     cd ${opwd}
-    return 1
+    return 0
 }
 
 function do_configure()
@@ -305,6 +324,14 @@ function do_configure()
     with_fpu=1
     for arg in $@ ; do
 	#echo "Configure with argument '${arg}'..."
+
+	if [ "x${arg}" = "x--with-python" ]; then
+	    with_python=1
+	fi
+
+	if [ "x${arg}" = "x--without-python" ]; then
+	    with_python=0
+	fi
 
 	if [ "x${arg}" = "x--with-eos-pba" ]; then
 	    with_eos_pba=1
@@ -336,6 +363,18 @@ function do_configure()
 	    err_msg "Boost has no version 1.34.1!"
 	    return 1
 	fi
+    fi
+
+    if [ ${with_python} -eq 0 ]; then
+	warning_msg "Do not use Python wrapper module from Boost.Python!"
+
+	cat > ${without_python_flag_file} <<EOF 
+# datatools does not use python wrapper module:
+export DATATOOLS_NO_PYTHON=1
+EOF
+    else
+	warning_msg "Use Python wrapper module from Boost.Python!"
+	test -f ${without_python_flag_file} && rm -f ${without_python_flag_file}
     fi
 
     if [ ${with_eos_pba} -eq 0 ]; then
@@ -380,6 +419,9 @@ function do_build()
 	fi
 	if [ -f ${without_fpu_flag_file} ]; then
 	    source ${without_fpu_flag_file}
+	fi
+	if [ -f ${without_python_flag_file} ]; then
+	    source ${without_python_flag_file}
 	fi
 	do_build_gmk $@
 	return $?
@@ -507,9 +549,11 @@ function do_install()
     fi
 
     ### special Python wrapper/program:
-    cd ${python_dir}
-    #make install
-    cd ${GMKDIR}
+    if [ ! -f ${without_python_flag_file} ]; then
+	cd ${python_dir}
+	make install
+	cd ${GMKDIR}
+    fi
     ###
 
     cd ${opwd}
@@ -532,7 +576,7 @@ function do_uninstall()
 
     ### special Python wrapper/program:
     cd ${python_dir}
-    #make install
+    make uninstall
     cd ${GMKDIR}
     ###
 

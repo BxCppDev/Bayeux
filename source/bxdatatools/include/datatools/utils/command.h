@@ -97,97 +97,73 @@ namespace datatools {
   
       public:
 
-	static bool is_option (std::string str_);
+	static bool token_is_option (const std::string & str_);
 
-	static bool is_short_option (std::string str_);
+	static bool token_is_short_option (const std::string & str_);
 
-	static bool is_long_option (std::string str_);
+	static bool token_is_long_option (const std::string & str_);
 
-	static bool is_pass (int);
+	static bool code_is_pass (int);
 
-	static bool is_error (int);
+	static bool code_is_error (int);
 
-	static bool is_failure (int);
+	static bool code_is_failure (int);
 
-	static bool is_success (int);
+	static bool code_is_success (int);
 
-	bool 
-	  is_with_options () const;
+	bool is_with_options () const;
 
-	bool 
-	  has_option (std::string) const;
+	bool has_option (const std::string &) const;
 
-	int 
-	  get_error_code () const;
+	int get_error_code () const;
 
-	void 
-	  set_returns (std::string ret_ = "");
+	void set_returns (const std::string & ret_ = "");
 
-	std::string 
-	  get_returns () const;
+	std::string get_returns () const;
 
-	std::string 
-	  get_error_message () const;
+	std::string get_error_message () const;
 
-	std::string 
-	  get_name () const;
+	std::string get_name () const;
 
-	std::string 
-	  get_argument (int = 0) const;
+	std::string get_argument (int = 0) const;
 
-	std::string 
-	  get_option (int = 0) const;
+	std::string get_option (int = 0) const;
 
-	bool 
-	  is_pass () const;
+	bool is_pass () const;
 
-	bool
-	  is_error () const;
+	bool is_error () const;
 
-	bool
-	  is_failure () const;
+	bool is_failure () const;
 
-	bool 
-	  is_success () const;
+	bool is_success () const;
 
-	void
-	  set_pass ();
+	void set_pass ();
 
-	void
-	  set_error ();
+	void set_error ();
 
-	void
-	  set_success ();
+	void set_success ();
 
-	void
-	  set_error_code (int = SUCCESS);
+	void set_error_code (int = SUCCESS);
 
-	void 
-	  set_error_message (std::string);
+	void set_error_message (const std::string &);
 
-	void 
-	  set_name (std::string);
+	//void set_error_message (const char *);
 
-	size_t
-	  get_number_of_arguments () const;
+	void set_name (const std::string &);
 
-	void 
-	  add_argument (std::string);
+	size_t get_number_of_arguments () const;
 
-	std::string 
-	  pop_argument ();
+	void add_argument (const std::string &);
 
-	size_t
-	  get_number_of_options () const;
+	std::string pop_argument ();
 
-	void 
-	  add_option (std::string);
+	size_t get_number_of_options () const;
 
-	std::string 
-	  pop_option ();
+	void add_option (const std::string &);
 
-	void  
-	  force_with_options ();
+	std::string pop_option ();
+
+	void force_with_options ();
 
 	command ();
 
@@ -198,48 +174,33 @@ namespace datatools {
 
 	~command ();
 
-	void
-	  reset_output ();
+	void reset_output ();
   
-	void
-	  reset ();
+	void reset ();
   
-	void 
-	  init (const std::string & command_line_);
+	void init (const std::string & command_line_);
   
-	/*
-	void 
-	  init_s (const std::string & command_line_)
+	void init (const std::string & command_line_, bool with_options_);
+
+	void shift ();
+
+	void shift (int);
+
+	void shift_one ();
+
+	void dump (std::ostream & out_ = std::clog) const;
+
+	void dump_def () const
 	  {
-	    init (command_line_);
+	    dump (std::cout);
 	  }
-	*/
-  
-	void 
-	  init (const std::string & command_line_, bool with_options_);
 
-	/*
-	void 
-	  init_sb (const std::string & command_line_, bool with_options_)
+	void dump_stderr () const
 	  {
-	    init (command_line_, with_options_);
+	    dump (std::cerr);
 	  }
-	*/
 
-	void 
-	  shift ();
-
-	void 
-	  shift (int);
-
-	void 
-	  shift_one ();
-
-	void 
-	  dump (std::ostream & out_ = std::clog) const;
-
-	void 
-	  dump_def () const
+	void dump_stdout () const
 	  {
 	    dump (std::cout);
 	  }

@@ -19,6 +19,11 @@ libs="${__PACKAGE_NAME___ROOT}/${system}/lib"
 bins="${__PACKAGE_NAME___ROOT}/${system}/bin"
 
 export PATH="${bins}":${PATH}
+if [ -n "${PYTHONPATH}" ]; then
+    export PYTHONPATH="${__PACKAGE_NAME___ROOT}/python:${PYTHONPATH}"
+else
+    export PYTHONPATH="${__PACKAGE_NAME___ROOT}/python"
+fi 
 
 sysarch=$(uname)
 if [ "${sysarch}" = "Linux" ]; then 

@@ -167,7 +167,7 @@ namespace datatools {
 	  bool is_locked  = false;
 	  int size = 1;
 
-	  for (int i = 0; i < nopts; i++)
+	  for (int i = 0; i < (int) nopts; i++)
 	    {
 	      string opt = command_.get_option (i);
 
@@ -610,7 +610,7 @@ namespace datatools {
       out_ << " dump :         dump the current properties object" << endl;
       out_ << endl;
     }
-
+ 
     int 
     properties_commander::_local_run (command & command_)
     {
@@ -744,7 +744,7 @@ namespace datatools {
 			     << "entering..." << std::endl;
       int err = command::SUCCESS;
       err = _local_run (command_);
-      if (command::is_pass (err))
+      if (command::code_is_pass (err))
 	{
 	  err = command::SUCCESS;
 	  command_.reset_output ();

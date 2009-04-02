@@ -3,9 +3,9 @@
 
 #ifndef __datatools__serialization__io_factory_h
 #define __datatools__serialization__io_factory_h 1
-
+ 
 #include <stdexcept>
-#include <iostream>
+#include <iostream> 
 #include <string>
 #include <sstream>
 #include <fstream>
@@ -45,6 +45,7 @@
 #include <boost/iostreams/filter/gzip.hpp>
 #include <boost/iostreams/filter/bzip2.hpp>
 
+#include <boost/serialization/string.hpp>
 #include <datatools/serialization/i_serializable.h>
 
 #ifdef DATATOOLS_USE_TREE_DUMP
@@ -469,6 +470,7 @@ namespace datatools {
     // user friendly constants used in ctors 
     // for data_reader/data_writer:
     static const bool using_multi_archives = true;
+    static const bool using_multiple_archives = using_multi_archives;
     static const bool using_single_archive = false;
     static const bool append_mode          = true;
     static const bool no_append_mode       = false;
