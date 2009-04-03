@@ -27,18 +27,32 @@ namespace geomtools {
   class gnuplot_draw
   {
   public: 
-    typedef basic_polyline_t polyline_t;
+    typedef basic_polyline_3d polyline_t;
   
   public: 
     static void 
     basic_draw_point (std::ostream &, 
 		      double x_, double y_, double z_,
-		      bool endl_ = true);
+		      bool endl_);
+
+    static void 
+    basic_draw_point (std::ostream & out_, 
+		      double x_, double y_, double z_)
+    {
+      basic_draw_point (out_, x_, y_, z_, true);
+    }
 
     static void 
     basic_draw_point (std::ostream &, 
 		      const vector_3d &,
-		      bool endl_ = true);
+		      bool endl_);
+
+    static void 
+    basic_draw_point (std::ostream & out_, 
+		      const vector_3d & v_)
+    {
+      basic_draw_point (out_, v_, true);
+    }
 
     static void 
     basic_draw_polyline (std::ostream &, 

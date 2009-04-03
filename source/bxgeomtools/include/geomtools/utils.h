@@ -2,7 +2,7 @@
 /* utils.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
- * Last modified: 2008-05-23
+ * Last modified: 2009-03-31
  * 
  * License: 
  * 
@@ -29,13 +29,87 @@
 
 namespace geomtools {
 
-  typedef std::list<vector_3d> basic_polyline_t;
+  typedef std::list<vector_2d> basic_polyline_2d;
+
+  typedef std::list<vector_3d> basic_polyline_3d;
+
+  void 
+  print_xy (std::ostream & out_, 
+	    const vector_2d & p_,
+	    bool endl_ = true);
+
+  std::string to_xy (const vector_2d & p_);
+
+  std::string  vector_2d_to_xy (const vector_2d & p_);
+
+  void 
+  print_xy_stdout (const vector_2d & p_);
+
+  void 
+  print_xy_stderr (const vector_2d & p_);
+
+  /******/
+
+  void 
+  print_xyz (std::ostream & out_, 
+	     const vector_3d & p_,
+	     bool endl_ = true);
+
+  void 
+  print (std::ostream & out_, const vector_3d & p_);
+
+  std::string to_xyz (const vector_3d & p_);
+
+  std::string vector_3d_to_xyz (const vector_3d & p_);
+
+  void 
+  print_xyz_stdout (const vector_3d & p_);
+
+  void 
+  print_xyz_stderr (const vector_3d & p_);
+
+  /******/
+
+  void 
+  print_xy (std::ostream & out_, 
+	     const basic_polyline_2d & p_,
+	     bool endl_ = true);
+
+  std::string to_xy (const basic_polyline_2d & p_);
+
+  std::string basic_polyline_2d_to_xy (const basic_polyline_2d & p_);
+
+  void 
+  print_xy_stdout (const basic_polyline_2d & p_);
+
+  void 
+  print_xy_stderr (const basic_polyline_2d & p_);
+
+  /******/
+
+  void 
+  print_xyz (std::ostream & out_, 
+	     const basic_polyline_3d & p_,
+	     bool endl_ = true);
+
+  std::string to_xyz (const basic_polyline_3d & p_);
+
+  std::string basic_polyline_3d_to_xyz (const basic_polyline_3d & p_);
+
+  void 
+  print_xyz_stdout (const basic_polyline_3d & p_);
+
+  void 
+  print_xyz_stderr (const basic_polyline_3d & p_);
+
+  /******/
 
   enum orientation_type
     {
       VERTICAL   = 0,
       HORIZONTAL = 1
     };
+
 
   enum direction_type
     {
@@ -47,68 +121,105 @@ namespace geomtools {
       TOP    = 5  // +z
     };
 
+
   enum face_3d
     {
       FACE_NONE_BIT = 0x0,
       FACE_ALL_BITS = 0xFFFFFFFF
     };
   
+
   struct constants
   {
     static const int NO_INTERCEPT = -1;
     static const double DEFAULT_TOLERANCE;
   };
 
-  // see also CLHEP/Vector/TwoVector.h and CLHEP/Vector/ThreeVector.h
-  /*
-    enum axis_type
-    {
-    X = 0,
-    Y = 1,
-    Z = 2
-    };
-  */
     
   /* Initialize a rotation matrix for 
    * "World coordinates system->Local coordinates system":
    */
   void
+  create (rotation_3d & rot_,
+	  double phi_,
+	  double theta_,
+	  double delta_);
+  
+  void
+  create_rotation_3d (rotation_3d & rot_,
+		      double phi_,
+		      double theta_,
+		      double delta_);
+
+  void
   create_rotation (rotation_3d & rot_,
 		   double phi_,
 		   double theta_,
 		   double delta_);
-
+  
   void
-  reset_rotation (rotation_3d & rot_);
-    
+  reset (rotation_3d & rot_);
+  
+  void
+  reset_rotation_3d (rotation_3d & rot_);
+  
   void
   tree_dump (const rotation_3d & rot_,
 	     std::ostream & out_, 
 	     const std::string & title_ = "", 
 	     const std::string & indent_ = "");
-  
+
   void 
   invalidate (rotation_3d & rot_);
+  
+  void 
+  invalidate_rotation_3d (rotation_3d & rot_);
 
   bool 
   is_valid (const rotation_3d & rot_);
   
+  bool 
+  is_valid_rotation_3d (const rotation_3d & rot_);
+
+  /******/
+
   void 
   invalidate (vector_3d & vec_);
   
+  void 
+  invalidate_vector_3d (vector_3d & vec_);
+
   bool 
   is_valid (const vector_3d & vec_);
   
-  void 
-  invalidate (vector_2d & vec_);
-  
   bool 
-  is_valid (const vector_2d & vec_);
+  is_valid_vector_3d (const vector_3d & vec_);
 
   bool 
   are_near (const vector_3d & vec1_, 
 	    const vector_3d & vec2_,
 	    double tolerance_ = constants::DEFAULT_TOLERANCE);
+
+  bool 
+  are_near_vector_3d (const vector_3d & vec1_, 
+		      const vector_3d & vec2_,
+		      double tolerance_);
+
+  /*****/
+
+  void 
+  invalidate (vector_2d & vec_);
+  
+  void 
+  invalidate_vector_2d (vector_2d & vec_);
+
+  bool 
+  is_valid (const vector_2d & vec_);
+
+  bool 
+  is_valid_vector_2d (const vector_2d & vec_);
+
+  /*****/
 
   /* the 'ran_func' (functor) must have the following operator
    * defined:
@@ -118,7 +229,7 @@ namespace geomtools {
    */
   template <class ran_func>
   void
-  randomize_direction (ran_func ran_, vector_3d & ran_dir_)
+  randomize_direction (ran_func & ran_, vector_3d & ran_dir_)
   {
     double phi = 2. * M_PI * ran_ ();
     double cos_theta = -1 + 2 * ran_ ();
@@ -129,9 +240,10 @@ namespace geomtools {
     ran_dir_.set (x, y, z);
   }
 
+
   template <class ran_func>
   vector_3d
-  randomize_direction (ran_func ran_)
+  randomize_direction (ran_func & ran_)
   {
     vector_3d dir;
     randomize_direction (ran_, dir);
@@ -147,7 +259,7 @@ namespace geomtools {
    */
   template <class ran_func>
   void
-  randomize_orthogonal_direction (ran_func ran_, 
+  randomize_orthogonal_direction (ran_func & ran_, 
 				  const vector_3d & dir_, 
 				  vector_3d & ran_dir_)
   {
@@ -162,21 +274,23 @@ namespace geomtools {
     std::clog << "phi (dir) = " 
 	      << 180.* dir_phi / M_PI << "°"  << std::endl;
     rotation_3d dir_rot;
-    create_rotation (dir_rot, dir_phi, dir_theta, 0.0);
+    create_rotation_3d (dir_rot, dir_phi, dir_theta, 0.0);
     rotation_3d dir_inverse_rot;
     dir_inverse_rot = dir_rot.inverse ();
     vector_3d v (dx, dy, dz);
     ran_dir_ = v.transform (dir_inverse_rot); // XXX
   }
     
+
   template <class ran_func>
   vector_3d
-  randomize_orthogonal_direction (ran_func ran_, const vector_3d & ref_dir_)
+  randomize_orthogonal_direction (ran_func & ran_, const vector_3d & ref_dir_)
   {
     vector_3d dir;
     randomize_direction (ran_, ref_dir_, dir);
     return dir;
   }
+
 
   class rotation_wrapper_t : public rotation_3d
   {
@@ -184,10 +298,11 @@ namespace geomtools {
     rotation_wrapper_t (double mxx_, double mxy_, double mxz_, 
 			double myx_, double myy_, double myz_,
 			double mzx_, double mzy_, double mzz_) 
-     : rotation_3d (mxx_, mxy_, mxz_, 
-		 myx_, myy_, myz_,
-		 mzx_, mzy_, mzz_) {}
+      : rotation_3d (mxx_, mxy_, mxz_, 
+		     myx_, myy_, myz_,
+		     mzx_, mzy_, mzz_) {}
   };
+
 
   class intercept_t
   {
@@ -261,6 +376,14 @@ namespace geomtools {
     }
 
   };
+
+  struct io
+  {
+    static const std::string VECTOR_2D_SERIAL_TAG;
+    static const std::string VECTOR_3D_SERIAL_TAG;
+    static const std::string ROTATION_3D_SERIAL_TAG;
+  };
+
 } // end of namespace geomtools
 
 
@@ -309,6 +432,7 @@ namespace serialization {
 } // namespace serialization
 } // namespace boost
 
+
 // serialization stuff for CLHEP 'vector_2d':
 namespace boost {
 namespace serialization {
@@ -349,6 +473,7 @@ namespace serialization {
 
 } // namespace serialization
 } // namespace boost
+
 
 // serialization stuff for CLHEP 'rotation':
 namespace boost {

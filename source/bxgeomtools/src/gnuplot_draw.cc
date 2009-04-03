@@ -37,7 +37,7 @@ namespace geomtools {
 	 i != pl_.end ();
 	 ++i) 
       {
-	basic_draw_point (out_, *i, true);
+	basic_draw_point (out_, *i);
       }
     out_ << std::endl;
   }
@@ -47,8 +47,8 @@ namespace geomtools {
 			   const vector_3d & start_ , 
 			   const vector_3d & stop_)
   {
-    basic_draw_point (out_, start_, true);
-    basic_draw_point (out_, stop_, true);
+    basic_draw_point (out_, start_);
+    basic_draw_point (out_, stop_);
     out_ << std::endl;
   }
 

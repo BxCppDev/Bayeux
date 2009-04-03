@@ -41,7 +41,7 @@ namespace geomtools {
   placement::set_orientation (double phi_, double theta_, double delta_)
   {
     rotation_3d r;
-    geomtools::create_rotation (r, phi_, theta_, delta_);
+    geomtools::create_rotation_3d (r, phi_, theta_, delta_);
     set_orientation (r);
   }
   

@@ -28,7 +28,7 @@ namespace geomtools {
       static const bool open   = OPEN;
       static const bool DEFAULT_CLOSED = OPEN;
 
-      typedef basic_polyline_t point_col;
+      typedef basic_polyline_3d point_col;
 
     private:
       bool      __closed;
@@ -63,10 +63,10 @@ namespace geomtools {
       virtual const std::string & get_serial_tag () const;
 
       // inefficient algorithm:
-      void make_vertex_collection (basic_polyline_t &) const;
+      void make_vertex_collection (basic_polyline_3d &) const;
 
       // inefficient algorithm:
-      basic_polyline_t make_vertex_collection () const;
+      basic_polyline_3d make_vertex_collection () const;
 
     private:
       friend class boost::serialization::access; 

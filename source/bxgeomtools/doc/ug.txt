@@ -1,0 +1,38 @@
+geomtools User's Guide
+
+
+
+
+       
+  Typedefs from the CLHEP library:
+
+  Basics utils.h:
+    geomtools::vector_2d
+    geomtools::vector_3d
+    geomtools::rotation_3d
+    + utilities for serialization, I/O and manipulation
+
+  Gnuplot dataset format print driver:
+    geomtools::gnuplot_draw
+
+  Geometrical 3D objects:
+    geomtools::line_3d
+    geomtools::polyline_3d		
+    geomtools::helix_3d
+
+  3D shape interface:
+    geomtools::i_shape_3d
+      geomtools::box
+      geomtools::cylinder
+      geomtools::sphere
+      geomtools::tube
+      geomtools::i_composite_shape_3d
+        geomtools::union_3d
+        geomtools::subtraction_3d
+        geomtools::intersection_3d
+
+
+
+
+--
+	    

@@ -32,7 +32,7 @@ main (int argc_, char ** argv_)
 	  pl.add (p);
 	}
 
-      basic_polyline_t bpl = pl.make_vertex_collection ();
+      basic_polyline_3d bpl = pl.make_vertex_collection ();
       gnuplot_draw::basic_draw_polyline (cout, bpl);
 
       

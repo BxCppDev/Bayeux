@@ -6,7 +6,7 @@
 
 namespace geomtools {
 
-  const std::string polyline_3d::SERIAL_TAG = "__polyline_3d__";
+  const std::string polyline_3d::SERIAL_TAG = "__geomtools::polyline_3d__";
 
   const std::string & polyline_3d::get_serial_tag () const
   {
@@ -115,7 +115,7 @@ namespace geomtools {
   }
 
   void 
-  polyline_3d::make_vertex_collection (basic_polyline_t & bpl_) const
+  polyline_3d::make_vertex_collection (basic_polyline_3d & bpl_) const
   {
     bpl_.clear ();
     for (int i = 0; i < get_number_of_vertex (); i++)
@@ -124,10 +124,10 @@ namespace geomtools {
       }
   }
 
-  basic_polyline_t 
+  basic_polyline_3d 
   polyline_3d::make_vertex_collection () const
   {
-    basic_polyline_t bpl;
+    basic_polyline_3d bpl;
     make_vertex_collection (bpl);
     return bpl;
   }
