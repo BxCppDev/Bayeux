@@ -219,6 +219,13 @@ namespace geomtools {
   bool 
   is_valid_vector_2d (const vector_2d & vec_);
 
+
+  void 
+  vector_2d_to_vector_3d (const vector_2d & v2d_, vector_3d & v3d_);
+
+  void 
+  vector_3d_to_vector_2d (const vector_3d & v3d_, vector_2d & v2d_);
+
   /*****/
 
   /* the 'ran_func' (functor) must have the following operator
