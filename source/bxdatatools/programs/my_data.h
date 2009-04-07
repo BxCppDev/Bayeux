@@ -33,6 +33,11 @@ class data_t : public datatools::utils::i_tree_dumpable,
       __dval = 3.14;
     }
 
+  virtual ~data_t ()
+    {
+      __dvals.clear ();
+    }
+
   data_t ()
     {
       init ();
@@ -132,6 +137,10 @@ class more_data_t : public data_t
     : data_t (c_, i_, d_, n_)
     {
       __name=name_;
+    }
+
+  virtual ~more_data_t ()
+    {
     }
 
   const std::string & name () const { return __name; }
