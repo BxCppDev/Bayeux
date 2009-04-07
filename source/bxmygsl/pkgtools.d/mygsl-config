@@ -207,7 +207,7 @@ if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
     exit 0
 fi 
 
-echo "$SCRIPTNAME: error: Unknown option!" 
+echo "$SCRIPTNAME: error: Unknown option '${opt}'!" 
 $0 --help
 exit 1
 
