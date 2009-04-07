@@ -23,6 +23,8 @@ sh_ss=${pack_name_lower}.sh
 csh_ss=${pack_name_lower}.csh
 the_base_dir=.
 
+export DATATOOLS_ROOT=${the_base_dir}
+
 tool_mode=""
 do_usage=0
 debug=0
