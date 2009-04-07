@@ -14,7 +14,9 @@ struct data_t : public datatools::utils::i_tree_dumpable
   double x;
   std::string name;
 
-  data_t() : i(0) , x(3.145) , name("Hello, world!") {}
+  data_t () : i(0) , x(3.145) , name("Hello, world!") {}
+
+  virtual ~data_t () {};
 
   virtual void tree_dump( std::ostream & out_         = std::cerr , 
 			  const std::string & title_  = "" ,
@@ -41,6 +43,7 @@ struct more_data_t : public data_t
 {
   int log;
   more_data_t() : data_t() , log(1) {}
+  virtual ~more_data_t () {};
   virtual void tree_dump( std::ostream & out_         = std::cerr , 
 			  const std::string & title_  = "" ,
 			  const std::string & indent_ = "",
