@@ -61,6 +61,11 @@ This is the 'datatools' package README file
 
 	shell> ./pkgtools.d/pkgtool configure --without-eos-pba
 
+    Without 'Boost Python wrapper module' support,
+    (we have problems with 64 bits machine at CC):
+
+	shell> ./pkgtools.d/pkgtool configure --without-python
+
 
   Build shared library:
 
@@ -108,4 +113,4 @@ This is the 'datatools' package README file
     Arnaud Chapon <chapon@lpccaen.in2p3.fr>
 
 --
-Last update: 2009-03-11 by Francois Mauger <mauger@lpccaen.in2p3.fr>
+Last update: 2009-04-07 by Francois Mauger <mauger@lpccaen.in2p3.fr>
