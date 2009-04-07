@@ -1,0 +1,381 @@
+<!doctype HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!--
+(C) Copyright 2009 François Mauger <mauger@lpccaen.in2p3.fr>.
+Use, modification and distribution is subject to the Boost Software
+License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
+http://www.boost.org/LICENSE_1_0.txt)
+-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" type="text/css" href="../boost.css">
+<link rel="stylesheet" type="text/css" href="style.css">
+<title>Serialization - Using multiple archives within one file</title> 
+</head>
+<body link="#0000ff" vlink="#800080">
+<table border="0" cellpadding="7" cellspacing="0" width="100%" summary="header">
+  <tr> 
+    <td valign="top" width="300"> 
+<!--<h3><a href="../../../index.htm"><img height="86" -->
+<!--width="277" alt="C++ Boost" src="../boost.png" -->
+<!--border="0"></a></h3>-->
+      <img src="../boost.png">
+    </td>
+
+    <td valign="top"> 
+      <h1 align="center">Serialization</h1>
+      <h2 align="center">Using multiple archives within one file</h2>
+    </td>
+  </tr>
+</table>
+
+<hr>
+<dl class="page-index">
+<dt><a href="#Introduction">Introduction</a>
+<dt><a href="#Object_tracking_issues">Object tracking issues</a>
+<dt><a href="#Brute_force_approach">Brute force approach</a>
+<dt><a href="#A_smart_approach">A smart approach: using multiple archives per storage stream/file</a>
+<dt><a href="#Sample_code">Sample code</a>
+<dt><a href="#Disclaimer">Disclaimer</a>
+<dt><a href="#Acknowledgements">Acknowledgements</a>
+</dl>
+
+<a href="Introduction"></a>
+<h3>Introduction</h3>
+
+<p>
+The <i>Boost Serialization</i>
+<!--<a href="http://www.boost.org/doc/libs/1_38_0/libs/serialization/doc/index.html"
+target="_empty">Boost.Serialization</a>--> 
+library offers powerful tools to
+store/load arbitrary data using dedicated formatted medium objects known as
+<i>archives</i>. Archives are attached to 
+input/output streams. This naturally enables the use of
+<i>filestreams</i> 
+as privileged data storage devices. The Boost Serialization library implements a few
+formatted input/ouput archives: <i>Text</i>, <i>XML</i> and <i>Portable binary</i>
+rendering format. Archives supporting other rendering formats can be designed by the programmer.
+</p>
+
+<p>
+This note concerns a special serialization strategy based on Boost
+archives. I refer to it as the <i>multiple archives per stream</i>
+approach. Let's first explain the motivations for this work.
+
+</p>
+
+<a href="Object_tracking_issues"></a>
+<h3>Object tracking issues</h3>
+
+<p>
+The Boost Serialization library has a special mechanism known as
+<i>object  tracking</i>. It  enables  to store/load data in  a smart  and
+efficient way whenever some class instances are addressed by dynamically allocated memory
+and referenced through pointers within a sophisticated data model. 
+With this mechanism activated, one may avoid the duplication of
+storage for a saved <i>datum</i> (typically an instance of a class) 
+taht is managed through
+different handlers (pointers) to be saved too.  
+On the other hand, during archive loading process, it also
+restores properly and dynamically pointers referencing the datum as
+the unique source of shared data which is deserialized only once. 
+</p>
+
+<p>
+Nevertheless,  the use  of  the useful  and  powerful object  tracking
+mechanism  may have some  nasty side-effects.   Depending of  the data
+model to be stored and  without special care, some data corruption can
+(will) occur along the serialization process.  This  is because the
+ tracking  has  a  special  policy  that  triggers  the
+serialization of  data stored from  some memory location only  if this
+memory location  has not been visited  before.  It means  that during the
+serialization process,  if some dynamically  allocated memory location
+has been previously  used to handle data <tt>X</tt>  which has already
+been serialized,  the reuse  of this memory  location for  anoter data
+<tt>Y</tt> is  likely to corrupt  the storage/load flow  of <tt>Y</tt>
+for the memory tracking algorithm will consider <tt>Y</tt> as the same
+data  as  <tt>X</tt>,  even  if  <tt>Y</tt> has  nothing  to  do  with
+<tt>X</tt>. This generally induces loss  of data that exists in memory
+but is <i>skipped</i> by the memory tracker which may silently reconstruct
+some wrong references to data.  Of course, this is not what we
+want!
+</p>
+
+<p>
+To  illustrate  a  case  of  interest, assume  we  have  many  objects
+<tt>A</tt>,  <tt>B</tt>...<tt>Z</tt> to  be serialized,  each  of them
+implementing a complex data  model with internal dynamically allocated
+sub-objects      (let's      call      them    <tt>a<sub>A</sub></tt>,
+<tt>b<sub>A</sub></tt>...<tt>z<sub>A</sub></tt>   for  the  <tt>A</tt>
+object   and  so   on).    More  the   <tt>A</tt>   object  may   host
+reference pointers to its sub-objects, justifying the need for the
+object tracking approach.  We assume also
+there  is  no  cross-reference  between  the memory  scopes  owned  by
+meta-instances   <tt>A</tt>,  <tt>B</tt>...<tt>Z</tt>  which   so  are
+completely independant.   The medium where(from)  we store(load) data
+would have the following layout:
+
+<ul> 
+
+<li> Opening of the serialization stream,
+
+<li> The beginning of the Boost archive attached to the stream,
+
+<li> <tt>A</tt>: Instance of a complex data model with many internal pointers
+ referencing   other  dynamically  allocated  internal  objects
+<tt>a<sub>A</sub></tt>, <tt>b<sub>A</sub></tt>...
+
+<li>
+<tt>B</tt>: Another  instance of the  complex data model with  its own
+dynamically   allocated   internal  objects   (<tt>a<sub>B</sub></tt>,
+<tt>b<sub>B</sub></tt>...),  possibly  reusing  some memory  locations
+previously  visited  by the  serialization  process for  <tt>A</tt>...
+
+<li> <tt>C</tt>: Yet another one, likely to reuse accidentally some memory locations
+formerly addressed by <tt>A</tt> or <tt>B</tt> instance's internals... 
+
+<li> ...  
+
+<li><tt>Z</tt>: The last instance that likely uses some memory
+location used for <tt>A</tt>, <tt>B</tt>, <tt>C</tt>... 
+
+<li> The end of the Boost archive, 
+
+<li> Closing the serialization stream. 
+
+</ul>
+</p>
+
+<p>
+In such a case, we are likely to experience data corruption
+for  one never  can  predict the  behaviour of  the
+memory allocation  mechanism. We  cannot garantee that  some memory
+address used within the <tt>A</tt> object and then freed 
+will <b>never</b> be reused by some invocation of the
+<tt>new</tt>     operator    while     building     the    <tt>B</tt>,
+<tt>C</tt>... objects. 
+So the serialization process may be confused by underlying the memory tracking
+algorithm. 
+An already visited and  serialized memory location for <tt>A</tt> will
+be considered as already serialized if met again in <tt>B</tt>.
+The  effect  becomes  more  an  more probable  as  we  serialize  many
+instances  with such  complex and  dynamic internals.  Finally  we may
+experience some strange and bad cumulative effect through serialization of the
+whole set of data:
+<tt>B</tt>  having  its internals  initialized  with sub-objects  from
+<tt>A</tt>. No need to say it is really not what we want! 
+</p>
+
+
+<p>
+Of course, the object tracking  mechanism can be deactivated on demand
+by the  user on a per-class  basis. However there  are reasons
+why one does not want to proceed without tracking.  For a class
+released within  a library,  one cannot reasonably  assume/enforce the
+strategy  used by  end-users for  serializing instances  of  this class
+within his/her own application. Particularly, object tracking has nice
+and efficient features which the user may wish to rely on.  So we are left
+with this dilemna: we need the object tracking mechanism on 
+but we don't want the data corruption damages that come with it 
+as described above. 
+</p>
+
+<a href="Brute_force_approach"></a>
+<h3>Brute force approach</h3>
+
+<p>
+A solution  to this  problem consists in  the usage of  some container
+&mdash; STL  ones can be used  for that purpose &mdash;  that hosts at
+the same time <b>all</b> fully allocated instances (and internals) 
+to be serialized. This approach can be splitted in several steps: 
+
+<ol> 
+
+<li>Declare the container,
+
+<li>Fill the container with objects properly initialized ( <tt>A</tt>,
+<tt>B</tt>... <tt>Z</tt>). One garantees that no dynamically allocated
+memory location  is reused skipping  from <tt>A</tt> to  <tt>B</tt> or
+<tt>C...</tt>  instance  because  sub-objects  <tt>a<sub>A</sub></tt>,
+<tt>b<sub>A</sub></tt>... <tt>a<sub>B</sub></tt>,
+<tt>b<sub>B</sub></tt>... simultaneously coexists in memory at
+different locations. As no memory is freed till the end of the
+serialization, the state ot the memory related to our data is frozen and we should not
+experience memory tracking confusion. 
+
+<li>Initialize the archive, 
+
+<li>Traverse the container and serialize  all items in it (<b>without any</b>
+modification of internal allocated memory during this iterative process),<br> 
+or:
+<br> serialize  the  container if
+Boost serialization provides support for this (<code>std::map</code>, <code>std::list</code>...), 
+<br>
+The archive is thus a static picture of the memory layout of the whole
+data set,
+
+<li>Terminate the archive, 
+
+<li>Clear the container and objects in it.  
+
+</ol> 
+
+This is generally safe.  However, this strategy has counterparts: 
+
+<ul>
+
+<li>One must know in advance the full set of objects to be serialized,
+
+<li>One cannot modify the dataset (free/allocate internal memory)
+as soon as the serialization process is running,
+
+<li>The full set of objects must be stored in memory and it may 
+induce a huge memory footprint!  
+Particularly, during the serialization iterative processe,
+there is no hope to delete parts of 
+previously serialized objects in order to save memory storage 
+without taking a strong risk of data corruption,
+
+<li>Object tracking implies the book keeping  of many, many memory
+locations  at   the  cost  of  some  inefficiency   (this  point  needs
+confirmation from Robert Ramey).  
+
+</ul> 
+
+It is obvious that within some applications (asynchronous source/flow of
+data,  memory  limitation...),  this   brute  force  approach  is  not
+satisfactory.
+</p>
+
+
+<a href="A_smart_approach"></a>
+<h3>A smart approach: using multiple archives per storage stream/file</h3>
+
+<p>
+Now it's time to describe a simple but still elegant strategy to work around
+what one may call <i>far memory scope tracking data corruption
+effects</i> (note that the term <i>far</i> is very subjective and should be
+understood
+as <i>not confined</i>).  
+It relies on the following observation: memory tracking
+is <i>confined</i> within archives.
+It means that if some complex data structure <tt>A</tt> (with nested dynamically
+allocated  internal sub-objects)  is serialized through its  own archive,
+there is no risk of data corruption by the memory traking process if another instance
+<tt>B</tt> is  serialized through a different  archive: memory traking
+is reset at each new archive creation. 
+
+
+
+<p>
+A  new serialization  strategy  is then  proposed  with the  following
+layout for the serialization medium:
+
+<ul> 
+
+<li> Opening of the serialization stream,
+
+<li> Beginning of a Boost archive attached to the stream and dedicated to <tt>A</tt>,
+
+<li> <tt>A</tt>: Instance  of a complex data model  with many pointers
+in  it  referencing   other  dynamically  allocated  internal  objects
+(<tt>a<sub>A</sub></tt>, <tt>b<sub>A</sub></tt>...),
+
+<li> The end of the Boost archive dedicated to <tt>A</tt>,
+
+
+<li> Beginning  of a  Boost archive still  attached to  the continuing
+stream
+and now dedicated to <tt>B</tt>,
+
+<tt>B</tt>: Another  instance of the  complex data model with  its own
+dynamically   allocated   internal  objects   (<tt>a<sub>B</sub></tt>,
+<tt>b<sub>B</sub></tt>...),  possibly  reusing  some memory  locations
+previously  visited  by the  serialization  process for  <tt>A</tt>...
+
+<li> The end of the Boost archive dedicated to <tt>B</tt>,
+
+<li> ...
+
+<li> Beginning of a Boost archive for <tt>Z</tt>,
+
+<li><tt>Z</tt>: Serialization of the last instance,
+
+<li> The end of the Boost archive dedicated to <tt>Z</tt>,
+
+<li> Closing the serialization stream. 
+
+</ul>
+
+This approach  still takes benefit  of memory traking  features within
+each successive archives, ensuring confinement of memory tracking in the
+memory  footprint  of  a   single  meta-object.  But no  data  corruption  is
+experienced  as  the  nasty  side-effect  of  unavoidable  dynamically
+allocated memory  reusage. On can  safely reuse the same  instance (at
+same memory location) to iterate
+through the serialization process. Data can be manipulated between
+serialization actions. That make easy  and safe the use of an iterative
+loop with reasonable small memory footprint:
+<ol>
+<li>create a unique object,
+<li>manipulate the object,
+<li>create the archive,
+<li>store the object within its own archive,
+<li>terminate the archive,
+<li>manipulate the object,
+<li>loop to the first step...
+</ol>,
+</p>
+
+<p>
+What about performances as we now use one archive per object?
+Well, it depends on many factors, but typically, if the meta-objects
+<tt>A</tt>, <tt>B</tt>... are so huge and numerous, the memory footprint
+due to the use of many archives is rather negligible on the storage
+medium (archive header and footer are small).
+Probably one should get CPU advantages concerning the memory tracking process 
+because the memory size and associated combinatory is reduced within each
+archive.
+More, objects being isolated within their own archives stored in
+the same stream, it is quite easy to concatenate different
+such serialization streams or split one in several smaller ones.
+</p>
+
+<p>
+Of course,  the <i>multiple archives per file</i>  strategy makes only
+sense if  one does  not need  the memory tracking  to be  activated in
+order to care about cross-references between <tt>A</tt>, <tt>B</tt> 
+and whatever other meta-instances in the program. 
+</p>
+
+<a href="Sample_code"></a>
+<h3>Sample code</h3>
+
+
+
+
+
+<a href="Disclaimer"></a>
+<h3>Disclaimer</h3>
+
+This note and sample code coming with it are provided as is
+in the hope it could be useful, no more, no less.
+Do not count on a miracle! I believe only your work may 
+make your code working (and maybe the world a better place).
+
+<a href="Acknowledgements"></a>
+<h3>Acknowledgements</h3>
+
+Many thanks to Robert Ramey, the father of Boost.Serialization,
+for fruitful discussions.
+
+<hr>
+<p>
+<i>&copy; Copyright <a class="external" href="mailto:mauger@lpccaen.in2p3.fr">François
+Mauger</a> 2009. 
+Distributed under the Boost Software License, 
+Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at 
+http://www.boost.org/LICENSE_1_0.txt) </i>
+</p>	
+</body>
+</html>
