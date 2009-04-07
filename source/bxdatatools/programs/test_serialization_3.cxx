@@ -110,7 +110,7 @@ main (int argc_, char ** argv_)
       // safe_serial
       datatools::serialization::safe_serial<data_t> ss_data;
 
-      for (int i = 0; i < nrecords; i++) 
+      for (int i = 0; i < (int) nrecords; i++) 
 	{
 	  if (debug) std::clog << "DEBUG: Counts = " << i << std::endl;
 	  ss_data.make ();
