@@ -68,7 +68,7 @@ main (int argc_ , char ** argv_)
 	    if (command_str.empty ()) continue;
 	    du::command the_command;
 	    the_command.init (command_str);
-	    if (du::command::is_error (the_pc.run (the_command)))
+	    if (du::command::code_is_error (the_pc.run (the_command)))
 	      {
 		std::string msg = the_command.get_error_message ();
 		if (msg.empty ()) msg = "<no message>";

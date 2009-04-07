@@ -45,7 +45,6 @@ main (int argc_, char ** argv_)
     {
 
     bool debug = false;
-    long seed  = 12345;
     std::string filename = "";
     size_t nrecords = 3;
 
@@ -55,7 +54,6 @@ main (int argc_, char ** argv_)
 	FORMAT_XML = 1, 
 	FORMAT_BIN = 2
       };
-    int fmt   = FORMAT_XML;
     bool test = false;
 
     int iarg = 1;
