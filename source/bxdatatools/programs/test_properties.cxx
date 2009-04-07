@@ -7,7 +7,8 @@
 #include <exception>
 
 #include <datatools/serialization/io_factory.h>
-#include <datatools/serialization/boost_io_serialization.h>
+
+#include <datatools/serialization/serialization.h>
 
 #include <datatools/utils/properties.h>
 
