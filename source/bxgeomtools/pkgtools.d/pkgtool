@@ -29,29 +29,34 @@ debug=0
 verbose=0
 ###setup_dir=${HOME}
 
-function err_msg()
+function err_msg ()
 {
     echo "${APPNAME} (${pack_name}): ERROR: $@" 1>&2
 }
 
-function warning_msg()
+function warning_msg ()
 {
     echo "${APPNAME} (${pack_name}): WARNING: $@" 1>&2
 }
 
-function info_msg()
+function info_msg ()
 {
     test ${verbose} -eq 0 && return
     echo "${APPNAME} (${pack_name}): INFO: $@" 1>&2
 }
 
-function debug_msg()
+function notice_msg ()
+{
+    echo "${APPNAME} (${pack_name}): NOTICE: $@" 1>&2
+}
+
+function debug_msg ()
 {
     test ${debug} -eq 0 && return
     echo "${APPNAME} (${pack_name}): DEBUG: $@"
 }
 
-function print_usage()
+function print_usage ()
 {
     cat <<EOF
 
@@ -256,13 +261,39 @@ function do_clean()
     return 1
 }
 
-function do_configure()
+function do_configure ()
 {
-    info_msg "Configure package '${pack_name}': nothing special..."
-    echo "Configure package '${pack_name}': nothing special..."
+    #info_msg "Configure package '${pack_name}': Checking dependencies..."
+    ##echo "Configure package '${pack_name}': Checking dependencies..."
+    notice_msg "Configure package '${pack_name}': Checking dependencies..."
+
+    which clhep-config 2>&1 > /dev/null
+    if [ $? -ne 0 ]; then
+	error_msg "CLHEP seems not to be setup!"
+	return 1
+    else
+	notice_msg "CLHEP ($(clhep-config --version)) seems to be properly setup!"
+    fi
+
+    which gsl-config 2>&1 > /dev/null
+    if [ $? -ne 0 ]; then
+	error_msg "GSL seems not to be setup!"
+	return 1
+    else
+	notice_msg "GSL ($(gsl-config --version)) seems to be properly setup!"
+    fi
+
+    which datatools-config 2>&1 > /dev/null
+    if [ $? -ne 0 ]; then
+	error_msg "datatools seems not to be setup!"
+	return 1
+    else
+	notice_msg "datatools ($(datatools-config --version)) seems to be properly setup!"
+    fi
+    return 0
 }
 
-function do_build()
+function do_build ()
 {
     info_msg "Build package '${pack_name}'..."
     if [ -d ${GMKDIR} ]; then
@@ -357,7 +388,7 @@ EOF
 #     return 0
 # }
 
-function kill_startup()
+function kill_startup ()
 {
     cat<<EOF
 Don't forget to remove environment variables in your startup scripts.
@@ -379,7 +410,7 @@ EOF
 #     rm -f ${the_base_dir}/${csh_ss}
 # }
 
-function do_install()
+function do_install ()
 {
     debug_msg "do_install: Entering..."
     info_msg "Install package '${pack_name}'..."
@@ -397,7 +428,7 @@ function do_install()
     return 0
 }
 
-function do_uninstall()
+function do_uninstall ()
 {
     info_msg "Uninstall package '${pack_name}'... The"
     opwd=$(pwd)
@@ -412,7 +443,7 @@ function do_uninstall()
     return 0
 }
 
-function do_info()
+function do_info ()
 {
     pkg_version="undefined"
     pkg_lang="undefined"

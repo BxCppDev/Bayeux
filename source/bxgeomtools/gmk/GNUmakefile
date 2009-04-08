@@ -73,9 +73,9 @@ DEPLDFLAGS=
 #DEP_HOOK
 
 # GSL dependency:
-#ifeq ($(shell which gsl-config),)
-#$(error Sorry gsl-config not found!)
-#endif
+ifeq ($(shell which gsl-config),)
+$(error Sorry gsl-config not found!)
+endif
 DEPCPPFLAGS+=$(shell gsl-config --cflags)
 DEPLDFLAGS+=$(shell gsl-config --libs)
 

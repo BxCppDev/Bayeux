@@ -108,6 +108,7 @@ if [ "x$opt" = "x--cflags" ]; then
     echo -n \
         "-fPIC " \
 	"-I${THEPACK_INCLUDEDIR} "  \
+         "`datatools-config --cflags` "  \
          "`clhep-config --include` "  \
          "`gsl-config --cflags` "  | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py
 
@@ -156,6 +157,7 @@ fi
 
 if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
   echo -n "-L${THEPACK_LIBDIR} -lgeomtools "  \
+         "`datatools-config --ldflags` "  \
          "`clhep-config --libs` "  \
          "`gsl-config --libs` "  | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
 
