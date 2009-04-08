@@ -111,27 +111,37 @@ DEPLDFLAGS=
 ### Dependencies:
 #DEP_HOOK
 
+# geomtools dependency:
+ifeq ($(shell which geomtools-config),)
+$(error Sorry geomtools-config not found!)
+endif
+DEPCPPFLAGS+=$(shell geomtools-config --cflags)
+DEPLDFLAGS+=$(shell geomtools-config --ldflags)
+
 # datatools dependency:
 #ifeq ($(shell which datatools-config),)
 #$(error Sorry datatools-config not found!)
 #endif
-#DEPCPPFLAGS+=$(shell datatools-config --include)
-#DEPLDFLAGS+=$(shell datatools-config --libs)
+#DEPCPPFLAGS+=$(shell datatools-config --cflags)
+#DEPLDFLAGS+=$(shell datatools-config --ldflags)
 
 # CLHEP dependency:
-ifeq ($(shell which clhep-config),)
-$(error Sorry clhep-config not found!)
-endif
-DEPCPPFLAGS+=$(shell clhep-config --include)
-DEPLDFLAGS+=$(shell clhep-config --libs)
+#ifeq ($(shell which clhep-config),)
+#$(error Sorry clhep-config not found!)
+#endif
+#DEPCPPFLAGS+=$(shell clhep-config --include)
+#DEPLDFLAGS+=$(shell clhep-config --libs)
 
 # mygsl dependency:
+ifeq ($(shell which mygsl-config),)
+$(error Sorry mygsl-config not found!)
+endif
 DEPCPPFLAGS+=$(shell mygsl-config --cflags)
 DEPLDFLAGS+=$(shell mygsl-config --ldflags)
 
 # gsl dependency:
-DEPCPPFLAGS+=$(shell gsl-config --cflags)
-DEPLDFLAGS+=$(shell gsl-config --libs)
+#DEPCPPFLAGS+=$(shell gsl-config --cflags)
+#DEPLDFLAGS+=$(shell gsl-config --libs)
 
 #Here you should add stuff for 'CERNLIB':
 #DEPCPPFLAGS+=

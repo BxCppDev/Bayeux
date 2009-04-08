@@ -6,6 +6,13 @@
 
 namespace genbb {
 
+  const std::string primary_particle::SERIAL_TAG = "__genbb::primary_particle__";
+
+  const std::string & primary_particle::get_serial_tag () const
+  {
+    return primary_particle::SERIAL_TAG;
+  }
+
   void 
   primary_particle::dump (std::ostream & out_,
 			  const std::string & indent_) const
@@ -36,7 +43,13 @@ namespace genbb {
   }
  
   /************************************************************/
-  //#include <unistd.h>
+
+  const std::string primary_event::SERIAL_TAG = "__genbb::primary_event__";
+
+  const std::string & primary_event::get_serial_tag () const
+  {
+    return primary_event::SERIAL_TAG;
+  }
 
   void 
   primary_event::dump (std::ostream & out_,

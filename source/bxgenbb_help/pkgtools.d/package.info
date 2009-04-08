@@ -4,7 +4,7 @@ name=genbb_help
 version=0.1.0
 language=C++
 namespace=genbb
-dependencies=CERNLIB CLHEP
+dependencies=geomtools mygsl CERNLIB CLHEP
 creation=2009-01-12
 author=Francois Mauger <mauger@lpccaen.in2p3.fr>
 # end of package.info

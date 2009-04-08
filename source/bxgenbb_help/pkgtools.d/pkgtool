@@ -48,6 +48,11 @@ function info_msg()
     echo "${APPNAME} (${pack_name}): INFO: $@" 1>&2
 }
 
+function notice_msg ()
+{
+    echo "${APPNAME} (${pack_name}): NOTICE: $@" 1>&2
+}
+
 function debug_msg()
 {
     test ${debug} -eq 0 && return
@@ -268,7 +273,7 @@ function do_build_gmk()
 
 #######################################################
 
-function do_clean()
+function do_clean ()
 {
     info_msg "Clean package '${pack_name}'..."
     if [ -d ${GMKDIR} ]; then
@@ -278,22 +283,61 @@ function do_clean()
     return 1
 }
 
-function do_configure()
+function do_configure ()
 {
     info_msg "Configure package '${pack_name}': setting F77 compiler..."
 
+    which geomtools-config 2>&1 > /dev/null
+    if [ $? -ne 0 ]; then
+	error_msg "geomtools seems not to be setup!"
+	return 1
+    else
+	notice_msg "geomtools ($(geomtools-config --version)) seems to be properly setup!"
+    fi
+
+    which mygsl-config 2>&1 > /dev/null
+    if [ $? -ne 0 ]; then
+	error_msg "mygsl seems not to be setup!"
+	return 1
+    else
+	notice_msg "mygsl ($(mygsl-config --version)) seems to be properly setup!"
+    fi
+
+    which clhep-config 2>&1 > /dev/null
+    if [ $? -ne 0 ]; then
+	error_msg "CLHEP seems not to be setup!"
+	return 1
+    else
+	notice_msg "CLHEP ($(clhep-config --version)) seems to be properly setup!"
+    fi
+
+    which cernlib 2>&1 > /dev/null
+    if [ $? -ne 0 ]; then
+	error_msg "CERNLIB seems not to be setup!"
+	return 1
+    else
+	if [ "x${CERN_ROOT}" = "x" ]; then
+	    error_msg "CERN_ROOT path is not setup!"
+	    return 1
+	else
+	    notice_msg "CERNLIB seems to be properly setup!"
+	fi
+    fi
+
     if [ ${use_gfortran} -eq 1 ]; then
-	info_msg "Package '${pack_name}' build will use 'gfortran'"
+	notice_msg "Package '${pack_name}' build will use 'gfortran'"
 	F77_COMP=gfortran
     fi
     if [ ${use_g77} -eq 1 ]; then
 	F77_COMP=g77
-	info_msg "Package '${pack_name}' build will use 'g77'"
+	notice_msg "Package '${pack_name}' build will use 'g77'"
     fi
     echo "export F77_COMP=${F77_COMP}" > ${the_base_dir}/.${pack_name}.conf
+    notice_msg "File '${the_base_dir}/.${pack_name}.conf' has been generated."
+    return 0
 }
 
-function do_build()
+function do_build ()
 {
     info_msg "Build package '${pack_name}'..."
     if [ -f ${the_base_dir}/.${pack_name}.conf ]; then

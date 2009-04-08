@@ -2,7 +2,7 @@
 /* genbb_mgr.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2009-01-19
- * Last modified: 2009-01-19
+ * Last modified: 2009-04-02
  * 
  * License: 
  * 
@@ -28,29 +28,53 @@
 #include <CLHEP/Units/PhysicalConstants.h>
 #include <CLHEP/Vector/ThreeVector.h>
 
+#include <datatools/serialization/serialization.h>
+#include <geomtools/utils.h>
+
 namespace genbb {
 
-  struct primary_particle
+  struct primary_particle 
+    : public datatools::serialization::i_serializable 
   {
-    int               type;
-    double            time;
-    CLHEP::Hep3Vector momentum;
+  public:
+    
+    static const std::string SERIAL_TAG;
+    
+    virtual const std::string & get_serial_tag () const;
+    
+    enum particle_type
+      {
+	UNDEF = -1,
+	GAMMA = 1,
+	POSITRON = 2,
+	ELECTRON = 3,
+	ALPHA = 47
+      };
+
+  public:
+    
+    int                  type;
+    double               time;
+    geomtools::vector_3d momentum;
 
     bool is_gamma () const
     {
-      return type == 1;
+      return type == GAMMA;
     }
+
     bool is_positron () const
     {
-      return type == 2;
+      return type == POSITRON;
     }
+
     bool is_electron () const
     {
-      return type == 3;
+      return type == ELECTRON;
     }
+
     bool is_alpha () const
     {
-      return type == 47;
+      return type == ALPHA;
     }
 
     static std::string get_label (int type_);
@@ -58,10 +82,31 @@ namespace genbb {
     void dump (std::ostream & out_ = std::clog, 
 	       const std::string & indent_ = "") const;
 
+  private:
+    friend class boost::serialization::access; 
+    template<class Archive>
+    void serialize (Archive            & ar_, 
+                    const unsigned int   version_)
+    {
+      ar_ & boost::serialization::make_nvp ("type", type);
+      ar_ & boost::serialization::make_nvp ("time", time);
+      ar_ & boost::serialization::make_nvp ("momentum", momentum);
+    }
+
   };
+
+  /*******************/
   
   struct primary_event
+    : public datatools::serialization::i_serializable 
   {
+  public:
+    
+    static const std::string SERIAL_TAG;
+    
+    virtual const std::string & get_serial_tag () const;
+    
+  public:
     typedef std::list<primary_particle> particles_col_t;
 
     double          time;
@@ -131,7 +176,20 @@ namespace genbb {
     void dump (std::ostream & out_ = std::clog,
 	       const std::string & indent_ = "") const;
 
+  private:
+    friend class boost::serialization::access; 
+    template<class Archive>
+    void serialize (Archive            & ar_, 
+                    const unsigned int   version_)
+    {
+      ar_ & boost::serialization::make_nvp ("time", time);
+      ar_ & boost::serialization::make_nvp ("particles", particles);
+      ar_ & boost::serialization::make_nvp ("classification", classification);
+    }
+
   };
+
+  /*******************/
 
   class genbb_mgr
   {
