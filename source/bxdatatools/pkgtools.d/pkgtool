@@ -51,6 +51,11 @@ function info_msg()
     echo "${APPNAME} (${pack_name}): INFO: $@" 1>&2
 }
 
+function notice_msg ()
+{
+    echo "${APPNAME} (${pack_name}): NOTICE: $@" 1>&2
+}
+
 function debug_msg()
 {
     test ${debug} = 0 && return
@@ -368,21 +373,28 @@ function do_configure ()
 
     done
 
+    notice_msg "Configure package '${pack_name}': Checking dependencies..."
+
     which boost-config > /dev/null
     if [ $? -ne 0 ]; then
 	err_msg "The 'boost_help' package is not setup!"
 	return 1
     else
-	info_msg "The 'boost_help' package seems ok!"
 	if [ ${boost_version_check} -eq 1 ]; then
 	    boost_version=$(boost-config --version)
 	    if [ "x${boost_version}" != "x${enforced_boost_version}" ]; then
 		err_msg "Boost has no version ${enforced_boost_version}!"
 		return 1
+	    else
+		notice_msg "The 'boost_help' package seems ok with Boost version ${boost_version}"
 	    fi
 	fi
     fi
+    echo "Wait a while..." 1>&2
+    sleep 1
+    notice_msg "Configure package '${pack_name}': Special setup..."
 
+    notice_msg "Configure package '${pack_name}': Python setup..."
     if [ ${with_python} -eq 0 ]; then
 	warning_msg "Do not use Python wrapper module from Boost.Python!"
 
@@ -391,10 +403,11 @@ function do_configure ()
 export DATATOOLS_NO_PYTHON=1
 EOF
     else
-	warning_msg "Use Python wrapper module from Boost.Python!"
+	notice_msg "Use Python wrapper module from Boost.Python!"
 	test -f ${without_python_flag_file} && rm -f ${without_python_flag_file}
     fi
 
+    notice_msg "Configure package '${pack_name}': Portable Binary Archives (EOS) setup..."
     if [ ${with_eos_pba} -eq 0 ]; then
 	warning_msg "Do not use Portable Binary Archives from the Boost vault!"
 
@@ -403,11 +416,12 @@ EOF
 export DATATOOLS_NO_EOS_PBA=1
 EOF
     else
-	warning_msg "Use Portable Binary Archives from the Boost vault!"
+	notice_msg "Use Portable Binary Archives from the Boost vault!"
 	test -f ${without_eos_pba_flag_file} && rm -f ${without_eos_pba_flag_file}
 	with_fpu=1
     fi
 
+    notice_msg "Configure package '${pack_name}': Floating Point Utilities setup..."
     if [ ${with_fpu} -eq 0 ]; then
 	warning_msg "Do not use Floating Point Utilities from the 'Boost/vault' package!"
 
@@ -416,7 +430,7 @@ EOF
 export DATATOOLS_NO_FPU=1
 EOF
     else
-	warning_msg "Use Floating Point Utilities from the Boost/vault!"
+	notice_msg "Use Floating Point Utilities from the Boost/vault!"
 	test -f ${without_fpu_flag_file} && rm -f ${without_fpu_flag_file}
 	opwd=$(pwd)
 	cd ${the_base_dir}/boost/vault
@@ -425,6 +439,7 @@ EOF
 	cd ${opwd}
     fi
 
+    notice_msg "Configure package '${pack_name}': done."
     return 0
 }
 
