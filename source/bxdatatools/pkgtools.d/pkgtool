@@ -32,7 +32,8 @@ do_usage=0
 debug=0
 verbose=0
 
-python_version=2.5
+default_python_version=2.5
+python_version=${default_python_version}
 with_python=1
 ###setup_dir=${HOME}
 
@@ -187,6 +188,7 @@ fi
 without_eos_pba_flag_file=${the_base_dir}/gmk/datatools_without_eos_pba.config
 without_fpu_flag_file=${the_base_dir}/gmk/datatools_without_fpu.config
 without_python_flag_file=${the_base_dir}/gmk/datatools_without_python.config
+python_version_flag_file=${the_base_dir}/gmk/datatools_python_version.config
 
 if [ -d ${the_base_dir}/gmk ]; then
     GMKDIR=${the_base_dir}/gmk
@@ -396,6 +398,7 @@ function do_configure ()
 		return 1
 	    else
 		notice_msg "The 'boost_help' package seems ok with Boost version ${boost_version}"
+		boost_python_version="$(boost-config --python-version)"
 	    fi
 	fi
     fi
@@ -412,12 +415,19 @@ function do_configure ()
 export DATATOOLS_NO_PYTHON=1
 EOF
     else
+	if [ "x${python_version}" != "x${boost_python_version}" ]; then
+	    err_msg "Unmatching Python version with Boost! Boost uses Python ${boost_python_version}!"
+	    return 1
+	else
+	    notice_msg "Python version ${python_version} matches with the one used by Boost (${boost_python_version})!"
+	fi 
 	which python${python_version}-config 2>&1 > /dev/null
 	if [ $? -ne 0 ]; then
 	    err_msg "Python ${python_version} is not setup!"
 	    return 1
 	else
 	    notice_msg "Python ${python_version} is setup!"
+	    echo "${python_version}" > ${python_version_flag_file}
 	fi
 	notice_msg "Use Python wrapper module from Boost.Python!"
 	test -f ${without_python_flag_file} && rm -f ${without_python_flag_file}

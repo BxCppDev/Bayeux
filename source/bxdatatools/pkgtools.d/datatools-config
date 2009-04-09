@@ -62,6 +62,8 @@ if [ "x$opt" = "x--help" -o "x$opt" = "x-h" -o "x$opt" = "x-?" ]; then
     help=1
 fi
 
+python_version_flag_file=${THEPACK_ROOT}/gmk/datatools_python_version.config
+
 if [ $help -eq 1 ]; then
     cat<<EOF
 Usage: $SCRIPTNAME [OPTION]
@@ -80,6 +82,7 @@ Known values for OPTION are:
   --help                print this help then exit
   --version             print version information
   --system              print system
+  --python-version      print Python version
 
 EOF
     exit 1
@@ -150,6 +153,15 @@ if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
 	"`boost-config --ldflags serialization iostreams filesystem` " 
     echo
 #      "`liblockfile-config --ldflags` "  
+    exit 0
+fi 
+
+if [ "x$opt" = "x--python-version" ]; then
+    if [ -f ${python_version_flag_file} ]; then
+	cat ${python_version_flag_file}
+    else
+	exit 1
+    fi
     exit 0
 fi 
 
