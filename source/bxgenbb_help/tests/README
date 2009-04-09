@@ -1,0 +1,19 @@
+2009-04-09 FM: test_beta
+------------------------
+
+shell> ./pkgtools.d/pkgtool build test_beta.f77.exe
+
+shell> echo -e "314159\n10000" | ./Linux-i686/bin/test_beta.f77.exe  > beta.data
+
+shell> cat beta.data | gsl-histogram 0 4 400 > beta.his
+
+gnuplot> plot 'beta.his' u 1:3 with histeps
+
+Ooops! It's flat!!!!  Grrr!
+
+subroutine beta calls subroutine particle
+
+
+--
+
+

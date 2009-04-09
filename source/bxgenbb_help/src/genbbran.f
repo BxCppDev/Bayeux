@@ -2,6 +2,7 @@
       implicit none
       integer*4 seed_, code
       integer*4 rng_shoot_reset
+      !print *, 'genbbran.f: set_random_seed: invoke "rng_shoot_reset"'
       code = rng_shoot_reset (seed_)
       return
       end
