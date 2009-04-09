@@ -32,6 +32,7 @@ do_usage=0
 debug=0
 verbose=0
 
+python_version=2.5
 with_python=1
 ###setup_dir=${HOME}
 
@@ -56,13 +57,13 @@ function notice_msg ()
     echo "${APPNAME} (${pack_name}): NOTICE: $@" 1>&2
 }
 
-function debug_msg()
+function debug_msg ()
 {
     test ${debug} = 0 && return
     echo "${APPNAME} (${pack_name}): DEBUG: $@"
 }
 
-function print_usage()
+function print_usage ()
 {
     cat <<EOF
 
@@ -87,9 +88,11 @@ function print_usage()
                             do not use Floating Point Utilities boost vault extension
                           --with-python :
                             with Python wrapper module (default)
+                          --with-python-version VERSION :
+                            with Python version VERSION (default: 2.5)
                           --without-python :
                             without Python wrapper module
-                          --boost-version 1_34_1 : force Boost version (default 1_34_1)
+                          --boost-version 1_34_1 : force Boost version (default: 1_34_1)
                           --no-boost-version-check : skip Boost version check
 
     $APPNAME build      : build package
@@ -340,6 +343,12 @@ function do_configure ()
 	    with_python=1
 	fi
 
+	if [ "x${arg}" = "x--with-python-version" ]; then
+	    shift 1
+	    python_version=$1
+	    with_python=1
+	fi
+
 	if [ "x${arg}" = "x--without-python" ]; then
 	    with_python=0
 	fi
@@ -375,7 +384,7 @@ function do_configure ()
 
     notice_msg "Configure package '${pack_name}': Checking dependencies..."
 
-    which boost-config > /dev/null
+    which boost-config 2>&1 > /dev/null
     if [ $? -ne 0 ]; then
 	err_msg "The 'boost_help' package is not setup!"
 	return 1
@@ -403,6 +412,13 @@ function do_configure ()
 export DATATOOLS_NO_PYTHON=1
 EOF
     else
+	which python${python_version}-config 2>&1 > /dev/null
+	if [ $? -ne 0 ]; then
+	    err_msg "Python ${python_version} is not setup!"
+	    return 1
+	else
+	    notice_msg "Python ${python_version} is setup!"
+	fi
 	notice_msg "Use Python wrapper module from Boost.Python!"
 	test -f ${without_python_flag_file} && rm -f ${without_python_flag_file}
     fi
@@ -434,8 +450,8 @@ EOF
 	test -f ${without_fpu_flag_file} && rm -f ${without_fpu_flag_file}
 	opwd=$(pwd)
 	cd ${the_base_dir}/boost/vault
-	make clean
-	make 
+	make clean 2>&1 > /dev/null
+	make 2>&1 > /dev/null 
 	cd ${opwd}
     fi
 
