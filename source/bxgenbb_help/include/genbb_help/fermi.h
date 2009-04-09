@@ -18,7 +18,7 @@ extern "C"
   
   float fermi_func (float z_, float e_, bool use_l0_ = false);
 
-  float fermi_wrap (float z_, float e_);
+  float fermi_wrap (float * z_, float * e_);
 
 }
 

@@ -115,9 +115,14 @@ float fermi_func_shape_only (float z_, float e_)
     * exp (M_PI * y + 2. * lnr);
 }
 
-float fermi_wrap (float z_, float e_)
+float fermi_wrap (float * z_, float * e_)
 {
-  return fermi_func (z_, e_, false);
+  using namespace std;
+  //cerr << "DEVEL: fermi_wrap: z_=" << *z_ << endl;
+  //cerr << "DEVEL: fermi_wrap: e_=" << *e_ << endl;
+  float res = fermi_func (*z_, *e_, false);
+  //cerr << "DEVEL: fermi_wrap: res=" << res << endl;
+  return res;
 }
 
 // end

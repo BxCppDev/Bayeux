@@ -21,8 +21,8 @@ c     test_beta.F
       !print * , '# Enter nshoots: '
       read * , nshoots
       call set_random_seed (seed)
-      Qbeta = 3.0
-      Zdtr  = 6.0
+      Qbeta = 3.270
+      Zdtr  = 84.0
       tcnuc = 0.0
       thnuc = 1.0
       me    = 0.511
