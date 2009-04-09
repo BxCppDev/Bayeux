@@ -22,7 +22,9 @@
 
 
 #include <datatools/serialization/i_serializable.h>
-#include <datatools/serialization/serialization.h>
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/nvp.hpp>
+
 #include <datatools/utils/i_tree_dump.h>
 #include <datatools/utils/i_clear.h>
 #include <datatools/utils/properties.h>

@@ -32,13 +32,11 @@
 
 #include <boost/cstdint.hpp>
 
-//#include <boost/serialization/serialization.hpp>
 #include <boost/serialization/map.hpp>
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/string.hpp>
 
 #include <datatools/serialization/i_serializable.h>
-//#include <datatools/serialization/serialization.h>
 
 #include <datatools/utils/i_tree_dump.h>
 #include <datatools/utils/i_clear.h>
