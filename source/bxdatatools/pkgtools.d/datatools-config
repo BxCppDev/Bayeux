@@ -82,7 +82,11 @@ Known values for OPTION are:
   --help                print this help then exit
   --version             print version information
   --system              print system
+  --with-python         print if Python module is used
   --python-version      print Python version
+  --with-fpu            print if Floating Point Utility is used
+  --with-eos-pba        print if Portable Binary Archive (EOS) is used
+  --boost-version       print Boost version
 
 EOF
     exit 1
@@ -156,12 +160,39 @@ if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
     exit 0
 fi 
 
+if [ "x$opt" = "x--with-eos-pba" ]; then
+    echo "${with_boost_eos_pba}"
+    exit 0
+fi 
+
+if [ "x$opt" = "x--with-fpu" ]; then
+    echo "${with_boost_fpu}"
+    exit 0
+fi 
+
 if [ "x$opt" = "x--python-version" ]; then
     if [ -f ${python_version_flag_file} ]; then
 	cat ${python_version_flag_file}
     else
+	echo -n "2.5"
+	echo -n " (assumed)" >&2
+	echo ""
 	exit 1
     fi
+    exit 0
+fi 
+
+if [ "x$opt" = "x--with-python" ]; then
+    if [ -f ${python_version_flag_file} ]; then
+	echo "1"
+    else
+	echo "0"
+    fi
+    exit 0
+fi 
+
+if [ "x$opt" = "x--boost-version" ]; then
+    boost-config --version
     exit 0
 fi 
 
