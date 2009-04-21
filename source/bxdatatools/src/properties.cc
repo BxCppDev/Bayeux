@@ -946,8 +946,7 @@ namespace datatools {
     }
 
     void properties::clean (const std::string & key_)
-    {
-      
+    { 
       pmap::iterator found = __props.find (key_);
       if (found != __props.end ())
 	{

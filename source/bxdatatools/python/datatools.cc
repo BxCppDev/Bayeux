@@ -191,6 +191,10 @@ BOOST_PYTHON_MODULE (datatools)
 
   class_<datatools::utils::properties> ("properties", init<> ())
     .def(init<const std::string &>())
+    .def("is_debug", 
+	 &datatools::utils::properties::is_debug)
+    .def("set_debug", 
+	 &datatools::utils::properties::set_debug)
     .def("get_description", 
 	 &datatools::utils::properties::get_description,
 	 return_internal_reference<>())
@@ -242,6 +246,10 @@ BOOST_PYTHON_MODULE (datatools)
 	 &datatools::utils::properties::update_flag)
     .def("store_flag", 
 	 &datatools::utils::properties::store_flag, dup_store_flag ())
+    .def("set_flag", 
+	 &datatools::utils::properties::set_flag)
+    .def("unset_flag", 
+	 &datatools::utils::properties::unset_flag)
     .def("fetch_boolean", dup_fetch_boolean, dup_fetch_boolean_overloads ())
     .def("fetch_integer", dup_fetch_integer, dup_fetch_integer_overloads ())
     .def("fetch_real",    dup_fetch_real,    dup_fetch_real_overloads ())

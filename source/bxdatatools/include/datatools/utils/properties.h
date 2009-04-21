@@ -518,6 +518,18 @@ namespace datatools {
 		  bool lock_ = false);
 
       void
+      set_flag (const std::string & key_)
+      {
+	store_flag (key_, "", false);
+      }
+
+      void
+      unset_flag (const std::string & key_)
+      {
+	clean (key_);
+      }
+
+      void
       store (const std::string & key_, 
 	     bool value_, 
 	     const std::string & desc_ = "",
@@ -982,14 +994,9 @@ namespace datatools {
       build_property_key (const std::string & prefix_ ,
 			  const std::string & subkey_);
       
-      //BOOST_CLASS_EXPORT_GUID (properties, "datatools::utils::properties")
-
     };
 
   } // end of namespace utils 
-
-    //BOOST_CLASS_EXPORT_GUID (datatools::utils::properties, "datatools::utils::properties")
-    //BOOST_CLASS_EXPORT_GUID (datatools::utils::properties::data, "datatools::utils::properties::data")
 
 } // end of namespace datatools 
 

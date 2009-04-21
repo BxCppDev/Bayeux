@@ -469,7 +469,7 @@ EOF
     return 0
 }
 
-function do_build()
+function do_build ()
 {
     info_msg "Build package '${pack_name}'..."
     if [ -d ${GMKDIR} ]; then
@@ -508,71 +508,6 @@ You may source these scripts at startup time
 EOF
 }
 
-# function do_startup()
-# {
-#     rm -f ${the_base_dir}/${sh_ss}
-#     cat > ${the_base_dir}/${sh_ss} <<EOF
-# # Startup script for package ${pack_name}:
-
-# export ${pack_name_upper}_ROOT="$(pwd)"
-# export PATH=\${PATH}:"\${${pack_name_upper}_ROOT}/bin"
-# uname_s=\$(uname -s)
-# uname_m=\$(uname -m | sed -e 's/ //g')
-# libs="\${${pack_name_upper}_ROOT}/\${uname_s}-\${uname_m}/lib"
-
-# sysarch=\$(uname)
-# if [ "\${sysarch}" = "Linux" ]; then 
-#   if [ -n "\${LD_LIBRARY_PATH}" ]; then
-#     export LD_LIBRARY_PATH="\${LD_LIBRARY_PATH}:\${libs}"
-#   else
-#     export LD_LIBRARY_PATH="\${libs}"
-#   fi 
-# fi
-
-# if [ "\${sysarch}" = "Darwin" ]; then 
-#   if [ -n "\${DYLD_LIBRARY_PATH}" ]; then
-#     export DYLD_LIBRARY_PATH="\${DYLD_LIBRARY_PATH}:\${libs}"
-#   else
-#     export DYLD_LIBRARY_PATH="\${libs}"
-#   fi 
-# fi
-
-# # end
-# EOF
-#     rm -f ${the_base_dir}/${csh_ss}
-#     cat > ${the_base_dir}/${csh_ss} <<EOF
-# # Startup script for package ${pack_name}:
-
-# setenv ${pack_name_upper}_ROOT "$(pwd)"
-
-# setenv PATH "\${PATH}:\${${pack_name_upper}_ROOT}/bin"
-
-# set uname_s=$(echo '`')uname -s$(echo '`')
-# set uname_m=$(echo '`')uname -m | sed -e 's/ //g'$(echo '`')
-# set libs="\${${pack_name_upper}_ROOT}/\${uname_s}-\${uname_m}/lib"
-
-# set sysarch=$(echo '`')uname$(echo '`')
-# if ( \${sysarch} == Linux ) then 
-#   if (  \$?LD_LIBRARY_PATH ) then
-#     setenv LD_LIBRARY_PATH "\${LD_LIBRARY_PATH}:\${libs}"
-#   else
-#     setenv LD_LIBRARY_PATH "\${libs}"
-#   endif 
-# endif
-
-# if ( \${sysarch} == Darwin ) then 
-#   if (  \$?DYLD_LIBRARY_PATH ) then
-#     setenv DYLD_LIBRARY_PATH "\${DYLD_LIBRARY_PATH}:\${libs}"
-#   else
-#     setenv DYLD_LIBRARY_PATH "\${libs}"
-#   endif 
-# endif
-
-# # end
-# EOF
-#     return 0
-# }
-
 function kill_startup()
 {
     cat<<EOF
@@ -589,13 +524,7 @@ and
 EOF
 }
 
-# function kill_startup()
-# {
-#     rm -f ${the_base_dir}/${sh_ss}
-#     rm -f ${the_base_dir}/${csh_ss}
-# }
-
-function do_install()
+function do_install ()
 {
     debug_msg "do_install: Entering..."
     info_msg "Install package '${pack_name}'..."
@@ -622,7 +551,7 @@ function do_install()
     return 0
 }
 
-function do_uninstall()
+function do_uninstall ()
 {
     info_msg "Uninstall package '${pack_name}'... The"
     opwd=$(pwd)
@@ -644,7 +573,7 @@ function do_uninstall()
     return 0
 }
 
-function do_info()
+function do_info ()
 {
     pkg_version="undefined"
     pkg_lang="undefined"

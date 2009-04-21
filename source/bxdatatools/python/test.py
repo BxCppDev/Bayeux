@@ -23,9 +23,11 @@ def test () :
 	p.set_description ("Configuration")
 	p.store_flag ("debug")
 	p.store_flag ("buggy")
+	p.set_flag ("nada")
 	p.store_boolean ("Done", False, "Completeness")
 	p.store_real ("Pi", 3.14159, "The Pi constant")
 	p.dump_stdout ()
+	p.unset_flag ("nada")
 
 	if p.has_key ("toto") :
 		print "p has 'toto'!"
@@ -34,6 +36,7 @@ def test () :
 
 	x = p.fetch_real ("Pi")
 	print "x = ", x
+	p.dump_stdout ()
 		
 
 
