@@ -67,8 +67,8 @@ namespace geomtools {
   bool 
   is_valid (const vector_2d & vec_)
   {
-    double qnan = std::numeric_limits<double>::quiet_NaN();
-    return ((vec_.x () != qnan) && (vec_.y () != qnan));
+    //double qnan = std::numeric_limits<double>::quiet_NaN();
+    return ((vec_.x () == vec_.x ()) && (vec_.y () == vec_.y ()));
   }
 
   bool 
@@ -150,8 +150,8 @@ namespace geomtools {
   bool 
   is_valid (const vector_3d & vec_)
   {
-    double qnan = std::numeric_limits<double>::quiet_NaN();
-    return (vec_.x () != qnan) && (vec_.y () != qnan) && (vec_.z () != qnan);
+    //double qnan = std::numeric_limits<double>::quiet_NaN();
+    return (vec_.x () == vec_.x ()) && (vec_.y () == vec_.y () ) && (vec_.z () == vec_.z ());
   }
 
   bool 
@@ -272,6 +272,15 @@ namespace geomtools {
     rot_ = geomtools::rotation_3d ();
     double qnan = std::numeric_limits<double>::quiet_NaN();
     double * xx_addr = static_cast<double *>(static_cast<void *> (&rot_));
+    double * last_addr = xx_addr + 9;
+    for (double * p = xx_addr; p < last_addr; p++)
+      {
+	*p = 0.0;
+      }
+    *xx_addr = qnan;
+    xx_addr+=4;
+    *xx_addr = qnan;
+    xx_addr+=4;
     *xx_addr = qnan;
   }
 
@@ -284,8 +293,7 @@ namespace geomtools {
   bool 
   is_valid (const rotation_3d & rot_)
   {
-    double qnan = std::numeric_limits<double>::quiet_NaN();
-    return (rot_.xx() != qnan);
+    return (rot_.xx() == rot_.xx());
   }
 
   bool 

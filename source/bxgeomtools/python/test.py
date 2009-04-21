@@ -35,13 +35,32 @@ def test () :
 	r1 = rotation_3d ()
 	create_rotation_3d (r1, PI, PI/3, 0)
 	print "r1=", r1
+	if is_valid_rotation_3d (r1) :
+		print "r1 is valid"
+	else:
+		print "r1 is not valid"
 
+	reset_rotation_3d (r1)
+	print "r1 (reset)=", r1
+	
+	invalidate_rotation_3d (r1)
+	print "r1 (invalidate)=", r1
+	if is_valid_rotation_3d (r1) :
+		print "r1 is valid"
+	else:
+		print "r1 is not valid"
 	v4 = r1 * v3
 	print "v4=", v4
 	
+	invalidate_vector_3d (v2)
+	print "v2 (invalidate)=", v2
+	if is_valid_vector_3d (v2) :
+		print "v2 is valid"
+	else:
+		print "v2 is not valid"
 
 if __name__ == '__main__':
-	sys.stdout.write ("geomtools: running Test.py\n" % ())
+	sys.stdout.write ("geomtools: running test.py\n" % ())
 	test ()
 	sys.exit (0)
 

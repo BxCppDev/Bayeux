@@ -28,6 +28,9 @@ do_usage=0
 debug=0
 verbose=0
 ###setup_dir=${HOME}
+default_python_version=2.5
+python_version=${default_python_version}
+with_python=1
 
 function err_msg ()
 {
@@ -70,6 +73,12 @@ function print_usage ()
 
     $APPNAME info       : print package info
     $APPNAME configure  : configure package (not implemented)
+                          --with-python :
+                            with Python wrapper module (default)
+                          --with-python-version VERSION :
+                            with Python version VERSION (default: 2.5)
+                          --without-python :
+                            without Python wrapper module
     $APPNAME build      : build package
     $APPNAME clean      : clean package
     $APPNAME install    : install package
@@ -153,6 +162,11 @@ else
     err_msg "Please run 'pkgtools.d/pkgtool' from the base package directory!"
     exit 1    
 fi
+
+without_python_flag_file=${the_base_dir}/gmk/geomtools_without_python.config
+python_version_flag_file=${the_base_dir}/gmk/geomtools_python_version.config
+python_dir=${the_base_dir}/python
+
 #echo "Base package directory is '${the_base_dir}'!"
 if [ -d ${the_base_dir}/gmk ]; then
     GMKDIR=${the_base_dir}/gmk
@@ -163,7 +177,7 @@ fi
 
 #######################################################
 
-function do_clean_gmk()
+function do_clean_gmk ()
 {
     info_msg "Clean gmk..."
     if [ ! -d ${GMKDIR} ]; then 
@@ -177,11 +191,22 @@ function do_clean_gmk()
 	cd ${opwd}
 	return 1
     fi
+
+    ### special Python wrapper/program:
+    cd ${python_dir}
+    make clean
+    cd ${GMKDIR}
+
+    test -f ${without_python_flag_file} && rm -f ${without_python_flag_file}
+    test -f ${python_version_flag_file} && rm -f ${python_version_flag_file}
+
+    ###
+
     cd ${opwd}
     return 0
 }
 
-function do_build_gmk()
+function do_build_gmk ()
 {
     info_msg "Build gmk..."
     if [ ! -d ${GMKDIR} ]; then 
@@ -244,6 +269,19 @@ function do_build_gmk()
             return 1
         fi
     fi
+
+    ### special Python wrapper/program:
+    if [ ! -f ${without_python_flag_file} ]; then
+	cd ${python_dir}
+	make
+	if [ $? -ne 0 ]; then
+	    cd ${opwd} 
+	    err_msg "Build Python stuff failed!"
+	    return 1
+	fi
+	cd ${GMKDIR}
+    fi
+    ###
     
     cd ${opwd}
     return 0
@@ -263,8 +301,26 @@ function do_clean()
 
 function do_configure ()
 {
-    #info_msg "Configure package '${pack_name}': Checking dependencies..."
-    ##echo "Configure package '${pack_name}': Checking dependencies..."
+    info_msg "Configure package '${pack_name}'..."
+
+    for arg in $@ ; do
+
+	if [ "x${arg}" = "x--with-python" ]; then
+	    with_python=1
+	fi
+
+	if [ "x${arg}" = "x--with-python-version" ]; then
+	    shift 1
+	    python_version=$1
+	    with_python=1
+	fi
+
+	if [ "x${arg}" = "x--without-python" ]; then
+	    with_python=0
+	fi
+
+    done
+
     notice_msg "Configure package '${pack_name}': Checking dependencies..."
 
     which clhep-config 2>&1 > /dev/null
@@ -290,6 +346,36 @@ function do_configure ()
     else
 	notice_msg "datatools ($(datatools-config --version)) seems to be properly setup!"
     fi
+
+    notice_msg "Configure package '${pack_name}': Python setup..."
+    boost_python_version="$(boost-config --python-version)"
+    if [ ${with_python} -eq 0 ]; then
+	warning_msg "Do not use Python wrapper module from Boost.Python!"
+
+	cat > ${without_python_flag_file} <<EOF 
+# geomtools does not use python wrapper module:
+export GEOMTOOLS_NO_PYTHON=1
+EOF
+    else
+	if [ "x${python_version}" != "x${boost_python_version}" ]; then
+	    err_msg "Unmatching Python version with Boost! Boost uses Python ${boost_python_version}!"
+	    return 1
+	else
+	    notice_msg "Python version ${python_version} matches with the one used by Boost (${boost_python_version})!"
+	fi 
+	which python${python_version}-config 2>&1 > /dev/null
+	if [ $? -ne 0 ]; then
+	    err_msg "Python ${python_version} is not setup!"
+	    return 1
+	else
+	    notice_msg "Python ${python_version} is setup!"
+	    echo "${python_version}" > ${python_version_flag_file}
+	fi
+	notice_msg "Use Python wrapper module from Boost.Python!"
+	test -f ${without_python_flag_file} && rm -f ${without_python_flag_file}
+    fi
+
+    notice_msg "Configure package '${pack_name}': done."
     return 0
 }
 
@@ -297,6 +383,9 @@ function do_build ()
 {
     info_msg "Build package '${pack_name}'..."
     if [ -d ${GMKDIR} ]; then
+	if [ -f ${without_python_flag_file} ]; then
+	    source ${without_python_flag_file}
+	fi
 	do_build_gmk $@
 	return $?
     fi
@@ -323,71 +412,6 @@ You may source these scripts at startup time
 EOF
 }
 
-# function do_startup()
-# {
-#     rm -f ${the_base_dir}/${sh_ss}
-#     cat > ${the_base_dir}/${sh_ss} <<EOF
-# # Startup script for package ${pack_name}:
-
-# export ${pack_name_upper}_ROOT="$(pwd)"
-# export PATH=\${PATH}:"\${${pack_name_upper}_ROOT}/bin"
-# uname_s=\$(uname -s)
-# uname_m=\$(uname -m | sed -e 's/ //g')
-# libs="\${${pack_name_upper}_ROOT}/\${uname_s}-\${uname_m}/lib"
-
-# sysarch=\$(uname)
-# if [ "\${sysarch}" = "Linux" ]; then 
-#   if [ -n "\${LD_LIBRARY_PATH}" ]; then
-#     export LD_LIBRARY_PATH="\${LD_LIBRARY_PATH}:\${libs}"
-#   else
-#     export LD_LIBRARY_PATH="\${libs}"
-#   fi 
-# fi
-
-# if [ "\${sysarch}" = "Darwin" ]; then 
-#   if [ -n "\${DYLD_LIBRARY_PATH}" ]; then
-#     export DYLD_LIBRARY_PATH="\${DYLD_LIBRARY_PATH}:\${libs}"
-#   else
-#     export DYLD_LIBRARY_PATH="\${libs}"
-#   fi 
-# fi
-
-# # end
-# EOF
-#     rm -f ${the_base_dir}/${csh_ss}
-#     cat > ${the_base_dir}/${csh_ss} <<EOF
-# # Startup script for package ${pack_name}:
-
-# setenv ${pack_name_upper}_ROOT "$(pwd)"
-
-# setenv PATH "\${PATH}:\${${pack_name_upper}_ROOT}/bin"
-
-# set uname_s=$(echo '`')uname -s$(echo '`')
-# set uname_m=$(echo '`')uname -m | sed -e 's/ //g'$(echo '`')
-# set libs="\${${pack_name_upper}_ROOT}/\${uname_s}-\${uname_m}/lib"
-
-# set sysarch=$(echo '`')uname$(echo '`')
-# if ( \${sysarch} == Linux ) then 
-#   if (  \$?LD_LIBRARY_PATH ) then
-#     setenv LD_LIBRARY_PATH "\${LD_LIBRARY_PATH}:\${libs}"
-#   else
-#     setenv LD_LIBRARY_PATH "\${libs}"
-#   endif 
-# endif
-
-# if ( \${sysarch} == Darwin ) then 
-#   if (  \$?DYLD_LIBRARY_PATH ) then
-#     setenv DYLD_LIBRARY_PATH "\${DYLD_LIBRARY_PATH}:\${libs}"
-#   else
-#     setenv DYLD_LIBRARY_PATH "\${libs}"
-#   endif 
-# endif
-
-# # end
-# EOF
-#     return 0
-# }
-
 function kill_startup ()
 {
     cat<<EOF
@@ -404,12 +428,6 @@ and
 EOF
 }
 
-# function kill_startup()
-# {
-#     rm -f ${the_base_dir}/${sh_ss}
-#     rm -f ${the_base_dir}/${csh_ss}
-# }
-
 function do_install ()
 {
     debug_msg "do_install: Entering..."
@@ -421,6 +439,15 @@ function do_install ()
 	cd ${opwd}
 	return 1
     fi
+
+    ### special Python wrapper/program:
+    if [ ! -f ${without_python_flag_file} ]; then
+	cd ${python_dir}
+	make install
+	cd ${GMKDIR}
+    fi
+    ###
+
     cd ${opwd}
     debug_msg "do_startup..."
     do_startup
@@ -438,6 +465,13 @@ function do_uninstall ()
 	cd ${opwd}
 	return 1
     fi
+
+    ### special Python wrapper/program:
+    cd ${python_dir}
+    make uninstall
+    cd ${GMKDIR}
+    ###
+
     cd ${opwd}
     kill_startup
     return 0

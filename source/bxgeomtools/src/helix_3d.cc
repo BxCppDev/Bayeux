@@ -18,7 +18,6 @@ namespace geomtools {
   helix_3d::is_valid () const
   {
     return (__radius == __radius);
-    //geomtools::is_valid (__center) && angles_are_valid ());
   }
   
   void 
@@ -26,10 +25,6 @@ namespace geomtools {
   {
     double qnan = std::numeric_limits<double>::quiet_NaN();
     __radius = qnan;
-    /*
-    geomtools::invalidate_angles ();
-    geomtools::invalidate (__center);
-    */
   }
   
   const vector_3d & 
