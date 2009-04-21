@@ -106,6 +106,60 @@ namespace datatools {
     }
 
 
+    std::string expand_path (const std::string & path_str_)
+    {
+      std::string res ("");
+      if (path_str_.empty ()) return (res);
+      const std::string allowed = 
+	"~./_-${}0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      int found = path_str_.find_first_not_of (allowed);
+      if ( found > 0 ) 
+	{
+	  throw std::runtime_error ("expand_path: found a not allowed character!");
+	}
+      std::ostringstream sh_cmd;
+      char dummy[256];
+      sprintf (dummy, "tmp.XXXXXX");
+      int tmpfile = mkstemp (dummy);
+      if (tmpfile == -1) 
+	{
+	  throw std::runtime_error ("expand_path: Cannot create temporary file!");
+	}
+      sh_cmd << "echo \"" << path_str_ << "\" > " << dummy;
+      int ret = system (sh_cmd.str ().c_str ());
+      if (ret != 0) 
+	{
+	  throw std::runtime_error ("expand_path: Cannot execute shell command!");
+	}
+      std::ifstream input (dummy);
+      if (! input) 
+	{
+	  throw std::runtime_error ("expand_path: Cannot open temporary file!");
+	} 
+      std::string line_get;
+      std::getline (input, line_get);
+      if (! input)
+	{ 
+	  throw std::runtime_error ("expand_path: Cannot read temporary file!");
+	}
+      input.close ();
+      close (tmpfile);
+      /*
+      std::ostringstream sh_cmd2;
+      sh_cmd2 << "rm -f " << dummy;
+      ret = system (sh_cmd2.str ().c_str ());
+      */
+      ret = unlink (dummy);
+      if (ret != 0) 
+	{
+	  std::cerr << "expand_path: warning: "
+		    << "Cannot delete temporary file '" 
+		    << dummy << "'" << std::endl;
+	}
+      return (line_get);
+    }
+    
+    
     /* From:
        Data Structures in C++ Using the STL
        by Timothy A. Budd
