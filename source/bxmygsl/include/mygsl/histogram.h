@@ -193,9 +193,8 @@ namespace mygsl {
 	};
 
     };
-
   
-}
+} // end of namespace mygsl
 
 #endif // __gsl__histogram_h
 
