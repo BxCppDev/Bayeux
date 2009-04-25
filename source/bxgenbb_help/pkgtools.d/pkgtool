@@ -72,7 +72,10 @@ function print_usage()
   Available modes are:
 
     $APPNAME info       : print package info
-    $APPNAME configure  : configure package (not implemented)
+    $APPNAME configure [OPTIONS] : configure package
+           Options:
+              --g77        use g77 Fortran compiler
+              --gfortran   use gfortran Fortran compiler
     $APPNAME build      : build package
     $APPNAME clean      : clean package
     $APPNAME install    : install package
@@ -102,8 +105,9 @@ while [ -n "$1" ]; do
     
     if [ "${arg:0:1}" = "-" ]; then
 	if [ ${parse_switch} = 0 ]; then
-	    err_msg "Options (-X) must be placed before arguments!"
-	    exit 1
+	    break
+	    #err_msg "Options (-X) must be placed before arguments!"
+	    #exit 1
 	fi
 	if [ "${arg}" = "-h" -o "${arg}" = "--help" ]; then
 	    do_usage=1 
@@ -111,12 +115,12 @@ while [ -n "$1" ]; do
 	    debug=1 
 	elif [ "${arg}" = "-v" -o "${arg}" = "--verbose" ]; then
 	    verbose=1 
-	elif [ "${arg}" = "--g77" ]; then
-	    use_g77=1
-	    use_gfortran=0
-	elif [ "${arg}" = "--gfortran" ]; then
-	    use_g77=0
-	    use_gfortran=1
+#	elif [ "${arg}" = "--g77" ]; then
+#	    use_g77=1
+#	    use_gfortran=0
+#	elif [ "${arg}" = "--gfortran" ]; then
+#	    use_g77=0
+#	    use_gfortran=1
 	else
 	    err_msg "Invalid option!"
 	    exit 1
@@ -185,7 +189,7 @@ fi
 
 #######################################################
 
-function do_clean_gmk()
+function do_clean_gmk ()
 {
     info_msg "Clean gmk..."
     if [ ! -d ${GMKDIR} ]; then 
@@ -203,7 +207,7 @@ function do_clean_gmk()
     return 0
 }
 
-function do_build_gmk()
+function do_build_gmk ()
 {
     info_msg "Build gmk..."
     if [ ! -d ${GMKDIR} ]; then 
@@ -275,24 +279,46 @@ function do_build_gmk()
 
 function do_clean ()
 {
-    info_msg "Clean package '${pack_name}'..."
+    notice_msg "Clean package '${pack_name}'..."
     if [ -d ${GMKDIR} ]; then
 	do_clean_gmk $@
-	return $?
+	if [ $? -ne 0 ]; then
+	    err_msg "Clean package '${pack_name}' failed!"
+	    return 1
+	fi
     fi 
-    return 1
+    test -f ${the_base_dir}/.${pack_name}.conf && rm -f ${the_base_dir}/.${pack_name}.conf
+    notice_msg "Clean package '${pack_name}' done."
+    return 0
 }
 
 function do_configure ()
 {
-    info_msg "Configure package '${pack_name}': setting F77 compiler..."
+    notice_msg "Configure package '${pack_name}': Entering..."
+
+    # parse options:
+    while [ -n "$1" ]; do
+	arg="$1";
+	notice_msg "Configure package '${pack_name}': arg=${arg}"
+	if [ "x${arg}" = "x--g77" ]; then
+	    use_g77=1
+	    use_gfortran=0	    
+	elif [ "x${arg}" = "x--gfortran" ]; then
+	    use_g77=0
+	    use_gfortran=1
+	fi
+	shift 1
+    done
+
+    notice_msg "Configure package '${pack_name}': Setting F77 compiler..."
 
     which geomtools-config 2>&1 > /dev/null
     if [ $? -ne 0 ]; then
 	error_msg "geomtools seems not to be setup!"
 	return 1
     else
-	notice_msg "geomtools ($(geomtools-config --version)) seems to be properly setup!"
+	geomtools_version=$(geomtools-config --version)
+	notice_msg "geomtools (${geomtools_version}) seems to be properly setup!"
     fi
 
     which mygsl-config 2>&1 > /dev/null
@@ -300,7 +326,8 @@ function do_configure ()
 	error_msg "mygsl seems not to be setup!"
 	return 1
     else
-	notice_msg "mygsl ($(mygsl-config --version)) seems to be properly setup!"
+	mygsl_version=$(mygsl-config --version)
+	notice_msg "mygsl (${mygsl_version}) seems to be properly setup!"
     fi
 
     which clhep-config 2>&1 > /dev/null
@@ -308,7 +335,8 @@ function do_configure ()
 	error_msg "CLHEP seems not to be setup!"
 	return 1
     else
-	notice_msg "CLHEP ($(clhep-config --version)) seems to be properly setup!"
+	clhep_version=$(clhep-config --version)
+	notice_msg "CLHEP (${clhep_version}) seems to be properly setup!"
     fi
 
     which cernlib 2>&1 > /dev/null
@@ -333,7 +361,10 @@ function do_configure ()
 	notice_msg "Package '${pack_name}' build will use 'g77'"
     fi
     echo "export F77_COMP=${F77_COMP}" > ${the_base_dir}/.${pack_name}.conf
+
     notice_msg "File '${the_base_dir}/.${pack_name}.conf' has been generated."
+
+    notice_msg "Configure package '${pack_name}': Exiting."
     return 0
 }
 
@@ -351,7 +382,7 @@ function do_build ()
     return 1
 }
 
-function do_startup()
+function do_startup ()
 {
 cat<<EOF
 
@@ -371,72 +402,7 @@ You may source these scripts at startup time
 EOF
 }
 
-# function do_startup()
-# {
-#     rm -f ${the_base_dir}/${sh_ss}
-#     cat > ${the_base_dir}/${sh_ss} <<EOF
-# # Startup script for package ${pack_name}:
-
-# export ${pack_name_upper}_ROOT="$(pwd)"
-# export PATH=\${PATH}:"\${${pack_name_upper}_ROOT}/bin"
-# uname_s=\$(uname -s)
-# uname_m=\$(uname -m | sed -e 's/ //g')
-# libs="\${${pack_name_upper}_ROOT}/\${uname_s}-\${uname_m}/lib"
-
-# sysarch=\$(uname)
-# if [ "\${sysarch}" = "Linux" ]; then 
-#   if [ -n "\${LD_LIBRARY_PATH}" ]; then
-#     export LD_LIBRARY_PATH="\${LD_LIBRARY_PATH}:\${libs}"
-#   else
-#     export LD_LIBRARY_PATH="\${libs}"
-#   fi 
-# fi
-
-# if [ "\${sysarch}" = "Darwin" ]; then 
-#   if [ -n "\${DYLD_LIBRARY_PATH}" ]; then
-#     export DYLD_LIBRARY_PATH="\${DYLD_LIBRARY_PATH}:\${libs}"
-#   else
-#     export DYLD_LIBRARY_PATH="\${libs}"
-#   fi 
-# fi
-
-# # end
-# EOF
-#     rm -f ${the_base_dir}/${csh_ss}
-#     cat > ${the_base_dir}/${csh_ss} <<EOF
-# # Startup script for package ${pack_name}:
-
-# setenv ${pack_name_upper}_ROOT "$(pwd)"
-
-# setenv PATH "\${PATH}:\${${pack_name_upper}_ROOT}/bin"
-
-# set uname_s=$(echo '`')uname -s$(echo '`')
-# set uname_m=$(echo '`')uname -m | sed -e 's/ //g'$(echo '`')
-# set libs="\${${pack_name_upper}_ROOT}/\${uname_s}-\${uname_m}/lib"
-
-# set sysarch=$(echo '`')uname$(echo '`')
-# if ( \${sysarch} == Linux ) then 
-#   if (  \$?LD_LIBRARY_PATH ) then
-#     setenv LD_LIBRARY_PATH "\${LD_LIBRARY_PATH}:\${libs}"
-#   else
-#     setenv LD_LIBRARY_PATH "\${libs}"
-#   endif 
-# endif
-
-# if ( \${sysarch} == Darwin ) then 
-#   if (  \$?DYLD_LIBRARY_PATH ) then
-#     setenv DYLD_LIBRARY_PATH "\${DYLD_LIBRARY_PATH}:\${libs}"
-#   else
-#     setenv DYLD_LIBRARY_PATH "\${libs}"
-#   endif 
-# endif
-
-# # end
-# EOF
-#     return 0
-# }
-
-function kill_startup()
+function kill_startup ()
 {
     cat<<EOF
 Don't forget to remove environment variables in your startup scripts.
@@ -452,13 +418,7 @@ and
 EOF
 }
 
-# function kill_startup()
-# {
-#     rm -f ${the_base_dir}/${sh_ss}
-#     rm -f ${the_base_dir}/${csh_ss}
-# }
-
-function do_install()
+function do_install ()
 {
     debug_msg "do_install: Entering..."
     info_msg "Install package '${pack_name}'..."
@@ -476,7 +436,7 @@ function do_install()
     return 0
 }
 
-function do_uninstall()
+function do_uninstall ()
 {
     info_msg "Uninstall package '${pack_name}'... The"
     opwd=$(pwd)
@@ -491,7 +451,7 @@ function do_uninstall()
     return 0
 }
 
-function do_info()
+function do_info ()
 {
     pkg_version="undefined"
     pkg_lang="undefined"
