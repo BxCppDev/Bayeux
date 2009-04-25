@@ -23,7 +23,7 @@ sh_ss=${pack_name_lower}.sh
 csh_ss=${pack_name_lower}.csh
 the_base_dir=.
 boost_version_check=1
-enforced_boost_version=1_34_1
+enforced_boost_version=1_38_0
 
 export DATATOOLS_ROOT=${the_base_dir}
 
@@ -93,7 +93,7 @@ function print_usage ()
                             with Python version VERSION (default: 2.5)
                           --without-python :
                             without Python wrapper module
-                          --boost-version 1_34_1 : force Boost version (default: 1_34_1)
+                          --boost-version 1_34_1 : force Boost version (default: 1_38_0)
                           --no-boost-version-check : skip Boost version check
 
     $APPNAME build      : build package
@@ -397,7 +397,7 @@ function do_configure ()
 		err_msg "Boost has no version ${enforced_boost_version}!"
 		return 1
 	    else
-		notice_msg "The 'boost_help' package seems ok with Boost version ${boost_version}"
+		notice_msg "The 'boost_help' package seems ok with Boost version '${boost_version}'"
 		boost_python_version="$(boost-config --python-version)"
 	    fi
 	fi
