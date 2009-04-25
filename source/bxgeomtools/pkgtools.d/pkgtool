@@ -328,7 +328,8 @@ function do_configure ()
 	error_msg "CLHEP seems not to be setup!"
 	return 1
     else
-	notice_msg "CLHEP ($(clhep-config --version)) seems to be properly setup!"
+	clhep_version=$(clhep-config --version | cut -d' ' -f2)
+	notice_msg "CLHEP (${clhep_version}) seems to be properly setup!"
     fi
 
     which gsl-config 2>&1 > /dev/null
@@ -336,7 +337,8 @@ function do_configure ()
 	error_msg "GSL seems not to be setup!"
 	return 1
     else
-	notice_msg "GSL ($(gsl-config --version)) seems to be properly setup!"
+	gsl_version=$(gsl-config --version)
+	notice_msg "GSL (${gsl_version}) seems to be properly setup!"
     fi
 
     which datatools-config 2>&1 > /dev/null
