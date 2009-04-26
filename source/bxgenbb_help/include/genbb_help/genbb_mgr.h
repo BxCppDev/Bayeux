@@ -2,7 +2,7 @@
 /* genbb_mgr.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2009-01-19
- * Last modified: 2009-04-02
+ * Last modified: 2009-04-25
  * 
  * License: 
  * 
@@ -24,11 +24,15 @@
 #include <string>
 #include <list>
 
+#include <boost/cstdint.hpp>
+
 #include <CLHEP/Units/SystemOfUnits.h>
 #include <CLHEP/Units/PhysicalConstants.h>
 #include <CLHEP/Vector/ThreeVector.h>
 
 #include <datatools/serialization/serialization.h>
+#include <datatools/serialization/io_factory.h>
+
 #include <geomtools/utils.h>
 
 namespace genbb {
@@ -44,18 +48,25 @@ namespace genbb {
     
     enum particle_type
       {
-	UNDEF = -1,
-	GAMMA = 1,
+	UNDEF    = -1,
+	GAMMA    = 1,
 	POSITRON = 2,
 	ELECTRON = 3,
-	ALPHA = 47
+	ALPHA    = 47
       };
 
   public:
     
-    int                  type;
+    int32_t              type;
     double               time;
     geomtools::vector_3d momentum;
+
+    void reset ();
+
+    bool is_valid () const
+    {
+      return type != UNDEF;
+    }
 
     bool is_gamma () const
     {
@@ -78,6 +89,13 @@ namespace genbb {
     }
 
     static std::string get_label (int type_);
+
+    primary_particle ();
+
+    primary_particle (int32_t type_, 
+		      double time_, 
+		      const geomtools::vector_3d &);
+
 
     void dump (std::ostream & out_ = std::clog, 
 	       const std::string & indent_ = "") const;
@@ -193,11 +211,20 @@ namespace genbb {
 
   class genbb_mgr
   {
+  public:
+    enum
+      {
+	FORMAT_GENBB = 0,
+	FORMAT_BOOST = 1
+      };
+  private:
     bool __debug;
     bool __initialized;
     std::list<std::string> __filenames;
+    int            __format;
     std::istream * __in;
     std::ifstream  __fin;
+    datatools::serialization::data_reader __reader;
     primary_event  __current;
 
   // ctor/dtor:
@@ -213,7 +240,24 @@ namespace genbb {
       __debug = d_;
     }
 
-    genbb_mgr ();
+    int get_format () const
+    {
+      return __format;
+    }
+
+    void set_format (int format_ = FORMAT_GENBB);
+
+    bool is_format_genbb () const
+    {
+      return __format == FORMAT_GENBB;
+    }
+
+    bool is_format_boost () const
+    {
+      return __format == FORMAT_BOOST;
+    }
+
+    genbb_mgr (int format_ = FORMAT_GENBB);
 
     virtual ~genbb_mgr ();
   
@@ -225,13 +269,18 @@ namespace genbb {
 
     bool has_next ();
 
-    void load_next (primary_event & event_, bool compute_classification_ = true);
+    void load_next (primary_event & event_, 
+		    bool compute_classification_ = true);
 
     void dump (std::ostream & out_ = std::clog) const;
 
   private:
 
     void __load_next ();
+
+    void __load_next_genbb ();
+
+    void __load_next_boost ();
 
   };
 

@@ -42,7 +42,7 @@ Usage:
 
 Example:
 
-  genbb \${GENBB_HELP_ROOT}/resources/bipo212.conf 314159 100 /tmp/bipo212_out.data
+  genbb \${GENBB_HELP_ROOT}/resources/bipo212.conf 314159 100 /tmp/bipo212_out.genbb
 
 EOF
 
@@ -111,7 +111,16 @@ if [ ${interactive} -eq 0 ]; then
 
     ###echo "${appname}: NOTICE: =====================" 1>&2
 
+    if [ "x${output_file}" = "x" ]; then
+	output_file="out.genbb"
+    fi
+
     if [ "x${output_file}" != "x" ]; then
+	out_ext=$(echo ${output_file} | tr '.' '\n' | tail -1)
+	echo "${appname}: NOTICE: Output file has extension '${out_ext}'..." 1>&2
+	if [ "x${out_ext}" != "xgenbb" ]; then
+	    echo "${appname}: WARNING: Output file has not extension '.genbb'!" 1>&2
+	fi
 	echo "${appname}: NOTICE: Set 'output-file' to '${output_file}'..." 1>&2
 	cat ${tmp_conf}.1 | sed \
 	    -e "s@^output-file=.*@output-file=${output_file}@g" \

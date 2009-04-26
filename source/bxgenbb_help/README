@@ -49,7 +49,7 @@ This is the 'genbb_help' package README file
 
      to use g77 in place of gfortran:
 
-     shell>$ ./pkgtools.d/pkgtool -v --g77 configure
+     shell>$ ./pkgtools.d/pkgtool -v configure --g77 
 
    Step 3:
 

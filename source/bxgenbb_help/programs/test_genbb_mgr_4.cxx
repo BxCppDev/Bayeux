@@ -1,12 +1,10 @@
 // -*- mode: c++; -*- 
-// test_genbb_mgr_3.cxx
+// test_genbb_mgr_4.cxx
 
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
-
-#include <datatools/serialization/io_factory.h>
 
 #include <genbb_help/genbb_mgr.h>
 
@@ -28,32 +26,28 @@ main (int argc_, char ** argv_)
 	  iarg++;
 	}
     
-      genbb::genbb_mgr mgr;
+      // set format to Boost archive:
+      genbb::genbb_mgr mgr (genbb::genbb_mgr::FORMAT_BOOST);
 
-      // genbb input data files:
-      mgr.set ("resources/bipo212_1.genbb");
-      mgr.set ("resources/bipo212_2.genbb");
-      mgr.set ("resources/bipo212_3.genbb");
+      // Boost archive input data files:
+      mgr.set ("resources/bipo212_1.boost.txt.gz");
+      mgr.set ("resources/bipo212_2.boost.txt.gz");
+      mgr.set ("resources/bipo212_3.boost.txt.gz");
       if (debug) mgr.dump ();
 
-      // initialize the manager:
+      // initialize/lock the manager:
       mgr.init ();
       if (debug) mgr.dump ();
 
       // working primary event:
       genbb::primary_event pe;
 
-      datatools::serialization::data_writer writer;
-
-      writer.init ("bipo212_123.txt.gz", 
-		   datatools::serialization::using_multi_archives);
-
       size_t count = 0;
       // main loop on primary events source:
       while (mgr.has_next ())
 	{
 	  mgr.load_next (pe);
-	  writer.store (pe);
+	  if (debug) pe.dump ();
 	  count++;
 	}
       mgr.reset ();
@@ -75,4 +69,4 @@ main (int argc_, char ** argv_)
   return error_code;
 }
 
-// end of test_genbb_mgr_3.cxx
+// end of test_genbb_mgr_4.cxx
