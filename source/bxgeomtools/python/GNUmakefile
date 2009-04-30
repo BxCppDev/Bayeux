@@ -14,12 +14,14 @@ CXX=g++
 LD=g++
 LDFLAGS=-O
 CXXFLAGS=-fPIC
+PYMODEXT=.so
 ifeq ($(OS),Linux)
   SOFLAGS=-shared
   SHLIBEXT=.so
 endif
 ifeq ($(OS),Darwin)
-  SOFLAGS=-dynamiclib -twolevel_namespace -undefined dynamic_lookup -dynamic -single_module
+  #SOFLAGS=-dynamiclib -twolevel_namespace -undefined dynamic_lookup -dynamic -single_module
+  SOFLAGS=-bundle
   SHLIBEXT=.dylib
 endif
 
@@ -31,7 +33,7 @@ UPACKAGENAME=$(shell echo "$(PACKAGENAME)" | tr "a-z" "A-Z")
 LIBNAME=$(shell echo "$(PACKAGENAME)" | tr "A-Z" "a-z")
 SHLIBFILE=lib$(LIBNAME)${SHLIBEXT}
 PYMODULENAME=geomtools
-PYSHLIBFILE=$(PYMODULENAME)${SHLIBEXT}
+PYSHLIBFILE=$(PYMODULENAME)${PYMODEXT}
 PYMODSRCFILE=$(PYMODULENAME)${SOURCEEXT}
 
 # python

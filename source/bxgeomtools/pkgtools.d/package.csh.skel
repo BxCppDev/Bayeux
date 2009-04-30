@@ -18,7 +18,7 @@ set libs="${__PACKAGE_NAME___ROOT}/${system}/lib"
 set bins="${__PACKAGE_NAME___ROOT}/${system}/bin"
 setenv PATH :"${bins}":${PATH}
 
-if ( $?PYTHONPATH ]; then
+if ( $?PYTHONPATH ) then
     setenv PYTHONPATH "${__PACKAGE_NAME___ROOT}/python:${PYTHONPATH}"
 else
     setenv PYTHONPATH "${__PACKAGE_NAME___ROOT}/python"
@@ -26,7 +26,7 @@ fi
 
 set sysarch=`uname`
 if ( ${sysarch} == Linux ) then 
-  if (  $?LD_LIBRARY_PATH ) then
+  if ( $?LD_LIBRARY_PATH ) then
     setenv LD_LIBRARY_PATH "${libs}:${LD_LIBRARY_PATH}"
   else
     setenv LD_LIBRARY_PATH "${libs}"
@@ -34,7 +34,7 @@ if ( ${sysarch} == Linux ) then
 endif
 
 if ( ${sysarch} == Darwin ) then 
-  if (  $?DYLD_LIBRARY_PATH ) then
+  if ( $?DYLD_LIBRARY_PATH ) then
     setenv DYLD_LIBRARY_PATH "${libs}:${DYLD_LIBRARY_PATH}"
   else
     setenv DYLD_LIBRARY_PATH "${libs}"
