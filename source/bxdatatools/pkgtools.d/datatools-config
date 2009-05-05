@@ -154,7 +154,7 @@ fi
 
 if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
     echo -n "-L${THEPACK_LIBDIR} -ldatatools "  \
-	"`boost-config --ldflags serialization iostreams filesystem` " 
+	"`boost-config --ldflags serialization iostreams filesystem system` " 
     echo
 #      "`liblockfile-config --ldflags` "  
     exit 0
