@@ -76,7 +76,7 @@ DEPLDFLAGS=
 
 # boost dependency (from the 'boost_help' package) :
 ifeq ($(strip $(BOOST_ROOT)),)
-$(error Sorry boost is not configured; please define the BOOST_ROOT env!)
+$(error Sorry boost is not configured; please define the BOOST_ROOT env)
 endif
 ifeq ($(shell which boost-config),)
 $(error Sorry boost-config not found!)

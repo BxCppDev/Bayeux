@@ -70,15 +70,15 @@ approach. Let's first explain the motivations for this work.
 <p>
 The Boost Serialization library has a special mechanism known as
 <i>object  tracking</i>. It  enables  to store/load data in  a smart  and
-efficient way whenever some class instances are addressed by dynamically allocated memory
-and referenced through pointers within a sophisticated data model. 
-With this mechanism activated, one may avoid the duplication of
-storage for a saved <i>datum</i> (typically an instance of a class) 
-taht is managed through
-different handlers (pointers) to be saved too.  
-On the other hand, during archive loading process, it also
-restores properly and dynamically pointers referencing the datum as
-the unique source of shared data which is deserialized only once. 
+efficient way. 
+Using this feature, if a <i>datum</i>  (typically an instance of a class) 
+is addressed through different pointers and one wants to store the data
+refered by such collection of pointers, thus the datum is stored only
+one, avoiding to duplication of storage.  
+On the other hand, during archive loading process, only one instance
+of the datum will be restored while possibly many pointers refer to
+it, and the pointers will get dynamically initialized with the proper
+address of the datum. 
 </p>
 
 <p>
@@ -92,8 +92,9 @@ memory location  has not been visited  before.  It means  that during the
 serialization process,  if some dynamically  allocated memory location
 has been previously  used to handle data <tt>X</tt>  which has already
 been serialized,  the reuse  of this memory  location for  anoter data
-<tt>Y</tt> is  likely to corrupt  the storage/load flow  of <tt>Y</tt>
-for the memory tracking algorithm will consider <tt>Y</tt> as the same
+<tt>Y</tt> is  likely to corrupt  the storage/load flow  of <tt>Y</tt>.
+Thisnis because the memory tracking algorithm will 
+consider <tt>Y</tt> as the same
 data  as  <tt>X</tt>,  even  if  <tt>Y</tt> has  nothing  to  do  with
 <tt>X</tt>. This generally induces loss  of data that exists in memory
 but is <i>skipped</i> by the memory tracker which may silently reconstruct
@@ -108,7 +109,7 @@ implementing a complex data  model with internal dynamically allocated
 sub-objects      (let's      call      them    <tt>a<sub>A</sub></tt>,
 <tt>b<sub>A</sub></tt>...<tt>z<sub>A</sub></tt>   for  the  <tt>A</tt>
 object   and  so   on).    More  the   <tt>A</tt>   object  may   host
-reference pointers to its sub-objects, justifying the need for the
+ pointers referencing its sub-objects. This justifies the use of the
 object tracking approach.  We assume also
 there  is  no  cross-reference  between  the memory  scopes  owned  by
 meta-instances   <tt>A</tt>,  <tt>B</tt>...<tt>Z</tt>  which   so  are
@@ -152,10 +153,10 @@ for  one never  can  predict the  behaviour of  the
 memory allocation  mechanism. We  cannot garantee that  some memory
 address used within the <tt>A</tt> object and then freed 
 will <b>never</b> be reused by some invocation of the
-<tt>new</tt>     operator    while     building     the    <tt>B</tt>,
+<tt>new</tt>     operator    while     building     the    <tt>B</tt> or
 <tt>C</tt>... objects. 
-So the serialization process may be confused by underlying the memory tracking
-algorithm. 
+So the serialization process may be confused/corrupted 
+by the underlying memory tracking algorithm. 
 An already visited and  serialized memory location for <tt>A</tt> will
 be considered as already serialized if met again in <tt>B</tt>.
 The  effect  becomes  more  an  more probable  as  we  serialize  many
@@ -196,11 +197,12 @@ to be serialized. This approach can be splitted in several steps:
 <li>Fill the container with objects properly initialized ( <tt>A</tt>,
 <tt>B</tt>... <tt>Z</tt>). One garantees that no dynamically allocated
 memory location  is reused skipping  from <tt>A</tt> to  <tt>B</tt> or
-<tt>C...</tt>  instance  because  sub-objects  <tt>a<sub>A</sub></tt>,
+<tt>C...</tt>  instances  because  sub-objects  <tt>a<sub>A</sub></tt>,
 <tt>b<sub>A</sub></tt>... <tt>a<sub>B</sub></tt>,
 <tt>b<sub>B</sub></tt>... simultaneously coexists in memory at
 different locations. As no memory is freed till the end of the
-serialization, the state ot the memory related to our data is frozen and we should not
+serialization, the state ot the memory related to our data is frozen 
+and we should not
 experience memory tracking confusion. 
 
 <li>Initialize the archive, 
@@ -231,13 +233,13 @@ as soon as the serialization process is running,
 
 <li>The full set of objects must be stored in memory and it may 
 induce a huge memory footprint!  
-Particularly, during the serialization iterative processe,
+Particularly, during the serialization iterative process,
 there is no hope to delete parts of 
 previously serialized objects in order to save memory storage 
 without taking a strong risk of data corruption,
 
-<li>Object tracking implies the book keeping  of many, many memory
-locations  at   the  cost  of  some  inefficiency   (this  point  needs
+<li>Object tracking implies the <i>bookkeeping</i>  of many, many memory
+locations  maybe at   the  cost  of  some  inefficiency   (this  point  needs
 confirmation from Robert Ramey).  
 
 </ul> 
@@ -255,8 +257,7 @@ satisfactory.
 Now it's time to describe a simple but still elegant strategy to work around
 what one may call <i>far memory scope tracking data corruption
 effects</i> (note that the term <i>far</i> is very subjective and should be
-understood
-as <i>not confined</i>).  
+understood as <i>not confined</i>).  
 It relies on the following observation: memory tracking
 is <i>confined</i> within archives.
 It means that if some complex data structure <tt>A</tt> (with nested dynamically
@@ -311,9 +312,10 @@ This approach  still takes benefit  of memory traking  features within
 each successive archives, ensuring confinement of memory tracking in the
 memory  footprint  of  a   single  meta-object.  But no  data  corruption  is
 experienced  as  the  nasty  side-effect  of  unavoidable  dynamically
-allocated memory  reusage. On can  safely reuse the same  instance (at
-same memory location) to iterate
-through the serialization process. Data can be manipulated between
+allocated memory  reusage is not possible anymore. 
+One can  safely reuse the same  memory location to store the instances
+<tt>A</tt>, <tt>B</tt>... and iterate
+through it during the serialization process. Data can be manipulated between
 serialization actions. That make easy  and safe the use of an iterative
 loop with reasonable small memory footprint:
 <ol>
@@ -323,8 +325,8 @@ loop with reasonable small memory footprint:
 <li>store the object within its own archive,
 <li>terminate the archive,
 <li>manipulate the object,
-<li>loop to the first step...
-</ol>,
+<li>loop back to the first step...
+</ol>
 </p>
 
 <p>
@@ -335,22 +337,24 @@ due to the use of many archives is rather negligible on the storage
 medium (archive header and footer are small).
 Probably one should get CPU advantages concerning the memory tracking process 
 because the memory size and associated combinatory is reduced within each
-archive.
+archive (However, I'm not sure about this point).
 More, objects being isolated within their own archives stored in
 the same stream, it is quite easy to concatenate different
 such serialization streams or split one in several smaller ones.
 </p>
 
 <p>
-Of course,  the <i>multiple archives per file</i>  strategy makes only
-sense if  one does  not need  the memory tracking  to be  activated in
-order to care about cross-references between <tt>A</tt>, <tt>B</tt> 
-and whatever other meta-instances in the program. 
+Of course,  the <i>multiple archives per file</i>  strategy makes 
+sense only if  the instances <tt>A</tt>, <tt>B</tt>... to be
+serialized 
+are totally independant (for example without any cross-references pointers).
 </p>
 
 <a href="Sample_code"></a>
 <h3>Sample code</h3>
 
+File <tt>foo.hpp</tt> implements a <tt>foo</tt> sample class 
+with Boost serialization support.
 
 
 
@@ -360,8 +364,6 @@ and whatever other meta-instances in the program.
 
 This note and sample code coming with it are provided as is
 in the hope it could be useful, no more, no less.
-Do not count on a miracle! I believe only your work may 
-make your code working (and maybe the world a better place).
 
 <a href="Acknowledgements"></a>
 <h3>Acknowledgements</h3>

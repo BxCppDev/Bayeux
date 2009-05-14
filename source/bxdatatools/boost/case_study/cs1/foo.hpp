@@ -5,8 +5,8 @@
 
 #include <string>
 
-#include <boost/serialization/nvp.hpp>
 #include <boost/cstdint.hpp>
+#include <boost/serialization/nvp.hpp>
 #include <boost/serialization/string.hpp>
 
 using namespace std;
@@ -16,6 +16,7 @@ class foo
   int32_t __i;
   double  __x;
   string  __name;
+
 public:
   foo ()
   {

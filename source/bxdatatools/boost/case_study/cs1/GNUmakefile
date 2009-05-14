@@ -14,4 +14,8 @@ clean :
 	@find . -type f -a -perm /u=x -exec $(RM) \{\} \;
 	@$(RM) *.txt *.xml *.bin
 
+.PHONY : show
+show :
+	firefox --new-window file://$(shell pwd)/index.htm &
+
 # end
