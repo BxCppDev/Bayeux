@@ -23,7 +23,7 @@ sh_ss=${pack_name_lower}.sh
 csh_ss=${pack_name_lower}.csh
 the_base_dir=.
 boost_version_check=1
-enforced_boost_version=1_38_0
+enforced_boost_version=1_38
 
 export DATATOOLS_ROOT=${the_base_dir}
 
