@@ -36,11 +36,13 @@ PYMODULENAME=datatools
 PYSHLIBFILE=$(PYMODULENAME)${PYMODEXT}
 PYMODSRCFILE=$(PYMODULENAME)${SOURCEEXT}
 
+PYVERSION=$(shell boost-config --python-version)
+
 # python
-ifeq ($(shell which python2.5),)
-$(error Sorry Python 2.5 not found!)
+ifeq ($(shell which python${PYVERSION}),)
+$(error Sorry Python ${PYVERSION} not found!)
 endif
-python_bin=python2.5
+python_bin=python${PYVERSION}
 python_version=$(shell $(python_bin) -V 2>&1 | tr -s ' ' | cut -d' ' -f2 | cut -d'.' -f1,2)
 python_config=python$(python_version)-config
 python_cflags=$(shell $(python_config) --cflags)

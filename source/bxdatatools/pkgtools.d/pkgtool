@@ -338,50 +338,36 @@ function do_configure ()
     info_msg "Configure package '${pack_name}'..."
     with_eos_pba=1
     with_fpu=1
-    for arg in $@ ; do
-	#echo "Configure with argument '${arg}'..."
+    while [ -n "${1}" ]; do
+	arg="${1}"
+	##echo "DEVEL: Configure with argument '${arg}'..." 1>&2
 
 	if [ "x${arg}" = "x--with-python" ]; then
 	    with_python=1
-	fi
-
-	if [ "x${arg}" = "x--with-python-version" ]; then
+	elif [ "x${arg}" = "x--with-python-version" ]; then
 	    shift 1
 	    python_version=$1
 	    with_python=1
-	fi
-
-	if [ "x${arg}" = "x--without-python" ]; then
+	elif [ "x${arg}" = "x--without-python" ]; then
 	    with_python=0
-	fi
-
-	if [ "x${arg}" = "x--with-eos-pba" ]; then
+	elif [ "x${arg}" = "x--with-eos-pba" ]; then
 	    with_eos_pba=1
 	    with_fpu=1
-	fi
-
-	if [ "x${arg}" = "x--without-eos-pba" ]; then
+	elif [ "x${arg}" = "x--without-eos-pba" ]; then
 	    with_eos_pba=0
-	fi
-
-	if [ "x${arg}" = "x--with-fpu" ]; then
+	elif [ "x${arg}" = "x--with-fpu" ]; then
 	    with_fpu=1
-	fi
-
-	if [ "x${arg}" = "x--without-fpu" ]; then
+	elif [ "x${arg}" = "x--without-fpu" ]; then
 	    with_fpu=0
 	    with_eos_pba=0
-	fi
-
-	if [ "x${arg}" = "x--boost-version" ]; then
+	elif [ "x${arg}" = "x--boost-version" ]; then
 	    shift 1
 	    enforced_boost_version=$1
-	fi
-
-	if [ "x${arg}" = "x--no-boost-version-check" ]; then
+	elif [ "x${arg}" = "x--no-boost-version-check" ]; then
 	    boost_version_check=0
 	fi
 
+	shift 1
     done
 
     notice_msg "Configure package '${pack_name}': Checking dependencies..."
@@ -407,6 +393,7 @@ function do_configure ()
     notice_msg "Configure package '${pack_name}': Special setup..."
 
     notice_msg "Configure package '${pack_name}': Python setup..."
+    notice_msg "Configure package '${pack_name}': Python version is ${python_version}..."
     if [ ${with_python} -eq 0 ]; then
 	warning_msg "Do not use Python wrapper module from Boost.Python!"
 
