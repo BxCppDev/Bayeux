@@ -310,8 +310,6 @@ function do_configure ()
 	shift 1
     done
 
-    notice_msg "Configure package '${pack_name}': Setting F77 compiler..."
-
     which geomtools-config 2>&1 > /dev/null
     if [ $? -ne 0 ]; then
 	error_msg "geomtools seems not to be setup!"
@@ -352,6 +350,8 @@ function do_configure ()
 	fi
     fi
 
+
+    notice_msg "Configure package '${pack_name}': Setting F77 compiler..."
     if [ ${use_gfortran} -eq 1 ]; then
 	notice_msg "Package '${pack_name}' build will use 'gfortran'"
 	F77_COMP=gfortran

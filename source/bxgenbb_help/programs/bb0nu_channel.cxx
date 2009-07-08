@@ -112,7 +112,7 @@ main (int argc_, char ** argv_)
       clog << "NOTICE: rng_seed = " << rng_seed << endl;
 
       mygsl::rng r;
-      r.init(rng_id,rng_seed);
+      r.init (rng_id, rng_seed);
 
 
       genbb::genbb_mgr mgr;
@@ -143,7 +143,7 @@ main (int argc_, char ** argv_)
 	  if (debug) clog << "debug: me=" 
 			  << me / CLHEP::MeV 
 			  << " MeV" << endl;
-	  if (pe.particles.size ()== 2)
+	  if (pe.particles.size () == 2)
 	    {
 	      genbb::primary_particle pp1 = pe.particles.front ();
 	      pe.particles.pop_front ();
