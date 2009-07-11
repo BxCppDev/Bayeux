@@ -34,6 +34,28 @@ namespace genbb {
     return primary_particle::SERIAL_TAG;
   }
 
+  double primary_particle::get_mass () const
+  {
+    if (is_positron () || is_electron ())
+      {
+	return CLHEP::electron_mass_c2; 
+      }
+    if (is_alpha ()) 
+      {
+	return 3.727417 * CLHEP::GeV;
+      }
+    //if (is_gamma ()) 
+    return 0.0;
+  }
+
+  double primary_particle::get_kinetic_energy () const
+  {
+    double mass = get_mass ();
+    double kinetic_energy 
+      = std::sqrt (momentum.mag () * momentum.mag () + mass * mass) - mass;
+    return kinetic_energy;
+  }
+
   void 
   primary_particle::dump (std::ostream & out_,
 			  const std::string & indent_) const
@@ -43,10 +65,15 @@ namespace genbb {
     out_ << indent << "genbb::primary_particle:" << std::endl;
     if (is_valid ())
       {
+	double mass = get_mass ();
+	double energy = get_kinetic_energy ();
+
 	out_ << indent<< "|-- type: " << type << " (" << get_label (type) << ')'
 	     << std::endl;
 	out_ << indent<< "|-- time: " << time / CLHEP::ns 
 	     << " ns" << std::endl;
+	out_ << indent<< "|-- kinetic energy: " << energy / CLHEP::MeV 
+	     << " MeV" << std::endl;
 	out_ << indent<< "`-- momentum: " 
 	     << momentum / CLHEP::MeV 
 	     << " MeV" << std::endl;

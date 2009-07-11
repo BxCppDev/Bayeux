@@ -88,6 +88,10 @@ namespace genbb {
       return type == ALPHA;
     }
 
+    double get_mass () const;
+
+    double get_kinetic_energy () const;
+
     static std::string get_label (int type_);
 
     primary_particle ();
