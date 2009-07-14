@@ -70,7 +70,10 @@ namespace genbb {
 
 	out_ << indent << "|-- type: " << type << " (" << get_label (type) << ')'
 	     << std::endl;
-	out_ << indent << "|-- time: " << time / CLHEP::ns 
+	std::ostringstream time_oss;
+	time_oss.precision (15);
+	time_oss << time / CLHEP::ns;
+	out_ << indent << "|-- time: " << time_oss.str ()
 	     << " ns" << std::endl;
 	out_ << indent << "|-- kinetic energy: " << energy / CLHEP::MeV 
 	     << " MeV" << std::endl;
@@ -309,12 +312,17 @@ namespace genbb {
 	throw std::runtime_error (message.str ());
       }
     __current.time = time * CLHEP::second;
+    double part_time = 0.0;
     for (int i = 0; i < npart; i++)
       {
 	primary_particle pp;
-	double x, y ,z;
-	*__in >> std::ws >> pp.type 
-	      >> x >> y >> z >> pp.time; 
+	double x, y ,z, time_shift;
+	// 2009-07-14 FM: Vladimir Tretyak email about particles' time shifts: 
+	//*__in >> std::ws >> pp.type >> x >> y >> z >> pp.time; 
+	*__in >> std::ws >> pp.type >> x >> y >> z >> time_shift;
+	part_time += time_shift; 
+	pp.time = part_time;
+	
 	if (! *__in)
 	  {
 	    std::ostringstream message;

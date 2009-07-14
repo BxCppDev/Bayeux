@@ -3808,10 +3808,6 @@ c-----------------------------------------------------------------------
 	   npe1064=npfull
 	   call PbAtShell(3,0.,0.,tdlev)
 	end if
-c>>> FIX: 2009-07-14 FM: add 'metastable' decay time 
-c         before next gamma emission
-	tclev=tclev+tdlev
-c<<< FIX
 	go to 57000
 c-----------------------------------------------------------------------
 89800	thlev=0.
