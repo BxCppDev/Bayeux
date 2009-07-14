@@ -68,13 +68,13 @@ namespace genbb {
 	double mass = get_mass ();
 	double energy = get_kinetic_energy ();
 
-	out_ << indent<< "|-- type: " << type << " (" << get_label (type) << ')'
+	out_ << indent << "|-- type: " << type << " (" << get_label (type) << ')'
 	     << std::endl;
-	out_ << indent<< "|-- time: " << time / CLHEP::ns 
+	out_ << indent << "|-- time: " << time / CLHEP::ns 
 	     << " ns" << std::endl;
-	out_ << indent<< "|-- kinetic energy: " << energy / CLHEP::MeV 
+	out_ << indent << "|-- kinetic energy: " << energy / CLHEP::MeV 
 	     << " MeV" << std::endl;
-	out_ << indent<< "`-- momentum: " 
+	out_ << indent << "`-- momentum: " 
 	     << momentum / CLHEP::MeV 
 	     << " MeV" << std::endl;
       }
@@ -323,9 +323,9 @@ namespace genbb {
 	    __in = 0;
 	    throw std::runtime_error (message.str ());
 	  }
-	pp.time *= CLHEP::second;
+	pp.time *= CLHEP::second;  // GENBB unit is s
 	pp.momentum.set (x, y, z);
-	pp.momentum *= CLHEP::MeV;
+	pp.momentum *= CLHEP::MeV; // GENBB unit is MeV/c
 	__current.particles.push_back (pp);
       }
     *__in >> std::ws;

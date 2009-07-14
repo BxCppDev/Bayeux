@@ -58,8 +58,8 @@ namespace genbb {
   public:
     
     int32_t              type;
-    double               time;
-    geomtools::vector_3d momentum;
+    double               time; // CLHEP time unit
+    geomtools::vector_3d momentum; // CLHEP momentum unit
 
     void reset ();
 
