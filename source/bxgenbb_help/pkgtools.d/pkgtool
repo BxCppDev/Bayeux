@@ -312,7 +312,7 @@ function do_configure ()
 
     which geomtools-config 2>&1 > /dev/null
     if [ $? -ne 0 ]; then
-	error_msg "geomtools seems not to be setup!"
+	err_msg "geomtools seems not to be setup!"
 	return 1
     else
 	geomtools_version=$(geomtools-config --version)
@@ -321,7 +321,7 @@ function do_configure ()
 
     which mygsl-config 2>&1 > /dev/null
     if [ $? -ne 0 ]; then
-	error_msg "mygsl seems not to be setup!"
+	err_msg "mygsl seems not to be setup!"
 	return 1
     else
 	mygsl_version=$(mygsl-config --version)
@@ -330,7 +330,7 @@ function do_configure ()
 
     which clhep-config 2>&1 > /dev/null
     if [ $? -ne 0 ]; then
-	error_msg "CLHEP seems not to be setup!"
+	err_msg "CLHEP seems not to be setup!"
 	return 1
     else
 	clhep_version=$(clhep-config --version)
@@ -339,11 +339,11 @@ function do_configure ()
 
     which cernlib 2>&1 > /dev/null
     if [ $? -ne 0 ]; then
-	error_msg "CERNLIB seems not to be setup!"
+	err_msg "CERNLIB seems not to be setup!"
 	return 1
     else
 	if [ "x${CERN_ROOT}" = "x" ]; then
-	    error_msg "CERN_ROOT path is not setup!"
+	    err_msg "CERN_ROOT path is not setup!"
 	    return 1
 	else
 	    notice_msg "CERNLIB seems to be properly setup!"
