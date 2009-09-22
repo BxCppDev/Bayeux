@@ -30,21 +30,21 @@
 
 /**********************************************************/
 double 
-sqr(double x_)
+sqr (double x_)
 {
   return x_*x_;
 } 
 
 double 
-log_fact(unsigned long k_)
+log_fact (unsigned long k_)
 {
-  return gsl_sf_lnfact(k_);
+  return gsl_sf_lnfact (k_);
 }
 
 double 
-log_poisson(unsigned long k_ , double mu_)
+log_poisson (unsigned long k_, double mu_)
 {
-  return -mu_ + k_*std::log(mu_) - log_fact(k_);
+  return -mu_ + k_*std::log (mu_) - log_fact (k_);
 }
 
 /**********************************************************/
@@ -62,10 +62,10 @@ const double data::E4 = 1150.;
 
 /**********************************************************/
 double 
-sigma_resol(double e_ , double r_)
+sigma_resol (double e_, double r_)
 {
-  double f = 2. * std::sqrt(2. * std::log(2.));
-  return r_ * std::sqrt(e_ / 1000.) * 1000. / f;
+  double f = 2. * std::sqrt (2. * std::log (2.));
+  return r_ * std::sqrt (e_ / 1000.) * 1000. / f;
 }
 
 /**********************************************************/
@@ -75,8 +75,8 @@ public:
   
   struct params_t
   {
-    double a,b,r,p1,p2,p3,p4;
-    void dump(std::ostream & out_) const
+    double a, b, r, p1, p2, p3, p4;
+    void dump (std::ostream & out_) const
     {
       std::string tag  = "|-- ";
       std::string ltag = "`-- ";
@@ -111,8 +111,8 @@ public:
   double __p4;
   
   void 
-  set(const params_t & params_ , 
-      size_t nevents_ , 
+  set (const params_t & params_, 
+      size_t nevents_, 
       unsigned long int seed_)
   {
     __r  = params_.r;
@@ -122,55 +122,55 @@ public:
     __p2 = params_.p2;
     __p3 = params_.p3;
     __p4 = params_.p4;
-    __sig_e1  = sigma_resol(__e1,__r);
-    __sig_e2  = sigma_resol(__e2,__r);
-    __sig_e3  = sigma_resol(__e3,__r);
-    __sig_e4  = sigma_resol(__e4,__r);
+    __sig_e1  = sigma_resol (__e1, __r);
+    __sig_e2  = sigma_resol (__e2, __r);
+    __sig_e3  = sigma_resol (__e3, __r);
+    __sig_e4  = sigma_resol (__e4, __r);
     __nevents = nevents_;
     __seed    = seed_ ;
   }
 
-  experiment(const params_t & params_ , 
-	     size_t nevents_         = 5000 , 
+  experiment (const params_t & params_, 
+	     size_t nevents_         = 5000, 
 	     unsigned long int seed_ = 0)
   {
     __e1 = data::E1;
     __e2 = data::E2;
     __e3 = data::E3;
     __e4 = data::E4;
-    set(params_,nevents_,seed_);
+    set (params_, nevents_, seed_);
   }
   
   void 
-  shoot(mygsl::histogram & h_)
+  shoot (mygsl::histogram & h_)
   {
-    h_.init(1024,0.,1024.);
-    mygsl::rng ran("mt19937",__seed);
+    h_.init (1024, 0., 1024.);
+    mygsl::rng ran ("mt19937", __seed);
     for (int i = 0; i < __nevents; i++) 
       {
 	double energy;
-	double r = ran.uniform();
+	double r = ran.uniform ();
 
 	if (r < __p1) 
 	  {
-	    energy = ran.gaussian(__e1, __sig_e1);
+	    energy = ran.gaussian (__e1, __sig_e1);
 	  }
 	else if (r < __p2 + __p1) 
 	  {
-	    energy = ran.gaussian(__e2, __sig_e2);
+	    energy = ran.gaussian (__e2, __sig_e2);
 	  }
 	else if (r < __p3 + __p2 + __p1) 
 	  {
-	    energy = ran.gaussian(__e3, __sig_e3);
+	    energy = ran.gaussian (__e3, __sig_e3);
 	  }
 	else 
 	  {
-	    energy = ran.gaussian(__e4, __sig_e4);
+	    energy = ran.gaussian (__e4, __sig_e4);
 	  }
-	int ch=(int) ((energy - __b) / __a);
-	h_.fill(ch);
+	int ch= (int) ((energy - __b) / __a);
+	h_.fill (ch);
       }
-    std::cerr << "DEBUG: h.sum=" << h_.sum() << std::endl;
+    std::cerr << "DEBUG: h.sum=" << h_.sum () << std::endl;
   }
   
 };
@@ -182,7 +182,7 @@ class test_multimin_system : public mygsl::multimin_system
 public:
   enum mode_t
     {
-      MODE_CHISQUARE  = 0,
+      MODE_CHISQUARE  = 0, 
       MODE_LIKELIHOOD = 1
     };
 
@@ -195,25 +195,25 @@ private:
 public:
   
   bool 
-  is_chisquare() const
+  is_chisquare () const
   {
     return __mode == MODE_CHISQUARE;
   }
 
   bool 
-  is_likelihood() const
+  is_likelihood () const
   {
     return __mode == MODE_LIKELIHOOD;
   }
 
   void 
-  set_debug(bool d_)
+  set_debug (bool d_)
   {
     debug = d_;
   }
 
-  test_multimin_system(const mygsl::histogram & h_ , 
-		       int mode_ = MODE_CHISQUARE ,
+  test_multimin_system (const mygsl::histogram & h_, 
+		       int mode_ = MODE_CHISQUARE, 
 		       bool debug_ = false)
   {
     debug   = debug_;
@@ -221,7 +221,7 @@ public:
     __hdata = &h_;
   }
 
-  double f_nth(double energy_) const
+  double f_nth (double energy_) const
   {
     double e   = energy_;
     double a   = __exp_params.a;
@@ -237,16 +237,16 @@ public:
     double e2  = data::E2;
     double e3  = data::E3;
     double e4  = data::E4;
-    double sum = __hdata->sum();
+    double sum = __hdata->sum ();
 
-    double sig_e1 = sigma_resol(e1,r); 
-    double sig_e2 = sigma_resol(e2,r);
-    double sig_e3 = sigma_resol(e3,r);
-    double sig_e4 = sigma_resol(e4,r);
-    t += p1 * gsl_ran_gaussian_pdf(e - e1,sig_e1);
-    t += p2 * gsl_ran_gaussian_pdf(e - e2,sig_e2);
-    t += p3 * gsl_ran_gaussian_pdf(e - e3,sig_e3);
-    t += p4 * gsl_ran_gaussian_pdf(e - e4,sig_e4);
+    double sig_e1 = sigma_resol (e1, r); 
+    double sig_e2 = sigma_resol (e2, r);
+    double sig_e3 = sigma_resol (e3, r);
+    double sig_e4 = sigma_resol (e4, r);
+    t += p1 * gsl_ran_gaussian_pdf (e - e1, sig_e1);
+    t += p2 * gsl_ran_gaussian_pdf (e - e2, sig_e2);
+    t += p3 * gsl_ran_gaussian_pdf (e - e3, sig_e3);
+    t += p4 * gsl_ran_gaussian_pdf (e - e4, sig_e4);
     double res = t;
     res *= sum; 
     res *= a; 
@@ -254,35 +254,35 @@ public:
   }
 
   void 
-  print_solution(std::ostream & out_) const
+  print_solution (std::ostream & out_) const
   {
-    double a = get_param_value(0);
-    double b = get_param_value(1);
-    for (int ich = 0; ich < __hdata->bins(); ich++) 
+    double a = get_param_value (0);
+    double b = get_param_value (1);
+    for (int ich = 0; ich < __hdata->bins (); ich++) 
       {
 	double energy = a * (ich + 0.5) + b;
-	double nth    = f_nth( energy ); 
+	double nth    = f_nth (energy); 
 	out_ << ich << ' ' << nth << std::endl;
       }
   }
 
   double 
-  compute_likelihood()
+  compute_likelihood ()
   {
     bool local_debug = false;
     double likelihood = 0.0;
     size_t ch_min = 0;
-    size_t ch_max = __hdata->bins();
-    double a      = get_param_value(0);
-    double b      = get_param_value(1);
+    size_t ch_max = __hdata->bins ();
+    double a      = get_param_value (0);
+    double b      = get_param_value (1);
     for (int ich = ch_min; ich < ch_max; ich++) 
       {
-	double nexp       = __hdata->at(ich);
+	double nexp       = __hdata->at (ich);
 	double energy     = a * (ich + 0.5) + b;
-	double nth        = f_nth(energy); 
+	double nth        = f_nth (energy); 
 	unsigned int sz_exp = (unsigned int) nexp;
 
-	double lp = log_poisson(sz_exp,nth);
+	double lp = log_poisson (sz_exp, nth);
 	if (local_debug) 
 	  {
 	    std::cerr << "DEBUG: test_multimin_system::compute_likelihood: " 
@@ -301,26 +301,26 @@ public:
       { 
 	
 	double slope = 1.e15;
-	for (int i = 0; i < get_dimension(); i++) 
+	for (int i = 0; i < get_dimension (); i++) 
 	  {
-	    if (is_param_free(i))
+	    if (is_param_free (i))
 	      {
-		if (!get_param(i).is_in_range()) 
+		if (!get_param (i).is_in_range ()) 
 		  {
-		    double dist = get_param(i).get_dist_to_limit();
-		    double dist_term = slope * (dist / get_param(i).get_step());
+		    double dist = get_param (i).get_dist_to_limit ();
+		    double dist_term = slope * (dist / get_param (i).get_step ());
 		    likelihood += dist_term;
 		  }
 	      }
 	  }
 	
-	double p2 = get_param_value(4);
-	double p4 = get_param_value(6);
+	double p2 = get_param_value (4);
+	double p4 = get_param_value (6);
       
 	if (p4 > 0.35 * p2) 
 	  {
 	    double dist = p4 - 0.35 * p2;
-	    double dist_term = slope * (dist / get_param(4).get_step());
+	    double dist_term = slope * (dist / get_param (4).get_step ());
 	    likelihood += dist_term;
 	  }
       }
@@ -335,51 +335,51 @@ public:
   }
 
   double 
-  compute_chi_square()
+  compute_chi_square ()
   {
     bool local_debug = false;
     if (local_debug) std::cerr << "DEBUG: test_multimin_system::compute_chi_square: entering... " << std::endl;
     double chi2   = 0.0;
     size_t ch_min = 0;
-    size_t ch_max = __hdata->bins();
+    size_t ch_max = __hdata->bins ();
     //ch_min = 100;
     //ch_max = 500;
-    double a = get_param_value(0);
-    double b = get_param_value(1);
+    double a = get_param_value (0);
+    double b = get_param_value (1);
     for (int ich = ch_min; ich < ch_max; ich++) 
       {
 	if (local_debug) std::cerr << "DEBUG: test_multimin_system::compute_chi_square: LOOP ich=" << ich << std::endl;
-	double nexp       = __hdata->at(ich);
+	double nexp       = __hdata->at (ich);
 	if (local_debug) std::cerr << "DEBUG: test_multimin_system::compute_chi_square: nexp=" << nexp << std::endl;
-	double sigma_nexp = std::sqrt(nexp);
+	double sigma_nexp = std::sqrt (nexp);
 	if (nexp < 2) sigma_nexp = 1.0;
 	if (local_debug) std::cerr << "DEBUG: test_multimin_system::compute_chi_square: sigma_nexp=" << sigma_nexp << std::endl;
 	double energy    = a * (ich + 0.5) + b;
 	if (local_debug) std::cerr << "DEBUG: test_multimin_system::compute_chi_square: energy=" << energy << std::endl;
-	double nth       = f_nth(energy); 
+	double nth       = f_nth (energy); 
 	if (local_debug) std::cerr << "DEBUG: test_multimin_system::compute_chi_square: nth=" << nth << std::endl;
-	chi2 += sqr((nexp - nth) / sigma_nexp);
+	chi2 += sqr ((nexp - nth) / sigma_nexp);
       }
     if (local_debug) std::cerr << "DEBUG: test_multimin_system::compute_chi_square: chi2=" << chi2 << std::endl;
     double slope = 1.e7;
-    for (int i = 0; i < get_dimension(); i++) 
+    for (int i = 0; i < get_dimension (); i++) 
       {
-	if (is_param_free(i)) 
+	if (is_param_free (i)) 
 	  {
-	    if (!get_param(i).is_in_range()) 
+	    if (!get_param (i).is_in_range ()) 
 	      {
-		double dist=get_param(i).get_dist_to_limit();
-		double dist_term=slope*(dist/get_param(i).get_step());
+		double dist=get_param (i).get_dist_to_limit ();
+		double dist_term=slope* (dist/get_param (i).get_step ());
 		chi2+=dist_term;
 	      }
 	  }
       }
-    double p2 = get_param_value(4);
-    double p4 = get_param_value(6);
+    double p2 = get_param_value (4);
+    double p4 = get_param_value (6);
     if (p4 > 0.35 * p2) 
       {
 	double dist = p4 - 0.35 * p2;
-	double dist_term = slope * (dist / get_param(4).get_step());
+	double dist_term = slope * (dist / get_param (4).get_step ());
 	chi2 += dist_term;
       }
     return chi2;
@@ -388,38 +388,38 @@ public:
 protected:
 
   virtual int 
-  _auto_values()
+  _auto_values ()
   {
     __exp_params.p2 = 1. - __exp_params.p1 - __exp_params.p3 - __exp_params.p4;
-    set_param_value_no_check(4, __exp_params.p2);
+    set_param_value_no_check (4, __exp_params.p2);
     return 0;
   }
 
   virtual int 
-  _prepare_values()
+  _prepare_values ()
   {
-    __exp_params.a  = get_param_value(0);
-    __exp_params.b  = get_param_value(1);
-    __exp_params.r  = get_param_value(2);
-    __exp_params.p1 = get_param_value(3);  
-    __exp_params.p2 = get_param_value(4);
-    __exp_params.p3 = get_param_value(5);  
-    __exp_params.p4 = get_param_value(6); 
+    __exp_params.a  = get_param_value (0);
+    __exp_params.b  = get_param_value (1);
+    __exp_params.r  = get_param_value (2);
+    __exp_params.p1 = get_param_value (3);  
+    __exp_params.p2 = get_param_value (4);
+    __exp_params.p3 = get_param_value (5);  
+    __exp_params.p4 = get_param_value (6); 
     return 0;
   }
 
   virtual int 
-  _eval_f( double & f_ )
+  _eval_f (double & f_)
   {
-    if (is_chisquare()) 
+    if (is_chisquare ()) 
       {
-	f_ = compute_chi_square();
+	f_ = compute_chi_square ();
 	return 0;
       }
 
-    if (is_likelihood()) 
+    if (is_likelihood ()) 
       {
-	f_ = compute_likelihood();
+	f_ = compute_likelihood ();
 	return 0;
       }
 
@@ -427,7 +427,7 @@ protected:
   }
 
   virtual int 
-  _eval_df(double * gradient_)
+  _eval_df (double * gradient_)
   {
     std::cerr << "DEBUG: test_multimin_system::_eval_df: Not implemented!" 
 	      << std::endl;
@@ -437,7 +437,7 @@ protected:
 };
 
 int
-main (int argc_ , char ** argv_)
+main (int argc_, char ** argv_)
 {
   try
     {
@@ -508,7 +508,7 @@ main (int argc_ , char ** argv_)
       params.p2 = 0.45;
       params.p3 = 0.10;
       params.p4 = 0.15;
-      params.dump(std::clog);
+      params.dump (std::clog);
 
       //size_t nevents = 5000;   
       //nevents = 5000000;   
@@ -518,21 +518,21 @@ main (int argc_ , char ** argv_)
       if (! fixed_seed) 
 	{
 	  time_t tt;
-	  tt = time(NULL);
-	  srand((unsigned int)tt);
-	  seed = rand();
+	  tt = time (NULL);
+	  srand ((unsigned int) tt);
+	  seed = rand ();
 	}
 
       std::cerr << "NOTICE: seed=" << seed << std::endl;
       std::cerr << "NOTICE: nevents=" << nevents << std::endl;
 
-      experiment e(params,nevents,seed);
+      experiment e (params, nevents, seed);
 
-      e.shoot(h);
+      e.shoot (h);
 
-      std::ofstream fhist("test_multimin.hist");
-      h.print(fhist);
-      fhist.close();
+      std::ofstream fhist ("test_multimin.hist");
+      h.print (fhist);
+      fhist.close ();
 
       experiment::params_t start_params;
 
@@ -545,91 +545,91 @@ main (int argc_ , char ** argv_)
       start_params.p3 = 0.10;
       start_params.p4 = 0.10;
 
-      test_multimin_system sys(h,mode,debug);
+      test_multimin_system sys (h, mode, debug);
 
       typedef mygsl::multimin_system::param_entry pe;
-      sys.add_param(pe::make_param_entry_ranged("a", 
+      sys.add_param (pe::make_param_entry_ranged ("a", 
 						start_params.a, 
 						2.8, 
 						3.2, 
 						0.005));
 
       // 10.
-      sys.add_param(pe::make_param_entry_ranged("b", 
+      sys.add_param (pe::make_param_entry_ranged ("b", 
 						start_params.b, 
 						0., 
 						200., 
 						1.));
       
       // 0.005
-      sys.add_param(pe::make_param_entry_ranged("r", 
+      sys.add_param (pe::make_param_entry_ranged ("r", 
 						start_params.r, 
 						0.13, 
 						0.20, 
 						0.001));
       
-      sys.add_param(pe::make_param_entry_ranged("p1", 
+      sys.add_param (pe::make_param_entry_ranged ("p1", 
 						start_params.p1, 
 						0., 
 						1., 
 						0.005));
 
-      sys.add_param(pe::make_param_entry_auto("p2"));
+      sys.add_param (pe::make_param_entry_auto ("p2"));
 
-      //sys.add_param(pe::make_param_entry_fixed("p3",
+      //sys.add_param (pe::make_param_entry_fixed ("p3", 
       //start_params.p3));
 
-      sys.add_param(pe::make_param_entry_ranged("p3", 
+      sys.add_param (pe::make_param_entry_ranged ("p3", 
 						start_params.p3, 
 						0., 
 						1., 
 						0.005));
 
-      //sys.add_param(pe::make_param_entry_fixed("p4", start_params.p4));
+      //sys.add_param (pe::make_param_entry_fixed ("p4", start_params.p4));
 
-      sys.add_param(pe::make_param_entry_ranged("p4", 
+      sys.add_param (pe::make_param_entry_ranged ("p4", 
 						start_params.p4, 
 						0., 
 						1., 
 						0.005));
    
-      sys.dump(std::clog);
-      sys.lock_params();
+      sys.dump (std::clog);
+      sys.lock_params ();
 
-      mygsl::multimin::print_types(std::cerr);
+      mygsl::multimin::print_types (std::cerr);
       std::cerr << std::endl;
 
       mygsl::multimin mm;
-      //mm.set_default_step_action();
-      mm.init("nmsimplex",sys);
+      //mm.set_default_step_action ();
+      mm.init ("nmsimplex", sys);
 
       double epsabs = 1.0;
       //epsabs=1.0e-2;
-      if (mm.minimize(epsabs) == 0) 
+      if (mm.minimize (epsabs) == 0) 
 	{
 	  std::clog << "Found minimum!" << std::endl;
-	  std::ofstream fsol("test_multimin.sol");
-	  sys.print_params(std::cout);
-	  sys.print_solution(fsol);
-	  double fval = mm.get_fval();
+	  std::ofstream fsol ("test_multimin.sol");
+	  sys.print_params (std::cout);
+	  sys.print_solution (fsol);
+	  double fval = mm.get_fval ();
 	  std::clog << "Fval=" << fval << std::endl;
-	  std::ofstream fpar("test_multimin.pars", std::ios::app);
-	  sys.print_params2(fpar);
+	  std::ofstream fpar ("test_multimin.pars", std::ios::app);
+	  sys.print_params2 (fpar);
 	  fpar << fval << std::endl;
 	}
       else 
 	{
 	  std::clog << "Cannot find minimum!" << std::endl;
-	  double fval = mm.get_fval();
+	  double fval = mm.get_fval ();
 	  std::clog << "Last fval=" << fval << std::endl;
 	}
     }
   catch (std::exception & x) 
     { 
-      std::cerr << "ERROR: " << x.what() << std::endl;
-      exit(EXIT_FAILURE);
+      std::cerr << "ERROR: " << x.what () << std::endl;
+      exit (EXIT_FAILURE);
     }
-  return(EXIT_SUCCESS);
+  return (EXIT_SUCCESS);
 }
 
 // end of test_multimin.cxx

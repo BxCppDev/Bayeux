@@ -72,7 +72,7 @@ namespace mygsl {
 	throw std::runtime_error (message.str ());
       }
     __r = gsl_rng_alloc (g__initializer.dict[id_]);
-    if ( __r == 0 ) {
+    if (__r == 0) {
       std::ostringstream message;
       message << "gsl::rng::init: Cannot allocate the '" 
 	      << id_ << "' generator!";
@@ -81,7 +81,7 @@ namespace mygsl {
     gsl_rng_set (__r, seed_);
   }
 
-  rng::rng (const std::string & id_ , unsigned long int seed_)
+  rng::rng (const std::string & id_, unsigned long int seed_)
   {
     __r = 0;
     init (id_, seed_);
@@ -147,7 +147,7 @@ namespace mygsl {
   }
 
   void 
-  rng::store ( const std::string & filename_ ) const
+  rng::store (const std::string & filename_) const
   {
     FILE * stream = fopen (filename_.c_str (), "w");
     if (stream == NULL) 
@@ -159,7 +159,7 @@ namespace mygsl {
 	throw std::runtime_error (message.str ());
       }
     int ret=gsl_rng_fwrite (stream, __r);
-    if ( ret == GSL_EFAILED) 
+    if (ret == GSL_EFAILED) 
       {
 	std::ostringstream message;
 	message << "gsm::rng::store: Cannot store state in file '"
@@ -205,7 +205,7 @@ namespace mygsl {
   {
     void * state = gsl_rng_state (__r);
     size_t n = gsl_rng_size (__r);
-    const unsigned char * b = (const unsigned char * ) state;
+    const unsigned char * b = (const unsigned char *) state;
     out_ << this->name () << ' ' << n;
     for (int i = 0; i < n; i++) 
       {
@@ -216,7 +216,7 @@ namespace mygsl {
   }
 
   void 
-  rng::from_stream ( std::istream & in_) 
+  rng::from_stream (std::istream & in_) 
   {
     std::string token;
     in_ >> token;
@@ -257,7 +257,7 @@ namespace mygsl {
 				      "gsl::rng::from_stream: Cannot read state byte from stream!");      
 	  }
 	/*
-	  if ( g_debug ) {
+	  if (g_debug) {
 	  std::cerr << "DEBUG: rng::from_stream: i=" 
 	  << i << "   c='" 
 	  << c << "'" << std::endl;
@@ -287,7 +287,7 @@ namespace mygsl {
   }
   
   double 
-  rng::gaussian(double mu_ , double sigma_) const
+  rng::gaussian(double mu_, double sigma_) const
   {
     return mu_+gaussian(sigma_);
   }
@@ -329,7 +329,7 @@ namespace mygsl {
     return gsl_ran_binomial (__r, p_, n_);
   }
       
-  gsl_rng * rng::operator () ( void )
+  gsl_rng * rng::operator () (void)
   {
     return __r;
   }
