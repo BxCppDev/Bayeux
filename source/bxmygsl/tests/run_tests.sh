@@ -6,7 +6,7 @@ prefix=$(mygsl-config --prefix)
 bin_path=${prefix}/${system}/bin
 
 
-function test_histo()
+function test_histo ()
 {
     ${bin_path}/test_histogram
     gnuplot ${prefix}/tests/test_histogram.gnuplot
@@ -18,12 +18,12 @@ function test_histo()
 	-exec rm -f \{\} \;
 }
 
-function test_ode()
+function test_ode ()
 {
     ${prefix}/tests/test_ode.bash
 }
 
-function test_multimin()
+function test_multimin ()
 {
     ${prefix}/tests/test_multimin.bash --run
     ${prefix}/tests/test_multimin.bash --a

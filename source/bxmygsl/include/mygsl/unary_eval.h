@@ -23,19 +23,17 @@ namespace mygsl {
 
   struct unary_eval : public std::unary_function<double,double>
   {
-
-    virtual double 
-    eval(double x_) const = 0;
+    virtual double eval (double x_) const = 0;
 
     inline double 
-    operator()(double x_) const
+    operator () (double x_) const
     {
-      return eval(x_);
+      return eval (x_);
     }
 
   };
 
-} // end of namespace bi207
+} // end of namespace mygsl
 
 #endif // __mygsl__unary_eval_h
 

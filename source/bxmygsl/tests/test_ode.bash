@@ -52,14 +52,14 @@ done
 
 prefix=__test_ode
 
-function do_clean()
+function do_clean ()
 {
     rm -f *~
     rm -f ${prefix}.gnuplot
     rm -f ${prefix}.data
 }
 
-function do_run()
+function do_run ()
 {
 
     BIN=${MYGSL_ROOT}/$(uname -s)-$(uname -m | sed 's/ //g')/bin/test_ode
