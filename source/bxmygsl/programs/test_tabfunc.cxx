@@ -26,7 +26,8 @@ int main (int argc_ , char ** argv_)
   int error_code = EXIT_SUCCESS;
   try 
     {
-      std::cerr << "Hello, this is a sample program for package 'mygsl'!" 
+      bool debug = false;
+      std::cerr << "Test program for the 'mygsl::tabulated_function' class" 
 		<< std::endl; 
   
       mygsl::tabulated_function tf ("cspline"); // also available "linear";
@@ -52,14 +53,17 @@ int main (int argc_ , char ** argv_)
 	}
       tf.lock_table ("linear"); // change interpolation scheme
 
-      std::cerr.precision (10);
-      std::cerr << "DEBUG: min=" << tf.x_min () << std::endl; 
-      std::cerr << "DEBUG: max=" << tf.x_max () << std::endl; 
+      if (debug)
+	{
+	  std::cerr.precision (10);
+	  std::cerr << "DEBUG: min=" << tf.x_min () << std::endl; 
+	  std::cerr << "DEBUG: max=" << tf.x_max () << std::endl; 
+	}
 
       double dx = 0.01;
       for (double x = tf.x_min (); x <= tf.x_max () + 0.001 * dx; x += dx) 
 	{
-	  if (tf.in_range (x)) 
+	  if (tf.is_valid (x)) 
 	    {
 	      std::cout << x << ' ' << tf (x) << std::endl;
 	    }
@@ -69,7 +73,27 @@ int main (int argc_ , char ** argv_)
       tf.lock_table ("cspline"); // change interpolation scheme
       for (double x = tf.x_min (); x <= tf.x_max () + 0.001 * dx; x += dx) 
 	{
-	  if (tf.in_range (x)) 
+	  if (tf.is_valid (x)) 
+	    {
+	      std::cout << x << ' ' << tf (x) << std::endl;
+	    }
+	}
+      std::cout << std::endl << std::endl;
+
+      tf.lock_table ("polynomial"); // change interpolation scheme
+      for (double x = tf.x_min (); x <= tf.x_max () + 0.001 * dx; x += dx) 
+	{
+	  if (tf.is_valid (x)) 
+	    {
+	      std::cout << x << ' ' << tf (x) << std::endl;
+	    }
+	}
+      std::cout << std::endl << std::endl;
+
+      tf.lock_table ("akima"); // change interpolation scheme
+      for (double x = tf.x_min (); x <= tf.x_max () + 0.001 * dx; x += dx) 
+	{
+	  if (tf.is_valid (x)) 
 	    {
 	      std::cout << x << ' ' << tf (x) << std::endl;
 	    }
@@ -81,7 +105,7 @@ int main (int argc_ , char ** argv_)
 
       for (double x = tf.x_min (); x <= tf.x_max () + 0.001 * dx; x += dx) 
 	{
-	  if (tf.in_range (x)) 
+	  if (tf.is_valid (x)) 
 	    {
 	      std::cout << x << ' ' << std::exp (-x) << std::endl;
 	    }

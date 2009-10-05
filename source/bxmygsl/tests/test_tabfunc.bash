@@ -14,9 +14,11 @@ set ylabel "f(x)"
 
 plot \
  'tf.data' index 0 using 1:2 title "Linear interpolation" with lines, \
- '' index 1 using 1:2 title "C-spline interpolation" with lines, \
- '' index 2 using 1:2 title "Sampled points" with points pt 7 ps 0.75, \
- '' index 3 using 1:2 title "Theroretical" with lines
+ ''        index 1 using 1:2 title "C-spline interpolation" with lines, \
+ ''        index 2 using 1:2 title "Polynomial" with lines, \
+ ''        index 3 using 1:2 title "Akima" with lines, \
+ ''        index 4 using 1:2 title "Sampled points" with points pt 7 ps 0.75, \
+ ''        index 5 using 1:2 title "Theoretical" with lines
 pause -1
 
 EOF

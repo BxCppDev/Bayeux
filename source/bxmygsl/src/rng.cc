@@ -12,8 +12,7 @@ namespace mygsl {
 
   bool rng::g_debug = false;
 
-  void 
-  rng::default_setup ()
+  void rng::default_setup ()
   {
     gsl_rng_env_setup ();
   }
@@ -38,8 +37,7 @@ namespace mygsl {
     dict.clear();
   }
 
-  void 
-  rng::print_dict (std::ostream & out_)
+  void rng::print_dict (std::ostream & out_)
   {
     if (g_debug) 
       {
@@ -72,82 +70,76 @@ namespace mygsl {
 	throw std::runtime_error (message.str ());
       }
     __r = gsl_rng_alloc (g__initializer.dict[id_]);
-    if (__r == 0) {
-      std::ostringstream message;
-      message << "gsl::rng::init: Cannot allocate the '" 
-	      << id_ << "' generator!";
-      throw std::runtime_error (message.str ());
-    }
+    if (__r == 0) 
+      {
+	std::ostringstream message;
+	message << "gsl::rng::init: Cannot allocate the '" 
+		<< id_ << "' generator!";
+	throw std::runtime_error (message.str ());
+      }
     gsl_rng_set (__r, seed_);
   }
 
+  // ctor:
   rng::rng (const std::string & id_, unsigned long int seed_)
   {
     __r = 0;
     init (id_, seed_);
   }
 
-  void 
-  rng::reset ()
+  void rng::reset ()
   {
     if (g_debug) 
       {
-	std::cerr << "DEBUG: rng::reset: " 
+	std::clog << "DEBUG: rng::reset: " 
 		  << "Entering." << std::endl;
       }
     if (__r != 0) gsl_rng_free (__r);
     __r = 0;
   }
 
+  // dtor:
   rng::~rng ()
   {
     reset ();
   }
 
-  unsigned long int 
-  rng::get ()
+  unsigned long int rng::get ()
   {
     return gsl_rng_get (__r);
   }
 
-  double 
-  rng::uniform ()
+  double rng::uniform ()
   {
     return gsl_rng_uniform (__r);
   }
 
-  double 
-  rng::uniform_pos ()
+  double rng::uniform_pos ()
   {
     return gsl_rng_uniform_pos (__r);
   }
 
-  unsigned long int 
-  rng::uniform_int (unsigned long int n_)
+  unsigned long int rng::uniform_int (unsigned long int n_)
   {
     return gsl_rng_uniform_int (__r, n_);
   }
 
-  std::string 
-  rng::name () const
+  std::string rng::name () const
   {
     return (std::string (gsl_rng_name (__r)));
   }
 
-  unsigned long int 
-  rng::min () const
+  unsigned long int rng::min () const
   {
     return (gsl_rng_min (__r));
   }
 
-  unsigned long int 
-  rng::max () const
+  unsigned long int rng::max () const
   {
     return (gsl_rng_max (__r));
   }
 
-  void 
-  rng::store (const std::string & filename_) const
+  void rng::store (const std::string & filename_) const
   {
     FILE * stream = fopen (filename_.c_str (), "w");
     if (stream == NULL) 
@@ -169,8 +161,7 @@ namespace mygsl {
     fclose (stream);
   }
 
-  void 
-  rng::load (const std::string & filename_)
+  void rng::load (const std::string & filename_)
   {
     FILE * stream = fopen (filename_.c_str (), "r");
     if (stream == NULL) 
@@ -200,8 +191,7 @@ namespace mygsl {
       }
   }
 
-  void 
-  rng::to_stream (std::ostream & out_) const
+  void rng::to_stream (std::ostream & out_) const
   {
     void * state = gsl_rng_state (__r);
     size_t n = gsl_rng_size (__r);
@@ -215,8 +205,7 @@ namespace mygsl {
       }
   }
 
-  void 
-  rng::from_stream (std::istream & in_) 
+  void rng::from_stream (std::istream & in_) 
   {
     std::string token;
     in_ >> token;
@@ -253,8 +242,7 @@ namespace mygsl {
 	in_ >> c ;
 	if (! in_) 
 	  {
-	    throw std::runtime_error (
-				      "gsl::rng::from_stream: Cannot read state byte from stream!");      
+	    throw std::runtime_error ("gsl::rng::from_stream: Cannot read state byte from stream!");      
 	  }
 	/*
 	  if (g_debug) {
@@ -274,56 +262,47 @@ namespace mygsl {
   
   // specific distributions:
  
-  double 
-  rng::flat(double min_, double max_) const
+  double rng::flat (double min_, double max_) const
   {
-    return gsl_ran_flat(__r, min_, max_);
+    return gsl_ran_flat (__r, min_, max_);
   }
   
-  double 
-  rng::gaussian(double sigma_) const
+  double rng::gaussian (double sigma_) const
   {
-    return gsl_ran_gaussian_ziggurat(__r, sigma_);
+    return gsl_ran_gaussian_ziggurat (__r, sigma_);
   }
   
-  double 
-  rng::gaussian(double mu_, double sigma_) const
+  double rng::gaussian (double mu_, double sigma_) const
   {
-    return mu_+gaussian(sigma_);
+    return mu_ + gaussian (sigma_);
   }
 
-  double 
-  rng::gaussian_tail(double min_, double sigma_) const
+  double rng::gaussian_tail (double min_, double sigma_) const
   {
-    return gsl_ran_gaussian_tail(__r, min_, sigma_);
+    return gsl_ran_gaussian_tail (__r, min_, sigma_);
   }
 
-  double
-  rng::exponential(double sigma_) const
+  double rng::exponential (double sigma_) const
   {
-    return gsl_ran_exponential(__r, sigma_);
+    return gsl_ran_exponential (__r, sigma_);
   }
 
-  double 
-  rng::chisquare(double nu_) const
+  double rng::chisquare (double nu_) const
   {
-    return gsl_ran_chisq(__r, nu_);
+    return gsl_ran_chisq (__r, nu_);
   }
 
-  unsigned long int 
-  rng::poisson(double mu_) const
+  unsigned long int rng::poisson (double mu_) const
   {
-    return gsl_ran_poisson(__r, mu_);
+    return gsl_ran_poisson (__r, mu_);
   }
 
-  unsigned long int 
-  rng::bernoulli(double p_) const
+  unsigned long int rng::bernoulli (double p_) const
   {
-    return gsl_ran_bernoulli(__r, p_);
+    return gsl_ran_bernoulli (__r, p_);
   }
 
-  unsigned long int 
-  rng::binomial(double p_, 
+  unsigned long int rng::binomial (double p_, 
 		unsigned long int n_) const
   {
     return gsl_ran_binomial (__r, p_, n_);
@@ -334,8 +313,7 @@ namespace mygsl {
     return __r;
   }
   
-  const gsl_rng * 
-  rng::operator () (void) const
+  const gsl_rng * rng::operator () (void) const
   {
     return __r;
   }

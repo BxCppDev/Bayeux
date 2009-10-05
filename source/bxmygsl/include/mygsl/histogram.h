@@ -94,6 +94,8 @@ namespace mygsl {
 
       double sum () const;
 
+      double sum (size_t begin_, size_t end_) const;
+
       void to_stream (std::ostream &) const;
 
       void from_stream (std::istream &);

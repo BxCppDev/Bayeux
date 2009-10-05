@@ -316,6 +316,16 @@ namespace mygsl {
     return gsl_histogram_sum (__h);
   }
 
+  double histogram::sum (size_t begin_, size_t end_) const
+  {
+    double s = 0.0;
+    for (size_t i = begin_; i < end_; i++)
+      {
+	s += gsl_histogram_get (__h, i);
+      }
+    return s;
+  }
+
   void histogram::to_stream (std::ostream & out_) const
   {
     //out_ << "gsl::histogram" << ' ' 

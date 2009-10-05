@@ -5,6 +5,7 @@
 namespace mygsl {
 
   bool von_neumann_method::g_debug = false;
+  const double  von_neumann_method::AUTO_FMAX = 0.0;
 
   von_neumann_method::von_neumann_method (double xmin_, 
 					  double xmax_, 
@@ -52,7 +53,7 @@ namespace mygsl {
     __max_counts = max_counts_;
     __func = &func_;
 
-    if (fmax_ > 0.0)
+    if (fmax_ > AUTO_FMAX)
       {
 	__fmax = fmax_;
       }
@@ -110,6 +111,7 @@ namespace mygsl {
   double von_neumann_method::shoot (rng & ran_)
   {
     double res;
+    size_t max_counts = __max_counts;
     size_t counts = 0;
     while (true)
       {
@@ -122,7 +124,7 @@ namespace mygsl {
 	    res = x;
 	    break;
 	  } 
-	if (counts > __max_counts)
+	if ((max_counts > 0) && (counts > max_counts))
 	  {
 	    throw std::runtime_error ("von_neumann_method::shoot: maximum number of tries has been reached!");
 	  }

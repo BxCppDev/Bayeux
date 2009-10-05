@@ -32,6 +32,10 @@ namespace mygsl {
     {
     public:
       static bool g_debug;
+      static const double AUTO_FMAX;
+      static const size_t DEFAULT_NSAMPLES   = 1000;
+      static const size_t DEFAULT_MAX_COUNTS = 10000;
+      static const size_t NO_MAX_COUNTS      = 0;
 
     private:
       double __xmin;
@@ -42,12 +46,32 @@ namespace mygsl {
 
     public:
 
+      double get_xmin () const
+      {
+	return __xmin;
+      }
+
+      double get_xmax () const
+      {
+	return __xmax;
+      }
+
+      double get_fmax () const
+      {
+	return __fmax;
+      }
+
+      size_t get_max_counts () const
+      {
+	return __max_counts;
+      }
+
       von_neumann_method (double xmin_, 
 			  double xmax_, 
 			  unary_eval & func_, 
-			  double fmax_ = 0.0,
-			  size_t nsamples_ = 1000,
-			  size_t max_counts_ = 10000);
+			  double fmax_ = AUTO_FMAX,
+			  size_t nsamples_ = DEFAULT_NSAMPLES,
+			  size_t max_counts_ = DEFAULT_MAX_COUNTS);
 
       void init (double xmin_, 
 		 double xmax_, 
