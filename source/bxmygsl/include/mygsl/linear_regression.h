@@ -59,11 +59,9 @@ namespace mygsl {
       double    * __w;
       bool        __can_weighted;
 
-    protected:
+    public:
 
       double eval (double x_) const;
-
-    public:
 
       void eval_err (double x_, double & y_, double & yerr_) const;
 

@@ -34,7 +34,7 @@ namespace mygsl {
 
       const double & x () const;
 
-      const double &  y () const;
+      const double & y () const;
 
       const double & sigma () const;
 

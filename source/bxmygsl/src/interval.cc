@@ -434,7 +434,7 @@ namespace mygsl {
 	    else
 	      {
 		in_.putback (c);
-		in_.fail ();
+		in_.setstate (ios::failbit);
 	      }
 	    return in_;
 	  }
@@ -458,7 +458,7 @@ namespace mygsl {
     else 
       {
 	in_.putback (c);
-	in_.fail ();
+	in_.setstate (ios::failbit);
 	return in_;
       }
     
@@ -469,7 +469,7 @@ namespace mygsl {
     if (! in_) return in_;
     if (c != interval::IO_SEP)
       {
-	in_.fail ();
+	in_.setstate (ios::failbit);
 	return in_;
       }
     

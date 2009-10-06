@@ -81,7 +81,7 @@ namespace mygsl
 	  }
 	else
 	  {
-	    in_.fail ();
+	    in_.setstate (ios::failbit);
 	    return in_;
 	  }
 	in_.get (c);
@@ -91,7 +91,7 @@ namespace mygsl
 	  }
 	if (c != '}')
 	  {
-	    in_.fail ();
+	    in_.setstate (ios::failbit);
 	    return in_;
 	  }
 	else

@@ -1,10 +1,5 @@
 // test_multidimensional_minimization.cxx
 /*
- * compute movement of a simple oscillator:
- *
- * shell$ ./test_multidimensional_minimization > a.data
- *
- * gnuplot> plot 'a.data' using 1:2  title "" with dots 
  *
  */
 
@@ -15,6 +10,7 @@
 #include <cmath>
 #include <ctime>
 
+#include <gsl/gsl_math.h>
 #include <gsl/gsl_sf.h>
 #include <mygsl/rng.h>
 #include <mygsl/histogram.h>
@@ -25,16 +21,6 @@
 using namespace std;
 
 /**********************************************************/
-
-double sqr (double x_)
-{
-  return x_ * x_;
-} 
-
-double log_fact (unsigned long k_)
-{
-  return gsl_sf_lnfact (k_);
-}
 
 double log_poisson (unsigned long k_, double mu_)
 {
@@ -47,7 +33,7 @@ double log_poisson (unsigned long k_, double mu_)
     {
       return 0.0;
     }
-  return -mu + k_ * log (mu) - log_fact (k_);
+  return -mu + k_ * log (mu) - gsl_sf_lnfact (k_);
 }
 
 /**********************************************************/
@@ -401,7 +387,7 @@ public:
 	    clog << "DEBUG: test_multimin_system::compute_chi_square: energy=" << energy << endl;
 	    clog << "DEBUG: test_multimin_system::compute_chi_square: nth=" << nth << endl;
 	  }
-	chi2 += sqr ((nexp - nth) / sigma_nexp);
+	chi2 += gsl_pow_2 ((nexp - nth) / sigma_nexp);
       }
     if (local_debug) clog << "DEBUG: test_multimin_system::compute_chi_square: chi2=" << chi2 << endl;
 

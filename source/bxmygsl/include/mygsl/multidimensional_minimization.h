@@ -28,7 +28,7 @@ namespace mygsl {
       static const double DEFAULT_OUT_OF_LIMIT_SLOPE;
 
     private:
-      double __numeric_eval_df;
+      bool   __numeric_eval_df;
       double __out_of_limit_slope;
 
     private:
@@ -42,7 +42,7 @@ namespace mygsl {
       virtual int _eval_f (double & f_) = 0;
 
       // you may provide this method;
-      // if not, you may use the '__numerical_eval_df_MR' method in place:
+      // if not, the '__numerical_eval_df_MR' method will be used in place:
       virtual int _eval_df (double * gradient_);
 
     public:
@@ -62,8 +62,8 @@ namespace mygsl {
       int eval_df (const double * x_ , double * gradient_);
 
       int eval_fdf (const double * x_ , 
-			    double & f_ , 
-			    double * gradient_);
+		    double & f_ , 
+		    double * gradient_);
 
       void to_double_star (double * pars_ , 
 			   size_t dimension_) const;
@@ -120,10 +120,10 @@ namespace mygsl {
       static double f   (const gsl_vector * v_ , void * params_);
 
       static void   df  (const gsl_vector * v_ , void * params_ , 
-				  gsl_vector * gradient_);
+			 gsl_vector * gradient_);
 
       static void   fdf (const gsl_vector * v_ , void * params_ ,
-				  double * f_ , gsl_vector * gradient_);
+			 double * f_ , gsl_vector * gradient_);
 
       static bool name_is_valid (const std::string & name_);
 
@@ -184,7 +184,7 @@ namespace mygsl {
       gsl_multimin_function_fdf   __fdf;
       gsl_vector                * __x;
       gsl_vector                * __ss;
-      multidimensional_minimization_system           * __sys;
+      multidimensional_minimization_system * __sys;
 
       double                      __fdf_step_size;
       double                      __fdf_tol;
@@ -241,11 +241,11 @@ namespace mygsl {
 
       virtual ~multidimensional_minimization ();
 
-      void _at_step_hook (int status_ ,
-			  size_t iter_ , 
+      void _at_step_hook (int      status_ ,
+			  size_t   iter_ , 
 			  double * x_ , 
 			  size_t   dim_ , 
-			  double f_);
+			  double   f_);
 
       int minimize (double epsabs_);
 

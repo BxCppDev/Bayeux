@@ -48,11 +48,8 @@ namespace mygsl {
 
     virtual ~unary_eval ();
 
-  protected:
-
+    // mandatory:
     virtual double eval (double x_) const = 0;
-
-  public:
 
     double evaluate (double x_) const;
 

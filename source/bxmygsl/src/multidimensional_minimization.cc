@@ -166,19 +166,16 @@ namespace mygsl {
 	  {
 	    if (local_devel) clog << "DEVEL: __numerical_eval_df: gsl_deriv_central... " << endl;
 	    res_deriv = gsl_deriv_central (&func, x, h, &df, &df_err);
-	    // clog << "DEVEL: MMS::__numerical_eval_df_MR: gsl_deriv_central" << endl;
 	  }
 	else if (get_free_param (i).is_in_range_but_close_to_min ())
 	  {
 	    if (local_devel) clog << "DEVEL: __numerical_eval_df: gsl_deriv_forward... " << endl;
 	    res_deriv = gsl_deriv_forward (&func, x, h, &df, &df_err);
-	    // clog << "DEVEL: MMS::__numerical_eval_df_MR: gsl_deriv_forward" << endl;
 	  }
 	else if (get_free_param (i).is_in_range_but_close_to_max ())
 	  {
 	    if (local_devel) clog << "DEVEL: __numerical_eval_df: gsl_deriv_backward... " << endl;
 	    res_deriv = gsl_deriv_backward (&func, x, h, &df, &df_err);
-	    // clog << "DEVEL: MMS::__numerical_eval_df_MR: gsl_deriv_backward" << endl;
 	  }
 	else 
 	  {
