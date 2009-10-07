@@ -10,22 +10,22 @@ class col_t
 {
   typename std::list<T> __items;
 public:
-  col_t()
+  col_t ()
   {
   }
-  virtual ~col_t()
+  virtual ~col_t ()
   {
-    __items.clear();
+    __items.clear ();
   }
-  void add(const T & item_)  
+  void add (const T & item_)  
   {
-    __items.push_back(item_);
+    __items.push_back (item_);
   }
-  void print() const
+  void print () const
   {
     std::cout << "begin" << std::endl;
-    for (typename std::list<T>::const_iterator i=__items.begin();
-	 i != __items.end();
+    for (typename std::list<T>::const_iterator i = __items.begin ();
+	 i != __items.end ();
 	 i++)
       {
 	std::cout << *i << std::endl;
@@ -34,15 +34,15 @@ public:
   }
 };
 
-int main( void )
+int main (void)
 {
   col_t<int> ints;
   
-  for (int i=0; i< 4; i++)
+  for (int i = 0; i < 4; i++)
     {
-      ints.add(i);
+      ints.add (i);
     }
-  ints.print();
+  ints.print ();
   return 0;
 }
 

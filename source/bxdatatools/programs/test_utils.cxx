@@ -7,8 +7,7 @@
 
 #include <datatools/utils/utils.h>
 
-int 
-main(void)
+int main (void)
 {
   try 
     {
@@ -18,7 +17,7 @@ main(void)
       std::clog << expanded << std::endl;
       std::clog << path << std::endl;
     }
-  catch(std::exception & x)
+  catch (std::exception & x)
     {
       std::cerr << "error: " << x.what () << std::endl;
       return EXIT_FAILURE;
