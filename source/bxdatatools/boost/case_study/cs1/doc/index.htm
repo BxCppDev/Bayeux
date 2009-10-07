@@ -54,7 +54,7 @@ input/output streams. This naturally enables the use of
 <i>filestreams</i> 
 as privileged data storage devices. The Boost Serialization library implements a few
 formatted input/ouput archives: <i>Text</i>, <i>XML</i> and <i>Portable binary</i>
-rendering format. Archives supporting other rendering formats can be designed by the programmer.
+rendering formats. Archives supporting other rendering formats can be designed by the programmer.
 </p>
 
 <p>
@@ -74,26 +74,28 @@ efficient way.
 Using this feature, if a <i>datum</i>  (typically an instance of a class) 
 is addressed through different pointers and one wants to store the data
 refered by such collection of pointers, thus the datum is stored only
-one, avoiding to duplication of storage.  
-On the other hand, during archive loading process, only one instance
+once, avoiding the duplication of storage.  
+On the other hand, during archive deserialization (loading) process, 
+only one instance
 of the datum will be restored while possibly many pointers refer to
 it, and the pointers will get dynamically initialized with the proper
-address of the datum. 
+address of this single datum. 
 </p>
 
 <p>
-Nevertheless,  the use  of  the useful  and  powerful object  tracking
+Nevertheless,  the use  of  this very useful  and  powerful object  tracking
 mechanism  may have some  nasty side-effects.   Depending of  the data
 model to be stored and  without special care, some data corruption can
 (will) occur along the serialization process.  This  is because the
  tracking  has  a  special  policy  that  triggers  the
 serialization of  data stored from  some memory location only  if this
-memory location  has not been visited  before.  It means  that during the
+memory location  has not been visited (used)  before.  
+It means  that during the
 serialization process,  if some dynamically  allocated memory location
 has been previously  used to handle data <tt>X</tt>  which has already
 been serialized,  the reuse  of this memory  location for  anoter data
 <tt>Y</tt> is  likely to corrupt  the storage/load flow  of <tt>Y</tt>.
-Thisnis because the memory tracking algorithm will 
+This is because the memory tracking algorithm will 
 consider <tt>Y</tt> as the same
 data  as  <tt>X</tt>,  even  if  <tt>Y</tt> has  nothing  to  do  with
 <tt>X</tt>. This generally induces loss  of data that exists in memory

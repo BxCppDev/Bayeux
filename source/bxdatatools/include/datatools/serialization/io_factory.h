@@ -262,6 +262,31 @@ namespace datatools {
       {
 	Data & b = data_;
 	ar_ >> b; 
+	/*
+        // 2009-05-26, FM:  
+	std::cerr << "DEVEL: io_factory::__load_text: archive class name='" 
+		  << typeid (ar_).name() << "'" 
+		  << std::endl;
+	std::cerr << "DEVEL: io_factory::__load_text: class name='" 
+		  << typeid (b).name() << "'" 
+		  << std::endl;
+	// Problem!
+	try 
+	  {
+	    ar_ >> b; 
+	    std::cerr << "DEVEL: io_factory::__load_text: deserialization is ok."
+		      << std::endl;
+	  }
+	catch (std::exception & x)
+	  {
+	    std::cerr << "DEVEL: io_factory::__load_text: EXCEPTION="
+		      << x.what ()
+		      << std::endl;
+	    
+	  }
+	std::cerr << "DEVEL: io_factory::__load_text: done" 
+		  << std::endl;
+	*/
       }
 
       template <typename Data>
@@ -353,6 +378,11 @@ namespace datatools {
 	  {
 	    if (__itar_ptr != 0)
 	      {
+		/*
+		std::cerr << "DEVEL: io_factory::load: "
+			  << "load data from input text archive..." 
+			  << std::endl;	      
+		*/
 		__load_text<Data> (*__itar_ptr, data_);
 		*__in_fs >> std::ws;
 	      }
@@ -554,7 +584,16 @@ namespace datatools {
 	  }
 	try 
 	  {
+	    /*
+	    std::cerr << "DEVEL: io_factory::_basic_load: class name='" 
+		      << typeid (data_).name() << "'" 
+		      << std::endl;
+	    */
 	    __reader->load (data_);
+	    /*
+	    std::cerr << "DEVEL: io_factory::_basic_load: ok" 
+		      << std::endl;
+	    */
 	  }
 	catch (std::exception & x) 
 	  {
@@ -618,9 +657,9 @@ namespace datatools {
       template <typename Data>
       void load (Data & data_)
       {
-	datatools::serialization::i_serializable & i_ser=
+	datatools::serialization::i_serializable & i_ser =
 	  static_cast<datatools::serialization::i_serializable &> (data_);
-	this->load (i_ser.get_serial_tag(), data_);
+	this->load (i_ser.get_serial_tag (), data_);
       }
 	
     };

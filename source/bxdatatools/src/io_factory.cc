@@ -990,8 +990,12 @@ namespace datatools {
     /***********************************************************/
 
     void 
-    data_reader::__read_next_tag ()
+    data_reader::__read_next_tag () 
     {
+      /*
+      std::cerr << "DEVEL: data_reader::__read_next_tag: Entering..." 
+	        << std::endl;
+      */
       if (__status != STATUS_OK) 
 	{
 	  __next_tag = EMPTY_RECORD_TAG;
@@ -1043,6 +1047,10 @@ namespace datatools {
 	  __status   = STATUS_ERROR;
 	  __next_tag = EMPTY_RECORD_TAG;
 	}
+      /*
+      std::cerr << "DEVEL: data_reader::__read_next_tag: Exiting." 
+		<< std::endl;
+      */
     }
 
     void 
