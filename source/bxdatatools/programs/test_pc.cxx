@@ -11,20 +11,21 @@
 #include <datatools/utils/properties.h>
 #include <datatools/utils/properties_commander.h>
 
-int 
-main (int argc_ , char ** argv_)
+using namespace std;
+
+int main (int argc_ , char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
   try 
     {
-      std::cerr << "Hello, this is a sample program for class 'properties_commander'!" << std::endl; 
+      clog << "Test of the 'properties_commander' class..." << endl; 
       bool debug=false;
 
       int iarg = 1;
       while (iarg < argc_) 
 	{
     
-	  std::string arg = argv_[iarg];
+	  string arg = argv_[iarg];
 
 	  if ((arg == "-d") || (arg == "--debug")) debug = true;
 
@@ -48,19 +49,19 @@ main (int argc_ , char ** argv_)
 	the_pc.set_allows_map_commands (true);
 
 	// an interactive shell:
-	std::string shell_name = "test_pc";
+	string shell_name = "test_pc";
 
-	if (debug) std::clog << "starting '" << shell_name 
-			     << "' shell..." << std::endl;
-	std::string shell_prompt = "commander> "; //shell_name + "> ";
-	std::string command_str;
+	if (debug) clog << "starting '" << shell_name 
+			<< "' shell..." << endl;
+	string shell_prompt = "commander> "; //shell_name + "> ";
+	string command_str;
 
 	bool stop = false;
 	do 
 	  {
 	    command_str.clear ();
-	    std::clog << shell_prompt;
-	    if (! std::getline (std::cin, command_str))
+	    clog << shell_prompt;
+	    if (! getline (cin, command_str))
 	      {
 		stop = true;
 		break;
@@ -70,34 +71,34 @@ main (int argc_ , char ** argv_)
 	    the_command.init (command_str);
 	    if (du::command::code_is_error (the_pc.run (the_command)))
 	      {
-		std::string msg = the_command.get_error_message ();
+		string msg = the_command.get_error_message ();
 		if (msg.empty ()) msg = "<no message>";
-		std::cerr << shell_name << ": error: " 
-			  << msg
-			  << std::endl;
+		clog << shell_name << ": error: " 
+		     << msg
+		     << endl;
 	      }
 	    else
 	      {
 		if (! the_command.get_returns ().empty ())
 		  {
-		    std::cout << the_command.get_returns () << std::endl;
+		    cout << the_command.get_returns () << endl;
 		  }
-		if (debug) the_prop.tree_dump (std::clog, "Current status");
+		if (debug) the_prop.tree_dump (clog, "Current status");
 	      }
 	  } while (! stop);
-	if (command_str.empty ()) std::clog << std::endl;
-	if (debug) std::clog << "'test_pc' shell stopped." << std::endl;
+	if (command_str.empty ()) clog << endl;
+	if (debug) clog << "'test_pc' shell stopped." << endl;
       }
 
     }
-  catch (std::exception & x)
+  catch (exception & x)
     {
-      std::cerr << "error: " << x.what () << std::endl; 
+      cerr << "error: " << x.what () << endl; 
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      std::cerr << "error: " << "unexpected error!" << std::endl; 
+      cerr << "error: " << "unexpected error!" << endl; 
       error_code = EXIT_FAILURE;
     }
   return error_code;

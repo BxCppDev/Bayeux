@@ -8,39 +8,40 @@
 
 #include <datatools/dummy_datatools.h>
 
-int main( int argc_ , char ** argv_ )
+using namespace std;
+
+int main (int argc_ , char ** argv_)
 {
-  int error_code=EXIT_SUCCESS;
-  try {
-
-    std::cerr << "Hello, this is a sample program for class 'dummy_datatools'!" << std::endl; 
+  int error_code = EXIT_SUCCESS;
+  try 
+    {
+      clog << "Test of the 'dummy_datatools' class..." << endl; 
   
-    bool debug=false;
+      bool debug = false;
 
-    int iarg=1;
-    while ( iarg<argc_ ) {
+      int iarg = 1;
+      while (iarg <  argc_) 
+	{
+	  string arg = argv_[iarg];
+
+	  if (arg == "-d" || arg == "--debug") debug =  true;
+
+	  iarg++;
+	}
     
-      std::string arg=argv_[iarg];
+      datatools::dummy_datatools my_dummy_datatools;
 
-      if ( arg == "-d" || arg == "--debug" ) debug=true;
-
-      // <here you may add more switches...>
-
-      iarg++;
     }
-    
-    datatools::dummy_datatools my_dummy_datatools;
-    // <here you may put stuff for testing the class>
-
-  }
-  catch(std::exception & x){
-    std::cerr << "error: " << x.what() << std::endl; 
-    error_code=EXIT_FAILURE;
-  }
-  catch(...){
-    std::cerr << "error: " << "unexpected error!" << std::endl; 
-    error_code=EXIT_FAILURE;
-  }
+  catch (exception & x)
+    {
+      cerr << "error: " << x.what() << endl; 
+      error_code = EXIT_FAILURE;
+    }
+  catch (...)
+    {
+      cerr << "error: " << "unexpected error!" << endl; 
+      error_code = EXIT_FAILURE;
+    }
   return error_code;
 }
 

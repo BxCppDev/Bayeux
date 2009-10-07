@@ -43,14 +43,14 @@ public:
 
   void inf ()
   {
-    __v1 = -std::numeric_limits<double>::infinity ();
-    __v2 = std::numeric_limits<double>::infinity ();
+    __v1 = -numeric_limits<double>::infinity ();
+    __v2 = numeric_limits<double>::infinity ();
   }
 
   void nan ()
   {
-    __v1 = std::numeric_limits<double>::quiet_NaN ();
-    __v2 = std::numeric_limits<double>::quiet_NaN ();
+    __v1 = numeric_limits<double>::quiet_NaN ();
+    __v2 = numeric_limits<double>::quiet_NaN ();
   }
 
   double get_v1 () const
@@ -79,85 +79,83 @@ ostream & operator<< (ostream & out_, const data_t & d_)
   return out_;
 }
 
-const std::string data_t::SERIAL_TAG = "__DATA__";
+const string data_t::SERIAL_TAG = "__DATA__";
 
-const std::string & data_t::get_serial_tag () const
+const string & data_t::get_serial_tag () const
 {
   return data_t::SERIAL_TAG;
 }
 
-int 
-main (int argc_ , char ** argv_) 
+int main (int argc_ , char ** argv_) 
 {
-  try {
-    long seed = 314159;
-    string filename = "test_nans_ar.txt";
-    bool debug = false;
-    namespace ds = datatools::serialization;
+  try 
+    {
+      long seed = 314159;
+      string filename = "test_nans_ar.txt";
+      bool debug = false;
+      namespace ds = datatools::serialization;
 
-    ds::io_factory::g_debug = debug;
-    srand48 (seed);
-    clog << "NOTICE: using filename '" << filename << "'" << endl;
+      ds::io_factory::g_debug = debug;
+      srand48 (seed);
+      clog << "NOTICE: using filename '" << filename << "'" << endl;
    
-    if (boost::filesystem::exists (filename)) 
+      if (boost::filesystem::exists (filename)) 
+	{
+	  ostringstream message;
+	  message << "File '" << filename << "' already exists!";
+	  clog << message.str () << endl;
+	}
+    
       {
-	ostringstream message;
-	message << "File '" << filename << "' already exists!";
-	clog << message.str () << endl;
+	clog << "NOTICE: writing..." << endl;
+	ds::safe_serial<data_t> ss_data;
+	ds::data_writer writer (filename, ds::using_multi_archives);
+	int counts = 10;
+	for (int i = 0; i < counts; i++) 
+	  {
+	    ss_data.make ();
+	    if (drand48 () < 0.25) ss_data.get ().nan ();
+	    else if (drand48 () < 0.5) ss_data.get ().inf ();
+	    clog << ss_data.get () << endl;
+	    writer.store (ss_data.get ());
+	  }
+	clog << "NOTICE: writing done." << endl << endl;
       }
     
-    {
-      clog << "NOTICE: writing..." << endl;
-      ds::safe_serial<data_t> ss_data;
-      ds::data_writer writer (filename, ds::using_multi_archives);
-      int counts = 10;
-      for (int i = 0; i < counts; i++) 
-	{
-	  ss_data.make ();
-	  if (drand48 () < 0.25) ss_data.get ().nan ();
-	  else if (drand48 () < 0.5) ss_data.get ().inf ();
-	  clog << ss_data.get () << endl;
-	  writer.store (ss_data.get ());
-	}
-      clog << "NOTICE: writing done." << endl << endl;
+      {
+	clog << "NOTICE: reading..." << endl;
+	ds::safe_serial<data_t> ss_data;
+	ds::data_reader reader (filename, ds::using_multi_archives);    
+	int counts = 0;
+	while (reader.has_record_tag ()) 
+	  {
+	    if (reader.record_tag_is (data_t::SERIAL_TAG)) 
+	      {
+		if (debug) clog << "DEBUG: reading..." 
+				<< data_t::SERIAL_TAG << endl;
+		if (debug) clog << "DEBUG: making a new safe record..." 
+				<< endl;
+		ss_data.make ();
+		if (debug) clog << "DEBUG: loading the new safe record..." 
+				<< endl;
+		reader.load (ss_data.get ());
+		clog << ss_data.get () << endl;
+		if (debug) clog << "DEBUG: loading done." << endl;
+	      }
+	    else 
+	      {
+		string bad_tag = reader.get_record_tag ();
+		clog << "ERROR: unknown data tag '" 
+		     << bad_tag << "'!" << endl; 
+		break;
+	      }
+	    counts++;
+	    if (debug) clog << "DEBUG: Counts = " << counts << endl;
+	  }
+	clog << "NOTICE: reading done." << endl << endl;   
+      } 
+
     }
-    
-    {
-      clog << "NOTICE: reading..." << endl;
-      ds::safe_serial<data_t> ss_data;
-      ds::data_reader reader (filename, ds::using_multi_archives);    
-      int counts = 0;
-      while (reader.has_record_tag ()) 
-	{
-	  if (reader.record_tag_is (data_t::SERIAL_TAG)) 
-	    {
-	      if (debug) clog << "DEBUG: reading..." 
-				   << data_t::SERIAL_TAG << endl;
-	      if (debug) clog << "DEBUG: making a new safe record..." 
-				   << endl;
-	      ss_data.make ();
-	      if (debug) clog << "DEBUG: loading the new safe record..." 
-				   << endl;
-	      reader.load (ss_data.get ());
-	      clog << ss_data.get () << endl;
-	      if (debug) clog << "DEBUG: loading done." << endl;
-	    }
-	  else 
-	    {
-	      string bad_tag = reader.get_record_tag ();
-	      clog << "ERROR: unknown data tag '" 
-		   << bad_tag << "'!" << endl; 
-	      break;
-	    }
-	  counts++;
-	  if (debug) clog << "DEBUG: Counts = " << counts << endl;
-	}
-      clog << "NOTICE: reading done." << endl << endl;   
-    } 
-
-
-
-  }
   catch (exception & x) 
     {
       cerr << "test_nans_ar: ERROR: " << x.what () << endl;

@@ -9,20 +9,20 @@
 #include <datatools/serialization/io_factory.h>
 #include <datatools/event/event_id.h>
 
-int 
-main (int argc_ , char ** argv_)
+using namespace std;
+
+int main (int argc_ , char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
   try 
     {
-      std::cerr << "Hello, this is a sample program for class 'event_id'!" << std::endl; 
-      bool debug=false;
+      clog << "Hello, this is a sample program for class 'event_id'!" << endl; 
+      bool debug = false;
 
       int iarg = 1;
       while (iarg < argc_) 
 	{
-    
-	  std::string arg = argv_[iarg];
+	  string arg = argv_[iarg];
 
 	  if ((arg == "-d") || (arg == "--debug")) debug = true;
 
@@ -33,18 +33,18 @@ main (int argc_ , char ** argv_)
     
       my_id.set (666, 34);
 
-      std::cout << "Event id = " << my_id << std::endl;
+      clog << "Event id = " << my_id << endl;
 
-      std::cerr << "Enter event id [format=XXX_YYY] ? ";
-      std::cin >> my_id;
-      if (! std::cin) 
+      clog << "Enter event id [format=XXX_YYY] ? ";
+      cin >> my_id;
+      if (! cin) 
 	{
-	  throw std::runtime_error ("Format error!");
+	  throw runtime_error ("Format error!");
 	}
-      std::cout << "Event id = " << my_id << std::endl;
-      my_id.tree_dump (std::cout, "datatools::event::event_id:");
+      clog << "Event id = " << my_id << endl;
+      my_id.tree_dump (clog, "datatools::event::event_id:");
   
-      std::string filename = "test_event_id.xml";
+      string filename = "test_event_id.xml";
       {
 	datatools::serialization::data_writer writer(filename);
 	
@@ -62,7 +62,7 @@ main (int argc_ , char ** argv_)
 	    if (reader.record_tag_is (my_id.get_serial_tag ())) 
 	      {
 		reader.load (my_id);
-		my_id.tree_dump (std::cerr, "event_id",">>> ");
+		my_id.tree_dump (clog, "event_id",">>> ");
 	      }
 	    else 
 	      {
@@ -72,14 +72,14 @@ main (int argc_ , char ** argv_)
       }
 
     }
-  catch (std::exception & x)
+  catch (exception & x)
     {
-      std::cerr << "error: " << x.what () << std::endl; 
+      cerr << "error: " << x.what () << endl; 
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      std::cerr << "error: " << "unexpected error!" << std::endl; 
+      cerr << "error: " << "unexpected error!" << endl; 
       error_code = EXIT_FAILURE;
     }
   return error_code;

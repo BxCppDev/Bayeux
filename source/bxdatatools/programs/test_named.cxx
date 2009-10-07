@@ -9,61 +9,63 @@
 
 #include <datatools/utils/i_named.h>
 
+using namespace std;
+
 struct thing : public datatools::utils::i_named
 {
 private:
-  std::string __prefix;
-  int         __id;
+  string __prefix;
+  int    __id;
 public:
-  thing( const std::string & prefix_ , int id_ ) :
-    __prefix(prefix_), __id(id_)
+  thing (const string & prefix_ , int id_) :
+    __prefix (prefix_), __id (id_)
   {
   }
-  virtual std::string get_name()
+  virtual string get_name ()
   {
-    std::ostringstream name_ss;
+    ostringstream name_ss;
     name_ss << __prefix << __id;
-    return name_ss.str();
+    return name_ss.str ();
   }
 };
 
-int main( int argc_ , char ** argv_ )
+int main (int argc_ , char ** argv_)
 {
-  int error_code=EXIT_SUCCESS;
-  try {
+  int error_code = EXIT_SUCCESS;
+  try 
+    {
 
-    std::cerr << "Hello, this is a sample program for interface 'i_named'!" << std::endl; 
-    bool debug=false;
+      clog << "Test of the 'i_named' interface..." << endl; 
+      bool debug = false;
 
-    int iarg=1;
-    while ( iarg<argc_ ) {
+      int iarg =  1;
+      while (iarg < argc_) 
+	{
+          string arg = argv_[iarg];
+
+	  if ((arg == "-d") || (arg == "--debug")) debug = true;
+
+	  iarg++;
+	}
     
-      std::string arg=argv_[iarg];
+      thing t1 ("t",1);
+      thing t2 ("t",2);
+      thing t3 ("t",666);
 
-      if ( arg == "-d" || arg == "--debug" ) debug=true;
+      clog << "t1 is named '" << t1.get_name () << "'" <<  endl;
+      clog << "t2 is named '" << t2.get_name () << "'" <<  endl;
+      clog << "t3 is named '" << t3.get_name () << "'" <<  endl;
 
-      iarg++;
     }
-    
-    thing t1("t",1);
-    thing t2("t",2);
-    thing t3("t",666);
-
-    std::cerr << "t1 is named '" << t1.get_name() << "'" <<  std::endl;
-    std::cerr << "t2 is named '" << t2.get_name() << "'" <<  std::endl;
-    std::cerr << "t3 is named '" << t3.get_name() << "'" <<  std::endl;
-
-
-  }
-  catch(std::exception & x)
+  catch (exception & x)
     { 
-      std::cerr << "error: " << x.what() << std::endl; 
-      error_code=EXIT_FAILURE;
+      clog << "error: " << x.what () << endl; 
+      error_code =  EXIT_FAILURE;
     }
-  catch(...) 
+  catch (...) 
     { 
-      std::cerr << "error: " << "unexpected error!" << std::endl;  
-      error_code=EXIT_FAILURE; 
+      clog << "error: " << "unexpected error!" << endl;  
+      error_code = EXIT_FAILURE; 
     } 
   return error_code;
 } 

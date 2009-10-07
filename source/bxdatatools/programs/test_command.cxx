@@ -22,8 +22,7 @@ public:
     debug = debug_;
   }
   
-  void 
-  do_invoke (datatools::utils::command & command_)
+  void do_invoke (datatools::utils::command & command_)
   {
     command_.reset_output ();
       
@@ -76,7 +75,7 @@ public:
 	    throw datatools::utils::invalid_number_of_arguments ();
 	  }
 	clog << "execute 'run1' with argument '" 
-		  << command_.get_argument (0) << "'" << endl;	
+	     << command_.get_argument (0) << "'" << endl;	
       }
     else if (command_name == "run2")
       {
@@ -85,9 +84,9 @@ public:
 	    throw datatools::utils::invalid_number_of_arguments ();
 	  }
 	clog << "execute 'run2' with argument '" 
-		  << command_.get_argument (0) << "' and '" 
-		  << command_.get_argument (1) << "'" 
-		  << endl;	
+	     << command_.get_argument (0) << "' and '" 
+	     << command_.get_argument (1) << "'" 
+	     << endl;	
       }
     else
       {
@@ -97,14 +96,13 @@ public:
   
 };
 
-int 
-main (int argc_ , char ** argv_)
+int main (int argc_ , char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
   try 
     {
-      clog << "Hello, this is a sample program for class 'command'!" << endl; 
-      bool debug=false;
+      clog << "Test of the 'command' class..." << endl; 
+      bool debug = false;
 
       int iarg = 1;
       while (iarg < argc_) 
@@ -137,7 +135,7 @@ main (int argc_ , char ** argv_)
 	if (my_test.invoke (my_command) != du::command::SUCCESS)
 	  {
 	    clog << "error message: " << my_command.get_error_message ()
-		      << endl;
+		 << endl;
 	  }
       }
 
@@ -162,7 +160,7 @@ main (int argc_ , char ** argv_)
 	    if (the_test.invoke (the_command) != du::command::SUCCESS)
 	      {
 		clog << "test: error: " << the_command.get_error_message ()
-			  << endl;
+		     << endl;
 	      }
 	  } while (! stop);
 	if (command_str.empty ()) clog << endl;

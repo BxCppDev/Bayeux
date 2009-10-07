@@ -11,76 +11,76 @@
 #include <datatools/serialization/io_factory.h>
 #include <boost/serialization/vector.hpp>
 
-int 
-main (int argc_ , char ** argv_)
+using namespace std;
+
+int main (int argc_ , char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
-  try {
-
-    std::clog << "Hello, this is a sample program for class 'basic_event'!" 
-	      << std::endl; 
-    bool debug = false;
-
-    int iarg = 1;
-    while (iarg < argc_) 
-      {
-	std::string arg = argv_[iarg];
-
-	if (arg == "-d" || arg == "--debug") debug = true;
-	iarg++;
-      }
-    
-    datatools::event::basic_event my_event;
-    
-    my_event.id (datatools::event::event_id (666, 34));
-
-    my_event.properties ().store ("hell", 666);
-
-    my_event.properties ().store ("pi", 3.14159);
-
-    std::vector<double> coords;
-    coords.assign (3, 0.0);
-    coords[0] = +1.0;
-    coords[1] = -2.0;
-    coords[2] = +0.25;
-
-    my_event.properties ().store ("position", coords);
-
-    my_event.tree_dump (std::cout, "datatools::event::basic_event:");
-
-    std::cout << "serialize: writing..." << std::endl;
-    std::string filename = "test_basic_event.xml";
+  try 
     {
-      datatools::serialization::data_writer writer (filename);
-      writer.store (my_event);
-    }
+      clog << "Test of the 'basic_event' class..." << endl; 
+      bool debug = false;
 
-    std::cout << "reset event..." << std::endl;
-    my_event.clear ();
-
-    std::cout << "serialize: reading..." << std::endl;
-    {
-      datatools::serialization::data_reader reader (filename);
-      if (reader.has_record_tag ()) 
+      int iarg = 1;
+      while (iarg < argc_) 
 	{
-	  if (reader.get_record_tag () == "__BASIC_EVENT__") 
-	    {
-	      reader.load (my_event);
-	    }
-	}
-    }
+	  string arg = argv_[iarg];
 
-    my_event.tree_dump (std::cout, "datatools::event::basic_event:");
+	  if (arg == "-d" || arg == "--debug") debug = true;
+	  iarg++;
+	}
+    
+      datatools::event::basic_event my_event;
+    
+      my_event.id (datatools::event::event_id (666, 34));
+
+      my_event.properties ().store ("hell", 666);
+
+      my_event.properties ().store ("pi", 3.14159);
+
+      vector<double> coords;
+      coords.assign (3, 0.0);
+      coords[0] = +1.0;
+      coords[1] = -2.0;
+      coords[2] = +0.25;
+
+      my_event.properties ().store ("position", coords);
+
+      my_event.tree_dump (cout, "datatools::event::basic_event:");
+
+      cout << "serialize: writing..." << endl;
+      string filename = "test_basic_event.xml";
+      {
+	datatools::serialization::data_writer writer (filename);
+	writer.store (my_event);
+      }
+
+      cout << "reset event..." << endl;
+      my_event.clear ();
+
+      cout << "serialize: reading..." << endl;
+      {
+	datatools::serialization::data_reader reader (filename);
+	if (reader.has_record_tag ()) 
+	  {
+	    if (reader.get_record_tag () == "__BASIC_EVENT__") 
+	      {
+		reader.load (my_event);
+	      }
+	  }
+      }
+
+      my_event.tree_dump (cout, "datatools::event::basic_event:");
   
-  }
-  catch (std::exception & x)
+    }
+  catch (exception & x)
     {
-      std::cerr << "error: " << x.what () << std::endl; 
+      cerr << "error: " << x.what () << endl; 
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      std::cerr << "error: " << "unexpected error!" << std::endl; 
+      cerr << "error: " << "unexpected error!" << endl; 
       error_code = EXIT_FAILURE;
     }
   return error_code;
