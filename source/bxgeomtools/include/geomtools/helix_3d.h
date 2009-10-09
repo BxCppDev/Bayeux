@@ -51,6 +51,11 @@ namespace geomtools {
 
     const vector_3d & get_center () const;
 
+    const vector_3d & get_center_const () const
+    {
+      return get_center ();
+    }
+
     vector_3d & get_center ();
 
     void   set_center (const vector_3d &);
@@ -115,6 +120,11 @@ namespace geomtools {
 			    const std::string & title_  = "",
 			    const std::string & indent_ = "",
 			    bool inherit_               = false) const;
+
+    void dump () const
+    {
+      tree_dump (std::clog);
+    }
 
     void make_vertex_collection (basic_polyline_3d &) const;
     

@@ -25,11 +25,14 @@
 
 #include <datatools/serialization/serialization.h>
 
+#include <datatools/utils/i_tree_dump.h>
+
 #include <geomtools/utils.h>
 
 namespace geomtools {
 
   class line_3d :
+    public datatools::utils::i_tree_dumpable,
     public datatools::serialization::i_serializable
   {
   private: 
@@ -52,11 +55,27 @@ namespace geomtools {
 
     vector_3d get_point (double t_) const;
   
+    double get_length () const;
+
   public: 
+
     // ctor/dtor:
     line_3d ();
 
+    line_3d (const vector_3d & first_, const vector_3d & last_);
+
     virtual ~line_3d ();
+
+    /* interface i_tree_dumpable */
+    virtual void tree_dump (std::ostream & out_         = std::cerr, 
+			    const std::string & title_  = "",
+			    const std::string & indent_ = "",
+			    bool inherit_               = false) const;
+
+    void dump () const
+    {
+      tree_dump (std::clog);
+    }
 
     void make_vertex_collection (basic_polyline_3d &) const;
     

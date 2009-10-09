@@ -58,7 +58,25 @@ def test () :
 		print "v2 is valid"
 	else:
 		print "v2 is not valid"
-
+	print
+		
+	print "Line #1:"  
+	l1 = line_3d ()
+	l1.set_first (v1)
+	l1.set_last (v3)
+	l1.dump ()
+	print
+		
+	print "Line #2:"  
+	l2 = line_3d (v1, v3)
+	l2.dump ()
+	print
+		
+	print "Line #3:"  
+	l3 = line_3d ()
+	l3.dump ()
+	print
+	
 if __name__ == '__main__':
 	sys.stdout.write ("geomtools: running test.py\n" % ())
 	test ()

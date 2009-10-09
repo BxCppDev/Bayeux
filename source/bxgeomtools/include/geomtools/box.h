@@ -24,11 +24,11 @@
 namespace geomtools {
 
   class box : public i_shape_3d 
-    {
+  {
 
-    public:
-      static const std::string BOX_LABEL;
-      enum faces_mask_t
+  public:
+    static const std::string BOX_LABEL;
+    enum faces_mask_t
       {
 	FACE_NONE   = FACE_NONE_BIT,
 	FACE_BACK   = 0x1,
@@ -45,93 +45,93 @@ namespace geomtools {
 		       | FACE_TOP)
       };
 
-    private: 
-      double __x;
-      double __y;
-      double __z;
+  private: 
+    double __x;
+    double __y;
+    double __z;
 
-    public: 
-      double get_x () const;
-
-      void set_x (double);
-
-      double get_half_x () const;
-
-      void set_half_x (double);
-
-      double get_y () const;
-
-      void set_y(double);
-
-      double get_half_y () const;
-
-      void set_half_y (double);
-
-      double get_z () const;
-
-      void set_z (double);
-
-      double get_half_z () const;
-
-      void set_half_z (double);
-
-      void set (double, double, double);
-
-      void set_half (double, double, double);
-  
-  // ctor/dtor:
   public: 
-      box ();
+    double get_x () const;
 
-      box (double, double, double);
+    void set_x (double);
 
-      virtual ~box ();
+    double get_half_x () const;
+
+    void set_half_x (double);
+
+    double get_y () const;
+
+    void set_y (double);
+
+    double get_half_y () const;
+
+    void set_half_y (double);
+
+    double get_z () const;
+
+    void set_z (double);
+
+    double get_half_z () const;
+
+    void set_half_z (double);
+
+    void set (double, double, double);
+
+    void set_half (double, double, double);
+  
+    // ctor/dtor:
+  public: 
+    box ();
+
+    box (double, double, double);
+
+    virtual ~box ();
     
-  // methods:
+    // methods:
       
-      virtual std::string 
-	get_shape_name () const;
+    virtual std::string 
+    get_shape_name () const;
 
-      double 
-	get_parameter(const std::string &) const;
+    double 
+    get_parameter (const std::string &) const;
 
-      bool 
-	is_valid() const;
+    bool 
+    is_valid () const;
 
-      void 
-	init();
+    void 
+    init ();
 
-      void 
-	reset();
+    void 
+    reset ();
 
-      double 
-	get_surface(int mask_ = FACE_ALL) const;
+    double 
+    get_surface (int mask_ = FACE_ALL) const;
 
-      double 
-	get_volume() const;
+    double 
+    get_volume () const;
 
-      virtual bool 
-	is_inside(const vector_3d &, 
-		  double skin_ = USING_PROPER_SKIN) const;
+    virtual bool 
+    is_inside (const vector_3d &, 
+	       double skin_ = USING_PROPER_SKIN) const;
 
-      // if 'skin' < 0 no skin is taken into account:
-      virtual bool 
-	is_on_surface(const vector_3d & , 
-		      int mask_    = FACE_ALL , 
-		      double skin_ = USING_PROPER_SKIN) const;
+    // if 'skin' < 0 no skin is taken into account:
+    virtual bool 
+    is_on_surface (const vector_3d & , 
+		   int mask_    = FACE_ALL , 
+		   double skin_ = USING_PROPER_SKIN) const;
 
-      virtual vector_3d get_normal_on_surface (const vector_3d & position_) const;
+    virtual vector_3d get_normal_on_surface (const vector_3d & position_) const;
 
-      friend std::ostream & operator<<( std::ostream & , const box & );
+    friend std::ostream & operator<< ( std::ostream & , const box & );
 
-      friend std::istream & operator>>( std::istream & , box & );
+    friend std::istream & operator>> ( std::istream & , box & );
       
-      virtual bool find_intercept (const vector_3d & from_, 
-				   const vector_3d & direction_,
-				   intercept_t & intercept_,
-				   double skin_ = USING_PROPER_SKIN) const;
+    virtual bool find_intercept (const vector_3d & from_, 
+				 const vector_3d & direction_,
+				 intercept_t & intercept_,
+				 double skin_ = USING_PROPER_SKIN) const;
        
-    };
+  };
     
 } // end of namespace geomtools
 

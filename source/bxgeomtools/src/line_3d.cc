@@ -51,9 +51,23 @@ namespace geomtools {
     __last = new_value_;
   }
   
+  double line_3d::get_length () const
+  {
+    double l = (__last - __first).mag ();
+    return l;
+  }
+  
   // ctor/dtor:
   line_3d::line_3d ()
   {
+    invalidate ();
+  }
+
+  // ctor/dtor:
+  line_3d::line_3d (const vector_3d & first_, const vector_3d & last_)
+  {
+    set_first (first_);
+    set_last (last_);
   }
   
   line_3d::~line_3d ()
@@ -81,6 +95,32 @@ namespace geomtools {
     basic_polyline_3d bpl;
     make_vertex_collection (bpl);
     return bpl;
+  }
+  
+  void 
+  line_3d::tree_dump (std::ostream &      out_, 
+		      const std::string & title_,
+		      const std::string & indent_,
+		      bool                inherit_) const
+  {
+    std::string indent;
+    if (! indent_.empty ())
+      {
+        indent = indent_;
+      }
+    if ( !title_.empty () ) {
+      out_ << indent << title_ << std::endl;
+    }
+
+    namespace du = datatools::utils;
+    out_ << indent << du::i_tree_dumpable::tag 
+	 << "first : " 
+	 << __first 
+	 << std::endl;
+    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_) 
+	 << "last : " 
+	 << __last
+	 << std::endl;
   }
 
   /*
