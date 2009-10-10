@@ -38,6 +38,8 @@ def test () :
 	print "x = ", x
 	p.dump_stdout ()
 		
+	i  = datatools.event_id (666, 123)
+	print "Event ID = ", i.to_string ()
 
 
 if __name__ == '__main__':

@@ -48,50 +48,69 @@ namespace datatools {
 
     public: 
 
-      virtual void
-      clear();
+      virtual void clear ();
 
-      void
-      id(const event_id & id_);
+      void id (const event_id & id_);
 
-      const event_id &
-      id() const;
+      void set_id (const event_id & id_)
+      {
+	id  (id_);
+      }
 
-      event_id &
-      id();
+      const event_id & id () const;
 
-      const datatools::utils::properties &
-      properties() const;
+      const event_id & get_id () const
+      {
+	return id ();
+      }
 
-      datatools::utils::properties &
-      properties();
+      event_id & id ();
+
+      const datatools::utils::properties & properties () const;
+
+      const datatools::utils::properties & get_properties_ro () const
+      {
+	return properties ();
+      }
+
+      datatools::utils::properties & properties ();
+
+      datatools::utils::properties & get_properties_rw ()
+      {
+	return properties ();
+      }
 
     public: 
 
       // ctor
-      basic_event();
+      basic_event ();
       
-      basic_event(const event_id & id_);
+      basic_event (const event_id & id_);
       
       // dtor
-      virtual ~basic_event();
+      virtual ~basic_event ();
       
-      virtual void tree_dump( std::ostream & out_         = std::cerr , 
-			      const std::string & title_  = "" ,
+      virtual void tree_dump (std::ostream & out_         = std::cerr, 
+			      const std::string & title_  = "",
 			      const std::string & indent_ = "",
-			      bool inherit_               = false ) const;
+			      bool inherit_               = false) const;
       
-      virtual const std::string & get_serial_tag() const;
+      void dump () const
+      {
+	tree_dump (std::clog);
+      }
+
+      virtual const std::string & get_serial_tag () const;
 
     private:
 
       friend class boost::serialization::access; 
       template<class Archive>
-      void serialize( Archive            & ar_ , 
-		      const unsigned int   version_ )
+      void serialize (Archive            & ar_, 
+		      const unsigned int   version_)
       {
-	ar_ & boost::serialization::make_nvp("id",__id);
-	ar_ & boost::serialization::make_nvp("properties",__properties);
+	ar_ & boost::serialization::make_nvp ("id",__id);
+	ar_ & boost::serialization::make_nvp ("properties",__properties);
       }
       
     };
@@ -100,6 +119,6 @@ namespace datatools {
 
 } // end of namespace datatools
 
-#endif // __datatools__event__dummy_datatools_h
+#endif // __datatools__event__basic_event_h
 
-// end of dummy_datatools.h
+// end of basic_event.h

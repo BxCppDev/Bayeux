@@ -147,8 +147,6 @@ namespace datatools {
 
 	void set_error_message (const std::string &);
 
-	//void set_error_message (const char *);
-
 	void set_name (const std::string &);
 
 	size_t get_number_of_arguments () const;

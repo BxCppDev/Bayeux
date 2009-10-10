@@ -1,6 +1,6 @@
 // -*- mode: c++; -*- 
 /* event_id.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-02-15
  * Last modified: 2008-02-15
  * 
@@ -55,81 +55,67 @@ namespace datatools {
 
     public:
 
-      virtual void
-      clear();
+      virtual void clear ();
 
-      int
-      get_run_number() const;
+      int get_run_number () const;
 
-      int
-      get_event_number() const;
+      int get_event_number () const;
 
-      void
-      set_run_number(int);
+      void set_run_number (int);
 
-      void
-      set_event_number(int);
+      void set_event_number (int);
 
-      void
-      set(int, int);
+      void set (int, int);
 
       // ctor
-      event_id();
+      event_id ();
 
-      event_id(int);
+      event_id (int);
 
-      event_id(int, int);
+      event_id (int, int);
 
       // dtor
-      virtual ~event_id();
+      virtual ~event_id ();
 
-      bool
-      is_valid() const;
+      bool is_valid () const;
 
-      bool
-      has (int, int) const;
+      bool has (int, int) const;
 
-      bool
-      operator== (const event_id & id_) const;
+      bool operator== (const event_id & id_) const;
 
-      bool
-      operator< (const event_id & id_) const;
+      bool operator< (const event_id & id_) const;
 
-      bool
-      operator> (const event_id & id_) const;
+      bool operator> (const event_id & id_) const;
 
+      std::string to_string () const;
 
-      std::string
-      to_string() const;
+      void from_string (const std::string &);
 
-      void
-      from_string(const std::string &);
+      friend std::ostream & operator<< (std::ostream &, const event_id &);
 
-      friend std::ostream &
-      operator<<(std::ostream &, const event_id &);
+      friend std::istream & operator>> (std::istream &, event_id &);
 
-      friend std::istream &
-      operator>>(std::istream &, event_id &);
+      virtual void tree_dump (std::ostream & out_         = std::cerr , 
+			      const std::string & title_  = "" ,
+			      const std::string & indent_ = "",
+			      bool inherit_               = false) const;
 
-      virtual void
-      tree_dump(std::ostream & out_         = std::cerr , 
-		const std::string & title_  = "" ,
-		const std::string & indent_ = "",
-		bool inherit_               = false) const;
+      void dump () const
+      {
+	tree_dump (std::clog);
+      }
 
-      virtual const std::string &
-      get_serial_tag() const;
+      virtual const std::string & get_serial_tag () const;
 
     private:
 
       friend class boost::serialization::access; 
       template<class Archive>
-      void
-      serialize(Archive            & ar_ , 
+      void serialize (Archive            & ar_ , 
 		const unsigned int   version_)
       {
-	ar_ & boost::serialization::make_nvp("run_number",__run_number);
-	ar_ & boost::serialization::make_nvp("event_number",__event_number);
+	ar_ & boost::serialization::make_nvp ("run_number",__run_number);
+	ar_ & boost::serialization::make_nvp ("event_number",__event_number);
       }
     };
 
@@ -144,7 +130,7 @@ namespace datatools {
 	__id = id_;
       }
       
-      bool operator() (const event_id & id_) const
+      bool operator () (const event_id & id_) const
       {
 	return __id == id_;
       }
