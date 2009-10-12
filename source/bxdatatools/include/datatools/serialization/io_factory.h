@@ -561,6 +561,16 @@ namespace datatools {
       void init (const std::string & filename_, 
 		 bool multiple_archives_ = using_single_archive);
 
+      void init_multi (const std::string & filename_)
+      {
+	init (filename_, using_multiple_archives);
+      }
+
+      void init_single (const std::string & filename_)
+      {
+	init (filename_, using_single_archive);
+      }
+
       void init (const std::string & filename_ , int mode_);
 
       // ctor

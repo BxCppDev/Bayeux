@@ -7,6 +7,7 @@
 #include <datatools/utils/properties.h>
 #include <datatools/event/event_id.h>
 #include <datatools/event/basic_event.h>
+#include <datatools/serialization/io_factory.h>
 
 using namespace boost::python;
 
@@ -419,8 +420,6 @@ void export_event_id ()
     ;
 }
 
-
-
 /*************/
 
 void export_basic_event ()
@@ -459,6 +458,115 @@ void export_basic_event ()
     ;
 }
 
+/*************/
+
+void export_io_data_reader ()
+{
+  using namespace boost::python;
+
+  class_<datatools::serialization::data_reader> ("data_reader", init<> ())
+
+    .def (init<const std::string &, bool> ( ))
+
+    .def (init<const std::string &, int> ( ))
+
+    .def ("has_record_tag", 
+	 &datatools::serialization::data_reader::has_record_tag)
+
+    .def ("record_tag_is", 
+	 &datatools::serialization::data_reader::record_tag_is)
+
+    .def ("reset", 
+	 &datatools::serialization::data_reader::reset)
+
+    .def ("is_initialized", 
+	 &datatools::serialization::data_reader::is_initialized)
+
+    .def ("is_multi_archives", 
+	 &datatools::serialization::data_reader::is_multi_archives)
+
+    .def ("is_single_archive", 
+	 &datatools::serialization::data_reader::is_single_archive)
+
+    .def ("is_compressed", 
+	 &datatools::serialization::data_reader::is_compressed)
+
+    .def ("is_uncompressed", 
+	 &datatools::serialization::data_reader::is_uncompressed)
+
+    .def ("is_gzip", 
+	 &datatools::serialization::data_reader::is_gzip)
+
+    .def ("is_bzip2", 
+	 &datatools::serialization::data_reader::is_bzip2)
+
+    .def ("is_text", 
+	 &datatools::serialization::data_reader::is_text)
+
+    .def ("is_binary", 
+	 &datatools::serialization::data_reader::is_binary)
+
+    .def ("is_xml", 
+	 &datatools::serialization::data_reader::is_xml)
+
+    .def ("init_multi", 
+	 &datatools::serialization::data_reader::init_multi)
+
+    .def ("init_single", 
+	 &datatools::serialization::data_reader::init_single)
+
+
+    ;
+}
+
+
+void export_io_data_writer ()
+{
+  using namespace boost::python;
+
+  class_<datatools::serialization::data_writer> ("data_writer", init<> ())
+
+    .def (init<const std::string &, bool, bool> ( ))
+
+    .def (init<const std::string &, int> ( ))
+
+    .def ("reset", 
+	 &datatools::serialization::data_writer::reset)
+
+    .def ("is_initialized", 
+	 &datatools::serialization::data_writer::is_initialized)
+
+    .def ("is_multi_archives", 
+	 &datatools::serialization::data_writer::is_multi_archives)
+
+    .def ("is_single_archive", 
+	 &datatools::serialization::data_writer::is_single_archive)
+
+    .def ("is_compressed", 
+	 &datatools::serialization::data_writer::is_compressed)
+
+    .def ("is_uncompressed", 
+	 &datatools::serialization::data_writer::is_uncompressed)
+
+    .def ("is_gzip", 
+	 &datatools::serialization::data_writer::is_gzip)
+
+    .def ("is_bzip2", 
+	 &datatools::serialization::data_writer::is_bzip2)
+
+    .def ("is_text", 
+	 &datatools::serialization::data_writer::is_text)
+
+    .def ("is_binary", 
+	 &datatools::serialization::data_writer::is_binary)
+
+    .def ("is_xml", 
+	 &datatools::serialization::data_writer::is_xml)
+
+
+    ;
+}
+
 /*******************************************************************/
 BOOST_PYTHON_MODULE (datatools)
 {
@@ -471,6 +579,10 @@ BOOST_PYTHON_MODULE (datatools)
   export_event_id ();
 
   export_basic_event ();
+
+  export_io_data_reader ();
+
+  export_io_data_writer ();
 
 }
 
