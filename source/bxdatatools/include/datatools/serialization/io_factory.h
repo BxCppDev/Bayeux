@@ -10,6 +10,7 @@
 #include <sstream>
 #include <fstream>
 #include <locale>
+#include <typeinfo>
 
 #ifdef IOFACTORY_USE_EOS_PBA
 // Force usage of `Floating point utilities' by Johan Råde
@@ -223,7 +224,7 @@ namespace datatools {
 		  int mode_ = io_factory::MODE_DEFAULT);
 	
       // dtor
-      virtual ~io_factory();
+      virtual ~io_factory ();
 
     private:
 	
@@ -231,10 +232,11 @@ namespace datatools {
       void __store_text (boost::archive::text_oarchive & ar_, 
 			 const Data & data_)
       {
+	using namespace std;
 	const Data & b = data_;
 	ar_ << b; 
       }
-	
+
       template <typename Data>
       void __store_xml (boost::archive::xml_oarchive & ar_, 
 			const Data & data_)
@@ -315,6 +317,7 @@ namespace datatools {
       template <typename Data>
       void store (const Data & data_)
       {
+	using namespace std;
 	if (! is_write ())
 	  {
 	    throw std::runtime_error ("io_factory::store: Not a writer factory!");
@@ -733,6 +736,7 @@ namespace datatools {
       template <typename Data>
       void _basic_store (const Data & data_)
       {
+	using namespace std;
 	if (__writer == 0)
 	  {
 	    throw std::runtime_error ("data_writer::_basic_store(...): not initialized!");
@@ -741,21 +745,30 @@ namespace datatools {
       }
 
     public:
+
       template <typename Data>
       void store (const std::string & tag_, const Data & data_)
       {
-	if (__writer->is_multi_archives ()) __writer->start_archive ();
+	using namespace std;
+	if (__writer->is_multi_archives ()) 
+	  {
+	    __writer->start_archive ();
+	  }
 	this->_basic_store<std::string> (tag_);
 	this->_basic_store<Data> (data_);
-	if (__writer->is_multi_archives ()) __writer->stop_archive ();
+	if (__writer->is_multi_archives ()) 
+	  {
+	    __writer->stop_archive ();
+	  }
       }
 
       template <typename Data>
       void store (const Data & data_)
       {
-	const datatools::serialization::i_serializable & i_ser=
+	using namespace std;
+	const datatools::serialization::i_serializable & i_ser =
 	  static_cast<const datatools::serialization::i_serializable &> (data_);
-	this->store (i_ser.get_serial_tag(), data_);
+	this->store<Data> (i_ser.get_serial_tag (), data_);
       }
 
     };
