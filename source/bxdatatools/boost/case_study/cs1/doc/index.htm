@@ -71,6 +71,7 @@ table {
 <dt><a href="#Brute_force_approach">Brute force approach</a>
 <dt><a href="#A_smart_approach">A smart approach: using multiple archive per storage stream/file</a>
 <dt><a href="#Sample_code">Sample code</a>
+<dt><a href="#Conclusion">Conclusion</a>
 <dt><a href="#Disclaimer">Disclaimer</a>
 <dt><a href="#Acknowledgements">Acknowledgements</a>
 </dl>
@@ -97,11 +98,19 @@ rendering formats. Archives supporting other rendering formats can be designed b
 
 <p>
 This note concerns a special serialization strategy based on Boost
-archives. I refer to it as the <i>multiple archive per (file)stream</i>
-approach  that can be used to workaround some issues induced
-by the object tracking machanism. 
-Let's first explain the motivations for this work.
+archives. We refer to it as the <i>multiple archive per file/stream</i>
+approach  that can be used to workaround some data corruption issues induced
+by the powerful but tricky object tracking mechanism. First we explain the
+reasons why object tracking may produce corruption during the
+Boost (de-)serialization
+process. An example is given as an illustration of the data corruption
+mechanism. We then propose two strategies that prevent data
+corruption problems, one approach being considered as the best one,
+namely the <i>multiple archive per file/stream</i> strategy. 
+Some sample code is provided, that shows what can be done and what should not.
 </p>
+
+
 <hr>
 
 <a name="Object_tracking"></a>
@@ -186,7 +195,7 @@ It means  that during the  serialization process, if  some dynamically
 allocated  memory location  has been  previously used  to  handle data
 <tt>X</tt> which has already been serialized, the reuse of this memory
 location  for  anoter  data   <tt>Y</tt>  is  likely  to  corrupt  the
-storage/load flow  of <tt>Y</tt>.  The memory  tracking algorithm will
+storage/loading flow  of <tt>Y</tt>.  The memory  tracking algorithm will
 consider  <tt>Y</tt>   as  the  same  data  as   the  previously  used
 <tt>X</tt>, even if  <tt>Y</tt> has nothing to do  with <tt>X</tt> and
 consists in a  new dataset.  This generally induces  loss of data that
@@ -202,10 +211,20 @@ understand this issue.
 <p><a href="#fig2">Figure 2</a> illustrates  this special case where 2
 <tt>foo</tt>  collections, <tt>foo #0</tt>  and <tt>foo  #1</tt>, that
 simultaneously  coexist in  memory,  owns through  pointers their  own
-independant  set of  <tt>fuu</tt> objects.  Now consider  the  case of
-storing both collections  in the same Boost archive.   In this example
+independant  set of  <tt>fuu</tt> objects.  
+The <tt>sum</tt> field is then computed to store the
+value of the sum of all values in <tt>fuu</tt> objects.
+More the <tt>max_fuu</tt> is a weak pointer to the
+<tt>fuu</tt> object with the largest value.
+<tt>sum</tt> and <tt>max_fuu</tt>  should obviously been updated
+whenever the content of the <tt>fuus</tt> list is modified. 
+</p>
+
+<p>
+Now consider  the  case of
+storing both <tt>foo</tt> objects in the same Boost archive.   In this example
 and  for  simplicity,  we  consider  the  only  serialization  of  the
-<tt>fuus</tt> list, not the <tt>sum</tt> and <tt>max_fuu</tt> fields!
+internal <tt>fuus</tt> list, not the <tt>sum</tt> and <tt>max_fuu</tt> fields!
 </p>
 <p>
 <table align="center"><tr><td>
@@ -223,8 +242,8 @@ At the  end of the serialization  of both <tt>foo  #0</tt> and <tt>foo
 been visited by the memory tracking system. This is represented by red
 color squares in the upper  left corner of the <tt>fuu</tt> objects in
 <a  href="#fig3">figure  3</a>.  Here  we  are  satisfied because  the
-archive has been generated properly, and we don't care about the final
-state of the memory tracker system.
+archive has been generated properly, and at this final stage
+we don't care about the state of the memory tracker system.
 </p>
 <p>
 <table align="center"><tr><td>
@@ -372,7 +391,8 @@ and serialization  operations are  performed.  As we  generally cannot
 control  the  memory locations  used  by  the  memory manager  of  the
 operating system,  some memory addresses  are likely to be  reused and
 <i>tracked</i>, particularly for application that handle large sets of
-dynamically allocated data. The result is then unpredictible. 
+dynamically allocated data. The result is then not predictable. At
+least, what is predictable is that everything  turns to be corrupted! 
 </p>
 
 <p>
@@ -605,7 +625,7 @@ sub-objects) is serialized  through its own archive, there  is no risk
 of data corruption  by the memory traking process  if another instance
 <tt>B</tt> is  serialized through a different  archive: memory traking
 is always  reset at creation  of a new  archive : all red  squares get
-green again!. 
+green again ! 
 
 
 
@@ -721,11 +741,11 @@ point).-->
 More, objects being  isolated within their own archives  stored in the
 same stream,  it is quite easy to  concatenate different serialization
 streams or  split one in  several smaller ones  (one can easily  do it
-with text or xml archive through simple scripts).
+with text or xml archive using simple scripts).
 </p>
 
 <p>
-Of course,  the <i>multiple archives per file</i>  strategy makes 
+Of course,  the <i>multiple archive per file</i>  strategy makes 
 sense only if  the instances <tt>A</tt>, <tt>B</tt>... to be
 serialized 
 are totally independant (without any cross-referenced data).
@@ -759,12 +779,7 @@ items in the <tt>__fuus</tt> list. No memory deallocation is performed
 for the  <tt>__max_fuu</tt> pointer that is considered as a weak reference.
 Just for educationnal purpose, there is special added code 
 for debugging  and doing statistics 
-on memory usage.
-</p>
-
-</p>
-
-<p>
+about memory usage.
 File <a href="../foo_light.hpp"><i>foo_light.hpp</i></a> is a clone
 of <i>foo.hpp</i> without the tools for debugging and doing statistics 
 on memory usage.
@@ -772,8 +787,9 @@ on memory usage.
 
 <p>
 The programs below manipulate some XML  archives to store
-data  from <i>foo.hpp</i>. They also print statistics on memory usage. These last
-informations can be used to understand the cases
+data  from <i>foo.hpp</i>. They also print statistics about memory
+usage. 
+These last informations can be used to understand the cases
 where object tracking produces serialized data corruption.
 </p>
 
@@ -808,7 +824,8 @@ the <i>data_1.xml</i> archive file which is a clone of  <i>data_0.xml</i>.
 <br>
 
 <li><a name="example:2"></a>
- Brute force solution to prevent data corruption:<br>
+Example implementing the <i>brute force</i> solution 
+to prevent data corruption:<br>
 <ul>
 
 <li><a
@@ -832,7 +849,8 @@ of a larger used memory.
 <br>
 <br>
 
-<li><a name="example:3"></a> Not using object memory tracking implies
+<li><a name="example:3"></a> Example that does not use 
+object memory tracking and implies
 some memory leakage:<br>
 <ul>
 <li><a
@@ -850,7 +868,7 @@ at deletion of <tt>foo</tt> instances.
 
 </ul>
 <br>
-<li><a name="example:4"></a> Smart solution: using multiple archive within one file <u>with</u> memory tracking.<br>
+<li><a name="example:4"></a> Example implementing the <i>smart solution</i> using multiple archive within one file <u>with</u> memory tracking:<br>
 <ul>
 <li><a
 href="../tracking_write_4.cpp"><i>tracking_write_4.cpp</i></a>:
@@ -871,6 +889,24 @@ Everything is okay.
 <br>
 
 </ol>
+
+<hr>
+
+<a name="Conclusion"></a>
+<h3>Conclusion</h3>
+
+<p>
+The two approaches described above are strongly suggested whenever one
+has to serialize a set of independant data with some complex
+internals that rely on object tracking. The so called brute force
+approach is only a workaround for object tracking issues but it works well 
+in some conditions at the cost of special care and possibly large
+memory resources.
+The <i>multiple archive per file</i> strategy, using one archive per
+serialized data object, is smarter and should work in many cases. 
+It is the solution we recommend.
+</p>
+<br>
 
 <hr>
 
