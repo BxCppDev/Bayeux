@@ -10,8 +10,42 @@ http://www.boost.org/LICENSE_1_0.txt)
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" type="text/css" href="../boost.css">
 <link rel="stylesheet" type="text/css" href="style.css">
-<title>Serialization - Using multiple archives within one file</title> 
+<title>Boost serialization &mdash; About object tracking issues and using multiple
+archive within one single file</title> 
+
+<style type="text/css">
+<!--
+
+
+tt {
+   font-size: 12pt;
+   color : maroon;
+   background-color : white;
+   border-color: white;
+   border-width: 1pt;
+   border-style: none;
+}
+
+p {
+   text-align: justify;
+   background-color : white;
+   color : black;
+}
+
+table {
+   color : black;
+   background-color : white;
+   border-style: none;
+   border-width: 1pt;
+
+}
+-->
+</style>
+
+
 </head>
+
+
 <body link="#0000ff" vlink="#800080">
 <table border="0" cellpadding="7" cellspacing="0" width="100%" summary="header">
   <tr> 
@@ -24,7 +58,8 @@ http://www.boost.org/LICENSE_1_0.txt)
 
     <td valign="top"> 
       <h1 align="center">Serialization</h1>
-      <h2 align="center">Using multiple archives within one file</h2>
+      <h2 align="center">About object tracking issues and</h2>
+      <h2 align="center">using multiple archive within one single file</h2>
     </td>
   </tr>
 </table>
@@ -32,144 +67,387 @@ http://www.boost.org/LICENSE_1_0.txt)
 <hr>
 <dl class="page-index">
 <dt><a href="#Introduction">Introduction</a>
-<dt><a href="#Object_tracking_issues">Object tracking issues</a>
+<dt><a href="#Object_tracking">Object tracking</a>
 <dt><a href="#Brute_force_approach">Brute force approach</a>
-<dt><a href="#A_smart_approach">A smart approach: using multiple archives per storage stream/file</a>
+<dt><a href="#A_smart_approach">A smart approach: using multiple archive per storage stream/file</a>
 <dt><a href="#Sample_code">Sample code</a>
 <dt><a href="#Disclaimer">Disclaimer</a>
 <dt><a href="#Acknowledgements">Acknowledgements</a>
 </dl>
 
-<a href="Introduction"></a>
+
+<!-- ******************************************************** -->
+<hr>
+
+<a name="Introduction"></a>
 <h3>Introduction</h3>
 
 <p>
-The <i>Boost Serialization</i>
-<!--<a href="http://www.boost.org/doc/libs/1_38_0/libs/serialization/doc/index.html"
-target="_empty">Boost.Serialization</a>--> 
-library offers powerful tools to
-store/load arbitrary data using dedicated formatted medium objects known as
-<i>archives</i>. Archives are attached to 
-input/output streams. This naturally enables the use of
-<i>filestreams</i> 
-as privileged data storage devices. The Boost Serialization library implements a few
+The <i>Boost Serialization</i> 
+<!-- <a href="http://www.boost.org/doc/libs/1_38_0/libs/serialization/doc/index.html"
+target="_empty">Boost.Serialization</a> --> 
+library offers  a powerful
+tool to  store/load arbitrary  data using dedicated  formatted medium
+objects known as
+<i>archives</i>. Archives are attached to input/output streams. This naturally enables the use of
+<i>filestreams</i> as privileged data storage devices. The Boost Serialization library implements a few
 formatted input/ouput archives: <i>Text</i>, <i>XML</i> and <i>Portable binary</i>
 rendering formats. Archives supporting other rendering formats can be designed by the programmer.
 </p>
 
 <p>
 This note concerns a special serialization strategy based on Boost
-archives. I refer to it as the <i>multiple archives per stream</i>
-approach. Let's first explain the motivations for this work.
-
+archives. I refer to it as the <i>multiple archive per (file)stream</i>
+approach  that can be used to workaround some issues induced
+by the object tracking machanism. 
+Let's first explain the motivations for this work.
 </p>
+<hr>
 
-<a href="Object_tracking_issues"></a>
-<h3>Object tracking issues</h3>
+<a name="Object_tracking"></a>
+<h3>Object tracking</h3>
+
+<!-- ******************************************************** -->
+
+<a href="Object_tracking__Introduction"></a>
+<h4>Introduction</h4>
 
 <p>
 The Boost Serialization library has a special mechanism known as
-<i>object  tracking</i>. It  enables  to store/load data in  a smart  and
-efficient way. 
-Using this feature, if a <i>datum</i>  (typically an instance of a class) 
-is addressed through different pointers and one wants to store the data
-refered by such collection of pointers, thus the datum is stored only
-once, avoiding the duplication of storage.  
-On the other hand, during archive deserialization (loading) process, 
-only one instance
-of the datum will be restored while possibly many pointers refer to
-it, and the pointers will get dynamically initialized with the proper
-address of this single datum. 
+<i>object tracking</i> (or  <i>object memory tracking</i>). It enables
+to store/load data  in a smart and efficient  way. Using this feature,
+if  a <i>datum</i>  (typically an  instance of  a class)  is addressed
+through different pointers and one  wants to store the data referenced
+by such collection of pointers, thus  the datum is stored only once in
+the target archive, avoiding the  duplication of storage. On the other
+hand,  during  archive  deserialization  (loading) process,  only  one
+instance  of the  datum will  be restored  and possibly  many pointers
+referencing it will be dynamically initialized with the unique address
+of this single datum.
 </p>
 
 <p>
-Nevertheless,  the use  of  this very useful  and  powerful object  tracking
-mechanism  may have some  nasty side-effects.   Depending of  the data
-model to be stored and  without special care, some data corruption can
-(will) occur along the serialization process.  This  is because the
- tracking  has  a  special  policy  that  triggers  the
-serialization of  data stored from  some memory location only  if this
-memory location  has not been visited (used)  before.  
-It means  that during the
-serialization process,  if some dynamically  allocated memory location
-has been previously  used to handle data <tt>X</tt>  which has already
-been serialized,  the reuse  of this memory  location for  anoter data
-<tt>Y</tt> is  likely to corrupt  the storage/load flow  of <tt>Y</tt>.
-This is because the memory tracking algorithm will 
-consider <tt>Y</tt> as the same
-data  as  <tt>X</tt>,  even  if  <tt>Y</tt> has  nothing  to  do  with
-<tt>X</tt>. This generally induces loss  of data that exists in memory
-but is <i>skipped</i> by the memory tracker which may silently reconstruct
-some wrong references to data.  Of course, this is not what we
-want!
+As  an  example,  consider  <a  href="#fig1">figure  1</a>  where  the
+<tt>foo</tt> container (top  of the figure) owns a  list of 5 pointers
+that reference  only 3 <tt>fuu</tt> instances. Archiving  the full set
+of  pointers <u>without</u>  memory tracking  leads to  the replicated
+storage of  both the second  and third <tt>fuu</tt> instances  (top to
+bottom left  flow on the figure).  Using  archiving <u>with</u> memory
+tracking  only  stores the  minimal  amount  of  data: 3  <tt>fuu</tt>
+instances plus  the minimal informations that  indicates that pointers
+<tt>#2</tt>   and  <tt>#4</tt>  respectively   reference  <tt>fuu</tt>
+instances 1 and 2 (top to bottom right flow on the figure). 
 </p>
 
 <p>
-To  illustrate  a  case  of  interest, assume  we  have  many  objects
-<tt>A</tt>,  <tt>B</tt>...<tt>Z</tt> to  be serialized,  each  of them
-implementing a complex data  model with internal dynamically allocated
-sub-objects      (let's      call      them    <tt>a<sub>A</sub></tt>,
-<tt>b<sub>A</sub></tt>...<tt>z<sub>A</sub></tt>   for  the  <tt>A</tt>
-object   and  so   on).    More  the   <tt>A</tt>   object  may   host
- pointers referencing its sub-objects. This justifies the use of the
-object tracking approach.  We assume also
-there  is  no  cross-reference  between  the memory  scopes  owned  by
-meta-instances   <tt>A</tt>,  <tt>B</tt>...<tt>Z</tt>  which   so  are
-completely independant.   The medium where(from)  we store(load) data
-would have the following layout:
-
-<ul> 
-
-<li> Opening of the serialization stream,
-
-<li> The beginning of the Boost archive attached to the stream,
-
-<li> <tt>A</tt>: Instance of a complex data model with many internal pointers
- referencing   other  dynamically  allocated  internal  objects
-<tt>a<sub>A</sub></tt>, <tt>b<sub>A</sub></tt>...
-
-<li>
-<tt>B</tt>: Another  instance of the  complex data model with  its own
-dynamically   allocated   internal  objects   (<tt>a<sub>B</sub></tt>,
-<tt>b<sub>B</sub></tt>...),  possibly  reusing  some memory  locations
-previously  visited  by the  serialization  process for  <tt>A</tt>...
-
-<li> <tt>C</tt>: Yet another one, likely to reuse accidentally some memory locations
-formerly addressed by <tt>A</tt> or <tt>B</tt> instance's internals... 
-
-<li> ...  
-
-<li><tt>Z</tt>: The last instance that likely uses some memory
-location used for <tt>A</tt>, <tt>B</tt>, <tt>C</tt>... 
-
-<li> The end of the Boost archive, 
-
-<li> Closing the serialization stream. 
-
-</ul>
+More  the deserialization  process  without memory  tracking does  not
+restore the  original data structure  (see the bottom  <tt>foo</tt> on
+the figure) while  using memory tracking ensures the  proper backup of
+the original data (bottom to top right flow).
+</p>
+<p>
+<table align="center"><tr><td>
+<a name="fig1"></a> 
+<img src="./images/fuu_2.png" border="0">
+<br>
+Figure 1
+</td></tr></table><br>
+</p>
+<p>
+This illustrates  that the object  memory tracking system can  be very
+useful or  even necessary, depending  on your application.   Note that
+the Boost serialization library provides some tools to activate or not
+this feature, typically on a per class basis.
 </p>
 
 <p>
-In such a case, we are likely to experience data corruption
-for  one never  can  predict the  behaviour of  the
-memory allocation  mechanism. We  cannot garantee that  some memory
-address used within the <tt>A</tt> object and then freed 
-will <b>never</b> be reused by some invocation of the
-<tt>new</tt>     operator    while     building     the    <tt>B</tt> or
-<tt>C</tt>... objects. 
-So the serialization process may be confused/corrupted 
-by the underlying memory tracking algorithm. 
-An already visited and  serialized memory location for <tt>A</tt> will
-be considered as already serialized if met again in <tt>B</tt>.
-The  effect  becomes  more  an  more probable  as  we  serialize  many
-instances  with such  complex and  dynamic internals.  Finally  we may
-experience some strange and bad cumulative effect through serialization of the
-whole set of data:
-<tt>B</tt>  having  its internals  initialized  with sub-objects  from
-<tt>A</tt>. No need to say it is really not what we want! 
+In  this  note   I  will  consider  the  case   where  an  application
+<u>needs</u> to serialize data through the Boost serialization library
+<u>with</u> object memory tracking.
 </p>
 
+<!-- ******************************************************** -->
 
+<a href="Object_tracking__Issues"></a>
+<h4>Issues</h4>
+
+<p>
+The  use of  this  very  useful and  powerful  object memory  tracking
+mechanism may however have  some nasty side-effects.  Depending on the
+data model  to be stored (or  loaded), and without  special care, some
+data  corruption can  (will)  occur along  the serialization  process.
+This is because the tracking system has a special policy that triggers
+the serialization  of data  stored from some  memory location  only if
+this memory location has not been visited (used) before.
+</p>
+
+<p>
+It means  that during the  serialization process, if  some dynamically
+allocated  memory location  has been  previously used  to  handle data
+<tt>X</tt> which has already been serialized, the reuse of this memory
+location  for  anoter  data   <tt>Y</tt>  is  likely  to  corrupt  the
+storage/load flow  of <tt>Y</tt>.  The memory  tracking algorithm will
+consider  <tt>Y</tt>   as  the  same  data  as   the  previously  used
+<tt>X</tt>, even if  <tt>Y</tt> has nothing to do  with <tt>X</tt> and
+consists in a  new dataset.  This generally induces  loss of data that
+exists in memory but is <i>skipped</i> by the memory tracker which may
+silently reconstruct  some wrong references to data.   Of course, this
+is  not what  we want!  The  example given  below should  help you  to
+understand this issue.
+</p>
+
+<a href="Object_tracking__Example"></a>
+<h4>Example</h4>
+
+<p><a href="#fig2">Figure 2</a> illustrates  this special case where 2
+<tt>foo</tt>  collections, <tt>foo #0</tt>  and <tt>foo  #1</tt>, that
+simultaneously  coexist in  memory,  owns through  pointers their  own
+independant  set of  <tt>fuu</tt> objects.  Now consider  the  case of
+storing both collections  in the same Boost archive.   In this example
+and  for  simplicity,  we  consider  the  only  serialization  of  the
+<tt>fuus</tt> list, not the <tt>sum</tt> and <tt>max_fuu</tt> fields!
+</p>
+<p>
+<table align="center"><tr><td>
+<a name="fig2"></a> 
+<img src="./images/foo_2.png" border="0">
+<br>
+Figure 2
+</td></tr></table><br>
+</p>
+
+<p>
+At the  end of the serialization  of both <tt>foo  #0</tt> and <tt>foo
+#1</tt> collections,  the archive contains all  data representing both
+<tt>foo</tt>  instances.  All  the memory  locations  (addresses) have
+been visited by the memory tracking system. This is represented by red
+color squares in the upper  left corner of the <tt>fuu</tt> objects in
+<a  href="#fig3">figure  3</a>.  Here  we  are  satisfied because  the
+archive has been generated properly, and we don't care about the final
+state of the memory tracker system.
+</p>
+<p>
+<table align="center"><tr><td>
+<a name="fig3"></a> 
+<img src="./images/foo_2b.png" border="0">
+<br>
+Figure 3
+</td></tr></table><br>
+</p>
+
+<p>
+But wait!  There is another way to  <i>manipulate</i> our <tt>foo</tt>
+collections.  Let's  consider <a  href="#fig4">figure  4</a> when  you
+first create the <tt>foo #0</tt> instance alone, populate it with some
+<tt>fuu</tt>  objects then  immediately  serialize it  in the  archive
+using memory tracking:
+</p>
+<p>
+<table align="center"><tr><td>
+<a name="fig4"></a> 
+<img src="./images/foo_2c.png" border="0">
+<br>
+Figure 4
+</td></tr></table><br>
+</p>
+<p>
+Up to  now, everything  is fine!  After  the serialization  of <tt>foo
+#0</tt>, you  get a preliminary  archive and the tracking  system have
+visited the  4 addresses corresponding  to the 4  <tt>fuu</tt> objects
+within <tt>foo #0</tt>. This is  shown again by the red filled squared
+in <a href="#fig4">figure 5</a>:
+</p>
+<table align="center"><tr><td>
+<a name="fig5"></a> 
+<p>
+<img src="./images/foo_2d.png" border="0">
+<br>
+Figure 5
+</td></tr></table><br>
+</p>
+
+<p>
+Now you  decide to delete  the <tt>foo #0</tt> collection  from memory
+and  allocate  the new  <tt>foo  #1</tt>  collection  with all  its  3
+<tt>fuu</tt>  items in  it.  <a  href="#fig4">Figure 6</a>  shows this
+case  where   the  freshly  deleted  <tt>foo   #0</tt>  collection  is
+represented  with light  blue contour  and the  new  allocated <tt>foo
+#1</tt> is ready for serialization in order to terminate the archiving
+process. As it can be seen  on the picture, the memory tracking system
+keeps some <i>red</i> flags on the memory locations previously used by
+<tt>fuu</tt> items  in the former <tt>foo #0</tt>  collection. The new
+<tt>foo #1</tt> collection has not  been serialized yet, so the memory
+location have  not been  visited by the  memory tracker  (green filled
+squares).
+</p>
+<p>
+<table align="center"><tr><td>
+<a name="fig6"></a> 
+<img src="./images/foo_2e.png" border="0">
+<br>
+Figure 6
+</td></tr></table><br>
+</p>
+Now  let's  serialize  <tt>foo   #1</tt>,  we  get  the  following  <a
+href="#fig7">picture</a>:
+</p>
+<p>
+<table align="center"><tr><td>
+<a name="fig7"></a> 
+<img src="./images/foo_2f.png" border="0">
+<br>
+Figure 7
+</td></tr></table><br>
+</p>
+<p>
+This final  situation is strictly the same  than the one we  got in <a
+href="#fig3">Figure 3</a>. The archive  is completed with the expected
+data. So, everything is fine! Hum, we were just lucky!
+</p>
+
+<p>Unfortunately, we definitively cannot  rely on the picture shown in
+<a href="#fig6">figure 6</a>.   Let's see why!  Now have  a look on <a
+href="#fig8">figure 8</a> that shows the (realistic) case where one of
+the <tt>fuu</tt>  item in the <tt>foo #1</tt>  collection is allocated
+at some location that have been already visited by the memory tracking
+system while  serializing <tt>foo  #0</tt>. Be sure  that in  the real
+there is no way to prevent such event on your system (unless you add a
+special memory management system on top of the default one that should
+be aware of Boost serialization memory tracking system's state):
+</p>
+<p>
+<table align="center"><tr><td>
+<a name="fig8"></a> 
+<img src="./images/foo_2g.png" border="0">
+<br>
+Figure 8
+</td></tr></table><br>
+</p>
+<p>
+So, let's try to serialize <tt>foo #1</tt> in the same archive than
+the one used for <tt>foo #0</tt> serialization!
+<a href="#fig9">Figure 9</a> shows what we get:
+</p>
+<p>
+<table align="center"><tr><td>
+<a name="fig9"></a> 
+<img src="./images/foo_2h.png" border="0">
+<br>
+Figure 9
+</td></tr></table><br>
+</p>
+
+<p>
+As  you  can  see,  the  memory tracking  system,  following  its  own
+algorithm, generates  an archive internal reference  to the serialized
+<tt>fuu #1</tt>  item of the serialized <tt>foo  #0</tt> collection in
+place of storing the real <tt>fuu #1</tt> data that belongs to <tt>foo
+#1</tt>!   This is  not the  same result  than the  one we  got  in <a
+href="#fig7">figure 7</a>.  The archive  is now corrupted and there is
+no way to restore the original data structure.
+</p>
+
+<p>
+It  is easy  to  imagine  the consequence  of  the deserialization  of
+<tt>foo #0</tt> and <tt>foo  #1</tt> collection using this archive (<a
+href="#fig10">figure  10</a>): the  data will  be nested  with invalid
+crossed references.  The <tt>fuu==0.2</tt> value in <tt>foo #1</tt> is
+definitively  lost.  More  if we  consider that  the  <tt>sum</tt> and
+<tt>max_fuu</tt>  fields have  also  been serialized,  then we  cannot
+trust their respective restored values in <tt>foo #1</tt>.
+</p>
+<p>
+<table align="center"><tr><td>
+<a name="fig10"></a> 
+<img src="./images/foo_2i.png" border="0">
+<br>
+Figure 10
+</td></tr></table><br>
+</p>
+
+<p>
+The conclusion we  can draw from this basic  example is the following:
+the success of serialization depends  on the way the memory allocation
+and serialization  operations are  performed.  As we  generally cannot
+control  the  memory locations  used  by  the  memory manager  of  the
+operating system,  some memory addresses  are likely to be  reused and
+<i>tracked</i>, particularly for application that handle large sets of
+dynamically allocated data. The result is then unpredictible. 
+</p>
+
+<p>
+The  two algorithms  shown  in the  following <a  href="#table1">table
+1</a> will thus generally lead to different results while using memory
+tracking through serialization,  the one on the right  being likely to
+produce some corrupted archive:
+</p>
+
+<p>
+<a name="table1"></a> 
+<table align="center" border="1">
+
+<tr>
+<th align="center">Algorithm 1
+</th>
+<th align="center">Algorithm 2
+</th>
+</tr>
+
+<tr>
+<td align="left">
+<pre>
+open archive
+
+allocate object 1
+allocate object 2
+allocate object 3
+
+serialize object 1
+serialize object 2
+serialize object 3
+
+deallocate object 1
+deallocate object 2
+deallocate object 3
+
+close archive
+</pre>
+</td>
+
+<td align="left">
+<pre>
+open archive
+
+allocate object 1
+serialize object 1
+deallocate object 1
+
+allocate object 2
+serialize object 2
+deallocate object 2
+
+allocate object 3
+serialize object 3
+deallocate object 3
+
+close archive
+</pre>
+</td>
+
+</tr>
+<caption>Table 1</caption>
+</table><br>
+</p>
+
+<p>
+Do  we have solutions  to avoid  such an  effect with  minimal effort,
+still benefiting of the object tracking features ?  Yes we do. This is
+the point of the next sections.
+</p>
+
+<!-- ******************************************************** -->
+
+<!--
 <p>
 Of course, the object tracking  mechanism can be deactivated on demand
 by the  user on a per-class  basis. However there  are reasons
@@ -182,196 +460,438 @@ with this dilemna: we need the object tracking mechanism on
 but we don't want the data corruption damages that come with it 
 as described above. 
 </p>
+-->
 
-<a href="Brute_force_approach"></a>
+<hr>
+<a name="Brute_force_approach"></a>
 <h3>Brute force approach</h3>
 
 <p>
-A solution  to this  problem consists in  the usage of  some container
-&mdash; STL  ones can be used  for that purpose &mdash;  that hosts at
-the same time <b>all</b> fully allocated instances (and internals) 
-to be serialized. This approach can be splitted in several steps: 
+The  so-called brute-force solution  to this  problem consists  in the
+usage of some  container &mdash; for example STL list  can be used for
+that  purpose  &mdash;  that  hosts  simultaneously  <b>all</b>  fully
+allocated instances and their internally sub-data to be serialized.
+</p>
 
+<p>
+To  illustrate  a  case  of  interest, assume  we  have  many  objects
+<tt>A</tt>,    <tt>B</tt>...<tt>Z</tt>    to    be   serialized    (<a
+href="#fig11">figure 11</a>), each of them implementing a complex data
+model with internal dynamically allocated sub-objects (let's call them
+<tt>a</tt>, <tt>b</tt>...  for the <tt>A</tt> object and so on).  More
+the   <tt>A</tt>   object    may   host   pointers   referencing   its
+sub-objects. This  justifies the use of the  object tracking approach.
+We assume also  there is no cross-reference between  the memory scopes
+owned  by instances <tt>A</tt>,  <tt>B</tt>...<tt>Z</tt> which  so are
+completely independant.
+</p>
+
+
+<p> 
+<table align="center"><tr><td>
+<a name="fig11"></a> <img src="./images/foo_4.png" border="0"> 
+<br> 
+Figure 11
+</td></tr></table><br>
+</p>
+
+<p>
+The serialization process can be splitted in several steps: 
 <ol> 
 
-<li>Declare the container,
-
-<li>Fill the container with objects properly initialized ( <tt>A</tt>,
-<tt>B</tt>... <tt>Z</tt>). One garantees that no dynamically allocated
-memory location  is reused skipping  from <tt>A</tt> to  <tt>B</tt> or
-<tt>C...</tt>  instances  because  sub-objects  <tt>a<sub>A</sub></tt>,
-<tt>b<sub>A</sub></tt>... <tt>a<sub>B</sub></tt>,
-<tt>b<sub>B</sub></tt>... simultaneously coexists in memory at
-different locations. As no memory is freed till the end of the
-serialization, the state ot the memory related to our data is frozen 
-and we should not
-experience memory tracking confusion. 
-
-<li>Initialize the archive, 
-
-<li>Traverse the container and serialize  all items in it (<b>without any</b>
-modification of internal allocated memory during this iterative process),<br> 
-or:
-<br> serialize  the  container if
-Boost serialization provides support for this (<code>std::map</code>, <code>std::list</code>...), 
+<li>Initialize the container.
+<p>
+<table align="center"><tr><td>
+<a name="fig12"></a> 
+<img src="./images/foo_4a_0.png" border="0">
 <br>
-The archive is thus a static picture of the memory layout of the whole
-data set,
+Figure 12
+</td></tr></table><br>
+</p>
 
-<li>Terminate the archive, 
+<li>Fill the container (<tt>push_back</tt>, <tt>insert</tt>...)
+with objects properly initialized <tt>A</tt>,
+<tt>B</tt>... <tt>Z</tt> (<a href="#fig13">figure 13</a>). One garantees that no dynamically allocated
+memory location  is reused while skipping  from scope <tt>A</tt> to  <tt>B</tt> or
+<tt>Z</tt>  instances  because  sub-objects  <tt>a</tt>,
+<tt>b</tt>... in <tt>A</tt>, <tt>e</tt>,
+<tt>f</tt>... in <tt>B</tt> and <tt>v</tt>,
+<tt>w</tt>... in <tt>Z</tt>  simultaneously coexists in memory at
+<u>different</u> locations. 
+<p>
+<table align="center"><tr><td>
+<a name="fig13"></a> 
+<img src="./images/foo_4b.png" border="0">
+<br>
+Figure 13
+</td></tr></table><br>
+</p>
 
-<li>Clear the container and objects in it.  
+<li>At this step, no memory will be freed &mdash; and possibly
+reused &mdash; till the end of the
+serialization process. The state of the memory related to our data is <u>frozen</u>. 
+
+<li>Initialize the archive with its associated output stream.
+
+<li>Traverse the  container and serialize  all items in it.   <br> For
+this, you  should not perform  a single intermediate operation  on the
+container's items  that could modify  the internal state  of allocated
+memory  during this iterative  process: remove  or/and add  objects or
+sub-objects.   <br> If  one uses  a STL  container supported  by Boost
+serialization (<code>std::map</code>, <code>std::list</code>...), then
+it is straightforward.  <br> The  archive is thus a static snapshot of
+the memory layout of the whole data set.
+
+<li>Now you can terminate the archive and close its associated stream.
+
+<li>Finally you can clear the container and all objects in it.  
 
 </ol> 
 
-This is generally safe.  However, this strategy has counterparts: 
+<p>
+Now  you have your archive  stored typically in a  file with the
+layout shown on <a  href="#fig14">figure 14</a>: 
+</p>
+
+<p> 
+<table align="center"><tr><td>
+<a name="fig14"></a> 
+<img  src="./images/foo_5.png"   border="0">  
+<br>
+Figure 14
+</td></tr></table><br>
+</p>
+
+This approach is safe.  However, it has counterparts: 
 
 <ul>
 
-<li>One must know in advance the full set of objects to be serialized,
+<li>One must know in advance the full set of objects to be serialized.
 
-<li>One cannot modify the dataset (free/allocate internal memory)
-as soon as the serialization process is running,
+<li>One cannot  modify the dataset (free/allocate  internal memory) as
+soon as the serialization process is running.
 
-<li>The full set of objects must be stored in memory and it may 
-induce a huge memory footprint!  
-Particularly, during the serialization iterative process,
-there is no hope to delete parts of 
-previously serialized objects in order to save memory storage 
-without taking a strong risk of data corruption,
+<li>The full set of objects must be stored in memory and it may induce
+a  huge  memory  footprint!   Particularly, during  the  serialization
+iterative  process, there  is no  hope to  delete parts  of previously
+serialized objects  in order to  save memory storage without  taking a
+strong risk of data corruption.
 
-<li>Object tracking implies the <i>bookkeeping</i>  of many, many memory
-locations  maybe at   the  cost  of  some  inefficiency   (this  point  needs
-confirmation from Robert Ramey).  
+<!--li>Object  tracking  implies  the  <i>bookkeeping</i> of  many,  many
+memory locations  maybe at the  cost of some inefficiency  (this point
+needs confirmation from Robert Ramey). -->
 
 </ul> 
 
-It is obvious that within some applications (asynchronous source/flow of
-data,  memory  limitation...),  this   brute  force  approach  is  not
+It is obvious that  within some applications (asynchronous source/flow
+of  data, memory  limitation...),  this brute  force  approach is  not
 satisfactory.
 </p>
 
 
-<a href="A_smart_approach"></a>
+<hr>
+<a name="A_smart_approach"></a>
 <h3>A smart approach: using multiple archives per storage stream/file</h3>
 
 <p>
-Now it's time to describe a simple but still elegant strategy to work around
-what one may call <i>far memory scope tracking data corruption
-effects</i> (note that the term <i>far</i> is very subjective and should be
-understood as <i>not confined</i>).  
-It relies on the following observation: memory tracking
-is <i>confined</i> within archives.
-It means that if some complex data structure <tt>A</tt> (with nested dynamically
-allocated  internal sub-objects)  is serialized through its  own archive,
-there is no risk of data corruption by the memory traking process if another instance
+Now it's time to describe a simple but elegant strategy to prevent our
+application from what  one may call <i>far memory  scope tracking data
+corruption  effects</i>  (note  that   the  term  <i>far</i>  is  very
+subjective  and  should be  understood  as  <i>not confined</i>).   It
+relies on the following  observation: the memory tracking mechanism is
+<i>confined</i> within an archive.  It means that if some complex data
+structure  <tt>A</tt>  (with  nested  dynamically  allocated  internal
+sub-objects) is serialized  through its own archive, there  is no risk
+of data corruption  by the memory traking process  if another instance
 <tt>B</tt> is  serialized through a different  archive: memory traking
-is reset at each new archive creation. 
+is always  reset at creation  of a new  archive : all red  squares get
+green again!. 
 
 
 
 <p>
-A  new serialization  strategy  is then  proposed  with the  following
-layout for the serialization medium:
+A   new    serialization   strategy    is   then   proposed    on   <a
+href="#fig15">figure  15</a>   with  the  following   layout  for  the
+serialization  medium: <p  align="center">  <a name="fig15"></a>  <img
+src="./images/foo_5b.png" border="0"> <br> Figure 15
+</p>
 
-<ul> 
+<p> The main idea is to  use one archive for each instance <tt>A</tt>,
+<tt>B</tt>...   <tt>Z</tt>  and store  all  archives  within the  same
+stream.
+</p>
+
+<p>Now it is possible to use the following algorithm:
+<ol> 
 
 <li> Opening of the serialization stream,
 
-<li> Beginning of a Boost archive attached to the stream and dedicated to <tt>A</tt>,
+<li> <tt>A</tt> management:
+<ul>
+<li> Initialize a Boost archive attached to the stream and dedicated to <tt>A</tt>,
 
-<li> <tt>A</tt>: Instance  of a complex data model  with many pointers
-in  it  referencing   other  dynamically  allocated  internal  objects
-(<tt>a<sub>A</sub></tt>, <tt>b<sub>A</sub></tt>...),
+<li> Create and manipulated <tt>A</tt> which is a complex data
+  structure
+  with many pointers in  it  referencing   other  dynamically  allocated  internal  objects
+(<tt>a</tt>, <tt>b</tt>...),
 
-<li> The end of the Boost archive dedicated to <tt>A</tt>,
+<li> Serialize <tt>A</tt>
 
+<li> Terminate the Boost archive dedicated to <tt>A</tt>,
 
-<li> Beginning  of a  Boost archive still  attached to  the continuing
-stream
-and now dedicated to <tt>B</tt>,
-
-<tt>B</tt>: Another  instance of the  complex data model with  its own
-dynamically   allocated   internal  objects   (<tt>a<sub>B</sub></tt>,
-<tt>b<sub>B</sub></tt>...),  possibly  reusing  some memory  locations
-previously  visited  by the  serialization  process for  <tt>A</tt>...
-
-<li> The end of the Boost archive dedicated to <tt>B</tt>,
-
-<li> ...
-
-<li> Beginning of a Boost archive for <tt>Z</tt>,
-
-<li><tt>Z</tt>: Serialization of the last instance,
-
-<li> The end of the Boost archive dedicated to <tt>Z</tt>,
-
-<li> Closing the serialization stream. 
+<li> Delete/terminate <tt>A</tt>
 
 </ul>
 
+<li> <tt>B</tt> management:
+<ul>
+<li> Initialize a Boost archive attached to the stream and dedicated to <tt>B</tt>,
+
+
+<li> Create and manipulated <tt>B</tt> which is a complex data
+  structure
+  with many pointers in  it  referencing   other  dynamically  allocated  internal  objects
+(<tt>e</tt>, <tt>f</tt>...),
+
+<li> Serialize <tt>B</tt>
+
+<li> Terminate the Boost archive dedicated to <tt>B</tt>,
+
+<li> Delete/terminate <tt>B</tt>
+</ul>
+...
+<li> <tt>Z</tt> management:
+<ul>
+<li> Initialize a Boost archive attached to the stream and dedicated to <tt>Z</tt>,
+
+<li> Create and manipulated <tt>Z</tt> which is a complex data
+  structure
+  with many pointers in  it  referencing   other  dynamically  allocated  internal  objects
+(<tt>v</tt>, <tt>w</tt>...),
+
+<li> Serialize <tt>Z</tt>
+
+<li> Terminate the Boost archive dedicated to <tt>Z</tt>
+
+<li> Delete/terminate <tt>Z</tt>
+</ul>
+
+<li> Closing the serialization stream. 
+
+</ol>
+
+
+<p>
 This approach  still takes benefit  of memory traking  features within
-each successive archives, ensuring confinement of memory tracking in the
-memory  footprint  of  a   single  meta-object.  But no  data  corruption  is
+each successive  archives, ensuring confinement of  memory tracking in
+the memory  scope of a single  object.  But no  data corruption is
 experienced  as  the  nasty  side-effect  of  unavoidable  dynamically
-allocated memory  reusage is not possible anymore. 
-One can  safely reuse the same  memory location to store the instances
-<tt>A</tt>, <tt>B</tt>... and iterate
-through it during the serialization process. Data can be manipulated between
-serialization actions. That make easy  and safe the use of an iterative
-loop with reasonable small memory footprint:
-<ol>
-<li>create a unique object,
-<li>manipulate the object,
-<li>create the archive,
-<li>store the object within its own archive,
-<li>terminate the archive,
-<li>manipulate the object,
-<li>loop back to the first step...
+allocated memory reuse is not  possible anymore.  One can safely reuse
+the  same   memory  location   to  store  the   instances  <tt>A</tt>,
+<tt>B</tt>...  and   iterate  through  it   during  the  serialization
+process. Data  can be manipulated between  serialization actions. That
+makes easy and safe the use of an iterative loop with a reasonable small
+memory footprint: 
+</p>
+
+<p>
+<ol> 
+<li>create an object 
+<li>manipulate the object
+<li>create the archive 
+<li>store the object within its own archive
+<li>terminate the archive 
+<li>loop back to step 2...  
 </ol>
 </p>
 
 <p>
-What about performances as we now use one archive per object?
-Well, it depends on many factors, but typically, if the meta-objects
-<tt>A</tt>, <tt>B</tt>... are so huge and numerous, the memory footprint
-due to the use of many archives is rather negligible on the storage
-medium (archive header and footer are small).
-Probably one should get CPU advantages concerning the memory tracking process 
-because the memory size and associated combinatory is reduced within each
-archive (However, I'm not sure about this point).
-More, objects being isolated within their own archives stored in
-the same stream, it is quite easy to concatenate different
-such serialization streams or split one in several smaller ones.
+What  about performances  and possible  advantages as  we now  use one
+archive per object ?  Well, it  depends on many factors, but typically,
+if the objects <tt>A</tt>, <tt>B</tt>... are so huge and numerous, the
+memory footprint due to the  use of many archives is rather negligible
+on the storage medium (Boost serialization archive headers and footers
+are small).
+
+<!--Probably  one  should get  CPU  advantages  concerning the  memory
+tracking process because the memory size and associated combinatory is
+reduced  within  each  archive  (However,  I'm  not  sure  about  this
+point).--> 
+
+More, objects being  isolated within their own archives  stored in the
+same stream,  it is quite easy to  concatenate different serialization
+streams or  split one in  several smaller ones  (one can easily  do it
+with text or xml archive through simple scripts).
 </p>
 
 <p>
 Of course,  the <i>multiple archives per file</i>  strategy makes 
 sense only if  the instances <tt>A</tt>, <tt>B</tt>... to be
 serialized 
-are totally independant (for example without any cross-references pointers).
+are totally independant (without any cross-referenced data).
 </p>
 
-<a href="Sample_code"></a>
+<hr>
+<a name="Sample_code"></a>
 <h3>Sample code</h3>
 
-File <tt>foo.hpp</tt> implements a <tt>foo</tt> sample class 
-with Boost serialization support.
+<p>Some sample programs are provided in order to illustrate the 
+coupling of Boost serialization with the object memory tracking
+mechanism: possible
+issues (examples <a href="#example:1">1</a> and <a href="#example:3">3</a>) and proposed strategies  to fix the problems
+explained above (examples <a href="#example:2">2</a> and <a href="#example:4">4</a>). They 
+compile with Boost 1.38.0 and gcc 4.2.4 under Linux and are likely to
+do so using other platforms.
+</p>
 
+<p>
+File <a href="../foo.hpp"><i>foo.hpp</i></a> 
+implements a <tt>foo</tt> class 
+with Boost serialization support. A <tt>foo</tt>  object
+contains a <tt>__fuus</tt> list of pointers to dynamically 
+allocated <tt>fuu</tt> objects.
+More there is a <tt>__sum</tt> field whom  value is
+computed to be the sum of values belonging to the <tt>fuu</tt> items
+in the <tt>__fuus</tt> list. Also a <tt>__max_fuu</tt> pointer
+references the <tt>fuu</tt> item with the largest value.
+The <tt>foo</tt> class is responsible of the deletion of <tt>fuu</tt>
+items in the <tt>__fuus</tt> list. No memory deallocation is performed
+for the  <tt>__max_fuu</tt> pointer that is considered as a weak reference.
+Just for educationnal purpose, there is special added code 
+for debugging  and doing statistics 
+on memory usage.
+</p>
 
+</p>
 
+<p>
+File <a href="../foo_light.hpp"><i>foo_light.hpp</i></a> is a clone
+of <i>foo.hpp</i> without the tools for debugging and doing statistics 
+on memory usage.
+</p>
 
-<a href="Disclaimer"></a>
+<p>
+The programs below manipulate some XML  archives to store
+data  from <i>foo.hpp</i>. They also print statistics on memory usage. These last
+informations can be used to understand the cases
+where object tracking produces serialized data corruption.
+</p>
+
+<p>
+Examples:
+</p>
+
+<ol>
+
+<li> 
+<a name="example:1"></a>
+Example of data/memory corruption due to object memory tracking:<br>
+
+<ul>
+<li><a href="../tracking_write_0.cpp"><i>tracking_write_0.cpp</i></a>
+generates a file <i>data_0.xml</i> with an XML archive that contains
+5  <tt>foo</tt>  objects.  The   archive  is  silently  generated  and
+corrupted by  object tracking.   A tool inside  the program  gives the
+status  of reused  memory  locations, it  proves  the data  corruption
+process in the archive.
+
+<li><a href="../tracking_read_0.cpp"><i>tracking_read_0.cpp</i></a>:
+attempts to load (deserialize) the 5 <tt>foo</tt> objects previously
+serialized by the <i>tracking_write_0.cpp</i> program (input file: <i>data_0.xml</i>). 
+It fails at some point through a  memory dynamic management error.
+
+<li><a
+href="../tracking_write_1.cpp"><i>tracking_write_1.cpp</i></a>:
+a variant of the  <i>tracking_write_0.cpp</i> program that generates
+the <i>data_1.xml</i> archive file which is a clone of  <i>data_0.xml</i>.
+</ul>
+<br>
+
+<li><a name="example:2"></a>
+ Brute force solution to prevent data corruption:<br>
+<ul>
+
+<li><a
+href="../tracking_write_2.cpp"><i>tracking_write_2.cpp</i></a>:
+generate the XML archive file <i>data_2.xml</i>, but arrange
+not to  reused memory location while traversing a list of
+5 <tt>foo</tt> objects. It uses a <tt>std::list</tt>
+instance  for that. The memory tracker indicates no reuse of any
+memory location. The archive is NOT corrupted.
+
+<li><a href="../tracking_read_2.cpp"><i>tracking_read_2.cpp</i></a>:
+load the <tt>foo</tt> objects from file  <i>data_2.xml</i>
+using a <tt>std::list</tt> instance.
+Everything works well. 
+
+</ul>
+
+This brute force approach produces reversible
+serialization/deserialization operations at the cost
+of a larger used memory.
+<br>
+<br>
+
+<li><a name="example:3"></a> Not using object memory tracking implies
+some memory leakage:<br>
+<ul>
+<li><a
+href="../tracking_write_3.cpp"><i>tracking_write_3.cpp</i></a>:
+is similar to program <i>tracking_write_0.cpp</i> but
+does not use object memory tracking thanks to a special Boost
+serialization directive. The output is not corrupted
+but some data are replicated in the <i>data_3.xml</i>
+output file.
+
+<li><a href="../tracking_read_3.cpp"><i>tracking_read_3.cpp</i></a>:
+load the <tt>foo</tt> objects from file  <i>data_3.xml</i>.
+Everything looks okay but it implies memory leakage
+at deletion of <tt>foo</tt> instances. 
+
+</ul>
+<br>
+<li><a name="example:4"></a> Smart solution: using multiple archive within one file <u>with</u> memory tracking.<br>
+<ul>
+<li><a
+href="../tracking_write_4.cpp"><i>tracking_write_4.cpp</i></a>:
+is similar to program <i>tracking_write_0.cpp</i> but
+use one archive per <tt>foo</tt> instance 
+<u>and</u> object memory tracking. The output is not corrupted
+and no data is replicated in the <i>data_4.xml</i>
+output file.
+
+<li><a href="../tracking_read_4.cpp"><i>tracking_read_4.cpp</i></a>:
+load the <tt>foo</tt> objects from file  <i>data_4.xml</i>.
+The serialized/unserialized data are not 
+corrupted. There is no memory leakage. There is no need of a special
+container to handle all  <tt>foo</tt> objects simultaneously. 
+Everything is okay. 
+
+</ul>
+<br>
+
+</ol>
+
+<hr>
+
+<a name="Disclaimer"></a>
 <h3>Disclaimer</h3>
 
-This note and sample code coming with it are provided as is
-in the hope it could be useful, no more, no less.
+<p>
+This note and sample programs coming with it are provided as is
+in the hope it could be useful.
+</p>
 
-<a href="Acknowledgements"></a>
+<hr>
+
+<a name="Acknowledgements"></a>
 <h3>Acknowledgements</h3>
 
+<p>
 Many thanks to Robert Ramey, the father of Boost.Serialization,
-for fruitful discussions.
+for fruitful discussions and also to Jean Hommet, I worked
+on Boost serialization and object tracking issues with.
+</p>
 
 <hr>
 <p>
