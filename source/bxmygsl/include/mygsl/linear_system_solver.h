@@ -40,8 +40,11 @@ namespace mygsl {
   private:
 
     size_t              __dimension;
+    bool __use_gsl_vector;
     std::vector<double> __va;
     std::vector<double> __vb;
+    gsl_vector *        __vva;
+    gsl_vector *        __vvb;
     gsl_matrix_view     __m;
     gsl_vector_view     __b;
     gsl_permutation *   __p;

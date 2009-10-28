@@ -64,7 +64,7 @@ function print_usage()
   Available modes are:
 
     $APPNAME info       : print package info
-    $APPNAME conffigure  : configure package (not implemented)
+    $APPNAME configure  : configure package 
     $APPNAME build      : build package
     $APPNAME clean      : clean package
     $APPNAME install    : install package

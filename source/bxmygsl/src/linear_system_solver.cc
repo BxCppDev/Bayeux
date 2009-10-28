@@ -12,7 +12,9 @@ namespace mygsl {
   {
     __dimension = 0;
     __p = 0;
-    __x = 0;
+    __x = 0; 
+    __vva = 0;
+    __vvb = 0;
     if (dimension_ > 0) __init (dimension_);
   }
 
@@ -30,8 +32,13 @@ namespace mygsl {
       }
     if (__x) gsl_vector_free (__x);
     if (__p) gsl_permutation_free (__p);
-    __va.clear ();
-    __vb.clear ();
+
+    gsl_vector_free (__vva);
+    gsl_vector_free (__vvb);
+    __vva = 0;
+    __vvb = 0;
+    //__va.clear ();
+    //__vb.clear ();
     __dimension = 0;
   }
 
@@ -48,10 +55,12 @@ namespace mygsl {
 	return;
       }
     __dimension = dimension_;
-    __va.assign (__dimension * __dimension, 0.0);
-    __vb.assign (__dimension, 0.0);
-    __m = gsl_matrix_view_array (__va.data (), __dimension, __dimension);
-    __b = gsl_vector_view_array (__vb.data (), __dimension);
+    //__va.assign (__dimension * __dimension, 0.0);
+    //__vb.assign (__dimension, 0.0);
+    __vva = gsl_vector_calloc (__dimension * __dimension);
+    __vvb = gsl_vector_calloc (__dimension);    
+    __m = gsl_matrix_view_array (__vva->data, __dimension, __dimension);
+    __b = gsl_vector_view_array (__vvb->data, __dimension);
     __p = gsl_permutation_alloc (__dimension);
     __x = gsl_vector_alloc (__dimension);
   }
@@ -78,15 +87,21 @@ namespace mygsl {
 	std::cerr << "ERROR: linear_system_solver::solve: Invalid system dimensions!" << endl;
 	return EXIT_FAILURE;
       }
-    if (dim != __vb.size ())
+    if (dim != __vvb->size)
       {
 	std::clog << "WARNING: linear_system_solver::solve: Redimensioning system!" << endl;
 	__reset ();
 	__init (dim);
       }
     // input values:
-    __va = a_;
-    __vb = b_;
+    for (int i = 0; i < a_.size (); i++)
+      {
+	gsl_vector_set (__vva, (size_t) i, a_[i]);
+      }
+    for (int i = 0; i < b_.size (); i++)
+      {
+	gsl_vector_set (__vvb, (size_t) i, b_[i]);
+      }
     // computing:
     int s;
     if (gsl_linalg_LU_decomp (&__m.matrix, __p, &s))
