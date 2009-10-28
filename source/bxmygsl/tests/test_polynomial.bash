@@ -6,6 +6,7 @@ test_polynomial > test_polynomial.data
 
 cat>test_polynomial.gpl<<EOF
 
+set terminal x11
 set grid
 set title "mygsl: test of the 'polynomial' and related classes"
 set xrange [0:10]
