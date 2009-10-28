@@ -76,7 +76,13 @@ namespace mygsl {
    
   double polynomial::eval (double x_) const
   {
-    return gsl_poly_eval (__c.data (), __c.size (),x_);
+    size_t sz = __c.size ();
+    const double * first_arg = 0;
+    if (sz > 0)
+      {
+	first_arg = &(__c[0]);
+      }
+    return gsl_poly_eval (first_arg, sz, x_);
   }
 
   void polynomial::print (ostream & out_, int format_, bool eol_) const
