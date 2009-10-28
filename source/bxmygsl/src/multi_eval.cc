@@ -85,7 +85,13 @@ namespace mygsl {
   
   double multi_eval::evaluate (const vector<double> & v_) const
   {
-    return evaluate (v_.data ());
+    const double * first_arg = 0;
+    if (v_.size ())
+      {
+	first_arg = &(v_[0]);
+      }
+    return evaluate (first_arg);
+    //    return evaluate (v_.data ());
   }
   
   double multi_eval::evaluate (const double *  x_) const
