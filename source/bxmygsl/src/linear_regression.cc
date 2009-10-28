@@ -265,17 +265,33 @@ namespace mygsl {
 	__can_weighted = false;    
       }
     size_t n = x_.size ();
+
+    // 2009-10-28 FM: std::vector::data() method is not available:
+    /*
     __delete = false;
     __x = const_cast<double *> (x_.data ());
     __y = const_cast<double *> (y_.data ());
+    */
+    __delete = true;
+    __x = new double [n];
+    __y = new double [n];
+    for (int i = 0; i < n; i++)
+      {
+	__x[i] = x_[i];
+	__y[i] = y_[i];
+      }
+
     __w = 0;
     int count = 0;
     if (w_.size () != 0)
       {
-	__w = const_cast<double *>(w_.data ());
+	// 2009-10-28 FM: missing std::vector::data() method:
+	//__w = const_cast<double *>(w_.data ());
+	__w = new double [n];
 	__can_weighted = true;
 	for (int i = 0; i < n; i++)
 	  {
+	    __w[i] = w_[i];
 	    if (isnan (__w[i]))
 	      {
 		clog << "WARNING: linear_regression::init: Datapoint #" << count << " is not weighted!" << endl;
