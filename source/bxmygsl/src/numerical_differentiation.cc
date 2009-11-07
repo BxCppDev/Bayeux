@@ -98,6 +98,151 @@ namespace mygsl {
     derivative (eval_, x_, domain_, abserr);
   }
 
+
+  /*****************************************************
+   *                                                   *
+   *   Derivative formula for regular sampled function *
+   *                                                   *
+   *****************************************************/
+
+  // central:
+
+  double derivative_central_regular_sampled_2 (double f_1_, 
+					       double f1_, 
+					       double h_)
+  {
+    return (f1_ - f_1_) / (h_ + h_);    
+  }
+  
+  double derivative_central_regular_sampled_4 (double f_2_, 
+					       double f_1_, 
+					       double f1_, 
+					       double f2_, 
+					       double h_)
+  {
+    double dfdx = -f2_ + 8. * (f1_ - f_1_) + f_2_;
+    return dfdx / (12. * h_);
+  }
+  
+  double second_derivative_central_regular_sampled_2 (double f_1_, 
+						      double f0_, 
+						      double f1_,
+						      double h_)
+  {
+    return (f1_ - 2 * f0_ + f_1_) / (h_ * h_);  
+  }
+
+  double second_derivative_central_regular_sampled_4 (double f_2_, 
+						      double f_1_, 
+						      double f0_, 
+						      double f1_, 
+						      double f2_, 
+						      double h_)
+  {
+    double dfdx = -f2_ + 16. * (f1_ + f_1_) + - 30. * f0_ - f_2_;
+    return dfdx / (12. * h_ * h_);
+  }
+
+
+  // forward:
+
+  double derivative_forward_regular_sampled_1 (double f0_, 
+					       double f1_, 
+					       double h_)
+  {
+    return (f1_ - f0_) / h_;
+  }
+
+  double derivative_forward_regular_sampled_2 (double f0_, 
+					       double f1_, 
+					       double f2_, 
+					       double h_)
+  {
+    return (4. * f1_ - 3. * f0_ - f2_) / (h_ + h_);
+  }
+
+  double derivative_forward_regular_sampled_3 (double f0_, 
+					       double f1_, 
+					       double f2_, 
+					       double f3_, 
+					       double h_)
+  {
+    return (18. * f1_ - 9. * f2_ + 2. * f3_ - 11 * f0_) / (6 * h_);
+  }
+
+  /*
+  double derivative_forward_regular_sampled_4 (double f0_, 
+					       double f1_, 
+					       double f2_, 
+					       double f3_, 
+					       double f4_, 
+					       double h_)
+  {
+    return (25. * f4_ - 72. * f3_ + 24. * f2_ + 152. * f1_ - 129. * f0_) / (84. * h_);
+  }
+  */
+
+  double second_derivative_forward_regular_sampled_1 (double f0_, 
+						      double f1_, 
+						      double f2_, 
+						      double h_)
+  {
+    double dfdx = (f0_ - 2. * f1_ + f2_) / (h_ * h_);
+    return dfdx;
+  }
+
+  double second_derivative_forward_regular_sampled_2 (double f0_, 
+						      double f1_, 
+						      double f2_, 
+						      double f3_, 
+						      double h_)
+  {
+    double dfdx = (2 * f0_ - 5. * f1_ + 4 * f2_ - f3_) / (h_ * h_);
+    return dfdx;
+  }
+
+  // backward:
+  double derivative_backward_regular_sampled_1 (double f_1_, 
+						double f0_, 
+						double h_)
+  {
+    return -derivative_forward_regular_sampled_1 (f0_, f_1_, h_);
+  }
+
+  double derivative_backward_regular_sampled_2 (double f_2_, 
+						double f_1_, 
+						double f0_, 
+						double h_)
+  {
+    return -derivative_forward_regular_sampled_2 (f0_, f_1_, f_2_, h_);
+  }
+
+  double derivative_backward_regular_sampled_3 (double f_3_,
+						double f_2_, 
+						double f_1_, 
+						double f0_, 
+						double h_)
+  {
+    return -derivative_forward_regular_sampled_3 (f0_, f_1_, f_2_, f_3_, h_);
+  }
+
+  double second_derivative_backward_regular_sampled_1 (double f_2_, 
+						       double f_1_, 
+						       double f0_, 
+						       double h_)
+  {
+    return second_derivative_forward_regular_sampled_1 (f0_, f_1_, f_2_, h_);
+  }
+
+  double second_derivative_backward_regular_sampled_2 (double f_3_, 
+						       double f_2_, 
+						       double f_1_, 
+						       double f0_, 
+						       double h_)
+  {
+    return second_derivative_forward_regular_sampled_2 (f0_, f_1_, f_2_, f_3_, h_);
+  }
+
 }
 
 // end of mygsl::numerical_differentiation.cc
