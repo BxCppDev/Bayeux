@@ -308,6 +308,7 @@ namespace mygsl {
     return gsl_ran_binomial (__r, p_, n_);
   }
       
+  /*
   gsl_rng * rng::operator () (void)
   {
     return __r;
@@ -316,6 +317,12 @@ namespace mygsl {
   const gsl_rng * rng::operator () (void) const
   {
     return __r;
+  }
+  */
+
+  double rng::operator () (void)
+  {
+    return this->uniform ();
   }
 
 }

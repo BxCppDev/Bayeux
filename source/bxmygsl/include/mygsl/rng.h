@@ -97,9 +97,22 @@ namespace mygsl {
       unsigned long int binomial (double p_, 
 				  unsigned long int n_) const;
 
+      // 2009-11-08 FM: do not understand what it is for!!!
+      /*
       gsl_rng * operator () (void);
 
       const gsl_rng * operator () (void) const;
+      */
+
+      /*
+      gsl_rng * get () (void);
+
+      const gsl_rng * get () (void) const;
+      */
+
+      // 2009-11-08 FM: to be used as a functor:
+      double operator () (void);
+
 
     };
   
