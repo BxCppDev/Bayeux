@@ -79,7 +79,13 @@ function print_usage ()
                             with Python version VERSION (default: 2.5)
                           --without-python :
                             without Python wrapper module
-    $APPNAME build      : build package
+    $APPNAME build [TARGET] : build package
+            TARGET:
+                lib (default) : build the shared library
+                bin : build all executable programs (if any)
+                bin_test : build all executable test programs (if any)
+             or the name of a specific program, example:
+                test_event_id : build only the 'test_event_id'  program
     $APPNAME clean      : clean package
     $APPNAME install    : install package
     $APPNAME uninstall  : uninstall package
@@ -394,7 +400,7 @@ function do_build ()
     return 1
 }
 
-function do_startup()
+function do_startup ()
 {
 cat<<EOF
 

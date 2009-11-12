@@ -255,10 +255,13 @@ clean : clean_special
 	@echo "Cleaning..."
 	find $(BASEDIR)/ -name "*~" -exec $(RM) \{\} \; 
 	test -d $(ARCHDIR)/ && $(RM) -r $(ARCHDIR) || echo -n ""
+	@echo "Cleaning done."
+	@echo
 
 .PHONY : distclean
 distclean : uninstall clean
 	@echo "Total cleaning..."
+	@echo
 
 .PHONY : bin
 bin : bin_shared
@@ -284,11 +287,15 @@ $(LIBFILE) : $(objectsWithPath)
 	for file_object in $(objects); do \
 	  $(AR) -rusv $(LIBDIR)/$(LIBFILE) $(OBJDIR)/$(notdir $${file_object}) ; done
 	ranlib $(LIBDIR)/$(notdir $(@))
+	@echo "Building static lib '$(@)' done."
+	@echo
 
 $(SHLIBFILE) : $(objectsWithPath) 
 	@echo "Building shared lib '$(@)'..."
 	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
 	@test -n "$(objectsWithPath)" && $(LD) $(CXXFLAGS) $(SOFLAGS) $(^) -o $(LIBDIR)/$(notdir $(@)) || echo ""
+	@echo "Building shared lib '$(@)' done."
+	@echo
 
 $(OBJDIR)/%$(OBJEXT) : %$(SOURCEEXT) %$(HEADEREXT)
 	@echo "Compiling module '$(@)'..."

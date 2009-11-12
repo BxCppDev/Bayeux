@@ -11,8 +11,7 @@
 #include <geomtools/intersection_3d.h>
 #include <geomtools/gnuplot_draw.h>
 
-int 
-main (int argc_, char ** argv_)
+int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
   try 
@@ -122,7 +121,7 @@ main (int argc_, char ** argv_)
 	    for (int i = 0; i < (int) nshoots; i++)
 	      {
 		if ((i%1000) == 0) std::clog << "Loop #" << i << std::endl;
-		std::clog << "DEVEL: Loop #" << i << std::endl;
+		//std::clog << "DEVEL: Loop #" << i << std::endl;
 
 		// special debug activation:
 		int idevel = -1;
