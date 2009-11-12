@@ -98,6 +98,13 @@ namespace mygsl {
 					       double f3_, 
 					       double h_);
 
+  double derivative_forward_regular_sampled_4 (double f0_, 
+					       double f1_, 
+					       double f2_,  
+					       double f3_,  
+					       double f4_, 
+					       double h_); 
+
   double second_derivative_forward_regular_sampled_1 (double f0_, 
 						      double f1_, 
 						      double f2_, 
@@ -108,15 +115,6 @@ namespace mygsl {
 						      double f2_, 
 						      double f3_, 
 						      double h_);
-
-  /*
-  double derivative_forward_regular_sampled_4 (double f0_, 
-					       double f1_, 
-					       double f2_, 
-					       double f3_, 
-					       double f4_, 
-					       double h_);
-  */
 
   // backward:
 
@@ -135,6 +133,13 @@ namespace mygsl {
 						double f_1_, 
 						double f0_, 
 						double h_);
+  
+  double derivative_backward_regular_sampled_4 (double f_4_,
+						double f_3_,  
+						double f_2_, 
+						double f_1_, 
+						double f0_, 
+						double h_);
 
   double second_derivative_backward_regular_sampled_1 (double f_2_, 
 						       double f_1_, 
@@ -146,6 +151,8 @@ namespace mygsl {
 						       double f_1_, 
 						       double f_0_, 
 						       double h_);
+
+
 
 } // end of namespace mygsl
 

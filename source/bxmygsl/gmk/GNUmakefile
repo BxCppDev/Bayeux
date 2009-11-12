@@ -36,6 +36,7 @@ endif
 
 SYSTEM=$(OS)-$(ARCH)
 
+.PHONY : all
 all : libs bins build_special
 
 PACKAGENAME=mygsl
@@ -121,13 +122,48 @@ headers := $(notdir $(shell ls $(INCDIR)/$(PACKAGENAME)/*$(HEADEREXT)))
 sources := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT)))
 objects := $(sources:%$(SOURCEEXT)=%$(OBJEXT))
 objectsWithPath := $(sources:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT))
-programs:= $(notdir $(shell ls $(PROGDIR)/*$(PROGEXT)))
+
+programs_all:= $(notdir $(shell ls $(PROGDIR)/*$(PROGEXT) 2> /dev/null))
+
+programs_test:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep ^test_)
+programs:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep -v ^test_)
+
 binaries:= $(programs:%$(PROGEXT)=%$(BINEXT))
 binaries.static:= $(programs:%$(PROGEXT)=%.static$(BINEXT))
+
+binaries_test:= $(programs_test:%$(PROGEXT)=%$(BINEXT))
+#programs:= $(notdir $(shell ls $(PROGDIR)/*$(PROGEXT)))
+#binaries:= $(programs:%$(PROGEXT)=%$(BINEXT))
+#binaries.static:= $(programs:%$(PROGEXT)=%.static$(BINEXT))
 
 .PHONY : all clean clean_special build_special libs lib_static lib_shared \
   bin bins bin_static bin_shared system test dist install uninstall 
 
+.PHONY : help
+help :
+	@echo "GNUmakefile usage "
+	@echo "----------------- "
+	@echo ""
+	@echo "make help      : print this help"
+	@echo ""
+	@echo "make           : default as 'make lib'"
+	@echo "make lib       : build the shared library"
+	@echo "make bin       : build the shared production executables"
+	@echo "make bin_test  : build the shared test executables (not mandatory)"
+	@echo "make install   : generates install stuff"
+	@echo "                 - setup ($(LIBNAME).sh/$(LIBNAME).csh)"
+	@echo "                 - $(LIBNAME)-config scripts"
+	@echo "make uninstall : clean install stuff"
+	@echo "make clean     : clean all object/binaries"
+	@echo ""
+	@echo "make system    : print system"
+	@echo "make test      : print some infos"
+	@echo ""
+	@echo "make dist      : make a source tarball ($(LIBNAME)-$(LIBVER).tar.gz)"
+	@echo "make bzdist    : make a source tarball ($(LIBNAME)-$(LIBVER).tar.bz2)"
+	@echo ""
+
+.PHONY : test
 test:
 	@echo "Default GSL version='$(gsl_version_def)'"
 	@echo "Default GSL prefix='$(gsl_prefix_def)'"
@@ -145,12 +181,20 @@ test:
 	@echo "headers = $(headers)"
 	@echo "sources = $(sources)"
 	@echo "objects = $(objects)"
+	@echo "programs = $(programs)"
+	@echo "binaries = $(binaries)"
+	@echo "programs_test = $(programs_test)"
+	@echo "binaries_test = $(binaries_test)"
 	@echo "arch dir = $(ARCHDIR)"
+	@echo "CPPFLAGS='$(CPPFLAGS)'"
+	@echo "LDFLAGS='$(LDFLAGS)'"
 
-#########################################################################"
+########################################################################
+.PHONY : build_special
 build_special :
 	@echo "build_special..."
 
+.PHONY : install
 install : 
 	@echo "installing..."
 	@cat $(BASEDIR)/pkgtools.d/package.csh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).csh
@@ -160,9 +204,11 @@ install :
 	@#echo "Please source the '$(PACKAGE_ROOT)/$(LIBNAME).sh' or '$(PACKAGE_ROOT)/$(LIBNAME).csh' from your startup scripts!"
 
 #########################################################################"
+.PHONY : clean_special
 clean_special :
 	@echo "clean_special..."
 
+.PHONY : uninstall
 uninstall : 
 	@echo "uninstalling..."
 	test -L $(BINDIR)/$(LIBNAME)-config && $(RM) $(BINDIR)/$(LIBNAME)-config || echo -n ""
@@ -174,35 +220,53 @@ uninstall :
 	@#echo "Please remove the sourcing of '$(LIBNAME).sh' or '$(LIBNAME).csh' from your startup scripts!"
 
 #########################################################################"
+.PHONY : system
 system :
 	@echo "$(SYSTEM)"
 
+.PHONY : setup
 setup :
 	@echo "export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(PACKAGE_DIR)/$(SYSTEM)/lib"
 
+.PHONY : lib
 lib : lib_shared
 
+.PHONY : libs
 libs : lib_static lib_shared
 
+.PHONY : lib_static
 lib_static : $(LIBFILE)
 
+.PHONY : lib_shared
 lib_shared : $(SHLIBFILE)
 
+.PHONY : clean
 clean : clean_special
 	@echo "Cleaning..."
 	find $(BASEDIR)/ -name "*~" -exec $(RM) \{\} \; 
 	test -d $(ARCHDIR)/ && $(RM) -r $(ARCHDIR) || echo -n ""
 
+.PHONY : distclean
 distclean : uninstall clean
 	@echo "Total cleaning..."
 
+.PHONY : bin
 bin : bin_shared
 
+.PHONY : bin
+bin_test : bin_test_shared
+
+.PHONY : bins
 bins : bin_shared bin_static 
 
+.PHONY : bin_static
 bin_static : $(binaries_static)
 
+.PHONY : bin_shared
 bin_shared : $(binaries)
+
+.PHONY : bin_test_shared
+bin_test_shared : $(binaries_test)
 
 $(LIBFILE) : $(objectsWithPath) 
 	@echo "Building static lib '$(@)'..."
@@ -231,9 +295,16 @@ $(OBJDIR)/%$(OBJEXT) : %$(SOURCEEXT) %$(HEADEREXT)
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $< $(SHFLAGS) -o $(BINDIR)/$(notdir $(@))
 
+.PHONY : dist
 dist : distclean
 	echo "Making the distribution tarball '$(LIBNAME)-$(shell cat ../VERSION |tr -d '\n').tar.gz'"
 	make clean
 	tar cvzf "../../$(LIBNAME)-$(shell cat ../VERSION |tr -d '\n').tar.gz" ../../$(PACKAGENAME)/
+
+.PHONY : bzdist
+bzdist : distclean
+	echo "Making the distribution tarball '$(LIBNAME)-$(LIBVER).tar.bz2'"
+	make clean
+	tar cvjf "../../$(LIBNAME)-$(LIBVER).tar.bz2" --exclude ".svn" ../../$(PACKAGENAME)/
 
 # end of GNUmakefile (language C++)
