@@ -293,13 +293,11 @@ int main (int argc_, char ** argv_)
     
       clog << "========================================" << endl;
 
-      string s3;
-
-      s3 = "azerty";
-
+      string s3 = "azerty";
+      clog << "s3='" << s3 << "'" << endl;
       if (du::properties::data::has_forbidden_char (s3)) 
 	{
-	  clog << "ok! there are forbidden chars found in 's3'!" 
+	  clog << "Oops! there are forbidden chars found in 's3'!" 
 	       << endl;
 	}
       else 
@@ -308,10 +306,10 @@ int main (int argc_, char ** argv_)
 	}
     
       string s4 = "aze\"rty";
-
+      clog << "s4='" << s4 << "'" << endl;
       if (du::properties::data::has_forbidden_char (s4))
 	{
-	  clog << "ok! there are forbidden chars found in 's4'!"
+	  clog << "Oops! there are forbidden chars found in 's4'!"
 	       << endl;
 	}
       else 

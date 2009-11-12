@@ -23,7 +23,8 @@ sh_ss=${pack_name_lower}.sh
 csh_ss=${pack_name_lower}.csh
 the_base_dir=.
 boost_version_check=1
-enforced_boost_version=1_38
+#enforced_boost_version=1_38
+enforced_boost_version=1_38_0
 
 export DATATOOLS_ROOT=${the_base_dir}
 
@@ -72,31 +73,38 @@ function print_usage ()
 
   Usage:
 
-    $APPNAME -h         : print this help then exit
+    $APPNAME -h | --help : print this help then exit
   
   Available modes are:
 
-    $APPNAME info       : print package info
+    $APPNAME info        : print package info
     $APPNAME configure  [OPTIONS]: configure package 
-                          OPTIONS:
-                          --with-eos-pba (default) :
-                            depends on Portable Binary Archive boost vault extension
-                          --without-eos-pba :
-                            do not use Portable Binary Archive boost vault extension
-                          --with-fpu (default) :
-                            depends on Floating Point Utilities boost vault extension
-                          --without-fpu :
-                            do not use Floating Point Utilities boost vault extension
-                          --with-python :
-                            with Python wrapper module (default)
-                          --with-python-version VERSION :
-                            with Python version VERSION (default: 2.5)
-                          --without-python :
-                            without Python wrapper module
-                          --boost-version 1_34_1 : force Boost version (default: 1_38_0)
-                          --no-boost-version-check : skip Boost version check
+            OPTIONS:
+            --with-eos-pba (default) :
+              depends on Portable Binary Archive boost vault extension
+            --without-eos-pba :
+              do not use Portable Binary Archive boost vault extension
+            --with-fpu (default) :
+              depends on Floating Point Utilities boost vault extension
+            --without-fpu :
+              do not use Floating Point Utilities boost vault extension
+            --with-python :
+              with Python wrapper module (default)
+            --with-python-version VERSION :
+              with Python version VERSION (default: 2.5)
+            --without-python :
+              without Python wrapper module
+            --boost-version 1_34_1 : force Boost version (default: 1_38_0)
+            --no-boost-version-check : skip Boost version check
 
-    $APPNAME build      : build package
+    $APPNAME build [TARGET] : build package
+            TARGET:
+                lib (default) : build the shared library
+                bin : build all executable programs (if any)
+                bin_test : build all executable test programs (if any)
+             or the name of a specific program, example:
+                test_event_id : build only the 'test_event_id'  program
+
     $APPNAME clean      : clean package
     $APPNAME install    : install package
     $APPNAME uninstall  : uninstall package
@@ -225,7 +233,7 @@ function do_clean_gmk ()
     return 0
 }
 
-function do_build_gmk()
+function do_build_gmk ()
 {
     info_msg "Build gmk..."
     if [ ! -d ${GMKDIR} ]; then 
@@ -308,7 +316,7 @@ function do_build_gmk()
 
 #######################################################
 
-function do_clean()
+function do_clean ()
 {
     info_msg "Clean package '${pack_name}'..."
     if [ -d ${GMKDIR} ]; then
@@ -383,10 +391,10 @@ function do_configure ()
 		err_msg "Boost has no version ${enforced_boost_version}!"
 		return 1
 	    else
-		notice_msg "The 'boost_help' package seems ok with Boost version '${boost_version}'"
-		boost_python_version="$(boost-config --python-version)"
+		notice_msg "The 'boost_help' package uses Boost version '${enforced_boost_version}'"
 	    fi
 	fi
+	boost_python_version="$(boost-config --python-version)"
     fi
     echo "Wait a while..." 1>&2
     sleep 1
@@ -475,7 +483,7 @@ function do_build ()
     return 1
 }
 
-function do_startup()
+function do_startup ()
 {
 cat<<EOF
 
@@ -495,7 +503,7 @@ You may source these scripts at startup time
 EOF
 }
 
-function kill_startup()
+function kill_startup ()
 {
     cat<<EOF
 Don't forget to remove environment variables in your startup scripts.

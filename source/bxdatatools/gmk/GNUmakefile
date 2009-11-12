@@ -348,10 +348,11 @@ $(OBJDIR)/%$(OBJEXT) : %$(SOURCEEXT)
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
 	$(CXX) -I. -I$(PROGDIR) $(CPPFLAGS) $(CXXFLAGS) $< $(STATICFLAGS) $(LDFLAGS) -o $(BINDIR)/$(notdir $(@))
 
+### 2009-11-12 FM: remove --shared flags (produce segmentation fault)
 %$(BINEXT) : %$(PROGEXT) | lib_shared 
 	@echo "Compiling program '$(@)' with shared library..."
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
-	$(CXX) -I. -I$(PROGDIR) $(CPPFLAGS) $(CXXFLAGS) $(SOFLAGS) $< $(SHFLAGS) -o $(BINDIR)/$(notdir $(@))
+	$(CXX) -I. -I$(PROGDIR) $(CPPFLAGS) $(CXXFLAGS) $< $(SHFLAGS) -o $(BINDIR)/$(notdir $(@))
 
 .PHONY : dist
 dist : distclean
