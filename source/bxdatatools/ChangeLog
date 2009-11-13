@@ -16,5 +16,10 @@ This is the datatools package ChangeLog
 	./pkgtools.d/pkgtool build bin
 	./pkgtools.d/pkgtool install
 	
+2009-11-13 : 
+	- support for Boost 1.40.0
+	- support for new serialization stuff: 
+	http://www.boost.org/doc/libs/1_40_0/libs/serialization/doc/release.html#requirements
 
+	
 	

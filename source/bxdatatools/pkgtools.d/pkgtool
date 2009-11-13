@@ -38,17 +38,17 @@ python_version=${default_python_version}
 with_python=1
 ###setup_dir=${HOME}
 
-function err_msg()
+function err_msg ()
 {
     echo "${APPNAME} (${pack_name}): ERROR: $@" 1>&2
 }
 
-function warning_msg()
+function warning_msg ()
 {
     echo "${APPNAME} (${pack_name}): WARNING: $@" 1>&2
 }
 
-function info_msg()
+function info_msg ()
 {
     test ${verbose} = 0 && return
     echo "${APPNAME} (${pack_name}): INFO: $@" 1>&2
@@ -340,9 +340,77 @@ function do_clean ()
     return 0
 }
 
+function boost_eos_archive_trick ()
+{
+    notice_msg "boost_eos_archive_trick: Entering..."
+    notice_msg "boost_eos_archive_trick: From 'http://www.boost.org/doc/libs/1_40_0/libs/serialization/doc/release.html#requirements'"
+
+    opwd=$(pwd) 
+    cd ${the_base_dir}/boost/vault/eos
+
+    ### input archive:
+    pia_src=portable_iarchive.hpp
+    if [ ! -f ${pia_src}.orig ]; then
+	cp -f ${pia_src} ${pia_src}.orig 
+    fi
+
+    cat >>portable_iarchive__trick_1.hpp<<EOF
+#if BOOST_VERSION < 104000
+#include <boost/archive/impl/archive_pointer_iserializer.ipp>
+#else 
+#ifndef __eos_archive_serializer_map
+#define __eos_archive_serializer_map
+#include <boost/archive/impl/archive_serializer_map.ipp>
+#endif
+#endif 
+EOF
+
+    cat >>portable_iarchive__trick_2.hpp<<EOF
+#if BOOST_VERSION < 104000
+	template class detail::archive_pointer_iserializer<eos::portable_iarchive>;
+#else 
+	template class detail::archive_serializer_map<eos::portable_iarchive>;
+#endif 
+EOF
+    cat ${pia_src}.orig | sed 's@#include <boost/archive/impl/archive_pointer_iserializer.ipp>@#include "portable_iarchive__trick_1.hpp"@g' > ${pia_src}.tmp1
+    cat ${pia_src}.tmp1 | sed 's@^[[:space:]*]template class detail::archive_pointer_iserializer<eos::portable_iarchive>;@#include "portable_iarchive__trick_2.hpp"@g' > ${pia_src}
+    rm -f ${pia_src}.tmp1
+
+    ### output archive:
+    poa_src=portable_oarchive.hpp
+    if [ ! -f ${poa_src}.orig ]; then
+	cp -f ${poa_src} ${poa_src}.orig 
+    fi
+
+    cat >>portable_oarchive__trick_1.hpp<<EOF
+#if BOOST_VERSION < 104000
+#include <boost/archive/impl/archive_pointer_iserializer.ipp>
+#else 
+#ifndef __eos_archive_serializer_map
+#define __eos_archive_serializer_map
+#include <boost/archive/impl/archive_serializer_map.ipp>
+#endif 
+#endif 
+EOF
+
+    cat >>portable_oarchive__trick_2.hpp<<EOF
+#if BOOST_VERSION < 104000
+	template class detail::archive_pointer_iserializer<eos::portable_oarchive>;
+#else 
+	template class detail::archive_serializer_map<eos::portable_oarchive>;
+#endif 
+EOF
+
+    cat ${poa_src}.orig | sed 's@#include <boost/archive/impl/archive_pointer_oserializer.ipp>@#include "portable_oarchive__trick_1.hpp"@g' > ${poa_src}.tmp1
+    cat ${poa_src}.tmp1 | sed 's@^[[:space:]*]template class detail::archive_pointer_oserializer<eos::portable_oarchive>;@#include "portable_oarchive__trick_2.hpp"@g' > ${poa_src}
+    rm -f ${poa_src}.tmp1
+    cd ${opwd}
+
+    notice_msg "boost_eos_archive_trick: Exiting."
+}
+
 function do_configure ()
 {
-
     info_msg "Configure package '${pack_name}'..."
     with_eos_pba=1
     with_fpu=1
@@ -458,6 +526,18 @@ EOF
 	make clean 2>&1 > /dev/null
 	make 2>&1 > /dev/null 
 	cd ${opwd}
+    fi
+
+    if [ ${with_eos_pba} -eq 1 ]; then
+	local boost_version_rank=$(echo ${boost_version} | tr '_' '0')
+	notice_msg "boost_version_rank=${boost_version_rank}"
+	# 2009-11-12 FM: force 1.40.0 for tests 
+	###boost_version_rank=104000
+	if [ ${boost_version_rank} -ge 104000 ]; then
+	    warning_msg "Special trick for EOS portable archives!"
+	    boost_eos_archive_trick
+	fi
+
     fi
 
     notice_msg "Configure package '${pack_name}': done."
