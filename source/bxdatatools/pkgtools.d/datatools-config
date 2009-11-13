@@ -118,7 +118,7 @@ if [ "x$opt" = "x--include" ]; then
 fi
 
 if [ "x$opt" = "x--cflags" ]; then
-    echo -n "-I${THEPACK_INCLUDEDIR} -DDATATOOLS_USE_TREE_DUMP=1 "  \
+    (echo -n "-I${THEPACK_INCLUDEDIR} -DDATATOOLS_USE_TREE_DUMP=1 "  \
 	"`boost-config --cflags` "
     if [ ${with_boost_eos_pba} -eq 1 ]; then
         echo -n "-DIOFACTORY_USE_EOS_PBA=1 "
@@ -128,12 +128,9 @@ if [ "x$opt" = "x--cflags" ]; then
         echo -n "-DIOFACTORY_USE_FPU=1 "
         echo -n "-I${THEPACK_ROOT}/boost/vault/fpu "
 	echo -n "-I${THEPACK_ROOT}/boost/vault/endian "
-    fi
+    fi) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py 
     echo
 
-#    echo -n "-I${THEPACK_INCLUDEDIR} "  \
-#         "`boost-config --cflags` " \
-#        "`liblockfile-config --cflags` "  
     exit 0
 fi
 
@@ -154,7 +151,7 @@ fi
 
 if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
     echo -n "-L${THEPACK_LIBDIR} -ldatatools "  \
-	"`boost-config --ldflags serialization iostreams filesystem system` " 
+	"`boost-config --ldflags serialization iostreams filesystem system` "  | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
     echo
 #      "`liblockfile-config --ldflags` "  
     exit 0

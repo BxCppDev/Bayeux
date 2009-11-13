@@ -26,7 +26,7 @@ boost_version_check=1
 #enforced_boost_version=1_38
 enforced_boost_version=1_38_0
 
-export DATATOOLS_ROOT=${the_base_dir}
+export DATATOOLS_ROOT=$(pwd)
 
 tool_mode=""
 do_usage=0
@@ -322,7 +322,7 @@ function do_clean ()
     if [ -d ${GMKDIR} ]; then
 	do_clean_gmk $@
 	if [ $? -ne 0 ]; then
-	    error_msg "Clean package '${pack_name}' failed!"
+	    err_msg "Clean package '${pack_name}' failed!"
 	    return $?
 	fi
     fi 
@@ -332,7 +332,7 @@ function do_clean ()
     info_msg "Clean Boost vault contribution ($pwd)..."
     make clean
     if [ $? -ne 0 ]; then
-	error_msg "Clean Boost vault contribution from '${pack_name}' failed!"
+	err_msg "Clean Boost vault contribution from '${pack_name}' failed!"
 	return $?
     fi
     #read TEST
@@ -353,8 +353,25 @@ function boost_eos_archive_trick ()
     if [ ! -f ${pia_src}.orig ]; then
 	cp -f ${pia_src} ${pia_src}.orig 
     fi
+    ### output archive:	
+    poa_src=portable_oarchive.hpp
+    if [ ! -f ${poa_src}.orig ]; then
+	cp -f ${poa_src} ${poa_src}.orig 
+    fi
 
-    cat >>portable_iarchive__trick_1.hpp<<EOF
+    version=2
+
+    if [ ${version} -eq 2 ]; then
+        ### input archive:
+	cp -f ../eos_trick/portable_iarchive.trick.hpp ${pia_src}
+        ### output archive:
+	cp -f ../eos_trick/portable_oarchive.trick.hpp ${poa_src}
+    fi
+
+    if [ ${version} -eq 1 ]; then
+        ### input archive:
+
+	cat >>portable_iarchive__trick_1.hpp<<EOF
 #if BOOST_VERSION < 104000
 #include <boost/archive/impl/archive_pointer_iserializer.ipp>
 #else 
@@ -364,25 +381,20 @@ function boost_eos_archive_trick ()
 #endif
 #endif 
 EOF
-
-    cat >>portable_iarchive__trick_2.hpp<<EOF
+	
+	cat >>portable_iarchive__trick_2.hpp<<EOF
 #if BOOST_VERSION < 104000
 	template class detail::archive_pointer_iserializer<eos::portable_iarchive>;
 #else 
 	template class detail::archive_serializer_map<eos::portable_iarchive>;
 #endif 
 EOF
-    cat ${pia_src}.orig | sed 's@#include <boost/archive/impl/archive_pointer_iserializer.ipp>@#include "portable_iarchive__trick_1.hpp"@g' > ${pia_src}.tmp1
-    cat ${pia_src}.tmp1 | sed 's@^[[:space:]*]template class detail::archive_pointer_iserializer<eos::portable_iarchive>;@#include "portable_iarchive__trick_2.hpp"@g' > ${pia_src}
-    rm -f ${pia_src}.tmp1
-
-    ### output archive:
-    poa_src=portable_oarchive.hpp
-    if [ ! -f ${poa_src}.orig ]; then
-	cp -f ${poa_src} ${poa_src}.orig 
-    fi
-
-    cat >>portable_oarchive__trick_1.hpp<<EOF
+	cat ${pia_src}.orig | sed 's@#include <boost/archive/impl/archive_pointer_iserializer.ipp>@#include "portable_iarchive__trick_1.hpp"@g' > ${pia_src}.tmp1
+	cat ${pia_src}.tmp1 | sed 's@^[[:space:]*]template class detail::archive_pointer_iserializer<eos::portable_iarchive>;@#include "portable_iarchive__trick_2.hpp"@g' > ${pia_src}
+	rm -f ${pia_src}.tmp1
+	
+        ### output archive:	
+	cat >>portable_oarchive__trick_1.hpp<<EOF
 #if BOOST_VERSION < 104000
 #include <boost/archive/impl/archive_pointer_iserializer.ipp>
 #else 
@@ -392,18 +404,20 @@ EOF
 #endif 
 #endif 
 EOF
-
-    cat >>portable_oarchive__trick_2.hpp<<EOF
+	
+	cat >>portable_oarchive__trick_2.hpp<<EOF
 #if BOOST_VERSION < 104000
 	template class detail::archive_pointer_iserializer<eos::portable_oarchive>;
 #else 
 	template class detail::archive_serializer_map<eos::portable_oarchive>;
 #endif 
 EOF
+	
+	cat ${poa_src}.orig | sed 's@#include <boost/archive/impl/archive_pointer_oserializer.ipp>@#include "portable_oarchive__trick_1.hpp"@g' > ${poa_src}.tmp1
+	cat ${poa_src}.tmp1 | sed 's@^[[:space:]*]template class detail::archive_pointer_oserializer<eos::portable_oarchive>;@#include "portable_oarchive__trick_2.hpp"@g' > ${poa_src}
+	rm -f ${poa_src}.tmp1
+    fi
 
-    cat ${poa_src}.orig | sed 's@#include <boost/archive/impl/archive_pointer_oserializer.ipp>@#include "portable_oarchive__trick_1.hpp"@g' > ${poa_src}.tmp1
-    cat ${poa_src}.tmp1 | sed 's@^[[:space:]*]template class detail::archive_pointer_oserializer<eos::portable_oarchive>;@#include "portable_oarchive__trick_2.hpp"@g' > ${poa_src}
-    rm -f ${poa_src}.tmp1
     cd ${opwd}
 
     notice_msg "boost_eos_archive_trick: Exiting."
@@ -531,13 +545,16 @@ EOF
     if [ ${with_eos_pba} -eq 1 ]; then
 	local boost_version_rank=$(echo ${boost_version} | tr '_' '0')
 	notice_msg "boost_version_rank=${boost_version_rank}"
-	# 2009-11-12 FM: force 1.40.0 for tests 
-	###boost_version_rank=104000
+	run_eos_archive_trick=0
 	if [ ${boost_version_rank} -ge 104000 ]; then
+	    run_eos_archive_trick=1
+	fi
+	# 2009-11-12 FM: force the trick: 
+	#run_eos_archive_trick=1
+	if [ ${run_eos_archive_trick} -eq 1 ]; then
 	    warning_msg "Special trick for EOS portable archives!"
 	    boost_eos_archive_trick
 	fi
-
     fi
 
     notice_msg "Configure package '${pack_name}': done."

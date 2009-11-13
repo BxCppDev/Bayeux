@@ -36,6 +36,15 @@ PYMODULENAME=datatools
 PYSHLIBFILE=$(PYMODULENAME)${PYMODEXT}
 PYMODSRCFILE=$(PYMODULENAME)${SOURCEEXT}
 
+BASEDIR=..
+PACKAGE_ROOT=$(shell cd .. ; pwd)
+PACKAGE_DIR=$(shell cd ${BASEDIR} ; pwd)
+
+# boost
+ifeq ($(shell which boost-config),)
+$(error Sorry boost-config not found!)
+endif
+
 PYVERSION=$(shell boost-config --python-version)
 
 # python
@@ -48,10 +57,6 @@ python_config=python$(python_version)-config
 python_cflags=$(shell $(python_config) --cflags)
 python_ldflags=$(shell $(python_config) --ldflags)
 
-# boost
-ifeq ($(shell which boost-config),)
-$(error Sorry boost-config not found!)
-endif
 boost_cflags=$(shell boost-config --cflags)
 boost_ldflags=$(shell boost-config --ldflags python serialization)
 
@@ -64,11 +69,6 @@ boost_ldflags=$(shell boost-config --ldflags python serialization)
 datatools_cflags=$(shell $(PACKAGE_DIR)/pkgtools.d/datatools-config --cflags)
 datatools_ldflags=$(shell $(PACKAGE_DIR)/pkgtools.d/datatools-config --ldflags)
 #endif
-
-
-BASEDIR=..
-PACKAGE_ROOT=$(shell cd .. ; pwd)
-PACKAGE_DIR=$(shell cd ${BASEDIR} ; pwd)
 
 DEPCPPFLAGS=
 DEPLDFLAGS=
