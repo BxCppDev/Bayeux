@@ -36,20 +36,27 @@ PYMODULENAME=geomtools
 PYSHLIBFILE=$(PYMODULENAME)${PYMODEXT}
 PYMODSRCFILE=$(PYMODULENAME)${SOURCEEXT}
 
-# python
-ifeq ($(shell which python2.5),)
-$(error Sorry Python 2.5 not found!)
-endif
-python_bin=python2.5
-python_version=$(shell $(python_bin) -V 2>&1 | tr -s ' ' | cut -d' ' -f2 | cut -d'.' -f1,2)
-python_config=python$(python_version)-config
-python_cflags=$(shell $(python_config) --cflags)
-python_ldflags=$(shell $(python_config) --ldflags)
+BASEDIR=..
+PACKAGE_ROOT=$(shell cd .. ; pwd)
+PACKAGE_DIR=$(shell cd ${BASEDIR} ; pwd)
 
 # boost
 ifeq ($(shell which boost-config),)
 $(error Sorry boost-config not found!)
 endif
+
+PYVERSION=$(shell boost-config --python-version)
+
+# python
+ifeq ($(shell which python${PYVERSION}),)
+$(error Sorry Python ${PYVERSION} not found!)
+endif
+python_bin=python${PYVERSION}
+python_version=$(shell $(python_bin) -V 2>&1 | tr -s ' ' | cut -d' ' -f2 | cut -d'.' -f1,2)
+python_config=python$(python_version)-config
+python_cflags=$(shell $(python_config) --cflags)
+python_ldflags=$(shell $(python_config) --ldflags)
+
 boost_cflags=$(shell boost-config --cflags)
 boost_ldflags=$(shell boost-config --ldflags python serialization)
 
@@ -63,10 +70,6 @@ datatools_ldflags=$(shell datatools-config --ldflags)
 # geomtools
 geomtools_cflags=$(shell $(PACKAGE_DIR)/pkgtools.d/geomtools-config --cflags)
 geomtools_ldflags=$(shell $(PACKAGE_DIR)/pkgtools.d/geomtools-config --ldflags)
-
-BASEDIR=..
-PACKAGE_ROOT=$(shell cd .. ; pwd)
-PACKAGE_DIR=$(shell cd ${BASEDIR} ; pwd)
 
 DEPCPPFLAGS=
 DEPLDFLAGS=

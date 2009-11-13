@@ -22,6 +22,7 @@ pack_name_lower=$(echo ${pack_name} | tr "A-Z" "a-z")
 sh_ss=${pack_name_lower}.sh
 csh_ss=${pack_name_lower}.csh
 the_base_dir=.
+export GEOMTOOLS_ROOT=$(pwd)
 
 tool_mode=""
 do_usage=0
@@ -29,7 +30,7 @@ debug=0
 verbose=0
 ###setup_dir=${HOME}
 default_python_version=2.5
-python_version=${default_python_version}
+#python_version=${default_python_version}
 with_python=1
 
 function err_msg ()
@@ -72,7 +73,8 @@ function print_usage ()
   Available modes are:
 
     $APPNAME info       : print package info
-    $APPNAME configure  : configure package (not implemented)
+    $APPNAME configure [OPTIONS] : configure package 
+            OPTIONS:
                           --with-python :
                             with Python wrapper module (default)
                           --with-python-version VERSION :
@@ -101,8 +103,9 @@ while [ -n "$1" ]; do
     
     if [ "${arg:0:1}" = "-" ]; then
 	if [ ${parse_switch} = 0 ]; then
-	    err_msg "Options (-X) must be placed before arguments!"
-	    exit 1
+	    break
+	    #warning_msg "Options (-X) must be placed before arguments!"
+	    #exit 1
 	fi
 	if [ "${arg}" = "-h" -o "${arg}" = "--help" ]; then
 	    do_usage=1 
@@ -308,7 +311,7 @@ function do_clean()
 function do_configure ()
 {
     info_msg "Configure package '${pack_name}'..."
-
+    python_version=
     for arg in $@ ; do
 
 	if [ "x${arg}" = "x--with-python" ]; then
@@ -331,7 +334,7 @@ function do_configure ()
 
     which clhep-config 2>&1 > /dev/null
     if [ $? -ne 0 ]; then
-	error_msg "CLHEP seems not to be setup!"
+	err_msg "CLHEP seems not to be setup!"
 	return 1
     else
 	clhep_version=$(clhep-config --version | cut -d' ' -f2)
@@ -340,7 +343,7 @@ function do_configure ()
 
     which gsl-config 2>&1 > /dev/null
     if [ $? -ne 0 ]; then
-	error_msg "GSL seems not to be setup!"
+	err_msg "GSL seems not to be setup!"
 	return 1
     else
 	gsl_version=$(gsl-config --version)
@@ -349,14 +352,29 @@ function do_configure ()
 
     which datatools-config 2>&1 > /dev/null
     if [ $? -ne 0 ]; then
-	error_msg "datatools seems not to be setup!"
+	err_msg "datatools seems not to be setup!"
 	return 1
     else
 	notice_msg "datatools ($(datatools-config --version)) seems to be properly setup!"
     fi
 
     notice_msg "Configure package '${pack_name}': Python setup..."
+    check_boost_python=$(boost-config --with-python)
+    if  [ ${check_boost_python} -eq 0 ]; then
+	err_msg "Boost has no Python library!"
+	return 1
+    fi
     boost_python_version="$(boost-config --python-version)"
+    if [ "x${boost_python_version}" = "x" ]; then
+	err_msg "Boost has no known Python version!"
+	return 1
+    else
+	notice_msg "Boost has Python version '${boost_python_version}'"
+    fi
+    if [ "x${python_version}" = "x" ]; then
+	warning_msg "Force Boost Python version!"
+	python_version=${boost_python_version}
+    fi
     if [ ${with_python} -eq 0 ]; then
 	warning_msg "Do not use Python wrapper module from Boost.Python!"
 
