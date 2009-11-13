@@ -1145,6 +1145,18 @@ namespace datatools {
     }
 
     bool
+    data_reader::is_portable_binary () const
+    {
+      if (! is_initialized ())
+	{
+	  std::ostringstream message;
+	  message << "data_reader::is_portable_binary: reader is not initialized!"; 
+	  throw std::runtime_error (message.str ());
+	}
+      return __reader->is_portable_binary ();
+    }
+
+    bool
     data_reader::is_xml () const
     {
       if (! is_initialized ())
@@ -1322,6 +1334,18 @@ namespace datatools {
 	  throw std::runtime_error (message.str ());
 	}
       return __writer->is_binary ();
+    }
+
+    bool
+    data_writer::is_portable_binary () const
+    {
+      if (! is_initialized ())
+	{
+	  std::ostringstream message;
+	  message << "data_writer::is_portable_binary: writer is not initialized!"; 
+	  throw std::runtime_error (message.str ());
+	}
+      return __writer->is_portable_binary ();
     }
 
     bool

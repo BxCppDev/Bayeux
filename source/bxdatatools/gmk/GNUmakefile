@@ -100,6 +100,8 @@ DATATOOLS_NO_FPU=1
 $(warning WARNING: datatools does not use FPU!)
 endif
 
+### support for std::bitset serialization:
+DEPCPPFLAGS+=-I$(PACKAGE_DIR)/boost/vault/local
 
 DATATOOLS_NO_EOS_PBA=$(shell ls -1 $(PACKAGE_DIR)/gmk/datatools_without_eos_pba.config 2> /dev/null)
 EOS_PBA_FLAGS=

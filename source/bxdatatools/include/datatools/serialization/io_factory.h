@@ -93,8 +93,8 @@ namespace datatools {
       eos::portable_iarchive            * __ibar_ptr;
       eos::portable_oarchive            * __obar_ptr;
 #else
-      boost::archive::binary_iarchive * __ibar_ptr;
-      boost::archive::binary_oarchive * __obar_ptr;
+      boost::archive::binary_iarchive   * __ibar_ptr;
+      boost::archive::binary_oarchive   * __obar_ptr;
 #endif // IOFACTORY_USE_EOS_PBA
 
     public:
@@ -174,7 +174,19 @@ namespace datatools {
       bool is_text () const;
 	
       bool is_binary () const;
-	
+
+#ifdef IOFACTORY_USE_EOS_PBA
+      bool is_portable_binary () const
+      {
+	return is_binary () && true;
+      }
+#else
+      bool is_portable_binary () const
+      {
+	return is_binary () && false;
+      }
+#endif // IOFACTORY_USE_EOS_PBA	
+
       bool is_xml () const;
 
       bool is_append () const;
@@ -558,6 +570,8 @@ namespace datatools {
       bool is_text () const;
 	
       bool is_binary () const;
+
+      bool is_portable_binary () const;
 	
       bool is_xml () const;
 
@@ -707,6 +721,8 @@ namespace datatools {
       bool is_text () const;
 	
       bool is_binary () const;
+
+      bool is_portable_binary () const;
 	
       bool is_xml () const;
 

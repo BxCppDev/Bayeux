@@ -43,6 +43,13 @@ elif [ -f "$THEPACK_ROOT/pkgtools.d/package.info"  ]; then
     THEPACK_VERSION=$version
 fi
 
+# 2009-11-13 FM: add support for ser_bitset (vault)
+with_boost_bitset=1
+###if [ ! -L ${THEPACK_ROOT}/boost/vault/ser_bitset ]; then
+if [ ! -d ${THEPACK_ROOT}/boost/vault/local ]; then
+    with_boost_bitset=0
+    export DATATOOLS_NO_BITSET=1
+fi
 with_boost_eos_pba=1
 with_boost_fpu=1
 if [ "x${DATATOOLS_NO_EOS_PBA}" == "x1" ]; then
@@ -120,6 +127,9 @@ fi
 if [ "x$opt" = "x--cflags" ]; then
     (echo -n "-I${THEPACK_INCLUDEDIR} -DDATATOOLS_USE_TREE_DUMP=1 "  \
 	"`boost-config --cflags` "
+    if [ ${with_boost_bitset} -eq 1 ]; then
+        echo -n "-I${THEPACK_ROOT}/boost/vault/local "
+    fi
     if [ ${with_boost_eos_pba} -eq 1 ]; then
         echo -n "-DIOFACTORY_USE_EOS_PBA=1 "
         echo -n "-I${THEPACK_ROOT}/boost/vault/eos_pba "
