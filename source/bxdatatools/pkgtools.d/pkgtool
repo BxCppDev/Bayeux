@@ -428,6 +428,7 @@ function do_configure ()
     info_msg "Configure package '${pack_name}'..."
     with_eos_pba=1
     with_fpu=1
+    enforced_boost_version=
     while [ -n "${1}" ]; do
 	arg="${1}"
 	##echo "DEVEL: Configure with argument '${arg}'..." 1>&2
@@ -466,24 +467,30 @@ function do_configure ()
     if [ $? -ne 0 ]; then
 	err_msg "The 'boost_help' package is not setup!"
 	return 1
-    else
-	if [ ${boost_version_check} -eq 1 ]; then
-	    boost_version=$(boost-config --version)
-	    if [ "x${boost_version}" != "x${enforced_boost_version}" ]; then
-		err_msg "Boost has no version ${enforced_boost_version}!"
-		return 1
-	    else
-		notice_msg "The 'boost_help' package uses Boost version '${enforced_boost_version}'"
-	    fi
-	fi
-	boost_python_version="$(boost-config --python-version)"
     fi
-    echo "Wait a while..." 1>&2
-    sleep 1
-    notice_msg "Configure package '${pack_name}': Special setup..."
+    if [ ${boost_version_check} -eq 1 ]; then
+	boost_version=$(boost-config --version)
+    fi
 
-    notice_msg "Configure package '${pack_name}': Python setup..."
-    notice_msg "Configure package '${pack_name}': Python version is ${python_version}..."
+    if [ "x${enforced_boost_version}" = "x" ]; then
+	enforced_boost_version=${boost_version}
+    fi
+    
+    if [ "x${boost_version}" != "x${enforced_boost_version}" ]; then
+	err_msg "Boost has no version ${enforced_boost_version}!"
+	return 1
+    else
+	notice_msg "The 'boost_help' package uses Boost version '${enforced_boost_version}'"
+    fi
+    check_boost_python=$(boost-config --with-python)
+    if  [ ${check_boost_python} -eq 0 ]; then
+	warning_msg "Boost has no Python library!"
+    fi
+
+    #echo "Wait a while..." 1>&2
+    #sleep 1
+
+    notice_msg "Python setup..."
     if [ ${with_python} -eq 0 ]; then
 	warning_msg "Do not use Python wrapper module from Boost.Python!"
 
@@ -492,6 +499,13 @@ function do_configure ()
 export DATATOOLS_NO_PYTHON=1
 EOF
     else
+	notice_msg "Requested Python version is ${python_version}..."
+	if  [ ${check_boost_python} -eq 0 ]; then
+	    err_msg "Boost has no Python library}!"
+	    return 1
+	    
+	fi
+	boost_python_version="$(boost-config --python-version)"
 	if [ "x${python_version}" != "x${boost_python_version}" ]; then
 	    err_msg "Unmatching Python version with Boost! Boost uses Python ${boost_python_version}!"
 	    return 1
