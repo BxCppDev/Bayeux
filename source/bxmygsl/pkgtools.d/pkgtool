@@ -22,6 +22,7 @@ pack_name_lower=$(echo ${pack_name} | tr "A-Z" "a-z")
 sh_ss=${pack_name_lower}.sh
 csh_ss=${pack_name_lower}.csh
 the_base_dir=.
+export MYGSL_ROOT=$(pwd)
 
 tool_mode=""
 do_usage=0
@@ -29,29 +30,29 @@ debug=0
 verbose=1
 ###setup_dir=${HOME}
 
-function err_msg()
+function err_msg ()
 {
     echo "${APPNAME} (${pack_name}): ERROR: $@" 1>&2
 }
 
-function warning_msg()
+function warning_msg ()
 {
     echo "${APPNAME} (${pack_name}): WARNING: $@" 1>&2
 }
 
-function info_msg()
+function info_msg ()
 {
     test ${verbose} = 0 && return
     echo "${APPNAME} (${pack_name}): INFO: $@" 1>&2
 }
 
-function debug_msg()
+function debug_msg ()
 {
     test ${debug} = 0 && return
     echo "${APPNAME} (${pack_name}): DEBUG: $@"
 }
 
-function print_usage()
+function print_usage ()
 {
     cat <<EOF
 
@@ -158,7 +159,7 @@ fi
 
 #######################################################
 
-function do_clean_gmk()
+function do_clean_gmk ()
 {
     info_msg "Clean gmk..."
     if [ ! -d ${GMKDIR} ]; then 
@@ -176,7 +177,7 @@ function do_clean_gmk()
     return 0
 }
 
-function do_build_gmk()
+function do_build_gmk ()
 {
     info_msg "Build gmk..."
     if [ ! -d ${GMKDIR} ]; then 
@@ -245,7 +246,7 @@ function do_build_gmk()
 
 #######################################################
 
-function do_clean()
+function do_clean ()
 {
     info_msg "Clean package '${pack_name}'..."
     if [ -d ${GMKDIR} ]; then
@@ -255,7 +256,7 @@ function do_clean()
     return 1
 }
 
-function do_configure()
+function do_configure ()
 {
     info_msg "Configure package '${pack_name}'..."
 
@@ -291,7 +292,7 @@ function do_configure()
     info_msg "Configure package '${pack_name}' done."
 }
 
-function do_build()
+function do_build ()
 {
     info_msg "Build package '${pack_name}'..."
     if [ -d ${GMKDIR} ]; then
@@ -301,7 +302,7 @@ function do_build()
     return 1
 }
 
-function do_startup()
+function do_startup ()
 {
 cat<<EOF
 
@@ -321,72 +322,7 @@ You may source these scripts at startup time
 EOF
 }
 
-# function do_startup()
-# {
-#     rm -f ${the_base_dir}/${sh_ss}
-#     cat > ${the_base_dir}/${sh_ss} <<EOF
-# # Startup script for package ${pack_name}:
-
-# export ${pack_name_upper}_ROOT="$(pwd)"
-# export PATH=\${PATH}:"\${${pack_name_upper}_ROOT}/bin"
-# uname_s=\$(uname -s)
-# uname_m=\$(uname -m | sed -e 's/ //g')
-# libs="\${${pack_name_upper}_ROOT}/\${uname_s}-\${uname_m}/lib"
-
-# sysarch=\$(uname)
-# if [ "\${sysarch}" = "Linux" ]; then 
-#   if [ -n "\${LD_LIBRARY_PATH}" ]; then
-#     export LD_LIBRARY_PATH="\${LD_LIBRARY_PATH}:\${libs}"
-#   else
-#     export LD_LIBRARY_PATH="\${libs}"
-#   fi 
-# fi
-
-# if [ "\${sysarch}" = "Darwin" ]; then 
-#   if [ -n "\${DYLD_LIBRARY_PATH}" ]; then
-#     export DYLD_LIBRARY_PATH="\${DYLD_LIBRARY_PATH}:\${libs}"
-#   else
-#     export DYLD_LIBRARY_PATH="\${libs}"
-#   fi 
-# fi
-
-# # end
-# EOF
-#     rm -f ${the_base_dir}/${csh_ss}
-#     cat > ${the_base_dir}/${csh_ss} <<EOF
-# # Startup script for package ${pack_name}:
-
-# setenv ${pack_name_upper}_ROOT "$(pwd)"
-
-# setenv PATH "\${PATH}:\${${pack_name_upper}_ROOT}/bin"
-
-# set uname_s=$(echo '`')uname -s$(echo '`')
-# set uname_m=$(echo '`')uname -m | sed -e 's/ //g'$(echo '`')
-# set libs="\${${pack_name_upper}_ROOT}/\${uname_s}-\${uname_m}/lib"
-
-# set sysarch=$(echo '`')uname$(echo '`')
-# if ( \${sysarch} == Linux ) then 
-#   if (  \$?LD_LIBRARY_PATH ) then
-#     setenv LD_LIBRARY_PATH "\${LD_LIBRARY_PATH}:\${libs}"
-#   else
-#     setenv LD_LIBRARY_PATH "\${libs}"
-#   endif 
-# endif
-
-# if ( \${sysarch} == Darwin ) then 
-#   if (  \$?DYLD_LIBRARY_PATH ) then
-#     setenv DYLD_LIBRARY_PATH "\${DYLD_LIBRARY_PATH}:\${libs}"
-#   else
-#     setenv DYLD_LIBRARY_PATH "\${libs}"
-#   endif 
-# endif
-
-# # end
-# EOF
-#     return 0
-# }
-
-function kill_startup()
+function kill_startup ()
 {
     cat<<EOF
 Don't forget to remove environment variables in your startup scripts.
@@ -402,13 +338,7 @@ and
 EOF
 }
 
-# function kill_startup()
-# {
-#     rm -f ${the_base_dir}/${sh_ss}
-#     rm -f ${the_base_dir}/${csh_ss}
-# }
-
-function do_install()
+function do_install ()
 {
     debug_msg "do_install: Entering..."
     info_msg "Install package '${pack_name}'..."
@@ -426,7 +356,7 @@ function do_install()
     return 0
 }
 
-function do_uninstall()
+function do_uninstall ()
 {
     info_msg "Uninstall package '${pack_name}'... The"
     opwd=$(pwd)
@@ -441,7 +371,7 @@ function do_uninstall()
     return 0
 }
 
-function do_info()
+function do_info ()
 {
     pkg_version="undefined"
     pkg_lang="undefined"
