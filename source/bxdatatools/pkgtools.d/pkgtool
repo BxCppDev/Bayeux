@@ -429,6 +429,7 @@ function do_configure ()
     with_eos_pba=1
     with_fpu=1
     enforced_boost_version=
+    python_version=
     while [ -n "${1}" ]; do
 	arg="${1}"
 	##echo "DEVEL: Configure with argument '${arg}'..." 1>&2
@@ -484,11 +485,10 @@ function do_configure ()
     fi
     check_boost_python=$(boost-config --with-python)
     if  [ ${check_boost_python} -eq 0 ]; then
-	warning_msg "Boost has no Python library!"
+	warning_msg "Boost.Python library is not available!"
+    else
+	notice_msg "Boost.Python library is available!"
     fi
-
-    #echo "Wait a while..." 1>&2
-    #sleep 1
 
     notice_msg "Python setup..."
     if [ ${with_python} -eq 0 ]; then
@@ -501,17 +501,21 @@ EOF
     else
 	notice_msg "Requested Python version is ${python_version}..."
 	if  [ ${check_boost_python} -eq 0 ]; then
-	    err_msg "Boost has no Python library}!"
+	    err_msg "Boost.Python library is not available!"
 	    return 1
 	    
 	fi
 	boost_python_version="$(boost-config --python-version)"
+	if [ "x${python_version}" = "x" ]; then
+	    python_version=${boost_python_version}
+	fi
 	if [ "x${python_version}" != "x${boost_python_version}" ]; then
 	    err_msg "Unmatching Python version with Boost! Boost uses Python ${boost_python_version}!"
 	    return 1
 	else
 	    notice_msg "Python version ${python_version} matches with the one used by Boost (${boost_python_version})!"
 	fi 
+### XXXX
 	which python${python_version}-config 2>&1 > /dev/null
 	if [ $? -ne 0 ]; then
 	    err_msg "Python ${python_version} is not setup!"
@@ -563,10 +567,10 @@ EOF
 	if [ ${boost_version_rank} -ge 104000 ]; then
 	    run_eos_archive_trick=1
 	fi
-	# 2009-11-12 FM: force the trick: 
+	# 2009-11-12 FM: force the trick for debugging purpose: 
 	#run_eos_archive_trick=1
 	if [ ${run_eos_archive_trick} -eq 1 ]; then
-	    warning_msg "Special trick for EOS portable archives!"
+	    warning_msg "Using special trick for EOS portable archives!"
 	    boost_eos_archive_trick
 	fi
     fi
