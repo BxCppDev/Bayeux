@@ -4,7 +4,7 @@ name=datatools
 version=2.2
 language=C++
 namespace=datatools
-dependencies=boost_help python/2.5
+dependencies=boost_help python
 creation=2008-02-25
 author=Francois Mauger <mauger@lpccaen.in2p3.fr>
 # end of package.info

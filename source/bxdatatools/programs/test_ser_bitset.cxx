@@ -16,6 +16,8 @@ using namespace std;
 
 int main (int argc_, char ** argv_) 
 {
+  // 2009-11-17 FM: do not compile with gcc 3:
+#if __GNUC__ > 3
   try 
     {
       bool debug = false;
@@ -112,7 +114,9 @@ int main (int argc_, char ** argv_)
 	      {
 		bitset_data.get ().set(i, drand48 () < 0.5 ? true: false);
 	      }
+#if __GNUC__ > 3
 	    clog << "bitset = " << bitset_data.get ().to_string () << endl;
+#endif
 	    writer.store ("__std::bitset__", bitset_data.get ());
 	  }
 	clog << "NOTICE: writing done." << endl << endl;
@@ -138,7 +142,9 @@ int main (int argc_, char ** argv_)
 		reader.load ("__std::bitset__", bitset_data.get ());
 		if (debug) clog << "DEBUG: loading done." 
 				<< endl;
+#if __GNUC__ > 3
 		clog << "bitset = " << bitset_data.get ().to_string () << endl;
+#endif
 	      }
 	    else 
 	      {
@@ -159,7 +165,7 @@ int main (int argc_, char ** argv_)
       cerr << "test_ser_bitset: ERROR: " << x.what () << endl;
       exit (EXIT_FAILURE);
     }
-
+#endif
   return (EXIT_SUCCESS);
 }
 
