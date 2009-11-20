@@ -17,8 +17,11 @@ APPNAME="pkgtool"
 pack_name=genbb_help
 pack_name_upper=$(echo ${pack_name} | tr "a-z" "A-Z")
 pack_name_lower=$(echo ${pack_name} | tr "A-Z" "a-z")
-# startup scripts
 
+export BIPOVISU_ROOT=$(pwd)
+
+
+# startup scripts
 sh_ss=${pack_name_lower}.sh
 csh_ss=${pack_name_lower}.csh
 the_base_dir=.
@@ -31,18 +34,22 @@ verbose=0
 use_g77=0
 use_gfortran=1
 
-
-function err_msg()
+function err_msg ()
 {
     echo "${APPNAME} (${pack_name}): ERROR: $@" 1>&2
 }
 
-function warning_msg()
+function error_msg ()
+{
+    err_msg $@
+}
+
+function warning_msg ()
 {
     echo "${APPNAME} (${pack_name}): WARNING: $@" 1>&2
 }
 
-function info_msg()
+function info_msg ()
 {
     test ${verbose} -eq 0 && return
     echo "${APPNAME} (${pack_name}): INFO: $@" 1>&2
@@ -53,13 +60,13 @@ function notice_msg ()
     echo "${APPNAME} (${pack_name}): NOTICE: $@" 1>&2
 }
 
-function debug_msg()
+function debug_msg ()
 {
     test ${debug} -eq 0 && return
     echo "${APPNAME} (${pack_name}): DEBUG: $@"
 }
 
-function print_usage()
+function print_usage ()
 {
     cat <<EOF
 
@@ -106,8 +113,6 @@ while [ -n "$1" ]; do
     if [ "${arg:0:1}" = "-" ]; then
 	if [ ${parse_switch} = 0 ]; then
 	    break
-	    #err_msg "Options (-X) must be placed before arguments!"
-	    #exit 1
 	fi
 	if [ "${arg}" = "-h" -o "${arg}" = "--help" ]; then
 	    do_usage=1 
@@ -115,12 +120,6 @@ while [ -n "$1" ]; do
 	    debug=1 
 	elif [ "${arg}" = "-v" -o "${arg}" = "--verbose" ]; then
 	    verbose=1 
-#	elif [ "${arg}" = "--g77" ]; then
-#	    use_g77=1
-#	    use_gfortran=0
-#	elif [ "${arg}" = "--gfortran" ]; then
-#	    use_g77=0
-#	    use_gfortran=1
 	else
 	    err_msg "Invalid option!"
 	    exit 1
@@ -349,7 +348,6 @@ function do_configure ()
 	    notice_msg "CERNLIB seems to be properly setup!"
 	fi
     fi
-
 
     notice_msg "Configure package '${pack_name}': Setting F77 compiler..."
     if [ ${use_gfortran} -eq 1 ]; then

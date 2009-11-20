@@ -1,7 +1,6 @@
 # -*- mode: makefile; -*- 
 # GNUmakefile (language C++)
 
-###SHELL=/bin/bash
 OS=$(shell uname -s)
 ifneq ($(OS),Linux)
 ifneq ($(OS),Darwin)
@@ -10,16 +9,12 @@ endif
 endif
 
 ARCH=$(shell uname -m | sed 's/ //g')
-#ifeq ($(ARCH),Power Macintosh)
-#ARCH=PowerMacintosh
-#endif
 
 MAKE=gmake
 ifeq ($(OS),Linux)
   MAKE=make
   CXX=g++
   CC=gcc
-  #F77=g77
   F77=gfortran
   LD=g++
   LDFLAGS=-O
@@ -31,7 +26,6 @@ ifeq ($(OS),Darwin)
   MAKE=make
   CXX=g++
   CC=gcc
-  #F77=g77
   F77=gfortran
   LD=g++
   LDFLAGS=-O
@@ -48,6 +42,7 @@ F77=$(F77_COMP)
 $(Force $(F77_COMP) compiler!)
 endif
 
+COMPILER=$(CC)$(shell $(CC) --version | head -1 | cut -d ' ' -f 3)
 SYSTEM=$(OS)-$(ARCH)
 
 .PHONY : all
@@ -235,9 +230,12 @@ headers := $(notdir $(shell ls $(INCDIR)/$(PACKAGENAME)/*$(HEADEREXT)))
 sources := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT)))
 objects := $(sources:%$(SOURCEEXT)=%$(OBJEXT))
 objectsWithPath := $(sources:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT))
+programs_all:= $(notdir $(shell ls $(PROGDIR)/*$(PROGEXT) 2> /dev/null))
+programs_test:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep ^test_)
 programs:= $(notdir $(shell ls $(PROGDIR)/*$(PROGEXT)))
 binaries:= $(programs:%$(PROGEXT)=%$(BINEXT))
 binaries.static:= $(programs:%$(PROGEXT)=%.static$(BINEXT))
+binaries_test:= $(programs_test:%$(PROGEXT)=%$(BINEXT))
 
 f77_headers := $(notdir $(shell ls $(INCDIR)/$(PACKAGENAME)/*$(F77_HEADEREXT)))
 f77_sources := $(notdir $(shell ls $(SRCDIR)/*$(F77_SOURCEEXT)))
@@ -246,17 +244,48 @@ f77_objectsWithPath := $(f77_sources:%$(F77_SOURCEEXT)=$(OBJDIR)/%$(F77_OBJEXT))
 f77_programs:= $(notdir $(shell ls $(PROGDIR)/*$(F77_PROGEXT)))
 f77_binaries:= $(f77_programs:%$(F77_PROGEXT)=%$(F77_BINEXT))
 
+
+.PHONY : help
+help :
+	@echo "GNUmakefile usage "
+	@echo "----------------- "
+	@echo ""
+	@echo "make help      : print this help"
+	@echo ""
+	@echo "make           : default as 'make lib'"
+	@echo "make lib       : build the shared library"
+	@echo "make bin       : build the shared executables"
+	#@echo "make bin_test  : build the shared test executables (not mandatory)"
+	@echo "make install   : generates install stuff"
+	@echo "                 - setup ($(LIBNAME).sh/$(LIBNAME).csh)"
+	@echo "                 - $(LIBNAME)-config scripts"
+	@echo "make uninstall : clean install stuff"
+	@echo "make clean     : clean all object/binaries"
+	@echo ""
+	@echo "make system    : print system"
+	@echo "make test      : print some infos"
+	@echo ""
+	@echo "make dist      : make a source tarball ($(LIBNAME)-$(LIBVER).tar.gz)"
+	@echo "make bzdist    : make a source tarball ($(LIBNAME)-$(LIBVER).tar.bz2)"
+	@echo ""
+
 .PHONY : test
 test:
 	@echo "PACKAGE_DIR='$(PACKAGE_DIR)'"
 	@echo "PACKAGENAME='$(PACKAGENAME)'"
-	@echo "LIBNAME='$(LIBNAME)'"
+	@echo "COMPILER='$(COMPILER)'"
 	@echo "SYSTEM='$(SYSTEM)'"
+	@echo "LIBNAME='$(LIBNAME)'"
+	@echo "LIBVER='$(LIBVER)'"
 	@echo "INCDIR='$(INCDIR)'"
 	@echo "SRCDIR='$(SRCDIR)'"
 	@echo "C++ headers = $(headers)"
 	@echo "C++ sources = $(sources)"
 	@echo "C++ objects = $(objects)"
+	@echo "C++ programs = $(programs)"
+	@echo "C++ binaries = $(binaries)"
+	@echo "C++ programs_test = $(programs_test)"
+	@echo "C++ binaries_test = $(binaries_test)"
         @echo "F77 headers = $(f77_headers)"
         @echo "F77 sources = $(f77_sources)"
         @echo "F77 objects = $(f77_objects)"
@@ -329,6 +358,9 @@ distclean : uninstall clean
 .PHONY : bin
 bin : bin_shared
 
+.PHONY : bin_test
+bin_test : bin_test_shared
+
 .PHONY : bins
 bins : bin_shared bin_static 
 
@@ -337,6 +369,9 @@ bin_static : $(binaries_static)
 
 .PHONY : bin_shared
 bin_shared : $(binaries) $(f77_binaries)
+
+.PHONY : bin_test_shared
+bin_test_shared : $(binaries_test)
 
 $(LIBFILE) : $(objectsWithPath)  $(f77_objectsWithPath) 
 	@echo "Building static lib '$(@)'..."
@@ -375,5 +410,17 @@ $(OBJDIR)/%$(F77_OBJEXT) : %$(F77_SOURCEEXT) #%$(F77_HEADEREXT)
 	@echo "Compiling F77 program '$(@)' with shared library..."
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
 	$(F77) -I. $(F77CPPFLAGS) $(F77FLAGS) $< $(SHFLAGS) -o $(BINDIR)/$(notdir $(@))
+
+.PHONY : dist
+dist : distclean
+	echo "Making the distribution tarball '$(LIBNAME)-$(LIBVER).tar.gz'"
+	make clean
+	tar cvzf "../../$(LIBNAME)-$(LIBVER).tar.gz" --exclude ".svn" ../../$(PACKAGENAME)/
+
+.PHONY : bzdist
+bzdist : distclean
+	echo "Making the distribution tarball '$(LIBNAME)-$(LIBVER).tar.bz2'"
+	make clean
+	tar cvjf "../../$(LIBNAME)-$(LIBVER).tar.bz2" --exclude ".svn" ../../$(PACKAGENAME)/
 
 # end of GNUmakefile (language C++/F77)

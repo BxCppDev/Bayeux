@@ -23,8 +23,7 @@ void usage (ostream & out_ = clog)
   out_ << "   -h|--help   : print help" << endl; 
 } 
  
-int
-main (int argc_, char ** argv_)
+int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
   try
