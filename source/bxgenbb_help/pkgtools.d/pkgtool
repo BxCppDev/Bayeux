@@ -309,6 +309,16 @@ function do_configure ()
 	shift 1
     done
 
+    which boost-config 2>&1 > /dev/null
+    if [ $? -ne 0 ]; then
+	err_msg "boost seems not to be setup!"
+	err_msg "Use boost_help utility to set up BOOST_ROOT variable"
+	return 1
+    else
+	boost_version=$(boost-config --version)
+	notice_msg "Boost ${boost_version} seems to be properly setup."
+    fi
+
     which datatools-config 2>&1 > /dev/null
     if [ $? -ne 0 ]; then
 	err_msg "datatools seems not to be setup!"
