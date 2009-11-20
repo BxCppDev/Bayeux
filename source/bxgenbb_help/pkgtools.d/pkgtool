@@ -309,6 +309,15 @@ function do_configure ()
 	shift 1
     done
 
+    which datatools-config 2>&1 > /dev/null
+    if [ $? -ne 0 ]; then
+	err_msg "datatools seems not to be setup!"
+	return 1
+    else
+	datatools_version=$(datatools-config --version)
+	notice_msg "datatools ${datatools_version} seems to be properly setup!"
+    fi
+
     which geomtools-config 2>&1 > /dev/null
     if [ $? -ne 0 ]; then
 	err_msg "geomtools seems not to be setup!"
