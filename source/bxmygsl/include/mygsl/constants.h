@@ -175,7 +175,8 @@ namespace mygsl {
     static const double foot;
     static const double footcandle;
     static const double footlambert;
-    static const double gauss;
+    // 2009-11623 FM: remove 
+    // static const double gauss;
     static const double gram_force;
     static const double grav_accel;
     static const double gravitational_constant;

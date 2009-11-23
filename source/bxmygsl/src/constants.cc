@@ -159,7 +159,8 @@ namespace mygsl {
     const double cgsm::foot = GSL_CONST_CGSM_FOOT;
     const double cgsm::footcandle = GSL_CONST_CGSM_FOOTCANDLE;
     const double cgsm::footlambert = GSL_CONST_CGSM_FOOTLAMBERT;
-    const double cgsm::gauss = GSL_CONST_CGSM_GAUSS;
+    // 2009-11623 FM: remove 
+    //const double cgsm::gauss = GSL_CONST_CGSM_GAUSS;
     const double cgsm::gram_force = GSL_CONST_CGSM_GRAM_FORCE;
     const double cgsm::grav_accel = GSL_CONST_CGSM_GRAV_ACCEL;
     const double cgsm::gravitational_constant = GSL_CONST_CGSM_GRAVITATIONAL_CONSTANT;
