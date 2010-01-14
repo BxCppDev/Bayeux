@@ -78,14 +78,14 @@ gsl_test_path=$(GSL_BASE_DIR)
 #$(warning gsl_test_path=$(gsl_test_path))	
 ifneq ($(strip $(GSL_BASE_DIR)),)
 gsl_config=$(GSL_BASE_DIR)/bin/gsl-config
-$(warning Using special GSL version in $(shell $(gsl_config) --prefix) (from GSL_BASE_DIR=$(GSL_BASE_DIR))!)
 gsl_version=$(shell $(gsl_config) --version)
 gsl_prefix=$(shell $(gsl_config) --prefix)
+$(warning Using special GSL version $(gsl_version) in $(gsl_prefix) (from GSL_BASE_DIR=$(GSL_BASE_DIR))!)
 else
-$(warning Using default GSL version in $(shell $(gsl_config) --prefix)!)
 gsl_prefix=$(gsl_prefix_def)
 gsl_version=$(gsl_version_def)
 gsl_config=$(gsl_config_def)
+$(warning Using default GSL version $(gsl_version) in $(gsl_prefix)!)
 endif
 
 DEPCPPFLAGS+=$(shell $(gsl_config) --cflags)
