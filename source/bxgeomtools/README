@@ -41,6 +41,8 @@ This is the 'geomtools' package README file
 
      shell>$ ./pkgtools.d/pkgtool build bin
 
+     shell>$ ./pkgtools.d/pkgtool build bin_test
+
    Step 5:
 
      run the pkgtool program using the 'install' command to generate
