@@ -7,6 +7,21 @@
 namespace geomtools {
 
   using namespace std;
+ 
+  bool placement::is_valid () const
+  {
+    return 
+      geomtools::is_valid (__translation)
+      && geomtools::is_valid (__rotation)
+      && geomtools::is_valid (__inverse_rotation);
+  }
+
+  void placement::invalidate ()
+  {
+    geomtools::invalidate (__translation);
+    geomtools::invalidate (__rotation);
+    geomtools::invalidate (__inverse_rotation);
+  }
 
   const vector_3d & 
   placement::get_translation () const

@@ -35,7 +35,12 @@ namespace geomtools {
       vector_3d    __translation;      // absolute position in mother frame
       rotation_3d  __rotation;         // mother->child frame coord. transformation
       rotation_3d  __inverse_rotation; // child->mother frame coord. transformation
-    public: 
+    public:
+ 
+      bool is_valid () const;
+
+      void invalidate ();
+
       const vector_3d & get_translation () const;
 
       void set_translation (double, double, double);

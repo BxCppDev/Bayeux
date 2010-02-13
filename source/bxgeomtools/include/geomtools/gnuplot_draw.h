@@ -21,6 +21,7 @@
 #include <iostream>
 
 #include <geomtools/utils.h>
+#include <geomtools/box.h>
 
 namespace geomtools {
 
@@ -99,6 +100,12 @@ namespace geomtools {
 	      double, 
 	      double, 
 	      double);
+
+    static void 
+    draw_box (std::ostream &, 
+	      const vector_3d &, 
+	      const rotation_3d &,
+	      const box &);
 
     static void 
     draw_cylinder (std::ostream &, 

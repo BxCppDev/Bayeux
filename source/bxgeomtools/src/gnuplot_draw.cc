@@ -146,6 +146,18 @@ namespace geomtools {
   }
 
   void 
+  gnuplot_draw::draw_box (std::ostream & out_, 
+			  const vector_3d & pos_, 
+			  const rotation_3d & rot_,
+			  const box & b_)
+  {
+    draw_box (out_, pos_, rot_, 
+	      b_.get_x (),
+	      b_.get_y (),
+	      b_.get_z ());
+  }
+  
+  void 
   gnuplot_draw::draw_box (std::ostream & out_,
 			  const vector_3d & position_, 
 			  const rotation_3d & rotation_,
