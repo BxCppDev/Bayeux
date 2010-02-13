@@ -8,28 +8,33 @@
 
 #include <geomtools/placement.h>
 
-int 
-main (int argc_, char ** argv_)
+using namespace std;
+
+int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
   try 
     {
       geomtools::vector_3d pos;
       pos.set (1., 2., 3.);
-      std::cout << "Vector: " << pos << std::endl;
+      cout << "Vector: " << pos << endl;
 
-      geomtools::placement p (pos, 0.0, 90. * CLHEP::degree, 0.0);
-      p.dump ();
+      double phi   = 0.0 * CLHEP::degree;
+      double theta = 90.0 * CLHEP::degree;
+      double delta = 0.0 * CLHEP::degree;
+      
+      geomtools::placement p (pos, phi, theta, delta);
+      p.tree_dump (clog, "Placement", ">>> ");
 
     }
-  catch (std::exception & x)
+  catch (exception & x)
     {
-      std::cerr << "error: " << x.what() << std::endl; 
+      cerr << "error: " << x.what() << endl; 
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      std::cerr << "error: " << "unexpected error!" << std::endl; 
+      cerr << "error: " << "unexpected error!" << endl; 
       error_code = EXIT_FAILURE;
     }
   return error_code;

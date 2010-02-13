@@ -304,9 +304,9 @@ namespace geomtools {
    
   void
   create (rotation_3d & rot_,
-		   double phi_,
-		   double theta_,
-		   double delta_)
+	  double phi_,
+	  double theta_,
+	  double delta_)
   {
     rotation_3d r1, r2, r3;
     r1.rotateZ (-phi_);

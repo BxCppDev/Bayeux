@@ -20,17 +20,21 @@
 #include <iomanip>
 #include <string>
 
+#include <datatools/utils/i_tree_dump.h>
+
 #include <geomtools/utils.h>
 
 namespace geomtools {
 
+  using namespace std;
+
   class placement
+    : public datatools::utils::i_tree_dumpable
     {
     private: 
       vector_3d    __translation;      // absolute position in mother frame
       rotation_3d  __rotation;         // mother->child frame coord. transformation
       rotation_3d  __inverse_rotation; // child->mother frame coord. transformation
-      
     public: 
       const vector_3d & get_translation () const;
 
@@ -51,6 +55,13 @@ namespace geomtools {
       placement ();
 
       placement (const vector_3d & translation_, 
+		 double phi_,
+		 double theta_,
+		 double delta_);
+
+      placement (double x_,
+		 double y_,
+		 double z_, 
 		 double phi_,
 		 double theta_,
 		 double delta_);
@@ -76,14 +87,19 @@ namespace geomtools {
 
       vector_3d child_to_mother_direction (const vector_3d &) const;
 
-      void dump (std::ostream      & out_    = std::clog, 
-		 const std::string & title_  = "geomutils::placement", 
-		 const std::string & indent_ = "") const;
+      virtual void tree_dump (ostream & out_  = clog, 
+			      const string & title_ = "geomutils::placement", 
+			      const string & indent_ = "", 
+			      bool inherit_ = false) const;
+
+      void dump (ostream      & out_    = clog, 
+		 const string & title_  = "geomutils::placement", 
+		 const string & indent_ = "") const;
 
       /*
-	void dump ( std::ostream & out_ , 
-	const std::string & title_  = "geomutils::geom_data", 
-	const std::string & indent_ = "" ,
+	void dump ( ostream & out_ , 
+	const string & title_  = "geomutils::geom_data", 
+	const string & indent_ = "" ,
 	bool inherit_               =  false ) const;
       */
     

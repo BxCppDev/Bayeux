@@ -6,6 +6,8 @@
 
 namespace geomtools {
 
+  using namespace std;
+
   const vector_3d & 
   placement::get_translation () const
   {
@@ -62,6 +64,17 @@ namespace geomtools {
 			double delta_)
   {
     set_translation (translation_);
+    set_orientation (phi_, theta_, delta_);
+  }
+
+  placement::placement (double x_,
+			double y_,
+			double z_, 
+			double phi_,
+			double theta_,
+			double delta_)
+  {
+    set_translation (x_, y_, z_);
     set_orientation (phi_, theta_, delta_);
   }
   
@@ -148,16 +161,57 @@ namespace geomtools {
     return v;
   }
 
+  void placement::tree_dump (ostream & out_, 
+			     const string & title_, 
+			     const string & indent_, 
+			     bool inherit_) const
+  {
+    namespace du = datatools::utils;
+    string indent;
+    if (! indent_.empty ()) indent = indent_;
+    if (! title_.empty ()) 
+      {
+        out_ << indent << title_ << endl;
+      }
+
+    out_ << indent << i_tree_dumpable::tag << "Translation : " 
+	 << __translation  << endl;
+
+    {
+      ostringstream oss_title;
+      oss_title << indent << i_tree_dumpable::tag << "Rotation :";
+      ostringstream oss_indent;
+      oss_indent << indent << i_tree_dumpable::skip_tag;
+      geomtools::tree_dump (__rotation, 
+			    out_, 
+			    oss_title.str (), 
+			    oss_indent.str ());
+    }
+
+    {
+      ostringstream oss_title;
+      oss_title << indent << i_tree_dumpable::inherit_tag (inherit_) << "Inverse rotation :";
+      ostringstream oss_indent;
+      oss_indent << indent << i_tree_dumpable::inherit_skip_tag (inherit_);
+      geomtools::tree_dump (__inverse_rotation, 
+			    out_, 
+			    oss_title.str (), 
+			    oss_indent.str ());
+    }
+
+    return;
+   }
+
   void 
-  placement::dump (std::ostream      & out_ , 
-		   const std::string & title_, 
-		   const std::string & indent_) const
+  placement::dump (ostream      & out_ , 
+		   const string & title_, 
+		   const string & indent_) const
   {
     using namespace std;
     string indent = indent_;    
     string title = title_;
     if ( title.empty () ) title = title_;
-    out_ << title << std::endl;
+    out_ << title << endl;
     string tag       = "|-- ";
     string tagc      = "|   ";
     string last_tag  = "`-- ";
@@ -165,57 +219,13 @@ namespace geomtools {
 
     out_ << indent << tag << "Translation : " 
 	 << __translation  << endl;
-    //    ostringstream oss;
-    //oss << 
-    tree_dump (__rotation, out_, tag + "Rotation :", indent + tagc);
-    tree_dump (__inverse_rotation, out_, last_tag + "Inverse rotation :", indent + last_tagc);
     /*
-    out_ << indent << tag << "Rotation : \n" 
-	 << indent << __rotation  << endl;
-    out_ << indent << last_tag << "Inverse rotation : \n" 
-	 << indent << __inverse_rotation  << std::endl;
+    tree_dump (__rotation, out_, tag + "Rotation :", indent + tagc);
+    tree_dump (__inverse_rotation, out_, 
+	       last_tag + "Inverse rotation :", indent + last_tagc);
     */
   }
 
-
-  /*
-    void 
-    placement::dump ( std::ostream & out_ , 
-    const std::string & title_ , 
-    const std::string & indent_ ,
-    bool inherit_ ) const
-    {
-    shape_data::dump (out_,title_,indent_,true);
-    std::string indent=indent_;
-    
-    std::string title=title_;
-    std::string indent=indent_;
-    if ( title.empty () ) title=title_;
-    out_ << title << std::endl;
-  
-    std::string tag="|-- ";
-    std::string tagc="|   ";
-    std::string last_tag="`-- ";
-    std::string last_tagc="    ";
-    std::string & atag=tag;
-    std::string & atagc=tagc;
-    out_ << indent << atag << "Translation :            " 
-    << translation () << std::endl;
-    geomtools::dump (rotation (),
-    out_,
-    indent+atag+"Rotation",
-    indent+atagc);
-    if ( !inherit_ ) {
-    atag=last_tag;
-    atagc=last_tagc; 
-    }
-    geomtools::dump (inverse_rotation (),
-    out_,
-    indent+atag+"Inverse rotation",
-    indent+atagc);
-    }
-  */
- 
 } // end of namespace geomtools
 
 // end of placement.cc
