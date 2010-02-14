@@ -5,13 +5,21 @@
 #include <geomtools/helix_3d.h>
 
 namespace geomtools {
-  
-  const std::string helix_3d::SERIAL_TAG = "__geomtools::helix_3d__";
 
-  const std::string & 
+  using namespace std;
+  
+  const string helix_3d::SERIAL_TAG = "__geomtools::helix_3d__";
+  const string helix_3d::HELIX_3D_LABEL = "helix_3d";
+
+  const string & 
   helix_3d::get_serial_tag () const
   {
     return helix_3d::SERIAL_TAG;
+  }
+
+  string helix_3d::get_shape_name () const
+  {
+    return helix_3d::HELIX_3D_LABEL;
   }
 
   bool 
@@ -23,7 +31,7 @@ namespace geomtools {
   void 
   helix_3d::invalidate ()
   {
-    double qnan = std::numeric_limits<double>::quiet_NaN();
+    double qnan = numeric_limits<double>::quiet_NaN();
     __radius = qnan;
   }
   
@@ -118,7 +126,7 @@ namespace geomtools {
   }
   
   // ctor/dtor:
-  helix_3d::helix_3d ()
+  helix_3d::helix_3d () : i_shape_1d ()
   {
     __radius = 1.0;
     __center.set (0.0, 0.0, 0.0);
@@ -134,7 +142,7 @@ namespace geomtools {
   void 
   helix_3d::invalidate_angles ()
   {
-    double qnan = std::numeric_limits<double>::quiet_NaN();
+    double qnan = numeric_limits<double>::quiet_NaN();
     __t1 = qnan;
     __t2 = qnan;
   }
@@ -183,7 +191,7 @@ namespace geomtools {
   {
     double x = x_ - __center.x ();
     double y = y_ - __center.y ();
-    double theta = std::atan2 (y, x);
+    double theta = atan2 (y, x);
     if (theta < 0.0) theta += 2. * M_PI;
     return theta;
   }
@@ -194,22 +202,22 @@ namespace geomtools {
     bool devel = false;
     //devel = true;
     double t = 0.0;
-    if (! std::isnormal (z_)) 
+    if (! isnormal (z_)) 
       {
-	t = std::numeric_limits<double>::quiet_NaN (); 
+	t = numeric_limits<double>::quiet_NaN (); 
       }
     else 
       {
 	if (__step != 0.0 ) 
 	  {
 	    t = (z_ - __center.z ()) / __step;
-	    if (devel) std::clog << "DEVEL:  helix_3d::get_t_from_z: h=" << __step << std::endl;
-	    if (devel) std::clog << "DEVEL:  helix_3d::get_t_from_z: t=" << t << std::endl;
+	    if (devel) clog << "DEVEL:  helix_3d::get_t_from_z: h=" << __step << endl;
+	    if (devel) clog << "DEVEL:  helix_3d::get_t_from_z: t=" << t << endl;
 	  }
 	else 
 	  {
-	    t = std::numeric_limits<double>::infinity (); 
-	    if (devel) std::clog << "DEVEL:  helix_3d::get_t_from_z: t_inf=" << t << std::endl;
+	    t = numeric_limits<double>::infinity (); 
+	    if (devel) clog << "DEVEL:  helix_3d::get_t_from_z: t_inf=" << t << endl;
 	    // we have ! is_normal (t)
 	  }
       }
@@ -223,19 +231,19 @@ namespace geomtools {
   {
     bool devel = false;
     //devel = true;
-    if (devel) std::clog << "DEVEL:  helix_3d::get_t_from_xyz: go..." << std::endl;
+    if (devel) clog << "DEVEL:  helix_3d::get_t_from_xyz: go..." << endl;
     double theta = get_theta_from_xy (x_, y_);
     double t_xy = helix_3d::angle_to_t (theta);
     double t = t_xy;
-    if (devel) std::clog << "DEVEL:  helix_3d::get_t_from_xyz: z=" << z_  << std::endl;
-    if (devel) std::clog << "DEVEL:  helix_3d::get_t_from_xyz: z_c=" << __center.z ()  << std::endl;
+    if (devel) clog << "DEVEL:  helix_3d::get_t_from_xyz: z=" << z_  << endl;
+    if (devel) clog << "DEVEL:  helix_3d::get_t_from_xyz: z_c=" << __center.z ()  << endl;
     double t_z = get_t_from_z (z_);
-    if (devel) std::clog << "DEVEL:  helix_3d::get_t_from_xyz: t=" << t  << std::endl;
-    if (devel) std::clog << "DEVEL:  helix_3d::get_t_from_xyz: t_z=" << t_z  << std::endl;
-    if (devel) std::clog << "DEVEL:  helix_3d::get_t_from_xyz: h=" << get_step ()  << std::endl;
+    if (devel) clog << "DEVEL:  helix_3d::get_t_from_xyz: t=" << t  << endl;
+    if (devel) clog << "DEVEL:  helix_3d::get_t_from_xyz: t_z=" << t_z  << endl;
+    if (devel) clog << "DEVEL:  helix_3d::get_t_from_xyz: h=" << get_step ()  << endl;
     while (t < (t_z - 0.5)) t++;
     while (t > (t_z + 0.5)) t--;
-    if (devel) std::clog << "DEVEL:  helix_3d::get_t_from_xyz: stop" << std::endl;
+    if (devel) clog << "DEVEL:  helix_3d::get_t_from_xyz: stop" << endl;
     return t;
   }
 
@@ -250,8 +258,8 @@ namespace geomtools {
   helix_3d::get_point_xy (double theta_) const
   {
     double angle = theta_;
-    double x = __center.x () + __radius * std::cos (angle);
-    double y = __center.y () + __radius * std::sin (angle);
+    double x = __center.x () + __radius * cos (angle);
+    double y = __center.y () + __radius * sin (angle);
     return vector_3d (x, y, 0.0);    
   }
 
@@ -259,8 +267,8 @@ namespace geomtools {
   helix_3d::get_point (double t_) const
   {
     double angle = t_to_angle (t_);
-    double x = __center.x () + __radius * std::cos (angle);
-    double y = __center.y () + __radius * std::sin (angle);
+    double x = __center.x () + __radius * cos (angle);
+    double y = __center.y () + __radius * sin (angle);
     double z = get_z_from_t (t_);
     return vector_3d (x, y, z);
   }
@@ -285,7 +293,7 @@ namespace geomtools {
   }
 
   void 
-  helix_3d::print_xyz (std::ostream & out_, 
+  helix_3d::print_xyz (ostream & out_, 
 		       const helix_3d & helix_,
 		       double step_angle_, 
 		       int expand_)
@@ -314,49 +322,49 @@ namespace geomtools {
 	    stop = true;
 	  }
       } while (true);
-    //out_ << std::endl << std::endl;
-    out_ << std::endl;
+    //out_ << endl << endl;
+    out_ << endl;
     geomtools::print_xyz (out_, helix_.get_center ());
-    //out_ << std::endl << std::endl;
-    out_ << std::endl;
+    //out_ << endl << endl;
+    out_ << endl;
   }
   
   void 
-  helix_3d::tree_dump (std::ostream &      out_, 
-			 const std::string & title_,
-			 const std::string & indent_,
+  helix_3d::tree_dump (ostream &      out_, 
+			 const string & title_,
+			 const string & indent_,
 			 bool                inherit_) const
   {
-    std::string indent;
+    string indent;
     if (! indent_.empty ())
       {
         indent = indent_;
       }
     if ( !title_.empty () ) {
-      out_ << indent << title_ << std::endl;
+      out_ << indent << title_ << endl;
     }
 
     namespace du = datatools::utils;
     out_ << indent << du::i_tree_dumpable::tag 
 	 << "center : " 
 	 << __center 
-	 << std::endl;
+	 << endl;
     out_ << indent << du::i_tree_dumpable::tag 
 	 << "radius : " 
 	 << __radius 
-	 << std::endl;
+	 << endl;
     out_ << indent << du::i_tree_dumpable::tag 
 	 << "step : " 
 	 << __step 
-	 << std::endl;
+	 << endl;
     out_ << indent << du::i_tree_dumpable::tag 
 	 << "t1 : " 
 	 << __t1 << " (" << get_angle1 () << ')'
-	 << std::endl;
+	 << endl;
     out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_) 
 	 << "t2 : " 
 	 << __t2 << " (" << get_angle2 () << ')'
-	 << std::endl;
+	 << endl;
   }
 
   void 
@@ -381,6 +389,21 @@ namespace geomtools {
     basic_polyline_3d bpl;
     make_vertex_collection (bpl);
     return bpl;
+  }
+
+  bool helix_3d::is_on_curve (const vector_3d & position_, 
+			     double tolerance_) const
+  {
+    bool on_curve = false;
+    throw runtime_error ("helix_3d::is_on_curve: Not implemented yet !");
+    return on_curve;
+  }
+
+  vector_3d helix_3d::get_direction_on_curve (const vector_3d & position_) const
+  {
+    vector_3d dir;
+    throw runtime_error ("helix_3d::get_direction_on_curve: Not implemented yet !");
+    return dir;
   }
 
 } // end of namespace geomtools

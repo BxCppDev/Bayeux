@@ -1,8 +1,4 @@
 geomtools User's Guide
-
-
-
-
        
   Typedefs from the CLHEP library:
 
@@ -15,21 +11,25 @@ geomtools User's Guide
   Gnuplot dataset format print driver:
     geomtools::gnuplot_draw
 
-  Geometrical 3D objects:
-    geomtools::line_3d
-    geomtools::polyline_3d		
-    geomtools::helix_3d
-
   3D shape interface:
-    geomtools::i_shape_3d
-      geomtools::box
-      geomtools::cylinder
-      geomtools::sphere
-      geomtools::tube
-      geomtools::i_composite_shape_3d
-        geomtools::union_3d
-        geomtools::subtraction_3d
-        geomtools::intersection_3d
+    geomtools::i_object_3d
+
+      geomtools::i_shape_1d
+        geomtools::line_3d
+        geomtools::polyline_3d		
+        geomtools::helix_3d
+
+      geomtools::i_shape_2d
+
+      geomtools::i_shape_3d
+        geomtools::box
+        geomtools::cylinder
+        geomtools::sphere
+        geomtools::tube
+        geomtools::i_composite_shape_3d
+          geomtools::union_3d
+          geomtools::subtraction_3d
+          geomtools::intersection_3d
 
 
 

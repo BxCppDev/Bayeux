@@ -6,12 +6,20 @@
 
 namespace geomtools {
 
-  const std::string line_3d::SERIAL_TAG = "__geomtools::line_3d__";
+  using namespace std;
 
-  const std::string & 
+  const string line_3d::SERIAL_TAG = "__geomtools::line_3d__";
+  const string line_3d::LINE_3D_LABEL = "line_3d";
+
+  const string & 
   line_3d::get_serial_tag () const
   {
     return line_3d::SERIAL_TAG;
+  }
+
+  string line_3d::get_shape_name () const
+  {
+    return line_3d::LINE_3D_LABEL;
   }
 
   bool 
@@ -58,7 +66,7 @@ namespace geomtools {
   }
   
   // ctor/dtor:
-  line_3d::line_3d ()
+  line_3d::line_3d () : i_shape_1d ()
   {
     invalidate ();
   }
@@ -98,34 +106,49 @@ namespace geomtools {
   }
   
   void 
-  line_3d::tree_dump (std::ostream &      out_, 
-		      const std::string & title_,
-		      const std::string & indent_,
+  line_3d::tree_dump (ostream &      out_, 
+		      const string & title_,
+		      const string & indent_,
 		      bool                inherit_) const
   {
-    std::string indent;
+    string indent;
     if (! indent_.empty ())
       {
         indent = indent_;
       }
     if ( !title_.empty () ) {
-      out_ << indent << title_ << std::endl;
+      out_ << indent << title_ << endl;
     }
 
     namespace du = datatools::utils;
     out_ << indent << du::i_tree_dumpable::tag 
 	 << "first : " 
 	 << __first 
-	 << std::endl;
+	 << endl;
     out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_) 
 	 << "last : " 
 	 << __last
-	 << std::endl;
+	 << endl;
+  }
+
+  bool line_3d::is_on_curve (const vector_3d & position_, 
+			     double tolerance_) const
+  {
+    bool on_curve = false;
+    throw runtime_error ("line_3d::is_on_curve: Not implemented yet !");
+    return on_curve;
+  }
+
+  vector_3d line_3d::get_direction_on_curve (const vector_3d & position_) const
+  {
+    vector_3d dir;
+    throw runtime_error ("line_3d::get_direction_on_curve: Not implemented yet !");
+    return dir;
   }
 
   /*
   void 
-  line_3d::print_xyz (std::ostream & out_, 
+  line_3d::print_xyz (ostream & out_, 
 		      const line_3d & line_,
 		      double step_)
   {
@@ -138,7 +161,7 @@ namespace geomtools {
 	vector_3d v = line_.get_point (t);
 	vector_3d::print_xyz (out_, v);
       }
-    out_ << std::endl << std::endl;
+    out_ << endl << endl;
   }
   */
   

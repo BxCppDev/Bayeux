@@ -6,7 +6,9 @@
 
 namespace geomtools {
 
-  const std::string cylinder::CYLINDER_LABEL = "cylinder";
+  using namespace std;
+
+  const string cylinder::CYLINDER_LABEL = "cylinder";
 
   double 
   cylinder::get_r () const
@@ -19,9 +21,9 @@ namespace geomtools {
   {
     if (new_value_ < 0.0 )
       {
-	std::ostringstream message;
+	ostringstream message;
 	message << "cylinder::set_r: Invalid '" << new_value_ << "' R value!";
-	throw std::logic_error (message.str ());
+	throw logic_error (message.str ());
       }
     __r = new_value_;
   }
@@ -55,9 +57,9 @@ namespace geomtools {
   {
     if (new_value_ < 0.0) 
       {
-	std::ostringstream message;
+	ostringstream message;
 	message << "cylinder::set_z: Invalid '" << new_value_ << "' Z value!";
-	throw std::logic_error (message.str ());
+	throw logic_error (message.str ());
       }
     __z = new_value_;
   }
@@ -103,7 +105,7 @@ namespace geomtools {
   {
   }
 
-  std::string 
+  string 
   cylinder::get_shape_name () const
   {
     return CYLINDER_LABEL;
@@ -138,7 +140,7 @@ namespace geomtools {
   }
 
   double 
-  cylinder::get_parameter ( const std::string & flag_ ) const
+  cylinder::get_parameter ( const string & flag_ ) const
   {
     if ( flag_ == "r" ) return get_r ();
     if ( flag_ == "radius" ) return get_r ();
@@ -150,7 +152,7 @@ namespace geomtools {
     if ( flag_ == "surface.side" ) return get_surface (FACE_SIDE);
     if ( flag_ == "surface" ) return get_surface (FACE_ALL);
 
-    throw std::runtime_error ("cylinder::get_parameter: Unknown flag!");
+    throw runtime_error ("cylinder::get_parameter: Unknown flag!");
   }
 
 
@@ -181,7 +183,7 @@ namespace geomtools {
 
     double r = hypot (point_.x (), point_.y ());
     if ( r > __r + 0.5 * skin ) return false;
-    if ( std::abs (point_.z ()) > 0.5 *__z + 0.5 * skin ) return false;
+    if ( abs (point_.z ()) > 0.5 *__z + 0.5 * skin ) return false;
     return true;
   }
 
@@ -193,7 +195,7 @@ namespace geomtools {
     if (is_on_surface (position_, FACE_SIDE)) 
       {
 	double phi = position_.phi ();
-	normal.set (std::cos (phi), std::sin (phi), 0.0);
+	normal.set (cos (phi), sin (phi), 0.0);
       }
     else if (is_on_surface (position_, FACE_BOTTOM)) normal.set (0.0, 0.0, -1.0);
     else if (is_on_surface (position_, FACE_TOP)) normal.set (0.0, 0.0, +1.0); 
@@ -215,18 +217,18 @@ namespace geomtools {
     double r = hypot (point_.x (), point_.y ());
     if (mask & FACE_BOTTOM) 
       {
-	if ((std::abs (point_.z () + 0.5 * __z) < hskin) 
+	if ((abs (point_.z () + 0.5 * __z) < hskin) 
 	    && (r < (__r + hskin))) return true;
       } 
     if (mask & FACE_TOP) 
       {
-	if ((std::abs (point_.z () - 0.5 * __z) < hskin) 
+	if ((abs (point_.z () - 0.5 * __z) < hskin) 
 	    && (r < (__r + hskin))) return true;
       }
     if (mask & FACE_SIDE) 
       {
-	if ((std::abs (point_.z ()) < (0.5 * __z + hskin))   
-	    && (std::abs (r - __r) < hskin)) return true;
+	if ((abs (point_.z ()) < (0.5 * __z + hskin))   
+	    && (abs (r - __r) < hskin)) return true;
       }
     return false;
   }
@@ -259,45 +261,45 @@ namespace geomtools {
     double ts[2];
     if (debug)
       {
-	std::clog << "DEVEL: cylinder::find_intercept: from= "
+	clog << "DEVEL: cylinder::find_intercept: from= "
 		  << from_
-		  << std::endl;
-	std::clog << "DEVEL: cylinder::find_intercept: direction= "
+		  << endl;
+	clog << "DEVEL: cylinder::find_intercept: direction= "
 		  << direction_
-		  << std::endl;
-	std::clog << "DEVEL: cylinder::find_intercept: a= "
+		  << endl;
+	clog << "DEVEL: cylinder::find_intercept: a= "
 		  << a
-		  << std::endl;
-	std::clog << "DEVEL: cylinder::find_intercept: b= "
+		  << endl;
+	clog << "DEVEL: cylinder::find_intercept: b= "
 		  << b
-		  << std::endl;
-	std::clog << "DEVEL: cylinder::find_intercept: c= "
+		  << endl;
+	clog << "DEVEL: cylinder::find_intercept: c= "
 		  << c
-		  << std::endl;
-	std::clog << "DEVEL: cylinder::find_intercept: delta= "
+		  << endl;
+	clog << "DEVEL: cylinder::find_intercept: delta= "
 		  << delta
-		  << std::endl;
+		  << endl;
       }
     if (delta >= 0.0)
       {
-	double q = std::sqrt (delta);
+	double q = sqrt (delta);
 	double n = a + a;
 	ts[0] = (- b + q) / n;
 	ts[1] = (- b - q) / n;
       }
     if (debug)
       {
-	std::clog << "DEVEL: cylinder::find_intercept: ts[" << 0 << "]= "
+	clog << "DEVEL: cylinder::find_intercept: ts[" << 0 << "]= "
 		  << ts[0]
-		  << std::endl;
-	std::clog << "DEVEL: cylinder::find_intercept: ts[" << 1 << "]= "
+		  << endl;
+	clog << "DEVEL: cylinder::find_intercept: ts[" << 1 << "]= "
 		  << ts[1]
-		  << std::endl;
+		  << endl;
       }
     for (int i = 0; i < 2; i++)
       {
 	double tsi = ts[i];
-	if (std::isnormal (tsi) && (tsi > 0.0))
+	if (isnormal (tsi) && (tsi > 0.0))
 	  {
 	    if (t[CYL_SIDE] < 0) 
 	      {
@@ -325,12 +327,12 @@ namespace geomtools {
 	double ti = t[i];
 	if (debug)
 	  {
-	    std::clog << "DEVEL: cylinder::find_intercept: t[" << i << "]= "
+	    clog << "DEVEL: cylinder::find_intercept: t[" << i << "]= "
 		      << ti << " t_min=" << t_min 
 		      << " face_min=" << face_min 
-		      << std::endl;
+		      << endl;
 	  }
-	if (std::isnormal (ti) && (ti > 0.0))
+	if (isnormal (ti) && (ti > 0.0))
 	  {
 	    int face_bit = (0x1 << i); // face mask
 	    vector_3d intercept = from_ + direction_ * ti;
@@ -352,7 +354,7 @@ namespace geomtools {
     return intercept_.is_ok ();
   }
 
-  std::ostream & operator<< (std::ostream & out_, const cylinder & c_)
+  ostream & operator<< (ostream & out_, const cylinder & c_)
   {
     out_ << '{' << cylinder::CYLINDER_LABEL << ' ' 
 	 << c_.__r << ' ' 
@@ -360,35 +362,35 @@ namespace geomtools {
     return out_;
   }
 
-  std::istream & operator>> ( std::istream & in_, cylinder & c_)
+  istream & operator>> ( istream & in_, cylinder & c_)
   {
     c_.reset ();
     char c = 0;
     in_.get (c);
     if (c != '{') 
       {
-	in_.clear (std::ios_base::failbit);
+	in_.clear (ios_base::failbit);
 	return in_;
       } 
-    std::string name;
+    string name;
     in_ >> name;
     if (name != cylinder::CYLINDER_LABEL) 
       {
-	in_.clear (std::ios_base::failbit);
+	in_.clear (ios_base::failbit);
 	return in_;
       } 
     double r, z;
     in_ >> r >> z;
     if (! in_) 
       {
-	in_.clear (std::ios_base::failbit);
+	in_.clear (ios_base::failbit);
 	return in_;
       } 
     c = 0;
     in_.get (c);
     if (c != '}') 
       {
-	in_.clear (std::ios_base::failbit);
+	in_.clear (ios_base::failbit);
 	return in_;
       } 
     try 
@@ -398,7 +400,7 @@ namespace geomtools {
     catch (...)
       {
 	c_.reset ();
-	in_.clear (std::ios_base::failbit);
+	in_.clear (ios_base::failbit);
       }
     return in_;
   }

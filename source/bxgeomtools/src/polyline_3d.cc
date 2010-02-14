@@ -6,11 +6,19 @@
 
 namespace geomtools {
 
-  const std::string polyline_3d::SERIAL_TAG = "__geomtools::polyline_3d__";
+  using namespace std;
 
-  const std::string & polyline_3d::get_serial_tag () const
+  const string polyline_3d::SERIAL_TAG = "__geomtools::polyline_3d__";
+  const string polyline_3d::POLYLINE_3D_LABEL = "line_3d";
+
+  const string & polyline_3d::get_serial_tag () const
   {
     return polyline_3d::SERIAL_TAG;
+  }
+
+  string polyline_3d::get_shape_name () const
+  {
+    return polyline_3d::POLYLINE_3D_LABEL;
   }
 
   bool  
@@ -70,11 +78,11 @@ namespace geomtools {
   {
     if (is_empty ())
       {
-	throw std::runtime_error ("polyline_3d::get_point: Empty point collection!");
+	throw runtime_error ("polyline_3d::get_point: Empty point collection!");
       }
     if ((i_ < 0) || (i_ >= (int) __points.size ()))
       {
-	throw std::runtime_error ("polyline_3d::get_point: Invalid point index!");
+	throw runtime_error ("polyline_3d::get_point: Invalid point index!");
       }
     int i = 0;
     point_col::const_iterator it = __points.begin ();
@@ -99,7 +107,7 @@ namespace geomtools {
   {
     if (is_empty ())
       {
-	throw std::runtime_error ("polyline_3d::get_vertex: Empty vertex collection!");
+	throw runtime_error ("polyline_3d::get_vertex: Empty vertex collection!");
       }
 
     if (! is_closed ())
@@ -109,7 +117,7 @@ namespace geomtools {
     
     if ((i_ < 0) || (i_ >= get_number_of_vertex ()))
       {
-	throw std::runtime_error ("polyline_3d::get_vertex: Invalid vertex index!");
+	throw runtime_error ("polyline_3d::get_vertex: Invalid vertex index!");
       }
     return get_point (i_ % get_number_of_points ());
   }
@@ -130,6 +138,21 @@ namespace geomtools {
     basic_polyline_3d bpl;
     make_vertex_collection (bpl);
     return bpl;
+  }
+
+  bool polyline_3d::is_on_curve (const vector_3d & position_, 
+			     double tolerance_) const
+  {
+    bool on_curve = false;
+    throw runtime_error ("polyline_3d::is_on_curve: Not implemented yet !");
+    return on_curve;
+  }
+
+  vector_3d polyline_3d::get_direction_on_curve (const vector_3d & position_) const
+  {
+    vector_3d dir;
+    throw runtime_error ("polyline_3d::get_direction_on_curve: Not implemented yet !");
+    return dir;
   }
 
 } // end of namespace geomtools

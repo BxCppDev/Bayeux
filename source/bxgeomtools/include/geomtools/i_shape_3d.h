@@ -2,12 +2,12 @@
 /* i_shape_3d.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
- * Last modified: 2008-05-23
+ * Last modified: 2010-02-14
  * 
  * License: 
  * 
  * Description: 
- *  Interface:
+ *  Interface for 3D shaped volumes
  *
  * History: 
  * 
@@ -21,36 +21,29 @@
 #include <datatools/utils/properties.h>
 
 #include <geomtools/utils.h>
+#include <geomtools/i_object_3d.h>
 
 namespace geomtools {
 
-  class i_shape_3d 
+  class i_shape_3d : public i_object_3d
     {
     public:
       static const double DEFAULT_SKIN;
-      static const unsigned int ALL_SURFACES;
-      static const unsigned int NO_SURFACES;
       static const double USING_PROPER_SKIN;
-
-    private:
-      double __skin; // proper tolerance to check surface belonging
-      datatools::utils::properties __properties;
 
     public:
 
+      virtual int get_dimensional () const;
+      
       double get_skin () const;
 
       void set_skin (double skin_);
-
-      datatools::utils::properties & properties ();
-
-      const datatools::utils::properties & properties () const;
 
       i_shape_3d (double skin_ = DEFAULT_SKIN);
 
       virtual ~i_shape_3d ();
 
-      virtual std::string get_shape_name () const = 0;
+      // virtual std::string get_shape_name () const = 0;
 
       virtual bool is_composite () const
       {

@@ -26,16 +26,23 @@
 
 #include <datatools/serialization/serialization.h>
 
+#include <geomtools/i_shape_1d.h>
 #include <geomtools/utils.h>
 
 #include <datatools/utils/i_tree_dump.h>
 
 namespace geomtools {
 
-  class helix_3d :
+  using namespace std;
+
+  class helix_3d : 
+    public i_shape_1d,
     public datatools::utils::i_tree_dumpable,
     public datatools::serialization::i_serializable  
   {
+  public: 
+    static const string HELIX_3D_LABEL;
+
   private: 
     double    __radius;
     vector_3d __center;
@@ -44,6 +51,8 @@ namespace geomtools {
     double    __t2;    // angle2 / (2 pi)
 
   public: 
+
+    virtual string get_shape_name () const;
 
     bool is_valid () const;
 
@@ -116,14 +125,14 @@ namespace geomtools {
     virtual ~helix_3d ();
 
     /* interface i_tree_dumpable */
-    virtual void tree_dump (std::ostream & out_         = std::cerr, 
-			    const std::string & title_  = "",
-			    const std::string & indent_ = "",
+    virtual void tree_dump (ostream & out_         = cerr, 
+			    const string & title_  = "",
+			    const string & indent_ = "",
 			    bool inherit_               = false) const;
 
     void dump () const
     {
-      tree_dump (std::clog);
+      tree_dump (clog);
     }
 
     void make_vertex_collection (basic_polyline_3d &) const;
@@ -131,9 +140,9 @@ namespace geomtools {
     basic_polyline_3d make_vertex_collection () const;
     
     /* interface i_serializable */
-    static const std::string SERIAL_TAG;
+    static const string SERIAL_TAG;
     
-    virtual const std::string & get_serial_tag () const;
+    virtual const string & get_serial_tag () const;
   
   private:
       
@@ -161,10 +170,17 @@ namespace geomtools {
     // convert angle in radian to parametric:
     static double angle_to_t (double angle_);
     
-    static void print_xyz (std::ostream & out_, 
+    static void print_xyz (ostream & out_, 
 			   const helix_3d & helix_, 
 			   double step_angle_ = 0.0,
 			   int expand_ = 0);
+
+  public:
+
+    virtual bool is_on_curve (const vector_3d & position_, 
+			      double tolerance_ = USING_PROPER_TOLERANCE) const;
+
+    virtual vector_3d get_direction_on_curve (const vector_3d & position_) const;
 
   };
 

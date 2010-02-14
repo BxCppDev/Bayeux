@@ -7,7 +7,7 @@
  * License: 
  * 
  * Description: 
- *  Interface:
+ *  A cylinder on z-axis
  *
  * History: 
  * 
@@ -23,11 +23,13 @@
 
 namespace geomtools {
 
+  using namespace std;
+
   class cylinder : public i_shape_3d 
     {
 
     public:
-      static const std::string CYLINDER_LABEL;
+      static const string CYLINDER_LABEL;
 
       enum faces_mask_t
 	{
@@ -89,11 +91,11 @@ namespace geomtools {
       virtual ~cylinder();
   
       // methods:
-      virtual std::string 
+      virtual string 
 	get_shape_name() const;
 
       virtual double 
-	get_parameter(const std::string &) const;
+	get_parameter(const string &) const;
 
       bool 
 	is_valid() const;
@@ -126,11 +128,11 @@ namespace geomtools {
 				   intercept_t & intercept_,
 				   double skin_ = USING_PROPER_SKIN) const;
 
-      friend std::ostream & 
-	operator<<(std::ostream &, const cylinder &);
+      friend ostream & 
+	operator<<(ostream &, const cylinder &);
 
-      friend std::istream & 
-	operator>>(std::istream &, cylinder &);
+      friend istream & 
+	operator>>(istream &, cylinder &);
 
     };
     

@@ -12,15 +12,20 @@
 #include <stdexcept>
 #include <list>
 
+#include <geomtools/i_shape_1d.h>
 #include <geomtools/utils.h>
 
 namespace geomtools {
 
+  using namespace std;
+
   class polyline_3d : 
+    public i_shape_1d,
     public datatools::serialization::i_serializable
     {
     public:
-      static const std::string SERIAL_TAG;
+      static const string SERIAL_TAG;
+      static const string POLYLINE_3D_LABEL;
 
       static const bool CLOSED = true;
       static const bool closed = CLOSED;
@@ -35,6 +40,8 @@ namespace geomtools {
       point_col __points;
 
     public:
+
+      virtual string get_shape_name () const;
 
       bool is_closed () const;
 
@@ -60,7 +67,7 @@ namespace geomtools {
       
       const vector_3d & get_vertex (int i_) const;
 
-      virtual const std::string & get_serial_tag () const;
+      virtual const string & get_serial_tag () const;
 
       // inefficient algorithm:
       void make_vertex_collection (basic_polyline_3d &) const;
@@ -78,6 +85,12 @@ namespace geomtools {
 	  ar_ & boost::serialization::make_nvp ("points", __points);
 	}
 
+    public:
+
+      virtual bool is_on_curve (const vector_3d & position_, 
+				double tolerance_ = USING_PROPER_TOLERANCE) const;
+      
+      virtual vector_3d get_direction_on_curve (const vector_3d & position_) const;
  
     }; 
  

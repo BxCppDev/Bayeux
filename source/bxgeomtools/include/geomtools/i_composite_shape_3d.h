@@ -7,7 +7,7 @@
  * License: 
  * 
  * Description: 
- *  Interface:
+ *  Basic interface for composite 3D shapes (union, intersection, difference)
  *
  * History: 
  * 
@@ -25,6 +25,8 @@
 
 namespace geomtools {
 
+  using namespace std;
+
   class i_composite_shape_3d : public i_shape_3d
     {
       
@@ -36,7 +38,7 @@ namespace geomtools {
 	  placement    __placement;
 	  
 	private:
-	  // forbid implemtation of:
+	  // forbid implementation of:
 	  shape_t (const shape_t &);
 	  shape_t & operator=(const shape_t &);
 
@@ -71,7 +73,7 @@ namespace geomtools {
 				  const placement &, 
 				  shape_t &);
 
-	  void dump (std::ostream & out_ = std::clog) const;
+	  void dump (ostream & out_ = clog) const;
 	};
 
 
@@ -95,7 +97,7 @@ namespace geomtools {
 
       const shape_t & get_shape (int i_) const;
 
-      void dump (std::ostream & out_ = std::clog) const;
+      void dump (ostream & out_ = clog) const;
 
     private:
       shape_t __shape1;

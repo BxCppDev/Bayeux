@@ -27,19 +27,28 @@
 
 #include <datatools/utils/i_tree_dump.h>
 
+#include <geomtools/i_shape_1d.h>
 #include <geomtools/utils.h>
 
 namespace geomtools {
 
-  class line_3d :
+  using namespace std;
+
+  class line_3d : 
+    public i_shape_1d,
     public datatools::utils::i_tree_dumpable,
     public datatools::serialization::i_serializable
   {
+  public: 
+    static const string LINE_3D_LABEL;
+
   private: 
     vector_3d __first;
     vector_3d __last;
 
   public: 
+
+    virtual string get_shape_name () const;
 
     bool is_valid () const;
 
@@ -62,29 +71,36 @@ namespace geomtools {
     // ctor/dtor:
     line_3d ();
 
-    line_3d (const vector_3d & first_, const vector_3d & last_);
+    line_3d (const vector_3d & first_, 
+	     const vector_3d & last_);
 
     virtual ~line_3d ();
 
     /* interface i_tree_dumpable */
-    virtual void tree_dump (std::ostream & out_         = std::cerr, 
-			    const std::string & title_  = "",
-			    const std::string & indent_ = "",
-			    bool inherit_               = false) const;
+    virtual void tree_dump (ostream & out_         = clog, 
+			    const string & title_  = "",
+			    const string & indent_ = "",
+			    bool inherit_          = false) const;
 
     void dump () const
     {
-      tree_dump (std::clog);
+      tree_dump (clog);
     }
+
+    virtual bool is_on_curve (const vector_3d & position_, 
+			      double tolerance_ = USING_PROPER_TOLERANCE) const;
+
+    virtual vector_3d get_direction_on_curve (const vector_3d & position_) const;
+ 
 
     void make_vertex_collection (basic_polyline_3d &) const;
     
     basic_polyline_3d make_vertex_collection () const;
 
     /* interface i_serializable */
-    static const std::string SERIAL_TAG;
+    static const string SERIAL_TAG;
     
-    virtual const std::string & get_serial_tag () const;
+    virtual const string & get_serial_tag () const;
     
   private:
       
@@ -97,14 +113,6 @@ namespace geomtools {
       ar_ & boost::serialization::make_nvp ("first", __first);
       ar_ & boost::serialization::make_nvp ("last", __last);
     }
-
-    /*
-  public:
-    
-    static void print_xyz (std::ostream & out_, 
-			   const line_3d & line_, 
-			   double step_ = 0.0);
-    */
 
   };
 
