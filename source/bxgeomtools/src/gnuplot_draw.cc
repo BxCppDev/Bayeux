@@ -248,6 +248,20 @@ namespace geomtools {
   }
 
   void 
+  gnuplot_draw::draw_cylinder (std::ostream & out_, 
+			       const vector_3d & pos_, 
+			       const rotation_3d & rot_,
+			       const cylinder & c_, 
+			       size_t arc_sampling_)
+  {
+    draw_cylinder (out_, pos_, rot_, 
+		   c_.get_r (),
+		   c_.get_z (),
+		   arc_sampling_);
+  }
+  
+
+  void 
   gnuplot_draw::draw_cylinder (std::ostream & out_,
 			       const vector_3d & position_, 
 			       const rotation_3d & rotation_,

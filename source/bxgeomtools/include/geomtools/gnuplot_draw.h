@@ -22,6 +22,9 @@
 
 #include <geomtools/utils.h>
 #include <geomtools/box.h>
+#include <geomtools/cylinder.h>
+#include <geomtools/sphere.h>
+#include <geomtools/tube.h>
 
 namespace geomtools {
 
@@ -113,6 +116,13 @@ namespace geomtools {
 		   const rotation_3d &,
 		   double, 
 		   double, 
+		   size_t = 36);
+
+    static void 
+    draw_cylinder (std::ostream &, 
+		   const vector_3d &, 
+		   const rotation_3d &,
+		   const cylinder &, 
 		   size_t = 36);
 
     static void 
