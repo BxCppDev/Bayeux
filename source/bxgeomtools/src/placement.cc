@@ -46,20 +46,58 @@ namespace geomtools {
   {
     return __rotation;
   }
-  
-  void 
-  placement::set_orientation (const rotation_3d & new_value_)
+
+  double placement::get_phi () const
   {
-    __rotation = new_value_;
+    return __phi;
+  }
+
+  double placement::get_theta () const
+  {
+    return __theta;
+  }
+
+  double placement::get_delta () const
+  {
+    return __delta;
+  }
+  
+  void placement::__compute_orientation ()
+  {
+    geomtools::create_rotation_3d (__rotation, __phi, __theta, __delta);
     __inverse_rotation = __rotation.inverse ();
+  }
+
+  bool placement::has_angles () const
+  {
+    return ((__phi == __phi) && (__theta == __theta) && (__delta == __delta));
+  }
+
+  void placement::set_orientation (const rotation_3d & r_)
+  {
+    __phi = std::numeric_limits<double>::quiet_NaN();
+    __theta = std::numeric_limits<double>::quiet_NaN();
+    __delta = std::numeric_limits<double>::quiet_NaN();
+    __rotation = r_;
+    __inverse_rotation = __rotation.inverse ();    
   }
 
   void 
   placement::set_orientation (double phi_, double theta_, double delta_)
   {
+    __phi = phi_;
+    __theta = theta_;
+    __delta = delta_;
+    __compute_orientation ();
+    /*
     rotation_3d r;
     geomtools::create_rotation_3d (r, phi_, theta_, delta_);
-    set_orientation (r);
+    __set_orientation (r);
+    */
+    /*
+    geomtools::create_rotation_3d (__rotation, __phi, __theta, __delta);
+    __inverse_rotation = __rotation.inverse ();
+    */
   }
   
   const rotation_3d & 
@@ -71,6 +109,7 @@ namespace geomtools {
   // ctor/dtor:
   placement::placement ()
   {
+    __phi = __theta = __delta = 0.0;
   }
 
   placement::placement (const vector_3d & translation_, 
@@ -78,6 +117,7 @@ namespace geomtools {
 			double theta_,
 			double delta_)
   {
+    __phi = __theta = __delta = 0.0;
     set_translation (translation_);
     set_orientation (phi_, theta_, delta_);
   }
@@ -191,7 +231,21 @@ namespace geomtools {
 
     out_ << indent << i_tree_dumpable::tag << "Translation : " 
 	 << __translation  << endl;
-
+    out_ << indent << i_tree_dumpable::tag << "Angles : "
+	 << (has_angles ()? "Yes": "No") << endl;
+    if (has_angles ())
+      {
+	out_ << indent << i_tree_dumpable::skip_tag 
+	     << i_tree_dumpable::tag << "Phi :   "
+	     << __phi / CLHEP::degree << " degree" << endl;
+	out_ << indent << i_tree_dumpable::skip_tag 
+	     << i_tree_dumpable::tag << "Theta : "
+	     << __theta / CLHEP::degree << " degree"  << endl;
+	out_ << indent << i_tree_dumpable::skip_tag 
+	     << i_tree_dumpable::last_tag << "Delta : " 
+	     << __delta / CLHEP::degree << " degree"  << endl;
+      }
+ 
     {
       ostringstream oss_title;
       oss_title << indent << i_tree_dumpable::tag << "Rotation :";
@@ -222,6 +276,8 @@ namespace geomtools {
 		   const string & title_, 
 		   const string & indent_) const
   {
+    tree_dump (out_, title_, indent_);
+    /*
     using namespace std;
     string indent = indent_;    
     string title = title_;
@@ -234,6 +290,7 @@ namespace geomtools {
 
     out_ << indent << tag << "Translation : " 
 	 << __translation  << endl;
+    */
     /*
     tree_dump (__rotation, out_, tag + "Rotation :", indent + tagc);
     tree_dump (__inverse_rotation, out_, 

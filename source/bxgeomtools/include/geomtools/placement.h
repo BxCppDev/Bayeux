@@ -33,6 +33,7 @@ namespace geomtools {
     {
     private: 
       vector_3d    __translation;      // absolute position in mother frame
+      double       __phi, __theta, __delta;
       rotation_3d  __rotation;         // mother->child frame coord. transformation
       rotation_3d  __inverse_rotation; // child->mother frame coord. transformation
     public:
@@ -47,13 +48,27 @@ namespace geomtools {
 
       void set_translation (const vector_3d &);
 
+      double get_phi () const;
+
+      double get_theta () const;
+
+      double get_delta () const;
+
+      bool has_angles () const;
+
       const rotation_3d & get_rotation () const;
 
       const rotation_3d & get_inverse_rotation () const;
 
-      void set_orientation (const rotation_3d &);
+    private:
+      void __compute_orientation ();
 
-      void set_orientation (double , double , double);
+    public:
+
+      void set_orientation (double phi_, double theta_, double delta_);
+
+      // Not recommended at all:
+      void set_orientation (const rotation_3d &);
 
       // ctor/dtor:
     public: 
