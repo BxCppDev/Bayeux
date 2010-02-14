@@ -228,7 +228,7 @@ namespace geomtools {
       {
         out_ << indent << title_ << endl;
       }
-
+ 
     out_ << indent << i_tree_dumpable::tag << "Translation : " 
 	 << __translation  << endl;
     out_ << indent << i_tree_dumpable::tag << "Angles : "
