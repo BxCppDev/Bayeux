@@ -661,9 +661,9 @@ function do_info ()
 	pkg_url=$(cat ${pkgi_file} | grep "URL=" | cut -d= -f2)
 	pkg_svn_rep=$(cat ${pkgi_file} | grep "SVN base repository=" | cut -d= -f2)
 	pkg_desc=$(cat ${pkgi_file} | grep "description=" | cut -d= -f2)
-	test -z ${pkg_url} && pkg_url="no URL"
-	test -z ${pkg_desc} && pkg_desc="no description"
-	test -z ${pkg_svn_rep} && pkg_svn_rep="no SVN repository"
+	test -z "${pkg_url}" && pkg_url="no URL"
+	test -z "${pkg_desc}" && pkg_desc="no description"
+	test -z "${pkg_svn_rep}" && pkg_svn_rep="no SVN repository"
 	echo -e "\tName                : ${pack_name}"
 	echo -e "\tVersion             : ${pkg_version}"
 	echo -e "\tDescription         : ${pkg_desc}"
