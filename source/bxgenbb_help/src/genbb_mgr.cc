@@ -42,7 +42,7 @@ namespace genbb {
       }
     if (is_alpha ()) 
       {
-	return 3.727417 * CLHEP::GeV;
+	return 3.72738 *CLHEP::GeV;
       }
     //if (is_gamma ()) 
     return 0.0;
@@ -54,6 +54,19 @@ namespace genbb {
     double kinetic_energy 
       = std::sqrt (momentum.mag () * momentum.mag () + mass * mass) - mass;
     return kinetic_energy;
+  }
+
+  double primary_particle::get_initial_angle () const
+  {
+    double total_momentum = momentum.mag ();
+    double cos_phi        = momentum.z() / total_momentum;
+    /*
+    std::cerr << "cos(phi) = " << cos_phi << std::endl
+	      << "|-- phi = " << acos ( cos_phi ) << " rad" << std::endl
+	      << "`-- phi = " << acos ( cos_phi ) * 180. / M_PI
+	      << " deg" << std::endl;
+    */
+    return acos ( cos_phi ) * 180. / M_PI;
   }
 
   void 
@@ -125,7 +138,12 @@ namespace genbb {
 	  {
 	    it->dump (out_, (indent + "|   ")); 
 	  }
-	out_ << indent << "`-- classification: " << get_classification () << std::endl;
+	out_ << indent << "|-- classification: '" << get_classification ()
+	     << "'" << std::endl;
+	out_ << indent << "|-- initial_energy: " << get_initial_energy ()
+	     << " MeV" << std::endl;
+	out_ << indent << "`-- initial_angle:  " << get_initial_angle ()
+	     << " rad" << std::endl;
       }
     else
       {
@@ -188,10 +206,14 @@ namespace genbb {
   
   void 
   genbb_mgr::load_next (primary_event & event_, 
-			bool compute_classification_)
+			bool compute_classification_,
+			bool compute_initial_energy_,
+			bool compute_initial_angle_)
   {
     event_ = __current;
     if (compute_classification_) event_.compute_classification ();
+    if (compute_initial_energy_) event_.compute_initial_energy ();
+    if (compute_initial_angle_)  event_.compute_initial_angle ();
     __load_next ();
   }
 

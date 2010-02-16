@@ -92,6 +92,8 @@ namespace genbb {
 
     double get_kinetic_energy () const;
 
+    double get_initial_angle () const;
+
     static std::string get_label (int type_);
 
     primary_particle ();
@@ -134,6 +136,8 @@ namespace genbb {
     double          time;
     particles_col_t particles;
     std::string     classification;
+    double          initial_energy;
+    double          initial_angle;
 
     const std::string & get_classification () const
     {
@@ -178,6 +182,64 @@ namespace genbb {
       set_classification (cl_ss.str ());
     }
 
+    double get_initial_energy () const
+    {
+      return initial_energy;
+    }
+
+    void set_initial_energy (const double & ie_)
+    {
+      initial_energy = ie_;
+    }
+
+    void reset_initial_energy ()
+    {
+      initial_energy = 0;
+    }
+
+    void compute_initial_energy ()
+    {
+      double ie = 0.;
+      for (particles_col_t::const_iterator i = particles.begin ();
+	   i != particles.end ();
+	   i++)
+	{
+	  const primary_particle & p = *i;
+	  ie += p.get_kinetic_energy();
+	}
+      set_initial_energy ( ie );
+    }
+
+    double get_initial_angle () const
+    {
+      return initial_angle;
+    }
+
+    void set_initial_angle (const double & ia_)
+    {
+      initial_angle = ia_;
+    }
+
+    void reset_initial_angle ()
+    {
+      initial_angle = 0;
+    }
+
+    void compute_initial_angle ()
+    {
+      double ia = 0.;
+      double n  = 0.;
+      for (particles_col_t::const_iterator i = particles.begin ();
+	   i != particles.end ();
+	   i++)
+	{
+	  const primary_particle & p = *i;
+	  ia += p.get_initial_angle();
+	  n  += 1.;
+	}
+      set_initial_angle ( ia / n );
+    }
+
     primary_event ()
     {
       time = -1.;
@@ -193,6 +255,8 @@ namespace genbb {
       time = -1.;
       particles.clear ();
       classification = "";
+      initial_energy = 0;
+      initial_angle  = 0;
     }
 
     void dump (std::ostream & out_ = std::clog,
@@ -207,6 +271,8 @@ namespace genbb {
       ar_ & boost::serialization::make_nvp ("time", time);
       ar_ & boost::serialization::make_nvp ("particles", particles);
       ar_ & boost::serialization::make_nvp ("classification", classification);
+      ar_ & boost::serialization::make_nvp ("initial_energy", initial_energy);
+      ar_ & boost::serialization::make_nvp ("initial_angle", initial_angle);
     }
 
   };
@@ -274,7 +340,9 @@ namespace genbb {
     bool has_next ();
 
     void load_next (primary_event & event_, 
-		    bool compute_classification_ = true);
+		    bool compute_classification_ = true, 
+		    bool compute_initial_energy_ = false, 
+		    bool compute_initial_angle_  = false);
 
     void dump (std::ostream & out_ = std::clog) const;
 
