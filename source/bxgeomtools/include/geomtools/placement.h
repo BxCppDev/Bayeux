@@ -20,16 +20,14 @@
 #include <iomanip>
 #include <string>
 
-#include <datatools/utils/i_tree_dump.h>
-
-#include <geomtools/utils.h>
+#include <geomtools/i_placement.h>
 
 namespace geomtools {
 
   using namespace std;
 
   class placement
-    : public datatools::utils::i_tree_dumpable
+    : public i_placement
     {
     private: 
       vector_3d    __translation;      // absolute position in mother frame
@@ -60,6 +58,12 @@ namespace geomtools {
 
       const rotation_3d & get_inverse_rotation () const;
 
+    public: 
+      // i_placement interface:
+      virtual size_t get_number_of_items () const;
+   
+      virtual void get_placement (int item_, placement & p_) const;
+ 
     private:
       void __compute_orientation ();
 
@@ -70,15 +74,17 @@ namespace geomtools {
       // Not recommended at all:
       void set_orientation (const rotation_3d &);
 
-      // ctor/dtor:
     public: 
+      // ctor:
       placement ();
 
+      // ctor:
       placement (const vector_3d & translation_, 
 		 double phi_,
 		 double theta_,
 		 double delta_);
 
+      // ctor:
       placement (double x_,
 		 double y_,
 		 double z_, 
@@ -86,6 +92,7 @@ namespace geomtools {
 		 double theta_,
 		 double delta_);
 
+      // dtor:
       virtual ~placement ();
 
       virtual void reset ();
@@ -107,6 +114,7 @@ namespace geomtools {
 
       vector_3d child_to_mother_direction (const vector_3d &) const;
 
+      // i_tree_dump interface:
       virtual void tree_dump (ostream & out_  = clog, 
 			      const string & title_ = "geomutils::placement", 
 			      const string & indent_ = "", 

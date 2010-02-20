@@ -97,14 +97,62 @@ namespace geomtools {
     sh_.__shape = sh3d_;
     sh_.__placement = p_;
   }
+  
+  void i_composite_shape_3d::shape_t::tree_dump (ostream & out_, 
+						 const string & title_, 
+						 const string & indent_, 
+						 bool inherit_) const
+  {
+    namespace du = datatools::utils;
+    string indent;
+    if (! indent_.empty ()) indent = indent_;
+    if (! title_.empty ()) 
+      {
+        out_ << indent << title_ << endl;
+      }
 
-  void 
-  i_composite_shape_3d::shape_t::dump (std::ostream & out_) const
+    {
+      if (__shape != 0)
+	{
+	  out_ << indent << du::i_tree_dumpable::tag 
+	       << "Shape = ";
+	  out_ << "'" << __shape->get_shape_name () << "' " 
+	       << (__delete? "(owned)": "(not owned)") << endl;
+	  ostringstream oss_indent;
+	  oss_indent << indent << du::i_tree_dumpable::skip_tag;
+	  __shape->tree_dump (out_, 
+			      "", 
+			      oss_indent.str (), 
+			      false);
+	}
+      else
+	{
+	  out_ << indent << du::i_tree_dumpable::tag 
+	       << "Shape = " << "<no shape>" << endl;
+	}
+    }
+
+    {
+      out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)  
+	   << "Placement : " << endl;
+      ostringstream oss_indent;
+      oss_indent << indent << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+      __placement.tree_dump (out_, 
+			     "", 
+			     oss_indent.str (), 
+			     false);
+    }
+
+    return;
+  }
+
+  void i_composite_shape_3d::shape_t::dump (std::ostream & out_) const
   {
     out_ << "i_composite_shape_3d::shape_t" << std::endl;
     out_ << "|-- delete: " << __delete << std::endl;
     out_ << "|-- shape: " << std::hex << (void *) __shape << std::dec << std::endl;
-    out_ << "`-- placement: " << std::endl; // << __placement << std::endl;
+    out_ << "`-- placement: " << std::endl; 
+    return;
   }
 
   /***************************************/
@@ -176,6 +224,42 @@ namespace geomtools {
   {
     if (i_ == 0) return __shape1;
     return __shape2;
+  }
+
+  
+  void i_composite_shape_3d::tree_dump (ostream & out_, 
+					const string & title_, 
+					const string & indent_, 
+					bool inherit_) const
+  {
+    namespace du = datatools::utils;
+    string indent;
+    if (! indent_.empty ()) indent = indent_;
+    i_object_3d::tree_dump (out_, title_, indent_, true);
+
+    {
+     out_ << indent << du::i_tree_dumpable::tag 
+	  << "Shape 1 : " << endl;
+     ostringstream oss_indent;
+     oss_indent << indent << i_tree_dumpable::skip_tag;
+     get_shape1 ().tree_dump (out_, 
+			      "", 
+			      oss_indent.str (), 
+			      false);
+    }
+
+    {
+     out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)   
+	  << "Shape 2 : " << endl;
+     ostringstream oss_indent;
+     oss_indent << indent << i_tree_dumpable::inherit_skip_tag (inherit_);
+     get_shape2 ().tree_dump (out_, 
+			      "", 
+			      oss_indent.str (), 
+			      false);
+    }
+
+    return;
   }
 
 } // end of namespace geomtools

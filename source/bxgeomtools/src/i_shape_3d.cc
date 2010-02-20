@@ -6,6 +6,8 @@
 
 namespace geomtools {
 
+  using namespace std;
+
   const double i_shape_3d::DEFAULT_SKIN = i_object_3d::DEFAULT_TOLERANCE;
   const double i_shape_3d::USING_PROPER_SKIN = i_object_3d::USING_PROPER_TOLERANCE;
   
@@ -16,6 +18,7 @@ namespace geomtools {
    
   void i_shape_3d::set_skin (double skin_)
   {
+    //clog << "DEVEL: i_shape_3d::set_skin: skin_ = " << skin_ << endl;
     set_tolerance (skin_);
   }
  
@@ -24,10 +27,24 @@ namespace geomtools {
     return DIMENSIONAL_3;
   }
      
-  i_shape_3d::i_shape_3d (double skin_) : i_object_3d (skin_)
+  // ctor:
+  i_shape_3d::i_shape_3d () : i_object_3d ()
   {
   }
+     
+  // ctor:
+  i_shape_3d::i_shape_3d (double skin_) : i_object_3d (skin_)
+  {
+    /*
+    clog << "DEVEL: i_shape_3d::i_shape_3d: i_object_3d::DEFAULT_TOLERANCE = " 
+	 << i_object_3d::DEFAULT_TOLERANCE << endl;
+    clog << "DEVEL: i_shape_3d::i_shape_3d: i_shape_3d::DEFAULT_SKIN = " 
+	 << i_shape_3d::DEFAULT_SKIN << endl;
+    clog << "DEVEL: i_shape_3d::i_shape_3d: skin_ = " << skin_ << endl;
+    */
+  }
   
+  // dtor:
   i_shape_3d::~i_shape_3d ()
   {
   }

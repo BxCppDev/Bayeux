@@ -41,19 +41,35 @@ namespace geomtools {
     return __parameters;
   }
 
-  void physical_volume::set_placement (const placement & p_)
+  bool physical_volume::has_placement () const
   {
-    __placement = p_;
+    return __placement != 0;
+  }
+
+  void physical_volume::set_placement (const i_placement * p_)
+  {
+    __clear_placement ();
+    if (p_ != 0)
+      {
+	__own_placement = true;
+	__placement = p_;
+      }
+  }
+
+  void physical_volume::set_placement (const i_placement & p_)
+  {
+    __clear_placement ();
+    __own_placement = false;
+    __placement = &p_;
   }
   
-  const placement & physical_volume::get_placement () const
+  const i_placement & physical_volume::get_placement () const
   {
-    return __placement;
-  }
-  
-  placement & physical_volume::get_placement ()
-  {
-    return __placement;
+    if (! __placement)
+      {
+	throw runtime_error ("physical_volume::get_placement: Missing placement !");
+      }
+    return *__placement;
   }
 
   bool physical_volume::has_logical () const
@@ -61,6 +77,19 @@ namespace geomtools {
     return __logical != 0;
   }
 
+  void physical_volume::__clear_placement ()
+  {
+    if (__placement != 0)
+      {
+	if (__own_placement)
+	  {
+	    delete __placement;
+	  }
+	__placement = 0;
+	__own_placement = false;
+      }
+  }
+ 
   void physical_volume::__clear_logical ()
   {
     if (__logical != 0)
@@ -108,11 +137,15 @@ namespace geomtools {
   void physical_volume::set_mother (const logical_volume & mother_)
   {
     __mother = &mother_;
+    logical_volume & the_mother = const_cast<logical_volume &> (mother_);
+    the_mother.add_physical (*this, this->get_name ());
   }
   
   physical_volume::physical_volume ()
   {
     __locked = false;
+    __own_placement = false;
+    __placement = 0;
     __own_logical = false;
     __logical = 0;
     __mother = 0;
@@ -121,6 +154,8 @@ namespace geomtools {
   physical_volume::physical_volume (const string & name_)
   {
     __locked = false;
+    __own_placement = false;
+    __placement = 0;
     __own_logical = false;
     __logical = 0;
     __mother = 0;
@@ -130,9 +165,44 @@ namespace geomtools {
   physical_volume::physical_volume (const string & name_, 
 				    const logical_volume & logical_,
 				    const logical_volume & mother_,
-				    const placement & placement_)
+				    const i_placement    & placement_)
   {
     __locked = false;
+    __own_placement = false;
+    __placement = 0;
+    __own_logical = false;
+    __logical = 0;
+    __mother = 0;
+    set_name (name_);
+    set_logical (logical_);    
+    set_mother (mother_);    
+    set_placement (placement_);    
+  }
+  
+  physical_volume::physical_volume (const string & name_, 
+				    const logical_volume * logical_,
+				    const logical_volume & mother_,
+				    const i_placement    & placement_)
+  {
+    __locked = false;
+    __own_placement = false;
+    __placement = 0;
+    __own_logical = false;
+    __logical = 0;
+    set_name (name_);
+    set_logical (logical_);    
+    set_mother (mother_);    
+    set_placement (placement_);    
+  }
+
+  physical_volume::physical_volume (const string & name_, 
+				    const logical_volume & logical_,
+				    const logical_volume & mother_,
+				    const i_placement    * placement_)
+  {
+    __locked = false;
+    __own_placement = false;
+    __placement = 0;
     __own_logical = false;
     __logical = 0;
     set_name (name_);
@@ -144,7 +214,7 @@ namespace geomtools {
   physical_volume::physical_volume (const string & name_, 
 				    const logical_volume * logical_,
 				    const logical_volume & mother_,
-				    const placement & placement_)
+				    const i_placement    * placement_)
   {
     __locked = false;
     __own_logical = false;
@@ -158,6 +228,7 @@ namespace geomtools {
   physical_volume::~physical_volume ()
   {
     __locked = false;
+    __clear_placement ();
     __clear_logical ();
   }
 
@@ -173,74 +244,74 @@ namespace geomtools {
       {
         out_ << indent << title_ << std::endl;
       }
+
     out_ << indent << i_tree_dumpable::tag 
 	 << "Name    = " << __name << std::endl;
 
     out_ << indent << i_tree_dumpable::tag 
 	 << "Locked    = " << (__locked? "Yes": "No") << std::endl;
 
-    out_ << indent << du::i_tree_dumpable::tag
-	 << "Parameters : ";
+    {
+      // parameters:
+      out_ << indent << du::i_tree_dumpable::tag
+	   << "Parameters : ";
       if ( __parameters.size () == 0) 
-        {
-          out_ << "<empty>"; 
-        }
+	{
+	  out_ << "<empty>"; 
+	}
       out_ << std::endl;
       {
-        std::ostringstream indent_oss;
+	std::ostringstream indent_oss;
         indent_oss << indent;
         indent_oss << du::i_tree_dumpable::skip_tag;
         __parameters.tree_dump (out_,"",indent_oss.str ());
-      }
- 
-      /*
-	out_ << indent << i_tree_dumpable::tag 
-	<< "Own its logical    = " << (__own_logical? "Yes": "No") << std::endl;
-      */
-    out_ << indent << i_tree_dumpable::tag 
-         << "Logical = ";
-    if (has_logical ())
-      {
-	out_ << "'" << __logical->get_name () << "' " 
-	     << (__own_logical? "(owned)": "(not owned)");
-      }
-    else
-      {
-	out_ << "<no logical>";
-      }
-    out_ << std::endl; 
-
-    out_ << indent << i_tree_dumpable::tag 
-         << "Mother = ";
-    if (has_mother ())
-      {
-	out_ << "'" << __mother->get_name () << "'";
-      }
-    else
-      {
-	out_ << "<no mother>";
-      }
-    out_ << std::endl; 
-
-    {
-      out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
-	   << "Placement : " << endl;
-      ostringstream oss_title;
-      oss_title << i_tree_dumpable::inherit_tag (inherit_) << "Placement:";
-      ostringstream oss_indent;
-      oss_indent << indent << i_tree_dumpable::inherit_skip_tag (inherit_);
-
-      /*
-	std::ostringstream indent_oss;
-      indent_oss << indent;
-      indent_oss << du::i_tree_dumpable::skip_tag;
-      */
-      __placement.tree_dump (out_, 
-			     "", //oss_title.str (), 
-			     oss_indent.str (), 
-			     inherit_);
+      }      
     }
 
+    {
+      // Logical:
+	out_ << indent << i_tree_dumpable::tag 
+	     << "Logical = ";
+	if (has_logical ())
+	  {
+	    out_ << "'" << __logical->get_name () << "' " 
+		 << (__own_logical? "(owned)": "(not owned)");
+	  }
+	else
+	  {
+	    out_ << "<no logical>";
+	  }
+	out_ << std::endl; 
+    }
+
+    {
+      out_ << indent << i_tree_dumpable::tag 
+	   << "Placement : " << endl;
+      //ostringstream oss_title;
+      //oss_title << i_tree_dumpable::inherit_tag (inherit_) << "Placement:";
+      ostringstream oss_indent;
+      oss_indent << indent << i_tree_dumpable::skip_tag;
+      __placement->tree_dump (out_, 
+			      "", 
+			      oss_indent.str (), 
+			      false);
+    }
+
+    {
+      // Mother:
+      out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
+	   << "Mother = ";
+      if (has_mother ())
+	{
+	  out_ << "'" << __mother->get_name () << "'";
+	}
+      else
+	{
+	  out_ << "<no mother>";
+	}
+      out_ << std::endl; 
+    }
+    return;
   }
 
 } // end of namespace geomtools

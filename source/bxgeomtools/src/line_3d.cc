@@ -105,30 +105,27 @@ namespace geomtools {
     return bpl;
   }
   
-  void 
-  line_3d::tree_dump (ostream &      out_, 
-		      const string & title_,
-		      const string & indent_,
-		      bool                inherit_) const
+  void line_3d::tree_dump (ostream &      out_, 
+			   const string & title_,
+			   const string & indent_,
+			   bool           inherit_) const
   {
+    namespace du = datatools::utils;
     string indent;
     if (! indent_.empty ())
       {
         indent = indent_;
       }
-    if ( !title_.empty () ) {
-      out_ << indent << title_ << endl;
-    }
-
-    namespace du = datatools::utils;
+    i_object_3d::tree_dump (out_, title_, indent_, true);
     out_ << indent << du::i_tree_dumpable::tag 
-	 << "first : " 
+	 << "First : " 
 	 << __first 
 	 << endl;
     out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_) 
-	 << "last : " 
+	 << "Last : " 
 	 << __last
 	 << endl;
+    return;
   }
 
   bool line_3d::is_on_curve (const vector_3d & position_, 

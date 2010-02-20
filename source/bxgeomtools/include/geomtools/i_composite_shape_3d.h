@@ -31,7 +31,7 @@ namespace geomtools {
     {
       
     public:
-      class shape_t
+      class shape_t : public datatools::utils::i_tree_dumpable
 	{
 	  bool         __delete;
 	  i_shape_3d * __shape;
@@ -73,7 +73,14 @@ namespace geomtools {
 				  const placement &, 
 				  shape_t &);
 
-	  void dump (ostream & out_ = clog) const;
+
+	  virtual void tree_dump (ostream & out_         = clog, 
+				  const string & title_  = "", 
+				  const string & indent_ = "", 
+				  bool inherit_          = false) const;
+
+	  void dump (std::ostream & out_ = clog) const;
+
 	};
 
 
@@ -99,6 +106,11 @@ namespace geomtools {
 
       void dump (ostream & out_ = clog) const;
 
+      virtual void tree_dump (ostream & out_         = clog, 
+			      const string & title_  = "", 
+			      const string & indent_ = "", 
+			      bool inherit_          = false) const;
+       
     private:
       shape_t __shape1;
       shape_t __shape2;

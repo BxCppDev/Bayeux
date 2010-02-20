@@ -39,11 +39,14 @@ namespace geomtools {
 
       void set_skin (double skin_);
 
-      i_shape_3d (double skin_ = DEFAULT_SKIN);
+      // ctor:
+      i_shape_3d ();
 
+      // ctor:
+      i_shape_3d (double skin_);
+
+      // dtor:
       virtual ~i_shape_3d ();
-
-      // virtual std::string get_shape_name () const = 0;
 
       virtual bool is_composite () const
       {
@@ -54,24 +57,25 @@ namespace geomtools {
       //	get_parameter(const std::string &) const = 0;
 
       virtual bool is_inside (const vector_3d &, 
-			      double skin_ = USING_PROPER_SKIN) const = 0;
+			      double skin_ = USING_PROPER_TOLERANCE) const = 0;
       
       virtual bool is_on_surface (const vector_3d &,
 				  int surface_mask_ = ALL_SURFACES, 
-				  double skin_ = USING_PROPER_SKIN) const = 0; 
+				  double skin_ = USING_PROPER_TOLERANCE) const = 0; 
       
       virtual vector_3d get_normal_on_surface (const vector_3d & position_) const = 0;
       
       virtual bool is_outside (const vector_3d &,
-			       double skin_ = USING_PROPER_SKIN) const; 
+			       double skin_ = USING_PROPER_TOLERANCE) const; 
       
 
       virtual bool find_intercept (const vector_3d & from_, 
 				   const vector_3d & direction_,
 				   intercept_t & intercept_,
-				   double skin_ = USING_PROPER_SKIN) const
+				   double skin_ = USING_PROPER_TOLERANCE) const
       {
 	// temporary:
+	// NOT IMPLEMENTED !
 	// default: no intercept on any face of the 3D shape...
 	intercept_.reset ();
 	return intercept_.is_ok ();

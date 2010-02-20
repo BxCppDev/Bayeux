@@ -25,7 +25,7 @@
 #include <datatools/utils/i_tree_dump.h>
 
 #include <geomtools/logical_volume.h>
-#include <geomtools/placement.h>
+#include <geomtools/i_placement.h>
 
 namespace geomtools {
 
@@ -39,14 +39,17 @@ namespace geomtools {
     string     __name;
     bool       __locked;
     properties __parameters;
-    placement  __placement;
-    bool       __own_logical;
+    bool                   __own_placement;
+    const i_placement *    __placement;
+    bool                   __own_logical;
     const logical_volume * __logical;
     const logical_volume * __mother;
 
   private:
     
     void __clear_logical ();
+    
+    void __clear_placement ();
     
   public:
 
@@ -64,11 +67,13 @@ namespace geomtools {
 
     properties & parameters ();
 
-    void set_placement (const placement &);
+    bool has_placement () const;
 
-    const placement & get_placement () const;
+    void set_placement (const i_placement &);
 
-    placement & get_placement ();
+    void set_placement (const i_placement *);
+
+    const i_placement & get_placement () const;
 
     bool has_logical () const;
 
@@ -86,17 +91,27 @@ namespace geomtools {
 
     physical_volume ();
 
-    physical_volume (const string &);
+    physical_volume (const string & name_);
 
-    physical_volume (const string &, 
+    physical_volume (const string & name_, 
 		     const logical_volume & logical_,
 		     const logical_volume & mother_,
-		     const placement & placement_);
+		     const i_placement    & placement_);
 
-    physical_volume (const string &, 
+    physical_volume (const string & name_, 
 		     const logical_volume * logical_,
 		     const logical_volume & mother_,
-		     const placement & placement_);
+		     const i_placement    & placement_);
+    
+    physical_volume (const string & name_,   
+		     const logical_volume & logical_,
+		     const logical_volume & mother_,
+		     const i_placement    * placement_);
+    
+    physical_volume (const string & name_,  
+		     const logical_volume * logical_,
+		     const logical_volume & mother_,
+		     const i_placement    * placement_);
 
     virtual ~physical_volume ();
 

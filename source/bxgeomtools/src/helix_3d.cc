@@ -329,42 +329,40 @@ namespace geomtools {
     out_ << endl;
   }
   
-  void 
-  helix_3d::tree_dump (ostream &      out_, 
-			 const string & title_,
-			 const string & indent_,
-			 bool                inherit_) const
+  void helix_3d::tree_dump (ostream &      out_, 
+			    const string & title_,
+			    const string & indent_,
+			    bool                inherit_) const
   {
     string indent;
     if (! indent_.empty ())
       {
         indent = indent_;
       }
-    if ( !title_.empty () ) {
-      out_ << indent << title_ << endl;
-    }
+    i_object_3d::tree_dump (out_, title_, indent_, true);
 
     namespace du = datatools::utils;
     out_ << indent << du::i_tree_dumpable::tag 
-	 << "center : " 
-	 << __center 
+	 << "Center : " 
+	 << __center  / CLHEP::mm << " mm"
 	 << endl;
     out_ << indent << du::i_tree_dumpable::tag 
-	 << "radius : " 
-	 << __radius 
+	 << "Radius : " 
+	 << __radius / CLHEP::mm << " mm"
 	 << endl;
     out_ << indent << du::i_tree_dumpable::tag 
-	 << "step : " 
-	 << __step 
+	 << "Step  : " 
+	 << __step // << " mm/round"
 	 << endl;
     out_ << indent << du::i_tree_dumpable::tag 
-	 << "t1 : " 
-	 << __t1 << " (" << get_angle1 () << ')'
+	 << "T1    : " 
+	 << __t1 << " (" << get_angle1 () / CLHEP::radian << " radian)"
 	 << endl;
     out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_) 
-	 << "t2 : " 
-	 << __t2 << " (" << get_angle2 () << ')'
+	 << "T2    : " 
+	 << __t2 << " (" << get_angle2 () / CLHEP::radian << " radian)"
 	 << endl;
+    return;
   }
 
   void 

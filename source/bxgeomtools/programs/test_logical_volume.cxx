@@ -8,6 +8,7 @@
 
 #include <geomtools/box.h>
 #include <geomtools/logical_volume.h>
+#include <geomtools/physical_volume.h>
 
 using namespace std;
 
@@ -16,7 +17,7 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'geom_id'!" << endl; 
+      clog << "Test program for class 'logical_volume' !" << endl; 
   
       bool debug = false;
 
@@ -30,7 +31,9 @@ int main (int argc_, char ** argv_)
           iarg++;
       }
 
+      if (debug) clog << "DEBUG: Creating 'world_box'..." << endl;
       geomtools::box world_box (1.0, 1.0, 1.0);
+      if (debug) clog << "DEBUG: 'world_box' done." << endl;
       geomtools::logical_volume world_log ("world", world_box);
       world_log.parameters ().store ("material", "vacuum");
       world_log.parameters ().store ("visualization.visible", false);
@@ -49,7 +52,7 @@ int main (int argc_, char ** argv_)
       gas_log.parameters ().store ("visualization.visible", true);  
       gas_log.parameters ().store ("visualization.color", "blue");  
       gas_log.tree_dump (cout, "Air");
-
+ 
     }
   catch (exception & x)
     {

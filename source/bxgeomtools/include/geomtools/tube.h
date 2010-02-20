@@ -126,6 +126,11 @@ namespace geomtools {
     friend std::istream & 
     operator>>(std::istream &, tube &);
 
+    virtual void tree_dump (ostream & out_         = clog, 
+			    const string & title_  = "", 
+			    const string & indent_ = "", 
+			    bool inherit_          = false) const;
+
   };
 
 } // end of namespace geomtools

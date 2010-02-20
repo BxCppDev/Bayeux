@@ -308,6 +308,27 @@ namespace geomtools {
     return in_;
   }
 
+
+  void tube::tree_dump (ostream & out_, 
+			    const string & title_, 
+			    const string & indent_, 
+			    bool inherit_) const
+  {
+    namespace du = datatools::utils;
+    string indent;
+    if (! indent_.empty ()) indent = indent_;
+    i_object_3d::tree_dump (out_, title_, indent_, true);
+
+    out_ << indent << du::i_tree_dumpable::tag
+	 << "R(internal) : " << get_inner_r () / CLHEP::mm << " mm" << endl;
+
+    out_ << indent << du::i_tree_dumpable::tag
+	 << "R(external) : " << get_outer_r () / CLHEP::mm << " mm" << endl;
+
+    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)  
+	 << "Z : " << get_z () / CLHEP::mm << " mm" << endl;
+    return;
+  }
   
 } // end of namespace geomtools
 

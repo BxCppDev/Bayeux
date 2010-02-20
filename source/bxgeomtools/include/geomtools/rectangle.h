@@ -1,5 +1,5 @@
 // -*- mode: c++ ; -*- 
-/* disk.h
+/* rectangle.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-14
  * Last modified: 2010-02-14
@@ -7,14 +7,14 @@
  * License: 
  * 
  * Description: 
- *   A disk in x-y plane
+ *   A rectangle in x-y plane
  * 
  * History: 
  * 
  */
 
-#ifndef __geomtools__disk_h
-#define __geomtools__disk_h 1
+#ifndef __geomtools__rectangle_h
+#define __geomtools__rectangle_h 1
 
 #include <cstdlib>
 #include <cmath>
@@ -31,37 +31,36 @@ namespace geomtools {
 
   using namespace std;
 
-  class disk : public i_shape_2d
+  class rectangle : public i_shape_2d
   {
     
   public:
-    static const string DISK_LABEL;
+    static const string RECTANGLE_LABEL;
     
   private: 
-    double __r;
+    double __x;
+    double __y;
 
   public: 
 
     bool is_valid () const;
 
-    double get_r () const;
+    double get_x () const;
 
-    double get_radius () const;
+    double get_y () const;
 
-    void set_r (double);
+    void set_x (double);
 
-    void set_diameter (double);
- 
-    double get_diameter () const;
+    void set_y (double);
  
   public: 
     // ctor:
-    disk ();
+    rectangle ();
 
-    disk (double r_);
+    rectangle (double x_, double y_);
 
     // dtor:
-    virtual ~disk ();
+    virtual ~rectangle ();
   
     // methods:
     virtual string get_shape_name () const;
@@ -86,6 +85,6 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // __geomtools__disk_h
+#endif // __geomtools__rectangle_h
 
-// end of disk.h
+// end of rectangle.h

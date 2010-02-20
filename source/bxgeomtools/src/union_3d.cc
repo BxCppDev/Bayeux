@@ -10,8 +10,7 @@ namespace geomtools {
 
   bool union_3d::g_devel = false;
 
-  std::string 
-  union_3d::get_shape_name () const
+  std::string union_3d::get_shape_name () const
   {
     return UNION_3D_LABEL;
   }
@@ -24,9 +23,8 @@ namespace geomtools {
   {
   }
   
-  bool 
-  union_3d::is_inside (const vector_3d & position_, 
-		       double skin_) const
+  bool union_3d::is_inside (const vector_3d & position_, 
+			    double skin_) const
   {
     const shape_t & sh1 = get_shape1 ();
     const shape_t & sh2 = get_shape2 ();

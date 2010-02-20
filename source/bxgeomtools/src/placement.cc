@@ -1,5 +1,5 @@
 // -*- mode: c++; -*- 
-/* placement.cc
+/* placement.cc 
  */
 
 #include <geomtools/placement.h>
@@ -105,9 +105,26 @@ namespace geomtools {
   {
     return __inverse_rotation;
   }
+ 
+  // i_placement interface:
+  size_t placement::get_number_of_items () const
+  {
+    return 1;
+  }
   
+  void placement::get_placement (int item_, placement & p_) const
+  {
+    if (item_ != 0)
+      {
+	ostringstream message;
+	message << "placement::get_placement: Invalid item index '" << item_ << "' !" << endl;
+	throw runtime_error (message.str ());
+      }
+    p_ = *this;
+  }
+ 
   // ctor/dtor:
-  placement::placement ()
+  placement::placement () : i_placement ()
   {
     __phi = __theta = __delta = 0.0;
   }
@@ -137,10 +154,9 @@ namespace geomtools {
   {
   }
 
-  void 
-  placement::reset ()
+  void placement::reset ()
   {
-    set_translation (vector_3d (0., 0., 0.));
+    set_translation (0., 0., 0.);
     set_orientation (0., 0., 0.);
   }
   
@@ -224,11 +240,14 @@ namespace geomtools {
     namespace du = datatools::utils;
     string indent;
     if (! indent_.empty ()) indent = indent_;
+    /*
     if (! title_.empty ()) 
       {
         out_ << indent << title_ << endl;
       }
- 
+    */
+    this->i_placement::tree_dump (out_, title_, indent, true);
+
     out_ << indent << i_tree_dumpable::tag << "Translation : " 
 	 << __translation  << endl;
     out_ << indent << i_tree_dumpable::tag << "Angles : "

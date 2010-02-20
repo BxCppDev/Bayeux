@@ -20,6 +20,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <map>
 
 #include <datatools/utils/properties.h>
 #include <datatools/utils/i_tree_dump.h>
@@ -30,16 +31,22 @@ namespace geomtools {
 
   using namespace std;
   using namespace datatools::utils;
- 
+
+  class physical_volume;
+
   class logical_volume
     : public datatools::utils::i_tree_dumpable
   {
+  public:
+    typedef map<string, const physical_volume *> physicals_col_t;
+
   private:
     string     __name;
     bool       __locked;
     properties __parameters;
     bool       __own_shape;
     const i_shape_3d * __shape;
+    physicals_col_t  __physicals;
 
   private:
     
@@ -83,7 +90,13 @@ namespace geomtools {
 			    const string & title_  = "", 
 			    const string & indent_ = "", 
 			    bool inherit_          = false) const;
+
+    bool has_physical (const string & name_) const;
+
+    const physical_volume & get_physical (const string & name_) const;
       
+    void add_physical (const physical_volume & phys_, const string & name_ = "");
+
   };
 
 } // end of namespace geomtools

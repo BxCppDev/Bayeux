@@ -37,7 +37,6 @@ namespace geomtools {
 
   class helix_3d : 
     public i_shape_1d,
-    public datatools::utils::i_tree_dumpable,
     public datatools::serialization::i_serializable  
   {
   public: 

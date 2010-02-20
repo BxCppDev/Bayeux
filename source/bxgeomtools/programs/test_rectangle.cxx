@@ -1,12 +1,12 @@
 // -*- mode: c++ ; -*- 
-// test_disk.cxx
+// test_rectangle.cxx
 
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
-#include <geomtools/disk.h>
+#include <geomtools/rectangle.h>
 #include <geomtools/gnuplot_draw.h>
 
 using namespace std;
@@ -16,7 +16,7 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'disk'!" << endl; 
+      clog << "Test program for class 'rectangle'!" << endl; 
   
       bool debug = false;
 
@@ -47,19 +47,22 @@ int main (int argc_, char ** argv_)
           iarg++;
       }
     
-      geomtools::disk my_disk;
-      double radius = 1.0;
-      my_disk.set_r (radius);
-      my_disk.tree_dump (clog, "my_disk");
+      geomtools::rectangle my_rectangle;
+      double x = 2.0;
+      double y = 1.0;
+      my_rectangle.set_x (x);
+      my_rectangle.set_y (y);
+      my_rectangle.tree_dump (clog, "my_rectangle");
 
       {
-	geomtools::vector_3d disk_pos;
-	geomtools::rotation_3d disk_rot;
-	geomtools::create_rotation (disk_rot, 0.0, 0.0, 0.0);
-	geomtools::gnuplot_draw::draw_circle (cout, 
-					      disk_pos,
-					      disk_rot, 
-					      my_disk.get_r ());
+	geomtools::vector_3d rectangle_pos;
+	geomtools::rotation_3d rectangle_rot;
+	geomtools::create_rotation (rectangle_rot, 0.0, 0.0, 0.0);
+	geomtools::gnuplot_draw::draw_rectangle (cout, 
+						 rectangle_pos,
+						 rectangle_rot, 
+						 my_rectangle.get_x (), 
+						 my_rectangle.get_y ());
 	cout << endl << endl;
 	size_t nshoots = 10000;
 	for (int i = 0; i < (int) nshoots; i++)
@@ -71,7 +74,7 @@ int main (int argc_, char ** argv_)
 	    geomtools::randomize_direction (drand48, dir);
 	    geomtools::intercept_t intercept;
 	    int intercept_face;
-	    if (my_disk.find_intercept (pos, dir, 
+	    if (my_rectangle.find_intercept (pos, dir, 
 					intercept))
 	      {
 		geomtools::gnuplot_draw::basic_draw_point (cout, 
@@ -92,7 +95,7 @@ int main (int argc_, char ** argv_)
 	    dir.setZ (0.0);
 	    geomtools::intercept_t intercept;
  	    int intercept_face;
-	    if (my_disk.find_intercept (pos, dir, 
+	    if (my_rectangle.find_intercept (pos, dir, 
 					intercept))
 	      {
 		geomtools::gnuplot_draw::basic_draw_point (cout, 
@@ -117,4 +120,4 @@ int main (int argc_, char ** argv_)
   return (error_code);
 }
 
-// end of test_disk.cxx
+// end of test_rectangle.cxx

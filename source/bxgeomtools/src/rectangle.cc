@@ -1,88 +1,94 @@
 // -*- mode: c++ ; -*- 
-/* disk.cc
+/* rectangle.cc
  */
 
-#include <geomtools/disk.h>
+#include <geomtools/rectangle.h>
 
 namespace geomtools {
 
   using namespace std;
 
-  const string disk::DISK_LABEL = "disk";
+  const string rectangle::RECTANGLE_LABEL = "rectangle";
 
-  string disk::get_shape_name () const
+  string rectangle::get_shape_name () const
   {
-    return DISK_LABEL;
+    return RECTANGLE_LABEL;
   }
   
-  double disk::get_r () const
+  double rectangle::get_x () const
   {
-    return __r;
+    return __x;
   }
   
-  double disk::get_radius () const
+  double rectangle::get_y () const
   {
-    return get_r ();
-  }
- 
-  void disk::set_diameter (double new_value_)
-  {
-    set_r (new_value_ * 0.5);
-  }
-
-  double disk::get_diameter () const
-  {
-    return (__r + __r);
+    return __y;
   }
   
-  void disk::set_r (double new_value_)
+  void rectangle::set_x (double new_value_)
   {
     if (new_value_ < 0.0 )
       {
 	ostringstream message;
-	message << "disk::set_r: Invalid '" << new_value_ << "' R value!";
+	message << "rectangle::set_x: Invalid '" << new_value_ << "' X value!";
 	throw logic_error (message.str ());
       }
-    __r = new_value_;
+    __x = new_value_;
+  }
+  
+  void rectangle::set_y (double new_value_)
+  {
+    if (new_value_ < 0.0 )
+      {
+	ostringstream message;
+	message << "rectangle::set_y: Invalid '" << new_value_ << "' Y value!";
+	throw logic_error (message.str ());
+      }
+    __y = new_value_;
   }
   
 
-  bool disk::is_valid () const
+  bool rectangle::is_valid () const
   {
-    return (__r > 0.0);
+    return (__x > 0.0) && (__y > 0.0);
   }
   
   // ctor/dtor:
-  disk::disk ()
+  rectangle::rectangle ()
   {
-    __r = -1.0;
+    __x = -1.0;
+    __y = -1.0;
   }
   
-  disk::~disk ()
+  rectangle::~rectangle ()
   {
   }
 
-  bool disk::is_on_surface (const vector_3d & position_,
-			    double tolerance_) const
+  bool rectangle::is_on_surface (const vector_3d & position_,
+				 double tolerance_) const
   {
     double tolerance = get_tolerance ();
     if (tolerance_ > USING_PROPER_TOLERANCE) tolerance = tolerance_;
     double z = position_.z ();
-    if (std::abs (z) > 0.5 * tolerance) return false;
-
+    if (std::abs (z) > (0.5 * tolerance))
+      {
+	return false;
+      }
     double x = position_.x ();
     double y = position_.y ();
-    double r2 = (__r + 0.5 * tolerance) * (__r + 0.5 * tolerance);
-    double rho2 = x * x + y * y;
-    if (rho2 > r2) 
+    if (std::abs (x) > (0.5 * (__x + tolerance)))
+      {
+	return false;
+      }
+    if (std::abs (y) > (0.5 * (__y + tolerance)))
       {
 	return false;
       }
     return true;
   }
 
-  vector_3d disk::get_normal_on_surface (const vector_3d & position_,
-					 bool up_) const
+  vector_3d rectangle::get_normal_on_surface (const vector_3d & position_,
+					      bool up_) const
   {
     vector_3d normal;
     geomtools::invalidate (normal);
@@ -94,12 +100,12 @@ namespace geomtools {
     return normal;
   }
 
-  bool disk::find_intercept (const vector_3d & from_, 
-			     const vector_3d & direction_,
-			     intercept_t & intercept_,
-			     double tolerance_) const
+  bool rectangle::find_intercept (const vector_3d & from_, 
+				  const vector_3d & direction_,
+				  intercept_t & intercept_,
+				  double tolerance_) const
   {
-     double ux = direction_.x ();
+    double ux = direction_.x ();
     double uy = direction_.y ();
     double uz = direction_.z ();
     double xf = from_.x ();
@@ -112,6 +118,7 @@ namespace geomtools {
 	  {
 	    return intercept_.is_ok ();	    
 	  }
+	/*
 	double p0;
 	double p1;
 	double p2;
@@ -146,6 +153,7 @@ namespace geomtools {
 	    double zi = zf;
 	    intercept_.set (0, 0, vector_3d (xi, yi, zi));
 	  }
+	*/
 	return intercept_.is_ok ();	    	    
       }
 
@@ -176,7 +184,7 @@ namespace geomtools {
     return intercept_.is_ok ();
   }
 
-  void disk::tree_dump (ostream & out_, 
+  void rectangle::tree_dump (ostream & out_, 
 			const string & title_, 
 			const string & indent_, 
 			bool inherit_) const
@@ -185,12 +193,13 @@ namespace geomtools {
     string indent;
     if (! indent_.empty ()) indent = indent_;
     i_object_3d::tree_dump (out_, title_, indent_, true);
-
+    out_ << indent << du::i_tree_dumpable::tag
+	 << "X : " << get_x () / CLHEP::mm << " mm" << endl;
     out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)  
-	 << "R : " << get_r () / CLHEP::mm << " mm" << endl;
+	 << "Y : " << get_y () / CLHEP::mm << " mm" << endl;
     return;
   }
   
 } // end of namespace geomtools
 
-// end of disk.cc
+// end of rectangle.cc

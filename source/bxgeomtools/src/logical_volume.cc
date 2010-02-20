@@ -3,8 +3,11 @@
  */
 
 #include <geomtools/logical_volume.h>
+#include <geomtools/physical_volume.h>
 
 namespace geomtools {
+
+  using namespace std;
 
   bool logical_volume::is_locked () const
   {
@@ -125,6 +128,51 @@ namespace geomtools {
     __locked = false;
     __clear_shape ();
   }
+ 
+  bool logical_volume::has_physical (const string & name_) const
+  {
+    return (__physicals.find (name_) != __physicals.end ());
+  }
+
+  const physical_volume & logical_volume::get_physical (const string & name_) const
+  {
+    physicals_col_t::const_iterator found = __physicals.find (name_);
+    if (found == __physicals.end ())
+      {
+	ostringstream message;
+	message << "logical_volume::get_physical: "
+		<< "Name '" << name_ << "' is not used !";
+	throw runtime_error (message.str ());
+      }
+    return *(found->second);
+  }
+    
+  void logical_volume::add_physical (const physical_volume & phys_,
+				     const string & name_)
+  {
+    if (__physicals.find (name_) != __physicals.end ())
+      {
+	ostringstream message;
+	message << "logical_volume::add_physical: "
+		<< "name '" << name_ << "' is already used !";
+	throw runtime_error (message.str ());
+      }
+    string name;
+    if (name_.empty ())
+      {
+	name = phys_.get_name ();
+      }
+    else
+      {
+	name = name_;
+      }
+    if (name.empty ())
+      {
+	throw runtime_error ("logical_volume::add_physical: Missing physical's name !");
+      }
+    __physicals[name] = &phys_;
+    return;
+  }
 
   void logical_volume::tree_dump (ostream & out_, 
 				  const string & title_, 
@@ -136,13 +184,13 @@ namespace geomtools {
     if (! indent_.empty ()) indent = indent_;
     if (! title_.empty ()) 
       {
-        out_ << indent << title_ << std::endl;
+        out_ << indent << title_ << endl;
       }
     out_ << indent << i_tree_dumpable::tag 
-	 << "Name    = " << __name << std::endl;
+	 << "Name    = " << __name << endl;
 
     out_ << indent << i_tree_dumpable::tag 
-	 << "Locked    = " << (__locked? "Yes": "No") << std::endl;
+	 << "Locked    = " << (__locked? "Yes": "No") << endl;
 
     out_ << indent << du::i_tree_dumpable::tag
 	 << "Parameters : ";
@@ -150,18 +198,15 @@ namespace geomtools {
         {
           out_ << "<empty>"; 
         }
-      out_ << std::endl;
+      out_ << endl;
       {
-        std::ostringstream indent_oss;
+        ostringstream indent_oss;
         indent_oss << indent;
         indent_oss << du::i_tree_dumpable::skip_tag;
         __parameters.tree_dump (out_,"",indent_oss.str ());
       }
-      /*
+      //out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
     out_ << indent << i_tree_dumpable::tag 
-	 << "Own its shape    = " << (__own_shape? "Yes": "No") << std::endl;
-      */
-    out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
          << "Shape = ";
     if (has_shape ())
       {
@@ -172,7 +217,24 @@ namespace geomtools {
       {
 	out_ << "<no shape>";
       }
-    out_ << std::endl; 
+    out_ << endl; 
+
+    out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
+         << "Physicals : ";
+    if (__physicals.size ())
+      {
+	for (physicals_col_t::const_iterator i = __physicals.begin ();
+	     i != __physicals.end ();
+	     i++)
+	  {
+	    out_ << i->first << ' ';
+	  }
+	out_ << endl; 
+      }
+    else
+      {
+	out_ << "<none>" << endl;
+      }
     
   }
   

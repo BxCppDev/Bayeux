@@ -114,19 +114,23 @@ namespace geomtools {
     set_half_z (z_);
   }
 
-  // ctor/dtor:
-  box::box ()
+  // ctor:
+  box::box () : i_shape_3d (DEFAULT_SKIN)
   {
-    reset ();
+    //clog << "DEVEL: box::box: skin_ = " << skin_ << endl;
+    __x = -1.0;
+    __y = -1.0;
+    __z = -1.0;
   }
 
-  box::box (double x_ ,double y_ ,double z_ )
+  box::box (double x_ ,double y_ ,double z_ ) : i_shape_3d (DEFAULT_SKIN)
   {
     set_x (x_);
     set_y (y_);
     set_z (z_);
   }
   
+  // dtor:
   box::~box ()
   {
   }
@@ -212,6 +216,7 @@ namespace geomtools {
     __x = -1.0;
     __y = -1.0;
     __z = -1.0;
+    i_object_3d::reset ();
   }
 
   bool 
@@ -409,6 +414,26 @@ namespace geomtools {
 	in_.clear (std::ios_base::failbit);
       }
     return in_;
+  }
+
+
+  void box::tree_dump (ostream & out_, 
+				  const string & title_, 
+				  const string & indent_, 
+				  bool inherit_) const
+  {
+    namespace du = datatools::utils;
+    string indent;
+    if (! indent_.empty ()) indent = indent_;
+    i_object_3d::tree_dump (out_, title_, indent_, true);
+
+    out_ << indent << du::i_tree_dumpable::tag 
+	 << "X : " << get_x () / CLHEP::mm << " mm" << endl;
+    out_ << indent << du::i_tree_dumpable::tag 
+	 << "Y : " << get_y () / CLHEP::mm << " mm" << endl;
+    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)  
+	 << "Z : " << get_z () / CLHEP::mm << " mm" << endl;
+    return;
   }
 
 } // end of namespace geomtools

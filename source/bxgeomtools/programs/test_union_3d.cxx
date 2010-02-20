@@ -11,8 +11,9 @@
 #include <geomtools/union_3d.h>
 #include <geomtools/gnuplot_draw.h>
 
-int 
-main (int argc_, char ** argv_)
+using namespace std;
+
+int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
   try 
@@ -23,7 +24,7 @@ main (int argc_, char ** argv_)
       int iarg = 1;
       while (iarg < argc_) 
 	{
-	  std::string arg = argv_[iarg];
+	  string arg = argv_[iarg];
 
 	  if (arg == "-d" || arg == "--debug") debug = true;
 
@@ -51,7 +52,10 @@ main (int argc_, char ** argv_)
 	union_3d u1;
 	u1.set_shape1 (b1, p1);
 	u1.set_shape2 (b2, p2);
-	u1.dump (std::clog);
+	u1.tree_dump (clog, "Union:");
+
+	char c;
+	cin >> c;
 
 	geomtools::vector_3d pos (4.0 * CLHEP::mm, 
 				  3.0 * CLHEP::mm, 
@@ -62,47 +66,46 @@ main (int argc_, char ** argv_)
 	if (u1.find_intercept (pos, dir, 
 			       intercept))
 	  {
-	    std::clog << "test 1: Intercept face=" << intercept.get_face ()
+	    clog << "test 1: Intercept face=" << intercept.get_face ()
 		      << " at impact=" << intercept.get_impact ()
-		      << std::endl;
+		      << endl;
 	  }
 	else
 	  {
-	    std::clog << "test 1: No intercept." << std::endl;
+	    clog << "test 1: No intercept." << endl;
 	  }
-	
 
-	geomtools::gnuplot_draw::draw_box (std::cout, 
+	geomtools::gnuplot_draw::draw_box (cout, 
 					   p1.get_translation (), 
 					   p1.get_rotation (), 
 					   b1.get_x (), 
 					   b1.get_y (), 
 					   b1.get_z ());
-	geomtools::gnuplot_draw::draw_box (std::cout, 
+	geomtools::gnuplot_draw::draw_box (cout, 
 					   p2.get_translation (), 
 					   p2.get_rotation (), 
 					   b2.get_x (), 
 					   b2.get_y (), 
 					   b2.get_z ());
-	std::cout << std::endl << std::endl;
+	cout << endl << endl;
 
-	geomtools::gnuplot_draw::basic_draw_point (std::cout, pos);
-	std::cout << std::endl << std::endl;
+	geomtools::gnuplot_draw::basic_draw_point (cout, pos);
+	cout << endl << endl;
 
-	geomtools::gnuplot_draw::basic_draw_point (std::cout, intercept.get_impact ());
-	std::cout << std::endl << std::endl;
+	geomtools::gnuplot_draw::basic_draw_point (cout, intercept.get_impact ());
+	cout << endl << endl;
 
-	geomtools::gnuplot_draw::basic_draw_point (std::cout, pos);
-	geomtools::gnuplot_draw::basic_draw_point (std::cout, intercept.get_impact ());
-	std::cout << std::endl << std::endl;
+	geomtools::gnuplot_draw::basic_draw_point (cout, pos);
+	geomtools::gnuplot_draw::basic_draw_point (cout, intercept.get_impact ());
+	cout << endl << endl;
 
-	std::clog << "test 1: End." << std::endl;
+	clog << "test 1: End." << endl;
 
 	size_t nshoots = 100000;
 	for (int i = 0; i < (int) nshoots; i++)
 	  {
-	    if ((i%1000) == 0) std::clog << "Loop #" << i << std::endl;
-	    std::clog << "DEVEL: Loop #" << i << std::endl;
+	    if ((i%1000) == 0) clog << "Loop #" << i << endl;
+	    clog << "DEVEL: Loop #" << i << endl;
 
 	    // special debug activation:
 	    int idevel = -1;
@@ -123,34 +126,34 @@ main (int argc_, char ** argv_)
 	    geomtools::intercept_t intercept;
 	    if (u1.find_intercept (pos, dir, intercept))
 	      {
-		if (debug) std::clog << "test 1: Intercept face=" 
+		if (debug) clog << "test 1: Intercept face=" 
 				     << intercept.get_face ()
 				     << " at impact=" 
 				     << intercept.get_impact ()
-				     << std::endl;
-		geomtools::gnuplot_draw::basic_draw_point (std::cout, 
+				     << endl;
+		geomtools::gnuplot_draw::basic_draw_point (cout, 
 							   intercept.get_impact (),
 							   false);
 		int face = intercept.get_face ();
-		std::cout << ' ' << face;
-		std::cout << std::endl;
+		cout << ' ' << face;
+		cout << endl;
 	      }
 	    else
 	      {
-		if (debug) std::clog << "test 1: No intercept." << std::endl;
+		if (debug) clog << "test 1: No intercept." << endl;
 	      }
 	  }
       }
       
     }
-  catch (std::exception & x)
+  catch (exception & x)
     {
-      std::cerr << "error: " << x.what () << std::endl; 
+      cerr << "error: " << x.what () << endl; 
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      std::cerr << "error: " << "unexpected error!" << std::endl; 
+      cerr << "error: " << "unexpected error!" << endl; 
       error_code = EXIT_FAILURE;
     }
   return error_code;

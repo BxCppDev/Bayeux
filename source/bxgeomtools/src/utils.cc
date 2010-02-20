@@ -6,7 +6,7 @@
 
 namespace geomtools {
 
-  const double constants::DEFAULT_TOLERANCE = 1.e-14 * CLHEP::mm;
+  const double constants::DEFAULT_TOLERANCE = 1.e-7 * CLHEP::mm;
 
   const std::string io::VECTOR_2D_SERIAL_TAG   = "__geomtools::vector_2d__";
   const std::string io::VECTOR_3D_SERIAL_TAG   = "__geomtools::vector_3d__";

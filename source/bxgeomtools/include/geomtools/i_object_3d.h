@@ -17,14 +17,20 @@
 #define __geomtools__i_object_3d_h 1
 
 #include <string>
+#include <iostream>
+#include <sstream>
 
 #include <datatools/utils/properties.h>
+#include <datatools/utils/i_tree_dump.h>
 
 #include <geomtools/utils.h>
 
 namespace geomtools {
 
-  class i_object_3d 
+  using namespace std;
+
+  class i_object_3d  :
+    public datatools::utils::i_tree_dumpable
     {
     public:
       enum dimensional_t
@@ -60,12 +66,23 @@ namespace geomtools {
 
       virtual std::string get_shape_name () const = 0;
 
+      virtual bool is_composite () const;
+
     public:
 
-      i_object_3d (double tolerance_ = DEFAULT_TOLERANCE);
+      i_object_3d ();
+
+      i_object_3d (double tolerance_);
 
       virtual ~i_object_3d ();
 
+      virtual void reset ();
+
+      virtual void tree_dump (ostream & out_         = clog, 
+			      const string & title_  = "", 
+			      const string & indent_ = "", 
+			      bool inherit_          = false) const;
+      
     };
     
 } // end of namespace geomtools
