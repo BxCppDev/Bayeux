@@ -44,12 +44,31 @@ namespace geomtools {
 
   void 
   gnuplot_draw::draw_line (std::ostream & out_, 
+			   const line_3d & l_)
+  {
+    draw_line (out_, l_.get_first (), l_.get_last ());
+  }
+
+  void 
+  gnuplot_draw::draw_line (std::ostream & out_, 
 			   const vector_3d & start_ , 
 			   const vector_3d & stop_)
   {
     basic_draw_point (out_, start_);
     basic_draw_point (out_, stop_);
     out_ << std::endl;
+  }
+
+  void 
+  gnuplot_draw::draw_polyline (std::ostream & out_, 
+			       const vector_3d & position_, 
+			       const rotation_3d & rotation_,
+			       const polyline_3d & p_, 
+			       bool  more_)
+  {
+    polyline_3d::point_col c;
+    p_.make_vertex_collection (c);
+    draw_polyline (out_, position_, rotation_, c, more_);
   }
 
   void 
@@ -104,6 +123,26 @@ namespace geomtools {
   }
 
   void 
+  gnuplot_draw::draw_segment (std::ostream & out_, 
+			      const vector_3d & position_, 
+			      const rotation_3d & rotation_,  
+			      const line_3d & l_)
+  {
+    draw_segment (out_, position_, rotation_, 
+		  l_.get_first (),
+		  l_.get_last ());
+  }
+
+  void 
+  gnuplot_draw::draw_line (std::ostream & out_, 
+			   const vector_3d & position_, 
+			   const rotation_3d & rotation_,  
+			   const line_3d & l_)
+  {
+    draw_segment (out_, position_, rotation_, l_);
+  }
+  
+  void 
   gnuplot_draw::draw_rectangle (std::ostream & out_, 
 				const vector_3d & position_, 
 				const rotation_3d & rotation_, 
@@ -143,6 +182,17 @@ namespace geomtools {
     polyline.push_back (A2);
     if (more_) polyline.push_back (B2); 
     basic_draw_polyline (out_,polyline);
+  }
+  
+  void 
+  gnuplot_draw::draw_rectangle (std::ostream & out_, 
+				const vector_3d & position_, 
+				const rotation_3d & rotation_, 
+				const rectangle & r_, 
+				bool more_)
+  {
+    draw_rectangle (out_, position_, rotation_, 
+		    r_.get_x (), r_.get_y (), more_);
   }
 
   void 
@@ -309,6 +359,19 @@ namespace geomtools {
   gnuplot_draw::draw_tube (std::ostream & out_,
 			   const vector_3d & position_, 
 			   const rotation_3d & rotation_,
+			   const tube & t_,
+			   size_t arc_sampling_)
+  {
+    draw_tube (out_, position_, rotation_, 
+	       t_.get_inner_r (),
+	       t_.get_outer_r (),
+	       t_.get_z (), arc_sampling_);
+  }
+
+  void 
+  gnuplot_draw::draw_tube (std::ostream & out_,
+			   const vector_3d & position_, 
+			   const rotation_3d & rotation_,
 			   double inner_radius_, 
 			   double outer_radius_, 
 			   double height_,
@@ -394,6 +457,16 @@ namespace geomtools {
   gnuplot_draw::draw_circle (std::ostream & out_, 
 			     const vector_3d & position_, 
 			     const rotation_3d & rotation_, 
+			     const circle & c_,
+			     size_t arc_sampling_)
+  {
+    draw_circle (out_, position_, rotation_, c_.get_r (), arc_sampling_);
+  }
+
+  void 
+  gnuplot_draw::draw_circle (std::ostream & out_, 
+			     const vector_3d & position_, 
+			     const rotation_3d & rotation_, 
 			     double radius_,
 			     size_t arc_sampling_)
   {
@@ -416,6 +489,60 @@ namespace geomtools {
 	polyline.push_back (P2);
       }
     basic_draw_polyline (out_, polyline);
+  }
+
+
+  void 
+  gnuplot_draw::draw_disk (std::ostream & out_, 
+			     const vector_3d & position_, 
+			     const rotation_3d & rotation_, 
+			     const disk & d_,
+			     size_t arc_sampling_)
+  {
+    draw_disk (out_, position_, rotation_, d_.get_r (), arc_sampling_);
+  }
+
+  void 
+  gnuplot_draw::draw_disk (std::ostream & out_, 
+			     const vector_3d & position_, 
+			     const rotation_3d & rotation_, 
+			     double radius_,
+			     size_t arc_sampling_)
+  {
+    rotation_3d inverseRotation (rotation_);
+    inverseRotation.invert ();
+
+    size_t sample =  arc_sampling_;
+    double dangle = 2 * M_PI * CLHEP::radian / sample;
+    polyline_t polyline;
+    for (size_t i = 0; i <= sample; ++i) 
+      {
+	vector_3d O;
+	vector_3d P;
+	double angle = i * dangle;
+	P.set (radius_ * std::cos (angle),
+	       radius_ * std::sin (angle),
+	       0.0);
+	vector_3d P2 (P);
+	P2.transform (inverseRotation);
+	P2 += position_;
+	polyline.push_back (P2);
+	draw_segment (out_, position_, rotation_,
+		      O, P);
+      }
+    basic_draw_polyline (out_, polyline);
+  }
+
+  void 
+  gnuplot_draw::draw_sphere (std::ostream & out_, 
+			     const vector_3d & position_, 
+			     const rotation_3d & rotation_, 
+			     const sphere & s_,
+			     size_t arc_sampling_,
+			     size_t z_sampling_)
+  {
+    draw_sphere (out_, position_, rotation_, s_.get_r (), 
+		 arc_sampling_, z_sampling_);
   }
 
   void 
@@ -458,6 +585,85 @@ namespace geomtools {
  
     //throw std::runtime_error ("gnuplot_draw::draw_sphere: Not implemented yet!");
   }
+
+ 
+  void gnuplot_draw::draw (ostream & out_, 
+			   const i_placement & p_, 
+			   const i_object_3d & o_)
+  {
+    for (int i = 0; i < p_.get_number_of_items (); i++)
+      {
+	placement p;
+	p_.get_placement (i, p);
+
+	const vector_3d & pos = p.get_translation ();
+	const rotation_3d & rot = p.get_rotation ();
+	
+	string shape_name = o_.get_shape_name ();
+	if (shape_name == "line_3d")
+	  {
+	    const line_3d & l = dynamic_cast<const line_3d &> (o_);
+	    draw_line (out_, pos, rot, l);
+	    return;
+	  }
+	if (shape_name == "polyline_3d")
+	  {
+	    const polyline_3d & p = dynamic_cast<const polyline_3d &> (o_);
+	    draw_polyline (out_, pos, rot, p);
+	    return;
+	  }
+
+	if (shape_name == "rectangle")
+	  {
+	    const rectangle & r = dynamic_cast<const rectangle &> (o_);
+	    draw_rectangle (out_, pos, rot, r);
+	    return;
+	  }
+
+	if (shape_name == "circle")
+	  {
+	    const circle & c = dynamic_cast<const circle &> (o_);
+	    draw_circle (out_, pos, rot, c);
+	    return;
+	  }
+
+	if (shape_name == "box")
+	  {
+	    const box & b = dynamic_cast<const box &> (o_);
+	    draw_box (out_, pos, rot, b);
+	    return;
+	  }
+
+	if (shape_name == "cylinder")
+	  {
+	    const cylinder & c = dynamic_cast<const cylinder &> (o_);
+	    draw_cylinder (out_, pos, rot, c);
+	    return;
+	  }
+
+	if (shape_name == "tube")
+	  {
+	    const tube & t = dynamic_cast<const tube &> (o_);
+	    draw_tube (out_, pos, rot, t);
+	    return;
+	  }
+
+	if (shape_name == "sphere")
+	  {
+	    const sphere & s = dynamic_cast<const sphere &> (o_);
+	    draw_sphere (out_, pos, rot, s);
+	    return;
+	  }
+
+	clog << "gnuplot_draw::draw: "
+	     << " No method to draw an 3D object of type '" 
+	     << shape_name << "' !" << endl;
+	return;
+      }
+    
+  }
+
+
 
 } // end of namespace geomtools
 

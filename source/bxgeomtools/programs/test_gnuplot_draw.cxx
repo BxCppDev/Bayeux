@@ -9,44 +9,46 @@
 
 #include <geomtools/utils.h>
 #include <geomtools/gnuplot_draw.h>
+#include <geomtools/box.h>
 
 #include <CLHEP/Random/RanluxEngine.h>
 #include <CLHEP/Random/RandFlat.h>
+
+using namespace std;
 
 class test_app
 {
 protected:
   long        _seed;
-  std::string _filename;
+  string _filename;
   
 public:
 
-  test_app (long seed_, const std::string & filename_)
+  test_app (long seed_, const string & filename_)
   {
     _seed     = seed_;
     _filename = filename_;
   }
 
-  void 
-  run ()
+  void run ()
   {
     CLHEP::RanluxEngine engine (_seed, 3);
     CLHEP::RandFlat randflat (engine);
 
-    std::ostream * output_ptr = &std::cout;
-    std::ofstream foutput;
+    ostream * output_ptr = &cout;
+    ofstream foutput;
     if (! _filename.empty ()) 
       {
-	std::cerr << "test_app::run: info: file name='" 
-		  << _filename << "'" << std::endl;
+	cerr << "test_app::run: info: file name='" 
+		  << _filename << "'" << endl;
 	foutput.open (_filename.c_str ());
 	if (! foutput) 
 	  {
-	    throw std::runtime_error ("test_app::run: Cannot open file!");
+	    throw runtime_error ("test_app::run: Cannot open file!");
 	  }
 	output_ptr = &foutput;
       }
-    std::ostream & output = *output_ptr;
+    ostream & output = *output_ptr;
 
     geomtools::vector_3d pos;
     geomtools::rotation rot;
@@ -72,14 +74,14 @@ public:
     pos.set (0.,+2.0,5.75);
     geomtools::gnuplot_draw::draw_rectangle (output, pos, rot, 0.5, 2.0);
 
-    output << std::endl;
+    output << endl;
 
     // Holy hat:
     pos.set (0.,0.,9.0);
     geomtools::create_rotation (rot, 0.0, 150. * CLHEP::degree, 0.0);
     geomtools::gnuplot_draw::draw_circle (output, pos, rot, 0.75);
 
-    output << std::endl;
+    output << endl;
 
     // Saint's wand:
     pos.set (0., 0., 0.0);
@@ -88,7 +90,7 @@ public:
     geomtools::vector_3d stop (0., 3.5, 7.);
     geomtools::gnuplot_draw::draw_segment (output, pos, rot, start, stop);  
 
-    output << std::endl;
+    output << endl;
 
     // Saint's box:
     double x0 = 3.0;
@@ -101,7 +103,7 @@ public:
     geomtools::create_rotation (rot, 0.0, -45. * CLHEP::degree, 0.0);
     geomtools::gnuplot_draw::draw_rectangle (output, pos, rot, 2., 4.);
 
-    output << std::endl;
+    output << endl;
 
     // Coins:
     int nb_coins = randflat.shootInt (10, 30);
@@ -120,35 +122,42 @@ public:
     // Holy tube:
     pos.set (1., -3., 2.0);
     geomtools::create_rotation (rot, 0.0, 10. * CLHEP::degree, 0.0);
-    geomtools::gnuplot_draw::draw_tube (output, pos, rot, 1.2, 1.3, 3.0);
+    geomtools::gnuplot_draw::draw_tube (output, pos, rot, 1.0, 1.3, 3.0);
 
-    output << std::endl;
+    output << endl;
+
+    geomtools::placement placement1 (1.5, 3, 2.5, 
+				     30. * CLHEP::degree, 
+				     25. * CLHEP::degree,
+				     50. * CLHEP::degree);
+    geomtools::box box1 (2.0, 3.0, 0.5);
+    geomtools::gnuplot_draw::draw (output, placement1, box1);
+
   }
 
 };
 
-int 
-main (int argc_, char ** argv_)
+int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
   try 
     {
       bool debug = false;
       long seed = 12345;
-      std::string filename = "";
+      string filename = "";
 
       int iarg = 1;
       while (iarg < argc_) 
 	{
-	  std::string arg = argv_[iarg];
-	  std::cerr << "Argument=" << arg << std::endl;
+	  string arg = argv_[iarg];
+	  cerr << "Argument=" << arg << endl;
 	  if (arg == "-d" || arg == "--debug") debug = true;
 	  if (arg == "-o" || arg == "--output") 
 	    {
 	      iarg++;
 	      if (iarg == argc_) 
 		{
-		  throw std::runtime_error ("Missing output filename!");
+		  throw runtime_error ("Missing output filename!");
 		}
 	      filename = argv_[iarg];
 	    }
@@ -157,17 +166,17 @@ main (int argc_, char ** argv_)
 	      iarg++;
 	      if (iarg == argc_) 
 		{
-		  throw std::runtime_error ("Missing seed value!");
+		  throw runtime_error ("Missing seed value!");
 		}
-	      std::istringstream seed_ss (argv_[iarg]);
+	      istringstream seed_ss (argv_[iarg]);
 	      seed_ss >> seed;
 	      if (! seed_ss) 
 		{
-		  throw std::runtime_error ("Invalid format for seed value!");
+		  throw runtime_error ("Invalid format for seed value!");
 		}
 	      if (seed <= 0) 
 		{
-		  throw std::runtime_error ("Invalid seed value!");
+		  throw runtime_error ("Invalid seed value!");
 		}
 	    }
 	  iarg++;
@@ -177,14 +186,14 @@ main (int argc_, char ** argv_)
       my_app.run ();
 
     }
-  catch (std::exception & x)
+  catch (exception & x)
     {
-      std::cerr << "error: " << x.what () << std::endl; 
+      cerr << "error: " << x.what () << endl; 
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      std::cerr << "error: " << "unexpected error!" << std::endl; 
+      cerr << "error: " << "unexpected error!" << endl; 
       error_code = EXIT_FAILURE;
     }
   return error_code;

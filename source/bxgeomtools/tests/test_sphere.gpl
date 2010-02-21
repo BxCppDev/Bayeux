@@ -34,6 +34,6 @@ splot \
   "test_sphere.data" index 5 title "Impact" with dots lt 1 
 
 
-! #rm -f test_sphere.data
+! rm -f test_sphere.data
 
 # end 

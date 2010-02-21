@@ -10,14 +10,15 @@
 #include <geomtools/sphere.h>
 #include <geomtools/gnuplot_draw.h>
 
-int 
-main (int argc_, char ** argv_)
+using namespace std;
+
+int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
   try 
     {
       bool debug = false;
-      long seed = 314159;
+      long seed  = 314159;
       bool test1 = true;
       bool test2 = true;
       bool test3 = true;
@@ -25,7 +26,7 @@ main (int argc_, char ** argv_)
       int iarg = 1;
       while (iarg < argc_) 
 	{
-	  std::string arg = argv_[iarg];
+	  string arg = argv_[iarg];
 
 	  if (arg == "-d" || arg == "--debug") debug = true;
 	  if (arg == "-t1" || arg == "--test1") test1 = false;
@@ -42,31 +43,31 @@ main (int argc_, char ** argv_)
 	{
 	  geomtools::sphere my_sphere (1000 * CLHEP::mm);
 
-	  std::clog << "test 1: Sphere #1 = " << my_sphere << " " << std::endl;
+	  clog << "test 1: Sphere #1 = " << my_sphere << " " << endl;
 
-	  std::clog << "test 1: Volume   = " << my_sphere.get_volume () / CLHEP::m3 << " m3" << std::endl;
+	  clog << "test 1: Volume   = " << my_sphere.get_volume () / CLHEP::m3 << " m3" << endl;
 
-	  std::clog << "test 1: Side surface = " 
+	  clog << "test 1: Side surface = " 
 		    << my_sphere.get_surface (geomtools::sphere::FACE_SIDE) / CLHEP::m2 
-		    << " m2" << std::endl;
+		    << " m2" << endl;
 
-	  std::clog << "test 1: Full surface = " 
+	  clog << "test 1: Full surface = " 
 		    << my_sphere.get_surface (geomtools::sphere::FACE_ALL) / CLHEP::m2 
-		    << " m2" << std::endl;
+		    << " m2" << endl;
 
 	  {
 	    bool test_in = false;
 	    if (test_in)
 	      {
-		std::clog << "test 1: Enter a sphere (example: '{sphere 1000}'): ";
-		std::cin >> std::ws >> my_sphere;
-		if (std::cin) 
+		clog << "test 1: Enter a sphere (example: '{sphere 1000}'): ";
+		cin >> ws >> my_sphere;
+		if (cin) 
 		  {
-		    std::clog << "test 1: Sphere = " << my_sphere << " " << std::endl;
+		    clog << "test 1: Sphere = " << my_sphere << " " << endl;
 		  }
 		else 
 		  {
-		    throw std::runtime_error ("Invalid input for sphere!");
+		    throw runtime_error ("Invalid input for sphere!");
 		  }
 	      }
 	  }
@@ -76,7 +77,7 @@ main (int argc_, char ** argv_)
       if (test2) 
 	{
 	  geomtools::sphere my_sphere (3.0 * CLHEP::mm);
-	  std::clog << "test 2: Sphere #2   = " << my_sphere << " " << std::endl;
+	  clog << "test 2: Sphere #2   = " << my_sphere << " " << endl;
       
 	  geomtools::vector_3d pos (4.0 * CLHEP::mm, 
 				    0.0 * CLHEP::mm, 
@@ -87,48 +88,50 @@ main (int argc_, char ** argv_)
 	  if (my_sphere.find_intercept (pos, dir, 
 					intercept))
 	    {
-	      std::clog << "test 2: Intercept face=" << intercept.get_face ()
+	      clog << "test 2: Intercept face=" << intercept.get_face ()
 			<< " at impact=" << intercept.get_impact ()
-			<< std::endl;
+			<< endl;
 	    }
 	  else
 	    {
-	      std::clog << "test 2: No intercept." << std::endl;
+	      clog << "test 2: No intercept." << endl;
 	    }
 
 	  geomtools::vector_3d sphere_pos;
 	  geomtools::rotation sphere_rot;
 	  geomtools::create_rotation (sphere_rot, 0.0, 0.0, 0.0);
-	  geomtools::gnuplot_draw::draw_sphere (std::cout, sphere_pos, sphere_rot, 
-						my_sphere.get_r ());
-	  std::cout << std::endl << std::endl;
+	  geomtools::gnuplot_draw::draw_sphere (cout, 
+						sphere_pos, 
+						sphere_rot, 
+						my_sphere);
+	  cout << endl << endl;
 
-	  geomtools::gnuplot_draw::basic_draw_point (std::cout, pos);
-	  std::cout << std::endl << std::endl;
+	  geomtools::gnuplot_draw::basic_draw_point (cout, pos);
+	  cout << endl << endl;
 
-	  geomtools::gnuplot_draw::basic_draw_point (std::cout, 
+	  geomtools::gnuplot_draw::basic_draw_point (cout, 
 						     intercept.get_impact ());
-	  std::cout << std::endl << std::endl;
+	  cout << endl << endl;
 
-	  geomtools::gnuplot_draw::basic_draw_point (std::cout, pos);
-	  geomtools::gnuplot_draw::basic_draw_point (std::cout, pos + dir);
-	  std::cout << std::endl << std::endl;
+	  geomtools::gnuplot_draw::basic_draw_point (cout, pos);
+	  geomtools::gnuplot_draw::basic_draw_point (cout, pos + dir);
+	  cout << endl << endl;
 	}
  
       // test 3:
       if (test3) 
 	{
 	  geomtools::sphere my_sphere (2.0 * CLHEP::mm);
-	  std::clog << "test 3: Sphere #3   = " << my_sphere 
-		    << " " << std::endl;
+	  clog << "test 3: Sphere #3   = " << my_sphere 
+		    << " " << endl;
 	  geomtools::vector_3d sphere_pos;
 	  geomtools::rotation sphere_rot;
 	  geomtools::create_rotation (sphere_rot, 0.0, 0.0, 0.0);
-	  geomtools::gnuplot_draw::draw_sphere (std::cout, 
+	  geomtools::gnuplot_draw::draw_sphere (cout, 
 						sphere_pos, 
 						sphere_rot, 
-						my_sphere.get_r ());
-	  std::cout << std::endl << std::endl;
+						my_sphere);
+	  cout << endl << endl;
 	
 	  size_t nshoots = 100000;
 	  for (int i = 0; i < (int) nshoots; i++)
@@ -146,30 +149,30 @@ main (int argc_, char ** argv_)
 	      if (my_sphere.find_intercept (pos, dir, 
 					    intercept))
 		{
-		  if (debug) std::clog << "test 3: Intercept face=" 
+		  if (debug) clog << "test 3: Intercept face=" 
 				       << intercept.get_face ()
 				       << " at impact=" << intercept.get_impact ()
-				       << std::endl;
-		  geomtools::gnuplot_draw::basic_draw_point (std::cout, 
+				       << endl;
+		  geomtools::gnuplot_draw::basic_draw_point (cout, 
 							     intercept.get_impact ());
 		}
 	      else
 		{
-		  if (debug) std::clog << "test 3: No intercept." << std::endl;
+		  if (debug) clog << "test 3: No intercept." << endl;
 		}
 	    }
 	}
 	
 	
     }
-  catch (std::exception & x)
+  catch (exception & x)
     {
-      std::cerr << "error: " << x.what () << std::endl; 
+      cerr << "error: " << x.what () << endl; 
       error_code = EXIT_FAILURE;
     }
   catch (...) 
     {
-      std::cerr << "error: " << "unexpected error!" << std::endl; 
+      cerr << "error: " << "unexpected error!" << endl; 
       error_code = EXIT_FAILURE;
     }
   return error_code;

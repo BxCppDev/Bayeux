@@ -56,10 +56,10 @@ int main (int argc_, char ** argv_)
 	geomtools::vector_3d disk_pos;
 	geomtools::rotation_3d disk_rot;
 	geomtools::create_rotation (disk_rot, 0.0, 0.0, 0.0);
-	geomtools::gnuplot_draw::draw_circle (cout, 
-					      disk_pos,
-					      disk_rot, 
-					      my_disk.get_r ());
+	geomtools::gnuplot_draw::draw_disk (cout, 
+					    disk_pos,
+					    disk_rot, 
+					    my_disk);
 	cout << endl << endl;
 	size_t nshoots = 10000;
 	for (int i = 0; i < (int) nshoots; i++)

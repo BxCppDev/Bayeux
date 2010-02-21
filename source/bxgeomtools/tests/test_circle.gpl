@@ -1,0 +1,21 @@
+# -*- mode: gnuplot; -*-
+# C++ source: ./programs/test_circle.cxx
+#
+
+
+! ${GEOMTOOLS_ROOT}/$(geomtools-config --system)/bin/test_circle > test_circle.data
+
+set xrange [-2:2]
+set yrange [-2:2]
+set zrange [-2:2]
+set xlabel "x"
+set ylabel "y"
+set zlabel "z"
+set title "test_circle.cxx - test "
+splot \
+  "test_circle.data" index 0 title "Circle" with lines 
+pause -1 "Hit [Enter]..."
+
+! rm -f test_circle.data
+
+# end 

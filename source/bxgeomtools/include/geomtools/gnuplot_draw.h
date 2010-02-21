@@ -21,10 +21,16 @@
 #include <iostream>
 
 #include <geomtools/utils.h>
+#include <geomtools/placement.h>
 #include <geomtools/box.h>
 #include <geomtools/cylinder.h>
 #include <geomtools/sphere.h>
 #include <geomtools/tube.h>
+#include <geomtools/line_3d.h>
+#include <geomtools/polyline_3d.h>
+#include <geomtools/rectangle.h>
+#include <geomtools/circle.h>
+#include <geomtools/disk.h>
 
 namespace geomtools {
 
@@ -68,6 +74,10 @@ namespace geomtools {
 	       const vector_3d &);
     
     static void 
+    draw_line (std::ostream &, 
+	       const line_3d &);
+    
+    static void 
     draw_polyline  (std::ostream &, 
 		    const vector_3d &, 
 		    const rotation_3d &,  
@@ -75,12 +85,31 @@ namespace geomtools {
 		    bool = false);
     
     static void 
+    draw_polyline  (std::ostream &, 
+		    const vector_3d &, 
+		    const rotation_3d &,  
+		    const polyline_3d &, 
+		    bool = false);
+    
+    static void 
     draw_segment  (std::ostream &, 
 		   const vector_3d &, 
 		   const rotation_3d &,  
 		   const vector_3d &, 
-		   const vector_3d & );
+		   const vector_3d &);
     
+    static void 
+    draw_segment  (std::ostream &, 
+		   const vector_3d &, 
+		   const rotation_3d &,  
+		   const line_3d &);
+
+    static void 
+    draw_line  (std::ostream &, 
+		   const vector_3d &, 
+		   const rotation_3d &,  
+		   const line_3d &);
+     
     static void 
     draw_rectangle (std::ostream &, 
 		    const vector_3d &, 
@@ -88,14 +117,42 @@ namespace geomtools {
 		    double, 
 		    double, 
 		    bool = false);
-    
+     
+    static void 
+    draw_rectangle (std::ostream &, 
+		    const vector_3d &, 
+		    const rotation_3d &,  
+		    const rectangle &,
+		    bool = false);
+     
     static void 
     draw_circle (std::ostream &, 
 		 const vector_3d &, 
 		 const rotation_3d &,
 		 double, 
 		 size_t = 36 );
-    
+     
+    static void 
+    draw_circle (std::ostream &, 
+		 const vector_3d &, 
+		 const rotation_3d &,
+		 const circle & , 
+		 size_t = 36 );
+      
+    static void 
+    draw_disk (std::ostream &, 
+		 const vector_3d &, 
+		 const rotation_3d &,
+		 double, 
+		 size_t = 36 );
+      
+    static void 
+    draw_disk (std::ostream &, 
+		 const vector_3d &, 
+		 const rotation_3d &,
+		 const disk & , 
+		 size_t = 36 );
+   
     static void 
     draw_box (std::ostream &, 
 	      const vector_3d &, 
@@ -135,12 +192,29 @@ namespace geomtools {
 	       size_t = 36);
 
     static void 
+    draw_tube (std::ostream &, 
+	       const vector_3d &, 
+	       const rotation_3d &,
+	       const tube &, 
+	       size_t = 36);
+
+    static void 
     draw_sphere (std::ostream &, 
 		 const vector_3d &, 
 		 const rotation_3d &,
 		 double, 
 		 size_t = 36,
-		 size_t = 10);
+		 size_t = 16);
+
+    static void 
+    draw_sphere (std::ostream &, 
+		 const vector_3d &, 
+		 const rotation_3d &,
+		 const sphere &, 
+		 size_t = 36,
+		 size_t = 16);
+ 
+   static void draw (ostream & out_, const i_placement &, const i_object_3d &);
 
   };
 
