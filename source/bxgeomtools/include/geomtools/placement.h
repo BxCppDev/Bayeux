@@ -71,6 +71,12 @@ namespace geomtools {
 
       void set_orientation (double phi_, double theta_, double delta_);
 
+      void set (double x_, double y_, double z_, 
+		double phi_, double theta_, double delta_);
+
+      void set (const vector_3d & t_, 
+		double phi_, double theta_, double delta_);
+
       // Not recommended at all:
       void set_orientation (const rotation_3d &);
 

@@ -82,6 +82,20 @@ namespace geomtools {
     __inverse_rotation = __rotation.inverse ();    
   }
 
+  void placement::set (double x_, double y_, double z_, 
+		       double phi_, double theta_, double delta_)
+  {
+    set_translation (x_, y_, z_);
+    set_orientation (phi_, theta_, delta_);
+  }
+
+  void placement::set (const vector_3d & t_, 
+		       double phi_, double theta_, double delta_)
+  {
+    set_translation (t_);
+    set_orientation (phi_, theta_, delta_);
+  }
+
   void 
   placement::set_orientation (double phi_, double theta_, double delta_)
   {
