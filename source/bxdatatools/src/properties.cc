@@ -1892,8 +1892,10 @@ namespace datatools {
 	{
 	  out_ << indent << title_ << std::endl;
 	}
+      /*
       out_ << indent << du::i_tree_dumpable::tag 
 	   << "Debug : " <<  __debug << std::endl;
+      */
       if (! __description.empty ()) 
 	{
 	  out_ << indent << du::i_tree_dumpable::tag 
