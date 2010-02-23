@@ -41,6 +41,8 @@
 #include <datatools/utils/i_tree_dump.h>
 #include <datatools/utils/i_clear.h>
 
+using namespace std;
+
 namespace datatools {
 
   namespace utils {
@@ -883,11 +885,11 @@ namespace datatools {
       }
 
       virtual void
-      tree_dump (std::ostream & out_         = std::cerr, 
-		const std::string & title_  = "",
-		const std::string & indent_ = "",
-		bool inherit_               = false) const;
-
+      tree_dump (std::ostream & out_         = std::clog, 
+		 const std::string & title_  = "",
+		 const std::string & indent_ = "",
+		 bool inherit_               = false) const;
+      
       std::string 
       key_to_string (const std::string & key_) const;
 
@@ -906,8 +908,8 @@ namespace datatools {
       serialize (Archive          & ar_ , 
 		const unsigned int version_)
       {
-	ar_ & boost::serialization::make_nvp ("description",__description);
-	ar_ & boost::serialization::make_nvp ("properties",__props);
+	ar_ & boost::serialization::make_nvp ("description", __description);
+	ar_ & boost::serialization::make_nvp ("properties",  __props);
       }
 
     public:
@@ -930,6 +932,7 @@ namespace datatools {
 	static const int MODE_HEADER_FOOTER = 1;
 	static const int MODE_DEFAULT       = MODE_HEADER_FOOTER;
 	static const int mode_header_footer = MODE_HEADER_FOOTER;
+	static const int mode_bare          = MODE_BARE;
 	
 	static const bool write_private_also;
 	static const bool write_public_only;
@@ -961,21 +964,18 @@ namespace datatools {
 
 	// ctor
 	config (bool use_smart_modulo_ = true,
-	       int mode_ = MODE_DEFAULT,
-	       bool write_public_only_ = write_public_only);
+		int mode_ = MODE_DEFAULT,
+		bool write_public_only_ = write_public_only);
 
 	// dtor
 	virtual ~config ();
 
-	void
-	read (std::istream & in_, properties & p_);
+	void read (std::istream & in_, properties & p_);
 	
-	void
-	write (std::ostream & out_, const properties & p_);
+	void write (std::ostream & out_, const properties & p_);
        
-	static bool
-	read_quoted_string (std::istream &,
-			   std::string &);
+	static bool read_quoted_string (std::istream &,
+					std::string &);
 
 
       };
