@@ -137,6 +137,8 @@ namespace datatools {
 
       private:
 
+	void __remove (const string & key_);
+
 	void __add (const string & key_, 
 		    const string & meta_ = "");
 

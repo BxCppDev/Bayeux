@@ -63,22 +63,33 @@ int main (int argc_ , char ** argv_)
 	e4.get_properties ().store ("password", "********");
 	e4.get_properties ().store ("code", 1234567);
 
+	mp.add ("object_3a", "type_1");
+	du::multi_properties::entry & e3a = mp.get ("object_3a");
+	e3a.get_properties ().store ("to_be_removed", true);
+	mp.add ("object_3b", "type_1");
+	du::multi_properties::entry & e3b = mp.get ("object_3b");
+	e3b.get_properties ().store ("to_be_removed", true);
+
 	mp.dump (clog);
 
+	clog << endl << "Removing 2 entries..." << endl;
+	mp.remove ("object_3a");
+	mp.remove ("object_3b");
 
-	clog << "Saving in ASCII format keeping private entries..." << endl;
+	mp.dump (clog);
+
+	clog << endl << "Saving in ASCII file keeping private entries..." << endl;
 	mp.write ("test_multi_properties.conf", 
 		  du::multi_properties::with_header_footer,
 		  du::multi_properties::write_private_also);  
  
 	{
-	  clog << "Serializing..." << endl;
+	  clog << endl << "Serializing..." << endl;
 	  string filename = "test_multi_properties.xml";
 	  clog << "Writing to '" << filename << "' ..." << endl;
 	  datatools::serialization::data_writer writer (filename);
 	  writer.store (mp);
 	  clog << "Serialization is done." << endl;
-	  clog << endl;
 	}
 
       }
@@ -86,7 +97,7 @@ int main (int argc_ , char ** argv_)
       {
 	clog << endl << "Read test:" << endl;
 	du::multi_properties mp ("name", "type");
-	clog << "Readinf from ASCII format skipping private entries..." << endl;
+	clog << "Reading from ASCII file skipping private entries..." << endl;
 	mp.read ("test_multi_properties.conf", 
 		 du::multi_properties::read_public_only);  
 	mp.dump (clog);

@@ -211,8 +211,23 @@ namespace datatools {
       return found->second;
     }
 
+    void multi_properties::__remove (const string & key_)
+    {
+      size_t n = __entries.erase (key_);
+      return;
+    }
+
     void multi_properties::remove (const string & key_)
     {
+      entries_col_t::iterator found = __entries.find (key_);
+      if (found == __entries.end ())
+	{
+	  ostringstream message;
+	  message << "multi_properties::remove: Key '"
+		  <<  key_ << "' is not used !";
+	  throw runtime_error (message.str ());
+	}
+      multi_properties::__remove (key_);
       return;
     }
 
