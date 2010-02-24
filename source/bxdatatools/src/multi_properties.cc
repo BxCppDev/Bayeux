@@ -38,13 +38,13 @@ namespace datatools {
 
     /****************************************************************/
 
-    const std::string & 
+    const string & 
     multi_properties::get_serial_tag () const
     {
       return multi_properties::SERIAL_TAG;
     }
 
-    const std::string & 
+    const string & 
     multi_properties::entry::get_serial_tag () const
     {
       return multi_properties::entry::SERIAL_TAG;
@@ -106,6 +106,46 @@ namespace datatools {
       __properties.clear ();
     }
 
+	
+    void multi_properties::entry::tree_dump (ostream & out_, 
+					     const string & title_,
+					     const string & indent_,
+					     bool inherit_) const
+    {
+      namespace du = datatools::utils;
+      string indent;
+      if (! indent_.empty ()) indent = indent_;
+      if (! title_.empty ()) 
+	{
+	  out_ << indent << title_ << endl;
+	}
+
+      out_ << indent << du::i_tree_dumpable::tag 
+	   << "Key        : \"" <<  __key << "\"" << endl;
+
+      out_ << indent << du::i_tree_dumpable::tag 
+	   << "Meta       : \"" <<  __meta << "\"" << endl;
+      
+      {
+	out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
+	     << "Properties : ";
+	if ( __properties.size () == 0) 
+	  {
+	    out_ << "<empty>"; 
+	  }
+	out_ << endl;
+	{
+	  ostringstream indent_oss;
+	  indent_oss << indent;
+	  indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+	  __properties.tree_dump (out_,"",indent_oss.str ());
+	}
+      }
+     
+      return;
+    }
+
+
     /****************************************************************/
 
     bool multi_properties::is_debug () const
@@ -159,6 +199,16 @@ namespace datatools {
       __entries.clear ();
     }
 
+    void multi_properties::clear ()
+    {
+      reset ();
+    }
+
+    const multi_properties::entries_col_t & multi_properties::entries () const
+    {
+      return __entries;
+    }
+
     multi_properties::multi_properties (const string & key_label_,
 					const string & meta_label_,
 					const string & description_,
@@ -167,8 +217,8 @@ namespace datatools {
       __debug = debug_;
       __key_label = DEFAULT_KEY_LABEL;
       __meta_label = DEFAULT_META_LABEL;
-      set_key_label (key_label_);
-      set_meta_label (meta_label_);
+      if (! key_label_.empty ()) set_key_label (key_label_);
+      if (! meta_label_.empty ()) set_meta_label (meta_label_);
       set_description (description_);
     }
 
@@ -382,10 +432,10 @@ namespace datatools {
 	{
 	  clog << "DEVEL: multi_properties::__read: Entering..." << endl;
 	}
-      std::string line_in;
-      std::string mprop_description;
-      std::string mprop_key_label;
-      std::string mprop_meta_label;
+      string line_in;
+      string mprop_description;
+      string mprop_key_label;
+      string mprop_meta_label;
       bool line_goon = false;
       int line_count = 0;
       ostringstream current_block_oss;
@@ -394,8 +444,8 @@ namespace datatools {
 
       while (in_) 
 	{
-	  std::string line_get;
-	  std::getline (in_,line_get);
+	  string line_get;
+	  getline (in_,line_get);
 	  bool line_continue = false; 
 	  int sz = line_get.size ();
 	  if (sz > 0 && line_get[sz-1] == '\\') 
@@ -425,12 +475,12 @@ namespace datatools {
 	  if (! line_goon) 
 	    {
 	      bool skip_line = false;
-	      std::string line = line_in;
+	      string line = line_in;
 	    
 	      // check if line is blank:
-	      std::istringstream check_iss (line_in);
-	      std::string check_word;
-	      check_iss >> std::ws >> check_word;
+	      istringstream check_iss (line_in);
+	      string check_word;
+	      check_iss >> ws >> check_word;
 	      if (check_word.empty ()) 
 		{
 		  skip_line=true;
@@ -439,20 +489,20 @@ namespace datatools {
 	      // check if line is a comment:
 	      if (! skip_line) 
 		{
-		  std::istringstream iss (line);
+		  istringstream iss (line);
 		  char c = 0;
 		  iss >> c;
 		  if (c == '#') 
 		    {
-		      iss >> std::ws;
-		      std::string token;
+		      iss >> ws;
+		      string token;
 		      iss >> token;
 	      
 		      if (token == "@description") 
 			{
-			  iss >> std::ws;
-			  std::string desc;
-			  std::getline (iss, desc);
+			  iss >> ws;
+			  string desc;
+			  getline (iss, desc);
 			  if (! desc.empty ()) 
 			    {
 			      mprop_description = desc;
@@ -461,14 +511,14 @@ namespace datatools {
 			}
 		      if (token == "@key_label") 
 			{
-			  iss >> std::ws;
-			  std::string key_label;
+			  iss >> ws;
+			  string key_label;
 			  if (! properties::config::read_quoted_string (iss, key_label))
 			    {
 			      throw runtime_error ("multi_properties::__read: Unquoted value for 'key_label'");
 			    }
-			  std::string tmp;
-			  std::getline (iss, tmp);
+			  string tmp;
+			  getline (iss, tmp);
 			  if (! key_label.empty ()) 
 			    {
 			      mprop_key_label = key_label;
@@ -490,14 +540,14 @@ namespace datatools {
 			}
 		      if (token == "@meta_label") 
 			{
-			  iss >> std::ws;
-			  std::string meta_label;
+			  iss >> ws;
+			  string meta_label;
 			  if (! properties::config::read_quoted_string (iss, meta_label))
 			    {
 			      throw runtime_error ("multi_properties::__read: Unquoted value for 'meta_label'");
 			    }
-			  std::string tmp;
-			  std::getline (iss, tmp);
+			  string tmp;
+			  getline (iss, tmp);
 			  if (! meta_label.empty ()) 
 			    {
 			      mprop_meta_label = meta_label;
@@ -543,10 +593,10 @@ namespace datatools {
 			}
 		      if (! properties::config::read_quoted_string (iss, new_key)) 
 			{
-			  std::ostringstream message;
+			  ostringstream message;
 			  message << "multi_properties::__read: "
 				  << "Cannot read quoted string 'key' value !" ;
-			  throw std::runtime_error (message.str ());
+			  throw runtime_error (message.str ());
 			}
 		      iss >> ws;
 		      string meta_label;
@@ -562,10 +612,10 @@ namespace datatools {
 			    }
 			  if (! properties::config::read_quoted_string (iss, new_meta)) 
 			    {
-			      std::ostringstream message;
+			      ostringstream message;
 			      message << "multi_properties::__read: "
 				      << "Cannot read quoted string 'meta' value!" ;
-			      throw std::runtime_error (message.str ());
+			      throw runtime_error (message.str ());
 			    }
 			}
 		      iss >> ws;
@@ -573,10 +623,10 @@ namespace datatools {
 		      iss >> c;
 		      if (c != ']')
 			{
-			  std::ostringstream message;
+			  ostringstream message;
 			  message << "multi_properties::__read: "
 				  << "Cannot read 'key/meta' closing symbol !" ;
-			  throw std::runtime_error (message.str ());
+			  throw runtime_error (message.str ());
 			}
 		      process_block = true;
 		    }
@@ -659,12 +709,90 @@ namespace datatools {
 
     void multi_properties::dump (ostream & out_) const
     {
+      tree_dump (out_, "multi_properties:");
+      /*
       out_ << "multi_properties:" << endl;
       out_ << "|-- " << "Debug       : " <<  __debug << endl;
       out_ << "|-- " << "Description : " <<  __description << endl;
       out_ << "|-- " << "Key label   : \"" <<  __key_label << "\"" << endl;
       out_ << "|-- " << "Meta label  : \"" <<  __meta_label << "\"" << endl;
       out_ << "`-- " << "Number of entries = " <<  __entries.size () << endl;
+      */
+      return;
+    }
+	
+    void multi_properties::tree_dump (ostream & out_, 
+				      const string & title_,
+				      const string & indent_,
+				      bool inherit_) const
+    {
+      namespace du = datatools::utils;
+      string indent;
+      if (! indent_.empty ()) indent = indent_;
+      if (! title_.empty ()) 
+	{
+	  out_ << indent << title_ << endl;
+	}
+     
+      if (! __description.empty ()) 
+	{
+	  out_ << indent << du::i_tree_dumpable::tag 
+	       << "Description  : " <<  get_description () << endl;
+	}
+
+      if (! __key_label.empty ()) 
+	{
+	  out_ << indent << du::i_tree_dumpable::tag 
+	       << "Key label    : \"" <<  get_key_label () << "\"" << endl;
+	}
+
+      if (! __meta_label.empty ()) 
+	{
+	  out_ << indent << du::i_tree_dumpable::tag 
+	       << "Meta label   : \"" <<  get_meta_label () << "\"" << endl;
+	}
+
+      {
+	out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
+	     << "Entries      : ";
+	if ( __entries.size () == 0) 
+	  {
+	    out_ << "<empty>"; 
+	  }
+	out_ << endl;
+	for (entries_col_t::const_iterator i = __entries.begin ();
+	     i != __entries.end () ;
+	     i++) 
+	  {
+	    const string & key = i->first;
+	    const entry & a_entry = i->second;
+	    out_ << indent;
+	    ostringstream indent_oss;
+	    indent_oss << indent;
+	    entries_col_t::const_iterator j = i; 
+	    j++;
+	    out_ << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+	    indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+	    if (j == __entries.end ()) 
+	      {
+		out_ << du::i_tree_dumpable::last_tag;
+		indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+	      }
+	    else 
+	      {
+		out_ << du::i_tree_dumpable::tag;
+		indent_oss << du::i_tree_dumpable::skip_tag;
+	      }
+	    out_ << "Entry : " << '"' << key << '"';
+	    if (properties::key_is_private (key))
+	      {
+		out_ << " [private]";
+	      }
+	    out_ << endl;
+	    a_entry.tree_dump (out_, "", indent_oss.str ());
+	  }
+      }
+ 
       return;
     }
 

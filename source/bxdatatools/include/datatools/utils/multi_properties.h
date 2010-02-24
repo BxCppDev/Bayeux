@@ -26,7 +26,9 @@ namespace datatools {
   namespace utils {
 
     class multi_properties :    
-	  public datatools::serialization::i_serializable  
+      public datatools::serialization::i_serializable,
+      public datatools::utils::i_clear,
+      public datatools::utils::i_tree_dumpable
       {
       public:
 	static const char OPEN;
@@ -46,7 +48,8 @@ namespace datatools {
 
       public:
 	class entry :    
-	  public datatools::serialization::i_serializable  
+	  public datatools::serialization::i_serializable,
+	  public datatools::utils::i_tree_dumpable  
 	{
 	public:
 	  static const string SERIAL_TAG;
@@ -92,6 +95,12 @@ namespace datatools {
 	    ar_ & boost::serialization::make_nvp ("properties", __properties);
 	  }
 
+	public:
+	  virtual void tree_dump (ostream & out_        = cerr, 
+				  const string & title_  = "",
+				  const string & indent_ = "",
+				  bool inherit_          = false) const;
+
 	};
 
       public:
@@ -125,6 +134,10 @@ namespace datatools {
 	const string & get_meta_label () const;
 	
 	void reset ();
+
+	virtual void clear ();
+
+	const entries_col_t & entries () const;
 
 	multi_properties (const string & key_label_ = "", 
 			  const string & meta_label_ = "", 
@@ -184,11 +197,19 @@ namespace datatools {
 		    bool write_private_ = false) const;
 	
 	void read (const string & filename_,
-		   bool skip_private_);
+		   bool skip_private_ = false);
 
       private:
 	
 	void __read (istream & in_, bool skip_private_);
+
+      public:
+
+	virtual void
+	tree_dump (ostream & out_        = cerr, 
+		  const string & title_  = "",
+		  const string & indent_ = "",
+		  bool inherit_          = false) const;
 	
       };
 

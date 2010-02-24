@@ -1,5 +1,5 @@
 // -*- mode: c++; -*- 
-// test_multi_properties.cxx
+// test_multi_properties.cxx 
 
 #include <cstdlib>
 #include <iostream>
