@@ -191,11 +191,21 @@ namespace datatools {
     {
       return __meta_label;
     }
+	
+    size_t multi_properties::size () const
+    {
+      if (__ordered_entries.size () != __entries.size ()) 
+	{
+	  throw runtime_error ("multi_properties::size: Containers are broken !");
+	}
+      return __entries.size ();
+    }
 
     void multi_properties::reset ()
     {
       __key_label = "";
       __meta_label = "";
+      __ordered_entries.clear ();
       __entries.clear ();
     }
 
@@ -209,11 +219,17 @@ namespace datatools {
       return __entries;
     }
 
+    const multi_properties::entries_ordered_col_t & 
+    multi_properties::ordered_entries () const
+    {
+      return __ordered_entries;
+    }
+
     multi_properties::multi_properties (const string & key_label_,
 					const string & meta_label_,
 					const string & description_,
 					bool debug_)
-    {
+    { 
       __debug = debug_;
       __key_label = DEFAULT_KEY_LABEL;
       __meta_label = DEFAULT_META_LABEL;
@@ -263,6 +279,36 @@ namespace datatools {
 
     void multi_properties::__remove (const string & key_)
     {
+      bool devel = __debug;
+      //devel = true;
+      entries_ordered_col_t::iterator found = __ordered_entries.end ();
+       if (devel)
+	{
+	  clog << "DEVEL: multi_properties::__add: "
+	       << "Removing key '" << key_ << "'";
+	  clog << endl;
+	}
+       for (entries_ordered_col_t::iterator i = __ordered_entries.begin ();
+	   i != __ordered_entries.end ();
+	   i++)
+	{
+	  entry * e = *i;
+	  if (e->get_key () == key_)
+	    {
+	      found = i;
+	      break;
+	    }
+	}
+      if (found != __ordered_entries.end ())
+	{
+	  __ordered_entries.erase (found);
+	  if (devel)
+	    {
+	      clog << "DEVEL: multi_properties::__add: "
+		   << "Removing ordered key '" << key_ << "'...";
+	      clog << endl;
+	    }
+	}
       size_t n = __entries.erase (key_);
       return;
     }
@@ -284,6 +330,8 @@ namespace datatools {
     void multi_properties::__add (const string & key_, 
 				  const string & meta_)
     {
+      bool devel = __debug;
+      //devel = true;
       if (__entries.find (key_) != __entries.end ())
 	{
 	  ostringstream message;
@@ -291,7 +339,15 @@ namespace datatools {
 		  <<  key_ << "' is already used !";
 	  throw runtime_error (message.str ());
 	}
+      if (devel)
+	{
+	  clog << "DEVEL: multi_properties::__add: "
+	       << "Adding key '" << key_ << "'";
+	  if (! meta_.empty()) clog << " with meta '" << meta_ << "'";
+	  clog << endl;
+	}
       __entries[key_] = entry (key_, meta_);
+      __ordered_entries.push_back (&__entries[key_]);
       return;
     }
 
@@ -753,11 +809,15 @@ namespace datatools {
 	}
 
       {
-	out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
+	out_ << indent << du::i_tree_dumpable::tag
 	     << "Entries      : ";
-	if ( __entries.size () == 0) 
+	if (__entries.size () == 0) 
 	  {
 	    out_ << "<empty>"; 
+	  }
+	else
+	  {
+	    out_ << "[" << __entries.size () << "]";
 	  }
 	out_ << endl;
 	for (entries_col_t::const_iterator i = __entries.begin ();
@@ -771,8 +831,10 @@ namespace datatools {
 	    indent_oss << indent;
 	    entries_col_t::const_iterator j = i; 
 	    j++;
-	    out_ << du::i_tree_dumpable::inherit_skip_tag (inherit_);
-	    indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+	    //out_ << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+	    //indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+	    out_ << du::i_tree_dumpable::skip_tag;
+	    indent_oss << du::i_tree_dumpable::skip_tag;
 	    if (j == __entries.end ()) 
 	      {
 		out_ << du::i_tree_dumpable::last_tag;
@@ -790,6 +852,52 @@ namespace datatools {
 	      }
 	    out_ << endl;
 	    a_entry.tree_dump (out_, "", indent_oss.str ());
+	  }
+      }
+
+      {
+	int rank = 0;
+	out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
+	     << "Ordered entries      : ";
+	if (__ordered_entries.size () == 0) 
+	  {
+	    out_ << "<empty>"; 
+	  }
+	else
+	  {
+	    out_ << "[" << __ordered_entries.size () << "]";
+	  }
+	out_ << endl;
+	for (entries_ordered_col_t::const_iterator i = __ordered_entries.begin ();
+	     i != __ordered_entries.end () ;
+	     i++) 
+	  {
+	    const entry * p_entry = *i;
+	    out_ << indent;
+	    ostringstream indent_oss;
+	    indent_oss << indent;
+	    entries_ordered_col_t::const_iterator j = i; 
+	    j++;
+	    out_ << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+	    indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+	    if (j == __ordered_entries.end ()) 
+	      {
+		out_ << du::i_tree_dumpable::last_tag;
+		indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+	      }
+	    else 
+	      {
+		out_ << du::i_tree_dumpable::tag;
+		indent_oss << du::i_tree_dumpable::skip_tag;
+	      }
+	    string key = p_entry->get_key ();
+	    out_ << "Entry [rank=" << rank << "] : " << '"' << key << '"';
+	    if (properties::key_is_private (key))
+	      {
+		out_ << " [private]";
+	      }
+	    out_ << endl;
+	    rank++;
 	  }
       }
  

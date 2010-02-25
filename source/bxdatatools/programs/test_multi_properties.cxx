@@ -36,7 +36,8 @@ int main (int argc_ , char ** argv_)
       {
 	clog << endl << "Write test:" << endl;
 	du::multi_properties mp ("name", "type", "A sample list of setups");
-	
+	mp.set_debug (debug);
+
 	mp.add ("object_1", "type_1");
 	du::multi_properties::entry & e1 = mp.get ("object_1");
 	e1.get_properties ().store ("debug", true);

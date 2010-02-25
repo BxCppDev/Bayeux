@@ -7,6 +7,7 @@
 #include <string>
 #include <fstream>
 #include <stdexcept>
+#include <list>
 #include <map>
 #include <string>
 
@@ -106,6 +107,7 @@ namespace datatools {
       public:
 
 	typedef map<string, entry> entries_col_t;
+	typedef list<entry *> entries_ordered_col_t;
 
       private:
 	
@@ -114,7 +116,7 @@ namespace datatools {
 	string        __key_label;
 	string        __meta_label;
 	entries_col_t __entries;
-
+	entries_ordered_col_t __ordered_entries;
       public:
 
 	bool is_debug () const;
@@ -133,11 +135,15 @@ namespace datatools {
 
 	const string & get_meta_label () const;
 	
+	size_t size () const;
+
 	void reset ();
 
 	virtual void clear ();
 
 	const entries_col_t & entries () const;
+
+	const entries_ordered_col_t & ordered_entries () const;
 
 	multi_properties (const string & key_label_ = "", 
 			  const string & meta_label_ = "", 
@@ -170,6 +176,7 @@ namespace datatools {
 	ar_ & boost::serialization::make_nvp ("key_label",  __key_label);
 	ar_ & boost::serialization::make_nvp ("meta_label",  __meta_label);
 	ar_ & boost::serialization::make_nvp ("entries",  __entries);
+	ar_ & boost::serialization::make_nvp ("ordered_entries",  __ordered_entries);
       }
 
       public:
