@@ -187,13 +187,14 @@ namespace geomtools {
         out_ << indent << title_ << endl;
       }
     out_ << indent << i_tree_dumpable::tag 
-	 << "Name    = " << __name << endl;
+	 << "Name       : \"" << __name << "\"" << endl;
 
     out_ << indent << i_tree_dumpable::tag 
-	 << "Locked    = " << (__locked? "Yes": "No") << endl;
+	 << "Locked     : " << (__locked? "Yes": "No") << endl;
 
-    out_ << indent << du::i_tree_dumpable::tag
-	 << "Parameters : ";
+    {
+      out_ << indent << du::i_tree_dumpable::tag
+	   << "Parameters : ";
       if ( __parameters.size () == 0) 
         {
           out_ << "<empty>"; 
@@ -205,37 +206,49 @@ namespace geomtools {
         indent_oss << du::i_tree_dumpable::skip_tag;
         __parameters.tree_dump (out_,"",indent_oss.str ());
       }
-      //out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
-    out_ << indent << i_tree_dumpable::tag 
-         << "Shape = ";
-    if (has_shape ())
-      {
-	out_ << "'" << __shape->get_shape_name () << "' " 
-	     << (__own_shape? "(owned)": "(not owned)");
-      }
-    else
-      {
-	out_ << "<no shape>";
-      }
-    out_ << endl; 
-
-    out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
-         << "Physicals : ";
-    if (__physicals.size ())
-      {
-	for (physicals_col_t::const_iterator i = __physicals.begin ();
-	     i != __physicals.end ();
-	     i++)
-	  {
-	    out_ << i->first << ' ';
-	  }
-	out_ << endl; 
-      }
-    else
-      {
-	out_ << "<none>" << endl;
-      }
+    }
     
+    {
+      out_ << indent << i_tree_dumpable::tag 
+	   << "Shape : ";
+      if (has_shape ())
+	{
+	  out_ << "'" << __shape->get_shape_name () << "' " 
+	       << (__own_shape? "(owned)": "(not owned)");
+	}
+      else
+	{
+	  out_ << "<no shape>";
+	}
+      out_ << endl; 
+      {
+	ostringstream indent_oss;
+	indent_oss << indent;
+	indent_oss << du::i_tree_dumpable::skip_tag;
+	__shape->tree_dump (out_,"",indent_oss.str ());
+      }
+    }
+      
+    {
+      out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
+	   << "Physicals : ";
+      if (__physicals.size ())
+	{
+	  for (physicals_col_t::const_iterator i = __physicals.begin ();
+	       i != __physicals.end ();
+	       i++)
+	    {
+	      out_ << i->first << ' ';
+	    }
+	  out_ << endl; 
+	}
+      else
+	{
+	  out_ << "<none>" << endl;
+	}
+    }
+
+    return;
   }
   
 } // end of namespace geomtools

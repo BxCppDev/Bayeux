@@ -134,6 +134,50 @@ namespace geomtools {
     print_xyz (std::cerr, p_);
   }
 
+  void
+  create (vector_3d & v_,
+	  double x_,
+	  double y_,
+	  double z_)
+  {
+    create_xyz (v_, x_, y_, z_);
+  }
+
+  void
+  create_xyz (vector_3d & v_,
+	      double x_,
+	      double y_,
+	      double z_)
+  {
+    v_.setX (x_);
+    v_.setY (y_);
+    v_.setZ (z_);
+  }
+
+  void
+  create_polar (vector_3d & v_,
+		double r_,
+		double theta_,
+		double z_)
+  {
+    create_xyz (v_,
+		r_ * cos (theta_),
+		r_ * sin (theta_),
+		z_);   
+  }
+
+  void
+  create_spherical (vector_3d & v_,
+		    double r_,
+		    double phi_,
+		    double theta_)
+  {
+    create_xyz (v_,
+		r_ * sin (theta_) * cos (phi_),
+		r_ * sin (theta_) * sin (phi_),
+		r_ * cos (theta_));   
+  }
+
   void 
   invalidate (vector_3d & vec_)
   {

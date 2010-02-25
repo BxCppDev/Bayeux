@@ -42,6 +42,8 @@ namespace geomtools {
 
   public: 
 
+    bool is_multiple () const;
+
     virtual size_t get_number_of_items () const = 0;
     
     virtual void get_placement (int item_, placement & p_) const = 0;

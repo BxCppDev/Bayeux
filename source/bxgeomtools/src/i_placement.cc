@@ -17,6 +17,11 @@ namespace geomtools {
   {
   }
 
+  bool i_placement::is_multiple () const
+  {
+    return get_number_of_items () > 0;
+  }
+
   void i_placement::tree_dump (ostream & out_, 
 			       const string & title_, 
 			       const string & indent_, 

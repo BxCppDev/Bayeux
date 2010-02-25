@@ -246,10 +246,10 @@ namespace geomtools {
       }
 
     out_ << indent << i_tree_dumpable::tag 
-	 << "Name    = " << __name << std::endl;
+	 << "Name      : \"" << __name << "\"" << std::endl;
 
     out_ << indent << i_tree_dumpable::tag 
-	 << "Locked    = " << (__locked? "Yes": "No") << std::endl;
+	 << "Locked    : " << (__locked? "Yes": "No") << std::endl;
 
     {
       // parameters:
@@ -271,10 +271,10 @@ namespace geomtools {
     {
       // Logical:
 	out_ << indent << i_tree_dumpable::tag 
-	     << "Logical = ";
+	     << "Logical : ";
 	if (has_logical ())
 	  {
-	    out_ << "'" << __logical->get_name () << "' " 
+	    out_ << "\"" << __logical->get_name () << "\" " 
 		 << (__own_logical? "(owned)": "(not owned)");
 	  }
 	else
@@ -287,8 +287,6 @@ namespace geomtools {
     {
       out_ << indent << i_tree_dumpable::tag 
 	   << "Placement : " << endl;
-      //ostringstream oss_title;
-      //oss_title << i_tree_dumpable::inherit_tag (inherit_) << "Placement:";
       ostringstream oss_indent;
       oss_indent << indent << i_tree_dumpable::skip_tag;
       __placement->tree_dump (out_, 
@@ -303,7 +301,7 @@ namespace geomtools {
 	   << "Mother = ";
       if (has_mother ())
 	{
-	  out_ << "'" << __mother->get_name () << "'";
+	  out_ << "\"" << __mother->get_name () << "\"";
 	}
       else
 	{

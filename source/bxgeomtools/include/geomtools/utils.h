@@ -182,6 +182,29 @@ namespace geomtools {
   is_valid_rotation_3d (const rotation_3d & rot_);
 
   /******/
+  void
+  create (vector_3d &,
+	  double x_,
+	  double y_,
+	  double z_);
+
+  void
+  create_xyz (vector_3d &,
+	      double x_,
+	      double y_,
+	      double z_);
+
+  void
+  create_polar (vector_3d &,
+		double r_,
+		double theta_,
+		double z_);
+
+  void
+  create_spherical (vector_3d &,
+		    double r_,
+		    double phi_,
+		    double theta_);
 
   void 
   invalidate (vector_3d & vec_);
