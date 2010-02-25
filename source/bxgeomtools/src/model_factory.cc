@@ -115,21 +115,26 @@ namespace geomtools {
 	  clog << "DEVEL: model_factory::__construct: "
 	       << "Entering..." << endl;
 	}
-      for (datatools::utils::multi_properties::entries_col_t::const_iterator i 
-	     = __mp.entries ().begin ();
-	   i != __mp.entries ().end ();
+      for (datatools::utils::multi_properties::entries_ordered_col_t::const_iterator i 
+	     = __mp.ordered_entries ().begin ();
+	   i != __mp.ordered_entries ().end ();
 	   i++)
 	{
-	  const datatools::utils::multi_properties::entry & e = i->second;
+	  const datatools::utils::multi_properties::entry * ptr_entry = *i;
+	  const datatools::utils::multi_properties::entry & e = *ptr_entry;
 	  string name = e.get_key ();
 	  string type = e.get_meta ();
+
 	  model_creator_t & creator = i_model::get_model_db ().get_model (type);
 	  if (devel)  clog << "DEVEL: model_factory::__construct: "
 	       << "About to create a new model of type \"" << type 
 	       << "\" with name \"" << name << "\"..." << endl;
-	  i_model * model = creator (name, 
-				     e.get_properties (),
-				     &__models);
+	  i_model * model = 0;
+
+	  model = creator (name, 
+			   e.get_properties (),
+			   &__models);
+
 	  if (model != 0)
 	    {
 	      __models[name] = model;
