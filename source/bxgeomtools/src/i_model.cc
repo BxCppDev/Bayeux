@@ -174,7 +174,12 @@ namespace geomtools {
   {
     __debug = new_value_;
   }
-
+   
+  const string & i_model::get_name () const
+  {
+    return __name;
+  }
+ 
   void i_model::set_name (const string & name_)
   {
     __name = name_;

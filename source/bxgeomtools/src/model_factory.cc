@@ -82,7 +82,7 @@ namespace geomtools {
   
   void model_factory::unlock ()
   {
-   if (! __locked) return;
+    if (! __locked) return;
     __unlock ();
     __locked = false;
   }
@@ -105,124 +105,134 @@ namespace geomtools {
       }
     __models.clear ();
     __mp.reset ();
-   }
+  }
 
-    void model_factory::__construct ()
-    {
-      bool devel = __debug;
-      if (devel) 
-	{
-	  clog << "DEVEL: model_factory::__construct: "
-	       << "Entering..." << endl;
-	}
-      for (datatools::utils::multi_properties::entries_ordered_col_t::const_iterator i 
-	     = __mp.ordered_entries ().begin ();
-	   i != __mp.ordered_entries ().end ();
-	   i++)
-	{
-	  const datatools::utils::multi_properties::entry * ptr_entry = *i;
-	  const datatools::utils::multi_properties::entry & e = *ptr_entry;
-	  string name = e.get_key ();
-	  string type = e.get_meta ();
+  void model_factory::__construct ()
+  {
+    bool devel = __debug;
+    if (devel) 
+      {
+	clog << "DEVEL: model_factory::__construct: "
+	     << "Entering..." << endl;
+      }
+    for (datatools::utils::multi_properties::entries_ordered_col_t::const_iterator i 
+	   = __mp.ordered_entries ().begin ();
+	 i != __mp.ordered_entries ().end ();
+	 i++)
+      {
+	const datatools::utils::multi_properties::entry * ptr_entry = *i;
+	const datatools::utils::multi_properties::entry & e = *ptr_entry;
+	string name = e.get_key ();
+	string type = e.get_meta ();
 
-	  model_creator_t & creator = i_model::get_model_db ().get_model (type);
-	  if (devel)  clog << "DEVEL: model_factory::__construct: "
-	       << "About to create a new model of type \"" << type 
-	       << "\" with name \"" << name << "\"..." << endl;
-	  i_model * model = 0;
+	model_creator_t & creator = i_model::get_model_db ().get_model (type);
+	if (devel)  
+	  {
+	    clog << "DEVEL: model_factory::__construct: "
+		 << "About to create a new model of type \"" << type 
+		 << "\" with name \"" << name << "\"..." << endl;
+	  }
+	i_model * model = 0;
 
-	  model = creator (name, 
-			   e.get_properties (),
-			   &__models);
+	model = creator (name, 
+			 e.get_properties (),
+			 &__models);
 
-	  if (model != 0)
-	    {
-	      __models[name] = model;
-	      if (devel)  model->tree_dump (clog, "New model is:", "DEVEL: model_factory::__construct: ");
-	    }
-	  else
-	    {
-	      cerr << "ERROR: model_factory::__construct: "
-		   << "Cannot create model of type \"" << type 
-		   << "\" with name \"" << name << "\"..." << endl;
-	    }
-	}
-      if (devel) clog << "DEVEL: model_factory::__construct: "
-		      << "Exiting." << endl;
-      return;
-    }
+	if (model != 0)
+	  {
+	    __models[name] = model;
+	    if (devel) model->tree_dump (clog, "New model is:", "DEVEL: model_factory::__construct: ");
+	  }
+	else
+	  {
+	    cerr << "ERROR: model_factory::__construct: "
+		 << "Cannot create model of type \"" << type 
+		 << "\" with name \"" << name << "\"..." << endl;
+	  }
+      }
+    if (devel) 
+      {
+	clog << "DEVEL: model_factory::__construct: "
+	     << "Exiting." << endl;
+      }
+    return;
+  }
 
-  void model_factory::tree_dump (std::ostream & out_, 
-				 const std::string & title_,
-				 const std::string & indent_,
+  void model_factory::tree_dump (ostream & out_, 
+				 const string & title_,
+				 const string & indent_,
 				 bool inherit_) const
   {
-      namespace du = datatools::utils;
-      std::string indent;
-      if (! indent_.empty ()) indent = indent_;
-      if (! title_.empty ()) 
-	{
-	  out_ << indent << title_ << std::endl;
-	}
-      /*
-      out_ << indent << du::i_tree_dumpable::tag 
-	   << "Debug : " <<  __debug << std::endl;
-      */
-
-      out_ << indent << du::i_tree_dumpable::tag 
-	   << "Locked  : " <<  (__locked? "Yes": "No") << std::endl;
-
+    namespace du = datatools::utils;
+    string indent;
+    if (! indent_.empty ()) indent = indent_;
+    if (! title_.empty ()) 
       {
-	out_ << indent << du::i_tree_dumpable::tag
-	     << "Multi-properties : ";
-	if ( __mp.entries ().size () == 0) 
-	  {
-	    out_ << "<empty>"; 
-	  }
-	out_ << endl;
+	out_ << indent << title_ << endl;
+      }
+    /*
+      out_ << indent << du::i_tree_dumpable::tag 
+      << "Debug : " <<  __debug << endl;
+    */
+
+    out_ << indent << du::i_tree_dumpable::tag 
+	 << "Locked  : " <<  (__locked? "Yes": "No") << endl;
+
+    {
+      out_ << indent << du::i_tree_dumpable::tag
+	   << "Multi-properties : ";
+      if ( __mp.entries ().size () == 0) 
 	{
+	  out_ << "<empty>"; 
+	}
+      out_ << endl;
+      {
+	ostringstream indent_oss;
+	indent_oss << indent;
+	indent_oss << du::i_tree_dumpable::skip_tag;
+	__mp.tree_dump (out_, "", indent_oss.str ());
+      }
+    }
+ 
+    {
+      out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
+	   << "Models : ";
+      if ( __models.size () == 0) 
+	{
+	  out_ << "<empty>"; 
+	}
+      else
+	{
+	  out_ << "[" << __models.size () << "]"; 
+	}
+      out_ << endl;
+      for (models_col_t::const_iterator i = __models.begin ();
+	   i != __models.end ();
+	   i++)
+	{
+	  const string & key = i->first;
+	  const i_model * a_model = i->second;
 	  ostringstream indent_oss;
-	  indent_oss << indent;
-	  indent_oss << du::i_tree_dumpable::skip_tag;
-	  __mp.tree_dump (out_, "", indent_oss.str ());
+	  out_ << indent << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+	  indent_oss << indent << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+	  models_col_t::const_iterator j = i; 
+	  j++;
+	  if (j == __models.end ()) 
+	    {
+	      out_ << du::i_tree_dumpable::inherit_tag (inherit_);
+	      indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+	    }
+	  else 
+	    {
+	      out_ << du::i_tree_dumpable::tag;
+	      indent_oss << du::i_tree_dumpable::skip_tag;
+	    }
+	  out_ << "Model : " << '"' << key << '"' << endl;
+	  a_model->tree_dump (out_, "", indent_oss.str ());
 	}
-      }
-
-      {
-	out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
-	     << "Models : ";
-	if ( __models.size () == 0) 
-	  {
-	    out_ << "<empty>"; 
-	  }
-	out_ << endl;
-	for (models_col_t::const_iterator i = __models.begin ();
-	     i != __models.end ();
-	     i++)
-	  {
-	    const std::string & key = i->first;
-	    const i_model * a_model = i->second;
-	    out_ << indent;
-	    std::ostringstream indent_oss;
-	    indent_oss << indent;
-	    models_col_t::const_iterator j = i; 
-	    j++;
-	    if (j == __models.end ()) 
-	      {
-		out_ << du::i_tree_dumpable::inherit_tag (inherit_);
-		indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
-	      }
-	    else 
-	      {
-		out_ << du::i_tree_dumpable::tag;
-		indent_oss << du::i_tree_dumpable::skip_tag;
-	      }
-	    out_ << "Name : " << '"' << key << '"' << std::endl;
-	    a_model->tree_dump (out_, "", indent_oss.str ());
-	  }
-      }
+    }
       
-      return;
+    return;
   }
        
 } // end of namespace geomtools
