@@ -120,11 +120,7 @@ namespace geomtools {
 
       vector_3d child_to_mother_direction (const vector_3d &) const;
 
-      void mother_to_child (const rotation_3d &, rotation_3d &) const;
-
-      void child_to_mother (const rotation_3d &, rotation_3d &) const;
-
-      void mother_to_child (const placement &, placement &) const;
+      //void mother_to_child (const placement &, placement &) const;
 
       void child_to_mother (const placement &, placement &) const;
 
@@ -137,13 +133,6 @@ namespace geomtools {
       void dump (ostream      & out_    = clog, 
 		 const string & title_  = "geomutils::placement", 
 		 const string & indent_ = "") const;
-
-      /*
-	void dump ( ostream & out_ , 
-	const string & title_  = "geomutils::geom_data", 
-	const string & indent_ = "" ,
-	bool inherit_               =  false ) const;
-      */
     
     };
 

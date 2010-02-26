@@ -25,8 +25,8 @@ visibility : string = "visible"
 sub1_model : string = "box1"
 sub2_model : string = "box2"
 distance : real = 30.
-phy : real = 0.
-theta : real = 0.
+phi : real = 30. # degree
+theta : real = 45. # degree
 gas_pressure : real = 0.9 # atmosphere
 gas_temperature : real = 305. # kelvin
 
@@ -35,7 +35,8 @@ gas_temperature : real = 305. # kelvin
 material : string = "vacuum"
 visibility : string = "visible"
 setup_model : string = "box3"
-phy : real = 12.
-theta : real = 47.
+# not used:
+#phi : real = 12.
+#theta : real = 47.
 
 # End of list of multi-properties.

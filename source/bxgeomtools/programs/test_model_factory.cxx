@@ -62,13 +62,13 @@ int main (int argc_, char ** argv_)
 
       datatools::utils::properties drawer_config;
       geomtools::placement p;
-      //p.set (0,0,0,30,27,12);
       //p.set (0, 0, 0, 30 * CLHEP::degree, 45 * CLHEP::degree, 0);
-      p.set (0, 0, 0, 30 * CLHEP::degree, 0, 0);
+      //p.set (0, 0, 0, 30 * CLHEP::degree, 20 * CLHEP::degree, 0);
+      p.set (0, 0, 0, 60 * CLHEP::degree, 30 * CLHEP::degree, 0);
 
       p.tree_dump (clog, "Placement");
 
-      geomtools::drawer::draw (factory, "box3", p, drawer_config);
+      geomtools::drawer::draw (factory, "box3", p, 2, drawer_config);
 
     }
   catch (exception & x)

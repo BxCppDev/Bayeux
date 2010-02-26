@@ -24,6 +24,7 @@
 #include <sstream>
 #include <string>
 #include <map>
+#include <unistd.h>
 
 #include <datatools/utils/properties.h>
 #include <datatools/utils/i_tree_dump.h>
@@ -43,10 +44,24 @@ namespace geomtools {
   public:
   
     static void wait_for_key ();
+
+  private:
+    static void __draw (ostream & out_,
+			const logical_volume & log_,
+			const placement & p_,
+			int max_display_level_ = 0);
+
   
+  public:
+    static void draw (const logical_volume & log_,
+		      const placement & p_,
+		      int max_display_level_,
+		      const string & name_);
+    
     static void draw (const model_factory & mf_,
 		      const string & name_,
 		      const placement & p_,
+		      int max_display_level_,
 		      const datatools::utils::properties & config_);
 
   }; // class drawer
