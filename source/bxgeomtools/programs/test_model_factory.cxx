@@ -1,13 +1,14 @@
 // -*- mode: c++ ; -*- 
-// test_model_factory.cxx
+// test_model_factory.cxx 
 
-#include <cstdlib>
+#include <cstdlib> 
 #include <iostream>
 #include <string>
 #include <exception>
 
 #include <datatools/utils/utils.h>
 #include <geomtools/model_factory.h>
+#include <geomtools/drawer.h>
 
 using namespace std;
 
@@ -58,6 +59,16 @@ int main (int argc_, char ** argv_)
       factory.load (setup_filename);
       factory.lock ();
       factory.tree_dump (clog);
+
+      datatools::utils::properties drawer_config;
+      geomtools::placement p;
+      //p.set (0,0,0,30,27,12);
+      //p.set (0, 0, 0, 30 * CLHEP::degree, 45 * CLHEP::degree, 0);
+      p.set (0, 0, 0, 30 * CLHEP::degree, 0, 0);
+
+      p.tree_dump (clog, "Placement");
+
+      geomtools::drawer::draw (factory, "box3", p, drawer_config);
 
     }
   catch (exception & x)

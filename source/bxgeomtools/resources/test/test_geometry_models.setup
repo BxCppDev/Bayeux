@@ -6,15 +6,15 @@
 
 [name="box1" type="geomtools::test::test_model_1"]
 
-width : real = 34.0
-height : real = 14.0
+width : real = 40.0
+height : real = 10.0
 material : string = "copper"
 visibility : string = "visible"
 
 [name="box2" type="geomtools::test::test_model_1"]
 
-width : real = 64.0
-height : real = 24.0
+width : real = 10.0
+height : real = 5.0
 material : string = "teflon"
 visibility : string = "visible"
 
@@ -26,7 +26,7 @@ sub1_model : string = "box1"
 sub2_model : string = "box2"
 distance : real = 30.
 phy : real = 0.
-theta : real = 30.
+theta : real = 0.
 gas_pressure : real = 0.9 # atmosphere
 gas_temperature : real = 305. # kelvin
 

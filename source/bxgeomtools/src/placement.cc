@@ -21,6 +21,7 @@ namespace geomtools {
     geomtools::invalidate (__translation);
     geomtools::invalidate (__rotation);
     geomtools::invalidate (__inverse_rotation);
+    __phi = __theta = __delta = std::numeric_limits<double>::quiet_NaN();
   }
 
   const vector_3d & 
@@ -244,6 +245,32 @@ namespace geomtools {
     vector_3d v;
     child_to_mother_direction (child_dir_,v);
     return v;
+  }
+
+  void placement::mother_to_child (const rotation_3d & rm_, rotation_3d & rc_) const
+  {
+    rc_ = __inverse_rotation * rm_ * __rotation;
+  }
+
+  void placement::child_to_mother (const rotation_3d & rc_, rotation_3d & rm_) const
+  {
+    rm_ = __rotation * rc_ * __inverse_rotation;
+  }
+
+  void placement::mother_to_child (const placement & pm_, placement & pc_) const
+  {
+    mother_to_child (pm_.__translation, pc_.__translation);
+    pc_.__phi = pc_.__theta = pc_.__delta = std::numeric_limits<double>::quiet_NaN ();
+    mother_to_child (pm_.__rotation, pc_.__rotation);
+    pc_.__inverse_rotation = pc_.__rotation.inverse ();
+ }
+
+  void placement::child_to_mother (const placement & pc_, placement & pm_) const
+  {
+    child_to_mother (pc_.__translation, pm_.__translation);
+    pm_.__phi = pm_.__theta = pm_.__delta = std::numeric_limits<double>::quiet_NaN ();
+    child_to_mother (pc_.__rotation, pm_.__rotation);
+    pm_.__inverse_rotation = pm_.__rotation.inverse ();
   }
 
   void placement::tree_dump (ostream & out_, 

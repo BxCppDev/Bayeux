@@ -134,6 +134,12 @@ namespace geomtools {
     return (__physicals.find (name_) != __physicals.end ());
   }
 
+  const logical_volume::physicals_col_t & 
+  logical_volume::get_physicals () const
+  {
+    return __physicals;
+  }
+
   const physical_volume & logical_volume::get_physical (const string & name_) const
   {
     physicals_col_t::const_iterator found = __physicals.find (name_);

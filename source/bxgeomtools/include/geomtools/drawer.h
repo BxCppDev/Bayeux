@@ -1,0 +1,58 @@
+// -*- mode: c++ ; -*- 
+/* drawer.h
+ * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Creation date: 2010-02-20
+ * Last modified: 2010-02-20
+ * 
+ * License: 
+ * 
+ * Description: 
+ *   
+ * 
+ * History: 
+ * 
+ */
+
+#ifndef __geomtools__drawer_h
+#define __geomtools__drawer_h 1
+
+#include <cstdlib>
+#include <cmath>
+#include <stdexcept>
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+#include <string>
+#include <map>
+
+#include <datatools/utils/properties.h>
+#include <datatools/utils/i_tree_dump.h>
+
+#include <geomtools/gnuplot_draw.h>
+#include <geomtools/gnuplot_i.h>
+#include <geomtools/model_factory.h>
+#include <geomtools/placement.h>
+#include <geomtools/physical_volume.h>
+
+namespace geomtools {
+  
+  using namespace std;  
+  
+  class drawer 
+  {
+  public:
+  
+    static void wait_for_key ();
+  
+    static void draw (const model_factory & mf_,
+		      const string & name_,
+		      const placement & p_,
+		      const datatools::utils::properties & config_);
+
+  }; // class drawer
+  
+} // end of namespace snemo
+
+#endif // __geomtools__i_model_h
+
+// end of i_model.h

@@ -76,6 +76,8 @@ namespace geomtools {
 
     const i_shape_3d & get_shape () const;
 
+    const physicals_col_t & get_physicals () const;
+
     logical_volume ();
 
     logical_volume (const string &);
