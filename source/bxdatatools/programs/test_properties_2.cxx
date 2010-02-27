@@ -108,6 +108,8 @@ int main (int argc_, char ** argv_)
       my_dict.export_not_starting_with (my_dict5, "visibility.");
       my_dict5.dump (clog);
 
+      my_dict.export_starting_with (my_dict, "visibility.");
+
     }
   catch (exception & x)
     {

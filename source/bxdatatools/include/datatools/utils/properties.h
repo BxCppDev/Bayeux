@@ -533,11 +533,11 @@ namespace datatools {
 
       void
       export_starting_with (properties & p_, 
-			    const std::string & key_prefix_);
+			    const std::string & key_prefix_) const;
 
       void
       export_not_starting_with (properties & p_, 
-				const std::string & key_prefix_);
+				const std::string & key_prefix_) const;
 
       void
       clean (const std::string & key_);

@@ -973,29 +973,39 @@ namespace datatools {
 
     void
     properties::export_starting_with (properties & p_, 
-				      const std::string & key_prefix_)
+				      const std::string & key_prefix_) const
     {
+      if (this == &p_)
+	{
+	  throw runtime_error ("properties::export_starting_with: Self export is not allowed !");
+	}
       keys_col_t ks;
-      keys_starting_with (ks, key_prefix_);
+      this->keys_starting_with (ks, key_prefix_);
       for (keys_col_t::const_iterator i = ks.begin ();
 	   i !=  ks.end ();
 	   i++)
 	{
-	  p_.__props[*i] = __props[*i];
+	  properties & ptmp = const_cast<properties &> (*this);
+	  p_.__props[*i] = ptmp.__props[*i];
 	}
     }
 
     void
     properties::export_not_starting_with (properties & p_, 
-					  const std::string & key_prefix_)
+					  const std::string & key_prefix_) const
     {
+      if (this == &p_)
+	{
+	  throw runtime_error ("properties::export_starting_with: Self export is not allowed !");
+	}
       keys_col_t ks;
       keys_not_starting_with (ks, key_prefix_);
       for (keys_col_t::const_iterator i = ks.begin ();
 	   i !=  ks.end ();
 	   i++)
 	{
-	  p_.__props[*i] = __props[*i];
+	  properties & ptmp = const_cast<properties &> (*this);
+	  p_.__props[*i] = ptmp.__props[*i];
 	}
     }
 
