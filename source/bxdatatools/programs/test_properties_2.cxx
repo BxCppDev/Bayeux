@@ -53,12 +53,15 @@ int main (int argc_, char ** argv_)
       my_dict.store ("visibility.rendering", "shaded");
       my_dict.store ("visibility.texture", "marble");
       my_dict.store ("age", 24, "the age of the captain");    
+      my_dict.dump (clog);
 
       du::properties::keys_col_t all_keys;
       my_dict.keys (all_keys);
 
       du::properties::keys_col_t visibility_keys;
       my_dict.keys_starting_with (visibility_keys, "visibility.");
+      du::properties::keys_col_t other_keys;
+      my_dict.keys_not_starting_with (other_keys, "visibility.");
 
       clog << "All keys: " << endl;
       for (du::properties::keys_col_t::const_iterator i
@@ -69,6 +72,7 @@ int main (int argc_, char ** argv_)
 	  clog << " " << '"' << *i << '"' << endl; 
 	}
       clog << endl;
+ 
       clog << "Visibility keys: " << endl;
       for (du::properties::keys_col_t::const_iterator i 
 	     = visibility_keys.begin ();
@@ -77,6 +81,33 @@ int main (int argc_, char ** argv_)
 	{
 	  clog << " " << '"' << *i << '"' << endl; 
 	}
+      clog << endl;
+ 
+      clog << "Other keys: " << endl;
+      for (du::properties::keys_col_t::const_iterator i 
+	     = other_keys.begin ();
+	    i != other_keys.end ();
+	   i++)
+	{
+	  clog << " " << '"' << *i << '"' << endl; 
+	}
+
+      du::properties my_dict2 = my_dict;
+      my_dict2.erase_all_not_starting_with ("visibility.");
+      my_dict2.dump (clog);
+
+      du::properties my_dict3 = my_dict;
+      my_dict3.erase_all_starting_with ("visibility.");
+      my_dict3.dump (clog);
+
+      du::properties my_dict4;
+      my_dict.export_starting_with (my_dict4, "visibility.");
+      my_dict4.dump (clog);
+
+      du::properties my_dict5;
+      my_dict.export_not_starting_with (my_dict5, "visibility.");
+      my_dict5.dump (clog);
+
     }
   catch (exception & x)
     {

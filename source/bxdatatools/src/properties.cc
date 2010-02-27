@@ -945,6 +945,66 @@ namespace datatools {
       __props.erase (found);
     }
 
+    void properties::erase_all_starting_with (const std::string & key_prefix_)
+    {
+      keys_col_t keys;
+      keys_starting_with (keys, key_prefix_);
+      for (keys_col_t::const_iterator i = keys.begin ();
+	   i != keys.end ();
+	   i++)
+	{
+	  erase (*i);
+	}
+      return;	
+    }
+
+    void properties::erase_all_not_starting_with (const std::string & key_prefix_)
+    {
+      keys_col_t keys;
+      keys_not_starting_with (keys, key_prefix_);
+      for (keys_col_t::const_iterator i = keys.begin ();
+	   i != keys.end ();
+	   i++)
+	{
+	  erase (*i);
+	}
+      return;	
+    }
+
+    void
+    properties::export_starting_with (properties & p_, 
+				      const std::string & key_prefix_)
+    {
+      keys_col_t ks;
+      keys_starting_with (ks, key_prefix_);
+      for (keys_col_t::const_iterator i = ks.begin ();
+	   i !=  ks.end ();
+	   i++)
+	{
+	  p_.__props[*i] = __props[*i];
+	}
+    }
+
+    void
+    properties::export_not_starting_with (properties & p_, 
+					  const std::string & key_prefix_)
+    {
+      keys_col_t ks;
+      keys_not_starting_with (ks, key_prefix_);
+      for (keys_col_t::const_iterator i = ks.begin ();
+	   i !=  ks.end ();
+	   i++)
+	{
+	  p_.__props[*i] = __props[*i];
+	}
+    }
+
+    void
+    properties::erase_all ()
+    {
+      __props.clear ();
+    }
+
     void properties::clean (const std::string & key_)
     { 
       pmap::iterator found = __props.find (key_);
@@ -956,6 +1016,11 @@ namespace datatools {
 
     void properties::clear ()
     {
+      reset ();
+    }
+
+    void properties::reset ()
+    {
       set_description ("");
       __props.clear ();
       __clear_key_validator ();
@@ -963,18 +1028,51 @@ namespace datatools {
     }
 
     void
+    properties::keys_not_starting_with (properties::vkeys & keys_, 
+					const std::string & key_prefix_) const
+    {
+      if (key_prefix_.empty ())
+ 	{
+	  throw runtime_error("properties::keys_not_starting_with: Empty key prefix argument !");
+	}
+      size_t n = key_prefix_.size ();
+      for (pmap::const_iterator iter = __props.begin (); 
+	   iter != __props.end (); 
+	   iter++) 
+	{
+	  bool push = true;
+	  if (iter->first.substr (0, n) == key_prefix_)
+	    {
+	      push = false;
+	    }
+	  if (push)
+	    {
+	      keys_.push_back (iter->first);
+	    }
+	}
+      return;
+    }
+
+    properties::vkeys
+    properties::keys_not_starting_with (const std::string & key_prefix_) const
+    {
+      properties::vkeys lkeys;
+      keys_not_starting_with (lkeys, key_prefix_);
+      return lkeys;
+    }
+
+    void
     properties::keys_starting_with (properties::vkeys & keys_, 
 				    const std::string & key_prefix_) const
     {
-      size_t n = key_prefix_.size ();
-      if (n == 0)
+      if (key_prefix_.empty ())
 	{
-	  keys_ = keys ();
-	  return;
+	  throw runtime_error("properties::keys_starting_with: Empty key prefix argument !");
 	}
+      size_t n = key_prefix_.size ();
       for (pmap::const_iterator iter = __props.begin (); 
 	   iter != __props.end (); 
-	   iter++ ) 
+	   iter++) 
 	{
 	  if (iter->first.size () < n) continue;
 	  if (iter->first.substr (0, n) == key_prefix_)

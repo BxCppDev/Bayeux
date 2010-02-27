@@ -408,7 +408,7 @@ namespace datatools {
 
       void
       set_key_validator (const basic_key_validator *, 
-			bool deletion_on_destroy_ = true); 
+			 bool deletion_on_destroy_ = true); 
 
       // ctor
       properties (); // with embedded default key validator
@@ -458,6 +458,12 @@ namespace datatools {
 
       void
       keys (vkeys &) const;
+
+      void
+      keys_not_starting_with (vkeys &, const std::string & key_prefix_) const;
+
+      vkeys
+      keys_not_starting_with (const std::string & key_prefix_) const;
 
       void
       keys_starting_with (vkeys &, const std::string & key_prefix_) const;
@@ -517,10 +523,29 @@ namespace datatools {
       erase (const std::string & key_);
 
       void
+      erase_all ();
+
+      void
+      erase_all_starting_with (const std::string & key_prefix_);
+
+      void
+      erase_all_not_starting_with (const std::string & key_prefix_);
+
+      void
+      export_starting_with (properties & p_, 
+			    const std::string & key_prefix_);
+
+      void
+      export_not_starting_with (properties & p_, 
+				const std::string & key_prefix_);
+
+      void
       clean (const std::string & key_);
 
       virtual void
       clear ();
+
+      void reset ();
  
       void
       store_flag (const std::string & key_, 
