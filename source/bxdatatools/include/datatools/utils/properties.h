@@ -323,6 +323,8 @@ namespace datatools {
 
       typedef std::list<std::string>      vkeys;
       typedef std::map<std::string, data> pmap;
+      typedef vkeys keys_col_t;
+      typedef pmap  props_col_t;
   
       struct basic_key_validator 
 	: public std::unary_function<std::string,bool>
@@ -456,6 +458,12 @@ namespace datatools {
 
       void
       keys (vkeys &) const;
+
+      void
+      keys_starting_with (vkeys &, const std::string & key_prefix_) const;
+
+      vkeys
+      keys_starting_with (const std::string & key_prefix_) const;
 
       void
       lock (const std::string & key_);

@@ -962,6 +962,37 @@ namespace datatools {
       __debug = false;
     }
 
+    void
+    properties::keys_starting_with (properties::vkeys & keys_, 
+				    const std::string & key_prefix_) const
+    {
+      size_t n = key_prefix_.size ();
+      if (n == 0)
+	{
+	  keys_ = keys ();
+	  return;
+	}
+      for (pmap::const_iterator iter = __props.begin (); 
+	   iter != __props.end (); 
+	   iter++ ) 
+	{
+	  if (iter->first.size () < n) continue;
+	  if (iter->first.substr (0, n) == key_prefix_)
+	    {
+	      keys_.push_back (iter->first);
+	    }
+	}
+      return;
+    }
+
+    properties::vkeys
+    properties::keys_starting_with (const std::string & key_prefix_) const
+    {
+      properties::vkeys lkeys;
+      keys_starting_with (lkeys, key_prefix_);
+      return lkeys;
+    }
+
     properties::vkeys properties::keys () const
     {
       properties::vkeys lkeys;
@@ -971,12 +1002,13 @@ namespace datatools {
     
     void properties::keys (properties::vkeys & keys_) const
     {
-      for ( pmap::const_iterator iter = __props.begin (); 
-	    iter != __props.end (); 
-	    iter++ ) 
+      for (pmap::const_iterator iter = __props.begin (); 
+	   iter != __props.end (); 
+	   iter++ ) 
 	{
 	  keys_.push_back (iter->first);
 	}
+      return;
     }
     
     void properties::lock (const std::string & key_)
@@ -984,6 +1016,7 @@ namespace datatools {
       data * data_ptr = 0;
       __check_key (key_, &data_ptr);
       data_ptr->lock ();
+      return;
     }
     
     void properties::unlock (const std::string & key_)
