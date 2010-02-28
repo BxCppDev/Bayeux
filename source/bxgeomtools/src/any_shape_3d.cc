@@ -10,6 +10,21 @@ namespace geomtools {
 
   const std::string any_shape_3d::ANY_SHAPE_3D_LABEL = "any_shape_3d";
 
+  void any_shape_3d::compute_bounding_box (box & bb_)
+  {
+    bb_ = __bounding_box;
+  }
+
+  void any_shape_3d::set_bounding_box (const box & bounding_box_)
+  {
+    __bounding_box = bounding_box_;
+  }
+
+  const box & any_shape_3d::get_bounding_box () const
+  {
+    return __bounding_box;
+  }
+
   string any_shape_3d::get_shape_name () const
   {
     return __shape_name;
@@ -23,10 +38,12 @@ namespace geomtools {
   // ctor:
   any_shape_3d::any_shape_3d () : i_shape_3d ()
   {
+    __bounding_box.reset ();
   }
 
   any_shape_3d::any_shape_3d (const string & shape_name_) : i_shape_3d (DEFAULT_TOLERANCE)
   {
+    __bounding_box.reset ();
     set_shape_name (shape_name_);
   }
   
@@ -44,6 +61,7 @@ namespace geomtools {
   void 
   any_shape_3d::reset ()
   {
+    __bounding_box.reset ();
     __shape_name= "";
     i_shape_3d::reset ();
   }

@@ -586,11 +586,20 @@ namespace geomtools {
     //throw std::runtime_error ("gnuplot_draw::draw_sphere: Not implemented yet!");
   }
 
- 
-  void gnuplot_draw::draw (ostream & out_, 
+   void gnuplot_draw::draw (ostream & out_, 
 			   const i_placement & p_, 
 			   const i_object_3d & o_)
   {
+    gnuplot_draw::draw (out_, p_, o_, gnuplot_draw::MODE_NULL);
+  }
+
+  void gnuplot_draw::draw (ostream & out_, 
+			   const i_placement & p_, 
+			   const i_object_3d & o_,
+			   unsigned long mode_)
+  { 
+    bool mode_wired_cylinder = mode_ & gnuplot_draw::MODE_WIRED_CYLINDER;
+
     for (int i = 0; i < p_.get_number_of_items (); i++)
       {
 	placement p;
@@ -637,14 +646,32 @@ namespace geomtools {
 	if (shape_name == "cylinder")
 	  {
 	    const cylinder & c = dynamic_cast<const cylinder &> (o_);
-	    draw_cylinder (out_, pos, rot, c);
+	    if (! mode_wired_cylinder)
+	      {
+		draw_cylinder (out_, pos, rot, c);
+	      }
+	    else
+	      {
+		vector_3d first (0, 0, -c.get_half_z()), last (0, 0, +c.get_half_z());
+		line_3d l (first, last);
+		draw_segment (out_, pos, rot, l);
+	      }
 	    return;
 	  }
 
 	if (shape_name == "tube")
 	  {
 	    const tube & t = dynamic_cast<const tube &> (o_);
-	    draw_tube (out_, pos, rot, t);
+	    if (! mode_wired_cylinder)
+	      {
+		draw_tube (out_, pos, rot, t);
+	      }
+	    else
+	      {
+		vector_3d first (0, 0, -t.get_half_z()), last (0, 0, +t.get_half_z());
+		line_3d l (first, last);
+		draw_segment (out_, pos, rot, l);
+	      }
 	    return;
 	  }
 

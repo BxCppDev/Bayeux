@@ -1,5 +1,5 @@
 // -*- mode: c++; -*- 
-// test_gnuplot_draw.cxx
+// test_gnuplot_draw.cxx 
 
 #include <cstdlib>
 #include <iostream>
@@ -119,7 +119,7 @@ public:
 	geomtools::gnuplot_draw::draw_cylinder (output, pos, rot, 0.1, 0.02);
       }
 
-    // Holy tube:
+    // Holy tube: 
     pos.set (1., -3., 2.0);
     geomtools::create_rotation (rot, 0.0, 10. * CLHEP::degree, 0.0);
     geomtools::gnuplot_draw::draw_tube (output, pos, rot, 1.0, 1.3, 3.0);
@@ -132,6 +132,16 @@ public:
 				     50. * CLHEP::degree);
     geomtools::box box1 (2.0, 3.0, 0.5);
     geomtools::gnuplot_draw::draw (output, placement1, box1);
+
+    geomtools::placement placement2 (+1.5, -4, 4.5, 
+				     10. * CLHEP::degree, 
+				     65. * CLHEP::degree,
+				     0. * CLHEP::degree);
+
+    int mode = geomtools::gnuplot_draw::MODE_NULL;
+    mode = geomtools::gnuplot_draw::MODE_WIRED_CYLINDER;
+    geomtools::cylinder cyl1 (0.5, 3.0);
+    geomtools::gnuplot_draw::draw (output, placement2, cyl1, mode);
 
   }
 

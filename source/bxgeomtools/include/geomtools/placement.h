@@ -63,6 +63,8 @@ namespace geomtools {
       virtual size_t get_number_of_items () const;
    
       virtual void get_placement (int item_, placement & p_) const;
+
+      virtual bool is_replica () const;
  
     private:
       void __compute_orientation ();

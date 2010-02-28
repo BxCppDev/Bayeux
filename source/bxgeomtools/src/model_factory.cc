@@ -133,13 +133,14 @@ namespace geomtools {
 		 << "\" with name \"" << name << "\"..." << endl;
 	  }
 	i_model * model = 0;
-
 	model = creator (name, 
 			 e.get_properties (),
 			 &__models);
-
 	if (model != 0)
 	  {
+	    e.get_properties ().export_starting_with (model->get_logical ().parameters (),
+						      visibility::VISIBILITY_PREFIX);
+
 	    __models[name] = model;
 	    if (devel) model->tree_dump (clog, "New model is:", "DEVEL: model_factory::__construct: ");
 	  }

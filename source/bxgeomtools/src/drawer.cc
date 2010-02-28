@@ -7,6 +7,12 @@
 namespace geomtools {
 
   using namespace std;
+  
+  const string drawer::VIEW_KEY   = "view";
+  const string drawer::VIEW_2D_XY = "xy";
+  const string drawer::VIEW_2D_XZ = "xz";
+  const string drawer::VIEW_2D_YZ = "yz";
+  const string drawer::VIEW_3D    = "xyz";
 
   void drawer::wait_for_key ()
   {
@@ -27,7 +33,8 @@ namespace geomtools {
   void drawer::draw (const logical_volume & log_,
 		     const placement & p_,
 		     int max_display_level_,
-		     const string & name_)
+		     const string & name_,
+		     const datatools::utils::properties & config_)
   {
     int max_display_level = max_display_level_;
     if (max_display_level_ < 0)
@@ -37,22 +44,77 @@ namespace geomtools {
     const geomtools::logical_volume & log = log_;
     char tmp[256];
     sprintf (tmp, "%s",".tmp_drawer_XXXXXX");
-    mktemp (tmp);
+    char * c = mktemp (tmp);
     string tmp_filename = tmp;
     ofstream tmp_file (tmp_filename.c_str ());
 
-    drawer::__draw (tmp_file, log_, p_, max_display_level);
+    datatools::utils::properties visu_config;
+    visibility::extract (log_.parameters (), visu_config);
+
+    bool shown = true;
+    if (visibility::is_hidden (visu_config))
+      {
+	shown = false;
+      }
+    if (visibility::is_shown (visu_config))
+      {
+	shown = true;
+      } 
+    if (shown)
+      {
+	drawer::__draw (tmp_file, log_, p_, max_display_level);
+	tmp_file.flush ();
+      }
+
+    tmp_file.close ();
+    usleep (200);
+   
+    string view = drawer::VIEW_3D;
+    if (config_.has_key ("view"))
+      {
+	view = config_.fetch_string (drawer::VIEW_KEY);
+      }
 
     Gnuplot g1 ("lines");	
     ostringstream title_oss;
     title_oss << "Logical '" << name_ << "'";
     g1.set_title (title_oss.str ());
-    g1.set_grid ();
-    g1.set_xlabel ("x").set_ylabel ("y").set_zlabel ("z");
-    g1.plotfile_xyz (tmp_filename, 1, 2, 3, "3D view");
+
+    if (view == drawer::VIEW_2D_XY)
+      {
+	g1.set_grid ();
+	g1.cmd ("set size ratio -1");
+	g1.set_xlabel ("x").set_ylabel ("y");
+	g1.plotfile_xy (tmp_filename, 1, 2, "XY view");
+      }
+
+    if (view == drawer::VIEW_2D_XZ)
+      {
+	g1.set_grid ();
+	g1.cmd ("set size ratio -1");
+	g1.set_xlabel ("x").set_ylabel ("z");
+	g1.plotfile_xy (tmp_filename, 1, 3, "XZ view");
+      }
+
+    if (view == drawer::VIEW_2D_YZ)
+      {
+	g1.set_grid ();
+	g1.cmd ("set size ratio -1");
+	g1.set_xlabel ("y").set_ylabel ("z");
+	g1.plotfile_xy (tmp_filename, 2, 3, "YZ view");
+      }
+
+    if (view == drawer::VIEW_3D)
+      {
+	g1.set_xlabel ("x").set_ylabel ("y").set_zlabel ("z");
+	g1.plotfile_xyz (tmp_filename, 1, 2, 3, "3D view");
+      }
+
     g1.showonscreen (); // window output
     wait_for_key ();
-    // remove tmp file
+
+
+    // remove tmp file:
     unlink (tmp_filename.c_str ());
     return;
   }
@@ -73,12 +135,39 @@ namespace geomtools {
       {
 	int display_level = 0;
 
-	gnuplot_draw::draw (out_, 
-			    p_,
-			    log.get_shape ());
+	datatools::utils::properties log_visu_config;
+	visibility::extract (log_.parameters (), log_visu_config);
 	
+	bool shown = true;
+	if (visibility::is_shown (log_visu_config))
+	  {
+	    shown = true;
+	  }
+	if (visibility::is_hidden (log_visu_config))
+	  {
+	    shown = false;
+	  }
+
+	if (shown)
+	  {
+	    gnuplot_draw::draw (out_, 
+				p_,
+				log.get_shape ());
+	  }
+	
+	bool draw_children = false;
 	// draw children:
 	if ((display_level < max_display_level) && log.get_physicals ().size ())
+	  {
+	    draw_children = true;
+	  }
+
+	if (visibility::is_daughters_hidden (log_visu_config))
+	  {
+	    draw_children = false;
+	  }
+
+	if (draw_children)
 	  {
 	    display_level++;
 	    for (geomtools::logical_volume::physicals_col_t::const_iterator i 
@@ -99,20 +188,16 @@ namespace geomtools {
 		const geomtools::i_placement * pp = &(phys.get_placement ());
 		for (int i = 0; i < pp->get_number_of_items (); i++)
 		  {
-		    clog << "DEVEL: item #" << i << endl;
-		    
 		    geomtools::placement p;
+		    // get placement from the daughter physical #i: 
 		    pp->get_placement (i, p);
-		    pp->tree_dump (clog, "item placement (child)", "    ");
+		    //pp->tree_dump (clog, "item placement (child)", "    ");
 		    geomtools::placement pt = p;
+		    // compute the placement relative to the mother volume:
 		    p_.child_to_mother (p, pt);
-		    pt.tree_dump (clog, "item placement (mother)", "    ");
+		    //pt.tree_dump (clog, "item placement (mother)", "    ");
 
-		    /*
-		    gnuplot_draw::draw (out_, 
-					pt,
-					log_child.get_shape ());
-		    */
+		    // invoke rendering for daughter #i:
 		    drawer::__draw (out_,
 				    log_child,
 				    pt,
@@ -146,7 +231,7 @@ namespace geomtools {
     const i_model & model = *(found->second);
     const geomtools::logical_volume & log = model.get_logical ();
 
-    draw (log, p_, max_display_level_, log.get_name ());
+    draw (log, p_, max_display_level_, log.get_name (), config_);
 
     return;
   }

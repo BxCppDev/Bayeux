@@ -20,6 +20,7 @@
 #include <stdexcept>
 
 #include <geomtools/i_shape_3d.h>
+#include <geomtools/box.h>
 
 namespace geomtools {
 
@@ -38,10 +39,17 @@ namespace geomtools {
 
   private: 
     string __shape_name;
+    box    __bounding_box;
 
   public: 
 
     void set_shape_name (const string & shape_name_);
+
+    virtual void compute_bounding_box (box & bb_);
+
+    void set_bounding_box (const box & bounding_box_);
+
+    const box & get_bounding_box () const;
 
     // ctor/dtor:
   public: 

@@ -43,8 +43,12 @@ namespace geomtools {
   public: 
 
     bool is_multiple () const;
+    
+    placement get_placement (int item_) const;
 
     virtual size_t get_number_of_items () const = 0;
+
+    virtual bool is_replica () const = 0;
     
     virtual void get_placement (int item_, placement & p_) const = 0;
     

@@ -34,6 +34,7 @@
 #include <geomtools/model_factory.h>
 #include <geomtools/placement.h>
 #include <geomtools/physical_volume.h>
+#include <geomtools/visibility.h>
 
 namespace geomtools {
   
@@ -41,7 +42,14 @@ namespace geomtools {
   
   class drawer 
   {
+
   public:
+
+    static const string VIEW_KEY;
+    static const string VIEW_2D_XY;
+    static const string VIEW_2D_XZ;
+    static const string VIEW_2D_YZ;
+    static const string VIEW_3D;
   
     static void wait_for_key ();
 
@@ -50,19 +58,24 @@ namespace geomtools {
 			const logical_volume & log_,
 			const placement & p_,
 			int max_display_level_ = 0);
-
   
   public:
+
     static void draw (const logical_volume & log_,
 		      const placement & p_,
 		      int max_display_level_,
-		      const string & name_);
+		      const string & name_,
+		      const datatools::utils::properties & config_);
     
     static void draw (const model_factory & mf_,
 		      const string & name_,
 		      const placement & p_,
 		      int max_display_level_,
 		      const datatools::utils::properties & config_);
+  
+  public:
+
+
 
   }; // class drawer
   

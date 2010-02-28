@@ -19,7 +19,7 @@ splot \
   "test_gnuplot_draw.data" index 2 title "" with lines , \
   "test_gnuplot_draw.data" index 3 title "" with lines , \
   "test_gnuplot_draw.data" index 4 title "" with lines , \
-  "test_gnuplot_draw.data" index 5 title "" with lines  
+  "test_gnuplot_draw.data" index 5 title "" with lines lt 7
 pause -1 "Hit [Enter]..."
 
 ! rm -f test_gnuplot_draw.data

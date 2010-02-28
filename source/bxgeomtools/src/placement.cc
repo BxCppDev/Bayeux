@@ -7,6 +7,11 @@
 namespace geomtools {
 
   using namespace std;
+
+  bool placement::is_replica () const
+  {
+    return false;
+  }
  
   bool placement::is_valid () const
   {
@@ -147,7 +152,7 @@ namespace geomtools {
   placement::placement (const vector_3d & translation_, 
 			double phi_,
 			double theta_,
-			double delta_)
+			double delta_) : i_placement ()
   {
     __phi = __theta = __delta = 0.0;
     set_translation (translation_);
@@ -159,7 +164,7 @@ namespace geomtools {
 			double z_, 
 			double phi_,
 			double theta_,
-			double delta_)
+			double delta_) : i_placement ()
   {
     set_translation (x_, y_, z_);
     set_orientation (phi_, theta_, delta_);

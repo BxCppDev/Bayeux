@@ -4,6 +4,8 @@
 
 #include <geomtools/i_object_3d.h>
 
+#include <geomtools/box.h>
+
 namespace geomtools {
 
   using namespace std;
@@ -13,6 +15,11 @@ namespace geomtools {
   
   const uint32_t i_object_3d::ALL_SURFACES = 0xFFFFFFFF;
   const uint32_t i_object_3d::NO_SURFACES  = 0;
+
+  void i_object_3d::compute_bounding_box (box & bb_)
+  {
+    bb_.reset ();
+  }
    
   double i_object_3d::get_tolerance () const
   {

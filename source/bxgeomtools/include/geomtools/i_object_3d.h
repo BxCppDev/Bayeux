@@ -29,7 +29,9 @@ namespace geomtools {
 
   using namespace std;
 
-  class i_object_3d  :
+  class box;
+
+  class i_object_3d :
     public datatools::utils::i_tree_dumpable
     {
     public:
@@ -67,6 +69,8 @@ namespace geomtools {
       virtual std::string get_shape_name () const = 0;
 
       virtual bool is_composite () const;
+
+      virtual void compute_bounding_box (box & bb_);
 
     public:
 

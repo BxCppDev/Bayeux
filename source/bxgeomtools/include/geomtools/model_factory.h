@@ -31,6 +31,7 @@
 
 #include <geomtools/detail/model_tools.h>
 #include <geomtools/i_model.h>
+#include <geomtools/visibility.h>
 
 namespace geomtools {
 

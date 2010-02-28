@@ -21,6 +21,13 @@ namespace geomtools {
   {
     return get_number_of_items () > 0;
   }
+    
+  placement i_placement::get_placement (int item_) const
+  {
+    placement p;
+    get_placement (item_, p);
+    return p;
+  }
 
   void i_placement::tree_dump (ostream & out_, 
 			       const string & title_, 

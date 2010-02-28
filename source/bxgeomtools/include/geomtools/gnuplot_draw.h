@@ -39,6 +39,12 @@ namespace geomtools {
   public: 
     typedef basic_polyline_3d polyline_t;
   
+    enum mode_flags_t
+      {
+	MODE_NULL = 0x0,
+	MODE_WIRED_CYLINDER = 0x1
+      };
+
   public: 
     static void 
     basic_draw_point (std::ostream &, 
@@ -214,7 +220,14 @@ namespace geomtools {
 		 size_t = 36,
 		 size_t = 16);
  
-   static void draw (ostream & out_, const i_placement &, const i_object_3d &);
+    static void draw (ostream & out_, 
+		     const i_placement &, 
+		     const i_object_3d &);
+ 
+    static void draw (ostream & out_, 
+		     const i_placement &, 
+		     const i_object_3d &,
+		     unsigned long mode_);
 
   };
 

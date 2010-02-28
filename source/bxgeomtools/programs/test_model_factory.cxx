@@ -20,6 +20,7 @@ int main (int argc_, char ** argv_)
       clog << "Test program for class 'model_factory'!" << endl; 
   
       bool debug = false;
+      string drawer_view = geomtools::drawer::VIEW_3D;
 
       int iarg = 1;
       while (iarg < argc_)
@@ -33,7 +34,23 @@ int main (int argc_, char ** argv_)
                  {
                    debug = true;
                  }
-              else 
+               else if (option == "-xy") 
+                 {
+                   drawer_view = geomtools::drawer::VIEW_2D_XY;
+                 }
+               else if (option == "-xz") 
+                 {
+                   drawer_view = geomtools::drawer::VIEW_2D_XZ;
+                 }
+               else if (option == "-yz") 
+                 {
+                   drawer_view = geomtools::drawer::VIEW_2D_YZ;
+                 }
+               else if (option == "-3d") 
+                 {
+                   drawer_view = geomtools::drawer::VIEW_3D;
+                 }
+	       else 
                  { 
                     clog << "warning: ignoring option '" << option << "'!" << endl; 
                  }
@@ -60,13 +77,12 @@ int main (int argc_, char ** argv_)
       factory.lock ();
       factory.tree_dump (clog);
 
-      datatools::utils::properties drawer_config;
       geomtools::placement p;
-      //p.set (0, 0, 0, 30 * CLHEP::degree, 45 * CLHEP::degree, 0);
-      //p.set (0, 0, 0, 30 * CLHEP::degree, 20 * CLHEP::degree, 0);
-      p.set (0, 0, 0, 60 * CLHEP::degree, 30 * CLHEP::degree, 0);
-
+      p.set (0, 0, 0, 0 * CLHEP::degree, 0 * CLHEP::degree, 0);
       p.tree_dump (clog, "Placement");
+
+      datatools::utils::properties drawer_config;
+      drawer_config.store (geomtools::drawer::VIEW_KEY, drawer_view);
 
       geomtools::drawer::draw (factory, "box3", p, 2, drawer_config);
 

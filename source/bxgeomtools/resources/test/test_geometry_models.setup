@@ -6,37 +6,43 @@
 
 [name="box1" type="geomtools::test::test_model_1"]
 
-width : real = 40.0
-height : real = 10.0
+width  : real = 100.0
+height : real = 30.0
 material : string = "copper"
-visibility : string = "visible"
+
+visibility.shown : boolean = 1
+visibility.color : string = "green"
 
 [name="box2" type="geomtools::test::test_model_1"]
 
-width : real = 10.0
-height : real = 5.0
+width  : real = 52.0
+height : real = 12.0
 material : string = "teflon"
-visibility : string = "visible"
+
+visibility.shown : boolean = 1
+visibility.color : string = "blue"
 
 [name="box3" type="geomtools::test::test_model_2"]
 
-material : string = "air"
-visibility : string = "visible"
+material   : string = "air"
 sub1_model : string = "box1"
 sub2_model : string = "box2"
-distance : real = 30.
-phi : real = 30. # degree
-theta : real = 45. # degree
-gas_pressure : real = 0.9 # atmosphere
-gas_temperature : real = 305. # kelvin
+distance         : real = 50.
+phi              : real = 60. # degree
+theta            : real = 75. # degree
+gas_pressure     : real = 0.9 # atmosphere
+gas_temperature  : real = 305. # kelvin
+
+visibility.color : string = "red"
+visibility.shown : boolean = 1
+visibility.daughters.shown : boolean = 1
 
 [name="world" type="geomtools::test::test_world_model"]
 
-material : string = "vacuum"
-visibility : string = "visible"
+material    : string = "vacuum"
 setup_model : string = "box3"
-# not used:
-#phi : real = 12.
-#theta : real = 47.
+
+visibility.shown : boolean = 1
+visibility.daughters.shown : boolean = 1
 
 # End of list of multi-properties.
