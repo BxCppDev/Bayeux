@@ -168,6 +168,6 @@ namespace mygsl {
 
 } // end of namespace mygsl
 
-#endif // __mygsl__unary_eval_with_derivative_h
+#endif // __mygsl__interval_h
 
-// end of mygsl::unary_eval_with_derivative.h
+// end of mygsl::interval.h
