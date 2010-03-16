@@ -986,6 +986,10 @@ namespace datatools {
 	   i++)
 	{
 	  properties & ptmp = const_cast<properties &> (*this);
+	  /*
+	    clog << "DEVEL: properties::export_starting_with: property '" 
+	       << *i << "'..." << endl;
+	  */
 	  p_.__props[*i] = ptmp.__props[*i];
 	}
     }

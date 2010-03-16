@@ -225,6 +225,7 @@ namespace datatools {
       return __ordered_entries;
     }
 
+    // ctor:
     multi_properties::multi_properties (const string & key_label_,
 					const string & meta_label_,
 					const string & description_,
@@ -238,6 +239,7 @@ namespace datatools {
       set_description (description_);
     }
 
+    // dtor:
     multi_properties::~multi_properties ()
     {
       reset ();
