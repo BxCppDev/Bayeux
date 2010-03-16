@@ -34,6 +34,7 @@
 
 #include <boost/serialization/map.hpp>
 #include <boost/serialization/list.hpp>
+#include <boost/serialization/vector.hpp> // missing header: fixed 2010-03-16
 #include <boost/serialization/string.hpp>
 
 #include <datatools/serialization/i_serializable.h>
@@ -50,7 +51,6 @@ namespace datatools {
     class properties : public datatools::utils::i_tree_dumpable,
 		       public datatools::utils::i_clear,
 		       public datatools::serialization::i_serializable     
-
     {
 
     public:
