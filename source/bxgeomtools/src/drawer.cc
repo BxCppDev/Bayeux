@@ -13,6 +13,7 @@ namespace geomtools {
   const string drawer::VIEW_2D_XZ = "xz";
   const string drawer::VIEW_2D_YZ = "yz";
   const string drawer::VIEW_3D    = "xyz";
+  const int    drawer::DISPLAY_LEVEL_NO_LIMIT = 1000;
 
   void drawer::wait_for_key ()
   {
@@ -112,6 +113,7 @@ namespace geomtools {
 
     g1.showonscreen (); // window output
     wait_for_key ();
+    usleep (200);
 
 
     // remove tmp file:

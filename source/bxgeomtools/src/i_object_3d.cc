@@ -131,6 +131,16 @@ namespace geomtools {
     return;
   }
 
+  /*** Object 3D getter interface ***/
+
+  const i_object_3d * 
+  i_object_3d::i_getter::get (const string & name_)
+  {
+    datatools::utils::properties params;
+    return get (name_, params);
+  }
+
+
 } // end of namespace geomtools
 
 // end of i_object_3d.cc

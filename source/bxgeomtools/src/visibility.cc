@@ -29,7 +29,7 @@ namespace geomtools {
     source_.export_starting_with (target_, visibility::VISIBILITY_PREFIX);
     return;
   }
-
+ 
   bool visibility::has_flag (const datatools::utils::properties & config_,
 			      const string & flag_)
   {

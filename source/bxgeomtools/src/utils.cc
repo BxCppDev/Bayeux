@@ -6,6 +6,8 @@
 
 namespace geomtools {
 
+  using namespace std;
+
   const double constants::DEFAULT_TOLERANCE = 1.e-7 * CLHEP::mm;
 
   const std::string io::VECTOR_2D_SERIAL_TAG   = "__geomtools::vector_2d__";
@@ -87,6 +89,16 @@ namespace geomtools {
   vector_3d_to_vector_2d (const vector_3d & v3d_, vector_2d & v2d_)
   {
     v2d_.set (v3d_.x(), v3d_.y());
+  }
+
+  void 
+  make_phi_theta (vector_3d & vec_, double phi_, double theta_)
+  {
+    double sin_theta = std::sin (theta_);
+    double x = sin_theta * std::cos (phi_);
+    double y = sin_theta * std::sin (phi_);
+    double z = std::cos (theta_);   
+    vec_.set (x, y, z);
   }
 
   /******/
@@ -347,7 +359,7 @@ namespace geomtools {
   }
    
   void
-  create (rotation_3d & rot_,
+  create_zyz (rotation_3d & rot_,
 	  double phi_,
 	  double theta_,
 	  double delta_)
@@ -360,12 +372,56 @@ namespace geomtools {
   }
 
   void
+  create (rotation_3d & rot_,
+	  double phi_,
+	  double theta_,
+	  double delta_)
+  {
+    create_zyz (rot_, phi_, theta_, delta_);
+  }
+   
+  void
+  create_zxz (rotation_3d & rot_,
+	      double phi_,
+	      double theta_,
+	      double psi_)
+  {
+    rotation_3d r1, r2, r3;
+    r1.rotateZ (-phi_);
+    r2.rotateX (-theta_); 
+    r3.rotateZ (-psi_);
+    rot_ = r3 * r2 * r1;
+  }
+   
+  void
+  create_xyz (rotation_3d & rot_,
+	      double phi_,
+	      double theta_,
+	      double psi_)
+  {
+    rotation_3d r1, r2, r3;
+    r1.rotateX (-phi_);
+    r2.rotateY (-theta_); 
+    r3.rotateZ (-psi_);
+    rot_ = r3 * r2 * r1;
+  }
+
+  void
   create_rotation_3d (rotation_3d & rot_,
 		      double phi_,
 		      double theta_,
 		      double delta_)
   {
     create (rot_, phi_, theta_, delta_);
+  }
+
+  void
+  create_rotation_from_zyz_euler_angles (rotation_3d & rot_,
+					 double phi_,
+					 double theta_,
+					 double delta_)
+  {
+    create (rot_, phi_, theta_, delta_);    
   }
 
   void
@@ -381,6 +437,136 @@ namespace geomtools {
   reset (rotation_3d & rot_)
   {
     rot_ = rotation_3d ();
+  }
+
+  double get_special_rotation_angle (int flag_angle_)
+  {
+    switch (flag_angle_)
+      {
+      case ROTATION_ANGLE_0: return 0.0 * CLHEP::degree;
+      case ROTATION_ANGLE_90: return 90.0 * CLHEP::degree;
+      case ROTATION_ANGLE_180: return 180.0 * CLHEP::degree;
+      case ROTATION_ANGLE_270: return 270.0 * CLHEP::degree;
+      }
+    return std::numeric_limits<double>::quiet_NaN();
+  }
+
+  int get_special_rotation_angle_from_label (const string & s_)
+  {
+    if (s_ == "0") return ROTATION_ANGLE_0;
+    if (s_ == "90") return ROTATION_ANGLE_90;
+    if (s_ == "180") return ROTATION_ANGLE_180;
+    if (s_ == "270") return ROTATION_ANGLE_270;
+    return ROTATION_ANGLE_INVALID;
+  }
+
+  bool check_special_rotation_angle (int flag_angle_)
+  {
+    return (flag_angle_ >= ROTATION_ANGLE_0) && (flag_angle_ <= ROTATION_ANGLE_270);
+  }
+
+  string get_special_rotation_angle_label (int flag_angle_)
+  {
+    switch (flag_angle_)
+      {
+      case ROTATION_ANGLE_0: return "0";
+      case ROTATION_ANGLE_90: return "90";
+      case ROTATION_ANGLE_180: return "180";
+      case ROTATION_ANGLE_270: return "270";
+      }
+    return "";
+  }
+
+  bool check_rotation_axis (int axis_)
+  {
+    return (axis_ >= ROTATION_AXIS_X) && (axis_ <= ROTATION_AXIS_Z);
+  }
+
+  int get_rotation_axis_from_label (const string & s_)
+  {
+    if (s_ == "x") return ROTATION_AXIS_X;
+    if (s_ == "y") return ROTATION_AXIS_Y;
+    if (s_ == "z") return ROTATION_AXIS_Z;
+    return ROTATION_AXIS_INVALID;
+  }
+
+  string get_rotation_label (int axis_)
+  {
+    switch (axis_)
+      {
+      case ROTATION_AXIS_X: return "x";
+      case ROTATION_AXIS_Y: return "y";
+      case ROTATION_AXIS_Z: return "z";
+      }
+    return "";
+  }
+
+  void 
+  create_rotation_from_axis (rotation_3d & rot_,
+			     int axis_,
+			     double angle_)
+  {
+    clog << "DEVEL: create_rotation_from_axis: "
+	 << "axis=" << axis_ << " angle=" << angle_ / CLHEP::degree << " °" << endl;
+    if (! check_rotation_axis (axis_))
+      {
+	throw runtime_error ("create_rotation_from_axis: Invalid rotation axis !");
+      }
+    rotation_3d r;
+    if (axis_ == ROTATION_AXIS_X)
+      {
+	r.rotateX (-angle_);
+      }
+    if (axis_ == ROTATION_AXIS_Y)
+      {
+	r.rotateY (-angle_);
+      }
+    if (axis_ == ROTATION_AXIS_Z)
+      {
+	r.rotateZ (-angle_);
+      }
+    rot_ = r;
+  }
+
+  void 
+  create_rotation (rotation_3d & rot_,
+		   int axis_,
+		   double angle_)
+  {
+    create_rotation_from_axis (rot_, axis_, angle_);
+  }
+
+  void create_rotation (rotation_3d & rot_,
+			int axis_,
+			int special_angle_)
+  {
+    if (! check_special_rotation_angle (special_angle_))
+      {
+	throw runtime_error ("create_rotation_from: Invalid special angle !");
+      }
+    double angle = get_special_rotation_angle (special_angle_);
+    create_rotation (rot_, axis_, angle);
+  }
+
+  void create_rotation_from (rotation_3d & rot_,
+			     const string & s_)
+  {
+    throw runtime_error ("create_rotation_from: Not implemented yet !");
+    /*
+    istringstream iss (s_);
+    string token;
+    getline (iss, token, '(');
+    if (! iss)
+      {
+	invalidate_rotation_3d (rot_);
+	return;
+      }
+    {
+      if (token != "rotation")
+      {
+      }
+      }
+    */
   }
 
   void

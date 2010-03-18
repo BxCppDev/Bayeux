@@ -586,7 +586,44 @@ namespace geomtools {
     //throw std::runtime_error ("gnuplot_draw::draw_sphere: Not implemented yet!");
   }
 
-   void gnuplot_draw::draw (ostream & out_, 
+  void 
+  gnuplot_draw::draw_polycone (std::ostream & out_,
+			     const vector_3d & position_, 
+			     const rotation_3d & rotation_,
+			     const polycone & p_, 
+			     size_t arc_sampling_)
+  {
+    rotation_3d inverseRotation (rotation_);
+    inverseRotation.invert ();
+
+    size_t phy_sample = arc_sampling_;
+    double dphi =  2 * M_PI * CLHEP::radian / phy_sample;
+
+    polyline_t polyline_meridian;
+    for (size_t i = 0; i <= phy_sample ; ++i) 
+      {
+	polyline_meridian.clear ();
+	vector_3d P,Q;
+	double phi = i * dphi;
+	for (polycone::rz_col_t::const_iterator j = p_.points ().begin ();
+	     j!= p_.points ().end ();
+	     j++)
+	  {
+	    double z = j->first;
+	    double r = j->second;
+	    P.set (r * std::cos (phi), 
+		   r * std::sin (phi),  
+		   z);
+	    vector_3d P2 (P);
+	    P2.transform (inverseRotation);
+	    P2 += position_;
+	    polyline_meridian.push_back (P2);
+	  }
+	basic_draw_polyline (out_, polyline_meridian);
+      }
+  }
+
+  void gnuplot_draw::draw (ostream & out_, 
 			   const i_placement & p_, 
 			   const i_object_3d & o_)
   {
@@ -679,6 +716,13 @@ namespace geomtools {
 	  {
 	    const sphere & s = dynamic_cast<const sphere &> (o_);
 	    draw_sphere (out_, pos, rot, s);
+	    return;
+	  }
+
+	if (shape_name == "polycone")
+	  {
+	    const polycone & p = dynamic_cast<const polycone &> (o_);
+	    draw_polycone (out_, pos, rot, p);
 	    return;
 	  }
 

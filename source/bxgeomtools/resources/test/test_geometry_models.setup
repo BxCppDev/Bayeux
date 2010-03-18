@@ -1,48 +1,141 @@
+# -*- mode: conf-unix; -*-
 # List of multi-properties (datatools::utils::multi_properties):
 
 #@description List of geometry models
 #@key_label   "name"
 #@meta_label  "type"
 
-[name="box1" type="geomtools::test::test_model_1"]
-
-width  : real = 100.0
-height : real = 30.0
-material : string = "copper"
-
+[name="box0" type="geomtools::simple_boxed_model"]
+x   : real   = 10.0
+y   : real   = 30.0
+z   : real   = 50.0
+material.ref : string = "copper"
 visibility.shown : boolean = 1
-visibility.color : string = "green"
+visibility.color : string  = "green"
+
+[name="row" type="geomtools::replicated_boxed_model"]
+replicant_axis  : string = "x"
+number_of_items : integer = 10
+boxed_model     : string = "box0"
+
+[name="wall" type="geomtools::replicated_boxed_model"]
+replicant_axis  : string = "y"
+number_of_items : integer = 4
+boxed_model     : string = "row"
+
+[name="box1" type="geomtools::test::test_model_1"]
+width    : real   = 100.0
+height   : real   = 30.0
+material.ref : string = "copper"
+visibility.shown : boolean = 1
+visibility.color : string  = "green"
 
 [name="box2" type="geomtools::test::test_model_1"]
-
-width  : real = 52.0
-height : real = 12.0
-material : string = "teflon"
-
+width    : real   = 52.0
+height   : real   = 12.0
+material.ref : string = "teflon"
 visibility.shown : boolean = 1
-visibility.color : string = "blue"
+visibility.color : string  = "blue"
 
 [name="box3" type="geomtools::test::test_model_2"]
-
-material   : string = "air"
-sub1_model : string = "box1"
-sub2_model : string = "box2"
-distance         : real = 50.
-phi              : real = 60. # degree
-theta            : real = 75. # degree
-gas_pressure     : real = 0.9 # atmosphere
-gas_temperature  : real = 305. # kelvin
-
+material.ref         : string = "air"
+sub1_model       : string = "box1"
+sub2_model       : string = "box2"
+distance         : real   = 50.
+phi              : real   = 60. # degree
+theta            : real   = 75. # degree
+gas_pressure     : real   = 0.9 # atmosphere
+gas_temperature  : real   = 305. # kelvin
 visibility.color : string = "red"
-visibility.shown : boolean = 1
+visibility.shown           : boolean = 1
 visibility.daughters.shown : boolean = 1
 
+[name="box4" type="geomtools::replicated_boxed_model"]
+replicant_axis  : string = "x"
+number_of_items : integer = 3
+boxed_model     : string = "box2"
+
+[name="rotz_box2" type="geomtools::rotated_boxed_model"]
+rotation_axis   : string = "z"
+rotation_angle  : string = "90"
+boxed_model     : string = "box3"
+
+[name="rotx_box2" type="geomtools::rotated_boxed_model"]
+rotation_axis   : string = "x"
+rotation_angle  : string = "90"
+boxed_model     : string = "box3"
+
+[name="many_rotz_box2" type="geomtools::replicated_boxed_model"]
+replicant_axis  : string = "x"
+number_of_items : integer = 5
+boxed_model     : string = "rotz_box2"
+
+[name="many_rotx_box2" type="geomtools::replicated_boxed_model"]
+replicant_axis  : string = "x"
+number_of_items : integer = 5
+boxed_model     : string = "rotx_box2"
+
+[name="box5" type="geomtools::replicated_boxed_model"]
+replicant_axis  : string = "x"
+number_of_items : integer = 5
+boxed_model     : string = "box3"
+
+[name="box6" type="geomtools::replicated_boxed_model"]
+replicant_axis  : string = "y"
+number_of_items : integer = 3
+boxed_model     : string = "box5"
+
+[name="box7" type="geomtools::replicated_boxed_model"]
+replicant_axis  : string = "z"
+number_of_items : integer = 2
+boxed_model     : string = "box6"
+
+#######################################################
+
 [name="world" type="geomtools::test::test_world_model"]
-
-material    : string = "vacuum"
+material.ref    : string = "vacuum"
 setup_model : string = "box3"
+phi         : real   = 30.0
+theta       : real   = 0.0
+visibility.shown           : boolean = 1
+visibility.daughters.shown : boolean = 1
 
-visibility.shown : boolean = 1
+[name="world2" type="geomtools::test::test_world_model"]
+material.ref    : string = "vacuum"
+setup_model : string = "box3"
+visibility.shown           : boolean = 1
+visibility.daughters.shown : boolean = 1
+
+[name="world3" type="geomtools::test::test_world_model"]
+material.ref    : string = "vacuum"
+setup_model : string = "box6"
+phi         : real   = 0.0
+theta       : real   = 0.0
+visibility.shown           : boolean = 1
+visibility.daughters.shown : boolean = 1
+
+[name="world4" type="geomtools::test::test_world_model"]
+material.ref    : string = "vacuum"
+setup_model : string = "box7"
+phi         : real   = 0.0
+theta       : real   = 0.0
+visibility.shown           : boolean = 1
+visibility.daughters.shown : boolean = 1
+
+[name="world5" type="geomtools::test::test_world_model"]
+material.ref    : string = "vacuum"
+setup_model : string = "many_rotz_box2"
+phi         : real   = 0.0
+theta       : real   = 0.0
+visibility.shown           : boolean = 1
+visibility.daughters.shown : boolean = 1
+
+[name="world6" type="geomtools::test::test_world_model"]
+material.ref    : string = "vacuum"
+setup_model : string = "many_rotx_box2"
+phi         : real   = 0.0
+theta       : real   = 0.0
+visibility.shown           : boolean = 1
 visibility.daughters.shown : boolean = 1
 
 # End of list of multi-properties.

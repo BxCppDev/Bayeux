@@ -134,7 +134,7 @@ namespace geomtools {
       tree_dump (clog);
     }
 
-    void make_vertex_collection (basic_polyline_3d &) const;
+    void make_vertex_collection (basic_polyline_3d &, double angular_step_ = 0.0) const;
     
     basic_polyline_3d make_vertex_collection () const;
     

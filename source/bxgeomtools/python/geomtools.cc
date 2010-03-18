@@ -376,6 +376,12 @@ BOOST_PYTHON_MODULE (geomtools)
 
   def ("create_rotation_3d", geomtools::create_rotation_3d);
 
+  def ("create_rotation_from_axis", 
+       geomtools::create_rotation_from_axis);
+
+  def ("create_rotation_from_zyz_euler_angles", 
+       geomtools::create_rotation_from_zyz_euler_angles);
+
   def ("reset_rotation_3d", geomtools::reset_rotation_3d);
 
   def ("invalidate_rotation_3d", geomtools::invalidate_rotation_3d);

@@ -125,7 +125,7 @@ namespace geomtools {
   // ctor:
   geom_id::geom_id ()
   {
-    clog << "geom_id::geom_id[1]: Entering..." << endl;
+    //clog << "geom_id::geom_id[1]: Entering..." << endl;
     __type = geom_id::INVALID_TYPE;
     __address.reserve (geom_id::DEFAULT_ADDRESS_DEPTH);
   }
@@ -447,6 +447,19 @@ namespace geomtools {
   bool geom_id::operator> (const geom_id & id_) const
   {
     return geom_id::compare (*this, id_) > 0;
+  }
+
+  void geom_id::make (int type_, int depth_)
+  {
+    reset ();
+    set_type (type_);
+    set_depth (depth_);
+    set_address (INVALID_ADDRESS);     
+  }
+
+  void geom_id::make (geom_id & id_, int type_, int depth_)
+  {
+    id_.make (type_, depth_);
   }
    
 } // end of namespace geomtools

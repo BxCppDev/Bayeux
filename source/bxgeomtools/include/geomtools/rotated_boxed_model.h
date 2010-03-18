@@ -1,5 +1,5 @@
 // -*- mode: c++ ; -*- 
-/* test_world_model.h
+/* rotated_boxed_model.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-24
  * Last modified: 2010-02-24
@@ -7,50 +7,53 @@
  * License: 
  * 
  * Description: 
- *   Test model for world geometry
+ *   Factory for geometry models
  * 
  * History: 
  * 
  */
 
-#ifndef __geomtools__test__test_world_model_h
-#define __geomtools__test__test_world_model_h 1
+#ifndef __geomtools__rotated_boxed_model_h
+#define __geomtools__rotated_boxed_model_h 1
 
 #include <iostream>
 #include <string> 
 #include <exception>
+#include <limits> 
 
 #include <geomtools/i_model.h>
-
 #include <geomtools/box.h>
-#include <geomtools/placement.h>
 #include <geomtools/physical_volume.h>
+#include <geomtools/regular_linear_placement.h>
 #include <geomtools/visibility.h>
-
-#include <geomtools/i_model.h>
+#include <geomtools/placement.h>
 
 namespace geomtools {
 
   using namespace std;
 
-  // define a geometry model with a single box: 
-  class test_world_model : public geomtools::i_model 
+  // define a geometry model with a boxed model rotated by some simple rotation
+  // 
+  class rotated_boxed_model : public geomtools::i_model 
     {
     private:
-      const i_model      *        __setup_model;
-      geomtools::placement        __setup_placement;
-      geomtools::physical_volume  __setup_phys;
-      geomtools::box              __solid;
+
+      const i_model *  __boxed_model;
+      placement        __boxed_placement;
+      physical_volume  __boxed_phys;
+      geomtools::box   __solid;
 
     public: 
-
+      void set_boxed_model (const i_model &);
+      const i_model & get_boxed_model () const;
+      const geomtools::box & get_box () const;
       const geomtools::box & get_solid () const;
 
     public:
   
-      test_world_model ();
+      rotated_boxed_model ();
   
-      virtual ~test_world_model ();
+      virtual ~rotated_boxed_model ();
 
     public:
 
@@ -59,12 +62,12 @@ namespace geomtools {
     protected:
   
       virtual void _at_construct (const string & name_,
-				  const datatools::utils::properties & setup_,
+				  const datatools::utils::properties & config_,
 				  models_col_t * models_ = 0);
 
     private:
 
-      static creator_registration<test_world_model> __CR;
+      static creator_registration<rotated_boxed_model> __CR;
       
     public: 
       virtual void tree_dump (ostream & out_         = clog, 
@@ -76,6 +79,6 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // __geomtools__test__test_world_model_h
+#endif // __geomtools__rotated_boxed_model_h
 
-// end of test_world_model.h
+// end of rotated_boxed_model.h

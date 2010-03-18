@@ -16,6 +16,7 @@
 #ifndef __geomtools__utils_h
 #define __geomtools__utils_h 1
 
+#include <stdexcept>
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -28,6 +29,8 @@
 #include <boost/serialization/split_free.hpp>
 
 namespace geomtools {
+
+  using namespace std;
 
   typedef std::list<vector_2d> basic_polyline_2d;
 
@@ -139,23 +142,102 @@ namespace geomtools {
   /* Initialize a rotation matrix for 
    * "World coordinates system->Local coordinates system":
    */
+
+  // ZYZ Euler angles:
+  void
+  create_zyz (rotation_3d & rot_,
+	      double phi_,
+	      double theta_,
+	      double delta_);
   void
   create (rotation_3d & rot_,
 	  double phi_,
 	  double theta_,
 	  double delta_);
-  
+
+  // ZXZ Euler angles:
+  void
+  create_zxz (rotation_3d & rot_,
+	  double phi_,
+	  double theta_,
+	  double psi_);
+
+  // XYZ Euler angles:
+  void
+  create_xyz (rotation_3d & rot_,
+	      double phi_,
+	      double theta_,
+	      double psi_);
+   
   void
   create_rotation_3d (rotation_3d & rot_,
 		      double phi_,
 		      double theta_,
 		      double delta_);
+  
+  void
+  create_rotation_from_zyz_euler_angles (rotation_3d & rot_,
+					 double phi_,
+					 double theta_,
+					 double delta_);
 
   void
   create_rotation (rotation_3d & rot_,
 		   double phi_,
 		   double theta_,
 		   double delta_);
+
+  /********************/
+
+  enum special_rotation_angle_t
+    {
+      ROTATION_ANGLE_INVALID = -1,
+      ROTATION_ANGLE_0   = 0,
+      ROTATION_ANGLE_90  = 1,
+      ROTATION_ANGLE_180 = 2,
+      ROTATION_ANGLE_270 = 3
+    };
+
+  bool check_special_rotation_angle (int);
+
+  double get_special_rotation_angle (int);
+
+  int get_special_rotation_angle_from_label (const string & );
+
+  string get_special_rotation_angle_label (int);
+
+  /********************/
+
+  enum rotation_axis_t
+    {
+      ROTATION_AXIS_INVALID = -1,
+      ROTATION_AXIS_X = 0,
+      ROTATION_AXIS_Y = 1,
+      ROTATION_AXIS_Z = 2
+    };
+
+  bool check_rotation_axis (int);
+
+  int get_rotation_axis_from_label (const string & );
+
+  string get_rotation_label (int);
+
+  /********************/
+
+  void create_rotation_from_axis (rotation_3d & rot_,
+				  int axis_,
+				  double angle_);
+
+  void create_rotation (rotation_3d & rot_,
+			int axis_,
+			double angle_);
+
+  void create_rotation (rotation_3d & rot_,
+			int axis_,
+			int special_angle_);
+  
+  void create_rotation_from (rotation_3d & rot_,
+			     const string &);
   
   void
   reset (rotation_3d & rot_);
@@ -248,6 +330,9 @@ namespace geomtools {
 
   void 
   vector_3d_to_vector_2d (const vector_3d & v3d_, vector_2d & v2d_);
+
+  void 
+  make_phi_theta (vector_3d & vec_, double phi_, double theta_);
 
   /*****/
 

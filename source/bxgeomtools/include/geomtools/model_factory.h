@@ -31,6 +31,7 @@
 
 #include <geomtools/detail/model_tools.h>
 #include <geomtools/i_model.h>
+#include <geomtools/logical_volume.h>
 #include <geomtools/visibility.h>
 
 namespace geomtools {
@@ -40,11 +41,16 @@ namespace geomtools {
   class model_factory :
     public datatools::utils::i_tree_dumpable
   {
+  public:
+
+    static const string DEFAULT_WORLD_LABEL;
+
   private: 
     bool __locked;
     bool __debug;
     datatools::utils::multi_properties __mp;
-    models_col_t __models;
+    models_col_t           __models;
+    logical_volume::dict_t __logicals;
 
   public: 
 
@@ -55,6 +61,8 @@ namespace geomtools {
     void set_debug (bool);
 
     const models_col_t & get_models () const;
+
+    const logical_volume::dict_t & get_logicals () const;
      
   public: 
     // ctor:
@@ -80,11 +88,29 @@ namespace geomtools {
     void __construct ();
 
   public:
-
+    
     virtual void tree_dump (std::ostream & out_         = clog, 
 			    const std::string & title_  = "",
 			    const std::string & indent_ = "",
 			    bool inherit_               = false) const;
+    
+  public:
+    
+    /*** Object 3D getter ***/
+
+    /*
+    class getter : public i_object_3d::i_getter
+    {
+    private:
+      model_factory * __factory;
+
+    public:
+      getter (const model_factory & factory_);
+
+      virtual const i_object_3d * get (const datatools::utils::properties & params_);
+      
+    };
+    */
 
   };
 

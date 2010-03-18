@@ -39,7 +39,6 @@ namespace geomtools {
     if (devel) clog << "DEVEL: test_world_model::_at_construct: Entering..." << endl;
     set_name (name_);
     string material = "vacuum";
-    string visibility = "invisible";
     string setup_model_name;
     double phi = 0. * CLHEP::degree;
     double theta = 0. * CLHEP::degree;
@@ -55,19 +54,13 @@ namespace geomtools {
       {
 	 if (devel) clog << "DEVEL: test_world_model::_at_construct: key= 'phi'..." << endl;
 	phi = config_.fetch_real ("phi");
-	phi *= CLHEP::degree;
+	phi *= CLHEP::degree; 
       }
 
-    if (config_.has_key ("material"))
+    if (material::has_key (config_, material::make_key (material::MATERIAL_REF_PROPERTY)))
       {
 	if (devel) clog << "DEVEL: test_world_model::_at_construct: key= 'material'..." << endl;
-	material = config_.fetch_string ("material");
-      }
-
-    if (config_.has_key ("visibility"))
-      {
-	if (devel) clog << "DEVEL: test_world_model::_at_construct: key= 'visibility'..." << endl;
-	visibility = config_.fetch_string ("visibility");
+	material = config_.fetch_string (material::make_key (material::MATERIAL_REF_PROPERTY));
       }
 
     if (config_.has_key ("setup_model"))
@@ -95,7 +88,8 @@ namespace geomtools {
       models_col_t::const_iterator found = models_->find (setup_model_name);
       if (found != models_->end ())
 	{
-	  __setup_model = (dynamic_cast<const test_model_2 *> (found->second));
+	  //__setup_model = (dynamic_cast<const test_model_2 *> (found->second));
+	  __setup_model = found->second;
 	}
       else
 	{
@@ -110,12 +104,22 @@ namespace geomtools {
     vector_3d setup_pos;
     create_xyz (setup_pos, 0, 0, 0);
     __setup_placement.set_translation (setup_pos);
-    __setup_placement.set_orientation (0.0, 0.0, 0.0);
+    __setup_placement.set_orientation (phi, theta, 0.0);
 
     __solid.reset ();
-    double setup_x = __setup_model->get_solid ().get_x ();
-    double setup_y = __setup_model->get_solid ().get_y ();
-    double setup_z = __setup_model->get_solid ().get_z ();
+
+    double setup_x = 1000.;
+    double setup_y = 1000.;
+    double setup_z = 1000.;
+    if (__setup_model->get_logical ().get_shape ().get_shape_name () == "box")
+      {
+	const geomtools::box * b = 0;
+	b = dynamic_cast<const geomtools::box *> (&(__setup_model->get_logical ()).get_shape ());
+	setup_x = b->get_x ();
+	setup_y = b->get_y ();
+	setup_z = b->get_z ();
+      }
+    
     double size = setup_x;
     if (setup_y > size) size = setup_y;
     if (setup_z > size) size = setup_z;
@@ -128,13 +132,10 @@ namespace geomtools {
 	throw runtime_error ("test_world_model::_at_construct: Invalid solid !");
       }
     
-    // initialize the 'logical_volume' of this model:
-    ostringstream name_log_oss;
-    name_log_oss << name_ << LOGICAL_SUFFIX;
-    get_logical ().set_name (name_log_oss.str ());
+    get_logical ().set_name (name_);
     get_logical ().set_shape (__solid);
-    get_logical ().parameters ().store ("material", material);
-    get_logical ().parameters ().store ("visibility", visibility);
+    get_logical ().set_material_ref (material);
+    geomtools::visibility::extract (config_, _logical.parameters ());
 
     if (devel) clog << "DEVEL: test_world_model::_at_construct: Install physicals..." << endl;
     __setup_phys.set_name ("setup_phys");

@@ -20,6 +20,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <map>
 
 #include <datatools/utils/properties.h>
 #include <datatools/utils/i_tree_dump.h>
@@ -119,6 +120,9 @@ namespace geomtools {
 			    const string & title_  = "", 
 			    const string & indent_ = "", 
 			    bool inherit_          = false) const;
+  public:
+
+    typedef map<string, const physical_volume *> dict_t;
       
   };
 

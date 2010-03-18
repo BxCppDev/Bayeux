@@ -39,7 +39,6 @@ namespace geomtools {
     double width;
     double height;
     string material;
-    string visibility;
     
     if (config_.has_key ("width"))
       {
@@ -58,11 +57,6 @@ namespace geomtools {
 	if (devel) clog << "DEVEL: test_model_1::_at_construct: key= 'material'..." << endl;
 	material = config_.fetch_string ("material");
       }
-    if (config_.has_key ("visibility"))
-      {
-	if (devel) clog << "DEVEL: test_model_1::_at_construct: key= 'visibility'..." << endl;
-	visibility = config_.fetch_string ("visibility");
-      }
     
     __solid.reset ();
     __solid.set_x (width);
@@ -73,13 +67,11 @@ namespace geomtools {
 	throw runtime_error ("test_model_1::_at_construct: Invalid solid !");
       }
     
-    // initialize the 'logical_volume' of this model:
-    ostringstream name_log_oss;
-    name_log_oss << name_ << LOGICAL_SUFFIX;
-    get_logical ().set_name (name_log_oss.str ());
+   // initialize the 'logical_volume' of this model:
+    get_logical ().set_name (name_);
     get_logical ().set_shape (__solid);
-    get_logical ().parameters ().store ("material", material);
-    get_logical ().parameters ().store ("visibility", visibility);
+    get_logical ().set_material_ref (material);
+    geomtools::visibility::extract (config_, _logical.parameters ());
 
     if (devel) clog << "DEVEL: test_model_1::_at_construct: Exiting." << endl;
     return;

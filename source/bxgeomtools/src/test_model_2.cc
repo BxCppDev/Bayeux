@@ -45,7 +45,6 @@ namespace geomtools {
     double phi = 0. * CLHEP::degree;
     double theta = 0. * CLHEP::degree;
     string material = "air";
-    string visibility = "invisible";
     string sub1_model_name;
     string sub2_model_name;
 
@@ -88,12 +87,6 @@ namespace geomtools {
       {
 	if (devel) clog << "DEVEL: test_model_2::_at_construct: key= 'material'..." << endl;
 	material = config_.fetch_string ("material");
-      }
-
-    if (config_.has_key ("visibility"))
-      {
-	if (devel) clog << "DEVEL: test_model_2::_at_construct: key= 'visibility'..." << endl;
-	visibility = config_.fetch_string ("visibility");
       }
 
     if (config_.has_key ("sub1_model"))
@@ -178,7 +171,6 @@ namespace geomtools {
     __sub2_placement.set_translation (sub2_pos);
     __sub2_placement.set_orientation (phi, theta, 0.0);
 
-
     __solid.reset ();
     double size = 
       distance 
@@ -193,14 +185,12 @@ namespace geomtools {
       }
     
     // initialize the 'logical_volume' of this model:
-    ostringstream name_log_oss;
-    name_log_oss << name_ << LOGICAL_SUFFIX;
-    get_logical ().set_name (name_log_oss.str ());
+    get_logical ().set_name (name_);
     get_logical ().set_shape (__solid);
-    get_logical ().parameters ().store ("material", material);
-    get_logical ().parameters ().store ("visibility", visibility);
-    get_logical ().parameters ().store ("gas_pressure", gas_pressure);
-    get_logical ().parameters ().store ("gas_temperature", gas_temperature);
+    get_logical ().set_material_ref (material);
+    geomtools::visibility::extract (config_, _logical.parameters ());
+    get_logical ().parameters ().store (material::make_key (material::MATERIAL_GAS_PRESSURE_PROPERTY), gas_pressure);
+    get_logical ().parameters ().store (material::make_key (material::MATERIAL_GAS_TEMPERATURE_PROPERTY), gas_temperature);
 
     if (devel) clog << "DEVEL: test_model_2::_at_construct: Install physicals..." << endl;
     __sub1_phys.set_name ("sub1_phys");

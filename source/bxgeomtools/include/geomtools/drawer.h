@@ -50,6 +50,7 @@ namespace geomtools {
     static const string VIEW_2D_XZ;
     static const string VIEW_2D_YZ;
     static const string VIEW_3D;
+    static const int    DISPLAY_LEVEL_NO_LIMIT;
   
     static void wait_for_key ();
 

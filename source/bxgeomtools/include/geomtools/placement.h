@@ -31,7 +31,9 @@ namespace geomtools {
     {
     private: 
       vector_3d    __translation;      // absolute position in mother frame
-      double       __phi, __theta, __delta;
+      int          __rotation_axis;
+      double       __rotation_angle;
+      double       __phi, __theta, __delta; // ZYZ Euler angles
       rotation_3d  __rotation;         // mother->child frame coord. transformation
       rotation_3d  __inverse_rotation; // child->mother frame coord. transformation
     public:
@@ -45,6 +47,20 @@ namespace geomtools {
       void set_translation (double, double, double);
 
       void set_translation (const vector_3d &);
+
+      bool is_simple_rotation () const; 
+
+      bool is_rotation_x () const; 
+
+      bool is_rotation_y () const; 
+
+      bool is_rotation_z () const; 
+
+      int get_rotation_axis () const;
+
+      double get_rotation_angle () const;
+
+      bool is_zyz_rotation () const; 
 
       double get_phi () const;
 
@@ -71,13 +87,21 @@ namespace geomtools {
 
     public:
 
+      void set_orientation (int axis_, double angle_);
+
       void set_orientation (double phi_, double theta_, double delta_);
 
       void set (double x_, double y_, double z_, 
 		double phi_, double theta_, double delta_);
 
+      void set (double x_, double y_, double z_, 
+		int axis_, double angle_);
+
       void set (const vector_3d & t_, 
 		double phi_, double theta_, double delta_);
+
+      void set (const vector_3d & t_, 
+		int axis_, double angle_);
 
       // Not recommended at all:
       void set_orientation (const rotation_3d &);
@@ -92,6 +116,10 @@ namespace geomtools {
 		 double theta_,
 		 double delta_);
 
+      placement (const vector_3d & translation_, 
+		 int axis_, 
+		 double angle_);
+
       // ctor:
       placement (double x_,
 		 double y_,
@@ -99,6 +127,12 @@ namespace geomtools {
 		 double phi_,
 		 double theta_,
 		 double delta_);
+
+      placement (double x_,
+		 double y_,
+		 double z_, 
+		 int    axis_, 
+		 double angle_);
 
       // dtor:
       virtual ~placement ();

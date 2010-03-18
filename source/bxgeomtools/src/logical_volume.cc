@@ -87,7 +87,35 @@ namespace geomtools {
       }
     return *__shape;
   }
-  
+ 
+  bool logical_volume::has_material_ref () const
+  {
+    if (material::has_key (__parameters, material::MATERIAL_REF_PROPERTY))
+      {
+	return (__parameters.is_string  (material::make_key (material::MATERIAL_REF_PROPERTY)));
+      }
+    return false;
+  }
+ 
+  string logical_volume::get_material_ref () const
+  {
+    if (has_material_ref ())
+      {
+	return (__parameters.fetch_string  (material::make_key (material::MATERIAL_REF_PROPERTY)));
+      }
+    return material::MATERIAL_REF_UNKWOWN;
+  }
+
+  void logical_volume::set_material_ref (const string & material_ref_)
+  {
+    string mr = material_ref_;
+    if (mr.empty ())
+      {
+	mr = material::MATERIAL_REF_DEFAULT;
+      }
+    __parameters.update (material::make_key (material::MATERIAL_REF_PROPERTY), material_ref_);
+  }
+
   logical_volume::logical_volume ()
   {
     __locked = false;

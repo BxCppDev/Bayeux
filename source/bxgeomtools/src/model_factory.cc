@@ -7,6 +7,8 @@
 namespace geomtools {
 
   using namespace std;
+
+  const string model_factory::DEFAULT_WORLD_LABEL = "world";
   
   bool model_factory::is_locked () const
   {
@@ -26,6 +28,11 @@ namespace geomtools {
   const models_col_t & model_factory::get_models () const
   {
     return __models;
+  }
+
+  const logical_volume::dict_t & model_factory::get_logicals () const
+  {
+    return __logicals;
   }
   
   // ctor:
@@ -55,7 +62,11 @@ namespace geomtools {
 	throw runtime_error ("model_factory::init: Factory is locked !");	
       }
 
+    //cerr << "********** DEVEL: model_factory::load: Go !" << endl; 
+    //__mp.set_debug (devel);
     __mp.read (mprop_file_);  
+    //cerr << "********** DEVEL: model_factory::load: Done !" << endl;
+    //usleep (200);
 
     if (devel)
       {
@@ -103,6 +114,7 @@ namespace geomtools {
       {
 	unlock ();
       }
+    __logicals.clear ();
     __models.clear ();
     __mp.reset ();
   }
@@ -142,6 +154,8 @@ namespace geomtools {
 						      visibility::VISIBILITY_PREFIX);
 
 	    __models[name] = model;
+	    string log_name = model->get_logical ().get_name ();
+	    __logicals[log_name] = &(model->get_logical ());
 	    if (devel) model->tree_dump (clog, "New model is:", "DEVEL: model_factory::__construct: ");
 	  }
 	else
@@ -235,6 +249,32 @@ namespace geomtools {
       
     return;
   }
+
+  /*** Object 3D getter ***/
+
+  /*
+  model_factory::getter::getter (const model_factory & factory_)
+  {
+    __factory = &factory_;
+  }
+
+  const i_object_3d * 
+  model_factory::getter::get (const datatools::utils::properties & params_)
+  {
+    const i_object_3d * o3d = 0;
+    if (! __factory->is_locked ())
+      {
+	throw runtime_error ("model_factory::getter::get: Model factory is not locked !");	
+      }
+    const models_col_t & models = __factory->get_models ();
+    
+    const i_shape_3d * shape = is_constructed ()
+    throw runtime_error ("model_factory::getter::get: Not implemented yet !");
+
+    return o3d;
+  }
+  */
+
        
 } // end of namespace geomtools
 

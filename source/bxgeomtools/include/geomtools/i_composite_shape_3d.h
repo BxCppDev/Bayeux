@@ -94,9 +94,13 @@ namespace geomtools {
 
       void set_shape2 (i_shape_3d &, const placement &);
 
+      void set_shapes (i_shape_3d &, i_shape_3d &, const placement &);
+
       void set_shape1 (i_shape_3d *, const placement &);
 
       void set_shape2 (i_shape_3d *, const placement &);
+
+      void set_shapes (i_shape_3d *, i_shape_3d *, const placement &);
 
       const shape_t & get_shape1 () const;
 

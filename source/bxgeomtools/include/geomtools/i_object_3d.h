@@ -87,6 +87,21 @@ namespace geomtools {
 			      const string & indent_ = "", 
 			      bool inherit_          = false) const;
       
+
+    public:
+
+      /*** Object 3D getter ***/
+      class i_getter
+      {
+      public:
+	
+	virtual const i_object_3d * get (const string & name_, 
+					 const datatools::utils::properties & params_) = 0;
+	
+	const i_object_3d * get (const string & name_);
+	
+      };
+      
     };
     
 } // end of namespace geomtools

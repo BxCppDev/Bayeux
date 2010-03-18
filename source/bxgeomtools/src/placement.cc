@@ -26,6 +26,8 @@ namespace geomtools {
     geomtools::invalidate (__translation);
     geomtools::invalidate (__rotation);
     geomtools::invalidate (__inverse_rotation);
+    __rotation_axis = ROTATION_AXIS_INVALID;
+    __rotation_angle = std::numeric_limits<double>::quiet_NaN();
     __phi = __theta = __delta = std::numeric_limits<double>::quiet_NaN();
   }
 
@@ -53,6 +55,41 @@ namespace geomtools {
     return __rotation;
   }
 
+  bool placement::is_simple_rotation () const
+  {
+    return is_rotation_x () || is_rotation_y () || is_rotation_z ();
+  }
+
+  bool placement::is_zyz_rotation () const
+  {
+    return ! is_simple_rotation ();
+  } 
+  
+  bool placement::is_rotation_x () const
+  {
+    return __rotation_axis == ROTATION_AXIS_X;
+  }
+  
+  bool placement::is_rotation_y () const
+  {
+    return __rotation_axis == ROTATION_AXIS_Y;
+  } 
+  
+  bool placement::is_rotation_z () const
+  {
+    return __rotation_axis == ROTATION_AXIS_Z;
+  }
+
+  int placement::get_rotation_axis () const
+  {
+    return __rotation_axis;
+  }
+
+  double placement::get_rotation_angle () const
+  {
+    return __rotation_angle;
+  }
+
   double placement::get_phi () const
   {
     return __phi;
@@ -70,17 +107,34 @@ namespace geomtools {
   
   void placement::__compute_orientation ()
   {
-    geomtools::create_rotation_3d (__rotation, __phi, __theta, __delta);
+    if (is_simple_rotation ())
+      {
+	// X, Y or Z rotations:
+	geomtools::create_rotation_from_axis (__rotation, __rotation_axis, __rotation_angle);	
+      }
+    else
+      {
+	// rotation by (Z,Y,Z) Euler angles:
+	geomtools::create_rotation_from_zyz_euler_angles (__rotation, __phi, __theta, __delta);
+      }
     __inverse_rotation = __rotation.inverse ();
   }
 
   bool placement::has_angles () const
   {
+    if (is_simple_rotation ())
+      {
+	return __rotation_angle == __rotation_angle;
+      }
+    // else:
     return ((__phi == __phi) && (__theta == __theta) && (__delta == __delta));
   }
 
+  // Not recommended at all:
   void placement::set_orientation (const rotation_3d & r_)
   {
+    __rotation_axis == ROTATION_AXIS_INVALID;
+    __rotation_angle = std::numeric_limits<double>::quiet_NaN();
     __phi = std::numeric_limits<double>::quiet_NaN();
     __theta = std::numeric_limits<double>::quiet_NaN();
     __delta = std::numeric_limits<double>::quiet_NaN();
@@ -102,22 +156,44 @@ namespace geomtools {
     set_orientation (phi_, theta_, delta_);
   }
 
+  void placement::set (double x_, double y_, double z_, 
+		       int axis_, double angle_)
+  {
+    set_translation (x_, y_, z_);
+    set_orientation (axis_, angle_);
+  }
+
+  void placement::set (const vector_3d & t_, 
+		       int axis_, double angle_)
+  {
+    set_translation (t_);
+    set_orientation (axis_, angle_);
+  }
+
+  void 
+  placement::set_orientation (int axis_, double angle_)
+  {
+    if (! check_rotation_axis (axis_))
+      {
+	throw runtime_error ("placement::set_orientation: Invalid rotation axis !");
+      }
+    __rotation_axis = axis_;
+    __rotation_angle = angle_;
+    __phi = std::numeric_limits<double>::quiet_NaN();
+    __theta = std::numeric_limits<double>::quiet_NaN();
+    __delta = std::numeric_limits<double>::quiet_NaN();
+    __compute_orientation ();
+  }
+
   void 
   placement::set_orientation (double phi_, double theta_, double delta_)
   {
+    __rotation_axis = ROTATION_AXIS_INVALID;
+    __rotation_angle = std::numeric_limits<double>::quiet_NaN();
     __phi = phi_;
     __theta = theta_;
     __delta = delta_;
     __compute_orientation ();
-    /*
-    rotation_3d r;
-    geomtools::create_rotation_3d (r, phi_, theta_, delta_);
-    __set_orientation (r);
-    */
-    /*
-    geomtools::create_rotation_3d (__rotation, __phi, __theta, __delta);
-    __inverse_rotation = __rotation.inverse ();
-    */
   }
   
   const rotation_3d & 
@@ -146,6 +222,8 @@ namespace geomtools {
   // ctor/dtor:
   placement::placement () : i_placement ()
   {
+    __rotation_axis = ROTATION_AXIS_INVALID;
+    __rotation_angle = 0.0;
     __phi = __theta = __delta = 0.0;
   }
 
@@ -154,9 +232,22 @@ namespace geomtools {
 			double theta_,
 			double delta_) : i_placement ()
   {
+    __rotation_axis = ROTATION_AXIS_INVALID;
+    __rotation_angle = 0.0;
     __phi = __theta = __delta = 0.0;
     set_translation (translation_);
     set_orientation (phi_, theta_, delta_);
+  }
+
+  placement::placement (const vector_3d & translation_, 
+			int axis_, 
+			double angle_) : i_placement ()
+  {
+    __rotation_axis = ROTATION_AXIS_INVALID;
+    __rotation_angle = 0.0;
+    __phi = __theta = __delta = 0.0;
+    set_translation (translation_);
+    set_orientation (axis_, angle_);
   }
 
   placement::placement (double x_,
@@ -166,8 +257,24 @@ namespace geomtools {
 			double theta_,
 			double delta_) : i_placement ()
   {
+    __rotation_axis = ROTATION_AXIS_INVALID;
+    __rotation_angle = 0.0;
+    __phi = __theta = __delta = 0.0;
     set_translation (x_, y_, z_);
     set_orientation (phi_, theta_, delta_);
+  }
+  
+  placement::placement (double x_,
+			double y_,
+			double z_, 
+			int axis_, 
+			double angle_) : i_placement ()
+  {
+    __rotation_axis = ROTATION_AXIS_INVALID;
+    __rotation_angle = 0.0;
+    __phi = __theta = __delta = 0.0;
+    set_translation (x_, y_, z_);
+    set_orientation (axis_, angle_);
   }
   
   placement::~placement ()
@@ -278,31 +385,39 @@ namespace geomtools {
     namespace du = datatools::utils;
     string indent;
     if (! indent_.empty ()) indent = indent_;
-    /*
-    if (! title_.empty ()) 
-      {
-        out_ << indent << title_ << endl;
-      }
-    */
     this->i_placement::tree_dump (out_, title_, indent, true);
+
+    out_ << indent << i_tree_dumpable::tag << "Valid : " 
+	 << is_valid ()  << endl;
 
     out_ << indent << i_tree_dumpable::tag << "Translation : " 
 	 << __translation  << endl;
-    out_ << indent << i_tree_dumpable::tag << "Angles : "
-	 << (has_angles ()? "Yes": "No") << endl;
-    if (has_angles ())
+
+    if (is_zyz_rotation ())
       {
-	out_ << indent << i_tree_dumpable::skip_tag 
-	     << i_tree_dumpable::tag << "Phi :   "
-	     << __phi / CLHEP::degree << " degree" << endl;
-	out_ << indent << i_tree_dumpable::skip_tag 
-	     << i_tree_dumpable::tag << "Theta : "
-	     << __theta / CLHEP::degree << " degree"  << endl;
-	out_ << indent << i_tree_dumpable::skip_tag 
-	     << i_tree_dumpable::last_tag << "Delta : " 
-	     << __delta / CLHEP::degree << " degree"  << endl;
+	out_ << indent << i_tree_dumpable::tag << "Euler Angles : "
+	     << (has_angles ()? "Yes": "No") << endl;
+	if (has_angles ())
+	  {
+	    out_ << indent << i_tree_dumpable::skip_tag 
+		 << i_tree_dumpable::tag << "Phi :   "
+		 << __phi / CLHEP::degree << " degree" << endl;
+	    out_ << indent << i_tree_dumpable::skip_tag 
+		 << i_tree_dumpable::tag << "Theta : "
+		 << __theta / CLHEP::degree << " degree"  << endl;
+	    out_ << indent << i_tree_dumpable::skip_tag 
+		 << i_tree_dumpable::last_tag << "Delta : " 
+		 << __delta / CLHEP::degree << " degree"  << endl;
+	  }
       }
- 
+    else
+      {
+	out_ << indent << i_tree_dumpable::tag << "Rotation axis : "
+	     << __rotation_axis << endl;
+	out_ << indent << i_tree_dumpable::tag << "Rotation angle : "
+	     << __rotation_angle / CLHEP::degree << " degree" << endl;
+      }
+
     {
       ostringstream oss_title;
       oss_title << indent << i_tree_dumpable::tag << "Rotation :";

@@ -7,8 +7,10 @@
 #include <exception>
 
 #include <datatools/utils/utils.h>
+
 #include <geomtools/model_factory.h>
 #include <geomtools/drawer.h>
+#include <geomtools/gdml_export.h>
 
 using namespace std;
 
@@ -21,7 +23,7 @@ int main (int argc_, char ** argv_)
   
       bool debug = false;
       string drawer_view = geomtools::drawer::VIEW_3D;
-
+      bool draw = true;
       int iarg = 1;
       while (iarg < argc_)
         {
@@ -33,6 +35,10 @@ int main (int argc_, char ** argv_)
                if ((option == "-d") || (option == "--debug")) 
                  {
                    debug = true;
+                 }
+               else if (option == "-D") 
+                 {
+                   draw = false;
                  }
                else if (option == "-xy") 
                  {
@@ -66,7 +72,7 @@ int main (int argc_, char ** argv_)
       }
     
       geomtools::i_model::g_devel = debug;
-
+ 
       geomtools::model_factory factory;
       factory.set_debug (debug);
       geomtools::i_model::g_devel = debug;
@@ -81,10 +87,79 @@ int main (int argc_, char ** argv_)
       p.set (0, 0, 0, 0 * CLHEP::degree, 0 * CLHEP::degree, 0);
       p.tree_dump (clog, "Placement");
 
-      datatools::utils::properties drawer_config;
-      drawer_config.store (geomtools::drawer::VIEW_KEY, drawer_view);
+      clog << "Logicals: " << endl;
+      int count = 0;
+      for (geomtools::logical_volume::dict_t::const_iterator i 
+	     = factory.get_logicals ().begin ();
+	   i != factory.get_logicals ().end ();
+	   i++)
+	{
+	  clog << "  " << i->second->get_name ();
+	  count++;
+	  if ((count % 5) == 0)  clog << endl;
+	}
+      clog << endl;
 
-      geomtools::drawer::draw (factory, "box3", p, 2, drawer_config);
+      clog << "Enter the name of the logical to be displayed: ";
+
+      string name; 
+      getline (cin, name);
+      if (name.empty ())
+	{
+	  name = "world";
+	}
+      clog << "Name of the logical : " << name << endl;
+
+      if (draw)
+	{  
+	  datatools::utils::properties drawer_config;
+	  drawer_config.store (geomtools::drawer::VIEW_KEY, drawer_view); 
+	  geomtools::drawer::draw (factory, name, p,  
+				   geomtools::drawer::DISPLAY_LEVEL_NO_LIMIT, 
+				   drawer_config);
+	}
+
+      ostringstream ext_mat_oss;
+      geomtools::gdml_writer writer;
+      {
+	writer.add_element ("Hydrogen", 1, "H", 1);
+	writer.add_element ("Oxygen", 8, "O", 16);
+	writer.add_element ("Carbon", 6, "C", 12);
+	writer.add_element ("Nitrogen", 7, "N", 14);
+	writer.add_element ("Lead", 82, "Pb", 1);
+
+	writer.add_material ("Al", 
+			     13.0,
+			     2.70 * CLHEP::g / CLHEP::cm3,
+			     26.98);
+	
+	map<string, double> Air_map; 
+	Air_map["Oxygen"] = 0.3;
+	Air_map["Nitrogen"] = 0.7;
+	writer.add_material ("Air",
+			     "air",
+			     1.29 * CLHEP::mg / CLHEP::cm3,
+			     Air_map);
+	
+	map<string, size_t> H2O_map;
+	H2O_map["Oxygen"] = 1;
+	H2O_map["Hydrogen"] = 2;
+	writer.add_material ("Water",
+			     "H2O",
+			     1.0 * CLHEP::g / CLHEP::cm3,
+			     H2O_map);
+      }
+
+      geomtools::gdml_export::g_devel = true;
+      geomtools::gdml_export GDML;
+      GDML.add_replica_support (true);
+      GDML.attach_external_materials (writer.get_stream (geomtools::gdml_writer::MATERIALS_SECTION));
+      GDML.parameters ().store ("xml_version",  geomtools::gdml_writer::DEFAULT_XML_VERSION);
+      GDML.parameters ().store ("xml_encoding", geomtools::gdml_writer::DEFAULT_XML_ENCODING);
+      GDML.parameters ().store ("gdml_schema",  geomtools::gdml_writer::DEFAULT_GDML_SCHEMA);
+      GDML.parameters ().store ("length_unit",  geomtools::gdml_export::DEFAULT_LENGTH_UNIT);
+      GDML.parameters ().store ("angle_unit",   geomtools::gdml_export::DEFAULT_ANGLE_UNIT);
+      GDML.export_gdml ("test_model_factory.gdml", factory);
 
     }
   catch (exception & x)

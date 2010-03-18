@@ -31,19 +31,39 @@ namespace geomtools {
   class regular_linear_placement
     : public i_placement 
     {
+    public:
+      enum axis_t
+	{
+	  REPLICANT_AXIS_NONE = -1,
+	  REPLICANT_AXIS_X = 0,
+	  REPLICANT_AXIS_Y = 1,
+	  REPLICANT_AXIS_Z = 2
+	};
     private:
       placement __basic_placement;
       vector_3d __step;
       size_t    __number_of_items;
-      bool      __replica;
+      int       __replicant_axis;
 
     public:
  
       virtual bool is_replica () const;
+ 
+      void set_replicant_axis (int);
+      int  get_replicant_axis () const;
+      bool is_replicant_x_axis () const;
+      bool is_replicant_y_axis () const;
+      bool is_replicant_z_axis () const;
 
       bool is_valid () const;
 
       void invalidate ();
+
+      void set_replicant_step_x (double x_);
+
+      void set_replicant_step_y (double y_);
+
+      void set_replicant_step_z (double z_);
 
       void set_step (double x_, double y_, double z_);
 
@@ -59,8 +79,6 @@ namespace geomtools {
 
       void set_number_of_items (size_t n_);
 
-      void set_replica (bool r_);
-
     public: 
       // i_placement interface:
       virtual size_t get_number_of_items () const;
@@ -74,16 +92,25 @@ namespace geomtools {
       // ctor:
       regular_linear_placement (const placement & basic_placement_, 
 				const vector_3d & step_,
+				size_t number_of_items_);
+		
+      // ctor:
+      regular_linear_placement (const placement & basic_placement_, 
+				double step_,
 				size_t number_of_items_,
-				bool replica_ = false);
+				int replicant_axis_ = REPLICANT_AXIS_NONE);
 		
        // dtor:
       virtual ~regular_linear_placement ();
 
       void init (const placement & basic_placement_, 
 		 const vector_3d & step_,
+		 size_t number_of_items_);
+
+      void init (const placement & basic_placement_, 
+		 double step_,
 		 size_t number_of_items_,
-		 bool replica_ = false);
+		 int replicant_axis_ = REPLICANT_AXIS_X);
       
       virtual void reset ();
 

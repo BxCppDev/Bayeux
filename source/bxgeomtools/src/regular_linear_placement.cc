@@ -20,16 +20,67 @@ namespace geomtools {
     geomtools::invalidate (__step);
     __basic_placement.invalidate ();
     __number_of_items = 0;
+    __replicant_axis = REPLICANT_AXIS_NONE;
   }
-
+     
+  void regular_linear_placement::set_replicant_axis (int axis_)
+  {
+    if ((axis_ < REPLICANT_AXIS_X) || (axis_ > REPLICANT_AXIS_Z))
+      {
+	__replicant_axis = REPLICANT_AXIS_NONE;
+	return;
+      }
+    __replicant_axis = axis_;
+  }
+ 
   void regular_linear_placement::set_step (double x_, double y_, double z_)
   {
     __step.set (x_, y_, z_);
+    set_replicant_axis (REPLICANT_AXIS_NONE);
   }
 
   void regular_linear_placement::set_step (const vector_3d & step_)
   {
     __step = step_;
+    set_replicant_axis (REPLICANT_AXIS_NONE);
+  }
+ 
+  int regular_linear_placement::get_replicant_axis () const
+  {
+    return __replicant_axis;
+  }
+
+  bool regular_linear_placement::is_replicant_x_axis () const
+  {
+    return __replicant_axis == REPLICANT_AXIS_X;
+  }
+
+  bool regular_linear_placement::is_replicant_y_axis () const
+  {
+    return __replicant_axis == REPLICANT_AXIS_Y;
+  }
+
+  bool regular_linear_placement::is_replicant_z_axis () const
+  {
+    return __replicant_axis == REPLICANT_AXIS_Z;
+  }
+
+  void regular_linear_placement::set_replicant_step_x (double x_)
+  {
+    __step.set (x_, 0., 0.);
+    set_replicant_axis (REPLICANT_AXIS_X);
+  }
+
+  void regular_linear_placement::set_replicant_step_y (double y_)
+  {
+    __step.set (0., y_, 0.);
+    set_replicant_axis (REPLICANT_AXIS_Y);
+  }
+
+  void regular_linear_placement::set_replicant_step_z (double z_)
+  {
+    __step.set (0., 0., z_);
+    set_replicant_axis (REPLICANT_AXIS_Z);
   }
 
   const vector_3d & regular_linear_placement::get_step () const
@@ -70,14 +121,9 @@ namespace geomtools {
     p_.set_translation (trans);
   }
 
-  void regular_linear_placement::set_replica (bool r_)
-  {
-    __replica = r_;
-  }
-
   bool regular_linear_placement::is_replica () const
   {
-    return __replica;
+    return __replicant_axis != REPLICANT_AXIS_NONE;
   }
  
   // ctor:
@@ -86,19 +132,29 @@ namespace geomtools {
     __basic_placement.invalidate ();
     geomtools::invalidate_vector_3d (__step);
     __number_of_items = 0;
-    __replica = false;
+    __replicant_axis = REPLICANT_AXIS_NONE;
   }
 		
   // ctor:
   regular_linear_placement::regular_linear_placement (const placement & basic_placement_, 
 						      const vector_3d & step_,
+						      size_t number_of_items_) : i_placement ()
+  {
+    init (basic_placement_,
+	  step_,
+	  number_of_items_);
+  }
+
+  // ctor:
+  regular_linear_placement::regular_linear_placement (const placement & basic_placement_, 
+						      double step_,
 						      size_t number_of_items_,
-						      bool replica_) : i_placement ()
+						      int replicant_axis_)
   {
     init (basic_placement_,
 	  step_,
 	  number_of_items_,
-	  replica_);
+	  replicant_axis_);
   }
 
   // dtor:
@@ -108,21 +164,32 @@ namespace geomtools {
  
   void regular_linear_placement::init (const placement & basic_placement_, 
 				       const vector_3d & step_,
-				       size_t number_of_items_,
-				       bool replica_)
+				       size_t number_of_items_)
   {
     set_basic_placement (basic_placement_);
-    set_step (step_);
     set_number_of_items (number_of_items_);
-    set_replica (replica_);
+    set_step (step_);
   }
-  
+
+  void regular_linear_placement::init (const placement & basic_placement_, 
+				       double step_,
+				       size_t number_of_items_,
+				       int replicant_axis_)
+  {
+    set_basic_placement (basic_placement_);
+    set_number_of_items (number_of_items_);
+    if (replicant_axis_ == REPLICANT_AXIS_X) set_replicant_step_x (step_);
+    else if (replicant_axis_ == REPLICANT_AXIS_Y) set_replicant_step_y (step_);
+    else if (replicant_axis_ == REPLICANT_AXIS_Z) set_replicant_step_z (step_);
+    else throw runtime_error ("regular_linear_placement::init: Invalid replicant axis !");
+  }
+   
   void regular_linear_placement::reset ()
   {
     __basic_placement.invalidate ();
     geomtools::invalidate_vector_3d (__step);
     __number_of_items = 0;
-    __replica = false;
+    __replicant_axis = REPLICANT_AXIS_NONE;
   }
     
   void regular_linear_placement::tree_dump (ostream & out_, 
@@ -152,7 +219,20 @@ namespace geomtools {
 	 << __number_of_items  << endl;
 
     out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
-	 << "Replica :" << is_replica () << endl;
+	 << "Replica :" << is_replica ();
+    if (is_replicant_x_axis ())
+      {
+	out_ << " [X]";
+      }
+    if (is_replicant_y_axis ())
+      {
+	out_ << " [Y]";
+      }
+    if (is_replicant_z_axis ())
+      {
+	out_ << " [Z]";
+      }
+    out_ << endl;
 
     return;
   }

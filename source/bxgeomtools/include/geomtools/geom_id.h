@@ -9,6 +9,12 @@
  * Description: 
  *   Geometry ID
  * 
+ * A geometry ID is composed of two parts:
+ * - the TYPE is an integer representing the category of geometry object 
+ *   each type object in a geometry setup has an unique category, thus a unique TYPE integer
+ * - the ADDRESS is a list of integers representing the path to the object located in
+ *   the hierarchy tree of the setup.
+ *
  * History: 
  * 
  */
@@ -128,7 +134,11 @@ namespace geomtools {
     friend istream & operator>> (istream & in_, geom_id & id_);
 
     virtual const string & get_serial_tag () const;
+
+    void make (int type_, int depth_);
     
+    static void make (geom_id & id_, int type_, int depth_);
+
   private:
     
     friend class boost::serialization::access; 

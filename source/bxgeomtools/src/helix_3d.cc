@@ -366,10 +366,12 @@ namespace geomtools {
   }
 
   void 
-  helix_3d::make_vertex_collection (basic_polyline_3d & bpl_) const
+  helix_3d::make_vertex_collection (basic_polyline_3d & bpl_, 
+				    double angular_step_) const
   {
     bpl_.clear ();
-    double dt = 0.01;
+    double dt = angular_step_ / (2. * M_PI);
+    if (angular_step_ <= 0.0) dt = 0.01;
     bpl_.push_back (get_first ());
     for (double t = get_t1 () + dt;
 	 t < get_t2 ();

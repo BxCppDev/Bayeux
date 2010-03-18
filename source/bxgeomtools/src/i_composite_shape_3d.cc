@@ -202,6 +202,24 @@ namespace geomtools {
   }
     
   void 
+  i_composite_shape_3d::set_shapes (i_shape_3d & sh3d1_, 
+				    i_shape_3d & sh3d2_, const placement & p2_)
+  {
+    placement p1;
+    shape_t::make_shape (sh3d1_, p1, __shape1);
+    shape_t::make_shape (sh3d2_, p2_, __shape2);
+  }
+    
+  void 
+  i_composite_shape_3d::set_shapes (i_shape_3d * sh3d1_, 
+				    i_shape_3d * sh3d2_, const placement & p2_)
+  {
+    placement p1;
+    shape_t::make_shape (sh3d1_, p1, __shape1);
+    shape_t::make_shape (sh3d2_, p2_, __shape2);
+  }
+    
+  void 
   i_composite_shape_3d::set_shape2 (i_shape_3d * sh3d_, const placement & p_)
   {
     shape_t::make_shape (sh3d_, p_, __shape2);

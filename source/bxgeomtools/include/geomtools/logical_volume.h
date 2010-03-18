@@ -26,6 +26,7 @@
 #include <datatools/utils/i_tree_dump.h>
 
 #include <geomtools/i_shape_3d.h>
+#include <geomtools/material.h>
 
 namespace geomtools {
 
@@ -95,9 +96,19 @@ namespace geomtools {
 
     bool has_physical (const string & name_) const;
 
+    bool has_material_ref () const;
+
+    string get_material_ref () const;
+
+    void set_material_ref (const string & = "");
+
     const physical_volume & get_physical (const string & name_) const;
       
     void add_physical (const physical_volume & phys_, const string & name_ = "");
+
+  public:
+
+    typedef map<string, const logical_volume *> dict_t;
 
   };
 

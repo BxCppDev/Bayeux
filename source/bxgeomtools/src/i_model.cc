@@ -10,9 +10,13 @@ namespace geomtools {
   
   bool i_model::g_devel = false;
   
-  const string i_model::LOGICAL_SUFFIX = "_log";
+  // const string i_model::MODEL_SUFFIX = ".model";
   
-  const string i_model::PHYSICAL_SUFFIX = "_phys";
+  const string i_model::SOLID_SUFFIX = ".solid";
+  
+  const string i_model::LOGICAL_SUFFIX = ".log";
+  
+  const string i_model::PHYSICAL_SUFFIX = ".phys";
    
   /***************************************************/
  

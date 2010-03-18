@@ -31,6 +31,7 @@
 #include <geomtools/rectangle.h>
 #include <geomtools/circle.h>
 #include <geomtools/disk.h>
+#include <geomtools/polycone.h>
 
 namespace geomtools {
 
@@ -219,7 +220,14 @@ namespace geomtools {
 		 const sphere &, 
 		 size_t = 36,
 		 size_t = 16);
- 
+
+    static void 
+    draw_polycone (std::ostream &, 
+		   const vector_3d &, 
+		   const rotation_3d &,
+		   const polycone &, 
+		   size_t = 36);
+  
     static void draw (ostream & out_, 
 		     const i_placement &, 
 		     const i_object_3d &);

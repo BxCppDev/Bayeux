@@ -40,6 +40,7 @@ namespace geomtools {
   {
   public:
     static bool g_devel;
+    static const string SOLID_SUFFIX;
     static const string LOGICAL_SUFFIX;
     static const string PHYSICAL_SUFFIX;
     

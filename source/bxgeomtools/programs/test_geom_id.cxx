@@ -85,7 +85,13 @@ int main (int argc_, char ** argv_)
 	  cout << "ID5 : " << id5 << ' ' 
 	       << (id5.is_valid () ? "[Valid]": "[Invalid]") << endl;
 	}
-      
+
+     geomtools::geom_id id6;
+     geomtools::geom_id::make (id6, 234, 4);
+     cout << "ID6 : " << id6 << ' ' 
+	  << (id6.is_valid () ? "[Valid]": "[Invalid]") << endl;
+    
+       
     }
   catch (exception & x)
     {
