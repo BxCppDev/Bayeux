@@ -8,6 +8,8 @@ namespace genvtx {
 
   using namespace std;
 
+  const double from_file_vg::LENGTH_UNIT = 1.0;
+
   bool from_file_vg::is_open  () const
   {
     return __open;
@@ -68,6 +70,20 @@ namespace genvtx {
     geomtools::invalidate (__next);
     __open = true;
   }
+
+  void from_file_vg::set_length_unit (double lu_)
+  {
+    if (__length_unit <= 0.0)
+      {
+	throw runtime_error ("from_file_vg::set_length_unit: Invalid length unit !");	
+      }
+    __length_unit = lu_;
+  }
+  
+  double from_file_vg::get_length_unit () const
+  {
+    return __length_unit;
+  }
   
   // ctor:
   from_file_vg::from_file_vg ()
@@ -75,6 +91,7 @@ namespace genvtx {
     __filename = "";
     __open = false;
     geomtools::invalidate (__next);
+    __length_unit = LENGTH_UNIT;
   }
   
   from_file_vg::from_file_vg (const string & filename_)
@@ -82,6 +99,7 @@ namespace genvtx {
     __filename = "";
     __open = false;
     geomtools::invalidate (__next);
+    __length_unit = LENGTH_UNIT;
     set_filename (filename_);
     _open_source ();
   }
@@ -156,7 +174,8 @@ namespace genvtx {
   void from_file_vg::_shoot_vertex (mygsl::rng & random_, 
 				    geomtools::vector_3d & vertex_)
   {
-    vertex_ = __next;
+    // here apply the length unit:
+    vertex_ = __next * __length_unit;
     _read_next ();
   }
 
@@ -164,13 +183,14 @@ namespace genvtx {
 
   // static method used within a vertex generator factory:
   i_vertex_generator * 
-  from_file_vg::create (const properties & configuration_)
+  from_file_vg::create (const properties & configuration_, void * user_)
   {
     cerr << "DEVEL: from_file_vg::create: Entering..." << endl;
     configuration_.tree_dump (cerr, "from_file_vg::create: configuration:", "DEVEL: ");
     using namespace std;
     bool devel = false;
-    //devel = true;
+    double lunit = LENGTH_UNIT;
+    string lunit_str;
 
     // parameters of the cut:
     string filename;
@@ -180,8 +200,15 @@ namespace genvtx {
 	filename = configuration_.fetch_string ("filename");
       }
 
+    if (configuration_.has_key ("length_unit"))
+      {
+	lunit_str = configuration_.fetch_string ("length_unit");
+	lunit = geomtools::units::get_length_unit_from (lunit_str);
+      }
+
     // create a new parameterized 'from_file_vg' instance:
     from_file_vg * ptr = new from_file_vg (filename);
+    ptr->set_length_unit (lunit);
     return ptr;	
   }
 

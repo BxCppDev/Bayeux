@@ -72,7 +72,7 @@ namespace genvtx {
 
     virtual vg_creator_t vg_creator () const;
 
-    static i_vertex_generator * create (const properties & configuration_);
+    static i_vertex_generator * create (const properties & configuration_, void * user_ = 0);
   
   protected:
   

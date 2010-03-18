@@ -19,7 +19,7 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'factory'!" << endl; 
+      clog << "Test program for class 'genvtx::factory'!" << endl; 
   
       bool debug = false;
 
@@ -61,13 +61,14 @@ int main (int argc_, char ** argv_)
      
       i_vertex_generator * vg = 0;
 
-      {
+      { 
 	string vg_id = "genvtx::spot_vertex_generator";
 	clog << "Generating vertices from a '" << vg_id << "' generator:" << endl;
 	datatools::utils::properties vg_configuration;
-	vg_configuration.store ("x", -4.0);
-	vg_configuration.store ("y", +2.0);
-	vg_configuration.store ("z", -1.0);
+	vg_configuration.store ("spot.x", -4.0);
+	vg_configuration.store ("spot.y", +2.0);
+	vg_configuration.store ("spot.z", -1.0);
+	vg_configuration.store ("spot.length_unit", "mm");
  	vg = my_factory.create_vertex_generator (vg_id, 
 						 vg_configuration);
 	if (vg == 0)

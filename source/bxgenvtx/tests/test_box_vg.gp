@@ -14,9 +14,10 @@ set xlabel "x"
 set ylabel "y"
 set zlabel "z"
 splot \
-      'test_box_vg.data' index 0 using 1:2:3 title "Surface" with dots, \
+      'test_box_vg.data' index 0 using 1:2:3 title "Front surface" with dots, \
       'test_box_vg.data' index 1 using 1:2:3 title "Bulk" with dots, \
-      'test_box_vg.data' index 2 using 1:2:3 title "Box" with lines
+      'test_box_vg.data' index 2 using 1:2:3 title "Box" with lines, \
+      'test_box_vg.data' index 3 using 1:2:3 title "Other surfaces" with dots
 pause -1 "Hit [Enter]..."
 
 ! rm -f test_box_vg.data

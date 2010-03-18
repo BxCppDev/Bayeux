@@ -26,7 +26,9 @@
 #include <string>
 
 #include <genvtx/i_vertex_generator.h>
+
 #include <geomtools/box.h>
+#include <geomtools/units.h>
 
 namespace genvtx {
   
@@ -45,6 +47,7 @@ namespace genvtx {
   private:
     bool           __initialized;
     geomtools::box __box;
+    const geomtools::box * __box_ref;
     int            __mode;
     int            __surface_mask;
     double         __skin_skip;
@@ -75,6 +78,10 @@ namespace genvtx {
 
     void set_box (const geomtools::box & box_);
 
+    bool has_box_ref () const;
+
+    void set_box_ref (const geomtools::box & box_);
+
     const geomtools::box & get_box () const;
 
     void dump (ostream & out_ = clog) const;
@@ -101,7 +108,8 @@ namespace genvtx {
 
     virtual vg_creator_t vg_creator () const;
 
-    static i_vertex_generator * create (const properties & configuration_);
+    static i_vertex_generator * create (const properties & configuration_, 
+					void * user_ = 0);
   
   protected:
   
@@ -112,7 +120,6 @@ namespace genvtx {
 
     static creator_registration<box_vg> __CR;
   
-
   };
 
 } // end of namespace genvtx

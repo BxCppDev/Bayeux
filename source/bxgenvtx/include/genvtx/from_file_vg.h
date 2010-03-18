@@ -28,6 +28,7 @@
 #include <boost/filesystem.hpp>
 
 #include <datatools/utils/utils.h>
+#include <geomtools/units.h>
 
 #include <genvtx/i_vertex_generator.h>
 
@@ -37,11 +38,15 @@ namespace genvtx {
 
   class from_file_vg : public i_vertex_generator
   {
+  public:
+    static const double LENGTH_UNIT;
+
   private: 
     string   __filename;
     bool     __open;
     ifstream __source;
     geomtools::vector_3d __next;
+    double   __length_unit; // length unit (default == 1); 
 
   protected:
 
@@ -60,6 +65,10 @@ namespace genvtx {
     const string & get_filename () const;
 
     void set_filename (const string &);
+
+    void set_length_unit (double lu_);
+
+    double get_length_unit () const;
   
   // ctor/dtor:
   public: 
@@ -75,7 +84,7 @@ namespace genvtx {
 
     virtual vg_creator_t vg_creator () const;
 
-    static i_vertex_generator * create (const properties & configuration_);
+    static i_vertex_generator * create (const properties & configuration_, void * user_ = 0);
  
   protected:
   

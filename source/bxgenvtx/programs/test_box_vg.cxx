@@ -103,6 +103,42 @@ int main (int argc_, char ** argv_)
 	cout << endl << endl;
       }
 
+      {
+	genvtx::i_vertex_generator * ivg = 0;
+	datatools::utils::properties config;
+	config.store ("mode", "surface");
+	config.store ("skin_skip",      0.05);
+	config.store ("skin_thickness", 0.1);
+	vector<string> surfaces;
+	surfaces.push_back ("left");
+	surfaces.push_back ("back");
+	surfaces.push_back ("bottom");
+	config.store ("surfaces", surfaces);
+
+	//config.store ("box_ref" , genvtx::vg_tools::SHAPE_REF_NONE);
+	config.store ("box_ref" , genvtx::vg_tools::SHAPE_REF_PLAIN);
+	//config.store ("box_ref" , genvtx::vg_tools::SHAPE_REF_MODEL);
+	//config.store ("box_ref" , "mybox");
+
+	{
+	  config.store ("box.x", 4.0);
+	  config.store ("box.y", 2.0);
+	  config.store ("box.z", 1.0);
+	  config.store ("length_unit", "mm");
+	}
+	config.tree_dump (clog, "Configuration for dynamic VG:");
+	ivg = genvtx::box_vg::create (config, (void*) &b);
+	size_t nshoots = 1000;
+	geomtools::vector_3d vertex;     
+	for (int i = 0; i < nshoots; i++)
+	  {
+	    ivg->shoot_vertex (random, vertex);
+	    geomtools::gnuplot_draw::basic_draw_point (cout, vertex, true);
+	  }
+	cout << endl << endl; 
+	if (ivg != 0) delete ivg;
+      }
+
     }
   catch (exception & x)
     {

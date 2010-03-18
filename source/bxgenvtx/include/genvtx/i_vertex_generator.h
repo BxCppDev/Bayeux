@@ -18,6 +18,8 @@
 #include <boost/scoped_ptr.hpp>
 
 #include <geomtools/utils.h>
+#include <geomtools/detail/model_tools.h>
+
 #include <mygsl/rng.h>
 
 #include <genvtx/detail/vg_tools.h>
@@ -101,9 +103,9 @@ namespace genvtx {
     /* utility to enable auto-registering of some vertex generator 
      * in the global dictionary:
      *
-     * The templatized class 'vg_t' must inherits from 'i_vertex_generator_cut'
+     * The templatized class 'vg_t' must inherits from 'i_vertex_generator'
      * and implements the following methods:
-     *  - string   vg_id () const
+     *  - string       vg_id () const
      *  - vg_creator_t vg_creator () const
      *
      */
@@ -163,9 +165,12 @@ namespace genvtx {
 			<< "Exiting."
 			<< endl;
       }
+
     };
 
   };
+
+
 
 } // end of namespace genvtx
 

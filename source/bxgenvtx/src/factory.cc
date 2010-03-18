@@ -44,7 +44,7 @@ namespace genvtx {
       {
 	ostringstream message;
 	message << "factory::do_register: " 
-		<< "Missing cut ID!";
+		<< "Missing vertex generator ID!";
 	throw runtime_error (message.str ());
       }
     __creators [vertex_generator_id] = creator_;
@@ -83,7 +83,7 @@ namespace genvtx {
   }
   
   i_vertex_generator * factory::create_vertex_generator (const string & vg_id_, 
-							 const datatools::utils::properties & vg_configuration_)
+							 const datatools::utils::properties & vg_configuration_, void * user_)
   {
     using namespace std;
 
@@ -92,44 +92,17 @@ namespace genvtx {
     if (found != __creators.end ())
       {
 	vg_creator_t creator = found->second;
-	i_vertex_generator * vg = creator (vg_configuration_);
+	i_vertex_generator * vg = creator (vg_configuration_, user_);
 	return vg;
       }
     /*
     else
       {
-	if (is_debug ()) 
+	i_vertex_generator * a_vg = base_factory::create_vertex_generator (vertex_generator_id_,
+	vg_configuration_,user_);
+	if (a_vg != 0) 
 	  {
-	    clog << "factory::CreateCut: " 
-		 << "Invoking 'BaseCutFactory:CreateCut'" 
-		 << endl;
-	    clog << "factory::CreateCut: "
-		 << "Cut ID='" << vg_id_ << "'" << endl;
-	    clog << "factory::CreateCut: "
-		 << "Properties:" << endl;
-	    for (nemocuts::ICutFactory::vg_configuration_t::const_iterator 
-		   i = vg_configuration_.begin ();
-		 i != vg_configuration_.end ();
-		 ++i) 
-	      {
-		clog << "factory::CreateCut: "
-		     << i->GetPropertyName () << "=" 
-		     << i->GetPropertyValue () << endl;
-	      }
-	  }
-	  
-	i_vertex_generator * a_vg = BaseCutFactory::CreateCut (vertex_generator_id_,
-	vg_configuration_);
-	if (is_debug ()) 
-	  {
-	    clog << "factory::CreateCut: " 
-		 << "'BaseCutFactory:CreateCut' gave me '" 
-		 << hex << a_cut << dec << "'!" 
-		 << endl;
-	  }
-	if (a_cut != 0) 
-	  {
-	    return (a_cut);
+	    return (a_vg);
 	  }
       }
     */

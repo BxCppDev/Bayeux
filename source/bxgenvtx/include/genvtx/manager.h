@@ -30,7 +30,6 @@
 #include <datatools/utils/properties.h>
 #include <geomtools/utils.h>
 #include <genvtx/i_vertex_generator.h>
-//#include <sngeometry/manager.h>
 
 namespace genvtx {
 

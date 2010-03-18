@@ -235,7 +235,7 @@ namespace genvtx {
 
   // static method used within a vertex generator factory:
   i_vertex_generator * 
-  cylinder_vg::create (const properties & configuration_)
+  cylinder_vg::create (const properties & configuration_, void * user_)
   {
     cerr << "DEVEL: cylinder_vg::create: Entering..." << endl;
     configuration_.tree_dump (cerr, "cylinder_vg::create: configuration:", "DEVEL: ");

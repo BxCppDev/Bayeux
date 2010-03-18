@@ -47,12 +47,13 @@ int main (int argc_, char ** argv_)
           iarg++;
       }
 
-      std::string       rng_id = "mt19937";
+      string            rng_id = "mt19937";
       unsigned long int rng_seed = 12345;
-      mygsl::rng random (rng_id, rng_seed);
+      mygsl::rng        random (rng_id, rng_seed);
      
       genvtx::from_file_vg vg ("${GENVTX_ROOT}/resources/vertices.data");
-    
+      vg.set_length_unit (CLHEP::cm);
+
       geomtools::vector_3d vertex;
            
       while (true)

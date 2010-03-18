@@ -108,7 +108,7 @@ namespace genvtx {
 
   // static method used within a vertex generator factory:
   i_vertex_generator * 
-  placement_vg::create (const properties & configuration_)
+  placement_vg::create (const properties & configuration_, void * user_)
   {
     cerr << "DEVEL: placement_vg::create: Entering..." << endl;
     configuration_.tree_dump (cerr, "placement_vg::create: configuration:", "DEVEL: ");

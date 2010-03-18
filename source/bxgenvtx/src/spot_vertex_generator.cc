@@ -51,7 +51,7 @@ namespace genvtx {
 
   // static method used within a vertex generator factory:
   i_vertex_generator * 
-  spot_vertex_generator::create (const properties & configuration_)
+  spot_vertex_generator::create (const properties & configuration_, void * user_)
   {
     cerr << "DEVEL: spot_vertex_generator::create: Entering..." << endl;
     configuration_.tree_dump (cerr, "spot_vertex_generator::create: configuration:", "DEVEL: ");
@@ -62,20 +62,35 @@ namespace genvtx {
     // parameters of the spot vertex generator:
     double x, y, z;
     x = y = z = 0.0;
+    double lunit = 1.0;
+    string lunit_str;;
 
-    if (configuration_.has_key ("x"))
+    if (configuration_.has_key ("spot.x"))
       {
-	x = configuration_.fetch_real ("x");
+	x = configuration_.fetch_real ("spot.x");
       }
 
-    if (configuration_.has_key ("y"))
+    if (configuration_.has_key ("spot.y"))
       {
-	y = configuration_.fetch_real ("y");
+	y = configuration_.fetch_real ("spot.y");
       }
 
-    if (configuration_.has_key ("z"))
+    if (configuration_.has_key ("spot.z"))
       {
-	z = configuration_.fetch_real ("z");
+	z = configuration_.fetch_real ("spot.z");
+      }
+
+    if (configuration_.has_key ("spot.length_unit"))
+      {
+	lunit_str = configuration_.fetch_string ("spot.length_unit");
+	lunit = geomtools::units::get_length_unit_from (lunit_str);
+      }
+
+    if (! lunit_str.empty ())
+      {
+	x *= lunit;
+	y *= lunit;
+	z *= lunit;
       }
 
     // create a new parameterized 'spot_vertex_generator' instance:

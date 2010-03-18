@@ -27,9 +27,19 @@ namespace genvtx {
 
   class i_vertex_generator;
 
-  typedef i_vertex_generator * (*vg_creator_t) (const properties & configuration_);
+  typedef i_vertex_generator * (*vg_creator_t) (const properties & configuration_, void * user_);
 
   typedef map<string, vg_creator_t> vertex_generator_creator_dict_t;
+
+  class vg_tools
+  {
+  public:
+    static const string SHAPE_REF_NONE;
+    static const string SHAPE_REF_PLAIN;
+    static const string SHAPE_REF_GETTER;
+
+  };
+
 
 } // end of namespace genvtx
 
