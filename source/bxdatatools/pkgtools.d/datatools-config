@@ -138,7 +138,9 @@ if [ "x$opt" = "x--cflags" ]; then
         echo -n "-DIOFACTORY_USE_FPU=1 "
         echo -n "-I${THEPACK_ROOT}/boost/vault/fpu "
 	echo -n "-I${THEPACK_ROOT}/boost/vault/endian "
-    fi) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py 
+    fi
+    echo -n "`clhep-config --include` "
+    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py 
     echo
 
     exit 0
@@ -160,8 +162,11 @@ if [ "x$opt" = "x--libs" ]; then
 fi 
 
 if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
-    echo -n "-L${THEPACK_LIBDIR} -ldatatools "  \
-	"`boost-config --ldflags serialization iostreams filesystem system` "  | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
+    (
+	echo -n "-L${THEPACK_LIBDIR} -ldatatools "  \
+	    "`boost-config --ldflags serialization iostreams filesystem system` " 
+	echo -n "`clhep-config --libs` "
+    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
     echo
 #      "`liblockfile-config --ldflags` "  
     exit 0

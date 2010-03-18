@@ -575,6 +575,13 @@ EOF
 	fi
     fi
 
+    which clhep-config 2>&1 > /dev/null
+    if [ $? -ne 0 ]; then
+	err_msg "The 'CLHEP' package is not setup!"
+	return 1
+    fi
+    clhep_version=$(clhep-config --version)
+
     notice_msg "Configure package '${pack_name}': done."
     return 0
 }

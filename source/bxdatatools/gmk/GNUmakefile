@@ -84,6 +84,13 @@ endif
 DEPCPPFLAGS+=$(shell boost-config --cflags)
 DEPLDFLAGS+=$(shell boost-config --ldflags serialization iostreams filesystem)
 
+# CLHEP dependency :
+ifeq ($(strip $(CLHEP_LIB)),)
+$(error Sorry CLHEP is not configured, please define the CLHEP_LIB env)
+endif
+DEPCPPFLAGS+=$(shell clhep-config --include)
+DEPLDFLAGS+=$(shell clhep-config --libs)
+
 ### depends on Endian:
 DEPCPPFLAGS+=-I$(PACKAGE_DIR)/boost/vault/endian
 
