@@ -1,4 +1,5 @@
 // -*- mode: c++; -*- 
+//! \file datatools/utils/properties.h
 /* properties.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-02-19
@@ -48,23 +49,36 @@ namespace datatools {
 
   namespace utils {
 
+    /*! \brief A dictionary of arbitrary properties.
+     *
+     *  The properties class provides a container that holds
+     *  many different data of different types (bool, int, double, string
+     *  as well as arrays (std::vector) of build-in. 
+     *
+     */
     class properties : public datatools::utils::i_tree_dumpable,
 		       public datatools::utils::i_clear,
 		       public datatools::serialization::i_serializable     
     {
 
     public:
+
+      //! Global static debug variable.
       static bool g_debug;
+
+      //! Serialization tag.
       static const std::string SERIAL_TAG;
 
+      //! Internal data stored within the dictionary.
       class data :    
 	public datatools::serialization::i_serializable     
-
       {
 
       public:
 
+	//! Serialization tag.
 	static const std::string SERIAL_TAG;
+
 	static const int  ERROR_SUCCESS = 0;
 	static const int  ERROR_FAILURE = 1;
 	static const int  ERROR_BADTYPE = 2;
@@ -272,18 +286,23 @@ namespace datatools {
 	static std::string
 	get_error_message (int);
 
+	//! Method for smart printing (from the datatools::utils::i_tree_dump interface).
 	virtual void
 	tree_dump (std::ostream & out_         = std::cerr, 
 		  const std::string & title_  = "",
 		  const std::string & indent_ = "",
 		  bool inherit_               = false) const;
 
+      //! Return the serialization tag (from the datatools::serialization::i_serializable interface).
 	virtual const std::string &
 	get_serial_tag () const;
 
       private:
 
+	//! Boost.Serialization hook.
 	friend class boost::serialization::access; 
+
+	//! Templatized serialization method for the Boost.Serialization library.
 	template<class Archive>
 	void
 	serialize (Archive            & ar_ , 
@@ -313,19 +332,18 @@ namespace datatools {
 	    }
 	}
 
-	//BOOST_CLASS_EXPORT_GUID (data, "datatools::utils::properties::data")
-
       };
 
-      // typedefs declarations:
 
     public: 
 
+      // typedefs declarations:
       typedef std::list<std::string>      vkeys;
       typedef std::map<std::string, data> pmap;
       typedef vkeys keys_col_t;
       typedef pmap  props_col_t;
-  
+
+      //! \brief Pure abstract class for key validator.
       struct basic_key_validator 
 	: public std::unary_function<std::string,bool>
       {
@@ -333,6 +351,7 @@ namespace datatools {
 	operator () (const std::string & key_arg_) const = 0;
       };
 
+      //! \brief Default abstract class for key validator.
       class default_key_validator 
 	: public basic_key_validator
       {
@@ -453,60 +472,75 @@ namespace datatools {
 
     public: 
 
-      vkeys
-      keys () const;
+      //! Returns the list of keys stored in the map (read-only).  
+      vkeys keys () const;
 
+      //! Set the list of keys. 
       void
       keys (vkeys &) const;
 
+      //! returns the list of keys stored in the map that start with key_prefix_. 
       void
       keys_not_starting_with (vkeys &, const std::string & key_prefix_) const;
 
       vkeys
       keys_not_starting_with (const std::string & key_prefix_) const;
 
+      //! returns the list of keys stored in the map that start with key_prefix_. 
       void
       keys_starting_with (vkeys &, const std::string & key_prefix_) const;
 
       vkeys
       keys_starting_with (const std::string & key_prefix_) const;
 
+      //! Lock the properties dictionary. 
       void
       lock (const std::string & key_);
 
+      //! Unlock the properties dictionary. 
       void
       unlock (const std::string & key_);
 
-      bool
+      //! Check if the instance is locked.
       is_locked (const std::string & key_) const;
 
+      //! Return a static key.
       static std::string
       make_private_key (const std::string & key_);
 
+      //! Check if a string matches a private 'key_'.
       static bool
       key_is_private (const std::string & key_);
 
+      //! Check if a string matches a public 'key_'.
       static bool
       key_is_public (const std::string & key_);
 
+      //! Check if data with name 'key_' is private.
       bool
       is_private (const std::string & key_) const;
 
+      //! Check if data with name 'key_' is public.
       bool
       is_public (const std::string & key_) const;
 
+      //! Check if data with name 'key_' is boolean.
       bool
       is_boolean (const std::string & key_) const;
 
+      //! Check if data with name 'key_' is integer.
       bool
       is_integer (const std::string & key_) const;
 
+      //! Check if data with name 'key_' is real.
       bool
       is_real (const std::string & key_) const;
 
+      //! Check if data with name 'key_' is string.
       bool
       is_string (const std::string & key_) const;
       
+      //! Check if data with name 'string' is scalar.
       bool
       is_scalar (const std::string & key_) const;
 
@@ -519,15 +553,19 @@ namespace datatools {
       bool
       has_key (const std::string & key_) const;
 
+      //! Erase property with name key_.
       void
       erase (const std::string & key_);
 
+      //! Erase all properties.
       void
       erase_all ();
 
+      //! Erase all properties starting with key_prefix_
       void
       erase_all_starting_with (const std::string & key_prefix_);
 
+      //! Erase all properties not starting with key_prefix_
       void
       erase_all_not_starting_with (const std::string & key_prefix_);
 
@@ -542,9 +580,11 @@ namespace datatools {
       void
       clean (const std::string & key_);
 
+      //! Reset method (from the datatools::utils::i_clear interface).
       virtual void
       clear ();
 
+      //! Reset method (from the datatools::utils::i_clear interface).
       void reset ();
  
       void

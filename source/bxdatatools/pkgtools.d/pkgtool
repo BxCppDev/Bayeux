@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # -*- mode: shell-script; -*-
 # pkgtool
 #
@@ -105,6 +105,7 @@ function print_usage ()
              or the name of a specific program, example:
                 test_event_id : build only the 'test_event_id'  program
 
+    $APPNAME doc        : generate doc
     $APPNAME clean      : clean package
     $APPNAME install    : install package
     $APPNAME uninstall  : uninstall package
@@ -151,6 +152,8 @@ while [ -n "$1" ]; do
 		tool_mode="uninstall"	
 	    elif [ "$arg" = "info" ]; then
 		tool_mode="info"	
+	    elif [ "$arg" = "doc" ]; then
+		tool_mode="doc"	
 	    else
 		err_msg "Invalid argument!"
 		exit 1
@@ -335,6 +338,11 @@ function do_clean ()
 	err_msg "Clean Boost vault contribution from '${pack_name}' failed!"
 	return $?
     fi
+
+    if [ -d ${the_base_dir}/doc/doxygen ]; then
+	rm -fr ${the_base_dir}/doc/doxygen
+    fi
+
     #read TEST
     cd ${opwd}
     return 0
@@ -670,7 +678,7 @@ function do_install ()
 
 function do_uninstall ()
 {
-    info_msg "Uninstall package '${pack_name}'... The"
+    info_msg "Uninstall package '${pack_name}'..."
     opwd=$(pwd)
     cd ${GMKDIR}
     make uninstall 
@@ -727,7 +735,26 @@ function do_info ()
 	fi
 	echo -e "\tBuild method       : ${pkg_build}"
     fi
+    return 0
+}
 
+function do_doc ()
+{
+    info_msg "Generate documentation for package '${pack_name}'..."
+    which doxygen >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+	err_msg "Cannot find doxygen !"
+	return 1
+    fi
+    if [ ! -f ${the_base_dir}/pkgtools.d/${pack_name}.doxygen ]; then
+	err_msg "Missing '${the_base_dir}/pkgtools.d/${pack_name}.doxygen' configuration file !"
+	return 1
+    fi
+    # doxygen -g ${the_base_dir}/pkgtools.d/${pack_name}.doxygen
+    doxygen ${the_base_dir}/pkgtools.d/${pack_name}.doxygen 
+    
+
+    return 0
 }
 
 #######################################################
@@ -776,6 +803,14 @@ if [ "${tool_mode}" = "info" ]; then
     do_info
     if [ $? -ne 0 ]; then
 	err_msg "Info failed!"
+	exit 1
+    fi
+fi
+
+if [ "${tool_mode}" = "doc" ]; then
+    do_doc
+    if [ $? -ne 0 ]; then
+	err_msg "Documentation failed!"
 	exit 1
     fi
 fi

@@ -1,4 +1,5 @@
 /* i_clear.h */
+//! \file datatools/utils/clear.h
 
 #ifndef __datatools__utils__i_clear_h
 #define __datatools__utils__i_clear_h 1

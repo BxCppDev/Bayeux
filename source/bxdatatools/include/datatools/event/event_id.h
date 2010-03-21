@@ -1,4 +1,5 @@
 // -*- mode: c++; -*- 
+//! \file datatools/event/event_id.h
 /* event_id.h
  * Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-02-15
@@ -35,6 +36,14 @@ namespace datatools {
 
   namespace event {
 
+    /*! \brief A simple event ID object based on a run number and an event number.
+     *        Run and event numbers are represented by 32 bits signed integrals.
+     *
+     *  The event_id class is serializable through the Boost.Serialization library.
+     *  Utilities for standard I/O streams is also provided.
+     *
+     *
+     */
     class event_id : public datatools::utils::i_tree_dumpable ,
 		     public datatools::utils::i_clear,
 		     public datatools::serialization::i_serializable     
@@ -43,73 +52,124 @@ namespace datatools {
 
     public:
 
+      //! Serialization tag.
       static const std::string SERIAL_TAG;
+
+      //! Constant value for an invalid run number.
       static const int  INVALID_RUN_NUMBER   = -1;
+
+      //! Constant value for an invalid event number.
       static const int  INVALID_EVENT_NUMBER = -1;
+
+      //! Format separator character used in the to_string and from_string methods.
       static const char IO_FORMAT_SEP = '_';
 
     private:
 
+      //! The number of the run.
       int32_t __run_number;
+      //! The number of the event within the run.
       int32_t __event_number;
 
     public:
 
+      //! Reset method (from the datatools::utils::i_clear interface).
       virtual void clear ();
 
+      //! Returns the run number.
+      /** @returns the run number.
+       */
       int get_run_number () const;
 
+      //! Returns the event number.
+      /** @returns the event number.
+       */
       int get_event_number () const;
 
-      void set_run_number (int);
+      //! Set the run number.
+      /** @param r_ the run number.
+       */
+      void set_run_number (int r_);
 
-      void set_event_number (int);
+      //! Set the event number.
+      /** @param e_ the event number.
+       */
+      void set_event_number (int e_);
 
-      void set (int, int);
+      /**
+       * Method to fully set the event_id object.
+       * @param r_ the run number.
+       * @param e_ the event number.
+       */
+      void set (int r_, int e_);
 
-      // ctor
+      //! The default constructor.
       event_id ();
 
-      event_id (int);
+      //! A constructor that sets only the event number.
+      event_id (int e_);
 
-      event_id (int, int);
+      /**
+       * A constructor to fully set the event_id object.
+       * @param r_ the run number.
+       * @param e_ the event number.
+       */
+      event_id (int r_, int e_);
 
-      // dtor
+      //! The destructor.
       virtual ~event_id ();
 
+      //! Check whether the instance is valid.
       bool is_valid () const;
 
-      bool has (int, int) const;
+      /**
+       * Check if the event_id object has specific run and event numbers.
+       * @param r_ the run number.
+       * @param e_ the event number.
+       * @return true or false
+       */
+      bool has (int r_, int e_) const;
 
+      //! Comparison operator.
       bool operator== (const event_id & id_) const;
 
+      //! Comparison operator.
       bool operator< (const event_id & id_) const;
 
+      //! Comparison operator.
       bool operator> (const event_id & id_) const;
 
+      //! Output convertor.
       std::string to_string () const;
 
+      //! Input convertor.
       void from_string (const std::string &);
 
       friend std::ostream & operator<< (std::ostream &, const event_id &);
 
       friend std::istream & operator>> (std::istream &, event_id &);
 
+      //! Method for smart printing (from the datatools::utils::i_tree_dump interface).
       virtual void tree_dump (std::ostream & out_         = std::cerr , 
 			      const std::string & title_  = "" ,
 			      const std::string & indent_ = "",
 			      bool inherit_               = false) const;
 
+      //! Shortcut to tree_dump.
       void dump () const
       {
 	tree_dump (std::clog);
       }
 
+      //! Return the serialization tag (from the datatools::serialization::i_serializable interface).
       virtual const std::string & get_serial_tag () const;
 
     private:
 
+      //! Boost.Serialization hook.
       friend class boost::serialization::access; 
+
+      //! Templatized serialization method for the Boost.Serialization library.
       template<class Archive>
       void serialize (Archive            & ar_ , 
 		const unsigned int   version_)
@@ -119,6 +179,10 @@ namespace datatools {
       }
     };
 
+    //! Predicate to check if an event_id equals another one.
+    /** 
+     * May be used with the std::find_if standard algorithm.
+     */
     class event_id_equal_predicate : public std::unary_function<event_id, bool>
     {
       event_id __id;
