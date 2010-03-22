@@ -502,6 +502,7 @@ namespace datatools {
       unlock (const std::string & key_);
 
       //! Check if the instance is locked.
+      bool
       is_locked (const std::string & key_) const;
 
       //! Return a static key.
