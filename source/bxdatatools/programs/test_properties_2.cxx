@@ -116,7 +116,7 @@ int main (int argc_, char ** argv_)
       du::properties my_dict3 = my_dict;
       my_dict3.erase_all_starting_with ("visibility.");
       my_dict3.dump (clog);
-
+ 
       du::properties my_dict4;
       my_dict.export_starting_with (my_dict4, "visibility.");
       my_dict4.dump (clog);

@@ -2899,7 +2899,7 @@ namespace datatools {
       return s;
     }
 
-    void properties::export_to_string_based_dictionary (map<string, string> & dict_)
+    void properties::export_to_string_based_dictionary (map<string, string> & dict_) const
     {
       for (pmap::const_iterator i = __props.begin ();
 	   i != __props.end ();

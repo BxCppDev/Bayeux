@@ -988,7 +988,7 @@ namespace datatools {
 
     public:
 
-      void export_to_string_based_dictionary (map<string, string> & dict_);
+      void export_to_string_based_dictionary (map<string, string> & dict_) const;
 
     public:
 
