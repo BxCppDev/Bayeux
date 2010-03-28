@@ -2898,6 +2898,39 @@ namespace datatools {
       s += subkey_;
       return s;
     }
+
+    void properties::export_to_string_based_dictionary (map<string, string> & dict_)
+    {
+      for (pmap::const_iterator i = __props.begin ();
+	   i != __props.end ();
+	   i++)
+	{
+	  const string & key = i->first;
+	  ostringstream valoss;
+	  const data & data = i->second;
+	  if ( data.is_vector ())
+	    {
+	      valoss << '(';
+	    }
+	  for (int i = 0; i < (int) data.get_size (); i++)
+	    {
+	      if (i != 0) valoss << ',';
+	      if (data.is_boolean ()) valoss << data.get_boolean_value (i);
+	      if (data.is_integer ()) valoss << data.get_integer_value (i);
+	      if (data.is_real ())
+		{
+		  valoss.precision (15);
+		  valoss << data.get_real_value (i);
+		}
+	      if (data.is_string ())  valoss << '"' << data.get_string_value (i) << '"';
+	    }
+	  if ( data.is_vector ())
+	    {
+	      valoss << ')';
+	    }
+	  dict_[key] = valoss.str ();
+	}
+    }
     
   } // end of namespace utils 
 

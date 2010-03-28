@@ -988,6 +988,10 @@ namespace datatools {
 
     public:
 
+      void export_to_string_based_dictionary (map<string, string> & dict_);
+
+    public:
+
       friend class config;
 
       class config

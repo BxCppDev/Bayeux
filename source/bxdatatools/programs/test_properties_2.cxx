@@ -5,6 +5,8 @@
 #include <iostream>
 #include <string>
 #include <exception>
+#include <vector>
+#include <map>
 
 #include <datatools/serialization/io_factory.h>
 #include <datatools/serialization/serialization.h>
@@ -53,6 +55,21 @@ int main (int argc_, char ** argv_)
       my_dict.store ("visibility.rendering", "shaded");
       my_dict.store ("visibility.texture", "marble");
       my_dict.store ("age", 24, "the age of the captain");    
+      vector<int> vi;
+      vi.push_back (1);
+      vi.push_back (2);
+      vi.push_back (3);
+      my_dict.store ("vi", vi, "a vector of integers");    
+      vector<double> vd;
+      vd.push_back (1.6e-19);
+      vd.push_back (M_PI);
+      vd.push_back (6.022e23);
+      my_dict.store ("vd", vd, "a vector of reals");    
+      vector<string> vs;
+      vs.push_back ("Hello");
+      vs.push_back ("world");
+      vs.push_back ("!");
+      my_dict.store ("vs", vs, "a vector of strings");    
       my_dict.dump (clog);
 
       du::properties::keys_col_t all_keys;
@@ -108,8 +125,19 @@ int main (int argc_, char ** argv_)
       my_dict.export_not_starting_with (my_dict5, "visibility.");
       my_dict5.dump (clog);
 
-      my_dict.export_starting_with (my_dict, "visibility.");
+      //du::properties my_dict;
+      //my_dict.export_starting_with (my_dict, "visibility.");
 
+      map<string, string> string_based_dict;
+      my_dict.export_to_string_based_dictionary (string_based_dict);
+
+      cout << endl << "Exported string-based dictionary:" << endl;
+      for (map<string,string>::const_iterator i = string_based_dict.begin ();
+	   i != string_based_dict.end ();
+	   i++)
+	{
+	  cout << i->first << " = " << i->second << endl;
+	}
     }
   catch (exception & x)
     {
