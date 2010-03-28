@@ -2899,7 +2899,7 @@ namespace datatools {
       return s;
     }
 
-    void properties::export_to_string_based_dictionary (map<string, string> & dict_) const
+    void properties::export_to_string_based_dictionary (map<string, string> & dict_, bool quoted_strings_) const
     {
       for (pmap::const_iterator i = __props.begin ();
 	   i != __props.end ();
@@ -2922,7 +2922,12 @@ namespace datatools {
 		  valoss.precision (15);
 		  valoss << data.get_real_value (i);
 		}
-	      if (data.is_string ())  valoss << '"' << data.get_string_value (i) << '"';
+	      if (data.is_string ()) 
+		{
+		  if (quoted_strings_) valoss << '"';
+		  valoss << data.get_string_value (i);
+		  if (quoted_strings_) valoss << '"';
+		}
 	    }
 	  if ( data.is_vector ())
 	    {
