@@ -9,9 +9,7 @@
  * Description: 
  *  Utilities for visualization tools:
  *
- *  Some standard properties are defined:
- *  visibility.
- *
+ *  Some visibility properties are defined:
  *
  *
  * History: 
@@ -37,12 +35,11 @@ namespace geomtools {
   public:
     static const string VISIBILITY_PREFIX;
     static const string VISIBILITY_HIDDEN_FLAG;
-    static const string VISIBILITY_SHOWN_FLAG;
+    static const string VISIBILITY_HIDDEN_ENVELOP_FLAG;
     static const string VISIBILITY_DAUGHTERS_HIDDEN_FLAG;
-    static const string VISIBILITY_DAUGHTERS_SHOWN_FLAG;
     static const string VISIBILITY_COLOR_PROPERTY;
     static const string VISIBILITY_WIRED_CYLINDER_FLAG;
-    
+
   public:
 
     static string make_key (const string & flag_);
@@ -59,6 +56,8 @@ namespace geomtools {
     static bool is_shown (const datatools::utils::properties & config_);
 
     static bool is_hidden (const datatools::utils::properties & config_);
+
+    static bool is_hidden_envelop (const datatools::utils::properties & config_);
 
     static bool is_daughters_shown (const datatools::utils::properties & config_);
 

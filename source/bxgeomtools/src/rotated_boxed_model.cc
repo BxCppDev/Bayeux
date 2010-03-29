@@ -60,10 +60,12 @@ namespace geomtools {
 				    models_col_t * models_)
   {
     bool devel = i_model::g_devel;
-    if (devel) clog << "DEVEL: rotated_boxed_model::_at_construct: Entering..." << endl;
+    if (devel)
+      {
+	clog << "DEVEL: rotated_boxed_model::_at_construct: Entering..." << endl;
+      }
     set_name (name_);
     string boxed_model_name;
-    size_t number_of_items = 0;
     string rotation_axis_label = "";
     string special_rotation_angle_label = "";
 
@@ -155,7 +157,7 @@ namespace geomtools {
       {
 	  ostringstream message;
 	  message << "rotated_boxed_model::_at_construct: "
-		  << "The embedded model is not a 'bowed' one !"; 
+		  << "The embedded model is not a 'boxed' one !"; 
 	  throw runtime_error (message.str ());
       }
     const box & b = 

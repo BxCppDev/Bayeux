@@ -32,6 +32,7 @@
 #include <geomtools/circle.h>
 #include <geomtools/disk.h>
 #include <geomtools/polycone.h>
+#include <geomtools/color.h>
 
 namespace geomtools {
 
@@ -47,6 +48,22 @@ namespace geomtools {
       };
 
   public: 
+
+    static bool   g_using_color;
+    static double g_current_color;
+
+    static void 
+    basic_draw_point_with_color (std::ostream &, 
+				 double x_, double y_, double z_, 
+				 double color_,
+				 bool endl_ = true);
+
+    static void 
+    basic_draw_point_with_color (std::ostream & out_, 
+				 const vector_3d & point_,
+				 double color_,
+				 bool   endl_ = true);
+
     static void 
     basic_draw_point (std::ostream &, 
 		      double x_, double y_, double z_,
@@ -69,6 +86,39 @@ namespace geomtools {
 		      const vector_3d & v_)
     {
       basic_draw_point (out_, v_, true);
+    }
+
+    static void 
+    basic_draw_facet3 (std::ostream & out_, 
+		       const vector_3d & p1_, 
+		       const vector_3d & p2_, 
+		       const vector_3d & p3_,
+		       double color_ = 1.0)
+    {
+      basic_draw_point_with_color (out_, p1_, color_, true);
+      basic_draw_point_with_color (out_, p2_, color_, true);
+      out_ << endl;
+      basic_draw_point_with_color (out_, p3_, color_, true);
+      basic_draw_point_with_color (out_, p3_, color_, true);
+      out_ << endl;
+      out_ << endl;
+    }
+
+    static void 
+    basic_draw_facet3 (std::ostream & out_, 
+		       const vector_3d & p1_, 
+		       const vector_3d & p2_, 
+		       const vector_3d & p3_, 
+		       const vector_3d & p4_,
+		       double color_ = 1.0)
+    {
+      basic_draw_point_with_color (out_, p1_, color_);
+      basic_draw_point_with_color (out_, p2_, color_);
+      out_ << endl;
+      basic_draw_point_with_color (out_, p4_, color_);
+      basic_draw_point_with_color (out_, p3_, color_);
+      out_ << endl;
+      out_ << endl;
     }
 
     static void 

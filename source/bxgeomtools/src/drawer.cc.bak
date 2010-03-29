@@ -52,7 +52,7 @@ namespace geomtools {
     datatools::utils::properties visu_config;
     visibility::extract (log_.parameters (), visu_config);
 
-    bool shown = true;
+    bool shown = true; 
     if (visibility::is_hidden (visu_config))
       {
 	shown = false;
@@ -61,6 +61,19 @@ namespace geomtools {
       {
 	shown = true;
       } 
+    int color = 1;
+    int former_color = color::get_color (color::default_color);
+    if (visibility::has_color (visu_config))
+      {
+	color = color::get_color (visibility::get_color (visu_config));
+	cerr << "DEVEL: **** Found color '" 
+	     << visibility::get_color (visu_config)
+	     << "' color is : " << color << endl;
+      } 
+
+    gnuplot_draw::g_current_color = color;
+    gnuplot_draw::g_current_color = former_color;
+
     if (shown)
       {
 	drawer::__draw (tmp_file, log_, p_, max_display_level);
@@ -84,6 +97,7 @@ namespace geomtools {
     if (view == drawer::VIEW_2D_XY)
       {
 	g1.set_grid ();
+	cerr << "DEVEL: ************** VIEW_2D_XY " << endl;
 	g1.cmd ("set size ratio -1");
 	g1.set_xlabel ("x").set_ylabel ("y");
 	g1.plotfile_xy (tmp_filename, 1, 2, "XY view");

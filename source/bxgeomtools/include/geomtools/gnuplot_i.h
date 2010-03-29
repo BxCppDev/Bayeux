@@ -638,6 +638,10 @@ Gnuplot& plot_xy_err(const X &x,
 			const unsigned int column_z = 3,
 			const std::string &title = "");
 
+  Gnuplot& plotfile_xyz_with_colored_wires (const std::string &filename,
+					    const std::string &title = "",
+					    int color_ = 0);
+
   ///   from std::vector
 /*
   template<typename X, typename Y, typename Z>

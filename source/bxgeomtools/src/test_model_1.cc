@@ -52,10 +52,17 @@ namespace geomtools {
 	height = config_.fetch_real ("height");
 	height *= CLHEP::mm;
       }
-    if (config_.has_key ("material"))
+    if (config_.has_key ("material.ref"))
       {
 	if (devel) clog << "DEVEL: test_model_1::_at_construct: key= 'material'..." << endl;
-	material = config_.fetch_string ("material");
+	material = config_.fetch_string ("material.ref");
+      }
+    else
+      {
+	ostringstream message;
+	message << "test_model_1::_at_construct: "
+		<< "Missing 'material.ref' property !";
+	throw runtime_error (message.str ());
       }
     
     __solid.reset ();
@@ -67,7 +74,7 @@ namespace geomtools {
 	throw runtime_error ("test_model_1::_at_construct: Invalid solid !");
       }
     
-   // initialize the 'logical_volume' of this model:
+    // initialize the 'logical_volume' of this model:
     get_logical ().set_name (name_);
     get_logical ().set_shape (__solid);
     get_logical ().set_material_ref (material);

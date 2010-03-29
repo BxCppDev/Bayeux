@@ -862,6 +862,49 @@ Gnuplot& Gnuplot::plotfile_xy_err(const std::string &filename,
 //
 // Plots a 3d graph from a list of doubles (x y z) saved in a file
 //
+Gnuplot& Gnuplot::plotfile_xyz_with_colored_wires (const std::string &filename,
+						   const std::string &title,
+						   int color_)
+{
+  //
+  // check if file exists
+  //
+  file_available(filename);
+  unsigned int column_x = 1;
+  unsigned int column_y = 2;
+  unsigned int column_z = 3;
+
+  std::ostringstream cmdstr;
+  //
+  // command to be sent to gnuplot
+  //
+  if (nplots > 0  &&  two_dim == false)
+    cmdstr << "replot ";
+  else
+    cmdstr << "splot ";
+
+  cmdstr << "\"" << filename << "\" using " << column_x << ":" << column_y 
+	 << ":" << column_z;
+
+  std::ostringstream wired_colored_pstyle;
+  wired_colored_pstyle << "lines lt " << color_;
+  if (title == "")
+    cmdstr << " notitle with " << wired_colored_pstyle;
+  else
+    cmdstr << " title \"" << title << "\" with " << wired_colored_pstyle;
+
+  //
+  // Do the actual plot
+  //
+  cmd(cmdstr.str());
+
+  return *this;
+}
+
+//------------------------------------------------------------------------------
+//
+// Plots a 3d graph from a list of doubles (x y z) saved in a file
+//
 Gnuplot& Gnuplot::plotfile_xyz(const std::string &filename,
                                const unsigned int column_x,
                                const unsigned int column_y,

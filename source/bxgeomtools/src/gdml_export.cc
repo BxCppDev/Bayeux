@@ -313,8 +313,8 @@ namespace geomtools {
 	if (devel) clog << "DEVEL: gdml_export::_export_gdml_logical: Here we should export the daughter physicals..." << endl;
 	
 	for (logical_volume::physicals_col_t::const_iterator i 
-		   = logical.get_physicals ().begin (); 
-		 i != logical.get_physicals ().end (); 
+	       = logical.get_physicals ().begin (); 
+	     i != logical.get_physicals ().end (); 
 	     i++)
 	  {
 	    const physical_volume & phys = *(i->second);
@@ -325,6 +325,10 @@ namespace geomtools {
 			    << "log_child=" << log_child.get_name () << endl;
 
 	    _export_gdml_logical (log_child);
+
+	    // export a dictionary of auxiliary properties:
+	    map<string, string> auxprops;
+	    log_child.parameters ().export_to_string_based_dictionary (auxprops, false);
 
 	    const i_placement * pp = &(phys.get_placement ());
 	    bool multiple = false;
@@ -367,12 +371,16 @@ namespace geomtools {
 		    }
 		  a_replicavol.offset = 0.0;
 		}
+		if (devel) clog << "DEVEL: gdml_export::_export_gdml_logical: "
+				<< "add volume '" << log_name << "' (replica)..." << endl;
+		
 		__writer.add_volume (log_name, 
 				     material_ref,
 				     solid_ref, 
 				     a_replicavol,
 				     __length_unit,
-				     __angle_unit);
+				     __angle_unit,
+				     auxprops);
 	      }
 	    else
 	      {
@@ -420,14 +428,17 @@ namespace geomtools {
 							      pos_name_oss.str (), 
 							      rot_name_oss.str ()));
 		  }
+		if (devel) clog << "DEVEL: gdml_export::_export_gdml_logical: "
+				<< "add volume '" << log_name << "'..." << endl;
 		__writer.add_volume (log_name, 
 				     material_ref,
 				     solid_ref, 
-				     physvols);
+				     physvols,
+				     auxprops);
 	      }
 	  }
       }
-
+    
     __volumes_refs.push_back (log_name);
     if (devel)
       {

@@ -12,7 +12,7 @@ namespace geomtools {
   const string gdml_writer::DEFAULT_XML_ENCODING = "UTF-8";
   const string gdml_writer::DEFAULT_GDML_SCHEMA   = "gdml.xsd";
 
-  const string gdml_writer::DEFINE_SECTION    = "section";
+  const string gdml_writer::DEFINE_SECTION    = "define";
   const string gdml_writer::MATERIALS_SECTION = "materials";
   const string gdml_writer::SOLIDS_SECTION    = "solids";
   const string gdml_writer::STRUCTURE_SECTION = "structure";
@@ -125,8 +125,9 @@ namespace geomtools {
 		    << " name=" << '"' << name_ << '"' 
 		    << " value="  << '"';
     _get_stream (DEFINE_SECTION).precision (15);
-    _get_stream (DEFINE_SECTION) << value_ << '"'
-		    << " />" << endl;
+    _get_stream (DEFINE_SECTION) << value_ << '"';
+    _get_stream (DEFINE_SECTION) << " />" << endl;
+    _get_stream (DEFINE_SECTION) << endl;
   }
   
   void gdml_writer::add_quantity (const string & name_, 
@@ -143,6 +144,7 @@ namespace geomtools {
     _get_stream (DEFINE_SECTION) << (value_ / unit) << '"'
 		    << " unit=" << '"' << unit_str_ << '"' 
 		    << " />" << endl;
+    _get_stream (DEFINE_SECTION) << endl;
   }
 
   void gdml_writer::add_variable (const string & name_, 
@@ -154,6 +156,7 @@ namespace geomtools {
     _get_stream (DEFINE_SECTION).precision (15);
     _get_stream (DEFINE_SECTION) << value_ << '"'
 		    << " />" << endl;
+    _get_stream (DEFINE_SECTION) << endl;
   }
 
   void gdml_writer::add_variable (const string & name_, 
@@ -163,6 +166,7 @@ namespace geomtools {
 		    << " name=" << '"' << name_ << '"' 
 		    << " value="  << '"' << expr_value_ << '"' 
 		    << " />" << endl;
+    _get_stream (DEFINE_SECTION) << endl;
   }
 
   void gdml_writer::add_position (const string & name_, 
@@ -184,6 +188,7 @@ namespace geomtools {
     _get_stream (DEFINE_SECTION) << z_ / unit << '"'
 		    << " unit=" << '"' << unit_str_ << '"' 
 		    << " />" << endl;
+    _get_stream (DEFINE_SECTION) << endl;
   }
   
   void gdml_writer::add_position (const string & name_, 
@@ -214,6 +219,7 @@ namespace geomtools {
     _get_stream (DEFINE_SECTION) << (angle_ / angle_unit) << '"' 
 		    << " unit=" << '"' << unit_str_ << '"' 
 		    << " />" << endl;
+    _get_stream (DEFINE_SECTION) << endl;
   }
 
   void gdml_writer::add_rotation (const string & name_, 
@@ -264,6 +270,7 @@ namespace geomtools {
 
     _get_stream (DEFINE_SECTION) << " unit=" << '"' << unit_str_ << '"' 
 				 << " />" << endl;
+    _get_stream (DEFINE_SECTION) << endl;
   }
 
   /*** Materials ***/
@@ -284,6 +291,7 @@ namespace geomtools {
     _get_stream (MATERIALS_SECTION).precision (15);
     _get_stream (MATERIALS_SECTION) << a_ << '"' << " >" << endl;
     _get_stream (MATERIALS_SECTION) << "</isotope>" << endl; 
+    _get_stream (MATERIALS_SECTION) << endl; 
   }
 
   void gdml_writer::add_element (const string & name_, 
@@ -301,7 +309,8 @@ namespace geomtools {
     _get_stream (MATERIALS_SECTION).precision (15);
     _get_stream (MATERIALS_SECTION) << a_ << '"' << " />" << endl;
     _get_stream (MATERIALS_SECTION) << "</element>" << endl; 
-  }
+    _get_stream (MATERIALS_SECTION) << endl; 
+   }
 
   void gdml_writer::add_element (const string & name_, 
 				 const map<string, double> & fractions_)
@@ -345,10 +354,11 @@ namespace geomtools {
     materials_stream << "</element>" << endl; 
 
     _get_stream (MATERIALS_SECTION) << materials_stream.str ();
+    _get_stream (MATERIALS_SECTION) << endl; 
   }
 
   void gdml_writer::add_element (const string & name_, 
-		    const string & ref_)
+				 const string & ref_)
   {
     map<string, double> m;
     m[ref_] = 1.0;
@@ -356,8 +366,8 @@ namespace geomtools {
   }
   
   void gdml_writer::add_element (const string & name_, 
-		    const string & ref1_, double fraction1_, 
-		    const string & ref2_, double fraction2_)
+				 const string & ref1_, double fraction1_, 
+				 const string & ref2_, double fraction2_)
   {
     map<string, double> m;
     m[ref1_] = fraction1_;
@@ -366,9 +376,9 @@ namespace geomtools {
   }
 
   void gdml_writer::add_element (const string & name_, 
-		    const string & ref1_, double fraction1_, 
-		    const string & ref2_, double fraction2_, 
-		    const string & ref3_, double fraction3_)
+				 const string & ref1_, double fraction1_, 
+				 const string & ref2_, double fraction2_, 
+				 const string & ref3_, double fraction3_)
   {
     map<string, double> m;
     m[ref1_] = fraction1_;
@@ -392,11 +402,11 @@ namespace geomtools {
   }
   
   void gdml_writer::add_element (const string & name_, 
-		    const string & ref1_, double fraction1_, 
-		    const string & ref2_, double fraction2_, 
-		    const string & ref3_, double fraction3_, 
-		    const string & ref4_, double fraction4_, 
-		    const string & ref5_, double fraction5_)
+				 const string & ref1_, double fraction1_, 
+				 const string & ref2_, double fraction2_, 
+				 const string & ref3_, double fraction3_, 
+				 const string & ref4_, double fraction4_, 
+				 const string & ref5_, double fraction5_)
   {
     map<string, double> m;
     m[ref1_] = fraction1_;
@@ -432,6 +442,7 @@ namespace geomtools {
      _get_stream (MATERIALS_SECTION) << a_ << '"' << " />" << endl;
      
      _get_stream (MATERIALS_SECTION) << "</material >" << endl; 
+     _get_stream (MATERIALS_SECTION) << endl; 
   }
 
   void gdml_writer::add_material (const string & name_,
@@ -488,6 +499,7 @@ namespace geomtools {
     materials_stream << "</material>" << endl; 
 
     _get_stream (MATERIALS_SECTION) << materials_stream.str ();
+    _get_stream (MATERIALS_SECTION) << endl; 
   }
   
 
@@ -531,9 +543,10 @@ namespace geomtools {
       }
     materials_stream << "</material>" << endl; 
     _get_stream (MATERIALS_SECTION) << materials_stream.str ();
+    _get_stream (MATERIALS_SECTION) << endl; 
   }
  
-  /*** section ***/
+  /*** solid ***/
  
   bool gdml_writer::solid_type_is_valid (const string & solid_type_)
   {
@@ -996,8 +1009,7 @@ namespace geomtools {
     positionref = positionref_;
     rotationref = rotationref_;
     scaleref = scaleref_;
-  }
-
+  } 
 
   const string gdml_writer::replicavol::REPLICATED_ALONG_AXIS = "replicated_along_axis";
 
@@ -1006,7 +1018,8 @@ namespace geomtools {
 				const string & solid_ref_,
 				const replicavol & replicavol_,
 				const string & lunit_str_,
-				const string & aunit_str_)
+				const string & aunit_str_,
+				const map<string, string> & aux_)
   {
     double lunit = units::get_length_unit_from (lunit_str_);
     _get_stream (STRUCTURE_SECTION) << "<volume" << " name=" << '"' << name_ << '"' << " >" << endl;
@@ -1027,7 +1040,7 @@ namespace geomtools {
 				    << " unit=" 
 				    << '"' << lunit_str_ << '"' 
 				    << " />" << endl;
-
+ 
     _get_stream (STRUCTURE_SECTION) << "      <offset" 
 				    << " value=" 
 				    << '"' << replicavol_.offset / lunit << '"' 
@@ -1038,13 +1051,35 @@ namespace geomtools {
     _get_stream (STRUCTURE_SECTION) << "    </" << replicavol_.mode << ">" << endl;
     _get_stream (STRUCTURE_SECTION) << "  </replicavol >" << endl << endl; 
 
+    add_volume_auxiliaries (aux_);
+
     _get_stream (STRUCTURE_SECTION) << "</volume >" << endl << endl; 
   }
   
+  void gdml_writer::add_volume_auxiliaries (const map<string,string> & aux_)
+  {
+    _get_stream (STRUCTURE_SECTION) << endl;  
+    for (map<string,string>::const_iterator i = aux_.begin ();
+	 i != aux_.end ();
+	 i++)
+      {
+	_get_stream (STRUCTURE_SECTION) << "  <auxiliary "
+					<< "auxtype=\""
+					<< i->first
+					<< "\" "
+					<< " auxvalue=\""
+					<< i->second
+					<< "\" />" << endl;
+      }
+    _get_stream (STRUCTURE_SECTION) << endl;
+    return;
+  }
+
   void gdml_writer::add_volume (const string & name_,
 				const string & material_ref_,
 				const string & solid_ref_,
-				const list<physvol> & phys_vols_)
+				const list<physvol> & phys_vols_,
+				const map<string, string> & aux_)
   {
     _get_stream (STRUCTURE_SECTION) << "<volume" << " name=" << '"' << name_ << '"' << " >" << endl;
     _get_stream (STRUCTURE_SECTION) << "  <solidref   " << " ref=" << '"' << solid_ref_ << '"' << " />" << endl;
@@ -1069,15 +1104,18 @@ namespace geomtools {
 	_get_stream (STRUCTURE_SECTION) << "  </physvol>" << endl << endl;
       }
 
+    add_volume_auxiliaries (aux_);
+
     _get_stream (STRUCTURE_SECTION) << "</volume >" << endl << endl; 
   }
 
   void gdml_writer::add_volume (const string & name_,
 				const string & material_ref_,
-				const string & solid_ref_)
+				const string & solid_ref_,
+				const map<string, string> & aux_)
   {
     list<physvol> empty_phys_vols;
-    add_volume (name_, material_ref_, solid_ref_, empty_phys_vols);
+    add_volume (name_, material_ref_, solid_ref_, empty_phys_vols, aux_);
   }
   
   /*** Setup ***/
@@ -1125,13 +1163,13 @@ namespace geomtools {
   void gdml_writer::gdml_section_begin (ostream & out_, 
 					const string & section_)
   {
-    out_ << "<" << section_ << ">" << endl;
+    out_ << "<" << section_ << ">" << endl << endl;
   }
 
   void gdml_writer::gdml_section_end (ostream & out_, 
 					const string & section_)
   {
-    out_ << "</" << section_ << ">" << endl;
+    out_ << "</" << section_ << ">" << endl << endl;
   }
   
   /*** Utilities ***/

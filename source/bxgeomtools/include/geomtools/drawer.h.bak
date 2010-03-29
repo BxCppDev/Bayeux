@@ -75,7 +75,7 @@ namespace geomtools {
 		      const datatools::utils::properties & config_);
   
   public:
-
+    
 
 
   }; // class drawer

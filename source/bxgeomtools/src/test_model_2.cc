@@ -83,10 +83,10 @@ namespace geomtools {
 	phi *= CLHEP::degree;
       }
 
-    if (config_.has_key ("material"))
+    if (config_.has_key ("material.ref"))
       {
 	if (devel) clog << "DEVEL: test_model_2::_at_construct: key= 'material'..." << endl;
-	material = config_.fetch_string ("material");
+	material = config_.fetch_string ("material.ref");
       }
 
     if (config_.has_key ("sub1_model"))

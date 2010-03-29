@@ -110,42 +110,86 @@ namespace geomtools {
     double y;
     double z;
     string material_name = material::MATERIAL_REF_UNKWOWN;
-
+    string lunit_str = "mm"; // default unit
+ 
     if (config_.has_key ("x"))
       {
 	x = config_.fetch_real ("x");
-	x *= CLHEP::mm;
       }  
+    else
+      {
+ 	ostringstream message;
+	message << "simple_boxed_model::_at_construct: "
+		<< "Missing 'x' property !";
+	throw runtime_error (message.str ());
+      }
 
     if (config_.has_key ("y"))
       {
 	y = config_.fetch_real ("y");
-	y *= CLHEP::mm;
+      }
+    else
+      {
+ 	ostringstream message;
+	message << "simple_boxed_model::_at_construct: "
+		<< "Missing 'y' property !";
+	throw runtime_error (message.str ());
       }
 
     if (config_.has_key ("z"))
       {
 	z = config_.fetch_real ("z");
-	z *= CLHEP::mm;
+      }
+    else
+      {
+ 	ostringstream message;
+	message << "simple_boxed_model::_at_construct: "
+		<< "Missing 'z' property !";
+	throw runtime_error (message.str ());
       }
 
-    if (config_.has_key ("material"))
+    if (config_.has_key ("length_unit"))
       {
-	material_name = config_.fetch_string ("material");
+	lunit_str = config_.fetch_string ("length_unit");
       }
-    
+
+    if (config_.has_key ("material.ref"))
+      {
+	material_name = config_.fetch_string ("material.ref");
+      }
+    else
+      {
+	ostringstream message;
+	message << "simple_boxed_model::_at_construct: "
+		<< "Missing 'material.ref' property !";
+	throw runtime_error (message.str ());
+      }
+ 
+    double lunit = CLHEP::mm;
+    lunit = units::get_length_unit_from (lunit_str);
+
+    x *= lunit;
+    y *= lunit;
+    z *= lunit;
+
+    set_material_name (material_name);
+    set_x (x);
+    set_y (y);
+    set_z (z);
+
     __solid.reset ();
-    __solid.set_x (x);
-    __solid.set_y (y);
-    __solid.set_z (z);
+    __solid.set_x (get_x ());
+    __solid.set_y (get_y ());
+    __solid.set_z (get_z ());
     if (! __solid.is_valid ())
       {
-	throw runtime_error ("simple_boxed_model::_at_construct: Invalid solid !");
+	throw runtime_error ("simple_boxed_model::_at_construct: Invalid box dimensions !");
       }
     get_logical ().set_name (name_);
     get_logical ().set_shape (__solid);
     geomtools::visibility::extract (config_, get_logical ().parameters ());
     geomtools::material::extract (config_, get_logical ().parameters ());
+    geomtools::sensitive::extract (config_, _logical.parameters ());
     get_logical ().set_material_ref (material_name);
 
     if (devel) clog << "DEVEL: simple_boxed_model::_at_construct: Exiting." << endl;
@@ -174,21 +218,20 @@ namespace geomtools {
      out_ << indent << i_tree_dumpable::tag 
 	  << "Z : " << get_z () / CLHEP::mm << " mm" << endl;
 
-      {
-	out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
-	     << "Solid : " << endl;
-	{
-	  ostringstream indent_oss;
-	  indent_oss << indent;
-	  indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
-	  __solid.tree_dump (out_, "", indent_oss.str ());
-	}   
-      }
+     {
+       out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
+	    << "Solid : " << endl;
+       {
+	 ostringstream indent_oss;
+	 indent_oss << indent;
+	 indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+	 __solid.tree_dump (out_, "", indent_oss.str ());
+       }   
+     }
 
      return;
   }
-
-       
+    
 } // end of namespace geomtools
 
 // end of simple_boxed_model.cc

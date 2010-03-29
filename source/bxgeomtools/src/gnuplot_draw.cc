@@ -6,14 +6,56 @@
 
 namespace geomtools {
 
+  bool gnuplot_draw::g_using_color  = false;
+  double gnuplot_draw::g_current_color = 1.0;
+
+  void 
+  gnuplot_draw::basic_draw_point_with_color (std::ostream & out_, 
+					     double x_, 
+					     double y_, 
+					     double z_, 
+					     double color_,
+					     bool   endl_)
+  {
+    double color = color_;
+    out_ << x_ << ' ' 
+	 << y_ << ' ' 
+	 << z_ << ' ' 
+	 << color;
+    if (endl_) out_ << std::endl;
+  }
+
+  void 
+  gnuplot_draw::basic_draw_point_with_color (std::ostream & out_, 
+					     const vector_3d & point_,
+					     double color_,
+					     bool   endl_)
+  {
+    basic_draw_point_with_color (out_,
+				 point_.x (),
+				 point_.y (),
+				 point_.z (),
+				 color_,
+				 endl_);
+  }
+
   void 
   gnuplot_draw::basic_draw_point (std::ostream & out_, 
 				  double x_, double y_, double z_,
 				  bool endl_)
-  {
-    out_ << x_ << ' ' 
-	 << y_ << ' ' 
-	 << z_;
+  { 
+    if (gnuplot_draw::g_using_color)
+      {
+	basic_draw_point_with_color (out_, 
+				     x_, y_, z_, 
+				     gnuplot_draw::g_current_color, false);
+      }
+    else
+      {
+	out_ << x_ << ' ' 
+	     << y_ << ' ' 
+	     << z_;
+      }
     if (endl_) out_ << std::endl;
   }
 
@@ -108,6 +150,7 @@ namespace geomtools {
 			      const vector_3d & start_, 
 			      const vector_3d & stop_)
   {
+    static bool even = true;
     rotation_3d inverseRotation (rotation_);
     inverseRotation.invert ();
     vector_3d A (start_);
@@ -118,6 +161,16 @@ namespace geomtools {
     B += position_;
     polyline_t polyline;
     polyline.push_back (A);
+    if (even)
+      {
+	vector_3d M = 0.5 * (A + B);
+	polyline.push_back (M);
+	even = false;
+      }
+    else
+      {
+	even = true;
+      }
     polyline.push_back (B);
     basic_draw_polyline (out_, polyline);
   }

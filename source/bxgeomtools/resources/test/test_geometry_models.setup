@@ -10,8 +10,8 @@ x   : real   = 10.0
 y   : real   = 30.0
 z   : real   = 50.0
 material.ref : string = "copper"
-visibility.shown : boolean = 1
-visibility.color : string  = "green"
+visibility.hidden : boolean = 0
+visibility.color  : string  = "green"
 
 [name="row" type="geomtools::replicated_boxed_model"]
 replicant_axis  : string = "x"
@@ -27,18 +27,18 @@ boxed_model     : string = "row"
 width    : real   = 100.0
 height   : real   = 30.0
 material.ref : string = "copper"
-visibility.shown : boolean = 1
-visibility.color : string  = "green"
+visibility.hidden : boolean = 0
+visibility.color  : string  = "green"
 
 [name="box2" type="geomtools::test::test_model_1"]
 width    : real   = 52.0
 height   : real   = 12.0
 material.ref : string = "teflon"
-visibility.shown : boolean = 1
+visibility.hidden : boolean = 0
 visibility.color : string  = "blue"
 
 [name="box3" type="geomtools::test::test_model_2"]
-material.ref         : string = "air"
+material.ref     : string = "air"
 sub1_model       : string = "box1"
 sub2_model       : string = "box2"
 distance         : real   = 50.
@@ -47,8 +47,9 @@ theta            : real   = 75. # degree
 gas_pressure     : real   = 0.9 # atmosphere
 gas_temperature  : real   = 305. # kelvin
 visibility.color : string = "red"
-visibility.shown           : boolean = 1
-visibility.daughters.shown : boolean = 1
+visibility.hidden           : boolean = 0
+visibility.hidden_envelop   : boolean = 1
+visibility.daughters.hidden : boolean = 0
 
 [name="box4" type="geomtools::replicated_boxed_model"]
 replicant_axis  : string = "x"
@@ -59,6 +60,7 @@ boxed_model     : string = "box2"
 rotation_axis   : string = "z"
 rotation_angle  : string = "90"
 boxed_model     : string = "box3"
+visibility.hidden_envelop : boolean = 0
 
 [name="rotx_box2" type="geomtools::rotated_boxed_model"]
 rotation_axis   : string = "x"
@@ -69,6 +71,8 @@ boxed_model     : string = "box3"
 replicant_axis  : string = "x"
 number_of_items : integer = 5
 boxed_model     : string = "rotz_box2"
+visibility.hidden_envelop : boolean = 1
+visibility.daughters.hidden : boolean = 0
 
 [name="many_rotx_box2" type="geomtools::replicated_boxed_model"]
 replicant_axis  : string = "x"
@@ -97,45 +101,46 @@ material.ref    : string = "vacuum"
 setup_model : string = "box3"
 phi         : real   = 30.0
 theta       : real   = 0.0
-visibility.shown           : boolean = 1
-visibility.daughters.shown : boolean = 1
+visibility.hidden           : boolean = 0
+visibility.daughters.hidden : boolean = 0
 
 [name="world2" type="geomtools::test::test_world_model"]
 material.ref    : string = "vacuum"
 setup_model : string = "box3"
-visibility.shown           : boolean = 1
-visibility.daughters.shown : boolean = 1
+visibility.hidden          : boolean = 0
+visibility.daughters.hidden : boolean = 0
 
 [name="world3" type="geomtools::test::test_world_model"]
 material.ref    : string = "vacuum"
 setup_model : string = "box6"
 phi         : real   = 0.0
 theta       : real   = 0.0
-visibility.shown           : boolean = 1
-visibility.daughters.shown : boolean = 1
+visibility.hidden           : boolean = 0
+visibility.daughters.hidden : boolean = 0
 
 [name="world4" type="geomtools::test::test_world_model"]
 material.ref    : string = "vacuum"
 setup_model : string = "box7"
 phi         : real   = 0.0
 theta       : real   = 0.0
-visibility.shown           : boolean = 1
-visibility.daughters.shown : boolean = 1
+visibility.hidden           : boolean = 0
+visibility.daughters.hidden : boolean = 0
 
 [name="world5" type="geomtools::test::test_world_model"]
-material.ref    : string = "vacuum"
+material.ref : string = "vacuum"
 setup_model : string = "many_rotz_box2"
 phi         : real   = 0.0
 theta       : real   = 0.0
-visibility.shown           : boolean = 1
-visibility.daughters.shown : boolean = 1
+visibility.hidden           : boolean = 0
+visibility.daughters.hidden : boolean = 0
+visibility.color            : string  = "orange"
 
 [name="world6" type="geomtools::test::test_world_model"]
 material.ref    : string = "vacuum"
 setup_model : string = "many_rotx_box2"
-phi         : real   = 0.0
-theta       : real   = 0.0
-visibility.shown           : boolean = 1
-visibility.daughters.shown : boolean = 1
+phi         : real   = 30.0
+theta       : real   = 20.0
+visibility.hidden           : boolean = 0
+visibility.daughters.hidden : boolean = 0
 
 # End of list of multi-properties.

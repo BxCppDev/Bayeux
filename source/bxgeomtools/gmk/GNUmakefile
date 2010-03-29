@@ -142,10 +142,10 @@ vpath %$(BINEXT)     $(BINDIR)
 headers := $(notdir $(shell ls $(INCDIR)/$(PACKAGENAME)/*$(HEADEREXT) 2> /dev/null))
 
 #sources := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT) 2> /dev/null))
-sources1 := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT) 2> /dev/null | sed -e 's/i_object_3d.cc//g' -e 's/i_model.cc//g'))
+sources1 := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT) 2> /dev/null | sed -e 's/i_object_3d.cc//g' -e 's/i_model.cc//g' -e 's/color.cc//g'))
 ### - force i_object_3d.cc to be the last in library 
 ### - force XXX.cc to be the last in library due to initialization of a static scoped pointer
-sources := $(sources1)  i_model.cc i_object_3d.cc
+sources := $(sources1)  i_model.cc i_object_3d.cc color.cc
 
 #csources := $(notdir $(shell ls $(SRCDIR)/*$(CSOURCEEXT) 2> /dev/null))
 objects := $(sources:%$(SOURCEEXT)=%$(OBJEXT))

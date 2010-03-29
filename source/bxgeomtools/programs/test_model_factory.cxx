@@ -9,7 +9,7 @@
 #include <datatools/utils/utils.h>
 
 #include <geomtools/model_factory.h>
-#include <geomtools/drawer.h>
+#include <geomtools/gnuplot_drawer.h>
 #include <geomtools/gdml_export.h>
 
 using namespace std;
@@ -22,8 +22,11 @@ int main (int argc_, char ** argv_)
       clog << "Test program for class 'model_factory'!" << endl; 
   
       bool debug = false;
-      string drawer_view = geomtools::drawer::VIEW_3D;
+      string drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
       bool draw = true;
+      bool gdml = true;
+      bool dump = true;
+
       int iarg = 1;
       while (iarg < argc_)
         {
@@ -40,21 +43,29 @@ int main (int argc_, char ** argv_)
                  {
                    draw = false;
                  }
+               else if (option == "-G") 
+                 {
+                   gdml = false;
+                 }
+               else if (option == "-T") 
+                 {
+                   dump = false;
+                 }
                else if (option == "-xy") 
                  {
-                   drawer_view = geomtools::drawer::VIEW_2D_XY;
+                   drawer_view = geomtools::gnuplot_drawer::VIEW_2D_XY;
                  }
                else if (option == "-xz") 
                  {
-                   drawer_view = geomtools::drawer::VIEW_2D_XZ;
+                   drawer_view = geomtools::gnuplot_drawer::VIEW_2D_XZ;
                  }
                else if (option == "-yz") 
                  {
-                   drawer_view = geomtools::drawer::VIEW_2D_YZ;
+                   drawer_view = geomtools::gnuplot_drawer::VIEW_2D_YZ;
                  }
                else if (option == "-3d") 
                  {
-                   drawer_view = geomtools::drawer::VIEW_3D;
+                   drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
                  }
 	       else 
                  { 
@@ -69,7 +80,7 @@ int main (int argc_, char ** argv_)
               }
             }
           iarg++;
-      }
+      }  
     
       geomtools::i_model::g_devel = debug;
  
@@ -81,11 +92,11 @@ int main (int argc_, char ** argv_)
       datatools::utils::fetch_path_with_env (setup_filename);
       factory.load (setup_filename);
       factory.lock ();
-      factory.tree_dump (clog);
+      if (dump) factory.tree_dump (clog);
 
       geomtools::placement p;
       p.set (0, 0, 0, 0 * CLHEP::degree, 0 * CLHEP::degree, 0);
-      p.tree_dump (clog, "Placement");
+      if (dump) p.tree_dump (clog, "Placement");
 
       clog << "Logicals: " << endl;
       int count = 0;
@@ -112,11 +123,14 @@ int main (int argc_, char ** argv_)
 
       if (draw)
 	{  
-	  datatools::utils::properties drawer_config;
-	  drawer_config.store (geomtools::drawer::VIEW_KEY, drawer_view); 
-	  geomtools::drawer::draw (factory, name, p,  
-				   geomtools::drawer::DISPLAY_LEVEL_NO_LIMIT, 
-				   drawer_config);
+	  geomtools::gnuplot_drawer::g_devel = debug;
+	  geomtools::gnuplot_drawer GPD;
+	  GPD.set_view (drawer_view);
+	  GPD.set_mode (geomtools::gnuplot_drawer::MODE_WIRED);
+	  GPD.draw (factory, 
+		    name, 
+		    p,  
+		    geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT);
 	}
 
       ostringstream ext_mat_oss;
@@ -150,17 +164,24 @@ int main (int argc_, char ** argv_)
 			     H2O_map);
       }
 
-      geomtools::gdml_export::g_devel = true;
-      geomtools::gdml_export GDML;
-      GDML.add_replica_support (true);
-      GDML.attach_external_materials (writer.get_stream (geomtools::gdml_writer::MATERIALS_SECTION));
-      GDML.parameters ().store ("xml_version",  geomtools::gdml_writer::DEFAULT_XML_VERSION);
-      GDML.parameters ().store ("xml_encoding", geomtools::gdml_writer::DEFAULT_XML_ENCODING);
-      GDML.parameters ().store ("gdml_schema",  geomtools::gdml_writer::DEFAULT_GDML_SCHEMA);
-      GDML.parameters ().store ("length_unit",  geomtools::gdml_export::DEFAULT_LENGTH_UNIT);
-      GDML.parameters ().store ("angle_unit",   geomtools::gdml_export::DEFAULT_ANGLE_UNIT);
-      GDML.export_gdml ("test_model_factory.gdml", factory);
-
+      if (gdml)
+      {
+	geomtools::gdml_export::g_devel = debug;
+	geomtools::gdml_export GDML;
+	GDML.add_replica_support (true);
+	GDML.attach_external_materials (writer.get_stream (geomtools::gdml_writer::MATERIALS_SECTION));
+	GDML.parameters ().store ("xml_version",  
+				  geomtools::gdml_writer::DEFAULT_XML_VERSION);
+	GDML.parameters ().store ("xml_encoding", 
+				  geomtools::gdml_writer::DEFAULT_XML_ENCODING);
+	GDML.parameters ().store ("gdml_schema",  
+				  geomtools::gdml_writer::DEFAULT_GDML_SCHEMA);
+	GDML.parameters ().store ("length_unit",  
+				  geomtools::gdml_export::DEFAULT_LENGTH_UNIT);
+	GDML.parameters ().store ("angle_unit",   
+				  geomtools::gdml_export::DEFAULT_ANGLE_UNIT);
+	GDML.export_gdml ("test_model_factory.gdml", factory);
+      }
     }
   catch (exception & x)
     {
