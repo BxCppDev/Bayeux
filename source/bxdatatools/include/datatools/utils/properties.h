@@ -37,6 +37,8 @@
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/vector.hpp> // missing header: fixed 2010-03-16
 #include <boost/serialization/string.hpp>
+#include <boost/serialization/nvp.hpp>
+#include <boost/serialization/access.hpp>
 
 #include <datatools/serialization/i_serializable.h>
 
