@@ -1013,13 +1013,13 @@ namespace geomtools {
 
   const string gdml_writer::replicavol::REPLICATED_ALONG_AXIS = "replicated_along_axis";
 
-  void gdml_writer::add_volume (const string & name_,
-				const string & material_ref_,
-				const string & solid_ref_,
-				const replicavol & replicavol_,
-				const string & lunit_str_,
-				const string & aunit_str_,
-				const map<string, string> & aux_)
+  void gdml_writer::add_replica_volume (const string & name_,
+					const string & material_ref_,
+					const string & solid_ref_,
+					const replicavol & replicavol_,
+					const string & lunit_str_,
+					const string & aunit_str_,
+					const map<string, string> & aux_)
   {
     double lunit = units::get_length_unit_from (lunit_str_);
     _get_stream (STRUCTURE_SECTION) << "<volume" << " name=" << '"' << name_ << '"' << " >" << endl;
@@ -1111,13 +1111,53 @@ namespace geomtools {
 
   void gdml_writer::add_volume (const string & name_,
 				const string & material_ref_,
+				const string & solid_ref_)
+  {
+    map<string, string> aux;
+    add_volume (name_, material_ref_, solid_ref_, aux);
+  }
+
+  void gdml_writer::add_volume (const string & name_,
+				const string & material_ref_,
 				const string & solid_ref_,
 				const map<string, string> & aux_)
   {
+    //cerr << "DEVEL: gdml_writer::add_volume: " << "Entering..." << endl;
     list<physvol> empty_phys_vols;
     add_volume (name_, material_ref_, solid_ref_, empty_phys_vols, aux_);
+    //cerr << "DEVEL: gdml_writer::add_volume: " << "Exiting." << endl;
   }
   
+  void gdml_writer::add_volume (const string & name_,
+				const string & material_ref_,
+				const string & solid_ref_,
+				const list<physvol> & phys_vols_)
+  {
+    map<string, string> aux;
+    add_volume (name_, 
+		material_ref_, 
+		solid_ref_, 
+		phys_vols_, 
+		aux);
+  }
+    
+  void gdml_writer::add_replica_volume (const string & name_,
+					const string & material_ref_,
+					const string & solid_ref_,
+					const replicavol & replicavol_,
+					const string & lunit_str_,
+					const string & aunit_str_)
+  {
+    map<string, string> aux;
+    add_replica_volume (name_, 
+			material_ref_, 
+			solid_ref_, 
+			replicavol_, 
+			lunit_str_, 
+			aunit_str_,
+			aux);
+  }
+ 
   /*** Setup ***/
 
   void gdml_writer::add_setup (const string & name_, 

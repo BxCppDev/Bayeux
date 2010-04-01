@@ -16,6 +16,11 @@ namespace geomtools {
   i_placement::~i_placement ()
   {
   }
+ 
+  bool i_placement::has_only_one_rotation () const
+  {
+    return false;
+  }
 
   bool i_placement::is_multiple () const
   {

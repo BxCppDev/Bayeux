@@ -88,6 +88,7 @@ function print_usage ()
                 bin_test : build all executable test programs (if any)
              or the name of a specific program, example:
                 test_event_id : build only the 'test_event_id'  program
+    $APPNAME doc        : generate documentation
     $APPNAME clean      : clean package
     $APPNAME install    : install package
     $APPNAME uninstall  : uninstall package
@@ -132,6 +133,8 @@ while [ -n "$1" ]; do
 		tool_mode="uninstall"	
 	    elif [ "$arg" = "info" ]; then
 		tool_mode="info"	
+	    elif [ "$arg" = "doc" ]; then
+		tool_mode="doc"	
 	    else
 		err_msg "Invalid argument!"
 		exit 1
@@ -210,6 +213,10 @@ function do_clean_gmk ()
     test -f ${python_version_flag_file} && rm -f ${python_version_flag_file}
 
     ###
+
+    if [ -d ${the_base_dir}/doc/doxygen ]; then
+	rm -fr ${the_base_dir}/doc/doxygen
+    fi
 
     cd ${opwd}
     return 0
@@ -543,6 +550,24 @@ function do_info ()
 
 }
 
+function do_doc ()
+{
+    info_msg "Generate documentation for package '${pack_name}'..."
+    which doxygen >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+	err_msg "Cannot find doxygen !"
+	return 1
+    fi
+    if [ ! -f ${the_base_dir}/pkgtools.d/${pack_name}.doxygen ]; then
+	err_msg "Missing '${the_base_dir}/pkgtools.d/${pack_name}.doxygen' configuration file !"
+	return 1
+    fi
+    # doxygen -g ${the_base_dir}/pkgtools.d/${pack_name}.doxygen
+    doxygen ${the_base_dir}/pkgtools.d/${pack_name}.doxygen 
+    
+    return 0
+}
+
 #######################################################
 
 if [ "${tool_mode}" = "configure" ]; then
@@ -589,6 +614,14 @@ if [ "${tool_mode}" = "info" ]; then
     do_info
     if [ $? -ne 0 ]; then
 	err_msg "Info failed!"
+	exit 1
+    fi
+fi
+
+if [ "${tool_mode}" = "doc" ]; then
+    do_doc
+    if [ $? -ne 0 ]; then
+	err_msg "Documentation failed!"
 	exit 1
     fi
 fi

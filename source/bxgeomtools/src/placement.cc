@@ -13,6 +13,11 @@ namespace geomtools {
     return false;
   }
  
+  bool placement::has_only_one_rotation () const
+  {
+    return true;
+  }
+ 
   bool placement::is_valid () const
   {
     return 

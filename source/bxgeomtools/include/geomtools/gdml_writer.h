@@ -299,11 +299,7 @@ namespace geomtools {
 
     void add_volume (const string & name_,
 		     const string & material_ref_,
-		     const string & solid_ref_)
-    {
-       map<string, string> aux;
-       add_volume (name_, material_ref_, solid_ref_);
-    }
+		     const string & solid_ref_);
 
     void add_volume (const string & name_,
 		     const string & material_ref_,
@@ -314,40 +310,22 @@ namespace geomtools {
     void add_volume (const string & name_,
 		     const string & material_ref_,
 		     const string & solid_ref_,
-		     const list<physvol> & phys_vols_)
-    {
-      map<string, string> aux;
-      add_volume (name_, 
-		  material_ref_, 
-		  solid_ref_, 
-		  phys_vols_, 
-		  aux);
-    }
+		     const list<physvol> & phys_vols_);
 
-    void add_volume (const string & name_,
-		     const string & material_ref_,
-		     const string & solid_ref_,
-		     const replicavol & replicavol_,
-		     const string & lunit_str_,
-		     const string & aunit_str_,
-		     const map<string, string> & aux_);
-
-    void add_volume (const string & name_,
-		     const string & material_ref_,
-		     const string & solid_ref_,
-		     const replicavol & replicavol_,
-		     const string & lunit_str_ = "mm",
-		     const string & aunit_str_ = "radian")
-    {
-      map<string, string> aux;
-      add_volume (name_, 
-		  material_ref_, 
-		  solid_ref_, 
-		  replicavol_, 
-		  lunit_str_, 
-		  aunit_str_,
-		  aux);
-    }
+    void add_replica_volume (const string & name_,
+			     const string & material_ref_,
+			     const string & solid_ref_,
+			     const replicavol & replicavol_,
+			     const string & lunit_str_,
+			     const string & aunit_str_,
+			     const map<string, string> & aux_);
+    
+    void add_replica_volume (const string & name_,
+			     const string & material_ref_,
+			     const string & solid_ref_,
+			     const replicavol & replicavol_,
+			     const string & lunit_str_ = "mm",
+			     const string & aunit_str_ = "radian");
 
     /**************** Setups section *******************/
  

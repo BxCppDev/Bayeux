@@ -7,7 +7,12 @@
 namespace geomtools {
 
   using namespace std;
- 
+  
+  bool regular_linear_placement::has_only_one_rotation () const
+  {
+    return true;
+  }
+
   bool regular_linear_placement::is_valid () const
   {
     return __number_of_items > 0 

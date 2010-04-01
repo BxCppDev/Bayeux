@@ -50,7 +50,7 @@ int main (int argc_, char ** argv_)
       geomtools::gdml_writer writer;
 
       /*** Defines ***/
-      
+       
       writer.add_constant ("pi", M_PI);
       writer.add_constant ("e", exp (1.0));
       writer.add_quantity ("m_e", 
@@ -121,7 +121,7 @@ int main (int argc_, char ** argv_)
 			   1.0 * CLHEP::g / CLHEP::cm3,
 			   H2O_map);
 
-
+ 
       /*** Solids ***/
 
       /*
@@ -148,6 +148,7 @@ int main (int argc_, char ** argv_)
 			   10. * CLHEP::cm, 
 			   -20. * CLHEP::cm, "mm");
       writer.add_rotation ("u1_rot", "x", CLHEP::pi / 4 * CLHEP::radian, "degree");
+
       writer.add_gdml_union ("u1","box1", "tub1", "u1_pos", "u1_rot");
       writer.add_gdml_subtraction ("s1", "box1", "tub1", "u1_pos", "u1_rot");
       writer.add_gdml_intersection ("i1", "box1", "tub1", "u1_pos", "u1_rot");
@@ -157,7 +158,7 @@ int main (int argc_, char ** argv_)
       writer.add_volume ("InVessel", 
 			 "Air",
 			 "box2");
-
+ 
       list<geomtools::gdml_writer::physvol> physvols;
       physvols.push_back (geomtools::gdml_writer::physvol ("vol1", "pos1", "rot1"));
       physvols.push_back (geomtools::gdml_writer::physvol ("vol2", "pos2", "rot2"));
@@ -174,11 +175,11 @@ int main (int argc_, char ** argv_)
       RV.direction = "x";
       RV.width = 100.0 * CLHEP::mm;
       RV.offset = 0.0;
-      writer.add_volume ("Vessel3", 
-			 "Air",
-			 "box2", 
-			 RV,
-			 "mm");
+      writer.add_replica_volume ("Vessel3", 
+				 "Air",
+				 "box2", 
+				 RV,
+				 "mm");
 
 
 

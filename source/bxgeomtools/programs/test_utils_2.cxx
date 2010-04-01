@@ -10,7 +10,7 @@
 #include <geomtools/gnuplot_draw.h>
 #include <geomtools/gnuplot_i.h>
 #include <datatools/serialization/serialization.h>
-#include <geomtools/drawer.h>
+#include <geomtools/gnuplot_drawer.h>
 
 using namespace std;
 
@@ -83,7 +83,7 @@ int main (int argc_, char ** argv_)
       g1.set_xlabel ("x").set_ylabel ("y").set_zlabel ("z");
       g1.plotfile_xyz (tmp_filename, 1, 2, 3, "3D view");
       g1.showonscreen (); // window output
-      drawer::wait_for_key ();
+      gnuplot_drawer::wait_for_key ();
       usleep (200);
  
     }

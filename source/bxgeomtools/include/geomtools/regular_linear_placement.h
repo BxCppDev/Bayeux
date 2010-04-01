@@ -2,7 +2,7 @@
 /* regular_linear_placement.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-26
- * Last modified: 2010-02-26
+ * Last modified: 2010-03-31
  * 
  * License: 
  * 
@@ -48,6 +48,8 @@ namespace geomtools {
     public:
  
       virtual bool is_replica () const;
+ 
+      virtual bool has_only_one_rotation () const;
  
       void set_replicant_axis (int);
       int  get_replicant_axis () const;

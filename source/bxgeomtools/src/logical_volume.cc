@@ -9,6 +9,8 @@ namespace geomtools {
 
   using namespace std;
 
+  const string logical_volume::HAS_REPLICA_FLAG = "__has_replica";
+
   bool logical_volume::is_locked () const
   {
     return __locked;
@@ -204,8 +206,37 @@ namespace geomtools {
       {
 	throw runtime_error ("logical_volume::add_physical: Missing physical's name !");
       }
+    if (__parameters.has_flag (HAS_REPLICA_FLAG))
+      {
+	ostringstream message;
+	message << "logical_volume::add_physical: "
+		<< "Cannot add more physical volume for a 'replica' already exists !";
+	throw runtime_error (message.str ());
+      }
+    if (phys_.get_placement ().is_replica ())
+      {
+	if (__physicals.size () > 0)
+	  {
+	    ostringstream message;
+	    message << "logical_volume::add_physical: "
+		    << "Cannot add a 'replica' physical volume for other physicals already exist !";
+	    throw runtime_error (message.str ());
+	  }
+	__parameters.store_flag (HAS_REPLICA_FLAG);
+      }
+
     __physicals[name] = &phys_;
     return;
+  }
+
+  bool logical_volume::is_replica () const
+  {
+    if (__physicals.size () != 1) return false;
+    const physical_volume & phys = *(__physicals.begin ()->second);
+    const i_placement & pl = phys.get_placement ();
+    return pl.is_replica ();
+    // alternative:
+    //return __parameters.has_flag (HAS_REPLICA_FLAG);
   }
 
   void logical_volume::tree_dump (ostream & out_, 

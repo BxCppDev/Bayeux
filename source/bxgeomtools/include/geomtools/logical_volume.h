@@ -7,7 +7,7 @@
  * License: 
  * 
  * Description: 
- *   Geometry ID
+ *   Logical volume.
  * 
  * History: 
  * 
@@ -41,6 +41,7 @@ namespace geomtools {
   public:
     typedef map<string, const physical_volume *> physicals_col_t;
 
+    static const string HAS_REPLICA_FLAG;
   private:
     string     __name;
     bool       __locked;
@@ -105,6 +106,8 @@ namespace geomtools {
     const physical_volume & get_physical (const string & name_) const;
       
     void add_physical (const physical_volume & phys_, const string & name_ = "");
+
+    bool is_replica () const;
 
   public:
 

@@ -43,6 +43,8 @@ namespace geomtools {
   public: 
 
     bool is_multiple () const;
+ 
+    virtual bool has_only_one_rotation () const;
     
     placement get_placement (int item_) const;
 

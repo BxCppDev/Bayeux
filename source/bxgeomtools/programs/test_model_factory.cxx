@@ -1,5 +1,5 @@
 // -*- mode: c++ ; -*- 
-// test_model_factory.cxx 
+// test_model_factory.cxx  
 
 #include <cstdlib> 
 #include <iostream>
@@ -180,7 +180,7 @@ int main (int argc_, char ** argv_)
 				  geomtools::gdml_export::DEFAULT_LENGTH_UNIT);
 	GDML.parameters ().store ("angle_unit",   
 				  geomtools::gdml_export::DEFAULT_ANGLE_UNIT);
-	GDML.export_gdml ("test_model_factory.gdml", factory);
+	GDML.export_gdml ("test_model_factory.gdml", factory, name);
       }
     }
   catch (exception & x)

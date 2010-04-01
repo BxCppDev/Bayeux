@@ -11,7 +11,7 @@
 #include <geomtools/regular_linear_placement.h>
 #include <geomtools/box.h>
 #include <geomtools/gnuplot_draw.h>
-#include <geomtools/drawer.h>
+#include <geomtools/gnuplot_drawer.h>
 
 using namespace std;
 
@@ -62,7 +62,7 @@ int main (int argc_, char ** argv_)
 	g1.set_xlabel ("x").set_ylabel ("y").set_zlabel ("z");
 	g1.plotfile_xyz (tmp_filename, 1, 2, 3, "3D view");
 	g1.showonscreen (); 
-	geomtools::drawer::wait_for_key ();
+	geomtools::gnuplot_drawer::wait_for_key ();
 	tmp_file.flush ();
 	tmp_file.close ();
 	usleep (200);

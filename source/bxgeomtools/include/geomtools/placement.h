@@ -82,6 +82,8 @@ namespace geomtools {
 
       virtual bool is_replica () const;
  
+      virtual bool has_only_one_rotation () const;
+ 
     private:
       void __compute_orientation ();
 

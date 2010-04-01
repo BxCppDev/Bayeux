@@ -7,6 +7,11 @@
 namespace geomtools {
 
   using namespace std;
+  
+  bool regular_xy_grid_placement::has_only_one_rotation () const
+  {
+    return true;
+  }
  
   bool regular_xy_grid_placement::is_valid () const
   {

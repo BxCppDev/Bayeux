@@ -48,8 +48,8 @@ namespace geomtools {
   {
     __debug = false;
     __factory = 0;
-    __length_unit = "mm";
-    __angle_unit = "degree";
+    __length_unit = DEFAULT_LENGTH_UNIT;
+    __angle_unit = DEFAULT_ANGLE_UNIT;
     __external_materials_stream = 0;
     __support_replica = false;
   }
@@ -281,14 +281,17 @@ namespace geomtools {
       {
 	clog << "DEVEL: gdml_export::_export_gdml_logical: "
 	     << "Logical '" << log_name << "' is already exported !" << endl;
+	return;
       }
 
+    // export solid shape:
     const i_shape_3d & log_solid = logical.get_shape ();
     ostringstream solid_name_oss;
     solid_name_oss << log_name << i_model::SOLID_SUFFIX;
     string solid_name = solid_name_oss.str ();
     _export_gdml_solid (log_solid, solid_name);
 
+    // prepare volume export
     string material_ref = material::MATERIAL_REF_UNKWOWN;
     string solid_ref = solid_name;
     logical.tree_dump (cerr, "Logical:", " *** ");
@@ -306,12 +309,95 @@ namespace geomtools {
 	throw runtime_error (message.str ());		
       }
 
-    list<gdml_writer::physvol> physvols;
-    gdml_writer::replicavol    a_replicavol;
-    if (logical.get_physicals ().size ())
+    bool skip = false;
+
+    // export a dictionary of auxiliary properties:
+    map<string, string> auxprops;
+    logical.parameters ().export_to_string_based_dictionary (auxprops, false);
+    
+    if (! skip && logical.get_physicals ().size () == 0)
       {
-	if (devel) clog << "DEVEL: gdml_export::_export_gdml_logical: Here we should export the daughter physicals..." << endl;
+	__writer.add_volume (log_name, 
+			     material_ref,
+			     solid_ref, 
+			     auxprops);
+	skip = true;
+      }
+
+    // there is a replica children:
+    if (! skip && (__support_replica && logical.is_replica ()))
+      {
+	const physical_volume & phys = *(logical.get_physicals ().begin ()->second);
+	if (devel) clog << "DEVEL: gdml_export::_export_gdml_logical: "
+			<< "replica phys=" << phys.get_name () << endl;
+	const logical_volume & log_child = phys.get_logical ();
+	if (devel) clog << "DEVEL: gdml_export::_export_gdml_logical: "
+			<< "replica log_child=" << log_child.get_name () << endl;
+	    
+	_export_gdml_logical (log_child);
+	const i_placement * pp = &(phys.get_placement ());
+
+	gdml_writer::replicavol a_replicavol;
+	// only support for 'regular_linear_placement':
+	const regular_linear_placement * RLP = 0;
+	RLP = dynamic_cast<const regular_linear_placement *> (pp);
+	if (RLP == 0)
+	  {
+	    throw runtime_error ("gdml_export::_export_gdml_logical: GDML replica support is for 'regular_linear_placement' only !");
+	  }
+	a_replicavol.volumeref = log_child.get_name ();
+	a_replicavol.number = pp->get_number_of_items ();
+	a_replicavol.mode = "replicate_along_axis";
+	if (RLP->is_replicant_x_axis ()) 
+	  {
+	    a_replicavol.direction = "x";
+	    a_replicavol.width = RLP->get_step ().x ();
+	  }
+	else if (RLP->is_replicant_y_axis ()) 
+	  {
+	    a_replicavol.direction = "y";
+	    a_replicavol.width = RLP->get_step ().y ();
+	  }
+	else if (RLP->is_replicant_z_axis ()) 
+	  {
+	    a_replicavol.direction = "z";
+	    a_replicavol.width = RLP->get_step ().z ();
+	  }
+	a_replicavol.offset = 0.0;
+	if (devel) clog << "DEVEL: gdml_export::_export_gdml_logical: "
+			<< "add volume '" << log_name << "' (replica)..." << endl;
 	
+	__writer.add_replica_volume (log_name, 
+				     material_ref,
+				     solid_ref, 
+				     a_replicavol,
+				     __length_unit,
+				     __angle_unit,
+				     auxprops);
+	skip = true;
+      }
+
+    // there are children:
+    if (! skip && (logical.get_physicals ().size () > 0))
+      {
+	if (devel) 
+	  {
+	    clog << "DEVEL: gdml_export::_export_gdml_logical: Here we should export the daughter physicals..." << endl;
+	    clog << "DEVEL: gdml_export::_export_gdml_logical: List of daughter physicals:" << endl;
+
+	    for (logical_volume::physicals_col_t::const_iterator i 
+		   = logical.get_physicals ().begin (); 
+		 i != logical.get_physicals ().end (); 
+		 i++)
+	      {
+		const string & name = (i->first);
+		const physical_volume & phys = *(i->second);
+		clog << "DEVEL: gdml_export::_export_gdml_logical: "
+		     << "    name=" << name << "     " << "phys->name=" << phys.get_name () << endl;
+	      }
+	  }
+	
+	list<gdml_writer::physvol> physvols;
 	for (logical_volume::physicals_col_t::const_iterator i 
 	       = logical.get_physicals ().begin (); 
 	     i != logical.get_physicals ().end (); 
@@ -323,127 +409,107 @@ namespace geomtools {
 	    const logical_volume & log_child = phys.get_logical ();
 	    if (devel) clog << "DEVEL: gdml_export::_export_gdml_logical: "
 			    << "log_child=" << log_child.get_name () << endl;
-
+	    
 	    _export_gdml_logical (log_child);
-
-	    // export a dictionary of auxiliary properties:
-	    map<string, string> auxprops;
-	    log_child.parameters ().export_to_string_based_dictionary (auxprops, false);
-
+	    
 	    const i_placement * pp = &(phys.get_placement ());
 	    bool multiple = false;
-	    multiple = (pp->get_number_of_items () > 1) || pp->is_replica ();
-
-	    bool use_replica_algo = false;
-	    if (__support_replica && pp->is_replica ())
+	    size_t nitems = pp->get_number_of_items ();
+	    bool only_one_rotation = pp->has_only_one_rotation ();
+	    multiple = (nitems > 1);
+	    
+	    if (devel) clog << "DEVEL: gdml_export::_export_gdml_logical: "
+			    << "No replica... for '" << log_name << "'..." << endl;
+	    // XXX UUU
+	    rotation_3d ref_rot;
+	    invalidate_rotation_3d (ref_rot);
+	    ostringstream ref_rot_name_oss;
+	    if (only_one_rotation)
 	      {
-		use_replica_algo = true;
+		ref_rot_name_oss << log_name << '.' << phys.get_name ();
+		if (multiple) ref_rot_name_oss << '[' << '0' << '-' << (nitems - 1) << ']';
+		ref_rot_name_oss << ".rot";
 	      }
-	    if (use_replica_algo)
+	    if (devel) clog << "DEVEL: gdml_export::_export_gdml_logical: "
+			    << "add placements for " << nitems 
+			    << " items..." << endl;
+	    for (int i = 0; i < nitems; i++)
 	      {
-		//throw runtime_error ("gdml_export::_export_gdml_logical: GDML replica export is not supported yet !");
+		// extract placement for item 'i':
+		placement p;
+		pp->get_placement (i, p);
 
-		{
-		  // only support for 'regular_linear_placement':
-		  const regular_linear_placement * RLP = 0;
-		  RLP = dynamic_cast<const regular_linear_placement *> (pp);
-		  if (RLP == 0)
-		    {
-		      throw runtime_error ("gdml_export::_export_gdml_logical: GDML replica support is for 'regular_linear_placement' only !");
-		    }
-		  a_replicavol.volumeref = log_child.get_name ();
-		  a_replicavol.number = pp->get_number_of_items ();
-		  a_replicavol.mode = "replicate_along_axis";
-		  if (RLP->is_replicant_x_axis ()) 
-		    {
-		      a_replicavol.direction = "x";
-		      a_replicavol.width = RLP->get_step ().x ();
-		    }
-		  else if (RLP->is_replicant_y_axis ()) 
-		    {
-		      a_replicavol.direction = "y";
-		      a_replicavol.width = RLP->get_step ().y ();
-		    }
-		  else if (RLP->is_replicant_z_axis ()) 
-		    {
-		      a_replicavol.direction = "z";
-		      a_replicavol.width = RLP->get_step ().z ();
-		    }
-		  a_replicavol.offset = 0.0;
-		}
-		if (devel) clog << "DEVEL: gdml_export::_export_gdml_logical: "
-				<< "add volume '" << log_name << "' (replica)..." << endl;
+		// register the position of item 'i':
+		ostringstream pos_name_oss;
+		pos_name_oss << log_name << '.' << phys.get_name ();
+		if (multiple) pos_name_oss << '[' << i << ']';
+		pos_name_oss << ".pos";
+		__writer.add_position (pos_name_oss.str (), 
+				       p.get_translation (), 
+				       __length_unit);
 		
-		__writer.add_volume (log_name, 
-				     material_ref,
-				     solid_ref, 
-				     a_replicavol,
-				     __length_unit,
-				     __angle_unit,
-				     auxprops);
-	      }
-	    else
-	      {
-		for (int i = 0; i < pp->get_number_of_items (); i++)
+		if (devel) clog << "DEVEL: gdml_export::_export_gdml_logical: "
+				<< "add rotation..." << endl;
+		// register the rotation of item 'i':
+		//   default rotation name:
+		ostringstream rot_name_oss;
+		rot_name_oss << log_name << '.' << phys.get_name ();
+		if (multiple) rot_name_oss << '[' << i << ']';
+		rot_name_oss << ".rot";
+		string rot_name = rot_name_oss.str ();
+		bool add_rot = false;
+		// XXX YYY ZZZ
+		if (only_one_rotation)
 		  {
-		    if (devel) clog << "DEVEL: gdml_export::_export_gdml_logical: "
-				    << "add placement..." << endl;
-		    placement p;
-		    pp->get_placement (i, p);
-		    ostringstream pos_name_oss;
-		    pos_name_oss << log_name << '.' << phys.get_name ();
-		    if (multiple) pos_name_oss << '[' << i << ']';
-		    pos_name_oss << ".pos";
-		    __writer.add_position (pos_name_oss.str (), 
-					   p.get_translation (), 
-					   __length_unit);
-		    
-		    if (devel) clog << "DEVEL: gdml_export::_export_gdml_logical: "
-				    << "add rotation..." << endl;
-		    ostringstream rot_name_oss;
-		    rot_name_oss << log_name << '.' << phys.get_name ();
-		    if (multiple) rot_name_oss << '[' << i << ']';
-		    rot_name_oss << ".rot";
-		    __writer.add_rotation (rot_name_oss.str (), 
+		    rot_name = ref_rot_name_oss.str ();
+		    if (! is_valid_rotation_3d (ref_rot))
+		      {
+			ref_rot = p.get_rotation ();
+			add_rot= true;
+		      }
+		  }
+		else
+		  {
+		    // Force add_rot:
+		    add_rot = true;
+		  }
+		if (add_rot)
+		  { 
+		    __writer.add_rotation (rot_name, 
 					   p.get_rotation (),
 					   __angle_unit);
-		    
-		    /*
-		      if (p.is_simple_rotation ())
-		      {
-		      __writer.add_rotation (rot_name_oss.str (), 
-		      get_rotation_label (p.get_rotation_axis ()),
-		      p.get_rotation_angle (), 
-		      __angle_unit);
-		      }
-		      else
-		      {
-		      __writer.add_rotation (rot_name_oss.str (), 
-		      p.get_rotation (),
-		      __angle_unit);
-		      }
-		    */
-		    
-		    physvols.push_back (gdml_writer::physvol (log_child.get_name (), 
-							      pos_name_oss.str (), 
-							      rot_name_oss.str ()));
 		  }
-		if (devel) clog << "DEVEL: gdml_export::_export_gdml_logical: "
-				<< "add volume '" << log_name << "'..." << endl;
-		__writer.add_volume (log_name, 
-				     material_ref,
-				     solid_ref, 
-				     physvols,
-				     auxprops);
+		physvols.push_back (gdml_writer::physvol (log_child.get_name (), 
+							  pos_name_oss.str (), 
+							  rot_name));
+	      } // for ... items
+	    if (devel) 
+		  {
+		    clog << "DEVEL: gdml_export::_export_gdml_logical: "
+			 << "add volume '" << log_name << "' with physvols=";
+		    for (list<gdml_writer::physvol>::const_iterator jj = physvols.begin ();
+			 jj != physvols.end ();
+			 jj++)
+		      {
+			clog << '"' << jj->volumeref << '"' << ' '; 
+		      }
+		    clog  << endl;
+		  }
 	      }
-	  }
-      }
+	__writer.add_volume (log_name, 
+			     material_ref,
+			     solid_ref, 
+			     physvols,
+			     auxprops);
+	skip = true;
+      } // there are children:
     
     __volumes_refs.push_back (log_name);
     if (devel)
       {
 	clog << "DEVEL: gdml_export::_export_gdml_logical: Exiting." << endl;
       }
+    return;
     return;
   }
   

@@ -58,6 +58,8 @@ namespace geomtools {
     public:
  
       virtual bool is_replica () const;
+ 
+      virtual bool has_only_one_rotation () const;
 
       bool is_valid () const;
 
