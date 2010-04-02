@@ -427,7 +427,7 @@ namespace geomtools {
 	    if (only_one_rotation)
 	      {
 		ref_rot_name_oss << log_name << '.' << phys.get_name ();
-		if (multiple) ref_rot_name_oss << '[' << '0' << '-' << (nitems - 1) << ']';
+		if (multiple) ref_rot_name_oss << '{' << '0' << '-' << (nitems - 1) << '}';
 		ref_rot_name_oss << ".rot";
 	      }
 	    if (devel) clog << "DEVEL: gdml_export::_export_gdml_logical: "
