@@ -605,6 +605,25 @@ namespace geomtools {
   }
 
   /****************************************************/
+
+  void gnuplot_drawer::draw_logical (const model_factory & mf_,
+				     const string & logical_name_,
+				     const placement & p_,
+				     int max_display_level_)
+  {
+    geomtools::logical_volume::dict_t::const_iterator found;
+    found = mf_.get_logicals ().find (logical_name_);
+    if (found ==  mf_.get_logicals ().end ())
+      {
+	ostringstream message;
+	message << "gnuplot_drawer::draw: "
+		<< "Cannot find logical volume with name '" << logical_name_ << "' !"; 
+	throw runtime_error (message.str ());	
+      }
+    const geomtools::logical_volume & log = *(found->second);
+    draw (log, p_, max_display_level_, log.get_name ());
+    return;
+  }
    
   void gnuplot_drawer::draw (const model_factory & mf_,
 			     const string & name_,
@@ -618,7 +637,7 @@ namespace geomtools {
       {
 	ostringstream message;
 	message << "gnuplot_drawer::draw: "
-		<< "Cannot find model with name '" << name_ << "' !"; 
+		<< "Cannot find geometry model with name '" << name_ << "' !"; 
 	throw runtime_error (message.str ());	
       }
     const i_model & model = *(found->second);

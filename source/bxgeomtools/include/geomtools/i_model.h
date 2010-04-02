@@ -228,6 +228,26 @@ namespace geomtools {
 
     }; // template <class model_type> class creator_registration
     
+
+    static string make_solid_name (const string & basename_);
+
+    static string make_logical_volume_name (const string & basename_);
+
+    static string make_physical_volume_name (const string & basename_);
+
+    static string make_physical_volume_name_per_item (const string & basename_, 
+						      int i_);
+
+    static string make_physical_volume_name_per_item (const string & basename_, 
+						      int i_, int j_);
+
+    static string make_physical_volume_name (const string & basename_,
+					     int nitems_);
+
+    static string make_physical_volume_name (const string & basename_,
+					     int ncols_,
+					     int nrows_);
+
   }; // class i_model
   
 } // end of namespace snemo

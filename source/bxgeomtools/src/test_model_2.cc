@@ -185,7 +185,7 @@ namespace geomtools {
       }
     
     // initialize the 'logical_volume' of this model:
-    get_logical ().set_name (name_);
+    get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (__solid);
     get_logical ().set_material_ref (material);
     geomtools::visibility::extract (config_, _logical.parameters ());
@@ -193,12 +193,12 @@ namespace geomtools {
     get_logical ().parameters ().store (material::make_key (material::MATERIAL_GAS_TEMPERATURE_PROPERTY), gas_temperature);
 
     if (devel) clog << "DEVEL: test_model_2::_at_construct: Install physicals..." << endl;
-    __sub1_phys.set_name ("sub1_phys");
+    __sub1_phys.set_name (i_model::make_physical_volume_name ("sub1"));
     __sub1_phys.set_placement (__sub1_placement);
     __sub1_phys.set_logical (__sub1_model->get_logical ());
     __sub1_phys.set_mother (_logical);
 
-    __sub2_phys.set_name ("sub2_phys");
+    __sub2_phys.set_name (i_model::make_physical_volume_name ("sub2"));
     __sub2_phys.set_placement (__sub2_placement);
     __sub2_phys.set_logical (__sub2_model->get_logical ());
     __sub2_phys.set_mother (_logical);

@@ -132,13 +132,13 @@ namespace geomtools {
 	throw runtime_error ("test_world_model::_at_construct: Invalid solid !");
       }
     
-    get_logical ().set_name (name_);
+    get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (__solid);
     get_logical ().set_material_ref (material);
     geomtools::visibility::extract (config_, _logical.parameters ());
 
     if (devel) clog << "DEVEL: test_world_model::_at_construct: Install physicals..." << endl;
-    __setup_phys.set_name ("setup_phys");
+    __setup_phys.set_name (i_model::make_physical_volume_name ("setup"));
     __setup_phys.set_placement (__setup_placement);
     __setup_phys.set_logical (__setup_model->get_logical ());
     __setup_phys.set_mother (_logical);

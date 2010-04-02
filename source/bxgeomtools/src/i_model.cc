@@ -17,6 +17,66 @@ namespace geomtools {
   const string i_model::LOGICAL_SUFFIX = ".log";
   
   const string i_model::PHYSICAL_SUFFIX = ".phys";
+
+
+  string i_model::make_solid_name (const string & basename_)
+  {
+    ostringstream oss;
+    oss << basename_ << i_model::SOLID_SUFFIX;
+  }
+
+  string i_model::make_logical_volume_name (const string & basename_)
+  {
+    ostringstream oss;
+    oss << basename_ << i_model::LOGICAL_SUFFIX;
+    return oss.str ();
+  }
+  
+  string i_model::make_physical_volume_name (const string & basename_)
+  {
+    ostringstream oss;
+    oss << basename_ << i_model::PHYSICAL_SUFFIX;
+    return oss.str ();
+  }
+
+  string i_model::make_physical_volume_name (const string & basename_,
+					     int nitems_)
+  {
+    ostringstream oss;
+    oss << basename_ << i_model::PHYSICAL_SUFFIX
+	<< '{' << 0 << '-' << (nitems_ - 1) << '}';
+    return oss.str ();
+  }
+
+  string i_model::make_physical_volume_name_per_item (const string & basename_,
+						      int item_)
+  {
+    ostringstream oss;
+    oss << basename_ << i_model::PHYSICAL_SUFFIX
+	<< '{' << item_ << '}';
+    return oss.str ();
+  }
+
+  string i_model::make_physical_volume_name_per_item (const string & basename_,
+						      int i_, int j_)
+  {
+    ostringstream oss;
+    oss << basename_ << i_model::PHYSICAL_SUFFIX
+	<< '[' << i_ << ']'
+	<< '[' << j_ << ']';
+    return oss.str ();
+  }
+
+  string i_model::make_physical_volume_name (const string & basename_,
+					     int ncols_,
+					     int nrows_)
+  {
+    ostringstream oss;
+    oss << basename_ << i_model::PHYSICAL_SUFFIX
+	<< '{' << 0 << '-' << (ncols_ - 1) << '}'
+	<< '{' << 0 << '-' << (nrows_ - 1) << '}';
+    return oss.str ();
+  }
    
   /***************************************************/
  

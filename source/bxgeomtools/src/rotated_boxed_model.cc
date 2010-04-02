@@ -200,7 +200,8 @@ namespace geomtools {
       {
 	throw runtime_error ("rotated_boxed_model::_at_construct: Invalid solid !");
       }
-    get_logical ().set_name (name_);
+
+    get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (__solid);
     string material_name = material::MATERIAL_REF_DEFAULT;
     if (__boxed_model->get_logical ().has_material_ref ())
@@ -210,7 +211,7 @@ namespace geomtools {
     get_logical ().set_material_ref (material_name);
     geomtools::visibility::extract (config_, _logical.parameters ());
 
-    __boxed_phys.set_name ("rotated_phys");
+    __boxed_phys.set_name (i_model::make_physical_volume_name ("rotated"));
     __boxed_phys.set_placement (__boxed_placement);
     __boxed_phys.set_logical (__boxed_model->get_logical ());
     __boxed_phys.set_mother (_logical);

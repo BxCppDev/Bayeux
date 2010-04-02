@@ -158,10 +158,15 @@ namespace geomtools {
 	       const string & name_);
 
     void draw (const model_factory & mf_,
-	       const string & name_,
+	       const string & model_name_,
 	       const placement & p_,
 	       int max_display_level_);
-  
+
+    void draw_logical (const model_factory & mf_,
+		       const string & model_name_,
+		       const placement & p_,
+		       int max_display_level_);
+    
   public:
     
 

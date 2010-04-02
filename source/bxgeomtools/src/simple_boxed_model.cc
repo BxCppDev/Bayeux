@@ -185,7 +185,7 @@ namespace geomtools {
       {
 	throw runtime_error ("simple_boxed_model::_at_construct: Invalid box dimensions !");
       }
-    get_logical ().set_name (name_);
+    get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (__solid);
     geomtools::visibility::extract (config_, get_logical ().parameters ());
     geomtools::material::extract (config_, get_logical ().parameters ());

@@ -75,7 +75,7 @@ namespace geomtools {
       }
     
     // initialize the 'logical_volume' of this model:
-    get_logical ().set_name (name_);
+    get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (__solid);
     get_logical ().set_material_ref (material);
     geomtools::visibility::extract (config_, _logical.parameters ());

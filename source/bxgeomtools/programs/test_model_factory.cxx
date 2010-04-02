@@ -98,6 +98,21 @@ int main (int argc_, char ** argv_)
       p.set (0, 0, 0, 0 * CLHEP::degree, 0 * CLHEP::degree, 0);
       if (dump) p.tree_dump (clog, "Placement");
 
+      clog << "Models: " << endl;
+      int count = 0;
+      for (geomtools::models_col_t::const_iterator i 
+	     = factory.get_models ().begin ();
+	   i != factory.get_models ().end ();
+	   i++)
+	{
+	  clog << "  " << i->second->get_name ();
+	  count++;
+	  if ((count % 5) == 0)  clog << endl;
+	}
+      clog << endl;
+
+      clog << "Enter the name of the geometry model to be displayed: ";
+      /*
       clog << "Logicals: " << endl;
       int count = 0;
       for (geomtools::logical_volume::dict_t::const_iterator i 
@@ -110,8 +125,9 @@ int main (int argc_, char ** argv_)
 	  if ((count % 5) == 0)  clog << endl;
 	}
       clog << endl;
-
+  
       clog << "Enter the name of the logical to be displayed: ";
+      */
 
       string name; 
       getline (cin, name);
@@ -119,7 +135,7 @@ int main (int argc_, char ** argv_)
 	{
 	  name = "world";
 	}
-      clog << "Name of the logical : " << name << endl;
+      clog << "Name of the model : " << name << endl;
 
       if (draw)
 	{  

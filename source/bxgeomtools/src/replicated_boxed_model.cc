@@ -217,7 +217,7 @@ namespace geomtools {
       {
 	throw runtime_error ("replicated_boxed_model::_at_construct: Invalid solid !");
       }
-    get_logical ().set_name (name_);
+    get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (__solid);
     if (__boxed_model->get_logical ().has_material_ref ())
       {
@@ -229,7 +229,7 @@ namespace geomtools {
     placement basic_p;
     basic_p.set (x0, y0, z0, 0, 0, 0);
     __boxed_replica_placement.set_basic_placement (basic_p);
-    __boxed_phys.set_name ("items_phys");
+    __boxed_phys.set_name (i_model::make_physical_volume_name ("replicated_boxed", get_number_of_items ()));
     __boxed_phys.set_placement (__boxed_replica_placement);
     __boxed_phys.set_logical (__boxed_model->get_logical ());
     __boxed_phys.set_mother (_logical);
