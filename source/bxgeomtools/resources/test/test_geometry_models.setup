@@ -105,6 +105,18 @@ visibility.color            : string  = "cyan"
 visibility.hidden           : boolean = 0
 visibility.daughters.hidden : boolean = 0
 
+[name="box9" type="geomtools::stacked_boxed_model"]
+material.ref    : string = "air"
+stacking_axis   : string = "z"
+number_of_items : integer = 4
+boxed_model_0   : string = "many_rotx_box2"
+boxed_model_1   : string = "box3"
+boxed_model_2   : string = "box6"
+boxed_model_3   : string = "box1"
+visibility.color            : string  = "cyan"
+visibility.hidden           : boolean = 0
+visibility.daughters.hidden : boolean = 0
+
 #######################################################
 
 [name="world" type="geomtools::test::test_world_model"]

@@ -158,6 +158,7 @@ namespace geomtools {
       {
 	stacking_axis = STACKING_ALONG_Z;
       }
+    set_staking_axis (stacking_axis);
 
     if (config_.has_key ("number_of_items"))
       {
@@ -170,7 +171,6 @@ namespace geomtools {
 		<< "Missing 'number_of_items' property !"; 
 	throw runtime_error (message.str ());		
       }
-
 
     if (! models_)
       {
