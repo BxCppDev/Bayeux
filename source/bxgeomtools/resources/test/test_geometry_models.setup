@@ -109,10 +109,19 @@ visibility.daughters.hidden : boolean = 0
 material.ref    : string = "air"
 stacking_axis   : string = "y"
 number_of_items : integer = 4
+
 boxed_model_0   : string = "many_rotx_box2"
+label_0         : string = "box9.label0"
+
 boxed_model_1   : string = "box3"
+label_1         : string = "box9.label1"
+
 boxed_model_2   : string = "box6"
+#label_2         : string = "box9.label2"
+
 boxed_model_3   : string = "box1"
+label_3         : string = "box9.label3"
+
 visibility.color            : string  = "cyan"
 visibility.hidden           : boolean = 0
 visibility.daughters.hidden : boolean = 0

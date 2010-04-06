@@ -89,11 +89,13 @@ namespace geomtools {
     virtual void construct (const string & name_,
 			    const datatools::utils::properties & setup_,
 			    models_col_t * models_ = 0);
-
+ 
     /**************************************************/
      
   protected:
-    
+    virtual void _pre_construct (datatools::utils::properties & setup_);
+    virtual void _post_construct (datatools::utils::properties & setup_);
+ 
     virtual void _at_construct (const string & name_,
 				const datatools::utils::properties & setup_,
 				models_col_t * models_ = 0);

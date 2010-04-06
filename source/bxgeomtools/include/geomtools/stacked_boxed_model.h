@@ -50,18 +50,22 @@ namespace geomtools {
 
       struct boxed_item
       {
+	string           label;
 	const i_model *  model;
 	placement        placmt;
 	physical_volume  phys;
       };
 
       typedef map<int, boxed_item> boxed_dict_t;
+      typedef map<string, int> labels_dict_t;
 
     private:
 
       string         __material_name;
       int            __stacking_axis;
       boxed_dict_t   __boxed_models;
+      labels_dict_t  __labels;
+
       geomtools::box __solid;
 
     public: 
@@ -76,8 +80,11 @@ namespace geomtools {
       const geomtools::box & get_box () const;
       const geomtools::box & get_solid () const;
 
-      void add_boxed_model (int i_, const i_model &);
+      void add_boxed_model (int i_, const i_model &, const string & label_ = "");
       const i_model & get_boxed_model (int i_) const;
+      const i_model & get_boxed_model (const string & label_) const;
+      const labels_dict_t & get_labels () const;
+      const boxed_dict_t & get_models () const;
 
     public:
   

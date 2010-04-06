@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*- 
 // test_model_factory.cxx  
- 
+  
 #include <cstdlib> 
 #include <iostream>
 #include <string>
@@ -97,7 +97,7 @@ int main (int argc_, char ** argv_)
       geomtools::placement p;
       p.set (0, 0, 0, 0 * CLHEP::degree, 0 * CLHEP::degree, 0);
       if (dump) p.tree_dump (clog, "Placement");
-
+ 
       clog << "Models: " << endl;
       int count = 0;
       for (geomtools::models_col_t::const_iterator i 

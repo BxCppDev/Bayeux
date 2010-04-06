@@ -60,7 +60,7 @@ namespace geomtools {
     return __solid;
   }
 
-  void stacked_boxed_model::add_boxed_model (int i_, const i_model & model_)
+  void stacked_boxed_model::add_boxed_model (int i_, const i_model & model_, const string & label_)
   {
     boxed_dict_t::const_iterator found = __boxed_models.find (i_);
     if (found != __boxed_models.end ())
@@ -75,7 +75,50 @@ namespace geomtools {
     __boxed_models[i_] = bi;
     __boxed_models[i_].model = &model_;
     __boxed_models[i_].placmt.invalidate ();
+    string label = label_;
+    if (label.empty ())
+      {
+	ostringstream label_oss;
+	label_oss << "stacked[" << i_ << ']';
+	label = label_oss.str ();
+      }
+    else
+      {
+	if (__labels.find (label) != __labels.end ())
+	  {
+	    ostringstream message;
+	    message << "stacked_boxed_model::add_boxed_model: "
+		    << "Label '" << label << "' is already used !";
+	    throw runtime_error (message.str ());
+	  }
+      }
+    __boxed_models[i_].label = label;
+    __labels[label] = i_;
     return;
+  }
+
+  const stacked_boxed_model::boxed_dict_t & stacked_boxed_model::get_models () const
+  {
+    return __boxed_models;
+  }
+
+  const stacked_boxed_model::labels_dict_t & stacked_boxed_model::get_labels () const
+  {
+    return __labels;
+  }
+
+  const i_model & stacked_boxed_model::get_boxed_model (const string & label_) const
+  {
+    labels_dict_t::const_iterator found = __labels.find (label_);
+    if (found == __labels.end ())
+      {
+	ostringstream message;
+	message << "stacked_boxed_model::get_boxed_model: "
+		<< "Dictionary has no model with "
+		<< "label '" << label_ << "' !";
+	throw runtime_error (message.str ());
+      }
+    return this->get_boxed_model (found->second);
   }
 
   const i_model & stacked_boxed_model::get_boxed_model (int i_) const
@@ -118,6 +161,7 @@ namespace geomtools {
     set_name (name_);
     size_t number_of_items;
     string boxed_model_name;
+    string label_name;
     string stacking_axis_label = "";
     int    stacking_axis;
     string material_name;
@@ -188,6 +232,7 @@ namespace geomtools {
     for (int i = 0; i < number_of_items; i++)
       {
 	string boxed_model_name;
+	string label_name;
 	ostringstream boxed_item_prop;
 	boxed_item_prop << "boxed_model_" << i;
 	if (config_.has_key (boxed_item_prop.str ()))
@@ -201,6 +246,14 @@ namespace geomtools {
 		    << "Missing '" << boxed_item_prop.str () << "' property !"; 
 	    throw runtime_error (message.str ());	
 	  }
+	// attempt to extract a user defined label:
+	ostringstream label_item_prop;
+	label_item_prop << "label_" << i;
+	if (config_.has_key (label_item_prop.str ()))
+	  {
+	    label_name = config_.fetch_string (label_item_prop.str ());
+	  }  
+
 	models_col_t::const_iterator found = 
 	  models_->find (boxed_model_name);
 	if (found != models_->end ())
@@ -215,7 +268,7 @@ namespace geomtools {
 			<< "' is not a 'boxed' one !"; 
 		throw runtime_error (message.str ());
 	      }
-	    add_boxed_model (i, *(found->second));
+	    add_boxed_model (i, *(found->second), label_name);
 	  }
 	else
 	  {
@@ -329,7 +382,7 @@ namespace geomtools {
 	    pos += b.get_z ();
 	  }
 	bi.placmt.set (xi, yi, zi, 0.0, 0.0);
-	bi.phys.set_name (i_model::make_physical_volume_name_per_item ("stacked", j));
+	bi.phys.set_name (i_model::make_physical_volume_name (bi.label));
 	bi.phys.set_placement (bi.placmt);
 	bi.phys.set_logical (bi.model->get_logical ());
 	bi.phys.set_mother (_logical);
@@ -360,6 +413,16 @@ namespace geomtools {
 	    << "Stacking axis : " << get_stacking_axis () << endl;
      }
      
+     {
+       for (labels_dict_t::const_iterator i = __labels.begin ();
+	    i != __labels.end ();
+	    i++)
+	 {
+	   out_ << indent << i_tree_dumpable::tag 
+		<< "Stacked model : " << "'" << i->first << "'" << " [rank==" << i->second << "]" << endl;
+	 }
+     }
+
      {
        out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
 	    << "Solid : " << endl;

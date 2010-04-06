@@ -299,6 +299,14 @@ namespace geomtools {
     return;      
   }
 
+  void i_model::_pre_construct (datatools::utils::properties & setup_)
+  {
+  }
+
+  void i_model::_post_construct (datatools::utils::properties & setup_)
+  {
+  }
+
   void i_model::construct (const string & name_,
 			   const datatools::utils::properties & setup_,
 			   models_col_t * models_)
@@ -308,7 +316,10 @@ namespace geomtools {
       {
 	throw runtime_error ("i_model::construct: Already constructed !");
       }
+    datatools::utils::properties & setup = const_cast<datatools::utils::properties &> (setup_);
+    _pre_construct (setup);
     _at_construct (name_, setup_, models_);
+    _post_construct (setup);
     __constructed = true;
     if (g_devel) clog << "DEVEL: i_model::construct: Exiting." << endl;
     return;      

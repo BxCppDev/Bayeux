@@ -322,12 +322,15 @@ namespace geomtools {
 	
 	// draw children:
 	bool draw_children = false;
+
+	/*
 	if (devel)
 	  {
 	    cerr << "DEVEL: gnuplot_drawer::__draw: " 
 		 << "TEST XXX"  
 		 << endl;
 	  }
+	*/
 
 	// check the disply level of the geometry tree:
 	if ((display_level < max_display_level) 
