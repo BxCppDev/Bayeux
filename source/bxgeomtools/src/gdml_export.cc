@@ -475,9 +475,16 @@ namespace geomtools {
 		  }
 		if (add_rot)
 		  { 
-		    __writer.add_rotation (rot_name, 
-					   p.get_rotation (),
-					   __angle_unit);
+		    if (! is_identity (p.get_rotation ()))
+		      {
+			__writer.add_rotation (rot_name, 
+					       p.get_rotation (),
+					       __angle_unit);
+		      }
+		  }
+		if (is_identity (p.get_rotation ()))
+		  {
+		    rot_name = "";
 		  }
 		physvols.push_back (gdml_writer::physvol (log_child.get_name (), 
 							  pos_name_oss.str (), 

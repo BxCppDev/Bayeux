@@ -46,9 +46,9 @@ phi              : real   = 60. # degree
 theta            : real   = 75. # degree
 gas_pressure     : real   = 0.9 # atmosphere
 gas_temperature  : real   = 305. # kelvin
-visibility.color : string = "red"
+visibility.color            : string = "orange"
 visibility.hidden           : boolean = 0
-visibility.hidden_envelop   : boolean = 1
+visibility.hidden_envelop   : boolean = 0
 visibility.daughters.hidden : boolean = 0
 
 [name="box4" type="geomtools::replicated_boxed_model"]
@@ -93,6 +93,17 @@ boxed_model     : string = "box5"
 replicant_axis  : string = "z"
 number_of_items : integer = 2
 boxed_model     : string = "box6"
+
+[name="box8" type="geomtools::stacked_boxed_model"]
+material.ref    : string = "air"
+stacking_axis   : string = "x"
+number_of_items : integer = 3
+boxed_model_0   : string = "many_rotx_box2"
+boxed_model_1   : string = "box3"
+boxed_model_2   : string = "box6"
+visibility.color            : string  = "cyan"
+visibility.hidden           : boolean = 0
+visibility.daughters.hidden : boolean = 0
 
 #######################################################
 

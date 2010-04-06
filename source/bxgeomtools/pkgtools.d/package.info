@@ -4,7 +4,7 @@ name=geomtools
 version=0.1.0
 language=C++
 namespace=geomtools
-dependencies=datatools CLHEP GSL 
+dependencies=datatools CLHEP mygsl 
 creation=2008-12-10
 author=Francois Mauger <mauger@lpccaen.in2p3.fr>
 # end of package.info

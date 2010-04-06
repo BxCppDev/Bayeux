@@ -348,13 +348,13 @@ function do_configure ()
 	notice_msg "CLHEP (${clhep_version}) seems to be properly setup!"
     fi
 
-    which gsl-config 2>&1 > /dev/null
+    which mygsl-config 2>&1 > /dev/null
     if [ $? -ne 0 ]; then
-	err_msg "GSL seems not to be setup!"
+	err_msg "mygsl seems not to be setup!"
 	return 1
     else
-	gsl_version=$(gsl-config --version)
-	notice_msg "GSL (${gsl_version}) seems to be properly setup!"
+	mygsl_version=$(mygsl-config --version)
+	notice_msg "mygsl (${mygsl_version}) seems to be properly setup!"
     fi
 
     which datatools-config 2>&1 > /dev/null

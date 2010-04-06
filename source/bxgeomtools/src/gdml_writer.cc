@@ -1096,7 +1096,10 @@ namespace geomtools {
 	_get_stream (STRUCTURE_SECTION) << "  <physvol>" << endl;
 	_get_stream (STRUCTURE_SECTION) << "    <volumeref  " << " ref=" << '"' << i->volumeref << '"' << " />" << endl;
 	_get_stream (STRUCTURE_SECTION) << "    <positionref" << " ref=" << '"' << i->positionref << '"' << " />" << endl;
-	_get_stream (STRUCTURE_SECTION) << "    <rotationref" << " ref=" << '"' << i->rotationref << '"' << " />" << endl;
+	if (! i->rotationref.empty ())
+	  {
+	    _get_stream (STRUCTURE_SECTION) << "    <rotationref" << " ref=" << '"' << i->rotationref << '"' << " />" << endl;
+	  }
 	if (! i->scaleref.empty ())
 	  {
 	    _get_stream (STRUCTURE_SECTION) << "    <scaleref  " << " ref=" << '"' << i->scaleref << '"' << " />" << endl;

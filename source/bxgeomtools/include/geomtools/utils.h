@@ -250,6 +250,9 @@ namespace geomtools {
 		   double theta_,
 		   double delta_);
 
+  bool
+  is_identity (const rotation_3d & rot_);
+
   /********************/
 
   enum special_rotation_angle_t

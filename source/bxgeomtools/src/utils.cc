@@ -506,8 +506,10 @@ namespace geomtools {
 			     int axis_,
 			     double angle_)
   {
-    clog << "DEVEL: create_rotation_from_axis: "
-	 << "axis=" << axis_ << " angle=" << angle_ / CLHEP::degree << " °" << endl;
+    /*
+      clog << "DEVEL: create_rotation_from_axis: "
+      << "axis=" << axis_ << " angle=" << angle_ / CLHEP::degree << " °" << endl;
+    */
     if (! check_rotation_axis (axis_))
       {
 	throw runtime_error ("create_rotation_from_axis: Invalid rotation axis !");
@@ -567,6 +569,12 @@ namespace geomtools {
       }
       }
     */
+  }
+
+  bool
+  is_identity (const rotation_3d & rot_)
+  {
+    return rot_.isIdentity ();
   }
 
   void

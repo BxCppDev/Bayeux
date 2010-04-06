@@ -72,12 +72,12 @@ DEPLDFLAGS=
 ### Dependencies:
 #DEP_HOOK
 
-# GSL dependency:
-ifeq ($(shell which gsl-config),)
-$(error Sorry gsl-config not found!)
+# mygsl dependency:
+ifeq ($(shell which mygsl-config),)
+$(error Sorry mygsl-config not found!)
 endif
-DEPCPPFLAGS+=$(shell gsl-config --cflags)
-DEPLDFLAGS+=$(shell gsl-config --libs)
+DEPCPPFLAGS+=$(shell mygsl-config --cflags)
+DEPLDFLAGS+=$(shell mygsl-config --ldflags)
 
 # CLHEP dependency:
 ifeq ($(strip $(CLHEP_BASE_DIR)),)
