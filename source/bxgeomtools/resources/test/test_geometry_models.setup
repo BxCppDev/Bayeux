@@ -107,7 +107,7 @@ visibility.daughters.hidden : boolean = 0
 
 [name="box9" type="geomtools::stacked_boxed_model"]
 material.ref    : string = "air"
-stacking_axis   : string = "z"
+stacking_axis   : string = "y"
 number_of_items : integer = 4
 boxed_model_0   : string = "many_rotx_box2"
 boxed_model_1   : string = "box3"
@@ -161,6 +161,14 @@ visibility.color            : string  = "orange"
 [name="world6" type="geomtools::test::test_world_model"]
 material.ref    : string = "vacuum"
 setup_model : string = "many_rotx_box2"
+phi         : real   = 30.0
+theta       : real   = 20.0
+visibility.hidden           : boolean = 0
+visibility.daughters.hidden : boolean = 0
+
+[name="world7" type="geomtools::test::test_world_model"]
+material.ref    : string = "vacuum"
+setup_model : string = "box9"
 phi         : real   = 30.0
 theta       : real   = 20.0
 visibility.hidden           : boolean = 0

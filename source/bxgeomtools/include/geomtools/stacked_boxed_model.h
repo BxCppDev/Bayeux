@@ -60,15 +60,15 @@ namespace geomtools {
     private:
 
       string         __material_name;
-      int            __staking_axis;
+      int            __stacking_axis;
       boxed_dict_t   __boxed_models;
       geomtools::box __solid;
 
     public: 
       const string & get_material_name () const;
       void set_material_name (const string &);
-      void set_staking_axis (int a_);
-      int get_staking_axis () const;
+      void set_stacking_axis (int a_);
+      int get_stacking_axis () const;
       bool is_stacking_along_x () const;
       bool is_stacking_along_y () const;
       bool is_stacking_along_z () const;

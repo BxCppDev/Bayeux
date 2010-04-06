@@ -21,33 +21,33 @@ namespace geomtools {
     __material_name = mn_;
   }
 
-  void stacked_boxed_model::set_staking_axis (int a_)
+  void stacked_boxed_model::set_stacking_axis (int a_)
   {
     if ((a_ < STACKING_ALONG_X) || (a_ > STACKING_ALONG_Z))
       {
 	throw runtime_error ("stacked_boxed_model::set_staking_axis: Invalid stacking axis !");
       }
-    __staking_axis = a_;
+    __stacking_axis = a_;
   }
 
-  int stacked_boxed_model::get_staking_axis () const
+  int stacked_boxed_model::get_stacking_axis () const
   {
-    return __staking_axis;
+    return __stacking_axis;
   }
 
   bool stacked_boxed_model::is_stacking_along_x () const
   {
-    return __staking_axis == STACKING_ALONG_X;
+    return __stacking_axis == STACKING_ALONG_X;
   }
   
   bool stacked_boxed_model::is_stacking_along_y () const
   {
-    return __staking_axis == STACKING_ALONG_Y;
+    return __stacking_axis == STACKING_ALONG_Y;
   }
   
   bool stacked_boxed_model::is_stacking_along_z () const
   {
-    return __staking_axis == STACKING_ALONG_Z;
+    return __stacking_axis == STACKING_ALONG_Z;
   }
   
   const geomtools::box & stacked_boxed_model::get_box () const
@@ -122,6 +122,7 @@ namespace geomtools {
     int    stacking_axis;
     string material_name;
 
+    /*** material ***/
     if (config_.has_key ("material.ref"))
       {
 	material_name = config_.fetch_string ("material.ref");
@@ -135,6 +136,7 @@ namespace geomtools {
       }
     set_material_name (material_name);
 
+    /*** stacking axis ***/
     if (config_.has_key ("stacking_axis"))
       {
 	stacking_axis_label = config_.fetch_string ("stacking_axis");
@@ -158,8 +160,9 @@ namespace geomtools {
       {
 	stacking_axis = STACKING_ALONG_Z;
       }
-    set_staking_axis (stacking_axis);
+    set_stacking_axis (stacking_axis);
 
+    /*** number of stacked boxed models ***/
     if (config_.has_key ("number_of_items"))
       {
 	number_of_items = config_.fetch_integer ("number_of_items");
@@ -172,6 +175,7 @@ namespace geomtools {
 	throw runtime_error (message.str ());		
       }
 
+    /*** check models ***/
     if (! models_)
       {
 	ostringstream message;
@@ -180,6 +184,7 @@ namespace geomtools {
 	throw runtime_error (message.str ());
       }
 
+    /*** loop over models to be stacked ***/
     for (int i = 0; i < number_of_items; i++)
       {
 	string boxed_model_name;
@@ -222,6 +227,7 @@ namespace geomtools {
 	  }
       }
 
+    /*** compute main box dimensions ***/
     mygsl::min_max mmx;
     mygsl::min_max mmy;
     mygsl::min_max mmz;
@@ -247,7 +253,7 @@ namespace geomtools {
 	  {
 	    stacked_y += b.get_y ();
 	  }
-	else if (is_stacking_along_y ())
+	else if (is_stacking_along_z ())
 	  {
 	    stacked_z += b.get_z ();
 	  }
@@ -264,10 +270,10 @@ namespace geomtools {
 	stacked_x = mmx.get_max ();
 	stacked_z = mmz.get_max ();
       }
-    else if (is_stacking_along_y ())
+    else if (is_stacking_along_z ())
       {
+	stacked_x = mmx.get_max ();
 	stacked_y = mmy.get_max ();
-	stacked_z = mmz.get_max ();
       }
     __solid.reset ();
     __solid.set_x (stacked_x);
@@ -317,7 +323,7 @@ namespace geomtools {
 	    yi = pos + 0.5 * b.get_y ();
 	    pos += b.get_y ();
 	  }
-	else if (is_stacking_along_y ())
+	else if (is_stacking_along_z ())
 	  {
 	    zi = pos + 0.5 * b.get_z ();
 	    pos += b.get_z ();
@@ -351,7 +357,7 @@ namespace geomtools {
 
      {
        out_ << indent << i_tree_dumpable::tag 
-	    << "Stacking axis : " << get_staking_axis () << endl;
+	    << "Stacking axis : " << get_stacking_axis () << endl;
      }
      
      {

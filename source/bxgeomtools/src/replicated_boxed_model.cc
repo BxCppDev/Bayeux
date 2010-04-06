@@ -266,7 +266,7 @@ namespace geomtools {
        {
 	 ostringstream indent_oss;
 	 indent_oss << indent;
-	 indent_oss << du::i_tree_dumpable::skip_tag (inherit_);
+	 indent_oss << du::i_tree_dumpable::skip_tag;
 	 __boxed_replica_placement.tree_dump (out_, "", indent_oss.str ());
        }   
      }
