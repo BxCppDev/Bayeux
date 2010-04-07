@@ -13,8 +13,8 @@
  * 
  */
 
-#ifndef __geomtools__test__replicated_boxed_model_h
-#define __geomtools__test__replicated_boxed_model_h 1
+#ifndef __geomtools__replicated_boxed_model_h
+#define __geomtools__replicated_boxed_model_h 1
 
 #include <iostream>
 #include <string> 
@@ -44,6 +44,7 @@ namespace geomtools {
       double         __x;
       double         __y;
       double         __z;
+
       geomtools::box __solid;
 
     public: 

@@ -23,10 +23,12 @@ namespace geomtools {
      
   void simple_boxed_model::set_x (double x_)
   {
+    assert_unconstructed("simple_boxed_model::set_x");
+
     if (x_ <= 0.0 * CLHEP::mm)
       {
 	ostringstream message;
-	message << "source_layer_model::set_gap_between_pads: "
+	message << "simple_boxed_model::set_x: "
 		<< "Invalid X " << x_ / CLHEP::mm << " mm !";
 	throw runtime_error (message.str ());
       }
@@ -35,10 +37,12 @@ namespace geomtools {
 
   void simple_boxed_model::set_y (double y_)
   {
+    assert_unconstructed("simple_boxed_model::set_y");
+
     if (y_ <= 0.0 * CLHEP::mm)
       {
 	ostringstream message;
-	message << "source_layer_model::set_gap_between_pads: "
+	message << "simple_boxed_model::set_y: "
 		<< "Invalid Y " << y_ / CLHEP::mm << " mm !";
 	throw runtime_error (message.str ());
       }
@@ -47,10 +51,12 @@ namespace geomtools {
 
   void simple_boxed_model::set_z (double z_)
   {
+    assert_unconstructed("simple_boxed_model::set_z");
+
     if (z_ <= 0.0 * CLHEP::mm)
       {
 	ostringstream message;
-	message << "source_layer_model::set_gap_between_pads: "
+	message << "simple_boxed_model::set_z: "
 		<< "Invalid Z " << z_ / CLHEP::mm << " mm !";
 	throw runtime_error (message.str ());
       }
@@ -59,14 +65,14 @@ namespace geomtools {
 
   double simple_boxed_model::get_x () const
   {
-     return __x;
+    return __x;
   }
-
+  
   double simple_boxed_model::get_y () const
   {
-     return __y;
+    return __y;
   }
-
+  
   double simple_boxed_model::get_z () const
   {
     return __z;
@@ -74,7 +80,9 @@ namespace geomtools {
 
   void simple_boxed_model::set_material_name (const string & mn_)
   {
-    __material_name = mn_;
+    assert_unconstructed("simple_boxed_model::set_material_name");
+
+     __material_name = mn_;
   }
 
   const string & simple_boxed_model::get_material_name () const

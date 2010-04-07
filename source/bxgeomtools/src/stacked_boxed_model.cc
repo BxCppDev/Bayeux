@@ -11,6 +11,9 @@ namespace geomtools {
   // register this creator:   
   geomtools::i_model::creator_registration<stacked_boxed_model> stacked_boxed_model::__CR;
 
+  const string stacked_boxed_model::STACKED_LABEL = "stacked";
+  const string stacked_boxed_model::LABEL_PROPERTY_PREFIX = "label";
+
   const string & stacked_boxed_model::get_material_name () const
   {
     return __material_name;
@@ -18,11 +21,15 @@ namespace geomtools {
 
   void stacked_boxed_model::set_material_name (const string & mn_)
   {
+    assert_unconstructed("stacked_boxed_model::set_material_name");
+
     __material_name = mn_;
   }
 
   void stacked_boxed_model::set_stacking_axis (int a_)
   {
+    assert_unconstructed("stacked_boxed_model::set_stacking_axis");
+
     if ((a_ < STACKING_ALONG_X) || (a_ > STACKING_ALONG_Z))
       {
 	throw runtime_error ("stacked_boxed_model::set_staking_axis: Invalid stacking axis !");
@@ -62,6 +69,8 @@ namespace geomtools {
 
   void stacked_boxed_model::add_boxed_model (int i_, const i_model & model_, const string & label_)
   {
+    assert_unconstructed("stacked_boxed_model::add_boxed_model");
+
     boxed_dict_t::const_iterator found = __boxed_models.find (i_);
     if (found != __boxed_models.end ())
       {
@@ -79,7 +88,7 @@ namespace geomtools {
     if (label.empty ())
       {
 	ostringstream label_oss;
-	label_oss << "stacked[" << i_ << ']';
+	label_oss << STACKED_LABEL << "[" << i_ << ']';
 	label = label_oss.str ();
       }
     else
@@ -105,6 +114,12 @@ namespace geomtools {
   const stacked_boxed_model::labels_dict_t & stacked_boxed_model::get_labels () const
   {
     return __labels;
+  }
+
+  bool stacked_boxed_model::has_boxed_model (const string & label_) const
+  {
+    labels_dict_t::const_iterator found = __labels.find (label_);
+    return found != __labels.end ();
   }
 
   const i_model & stacked_boxed_model::get_boxed_model (const string & label_) const
@@ -142,7 +157,6 @@ namespace geomtools {
   
   stacked_boxed_model::stacked_boxed_model () : geomtools::i_model ()
   {
-    //__boxed_model = 0;
   }
   
   stacked_boxed_model::~stacked_boxed_model ()
@@ -248,7 +262,7 @@ namespace geomtools {
 	  }
 	// attempt to extract a user defined label:
 	ostringstream label_item_prop;
-	label_item_prop << "label_" << i;
+	label_item_prop << LABEL_PROPERTY_PREFIX << "_" << i;
 	if (config_.has_key (label_item_prop.str ()))
 	  {
 	    label_name = config_.fetch_string (label_item_prop.str ());

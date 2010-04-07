@@ -41,6 +41,9 @@ namespace geomtools {
     {
     public:
 
+      static const string LABEL_PROPERTY_PREFIX;
+      static const string STACKED_LABEL;
+
       enum stacking_axis_t
 	{
 	  STACKING_ALONG_X = 0,
@@ -81,6 +84,7 @@ namespace geomtools {
       const geomtools::box & get_solid () const;
 
       void add_boxed_model (int i_, const i_model &, const string & label_ = "");
+      bool has_boxed_model (const string & label_) const;
       const i_model & get_boxed_model (int i_) const;
       const i_model & get_boxed_model (const string & label_) const;
       const labels_dict_t & get_labels () const;

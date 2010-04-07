@@ -18,6 +18,47 @@ namespace geomtools {
   
   const string i_model::PHYSICAL_SUFFIX = ".phys";
 
+  void i_model::assert_constructed (const string & where_, 
+				    const string & what_) const
+  {
+    if (is_constructed ()) return;
+    ostringstream message;
+    if (! where_.empty ())
+      {
+	message << where_ << ": ";
+      }
+    if (! what_.empty ())
+      {
+	message << what_;
+      }
+    else
+      {
+	message << "Operation not allowed ! Model has not been constructed yet";
+      }
+    message << " !";
+    throw runtime_error (message.str ());
+  }
+
+  void i_model::assert_unconstructed (const string & where_, 
+				      const string & what_) const
+  {
+    if (! is_constructed ()) return;
+    ostringstream message;
+    if (! where_.empty ())
+      {
+	message << where_ << ": ";
+      }
+    if (! what_.empty ())
+      {
+	message << what_;
+      }
+    else
+      {
+	message << "Operation not allowed ! Model has already been constructed";
+      }
+    message << " !";
+    throw runtime_error (message.str ());
+  }
 
   string i_model::make_solid_name (const string & basename_)
   {

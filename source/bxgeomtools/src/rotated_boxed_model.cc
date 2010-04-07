@@ -23,6 +23,8 @@ namespace geomtools {
 
   void rotated_boxed_model::set_boxed_model (const i_model & model_)
   {
+    assert_unconstructed("rotated_boxed_model::set_boxed_model");
+
     // check if model has a logical volume with a box shape:
     const i_shape_3d & shape = model_.get_logical ().get_shape ();
     if (shape.get_shape_name () != box::BOX_LABEL)
@@ -56,8 +58,8 @@ namespace geomtools {
   }
   
   void rotated_boxed_model::_at_construct (const string & name_,
-				    const datatools::utils::properties & config_,
-				    models_col_t * models_)
+					   const datatools::utils::properties & config_,
+					   models_col_t * models_)
   {
     bool devel = i_model::g_devel;
     if (devel)

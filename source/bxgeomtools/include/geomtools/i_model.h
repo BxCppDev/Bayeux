@@ -56,6 +56,13 @@ namespace geomtools {
     geomtools::logical_volume _logical;
     
   public: 
+
+    void assert_constructed (const string & where_, 
+		             const string & what_ = "") const;
+
+    void assert_unconstructed (const string & where_, 
+			       const string & what_ = "") const;
+
     bool is_constructed () const;
     
     bool is_debug () const;

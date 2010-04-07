@@ -23,6 +23,8 @@ namespace geomtools {
 
   void replicated_boxed_model::set_number_of_items (size_t n_)
   {
+    assert_unconstructed("replicated_boxed_model::set_number_of_items");
+
     __number_of_items = n_;
   }
   
@@ -48,6 +50,8 @@ namespace geomtools {
  
   void replicated_boxed_model::set_boxed_model (const i_model & model_)
   {
+    assert_unconstructed("replicated_boxed_model::set_boxed_model");
+
     // check if model has a logical volume with a box shape:
     const i_shape_3d & shape = model_.get_logical ().get_shape ();
     if (shape.get_shape_name () != box::BOX_LABEL)
@@ -142,6 +146,7 @@ namespace geomtools {
 		<< "Number of items is zero !"; 
 	throw runtime_error (message.str ());	
       }
+
     set_number_of_items (number_of_items);
 
     bool axis_ok = false;
