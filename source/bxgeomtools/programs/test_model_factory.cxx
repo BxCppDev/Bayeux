@@ -138,7 +138,7 @@ int main (int argc_, char ** argv_)
       clog << "Name of the model : " << name << endl;
 
       if (draw)
-	{  
+	{   
 	  geomtools::gnuplot_drawer::g_devel = debug;
 	  geomtools::gnuplot_drawer GPD;
 	  GPD.set_view (drawer_view);

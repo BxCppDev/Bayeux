@@ -16,6 +16,12 @@ namespace geomtools {
 
   const string & stacked_boxed_model::get_material_name () const
   {
+    assert_constructed ("stacked_boxed_model::get_material_name");
+    return __get_material_name ();
+  }
+
+  const string & stacked_boxed_model::__get_material_name () const
+  {
     return __material_name;
   }
 
@@ -39,31 +45,39 @@ namespace geomtools {
 
   int stacked_boxed_model::get_stacking_axis () const
   {
+    assert_constructed ("stacked_boxed_model::get_stacking_axis");
+    return __get_stacking_axis ();
+  }
+
+  int stacked_boxed_model::__get_stacking_axis () const
+  {
     return __stacking_axis;
   }
 
   bool stacked_boxed_model::is_stacking_along_x () const
   {
-    return __stacking_axis == STACKING_ALONG_X;
+    return __get_stacking_axis () == STACKING_ALONG_X;
   }
   
   bool stacked_boxed_model::is_stacking_along_y () const
   {
-    return __stacking_axis == STACKING_ALONG_Y;
+    return __get_stacking_axis () == STACKING_ALONG_Y;
   }
   
   bool stacked_boxed_model::is_stacking_along_z () const
   {
-    return __stacking_axis == STACKING_ALONG_Z;
+    return __get_stacking_axis () == STACKING_ALONG_Z;
   }
   
   const geomtools::box & stacked_boxed_model::get_box () const
   {
+    assert_constructed ("stacked_boxed_model::get_box");
     return __solid;
   }
   
   const geomtools::box & stacked_boxed_model::get_solid () const
   {
+    assert_constructed ("stacked_boxed_model::get_solid");
     return __solid;
   }
 
@@ -179,6 +193,7 @@ namespace geomtools {
     string stacking_axis_label = "";
     int    stacking_axis;
     string material_name;
+    double x, y, z;
 
     /*** material ***/
     if (config_.has_key ("material.ref"))
@@ -342,10 +357,58 @@ namespace geomtools {
 	stacked_x = mmx.get_max ();
 	stacked_y = mmy.get_max ();
       }
+
+    double dim_x = stacked_x;
+    double dim_y = stacked_y;
+    double dim_z = stacked_z;
+    double lunit = CLHEP::mm;
+
+    if (config_.has_key ("x"))
+      {
+	x = config_.fetch_real ("x");
+	x *= lunit;
+	if (x < stacked_x)
+	  {
+	    ostringstream message;
+	    message << "stacked_boxed_model::_at_construct: "
+		    << "Enforced X dimension '" << x / CLHEP::mm << "' mm (<" << stacked_x / CLHEP::mm << ") is too small for stacked components to fit !"; 
+	    throw runtime_error (message.str ());    
+	  }
+        dim_x = x;
+      }  
+
+    if (config_.has_key ("y"))
+      {
+	y = config_.fetch_real ("y");
+	y *= lunit;
+	if (y < stacked_y)
+	  {
+	    ostringstream message;
+	    message << "stacked_boxed_model::_at_construct: "
+		    << "Enforced Y dimension '" << y / CLHEP::mm << "' mm (<" << stacked_y / CLHEP::mm << ") is too small for stacked components to fit !"; 
+	    throw runtime_error (message.str ());    
+	  }
+        dim_y = y;
+      }  
+
+    if (config_.has_key ("z"))
+      {
+	z = config_.fetch_real ("z");
+	z *= lunit;
+	if (z < stacked_z)
+	  {
+	    ostringstream message;
+	    message << "stacked_boxed_model::_at_construct: "
+		    << "Enforced Z dimension '" << z / CLHEP::mm << "' mm (<" << stacked_z / CLHEP::mm << ") is too small for stacked components to fit !"; 
+	    throw runtime_error (message.str ());    
+	  }
+        dim_z = z;
+      }  
+
     __solid.reset ();
-    __solid.set_x (stacked_x);
-    __solid.set_y (stacked_y);
-    __solid.set_z (stacked_z);
+    __solid.set_x (dim_x);
+    __solid.set_y (dim_y);
+    __solid.set_z (dim_z);
     if (! __solid.is_valid ())
       {
 	throw runtime_error ("stacked_boxed_model::_at_construct: Invalid solid !");
@@ -353,7 +416,7 @@ namespace geomtools {
 
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (__solid);
-    get_logical ().set_material_ref (get_material_name ());
+    get_logical ().set_material_ref (__get_material_name ());
     geomtools::visibility::extract (config_, _logical.parameters ());
 
     double pos;

@@ -70,6 +70,11 @@ namespace geomtools {
       labels_dict_t  __labels;
 
       geomtools::box __solid;
+    private:
+
+
+      int __get_stacking_axis () const;
+      const string & __get_material_name () const;
 
     public: 
       const string & get_material_name () const;

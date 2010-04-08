@@ -109,6 +109,8 @@ visibility.daughters.hidden : boolean = 0
 material.ref    : string = "air"
 stacking_axis   : string = "y"
 number_of_items : integer = 4
+x : real = 3000.
+y : real = 3000.
 
 boxed_model_0   : string = "many_rotx_box2"
 label_0         : string = "box9.label0"
