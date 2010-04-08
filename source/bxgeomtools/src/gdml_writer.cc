@@ -1053,7 +1053,7 @@ namespace geomtools {
 
     add_volume_auxiliaries (aux_);
 
-    _get_stream (STRUCTURE_SECTION) << "</volume >" << endl << endl; 
+    _get_stream (STRUCTURE_SECTION) << "</volume>" << endl << endl; 
   }
   
   void gdml_writer::add_volume_auxiliaries (const map<string,string> & aux_)
@@ -1109,7 +1109,7 @@ namespace geomtools {
 
     add_volume_auxiliaries (aux_);
 
-    _get_stream (STRUCTURE_SECTION) << "</volume >" << endl << endl; 
+    _get_stream (STRUCTURE_SECTION) << "</volume>" << endl << endl; 
   }
 
   void gdml_writer::add_volume (const string & name_,
@@ -1173,7 +1173,7 @@ namespace geomtools {
 		    << " >" << endl;
     _get_stream (SETUP_SECTION) << "  <world ref=" << '"' << world_ref_ << '"'
 		    << " />" << endl; 
-    _get_stream (SETUP_SECTION) << "</setup >" << endl << endl; 
+    _get_stream (SETUP_SECTION) << "</setup>" << endl << endl; 
   }
    
   
@@ -1192,10 +1192,21 @@ namespace geomtools {
   void gdml_writer::gdml_begin (ostream & out_, 
 				const string & schema_)
   {
-    out_ << "<gdml " 
+
+    out_ << "<gdml xmlns:gdml=" << '"' << "http://cern.ch/2001/Schemas/GDML" << '"'
+	 << ' ' << endl
+	 << "      xmlns:xsi=" << '"' << "http://www.w3.org/2001/XMLSchema-instance" << '"'
+	 << ' ' << endl
+	 << "      xsi:noNamespaceSchemaLocation="
+	 << '"' << schema_ << '"' 
+	 << " >" << endl;
+
+    /*
+      out_ << "<gdml " 
 	 << "xsi:noNamespaceSchemaLocation="
 	 << '"' << schema_ << '"' 
 	 << " >" << endl;
+    */
   }
 
   void gdml_writer::gdml_end (ostream & out_)
@@ -1257,6 +1268,9 @@ namespace geomtools {
     //gdml_section_begin (out_, SETUP_SECTION);
     out_ << _get_stream (SETUP_SECTION).str ();
     //gdml_section_end (out_, SETUP_SECTION);
+    out_ << endl;
+
+    gdml_end (out_);
     out_ << endl;
 
     return;

@@ -58,6 +58,7 @@ namespace geomtools {
     const ostringstream * __external_materials_stream;
 
     bool __support_replica;
+    bool __support_auxiliary;
 
   public:
 
@@ -65,9 +66,13 @@ namespace geomtools {
 
     void set_debug (bool d_);
   
+    bool is_auxiliary_supported () const;
+
+    void add_auxiliary_support (bool s_ = true);
+  
     bool is_replica_supported () const;
 
-    void add_replica_support (bool s_);
+    void add_replica_support (bool s_ = true);
 
     const datatools::utils::properties & parameters () const;
 

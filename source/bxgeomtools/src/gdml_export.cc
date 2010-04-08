@@ -23,6 +23,17 @@ namespace geomtools {
     __debug = d_;
   }
 
+  bool gdml_export::is_auxiliary_supported () const
+  {
+    return __support_auxiliary;
+  }
+
+  void gdml_export::add_auxiliary_support (bool s_)
+  {
+    __support_auxiliary = s_;
+  }
+
+
   bool gdml_export::is_replica_supported () const
   {
     return __support_replica;
@@ -51,6 +62,7 @@ namespace geomtools {
     __length_unit = DEFAULT_LENGTH_UNIT;
     __angle_unit = DEFAULT_ANGLE_UNIT;
     __external_materials_stream = 0;
+    __support_auxiliary = true;
     __support_replica = false;
   }
   
@@ -198,11 +210,7 @@ namespace geomtools {
     string shape_name = shape_.get_shape_name ();
 
     bool composite = false;
-    /*
-    if (__solid_refs.find)
-      {
-      }
-    */
+
     if (shape_.is_composite ())
       {
 	/*
@@ -218,7 +226,7 @@ namespace geomtools {
 	    message << "gdml_export::_export_gdml_solid: "
 		    << "Boolean solid type '"
 		    << shape_name
-		    << "' is not supported !";
+		    << "' is not supported yet !";
 	    throw runtime_error (message.str ());	
 	  }	
       } 
@@ -313,8 +321,11 @@ namespace geomtools {
 
     // export a dictionary of auxiliary properties:
     map<string, string> auxprops;
-    logical.parameters ().export_to_string_based_dictionary (auxprops, false);
-    
+    if (is_auxiliary_supported ())
+      {
+	logical.parameters ().export_to_string_based_dictionary (auxprops, false);
+      }
+
     if (! skip && logical.get_physicals ().size () == 0)
       {
 	__writer.add_volume (log_name, 
@@ -327,6 +338,12 @@ namespace geomtools {
     // there is a replica children:
     if (! skip && (__support_replica && logical.is_replica ()))
       {
+	cerr << endl << "DEVEL: gdml_export::_export_gdml_logical: " 
+	     << "**************"
+	     << " REPLICA "
+	     << "**************"
+	     << endl
+	     << endl;
 	const physical_volume & phys = *(logical.get_physicals ().begin ()->second);
 	if (devel) clog << "DEVEL: gdml_export::_export_gdml_logical: "
 			<< "replica phys=" << phys.get_name () << endl;

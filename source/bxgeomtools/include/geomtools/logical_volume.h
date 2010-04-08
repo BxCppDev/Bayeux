@@ -42,6 +42,7 @@ namespace geomtools {
     typedef map<string, const physical_volume *> physicals_col_t;
 
     static const string HAS_REPLICA_FLAG;
+
   private:
     string     __name;
     bool       __locked;
