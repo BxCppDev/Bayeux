@@ -35,8 +35,8 @@ namespace geomtools {
 
   using namespace std;
 
-  // define a geometry model with a boxed model rotated by some simple rotation
-  // 
+  // define a geometry model with some stacked boxed models along
+  // a specific axis (X, Y or Z)
   class stacked_boxed_model : public geomtools::i_model 
     {
     public:
@@ -46,9 +46,10 @@ namespace geomtools {
 
       enum stacking_axis_t
 	{
-	  STACKING_ALONG_X = 0,
-	  STACKING_ALONG_Y = 1,
-	  STACKING_ALONG_Z = 2
+	  STACKING_ALONG_INVALID = -1,
+	  STACKING_ALONG_X = AXIS_X,
+	  STACKING_ALONG_Y = AXIS_Y,
+	  STACKING_ALONG_Z = AXIS_Z
 	};
 
       struct boxed_item
@@ -57,6 +58,23 @@ namespace geomtools {
 	const i_model *  model;
 	placement        placmt;
 	physical_volume  phys;
+      public:
+	const string & get_label () const
+	{
+	  return label;
+	}
+	const i_model & get_model () const
+	{
+	  return *model;
+	}
+	const placement & get_placement () const
+	{
+	  return placmt;
+	}
+	const physical_volume & get_physical_volume () const
+	{
+	  return phys;
+	}
       };
 
       typedef map<int, boxed_item> boxed_dict_t;
@@ -70,6 +88,7 @@ namespace geomtools {
       labels_dict_t  __labels;
 
       geomtools::box __solid;
+
     private:
 
 
@@ -88,10 +107,13 @@ namespace geomtools {
       const geomtools::box & get_box () const;
       const geomtools::box & get_solid () const;
 
+      size_t get_number_of_boxed_models () const;
       void add_boxed_model (int i_, const i_model &, const string & label_ = "");
       bool has_boxed_model (const string & label_) const;
       const i_model & get_boxed_model (int i_) const;
+      const boxed_item & get_boxed_item (int i_) const;
       const i_model & get_boxed_model (const string & label_) const;
+      const boxed_item & get_boxed_item (const string & label_) const;
       const labels_dict_t & get_labels () const;
       const boxed_dict_t & get_models () const;
 

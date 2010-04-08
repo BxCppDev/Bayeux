@@ -130,10 +130,45 @@ namespace geomtools {
     return __labels;
   }
 
+  size_t stacked_boxed_model::get_number_of_boxed_models () const
+  {
+    return __boxed_models.size ();
+  }
+
   bool stacked_boxed_model::has_boxed_model (const string & label_) const
   {
     labels_dict_t::const_iterator found = __labels.find (label_);
     return found != __labels.end ();
+  }
+
+  const stacked_boxed_model::boxed_item & 
+  stacked_boxed_model::get_boxed_item (const string & label_) const
+  {
+    labels_dict_t::const_iterator found = __labels.find (label_);
+    if (found == __labels.end ())
+      {
+	ostringstream message;
+	message << "stacked_boxed_model::get_boxed_model: "
+		<< "Dictionary has no model with "
+		<< "label '" << label_ << "' !";
+	throw runtime_error (message.str ());
+      }
+    return (this->get_boxed_item (found->second));
+  }
+
+  const stacked_boxed_model::boxed_item & 
+  stacked_boxed_model::get_boxed_item (int i_) const
+  {
+    boxed_dict_t::const_iterator found = __boxed_models.find (i_);
+    if (found == __boxed_models.end ())
+      {
+	ostringstream message;
+	message << "stacked_boxed_model::get_boxed_item: "
+		<< "Dictionary has no model item with "
+		<< "index '" << i_ << "' !";
+	throw runtime_error (message.str ());
+      }
+    return found->second;
   }
 
   const i_model & stacked_boxed_model::get_boxed_model (const string & label_) const
@@ -169,10 +204,14 @@ namespace geomtools {
     return "geomtools::stacked_boxed_model";
   }
   
+  // ctor:
   stacked_boxed_model::stacked_boxed_model () : geomtools::i_model ()
   {
+    __material_name = "";
+    __stacking_axis = STACKING_ALONG_INVALID;
   }
   
+  // dtor:
   stacked_boxed_model::~stacked_boxed_model ()
   {
   }

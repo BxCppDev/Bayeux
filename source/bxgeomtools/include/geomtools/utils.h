@@ -273,13 +273,20 @@ namespace geomtools {
   string get_special_rotation_angle_label (int);
 
   /********************/
+  enum axis_t
+    {
+      AXIS_INVALID = -1,
+      AXIS_X = 0,
+      AXIS_Y = 1,
+      AXIS_Z = 2
+    };
 
   enum rotation_axis_t
     {
       ROTATION_AXIS_INVALID = -1,
-      ROTATION_AXIS_X = 0,
-      ROTATION_AXIS_Y = 1,
-      ROTATION_AXIS_Z = 2
+      ROTATION_AXIS_X = AXIS_X,
+      ROTATION_AXIS_Y = AXIS_Y,
+      ROTATION_AXIS_Z = AXIS_Z
     };
 
   bool check_rotation_axis (int);
