@@ -49,48 +49,29 @@ int main (int argc_, char ** argv_)
             }
           iarg++;
       }
-      
-      mat::isotope my_isotope_1("H ",1);  
-      mat::isotope my_isotope_2("H ",2);   
-      mat::isotope my_isotope_3("H ",3); 
-      mat::isotope my_isotope_4("O ",16);   
-      mat::isotope my_isotope_5(8,16);   
-      
-      mat::element my_element_1;
-      my_element_1.add_isotope(my_isotope_1, 0.2);
-      my_element_1.add_isotope(my_isotope_2, 0.5);
-      my_element_1.add_isotope(my_isotope_3, 0.3);
-      my_element_1.add_isotope(new mat::isotope("C ", 12), 0.1);  
-      my_element_1.tree_dump (cout, "my element 1");   
-      
-      
-/*
-       mat::map_isotope_weight   comp1;
-       
-       comp1[&my_isotope_1] = 1; 
-       comp1[&my_isotope_3] = 1;
-       comp1[&my_isotope_3] = 2;
-       	
-       mat::map_isotope_weight   comp2; comp1[&my_isotope_1] = 1; 
-       comp2[&my_isotope_4] = 1;
-       comp2[&my_isotope_5] = 2;
-       
-       
-       comp2.insert(pair<mat::isotope*, double>(&my_isotope_1, 2));  
-       comp2.insert(pair<mat::isotope*, double>(&my_isotope_2, 1));
+    
 
-       cerr<<endl;
-
-       mat::element my_element_1;
-       my_element_1.set_name("H2O");
-       my_element_1.tree_dump (cout, "my element 1");  
+      mat::isotope iso_H1; 
+      iso_H1 = mat::isotope("H ",1);   
+	
+      mat::isotope iso_H2 = mat::isotope ("H ",2);   
+      mat::isotope iso_H3 = mat::isotope ("H ",3);          
+      mat::isotope iso_H4 = mat::isotope ("H ",4);   
+      mat::isotope iso_H5 = mat::isotope (1,5);  
+ 
+      mat::element elt_H("Hydrogen");
+          
+      elt_H.add_isotope (iso_H1, 0.2);
+      elt_H.add_isotope (iso_H2, 0.5);
+      elt_H.add_isotope (iso_H3, 0.1); 
+      elt_H.build (); 
+      elt_H.tree_dump (cout, "my element Hydrogen");   
       
-   
-       cerr<<endl; 
-       my_element_1.set_composition(comp1);
-       my_element_1.set_composition(comp2);
-       my_element_1.tree_dump (cout, "my element 1");
-*/
+      elt_H.add_isotope (iso_H4, 0.1); 
+      elt_H.add_isotope (iso_H5, 0.1); 
+      elt_H.build (); 
+      elt_H.tree_dump (cout, "my element Hydrogen");     
+      
     }
   catch (exception & x)
     {

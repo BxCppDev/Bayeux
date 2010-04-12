@@ -125,6 +125,7 @@ EOF
     shell> pkgtool build bin
     shell> pkgtool build bin_test
     shell> pkgtool install
+    shell> pkgtool doc
 
     shell> pkgtool uninstall
     shell> pkgtool clean
@@ -181,7 +182,9 @@ while [ -n "$1" ]; do
 	    elif [ "$arg" = "info" ]; then
 		action_mode="info"	
 	    elif [ "$arg" = "check" ]; then
-		action_mode="check"	
+		action_mode="check"
+	    elif [ "$arg" = "doc" ]; then
+		action_mode="doc"	
 	    else
 		pkgtools__msg_error "Invalid argument!"
 		my_exit 1
@@ -312,7 +315,11 @@ function do_build_gmk ()
 function do_clean ()
 {
     __pkgtools__at_function_enter do_clean
-
+      
+    if [ -d ${the_base_dir}/doc/doxygen ]; then
+	rm -fr ${the_base_dir}/doc/doxygen
+    fi    
+    
     if [ -d ${the_gmk_dir} ]; then
 	do_clean_gmk $@
 	__pkgtools__at_function_exit
@@ -697,6 +704,24 @@ function do_check ()
     return 0
 }
 
+function do_doc ()
+{
+    info_msg "Generate documentation for package '${pack_name}'..."
+    which doxygen >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+	err_msg "Cannot find doxygen !"
+	return 1
+    fi
+    if [ ! -f ${the_base_dir}/pkgtools.d/${pack_name}.doxygen ]; then
+	err_msg "Missing '${the_base_dir}/pkgtools.d/${pack_name}.doxygen' configuration file !"
+	return 1
+    fi
+    # doxygen -g ${the_base_dir}/pkgtools.d/${pack_name}.doxygen
+    doxygen ${the_base_dir}/pkgtools.d/${pack_name}.doxygen 
+    
+
+    return 0
+}
 ##########################################################
 
 function main ()
@@ -789,7 +814,14 @@ function main ()
 	    return 1
 	fi
     fi
-
+   
+   if [ "${action_mode}" = "doc" ]; then
+    do_doc
+    if [ $? -ne 0 ]; then
+	err_msg "Documentation failed!"
+	exit 1
+    fi
+  fi
     __pkgtools__at_function_exit
     return 0
 }
