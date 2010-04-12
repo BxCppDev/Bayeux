@@ -138,13 +138,13 @@ namespace geomtools {
 		
       // ctor:
       regular_grid_placement (const placement & basic_placement_, 
-				 double column_step_,
-				 double row_step_,
-				 size_t number_of_columns_,
-				 size_t number_of_rows_,
-				 int mode_,
-				 bool centered_ = true);
-		
+			      double column_step_,
+			      double row_step_,
+			      size_t number_of_columns_,
+			      size_t number_of_rows_,
+			      int mode_,
+			      bool centered_ = true);
+      
        // dtor:
       virtual ~regular_grid_placement ();
 

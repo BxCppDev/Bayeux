@@ -88,12 +88,13 @@ namespace geomtools {
     return __categories_by_name;
   }
   
-  // ctor/dtor:
+  // ctor:
   id_mgr::id_mgr ()
   {
     __debug = false;
   }
   
+  // dtor:
   id_mgr::~id_mgr ()
   {
   }

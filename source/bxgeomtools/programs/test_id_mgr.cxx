@@ -31,13 +31,7 @@ int main (int argc_, char ** argv_)
                  {
                    debug = true;
                  }
-               /* Here you may add more switches...
-                * else if (...) 
-                *  { 
-                *    ... 
-                *  }
-                */
-               else 
+              else 
                  { 
                     clog << "warning: ignoring option '" << option << "'!" << endl; 
                  }
@@ -45,7 +39,6 @@ int main (int argc_, char ** argv_)
           else
             {
               string argument = token; 
-              /* Here you may add more argument handlers... */
               { 
                 clog << "warning: ignoring argument '" << argument << "'!" << endl; 
               }

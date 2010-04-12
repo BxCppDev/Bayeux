@@ -124,11 +124,12 @@ namespace geomtools {
     const categories_by_type_col_t & categories_by_type () const;
     const categories_by_name_col_t & categories_by_name () const;
 
-  // ctor/dtor:
   public: 
 
+    // ctor:
     id_mgr ();
 
+    // dtor:
     virtual ~id_mgr ();
   
     void init_from (const datatools::utils::multi_properties & mp_);
@@ -147,7 +148,6 @@ namespace geomtools {
     const category_info & get_category_info (int) const;
 
     const category_info & get_category_info (const string &) const;
-
 
   };
 
