@@ -8,8 +8,7 @@
 
 #include <genbb_help/genbb_mgr.h>
 
-int
-main (int argc_, char ** argv_)
+int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
   try
@@ -31,7 +30,7 @@ main (int argc_, char ** argv_)
     
       genbb::genbb_mgr mgr;
       mgr.set ("resources/se82_0nubb_mn.genbb");
-      if (debug)  mgr.dump ();
+      if (debug) mgr.dump ();
       mgr.init ();
       mgr.dump ();
 
@@ -51,15 +50,15 @@ main (int argc_, char ** argv_)
 	      pe.particles.pop_front ();
 	      if (pp.is_electron ())
 		{
-		  double p = pp.momentum.mag ();
+		  double p = pp.get_momentum ().mag ();
 		  if (debug) std::clog << "debug: p=" 
 				       << p / CLHEP::MeV 
 				       << " MeV" << std::endl;
-		  double w = std::sqrt(p * p + me * me);
+		  double w = pp.get_total_energy ();
 		  if (debug) std::clog << "debug: w=" 
 				       << w / CLHEP::MeV 
 				       << " MeV" << std::endl;
-		  double e = w - me;
+		  double e = pp.get_kinetic_energy ();
 		  if (debug) std::clog << "debug: e=" 
 				       << e / CLHEP::MeV 
 				       << " MeV" << std::endl;

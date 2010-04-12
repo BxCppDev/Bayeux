@@ -10,8 +10,7 @@
 
 #include <genbb_help/genbb_mgr.h>
 
-int
-main (int argc_, char ** argv_)
+int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
   try
@@ -68,29 +67,29 @@ main (int argc_, char ** argv_)
 	  if (debug) std::clog << "debug: me=" 
 			       << me / CLHEP::MeV 
 			       << " MeV" << std::endl;
-	  if (pe.particles.size ()== 2)
+	  if (pe.get_particles ().size ()== 2)
 	    {
-	      genbb::primary_particle pp1 = pe.particles.front ();
-	      pe.particles.pop_front ();
-	      genbb::primary_particle pp2 = pe.particles.front ();
-	      pe.particles.pop_front ();
+	      genbb::primary_particle pp1 = pe.get_particles ().front ();
+	      pe.get_particles ().pop_front ();
+	      genbb::primary_particle pp2 = pe.get_particles ().front ();
+	      pe.get_particles ().pop_front ();
 	      if (! pp1.is_electron () && ! pp2.is_electron ())
 		{
 		  continue;
 		}
 	      if (debug) 
 		{
-		  std::clog << "p1=" << pp1.momentum / CLHEP::MeV << std::endl;
-		  std::clog << "p2=" << pp2.momentum / CLHEP::MeV << std::endl;
+		  std::clog << "p1=" << pp1.get_momentum () / CLHEP::MeV << std::endl;
+		  std::clog << "p2=" << pp2.get_momentum () / CLHEP::MeV << std::endl;
 		}
-	      double p1 = pp1.momentum.mag ();
-	      double p2 = pp2.momentum.mag ();
+	      double p1 = pp1.get_momentum ().mag ();
+	      double p2 = pp2.get_momentum ().mag ();
 	      if (debug) 
 		{
 		  std::clog << "|p1|=" << p1 / CLHEP::MeV  << std::endl;
 		  std::clog << "|p2|=" << p2 / CLHEP::MeV  << std::endl;
 		}
-	      double p1_dot_p2 = pp1.momentum * pp2.momentum;
+	      double p1_dot_p2 = pp1.get_momentum () * pp2.get_momentum ();
 	      double cos_theta = p1_dot_p2 / (p1 * p2);
 	      std::cout << cos_theta << std::endl;
 	    }

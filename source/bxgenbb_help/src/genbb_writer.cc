@@ -6,10 +6,9 @@
 
 namespace genbb {
 
-  void 
-  genbb_writer::run()
+  void genbb_writer::run ()
   {
-    init();
+    init ();
 
     std::ofstream __out ( __fout.c_str() );
 
@@ -67,15 +66,13 @@ namespace genbb {
   }
   
 
-  double
-  genbb_writer::myrandom ( double min_, double max_ )
+  double genbb_writer::myrandom ( double min_, double max_ )
   {
     return ( max_ - min_ ) * drand48() + min_;
   }
   
 
-  void 
-  genbb_writer::init()
+  void genbb_writer::init ()
   {
     if ( __Npart < 0        ||
 	 __part_per_evt < 0 ||
@@ -93,8 +90,7 @@ namespace genbb {
   }
   
 
-  void 
-  genbb_writer::dump ( std::ostream & out_ ) const
+  void genbb_writer::dump ( std::ostream & out_ ) const
   {
     out_ << "genbb_writer::dump: " << std::endl;
     out_ << "|-- debug:         " << __debug        << std::endl;
@@ -109,8 +105,8 @@ namespace genbb {
   }
 
 
-  // ctor/dtor:
-  genbb_writer::genbb_writer()
+  // ctor:
+  genbb_writer::genbb_writer ()
   {
     __debug        = false;
     __seed         = 314159;
@@ -124,7 +120,8 @@ namespace genbb {
     srand48 ( __seed );
   }
   
-  genbb_writer::~genbb_writer()
+  // dtor:
+  genbb_writer::~genbb_writer ()
   {
   }
 

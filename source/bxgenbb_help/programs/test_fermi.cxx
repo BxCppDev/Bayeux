@@ -11,8 +11,7 @@
 
 using namespace std;
 
-int
-main(int argc_, char ** argv_)
+int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
   try

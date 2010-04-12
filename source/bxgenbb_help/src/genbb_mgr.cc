@@ -6,154 +6,7 @@
 
 namespace genbb {
 
-  const std::string primary_particle::SERIAL_TAG = "__genbb::primary_particle__";
-
-  void primary_particle::reset ()
-  {
-    type = UNDEF;
-    time = 0.0;
-    geomtools::invalidate (momentum);
-  }
-
-  primary_particle::primary_particle ()
-  {
-    reset ();
-  }
-
-  primary_particle::primary_particle (int32_t type_, 
-				      double time_, 
-				      const geomtools::vector_3d & mom_)
-  {
-    type = type_;
-    time = time_;
-    momentum = mom_;
-  }
-
-  const std::string & primary_particle::get_serial_tag () const
-  {
-    return primary_particle::SERIAL_TAG;
-  }
-
-  double primary_particle::get_mass () const
-  {
-    if (is_positron () || is_electron ())
-      {
-	return CLHEP::electron_mass_c2; 
-      }
-    if (is_alpha ()) 
-      {
-	return 3.72738 *CLHEP::GeV;
-      }
-    //if (is_gamma ()) 
-    return 0.0;
-  }
-
-  double primary_particle::get_kinetic_energy () const
-  {
-    double mass = get_mass ();
-    double kinetic_energy 
-      = std::sqrt (momentum.mag () * momentum.mag () + mass * mass) - mass;
-    return kinetic_energy;
-  }
-
-  double primary_particle::get_initial_angle () const
-  {
-    double total_momentum = momentum.mag ();
-    double cos_phi        = momentum.z() / total_momentum;
-    /*
-    std::cerr << "cos(phi) = " << cos_phi << std::endl
-	      << "|-- phi = " << acos ( cos_phi ) << " rad" << std::endl
-	      << "`-- phi = " << acos ( cos_phi ) * 180. / M_PI
-	      << " deg" << std::endl;
-    */
-    return acos ( cos_phi ) * 180. / M_PI;
-  }
-
-  void 
-  primary_particle::dump (std::ostream & out_,
-			  const std::string & indent_) const
-  {
-    std::string indent = indent_;
-    
-    out_ << indent << "genbb::primary_particle:" << std::endl;
-    if (is_valid ())
-      {
-	double mass = get_mass ();
-	double energy = get_kinetic_energy ();
-
-	out_ << indent << "|-- type: " << type << " (" << get_label (type) << ')'
-	     << std::endl;
-	std::ostringstream time_oss;
-	time_oss.precision (15);
-	time_oss << time / CLHEP::ns;
-	out_ << indent << "|-- time: " << time_oss.str ()
-	     << " ns" << std::endl;
-	out_ << indent << "|-- kinetic energy: " << energy / CLHEP::MeV 
-	     << " MeV" << std::endl;
-	out_ << indent << "`-- momentum: " 
-	     << momentum / CLHEP::MeV 
-	     << " MeV" << std::endl;
-      }
-    else
-      {
-	out_ << indent<< "`-- type: " << "<invalid>" << std::endl;
-      }
-  }
-  
-  std::string 
-  primary_particle::get_label (int type_)
-  {
-    switch (type_)
-      {
-      case 1: return "gamma";
-      case 2: return "e+";
-      case 3: return "e-";
-      case 47: return "alpha";
-      }
-    return "<unknown>";
-  }
- 
-  /************************************************************/
-
-  const std::string primary_event::SERIAL_TAG = "__genbb::primary_event__";
-
-  const std::string & primary_event::get_serial_tag () const
-  {
-    return primary_event::SERIAL_TAG;
-  }
-
-  void 
-  primary_event::dump (std::ostream & out_,
-		       const std::string & indent_) const
-  {
-    std::string indent = indent_;
-    out_ << indent << "genbb::primary_event:" << std::endl;
-    if (is_valid ())
-      {
-	out_ << indent << "|-- time: " << time << std::endl;
-	out_ << indent << "|-- #particles: " << particles.size () << std::endl;
-	for (particles_col_t::const_iterator it = particles.begin ();
-	     it != particles.end ();
-	     it++)
-	  {
-	    it->dump (out_, (indent + "|   ")); 
-	  }
-	out_ << indent << "|-- classification: '" << get_classification ()
-	     << "'" << std::endl;
-	out_ << indent << "|-- initial_energy: " << get_initial_energy ()
-	     << " MeV" << std::endl;
-	out_ << indent << "`-- initial_angle:  " << get_initial_angle ()
-	     << " rad" << std::endl;
-      }
-    else
-      {
-	out_ << indent << "`-- status: " << "<invalid>" << std::endl;
-      }
-  }
- 
-  /************************************************************/
-
-  // ctor/dtor:
+  // ctor:
   genbb_mgr::genbb_mgr (int format_)
   {
     __debug = false;
@@ -163,13 +16,13 @@ namespace genbb {
     set_format (format_);
   }
   
+  // dtor:
   genbb_mgr::~genbb_mgr ()
   {
     reset ();
   }
 
-  void 
-  genbb_mgr::set_format (int format_)
+  void genbb_mgr::set_format (int format_)
   {
     if (__initialized)
       {
@@ -179,17 +32,10 @@ namespace genbb {
       {
 	throw std::runtime_error ("genbb_mgr::set: Invalid format!");
       }
-    /*
-    if (format_ == FORMAT_BOOST)
-      {
-	throw std::runtime_error ("genbb_mgr::set: Boost format is not supported yet!");
-      }
-    */
     __format = format_;
   }
 
-  void 
-  genbb_mgr::set (const std::string & filename_)
+  void genbb_mgr::set (const std::string & filename_)
   {
     if (__initialized)
       {
@@ -198,32 +44,21 @@ namespace genbb {
     __filenames.push_back (filename_);
   }
 
-  bool 
-  genbb_mgr::has_next ()
+  bool genbb_mgr::has_next ()
   {
     return __current.is_valid ();
   }
   
-  void 
-  genbb_mgr::load_next (primary_event & event_, 
-			bool compute_classification_,
-			bool compute_initial_energy_,
-			bool compute_initial_angle_)
+  void genbb_mgr::load_next (primary_event & event_, 
+			     bool compute_classification_)
   {
     event_ = __current;
     if (compute_classification_) event_.compute_classification ();
-    if (compute_initial_energy_) event_.compute_initial_energy ();
-    if (compute_initial_angle_)  event_.compute_initial_angle ();
     __load_next ();
   }
 
-  void 
-  genbb_mgr::__load_next_boost ()
+  void genbb_mgr::__load_next_boost ()
   {
-    /*
-      throw std::runtime_error ("genbb_mgr::__load_next_boost: Not implemented yet!");  
-    */
-
     if (! __reader.is_initialized ())
       {
 	std::string filename;
@@ -266,8 +101,7 @@ namespace genbb {
       }
   }
 
-  void 
-  genbb_mgr::__load_next ()
+  void genbb_mgr::__load_next ()
   {
     __current.reset ();
     if (__format == FORMAT_GENBB)
@@ -280,8 +114,7 @@ namespace genbb {
       }
   }
     
-  void 
-  genbb_mgr::__load_next_genbb ()
+  void genbb_mgr::__load_next_genbb ()
   {
     if (__in == 0)
       {
@@ -338,12 +171,14 @@ namespace genbb {
     for (int i = 0; i < npart; i++)
       {
 	primary_particle pp;
+	int part_type;
 	double x, y ,z, time_shift;
 	// 2009-07-14 FM: Vladimir Tretyak email about particles' time shifts: 
 	//*__in >> std::ws >> pp.type >> x >> y >> z >> pp.time; 
-	*__in >> std::ws >> pp.type >> x >> y >> z >> time_shift;
+	*__in >> std::ws >> part_type >> x >> y >> z >> time_shift;
 	part_time += time_shift; 
-	pp.time = part_time;
+	pp.set_type (part_type);
+	pp.set_time (part_time * CLHEP::second); // GENBB unit is s
 	
 	if (! *__in)
 	  {
@@ -353,10 +188,10 @@ namespace genbb {
 	    __in = 0;
 	    throw std::runtime_error (message.str ());
 	  }
-	pp.time *= CLHEP::second;  // GENBB unit is s
-	pp.momentum.set (x, y, z);
-	pp.momentum *= CLHEP::MeV; // GENBB unit is MeV/c
-	__current.particles.push_back (pp);
+	geomtools::vector_3d p (x, y, z);
+	p *= CLHEP::MeV; // GENBB unit is MeV/c
+	pp.set_momentum (p);
+	__current.add_particle (pp);
       }
     *__in >> std::ws;
     if (__fin.eof ())
@@ -366,8 +201,7 @@ namespace genbb {
       }
   }
 
-  void 
-  genbb_mgr::dump (std::ostream & out_) const
+  void genbb_mgr::dump (std::ostream & out_) const
   {
     out_ << "genbb_mgr::dump: " << std::endl;
     out_ << "|-- debug : " << __debug << std::endl;
@@ -394,17 +228,14 @@ namespace genbb {
 
   }
 
-  void 
-  genbb_mgr::init ()
+  void genbb_mgr::init ()
   {
     if (__initialized) return;
-
     __load_next ();
     __initialized = true;
   }
 
-  void
-  genbb_mgr::reset ()
+  void genbb_mgr::reset ()
   {
     if (! __initialized) return;
     __filenames.clear ();

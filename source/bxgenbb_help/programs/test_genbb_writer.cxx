@@ -8,7 +8,6 @@
 
 #include <genbb_help/genbb_writer.h>
 
-
 void usage(std::ostream & out_)
 {
   out_ << "\ntest_genbb_writer usage:" << std::endl;
@@ -30,8 +29,7 @@ void usage(std::ostream & out_)
 }
 
 
-int
-main (int argc_, char ** argv_)
+int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
   try
@@ -58,7 +56,7 @@ main (int argc_, char ** argv_)
 		}
 	      else if (arg == "-h" || arg == "--help" )
 		{
-		  usage ( std::cerr );
+		  usage ( std::clog );
 		  return 0;
 		}
 	      else if ( arg == "-s" || arg == "--seed" ) 
@@ -116,7 +114,7 @@ main (int argc_, char ** argv_)
     if ( N < 0 || Emin < 0 || Emax < 0 || 
 	 phi_min < 0 || phi_max > 180. )
       {
-	usage ( std::cerr );
+	usage ( std::clog );
 	return 1;
       }
       genbb::genbb_writer writer;
@@ -142,7 +140,7 @@ main (int argc_, char ** argv_)
 	writer.set_type ( -1 );
 
       if ( debug )
-	writer.dump( std::cerr );
+	writer.dump( std::clog );
 
       writer.run();
 

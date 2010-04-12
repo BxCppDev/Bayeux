@@ -14,8 +14,7 @@
 
 using namespace std;
 
-int
-main (int argc_, char ** argv_)
+int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
   try
@@ -114,7 +113,6 @@ main (int argc_, char ** argv_)
       mygsl::rng r;
       r.init (rng_id, rng_seed);
 
-
       genbb::genbb_mgr mgr;
       
       if (boost::algorithm::iends_with (input_file, ".genbb")) 
@@ -124,7 +122,7 @@ main (int argc_, char ** argv_)
 	}
       
       mgr.set (input_file.c_str ()); 
-      if (debug)  mgr.dump ();
+      if (debug) mgr.dump ();
       mgr.init ();
       mgr.dump ();
 
@@ -143,32 +141,32 @@ main (int argc_, char ** argv_)
 	  if (debug) clog << "debug: me=" 
 			  << me / CLHEP::MeV 
 			  << " MeV" << endl;
-	  if (pe.particles.size () == 2)
+	  if (pe.get_particles ().size () == 2)
 	    {
-	      genbb::primary_particle pp1 = pe.particles.front ();
-	      pe.particles.pop_front ();
-	      genbb::primary_particle pp2 = pe.particles.front ();
-	      pe.particles.pop_front ();
+	      genbb::primary_particle pp1 = pe.get_particles ().front ();
+	      pe.get_particles ().pop_front ();
+	      genbb::primary_particle pp2 = pe.get_particles ().front ();
+	      pe.get_particles ().pop_front ();
 	      if (! pp1.is_electron () && ! pp2.is_electron ())
 		{
 		  continue;
 		}
 	      if (debug) 
 		{
-		  clog << "p1=" << pp1.momentum / CLHEP::MeV << endl;
-		  clog << "p2=" << pp2.momentum / CLHEP::MeV << endl;
+		  clog << "p1=" << pp1.get_momentum () / CLHEP::MeV << endl;
+		  clog << "p2=" << pp2.get_momentum () / CLHEP::MeV << endl;
 		}
-	      double p1 = pp1.momentum.mag ();
-	      double p2 = pp2.momentum.mag ();
+	      double p1 = pp1.get_momentum ().mag ();
+	      double p2 = pp2.get_momentum ().mag ();
 	      if (debug) 
 		{
 		  clog << "|p1|=" << p1 / CLHEP::MeV  << endl;
 		  clog << "|p2|=" << p2 / CLHEP::MeV  << endl;
 		}
-	      double p1_dot_p2 = pp1.momentum * pp2.momentum;
+	      double p1_dot_p2 = pp1.get_momentum () * pp2.get_momentum ();
 	      double cos_theta = p1_dot_p2 / (p1 * p2);
-	      double e1 = sqrt (p1 * p1 + me * me) - me;
-	      double e2 = sqrt (p2 * p2 + me * me) - me;
+	      double e1 = pp1.get_kinetic_energy ();
+	      double e2 = pp2.get_kinetic_energy ();
 
 	      double fwhm1 = energy_resolution * sqrt (e1 / CLHEP::MeV);
 	      double fwhm2 = energy_resolution * sqrt (e2 / CLHEP::MeV);
