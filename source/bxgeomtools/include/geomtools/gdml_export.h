@@ -45,6 +45,7 @@ namespace geomtools {
     static bool g_devel;
     static const string DEFAULT_LENGTH_UNIT;
     static const string DEFAULT_ANGLE_UNIT;
+    static const string DEFAULT_DENSITY_UNIT;
 
   private:
     bool __debug;
@@ -53,6 +54,7 @@ namespace geomtools {
     const model_factory * __factory;
     string       __length_unit;
     string       __angle_unit;
+    string       __density_unit;
     list<string> __solid_refs;
     list<string> __volumes_refs;
     const ostringstream * __external_materials_stream;

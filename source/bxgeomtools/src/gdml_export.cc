@@ -10,8 +10,9 @@ namespace geomtools {
 
   bool gdml_export::g_devel = false;
 
-  const string gdml_export::DEFAULT_LENGTH_UNIT = "millimeter";
-  const string gdml_export::DEFAULT_ANGLE_UNIT  = "degree";
+  const string gdml_export::DEFAULT_LENGTH_UNIT = "mm";
+  const string gdml_export::DEFAULT_ANGLE_UNIT  = "deg";
+  const string gdml_export::DEFAULT_DENSITY_UNIT = "g/cm3";
 
   bool gdml_export::is_debug () const
   {
@@ -61,6 +62,7 @@ namespace geomtools {
     __factory = 0;
     __length_unit = DEFAULT_LENGTH_UNIT;
     __angle_unit = DEFAULT_ANGLE_UNIT;
+    __density_unit = DEFAULT_DENSITY_UNIT;
     __external_materials_stream = 0;
     __support_auxiliary = true;
     __support_replica = false;
@@ -170,6 +172,11 @@ namespace geomtools {
     if (__parameters.has_key ("angle_unit"))
       {
 	__angle_unit = __parameters.fetch_string ("angle_unit");
+      }
+
+    if (__parameters.has_key ("density_unit"))
+      {
+	__density_unit = __parameters.fetch_string ("density_unit");
       }
 
     // add a fake material:

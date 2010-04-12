@@ -18,6 +18,46 @@ namespace geomtools {
   const string gdml_writer::STRUCTURE_SECTION = "structure";
   const string gdml_writer::SETUP_SECTION     = "setup";
 
+  bool gdml_writer::__g_using_html_symbols = false;
+
+  void gdml_writer::set_using_html_symbols (bool u_)
+  {
+    __g_using_html_symbols = u_;
+  }
+
+  bool gdml_writer::is_using_html_symbols ()
+  {
+    return __g_using_html_symbols;
+  }
+
+  string gdml_writer::to_html (const string & name_)
+  {
+    string str1 = name_;
+    if (gdml_writer::is_using_html_symbols ())
+      {
+	boost::replace_all (str1, "." , "&#46;");
+	boost::replace_all (str1, "[" , "&#91;");
+	boost::replace_all (str1, "]" , "&#93;");
+	boost::replace_all (str1, "{" , "&#123;");
+	boost::replace_all (str1, "}" , "&#124;");
+      }
+    return str1;
+  }
+
+  string gdml_writer::to_ascii (const string & name_)
+  {
+    string str1 = name_;
+    //if (is_using_html_symbols ())
+      {
+	boost::replace_all (str1 , "&#46;"  , ".");
+	boost::replace_all (str1 , "&#91;"  , "[");
+	boost::replace_all (str1 , "&#93;"  , "]");
+	boost::replace_all (str1 , "&#123;" , "{");
+	boost::replace_all (str1 , "&#124;" , "}");
+      }
+    return str1;
+  }
+
   const ostringstream & gdml_writer::get_stream (const string & section_) const
   {
     return _get_stream (section_);
@@ -122,8 +162,8 @@ namespace geomtools {
 				  double value_)
   {
     _get_stream (DEFINE_SECTION) << "<constant" 
-		    << " name=" << '"' << name_ << '"' 
-		    << " value="  << '"';
+				 << " name=" << '"' << to_html (name_) << '"' 
+				 << " value="  << '"';
     _get_stream (DEFINE_SECTION).precision (15);
     _get_stream (DEFINE_SECTION) << value_ << '"';
     _get_stream (DEFINE_SECTION) << " />" << endl;
@@ -137,7 +177,7 @@ namespace geomtools {
   {
     double unit = units::get_unit_from (quantity_type_, unit_str_);
     _get_stream (DEFINE_SECTION) << "<quantity" 
-		    << " name=" << '"' << name_ << '"' 
+		    << " name=" << '"' << to_html (name_) << '"' 
 		    << " type=" << '"' << quantity_type_ << '"' 
 		    << " value="  << '"';
     _get_stream (DEFINE_SECTION).precision (15);
@@ -151,7 +191,7 @@ namespace geomtools {
 				  double value_)
   {
     _get_stream (DEFINE_SECTION) << "<variable" 
-		    << " name=" << '"' << name_ << '"' 
+		    << " name=" << '"' << to_html (name_) << '"' 
 		    << " value="  << '"';
     _get_stream (DEFINE_SECTION).precision (15);
     _get_stream (DEFINE_SECTION) << value_ << '"'
@@ -163,7 +203,7 @@ namespace geomtools {
 				  const string & expr_value_)
   {
     _get_stream (DEFINE_SECTION) << "<variable" 
-		    << " name=" << '"' << name_ << '"' 
+		    << " name=" << '"' << to_html (name_) << '"' 
 		    << " value="  << '"' << expr_value_ << '"' 
 		    << " />" << endl;
     _get_stream (DEFINE_SECTION) << endl;
@@ -176,7 +216,7 @@ namespace geomtools {
     //clog << "DEVEL: gdml_writer::add_position: Entering..." << endl;
     double unit = units::get_length_unit_from (unit_str_);
     _get_stream (DEFINE_SECTION) << "<position" 
-		    << " name=" << '"' << name_ << '"' 
+		    << " name=" << '"' << to_html (name_) << '"' 
 		    << " x=" << '"';
     _get_stream (DEFINE_SECTION).precision (15);
     _get_stream (DEFINE_SECTION) << x_ / unit << '"'
@@ -213,7 +253,7 @@ namespace geomtools {
 	throw runtime_error (message.str ());		
       }
     _get_stream (DEFINE_SECTION) << "<rotation" 
-		    << " name=" << '"' << name_ << '"' 
+		    << " name=" << '"' << to_html (name_) << '"' 
 		    << " " << axis_ << "=" << '"';
     _get_stream (DEFINE_SECTION).precision (15);
     _get_stream (DEFINE_SECTION) << (angle_ / angle_unit) << '"' 
@@ -228,7 +268,7 @@ namespace geomtools {
   {
     double angle_unit = units::get_angle_unit_from (unit_str_);
     _get_stream (DEFINE_SECTION) << "<rotation" 
-				 << " name=" << '"' << name_ << '"'; 
+				 << " name=" << '"' << to_html (name_) << '"'; 
 
     double xx = rot_.xx ();
     double yx = rot_.yx ();
@@ -281,7 +321,7 @@ namespace geomtools {
 				 double a_)
   {
     _get_stream (MATERIALS_SECTION) << "<isotope" 
-		       << " name=" << '"' << name_ << '"' 
+		       << " name=" << '"' << to_html (name_) << '"' 
 		       << " Z=" << '"' << atomic_number_ << '"' 
 		       << " N=" << '"' << number_of_nucleons_ << '"' 
 		       << " >" << endl;
@@ -300,7 +340,7 @@ namespace geomtools {
 				 double a_)
   {
     _get_stream (MATERIALS_SECTION) << "<element" 
-		       << " name=" << '"' << name_ << '"' 
+		       << " name=" << '"' << to_html (name_) << '"' 
 		       << " Z=" << '"' << atomic_number_ << '"' 
 		       << " formula=" << '"' << formula_ << '"' 
 		       << " >" << endl;
@@ -317,7 +357,7 @@ namespace geomtools {
   {
     ostringstream materials_stream;
     materials_stream << "<element" 
-		       << " name=" << '"' << name_ << '"' 
+		       << " name=" << '"' << to_html (name_) << '"' 
 		       << " >" << endl;
     double s = 0.0;
     for (map<string, double>::const_iterator i = fractions_.begin ();
@@ -423,7 +463,7 @@ namespace geomtools {
 				  double a_)
   {
      _get_stream (MATERIALS_SECTION) << "<material" 
-			<< " name=" << '"' << name_ << '"' 
+			<< " name=" << '"' << to_html (name_) << '"' 
 			<< " Z=" << '"';
      _get_stream (MATERIALS_SECTION).precision (15);
      _get_stream (MATERIALS_SECTION) << atomic_number_ << '"' << " >" << endl;
@@ -452,7 +492,7 @@ namespace geomtools {
   {
     ostringstream materials_stream;
     materials_stream << "<material" 
-		       << " name=" << '"' << name_ << '"' 
+		       << " name=" << '"' << to_html (name_) << '"' 
 		       << " formula=" << '"' << formula_ << '"' 
 		       << " >" << endl;
      
@@ -510,7 +550,7 @@ namespace geomtools {
   {
     ostringstream materials_stream;
     materials_stream << "<material" 
-		       << " name=" << '"' << name_ << '"' 
+		       << " name=" << '"' << to_html (name_) << '"' 
 		       << " formula=" << '"' << formula_ << '"' 
 		       << " >" << endl;
      
@@ -665,7 +705,7 @@ namespace geomtools {
 
     ostringstream solids_stream;
     solids_stream << "<" <<  "box"
-		  << " name=" << '"' << name_ << '"';
+		  << " name=" << '"' << to_html (name_) << '"';
 
     solids_stream << " x=" << '"';
     solids_stream.precision (15);
@@ -702,7 +742,7 @@ namespace geomtools {
 
     ostringstream solids_stream;
     solids_stream << "<" <<  "sphere"
-		  << " name=" << '"' << name_ << '"';
+		  << " name=" << '"' << to_html (name_) << '"';
 
     solids_stream << " r=" << '"';
     solids_stream.precision (15);
@@ -727,7 +767,7 @@ namespace geomtools {
 
     ostringstream solids_stream;
     solids_stream << "<" <<  "sphere"
-		  << " name=" << '"' << name_ << '"';
+		  << " name=" << '"' << to_html (name_) << '"';
 
     if (rmin_ > 0.0)
       {
@@ -781,7 +821,7 @@ namespace geomtools {
 
     ostringstream solids_stream;
     solids_stream << "<" <<  "tube"
-		  << " name=" << '"' << name_ << '"';
+		  << " name=" << '"' << to_html (name_) << '"';
 
     if (rmin_ > 0.0)
       {
@@ -864,13 +904,13 @@ namespace geomtools {
       }
     ostringstream solids_stream;
     solids_stream << "<" <<  boolean_type_
-		  << " name=" << '"' << name_ << '"'
+		  << " name=" << '"' << to_html (name_) << '"'
 		  << " >" << endl;
 
-    solids_stream << "  <first ref=" << '"' <<  first_ref_ << '"' << " />" << endl;
-    solids_stream << "  <second ref=" << '"' <<  second_ref_ << '"' << " />" << endl;
-    solids_stream << "  <positionref ref=" << '"' <<  position_ref_ << '"' << " />" << endl;
-    solids_stream << "  <rotationref ref=" << '"' <<  rotation_ref_ << '"' << " />" << endl;
+    solids_stream << "  <first ref=" << '"' <<  to_html (first_ref_) << '"' << " />" << endl;
+    solids_stream << "  <second ref=" << '"' <<  to_html (second_ref_) << '"' << " />" << endl;
+    solids_stream << "  <positionref ref=" << '"' <<  to_html (position_ref_) << '"' << " />" << endl;
+    solids_stream << "  <rotationref ref=" << '"' <<  to_html (rotation_ref_) << '"' << " />" << endl;
 
     solids_stream << "</" <<  boolean_type_ << ">" << endl << endl; 
     _get_stream (SOLIDS_SECTION) << solids_stream.str (); 
@@ -939,7 +979,7 @@ namespace geomtools {
 
     ostringstream solids_stream;
     solids_stream << "<" <<  solid_type_
-		  << " name=" << '"' << name_ << '"';
+		  << " name=" << '"' << to_html (name_) << '"';
     datatools::utils::properties::keys_col_t keys;
     params_.keys (keys);
     for (datatools::utils::properties::keys_col_t::const_iterator i = keys.begin ();
@@ -1022,12 +1062,12 @@ namespace geomtools {
 					const map<string, string> & aux_)
   {
     double lunit = units::get_length_unit_from (lunit_str_);
-    _get_stream (STRUCTURE_SECTION) << "<volume" << " name=" << '"' << name_ << '"' << " >" << endl;
-    _get_stream (STRUCTURE_SECTION) << "  <solidref   " << " ref=" << '"' << solid_ref_ << '"' << " />" << endl;
-    _get_stream (STRUCTURE_SECTION) << "  <materialref" << " ref=" << '"' << material_ref_ << '"' << " />" << endl;
+    _get_stream (STRUCTURE_SECTION) << "<volume" << " name=" << '"' << to_html (name_) << '"' << " >" << endl;
+    _get_stream (STRUCTURE_SECTION) << "  <materialref" << " ref=" << '"' << to_html (material_ref_) << '"' << " />" << endl;
+    _get_stream (STRUCTURE_SECTION) << "  <solidref   " << " ref=" << '"' << to_html (solid_ref_) << '"' << " />" << endl;
 
     _get_stream (STRUCTURE_SECTION) << "  <replicavol number=" << '"' << replicavol_.number << '"' << " >" << endl;
-    _get_stream (STRUCTURE_SECTION) << "    <volumeref  " << " ref=" << '"' << replicavol_.volumeref << '"' << " />" << endl;
+    _get_stream (STRUCTURE_SECTION) << "    <volumeref  " << " ref=" << '"' << to_html (replicavol_.volumeref) << '"' << " />" << endl;
 
     _get_stream (STRUCTURE_SECTION) << "    <" << replicavol_.mode << ">" << endl;
 
@@ -1081,9 +1121,9 @@ namespace geomtools {
 				const list<physvol> & phys_vols_,
 				const map<string, string> & aux_)
   {
-    _get_stream (STRUCTURE_SECTION) << "<volume" << " name=" << '"' << name_ << '"' << " >" << endl;
-    _get_stream (STRUCTURE_SECTION) << "  <solidref   " << " ref=" << '"' << solid_ref_ << '"' << " />" << endl;
-    _get_stream (STRUCTURE_SECTION) << "  <materialref" << " ref=" << '"' << material_ref_ << '"' << " />" << endl;
+    _get_stream (STRUCTURE_SECTION) << "<volume" << " name=" << '"' << to_html (name_) << '"' << " >" << endl;
+    _get_stream (STRUCTURE_SECTION) << "  <materialref" << " ref=" << '"' << to_html (material_ref_) << '"' << " />" << endl;
+    _get_stream (STRUCTURE_SECTION) << "  <solidref   " << " ref=" << '"' << to_html (solid_ref_) << '"' << " />" << endl;
 
     if ( phys_vols_.size ())
       {
@@ -1168,10 +1208,10 @@ namespace geomtools {
 			       const string & version_)
   {
     _get_stream (SETUP_SECTION) << "<setup" 
-		    << " name=" << '"' << name_ << '"' 
+		    << " name=" << '"' << to_html (name_) << '"' 
 		    << " version=" << '"' << version_ << '"'
 		    << " >" << endl;
-    _get_stream (SETUP_SECTION) << "  <world ref=" << '"' << world_ref_ << '"'
+    _get_stream (SETUP_SECTION) << "  <world ref=" << '"' << to_html (world_ref_) << '"'
 		    << " />" << endl; 
     _get_stream (SETUP_SECTION) << "</setup>" << endl << endl; 
   }

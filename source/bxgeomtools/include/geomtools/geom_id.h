@@ -92,6 +92,7 @@ namespace geomtools {
     // ctor:
     geom_id (); 
 
+    // ctor:
     geom_id (uint32_t type_, 
 	     uint32_t si0_, 
 	     uint32_t si1_ = INVALID_ADDRESS, 

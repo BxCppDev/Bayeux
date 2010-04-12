@@ -8,8 +8,8 @@ namespace geomtools {
  
   const std::string geom_id::SERIAL_TAG = "__GEOM_ID__";
 
-   const uint32_t geom_id::INVALID_TYPE = 0xFFFFFFFF;
-   const uint32_t geom_id::INVALID_ADDRESS = 0xFFFFFFFF;
+   const uint32_t geom_id::INVALID_TYPE          = 0xFFFFFFFF;
+   const uint32_t geom_id::INVALID_ADDRESS       = 0xFFFFFFFF;
    const size_t   geom_id::DEFAULT_ADDRESS_DEPTH = 10;
   
    const char geom_id::IO_ID_OPEN           = '[';

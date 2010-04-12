@@ -29,6 +29,8 @@
 #include <list>
 #include <map>
 
+#include <boost/algorithm/string.hpp>
+
 #include <datatools/utils/utils.h>
 #include <datatools/utils/properties.h>
 
@@ -65,7 +67,14 @@ namespace geomtools {
     __streams_col_t __streams;
     const ostringstream * __external_materials_stream;
 
+    static bool __g_using_html_symbols;
+
   public:
+
+    static void set_using_html_symbols (bool u_);
+    static bool is_using_html_symbols ();
+    static string to_html (const string &);
+    static string to_ascii (const string &);
 
     bool is_initialized () const;
 
