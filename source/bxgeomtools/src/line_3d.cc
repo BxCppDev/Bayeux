@@ -128,6 +128,18 @@ namespace geomtools {
     return;
   }
 
+
+  void line_3d::print_xyz (ostream & out_, 
+			   const line_3d & line_)
+  {
+    vector_3d first = line_.get_first();
+    vector_3d last  = line_.get_last();
+
+    out_ << first.x() << " " << first.y() << " " << first.z() << endl;
+    out_ << last.x() << " " << last.y() << " " << last.z() << endl;
+  }
+
+
   bool line_3d::is_on_curve (const vector_3d & position_, 
 			     double tolerance_) const
   {

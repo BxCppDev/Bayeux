@@ -86,6 +86,9 @@ namespace geomtools {
       tree_dump (clog);
     }
 
+    static void print_xyz (ostream & out_, 
+			   const line_3d & line_);
+
     virtual bool is_on_curve (const vector_3d & position_, 
 			      double tolerance_ = USING_PROPER_TOLERANCE) const;
 

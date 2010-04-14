@@ -1,5 +1,5 @@
 // -*- mode: c++ ; -*- 
-/* disk.cc
+/* gnuplot_i.cc
  */
 
 #include <geomtools/gnuplot_i.h>
@@ -1320,4 +1320,4 @@ void Gnuplot::remove_tmpfiles()
     }
 }
 
-// end of disk.cc
+// end of gnuplot_i.cc
