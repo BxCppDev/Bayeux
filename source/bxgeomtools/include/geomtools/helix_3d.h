@@ -101,6 +101,8 @@ namespace geomtools {
 
     double get_theta_from_xy (double x_, double y_) const;
 
+    double get_t (vector_3d point_) const;
+
     double get_t_from_xyz (double x_, double y_, double z_) const;
 
     double get_t_from_z (double t_) const;

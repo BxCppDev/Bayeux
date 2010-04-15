@@ -235,6 +235,12 @@ namespace geomtools {
   // XXX
 
   double 
+  helix_3d::get_t (vector_3d point_) const
+  {
+    return get_t_from_xyz (point_.x(), point_.y(), point_.z());
+  }
+
+  double 
   helix_3d::get_t_from_xyz (double x_, double y_, double z_) const
   {
     bool devel = false;
