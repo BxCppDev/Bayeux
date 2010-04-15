@@ -1,8 +1,9 @@
 // -*- mode: c++; -*- 
 /* helix_3d.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Author(s): Francois Mauger <mauger@lpccaen.in2p3.fr>
+ *            Arnaud Chapon   <chapon@lpccaen.in2p3.fr>
  * Creation date: 2008-12-18
- * Last modified: 2008-12-18
+ * Last modified: 2010-04-15
  * 
  * License: 
  * 
@@ -91,6 +92,8 @@ namespace geomtools {
     double get_angle1 () const;
 
     double get_angle2 () const;
+
+    double get_length () const;
 
     double get_curvilinear_position (double t_) const;
 

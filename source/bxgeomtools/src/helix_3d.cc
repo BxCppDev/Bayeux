@@ -125,6 +125,14 @@ namespace geomtools {
     return t_to_angle (__t2);
   }
   
+  double
+  helix_3d::get_length () const
+  {
+    double l = fabs (get_angle2 () - get_angle1 () )
+      * sqrt ( __radius * __radius + __step * __step );
+    return l;
+  }
+  
   // ctor/dtor:
   helix_3d::helix_3d () : i_shape_1d ()
   {
@@ -332,7 +340,7 @@ namespace geomtools {
   void helix_3d::tree_dump (ostream &      out_, 
 			    const string & title_,
 			    const string & indent_,
-			    bool                inherit_) const
+			    bool           inherit_) const
   {
     string indent;
     if (! indent_.empty ())
@@ -351,16 +359,20 @@ namespace geomtools {
 	 << __radius / CLHEP::mm << " mm"
 	 << endl;
     out_ << indent << du::i_tree_dumpable::tag 
-	 << "Step  : " 
+	 << "Step   : " 
 	 << __step // << " mm/round"
 	 << endl;
     out_ << indent << du::i_tree_dumpable::tag 
-	 << "T1    : " 
+	 << "T1     : " 
 	 << __t1 << " (" << get_angle1 () / CLHEP::radian << " radian)"
 	 << endl;
-    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_) 
-	 << "T2    : " 
+    out_ << indent << du::i_tree_dumpable::tag
+	 << "T2     : " 
 	 << __t2 << " (" << get_angle2 () / CLHEP::radian << " radian)"
+	 << endl;
+    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_) 
+	 << "Lenght : " 
+	 << get_length() / CLHEP::mm << " mm"
 	 << endl;
     return;
   }

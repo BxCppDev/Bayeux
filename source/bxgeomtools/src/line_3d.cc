@@ -121,9 +121,13 @@ namespace geomtools {
 	 << "First : " 
 	 << __first 
 	 << endl;
-    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_) 
+    out_ << indent << du::i_tree_dumpable::tag
 	 << "Last : " 
 	 << __last
+	 << endl;
+    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_) 
+	 << "Lenght : " 
+	 << get_length() / CLHEP::mm << " mm"
 	 << endl;
     return;
   }

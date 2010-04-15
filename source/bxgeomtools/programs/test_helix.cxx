@@ -52,7 +52,7 @@ main (int argc_, char ** argv_)
        
       my_helix_1.set_radius ( 1. * CLHEP::m  );
       my_helix_1.set_center ( helix_center_1 );
-      my_helix_1.set_step   ( 1. * CLHEP::m  );
+      my_helix_1.set_step   ( 10. * CLHEP::mm  );
       my_helix_1.set_t1     ( 0.0 );
       my_helix_1.set_t2     ( 2.0 );
 
@@ -60,7 +60,7 @@ main (int argc_, char ** argv_)
        
       my_helix_2.set_radius ( 0.5 * CLHEP::m );
       my_helix_2.set_center ( helix_center_2 );
-      my_helix_2.set_step   ( -1. * CLHEP::m );
+      my_helix_2.set_step   ( -1. * CLHEP::mm );
       my_helix_2.set_t1     ( 0.0 );
       my_helix_2.set_t2     ( 2.0 );
 
