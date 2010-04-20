@@ -763,7 +763,7 @@ namespace datatools {
     
     /**********************************************/
     const std::string properties::default_key_validator::ALLOWED_CHARS = 
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.";
+                  "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.";
 
     properties::default_key_validator::default_key_validator ()
     {      
@@ -988,7 +988,7 @@ namespace datatools {
 	  properties & ptmp = const_cast<properties &> (*this);
 	  /*
 	    clog << "DEVEL: properties::export_starting_with: property '" 
-	       << *i << "'..." << endl;
+            << *i << "'..." << endl;
 	  */
 	  p_.__props[*i] = ptmp.__props[*i];
 	}
@@ -1004,6 +1004,74 @@ namespace datatools {
 	}
       keys_col_t ks;
       keys_not_starting_with (ks, key_prefix_);
+      for (keys_col_t::const_iterator i = ks.begin ();
+	   i !=  ks.end ();
+	   i++)
+	{
+	  properties & ptmp = const_cast<properties &> (*this);
+	  p_.__props[*i] = ptmp.__props[*i];
+	}
+    }
+
+    void properties::erase_all_ending_with (const std::string & key_suffix_)
+    {
+      keys_col_t keys;
+      keys_ending_with (keys, key_suffix_);
+      for (keys_col_t::const_iterator i = keys.begin ();
+	   i != keys.end ();
+	   i++)
+	{
+	  erase (*i);
+	}
+      return;	
+    }
+
+    void properties::erase_all_not_ending_with (const std::string & key_suffix_)
+    {
+      keys_col_t keys;
+      keys_not_ending_with (keys, key_suffix_);
+      for (keys_col_t::const_iterator i = keys.begin ();
+	   i != keys.end ();
+	   i++)
+	{
+	  erase (*i);
+	}
+      return;	
+    }
+
+    void
+    properties::export_ending_with (properties & p_, 
+                                    const std::string & key_suffix_) const
+    {
+      if (this == &p_)
+	{
+	  throw runtime_error ("properties::export_ending_with: Self export is not allowed !");
+	}
+      keys_col_t ks;
+      this->keys_ending_with (ks, key_suffix_);
+      for (keys_col_t::const_iterator i = ks.begin ();
+	   i !=  ks.end ();
+	   i++)
+	{
+	  properties & ptmp = const_cast<properties &> (*this);
+	  /*
+	    clog << "DEVEL: properties::export_ending_with: property '" 
+            << *i << "'..." << endl;
+	  */
+	  p_.__props[*i] = ptmp.__props[*i];
+	}
+    }
+
+    void
+    properties::export_not_ending_with (properties & p_, 
+                                        const std::string & key_suffix_) const
+    {
+      if (this == &p_)
+	{
+	  throw runtime_error ("properties::export_ending_with: Self export is not allowed !");
+	}
+      keys_col_t ks;
+      keys_not_ending_with (ks, key_suffix_);
       for (keys_col_t::const_iterator i = ks.begin ();
 	   i !=  ks.end ();
 	   i++)
@@ -1102,6 +1170,74 @@ namespace datatools {
     {
       properties::vkeys lkeys;
       keys_starting_with (lkeys, key_prefix_);
+      return lkeys;
+    }
+
+    void
+    properties::keys_not_ending_with (properties::vkeys & keys_, 
+                                      const std::string & key_suffix_) const
+    {
+      if (key_suffix_.empty ())
+ 	{
+	  throw runtime_error("properties::keys_not_ending_with: Empty key suffix argument !");
+	}
+      size_t n = key_suffix_.size ();
+      for (pmap::const_iterator iter = __props.begin (); 
+	   iter != __props.end (); 
+	   iter++) 
+	{
+	  bool push = true;
+	  if (iter->first.substr
+              (iter->first.size () - n, iter->first.size ())
+              == key_suffix_)
+	    {
+	      push = false;
+	    }
+	  if (push)
+	    {
+	      keys_.push_back (iter->first);
+	    }
+	}
+      return;
+    }
+
+    properties::vkeys
+    properties::keys_not_ending_with (const std::string & key_suffix_) const
+    {
+      properties::vkeys lkeys;
+      keys_not_ending_with (lkeys, key_suffix_);
+      return lkeys;
+    }
+
+    void
+    properties::keys_ending_with (properties::vkeys & keys_, 
+                                  const std::string & key_suffix_) const
+    {
+      if (key_suffix_.empty ())
+	{
+	  throw runtime_error("properties::keys_ending_with: Empty key suffix argument !");
+	}
+      size_t n = key_suffix_.size ();
+      for (pmap::const_iterator iter = __props.begin (); 
+	   iter != __props.end (); 
+	   iter++) 
+	{
+	  if (iter->first.size () < n) continue;
+	  if (iter->first.substr
+              (iter->first.size ()-n, iter->first.size ())
+              == key_suffix_)
+	    {
+	      keys_.push_back (iter->first);
+	    }
+	}
+      return;
+    }
+
+    properties::vkeys
+    properties::keys_ending_with (const std::string & key_suffix_) const
+    {
+      properties::vkeys lkeys;
+      keys_ending_with (lkeys, key_suffix_);
       return lkeys;
     }
 
@@ -1276,8 +1412,8 @@ namespace datatools {
     }
 
     void properties::store_flag (const std::string & key_, 
-			    const std::string & desc_, 
-			    bool lock_)
+                                 const std::string & desc_, 
+                                 bool lock_)
     {
       store (key_, true, desc_, lock_);
     }
@@ -2038,8 +2174,8 @@ namespace datatools {
 	  out_ << indent << title_ << std::endl;
 	}
       /*
-      out_ << indent << du::i_tree_dumpable::tag 
-	   << "Debug : " <<  __debug << std::endl;
+        out_ << indent << du::i_tree_dumpable::tag 
+        << "Debug : " <<  __debug << std::endl;
       */
       if (! __description.empty ()) 
 	{
@@ -2142,17 +2278,17 @@ namespace datatools {
     {
       int mode = __mode;
       /*
-      clog << "DEVEL: properties::config::write: mode=" 
-           << mode << endl; 
+        clog << "DEVEL: properties::config::write: mode=" 
+        << mode << endl; 
       */
       if (mode == MODE_HEADER_FOOTER) 
 	{
 	  out_ << "# List of properties (datatools::utils::properties):" << std::endl;
 	  /*
-          out_ << "# This file was autogenerated by "
-	       << "'datatools::utils::properties'." << std::endl;
-	  out_ << "# Do not modify it unless you know what you are doing!" 
-	       << std::endl;
+            out_ << "# This file was autogenerated by "
+            << "'datatools::utils::properties'." << std::endl;
+            out_ << "# Do not modify it unless you know what you are doing!" 
+            << std::endl;
 	  */
 	  out_ << std::endl;
 	}

@@ -495,6 +495,20 @@ namespace datatools {
       vkeys
       keys_starting_with (const std::string & key_prefix_) const;
 
+      //! returns the list of keys stored in the map that end with key_suffix_. 
+      void
+      keys_not_ending_with (vkeys &, const std::string & key_suffix_) const;
+
+      vkeys
+      keys_not_ending_with (const std::string & key_suffix_) const;
+
+      //! returns the list of keys stored in the map that end with key_suffix_. 
+      void
+      keys_ending_with (vkeys &, const std::string & key_suffix_) const;
+
+      vkeys
+      keys_ending_with (const std::string & key_suffix_) const;
+
       //! Lock the properties dictionary. 
       void
       lock (const std::string & key_);
@@ -579,6 +593,22 @@ namespace datatools {
       void
       export_not_starting_with (properties & p_, 
 				const std::string & key_prefix_) const;
+      
+      //! Erase all properties ending with key_suffix_
+      void
+      erase_all_ending_with (const std::string & key_suffix_);
+      
+      //! Erase all properties not ending with key_suffix_
+      void
+      erase_all_not_ending_with (const std::string & key_suffix_);
+      
+      void
+      export_ending_with (properties & p_, 
+                          const std::string & key_suffix_) const;
+      
+      void
+      export_not_ending_with (properties & p_, 
+                              const std::string & key_suffix__) const;
 
       void
       clean (const std::string & key_);
