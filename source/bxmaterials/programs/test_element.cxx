@@ -48,18 +48,17 @@ int main (int argc_, char ** argv_)
               }
             }
           iarg++;
-      }
-    
+      }    
 
       mat::isotope iso_H1; 
-      iso_H1 = mat::isotope("H ",1);   
+      iso_H1 = mat::isotope("Hydrogen 1","H ",1);   
 	
-      mat::isotope iso_H2 = mat::isotope ("H ",2);   
-      mat::isotope iso_H3 = mat::isotope ("H ",3);          
-      mat::isotope iso_H4 = mat::isotope ("H ",4);   
-      mat::isotope iso_H5 = mat::isotope (1,5);  
+      mat::isotope iso_H2 = mat::isotope ("Hydrogen 2","H",2);   
+      mat::isotope iso_H3 = mat::isotope ("Hydrogen 3","H",3);          
+      mat::isotope iso_H4 = mat::isotope ("Hydrogen 4","H",4);   
+      mat::isotope iso_H5 = mat::isotope ("Hydrogen 5",1,5);  
  
-      mat::element elt_H("Hydrogen");
+      mat::element elt_H("Hydrogen",1);
           
       elt_H.add_isotope (iso_H1, 0.2);
       elt_H.add_isotope (iso_H2, 0.5);
@@ -68,10 +67,14 @@ int main (int argc_, char ** argv_)
       elt_H.tree_dump (cout, "my element Hydrogen");   
       
       elt_H.add_isotope (iso_H4, 0.1); 
-      elt_H.add_isotope (iso_H5, 0.1); 
+      elt_H.add_isotope (iso_H5, 0.1);  
+      elt_H.add_isotope (new mat::isotope("Hydrogen 5",1,5),0.2); 
       elt_H.build (); 
-      elt_H.tree_dump (cout, "my element Hydrogen");     
+      elt_H.tree_dump (cout, "my element Hydrogen");                 
       
+      mat::element elt_Na("Sodium","Na");
+      elt_Na.tree_dump (cout, "my element Sodium");     
+      elt_Na.tree_dump (cout, "my element Sodium");       
     }
   catch (exception & x)
     {
