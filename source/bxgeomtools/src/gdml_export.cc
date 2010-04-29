@@ -467,7 +467,7 @@ namespace geomtools {
 		ostringstream pos_name_oss;
 		pos_name_oss << log_name << '.' << phys.get_name ();
 		if (multiple) pos_name_oss << '[' << i << ']';
-		pos_name_oss << ".pos";
+		pos_name_oss << io::POSITION_SUFFIX;
 		__writer.add_position (pos_name_oss.str (), 
 				       p.get_translation (), 
 				       __length_unit);
@@ -479,7 +479,7 @@ namespace geomtools {
 		ostringstream rot_name_oss;
 		rot_name_oss << log_name << '.' << phys.get_name ();
 		if (multiple) rot_name_oss << '[' << i << ']';
-		rot_name_oss << ".rot";
+		rot_name_oss << io::ROTATION_SUFFIX;
 		string rot_name = rot_name_oss.str ();
 		bool add_rot = false;
 		// XXX YYY ZZZ

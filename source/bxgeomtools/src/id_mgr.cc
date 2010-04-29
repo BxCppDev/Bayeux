@@ -362,6 +362,64 @@ namespace geomtools {
       }
     return found->second;
   }
+
+  int id_mgr::get (const geom_id & id_, const string & what_) const
+  {
+    int type = id_.get_type ();
+    categories_by_type_col_t::const_iterator found = 
+      __categories_by_type.find (type);
+    const category_info & ci = *found->second;
+    int i = -1;
+    for (int j = 0; j < ci.addresses.size (); j++)
+      {
+	if (ci.addresses[j] == what_)
+	  {
+	    break;
+	  }
+      }
+    if (i >= 0)
+      {
+	return id_.get (i);
+      }
+    else
+      {
+	ostringstream message;
+	message << "id_mgr::get: "
+		<< "Invalid address label '" << what_ << "'"
+		<< "for category '" << ci.category << "' !";
+	throw runtime_error (message.str ());
+      }
+    return geom_id::INVALID_ADDRESS;
+  }
+
+  void id_mgr::set (geom_id & id_, const string & what_, uint32_t value_) const
+  {
+    int type = id_.get_type ();
+    categories_by_type_col_t::const_iterator found = 
+      __categories_by_type.find (type);
+    const category_info & ci = *found->second;
+    int i = -1;
+    for (int j = 0; j < ci.addresses.size (); j++)
+      {
+	if (ci.addresses[j] == what_)
+	  {
+	    break;
+	  }
+      }
+    if (i >= 0)
+      {
+	return id_.set (i, value_);
+      }
+    else
+      {
+	ostringstream message;
+	message << "id_mgr::set: "
+		<< "Invalid address label '" << what_ << "'"
+		<< "for category '" << ci.category << "' !";
+	throw runtime_error (message.str ());
+      }
+    return;
+  }
  
 } // end of namespace geomtools
 

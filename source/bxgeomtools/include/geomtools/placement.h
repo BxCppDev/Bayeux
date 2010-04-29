@@ -21,6 +21,7 @@
 #include <string>
 
 #include <geomtools/i_placement.h>
+#include <geomtools/units.h>
 
 namespace geomtools {
 
@@ -172,6 +173,9 @@ namespace geomtools {
 		 const string & title_  = "geomutils::placement", 
 		 const string & indent_ = "") const;
     
+      static bool from_string (const string &, placement &);
+      static void to_string (string &, const placement &);
+
     };
 
 } // end of namespace geomtools

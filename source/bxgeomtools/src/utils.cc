@@ -13,6 +13,9 @@ namespace geomtools {
   const std::string io::VECTOR_2D_SERIAL_TAG   = "__geomtools::vector_2d__";
   const std::string io::VECTOR_3D_SERIAL_TAG   = "__geomtools::vector_3d__";
   const std::string io::ROTATION_3D_SERIAL_TAG = "__geomtools::rotation_3d__";
+  
+  const std::string io::POSITION_SUFFIX = ".pos";
+  const std::string io::ROTATION_SUFFIX = ".rot";
 
   /*******/
 

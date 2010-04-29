@@ -26,6 +26,17 @@ int main (int argc_, char ** argv_)
       geomtools::placement p (pos, phi, theta, delta);
       p.tree_dump (clog, "Placement", ">>> ");
 
+
+      string s1 = " 3 4 5 (mm) @ 90 30 0 (deg)";
+      geomtools::placement p1;
+      geomtools::placement::from_string (s1, p1);
+      p1.tree_dump (clog, "P1 = ", ">>> ");
+
+      string s2 = " 3 4 5 (m)";
+      geomtools::placement p2;
+      geomtools::placement::from_string (s2, p2);
+      p2.tree_dump (clog, "P2 = ", ">>> ");
+      
     }
   catch (exception & x)
     {

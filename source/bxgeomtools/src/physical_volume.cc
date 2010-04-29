@@ -65,6 +65,11 @@ namespace geomtools {
   
   const i_placement & physical_volume::get_placement () const
   {
+    /*
+    clog << "**** DEVEL: physical_volume::get_placement: " 
+	 << __placement
+	 << endl; 
+    */
     if (! __placement)
       {
 	throw runtime_error ("physical_volume::get_placement: Missing placement !");

@@ -570,6 +570,8 @@ namespace geomtools {
     static const std::string VECTOR_2D_SERIAL_TAG;
     static const std::string VECTOR_3D_SERIAL_TAG;
     static const std::string ROTATION_3D_SERIAL_TAG;
+    static const std::string POSITION_SUFFIX;
+    static const std::string ROTATION_SUFFIX;
   };
 
 } // end of namespace geomtools

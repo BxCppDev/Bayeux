@@ -85,7 +85,7 @@ namespace geomtools {
   {
     ostringstream oss;
     oss << basename_ << i_model::PHYSICAL_SUFFIX
-	<< '{' << 0 << '-' << (nitems_ - 1) << '}';
+	<< "__" << 0 << ".." << (nitems_ - 1) << "__";
     return oss.str ();
   }
 
@@ -94,7 +94,7 @@ namespace geomtools {
   {
     ostringstream oss;
     oss << basename_ << i_model::PHYSICAL_SUFFIX
-	<< '{' << item_ << '}';
+	<< "__" << item_ << "__";
     return oss.str ();
   }
 
@@ -103,8 +103,8 @@ namespace geomtools {
   {
     ostringstream oss;
     oss << basename_ << i_model::PHYSICAL_SUFFIX
-	<< '[' << i_ << ']'
-	<< '[' << j_ << ']';
+	<< "__" << i_ << "__"
+	<< "__" << j_ << "__";
     return oss.str ();
   }
 
@@ -114,8 +114,8 @@ namespace geomtools {
   {
     ostringstream oss;
     oss << basename_ << i_model::PHYSICAL_SUFFIX
-	<< '{' << 0 << '-' << (ncols_ - 1) << '}'
-	<< '{' << 0 << '-' << (nrows_ - 1) << '}';
+	<< "__" << 0 << ".." << (ncols_ - 1) << "__"
+	<< "__" << 0 << ".." << (nrows_ - 1) << "__";
     return oss.str ();
   }
    

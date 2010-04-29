@@ -30,6 +30,7 @@
 #include <geomtools/model_factory.h>
 #include <geomtools/gdml_writer.h>
 #include <geomtools/units.h>
+#include <geomtools/utils.h>
 #include <geomtools/material.h>
 #include <geomtools/physical_volume.h>
 #include <geomtools/placement.h>

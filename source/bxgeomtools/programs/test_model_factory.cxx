@@ -26,6 +26,7 @@ int main (int argc_, char ** argv_)
       bool draw = true;
       bool gdml = true;
       bool dump = true;
+      string setup_filename;
 
       int iarg = 1;
       while (iarg < argc_)
@@ -75,9 +76,14 @@ int main (int argc_, char ** argv_)
           else
             {
               string argument = token; 
-              { 
-                clog << "warning: ignoring argument '" << argument << "'!" << endl; 
-              }
+	      if (setup_filename.empty ())
+		{
+		  setup_filename = argument;
+		}
+	      else
+		{ 
+		  clog << "warning: ignoring argument '" << argument << "'!" << endl; 
+		}
             }
           iarg++;
       }  
@@ -88,7 +94,10 @@ int main (int argc_, char ** argv_)
       factory.set_debug (debug);
       geomtools::i_model::g_devel = debug;
 
-      string setup_filename = "${GEOMTOOLS_ROOT}/resources/test/test_geometry_models.setup"; 
+      if (setup_filename.empty ())
+	{
+	  setup_filename = "${GEOMTOOLS_ROOT}/resources/test/test_geometry_models_0.setup";
+	} 
       datatools::utils::fetch_path_with_env (setup_filename);
       factory.load (setup_filename);
       factory.lock ();
@@ -112,23 +121,6 @@ int main (int argc_, char ** argv_)
       clog << endl;
 
       clog << "Enter the name of the geometry model to be displayed: ";
-      /*
-      clog << "Logicals: " << endl;
-      int count = 0;
-      for (geomtools::logical_volume::dict_t::const_iterator i 
-	     = factory.get_logicals ().begin ();
-	   i != factory.get_logicals ().end ();
-	   i++)
-	{
-	  clog << "  " << i->second->get_name ();
-	  count++;
-	  if ((count % 5) == 0)  clog << endl;
-	}
-      clog << endl;
-  
-      clog << "Enter the name of the logical to be displayed: ";
-      */
-
       string name; 
       getline (cin, name);
       if (name.empty ())

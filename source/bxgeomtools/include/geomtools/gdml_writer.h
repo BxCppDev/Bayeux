@@ -55,6 +55,7 @@ namespace geomtools {
     static const string DEFAULT_XML_VERSION;
     static const string DEFAULT_XML_ENCODING;
     static const string DEFAULT_GDML_SCHEMA;
+    static const string DEFAULT_REMOTE_GDML_SCHEMA;
 
     static const string DEFINE_SECTION;
     static const string MATERIALS_SECTION;
@@ -63,8 +64,8 @@ namespace geomtools {
     static const string SETUP_SECTION;
 
   private:
-    bool            __initialized;
-    __streams_col_t __streams;
+    bool                  __initialized;
+    __streams_col_t       __streams;
     const ostringstream * __external_materials_stream;
 
     static bool __g_using_html_symbols;
@@ -366,7 +367,7 @@ namespace geomtools {
     void full_write (ostream & out_,
 		     const string & version_ = DEFAULT_XML_VERSION,
 		     const string & encoding_ = DEFAULT_XML_ENCODING,
-		     const string & schema_ = DEFAULT_GDML_SCHEMA);
+		     const string & schema_ = DEFAULT_REMOTE_GDML_SCHEMA);
    
     void save_file (const string & filename_,
 		    const string & version_ = "1.0",

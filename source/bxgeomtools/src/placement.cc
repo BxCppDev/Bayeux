@@ -474,6 +474,100 @@ namespace geomtools {
 	       last_tag + "Inverse rotation :", indent + last_tagc);
     */
   }
+    
+  void placement::to_string (string & str_, const placement & pl_)
+  {
+    ostringstream oss;
+    double lunit = CLHEP::mm;
+    double aunit = CLHEP::degree;
+    oss << pl_.get_translation ().x () / lunit;
+    oss << ' ' << pl_.get_translation ().y () / lunit;
+    oss << ' ' << pl_.get_translation ().z () / lunit;
+    oss << " (mm) ";
+    oss << " @ ";
+    oss << pl_.get_phi () / aunit;
+    oss << ' ' << pl_.get_theta () / aunit;
+    oss << ' ' << pl_.get_delta () / aunit;
+    oss << " (deg)";
+    str_ = oss.str ();
+  }
+    
+  bool placement::from_string (const string & str_, placement & pl_)
+  {
+    pl_.reset ();
+    istringstream oss (str_);
+
+    double x (0.0), y (0.0), z (0.0);
+    double length_unit = CLHEP::mm;
+    double phi (0.0), theta (0.0), delta (0.0);
+    double angle_unit = CLHEP::degree;
+
+    oss >> ws;
+    if (oss.eof ())
+      {
+	return false;
+      }
+
+    // Position:
+    oss >> x >> y >> z >> ws;
+    // extract length unit:
+    if (! oss.eof ())
+      {
+	char open = oss.peek ();
+	if (open == '(')
+	  {
+	    string length_unit_str;
+	    oss.get ();
+	    getline (oss, length_unit_str, ')');
+	    if (! oss)
+	      {
+		return false;
+	      }
+	    length_unit = units::get_length_unit_from (length_unit_str);
+	  }
+	oss >> ws;
+      }
+    x *= length_unit;
+    y *= length_unit;
+    z *= length_unit;
+ 
+    oss >> ws;
+    if (! oss.eof ())
+      {
+	char pr_sep = oss.peek ();
+	if (pr_sep != '@')
+	  {
+	    return false;
+	  }
+	oss.get ();
+	oss >> phi >> theta >> delta >> ws;
+	// extract angle unit:
+	if (! oss.eof ())
+	  {
+	    char open = oss.peek ();
+	    if (open == '(')
+	      {
+		string angle_unit_str;
+		oss.get ();
+		getline (oss, angle_unit_str, ')');
+		if (! oss)
+		  {
+		    return false;
+		  }
+		angle_unit = units::get_angle_unit_from (angle_unit_str);
+	      }
+	    oss >> ws;
+	  }
+ 	
+      }
+ 
+    phi   *= angle_unit;
+    theta *= angle_unit;
+    delta *= angle_unit;
+
+    pl_.set (x, y, z, phi, theta, delta);
+    return true;
+  }
 
 } // end of namespace geomtools
 

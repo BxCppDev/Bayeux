@@ -370,8 +370,33 @@ namespace geomtools {
 			continue;
 		      }
 		  }
+		/*
+		cerr << "**** DEVEL: gnuplot_drawer::__draw: " 
+		     << "child's name = " <<  log_child.get_name () 
+		     << endl;
+		*/
 		const geomtools::i_placement * pp = &(phys.get_placement ());
-		for (int i = 0; i < pp->get_number_of_items (); i++)
+		/*
+		cerr << "**** DEVEL: gnuplot_drawer::__draw: " 
+		     << "TEST 0: addr pp = " << hex << pp << dec
+		     << endl;
+		cerr << "**** DEVEL: gnuplot_drawer::__draw: " 
+		     << "TEST 1: phys.get_placement ()=" << ""
+		     << endl;
+
+		phys.get_placement ().tree_dump (
+						 clog, 
+						 "Placement: ", 
+						 "**** DEVEL: gnuplot_drawer::__draw: ");
+		*/
+		size_t npp = 0;
+		npp = pp->get_number_of_items ();
+		/*
+                cerr << "**** DEVEL: gnuplot_drawer::__draw: " 
+		     << "TEST 1: #items=" << npp
+		     << endl;
+		*/		 
+		for (int i = 0; i < npp; i++)
 		  {
 		    geomtools::placement p;
 		    // get placement from the daughter physical #i: 
@@ -388,12 +413,23 @@ namespace geomtools {
 					    pt,
 					    max_display_level - 1);
 		  }
+		cerr << "**** DEVEL: gnuplot_drawer::__draw: " 
+		     << "TEST 2" 
+		     << endl;
 	      }
 	  }
       }
     catch (GnuplotException ge)
       {
 	cerr << "ERROR: gnuplot_drawer::__draw: " << ge.what () << endl;
+      }
+    catch (exception & x)
+      {
+	cerr << "ERROR: gnuplot_drawer::__draw: " << x.what () << endl;
+      }
+    catch (...)
+      {
+	cerr << "ERROR: gnuplot_drawer::__draw: " << "Unexpected error !" << endl;
       }
     if (devel)
       {

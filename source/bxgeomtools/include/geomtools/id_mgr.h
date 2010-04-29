@@ -89,7 +89,7 @@ namespace geomtools {
 
       const string & get_extends () const
       {
-	return inherits;
+	return extends;
       }
 
       // ctor:
@@ -148,6 +148,10 @@ namespace geomtools {
     const category_info & get_category_info (int) const;
 
     const category_info & get_category_info (const string &) const;
+
+    int get (const geom_id &, const string & what_) const;
+
+    void set (geom_id &, const string & what_, uint32_t value_) const;
 
   };
 
