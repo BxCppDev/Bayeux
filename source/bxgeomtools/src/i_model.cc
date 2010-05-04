@@ -10,13 +10,13 @@ namespace geomtools {
   
   bool i_model::g_devel = false;
   
-  // const string i_model::MODEL_SUFFIX = ".model";
-  
   const string i_model::SOLID_SUFFIX = ".solid";
   
   const string i_model::LOGICAL_SUFFIX = ".log";
   
   const string i_model::PHYSICAL_SUFFIX = ".phys";
+  
+  //const string i_model::DEFAULT_WORLD_NAME = "world";
 
   void i_model::assert_constructed (const string & where_, 
 				    const string & what_) const

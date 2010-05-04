@@ -35,7 +35,6 @@ namespace geomtools {
 
   class id_mgr :
     public datatools::utils::i_tree_dumpable
-
   {
 
   public:

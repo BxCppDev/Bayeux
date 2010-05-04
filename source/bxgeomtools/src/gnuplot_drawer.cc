@@ -413,9 +413,11 @@ namespace geomtools {
 					    pt,
 					    max_display_level - 1);
 		  }
-		cerr << "**** DEVEL: gnuplot_drawer::__draw: " 
+		/*
+                cerr << "**** DEVEL: gnuplot_drawer::__draw: " 
 		     << "TEST 2" 
 		     << endl;
+		*/
 	      }
 	  }
       }

@@ -46,6 +46,12 @@ namespace geomtools {
   {
   public:
     static const string SERIAL_TAG;
+    /*
+    static const string GEOM_ID_PREFIX;
+    static const string GEOM_ID_CATEGORY_PROPERTY;
+    static const int    GEOM_ID_WORLD_TYPE;
+    static const string GEOM_ID_WORLD_CATEGORY;
+    */
 
     static const uint32_t INVALID_TYPE;
     static const uint32_t INVALID_ADDRESS;

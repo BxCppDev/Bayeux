@@ -43,8 +43,9 @@ namespace geomtools {
     static const string SOLID_SUFFIX;
     static const string LOGICAL_SUFFIX;
     static const string PHYSICAL_SUFFIX;
+    //static const string DEFAULT_WORLD_NAME;
     
-    typedef map <string, i_model *> models_col_t;
+    //typedef map <string, i_model *> models_col_t;
     
   private: 
     bool __debug;

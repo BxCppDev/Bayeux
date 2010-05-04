@@ -8,6 +8,13 @@ namespace geomtools {
  
   const std::string geom_id::SERIAL_TAG = "__GEOM_ID__";
 
+  /*
+  const string geom_id::GEOM_ID_PREFIX            = "geom_id.";
+  const string geom_id::GEOM_ID_CATEGORY_PROPERTY = "category";
+  const int    geom_id::GEOM_ID_WORLD_TYPE        = 0;
+  const string geom_id::GEOM_ID_WORLD_CATEGORY    = "world";
+  */
+
    const uint32_t geom_id::INVALID_TYPE          = 0xFFFFFFFF;
    const uint32_t geom_id::INVALID_ADDRESS       = 0xFFFFFFFF;
    const size_t   geom_id::DEFAULT_ADDRESS_DEPTH = 10;
