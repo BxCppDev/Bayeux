@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*- 
 /* i_model.cc
- */
+ */ 
 
 #include <geomtools/i_model.h>
 

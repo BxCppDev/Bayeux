@@ -45,7 +45,7 @@ namespace geomtools {
     static const string PHYSICAL_SUFFIX;
     //static const string DEFAULT_WORLD_NAME;
     
-    //typedef map <string, i_model *> models_col_t;
+    typedef geomtools::models_col_t models_col_t;
     
   private: 
     bool __debug;
