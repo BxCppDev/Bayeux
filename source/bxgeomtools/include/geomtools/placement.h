@@ -21,7 +21,7 @@
 #include <string>
 
 #include <geomtools/i_placement.h>
-#include <geomtools/units.h>
+#include <datatools/utils/units.h>
 
 namespace geomtools {
 

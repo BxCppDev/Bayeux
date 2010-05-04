@@ -523,7 +523,7 @@ namespace geomtools {
 	      {
 		return false;
 	      }
-	    length_unit = units::get_length_unit_from (length_unit_str);
+	    length_unit = datatools::utils::units::get_length_unit_from (length_unit_str);
 	  }
 	oss >> ws;
       }
@@ -554,7 +554,7 @@ namespace geomtools {
 		  {
 		    return false;
 		  }
-		angle_unit = units::get_angle_unit_from (angle_unit_str);
+		angle_unit = datatools::utils::units::get_angle_unit_from (angle_unit_str);
 	      }
 	    oss >> ws;
 	  }

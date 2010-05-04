@@ -174,7 +174,7 @@ namespace geomtools {
       }
  
     double lunit = CLHEP::mm;
-    lunit = units::get_length_unit_from (lunit_str);
+    lunit = datatools::utils::units::get_length_unit_from (lunit_str);
 
     x *= lunit;
     y *= lunit;

@@ -35,7 +35,8 @@
 #include <datatools/utils/properties.h>
 
 #include <geomtools/utils.h>
-#include <geomtools/units.h>
+//#include <geomtools/units.h>
+#include <datatools/utils/units.h>
 
 #include <geomtools/box.h>
 #include <geomtools/cylinder.h>

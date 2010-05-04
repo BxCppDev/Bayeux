@@ -176,7 +176,7 @@ namespace geomtools {
 				  const string & unit_str_, 
 				  double value_)
   {
-    double unit = units::get_unit_from (quantity_type_, unit_str_);
+    double unit = datatools::utils::units::get_unit_from (quantity_type_, unit_str_);
     _get_stream (DEFINE_SECTION) << "<quantity" 
 		    << " name=" << '"' << to_html (name_) << '"' 
 		    << " type=" << '"' << quantity_type_ << '"' 
@@ -215,7 +215,7 @@ namespace geomtools {
 				  const string & unit_str_)
   {
     //clog << "DEVEL: gdml_writer::add_position: Entering..." << endl;
-    double unit = units::get_length_unit_from (unit_str_);
+    double unit = datatools::utils::units::get_length_unit_from (unit_str_);
     _get_stream (DEFINE_SECTION) << "<position" 
 		    << " name=" << '"' << to_html (name_) << '"' 
 		    << " x=" << '"';
@@ -244,7 +244,7 @@ namespace geomtools {
 				  double angle_,
 				  const string & unit_str_)
   {
-    double angle_unit = units::get_angle_unit_from (unit_str_);
+    double angle_unit = datatools::utils::units::get_angle_unit_from (unit_str_);
     if ((axis_ != "x") && (axis_ != "y") && (axis_ != "z"))
       {
 	ostringstream message;
@@ -267,7 +267,7 @@ namespace geomtools {
 				  const rotation_3d & rot_, 
 				  const string & unit_str_)
   {
-    double angle_unit = units::get_angle_unit_from (unit_str_);
+    double angle_unit = datatools::utils::units::get_angle_unit_from (unit_str_);
     _get_stream (DEFINE_SECTION) << "<rotation" 
 				 << " name=" << '"' << to_html (name_) << '"'; 
 
@@ -702,7 +702,7 @@ namespace geomtools {
 				  double x_, double y_, double z_, 
 				  const string & lunit_str_)
   {
-    double lunit = units::get_length_unit_from (lunit_str_);
+    double lunit = datatools::utils::units::get_length_unit_from (lunit_str_);
 
     ostringstream solids_stream;
     solids_stream << "<" <<  "box"
@@ -739,7 +739,7 @@ namespace geomtools {
 				  double r_,
 				  const string & lunit_str_)
   {
-    double lunit = units::get_length_unit_from (lunit_str_);
+    double lunit = datatools::utils::units::get_length_unit_from (lunit_str_);
 
     ostringstream solids_stream;
     solids_stream << "<" <<  "sphere"
@@ -763,8 +763,8 @@ namespace geomtools {
 				     const string & lunit_str_,
 				     const string & aunit_str_)
   {
-    double lunit = units::get_length_unit_from (lunit_str_);
-    double aunit = units::get_angle_unit_from (aunit_str_);
+    double lunit = datatools::utils::units::get_length_unit_from (lunit_str_);
+    double aunit = datatools::utils::units::get_angle_unit_from (aunit_str_);
 
     ostringstream solids_stream;
     solids_stream << "<" <<  "sphere"
@@ -817,8 +817,8 @@ namespace geomtools {
 				   const string & lunit_str_,
 				   const string & aunit_str_)
   {
-    double lunit = units::get_length_unit_from (lunit_str_);
-    double aunit = units::get_angle_unit_from (aunit_str_);
+    double lunit = datatools::utils::units::get_length_unit_from (lunit_str_);
+    double aunit = datatools::utils::units::get_angle_unit_from (aunit_str_);
 
     ostringstream solids_stream;
     solids_stream << "<" <<  "tube"
@@ -1062,7 +1062,7 @@ namespace geomtools {
 					const string & aunit_str_,
 					const map<string, string> & aux_)
   {
-    double lunit = units::get_length_unit_from (lunit_str_);
+    double lunit = datatools::utils::units::get_length_unit_from (lunit_str_);
     _get_stream (STRUCTURE_SECTION) << "<volume" << " name=" << '"' << to_html (name_) << '"' << " >" << endl;
     _get_stream (STRUCTURE_SECTION) << "  <materialref" << " ref=" << '"' << to_html (material_ref_) << '"' << " />" << endl;
     _get_stream (STRUCTURE_SECTION) << "  <solidref   " << " ref=" << '"' << to_html (solid_ref_) << '"' << " />" << endl;

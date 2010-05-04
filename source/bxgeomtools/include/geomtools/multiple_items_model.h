@@ -24,12 +24,13 @@
 #include <sstream>
 #include <string>
 
+#include <datatools/utils/units.h>
+
 #include <geomtools/i_model.h>
 #include <geomtools/box.h>
 #include <geomtools/placement.h>
 #include <geomtools/physical_volume.h>
 #include <geomtools/utils.h>
-#include <geomtools/units.h>
 #include <geomtools/visibility.h>
 #include <geomtools/material.h>
 
