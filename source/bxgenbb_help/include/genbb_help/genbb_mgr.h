@@ -60,6 +60,8 @@ namespace genbb {
 
   public: 
 
+    bool is_initialized () const;
+
     bool is_debug () const
     {
       return __debug;
@@ -96,6 +98,8 @@ namespace genbb {
     void set (const std::string & filename_);
 
     void init ();
+
+    void initialize ();
 
     void reset ();
 

@@ -6,6 +6,11 @@
 
 namespace genbb {
 
+  bool genbb_mgr::is_initialized () const
+  {
+    return __initialized;
+  }
+
   // ctor:
   genbb_mgr::genbb_mgr (int format_)
   {
@@ -233,6 +238,11 @@ namespace genbb {
     if (__initialized) return;
     __load_next ();
     __initialized = true;
+  }
+
+  void genbb_mgr::initialize ()
+  {
+    this->init ();
   }
 
   void genbb_mgr::reset ()
