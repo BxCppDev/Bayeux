@@ -1,5 +1,5 @@
 // -*- mode: c++ ; -*- 
-/* gdml_writer.cc
+/* gdml_writer.cc 
  */
 
 #include <geomtools/gdml_writer.h>
