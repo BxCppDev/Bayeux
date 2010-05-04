@@ -28,7 +28,7 @@
 #include <genvtx/i_vertex_generator.h>
 
 #include <geomtools/box.h>
-#include <geomtools/units.h>
+#include <datatools/utils/units.h>
 
 namespace genvtx {
   

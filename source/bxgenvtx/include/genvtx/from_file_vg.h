@@ -28,7 +28,7 @@
 #include <boost/filesystem.hpp>
 
 #include <datatools/utils/utils.h>
-#include <geomtools/units.h>
+#include <datatools/utils/units.h>
 
 #include <genvtx/i_vertex_generator.h>
 

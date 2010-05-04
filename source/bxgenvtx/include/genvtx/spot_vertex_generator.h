@@ -19,7 +19,7 @@
 #include <cstdlib>
 #include <stdexcept>
 
-#include <geomtools/units.h>
+#include <datatools/utils/units.h>
 
 #include <genvtx/i_vertex_generator.h>
 

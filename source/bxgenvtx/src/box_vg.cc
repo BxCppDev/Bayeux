@@ -348,7 +348,7 @@ namespace genvtx {
     if (configuration_.has_key ("length_unit"))
       {
 	lunit_str = configuration_.fetch_string ("length_unit");
-	lunit = geomtools::units::get_length_unit_from (lunit_str);
+	lunit = datatools::utils::units::get_length_unit_from (lunit_str);
       }
 
     if (configuration_.has_key ("skin_skip"))
