@@ -7,7 +7,7 @@
  * License: 
  * 
  * Description: 
- *   Primary event for GENBB generator
+ *   Primary event from the GENBB generator
  * 
  * History: 
  * 
@@ -29,6 +29,7 @@
 #include <geomtools/utils.h>
 
 #include <datatools/serialization/serialization.h>
+#include <datatools/utils/units.h>
 
 #include <genbb_help/primary_particle.h>
 
@@ -84,6 +85,10 @@ namespace genbb {
 
     void dump (std::ostream & out_ = std::clog,
 	       const std::string & indent_ = "") const;
+
+    void dump (std::ostream & out_,
+	       const std::string & title_,
+	       const std::string & indent_) const;
 
   private:
 

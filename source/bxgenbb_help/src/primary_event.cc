@@ -119,13 +119,17 @@ namespace genbb {
   }
 
   void primary_event::dump (std::ostream & out_,
+			    const std::string & title_,
 			    const std::string & indent_) const
   {
     std::string indent = indent_;
-    out_ << indent << "genbb::primary_event:" << std::endl;
+    if (! title_.empty ())
+      {
+	out_ << indent << title_ << std::endl;
+      }
     if (is_valid ())
       {
-	out_ << indent << "|-- time: " << time << std::endl;
+	out_ << indent << "|-- time: " << time / CLHEP::second << " s" << std::endl;
 	out_ << indent << "|-- #particles: " << particles.size () << std::endl;
 	for (particles_col_t::const_iterator it = particles.begin ();
 	     it != particles.end ();
@@ -135,10 +139,16 @@ namespace genbb {
 	  }
 	out_ << indent << "`-- classification: " << get_classification () << std::endl;
       }
-    else
+    else 
       {
 	out_ << indent << "`-- status: " << "<invalid>" << std::endl;
       }
+  }
+  
+  void primary_event::dump (std::ostream & out_,
+			    const std::string & indent_) const
+  {
+    dump (out_, "genbb::primary_event:", indent_); 
   }
   
 } // end of namespace genbb

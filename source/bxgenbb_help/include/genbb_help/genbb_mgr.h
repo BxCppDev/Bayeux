@@ -48,6 +48,10 @@ namespace genbb {
 	FORMAT_GENBB = 0,
 	FORMAT_BOOST = 1
       };
+
+    static const std::string FORMAT_GENBB_LABEL;
+    static const std::string FORMAT_BOOST_LABEL;
+
   private:
     bool __debug;
     bool __initialized;
@@ -78,6 +82,8 @@ namespace genbb {
     }
 
     void set_format (int format_ = FORMAT_GENBB);
+
+    void set_format (const std::string & format_ = FORMAT_GENBB_LABEL);
 
     bool is_format_genbb () const
     {

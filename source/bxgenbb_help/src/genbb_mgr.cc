@@ -6,6 +6,9 @@
 
 namespace genbb {
 
+  const std::string genbb_mgr::FORMAT_GENBB_LABEL = "genbb";
+  const std::string genbb_mgr::FORMAT_BOOST_LABEL = "boost";
+
   bool genbb_mgr::is_initialized () const
   {
     return __initialized;
@@ -26,16 +29,42 @@ namespace genbb {
   {
     reset ();
   }
-
+  
+  void genbb_mgr::set_format (const std::string & format_label_)
+  {
+    if (__initialized)
+      {
+	throw std::runtime_error ("genbb_mgr::set: Operation not allowed ! Manager is locked !");
+      }
+    int fmt = FORMAT_GENBB;
+    if ((format_label_ != FORMAT_GENBB_LABEL) 
+	&& (format_label_ != FORMAT_BOOST_LABEL))
+      {
+	std::ostringstream message;
+	message << "genbb_mgr::set: Invalid format label '" 
+		<< format_label_ << "' !";
+	throw std::runtime_error (message.str ());
+      }
+    if (format_label_ == FORMAT_GENBB_LABEL) 
+      {
+	fmt = FORMAT_GENBB;
+      }
+    if (format_label_ == FORMAT_BOOST_LABEL) 
+      {
+	fmt = FORMAT_BOOST;
+      }
+    this->set_format (fmt);
+  }
+  
   void genbb_mgr::set_format (int format_)
   {
     if (__initialized)
       {
-	throw std::runtime_error ("genbb_mgr::set: Operation not allowed! Manager is locked!");
+	throw std::runtime_error ("genbb_mgr::set: Operation not allowed ! Manager is locked !");
       }
     if ((format_ != FORMAT_GENBB) && (format_ != FORMAT_BOOST))
       {
-	throw std::runtime_error ("genbb_mgr::set: Invalid format!");
+	throw std::runtime_error ("genbb_mgr::set: Invalid format !");
       }
     __format = format_;
   }
@@ -230,7 +259,7 @@ namespace genbb {
       }
     out_ << "`-- current event: " << std::endl;
     __current.dump (out_, "    "); 
-
+    return;
   }
 
   void genbb_mgr::init ()
@@ -238,17 +267,21 @@ namespace genbb {
     if (__initialized) return;
     __load_next ();
     __initialized = true;
+    return;
   }
 
   void genbb_mgr::initialize ()
   {
     this->init ();
+    return;
   }
 
   void genbb_mgr::reset ()
   {
     if (! __initialized) return;
     __filenames.clear ();
+
+    // "genbb"
     if (__format == FORMAT_GENBB)
       {
 	if (__in != 0)
@@ -257,6 +290,8 @@ namespace genbb {
 	    __fin.close ();
 	  }
       }
+
+    // "boost":
     if (__format == FORMAT_BOOST)
       {
 	if (__reader.is_initialized ())
@@ -267,6 +302,7 @@ namespace genbb {
     __format = FORMAT_GENBB;
 
     __initialized = false;
+    return;
   }
   
 } // end of namespace genbb
