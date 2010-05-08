@@ -110,7 +110,7 @@ namespace genvtx {
     return (0);
   }
 
-  void factory::dump_vertex_generators (ostream & out_)
+  void factory::dump_vertex_generators (ostream & out_) const
   {
     out_ << "List of vertex generator creators in 'factory::__creators': ";
     size_t sz = __creators.size ();

@@ -59,7 +59,7 @@ namespace genvtx {
 			     const datatools::utils::properties & vg_configuration_, 
 			     void * user_ = 0);
     
-    void dump_vertex_generators (ostream & out_ = clog);
+    void dump_vertex_generators (ostream & out_ = clog) const;
     
   };
 
