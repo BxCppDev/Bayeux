@@ -466,7 +466,7 @@ namespace geomtools {
 		// register the position of item 'i':
 		ostringstream pos_name_oss;
 		pos_name_oss << log_name << '.' << phys.get_name ();
-		if (multiple) pos_name_oss << '[' << i << ']';
+		if (multiple) pos_name_oss << "__" << i << "__";
 		pos_name_oss << io::POSITION_SUFFIX;
 		__writer.add_position (pos_name_oss.str (), 
 				       p.get_translation (), 
