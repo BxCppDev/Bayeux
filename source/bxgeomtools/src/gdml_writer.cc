@@ -107,10 +107,21 @@ namespace geomtools {
     return __initialized;
   }
 
+  bool gdml_writer::is_verbose () const
+  {
+    return __verbose;
+  }
+
+  void gdml_writer::set_verbose (bool v_)
+  {
+    __verbose = v_;
+  }
+
   // ctor:
   gdml_writer::gdml_writer ()
   {
     __initialized = false;
+    __verbose = false;
     __external_materials_stream = 0;
     init ();
   }
@@ -123,11 +134,16 @@ namespace geomtools {
       }
   }
 
+  void gdml_writer::initialize ()
+  {
+    this->init ();
+  }
+
   void gdml_writer::init ()
   {
     if (__initialized) 
       {
-	clog << "WARNING: gdml_writer::init: Already initialized !" << endl;
+	if (is_verbose ()) clog << "WARNING: gdml_writer::init: Already initialized !" << endl;
       }
     __streams[DEFINE_SECTION]    = new ostringstream;
     __streams[MATERIALS_SECTION] = new ostringstream;
@@ -141,6 +157,7 @@ namespace geomtools {
   {
     if (! __initialized) 
       {
+	if (is_verbose ()) clog << "WARNING: gdml_writer::reset: Not initialized !" << endl;
 	return;
       }
     if (__streams.size())

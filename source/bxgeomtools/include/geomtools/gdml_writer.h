@@ -66,6 +66,7 @@ namespace geomtools {
 
   private:
     bool                  __initialized;
+    bool                  __verbose;
     __streams_col_t       __streams;
     const ostringstream * __external_materials_stream;
 
@@ -79,6 +80,10 @@ namespace geomtools {
     static string to_ascii (const string &);
 
     bool is_initialized () const;
+
+    bool is_verbose () const;
+
+    void set_verbose (bool);
 
     const ostringstream & get_stream (const string & section_) const;
 
@@ -100,6 +105,7 @@ namespace geomtools {
     virtual ~gdml_writer ();
 
     void init ();
+    void initialize ();
 
     void reset ();
 

@@ -83,7 +83,7 @@ namespace geomtools {
 				 const string & model_name_)
   {
     bool devel = g_devel;
-    devel = true; // XXX
+    //devel = true; // XXX
     if (devel)
       {
 	clog << "DEVEL: gdml_export::export_gdml: Entering..." << endl;
@@ -119,7 +119,7 @@ namespace geomtools {
 				  const string & model_name_)
   {
     bool devel = g_devel;
-    devel = true; // XXX
+    //devel = true; // XXX
     if (devel)
       {
 	clog << "DEVEL: gdml_export::export_gdml: Entering..." << endl;
@@ -139,7 +139,7 @@ namespace geomtools {
     const i_model & top_model = *(found->second);
     if (__external_materials_stream != 0)
       {
-	clog << "WARNING: gdml_export::export_gdml: Attach a stream with materials external definitions." << endl;
+	clog << "NOTICE: gdml_export::export_gdml: Attach a stream with materials external definitions." << endl;
 	__writer.attach_external_materials (*__external_materials_stream);
       }
     __writer.init ();
@@ -209,7 +209,7 @@ namespace geomtools {
 					const string & solid_name_)
   {
     bool devel = g_devel;
-    devel = true; // XXX
+    //devel = true; // XXX
     if (devel)
       {
 	clog << "DEVEL: gdml_export::_export_gdml_solid: Entering..." << endl;
@@ -281,7 +281,7 @@ namespace geomtools {
   void gdml_export::_export_gdml_logical (const logical_volume & lv_)
   {
     bool devel = g_devel;
-    devel = true; // XXX
+    //devel = true; // XXX
     if (devel)
       {
 	clog << "DEVEL: gdml_export::_export_gdml_logical: Entering..." << endl;
@@ -294,8 +294,11 @@ namespace geomtools {
 	      __volumes_refs.end (),
 	      log_name) != __volumes_refs.end ())
       {
-	clog << "DEVEL: gdml_export::_export_gdml_logical: "
-	     << "Logical '" << log_name << "' is already exported !" << endl;
+	if (devel)
+	  {
+	    clog << "DEVEL: gdml_export::_export_gdml_logical: "
+		 << "Logical '" << log_name << "' is already exported !" << endl;
+	  }
 	return;
       }
 
@@ -309,7 +312,7 @@ namespace geomtools {
     // prepare volume export
     string material_ref = material::MATERIAL_REF_UNKWOWN;
     string solid_ref = solid_name;
-    logical.tree_dump (cerr, "Logical:", " *** ");
+    if (devel) logical.tree_dump (clog, "Logical:", "DEVEL: ");
     if (logical.has_material_ref ())
       {
 	material_ref = logical.get_material_ref ();
@@ -345,12 +348,15 @@ namespace geomtools {
     // there is a replica children:
     if (! skip && (__support_replica && logical.is_replica ()))
       {
-	cerr << endl << "DEVEL: gdml_export::_export_gdml_logical: " 
-	     << "**************"
-	     << " REPLICA "
-	     << "**************"
-	     << endl
-	     << endl;
+	if (devel)
+	  {
+	    clog << endl << "DEVEL: gdml_export::_export_gdml_logical: " 
+		 << "**************"
+		 << " REPLICA "
+		 << "**************"
+		 << endl
+		 << endl;
+	  }
 	const physical_volume & phys = *(logical.get_physicals ().begin ()->second);
 	if (devel) clog << "DEVEL: gdml_export::_export_gdml_logical: "
 			<< "replica phys=" << phys.get_name () << endl;
@@ -451,7 +457,7 @@ namespace geomtools {
 	    if (only_one_rotation)
 	      {
 		ref_rot_name_oss << log_name << '.' << phys.get_name ();
-		if (multiple) ref_rot_name_oss << '{' << '0' << '-' << (nitems - 1) << '}';
+		if (multiple) ref_rot_name_oss << "__" << '0' << ".." << (nitems - 1) << "__";
 		ref_rot_name_oss << ".rot";
 	      }
 	    if (devel) clog << "DEVEL: gdml_export::_export_gdml_logical: "
@@ -478,7 +484,7 @@ namespace geomtools {
 		//   default rotation name:
 		ostringstream rot_name_oss;
 		rot_name_oss << log_name << '.' << phys.get_name ();
-		if (multiple) rot_name_oss << '[' << i << ']';
+		if (multiple) rot_name_oss << "__" << i << "__";
 		rot_name_oss << io::ROTATION_SUFFIX;
 		string rot_name = rot_name_oss.str ();
 		bool add_rot = false;
@@ -547,7 +553,7 @@ namespace geomtools {
   void gdml_export::_export_gdml_model (const i_model & model_)
   {
     bool devel = g_devel;
-    devel = true; // XXX
+    //devel = true; // XXX
     if (devel)
       {
 	clog << "DEVEL: gdml_export::_export_gdml_model: Entering..." << endl;
