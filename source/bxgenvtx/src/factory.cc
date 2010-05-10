@@ -83,17 +83,33 @@ namespace genvtx {
   }
   
   i_vertex_generator * factory::create_vertex_generator (const string & vg_id_, 
-							 const datatools::utils::properties & vg_configuration_, void * user_)
+							 const datatools::utils::properties & vg_configuration_,
+							 void * user_)
   {
     using namespace std;
+    bool devel = false;
+    devel = true;
 
+    if (devel) 
+      {
+	cerr << "DEVEL: factory::create_vertex_generator: " 
+	     << "VERTEX GENERATOR ID == '" << vg_id_ << "' " << endl;
+      }
     // search for the vertex generator's label in the creators dictionary:
     vertex_generator_creator_dict_t::iterator found = __creators.find (vg_id_);
     if (found != __creators.end ())
       {
-	vg_creator_t creator = found->second;
-	i_vertex_generator * vg = creator (vg_configuration_, user_);
+	vg_creator_t a_creator = found->second;
+	i_vertex_generator * vg = a_creator (vg_configuration_, user_);
 	return vg;
+      }
+    else
+      {
+	if (devel) 
+	  {
+	    cerr << "DEVEL: factory::create_vertex_generator: "
+		 << "NULL VERTEX GENERATOR !" << endl;
+	  }
       }
     /*
     else
