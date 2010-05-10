@@ -102,7 +102,7 @@ namespace geomtools {
     if (label.empty ())
       {
 	ostringstream label_oss;
-	label_oss << STACKED_LABEL << "[" << i_ << ']';
+	label_oss << STACKED_LABEL << "__" << i_ << "__";
 	label = label_oss.str ();
       }
     else
