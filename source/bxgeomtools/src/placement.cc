@@ -350,9 +350,9 @@ namespace geomtools {
 					vector_3d & mother_dir_) const
   {
     vector_3d a;
-    child_to_mother (vector_3d ( 0., 0., 0.), a);
+    child_to_mother (vector_3d (0., 0., 0.), a);
     vector_3d b;
-    child_to_mother (mother_dir_, b);
+    child_to_mother (child_dir_, b);
     mother_dir_= b - a;
   }
 
