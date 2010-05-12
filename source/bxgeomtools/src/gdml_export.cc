@@ -147,7 +147,8 @@ namespace geomtools {
 
     string xml_version  = gdml_writer::DEFAULT_XML_VERSION;
     string xml_encoding = gdml_writer::DEFAULT_XML_ENCODING;
-    string gdml_schema  = gdml_writer::DEFAULT_GDML_SCHEMA;
+    string xsi          = gdml_writer::DEFAULT_XSI;
+    string gdml_schema  = gdml_writer::DEFAULT_REMOTE_GDML_SCHEMA;
 
     if (__parameters.has_key ("xml_version"))
       {
@@ -157,6 +158,11 @@ namespace geomtools {
     if (__parameters.has_key ("xml_encoding"))
       {
 	xml_encoding = __parameters.fetch_string ("xml_encoding");
+      }
+
+    if (__parameters.has_key ("xsi"))
+      {
+	xsi = __parameters.fetch_string ("xsi");
       }
 
     if (__parameters.has_key ("gdml_schema"))
@@ -195,7 +201,7 @@ namespace geomtools {
 
     __writer.add_setup ("Setup", top_model.get_name ());
 
-    __writer.full_write (out_, xml_version, xml_encoding, gdml_schema);
+    __writer.full_write (out_, xml_version, xml_encoding, gdml_schema, xsi);
     __writer.reset ();
 
     if (devel)

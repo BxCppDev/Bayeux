@@ -55,6 +55,7 @@ namespace geomtools {
 
     static const string DEFAULT_XML_VERSION;
     static const string DEFAULT_XML_ENCODING;
+    static const string DEFAULT_XSI;
     static const string DEFAULT_GDML_SCHEMA;
     static const string DEFAULT_REMOTE_GDML_SCHEMA;
 
@@ -356,30 +357,34 @@ namespace geomtools {
 
     void xml_header (ostream &, 
 		     const string & version_ = DEFAULT_XML_VERSION,
-		     const string & encoding_ = DEFAULT_XML_ENCODING);
+		     const string & encoding_ = DEFAULT_XML_ENCODING,
+		     bool standalone_ = false);
 
     void gdml_begin (ostream &, 
-		     const string & schema_ = DEFAULT_GDML_SCHEMA);
+		     const string & schema_ = DEFAULT_GDML_SCHEMA,
+		     const string & xsi_ = DEFAULT_XSI);
 
     void gdml_end (ostream &);
 
     void gdml_section_begin (ostream &, 
 			     const string & section_);
     void gdml_section_end (ostream &, 
-			     const string & section_);
+			   const string & section_);
    
    
     /**************** Utilities *******************/
    
     void full_write (ostream & out_,
-		     const string & version_ = DEFAULT_XML_VERSION,
+		     const string & version_  = DEFAULT_XML_VERSION,
 		     const string & encoding_ = DEFAULT_XML_ENCODING,
-		     const string & schema_ = DEFAULT_REMOTE_GDML_SCHEMA);
+		     const string & schema_   = DEFAULT_REMOTE_GDML_SCHEMA,
+		     const string & xsi_      = DEFAULT_XSI);
    
     void save_file (const string & filename_,
-		    const string & version_ = "1.0",
+		    const string & version_  = "1.0",
 		    const string & encoding_ = "UTF-8",
-		    const string & schema_ = "gdml.xsd");
+		    const string & schema_   = DEFAULT_REMOTE_GDML_SCHEMA,
+		    const string & xsi_      = DEFAULT_XSI);
 
 
     void dump (ostream &) const;

@@ -10,6 +10,7 @@ namespace geomtools {
 
   const string gdml_writer::DEFAULT_XML_VERSION = "1.0";
   const string gdml_writer::DEFAULT_XML_ENCODING = "UTF-8";
+  const string gdml_writer::DEFAULT_XSI = "http://www.w3.org/2001/XMLSchema-instance";
   const string gdml_writer::DEFAULT_GDML_SCHEMA   = "gdml.xsd";
   const string gdml_writer::DEFAULT_REMOTE_GDML_SCHEMA  = "http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd";
 
@@ -1239,36 +1240,49 @@ namespace geomtools {
 
   void gdml_writer::xml_header (ostream & out_, 
 				const string & version_, 
-				const string & encoding_)
+				const string & encoding_,
+				bool standalone_)
   {
-    out_ << "<?xml version=" << '"' << version_ << '"' 
-	 << " encoding=" << '"' << encoding_ << '"' 
-	 << " ?>" << endl;
-
+    out_ << "<?xml version=" << '"' << version_ << '"'; 
+    out_ << " encoding=" << '"' << encoding_ << '"';
+    if (standalone_)
+      {
+	out_ << " standalone=" << '"' << "yes" << '"';
+      }
+    else
+      {
+	out_ << " standalone=" << '"' << "no" << '"';
+      }
+    out_ << " ?>" << endl;
+    return;
   }
 
-  void gdml_writer::gdml_begin (ostream & out_, 
-				const string & schema_)
-  {
-    /*
-    out_ << "<gdml xmlns:gdml=" << '"' << "http://cern.ch/2001/Schemas/GDML" << '"'
-	 << ' ' << endl
-	 << "      xmlns:xsi=" << '"' << "http://www.w3.org/2001/XMLSchema-instance" << '"'
-	 << ' ' << endl
-	 << "      xsi:noNamespaceSchemaLocation="
-	 << '"' << schema_ << '"' 
-	 << " >" << endl;
-    */
-    out_ << "<gdml xsi:noNamespaceSchemaLocation="
-	 << '"' << schema_ << '"' 
-	 << " >" << endl;
 
-    /*
-      out_ << "<gdml " 
-	 << "xsi:noNamespaceSchemaLocation="
+  /*
+
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+
+  */
+  void gdml_writer::gdml_begin (ostream & out_, 
+				const string & schema_, 
+				const string & xsi_)
+  {
+    out_ << "<gdml ";
+    if (! xsi_.empty ())
+      {
+	out_ << "xmlns:xsi="
+	     << '"' << xsi_ << '"' 
+	     << " ";
+	
+      }
+    out_ << "xsi:noNamespaceSchemaLocation="
 	 << '"' << schema_ << '"' 
-	 << " >" << endl;
-    */
+	 << " ";
+
+    out_ << " >" << endl;
+    
+    return;
   }
 
   void gdml_writer::gdml_end (ostream & out_)
@@ -1291,16 +1305,18 @@ namespace geomtools {
   /*** Utilities ***/
    
   void gdml_writer::full_write (ostream & out_,
-			   const string & version_,
-			   const string & encoding_,
-			   const string & schema_)
+				const string & version_,
+				const string & encoding_,
+				const string & schema_,
+				const string & xsi_)
   {
     if (! out_)
       {
 	throw runtime_error ("gdml_writer::full_write: Output stream is invalid !");
       }
-    xml_header (out_, version_, encoding_);
-    gdml_begin (out_, schema_);
+    bool standalone = false;
+    xml_header (out_, version_, encoding_, standalone);
+    gdml_begin (out_, schema_, xsi_);
     out_ << endl;
 
     gdml_section_begin (out_, DEFINE_SECTION);
@@ -1346,7 +1362,8 @@ namespace geomtools {
   void gdml_writer::save_file (const string & filename_,
 			       const string & version_,
 			       const string & encoding_,
-			       const string & schema_)
+			       const string & schema_,
+			       const string & xsi_)
   {
     ofstream fout;
     string filename = filename_;
@@ -1361,7 +1378,7 @@ namespace geomtools {
 		<< "' !";
 	throw runtime_error (message.str ());
       }
-    full_write (fout, version_, encoding_, schema_);
+    full_write (fout, version_, encoding_, schema_, xsi_);
     return;
   }
  
