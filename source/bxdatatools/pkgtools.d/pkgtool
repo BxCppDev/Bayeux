@@ -32,6 +32,7 @@ tool_mode=""
 do_usage=0
 debug=0
 verbose=0
+eos_trick=0
 
 default_python_version=2.5
 python_version=${default_python_version}
@@ -351,7 +352,61 @@ function do_clean ()
 function boost_eos_archive_trick ()
 {
     notice_msg "boost_eos_archive_trick: Entering..."
-    notice_msg "boost_eos_archive_trick: From 'http://www.boost.org/doc/libs/1_40_0/libs/serialization/doc/release.html#requirements'"
+
+    # force eos_portable_archive 4.1 trick:
+    if [ "x${1}" != "x" ]; then
+	eos_trick_ver="${1}"
+    fi
+    local eos_trick_ver=""
+    local boost_version_rank=$(echo ${boost_version} | tr '_' '0')
+    notice_msg "boost_eos_archive_trick: boost_version_rank=${boost_version_rank}"
+    if [ ${boost_version_rank} -ge 104200 ]; then
+	eos_trick_ver=4.1
+    fi
+
+    # Force 4.1 trick:
+    eos_trick_ver=4.1
+    
+    # run the proper trick:
+    if [ "x${eos_trick_ver}" = "x4.1" ]; then
+	notice_msg "boost_eos_archive_trick: Running trick 4.1..."
+	boost_eos_archive_trick_4_1
+	return
+    fi
+    # obsolete:
+    if [ "x${eos_trick_ver}" = "x3.1" ]; then
+	boost_eos_archive_trick_3_1
+	return
+    fi
+    notice_msg "boost_eos_archive_trick: Exiting."
+    return
+}
+
+function boost_eos_archive_trick_4_1 ()
+{
+    notice_msg "boost_eos_archive_trick_4_1: Entering..."
+
+    opwd=$(pwd) 
+    cd ${the_base_dir}/boost/vault/eos
+
+    ### fix input archive:
+    pia_src=portable_iarchive.hpp
+    if [ ! -f ${pia_src}.orig ]; then
+	cp -f ${pia_src} ${pia_src}.orig 
+    fi
+
+    cat ${pia_src}.orig | sed 's@set_library_version(3)@set_library_version((version_type)3)@g' > ${pia_src}
+
+    cd ${opwd}
+
+    notice_msg "boost_eos_archive_trick_4_1: Exiting."
+    return
+}
+
+function boost_eos_archive_trick_3_1 ()
+{
+    notice_msg "boost_eos_archive_trick_3_1: Entering..."
+    notice_msg "boost_eos_archive_trick_3_1: From 'http://www.boost.org/doc/libs/1_40_0/libs/serialization/doc/release.html#requirements'"
 
     opwd=$(pwd) 
     cd ${the_base_dir}/boost/vault/eos
@@ -428,7 +483,7 @@ EOF
 
     cd ${opwd}
 
-    notice_msg "boost_eos_archive_trick: Exiting."
+    notice_msg "boost_eos_archive_trick_3_1: Exiting."
 }
 
 function do_configure ()
@@ -579,7 +634,7 @@ EOF
 	#run_eos_archive_trick=1
 	if [ ${run_eos_archive_trick} -eq 1 ]; then
 	    warning_msg "Using special trick for EOS portable archives!"
-	    boost_eos_archive_trick
+	    boost_eos_archive_trick ${eos_trick}
 	fi
     fi
 

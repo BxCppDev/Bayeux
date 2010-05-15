@@ -1,23 +1,25 @@
 # -*- mode: make; -*-
 
+archives_dir=./archives
+
 FPU_CAT="Math%20-%20Numerics"
-FPU_AR="floating_point_utilities_v3.zip"
+FPU_AR=floating_point_utilities_v3.zip
 FPU_URL="http://www.boostpro.com/vault/index.php?action=downloadfile&filename=$(FPU_AR)&directory=$(FPU_CAT)&"
 
-PBA_CAT="serialization"
-PBA_AR="eos_portable_archive.zip"
+PBA_CAT=serialization
+PBA_AR=eos_portable_archive.zip
 PBA_URL="http://www.boostpro.com/vault/index.php?action=downloadfile&filename=$(PBA_AR)&directory=$(PBA_CAT)&"
 
-ENDIAN_CAT="Integer"
-ENDIAN_AR="endian-0.8.zip"
+ENDIAN_CAT=Integer
+ENDIAN_AR=endian-0.8.zip
 ENDIAN_URL="http://www.boostpro.com/vault/index.php?action=downloadfile&filename=$(ENDIAN_AR)&directory=$(ENDIAN_CAT)&"
 
-SER_BITSET_CAT="serialization"
-SER_BITSET_AR="ser_bitset1.zip"
+SER_BITSET_CAT=serialization
+SER_BITSET_AR=ser_bitset1.zip
 SER_BITSET_URL="http://www.boostpro.com/vault/index.php?action=downloadfile&filename=$(SER_BITSET_AR)&directory=$(SER_BITSET_CAT)&"
 
-BITSET_AND_MORE_CAT="serialization"
-BITSET_AND_MORE_AR="bitset_and_more.zip"
+BITSET_AND_MORE_CAT=serialization
+BITSET_AND_MORE_AR=bitset_and_more.zip
 BITSET_AND_MORE_URL="http://www.boostpro.com/vault/index.php?action=downloadfile&filename=$(BITSET_AND_MORE_AR)&directory=$(BITSET_AND_MORE_CAT)&"
 
 .PHONY : all
@@ -29,16 +31,31 @@ install : install__fpu install__eos_pba install__endian #install__ser_bitset
 .PHONY : clean
 clean : clean__fpu clean__eos_pba clean__endian #clean__ser_bitset
 	find . -name "*~" -exec $(RM) \{\} \;
+	$(RM) $(FPU_AR)
+	$(RM) $(PBA_AR)
+	$(RM) $(ENDIAN_AR)
 
 .PHONY : install__fpu
 install__fpu :
+	cp -f $(archives_dir)/$(FPU_AR) ./
 	unzip $(FPU_AR)
 	ln -s $(shell pwd)/floating_point_utilities_v3 ./fpu
+	chmod -R u+rw ./fpu
 
 .PHONY : install__eos_pba
 install__eos_pba :
+	cp -f $(archives_dir)/$(PBA_AR) ./$(PBA_AR)
+	#cp -f $(archives_dir)/eos_portable_archive.4.1.zip ./$(PBA_AR)
 	unzip $(PBA_AR)
 	ln -s $(shell pwd)/eos ./eos_pba
+	chmod -R u+rw ./eos_pba
+
+.PHONY : install__endian
+install__endian :
+	cp -f $(archives_dir)/$(ENDIAN_AR) ./
+	unzip $(ENDIAN_AR)
+	ln -s $(shell pwd)/endian-0.8 ./endian
+	chmod -R u+rw  ./endian
 
 # .PHONY : install__ser_bitset
 # install__ser_bitset :
@@ -51,11 +68,6 @@ install__eos_pba :
 #	mkdir ./bitset_and_more
 #	cd ./bitset_and_more; unzip ../$(BITSET_AND_MORE_AR); cd ..
 #	#ln -s $(shell pwd)/bitset_and_more ./bitset_and_more
-
-.PHONY : install__endian
-install__endian :
-	unzip $(ENDIAN_AR)
-	ln -s $(shell pwd)/endian-0.8 ./endian
 
 .PHONY : clean__fpu
 clean__fpu :

@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <string>
 #include <map>
+#include <unistd.h>
 
 using namespace std;
 
@@ -41,7 +42,9 @@ toto::toto (const string & name_, double val_)
 
 toto::~toto ()
 {
-  //clog << "toto::~toto: Entering..." << endl;
+  clog << "toto::~toto: Destroying '" << __name << "'..." << endl;
+  __name = "<toto without name>";
+  __value = -666.0;
 }
 
 const string & toto::get_name () const
@@ -93,9 +96,11 @@ public:
   titi ();
   titi (const string & name_);
   // CRITICAL
+  /*
 private:
   titi (const titi &);
   titi & operator = (const titi &);
+  */
 public:
   ~titi ();
   const string & get_name () const;
@@ -137,6 +142,9 @@ titi::entry::entry (const entry & e_)
  
 titi::entry::~entry ()
 {
+  clog << "titi::entry::~entry () : destroying entry";
+  if (t != 0) clog << " with named '" << t->get_name () << "'";
+  clog << "..." << endl; 
   if (t != 0)
     {
       if (owned)
@@ -182,7 +190,8 @@ titi::titi (const string & name_)
 
 titi::~titi ()
 {
-  //clog << "titi::~titi: Entering..." << endl;
+  clog << "titi::~titi: Destroying '" << __name << "'..." << endl;
+  __name = "<invalid>";
   __composition.clear ();
 }
 
@@ -374,55 +383,64 @@ int main (void)
     toto t2 ("b", 4.56);
     toto t3 ("c", 12.65);
     
-    cout << "t1=" << t1 << endl;
-    cout << "t2=" << t2 << endl;
-    cout << "t3=" << t3 << endl;
-    cout << endl;
+    clog << "t1=" << t1 << endl;
+    clog << "t2=" << t2 << endl;
+    clog << "t3=" << t3 << endl;
+    clog << endl;
     
     titi T ("Z");
     T.add_toto (t1, 0.2);
     T.add_toto (t2, 0.5);
     T.add_toto (t3, 0.3);
     T.add_toto (new toto ("d", 666.), 0.1);
-    T.print (cout);
+    T.print (clog);
     
     titi T2 = T;
-    T2.print (cout);
+    T2.print (clog);
   }
 
   {
-    mgr M;
-    M.add_toto ("a", 1.23);
-    M.add_toto ("b", 10.23);
-    M.add_toto ("c", 12.23);
-    M.add_toto ("d", 34.23);
-    M.add_toto ("e", 34.23);
-    M.add_toto ("f", 0.23);
-    map<string, double> z_comp;
-    z_comp["a"] = 0.2;
-    z_comp["b"] = 0.3;
-    z_comp["f"] = 0.5;
-    M.add_titi ("Z", z_comp);
-    map<string, double> y_comp;
-    y_comp["a"] = 0.15;
-    y_comp["c"] = 0.05;
-    y_comp["e"] = 0.8;
-    M.add_titi ("Y", y_comp);
-    M.print (cout);
-    
-    if (M.has_toto ("c"))
-      {
-	cout << "found toto: " << M.get_toto ("c") << endl;
-      }
-    if (M.has_titi ("Z"))
-      {
-	cout << "found titi: " << endl;
-	M.get_titi ("Z").print (cout);
-      }
-  
-    titi bad_titi = M.get_titi ("Z");
-    cout << "bad titi: " << endl;
-    bad_titi.print (cout);
+    titi bad_titi;
+    //{
+      mgr M;
+
+      // add totos:
+      M.add_toto ("a", 1.23);
+      M.add_toto ("b", 10.23);
+      M.add_toto ("c", 12.23);
+      M.add_toto ("d", 34.23);
+      M.add_toto ("e", 34.23);
+      M.add_toto ("f", 0.23);
+
+      // build and add titis:
+      map<string, double> z_comp;
+      z_comp["a"] = 0.2;
+      z_comp["b"] = 0.3;
+      z_comp["f"] = 0.5;
+      M.add_titi ("Z", z_comp);
+      map<string, double> y_comp;
+      y_comp["a"] = 0.15;
+      y_comp["c"] = 0.05;
+      y_comp["e"] = 0.8;
+      M.add_titi ("Y", y_comp);
+      M.print (clog);
+      
+      if (M.has_toto ("c"))
+	{
+	  clog << "found toto: " << M.get_toto ("c") << endl;
+	}
+      if (M.has_titi ("Z"))
+	{
+	clog << "found titi: " << endl;
+	M.get_titi ("Z").print (clog);
+	}
+      // make a copy:
+      bad_titi = M.get_titi ("Z");
+      // }
+    usleep (500);
+    clog << "*****************************" << endl;
+    clog << "bad titi: " << endl;
+    bad_titi.print (clog);
   }
 
   return 0;

@@ -19,11 +19,12 @@ This is the datatools package ChangeLog
 2009-11-13 : F. Mauger, X. Garrido 
 	- many fix
 	- support for Boost 1.40.0
-	- support for new serialization stuff: 
+	  with EOS portable binary archive 3.1 + a trick (3.1)
+	- support for new serialization stuff:
 	http://www.boost.org/doc/libs/1_40_0/libs/serialization/doc/release.html#requirements
-	- support for std::bitset serialization stuff (vault)
+	- support for std::bitset serialization stuff (vault) [to be checked]
+	
+2010-05-15 : F. Mauger, X. Garrido
+	- attempt to support Boost 1.43.0
+	  with EOS portable binary archive 4.1 + a trick (4.1)
 
-	
-
-	
-	
