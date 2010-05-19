@@ -60,6 +60,8 @@ namespace geomtools {
     const id_mgr & _get_id_manager () const;
     
     const geom_info_dict_t & _get_geom_infos () const;
+    
+    geom_info_dict_t & _get_geom_infos ();
 
   public:
 

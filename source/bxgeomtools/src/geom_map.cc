@@ -10,6 +10,11 @@ namespace geomtools {
   {
     return __geom_infos;
   }
+
+  geom_map::geom_info_dict_t & geom_map::_get_geom_infos ()
+  {
+    return __geom_infos;
+  }
     
   const id_mgr & geom_map::_get_id_manager () const
   {
