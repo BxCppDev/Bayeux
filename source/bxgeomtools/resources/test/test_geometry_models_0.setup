@@ -50,6 +50,7 @@ visibility.color            : string = "orange"
 visibility.hidden           : boolean = 0
 visibility.hidden_envelop   : boolean = 0
 visibility.daughters.hidden : boolean = 0
+category : string = "vessel"
 
 [name="box4" type="geomtools::replicated_boxed_model"]
 replicant_axis  : string = "x"
@@ -137,6 +138,7 @@ phi         : real   = 30.0
 theta       : real   = 0.0
 visibility.hidden           : boolean = 0
 visibility.daughters.hidden : boolean = 0
+category : string = "world"
 
 [name="world2" type="geomtools::test::test_world_model"]
 material.ref    : string = "vacuum"
@@ -184,5 +186,6 @@ phi         : real   = 30.0
 theta       : real   = 20.0
 visibility.hidden           : boolean = 0
 visibility.daughters.hidden : boolean = 0
+category : string = "world"
 
 # End of list of multi-properties.
