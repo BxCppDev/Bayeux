@@ -101,15 +101,7 @@ namespace geomtools {
 	new_cs.label = section_;
 	new_cs.filename = "";
 	new_cs.oss = new ostringstream;
-	/*
-        cerr << "DEVEL: gnuplot_drawer::_get_stream: "
-	     << "new_cs.oss   = " << new_cs.oss << endl;
-	*/
 	new_cs.color = color::get_color (section_);
-	/*
-        cerr << "DEVEL: gnuplot_drawer::_get_stream: "
-	     << "new_cs.color = " << new_cs.color << endl;
-	*/
 	__cstreams[section_] = new_cs;
 	return *(new_cs.oss);
       }
@@ -132,30 +124,12 @@ namespace geomtools {
     __initialized = false;
     __view = gnuplot_drawer::DEFAULT_VIEW;
     __mode = gnuplot_drawer::DEFAULT_MODE;
-    //init ();
   }
   
   gnuplot_drawer::~gnuplot_drawer ()
   {
-    /*
-      if (__initialized) 
-      {
-      reset ();
-      }
-    */
-    reset ();
+   reset ();
   }
-
-  /*
-    void gnuplot_drawer::init ()
-    {
-    if (__initialized) 
-    {
-    clog << "WARNING: gnuplot_drawer::init: Already initialized !" << endl;
-    }
-    __initialized = true;
-    }
-  */
   
   void gnuplot_drawer::reset_cstreams ()
   {
@@ -185,21 +159,14 @@ namespace geomtools {
  
   void gnuplot_drawer::reset ()
   {
-    /*
-      if (! __initialized) 
-      {
-      return;
-      }
-    */
     reset_cstreams ();
     __view = gnuplot_drawer::DEFAULT_VIEW;
     __mode = gnuplot_drawer::DEFAULT_MODE;
-    //__initialized = false;
+    __initialized = false;
   }
   
   /****************************************************/
    
-  
   void gnuplot_drawer::__draw (const logical_volume & log_,
 			       const placement & p_,
 			       int max_display_level_)
@@ -323,15 +290,6 @@ namespace geomtools {
 	// draw children:
 	bool draw_children = false;
 
-	/*
-	if (devel)
-	  {
-	    cerr << "DEVEL: gnuplot_drawer::__draw: " 
-		 << "TEST XXX"  
-		 << endl;
-	  }
-	*/
-
 	// check the disply level of the geometry tree:
 	if ((display_level < max_display_level) 
 	    && (log.get_physicals ().size () > 0))
@@ -439,7 +397,6 @@ namespace geomtools {
       }
     return;
   }
-  
   
   /****************************************************/
 

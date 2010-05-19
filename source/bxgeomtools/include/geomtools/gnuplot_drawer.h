@@ -7,8 +7,8 @@
  * License: 
  * 
  * Description: 
- *   
- * 
+ *  Algorithm to recursively draw the geometry using gnuplot.
+ *
  * History: 
  * 
  */
@@ -70,23 +70,8 @@ namespace geomtools {
 
       cstream ()
       {
-	//clog << "DEVEL: cstream::CTOR: Entering..." << endl;
 	oss = 0;
-	//clog << "DEVEL: cstream::CTOR: Exiting." << endl;
       }
-      /*
-      // Bug:
-      ~cstream ()
-      {
-	clog << "DEVEL: cstream::DTOR: Entering..." << endl;
-	if (oss)
-	  {
-	    delete oss;
-	    oss = 0;
-	  }
-	clog << "DEVEL: cstream::DTOR: Exiting." << endl;
-      }
-      */
     };
 
     typedef map<string, cstream> cstreams_col_t;
@@ -101,7 +86,6 @@ namespace geomtools {
     datatools::utils::properties __props;
     string __view;
     string __mode;
-
 
   public:
 
@@ -123,9 +107,7 @@ namespace geomtools {
 
     bool is_initialized () const;
 
-    //ostringstream & get_stream (const string & section_);
-
- protected:
+  protected:
 
     ostringstream & _get_stream (const string & section_);
 
@@ -149,7 +131,6 @@ namespace geomtools {
 		 const placement & p_,
 		 int max_display_level_ = 0);
     
-
   public:
 
     void draw (const logical_volume & log_,
@@ -166,10 +147,6 @@ namespace geomtools {
 		       const string & model_name_,
 		       const placement & p_,
 		       int max_display_level_);
-    
-  public:
-    
-
 
   }; // class gnuplot_drawer
   
