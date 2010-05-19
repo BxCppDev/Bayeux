@@ -20,6 +20,7 @@
 
 #include <geomtools/utils.h>
 #include <geomtools/geom_id.h>
+#include <geomtools/geom_info.h>
 
 namespace geomtools {
 
@@ -28,34 +29,6 @@ namespace geomtools {
 
   class i_locator 
   {
-  private:
-    bool __debug;
-    bool __initialized;
-    properties __parameters;
-
-  public:
-
-    bool is_debug () const;
-
-    bool is_initialized () const;
-
-    const properties & parameters () const;
-    
-    properties & parameters ();
-
-    i_locator ();
-
-    virtual ~i_locator ();
-
-    void initialize (const properties & params_);
- 
-    void reset ();
-
-  protected:
-
-    virtual void _initialize (const properties & params_);
- 
-    virtual void _reset ();
 
   public:
 
@@ -64,14 +37,11 @@ namespace geomtools {
     // check if 'id_' is valid:
     virtual bool validate_id (const geom_id & id_) const = 0;
 
-    // find the 'id_' of the object from its category where position 'position_' lies in;
-    // return invalid 'id_' if not found:
-    virtual void find_id (geom_id & id_, const vector_3d & position_) const = 0;
+    virtual const geom_info & get_geom_info (const geom_id & id_) const = 0;
 
-    geom_id find_id (const vector_3d & position_) const;
-
-    // get the geometry data related to object with id 'id_':
-    // virtual void locate_id (const geom_id & id_, geom_data & gdata_) const = 0;
+    virtual const geom_id & get_geom_id (const vector_3d & world_position_, 
+					 int type_, 
+					 double tolerance_ = i_object_3d::USING_PROPER_TOLERANCE) const = 0;
 
   };
 

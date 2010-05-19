@@ -44,6 +44,11 @@ namespace geomtools {
     __id_manager = &mgr_;
   }
 
+  bool geom_map::validate_id (const geom_id & id_) const
+  {
+    return has_geom_info (id_);
+  }
+
   bool geom_map::has_geom_info (const geom_id & id_) const
   {
     return __geom_infos.find (id_) != __geom_infos.end ();
@@ -68,6 +73,15 @@ namespace geomtools {
   }
   
   void geom_map::get_geom_id (const vector_3d & world_position_, 
+			      int type_,
+			      geom_id & gid_,
+			      double tolerance_) const
+  {
+    gid_.invalidate ();
+    gid_ = geom_map::get_geom_id (world_position_, type_, tolerance_);
+  };
+  
+  void geom_map::get_geom_id (const vector_3d & world_position_, 
 			      const string & category_,
 			      geom_id & gid_,
 			      double tolerance_) const
@@ -75,22 +89,12 @@ namespace geomtools {
     gid_.invalidate ();
     gid_ = geom_map::get_geom_id (world_position_, category_, tolerance_);
   };
-   
+
   const geom_id & geom_map::get_geom_id (const vector_3d & world_position_, 
-					 const string & category_, 
+					 int type_, 
 					 double tolerance_) const
   {
-    geom_info_dict_t::const_iterator found = __geom_infos.end ();
-    if (! __id_manager->has_category_info (category_))
-      {
-	ostringstream message;
-	message << "geom_map::get_geom_id: "
-		<< "No category named '" << category_ << "' !";
-	throw runtime_error (message.str ());
-      }
-    const id_mgr::category_info & ci 
-      = __id_manager->get_category_info (category_);
-    int requested_type = ci.get_type ();
+    int requested_type = type_;
     for (geom_info_dict_t::const_iterator i = __geom_infos.begin ();
 	 i != __geom_infos.end ();
 	 i++)
@@ -108,17 +112,31 @@ namespace geomtools {
 	    return gid;
 	  }
       }
-    return __invalid_geom_id;
+     return __invalid_geom_id;
+  }
+   
+  const geom_id & geom_map::get_geom_id (const vector_3d & world_position_, 
+					 const string & category_, 
+					 double tolerance_) const
+  {
+    geom_info_dict_t::const_iterator found = __geom_infos.end ();
+    if (! __id_manager->has_category_info (category_))
+      {
+	ostringstream message;
+	message << "geom_map::get_geom_id: "
+		<< "No category named '" << category_ << "' !";
+	throw runtime_error (message.str ());
+      }
+    const id_mgr::category_info & ci 
+      = __id_manager->get_category_info (category_);
+    int requested_type = ci.get_type ();
+    return get_geom_id (world_position_, requested_type, tolerance_);
   }
 
   void geom_map::build_from (const model_factory & factory_,
 			     const string & mother_)
   {
     throw runtime_error ("geom_map::build_from: Not implemented !");
-    /*
-    const models_col_t & models = factory_.get_models ();
-    const logical_volume::dict_t & logicals = get_logicals ();
-    */
   }
 
 } // end of namespace geomtools

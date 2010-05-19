@@ -36,13 +36,15 @@
 #include <geomtools/id_mgr.h>
 #include <geomtools/placement.h>
 #include <geomtools/model_factory.h>
+#include <geomtools/i_locator.h>
+#include <geomtools/geom_id.h>
 #include <geomtools/geom_info.h>
 
 namespace geomtools {
 
   using namespace std;
 
-  class geom_map 
+  class geom_map : public i_locator
   {
   public:
 
@@ -69,22 +71,37 @@ namespace geomtools {
 
     void set_id_manager (const id_mgr & mgr_);
 
-    bool has_geom_info (const geom_id &) const;
+    const geom_id & get_invalid_geom_id () const;    
 
-    const geom_info & get_geom_info (const geom_id &) const;
+    /***  i_locator interface  ***/
+
+    virtual bool validate_id (const geom_id & id_) const;
+    
+    virtual const geom_info & get_geom_info (const geom_id &) const;
+    
+    virtual const geom_id & get_geom_id (const vector_3d & world_position_, 
+					 int type_, 
+					 double tolerance_ = i_object_3d::USING_PROPER_TOLERANCE) const;
+
+    /*****************************/
+
+    virtual bool has_geom_info (const geom_id &) const;
+
+    void get_geom_id (const vector_3d & world_position_, 
+		      int type_,
+		      geom_id & gid_,
+		      double tolerance_ = i_object_3d::USING_PROPER_TOLERANCE) const;
 
     void get_geom_id (const vector_3d & world_position_, 
 		      const string & category_,
 		      geom_id & gid_,
 		      double tolerance_ = i_object_3d::USING_PROPER_TOLERANCE) const;
 
-    const geom_id & get_invalid_geom_id () const;    
-
     virtual const geom_id & get_geom_id (const vector_3d & world_position_, 
-					 const string &  category_, 
+					 const string & category_, 
 					 double tolerance_ = i_object_3d::USING_PROPER_TOLERANCE) const;
     
-    virtual void build_from (const model_factory &,
+    virtual void build_from (const model_factory & factory_,
 			     const string & mother_ = "world");
 
   };
