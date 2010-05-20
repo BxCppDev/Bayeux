@@ -7,6 +7,16 @@ namespace datatools {
 
   namespace utils {
 
+    void invalidate (double & x_)
+    {
+       x_ = std::numeric_limits<double>::quiet_NaN ();    
+    }
+
+    bool is_valid (double x_)
+    {
+      return x_ == x_;
+    }
+
     bool fetch_path_with_env (std::string & text_)
     {
       std::string::size_type dollar;

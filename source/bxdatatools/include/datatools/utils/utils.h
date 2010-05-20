@@ -13,11 +13,18 @@
 #include <vector>
 #include <algorithm>
 #include <list>
+#include <limits>
 
 namespace datatools {
   
   namespace utils {
-    
+
+    // Invalidate a double float (using NaN):
+    void invalidate (double & x_);
+
+    // Check if a double float is valid (not a NaN):
+    bool is_valid (double x_);
+
     bool fetch_path_with_env (std::string & text_);
     
     /* This method is not very elegant. I use 
