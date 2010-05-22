@@ -10,7 +10,12 @@ namespace geomtools {
   {
     return __geom_infos;
   }
-
+    
+  const geom_map::geom_info_dict_t & geom_map::get_geom_infos () const
+  {
+    return __geom_infos;
+  }
+  
   geom_map::geom_info_dict_t & geom_map::_get_geom_infos ()
   {
     return __geom_infos;

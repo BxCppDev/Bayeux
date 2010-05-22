@@ -10,170 +10,149 @@ namespace geomtools {
 
   const double constants::DEFAULT_TOLERANCE = 1.e-7 * CLHEP::mm;
 
-  const std::string io::VECTOR_2D_SERIAL_TAG   = "__geomtools::vector_2d__";
-  const std::string io::VECTOR_3D_SERIAL_TAG   = "__geomtools::vector_3d__";
-  const std::string io::ROTATION_3D_SERIAL_TAG = "__geomtools::rotation_3d__";
+  const string io::VECTOR_2D_SERIAL_TAG   = "__geomtools::vector_2d__";
+  const string io::VECTOR_3D_SERIAL_TAG   = "__geomtools::vector_3d__";
+  const string io::ROTATION_3D_SERIAL_TAG = "__geomtools::rotation_3d__";
   
-  const std::string io::POSITION_SUFFIX = ".pos";
-  const std::string io::ROTATION_SUFFIX = ".rot";
+  const string io::POSITION_SUFFIX = ".pos";
+  const string io::ROTATION_SUFFIX = ".rot";
 
   /*******/
 
-  std::string 
-  to_xy (const vector_2d & p_)
+  string to_xy (const vector_2d & p_)
   {
-    std::ostringstream out;
+    ostringstream out;
     out << p_.x () << ' ' <<  p_.y ();
     return out.str ();
   }
 
-  std::string 
-  vector_2d_to_xy (const vector_2d & p_)
+  string vector_2d_to_xy (const vector_2d & p_)
   {
-    std::ostringstream out;
+    ostringstream out;
     out << p_.x () << ' ' <<  p_.y ();
     return out.str ();    
   }
 
-  void 
-  print_xy (std::ostream & out_, 
-	    const vector_2d & p_,
-	    bool endl_)
+  void print_xy (ostream & out_, 
+		 const vector_2d & p_,
+		 bool endl_)
   {
     out_ << p_.x () << ' ' <<  p_.y ();
-    if (endl_) out_ << std::endl;
+    if (endl_) out_ << endl;
   }
   
-  void 
-  print_xy_stdout (const vector_2d & p_)
+  void print_xy_stdout (const vector_2d & p_)
   {
-    print_xy (std::cout, p_, true);
+    print_xy (cout, p_, true);
   }
   
-  void 
-  print_xy_stderr (const vector_2d & p_)
+  void print_xy_stderr (const vector_2d & p_)
   {
-    print_xy (std::cerr, p_, true);
+    print_xy (cerr, p_, true);
   }
  
-  void
-  invalidate (vector_2d & vec_)
+  void invalidate (vector_2d & vec_)
   {
-    double qnan = std::numeric_limits<double>::quiet_NaN();
+    double qnan = numeric_limits<double>::quiet_NaN();
     vec_.set (qnan, qnan); 
   }
   
-  void 
-  invalidate_vector_2d (vector_2d & vec_)
+  void invalidate_vector_2d (vector_2d & vec_)
   {
     invalidate (vec_);
   }
   
-  bool 
-  is_valid (const vector_2d & vec_)
+  bool is_valid (const vector_2d & vec_)
   {
-    //double qnan = std::numeric_limits<double>::quiet_NaN();
+    //double qnan = numeric_limits<double>::quiet_NaN();
     return ((vec_.x () == vec_.x ()) && (vec_.y () == vec_.y ()));
   }
 
-  bool 
-  is_valid_vector_2d (const vector_2d & vec_)
+  bool is_valid_vector_2d (const vector_2d & vec_)
   {
     return is_valid (vec_);
   }
 
-  void 
-  vector_2d_to_vector_3d (const vector_2d & v2d_, vector_3d & v3d_)
+  void vector_2d_to_vector_3d (const vector_2d & v2d_, vector_3d & v3d_)
   {
     v3d_.set (v2d_.x(), v2d_.y(), 0.0);
   }
 
-  void 
-  vector_3d_to_vector_2d (const vector_3d & v3d_, vector_2d & v2d_)
+  void vector_3d_to_vector_2d (const vector_3d & v3d_, vector_2d & v2d_)
   {
     v2d_.set (v3d_.x(), v3d_.y());
   }
 
-  void 
-  make_phi_theta (vector_3d & vec_, double phi_, double theta_)
+  void make_phi_theta (vector_3d & vec_, double phi_, double theta_)
   {
-    double sin_theta = std::sin (theta_);
-    double x = sin_theta * std::cos (phi_);
-    double y = sin_theta * std::sin (phi_);
-    double z = std::cos (theta_);   
+    double sin_theta = sin (theta_);
+    double x = sin_theta * cos (phi_);
+    double y = sin_theta * sin (phi_);
+    double z = cos (theta_);   
     vec_.set (x, y, z);
   }
 
   /******/
 
-  std::string 
-  to_xyz (const vector_3d & p_)
+  string to_xyz (const vector_3d & p_)
   {
-    std::ostringstream out;
+    ostringstream out;
     out << p_.x () << ' ' <<  p_.y () << ' ' << p_.z ();
     return out.str ();
   }
 
-  std::string 
-  vector_3d_to_xyz (const vector_3d & p_)
+  string vector_3d_to_xyz (const vector_3d & p_)
   {
-    std::ostringstream out;
+    ostringstream out;
     out << p_.x () << ' ' <<  p_.y () << ' ' << p_.z ();
     return out.str ();
   }
 
-  void 
-  print_xyz (std::ostream & out_, 
-	     const vector_3d & p_,
-	     bool endl_)
+  void print_xyz (ostream & out_, 
+		  const vector_3d & p_,
+		  bool endl_)
   {
     out_ << p_.x () << ' ' <<  p_.y () << ' ' << p_.z ();
-    if (endl_) out_ << std::endl;
+    if (endl_) out_ << endl;
   }
 
-  void 
-  print (std::ostream & out_, const vector_3d & p_)
+  void print (ostream & out_, const vector_3d & p_)
   {
     out_ << p_;
   }
 
-  void 
-  print_xyz_stdout (const vector_3d & p_)
+  void print_xyz_stdout (const vector_3d & p_)
   {
-    print_xyz (std::cout, p_);
+    print_xyz (cout, p_);
   }
 
-  void 
-  print_xyz_stderr (const vector_3d & p_)
+  void print_xyz_stderr (const vector_3d & p_)
   {
-    print_xyz (std::cerr, p_);
+    print_xyz (cerr, p_);
   }
 
-  void
-  create (vector_3d & v_,
-	  double x_,
-	  double y_,
-	  double z_)
+  void create (vector_3d & v_,
+	       double x_,
+	       double y_,
+	       double z_)
   {
     create_xyz (v_, x_, y_, z_);
   }
 
-  void
-  create_xyz (vector_3d & v_,
-	      double x_,
-	      double y_,
-	      double z_)
+  void create_xyz (vector_3d & v_,
+		   double x_,
+		   double y_,
+		   double z_)
   {
     v_.setX (x_);
     v_.setY (y_);
     v_.setZ (z_);
   }
 
-  void
-  create_polar (vector_3d & v_,
-		double r_,
-		double theta_,
-		double z_)
+  void create_polar (vector_3d & v_,
+		     double r_,
+		     double theta_,
+		     double z_)
   {
     create_xyz (v_,
 		r_ * cos (theta_),
@@ -181,11 +160,10 @@ namespace geomtools {
 		z_);   
   }
 
-  void
-  create_spherical (vector_3d & v_,
-		    double r_,
-		    double phi_,
-		    double theta_)
+  void create_spherical (vector_3d & v_,
+			 double r_,
+			 double phi_,
+			 double theta_)
   {
     create_xyz (v_,
 		r_ * sin (theta_) * cos (phi_),
@@ -193,54 +171,47 @@ namespace geomtools {
 		r_ * cos (theta_));   
   }
 
-  void 
-  invalidate (vector_3d & vec_)
+  void invalidate (vector_3d & vec_)
   {
-    double qnan = std::numeric_limits<double>::quiet_NaN();
+    double qnan = numeric_limits<double>::quiet_NaN();
     vec_.set (qnan, qnan, qnan); 
   }
 
-  void 
-  invalidate_vector_3d (vector_3d & vec_)
+  void invalidate_vector_3d (vector_3d & vec_)
   {
     invalidate (vec_);
   }
   
-  bool 
-  is_valid (const vector_3d & vec_)
+  bool is_valid (const vector_3d & vec_)
   {
-    //double qnan = std::numeric_limits<double>::quiet_NaN();
+    //double qnan = numeric_limits<double>::quiet_NaN();
     return (vec_.x () == vec_.x ()) && (vec_.y () == vec_.y () ) && (vec_.z () == vec_.z ());
   }
 
-  bool 
-  is_valid_vector_3d (const vector_3d & vec_)
+  bool is_valid_vector_3d (const vector_3d & vec_)
   {
     return is_valid (vec_);
   }
 
-  bool 
-  are_near (const vector_3d & vec1_, 
-	    const vector_3d & vec2_,
-	    double tolerance_)
+  bool are_near (const vector_3d & vec1_, 
+		 const vector_3d & vec2_,
+		 double tolerance_)
   {
     return vec1_.isNear (vec2_, tolerance_); // from CLHEP
   }
 
-  bool 
-  are_near_vector_3d (const vector_3d & vec1_, 
-		      const vector_3d & vec2_,
-		      double tolerance_)
+  bool are_near_vector_3d (const vector_3d & vec1_, 
+			   const vector_3d & vec2_,
+			   double tolerance_)
   {
     return are_near (vec1_, vec2_, tolerance_);
   }
 
   /******/
 
-  void 
-  print_xy (std::ostream & out_, 
-	     const basic_polyline_2d & p_,
-	     bool endl_)
+  void print_xy (ostream & out_, 
+		 const basic_polyline_2d & p_,
+		 bool endl_)
   {
     for (basic_polyline_2d::const_iterator i = p_.begin ();
 	 i != p_.end ();
@@ -248,43 +219,38 @@ namespace geomtools {
       {
 	print_xy (out_, *i, true);
       }
-    if (endl_) out_ << std::endl;
+    if (endl_) out_ << endl;
   }
 
-  std::string 
-  to_xy (const basic_polyline_2d & p_)
+  string to_xy (const basic_polyline_2d & p_)
   {
-    std::ostringstream out;
+    ostringstream out;
     print_xy (out, p_, true);
     return out.str ();
   }
 
-  std::string 
-  basic_polyline_2d_to_xy (const basic_polyline_2d & p_)
+  string basic_polyline_2d_to_xy (const basic_polyline_2d & p_)
   {
-    std::ostringstream out;
+    ostringstream out;
     print_xy (out, p_, true);
     return out.str ();
   }
 
-  void 
-  print_xy_stdout (const basic_polyline_2d & p_)
+  void print_xy_stdout (const basic_polyline_2d & p_)
   {
-    print_xy (std::cout, p_, true);
+    print_xy (cout, p_, true);
   }
 
-  void 
-  print_xy_stderr (const basic_polyline_2d & p_)
+  void print_xy_stderr (const basic_polyline_2d & p_)
   {
-    print_xy (std::cerr, p_, true);
+    print_xy (cerr, p_, true);
   }
 
   /******/
 
-  void 
-  print_xyz (std::ostream & out_, 
-	     const basic_polyline_3d & p_,
-	     bool endl_)
+  void print_xyz (ostream & out_, 
+		  const basic_polyline_3d & p_,
+		  bool endl_)
   {
     for (basic_polyline_3d::const_iterator i = p_.begin ();
 	 i != p_.end ();
@@ -292,44 +258,39 @@ namespace geomtools {
       {
 	print_xyz (out_, *i, true);
       }
-    if (endl_) out_ << std::endl;
+    if (endl_) out_ << endl;
   }
 
-  std::string 
-  to_xyz (const basic_polyline_3d & p_)
+  string to_xyz (const basic_polyline_3d & p_)
   {
-    std::ostringstream out;
+    ostringstream out;
     print_xyz (out, p_, true);
     return out.str ();
   }
 
-  std::string 
-  basic_polyline_3d_to_xyz (const basic_polyline_3d & p_)
+  string basic_polyline_3d_to_xyz (const basic_polyline_3d & p_)
   {
-    std::ostringstream out;
+    ostringstream out;
     print_xyz (out, p_, true);
     return out.str ();
   }
 
-  void 
-  print_xyz_stdout (const basic_polyline_3d & p_)
+  void print_xyz_stdout (const basic_polyline_3d & p_)
   {
-    print_xyz (std::cout, p_, true);
+    print_xyz (cout, p_, true);
   }
 
-  void 
-  print_xyz_stderr (const basic_polyline_3d & p_)
+  void print_xyz_stderr (const basic_polyline_3d & p_)
   {
-    print_xyz (std::cerr, p_, true);
+    print_xyz (cerr, p_, true);
   }
 
   /******/
 
-  void 
-  invalidate (rotation_3d & rot_)
+  void invalidate (rotation_3d & rot_)
   {
     rot_ = geomtools::rotation_3d ();
-    double qnan = std::numeric_limits<double>::quiet_NaN();
+    double qnan = numeric_limits<double>::quiet_NaN();
     double * xx_addr = static_cast<double *>(static_cast<void *> (&rot_));
     double * last_addr = xx_addr + 9;
     for (double * p = xx_addr; p < last_addr; p++)
@@ -343,29 +304,25 @@ namespace geomtools {
     *xx_addr = qnan;
   }
 
-  void 
-  invalidate_rotation_3d (rotation_3d & rot_)
+  void invalidate_rotation_3d (rotation_3d & rot_)
   {
     invalidate (rot_);
   }
 
-  bool 
-  is_valid (const rotation_3d & rot_)
+  bool is_valid (const rotation_3d & rot_)
   {
     return (rot_.xx() == rot_.xx());
   }
 
-  bool 
-  is_valid_rotation_3d (const rotation_3d & rot_)
+  bool is_valid_rotation_3d (const rotation_3d & rot_)
   {
     return is_valid (rot_);
   }
    
-  void
-  create_zyz (rotation_3d & rot_,
-	  double phi_,
-	  double theta_,
-	  double delta_)
+  void create_zyz (rotation_3d & rot_,
+		   double phi_,
+		   double theta_,
+		   double delta_)
   {
     rotation_3d r1, r2, r3;
     r1.rotateZ (-phi_);
@@ -374,20 +331,18 @@ namespace geomtools {
     rot_ = r3 * r2 * r1;
   }
 
-  void
-  create (rotation_3d & rot_,
-	  double phi_,
-	  double theta_,
-	  double delta_)
+  void create (rotation_3d & rot_,
+	       double phi_,
+	       double theta_,
+	       double delta_)
   {
     create_zyz (rot_, phi_, theta_, delta_);
   }
    
-  void
-  create_zxz (rotation_3d & rot_,
-	      double phi_,
-	      double theta_,
-	      double psi_)
+  void create_zxz (rotation_3d & rot_,
+		   double phi_,
+		   double theta_,
+		   double psi_)
   {
     rotation_3d r1, r2, r3;
     r1.rotateZ (-phi_);
@@ -396,11 +351,10 @@ namespace geomtools {
     rot_ = r3 * r2 * r1;
   }
    
-  void
-  create_xyz (rotation_3d & rot_,
-	      double phi_,
-	      double theta_,
-	      double psi_)
+  void create_xyz (rotation_3d & rot_,
+		   double phi_,
+		   double theta_,
+		   double psi_)
   {
     rotation_3d r1, r2, r3;
     r1.rotateX (-phi_);
@@ -409,35 +363,31 @@ namespace geomtools {
     rot_ = r3 * r2 * r1;
   }
 
-  void
-  create_rotation_3d (rotation_3d & rot_,
-		      double phi_,
-		      double theta_,
-		      double delta_)
+  void create_rotation_3d (rotation_3d & rot_,
+			   double phi_,
+			   double theta_,
+			   double delta_)
   {
     create (rot_, phi_, theta_, delta_);
   }
 
-  void
-  create_rotation_from_zyz_euler_angles (rotation_3d & rot_,
-					 double phi_,
-					 double theta_,
-					 double delta_)
+  void create_rotation_from_zyz_euler_angles (rotation_3d & rot_,
+					      double phi_,
+					      double theta_,
+					      double delta_)
   {
     create (rot_, phi_, theta_, delta_);    
   }
 
-  void
-  create_rotation (rotation_3d & rot_,
-		   double phi_,
-		   double theta_,
-		   double delta_)
+  void create_rotation (rotation_3d & rot_,
+			double phi_,
+			double theta_,
+			double delta_)
   {
     create (rot_, phi_, theta_, delta_);
   }
 
-  void
-  reset (rotation_3d & rot_)
+  void reset (rotation_3d & rot_)
   {
     rot_ = rotation_3d ();
   }
@@ -451,7 +401,7 @@ namespace geomtools {
       case ROTATION_ANGLE_180: return 180.0 * CLHEP::degree;
       case ROTATION_ANGLE_270: return 270.0 * CLHEP::degree;
       }
-    return std::numeric_limits<double>::quiet_NaN();
+    return numeric_limits<double>::quiet_NaN();
   }
 
   int get_special_rotation_angle_from_label (const string & s_)
@@ -504,10 +454,9 @@ namespace geomtools {
     return "";
   }
 
-  void 
-  create_rotation_from_axis (rotation_3d & rot_,
-			     int axis_,
-			     double angle_)
+  void create_rotation_from_axis (rotation_3d & rot_,
+				  int axis_,
+				  double angle_)
   {
     /*
       clog << "DEVEL: create_rotation_from_axis: "
@@ -533,10 +482,9 @@ namespace geomtools {
     rot_ = r;
   }
 
-  void 
-  create_rotation (rotation_3d & rot_,
-		   int axis_,
-		   double angle_)
+  void create_rotation (rotation_3d & rot_,
+			int axis_,
+			double angle_)
   {
     create_rotation_from_axis (rot_, axis_, angle_);
   }
@@ -574,48 +522,123 @@ namespace geomtools {
     */
   }
 
-  bool
-  is_identity (const rotation_3d & rot_)
+  void extract_xyz_euler_angle_from_rotation (const rotation_3d & rot_,
+					      double & a_,
+					      double & b_,
+					      double & c_)
+  {
+    /*
+     * [ xx  xy  xz ]
+     * [ yx  yy  yz ]
+     * [ zx  zy  zz ]
+     */
+    double xx = rot_.xx ();
+    double yx = rot_.yx ();
+    double yy = rot_.yy ();
+    double yz = rot_.yz ();
+    double zx = rot_.zx ();
+    double zy = rot_.zy ();
+    double zz = rot_.zz ();
+    // from a sample by Evgueni Tcherniaev:
+    //  see also: http://en.wikipedia.org/wiki/Euler_angles -> Table of matrices
+    double cosb = sqrt (xx * xx + yx * yx); 
+    if (cosb > 16 * numeric_limits<double>::epsilon ()) 
+      {
+	a_ = -atan2 ( zy, zz) * CLHEP::radian;
+	b_ = -atan2 (-zx, cosb) * CLHEP::radian;
+	c_ = -atan2 ( yx, xx) * CLHEP::radian;
+      }
+    else
+      {
+	a_ = -atan2 (-yz, yy) * CLHEP::radian;
+	b_ = -atan2 (-zx, cosb) * CLHEP::radian;
+	c_ = 0. * CLHEP::radian;
+      }
+    if (a_ < 0.0) a_ += 360. * CLHEP::degree;
+    if (b_ < 0.0) b_ += 360. * CLHEP::degree;
+    if (c_ < 0.0) c_ += 360. * CLHEP::degree;
+    return;
+  }
+  
+  void extract_zyz_euler_angle_from_rotation (const rotation_3d & rot_,
+					      double & a_,
+					      double & b_,
+					      double & c_)
+  {
+    /*
+     * [ xx  xy  xz ]
+     * [ yx  yy  yz ]
+     * [ zx  zy  zz ]
+     */
+    double xx = rot_.xx ();
+    double xy = rot_.xy ();
+    double xz = rot_.xz ();
+    double yx = rot_.yx ();
+    double yy = rot_.yy ();
+    double yz = rot_.yz ();
+    double zx = rot_.zx ();
+    double zy = rot_.zy ();
+    double zz = rot_.zz ();
+    // from a sample by Evgueni Tcherniaev:
+    //  see also: http://en.wikipedia.org/wiki/Euler_angles -> Table of matrices
+    double sinb = sqrt (zx * zx + zy * zy); 
+    if (sinb > 16 * numeric_limits<double>::epsilon()) 
+      {
+	a_ = -atan2 ( zy, -zx) * CLHEP::radian;
+	b_ = -atan2 ( sinb, zz) * CLHEP::radian;
+	c_ = -atan2 ( yz, xz) * CLHEP::radian;
+      }
+    else
+      {
+	a_ = -atan2 ( yx, xx) * CLHEP::radian;
+	b_ = 0. * CLHEP::radian;
+	c_ = 0. * CLHEP::radian;
+      }
+    if (a_ < 0.0) a_ += 360. * CLHEP::degree;
+    if (b_ < 0.0) b_ += 360. * CLHEP::degree;
+    if (c_ < 0.0) c_ += 360. * CLHEP::degree;
+    return;
+  }
+
+  bool is_identity (const rotation_3d & rot_)
   {
     return rot_.isIdentity ();
   }
 
-  void
-  reset_rotation_3d (rotation_3d & rot_)
+  void reset_rotation_3d (rotation_3d & rot_)
   {
     reset (rot_);
   }
   
-  void
-  tree_dump (const rotation_3d & rot_,
-	     std::ostream & out_ , 
-	     const std::string & title_, 
-	     const std::string & indent_)
+  void tree_dump (const rotation_3d & rot_,
+		  ostream & out_ , 
+		  const string & title_, 
+		  const string & indent_)
   {
-    std::string title = title_;
-    std::string indent = indent_;
+    string title = title_;
+    string indent = indent_;
     if (title.empty ()) title = title_;
-    out_ << title << std::endl;
-    std::string last_tag  = "`-- ";
-    std::string last_tagc = "    ";
+    out_ << title << endl;
+    string last_tag  = "`-- ";
+    string last_tagc = "    ";
     if (is_valid (rot_))
       {
 	out_ << indent << last_tag << "[ ( " <<
-	  std::setw (11) << std::setprecision (6) << rot_.xx () << "   " <<
-	  std::setw (11) << std::setprecision (6) << rot_.xy () << "   " <<
-	  std::setw (11) << std::setprecision (6) << rot_.xz () << ")" << std::endl;
+	  setw (11) << setprecision (6) << rot_.xx () << "   " <<
+	  setw (11) << setprecision (6) << rot_.xy () << "   " <<
+	  setw (11) << setprecision (6) << rot_.xz () << ")" << endl;
 	out_ << indent << last_tagc << "  ( " <<
-	  std::setw (11) << std::setprecision (6) << rot_.yx () << "   " <<
-	  std::setw (11) << std::setprecision (6) << rot_.yy () << "   " <<
-	  std::setw (11) << std::setprecision (6) << rot_.yz () << ")" << std::endl;
+	  setw (11) << setprecision (6) << rot_.yx () << "   " <<
+	  setw (11) << setprecision (6) << rot_.yy () << "   " <<
+	  setw (11) << setprecision (6) << rot_.yz () << ")" << endl;
 	out_ << indent << last_tagc << "  ( " <<
-	  std::setw (11) << std::setprecision (6) << rot_.zx () << "   " <<
-	  std::setw (11) << std::setprecision (6) << rot_.zy () << "   " <<
-	  std::setw (11) << std::setprecision (6) << rot_.zz () << ") ]" << std::endl;
+	  setw (11) << setprecision (6) << rot_.zx () << "   " <<
+	  setw (11) << setprecision (6) << rot_.zy () << "   " <<
+	  setw (11) << setprecision (6) << rot_.zz () << ") ]" << endl;
       }
     else 
       {
-	out_ << indent << last_tag << "[" << "invalid" << "]" << std::endl;
+	out_ << indent << last_tag << "[" << "invalid" << "]" << endl;
       }
   }
  

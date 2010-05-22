@@ -64,6 +64,8 @@ namespace geomtools {
     geom_info_dict_t & _get_geom_infos ();
 
   public:
+    
+    const geom_info_dict_t & get_geom_infos () const;
 
     geom_map ();
 
@@ -105,6 +107,8 @@ namespace geomtools {
     
     virtual void build_from (const model_factory & factory_,
 			     const string & mother_ = "world");
+
+    //void parse_id_info (const string & id_str, geom_id & id_);
 
   };
 

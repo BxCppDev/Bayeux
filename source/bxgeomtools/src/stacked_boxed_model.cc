@@ -456,7 +456,6 @@ namespace geomtools {
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (__solid);
     get_logical ().set_material_ref (__get_material_name ());
-    geomtools::visibility::extract (config_, _logical.parameters ());
 
     double pos;
     if (is_stacking_along_x ())

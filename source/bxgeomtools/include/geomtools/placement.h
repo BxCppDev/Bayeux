@@ -22,21 +22,23 @@
 
 #include <geomtools/i_placement.h>
 #include <datatools/utils/units.h>
+#include <datatools/utils/utils.h>
 
 namespace geomtools {
 
   using namespace std;
 
-  class placement
-    : public i_placement
+  class placement : public i_placement
     {
     private: 
+
       vector_3d    __translation;      // absolute position in mother frame
-      int          __rotation_axis;
+      int          __rotation_axis;    // see utils.h: ROTATION_AXIS_X/Y/Z
       double       __rotation_angle;
       double       __phi, __theta, __delta; // ZYZ Euler angles
       rotation_3d  __rotation;         // mother->child frame coord. transformation
       rotation_3d  __inverse_rotation; // child->mother frame coord. transformation
+
     public:
  
       bool is_valid () const;
@@ -86,7 +88,10 @@ namespace geomtools {
       virtual bool has_only_one_rotation () const;
  
     private:
+
       void __compute_orientation ();
+
+      void __compute_orientation_xyz (); // just for test
 
     public:
 
@@ -108,6 +113,9 @@ namespace geomtools {
 
       // Not recommended at all:
       void set_orientation (const rotation_3d &);
+
+      // just for test:
+      void set_orientation_xyz (double phi_, double theta_, double delta_);
 
     public: 
       // ctor:
@@ -174,9 +182,14 @@ namespace geomtools {
 		 const string & indent_ = "") const;
     
       static bool from_string (const string &, placement &);
+
       static void to_string (string &, const placement &);
+ 
+      void test () const;
 
     };
+
+  ostream & operator<< (ostream & out_, const placement &);
 
 } // end of namespace geomtools
 

@@ -211,7 +211,6 @@ namespace geomtools {
 	material_name = __boxed_model->get_logical ().get_material_ref ();
       }
     get_logical ().set_material_ref (material_name);
-    geomtools::visibility::extract (config_, _logical.parameters ());
 
     __boxed_phys.set_name (i_model::make_physical_volume_name ("rotated"));
     __boxed_phys.set_placement (__boxed_placement);

@@ -123,6 +123,8 @@ namespace geomtools {
     void extract_to (geom_id & target_) const;
 
     void extract_from (const geom_id & source_);
+
+    void inherits_from (const geom_id & source_);
      
     static int compare (const geom_id & id1_, const geom_id & id2_);
 

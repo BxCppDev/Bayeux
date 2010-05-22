@@ -39,7 +39,7 @@ namespace geomtools {
   bool visibility::has_key (const datatools::utils::properties & config_,
 			     const string & key_)
   {
-    return (config_.has_key (make_key (key_)));
+    return (config_.has_key (visibility::make_key (key_)));
   }
 
   bool visibility::is_shown (const datatools::utils::properties & config_)

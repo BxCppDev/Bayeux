@@ -78,7 +78,6 @@ namespace geomtools {
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (__solid);
     get_logical ().set_material_ref (material);
-    geomtools::visibility::extract (config_, _logical.parameters ());
 
     if (devel) clog << "DEVEL: test_model_1::_at_construct: Exiting." << endl;
     return;

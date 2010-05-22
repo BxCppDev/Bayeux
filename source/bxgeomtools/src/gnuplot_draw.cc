@@ -23,7 +23,8 @@ namespace geomtools {
 	 << z_ << ' ' 
 	 << color;
     if (endl_) out_ << std::endl;
-  }
+    return;
+ }
 
   void 
   gnuplot_draw::basic_draw_point_with_color (std::ostream & out_, 
@@ -37,6 +38,7 @@ namespace geomtools {
 				 point_.z (),
 				 color_,
 				 endl_);
+    return;
   }
 
   void 
@@ -57,6 +59,7 @@ namespace geomtools {
 	     << z_;
       }
     if (endl_) out_ << std::endl;
+    return;
   }
 
   void 
@@ -69,6 +72,7 @@ namespace geomtools {
 				    point_.y (),
 				    point_.z (), 
 				    endl_);
+    return;
   }
 
   void 
@@ -82,6 +86,7 @@ namespace geomtools {
 	basic_draw_point (out_, *i);
       }
     out_ << std::endl;
+    return;
   }
 
   void 
@@ -89,6 +94,7 @@ namespace geomtools {
 			   const line_3d & l_)
   {
     draw_line (out_, l_.get_first (), l_.get_last ());
+    return;
   }
 
   void 
@@ -99,6 +105,7 @@ namespace geomtools {
     basic_draw_point (out_, start_);
     basic_draw_point (out_, stop_);
     out_ << std::endl;
+    return;
   }
 
   void 
@@ -111,6 +118,7 @@ namespace geomtools {
     polyline_3d::point_col c;
     p_.make_vertex_collection (c);
     draw_polyline (out_, position_, rotation_, c, more_);
+    return;
   }
 
   void 
@@ -141,6 +149,7 @@ namespace geomtools {
       } 
     if (more_) polyline.push_back (first);
     basic_draw_polyline (out_, polyline);
+    return;
   }
 
   void 
@@ -173,6 +182,7 @@ namespace geomtools {
       }
     polyline.push_back (B);
     basic_draw_polyline (out_, polyline);
+    return;
   }
 
   void 
@@ -184,6 +194,7 @@ namespace geomtools {
     draw_segment (out_, position_, rotation_, 
 		  l_.get_first (),
 		  l_.get_last ());
+    return;
   }
 
   void 
@@ -235,6 +246,7 @@ namespace geomtools {
     polyline.push_back (A2);
     if (more_) polyline.push_back (B2); 
     basic_draw_polyline (out_,polyline);
+    return;
   }
   
   void 
@@ -246,6 +258,7 @@ namespace geomtools {
   {
     draw_rectangle (out_, position_, rotation_, 
 		    r_.get_x (), r_.get_y (), more_);
+    return;
   }
 
   void 
@@ -258,6 +271,7 @@ namespace geomtools {
 	      b_.get_x (),
 	      b_.get_y (),
 	      b_.get_z ());
+    return;
   }
   
   void 
@@ -348,6 +362,7 @@ namespace geomtools {
     polyline.push_back (S2);
     basic_draw_polyline (out_, polyline);
 
+    return;
   }
 
   void 
@@ -361,6 +376,7 @@ namespace geomtools {
 		   c_.get_r (),
 		   c_.get_z (),
 		   arc_sampling_);
+    return;
   }
   
 
@@ -406,6 +422,7 @@ namespace geomtools {
     basic_draw_polyline (out_, polyline_top);
     basic_draw_polyline (out_, polyline_bottom);
     
+    return;
   }
 
   void 
@@ -504,6 +521,7 @@ namespace geomtools {
     basic_draw_polyline (out_, polyline_top_o);
     basic_draw_polyline (out_, polyline_bottom_o);
     
+    return;
   }
 
   void 
@@ -514,6 +532,7 @@ namespace geomtools {
 			     size_t arc_sampling_)
   {
     draw_circle (out_, position_, rotation_, c_.get_r (), arc_sampling_);
+    return;
   }
 
   void 
@@ -542,17 +561,18 @@ namespace geomtools {
 	polyline.push_back (P2);
       }
     basic_draw_polyline (out_, polyline);
+    return;
   }
 
 
-  void 
-  gnuplot_draw::draw_disk (std::ostream & out_, 
-			     const vector_3d & position_, 
-			     const rotation_3d & rotation_, 
-			     const disk & d_,
-			     size_t arc_sampling_)
+  void gnuplot_draw::draw_disk (std::ostream & out_, 
+				const vector_3d & position_, 
+				const rotation_3d & rotation_, 
+				const disk & d_,
+				size_t arc_sampling_)
   {
     draw_disk (out_, position_, rotation_, d_.get_r (), arc_sampling_);
+    return;
   }
 
   void 
@@ -584,6 +604,7 @@ namespace geomtools {
 		      O, P);
       }
     basic_draw_polyline (out_, polyline);
+    return;
   }
 
   void 
@@ -637,6 +658,7 @@ namespace geomtools {
     //basic_draw_polyline (out_, polyline_parallel);
  
     //throw std::runtime_error ("gnuplot_draw::draw_sphere: Not implemented yet!");
+    return;
   }
 
   void 
@@ -674,6 +696,7 @@ namespace geomtools {
 	  }
 	basic_draw_polyline (out_, polyline_meridian);
       }
+    return;
   }
 
   void gnuplot_draw::draw (ostream & out_, 
@@ -784,10 +807,7 @@ namespace geomtools {
 	     << shape_name << "' !" << endl;
 	return;
       }
-    
   }
-
-
 
 } // end of namespace geomtools
 

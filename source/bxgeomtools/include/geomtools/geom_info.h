@@ -38,9 +38,15 @@ namespace geomtools {
 
     public:
 
+      geom_info ();
+
+      geom_info (const geom_id &);
+
       geom_info (const geom_id &, 
 		 const placement &,
 		 const logical_volume &);
+
+      bool has_logical () const;
 
       const placement & get_world_placement () const;
 
@@ -51,6 +57,8 @@ namespace geomtools {
       const datatools::utils::properties & get_properties () const;
 
       datatools::utils::properties & get_properties ();
+
+      friend ostream & operator<< (ostream &, const geom_info &);
 
   };
 

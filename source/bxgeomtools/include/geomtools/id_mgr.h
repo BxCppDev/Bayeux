@@ -24,6 +24,9 @@
 #include <fstream>
 #include <string>
 #include <map>
+#include <vector>
+
+#include <boost/algorithm/string.hpp>
 
 #include <datatools/utils/utils.h>
 #include <datatools/utils/multi_properties.h>
@@ -33,8 +36,7 @@ namespace geomtools {
 
   using namespace std;
 
-  class id_mgr :
-    public datatools::utils::i_tree_dumpable
+  class id_mgr : public datatools::utils::i_tree_dumpable
   {
 
   public:
@@ -44,15 +46,16 @@ namespace geomtools {
 
     /***************************************/
 
-    class category_info :
-      public datatools::utils::i_tree_dumpable
+    class category_info : public datatools::utils::i_tree_dumpable
     {
     public:
       string category;  // human readable label
       int    type;      // unique integral ID
-      string inherits;
-      string extends;
-      vector<string> addresses;
+      string inherits;  // the category from which the category is inherited
+      string extends;   // the category from which the category is extented
+      vector<string> ancestors; // the list of ancestor categories
+      vector<string> extends_by; // the addresses added by the extension
+      vector<string> addresses;  // the full list of addresses
 
     public:
 
@@ -66,6 +69,20 @@ namespace geomtools {
 	return category;
       }
 
+      bool has_ancestor (const string & cat_) const
+      {
+	return (find (ancestors.begin (), ancestors.end(), cat_) 
+		!= ancestors.end ());
+      }
+      
+      void add_ancestor (const string & cat_)
+      {
+	if (! has_ancestor (cat_))
+	  {
+	    ancestors.push_back (cat_);
+	  }
+      }
+      
       int get_type () const
       {
 	return type;
@@ -94,7 +111,15 @@ namespace geomtools {
       // ctor:
       category_info ();
 
+      //! returns the size of the list of addresses
       size_t get_depth () const;
+
+      //! returns the size of the list of extenting addresses
+      size_t get_by_depth () const;
+
+      //! create a geom ID with the proper type and depth
+      // 
+      void create (geom_id & id_) const;
 
       void dump (ostream & = clog) const;
 
@@ -103,14 +128,12 @@ namespace geomtools {
 			      const string & indent_ = "",
 			      bool inherit_          = false) const;
 
-      void make (geom_id & id_) const;
-
     };
 
     /***************************************/
     
-    typedef map<string, category_info> categories_by_name_col_t;
-    typedef map<int, const category_info *>    categories_by_type_col_t;
+    typedef map<string, category_info>      categories_by_name_col_t;
+    typedef map<int, const category_info *> categories_by_type_col_t;
 
   private: 
     bool __debug;
@@ -151,6 +174,44 @@ namespace geomtools {
     int get (const geom_id &, const string & what_) const;
 
     void set (geom_id &, const string & what_, uint32_t value_) const;
+
+    bool check_inheritance (const geom_id & mother_id_, 
+			    geom_id & id_) const;
+ 
+    bool validate_id (const geom_id & id_) const;
+
+    void id_to_human_readable_format_string (const geom_id & id_, string &) const;
+
+    string id_to_human_readable_format_string (const geom_id & id_) const;
+
+    void make_id (geom_id & id_, 
+		  uint32_t address_) const;
+
+
+    /*   
+    void make_extended (const geom_id & mother_id_, 
+			geom_id & id_, 
+			uint32_t address_) const;
+    */
+
+    /** Given a string representing the geometry ID "[module:module=0]"
+     *  and theID of the mother volume, one computes the full geometry ID
+     *  of the daughter volume, eventually using the index of the item. 
+     *
+     *  Example:
+     *  Assume `[100:3]' is the mother ID from the `module' category 
+     *  (index=100) with module number = 3 (mother ID info is then
+     *  "[module:module=3]"). Assume the child ID info is 
+     *  "[submodule:submodule=4]" from the `submodule' category
+     *  The resulting child ID is: `[110:3.4]' where 110 is the type
+     *  of the `submodule' category.
+     */
+    int compute_id_from_info (geom_id & id_, 
+			      const geom_id & mother_id_,
+			      const string & id_info_, 
+			      uint32_t item0_ = geom_id::INVALID_ADDRESS, 
+			      uint32_t item1_ = geom_id::INVALID_ADDRESS, 
+			      uint32_t item2_ = geom_id::INVALID_ADDRESS) const;
 
   };
 

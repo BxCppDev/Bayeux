@@ -32,8 +32,8 @@ namespace geomtools {
     geomtools::invalidate (__rotation);
     geomtools::invalidate (__inverse_rotation);
     __rotation_axis = ROTATION_AXIS_INVALID;
-    __rotation_angle = std::numeric_limits<double>::quiet_NaN();
-    __phi = __theta = __delta = std::numeric_limits<double>::quiet_NaN();
+    __rotation_angle = std::numeric_limits<double>::quiet_NaN ();
+    __phi = __theta = __delta = std::numeric_limits<double>::quiet_NaN ();
   }
 
   const vector_3d & 
@@ -124,6 +124,23 @@ namespace geomtools {
       }
     __inverse_rotation = __rotation.inverse ();
   }
+  
+  void placement::__compute_orientation_xyz ()
+  {
+    if (is_simple_rotation ())
+      {
+	// X, Y or Z rotations:
+	geomtools::create_rotation_from_axis (__rotation, 
+					      __rotation_axis, 
+					      __rotation_angle);	
+      }
+    else
+      {
+	// rotation by (X,Y,Z) Euler angles:
+	geomtools::create_xyz (__rotation, __phi, __theta, __delta);
+      }
+    __inverse_rotation = __rotation.inverse ();
+  }
 
   bool placement::has_angles () const
   {
@@ -135,18 +152,6 @@ namespace geomtools {
     return ((__phi == __phi) && (__theta == __theta) && (__delta == __delta));
   }
 
-  // Not recommended at all:
-  void placement::set_orientation (const rotation_3d & r_)
-  {
-    __rotation_axis == ROTATION_AXIS_INVALID;
-    __rotation_angle = std::numeric_limits<double>::quiet_NaN();
-    __phi = std::numeric_limits<double>::quiet_NaN();
-    __theta = std::numeric_limits<double>::quiet_NaN();
-    __delta = std::numeric_limits<double>::quiet_NaN();
-    __rotation = r_;
-    __inverse_rotation = __rotation.inverse ();    
-  }
-
   void placement::set (double x_, double y_, double z_, 
 		       double phi_, double theta_, double delta_)
   {
@@ -175,8 +180,7 @@ namespace geomtools {
     set_orientation (axis_, angle_);
   }
 
-  void 
-  placement::set_orientation (int axis_, double angle_)
+  void placement::set_orientation (int axis_, double angle_)
   {
     if (! check_rotation_axis (axis_))
       {
@@ -184,25 +188,53 @@ namespace geomtools {
       }
     __rotation_axis = axis_;
     __rotation_angle = angle_;
-    __phi = std::numeric_limits<double>::quiet_NaN();
-    __theta = std::numeric_limits<double>::quiet_NaN();
-    __delta = std::numeric_limits<double>::quiet_NaN();
+    __phi = std::numeric_limits<double>::quiet_NaN ();
+    __theta = std::numeric_limits<double>::quiet_NaN ();
+    __delta = std::numeric_limits<double>::quiet_NaN ();
     __compute_orientation ();
   }
 
-  void 
-  placement::set_orientation (double phi_, double theta_, double delta_)
+  void placement::set_orientation (double phi_, double theta_, double delta_)
   {
     __rotation_axis = ROTATION_AXIS_INVALID;
-    __rotation_angle = std::numeric_limits<double>::quiet_NaN();
+    __rotation_angle = std::numeric_limits<double>::quiet_NaN ();
     __phi = phi_;
     __theta = theta_;
     __delta = delta_;
     __compute_orientation ();
   }
+
+  // Not recommended at all:
+  void placement::set_orientation (const rotation_3d & r_)
+  {
+    __rotation_axis == ROTATION_AXIS_INVALID;
+    __rotation_angle = std::numeric_limits<double>::quiet_NaN ();
+    __phi   = std::numeric_limits<double>::quiet_NaN ();
+    __theta = std::numeric_limits<double>::quiet_NaN ();
+    __delta = std::numeric_limits<double>::quiet_NaN ();
+    __rotation = r_;
+    __inverse_rotation = __rotation.inverse ();
+    extract_zyz_euler_angle_from_rotation (__rotation,
+					   __phi,
+					   __theta,
+					   __delta);
+  }
+
+  void placement::set_orientation_xyz (double phi_, double theta_, double delta_)
+  {
+    __rotation_axis = ROTATION_AXIS_INVALID;
+    __rotation_angle = std::numeric_limits<double>::quiet_NaN ();
+    __phi = phi_;
+    __theta = theta_;
+    __delta = delta_;
+    __compute_orientation_xyz ();
+    extract_zyz_euler_angle_from_rotation (__rotation,
+					   __phi,
+					   __theta,
+					   __delta);
+  }
   
-  const rotation_3d & 
-  placement::get_inverse_rotation () const
+  const rotation_3d & placement::get_inverse_rotation () const
   {
     return __inverse_rotation;
   }
@@ -224,7 +256,7 @@ namespace geomtools {
     p_ = *this;
   }
  
-  // ctor/dtor:
+  // ctor:
   placement::placement () : i_placement ()
   {
     __rotation_axis = ROTATION_AXIS_INVALID;
@@ -232,6 +264,7 @@ namespace geomtools {
     __phi = __theta = __delta = 0.0;
   }
 
+  // ctor:
   placement::placement (const vector_3d & translation_, 
 			double phi_,
 			double theta_,
@@ -244,6 +277,7 @@ namespace geomtools {
     set_orientation (phi_, theta_, delta_);
   }
 
+  // ctor:
   placement::placement (const vector_3d & translation_, 
 			int axis_, 
 			double angle_) : i_placement ()
@@ -255,6 +289,7 @@ namespace geomtools {
     set_orientation (axis_, angle_);
   }
 
+  // ctor:
   placement::placement (double x_,
 			double y_,
 			double z_, 
@@ -269,6 +304,7 @@ namespace geomtools {
     set_orientation (phi_, theta_, delta_);
   }
   
+  // ctor:
   placement::placement (double x_,
 			double y_,
 			double z_, 
@@ -282,6 +318,7 @@ namespace geomtools {
     set_orientation (axis_, angle_);
   }
   
+  // dtor:
   placement::~placement ()
   {
   }
@@ -294,41 +331,36 @@ namespace geomtools {
   
   // transformation methods:
 
-  void 
-  placement::mother_to_child (const vector_3d & mother_pos_, 
-			     vector_3d & child_pos_) const
+  void placement::mother_to_child (const vector_3d & mother_pos_, 
+				   vector_3d & child_pos_) const
   {
     vector_3d v = mother_pos_ - __translation;
     child_pos_ = v.transform (__rotation);
   }
 
-  vector_3d 
-  placement::mother_to_child (const vector_3d & mother_pos_) const
+  vector_3d placement::mother_to_child (const vector_3d & mother_pos_) const
   {
     vector_3d v;
     mother_to_child (mother_pos_, v);
     return v;
   }
 
-  void 
-  placement::child_to_mother (const vector_3d & child_pos_ , 
-			      vector_3d & mother_pos_) const
+  void placement::child_to_mother (const vector_3d & child_pos_ , 
+				   vector_3d & mother_pos_) const
   {
     vector_3d v (child_pos_);
     mother_pos_ = v.transform (__inverse_rotation) + __translation;
   }
 
-  vector_3d 
-  placement::child_to_mother (const vector_3d & child_pos_) const
+  vector_3d placement::child_to_mother (const vector_3d & child_pos_) const
   {
     vector_3d v;
     child_to_mother (child_pos_, v);
     return v;
   }
 
-  void 
-  placement::mother_to_child_direction (const vector_3d & mother_dir_, 
-					vector_3d & child_dir_) const
+  void placement::mother_to_child_direction (const vector_3d & mother_dir_, 
+					     vector_3d & child_dir_) const
   {
     vector_3d a;
     mother_to_child (vector_3d ( 0., 0., 0.), a);
@@ -337,17 +369,15 @@ namespace geomtools {
     child_dir_= b - a;
   }
 
-  vector_3d 
-  placement::mother_to_child_direction (const vector_3d & mother_dir_) const
+  vector_3d placement::mother_to_child_direction (const vector_3d & mother_dir_) const
   {
     vector_3d v;
     mother_to_child_direction (mother_dir_,v);
     return v;
   }
   
-  void 
-  placement::child_to_mother_direction (const vector_3d & child_dir_ , 
-					vector_3d & mother_dir_) const
+  void placement::child_to_mother_direction (const vector_3d & child_dir_ , 
+					     vector_3d & mother_dir_) const
   {
     vector_3d a;
     child_to_mother (vector_3d (0., 0., 0.), a);
@@ -356,8 +386,7 @@ namespace geomtools {
     mother_dir_= b - a;
   }
 
-  vector_3d 
-  placement::child_to_mother_direction (const vector_3d & child_dir_) const
+  vector_3d placement::child_to_mother_direction (const vector_3d & child_dir_) const
   {
     vector_3d v;
     child_to_mother_direction (child_dir_,v);
@@ -380,6 +409,13 @@ namespace geomtools {
     pm_.__phi = pm_.__theta = pm_.__delta = std::numeric_limits<double>::quiet_NaN ();
     pm_.__inverse_rotation = __inverse_rotation * pc_.__inverse_rotation;
     pm_.__rotation = pm_.__inverse_rotation.inverse ();
+
+    // reconvert angles in ZYZ Euler representation from __rotation:
+    extract_zyz_euler_angle_from_rotation (pm_.__rotation,
+					   pm_.__phi,
+					   pm_.__theta,
+					   pm_.__delta);
+    return;
   }
 
   void placement::tree_dump (ostream & out_, 
@@ -400,7 +436,7 @@ namespace geomtools {
 
     if (is_zyz_rotation ())
       {
-	out_ << indent << i_tree_dumpable::tag << "Euler Angles : "
+	out_ << indent << i_tree_dumpable::tag << "Euler Angles (ZYZ): "
 	     << (has_angles ()? "Yes": "No") << endl;
 	if (has_angles ())
 	  {
@@ -483,13 +519,30 @@ namespace geomtools {
     oss << pl_.get_translation ().x () / lunit;
     oss << ' ' << pl_.get_translation ().y () / lunit;
     oss << ' ' << pl_.get_translation ().z () / lunit;
-    oss << " (mm) ";
-    oss << " @ ";
-    oss << pl_.get_phi () / aunit;
-    oss << ' ' << pl_.get_theta () / aunit;
-    oss << ' ' << pl_.get_delta () / aunit;
-    oss << " (deg)";
+    oss << " (mm)";
+    if (pl_.is_simple_rotation ())
+      {
+	oss << " / ";
+	oss << pl_.get_rotation_axis ();
+	oss << ' ' << pl_. get_rotation_angle () / aunit;
+     }
+    else
+      {
+	oss << " @ ";
+	oss << pl_.get_phi () / aunit;
+	oss << ' ' << pl_.get_theta () / aunit;
+	oss << ' ' << pl_.get_delta () / aunit;
+      }
+    oss << " (deg)";	
     str_ = oss.str ();
+  }
+
+  ostream & operator<< (ostream & out_, const placement & pl_)
+  {
+    string s;
+    placement::to_string (s, pl_);
+    out_ << s;
+    return out_;
   }
     
   bool placement::from_string (const string & str_, placement & pl_)
@@ -531,16 +584,26 @@ namespace geomtools {
     y *= length_unit;
     z *= length_unit;
  
+    int rotation_axis = -1;
+    bool simple_rotation = false;
     oss >> ws;
     if (! oss.eof ())
       {
 	char pr_sep = oss.peek ();
-	if (pr_sep != '@')
+	if (pr_sep != '@' && pr_sep != '/')
 	  {
 	    return false;
 	  }
 	oss.get ();
-	oss >> phi >> theta >> delta >> ws;
+	if (pr_sep == '@' )
+	  {
+	    oss >> phi >> theta >> delta >> ws;
+	  }
+	if (pr_sep == '/' )
+	  {
+	    simple_rotation = true;
+	    oss >> rotation_axis >> phi >> ws;
+	  }
 	// extract angle unit:
 	if (! oss.eof ())
 	  {
@@ -560,13 +623,51 @@ namespace geomtools {
 	  }
  	
       }
- 
-    phi   *= angle_unit;
-    theta *= angle_unit;
-    delta *= angle_unit;
-
-    pl_.set (x, y, z, phi, theta, delta);
+    phi *= angle_unit;
+    if (! simple_rotation)
+      {
+	theta *= angle_unit;
+	delta *= angle_unit;
+	pl_.set (x, y, z, phi, theta, delta);
+      }
+    else
+      {
+	pl_.set (x, y, z, rotation_axis, phi);
+      }
     return true;
+  }
+
+  void placement::test () const
+  {
+    clog << "DEVEL: placement::test: " << endl;
+    double phi, theta, delta;
+    extract_zyz_euler_angle_from_rotation (__rotation, phi, theta, delta);
+    clog << "|-- phi   = " << get_phi () / CLHEP::degree << " deg" << endl;
+    clog << "|-- theta = " << get_theta () / CLHEP::degree << " deg" << endl;
+    clog << "|-- delta = " << get_delta () / CLHEP::degree << " deg" << endl;
+    clog << "|-- test ZYZ: " << endl;
+    clog << "|   |-- phi   = " << phi / CLHEP::degree << " deg" << endl;
+    clog << "|   |-- theta = " << theta / CLHEP::degree << " deg" << endl;
+    clog << "|   `-- delta = " << delta / CLHEP::degree << " deg" << endl;
+    clog << "|--rotation: ";
+    geomtools::tree_dump (__rotation, clog, "", "|   ");
+    clog << "|--Inverse rotation: ";
+    geomtools::tree_dump (__inverse_rotation, clog, "", "|   ");
+    double a, b, c;
+    extract_xyz_euler_angle_from_rotation (__rotation, a, b, c);
+    clog << "|-- test XYZ: " << endl;
+    clog << "|   |-- a = " << a / CLHEP::degree << " deg" << endl;
+    clog << "|   |-- b = " << b / CLHEP::degree << " deg" << endl;
+    clog << "|   `-- c = " << c / CLHEP::degree << " deg" << endl;
+    clog << "|-- placement XYZ: " << endl;
+    placement pxyz;
+    pxyz.set_translation (0.,0.,0.);
+    pxyz.set_orientation_xyz (a, b, c);
+    pxyz.tree_dump (clog, "", "|   ");
+    clog << "`-- Placement: " << pxyz << endl;
+    clog << endl;
+
+    return;
   }
 
 } // end of namespace geomtools

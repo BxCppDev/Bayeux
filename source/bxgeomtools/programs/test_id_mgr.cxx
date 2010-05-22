@@ -57,11 +57,62 @@ int main (int argc_, char ** argv_)
 	    = my_id_mgr.get_category_info (cat_name);
 	  cat_info.tree_dump (clog, "Category info: ");
 	  geomtools::geom_id id;
-	  cat_info.make (id);
+	  cat_info.create (id);
 	  clog << "ID = " << id << ' ' 
 	       << (id.is_valid () ? "[Valid]": "[Invalid]")<< endl;
 	}
+      clog << endl << endl;
+      
+      clog << "Test of ID mapping tools:" << endl << endl;
+      
+      geomtools::geom_id world_id (0, 0);
+      
+      string module_id_info = "  [ module : module=3]  ";
+      geomtools::geom_id module_id;
+      
+      my_id_mgr.compute_id_from_info (module_id, world_id, module_id_info);
+      clog << "Module ID = " << module_id
+	   << " -> " << my_id_mgr.id_to_human_readable_format_string (module_id) 
+	   << ' ' << ((my_id_mgr.validate_id (module_id)) ? "[Valid]": "[Invalid]")
+	   << endl;
 
+      string submodule_id_info = "  [ source_submodule : ]  ";
+      geomtools::geom_id submodule_id;
+      my_id_mgr.compute_id_from_info (submodule_id, module_id, submodule_id_info);
+      clog << "Source submodule ID = " << submodule_id
+	   << " -> " << my_id_mgr.id_to_human_readable_format_string (submodule_id) 
+	   << ' ' << ((my_id_mgr.validate_id (submodule_id)) ? "[Valid]": "[Invalid]")
+	   << endl;
+       
+      string layer_id_info = "  [ source_layer : layer=3]  ";
+      geomtools::geom_id layer_id;
+      my_id_mgr.compute_id_from_info (layer_id, module_id, layer_id_info);
+      clog << "Layer ID = " << layer_id 
+	   << " -> " << my_id_mgr.id_to_human_readable_format_string (layer_id) 
+	   << ' ' << (my_id_mgr.validate_id (layer_id) ? "[Valid]": "[Invalid]")
+	   << endl;
+      
+      string strip_id_info = "  [ source_strip : strip=8]  ";
+      geomtools::geom_id strip_id;
+
+      my_id_mgr.compute_id_from_info (strip_id, layer_id, strip_id_info, 3, 4);
+      clog << "Strip ID = " << strip_id
+	   << " -> " << my_id_mgr.id_to_human_readable_format_string (strip_id) 
+	   << ' ' << (my_id_mgr.validate_id (strip_id) ? "[Valid]": "[Invalid]")
+	   << endl;
+
+      for (int ipad = 0; ipad < 3; ipad++)
+	{
+	  string pad_id_info = "  [ source_pad : pad+2]  ";
+	  geomtools::geom_id pad_id;
+	  
+	  my_id_mgr.compute_id_from_info (pad_id, strip_id, pad_id_info, ipad);
+	  clog << "Pad ID = " << pad_id
+	       << " -> " << my_id_mgr.id_to_human_readable_format_string (pad_id) 
+	       << ' ' <<  (my_id_mgr.validate_id (pad_id) ? "[Valid]": "[Invalid]")
+	       << endl;
+	}
+      
     }
   catch (exception & x)
     {

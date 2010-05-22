@@ -188,9 +188,6 @@ namespace geomtools {
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (__solid);
     get_logical ().set_material_ref (material);
-    geomtools::visibility::extract (config_, _logical.parameters ());
-    get_logical ().parameters ().store (material::make_key (material::MATERIAL_GAS_PRESSURE_PROPERTY), gas_pressure);
-    get_logical ().parameters ().store (material::make_key (material::MATERIAL_GAS_TEMPERATURE_PROPERTY), gas_temperature);
 
     if (devel) clog << "DEVEL: test_model_2::_at_construct: Install physicals..." << endl;
     __sub1_phys.set_name (i_model::make_physical_volume_name ("sub1"));

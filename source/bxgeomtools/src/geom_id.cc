@@ -132,7 +132,6 @@ namespace geomtools {
   // ctor:
   geom_id::geom_id ()
   {
-    //clog << "geom_id::geom_id[1]: Entering..." << endl;
     __type = geom_id::INVALID_TYPE;
     __address.reserve (geom_id::DEFAULT_ADDRESS_DEPTH);
   }
@@ -149,7 +148,6 @@ namespace geomtools {
 		    uint32_t si8_, 
 		    uint32_t si9_)
   {  
-    clog << "geom_id::geom_id[2]: Entering..." << endl;
     __type = geom_id::INVALID_TYPE;
     set_type (type_);
     __address.reserve (geom_id::DEFAULT_ADDRESS_DEPTH);
@@ -231,9 +229,22 @@ namespace geomtools {
     return true;
   }
 
+  void geom_id::inherits_from (const geom_id & source_)
+  {
+    if (this->__address.size () < source_.__address.size ())
+      {
+	throw runtime_error ("geom_id::inherits_from: Incompatible address depth !");
+      }
+    for (int i = 0; i < source_.__address.size (); i++) 
+      {
+	set (i, source_.__address[i]);
+      }
+    return;
+  }
+
   void geom_id::extract_to (geom_id & target_) const
   {
-    if (this->__address.size() < target_.__address.size ())
+    if (this->__address.size () < target_.__address.size ())
       {
 	throw runtime_error ("geom_id::extract: Incompatible address depth !");
       }

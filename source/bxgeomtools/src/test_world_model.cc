@@ -135,7 +135,6 @@ namespace geomtools {
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (__solid);
     get_logical ().set_material_ref (material);
-    geomtools::visibility::extract (config_, _logical.parameters ());
 
     if (devel) clog << "DEVEL: test_world_model::_at_construct: Install physicals..." << endl;
     __setup_phys.set_name (i_model::make_physical_volume_name ("setup"));

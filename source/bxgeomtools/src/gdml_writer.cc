@@ -289,43 +289,20 @@ namespace geomtools {
     _get_stream (DEFINE_SECTION) << "<rotation" 
 				 << " name=" << '"' << to_html (name_) << '"'; 
 
-    double xx = rot_.xx ();
-    double yx = rot_.yx ();
-    double yy = rot_.yy ();
-    double yz = rot_.yz ();
-    double zx = rot_.zx ();
-    double zy = rot_.zy ();
-    double zz = rot_.zz ();
     double a, b, c;
-    {
-      // from a sample by Evgueni Tcherniaev:
-      //  see also: http://en.wikipedia.org/wiki/Euler_angles -> Table of matrices
-      double cosb = sqrt (xx * xx + yx * yx); 
-      if (cosb > 16 * numeric_limits<double>::epsilon()) 
-	{
-	  a = atan2 ( zy, zz);
-	  b = atan2 (-zx, cosb);
-	  c = atan2 ( yx, xx);
-	}
-      else
-	{
-	  a = atan2 (-yz, yy);
-	  b = atan2 (-zx, cosb);
-	  c = 0.;
-	}
-    }
-    
+    extract_xyz_euler_angle_from_rotation (rot_, a, b, c);
+
     _get_stream (DEFINE_SECTION) << " " << "x" << "=" << '"';
     _get_stream (DEFINE_SECTION).precision (15);
-    _get_stream (DEFINE_SECTION) << (a / angle_unit) << '"'; 
+    _get_stream (DEFINE_SECTION) << (-a / angle_unit) << '"'; 
  
     _get_stream (DEFINE_SECTION) << " " << "y" << "=" << '"';
     _get_stream (DEFINE_SECTION).precision (15);
-    _get_stream (DEFINE_SECTION) << (b / angle_unit) << '"'; 
+    _get_stream (DEFINE_SECTION) << (-b / angle_unit) << '"'; 
  
     _get_stream (DEFINE_SECTION) << " " << "z" << "=" << '"';
     _get_stream (DEFINE_SECTION).precision (15);
-    _get_stream (DEFINE_SECTION) << (c / angle_unit) << '"'; 
+    _get_stream (DEFINE_SECTION) << (-c / angle_unit) << '"'; 
 
     _get_stream (DEFINE_SECTION) << " unit=" << '"' << unit_str_ << '"' 
 				 << " />" << endl;

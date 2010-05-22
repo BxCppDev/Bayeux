@@ -7,16 +7,19 @@
 
 ##########################################
 
+[category="world" type="0"]
+addresses : string[1] = "world"
+
 [category="module" type="1"]
 addresses : string[1] = "module"
 
 ##########################################
 
-[category="source_setup" type="30"]
+[category="source_submodule" type="30"]
 inherits : string = "module"
 
 [category="source_layer" type="31"]
-extends : string = "source_setup"
+extends : string = "source_submodule"
 by      : string[1] = "layer"
 
 [category="source_strip" type="32"]
@@ -29,47 +32,41 @@ by      : string[1] = "pad"
 
 ##########################################
 
-[category="tracking_chamber" type="10"]
-inherits : string = "module"
+[category="tracker_submodule" type="10"]
+extends : string = "module"
+by      : string[1] = "side"
 
-[category="half_tracking_chamber" type="11"]
-extends : string = "tracking_chamber"
-by      : string[1] = "half"
-
-[category="geiger_layer" type="12"]
-extends : string = "half_tracking_chamber"
+[category="geiger_layer" type="11"]
+extends : string = "tracker_submodule"
 by      : string[1] = "layer"
 
-[category="geiger_cell" type="13"]
+[category="geiger_cell" type="12"]
 extends : string = "geiger_layer"
 by      : string[1] = "cell"
 
-[category="geiger_cell_anodic_wire" type="14"]
+[category="geiger_cell_anodic_wire" type="13"]
 inherits : string = "geiger_cell"
 
-[category="geiger_cell_cathodic_ring" type="15"]
+[category="geiger_cell_cathodic_ring" type="14"]
 extends : string = "geiger_cell"
 by      : string[1] = "ring"
 
-[category="geiger_cell_field_wire" type="16"]
+[category="geiger_cell_field_wire" type="15"]
 extends : string = "geiger_cell"
 by      : string[1] = "wire"
 
 ##########################################
 
-[category="calorimeter" type="20"]
-inherits : string = "module"
+[category="calorimeter_submodule" type="20"]
+extends : string = "module"
+by      : string[1] = "side"
 
-[category="calorimeter_wall" type="21"]
-extends : string = "calorimeter"
-by      : string[1] = "wall"
-
-[category="calorimeter_column" type="22"]
-extends : string = "calorimeter_wall"
+[category="calorimeter_column" type="21"]
+extends : string = "calorimeter_submodule"
 by      : string[1] = "column"
 
-[category="calorimeter_cell" type="23"]
+[category="calorimeter_block" type="22"]
 extends : string = "calorimeter_column"
-by      : string[1] = "cell"
+by      : string[1] = "row"
 
 # end

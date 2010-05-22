@@ -261,7 +261,6 @@ namespace geomtools {
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (__solid);
     get_logical ().set_material_ref (__get_material_name ());
-    visibility::extract (config_, get_logical ().parameters ());
 
     for (vector<string>::const_iterator i = labels.begin ();
 	 i != labels.end ();

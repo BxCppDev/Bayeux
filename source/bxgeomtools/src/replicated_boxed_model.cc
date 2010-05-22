@@ -229,7 +229,6 @@ namespace geomtools {
 	material_name = __boxed_model->get_logical ().get_material_ref ();
       }
     get_logical ().set_material_ref (material_name);
-    geomtools::visibility::extract (config_, _logical.parameters ());
 
     placement basic_p;
     basic_p.set (x0, y0, z0, 0, 0, 0);

@@ -31,6 +31,11 @@
 #include <geomtools/logical_volume.h>
 #include <geomtools/detail/model_tools.h>
 
+#include <geomtools/sensitive.h>
+#include <geomtools/material.h>
+#include <geomtools/visibility.h>
+#include <geomtools/mapping_utils.h>
+
 namespace geomtools {
   
   using namespace std;  

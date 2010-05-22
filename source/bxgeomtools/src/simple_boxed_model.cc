@@ -195,9 +195,6 @@ namespace geomtools {
       }
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (__solid);
-    geomtools::visibility::extract (config_, get_logical ().parameters ());
-    geomtools::material::extract (config_, get_logical ().parameters ());
-    geomtools::sensitive::extract (config_, _logical.parameters ());
     get_logical ().set_material_ref (material_name);
 
     if (devel) clog << "DEVEL: simple_boxed_model::_at_construct: Exiting." << endl;
