@@ -166,6 +166,7 @@ if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
 	echo -n "-L${THEPACK_LIBDIR} -ldatatools "  \
 	    "`boost-config --ldflags serialization iostreams filesystem system` " 
 	echo -n "`clhep-config --libs` "
+	###echo -n "-lcurses "
     ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
     echo
 #      "`liblockfile-config --ldflags` "  

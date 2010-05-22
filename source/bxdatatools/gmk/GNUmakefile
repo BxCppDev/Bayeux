@@ -93,6 +93,7 @@ DEPLDFLAGS+=$(shell clhep-config --libs)
 
 ### depends on Endian:
 DEPCPPFLAGS+=-I$(PACKAGE_DIR)/boost/vault/endian
+###DEPLDFLAGS+=-lcurses
 
 ### depends on Floating point utility:
 DATATOOLS_NO_FPU=$(shell ls -1 $(PACKAGE_DIR)/gmk/datatools_without_fpu.config 2> /dev/null)
