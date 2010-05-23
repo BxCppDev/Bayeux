@@ -209,10 +209,14 @@ namespace geomtools {
     int compute_id_from_info (geom_id & id_, 
 			      const geom_id & mother_id_,
 			      const string & id_info_, 
-			      uint32_t item0_ = geom_id::INVALID_ADDRESS, 
-			      uint32_t item1_ = geom_id::INVALID_ADDRESS, 
-			      uint32_t item2_ = geom_id::INVALID_ADDRESS) const;
+			      const vector<uint32_t> & items_index_) const;
 
+    int compute_id_from_info (geom_id & id_, 
+			      const geom_id & mother_id_,
+			      const string & id_info_, 
+			      uint32_t nitem0_ = geom_id::INVALID_ADDRESS, 
+			      uint32_t nitem1_ = geom_id::INVALID_ADDRESS, 
+			      uint32_t nitem2_ = geom_id::INVALID_ADDRESS) const;
   };
 
 } // end of namespace geomtools

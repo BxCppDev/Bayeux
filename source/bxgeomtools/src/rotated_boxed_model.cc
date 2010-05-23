@@ -70,6 +70,12 @@ namespace geomtools {
     string boxed_model_name;
     string rotation_axis_label = "";
     string special_rotation_angle_label = "";
+    string rotated_label = "rotated";
+
+    if (config_.has_key ("rotated_label"))
+      {
+	rotated_label = config_.fetch_string ("rotated_label");
+      }  
 
     if (config_.has_key ("rotation_axis"))
       {
@@ -211,8 +217,7 @@ namespace geomtools {
 	material_name = __boxed_model->get_logical ().get_material_ref ();
       }
     get_logical ().set_material_ref (material_name);
-
-    __boxed_phys.set_name (i_model::make_physical_volume_name ("rotated"));
+    __boxed_phys.set_name (i_model::make_physical_volume_name (rotated_label));
     __boxed_phys.set_placement (__boxed_placement);
     __boxed_phys.set_logical (__boxed_model->get_logical ());
     __boxed_phys.set_mother (_logical);

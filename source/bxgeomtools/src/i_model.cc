@@ -85,7 +85,7 @@ namespace geomtools {
   {
     ostringstream oss;
     oss << basename_ << i_model::PHYSICAL_SUFFIX
-	<< "__" << 0 << ".." << (nitems_ - 1) << "__";
+	<< "." << "__" << 0 << ".." << (nitems_ - 1) << "__";
     return oss.str ();
   }
 
@@ -94,7 +94,7 @@ namespace geomtools {
   {
     ostringstream oss;
     oss << basename_ << i_model::PHYSICAL_SUFFIX
-	<< "__" << item_ << "__";
+	<< "." << "__" << item_ << "__";
     return oss.str ();
   }
 
@@ -103,7 +103,7 @@ namespace geomtools {
   {
     ostringstream oss;
     oss << basename_ << i_model::PHYSICAL_SUFFIX
-	<< "__" << i_ << "__"
+	<< "." << "__" << i_ << "__"
 	<< "__" << j_ << "__";
     return oss.str ();
   }
@@ -114,13 +114,26 @@ namespace geomtools {
   {
     ostringstream oss;
     oss << basename_ << i_model::PHYSICAL_SUFFIX
-	<< "__" << 0 << ".." << (ncols_ - 1) << "__"
+	<< "." << "__" << 0 << ".." << (ncols_ - 1) << "__"
 	<< "__" << 0 << ".." << (nrows_ - 1) << "__";
     return oss.str ();
   }
+
+  string i_model::extract_label_from_physical_volume_name (const string & physical_volume_name_)
+  {
+    size_t pos = physical_volume_name_.rfind (i_model::PHYSICAL_SUFFIX);
+    if (pos == physical_volume_name_.npos)
+      {
+	ostringstream message;
+	message << "i_model::extract_label_from_physical_volume_name: "
+		<< "Do not recognize a physical volume name !";
+	throw runtime_error (message.str ());
+      }
+    return physical_volume_name_.substr (0, pos);
+  }
    
   /***************************************************/
- 
+  
   // static:
   i_model::scoped_model_db_t i_model::g__model_db (new model_db (true));
      

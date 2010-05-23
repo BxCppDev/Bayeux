@@ -23,7 +23,7 @@ namespace geomtools {
 
   void replicated_boxed_model::set_number_of_items (size_t n_)
   {
-    assert_unconstructed("replicated_boxed_model::set_number_of_items");
+    assert_unconstructed ("replicated_boxed_model::set_number_of_items");
 
     __number_of_items = n_;
   }
@@ -50,7 +50,7 @@ namespace geomtools {
  
   void replicated_boxed_model::set_boxed_model (const i_model & model_)
   {
-    assert_unconstructed("replicated_boxed_model::set_boxed_model");
+    assert_unconstructed ("replicated_boxed_model::set_boxed_model");
 
     // check if model has a logical volume with a box shape:
     const i_shape_3d & shape = model_.get_logical ().get_shape ();
@@ -89,8 +89,8 @@ namespace geomtools {
   }
   
   void replicated_boxed_model::_at_construct (const string & name_,
-				    const datatools::utils::properties & config_,
-				    models_col_t * models_)
+					      const datatools::utils::properties & config_,
+					      models_col_t * models_)
   {
     bool devel = i_model::g_devel;
     if (devel) clog << "DEVEL: replicated_boxed_model::_at_construct: Entering..." << endl;
@@ -102,6 +102,12 @@ namespace geomtools {
     string boxed_model_name;
     size_t number_of_items = 0;
     string replicant_axis_label = "";
+    string replicated_label = "replicated";
+
+    if (config_.has_key ("replicated_label"))
+      {
+	replicated_label = config_.fetch_string ("replicated_label");
+      }  
 
     if (config_.has_key ("replicant_axis"))
       {
@@ -233,7 +239,7 @@ namespace geomtools {
     placement basic_p;
     basic_p.set (x0, y0, z0, 0, 0, 0);
     __boxed_replica_placement.set_basic_placement (basic_p);
-    __boxed_phys.set_name (i_model::make_physical_volume_name ("replicated_boxed", get_number_of_items ()));
+    __boxed_phys.set_name (i_model::make_physical_volume_name (replicated_label, get_number_of_items ()));
     __boxed_phys.set_placement (__boxed_replica_placement);
     __boxed_phys.set_logical (__boxed_model->get_logical ());
     __boxed_phys.set_mother (_logical);

@@ -134,6 +134,25 @@ namespace geomtools {
     return __number_of_columns * __number_of_rows;
   }
 
+  size_t regular_grid_placement::compute_index_map (vector<uint32_t> & map_, 
+						    int item_) const
+  {
+    if ((item_ < 0) || (item_ >= get_number_of_items ()))
+      {
+ 	ostringstream message;
+	message << "regular_grid_placement::compute_index_map: " 
+		<< "Invalid item index '" << item_ << "' !" << endl;
+	throw runtime_error (message.str ());
+      }
+    uint32_t nitem = (uint32_t) item_;
+    uint32_t icol = nitem % __number_of_columns;
+    uint32_t irow = nitem / __number_of_columns;
+    map_.clear ();
+    map_.push_back (icol);
+    map_.push_back (irow);
+    return map_.size ();
+  }
+
   void regular_grid_placement::get_placement (int col_, int row_, placement & p_) const
   {
     int item = col_ + row_ * __number_of_columns;

@@ -86,6 +86,9 @@ namespace geomtools {
       virtual bool is_replica () const;
  
       virtual bool has_only_one_rotation () const;
+
+      virtual size_t compute_index_map (vector<uint32_t> & map_, 
+					int item_) const;
  
     private:
 

@@ -577,13 +577,34 @@ namespace geomtools {
       }
     return id_.is_valid ();
   }
-  
+
   int id_mgr::compute_id_from_info (geom_id & id_, 
 				    const geom_id & mother_id_,
 				    const string & id_info_, 
-				    uint32_t item0_, 
-				    uint32_t item1_, 
-				    uint32_t item2_) const
+				    uint32_t nitem0_, 
+		 		    uint32_t nitem1_, 
+				    uint32_t nitem2_) const
+  {
+    vector<uint32_t> items_index;
+    if (nitem0_ != geom_id::INVALID_ADDRESS)
+      {
+	items_index.push_back (nitem0_);
+	if (nitem1_ != geom_id::INVALID_ADDRESS)
+	  {
+	    items_index.push_back (nitem1_);
+	    if (nitem2_ != geom_id::INVALID_ADDRESS)
+	      {
+		items_index.push_back (nitem2_);
+	      }
+	  }
+      }
+    return compute_id_from_info (id_, mother_id_, id_info_, items_index);
+  }
+
+  int id_mgr::compute_id_from_info (geom_id & id_, 
+				    const geom_id & mother_id_,
+				    const string & id_info_,
+				    const vector<uint32_t> & items_index_) const
   {
     bool devel = false;
     //devel = true;
@@ -755,48 +776,17 @@ namespace geomtools {
 	    uint32_t address_value = addr_val;
 	    if (skip) 
 	      {
-		if (i == 0)
+		if (items_index_.size () > i && items_index_[i] >= 0)
 		  {
-		    if (item0_ >= 0)
-		      {
-			address_value += item0_;
-		      }
-		    else
-		      {
-			ostringstream message;
-			message << "id_mgr::compute_id_from_info: " 
-				<< "Missing item number for address `" << i << "' !";
-			throw runtime_error (message.str ());		    
-		      }
+		    address_value += items_index_[i];
 		  }
-		if (i == 1)
+		else
 		  {
-		    if (item1_ >= 0)
-		      {
-			address_value += item1_;
+		    ostringstream message;
+		    message << "id_mgr::compute_id_from_info: " 
+			    << "Missing address at index `" << i << "' !";
+		    throw runtime_error (message.str ());		    
 		      }
-		    else
-		      {
-			ostringstream message;
-			message << "id_mgr::compute_id_from_info: " 
-				<< "Missing item number for address `" << i << "' !";
-			throw runtime_error (message.str ());		    
-		      }
-		  }
-		if (i == 2)
-		  {
-		    if (item2_ >= 0)
-		      {
-			address_value += item2_;
-		      }
-		    else
-		      {
-			ostringstream message;
-			message << "id_mgr::compute_id_from_info: " 
-				<< "Missing item number for address `" << i << "' !";
-			throw runtime_error (message.str ());		    
-		      }
-		  }
 	      }
 	    id_.set (i + current_address_index, address_value);
 	  }

@@ -132,6 +132,9 @@ namespace geomtools {
    
       virtual void get_placement (int item_, placement & p_) const;
 
+      virtual size_t compute_index_map (vector<uint32_t> & map_, 
+					int item_) const;
+
     public: 
       // ctor:
       regular_grid_placement ();

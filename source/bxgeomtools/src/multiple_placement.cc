@@ -42,6 +42,21 @@ namespace geomtools {
   {
     return __placements.size ();
   }
+
+  size_t multiple_placement::compute_index_map (vector<uint32_t> & map_, 
+						int item_) const
+  {
+    if ((item_ < 0) || (item_ >= get_number_of_items ()))
+      {
+ 	ostringstream message;
+	message << "multiple_placement::compute_index_map: " 
+		<< "Invalid item index '" << item_ << "' !" << endl;
+	throw runtime_error (message.str ());
+      }
+    map_.clear ();
+    map_.push_back (item_);
+    return map_.size ();
+  }
   
   void multiple_placement::get_placement (int item_, placement & p_) const
   {

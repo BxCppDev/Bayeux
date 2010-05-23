@@ -50,6 +50,8 @@ namespace geomtools {
 
     virtual size_t get_number_of_items () const = 0;
 
+    virtual size_t compute_index_map (vector<uint32_t> & map_, int item_) const = 0;
+
     virtual bool is_replica () const = 0;
     
     virtual void get_placement (int item_, placement & p_) const = 0;

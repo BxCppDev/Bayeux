@@ -243,6 +243,7 @@ namespace geomtools {
 
     }; // template <class model_type> class creator_registration
     
+  public:
 
     static string make_solid_name (const string & basename_);
 
@@ -262,6 +263,8 @@ namespace geomtools {
     static string make_physical_volume_name (const string & basename_,
 					     int ncols_,
 					     int nrows_);
+
+    static string extract_label_from_physical_volume_name (const string & physical_volume_name_);
 
   }; // class i_model
   
