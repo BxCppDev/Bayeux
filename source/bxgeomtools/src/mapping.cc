@@ -65,17 +65,17 @@ namespace geomtools {
 	 i != _get_geom_infos ().end ();
 	 i++)
       {
-	out_ << i->first << ": LOG= ";
+	out_ << i->first << ": LOG=`";
 	if (i->second.has_logical ())
 	  {
-	    out_ << "'" 
-		 << i->second.get_logical ().get_name () << "'";
+	    out_ << i->second.get_logical ().get_name ();
 	  }
 	else
 	  {
 	    out_ << "<no logical>";
 	  }
-	out_ << " WP= " << i->second.get_world_placement ();
+	out_ << "'";
+	out_ << " WP=`" << i->second.get_world_placement () << "'";
 	out_ << endl;
       }
     out_ << "--------------------------- " <<  endl;
