@@ -21,6 +21,18 @@ namespace geomtools {
     return __geom_infos;
   }
     
+  const id_mgr & geom_map::get_id_manager () const
+  {
+    if (__id_manager == 0)
+      {
+	ostringstream message;
+	message << "geom_map::get__manager: "
+		<< "No manager !";
+	throw runtime_error (message.str ());
+      }
+    return *__id_manager;
+  }
+     
   const id_mgr & geom_map::_get_id_manager () const
   {
     if (__id_manager == 0)
