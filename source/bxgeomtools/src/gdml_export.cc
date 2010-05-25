@@ -199,7 +199,7 @@ namespace geomtools {
 			   1.e-15 * CLHEP::g / CLHEP::cm3,
 			   1.00); 
 
-    __writer.add_setup ("Setup", top_model.get_name ());
+    __writer.add_setup ("Setup", top_model.get_logical ().get_name ());
 
     __writer.full_write (out_, xml_version, xml_encoding, gdml_schema, xsi);
     __writer.reset ();
