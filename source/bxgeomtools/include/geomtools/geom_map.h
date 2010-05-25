@@ -46,11 +46,8 @@ namespace geomtools {
 
   class geom_map : public i_locator
   {
-  public:
-
-    typedef map<geom_id, geom_info> geom_info_dict_t;
-
   private:  
+
     geom_id          __invalid_geom_id;
     const id_mgr *   __id_manager;
     geom_info_dict_t __geom_infos;
@@ -107,8 +104,6 @@ namespace geomtools {
     
     virtual void build_from (const model_factory & factory_,
 			     const string & mother_ = "world");
-
-    //void parse_id_info (const string & id_str, geom_id & id_);
 
   };
 

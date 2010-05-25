@@ -677,20 +677,22 @@ namespace geomtools {
     if (devel) ci.tree_dump (clog, "Category info:");
     ci.create (id_);
     if (devel) clog << "id_mgr::compute_id_from_info: "
-	 << "Preliminary geometry ID is `" << id_ << "'" << endl;
+		    << "Preliminary geometry ID is `" << id_ << "'" << endl;
 
     // Eventually import mother ID stuff:
     size_t current_address_index = 0;
+    string mother_category;
     if (mother_id_.is_valid ())
       {
 	const category_info & mother_ci = get_category_info (mother_id_.get_type ());
 	if (devel) mother_ci.tree_dump (clog, "Mother category info:");
 	if (devel) clog << "id_mgr::compute_id_from_info: "
-	     << "Mother ID `" << mother_id_ << "'" << endl;
+			<< "Mother ID `" << mother_id_ << "'" << endl;
 	bool import_mother = false;
 	if (ci.has_ancestor (mother_ci.get_category ()))
 	  {
 	    import_mother = true;
+	    mother_category = mother_ci.get_category ();
 	  }
 	if (import_mother)
 	  {
@@ -704,7 +706,8 @@ namespace geomtools {
 
     size_t number_of_remaining_addresses = id_.get_depth () - current_address_index;
     if (devel) clog << "id_mgr::compute_id_from_info: "
-	 << "Number of remaining addresses = " << number_of_remaining_addresses << endl;
+		    << "Number of remaining addresses = " << number_of_remaining_addresses 
+		    << endl;
 
     // Parse the address rules:
     bool parse_address = false;
@@ -727,11 +730,14 @@ namespace geomtools {
 	boost::split (split_addr, addresses_token, boost::algorithm::is_any_of (","));
 	if (split_addr.size () != number_of_remaining_addresses)
 	  {
+	    ci.tree_dump (clog, "Category info:");
 	    clog << "id_mgr::compute_id_from_info: "
 		 << "Number of remaining addresses = " << number_of_remaining_addresses << endl;
 	    ostringstream message;
 	    message << "id_mgr::compute_id_from_info: " 
-		    << "Invalid number of remaining addresses info !";
+		    << "Invalid number of remaining addresses info for category `" 
+		    << category << "' from token `" << addresses_token << "' "
+		    << " with mother ID " << mother_id_ << " (mother=`" << mother_category << "') !";
 	    throw runtime_error (message.str ());
 	  }
 	// parse each address rule:

@@ -60,21 +60,23 @@ namespace geomtools {
   void mapping::dump_dictionnary (ostream & out_) const
   {
     out_ << "--- Geometry ID mapping --- " << endl;
-    for (geom_map::geom_info_dict_t::const_iterator i
+    for (geom_info_dict_t::const_iterator i
 	   = _get_geom_infos ().begin ();
 	 i != _get_geom_infos ().end ();
 	 i++)
       {
-	out_ << i->first << ": ";
+	out_ << i->first << ": LOG= ";
 	if (i->second.has_logical ())
 	  {
 	    out_ << "'" 
-		 << i->second.get_logical ().get_name () << "'" << endl;
+		 << i->second.get_logical ().get_name () << "'";
 	  }
 	else
 	  {
-	    out_ << "<no logical>" << endl;
+	    out_ << "<no logical>";
 	  }
+	out_ << " WP= " << i->second.get_world_placement ();
+	out_ << endl;
       }
     out_ << "--------------------------- " <<  endl;
     return;
@@ -112,10 +114,10 @@ namespace geomtools {
 
       // Add 
       _get_geom_infos ()[world_id] = world_gi;
-      dump_dictionnary (clog);
+      //dump_dictionnary (clog);
       __build_logical_children (*__top_logical, top_placement, world_id);
     }
-    dump_dictionnary (clog);
+    //dump_dictionnary (clog);
     clog << "DEVEL: mapping::__build: Exiting." << endl;
   }
  

@@ -7,6 +7,7 @@
  * License: 
  * 
  * Description: 
+ *
  *   Geometry information about an object from a geomertry setup.
  *
  * History: 
@@ -21,7 +22,6 @@
 #include <geomtools/geom_id.h>
 #include <geomtools/placement.h>
 #include <geomtools/logical_volume.h>
-
 
 namespace geomtools {
 
@@ -61,6 +61,8 @@ namespace geomtools {
       friend ostream & operator<< (ostream &, const geom_info &);
 
   };
+
+  typedef map<geom_id, geom_info> geom_info_dict_t;
 
 } // end of namespace geomtools
 
