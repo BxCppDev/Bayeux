@@ -75,7 +75,7 @@ namespace geomtools {
     return "geomtools::replicated_boxed_model";
   }
   
-  replicated_boxed_model::replicated_boxed_model () : geomtools::i_model ()
+  replicated_boxed_model::replicated_boxed_model () : i_boxed_model ()
   {
     __boxed_model = 0;
     __x = numeric_limits<double>::quiet_NaN ();

@@ -737,7 +737,14 @@ namespace geomtools {
 	    message << "id_mgr::compute_id_from_info: " 
 		    << "Invalid number of remaining addresses info for category `" 
 		    << category << "' from token `" << addresses_token << "' "
-		    << " with mother ID " << mother_id_ << " (mother=`" << mother_category << "') !";
+		    << " with mother ID " << mother_id_ << " (mother=`" << mother_category << "') [";
+	    for (vector<uint32_t>::const_iterator ii = items_index_.begin ();
+		 ii !=  items_index_.end ();
+		 ii++)
+	      {
+		message << " " << *ii;
+	      }
+	    message << "] !";
 	    throw runtime_error (message.str ());
 	  }
 	// parse each address rule:

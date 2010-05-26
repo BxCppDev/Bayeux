@@ -126,6 +126,9 @@ namespace geomtools {
 					  const geom_id & mother_id_)
   {
     bool devel = g_devel;
+    // XXX
+    //if (mother_id_.get_type () >= 1200) devel = true;
+    //if (mother_id_.get_type () > 1211) devel = false;
     //devel = true;
     //using namespace datatools::utils;
     namespace du = datatools::utils;

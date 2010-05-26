@@ -21,7 +21,7 @@
 #include <exception>
 #include <limits> 
 
-#include <geomtools/i_model.h>
+#include <geomtools/i_boxed_model.h>
 #include <geomtools/box.h>
 #include <geomtools/physical_volume.h>
 #include <geomtools/regular_linear_placement.h>
@@ -32,12 +32,12 @@ namespace geomtools {
 
   using namespace std;
 
-  // define a geometry model with a boxed model rotated by some simple rotation
-  // 
-  class rotated_boxed_model : public geomtools::i_model 
-    {
-    private:
-
+  // define a geometry model with a boxed model rotated 
+  // by some simple rotation:
+  class rotated_boxed_model : public geomtools::i_boxed_model
+  {
+  private:
+    
       const i_model *  __boxed_model;
       placement        __boxed_placement;
       physical_volume  __boxed_phys;
@@ -46,7 +46,7 @@ namespace geomtools {
     public: 
       void set_boxed_model (const i_model &);
       const i_model & get_boxed_model () const;
-      const geomtools::box & get_box () const;
+      virtual const geomtools::box & get_box () const;
       const geomtools::box & get_solid () const;
 
     public:

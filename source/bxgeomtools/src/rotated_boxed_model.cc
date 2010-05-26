@@ -48,7 +48,7 @@ namespace geomtools {
     return "geomtools::rotated_boxed_model";
   }
   
-  rotated_boxed_model::rotated_boxed_model () : geomtools::i_model ()
+  rotated_boxed_model::rotated_boxed_model () : i_boxed_model ()
   {
     __boxed_model = 0;
   }

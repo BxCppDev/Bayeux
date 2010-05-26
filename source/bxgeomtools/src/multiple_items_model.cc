@@ -66,6 +66,11 @@ namespace geomtools {
   /***************************************/
 
   i_model::creator_registration<multiple_items_model> multiple_items_model::__CR;
+  
+  const box & multiple_items_model::get_box () const
+  {
+    return __solid;
+  }
  
   const box & multiple_items_model::get_solid () const
   {
@@ -169,7 +174,7 @@ namespace geomtools {
   
   // ctor:
   multiple_items_model::multiple_items_model ()
-    : i_model ()
+    : i_boxed_model ()
   {
   }
   

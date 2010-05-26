@@ -95,7 +95,7 @@ namespace geomtools {
     return "geomtools::simple_boxed_model";
   }
   
-  simple_boxed_model::simple_boxed_model () : geomtools::i_model ()
+  simple_boxed_model::simple_boxed_model () : i_boxed_model ()
   {
     __material_name = "";
     __x = numeric_limits<double>::quiet_NaN ();

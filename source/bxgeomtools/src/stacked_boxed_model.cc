@@ -205,7 +205,7 @@ namespace geomtools {
   }
   
   // ctor:
-  stacked_boxed_model::stacked_boxed_model () : geomtools::i_model ()
+  stacked_boxed_model::stacked_boxed_model () : i_boxed_model ()
   {
     __material_name = "";
     __stacking_axis = STACKING_ALONG_INVALID;

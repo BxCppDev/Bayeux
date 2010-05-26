@@ -26,19 +26,19 @@
 
 #include <datatools/utils/units.h>
 
-#include <geomtools/i_model.h>
 #include <geomtools/box.h>
 #include <geomtools/placement.h>
 #include <geomtools/physical_volume.h>
 #include <geomtools/utils.h>
 #include <geomtools/visibility.h>
 #include <geomtools/material.h>
+#include <geomtools/i_boxed_model.h>
 
 namespace geomtools {
     
   using namespace std;  
  
-  class multiple_items_model : public i_model
+  class multiple_items_model : public i_boxed_model
   {
   public: 
 
@@ -74,6 +74,7 @@ namespace geomtools {
 
   public: 
 
+    virtual const geomtools::box & get_box () const;
     const box & get_solid () const;
 
     const string & get_material_name () const;

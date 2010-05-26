@@ -7,7 +7,7 @@
  * License: 
  * 
  * Description: 
- *   Factory for geometry models
+ *   Simple boxed models
  * 
  * History: 
  * 
@@ -23,9 +23,8 @@
 
 #include <datatools/utils/units.h>
 
-#include <geomtools/i_model.h>
+#include <geomtools/i_boxed_model.h>
 #include <geomtools/box.h>
-
 #include <geomtools/visibility.h>
 #include <geomtools/material.h>
 #include <geomtools/sensitive.h>
@@ -35,7 +34,7 @@ namespace geomtools {
   using namespace std;
 
   // define a geometry model with a single box: 
-  class simple_boxed_model : public geomtools::i_model 
+  class simple_boxed_model : public i_boxed_model
     {
     private:
 
@@ -55,7 +54,7 @@ namespace geomtools {
       double get_z () const;
       void set_material_name (const string &);
       const string & get_material_name () const;
-      const geomtools::box & get_box () const;
+      virtual const geomtools::box & get_box () const;
       const geomtools::box & get_solid () const;
 
     public:
