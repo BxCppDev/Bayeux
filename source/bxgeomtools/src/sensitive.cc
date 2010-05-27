@@ -19,7 +19,7 @@ namespace geomtools {
   }
   
   void sensitive::extract (const datatools::utils::properties & source_,
-			  datatools::utils::properties & target_)
+			   datatools::utils::properties & target_)
   {
     source_.export_starting_with (target_, sensitive::SENSITIVE_PREFIX);
     return;
