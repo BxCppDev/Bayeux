@@ -35,6 +35,7 @@ namespace geomtools {
   {
   public:
 
+    static const string white;
     static const string black;
     static const string red;
     static const string green;

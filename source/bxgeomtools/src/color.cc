@@ -8,6 +8,7 @@ namespace geomtools {
 
   using namespace std;
 
+  const string color::white   = "white";
   const string color::black   = "black";
   const string color::red     = "red";
   const string color::green   = "green";
@@ -56,6 +57,7 @@ namespace geomtools {
       {
 	clog << "DEVEL: color::color_db::color_db: Entering..." << endl; 
       }
+    __map[color::white]   = -2;
     __map[color::black]   = -1;
     __map[color::grey]    = 0; 
     __map[color::red]     = 1;
