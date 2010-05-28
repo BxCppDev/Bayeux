@@ -72,9 +72,9 @@ namespace geomtools {
 
     bool is_type (uint32_t) const;
 
-    const uint32_t & get_type () const;
+    uint32_t get_type () const;
  
-    void set_type (const uint32_t &);
+    void set_type (uint32_t);
 
     void set_depth (size_t depth_);
 

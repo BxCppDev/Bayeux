@@ -459,6 +459,22 @@ namespace geomtools {
     id_.set (0, address_);
     return;
   }
+
+  void id_mgr::make_id (const string & category_, geom_id & id_) const
+  {
+    id_.reset ();
+    if (! has_category_info (category_))
+      {
+	ostringstream message;
+	message << "id_mgr::make_id: " 
+		<< "No category '" << category_ << "' !";	
+	throw runtime_error (message.str ());
+      }
+    const category_info & ci = get_category_info (category_);
+    id_.set_type (ci.get_type ());
+    id_.set_depth (ci.get_depth ());
+    return;
+  }
  
   int id_mgr::get (const geom_id & id_, const string & what_) const
   {

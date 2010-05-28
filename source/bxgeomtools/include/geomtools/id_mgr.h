@@ -187,6 +187,8 @@ namespace geomtools {
     void make_id (geom_id & id_, 
 		  uint32_t address_) const;
 
+    void make_id (const string & category_, geom_id & id_) const;
+
 
     /*   
     void make_extended (const geom_id & mother_id_, 

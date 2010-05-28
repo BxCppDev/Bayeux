@@ -49,7 +49,12 @@ namespace geomtools {
     else 
       {
 	__address.resize (depth_);
+	for (int i = sz; i < depth_; i++)
+	  {
+	    __address.push_back (INVALID_ADDRESS);
+	  }
       }
+    return;
   }
 
   size_t geom_id::get_depth () const
@@ -86,12 +91,12 @@ namespace geomtools {
       }
   }
   
-  const uint32_t & geom_id::get_type () const
+  uint32_t geom_id::get_type () const
   {
     return __type;
   }
   
-  void geom_id::set_type (const uint32_t & new_value_)
+  void geom_id::set_type (uint32_t new_value_)
   {
     __type = new_value_;
   }
