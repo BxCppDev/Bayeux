@@ -12,6 +12,19 @@ namespace geomtools {
     return (__cat_info != 0);
   }
 
+  void id_selector::set_id_mgr (const id_mgr & id_mgr_)
+  {
+    if (is_initialized ())
+      {
+	ostringstream message;
+	message << "id_selector::set_id_mgr: "
+		<< "Selector is already initialized !";
+	throw runtime_error (message.str ());	
+      }
+    __id_mgr = &id_mgr_;
+    return;
+  }
+
   id_selector::id_selector ()
   {
     __id_mgr = 0;

@@ -31,7 +31,6 @@ namespace geomtools {
 
   using namespace std;
 
-
   class id_selector
   {
   private:
@@ -43,6 +42,8 @@ namespace geomtools {
   public:
 
     bool is_initialized () const;
+
+    void set_id_mgr (const id_mgr & id_mgr_);
 
     id_selector ();
 

@@ -102,7 +102,7 @@ namespace geomtools {
     gid_.invalidate ();
     gid_ = geom_map::get_geom_id (world_position_, type_, tolerance_);
   };
-  
+ 
   void geom_map::get_geom_id (const vector_3d & world_position_, 
 			      const string & category_,
 			      geom_id & gid_,
@@ -111,6 +111,23 @@ namespace geomtools {
     gid_.invalidate ();
     gid_ = geom_map::get_geom_id (world_position_, category_, tolerance_);
   };
+ 
+  bool geom_map::check_inside (const geom_info & ginfo_,
+			       const vector_3d & world_position_,
+			       double tolerance_)
+  {
+    const geom_info & ginfo = ginfo_;
+    vector_3d local_position;
+    const placement & pl = ginfo.get_world_placement ();
+    pl.mother_to_child (world_position_, local_position);
+    const logical_volume & log = ginfo.get_logical ();
+    const i_shape_3d & shape = log.get_shape ();
+    if (shape.is_inside (local_position, tolerance_))
+      {
+	return true;
+      }
+    return false;
+  }
 
   const geom_id & geom_map::get_geom_id (const vector_3d & world_position_, 
 					 int type_, 
@@ -124,6 +141,13 @@ namespace geomtools {
 	const geom_info & ginfo = i->second;
 	const geom_id & gid = ginfo.get_id ();
 	if (gid.get_type () != requested_type) continue;
+
+	if (geom_map::check_inside (ginfo, world_position_, tolerance_))
+	  {
+	    return gid;
+	  }
+
+	/*
 	vector_3d local_position;
 	const placement & pl = ginfo.get_world_placement ();
 	pl.mother_to_child (world_position_, local_position);
@@ -133,6 +157,7 @@ namespace geomtools {
 	  {
 	    return gid;
 	  }
+	*/
       }
      return __invalid_geom_id;
   }

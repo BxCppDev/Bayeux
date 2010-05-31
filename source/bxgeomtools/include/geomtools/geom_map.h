@@ -107,6 +107,10 @@ namespace geomtools {
     virtual void build_from (const model_factory & factory_,
 			     const string & mother_ = "world");
 
+    static bool check_inside (const geom_info & ginfo_,
+			      const vector_3d & world_position_,
+			      double tolerance_);
+
   };
 
 } // end of namespace geomtools
