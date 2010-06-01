@@ -45,7 +45,7 @@ int main (int argc_, char ** argv_)
               }
             }
           iarg++;
-      }
+      } 
     
       geomtools::id_mgr my_id_mgr;
       my_id_mgr.load ("${GEOMTOOLS_ROOT}/resources/geom_id_mgr.lis");
@@ -55,6 +55,7 @@ int main (int argc_, char ** argv_)
 
       string selector_rules = "category=source_pad module={0;1} layer={*} strip={1;2;4;5;10} pad=[3;7]";
       IDS.initialize (selector_rules);
+      if (debug) IDS.dump (clog, "ID selector: ");
 
       for (int i = 0; i < 20; i++)
 	{

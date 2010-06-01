@@ -12,6 +12,18 @@ namespace geomtools {
     return (__cat_info != 0);
   }
 
+  const id_mgr::category_info & id_selector::get_category_info () const
+  {
+    if (__cat_info == 0)
+      {
+ 	ostringstream message;
+	message << "id_selector::set_id_mgr: "
+		<< "Missing category info ! ID selector is not initalized !";
+	throw runtime_error (message.str ());	
+     }
+    return *__cat_info;
+  }
+
   void id_selector::set_id_mgr (const id_mgr & id_mgr_)
   {
     if (is_initialized ())
@@ -175,7 +187,7 @@ namespace geomtools {
       }
 
     return;
-  }
+  } 
 
   void id_selector::dump (ostream & out_, const string & title_) const
   {
@@ -191,7 +203,6 @@ namespace geomtools {
     else
       {
 	out_ << "|-- Initialized:   '" << "Yes" << "'" << endl;
-	return;
       }
     out_ << "|-- Category:   '" << __cat_info->get_category () << "' (type=" 
 	 << __cat_info->get_type () 
