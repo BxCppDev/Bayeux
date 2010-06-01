@@ -204,8 +204,8 @@ namespace datatools {
 
     void multi_properties::reset ()
     {
-      __key_label = "";
-      __meta_label = "";
+      __key_label = DEFAULT_KEY_LABEL;
+      __meta_label = DEFAULT_META_LABEL;
       __ordered_entries.clear ();
       __entries.clear ();
     }
@@ -236,7 +236,8 @@ namespace datatools {
       __key_label = DEFAULT_KEY_LABEL;
       __meta_label = DEFAULT_META_LABEL;
       if (! key_label_.empty ()) set_key_label (key_label_);
-      if (! meta_label_.empty ()) set_meta_label (meta_label_);
+      //if (! meta_label_.empty ()) 
+      set_meta_label (meta_label_);
       set_description (description_);
     }
 
@@ -490,6 +491,7 @@ namespace datatools {
       if (devel)
 	{
 	  clog << "DEVEL: multi_properties::__read: Entering..." << endl;
+	  tree_dump (cerr, "DUMP: " , "DEVEL: ");
 	}
       string line_in;
       string mprop_description;
@@ -607,7 +609,17 @@ namespace datatools {
 			    }
 			  string tmp;
 			  getline (iss, tmp);
-			  if (! meta_label.empty ()) 
+			  if (meta_label.empty ()) 
+			    {
+			      if (! __meta_label.empty ())
+				{
+				  ostringstream message;
+				  message << "multi_properties::__read: " 
+					  << "Missing meta label with setup '" << __meta_label << "' !";
+				  throw runtime_error (message.str ());
+				}
+			    }
+			  else
 			    {
 			      mprop_meta_label = meta_label;
 			      if (__meta_label.empty ())
@@ -646,7 +658,7 @@ namespace datatools {
 		      if (key_label != get_key_label ())
 			{
 			  ostringstream message;
-			  message << "multi_properties::__read: Incompatible 'key' label '"
+			  message << "multi_properties::__read: Incompatible key label '"
 				  << key_label << "' with setup '" << __key_label << "' !";
 			  throw runtime_error (message.str ());
 			}
@@ -654,27 +666,42 @@ namespace datatools {
 			{
 			  ostringstream message;
 			  message << "multi_properties::__read: "
-				  << "Cannot read quoted string 'key' value !" ;
+				  << "Cannot read quoted string key value !" ;
 			  throw runtime_error (message.str ());
 			}
 		      iss >> ws;
-		      string meta_label;
-		      getline (iss, meta_label, '=');
-		      if (! meta_label.empty ())
+		      char dummy = iss.peek ();
+		      if (dummy != ']')
 			{
-			  if (meta_label != get_meta_label ())
+			  string meta_label;
+			  getline (iss, meta_label, '=');
+			  if (! meta_label.empty ())
 			    {
-			      ostringstream message;
-			      message << "multi_properties::__read: Incompatible 'meta' label '"
-				      << meta_label << "' with setup '" << __meta_label << "' !";
-			      throw runtime_error (message.str ());
+			      if (meta_label != get_meta_label ())
+				{
+				  ostringstream message;
+				  message << "multi_properties::__read: Incompatible meta label '"
+					  << meta_label << "' with setup '" << __meta_label << "' !";
+				  throw runtime_error (message.str ());
+				}
+			      if (! properties::config::read_quoted_string (iss, new_meta)) 
+				{
+				  ostringstream message;
+				  message << "multi_properties::__read: "
+					  << "Cannot read quoted string meta value!" ;
+				  throw runtime_error (message.str ());
+				}
 			    }
-			  if (! properties::config::read_quoted_string (iss, new_meta)) 
+			}
+		      else
+			{
+			  if (! get_meta_label ().empty ())
 			    {
-			      ostringstream message;
-			      message << "multi_properties::__read: "
-				      << "Cannot read quoted string 'meta' value!" ;
-			      throw runtime_error (message.str ());
+				  ostringstream message;
+				  message << "multi_properties::__read: "
+					  << "Expected meta record '" << get_meta_label () << '=' 
+					  << "\"???\"" << "' is missing !" ;
+				  throw runtime_error (message.str ());			      
 			    }
 			}
 		      iss >> ws;
