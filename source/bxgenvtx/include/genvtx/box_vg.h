@@ -82,7 +82,11 @@ namespace genvtx {
 
     void set_box_ref (const geomtools::box & box_);
 
+    const geomtools::box & get_box_safe () const;
+
     const geomtools::box & get_box () const;
+
+    const geomtools::box & get_box_ref () const;
 
     void dump (ostream & out_ = clog) const;
 

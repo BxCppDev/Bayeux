@@ -86,6 +86,20 @@ namespace genvtx {
     __box = box_;
   }
 
+  const geomtools::box & box_vg::get_box_safe () const
+  {
+    if (has_box_ref ())
+      {
+	return get_box_ref ();
+      }
+    return get_box ();
+  }
+
+  const geomtools::box & box_vg::get_box_ref () const
+  {
+    return *__box_ref;
+  }
+
   const geomtools::box & box_vg::get_box () const
   {
     return __box;
