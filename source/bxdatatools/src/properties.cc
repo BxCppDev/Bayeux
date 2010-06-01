@@ -12,6 +12,13 @@ namespace datatools {
     const std::string properties::SERIAL_TAG       = "__PROPERTIES__";
     const std::string properties::data::SERIAL_TAG = "__DATA_PROPERTIES__";
 
+    /* 2010-06-01 FM: to be updated 
+     */
+    /*
+    const std::string properties::SERIAL_TAG       = "datatools::utils::properties";
+    const std::string properties::data::SERIAL_TAG = "__datatools::utils::properties::data";
+    */
+
     const std::string & 
     properties::get_serial_tag () const
     {

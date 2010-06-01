@@ -30,9 +30,11 @@ namespace datatools {
 
     const bool multi_properties::read_private_also = false;
 
-    const string multi_properties::SERIAL_TAG       = "__multi_properties__";
+    const string multi_properties::SERIAL_TAG       = "datatools::utils::multi_properties";
+    //const string multi_properties::SERIAL_TAG       = "__multi_properties__";
 
-    const string multi_properties::entry::SERIAL_TAG = "__multi_properties__entry__";
+    const string multi_properties::entry::SERIAL_TAG = "__datatools::utils::multi_properties::entry";
+    //const string multi_properties::entry::SERIAL_TAG = "__multi_properties__entry__";
 
     bool multi_properties::g_debug = false;
 
@@ -121,10 +123,10 @@ namespace datatools {
 	}
 
       out_ << indent << du::i_tree_dumpable::tag 
-	   << "Key        : \"" <<  __key << "\"" << endl;
+	   << "Key         : \"" <<  __key << "\"" << endl;
 
       out_ << indent << du::i_tree_dumpable::tag 
-	   << "Meta       : \"" <<  __meta << "\"" << endl;
+	   << "Meta        : \"" <<  __meta << "\"" << endl;
       
       {
 	out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
@@ -141,7 +143,6 @@ namespace datatools {
 	  __properties.tree_dump (out_,"",indent_oss.str ());
 	}
       }
-     
       return;
     }
 
@@ -541,7 +542,7 @@ namespace datatools {
 	      check_iss >> ws >> check_word;
 	      if (check_word.empty ()) 
 		{
-		  skip_line=true;
+		  skip_line = true;
 		}
 
 	      // check if line is a comment:
@@ -556,7 +557,7 @@ namespace datatools {
 		      string token;
 		      iss >> token;
 	      
-		      if (token == "@description") 
+		      if (token == "@description" && mprop_description.empty ()) 
 			{
 			  iss >> ws;
 			  string desc;
@@ -567,7 +568,7 @@ namespace datatools {
 			      set_description (mprop_description);
 			    }
 			}
-		      if (token == "@key_label") 
+		      if (token == "@key_label" && mprop_key_label.empty ()) 
 			{
 			  iss >> ws;
 			  string key_label;
@@ -596,7 +597,7 @@ namespace datatools {
 				}
 			    }
 			}
-		      if (token == "@meta_label") 
+		      if (token == "@meta_label" && mprop_meta_label.empty ()) 
 			{
 			  iss >> ws;
 			  string meta_label;
