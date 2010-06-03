@@ -452,6 +452,11 @@ namespace geomtools {
     return geom_id::compare (*this, id_) == 0;
   }
 
+  bool geom_id::operator!= (const geom_id & id_) const
+  {
+    return geom_id::compare (*this, id_) != 0;
+  }
+
   bool geom_id::operator< (const geom_id & id_) const
   {
     return geom_id::compare (*this, id_) < 0;

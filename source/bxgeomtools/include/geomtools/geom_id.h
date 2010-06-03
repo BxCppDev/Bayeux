@@ -130,6 +130,8 @@ namespace geomtools {
 
     bool operator== (const geom_id & id_) const;
 
+    bool operator!= (const geom_id & id_) const;
+
     bool operator< (const geom_id & id_) const;
 
     bool operator<= (const geom_id & id_) const;
