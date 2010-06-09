@@ -8,6 +8,11 @@ namespace geomtools {
 
   using namespace std;
 
+  const list<const geom_info *> & smart_id_locator::get_ginfos () const
+  {
+    return __ginfos;
+  }
+
   void smart_id_locator::_construct ()
   {
     for (geom_info_dict_t::const_iterator i 
@@ -103,7 +108,13 @@ namespace geomtools {
 		<< "Locator is already initialized !";
 	throw runtime_error (message.str ());
       }
-
+    if (__gmap == 0)
+      {
+	ostringstream message;
+	message << "smart_id_locator::initialize: "
+		<< "Missing geoemtry map ! Use the 'set_gmap' method before !";
+	throw runtime_error (message.str ());	
+      }
     __idsel.set_id_mgr (__gmap->get_id_manager ());
     try
       {

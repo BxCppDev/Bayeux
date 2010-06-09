@@ -50,6 +50,9 @@ namespace geomtools {
 
     static string get_sensitive_category (const datatools::utils::properties & config_);
 
+    static void set_sensitive_category (datatools::utils::properties & config_,
+					const string & cat_name_);
+
   };
 
 

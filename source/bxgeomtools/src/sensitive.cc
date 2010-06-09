@@ -47,6 +47,13 @@ namespace geomtools {
     return config_.fetch_string (make_key (sensitive::SENSITIVE_CATEGORY_PROPERTY));
   }
 
+  void sensitive::set_sensitive_category (datatools::utils::properties & config_,
+					  const string & cat_name_)
+  {
+    config_.update (make_key (sensitive::SENSITIVE_CATEGORY_PROPERTY), cat_name_);
+    return;
+  }
+
 } // end of namespace geomtools
 
 // end of sensitive.cc

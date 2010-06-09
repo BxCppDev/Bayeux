@@ -45,6 +45,7 @@ namespace geomtools {
 	MODE_DEFAULT = MODE_LAST
       };
 
+
   private:
     bool              __initialized;
     int               __mode;
@@ -81,6 +82,8 @@ namespace geomtools {
     void initialize (const string & selection_rules_, int mode_ = MODE_DEFAULT);
 
     void reset ();
+
+    const list<const geom_info *> & get_ginfos () const;
 
   protected:
 

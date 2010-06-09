@@ -25,6 +25,8 @@
 
 namespace geomtools {
 
+  //class box;
+
   class i_shape_3d : public i_object_3d
     {
     public:
@@ -52,6 +54,10 @@ namespace geomtools {
       {
 	return false;
       }
+
+      // bool has_bounding_box () const;
+
+      // const box & get_bounding_box () const;
 
       //virtual double 
       //	get_parameter(const std::string &) const = 0;

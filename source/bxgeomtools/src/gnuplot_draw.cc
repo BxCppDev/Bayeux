@@ -699,6 +699,54 @@ namespace geomtools {
     return;
   }
 
+  void 
+  gnuplot_draw::draw_tessellated (std::ostream & out_,
+				  const vector_3d & position_, 
+				  const rotation_3d & rotation_,
+				  const tessellated_solid & t_)
+  {
+    rotation_3d inverseRotation (rotation_);
+    inverseRotation.invert ();
+
+    polyline_t polyline_facet;
+    size_t last_nvtx = 0;
+    for (tessellated_solid::facets_col_t::const_iterator i 
+	   = t_.facets ().begin ();
+	 i !=  t_.facets ().end ();
+	 i++)
+      {
+	polyline_facet.clear ();
+	const i_facet * fct = i->second;
+	size_t nvtx = fct->get_number_of_vertices ();
+	size_t nvtx_safe = nvtx;
+	if (last_nvtx == 0)
+	  {
+	    last_nvtx = nvtx;
+	  }
+	else if (last_nvtx < 1000)
+	  {
+	    if (last_nvtx == nvtx)
+	      {
+		nvtx_safe++;
+		last_nvtx = 1000;
+	      }
+	    else
+	      {
+		last_nvtx = nvtx;
+	      }
+	  }
+	for (int i = 0; i <= nvtx_safe; i++)
+	  {
+	    vector_3d P2 (fct->get_vertex (i % nvtx).position);
+	    P2.transform (inverseRotation);
+	    P2 += position_;
+	    polyline_facet.push_back (P2);
+	  }
+	basic_draw_polyline (out_, polyline_facet);
+      }
+    return;
+  }
+
   void gnuplot_draw::draw (ostream & out_, 
 			   const i_placement & p_, 
 			   const i_object_3d & o_)
@@ -799,6 +847,13 @@ namespace geomtools {
 	  {
 	    const polycone & p = dynamic_cast<const polycone &> (o_);
 	    draw_polycone (out_, pos, rot, p);
+	    return;
+	  }
+
+	if (shape_name == "tessellated")
+	  {
+	    const tessellated_solid & t = dynamic_cast<const tessellated_solid &> (o_);
+	    draw_tessellated (out_, pos, rot, t);
 	    return;
 	  }
 
