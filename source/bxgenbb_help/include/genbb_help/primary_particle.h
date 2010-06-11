@@ -44,17 +44,30 @@ namespace genbb {
     
     enum particle_type
     {
-      UNDEF    = -1,
-      GAMMA    = 1,
-      POSITRON = 2,
-      ELECTRON = 3,
-      ALPHA    = 47
+      // Using GEANT3 definition from: 
+      // http://wwwasdoc.web.cern.ch/wwwasdoc/geant_html3/node72.html#SECTION024000000000000000000000
+      UNDEF      = -1,
+      GAMMA      = 1,
+      POSITRON   = 2,
+      ELECTRON   = 3,
+      NEUTRINO   = 4,
+      MUON_PLUS  = 5,
+      MUON_MINUS = 6,
+      PION_0     = 7,
+      PION_PLUS  = 8,
+      PION_MINUS = 9,
+      NEUTRON    = 13,
+      PROTON     = 14,
+      DEUTERON   = 45,
+      TRITIUM    = 46,
+      ALPHA      = 47,
+      HE3        = 49
     };
 
   public:
     
     int32_t              type;
-    double               time; // CLHEP time unit
+    double               time;     // CLHEP time unit
     geomtools::vector_3d momentum; // CLHEP momentum unit
 
     void reset ();
