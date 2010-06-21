@@ -8,6 +8,16 @@ namespace geomtools {
 
   using namespace std;
 
+  void smart_id_locator::set_debug (bool d_)
+  {
+    __debug = d_;
+  }
+
+  bool smart_id_locator::is_debug () const
+  {
+    return __debug;
+  }
+
   const list<const geom_info *> & smart_id_locator::get_ginfos () const
   {
     return __ginfos;
@@ -55,19 +65,25 @@ namespace geomtools {
 
     if (__type != geom_id::INVALID_TYPE)
       {
-	clog << datatools::utils::io::debug 
-	     << "smart_id_locator::_construct: "
-	     << "Number of entries with type (" << __type << ") = "
-	     << __ginfos.size ()
-	     << endl;
+	if (is_debug ())
+	  {
+	    clog << datatools::utils::io::debug 
+		 << "smart_id_locator::_construct: "
+		 << "Number of entries with type (" << __type << ") = "
+		 << __ginfos.size ()
+		 << endl;
+	  }
       }
     if (__idsel.is_initialized ())
       {
-	clog << datatools::utils::io::debug 
-	     << "smart_id_locator::_construct: "
-	     << "Number of entries selected by the ID selector = "
-	     << __ginfos.size ()
-	     << endl;
+	if (is_debug ())
+	  {
+	    clog << datatools::utils::io::debug 
+		 << "smart_id_locator::_construct: "
+		 << "Number of entries selected by the ID selector = "
+		 << __ginfos.size ()
+		 << endl;
+	  }
       }
     return;
   }
@@ -167,6 +183,7 @@ namespace geomtools {
   // ctor:
   smart_id_locator::smart_id_locator ()
   {
+    __debug= false;
     __gmap = 0;
     __mode = MODE_INVALID;
     __type = geom_id::INVALID_TYPE;
@@ -250,11 +267,14 @@ namespace geomtools {
 					      tolerance_);
 	    if (located)
 	      {
-		clog << datatools::utils::io::debug 
-		     << "smart_id_locator::get_geom_id: "
-		     << "Last found entry match ("
-		     << __last_found->get_id () << ")"
-		     << endl;
+		if (is_debug ())
+		  {
+		    clog << datatools::utils::io::debug 
+			 << "smart_id_locator::get_geom_id: "
+			 << "Last found entry match ("
+			 << __last_found->get_id () << ")"
+			 << endl;
+		  }
 		return __last_found->get_id ();
 	      }
 	    
@@ -286,11 +306,14 @@ namespace geomtools {
 		smart_id_locator * non_const_this = const_cast<smart_id_locator *> (this);
 		non_const_this->__last_found = ginfo;
 	      }
-	    clog << datatools::utils::io::debug 
-		 << "smart_id_locator::get_geom_id: "
-		 << "New entry match ("
-		 << ginfo->get_id () << ")"
-		 << endl;
+	    if (is_debug ())
+	      {
+		clog << datatools::utils::io::debug 
+		     << "smart_id_locator::get_geom_id: "
+		     << "New entry match ("
+		     << ginfo->get_id () << ")"
+		     << endl;
+	      }
 	    return ginfo->get_id ();
 	  }
      }

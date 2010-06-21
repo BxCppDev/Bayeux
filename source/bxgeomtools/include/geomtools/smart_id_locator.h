@@ -47,6 +47,7 @@ namespace geomtools {
 
 
   private:
+    bool              __debug;
     bool              __initialized;
     int               __mode;
     uint32_t          __type;
@@ -58,6 +59,10 @@ namespace geomtools {
     const geom_info * __last_found;
 
   public:
+
+    void set_debug (bool);
+
+    bool is_debug () const;
 
     bool is_initialized () const;
 
