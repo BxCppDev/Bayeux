@@ -194,6 +194,7 @@ namespace geomtools {
   // ctor:
   smart_id_locator::smart_id_locator (const geom_map & gmap_)
   {
+    __debug= false;
     __gmap = 0;
     __mode = MODE_INVALID;
     __type = geom_id::INVALID_TYPE;
