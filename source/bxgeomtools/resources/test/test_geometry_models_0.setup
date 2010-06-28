@@ -13,6 +13,14 @@ material.ref : string = "copper"
 visibility.hidden : boolean = 0
 visibility.color  : string  = "green"
 
+[name="boxa" type="geomtools::simple_boxed_model"]
+x   : real   = 50.0
+y   : real   = 70.0
+z   : real   = 180.0
+material.ref : string = "copper"
+visibility.hidden : boolean = 0
+visibility.color  : string  = "red"
+
 [name="row" type="geomtools::replicated_boxed_model"]
 replicant_axis  : string = "x"
 number_of_items : integer = 10
@@ -128,6 +136,27 @@ label_3         : string = "box9.label3"
 visibility.color            : string  = "cyan"
 visibility.hidden           : boolean = 0
 visibility.daughters.hidden : boolean = 0
+
+[name="z10" type="geomtools::surrounded_boxed_model"]
+material.ref     : string = "air"
+
+centered.x : boolean = 0
+centered.y : boolean = 0
+centered.z : boolean = 0
+
+surrounded_model : string = "boxa"
+surrounded_label : string = "central"
+
+surrounding_model.front  : string = "box1"
+surrounding_model.back   : string = "box2"
+surrounding_model.top    : string = "box0"
+surrounding_model.left   : string = "box0"
+surrounding_label.front  : string = "front"
+surrounding_label.back   : string = "back"
+surrounding_label.top    : string = "top"
+surrounding_label.left   : string = "left"
+
+
 
 #######################################################
 

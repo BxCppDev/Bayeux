@@ -148,7 +148,7 @@ namespace geomtools {
     if (found == __labels.end ())
       {
 	ostringstream message;
-	message << "stacked_boxed_model::get_boxed_model: "
+	message << "stacked_boxed_model::get_boxed_item: "
 		<< "Dictionary has no model with "
 		<< "label '" << label_ << "' !";
 	throw runtime_error (message.str ());
