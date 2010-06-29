@@ -9,6 +9,8 @@ namespace geomtools {
   using namespace std;
 
   const string model_factory::DEFAULT_WORLD_LABEL = "world";
+
+  bool model_factory::g_devel = false;
   
   bool model_factory::is_locked () const
   {
@@ -56,7 +58,7 @@ namespace geomtools {
 
   void model_factory::load (const string & mprop_file_)
   {
-    bool devel = __debug;
+    bool devel = g_devel || __debug;
     if (__locked)
       {
 	throw runtime_error ("model_factory::init: Factory is locked !");	
@@ -121,7 +123,7 @@ namespace geomtools {
 
   void model_factory::__construct ()
   {
-    bool devel = __debug;
+    bool devel = g_devel;
     if (devel) 
       {
 	clog << "DEVEL: model_factory::__construct: "

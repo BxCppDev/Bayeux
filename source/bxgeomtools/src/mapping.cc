@@ -24,11 +24,10 @@ namespace geomtools {
   void mapping::build_from (const model_factory & factory_,
 			    const string & mother_)
   {
-    bool devel = false;
-    devel = true;
+    bool devel = g_devel;
     if (devel)
       {
-	clog << "DEVEL: mapping::build_from: Entering..." << endl;
+	clog << datatools::utils::io::devel << "mapping::build_from: Entering..." << endl;
       }
     if (! factory_.is_locked ())
       {
@@ -52,7 +51,8 @@ namespace geomtools {
 
     if (devel)
       {
-	clog << "DEVEL: mapping::build_from: Exiting." << endl;
+	clog << datatools::utils::io::devel 
+	     << "mapping::build_from: Exiting." << endl;
       }
     return;
   }
@@ -84,8 +84,13 @@ namespace geomtools {
 
   void mapping::__build ()
   {
-    clog << "DEVEL: mapping::__build: Entering..." << endl;
-      
+    bool devel = g_devel;
+
+    if (devel)
+      {
+	clog << datatools::utils::io::devel 
+	     << "mapping::__build: Entering..." << endl;
+      }
     string world_cat_name = "world";
     if (! _get_id_manager ().has_category_info (world_cat_name))
       {
@@ -97,7 +102,7 @@ namespace geomtools {
     {
       const id_mgr::category_info & world_cat_info
 	= _get_id_manager ().get_category_info (world_cat_name);
-      world_cat_info.tree_dump (clog, "Category info: ");
+      if (devel) world_cat_info.tree_dump (clog, "Category info: ");
       geom_id world_id;
       world_cat_info.create (world_id);
       world_id.set_address (0);
@@ -118,7 +123,12 @@ namespace geomtools {
       __build_logical_children (*__top_logical, top_placement, world_id);
     }
     //dump_dictionnary (clog);
-    clog << "DEVEL: mapping::__build: Exiting." << endl;
+    if (devel)
+      {
+	clog << datatools::utils::io::devel 
+	     << "mapping::__build: Exiting." << endl;
+      }
+    return;
   }
  
   void mapping::__build_logical_children (const logical_volume & log_, 
@@ -126,11 +136,6 @@ namespace geomtools {
 					  const geom_id & mother_id_)
   {
     bool devel = g_devel;
-    // XXX
-    //if (mother_id_.get_type () >= 1200) devel = true;
-    //if (mother_id_.get_type () > 1211) devel = false;
-    //devel = true;
-    //using namespace datatools::utils;
     namespace du = datatools::utils;
     __indenter (++__depth);
 
@@ -274,8 +279,12 @@ namespace geomtools {
 	  }
       }
 
-    if (devel) clog << du::io::devel 
-		    << __indenter << "mapping::__build_logical_children: Exiting." << endl;
+    if (devel) 
+      {
+	clog << du::io::devel 
+	     << __indenter << "mapping::__build_logical_children: Exiting." 
+	     << endl;
+      }
     __indenter (--__depth);
     return;
   }

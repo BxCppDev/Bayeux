@@ -104,6 +104,9 @@ namespace geomtools {
 					 int type_, 
 					 double tolerance_ = i_object_3d::USING_PROPER_TOLERANCE) const;
 
+
+    void dump (ostream & out_ = clog) const;
+
   };
 
 } // end of namespace geomtools

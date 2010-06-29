@@ -11,6 +11,8 @@ namespace geomtools {
   const string id_mgr::CATEGORY_KEY_LABEL = "category";
   const string id_mgr::TYPE_META_LABEL    = "type";
 
+  bool id_mgr::g_devel = false;
+
   id_mgr::category_info::category_info ()
   {
     category = "";
@@ -146,7 +148,7 @@ namespace geomtools {
   
   void id_mgr::init_from (const datatools::utils::multi_properties & mp_)
   {
-    bool devel = false;
+    bool devel = g_devel;
     //devel = true;
     if (mp_.get_key_label () != id_mgr::CATEGORY_KEY_LABEL)
       {
@@ -622,7 +624,7 @@ namespace geomtools {
 				    const string & id_info_,
 				    const vector<uint32_t> & items_index_) const
   {
-    bool devel = false;
+    bool devel = g_devel;
     //devel = true;
     // parse ID info:
     string id_info = id_info_;

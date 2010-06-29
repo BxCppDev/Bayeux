@@ -107,11 +107,19 @@ namespace geomtools {
   
   void smart_id_locator::reset ()
   {
+    if (! is_initialized ())
+      {
+	ostringstream message;
+	message << "smart_id_locator::reset: "
+		<< "Locator is not initialized !";
+	throw runtime_error (message.str ());
+      }
     __mode = MODE_INVALID;
     __type = geom_id::INVALID_TYPE;
     __idsel.reset ();
     __last_found = 0;
     __ginfos.clear ();
+    __initialized = false;
   }
 
   void smart_id_locator::initialize (const string & rules_, 
@@ -148,6 +156,7 @@ namespace geomtools {
     __last_found = 0;
 
     _construct ();
+    __initialized = true;
   
     return;
   }
@@ -176,6 +185,7 @@ namespace geomtools {
     __last_found = 0;
 
     _construct ();
+   __initialized = true;
   
     return;
   }
@@ -183,7 +193,8 @@ namespace geomtools {
   // ctor:
   smart_id_locator::smart_id_locator ()
   {
-    __debug= false;
+    __debug = false;
+    __initialized = false;
     __gmap = 0;
     __mode = MODE_INVALID;
     __type = geom_id::INVALID_TYPE;
@@ -194,7 +205,8 @@ namespace geomtools {
   // ctor:
   smart_id_locator::smart_id_locator (const geom_map & gmap_)
   {
-    __debug= false;
+    __debug = false;
+    __initialized = false;
     __gmap = 0;
     __mode = MODE_INVALID;
     __type = geom_id::INVALID_TYPE;
@@ -209,6 +221,9 @@ namespace geomtools {
 				      uint32_t type_,
 				      int mode_)
   {
+    __debug = false;
+    __initialized = false;
+    __gmap = 0;
     __mode = MODE_INVALID;
     __type = geom_id::INVALID_TYPE;
     __last_found = 0;
@@ -223,6 +238,9 @@ namespace geomtools {
 				      const string & selection_rules_,
 				      int mode_)
   {
+    __debug = false;
+    __initialized = false;
+    __gmap = 0;
     __mode = MODE_INVALID;
     __type = geom_id::INVALID_TYPE;
     __last_found = 0;
@@ -321,6 +339,35 @@ namespace geomtools {
 
     // 
     return __gmap->get_invalid_geom_id ();
+  }
+
+  void smart_id_locator::dump (ostream & out_) const
+  {
+    out_ << "smart_id_locator::dump: " << endl;
+    out_ << "|-- Debug:       " << __debug << endl;
+    out_ << "|-- Initialized: " << __initialized << endl;
+    out_ << "|-- Mode:        " << __mode << endl;
+    if (__type != geom_id::INVALID_TYPE)
+      {
+	out_ << "|-- Type:        " << __type << endl;
+      }
+    else 
+      {
+	out_ << "|-- ID selector: " << __idsel.is_initialized () << endl;
+      }
+    out_ << "|-- Geom. map:   " << __gmap << endl;
+    out_ << "|-- Geom. infos: " << __ginfos.size () << " items" << endl;
+    out_ << "`-- Last found:  ";
+    if (__last_found != 0)
+      {
+	out_ << *__last_found;
+      }
+    else
+      {
+	out_ << "<none>";
+      }
+    out_ << endl;
+    return;
   }
 
 } // end of namespace geomtools

@@ -277,17 +277,17 @@ namespace geomtools {
     /*** Centering of the surrounded item ***/
     if (config_.has_flag ("centered.x"))
       {
-	cerr << "DEVEL: X-centered" << endl; 
+	if (devel) cerr << "DEVEL: X-centered" << endl; 
 	__centered_x = true;
       }
     if (config_.has_flag ("centered.y"))
       {
-	cerr << "DEVEL: Y-centered" << endl; 
+	if (devel) cerr << "DEVEL: Y-centered" << endl; 
 	__centered_y = true;
       }
     if (config_.has_flag ("centered.z"))
       {
-	cerr << "DEVEL: Z-centered" << endl; 
+	if (devel) cerr << "DEVEL: Z-centered" << endl; 
 	__centered_z = true;
       }
 

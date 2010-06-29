@@ -44,6 +44,8 @@ namespace geomtools {
     static const string CATEGORY_KEY_LABEL;
     static const string TYPE_META_LABEL;
 
+    static bool g_devel;
+
     /***************************************/
 
     class category_info : public datatools::utils::i_tree_dumpable

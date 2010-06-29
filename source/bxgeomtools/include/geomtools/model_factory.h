@@ -44,6 +44,7 @@ namespace geomtools {
   public:
 
     static const string DEFAULT_WORLD_LABEL;
+    static bool g_devel;
 
   private: 
     bool __locked;
