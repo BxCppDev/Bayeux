@@ -7,6 +7,8 @@
 namespace genvtx {
 
   using namespace std;
+
+  bool factory::g_devel = false;
   
   bool factory::is_debug () const
   {
@@ -54,7 +56,7 @@ namespace genvtx {
   factory::factory (bool preload_)
   {
     __debug = false;
-    bool devel = false;
+    bool devel = g_devel;
     //devel = true;
     if (devel)
       {
@@ -87,8 +89,8 @@ namespace genvtx {
 							 void * user_)
   {
     using namespace std;
-    bool devel = false;
-    devel = true;
+    bool devel = g_devel;
+    //devel = true;
 
     if (devel) 
       {

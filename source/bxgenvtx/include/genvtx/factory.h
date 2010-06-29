@@ -35,6 +35,9 @@ namespace genvtx {
 
   class factory
   {
+  public: 
+    static bool g_devel;
+
   private: 
     bool                            __debug;
     vertex_generator_creator_dict_t __creators;
