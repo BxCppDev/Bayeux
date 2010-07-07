@@ -138,6 +138,26 @@ namespace mygsl {
     return EXIT_SUCCESS;
   }
 
+  /* Solve:
+   *
+   *  a1 x + b1 y = c1
+   *  a2 x + b2 y = c2 
+   *
+   */
+  bool linear_system_2x2_solve (double a1_, double b1_, double c1_,
+				double a2_, double b2_, double c2_,
+				double & x_, double & y_)
+  {
+    double det = b1_ * a2_ - a1_ * b2_;
+    if (abs (det) < 1.e-15) 
+      {
+	return false;
+      }
+    x_ = (b1_ * c2_ - c1_ * b2_) / det;
+    y_ = (c1_ * a2_ - c2_ * a1_) / det;
+    return true;
+  }
+
 }
 
 // end of mygsl::linear_system_solver.cc

@@ -90,7 +90,7 @@ namespace mygsl {
 
     void relock_table (const std::string & interp_name_ = "");
 
-    void add_point (double x_ , double y_ , bool lock_after_ = true);
+    void add_point (double x_ , double y_ , bool lock_after_ = false);
 
     tabulated_function (const std::string & interp_name_ = DEFAULT_INTERP_NAME);
 

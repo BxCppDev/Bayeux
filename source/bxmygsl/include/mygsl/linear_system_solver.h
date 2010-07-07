@@ -73,6 +73,16 @@ namespace mygsl {
 	       std::vector<double>       & x_);
     
   };
+
+  /* Solve:
+   *
+   *  a1 x + b1 y = c1
+   *  a2 x + b2 y = c2 
+   *
+   */
+  bool linear_system_2x2_solve (double a1_, double b1_, double c1_,
+				double a2_, double b2_, double c2_,
+				double & x_, double & y_);
   
 } // end of namespace mygsl
 

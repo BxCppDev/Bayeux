@@ -71,7 +71,7 @@ int main (int argc_, char ** argv_)
 	}
       else if (mode == "test")
 	{
-	  a[0] = 0.18;  a[1] = 0.60;  a[1] = 0.60;
+	  a[0] = 0.18;  a[1] = 0.60;  a[2] = 0.60;
 	  a[3] = 0.96;  a[4] = 0.41;  a[5] = 0.24;
 	  a[6] = 0.99;  a[7] = 0.58;  a[8] = 0.14;
 
@@ -106,6 +106,29 @@ int main (int argc_, char ** argv_)
 	      cout << "  x[" << i << "] = " << x[i] << endl;
 	    }
 	}
+
+      {
+	double a1, b1, c1;
+	double a2, b2, c2;
+	double x,y;
+	a1 = 1.0;
+	b1 = 2.0;
+	c1 = 3.0;
+	a2 = 4.0;
+	b2 = 5.0;
+	c2 = 0.0;
+	if (mygsl::linear_system_2x2_solve (a1, b1, c1, a2, b2, c2, x, y))
+	  {
+	    cout << "Solution: " << endl;
+	    cout << "  x = " << x << endl;
+	    cout << "  y = " << y << endl;
+	  }
+	else
+	  { 
+	    cout << "No solution." << endl;
+	  }
+      }
+
     }
   catch (exception & x) 
     {
