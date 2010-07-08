@@ -8,6 +8,12 @@ namespace geomtools {
 
   namespace intersection {
 
+
+    /**
+     * Some useful formulae at:
+     *  http://local.wasp.uwa.edu.au/~pbourke/geometry/sphereline/
+     *
+     */
     bool find_intersection_line_circle_2d (const vector_2d & line_origin_, 
 					   const vector_2d & line_direction_,
 					   const vector_2d & circle_origin_,
