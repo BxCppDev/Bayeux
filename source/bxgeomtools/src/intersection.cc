@@ -11,6 +11,7 @@ namespace geomtools {
 
     /**
      * Some useful formulae at:
+     *
      *  http://local.wasp.uwa.edu.au/~pbourke/geometry/sphereline/
      *
      */

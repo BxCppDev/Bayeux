@@ -6,7 +6,7 @@
 
 namespace geomtools {
 
-  bool gnuplot_draw::g_using_color  = false;
+  bool   gnuplot_draw::g_using_color   = false;
   double gnuplot_draw::g_current_color = 1.0;
 
   void 
@@ -18,6 +18,7 @@ namespace geomtools {
 					     bool   endl_)
   {
     double color = color_;
+    out_.precision (15);
     out_ << x_ << ' ' 
 	 << y_ << ' ' 
 	 << z_ << ' ' 
@@ -54,6 +55,7 @@ namespace geomtools {
       }
     else
       {
+	out_.precision (15);
 	out_ << x_ << ' ' 
 	     << y_ << ' ' 
 	     << z_;
@@ -128,8 +130,8 @@ namespace geomtools {
 			       const polyline_t & pl_, 
 			       bool  more_)
   {
-    rotation_3d inverseRotation (rotation_);
-    inverseRotation.invert ();
+    rotation_3d inverse_rotation (rotation_);
+    inverse_rotation.invert ();
     polyline_t polyline;
     vector_3d first;
     bool start = true;
@@ -138,7 +140,7 @@ namespace geomtools {
 	 i++) 
       {
 	vector_3d P (*i);
-	P.transform (inverseRotation);
+	P.transform (inverse_rotation);
 	P += position_;
 	if (start) 
 	  {
@@ -160,13 +162,13 @@ namespace geomtools {
 			      const vector_3d & stop_)
   {
     static bool even = true;
-    rotation_3d inverseRotation (rotation_);
-    inverseRotation.invert ();
+    rotation_3d inverse_rotation (rotation_);
+    inverse_rotation.invert ();
     vector_3d A (start_);
-    A.transform (inverseRotation);
+    A.transform (inverse_rotation);
     A += position_;
     vector_3d B (stop_);
-    B.transform (inverseRotation);
+    B.transform (inverse_rotation);
     B += position_;
     polyline_t polyline;
     polyline.push_back (A);
@@ -219,23 +221,23 @@ namespace geomtools {
     vector_3d C (-0.5 * length_, -0.5 * width_, 0.);
     vector_3d D (-0.5 * length_,  0.5 * width_, 0.);
 
-    rotation_3d inverseRotation (rotation_);
-    inverseRotation.invert ();
+    rotation_3d inverse_rotation (rotation_);
+    inverse_rotation.invert ();
 
     vector_3d A2 (A);
-    A2.transform (inverseRotation);
+    A2.transform (inverse_rotation);
     A2 += position_;
 
     vector_3d B2 (B);
-    B2.transform (inverseRotation);
+    B2.transform (inverse_rotation);
     B2 += position_;
 
     vector_3d C2 (C);
-    C2.transform (inverseRotation);
+    C2.transform (inverse_rotation);
     C2 += position_;
 
     vector_3d D2 (D);
-    D2.transform (inverseRotation);
+    D2.transform (inverse_rotation);
     D2 += position_;
 
     polyline_t polyline;
@@ -291,39 +293,39 @@ namespace geomtools {
     vector_3d R (-0.5 * length_, -0.5 * width_, -0.5 * height_);
     vector_3d S (-0.5 * length_,  0.5 * width_, -0.5 * height_);
 
-    rotation_3d inverseRotation (rotation_);
-    inverseRotation.invert ();
+    rotation_3d inverse_rotation (rotation_);
+    inverse_rotation.invert ();
 
     vector_3d A2 (A);
-    A2.transform (inverseRotation);
+    A2.transform (inverse_rotation);
     A2 += position_;
 
     vector_3d B2 (B);
-    B2.transform (inverseRotation);
+    B2.transform (inverse_rotation);
     B2 += position_;
 
     vector_3d C2 (C);
-    C2.transform (inverseRotation);
+    C2.transform (inverse_rotation);
     C2 += position_;
 
     vector_3d D2 (D);
-    D2.transform (inverseRotation);
+    D2.transform (inverse_rotation);
     D2 += position_;
 
     vector_3d P2 (P);
-    P2.transform (inverseRotation);
+    P2.transform (inverse_rotation);
     P2 += position_;
 
     vector_3d Q2 (Q);
-    Q2.transform (inverseRotation);
+    Q2.transform (inverse_rotation);
     Q2 += position_;
 
     vector_3d R2 (R);
-    R2.transform (inverseRotation);
+    R2.transform (inverse_rotation);
     R2 += position_;
 
     vector_3d S2 (S);
-    S2.transform (inverseRotation);
+    S2.transform (inverse_rotation);
     S2 += position_;
 
     polyline_t polyline;
@@ -388,8 +390,8 @@ namespace geomtools {
 			       double height_,
 			       size_t arc_sampling_)
   {
-    rotation_3d inverseRotation (rotation_);
-    inverseRotation.invert ();
+    rotation_3d inverse_rotation (rotation_);
+    inverse_rotation.invert ();
 
     size_t sample =  arc_sampling_;
     double dangle =  2 * M_PI * CLHEP::radian / sample;
@@ -407,11 +409,11 @@ namespace geomtools {
 	       radius_ * std::sin (angle), 
 	       -0.5 * height_);
 	vector_3d P2 (P);
-	P2.transform (inverseRotation);
+	P2.transform (inverse_rotation);
 	P2 += position_;
 	polyline_top.push_back (P2);
 	vector_3d Q2 (Q);
-	Q2.transform (inverseRotation);
+	Q2.transform (inverse_rotation);
 	Q2 += position_;
 	polyline_bottom.push_back (Q2);
 	polyline_segment.clear ();
@@ -447,8 +449,8 @@ namespace geomtools {
 			   double height_,
 			   size_t arc_sampling_)
   {
-    rotation_3d inverseRotation (rotation_);
-    inverseRotation.invert ();
+    rotation_3d inverse_rotation (rotation_);
+    inverse_rotation.invert ();
 
     size_t sample = arc_sampling_;
     double dangle = 2 * M_PI * CLHEP::radian / sample;
@@ -478,19 +480,19 @@ namespace geomtools {
 		 outer_radius_ * std::sin (angle),
 		 -0.5 * height_);
 	vector_3d P2_i (P_i);
-	P2_i.transform (inverseRotation);
+	P2_i.transform (inverse_rotation);
 	P2_i += position_;
 	polyline_top_i.push_back (P2_i);
 	vector_3d Q2_i (Q_i);
-	Q2_i.transform (inverseRotation);
+	Q2_i.transform (inverse_rotation);
 	Q2_i += position_;
 
 	vector_3d P2_o (P_o);
-	P2_o.transform (inverseRotation);
+	P2_o.transform (inverse_rotation);
 	P2_o += position_;
 	polyline_top_o.push_back (P2_o);
 	vector_3d Q2_o (Q_o);
-	Q2_o.transform (inverseRotation);
+	Q2_o.transform (inverse_rotation);
 	Q2_o += position_;
 
 	polyline_bottom_i.push_back (Q2_i);
@@ -542,8 +544,8 @@ namespace geomtools {
 			     double radius_,
 			     size_t arc_sampling_)
   {
-    rotation_3d inverseRotation (rotation_);
-    inverseRotation.invert ();
+    rotation_3d inverse_rotation (rotation_);
+    inverse_rotation.invert ();
 
     size_t sample =  arc_sampling_;
     double dangle = 2 * M_PI * CLHEP::radian / sample;
@@ -556,7 +558,7 @@ namespace geomtools {
 	       radius_ * std::sin (angle),
 	       0.0);
 	vector_3d P2 (P);
-	P2.transform (inverseRotation);
+	P2.transform (inverse_rotation);
 	P2 += position_;
 	polyline.push_back (P2);
       }
@@ -582,8 +584,8 @@ namespace geomtools {
 			     double radius_,
 			     size_t arc_sampling_)
   {
-    rotation_3d inverseRotation (rotation_);
-    inverseRotation.invert ();
+    rotation_3d inverse_rotation (rotation_);
+    inverse_rotation.invert ();
 
     size_t sample =  arc_sampling_;
     double dangle = 2 * M_PI * CLHEP::radian / sample;
@@ -597,7 +599,7 @@ namespace geomtools {
 	       radius_ * std::sin (angle),
 	       0.0);
 	vector_3d P2 (P);
-	P2.transform (inverseRotation);
+	P2.transform (inverse_rotation);
 	P2 += position_;
 	polyline.push_back (P2);
 	draw_segment (out_, position_, rotation_,
@@ -627,8 +629,8 @@ namespace geomtools {
 			     size_t arc_sampling_,
 			     size_t z_sampling_)
   {
-    rotation_3d inverseRotation (rotation_);
-    inverseRotation.invert ();
+    rotation_3d inverse_rotation (rotation_);
+    inverse_rotation.invert ();
 
     size_t phy_sample = arc_sampling_;
     size_t z_sample = z_sampling_;
@@ -648,7 +650,7 @@ namespace geomtools {
 		   radius_ * std::sin (phi) * std::sin (theta),  
 		   z);
 	    vector_3d P2 (P);
-	    P2.transform (inverseRotation);
+	    P2.transform (inverse_rotation);
 	    P2 += position_;
 	    polyline_meridian.push_back (P2);
 	  }
@@ -668,8 +670,8 @@ namespace geomtools {
 			     const polycone & p_, 
 			     size_t arc_sampling_)
   {
-    rotation_3d inverseRotation (rotation_);
-    inverseRotation.invert ();
+    rotation_3d inverse_rotation (rotation_);
+    inverse_rotation.invert ();
 
     size_t phy_sample = arc_sampling_;
     double dphi =  2 * M_PI * CLHEP::radian / phy_sample;
@@ -690,7 +692,7 @@ namespace geomtools {
 		   r * std::sin (phi),  
 		   z);
 	    vector_3d P2 (P);
-	    P2.transform (inverseRotation);
+	    P2.transform (inverse_rotation);
 	    P2 += position_;
 	    polyline_meridian.push_back (P2);
 	  }
@@ -705,8 +707,8 @@ namespace geomtools {
 				  const rotation_3d & rotation_,
 				  const tessellated_solid & t_)
   {
-    rotation_3d inverseRotation (rotation_);
-    inverseRotation.invert ();
+    rotation_3d inverse_rotation (rotation_);
+    inverse_rotation.invert ();
 
     polyline_t polyline_facet;
     size_t last_nvtx = 0;
@@ -738,7 +740,7 @@ namespace geomtools {
 	for (int i = 0; i <= nvtx_safe; i++)
 	  {
 	    vector_3d P2 (fct->get_vertex (i % nvtx).position);
-	    P2.transform (inverseRotation);
+	    P2.transform (inverse_rotation);
 	    P2 += position_;
 	    polyline_facet.push_back (P2);
 	  }
