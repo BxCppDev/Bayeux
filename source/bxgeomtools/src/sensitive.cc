@@ -10,6 +10,7 @@ namespace geomtools {
 
   const string sensitive::SENSITIVE_PREFIX            = "sensitive.";
   const string sensitive::SENSITIVE_CATEGORY_PROPERTY = "category";
+  const string sensitive::SENSITIVE_ALPHA_QUENCHING_FLAG = "alpha_quenching";
 
   string sensitive::make_key (const string & key_)
   {
@@ -40,6 +41,11 @@ namespace geomtools {
   bool sensitive::is_sensitive (const datatools::utils::properties & config_)
   {
     return sensitive::has_key (config_, sensitive::SENSITIVE_CATEGORY_PROPERTY);
+  }
+
+  bool sensitive::has_alpha_quenching (const datatools::utils::properties & config_)
+  {
+    return sensitive::has_flag (config_, sensitive::SENSITIVE_ALPHA_QUENCHING_FLAG);
   }
 
   string sensitive::get_sensitive_category (const datatools::utils::properties & config_)

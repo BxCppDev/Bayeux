@@ -34,6 +34,7 @@ namespace geomtools {
 
     static const string SENSITIVE_PREFIX;
     static const string SENSITIVE_CATEGORY_PROPERTY;
+    static const string SENSITIVE_ALPHA_QUENCHING_FLAG;
 
     static string make_key (const string & flag_);
 
@@ -47,6 +48,8 @@ namespace geomtools {
 			 const string & key_);
 
     static bool is_sensitive (const datatools::utils::properties & config_);
+
+    static bool has_alpha_quenching (const datatools::utils::properties & config_);
 
     static string get_sensitive_category (const datatools::utils::properties & config_);
 
