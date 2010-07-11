@@ -17,6 +17,8 @@
 #include <curses.h>
 #endif // USING_NCURSES
 
+#include <boost/cstdint.hpp>
+
 using namespace std;
 
 namespace datatools {
@@ -165,6 +167,8 @@ namespace datatools {
       static ostream & ostream_precision (ostream & os_, const int & n_); 
     
       static ostream_manipulator<int> precision (const int & n_); 
+
+      static string to_binary (const uint32_t & val_);
 
     };
 

@@ -288,6 +288,27 @@ namespace datatools {
       return out_;
     }
 
+    string io::to_binary (const uint32_t & val_)
+    {
+      ostringstream oss;
+      size_t nbits = sizeof (val_) * 8;
+      //clog << "DEVEL: io::to_binary: value=" << val_ << endl;
+      //clog << "DEVEL: io::to_binary: nbits=" << nbits << endl;
+      oss << '(';
+      bool first = true;
+      for (int i = (nbits - 1); i >= 0; i--)
+	{
+	  bool abit;
+	  abit = (val_ >> i) & 0x1;  
+	  //clog << "DEVEL: io::to_binary: bit[" << i << "]=" << abit << endl;
+	  if (abit) first = false;
+	  if (! abit && first) continue;
+	  oss << abit;
+	}
+      oss << ')';
+      return oss.str ();
+    }
+
   } // namespace utils
 
 } // namespace datatools 

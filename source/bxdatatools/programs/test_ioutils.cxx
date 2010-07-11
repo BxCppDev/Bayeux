@@ -59,13 +59,17 @@ int main (int argc_ , char ** argv_)
 
       io::indenter ind;
       ind++;
-      cout << ind << "Hello, World !"<< endl;
+      cout << ind << "Hello, World !" << endl;
       ind++;
-      cout << ind << "How do you feel ?"<< endl;
+      cout << ind << "How do you feel ?" << endl;
       ind (4);
-      cout << ind << "Well, I'm fine."<< endl;
+      cout << ind << "Well, I'm fine." << endl;
       ind--;
-      cout << ind << "Good ! Let's go !"<< endl;
+      cout << ind << "Good ! Let's go !" << endl;
+
+      uint32_t value = 54;
+      cout << "value (dec) = " << value << endl;
+      cout << "value (bin) = " << io::to_binary (value) << endl;
 
     }
   catch (exception & x)
