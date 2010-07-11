@@ -295,14 +295,14 @@ namespace datatools {
       //clog << "DEVEL: io::to_binary: value=" << val_ << endl;
       //clog << "DEVEL: io::to_binary: nbits=" << nbits << endl;
       oss << '(';
-      bool first = true;
+      bool start = false;
       for (int i = (nbits - 1); i >= 0; i--)
 	{
 	  bool abit;
 	  abit = (val_ >> i) & 0x1;  
 	  //clog << "DEVEL: io::to_binary: bit[" << i << "]=" << abit << endl;
-	  if (abit) first = false;
-	  if (! abit && first) continue;
+	  if (! start & abit) start = true;
+	  if (! abit && ! start) continue;
 	  oss << abit;
 	}
       oss << ')';

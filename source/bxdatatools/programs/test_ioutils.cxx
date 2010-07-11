@@ -69,8 +69,10 @@ int main (int argc_ , char ** argv_)
 
       uint32_t value = 54;
       cout << "value (dec) = " << value << endl;
+      cout << "value (bin) = " << io::to_binary (value) << endl << endl;
+      value = 55;
+      cout << "value (dec) = " << value << endl;
       cout << "value (bin) = " << io::to_binary (value) << endl;
-
     }
   catch (exception & x)
     {
