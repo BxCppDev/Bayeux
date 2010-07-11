@@ -11,6 +11,8 @@ namespace geomtools {
   const string sensitive::SENSITIVE_PREFIX            = "sensitive.";
   const string sensitive::SENSITIVE_CATEGORY_PROPERTY = "category";
   const string sensitive::SENSITIVE_ALPHA_QUENCHING_FLAG = "alpha_quenching";
+  const string sensitive::SENSITIVE_RECORD_TRACK_ID_FLAG = "record_track_id";
+  const string sensitive::SENSITIVE_PRIMARY_PARTICLE_FLAG = "primary_particle";
 
   string sensitive::make_key (const string & key_)
   {
@@ -43,11 +45,6 @@ namespace geomtools {
     return sensitive::has_key (config_, sensitive::SENSITIVE_CATEGORY_PROPERTY);
   }
 
-  bool sensitive::has_alpha_quenching (const datatools::utils::properties & config_)
-  {
-    return sensitive::has_flag (config_, sensitive::SENSITIVE_ALPHA_QUENCHING_FLAG);
-  }
-
   string sensitive::get_sensitive_category (const datatools::utils::properties & config_)
   {
     return config_.fetch_string (make_key (sensitive::SENSITIVE_CATEGORY_PROPERTY));
@@ -58,6 +55,21 @@ namespace geomtools {
   {
     config_.update (make_key (sensitive::SENSITIVE_CATEGORY_PROPERTY), cat_name_);
     return;
+  }
+
+  bool sensitive::has_alpha_quenching (const datatools::utils::properties & config_)
+  {
+    return sensitive::has_flag (config_, sensitive::SENSITIVE_ALPHA_QUENCHING_FLAG);
+  }
+
+  bool sensitive::has_record_track_id (const datatools::utils::properties & config_)
+  {
+    return sensitive::has_flag (config_, sensitive::SENSITIVE_RECORD_TRACK_ID_FLAG);
+  }
+  
+  bool sensitive::has_record_primary_particle (const datatools::utils::properties & config_)
+  {
+    return sensitive::has_flag (config_, sensitive::SENSITIVE_PRIMARY_PARTICLE_FLAG);
   }
 
 } // end of namespace geomtools
