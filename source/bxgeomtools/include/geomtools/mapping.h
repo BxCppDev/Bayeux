@@ -7,7 +7,9 @@
  * License: 
  * 
  * Description: 
- *   Default geometry mapping
+ *   Default geometry mapping: given a model factory (class model_factory) 
+ *   and a ID manager (class id_mgr), this geometry mapping dictionnary 
+ *   is auto generated.
  * 
  * History: 
  * 
@@ -18,6 +20,7 @@
 
 #include <string>
 #include <stdexcept>
+#include <list>
 
 #include <datatools/utils/ioutils.h>
 
@@ -32,20 +35,61 @@ namespace geomtools {
   class mapping : public geom_map
   {
   public:
+
     static bool g_devel;
+    static const size_t NO_MAX_DEPTH = 0;
+    static const string MAPPING_PREFIX;
+
+    enum mode_t
+      {
+	MODE_NONE = 0,
+	MODE_ONLY = 1,
+	MODE_EXCLUDED = 2
+      };
 
   private:
-    const model_factory  * __factory;
-    const logical_volume * __top_logical;
 
-    size_t               __depth;
+    bool                           __initialized;
+    const model_factory  *         __factory;
+    const logical_volume *         __top_logical;
+    size_t                         __depth; // running depth at build
+
+    size_t                         __max_depth;
+    int                            __mode;
+    list<string>                   __only_excluded_list;
+    
+    // debug display utility:
     datatools::utils::io::indenter __indenter;
 
   public:
 
+    static string make_key (const string & flag_);
+
+    static void extract (const datatools::utils::properties & source_,
+			 datatools::utils::properties & target_);
+
+    static bool has_flag (const datatools::utils::properties & config_,
+			  const string & flag_);
+
+    static bool has_key (const datatools::utils::properties & config_,
+			 const string & key_);
+ 
+    bool is_initialized () const;
+    bool is_mode_none () const;
+    bool is_mode_only () const;
+    bool is_mode_excluded () const;
+    void add_only (const string &);
+    void add_excluded (const string &);
+
+    void set_max_depth (size_t max_depth_);
+
+    size_t get_max_depth () const;
+
     mapping ();
 
     virtual ~mapping ();
+
+    void initialize (const datatools::utils::properties & config_);
     
     virtual void build_from (const model_factory & factory_,
 			     const string & mother_ = "world");

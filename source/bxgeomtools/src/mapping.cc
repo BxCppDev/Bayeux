@@ -9,11 +9,143 @@ namespace geomtools {
   using namespace std;
 
   bool mapping::g_devel = false;
+
+  /*** Properties manipulation ***/
+  const string mapping::MAPPING_PREFIX = "mapping.";
+
+  string mapping::make_key (const string & key_)
+  {
+    ostringstream key_oss;
+    key_oss << mapping::MAPPING_PREFIX << key_;
+    return key_oss.str ();
+  }
+  
+  void mapping::extract (const datatools::utils::properties & source_,
+			 datatools::utils::properties & target_)
+  {
+    source_.export_starting_with (target_, mapping::MAPPING_PREFIX);
+    return;
+  }
  
+  bool mapping::has_flag (const datatools::utils::properties & config_,
+			  const string & flag_)
+  {
+    return (config_.has_flag (mapping::make_key (flag_)));
+  }
+
+  bool mapping::has_key (const datatools::utils::properties & config_,
+			 const string & key_)
+  {
+    return (config_.has_key (mapping::make_key (key_)));
+  }
+
+  /******/
+
+  bool mapping::is_initialized () const
+  {
+    return __initialized;
+  }
+ 
+  bool mapping::is_mode_none () const
+  {
+    return __mode == MODE_NONE;
+  }
+ 
+  bool mapping::is_mode_only () const
+  {
+    return __mode == MODE_ONLY;
+  }
+ 
+  bool mapping::is_mode_excluded () const
+  {
+    return __mode == MODE_EXCLUDED;
+  }
+
+  void mapping::add_only (const string & category_)
+  {
+    if (is_initialized ())
+      {
+	throw runtime_error ("mapping::add_only: Already initialized !");
+      }
+    if (! is_mode_only ())
+      {
+	__only_excluded_list.clear ();
+	__mode = MODE_ONLY;
+      }
+    __only_excluded_list.push_back (category_);
+    return;
+  }
+
+  void mapping::add_excluded (const string & category_)
+  {
+    if (is_initialized ())
+      {
+	throw runtime_error ("mapping::add_excluded: Already initialized !");
+      }
+    if (! is_mode_excluded ())
+      {
+	__only_excluded_list.clear ();
+	__mode = MODE_EXCLUDED;
+      }
+    __only_excluded_list.push_back (category_);
+    return;
+  }
+
+  void mapping::initialize (const datatools::utils::properties & config_)
+  {
+    if (is_initialized ())
+      {
+	throw runtime_error ("mapping::initialize: Already initialized !");
+      }
+
+    if (config_.has_key ("mapping.max_depth"))
+      {
+	int mdepth = config_.fetch_integer ("mapping.max_depth");
+	if (mdepth > 0)
+	  {
+	    set_max_depth (mdepth);
+	  }
+      }
+
+    bool has_only = false;
+    if (config_.has_key ("mapping.only_categories"))
+      {
+	has_only = true;
+	vector<string> only;
+	config_.fetch ("mapping.only_categories", only);
+	for (int i = 0; i < only.size (); i++)
+	  {
+	    add_only (only[i]);
+	  }
+      }
+
+    if (config_.has_key ("mapping.excluded_categories"))
+      {
+	if (has_only)
+	  {
+	    throw runtime_error ("mapping::initialize: The 'mapping.excluded_categories' property is not compatible with 'mapping.only_categories' property !");
+	  }
+	vector<string> excluded;
+	config_.fetch ("mapping.excluded_categories", excluded);
+	for (int i = 0; i < excluded.size (); i++)
+	  {
+	    add_excluded (excluded[i]);
+	  }
+      }
+
+    __initialized = true;
+  }
+
   // ctor:
   mapping::mapping () : geom_map ()
   {
-    __depth   = 0;
+    __initialized = false;
+    __depth       = 0;
+    __max_depth   = NO_MAX_DEPTH;
+    __factory     = 0;
+    __top_logical = 0;
+    __mode        = MODE_NONE;
+    return;
   }
 
   // dtor:
@@ -21,14 +153,35 @@ namespace geomtools {
   {
   }
 
-  void mapping::build_from (const model_factory & factory_,
-			    const string & mother_)
+  void mapping::set_max_depth (size_t max_depth_)
+  {
+    if (is_initialized ())
+      {
+	throw runtime_error ("mapping::set_max_depth: Already initialized !");
+      }
+    __max_depth = max_depth_;
+    return;
+  }
+
+  size_t mapping::get_max_depth () const
+  {
+    return __max_depth;
+  }
+
+  void mapping::build_from (const model_factory & factory_, const string & mother_)
   {
     bool devel = g_devel;
     if (devel)
       {
 	clog << datatools::utils::io::devel << "mapping::build_from: Entering..." << endl;
       }
+
+    if (! is_initialized ())
+      {
+	__initialized = true;
+	//throw runtime_error ("mapping::build_from: Not initialized !");
+      }
+
     if (! factory_.is_locked ())
       {
 	throw runtime_error ("mapping::build_from: Factory is not locked !");
@@ -44,11 +197,8 @@ namespace geomtools {
 	throw runtime_error (message.str ());
       }
     const i_model & top_model = *(found->second);
-
     __top_logical = &(top_model.get_logical ());
-      
     __build ();
-
     if (devel)
       {
 	clog << datatools::utils::io::devel 
@@ -106,8 +256,12 @@ namespace geomtools {
       geom_id world_id;
       world_cat_info.create (world_id);
       world_id.set_address (0);
-      clog << "World ID = " << world_id << ' ' 
-	   << (world_id.is_valid () ? "[Valid]": "[Invalid]")<< endl;
+      if (devel)
+	{
+	  clog << datatools::utils::io::devel 
+	       <<  "mapping::__build:"<< "World ID = " << world_id << ' ' 
+	       << (world_id.is_valid () ? "[Valid]": "[Invalid]")<< endl;
+	}
       placement top_placement (0.0, 0.0, 0.0);
 	
       //	const logical_volume * world_log 
@@ -247,22 +401,65 @@ namespace geomtools {
 							 mother_id_,
 							 daughter_category_info, 
 							 items_index);
-
-		  
-		if ( _get_id_manager ().validate_id (item_id))
+	  
+		if (_get_id_manager ().validate_id (item_id))
 		  {
 		    if (devel) clog << du::io::devel << __indenter << "-> Item ID " << item_id << " is added to the map: " << endl;
 		    geom_info item_gi (item_id, 
 				       world_item_placement, 
 				       phys_logical);
-		    _get_geom_infos ()[item_id] = item_gi;
+
+
+		    bool add_it = true;
+		    if (! is_mode_none ())
+		      {
+			// get the category associated to the item ID:
+			const string & category 
+			  = _get_id_manager ().get_category_info (item_id.get_type ()).get_category ();
+			if (devel) clog << du::io::devel << __indenter << "mapping::__build_logical_children: "
+			     << "Category = '" << category << "' (from ID=" << item_id << ")"
+			     << endl;
+			if (is_mode_only ())
+			  {
+			    // the list contains only the categories to be registered:
+			    list<string>::const_iterator found = find (__only_excluded_list.begin (),
+								       __only_excluded_list.end (),
+								       category);
+			    if (found == __only_excluded_list.end ())
+			      {
+				add_it = false;
+			      } 
+			  }
+			else if (is_mode_excluded ())
+			  {
+			    // the list contains only the categories to be excluded:
+			    list<string>::const_iterator found = find (__only_excluded_list.begin (),
+								       __only_excluded_list.end (),
+								       category);
+			    if (found != __only_excluded_list.end ())
+			      {
+				add_it = false;
+			      } 
+			  }
+		      }
+		    if (add_it)
+		      {
+			_get_geom_infos ()[item_id] = item_gi;
+		      }
 		    propagated_world_id = item_id;
 		  }
 	      }
 
-	    size_t max_depth = 1000;
 	    // DEBUG: stop after traverse down to depth==max_depth:
-	    if (__depth < max_depth)
+	    bool build_it = true;
+	    if (__max_depth > 0)
+	      {
+		if (__depth > __max_depth)
+		  {
+		    build_it = false;
+		  }
+	      }
+	    if (build_it)
 	      {
 		__build_logical_children (phys_logical, 
 					  world_item_placement, 
