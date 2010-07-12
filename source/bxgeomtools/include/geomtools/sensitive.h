@@ -34,9 +34,9 @@ namespace geomtools {
 
     static const string SENSITIVE_PREFIX;
     static const string SENSITIVE_CATEGORY_PROPERTY;
-    static const string SENSITIVE_ALPHA_QUENCHING_FLAG;
+    static const string SENSITIVE_RECORD_ALPHA_QUENCHING_FLAG;
     static const string SENSITIVE_RECORD_TRACK_ID_FLAG;
-    static const string SENSITIVE_PRIMARY_PARTICLE_FLAG;
+    static const string SENSITIVE_RECORD_PRIMARY_PARTICLE_FLAG;
 
     static string make_key (const string & flag_);
 
@@ -56,11 +56,11 @@ namespace geomtools {
     static void set_sensitive_category (datatools::utils::properties & config_,
 					const string & cat_name_);
 
-    static bool has_alpha_quenching (const datatools::utils::properties & config_);
+    static bool recording_alpha_quenching (const datatools::utils::properties & config_);
 
-    static bool has_record_track_id (const datatools::utils::properties & config_);
+    static bool recording_track_id (const datatools::utils::properties & config_);
 
-    static bool has_record_primary_particle (const datatools::utils::properties & config_);
+    static bool recording_primary_particle (const datatools::utils::properties & config_);
 
   };
 
