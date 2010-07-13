@@ -100,6 +100,7 @@ class MkUniqueFlags :
         self.print_tags()
         
     def test( self ) :
+        self.append("-lm")
         self.append("-L/usr/lib")
         self.append("  -L/usr/local/lib ")
         self.append("-L/usr/test1/lib")
@@ -114,6 +115,8 @@ class MkUniqueFlags :
         self.append("-L/usr/test4/lib")
         self.append("-ltoto2")
         self.append("-lbibi")
+        self.append("-lm")
+        self.append("-lm")
         self.print_tags()
         pass
 
@@ -126,15 +129,12 @@ if __name__ == '__main__':
         sys.stderr.write("Usage: %s [-d|-t|-r] \n" % sys.argv[0])
         sys.exit(1)
     for (opt,val) in opts:
-        if   opt == '-d':
+        if opt == '-d':
             TheDebug = True
-        elif   opt == '-t':
+        if opt == '-t':
             TheTest = True
-        elif   opt == '-r':
+        if opt == '-r':
             TheReverse = True
-        else:
-            # This should never happen:
-            raise OptionError, opt
     for (arg,val) in args:
         if arg == 'zzz':
             pass
@@ -143,7 +143,8 @@ if __name__ == '__main__':
 
     theApp =  MkUniqueFlags()
     theApp.set_debug(TheDebug);
-    if TheReverse : theApp.set_reverse()
+    if TheReverse : 
+        theApp.set_reverse()
     if TheTest :
         theApp.test()
     else :

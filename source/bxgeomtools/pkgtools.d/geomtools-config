@@ -133,11 +133,9 @@ if [ "x$opt" = "x--cflags" ]; then
     echo -n \
         "-fPIC " \
 	"-I${THEPACK_INCLUDEDIR} "  \
-         "`datatools-config --cflags` "  \
-         "`clhep-config --include` "  \
-         "`gsl-config --cflags` " | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py
-
-    test -z $no_pack_list || echo "warning: non found packages: $no_pack_list" 1>&2
+        "`datatools-config --cflags` "  \
+        "`clhep-config --include` "  \
+        "`mygsl-config --cflags` " | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py
     echo
 
     ################################################################
@@ -166,12 +164,10 @@ if [ "x$opt" = "x--libs" ]; then
 fi 
 
 if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
-  echo -n "-L${THEPACK_LIBDIR} -lgeomtools "  \
-         "`datatools-config --ldflags` "  \
-         "`clhep-config --libs` "  \
-         "`gsl-config --libs` " | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
-
-    test -z $no_pack_list || echo "warning: non found packages: $no_pack_list" 1>&2
+    echo -n "-L${THEPACK_LIBDIR} -lgeomtools "  \
+        "`datatools-config --ldflags` "  \
+        "`clhep-config --libs` "  \
+        "`mygsl-config --ldflags` " | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
     echo
 
     ################################################################
