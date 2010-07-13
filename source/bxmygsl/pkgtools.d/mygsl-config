@@ -159,8 +159,10 @@ if [ "x$opt" = "x--include" ]; then
 fi
 
 if [ "x$opt" = "x--cflags" ]; then
-    echo -n "-I${THEPACK_INCLUDEDIR} "  \
-         "`gsl-config --cflags` " 
+    echo -n  \
+        "-fPIC " \
+	"-I${THEPACK_INCLUDEDIR} "  \
+        "`gsl-config --cflags` " | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py 
     exit 0
 fi
 
@@ -192,11 +194,10 @@ if [ "x$opt" = "x--libs" ]; then
 fi 
 
 if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
-  echo -n "-fPIC -L${THEPACK_LIBDIR} -lmygsl "  \
-         "`gsl-config --libs` " \
-         " -lm"
+    echo -n "-L${THEPACK_LIBDIR} -lmygsl "  \
+        "`gsl-config --libs` " | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
     echo
-
+    
     ################################################################
     # Please add here some stuff in order to take into account
     # external package dependencies; it may looks like:
