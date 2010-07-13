@@ -106,7 +106,7 @@ if [ "x$opt" = "x--cflags" ]; then
 	"`geomtools-config --cflags` "  \
 	"`mygsl-config --cflags` "  \
 	"`clhep-config --include` " \
-	"-I${CERN_ROOT}/include " \  
+	"-I${CERN_ROOT}/include " \
 	| python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py
 
     ################################################################
@@ -152,8 +152,8 @@ if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
 	"`geomtools-config --ldflags` "  \
 	"`mygsl-config --ldflags` "  \
 	"`clhep-config --libs` "  \
-	"`cernlib mathlib` "  \  
-	"${f77_opt} "  \ 
+	"`cernlib mathlib` "  \
+	"${f77_opt} "  \
 	"-lm "  \
 	| python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
 
