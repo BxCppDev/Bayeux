@@ -109,9 +109,10 @@ if [ "x$opt" = "x--cflags" ]; then
         "-fPIC " \
 	"-I${THEPACK_INCLUDEDIR} "  \
          "`geomtools-config --cflags` "  \
-         "`mygsl-config --cflags` "  \
-         "`datatools-config --cflags` "  \
     | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py
+
+#         "`mygsl-config --cflags` "  
+#         "`datatools-config --cflags` "  
 
     echo
     exit 0
@@ -135,9 +136,10 @@ fi
 if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
     echo -n "-L${THEPACK_LIBDIR} -lgenvtx "  \
          "`geomtools-config --ldflags` "  \
-         "`mygsl-config --ldflags` "  \
-         "`datatools-config --ldflags` "  \
     | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
+
+#         "`mygsl-config --ldflags` "  
+#         "`datatools-config --ldflags` "  
     
     echo
     exit 0

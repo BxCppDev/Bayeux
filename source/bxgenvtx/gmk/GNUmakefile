@@ -82,15 +82,15 @@ DEPLDFLAGS=
 #ifeq ($(shell which datatools-config),)
 #$(error Sorry datatools-config not found!)
 #endif
-DEPCPPFLAGS+=$(shell datatools-config --cflags)
-DEPLDFLAGS+=$(shell datatools-config --ldflags)
+#DEPCPPFLAGS+=$(shell datatools-config --cflags)
+#DEPLDFLAGS+=$(shell datatools-config --ldflags)
 
 #Here one sets the stuff for 'mygsl':
 #ifeq ($(shell which mygsl-config),)
 #$(error Sorry mygsl-config not found!)
 #endif
-DEPCPPFLAGS+=$(shell mygsl-config --cflags)
-DEPLDFLAGS+=$(shell mygsl-config --ldflags)
+#DEPCPPFLAGS+=$(shell mygsl-config --cflags)
+#DEPLDFLAGS+=$(shell mygsl-config --ldflags)
 
 #Here one sets the stuff for 'geomtools':
 #ifeq ($(shell which geomtools-config),)
@@ -98,46 +98,6 @@ DEPLDFLAGS+=$(shell mygsl-config --ldflags)
 #endif
 DEPCPPFLAGS+=$(shell geomtools-config --cflags)
 DEPLDFLAGS+=$(shell geomtools-config --ldflags)
-
-#>>> Examples of dependencies stuff:
-
-# 'some_package':
-#ifeq ($(shell which some_package-config),)
-#$(error Sorry some_package-config not found!)
-#endif
-#DEPCPPFLAGS+=$(shell some_package-config --cflags)
-#DEPLDFLAGS+=$(shell some_package-config --ldflags)
-
-# CLHEP:
-#ifeq ($(strip $(CLHEP_BASE_DIR)),)
-#$(error Sorry CLHEP is not configured!)
-#endif
-#ifeq ($(shell which clhep-config),)
-#$(error Sorry clhep-config not found!)
-#endif
-#DEPCPPFLAGS+=$(shell clhep-config --include)
-#DEPLDFLAGS+=$(shell clhep-config --libs)
-
-# HDF5:
-#ifeq ($(strip $(HDF5_PREFIX)),)
-#$(error Sorry HDF5 is not configured!)
-#endif
-#ifeq ($(shell which hdf5-config),)
-#$(error Sorry hdf5-config not found!)
-#endif
-#DEPCPPFLAGS+=$(shell hdf5-config --include)
-#DEPLDFLAGS+=$(shell hdf5-config --libs)
-
-# ROOT:
-#ifeq ($(strip $(ROOTSYS)),)
-#$(error Sorry ROOT is not configured!)
-#endif
-#ifeq ($(shell which root-config),)
-#$(error Sorry root-config not found!)
-#endif
-#DEPCPPFLAGS+=$(shell root-config --cflags)
-#DEPLDFLAGS+=$(shell root-config --libs)
-#<<<
 
 ### End of dependencies.
 CPPFLAGS1+=$(DEPCPPFLAGS) 
