@@ -84,7 +84,10 @@ int main (int argc_, char ** argv_)
 	  my_id_mgr.set (gg_cell_id, "side",   1); // submodule==1 (front)
 	  my_id_mgr.set (gg_cell_id, "layer",  2); // layer #2
 	  my_id_mgr.set (gg_cell_id, "cell",  28); // cell #28
-	  cout << "Geiger cell ID = " << gg_cell_id << endl;
+	  cout << "Geiger cell ID = " << gg_cell_id  
+	       << " in category '" 
+	       << my_id_mgr.get_category (gg_cell_id) 
+	       << "'" << endl;
 
 	  if (! my_id_mgr.is_category (gg_cell_id, "source_layer"))
 	    {

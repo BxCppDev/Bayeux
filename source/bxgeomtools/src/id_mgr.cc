@@ -524,6 +524,23 @@ namespace geomtools {
       }
     return false;
   }
+
+  const string & id_mgr::get_category (const geom_id & id_) const
+  {
+    int id_type = id_.get_type ();
+    categories_by_type_col_t::const_iterator found = 
+      __categories_by_type.find (id_type);
+    if (found == __categories_by_type.end ())
+      {
+	ostringstream message;
+	message << "id_mgr::get_category: "
+		<< "No category associated to ID '" << id_ << "' !";
+	throw runtime_error (message.str ());
+      }
+    const category_info & ci = *found->second;
+    return ci.get_category ();
+  }
+
  
   int id_mgr::get (const geom_id & id_, const string & what_) const
   {

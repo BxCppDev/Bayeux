@@ -179,6 +179,9 @@ namespace geomtools {
     //! check is an ID has an address 'what': 
     bool has (const geom_id &, const string & what_) const; 
 
+    //! returns the category associated to an ID: 
+    const string & get_category (const geom_id &) const;
+
     //! returns the value of the address 'what' from an ID: 
     int get (const geom_id &, const string & what_) const;
 
