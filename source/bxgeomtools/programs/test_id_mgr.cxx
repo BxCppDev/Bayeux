@@ -86,6 +86,28 @@ int main (int argc_, char ** argv_)
 	  my_id_mgr.set (gg_cell_id, "cell",  28); // cell #28
 	  cout << "Geiger cell ID = " << gg_cell_id << endl;
 
+	  if (! my_id_mgr.is_category (gg_cell_id, "source_layer"))
+	    {
+	      cout << "ID " << gg_cell_id <<
+		" is not from 'source_layer' category !" << endl;
+	    }
+
+	  if (my_id_mgr.is_category (gg_cell_id, "geiger_cell"))
+	    {
+	      cout << "ID " << gg_cell_id <<
+		" is from 'geiger_cell' category !" << endl;
+
+	      cout << "  Module number is : " 
+		   << my_id_mgr.get (gg_cell_id, "module") << endl;
+	      cout << "  Side number is :   " 
+		   << my_id_mgr.get (gg_cell_id, "side") << endl;
+	      cout << "  Layer number is :  " 
+		   << my_id_mgr.get (gg_cell_id, "layer") << endl;
+	      cout << "  Cell number is :   " 
+		   << my_id_mgr.get (gg_cell_id, "cell") << endl;
+	    }
+
+	  clog << endl << "Extraction: " << endl;
 	  geomtools::geom_id module_id;
 	  // build the module ID:
 	  my_id_mgr.make_id ("module", module_id);
