@@ -66,6 +66,15 @@ namespace geomtools {
   {
     return __address.at (i_);
   }
+
+  void geom_id::reset_address ()
+  {
+    for (int i = 0; i < __address.size (); i++)
+      {  
+	__address.at (i) = geom_id::INVALID_ADDRESS;
+      }
+    return;
+  }
   
   void geom_id::set (int i_, uint32_t val_)
   {

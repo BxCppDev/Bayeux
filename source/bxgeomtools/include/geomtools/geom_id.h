@@ -95,6 +95,8 @@ namespace geomtools {
 		      uint32_t si8_ = INVALID_ADDRESS, 
 		      uint32_t si9_ = INVALID_ADDRESS);
 
+    void reset_address ();
+
     // ctor:
     geom_id (); 
 

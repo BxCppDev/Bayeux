@@ -51,10 +51,10 @@ namespace geomtools {
     class category_info : public datatools::utils::i_tree_dumpable
     {
     public:
-      string category;  // human readable label
+      string category;  // human readable category label
       int    type;      // unique integral ID
-      string inherits;  // the category from which the category is inherited
-      string extends;   // the category from which the category is extented
+      string inherits;  // the mother category from which the category is inherited
+      string extends;   // the mother category from which the category is extented
       vector<string> ancestors; // the list of ancestor categories
       vector<string> extends_by; // the addresses added by the extension
       vector<string> addresses;  // the full list of addresses
@@ -173,13 +173,27 @@ namespace geomtools {
 
     const category_info & get_category_info (const string &) const;
 
+    //! check the category of an ID: 
+    bool is_category (const geom_id & id_, const string & category_) const;
+
+    //! check is an ID has an address 'what': 
+    bool has (const geom_id &, const string & what_) const; 
+
+    //! returns the value of the address 'what' from an ID: 
     int get (const geom_id &, const string & what_) const;
 
+    //! set the value of the address 'what' from an ID: 
     void set (geom_id &, const string & what_, uint32_t value_) const;
 
+    //! check if an ID inherits or extends a candidate mother ID:
     bool check_inheritance (const geom_id & mother_id_, 
-			    geom_id & id_) const;
+			    const geom_id & id_) const;
  
+    //! extract the part of the address of some child ID that
+    //  is inherited from a mother ID.
+    // 
+    void extract (const geom_id & child_id_, geom_id & mother_id_) const;
+
     bool validate_id (const geom_id & id_) const;
 
     void id_to_human_readable_format_string (const geom_id & id_, string &) const;
@@ -198,7 +212,7 @@ namespace geomtools {
     */
 
     /** Given a string representing the geometry ID "[module:module=0]"
-     *  and theID of the mother volume, one computes the full geometry ID
+     *  and the ID of the mother volume, one computes the full geometry ID
      *  of the daughter volume, eventually using the index of the item. 
      *
      *  Example:

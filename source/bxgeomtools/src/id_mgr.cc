@@ -419,7 +419,7 @@ namespace geomtools {
   }
 
   bool id_mgr::check_inheritance (const geom_id & mother_id_, 
-				  geom_id & id_) const
+				  const geom_id & id_) const
   {
     categories_by_type_col_t::const_iterator found 
       = __categories_by_type.end ();
@@ -447,12 +447,34 @@ namespace geomtools {
 	throw runtime_error (message.str ());
       }    
     const category_info & mci = *(found->second);
-
-    if (! ci.is_inherited ())
+    if (ci.has_ancestor (mci.get_category ())) return true;
+    /*
+    if (ci.is_inherited ())
       {
-	return false;
+	return (ci.get_inherits () == mci.get_category ());
       }
-    return (ci.get_inherits () == mci.get_category ());
+    else
+      {
+	if (ci.is_extension ())
+	  {
+	    return (ci.get_extends () == mci.get_category ());
+	  }	
+      }
+    */
+    return false;
+  }
+ 
+  void id_mgr::extract (const geom_id & child_id_, geom_id & mother_id_) const
+  {
+    if (! check_inheritance (mother_id_, child_id_))
+      {
+	//clog << "DEVEL: id_mgr::extract: NO !" << endl;
+	// if child ID does not inherit/extend the mother ID:
+	mother_id_.reset_address ();
+	return;
+      }
+    mother_id_.extract_from (child_id_);
+    return;
   }
 
   void id_mgr::make_id (geom_id & id_,
@@ -477,18 +499,44 @@ namespace geomtools {
     id_.set_depth (ci.get_depth ());
     return;
   }
- 
-  int id_mgr::get (const geom_id & id_, const string & what_) const
+
+  bool id_mgr::is_category (const geom_id & id_,
+			    const string & category_) const
   {
-    int type = id_.get_type ();
+    int id_type = id_.get_type ();
+    const category_info & ci = get_category_info (id_type);
+    return ci.get_category () == category_;
+  }
+
+  bool id_mgr::has (const geom_id & id_, const string & what_) const
+  {
+    int id_type = id_.get_type ();
     categories_by_type_col_t::const_iterator found = 
-      __categories_by_type.find (type);
+      __categories_by_type.find (id_type);
     const category_info & ci = *found->second;
     int i = -1;
     for (int j = 0; j < ci.addresses.size (); j++)
       {
 	if (ci.addresses[j] == what_)
 	  {
+	    return true;
+	  }
+      }
+    return false;
+  }
+ 
+  int id_mgr::get (const geom_id & id_, const string & what_) const
+  {
+    int id_type = id_.get_type ();
+    categories_by_type_col_t::const_iterator found = 
+      __categories_by_type.find (id_type);
+    const category_info & ci = *found->second;
+    int i = -1;
+    for (int j = 0; j < ci.addresses.size (); j++)
+      {
+	if (ci.addresses[j] == what_)
+	  {
+	    i = j;
 	    break;
 	  }
       }
@@ -500,7 +548,7 @@ namespace geomtools {
       {
 	ostringstream message;
 	message << "id_mgr::get: "
-		<< "Invalid address label '" << what_ << "'"
+		<< "Invalid address label '" << what_ << "' "
 		<< "for category '" << ci.category << "' !";
 	throw runtime_error (message.str ());
       }
@@ -509,15 +557,18 @@ namespace geomtools {
 
   void id_mgr::set (geom_id & id_, const string & what_, uint32_t value_) const
   {
-    int type = id_.get_type ();
+    int id_type = id_.get_type ();
     categories_by_type_col_t::const_iterator found = 
-      __categories_by_type.find (type);
+      __categories_by_type.find (id_type);
     const category_info & ci = *found->second;
     int i = -1;
     for (int j = 0; j < ci.addresses.size (); j++)
       {
+	//clog << "DEVEL: id_mgr::set: what=" << what_ << endl;
 	if (ci.addresses[j] == what_)
 	  {
+	    i = j; 
+	    //clog << "DEVEL: id_mgr::set: break!" << endl;
 	    break;
 	  }
       }
@@ -529,7 +580,7 @@ namespace geomtools {
       {
 	ostringstream message;
 	message << "id_mgr::set: "
-		<< "Invalid address label '" << what_ << "'"
+		<< "Invalid address label '" << what_ << "' "
 		<< "for category '" << ci.category << "' !";
 	throw runtime_error (message.str ());
       }
