@@ -145,7 +145,7 @@ vpath %$(CPROGEXT)    $(PROGDIR)
 
 headers := $(notdir $(shell ls $(INCDIR)/$(PACKAGENAME)/*$(HEADEREXT) 2> /dev/null))
 #sources := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT) 2> /dev/null))
-sources1 := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT) 2> /dev/null | sed -e 's/i_vertex_generator.cc//g'))
+sources1 := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT) 2> /dev/null | sed -e 's@/i_vertex_generator.cc@/@g'))
 ### force i_vertex_generator.cc to be the last in library due to initialization
 # of a static scoped pointer
 sources := $(sources1) i_vertex_generator.cc
