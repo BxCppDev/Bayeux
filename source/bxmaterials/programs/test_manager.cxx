@@ -19,7 +19,7 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'manager'!" << endl; 
+      clog << "Test program for class 'manager' !" << endl; 
   
       bool debug = false;
       list<string> input_files;
@@ -61,8 +61,6 @@ int main (int argc_, char ** argv_)
           iarg++;
       }
 
-
-    
       mat::manager my_manager;
       my_manager.set_debug (debug);
       for (list<string>::iterator i = input_files.begin ();

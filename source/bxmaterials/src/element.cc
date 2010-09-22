@@ -452,12 +452,16 @@ namespace mat {
 	 
     out_ << indent << du::i_tree_dumpable::tag 
 	 << "Composition  : "; 
-    if ( __composition.size () == 0)  out_ << "<empty>"<< std::endl;
+    if ( __composition.size () == 0)  
+      {
+	out_ << "<empty>" << endl;
+      }
     else
       {  
-        out_ << std::endl; 
-	
-	for (isotope_weight_map_t::const_iterator i = __composition.begin (); i !=  __composition.end (); i++)
+        out_ << endl; 
+	for (isotope_weight_map_t::const_iterator i = __composition.begin (); 
+	     i !=  __composition.end (); 
+	     i++)
 	  {
 	    const string & key = i->first;
 	    const iso_entry & entry = i->second;
@@ -465,26 +469,32 @@ namespace mat {
 	    j++;
 	    string atag = du::i_tree_dumpable::TAG;
 	    if (j == __composition.end ()) atag = du::i_tree_dumpable::LAST_TAG;
-	    out_ << i_tree_dumpable::skip_tag<< atag << "'"<<entry.iso_ptr->get_name ()<< "'" <<" : "<<
-	      entry.weight<< " " << (entry.owned? "(owned)": "(not owned)") <<std::endl;
+	    out_  << indent 
+		  << i_tree_dumpable::skip_tag 
+		  << atag 
+		  << "Isotope '" << entry.iso_ptr->get_name () << "'" << " : " 
+		  << entry.weight << " " 
+		  << (entry.owned? "(owned)": "(not owned)") << endl;
 	  }
       } 
 
     out_ << indent << i_tree_dumpable::tag 
-	 << "Molar mass   : "<<  __molar_mass << " [g/mol]" << endl;  
+	 << "Molar mass   : " <<  __molar_mass << " [g/mol]" << endl;  
 
     {
       out_ << indent << du::i_tree_dumpable::tag
 	   << "Properties   : ";
-      if ( __properties.size () == 0)           out_ << "<empty>"<<endl; 
-
+      if ( __properties.size () == 0) 
+	{
+	  out_ << "<empty>" <<endl; 
+	}
       else
         {
-	  out_ << std::endl; 
+	  out_ << endl; 
 	  ostringstream indent_oss;
 	  indent_oss << indent;
 	  indent_oss << du::i_tree_dumpable::skip_tag;
-	  __properties.tree_dump (out_,"",indent_oss.str ());
+	  __properties.tree_dump (out_, "", indent_oss.str ());
         }
     }     
 	    

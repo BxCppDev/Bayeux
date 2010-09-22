@@ -1,0 +1,19 @@
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::utils::multi_properties):
+
+#@description A sample list of elements
+#@key_label   "name"
+#@meta_label  "type"
+
+[name="H_gas" type="material"]
+#@description Hydrogen gas
+density        : real   = 1.0
+density.unit   : string = "mg/cm3"
+
+[name="copper" type="material"]
+#@description Copper material
+density        : real   = 8.9
+density.unit   : string = "g/cm3"
+
+
+# end

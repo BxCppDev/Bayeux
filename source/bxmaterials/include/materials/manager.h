@@ -38,6 +38,7 @@ namespace mat {
     isotope_dict_t  __isotopes;
     element_dict_t  __elements;
     material_dict_t __materials;
+    list<string>    __ordered_materials;
     bool            __locked;
 
   public: 
@@ -47,7 +48,7 @@ namespace mat {
     const isotope_dict_t & get_isotopes () const;
     const element_dict_t & get_elements () const;
     const material_dict_t & get_materials () const;
-  
+
   public: 
     // ctor:
     manager ();

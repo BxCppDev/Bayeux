@@ -5,7 +5,6 @@
 #include <materials/manager.h>
 
 namespace mat {
-
   
   bool manager::is_debug () const
   {
@@ -53,6 +52,7 @@ namespace mat {
     __materials.clear ();
     __elements.clear ();
     __isotopes.clear ();
+    __ordered_materials.clear ();
     return;
   }
 
@@ -127,10 +127,14 @@ namespace mat {
 			<< "Material with name '" << name << "' already exists !";
 		throw runtime_error (message.str ());
 	      }
-	    material * matl = __creator.create_material (name, props, __elements, __materials);
+	    material * matl = __creator.create_material (name, 
+							 props, 
+							 __elements, 
+							 __materials);
 	    __materials[matl->get_name ()] = mat::smart_ref<material> ();
 	    __materials[matl->get_name ()].set_ref (matl);
 	    if (__debug) clog << "DEBUG: " << "manager::load: " << "Add new material = '" << matl->get_name () << "'" << endl;
+	    __ordered_materials.push_back (matl->get_name ());
 	  }
 	else if (type == "alias")
 	  {
@@ -159,6 +163,7 @@ namespace mat {
 	      }
 	    __materials[name] = mat::smart_ref<material> ();
 	    __materials[name].set_ref (found->second.get_ref ());
+	    __ordered_materials.push_back (name);
 	    if (__debug) clog << "DEBUG: " << "manager::load: " << "Add new material alias = '" << name << "'" << endl;
 	  }
 
@@ -255,7 +260,6 @@ namespace mat {
         }
     }     
 	    
-   
     {
       out_ << indent << du::i_tree_dumpable::tag
 	   << "Materials : ";
@@ -292,6 +296,41 @@ namespace mat {
         }
     }     
 	    
+	    
+    {
+      out_ << indent << du::i_tree_dumpable::tag
+	   << "Materials (ordered): ";
+      if ( __ordered_materials.size () == 0)
+	{
+	  out_ << "<empty>" << endl; 
+	}
+      else
+        {
+	  out_ << endl;
+	  for (list<string>::const_iterator i = __ordered_materials.begin ();
+	        i != __ordered_materials.end ();
+	       i++)
+	    {
+	      ostringstream indent_oss;
+	      indent_oss << indent;
+	      indent_oss << du::i_tree_dumpable::skip_tag;
+	      list<string>::const_iterator j = i;
+	      j++;
+	      out_ << indent << du::i_tree_dumpable::skip_tag;;
+	      if (j != __ordered_materials.end ()) 
+		{
+		  out_ << du::i_tree_dumpable::tag;
+		  indent_oss << du::i_tree_dumpable::skip_tag;;
+		}
+	      else 
+		{
+		  out_ << du::i_tree_dumpable::last_tag;
+		  indent_oss << du::i_tree_dumpable::last_skip_tag;;
+		}
+	      out_ << "Material '" << *i << "'" << endl;
+	    }
+        }
+    }     
      
     out_ << indent << i_tree_dumpable::last_tag 
 	 << "Locked       : " << (is_locked()? "Yes": "No") << endl;

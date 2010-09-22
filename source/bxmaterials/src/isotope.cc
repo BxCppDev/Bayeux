@@ -610,13 +610,14 @@ namespace mat {
         out_ << indent << title_ << endl;
       }  
     out_ << indent << i_tree_dumpable::tag 
-	 << "Name       :'"<< get_name () <<"'" << endl;   
-    if(is_known ()) 
+	 << "Name       :'" << get_name () << "'" << endl;   
+    if (is_known ()) 
       {
 	out_ << indent << i_tree_dumpable::tag 
-	     << "Z, A, I    : " << get_Z () <<", "<<  get_A () <<", "<< get_I ()<< ""<<endl; 
+	     << "Z, A, I    : " << get_Z () << ", " 
+	     <<  get_A () << ", " << get_I () << "" << endl; 
 	out_ << indent << i_tree_dumpable::tag 
-	     << "ZAI name   :'" << get_ZAI_name () << "'"  <<endl;     
+	     << "ZAI name   : '" << get_ZAI_name () << "'"  <<endl;     
       }
     else 
       {
@@ -626,26 +627,29 @@ namespace mat {
 	     << get_Z () << ", " << get_A () << ", " 
 	     << get_I () <<" ) " << endl;     
 	out_ << indent << i_tree_dumpable::tag 
-	     << "ZAI name   : " << "no data ( default values : '"
-	     << get_ZAI_name () << "' ) " << endl;   
+	     << "ZAI name   : " << "no data (default values : '"
+	     << get_ZAI_name () << "') " << endl;   
       } 
     
-    if(has_mass_data ()) 
+    if (has_mass_data ()) 
       {
 	out_ << indent << i_tree_dumpable::tag 
-	     << "Mass       : "<<  get_mass () <<" +- " << get_err_mass ()<< " [g/mol]" << endl;  
+	     << "Mass       : "<<  get_mass () << " +- " 
+	     << get_err_mass () << " [g/mol]" << endl;  
       } 
     else 
       {
 	out_ << indent << i_tree_dumpable::tag 
-	     << "Mass       : "<<  "no data ( default values : " <<get_mass () <<" +- "<< get_err_mass () << " [g/mol] ) " << endl;  
+	     << "Mass       : " <<  "no data ( default values : " 
+	     << get_mass () << " +- " << get_err_mass () 
+	     << " [g/mol] ) " << endl;  
       }
     
-    if(has_decay_data ())
+    if (has_decay_data ())
       {
-	if( is_stable () )  out_ << indent << i_tree_dumpable::tag << "Stable     : true"   << endl;
+	if (is_stable ()) out_ << indent << i_tree_dumpable::tag << "Stable     : true"   << endl;
     
-	if(! is_stable () )
+	if (! is_stable ())
           { 
 	    out_ << indent << i_tree_dumpable::tag << "Unstable   : "; 
 	    out_ << "T1/2 = "
@@ -656,11 +660,11 @@ namespace mat {
     else
       {
         out_ << indent << i_tree_dumpable::tag 
-	     << "Stability  : "<<  "no data (default values : ";
-	if(is_stable () ) out_ << "stable & ";
-	if(! is_stable () ) out_ << "unstable & ";
+	     << "Stability  : " <<  "no data (default values : ";
+	if(is_stable ()) out_ << "stable & ";
+	if(! is_stable ()) out_ << "unstable & ";
 	out_ << " T1/2 = " << get_half_life_time () 
-	     << " +- " << get_half_life_time () <<" [s] )" << endl; 
+	     << " +- " << get_half_life_time () << " [s] )" << endl; 
       }
       
     if(__properties.size () != 0)  
@@ -688,7 +692,7 @@ namespace mat {
 
 
 //________________________________________________________________________
-double endfline_to_double(const string & endf_line)
+double endfline_to_double (const string & endf_line)
 {
   //  Convert a string (of size 11) written in endf6 format to a double 
   //  3 differents formats  
@@ -697,17 +701,25 @@ double endfline_to_double(const string & endf_line)
   if(endf_line.find("E")==string::npos)
     {	
       int pos;
-      if(endf_line.find("+")!=string::npos) pos=endf_line.find_first_of("+");
-      if(endf_line.find("-")!=string::npos)  pos=endf_line.find_first_of("-");
-      s_number=endf_line.substr(0, pos)+"E";
-      s_number+=endf_line.substr(pos, endf_line.size ()-pos);
+      if (endf_line.find("+")!=string::npos) pos = endf_line.find_first_of ("+");
+      if (endf_line.find("-")!=string::npos) pos = endf_line.find_first_of ("-");
+      s_number = endf_line.substr (0, pos) + "E";
+      s_number += endf_line.substr (pos, endf_line.size () - pos);
     }
   else s_number = endf_line; 
 	 
-  std::istringstream i(s_number);
+  std::istringstream iss(s_number);
         
   double number;
-  if (!(i >> number))   return 0;
+  iss >> number;
+  if (! iss) 
+    {
+      ostringstream message;
+      message << "endfline_to_double: Invalid format for real: '" 
+	      << s_number << "' !";
+      throw runtime_error (message.str ());
+      //return 0;
+    }
   return number;
 }
 
@@ -720,12 +732,18 @@ double ame3line_to_double(const string & ame3_line)
   else if( (ame3_line.find("#")) !=string::npos)  s_number=ame3_line.substr(0, ame3_line.find_first_of("#"));
   else   s_number = ame3_line;
    
-  std::istringstream i(s_number);
-
-        
+  std::istringstream iss(s_number);
   double number;
-
-  if (!(i >> number))   return 0; 
+  iss >> number;
+  if (! iss) 
+    {
+      ostringstream message;
+      message << "ame3line_to_double: Invalid format for real: '" 
+	      << s_number << "' !";
+      throw runtime_error (message.str ());
+      //return 0;
+    }
+  //if (!(i >> number))   return 0; 
   else return number;
 }
 

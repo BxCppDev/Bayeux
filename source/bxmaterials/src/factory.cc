@@ -152,11 +152,10 @@ namespace mat {
 				       const element_dict_t & elements_, 
 				       const material_dict_t & materials_) const
   {
-
     double density = 1.0;
     double density_unit = material::g_per_cm3;
-    cerr << "DEVEL: factory::create_material: 1 g=" << CLHEP::g << endl;
-    cerr << "DEVEL: factory::create_material: 1 cm3=" << CLHEP::cm3 << endl;
+    //cerr << "DEVEL: factory::create_material: 1 g=" << CLHEP::g << endl;
+    //cerr << "DEVEL: factory::create_material: 1 cm3=" << CLHEP::cm3 << endl;
 
     if (config_.has_key ("density"))
       {
@@ -176,8 +175,9 @@ namespace mat {
     material * matl = new material ();
     matl->set_name (name_);
     matl->set_density (density * density_unit);
-    cerr << "DEVEL: factory::create_material: density=" << density << endl;
-    cerr << "DEVEL: factory::create_material: density unit =" << density_unit << endl;
+
+    //cerr << "DEVEL: factory::create_material: density=" << density << endl;
+    //cerr << "DEVEL: factory::create_material: density unit =" << density_unit << endl;
     //matl->build ();
     return matl;
   }
