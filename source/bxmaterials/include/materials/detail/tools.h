@@ -52,12 +52,12 @@ namespace mat {
 	{
 	    if (__owned) 
 	      {
-		cerr << "DEVEL: smart_ref::dtor: Deleting ref..." << endl;
+		//cerr << "DEVEL: smart_ref::dtor: Deleting ref..." << endl;
 		delete __ref;
 	      }
 	    else
 	      {
-		cerr << "DEVEL: smart_ref::dtor: Detaching ref..." << endl;
+		//cerr << "DEVEL: smart_ref::dtor: Detaching ref..." << endl;
 	      }
 	    __ref = 0;
 	}

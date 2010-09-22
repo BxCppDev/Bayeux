@@ -7,7 +7,15 @@
 namespace mat {
 
   const double material::g_per_cm3 = CLHEP::g / CLHEP::cm3;
-  
+
+  composite_entry::composite_entry ()
+  {
+  }
+
+  composite_entry::~composite_entry ()
+  {
+  }
+ 
   const string & material::get_name () const
   {
     return __name;

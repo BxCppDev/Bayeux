@@ -30,7 +30,7 @@ namespace mat {
   }
   
   isotope * factory::create_isotope (const string & name_, 
-				     datatools::utils::properties & config_)
+				     const datatools::utils::properties & config_) const
   {
     int z = 0;
     int a = 0;
@@ -87,8 +87,8 @@ namespace mat {
 
   
   element * factory::create_element (const string & name_,
-				     datatools::utils::properties & config_, 
-				     const isotope_dict_t & isotopes_)
+				     const datatools::utils::properties & config_, 
+				     const isotope_dict_t & isotopes_) const
   {
 
     int z = 0;
@@ -148,9 +148,9 @@ namespace mat {
   }
   
   material * factory::create_material (const string & name_, 
-				       datatools::utils::properties & config_, 
+				       const datatools::utils::properties & config_, 
 				       const element_dict_t & elements_, 
-				       const material_dict_t & materials_)
+				       const material_dict_t & materials_) const
   {
 
     double density = 1.0;

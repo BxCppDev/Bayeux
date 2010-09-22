@@ -1,0 +1,25 @@
+# List of multi-properties (datatools::utils::multi_properties):
+
+#@description A sample list of elements
+#@key_label   "name"
+#@meta_label  "type"
+
+[name="H" type="element"]
+#@description The H natural element
+z               : integer    = 1
+isotope.names   : string [2] = "H" "D"
+isotope.weights : double [2] = 99.9885 0.0115
+
+[name="He" type="element"]
+#@description The He natural element
+z               : integer    = 2
+isotope.names   : string [2] = "He-3" "He-4"
+isotope.weights : double [2] = 0.000137 99.999863
+
+[name="Carbon" type="element"]
+#@description The H natural element
+z               : integer    = 6
+isotope.names   : string [1] = "C-12"
+isotope.weights : double [1] = 1
+
+# end

@@ -33,12 +33,14 @@ namespace mat {
 
   using namespace std;
   using namespace datatools::utils;
-  
+
+  class material;
+
   struct composite_entry
   {
     bool                owned;
     const     element*  iso_ptr;
-    const     material* iso_ptr;
+    const     material* mat_ptr;
     size_t              number_of_atom;
     double              fraction_mass;
     
@@ -47,7 +49,7 @@ namespace mat {
     bool is_valid () const;
   }; 
 
-  typedef std::map<string, composite_entry>   composite_map_t; 
+  typedef std::map<string, composite_entry> composite_map_t; 
 
   class material : public datatools::utils::i_tree_dumpable
   {

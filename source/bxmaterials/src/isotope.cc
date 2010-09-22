@@ -638,7 +638,7 @@ namespace mat {
     else 
       {
 	out_ << indent << i_tree_dumpable::tag 
-	     << "Mass       : "<<  "no data ( default values : " <<get_mass () <<" +- "<< get_err_mass () <<" [g/mol] ) " << endl;  
+	     << "Mass       : "<<  "no data ( default values : " <<get_mass () <<" +- "<< get_err_mass () << " [g/mol] ) " << endl;  
       }
     
     if(has_decay_data ())
@@ -647,9 +647,9 @@ namespace mat {
     
 	if(! is_stable () )
           { 
-	    out_ << indent << i_tree_dumpable::tag << "Unstable   :" << endl; 
-	    out_ << du::i_tree_dumpable::skip_tag << "  `-- T1/2 : "
-		 <<  get_half_life_time () << " +- " 
+	    out_ << indent << i_tree_dumpable::tag << "Unstable   : "; 
+	    out_ << "T1/2 = "
+		 << get_half_life_time () << " +- " 
 		 << get_err_half_life_time () << " [s]" << endl;
 	  }
       }

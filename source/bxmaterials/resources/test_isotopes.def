@@ -1,0 +1,58 @@
+# List of multi-properties (datatools::utils::multi_properties):
+
+#@description A sample list of isotopes
+#@key_label   "name"
+#@meta_label  "type"
+
+[name="H" type="isotope"]
+#@description The H hydrogen isotope
+z : integer = 1
+a : integer = 1
+
+[name="D" type="isotope"]
+#@description The D hydrogen isotope
+z : integer = 1
+a : integer = 2
+
+[name="T" type="isotope"]
+#@description The D hydrogen isotope
+z : integer = 1
+a : integer = 3
+
+
+[name="He-3" type="isotope"]
+#@description The He-4 isotope
+z : integer = 2
+a : integer = 3
+
+[name="He-4" type="isotope"]
+#@description The He-4 isotope
+z : integer = 2
+a : integer = 4
+
+[name="C-12" type="isotope"]
+#@description The C-12 isotope
+z : integer = 6
+a : integer = 12
+
+[name="N-14" type="isotope"]
+#@description The N-13 isotope
+z : integer = 7
+a : integer = 14
+
+[name="O-16" type="isotope"]
+#@description The O-16 isotope
+z : integer = 8
+a : integer = 16
+
+[name="F-19" type="isotope"]
+#@description The F-19 isotope
+z : integer = 9
+a : integer = 19
+
+[name="Al-27" type="isotope"]
+#@description The Al-27 isotope
+z : integer = 13
+a : integer = 27
+
+# end
