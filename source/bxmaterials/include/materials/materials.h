@@ -85,7 +85,7 @@
 
 #include <materials/isotope.h>
 #include <materials/element.h>
-
+#include <materials/material.h>
 
 //! \namespace materials
 /* The basic materials namespace.

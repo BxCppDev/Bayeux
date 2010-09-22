@@ -26,53 +26,28 @@
 #ifndef __materials__ch_symbol_h
 #define __materials__ch_symbol_h 1
 
+#include <string>
+#include <iostream>
+#include <sstream>
+#include <stdexcept>
+
+using namespace std;
+
 namespace mat {
-   
-  static const string chemical_symbol[119]={"n", "H", "He", "Li", "Be", "B","C", "N", "O", "F", "Ne",			
-   "Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar", "K", "Ca", "Sc", "Ti", "V", "Cr", "Mn", "Fe", 
-   "Co", "Ni", "Cu", "Zn", "Ga", "Ge","As", "Se", "Br", "Kr", "Rb", "Sr", "Y", "Zr", "Nb", "Mo", 
-   "Tc", "Ru", "Rh", "Pd", "Ag", "Cd", "In", "Sn", "Sb", "Te", "I", "Xe","Cs", "Ba", "La", "Ce", 
-   "Pr", "Nd", "Pm", "Sm", "Eu", "Gd", "Tb","Dy", "Ho", "Er", "Tm", "Yb", "Lu", "Hf", "Ta", 
-   "W", "Re", "Os","Ir", "Pt", "Au", "Hg", "Tl", "Pb", "Bi", "Po", "At", "Rn", "Fr", "Ra","Ac", 
-   "Th", "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm", "Md", "No", "Lr", "Rf", 
-   "Db", "Sg", "Bh", "Hs", "Mt", "Ds",  "Rg", "Ec", "Ed", "Ee", "Ef", "Eg", "Eh", "Ei" };
 
-   static inline const int Z_from_symbol(const string & symbol_)
-    {
-       bool is_symbol_found = false; 
-					    
-       int i_Z=0;
+  class chemical_symbol 
+  {
+  public:
     
-      while(!is_symbol_found && i_Z < 119) 
-        {
-        if(symbol_ == chemical_symbol[i_Z]) is_symbol_found = true;
-        i_Z++;
-        }
-      
-        if(!is_symbol_found)
-          {
-	    ostringstream message;
-	    message << endl<<"ch_symbol::Z_from_symbol(): '" << symbol_<<"' not founded !"<<endl;
-	    throw runtime_error (message.str ());
-	 }	      
-      else return(i_Z-1);
-    }
-    
-    
+    static const unsigned int NB_CHEMICAL_SYMBOLS = 119;
+  
+    static const string table[NB_CHEMICAL_SYMBOLS];
 
-   static const inline string symbol_from_Z(const int Z_)
-    {
-      if(  Z_ >= 1  &&  Z_ < 119)
-       {
-        return chemical_symbol[Z_];
-       }
-     else
-      {
-	    ostringstream message;
-	    message << endl<< "mat::ch_symbol::symbol_from_Z:  Z value : '" << Z_<<"' not tabulated !"<<endl;
-	    throw runtime_error (message.str ());
-       }
-   };
+    static int Z_from_symbol (const string & symbol_);
+    
+    static const string & symbol_from_Z (int Z_);
+
+  };
 
 } // end of namespace mat
 
