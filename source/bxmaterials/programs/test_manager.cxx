@@ -75,6 +75,7 @@ int main (int argc_, char ** argv_)
 	  my_manager.load (config);
 	}
       my_manager.tree_dump (clog, "Material manager: ");
+      my_manager.export_gdml (cout);
 
     }
   catch (exception & x)

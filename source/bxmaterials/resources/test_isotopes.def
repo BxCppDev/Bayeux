@@ -222,4 +222,20 @@ a : integer = 207
 z : integer = 82
 a : integer = 208
 
+[name="U-234" type="isotope"]
+#@description The U-234 isotope
+z : integer = 92
+a : integer = 234
+
+[name="U-235" type="isotope"]
+#@description The U-235 isotope
+z : integer = 92
+a : integer = 235
+
+[name="U-238" type="isotope"]
+#@description The U-238 isotope
+z : integer = 92
+a : integer = 238
+
+
 # end

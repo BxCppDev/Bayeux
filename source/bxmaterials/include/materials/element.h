@@ -118,7 +118,10 @@ namespace mat {
     const int      get_Z () const {return __Z;}                    //!<  Return the number of protons (Z).             
     const double   get_molar_mass () const {return  __molar_mass;} //!<  Return the molar mass [g/mol].           
     const bool     is_locked () const{return __locked;}            //!<  Return true if composition is valid, weights are normalized and molar mass is computed.       
-    
+    const isotope_weight_map_t & get_composition () const  
+    {
+      return __composition;
+    }
 
     const properties & grab_properties () const {return __properties;} //!< Get reference of datatools::properties private attribute
 

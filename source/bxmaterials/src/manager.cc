@@ -338,6 +338,42 @@ namespace mat {
     return;
     
   }
+
+  void manager::export_gdml (ostream & out_) const
+  {
+    geomtools::gdml_writer GW;
+
+    for (isotope_dict_t::const_iterator i = __isotopes.begin ();
+	 i != __isotopes.end ();
+	 i++)
+      {
+	const isotope & iso = i->second.get_ref ();
+	GW.add_isotope (i->first, 
+			iso.get_Z (),
+			iso.get_A (),
+			iso.get_mass ()); // / (CLHEP::g /CLHEP::mole));
+		     
+      }
+
+    for (element_dict_t::const_iterator i = __elements.begin ();
+	 i != __elements.end ();
+	 i++)
+      {
+	const element & elmt = i->second.get_ref ();
+	map<string, double> fractions;
+	for (isotope_weight_map_t::const_iterator j 
+	       = elmt.get_composition ().begin ();
+	     j != elmt.get_composition ().end ();
+	     j++)
+	  {
+	    fractions[j->first] = j->second.weight;
+	  }
+	GW.add_element (i->first, fractions);
+      }
+
+    out_ << GW.get_stream (geomtools::gdml_writer::MATERIALS_SECTION).str ();
+    return;
+  }
   
 } // end of namespace mat
 

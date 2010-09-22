@@ -26,6 +26,7 @@
 
 #include <materials/factory.h>
 #include <datatools/utils/multi_properties.h>
+#include <geomtools/gdml_writer.h>
 
 namespace mat {
 
@@ -67,6 +68,8 @@ namespace mat {
 			    const string & title_  = "", 
 			    const string & indent_ = "", 
 			    bool inherit_          = false) const;          
+
+    void export_gdml (ostream & out_) const;
 
   };
 

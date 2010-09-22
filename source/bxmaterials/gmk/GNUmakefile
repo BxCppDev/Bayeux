@@ -78,19 +78,12 @@ DEPLDFLAGS=
 ### Dependencies:
 #DEP_HOOK
 
-#Here one sets the stuff for 'GSL':
-#ifeq ($(shell which gsl-config),)
-#$(error Sorry gsl-config not found!)
+#Here one sets the stuff for 'geomtools':
+#ifeq ($(shell which geomtools-config),)
+#$(error Sorry geomtools-config not found!)
 #endif
-DEPCPPFLAGS+=$(shell gsl-config --cflags)
-DEPLDFLAGS+=$(shell gsl-config --libs)
-
-#Here one sets the stuff for 'CLHEP':
-#ifeq ($(shell which clhep-config),)
-#$(error Sorry clhep-config not found!)
-#endif
-DEPCPPFLAGS+=$(shell clhep-config --include)
-DEPLDFLAGS+=$(shell clhep-config --libs)
+DEPCPPFLAGS+=$(shell geomtools-config --cflags)
+DEPLDFLAGS+=$(shell geomtools-config --ldflags)
 
 #Here one sets the stuff for 'datatools':
 #ifeq ($(shell which datatools-config),)

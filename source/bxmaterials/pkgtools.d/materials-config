@@ -109,8 +109,7 @@ if [ "x$opt" = "x--cflags" ]; then
         "-fPIC " \
 	"-I${THEPACK_INCLUDEDIR} "  \
          "`datatools-config --cflags` "  \
-         "`clhep-config --include` "  \
-         "`gsl-config --cflags` "  \
+         "`geomtools-config --include` "  \
     | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py
 
     echo
@@ -135,8 +134,7 @@ fi
 if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
     echo -n "-L${THEPACK_LIBDIR} -lmaterials "  \
          "`datatools-config --ldflags` "  \
-         "`clhep-config --libs` "  \
-         "`gsl-config --libs` "  \
+         "`geomtools-config --libs` "  \
     | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
     
     echo
