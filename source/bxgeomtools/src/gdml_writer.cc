@@ -353,8 +353,8 @@ namespace geomtools {
   {
     ostringstream materials_stream;
     materials_stream << "<element" 
-		       << " name=" << '"' << to_html (name_) << '"' 
-		       << " >" << endl;
+		     << " name=" << '"' << to_html (name_) << '"' 
+		     << " >" << endl;
     double s = 0.0;
     for (map<string, double>::const_iterator i = fractions_.begin ();
 	 i != fractions_.end ();
@@ -379,7 +379,7 @@ namespace geomtools {
 	materials_stream.precision (15);
 	materials_stream << n << '"' << " />" << endl;
       }
-    if (s > 1.0)
+    if (s > 1.000000000001)
       {    ostringstream message;
 	message << "gdml_writer::add_element: " 
 		<< "Invalid fraction sum in element '" 
