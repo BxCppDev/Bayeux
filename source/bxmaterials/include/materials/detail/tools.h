@@ -27,6 +27,11 @@ namespace mat {
     
   public:
     
+    bool is_owned () const
+    {
+      return __owned;
+    }
+
     bool has_ref () const
     {
       return __ref != 0;

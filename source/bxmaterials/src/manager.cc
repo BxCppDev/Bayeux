@@ -145,14 +145,14 @@ namespace mat {
 			<< "Material with name '" << name << "' already exists !";
 		throw runtime_error (message.str ());
 	      }
-	    if (! props.has_key ("alias"))
+	    if (! props.has_key ("material"))
 	      {
 		ostringstream message;
 		message << "manager::load: "
-			<< "Missing property 'alias' for a material alias !";
+			<< "Missing property 'material' for a material alias !";
 		throw runtime_error (message.str ());		
 	      }
-	    string alias_material = props.fetch_string ("alias");
+	    string alias_material = props.fetch_string ("material");
 	    material_dict_t::iterator found = __materials.find (alias_material);
 	    if (found == __materials.end ())
 	      {
@@ -290,7 +290,12 @@ namespace mat {
 		  out_ << du::i_tree_dumpable::last_tag;
 		  indent_oss << du::i_tree_dumpable::last_skip_tag;;
 		}
-	      out_ << "Material '" << i->first << "'" << endl;
+	      out_ << "Material '" << i->first << "'";
+	      if (! i->second.is_owned ())
+		{
+		  out_ << " (alias)";
+		}
+	      out_ << endl;
 	      i->second.get_ref ().tree_dump (out_, "", indent_oss.str ());
 	    }
         }
