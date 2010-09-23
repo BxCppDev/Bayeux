@@ -360,7 +360,7 @@ namespace mat {
 	clog << message << endl;
       }        
   }              
-  //________________________________________________________________________ 
+//________________________________________________________________________ 
   void element::__norm_weights ()
   {  
     double norm =0.;     
@@ -400,20 +400,20 @@ namespace mat {
   }  
     
     
-  //________________________________________________________________________ 	       
+//________________________________________________________________________ 	       
   void element::__set_molar_mass(const double molar_mass_)
-  {      
-    if(  molar_mass_ < 0 )    
-      {
-	ostringstream message;
-	message << endl << "element:::__set_molar_mass() : Invalid mass value : '" 
+    {      
+      if(  molar_mass_ < 0 )    
+        {
+	  ostringstream message;
+	  message << endl << "element:::__set_molar_mass() : Invalid mass value : '" 
 		<< molar_mass_ << "' !" << endl;
-	throw logic_error (message.str ());
-      }	
-    __molar_mass = molar_mass_;   
-  }
+	  throw logic_error (message.str ());
+        }	
+        __molar_mass = molar_mass_;   
+     }
 
-  //________________________________________________________________________ 
+//________________________________________________________________________ 
   void  element::__compute_molar_mass ()
   {    
     double molar_mass =0.; 
