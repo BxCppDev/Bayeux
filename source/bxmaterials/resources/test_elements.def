@@ -5,17 +5,23 @@
 #@key_label   "name"
 #@meta_label  "type"
 
-[name="H" type="element"]
+[name="Hydrogen" type="element"]
 #@description The H natural element
 z               : integer   = 1
 isotope.names   : string[2] = "H"     "D"
 isotope.weights : real[2]   = 99.9885 0.0115
 
-[name="He" type="element"]
+[name="Helium" type="element"]
 #@description The He natural element
 z               : integer   = 2
 isotope.names   : string[2] = "He-3"   "He-4"
 isotope.weights : real[2]   = 0.000137 99.999863
+
+[name="Boron" type="element"]
+#@description The B natural element
+z               : integer   = 5 
+isotope.names   : string[2] = "B-10" "B-11"
+isotope.weights : real[2]   =  19.9   80.1
 
 [name="Carbon" type="element"]
 #@description The H natural element

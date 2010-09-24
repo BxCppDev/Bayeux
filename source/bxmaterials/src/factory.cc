@@ -156,6 +156,12 @@ namespace mat {
     double density_unit = material::g_per_cm3;
     //cerr << "DEVEL: factory::create_material: 1 g=" << CLHEP::g << endl;
     //cerr << "DEVEL: factory::create_material: 1 cm3=" << CLHEP::cm3 << endl;
+    string formula;
+    double temperature = -1.0;
+    double temperature_unit = CLHEP::kelvin;
+    double pressure = -1.0;
+    double pressure_unit = CLHEP::bar;
+    string state = "";
 
     if (config_.has_key ("density"))
       {
@@ -172,13 +178,253 @@ namespace mat {
 	density_unit = datatools::utils::units::get_density_unit_from (density_unit_str);
       }
 
-    material * matl = new material ();
-    matl->set_name (name_);
-    matl->set_density (density * density_unit);
+    if (config_.has_key ("temperature"))
+      {
+	temperature = config_.fetch_real ("temperature");
+	temperature *= CLHEP::kelvin;
+      }
 
-    //cerr << "DEVEL: factory::create_material: density=" << density << endl;
-    //cerr << "DEVEL: factory::create_material: density unit =" << density_unit << endl;
-    //matl->build ();
+    if (config_.has_key ("temperature.unit"))
+      {
+	string temperature_unit_str =  config_.fetch_string ("temperature.unit");
+	temperature_unit = datatools::utils::units::get_temperature_unit_from (temperature_unit_str);
+      }
+
+    if (config_.has_key ("pressure"))
+      {
+	pressure = config_.fetch_real ("pressure");
+      }
+
+    if (config_.has_key ("pressure.unit"))
+      {
+	string pressure_unit_str =  config_.fetch_string ("pressure.unit");
+	pressure_unit = datatools::utils::units::get_pressure_unit_from (pressure_unit_str);
+      }
+ 
+    // apply units:
+    density *= density_unit;
+    temperature *= temperature_unit;
+    pressure *= pressure_unit;
+
+    if (config_.has_key ("formula"))
+      {
+	formula = config_.fetch_string ("formula");
+      }
+
+   if (config_.has_key ("state"))
+      {
+	state = config_.fetch_string ("state");
+      }
+
+    vector<string> composition_names;
+    vector<int>    composition_nb_of_atoms;
+    vector<double> composition_fraction_mass;
+    string         composition_mode_label;
+    int            composition_mode = -1;
+    double         mean_z = -1.0;
+    double         mean_a = -1.0;
+
+    if (config_.has_key ("composition.mode"))
+      {
+	composition_mode_label =  config_.fetch_string ("composition.mode");
+      }
+    else
+      {
+	throw runtime_error ("factory::create_element: Missing 'composition.mode' property !");
+      }
+
+    if (composition_mode_label == "number_of_atoms")
+      {
+	composition_mode = material::NUMBER_OF_ATOMS;
+      }
+    else if (composition_mode_label == "fraction_mass")
+      {
+	composition_mode = material::FRACTION_MASS;
+      }
+    else if (composition_mode_label == "mean_za")
+      {
+	composition_mode = material::MEAN_ZA;
+      }
+    else
+      {
+	ostringstream message;
+	message << "factory::create_element: "
+		<< "Invalid 'composition.mode' property ('" << composition_mode_label << "') !";
+	throw runtime_error (message.str ());
+      }
+
+    if (composition_mode == material::MEAN_ZA)
+      {
+	if (config_.has_key ("mean_z"))
+	  {
+	    mean_z = config_.fetch_real ("mean_z");
+	  }
+	else
+	  {
+	    throw runtime_error ("factory::create_element: Missing 'mean_z' property !");
+	  }
+	if (config_.has_key ("mean_a"))
+	  {
+	    mean_a = config_.fetch_real ("mean_a");
+	  }
+	else
+	  {
+	    throw runtime_error ("factory::create_element: Missing 'mean_a' property !");
+	  }
+       }
+    else
+      {
+    if (config_.has_key ("composition.names"))
+      {
+	config_.fetch ("composition.names", composition_names);
+	if (composition_names.size () == 0)
+	  {
+	    throw runtime_error ("factory::create_element: Empty list of compounds !");	    
+	  } 
+      }
+    else
+      {
+	throw runtime_error ("factory::create_element: Missing 'composition.names' property !");
+      }
+
+    if (composition_mode == material::NUMBER_OF_ATOMS)
+      {
+	if (config_.has_key ("composition.number_of_atoms"))
+	  {
+	    config_.fetch ("composition.number_of_atoms", composition_nb_of_atoms);
+	    if (composition_names.size () != composition_nb_of_atoms.size ())
+	      {
+		throw runtime_error ("factory::create_element: Unmatching sizes of list of compounds/number of atoms !");
+	      }
+	  }
+	else
+	  {
+	    throw runtime_error ("factory::create_element: Missing 'composition.number_of_atoms' property !");
+	  }
+      }
+
+
+    if (composition_mode == material::FRACTION_MASS)
+      {
+	if (config_.has_key ("composition.fraction_mass"))
+	  {
+	    config_.fetch ("composition.fraction_mass", composition_fraction_mass);
+	    if (composition_names.size () != composition_fraction_mass.size ())
+	      {
+		throw runtime_error ("factory::create_element: Unmatching sizes of list of compounds/fraction mass !");
+	      }
+	  }
+	else
+	  {
+	    throw runtime_error ("factory::create_element: Missing 'composition.number_of_atoms' property !");
+	  }
+      }
+      }
+    
+    material * matl = new material ();
+    try 
+      {
+	matl->set_name (name_);
+	matl->set_density (density);
+
+	if (composition_mode == material::MEAN_ZA)
+	  {
+	    matl->set_mean_z_a (mean_z, mean_a);
+	  }
+
+	if (composition_mode == material::NUMBER_OF_ATOMS)
+	  {
+	    for (int i = 0; i < composition_names.size (); i++)
+	      { 
+		element_dict_t::const_iterator found = elements_.find (composition_names[i]);
+		if (found ==  elements_.end ())
+		  {
+		    ostringstream message;
+		    message << "factory::create_element: "
+			    << "Unknown element '" << composition_names[i] << "') !";
+		    throw runtime_error (message.str ());	
+		  }
+		const element & elmt = found->second.get_ref ();
+		int nb_atoms = composition_nb_of_atoms[i];
+		matl->add_element_by_nb_of_atoms (elmt , nb_atoms);
+	      }
+	  }
+
+	if (composition_mode == material::FRACTION_MASS)
+	  {
+	    for (int i = 0; i < composition_names.size (); i++)
+	      { 
+		const element * a_elmt = 0;
+		const material * a_matl = 0;
+		if (composition_names[i] == name_)
+		  {
+		    ostringstream message;
+		    message << "factory::create_element: "
+			    << "Self-referenced material with name '" << composition_names[i] << "' !";
+		    delete matl;
+		    throw runtime_error (message.str ());	
+		  }
+		element_dict_t::const_iterator found = elements_.find (composition_names[i]);
+		if (found != elements_.end ())
+		  {
+		    a_elmt = found->second.get_ptr ();
+		  }
+		else
+		  {
+		    material_dict_t::const_iterator found2 = materials_.find (composition_names[i]);
+		    if (found2 != materials_.end ())
+		      {
+			a_matl = found2->second.get_ptr ();
+		      }
+		    else
+		      {
+			ostringstream message;
+			message << "factory::create_element: "
+				<< "Unknown element or material '" << composition_names[i] << "') !";
+			delete matl;
+			throw runtime_error (message.str ());	
+		      }
+		  }
+		double f_mass = composition_fraction_mass[i];
+		if (a_elmt !=  0)
+		  {
+		    matl->add_element_by_mass (*a_elmt, f_mass);
+		  }
+		else
+		  {
+		    matl->add_material_by_mass (*a_matl, f_mass);
+		  }
+	      }
+	  }
+
+	// Some auxiliary properties:
+	if (! formula.empty ())
+	  {
+	    matl->grab_properties ().store ("formula", formula);
+	  }
+
+	if (! state.empty ())
+	  {
+	    matl->grab_properties ().store ("state", state);
+	  }
+
+	if (temperature > 0.0)
+	  {
+	    matl->grab_properties ().store ("temperature", temperature);
+	  }
+
+	if (pressure > 0.0)
+	  {
+	    matl->grab_properties ().store ("pressure", pressure);
+	  }
+
+	matl->build ();
+      }
+    catch (exception & x)
+      {
+	delete matl;
+	throw x;
+      }
     return matl;
   }
  

@@ -69,6 +69,8 @@ namespace mat {
 			    const string & indent_ = "", 
 			    bool inherit_          = false) const;          
 
+    void export_gdml (geomtools::gdml_writer & gw_) const;
+
     void export_gdml (ostream & out_) const;
 
   };

@@ -75,7 +75,7 @@ namespace mat {
 	throw runtime_error ("mat::manager::load: Manager is locked !");
       }
     
-   for (multi_properties::entries_ordered_col_t::const_iterator i 
+    for (multi_properties::entries_ordered_col_t::const_iterator i 
            = config_.ordered_entries ().begin ();
          i != config_.ordered_entries ().end ();
          i++)
@@ -113,6 +113,17 @@ namespace mat {
 			<< "Element with name '" << name << "' already exists !";
 		throw runtime_error (message.str ());
 	      }
+	    bool unique_element_material = false;
+	    if (unique_element_material)
+	      {
+		if (__materials.find (name) != __materials.end ())
+		  {
+		    ostringstream message;
+		    message << "manager::load: "
+			    << "Material with name '" << name << "' already exists !";
+		    throw runtime_error (message.str ());
+		  }
+	      }
 	    element * elmt = __creator.create_element (name, props, __isotopes);
 	    __elements[elmt->get_name ()] = mat::smart_ref<element> ();
 	    __elements[elmt->get_name ()].set_ref (elmt);
@@ -127,13 +138,26 @@ namespace mat {
 			<< "Material with name '" << name << "' already exists !";
 		throw runtime_error (message.str ());
 	      }
+	    bool unique_element_material = false;
+	    if (unique_element_material)
+	      {
+		if (__elements.find (name) != __elements.end ())
+		  {
+		    ostringstream message;
+		    message << "manager::load: "
+			    << "Elements with name '" << name << "' already exists !";
+		    throw runtime_error (message.str ());
+		  }
+	      }
 	    material * matl = __creator.create_material (name, 
 							 props, 
 							 __elements, 
 							 __materials);
 	    __materials[matl->get_name ()] = mat::smart_ref<material> ();
 	    __materials[matl->get_name ()].set_ref (matl);
-	    if (__debug) clog << "DEBUG: " << "manager::load: " << "Add new material = '" << matl->get_name () << "'" << endl;
+	    if (__debug) clog << "DEBUG: " << "manager::load: " 
+			      << "Add new material = '" 
+			      << matl->get_name () << "'" << endl;
 	    __ordered_materials.push_back (matl->get_name ());
 	  }
 	else if (type == "alias")
@@ -142,8 +166,21 @@ namespace mat {
 	      {
 		ostringstream message;
 		message << "manager::load: "
-			<< "Material with name '" << name << "' already exists !";
+			<< "Material with name '" << name 
+			<< "' already exists !";
 		throw runtime_error (message.str ());
+	      }
+	    bool unique_element_material = false;
+	    if (unique_element_material)
+	      {
+		if (__elements.find (name) != __elements.end ())
+		  {
+		    ostringstream message;
+		    message << "manager::load: "
+			    << "Elements with name '" 
+			    << name << "' already exists !";
+		    throw runtime_error (message.str ());
+		  }
 	      }
 	    if (! props.has_key ("material"))
 	      {
@@ -158,7 +195,7 @@ namespace mat {
 	      {
 		ostringstream message;
 		message << "manager::load: "
-			<< "Material to be aliased with name '" << alias_material << "' does not exist !";
+			<< "Aliased material named '" << alias_material << "' does not exist !";
 		throw runtime_error (message.str ());
 	      }
 	    __materials[name] = mat::smart_ref<material> ();
@@ -190,16 +227,16 @@ namespace mat {
 	 
     {
       out_ << indent << du::i_tree_dumpable::tag
-	   << "Isotopes : ";
+	   << "Isotopes";
       if ( __isotopes.size () == 0)
 	{
-	  out_ << "<empty>" << endl; 
+	  out_ << " : <empty>" << endl; 
 	}
       else
         {
-	  out_ << endl;
+	  out_ << " [" << __isotopes.size () << "] :" << endl;
 	  for (isotope_dict_t::const_iterator i = __isotopes.begin ();
-	        i != __isotopes.end ();
+	       i != __isotopes.end ();
 	       i++)
 	    {
 	      ostringstream indent_oss;
@@ -218,7 +255,7 @@ namespace mat {
 		  out_ << du::i_tree_dumpable::last_tag;
 		  indent_oss << du::i_tree_dumpable::last_skip_tag;;
 		}
-	      out_ << "Isotope '" << i->first << "'" << endl;
+	      out_ << "Isotope '" << i->first << "' :" << endl;
 	      i->second.get_ref ().tree_dump (out_, "", indent_oss.str ());
 	    }
         }
@@ -226,16 +263,16 @@ namespace mat {
    
     {
       out_ << indent << du::i_tree_dumpable::tag
-	   << "Elements : ";
+	   << "Elements";
       if ( __elements.size () == 0)
 	{
-	  out_ << "<empty>" << endl; 
+	  out_ << " : <empty>" << endl; 
 	}
       else
         {
-	  out_ << endl;
+	  out_ << " [" << __elements.size () << "] :" << endl;
 	  for (element_dict_t::const_iterator i = __elements.begin ();
-	        i != __elements.end ();
+	       i != __elements.end ();
 	       i++)
 	    {
 	      ostringstream indent_oss;
@@ -254,7 +291,7 @@ namespace mat {
 		  out_ << du::i_tree_dumpable::last_tag;
 		  indent_oss << du::i_tree_dumpable::last_skip_tag;;
 		}
-	      out_ << "Element '" << i->first << "'" << endl;
+	      out_ << "Element '" << i->first << "' :" << endl;
 	      i->second.get_ref ().tree_dump (out_, "", indent_oss.str ());
 	    }
         }
@@ -262,16 +299,16 @@ namespace mat {
 	    
     {
       out_ << indent << du::i_tree_dumpable::tag
-	   << "Materials : ";
+	   << "Materials";
       if ( __materials.size () == 0)
 	{
-	  out_ << "<empty>" << endl; 
+	  out_ << " : <empty>" << endl; 
 	}
       else
         {
-	  out_ << endl;
+	  out_ << " [" << __materials.size () << "] :" << endl;
 	  for (material_dict_t::const_iterator i = __materials.begin ();
-	        i != __materials.end ();
+	       i != __materials.end ();
 	       i++)
 	    {
 	      ostringstream indent_oss;
@@ -295,7 +332,7 @@ namespace mat {
 		{
 		  out_ << " (alias)";
 		}
-	      out_ << endl;
+	      out_ << " : " << endl;
 	      i->second.get_ref ().tree_dump (out_, "", indent_oss.str ());
 	    }
         }
@@ -304,16 +341,16 @@ namespace mat {
 	    
     {
       out_ << indent << du::i_tree_dumpable::tag
-	   << "Materials (ordered): ";
+	   << "Materials (ordered)";
       if ( __ordered_materials.size () == 0)
 	{
-	  out_ << "<empty>" << endl; 
+	  out_ << " : <empty>" << endl; 
 	}
       else
         {
-	  out_ << endl;
+	  out_ << " [" << __ordered_materials.size () << "] :" << endl;
 	  for (list<string>::const_iterator i = __ordered_materials.begin ();
-	        i != __ordered_materials.end ();
+	       i != __ordered_materials.end ();
 	       i++)
 	    {
 	      ostringstream indent_oss;
@@ -332,7 +369,7 @@ namespace mat {
 		  out_ << du::i_tree_dumpable::last_tag;
 		  indent_oss << du::i_tree_dumpable::last_skip_tag;;
 		}
-	      out_ << "Material '" << *i << "'" << endl;
+	      out_ << "Material '" << *i << "' " << endl;
 	    }
         }
     }     
@@ -347,19 +384,26 @@ namespace mat {
   void manager::export_gdml (ostream & out_) const
   {
     geomtools::gdml_writer GW;
+    export_gdml (GW);
+    out_ << GW.get_stream (geomtools::gdml_writer::MATERIALS_SECTION).str ();    
+  }
 
+  void manager::export_gdml (geomtools::gdml_writer & gw_) const
+  {
+    // export isotopes:
     for (isotope_dict_t::const_iterator i = __isotopes.begin ();
 	 i != __isotopes.end ();
 	 i++)
       {
 	const isotope & iso = i->second.get_ref ();
-	GW.add_isotope (i->first, 
+	gw_.add_isotope (i->first, 
 			iso.get_Z (),
 			iso.get_A (),
 			iso.get_mass ()); // / (CLHEP::g /CLHEP::mole));
 		     
-      }
+      } // end of loop on isotopes
 
+    // export elements:
     for (element_dict_t::const_iterator i = __elements.begin ();
 	 i != __elements.end ();
 	 i++)
@@ -373,10 +417,88 @@ namespace mat {
 	  {
 	    fractions[j->first] = j->second.weight;
 	  }
-	GW.add_element (i->first, fractions);
-      }
+	gw_.add_element (i->first, fractions);
+      } // end of loop on elements
 
-    out_ << GW.get_stream (geomtools::gdml_writer::MATERIALS_SECTION).str ();
+    // export materials:
+    for (list<string>::const_iterator i = __ordered_materials.begin ();
+	 i != __ordered_materials.end ();
+	 i++)
+      {
+	const string & material_name = *i;
+	material_dict_t::const_iterator found 
+	  = __materials.find (material_name);
+	if (found == __materials.end ())
+	  {
+	    ostringstream message;
+	    message << "manager::export_gdml: "
+		    << "Missing property 'material' for a material alias !";
+	    throw runtime_error (message.str ());		
+	  }
+	const material & a_mat = found->second.get_ref ();
+
+	// composite by mean Z and A:
+	if (a_mat.is_composed_by_mean_z_a ())
+	  {
+	    gw_.add_material (material_name, 
+			     a_mat.get_mean_z (), 
+			     a_mat.get_density (), 
+			     a_mat.get_mean_a ());
+	  }
+
+	// composite by number of atoms:
+	if (a_mat.is_composed_by_number_of_atoms ())
+	  {
+	    const composition_map_t & comp = a_mat.get_composition ();
+	    map<string, size_t> natoms_map;
+	    for (composition_map_t::const_iterator jcomp = comp.begin ();
+		 jcomp != comp.end ();
+		 jcomp++)
+	      {
+		const compound_entry & ce = jcomp->second;
+		string elmt_name = ce.elt_ptr->get_name ();
+		size_t elmt_nb_of_atoms = (size_t) ce.nb_of_atoms;
+		natoms_map[elmt_name] = elmt_nb_of_atoms;
+	      }
+	    string formula = material_name;
+	    if (a_mat.grab_properties ().has_key ("formula"))
+	      {
+		formula = a_mat.grab_properties ().fetch_string ("formula");
+	      }
+	    gw_.add_material (material_name, 
+			     formula, 
+			     a_mat.get_density (), 
+			     natoms_map);
+	  }
+
+	// composite by fraction mass:
+	if (a_mat.is_composed_by_fraction_mass ())
+	  {
+	    const composition_map_t & comp = a_mat.get_composition ();
+	    map<string, double> fractions_map;
+	    for (composition_map_t::const_iterator jcomp = comp.begin ();
+		 jcomp != comp.end ();
+		 jcomp++)
+	      {
+		const compound_entry & ce = jcomp->second;
+		string compound_name;
+		if (ce.elt_ptr != 0) compound_name = ce.elt_ptr->get_name ();
+		if (ce.mat_ptr != 0) compound_name = ce.mat_ptr->get_name ();
+		double compound_fraction = ce.weight;
+		fractions_map[compound_name] = compound_fraction;
+	      }
+	    string formula = material_name;
+	    if (a_mat.grab_properties ().has_key ("formula"))
+	      {
+		formula = a_mat.grab_properties ().fetch_string ("formula");
+	      }
+	    gw_.add_material (material_name, 
+			     formula, 
+			     a_mat.get_density (), 
+			     fractions_map);
+	  }
+      } // end of loop on materials
+
     return;
   }
   

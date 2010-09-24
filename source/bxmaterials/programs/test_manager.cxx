@@ -23,6 +23,7 @@ int main (int argc_, char ** argv_)
   
       bool debug = false;
       list<string> input_files;
+      bool generate_gdml = false;
 
       int iarg = 1;
       bool parsing_options = true;
@@ -41,6 +42,10 @@ int main (int argc_, char ** argv_)
                if ((option == "-d") || (option == "--debug")) 
                  {
                    debug = true;
+                 }
+               else if ((option == "-g") || (option == "--generate-gdml")) 
+                 {
+                   generate_gdml = true;
                  }
                else 
                  { 
@@ -70,12 +75,19 @@ int main (int argc_, char ** argv_)
 	  datatools::utils::multi_properties config ("name", "type");
 	  datatools::utils::fetch_path_with_env (*i);
 	  config.read (*i);
-	  clog << "Config file '" << *i << "' : " << endl;
-	  config.tree_dump (clog, "");
+	  if (debug)
+	    {
+	      clog << "Config file '" << *i << "' : " << endl;
+	      config.tree_dump (clog, "", "DEBUG: ");
+	    }
 	  my_manager.load (config);
 	}
       my_manager.tree_dump (clog, "Material manager: ");
-      my_manager.export_gdml (cout);
+
+      if (generate_gdml)
+	{
+	  my_manager.export_gdml (cout);
+	}
 
     }
   catch (exception & x)

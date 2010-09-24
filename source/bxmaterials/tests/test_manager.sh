@@ -6,7 +6,10 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-${MATERIALS_ROOT}/$(materials-config --system)/bin/test_manager --debug \
+#${MATERIALS_ROOT}/$(materials-config --system)/bin/test_manager \ --debug \
+#
+
+${MATERIALS_ROOT}/$(materials-config --system)/bin/test_manager -g \
   ${MATERIALS_ROOT}/resources/test_isotopes.def \
   ${MATERIALS_ROOT}/resources/test_elements.def \
   ${MATERIALS_ROOT}/resources/test_materials.def \

@@ -110,6 +110,13 @@ int main (int argc_, char ** argv_)
       datatools::utils::properties matl_1_conf;
       matl_1_conf.store ("density", 1.0);
       matl_1_conf.store ("density.unit", "g/cm3");
+      matl_1_conf.store ("composition.mode", "fraction_mass");
+      vector<string> compounds_names;
+      vector<double> compounds_masses;
+      compounds_names.push_back ("elmt_1");
+      compounds_masses.push_back (1.0);
+      matl_1_conf.store ("composition.names", compounds_names);
+      matl_1_conf.store ("composition.fraction_mass", compounds_masses);
       {
 	mat::material * matl = my_factory.create_material ("matl_1", 
 							   matl_1_conf,

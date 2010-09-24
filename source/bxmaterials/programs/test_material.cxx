@@ -85,25 +85,33 @@ int main (int argc_, char ** argv_)
       
  // Definition Of Materials :        
     
-      mat::material mat_H20;
-      mat_H20.set_name ("Eau (H20)");
-      mat_H20.add_element_by_nb_of_atoms (elt_H,2);
-      mat_H20.add_element_by_nb_of_atoms (elt_O,1);      
-      mat_H20.grab_properties ().store ("state", "liquid");
-      mat_H20.set_density (1.* mat::material::g_per_cm3);
-      mat_H20.build();
-      mat_H20.tree_dump (clog, "First material (H20) : ");    
+      mat::material mat_H2O;
+      mat_H2O.set_name ("water (H2O)");
+      mat_H2O.add_element_by_nb_of_atoms (elt_H,2);
+      mat_H2O.add_element_by_nb_of_atoms (elt_O,1);      
+      mat_H2O.grab_properties ().store ("state", "liquid");
+      mat_H2O.set_density (1.* mat::material::g_per_cm3);
+      mat_H2O.build();
+      mat_H2O.tree_dump (clog, "First material (H2O) : ");    
       
-      double conc = 1e-2;     
       
-      mat::material mat_Eau_Boree;
-      mat_Eau_Boree.set_name ("Eau boree");
-      mat_Eau_Boree.add_element_by_mass (elt_B,conc);
-      mat_Eau_Boree.add_material_by_mass (mat_H20,1.-conc);      
-      mat_Eau_Boree.grab_properties ().store ("state", "liquid");
-      mat_Eau_Boree.set_density (1.* mat::material::g_per_cm3);
-      mat_Eau_Boree.build();
-      mat_Eau_Boree.tree_dump (clog, "2nd material Eau boree : "); 
+      mat::material mat_borated_water;
+      double boron_mass_concentration = 1e-2;     
+      mat_borated_water.set_name ("borated water");
+      mat_borated_water.add_element_by_mass (elt_B, boron_mass_concentration);
+      mat_borated_water.add_material_by_mass (mat_H2O, 1. - boron_mass_concentration);      
+      mat_borated_water.grab_properties ().store ("state", "liquid");
+      mat_borated_water.set_density (1.* mat::material::g_per_cm3);
+      mat_borated_water.build ();
+      mat_borated_water.tree_dump (clog, "2nd material Borated water : "); 
+
+      mat::material mat_diamond;
+      mat_diamond.set_name ("Diamond");
+      mat_diamond.set_mean_z_a (6.0, 12.0);
+      mat_diamond.set_density (3.517 * mat::material::g_per_cm3);
+      mat_diamond.grab_properties ().store ("state", "solid");
+      mat_diamond.build ();
+      mat_diamond.tree_dump (clog, "3rd material Diamond : "); 
      
     /*  
       mat::material my_material0;
@@ -117,12 +125,12 @@ int main (int argc_, char ** argv_)
    
      
       
-      mat::material  mat_H20("Eau");  
-      mat_H20.add_element_by_nb_of_atoms (elt_H,2);
-      mat_H20.add_element_by_nb_of_atoms (elt_O,1); 
-      mat_H20.set_density (1 * mat::material::g_per_cm3); 
-      mat_H20.grab_properties ().store ("state", "liquid");
-      mat_H20.tree_dump (clog, "H2O material: "); 
+      mat::material  mat_H2O("Eau");  
+      mat_H2O.add_element_by_nb_of_atoms (elt_H,2);
+      mat_H2O.add_element_by_nb_of_atoms (elt_O,1); 
+      mat_H2O.set_density (1 * mat::material::g_per_cm3); 
+      mat_H2O.grab_properties ().store ("state", "liquid");
+      mat_H2O.tree_dump (clog, "H2O material: "); 
   
   
  */ 

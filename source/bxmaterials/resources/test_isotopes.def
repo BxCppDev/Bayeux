@@ -35,6 +35,18 @@ a : integer = 3
 z : integer = 2
 a : integer = 4
 
+### boron:
+
+[name="B-10" type="isotope"]
+#@description The B-10 isotope
+z : integer = 5
+a : integer = 10
+
+[name="B-11" type="isotope"]
+#@description The B-11 isotope
+z : integer = 5
+a : integer = 11
+
 ### carbon:
 
 [name="C-12" type="isotope"]

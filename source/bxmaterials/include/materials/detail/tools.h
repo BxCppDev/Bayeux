@@ -37,6 +37,16 @@ namespace mat {
       return __ref != 0;
     }
 
+    T * get_ptr ()
+    {
+      return __ref;
+    }
+    
+    const T * get_ptr () const
+    {
+      return __ref;
+    }
+
     T & get_ref ()
     {
       return *__ref;
