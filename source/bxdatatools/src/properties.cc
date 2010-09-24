@@ -2610,7 +2610,7 @@ namespace datatools {
 		    {
 		      std::ostringstream message;
 		      message << "properties::config::read_next_property: "
-			      << "Cannot find assign symbol!" ;
+			      << "Cannot find assign symbol !" ;
 		      throw std::runtime_error (message.str ());
 		    }
 	    
@@ -2671,14 +2671,14 @@ namespace datatools {
 			    {
 			      std::ostringstream message;
 			      message << "properties::config::read_next_property: "
-				      << "Cannot find vector size!" ;
+				      << "Cannot find vector size !" ;
 			      throw std::runtime_error (message.str ());		    
 			    }
 			  if (vsize < 0) 
 			    {
 			      std::ostringstream message;
 			      message << "properties::config::read_next_property: "
-				      << "Invalid vector size!" ;
+				      << "Invalid vector size !" ;
 			      throw std::runtime_error (message.str ());		    
 			    }
 			  char c = 0;
@@ -2686,7 +2686,7 @@ namespace datatools {
 			    {
 			      std::ostringstream message;
 			      message << "properties::config::read_next_property: "
-				      << "Cannot find expected vector size closing symbol!" ;
+				      << "Cannot find expected vector size closing symbol !" ;
 			      throw std::runtime_error (message.str ());		    
 			    }
 			  vec_ss >> c;
@@ -2694,7 +2694,7 @@ namespace datatools {
 			    {
 			      std::ostringstream message;
 			      message << "properties::config::read_next_property: "
-				      << "Invalid vector size closing symbol!" ;
+				      << "Invalid vector size closing symbol !" ;
 			      throw std::runtime_error (message.str ());
 			    }
 			}
