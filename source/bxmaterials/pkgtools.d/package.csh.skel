@@ -1,10 +1,6 @@
 # -*- mode: shell-script; -*-
 # csh startup sample script for package __Package_name__:
 
-#if ( x${__PACKAGE_NAME___ROOT} != x ) then
-#    echo "Warning: __PACKAGE_NAME___ROOT is already defined! Check for possible conflict!"
-#endif
-
 setenv __PACKAGE_NAME___ROOT __PACKAGE_ROOT__
 set uname_s=`uname -s`
 set uname_m=`uname -m | sed -e 's/ //g'`

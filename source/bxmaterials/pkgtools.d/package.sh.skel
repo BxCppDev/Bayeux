@@ -2,7 +2,7 @@
 # sh startup sample script for package __Package_name__:
 
 export __PACKAGE_NAME___ROOT=__PACKAGE_ROOT__
-echo "NOTICE: Setting up the 'datatools' package (at DATATOOLS_ROOT='${DATATOOLS_ROOT}')..." >&2
+echo "NOTICE: Setting up the '__Package_name__' package (at __PACKAGE_NAME___ROOT='${__PACKAGE_NAME___ROOT}')..." >&2
 
 uname_s=$(uname -s)
 uname_m=$(uname -m | sed -e 's/ //g')
