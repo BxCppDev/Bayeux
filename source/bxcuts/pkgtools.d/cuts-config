@@ -1,0 +1,227 @@
+#!/usr/bin/env bash
+# -*- mode: shell-script; -*-
+# cuts-config
+#
+# Note:
+# This is a default config script provided by
+# the mkskelpack program (from the PkgTools package).
+# It suits the use of some default GNU/makefile
+# generated in the package 'gmk' directory.
+#
+# Feel free to modify this file if you use another system
+# to build/install this package (i.e. Autotools).
+#
+#
+# The following environment variables may be set to change 
+# the behaviour of the cuts-config script:
+#
+# export CUTS_LDFLAGS_MODE="hardcoded_shared_lib_path"
+#  will force the usage of hardcoded path name while linking against
+#  a shared library (no use of -LPATH -lLIBNAME option)
+#
+# export CUTS_USING_CACHE_FILES=0
+#  will not use the cflags/ldflags cache accelerator files
+#
+
+help=0
+
+SCRIPTNAME="cuts-config"
+COMP=gcc
+COMPVER=$(${COMP} --version | head -1 | cut -d ' ' -f 3)
+COMPILER=-${COMP}${COMPVER}
+COMPILER=
+
+THE_SYSTEM="$(uname -s)-$(uname -m | sed -e 's/ //g')${COMPILER}"
+
+THEPACK_ROOT=/usr/local
+if [ -n "${CUTS_ROOT}" ]; then
+    THEPACK_ROOT="${CUTS_ROOT}" 
+else 
+    echo "${SCRIPTNAME}: error: 'CUTS_ROOT' environment variable is not defined!" 
+    exit 1
+fi
+
+THEPACK_INCLUDEDIR="${THEPACK_ROOT}/include" 
+
+THEPACK_LIBDIR="${THEPACK_ROOT}/${THE_SYSTEM}/lib" 
+
+THEPACK_BINDIR="${THEPACK_ROOT}/${THE_SYSTEM}/bin" 
+
+THEPACK_VERSION=0.1.0
+if [ -f "${THEPACK_ROOT}/VERSION" ]; then
+    THEPACK_VERSION="$(cat ${THEPACK_ROOT}/VERSION)"    
+elif [ -f "${THEPACK_ROOT}/pkgtools.d/package.info"  ]; then
+    version=$(cat ${THEPACK_ROOT}/pkgtools.d/package.info | grep "version=" | cut -d'=' -f2 )    
+    THEPACK_VERSION=$version
+fi
+
+using_cache_files=1
+if [ "X${CUTS_USING_CACHE_FILES}" = "X0" ]; then
+    using_cache_files=${CUTS_USING_CACHE_FILES}
+fi
+cflags_cache=${THEPACK_ROOT}/.cflags.cache
+ldflags_cache=${THEPACK_ROOT}/.ldflags.cache
+
+ldflags_mode=""
+if [ "X${CUTS_LDFLAGS_MODE}" != "X" ]; then
+    ldflags_mode="${CUTS_LDFLAGS_MODE}"
+fi
+
+opt=$1
+
+if [ "x$opt" = "x" ]; then
+    echo "${SCRIPTNAME}: error: Missing option!" 
+    help=1
+fi
+
+if [ "x$opt" = "x--help" -o "x$opt" = "x-h" -o "x$opt" = "x-?" ]; then
+    help=1
+fi
+
+if [ $help -eq 1 ]; then
+    cat<<EOF
+Usage: $SCRIPTNAME [OPTION]
+
+Known values for OPTION are:
+
+  --prefix              show cuts installation prefix
+  --incdir              print include directory
+  --libdir              print library directory
+  --bindir              print binary directory
+  --include             print include path pre-processor flags without dependencies 
+  --cflags              print include path pre-processor flags with dependencies
+  --libs                print library linking information, without dependencies
+  --ldflags             
+  --libs-depends        print library linking information, with dependencies
+  --help                print this help then exit
+  --version             print version information
+  --system              print system
+  --check               check dependencies and setup
+  --clean-cache-files   clean compile/link cache files
+
+EOF
+    exit 1
+fi 
+
+if [ "x$opt" = "x--system" ]; then
+    echo "${THE_SYSTEM}"
+    exit 0
+fi 
+
+if [ "x$opt" = "x--prefix" ]; then
+    echo "${THEPACK_ROOT}"
+    exit 0
+fi 
+
+if [ "x$opt" = "x--version" ]; then
+    echo "${THEPACK_VERSION}"
+    exit 0
+fi 
+
+if [ "x$opt" = "x--clean-cache-files" ]; then
+    if [ -f ${cflags_cache} ]; then
+	echo "${SCRIPTNAME}: NOTICE: Removing '${cflags_cache}' cache file !" >&2
+	rm -f ${cflags_cache}
+    fi
+    if [ -f ${ldflags_cache} ]; then
+	echo "${SCRIPTNAME}: NOTICE: Removing '${ldflags_cache}' cache file !" >&2
+	rm -f ${ldflags_cache}
+    fi
+    exit 0
+fi
+
+if [ "x$opt" = "x--incdir" ]; then
+    echo "${THEPACK_INCLUDEDIR}" 
+    exit 0
+fi
+
+if [ "x$opt" = "x--include" ]; then
+    echo "-I${THEPACK_INCLUDEDIR} " 
+    exit 0
+fi
+
+if [ "x$opt" = "x--cflags" ]; then
+    generate_cflags=0
+    if [ ${using_cache_files} -eq 1 ]; then
+	if [ -f ${cflags_cache} ]; then
+	    cat ${cflags_cache}
+	    exit 0
+	else
+	    generate_cflags=1
+	fi
+    else
+	generate_cflags=1
+    fi
+	    
+    if [ ${generate_cflags} -eq 1 ]; then
+	(
+	    echo -n \
+		"-fPIC " \
+		"-I${THEPACK_INCLUDEDIR} "  \
+         "`datatools-config --cflags` "  \
+	    | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py	    
+	    #echo
+	) | tee ${cflags_cache}
+    fi
+    exit 0
+fi
+
+if [ "x$opt" = "x--libdir" ]; then
+    echo "${THEPACK_LIBDIR}"
+    exit 0
+fi 
+
+if [ "x$opt" = "x--bindir" ]; then
+    echo "${THEPACK_BINDIR}"
+    exit 0
+fi 
+
+if [ "x$opt" = "x--libs" ]; then
+    echo "-L${THEPACK_LIBDIR} -lcuts "
+    exit 0
+fi 
+
+if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
+    generate_ldflags=0
+    if [ ${using_cache_files} -eq 1 ]; then
+	if [ -f ${ldflags_cache} ]; then
+	    cat ${ldflags_cache}
+	    exit 0
+	else
+	    generate_ldflags=1
+	fi
+    else
+	generate_ldflags=1
+    fi
+    
+    if [ ${generate_ldflags} -eq 1 ]; then	
+	(
+	    (
+		if [ "X${ldflags_mode}" = "Xhardcoded_shared_lib_path" ]; then
+		    echo -n "${THEPACK_LIBDIR}/libcuts.so "
+		else
+		    echo -n "-L${THEPACK_LIBDIR} -lcuts "
+		fi
+		echo -n ""  \
+         "`datatools-config --ldflags` "  \
+	    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
+	    #echo
+	) | tee ${ldflags_cache}
+    fi
+    exit 0
+fi 
+
+if [ "x$opt" = "x--check" ]; then
+    ${THEPACK_ROOT}/pkgtools.d/pkgtool check
+    if [ $? -ne 0 ]; then
+	echo "$SCRIPTNAME: error: Check procedure failed!" >&2
+	exit 1
+    fi
+    exit 0
+fi 
+
+echo "$SCRIPTNAME: error: Unknown option '${opt}'!"  >&2
+$0 --help
+exit 1
+
+# end of cuts-config
