@@ -11,13 +11,13 @@
 //  MATERIALS_VERSION / 100 % 1000 is the minor version
 //  MATERIALS_VERSION / 100000     is the major version
 
-#define MATERIALS_VERSION 100
+#define MATERIALS_VERSION 100000
 
 //  MATERIALS_LIB_VERSION must be defined to be the same as MATERIALS_VERSION
 //  but as a *string* in the form "x_y[_z]" where x is the major version
 //  number, y is the minor version number, and z is the patch level if not 0.
 
-#define MATERIALS_LIB_VERSION "0.1"
+#define MATERIALS_LIB_VERSION "1.0"
 
 #endif // __materials__version_h
 
