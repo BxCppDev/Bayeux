@@ -1,11 +1,8 @@
 # -*- mode: shell-script; -*-
 # sh startup sample script for package __Package_name__:
 
-if [ "x${__PACKAGE_NAME___ROOT}" != "x" ]; then
-    echo "Warning: __PACKAGE_NAME___ROOT is already defined! Check for possible conflict!"
-fi
-
 export __PACKAGE_NAME___ROOT=__PACKAGE_ROOT__
+echo "NOTICE: Setting up the 'datatools' package (at DATATOOLS_ROOT='${DATATOOLS_ROOT}')..." >&2
 
 uname_s=$(uname -s)
 uname_m=$(uname -m | sed -e 's/ //g')
@@ -20,18 +17,12 @@ sysdir="${__PACKAGE_NAME___ROOT}/${system}"
 export __PACKAGE_NAME___BIN_DIR="${__PACKAGE_NAME___ROOT}/${system}/bin"
 export __PACKAGE_NAME___LIB_DIR="${__PACKAGE_NAME___ROOT}/${system}/lib"
 
-export PATH="${__PACKAGE_NAME___BIN_DIR}":${PATH}
-#if [ -n "${PYTHONPATH}" ]; then
-#    export PYTHONPATH="${__PACKAGE_NAME___ROOT}/python:${PYTHONPATH}"
-#else
-#    export PYTHONPATH="${__PACKAGE_NAME___ROOT}/python"
-#fi 
-
-#if [ -n "${PKG_CONFIG_PATH}" ]; then
-#    export PKG_CONFIG_PATH="${sysdir}:${PKG_CONFIG_PATH}"
-#else
-#    export PKG_CONFIG_PATH="${sysdir}"
-#fi 
+# export PATH="${__PACKAGE_NAME___BIN_DIR}":${PATH}
+# if [ -n "${PYTHONPATH}" ]; then
+#     export PYTHONPATH="${__PACKAGE_NAME___ROOT}/python:${PYTHONPATH}"
+# else
+#     export PYTHONPATH="${__PACKAGE_NAME___ROOT}/python"
+# fi 
 
 sysarch=$(uname)
 if [ "${sysarch}" = "Linux" ]; then 

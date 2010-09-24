@@ -25,12 +25,6 @@ setenv PATH "${__PACKAGE_NAME___BIN_DIR}":${PATH}
 #    setenv PYTHONPATH "${__PACKAGE_NAME___ROOT}/python"
 #fi 
 
-#if [ -n "${PKG_CONFIG_PATH}" ]; then
-#    setenv PKG_CONFIG_PATH "${sysdir}:${PKG_CONFIG_PATH}"
-#else
-#    setenv PKG_CONFIG_PATH "${sysdir}"
-#fi 
-
 set sysarch=`uname`
 if ( ${sysarch} == Linux ) then 
   if (  $?LD_LIBRARY_PATH ) then
