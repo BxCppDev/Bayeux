@@ -1026,6 +1026,8 @@ function do_info ()
 	pkg_authors=$(cat ${pkgi_file} | grep "author=" | cut -d= -f2)
 	pkg_deps=$(cat ${pkgi_file} | grep "dependencies=" | cut -d= -f2)
 	pkg_namespace=$(cat ${pkgi_file} | grep "namespace=" | cut -d= -f2)
+	pkg_url=$(cat ${pkgi_file} | grep "URL=" | cut -d= -f2)
+	pkg_svn=$(cat ${pkgi_file} | grep "SVN base repository=" | cut -d= -f2)
 	echo -e "\tName               : ${pack_name}"
 	echo -e "\tVersion            : ${pkg_version}"
 	echo -e "\tLanguage is        : ${pkg_lang}"
@@ -1036,6 +1038,8 @@ function do_info ()
 	    echo -e "\tNamespace          : ${pkg_namespace}"
 	fi
 	echo -e "\tBuild method       : ${pkg_build}"
+	echo -e "\tURL                : ${pkg_url}"
+	echo -e "\tSVN base repository: ${pkg_svn}"
     fi
 
     __pkgtools__at_function_exit

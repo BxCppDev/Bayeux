@@ -15,7 +15,7 @@ ifeq ($(OS),Linux)
   MAKE=make
   CXX=g++
   CC=gcc
-  F77=g77
+  F77=gfortran
   LD=g++
   LDFLAGS=-O
   SOFLAGS=-shared
@@ -26,7 +26,7 @@ ifeq ($(OS),Darwin)
   MAKE=make
   CXX=g++
   CC=gcc
-  F77=g77
+  F77=gfortran
   LD=g++
   LDFLAGS=-O
   SOFLAGS=-dynamiclib -twolevel_namespace -undefined dynamic_lookup -dynamic -single_module
@@ -100,12 +100,12 @@ DATATOOLS_NO_FPU=$(shell ls -1 $(PACKAGE_DIR)/gmk/datatools_without_fpu.config 2
 FPU_FLAGS=
 ifeq ($(DATATOOLS_NO_FPU),)
 DATATOOLS_NO_FPU=0
-$(warning WARNING: datatools uses 'Floating point utilities' (FPU)!)
+$(warning WARNING: datatools uses 'Floating point utilities' (FPU) !)
 FPU_FLAGS=-DIOFACTORY_USE_FPU=1
 DEPCPPFLAGS+=-I$(PACKAGE_DIR)/boost/vault/fpu
 else
 DATATOOLS_NO_FPU=1
-$(warning WARNING: datatools does not use FPU!)
+$(warning WARNING: datatools does not use FPU !)
 endif
 
 ### support for std::bitset serialization:
@@ -115,12 +115,12 @@ DATATOOLS_NO_EOS_PBA=$(shell ls -1 $(PACKAGE_DIR)/gmk/datatools_without_eos_pba.
 EOS_PBA_FLAGS=
 ifeq ($(DATATOOLS_NO_EOS_PBA),)
 DATATOOLS_NO_EOS_PBA=0
-$(warning WARNING: datatools uses 'Portable Binary Archive' (PBA from eos)!) 
+$(warning WARNING: datatools uses 'Portable Binary Archive' (PBA from eos) !) 
 EOS_PBA_FLAGS=-DIOFACTORY_USE_EOS_PBA=1
 DEPCPPFLAGS+=-I$(PACKAGE_DIR)/boost/vault/eos_pba
 else
 DATATOOLS_NO_EOS_PBA=1
-$(warning WARNING: datatools does not use EOS_PBA!)
+$(warning WARNING: datatools does not use EOS_PBA !)
 endif
 
 CPPFLAGS1+=-DDATATOOLS_USE_TREE_DUMP=1
@@ -229,8 +229,7 @@ test:
 
 .PHONY : build_special
 build_special :
-	@echo "Target 'build_special'..."
-	@#cd $(BASEDIR)/boost/vault; make 
+	@echo "NOTICE: Target 'build_special'..." >&2
 
 .PHONY : install
 install : 
@@ -238,41 +237,36 @@ install :
 
 .PHONY : install_eos_pba
 install_eos_pba :  
-	@echo "installing with EOS_PBA..."
+	@echo "NOTICE: Installing with EOS_PBA..." >&2
 	@cat $(BASEDIR)/pkgtools.d/package.csh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).csh
 	@cat $(BASEDIR)/pkgtools.d/package.sh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).sh
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
 	@ln -s -f $(PACKAGE_ROOT)/pkgtools.d/$(LIBNAME)-config $(BINDIR)/$(LIBNAME)-config
-
-	@echo "installing with EOS_PBA done."
-	@echo ""
+	@echo "NOTICE: Installing with EOS_PBA done." >&2
 
 .PHONY : install_no_eos_pba
 install_no_eos_pba : 
-	@echo "installing without EOS_PBA..."
+	@echo "NOTICE: Installing without EOS_PBA..." >&2
 	@cat $(BASEDIR)/pkgtools.d/package.csh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" -e "s@NO_EOS_PBA 0@NO_EOS_PBA 1@g" > $(BASEDIR)/$(LIBNAME).csh
 	@cat $(BASEDIR)/pkgtools.d/package.sh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" -e "s@NO_EOS_PBA=0@NO_EOS_PBA=1@g" > $(BASEDIR)/$(LIBNAME).sh
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
 	@ln -s -f $(PACKAGE_ROOT)/pkgtools.d/$(LIBNAME)-config $(BINDIR)/$(LIBNAME)-config
-
-	@echo "installing without EOS_PBA done."
-	@echo ""
+	@echo "NOTICE: Installing without EOS_PBA done." >&2
 
 #########################################################################
 
 .PHONY : clean_special
 clean_special :
-	@echo "Target 'clean_special'..."
+	@echo "NOTICE: Target 'clean_special'..." >&2
 	@#cd $(BASEDIR)/boost/vault; make clean
 
 .PHONY : uninstall
 uninstall : 
-	@echo "Uninstalling..."
+	@echo "NOTICE: Uninstalling..." >&2
 	test -L $(BINDIR)/$(LIBNAME)-config && $(RM) $(BINDIR)/$(LIBNAME)-config || echo -n ""
 	test -f $(BASEDIR)/$(LIBNAME).sh && $(RM) $(BASEDIR)/$(LIBNAME).sh || echo -n ""
 	test -f $(BASEDIR)/$(LIBNAME).csh && $(RM) $(BASEDIR)/$(LIBNAME).csh || echo -n ""
-	@echo "uninstalling done."
-	@echo ""
+	@echo "NOTICE: Uninstalling done." >&2
 
 #########################################################################
 
@@ -280,10 +274,10 @@ uninstall :
 system :
 	@echo "$(SYSTEM)"
 
-.PHONY : setup
-setup :
-	@echo "export PATH=$(PACKAGE_DIR)/$(SYSTEM)/bin:$(PATH)"
-	@echo "export LD_LIBRARY_PATH=$(PACKAGE_DIR)/$(SYSTEM)/lib:$(LD_LIBRARY_PATH)"
+#.PHONY : setup
+#setup :
+#	@echo "export PATH=$(PACKAGE_DIR)/$(SYSTEM)/bin:$(PATH)"
+#	@echo "export LD_LIBRARY_PATH=$(PACKAGE_DIR)/$(SYSTEM)/lib:$(LD_LIBRARY_PATH)"
 
 .PHONY : lib
 lib : lib_shared
@@ -299,16 +293,14 @@ lib_shared : $(SHLIBFILE)
 
 .PHONY : clean
 clean : clean_special
-	@echo "Cleaning..."
+	@echo "NOTICE: Cleaning..." >&2
 	find $(BASEDIR)/ -name "*~" -exec $(RM) \{\} \; 
 	test -d $(ARCHDIR)/ && $(RM) -r $(ARCHDIR) || echo -n ""
-	@echo "Cleaning done."
-	@echo
+	@echo "NOTICE: Cleaning done." >&2
 
 .PHONY : distclean
 distclean : uninstall clean
-	@echo "Total cleaning..."
-	@echo
+	@echo "NOTICE: Total cleaning..." >&2
 
 .PHONY : bin
 bin : bin_shared
@@ -321,58 +313,56 @@ bins : bin_shared bin_static
 
 .PHONY : bin_static
 bin_static : $(binaries_static)
-	@echo "Building static binaries done."
-	@echo
+	@echo "NOTICE: Building static binaries done." >&2
 
 .PHONY : bin_shared
 bin_shared : $(binaries)
-	@echo "Building shared binaries done."
+	@echo "NOTICE: Building shared binaries done." >&2
 	@echo
 
 .PHONY : bin_test_shared
 bin_test_shared : $(binaries_test)
 
 $(LIBFILE) : $(objectsWithPath) 
-	@echo "Building static lib '$(@)'..."
+	@echo "NOTICE: Building static lib '$(@)'..." >&2
 	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
 	for file_object in $(objects); do \
 	  $(AR) -rusv $(LIBDIR)/$(LIBFILE) $(OBJDIR)/$(notdir $${file_object}) ; done
 	ranlib $(LIBDIR)/$(notdir $(@))
-	@echo "Building static lib '$(@)' done."
-	@echo
+	@echo "NOTICE: Building static lib '$(@)' done." >&2
 
 $(SHLIBFILE) : $(objectsWithPath) 
-	@echo "Building shared lib '$(@)'..."
+	@echo "NOTICE: Building shared lib '$(@)'..." >&2
 	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
 	@test -n "$(objectsWithPath)" && $(LD) $(CXXFLAGS) $(SOFLAGS) $(^) -o $(LIBDIR)/$(notdir $(@)) || echo ""
-	@echo "Building shared lib '$(@)' done."
+	@echo "NOTICE: Building shared lib '$(@)' done." >&2
 	@echo
 
 $(OBJDIR)/%$(OBJEXT) : %$(SOURCEEXT) 
-	@echo "Compiling module '$(@)'..."
+	@echo "NOTICE: Compiling module '$(@)'..." >&2
 	@test -d $(OBJDIR) || mkdir -p $(OBJDIR)
 	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< -o $(OBJDIR)/$(notdir $(@))
 
 %.static$(BINEXT) : %$(PROGEXT) | lib_static
-	@echo "Compiling statically linked program '$(@)'..."
+	@echo "NOTICE: Compiling statically linked program '$(@)'..." >&2
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
 	$(CXX) -I. -I$(PROGDIR) $(CPPFLAGS) $(CXXFLAGS) $< $(STATICFLAGS) $(LDFLAGS) -o $(BINDIR)/$(notdir $(@))
 
 ### 2009-11-12 FM: remove --shared flags (produce segmentation fault)
 %$(BINEXT) : %$(PROGEXT) | lib_shared 
-	@echo "Compiling program '$(@)' with shared library..."
+	@echo "NOTICE: Compiling program '$(@)' with shared library..." >&2
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
 	$(CXX) -I. -I$(PROGDIR) $(CPPFLAGS) $(CXXFLAGS) $< $(SHFLAGS) -o $(BINDIR)/$(notdir $(@))
 
 .PHONY : dist
 dist : distclean
-	echo "Making the distribution tarball '$(LIBNAME)-$(LIBVER).tar.gz'"
+	@echo "NOTICE: Making the distribution tarball '$(LIBNAME)-$(LIBVER).tar.gz'" >&2
 	make clean
 	tar cvzf "../../$(LIBNAME)-$(LIBVER).tar.gz" --exclude ".svn" ../../$(PACKAGENAME)/
 
 .PHONY : bzdist
 bzdist : distclean
-	echo "Making the distribution tarball '$(LIBNAME)-$(LIBVER).tar.bz2'"
+	@echo "NOTICE: Making the distribution tarball '$(LIBNAME)-$(LIBVER).tar.bz2'" >&2
 	make clean
 	tar cvjf "../../$(LIBNAME)-$(LIBVER).tar.bz2" --exclude ".svn" ../../$(PACKAGENAME)/
 

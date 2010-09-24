@@ -3,7 +3,7 @@
 /* datatools.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-02-25
- * Last modified: 2008-02-25
+ * Last modified: 2010-09-25
  * 
  * License: 
  * 
@@ -89,6 +89,8 @@
 
 #ifndef __datatools__datatools_h
 #define __datatools__datatools_h 1
+
+#include <datatools/datatools_version.h>
 
 #include <datatools/serialization/io_factory.h>
 #include <datatools/serialization/serialization.h>

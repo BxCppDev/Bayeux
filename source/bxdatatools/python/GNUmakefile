@@ -84,12 +84,12 @@ DATATOOLS_NO_FPU=$(shell ls -1 $(PACKAGE_DIR)/gmk/datatools_without_fpu.config 2
 FPU_FLAGS=
 ifeq ($(DATATOOLS_NO_FPU),)
 DATATOOLS_NO_FPU=0
-$(warning WARNING: datatools uses 'Floating point utilities' (FPU)!)
+#$(warning WARNING: datatools uses 'Floating point utilities' (FPU) !)
 FPU_FLAGS=-DIOFACTORY_USE_FPU=1
 DEPCPPFLAGS+=-I$(PACKAGE_DIR)/boost/vault/fpu
 else
 DATATOOLS_NO_FPU=1
-$(warning WARNING: datatools does not use FPU!)
+#$(warning WARNING: datatools does not use FPU !)
 endif
 
 
@@ -97,12 +97,12 @@ DATATOOLS_NO_EOS_PBA=$(shell ls -1 $(PACKAGE_DIR)/gmk/datatools_without_eos_pba.
 EOS_PBA_FLAGS=
 ifeq ($(DATATOOLS_NO_EOS_PBA),)
 DATATOOLS_NO_EOS_PBA=0
-$(warning WARNING: datatools uses 'Portable Binary Archive' (PBA from eos)!) 
+#$(warning WARNING: datatools uses 'Portable Binary Archive' (PBA from eos) !) 
 EOS_PBA_FLAGS=-DIOFACTORY_USE_EOS_PBA=1
 DEPCPPFLAGS+=-I$(PACKAGE_DIR)/boost/vault/eos_pba
 else
 DATATOOLS_NO_EOS_PBA=1
-$(warning WARNING: datatools does not use EOS_PBA!)
+#$(warning WARNING: datatools does not use EOS_PBA !)
 endif
 
 CPPFLAGS1+=-DDATATOOLS_USE_TREE_DUMP=1
@@ -130,10 +130,10 @@ LDFLAGS1+=-lm
 CPPFLAGS+=$(shell echo $(CPPFLAGS1) | sed -e "s/-Wstrict-prototypes//g" | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py ) 
 LDFLAGS+=$(shell echo $(LDFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r) 
 
-.PHONY : all clean lib shlib test
-
+.PHONY : all
 all : lib
 
+.PHONY : test
 test:
 	@echo "SYSTEM=$(SYSTEM)"
 	@echo "PYMODULENAME=$(PYMODULENAME)"
@@ -145,22 +145,27 @@ test:
 	@echo "python_version=$(python_version)"
 	@echo "python_config=$(python_config)"
 
+.PHONY : clean
 clean :
 	$(RM) *~
 	$(RM) *.pyc
 	$(RM) $(PYSHLIBFILE)
 
+.PHONY : lib
 lib : shlib
 
+.PHONY : shlib
 shlib : $(PYSHLIBFILE)
 
 $(PYSHLIBFILE) : $(PYMODSRCFILE) 
 	$(CXX) $< $(CPPFLAGS) $(SOFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ 
 
+.PHONY : install
 install :
-	#ln -s $(PACKAGE_DIR)/scripts/n3visu $(PACKAGE_DIR)/$(SYSTEM)/bin/
 
+
+.PHONY : uninstall
 uninstall :
-	#test -L $(PACKAGE_DIR)/$(SYSTEM)/bin/n3visu && rm -f $(PACKAGE_DIR)/$(SYSTEM)/bin/n3visu
+
 
 # end of GNUmakefile

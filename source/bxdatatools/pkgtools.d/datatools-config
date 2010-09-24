@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # -*- mode: shell-script; -*-
 # datatools-config
 #
@@ -11,15 +11,27 @@
 # Feel free to modify this file if you use another system
 # to build/install this package (i.e. Autotools).
 #
+#
+# The following environment variables may be set to change 
+# the behaviour of the toto-config script:
+#
+# export DATATOOLS_LDFLAGS_MODE="hardcoded_shared_lib_path"
+#  will force the usage of hardcoded path name while linking against
+#  a shared library (no use of -LPATH -lLIBNAME option)
+#
+# export DATATOOLS_USING_CACHE_FILES=0
+#  will not use the cflags/ldflags cache accelerator files
+#
+
 help=0
 
 SCRIPTNAME="datatools-config"
 COMP=gcc
 COMPVER=$(${COMP} --version | head -1 | cut -d ' ' -f 3)
-COMPILER=${COMP}${COMPVER}
+#COMPILER=${COMP}${COMPVER}
+COMPILER=
 
-###THE_SYSTEM="$(uname -s)-$(uname -m | sed -e 's/ //g')-${COMPILER}"
-THE_SYSTEM="$(uname -s)-$(uname -m | sed -e 's/ //g')"
+THE_SYSTEM="$(uname -s)-$(uname -m | sed -e 's/ //g')${COMPILER}"
 
 THEPACK_ROOT=/usr/local
 if [ -n "${DATATOOLS_ROOT}" ]; then
@@ -43,6 +55,18 @@ elif [ -f "$THEPACK_ROOT/pkgtools.d/package.info"  ]; then
     THEPACK_VERSION=$version
 fi
 
+using_cache_files=1
+if [ "X${DATATOOLS_USING_CACHE_FILES}" = "X0" ]; then
+    using_cache_files=${TOTO_USING_CACHE_FILES}
+fi
+cflags_cache=${THEPACK_ROOT}/.cflags.cache
+ldflags_cache=${THEPACK_ROOT}/.ldflags.cache
+
+ldflags_mode=""
+if [ "X${TOTO_LDFLAGS_MODE}" != "X" ]; then
+    ldflags_mode="${TOTO_LDFLAGS_MODE}"
+fi
+
 # 2009-11-13 FM: add support for ser_bitset (vault)
 with_boost_bitset=1
 ###if [ ! -L ${THEPACK_ROOT}/boost/vault/ser_bitset ]; then
@@ -50,6 +74,7 @@ if [ ! -d ${THEPACK_ROOT}/boost/vault/local ]; then
     with_boost_bitset=0
     export DATATOOLS_NO_BITSET=1
 fi
+
 with_boost_eos_pba=1
 with_boost_fpu=1
 if [ "x${DATATOOLS_NO_EOS_PBA}" == "x1" ]; then
@@ -58,6 +83,7 @@ fi
 if [ "x${DATATOOLS_NO_FPU}" == "x1" ]; then
     with_boost_fpu=0
 fi
+
 opt=$1
 
 if [ "x$opt" = "x" ]; then
@@ -94,6 +120,7 @@ Known values for OPTION are:
   --with-fpu            print if Floating Point Utility is used
   --with-eos-pba        print if Portable Binary Archive (EOS) is used
   --boost-version       print Boost version
+  --clean-cache-files   clean compile/link cache files
 
 EOF
     exit 1
@@ -114,6 +141,18 @@ if [ "x$opt" = "x--version" ]; then
     exit 0
 fi 
 
+if [ "x$opt" = "x--clean-cache-files" ]; then
+    if [ -f ${cflags_cache} ]; then
+        echo "${SCRIPTNAME}: NOTICE: Removing '${cflags_cache}' cache file !" >&2
+        rm -f ${cflags_cache}
+    fi
+    if [ -f ${ldflags_cache} ]; then
+        echo "${SCRIPTNAME}: NOTICE: Removing '${ldflags_cache}' cache file !" >&2
+        rm -f ${ldflags_cache}
+    fi
+    exit 0
+fi
+
 if [ "x$opt" = "x--incdir" ]; then
     echo "${THEPACK_INCLUDEDIR}" 
     exit 0
@@ -125,26 +164,41 @@ if [ "x$opt" = "x--include" ]; then
 fi
 
 if [ "x$opt" = "x--cflags" ]; then
-    (
-	echo -n "-fPIC " 
-	echo -n "-I${THEPACK_INCLUDEDIR} -DDATATOOLS_USE_TREE_DUMP=1 "  \
-	    "`boost-config --cflags` "
-	if [ ${with_boost_bitset} -eq 1 ]; then
-            echo -n "-I${THEPACK_ROOT}/boost/vault/local "
-	fi
-	if [ ${with_boost_eos_pba} -eq 1 ]; then
-            echo -n "-DIOFACTORY_USE_EOS_PBA=1 "
-            echo -n "-I${THEPACK_ROOT}/boost/vault/eos_pba "
-	fi
-	if [ ${with_boost_fpu} -eq 1 ]; then
-            echo -n "-DIOFACTORY_USE_FPU=1 "
-            echo -n "-I${THEPACK_ROOT}/boost/vault/fpu "
-	    echo -n "-I${THEPACK_ROOT}/boost/vault/endian "
-	fi
-	echo -n "`clhep-config --include` "
-    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py 
-    echo
+    generate_cflags=0
+    if [ ${using_cache_files} -eq 1 ]; then
+        if [ -f ${cflags_cache} ]; then
+            cat ${cflags_cache}
+            exit 0
+        else
+            generate_cflags=1
+        fi
+    else
+        generate_cflags=1
+    fi
 
+    if [ ${generate_cflags} -eq 1 ]; then
+	(
+	    (
+		echo -n \
+		    "-fPIC " \
+		    "-I${THEPACK_INCLUDEDIR} -DDATATOOLS_USE_TREE_DUMP=1 "  \
+		    "`boost-config --cflags` "
+		if [ ${with_boost_bitset} -eq 1 ]; then
+		    echo -n "-I${THEPACK_ROOT}/boost/vault/local "
+		fi
+		if [ ${with_boost_eos_pba} -eq 1 ]; then
+		    echo -n "-DIOFACTORY_USE_EOS_PBA=1 "
+		    echo -n "-I${THEPACK_ROOT}/boost/vault/eos_pba "
+		fi
+		if [ ${with_boost_fpu} -eq 1 ]; then
+		    echo -n "-DIOFACTORY_USE_FPU=1 "
+		    echo -n "-I${THEPACK_ROOT}/boost/vault/fpu "
+		    echo -n "-I${THEPACK_ROOT}/boost/vault/endian "
+		fi
+		echo -n "`clhep-config --include` " 
+	    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py 
+	) | tee ${cflags_cache}
+    fi
     exit 0
 fi
 
@@ -159,19 +213,42 @@ if [ "x$opt" = "x--bindir" ]; then
 fi 
 
 if [ "x$opt" = "x--libs" ]; then
-    echo "-L${THEPACK_LIBDIR} -ldatatools "
+    if [ "X${ldflags_mode}" = "Xhardcoded_shared_lib_path" ]; then
+        echo -n "${THEPACK_LIBDIR}/libdatatools.so "
+    else
+        echo -n "-L${THEPACK_LIBDIR} -ldatatools "
+    fi
     exit 0
 fi 
 
 if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
-    (
-	echo -n "-L${THEPACK_LIBDIR} -ldatatools "  \
-	    "`boost-config --ldflags serialization iostreams filesystem system` " 
-	echo -n "`clhep-config --libs` -lm "
-	###echo -n "-lcurses "
-    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
-    echo
-#      "`liblockfile-config --ldflags` "  
+    generate_ldflags=0
+    if [ ${using_cache_files} -eq 1 ]; then
+        if [ -f ${ldflags_cache} ]; then
+            cat ${ldflags_cache}
+            exit 0
+        else
+            generate_ldflags=1
+        fi
+    else
+        generate_ldflags=1
+    fi
+    
+    if [ ${generate_ldflags} -eq 1 ]; then      
+        (
+            (
+		if [ "X${ldflags_mode}" = "Xhardcoded_shared_lib_path" ]; then
+                    echo -n "${THEPACK_LIBDIR}/libdatatools.so "
+		else
+                    echo -n "-L${THEPACK_LIBDIR} -ldatatools "
+		fi
+		
+		echo -n "-L${THEPACK_LIBDIR} -ldatatools "  
+		echo -n "`boost-config --ldflags serialization iostreams filesystem system` " 
+		echo -n "`clhep-config --libs` -lm "
+            ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r 
+	) | tee ${ldflags_cache}
+    fi
     exit 0
 fi 
 

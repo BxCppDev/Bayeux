@@ -1,24 +1,26 @@
 # -*- mode: shell-script; -*-
 # sh startup sample script for package __Package_name__:
 
-if [ "x${__PACKAGE_NAME___ROOT}" != "x" ]; then
-    echo "Warning: __PACKAGE_NAME___ROOT is already defined! Check for possible conflict!"
-fi
-
+#if [ "x${__PACKAGE_NAME___ROOT}" != "x" ]; then
+#    echo "Warning: __PACKAGE_NAME___ROOT is already defined ! Check for possible conflict !" >&2
+#fi
 export __PACKAGE_NAME___ROOT=__PACKAGE_ROOT__
+echo "NOTICE: Setting up the '__Package_name__' package (at __PACKAGE_NAME___ROOT='${__PACKAGE_NAME___ROOT}')..." >&2
 
 uname_s=$(uname -s)
 uname_m=$(uname -m | sed -e 's/ //g')
-comp=gcc
-compver=$(gcc --version | head -1 | cut -d ' ' -f 3)
-compiler=${comp}${compver}
-#system=${uname_s}-${uname_m}-${compiler}
-system=${uname_s}-${uname_m}
+#comp=gcc
+#compver=$(gcc --version | head -1 | cut -d ' ' -f 3)
+#compver=$(gccver)
+compiler=
+#compiler=-${comp}${compver}
+system=${uname_s}-${uname_m}${compiler}
+sysdir="${__PACKAGE_NAME___ROOT}/${system}"
 
-libs="${__PACKAGE_NAME___ROOT}/${system}/lib"
-bins="${__PACKAGE_NAME___ROOT}/${system}/bin"
+export __PACKAGE_NAME___BIN_DIR="${__PACKAGE_NAME___ROOT}/${system}/bin"
+export __PACKAGE_NAME___LIB_DIR="${__PACKAGE_NAME___ROOT}/${system}/lib"
 
-export PATH="${bins}":${PATH}
+export PATH="${__PACKAGE_NAME___BIN_DIR}":${PATH}
 if [ -n "${PYTHONPATH}" ]; then
     export PYTHONPATH="${__PACKAGE_NAME___ROOT}/python:${PYTHONPATH}"
 else
@@ -28,28 +30,27 @@ fi
 sysarch=$(uname)
 if [ "${sysarch}" = "Linux" ]; then 
   if [ -n "${LD_LIBRARY_PATH}" ]; then
-    export LD_LIBRARY_PATH="${libs}:${LD_LIBRARY_PATH}"
+    export LD_LIBRARY_PATH="${__PACKAGE_NAME___LIB_DIR}:${LD_LIBRARY_PATH}"
   else
-    export LD_LIBRARY_PATH="${libs}"
+    export LD_LIBRARY_PATH="${__PACKAGE_NAME___LIB_DIR}"
   fi 
 fi
 
 if [ "${sysarch}" = "Darwin" ]; then 
   if [ -n "${DYLD_LIBRARY_PATH}" ]; then
-    export DYLD_LIBRARY_PATH="${libs}:${DYLD_LIBRARY_PATH}"
+    export DYLD_LIBRARY_PATH="${__PACKAGE_NAME___LIB_DIR}:${DYLD_LIBRARY_PATH}"
   else
-    export DYLD_LIBRARY_PATH="${libs}"
+    export DYLD_LIBRARY_PATH="${__PACKAGE_NAME___LIB_DIR}"
   fi 
 fi
 
-unset -v comp
-unset -v compver
+#unset -v comp
+#unset -v compver
 unset -v compiler
 unset -v system
+unset -v sysdir
 unset -v uname_s
 unset -v uname_m
-unset -v libs
-unset -v bins
 unset -v sysarch
 
-# end
+###
