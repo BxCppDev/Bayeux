@@ -17,7 +17,7 @@ sysdir="${__PACKAGE_NAME___ROOT}/${system}"
 export __PACKAGE_NAME___BIN_DIR="${__PACKAGE_NAME___ROOT}/${system}/bin"
 export __PACKAGE_NAME___LIB_DIR="${__PACKAGE_NAME___ROOT}/${system}/lib"
 
-# export PATH="${__PACKAGE_NAME___BIN_DIR}":${PATH}
+export PATH="${__PACKAGE_NAME___BIN_DIR}":${PATH}
 # if [ -n "${PYTHONPATH}" ]; then
 #     export PYTHONPATH="${__PACKAGE_NAME___ROOT}/python:${PYTHONPATH}"
 # else
