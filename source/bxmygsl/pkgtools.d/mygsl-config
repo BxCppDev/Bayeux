@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # -*- mode: shell-script; -*-
 # mygsl-config
 #
@@ -11,37 +11,66 @@
 # Feel free to modify this file if you use another system
 # to build/install this package (i.e. Autotools).
 #
+#
+# The following environment variables may be set to change 
+# the behaviour of the mygsl-config script:
+#
+# export MYGSL_LDFLAGS_MODE="hardcoded_shared_lib_path"
+#  will force the usage of hardcoded path name while linking against
+#  a shared library (no use of -LPATH -lLIBNAME option)
+#
+# export MYGSL_USING_CACHE_FILES=0
+#  will not use the cflags/ldflags cache accelerator files
+#
+
 help=0
 
 SCRIPTNAME="mygsl-config"
-THE_SYSTEM="$(uname -s)-$(uname -m | sed -e 's/ //g')"
+COMP=gcc
+COMPVER=$(${COMP} --version | head -1 | cut -d ' ' -f 3)
+COMPILER=-${COMP}${COMPVER}
+COMPILER=
+
+THE_SYSTEM="$(uname -s)-$(uname -m | sed -e 's/ //g')${COMPILER}"
 
 THEPACK_ROOT=/usr/local
 if [ -n "${MYGSL_ROOT}" ]; then
     THEPACK_ROOT="${MYGSL_ROOT}" 
 else 
-    echo "$SCRIPTNAME: error: 'MYGSL_ROOT' environment variable is not defined!" 
+    echo "${SCRIPTNAME}: error: 'MYGSL_ROOT' environment variable is not defined!" 
     exit 1
 fi
 
-THEPACK_INCLUDEDIR="$THEPACK_ROOT/include" 
+THEPACK_INCLUDEDIR="${THEPACK_ROOT}/include" 
 
-THEPACK_LIBDIR="$THEPACK_ROOT/${THE_SYSTEM}/lib" 
+THEPACK_LIBDIR="${THEPACK_ROOT}/${THE_SYSTEM}/lib" 
 
-THEPACK_BINDIR="$THEPACK_ROOT/${THE_SYSTEM}/bin" 
+THEPACK_BINDIR="${THEPACK_ROOT}/${THE_SYSTEM}/bin" 
 
 THEPACK_VERSION=0.1.0
-if [ -f "$THEPACK_ROOT/VERSION" ]; then
-    THEPACK_VERSION="$(cat $THEPACK_ROOT/VERSION)"    
-elif [ -f "$THEPACK_ROOT/pkgtools.d/package.info"  ]; then
-    version=$(cat $THEPACK_ROOT/pkgtools.d/package.info | grep "version=" | cut -d'=' -f2 )    
+if [ -f "${THEPACK_ROOT}/VERSION" ]; then
+    THEPACK_VERSION="$(cat ${THEPACK_ROOT}/VERSION)"    
+elif [ -f "${THEPACK_ROOT}/pkgtools.d/package.info"  ]; then
+    version=$(cat ${THEPACK_ROOT}/pkgtools.d/package.info | grep "version=" | cut -d'=' -f2 )    
     THEPACK_VERSION=$version
+fi
+
+using_cache_files=1
+if [ "X${MYGSL_USING_CACHE_FILES}" = "X0" ]; then
+    using_cache_files=${MYGSL_USING_CACHE_FILES}
+fi
+cflags_cache=${THEPACK_ROOT}/.cflags.cache
+ldflags_cache=${THEPACK_ROOT}/.ldflags.cache
+
+ldflags_mode=""
+if [ "X${MYGSL_LDFLAGS_MODE}" != "X" ]; then
+    ldflags_mode="${MYGSL_LDFLAGS_MODE}"
 fi
 
 opt=$1
 
 if [ "x$opt" = "x" ]; then
-    echo "$SCRIPTNAME: error: Missing option!" 
+    echo "${SCRIPTNAME}: error: Missing option!" 
     help=1
 fi
 
@@ -62,14 +91,15 @@ Known values for OPTION are:
   --include             print include path pre-processor flags without dependencies 
   --cflags              print include path pre-processor flags with dependencies
   --libs                print library linking information, without dependencies
-  --gsl-ldpath          print the path to GSL libraries             
-  --gsl-incpath         print the path to GSL headers             
   --ldflags             
   --libs-depends        print library linking information, with dependencies
   --help                print this help then exit
+  --gsl-ldpath          print the path to GSL libraries             
+  --gsl-incpath         print the path to GSL headers             
   --version             print version information
   --system              print system
-  --test                print test info
+  --check               check dependencies and setup
+  --clean-cache-files   clean compile/link cache files
 
 EOF
     exit 1
@@ -99,32 +129,32 @@ if [ ${gsl_major} -lt 1 ]; then
     echo "$SCRIPTNAME: error: GSL version ${gsl_version} is not suitable! Abort!" 1>&2
     exit 1
 elif [ ${gsl_major} -eq 1 -a ${gsl_minor} -lt 10 ]; then
-	echo "$SCRIPTNAME: error: GSL version ${gsl_version} is not suitable! Abort!" 1>&2
-	exit 1
+    echo "$SCRIPTNAME: error: GSL version ${gsl_version} is not suitable! Abort!" 1>&2
+    exit 1
 fi
 
 if [ "x$opt" = "x--test" ]; then
     if [ "x${GSL_BASE_DIR}" != "x" ]; then
 	echo "$SCRIPTNAME: warning: a special GSL installation is forced using the GSL_BASE_DIR='${GSL_BASE_DIR}'!" 1>&2
     fi
-cat <<EOF
+    cat <<EOF
 mygsl-config tests:
   Default system GSL prefix is:  ${gsl_prefix_def}
   Default system GSL version is: ${gsl_version_def}
   Default system GSL config is:  ${gsl_config_def}
 EOF
-echo -n "  Current GSL base directory is: ${gsl_prefix}" 
-if [ "x${GSL_BASE_DIR}" != "x" ]; then
-cat <<EOF
+    echo -n "  Current GSL base directory is: ${gsl_prefix}" 
+    if [ "x${GSL_BASE_DIR}" != "x" ]; then
+	cat <<EOF
  (from the GSL_BASE_DIR environment variable)
 EOF
-else
-cat <<EOF
+    else
+	cat <<EOF
  (corresponds to the system\'s default version)
 EOF
-fi
-
-cat <<EOF
+    fi
+    
+    cat <<EOF
   Current GSL version is:        ${gsl_version}
   Current GSL config is:         ${gsl_config}
   Current PATH is:               ${PATH}
@@ -148,6 +178,18 @@ if [ "x$opt" = "x--version" ]; then
     exit 0
 fi 
 
+if [ "x$opt" = "x--clean-cache-files" ]; then
+    if [ -f ${cflags_cache} ]; then
+	echo "${SCRIPTNAME}: NOTICE: Removing '${cflags_cache}' cache file !" >&2
+	rm -f ${cflags_cache}
+    fi
+    if [ -f ${ldflags_cache} ]; then
+	echo "${SCRIPTNAME}: NOTICE: Removing '${ldflags_cache}' cache file !" >&2
+	rm -f ${ldflags_cache}
+    fi
+    exit 0
+fi
+
 if [ "x$opt" = "x--incdir" ]; then
     echo "${THEPACK_INCLUDEDIR}" 
     exit 0
@@ -159,15 +201,37 @@ if [ "x$opt" = "x--include" ]; then
 fi
 
 if [ "x$opt" = "x--cflags" ]; then
-    echo -n  \
-        "-fPIC " \
-	"-I${THEPACK_INCLUDEDIR} "  \
-        "`gsl-config --cflags` " | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py 
+    generate_cflags=0
+    if [ ${using_cache_files} -eq 1 ]; then
+	if [ -f ${cflags_cache} ]; then
+	    cat ${cflags_cache}
+	    exit 0
+	else
+	    generate_cflags=1
+	fi
+    else
+	generate_cflags=1
+    fi
+	    
+    if [ ${generate_cflags} -eq 1 ]; then
+	(
+	    echo -n \
+		"-fPIC " \
+		"-I${THEPACK_INCLUDEDIR} "  \
+         "`gsl-config --cflags` "  \
+	    | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py	    
+	) | tee ${cflags_cache}
+    fi
     exit 0
 fi
 
 if [ "x$opt" = "x--libdir" ]; then
     echo "${THEPACK_LIBDIR}"
+    exit 0
+fi 
+
+if [ "x$opt" = "x--bindir" ]; then
+    echo "${THEPACK_BINDIR}"
     exit 0
 fi 
 
@@ -183,32 +247,50 @@ if [ "x$opt" = "x--gsl-ldpath" ]; then
     exit 0
 fi
 
-if [ "x$opt" = "x--bindir" ]; then
-    echo "${THEPACK_BINDIR}"
-    exit 0
-fi 
-
 if [ "x$opt" = "x--libs" ]; then
     echo "-L${THEPACK_LIBDIR} -lmygsl "
     exit 0
 fi 
 
 if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
-    echo -n "-L${THEPACK_LIBDIR} -lmygsl "  \
-        "`gsl-config --libs` " | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
-    echo
+    generate_ldflags=0
+    if [ ${using_cache_files} -eq 1 ]; then
+	if [ -f ${ldflags_cache} ]; then
+	    cat ${ldflags_cache}
+	    exit 0
+	else
+	    generate_ldflags=1
+	fi
+    else
+	generate_ldflags=1
+    fi
     
-    ################################################################
-    # Please add here some stuff in order to take into account
-    # external package dependencies; it may looks like:
-    # echo "-L${THEPACK_LIBDIR} -lmygsl " \
-    #      "`XXX-config --libs` " 
-    # where XXX stands for the identifier of the external package 
-    ################################################################
+    if [ ${generate_ldflags} -eq 1 ]; then	
+	(
+	    (
+		if [ "X${ldflags_mode}" = "Xhardcoded_shared_lib_path" ]; then
+		    echo -n "${THEPACK_LIBDIR}/libmygsl.so "
+		else
+		    echo -n "-L${THEPACK_LIBDIR} -lmygsl "
+		fi
+		echo -n ""  \
+         "`gsl-config --libs` "  \
+	    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
+	) | tee ${ldflags_cache}
+    fi
     exit 0
 fi 
 
-echo "$SCRIPTNAME: error: Unknown option '${opt}'!" 
+if [ "x$opt" = "x--check" ]; then
+    ${THEPACK_ROOT}/pkgtools.d/pkgtool check
+    if [ $? -ne 0 ]; then
+	echo "$SCRIPTNAME: error: Check procedure failed!" >&2
+	exit 1
+    fi
+    exit 0
+fi 
+
+echo "$SCRIPTNAME: error: Unknown option '${opt}'!"  >&2
 $0 --help
 exit 1
 

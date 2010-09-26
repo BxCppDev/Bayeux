@@ -15,7 +15,7 @@ ifeq ($(OS),Linux)
   MAKE=make
   CXX=g++
   CC=gcc
-  F77=g77
+  F77=gfortran
   LD=g++
   LDFLAGS=-O
   SOFLAGS=-shared
@@ -26,7 +26,7 @@ ifeq ($(OS),Darwin)
   MAKE=make
   CXX=g++
   CC=gcc
-  F77=g77
+  F77=gfortran
   LD=g++
   LDFLAGS=-O
   SOFLAGS=-dynamiclib -twolevel_namespace -undefined dynamic_lookup -dynamic -single_module
@@ -80,12 +80,12 @@ ifneq ($(strip $(GSL_BASE_DIR)),)
 gsl_config=$(GSL_BASE_DIR)/bin/gsl-config
 gsl_version=$(shell $(gsl_config) --version)
 gsl_prefix=$(shell $(gsl_config) --prefix)
-$(warning Using special GSL version $(gsl_version) in $(gsl_prefix) (from GSL_BASE_DIR=$(GSL_BASE_DIR))!)
+$(warning NOTICE: Using special GSL version $(gsl_version) in $(gsl_prefix) (from GSL_BASE_DIR=$(GSL_BASE_DIR))!)
 else
 gsl_prefix=$(gsl_prefix_def)
 gsl_version=$(gsl_version_def)
 gsl_config=$(gsl_config_def)
-$(warning Using default GSL version $(gsl_version) in $(gsl_prefix)!)
+$(warning NOTICE: Using default GSL version $(gsl_version) in $(gsl_prefix)!)
 endif
 
 DEPCPPFLAGS+=$(shell $(gsl_config) --cflags)
@@ -192,11 +192,11 @@ test:
 ########################################################################
 .PHONY : build_special
 build_special :
-	@echo "build_special..."
+	@#echo "Build_special..."
 
 .PHONY : install
 install : 
-	@echo "installing..."
+	@echo "Installing..."
 	@cat $(BASEDIR)/pkgtools.d/package.csh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).csh
 	@cat $(BASEDIR)/pkgtools.d/package.sh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).sh
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
@@ -206,18 +206,14 @@ install :
 #########################################################################"
 .PHONY : clean_special
 clean_special :
-	@echo "clean_special..."
+	@echo "Clean_special..."
 
 .PHONY : uninstall
 uninstall : 
-	@echo "uninstalling..."
+	@echo "Uninstalling..."
 	test -L $(BINDIR)/$(LIBNAME)-config && $(RM) $(BINDIR)/$(LIBNAME)-config || echo -n ""
-	@echo "ok1"
 	test -f $(BASEDIR)/$(LIBNAME).sh && $(RM) $(BASEDIR)/$(LIBNAME).sh || echo -n ""
-	@echo "ok2"
 	test -f $(BASEDIR)/$(LIBNAME).csh && $(RM) $(BASEDIR)/$(LIBNAME).csh || echo -n ""
-	@echo "ok3"
-	@#echo "Please remove the sourcing of '$(LIBNAME).sh' or '$(LIBNAME).csh' from your startup scripts!"
 
 #########################################################################"
 .PHONY : system
@@ -297,13 +293,13 @@ $(OBJDIR)/%$(OBJEXT) : %$(SOURCEEXT) %$(HEADEREXT)
 
 .PHONY : dist
 dist : distclean
-	echo "Making the distribution tarball '$(LIBNAME)-$(shell cat ../VERSION |tr -d '\n').tar.gz'"
+	@echo "Making the distribution tarball '$(LIBNAME)-$(shell cat ../VERSION |tr -d '\n').tar.gz'"
 	make clean
 	tar cvzf "../../$(LIBNAME)-$(shell cat ../VERSION |tr -d '\n').tar.gz" ../../$(PACKAGENAME)/
 
 .PHONY : bzdist
 bzdist : distclean
-	echo "Making the distribution tarball '$(LIBNAME)-$(LIBVER).tar.bz2'"
+	@echo "Making the distribution tarball '$(LIBNAME)-$(LIBVER).tar.bz2'"
 	make clean
 	tar cvjf "../../$(LIBNAME)-$(LIBVER).tar.bz2" --exclude ".svn" ../../$(PACKAGENAME)/
 
