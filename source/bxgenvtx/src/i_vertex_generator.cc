@@ -16,22 +16,26 @@ namespace genvtx {
 
   i_vertex_generator::vertex_generator_db::vertex_generator_db (bool test_)
   {
-    if (g_debug)
+    bool debug = g_debug;
+    //debug = true;
+    if (debug)
       {
 	clog << "******* DEVEL: i_vertex_generator::vertex_generator_db::vertex_generator_db: entering: " 
 	     << (test_? "TEST": "-") << endl;
       }
-    
+    return;
   }
 
   i_vertex_generator::vertex_generator_db::~vertex_generator_db ()
   {
-    if (g_debug)
+    bool debug = g_debug;
+    //debug = true;
+    if (debug)
       {
 	clog << "******* DEVEL: i_vertex_generator::vertex_generator_db::~vertex_generator_db: entering..." 
 	     << endl;
       }
-    
+    return;
   }
  
   bool i_vertex_generator::vertex_generator_db::has_vertex_generator (const string & vertex_generator_id_) const
