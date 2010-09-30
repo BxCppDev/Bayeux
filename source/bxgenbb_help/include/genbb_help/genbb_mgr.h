@@ -35,14 +35,14 @@
 
 #include <geomtools/utils.h>
 
-#include <genbb_help/primary_particle.h>
-#include <genbb_help/primary_event.h>
+#include <genbb_help/i_genbb.h>
 
 namespace genbb {
 
-  class genbb_mgr
+  class genbb_mgr : public i_genbb
   {
   public:
+
     enum
       {
 	FORMAT_GENBB = 0,
@@ -109,10 +109,10 @@ namespace genbb {
 
     void reset ();
 
-    bool has_next ();
+    virtual bool has_next ();
 
-    void load_next (primary_event & event_, 
-		    bool compute_classification_ = true);
+    virtual void load_next (primary_event & event_, 
+			    bool compute_classification_ = true);
 
     void dump (std::ostream & out_ = std::clog) const;
 

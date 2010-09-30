@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # -*- mode: shell-script; -*-
 
 appname="genbb"
@@ -15,6 +15,16 @@ seed=
 nevents=
 output_file=
 interactive=0
+tmp_dir=
+tmp_conf=
+
+function my_exit ()
+{
+    if [ -f ${tmp_conf} ]; then
+	rm -f ${tmp_conf} 
+    fi
+    exit $1
+}
 
 function usage ()
 {
@@ -27,6 +37,9 @@ Usage:
  Batch mode:
 
   genbb [-d|-h] <CONFIG FILE> [SEED] [NEVENTS] [OUTFILE]
+
+    -t|--temp-directory [TMP DIR]
+                : set the temporary working directory
 
     CONFIG FILE : see samples in the 'resources/' directory
 
@@ -58,7 +71,10 @@ while [ -n "$1" ]; do
 	    debug=1
 	elif [ "${arg}" = "-h" -o "${arg}" = "--help" ]; then
 	    usage
-	    exit 2
+	    my_exit 2
+	elif [ "${arg}" = "-t" -o "${arg}" = "--temp-directory" ]; then
+	    shift 1
+	    tmp_dir="$1"
 	fi
     else
 	if [ "x${config_file}" = "x" ]; then
@@ -86,13 +102,20 @@ fi
 
 BIN=${GENBB_HELP_ROOT}/${system}/bin/prog_genbb_1.f77.exe
 
-tmp_dir=/tmp/${USER}/
+if [ ! -x ${BIN} ]; then
+    echo "${appname}: ERROR: Missing '${BIN}' executable ! Abort !" 1>&2
+    my_exit 1
+fi
+
+if [ "x${tmp_dir}" = "x" ]; then
+    tmp_dir=/tmp/${USER}
+fi
 if [ ! -d ${tmp_dir} ]; then
     mkdir -p ${tmp_dir}
 fi
 if [ ! -d ${tmp_dir} ]; then
     echo "${appname}: ERROR: Directory '${tmp_dir}' does not exist ! Abort !" 1>&2
-    exit &
+    my_exit 1
 fi
 
 if [ ${interactive} -eq 0 ]; then
@@ -100,16 +123,26 @@ if [ ${interactive} -eq 0 ]; then
     tmp_conf=$(mktemp -p ${tmp_dir} genbb_XXXXXX )
     echo "${appname}: NOTICE: Set 'seed'..." 1>&2
     echo "seed=${seed}" > ${tmp_conf}.1
+    echo "${appname}: NOTICE: seed=${seed}" 1>&2
     cat ${config_file} >> ${tmp_conf}.1
+    echo "${appname}: NOTICE: nevents=${nevents}" 1>&2
     if [ "x${nevents}" != "x" ]; then
 	echo "${appname}: NOTICE: Set 'number-of-events'..." 1>&2
-	cat ${tmp_conf}.1 | sed \
-	    -e "s/^number-of-events=.*$/number-of-events=$nevents/g" \
-	    > ${tmp_conf}.2
+	#echo "${appname}: NOTICE: >>> ${tmp_conf}.1" 1>&2
+	#cat ${tmp_conf}.1 
+	#echo "${appname}: NOTICE: <<<" 1>&2
+	cat ${tmp_conf}.1 | sed -e "s@^number-of-events=.*@number-of-events=${nevents}@g" > ${tmp_conf}.2
+	#echo "${appname}: NOTICE: >>> ${tmp_conf}.2" 1>&2
+	#cat ${tmp_conf}.2
+	#echo "${appname}: NOTICE: <<<" 1>&2
 	mv -f ${tmp_conf}.2 ${tmp_conf}.1
+	#echo "${appname}: NOTICE: number-of-events=${nevents}" 1>&2
     fi
+    #echo "${appname}: NOTICE: >>> ${tmp_conf}.1" 1>&2
+    #cat ${tmp_conf}.1
+    #echo "${appname}: NOTICE: <<<" 1>&2
 
-    ###echo "${appname}: NOTICE: =====================" 1>&2
+    #echo "${appname}: NOTICE: =====================" 1>&2
 
     if [ "x${output_file}" = "x" ]; then
 	output_file="out.genbb"
@@ -122,12 +155,15 @@ if [ ${interactive} -eq 0 ]; then
 	    echo "${appname}: WARNING: Output file has not extension '.genbb'!" 1>&2
 	fi
 	echo "${appname}: NOTICE: Set 'output-file' to '${output_file}'..." 1>&2
+	#echo "${appname}: NOTICE: ======>>>" 1>&2
+	#cat ${tmp_conf}.1
+	#echo "${appname}: NOTICE: ======<<<" 1>&2
 	cat ${tmp_conf}.1 | sed \
 	    -e "s@^output-file=.*@output-file=${output_file}@g" \
 	    > ${tmp_conf}.2
 	mv -f ${tmp_conf}.2 ${tmp_conf}.1
     fi
-    cp -f ${tmp_conf}.1 ${tmp_conf}
+    mv -f ${tmp_conf}.1 ${tmp_conf} 
     cat ${tmp_conf}
     cat ${tmp_conf} | cut -d'=' -f2 | ${BIN}
 else
@@ -135,6 +171,6 @@ else
     ${BIN}
 fi
 
-exit 0
+my_exit 0
 
 # end

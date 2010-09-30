@@ -31,7 +31,7 @@ c
       !irndmst=12345
       irndmst = 0
       iwrfile = 0
-      chfile = 'genbb.output'
+      chfile = 'out.genbb'
       seed = 0
       
 c     

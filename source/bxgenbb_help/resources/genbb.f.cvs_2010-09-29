@@ -5,7 +5,7 @@ c Dialog to ask the inputs for GENBBsub subroutine.
 c Descriptions of common blocks and parameters see in GENBBsub.
 c VIT, 03.12.1995.
 c
-	character chfile*256
+	character chfile*40
         character  chnuclide*16,chn*16
 
 	common/genevent/tevst,npfull,npgeant(100),pmoment(3,100),
@@ -509,9 +509,7 @@ c	   print *,'    Double Compton'
 	endif
 c*********************************************************************
 c	print *,'     '                                    !**********
-c	
-        include "trick_nevents.f.inc"
-                                           ! comment
+c	print 29                                           ! comment
 c29	format('$number of events to generate      : ')    ! if in
 c	read *,nevents                                     ! nemo*.car
 c	print 30                                           !
@@ -528,9 +526,7 @@ c*********************************************************************
 	chfile='no file'
 	iwrfile=0
 c*********************************************************************
-c	
-        include "trick_write.f.inc"
-                                           !**********
+c	print 33                                           !**********
 c33	format('$to write generated events in file ? ')    ! comment
 c	read 3,chn                                         ! if in
 c	if(chn(1:1).eq.'Y'.or.chn(1:1).eq.'y') then        ! nemo*.car
@@ -542,8 +538,7 @@ c	endif                                              !**********
 c*********************************************************************
 	print *,'   '
 	istart=-1
-	ier=0
-        ! call GENBBsub(i2bbs,chnuclide,ilevel,modebb,istart,ier)
+	call GENBBsub(i2bbs,chnuclide,ilevel,modebb,istart,ier)
 	if(ier.ne.0) then
 	   print *,'incorrect input parameter in GENBBsub'
 	   go to 1000
@@ -559,7 +554,7 @@ c GENBB units: energy and moment - MeV and MeV/c; time - sec.
 c Energy release in double beta decay - in accordance with
 c G.Audi and A.H.Wapstra, Nucl. Phys. A 595(1995)409.
 c
-c Call  : character chnuclide*16,chfile*256,chart*4,chdspin*4
+c Call  : character chnuclide*16,chfile*40,chart*4,chdspin*4
 c         common/genbbpar/nevents,ievstart,irndmst,iwrfile,chfile
 c         common/currentev/icurrent
 c         common/enrange/ebb1,ebb2,toallevents,levelE,chdspin
@@ -571,8 +566,7 @@ c      +                    artQb(10),    artZd(10),
 c      +                    arttdelay(10),artthalf(10)
 c      +                    nartnpg(10)
 c         common/genevent/tevst,npfull,npgeant(100),pmoment(3,100),ptime(100)
-c         ier=0
-        ! call GENBBsub(i2bbs,chnuclide,ilevel,modebb,istart,ier)
+c         call GENBBsub(i2bbs,chnuclide,ilevel,modebb,istart,ier)
 c
 c Input : i2bbs     - i2bbs=1 - to generate 2b-decay,
 c                     i2bbs=2 - to generate decay of background nuclide
@@ -754,8 +748,7 @@ c                          =0 or -1;
 c         nevents   - number of events to generate; it will be used only
 c                     for information in GENBB.report file and in output
 c                     file with generated events (if asked) - so, one
-c                     has to ier=0
-        ! call GENBBsub one time for one decay event;
+c                     has to call GENBBsub one time for one decay event;
 c         ievstart  - number of first event;
 c         irndmst   - (only for ievstart > 1) initial random integer
 c                     for RDMIN;
@@ -880,7 +873,7 @@ c                                 the level of daughter nuclide in 2b decay.
 c
 c V.I.Tretyak, 04.12.1995.
 c
-	character chfile*256
+	character chfile*40
 	character chmodebb*33
         character  chnuclide*16,chn*16
 	common/genevent/tevst,npfull,npgeant(100),pmoment(3,100),
@@ -1860,20 +1853,6 @@ c (3) nuclide and mode of decay
      +                     artfmin(1),artfmax(1),artZd(1))
 	   endif
 	endif
-c
-c
-c
-c	print *,'DEVEL: GENBBsub: chnuclide=',chnuclide
-c	print *,'DEVEL: GENBBsub: Qbb=',Qbb
-c	print *,'DEVEL: GENBBsub: Zdbb=',Zdbb
-c	print *,'DEVEL: GENBBsub: EK=',EK
-c	do j=1,npfull
-c	   print *, 'DEVEL: GENBBsub: ', npgeant(j),
-c    +        (pmoment(k,j),k=1,3),ptime(j)
-c	enddo
-c
-c
-c
 	if(chfile.ne.'no file') then
 	   write(77,6) icurrent,tevst,npfull
 6	   format(i8,g13.6,i4)
@@ -2094,10 +2073,10 @@ c                               (for modes 4,5,6,8,10 and 13).
 c
 c V.I.Tretyak, 26.11.1995.
 	double precision dens,denf
-*----
-*----   modif. R.A. 05/01/2000
+c----
+c----   modif. R.A. 05/01/2000
         real*8 d_el(2)
-*----
+c----
 	external dshelp1
 	external eneut_mod14
 	external fe12_mod4, fe12_mod5, fe12_mod6, fe12_mod8,
@@ -2121,8 +2100,7 @@ c V.I.Tretyak, 26.11.1995.
       real*8 derest
       real*8 DGMLT1,X(2)
       
-c	print *, 'DEVEL: bb: Entering...'
-	twopi=2.*pi 
+	twopi=2.*pi
 	Zd=Zdbb
 	if(Zdbb.ge.0.)                   e0=Qbb-Edlevel
 	if(Zdbb.lt.0.)                   e0=Qbb-Edlevel-4.*emass
@@ -2206,7 +2184,6 @@ c correction for restricted energy sum (ebb1<=e1+e2<=ebb2)
 	endif
 	istartbb=1
 	print *,'starting the generation'
-c	print *,'DEVEL: bb: ebb2=', ebb2
 c sampling the energies: first e-/e+
 c1	e1=e0*rnd1(d)
 1	if(modebb.ne.10) e1=ebb2*rnd1(d)
@@ -2254,7 +2231,7 @@ c2	   e2=(e0-e1)*rnd1(d)
 	   if(f2max*rnd1(d).gt.fe2) go to 2
 c	   allevents=allevents+1.
 c	   if(e1+e2.lt.ebb1.or.e1+e2.gt.ebb2) go to 1
-cc	   if(rnd1(d).lt.0.5) then
+cc	   if(rndm(d).lt.0.5) then
 cc	      eh=e1
 cc	      e1=e2
 cc	      e2=eh
@@ -2267,10 +2244,6 @@ c	   if(e1.lt.ebb1.or.e1.gt.ebb2) go to 1
 	   call particle(1,EK,EK,0.,pi,0.,twopi,0.,0.,t)
 	   return
 	endif
-c	print *,'DEVEL: bb: ebb1=', ebb1, ' MeV'
-c	print *,'DEVEL: bb: ebb2=', ebb2, ' MeV'
-c	print *,'DEVEL: bb: e1=', e1, ' MeV'
-c	print *,'DEVEL: bb: e2=', e2, ' MeV'
 	p1=sqrt(e1*(e1+2.*emass))
 	p2=sqrt(e2*(e2+2.*emass))
 	b1=p1/(e1+emass)
@@ -2306,25 +2279,17 @@ CC          b=-b1*b2*DGMLT1(eneut_mod14b,0.D0,derest,64,8,X)
 	if(modebb.eq.8) b=b1*b2/3.
 	romaxt=a+abs(b)+c
 3       call grndm(rndm,5)
-c	print * , 'DEVEL: bb: twopi=', twopi
 	phi1=twopi*rndm(1)
 	ctet1=1.-2.*rndm(2)
 	stet1=sqrt(1.-ctet1*ctet1)
-c XXXX
-c	print * , 'DEVEL: bb: p1=', p1
-c	print * , 'DEVEL: bb: stet1=', stet1
 	phi2=twopi*rndm(3)
 	ctet2=1.-2.*rndm(4)
 	stet2=sqrt(1.-ctet2*ctet2)
-c	print * , 'DEVEL: bb: p2=', p2
-c	print * , 'DEVEL: bb: stet2=', stet2
 	ctet=ctet1*ctet2+stet1*stet2*cos(phi1-phi2)
 	if(romaxt*rndm(5).gt.a+b*ctet+c*ctet**2) go to 3
 	npfull=npfull+1
 	if(Zdbb.ge.0.) npgeant(npfull)=3
 	if(Zdbb.lt.0.) npgeant(npfull)=2
-c XXXX
-c	print * , 'DEVEL: bb: npfull=', npfull
 	pmoment(1,npfull)=p1*stet1*cos(phi1)
 	pmoment(2,npfull)=p1*stet1*sin(phi1)
 	pmoment(3,npfull)=p1*ctet1
@@ -2964,7 +2929,7 @@ c-----------------------------------------------------------------------
 c-----------------------------------------------------------------------
 1945	call beta(0.192,90.,0.,0.,t)
 19450	thlev=0.
-	p=100.*rnd1(d)
+	p=100.*rndm(d)
 	if(p.le.31.4) go to 19451   ! 31.4%
 	if(p.le.42.4) go to 19452   ! 11.0%
 	if(p.le.44.3) go to 19453   !  1.9%
@@ -13655,7 +13620,7 @@ c spectrum with correction
 
 C***********************************************************************
 CDECK  ID>, FERMI.
-	real*4 function fermi_bad(Z,E)
+	real*4 function fermi(Z,E)
 c Function fermi calculates the traditional function of Fermi in
 c theory of beta decay to take into account the Coulomb correction
 c to the shape of electron/positron energy spectrum.
@@ -13677,7 +13642,7 @@ c V.I.Tretyak, 15.07.1992.
 	y=alfaz*w/p
 	g=sqrt(1.-alfaz**2)
 	carg=cmplx(g,y)
-	fermi_bad=p**(2.*g-2.)*exp(pi*y+2.*alog(cabs(cgamma(carg))))
+	fermi=p**(2.*g-2.)*exp(pi*y+2.*alog(cabs(cgamma(carg))))
 	return
 	end
 
@@ -14029,13 +13994,13 @@ c VIT, 15.11.2006.
 	real*4 r(1)
 
 c CERN rndm as random number generator
-c	rnd1=rnd1(d)
+c	rnd1=rndm(d)
 
 c CERN ranlux as random number generator
 c	call ranlux(r,1)
 	call grndm(r,1)
-	! print *, 'DEVEL: rnd1: r(1)=', r(1)
 	rnd1=r(1)
+
 	return
 	end
 

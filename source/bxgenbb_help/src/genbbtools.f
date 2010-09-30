@@ -8,4 +8,12 @@ c -- genbbtools.f
       print *,'chfile=    ',chfile
       return
       end
+
+      subroutine genbb_init_enrange ()
+      common/enrange/ebb1,ebb2,toallevents,levelE,chdspin      
+      ebb1=0.
+      ebb2=4.3
+      return
+      end
+
 c -- end of genbbtools.f

@@ -8,31 +8,52 @@
 setenv __PACKAGE_NAME___ROOT __PACKAGE_ROOT__
 set uname_s=`uname -s`
 set uname_m=`uname -m | sed -e 's/ //g'`
-set libs="${__PACKAGE_NAME___ROOT}/${uname_s}-${uname_m}/lib"
-set bins="${__PACKAGE_NAME___ROOT}/${uname_s}-${uname_m}/bin"
-setenv PATH "${bins}":${PATH}
+#set comp=gcc
+#set compver=`gcc --version | head -1 | cut -d ' ' -f 3`
+set compiler=
+#set compiler=-${comp}${compver}
+set system=${uname_s}-${uname_m}${compiler}
+set sysdir="${__PACKAGE_NAME___ROOT}/${system}"
+
+setenv __PACKAGE_NAME___BIN_DIR "${__PACKAGE_NAME___ROOT}/${system}/bin"
+setenv __PACKAGE_NAME___LIB_DIR "${__PACKAGE_NAME___ROOT}/${system}/lib"
+
+setenv PATH "${__PACKAGE_NAME___BIN_DIR}":${PATH}
+#if ( $?PYTHONPATH ]; then
+#    setenv PYTHONPATH "${__PACKAGE_NAME___ROOT}/python:${PYTHONPATH}"
+#else
+#    setenv PYTHONPATH "${__PACKAGE_NAME___ROOT}/python"
+#fi 
+
+#if [ -n "${PKG_CONFIG_PATH}" ]; then
+#    setenv PKG_CONFIG_PATH "${sysdir}:${PKG_CONFIG_PATH}"
+#else
+#    setenv PKG_CONFIG_PATH "${sysdir}"
+#fi 
 
 set sysarch=`uname`
 if ( ${sysarch} == Linux ) then 
   if (  $?LD_LIBRARY_PATH ) then
-    setenv LD_LIBRARY_PATH "${libs}:${LD_LIBRARY_PATH}"
+    setenv LD_LIBRARY_PATH "${__PACKAGE_NAME___LIB_DIR}:${LD_LIBRARY_PATH}"
   else
-    setenv LD_LIBRARY_PATH "${libs}"
+    setenv LD_LIBRARY_PATH "${__PACKAGE_NAME___LIB_DIR}"
   endif 
 endif
-
 if ( ${sysarch} == Darwin ) then 
   if (  $?DYLD_LIBRARY_PATH ) then
-    setenv DYLD_LIBRARY_PATH "${libs}:$${DYLD_LIBRARY_PATH}"
+    setenv DYLD_LIBRARY_PATH "${__PACKAGE_NAME___LIB_DIR}:${DYLD_LIBRARY_PATH}"
   else
-    setenv DYLD_LIBRARY_PATH "${libs}"
+    setenv DYLD_LIBRARY_PATH "${__PACKAGE_NAME___LIB_DIR}"
   endif 
 endif
 
+#unset comp
+#unset compver
+unset compiler
+unset system
+unset sysdir
 unset uname_s
 unset uname_m
-unset libs
-unset bins
 unset sysarch
 
 # end

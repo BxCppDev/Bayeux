@@ -70,6 +70,7 @@ LIBDIR=$(ARCHDIR)/lib
 BINDIR=$(ARCHDIR)/bin
 
 CXXFLAGS=-fPIC
+
 F77FLAGS=-fPIC
 test_f77=$(shell which $(F77))
 ifeq ($(test_f77),)
@@ -93,7 +94,8 @@ processor=$(shell uname -p)
 ifeq ($(strip $(processor)),x86_64)
 dummy=$(shell echo "Processor: 64bits")
 else
-CXXFLAGS+= #-malign-double
+CXXFLAGS+= -Df2cFortran
+#-malign-double
 F77FLAGS+= #-malign-double
 endif
 
@@ -167,7 +169,13 @@ CPPFLAGS1+=-Dfermi_wrap=fermi_wrap__
 CPPFLAGS1+=-Dfermi_func=fermi_func__
 CPPFLAGS1+=-Dfermi_func_nr_approx=fermi_func_nr_approx__
 CPPFLAGS1+=-Drng_shoot_reset=rng_shoot_reset__
-CPPFLAGS1+=-Drng_shoot_flat=rng_shoot_flat__
+
+CPPFLAGS1+=-Dgenbbsub=genbbsub__
+CPPFLAGS1+=-Dset_random_seed=set_random_seed__
+CPPFLAGS1+=-Dgrndm=grndm__
+CPPFLAGS1+=-Dgenevent=genevent__
+CPPFLAGS1+=-Dgenbb_init_enrange=genbb_init_enrange__
+CPPFLAGS1+=-Denrange=enrange__
 endif
 
 ifeq ($(F77),gfortran)
@@ -177,6 +185,13 @@ CPPFLAGS1+=-Dfermi_func=fermi_func_
 CPPFLAGS1+=-Dfermi_func_nr_approx=fermi_func_nr_approx_
 CPPFLAGS1+=-Drng_shoot_reset=rng_shoot_reset_
 CPPFLAGS1+=-Drng_shoot_flat=rng_shoot_flat_
+
+CPPFLAGS1+=-Dgenbbsub=genbbsub_
+CPPFLAGS1+=-Dset_random_seed=set_random_seed_
+CPPFLAGS1+=-Dgrndm=grndm_
+CPPFLAGS1+=-Dgenbb_init_enrange=genbb_init_enrange_
+CPPFLAGS1+=-Dgenevent=genevent_
+CPPFLAGS1+=-Denrange=enrange_
 endif
 
 ### End of dependencies.
@@ -257,7 +272,6 @@ help :
 	@echo "make bin       : build the shared executables"
 	#@echo "make bin_test  : build the shared test executables (not mandatory)"
 	@echo "make install   : generates install stuff"
-	@echo "                 - setup ($(LIBNAME).sh/$(LIBNAME).csh)"
 	@echo "                 - $(LIBNAME)-config scripts"
 	@echo "make uninstall : clean install stuff"
 	@echo "make clean     : clean all object/binaries"
@@ -302,11 +316,11 @@ build_special :
 .PHONY : install
 install : 
 	@echo "Installing..."
-	@cat $(BASEDIR)/pkgtools.d/package.csh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).csh
-	@cat $(BASEDIR)/pkgtools.d/package.sh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).sh
+	#@cat $(BASEDIR)/pkgtools.d/package.csh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).csh
+	#@cat $(BASEDIR)/pkgtools.d/package.sh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).sh
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
-	@ln -s -f $(PACKAGE_ROOT)/pkgtools.d/$(LIBNAME)-config $(BINDIR)/$(LIBNAME)-config
-	@ln -s -f $(PACKAGE_ROOT)/scripts/genbb $(BINDIR)/genbb
+	#@ln -s -f $(PACKAGE_ROOT)/pkgtools.d/$(LIBNAME)-config $(BINDIR)/$(LIBNAME)-config
+	#@ln -s -f $(PACKAGE_ROOT)/scripts/genbb $(BINDIR)/genbb
 
 ##########################################################
 
@@ -317,10 +331,10 @@ clean_special :
 .PHONY : uninstall_special
 uninstall : 
 	@echo "Uninstalling..."
-	test -L $(BINDIR)/$(LIBNAME)-config && $(RM) $(BINDIR)/$(LIBNAME)-config || echo -n ""
-	test -f $(BASEDIR)/$(LIBNAME).sh && $(RM) $(BASEDIR)/$(LIBNAME).sh || echo -n ""
-	test -f $(BASEDIR)/$(LIBNAME).csh && $(RM) $(BASEDIR)/$(LIBNAME).csh || echo -n ""
-	test -L $(BINDIR)/genbb && rm -f $(BINDIR)/genbb || echo -n ""
+	#test -L $(BINDIR)/$(LIBNAME)-config && $(RM) $(BINDIR)/$(LIBNAME)-config || echo -n ""
+	#test -f $(BASEDIR)/$(LIBNAME).sh && $(RM) $(BASEDIR)/$(LIBNAME).sh || echo -n ""
+	#test -f $(BASEDIR)/$(LIBNAME).csh && $(RM) $(BASEDIR)/$(LIBNAME).csh || echo -n ""
+	#test -L $(BINDIR)/genbb && rm -f $(BINDIR)/genbb || echo -n ""
 
 
 ##########################################################

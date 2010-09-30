@@ -1,70 +1,61 @@
-#!/bin/bash
+#!/usr/bin/env bash 
 # -*- mode: shell-script; -*-
 # pkgtool
-#
-# Note:
-# This is a default pkgtool script provided by
-# the mkskelpack program (from the PkgTools package).
-# It suits the use of some default GNU/makefile
-# generated in the package 'gmk' directory.
-#
-# Feel free to modify this file if you use another system
-# to build/install this package (i.e. Autotools,CMT).
 #
 
 APPNAME="pkgtool"
 
+appname=${APPNAME} 
+the_base_dir=$(pwd)
+the_python_dir=${the_base_dir}/python
+the_gmk_dir=${the_base_dir}/gmk
+the_pkgtools_dir=${the_base_dir}/pkgtools.d
+libpkgtools_sh=${the_pkgtools_dir}/libpkgtools.sh 
+if [ ! -f ${libpkgtools_sh} ]; then
+    echo " ERROR:$APPNAME: Cannot find '${libpkgtools_sh}' setup file ! Abort !" >&2  
+    exit 1
+fi
+source ${libpkgtools_sh}
+export GENBB_HELP_ROOT=${the_base_dir}
+
+pkgtools__msg_not_using_verbose
+pkgtools__msg_not_using_debug
+pkgtools__msg_not_using_devel
+pkgtools__msg_not_using_date
+pkgtools__msg_using_color
+pkgtools__ui_not_using_gui
+
 pack_name=genbb_help
-pack_name_upper=$(echo ${pack_name} | tr "a-z" "A-Z")
-pack_name_lower=$(echo ${pack_name} | tr "A-Z" "a-z")
+pack_name_upper=$(pkgtools__to_upper ${pack_name})
+pack_name_lower=$(pkgtools__to_lower ${pack_name})
+pack_gccver=$(pkgtools__get_gccver)
+pack_sys=$(pkgtools__get_sys_with_gccver)
+pack_sys=$(pkgtools__get_sys)
+pack_config=${pack_name_lower}-config
 
-export BIPOVISU_ROOT=$(pwd)
 
-
-# startup scripts
+# startup scripts:
 sh_ss=${pack_name_lower}.sh
 csh_ss=${pack_name_lower}.csh
+pc_file=${pack_name}.pc
+pc_file_skel=${pc_file}.skel
+
+action_mode=""
+with_python=0
+config_file=${the_pkgtools_dir}/${pack_name_lower}.config
+
 the_base_dir=.
 
-tool_mode=""
 do_usage=0
-debug=0
-verbose=0
 
 use_g77=0
 use_gfortran=1
-
-function err_msg ()
+	
+function my_exit ()
 {
-    echo "${APPNAME} (${pack_name}): ERROR: $@" 1>&2
+    exit $1
 }
 
-function error_msg ()
-{
-    err_msg $@
-}
-
-function warning_msg ()
-{
-    echo "${APPNAME} (${pack_name}): WARNING: $@" 1>&2
-}
-
-function info_msg ()
-{
-    test ${verbose} -eq 0 && return
-    echo "${APPNAME} (${pack_name}): INFO: $@" 1>&2
-}
-
-function notice_msg ()
-{
-    echo "${APPNAME} (${pack_name}): NOTICE: $@" 1>&2
-}
-
-function debug_msg ()
-{
-    test ${debug} -eq 0 && return
-    echo "${APPNAME} (${pack_name}): DEBUG: $@"
-}
 
 function print_usage ()
 {
@@ -89,6 +80,7 @@ function print_usage ()
     $APPNAME uninstall  : uninstall package
 
 EOF
+    return 0
 }
 
 if [ "x${F77_COMP}" != "x" ]; then
@@ -99,8 +91,8 @@ if [ "x${F77_COMP}" != "x" ]; then
 	use_g77=0
 	use_gfortran=1
     else
-	err_msg "Unsupported enforced '${F77_COMP}' F77 compiler! Abort!"
-	exit 1	
+	pkgtools__msg_error "Unsupported enforced '${F77_COMP}' F77 compiler! Abort!"
+	my_exit 1	
     fi
 fi
 
@@ -108,62 +100,97 @@ fi
 
 parse_switch=1
 while [ -n "$1" ]; do
-    arg="$1"
-    
-    if [ "${arg:0:1}" = "-" ]; then
-	if [ ${parse_switch} = 0 ]; then
+    token="$1"
+    if [ "${token:0:1}" = "-" ]; then
+	opt=${token}
+	if [ ${parse_switch} -eq 0 ]; then
 	    break
 	fi
-	if [ "${arg}" = "-h" -o "${arg}" = "--help" ]; then
-	    do_usage=1 
-	elif [ "${arg}" = "-d" -o "${arg}" = "--debug" ]; then
-	    debug=1 
-	elif [ "${arg}" = "-v" -o "${arg}" = "--verbose" ]; then
-	    verbose=1 
+	if [ "${opt}" = "-h" -o "${opt}" = "--help" ]; then
+	    print_usage
+	    my_exit 0
+	elif [ "${opt}" = "-d" -o "${opt}" = "--debug" ]; then
+	    pkgtools__msg_using_debug
+	elif [ "${opt}" = "-D" -o "${opt}" = "--devel" ]; then
+	    pkgtools__msg_using_devel
+	elif [ "${opt}" = "-v" -o "${opt}" = "--verbose" ]; then
+	    pkgtools__msg_using_verbose
+	elif [ "${opt}" = "-i" -o "${opt}" = "--interactive" ]; then
+	    pkgtools__ui_interactive
+	elif [ "${opt}" = "-b" -o "${opt}" = "--batch" ]; then
+	    pkgtools__ui_batch
+	elif [ "${opt}" = "--no-color" ]; then
+	    pkgtools__msg_not_using_color
+	elif [ "${opt}" = "-G" -o "${opt}" = "--gui" ]; then
+	    pkgtools__ui_using_gui
+	    pkgtools__msg_devel "Using GUI" 	
 	else
-	    err_msg "Invalid option!"
-	    exit 1
+	    pkgtools__msg_error "Ignoring option '${opt}' !" 
+	    my_exit 1
 	fi
     else
+	arg=${token}
 	parse_switch=0
-	if [ -z "${tool_mode}" ]; then
+	if [ "x${action_mode}" = "x" ]; then
 	    if [ "$arg" = "configure" ]; then
-		tool_mode="configure"	
+		action_mode="configure"	
 	    elif [ "$arg" = "build" ]; then
-		tool_mode="build"	
+		action_mode="build"	
 	    elif [ "$arg" = "clean" ]; then
-		tool_mode="clean"	
+		action_mode="clean"	
 	    elif [ "$arg" = "install" ]; then
-		tool_mode="install"	
+		action_mode="install"	
 	    elif [ "$arg" = "uninstall" ]; then
-		tool_mode="uninstall"	
+		action_mode="uninstall"	
 	    elif [ "$arg" = "info" ]; then
-		tool_mode="info"	
+		action_mode="info"	
+	    elif [ "$arg" = "check" ]; then
+		action_mode="check"	
+	    elif [ "$arg" = "doc" ]; then
+		action_mode="doc"	
 	    else
-		err_msg "Invalid argument!"
-		exit 1
+		pkgtools__msg_error "Invalid argument !"
+		my_exit 1
 	    fi
 	else
 	    # remaining arguments on command line are kept in "$@"
+	    pkgtools__msg_devel "BREAK !"
 	    break
 	fi
     fi
-    
     shift 1
 done
 
 #######################################################
 
-if [ ${do_usage} = 1 ]; then
-    print_usage
-    exit 2
+pkgtools__msg_devel "action_mode=${action_mode}"
+pkgtools__msg_devel "args=$@"
+
+pkgtools__ui_is_interactive
+if [ $? -ne 0 ]; then
+    pkgtools__ui_not_using_gui
 fi
 
-if [ -z "${tool_mode}" ]; then
-    err_msg "Missing running mode!"
+if [ ${do_usage} = 1 ]; then
     print_usage
-    exit 2
+    my_exit 2
 fi
+
+######################################################
+
+function check_gmk ()
+{
+    __pkgtools__at_function_enter check_gmk
+
+    if [ ! -d ${the_gmk_dir} ]; then
+	pkgtools__msg_warning "Missing '${the_gmk_dir}' directory !"
+	__pkgtools__at_function_exit
+	return 1    
+    fi
+
+    __pkgtools__at_function_exit
+    return 0
+}
 
 bn=$(basename $(pwd))
 if [ "x$bn" = "xpkgtools.d" ]; then
@@ -175,14 +202,14 @@ if [ "x$bn" = "xpkgtools.d" ]; then
 elif [ -d ./pkgtools.d ]; then
     the_base_dir=$(pwd)
 else 
-    err_msg "Please run 'pkgtools.d/pkgtool' from the base package directory!"
+    pkgtools__msg_error "Please run 'pkgtools.d/pkgtool' from the base package directory!"
     exit 1    
 fi
 #echo "Base package directory is '${the_base_dir}'!"
 if [ -d ${the_base_dir}/gmk ]; then
     GMKDIR=${the_base_dir}/gmk
 else
-    err_msg "Missing gmk directory! Please run 'pkgtools.d/pkgtool' from the base package directory!"
+    pkgtools__msg_error "Missing gmk directory! Please run 'pkgtools.d/pkgtool' from the base package directory!"
     exit 1    
 fi
 
@@ -190,218 +217,292 @@ fi
 
 function do_clean_gmk ()
 {
-    info_msg "Clean gmk..."
-    if [ ! -d ${GMKDIR} ]; then 
-	err_msg "do_clean_gmk: Missing '${GMKDIR}' directory!"
+    __pkgtools__at_function_enter do_clean_gmk
+
+    if [ ! -d ${the_gmk_dir} ]; then 
+	pkgtools__msg_error "Missing '${the_gmk_dir}' directory !"
+	__pkgtools__at_function_exit
 	return 1
     fi
+
     opwd=$(pwd)
-    cd ${GMKDIR}
+    cd ${the_gmk_dir}
     make clean 
     if [ $? -ne 0 ]; then 
 	cd ${opwd}
+	__pkgtools__at_function_exit
 	return 1
     fi
+
+    # ### special Python wrapper/program:
+    # if [ -d ${the_python_dir} ]; then
+    # 	cd ${the_python_dir}
+    # 	make clean
+    # 	if [ $? -ne 0 ]; then 
+    # 	    cd ${opwd}
+    # 	    __pkgtools__at_function_exit
+    # 	    return 1
+    # 	fi
+    # fi
+    cd ${the_gmk_dir}
+
     cd ${opwd}
+    __pkgtools__at_function_exit
     return 0
 }
 
 function do_build_gmk ()
 {
-    info_msg "Build gmk..."
-    if [ ! -d ${GMKDIR} ]; then 
-	err_msg "do_build_gmk: Missing '${GMKDIR}' directory!"
+    __pkgtools__at_function_enter do_build_gmk
+
+    pkgtools__msg_info "Build gmk..."
+    if [ ! -d ${the_gmk_dir} ]; then 
+	pkgtools__msg_error "do_build_gmk: Missing '${the_gmk_dir}' directory !"
+	__pkgtools__at_function_exit
 	return 1
     fi
     opwd=$(pwd)
-    cd ${GMKDIR}
+
+    cd ${the_gmk_dir}
     mk_lib=0
     mk_bin=0
     mk_bin_static=0
+    pkgtools__msg_devel "Build parameter is '$1'"
     build_tag=""
     if [ -z "$1" ]; then
         build_tag="lib"
     else
         build_tag="$1"
     fi  
-    old=0
-    warning_msg "do_build_gmk: target='${build_tag}'"
-    if [ $old -eq 1 ]; then
-	if [ -z "$1" ]; then
-	    mk_lib=1
-	    mk_bin=1
-	    mk_bin_static=1
-	else
-	    if [ "$1" = "lib" -o "$1" = "libs" ]; then
-		mk_lib=1
-	    fi
-	    if [ "$1" = "bin" ]; then
-		mk_bin=1
-	    fi
-	    if [ "$1" = "bin_static" ]; then
-		mk_bin_static=1
-	    fi
-	    if [ "$1" = "all" ]; then
-		mk_bin=1
-		mk_bin_static=1
-	    fi
-	    if [ "$1" = "all_bin" -o "$1" = "bin_all" ]; then
-		mk_bin=1
-		mk_bin_static=1
-	    fi
-	fi
-    #
-	if [ $mk_lib = 1 ]; then
-	    make || return 1
-	fi
-	if [ $mk_bin = 1 ]; then
-	    make bin || return 1
-	fi
-	if [ $mk_bin_static = 1 ]; then
-	    make bin_static || return 1
-	fi
-    else
-        info_msg "Build target '${build_tag}'..."
-        make ${build_tag}
-        if [ $? -ne 0 ]; then
-            cd ${opwd} 
-            err_msg "Build target '${build_tag}' failed!"
-            return 1
-        fi
+    pkgtools__msg_notice "Build target is '${build_tag}'"
+    make ${build_tag}
+    if [ $? -ne 0 ]; then
+	cd ${opwd} 
+	pkgtools__msg_error "Build target '${build_tag}' failed !"
+	__pkgtools__at_function_exit
+	return 1
     fi
-    
+
     cd ${opwd}
+    __pkgtools__at_function_exit
     return 0
 }
 
 #######################################################
 
+function get_dependency_package_config ()
+{  
+    __pkgtools__at_function_enter get_dependency_package_config
+    dep=$1
+    if [ "x${dep}" = "x" ]; then
+	__pkgtools__at_function_exit
+	return 1
+    fi
+    dep_cfg=
+    dep_lower=$(echo ${dep} | tr 'A-Z' 'a-z')
+
+    if [ "x${dep_lower}" == "xcernlib" ]; then
+	dep_cfg=cernlib
+    else
+	dep_cfg=${dep_lower}-config
+    fi
+    echo ${dep_cfg}
+
+    __pkgtools__at_function_exit
+    return 0
+}
+
+### This is a default algorithm to check dependencies.
+### you may rewrite this function to suit your needs.
+function check_dependencies ()
+{
+    __pkgtools__at_function_enter check_dependencies
+
+    pkgtools__check_dependencies ${the_pkgtools_dir}/package.info $@
+    if [ $? -ne 0 ]; then
+	pkgtools__msg_warning "Invalid dependency !"
+	__pkgtools__at_function_exit
+	return 1
+    fi
+
+    __pkgtools__at_function_exit
+    return 0;
+}
+
 function do_clean ()
 {
-    notice_msg "Clean package '${pack_name}'..."
-    if [ -d ${GMKDIR} ]; then
+    __pkgtools__at_function_enter do_clean
+
+    if [ -d ${the_base_dir}/doc/doxygen ]; then
+        rm -fr ${the_base_dir}/doc/doxygen
+    fi
+
+    if [ -d ${the_gmk_dir} ]; then
 	do_clean_gmk $@
-	if [ $? -ne 0 ]; then
-	    err_msg "Clean package '${pack_name}' failed!"
-	    return 1
-	fi
+	__pkgtools__at_function_exit
+	return $?
     fi 
+
     test -f ${the_base_dir}/.${pack_name}.conf && rm -f ${the_base_dir}/.${pack_name}.conf
-    notice_msg "Clean package '${pack_name}' done."
-    return 0
+
+    __pkgtools__at_function_exit
+    return 1
 }
 
 function do_configure ()
 {
-    notice_msg "Configure package '${pack_name}': Entering..."
+    __pkgtools__at_function_enter do_configure
 
-    # parse options:
+    skip_all_dependencies_check=0
+    skipped_dependencies=
     while [ -n "$1" ]; do
-	arg="$1";
-	notice_msg "Configure package '${pack_name}': arg=${arg}"
-	if [ "x${arg}" = "x--g77" ]; then
-	    use_g77=1
-	    use_gfortran=0	    
-	elif [ "x${arg}" = "x--gfortran" ]; then
-	    use_g77=0
-	    use_gfortran=1
+	token="$1"
+	    
+	if [ "x${token:0:1}" = "x-" ]; then
+	    opt=${token}
+	    if [ "${opt}" = "-S" -o "${opt}" = "--skip-all-dependencies-check" ]; then
+		skip_all_dependencies_check=1
+	    elif [ "${opt}" = "-s" -o "${opt}" = "--skip-dependency-check" ]; then
+		shift 1
+		swpack=$1
+		if [ "x${skipped_dependencies}" = "x" ]; then
+		    skipped_dependencies=${swpack}
+		else
+		    skipped_dependencies="${skipped_dependencies} ${swpack}"
+		fi
+	    elif [ "x${opt}" = "x--g77" ]; then
+		use_g77=1
+		use_gfortran=0	    
+	    elif [ "x${opt}" = "x--gfortran" ]; then
+		use_g77=0
+		use_gfortran=1
+	    else
+                # parse other configuration options...
+		pkgtools__msg_warning "Ignoring '${opt}' option !"
+	    fi
+	else
+	    arg=${token}
+	    pkgtools__msg_warning "Ignoring '${arg}' argument !"
 	fi
+
 	shift 1
     done
 
-    which boost-config 2>&1 > /dev/null
-    if [ $? -ne 0 ]; then
-	err_msg "boost seems not to be setup!"
-	err_msg "Use boost_help utility to set up BOOST_ROOT variable"
-	return 1
-    else
-	boost_version=$(boost-config --version)
-	notice_msg "Boost ${boost_version} seems to be properly setup."
+    if [ "x${prefix}" != "x" ]; then
+	pkgtools__msg_warning "Installation prefix is '${prefix}' ! Unsupported option !"
     fi
 
-    which datatools-config 2>&1 > /dev/null
-    if [ $? -ne 0 ]; then
-	err_msg "datatools seems not to be setup!"
-	return 1
-    else
-	datatools_version=$(datatools-config --version)
-	notice_msg "datatools ${datatools_version} seems to be properly setup!"
-    fi
+    # please enter a list of software components you don't want
+    # to check:
+    # Example: 
+    #   skipped_dependencies="gnuplot test dummy"
 
-    which geomtools-config 2>&1 > /dev/null
-    if [ $? -ne 0 ]; then
-	err_msg "geomtools seems not to be setup!"
-	return 1
-    else
-	geomtools_version=$(geomtools-config --version)
-	notice_msg "geomtools (${geomtools_version}) seems to be properly setup!"
-    fi
-
-    which mygsl-config 2>&1 > /dev/null
-    if [ $? -ne 0 ]; then
-	err_msg "mygsl seems not to be setup!"
-	return 1
-    else
-	mygsl_version=$(mygsl-config --version)
-	notice_msg "mygsl (${mygsl_version}) seems to be properly setup!"
-    fi
-
-    which clhep-config 2>&1 > /dev/null
-    if [ $? -ne 0 ]; then
-	err_msg "CLHEP seems not to be setup!"
-	return 1
-    else
-	clhep_version=$(clhep-config --version)
-	notice_msg "CLHEP (${clhep_version}) seems to be properly setup!"
-    fi
-
-    which cernlib 2>&1 > /dev/null
-    if [ $? -ne 0 ]; then
-	err_msg "CERNLIB seems not to be setup!"
-	return 1
-    else
-	if [ "x${CERN_ROOT}" = "x" ]; then
-	    err_msg "CERN_ROOT path is not setup!"
+    if [ ${skip_all_dependencies_check} -eq 0 ]; then
+        # Check package dependencies:
+	check_dependencies ${skipped_dependencies}
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Dependencies check failed !"
+	    __pkgtools__at_function_exit
 	    return 1
-	else
-	    notice_msg "CERNLIB seems to be properly setup!"
 	fi
     fi
 
-    notice_msg "Configure package '${pack_name}': Setting F77 compiler..."
+    pkgtools__msg_notice "Setting F77 compiler..."
     if [ ${use_gfortran} -eq 1 ]; then
-	notice_msg "Package '${pack_name}' build will use 'gfortran'"
+	pkgtools__msg_notice "Package '${pack_name}' build will use 'gfortran'"
 	F77_COMP=gfortran
     fi
     if [ ${use_g77} -eq 1 ]; then
 	F77_COMP=g77
-	notice_msg "Package '${pack_name}' build will use 'g77'"
+	pkgtools__msg_notice "Package '${pack_name}' build will use 'g77'"
     fi
     echo "export F77_COMP=${F77_COMP}" > ${the_base_dir}/.${pack_name}.conf
 
-    notice_msg "File '${the_base_dir}/.${pack_name}.conf' has been generated."
+    pkgtools__msg_notice "File '${the_base_dir}/.${pack_name}.conf' has been generated."
 
-    notice_msg "Configure package '${pack_name}': Exiting."
+    __pkgtools__at_function_exit
     return 0
 }
 
 function do_build ()
 {
-    info_msg "Build package '${pack_name}'..."
+    __pkgtools__at_function_enter do_build
+
     if [ -f ${the_base_dir}/.${pack_name}.conf ]; then
 	source ${the_base_dir}/.${pack_name}.conf
-	info_msg "Build procedure use the '${F77_COMP}' F77 compiler..."
+	pkgtools__msg_notice "Build procedure use the '${F77_COMP}' F77 compiler..."
     fi
-    if [ -d ${GMKDIR} ]; then
+
+    if [ -d ${the_gmk_dir} ]; then
+	if [ -d ${the_python_dir} ]; then
+	    if [ -f ${without_python_flag_file} ]; then
+		source ${without_python_flag_file}
+	    fi
+	fi
 	do_build_gmk $@
-	return $?
+	local code=$?
+	__pkgtools__at_function_exit
+	return ${code}
     fi
-    return 1
+
+    __pkgtools__at_function_exit
+    return 0
 }
 
 function do_startup ()
 {
-cat<<EOF
+    __pkgtools__at_function_enter do_startup
+
+    pkgtools__msg_warning "SH startup = ${the_base_dir}/${sh_ss}"
+    cat ${the_pkgtools_dir}/package.sh.skel | sed -e "s@__PACKAGE_ROOT__@${GENBB_HELP_ROOT}@g" -e "s@__PACKAGE_NAME__@${pack_name_upper}@g" -e "s@__Package_name__@${pack_name}@g" > ${the_base_dir}/${sh_ss} 
+
+ 
+    pkgtools__msg_warning "CSH startup = ${the_base_dir}/${csh_ss}"
+    cat ${the_pkgtools_dir}/package.csh.skel | sed -e "s@__PACKAGE_ROOT__@${GENBB_HELP_ROOT}@g" -e "s@__PACKAGE_NAME__@${pack_name_upper}@g" -e "s@__Package_name__@${pack_name}@g" > ${the_base_dir}/${csh_ss}
+
+    ### using hardcoded shared lib path within LDFLAGS:
+    if [ "X${install__ldflags_mode}" = "Xhardcoded_shared_lib_path" ]; then
+	cat >> ${the_base_dir}/${sh_ss} <<EOF
+export ${pack_name_upper}_LDFLAGS_MODE="${install__ldflags_mode}"
+
+EOF
+	cat >> ${the_base_dir}/${csh_ss} <<EOF
+setenv ${pack_name_upper}_LDFLAGS_MODE "${install__ldflags_mode}"
+
+EOF
+    else
+	cat >> ${the_base_dir}/${sh_ss} <<EOF
+#export ${pack_name_upper}_LDFLAGS_MODE="hardcoded_shared_lib_path"
+
+EOF
+	cat >> ${the_base_dir}/${csh_ss} <<EOF
+#setenv ${pack_name_upper}_LDFLAGS_MODE "hardcoded_shared_lib_path"
+
+EOF
+    fi
+
+    ### using cflags/ldflags cache files:
+    if [ ${install__using_cache_files} -eq 0 ]; then
+	cat >> ${the_base_dir}/${sh_ss} <<EOF
+export ${pack_name_upper}_USING_CACHE_FILES=0
+
+EOF
+	cat >> ${the_base_dir}/${csh_ss} <<EOF
+setenv ${pack_name_upper}_USING_CACHE_FILES 0
+
+EOF
+    else
+	cat >> ${the_base_dir}/${sh_ss} <<EOF
+#export ${pack_name_upper}_USING_CACHE_FILES=0
+
+EOF
+	cat >> ${the_base_dir}/${csh_ss} <<EOF
+#setenv ${pack_name_upper}_USING_CACHE_FILES 0
+
+EOF
+    fi
+
+    cat<<EOF
 
 Setup scripts:
 
@@ -417,10 +518,17 @@ You may source these scripts at startup time
 (i.e. from your '~/.bashrc' or '~/.(t)cshrc' files).
 
 EOF
+    __pkgtools__at_function_exit
+    return 0
 }
 
 function kill_startup ()
 {
+    __pkgtools__at_function_enter kill_startup
+
+    test -f ${the_base_dir}/${sh_ss} && rm -f  ${the_base_dir}/${sh_ss} || echo -n ""
+    test -f ${the_base_dir}/${csh_ss} && rm -f  ${the_base_dir}/${csh_ss} || echo -n ""
+
     cat<<EOF
 Don't forget to remove environment variables in your startup scripts.
 Particularly, you should not source the following scripts anymore
@@ -433,131 +541,367 @@ and
   '${the_base_dir}/${csh_ss}' for csh-shells
 
 EOF
+    __pkgtools__at_function_exit
+    return 0
 }
 
 function do_install ()
 {
-    debug_msg "do_install: Entering..."
-    info_msg "Install package '${pack_name}'..."
+    __pkgtools__at_function_enter do_install
+
+    # reset default install options:
+    install__ldflags_mode=""
+    install__using_cache_files=1
+    dummy=0
+
+    while [ -n "$1" ]; do
+	token="$1"
+	if [ "x${token:0:1}" = "x-" ]; then
+	    opt=${token}
+	    if [ "${opt}" = "--dummy" ]; then
+		dummy=1
+	    elif [ "${opt}" = "--hardcoded-shared-lib-path" ]; then
+		install__ldflags_mode="hardcoded_shared_lib_path"
+	    elif [ "${opt}" = "--no-cache-files" ]; then
+		install__using_cache_files=0
+	    else
+                # parse other configuration options...
+		pkgtools__msg_warning "Ignoring '${opt}' option !"
+	    fi
+	else
+	    arg=${token}
+	    pkgtools__msg_warning "Ignoring '${arg}' argument !"
+	fi
+
+	shift 1
+    done
+
+    pkgtools__msg_info "Install package '${pack_name}'..."
     opwd=$(pwd)
-    cd ${GMKDIR}
+    cd ${the_gmk_dir}
     make install 
     if [ $? -ne 0 ]; then 
 	cd ${opwd}
 	return 1
     fi
+
+    ### special Python wrapper/program:
+    if [ -d ${the_python_dir} ]; then
+	if [ ! -f ${without_python_flag_file} ]; then
+	    cd ${the_python_dir}
+	    make install
+	    cd ${the_gmk_dir}
+	fi
+    fi
+    ###
+
     cd ${opwd}
-    debug_msg "do_startup..."
+    do_pkg_config_pc
+    pkgtools__msg_debug "do_startup..."
     do_startup
-    debug_msg "ok"
+    pkgtools__msg_debug "ok"
+
+    local sysdir=${the_base_dir}/$(pkgtools__get_sys)
+    test -L ${sysdir}/bin/${pack_config} && rm -f ${sysdir}/bin/${pack_config} 
+    ln -s -f ${the_pkgtools_dir}/${pack_config} ${sysdir}/bin/${pack_config}
+    ln -s -f ${the_base_dir}/scripts/genbb ${sysdir}/bin/genbb
+
+    __pkgtools__at_function_exit
     return 0
 }
 
 function do_uninstall ()
 {
-    info_msg "Uninstall package '${pack_name}'... The"
+    __pkgtools__at_function_enter do_uninstall
+    local sysdir=${the_base_dir}/$(pkgtools__get_sys)
+    kill_startup 
+
+
     opwd=$(pwd)
-    cd ${GMKDIR}
+    cd ${the_gmk_dir}
     make uninstall 
     if [ $? -ne 0 ]; then 
 	cd ${opwd}
+	__pkgtools__at_function_exit
 	return 1
     fi
+
+    ### special Python wrapper/program:
+    if [ -d ${the_python_dir} ]; then
+	cd ${the_python_dir}
+	make uninstall
+	cd ${the_gmk_dir}
+    fi
+
     cd ${opwd}
     kill_startup
+
+    local sysdir=${the_base_dir}/$(pkgtools__get_sys)
+    test -L ${sysdir}/bin/${pack_config} && rm -f ${sysdir}/bin/${pack_config} 
+
+    if [ -f ${the_base_dir}/.cflags.cache ]; then
+	rm -f  ${the_base_dir}/.cflags.cache
+    fi
+
+    if [ -f ${the_base_dir}/.ldflags.cache ]; then
+	rm -f  ${the_base_dir}/.ldflags.cache
+    fi
+
+    test -L ${sysdir}/bin/genbb && rm -f ${sysdir}/bin/genbb
+
+    __pkgtools__at_function_exit
     return 0
 }
 
 function do_info ()
 {
+    __pkgtools__at_function_enter do_info
+
     pkg_version="undefined"
     pkg_lang="undefined"
     pkg_creation="undefined"
     pkg_authors="undefined"
     pkg_deps="undefined"
+    pkg_url="undefined"
+    pkg_svn_rep="undefined"
+    pkg_desc="undefined"
     if [ -f ./VERSION ]; then
 	pkg_version=$(cat ./VERSION)
     fi
     pkg_build="undefined"
-    if [ -d ${GMKDIR} -a -f ${GMKDIR}/GNUmakefile ]; then
+    if [ -d ${the_gmk_dir} -a -f ${the_gmk_dir}/GNUmakefile ]; then
 	pkg_build="GNU-make"
     fi
     if [ -f ./configure.ac -o -f ./configure.in ]; then
 	pkg_build="Autotools"
     fi
-    echo "This is package '${pack_name}' (version ${pkg_version})" #1>&2
+    echo "This is package '${pack_name}' (version ${pkg_version})" 
     
     pkgi_file="./pkgtools.d/package.info"
     if [ -f ${pkgi_file} ]; then
 	pkg_lang=$(cat ${pkgi_file} | grep "language=" | cut -d= -f2)
 	pkg_creation=$(cat ${pkgi_file} | grep "creation=" | cut -d= -f2)
 	pkg_authors=$(cat ${pkgi_file} | grep "author=" | cut -d= -f2)
-	pkg_deps=$(cat ${pkgi_file} | grep "dependencies=" | cut -d= -f2)
+	pkg_deps=$(cat ${pkgi_file} | grep "dependencies=" | cut -d= -f2-)
 	pkg_namespace=$(cat ${pkgi_file} | grep "namespace=" | cut -d= -f2)
-	echo -e "\tName               : ${pack_name}"
-	echo -e "\tVersion            : ${pkg_version}"
-	echo -e "\tLanguage is        : ${pkg_lang}"
-	echo -e "\tDependencies are   : ${pkg_deps}"
-	echo -e "\tAuthors            : ${pkg_authors}"
-	echo -e "\tCreation date      : ${pkg_creation}"
+	pkg_url=$(cat ${pkgi_file} | grep "URL=" | cut -d= -f2)
+	pkg_svn_rep=$(cat ${pkgi_file} | grep "SVN base repository=" | cut -d= -f2)
+	pkg_desc=$(cat ${pkgi_file} | grep "description=" | cut -d= -f2)
+	test -z "${pkg_url}" && pkg_url="no URL"
+	test -z "${pkg_desc}" && pkg_desc="no description"
+	test -z "${pkg_svn_rep}" && pkg_svn_rep="no SVN repository"
+	echo -e "\tName                : ${pack_name}"
+	echo -e "\tVersion             : ${pkg_version}"
+	echo -e "\tDescription         : ${pkg_desc}"
+	echo -e "\tAuthors             : ${pkg_authors}"
+	echo -e "\tCreation date       : ${pkg_creation}"
+	echo -e "\tLanguage is         : ${pkg_lang}"
+	echo -e "\tDependencies are    : ${pkg_deps}"
 	if [ "${pkg_lang}" = "C++" ]; then
-	    echo -e "\tNamespace          : ${pkg_namespace}"
+	    echo -e "\tNamespace           : ${pkg_namespace}"
 	fi
-	echo -e "\tBuild method       : ${pkg_build}"
+	echo -e "\tBuild method        : ${pkg_build}"
+	echo -e "\tURL                 : ${pkg_url}"
+	echo -e "\tSVN base repository : ${pkg_svn_rep}"
+    fi
+ 
+    __pkgtools__at_function_exit
+    return 0
+}
+
+function do_check ()
+{
+    __pkgtools__at_function_enter do_check
+
+    skip_all_dependencies_check=0
+    skipped_dependencies=
+    while [ -n "$1" ]; do
+	token="$1"
+	    
+	if [ "x${token:0:1}" = "x-" ]; then
+	    opt=${token}
+	    if [ "${opt}" = "-S" -o "${opt}" = "--skip-all-dependencies-check" ]; then
+		skip_all_dependencies_check=1
+	    elif [ "${opt}" = "-s" -o "${opt}" = "--skip-dependency-check" ]; then
+		shift 1
+		swpack=$1
+		pkgtools__msg_debug "swpack = '${swpack}'"
+		if [ "x${skipped_dependencies}" = "x" ]; then
+		    skipped_dependencies=${swpack}
+		else
+		    skipped_dependencies="${skipped_dependencies} ${swpack}"
+		fi
+	    elif [ "${opt}" = "--prefix" ]; then
+		shift 1
+		prefix="$1"
+	    else
+                # parse other configuration options...
+		pkgtools__msg_warning "Ignoring '${opt}' option !"
+	    fi
+	else
+	    arg=${token}
+	    pkgtools__msg_warning "Ignoring '${arg}' argument !"
+	fi
+
+	shift 1
+    done
+
+    pkgtools__msg_debug "skipped_dependencies = '${skipped_dependencies}'"
+
+    if [ ${skip_all_dependencies_check} -eq 0 ]; then
+        # Check package dependencies:
+	check_dependencies ${skipped_dependencies}
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Dependencies check failed !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    else
+	pkgtools__msg_warning "No dependency check !"
     fi
 
+    __pkgtools__at_function_exit
+    return 0
+}
+
+function do_doc ()
+{ 
+    __pkgtools__at_function_enter do_doc
+
+    pkgtools__msg_info "Generate documentation for package '${pack_name}'..."
+
+    which doxygen >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+	pkgtools__msg_error "Cannot find doxygen ! Cannot generate documentation !"
+	__pkgtools__at_function_exit
+        return 1
+    fi
+    if [ ! -f ${the_base_dir}/pkgtools.d/${pack_name}.doxygen ]; then
+	pkgtools__msg_error "Missing '${the_base_dir}/pkgtools.d/${pack_name}.doxygen' configuration file !"
+	__pkgtools__at_function_exit
+       return 1
+    fi
+    doxygen ${the_base_dir}/pkgtools.d/${pack_name}.doxygen 
+
+    pkgtools__msg_notice "Doxygen documentation is at: ${the_base_dir}/doc/doxygen/html/index.html"
+    pkgtools__msg_notice "Please run: 'firefox file://$(pwd)/doc/doxygen/html/index.html &' or something similar..."
+
+    __pkgtools__at_function_exit
+    return 0
 }
 
 #######################################################
 
-if [ "${tool_mode}" = "configure" ]; then
-    do_configure $@
-    if [ $? -ne 0 ]; then
-	err_msg "Configure failed!"
-	exit 1
+function main ()
+{
+    __pkgtools__at_function_enter main
+    
+    # Some checks...
+    if [ -z "${action_mode}" ]; then
+	pkgtools__msg_error "Missing running mode !"
+	print_usage
+	__pkgtools__at_function_exit
+	return 1
     fi
-fi
 
-if [ "${tool_mode}" = "build" ]; then
-    do_build $@
-    if [ $? -ne 0 ]; then
-	err_msg "Build failed!"
-	exit 1
+    if [ ! -d ./pkgtools.d ]; then
+	pkgtools__msg_error "Please run the 'pkgtools.d/pkgtool' utility from the base package directory !"
+	__pkgtools__at_function_exit
+	return 1
     fi
-fi
 
-if [ "${tool_mode}" = "clean" ]; then
-    do_clean
+    pkgtools__msg_debug "Base package directory is '${the_base_dir}' !"
+    
+    check_gmk
     if [ $? -ne 0 ]; then
-	err_msg "Clean failed!"
-	exit 1
+	pkgtools__msg_error "Missing gmk directory ! Abort !"
+	__pkgtools__at_function_exit
+	return 1
     fi
-fi
-
-if [ "${tool_mode}" = "install" ]; then
-    do_install
-    if [ $? -ne 0 ]; then
-	err_msg "Install failed!"
-	exit 1
+    
+    # Perform action...
+    if [ "${action_mode}" = "configure" ]; then
+	do_configure $@
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Package configuration failed !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
     fi
-fi
-
-if [ "${tool_mode}" = "uninstall" ]; then
-    do_uninstall
-    if [ $? -ne 0 ]; then
-	err_msg "Uninstall failed!"
-	exit 1
+    
+    if [ "${action_mode}" = "build" ]; then
+	do_build $@
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "  building failed !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
     fi
-fi
-
-if [ "${tool_mode}" = "info" ]; then
-    do_info
-    if [ $? -ne 0 ]; then
-	err_msg "Info failed!"
-	exit 1
+    
+    if [ "${action_mode}" = "clean" ]; then
+	do_clean $@
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Package cleaning failed !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
     fi
-fi
+    
+    if [ "${action_mode}" = "install" ]; then
+	do_install $@
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Installation failed !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
+    
+    if [ "${action_mode}" = "uninstall" ]; then
+	do_uninstall $@
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Uninstallation failed !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
+    
+    if [ "${action_mode}" = "doc" ]; then
+	do_doc $@
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Documentation generation failed !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
+    
+    if [ "${action_mode}" = "info" ]; then
+	do_info $@
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Print info failed !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
+    
+    if [ "${action_mode}" = "check" ]; then
+	do_check $@
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Package check failed !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
 
-exit 0
+    __pkgtools__at_function_exit
+    return 0
+}
+
+#######################################
+
+main $@
+if [ $? -ne 0 ]; then
+    my_exit 1
+fi
+my_exit 0
 
 # end of pkgtool
