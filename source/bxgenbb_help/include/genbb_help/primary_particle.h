@@ -102,6 +102,11 @@ namespace genbb {
       return get_type () == ALPHA;
     }
 
+    bool is_neutron () const
+    {
+      return get_type () == NEUTRON;
+    }
+
     void set_momentum (const geomtools::vector_3d & m_);
 
     const geomtools::vector_3d & get_momentum () const;

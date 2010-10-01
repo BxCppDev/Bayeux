@@ -40,6 +40,16 @@ elif [ -f "${THEPACK_ROOT}/pkgtools.d/package.info"  ]; then
     THEPACK_VERSION=$version
 fi
 
+### Notes:
+###	"-lgfortran " 
+###	"-lg2c "
+f77_comp=$(cat ${PACK_CONF} | grep F77_COMP= | cut -d= -f2)
+
+f77_opt=-lgfortran
+if [ "x${f77_comp}" = "xg77" ]; then
+    f77_opt=-lg2c
+fi
+
 opt=$1
 
 if [ "x$opt" = "x" ]; then
@@ -100,8 +110,33 @@ if [ "x$opt" = "x--include" ]; then
 fi
 
 if [ "x$opt" = "x--cflags" ]; then
+
+    if [ "x${f77_comp}" = "xg77" ]; then
+	f77_defines="\
+-Df2cFortran \
+-Dgenbbsub=genbbsub__ \
+-Dset_random_seed=set_random_seed__ \
+-Dgrndm=grndm__ \
+-Dgenevent=genevent__ \
+-Dgenbb_init_enrange=genbb_init_enrange__ \
+-Denrange=enrange__\
+"
+    fi
+    if [ "x${f77_comp}" = "xgfortran" ]; then
+	f77_defines="\
+-Df2cFortran \
+-Dgenbbsub=genbbsub_ \
+-Dset_random_seed=set_random_seed_ \
+-Dgrndm=grndm_ \
+-Dgenevent=genevent_ \
+-Dgenbb_init_enrange=genbb_init_enrange_ \
+-Denrange=enrange_ \
+"
+    fi
+    f77_defines=
     echo -n \
         "-fPIC " \
+        "${f77_defines} " \
 	"-I${THEPACK_INCLUDEDIR} "  \
 	"`geomtools-config --cflags` "  \
 	"`mygsl-config --cflags` "  \
@@ -133,16 +168,6 @@ if [ "x$opt" = "x--libs" ]; then
     echo "-L${THEPACK_LIBDIR} -lgenbb_help "
     exit 0
 fi 
-
-### Notes:
-###	"-lgfortran " 
-###	"-lg2c "
-f77_comp=$(cat ${PACK_CONF} | grep F77_COMP= | cut -d= -f2)
-
-f77_opt=-lgfortran
-if [ "x${f77_comp}" = "xg77" ]; then
-    f77_opt=-lg2c
-fi
 
 #>>> 2009-03-01 FM:
 # Remove  -lg2c link option for we now use gfortran...
