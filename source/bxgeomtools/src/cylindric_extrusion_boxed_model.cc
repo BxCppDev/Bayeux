@@ -104,6 +104,13 @@ namespace geomtools {
      __material_name = mn_;
   }
 
+  void cylindric_extrusion_boxed_model::set_mother_material_name (const string & mn_)
+  {
+    assert_unconstructed("cylindric_extrusion_boxed_model::set_mother_material_name");
+
+     __mother_material_name = mn_;
+  }
+
   const string & cylindric_extrusion_boxed_model::get_material_name () const
   {
     return __material_name;
@@ -251,6 +258,7 @@ namespace geomtools {
       }
 
     set_material_name (material_name);
+    set_mother_material_name (mother_material_name);
     set_mother_x (mother_x);
     set_mother_y (mother_y);
     set_mother_z (mother_z);

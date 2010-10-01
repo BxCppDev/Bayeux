@@ -63,6 +63,8 @@ namespace geomtools {
 
     void set_material_name (const string &);
 
+    void set_mother_material_name (const string &);
+
     const string & get_material_name () const;
 
     const string & get_mother_material_name () const;
