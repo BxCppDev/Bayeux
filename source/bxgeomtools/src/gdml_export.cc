@@ -3,6 +3,9 @@
  */
 
 #include <geomtools/gdml_export.h>
+#include <geomtools/union_3d.h>
+#include <geomtools/subtraction_3d.h>
+#include <geomtools/intersection_3d.h>
 
 namespace geomtools {
 
@@ -226,14 +229,81 @@ namespace geomtools {
 
     if (shape_.is_composite ())
       {
-	/*
-	if (shape_name == "union")
+	/* GDML constraints:
+	 * One should check if placement of shape 1 in any composite 
+	 * solid is NULL (translation & rotation).
+	 *
+	 */
+	if (shape_name == "union_3d")
 	  {
 	    const union_3d & u = static_cast<const union_3d &> (shape_);
-	    //__writer.add_union (solid_name_, bu __length_unit);
+	    string shape_ref_1 = solid_name_ + ".union.first_ref";
+	    string shape_ref_2 = solid_name_ + ".union.second_ref";;
+	    string pos_ref = solid_name_ + ".union.pos_ref";
+	    string rot_ref = solid_name_ + ".union.rot_ref";;
+
+	    __writer.add_position (pos_ref, 
+				   u.get_shape2 ().get_placement ().get_translation (), 
+				   __length_unit);
+	    __writer.add_rotation (pos_ref, 
+				   u.get_shape2 ().get_placement ().get_rotation (), 
+				   __angle_unit);
+	    this->_export_gdml_solid (u.get_shape1 ().get_shape (), shape_ref_1);
+	    this->_export_gdml_solid (u.get_shape2 ().get_shape (), shape_ref_2);
+
+	    __writer.add_gdml_union (solid_name_, 
+				     shape_ref_1,
+				     shape_ref_2,
+				     pos_ref,
+				     rot_ref);
 	  }
-	else
-	*/ 
+	else if (shape_name == "subtraction_3d")
+	  {
+	    const subtraction_3d & s = static_cast<const subtraction_3d &> (shape_);
+	    string shape_ref_1 = solid_name_ + ".subtraction.first_ref";
+	    string shape_ref_2 = solid_name_ + ".subtraction.second_ref";;
+	    string pos_ref = solid_name_ + ".subtraction.pos_ref";
+	    string rot_ref = solid_name_ + ".subtraction.rot_ref";;
+
+	    __writer.add_position (pos_ref, 
+				   s.get_shape2 ().get_placement ().get_translation (), 
+				   __length_unit);
+	    __writer.add_rotation (pos_ref, 
+				   s.get_shape2 ().get_placement ().get_rotation (), 
+				   __angle_unit);
+	    this->_export_gdml_solid (s.get_shape1 ().get_shape (), shape_ref_1);
+	    this->_export_gdml_solid (s.get_shape2 ().get_shape (), shape_ref_2);
+
+	    __writer.add_gdml_subtraction (solid_name_, 
+					   shape_ref_1,
+					   shape_ref_2,
+					   pos_ref,
+					   rot_ref);
+	  }
+	else if (shape_name == "intersection_3d")
+	  {
+	    const intersection_3d & i = static_cast<const intersection_3d &> (shape_);
+	    string shape_ref_1 = solid_name_ + ".intersection.first_ref";
+	    string shape_ref_2 = solid_name_ + ".intersection.second_ref";;
+	    string pos_ref = solid_name_ + ".intersection.pos_ref";
+	    string rot_ref = solid_name_ + ".intersection.rot_ref";;
+
+	    __writer.add_position (pos_ref, 
+				   i.get_shape2 ().get_placement ().get_translation (), 
+				   __length_unit);
+	    __writer.add_rotation (pos_ref, 
+				   i.get_shape2 ().get_placement ().get_rotation (), 
+				   __angle_unit);
+	    this->_export_gdml_solid (i.get_shape1 ().get_shape (), shape_ref_1);
+	    this->_export_gdml_solid (i.get_shape2 ().get_shape (), shape_ref_2);
+
+	    __writer.add_gdml_intersection (solid_name_, 
+					    shape_ref_1,
+					    shape_ref_2,
+					    pos_ref,
+					    rot_ref);
+	  }
+	else	 
 	  {
 	    ostringstream message;
 	    message << "gdml_export::_export_gdml_solid: "

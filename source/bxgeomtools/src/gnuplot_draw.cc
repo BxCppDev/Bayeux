@@ -749,6 +749,45 @@ namespace geomtools {
     return;
   }
 
+  void 
+  gnuplot_draw::draw_intersection_3d (std::ostream & out_,
+				     const vector_3d & position_, 
+				     const rotation_3d & rotation_,
+				     const intersection_3d &)
+  {
+    rotation_3d inverse_rotation (rotation_);
+    inverse_rotation.invert ();
+
+    throw runtime_error ("gnuplot_draw::draw_intersection_3d: Not supported yet !");
+    return;
+  }
+
+  void 
+  gnuplot_draw::draw_union_3d (std::ostream & out_, 
+			       const vector_3d & position_, 
+			       const rotation_3d & rotation_,
+			       const union_3d &)
+  {
+    rotation_3d inverse_rotation (rotation_);
+    inverse_rotation.invert ();
+
+    throw runtime_error ("gnuplot_draw::draw_union_3d: Not supported yet !");
+    return;
+  }
+
+  void 
+  gnuplot_draw::draw_subtraction_3d (std::ostream & out_, 
+				     const vector_3d & position_, 
+				     const rotation_3d & rotation_,
+				     const subtraction_3d &)
+  {
+    rotation_3d inverse_rotation (rotation_);
+    inverse_rotation.invert ();
+
+    throw runtime_error ("gnuplot_draw::draw_subtraction_3d: Not supported yet !");
+    return;
+  }
+
   void gnuplot_draw::draw (ostream & out_, 
 			   const i_placement & p_, 
 			   const i_object_3d & o_)
@@ -856,6 +895,13 @@ namespace geomtools {
 	  {
 	    const tessellated_solid & t = dynamic_cast<const tessellated_solid &> (o_);
 	    draw_tessellated (out_, pos, rot, t);
+	    return;
+	  }
+
+	if (shape_name == "subtraction_3d")
+	  {
+	    const subtraction_3d & s = dynamic_cast<const subtraction_3d &> (o_);
+	    draw_subtraction_3d (out_, pos, rot, s);
 	    return;
 	  }
 

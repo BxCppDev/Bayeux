@@ -270,7 +270,7 @@ namespace geomtools {
       }
     p_ = *this;
   }
- 
+
   // ctor:
   placement::placement () : i_placement ()
   {

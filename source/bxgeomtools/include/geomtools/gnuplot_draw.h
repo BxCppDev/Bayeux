@@ -33,6 +33,9 @@
 #include <geomtools/disk.h>
 #include <geomtools/polycone.h>
 #include <geomtools/tessellation.h>
+#include <geomtools/union_3d.h>
+#include <geomtools/subtraction_3d.h>
+#include <geomtools/intersection_3d.h>
 
 #include <geomtools/color.h>
 
@@ -285,6 +288,24 @@ namespace geomtools {
 		      const vector_3d &, 
 		      const rotation_3d &,
 		      const tessellated_solid &);
+
+    static void 
+    draw_union_3d (std::ostream &, 
+		   const vector_3d &, 
+		   const rotation_3d &,
+		   const union_3d &);
+
+    static void 
+    draw_intersection_3d (std::ostream &, 
+			  const vector_3d &, 
+			  const rotation_3d &,
+			  const intersection_3d &);
+
+    static void 
+    draw_subtraction_3d (std::ostream &, 
+			 const vector_3d &, 
+			 const rotation_3d &,
+			 const subtraction_3d &);
   
     static void draw (ostream & out_, 
 		     const i_placement &, 
