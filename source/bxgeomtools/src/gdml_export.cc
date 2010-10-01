@@ -245,7 +245,7 @@ namespace geomtools {
 	    __writer.add_position (pos_ref, 
 				   u.get_shape2 ().get_placement ().get_translation (), 
 				   __length_unit);
-	    __writer.add_rotation (pos_ref, 
+	    __writer.add_rotation (rot_ref, 
 				   u.get_shape2 ().get_placement ().get_rotation (), 
 				   __angle_unit);
 	    this->_export_gdml_solid (u.get_shape1 ().get_shape (), shape_ref_1);
@@ -268,7 +268,7 @@ namespace geomtools {
 	    __writer.add_position (pos_ref, 
 				   s.get_shape2 ().get_placement ().get_translation (), 
 				   __length_unit);
-	    __writer.add_rotation (pos_ref, 
+	    __writer.add_rotation (rot_ref, 
 				   s.get_shape2 ().get_placement ().get_rotation (), 
 				   __angle_unit);
 	    this->_export_gdml_solid (s.get_shape1 ().get_shape (), shape_ref_1);
@@ -291,7 +291,7 @@ namespace geomtools {
 	    __writer.add_position (pos_ref, 
 				   i.get_shape2 ().get_placement ().get_translation (), 
 				   __length_unit);
-	    __writer.add_rotation (pos_ref, 
+	    __writer.add_rotation (rot_ref, 
 				   i.get_shape2 ().get_placement ().get_rotation (), 
 				   __angle_unit);
 	    this->_export_gdml_solid (i.get_shape1 ().get_shape (), shape_ref_1);
