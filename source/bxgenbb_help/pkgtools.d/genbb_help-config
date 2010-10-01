@@ -40,11 +40,20 @@ elif [ -f "${THEPACK_ROOT}/pkgtools.d/package.info"  ]; then
     THEPACK_VERSION=$version
 fi
 
+
+cernlib_config=cernlib
+if [ "x${CERNLIB_CONFIG}" != "x" ]; then
+    cernlib_config=${CERNLIB_CONFIG}
+fi
+
 ### Notes:
 ###	"-lgfortran " 
 ###	"-lg2c "
 f77_comp=$(cat ${PACK_CONF} | grep F77_COMP= | cut -d= -f2)
 
+#>>> 2009-03-01 FM:
+# Remove  -lg2c link option for we now use gfortran...
+#<<<
 f77_opt=-lgfortran
 if [ "x${f77_comp}" = "xg77" ]; then
     f77_opt=-lg2c
@@ -121,6 +130,7 @@ if [ "x$opt" = "x--cflags" ]; then
 -Dgenbb_init_enrange=genbb_init_enrange__ \
 -Denrange=enrange__\
 "
+	cernlib_cflags="-I${CERN_ROOT}/include"
     fi
     if [ "x${f77_comp}" = "xgfortran" ]; then
 	f77_defines="\
@@ -132,8 +142,16 @@ if [ "x$opt" = "x--cflags" ]; then
 -Dgenbb_init_enrange=genbb_init_enrange_ \
 -Denrange=enrange_ \
 "
+	cernlib_cflags="-I${CERN_ROOT}/include"
     fi
-    f77_defines=
+    ####
+    shift 1
+    more=$1
+    if [ "x${more}" = "x--no-f77" ]; then
+	f77_defines=
+	cernlib_cflags=
+    fi
+    ###
     echo -n \
         "-fPIC " \
         "${f77_defines} " \
@@ -141,16 +159,8 @@ if [ "x$opt" = "x--cflags" ]; then
 	"`geomtools-config --cflags` "  \
 	"`mygsl-config --cflags` "  \
 	"`clhep-config --include` " \
-	"-I${CERN_ROOT}/include " \
+	"${cernlib_cflags} " \
 	| python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py
-
-    ################################################################
-    # Please add here some stuff in order to take into account
-    # external package dependencies; it may looks like:
-    # echo "-I${THEPACK_INCLUDEDIR} " \
-    #      "`XXX-config --include` "  (or --cflags)
-    # where XXX stands for the identifier of the external package 
-    ################################################################
     exit 0
 fi
 
@@ -169,26 +179,24 @@ if [ "x$opt" = "x--libs" ]; then
     exit 0
 fi 
 
-#>>> 2009-03-01 FM:
-# Remove  -lg2c link option for we now use gfortran...
-#<<<EOF
 if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
+    cernlib_ldflags=`${cernlib_config} mathlib`
+    ####
+    shift 1
+    more=$1
+    if [ "x${more}" = "x--no-f77" ]; then
+	cernlib_ldflags=
+	f77_opt=
+    fi
+    ###
     echo -n "-L${THEPACK_LIBDIR} -lgenbb_help "  \
 	"`geomtools-config --ldflags` "  \
 	"`mygsl-config --ldflags` "  \
 	"`clhep-config --libs` "  \
-	"`cernlib mathlib` "  \
+	"${cernlib_ldflags} "  \
 	"${f77_opt} "  \
 	"-lm "  \
 	| python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
-
-    ################################################################
-    # Please add here some stuff in order to take into account
-    # external package dependencies; it may looks like:
-    # echo "-L${THEPACK_LIBDIR} -lgenbb_help " \
-    #      "`XXX-config --libs` " 
-    # where XXX stands for the identifier of the external package 
-    ################################################################
     exit 0
 fi 
 
