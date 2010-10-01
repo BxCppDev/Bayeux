@@ -162,6 +162,7 @@ endif
 
 CPPFLAGS1=
 CPPFLAGS2=
+CPPFLAGS3=
 
 ifeq ($(F77),g77)
 CPPFLAGS1+=-Dfermi_func_shape_only=fermi_func_shape_only__
@@ -170,12 +171,12 @@ CPPFLAGS1+=-Dfermi_func=fermi_func__
 CPPFLAGS1+=-Dfermi_func_nr_approx=fermi_func_nr_approx__
 CPPFLAGS1+=-Drng_shoot_reset=rng_shoot_reset__
 
-CPPFLAGS1+=-Dgenbbsub=genbbsub__
-CPPFLAGS1+=-Dset_random_seed=set_random_seed__
-CPPFLAGS1+=-Dgrndm=grndm__
-CPPFLAGS1+=-Dgenevent=genevent__
-CPPFLAGS1+=-Dgenbb_init_enrange=genbb_init_enrange__
-CPPFLAGS1+=-Denrange=enrange__
+CPPFLAGS3+=-Dgenbbsub=genbbsub__
+CPPFLAGS3+=-Dset_random_seed=set_random_seed__
+CPPFLAGS3+=-Dgrndm=grndm__
+CPPFLAGS3+=-Dgenevent=genevent__
+CPPFLAGS3+=-Dgenbb_init_enrange=genbb_init_enrange__
+CPPFLAGS3+=-Denrange=enrange__
 endif
 
 ifeq ($(F77),gfortran)
@@ -186,12 +187,12 @@ CPPFLAGS1+=-Dfermi_func_nr_approx=fermi_func_nr_approx_
 CPPFLAGS1+=-Drng_shoot_reset=rng_shoot_reset_
 CPPFLAGS1+=-Drng_shoot_flat=rng_shoot_flat_
 
-CPPFLAGS1+=-Dgenbbsub=genbbsub_
-CPPFLAGS1+=-Dset_random_seed=set_random_seed_
-CPPFLAGS1+=-Dgrndm=grndm_
-CPPFLAGS1+=-Dgenbb_init_enrange=genbb_init_enrange_
-CPPFLAGS1+=-Dgenevent=genevent_
-CPPFLAGS1+=-Denrange=enrange_
+CPPFLAGS3+=-Dgenbbsub=genbbsub_
+CPPFLAGS3+=-Dset_random_seed=set_random_seed_
+CPPFLAGS3+=-Dgrndm=grndm_
+CPPFLAGS3+=-Dgenbb_init_enrange=genbb_init_enrange_
+CPPFLAGS3+=-Dgenevent=genevent_
+CPPFLAGS3+=-Denrange=enrange_
 endif
 
 ### End of dependencies.
@@ -200,10 +201,11 @@ CPPFLAGS2+=$(DEPCPPFLAGS)
 LDFLAGS1+=$(DEPLDFLAGS) 
 LDFLAGS1+=-lm 
 
-CPPFLAGS+=$(shell echo $(CPPFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py) 
+CPPFLAGS+=$(shell echo $(CPPFLAGS1) $(CPPFLAGS3) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py) 
 LDFLAGS+=$(shell echo $(LDFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r) 
 
-F77CPPFLAGS+=$(shell echo $(CPPFLAGS) $(CPPFLAGS2) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py)
+DUMMY=-I. -I$(INCDIR)
+F77CPPFLAGS+=$(shell echo $(CPPFLAGS1) $(CPPFLAGS2) $(DUMMY) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py)
 
 CXXFLAGSSHFLAGS=-Wall -v
 STATICFLAGS=-static
