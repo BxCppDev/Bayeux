@@ -176,9 +176,9 @@ namespace genbb {
 
      }
  
-    clog << "DEVEL: genbb::initialize: Random init..." << endl;
+    //clog << "DEVEL: genbb::initialize: Random init..." << endl;
     __random.init ("mt19937", __seed);
-    clog << "DEVEL: genbb::initialize: Done." << endl;
+    //clog << "DEVEL: genbb::initialize: Done." << endl;
     
     /***************/
     datatools::utils::fetch_path_with_env (__tmp_base_dir);
@@ -213,7 +213,7 @@ namespace genbb {
 		<< __tmp_base_dir << "' !";
 	  throw runtime_error (message.str());
 	}
-      clog << "DEVEL: genbb::initialize: temp. dir.='" << __tmp_dir << "'" << endl;
+      //clog << "DEVEL: genbb::initialize: temp. dir.='" << __tmp_dir << "'" << endl;
 
       {
 	ostringstream oss;
