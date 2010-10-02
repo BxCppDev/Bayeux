@@ -50,7 +50,7 @@ namespace genbb {
       {
 	reset ();
       }
-    clog << "DEVEL: wgenbb::~wgenbb: Exiting." << endl;
+    //clog << "DEVEL: wgenbb::~wgenbb: Exiting." << endl;
   }
 
   void wgenbb::__clean ()
