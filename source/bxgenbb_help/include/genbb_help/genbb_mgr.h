@@ -32,6 +32,8 @@
 
 #include <datatools/serialization/serialization.h>
 #include <datatools/serialization/io_factory.h>
+#include <datatools/utils/properties.h>
+#include <datatools/utils/utils.h>
 
 #include <geomtools/utils.h>
 
@@ -39,26 +41,29 @@
 
 namespace genbb {
 
+  using namespace std;
+
   class genbb_mgr : public i_genbb
   {
   public:
 
-    enum
+    enum format_t
       {
 	FORMAT_GENBB = 0,
 	FORMAT_BOOST = 1
       };
 
-    static const std::string FORMAT_GENBB_LABEL;
-    static const std::string FORMAT_BOOST_LABEL;
+    static const string FORMAT_GENBB_LABEL;
+    static const string FORMAT_BOOST_LABEL;
 
   private:
     bool __debug;
     bool __initialized;
-    std::list<std::string> __filenames;
-    int            __format;
-    std::istream * __in;
-    std::ifstream  __fin;
+    list<string> __filenames;
+    string      __current_filename;
+    int         __format;
+    istream * __in;
+    ifstream  __fin;
     datatools::serialization::data_reader __reader;
     primary_event  __current;
 
@@ -83,7 +88,7 @@ namespace genbb {
 
     void set_format (int format_ = FORMAT_GENBB);
 
-    void set_format (const std::string & format_ = FORMAT_GENBB_LABEL);
+    void set_format (const string & format_ = FORMAT_GENBB_LABEL);
 
     bool is_format_genbb () const
     {
@@ -101,11 +106,13 @@ namespace genbb {
     // dtor:
     virtual ~genbb_mgr ();
   
-    void set (const std::string & filename_);
+    void set (const string & filename_);
 
     void init ();
 
     void initialize ();
+
+    void initialize (const datatools::utils::properties & config_);
 
     void reset ();
 
@@ -114,9 +121,13 @@ namespace genbb {
     virtual void load_next (primary_event & event_, 
 			    bool compute_classification_ = true);
 
-    void dump (std::ostream & out_ = std::clog) const;
+    void dump (ostream & out_ = clog) const;
 
   private:
+
+    void __at_init ();
+
+    void __at_reset ();
 
     void __load_next ();
 
