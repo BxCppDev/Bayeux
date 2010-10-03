@@ -75,6 +75,8 @@ namespace genbb {
 
     void compute_classification ();
 
+    void rotate (double phi_, double theta_, double delta_);
+
     double get_total_kinetic_energy () const;
 
     // ctor:

@@ -439,11 +439,6 @@ namespace genbb {
     py = 0.0;
     pz = momentum;
 
-    if (__randomized_direction)
-      {
-	throw runtime_error ("single_particle_generator::load_next: Randomize direction is not implemented yet !");
-      }
-
     event_.time = 0.0 * CLHEP::second;;
     primary_particle pp;
     pp.set_type (__particle_type);
@@ -451,6 +446,15 @@ namespace genbb {
     geomtools::vector_3d p (px, py, pz);
     pp.set_momentum (p);
     event_.add_particle (pp);
+
+    if (__randomized_direction)
+      {
+	double phi = __random.flat (0.0, 360.0 * CLHEP::degree);
+	double cos_theta = __random.flat (-1.0, +1.0);
+	double theta = acos (cos_theta);
+	double psi = __random.flat (0.0, 360.0 * CLHEP::degree);
+	event_.rotate (phi, theta, psi);
+      }
 
     if (compute_classification_)
       {

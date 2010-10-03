@@ -178,7 +178,7 @@ namespace genbb {
 	out_ << " (" << get_particle_label_from_type (type) << ')';
       }
     out_ << endl;
-    out_ << indent << "|-- Particle label: " << particle_label
+    out_ << indent << "|-- Particle label: '" << particle_label << "'"
 	 << endl;
     ostringstream time_oss;
     time_oss.precision (15);

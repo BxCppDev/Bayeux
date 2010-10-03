@@ -137,7 +137,8 @@ namespace genbb {
 	  {
 	    it->dump (out_, (indent + "|   ")); 
 	  }
-	out_ << indent << "`-- classification: " << get_classification () << std::endl;
+	out_ << indent << "`-- classification: '" << get_classification () 
+	     << "'" << std::endl;
       }
     else 
       {
@@ -149,6 +150,24 @@ namespace genbb {
 			    const std::string & indent_) const
   {
     dump (out_, "genbb::primary_event:", indent_); 
+  }
+
+  void primary_event::rotate (double phi_, double theta_, double delta_)
+  {
+    geomtools::rotation_3d rot;
+    geomtools::create_rotation_3d (rot, phi_, theta_, delta_);
+    rot.invert ();
+    for (particles_col_t::iterator i = particles.begin ();
+	 i != particles.end ();
+	 i++)
+      {
+	primary_particle & p = *i;
+	geomtools::vector_3d & momentum = p.momentum;
+	geomtools::vector_3d rotated_momentum = rot * momentum;
+	momentum = rotated_momentum;
+      }
+
+    return;
   }
   
 } // end of namespace genbb
