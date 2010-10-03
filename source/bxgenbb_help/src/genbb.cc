@@ -297,12 +297,12 @@ namespace genbb {
       {
 	primary_particle pp;
 	int part_type;
-	double x, y ,z, time_shift;
-	*__genbb_in >> std::ws >> part_type >> x >> y >> z >> time_shift;
+	double px, py ,pz, time_shift;
+	*__genbb_in >> std::ws >> part_type >> px >> py >> pz >> time_shift;
 	part_time += time_shift; 
 	pp.set_type (part_type);
 	pp.set_time (part_time * CLHEP::second); // GENBB unit is s
-	geomtools::vector_3d p (x, y, z);
+	geomtools::vector_3d p (px, py, pz);
 	p *= CLHEP::MeV; // GENBB unit is MeV/c
 	pp.set_momentum (p);
 	event_.add_particle (pp);

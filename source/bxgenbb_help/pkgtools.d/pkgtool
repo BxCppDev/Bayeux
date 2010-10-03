@@ -596,7 +596,7 @@ function do_install ()
     ###
 
     cd ${opwd}
-    do_pkg_config_pc
+    #do_pkg_config_pc
     pkgtools__msg_debug "do_startup..."
     do_startup
     pkgtools__msg_debug "ok"

@@ -30,23 +30,27 @@
 #include <geomtools/utils.h>
 
 #include <datatools/serialization/serialization.h>
+#include <datatools/utils/utils.h>
 
 namespace genbb {
+
+  using namespace std;
 
   struct primary_particle 
     : public datatools::serialization::i_serializable 
   {
   public:
     
-    static const std::string SERIAL_TAG;
+    static const string SERIAL_TAG;
     
-    virtual const std::string & get_serial_tag () const;
+    virtual const string & get_serial_tag () const;
     
     enum particle_type
     {
       // Using GEANT3 definition from: 
       // http://wwwasdoc.web.cern.ch/wwwasdoc/geant_html3/node72.html#SECTION024000000000000000000000
       UNDEF      = -1,
+      PARTICLE_UNDEFINED = -1,
       GAMMA      = 1,
       POSITRON   = 2,
       ELECTRON   = 3,
@@ -67,6 +71,8 @@ namespace genbb {
   public:
     
     int32_t              type;
+    string               particle_label;
+    double               mass;     // CLHEP energy unit
     double               time;     // CLHEP time unit
     geomtools::vector_3d momentum; // CLHEP momentum unit
 
@@ -77,6 +83,11 @@ namespace genbb {
     void set_type (int type_);
 
     double get_time () const;
+
+    const string & get_particle_label () const;
+
+    // Only if particle type == UNDEF:
+    void set_particle_label (const string &);
 
     void set_time (double time_);
 
@@ -121,8 +132,6 @@ namespace genbb {
 
     double get_beta () const;
 
-    static std::string get_label (int type_);
-
     // ctor:
     primary_particle ();
 
@@ -134,8 +143,8 @@ namespace genbb {
     // dtor:
     virtual ~primary_particle ();
 
-    void dump (std::ostream & out_ = std::clog, 
-	       const std::string & indent_ = "") const;
+    void dump (ostream & out_ = clog, 
+	       const string & indent_ = "") const;
 
   private:
     friend class boost::serialization::access; 
@@ -144,9 +153,25 @@ namespace genbb {
 		      const unsigned int   version_)
       {
 	ar_ & boost::serialization::make_nvp ("type", type);
+	if (type  == UNDEF)
+	  {
+	    ar_ & boost::serialization::make_nvp ("particle_label", particle_label);
+	  }
+	else
+	  {
+	    particle_label = get_particle_label_from_type (type);
+	  }
 	ar_ & boost::serialization::make_nvp ("time", time);
 	ar_ & boost::serialization::make_nvp ("momentum", momentum);
       }
+
+  public:
+ 
+    static string get_label (int type_);
+
+    static string get_particle_label_from_type (int type_);
+   
+    static int get_particle_type_from_label (const string & label_);
 
   };
 
