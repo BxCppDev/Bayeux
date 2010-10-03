@@ -290,9 +290,9 @@ namespace genbb {
 	throw runtime_error ("single_particle_generator::initialize: Missing 'seed' property !");
       }
 
-    if (config_.has_key ("randomize_direction"))
+    if (config_.has_key ("randomized_direction"))
       {
-	bool rd = config_.fetch_boolean ("randomize_direction");
+	bool rd = config_.fetch_boolean ("randomized_direction");
 	set_randomized_direction (rd);
       }
 

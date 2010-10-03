@@ -84,7 +84,7 @@ int main (int argc_, char ** argv_)
       config.store ("seed", 314159);
 
       /* Default momentum direction is along the Z axis */
-      config.store ("randomize_direction", randomized_direction);
+      config.store ("randomized_direction", randomized_direction);
 
       /* Possible values are:
        *   "electron" or "e-"
