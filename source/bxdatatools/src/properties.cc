@@ -1387,7 +1387,12 @@ namespace datatools {
       if (has_key (key_)) 
 	{
 	  std::ostringstream message;
-	  message << "properties::__check_nokey: key '" << key_ << "' already used!";
+	  message << "properties::__check_nokey: key '" << key_ << "' already used";
+	  if (! get_description ().empty ())
+	    {
+	      message << " (" << get_description () << ")";
+	    }
+	  message << " !";
 	  throw std::runtime_error (message.str ());
 	}
     }
@@ -2734,7 +2739,13 @@ namespace datatools {
 			{
 			  std::ostringstream message;
 			  message << "properties::config::read_next_property: "
-				  << "Missing type specifier!" ;
+				  << "Invalid type specifier '" << token << "' " 
+				  << "at key '" << prop_key << "' ";
+			  if (! p_.get_description ().empty ())
+			    {
+			      message << "for list described by '" << p_.get_description () << "' ";
+			    }
+			  message << "!" ;
 			  throw std::runtime_error (message.str ());
 			}
 	      
