@@ -151,7 +151,7 @@ namespace mat {
 	      {
 		ostringstream message;
 		message << "factory::create_element: Isotope '" << isotopes[i] 
-			<< "' not foudn in map of isotopes !";
+			<< "' not found in map of isotopes !";
 		throw runtime_error (message.str ());
 	      }
 	    const isotope & iso = found->second.get_ref ();
@@ -226,7 +226,7 @@ namespace mat {
 	formula = config_.fetch_string ("formula");
       }
 
-   if (config_.has_key ("state"))
+    if (config_.has_key ("state"))
       {
 	state = config_.fetch_string ("state");
       }
@@ -286,54 +286,54 @@ namespace mat {
 	  {
 	    throw runtime_error ("factory::create_element: Missing 'mean_a' property !");
 	  }
-       }
-    else
-      {
-    if (config_.has_key ("composition.names"))
-      {
-	config_.fetch ("composition.names", composition_names);
-	if (composition_names.size () == 0)
-	  {
-	    throw runtime_error ("factory::create_element: Empty list of compounds !");	    
-	  } 
       }
     else
       {
-	throw runtime_error ("factory::create_element: Missing 'composition.names' property !");
-      }
-
-    if (composition_mode == material::NUMBER_OF_ATOMS)
-      {
-	if (config_.has_key ("composition.number_of_atoms"))
+	if (config_.has_key ("composition.names"))
 	  {
-	    config_.fetch ("composition.number_of_atoms", composition_nb_of_atoms);
-	    if (composition_names.size () != composition_nb_of_atoms.size ())
+	    config_.fetch ("composition.names", composition_names);
+	    if (composition_names.size () == 0)
 	      {
-		throw runtime_error ("factory::create_element: Unmatching sizes of list of compounds/number of atoms !");
-	      }
+		throw runtime_error ("factory::create_element: Empty list of compounds !");	    
+	      } 
 	  }
 	else
 	  {
-	    throw runtime_error ("factory::create_element: Missing 'composition.number_of_atoms' property !");
+	    throw runtime_error ("factory::create_element: Missing 'composition.names' property !");
 	  }
-      }
 
-
-    if (composition_mode == material::FRACTION_MASS)
-      {
-	if (config_.has_key ("composition.fraction_mass"))
+	if (composition_mode == material::NUMBER_OF_ATOMS)
 	  {
-	    config_.fetch ("composition.fraction_mass", composition_fraction_mass);
-	    if (composition_names.size () != composition_fraction_mass.size ())
+	    if (config_.has_key ("composition.number_of_atoms"))
 	      {
-		throw runtime_error ("factory::create_element: Unmatching sizes of list of compounds/fraction mass !");
+		config_.fetch ("composition.number_of_atoms", composition_nb_of_atoms);
+		if (composition_names.size () != composition_nb_of_atoms.size ())
+		  {
+		    throw runtime_error ("factory::create_element: Unmatching sizes of list of compounds/number of atoms !");
+		  }
+	      }
+	    else
+	      {
+		throw runtime_error ("factory::create_element: Missing 'composition.number_of_atoms' property !");
 	      }
 	  }
-	else
+
+
+	if (composition_mode == material::FRACTION_MASS)
 	  {
-	    throw runtime_error ("factory::create_element: Missing 'composition.number_of_atoms' property !");
+	    if (config_.has_key ("composition.fraction_mass"))
+	      {
+		config_.fetch ("composition.fraction_mass", composition_fraction_mass);
+		if (composition_names.size () != composition_fraction_mass.size ())
+		  {
+		    throw runtime_error ("factory::create_element: Unmatching sizes of list of compounds/fraction mass !");
+		  }
+	      }
+	    else
+	      {
+		throw runtime_error ("factory::create_element: Missing 'composition.number_of_atoms' property !");
+	      }
 	  }
-      }
       }
     
     material * matl = new material ();
@@ -375,7 +375,8 @@ namespace mat {
 		  {
 		    ostringstream message;
 		    message << "factory::create_element: "
-			    << "Self-referenced material with name '" << composition_names[i] << "' !";
+			    << "Self-referenced material with name '" 
+			    << composition_names[i] << "' !";
 		    delete matl;
 		    throw runtime_error (message.str ());	
 		  }
@@ -437,6 +438,7 @@ namespace mat {
       }
     catch (exception & x)
       {
+	cerr << "factory::create_element: " << "Exception : " << x.what () << endl;
 	delete matl;
 	throw x;
       }
