@@ -1,0 +1,148 @@
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::utils::multi_properties):
+
+#@description A list of common materials
+#@key_label   "name"
+#@meta_label  "type"
+
+
+[name="std::vacuum" type="material"]
+#@description Vacuum material
+density        : real   = 1.0e-15
+density.unit   : string = "mg/cm3"
+state          : string = "gas"
+composition.mode : string   = "fraction_mass"
+composition.names         : string [1]  = "Hydrogen"
+composition.fraction_mass : real   [1]  =    1.0
+
+
+[name="std::air" type="material"]
+#@description Air material
+density        : real   = 1.2931
+density.unit   : string = "mg/cm3"
+state          : string = "gas"
+composition.mode : string   = "fraction_mass"
+composition.names         : string [2]  = "Nitrogen" "Oxygen"
+composition.fraction_mass : real   [2]  =    0.7       0.3
+
+
+[name="std::hydrogen_gas" type="material"]
+#@description Hydrogen gas
+density        : real   = 1.0
+density.unit   : string = "mg/cm3"
+state          : string = "gas"
+composition.mode : string   = "fraction_mass"
+composition.names         : string [1]  = "Hydrogen"
+composition.fraction_mass : real   [1]  =    1.0
+
+
+[name="std::copper" type="material"]
+#@description Copper material
+density        : real   = 8.9
+density.unit   : string = "g/cm3"
+state          : string = "solid"
+composition.mode          : string      = "fraction_mass"
+composition.names         : string [1]  = "Copper"
+composition.fraction_mass : real   [1]  =   1.0
+
+[name="std::iron" type="material"]
+#@description Copper material
+density        : real   = 7.874 
+density.unit   : string = "g/cm3"
+state          : string = "solid"
+composition.mode          : string      = "fraction_mass"
+composition.names         : string [1]  = "Iron"
+composition.fraction_mass : real   [1]  =   1.0
+
+[name="std::water" type="material"]
+#@description Water material
+density          : real   = 1.0
+density.unit     : string = "g/cm3"
+temperature      : real   = 300.
+temperature.unit : string = "kelvin"
+pressure         : real   = 1.
+pressure.unit    : string = "bar"
+state            : string = "liquid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [2]  = "Hydrogen" "Oxygen"
+composition.number_of_atoms : integer [2]  =      2        1
+
+# Example of auxiliary properties :
+contamination.radiocontaminants : string [3] = "Bi-214" "Tl-208" "Pa-234"
+contamination.activities        : real   [3] =  20.e-6   5.e-6   25.e-6   
+
+
+[name="std::diamond" type="material"]
+#@description Diamond material
+density          : real   = 3.517
+density.unit     : string = "g/cm3"
+temperature      : real   = 300.
+temperature.unit : string = "kelvin"
+pressure         : real   = 1.
+pressure.unit    : string = "bar"
+state            : string = "solid"
+composition.mode : string = "mean_za"
+mean_z           : real   = 6.0
+mean_a           : real   = 12.0
+
+
+[name="std::mylar" type="material"]
+#@description Mylar material
+density          : real   = 1.397
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [3]  = "Hydrogen" "Oxygen"  "Carbon"
+composition.number_of_atoms : integer [3]  =      8        4        10
+
+
+[name="std::polystyrene" type="material"]
+#@description Polystyrene material
+density          : real   = 1.032
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [2]  = "Hydrogen"  "Carbon"
+composition.number_of_atoms : integer [2]  =      9         10
+
+
+[name="std::PVT" type="material"]
+#@description PVT (polyvinyl-toluene) material CH2CH (C6H4CH3)n
+density          : real   = 1.032
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [2]  = "Hydrogen"  "Carbon"
+composition.number_of_atoms : integer [2]  =     10         9
+
+
+[name="std::delrin" type="material"]
+#@description Delrin material
+density          : real   = 1.42
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [3]  = "Hydrogen"  "Carbon" "Oxygen"
+composition.number_of_atoms : integer [3]  =      2         1       1
+
+
+[name="std::kapton" type="material"]
+#@description Kapton material
+density          : real   = 1.032
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+ composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [4]  = "Hydrogen" "Carbon" "Nitrogen" "Oxygen"
+composition.number_of_atoms : integer [4]  =     10        22        2         5
+
+
+[name="std::teflon" type="material"]
+#@description Teflon material
+density          : real   = 2.2
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [2]  = "Hydrogen" "Fluorine"
+composition.number_of_atoms : integer [2]  =     1        2
+
+# end

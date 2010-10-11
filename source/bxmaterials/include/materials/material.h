@@ -9,6 +9,10 @@
  * Description: 
  *   A simple class to handle "abstract" material and their basic properties
  * 
+ *  Note: 
+ *   some useful data here:
+ *     http://www.nucsafe.com/cms/Selecting+Gamma+Detector/43.html
+ *
  * History: 
  * 
  */

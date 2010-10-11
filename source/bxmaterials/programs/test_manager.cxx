@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*- 
 // test_manager.cxx
-
+ 
 #include <cstdlib>
 #include <iostream>
 #include <string>

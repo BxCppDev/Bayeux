@@ -92,56 +92,71 @@ namespace mat {
   {
 
     int z = 0;
+    double a = -1.0;     
+    vector<string> isotopes;
+    vector<double> weights;
 
     if (config_.has_key ("z"))
       {
-	z =  config_.fetch_integer ("z");
+	z = config_.fetch_integer ("z");
       }
     else
       {
 	throw runtime_error ("factory::create_element: Missing 'z' property !");
       }
-   
-    vector<string> isotopes;
-    vector<double> weights;
 
-    if (! config_.has_key ("isotope.names"))
+    if (config_.has_key ("a"))
       {
-	throw runtime_error ("factory::create_element: Missing 'isotope.names' property !");
+	a = config_.fetch_real ("a");
       }
     else
       {
-	config_.fetch ("isotope.names", isotopes);
-      }
+	if (! config_.has_key ("isotope.names"))
+	  {
+	    throw runtime_error ("factory::create_element: Missing 'isotope.names' property !");
+	  }
+	else
+	  {
+	    config_.fetch ("isotope.names", isotopes);
+	  }
     
-    if (! config_.has_key ("isotope.weights"))
-      {
-	throw runtime_error ("factory::create_element: Missing 'isotope.weights' property !");
-      }
-    else
-      {
-	config_.fetch ("isotope.weights", weights);
-      }
+	if (! config_.has_key ("isotope.weights"))
+	  {
+	    throw runtime_error ("factory::create_element: Missing 'isotope.weights' property !");
+	  }
+	else
+	  {
+	    config_.fetch ("isotope.weights", weights);
+	  }
     
-    if (isotopes.size () != weights.size ())
-      {
-	throw runtime_error ("factory::create_element: Unmatching isotopes/weights vector size !");
+	if (isotopes.size () != weights.size ())
+	  {
+	    throw runtime_error ("factory::create_element: Unmatching isotopes/weights vector size !");
+	  }
       }
      
     element * elmt = new element (name_, z);
-    // add isotopes in element:
-    for (int i = 0; i < isotopes.size (); i++)
-      { 
-	isotope_dict_t::const_iterator found = isotopes_.find (isotopes[i]);
-	if (found == isotopes_.end ())
-	  {
-	    ostringstream message;
-	    message << "factory::create_element: Isotope '" << isotopes[i] 
-		    << "' not foudn in map of isotopes !";
-	    throw runtime_error (message.str ());
+
+    if (a > 0.0)
+      {
+	elmt->set_molar_mass (a);
+      }
+    else
+      {
+	// add isotopes in element:
+	for (int i = 0; i < isotopes.size (); i++)
+	  { 
+	    isotope_dict_t::const_iterator found = isotopes_.find (isotopes[i]);
+	    if (found == isotopes_.end ())
+	      {
+		ostringstream message;
+		message << "factory::create_element: Isotope '" << isotopes[i] 
+			<< "' not foudn in map of isotopes !";
+		throw runtime_error (message.str ());
+	      }
+	    const isotope & iso = found->second.get_ref ();
+	    elmt->add_isotope (iso, weights[i]);
 	  }
-	const isotope & iso = found->second.get_ref ();
-	elmt->add_isotope (iso, weights[i]);
       }
     elmt->build ();
     return elmt;

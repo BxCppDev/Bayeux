@@ -65,13 +65,24 @@ namespace mat {
     /*!
       \param name_ : Name of the element
       \param Z_ : Z of the element 
+      \param build_ : On the fly building 
     */ 
     element (const string & name_, int Z_, bool build_ = false);   
+    
+    //! Normal Constructor. 
+    /*!
+      \param name_ : Name of the element
+      \param Z_ : Z of the element 
+      \param A_ : Molar mass of the element 
+      \param build_ : On the fly building 
+    */ 
+    element (const string & name_, int Z_, double molar_mass_, bool build_ = false);   
 
     //! Normal Constructor. 
     /*!
       \param name_ : Name of the element
       \param symbol_ : Chemical symbol of the element 
+      \param build_ : On the fly building 
     */ 
     element (const  string & name_, const string & symbol_ = "", bool build_ = false); 
 
@@ -100,10 +111,11 @@ namespace mat {
 				     					  	 
     /* public methods */ 
   public :
-   
+    bool   is_built_by_isotopic_composition () const;
     void   set_name (const string  & name_); //!<  Set the name of the element           
     void   set_Z (const int  Z_);            //!<  Set the Z (number of protons) & the chemical symbol of the element.      
     void   set_Z (const string  & symbol_);  //!<  Set the Z (number of protons) & the chemical symbol of the element.  
+    void   set_molar_mass(const double molar_mass_); //!<  Set the molar mass of the element.  
     void   add_isotope (const isotope & iso_ref_ , double weight_ = 1.0, bool owned_ = false);  //!<  Add an isotope with weight          
     void   add_isotope (const isotope * iso_ptr_ , double weight_ = 1.0);   //!<  Add an isotope with weight                                        
     void   build ();            //!<  Build the element : norm weights, compute molar mass and lock (or not).                
@@ -117,7 +129,7 @@ namespace mat {
     const string   get_symbol () const {return __symbol;}          //!<  Return the chemical symbol. 
     const int      get_Z () const {return __Z;}                    //!<  Return the number of protons (Z).             
     const double   get_molar_mass () const {return  __molar_mass;} //!<  Return the molar mass [g/mol].           
-    const bool     is_locked () const{return __locked;}            //!<  Return true if composition is valid, weights are normalized and molar mass is computed.       
+    const bool     is_locked () const {return __locked;}           //!<  Return true if composition is valid, weights are normalized and molar mass is computed.       
     const isotope_weight_map_t & get_composition () const  
     {
       return __composition;

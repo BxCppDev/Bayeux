@@ -409,15 +409,25 @@ namespace mat {
 	 i++)
       {
 	const element & elmt = i->second.get_ref ();
-	map<string, double> fractions;
-	for (isotope_weight_map_t::const_iterator j 
-	       = elmt.get_composition ().begin ();
-	     j != elmt.get_composition ().end ();
-	     j++)
+	if (elmt.is_built_by_isotopic_composition ())
 	  {
-	    fractions[j->first] = j->second.weight;
+	    map<string, double> fractions;
+	    for (isotope_weight_map_t::const_iterator j 
+		   = elmt.get_composition ().begin ();
+		 j != elmt.get_composition ().end ();
+		 j++)
+	      {
+		fractions[j->first] = j->second.weight;
+	      }
+	    gw_.add_element (i->first, fractions);
 	  }
-	gw_.add_element (i->first, fractions);
+	else
+	  {
+	    gw_.add_element (i->first, 
+			     elmt.get_Z (), 
+			     elmt.get_symbol (), 
+			     elmt.get_molar_mass ());
+	  }
       } // end of loop on elements
 
     // export materials:

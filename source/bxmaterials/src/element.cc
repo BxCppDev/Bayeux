@@ -49,7 +49,12 @@ namespace mat {
       }
     return;
   }
-       
+ 
+  bool element::is_built_by_isotopic_composition () const
+  {
+    return (is_locked () && __composition.size () > 0);
+  }
+      
   //________________________________________________________________________// element ctor
   element::element ()
   {
@@ -71,6 +76,20 @@ namespace mat {
     __Z = Z_UNDEFINED;
     set_name (name_);
     set_Z (Z_);         
+    if (build_) build ();
+  }
+    
+  //________________________________________________________________________// element ctor
+  element:: element (const string & name_, int Z_, double molar_mass_, bool build_)
+  {
+    __locked = false;
+    __molar_mass = -1.;   
+    __name   = "?";
+    __symbol = "?";
+    __Z = Z_UNDEFINED;
+    set_name (name_);
+    set_Z (Z_);   
+    set_molar_mass (molar_mass_);
     if (build_) build ();
   }
   
@@ -189,6 +208,14 @@ namespace mat {
   {        
     _lock_check ("element::add_isotope");
 
+    // 2010-10-11 by FM: not compatible with molar mass manual setting: 
+    if ((__molar_mass > 0.0) && (__composition.size () == 0))
+      {
+	ostringstream message;
+	message << "element::add_isotope: Operation not allowed ! Molar mass is set by hand !";
+	throw logic_error (message.str () );
+      }
+
     // set Z and symbol when add a new isotope.
        
     if ( __composition.size () == 0) 
@@ -277,6 +304,10 @@ namespace mat {
       {
 	__norm_weights ();
 	__compute_molar_mass ();
+      }
+    else if (__molar_mass > 0.0)
+      {
+	// ok
       }
     else
       {
@@ -399,11 +430,29 @@ namespace mat {
       }
   }  
     
+//________________________________________________________________________ 	       
+  void element::set_molar_mass(const double molar_mass_)
+    {     
+      if (__composition.size () > 0)
+	{
+	  ostringstream message;
+	  message << "element:::set_molar_mass: Operation not allowed when build mode uses isotopic composition !";
+	  throw logic_error (message.str ());	  
+	}
+      if (molar_mass_ < 0)    
+        {
+	  ostringstream message;
+	  message << "element:::set_molar_mass: Invalid mass value : '" 
+		  << molar_mass_ << "' !";
+	  throw logic_error (message.str ());
+        }	
+        __molar_mass = molar_mass_;   
+     }
     
 //________________________________________________________________________ 	       
   void element::__set_molar_mass(const double molar_mass_)
     {      
-      if(  molar_mass_ < 0 )    
+      if (molar_mass_ < 0)    
         {
 	  ostringstream message;
 	  message << endl << "element:::__set_molar_mass() : Invalid mass value : '" 

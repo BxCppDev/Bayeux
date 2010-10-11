@@ -1,0 +1,122 @@
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::utils::multi_properties):
+
+#@description A standard list of elements (based on natural isotopic abundances)
+#@key_label   "name"
+#@meta_label  "type"
+
+[name="Hydrogen" type="element"]
+#@description The H natural element
+z               : integer   = 1
+isotope.names   : string[2] = "H"     "D"
+isotope.weights : real[2]   = 99.9885 0.0115
+
+[name="Helium" type="element"]
+#@description The He natural element
+z               : integer   = 2
+isotope.names   : string[2] = "He-3"   "He-4"
+isotope.weights : real[2]   = 0.000137 99.999863
+
+[name="Boron" type="element"]
+#@description The B natural element
+z               : integer   = 5 
+isotope.names   : string[2] = "B-10" "B-11"
+isotope.weights : real[2]   =  19.9   80.1
+
+[name="Carbon" type="element"]
+#@description The H natural element
+z               : integer   = 6
+isotope.names   : string[2] = "C-12" "C-13"
+isotope.weights : real[2]   = 98.93  1.07
+
+[name="Nitrogen" type="element"]
+#@description The Nitrogen natural element
+z               : integer   = 7
+isotope.names   : string[2] = "N-14" "N-15"
+isotope.weights : real[2]   = 99.632 0.368
+
+[name="Oxygen" type="element"]
+#@description The Oxygen natural element
+z               : integer   = 8
+isotope.names   : string[3] = "O-16" "O-17" "O-18"
+isotope.weights : real[3]   = 99.757 0.038  0.205
+
+[name="Fluorine" type="element"]
+#@description The Fluorine natural element
+z               : integer   = 9
+isotope.names   : string[1] = "F-19"
+isotope.weights : real[1]   = 100
+
+[name="Neon" type="element"]
+#@description The Neon natural element
+z               : integer   = 10
+isotope.names   : string[3] = "Ne-20" "Ne-21" "Ne-22"
+isotope.weights : real[3]   = 90.48   0.27    9.25
+
+[name="Sodium" type="element"]
+#@description The Sodium natural element
+z               : integer   = 11
+isotope.names   : string[1] = "Na-23"
+isotope.weights : real[1]   = 100.0
+
+[name="Magnesium" type="element"]
+#@description The Magnesium natural element
+z               : integer   = 12
+isotope.names   : string[3] = "Mg-24" "Mg-25"  "Mg-26"
+isotope.weights : real[3]   = 78.99   10.00    11.01
+
+[name="Aluminium" type="element"]
+#@description The Aluminium natural element
+z               : integer   = 13
+isotope.names   : string[1] = "Al-27"
+isotope.weights : real[1]   = 100.0
+
+[name="Silicium" type="element"]
+#@description The Magnesium natural element
+z               : integer   = 14
+isotope.names   : string[3] = "Si-28"  "Si-29"  "Si-30"
+isotope.weights : real[3]   = 92.2297  4.6832   3.0872
+
+[name="Phosphore" type="element"]
+#@description The Magnesium natural element
+z               : integer   = 15
+isotope.names   : string[1] = "P-31" 
+isotope.weights : real[1]   = 100.0
+
+[name="Manganese" type="element"]
+#@description The Manganese natural element
+z               : integer   = 25
+isotope.names   : string[1] = "Mn-55"
+isotope.weights : real[1]   = 100.0
+
+[name="Iron" type="element"]
+#@description The Cu natural element
+z               : integer   = 26
+isotope.names   : string[4] = "Fe-54" "Fe-56" "Fe-57" "Fe-58"
+isotope.weights : real[4]   = 5.845   91.754  2.119   0.282
+
+[name="Cobalt" type="element"]
+#@description The Cobalt natural element
+z               : integer   = 27
+isotope.names   : string[1] = "Co-59"
+isotope.weights : real[1]   = 100.0
+
+[name="Nickel" type="element"]
+#@description The Nickel natural element
+z               : integer   = 28
+isotope.names   : string[5] = "Ni-58" "Ni-60" "Ni-61" "Ni-62" "Ni-64"
+isotope.weights : real[5]   = 68.0769 26.2231 1.1399  3.6345  0.9256
+
+[name="Copper" type="element"]
+#@description The Cu natural element
+z               : integer   = 29
+isotope.names   : string[2] = "Cu-63" "Cu-65"
+isotope.weights : real[2]   =  69.17   30.83
+
+[name="Lead" type="element"]
+#@description The Lead natural element
+z               : integer   = 82
+isotope.names   : string[4] = "Pb-204" "Pb-206" "Pb-207" "Pb-208"
+isotope.weights : real[4]   = 1.4      24.1     22.1     52.4 
+
+# end
