@@ -21,7 +21,7 @@ namespace mygsl {
   double derivative_central (const unary_eval & eval_, double x_, double h_)
   {
     double abserr;
-    derivative_central (eval_, x_, h_, abserr);
+    return derivative_central (eval_, x_, h_, abserr);
   }
 
 
@@ -42,7 +42,7 @@ namespace mygsl {
   double derivative_forward (const unary_eval & eval_, double x_, double h_)
   {
     double abserr;
-    derivative_forward (eval_, x_, h_, abserr);
+    return derivative_forward (eval_, x_, h_, abserr);
   }
 
   double derivative_backward (const unary_eval & eval_, double x_, double h_, double & abserr_ )
@@ -63,7 +63,7 @@ namespace mygsl {
   double derivative_backward (const unary_eval & eval_, double x_, double h_)
   {
     double abserr;
-    derivative_backward (eval_, x_, h_, abserr);
+    return derivative_backward (eval_, x_, h_, abserr);
   }
 
   double derivative (const unary_eval & eval_, 
@@ -96,7 +96,7 @@ namespace mygsl {
 		     const interval & domain_)
   {
     double abserr;
-    derivative (eval_, x_, domain_, abserr);
+    return derivative (eval_, x_, domain_, abserr);
   }
 
 
