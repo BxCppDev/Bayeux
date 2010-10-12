@@ -51,7 +51,8 @@ namespace mygsl {
     gsl_function func;
     func.function = unary_eval::g_function;
     func.params   = const_cast<unary_eval *>(&eval_);
-    if (gsl_deriv_forward (&func, x_, h_, &result, &abserr) != 0)
+    // 2010-10-12, FM: bug, was invoking 'gsl_deriv_forward'  in place of 'gsl_deriv_backward'
+    if (gsl_deriv_backward (&func, x_, h_, &result, &abserr) != 0)
       {
 	throw runtime_error ("derivative_backward: cannot derivate function!");
       }
