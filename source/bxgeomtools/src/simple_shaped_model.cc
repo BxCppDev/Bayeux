@@ -357,7 +357,7 @@ namespace geomtools {
 		// inner placement for the extrusion:
 		__inner_placement.set (0, 0, 0, 0, 0, 0);
 		ostringstream inner_name;
-		inner_name << get_logical ().get_name () << ".tube_extrusion";
+		inner_name << "__" << get_logical ().get_name () << ".tube_extrusion";
 		__inner_logical.set_name (i_model::make_logical_volume_name (inner_name.str ()));
 		__inner_logical.set_material_ref (inner_material_name);
 		__inner_logical.set_shape (*__inner_shape); // pass a reference -> logical has not the shape ownership
@@ -401,8 +401,8 @@ namespace geomtools {
 	    // inner placement
 	    {
 	      __inner_placement.set (0, 0, 0, 0, 0, 0);
-		ostringstream inner_name;
-		inner_name << get_logical ().get_name () << ".tube_envelope";
+	      ostringstream inner_name;
+	      inner_name << "__" << get_logical ().get_name () << ".tube_envelope";
 	      __inner_logical.set_name (i_model::make_logical_volume_name (name_));
 	      __inner_logical.set_material_ref (material_name);
 	      __inner_logical.set_shape (*__tube);

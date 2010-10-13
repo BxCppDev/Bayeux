@@ -132,6 +132,11 @@ namespace geomtools {
     void __build_from_envelope_and_skin (double thickness_, double step_ = 0.0);
 
   public:
+
+    void get_inner_polycone (polycone & ip_);
+
+    void get_outer_polycone (polycone & op_);
+
     double get_volume () const;
 
     double get_surface (int mask_ = FACE_ALL) const;

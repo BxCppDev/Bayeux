@@ -46,6 +46,36 @@ namespace geomtools {
   {
   }
 
+  void polycone::get_inner_polycone (polycone & ip_)
+  {
+    ip_.reset ();
+    for (polycone::rz_col_t::const_iterator i = __points.begin ();
+	 i != __points.end ();
+	 i++)
+      {
+	double z = i->first;
+	double rmin = i->second.rmin;
+	//double rmax = i->second.rmax;
+	add (z, 0.0, rmin);
+      }
+    return;
+  }
+
+  void polycone::get_outer_polycone (polycone & op_)
+  {
+    op_.reset ();
+    for (polycone::rz_col_t::const_iterator i = __points.begin ();
+	 i != __points.end ();
+	 i++)
+      {
+	double z = i->first;
+	//double rmin = i->second.rmin;
+	double rmax = i->second.rmax;
+	add (z, 0.0, rmax);
+      }
+    return;
+  }
+
   void polycone::__build_from_envelope_and_skin (double skin_thickness_, 
 						 double skin_step_)
   {

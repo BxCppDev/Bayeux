@@ -202,8 +202,8 @@ namespace geomtools {
   }
 
   bool tube::is_on_surface (const vector_3d & point_, 
-		      int mask_, 
-		      double skin_) const
+			    int mask_, 
+			    double skin_) const
   {
     double skin = get_skin ();
     if (skin_ > USING_PROPER_SKIN) skin = skin_;
@@ -319,9 +319,9 @@ namespace geomtools {
   }
 
   void tube::tree_dump (ostream & out_, 
-			    const string & title_, 
-			    const string & indent_, 
-			    bool inherit_) const
+			const string & title_, 
+			const string & indent_, 
+			bool inherit_) const
   {
     namespace du = datatools::utils;
     string indent;

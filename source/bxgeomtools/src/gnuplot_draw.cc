@@ -666,30 +666,69 @@ namespace geomtools {
     size_t z_sample = z_sampling_;
     double dphi =  2 * M_PI * CLHEP::radian / phy_sample;
     double dz   =  2 * radius_ / z_sample;
-    polyline_t polyline_meridian;
-    for (size_t i = 0; i <= phy_sample ; ++i) 
-      {
-	polyline_meridian.clear ();
-	vector_3d P,Q;
-	double phi = i * dphi;
-	for (int j = 0; j <= (int) z_sample ; j++)
-	  {
-	    double z = -radius_ + j * dz;
-	    double theta = std::acos (z / radius_);
-	    P.set (radius_ * std::cos (phi) * std::sin (theta), 
-		   radius_ * std::sin (phi) * std::sin (theta),  
-		   z);
-	    vector_3d P2 (P);
-	    P2.transform (inverse_rotation);
-	    P2 += position_;
-	    polyline_meridian.push_back (P2);
-	  }
-	basic_draw_polyline (out_, polyline_meridian);
-      }
-    //polyline_t polyline_parallel;
-    //basic_draw_polyline (out_, polyline_parallel);
- 
-    //throw std::runtime_error ("gnuplot_draw::draw_sphere: Not implemented yet!");
+    double factor = 0.25;
+
+    // draw meridians:
+    {
+      for (size_t i = 0; i <= phy_sample ; ++i) 
+	{
+	  polyline_t polyline_meridian;
+	  double phi = i * dphi;
+	  double z = -radius_;
+	  for (int j = 0; j <= (int) z_sample + 2 + (i == 0 ? 1: 0); j++)
+	    {
+	      //double z = -radius_ + j * dz;
+	      double theta = std::acos (z / radius_);
+	      vector_3d P;
+	      P.set (radius_ * std::cos (phi) * std::sin (theta), 
+		     radius_ * std::sin (phi) * std::sin (theta),  
+		     z);
+	      vector_3d P2 (P);
+	      P2.transform (inverse_rotation);
+	      P2 += position_;
+	      polyline_meridian.push_back (P2);
+	      // increment z:
+	      if (j == 0) z += factor * dz;
+	      else if (j == 1) z += (1 - factor) * dz;
+	      else if (j == z_sample) z += (1 - factor) * dz;
+	      else if (j == z_sample + 1) z += factor * dz;
+	      else if (j == z_sample + 2) z = radius_;
+	      else if (j == z_sample + 3) z = radius_ - 0.5 * factor;
+	      else z += dz;
+	    }
+	  basic_draw_polyline (out_, polyline_meridian);
+	}
+    }
+
+    // draw parallels:
+    {
+      double z = -radius_ + factor * dz;
+      for (int j = 1; j <= (int) z_sample + 1; j++)
+	{
+	  polyline_t polyline_parallel;
+	  for (size_t i = 0; i <= phy_sample ; ++i) 
+	    {
+	      vector_3d P;
+	      double phi = i * dphi;
+	      double theta = std::acos (z / radius_);
+	      P.set (radius_ * std::cos (phi) * std::sin (theta), 
+		     radius_ * std::sin (phi) * std::sin (theta),  
+		     z);
+	      vector_3d P2 (P);
+	      P2.transform (inverse_rotation);
+	      P2 += position_;
+	      polyline_parallel.push_back (P2);
+	    }
+	  basic_draw_polyline (out_, polyline_parallel);
+	  // increment z:
+	  if (j == 1) z += (1 - factor) * dz;
+	  else if (j == z_sample) z += (1 - factor) * dz;
+	  else if (j == z_sample + 1) z += factor * dz;
+	  else if (j == z_sample + 2) z = radius_;
+	  else if (j == z_sample + 3) z = radius_ - 0.5 * factor;
+	  else z += dz;
+	}
+    }
     return;
   }
 
