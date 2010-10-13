@@ -42,6 +42,8 @@
 #include <geomtools/cylinder.h>
 #include <geomtools/tube.h>
 #include <geomtools/sphere.h>
+#include <geomtools/polycone.h>
+#include <geomtools/polyhedra.h>
 
 namespace geomtools {
 
@@ -95,6 +97,7 @@ namespace geomtools {
     ostringstream & _get_stream (const string & section_);
 
   public:
+
     void attach_external_materials (const ostringstream & oss_);
 
     bool has_external_materials_stream () const;
@@ -106,6 +109,7 @@ namespace geomtools {
     virtual ~gdml_writer ();
 
     void init ();
+
     void initialize ();
 
     void reset ();
@@ -208,6 +212,8 @@ namespace geomtools {
     /**************** Solids section *******************/
  
     static bool solid_type_is_valid (const string & solid_type_);
+ 
+    static bool solid_type_is_supported (const string & solid_type_);
 
     /*
     void add_solid (const string & name_, 
@@ -235,6 +241,19 @@ namespace geomtools {
 			  double start_theta_, double delta_theta_,
 			  const string & lunit_str_ = "mm",
 			  const string & aunit_str_ = "radian");
+	    
+    void add_gdml_polycone (const string & name_, 
+			    map<double, pair<double, double> > zplanes_, 
+			    double start_phi_, double delta_phi_,
+			    const string & lunit_str_ = "mm",
+			    const string & aunit_str_ = "radian");
+	    
+    void add_gdml_polyhedra (const string & name_, 
+			     size_t num_sides_,
+			     map<double, pair<double, double> > zplanes_, 
+			     double start_phi_, double delta_phi_,
+			     const string & lunit_str_ = "mm",
+			     const string & aunit_str_ = "radian");
 	    
     void add_gdml_boolean (const string & name_, 
 			   const string & boolean_type_, 
@@ -279,6 +298,16 @@ namespace geomtools {
 		     const sphere & s_,
 		     const string & lunit_str_ = "mm",
 		     const string & aunit_str_ = "radian");
+
+    void add_polycone (const string & name_, 
+		       const polycone & s_,
+		       const string & lunit_str_ = "mm",
+		       const string & aunit_str_ = "radian");
+
+    void add_polyhedra (const string & name_, 
+		       const polyhedra & s_,
+		       const string & lunit_str_ = "mm",
+		       const string & aunit_str_ = "radian");
 
     /**************** Structures section *******************/
 

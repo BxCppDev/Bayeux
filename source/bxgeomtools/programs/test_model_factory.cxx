@@ -22,6 +22,7 @@ int main (int argc_, char ** argv_)
       clog << "Test program for class 'model_factory'!" << endl; 
   
       bool debug = false;
+      bool devel = false;
       string drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
       bool draw = true;
       bool gdml = true;
@@ -39,6 +40,10 @@ int main (int argc_, char ** argv_)
                if ((option == "-d") || (option == "--debug")) 
                  {
                    debug = true;
+                 }
+               else if (option == "--devel") 
+                 {
+                   devel = true;
                  }
                else if (option == "-D") 
                  {
@@ -88,15 +93,14 @@ int main (int argc_, char ** argv_)
           iarg++;
       }  
     
-      geomtools::i_model::g_devel = debug;
+      geomtools::i_model::g_devel = devel;
  
       geomtools::model_factory factory;
       factory.set_debug (debug);
-      geomtools::i_model::g_devel = debug;
 
       if (setup_filename.empty ())
 	{
-	  setup_filename = "${GEOMTOOLS_ROOT}/resources/test/test_geometry_models_0.setup";
+	  setup_filename = "${GEOMTOOLS_ROOT}/resources/test/test_geometry_models.setup";
 	} 
       datatools::utils::fetch_path_with_env (setup_filename);
       factory.load (setup_filename);
@@ -131,7 +135,7 @@ int main (int argc_, char ** argv_)
 
       if (draw)
 	{   
-	  geomtools::gnuplot_drawer::g_devel = debug;
+	  geomtools::gnuplot_drawer::g_devel = devel;
 	  geomtools::gnuplot_drawer GPD;
 	  GPD.set_view (drawer_view);
 	  GPD.set_mode (geomtools::gnuplot_drawer::MODE_WIRED);
@@ -174,7 +178,7 @@ int main (int argc_, char ** argv_)
 
       if (gdml)
       {
-	geomtools::gdml_export::g_devel = debug;
+	geomtools::gdml_export::g_devel = devel;
 	geomtools::gdml_export GDML;
 	GDML.add_replica_support (true);
 	GDML.attach_external_materials (writer.get_stream (geomtools::gdml_writer::MATERIALS_SECTION));

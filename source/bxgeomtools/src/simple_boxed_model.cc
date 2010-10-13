@@ -108,8 +108,8 @@ namespace geomtools {
   }
   
   void simple_boxed_model::_at_construct (const string & name_,
-				    const datatools::utils::properties & config_,
-				    models_col_t * models_)
+					  const datatools::utils::properties & config_,
+					  models_col_t * models_)
   {
     bool devel = i_model::g_devel;
     if (devel) clog << "DEVEL: simple_boxed_model::_at_construct: Entering..." << endl;
@@ -117,7 +117,7 @@ namespace geomtools {
     double x;
     double y;
     double z;
-    string material_name = material::MATERIAL_REF_UNKWOWN;
+    string material_name = material::MATERIAL_REF_UNKNOWN;
     string lunit_str = "mm"; // default unit
  
     if (config_.has_key ("x"))

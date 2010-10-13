@@ -54,6 +54,10 @@ namespace geomtools {
  
     double get_diameter () const;
  
+    double get_surface () const;
+
+    double get_circumference () const;
+
   public: 
     // ctor:
     circle ();

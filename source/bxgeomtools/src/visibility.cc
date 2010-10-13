@@ -83,6 +83,13 @@ namespace geomtools {
     return config_.fetch_string (visibility::make_key (visibility::VISIBILITY_COLOR_PROPERTY));
   }
 
+  void visibility::set_color (datatools::utils::properties & config_, 
+			      const string & color_)
+  {
+    config_.update (visibility::make_key (visibility::VISIBILITY_COLOR_PROPERTY), color_);
+    return;
+  }
+
   bool visibility::is_wired_cylinder (const datatools::utils::properties & config_)  
   {
     return visibility::has_flag (config_, visibility::VISIBILITY_WIRED_CYLINDER_FLAG);

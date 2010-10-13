@@ -20,12 +20,13 @@
 #include <stdexcept>
 
 #include <geomtools/i_shape_3d.h>
+#include <geomtools/i_stackable.h>
 
 namespace geomtools {
 
   using namespace std;
 
-  class cylinder : public i_shape_3d 
+  class cylinder : public i_shape_3d , public i_stackable
     {
 
     public:
@@ -47,6 +48,17 @@ namespace geomtools {
       double __r;
   
     public: 
+    
+      double get_x () const
+      {
+	return 2. * __r;
+      }
+      
+      double get_y () const
+      {
+	return 2. * __r;
+      }
+      
       double 
 	get_z() const;
 

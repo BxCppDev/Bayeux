@@ -1,0 +1,9 @@
+
+
+
+Test the geometry models factory:
+
+bash$ ${GEOMTOOLS_BIN_DIR}/test_model_factory \
+  --debug \
+  -3d \
+  ${GEOMTOOLS_ROOT}/resources/test/test_geometry_models.setup

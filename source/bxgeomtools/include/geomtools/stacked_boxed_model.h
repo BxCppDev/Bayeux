@@ -24,7 +24,10 @@
 
 #include <mygsl/min_max.h>
 
+#include <datatools/utils/units.h>
+
 #include <geomtools/i_boxed_model.h>
+#include <geomtools/i_stackable.h>
 #include <geomtools/box.h>
 #include <geomtools/physical_volume.h>
 #include <geomtools/placement.h>
@@ -58,6 +61,7 @@ namespace geomtools {
       const i_model *  model;
       placement        placmt;
       physical_volume  phys;
+
     public:
       const string & get_label () const
       {

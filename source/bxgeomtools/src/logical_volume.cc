@@ -105,7 +105,7 @@ namespace geomtools {
       {
 	return (__parameters.fetch_string  (material::make_key (material::MATERIAL_REF_PROPERTY)));
       }
-    return material::MATERIAL_REF_UNKWOWN;
+    return material::MATERIAL_REF_UNKNOWN;
   }
 
   void logical_volume::set_material_ref (const string & material_ref_)

@@ -66,6 +66,7 @@ namespace geomtools {
     const logical_volume::dict_t & get_logicals () const;
      
   public: 
+
     // ctor:
     model_factory (bool debug_ = false);
 
@@ -95,24 +96,6 @@ namespace geomtools {
 			    const std::string & indent_ = "",
 			    bool inherit_               = false) const;
     
-  public:
-    
-    /*** Object 3D getter ***/
-
-    /*
-    class getter : public i_object_3d::i_getter
-    {
-    private:
-      model_factory * __factory;
-
-    public:
-      getter (const model_factory & factory_);
-
-      virtual const i_object_3d * get (const datatools::utils::properties & params_);
-      
-    };
-    */
-
   };
 
 } // end of namespace geomtools

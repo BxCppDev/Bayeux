@@ -22,6 +22,7 @@
 
 #include <geomtools/utils.h>
 #include <geomtools/i_object_3d.h>
+#include <geomtools/i_stackable.h>
 
 namespace geomtools {
 
@@ -33,7 +34,20 @@ namespace geomtools {
       static const double DEFAULT_SKIN;
       static const double USING_PROPER_SKIN;
 
+    private:
+
+      bool                   __owns_stackable_data;
+      const stackable_data * __stackable_data;
+
     public:
+
+      const stackable_data & get_stackable_data () const;
+
+      bool has_stackable_data () const;
+
+      void set_stackable_data (const stackable_data & sd_);
+
+      void set_stackable_data (const stackable_data * sd_);
 
       virtual int get_dimensional () const;
       

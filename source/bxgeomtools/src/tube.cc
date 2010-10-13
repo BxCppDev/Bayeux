@@ -8,14 +8,12 @@ namespace geomtools {
 
   const std::string tube::TUBE_LABEL = "tube";
   
-  double 
-  tube::get_z () const
+  double tube::get_z () const
   {
     return __z;
   }
   
-  void 
-  tube::set_z (double new_value_)
+  void tube::set_z (double new_value_)
   {
     if (new_value_ < 0.0) 
       {
@@ -25,34 +23,31 @@ namespace geomtools {
 	throw std::logic_error (message.str ());
       }
     __z = new_value_;
+    return;
   }
   
-  double 
-  tube::get_half_z () const
+  double tube::get_half_z () const
   {
     return 0.5 * __z;
   }
   
-  void 
-  tube::set_half_z (double new_value_)
+  void tube::set_half_z (double new_value_)
   {
     set_z (new_value_ + new_value_);
+    return;
   }
   
-  double 
-  tube::get_inner_r () const
+  double tube::get_inner_r () const
   {
     return __inner_r;
   }
   
-  double 
-  tube::get_outer_r () const
+  double tube::get_outer_r () const
   {
     return __outer_r;
   }
   
-  void 
-  tube::set_radii (double inner_r_, double outer_r_)
+  void tube::set_radii (double inner_r_, double outer_r_)
   {
     if (inner_r_ < 0.0) 
       {
@@ -78,40 +73,44 @@ namespace geomtools {
 		<< __inner_r << "'!";
 	throw std::logic_error (message.str ());
       }
+    return;
   }
   
-  void 
-  tube::set (double ir_, double or_, double z_)
+  void tube::set (double ir_, double or_, double z_)
   {
     set_radii (ir_ ,or_);
     set_z (z_);
+    return;
   }
   
-  void 
-  tube::set_half (double ir_, double or_, double hz_)
+  void tube::set_half (double ir_, double or_, double hz_)
   {
     set_radii (ir_, or_);
     set_half_z (hz_);
+    return;
   }
 
-  
-  // ctor/dtor:
+  // ctor:
   tube::tube ()
   {
     reset ();
+    return;
   }
 
+  // ctor:
   tube::tube (double ir_, double or_, double z_)
   {
     set (ir_, or_, z_);
+    return;
   }
     
+  // dtor:
   tube::~tube ()
   {
+    return;
   }
 
-  double
-  tube::get_surface ( int mask_ ) const
+  double tube::get_surface ( int mask_ ) const
   {
     double s = 0.0;
     if (mask_ & FACE_INNER_SIDE) 
@@ -133,34 +132,29 @@ namespace geomtools {
     return s;
   }
 
-  double 
-  tube::get_volume () const 
+  double tube::get_volume () const 
   {
     return M_PI * (__outer_r * __outer_r - __inner_r * __inner_r ) * __z;
   }
 
-  bool 
-  tube::is_valid () const
+  bool tube::is_valid () const
   {
-    return (__inner_r > 0.0 && __outer_r > __inner_r && __z > 0.0);
+    return ((__inner_r > 0.0) && (__outer_r > __inner_r) && __z > 0.0);
   }
 
-  void 
-  tube::reset ()
+  void tube::reset ()
   {
     __inner_r = -1.0;
     __outer_r = -1.0;
     __z       = -1.0;
   }
 
-  std::string 
-  tube::get_shape_name () const
+  std::string tube::get_shape_name () const
   {
     return tube::TUBE_LABEL;
   }
 
-  bool 
-  tube::is_inside ( const vector_3d & point_ , double skin_ ) const
+  bool tube::is_inside ( const vector_3d & point_ , double skin_ ) const
   {
     double skin = get_skin ();
     if (skin_ > USING_PROPER_SKIN) skin = skin_;
@@ -172,8 +166,7 @@ namespace geomtools {
     return true;
   }
 
-  double 
-  tube::get_parameter ( const std::string & flag_ ) const
+  double tube::get_parameter ( const std::string & flag_ ) const
   {
     if ( flag_ == "inner.r" ) return get_inner_r ();
     if ( flag_ == "outer.r" ) return get_outer_r ();
@@ -188,8 +181,7 @@ namespace geomtools {
     throw std::runtime_error ("tube::get_parameter: Unknown flag!");
   }
 
-  vector_3d 
-  tube::get_normal_on_surface (const vector_3d & position_) const
+  vector_3d tube::get_normal_on_surface (const vector_3d & position_) const
   {
     vector_3d normal;
     invalidate (normal);
@@ -209,8 +201,7 @@ namespace geomtools {
     return (normal);
   }
 
-  bool 
-  tube::is_on_surface (const vector_3d & point_, 
+  bool tube::is_on_surface (const vector_3d & point_, 
 		      int mask_, 
 		      double skin_) const
   {
@@ -244,18 +235,16 @@ namespace geomtools {
     return false;
   }
   
-  bool 
-  tube::find_intercept (const vector_3d & from_, 
-			const vector_3d & direction_,
-			intercept_t & intercept_,
-			double skin_) const
+  bool tube::find_intercept (const vector_3d & from_, 
+			     const vector_3d & direction_,
+			     intercept_t & intercept_,
+			     double skin_) const
   {
     intercept_.reset ();
     return intercept_.is_ok ();
   }
 
-  std::ostream & 
-  operator<< (std::ostream & out_, const tube & t_)
+  std::ostream & operator<< (std::ostream & out_, const tube & t_)
   {
     out_ << '{' << tube::TUBE_LABEL << ' ' 
 	 << t_.__inner_r << ' ' 
@@ -264,8 +253,7 @@ namespace geomtools {
     return out_;
   }
 
-  std::istream & 
-  operator>> (std::istream & in_, tube & t_)
+  std::istream & operator>> (std::istream & in_, tube & t_)
   {
     t_.reset ();
     char c = 0;
@@ -308,6 +296,27 @@ namespace geomtools {
     return in_;
   }
 
+  void tube::get_inner_cylinder (cylinder & ic_)
+  {
+    ic_.reset ();
+    if (! is_valid ())
+      {
+	throw runtime_error ("tube::get_inner_cylinder: Tube is not valid !");
+      }
+    ic_.set (get_inner_r (), get_z ());
+    return;
+  }
+
+  void tube::get_outer_cylinder (cylinder & oc_)
+  {
+    oc_.reset ();
+    if (! is_valid ())
+      {
+	throw runtime_error ("tube::get_inner_cylinder: Tube is not valid !");
+      }
+    oc_.set (get_outer_r (), get_z ());
+    return;
+  }
 
   void tube::tree_dump (ostream & out_, 
 			    const string & title_, 

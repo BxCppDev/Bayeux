@@ -53,6 +53,13 @@ namespace geomtools {
 
     void set_y (double);
  
+    double get_surface () const;
+
+    double get_circumference () const;
+ 
+    double get_diagonal () const;
+ 
+ 
   public: 
     // ctor:
     rectangle ();

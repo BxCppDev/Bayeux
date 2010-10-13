@@ -11,8 +11,10 @@ namespace geomtools {
   const string material::MATERIAL_PREFIX       = "material.";
   const string material::MATERIAL_REF_PROPERTY = "ref";
   const string material::MATERIAL_REF_DEFAULT  = "__default__";
-  const string material::MATERIAL_REF_UNKWOWN  = "__unknown__";
+  const string material::MATERIAL_REF_UNKNOWN  = "__unknown__";
   const string material::MATERIAL_REF_VACUUM   = "vacuum";
+  const string material::MATERIAL_SOLID_FLAG   = "solid";
+  const string material::MATERIAL_LIQUID_FLAG  = "liquid";
   const string material::MATERIAL_GAS_FLAG     = "gas";
   const string material::MATERIAL_GAS_PRESSURE_PROPERTY    = "gas_pressure";
   const string material::MATERIAL_GAS_TEMPERATURE_PROPERTY = "gas_temperature";
@@ -46,6 +48,16 @@ namespace geomtools {
   bool material::is_gas (const datatools::utils::properties & config_)
   {
     material::has_flag (config_, material::MATERIAL_GAS_FLAG);
+  }
+
+  bool material::is_liquid (const datatools::utils::properties & config_)
+  {
+    material::has_flag (config_, material::MATERIAL_LIQUID_FLAG);
+  }
+
+  bool material::is_solid (const datatools::utils::properties & config_)
+  {
+    material::has_flag (config_, material::MATERIAL_SOLID_FLAG);
   }
 
 } // end of namespace geomtools

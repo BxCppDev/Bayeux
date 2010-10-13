@@ -450,7 +450,72 @@ namespace geomtools {
     return tessellated_solid::TESSELLATED_LABEL;
   }
 
-  
+  /*
+  void tessellated_solid::initialize (const string & filename_)
+  {
+    ifstream ifs;
+    string filename = filename_;
+    ifs.open (filename.c_str ());
+    if (! ifs)
+      {
+	ostringstream message;
+	message << "tessellated_solid::initialize: " 
+		<< "Cannot open data file '"
+		<< filename << "' !";
+	throw runtime_error (message.str ()); 
+      }
+    size_t count = 0;
+    double length_unit = CLHEP::mm;
+    double z_factor = 1.0;
+    double r_factor = 1.0;
+    size_t point_counter = 0;
+    while (! ifs.eof ())
+      {
+	string line;
+	getline (ifs, line);
+	cerr << "DEVEL: tessellated_solid::initialize: " 
+	     << "line = '" << line << "'" << endl;
+	count++;
+	{
+	  istringstream iss (line);
+	  string  word;
+	  iss >> word;
+	  if (word.empty ()) continue;
+	  if (word[0] == '#') 
+	    {
+	      if (word.size () >= 2)
+		{
+		  if (word == "#@length_unit")
+		    {
+		      string unit_str;
+		      iss >> unit_str;
+		      if (! iss)
+			{
+			  ostringstream message;
+			  message << "tessellated_solid::initialize: " 
+				  << "Invalid format for the length unit directive in data file '"
+				  << filename << "' at line " << count << " !";
+			  throw runtime_error (message.str ()); 
+			}
+		      length_unit = datatools::utils::units::get_length_unit_from (unit_str);
+		    }
+		}
+	      continue;
+	    }
+	}
+	{
+	  istringstream iss (line);
+	  string token;
+	  iss >> token;
+	  if (token == "point")
+	    {
+	    }
+	}
+      }
+    return;
+  }
+  */
+
 } // end of namespace geomtools
 
 // end of tessellation.cc

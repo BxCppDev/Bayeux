@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*- 
 // test_polycone.cxx
-
+ 
 #include <cstdlib>
 #include <iostream>
 #include <string>
@@ -19,6 +19,7 @@ int main (int argc_, char ** argv_)
       clog << "Test program for class 'polycone'!" << endl; 
   
       bool debug = false;
+      bool draw = true;
 
       int iarg = 1;
       while (iarg < argc_)
@@ -31,6 +32,10 @@ int main (int argc_, char ** argv_)
                if ((option == "-d") || (option == "--debug")) 
                  {
                    debug = true;
+                 }
+               else if ((option == "-D") || (option == "--no-draw")) 
+                 {
+                   draw = false;
                  }
 	       else 
                  { 
@@ -59,15 +64,14 @@ int main (int argc_, char ** argv_)
       double a = pmt_front_a;
       double b = pmt_radius;
       double dtheta = M_PI / 50.;
-      my_polycone.add (a / CLHEP::cm, 0.0 / CLHEP::cm);
+      my_polycone.add (a, 0.0);
       for (double theta = dtheta; 
-	   theta < 0.5 * M_PI + 0.1 * dtheta; 
+	   theta < 0.5 * M_PI - 0.1 * dtheta; 
 	   theta += dtheta)
 	{
 	  double z = b / sqrt (pow (tan (theta), 2) + pow (b / a, 2));
-	  double r = b * sqrt (1.0 - pow (z / a, 2));
-	  my_polycone.add (z / CLHEP::cm, r / CLHEP::cm);
-	  
+	  double r = b * sqrt (1.0 - (z / a) * (z / a));
+	  my_polycone.add (z, r);  
 	}
       double a2 = pmt_back_a;
       for (double theta = 0.5 * M_PI; 
@@ -75,27 +79,26 @@ int main (int argc_, char ** argv_)
 	   theta -= dtheta)
 	{
 	  double z = b / sqrt (pow (tan (theta), 2) + pow (b / a2, 2));
-	  double r = b * sqrt (1.0 - pow (z / a2, 2));
-	  my_polycone.add (- z / CLHEP::cm, r / CLHEP::cm);
+	  double r = b * sqrt (1.0 - (z / a2) * (z / a2));
+	  my_polycone.add (- z, r);
 	}
-      my_polycone.add (-pmt_front_a / CLHEP::cm, pmt_base_radius / CLHEP::cm);
-      my_polycone.add ((pmt_front_a - pmt_length)  / CLHEP::cm, 
-		       pmt_base_radius / CLHEP::cm);
+      my_polycone.add (-pmt_front_a, pmt_base_radius);
+      my_polycone.add ((pmt_front_a - pmt_length), pmt_base_radius);
 
       my_polycone.tree_dump (clog, "Polycone");
       clog << "Polycone: " << my_polycone << endl;
 
-      {
-	geomtools::vector_3d polycone_pos;
-	geomtools::rotation polycone_rot;
-	geomtools::create_rotation (polycone_rot, 0.0, 0.0, 0.0);
-	geomtools::gnuplot_draw::draw_polycone (cout, 
-						polycone_pos, 
-						polycone_rot, 
-						my_polycone);
-	cout << endl << endl;
-      }
-
+      if (draw)
+	{
+	  geomtools::vector_3d polycone_pos;
+	  geomtools::rotation polycone_rot;
+	  geomtools::create_rotation (polycone_rot, 0.0, 0.0, 0.0);
+	  geomtools::gnuplot_draw::draw_polycone (cout, 
+						  polycone_pos, 
+						  polycone_rot, 
+						  my_polycone);
+	  cout << endl << endl;
+	}
 
     }
   catch (exception & x)

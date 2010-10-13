@@ -193,7 +193,7 @@ namespace geomtools {
 			   1.0,
 			   1. * CLHEP::g / CLHEP::cm3,
 			   1.00); 
-    __writer.add_material (material::MATERIAL_REF_UNKWOWN,
+    __writer.add_material (material::MATERIAL_REF_UNKNOWN,
 			   1.0,
 			   1. * CLHEP::g / CLHEP::cm3,
 			   1.00); 
@@ -218,13 +218,31 @@ namespace geomtools {
 					const string & solid_name_)
   {
     bool devel = g_devel;
-    //devel = true; // XXX
+    //devel = true; 
     if (devel)
       {
 	clog << "DEVEL: gdml_export::_export_gdml_solid: Entering..." << endl;
       }
     string shape_name = shape_.get_shape_name ();
 
+    if (! gdml_writer::solid_type_is_valid (shape_name))
+      {
+	ostringstream message;
+	message << "gdml_export::_export_gdml_solid: "
+		<< "Solid type '"
+		<< shape_name
+		<< "' is not valid !";
+	throw runtime_error (message.str ());	
+     }
+    if (! gdml_writer::solid_type_is_supported (shape_name))
+      {
+	ostringstream message;
+	message << "gdml_export::_export_gdml_solid: "
+		<< "Solid type '"
+		<< shape_name
+		<< "' is not supported !";
+	throw runtime_error (message.str ());	
+     }
     bool composite = false;
 
     if (shape_.is_composite ())
@@ -241,7 +259,7 @@ namespace geomtools {
 	    string shape_ref_2 = solid_name_ + ".union.second_ref";;
 	    string pos_ref = solid_name_ + ".union.pos_ref";
 	    string rot_ref = solid_name_ + ".union.rot_ref";;
-
+	    // only stores the solid #2 placement:
 	    __writer.add_position (pos_ref, 
 				   u.get_shape2 ().get_placement ().get_translation (), 
 				   __length_unit);
@@ -265,6 +283,7 @@ namespace geomtools {
 	    string pos_ref = solid_name_ + ".subtraction.pos_ref";
 	    string rot_ref = solid_name_ + ".subtraction.rot_ref";;
 
+	    // only stores the solid #2 placement:
 	    __writer.add_position (pos_ref, 
 				   s.get_shape2 ().get_placement ().get_translation (), 
 				   __length_unit);
@@ -288,6 +307,7 @@ namespace geomtools {
 	    string pos_ref = solid_name_ + ".intersection.pos_ref";
 	    string rot_ref = solid_name_ + ".intersection.rot_ref";;
 
+	    // only stores the solid #2 placement:
 	    __writer.add_position (pos_ref, 
 				   i.get_shape2 ().get_placement ().get_translation (), 
 				   __length_unit);
@@ -334,6 +354,16 @@ namespace geomtools {
 	  {
 	    const sphere & s = static_cast<const sphere &> (shape_);
 	    __writer.add_sphere (solid_name_, s, __length_unit, __angle_unit);
+	  }
+	else if (shape_name == "polycone")
+	  {
+	    const polycone & p = static_cast<const polycone &> (shape_);
+	    __writer.add_polycone (solid_name_, p, __length_unit, __angle_unit);
+	  }
+	else if (shape_name == "polyhedra")
+	  {
+	    const polyhedra & p = static_cast<const polyhedra &> (shape_);
+	    __writer.add_polyhedra (solid_name_, p, __length_unit, __angle_unit);
 	  }
 	else 
 	  {
@@ -386,7 +416,7 @@ namespace geomtools {
     _export_gdml_solid (log_solid, solid_name);
 
     // prepare volume export
-    string material_ref = material::MATERIAL_REF_UNKWOWN;
+    string material_ref = material::MATERIAL_REF_UNKNOWN;
     string solid_ref = solid_name;
     if (devel) logical.tree_dump (clog, "Logical:", "DEVEL: ");
     if (logical.has_material_ref ())
@@ -622,7 +652,6 @@ namespace geomtools {
       {
 	clog << "DEVEL: gdml_export::_export_gdml_logical: Exiting." << endl;
       }
-    return;
     return;
   }
   

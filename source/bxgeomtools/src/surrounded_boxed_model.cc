@@ -238,6 +238,7 @@ namespace geomtools {
     string material_name;
     double x, y, z;
     map<string,string> surrounding_model_names;
+    double lunit = CLHEP::mm;
 
     /*** material ***/
     if (config_.has_key ("material.ref"))
@@ -252,6 +253,13 @@ namespace geomtools {
 	throw runtime_error (message.str ());		
       }
     set_material_name (material_name);
+
+    /*** length unit ***/
+    if (config_.has_key ("length_unit"))
+      {
+	string length_unit_str = config_.fetch_string ("length_unit");
+	lunit = datatools::utils::units::get_length_unit_from (length_unit_str);
+      }  
 
     /*** Surrounded model ***/
     if (config_.has_key ("surrounded_model"))
@@ -307,6 +315,7 @@ namespace geomtools {
       if (found != models_->end ())
 	{
 	  // check if the model is box-shaped:
+	  /*
 	  if (found->second->get_logical ().get_shape ().get_shape_name () !=
 	      "box")
 	    {
@@ -316,6 +325,7 @@ namespace geomtools {
 		      << "' is not a 'boxed' one !"; 
 	      throw runtime_error (message.str ());
 	    }
+	  */
 	  set_surrounded_model (*(found->second));
 	}
       else
@@ -367,6 +377,7 @@ namespace geomtools {
 	  if (found != models_->end ())
 	    {
 	      // check if the model is box-shaped:
+	      /*
 	      if (found->second->get_logical ().get_shape ().get_shape_name () !=
 		  "box")
 		{
@@ -376,6 +387,7 @@ namespace geomtools {
 			  << "' is not a 'boxed' one !"; 
 		  throw runtime_error (message.str ());
 		}
+	      */
 	      add_surrounding_model (ipos, *(found->second), label_name);
 	    }
 	  else
@@ -393,8 +405,21 @@ namespace geomtools {
     mygsl::min_max mmx;
     mygsl::min_max mmy;
     mygsl::min_max mmz;
+    const i_shape_3d & the_shape = __surrounded_model->get_logical ().get_shape ();
+    const i_stackable * the_stackable = 0;
+    if (the_shape.has_stackable_data ())
+      {
+	the_stackable = &(the_shape.get_stackable_data ());
+      }
+    else
+      {
+	the_stackable = dynamic_cast<const i_stackable *> (&the_shape);
+      }
+    const i_stackable & surrounded_box = *the_stackable;
+    /*
     const box & surrounded_box = 
 	  dynamic_cast<const box &>(__surrounded_model->get_logical ().get_shape ());
+    */
     double dx = surrounded_box.get_x ();
     double dy = surrounded_box.get_y ();
     double dz = surrounded_box.get_z ();
@@ -417,8 +442,21 @@ namespace geomtools {
 	int position = i->first;
 	const surrounding_item & si = i->second;
 	const i_model * model = si.model;
-	const box & surrounding_box = 
+	const i_shape_3d & the_shape = model->get_logical ().get_shape ();
+	const i_stackable * the_stackable = 0;
+	if (the_shape.has_stackable_data ())
+	  {
+	    the_stackable = &(the_shape.get_stackable_data ());
+	  }
+	else
+	  {
+	    the_stackable = dynamic_cast<const i_stackable *> (&the_shape);
+	  }
+	const i_stackable & surrounding_box = *the_stackable;
+	/*
+	  const box & surrounding_box = 
 	  dynamic_cast<const box &>(model->get_logical ().get_shape ());
+	*/
 	if (position == BACK)
 	  {
 	    dx0 = surrounding_box.get_x ();
@@ -506,7 +544,6 @@ namespace geomtools {
 	//cerr << "DEVEL: Z-centered" << endl; 
       }
 
-    double lunit = CLHEP::mm;
     if (config_.has_key ("x"))
       {
 	x = config_.fetch_real ("x");

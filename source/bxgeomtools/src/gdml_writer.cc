@@ -584,9 +584,65 @@ namespace geomtools {
  
   /*** solid ***/
  
-  bool gdml_writer::solid_type_is_valid (const string & solid_type_)
+  bool gdml_writer::solid_type_is_supported (const string & solid_type_)
   {
     if (solid_type_ == "box") 
+      {
+	return true;
+      }
+    if (solid_type_ == "cylinder") 
+      {
+	return true;
+      }
+    if (solid_type_ == "tube") 
+      {
+	return true;
+      }
+    if (solid_type_ == "sphere") 
+      {
+	return true;
+      }
+    if (solid_type_ == "polycone") 
+      {
+	return true;
+      }
+    if (solid_type_ == "polyhedra") 
+      {
+	return true;
+      }
+
+    // combination:
+    if (solid_type_ == "union")
+      {
+	return true;
+      }
+    if (solid_type_ == "subtraction")
+      {
+	return true;
+      }
+    if (solid_type_ == "intersection")
+      {
+	return true;
+      }
+    return false;
+  };
+     
+  bool gdml_writer::solid_type_is_valid (const string & solid_type_)
+  {
+    //list<string> supported_solid_types;
+    if (solid_type_ == "box") 
+      {
+	return true;
+      }
+    if (solid_type_ == "sphere")
+      {
+	return true;
+      }
+    if (solid_type_ == "tube")
+      {
+	return true;
+      }
+    if (solid_type_ == "cylinder")
       {
 	return true;
       }
@@ -622,10 +678,6 @@ namespace geomtools {
       {
 	return true;
       }
-    if (solid_type_ == "sphere")
-      {
-	return true;
-      }
     if (solid_type_ == "torus")
       {
 	return true;
@@ -639,10 +691,6 @@ namespace geomtools {
 	return true;
       }
     if (solid_type_ == "hype")
-      {
-	return true;
-      }
-    if (solid_type_ == "tube")
       {
 	return true;
       }
@@ -851,6 +899,123 @@ namespace geomtools {
     solids_stream << " />" << endl << endl; 
     _get_stream (SOLIDS_SECTION) << solids_stream.str ();
   }
+
+  /*
+   * <polycone name = "thepolycone" 
+      startphi="1" deltaphi="4" aunit="rad" lunit= "mm">
+   * <zplane rmin="1" rmax="9" z="10" />
+   * <zplane rmin="3" rmax="5" z="12" />
+   * </polycone>	    
+   */
+  void gdml_writer::add_gdml_polycone (const string & name_, 
+				       map<double, pair<double, double> > zplanes_, 
+				       double start_phi_, double delta_phi_,
+				       const string & lunit_str_,
+				       const string & aunit_str_)
+  {
+    double lunit = datatools::utils::units::get_length_unit_from (lunit_str_);
+    double aunit = datatools::utils::units::get_angle_unit_from (aunit_str_);
+
+    ostringstream solids_stream;
+    solids_stream << "<" <<  "polycone"
+		  << " name=" << '"' << to_html (name_) << '"';
+    
+    if (start_phi_ != 0.0)
+      {
+	solids_stream << " startphi=" << '"';
+	solids_stream.precision (15);
+	solids_stream << start_phi_ / aunit << '"';
+      }
+
+    solids_stream << " deltaphi=" << '"';
+    solids_stream.precision (15);
+    solids_stream << delta_phi_ / aunit << '"';
+
+    solids_stream << " lunit=" << '"' << lunit_str_ << '"';
+    solids_stream << " aunit=" << '"' << aunit_str_ << '"';
+
+    solids_stream << " >" << endl << endl; 
+    
+    for (map<double, pair<double, double> >::const_iterator i = zplanes_.begin ();
+	 i != zplanes_.end ();
+	 i++)
+      {
+	double z = i->first;
+	double rmin = i->second.first;
+	double rmax = i->second.second;
+	solids_stream << "  " << "<zplane ";
+	if (rmin != 0.0)
+	  {
+	    solids_stream << "rmin=\"" << rmin / lunit << "\" ";
+	  }
+	solids_stream << "rmax=\"" << rmax / lunit << "\" ";
+	solids_stream << "z=\"" << z / lunit << "\" ";
+	solids_stream << "/>" << endl;	
+      }
+    solids_stream << "<" <<  "/polycone>" << endl << endl; 
+    _get_stream (SOLIDS_SECTION) << solids_stream.str ();
+    return;
+  }
+  
+  /*
+   * <polyhedra name= "thepolyhedra" startphi="1" deltaphi="4" numsides="10" aunit="rad"
+   lunit= "mm">
+   * <zplane rmin="1" rmax="9" z="10" />
+   * <zplane rmin="3" rmax="5" z="12" />
+   * </polyhedra>
+   */
+  void gdml_writer::add_gdml_polyhedra (const string & name_, 
+					 size_t num_sides_,
+					 map<double, pair<double, double> > zplanes_, 
+					 double start_phi_, double delta_phi_,
+					 const string & lunit_str_,
+					 const string & aunit_str_)
+  {
+    double lunit = datatools::utils::units::get_length_unit_from (lunit_str_);
+    double aunit = datatools::utils::units::get_angle_unit_from (aunit_str_);
+
+    ostringstream solids_stream;
+    solids_stream << "<" <<  "polyhedra"
+		  << " name=" << '"' << to_html (name_) << '"';
+
+    solids_stream << " numsides=" << '"' << num_sides_ << '"';
+    
+    if (start_phi_ != 0.0)
+      {
+	solids_stream << " startphi=" << '"';
+	solids_stream.precision (15);
+	solids_stream << start_phi_ / aunit << '"';
+      }
+
+    solids_stream << " deltaphi=" << '"';
+    solids_stream.precision (15);
+    solids_stream << delta_phi_ / aunit << '"';
+
+    solids_stream << " lunit=" << '"' << lunit_str_ << '"';
+    solids_stream << " aunit=" << '"' << aunit_str_ << '"';
+
+    solids_stream << " >" << endl << endl; 
+    
+    for (map<double, pair<double, double> >::const_iterator i = zplanes_.begin ();
+	 i != zplanes_.end ();
+	 i++)
+      {
+	double z = i->first;
+	double rmin = i->second.first;
+	double rmax = i->second.second;
+	solids_stream << "  " << "<zplane ";
+	if (rmin != 0.0)
+	  {
+	    solids_stream << "rmin=\"" << rmin / lunit << "\" ";
+	  }
+	solids_stream << "rmax=\"" << rmax / lunit << "\" ";
+	solids_stream << "z=\"" << z / lunit << "\" ";
+	solids_stream << "/>" << endl;	
+      }
+    solids_stream << "<" <<  "/polyhedra>" << endl << endl; 
+    _get_stream (SOLIDS_SECTION) << solids_stream.str ();
+    return;
+  }
   
   void gdml_writer::add_gdml_union (const string & name_, 
 				    const string & first_ref_, 
@@ -953,6 +1118,58 @@ namespace geomtools {
 		  s_.get_r (), 
 		  lunit_str_);
   }
+
+  void gdml_writer::add_polycone (const string & name_, 
+				  const polycone & p_,
+				  const string & lunit_str_,
+				  const string & aunit_str_)
+  {
+    map<double, pair<double, double> > zplanes;
+    for (polycone::rz_col_t::const_iterator i = p_.points ().begin ();
+	 i != p_.points ().end ();
+	 i++)
+      {
+	double z = i->first;
+	pair<double, double> rminmax;
+	rminmax.first = i->second.rmin;
+	rminmax.second = i->second.rmax;
+	zplanes[z] = rminmax;
+      }
+    add_gdml_polycone (name_, 
+		       zplanes,
+		       0.0,
+		       2. * M_PI * CLHEP::radian, 
+		       lunit_str_, 
+		       aunit_str_);
+    return;
+  }
+
+  void gdml_writer::add_polyhedra (const string & name_, 
+				   const polyhedra & p_,
+				   const string & lunit_str_,
+				   const string & aunit_str_)
+  {
+    map<double, pair<double, double> > zplanes;
+    for (polyhedra::rz_col_t::const_iterator i = p_.points ().begin ();
+	 i != p_.points ().end ();
+	 i++)
+      {
+	double z = i->first;
+	pair<double, double> rminmax;
+	rminmax.first = 0.0;
+	rminmax.second = i->second;
+	zplanes[z] = rminmax;
+      }
+    add_gdml_polyhedra (name_, 
+			p_.get_n_sides (),
+			zplanes,
+			0.0,
+			2. * M_PI * CLHEP::radian, 
+			lunit_str_, 
+			aunit_str_);
+    return;
+  }
+
 
   /*
   void gdml_writer::add_solid (const string & name_, 

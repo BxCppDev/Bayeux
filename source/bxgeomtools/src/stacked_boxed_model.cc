@@ -233,6 +233,7 @@ namespace geomtools {
     int    stacking_axis;
     string material_name;
     double x, y, z;
+    double lunit = CLHEP::mm;
 
     /*** material ***/
     if (config_.has_key ("material.ref"))
@@ -248,6 +249,13 @@ namespace geomtools {
       }
     set_material_name (material_name);
 
+    /*** length unit ***/
+    if (config_.has_key ("length_unit"))
+      {
+	string length_unit_str = config_.fetch_string ("length_unit");
+	lunit = datatools::utils::units::get_length_unit_from (length_unit_str);
+      }  
+ 
     /*** stacking axis ***/
     if (config_.has_key ("stacking_axis"))
       {
@@ -326,6 +334,7 @@ namespace geomtools {
 	  models_->find (boxed_model_name);
 	if (found != models_->end ())
 	  {
+	    /*
 	    // check if the model is box-shaped:
 	    if (found->second->get_logical ().get_shape ().get_shape_name () !=
 		"box")
@@ -336,6 +345,7 @@ namespace geomtools {
 			<< "' is not a 'boxed' one !"; 
 		throw runtime_error (message.str ());
 	      }
+	    */
 	    add_boxed_model (i, *(found->second), label_name);
 	  }
 	else
@@ -361,8 +371,22 @@ namespace geomtools {
       {
 	const boxed_item & bi = i->second;
 	const i_model * model = bi.model;
+
+	const i_shape_3d & the_shape = model->get_logical ().get_shape ();
+	const i_stackable * the_stackable = 0;
+	if (the_shape.has_stackable_data ())
+	  {
+	    the_stackable = &(the_shape.get_stackable_data ());
+	  }
+	else
+	  {
+	    the_stackable = dynamic_cast<const i_stackable *> (&the_shape);
+	  }
+	const i_stackable & b = *the_stackable;
+	/*
 	const box & b = 
 	  dynamic_cast<const box &>(model->get_logical ().get_shape ());
+	*/
 	mmx.add (b.get_x ());
 	mmy.add (b.get_y ());
 	mmz.add (b.get_z ());
@@ -400,7 +424,6 @@ namespace geomtools {
     double dim_x = stacked_x;
     double dim_y = stacked_y;
     double dim_z = stacked_z;
-    double lunit = CLHEP::mm;
 
     if (config_.has_key ("x"))
       {
@@ -470,6 +493,7 @@ namespace geomtools {
       {
 	pos = -0.5 * stacked_z;
       }
+
     int j = 0;
     for (boxed_dict_t::iterator i = __boxed_models.begin ();
 	 i != __boxed_models.end ();
@@ -479,8 +503,28 @@ namespace geomtools {
 	const i_model * model = bi.model;
 	double xi, yi, zi;
 	xi = yi = zi = 0.0;
+
+	const i_shape_3d & the_shape = model->get_logical ().get_shape ();
+	const i_stackable * the_stackable = 0;
+	double x0 = 0.0;
+	double y0 = 0.0;
+	double z0 = 0.0;
+	if (the_shape.has_stackable_data ())
+	  {
+	    const stackable_data & sd = the_shape.get_stackable_data ();
+	    the_stackable = &sd;
+	  }
+	else
+	  {
+	    the_stackable = dynamic_cast<const i_stackable *> (&the_shape);
+	  }
+	const i_stackable & b = *the_stackable;
+
+	/*
 	const box & b = 
 	  dynamic_cast<const box &>(model->get_logical ().get_shape ());
+	*/
+
 	if (is_stacking_along_x ())
 	  {
 	    xi = pos + 0.5 * b.get_x ();

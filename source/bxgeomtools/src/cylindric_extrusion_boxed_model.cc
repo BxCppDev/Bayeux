@@ -151,8 +151,8 @@ namespace geomtools {
     double mother_y;
     double mother_z;
     double extrusion_radius;
-    string material_name = material::MATERIAL_REF_UNKWOWN;
-    string mother_material_name = material::MATERIAL_REF_UNKWOWN;
+    string material_name = material::MATERIAL_REF_UNKNOWN;
+    string mother_material_name = material::MATERIAL_REF_UNKNOWN;
     string lunit_str = "mm"; // default unit
  
     if (config_.has_key ("x"))

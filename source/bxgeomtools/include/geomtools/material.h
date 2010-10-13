@@ -34,8 +34,10 @@ namespace geomtools {
     static const string MATERIAL_PREFIX;
     static const string MATERIAL_REF_PROPERTY;
     static const string MATERIAL_REF_DEFAULT;
-    static const string MATERIAL_REF_UNKWOWN;
+    static const string MATERIAL_REF_UNKNOWN;
     static const string MATERIAL_REF_VACUUM;
+    static const string MATERIAL_SOLID_FLAG;
+    static const string MATERIAL_LIQUID_FLAG;
     static const string MATERIAL_GAS_FLAG;
     static const string MATERIAL_GAS_PRESSURE_PROPERTY;
     static const string MATERIAL_GAS_TEMPERATURE_PROPERTY;
@@ -52,6 +54,10 @@ namespace geomtools {
 			 const string & key_);
 
     static bool is_gas (const datatools::utils::properties & config_);
+
+    static bool is_liquid (const datatools::utils::properties & config_);
+
+    static bool is_solid (const datatools::utils::properties & config_);
 
   };
 

@@ -26,15 +26,61 @@ namespace geomtools {
   {
     return DIMENSIONAL_3;
   }
+
+  bool i_shape_3d::has_stackable_data () const
+  {
+    return __stackable_data != 0;
+  }
+
+  const stackable_data & i_shape_3d::get_stackable_data () const
+  {
+    return *__stackable_data;
+  }
+
+  void i_shape_3d::set_stackable_data (const stackable_data & sd_)
+  {
+    if (__stackable_data != 0)
+      {
+	if (&sd_ == __stackable_data) return;
+	if (__owns_stackable_data)
+	  {
+	    delete __stackable_data;
+	    __stackable_data = 0;
+	  }
+      }
+    __owns_stackable_data = false;
+    __stackable_data = &sd_;
+    return;
+  }
+
+  void i_shape_3d::set_stackable_data (const stackable_data * sd_)
+  {
+    if (__stackable_data != 0)
+      {
+	if (sd_ == __stackable_data) return;
+	if (__owns_stackable_data)
+	  {
+	    delete __stackable_data;
+	    __stackable_data = 0;
+	  }
+      }
+    __owns_stackable_data = true;
+    __stackable_data = sd_;
+    return;
+  }
      
   // ctor:
   i_shape_3d::i_shape_3d () : i_object_3d ()
   {
+    __owns_stackable_data = false;
+    __stackable_data = 0;
   }
      
   // ctor:
   i_shape_3d::i_shape_3d (double skin_) : i_object_3d (skin_)
   {
+    __owns_stackable_data = false;
+    __stackable_data = 0;
     /*
     clog << "DEVEL: i_shape_3d::i_shape_3d: i_object_3d::DEFAULT_TOLERANCE = " 
 	 << i_object_3d::DEFAULT_TOLERANCE << endl;
@@ -47,6 +93,14 @@ namespace geomtools {
   // dtor:
   i_shape_3d::~i_shape_3d ()
   {
+    if (__stackable_data == 0)
+      {
+	if (__owns_stackable_data)
+	  {
+	    delete __stackable_data;
+	    __stackable_data = 0;
+	  }
+      }
   }
 
   bool i_shape_3d::is_outside (const vector_3d & pos_, 

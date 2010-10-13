@@ -30,26 +30,149 @@ visibility.hidden : boolean = 0
 visibility.color  : string  = "blue"
 
 [name="MIM0" type="geomtools::multiple_items_model"]
+x                 : real   = 200.0
+y                 : real   = 200.0
+z                 : real   = 200.0
+length_unit       : string    = "mm"
+material.ref      : string    = "air"
+visibility.hidden : boolean   = 0
+visibility.color  : string    = "black"
+items.labels      : string[3] = "A" "B" "C" 
+model.A           : string  = "boxA"
+model.B           : string  = "boxB"
+model.C           : string  = "boxC"
+placement.A       : string  = "30 0 0 (mm) @ 90 00 0 (deg)"
+placement.B       : string  = "-20 0 0 (mm) @ 30 90 0 (deg)"
+placement.C       : string  = "0 55 40 (mm)"
+
+[name="entrance_window.model" type="geomtools::simple_shaped_model"]
+shape_type :   string =  "box"
 x   : real   = 200.0
 y   : real   = 200.0
-z   : real   = 200.0
-length_unit   : string   = "mm"
-material.ref : string = "air"
+z   : real   = 12.0e-3
+length_unit       : string  = "mm"
+material.ref      : string  = "mylar"
 visibility.hidden : boolean = 0
-visibility.color  : string  = "black"
-items.labels : string[3] = "A" "B" "C"
-model.A : string  = "boxA"
-model.B : string  = "boxB"
-model.C : string  = "boxC"
-placement.A : string  = "30 0 0 (mm) @ 90 00 0 (deg)"
-placement.B : string  = "-20 0 0 (mm) @ 30 90 0 (deg)"
-placement.C : string  = "0 55 40 (mm)"
+visibility.color  : string  = "green"
 
-[name="world" type="geomtools::test::test_world_model"]
+[name="scintillator_block.model" type="geomtools::simple_shaped_model"]
+shape_type :   string =  "box"
+x   : real   = 200.0
+y   : real   = 200.0
+z   : real   = 100.0
+length_unit       : string    = "mm"
+material.ref      : string = "polystyrene"
+visibility.hidden : boolean = 0
+visibility.color  : string  = "cyan"
+
+[name="light_guide.model" type="geomtools::simple_shaped_model"]
+shape_type :   string =  "cylinder"
+r   : real   = 40.0
+z   : real   = 60.0
+length_unit       : string    = "mm"
+material.ref : string = "polystyrene"
+visibility.hidden : boolean = 0
+visibility.color  : string  = "blue"
+
+[name="PMT.model" type="geomtools::simple_shaped_model"]
+shape_type :   string =  "sphere"
+r   : real   = 62.5
+length_unit       : string    = "mm"
+material.ref : string = "glass"
+visibility.hidden : boolean = 0
+visibility.color  : string  = "magenta"
+
+[name="PMT_body.model" type="geomtools::simple_shaped_model"]
+shape_type  : string = "tube"
+mode        : string = "by_envelope" # "by_extrusion"
+inner_r     : real   = 31.5
+outer_r     : real   = 32.5
+z           : real   = 50.0
+length_unit : string = "mm"
+
+material.ref       : string = "glass"
+inner_material.ref : string = "vacuum"
+
+visibility.hidden_envelop   : boolean = 1
+visibility.hidden           : boolean = 0
+visibility.color            : string  = "magenta"
+visibility.daughters.hidden : boolean = 0
+
+[name="PMT_endcap.model" type="geomtools::simple_shaped_model"]
+shape_type  : string = "cylinder"
+r           : real   = 32.5
+z           : real   = 2.0
+length_unit : string = "mm"
+
+material.ref       : string = "glass"
+
+visibility.hidden_envelop   : boolean = 0
+visibility.hidden           : boolean = 0
+visibility.color            : string  = "magenta"
+visibility.daughters.hidden : boolean = 0
+
+[name="PMT_base.model" type="geomtools::simple_shaped_model"]
+shape_type :   string =  "cylinder"
+r   : real   = 15.0
+z   : real   = 20.0
+length_unit       : string    = "mm"
+material.ref : string = "polystyrene"
+visibility.hidden : boolean = 0
+visibility.color  : string  = "orange"
+
+[name="optical_module.model" type="geomtools::stacked_boxed_model"]
+material.ref      : string    = "air"
+stacking_axis     : string = "z"
+number_of_items   : integer = 7
+
+boxed_model_0     : string  = "entrance_window.model"
+label_0           : string  = "entrance_window"
+
+boxed_model_1     : string  = "scintillator_block.model"
+label_1           : string  = "scintillator_block"
+
+boxed_model_2     : string  = "light_guide.model"
+label_2           : string  = "light_guide"
+
+boxed_model_3     : string  = "PMT.model"
+label_3           : string  = "PMT"
+
+boxed_model_4     : string  = "PMT_body.model"
+label_4           : string  = "PMT_body"
+
+boxed_model_5     : string  = "PMT_endcap.model"
+label_5           : string  = "PMT_endcap"
+
+boxed_model_6     : string  = "PMT_base.model"
+label_6           : string  = "PMT_base"
+
+visibility.hidden : boolean   = 0
+visibility.color  : string    = "grey"
+
+# [name="world" type="geomtools::test::test_world_model"]
+# material.ref    : string = "vacuum"
+# setup_model : string = "MIM0"
+# phi         : real   = 20.0
+# theta       : real   = 30.0
+# visibility.hidden           : boolean = 0
+# visibility.daughters.hidden : boolean = 0
+
+[name="world" type="geomtools::simple_world_model"]
 material.ref    : string = "vacuum"
-setup_model : string = "MIM0"
-phi         : real   = 20.0
-theta       : real   = 30.0
+setup.model     : string = "optical_module.model" #"MIM0"
+
+angle_unit      : string = "degree"
+setup.phi       : real   = 20.0
+setup.theta     : real   = 30.0
+
+setup.x         : real   = 0.0
+setup.y         : real   = 0.0
+setup.z         : real   = 0.0
+world.x         : real   = 500.0
+world.y         : real   = 500.0
+world.z         : real   = 500.0
+length_unit     : string = "mm"
+
 visibility.hidden           : boolean = 0
 visibility.daughters.hidden : boolean = 0
 

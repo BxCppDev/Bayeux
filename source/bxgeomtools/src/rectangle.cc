@@ -47,19 +47,41 @@ namespace geomtools {
     __y = new_value_;
   }
   
+  double rectangle::get_diagonal () const
+  {
+    return  hypot (__x, __y);
+  }
+   
+  double rectangle::get_surface () const
+  {
+    return  __x * __y;
+  }
+
+  double rectangle::get_circumference () const
+  {
+    return 2 * (__x + __y);
+  }
 
   bool rectangle::is_valid () const
   {
     return (__x > 0.0) && (__y > 0.0);
   }
   
-  // ctor/dtor:
+  // ctor:
   rectangle::rectangle ()
   {
     __x = -1.0;
     __y = -1.0;
   }
+
+  // ctor:
+  rectangle::rectangle (double x_, double y_)
+  {
+    set_x (x_);
+    set_y (y_);
+  }
   
+  // dtor:
   rectangle::~rectangle ()
   {
   }

@@ -20,10 +20,12 @@
 #include <stdexcept>
 
 #include <geomtools/i_shape_3d.h>
+#include <geomtools/i_stackable.h>
 
 namespace geomtools {
 
-  class box : public i_shape_3d 
+  class box : public i_shape_3d ,
+	      public i_stackable
   {
 
   public:

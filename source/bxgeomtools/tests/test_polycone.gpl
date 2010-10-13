@@ -4,9 +4,10 @@
 
 ! ${GEOMTOOLS_ROOT}/$(geomtools-config --system)/bin/test_polycone > test_polycone.data
 
-set xrange [-20:20]
-set yrange [-20:20]
-set zrange [-20:20]
+sz=200
+set xrange [-sz:sz]
+set yrange [-sz:sz]
+set zrange [-sz:sz]
 set xlabel "x"
 set ylabel "y"
 set zlabel "z"

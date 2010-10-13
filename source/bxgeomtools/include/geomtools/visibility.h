@@ -66,6 +66,9 @@ namespace geomtools {
     static bool has_color (const datatools::utils::properties & config_);
  
     static string get_color (const datatools::utils::properties & config_);
+    
+    static void set_color (datatools::utils::properties & config_, 
+			   const string & color_);
 
     static bool is_wired_cylinder (const datatools::utils::properties & config_);
 

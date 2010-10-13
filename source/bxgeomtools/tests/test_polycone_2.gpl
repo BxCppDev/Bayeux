@@ -1,0 +1,28 @@
+# -*- mode: gnuplot; -*-
+# C++ source: ./programs/test_polycone_2.cxx
+#
+
+! ${GEOMTOOLS_ROOT}/$(geomtools-config --system)/bin/test_polycone_2 resources/data/test_polycone_2.data > test_polycone_2.data
+
+set xrange [-100:100]
+set yrange [-100:100]
+set zrange [-100:100]
+set xlabel "x"
+set ylabel "y"
+set zlabel "z"
+set title "test_polycone_2.cxx - test"
+splot \
+  "test_polycone_2.data" index 0 title "Polycone 3D" with lines
+pause -1
+
+set size ratio -1
+set xlabel "x"
+set ylabel "z"
+set title "test_polycone_2.cxx - test"
+plot \
+  "test_polycone_2.data" index 0 u 1:3 title "Polycone XZ" with lines
+pause -1
+
+! rm -f test_polycone_2.data
+
+# end 

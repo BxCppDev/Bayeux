@@ -251,32 +251,6 @@ namespace geomtools {
       
     return;
   }
-
-  /*** Object 3D getter ***/
-
-  /*
-  model_factory::getter::getter (const model_factory & factory_)
-  {
-    __factory = &factory_;
-  }
-
-  const i_object_3d * 
-  model_factory::getter::get (const datatools::utils::properties & params_)
-  {
-    const i_object_3d * o3d = 0;
-    if (! __factory->is_locked ())
-      {
-	throw runtime_error ("model_factory::getter::get: Model factory is not locked !");	
-      }
-    const models_col_t & models = __factory->get_models ();
-    
-    const i_shape_3d * shape = is_constructed ()
-    throw runtime_error ("model_factory::getter::get: Not implemented yet !");
-
-    return o3d;
-  }
-  */
-
        
 } // end of namespace geomtools
 

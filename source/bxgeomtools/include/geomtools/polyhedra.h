@@ -1,20 +1,22 @@
 // -*- mode: c++ ; -*- 
-/* polycone.h
+/* polyhedra.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
- * Creation date: 2010-03-14
- * Last modified: 2010-03-14
+ * Creation date: 2010-10-08
+ * Last modified: 2010-10-08
  * 
  * License: 
  * 
  * Description: 
- *   Polycone 3D shape
- * 
+ *   Polyhedra 3D shape with regular polygon 
+ *   sections (fr: équilatéral, inscribed, circonscriptible)
+ *   See also: http://en.wikipedia.org/wiki/Frustum
+ *
  * History: 
  * 
  */
 
-#ifndef __geomtools__polycone_h
-#define __geomtools__polycone_h 1
+#ifndef __geomtools__polyhedra_h
+#define __geomtools__polyhedra_h 1
 
 #include <cmath>
 #include <stdexcept>
@@ -29,56 +31,55 @@
 #include <datatools/utils/utils.h>
 #include <datatools/utils/units.h>
 
-#include <mygsl/tabfunc.h>
-#include <mygsl/numerical_differentiation.h>
-#include <mygsl/interval.h>
-
 #include <geomtools/i_shape_3d.h>
+#include <geomtools/regular_polygon.h>
 #include <geomtools/i_stackable.h>
 
 namespace geomtools {
 
   using namespace std;
 
-  class polycone : public i_shape_3d, public i_stackable
+  class polyhedra : public i_shape_3d, public i_stackable
   {
   public:
-    static const string POLYCONE_LABEL;
+    static const string POLYHEDRA_LABEL;
 
     enum faces_mask_t
       {
 	FACE_NONE   = FACE_NONE_BIT,
-	FACE_INNER_SIDE   = 0x1,
-	FACE_OUTER_SIDE   = 0x2,
-	FACE_BOTTOM = 0x4,
-	FACE_TOP    = 0x8,
-	FACE_ALL    = (FACE_INNER_SIDE
-		       | FACE_OUTER_SIDE
+	FACE_SIDE   = 0x1,
+	FACE_BOTTOM = 0x2,
+	FACE_TOP    = 0x4,
+	FACE_ALL    = (FACE_SIDE
 		       | FACE_BOTTOM 
 		       | FACE_TOP)
       };  
 
-    struct r_min_max
-    {
-      double rmin, rmax;
-    };
-
-    //typedef map<double, double> rz_col_t;
-    typedef map<double, r_min_max> rz_col_t;
+    typedef map<double, double> rz_col_t;
 
   private:
 
+    size_t   __n_sides;
     rz_col_t __points;
     double  __top_surface;
     double  __bottom_surface;
-    double  __outer_side_surface;
-    double  __inner_side_surface;
-    double  __outer_volume;
-    double  __inner_volume;
+    double  __side_surface;
     double  __volume;
     double  __z_min;
     double  __z_max;
     double  __r_max;
+
+  private:
+
+    void __compute_surfaces ();
+
+    void __compute_volume ();
+
+    void __compute_limits ();
+
+    void __compute_all ();
+    
+  public: 
     
     double get_x () const
     {
@@ -95,24 +96,17 @@ namespace geomtools {
       return __z_max - __z_min;
     }
 
-  private:
-    void __compute_surfaces ();
+    void set_n_sides (size_t n_sides_);
 
-    void __compute_volume ();
-
-    void __compute_limits ();
-
-    void __compute_all ();
-    
-  public: 
+    size_t get_n_sides () const;
 
     const rz_col_t & points () const;
 
     // ctor:
-    polycone ();
+    polyhedra ();
 
     // dtor:
-    virtual ~polycone ();
+    virtual ~polyhedra ();
   
     // methods:
       
@@ -122,16 +116,10 @@ namespace geomtools {
 
     void reset ();
 
-    void add (double z_, double rmax_);
-    void add (double z_, double rmin_, double rmax_);
+    void add (double z_, double r_);
 
     void initialize (const string & filename_);
 
-  private:
-
-    void __build_from_envelope_and_skin (double thickness_, double step_ = 0.0);
-
-  public:
     double get_volume () const;
 
     double get_surface (int mask_ = FACE_ALL) const;
@@ -155,9 +143,9 @@ namespace geomtools {
 
     virtual vector_3d get_normal_on_surface (const vector_3d & position_) const;
 
-    friend ostream & operator<< (ostream &, const polycone &);
+    friend ostream & operator<< (ostream &, const polyhedra &);
 
-    friend istream & operator>> (istream &, polycone &);
+    friend istream & operator>> (istream &, polyhedra &);
       
     virtual bool find_intercept (const vector_3d & from_, 
 				 const vector_3d & direction_,
@@ -173,6 +161,6 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // __geomtools__polycone_h
+#endif // __geomtools__polyhedra_h
 
-// end of polycone.h
+// end of polyhedra.h

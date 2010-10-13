@@ -2,7 +2,7 @@
 /* tube.h
  * Author(s):     F.Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2006-11-28
- * Last modified: 2008-05-24
+ * Last modified: 2010-10-13
  * 
  * License: 
  * 
@@ -23,10 +23,12 @@
 #include <string>
 
 #include <geomtools/i_shape_3d.h>
+#include <geomtools/i_stackable.h>
+#include <geomtools/cylinder.h>
 
 namespace geomtools {
 
-  class tube : public i_shape_3d
+  class tube : public i_shape_3d, public i_stackable
   {
   public:
     enum faces_mask_t
@@ -51,60 +53,61 @@ namespace geomtools {
     double __outer_r;
   
   public: 
-    double 
-    get_z() const;
+    
+    double get_x () const
+    {
+      return 2. * __outer_r;
+    }
 
-    void 
-    set_z(double);
+    double get_y () const
+    {
+      return 2. * __outer_r;
+    }
 
-    double 
-    get_half_z() const;
+    double get_z () const;
 
-    void 
-    set_half_z(double);
+    void set_z (double);
 
-    double 
-    get_inner_r() const;
+    double get_half_z() const;
 
-    void 
-    set_radii(double, double);
+    void set_half_z (double);
 
-    double 
-    get_outer_r() const;
+    double get_inner_r () const;
 
-    void 
-    set(double, double, double);
+    void set_radii (double inner_r_, double outer_r_);
 
-    void 
-    set_half(double, double, double);
+    double get_outer_r () const;
 
-  
-    // ctor/dtor:
+    void set (double inner_r_, double outer_r_, double z_);
+
+    void set_half (double inner_r_, double outer_r_, double half_z_);
+
+    void get_inner_cylinder (cylinder & ic_);
+
+    void get_outer_cylinder (cylinder & oc_);
+
   public: 
+
+    // ctor:
     tube();
 
-    tube(double , double, double);
+    // ctor:
+    tube (double inner_radius_, double outer_radius_, double z_);
 
-    virtual 
-    ~tube();
+    // dtor:
+    virtual ~tube ();
   
-    virtual std::string 
-    get_shape_name() const;
+    virtual std::string get_shape_name () const;
 
-    virtual double 
-    get_parameter(const std::string &) const;
+    virtual double get_parameter (const std::string &) const;
 
-    bool 
-    is_valid() const;
+    bool is_valid () const;
 
-    void 
-    reset();
+    void reset ();
 
-    double 
-    get_surface(int mask_ = FACE_ALL) const;
+    double get_surface (int mask_ = FACE_ALL) const;
 
-    double 
-    get_volume() const;
+    double get_volume () const;
 
     virtual bool is_inside (const vector_3d &, 
 			    double skin_ = USING_PROPER_SKIN) const;
@@ -121,10 +124,10 @@ namespace geomtools {
 				 double skin_ = USING_PROPER_SKIN) const;
 
     friend std::ostream & 
-    operator<<(std::ostream &, const tube &);
+    operator<< (std::ostream &, const tube &);
 
     friend std::istream & 
-    operator>>(std::istream &, tube &);
+    operator>> (std::istream &, tube &);
 
     virtual void tree_dump (ostream & out_         = clog, 
 			    const string & title_  = "", 

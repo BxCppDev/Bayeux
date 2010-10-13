@@ -140,13 +140,15 @@ namespace geomtools {
     void unlock ();
     void print_xyz (ostream & out_) const;
     void dump (ostream & out_ = clog) const;
+
+    //void initialize (const string & filename_);
       
     virtual bool is_inside (const vector_3d &, 
 			    double skin_ = USING_PROPER_SKIN) const;
 
     // if 'skin' < 0 no skin is taken into account:
     virtual bool is_on_surface (const vector_3d & , 
-				int index_    = FACE_ALL , 
+				int index_   = FACE_ALL , 
 				double skin_ = USING_PROPER_SKIN) const;
     
     virtual vector_3d get_normal_on_surface (const vector_3d & position_) const;

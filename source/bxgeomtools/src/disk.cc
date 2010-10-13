@@ -46,18 +46,35 @@ namespace geomtools {
     __r = new_value_;
   }
   
+   
+  double disk::get_surface () const
+  {
+    return M_PI * __r * __r;
+  }
+
+  double disk::get_circumference () const
+  {
+    return 2 * M_PI * __r;
+  }
 
   bool disk::is_valid () const
   {
     return (__r > 0.0);
   }
   
-  // ctor/dtor:
+  // ctor:
   disk::disk ()
   {
     __r = -1.0;
   }
   
+  // ctor:
+  disk::disk (double r_)
+  {
+    set_r (r_);
+  }
+  
+  // dtor:
   disk::~disk ()
   {
   }

@@ -31,7 +31,9 @@
 #include <geomtools/rectangle.h>
 #include <geomtools/circle.h>
 #include <geomtools/disk.h>
+#include <geomtools/regular_polygon.h>
 #include <geomtools/polycone.h>
+#include <geomtools/polyhedra.h>
 #include <geomtools/tessellation.h>
 #include <geomtools/union_3d.h>
 #include <geomtools/subtraction_3d.h>
@@ -214,6 +216,13 @@ namespace geomtools {
 		 const rotation_3d &,
 		 const disk & , 
 		 size_t = 36 );
+      
+    static void 
+    draw_regular_polygon (std::ostream &, 
+			  const vector_3d &, 
+			  const rotation_3d &,
+			  const regular_polygon &,
+			  bool draw_radius_ = false);
    
     static void 
     draw_box (std::ostream &, 
@@ -282,6 +291,12 @@ namespace geomtools {
 		   const rotation_3d &,
 		   const polycone &, 
 		   size_t = 36);
+
+    static void 
+    draw_polyhedra (std::ostream &, 
+		   const vector_3d &, 
+		   const rotation_3d &,
+		   const polyhedra &);
 
     static void 
     draw_tessellated (std::ostream &, 
