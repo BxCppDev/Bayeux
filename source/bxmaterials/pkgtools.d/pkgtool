@@ -556,16 +556,40 @@ EOF
     return 0
 }
 
+
+function do_download_nist_material ()
+{
+    __pkgtools__at_function_enter do_download_nist_material
+
+    which wget >/dev/null 2>&1
+    if [ $? -ne 0 ]; then 
+	pkgtools__msg_error "Cannot find the 'wget' program !"
+	__pkgtools__at_function_exit
+	return 1
+    fi
+
+    pkgtools__msg_warning "To do: Download NIST files... (JEFF311RDD_ALL.OUT...)"
+#
+#
+#
+    pkgtools__msg_warning "To do: Install NIST files in the './resources/' directory"
+
+    __pkgtools__at_function_exit
+    return 0
+}
+
+
 function do_install ()
 {
     __pkgtools__at_function_enter do_install
-    dummy=0
+    download_nist_material=1
+
     while [ -n "$1" ]; do
 	token="$1"
 	if [ "x${token:0:1}" = "x-" ]; then
 	    opt=${token}
-	    if [ "${opt}" = "--dummy" ]; then
-		dummy=1
+	    if [ "${opt}" = "--no-download" ]; then
+		download_nist_material=0
 	    else
                 # parse other configuration options...
 		pkgtools__msg_warning "Ignoring '${opt}' option!"
@@ -580,10 +604,21 @@ function do_install ()
 
     pkgtools__msg_info "Install package '${pack_name}'..."
     opwd=$(pwd)
+
+    if [ ${download_nist_material} -eq 1 ]; then
+	do_download_nist_material
+	if [ $? -ne 0 ]; then 
+	    cd ${opwd}
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
+
     cd ${the_gmk_dir}
     make install 
     if [ $? -ne 0 ]; then 
 	cd ${opwd}
+	__pkgtools__at_function_exit
 	return 1
     fi
 
