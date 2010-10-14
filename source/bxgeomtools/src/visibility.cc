@@ -11,7 +11,8 @@ namespace geomtools {
   const string visibility::VISIBILITY_PREFIX = "visibility.";
 
   const string visibility::VISIBILITY_HIDDEN_FLAG = "hidden";
-  const string visibility::VISIBILITY_HIDDEN_ENVELOP_FLAG = "hidden_envelop";
+  const string visibility::VISIBILITY_HIDDEN_ENVELOP_FLAG   = "hidden_envelop";
+  const string visibility::VISIBILITY_HIDDEN_ENVELOPE_FLAG  = "hidden_envelope";
   const string visibility::VISIBILITY_DAUGHTERS_HIDDEN_FLAG = "daughters.hidden";
   const string visibility::VISIBILITY_COLOR_PROPERTY  = "color";
   const string visibility::VISIBILITY_WIRED_CYLINDER_FLAG  = "wired_cylinder";
@@ -60,6 +61,11 @@ namespace geomtools {
   bool visibility::is_hidden_envelop (const datatools::utils::properties & config_)
   {
     return visibility::has_flag (config_, visibility::VISIBILITY_HIDDEN_ENVELOP_FLAG);
+  }
+
+  bool visibility::is_hidden_envelope (const datatools::utils::properties & config_)
+  {
+    return visibility::has_flag (config_, visibility::VISIBILITY_HIDDEN_ENVELOPE_FLAG);
   }
 
   bool visibility::is_daughters_shown (const datatools::utils::properties & config_) 

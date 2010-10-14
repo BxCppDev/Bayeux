@@ -36,6 +36,7 @@ namespace geomtools {
     static const string VISIBILITY_PREFIX;
     static const string VISIBILITY_HIDDEN_FLAG;
     static const string VISIBILITY_HIDDEN_ENVELOP_FLAG;
+    static const string VISIBILITY_HIDDEN_ENVELOPE_FLAG;
     static const string VISIBILITY_DAUGHTERS_HIDDEN_FLAG;
     static const string VISIBILITY_COLOR_PROPERTY;
     static const string VISIBILITY_WIRED_CYLINDER_FLAG;
@@ -58,6 +59,8 @@ namespace geomtools {
     static bool is_hidden (const datatools::utils::properties & config_);
 
     static bool is_hidden_envelop (const datatools::utils::properties & config_);
+
+    static bool is_hidden_envelope (const datatools::utils::properties & config_);
 
     static bool is_daughters_shown (const datatools::utils::properties & config_);
 
