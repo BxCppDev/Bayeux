@@ -214,13 +214,13 @@ composition.names           : string  [4]  = "Hydrogen" "Carbon" "Nitrogen" "Oxy
 composition.number_of_atoms : integer [4]  =     11        6        1         1
 
 [name="std::pyrex" type="material"]
-#@description Pyrex (borosilicate glass: 80.9%SIO2+12.9%B203+3.8%NA2O+2.2%AL2O3+0.4%K2O BY WEIGHT)
+#@description Pyrex (borosilicate glass: 80.9%SIO2+12.9%B203+3.8%NA2O+2.2%AL2O3+0.4%K2O BY WEIGHT, also: http://en.wikipedia.org/wiki/Pyrex)
 density          : real   = 2.23
 density.unit     : string = "g/cm3"
 state            : string = "solid"
-composition.mode          : string       = "fraction_mass"
-omposition.names          : string  [6]  = "Silicium" "Oxygen" "Boron" "Sodium" "Aluminium" "Potassium" 
-composition.fraction_mass : integer [6]  =  0.377      0.540    0.040   0.028    0.012  0.003
+composition.mode          : string      = "fraction_mass"
+composition.names         : string [6]  = "Silicium" "Oxygen" "Boron" "Sodium" "Aluminium" "Potassium" 
+composition.fraction_mass : real   [6]  =  0.377      0.540    0.040   0.028    0.012  0.003
 
 
 # [name="std::inox" type="material"]
@@ -228,9 +228,9 @@ composition.fraction_mass : integer [6]  =  0.377      0.540    0.040   0.028   
 # density          : real   = 8.0
 # density.unit     : string = "g/cm3"
 # state            : string = "solid"
-# composition.mode            : string       = "number_of_atoms"
-# omposition.names            : string  [4]  = "Iron" "Nickel" "Chromium" "Molybdenum" 
-# composition.number_of_atoms : integer [4]  =  70.3   10.3     17.3       2.1
+# composition.mode            : string     = "fraction_mass"
+# composition.names           : string [4] = "Iron" "Nickel" "Chromium" "Molybdenum" 
+# composition.number_of_atoms : real [4]  =  70.3   10.3     17.3       2.1
 
 
 # [name="std::inox_316L" type="material"]
@@ -238,9 +238,9 @@ composition.fraction_mass : integer [6]  =  0.377      0.540    0.040   0.028   
 # density          : real   = 8.0
 # density.unit     : string = "g/cm3"
 # state            : string = "solid"
-# composition.mode            : string       = "number_of_atoms"
-# omposition.names            : string  [4]  = "Iron" "Nickel" "Chromium" "Molybdenum" 
-# composition.number_of_atoms : integer [4]  =  67.75  12.5     17.0       2.75
+# composition.mode            : string     = "fraction_mass"
+# composition.names           : string [4] = "Iron" "Nickel" "Chromium" "Molybdenum" 
+# composition.number_of_atoms : real [4]  =  67.75  12.5     17.0       2.75
 
 
 # end

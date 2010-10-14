@@ -184,7 +184,7 @@ namespace mat {
       }
     else
       {
-	throw runtime_error ("factory::create_element: Missing 'density' property !");
+	throw runtime_error ("factory::create_material: Missing 'density' property !");
       }
 
     if (config_.has_key ("density.unit"))
@@ -245,7 +245,7 @@ namespace mat {
       }
     else
       {
-	throw runtime_error ("factory::create_element: Missing 'composition.mode' property !");
+	throw runtime_error ("factory::create_material: Missing 'composition.mode' property !");
       }
 
     if (composition_mode_label == "number_of_atoms")
@@ -263,7 +263,7 @@ namespace mat {
     else
       {
 	ostringstream message;
-	message << "factory::create_element: "
+	message << "factory::create_material: "
 		<< "Invalid 'composition.mode' property ('" << composition_mode_label << "') !";
 	throw runtime_error (message.str ());
       }
@@ -276,7 +276,7 @@ namespace mat {
 	  }
 	else
 	  {
-	    throw runtime_error ("factory::create_element: Missing 'mean_z' property !");
+	    throw runtime_error ("factory::create_material: Missing 'mean_z' property !");
 	  }
 	if (config_.has_key ("mean_a"))
 	  {
@@ -284,7 +284,7 @@ namespace mat {
 	  }
 	else
 	  {
-	    throw runtime_error ("factory::create_element: Missing 'mean_a' property !");
+	    throw runtime_error ("factory::create_material: Missing 'mean_a' property !");
 	  }
       }
     else
@@ -294,12 +294,16 @@ namespace mat {
 	    config_.fetch ("composition.names", composition_names);
 	    if (composition_names.size () == 0)
 	      {
-		throw runtime_error ("factory::create_element: Empty list of compounds !");	    
+		ostringstream message;
+		message << "factory::create_material: Empty list of compounds for material '" << name_ << "' !";
+		throw runtime_error (message.str ());
 	      } 
 	  }
 	else
 	  {
-	    throw runtime_error ("factory::create_element: Missing 'composition.names' property !");
+	    ostringstream message;
+	    message << "factory::create_material: Missing 'composition.names' property for material '" << name_ << "' !";
+	    throw runtime_error (message.str ());
 	  }
 
 	if (composition_mode == material::NUMBER_OF_ATOMS)
@@ -309,12 +313,14 @@ namespace mat {
 		config_.fetch ("composition.number_of_atoms", composition_nb_of_atoms);
 		if (composition_names.size () != composition_nb_of_atoms.size ())
 		  {
-		    throw runtime_error ("factory::create_element: Unmatching sizes of list of compounds/number of atoms !");
+		    throw runtime_error ("factory::create_material: Unmatching sizes of list of compounds/number of atoms !");
 		  }
 	      }
 	    else
 	      {
-		throw runtime_error ("factory::create_element: Missing 'composition.number_of_atoms' property !");
+		ostringstream message;
+		message << "factory::create_material: Missing 'composition.number_of_atoms' property for material '" << name_ << "' !";
+		throw runtime_error (message.str ());
 	      }
 	  }
 
@@ -326,12 +332,14 @@ namespace mat {
 		config_.fetch ("composition.fraction_mass", composition_fraction_mass);
 		if (composition_names.size () != composition_fraction_mass.size ())
 		  {
-		    throw runtime_error ("factory::create_element: Unmatching sizes of list of compounds/fraction mass !");
+		    throw runtime_error ("factory::create_material: Unmatching sizes of list of compounds/fraction mass !");
 		  }
 	      }
 	    else
 	      {
-		throw runtime_error ("factory::create_element: Missing 'composition.number_of_atoms' property !");
+		ostringstream message;
+		message << "factory::create_material: Missing 'composition.fraction_mass' property for element '" << name_ << "' !";
+		throw runtime_error (message.str ());
 	      }
 	  }
       }
@@ -355,7 +363,7 @@ namespace mat {
 		if (found ==  elements_.end ())
 		  {
 		    ostringstream message;
-		    message << "factory::create_element: "
+		    message << "factory::create_material: "
 			    << "Unknown element '" << composition_names[i] << "') !";
 		    throw runtime_error (message.str ());	
 		  }
@@ -374,7 +382,7 @@ namespace mat {
 		if (composition_names[i] == name_)
 		  {
 		    ostringstream message;
-		    message << "factory::create_element: "
+		    message << "factory::create_material: "
 			    << "Self-referenced material with name '" 
 			    << composition_names[i] << "' !";
 		    delete matl;
@@ -395,8 +403,11 @@ namespace mat {
 		    else
 		      {
 			ostringstream message;
-			message << "factory::create_element: "
-				<< "Unknown element or material '" << composition_names[i] << "') !";
+			message << "factory::create_material: "
+				<< "Unknown element or material '" << composition_names[i] 
+				<< "' for material '" << name_ << "' !";
+		throw runtime_error (message.str ());
+
 			delete matl;
 			throw runtime_error (message.str ());	
 		      }
@@ -438,7 +449,7 @@ namespace mat {
       }
     catch (exception & x)
       {
-	cerr << "factory::create_element: " << "Exception : " << x.what () << endl;
+	cerr << "factory::create_material: " << "Exception : " << x.what () << endl;
 	delete matl;
 	throw x;
       }

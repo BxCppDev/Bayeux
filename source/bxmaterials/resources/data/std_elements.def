@@ -155,6 +155,12 @@ z               : integer   = 53
 isotope.names   : string[1] = "I-127"
 isotope.weights : real[1]   =  100
 
+[name="Cesium" type="element"]
+#@description The Cesium natural element
+z               : integer   = 55
+isotope.names   : string[1] = "Cs-133"
+isotope.weights : real[1]   =  100
+
 [name="Gold" type="element"]
 #@description The Gold natural element
 z               : integer   = 79
