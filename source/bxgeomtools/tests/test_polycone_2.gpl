@@ -2,11 +2,12 @@
 # C++ source: ./programs/test_polycone_2.cxx
 #
 
-! ${GEOMTOOLS_ROOT}/$(geomtools-config --system)/bin/test_polycone_2 resources/data/test_polycone_2.data > test_polycone_2.data
+! ${GEOMTOOLS_ROOT}/$(geomtools-config --system)/bin/test_polycone_2 resources/data/test_hamamatsu_R5912MOD_1.data > test_polycone_2.data
 
-set xrange [-100:100]
-set yrange [-100:100]
-set zrange [-100:100]
+sz=125.0
+set xrange [-sz:sz]
+set yrange [-sz:sz]
+set zrange [-sz:sz]
 set xlabel "x"
 set ylabel "y"
 set zlabel "z"

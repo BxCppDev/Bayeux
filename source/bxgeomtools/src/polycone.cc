@@ -137,7 +137,7 @@ namespace geomtools {
 	double xi = i->first;
 	double yi = i->second;
 	j++;
-	mygsl::interval domain (tf.x_min (), tf.x_max (), 0.05 * skin);
+	mygsl::interval domain (tf.x_min (), tf.x_max (), 0.01 * skin);
 	double drdz = mygsl::derivative (tf, xi, domain);
 	double ux = 1.0;
 	double uy = drdz;
@@ -269,6 +269,8 @@ namespace geomtools {
 
   void polycone::initialize (const string & filename_)
   {
+    bool devel = false;
+    devel = true;
     ifstream ifs;
     string filename = filename_;
     ifs.open (filename.c_str ());
@@ -437,11 +439,18 @@ namespace geomtools {
 		}
 	    }
 	  
-	  cerr << "DEVEL: polycone::initialize: " 
-	     << "z = " << z << " " 
-	     << "r = " << r << " "
-	     << "r2 = " << r2 << " " << endl;
-	  
+	  if (devel)
+	    {
+	      cerr << "DEVEL: polycone::initialize: " 
+		   << "z = " << z << " " 
+		   << "r = " << r << " ";
+	      if (datatools::utils::is_valid (r2))
+		{
+		  cerr << "r2 = " << r2;
+		}
+	      cerr << " " << endl;
+	    }
+
 	  if (datatools::utils::is_valid (r2))
 	    {
 	      this->add (z * z_factor * length_unit, 
