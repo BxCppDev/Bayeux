@@ -12,7 +12,7 @@ namespace mygsl {
     func.params   = const_cast<unary_eval *>(&eval_);
     if (gsl_deriv_central (&func, x_, h_, &result, &abserr) != 0)
       {
-	throw runtime_error ("derivative_central: cannot derivate function!");
+	throw runtime_error ("derivative_central: Cannot compute derivative !");
       }
     abserr_ = abserr;
     return result;
@@ -33,7 +33,7 @@ namespace mygsl {
     func.params   = const_cast<unary_eval *>(&eval_);
     if (gsl_deriv_forward (&func, x_, h_, &result, &abserr) != 0)
       {
-	throw runtime_error ("derivative_forward: cannot derivate function!");
+	throw runtime_error ("derivative_forward: Cannot compute derivative !");
       }
     abserr_ = abserr;
     return result;
@@ -54,7 +54,7 @@ namespace mygsl {
     // 2010-10-12, FM: bug, was invoking 'gsl_deriv_forward'  in place of 'gsl_deriv_backward'
     if (gsl_deriv_backward (&func, x_, h_, &result, &abserr) != 0)
       {
-	throw runtime_error ("derivative_backward: cannot derivate function!");
+	throw runtime_error ("derivative_backward: Cannot compute derivative !");
       }
     abserr_ = abserr;
     return result;
@@ -86,7 +86,12 @@ namespace mygsl {
       }
     else
       {
-	throw runtime_error ("derivative_backward: cannot derivate function!");
+	ostringstream message;
+	message << "derivative_backward: "
+		<< "Cannot compute derivative for domain is unsafe !"
+		<< "Domain is " << domain_ << " and x is " << x_
+		<< " !";
+	throw runtime_error (message.str ());
       }
     return 0.0;
   }
