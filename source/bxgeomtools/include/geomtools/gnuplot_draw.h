@@ -321,6 +321,20 @@ namespace geomtools {
 			 const vector_3d &, 
 			 const rotation_3d &,
 			 const subtraction_3d &);
+
+    // draw factory:
+     
+    typedef void (*draw_user_function_t) (std::ostream &, 
+					  const vector_3d &, 
+					  const rotation_3d &,
+					  const i_object_3d &, 
+					  void *);
+ 
+    static void basic_draw (ostream & out_,
+			    const vector_3d & position_, 
+			    const rotation_3d & rotation_, 
+			    const i_object_3d & o_,
+			    unsigned long mode_ = gnuplot_draw::MODE_NULL);
   
     static void draw (ostream & out_, 
 		     const i_placement &, 

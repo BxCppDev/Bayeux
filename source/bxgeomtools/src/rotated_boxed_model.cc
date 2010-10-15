@@ -27,6 +27,7 @@ namespace geomtools {
 
     // check if model has a logical volume with a box shape:
     const i_shape_3d & shape = model_.get_logical ().get_shape ();
+    /*
     if (shape.get_shape_name () != box::BOX_LABEL)
       {
 	ostringstream message;
@@ -35,6 +36,7 @@ namespace geomtools {
 		<< "Found '" << shape.get_shape_name () << "' !";
 	throw runtime_error (message.str ());
       }
+    */
     __boxed_model = &model_;
   }
 
@@ -147,7 +149,16 @@ namespace geomtools {
 	models_->find (boxed_model_name);
       if (found != models_->end ())
 	{
-	  //set_boxed_model (dynamic_cast<const i_model &>(*(found->second)));
+	  // check if the model is stackable:
+	  if (! i_shape_3d::is_stackable (found->second->get_logical ().get_shape ()))
+	    {
+	      ostringstream message;
+	      message << "stacked_boxed_model::_at_construct: "
+		      << "The rotating model '" 
+		      << found->second->get_name () 
+		      << "' is not stackable !"; 
+	      throw runtime_error (message.str ());
+	    }
 	  set_boxed_model (*(found->second));
 	}
       else
@@ -159,7 +170,27 @@ namespace geomtools {
 	  throw runtime_error (message.str ());
 	}
     }
-    
+ 
+    const i_shape_3d & the_shape = __boxed_model->get_logical ().get_shape ();
+
+    // try to get a stackable data from the shape:
+    stackable_data the_SD;
+    if (! i_shape_3d::pickup_stackable (the_shape, the_SD))
+      {
+	    ostringstream message;
+	    message << "stacked_boxed_model::_at_construct: "
+		    << "Cannot stack '" 
+		    << the_shape.get_shape_name () << "' shape !";
+	    throw runtime_error (message.str ());
+      }
+    double gxmin = the_SD.get_xmin ();
+    double gxmax = the_SD.get_xmax ();
+    double gymin = the_SD.get_ymin ();
+    double gymax = the_SD.get_ymax ();
+    double gzmin = the_SD.get_zmin ();
+    double gzmax = the_SD.get_zmax ();
+
+    /*   
     if (__boxed_model->get_logical ().get_shape ().get_shape_name () !=
 	"box")
       {
@@ -170,40 +201,103 @@ namespace geomtools {
       }
     const box & b = 
       dynamic_cast<const box &>(__boxed_model->get_logical ().get_shape ());
+    */
     double x0, y0, z0;
     x0 = y0 = z0 = 0.0;
 
     __boxed_placement.set_translation (x0, y0, z0);
     __boxed_placement.set_orientation (rotation_axis, 
-				       get_special_rotation_angle(special_rotation_angle));
-    double x, y, z;
-    x = b.get_x ();
-    y = b.get_y ();
-    z = b.get_z ();
-    if ((special_rotation_angle ==  ROTATION_ANGLE_90) ||
-	(special_rotation_angle ==  ROTATION_ANGLE_270))
+				       get_special_rotation_angle (special_rotation_angle));
+
+    stackable_data the_new_SD;    
+ 
+    double xmin, xmax, ymin, ymax, zmin, zmax;
+    the_new_SD.xmin = gxmin;
+    the_new_SD.xmax = gxmax;
+    the_new_SD.ymin = gymin;
+    the_new_SD.ymax = gymax;
+    the_new_SD.zmin = gzmin;
+    the_new_SD.zmax = gzmax;
+
+    if (rotation_axis == ROTATION_AXIS_X) 
       {
-	if (rotation_axis == ROTATION_AXIS_X) 
+	if (special_rotation_angle ==  ROTATION_ANGLE_90)
 	  {
-	    z = b.get_y ();
-	    y = b.get_z ();
-	  }
-	if (rotation_axis == ROTATION_AXIS_Y) 
+	    the_new_SD.ymax = -gzmin;
+	    the_new_SD.zmax =  gymax;
+	    the_new_SD.ymin = -gzmax;
+	    the_new_SD.zmin =  gymin;
+	  } 
+	if (special_rotation_angle ==  ROTATION_ANGLE_180)
 	  {
-	    z = b.get_x ();
-	    x = b.get_z ();
-	  }
-	if (rotation_axis == ROTATION_AXIS_Z) 
+	    the_new_SD.ymax = -gymin;
+	    the_new_SD.zmax = -gzmin;
+	    the_new_SD.ymin = -gymax;
+	    the_new_SD.zmin = -gzmax;
+	  } 
+	if (special_rotation_angle ==  ROTATION_ANGLE_270)
 	  {
-	    x = b.get_y ();
-	    y = b.get_x ();
-	  }
-      }
+	    the_new_SD.ymax =  gzmax;
+	    the_new_SD.zmax = -gymin;
+	    the_new_SD.ymin =  gzmin;
+	    the_new_SD.zmin = -gymax;
+	  } 
+       }
+
+    if (rotation_axis == ROTATION_AXIS_Y) 
+      {
+	if (special_rotation_angle ==  ROTATION_ANGLE_90)
+	  {
+	    the_new_SD.zmax = -gxmin;
+	    the_new_SD.xmax =  gzmax;
+	    the_new_SD.zmin = -gxmax;
+	    the_new_SD.xmin =  gzmin;
+	  } 
+	if (special_rotation_angle ==  ROTATION_ANGLE_180)
+	  {
+	    the_new_SD.zmax = -gzmin;
+	    the_new_SD.xmax = -gxmin;
+	    the_new_SD.zmin = -gzmax;
+	    the_new_SD.xmin = -gxmax;
+	  } 
+	if (special_rotation_angle ==  ROTATION_ANGLE_270)
+	  {
+	    the_new_SD.zmax =  gxmax;
+	    the_new_SD.xmax = -gzmin;
+	    the_new_SD.zmin =  gxmin;
+	    the_new_SD.xmin = -gzmax;
+	  } 
+        }
+
+    if (rotation_axis == ROTATION_AXIS_Z) 
+      {
+	if (special_rotation_angle ==  ROTATION_ANGLE_90)
+	  {
+	    the_new_SD.xmax = -gymin;
+	    the_new_SD.ymax =  gxmax;
+	    the_new_SD.xmin = -gymax;
+	    the_new_SD.ymin =  gxmin;
+	  } 
+	if (special_rotation_angle ==  ROTATION_ANGLE_180)
+	  {
+	    the_new_SD.xmax = -gxmin;
+	    the_new_SD.ymax = -gymin;
+	    the_new_SD.xmin = -gxmax;
+	    the_new_SD.ymin = -gymax;
+	  } 
+	if (special_rotation_angle ==  ROTATION_ANGLE_270)
+	  {
+	    the_new_SD.xmax =  gymax;
+	    the_new_SD.ymax = -gxmin;
+	    the_new_SD.xmin =  gymin;
+	    the_new_SD.ymin = -gxmax;
+	  } 
+        }
 
     __solid.reset ();
-    __solid.set_x (x);
-    __solid.set_y (y);
-    __solid.set_z (z);
+    __solid.set_x (the_new_SD.xmax - the_new_SD.xmin);
+    __solid.set_y (the_new_SD.ymax - the_new_SD.ymin);
+    __solid.set_z (the_new_SD.zmax - the_new_SD.zmin);
     if (! __solid.is_valid ())
       {
 	throw runtime_error ("rotated_boxed_model::_at_construct: Invalid solid !");

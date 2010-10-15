@@ -28,6 +28,7 @@ int main (int argc_, char ** argv_)
       bool gdml = true;
       bool dump = true;
       string setup_filename;
+      string model_name; 
 
       int iarg = 1;
       while (iarg < argc_)
@@ -72,6 +73,10 @@ int main (int argc_, char ** argv_)
                else if (option == "-3d") 
                  {
                    drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
+                 }
+               else if (option == "-m") 
+                 {
+		   model_name = argv_[++iarg];
                  }
 	       else 
                  { 
@@ -124,14 +129,16 @@ int main (int argc_, char ** argv_)
 	}
       clog << endl;
 
-      clog << "Enter the name of the geometry model to be displayed: ";
-      string name; 
-      getline (cin, name);
-      if (name.empty ())
+      if (model_name.empty ())
 	{
-	  name = "world";
+	  clog << "Enter the name of the geometry model to be displayed: ";
+	  getline (cin, model_name);
 	}
-      clog << "Name of the model : " << name << endl;
+      if (model_name.empty ())
+	{
+	  model_name = "world";
+	}
+      clog << "Name of the model : " << model_name << endl;
 
       if (draw)
 	{   
@@ -140,7 +147,7 @@ int main (int argc_, char ** argv_)
 	  GPD.set_view (drawer_view);
 	  GPD.set_mode (geomtools::gnuplot_drawer::MODE_WIRED);
 	  GPD.draw (factory, 
-		    name, 
+		    model_name, 
 		    p,  
 		    geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT);
 	}
@@ -192,7 +199,7 @@ int main (int argc_, char ** argv_)
 				  geomtools::gdml_export::DEFAULT_LENGTH_UNIT);
 	GDML.parameters ().store ("angle_unit",   
 				  geomtools::gdml_export::DEFAULT_ANGLE_UNIT);
-	GDML.export_gdml ("test_model_factory.gdml", factory, name);
+	GDML.export_gdml ("test_model_factory.gdml", factory, model_name);
       }
     }
   catch (exception & x)

@@ -2,7 +2,7 @@
 /* polyhedra.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-10-08
- * Last modified: 2010-10-08
+ * Last modified: 2010-10-14
  * 
  * License: 
  * 
@@ -81,19 +81,34 @@ namespace geomtools {
     
   public: 
     
-    double get_x () const
+    double get_xmin () const
     {
-      return 2. * __r_max;
+      return -__r_max;
     }
-
-    double get_y () const
+    
+    double get_xmax () const
     {
-      return 2. * __r_max;
+      return +__r_max;
     }
-
-    double get_z () const
+    
+    double get_ymin () const
     {
-      return __z_max - __z_min;
+      return -__r_max;
+    }
+    
+    double get_ymax () const
+    {
+      return +__r_max;
+    }
+    
+    double get_zmin () const
+    {
+      return __z_min;
+    }
+    
+    double get_zmax () const
+    {
+      return __z_max;
     }
 
     void set_n_sides (size_t n_sides_);

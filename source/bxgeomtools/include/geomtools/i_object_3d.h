@@ -7,7 +7,8 @@
  * License: 
  * 
  * Description: 
- *  Interface for object than can be described in a 3D reference frame.
+ *  Interface for object than can be described in a 3D reference frame
+ *  and possibly drawn with some graphics renderer.
  *
  * History: 
  * 
@@ -50,10 +51,18 @@ namespace geomtools {
       static const double USING_PROPER_TOLERANCE;
 
     private:
-      double __tolerance; // proper tolerance to check surface/curve belonging
-      datatools::utils::properties __properties;
+
+      double __tolerance; //!> Tolerance to check surface/curve belonging
+      datatools::utils::properties __properties; //!> List of properties
+      void * __user_draw; //!> An address that may point to some drawing function (may be used by the gnuplot renderer)
 
     public:
+
+      bool has_user_draw () const;
+
+      void set_user_draw (void * user_draw_);
+
+      void * get_user_draw () const;
 
       // must be implemented from inherited classes:
       virtual int get_dimensional () const = 0;

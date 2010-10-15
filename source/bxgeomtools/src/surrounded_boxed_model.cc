@@ -15,8 +15,6 @@ namespace geomtools {
   const string surrounded_boxed_model::SURROUNDING_LABEL     = "surrounding";
   const string surrounded_boxed_model::LABEL_PROPERTY_PREFIX = "label";
 
-  //list<string> surrounded_boxed_model::__g_position_labels;
-
   const string & surrounded_boxed_model::get_material_name () const
   {
     assert_constructed ("surrounded_boxed_model::get_material_name");
@@ -31,8 +29,8 @@ namespace geomtools {
   void surrounded_boxed_model::set_material_name (const string & mn_)
   {
     assert_unconstructed("surrounded_boxed_model::set_material_name");
-
     __material_name = mn_;
+    return;
   }
 
   const geomtools::box & surrounded_boxed_model::get_box () const
@@ -51,6 +49,7 @@ namespace geomtools {
   void surrounded_boxed_model::set_surrounded_label (const string & label_)
   {
     __surrounded_label = label_;
+    return;
   }
 
   const string & surrounded_boxed_model::get_surrounded_label () const
@@ -68,6 +67,7 @@ namespace geomtools {
   void surrounded_boxed_model::set_surrounded_model (const i_model & model_)
   {
     __surrounded_model = &model_;
+    return;
   }
 
   /*** surrounding models ***/
@@ -197,10 +197,22 @@ namespace geomtools {
   {
     return "geomtools::surrounded_boxed_model";
   }
+
+  bool surrounded_boxed_model::is_debug () const
+  {
+    return __debug;
+  }
+    
+  void surrounded_boxed_model::set_debug (bool d_)
+  {
+    __debug = d_;
+    return;
+  }
   
   // ctor:
   surrounded_boxed_model::surrounded_boxed_model () : i_boxed_model ()
   {
+    __debug = false;
     if (__position_labels.size () == 0)
       {
 	__position_labels.push_back ("back");
@@ -215,6 +227,7 @@ namespace geomtools {
     __centered_x = false;
     __centered_y = false;
     __centered_z = false;
+    return;
   }
   
   // dtor:
@@ -227,6 +240,10 @@ namespace geomtools {
 					   models_col_t * models_)
   {
     bool devel = i_model::g_devel;
+    if (config_.has_flag ("devel"))
+      {
+	devel = true;
+      }  
     if (devel)
       {
 	clog << datatools::utils::io::devel 
@@ -239,6 +256,12 @@ namespace geomtools {
     double x, y, z;
     map<string,string> surrounding_model_names;
     double lunit = CLHEP::mm;
+
+
+    if (config_.has_flag ("debug"))
+      {
+	set_debug (true);
+      }  
 
     /*** material ***/
     if (config_.has_key ("material.ref"))
@@ -285,17 +308,17 @@ namespace geomtools {
     /*** Centering of the surrounded item ***/
     if (config_.has_flag ("centered.x"))
       {
-	if (devel) cerr << "DEVEL: X-centered" << endl; 
+	if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: X-centered" << endl; 
 	__centered_x = true;
       }
     if (config_.has_flag ("centered.y"))
       {
-	if (devel) cerr << "DEVEL: Y-centered" << endl; 
+	if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: Y-centered" << endl; 
 	__centered_y = true;
       }
     if (config_.has_flag ("centered.z"))
       {
-	if (devel) cerr << "DEVEL: Z-centered" << endl; 
+	if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: Z-centered" << endl; 
 	__centered_z = true;
       }
 
@@ -314,18 +337,15 @@ namespace geomtools {
 	models_->find (surrounded_model_name);
       if (found != models_->end ())
 	{
-	  // check if the model is box-shaped:
-	  /*
-	  if (found->second->get_logical ().get_shape ().get_shape_name () !=
-	      "box")
+	  // check if the model is stackable:
+	  if (! i_shape_3d::is_stackable (found->second->get_logical ().get_shape ()))
 	    {
 	      ostringstream message;
-	      message << "surrounded_boxed_model::_at_construct: "
+	      message << "stacked_boxed_model::_at_construct: "
 		      << "The surrounded model '" << found->second->get_name () 
-		      << "' is not a 'boxed' one !"; 
+		      << "' is not stackable !"; 
 	      throw runtime_error (message.str ());
 	    }
-	  */
 	  set_surrounded_model (*(found->second));
 	}
       else
@@ -360,7 +380,7 @@ namespace geomtools {
 		  ostringstream message;
 		  message << "surrounded_boxed_model::_at_construct: "
 			  << "No '" << surrounding_item_prop.str () << "' property !"; 
-		  clog << datatools::utils::io::warning << message.str () << endl;	
+		  clog << datatools::utils::io::devel << message.str () << endl;	
 		}
 	      continue;
 	    }
@@ -376,18 +396,16 @@ namespace geomtools {
 	    models_->find (surrounding_model_name);
 	  if (found != models_->end ())
 	    {
-	      // check if the model is box-shaped:
-	      /*
-	      if (found->second->get_logical ().get_shape ().get_shape_name () !=
-		  "box")
+	      // check if the model is stackable:
+	      if (! i_shape_3d::is_stackable (found->second->get_logical ().get_shape ()))
 		{
 		  ostringstream message;
-		  message << "surrounded_boxed_model::_at_construct: "
-			  << "The surrounding model '" << found->second->get_name () 
-			  << "' is not a 'boxed' one !"; 
+		  message << "stacked_boxed_model::_at_construct: "
+			  << "The " << *ilabel << " surrounding model '" 
+			  << found->second->get_name () 
+			  << "' is not stackable !"; 
 		  throw runtime_error (message.str ());
 		}
-	      */
 	      add_surrounding_model (ipos, *(found->second), label_name);
 	    }
 	  else
@@ -402,33 +420,39 @@ namespace geomtools {
     }
     
     /*** compute main box dimensions ***/
-    mygsl::min_max mmx;
-    mygsl::min_max mmy;
-    mygsl::min_max mmz;
+    mygsl::min_max mmx0;
+    mygsl::min_max mmy0;
+    mygsl::min_max mmz0;
+    mygsl::min_max mmx1;
+    mygsl::min_max mmy1;
+    mygsl::min_max mmz1;
     const i_shape_3d & the_shape = __surrounded_model->get_logical ().get_shape ();
-    const i_stackable * the_stackable = 0;
-    if (the_shape.has_stackable_data ())
+
+    // try to get a stackable data from the shape:
+    stackable_data the_SD;
+    if (! i_shape_3d::pickup_stackable (the_shape, the_SD))
       {
-	the_stackable = &(the_shape.get_stackable_data ());
+	ostringstream message;
+	message << "stacked_boxed_model::_at_construct: "
+		<< "Cannot stack '" 
+		<< the_shape.get_shape_name () << "' shape !";
+	throw runtime_error (message.str ());
       }
-    else
-      {
-	the_stackable = dynamic_cast<const i_stackable *> (&the_shape);
-      }
-    const i_stackable & surrounded_box = *the_stackable;
-    /*
-    const box & surrounded_box = 
-	  dynamic_cast<const box &>(__surrounded_model->get_logical ().get_shape ());
-    */
-    double dx = surrounded_box.get_x ();
-    double dy = surrounded_box.get_y ();
-    double dz = surrounded_box.get_z ();
-    double x0 = -0.5 * dx;
-    double x1 = +0.5 * dx;
-    double y0 = -0.5 * dy;
-    double y1 = +0.5 * dy;
-    double z0 = -0.5 * dz;
-    double z1 = +0.5 * dz;
+    double gxmin = the_SD.get_xmin ();
+    double gxmax = the_SD.get_xmax ();
+    double gymin = the_SD.get_ymin ();
+    double gymax = the_SD.get_ymax ();
+    double gzmin = the_SD.get_zmin ();
+    double gzmax = the_SD.get_zmax ();
+
+    // border coordinates:
+    double x0 = gxmin;
+    double x1 = gxmax;
+    double y0 = gymin;
+    double y1 = gymax;
+    double z0 = gzmin;
+    double z1 = gzmax;
+
     double dx0 = 0.0;
     double dx1 = 0.0;
     double dy0 = 0.0;
@@ -442,71 +466,87 @@ namespace geomtools {
 	int position = i->first;
 	const surrounding_item & si = i->second;
 	const i_model * model = si.model;
-	const i_shape_3d & the_shape = model->get_logical ().get_shape ();
-	const i_stackable * the_stackable = 0;
-	if (the_shape.has_stackable_data ())
+	const i_shape_3d & the_surrounding_shape = model->get_logical ().get_shape ();
+
+	// try to get a stackable data from the shape:
+	stackable_data the_SD2;
+	if (! i_shape_3d::pickup_stackable (the_surrounding_shape, the_SD2))
 	  {
-	    the_stackable = &(the_shape.get_stackable_data ());
+	    ostringstream message;
+	    message << "stacked_boxed_model::_at_construct: "
+		    << "Cannot stack the '" 
+		    << the_surrounding_shape.get_shape_name () << "' surrounding shape !";
+	    throw runtime_error (message.str ());
 	  }
-	else
-	  {
-	    the_stackable = dynamic_cast<const i_stackable *> (&the_shape);
-	  }
-	const i_stackable & surrounding_box = *the_stackable;
-	/*
-	  const box & surrounding_box = 
-	  dynamic_cast<const box &>(model->get_logical ().get_shape ());
-	*/
+	double g2xmin = the_SD2.get_xmin ();
+	double g2xmax = the_SD2.get_xmax ();
+	double g2ymin = the_SD2.get_ymin ();
+	double g2ymax = the_SD2.get_ymax ();
+	double g2zmin = the_SD2.get_zmin ();
+	double g2zmax = the_SD2.get_zmax ();
+	
 	if (position == BACK)
 	  {
-	    dx0 = surrounding_box.get_x ();
+	    dx0 = abs (g2xmax - g2xmin);
 	    x0 -= dx0;
-	    mmy.add (surrounding_box.get_y ());
-	    mmz.add (surrounding_box.get_z ());
+	    mmy0.add (g2ymin);
+	    mmy1.add (g2ymax);
+	    mmz0.add (g2zmin);
+	    mmz1.add (g2zmax);
 	  }
 	if (position == FRONT)
 	  {
-	    dx1 = surrounding_box.get_x ();
+	    dx1 = abs (g2xmax - g2xmin);
 	    x1 += dx1;
-	    mmy.add (surrounding_box.get_y ());
-	    mmz.add (surrounding_box.get_z ());
+	    mmy0.add (g2ymin);
+	    mmy1.add (g2ymax);
+	    mmz0.add (g2zmin);
+	    mmz1.add (g2zmax);
 	  }
 	if (position == LEFT)
 	  {
-	    dy0 = surrounding_box.get_y ();
+	    dy0 = abs (g2ymax - g2ymin);
 	    y0 -= dy0;
-	    mmx.add (surrounding_box.get_x ());
-	    mmz.add (surrounding_box.get_z ());
+	    mmx0.add (g2xmin);
+	    mmx1.add (g2xmax);
+	    mmz0.add (g2zmin);
+	    mmz1.add (g2zmax);
 	  }
 	if (position == RIGHT)
 	  {
-	    dy1 = surrounding_box.get_y ();
+	    dy1 = abs (g2ymax - g2ymin);
 	    y1 += dy1;
-	    mmx.add (surrounding_box.get_x ());
-	    mmz.add (surrounding_box.get_z ());
+	    mmx0.add (g2xmin);
+	    mmx1.add (g2xmax);
+	    mmz0.add (g2zmin);
+	    mmz1.add (g2zmax);
 	  }
 	if (position == BOTTOM)
 	  {
-	    dz0 = surrounding_box.get_z ();
+	    dz0 = abs (g2zmax - g2zmin);
 	    z0 -= dz0;
-	    mmx.add (surrounding_box.get_x ());
-	    mmy.add (surrounding_box.get_y ());
+	    mmx0.add (g2xmin);
+	    mmx1.add (g2xmax);
+	    mmy0.add (g2ymin);
+	    mmy1.add (g2ymax);
 	  }
 	if (position == TOP)
 	  {
-	    dz1 = surrounding_box.get_z ();
+	    dz1 = abs (g2zmax - g2zmin);
 	    z1 += dz1;
-	    mmx.add (surrounding_box.get_x ());
-	    mmy.add (surrounding_box.get_y ());
+	    mmx0.add (g2xmin);
+	    mmx1.add (g2xmax);
+	    mmy0.add (g2ymin);
+	    mmy1.add (g2ymax);
 	  }
       }
     
-    if (0.5 * mmx.get_max () > abs (x0)) x0 = -0.5 * mmx.get_max ();
-    if (0.5 * mmx.get_max () > x1) x1 = +0.5 * mmx.get_max ();
-    if (0.5 * mmy.get_max () > abs (y0)) y0 = -0.5 * mmy.get_max ();
-    if (0.5 * mmy.get_max () > y1) y1 = +0.5 * mmy.get_max ();
-    if (0.5 * mmz.get_max () > abs (z0)) z0 = -0.5 * mmz.get_max ();
-    if (0.5 * mmz.get_max () > z1) z1 = +0.5 * mmz.get_max ();
+    if (mmx0.get_min () < x0) x0 = mmx0.get_min ();
+    if (mmx1.get_max () > x1) x1 = mmx1.get_max ();
+    if (mmy0.get_min () < y0) y0 = mmy0.get_min ();
+    if (mmy1.get_max () > y1) y1 = mmy1.get_max ();
+    if (mmz0.get_min () < z0) z0 = mmz0.get_min ();
+    if (mmz1.get_max () > z1) z1 = mmz1.get_max ();
     double surrounded_x = 0;
     double surrounded_y = 0;
     double surrounded_z = 0;
@@ -515,33 +555,33 @@ namespace geomtools {
     double dim_z = 2 * max (z1, abs (z0));
     if (! __centered_x)
       {
-	//cerr << "DEVEL: ! X-centered" << endl; 
+	if (devel) cerr << "DEVEL: geomtools::surrounded_boxed_model: ! X-centered" << endl; 
 	dim_x = x1 - x0;
-	surrounded_x = -0.5 * dim_x + dx0 + 0.5 * dx;
+	surrounded_x = -0.5 * dim_x - x0;
       }
     else
       {
-	//cerr << "DEVEL: X-centered" << endl; 
+	if (devel) cerr << "DEVEL: geomtools::surrounded_boxed_model: X-centered" << endl; 
       }
     if (! __centered_y)
       {
-	//cerr << "DEVEL: ! Y-centered" << endl; 
+	if (devel) cerr << "DEVEL: geomtools::surrounded_boxed_model: ! Y-centered" << endl; 
 	dim_y = y1 - y0;
-	surrounded_y = -0.5 * dim_y + dy0 + 0.5 * dy;
+	surrounded_y = -0.5 * dim_y - y0;
       }
     else
       {
-	//cerr << "DEVEL: Y-centered" << endl; 
+	if (devel) cerr << "DEVEL: geomtools::surrounded_boxed_model: Y-centered" << endl; 
       }
     if (! __centered_z)
       {
-	//cerr << "DEVEL: ! Z-centered" << endl; 
+	if (devel) cerr << "DEVEL: geomtools::surrounded_boxed_model: ! Z-centered" << endl; 
 	dim_z = z1 - z0;
-	surrounded_z = -0.5 * dim_z + dz0 + 0.5 * dz;
+	surrounded_z = -0.5 * dim_z + z0;
       }
     else
       {
-	//cerr << "DEVEL: Z-centered" << endl; 
+	if (devel) cerr << "DEVEL: geomtools::surrounded_boxed_model: Z-centered" << endl; 
       }
 
     if (config_.has_key ("x"))
@@ -596,7 +636,10 @@ namespace geomtools {
       {
 	throw runtime_error ("surrounded_boxed_model::_at_construct: Invalid solid !");
       }
-
+    if (devel) 
+      {
+	__solid.tree_dump (cerr, "surrounded_boxed_model::_at_construct: Solid: ", "DEVEL: ");
+      }
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (__solid);
     get_logical ().set_material_ref (__get_material_name ());
@@ -618,41 +661,50 @@ namespace geomtools {
 	int position = i->first;
 	surrounding_item & si = i->second;
 	const i_model * model = si.model;
+	const i_shape_3d & the_surrounding_shape = model->get_logical ().get_shape ();
 	double xi, yi, zi;
 	xi = surrounded_x;
 	yi = surrounded_y;
 	zi = surrounded_z;
-	const box & b = 
-	  dynamic_cast<const box &>(model->get_logical ().get_shape ());
+
+	// try to get a stackable data from the shape:
+	stackable_data the_SD2;
+	i_shape_3d::pickup_stackable (the_surrounding_shape, the_SD2);
+	double g2xmin = the_SD2.get_xmin ();
+	double g2xmax = the_SD2.get_xmax ();
+	double g2ymin = the_SD2.get_ymin ();
+	double g2ymax = the_SD2.get_ymax ();
+	double g2zmin = the_SD2.get_zmin ();
+	double g2zmax = the_SD2.get_zmax ();
 	if (position == BACK)
 	  {
-	    xi -= 0.5 * dx;
-	    xi -= 0.5 * dx0;
+	    xi += the_SD.get_xmin ();
+	    xi -= g2xmax;
 	  }
 	if (position == FRONT)
 	  {
-	    xi += 0.5 * dx;
-	    xi += 0.5 * dx1;
+	    xi += the_SD.get_xmax ();
+	    xi -= g2xmin;
 	  }
 	if (position == LEFT)
 	  {
-	    yi -= 0.5 * dy;
-	    yi -= 0.5 * dy0;
+	    yi += the_SD.get_ymin ();
+	    yi -= g2ymax;
 	  }
 	if (position == RIGHT)
 	  {
-	    yi += 0.5 * dy;
-	    yi += 0.5 * dy1;
+	    yi += the_SD.get_ymax ();
+	    yi -= g2ymin;
 	  }
 	if (position == BOTTOM)
 	  {
-	    zi -= 0.5 * dz;
-	    zi -= 0.5 * dz0;
+	    zi += the_SD.get_zmin ();
+	    zi -= g2zmax;
 	  }
 	if (position == TOP)
 	  {
-	    zi += 0.5 * dz;
-	    zi += 0.5 * dz1;
+	    zi += the_SD.get_zmax ();
+	    zi -= g2zmin;
 	  }
 	si.placmt.set (xi, yi, zi, 0.0, 0.0);
 	si.phys.set_name (i_model::make_physical_volume_name (si.label));

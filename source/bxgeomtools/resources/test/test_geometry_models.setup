@@ -29,6 +29,47 @@ material.ref : string = "copper"
 visibility.hidden : boolean = 0
 visibility.color  : string  = "blue"
 
+[name="boxD" type="geomtools::simple_boxed_model"]
+x   : real   = 25.0
+y   : real   = 20.0
+z   : real   = 30.0
+material.ref : string = "copper"
+visibility.hidden : boolean = 0
+visibility.color  : string  = "magenta"
+
+[name="boxE" type="geomtools::simple_boxed_model"]
+x   : real   = 30.0
+y   : real   = 45.0
+z   : real   =  5.0
+material.ref : string = "copper"
+visibility.hidden : boolean = 0
+visibility.color  : string  = "cyan"
+
+[name="tubA" type="geomtools::simple_shaped_model"]
+shape_type  : string = "tube"
+mode        : string = "by_envelope" # "by_extrusion"
+inner_r     : real   = 8.0
+outer_r     : real   = 14.0
+z           : real   = 15.0
+length_unit : string = "mm"
+
+material.ref       : string = "glass"
+inner_material.ref : string = "vacuum"
+
+visibility.hidden_envelop   : boolean = 1
+visibility.hidden           : boolean = 0
+visibility.color            : string  = "magenta"
+visibility.daughters.hidden : boolean = 0
+
+[name="rot_tubA" type="geomtools::rotated_boxed_model"]
+
+rotated_label  : string = "rotated_tube"
+rotation_axis  : string = "y"
+rotation_angle : string = "90"
+boxed_model    : string = "tubA"
+
+visibility.hidden           : boolean = 0
+
 [name="MIM0" type="geomtools::multiple_items_model"]
 x                 : real   = 200.0
 y                 : real   = 200.0
@@ -44,6 +85,26 @@ model.C           : string  = "boxC"
 placement.A       : string  = "30 0 0 (mm) @ 90 00 0 (deg)"
 placement.B       : string  = "-20 0 0 (mm) @ 30 90 0 (deg)"
 placement.C       : string  = "0 55 40 (mm)"
+
+[name="SBM0" type="geomtools::surrounded_boxed_model"]
+material.ref      : string    = "air"
+length_unit       : string    = "mm"
+surrounded_model  : string    = "boxC"
+centered.x        : boolean   = 0
+centered.y        : boolean   = 0
+centered.z        : boolean   = 1
+surrounding_model.front  : string  = "rot_tubA"
+surrounding_model.back   : string  = "boxB"
+surrounding_model.left   : string  = "boxD"
+#surrounding_model.right  : string  = "boxD"
+surrounding_model.top    : string  = "tubA"
+surrounding_model.bottom : string  = "boxE"
+#x                 : real   = 200.0
+#y                 : real   = 200.0
+#z                 : real   = 200.0
+
+visibility.hidden : boolean   = 0
+visibility.color  : string    = "grey"
 
 [name="entrance_window.model" type="geomtools::simple_shaped_model"]
 shape_type :   string =  "box"

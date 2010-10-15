@@ -40,14 +40,15 @@ namespace geomtools {
   
   using namespace std;  
   
-  class i_model :
-    public datatools::utils::i_tree_dumpable
+  class i_model : public datatools::utils::i_tree_dumpable
   {
   public:
     static bool g_devel;
     static const string SOLID_SUFFIX;
     static const string LOGICAL_SUFFIX;
     static const string PHYSICAL_SUFFIX;
+    static const string PHANTOM_SOLID_FLAG;
+
     //static const string DEFAULT_WORLD_NAME;
     
     typedef geomtools::models_col_t models_col_t;

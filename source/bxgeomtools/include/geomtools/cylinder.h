@@ -44,94 +44,97 @@ namespace geomtools {
 	};  
 
     private: 
+
       double __z;
       double __r;
   
     public: 
     
-      double get_x () const
+      double get_xmin () const
       {
-	return 2. * __r;
+	return -__r;
       }
       
-      double get_y () const
+      double get_xmax () const
       {
-	return 2. * __r;
+	return +__r;
       }
       
-      double 
-	get_z() const;
+      double get_ymin () const
+      {
+	return -__r;
+      }
+      
+      double get_ymax () const
+      {
+	return +__r;
+      }
+      
+      double get_zmin () const
+      {
+	return -0.5*__z;
+      }
+      
+      double get_zmax () const
+      {
+	return +0.5*__z;
+      }
+      
+      double get_z () const;
 
-      void 
-	set_z(double);
+      void set_z (double);
 
-      void 
-	set_diameter(double);
+      void set_diameter (double);
 
-      double 
-	get_half_z() const;
+      double get_half_z () const;
 
-      void 
-	set_half_z(double);
+      void set_half_z (double);
 
-      double 
-	get_r() const;
+      double get_r () const;
 
-      double 
-	get_radius() const;
+      double get_radius () const;
 
-      double 
-	get_diameter() const;
+      double get_diameter () const;
 
-      void 
-	set_r(double);
+      void set_r (double);
 
-      void 
-	set(double, double);
+      void set (double, double);
 
-      void 
-	set_alternative(double, double);
+      void set_alternative (double, double);
 
   
-      // ctor/dtor:
     public: 
 
-      cylinder();
+      // ctor:
+      cylinder ();
 
-      cylinder(double r_, double z_);
+      // ctor:
+      cylinder (double r_, double z_);
 
-      virtual ~cylinder();
+      // dtor:
+      virtual ~cylinder ();
   
       // methods:
-      virtual string 
-	get_shape_name() const;
+      virtual string get_shape_name () const;
 
-      virtual double 
-	get_parameter(const string &) const;
+      virtual double get_parameter (const string &) const;
 
-      bool 
-	is_valid() const;
+      bool is_valid () const;
 
-      void 
-	init();
+      void init ();
 
-      void 
-	reset();
+      void reset ();
 
-      double 
-	get_surface(int mask_ = FACE_ALL) const;
+      double get_surface (int mask_ = FACE_ALL) const;
 
-      double 
-	get_volume() const;
+      double get_volume () const;
 
-      virtual bool 
-	is_inside(const vector_3d &, 
-		  double skin_ = USING_PROPER_SKIN) const;
+      virtual bool is_inside (const vector_3d &, 
+			     double skin_ = USING_PROPER_SKIN) const;
 
-      virtual bool 
-	is_on_surface(const vector_3d &, 
-		      int mask_    = FACE_ALL, 
-		      double skin_ = USING_PROPER_SKIN) const;
+      virtual bool is_on_surface (const vector_3d &, 
+				 int mask_    = FACE_ALL, 
+				 double skin_ = USING_PROPER_SKIN) const;
 
       virtual vector_3d get_normal_on_surface (const vector_3d & position_) const;
 
@@ -140,11 +143,9 @@ namespace geomtools {
 				   intercept_t & intercept_,
 				   double skin_ = USING_PROPER_SKIN) const;
 
-      friend ostream & 
-	operator<<(ostream &, const cylinder &);
+      friend ostream & operator<< (ostream &, const cylinder &);
 
-      friend istream & 
-	operator>>(istream &, cylinder &);
+      friend istream & operator>> (istream &, cylinder &);
 
       virtual void tree_dump (ostream & out_         = clog, 
 			      const string & title_  = "", 

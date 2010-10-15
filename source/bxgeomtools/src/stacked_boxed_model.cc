@@ -221,6 +221,10 @@ namespace geomtools {
 					   models_col_t * models_)
   {
     bool devel = i_model::g_devel;
+    if (config_.has_flag ("devel"))
+      {
+	devel = true;
+      }  
     if (devel)
       {
 	clog << "DEVEL: stacked_boxed_model::_at_construct: Entering..." << endl;
@@ -234,6 +238,11 @@ namespace geomtools {
     string material_name;
     double x, y, z;
     double lunit = CLHEP::mm;
+
+    if (config_.has_flag ("debug"))
+      {
+	set_debug (true);
+      }  
 
     /*** material ***/
     if (config_.has_key ("material.ref"))
@@ -295,6 +304,9 @@ namespace geomtools {
 	throw runtime_error (message.str ());		
       }
 
+
+    if (devel) cerr << "DEVEL: stacked_boxed_model::_at_construct: " << "step 1" << endl;
+
     /*** check models ***/
     if (! models_)
       {
@@ -303,6 +315,8 @@ namespace geomtools {
 		<< "Missing logicals dictionary !"; 
 	throw runtime_error (message.str ());
       }
+
+    if (devel) cerr << "DEVEL: stacked_boxed_model::_at_construct: " << "step 2" << endl;
 
     /*** loop over models to be stacked ***/
     for (int i = 0; i < number_of_items; i++)
@@ -334,18 +348,15 @@ namespace geomtools {
 	  models_->find (boxed_model_name);
 	if (found != models_->end ())
 	  {
-	    /*
-	    // check if the model is box-shaped:
-	    if (found->second->get_logical ().get_shape ().get_shape_name () !=
-		"box")
+	    // check if the model is stackable:
+	    if (! i_shape_3d::is_stackable (found->second->get_logical ().get_shape ()))
 	      {
 		ostringstream message;
 		message << "stacked_boxed_model::_at_construct: "
 			<< "The embedded model '" << found->second->get_name () 
-			<< "' is not a 'boxed' one !"; 
+			<< "' is not stackable !"; 
 		throw runtime_error (message.str ());
 	      }
-	    */
 	    add_boxed_model (i, *(found->second), label_name);
 	  }
 	else
@@ -357,6 +368,8 @@ namespace geomtools {
 	    throw runtime_error (message.str ());
 	  }
       }
+
+    if (devel) cerr << "DEVEL: stacked_boxed_model::_at_construct: " << "step 3" << endl;
 
     /*** compute main box dimensions ***/
     mygsl::min_max mmx;
@@ -370,39 +383,50 @@ namespace geomtools {
 	 i++)
       {
 	const boxed_item & bi = i->second;
-	const i_model * model = bi.model;
+	const i_model * stacked_model = bi.model;
 
-	const i_shape_3d & the_shape = model->get_logical ().get_shape ();
-	const i_stackable * the_stackable = 0;
-	if (the_shape.has_stackable_data ())
+	const i_shape_3d & the_shape = stacked_model->get_logical ().get_shape ();
+
+	// try to get a stackable data from the shape:
+	stackable_data the_SD;
+	if (! i_shape_3d::pickup_stackable (the_shape, the_SD))
 	  {
-	    the_stackable = &(the_shape.get_stackable_data ());
+	    ostringstream message;
+	    message << "stacked_boxed_model::_at_construct: "
+		    << "Cannot stack '" 
+		    << the_shape.get_shape_name () << "' shape !";
+	    throw runtime_error (message.str ());
 	  }
-	else
+
+	if (devel) 
 	  {
-	    the_stackable = dynamic_cast<const i_stackable *> (&the_shape);
+	    cerr << "DEVEL: stacked_boxed_model::_at_construct: " << "step 3d: dump stackable data for '" << stacked_model->get_name () << "' from '" << name_ << "'..." << endl;
+
+	    the_SD.dump (cerr, "DEVEL: stacked_boxed_model::_at_construct: Stackable data:");
 	  }
-	const i_stackable & b = *the_stackable;
-	/*
-	const box & b = 
-	  dynamic_cast<const box &>(model->get_logical ().get_shape ());
-	*/
-	mmx.add (b.get_x ());
-	mmy.add (b.get_y ());
-	mmz.add (b.get_z ());
+	if (devel) cerr << "DEVEL: stacked_boxed_model::_at_construct: " << "step 3e: gets..." << endl;
+	double full_x = the_SD.get_xmax () - the_SD.get_xmin ();
+	double full_y = the_SD.get_ymax () - the_SD.get_ymin ();
+	double full_z = the_SD.get_zmax () - the_SD.get_zmin ();
+	mmx.add (full_x);
+	mmy.add (full_y);
+	mmz.add (full_z);
+	if (devel) cerr << "DEVEL: stacked_boxed_model::_at_construct: " << "step 3f: mmx... add" << endl;
 	if (is_stacking_along_x ())
 	  {
-	    stacked_x += b.get_x ();
+	    stacked_x += full_x;
 	  }
 	else if (is_stacking_along_y ())
 	  {
-	    stacked_y += b.get_y ();
+	    stacked_y += full_y;
 	  }
 	else if (is_stacking_along_z ())
 	  {
-	    stacked_z += b.get_z ();
+	    stacked_z += full_z;
 	  }
       }
+
+    if (devel) cerr << "DEVEL: stacked_boxed_model::_at_construct: " << "step 4" << endl;
 
     double max = -1.0;
     if (is_stacking_along_x ())
@@ -467,6 +491,8 @@ namespace geomtools {
         dim_z = z;
       }  
 
+    if (devel) cerr << "DEVEL: stacked_boxed_model::_at_construct: " << "step 5" << endl;
+
     __solid.reset ();
     __solid.set_x (dim_x);
     __solid.set_y (dim_y);
@@ -480,6 +506,7 @@ namespace geomtools {
     get_logical ().set_shape (__solid);
     get_logical ().set_material_ref (__get_material_name ());
 
+    // starting position:
     double pos;
     if (is_stacking_along_x ())
       {
@@ -494,51 +521,53 @@ namespace geomtools {
 	pos = -0.5 * stacked_z;
       }
 
+    if (devel) cerr << "DEVEL: stacked_boxed_model::_at_construct: " << "step 6" << endl;
+
     int j = 0;
     for (boxed_dict_t::iterator i = __boxed_models.begin ();
 	 i != __boxed_models.end ();
 	 i++)
       {
 	boxed_item & bi = i->second;
-	const i_model * model = bi.model;
+	const i_model * stacked_model = bi.model;
 	double xi, yi, zi;
 	xi = yi = zi = 0.0;
 
-	const i_shape_3d & the_shape = model->get_logical ().get_shape ();
-	const i_stackable * the_stackable = 0;
+	const i_shape_3d & the_shape = stacked_model->get_logical ().get_shape ();
+	stackable_data the_SD;
+	if (! i_shape_3d::pickup_stackable (the_shape, the_SD))
+	  {
+	    ostringstream message;
+	    message << "stacked_boxed_model::_at_construct: "
+		    << "Cannot stack '" 
+		    << the_shape.get_shape_name () << "' shape !";
+	    throw runtime_error (message.str ());
+	  }
 	double x0 = 0.0;
 	double y0 = 0.0;
 	double z0 = 0.0;
-	if (the_shape.has_stackable_data ())
-	  {
-	    const stackable_data & sd = the_shape.get_stackable_data ();
-	    the_stackable = &sd;
-	  }
-	else
-	  {
-	    the_stackable = dynamic_cast<const i_stackable *> (&the_shape);
-	  }
-	const i_stackable & b = *the_stackable;
 
-	/*
-	const box & b = 
-	  dynamic_cast<const box &>(model->get_logical ().get_shape ());
-	*/
+	double gxmin = the_SD.get_xmin ();
+	double gymin = the_SD.get_ymin ();
+	double gzmin = the_SD.get_zmin ();
+	double gxmax = the_SD.get_xmax ();
+	double gymax = the_SD.get_ymax ();
+	double gzmax = the_SD.get_zmax ();
 
 	if (is_stacking_along_x ())
 	  {
-	    xi = pos + 0.5 * b.get_x ();
-	    pos += b.get_x ();
+	    xi = pos + abs (gxmin);
+	    pos += abs (gxmax - gxmin);
 	  }
 	else if (is_stacking_along_y ())
 	  {
-	    yi = pos + 0.5 * b.get_y ();
-	    pos += b.get_y ();
+	    yi = pos + abs (gymin);
+	    pos += abs (gymax - gymin);
 	  }
 	else if (is_stacking_along_z ())
 	  {
-	    zi = pos + 0.5 * b.get_z ();
-	    pos += b.get_z ();
+	    zi = pos + abs (gzmin);
+	    pos += abs (gzmax - gzmin);
 	  }
 	bi.placmt.set (xi, yi, zi, 0.0, 0.0);
 	bi.phys.set_name (i_model::make_physical_volume_name (bi.label));
@@ -547,6 +576,8 @@ namespace geomtools {
 	bi.phys.set_mother (_logical);
 	j++;
       }
+
+    if (devel) cerr << "DEVEL: stacked_boxed_model::_at_construct: " << "step 7" << endl;
 
     if (devel) clog << "DEVEL: stacked_boxed_model::_at_construct: Exiting." << endl;
     return;

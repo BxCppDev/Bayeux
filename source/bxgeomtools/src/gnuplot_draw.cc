@@ -946,14 +946,36 @@ namespace geomtools {
 
   void 
   gnuplot_draw::draw_intersection_3d (std::ostream & out_,
-				     const vector_3d & position_, 
-				     const rotation_3d & rotation_,
-				     const intersection_3d &)
+				      const vector_3d & position_, 
+				      const rotation_3d & rotation_,
+				      const intersection_3d & i_)
   {
     rotation_3d inverse_rotation (rotation_);
     inverse_rotation.invert ();
+    const i_composite_shape_3d::shape_t & s1 = i_.get_shape1 ();
+    const i_composite_shape_3d::shape_t & s2 = i_.get_shape2 ();    
+    const i_shape_3d & sh1 = s1.get_shape ();
+    const i_shape_3d & sh2 = s2.get_shape ();
+    basic_draw (out_, position_, rotation_, sh1);
 
-    throw runtime_error ("gnuplot_draw::draw_intersection_3d: Not supported yet !");
+    // XXX:
+
+    // draw second shape:
+    placement mother_world_placement;
+    mother_world_placement.set_translation (position_);
+    mother_world_placement.set_orientation (rotation_);
+    
+    placement world_item_placement;
+    mother_world_placement.child_to_mother (s2.get_placement (), 
+					    world_item_placement);  
+    const vector_3d   & sh2_pos = world_item_placement.get_translation ();
+    const rotation_3d & sh2_rot = world_item_placement.get_rotation ();
+    basic_draw (out_, 
+		sh2_pos, 
+		sh2_rot, 
+		sh2);
+ 
+    //throw runtime_error ("gnuplot_draw::draw_intersection_3d: Not supported yet !");
     return;
   }
 
@@ -961,12 +983,31 @@ namespace geomtools {
   gnuplot_draw::draw_union_3d (std::ostream & out_, 
 			       const vector_3d & position_, 
 			       const rotation_3d & rotation_,
-			       const union_3d &)
+			       const union_3d & u_)
   {
     rotation_3d inverse_rotation (rotation_);
     inverse_rotation.invert ();
+    const i_composite_shape_3d::shape_t & s1 = u_.get_shape1 ();
+    const i_composite_shape_3d::shape_t & s2 = u_.get_shape2 ();    
+    const i_shape_3d & sh1 = s1.get_shape ();
+    const i_shape_3d & sh2 = s2.get_shape ();
+    basic_draw (out_, position_, rotation_, sh1);
 
-    throw runtime_error ("gnuplot_draw::draw_union_3d: Not supported yet !");
+    // draw second shape:
+    placement mother_world_placement;
+    mother_world_placement.set_translation (position_);
+    mother_world_placement.set_orientation (rotation_);
+    
+    placement world_item_placement;
+    mother_world_placement.child_to_mother (s2.get_placement (), 
+					    world_item_placement);  
+    const vector_3d   & sh2_pos = world_item_placement.get_translation ();
+    const rotation_3d & sh2_rot = world_item_placement.get_rotation ();
+    basic_draw (out_, 
+		sh2_pos, 
+		sh2_rot, 
+		sh2);
+    //throw runtime_error ("gnuplot_draw::draw_union_3d: Not supported yet !");
     return;
   }
 
@@ -974,20 +1015,183 @@ namespace geomtools {
   gnuplot_draw::draw_subtraction_3d (std::ostream & out_, 
 				     const vector_3d & position_, 
 				     const rotation_3d & rotation_,
-				     const subtraction_3d &)
+				     const subtraction_3d & s_)
   {
     rotation_3d inverse_rotation (rotation_);
-    inverse_rotation.invert ();
+    inverse_rotation.invert (); 
+    const i_composite_shape_3d::shape_t & s1 = s_.get_shape1 ();
+    const i_composite_shape_3d::shape_t & s2 = s_.get_shape2 ();    
+    const i_shape_3d & sh1 = s1.get_shape ();
+    const i_shape_3d & sh2 = s2.get_shape ();
+    //basic_draw (out_, position_, rotation_, sh1);
 
-    throw runtime_error ("gnuplot_draw::draw_subtraction_3d: Not supported yet !");
+    bool draw_first_shape = true;
+    if (draw_first_shape)
+      { 
+	// draw first shape:
+	placement mother_world_placement;
+	mother_world_placement.set_translation (position_);
+	mother_world_placement.set_orientation (rotation_);
+	
+	placement world_item_placement;
+	mother_world_placement.child_to_mother (s1.get_placement (), 
+						world_item_placement);  
+	const vector_3d   & sh1_pos = world_item_placement.get_translation ();
+	const rotation_3d & sh1_rot = world_item_placement.get_rotation ();
+	basic_draw (out_, 
+		    sh1_pos, 
+		    sh1_rot, 
+		    sh1);
+      }
+
+    bool draw_second_shape = false;
+    if (draw_second_shape)
+      {
+	// draw second shape:
+	placement mother_world_placement;
+	mother_world_placement.set_translation (position_);
+	mother_world_placement.set_orientation (rotation_);
+	
+	placement world_item_placement;
+	mother_world_placement.child_to_mother (s2.get_placement (), 
+						world_item_placement);  
+	const vector_3d   & sh2_pos = world_item_placement.get_translation ();
+	const rotation_3d & sh2_rot = world_item_placement.get_rotation ();
+	basic_draw (out_, 
+		    sh2_pos, 
+		    sh2_rot, 
+		    sh2);
+      }
     return;
   }
 
-  void gnuplot_draw::draw (ostream & out_, 
-			   const i_placement & p_, 
-			   const i_object_3d & o_)
-  {
-    gnuplot_draw::draw (out_, p_, o_, gnuplot_draw::MODE_NULL);
+  void gnuplot_draw::basic_draw (ostream & out_,
+				 const vector_3d & position_, 
+				 const rotation_3d & rotation_, 
+				 const i_object_3d & o_,
+				 unsigned long mode_)
+  { 
+    bool mode_wired_cylinder = mode_ & gnuplot_draw::MODE_WIRED_CYLINDER;
+    const vector_3d & pos = position_;
+    const rotation_3d & rot = rotation_;
+    string shape_name = o_.get_shape_name ();
+
+    if (o_.has_user_draw ())
+      {
+	void * user_draw = o_.get_user_draw ();
+	gnuplot_draw::draw_user_function_t user_draw_f 
+	  = reinterpret_cast<gnuplot_draw::draw_user_function_t> (user_draw);
+	//  = static_cast<gnuplot_draw::draw_user_function_t> (user_draw);
+	(*user_draw_f) (out_, position_, rotation_, o_, 0);
+	return;
+      }
+
+    if (shape_name == "line_3d")
+      {
+	const line_3d & l = dynamic_cast<const line_3d &> (o_);
+	draw_line (out_, pos, rot, l);
+	return;
+      }
+
+    if (shape_name == "polyline_3d")
+      {
+	const polyline_3d & p = dynamic_cast<const polyline_3d &> (o_);
+	draw_polyline (out_, pos, rot, p);
+	return;
+      }
+
+    if (shape_name == "rectangle")
+      {
+	const rectangle & r = dynamic_cast<const rectangle &> (o_);
+	draw_rectangle (out_, pos, rot, r);
+	return;
+      }
+
+    if (shape_name == "circle")
+      {
+	const circle & c = dynamic_cast<const circle &> (o_);
+	draw_circle (out_, pos, rot, c);
+	return;
+      }
+
+    if (shape_name == "box")
+      {
+	const box & b = dynamic_cast<const box &> (o_);
+	draw_box (out_, pos, rot, b);
+	return;
+      }
+
+    if (shape_name == "cylinder")
+      {
+	const cylinder & c = dynamic_cast<const cylinder &> (o_);
+	if (! mode_wired_cylinder)
+	  {
+	    draw_cylinder (out_, pos, rot, c);
+	  }
+	else
+	  {
+	    vector_3d first (0, 0, -c.get_half_z()), last (0, 0, +c.get_half_z());
+	    line_3d l (first, last);
+	    draw_segment (out_, pos, rot, l);
+	  }
+	return;
+      }
+
+    if (shape_name == "tube")
+      {
+	const tube & t = dynamic_cast<const tube &> (o_);
+	if (! mode_wired_cylinder)
+	  {
+	    draw_tube (out_, pos, rot, t);
+	  }
+	else
+	  {
+	    vector_3d first (0, 0, -t.get_half_z()), last (0, 0, +t.get_half_z());
+	    line_3d l (first, last);
+	    draw_segment (out_, pos, rot, l);
+	  }
+	return;
+      }
+
+    if (shape_name == "sphere")
+      {
+	const sphere & s = dynamic_cast<const sphere &> (o_);
+	draw_sphere (out_, pos, rot, s);
+	return;
+      }
+
+    if (shape_name == "polycone")
+      {
+	const polycone & p = dynamic_cast<const polycone &> (o_);
+	draw_polycone (out_, pos, rot, p);
+	return;
+      }
+
+    if (shape_name == "polyhedra")
+      {
+	const polyhedra & p = dynamic_cast<const polyhedra &> (o_);
+	draw_polyhedra (out_, pos, rot, p);
+	return;
+      }
+
+    if (shape_name == "tessellated")
+      {
+	const tessellated_solid & t = dynamic_cast<const tessellated_solid &> (o_);
+	draw_tessellated (out_, pos, rot, t);
+	return;
+      }
+
+    if (shape_name == "subtraction_3d")
+      {
+	const subtraction_3d & s = dynamic_cast<const subtraction_3d &> (o_);
+	draw_subtraction_3d (out_, pos, rot, s);
+	return;
+      }
+
+    clog << "gnuplot_draw::basic_draw: "
+	 << " No method to draw an 3D object of type '" 
+	 << shape_name << "' !" << endl;
+    return;
   }
 
   void gnuplot_draw::draw (ostream & out_, 
@@ -997,122 +1201,23 @@ namespace geomtools {
   { 
     bool mode_wired_cylinder = mode_ & gnuplot_draw::MODE_WIRED_CYLINDER;
 
+    // multi-placement:
     for (int i = 0; i < p_.get_number_of_items (); i++)
       {
 	placement p;
 	p_.get_placement (i, p);
-
 	const vector_3d & pos = p.get_translation ();
 	const rotation_3d & rot = p.get_rotation ();
-	
-	string shape_name = o_.get_shape_name ();
-	if (shape_name == "line_3d")
-	  {
-	    const line_3d & l = dynamic_cast<const line_3d &> (o_);
-	    draw_line (out_, pos, rot, l);
-	    return;
-	  }
-
-	if (shape_name == "polyline_3d")
-	  {
-	    const polyline_3d & p = dynamic_cast<const polyline_3d &> (o_);
-	    draw_polyline (out_, pos, rot, p);
-	    return;
-	  }
-
-	if (shape_name == "rectangle")
-	  {
-	    const rectangle & r = dynamic_cast<const rectangle &> (o_);
-	    draw_rectangle (out_, pos, rot, r);
-	    return;
-	  }
-
-	if (shape_name == "circle")
-	  {
-	    const circle & c = dynamic_cast<const circle &> (o_);
-	    draw_circle (out_, pos, rot, c);
-	    return;
-	  }
-
-	if (shape_name == "box")
-	  {
-	    const box & b = dynamic_cast<const box &> (o_);
-	    draw_box (out_, pos, rot, b);
-	    return;
-	  }
-
-	if (shape_name == "cylinder")
-	  {
-	    const cylinder & c = dynamic_cast<const cylinder &> (o_);
-	    if (! mode_wired_cylinder)
-	      {
-		draw_cylinder (out_, pos, rot, c);
-	      }
-	    else
-	      {
-		vector_3d first (0, 0, -c.get_half_z()), last (0, 0, +c.get_half_z());
-		line_3d l (first, last);
-		draw_segment (out_, pos, rot, l);
-	      }
-	    return;
-	  }
-
-	if (shape_name == "tube")
-	  {
-	    const tube & t = dynamic_cast<const tube &> (o_);
-	    if (! mode_wired_cylinder)
-	      {
-		draw_tube (out_, pos, rot, t);
-	      }
-	    else
-	      {
-		vector_3d first (0, 0, -t.get_half_z()), last (0, 0, +t.get_half_z());
-		line_3d l (first, last);
-		draw_segment (out_, pos, rot, l);
-	      }
-	    return;
-	  }
-
-	if (shape_name == "sphere")
-	  {
-	    const sphere & s = dynamic_cast<const sphere &> (o_);
-	    draw_sphere (out_, pos, rot, s);
-	    return;
-	  }
-
-	if (shape_name == "polycone")
-	  {
-	    const polycone & p = dynamic_cast<const polycone &> (o_);
-	    draw_polycone (out_, pos, rot, p);
-	    return;
-	  }
-
-	if (shape_name == "polyhedra")
-	  {
-	    const polyhedra & p = dynamic_cast<const polyhedra &> (o_);
-	    draw_polyhedra (out_, pos, rot, p);
-	    return;
-	  }
-
-	if (shape_name == "tessellated")
-	  {
-	    const tessellated_solid & t = dynamic_cast<const tessellated_solid &> (o_);
-	    draw_tessellated (out_, pos, rot, t);
-	    return;
-	  }
-
-	if (shape_name == "subtraction_3d")
-	  {
-	    const subtraction_3d & s = dynamic_cast<const subtraction_3d &> (o_);
-	    draw_subtraction_3d (out_, pos, rot, s);
-	    return;
-	  }
-
-	clog << "gnuplot_draw::draw: "
-	     << " No method to draw an 3D object of type '" 
-	     << shape_name << "' !" << endl;
+	basic_draw (out_, pos, rot, o_, mode_);
 	return;
       }
+  }
+
+  void gnuplot_draw::draw (ostream & out_, 
+			   const i_placement & p_, 
+			   const i_object_3d & o_)
+  {
+    gnuplot_draw::draw (out_, p_, o_, gnuplot_draw::MODE_NULL);
   }
 
 } // end of namespace geomtools

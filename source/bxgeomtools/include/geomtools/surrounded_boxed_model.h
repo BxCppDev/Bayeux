@@ -79,6 +79,8 @@ namespace geomtools {
     typedef map<string, int> labels_dict_t;
 
   private:
+    bool __debug;
+
     //static list<string> __g_position_labels;
     list<string>        __position_labels;
     string              __material_name;
@@ -97,10 +99,17 @@ namespace geomtools {
     geomtools::box __solid;
 
   private:
+
     const string & __get_material_name () const;
 
   public: 
+
+    bool is_debug () const;
+    
+    void set_debug (bool);
+
     const string & get_material_name () const;
+
     void set_material_name (const string &);
 
     virtual const geomtools::box & get_box () const;

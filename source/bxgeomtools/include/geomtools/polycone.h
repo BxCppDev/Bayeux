@@ -79,15 +79,37 @@ namespace geomtools {
     double  __z_min;
     double  __z_max;
     double  __r_max;
+  
+  public:
     
-    double get_x () const
+    double get_xmin () const
     {
-      return 2. * __r_max;
+      return -__r_max;
     }
-
-    double get_y () const
+    
+    double get_xmax () const
     {
-      return 2. * __r_max;
+      return +__r_max;
+    }
+    
+    double get_ymin () const
+    {
+      return -__r_max;
+    }
+    
+    double get_ymax () const
+    {
+      return +__r_max;
+    }
+    
+    double get_zmin () const
+    {
+      return __z_min;
+    }
+    
+    double get_zmax () const
+    {
+      return __z_max;
     }
 
     double get_z () const

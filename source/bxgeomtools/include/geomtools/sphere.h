@@ -30,6 +30,7 @@ namespace geomtools {
   class sphere : public i_shape_3d, public i_stackable
   {
   public:
+
     enum faces_mask_t
       {
 	FACE_NONE   = FACE_NONE_BIT,
@@ -38,42 +39,54 @@ namespace geomtools {
       };  
   
   public:
+
     static const std::string SPHERE_LABEL;
   
   private: 
+
     double __r;
   
   public: 
     
-    double get_x () const
+    double get_xmin () const
     {
-      return 2. * __r;
+      return -__r;
+    }
+    
+    double get_xmax () const
+    {
+      return +__r;
+    }
+    
+    double get_ymin () const
+    {
+      return -__r;
+    }
+    
+    double get_ymax () const
+    {
+      return +__r;
+    }
+    
+    double get_zmin () const
+    {
+      return -__r;
+    }
+    
+    double get_zmax () const
+    {
+      return +__r;
     }
 
-    double get_y () const
-    {
-      return 2. * __r;
-    }
+    double get_r () const;
 
-    double get_z () const
-    {
-      return 2. * __r;
-    }
+    double get_radius () const;
 
-    double 
-    get_r () const;
+    void set_r (double);
 
-    double 
-    get_radius () const;
+    void set_radius (double);
 
-    void 
-    set_r (double);
-
-    void 
-    set_radius (double);
-
-    void 
-    set (double);
+    void set (double);
   
     // ctor/dtor:
   public: 
@@ -82,26 +95,19 @@ namespace geomtools {
 
     sphere (double radius_);
 
-    virtual 
-    ~sphere ();
+    virtual ~sphere ();
   
-    virtual std::string 
-    get_shape_name () const;
+    virtual std::string get_shape_name () const;
 
-    virtual double 
-    get_parameter (const std::string &) const;
+    virtual double get_parameter (const std::string &) const;
 
-    bool 
-    is_valid () const;
+    bool is_valid () const;
 
-    void 
-    reset ();
+    void reset ();
 
-    double 
-    get_surface (int mask_ = FACE_ALL) const;
+    double get_surface (int mask_ = FACE_ALL) const;
 
-    double 
-    get_volume () const;
+    double get_volume () const;
 
     virtual bool is_inside (const vector_3d &, 
 			    double skin_ = USING_PROPER_SKIN) const;

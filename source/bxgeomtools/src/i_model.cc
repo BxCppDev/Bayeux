@@ -16,6 +16,8 @@ namespace geomtools {
   
   const string i_model::PHYSICAL_SUFFIX = ".phys";
   
+  const string i_model::PHANTOM_SOLID_FLAG = "phantom_solid";
+  
   //const string i_model::DEFAULT_WORLD_NAME = "world";
 
   void i_model::assert_constructed (const string & where_, 
@@ -371,6 +373,13 @@ namespace geomtools {
 			   models_col_t * models_)
   {
     if (g_devel) clog << "DEVEL: i_model::construct: Entering..." << endl;
+    bool devel_track_name = false;
+
+    if (setup_.has_flag ("geomtools::i_model::devel_track_name"))
+      {
+	devel_track_name = true;
+      }
+    if (devel_track_name) clog << "DEVEL: i_model::construct: Constructing name='" << name_ << "'..." << endl;
     if (__constructed)
       {
 	throw runtime_error ("i_model::construct: Already constructed !");
@@ -381,6 +390,7 @@ namespace geomtools {
     _post_construct (setup);
     __constructed = true;
     if (g_devel) clog << "DEVEL: i_model::construct: Exiting." << endl;
+    if (devel_track_name) clog << "DEVEL: i_model::construct: Constructed name='" << name_ << "'." << endl;
     return;      
   }
 

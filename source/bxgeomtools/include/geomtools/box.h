@@ -48,11 +48,43 @@ namespace geomtools {
       };
 
   private: 
+
     double __x;
     double __y;
     double __z;
 
   public: 
+    
+    double get_xmin () const
+    {
+      return -0.5*__x;
+    }
+    
+    double get_xmax () const
+    {
+      return +0.5*__x;
+    }
+    
+    double get_ymin () const
+    {
+      return -0.5*__y;
+    }
+    
+    double get_ymax () const
+    {
+      return +0.5*__y;
+    }
+    
+    double get_zmin () const
+    {
+      return -0.5*__z;
+    }
+    
+    double get_zmax () const
+    {
+      return +0.5*__z;
+    }
+
     double get_x () const;
 
     void set_x (double);
@@ -81,44 +113,38 @@ namespace geomtools {
 
     void set_half (double, double, double);
   
-    // ctor/dtor:
   public: 
+
+    // ctor:
     box ();
 
-    box (double, double, double);
+    // ctor:
+    box (double x_, double y_, double z_);
 
+    // dtor:
     virtual ~box ();
     
     // methods:
       
-    virtual std::string 
-    get_shape_name () const;
+    virtual std::string get_shape_name () const;
 
-    double 
-    get_parameter (const std::string &) const;
+    double get_parameter (const std::string &) const;
 
-    bool 
-    is_valid () const;
+    bool is_valid () const;
 
-    void 
-    init ();
+    void init ();
 
-    void 
-    reset ();
+    void reset ();
 
-    double 
-    get_surface (int mask_ = FACE_ALL) const;
+    double get_surface (int mask_ = FACE_ALL) const;
 
-    double 
-    get_volume () const;
+    double get_volume () const;
 
-    virtual bool 
-    is_inside (const vector_3d &, 
+    virtual bool is_inside (const vector_3d &, 
 	       double skin_ = USING_PROPER_SKIN) const;
 
     // if 'skin' < 0 no skin is taken into account:
-    virtual bool 
-    is_on_surface (const vector_3d & , 
+    virtual bool is_on_surface (const vector_3d & , 
 		   int mask_    = FACE_ALL , 
 		   double skin_ = USING_PROPER_SKIN) const;
 

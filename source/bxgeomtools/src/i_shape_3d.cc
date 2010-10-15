@@ -8,9 +8,54 @@ namespace geomtools {
 
   using namespace std;
 
-  const double i_shape_3d::DEFAULT_SKIN = i_object_3d::DEFAULT_TOLERANCE;
+  const double i_shape_3d::DEFAULT_SKIN      = i_object_3d::DEFAULT_TOLERANCE;
   const double i_shape_3d::USING_PROPER_SKIN = i_object_3d::USING_PROPER_TOLERANCE;
-  
+
+  bool i_shape_3d::is_stackable (const i_shape_3d & shape_)
+  {
+    if (shape_.has_stackable_data ())
+      {
+	if (shape_.get_stackable_data ().is_valid ()) 
+	  {
+	    return true;
+	  }
+      }
+    const i_stackable * the_stackable 
+      = dynamic_cast<const i_stackable *> (&shape_);
+    if (the_stackable != 0)
+      {
+	return true;
+      }
+    return false;
+  }
+
+  bool i_shape_3d::pickup_stackable (const i_shape_3d & shape_, 
+				     stackable_data & sd_)
+  {
+    sd_.invalidate ();
+    if (shape_.has_stackable_data ())
+      {
+	if (shape_.get_stackable_data ().is_valid ()) 
+	  {
+	    sd_ = shape_.get_stackable_data ();
+	    return true;
+	  }
+      }
+    const i_stackable * the_stackable 
+      = dynamic_cast<const i_stackable *> (&shape_);
+    if (the_stackable != 0)
+      {
+	sd_.xmin = the_stackable->get_xmin ();
+	sd_.xmax = the_stackable->get_xmax ();
+	sd_.ymin = the_stackable->get_ymin ();
+	sd_.ymax = the_stackable->get_ymax ();
+	sd_.zmin = the_stackable->get_zmin ();
+	sd_.zmax = the_stackable->get_zmax ();
+	return true;
+      } 
+    return false;
+  }
+
   double i_shape_3d::get_skin () const
   {
     return get_tolerance ();
@@ -18,7 +63,6 @@ namespace geomtools {
    
   void i_shape_3d::set_skin (double skin_)
   {
-    //clog << "DEVEL: i_shape_3d::set_skin: skin_ = " << skin_ << endl;
     set_tolerance (skin_);
   }
  
@@ -108,6 +152,21 @@ namespace geomtools {
   {
     return ! is_inside (pos_, skin_) 
       && ! is_on_surface (pos_, ALL_SURFACES, skin_);
+  }
+
+  void i_shape_3d::tree_dump (ostream & out_, 
+			      const string & title_, 
+			      const string & indent_, 
+			      bool inherit_) const
+  {
+    namespace du = datatools::utils;
+    string indent;
+    if (! indent_.empty ()) indent = indent_;
+    i_object_3d::tree_dump (out_, title_, indent_, true);
+
+    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)  
+	 << "Stackable_data : " << (__stackable_data != 0? "Yes": "No") << endl;
+    
   }
 
 } // end of namespace geomtools

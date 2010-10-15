@@ -53,10 +53,27 @@ namespace geomtools {
     return false;
   }
 
+  bool i_object_3d::has_user_draw () const
+  {
+    return __user_draw != 0;
+  }
+
+  void * i_object_3d::get_user_draw () const
+  {
+    return __user_draw;
+  }
+
+  void i_object_3d::set_user_draw (void * user_draw_)
+  {
+    __user_draw = user_draw_;
+    return;
+  }
+
   // ctor:
   i_object_3d::i_object_3d ()
   {
     __tolerance = DEFAULT_TOLERANCE;
+    __user_draw = 0;
   }
 
   i_object_3d::i_object_3d (double tolerance_)
@@ -124,10 +141,15 @@ namespace geomtools {
     }
 
     {
-      out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
+      out_ << indent << i_tree_dumpable::tag 
 	   << "Dimensionality : " << get_dimensional () <<  endl;
     }
 
+    {
+      out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)  
+	   << "User draw : " << (has_user_draw () ? "Yes": "No") << endl;
+
+    }
     return;
   }
 
