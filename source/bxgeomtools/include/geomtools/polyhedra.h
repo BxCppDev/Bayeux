@@ -42,20 +42,29 @@ namespace geomtools {
   class polyhedra : public i_shape_3d, public i_stackable
   {
   public:
+
     static const string POLYHEDRA_LABEL;
+    static const size_t MIN_NUMBER_OF_SIDES = 3;
 
     enum faces_mask_t
       {
 	FACE_NONE   = FACE_NONE_BIT,
-	FACE_SIDE   = 0x1,
-	FACE_BOTTOM = 0x2,
-	FACE_TOP    = 0x4,
-	FACE_ALL    = (FACE_SIDE
+	FACE_INNER_SIDE   = 0x1,
+	FACE_OUTER_SIDE   = 0x2,
+	FACE_BOTTOM = 0x4,
+	FACE_TOP    = 0x8,
+	FACE_ALL    = (FACE_INNER_SIDE
+		       | FACE_OUTER_SIDE
 		       | FACE_BOTTOM 
 		       | FACE_TOP)
       };  
 
-    typedef map<double, double> rz_col_t;
+    struct r_min_max
+    {
+      double rmin, rmax;
+    };
+
+    typedef map<double, r_min_max> rz_col_t;
 
   private:
 
@@ -64,22 +73,19 @@ namespace geomtools {
     double  __top_surface;
     double  __bottom_surface;
     double  __side_surface;
+    double  __outer_side_surface;
+    double  __inner_side_surface;
+    double  __outer_volume;
+    double  __inner_volume;
     double  __volume;
     double  __z_min;
     double  __z_max;
     double  __r_max;
-
-  private:
-
-    void __compute_surfaces ();
-
-    void __compute_volume ();
-
-    void __compute_limits ();
-
-    void __compute_all ();
+    bool    __extruded;
     
   public: 
+
+    bool is_extruded () const;
     
     double get_xmin () const
     {
@@ -111,6 +117,18 @@ namespace geomtools {
       return __z_max;
     }
 
+  private:
+
+    void __compute_surfaces ();
+
+    void __compute_volume ();
+
+    void __compute_limits ();
+
+    void __compute_all ();
+
+  public:
+
     void set_n_sides (size_t n_sides_);
 
     size_t get_n_sides () const;
@@ -131,9 +149,17 @@ namespace geomtools {
 
     void reset ();
 
-    void add (double z_, double r_);
+    void add (double z_, double rmax_, bool compute_ = true);
+
+    void add (double z_, double rmin_, double rmax_, bool compute_ = true);
+
+    void initialize (const datatools::utils::properties & setup_); 
 
     void initialize (const string & filename_);
+
+    void compute_inner_polyhedra (polyhedra & ip_);
+
+    void compute_outer_polyhedra (polyhedra & op_);
 
     double get_volume () const;
 

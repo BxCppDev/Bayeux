@@ -142,10 +142,102 @@ vpath %$(BINEXT)     $(BINDIR)
 headers := $(notdir $(shell ls $(INCDIR)/$(PACKAGENAME)/*$(HEADEREXT) 2> /dev/null))
 
 #sources := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT) 2> /dev/null))
-sources1 := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT) 2> /dev/null | sed -e 's/i_object_3d.cc//g' -e 's/i_model.cc//g' -e 's/color.cc//g'))
+#sources1 := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT) 2> /dev/null | sed -e 's@ i_object_3d.cc@ @g' -e 's@ i_shape_3d.cc@ @g' -e 's@ i_model.cc@ @g'  -e 's@ color.cc@ @g' -e 's@ material.cc@ @g' -e 's@ utils.cc@ @g'))
+
+sources1=
+sources1+=address_set.cc
+sources1+=any_shape_3d.cc
+sources1+=dummy_geomtools.cc 
+sources1+=gdml_export.cc 
+sources1+=gdml_writer.cc 
+sources1+=geom_id.cc
+sources1+=geom_info.cc 
+sources1+=geom_map.cc 
+sources1+=gnuplot_draw.cc 
+sources1+=gnuplot_drawer.cc 
+sources1+=gnuplot_i.cc 
+sources1+=hexagon_box.cc 
+sources1+=id_mgr.cc 
+sources1+=id_selector.cc 
+sources1+=i_locator.cc  
+sources1+=intersection.cc  
+sources1+=i_placement.cc 
+sources1+=i_stackable.cc 
+sources1+=logical_volume.cc 
+sources1+=mapping.cc 
+sources1+=mapping_utils.cc  
+sources1+=model_factory.cc 
+sources1+=model_with_internal_items_tools.cc 
+sources1+=multiple_items_model.cc 
+sources1+=physical_volume.cc 
+
+sources1+=multiple_placement.cc 
+sources1+=regular_grid_placement.cc 
+sources1+=regular_linear_placement.cc 
+sources1+=placement.cc 
+
+sources1+=regular_polygon.cc 
+sources1+=sensitive.cc 
+sources1+=smart_id_locator.cc 
+
+# One-dimensional objects:
+sources1+=helix_3d.cc 
+sources1+=line_3d.cc 
+sources1+=polyline_3d.cc 
+sources1+=circle.cc 
+
+# Two-dimensional objects:
+sources1+=rectangle.cc 
+sources1+=disk.cc 
+
+# Models:
+sources1+=cylindric_extrusion_boxed_model.cc 
+sources1+=replicated_boxed_model.cc 
+sources1+=rotated_boxed_model.cc 
+sources1+=simple_boxed_model.cc 
+sources1+=simple_shaped_model.cc 
+sources1+=simple_world_model.cc 
+sources1+=stacked_model.cc 
+sources1+=stacked_boxed_model.cc 
+sources1+=surrounded_boxed_model.cc 
+sources1+=test_model_1.cc 
+sources1+=test_model_2.cc 
+sources1+=test_world_model.cc 
+
+# 3D shapes:
+sources1+=cylinder.cc 
+sources1+=box.cc
+sources1+=sphere.cc 
+sources1+=tube.cc 
+sources1+=tessellation.cc 
+sources1+=polycone.cc 
+sources1+=polyhedra.cc 
+
+# 3D composite  shapes:
+sources1+=subtraction_3d.cc 
+sources1+=union_3d.cc 
+sources1+=intersection_3d.cc 
+sources1+=i_composite_shape_3d.cc 
+
+sources1+=i_model.cc
+
+sources1+=i_shape_1d.cc 
+sources1+=i_shape_2d.cc 
+sources1+=i_shape_3d.cc 
+sources1+=i_object_3d.cc 
+
+sources1+=visibility.cc 
+sources1+=color.cc 
+sources1+=material.cc 
+sources1+=utils.cc
+sources := $(sources1)
+
+#-e 's@ visibility.cc@ @g'
+
 ### - force i_object_3d.cc to be the last in library 
 ### - force XXX.cc to be the last in library due to initialization of a static scoped pointer
-sources := $(sources1)  i_model.cc i_object_3d.cc color.cc
+#sources := $(sources1) i_model.cc i_shape_3d.cc i_object_3d.cc color.cc material.cc utils.cc
+#visibility.cc
 
 #csources := $(notdir $(shell ls $(SRCDIR)/*$(CSOURCEEXT) 2> /dev/null))
 objects := $(sources:%$(SOURCEEXT)=%$(OBJEXT))
@@ -185,6 +277,10 @@ help :
 	@echo "make dist      : make a source tarball ($(LIBNAME)-$(LIBVER).tar.gz)"
 	@echo "make bzdist    : make a source tarball ($(LIBNAME)-$(LIBVER).tar.bz2)"
 	@echo ""
+
+.PHONY : test1
+test1:
+	@echo "sources = $(sources)"
 
 .PHONY : test
 test:

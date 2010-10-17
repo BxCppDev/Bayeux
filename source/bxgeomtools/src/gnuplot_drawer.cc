@@ -290,7 +290,7 @@ namespace geomtools {
 	// draw children:
 	bool draw_children = false;
 
-	// check the disply level of the geometry tree:
+	// check the display level of the geometry tree:
 	if ((display_level < max_display_level) 
 	    && (log.get_physicals ().size () > 0))
 	  {
@@ -304,78 +304,66 @@ namespace geomtools {
 	    draw_children = false;
 	  }
 
-	// do it:
-	if (draw_children)
+	if (devel)
 	  {
-	    if (devel)
+	    cerr << "DEVEL: gnuplot_drawer::__draw: " 
+		 << "Drawing children..."  
+		 << endl;
+	  }
+	display_level++;
+	for (geomtools::logical_volume::physicals_col_t::const_iterator i 
+	       = log.get_physicals ().begin (); 
+	     i != log.get_physicals ().end (); i++)
+	  {
+	    bool draw_it = true;
+	    const physical_volume & phys = *(i->second);
+	    const geomtools::logical_volume & log_child = phys.get_logical ();
+	    if (! draw_children)
 	      {
-		cerr << "WARNING: gnuplot_drawer::__draw: " 
-		     << "Drawing children..."  
-		     << endl;
+		draw_it = false;
 	      }
-	    display_level++;
-	    for (geomtools::logical_volume::physicals_col_t::const_iterator i 
-		   = log.get_physicals ().begin (); 
-		 i != log.get_physicals ().end (); i++)
+	    if (log_child.parameters ().has_flag ("visibility.shown"))
 	      {
-		const physical_volume & phys = *(i->second);
-		const geomtools::logical_volume & log_child = phys.get_logical ();
-		if (log_child.parameters ().has_key ("visibility"))
+		draw_it = true;
+	      }
+	    if (log_child.parameters ().has_flag ("visibility.hidden"))
+	      {
+		draw_it = false;
+	      }
+	    /*
+		string visibility = log_child.parameters ().fetch_string ("visibility");
+		if (visibility == "invisible")
 		  {
-		    if (log_child.parameters ().fetch_string ("visibility")
-			== "invisible")
-		      {
-			continue;
-		      }
+		    draw_it = false;
 		  }
-		/*
-		cerr << "**** DEVEL: gnuplot_drawer::__draw: " 
-		     << "child's name = " <<  log_child.get_name () 
-		     << endl;
-		*/
-		const geomtools::i_placement * pp = &(phys.get_placement ());
-		/*
-		cerr << "**** DEVEL: gnuplot_drawer::__draw: " 
-		     << "TEST 0: addr pp = " << hex << pp << dec
-		     << endl;
-		cerr << "**** DEVEL: gnuplot_drawer::__draw: " 
-		     << "TEST 1: phys.get_placement ()=" << ""
-		     << endl;
-
-		phys.get_placement ().tree_dump (
-						 clog, 
-						 "Placement: ", 
-						 "**** DEVEL: gnuplot_drawer::__draw: ");
-		*/
-		size_t npp = 0;
-		npp = pp->get_number_of_items ();
-		/*
-                cerr << "**** DEVEL: gnuplot_drawer::__draw: " 
-		     << "TEST 1: #items=" << npp
-		     << endl;
-		*/		 
-		for (int i = 0; i < npp; i++)
+		if (visibility == "visible")
 		  {
-		    geomtools::placement p;
-		    // get placement from the daughter physical #i: 
-		    pp->get_placement (i, p);
-		    //pp->tree_dump (clog, "item placement (child)", "    ");
-		    geomtools::placement pt = p;
-		    // compute the placement relative to the mother volume:
-		    p_.child_to_mother (p, pt);
-		    //pt.tree_dump (clog, "item placement (mother)", "    ");
-		    
-		    // recursive invocation of the visualization data generation
-		    // for daughter #i:
-		    gnuplot_drawer::__draw (log_child,
-					    pt,
-					    max_display_level - 1);
+		    draw_it = true;
 		  }
-		/*
-                cerr << "**** DEVEL: gnuplot_drawer::__draw: " 
-		     << "TEST 2" 
-		     << endl;
-		*/
+	    */
+	    if (! draw_it)
+	      {
+		continue;
+	      }
+	    const geomtools::i_placement * pp = &(phys.get_placement ());
+	    size_t npp = 0;
+	    npp = pp->get_number_of_items ();
+	    for (int i = 0; i < npp; i++)
+	      {
+		geomtools::placement p;
+		// get placement from the daughter physical #i: 
+		pp->get_placement (i, p);
+		//pp->tree_dump (clog, "item placement (child)", "    ");
+		geomtools::placement pt = p;
+		// compute the placement relative to the mother volume:
+		p_.child_to_mother (p, pt);
+		//pt.tree_dump (clog, "item placement (mother)", "    ");
+		
+		// recursive invocation of the visualization data generation
+		// for daughter #i:
+		gnuplot_drawer::__draw (log_child,
+					pt,
+					max_display_level - 1);
 	      }
 	  }
       }
@@ -581,18 +569,7 @@ namespace geomtools {
       {
 	cstream & cs = i->second;
 	unlink (cs.filename.c_str ());
-	/*
-	if (! devel)
-	  {
-	    unlink (cs.filename.c_str ());
-	  }
-	else
-	  {
-	    cerr << "WARNING: gnuplot_drawer::draw: Do not remove file '" 
-		 << cs.filename << "' !" << endl;
-	  }
-	*/
-      }
+     }
     if (devel)
       {
 	cerr << "DEVEL: gnuplot_drawer::draw: " 

@@ -50,9 +50,13 @@ int main (int argc_, char ** argv_)
     
 	
       geomtools::polyhedra my_polyhedra;
-      string datafile = "${GEOMTOOLS_ROOT}/resources/data/bipo3_light_guide_0.data";
+      string datafile = "${GEOMTOOLS_ROOT}/resources/data/test_light_guide_0.data";
       datatools::utils::fetch_path_with_env (datafile);
       my_polyhedra.initialize (datafile);
+      if (debug)
+	{
+	  my_polyhedra.tree_dump (clog,"Polyhedra: ", "DEBUG: ");
+	}
       clog << "Polyhedra: " << my_polyhedra << endl;
 
       {

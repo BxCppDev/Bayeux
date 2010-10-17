@@ -46,7 +46,7 @@ namespace geomtools {
   {
   }
 
-  void polycone::get_inner_polycone (polycone & ip_)
+  void polycone::compute_inner_polycone (polycone & ip_)
   {
     ip_.reset ();
     for (polycone::rz_col_t::const_iterator i = __points.begin ();
@@ -54,14 +54,18 @@ namespace geomtools {
 	 i++)
       {
 	double z = i->first;
-	double rmin = i->second.rmin;
-	//double rmax = i->second.rmax;
-	add (z, 0.0, rmin);
+	double rmax = i->second.rmin;
+	bool add_it = true;
+	if (add_it)
+	  {
+	    ip_.add (z, rmax, false);
+	  }
       }
+    ip_.__compute_all ();
     return;
   }
 
-  void polycone::get_outer_polycone (polycone & op_)
+  void polycone::compute_outer_polycone (polycone & op_)
   {
     op_.reset ();
     for (polycone::rz_col_t::const_iterator i = __points.begin ();
@@ -69,18 +73,35 @@ namespace geomtools {
 	 i++)
       {
 	double z = i->first;
-	//double rmin = i->second.rmin;
 	double rmax = i->second.rmax;
-	add (z, 0.0, rmax);
+	op_.add (z, 0.0, rmax, false);
       }
+    op_.__compute_all ();
     return;
   }
 
   void polycone::__build_from_envelope_and_skin (double skin_thickness_, 
 						 double skin_step_)
   {
+    __build_from_envelope_and_skin (skin_thickness_,
+				    skin_step_,
+				    std::numeric_limits<double>::quiet_NaN (),
+				    std::numeric_limits<double>::quiet_NaN ());
+    return;
+  }
+
+  void polycone::__build_from_envelope_and_skin (double skin_thickness_, 
+						 double skin_step_,
+						 double zmin_,
+						 double zmax_)
+  {
     bool devel = false;
-    devel = true;
+    //devel = true;
+    double zmin = zmin_;
+    double zmax = zmax_;
+    //datatools::utils::invalidate (zmin);
+    //datatools::utils::invalidate (zmax);
+    
     if (devel)
       {
 	clog << "DEVEL: " << "polycone::__build_from_envelope_and_skin: "
@@ -195,13 +216,39 @@ namespace geomtools {
       }
     mygsl::tabulated_function tf_outer ("linear"); 
     mygsl::tabulated_function tf_inner ("linear"); 
-    double z = tf.x_min ();
+    double z1 = tf.x_min ();
+    double z2 = tf.x_max ();
+    if (datatools::utils::is_valid (zmin))
+      {
+	if (devel) cerr << "DEVEL: "  << "polycone::__build_from_envelope_and_skin: "
+			<< "Z(min)=" << zmin << endl;
+	if (zmin > tf.x_min ())
+	  {
+	    z1 = zmin;
+	  }
+      }
+    double zlim = tf.x_max ();
+    if (datatools::utils::is_valid (zmax))
+      {
+	if (devel) cerr << "DEVEL: "  << "polycone::__build_from_envelope_and_skin: "
+			<< "Z(max)=" << zmax << endl;
+	if (zmax < tf.x_max ())
+	  {
+	    z2 = zmax;
+	  }
+      }
     double dz = dx;
     double za, ra;
     datatools::utils::invalidate (za);
+    double z = z1;
+    bool stop = false;
     while (z < tf.x_max () + 0.1 * dz)
       {
-	if (z > tf.x_max ()) z = tf.x_max ();
+	if (z > z2) 
+	  {
+	    z = z2;
+	    stop = true;
+	  }
 	mygsl::interval domain (tf.x_min (), tf.x_max (), 0.05 * skin);
 	double drdz = mygsl::derivative (tf, z, domain);
 	dz = dx  / sqrt ( 1 + drdz * drdz);
@@ -243,6 +290,7 @@ namespace geomtools {
 	tf_outer.add_point (z, r_outer, false);
 	tf_inner.add_point (z, r_inner, false);
 	z += dz;
+	if (stop) break;
       }
     // lock interpolators:
     tf_outer.lock_table ();
@@ -260,17 +308,173 @@ namespace geomtools {
 	    rmin = 0.0;
 	  }
 	double rmax = i->second;
-	this->add (z, rmin, rmax);
+	this->add (z, rmin, rmax, false);
 	i++;
 	j++;
       }
+    __compute_all ();
+    return;
+  }
+
+  void polycone::initialize (const datatools::utils::properties & setup_)
+  {
+    string build_mode_label;
+    string datafile;
+    double zmin, zmax;
+    datatools::utils::invalidate (zmin);
+    datatools::utils::invalidate (zmax);
+    double lunit = CLHEP::mm;
+
+    if (setup_.has_key ("build_mode"))
+      {
+	build_mode_label = setup_.fetch_string ("build_mode");
+      }
+
+    if (setup_.has_key ("length_unit"))
+      {
+	string lunit_str = setup_.fetch_string ("length_unit");
+	lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+      }
+
+    if (build_mode_label == "points")
+      {
+	vector<double> zs;
+	vector<double> rmins;
+	vector<double> rmaxs;
+	double rmin = 0.0;
+
+	if (setup_.has_key ("list_of_z"))
+	  {
+	    setup_.fetch ("list_of_z", zs);
+	    if (zs.size () < 2)
+	      {
+		ostringstream message;
+		message << "polycone::initialize: "
+			<< "'list_of_z' has not enough points !";
+		throw runtime_error (message.str ());
+	      }
+	  }
+	else
+	  {
+	    ostringstream message;
+	    message << "polycone::initialize: "
+		    << "Missing 'list_of_z' property !";
+	    throw runtime_error (message.str ());
+	  }
+
+	if (setup_.has_key ("list_of_rmax"))
+	  {
+	    setup_.fetch ("list_of_rmax", rmaxs);
+	    if (rmaxs.size () != zs.size ())
+	      {
+		ostringstream message;
+		message << "polycone::initialize: "
+			<< "'list_of_z' and 'list_of_rmax' have not the same size !";
+		throw runtime_error (message.str ());
+		    
+	      }
+	  }
+	else
+	  {
+	    ostringstream message;
+	    message << "polycone::initialize: "
+		    << "Missing 'list_of_rmax' property !";
+	    throw runtime_error (message.str ());
+	  }
+
+	if (setup_.has_key ("list_of_rmin"))
+	  {
+	    setup_.fetch ("list_of_rmin", rmins);
+	    if (rmins.size () != zs.size ())
+	      {
+		ostringstream message;
+		message << "polycone::initialize: "
+			<< "'list_of_rmin' and 'list_of_rmax' have not the same size !";
+		throw runtime_error (message.str ());
+		    
+	      }
+	  }
+	else if (setup_.has_key ("rmin"))
+	  {
+	    rmin = setup_.fetch_real ("rmin", rmin);
+	    rmin *= lunit;
+	  }
+	    
+	for (int i = 0; i < zs.size (); i++)
+	  {
+	    double a_z = zs[i];
+	    double a_rmin;
+	    if (datatools::utils::is_valid (rmin))
+	      {
+		a_rmin = rmin;
+	      }
+	    else
+	      {
+		a_rmin = rmins[i];
+	      }
+	    double a_rmax = rmaxs[i];
+	    this->add (a_z, a_rmin, a_rmax, false);
+	  }
+	this->__compute_all ();	  
+      }
+    else if (build_mode_label == "datafile")
+      {
+	string datafile;
+	double zmin, zmax;
+	datatools::utils::invalidate (zmin);
+	datatools::utils::invalidate (zmax);
+
+	if (setup_.has_key ("datafile"))
+	  {
+	    datafile = setup_.fetch_string ("datafile");
+	  }  
+	else
+	  {
+	    ostringstream message;
+	    message << "polycone::initialize: "
+		    << "Missing 'datafile' property !";
+	    throw runtime_error (message.str ());
+	  }
+
+	if (setup_.has_key ("zmin"))
+	  {
+	    zmin = setup_.fetch_real ("zmin");
+	    zmin *= lunit;
+	  }  
+
+	if (setup_.has_key ("zmax"))
+	  {
+	    zmax = setup_.fetch_real ("zmax");
+	    zmax *= lunit;
+	  }  
+
+	datatools::utils::fetch_path_with_env (datafile);
+	this->initialize (datafile, zmin, zmax);
+      }
+    else 
+      {
+	ostringstream message;
+	message << "polycone::initialize: "
+		<< "Invalid build mode '" << build_mode_label << "' !";
+	throw runtime_error (message.str ());
+      }
+
     return;
   }
 
   void polycone::initialize (const string & filename_)
   {
+    polycone::initialize (filename_,
+			  std::numeric_limits<double>::quiet_NaN (),
+			  std::numeric_limits<double>::quiet_NaN ());
+    return;
+  }
+
+  void polycone::initialize (const string & filename_, 
+			     double zmin_, double zmax_)
+  {
     bool devel = false;
-    devel = true;
+    //devel = true;
     ifstream ifs;
     string filename = filename_;
     ifs.open (filename.c_str ());
@@ -288,7 +492,10 @@ namespace geomtools {
     double r_factor = 1.0;
     double skin_thickness;
     datatools::utils::invalidate (skin_thickness);
-    double skin_step = 0.0;
+    double skin_step;
+    datatools::utils::invalidate (skin_step);
+    bool ignore_rmin = false;
+
     while (! ifs.eof ())
       {
 	string line;
@@ -317,6 +524,10 @@ namespace geomtools {
 			  throw runtime_error (message.str ()); 
 			}
 		      length_unit = datatools::utils::units::get_length_unit_from (unit_str);
+		    }
+		  else if (word == "#@ignore_rmin")
+		    {
+		      ignore_rmin = true;
 		    }
 		  else if (word == "#@z_factor")
 		    {
@@ -370,54 +581,51 @@ namespace geomtools {
 	      continue;
 	    }
 	}
+	// parse (z,r1) or (z,r1,r2) formated lines:
 	{
 	  istringstream iss (line);
-	  double z, r, r2;
+	  double z, r1, r2;
+	  datatools::utils::invalidate (z);
+	  datatools::utils::invalidate (r1);
 	  datatools::utils::invalidate (r2);
 	  iss >> z;
 	  if (! iss)
 	    {
 	      ostringstream message;
 	      message << "polycone::initialize: " 
-		      << "Format error for Z in data file '"
+		      << "Format error for 'z' in data file '"
 		      << filename << "' at line " << count << " !";
 	      throw runtime_error (message.str ()); 
 	    }
-	  iss >> r;
+	  iss >> r1;
 	  if (! iss)
 	    {
 	      ostringstream message;
 	      message << "polycone::initialize: " 
-		      << "Format error for 'r' in data file '"
+		      << "Format error for 'r1' in data file '"
 		      << filename << "' at line " << count << " !";
 	      throw runtime_error (message.str ()); 
 	    }
-	  if (r < 0.0)
-	    {
-	      ostringstream message;
-	      message << "polycone::initialize: " 
-		      << "Invalid value '" << r << "' for 'r' in data file '"
-		      << filename << "' at line " << count << " !";
-	      throw runtime_error (message.str ()); 
-	    }
+	  // try to read a third column:
 	  string token;
 	  iss >> token;
-	  if (datatools::utils::is_valid (skin_thickness))
+	  if (token.length () == 0)
 	    {
-	      if (token.length () > 0)
-		{
-		  ostringstream message;
-		  message << "polycone::initialize: " 
-			  << "Invalid format for 'z r' pair "
-			  << "in 'skin_thickness' mode from data file '"
-			  << filename << "' at line " << count << " !";
-		  throw runtime_error (message.str ()); 
-		}
+	      // two columns format:
+	      r2 = r1;
+	      datatools::utils::invalidate (r1);
 	    }
 	  else
 	    {
-	      if (token.length () > 0)
+	      if (token[0] == '#')
 		{
+		  // if line ends with a comment: this is two columns format !
+		  r2 = r1;
+		  datatools::utils::invalidate (r1);
+		}
+	      else 
+		{
+		  // try three columns format:
 		  istringstream iss2 (token);
 		  iss2 >> r2;
 		  if (! iss2)
@@ -428,90 +636,106 @@ namespace geomtools {
 			      << filename << "' at line " << count << " !";
 		      throw runtime_error (message.str ()); 
 		    }	    
-		  if (r2 < 0.0)
+		  if (ignore_rmin)
+		    {
+		      datatools::utils::invalidate (r1);
+		    }
+		  else if (datatools::utils::is_valid (skin_thickness))
 		    {
 		      ostringstream message;
 		      message << "polycone::initialize: " 
-			      << "Invalid value '" << r2 << "' for 'r2' in data file '"
+			      << "Invalid format for 'z r2' pair "
+			      << "in 'skin_thickness' mode from data file '"
 			      << filename << "' at line " << count << " !";
 		      throw runtime_error (message.str ()); 
 		    }
 		}
 	    }
-	  
-	  if (devel)
+	  if (datatools::utils::is_valid (r2) && (r2 < 0.0))
 	    {
-	      cerr << "DEVEL: polycone::initialize: " 
-		   << "z = " << z << " " 
-		   << "r = " << r << " ";
-	      if (datatools::utils::is_valid (r2))
-		{
-		  cerr << "r2 = " << r2;
-		}
-	      cerr << " " << endl;
+	      ostringstream message;
+	      message << "polycone::initialize: " 
+		      << "Invalid value '" << r2 << "' for '2' in data file '"
+		      << filename << "' at line " << count << " !";
+	      throw runtime_error (message.str ()); 
 	    }
-
-	  if (datatools::utils::is_valid (r2))
+	  double tz, tr1, tr2;
+	  tz  = z  * z_factor * length_unit;
+	  tr1 = r1 * r_factor * length_unit;
+	  tr2 = r2 * r_factor * length_unit;
+	  if (datatools::utils::is_valid (r1))
 	    {
-	      this->add (z * z_factor * length_unit, 
-			 r * r_factor * length_unit, 
-			 r2 * r_factor * length_unit);
+	      this->add (tz, tr1, tr2, false);
 	    }
 	  else
 	    {
-	      this->add (z * z_factor * length_unit, 
-			 r * r_factor * length_unit);
+	      this->add (tz, tr2, false);
 	    }
 	}
       }
+    this->__compute_all ();	    
+
     if (datatools::utils::is_valid (skin_thickness))
       {
-	__build_from_envelope_and_skin (skin_thickness, skin_step);
+	if (! datatools::utils::is_valid (skin_step))
+	  {
+	    skin_step = abs (zmax_ - zmin_) / 20.0;
+	  }
+	__build_from_envelope_and_skin (skin_thickness, skin_step, zmin_, zmax_);
       }
-   return;
+    return;
   }
 
   void polycone::__compute_all ()
   {
-   __compute_surfaces ();
-   __compute_volume ();
-   __compute_limits ();
+    __compute_surfaces ();
+    __compute_volume ();
+    __compute_limits ();
+    return;
   }
 
-  void polycone::add (double z_, double rmax_)
+  void polycone::add (double z_, double rmax_, bool compute_)
   {
-   if (rmax_ < 0.0)
+    if (rmax_ < 0.0)
       {
 	throw runtime_error ("polycone::add: Invalid negative 'rmax' !");
       }
-   r_min_max RMM;
-   RMM.rmin = 0.0;
-   RMM.rmax = rmax_;
-   __points[z_] = RMM;
-   if (__points.size () > 1)
-     {
-       __compute_all ();
-     }
+    r_min_max RMM;
+    RMM.rmin = 0.0;
+    RMM.rmax = rmax_;
+    __points[z_] = RMM;
+    if (__points.size () > 1)
+      {
+	if (compute_) __compute_all ();
+      }
+    return;
   }
 
-  void polycone::add (double z_, double rmin_,  double rmax_)
+  bool polycone::is_extruded () const
   {
-   if (rmin_ < 0.0)
+    return __extruded;
+  }
+
+  void polycone::add (double z_, double rmin_,  double rmax_, bool compute_)
+  {
+    if (rmin_ < 0.0)
       {
 	throw runtime_error ("polycone::add: Invalid negative 'rmin' !");
       }
-   if (rmax_ < rmin_)
+    if (rmax_ < rmin_)
       {
 	throw runtime_error ("polycone::add: Invalid value for 'rmax' !");
       }
-   r_min_max RMM;
-   RMM.rmin = rmin_;
-   RMM.rmax = rmax_;
-   __points[z_] = RMM;
-   if (__points.size () > 1)
-     {
-       __compute_all ();
-     }
+    r_min_max RMM;
+    if (rmin_ > 0.0) __extruded = true;
+    RMM.rmin = rmin_;
+    RMM.rmax = rmax_;
+    __points[z_] = RMM;
+    if (__points.size () > 1)
+      {
+	if (compute_) __compute_all ();
+      }
+    return;
   }
 
   bool polycone::is_valid () const
@@ -530,6 +754,8 @@ namespace geomtools {
     __outer_volume = numeric_limits<double>::quiet_NaN();
     __volume = numeric_limits<double>::quiet_NaN();
     __z_min = __z_max = __r_max = numeric_limits<double>::quiet_NaN();
+    __extruded = false;
+    return;
   }
 
   void polycone::__compute_limits ()
@@ -573,60 +799,89 @@ namespace geomtools {
   void polycone::__compute_surfaces ()
   {
     if (! is_valid ()) return;
-    rz_col_t::const_iterator i = __points.begin ();
-    double z0 = i->first;
-    double rmin0 = i->second.rmin;
-    double rmax0 = i->second.rmax;
-    __bottom_surface = M_PI * (rmax0 * rmax0 - rmin0 * rmin0);
-    double s = 0.0;
-    rz_col_t::const_iterator j = i;
-    j++;
-    while (j != __points.end ())
-      {
-	double z1 = j->first;
-	double rmin1 = j->second.rmin;
-	double rmax1 = j->second.rmax;
-	// See: http://en.wikipedia.org/wiki/Frustum#Surface_Area
-	double R1 = rmax0;
-	double R2 = rmax1;
-	double R1_2 = R1 * R1;
-	double R2_2 = R2 * R2;
-	double h = abs (z1 - z0);
-	double A = M_PI * (R1_2 + R2_2 + 
-			   sqrt ((R1_2 - R2_2) * (R1_2 - R2_2) 
-				 + h * h * (R1_2 + R2_2) * (R1_2 + R2_2)));
-	s += A;
-	// increment:
-	j++;
-	z0 = z1;
-	rmin0 = rmin1;
-	rmax0 = rmin1;
-      }
-    __outer_side_surface = s;
-    __top_surface = M_PI * (rmax0 * rmax0 - rmin0 * rmin0);
-    while (j != __points.end ())
-      {
-	double z1 = j->first;
-	double rmin1 = j->second.rmin;
-	double rmax1 = j->second.rmax;
-	// See: http://en.wikipedia.org/wiki/Frustum#Surface_Area
-	double R1 = rmin0;
-	double R2 = rmin1;
-	double R1_2 = R1 * R1;
-	double R2_2 = R2 * R2;
-	double h = abs (z1 - z0);
-	double A = M_PI * (R1_2 + R2_2 + 
-			   sqrt ((R1_2 - R2_2) * (R1_2 - R2_2) 
-				 + h * h * (R1_2 + R2_2) * (R1_2 + R2_2)));
-	s += A;
-	// increment:
-	j++;
-	z0 = z1;
-	rmin0 = rmin1;
-	rmax0 = rmin1;
-      }
-    __inner_side_surface = s;
-   }
+    cerr << "DEBUG: polycone::__compute_surfaces: Entering..." << endl;
+    
+    // bottom surface:
+    {
+      rz_col_t::const_iterator i = __points.begin ();
+      double z0 = i->first;
+      double rmin0 = i->second.rmin;
+      double rmax0 = i->second.rmax;
+      __bottom_surface = M_PI * (rmax0 * rmax0 - rmin0 * rmin0);
+    }
+
+    // outer side surface:
+    {
+      rz_col_t::const_iterator i = __points.begin ();
+      double z0 = i->first;
+      double rmin0 = i->second.rmin;
+      double rmax0 = i->second.rmax;
+      double s = 0.0;
+      rz_col_t::const_iterator j = __points.begin ();
+      j++;
+      while (j != __points.end ())
+	{
+	  double z1 = j->first;
+	  double rmin1 = j->second.rmin;
+	  double rmax1 = j->second.rmax;
+	  // See: http://en.wikipedia.org/wiki/Frustum#Surface_Area
+	  double R1 = rmax0;
+	  double R2 = rmax1;
+	  double R1_2 = R1 * R1;
+	  double R2_2 = R2 * R2;
+	  double h = abs (z1 - z0);
+	  double A = M_PI * (R1_2 + R2_2 + 
+			     sqrt ((R1_2 - R2_2) * (R1_2 - R2_2) 
+				   + h * h * (R1_2 + R2_2) * (R1_2 + R2_2)));
+	  s += A;
+	  // increment:
+	  j++;
+	  z0 = z1;
+	  rmin0 = rmin1;
+	  rmax0 = rmax1;
+	}
+      __outer_side_surface = s;
+
+      // top surface:
+      __top_surface = M_PI * (rmax0 * rmax0 - rmin0 * rmin0);
+    }
+
+    {
+      // inner side surface:
+      rz_col_t::const_iterator i = __points.begin ();
+      double z0 = i->first;
+      double rmin0 = i->second.rmin;
+      double rmax0 = i->second.rmax;
+      double s = 0.0;
+      rz_col_t::const_iterator j = i;
+      j++;
+      while (j != __points.end ())
+	{
+	  double z1 = j->first;
+	  double rmin1 = j->second.rmin;
+	  double rmax1 = j->second.rmax;
+	  // See: http://en.wikipedia.org/wiki/Frustum#Surface_Area
+	  double R1 = rmin0;
+	  double R2 = rmin1;
+	  double R1_2 = R1 * R1;
+	  double R2_2 = R2 * R2;
+	  double h = abs (z1 - z0);
+	  double A = M_PI * (R1_2 + R2_2 + 
+			     sqrt ((R1_2 - R2_2) * (R1_2 - R2_2) 
+				   + h * h * (R1_2 + R2_2) * (R1_2 + R2_2)));
+	  s += A;
+	  // increment:
+	  j++;
+	  z0 = z1;
+	  rmin0 = rmin1;
+	  rmax0 = rmax1;
+	}
+      __inner_side_surface = s;
+      cerr << "DEBUG:  polycone::__compute_surfaces: " 
+	   << "__inner_side_surface==" << __inner_side_surface << endl;
+    }
+    return;
+  }
   
   void polycone::__compute_volume ()
   {
@@ -668,10 +923,10 @@ namespace geomtools {
       while (j != __points.end ())
 	{
 	  double z1 = j->first;
-	  double r1 = j->second.rmax;
+	  double rmin1 = j->second.rmin;
 	  // See: http://en.wikipedia.org/wiki/Frustum# Volume
 	  double R1 = rmin0;
-	  double R2 = r1;
+	  double R2 = rmin1;
 	  double R1_2 = R1 * R1;
 	  double R2_2 = R2 * R2;
 	  double h = abs (z1 - z0);
@@ -680,9 +935,10 @@ namespace geomtools {
 	  // increment:
 	  j++;
 	  z0 = z1;
-	  rmin0 = r1;
+	  rmin0 = rmin1;
 	}
     }
+
     __outer_volume = vext;
     __inner_volume = vint;
     __volume = __outer_volume - __inner_volume;
@@ -711,7 +967,7 @@ namespace geomtools {
 	s += __top_surface;
       }
     return s;
-   }
+  }
 
   double polycone::get_volume () const
   {
@@ -730,7 +986,7 @@ namespace geomtools {
     if ( flag_ == "surface.outer_side" ) return get_surface (FACE_OUTER_SIDE);
     if ( flag_ == "surface" ) return get_surface (FACE_ALL);
 
-    throw runtime_error ("polycone::get_parameter: Unknown flag!");
+    throw runtime_error ("polycone::get_parameter: Unknown parameter flag !");
   }
 
   bool polycone::is_inside (const vector_3d & point_, 
@@ -940,7 +1196,7 @@ namespace geomtools {
 	  } 
 	try 
 	  {
-	    p_.add (z, rmin, rmax);
+	    p_.add (z, rmin, rmax, false);
 	  }
 	catch (...)
 	  {
@@ -955,6 +1211,7 @@ namespace geomtools {
 	in_.clear (ios_base::failbit);
 	return in_;
       } 
+    p_.__compute_all ();
     return in_;
   }
 
@@ -988,9 +1245,9 @@ namespace geomtools {
 	 << "Inner side surface : " << get_surface (FACE_INNER_SIDE) / CLHEP::cm2 << " cm2" << endl;
     out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
 	 << "Total surface : " << get_surface (FACE_ALL) / CLHEP::cm2 << " cm2" << endl;
-     return;
+    return;
   }
   
 } // end of namespace geomtools
 
-// end of polycone.cc
+  // end of polycone.cc

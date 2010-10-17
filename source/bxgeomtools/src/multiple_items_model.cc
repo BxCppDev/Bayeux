@@ -8,6 +8,7 @@ namespace geomtools {
 
   using namespace std;  
 
+  /*
   multiple_items_model::item::item ()
   {
     __model = 0;
@@ -62,11 +63,25 @@ namespace geomtools {
   {
     return __phys;
   }
+  */
 
   /***************************************/
 
-  i_model::creator_registration<multiple_items_model> multiple_items_model::__CR;
-  
+  MWIM & multiple_items_model::get_internals ()
+  {
+    return __internals;
+  }
+
+  const MWIM & multiple_items_model::get_internals () const
+  {
+    return __internals;
+  }
+    
+  string multiple_items_model::get_model_id () const
+  {
+    return "geomtools::multiple_items_model";
+  }
+   
   const box & multiple_items_model::get_box () const
   {
     return __solid;
@@ -94,6 +109,7 @@ namespace geomtools {
     return __material_name;
   }
     
+  /*
   bool multiple_items_model::has_item (const string & label_) const
   {
     return __items.find (label_) != __items.end ();      
@@ -165,12 +181,9 @@ namespace geomtools {
   {
     return __items;
   }
-    
-  string multiple_items_model::get_model_id () const
-  {
-    return "geomtools::multiple_items_model";
-  }
- 
+
+  */
+
   
   // ctor:
   multiple_items_model::multiple_items_model ()
@@ -181,9 +194,8 @@ namespace geomtools {
   // dtor:
   multiple_items_model::~multiple_items_model ()
   {
-    __items.clear ();
+    //__items.clear ();
   }
-
 
   void multiple_items_model::_at_construct (const string & name_,
 					    const datatools::utils::properties & config_,
@@ -196,31 +208,31 @@ namespace geomtools {
     /*** box dimensions ***/
     double x, y, z;
     string length_unit = "mm";
-     
+    double lunit = CLHEP::mm;
+ 
+    if (config_.has_key ("length_unit"))
+      {
+	string length_unit_str = config_.fetch_string ("length_unit");
+	lunit = datatools::utils::units::get_length_unit_from (length_unit_str);
+      }
+    
     if (config_.has_key ("x"))
       {
 	x = config_.fetch_real ("x");
+	x *= lunit;
       }
 
     if (config_.has_key ("y"))
       {
 	y = config_.fetch_real ("y");
+	y *= lunit;
       }
 
     if (config_.has_key ("z"))
       {
 	z = config_.fetch_real ("z");
+	z *= lunit;
       }
-
-    if (config_.has_key ("length_unit"))
-      {
-	length_unit = config_.fetch_string ("length_unit");
-      }
-      
-    double lunit = datatools::utils::units::get_length_unit_from (length_unit);
-    x *= lunit;
-    y *= lunit;
-    z *= lunit;
 
     /*** material ***/
     {
@@ -239,12 +251,12 @@ namespace geomtools {
       set_material_name (material);
     }
 
+    /*
     vector<string> labels;
     if (config_.has_key ("items.labels"))
       {
 	config_.fetch ("items.labels", labels);
       }
-
 
     if (! models_)
       {
@@ -253,6 +265,7 @@ namespace geomtools {
 		<< "Missing logicals dictionary !"; 
 	throw runtime_error (message.str ());
       }
+    */
 
     __solid.reset ();
     __solid.set_x (x);
@@ -267,6 +280,9 @@ namespace geomtools {
     get_logical ().set_shape (__solid);
     get_logical ().set_material_ref (__get_material_name ());
 
+    __internals.plug_internal_models (config_, get_logical (), models_);
+
+    /*
     for (vector<string>::const_iterator i = labels.begin ();
 	 i != labels.end ();
 	 i++)
@@ -355,6 +371,7 @@ namespace geomtools {
 
 	//clog << "******* DEVEL: Item '" << item_label << "' is done..." << endl;
       }
+    */
 
     if (g_devel) clog << "DEVEL: multiple_items_model::_at_construct: Exiting." << endl;
     return;
@@ -376,6 +393,12 @@ namespace geomtools {
       out_ << indent << i_tree_dumpable::tag 
 	   << "Material : " << __get_material_name () << std::endl;
     }
+     
+    {
+      // Items:
+      out_ << indent << i_tree_dumpable::tag 
+	   << "Internal items : " << get_internals ().get_items ().size () << std::endl;
+    }
 
     {
       // Solid:
@@ -391,6 +414,8 @@ namespace geomtools {
 
     return;
   }
+
+  i_model::creator_registration<multiple_items_model> multiple_items_model::__CR;
 
 } // end of namespace geomtools
 

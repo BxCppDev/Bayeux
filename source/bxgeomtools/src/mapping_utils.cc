@@ -28,7 +28,6 @@ namespace geomtools {
     return key_oss.str ();
   }
   
-
   bool mapping_utils::has_key (const datatools::utils::properties & config_,
 			       const string & key_)
   {

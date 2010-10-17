@@ -10,9 +10,6 @@ namespace geomtools {
 
   const string simple_world_model::SETUP_LABEL = "setup";
   
-  // register this creator:   
-  geomtools::i_model::creator_registration<simple_world_model> simple_world_model::__CR;
-  
   const geomtools::box & simple_world_model::get_solid () const
   {
     return __solid;
@@ -292,6 +289,9 @@ namespace geomtools {
 
      return;
   }
+  
+  // register this creator:   
+  geomtools::i_model::creator_registration<simple_world_model> simple_world_model::__CR;
        
 } // end of namespace geomtools
 

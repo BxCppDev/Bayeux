@@ -27,6 +27,8 @@
 
 namespace geomtools {
 
+  using namespace std;
+
   class material
   {
   public:

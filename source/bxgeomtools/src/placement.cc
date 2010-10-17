@@ -599,6 +599,7 @@ namespace geomtools {
     y *= length_unit;
     z *= length_unit;
  
+    string rotation_axis_label; 
     int rotation_axis = -1;
     bool simple_rotation = false;
     oss >> ws;
@@ -617,7 +618,8 @@ namespace geomtools {
 	if (pr_sep == '/' )
 	  {
 	    simple_rotation = true;
-	    oss >> rotation_axis >> phi >> ws;
+	    oss >> rotation_axis_label >> phi >> ws;;
+	    rotation_axis = get_rotation_axis_from_label (rotation_axis_label);
 	  }
 	// extract angle unit:
 	if (! oss.eof ())

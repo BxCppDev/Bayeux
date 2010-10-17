@@ -7,10 +7,7 @@
 namespace geomtools {
 
   using namespace std;
-  
-  // register this creator:   
-  geomtools::i_model::creator_registration<cylindric_extrusion_boxed_model> cylindric_extrusion_boxed_model::__CR;
-  
+   
   const geomtools::box & cylindric_extrusion_boxed_model::get_box () const
   {
     return __solid;
@@ -345,6 +342,9 @@ namespace geomtools {
 
      return;
   }
+ 
+  // register this creator:   
+  geomtools::i_model::creator_registration<cylindric_extrusion_boxed_model> cylindric_extrusion_boxed_model::__CR;
     
 } // end of namespace geomtools
 

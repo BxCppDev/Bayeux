@@ -151,11 +151,13 @@ namespace geomtools {
 
   i_model::model_db::model_db (bool test_)
   {
-    if (g_devel)
+    bool devel = false;
+    devel = true;
+    if (g_devel || devel)
       {
 	clog << "DEVEL: i_model::model_db::model_db: Entering..." << endl; 
       }
-    if (g_devel)
+    if (g_devel|| devel)
       {
 	clog << "DEVEL: i_model::model_db::model_db: Exiting. " << endl;
       }

@@ -1,105 +1,113 @@
 // -*- mode: c++ ; -*- 
-/* stacked_boxed_model.cc
+/* stacked_model.cc
  */
 
-#include <geomtools/stacked_boxed_model.h>
+#include <geomtools/stacked_model.h>
 
 namespace geomtools {
 
   using namespace std;
 
-  const string stacked_boxed_model::STACKED_LABEL = "stacked";
-  const string stacked_boxed_model::LABEL_PROPERTY_PREFIX = "label";
+  const string stacked_model::STACKED_PROPERTY_PREFIX = "stacked.";
+  const string stacked_model::STACKED_MODEL_PROPERTY_PREFIX = "stacked.model_";
+  const string stacked_model::STACKED_LABEL_PROPERTY_PREFIX = "stacked.label_";
+  const string stacked_model::DEFAULT_STACKED_LABEL_PREFIX  = "stacked";
 
-  const string & stacked_boxed_model::get_material_name () const
+  // registration ID:
+  string stacked_model::get_model_id () const
   {
-    assert_constructed ("stacked_boxed_model::get_material_name");
+    return "geomtools::stacked_model";
+  }
+
+  const string & stacked_model::get_material_name () const
+  {
+    assert_constructed ("stacked_model::get_material_name");
     return __get_material_name ();
   }
 
-  const string & stacked_boxed_model::__get_material_name () const
+  const string & stacked_model::__get_material_name () const
   {
     return __material_name;
   }
 
-  void stacked_boxed_model::set_material_name (const string & mn_)
+  void stacked_model::set_material_name (const string & mn_)
   {
-    assert_unconstructed("stacked_boxed_model::set_material_name");
+    assert_unconstructed("stacked_model::set_material_name");
 
     __material_name = mn_;
   }
 
-  void stacked_boxed_model::set_stacking_axis (int a_)
+  void stacked_model::set_stacking_axis (int a_)
   {
-    assert_unconstructed("stacked_boxed_model::set_stacking_axis");
+    assert_unconstructed("stacked_model::set_stacking_axis");
 
     if ((a_ < STACKING_ALONG_X) || (a_ > STACKING_ALONG_Z))
       {
-	throw runtime_error ("stacked_boxed_model::set_staking_axis: Invalid stacking axis !");
+	throw runtime_error ("stacked_model::set_staking_axis: Invalid stacking axis !");
       }
     __stacking_axis = a_;
   }
 
-  int stacked_boxed_model::get_stacking_axis () const
+  int stacked_model::get_stacking_axis () const
   {
-    assert_constructed ("stacked_boxed_model::get_stacking_axis");
+    assert_constructed ("stacked_model::get_stacking_axis");
     return __get_stacking_axis ();
   }
 
-  int stacked_boxed_model::__get_stacking_axis () const
+  int stacked_model::__get_stacking_axis () const
   {
     return __stacking_axis;
   }
 
-  bool stacked_boxed_model::is_stacking_along_x () const
+  bool stacked_model::is_stacking_along_x () const
   {
     return __get_stacking_axis () == STACKING_ALONG_X;
   }
   
-  bool stacked_boxed_model::is_stacking_along_y () const
+  bool stacked_model::is_stacking_along_y () const
   {
     return __get_stacking_axis () == STACKING_ALONG_Y;
   }
   
-  bool stacked_boxed_model::is_stacking_along_z () const
+  bool stacked_model::is_stacking_along_z () const
   {
     return __get_stacking_axis () == STACKING_ALONG_Z;
   }
   
-  const geomtools::box & stacked_boxed_model::get_box () const
+  const geomtools::box & stacked_model::get_box () const
   {
-    assert_constructed ("stacked_boxed_model::get_box");
+    assert_constructed ("stacked_model::get_box");
     return __solid;
   }
   
-  const geomtools::box & stacked_boxed_model::get_solid () const
+  const geomtools::box & stacked_model::get_solid () const
   {
-    assert_constructed ("stacked_boxed_model::get_solid");
+    assert_constructed ("stacked_model::get_solid");
     return __solid;
   }
 
-  void stacked_boxed_model::add_boxed_model (int i_, const i_model & model_, const string & label_)
+  void stacked_model::add_stacked_model (int i_, const i_model & model_, const string & label_)
   {
-    assert_unconstructed("stacked_boxed_model::add_boxed_model");
+    assert_unconstructed("stacked_model::add_stacked_model");
 
-    boxed_dict_t::const_iterator found = __boxed_models.find (i_);
-    if (found != __boxed_models.end ())
+    stacked_dict_t::const_iterator found = __stacked_models.find (i_);
+    if (found != __stacked_models.end ())
       {
 	ostringstream message;
-	message << "stacked_boxed_model::add_boxed_model: "
+	message << "stacked_model::add_stacked_model: "
 		<< "Dictionary already has a model with "
 		<< "index '" << i_ << "' !";
 	throw runtime_error (message.str ());
       }
-    boxed_item bi;
-    __boxed_models[i_] = bi;
-    __boxed_models[i_].model = &model_;
-    __boxed_models[i_].placmt.invalidate ();
+    stacked_item bi;
+    __stacked_models[i_] = bi;
+    __stacked_models[i_].model = &model_;
+    __stacked_models[i_].placmt.invalidate ();
     string label = label_;
     if (label.empty ())
       {
 	ostringstream label_oss;
-	label_oss << STACKED_LABEL << "__" << i_ << "__";
+	label_oss << DEFAULT_STACKED_LABEL_PREFIX << "__" << i_ << "__";
 	label = label_oss.str ();
       }
     else
@@ -107,60 +115,60 @@ namespace geomtools {
 	if (__labels.find (label) != __labels.end ())
 	  {
 	    ostringstream message;
-	    message << "stacked_boxed_model::add_boxed_model: "
+	    message << "stacked_model::add_stacked_model: "
 		    << "Label '" << label << "' is already used !";
 	    throw runtime_error (message.str ());
 	  }
       }
-    __boxed_models[i_].label = label;
+    __stacked_models[i_].label = label;
     __labels[label] = i_;
     return;
   }
 
-  const stacked_boxed_model::boxed_dict_t & stacked_boxed_model::get_models () const
+  const stacked_model::stacked_dict_t & stacked_model::get_models () const
   {
-    return __boxed_models;
+    return __stacked_models;
   }
 
-  const stacked_boxed_model::labels_dict_t & stacked_boxed_model::get_labels () const
+  const stacked_model::labels_dict_t & stacked_model::get_labels () const
   {
     return __labels;
   }
 
-  size_t stacked_boxed_model::get_number_of_boxed_models () const
+  size_t stacked_model::get_number_of_stacked_models () const
   {
-    return __boxed_models.size ();
+    return __stacked_models.size ();
   }
 
-  bool stacked_boxed_model::has_boxed_model (const string & label_) const
+  bool stacked_model::has_stacked_model (const string & label_) const
   {
     labels_dict_t::const_iterator found = __labels.find (label_);
     return found != __labels.end ();
   }
 
-  const stacked_boxed_model::boxed_item & 
-  stacked_boxed_model::get_boxed_item (const string & label_) const
+  const stacked_model::stacked_item & 
+  stacked_model::get_stacked_item (const string & label_) const
   {
     labels_dict_t::const_iterator found = __labels.find (label_);
     if (found == __labels.end ())
       {
 	ostringstream message;
-	message << "stacked_boxed_model::get_boxed_item: "
+	message << "stacked_model::get_stacked_item: "
 		<< "Dictionary has no model with "
 		<< "label '" << label_ << "' !";
 	throw runtime_error (message.str ());
       }
-    return (this->get_boxed_item (found->second));
+    return (this->get_stacked_item (found->second));
   }
 
-  const stacked_boxed_model::boxed_item & 
-  stacked_boxed_model::get_boxed_item (int i_) const
+  const stacked_model::stacked_item & 
+  stacked_model::get_stacked_item (int i_) const
   {
-    boxed_dict_t::const_iterator found = __boxed_models.find (i_);
-    if (found == __boxed_models.end ())
+    stacked_dict_t::const_iterator found = __stacked_models.find (i_);
+    if (found == __stacked_models.end ())
       {
 	ostringstream message;
-	message << "stacked_boxed_model::get_boxed_item: "
+	message << "stacked_model::get_stacked_item: "
 		<< "Dictionary has no model item with "
 		<< "index '" << i_ << "' !";
 	throw runtime_error (message.str ());
@@ -168,54 +176,49 @@ namespace geomtools {
     return found->second;
   }
 
-  const i_model & stacked_boxed_model::get_boxed_model (const string & label_) const
+  const i_model & stacked_model::get_stacked_model (const string & label_) const
   {
     labels_dict_t::const_iterator found = __labels.find (label_);
     if (found == __labels.end ())
       {
 	ostringstream message;
-	message << "stacked_boxed_model::get_boxed_model: "
+	message << "stacked_model::get_stacked_model: "
 		<< "Dictionary has no model with "
 		<< "label '" << label_ << "' !";
 	throw runtime_error (message.str ());
       }
-    return this->get_boxed_model (found->second);
+    return this->get_stacked_model (found->second);
   }
 
-  const i_model & stacked_boxed_model::get_boxed_model (int i_) const
+  const i_model & stacked_model::get_stacked_model (int i_) const
   {
-    boxed_dict_t::const_iterator found = __boxed_models.find (i_);
-    if (found == __boxed_models.end ())
+    stacked_dict_t::const_iterator found = __stacked_models.find (i_);
+    if (found == __stacked_models.end ())
       {
 	ostringstream message;
-	message << "stacked_boxed_model::get_boxed_model: "
+	message << "stacked_model::get_stacked_model: "
 		<< "Dictionary has no model with "
 		<< "index '" << i_ << "' !";
 	throw runtime_error (message.str ());
       }
     return *(found->second.model);
   }
-
-  string stacked_boxed_model::get_model_id () const
-  {
-    return "geomtools::stacked_boxed_model";
-  }
   
   // ctor:
-  stacked_boxed_model::stacked_boxed_model () : i_boxed_model ()
+  stacked_model::stacked_model () : i_boxed_model ()
   {
     __material_name = "";
     __stacking_axis = STACKING_ALONG_INVALID;
   }
   
   // dtor:
-  stacked_boxed_model::~stacked_boxed_model ()
+  stacked_model::~stacked_model ()
   {
   }
   
-  void stacked_boxed_model::_at_construct (const string & name_,
-					   const datatools::utils::properties & config_,
-					   models_col_t * models_)
+  void stacked_model::_at_construct (const string & name_,
+				     const datatools::utils::properties & config_,
+				     models_col_t * models_)
   {
     bool devel = i_model::g_devel;
     if (config_.has_flag ("devel"))
@@ -224,11 +227,11 @@ namespace geomtools {
       }  
     if (devel)
       {
-	clog << "DEVEL: stacked_boxed_model::_at_construct: Entering..." << endl;
+	clog << "DEVEL: stacked_model::_at_construct: Entering..." << endl;
       }
     set_name (name_);
     size_t number_of_items;
-    string boxed_model_name;
+    string stacked_model_name;
     string label_name;
     string stacking_axis_label = "";
     int    stacking_axis;
@@ -249,7 +252,7 @@ namespace geomtools {
     else
       {
 	ostringstream message;
-	message << "stacked_boxed_model::_at_construct: "
+	message << "stacked_model::_at_construct: "
 		<< "Missing 'material.ref' property !"; 
 	throw runtime_error (message.str ());		
       }
@@ -263,14 +266,14 @@ namespace geomtools {
       }  
  
     /*** stacking axis ***/
-    if (config_.has_key ("stacking_axis"))
+    if (config_.has_key ("stacked.axis"))
       {
-	stacking_axis_label = config_.fetch_string ("stacking_axis");
+	stacking_axis_label = config_.fetch_string ("stacked.axis");
       }  
     else
       {
 	ostringstream message;
-	message << "stacked_boxed_model::_at_construct: "
+	message << "stacked_model::_at_construct: "
 		<< "Missing 'stacking_axis' property !"; 
 	throw runtime_error (message.str ());		
       }
@@ -288,32 +291,31 @@ namespace geomtools {
       }
     set_stacking_axis (stacking_axis);
 
-    /*** number of stacked boxed models ***/
-    if (config_.has_key ("number_of_items"))
+    /*** number of stacked stacked models ***/
+    if (config_.has_key ("stacked.number_of_items"))
       {
-	number_of_items = config_.fetch_integer ("number_of_items");
+	number_of_items = config_.fetch_integer ("stacked.number_of_items");
       }  
     else
       {
 	ostringstream message;
-	message << "stacked_boxed_model::_at_construct: "
-		<< "Missing 'number_of_items' property !"; 
+	message << "stacked_model::_at_construct: "
+		<< "Missing 'stacked.number_of_items' property !"; 
 	throw runtime_error (message.str ());		
       }
 
-
-    if (devel) cerr << "DEVEL: stacked_boxed_model::_at_construct: " << "step 1" << endl;
+    if (devel) cerr << "DEVEL: stacked_model::_at_construct: " << "step 1" << endl;
 
     /*** check models ***/
     if (! models_)
       {
 	ostringstream message;
-	message << "stacked_boxed_model::_at_construct: "
+	message << "stacked_model::_at_construct: "
 		<< "Missing logicals dictionary !"; 
 	throw runtime_error (message.str ());
       }
 
-    if (devel) cerr << "DEVEL: stacked_boxed_model::_at_construct: " << "step 2" << endl;
+    if (devel) cerr << "DEVEL: stacked_model::_at_construct: " << "step 2" << endl;
 
     /*** loop over models to be stacked ***/
     for (int i = 0; i < number_of_items; i++)
@@ -329,13 +331,13 @@ namespace geomtools {
 	else
 	  {
 	    ostringstream message;
-	    message << "stacked_boxed_model::_at_construct: "
+	    message << "stacked_model::_at_construct: "
 		    << "Missing '" << stacked_item_prop.str () << "' property !"; 
 	    throw runtime_error (message.str ());	
 	  }
 	// attempt to extract a user defined label:
 	ostringstream label_item_prop;
-	label_item_prop << LABEL_PROPERTY_PREFIX << "_" << i;
+	label_item_prop << STACKED_LABEL_PROPERTY_PREFIX  << i;
 	if (config_.has_key (label_item_prop.str ()))
 	  {
 	    label_name = config_.fetch_string (label_item_prop.str ());
@@ -349,24 +351,24 @@ namespace geomtools {
 	    if (! i_shape_3d::is_stackable (found->second->get_logical ().get_shape ()))
 	      {
 		ostringstream message;
-		message << "stacked_boxed_model::_at_construct: "
+		message << "stacked_model::_at_construct: "
 			<< "The embedded model '" << found->second->get_name () 
 			<< "' is not stackable !"; 
 		throw runtime_error (message.str ());
 	      }
-	    add_boxed_model (i, *(found->second), label_name);
+	    add_stacked_model (i, *(found->second), label_name);
 	  }
 	else
 	  {
 	    ostringstream message;
-	    message << "stacked_boxed_model::_at_construct: "
+	    message << "stacked_model::_at_construct: "
 		    << "Cannot find model with name '" 
 		    << stacked_model_name << "' !";
 	    throw runtime_error (message.str ());
 	  }
       }
 
-    if (devel) cerr << "DEVEL: stacked_boxed_model::_at_construct: " << "step 3" << endl;
+    if (devel) cerr << "DEVEL: stacked_model::_at_construct: " << "step 3" << endl;
 
     /*** compute main box dimensions ***/
     mygsl::min_max mmx;
@@ -375,11 +377,11 @@ namespace geomtools {
     double stacked_x = 0.0;
     double stacked_y = 0.0;
     double stacked_z = 0.0;
-    for (boxed_dict_t::const_iterator i = __boxed_models.begin ();
-	 i != __boxed_models.end ();
+    for (stacked_dict_t::const_iterator i = __stacked_models.begin ();
+	 i != __stacked_models.end ();
 	 i++)
       {
-	const boxed_item & bi = i->second;
+	const stacked_item & bi = i->second;
 	const i_model * stacked_model = bi.model;
 
 	const i_shape_3d & the_shape = stacked_model->get_logical ().get_shape ();
@@ -389,7 +391,7 @@ namespace geomtools {
 	if (! i_shape_3d::pickup_stackable (the_shape, the_SD))
 	  {
 	    ostringstream message;
-	    message << "stacked_boxed_model::_at_construct: "
+	    message << "stacked_model::_at_construct: "
 		    << "Cannot stack '" 
 		    << the_shape.get_shape_name () << "' shape !";
 	    throw runtime_error (message.str ());
@@ -397,18 +399,18 @@ namespace geomtools {
 
 	if (devel) 
 	  {
-	    cerr << "DEVEL: stacked_boxed_model::_at_construct: " << "step 3d: dump stackable data for '" << stacked_model->get_name () << "' from '" << name_ << "'..." << endl;
+	    cerr << "DEVEL: stacked_model::_at_construct: " << "step 3d: dump stackable data for '" << stacked_model->get_name () << "' from '" << name_ << "'..." << endl;
 
-	    the_SD.dump (cerr, "DEVEL: stacked_boxed_model::_at_construct: Stackable data:");
+	    the_SD.dump (cerr, "DEVEL: stacked_model::_at_construct: Stackable data:");
 	  }
-	if (devel) cerr << "DEVEL: stacked_boxed_model::_at_construct: " << "step 3e: gets..." << endl;
+	if (devel) cerr << "DEVEL: stacked_model::_at_construct: " << "step 3e: gets..." << endl;
 	double full_x = the_SD.get_xmax () - the_SD.get_xmin ();
 	double full_y = the_SD.get_ymax () - the_SD.get_ymin ();
 	double full_z = the_SD.get_zmax () - the_SD.get_zmin ();
 	mmx.add (full_x);
 	mmy.add (full_y);
 	mmz.add (full_z);
-	if (devel) cerr << "DEVEL: stacked_boxed_model::_at_construct: " << "step 3f: mmx... add" << endl;
+	if (devel) cerr << "DEVEL: stacked_model::_at_construct: " << "step 3f: mmx... add" << endl;
 	if (is_stacking_along_x ())
 	  {
 	    stacked_x += full_x;
@@ -423,7 +425,7 @@ namespace geomtools {
 	  }
       }
 
-    if (devel) cerr << "DEVEL: stacked_boxed_model::_at_construct: " << "step 4" << endl;
+    if (devel) cerr << "DEVEL: stacked_model::_at_construct: " << "step 4" << endl;
 
     double max = -1.0;
     if (is_stacking_along_x ())
@@ -453,7 +455,7 @@ namespace geomtools {
 	if (x < stacked_x)
 	  {
 	    ostringstream message;
-	    message << "stacked_boxed_model::_at_construct: "
+	    message << "stacked_model::_at_construct: "
 		    << "Enforced X dimension '" << x / CLHEP::mm << "' mm (<" << stacked_x / CLHEP::mm << ") is too small for stacked components to fit !"; 
 	    throw runtime_error (message.str ());    
 	  }
@@ -467,7 +469,7 @@ namespace geomtools {
 	if (y < stacked_y)
 	  {
 	    ostringstream message;
-	    message << "stacked_boxed_model::_at_construct: "
+	    message << "stacked_model::_at_construct: "
 		    << "Enforced Y dimension '" << y / CLHEP::mm << "' mm (<" << stacked_y / CLHEP::mm << ") is too small for stacked components to fit !"; 
 	    throw runtime_error (message.str ());    
 	  }
@@ -481,14 +483,14 @@ namespace geomtools {
 	if (z < stacked_z)
 	  {
 	    ostringstream message;
-	    message << "stacked_boxed_model::_at_construct: "
+	    message << "stacked_model::_at_construct: "
 		    << "Enforced Z dimension '" << z / CLHEP::mm << "' mm (<" << stacked_z / CLHEP::mm << ") is too small for stacked components to fit !"; 
 	    throw runtime_error (message.str ());    
 	  }
         dim_z = z;
       }  
 
-    if (devel) cerr << "DEVEL: stacked_boxed_model::_at_construct: " << "step 5" << endl;
+    if (devel) cerr << "DEVEL: stacked_model::_at_construct: " << "step 5" << endl;
 
     __solid.reset ();
     __solid.set_x (dim_x);
@@ -496,7 +498,7 @@ namespace geomtools {
     __solid.set_z (dim_z);
     if (! __solid.is_valid ())
       {
-	throw runtime_error ("stacked_boxed_model::_at_construct: Invalid solid !");
+	throw runtime_error ("stacked_model::_at_construct: Invalid solid !");
       }
 
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
@@ -518,14 +520,14 @@ namespace geomtools {
 	pos = -0.5 * stacked_z;
       }
 
-    if (devel) cerr << "DEVEL: stacked_boxed_model::_at_construct: " << "step 6" << endl;
+    if (devel) cerr << "DEVEL: stacked_model::_at_construct: " << "step 6" << endl;
 
     int j = 0;
-    for (boxed_dict_t::iterator i = __boxed_models.begin ();
-	 i != __boxed_models.end ();
+    for (stacked_dict_t::iterator i = __stacked_models.begin ();
+	 i != __stacked_models.end ();
 	 i++)
       {
-	boxed_item & bi = i->second;
+	stacked_item & bi = i->second;
 	const i_model * stacked_model = bi.model;
 	double xi, yi, zi;
 	xi = yi = zi = 0.0;
@@ -535,7 +537,7 @@ namespace geomtools {
 	if (! i_shape_3d::pickup_stackable (the_shape, the_SD))
 	  {
 	    ostringstream message;
-	    message << "stacked_boxed_model::_at_construct: "
+	    message << "stacked_model::_at_construct: "
 		    << "Cannot stack '" 
 		    << the_shape.get_shape_name () << "' shape !";
 	    throw runtime_error (message.str ());
@@ -574,60 +576,59 @@ namespace geomtools {
 	j++;
       }
 
-    if (devel) cerr << "DEVEL: stacked_boxed_model::_at_construct: " << "step 7" << endl;
+    if (devel) cerr << "DEVEL: stacked_model::_at_construct: " << "step 7" << endl;
 
-    if (devel) clog << "DEVEL: stacked_boxed_model::_at_construct: Exiting." << endl;
+    if (devel) clog << "DEVEL: stacked_model::_at_construct: Exiting." << endl;
     return;
   }
 
-  void stacked_boxed_model::tree_dump (ostream & out_, 
-					  const string & title_ , 
-					  const string & indent_, 
-					  bool inherit_) const
+  void stacked_model::tree_dump (ostream & out_, 
+				 const string & title_ , 
+				 const string & indent_, 
+				 bool inherit_) const
   {
-     namespace du = datatools::utils;
-     string indent;
-     if (! indent_.empty ()) indent = indent_;
-     i_model::tree_dump (out_, title_, indent, true);
+    namespace du = datatools::utils;
+    string indent;
+    if (! indent_.empty ()) indent = indent_;
+    i_model::tree_dump (out_, title_, indent, true);
 
-     {
-       out_ << indent << i_tree_dumpable::tag 
-	    << "Material : " << get_material_name () << endl;
-     }
+    {
+      out_ << indent << i_tree_dumpable::tag 
+	   << "Material : " << get_material_name () << endl;
+    }
 
-     {
-       out_ << indent << i_tree_dumpable::tag 
-	    << "Stacking axis : " << get_stacking_axis () << endl;
-     }
+    {
+      out_ << indent << i_tree_dumpable::tag 
+	   << "Stacking axis : " << get_stacking_axis () << endl;
+    }
      
-     {
-       for (labels_dict_t::const_iterator i = __labels.begin ();
-	    i != __labels.end ();
-	    i++)
-	 {
-	   out_ << indent << i_tree_dumpable::tag 
-		<< "Stacked model : " << "'" << i->first << "'" << " [rank==" << i->second << "]" << endl;
-	 }
-     }
+    {
+      for (labels_dict_t::const_iterator i = __labels.begin ();
+	   i != __labels.end ();
+	   i++)
+	{
+	  out_ << indent << i_tree_dumpable::tag 
+	       << "Stacked model : " << "'" << i->first << "'" << " [rank==" << i->second << "]" << endl;
+	}
+    }
 
-     {
-       out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
-	    << "Solid : " << endl;
-       {
-	 ostringstream indent_oss;
-	 indent_oss << indent;
-	 indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
-	 __solid.tree_dump (out_, "", indent_oss.str ());
-       }   
-     }
+    {
+      out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
+	   << "Solid : " << endl;
+      {
+	ostringstream indent_oss;
+	indent_oss << indent;
+	indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+	__solid.tree_dump (out_, "", indent_oss.str ());
+      }   
+    }
 
-     return;
+    return;
   }
 
-  
   // register this creator:   
-  geomtools::i_model::creator_registration<stacked_boxed_model> stacked_boxed_model::__CR;
-       
+  geomtools::i_model::creator_registration<stacked_model> stacked_model::__CR;
+      
 } // end of namespace geomtools
 
-// end of stacked_boxed_model.cc
+// end of stacked_model.cc

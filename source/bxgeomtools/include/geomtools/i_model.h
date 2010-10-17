@@ -195,7 +195,6 @@ namespace geomtools {
       creator_registration ()
       {
 	bool devel = g_devel;
-	//devel = true;
 	using namespace std;
 	if (devel) clog << "DEVEL: i_model::creator_registration::ctor: "
 			<< "Entering..."
@@ -208,7 +207,7 @@ namespace geomtools {
 	model_creator_t model_creator 
 	  = i_model::creator_registration<model_type>::creator;
 	if (devel) clog << "DEVEL: i_model::creator_registration::ctor: "
-			<< "vg_creator='" << hex << (void *) model_creator << dec << "'"
+			<< "model creator='" << hex << (void *) model_creator << dec << "'"
 			<< endl;
 	
 	try
@@ -220,7 +219,7 @@ namespace geomtools {
 		if (devel) 
 		  {
 		    clog << "DEVEL: i_model::creator_registration::ctor: "
-			 << "register_vg='" << model_id << " @ " 
+			 << "register model='" << model_id << " @ " 
 			 << hex << (void *) model_creator << dec << "'"
 			 << endl;
 		  }

@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*- 
 // test_model_factory.cxx  
-  
+   
 #include <cstdlib> 
 #include <iostream>
 #include <string>
@@ -67,7 +67,7 @@ int main (int argc_, char ** argv_)
                    drawer_view = geomtools::gnuplot_drawer::VIEW_2D_XZ;
                  }
                else if (option == "-yz") 
-                 {
+                 { 
                    drawer_view = geomtools::gnuplot_drawer::VIEW_2D_YZ;
                  }
                else if (option == "-3d") 

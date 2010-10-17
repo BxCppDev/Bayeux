@@ -8,9 +8,6 @@ namespace geomtools {
 
   using namespace std;
   
-  // register this creator:   
-  geomtools::i_model::creator_registration<replicated_boxed_model> replicated_boxed_model::__CR;
-  
   const geomtools::box & replicated_boxed_model::get_box () const
   {
     return __solid;
@@ -295,7 +292,10 @@ namespace geomtools {
      return;
   }
 
-       
+   
+  // register this creator:   
+  geomtools::i_model::creator_registration<replicated_boxed_model> replicated_boxed_model::__CR;
+      
 } // end of namespace geomtools
 
 // end of replicated_boxed_model.cc

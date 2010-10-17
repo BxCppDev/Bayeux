@@ -36,6 +36,11 @@ namespace geomtools {
     set_z (new_value_ + new_value_);
     return;
   }
+
+  bool tube::is_extruded () const
+  {
+    return __inner_r > 0.0;
+  }
   
   double tube::get_inner_r () const
   {
@@ -296,23 +301,23 @@ namespace geomtools {
     return in_;
   }
 
-  void tube::get_inner_cylinder (cylinder & ic_)
+  void tube::compute_inner_cylinder (cylinder & ic_)
   {
     ic_.reset ();
     if (! is_valid ())
       {
-	throw runtime_error ("tube::get_inner_cylinder: Tube is not valid !");
+	throw runtime_error ("tube::compute_inner_cylinder: Tube is not valid !");
       }
     ic_.set (get_inner_r (), get_z ());
     return;
   }
 
-  void tube::get_outer_cylinder (cylinder & oc_)
+  void tube::compute_outer_cylinder (cylinder & oc_)
   {
     oc_.reset ();
     if (! is_valid ())
       {
-	throw runtime_error ("tube::get_inner_cylinder: Tube is not valid !");
+	throw runtime_error ("tube::compute_outer_cylinder: Tube is not valid !");
       }
     oc_.set (get_outer_r (), get_z ());
     return;

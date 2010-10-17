@@ -181,11 +181,29 @@ namespace geomtools {
       FACE_ALL_BITS = 0xFFFFFFFF
     };
   
+  
   //! Some constants
   struct constants
   {
     static const int NO_INTERCEPT = -1;
     static const double DEFAULT_TOLERANCE;
+  };
+
+  class filled_utils
+  {
+  public:
+
+    enum filled_t
+      {
+	FILLED_NONE         = 0,
+	FILLED_BY_ENVELOPE  = 1,
+	FILLED_BY_EXTRUSION = 2
+      };
+
+    static const string FILLED_NONE_LABEL;
+    static const string FILLED_BY_ENVELOPE_LABEL;
+    static const string FILLED_BY_EXTRUSION_LABEL;
+
   };
   
   /* Initialize a rotation matrix for 

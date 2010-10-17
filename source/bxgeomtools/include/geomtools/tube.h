@@ -102,9 +102,9 @@ namespace geomtools {
 
     void set_half (double inner_r_, double outer_r_, double half_z_);
 
-    void get_inner_cylinder (cylinder & ic_);
+    void compute_inner_cylinder (cylinder & ic_);
 
-    void get_outer_cylinder (cylinder & oc_);
+    void compute_outer_cylinder (cylinder & oc_);
 
   public: 
 
@@ -120,6 +120,8 @@ namespace geomtools {
     virtual std::string get_shape_name () const;
 
     virtual double get_parameter (const std::string &) const;
+
+    bool is_extruded () const;
 
     bool is_valid () const;
 

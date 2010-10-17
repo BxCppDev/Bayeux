@@ -30,6 +30,7 @@
 #include <geomtools/cylinder.h>
 #include <geomtools/tube.h>
 #include <geomtools/sphere.h>
+#include <geomtools/polycone.h>
 
 #include <geomtools/placement.h>
 #include <geomtools/physical_volume.h>
@@ -38,6 +39,11 @@
 #include <geomtools/visibility.h>
 #include <geomtools/material.h>
 #include <geomtools/sensitive.h>
+#include <geomtools/color.h>
+#include <geomtools/utils.h>
+//#include <geomtools/mapping.h>
+
+#include <geomtools/model_with_internal_items_tools.h>
 
 namespace geomtools {
 
@@ -48,34 +54,56 @@ namespace geomtools {
     {
     private:
 
-      string                __shape_name;
+      string                 __shape_name;
+      int                    __filled_mode;
+      string                 __material_name;
+      string                 __filled_material_name;
 
-      geomtools::box *      __box;
-      geomtools::cylinder * __cylinder;
-      geomtools::tube *     __tube;
-      geomtools::sphere *   __sphere;
+      geomtools::box *       __box;
+      geomtools::cylinder *  __cylinder;
+      geomtools::tube *      __tube;
+      geomtools::sphere *    __sphere;
+      geomtools::polycone *  __polycone;
 
       geomtools::i_shape_3d * __solid;
-      geomtools::i_shape_3d * __inner_shape; //!> for tube only
+      geomtools::i_shape_3d * __inner_shape; //!> for filled tube or polycone
+      geomtools::i_shape_3d * __outer_shape; //!> for mother polycone
 
       placement               __inner_placement;
       logical_volume          __inner_logical;
       physical_volume         __inner_phys;
 
+      logical_volume        * __daughter_owner_logical;
+      logical_volume        * __visibility_logical;
+
+      // internal items:
+      MWIM                    __internals;
+
     public: 
 
-      string get_material_name () const;
+      MWIM & get_internals ();
+      const MWIM & get_internals () const;
+
+      const string & get_material_name () const;
+      const string & get_filled_material_name () const;
       const string & get_shape_name () const;
 
       const geomtools::box & get_box () const;
       const geomtools::cylinder & get_cylinder () const;
       const geomtools::tube & get_tube () const;
       const geomtools::sphere & get_sphere () const;
+      const geomtools::polycone & get_polycone () const;
 
       const geomtools::i_shape_3d & get_solid () const;
 
     public:
-  
+ 
+      bool is_filled () const;
+
+      bool is_filled_by_envelope () const;
+
+      bool is_filled_by_extrusion () const;
+
       simple_shaped_model ();
   
       virtual ~simple_shaped_model ();
@@ -85,16 +113,41 @@ namespace geomtools {
       virtual string get_model_id () const;
 
     protected:
+
+      virtual void _post_construct (datatools::utils::properties & setup_);
   
       virtual void _at_construct (const string & name_,
 				  const datatools::utils::properties & config_,
 				  models_col_t * models_ = 0);
 
+    protected:
+
+      virtual void _construct_box (const string & name_,
+				   const datatools::utils::properties & config_,
+				   models_col_t * models_);
+
+      virtual void _construct_cylinder (const string & name_,
+					const datatools::utils::properties & config_,
+					models_col_t * models_);
+      
+      virtual void _construct_sphere (const string & name_,
+				      const datatools::utils::properties & config_,
+				      models_col_t * models_);
+      
+      virtual void _construct_tube (const string & name_,
+				    const datatools::utils::properties & config_,
+				    models_col_t * models_);
+      
+      virtual void _construct_polycone (const string & name_,
+					const datatools::utils::properties & config_,
+					models_col_t * models_);
+      
     private:
 
       static creator_registration<simple_shaped_model> __CR;
       
     public: 
+
       virtual void tree_dump (ostream & out_         = clog, 
                               const string & title_  = "", 
                               const string & indent_ = "", 

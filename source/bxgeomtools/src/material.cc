@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*- 
 /* material.cc
- */
+ */ 
 
 #include <geomtools/material.h>
 

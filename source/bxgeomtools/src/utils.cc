@@ -641,6 +641,10 @@ namespace geomtools {
 	out_ << indent << last_tag << "[" << "invalid" << "]" << endl;
       }
   }
+
+  const string filled_utils::FILLED_NONE_LABEL         = "none";
+  const string filled_utils::FILLED_BY_ENVELOPE_LABEL  = "by_envelope";
+  const string filled_utils::FILLED_BY_EXTRUSION_LABEL = "by_extrusion";
  
 } // end of namespace geomtools
 

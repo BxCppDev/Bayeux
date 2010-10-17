@@ -78,6 +78,7 @@ namespace geomtools {
 
   i_object_3d::i_object_3d (double tolerance_)
   {
+    __user_draw = 0;
     __tolerance = DEFAULT_TOLERANCE;
     if (tolerance_ <= 0.0)
       {
@@ -102,6 +103,8 @@ namespace geomtools {
 
   void i_object_3d::reset ()
   {
+    __user_draw = 0;
+    __tolerance = DEFAULT_TOLERANCE;
     __properties.clear ();
   }
   

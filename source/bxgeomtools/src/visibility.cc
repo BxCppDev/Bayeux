@@ -10,12 +10,15 @@ namespace geomtools {
 
   const string visibility::VISIBILITY_PREFIX = "visibility.";
 
-  const string visibility::VISIBILITY_HIDDEN_FLAG = "hidden";
+  const string visibility::VISIBILITY_HIDDEN_FLAG           = "hidden";
   const string visibility::VISIBILITY_HIDDEN_ENVELOP_FLAG   = "hidden_envelop";
   const string visibility::VISIBILITY_HIDDEN_ENVELOPE_FLAG  = "hidden_envelope";
   const string visibility::VISIBILITY_DAUGHTERS_HIDDEN_FLAG = "daughters.hidden";
-  const string visibility::VISIBILITY_COLOR_PROPERTY  = "color";
-  const string visibility::VISIBILITY_WIRED_CYLINDER_FLAG  = "wired_cylinder";
+  const string visibility::VISIBILITY_COLOR_PROPERTY        = "color";
+  const string visibility::VISIBILITY_WIRED_CYLINDER_FLAG   = "wired_cylinder";
+ 
+  //const string visibility::VISIBILITY_FORCE_SHOWN_FLAG      = "daughters.invisible";
+  //const string visibility::VISIBILITY_FORCE_HIDDEN_FLAG     = "daughters.visible";
 
   string visibility::make_key (const string & key_)
   {
@@ -32,13 +35,13 @@ namespace geomtools {
   }
  
   bool visibility::has_flag (const datatools::utils::properties & config_,
-			      const string & flag_)
+			     const string & flag_)
   {
     return (config_.has_flag (visibility::make_key (flag_)));
   }
 
   bool visibility::has_key (const datatools::utils::properties & config_,
-			     const string & key_)
+			    const string & key_)
   {
     return (config_.has_key (visibility::make_key (key_)));
   }

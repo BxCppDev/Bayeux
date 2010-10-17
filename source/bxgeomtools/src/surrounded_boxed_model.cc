@@ -7,9 +7,6 @@
 namespace geomtools {
 
   using namespace std;
-  
-  // register this creator:   
-  geomtools::i_model::creator_registration<surrounded_boxed_model> surrounded_boxed_model::__CR;
 
   const string surrounded_boxed_model::SURROUNDED_LABEL      = "surrounded";
   const string surrounded_boxed_model::SURROUNDING_LABEL     = "surrounding";
@@ -770,7 +767,9 @@ namespace geomtools {
 
      return;
   }
-
+  
+  // register this creator:   
+  geomtools::i_model::creator_registration<surrounded_boxed_model> surrounded_boxed_model::__CR;
        
 } // end of namespace geomtools
 

@@ -25,7 +25,7 @@ namespace geomtools {
 	 << color;
     if (endl_) out_ << std::endl;
     return;
- }
+  }
 
   void 
   gnuplot_draw::basic_draw_point_with_color (std::ostream & out_, 
@@ -579,10 +579,10 @@ namespace geomtools {
 
   void 
   gnuplot_draw::draw_disk (std::ostream & out_, 
-			     const vector_3d & position_, 
-			     const rotation_3d & rotation_, 
-			     double radius_,
-			     size_t arc_sampling_)
+			   const vector_3d & position_, 
+			   const rotation_3d & rotation_, 
+			   double radius_,
+			   size_t arc_sampling_)
   {
     rotation_3d inverse_rotation (rotation_);
     inverse_rotation.invert ();
@@ -789,60 +789,62 @@ namespace geomtools {
 	  }
 	basic_draw_polyline (out_, polyline_parallel);
       }
-
-    // inner surface:
-    for (size_t i = 0; i <= phy_sample ; ++i) 
+ 
+    if (p_.is_extruded ())
       {
-	polyline_t polyline_meridian;
-	double phi = i * dphi;
+	// inner surface:
+	for (size_t i = 0; i <= phy_sample ; ++i) 
+	  {
+	    polyline_t polyline_meridian;
+	    double phi = i * dphi;
+	    for (polycone::rz_col_t::const_iterator j = p_.points ().begin ();
+		 j != p_.points ().end ();
+		 j++)
+	      {
+		double z = j->first;
+		double r = j->second.rmin;
+		vector_3d P;
+		P.set (r * std::cos (phi), 
+		       r * std::sin (phi),  
+		       z);
+		vector_3d P2 (P);
+		P2.transform (inverse_rotation);
+		P2 += position_;
+		polyline_meridian.push_back (P2);
+	      }
+	    basic_draw_polyline (out_, polyline_meridian);
+	  }
+
 	for (polycone::rz_col_t::const_iterator j = p_.points ().begin ();
 	     j != p_.points ().end ();
 	     j++)
 	  {
+	    polyline_t polyline_parallel;
 	    double z = j->first;
 	    double r = j->second.rmin;
-	    vector_3d P;
-	    P.set (r * std::cos (phi), 
-		   r * std::sin (phi),  
-		   z);
-	    vector_3d P2 (P);
-	    P2.transform (inverse_rotation);
-	    P2 += position_;
-	    polyline_meridian.push_back (P2);
+	    for (size_t i = 0; i <= phy_sample ; ++i) 
+	      {
+		vector_3d P;
+		double phi = i * dphi;
+		P.set (r * std::cos (phi), 
+		       r * std::sin (phi),  
+		       z);
+		vector_3d P2 (P);
+		P2.transform (inverse_rotation);
+		P2 += position_;
+		polyline_parallel.push_back (P2);
+	      }
+	    basic_draw_polyline (out_, polyline_parallel);
 	  }
-	basic_draw_polyline (out_, polyline_meridian);
       }
-
-    for (polycone::rz_col_t::const_iterator j = p_.points ().begin ();
-	 j != p_.points ().end ();
-	 j++)
-      {
-	polyline_t polyline_parallel;
-	double z = j->first;
-	double r = j->second.rmin;
-	for (size_t i = 0; i <= phy_sample ; ++i) 
-	  {
-	    vector_3d P;
-	    double phi = i * dphi;
-	    P.set (r * std::cos (phi), 
-		   r * std::sin (phi),  
-		   z);
-	    vector_3d P2 (P);
-	    P2.transform (inverse_rotation);
-	    P2 += position_;
-	    polyline_parallel.push_back (P2);
-	  }
-	basic_draw_polyline (out_, polyline_parallel);
-      }
-
     return;
   }
 
   void 
   gnuplot_draw::draw_polyhedra (std::ostream & out_,
-			       const vector_3d & position_, 
-			       const rotation_3d & rotation_,
-			       const polyhedra & p_)
+				const vector_3d & position_, 
+				const rotation_3d & rotation_,
+				const polyhedra & p_)
   {
     rotation_3d inverse_rotation (rotation_);
     inverse_rotation.invert ();
@@ -860,7 +862,7 @@ namespace geomtools {
 	     j++)
 	  {
 	    double z = j->first;
-	    double r = j->second;
+	    double r = j->second.rmax;
 	    vector_3d P;
 	    P.set (r * std::cos (phi), 
 		   r * std::sin (phi),  
@@ -878,7 +880,7 @@ namespace geomtools {
       {
 	polyline_t polyline_parallel;
 	double z = j->first;
-	double r = j->second;
+	double r = j->second.rmax;
 	for (size_t i = 0; i <= phy_sample ; ++i) 
 	  {
 	    vector_3d P;
@@ -892,6 +894,55 @@ namespace geomtools {
 	    polyline_parallel.push_back (P2);
 	  }
 	basic_draw_polyline (out_, polyline_parallel);
+      }
+    if (p_.is_extruded ())
+      {
+	/*
+	cerr << "DEVEL: gnuplot_draw::draw_polyhedra: "
+	     << " EXTRUDED !!!" << endl;
+	*/
+	for (size_t i = 0; i <= phy_sample ; ++i) 
+	  {
+	    polyline_t polyline_meridian;
+	    double phi = phi0 + i * dphi;
+	    for (polyhedra::rz_col_t::const_iterator j = p_.points ().begin ();
+		 j != p_.points ().end ();
+		 j++)
+	      {
+		double z = j->first;
+		double r = j->second.rmin;
+		vector_3d P;
+		P.set (r * std::cos (phi), 
+		       r * std::sin (phi),  
+		       z);
+		vector_3d P2 (P);
+		P2.transform (inverse_rotation);
+		P2 += position_;
+		polyline_meridian.push_back (P2);
+	      }
+	    basic_draw_polyline (out_, polyline_meridian);
+	  }
+	for (polyhedra::rz_col_t::const_iterator j = p_.points ().begin ();
+	     j != p_.points ().end ();
+	     j++)
+	  {
+	    polyline_t polyline_parallel;
+	    double z = j->first;
+	    double r = j->second.rmin;
+	    for (size_t i = 0; i <= phy_sample ; ++i) 
+	      {
+		vector_3d P;
+		double phi = phi0 + i * dphi;
+		P.set (r * std::cos (phi), 
+		       r * std::sin (phi),  
+		       z);
+		vector_3d P2 (P);
+		P2.transform (inverse_rotation);
+		P2 += position_;
+		polyline_parallel.push_back (P2);
+	      }
+	    basic_draw_polyline (out_, polyline_parallel);
+	  }
       }
     return;
   }
@@ -1076,8 +1127,11 @@ namespace geomtools {
     const rotation_3d & rot = rotation_;
     string shape_name = o_.get_shape_name ();
 
+    //cerr << "DEVEL: gnuplot_draw::basic_draw: Entering..." << endl;
+
     if (o_.has_user_draw ())
-      {
+      { 
+	//cerr << "DEVEL: gnuplot_draw::basic_draw: has_user_draw..." << endl;
 	void * user_draw = o_.get_user_draw ();
 	gnuplot_draw::draw_user_function_t user_draw_f 
 	  = reinterpret_cast<gnuplot_draw::draw_user_function_t> (user_draw);
@@ -1085,6 +1139,8 @@ namespace geomtools {
 	(*user_draw_f) (out_, position_, rotation_, o_, 0);
 	return;
       }
+
+    //cerr << "DEVEL: gnuplot_draw::basic_draw: Step 1" << endl;
 
     if (shape_name == "line_3d")
       {
@@ -1162,6 +1218,7 @@ namespace geomtools {
 
     if (shape_name == "polycone")
       {
+	//cerr << "DEVEL: gnuplot_draw::basic_draw: shape is polycone..." << endl;
 	const polycone & p = dynamic_cast<const polycone &> (o_);
 	draw_polycone (out_, pos, rot, p);
 	return;

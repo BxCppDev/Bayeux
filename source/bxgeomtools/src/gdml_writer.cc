@@ -1156,8 +1156,8 @@ namespace geomtools {
       {
 	double z = i->first;
 	pair<double, double> rminmax;
-	rminmax.first = 0.0;
-	rminmax.second = i->second;
+	rminmax.first =  i->second.rmin;
+	rminmax.second = i->second.rmax;
 	zplanes[z] = rminmax;
       }
     add_gdml_polyhedra (name_, 

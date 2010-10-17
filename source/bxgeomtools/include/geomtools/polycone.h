@@ -63,7 +63,6 @@ namespace geomtools {
       double rmin, rmax;
     };
 
-    //typedef map<double, double> rz_col_t;
     typedef map<double, r_min_max> rz_col_t;
 
   private:
@@ -79,8 +78,11 @@ namespace geomtools {
     double  __z_min;
     double  __z_max;
     double  __r_max;
+    bool    __extruded;
   
   public:
+
+    bool is_extruded () const;
     
     double get_xmin () const
     {
@@ -118,6 +120,7 @@ namespace geomtools {
     }
 
   private:
+
     void __compute_surfaces ();
 
     void __compute_volume ();
@@ -144,20 +147,62 @@ namespace geomtools {
 
     void reset ();
 
-    void add (double z_, double rmax_);
-    void add (double z_, double rmin_, double rmax_);
+    void add (double z_, double rmax_, bool compute_ = true);
+
+    void add (double z_, double rmin_, double rmax_, bool compute_ = true);
 
     void initialize (const string & filename_);
 
+    /**
+     * Initialize the polycone from data in a file.
+     * Format (ASCII) consists in lines with the
+     * (Z,Rmax) format or the (Z,Rmin,Rmax) format.
+     * Special comments may be inserted at the beginning
+     * of the file:
+     *
+     * All data are given with the following lenght unit:
+     *    #@length_unit mm
+     *
+     * Data (Rmin) in the second out of three columns are ignored:
+     *    #@ignore_rmin
+     *
+     * The thickness of the polycone:
+     *    #@skin_thickness 1
+     *
+     * The step of the polycone:
+     *    #@skin_step 5.0
+     *
+     * Example:
+     *  >>>
+     *  #@length_unit mm
+     *  z1 rmin1 rmax1
+     *  z2 rmin2 rmax2
+     *  z3       rmax3
+     *  z4 rmin4 rmax4
+     *  <<<
+     *
+     */
+    void initialize (const string & filename_, 
+		     double zmin_ = std::numeric_limits<double>::quiet_NaN (),
+		     double zmax_ = std::numeric_limits<double>::quiet_NaN ());
+
+    void initialize (const datatools::utils::properties & setup_); 
+
   private:
+
+    // interpolation:
+    void __build_from_envelope_and_skin (double thickness_, 
+					 double step_, 
+					 double zmin_,
+					 double zmax_);
 
     void __build_from_envelope_and_skin (double thickness_, double step_ = 0.0);
 
   public:
 
-    void get_inner_polycone (polycone & ip_);
+    void compute_inner_polycone (polycone & ip_);
 
-    void get_outer_polycone (polycone & op_);
+    void compute_outer_polycone (polycone & op_);
 
     double get_volume () const;
 
