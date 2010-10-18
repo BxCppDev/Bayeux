@@ -13,8 +13,8 @@ namespace geomtools {
 
   bool gdml_export::g_devel = false;
 
-  const string gdml_export::DEFAULT_LENGTH_UNIT = "mm";
-  const string gdml_export::DEFAULT_ANGLE_UNIT  = "deg";
+  const string gdml_export::DEFAULT_LENGTH_UNIT  = "mm";
+  const string gdml_export::DEFAULT_ANGLE_UNIT   = "deg";
   const string gdml_export::DEFAULT_DENSITY_UNIT = "g/cm3";
 
   bool gdml_export::is_debug () const

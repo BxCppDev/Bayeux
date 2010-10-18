@@ -612,15 +612,15 @@ namespace geomtools {
       }
 
     // combination:
-    if (solid_type_ == "union")
+    if (solid_type_ == "union_3d")
       {
 	return true;
       }
-    if (solid_type_ == "subtraction")
+    if (solid_type_ == "subtraction_3d")
       {
 	return true;
       }
-    if (solid_type_ == "intersection")
+    if (solid_type_ == "intersection_3d")
       {
 	return true;
       }
@@ -726,15 +726,15 @@ namespace geomtools {
       {
 	return true;
       }
-    if (solid_type_ == "union")
+    if (solid_type_ == "union_3d")
       {
 	return true;
       }
-    if (solid_type_ == "subtraction")
+    if (solid_type_ == "subtraction_3d")
       {
 	return true;
       }
-    if (solid_type_ == "intersection")
+    if (solid_type_ == "intersection_3d")
       {
 	return true;
       }

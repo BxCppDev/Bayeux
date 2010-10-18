@@ -274,7 +274,7 @@ namespace geomtools {
       {
 	ostringstream message;
 	message << "stacked_model::_at_construct: "
-		<< "Missing 'stacking_axis' property !"; 
+		<< "Missing 'stacked.axis' property !"; 
 	throw runtime_error (message.str ());		
       }
     if (stacking_axis_label == "x")

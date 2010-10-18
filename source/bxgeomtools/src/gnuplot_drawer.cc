@@ -288,7 +288,7 @@ namespace geomtools {
 	  }
 	
 	// draw children:
-	bool draw_children = false;
+	bool draw_children = true;
 
 	// check the display level of the geometry tree:
 	if ((display_level < max_display_level) 
@@ -297,9 +297,17 @@ namespace geomtools {
 	    // default is 'drawing children':
 	    draw_children = true;
 	  }
+	else
+	  {
+	    draw_children = false;
+	  }
 
 	// test if it is forbidden by the visibility properties:
-	if (! shown || visibility::is_daughters_hidden (log_visu_config))
+	if (! shown) 
+	  {
+	    draw_children = false;
+	  }
+	else if (visibility::is_daughters_hidden (log_visu_config))
 	  {
 	    draw_children = false;
 	  }
@@ -330,6 +338,7 @@ namespace geomtools {
 	      {
 		draw_it = false;
 	      }
+	    //draw_it = true;
 	    /*
 		string visibility = log_child.parameters ().fetch_string ("visibility");
 		if (visibility == "invisible")
