@@ -47,6 +47,7 @@ namespace mat {
   class isotope : public datatools::utils::i_tree_dumpable
   {   
   public:
+
     enum isomeric_level_t
       {
 	GROUND_STATE   = 0,
@@ -57,6 +58,7 @@ namespace mat {
 	THIRD_EXCITED  = 3,
 	ISOMERIC_O     = 3
       };
+
   public:   /* constructor - destructor */    
       
     isotope ();                      //!< Default Constructor   
@@ -73,8 +75,8 @@ namespace mat {
 	     bool build_ = false);  //!< Normal Constructor         
     virtual ~isotope ();            //!< Destructor
 
-  private :   /* private attributes */  					  
-      
+  private :   /* private attributes */   
+
     int __Z;    //!<  Number of protons   (0<Z<=119)   
     int __A;    //!<  Number of nucleons  (Z<=A<=293)  
     int __I;    //!<  Isomeric states I={0,1,2,3} ={' ','M','N','O'} for "long half-life" time excited states 		    
@@ -91,8 +93,7 @@ namespace mat {
       
     properties __properties;     //!<  datatools properties         
     
-  private :   /* private set & find methods */  					  
-      
+  private :   /* private set & find methods */
       
     void __check_ZA ();       //!<  true is (Z,A) values are founded in file mass.mas03   
       
@@ -107,7 +108,7 @@ namespace mat {
     void __set_mass (const double mass_, const double err_mass_=0);          //!<  Set the mass and its error in gramm per mol [g/mol]       
       
     void __set_half_life_time (const double half_life_time_ , const double err_half_life_time_);    //!<  Set the half-life time and its error in second [s]     
-                                                                                                                                                       
+
   public:   
 
     /* public set & find methods */   
@@ -144,7 +145,12 @@ namespace mat {
       
     bool is_locked ()     const; //!< Return true if isotope is locked (i.e. fully set), false either    
     void build () ;              //!< Lock the isotope data structure (i.e. invoking)    
-       
+
+  protected:
+
+    void _build (bool use_decay_);
+
+  public:
     //! Print info      
     virtual void tree_dump (ostream & out_         = clog, 
 			    const string & title_  = "", 

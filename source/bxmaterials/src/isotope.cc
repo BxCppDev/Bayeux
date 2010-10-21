@@ -222,7 +222,7 @@ namespace mat {
     else
       { 
 	tape_name.assign(getenv ("MATERIALS_ROOT"));
-	tape_name +="/resources/";
+	tape_name += "/resources/";
 	tape_name += input_file_name_;
       }
 
@@ -427,7 +427,7 @@ namespace mat {
   //________________________________________________________________________       
   void   isotope::__set_half_life_time(const double half_life_time_ , const double err_half_life_time_)
   { 	
-    if(  half_life_time_ < 0. || err_half_life_time_ <0. )    
+    if(  half_life_time_ < 0. || err_half_life_time_ < 0. )    
       {
 	ostringstream message;
 	message << "isotope:::__set_half_life_time () : Invalid half_life_time value : '" 
@@ -436,7 +436,7 @@ namespace mat {
 	throw logic_error (message.str ());
       }
 	 
-    else if(  half_life_time_ == 0.  && err_half_life_time_== 0.  )    
+    else if ( half_life_time_ == 0. && err_half_life_time_ == 0. )    
          
       {
 	__half_life_time = half_life_time_; 
@@ -447,6 +447,7 @@ namespace mat {
 	__half_life_time = half_life_time_; 
 	__err_half_life_time = err_half_life_time_;   
       }
+    return;
   }
     
   //________________________________________________________________________
@@ -543,6 +544,7 @@ namespace mat {
 	  {
 	  }   
       }
+    return;
   }
   
   //________________________________________________________________________
@@ -583,15 +585,33 @@ namespace mat {
 	  {
 	    return true;
 	  }
+	else
+	  {
+	    // accept locked isotope without decay data
+	    return true;
+	  }
       }
     return false;
   } 
 
   //________________________________________________________________________
+  void isotope::_build (bool use_decay_) 
+  {
+    bool use_decay_db = false;
+    find_mass ();
+    if (use_decay_db)
+      {
+	find_decay ();
+      }
+    return; 
+  }
+
+  //________________________________________________________________________
   void isotope::build () 
   {
-    find_mass ();
-    find_decay ();
+    bool use_mass_db = true;
+    bool use_decay_db = false;
+    _build (use_decay_db);
     return; 
   }
   
