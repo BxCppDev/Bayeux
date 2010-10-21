@@ -1,9 +1,6 @@
 # -*- mode: shell-script; -*-
 # sh startup sample script for package __Package_name__:
 
-#if [ "x${__PACKAGE_NAME___ROOT}" != "x" ]; then
-#    echo "Warning: __PACKAGE_NAME___ROOT is already defined ! Check for possible conflict !" >&2
-#fi
 export __PACKAGE_NAME___ROOT=__PACKAGE_ROOT__
 echo "Notice: Setting up the '__Package_name__' package (at __PACKAGE_NAME___ROOT='${__PACKAGE_NAME___ROOT}')..." >&2
 

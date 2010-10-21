@@ -141,6 +141,7 @@ EOF
     shell> pkgtool clean
 
 EOF
+    return 0
 }
 
 #######################################################
@@ -895,7 +896,7 @@ function do_doc ()
     doxygen ${the_base_dir}/pkgtools.d/${pack_name}.doxygen 
 
     pkgtools__msg_notice "Doxygen documentation is at: ${the_base_dir}/doc/doxygen/html/index.html"
-   pkgtools__msg_notice "Please run: 'firefox file://$(pwd)/doc/doxygen/html/index.html &' or something similar..."
+    pkgtools__msg_notice "Please run: 'firefox file://$(pwd)/doc/doxygen/html/index.html &' or something similar..."
 
     __pkgtools__at_function_exit
     return 0
