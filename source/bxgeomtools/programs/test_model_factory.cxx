@@ -110,7 +110,7 @@ int main (int argc_, char ** argv_)
       datatools::utils::fetch_path_with_env (setup_filename);
       factory.load (setup_filename);
       factory.lock ();
-      if (dump) factory.tree_dump (clog);
+      if (dump) factory.tree_dump (clog, "Geometry model factory:");
 
       geomtools::placement p;
       p.set (0, 0, 0, 0 * CLHEP::degree, 0 * CLHEP::degree, 0);

@@ -609,6 +609,13 @@ namespace geomtools {
 						 const datatools::utils::properties & config_,
 						 models_col_t * models_)
   {
+    bool devel = i_model::g_devel;
+    if (devel) 
+      {
+	cerr << "DEVEL: simple_shaped_model::_construct_polycone: "
+	     << "Name = '" << name_ << "'"
+	     << endl;
+      }
     string filled_material_name = material::MATERIAL_REF_UNKNOWN;
     double lunit = CLHEP::mm;
     double aunit = CLHEP::degree;
@@ -801,8 +808,12 @@ namespace geomtools {
 
   void simple_shaped_model::_post_construct (datatools::utils::properties & setup_)
   {
-    cerr << "DEVEL: " << "simple_shaped_model::_post_construct: "
-	 << "Entering..." << endl;
+    bool devel = i_model::g_devel;
+    if (devel) 
+      {
+	cerr << "DEVEL: " << "simple_shaped_model::_post_construct: "
+	     << "Entering..." << endl;
+      }
     //material::extract (setup_, get_logical ().parameters ());
     sensitive::extract (setup_, get_logical ().parameters ());
     visibility::extract (setup_, get_logical ().parameters ());
@@ -854,6 +865,12 @@ namespace geomtools {
      if (! indent_.empty ()) indent = indent_;
      i_model::tree_dump (out_, title_, indent, true);
 
+     // Shape name:
+     {
+       out_ << indent << i_tree_dumpable::tag  
+	    << "Shape name : '" << get_shape_name () << "'" << endl;
+     }
+
      // solid:
      {
        out_ << indent << i_tree_dumpable::tag
@@ -863,13 +880,26 @@ namespace geomtools {
 	   out_ << endl;
 	   ostringstream indent_oss;
 	   indent_oss << indent;
-	   indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+	   indent_oss << du::i_tree_dumpable::skip_tag;
 	   __solid->tree_dump (out_, "", indent_oss.str ());
 	 }   
        else
 	 {
 	   out_ << "<none>" << endl;
 	 }
+     }
+
+     // filled material name:
+     if (! __filled_material_name.empty ())
+       {
+	 out_ << indent << i_tree_dumpable::tag  
+	      << "Filled material name : '" << get_filled_material_name () << "'" << endl;
+       }
+
+     {
+       out_ << indent << i_tree_dumpable::tag  
+	    << "Filled mode : '" << __filled_mode << "'" << endl;
+       
      }
 
      // material name:

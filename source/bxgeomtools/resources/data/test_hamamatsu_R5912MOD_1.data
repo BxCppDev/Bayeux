@@ -2,7 +2,7 @@
 # This polycone building mode use an interpolation scheme
 # to generate inner and outer surfaces from the following list
 # of points [z ; r(outer envelope)]:
-#@skin_thickness 2.0
+#@skin_thickness 1.5
 #@skin_step      5.0
 -110.0   0.0
 -109.843987438   32.0048479506

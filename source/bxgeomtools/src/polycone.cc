@@ -96,11 +96,9 @@ namespace geomtools {
 						 double zmax_)
   {
     bool devel = false;
-    //devel = true;
+    devel = true;
     double zmin = zmin_;
     double zmax = zmax_;
-    //datatools::utils::invalidate (zmin);
-    //datatools::utils::invalidate (zmax);
     
     if (devel)
       {
@@ -121,7 +119,8 @@ namespace geomtools {
 	clog << "DEVEL: " << "polycone::__build_from_envelope_and_skin: "
 	     << "Building interpolated primary outer envelope..." << endl;
       }
-    string interpolation_mode = "akima";
+    string interpolation_mode = "linear";
+    //interpolation_mode = "akima";
     mygsl::tabulated_function tf (interpolation_mode);
     for (rz_col_t::const_iterator i = __points.begin ();
 	 i != __points.end ();
@@ -132,12 +131,15 @@ namespace geomtools {
 	tf.add_point (z, rmax);
       }
     tf.lock_table (); 
+    // ofstream f1 ("f1.data");
+    // tf.print_points (f1);
 
     // thickness of the polycone's skin:
     double skin = skin_thickness_;
 
     // compute the recommended sampling step along the envelope:
-    double dx = 5 * skin; // default
+    double dx0 = 5 * skin; // default
+    double dx = dx0;
     if (skin_step_ > 0.0)
       {
 	dx = skin_step_;
@@ -173,12 +175,15 @@ namespace geomtools {
       }
     //tf2.lock_table ();
     tf3.lock_table ();
+    //ofstream f3 ("f3.data");
+    //tf3.print_points (f3);
     
     // Manage bounds:
     if (devel)
       {
 	clog << "DEVEL: " << "polycone::__build_from_envelope_and_skin: "
-	     << "Building properly bounded interpolated inner envelope..." << endl;
+	     << "Building properly bounded interpolated inner envelope..."
+	     << endl;
       }
     mygsl::tabulated_function tf3bis (interpolation_mode); 
     for (mygsl::tabulated_function::points_map_t::const_iterator 
@@ -218,9 +223,13 @@ namespace geomtools {
     mygsl::tabulated_function tf_inner ("linear"); 
     double z1 = tf.x_min ();
     double z2 = tf.x_max ();
+    if (devel) cerr << "DEVEL: " << "polycone::__build_from_envelope_and_skin: "
+		    << "z1=" << z1 << endl;
+    if (devel) cerr << "DEVEL: " << "polycone::__build_from_envelope_and_skin: "
+		    << "z2=" << z2 << endl;
     if (datatools::utils::is_valid (zmin))
       {
-	if (devel) cerr << "DEVEL: "  << "polycone::__build_from_envelope_and_skin: "
+	if (devel) cerr << "DEVEL: " << "polycone::__build_from_envelope_and_skin: "
 			<< "Z(min)=" << zmin << endl;
 	if (zmin > tf.x_min ())
 	  {
@@ -242,24 +251,35 @@ namespace geomtools {
     datatools::utils::invalidate (za);
     double z = z1;
     bool stop = false;
-    while (z < tf.x_max () + 0.1 * dz)
+    //while (z < tf.x_max () + 0.1 * dz)
+    do
       {
-	if (z > z2) 
+	/*
+	cerr << "DEVEL: "  << "polycone::__build_from_envelope_and_skin: "
+	     << "Loop: z=" << z << endl;
+	*/
+	if (z >= z2) 
 	  {
+	    if (devel) cerr << "DEVEL: "  << "polycone::__build_from_envelope_and_skin: "
+			    << "z2 stop" << endl;
 	    z = z2;
 	    stop = true;
 	  }
-	mygsl::interval domain (tf.x_min (), tf.x_max (), 0.05 * skin);
+	double safe = 0.05 * skin;
+	safe = 0.1 * dz;
+	mygsl::interval domain (tf.x_min (), tf.x_max (), safe);
 	double drdz = mygsl::derivative (tf, z, domain);
-	dz = dx  / sqrt ( 1 + drdz * drdz);
+	dz = dx / sqrt (1.0 + drdz * drdz);
 	if (dz > dx) 
 	  {
 	    dz = dx;
 	  }
-	else if (dz < 0.25* skin)
+	/*
+	else if (dz < 0.1 * skin)
 	  {
-	    dz = 0.25 * skin;
+	    dz = 0.1 * skin;
 	  }
+	*/
 	double r_outer = tf (z);
 	if (r_outer < 0.0) // should not occur
 	  {
@@ -272,7 +292,7 @@ namespace geomtools {
 	    double rb = r_inner;
 	    if ((ra * rb) < 0.0)
 	      {
-		double a = (rb - ra)  / (zb - za);
+		double a = (rb - ra) / (zb - za);
 		double b = rb - a * zb;
 		double z_r = -b / a;
 		double rmin_r = 0.0;
@@ -292,26 +312,42 @@ namespace geomtools {
 	z += dz;
 	if (stop) break;
       }
-    // lock interpolators:
+      while (! stop);
+     // lock interpolators:
     tf_outer.lock_table ();
     tf_inner.lock_table (); 
-
+    if (devel) 
+      {
+	cerr << "DEVEL: " << "polycone::__build_from_envelope_and_skin: "
+	     << "Locked !" << endl;
+      }
+    /*
+    ofstream fo ("fo.data");
+    ofstream fi ("fi.data");
+    tf_outer.print_points (fo);
+    tf_inner.print_points (fi);
+    */
     __points.clear ();
+
+    //ofstream fp ("fp.data");
     mygsl::tabulated_function::points_map_t::const_iterator i = tf_outer.points ().begin ();
     mygsl::tabulated_function::points_map_t::const_iterator j = tf_inner.points ().begin ();
     for (int k = 0; k < tf_outer.points ().size (); k++)
       {
 	double z = i->first;
 	double rmin = j->second;
+	double rmax = i->second;
+	if (rmin > rmax) rmin = rmax;
 	if (rmin < 0.0) // should not occur
 	  {
 	    rmin = 0.0;
 	  }
-	double rmax = i->second;
 	this->add (z, rmin, rmax, false);
 	i++;
 	j++;
+	//fp << z << ' ' << rmin << ' ' << rmax << endl;
       }
+
     __compute_all ();
     return;
   }
@@ -724,7 +760,10 @@ namespace geomtools {
       }
     if (rmax_ < rmin_)
       {
-	throw runtime_error ("polycone::add: Invalid value for 'rmax' !");
+	ostringstream message;
+	message <<  "polycone::add: " 
+		<< "Invalid value for 'rmax==" << rmax_ << "' ! ('rmin==" << rmin_ << "')";
+	throw runtime_error (message.str ());
       }
     r_min_max RMM;
     if (rmin_ > 0.0) __extruded = true;
@@ -799,7 +838,7 @@ namespace geomtools {
   void polycone::__compute_surfaces ()
   {
     if (! is_valid ()) return;
-    cerr << "DEBUG: polycone::__compute_surfaces: Entering..." << endl;
+    //cerr << "DEBUG: polycone::__compute_surfaces: Entering..." << endl;
     
     // bottom surface:
     {
@@ -877,8 +916,10 @@ namespace geomtools {
 	  rmax0 = rmax1;
 	}
       __inner_side_surface = s;
-      cerr << "DEBUG:  polycone::__compute_surfaces: " 
+      /*
+      cerr << "DEBUG: polycone::__compute_surfaces: " 
 	   << "__inner_side_surface==" << __inner_side_surface << endl;
+      */
     }
     return;
   }
