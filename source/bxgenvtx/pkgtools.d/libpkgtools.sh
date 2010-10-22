@@ -1,12 +1,12 @@
 # -*- mode: shell-script; -*-
-#
+# 
 # libpkgtools.sh
 #
 #   A bash library used by the pkgtools utilities.
 #
 # Author: F.Mauger
-# Date: 2009-11-20
-# Last update: 2009-12-17
+# Date: 2009-11-20 
+# Last update: 2010-09-17 
 #
 
 # if [ "x${PKGTOOLS_FORCE_RELOAD}" = "x1" -o "x${__init_lib_pkgtools}" = "x" ]; then
@@ -71,7 +71,7 @@ if [ "x" = "x" ]; then
 	fi
 	return 0
     }
-    #export -f pkgtools__delete_temp_file
+
 
     function pkgtools__create_temp_file ()
     {
@@ -83,13 +83,13 @@ if [ "x" = "x" ]; then
 	__pkgtools__temp_file=$(mktemp -p ${tmp_dir} __pkgtools_XXXXXX)
        	return 0
     }
-    #export -f pkgtools__create_temp_file
+
 
     function pkgtools__get_temp_file ()
     {
 	echo ${__pkgtools__temp_file}
     }
-    #export -f pkgtools__get_temp_file
+
 
     function __pkgtools__dump ()
     {
@@ -102,7 +102,6 @@ pkgtools dump:
 
 EOF
     }
-    #export -f __pkgtools__dump
 
 
     function pkgtools__is_float ()
@@ -130,7 +129,6 @@ EOF
 	fi
 	return 0 
     }
-    #export -f pkgtools__is_float
 
 
     function pkgtools__is_integer () 
@@ -158,7 +156,7 @@ EOF
 	fi
 	return 0
     }
-    #export -f pkgtools__is_integer
+
 
 #
 # UI utilities:
@@ -168,13 +166,13 @@ EOF
     {
 	__pkgtools__ui_interactive=1
     }
-    #export -f pkgtools__ui_interactive
+
 
     function pkgtools__ui_batch ()
     {
 	__pkgtools__ui_interactive=0
     }
-    #export -f pkgtools__ui_batch
+
 
     function pkgtools__ui_is_interactive ()
     {
@@ -183,7 +181,7 @@ EOF
 	fi
 	return 0
     }
-    #export -f pkgtools__ui_is_interactive
+
 
     function pkgtools__ui_is_gui ()
     {
@@ -192,19 +190,19 @@ EOF
 	fi
 	return 0
     }
-    #export -f pkgtools__ui_is_gui
+
 
     function pkgtools__ui_using_gui ()
     {
 	__pkgtools__ui_gui=1
     }
-    #export -f pkgtools__ui_using_gui
+
 
     function pkgtools__ui_not_using_gui ()
     {
 	__pkgtools__ui_gui=0
     }
-    #export -f pkgtools__ui_not_using_gui
+
 
     function pkgtools__ui_set_user_integer ()
     {
@@ -219,7 +217,7 @@ EOF
 	__pkgtools__at_function_exit
 	return 0
     }
-    #export -f pkgtools__ui_set_user_integer
+
 
     function pkgtools__ui_set_user_yesno ()
     {
@@ -240,19 +238,19 @@ EOF
 	__pkgtools__at_function_exit
 	return 0
     }
-    #export -f pkgtools__ui_set_user_yesno
+
 
     function pkgtools__ui_reset_user_yesno ()
     {
 	__pkgtools__ui_user_yesno=${__pkgtools__ui_YES}
     }
-    #export -f pkgtools__ui_reset_user_yesno
+
 
     function pkgtools__ui_get_user_yesno ()
     {
 	echo ${__pkgtools__ui_user_yesno}
     }
-    #export -f pkgtools__ui_get_user_yesno
+
 
     function pkgtools__ui_user_yesno_is_yes ()
     {
@@ -261,7 +259,7 @@ EOF
 	fi
 	return 1
     }
-    #export -f pkgtools__ui_user_yesno_is_yes
+
 
     function pkgtools__ui_user_yesno_is_no ()
     {
@@ -270,7 +268,7 @@ EOF
 	fi
 	return 1
     }
-    #export -f pkgtools__ui_user_yesno_is_no
+
 
     function pkgtools__ui_ask_user_yesno ()
     {
@@ -364,25 +362,25 @@ EOF
 	__pkgtools__at_function_exit
 	return 0
     }
-    #export -f pkgtools__ui_ask_user_yesno
+
 
     function pkgtools__ui_set_user_string ()
     {
 	__pkgtools__ui_user_string="$1"
     }
-    #export -f pkgtools__ui_ask_user_yesno
+ 
 
     function pkgtools__ui_reset_user_string ()
     {
 	__pkgtools__ui_user_string=""
     }
-    #export -f pkgtools__ui_reset_user_string
+
 
     function pkgtools__ui_get_user_string ()
     {
 	echo ${__pkgtools__ui_user_string}
     }
-    #export -f pkgtools__ui_get_user_string
+
 
     function pkgtools__ui_ask_user_string ()
     {
@@ -433,7 +431,7 @@ EOF
 	__pkgtools__at_function_exit
 	return 0
     }
-    #export -f pkgtools__ui_ask_user_string
+
 
 #
 #
@@ -455,7 +453,7 @@ EOF
 	fi
 	__pkgtools__msg_funcname=${fname}
     }
-    #export -f pkgtools__set_funcname
+
 
     function pkgtools__unset_funcname ()
     {
@@ -474,14 +472,13 @@ EOF
 	previous_fname=$(echo ${__pkgtools__msg_funcname_deps} | tr "@" "\n" | tail -1)
 	__pkgtools__msg_funcname=${previous_fname}
     }
-    #export -f pkgtools__unset_funcname
+
 
     function pkgtools__no_funcname ()
     {
 	__pkgtools__msg_funcname=
 	__pkgtools__msg_funcname_deps=
     }
-    #export -f pkgtools__no_funcname
 
 
     function __pkgtools__at_function_enter ()
@@ -489,14 +486,14 @@ EOF
 	pkgtools__set_funcname $1
 	pkgtools__msg_devel "Entering..."
     }
-    #export -f __pkgtools__at_function_enter
+
 
     function __pkgtools__at_function_exit ()
     {
 	pkgtools__msg_devel "Exiting."
 	pkgtools__unset_funcname
     }
-    #export -f __pkgtools__at_function_exit
+
 
 #
 # General utilities:
@@ -506,14 +503,12 @@ EOF
     {
 	echo $1 | tr "[A-Z]" "[a-z]"
     }
-    #export -f pkgtools__to_lower
 
 
     function pkgtools__to_upper ()
     {
 	echo $1 | tr "[a-z]" "[A-Z]"
     }
-    #export -f pkgtools__to_upper
 
     
     function pkgtools__get_dirname ()
@@ -532,7 +527,7 @@ EOF
 	rm -f ${pymac}
 	return 0
     }
-    #export -f pkgtools__get_dirname
+
 
     function pkgtools__get_basename ()
     {
@@ -544,7 +539,6 @@ EOF
 	basename ${path}
 	return 0
     }
-    #export -f pkgtools__get_basename
     
 
 #
@@ -561,7 +555,6 @@ EOF
             echo -en "\\033[0;39m" 1>&2
         fi
     }
-    #export -f pkgtools__msg_color_normal
 
 
     function pkgtools__msg_color_bold ()
@@ -570,7 +563,6 @@ EOF
             echo -en "\\033[1;1m" 1>&2
         fi
     }
-    #export -f pkgtools__msg_color_bold
 
 
     function pkgtools__msg_color_underline ()
@@ -579,7 +571,6 @@ EOF
             echo -en "\\033[0;38m" 1>&2
         fi
     }
-    #export -f pkgtools__msg_color_underline
 
 
     function pkgtools__msg_color_red ()
@@ -588,7 +579,6 @@ EOF
             echo -en "\\033[0;31m" 1>&2
         fi
     }
-    #export -f pkgtools__msg_color_red
 
 
     function pkgtools__msg_color_bright_red ()
@@ -597,8 +587,6 @@ EOF
             echo -en "\\033[0;31m" 1>&2
         fi
     }
-    #export -f pkgtools__msg_color_bright_red
-
 
     function pkgtools__msg_color_green ()
     {
@@ -606,7 +594,6 @@ EOF
             echo -en "\\033[0;32m" 1>&2
         fi
     }
-    #export -f pkgtools__msg_color_green
 
     function pkgtools__msg_color_brown ()
     {
@@ -614,7 +601,6 @@ EOF
             echo -en "\\033[0;33m" 1>&2
         fi
     }
-    #export -f pkgtools__msg_color_brown
 
     function pkgtools__msg_color_blue ()
     {
@@ -622,7 +608,7 @@ EOF
             echo -en "\\033[0;34m" 1>&2
         fi
     }
-    #export -f pkgtools__msg_color_blue
+
 
     function pkgtools__msg_color_violet ()
     {
@@ -630,7 +616,6 @@ EOF
             echo -en "\\033[0;35m" 1>&2
         fi
     }
-    #export -f pkgtools__msg_color_violet
 
     function pkgtools__msg_color_grey ()
     {
@@ -638,7 +623,6 @@ EOF
             echo -en "\\033[0;37m" 1>&2
         fi
     }
-    #export -f pkgtools__msg_color_grey
 
     function pkgtools__msg_color_white ()
     {
@@ -646,7 +630,6 @@ EOF
             echo -en "\\033[1;37m" 1>&2
         fi
     }
-    #export -f pkgtools__msg_color_white
 
     function pkgtools__msg_color_black ()
     {
@@ -654,7 +637,6 @@ EOF
             echo -en "\\033[1;39m" 1>&2
         fi
     }
-    #export -f pkgtools__msg_color_black
 
     function pkgtools__msg_color_reverse ()
     {
@@ -662,7 +644,6 @@ EOF
             echo -en "\\033[1;7m" 1>&2
         fi
     }
-    #export -f pkgtools__msg_color_reverse
 
     function pkgtools__msg_color_no_reverse ()
     {
@@ -670,7 +651,6 @@ EOF
             echo -en "\\033[1;27m" 1>&2
         fi
     }
-    #export -f pkgtools__msg_color_no_reverse
 
 
     function pkgtools__msg_color_blink ()
@@ -679,7 +659,7 @@ EOF
             echo -en "" 1>&2
         fi
     }
-    #export -f pkgtools__msg_color_blink
+
 
     function pkgtools__msg_color_no_blink ()
     {
@@ -687,7 +667,7 @@ EOF
             echo -en "" 1>&2
         fi
     }
-    #export -f pkgtools__msg_color_no_blink
+
 
     function pkgtools__msg_color__cancel ()
     {
@@ -695,7 +675,7 @@ EOF
             echo -en "\\033[1;m" 1>&2
         fi
     }
-    #export -f pkgtools__msg_color__cancel
+
 
 #     function pkgtools__msg_begin_highlight ()
 #     {
@@ -713,7 +693,7 @@ EOF
 	echo -en "$@" 1>&2
         pkgtools__msg_color_normal
     }
-    #export -f pkgtools__highlight
+
 
 #     function pkgtools__begin_error ()
 #     {
@@ -734,33 +714,33 @@ EOF
     {  
 	echo "${__pkgtools__os}"
     }
-    #export -f pkgtools__get_os
     
+
     function pkgtools__get_arch ()
     {  
 	echo "${__pkgtools__arch}"
     }
-    #export -f pkgtools__get_arch
     
+
     function pkgtools__get_sys ()
     {  
 	echo "$(pkgtools__get_os)-$(pkgtools__get_arch)"
     }
-    #export -f pkgtools__get_sys
+
 
     function pkgtools__is_linux ()
     {
 	test "$(pkgtools__get_os)" = "Linux" && return 0
 	return 1
     }
-    #export -f pkgtools__is_linux
+
 
     function pkgtools__is_darwin ()
     {
 	test "$(pkgtools__get_os)" = "Darwin" && return 0
 	return 1
     }
-    #export -f pkgtools__is_darwin
+
 
     function pkgtools__get_distribution_family ()
     {
@@ -787,28 +767,28 @@ EOF
 	fi
 	echo "${__pkgtools__distribution_family}"
     }
-    #export -f pkgtools__get_distribution_family
+
 
     function pkgtools__is_redhat_like ()
     {
 	test "$(pkgtools__get_distribution_family)" = "RedHat" && return 0
 	return 1
     }
-    #export -f pkgtools__is_redhat_like
+
 
     function pkgtools__is_debian_like ()
     {
 	test "$(pkgtools__get_distribution_family)" = "Debian" && return 0
 	return 1
     }
-    #export -f pkgtools__is_debian_like
+
 
     function pkgtools__is_darwin_like ()
     {
 	test "$(pkgtools__get_distribution_family)" = "Darwin" && return 0
 	return 1
     }
-    #export -f pkgtools__is_darwin_like
+
 
     function pkgtools__get_distribution ()
     {
@@ -845,28 +825,28 @@ EOF
 	fi
 	echo "${__pkgtools__distribution}"
     }
-    #export -f pkgtools__get_distribution
+
 
     function pkgtools__is_fedora ()
     {
 	test "$(pkgtools__get_distribution)" = "Fedora" && return 0
 	return 1
     }
-    #export -f pkgtools__is_fedora
+
 
     function pkgtools__is_sl ()
     {
 	test "$(pkgtools__get_distribution)" = "SL" && return 0
 	return 1
     }
-    #export -f pkgtools__is_sl
+
 
     function pkgtools__is_ubuntu ()
     {
 	test "$(pkgtools__get_distribution)" = "Ubuntu" && return 0
 	return 1
     }
-    #export -f pkgtools__is_ubuntu
+
 
     function pkgtools__get_distribution_version ()
     {
@@ -898,7 +878,6 @@ EOF
 	fi
 	echo "${__pkgtools__distribution_version}"
     }
-    #export -f pkgtools__get_distribution_version
 
 #
 # Message log utilities:
@@ -908,62 +887,62 @@ EOF
     {
 	__pkgtools__msg_verbose=1
     }
-    #export -f pkgtools__msg_using_verbose
+
 
     function pkgtools__msg_not_using_verbose ()
     {
 	__pkgtools__msg_verbose=0
     }
-    #export -f pkgtools__msg_not_using_verbose
+
 
     function pkgtools__msg_using_debug ()
     {
 	__pkgtools__msg_debug=1
     }
-    #export -f pkgtools__msg_using_debug
+
 
     function pkgtools__msg_not_using_debug ()
     {
 	__pkgtools__msg_debug=0
     }
-    #export -f pkgtools__msg_not_using_debug
+
 
     function pkgtools__msg_using_devel ()
     {
 	__pkgtools__msg_devel=1
     }
-    #export -f pkgtools__msg_using_devel
+
 
     function pkgtools__msg_not_using_devel ()
     {
 	__pkgtools__msg_devel=0
     }
-    #export -f pkgtools__msg_not_using_devel
+
 
     function pkgtools__msg_using_date ()
     {
 	__pkgtools__msg_use_date=1
     }
-    #export -f pkgtools__msg_using_date
+
 
     function pkgtools__msg_not_using_date ()
     {
 	__pkgtools__msg_use_date=0
     }
-    #export -f pkgtools__msg_not_using_date
+
 
     function pkgtools__msg_using_color ()
     {
 	__pkgtools__msg_use_color=1
     }
-    #export -f pkgtools__msg_using_color
     
+
     function pkgtools__msg_not_using_color ()
     {
 	__pkgtools__msg_use_color=0
 	pkgtools__msg_color_normal
     }
-    #export -f pkgtools__msg_not_using_color
+
 
     function __pkgtools__base_msg ()
     {
@@ -983,7 +962,7 @@ EOF
 	fi
 	echo "$@" 1>&2
     }
-    #export -f __pkgtools__base_msg
+
 
     function __pkgtools__base_msg_2 ()
     {
@@ -1003,7 +982,6 @@ EOF
 	echo "" 1>&2
 	return 0
     }
-    #export -f __pkgtools__base_msg_2
 
 
     function pkgtools__msg_err ()
@@ -1026,15 +1004,15 @@ EOF
 	fi
 	return 0
     }
-    #export -f pkgtools__msg_err
     
+
     function pkgtools__msg_error ()
     {
 	pkgtools__msg_err $@
 	return 0
     }
-    #export -f pkgtools__msg_error
     
+
     function pkgtools__msg_warning ()
     {
 	pkgtools__msg_color_violet
@@ -1055,7 +1033,7 @@ EOF
 	fi
 	return 0
     }
-    #export -f pkgtools__msg_warning
+
 
     function pkgtools__msg_info ()
     {
@@ -1081,14 +1059,14 @@ EOF
 	fi
 	return 0
     }
-    #export -f pkgtools__msg_info
+
 
     function pkgtools__msg_verbose ()
     {
 	pkgtools__msg_info $@
 	return 0
     }
-    #export -f pkgtools__msg_verbose
+
 
     function pkgtools__msg_notice ()
     {
@@ -1122,7 +1100,7 @@ EOF
 	fi
 	return 0
     }
-    #export -f pkgtools__msg_notice
+
 
     function pkgtools__msg_highlight_notice ()
     {
@@ -1144,7 +1122,7 @@ EOF
 	fi
 	return 0
     }
-    #export -f pkgtools__msg_highlight_notice
+
     
     function pkgtools__msg_devel ()
     {
@@ -1161,7 +1139,7 @@ EOF
 	pkgtools__msg_color_normal
 	return 0
     }
-    #export -f pkgtools__msg_devel
+
 
     function pkgtools__msg_debug ()
     {
@@ -1177,7 +1155,7 @@ EOF
 	fi
 	return 0
     }
-    #export -f pkgtools__msg_debug
+
 
 #
 # Version number utilities
@@ -1197,7 +1175,7 @@ EOF
 	__pkgtools__at_function_exit
 	return 0
     }
-    #export -f pkgtools__get_version_major
+
 
     function pkgtools__get_version_minor ()
     {
@@ -1213,7 +1191,7 @@ EOF
 	__pkgtools__at_function_exit
 	return 0
     }
-    #export -f pkgtools__get_version_minor
+
 
     function pkgtools__get_version_patch_level ()
     {
@@ -1231,7 +1209,7 @@ EOF
 	__pkgtools__at_function_exit
 	return 0
     }
-    #export -f pkgtools__get_version_patch_level
+
 
     function pkgtools__get_version_int ()
     {
@@ -1250,7 +1228,123 @@ EOF
 	__pkgtools__at_function_exit
 	return 0
     }
-    #export -f pkgtools__get_version_int
+
+
+    function pkgtools__create_global_header_file ()
+    {
+	__pkgtools__at_function_enter pkgtools__create_global_header_file
+	pkg_name="$1"
+	if [ "x${pkg_name}" = "x" ]; then
+	    pkgtools__msg_error "Missing package name!"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+	shift 1
+
+	pkg_version="$1"
+	if [ "x${pkg_version}" = "x" ]; then
+	    pkgtools__msg_error "Missing package version!"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+	shift 1
+
+	pkg_global_file="$1"
+	if [ "x${pkg_global_file}" = "x" ]; then
+	    pkgtools__msg_error "Missing target global header file!"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+	shift 1
+	
+	pkg_name_lower=$(pkgtools__to_lower ${pkg_name})
+	pkg_name_upper=$(pkgtools__to_upper ${pkg_name})
+
+	version_header_file="${pack_name}/${pack_name}_version.h"
+
+	cat>${pkg_global_file}<<EOF
+// -*- mode: c++; -*- 
+/* ${pkg_name}.h global header file 
+ * Author(s):     ${USERNAME} <${USERMAIL}>
+ * Creation date: $(date +%F)
+ * Last modified: 
+ *
+ *
+ */
+
+/*! \mainpage The ${pkg_name} package documentation
+ *
+ * \section intro_section Introduction
+ *
+ * This section is empty.
+ *
+ * \section contents_section Contents 
+ *
+ * This section is empty.
+ *
+ * \section build_section Installation instructions 
+ *
+ * Configuration, build, installation and setup are done thanks 
+ * to the \c './pkgtools.d/pkgtool' script.
+ *
+ * Usage: 
+ *  \verbatim
+bash> ./pkgtools.d/pkgtool --help   
+\endverbatim
+ *
+ * Using bash, a typical install sequence is:
+ * 
+ *  \verbatim
+bash> ./pkgtools.d/pkgtool [options...] check [special options...]
+bash> ./pkgtools.d/pkgtool [options...] configure  [special options...]
+bash> ./pkgtools.d/pkgtool [options...] build 
+bash> ./pkgtools.d/pkgtool [options...] build bin 
+bash> ./pkgtools.d/pkgtool [options...] build bin_test 
+bash> ./pkgtools.d/pkgtool [options...] doc 
+bash> ./pkgtools.d/pkgtool [options...] install [special options...]
+\endverbatim
+ * 
+ * Test: 
+ *  \verbatim
+bash> source ${pack_name_lower}.sh
+bash> ${pack_name_lower}-config --help
+\endverbatim
+ * 
+ * Setup from your \c '~/.bashrc': 
+ *  \verbatim
+export ${pack_name_upper}_ROOT=<installation base directory>
+if [ -f \${${pack_name_upper}_ROOT}/${pack_name_lower}.sh ]; then
+   source \${${pack_name_upper}_ROOT}/${pack_name_lower}.sh
+else
+   echo "ERROR: No setup for the ${pack_name} package !" >&2
+fi
+\endverbatim
+ *
+ * \section misc_section Miscellaneous informations
+ *
+ * This section is empty.
+ *
+ */
+
+#ifndef __${pkg_name}__${pack_name}_h
+#define __${pkg_name}__${pack_name}_h 1
+
+#include <${version_header_file}>
+
+//#include <${pack_name}/dummy_${pack_name}.h>
+
+EOF
+	cat>>${pkg_global_file}<<EOF
+
+#endif // __${pkg_name}__${pack_name}_h
+
+// end of ${pkg_name}.h
+EOF
+	
+	__pkgtools__at_function_exit
+	return 0
+    }
+    
 
     function pkgtools__create_version_header_file ()
     {
@@ -1286,21 +1380,18 @@ EOF
 	
 	pkg_name_lower=$(pkgtools__to_lower ${pkg_name})
 	pkg_name_upper=$(pkgtools__to_upper ${pkg_name})
+	let pkg_version_int=$(pkgtools__get_version_int ${pkg_version})
 
 	cat>${pkg_version_file}<<EOF
 // -*- mode: c++; -*- 
-/* ${pkg_name}_version.h configuration header file 
+/* ${pkg_name}_version.h version header file 
  * 
  *
  */
 
-#ifndef __${pkg_name}__version_h
-#define __${pkg_name}__version_h 1
+#ifndef __${pkg_name}__${pkg_name}_version_h
+#define __${pkg_name}__${pkg_name}_version_h 1
 
-EOF
-    let pkg_version_int=$(pkgtools__get_version_int ${pkg_version})
-
-    cat>>${version_header_file}<<EOF
 //  ${pkg_name_upper}_VERSION % 100        is the patch level
 //  ${pkg_name_upper}_VERSION / 100 % 1000 is the minor version
 //  ${pkg_name_upper}_VERSION / 100000     is the major version
@@ -1313,7 +1404,7 @@ EOF
 
 #define ${pkg_name_upper}_LIB_VERSION "${pkg_version}"
 
-#endif // __${pkg_name}__version_h
+#endif // __${pkg_name}__${pkg_name}_version_h
 
 // end of ${pkg_name}_version.h
 EOF
@@ -1321,7 +1412,7 @@ EOF
 	__pkgtools__at_function_exit
 	return 0
     }
-    #export -f pkgtools__create_version_header_file
+
 
     function pkgtools__create_version_file ()
     {
@@ -1353,7 +1444,6 @@ EOF
 	__pkgtools__at_function_exit
 	return 0
     }
-    #export -f pkgtools__create_version_file
 
 
 #
@@ -1363,7 +1453,6 @@ EOF
 #   name[version description](component,,,)
 #
 #
-    
 
     function pkgtools__get_package_name ()
     {
@@ -1386,7 +1475,7 @@ EOF
 	__pkgtools__at_function_exit
 	return 0
     }
-    #export -f pkgtools__get_package_name
+
 
     function pkgtools__get_package_version_desc ()
     {
@@ -1410,7 +1499,7 @@ EOF
 	__pkgtools__at_function_exit
 	return 0
     }
-    #export -f pkgtools__get_package_version_desc
+
 
     function pkgtools__is_package_version_valid ()
     {
@@ -1445,7 +1534,7 @@ EOF
 	__pkgtools__at_function_exit
 	return 0
     }
-    #export -f pkgtools__is_package_version_valid
+
 
 #
 # Software check utilities:
@@ -1489,7 +1578,6 @@ EOF
 	__pkgtools__at_function_exit
 	return ${error_code}
     }
-    #export -f pkgtools__check_python_module
 
 
     function pkgtools__is_pkg_config_installed ()
@@ -1501,7 +1589,6 @@ EOF
 	__pkgtools__at_function_exit
 	return ${error_code}
     }
-    #export -f pkgtools__is_pkg_config_installed
 
 
     function pkgtools__package_is_pkg_config_aware ()
@@ -1525,7 +1612,7 @@ EOF
 	__pkgtools__at_function_exit
 	return ${error_code}
     }
-    #export -f pkgtools__package_is_pkg_config_aware
+
 
     function pkgtools__get_config_cflags_opt ()
     {
@@ -1545,7 +1632,7 @@ EOF
 	__pkgtools__at_function_exit
 	return 0
     }
-    #export -f pkgtools__get_config_cflags_opt
+
 
     function pkgtools__get_config_ldflags_opt ()
     {
@@ -1565,7 +1652,7 @@ EOF
 	__pkgtools__at_function_exit
 	return 0
     }
-    #export -f pkgtools__get_config_ldflags_opt
+
 
     # Returns the name of the configuration script:
     #
@@ -1620,7 +1707,7 @@ EOF
 	__pkgtools__at_function_exit
 	return 0
     }
-    #export -f pkgtools__get_package_config_tool
+
 
     function pkgtools__check_package_config_tool ()
     {
@@ -1644,7 +1731,7 @@ EOF
 	__pkgtools__at_function_exit
 	return 0	
     }
-    #export -f pkgtools__check_package_config_tool
+
 
     function pkgtools__get_package_cflags_command ()
     {  
@@ -1691,7 +1778,6 @@ EOF
 	__pkgtools__at_function_exit
 	return 0
     }
-    #export -f pkgtools__get_package_cflags_command
     
 
     function pkgtools__get_package_ldflags_command ()
@@ -1768,7 +1854,6 @@ EOF
 	__pkgtools__at_function_exit
 	return 0
     }
-    #export -f pkgtools__get_pyver
 
 
     function pkgtools__get_g77ver ()
@@ -1784,7 +1869,6 @@ EOF
 	__pkgtools__at_function_exit
 	return 0
     }
-    #export -f pkgtools__get_g77ver
     
 
     function pkgtools__get_gfortranver ()
@@ -1800,7 +1884,6 @@ EOF
 	__pkgtools__at_function_exit
 	return 0
     }
-    #export -f pkgtools__get_gfortranver
     
 
     function pkgtools__get_gccver ()
@@ -1816,7 +1899,6 @@ EOF
 	__pkgtools__at_function_exit
 	return 0
     }
-    #export -f pkgtools__get_gccver
 
 
     function pkgtools__get_sys_with_gccver ()
@@ -1824,7 +1906,6 @@ EOF
 	gccver=$(pkgtools__get_gccver | tr -d '.')
 	echo "$(pkgtools__get_sys)-gcc${gccver}"
     }
-    #export -f pkgtools__get_sys_with_gccver
 
 
     function pkgtools__check_package_by_executable ()
@@ -1839,7 +1920,6 @@ EOF
 	__pkgtools__at_function_exit
 	return 1
     }
-    #export -f pkgtools__check_package_by_executable
 
 
     function pkgtools__check_package_by_config ()
@@ -1861,7 +1941,6 @@ EOF
 	__pkgtools__at_function_exit
 	return 0
     }
-    #export -f pkgtools__check_package_by_config
 
 
     function pkgtools__check_package_by_root_env ()
@@ -1883,7 +1962,6 @@ EOF
 	__pkgtools__at_function_exit
 	return 0
     }
-    #export -f pkgtools__check_package_by_root_env
 
 
     function pkgtools__check_package_always_suspicious ()
@@ -1913,7 +1991,7 @@ EOF
 	__pkgtools__at_function_exit
 	return 1
     }
-    #export -f pkgtools__check_package_always_suspicious
+
 
     function pkgtools__check_package_always_bad ()
     {
@@ -1942,7 +2020,7 @@ EOF
 	__pkgtools__at_function_exit
 	return 1
     }
-    #export -f pkgtools__check_package_always_bad
+
     
     function pkgtools__check_package_always_ok ()
     {
@@ -1971,7 +2049,7 @@ EOF
 	__pkgtools__at_function_exit
 	return 1
     }
-    #export -f pkgtools__check_package_always_ok
+
     
     function pkgtools__check_package ()
     {
@@ -2048,13 +2126,14 @@ EOF
 	__pkgtools__at_function_exit
 	return 1
     }
-    #export -f pkgtools__check_package
+
 
     function pkgtools__check_dependencies ()
     {
 	__pkgtools__at_function_enter pkgtools__check_dependencies
 	
 	pack_info="$1"
+	shift 1
 	
 	if [ ! -f ${pack_info} ]; then
 	    pkgtools__msg_warning "Cannot find 'package.info' file!"
@@ -2064,22 +2143,23 @@ EOF
 
 	skipped_dependencies="$@"
 	if [ "x${skipped_dependencies}" != "x" ]; then
-	    pkgtools__msg_notice "Will skip dependency check for ${skipped_dependencies}..."
+	    pkgtools__msg_debug "Will skip dependency check for ${skipped_dependencies}..."
 	fi
 
 	deps=$(cat ${pack_info} | grep "dependencies=" | cut -d= -f2- | tr '\t' ' ' | tr -s ' ' | tr ';' '\n' | sed -e 's/ /___/g')
-	pkgtools__msg_notice "Checking deps='${deps}'"
+	pkgtools__msg_debug "Checking deps='${deps}'"
 	for adep in ${deps}; do
 	    tdep=$(echo "${adep}@" | cut -d'@' -f1)
 	    dep=$(echo ${tdep} | sed -e 's/___/ /g')
 	    dep_name=$(echo "${dep}[" | cut -d'[' -f1 | tr -d ' ')
-	    pkgtools__msg_notice "Checking ${dep_name} setup..."
 	    
             # skip check for dependency within the 'skipped_dependencies' list:
 	    echo "${skipped_dependencies}" | grep ${dep_name} >/dev/null 2>&1
 	    if [ $? -eq 0 ]; then
+		pkgtools__msg_notice "Do not check ${dep_name} setup..."
 		continue
 	    fi
+	    pkgtools__msg_notice "Checking ${dep_name} setup..."
 	    dep_version_info=$(echo "${dep}[" | cut -d'[' -f2 | cut -d']' -f1)
 	    dep_sublibs=$(echo "${adep}@" | cut -d'@' -f2 | sed -e 's/^(//g' -e 's/)$//g')
 	    dep_version=$(echo "${adep}/" | cut -d'/' -f2)
@@ -2087,34 +2167,33 @@ EOF
 	    dep_upper=$(pkgtools__to_upper ${dep_name})
 	    dep_cfg=$(get_dependency_package_config ${dep_name})
 	    sublibs=$(echo ${dep_sublibs} | tr "A-Z" "a-z" | tr -d [[:space:]] | tr ',' ' ')
-	    pkgtools__msg_debug "Package dependency    =  '${dep}'"
-	    pkgtools__msg_debug "   Package name         =  '${dep_name}'"
-	    pkgtools__msg_debug "   Package version info =  '${dep_version_info}'"
-	    pkgtools__msg_debug "   Package sublibs      =  '${dep_sublibs}'"
-	    pkgtools__msg_debug "   Depends on package '${dep_name}' with version info '${dep_version_info}'"
+	    pkgtools__msg_debug "Package dependency     =  '${dep}'"
+	    pkgtools__msg_debug "- Package name         =  '${dep_name}'"
+	    pkgtools__msg_debug "- Package version info =  '${dep_version_info}'"
+	    pkgtools__msg_debug "- Package sublibs      =  '${dep_sublibs}'"
+	    pkgtools__msg_debug "- Depends on package '${dep_name}' with version info '${dep_version_info}'"
 	    if [ "x${dep_sublibs}" != "x" ]; then
 		pkgtools__msg_debug "check_dependencies:     with libraries '${dep_sublibs}'"
 	    fi
-	    pkgtools__msg_debug "   Sublibs      =  '${sublibs}'"
+	    pkgtools__msg_debug "- Sublibs      =  '${sublibs}'"
 	    
 	    local dep_excluded=0
 	    check_excl=$(echo ${dep_version_info} | tr -d [:space:])
 	    if [ "x${check_excl}" = "x!" ]; then
 		dep_excluded=1
 	    fi	    
-	    pkgtools__msg_debug "   Excluded     =  '${dep_excluded}'"
-	    
-	    
+	    pkgtools__msg_debug "- Excluded     =  '${dep_excluded}'"
+	      
 	    has_config_script=0
 	    has_executable=0
-	    pkgtools__msg_debug "   Checking ${dep_cfg} file..."
+	    pkgtools__msg_debug "- Checking ${dep_cfg} file..."
 	    which ${dep_cfg} > /dev/null 2>&1 
 	    if [ $? -ne 0 ]; then
 		has_config_script=0
 	    else
 		has_config_script=1
 	    fi
-	    pkgtools__msg_debug "   Checking ${dep_name} executable..."
+	    pkgtools__msg_debug "- Checking ${dep_name} executable..."
 	    dep_exe=
 	    which ${dep_name} > /dev/null 2>&1 
 	    if [ $? -ne 0 ]; then
@@ -2125,7 +2204,7 @@ EOF
 	    fi
 	    
 	    if [ "x${dep_name}" != "x${dep_lower}" ]; then
-		pkgtools__msg_debug "   Checking ${dep_lower} executable..."
+		pkgtools__msg_debug "- Checking ${dep_lower} executable..."
 		which ${dep_lower} > /dev/null 2>&1 
 		if [ $? -eq 0 ]; then
 		    dep_exe=${dep_lower}
@@ -2135,7 +2214,7 @@ EOF
 	    
 	    if [ ${has_executable} -eq 0 -a ${has_config_script} -eq 0 ]; then
 		if [ ${dep_excluded} -eq 0 ]; then
-		    pkgtools__msg_error "   Cannot check ${dep_name} through some script nor executable!"
+		    pkgtools__msg_error "Cannot check ${dep_name} through some script nor executable!"
 		    __pkgtools__at_function_exit
 		    return 1
 		fi
@@ -2147,7 +2226,7 @@ EOF
 		if [ ${has_config_script} -eq 1 ]; then
 		    ${dep_cfg} --version > /dev/null 2>&1
 		    if [ $? -ne 0 ]; then
-			pkgtools__msg_warning "   Cannot retrieve version information from the '${dep_cfg}' script!"
+			pkgtools__msg_warning "Cannot retrieve version information from the '${dep_cfg}' script!"
 		    else
 			dep_version=$(${dep_cfg} --version 2>&1)
 		    fi
@@ -2158,7 +2237,7 @@ EOF
 		if [ ${has_executable} -eq 1 -a ${dep_cfg} != ${dep_exe} ]; then
 		    ${dep_exe} --version > /dev/null 2>&1
 		    if [ $? -ne 0 ]; then
-			pkgtools__msg_warning "   Cannot retrieve version information from the '${dep_exe}' executable!"
+			pkgtools__msg_warning "Cannot retrieve version information from the '${dep_exe}' executable!"
 		    else
 			dep_version=$(${dep_exe} --version 2>&1)
 		    fi
@@ -2169,15 +2248,15 @@ EOF
 	    if [ "x${dep_version}" != "x" ]; then
 		ver_str=" (${dep_version})"
 	    else
-		pkgtools__msg_warning "   Cannot retrieve version information for '${dep_name}'!"
+		pkgtools__msg_warning "Cannot retrieve version information for '${dep_name}'!"
 	    fi
 
 	    if [ ${dep_excluded} -eq 1 ]; then
-		pkgtools__msg_error "   ${dep_name}${ver_str} should NOT be setup !"
+		pkgtools__msg_error "${dep_name}${ver_str} should NOT be setup !"
 		__pkgtools__at_function_exit
 		return 1
 	    fi
-	    pkgtools__msg_notice "   ${dep_name}${ver_str} seems to be properly setup!"
+	    pkgtools__msg_notice "${dep_name}${ver_str} seems to be properly setup!"
 	    
 	done
 	
@@ -2215,6 +2294,7 @@ EOF
 	return 0;
     }
 
+
     function pkgtools__cfg_load_property ()
     {
 	__pkgtools__at_function_enter pkgtools__cfg_load_property 
@@ -2236,6 +2316,7 @@ EOF
 	__pkgtools__at_function_exit
 	return 0;
     }
+
 
     function pkgtools__cfg_store_property ()
     {
@@ -2451,7 +2532,6 @@ EOF
 	__pkgtools__at_function_exit
 	return 0
     }
-    #export -f pkgtools__test
 
 
     function pkgtools__test_ui ()
@@ -2562,7 +2642,6 @@ EOF
 	__pkgtools__at_function_exit
 	return 0
     }
-    #export -f pkgtools__test_ui
 
 fi
 
@@ -2571,4 +2650,4 @@ fi
 #    echo "WARNING: pkgtools library has already been loaded !" >&2
 #fi
 
-# end
+# end of libpkgtools.sh
