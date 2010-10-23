@@ -1,0 +1,12 @@
+# -*- mode: gnuplot; -*- 
+
+! ${DATATOOLS_BIN_DIR}/test_time_tools | gsl-histogram 0.0 0.01 20 > test_time_tools.data
+
+set title "Test the 'computing_time' class"
+set grid
+plot 'test_time_tools.data' u 1:3 notitle with histeps
+pause -1 "Hit [Return]..."
+
+! rm -f  test_time_tools.data
+
+# end
