@@ -48,6 +48,11 @@ namespace geomtools {
     return __z_max;
   }
 
+  double polyhedra::get_xy_max () const
+  {
+    return __xy_max;
+  }
+    
   double polyhedra::get_r_max () const
   {
     return __r_max;
@@ -164,6 +169,7 @@ namespace geomtools {
 	    rmin *= lunit;
 	  }
 	    
+	this->set_n_sides (n_sides);
 	for (int i = 0; i < zs.size (); i++)
 	  {
 	    double a_z = zs[i];
@@ -464,7 +470,7 @@ namespace geomtools {
 
   bool polyhedra::is_valid () const
   {
-    return (__n_sides > 3) && (__points.size () > 1);
+    return (__n_sides >= 3) && (__points.size () > 1);
   }
   
   void polyhedra::reset ()
@@ -478,7 +484,7 @@ namespace geomtools {
     __inner_volume = numeric_limits<double>::quiet_NaN();
     __outer_volume = numeric_limits<double>::quiet_NaN();
     __volume = numeric_limits<double>::quiet_NaN();
-    __z_min = __z_max = __r_max = numeric_limits<double>::quiet_NaN();
+    __z_min = __z_max = __r_max = __xy_max = numeric_limits<double>::quiet_NaN();
     __extruded = false;
     return;
   }
@@ -486,14 +492,16 @@ namespace geomtools {
   void polyhedra::__compute_limits ()
   {
     if (! is_valid ()) return;
-    __z_min = __z_max = __r_max = numeric_limits<double>::quiet_NaN ();    
+    __z_min = __z_max = __r_max = __xy_max = numeric_limits<double>::quiet_NaN ();  
+    double alpha = 2.0 * M_PI / __n_sides;
+    double max_radius = numeric_limits<double>::quiet_NaN ();
     for (rz_col_t::const_iterator i = __points.begin ();
 	 i != __points.end ();
 	 i++)
       {
-	double z = i->first;
+	double z    = i->first;
 	double rmax = i->second.rmax;
-	if (__z_min != __z_min)
+	if (! datatools::utils::is_valid (__z_min))
 	  {
 	    __z_min = z;
 	  }
@@ -501,7 +509,7 @@ namespace geomtools {
 	  {
 	    __z_min = z;
 	  }
-	if (__z_max != __z_max)
+	if (! datatools::utils::is_valid (__z_max))
 	  {
 	    __z_max = z;
 	  }
@@ -509,16 +517,38 @@ namespace geomtools {
 	  {
 	    __z_max = z;
 	  }
-	if (__r_max != __r_max)
+	if (! datatools::utils::is_valid (max_radius))
 	  {
-	    __r_max = rmax;
+	    max_radius = rmax;
 	  }
-	else if (rmax > __r_max)
+	else if (rmax > max_radius)
 	  {
-	    __r_max = rmax;
+	    max_radius = rmax;
 	  }
       }
-    return;
+    __r_max = max_radius;
+    // compute the bounding box:
+    for (int i = 0; i < __n_sides; i++)
+      {
+	double theta = alpha * (i + 0.5);
+	double xs  = __r_max * cos (theta);
+	double ys  = __r_max * sin (theta);
+	double axs = abs (xs);
+	double ays = abs (ys);
+	if (! datatools::utils::is_valid (__xy_max))
+	  {
+	    __xy_max = axs;
+	  }
+	if (axs > __xy_max)
+	  {
+	    __xy_max = axs;
+	  }
+	if (ays > __xy_max)
+	  {
+	    __xy_max = ays;
+	  }	
+      }
+   return;
   }
 
   void polyhedra::__compute_surfaces ()
@@ -686,6 +716,43 @@ namespace geomtools {
     __volume = __outer_volume - __inner_volume;
     return;
   }
+
+  void polyhedra::compute_inner_polyhedra (polyhedra & ip_)
+  {
+    ip_.reset ();
+    ip_.set_n_sides (this->get_n_sides ());
+    for (polyhedra::rz_col_t::const_iterator i = __points.begin ();
+	 i != __points.end ();
+	 i++)
+      {
+	double z = i->first;
+	double rmax = i->second.rmin;
+	bool add_it = true;
+	if (add_it)
+	  {
+	    ip_.add (z, rmax, false);
+	  }
+      }
+    ip_.__compute_all ();
+    return;
+  }
+
+  void polyhedra::compute_outer_polyhedra (polyhedra & op_)
+  {
+    op_.reset ();
+    op_.set_n_sides (this->get_n_sides ());
+    for (polyhedra::rz_col_t::const_iterator i = __points.begin ();
+	 i != __points.end ();
+	 i++)
+      {
+	double z = i->first;
+	double rmax = i->second.rmax;
+	op_.add (z, 0.0, rmax, false);
+      }
+    op_.__compute_all ();
+    return;
+  }
+
  
   double polyhedra::get_surface (int mask_) const
   {
@@ -968,7 +1035,7 @@ namespace geomtools {
     namespace du = datatools::utils;
     string indent;
     if (! indent_.empty ()) indent = indent_;
-    i_object_3d::tree_dump (out_, title_, indent_, true);
+    i_shape_3d::tree_dump (out_, title_, indent_, true);
 
     out_ << indent << du::i_tree_dumpable::tag 
 	 << "N(sides) : " << get_n_sides () << endl;

@@ -20,7 +20,7 @@ int main (int argc_, char ** argv_)
       clog << "Test program for class 'polyhedra'!" << endl; 
   
       bool debug = false;
-
+      bool draw = true;
       int iarg = 1;
       while (iarg < argc_)
         {
@@ -32,6 +32,10 @@ int main (int argc_, char ** argv_)
                if ((option == "-d") || (option == "--debug")) 
                  {
                    debug = true;
+                 }
+               else if ((option == "-D") || (option == "--draw")) 
+                 {
+                   draw = false;
                  }
 	       else 
                  { 
@@ -48,7 +52,6 @@ int main (int argc_, char ** argv_)
           iarg++;
       }
     
-	
       geomtools::polyhedra my_polyhedra;
       string datafile = "${GEOMTOOLS_ROOT}/resources/data/test_light_guide_0.data";
       datatools::utils::fetch_path_with_env (datafile);
@@ -59,6 +62,7 @@ int main (int argc_, char ** argv_)
 	}
       clog << "Polyhedra: " << my_polyhedra << endl;
 
+      if (draw)
       {
 	geomtools::vector_3d polyhedra_pos;
 	geomtools::rotation polyhedra_rot;

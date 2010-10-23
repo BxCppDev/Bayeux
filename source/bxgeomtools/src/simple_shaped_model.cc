@@ -58,6 +58,11 @@ namespace geomtools {
     return *__polycone;
   }
   
+  const geomtools::polyhedra & simple_shaped_model::get_polyhedra () const
+  {
+    return *__polyhedra;
+  }
+  
   const geomtools::i_shape_3d & simple_shaped_model::get_solid () const
   {
     return *__solid;
@@ -191,7 +196,19 @@ namespace geomtools {
       {
 	_construct_polycone (name_, config_, models_);
       }
-    
+    // Polyhedra case:
+    else if (shape_type == "polyhedra")
+      {
+	_construct_polyhedra (name_, config_, models_);
+      }
+    else
+      {
+	ostringstream message;
+	message << "simple_shaped_model::_at_construct: "
+		<< "Shape '" << shape_type << "' is not supported !";
+	throw runtime_error (message.str ());
+      }
+     
     // set the envelope solid shape:
     get_logical ().set_shape (*__solid);
 
@@ -691,24 +708,11 @@ namespace geomtools {
 	  }
       }
     
-      /*
-      if (config_.has_key ("z_min"))
-      {
-      z_min = config_.fetch_real ("z_min");
-      z_min *= lunit;
-      }  
-      
-      if (config_.has_key ("z_max"))
-      {
-      z_max = config_.fetch_real ("z_max");
-      z_max *= lunit;
-      }  
-      */
-    
     __polycone = new polycone ();
     __polycone->initialize (config_);
     if (! __polycone->is_valid ())
       {
+	__polycone->tree_dump (cerr, "Invalid polycone: ", "ERROR:" );
 	throw runtime_error ("simple_shaped_model::_construct_polycone: Invalid polycone build parameters !");
       }
     
@@ -776,19 +780,196 @@ namespace geomtools {
 	if (! __polycone->is_extruded ())
 	  {
 	    // if the polycon is not extruded, no daughter physical volumes can be placed 
-	    // within the 'outer' envelope polycon:
+	    // within the 'outer' envelope polycone:
 	    __daughter_owner_logical = 0;
 	  }
 	else
 	  {
-	    // if the polycon is extruded, add the polycon 
-	    // within the 'outer' envelope polycon:
+	    // if the polycone is extruded, add the polycone 
+	    // within the 'outer' envelope polycone:
 	    __inner_placement.set (0, 0, 0, 0, 0, 0);
 	    ostringstream inner_name;
-	    inner_name << "__" << get_logical ().get_name () << ".polycon_envelope";
+	    inner_name << "__" << get_logical ().get_name () << ".polycone_envelope";
 	    __inner_logical.set_name (i_model::make_logical_volume_name (name_));
 	    __inner_logical.set_material_ref (__material_name);
 	    __inner_logical.set_shape (*__polycone);
+	    if (visibility::has_color (config_))
+	      {
+		visibility::set_color (__inner_logical.parameters (), 
+				       visibility::get_color (config_));
+	      }
+	    __inner_phys.set_name (i_model::make_physical_volume_name (inner_name.str ()));
+	    __inner_phys.set_placement (__inner_placement);
+	    __inner_phys.set_logical (__inner_logical);
+	    __inner_phys.set_mother (this->get_logical ());
+	  }
+      }
+ 
+    return;
+  }
+
+
+  /*****************************************************/
+      
+  void simple_shaped_model::_construct_polyhedra (const string & name_,
+						 const datatools::utils::properties & config_,
+						 models_col_t * models_)
+  {
+    bool devel = i_model::g_devel;
+    if (devel) 
+      {
+	cerr << "DEVEL: simple_shaped_model::_construct_polyhedra: "
+	     << "Name = '" << name_ << "'"
+	     << endl;
+      }
+    string filled_material_name = material::MATERIAL_REF_UNKNOWN;
+    double lunit = CLHEP::mm;
+    double aunit = CLHEP::degree;
+    string filled_mode_label = filled_utils::FILLED_NONE_LABEL;
+
+    if (config_.has_key ("length_unit"))
+      {
+	string lunit_str = config_.fetch_string ("length_unit");
+	lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+      }
+    
+    if (config_.has_key ("angle_unit"))
+      {
+	string aunit_str = config_.fetch_string ("angle_unit");
+	aunit = datatools::utils::units::get_angle_unit_from (aunit_str);
+      }
+
+    // filled mode:
+    if (config_.has_key ("filled_mode"))
+      {
+	filled_mode_label = config_.fetch_string ("filled_mode");
+	if (filled_mode_label == filled_utils::FILLED_NONE_LABEL)
+	  {
+	    __filled_mode = filled_utils::FILLED_NONE;
+	  }
+	else if (filled_mode_label == filled_utils::FILLED_BY_ENVELOPE_LABEL)
+	  {
+	    __filled_mode = filled_utils::FILLED_BY_ENVELOPE;
+	  }
+	else if (filled_mode_label == filled_utils::FILLED_BY_EXTRUSION_LABEL)
+	  {
+	    __filled_mode = filled_utils::FILLED_BY_EXTRUSION;
+	  }
+	else
+	  {
+	    ostringstream message;
+	    message << "simple_boxed_model::_at_construct: "
+		    << "Invalid mode '" << filled_mode_label << "' property !";
+	    throw runtime_error (message.str ());
+	  }
+      }
+    else
+      {
+	__filled_mode = filled_utils::FILLED_NONE;
+      }
+    
+    // filling material:
+    if (__filled_mode != filled_utils::FILLED_NONE)
+      {
+	// parsing material:
+	if (config_.has_key ("material.filled.ref"))
+	  {
+	    __material_name = config_.fetch_string ("material.filled.ref");
+	  }
+	else
+	  {
+	    ostringstream message;
+	    message << "simple_shaped_model::_construct_polyhedra: "
+		    << "Missing 'material.filled.ref' property !";
+	    throw runtime_error (message.str ());
+	  }
+      }
+     
+    __polyhedra = new polyhedra ();
+    __polyhedra->initialize (config_);
+    if (! __polyhedra->is_valid ())
+      {
+	__polyhedra->tree_dump (cerr, "Invalid polyhedra: ", "ERROR:" );
+	throw runtime_error ("simple_shaped_model::_construct_polyhedra: Invalid polyhedra build parameters !");
+      }
+    
+    if (__filled_mode == filled_utils::FILLED_NONE)
+      {
+	__solid = __polyhedra;
+	get_logical ().set_material_ref (__material_name);
+      }
+     
+     // build the polyhedra by extrusion of a mother polyhedra:
+     if (__filled_mode == filled_utils::FILLED_BY_EXTRUSION)
+      {
+	// make the envelope a polyhedra:
+	polyhedra * envelope_polyhedra = new polyhedra;
+	__polyhedra->compute_outer_polyhedra (*envelope_polyhedra);
+	if (! envelope_polyhedra->is_valid ())
+	  {
+	    throw runtime_error ("simple_shaped_model::_construct_polyhedra: Invalid envelope polyhedra !");
+	  }
+	__outer_shape = envelope_polyhedra;
+	__solid = __outer_shape;
+	get_logical ().set_material_ref (__material_name);
+	// if the polyhedra is extruded, add an extruded 'inner' polyhedra 
+	// within the 'outer' polyhedra:
+	if (__polyhedra->is_extruded ())
+	  {
+	    polyhedra * inner_pol = new polyhedra;
+	    __polyhedra->compute_inner_polyhedra (*inner_pol);
+	    if (! inner_pol->is_valid ())
+	      {
+		delete inner_pol;
+		throw runtime_error ("simple_shaped_model::_construct_polyhedra: Invalid 'inner' polyhedra dimensions !");
+	      }
+	    __inner_shape = inner_pol;
+	    // inner placement for the extrusion:
+	    __inner_placement.set (0, 0, 0, 0, 0, 0);
+	    ostringstream inner_name;
+	    inner_name << "__" << get_logical ().get_name () << ".polyhedra_extrusion";
+	    __inner_logical.set_name (i_model::make_logical_volume_name (inner_name.str ()));
+	    __inner_logical.set_material_ref (__filled_material_name);
+	    __inner_logical.set_shape (*__inner_shape); // pass a reference -> logical has not the shape ownership
+	    __inner_phys.set_name (i_model::make_physical_volume_name (inner_name.str ()));
+	    __inner_phys.set_placement (__inner_placement);
+	    __inner_phys.set_logical (__inner_logical);
+	    __inner_phys.set_mother (this->get_logical ());
+
+	    // makes the child extrusion the mother of daughter physical volumes:
+	    __daughter_owner_logical = &__inner_logical;
+	  }
+      }
+
+     // build the polyhedra as a filled child of a mother filled polyhedra:
+     if (__filled_mode == filled_utils::FILLED_BY_ENVELOPE)
+      {
+	// make the envelope a cylinder:
+	polyhedra * outer_polyhedra = new polyhedra;
+	__polyhedra->compute_outer_polyhedra (*outer_polyhedra);
+	if (! outer_polyhedra->is_valid ())
+	  {
+	    throw runtime_error ("simple_shaped_model::_construct_tube: Invalid 'outer' cylinder dimensions !");
+	  }
+	__outer_shape = outer_polyhedra;
+	__solid = __outer_shape;
+	get_logical ().set_material_ref (__filled_material_name);
+	if (! __polyhedra->is_extruded ())
+	  {
+	    // if the polyhedra is not extruded, no daughter physical volumes can be placed 
+	    // within the 'outer' envelope polyhedra:
+	    __daughter_owner_logical = 0;
+	  }
+	else
+	  {
+	    // if the polyhedra is extruded, add the polyhedra 
+	    // within the 'outer' envelope polyhedra:
+	    __inner_placement.set (0, 0, 0, 0, 0, 0);
+	    ostringstream inner_name;
+	    inner_name << "__" << get_logical ().get_name () << ".polyhedra_envelope";
+	    __inner_logical.set_name (i_model::make_logical_volume_name (name_));
+	    __inner_logical.set_material_ref (__material_name);
+	    __inner_logical.set_shape (*__polyhedra);
 	    if (visibility::has_color (config_))
 	      {
 		visibility::set_color (__inner_logical.parameters (), 
@@ -817,6 +998,10 @@ namespace geomtools {
     //material::extract (setup_, get_logical ().parameters ());
     sensitive::extract (setup_, get_logical ().parameters ());
     visibility::extract (setup_, get_logical ().parameters ());
+    if (__solid)
+      {
+	stackable::extract (setup_, __solid->properties ());
+      }
     if (__daughter_owner_logical != 0)
       {
 	mapping_utils::extract (setup_, __daughter_owner_logical->parameters ());

@@ -50,10 +50,25 @@ namespace geomtools {
        */
       static bool is_stackable (const i_shape_3d &);
 
+      static bool is_xmin_stackable (const i_shape_3d &);
+
+      static bool is_xmax_stackable (const i_shape_3d &);
+
+      static bool is_ymin_stackable (const i_shape_3d &);
+
+      static bool is_ymax_stackable (const i_shape_3d &);
+
+      static bool is_zmin_stackable (const i_shape_3d &);
+
+      static bool is_zmax_stackable (const i_shape_3d &);
+
       /** Initialize a 'stackable_data' instance
        *  from stackable data attached to the 3D-shape.
        */
       static bool pickup_stackable (const i_shape_3d &, stackable_data &);
+
+      static bool pickup_stackable_with_properties (const i_shape_3d & shape_, 
+						    stackable_data & sd_);
 
       const stackable_data & get_stackable_data () const;
 

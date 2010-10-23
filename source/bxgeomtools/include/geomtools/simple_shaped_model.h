@@ -31,6 +31,7 @@
 #include <geomtools/tube.h>
 #include <geomtools/sphere.h>
 #include <geomtools/polycone.h>
+#include <geomtools/polyhedra.h>
 
 #include <geomtools/placement.h>
 #include <geomtools/physical_volume.h>
@@ -40,6 +41,7 @@
 #include <geomtools/material.h>
 #include <geomtools/sensitive.h>
 #include <geomtools/color.h>
+#include <geomtools/i_stackable.h>
 #include <geomtools/utils.h>
 //#include <geomtools/mapping.h>
 
@@ -64,6 +66,7 @@ namespace geomtools {
       geomtools::tube *      __tube;
       geomtools::sphere *    __sphere;
       geomtools::polycone *  __polycone;
+      geomtools::polyhedra * __polyhedra;
 
       geomtools::i_shape_3d * __solid;
       geomtools::i_shape_3d * __inner_shape; //!> for filled tube or polycone
@@ -93,6 +96,7 @@ namespace geomtools {
       const geomtools::tube & get_tube () const;
       const geomtools::sphere & get_sphere () const;
       const geomtools::polycone & get_polycone () const;
+      const geomtools::polyhedra & get_polyhedra () const;
 
       const geomtools::i_shape_3d & get_solid () const;
 
@@ -141,6 +145,10 @@ namespace geomtools {
       virtual void _construct_polycone (const string & name_,
 					const datatools::utils::properties & config_,
 					models_col_t * models_);
+
+      virtual void _construct_polyhedra (const string & name_,
+					 const datatools::utils::properties & config_,
+					 models_col_t * models_);
       
     private:
 

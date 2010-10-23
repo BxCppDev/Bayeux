@@ -1,5 +1,5 @@
 # Sample data file for a polyhedra 3D-shape:
-#@sides 5
+#@sides 4
 #@length_unit mm
 0.0   0.0 212.0
 25.01 0.0 212.0

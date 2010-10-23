@@ -29,31 +29,112 @@ namespace geomtools {
     return false;
   }
 
+  bool i_shape_3d::is_xmin_stackable (const i_shape_3d & shape_)
+  {
+    if (is_stackable (shape_)) return true;
+    if (stackable::has_xmin (shape_.properties ())) return true;
+    return false;
+  }
+
+  bool i_shape_3d::is_xmax_stackable (const i_shape_3d & shape_)
+  {
+    if (is_stackable (shape_)) return true;
+    if (stackable::has_xmax (shape_.properties ())) return true;
+    return false;
+  }
+
+  bool i_shape_3d::is_ymin_stackable (const i_shape_3d & shape_)
+  {
+    if (is_stackable (shape_)) return true;
+    if (stackable::has_ymin (shape_.properties ())) return true;
+    return false;
+  }
+
+  bool i_shape_3d::is_ymax_stackable (const i_shape_3d & shape_)
+  {
+    if (is_stackable (shape_)) return true;
+    if (stackable::has_ymax (shape_.properties ())) return true;
+    return false;
+  }
+
+  bool i_shape_3d::is_zmin_stackable (const i_shape_3d & shape_)
+  {
+    if (is_stackable (shape_)) return true;
+    if (stackable::has_zmin (shape_.properties ())) return true;
+    return false;
+  }
+
+  bool i_shape_3d::is_zmax_stackable (const i_shape_3d & shape_)
+  {
+    if (is_stackable (shape_)) return true;
+    if (stackable::has_zmax (shape_.properties ())) return true;
+    return false;
+  }
+
+  bool i_shape_3d::pickup_stackable_with_properties (const i_shape_3d & shape_, 
+						     stackable_data & sd_)
+  {
+    bool ok = false;
+    ok = i_shape_3d::pickup_stackable (shape_, sd_);
+    if (ok)
+      {
+	if (stackable::has_xmin (shape_.properties ()))
+	  {
+	    sd_.xmin = stackable::get_xmin (shape_.properties ());
+	  }
+	if (stackable::has_xmax (shape_.properties ()))
+	  {
+	    sd_.xmax = stackable::get_xmax (shape_.properties ());
+	  }
+	if (stackable::has_ymin (shape_.properties ()))
+	  {
+	    sd_.ymin = stackable::get_ymin (shape_.properties ());
+	  }
+	if (stackable::has_ymax (shape_.properties ()))
+	  {
+	    sd_.ymax = stackable::get_ymax (shape_.properties ());
+	  }
+	if (stackable::has_zmin (shape_.properties ()))
+	  {
+	    sd_.zmin = stackable::get_zmin (shape_.properties ());
+	  }
+	if (stackable::has_zmax (shape_.properties ()))
+	  {
+	    sd_.zmax = stackable::get_zmax (shape_.properties ());
+	  }
+      }
+    return ok;
+  }
+
   bool i_shape_3d::pickup_stackable (const i_shape_3d & shape_, 
 				     stackable_data & sd_)
   {
     sd_.invalidate ();
+    bool ok = false;
     if (shape_.has_stackable_data ())
       {
 	if (shape_.get_stackable_data ().is_valid ()) 
 	  {
 	    sd_ = shape_.get_stackable_data ();
-	    return true;
+	    ok =  true;
 	  }
       }
-    const i_stackable * the_stackable 
-      = dynamic_cast<const i_stackable *> (&shape_);
-    if (the_stackable != 0)
+    if (! ok)
       {
-	sd_.xmin = the_stackable->get_xmin ();
-	sd_.xmax = the_stackable->get_xmax ();
-	sd_.ymin = the_stackable->get_ymin ();
-	sd_.ymax = the_stackable->get_ymax ();
-	sd_.zmin = the_stackable->get_zmin ();
-	sd_.zmax = the_stackable->get_zmax ();
-	return true;
-      } 
-    return false;
+	const i_stackable * the_stackable 
+	  = dynamic_cast<const i_stackable *> (&shape_);
+	if (the_stackable != 0)
+	  {
+	    sd_.xmin = the_stackable->get_xmin ();
+	    sd_.xmax = the_stackable->get_xmax ();
+	    sd_.ymin = the_stackable->get_ymin ();
+	    sd_.ymax = the_stackable->get_ymax ();
+	    sd_.zmin = the_stackable->get_zmin ();
+	    sd_.zmax = the_stackable->get_zmax ();
+	    ok = true;
+	  } 
+      }
+    return ok;
   }
 
   double i_shape_3d::get_skin () const
@@ -163,10 +244,30 @@ namespace geomtools {
     string indent;
     if (! indent_.empty ()) indent = indent_;
     i_object_3d::tree_dump (out_, title_, indent_, true);
-
+    if (i_shape_3d::is_stackable (*this))
+      {
+	stackable_data SD;
+	i_shape_3d::pickup_stackable (*this, SD);
+	out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_) 
+	     << "Stackable data : ";
+	if (__stackable_data != 0)
+	  {
+	    out_ << "[plugged]";
+	  }
+	else
+	  {
+	    out_ << "[native]";
+	  }
+	out_ << endl;
+	ostringstream indent_oss;
+	indent_oss << indent;
+	indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+	SD.tree_dump (out_, "", indent_oss.str ());
+      }
+    /*
     out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)  
 	 << "Stackable_data : " << (__stackable_data != 0? "Yes": "No") << endl;
-    
+    */
   }
 
 } // end of namespace geomtools

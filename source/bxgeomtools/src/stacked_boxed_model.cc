@@ -399,7 +399,7 @@ namespace geomtools {
 	  {
 	    cerr << "DEVEL: stacked_boxed_model::_at_construct: " << "step 3d: dump stackable data for '" << stacked_model->get_name () << "' from '" << name_ << "'..." << endl;
 
-	    the_SD.dump (cerr, "DEVEL: stacked_boxed_model::_at_construct: Stackable data:");
+	    the_SD.tree_dump (cerr, "stacked_boxed_model::_at_construct: Stackable data:", "DEVEL: ");
 	  }
 	if (devel) cerr << "DEVEL: stacked_boxed_model::_at_construct: " << "step 3e: gets..." << endl;
 	double full_x = the_SD.get_xmax () - the_SD.get_xmin ();

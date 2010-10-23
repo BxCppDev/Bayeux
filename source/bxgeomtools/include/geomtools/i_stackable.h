@@ -60,9 +60,69 @@ namespace geomtools {
     static void extract (const datatools::utils::properties & source_,
 			 datatools::utils::properties & target_);
 
+    static bool has_xmin (const datatools::utils::properties & source_);
+
+    static bool has_xmax (const datatools::utils::properties & source_);
+
+    static bool has_ymin (const datatools::utils::properties & source_);
+
+    static bool has_ymax (const datatools::utils::properties & source_);
+
+    static bool has_zmin (const datatools::utils::properties & source_);
+
+    static bool has_zmax (const datatools::utils::properties & source_);
+
+    static double get_xmin (const datatools::utils::properties & source_);
+
+    static double get_xmax (const datatools::utils::properties & source_);
+
+    static double get_ymin (const datatools::utils::properties & source_);
+
+    static double get_ymax (const datatools::utils::properties & source_);
+
+    static double get_zmin (const datatools::utils::properties & source_);
+
+    static double get_zmax (const datatools::utils::properties & source_);
+
+    static void set_xmin (datatools::utils::properties & target_,
+			  double xmin_);
+
+    static void set_xmax (datatools::utils::properties & target_,
+			  double xmax_);
+
+    static void set_ymin (datatools::utils::properties & target_,
+			  double ymin_);
+
+    static void set_ymax (datatools::utils::properties & target_,
+			  double ymax_);
+
+    static void set_zmin (datatools::utils::properties & target_,
+			  double zmin_);
+
+    static void set_zmax (datatools::utils::properties & target_,
+			  double zmax_);
+
+    static void unset_xmin (datatools::utils::properties & target_);
+
+    static void unset_xmax (datatools::utils::properties & target_);
+
+    static void unset_ymin (datatools::utils::properties & target_);
+
+    static void unset_ymax (datatools::utils::properties & target_);
+
+    static void unset_zmin (datatools::utils::properties & target__);
+
+    static void unset_zmax (datatools::utils::properties & target_);
+
+    static void unset (datatools::utils::properties & target_);
+
+    static void set (datatools::utils::properties & target_, 
+		     const i_stackable & sd_);
+
   };
 
-  class stackable_data : public i_stackable
+  class stackable_data : public i_stackable,
+			 public datatools::utils::i_tree_dumpable
   {
   public:
 
@@ -87,8 +147,13 @@ namespace geomtools {
     virtual double get_ymax () const {return ymax;}
     virtual double get_zmin () const {return zmin;}
     virtual double get_zmax () const {return zmax;}
-   
-    void dump (ostream & out_ = clog, const string & title_ = "") const;
+
+    virtual void tree_dump (ostream & out_         = clog, 
+			    const string & title_  = "", 
+			    const string & indent_ = "", 
+			    bool inherit_          = false) const;
+    
+    void dump (ostream & out_ = clog) const;
 
     bool initialize (const datatools::utils::properties & config_);
 		       

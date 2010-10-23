@@ -85,7 +85,10 @@ namespace geomtools {
   {
     if (! __shape)
       {
-	throw runtime_error ("logical_volume::get_shape: Missing shape !");
+	ostringstream message;
+	message << "logical_volume::get_shape: Missing shape for logical '"
+		<< get_name () << "' !";
+	throw runtime_error (message.str ());
       }
     return *__shape;
   }

@@ -807,7 +807,7 @@ namespace geomtools {
       {
 	double z = i->first;
 	double rmax = i->second.rmax;
-	if (__z_min != __z_min)
+	if (! datatools::utils::is_valid (__z_min))
 	  {
 	    __z_min = z;
 	  }
@@ -815,7 +815,7 @@ namespace geomtools {
 	  {
 	    __z_min = z;
 	  }
-	if (__z_max != __z_max)
+	if (! datatools::utils::is_valid (__z_max))
 	  {
 	    __z_max = z;
 	  }
@@ -823,7 +823,7 @@ namespace geomtools {
 	  {
 	    __z_max = z;
 	  }
-	if (__r_max != __r_max)
+	if (! datatools::utils::is_valid (__r_max))
 	  {
 	    __r_max = rmax;
 	  }

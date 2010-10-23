@@ -81,30 +81,32 @@ namespace geomtools {
     double  __z_min;
     double  __z_max;
     double  __r_max;
+    double  __xy_max;
     bool    __extruded;
     
   public: 
 
     bool is_extruded () const;
     
+    //>>> stackable interface:
     double get_xmin () const
     {
-      return -__r_max;
+      return -__xy_max;
     }
     
     double get_xmax () const
     {
-      return +__r_max;
+      return +__xy_max;
     }
     
     double get_ymin () const
     {
-      return -__r_max;
+      return -__xy_max;
     }
     
     double get_ymax () const
     {
-      return +__r_max;
+      return +__xy_max;
     }
     
     double get_zmin () const
@@ -116,6 +118,9 @@ namespace geomtools {
     {
       return __z_max;
     }
+    //<<<
+
+    double get_r_max () const;
 
   private:
 
@@ -169,7 +174,7 @@ namespace geomtools {
 
     double get_z_max () const;
 
-    double get_r_max () const;
+    double get_xy_max () const;
 
     double get_parameter ( const string & flag_ ) const;
 

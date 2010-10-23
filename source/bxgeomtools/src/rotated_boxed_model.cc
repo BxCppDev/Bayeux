@@ -175,7 +175,7 @@ namespace geomtools {
     if (! i_shape_3d::pickup_stackable (the_shape, the_SD))
       {
 	    ostringstream message;
-	    message << "stacked_boxed_model::_at_construct: "
+	    message << "rotated_boxed_model::_at_construct: "
 		    << "Cannot stack '" 
 		    << the_shape.get_shape_name () << "' shape !";
 	    throw runtime_error (message.str ());
@@ -215,7 +215,7 @@ namespace geomtools {
     the_new_SD.ymax = gymax;
     the_new_SD.zmin = gzmin;
     the_new_SD.zmax = gzmax;
-
+    the_new_SD.tree_dump (cerr, "rotated_boxed_model::_at_construct: ", "DEVEL: ");
     if (rotation_axis == ROTATION_AXIS_X) 
       {
 	if (special_rotation_angle ==  ROTATION_ANGLE_90)
