@@ -1586,7 +1586,7 @@ namespace datatools {
       if (error != data::ERROR_SUCCESS) 
 	{
 	  std::ostringstream message;
-	  message << "properties::change: cannot change value for property '" << key_ << "': "
+	  message << "properties::change: Cannot change value for property '" << key_ << "': "
 		  << data::get_error_message (error) << "!";
 	  throw std::runtime_error (message.str ());
 	}
@@ -1602,7 +1602,7 @@ namespace datatools {
       if (error != data::ERROR_SUCCESS) 
 	{
 	  std::ostringstream message;
-	  message << "properties::change: cannot change value for property '" << key_ << "': "
+	  message << "properties::change: Cannot change value for property '" << key_ << "': "
 		  << data::get_error_message (error) << "!";
 	  throw std::runtime_error (message.str ());
 	}
@@ -1618,7 +1618,7 @@ namespace datatools {
       if (error != data::ERROR_SUCCESS) 
 	{
 	  std::ostringstream message;
-	  message << "properties::change: cannot change value for property '" << key_ << "': "
+	  message << "properties::change: Cannot change value for property '" << key_ << "': "
 		  << data::get_error_message (error) << "!";
 	  throw std::runtime_error (message.str ());
 	}
@@ -1634,7 +1634,7 @@ namespace datatools {
       if (error != data::ERROR_SUCCESS) 
 	{
 	  std::ostringstream message;
-	  message << "properties::change: cannot change value for property '" 
+	  message << "properties::change: Cannot change value for property '" 
 		  << key_ << "': "
 		  << data::get_error_message (error) << "!";
 	  throw std::runtime_error (message.str ());
@@ -1668,7 +1668,7 @@ namespace datatools {
 	  if (error != data::ERROR_SUCCESS) 
 	    {
 	      std::ostringstream message;
-	      message << "properties::change: cannot change values for vector property '" << key_ << "': "
+	      message << "properties::change: Cannot change values for vector property '" << key_ << "': "
 		      << data::get_error_message (error) << "!";
 	      throw std::runtime_error (message.str ());
 	    }    
@@ -1679,7 +1679,7 @@ namespace datatools {
 	  if (error != data::ERROR_SUCCESS) 
 	    {
 	      std::ostringstream message;
-	      message << "properties::change: cannot change values for vector property '" << key_ << "': "
+	      message << "properties::change: Cannot change values for vector property '" << key_ << "': "
 		      << data::get_error_message (error) << "!";
 	      throw std::runtime_error (message.str ());
 	    }    
@@ -1704,7 +1704,7 @@ namespace datatools {
 	  if (error != data::ERROR_SUCCESS) 
 	    {
 	      std::ostringstream message;
-	      message << "properties::change: cannot change values for vector property '" << key_ << "': "
+	      message << "properties::change: Cannot change values for vector property '" << key_ << "': "
 		      << data::get_error_message (error) << "!";
 	      throw std::runtime_error (message.str ());
 	    }    
@@ -1715,7 +1715,7 @@ namespace datatools {
 	  if (error != data::ERROR_SUCCESS) 
 	    {
 	      std::ostringstream message;
-	      message << "properties::change: cannot change values for vector property '" << key_ << "': "
+	      message << "properties::change: Cannot change values for vector property '" << key_ << "': "
 		      << data::get_error_message (error) << "!";
 	      throw std::runtime_error (message.str ());
 	    }    
@@ -1740,7 +1740,7 @@ namespace datatools {
 	  if (error != data::ERROR_SUCCESS) 
 	    {
 	      std::ostringstream message;
-	      message << "properties::change: cannot change values for vector property '" << key_ << "': "
+	      message << "properties::change: Cannot change values for vector property '" << key_ << "': "
 		      << data::get_error_message (error) << "!";
 	      throw std::runtime_error (message.str ());
 	    }    
@@ -1751,7 +1751,7 @@ namespace datatools {
 	  if (error != data::ERROR_SUCCESS) 
 	    {
 	      std::ostringstream message;
-	      message << "properties::change: cannot change values for vector property '" << key_ << "': "
+	      message << "properties::change: Cannot change values for vector property '" << key_ << "': "
 		      << data::get_error_message (error) << "!";
 	      throw std::runtime_error (message.str ());
 	    }    
@@ -1776,7 +1776,7 @@ namespace datatools {
 	  if (error != data::ERROR_SUCCESS) 
 	    {
 	      std::ostringstream message;
-	      message << "properties::change: cannot change values for vector property '" << key_ << "': "
+	      message << "properties::change: Cannot change values for vector property '" << key_ << "': "
 		      << data::get_error_message (error) << "!";
 	      throw std::runtime_error (message.str ());
 	    }    
@@ -1787,7 +1787,7 @@ namespace datatools {
 	  if (error != data::ERROR_SUCCESS) 
 	    {
 	      std::ostringstream message;
-	      message << "properties::change: cannot change values for vector property '" << key_ << "': "
+	      message << "properties::change: Cannot change values for vector property '" << key_ << "': "
 		      << data::get_error_message (error) << "!";
 	      throw std::runtime_error (message.str ());
 	    }    
@@ -1927,7 +1927,7 @@ namespace datatools {
       if (error != data::ERROR_SUCCESS) 
 	{
 	  std::ostringstream message;
-	  message << "properties::fetch: cannot fetch boolean value from property '" << key_ << "': "
+	  message << "properties::fetch: Cannot fetch boolean value from property '" << key_ << "': "
 		  << data::get_error_message (error) << "!";
 	  throw std::runtime_error (message.str ());
 	}    
@@ -1942,7 +1942,7 @@ namespace datatools {
       if (error != data::ERROR_SUCCESS) 
 	{
 	  std::ostringstream message;
-	  message << "properties::fetch: cannot fetch integer value from property '" << key_ << "': "
+	  message << "properties::fetch: Cannot fetch integer value from property '" << key_ << "': "
 		  << data::get_error_message (error) << "!";
 	  throw std::runtime_error (message.str ());
 	}    
@@ -1957,7 +1957,7 @@ namespace datatools {
       if (error != data::ERROR_SUCCESS) 
 	{
 	  std::ostringstream message;
-	  message << "properties::fetch: cannot fetch real value from property '" << key_ << "': "
+	  message << "properties::fetch: Cannot fetch real value from property '" << key_ << "': "
 		  << data::get_error_message (error) << "!";
 	  throw std::runtime_error (message.str ());
 	}    
@@ -1972,7 +1972,7 @@ namespace datatools {
       if (error != data::ERROR_SUCCESS) 
 	{
 	  std::ostringstream message;
-	  message << "properties::fetch: cannot fetch string value from property '" << key_ << "': "
+	  message << "properties::fetch: Cannot fetch string value from property '" << key_ << "': "
 		  << data::get_error_message (error) << "!";
 	  throw std::runtime_error (message.str ());
 	}    
@@ -2045,7 +2045,7 @@ namespace datatools {
 	  if (error != data::ERROR_SUCCESS) 
 	    {
 	      std::ostringstream message;
-	      message << "properties::fetch: cannot fetch boolean values for vector property '" 
+	      message << "properties::fetch: Cannot fetch boolean values for vector property '" 
 		      << key_ << "': "
 		      << data::get_error_message (error) << "!";
 	      throw std::runtime_error (message.str ());
@@ -2076,7 +2076,7 @@ namespace datatools {
 	  if (error != data::ERROR_SUCCESS) 
 	    {
 	      std::ostringstream message;
-	      message << "properties::fetch: cannot fetch integer values for vector property '" 
+	      message << "properties::fetch: Cannot fetch integer values for vector property '" 
 		      << key_ << "': "
 		      << data::get_error_message (error) << "!";
 	      throw std::runtime_error (message.str ());
@@ -2107,7 +2107,7 @@ namespace datatools {
 	  if (error != data::ERROR_SUCCESS) 
 	    {
 	      std::ostringstream message;
-	      message << "properties::fetch: cannot fetch real values for vector property '" 
+	      message << "properties::fetch: Cannot fetch real values for vector property '" 
 		      << key_ << "': "
 		      << data::get_error_message (error) << "!";
 	      throw std::runtime_error (message.str ());
@@ -2138,7 +2138,7 @@ namespace datatools {
 	  if (error != data::ERROR_SUCCESS) 
 	    {
 	      std::ostringstream message;
-	      message << "properties::fetch: cannot fetch string values for vector property '" 
+	      message << "properties::fetch: Cannot fetch string values for vector property '" 
 		      << key_ << "': "
 		      << data::get_error_message (error) << "!";
 	      throw std::runtime_error (message.str ());
@@ -2246,8 +2246,8 @@ namespace datatools {
 	  if (! fout) 
 	    {
 	      std::ostringstream message;
-	      message << "properties::writeread_config: "
-		      << "cannot open file '"
+	      message << "properties::write_config: "
+		      << "Cannot open file '"
 		      << filename_ << "!"
 		      << std::endl;
 	      throw std::runtime_error (message.str ());
@@ -2270,7 +2270,7 @@ namespace datatools {
 	{
 	  std::ostringstream message;
 	  message << "properties::read_config: "
-		  << "cannot open file '"
+		  << "Cannot open file '"
 		  << filename_ << "!"
 		  << std::endl;
 	  throw std::runtime_error (message.str ());
@@ -2459,13 +2459,14 @@ namespace datatools {
       bool verbose_parsing  = __debug || properties::g_debug;
 
       std::string line_in;
+      std::string prop_config;
       std::string prop_description;
       bool line_goon = false;
       while (in_) 
 	{
 	  if (verbose_parsing) 
 	    {
-	      std::cerr << "DEBUG: properties::config::read_next_property: "
+	      std::cerr << "DEBUG: properties::config::__read: "
 			<< "loop on input stream..." 
 			<< std::endl; 
 	    }
@@ -2474,7 +2475,7 @@ namespace datatools {
 	  /*
 	    if ( !in_ ) {
 	    if ( verbose_parsing ) {
-	    std::cerr << "DEBUG: properties::config::read_next_property: "
+	    std::cerr << "DEBUG: properties::config::__read: "
 	    << "Cannot get a new line from input!"
 	    << std::endl;
 	    } 
@@ -2492,7 +2493,7 @@ namespace datatools {
 	      line_get = line_get.substr (0, sz - 1);
 	      if (verbose_parsing) 
 		{
-		  std::cerr << "DEBUG: properties::config::read_next_property: "
+		  std::cerr << "DEBUG: properties::config::__read: "
 			    << "line_get='" 
 			    << line_get
 			    << "'" << std::endl; 
@@ -2505,7 +2506,7 @@ namespace datatools {
 	      line_in += line_get;	
 	      if (verbose_parsing) 
 		{
-		  std::cerr << "DEBUG: properties::config::read_next_property: "
+		  std::cerr << "DEBUG: properties::config::__read: "
 			    << "append --> line_in='" 
 			    << line_in << "'" << std::endl; 
 		}
@@ -2516,7 +2517,7 @@ namespace datatools {
 	      line_in = line_get;
 	      if (verbose_parsing) 
 		{
-		  std::cerr << "DEBUG: properties::config::read_next_property: "
+		  std::cerr << "DEBUG: properties::config::__read: "
 			    << "new --> line_in='" 
 			    << line_in << "'" << std::endl; 
 		}
@@ -2534,7 +2535,7 @@ namespace datatools {
 	      std::string line = line_in;
 	      if (verbose_parsing) 
 		{
-		  std::cerr << "DEBUG: properties::config::read_next_property: line " 
+		  std::cerr << "DEBUG: properties::config::__read: line " 
 			    << __read_line_count << " size is " 
 			    << line.size () << "" << std::endl;
 		}
@@ -2547,7 +2548,7 @@ namespace datatools {
 		{
 		  if (verbose_parsing) 
 		    {
-		      std::cerr << "DEBUG: properties::config::read_next_property: line " 
+		      std::cerr << "DEBUG: properties::config::__read: line " 
 				<< __read_line_count << " is blank" << std::endl;
 		    }
 		  skip_line=true;
@@ -2563,7 +2564,7 @@ namespace datatools {
 		    {
 		      if (verbose_parsing) 
 			{
-			  std::cerr << "DEBUG: properties::config::read_next_property: line " 
+			  std::cerr << "DEBUG: properties::config::__read: line " 
 				    << __read_line_count << " is a comment" << std::endl;
 			}
 		
@@ -2572,14 +2573,23 @@ namespace datatools {
 		      std::string token;
 	      
 		      iss >> token;
+		      // Maybe we should ensure only one '@config' directive
+		      // here only warn...
 		      if (token == "@config") 
 			{
 			  iss >> std::ws;
-			  std::string desc;
-			  std::getline (iss,desc);
-			  if (! desc.empty ()) 
+			  std::string config_desc;
+			  if (! prop_config.empty ())
 			    {
-			      p_.set_description (desc);
+			      cerr << "WARNING: " << "properties::config::__read: "
+				   << "Duplicated '@config' directive !" << endl;
+			    }
+			  std::getline (iss, config_desc);
+			  if (! config_desc.empty ()) 
+			    {
+			      prop_config = config_desc;
+
+			      p_.set_description (config_desc);
 			    }
 			}
 	      
@@ -2603,7 +2613,7 @@ namespace datatools {
 		{
 		  if (verbose_parsing) 
 		    {
-		      std::cerr << "DEBUG: properties::config::read_next_property: "
+		      std::cerr << "DEBUG: properties::config::__read: "
 				<< "line " 
 				<< __read_line_count << " is '" << line << "'" << std::endl;
 		    }
@@ -2614,7 +2624,7 @@ namespace datatools {
 		  if (flag_pos >= (int) line_parsing.size ()) 
 		    {
 		      std::ostringstream message;
-		      message << "properties::config::read_next_property: "
+		      message << "properties::config::__read: "
 			      << "Cannot find assign symbol !" ;
 		      throw std::runtime_error (message.str ());
 		    }
@@ -2623,7 +2633,7 @@ namespace datatools {
 		  std::string property_desc_str = line_parsing.substr (0,flag_pos);
 		  if (verbose_parsing) 
 		    {
-		      std::cerr << "DEBUG: properties::config::read_next_property: "
+		      std::cerr << "DEBUG: properties::config::__read: "
 				<< "property_desc_str='" 
 				<< property_desc_str << "'" << std::endl;
 		    }
@@ -2632,7 +2642,7 @@ namespace datatools {
 		  std::string property_value_str = line_parsing.substr (flag_pos+1);
 		  if (verbose_parsing) 
 		    {
-		      std::cerr << "DEBUG: properties::config::read_next_property: "
+		      std::cerr << "DEBUG: properties::config::__read: "
 				<< "property_value_str='" 
 				<< property_value_str << "'" << std::endl;
 		    }
@@ -2675,14 +2685,14 @@ namespace datatools {
 			  if (! vec_ss) 
 			    {
 			      std::ostringstream message;
-			      message << "properties::config::read_next_property: "
-				      << "Cannot find vector size !" ;
+			      message << "properties::config::__read: "
+				      << "Cannot find vector size for key '" << prop_key << "' !" ;
 			      throw std::runtime_error (message.str ());		    
 			    }
 			  if (vsize < 0) 
 			    {
 			      std::ostringstream message;
-			      message << "properties::config::read_next_property: "
+			      message << "properties::config::__read: "
 				      << "Invalid vector size !" ;
 			      throw std::runtime_error (message.str ());		    
 			    }
@@ -2690,16 +2700,16 @@ namespace datatools {
 			  if (! vec_ss) 
 			    {
 			      std::ostringstream message;
-			      message << "properties::config::read_next_property: "
-				      << "Cannot find expected vector size closing symbol !" ;
+			      message << "properties::config::__read: "
+				      << "Cannot find expected vector size closing symbol for key '" << prop_key << "'  !" ;
 			      throw std::runtime_error (message.str ());		    
 			    }
 			  vec_ss >> c;
 			  if (c != CLOSE_VECTOR) 
 			    {
 			      std::ostringstream message;
-			      message << "properties::config::read_next_property: "
-				      << "Invalid vector size closing symbol !" ;
+			      message << "properties::config::__read: "
+				      << "Invalid vector size closing symbol for key '" << prop_key << "'  !" ;
 			      throw std::runtime_error (message.str ());
 			    }
 			}
@@ -2738,7 +2748,7 @@ namespace datatools {
 		      else 
 			{
 			  std::ostringstream message;
-			  message << "properties::config::read_next_property: "
+			  message << "properties::config::__read: "
 				  << "Invalid type specifier '" << token << "' " 
 				  << "at key '" << prop_key << "' ";
 			  if (! p_.get_description ().empty ())
@@ -2751,16 +2761,16 @@ namespace datatools {
 	      
 		      if (verbose_parsing) 
 			{
-			  std::cerr << "DEBUG: properties::config::read_next_property: "
+			  std::cerr << "DEBUG: properties::config::__read: "
 				    << "type='" 
 				    << type << "'" << std::endl;
-			  std::cerr << "DEBUG: properties::config::read_next_property: "
+			  std::cerr << "DEBUG: properties::config::__read: "
 				    << "locked='" 
 				    << locked << "'" << std::endl;
-			  std::cerr << "DEBUG: properties::config::read_next_property: "
+			  std::cerr << "DEBUG: properties::config::__read: "
 				    << "vsize='" 
 				    << vsize << "'" << std::endl;
-			  std::cerr << "DEBUG: properties::config::read_next_property: "
+			  std::cerr << "DEBUG: properties::config::__read: "
 				    << "prop_description='" 
 				    << prop_description << "'" << std::endl;
 			}
@@ -2806,8 +2816,8 @@ namespace datatools {
 			      if (! iss) 
 				{
 				  std::ostringstream message;
-				  message << "properties::config::read_next_property: "
-					  << "Cannot read boolean value!" ;
+				  message << "properties::config::__read: "
+					  << "Cannot read boolean value for key '" << prop_key << "' !" ;
 				  throw std::runtime_error (message.str ());
 				}
 			    }
@@ -2820,8 +2830,8 @@ namespace datatools {
 				  if (! iss ) 
 				    {
 				      std::ostringstream message;
-				      message << "properties::config::read_next_property: "
-					      << "Cannot read vector boolean value!" ;
+				      message << "properties::config::__read: "
+					      << "Cannot read vector boolean value for key '" << prop_key << "' !" ;
 				      throw std::runtime_error (message.str ());
 				    }
 				  v_booleans[i] = b;
@@ -2839,8 +2849,8 @@ namespace datatools {
 				{
 
 				  std::ostringstream message;
-				  message << "properties::config::read_next_property: "
-					  << "Cannot read integer value!" ;
+				  message << "properties::config::__read: "
+					  << "Cannot read integer value for key '" << prop_key << "' !" ;
 				  throw std::runtime_error (message.str ());
 				}
 			    }
@@ -2853,8 +2863,8 @@ namespace datatools {
 				  if (! iss) 
 				    {
 				      std::ostringstream message;
-				      message << "properties::config::read_next_property: "
-					      << "Cannot read vector integer value!" ;
+				      message << "properties::config::__read: "
+					      << "Cannot read vector integer value for key '" << prop_key << "' !" ;
 				      throw std::runtime_error (message.str ());
 				    }
 				  v_integers[i] = k;
@@ -2871,8 +2881,8 @@ namespace datatools {
 			      if (! iss) 
 				{
 				  std::ostringstream message;
-				  message << "properties::config::read_next_property: "
-					  << "Cannot read real value!" ;
+				  message << "properties::config::__read: "
+					  << "Cannot read real value for key '" << prop_key << "' !" ;
 				  throw std::runtime_error (message.str ());
 				}
 			    }
@@ -2885,8 +2895,8 @@ namespace datatools {
 				  if (! iss) 
 				    {
 				      std::ostringstream message;
-				      message << "properties::config::read_next_property: "
-					      << "Cannot read vector real value!" ;
+				      message << "properties::config::__read: "
+					      << "Cannot read vector real value for key '" << prop_key << "' !" ;
 				      throw std::runtime_error (message.str ());
 				    }
 				  v_reals[i] = x;
@@ -2903,8 +2913,8 @@ namespace datatools {
 			      if (! read_quoted_string (iss, a_string)) 
 				{
 				  std::ostringstream message;
-				  message << "properties::config::read_next_property: "
-					  << "Cannot read string value!" ;
+				  message << "properties::config::__read: "
+					  << "Cannot read string value for key '" << prop_key << "' !" ;
 				  throw std::runtime_error (message.str ());
 				}
 			    }
@@ -2916,8 +2926,8 @@ namespace datatools {
 				  if (! read_quoted_string (iss,str)) 
 				    {
 				      std::ostringstream message;
-				      message << "properties::config::read_next_property: "
-					      << "Cannot read string value!" ;
+				      message << "properties::config::__read: "
+					      << "Cannot read string value for key '" << prop_key << "' !" ;
 				      throw std::runtime_error (message.str ());
 				    }
 				  v_strings[i] = str;
