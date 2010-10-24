@@ -31,23 +31,19 @@ namespace datatools {
     const bool multi_properties::read_private_also = false;
 
     const string multi_properties::SERIAL_TAG       = "datatools::utils::multi_properties";
-    //const string multi_properties::SERIAL_TAG       = "__multi_properties__";
 
     const string multi_properties::entry::SERIAL_TAG = "__datatools::utils::multi_properties::entry";
-    //const string multi_properties::entry::SERIAL_TAG = "__multi_properties__entry__";
 
     bool multi_properties::g_debug = false;
 
     /****************************************************************/
 
-    const string & 
-    multi_properties::get_serial_tag () const
+    const string & multi_properties::get_serial_tag () const
     {
       return multi_properties::SERIAL_TAG;
     }
 
-    const string & 
-    multi_properties::entry::get_serial_tag () const
+    const string & multi_properties::entry::get_serial_tag () const
     {
       return multi_properties::entry::SERIAL_TAG;
     }
@@ -267,8 +263,7 @@ namespace datatools {
       return found->second;
     }
     
-    multi_properties::entry & 
-    multi_properties::get (const string & key_)
+    multi_properties::entry & multi_properties::get (const string & key_)
     {
       entries_col_t::iterator found = __entries.find (key_);
       if (found == __entries.end ())
@@ -796,14 +791,6 @@ namespace datatools {
     void multi_properties::dump (ostream & out_) const
     {
       tree_dump (out_, "multi_properties:");
-      /*
-      out_ << "multi_properties:" << endl;
-      out_ << "|-- " << "Debug       : " <<  __debug << endl;
-      out_ << "|-- " << "Description : " <<  __description << endl;
-      out_ << "|-- " << "Key label   : \"" <<  __key_label << "\"" << endl;
-      out_ << "|-- " << "Meta label  : \"" <<  __meta_label << "\"" << endl;
-      out_ << "`-- " << "Number of entries = " <<  __entries.size () << endl;
-      */
       return;
     }
 	
@@ -934,7 +921,6 @@ namespace datatools {
       return;
     }
 
-    
   } // end of namespace utils 
 
 } // end of namespace datatools
