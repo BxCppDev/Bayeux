@@ -106,7 +106,7 @@ namespace mat {
     // composition:
   
     proportion_unit_type __proportion_unit; //!< KP_ATOM (number of atoms by molecule) or KP_MASS (% mass)
-    composition_map_t   __composition;      //!<  composition of the material [std::map<string,  elt_entry>]
+    composition_map_t   __composition;      //!<  composition of the material [std::map<string, compound_entry>]
         
     properties __properties;                //!< datatools properties
     bool       __locked;                    //!< boolean flags : true when composition is validated & derived properties are computed
@@ -171,7 +171,10 @@ namespace mat {
     //!<  Add an element with weight in KP_MASS proportion unit    
     
     void build (); //!<  Build the material :  compute molar mass and lock (or not).                                                                              
+  private:
     
+    void __normalize_weights ();    
+
   public: 
 
      const bool is_locked () const {return __locked;} //!<  Return true if composition is valid, weights are normalized and molar mass is computed.       

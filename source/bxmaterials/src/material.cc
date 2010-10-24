@@ -308,7 +308,7 @@ namespace mat {
       } 
     else
       { 
-	if(__proportion_unit!=KP_MASS)
+	if(__proportion_unit != KP_MASS)
 	  {
 	    ostringstream message;
 	    message << "material::add_material_by_mass : Unmatching proportion unit  !";
@@ -376,7 +376,10 @@ namespace mat {
       {
 	if (__composition.size () > 0)
 	  {
-	    //	__norm_weights ();
+	    if (is_composed_by_fraction_mass ())
+	      {
+	    	__normalize_weights ();
+	      }
 	    __compute_molar_mass ();
 	  }
 	else
@@ -386,6 +389,38 @@ namespace mat {
       }
     __lock ();
   }
+
+  //________________________________________________________________________ 
+  void material::__normalize_weights ()
+  {
+    if (! is_composed_by_fraction_mass ())
+      {
+	throw runtime_error ("material::__normalize_weights: Invalid composition mode !");
+      }
+    if (__composition.size () == 0)
+      {
+	throw runtime_error ("material::__normalize_weights: Empty composition map !");
+      }
+    // compute the sum of weight (fraction of mass):
+    double sum_weight = 0.0;
+    for (composition_map_t::const_iterator i 
+	   = __composition.begin (); 
+	 i != __composition.end (); 
+	 i++)
+      { 
+	const compound_entry & entry = i->second;
+        sum_weight += entry.weight;
+      }
+    // normalize all weights (fraction of mass):
+    for (composition_map_t::iterator i = __composition.begin (); 
+	 i != __composition.end (); 
+	 i++)
+      { 
+	compound_entry & entry = i->second;
+	entry.weight /= sum_weight;
+      }
+    return;
+  }   
   
   //________________________________________________________________________ 
   void  material::__compute_molar_mass ()
@@ -399,7 +434,8 @@ namespace mat {
 	const iso_entry & entry = i->second;
         molar_mass += (entry.weight) * (entry.iso_ptr->get_mass ());
 	}
-	__set_molar_mass (molar_mass);*/
+	__set_molar_mass (molar_mass);
+    */
   }     
   
   //________________________________________________________________________ 	     
