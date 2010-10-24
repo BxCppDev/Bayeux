@@ -88,13 +88,15 @@ namespace geomtools {
 
     void set (double);
   
-    // ctor/dtor:
   public: 
 
+    // ctor:
     sphere ();
 
+    // ctor:
     sphere (double radius_);
 
+    // dtor:
     virtual ~sphere ();
   
     virtual std::string get_shape_name () const;

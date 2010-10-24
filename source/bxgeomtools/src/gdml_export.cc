@@ -353,7 +353,7 @@ namespace geomtools {
 	else if (shape_name == "sphere")
 	  {
 	    const sphere & s = static_cast<const sphere &> (shape_);
-	    __writer.add_sphere (solid_name_, s, __length_unit, __angle_unit);
+	    __writer.add_orb (solid_name_, s, __length_unit, __angle_unit);
 	  }
 	else if (shape_name == "polycone")
 	  {

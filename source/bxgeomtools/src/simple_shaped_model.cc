@@ -564,7 +564,7 @@ namespace geomtools {
 	    // inner placement for the extrusion:
 	    __inner_placement.set (0, 0, 0, 0, 0, 0);
 	    ostringstream inner_name;
-	    inner_name << "__" << get_logical ().get_name () << ".tube_extrusion";
+	    inner_name << "__" << get_logical ().get_name () << ".tube_by_extrusion";
 	    __inner_logical.set_name (i_model::make_logical_volume_name (inner_name.str ()));
 	    __inner_logical.set_material_ref (__filled_material_name);
 	    __inner_logical.set_shape (*__inner_shape); // pass a reference -> logical has not the shape ownership
@@ -601,8 +601,8 @@ namespace geomtools {
 	    // if the tube is extruded, add the tube within the 'outer' envelope cylinder:
 	    __inner_placement.set (0, 0, 0, 0, 0, 0);
 	    ostringstream inner_name;
-	    inner_name << "__" << get_logical ().get_name () << ".tube_envelope";
-	    __inner_logical.set_name (i_model::make_logical_volume_name (name_));
+	    inner_name << "__" << get_logical ().get_name () << ".tube_by_envelope";
+	    __inner_logical.set_name (i_model::make_logical_volume_name (inner_name.str ()));
 	    __inner_logical.set_material_ref (__material_name);
 	    __inner_logical.set_shape (*__tube);
 	    if (visibility::has_color (config_))
@@ -750,7 +750,7 @@ namespace geomtools {
 	    // inner placement for the extrusion:
 	    __inner_placement.set (0, 0, 0, 0, 0, 0);
 	    ostringstream inner_name;
-	    inner_name << "__" << get_logical ().get_name () << ".polycone_extrusion";
+	    inner_name << "__" << get_logical ().get_name () << ".polycone_by_extrusion";
 	    __inner_logical.set_name (i_model::make_logical_volume_name (inner_name.str ()));
 	    __inner_logical.set_material_ref (__filled_material_name);
 	    __inner_logical.set_shape (*__inner_shape); // pass a reference -> logical has not the shape ownership
@@ -789,8 +789,8 @@ namespace geomtools {
 	    // within the 'outer' envelope polycone:
 	    __inner_placement.set (0, 0, 0, 0, 0, 0);
 	    ostringstream inner_name;
-	    inner_name << "__" << get_logical ().get_name () << ".polycone_envelope";
-	    __inner_logical.set_name (i_model::make_logical_volume_name (name_));
+	    inner_name << "__" << get_logical ().get_name () << ".polycone_by_envelope";
+	    __inner_logical.set_name (i_model::make_logical_volume_name (inner_name.str ()));
 	    __inner_logical.set_material_ref (__material_name);
 	    __inner_logical.set_shape (*__polycone);
 	    if (visibility::has_color (config_))
@@ -927,7 +927,7 @@ namespace geomtools {
 	    // inner placement for the extrusion:
 	    __inner_placement.set (0, 0, 0, 0, 0, 0);
 	    ostringstream inner_name;
-	    inner_name << "__" << get_logical ().get_name () << ".polyhedra_extrusion";
+	    inner_name << "__" << get_logical ().get_name () << ".polyhedra_by_extrusion";
 	    __inner_logical.set_name (i_model::make_logical_volume_name (inner_name.str ()));
 	    __inner_logical.set_material_ref (__filled_material_name);
 	    __inner_logical.set_shape (*__inner_shape); // pass a reference -> logical has not the shape ownership
@@ -966,8 +966,8 @@ namespace geomtools {
 	    // within the 'outer' envelope polyhedra:
 	    __inner_placement.set (0, 0, 0, 0, 0, 0);
 	    ostringstream inner_name;
-	    inner_name << "__" << get_logical ().get_name () << ".polyhedra_envelope";
-	    __inner_logical.set_name (i_model::make_logical_volume_name (name_));
+	    inner_name << "__" << get_logical ().get_name () << ".polyhedra_by_envelope";
+	    __inner_logical.set_name (i_model::make_logical_volume_name (inner_name.str ()));
 	    __inner_logical.set_material_ref (__material_name);
 	    __inner_logical.set_shape (*__polyhedra);
 	    if (visibility::has_color (config_))

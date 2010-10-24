@@ -294,6 +294,11 @@ namespace geomtools {
 		   const string & lunit_str_ = "mm",
 		   const string & aunit_str_ = "radian");
 
+    void add_orb (const string & name_, 
+		  const sphere & s_,
+		  const string & lunit_str_ = "mm",
+		  const string & aunit_str_ = "radian");
+
     void add_sphere (const string & name_, 
 		     const sphere & s_,
 		     const string & lunit_str_ = "mm",

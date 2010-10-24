@@ -43,6 +43,7 @@ namespace geomtools {
 	boost::replace_all (str1, "{" , "&#123;");
 	boost::replace_all (str1, "}" , "&#124;");
       }
+    boost::replace_all (str1, "::" , "__");
     return str1;
   }
 
@@ -57,6 +58,7 @@ namespace geomtools {
 	boost::replace_all (str1 , "&#123;" , "{");
 	boost::replace_all (str1 , "&#124;" , "}");
       }
+    boost::replace_all (str1, "__" , "::");
     return str1;
   }
 
@@ -325,7 +327,8 @@ namespace geomtools {
 		       << " type=" << '"' << "A" << '"'
 		       << " value=" << '"';
     _get_stream (MATERIALS_SECTION).precision (15);
-    _get_stream (MATERIALS_SECTION) << a_ << '"' << " >" << endl;
+    _get_stream (MATERIALS_SECTION) << a_ << '"' << " />" << endl;
+    // 2010-10-24 FM: the " />" termination string does not appear in the GDML user manual !
     _get_stream (MATERIALS_SECTION) << "</isotope>" << endl; 
     _get_stream (MATERIALS_SECTION) << endl; 
   }
@@ -374,7 +377,7 @@ namespace geomtools {
 	s += n;
 	
 	materials_stream << "  <fraction" 
-			   << " ref=" << '"' << ref << '"'
+			 << " ref=" << '"' << to_html (ref) << '"'
 			   << " n=" << '"';
 	materials_stream.precision (15);
 	materials_stream << n << '"' << " />" << endl;
@@ -519,7 +522,7 @@ namespace geomtools {
 	s += n;
 	
 	materials_stream << "  <fraction" 
-			   << " ref=" << '"' << ref << '"'
+			 << " ref=" << '"' << to_html (ref) << '"'
 			   << " n=" << '"';
 	materials_stream.precision (15);
 	materials_stream << n << '"' << " />" << endl;
@@ -574,7 +577,7 @@ namespace geomtools {
 	    throw runtime_error (message.str ());	
 	  }
 	materials_stream << "  <composite" 
-			   << " ref=" << '"' << ref << '"'
+			 << " ref=" << '"' << to_html (ref) << '"'
 			   << " n=" << '"' << n << '"' << " />" << endl;;
       }
     materials_stream << "</material>" << endl; 
@@ -785,7 +788,7 @@ namespace geomtools {
     double lunit = datatools::utils::units::get_length_unit_from (lunit_str_);
 
     ostringstream solids_stream;
-    solids_stream << "<" <<  "sphere"
+    solids_stream << "<" <<  "orb"
 		  << " name=" << '"' << to_html (name_) << '"';
 
     solids_stream << " r=" << '"';
@@ -1108,6 +1111,15 @@ namespace geomtools {
 		   aunit_str_);
   }
 
+  void gdml_writer::add_orb (const string & name_, 
+			     const sphere & s_,
+			     const string & lunit_str_,
+			     const string & aunit_str_)
+  {
+    add_gdml_orb (name_, 
+		  s_.get_r (), 
+		  lunit_str_);
+  }
 
   void gdml_writer::add_sphere (const string & name_, 
 				const sphere & s_,
@@ -1347,15 +1359,15 @@ namespace geomtools {
 	 i++)
       {
 	_get_stream (STRUCTURE_SECTION) << "  <physvol>" << endl;
-	_get_stream (STRUCTURE_SECTION) << "    <volumeref  " << " ref=" << '"' << i->volumeref << '"' << " />" << endl;
-	_get_stream (STRUCTURE_SECTION) << "    <positionref" << " ref=" << '"' << i->positionref << '"' << " />" << endl;
+	_get_stream (STRUCTURE_SECTION) << "    <volumeref  " << " ref=" << '"' << to_html (i->volumeref) << '"' << " />" << endl;
+	_get_stream (STRUCTURE_SECTION) << "    <positionref" << " ref=" << '"' << to_html (i->positionref) << '"' << " />" << endl;
 	if (! i->rotationref.empty ())
 	  {
-	    _get_stream (STRUCTURE_SECTION) << "    <rotationref" << " ref=" << '"' << i->rotationref << '"' << " />" << endl;
+	    _get_stream (STRUCTURE_SECTION) << "    <rotationref" << " ref=" << '"' << to_html (i->rotationref) << '"' << " />" << endl;
 	  }
 	if (! i->scaleref.empty ())
 	  {
-	    _get_stream (STRUCTURE_SECTION) << "    <scaleref  " << " ref=" << '"' << i->scaleref << '"' << " />" << endl;
+	    _get_stream (STRUCTURE_SECTION) << "    <scaleref  " << " ref=" << '"' << to_html (i->scaleref) << '"' << " />" << endl;
 	  }
 	_get_stream (STRUCTURE_SECTION) << "  </physvol>" << endl << endl;
       }
