@@ -71,12 +71,22 @@ namespace geomtools {
     string special_rotation_angle_label = "";
     string rotated_label = "rotated";
 
-    if (config_.has_key ("rotated_label"))
+    // fetch the label of the rotated boxed model:
+    if (config_.has_key ("rotated.label"))
+      {
+	rotated_label = config_.fetch_string ("rotated.label");
+      }  
+    else if (config_.has_key ("rotated_label")) //obsolete
       {
 	rotated_label = config_.fetch_string ("rotated_label");
       }  
 
-    if (config_.has_key ("rotation_axis"))
+    // fetch the rotation axis:
+    if (config_.has_key ("rotated.axis"))
+      {
+	rotation_axis_label = config_.fetch_string ("rotated.axis");
+      }  
+    else if (config_.has_key ("rotation_axis")) //obsolete
       {
 	rotation_axis_label = config_.fetch_string ("rotation_axis");
       }  
@@ -88,7 +98,11 @@ namespace geomtools {
 	throw runtime_error (message.str ());		
       }
 
-    if (config_.has_key ("rotation_angle"))
+    if (config_.has_key ("rotated.angle"))
+      {
+	special_rotation_angle_label = config_.fetch_string ("rotated.angle");
+      }  
+    else if (config_.has_key ("rotation_angle")) //obsolete
       {
 	special_rotation_angle_label = config_.fetch_string ("rotation_angle");
       }  
@@ -100,7 +114,11 @@ namespace geomtools {
 	throw runtime_error (message.str ());		
       }
      
-    if (config_.has_key ("boxed_model"))
+    if (config_.has_key ("rotated.model"))
+      {
+	boxed_model_name = config_.fetch_string ("rotated.model");
+      }  
+    else if (config_.has_key ("boxed_model")) //obsolete
       {
 	boxed_model_name = config_.fetch_string ("boxed_model");
       }  
@@ -215,7 +233,10 @@ namespace geomtools {
     the_new_SD.ymax = gymax;
     the_new_SD.zmin = gzmin;
     the_new_SD.zmax = gzmax;
-    the_new_SD.tree_dump (cerr, "rotated_boxed_model::_at_construct: ", "DEVEL: ");
+    if (devel)
+      {
+	the_new_SD.tree_dump (cerr, "rotated_boxed_model::_at_construct: ", "DEVEL: ");
+      }
     if (rotation_axis == ROTATION_AXIS_X) 
       {
 	if (special_rotation_angle ==  ROTATION_ANGLE_90)

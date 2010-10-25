@@ -63,10 +63,10 @@ visibility.daughters.hidden : boolean = 0
 
 [name="rot_tubA" type="geomtools::rotated_boxed_model"]
 
-rotated_label  : string = "rotated_tube"
-rotation_axis  : string = "y"
-rotation_angle : string = "90"
-boxed_model    : string = "tubA"
+rotated.label  : string = "rotated_tube"
+rotated.axis  : string = "y"
+rotated.angle : string = "90"
+rotated.model    : string = "tubA"
 
 visibility.hidden           : boolean = 0
 
@@ -90,20 +90,21 @@ internal_item.placement.C       : string  = "0 55 40 (mm)"
 
 [name="SBM0" type="geomtools::surrounded_boxed_model"]
 material.ref      : string    = "air"
-length_unit       : string    = "mm"
-surrounded_model  : string    = "boxC"
-centered.x        : boolean   = 0
-centered.y        : boolean   = 0
-centered.z        : boolean   = 1
-surrounding_model.front  : string  = "rot_tubA"
-surrounding_model.back   : string  = "boxB"
-surrounding_model.left   : string  = "boxD"
-#surrounding_model.right  : string  = "boxD"
-surrounding_model.top    : string  = "tubA"
-surrounding_model.bottom : string  = "boxE"
+surrounded.model  : string    = "boxC"
+surrounded.label  : string    = "the_central_box"
+surrounded.centered_x   : boolean   = 0
+surrounded.centered_y   : boolean   = 0
+surrounded.centered_z   : boolean   = 1
+surrounded.front_model  : string  = "rot_tubA"
+surrounded.back_model   : string  = "boxB"
+surrounded.left_model   : string  = "boxD"
+#surrounded.right_model  : string  = "boxD"
+surrounded.top_model    : string  = "tubA"
+surrounded.bottom_model : string  = "boxE"
 #x                 : real   = 200.0
 #y                 : real   = 200.0
 #z                 : real   = 200.0
+#length_unit       : string    = "mm"
 
 visibility.hidden : boolean   = 0
 visibility.color  : string    = "grey"

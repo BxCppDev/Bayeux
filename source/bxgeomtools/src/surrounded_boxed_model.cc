@@ -11,6 +11,7 @@ namespace geomtools {
   const string surrounded_boxed_model::SURROUNDED_LABEL      = "surrounded";
   const string surrounded_boxed_model::SURROUNDING_LABEL     = "surrounding";
   const string surrounded_boxed_model::LABEL_PROPERTY_PREFIX = "label";
+  const string surrounded_boxed_model::MODEL_PROPERTY_PREFIX = "model";
 
   const string & surrounded_boxed_model::get_material_name () const
   {
@@ -233,8 +234,8 @@ namespace geomtools {
   }
   
   void surrounded_boxed_model::_at_construct (const string & name_,
-					   const datatools::utils::properties & config_,
-					   models_col_t * models_)
+					      const datatools::utils::properties & config_,
+					      models_col_t * models_)
   {
     bool devel = i_model::g_devel;
     if (config_.has_flag ("devel"))
@@ -282,7 +283,11 @@ namespace geomtools {
       }  
 
     /*** Surrounded model ***/
-    if (config_.has_key ("surrounded_model"))
+    if (config_.has_key ("surrounded.model"))
+      {
+	surrounded_model_name = config_.fetch_string ("surrounded.model");
+      }  
+    else if (config_.has_key ("surrounded_model")) // obsolete
       {
 	surrounded_model_name = config_.fetch_string ("surrounded_model");
       }  
@@ -290,30 +295,51 @@ namespace geomtools {
       {
 	ostringstream message;
 	message << "surrounded_boxed_model::_at_construct: "
-		<< "Missing 'surrounded_model' property !"; 
+		<< "Missing 'surrounded.model' property !"; 
 	throw runtime_error (message.str ());		
       }
 
     /*** Surrounded label ***/
     __surrounded_label = SURROUNDED_LABEL;
-    if (config_.has_key ("surrounded_label"))
+    if (config_.has_key ("surrounded.label"))
+      {
+	set_surrounded_label (config_.fetch_string ("surrounded.label"));
+      }  
+    else if (config_.has_key ("surrounded_label")) // obsolete
       {
 	set_surrounded_label (config_.fetch_string ("surrounded_label"));
       }  
     
 
     /*** Centering of the surrounded item ***/
-    if (config_.has_flag ("centered.x"))
+    if (config_.has_flag ("surrounded.centered_x"))
       {
 	if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: X-centered" << endl; 
 	__centered_x = true;
       }
-    if (config_.has_flag ("centered.y"))
+    else if (config_.has_flag ("centered.x")) // obsolete
+      {
+	if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: X-centered" << endl; 
+	__centered_x = true;
+      }
+
+    if (config_.has_flag ("surrounded.centered_y"))
+      {
+	if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: Y-centered" << endl; 
+	__centered_x = true;
+      }
+    else if (config_.has_flag ("centered.y")) // obsolete
       {
 	if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: Y-centered" << endl; 
 	__centered_y = true;
       }
-    if (config_.has_flag ("centered.z"))
+
+    if (config_.has_flag ("surrounded.centered_z"))
+      {
+	if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: Z-centered" << endl; 
+	__centered_x = true;
+      }
+    else if (config_.has_flag ("centered.z")) // obsolete
       {
 	if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: Z-centered" << endl; 
 	__centered_z = true;
@@ -365,7 +391,7 @@ namespace geomtools {
 	  string surrounding_model_name;
 	  string label_name;
 	  ostringstream surrounding_item_prop;
-	  surrounding_item_prop << "surrounding_model." << *ilabel;
+	  surrounding_item_prop << "surrounded." <<  *ilabel << "_" << MODEL_PROPERTY_PREFIX;
 	  if (config_.has_key (surrounding_item_prop.str ()))
 	    {
 	      surrounding_model_name = config_.fetch_string (surrounding_item_prop.str ());
@@ -383,7 +409,7 @@ namespace geomtools {
 	    }
 	  // attempt to extract a user defined label:
 	  ostringstream label_item_prop;
-	  label_item_prop << "surrounding_" << LABEL_PROPERTY_PREFIX << "." << *ilabel;
+	  label_item_prop << "surrounded." <<  *ilabel << "_" << LABEL_PROPERTY_PREFIX;
 	  if (config_.has_key (label_item_prop.str ()))
 	    {
 	      label_name = config_.fetch_string (label_item_prop.str ());
@@ -397,7 +423,7 @@ namespace geomtools {
 	      if (! i_shape_3d::is_stackable (found->second->get_logical ().get_shape ()))
 		{
 		  ostringstream message;
-		  message << "stacked_boxed_model::_at_construct: "
+		  message << "surrounded_boxed_model::_at_construct: "
 			  << "The " << *ilabel << " surrounding model '" 
 			  << found->second->get_name () 
 			  << "' is not stackable !"; 
@@ -430,8 +456,8 @@ namespace geomtools {
     if (! i_shape_3d::pickup_stackable (the_shape, the_SD))
       {
 	ostringstream message;
-	message << "stacked_boxed_model::_at_construct: "
-		<< "Cannot stack '" 
+	message << "surrounded_boxed_model::_at_construct: "
+		<< "Cannot surround/stack the '" 
 		<< the_shape.get_shape_name () << "' shape !";
 	throw runtime_error (message.str ());
       }
@@ -470,8 +496,8 @@ namespace geomtools {
 	if (! i_shape_3d::pickup_stackable (the_surrounding_shape, the_SD2))
 	  {
 	    ostringstream message;
-	    message << "stacked_boxed_model::_at_construct: "
-		    << "Cannot stack the '" 
+	    message << "surrounded_boxed_model::_at_construct: "
+		    << "Cannot surround/stack the '" 
 		    << the_surrounding_shape.get_shape_name () << "' surrounding shape !";
 	    throw runtime_error (message.str ());
 	  }

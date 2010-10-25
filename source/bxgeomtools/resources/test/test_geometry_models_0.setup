@@ -22,14 +22,16 @@ visibility.hidden : boolean = 0
 visibility.color  : string  = "red"
 
 [name="row" type="geomtools::replicated_boxed_model"]
-replicant_axis  : string = "x"
-number_of_items : integer = 10
-boxed_model     : string = "box0"
+replicated.axis            : string = "x"
+replicated.number_of_items : integer = 10
+replicated.model           : string = "box0"
+replicated.label           : string = "the_box"
 
 [name="wall" type="geomtools::replicated_boxed_model"]
-replicant_axis  : string = "y"
-number_of_items : integer = 4
-boxed_model     : string = "row"
+replicated.axis            : string = "y"
+replicated.number_of_items : integer = 4
+replicated.model           : string = "row"
+replicated.label           : string = "the_row"
 
 [name="box1" type="geomtools::test::test_model_1"]
 width    : real   = 100.0
@@ -61,47 +63,53 @@ visibility.daughters.hidden : boolean = 0
 category : string = "vessel"
 
 [name="box4" type="geomtools::replicated_boxed_model"]
-replicant_axis  : string = "x"
-number_of_items : integer = 3
-boxed_model     : string = "box2"
+replicated.axis            : string = "x"
+replicated.number_of_items : integer = 3
+replicated.model           : string = "box2"
+replicated.label           : string = "the_box"
 
 [name="rotz_box2" type="geomtools::rotated_boxed_model"]
-rotation_axis   : string = "z"
-rotation_angle  : string = "90"
-boxed_model     : string = "box3"
+rotated.axis   : string = "z"
+rotated.angle  : string = "90"
+rotated.model  : string = "box3"
 visibility.hidden_envelop : boolean = 0
 
 [name="rotx_box2" type="geomtools::rotated_boxed_model"]
-rotation_axis   : string = "x"
-rotation_angle  : string = "90"
-boxed_model     : string = "box3"
+rotated.axis   : string = "x"
+rotated.angle  : string = "90"
+rotated.model  : string = "box3"
 
 [name="many_rotz_box2" type="geomtools::replicated_boxed_model"]
-replicant_axis  : string = "x"
-number_of_items : integer = 5
-boxed_model     : string = "rotz_box2"
+replicated.axis            : string = "x"
+replicated.number_of_items : integer = 5
+replicated.model           : string = "rotz_box2"
+replicated.label           : string = "the_box"
 visibility.hidden_envelop : boolean = 1
 visibility.daughters.hidden : boolean = 0
 
 [name="many_rotx_box2" type="geomtools::replicated_boxed_model"]
-replicant_axis  : string = "x"
-number_of_items : integer = 5
-boxed_model     : string = "rotx_box2"
+replicated.axis            : string = "x"
+replicated.number_of_items : integer = 5
+replicated.model           : string = "rotx_box2"
+replicated.label           : string = "the_box"
 
 [name="box5" type="geomtools::replicated_boxed_model"]
-replicant_axis  : string = "x"
-number_of_items : integer = 5
-boxed_model     : string = "box3"
+replicated.axis            : string = "x"
+replicated.number_of_items : integer = 5
+replicated.model           : string = "box3"
+replicated.label           : string = "the_box"
 
 [name="box6" type="geomtools::replicated_boxed_model"]
-replicant_axis  : string = "y"
-number_of_items : integer = 3
-boxed_model     : string = "box5"
+replicated.axis            : string = "y"
+replicated.number_of_items : integer = 3
+replicated.model           : string = "box5"
+replicated.label           : string = "the_box"
 
 [name="box7" type="geomtools::replicated_boxed_model"]
-replicant_axis  : string = "z"
-number_of_items : integer = 2
-boxed_model     : string = "box6"
+replicated.axis            : string = "z"
+replicated.number_of_items : integer = 2
+replicated.model           : string = "box6"
+replicated.label           : string = "the_box"
 
 [name="box8" type="geomtools::stacked_model"]
 material.ref      : string = "air"
@@ -147,21 +155,21 @@ visibility.daughters.hidden : boolean = 0
 [name="z10" type="geomtools::surrounded_boxed_model"]
 material.ref     : string = "air"
 
-centered.x : boolean = 0
-centered.y : boolean = 0
-centered.z : boolean = 0
+surrounded.centered_x : boolean = 0
+surrounded.centered_y : boolean = 0
+surrounded.centered_z : boolean = 0
 
-surrounded_model : string = "boxa"
-surrounded_label : string = "central"
+surrounded.model : string = "boxa"
+surrounded.label : string = "central"
 
-surrounding_model.front  : string = "box1"
-surrounding_model.back   : string = "box2"
-surrounding_model.top    : string = "box0"
-surrounding_model.left   : string = "box0"
-surrounding_label.front  : string = "front"
-surrounding_label.back   : string = "back"
-surrounding_label.top    : string = "top"
-surrounding_label.left   : string = "left"
+surrounded.front_model  : string = "box1"
+surrounded.back_model   : string = "box2"
+surrounded.top_model    : string = "box0"
+surrounded.left_model   : string = "box0"
+surrounded.front_label  : string = "front"
+surrounded.back_label   : string = "back"
+surrounded.top_label    : string = "top"
+surrounded.left_label   : string = "left"
 
 
 

@@ -46,6 +46,7 @@ namespace geomtools {
   public:
 
     static const string LABEL_PROPERTY_PREFIX;
+    static const string MODEL_PROPERTY_PREFIX;
     static const string SURROUNDED_LABEL;
     static const string SURROUNDING_LABEL;
 

@@ -697,6 +697,8 @@ namespace geomtools {
     // parse ID info:
     string id_info = id_info_;
     boost::trim (id_info);  
+    if (devel) clog << "id_mgr::compute_id_from_info: Entering..." << endl;
+
     if (devel) clog << "id_mgr::compute_id_from_info: "
 		    << "ID info is `" << id_info << "'" << endl;
     if (id_info.size () < 5)
@@ -891,6 +893,7 @@ namespace geomtools {
 	  }
       }
 	
+    if (devel) clog << "id_mgr::compute_id_from_info: Exiting." << endl << endl;
     return EXIT_SUCCESS;
   }
  

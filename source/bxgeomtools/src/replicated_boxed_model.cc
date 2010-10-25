@@ -101,12 +101,20 @@ namespace geomtools {
     string replicant_axis_label = "";
     string replicated_label = "replicated";
 
-    if (config_.has_key ("replicated_label"))
+    if (config_.has_key ("replicated.label"))
+      {
+	replicated_label = config_.fetch_string ("replicated.label");
+      }  
+    else if (config_.has_key ("replicated_label")) // Obsolete
       {
 	replicated_label = config_.fetch_string ("replicated_label");
       }  
 
-    if (config_.has_key ("replicant_axis"))
+    if (config_.has_key ("replicated.axis"))
+      {
+	replicant_axis_label = config_.fetch_string ("replicated.axis");
+      }  
+    else if (config_.has_key ("replicant_axis")) // Obsolete
       {
 	replicant_axis_label = config_.fetch_string ("replicant_axis");
       }  
@@ -114,11 +122,15 @@ namespace geomtools {
       {
 	ostringstream message;
 	message << "replicated_boxed_model::_at_construct: "
-		<< "Missing 'replicant_axis' property !"; 
+		<< "Missing 'replicated.axis' property !"; 
 	throw runtime_error (message.str ());		
       }
 
-    if (config_.has_key ("number_of_items"))
+    if (config_.has_key ("replicated.number_of_items"))
+      {
+	number_of_items = config_.fetch_integer ("replicated.number_of_items");
+      }  
+    else if (config_.has_key ("number_of_items")) // Obsolete
       {
 	number_of_items = config_.fetch_integer ("number_of_items");
       }  
@@ -126,11 +138,15 @@ namespace geomtools {
       {
 	ostringstream message;
 	message << "replicated_boxed_model::_at_construct: "
-		<< "Missing 'number_of_items' property !"; 
+		<< "Missing 'replicated.number_of_items' property !"; 
 	throw runtime_error (message.str ());		
       }
      
-    if (config_.has_key ("boxed_model"))
+    if (config_.has_key ("replicated.model"))
+      {
+	boxed_model_name = config_.fetch_string ("replicated.model");
+      }  
+    else if (config_.has_key ("boxed_model")) // Obsolete
       {
 	boxed_model_name = config_.fetch_string ("boxed_model");
       }  
@@ -138,7 +154,7 @@ namespace geomtools {
       {
 	ostringstream message;
 	message << "replicated_boxed_model::_at_construct: "
-		<< "Missing 'boxed_model' property !"; 
+		<< "Missing 'replicated.model' property !"; 
 	throw runtime_error (message.str ());	
       }
 
