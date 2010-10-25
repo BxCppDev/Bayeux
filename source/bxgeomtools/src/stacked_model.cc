@@ -574,7 +574,7 @@ namespace geomtools {
 	bi.phys.set_logical (bi.model->get_logical ());
 	bi.phys.set_mother (_logical);
 	j++;
-      }
+      } // for
 
     if (devel) cerr << "DEVEL: stacked_model::_at_construct: " << "step 7" << endl;
 

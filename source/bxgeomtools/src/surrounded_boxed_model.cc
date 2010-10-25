@@ -287,10 +287,12 @@ namespace geomtools {
       {
 	surrounded_model_name = config_.fetch_string ("surrounded.model");
       }  
+    /*
     else if (config_.has_key ("surrounded_model")) // obsolete
       {
 	surrounded_model_name = config_.fetch_string ("surrounded_model");
-      }  
+      }
+    */  
     else
       {
 	ostringstream message;
@@ -305,11 +307,12 @@ namespace geomtools {
       {
 	set_surrounded_label (config_.fetch_string ("surrounded.label"));
       }  
+    /*
     else if (config_.has_key ("surrounded_label")) // obsolete
       {
 	set_surrounded_label (config_.fetch_string ("surrounded_label"));
       }  
-    
+    */
 
     /*** Centering of the surrounded item ***/
     if (config_.has_flag ("surrounded.centered_x"))
@@ -317,33 +320,39 @@ namespace geomtools {
 	if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: X-centered" << endl; 
 	__centered_x = true;
       }
+    /*
     else if (config_.has_flag ("centered.x")) // obsolete
       {
 	if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: X-centered" << endl; 
 	__centered_x = true;
       }
+    */
 
     if (config_.has_flag ("surrounded.centered_y"))
       {
 	if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: Y-centered" << endl; 
-	__centered_x = true;
+	__centered_y = true;
       }
+    /*
     else if (config_.has_flag ("centered.y")) // obsolete
       {
 	if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: Y-centered" << endl; 
 	__centered_y = true;
       }
+    */
 
     if (config_.has_flag ("surrounded.centered_z"))
       {
 	if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: Z-centered" << endl; 
-	__centered_x = true;
+	__centered_z = true;
       }
+    /*
     else if (config_.has_flag ("centered.z")) // obsolete
       {
 	if (devel) cerr << "DEVEL: surrounded_boxed_model::_at_construct: Z-centered" << endl; 
 	__centered_z = true;
       }
+    */
 
     /*** check models ***/
     if (! models_)
@@ -578,7 +587,7 @@ namespace geomtools {
     double dim_z = 2 * max (z1, abs (z0));
     if (! __centered_x)
       {
-	if (devel) cerr << "DEVEL: geomtools::surrounded_boxed_model: ! X-centered" << endl; 
+	if (devel) cerr << "DEVEL: geomtools::surrounded_boxed_model: ! X-centered with x0=" << x0 << endl; 
 	dim_x = x1 - x0;
 	surrounded_x = -0.5 * dim_x - x0;
       }
@@ -588,7 +597,7 @@ namespace geomtools {
       }
     if (! __centered_y)
       {
-	if (devel) cerr << "DEVEL: geomtools::surrounded_boxed_model: ! Y-centered" << endl; 
+	if (devel) cerr << "DEVEL: geomtools::surrounded_boxed_model: ! Y-centered with y0=" << y0 << endl; 
 	dim_y = y1 - y0;
 	surrounded_y = -0.5 * dim_y - y0;
       }
@@ -598,9 +607,9 @@ namespace geomtools {
       }
     if (! __centered_z)
       {
-	if (devel) cerr << "DEVEL: geomtools::surrounded_boxed_model: ! Z-centered" << endl; 
+	if (devel) cerr << "DEVEL: geomtools::surrounded_boxed_model: ! Z-centered with z0=" << z0 << endl; 
 	dim_z = z1 - z0;
-	surrounded_z = -0.5 * dim_z + z0;
+	surrounded_z = -0.5 * dim_z - z0;
       }
     else
       {
@@ -630,7 +639,8 @@ namespace geomtools {
 	  {
 	    ostringstream message;
 	    message << "surrounded_boxed_model::_at_construct: "
-		    << "Enforced Y dimension '" << y / CLHEP::mm << "' mm (<" << dim_y / CLHEP::mm << ") is too small for surrounded components to fit !"; 
+		    << "Enforced Y dimension '" << y / CLHEP::mm 
+		    << "' mm (<" << dim_y / CLHEP::mm << ") is too small for surrounded components to fit !"; 
 	    throw runtime_error (message.str ());    
 	  }
         dim_y = y;
@@ -644,7 +654,8 @@ namespace geomtools {
 	  {
 	    ostringstream message;
 	    message << "surrounded_boxed_model::_at_construct: "
-		    << "Enforced Z dimension '" << z / CLHEP::mm << "' mm (<" << dim_z / CLHEP::mm << ") is too small for surrounded components to fit !"; 
+		    << "Enforced Z dimension '" << z / CLHEP::mm 
+		    << "' mm (<" << dim_z / CLHEP::mm << ") is too small for surrounded components to fit !"; 
 	    throw runtime_error (message.str ());    
 	  }
         dim_z = z;
@@ -674,7 +685,6 @@ namespace geomtools {
     __surrounded_phys.set_placement (__surrounded_placmt);
     __surrounded_phys.set_logical (__surrounded_model->get_logical ());
     __surrounded_phys.set_mother (get_logical ());
-
 
     // placement of the surrounding solids: 
     for (surrounding_dict_t::iterator i = __surrounding_items.begin ();

@@ -354,7 +354,7 @@ namespace geomtools {
        {
 	 ostringstream indent_oss;
 	 indent_oss << indent;
-	 indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+	 indent_oss << skip_tag;
 	 __boxed_placement.tree_dump (out_, "", indent_oss.str ());
        }   
      }
