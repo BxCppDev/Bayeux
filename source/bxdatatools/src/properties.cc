@@ -2820,7 +2820,7 @@ namespace datatools {
 					      << "Cannot read vector real value for key '" << prop_key << "' at line '" << line << "' !" ;
 				      throw std::runtime_error (message.str ());
 				    }
-				  cerr << "DEVEL: ***** x=" << x << " sz=" << vsize << endl;
+				  //cerr << "DEVEL: ***** x=" << x << " sz=" << vsize << endl;
 				  v_reals[i] = x;
 				}
 			    }
@@ -2975,8 +2975,7 @@ namespace datatools {
       return true;
     }
  
-    std::string 
-    properties::build_property_key (const std::string & prefix_,
+    std::string properties::build_property_key (const std::string & prefix_,
 				    const std::string & subkey_)
     {
       std::string s (prefix_);
