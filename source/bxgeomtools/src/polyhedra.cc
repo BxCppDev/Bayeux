@@ -139,8 +139,7 @@ namespace geomtools {
 		ostringstream message;
 		message << "polyhedra::initialize: "
 			<< "'list_of_z' and 'list_of_rmax' have not the same size !";
-		throw runtime_error (message.str ());
-		    
+		throw runtime_error (message.str ());		    
 	      }
 	  }
 	else
@@ -456,18 +455,6 @@ namespace geomtools {
     return;
   }
 
-  /*
-    void polyhedra::add (double z_, double r_)
-    {
-    if (r_ < 0.0)
-    {
-    throw runtime_error ("polyhedra::add: Invalid negative 'r' !");
-    }
-    __points[z_] = r_;
-    __compute_all ();
-    }
-  */
-
   bool polyhedra::is_valid () const
   {
     return (__n_sides >= 3) && (__points.size () > 1);
@@ -493,7 +480,6 @@ namespace geomtools {
   {
     if (! is_valid ()) return;
     __z_min = __z_max = __r_max = __xy_max = numeric_limits<double>::quiet_NaN ();  
-    double alpha = 2.0 * M_PI / __n_sides;
     double max_radius = numeric_limits<double>::quiet_NaN ();
     for (rz_col_t::const_iterator i = __points.begin ();
 	 i != __points.end ();
@@ -527,10 +513,11 @@ namespace geomtools {
 	  }
       }
     __r_max = max_radius;
-    // compute the bounding box:
+    // compute the XY-bounding box:
+    double alpha = 2.0 * M_PI / __n_sides;
     for (int i = 0; i < __n_sides; i++)
       {
-	double theta = alpha * (i + 0.5);
+	double theta = alpha * i;
 	double xs  = __r_max * cos (theta);
 	double ys  = __r_max * sin (theta);
 	double axs = abs (xs);
@@ -549,6 +536,52 @@ namespace geomtools {
 	  }	
       }
    return;
+  }
+
+  vector_3d polyhedra::get_corner (int zplane_index_, 
+				   int corner_index_,
+				   bool inner_) const
+  {
+    vector_3d corner;
+    geomtools::invalidate (corner);
+    double delta_phi = 2. * M_PI / __n_sides;
+    if ((zplane_index_ < 0)  || (zplane_index_ > __points.size ()))
+      {
+	ostringstream message;
+	message << "polyhedra::get_corner: "
+		<< "Invalid Z-plane index (" << zplane_index_ << ") !";
+	throw runtime_error (message.str ());
+      }
+    if ((corner_index_ < 0)  || (corner_index_ > __n_sides))
+      {
+	ostringstream message;
+	message << "polyhedra::get_corner: "
+		<< "Invalid corner index (" << corner_index_ << ") !";
+	throw runtime_error (message.str ());
+      }
+    size_t zcount = 0;
+    rz_col_t::const_iterator i = __points.begin ();
+    for (; i != __points.end (); i++)
+      {
+	if (zcount == zplane_index_) 
+	  {
+	    break;
+	  }
+	zcount++;
+      }
+    //   if (i != __points.end ())
+    //  {
+    double z = i->first;
+    double rmin = i->second.rmin;
+    double rmax = i->second.rmax;
+    double r = rmax;
+    if (inner_) r = rmin;
+    double x = r * cos (corner_index_ * delta_phi);
+    double y = r * sin (corner_index_ * delta_phi);
+    corner.set (x, y, z);
+    //}
+    
+    return corner;
   }
 
   void polyhedra::__compute_surfaces ()

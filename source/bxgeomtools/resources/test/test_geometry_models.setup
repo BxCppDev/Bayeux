@@ -26,24 +26,56 @@ visibility.color  : string  = "green"
 
 [name="scintillator_block.model" type="geomtools::simple_shaped_model"]
 shape_type :   string =  "box"
-x   : real   = 250.0
-y   : real   = 250.0
-z   : real   = 120.0
+x   : real   = 300.0
+y   : real   = 300.0
+z   : real   =  10.0
 length_unit       : string    = "mm"
 material.ref      : string = "polystyrene"
 visibility.hidden : boolean = 0
 visibility.color  : string  = "cyan"
 
 ############################################################################
-
 [name="light_guide.model" type="geomtools::simple_shaped_model"]
-shape_type :   string =  "cylinder"
-r   : real   = 60.0
-z   : real   = 60.0
-length_unit       : string    = "mm"
-material.ref : string = "polystyrene"
-visibility.hidden : boolean = 0
-visibility.color  : string  = "blue"
+shape_type : string = "polyhedra"
+build_mode : string = "points"
+sides        : integer = 4
+list_of_z    : real [3] = -80.     +60.     +80.
+list_of_rmin : real [3] =    0.      0.       0.
+list_of_rmax : real [3] =   60.    150.     150.
+length_unit  : string = "mm"
+material.ref : string  = "std::plexiglass"
+
+# --> Visibility:
+visibility.hidden          : boolean = 0
+visibility.color           : string  = "cyan"
+
+############################################################################
+
+[name="rotated_light_guide.model" type="geomtools::rotated_boxed_model"]
+rotated.axis  : string = "z"
+
+rotated.angle : real   = 45.0
+angle_unit    : string = "degree"
+
+x             : real   = 300.0
+y             : real   = 300.0
+length_unit   : string = "mm"
+
+rotated.model : string = "light_guide.model"
+rotated.label : string = "light_guide"
+
+visibility.hidden_envelope  : boolean = 0
+visibility.daughters.hidden : boolean = 0
+visibility.color            : string  = "grey"
+
+
+
+# [name="light_guide.model" type="geomtools::simple_shaped_model"]
+# shape_type :   string =  "cylinder"
+# r   : real   = 60.0
+# z   : real   = 60.0
+# length_unit       : string    = "mm"
+# material.ref : string = "polystyrene"
 
 ############################################################################
 
@@ -159,7 +191,7 @@ stacked.label_4   : string  = "front_window"
 stacked.model_3   : string  = "scintillator_block.model"
 stacked.label_3   : string  = "scintillator_block"
 
-stacked.model_2   : string  = "light_guide.model"
+stacked.model_2   : string  = "rotated_light_guide.model"
 stacked.label_2   : string  = "light_guide"
 
 #stacked.model_1   : string  = "approx_tube_PMT.model"

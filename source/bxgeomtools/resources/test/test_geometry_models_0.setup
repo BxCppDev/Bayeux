@@ -69,15 +69,16 @@ replicated.model           : string = "box2"
 replicated.label           : string = "the_box"
 
 [name="rotz_box2" type="geomtools::rotated_boxed_model"]
-rotated.axis   : string = "z"
-rotated.angle  : string = "90"
-rotated.model  : string = "box3"
+rotated.axis          : string = "z"
+rotated.special_angle : string = "90"
+rotated.model         : string = "box3"
+
 visibility.hidden_envelop : boolean = 0
 
 [name="rotx_box2" type="geomtools::rotated_boxed_model"]
-rotated.axis   : string = "x"
-rotated.angle  : string = "90"
-rotated.model  : string = "box3"
+rotated.axis          : string = "x"
+rotated.special_angle : string = "90"
+rotated.model         : string = "box3"
 
 [name="many_rotz_box2" type="geomtools::replicated_boxed_model"]
 replicated.axis            : string = "x"

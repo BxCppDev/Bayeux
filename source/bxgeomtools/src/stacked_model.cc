@@ -568,6 +568,7 @@ namespace geomtools {
 	    zi = pos + abs (gzmin);
 	    pos += abs (gzmax - gzmin);
 	  }
+	//double stacked_rotation_angle;
 	bi.placmt.set (xi, yi, zi, 0.0, 0.0);
 	bi.phys.set_name (i_model::make_physical_volume_name (bi.label));
 	bi.phys.set_placement (bi.placmt);

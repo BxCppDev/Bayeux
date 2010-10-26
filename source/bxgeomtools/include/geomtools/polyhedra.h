@@ -48,17 +48,37 @@ namespace geomtools {
 
     enum faces_mask_t
       {
-	FACE_NONE   = FACE_NONE_BIT,
-	FACE_INNER_SIDE   = 0x1,
-	FACE_OUTER_SIDE   = 0x2,
-	FACE_BOTTOM = 0x4,
-	FACE_TOP    = 0x8,
-	FACE_ALL    = (FACE_INNER_SIDE
+	FACE_NONE       = FACE_NONE_BIT,
+	FACE_INNER_SIDE = 0x1,
+	FACE_OUTER_SIDE = 0x2,
+	FACE_BOTTOM     = 0x4,
+	FACE_TOP        = 0x8,
+	FACE_ALL        = (FACE_INNER_SIDE
 		       | FACE_OUTER_SIDE
 		       | FACE_BOTTOM 
 		       | FACE_TOP)
       };  
 
+    /**
+     * The polyhedra is defined by a list of (z, rmin, rmax) triplets
+     * the radius are the tangential radius (radius of the inscribed
+     * circles) and not the distance from Z-axis to the corners.
+     *
+     * Example with a 'n_sides==6' polyhedra:
+     *        
+     *         C           B
+     *          +_________+
+     *         /           \ 
+     *        /            .+ T
+     *       /          .    \
+     *    D +        +        + A
+     *       \      O        /
+     *        \             /
+     *         \___________/
+     *         +           +
+     *        E             F
+     *
+     */
     struct r_min_max
     {
       double rmin, rmax;
@@ -121,6 +141,10 @@ namespace geomtools {
     //<<<
 
     double get_r_max () const;
+
+    vector_3d get_corner (int zplane_index_, 
+			  int corner_index_, 
+			  bool inner_ = false) const;
 
   private:
 

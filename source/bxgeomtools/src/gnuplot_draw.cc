@@ -849,11 +849,11 @@ namespace geomtools {
     rotation_3d inverse_rotation (rotation_);
     inverse_rotation.invert ();
 
-    size_t phy_sample = p_.get_n_sides ();
-    double dphi =  2 * M_PI * CLHEP::radian / phy_sample;
-    double phi0 = M_PI / phy_sample;
-
-    for (size_t i = 0; i <= phy_sample ; ++i) 
+    size_t nsides = p_.get_n_sides ();
+    double dphi =  2 * M_PI * CLHEP::radian / nsides;
+    double phi0 = 0; //M_PI / nsides;
+    double factor = 1. / cos (0.5 * dphi);
+    for (size_t i = 0; i <= nsides ; ++i) 
       {
 	polyline_t polyline_meridian;
 	double phi = phi0 + i * dphi;
@@ -862,7 +862,7 @@ namespace geomtools {
 	     j++)
 	  {
 	    double z = j->first;
-	    double r = j->second.rmax;
+	    double r = factor * j->second.rmax;
 	    vector_3d P;
 	    P.set (r * std::cos (phi), 
 		   r * std::sin (phi),  
@@ -880,8 +880,8 @@ namespace geomtools {
       {
 	polyline_t polyline_parallel;
 	double z = j->first;
-	double r = j->second.rmax;
-	for (size_t i = 0; i <= phy_sample ; ++i) 
+	double r = factor * j->second.rmax;
+	for (size_t i = 0; i <= nsides ; ++i) 
 	  {
 	    vector_3d P;
 	    double phi = phi0 + i * dphi;
@@ -901,7 +901,7 @@ namespace geomtools {
 	cerr << "DEVEL: gnuplot_draw::draw_polyhedra: "
 	     << " EXTRUDED !!!" << endl;
 	*/
-	for (size_t i = 0; i <= phy_sample ; ++i) 
+	for (size_t i = 0; i <= nsides ; ++i) 
 	  {
 	    polyline_t polyline_meridian;
 	    double phi = phi0 + i * dphi;
@@ -910,7 +910,7 @@ namespace geomtools {
 		 j++)
 	      {
 		double z = j->first;
-		double r = j->second.rmin;
+		double r = factor * j->second.rmin;
 		vector_3d P;
 		P.set (r * std::cos (phi), 
 		       r * std::sin (phi),  
@@ -928,8 +928,8 @@ namespace geomtools {
 	  {
 	    polyline_t polyline_parallel;
 	    double z = j->first;
-	    double r = j->second.rmin;
-	    for (size_t i = 0; i <= phy_sample ; ++i) 
+	    double r = factor * j->second.rmin;
+	    for (size_t i = 0; i <= nsides ; ++i) 
 	      {
 		vector_3d P;
 		double phi = phi0 + i * dphi;

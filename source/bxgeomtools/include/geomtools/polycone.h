@@ -220,10 +220,9 @@ namespace geomtools {
 			    double skin_ = USING_PROPER_SKIN) const;
 
     // if 'skin' < 0 no skin is taken into account:
-    virtual bool 
-    is_on_surface (const vector_3d & , 
-		   int mask_    = FACE_ALL , 
-		   double skin_ = USING_PROPER_SKIN) const;
+    virtual bool is_on_surface (const vector_3d & , 
+				int mask_    = FACE_ALL , 
+				double skin_ = USING_PROPER_SKIN) const;
 
     virtual vector_3d get_normal_on_surface (const vector_3d & position_) const;
 

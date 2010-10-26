@@ -63,10 +63,10 @@ visibility.daughters.hidden : boolean = 0
 
 [name="rot_tubA" type="geomtools::rotated_boxed_model"]
 
-rotated.label  : string = "rotated_tube"
-rotated.axis  : string = "y"
-rotated.angle : string = "90"
-rotated.model    : string = "tubA"
+rotated.label         : string = "rotated_tube"
+rotated.axis          : string = "y"
+rotated.special_angle : string = "90"
+rotated.model         : string = "tubA"
 
 visibility.hidden           : boolean = 0
 
@@ -95,7 +95,7 @@ surrounded.model  : string    = "boxC"
 surrounded.label  : string    = "the_central_box"
 surrounded.centered_x   : boolean   = 0
 surrounded.centered_y   : boolean   = 0
-surrounded.centered_z   : boolean   = 0
+surrounded.centered_z   : boolean   = 1
 surrounded.front_model  : string  = "rot_tubA"
 surrounded.back_model   : string  = "boxB"
 surrounded.left_model   : string  = "boxD"
@@ -112,7 +112,8 @@ visibility.color  : string    = "grey"
 
 [name="world" type="geomtools::simple_world_model"]
 material.ref    : string = "vacuum"
-setup.model     : string = "MIM0"
+#setup.model     : string = "MIM0"
+setup.model     : string = "SBM0"
 
 angle_unit      : string = "degree"
 setup.phi       : real   = 20.0
