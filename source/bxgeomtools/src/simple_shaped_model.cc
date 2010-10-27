@@ -910,7 +910,7 @@ namespace geomtools {
       }
     if (devel) 
       {
-	__polyhedra->tree_dump (cerr, "Polyhedra: ", "ERROR:" );
+	__polyhedra->tree_dump (cerr, "Polyhedra: ", "DEVEL:" );
       }    
     if (__filled_mode == filled_utils::FILLED_NONE)
       {
