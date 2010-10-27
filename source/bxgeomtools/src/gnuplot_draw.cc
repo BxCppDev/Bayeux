@@ -905,12 +905,26 @@ namespace geomtools {
 	  {
 	    polyline_t polyline_meridian;
 	    double phi = phi0 + i * dphi;
+	    bool last_has_zero_r = false;
 	    for (polyhedra::rz_col_t::const_iterator j = p_.points ().begin ();
 		 j != p_.points ().end ();
 		 j++)
 	      {
 		double z = j->first;
+		bool new_has_zero_r = false;
 		double r = factor * j->second.rmin;
+		if (r == 0)
+		  {
+		    new_has_zero_r = true;
+		  }
+		if (new_has_zero_r && last_has_zero_r)
+		  {
+		    if (polyline_meridian.size () > 2)
+		      {
+			basic_draw_polyline (out_, polyline_meridian);
+		      }
+		    polyline_meridian.clear ();
+		  }
 		vector_3d P;
 		P.set (r * std::cos (phi), 
 		       r * std::sin (phi),  
@@ -919,8 +933,12 @@ namespace geomtools {
 		P2.transform (inverse_rotation);
 		P2 += position_;
 		polyline_meridian.push_back (P2);
+		last_has_zero_r = new_has_zero_r;
 	      }
-	    basic_draw_polyline (out_, polyline_meridian);
+	    if (polyline_meridian.size () > 2)
+	      {
+		basic_draw_polyline (out_, polyline_meridian);
+	      }
 	  }
 	for (polyhedra::rz_col_t::const_iterator j = p_.points ().begin ();
 	     j != p_.points ().end ();
@@ -929,6 +947,7 @@ namespace geomtools {
 	    polyline_t polyline_parallel;
 	    double z = j->first;
 	    double r = factor * j->second.rmin;
+	    if (r == 0.0) continue;
 	    for (size_t i = 0; i <= nsides ; ++i) 
 	      {
 		vector_3d P;

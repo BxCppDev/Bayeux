@@ -48,6 +48,8 @@ namespace geomtools {
     static const string STACKED_MODEL_PROPERTY_PREFIX;
     static const string STACKED_LABEL_PROPERTY_PREFIX;
     static const string DEFAULT_STACKED_LABEL_PREFIX;
+    static const double DEFAULT_MECHANICS_PLAY;
+    static const double DEFAULT_NUMERICS_PLAY;
 
     enum stacking_axis_t
       {
@@ -63,8 +65,20 @@ namespace geomtools {
       const i_model *  model;
       placement        placmt;
       physical_volume  phys;
+      double           limit_min;
+      double           limit_max;
 
     public:
+
+      stacked_item ();
+
+      bool has_limit_min () const;
+
+      bool has_limit_max () const;
+
+      double get_limit_min () const;
+
+      double get_limit_max () const;
 
       const string & get_label () const
       {
@@ -95,6 +109,8 @@ namespace geomtools {
     labels_dict_t  __labels;
 
     geomtools::box __solid;
+    double         __numerics_play;
+    double         __mechanics_play;
 
   private:
 

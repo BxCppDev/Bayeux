@@ -72,7 +72,6 @@ namespace geomtools {
     string rotated_label = "rotated";
     int    special_rotation_angle = ROTATION_ANGLE_INVALID;
     double rotation_angle;
-    string rotation_angle_label;
     datatools::utils::invalidate (rotation_angle);
     int rotation_axis = ROTATION_AXIS_INVALID;
     bool use_special_angle = false;
@@ -114,13 +113,13 @@ namespace geomtools {
       {
 	ostringstream message;
 	message << "rotated_boxed_model::_at_construct: "
-		<< "Missing 'rotation_axis' property !"; 
+		<< "Missing 'rotated.axis' property for model '" << name_ << "' !"; 
 	throw runtime_error (message.str ());		
       }
 
     if (config_.has_key ("rotated.special_angle"))
       {
-	rotation_angle_label = config_.fetch_string ("rotated.special_angle");
+	special_rotation_angle_label = config_.fetch_string ("rotated.special_angle");
 	use_special_angle = true;
       }  
     else if (config_.has_key ("rotated.angle"))
@@ -133,7 +132,7 @@ namespace geomtools {
       {
 	ostringstream message;
 	message << "rotated_boxed_model::_at_construct: "
-		<< "Missing 'rotated.special_angle' or 'rotation.angle' property !"; 
+		<< "Missing 'rotated.special_angle' or 'rotation.angle' property for model '" << name_ << "' !"; 
 	throw runtime_error (message.str ());		
       }
      
@@ -145,7 +144,7 @@ namespace geomtools {
       {
 	ostringstream message;
 	message << "rotated_boxed_model::_at_construct: "
-		<< "Missing 'boxed_model' property !"; 
+		<< "Missing 'boxed_model' property for model '" << name_ << "' !"; 
 	throw runtime_error (message.str ());	
       }
 
@@ -154,10 +153,11 @@ namespace geomtools {
       {
 	ostringstream message;
 	message << "rotated_boxed_model::_at_construct: "
-		<< "Invalid rotation axis !"; 
+		<< "Invalid rotation axis for model '" << name_ << "' !"; 
 	throw runtime_error (message.str ());	
       }
     
+    // XXXX
     // special angles: 0, 90, 180, 270 degrees
     if (use_special_angle)
       {
@@ -167,7 +167,8 @@ namespace geomtools {
 	  {
 	    ostringstream message;
 	    message << "rotated_boxed_model::_at_construct: "
-		    << "Invalid rotation angle !"; 
+		    << "Invalid rotation angle (" 
+		    << special_rotation_angle_label << ") for model '" << name_ << "'!"; 
 	    throw runtime_error (message.str ());	
 	  }
       }

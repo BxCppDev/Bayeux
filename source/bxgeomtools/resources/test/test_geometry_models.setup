@@ -14,8 +14,8 @@
 
 [name="front_window.model" type="geomtools::simple_shaped_model"]
 shape_type :   string =  "box"
-x   : real   = 250.0
-y   : real   = 250.0
+x   : real   = 300.0
+y   : real   = 300.0
 z   : real   = 12.0e-3
 length_unit       : string  = "mm"
 material.ref      : string  = "mylar"

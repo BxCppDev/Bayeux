@@ -377,7 +377,8 @@ namespace geomtools {
 	vector<double> zs;
 	vector<double> rmins;
 	vector<double> rmaxs;
-	double rmin = 0.0;
+	double rmin;
+	datatools::utils::invalidate (rmin);
 
 	if (setup_.has_key ("list_of_z"))
 	  {
@@ -434,6 +435,10 @@ namespace geomtools {
 	  {
 	    rmin = setup_.fetch_real ("rmin", rmin);
 	    rmin *= lunit;
+	  }
+	else
+	  {
+	    rmin = 0.0 * lunit;
 	  }
 	    
 	for (int i = 0; i < zs.size (); i++)

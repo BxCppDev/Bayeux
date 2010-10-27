@@ -8,7 +8,7 @@
  * 
  * Description: 
  *   Model implementing a logical volume with a simple shape
- *   box, cylinder, sphere, tube
+ *   box, cylinder, sphere, tube, polycone, polyhedra
  * 
  * History: 
  * 
@@ -69,8 +69,8 @@ namespace geomtools {
       geomtools::polyhedra * __polyhedra;
 
       geomtools::i_shape_3d * __solid;
-      geomtools::i_shape_3d * __inner_shape; //!> for filled tube or polycone
-      geomtools::i_shape_3d * __outer_shape; //!> for mother polycone
+      geomtools::i_shape_3d * __inner_shape; //!> for filled tube or polycone or polyhedra
+      geomtools::i_shape_3d * __outer_shape; //!> for mother polycone or polyhedra
 
       placement               __inner_placement;
       logical_volume          __inner_logical;

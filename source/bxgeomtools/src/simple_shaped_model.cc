@@ -129,6 +129,10 @@ namespace geomtools {
 					   models_col_t * models_)
   {
     bool devel = i_model::g_devel;
+    if (config_.has_key ("devel"))
+      {
+	devel = true;
+      }
     if (devel) clog << "DEVEL: simple_shaped_model::_at_construct: Entering..." << endl;
     set_name (name_);
     string shape_type = "";
@@ -627,6 +631,10 @@ namespace geomtools {
 						 models_col_t * models_)
   {
     bool devel = i_model::g_devel;
+    if (config_.has_key ("devel"))
+      {
+	devel = true;
+      }
     if (devel) 
       {
 	cerr << "DEVEL: simple_shaped_model::_construct_polycone: "
@@ -714,6 +722,10 @@ namespace geomtools {
       {
 	__polycone->tree_dump (cerr, "Invalid polycone: ", "ERROR:" );
 	throw runtime_error ("simple_shaped_model::_construct_polycone: Invalid polycone build parameters !");
+      }
+    if (devel) 
+      {
+	__polycone->tree_dump (cerr, "Polycone: ", "DEVEL:" );
       }
     
     if (__filled_mode == filled_utils::FILLED_NONE)
@@ -812,10 +824,14 @@ namespace geomtools {
   /*****************************************************/
       
   void simple_shaped_model::_construct_polyhedra (const string & name_,
-						 const datatools::utils::properties & config_,
-						 models_col_t * models_)
+						  const datatools::utils::properties & config_,
+						  models_col_t * models_)
   {
     bool devel = i_model::g_devel;
+    if (config_.has_key ("devel"))
+      {
+	devel = true;
+      }
     if (devel) 
       {
 	cerr << "DEVEL: simple_shaped_model::_construct_polyhedra: "
@@ -892,7 +908,10 @@ namespace geomtools {
 	__polyhedra->tree_dump (cerr, "Invalid polyhedra: ", "ERROR:" );
 	throw runtime_error ("simple_shaped_model::_construct_polyhedra: Invalid polyhedra build parameters !");
       }
-    
+    if (devel) 
+      {
+	__polyhedra->tree_dump (cerr, "Polyhedra: ", "ERROR:" );
+      }    
     if (__filled_mode == filled_utils::FILLED_NONE)
       {
 	__solid = __polyhedra;

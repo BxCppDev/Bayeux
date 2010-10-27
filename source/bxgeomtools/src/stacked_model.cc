@@ -12,6 +12,41 @@ namespace geomtools {
   const string stacked_model::STACKED_MODEL_PROPERTY_PREFIX = "stacked.model_";
   const string stacked_model::STACKED_LABEL_PROPERTY_PREFIX = "stacked.label_";
   const string stacked_model::DEFAULT_STACKED_LABEL_PREFIX  = "stacked";
+  const double stacked_model::DEFAULT_MECHANICS_PLAY = 0.0 * CLHEP::mm;
+  const double stacked_model::DEFAULT_NUMERICS_PLAY = 0.0 * CLHEP::mm;
+
+
+  /****************************************************************/
+
+  stacked_model::stacked_item::stacked_item ()
+  {
+    model = 0;
+    datatools::utils::invalidate (limit_min);
+    datatools::utils::invalidate (limit_max);
+    return;
+  }
+
+  double stacked_model::stacked_item::get_limit_min () const
+  {
+    return limit_min;
+  }
+  
+  double stacked_model::stacked_item::get_limit_max () const
+  {
+    return limit_max;
+  }
+  
+  bool stacked_model::stacked_item::has_limit_min () const
+  {
+    return datatools::utils::is_valid (limit_min);
+  }
+
+  bool stacked_model::stacked_item::has_limit_max () const
+  {
+    return datatools::utils::is_valid (limit_max);
+  }
+
+  /****************************************************************/
 
   // registration ID:
   string stacked_model::get_model_id () const
@@ -209,6 +244,9 @@ namespace geomtools {
   {
     __material_name = "";
     __stacking_axis = STACKING_ALONG_INVALID;
+    __mechanics_play = DEFAULT_MECHANICS_PLAY;
+    __numerics_play = DEFAULT_NUMERICS_PLAY;
+    return;
   }
   
   // dtor:
@@ -258,14 +296,43 @@ namespace geomtools {
       }
     set_material_name (material_name);
 
-    /*** length unit ***/
+    /*** Length unit ***/
     if (config_.has_key ("length_unit"))
       {
 	string length_unit_str = config_.fetch_string ("length_unit");
 	lunit = datatools::utils::units::get_length_unit_from (length_unit_str);
       }  
+
+    /*** Position play ***/
+    if (config_.has_key ("mechanics_play"))
+      {
+	double mechanics_play = config_.fetch_real ("mechanics_play");
+	mechanics_play *= lunit;
+	if (mechanics_play < 0.0)
+	  {
+	    ostringstream message;
+	    message << "stacked_model::_at_construct: "
+		    << "Mechanics play '" <<  mechanics_play / CLHEP::mm << "' mm cannnot be negative !"; 
+	    throw runtime_error (message.str ());    
+	  }
+        __mechanics_play = mechanics_play;
+      }  
+
+    if (config_.has_key ("numerics_play"))
+      {
+	double numerics_play = config_.fetch_real ("numerics_play");
+	numerics_play *= lunit;
+	if (numerics_play < 0.0)
+	  {
+	    ostringstream message;
+	    message << "stacked_model::_at_construct: "
+		    << "Numerics play '" <<  numerics_play / CLHEP::mm << "' mm cannnot be negative !"; 
+	    throw runtime_error (message.str ());    
+	  }
+        __numerics_play = numerics_play;
+      }  
  
-    /*** stacking axis ***/
+    /*** Stacking axis ***/
     if (config_.has_key ("stacked.axis"))
       {
 	stacking_axis_label = config_.fetch_string ("stacked.axis");
@@ -381,6 +448,7 @@ namespace geomtools {
 	 i != __stacked_models.end ();
 	 i++)
       {
+	int index = i->first;
 	const stacked_item & bi = i->second;
 	const i_model * stacked_model = bi.model;
 
@@ -404,12 +472,86 @@ namespace geomtools {
 	    the_SD.tree_dump (cerr, "stacked_model::_at_construct: Stackable data:", "DEVEL: ");
 	  }
 	if (devel) cerr << "DEVEL: stacked_model::_at_construct: " << "step 3e: gets..." << endl;
-	double full_x = the_SD.get_xmax () - the_SD.get_xmin ();
-	double full_y = the_SD.get_ymax () - the_SD.get_ymin ();
-	double full_z = the_SD.get_zmax () - the_SD.get_zmin ();
+
+	double gxmin = the_SD.get_xmin ();
+	double gymin = the_SD.get_ymin ();
+	double gzmin = the_SD.get_zmin ();
+	double gxmax = the_SD.get_xmax ();
+	double gymax = the_SD.get_ymax ();
+	double gzmax = the_SD.get_zmax ();
+
+	// Parse special stacking position directives:
+	double gmin, gmax;
+	datatools::utils::invalidate (gmin);
+	datatools::utils::invalidate (gmax);
+	{
+	  string stacked_model_name;
+	  string label_name;
+	  ostringstream stacked_min_prop;
+	  stacked_min_prop << "stacked.limit_min_" << index;
+	  if (config_.has_key (stacked_min_prop.str ()))
+	    {
+	      gmin = config_.fetch_real (stacked_min_prop.str ());
+	      gmin *= lunit;
+	      stacked_item & mod_bi = const_cast <stacked_item &> (bi);
+	      mod_bi.limit_min = gmin;
+	    }  
+	}
+	{
+	  string stacked_model_name;
+	  string label_name;
+	  ostringstream stacked_max_prop;
+	  stacked_max_prop << "stacked.limit_max_" << index;
+	  if (config_.has_key (stacked_max_prop.str ()))
+	    {
+	      gmax = config_.fetch_real (stacked_max_prop.str ());
+	      gmax *= lunit;
+	      stacked_item & mod_bi = const_cast <stacked_item &> (bi);
+	      mod_bi.limit_max = gmax;
+	    }  
+	}
+
+	if (bi.has_limit_min ())
+	  {
+	    if (is_stacking_along_x ())
+	      {
+		gxmin = bi.get_limit_min ();
+	      }
+	    else if (is_stacking_along_y ())
+	      {
+		gymin = bi.get_limit_min ();
+	      }
+	    else if (is_stacking_along_z ())
+	      {
+		gzmin = bi.get_limit_min ();
+	      }	    
+	  }
+	if (bi.has_limit_max ())
+	  {
+	    if (is_stacking_along_x ())
+	      {
+		gxmax = bi.get_limit_max ();
+	      }
+	    else if (is_stacking_along_y ())
+	      {
+		gymax = bi.get_limit_max ();
+	      }
+	    else if (is_stacking_along_z ())
+	      {
+		gzmax = bi.get_limit_max ();
+	      }	    
+	  }
+
+	// Compute the effective dimensions of the stacked item within the stack:
+	double full_x = gxmax - gxmin;
+	double full_y = gymax - gymin;
+	double full_z = gzmax - gzmin;
+	
+	// Not sure of that:
 	mmx.add (full_x);
 	mmy.add (full_y);
 	mmz.add (full_z);
+	
 	if (devel) cerr << "DEVEL: stacked_model::_at_construct: " << "step 3f: mmx... add" << endl;
 	if (is_stacking_along_x ())
 	  {
@@ -493,6 +635,19 @@ namespace geomtools {
     if (devel) cerr << "DEVEL: stacked_model::_at_construct: " << "step 5" << endl;
 
     __solid.reset ();
+
+    if (__mechanics_play > 0.0)
+      {
+	dim_x += __mechanics_play;
+	dim_y += __mechanics_play;
+	dim_z += __mechanics_play;
+      }
+    if (__numerics_play > 0.0)
+      {
+	dim_x += __numerics_play;
+	dim_y += __numerics_play;
+	dim_z += __numerics_play;
+      }
     __solid.set_x (dim_x);
     __solid.set_y (dim_y);
     __solid.set_z (dim_z);
@@ -553,20 +708,52 @@ namespace geomtools {
 	double gymax = the_SD.get_ymax ();
 	double gzmax = the_SD.get_zmax ();
 
+	// Eventually extract specific stacking limits:
+	if (bi.has_limit_min ())
+	  {
+	    if (is_stacking_along_x ())
+	      {
+		gxmin = bi.get_limit_min ();
+	      }
+	    else if (is_stacking_along_y ())
+	      {
+		gymin = bi.get_limit_min ();
+	      }
+	    else if (is_stacking_along_z ())
+	      {
+		gzmin = bi.get_limit_min ();
+	      }	    
+	  }
+	if (bi.has_limit_max ())
+	  {
+	    if (is_stacking_along_x ())
+	      {
+		gxmax = bi.get_limit_max ();
+	      }
+	    else if (is_stacking_along_y ())
+	      {
+		gymax = bi.get_limit_max ();
+	      }
+	    else if (is_stacking_along_z ())
+	      {
+		gzmax = bi.get_limit_max ();
+	      }	    
+	  }
+
 	if (is_stacking_along_x ())
 	  {
-	    xi = pos + abs (gxmin);
-	    pos += abs (gxmax - gxmin);
+	    xi = pos - gxmin;
+	    pos += gxmax - gxmin;
 	  }
 	else if (is_stacking_along_y ())
 	  {
-	    yi = pos + abs (gymin);
-	    pos += abs (gymax - gymin);
+	    yi = pos - gymin;
+	    pos += gymax - gymin;
 	  }
 	else if (is_stacking_along_z ())
 	  {
-	    zi = pos + abs (gzmin);
-	    pos += abs (gzmax - gzmin);
+	    zi = pos - gzmin;
+	    pos += gzmax - gzmin;
 	  }
 	//double stacked_rotation_angle;
 	bi.placmt.set (xi, yi, zi, 0.0, 0.0);

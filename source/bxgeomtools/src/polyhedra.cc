@@ -96,7 +96,8 @@ namespace geomtools {
 	vector<double> zs;
 	vector<double> rmins;
 	vector<double> rmaxs;
-	double rmin = 0.0;
+	double rmin;
+	datatools::utils::invalidate (rmin);
 	size_t n_sides;
 
 	if (setup_.has_key ("sides"))
@@ -166,6 +167,10 @@ namespace geomtools {
 	  {
 	    rmin = setup_.fetch_real ("rmin", rmin);
 	    rmin *= lunit;
+	  }
+	else
+	  {
+	    rmin = 0.0 * lunit;
 	  }
 	    
 	this->set_n_sides (n_sides);
@@ -1078,6 +1083,8 @@ namespace geomtools {
 	 << "Z(max) : " << get_z_max () / CLHEP::mm << " mm" << endl;
     out_ << indent << du::i_tree_dumpable::tag 
 	 << "R(max) : " << get_r_max () / CLHEP::mm << " mm" << endl;
+    out_ << indent << du::i_tree_dumpable::tag 
+	 << "Extruded : " << is_extruded () << endl;
     out_ << indent << du::i_tree_dumpable::tag 
 	 << "Number of points : " << __points.size () << endl;
     out_ << indent << du::i_tree_dumpable::tag 
