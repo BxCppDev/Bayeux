@@ -38,7 +38,7 @@ pkgtools__ui_not_using_gui
 
 pack_name=genvtx
 pack_name_upper=$(pkgtools__to_upper ${pack_name})
-pack_name_lower=$(pkgtools__to_upper ${pack_lower})
+pack_name_lower=$(pkgtools__to_lower ${pack_name})
 pack_gccver=$(pkgtools__get_gccver)
 pack_sys=$(pkgtools__get_sys_with_gccver)
 pack_sys=$(pkgtools__get_sys)
