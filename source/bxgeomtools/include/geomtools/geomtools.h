@@ -32,19 +32,24 @@
  *    pure ASCII files
  *  - automate the placement of solid with respect to others thanks to useful automated
  *    placement algorithms
- *  - identify some or all 3D-object of a geometry, assigning to them a
- *    unique \e geometry \e ID
- *  - enable the automated \e mapping between any 3D-object (placement, shapes)
+ *  - identify some or all 3D-objects in a geometry, assigning to some of them a
+ *    unique autocomputed \e geometry \e ID
+ *  - enable the automated \e mapping between any 3D-object (placement, shape)
  *    and the associated geometry ID
+ *  - associate some arbitrary properties (visibility, material, mapping...) to any virtual solid
  *  - display part of the geometry setup using a simple graphics renderer based on gnuplot
  *  - export a geometry setup to GEANT4 using the GDML language
  *  - extends the library by providing new geometry model classes with auto-registration 
  *    in a \e models \e factory
  *
  *  This package depends on:
- *  - the \b datatools library
- *    (https://nemo.lpc-caen.in2p3.fr/wiki/datatools/)  
- *  - the \b CLHEP C++ library (version 2.0 and above)
+ *  - the \b datatools library (https://nemo.lpc-caen.in2p3.fr/wiki/datatools/). This implies
+ *  the following dependencies (see the \b datatools requirements):
+ *    - the \b Boost C++ library 
+ *    - the \b CLHEP C++ library (version 2.0 and above)
+ *  - the \b mygsl library. This implies the following dependency (see the \b mygsl requirements)::
+ *    - the \b GSL (GNU Scientific Library):
+ *  - the \b gnuplot program (for online graphics display)
  *
  * \section contents_section Contents
  *  
