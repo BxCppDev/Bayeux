@@ -179,11 +179,28 @@ visibility.color  : string  = "orange"
 
 ############################################################################
 
+[name="diaphragm.model" type="geomtools::cylindric_extrusion_boxed_model"]
+extrusion_radius : real   =  40.0
+x                : real   = 300.0
+y                : real   = 300.0
+z                : real   =  10.0
+length_unit      : string = "mm"
+
+material.ref : string = "copper"
+
+visibility.hidden : boolean = 0
+visibility.color  : string  = "red"
+
+############################################################################
+
 [name="optical_module.model" type="geomtools::stacked_model"]
-material.ref      : string    = "air"
+material.ref      : string    = "copper"
 
 stacked.axis            : string = "z"
-stacked.number_of_items : integer = 5
+stacked.number_of_items : integer = 6
+
+stacked.model_5   : string  = "diaphragm.model"
+stacked.label_5   : string  = "diaphragm"
 
 stacked.model_4   : string  = "front_window.model"
 stacked.label_4   : string  = "front_window"

@@ -802,6 +802,16 @@ namespace geomtools {
     return;
   }
 
+  void polycone::initialize ()
+  {
+    if (! is_valid ())
+      {
+	throw runtime_error ("polycone::initialize: Polycone is not valid !");
+      }
+    __compute_all ();
+    return;
+  }
+
   void polycone::__compute_limits ()
   {
     if (! is_valid ()) return;

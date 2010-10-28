@@ -31,13 +31,14 @@
 #include <geomtools/physical_volume.h>
 #include <geomtools/placement.h>
 #include <geomtools/visibility.h>
+#include <geomtools/gnuplot_draw.h>
 
 namespace geomtools {
 
   using namespace std;
 
   // define a geometry model:
-  class cylindric_extrusion_boxed_model : public geomtools::i_boxed_model
+  class cylindric_extrusion_boxed_model : public i_model
   {
   public:
 
@@ -47,27 +48,22 @@ namespace geomtools {
   private:
 
     string           __material_name;
-    string           __mother_material_name;
     double           __mother_x, __mother_y, __mother_z;
     double           __extrusion_radius;
 
-    geomtools::box            __mother_solid;
-    geomtools::cylinder       __extrusion_solid;
+    geomtools::box            __mother_box;
+    geomtools::cylinder       __extrusion_cylinder;
     geomtools::subtraction_3d __extruded_solid;
 
     logical_volume            __extruded_log;
     placement                 __extruded_placement;
     physical_volume           __extruded_phys;
 
-    geomtools::box            __solid;
+    geomtools::i_shape_3d * __solid;
 
     void set_material_name (const string &);
 
-    void set_mother_material_name (const string &);
-
     const string & get_material_name () const;
-
-    const string & get_mother_material_name () const;
   
     void set_mother_x (double);
 
@@ -85,16 +81,7 @@ namespace geomtools {
 
     double get_extrusion_radius () const;
 
-    /*
-    const physical_volume & get_extrusion_physical_volume () const
-    {
-      return __extrusion_phys;
-    }
-    */
-
-    virtual const geomtools::box & get_box () const;
-
-    const geomtools::box & get_solid () const;
+    const geomtools::i_shape_3d & get_solid () const;
 
 
   public:
@@ -122,6 +109,12 @@ namespace geomtools {
 			    const string & title_  = "", 
 			    const string & indent_ = "", 
 			    bool inherit_          = false) const;
+
+    static void gnuplot_draw_user_function (std::ostream &, 
+					    const geomtools::vector_3d &, 
+					    const geomtools::rotation_3d &,
+					    const geomtools::i_object_3d &, 
+					    void * = 0);
   
   };
 

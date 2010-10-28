@@ -151,6 +151,9 @@ namespace geomtools {
 
     void add (double z_, double rmin_, double rmax_, bool compute_ = true);
 
+    void initialize ();
+
+
     void initialize (const string & filename_);
 
     /**
