@@ -25,6 +25,9 @@ namespace datatools {
     // Check if a double float is valid (not a NaN):
     bool is_valid (double x_);
 
+    /** Extract the expanded path computed from the 'text_' string.
+     * Internally uses the 'getenv' function.
+     */
     bool fetch_path_with_env (std::string & text_);
     
     /* This method is not very elegant. I use 
@@ -33,11 +36,19 @@ namespace datatools {
      * That enables the expansion of environment variables embeded
      * in the 'path_str_' string:
      *
-     * Example: '$HOME/foo.dat' is expanded to '/home/mauger/foo.dat'
+     * Example: '$HOME/foo.dat' is expanded to '/home/<login>/foo.dat'
      *
      */
     std::string expand_path (const std::string & path_str_);
     
+    /** The function splits the string 'text_' using separators given 
+     *  within a string 'separators_' and provides the list of tokens
+     *  'words_'.
+     *
+     * The Boost library provides some powerful alternative through
+     * the tokenizer class stuff.
+     *
+     */
     void split_string (const std::string & text_ ,
 		       const std::string & separators_ ,
 		       std::list<std::string> & words_);

@@ -83,11 +83,11 @@ namespace datatools {
 
     public:
 
-      static bool timeval_subtract (const timeval & stop_, 
-				    const timeval & start_,
-				    timeval & result_);
+      static bool g_timeval_subtract (const timeval & stop_, 
+				      const timeval & start_,
+				      timeval & result_);
 
-      static void compute_system_dead_time ();
+      static void g_compute_system_dead_time ();
 
     };
 

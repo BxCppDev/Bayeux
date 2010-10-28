@@ -71,7 +71,7 @@ namespace datatools {
     {
       if (! datatools::utils::is_valid (g_system_dead_time))
 	{
-	  compute_system_dead_time ();
+	  g_compute_system_dead_time ();
 	}
       reset ();
     }
@@ -104,7 +104,7 @@ namespace datatools {
 	 }
       double elapsed_time = 0.0;
       timeval diff;
-      timeval_subtract (__stop, __start, diff);
+      g_timeval_subtract (__stop, __start, diff);
       elapsed_time = diff.tv_sec * CLHEP::second 
 	+ diff.tv_usec * CLHEP::microsecond;
       __sum_time += elapsed_time;
@@ -159,9 +159,9 @@ namespace datatools {
       return ! is_stopped ();
     }
 
-    bool computing_time::timeval_subtract (const timeval & x_, 
-					   const timeval & y_,
-					   timeval & result_)
+    bool computing_time::g_timeval_subtract (const timeval & x_, 
+					     const timeval & y_,
+					     timeval & result_)
     {
       timeval x = x_;
       timeval y = y_;
@@ -192,7 +192,7 @@ namespace datatools {
       return true;
     }
  
-    void computing_time::compute_system_dead_time ()
+    void computing_time::g_compute_system_dead_time ()
     {
       // preliminary:
       g_system_dead_time = 0.0 * CLHEP::second;
@@ -205,12 +205,12 @@ namespace datatools {
 	}  
       double elapsed_time = 0.0;
       timeval diff;
-      timeval_subtract (stop, start, diff);
+      g_timeval_subtract (stop, start, diff);
       elapsed_time = diff.tv_sec * CLHEP::second 
 	+ diff.tv_usec * CLHEP::microsecond;
       g_system_dead_time = elapsed_time / n;
       clog << "NOTICE: " 
-	   << "computing_time::compute_system_dead_time: "
+	   << "computing_time::g_compute_system_dead_time: "
 	   << "System dead time = " << g_system_dead_time / CLHEP::second  << " s"
 	   << endl;
       return;
@@ -228,6 +228,9 @@ namespace datatools {
 	{
 	  out_ << indent << title_ << std::endl;
 	}
+      
+      out_ << indent << du::i_tree_dumpable::tag
+	   << "System dead time   : " << g_system_dead_time / CLHEP::microsecond << " us" << std::endl;	  
 
       if (__counts == 0)
 	{
