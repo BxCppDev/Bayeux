@@ -2,7 +2,7 @@
 /* utils.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
- * Last modified: 2010-01-01
+ * Last modified: 2010-10-28
  * 
  * License: 
  * 
@@ -11,69 +11,6 @@
  *
  * History: 
  * 
- */
-
-/*! \mainpage The geomtools package documentation
- *
- * \section intro_section Introduction
- *
- * \subsection pres_subsection Presentation
- *  The geomtools package provides some general purpose utility classes
- *  for geometry. It is based on the CLHEP 2D and 3D vectors and rotation 
- *  matrices well. Some basic 2D and 3D shapes are implemented with useful
- *  features. It is possible to build a geometry model in the way the GEANT4
- *  library does with GDLM exporting capability. 
- *
- *  This package depends on:
- *  - the datatools library
- *    https://nemo.lpc-caen.in2p3.fr/svn/datatools/  
- *  - the CLHEP C++ library (version 2.0 and above)
- *
- * \section contents_section Contents
- *  event model.
- *
- * \section build_section Installation instructions
- *
- *  1- Configure:
- *
- *     shell> ./pkgtools.d/pkgtool configure
- *
- *  2- Build:
- * 
- *     shell> ./pkgtools.d/pkgtool build
- *
- *  3- Build binaries:
- *
- *     shell> ./pkgtools.d/pkgtool build bin
- *
- *  4- Build test binaries:
- *
- *     shell> ./pkgtools.d/pkgtool build bin_test
- *
- *  5- Build documentation:
- *
- *     shell> ./pkgtools.d/pkgtool doc
- *
- *  6- Installation:
- *
- *     shell> ./pkgtools.d/pkgtool install
- *
- * \section geninfo_section General informations
- *
- *  Wiki repository:
- *   - https://nemo.lpc-caen.in2p3.fr/wiki/geomtools/
- *
- *  SVN repository:
- *   - Base repository: https://nemo.lpc-caen.in2p3.fr/svn/geomtools/
- *   - Development version: https://nemo.lpc-caen.in2p3.fr/svn/geomtools/trunk
- *   - Releases: https://nemo.lpc-caen.in2p3.fr/svn/geomtools/tags/geomtools-X.Y
- *
- *  Author:
- *   - Francois Mauger <mauger@lpccaen.in2p3.fr>
- *
- *  Mainteners:
- *   - Francois Mauger <mauger@lpccaen.in2p3.fr>
- *
  */
 
 #ifndef __geomtools__utils_h
@@ -90,6 +27,11 @@
 #include <geomtools/clhep.h>
 #include <datatools/serialization/serialization.h>
 #include <boost/serialization/split_free.hpp>
+
+/** 
+ *
+ *
+ */
 
 namespace geomtools {
 

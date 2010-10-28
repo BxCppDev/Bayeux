@@ -85,6 +85,7 @@ namespace geomtools {
     datatools::utils::properties & parameters ();
     
   public: 
+
     // ctor:
     i_model (const string & name_ = "");
     
