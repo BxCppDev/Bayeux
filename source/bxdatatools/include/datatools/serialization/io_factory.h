@@ -33,11 +33,18 @@
 #include <boost/archive/xml_oarchive.hpp>
 
 #ifdef IOFACTORY_USE_EOS_PBA
-// portable binary archive by C. Pfligersdorffer
-#include <portable_iarchive.hpp>
-#include <portable_oarchive.hpp>
+// portable binary archives by C. Pfligersdorffer
+// do not include 
+//#include <portable_iarchive.hpp>
+//#include <portable_oarchive.hpp>
+
+// 2010-10-29 FM: quasi portable binary I/O archives by C. Pfligersdorffer + F. Mauger
+// a replacement for the original portable binary archive by C. Pfligersdorffer that
+// do not handle NaNs, Infinites and denorm. floating values.
+#include <datatools/serialization/quasi_portable_binary_iarchive.hpp>
+#include <datatools/serialization/quasi_portable_binary_oarchive.hpp>
 #else
-// native portable binary archive
+// native portable binary archives: not recommended at all
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 #endif

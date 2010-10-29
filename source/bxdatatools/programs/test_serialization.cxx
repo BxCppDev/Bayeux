@@ -8,7 +8,7 @@
  
 #include <boost/filesystem.hpp>
 
-#include <my_data.h>
+#include <datatools/test/my_data.h>
 
 #include <datatools/serialization/serialization.h>
 

@@ -310,7 +310,7 @@ namespace datatools {
 	}
       if (is_text ()) 
 	{
-#ifdef IOFACTORY_USE_FPU
+#ifdef IOFACTORY_USE_FPU 
 	  if (g_debug) 
 	    {
 	      std::clog << "DEBUG: io_factory::__init_write_archive: "

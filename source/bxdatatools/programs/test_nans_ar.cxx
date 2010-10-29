@@ -12,6 +12,31 @@
 
 using namespace std;
 
+string get_fp_classify_label (int fpc_)
+{
+  if (fpc_ == FP_INFINITE)
+    {
+      return "infinite";
+    }
+  else if (fpc_ == FP_NAN)
+    {
+      return "nan";
+    }
+  else if (fpc_ == FP_NORMAL)
+    {
+      return "normal";
+    }
+  else if (fpc_ == FP_SUBNORMAL)
+    {
+      return "subnormal";
+    }
+  else if (fpc_ == FP_ZERO)
+    {
+      return "zero";
+    }
+  return "?";
+}
+
 class data_t : public datatools::serialization::i_serializable 
 {
   double __v1, __v2;
@@ -22,16 +47,31 @@ public:
   static const std::string SERIAL_TAG;
 
   virtual const std::string & get_serial_tag () const;
-  //<<<
+  //<<< 
 
   bool values_are_ok () const
   {
     return isnormal (__v1) &&  isnormal (__v2);
   }
 
+  void info () const
+  {
+    clog << "DEVEL: info: " << endl;
+    clog << "DEVEL: v1 is " << get_fp_classify_label (boost::math::fpclassify (__v1)) << endl;
+    clog << "DEVEL: v2 is " << get_fp_classify_label (boost::math::fpclassify (__v2)) << endl;
+    if (! isfinite (__v1))
+      {
+	clog << "DEVEL: v1 is " << ((__v1 < 0)? " - ": " + ") << endl;
+      }
+    if (! isfinite (__v2))
+      {
+	clog << "DEVEL: v2 is " << ((__v2 < 0)? " - ": " + ") << endl;
+      }
+  }
+
   data_t ()
   {
-    __v1 = drand48 () * 1.e-10;
+    __v1 = drand48 () * 1.e-4;
     __v2 = drand48 () * 1.e+6;
   }
 
@@ -51,6 +91,12 @@ public:
   {
     __v1 = numeric_limits<double>::quiet_NaN ();
     __v2 = numeric_limits<double>::quiet_NaN ();
+  }
+
+  void zero ()
+  {
+    __v1 = 0.0;
+    __v2 = 0.0;
   }
 
   double get_v1 () const
@@ -84,6 +130,16 @@ const string data_t::SERIAL_TAG = "__DATA__";
 const string & data_t::get_serial_tag () const
 {
   return data_t::SERIAL_TAG;
+} 
+
+void test ()
+{
+  double x = 2.0625;
+  uint64_t ux = *((const uint64_t *) (&x));
+  clog << "test: x = " << x << endl;
+  clog << "test: ux = " << hex << ux << dec << endl;
+		
+  return;
 }
 
 int main (int argc_ , char ** argv_) 
@@ -91,9 +147,48 @@ int main (int argc_ , char ** argv_)
   try 
     {
       long seed = 314159;
-      string filename = "test_nans_ar.txt";
       bool debug = false;
+      bool do_test = false;
+      enum format_t  
+	{
+	  FORMAT_TXT = 0, 
+	  FORMAT_XML = 1, 
+	  FORMAT_BIN = 2
+	};
+      int fmt   = FORMAT_XML;
+
       namespace ds = datatools::serialization;
+
+      int iarg = 1;
+      while (iarg < argc_) 
+	{
+	  string arg=argv_[iarg];
+	  if (arg[0] == '-') 
+	    {
+	      if (arg == "-xml") fmt = FORMAT_XML;
+	      if (arg == "-txt") fmt = FORMAT_TXT;
+	      if (arg == "-bin") fmt = FORMAT_BIN;
+	    }
+	  else if (arg == "-t") 
+	    {
+	      do_test = true;
+	    }
+	  iarg++;
+	}
+
+      if (do_test)
+	{
+	  test ();
+	  return 0;
+	}
+
+      string ext = ".txt";
+      if (fmt == FORMAT_XML) ext = ".xml";
+      if (fmt == FORMAT_BIN) ext = ".data";
+      string filename = "test_nans_ar" + ext;
+
+      //boost::math::detail::fp_traits<double>::type::coverage dc;
+      //clog << "Coverage = " << dc << endl;
 
       ds::io_factory::g_debug = debug;
       srand48 (seed);
@@ -103,7 +198,7 @@ int main (int argc_ , char ** argv_)
 	{
 	  ostringstream message;
 	  message << "File '" << filename << "' already exists!";
-	  clog << message.str () << endl;
+	  clog << "warning: " << message.str () << endl;
 	}
     
       {
@@ -114,9 +209,11 @@ int main (int argc_ , char ** argv_)
 	for (int i = 0; i < counts; i++) 
 	  {
 	    ss_data.make ();
-	    if (drand48 () < 0.25) ss_data.get ().nan ();
-	    else if (drand48 () < 0.5) ss_data.get ().inf ();
+	    if (drand48 () < 0.15) ss_data.get ().nan ();
+	    else if (drand48 () < 0.30) ss_data.get ().inf ();
+	    else if (drand48 () < 0.45) ss_data.get ().zero ();
 	    clog << ss_data.get () << endl;
+	    if (debug) ss_data.get ().info ();
 	    writer.store (ss_data.get ());
 	  }
 	clog << "NOTICE: writing done." << endl << endl;
