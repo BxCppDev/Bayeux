@@ -16,8 +16,10 @@ using namespace std;
 
 int main (int argc_, char ** argv_) 
 {
-  // 2009-11-17 FM: do not compile with gcc 3:
-#if __GNUC__ > 3
+  // 2009-11-17 FM: do not compile with gcc 3 or 4 under SL @ CC:
+#if __GNUC__ < 1000
+  cerr << "ERROR: Do not compile under SL4/5 even with gcc 4!!!" << endl;
+#else
   try 
     {
       bool debug = false;
