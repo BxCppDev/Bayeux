@@ -119,16 +119,16 @@ int main (int argc_, char ** argv_)
 	    double p = 0.25 + 0.5 * (i % 2);
 	    if (p < 0.5) 
 	      {
-		data_t d;
+		datatools::test::data_t d;
 		randomize_data (d);
-		d.tree_dump (clog, "data_t", "<< ");
+		d.tree_dump (clog, "datatools::test::data_t", "<< ");
 		writer.store (d);
 	      }
 	    else 
 	      {
-		more_data_t md;
+		datatools::test::more_data_t md;
 		randomize_more_data (md);
-		md.tree_dump (clog, "more_data_t", "<< ");
+		md.tree_dump (clog, "datatools::test::more_data_t", "<< ");
 		writer.store (md);
 	      }
 	  }
@@ -145,22 +145,22 @@ int main (int argc_, char ** argv_)
 	  while (reader.has_record_tag ()) 
 	    {
 	      if (debug) clog << "DEBUG: read next record..." << endl;
-	      if (reader.record_tag_is (data_t::SERIAL_TAG)) 
+	      if (reader.record_tag_is (datatools::test::data_t::SERIAL_TAG)) 
 		{
 		  if (debug) clog << "DEBUG: reading..." 
-				  << data_t::SERIAL_TAG << endl;
-		  data_t d;
+				  << datatools::test::data_t::SERIAL_TAG << endl;
+		  datatools::test::data_t d;
 		  reader.load (d);
-		  d.tree_dump (clog, "data_t", ">> ");
+		  d.tree_dump (clog, "datatools::test::data_t", ">> ");
 		}
-	      else if (reader.record_tag_is (more_data_t::SERIAL_TAG)) 
+	      else if (reader.record_tag_is (datatools::test::more_data_t::SERIAL_TAG)) 
 		{
 		  if (debug)clog << "DEBUG: reading..." 
-				 << more_data_t::SERIAL_TAG 
+				 << datatools::test::more_data_t::SERIAL_TAG 
 				 << endl;
-		  more_data_t md;
+		  datatools::test::more_data_t md;
 		  reader.load (md);
-		  md.tree_dump (clog, "more_data_t", ">> ");
+		  md.tree_dump (clog, "datatools::test::more_data_t", ">> ");
 		}
 	      else 
 		{

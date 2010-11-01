@@ -104,8 +104,8 @@ int main (int argc_, char ** argv_)
 	datatools::serialization::data_writer writer (filename);
 
 	// safe_serial
-	datatools::serialization::safe_serial<data_t>      ss_data;
-	datatools::serialization::safe_serial<more_data_t> ss_more_data;
+	datatools::serialization::safe_serial<datatools::test::data_t>      ss_data;
+	datatools::serialization::safe_serial<datatools::test::more_data_t> ss_more_data;
 
 	for (int i = 0; i < (int) nrecords; i++) 
 	  {
@@ -137,18 +137,18 @@ int main (int argc_, char ** argv_)
       {
 	clog << "NOTICE: reading..." << endl;
 
-	datatools::serialization::safe_serial<data_t>      ss_data;
-	datatools::serialization::safe_serial<more_data_t> ss_more_data;
+	datatools::serialization::safe_serial<datatools::test::data_t>      ss_data;
+	datatools::serialization::safe_serial<datatools::test::more_data_t> ss_more_data;
 
 	size_t counts = 0;
 	datatools::serialization::data_reader reader (filename);    
 	while (reader.has_record_tag ()) 
 	  {
 	    if (debug) clog << "DEBUG: read next record..." << endl;
-	    if (reader.record_tag_is (data_t::SERIAL_TAG)) 
+	    if (reader.record_tag_is (datatools::test::data_t::SERIAL_TAG)) 
 	      {
 		if (debug) clog << "DEBUG: reading..." 
-				<< data_t::SERIAL_TAG << endl;
+				<< datatools::test::data_t::SERIAL_TAG << endl;
 		if (debug) clog << "DEBUG: making a new safe record..." 
 				<< endl;
 		ss_data.make ();
@@ -159,10 +159,10 @@ int main (int argc_, char ** argv_)
 				<< endl;
 		ss_data.get ().tree_dump (clog, "data_t", ">> ");
 	      }
-	    else if (reader.record_tag_is (more_data_t::SERIAL_TAG)) 
+	    else if (reader.record_tag_is (datatools::test::more_data_t::SERIAL_TAG)) 
 	      {
 		if (debug)clog << "DEBUG: reading..." 
-			       << more_data_t::SERIAL_TAG 
+			       << datatools::test::more_data_t::SERIAL_TAG 
 			       << endl;
 		if (debug) clog << "DEBUG: making a new safe record..." 
 				<< endl;
