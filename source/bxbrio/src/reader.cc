@@ -86,7 +86,7 @@ namespace brio {
       }
 
     out_ <<  indent << i_tree_dumpable::tag 
-	 << "Allow mixed type in stores: " << __allow_mixed_types_in_stores << endl;
+	 << "Allow mixed types in stores: " << __allow_mixed_types_in_stores << endl;
 
     out_ <<  indent << i_tree_dumpable::inherit_tag (inherit_)  
 	 << "Check serial tag: " << __check_serial_tag << endl;
@@ -94,46 +94,6 @@ namespace brio {
     return;
   }
 
-  void reader::close ()
-  { 
-    if (is_debug ())  
-      {
-	cerr << "DEBUG: " << "brio::reader::close: "
-	     << "Entering..." << endl;
-      }
-    if (! is_opened ()) 
-      {
-	throw runtime_error ("brio::reader::close: Not opened !");
-      }
-    _at_close ();
-    if (is_debug ())
-      {
-	cerr << "DEBUG: " << "brio::reader::close: "
-	     << "Exiting." << endl;
-      }
-    return;
-  }
-  
-  void reader::open (const string & filename_)
-  {
-    if (is_debug ())
-      {
-	cerr << "DEBUG: " << "brio::reader::open: "
-	     << "Entering with filename '" << filename_ << "'" << endl;
-      }
-    if (is_opened ()) 
-      {
-	throw runtime_error ("brio::reader::open: Already opened !");
-      }
-    _at_open (filename_);
-    if (is_debug ())
-      {
-	cerr << "DEBUG: " << "brio::reader::open: "
-	     << "Exiting." << endl;
-      }
-    return;
-  }
- 
   bool reader::has_previous (const string & label_) const
   {
     _only_if_opened ("has_previous");
@@ -226,6 +186,14 @@ namespace brio {
       }
     _filename = filename_;
     datatools::utils::fetch_path_with_env (_filename);
+    if (! boost::filesystem::exists (_filename))
+      {
+	ostringstream message;
+	message << "brio::reader::_at_open: "
+		<< "File '" << _filename << "' does not exist ! Abort !";
+	throw runtime_error (message.str ());	
+      }
+    
     string default_extension = ".root";
     static size_t test_extension_size 
       = store_info::DEFAULT_FILE_EXTENSION.length ();

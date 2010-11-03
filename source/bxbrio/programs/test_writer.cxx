@@ -86,7 +86,7 @@ int main (int argc_, char ** argv_)
       // Allow to use some stores with serialized objects of different types (dangerous):
       my_writer.set_allow_mixed_types_in_stores (with_mixed); 
 
-      // Allow the automatic creation of the so-called automatic store:
+      // Allow the automatic creation of the so-called *automatic* store:
       my_writer.set_allow_automatic_store (true); 
 
       // Attach the brio writer to a ROOT file:
@@ -131,7 +131,7 @@ int main (int argc_, char ** argv_)
       infos.store ("author", string (getenv ("USER")));
       if (dump) 
 	{
-	  infos.tree_dump (clog, "Properties to be stored in the 'header' store in ROOT file: ");
+	  infos.tree_dump (clog, "Properties to be stored in the 'header' store: ");
 	}
       
       // Store it in the `header' store:
@@ -146,7 +146,7 @@ int main (int argc_, char ** argv_)
       infos.store ("favorite_fruit", "coconut");
       if (dump) 
 	{
-	  infos.tree_dump (clog, "Another properties to be stored in the 'header' store in ROOT file: ");
+	  infos.tree_dump (clog, "Another properties to be stored in the 'header' store: ");
 	}
 
       // Store it in the `header' store (i.e. the current store from the last 'store' call):
@@ -172,7 +172,7 @@ int main (int argc_, char ** argv_)
 	  datatools::test::randomize_data (data);
 	  if (dump) 
 	    {
-	      data.tree_dump (clog, "Data to be stored in the 'data' store in ROOT file: ");
+	      data.tree_dump (clog, "Data to be stored in the 'data' store: ");
 	    }
 	  // 
 	  my_writer.store (data);
@@ -203,7 +203,7 @@ int main (int argc_, char ** argv_)
       // Unselect the current store:
       my_writer.unselect_store ();
 
-      // Store a properties object int the automatic store:
+      // Store a properties object int the *automatic* store:
       {
 	my_writer.unlock ();
 	datatools::utils::properties infos;

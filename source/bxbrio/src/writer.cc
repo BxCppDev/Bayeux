@@ -55,6 +55,11 @@ namespace brio {
     return;
   }
 
+  bool writer::is_existing_file_protected () const
+  {
+    return __existing_file_protected;
+  }
+
   bool writer::is_allow_mixed_types_in_stores () const
   {
     return __allow_mixed_types_in_stores;
@@ -78,6 +83,13 @@ namespace brio {
     __allow_automatic_store = new_value_; 
     return;
   }
+
+  void writer::set_existing_file_protected (bool new_value_)
+  {
+    _only_if_not_opened ("set_existing_file_protected");
+    __existing_file_protected = new_value_; 
+    return;
+  }
  
   void writer::_set_default ()
   {
@@ -85,6 +97,7 @@ namespace brio {
     __locked = false;
     __allow_mixed_types_in_stores = false;
     __allow_automatic_store = true;
+    __existing_file_protected = false;
     __automatic_store = 0;
     return;
   }
@@ -136,7 +149,7 @@ namespace brio {
     base_io::tree_dump (out_, title_, indent_, true);
     
     out_ <<  indent << i_tree_dumpable::tag 
-	 << "Use automatic store: " << __allow_automatic_store << endl;
+	 << "Allow automatic store: " << __allow_automatic_store << endl;
 
     if (__automatic_store != 0)
       {
@@ -145,52 +158,12 @@ namespace brio {
       }
 
     out_ <<  indent << i_tree_dumpable::tag 
-	 << "Allow mixed type in stores: " << __allow_mixed_types_in_stores << endl;
+	 << "Allow mixed types in stores: " << __allow_mixed_types_in_stores << endl;
 
     out_ <<  indent << i_tree_dumpable::inherit_tag (inherit_)  
 	 << "Locked: " << __locked << endl;
    
     return;
-  }
-
-  void writer::close ()
-  { 
-    if (is_debug ())  
-      {
-	cerr << "DEBUG: " << "brio::writer::close: "
-	     << "Entering..." << endl;
-      }
-    if (! is_opened ()) 
-      {
-	throw runtime_error ("brio::writer::close: Not opened !");
-      }
-    _at_close ();
-    if (is_debug ())
-      {
-	cerr << "DEBUG: " << "brio::writer::close: "
-	     << "Exiting." << endl;
-      }
-    return;
-  }
-  
-  void writer::open (const string & filename_)
-  {
-    if (is_debug ())
-      {
-	cerr << "DEBUG: " << "brio::writer::open: "
-	     << "Entering with filename '" << filename_ << "'" << endl;
-      }
-    if (is_opened ()) 
-      {
-	throw runtime_error ("brio::writer::open: Already opened !");
-      }
-    _at_open (filename_);
-    if (is_debug ())
-      {
-	cerr << "DEBUG: " << "brio::writer::open: "
-	     << "Exiting." << endl;
-      }
-   return;
   }
 
   int writer::add_store (const string & label_, const string & serial_tag_, size_t buffer_size_)
@@ -242,8 +215,8 @@ namespace brio {
 				   const string & serial_tag_,
 				   size_t buffer_size_)
   {
-    _only_if_opened ("_add_store");
-    __only_if_unlocked ("_add_store");
+    _only_if_opened ("brio::writer::_add_store");
+    __only_if_unlocked ("brio::writer::_add_store");
     if (label_.empty ())
       {
 	ostringstream message;
@@ -251,7 +224,8 @@ namespace brio {
 		<< "Empty label !";
 	throw runtime_error (message.str ());
       }  
-    if (! __allow_automatic_store && (label_ == store_info::AUTOMATIC_STORE_LABEL))
+    if (! __allow_automatic_store 
+	&& (label_ == store_info::AUTOMATIC_STORE_LABEL))
       {
 	ostringstream message;
 	message << "brio::writer::_add_store: "
@@ -316,6 +290,18 @@ namespace brio {
   {
     _filename = filename_;
     datatools::utils::fetch_path_with_env (_filename);
+    
+    if (is_existing_file_protected ())
+      {
+	if (boost::filesystem::exists (_filename))
+	  {
+	    ostringstream message;
+	    message << "brio::writer::_at_open: "
+		    << "File '" << _filename << "' already exists ! Abort !";
+	    throw runtime_error (message.str ());	
+	  }
+      }
+
     string default_extension = ".root";
     static size_t test_extension_size 
       = store_info::DEFAULT_FILE_EXTENSION.length ();

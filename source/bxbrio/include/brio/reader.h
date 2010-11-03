@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*- 
 /* reader.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-11-01
  * Last modified: 2010-11-01
  * 
@@ -29,6 +29,8 @@
 #include <datatools/serialization/i_serializable.h>
 #include <datatools/serialization/quasi_portable_binary_iarchive.hpp>
 #include <datatools/utils/utils.h>
+
+#include <boost/filesystem.hpp>
 
 #include <boost/iostreams/stream.hpp>
 #include <boost/iostreams/device/array.hpp>
@@ -68,9 +70,9 @@ namespace brio {
     bool is_check_serial_tag () const;
  
     // File open/close operations:
-    void open (const string & filename_);
+    //void open (const string & filename_);
 
-    void close ();
+    //void close ();
 
     /** Position current entry of store 'label' just before the first
      *  serialized object
@@ -125,11 +127,15 @@ namespace brio {
       int64_t entry = get_current_entry (label_);
       return load<T> (data_, label_, entry - 1);
     }
+
+    template<class T>
+    int load (T & data_, int64_t nentry_ = -1)
+    {
+      return load <T> (data_, "", nentry_);
+    }
     
     template<class T>
-    int load (T & data_, 
-	      const string & label_ = "",
-	      int64_t nentry_ = -1)
+    int load (T & data_, const string & label_, int64_t nentry_ = -1)
     {
       _only_if_opened ("brio::reader::load");
       store_info * ptr_si = _get_store_info (label_);
@@ -163,14 +169,14 @@ namespace brio {
 
   protected:
 
-    void _at_open (const string & filename_);
+    virtual void _at_open (const string & filename_);
 
-    void _at_close ();
+    virtual void _at_close ();
 
     template<class T>
     int _at_load (T & data_, 
-		   store_info * ptr_si_, //const string & label_,
-		   int64_t nentry_)
+		  store_info * ptr_si_, 
+		  int64_t nentry_)
     {
       if (is_debug ())
 	{

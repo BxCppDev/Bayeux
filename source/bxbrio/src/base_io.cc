@@ -18,7 +18,7 @@ namespace brio {
 	  {
 	    message << where_ << ": ";
 	  }
-	message << "Operation prohibited; base_io is opened !";
+	message << "Operation prohibited; file is opened !";
 	throw runtime_error (message.str ());
       }
     return;
@@ -34,13 +34,12 @@ namespace brio {
 	  {
 	    message << where_ << ": ";
 	  }
-	message << "Operation prohibited; base_io is not opened !";
+	message << "Operation prohibited; file is not opened !";
 	throw runtime_error (message.str ());
       }
     return;
   }
  
-
   bool base_io::is_debug () const
   {
     return __debug;
@@ -66,6 +65,46 @@ namespace brio {
   bool base_io::is_opened () const
   {
     return _file != 0 && _file->IsOpen ();
+  }
+
+  void base_io::close ()
+  { 
+    if (is_debug ())  
+      {
+	cerr << "DEBUG: " << "brio::base_io::close: "
+	     << "Entering..." << endl;
+      }
+    if (! is_opened ()) 
+      {
+	throw runtime_error ("brio::base_io::close: Not opened !");
+      }
+    _at_close ();
+    if (is_debug ())
+      {
+	cerr << "DEBUG: " << "brio::base_io::close: "
+	     << "Exiting." << endl;
+      }
+    return;
+  }
+  
+  void base_io::open (const string & filename_)
+  {
+    if (is_debug ())
+      {
+	cerr << "DEBUG: " << "brio::base_io::open: "
+	     << "Entering with filename '" << filename_ << "'" << endl;
+      }
+    if (is_opened ()) 
+      {
+	throw runtime_error ("brio::base_io::open: Already opened !");
+      }
+    _at_open (filename_);
+    if (is_debug ())
+      {
+	cerr << "DEBUG: " << "brio::base_io::open: "
+	     << "Exiting." << endl;
+      }
+   return;
   }
 
   bool base_io::has_automatic_store () const
@@ -314,7 +353,7 @@ namespace brio {
 	    tag = "`-- ";
 	    skip_tag = "    ";
 	  }
-	out_ << indent << "|   " << tag << "Store '" << si.label << "' : " << endl;
+	out_ << indent << "|   " << tag << "Store label: '" << si.label << "' : " << endl;
 	out_ << indent << "|   " << skip_tag << "|-- " << "Serialization tag = ";
 	if (si.has_dedicated_serialization_tag ())
 	  {

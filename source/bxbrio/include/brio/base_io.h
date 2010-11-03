@@ -84,8 +84,17 @@ namespace brio {
 			    const std::string & title_ = "", 
 			    const std::string & indent_ = "", 
 			    bool inherit_ = false) const;
-      
+   
+    // File open/close operations:
+    virtual void open (const string & filename_);
+
+    virtual void close ();
+     
   protected:
+
+    virtual void _at_open (const string & filename_) = 0;
+
+    virtual void _at_close () = 0;
 
     void _only_if_opened (const string & where_) const;
 

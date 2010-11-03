@@ -30,7 +30,9 @@
 #include <datatools/utils/utils.h>
 
 #include <boost/iostreams/stream.hpp>
+
 #include <boost/iostreams/device/back_inserter.hpp>
+#include <boost/filesystem.hpp>
 
 #include <brio/utils.h>
 #include <brio/base_io.h>
@@ -46,6 +48,7 @@ namespace brio {
     bool __locked;
     bool __allow_mixed_types_in_stores;
     bool __allow_automatic_store;
+    bool __existing_file_protected;
     store_info * __automatic_store;
 
   public: 
@@ -58,6 +61,7 @@ namespace brio {
     bool is_locked () const;
     bool is_allow_mixed_types_in_stores () const;
     bool is_allow_automatic_store () const;
+    bool is_existing_file_protected () const;
     
     // setters:
 
@@ -75,11 +79,13 @@ namespace brio {
      *  Default at construction is true.
      */
     void set_allow_automatic_store (bool new_value_ = true);
+
+    void set_existing_file_protected (bool new_value_ = true);
   
     // File open/close operations:
-    void open (const string & filename_);
+    //void open (const string & filename_);
 
-    void close ();
+    //void close ();
   
   private:
 
@@ -116,8 +122,8 @@ namespace brio {
      *  to store objects with a dedicated serialization tag 'serial_tag_':
      */
     int add_store (const string & label_, 
-			    const string & serial_tag_,
-			    size_t buffer_size_ = 256000);
+		   const string & serial_tag_,
+		   size_t buffer_size_ = 256000);
 
     int add_store (const string & label_, 
 		   size_t buffer_size_ = 256000);
@@ -131,9 +137,9 @@ namespace brio {
 			     const string & serial_tag_,
 			     size_t buffer_size_);
 
-    void _at_open (const string & filename_);
+    virtual void _at_open (const string & filename_);
 
-    void _at_close ();
+    virtual void _at_close ();
 
   public:
 

@@ -1,5 +1,5 @@
 // -*- mode: c++ ; -*- 
-// test_reader.cxx
+// test_reader_2.cxx
 
 #include <cstdlib>
 #include <iostream>
@@ -23,8 +23,8 @@ int main (int argc_, char ** argv_)
   
       bool debug = false;
       bool verbose = false;
+      bool dump = false;
       size_t data_count = 10;
-      bool check_tag = true;
       int iarg = 1;
       while (iarg < argc_)
         {
@@ -32,12 +32,16 @@ int main (int argc_, char ** argv_)
 
           if (token[0] == '-') 
             {
-               string option = token; 
-               if ((option == "-d") || (option == "--debug")) 
-                 {
+	      string option = token; 
+	      if ((option == "-d") || (option == "--debug")) 
+		{
                    debug = true;
                  }
-               else if ((option == "-v") || (option == "--verbose")) 
+	       else if ((option == "-D") || (option == "--dump")) 
+		{
+		  dump = true;
+		}
+	       else if ((option == "-v") || (option == "--verbose")) 
                  {
                    verbose = true;
                  }
@@ -49,11 +53,7 @@ int main (int argc_, char ** argv_)
                  {
                    data_count = 100000;
                  }
-               else if ((option == "-c")) 
-                 {
-                   check_tag = false;
-                 }
-	       else 
+ 	       else 
                  { 
                     clog << "warning: ignoring option '" << option << "'!" << endl; 
                  }
@@ -68,65 +68,24 @@ int main (int argc_, char ** argv_)
           iarg++; 
       } 
 
-      // Declare a brio reader:           
-      brio::reader my_reader (verbose, debug);
-
-      // Set the flag to check serialization tags while loading archives:
-      my_reader. set_check_serial_tag (check_tag);
-
-      // Attach the brio reader to a ROOT file:
-      my_reader.open ("test_io.root"); 
-
-      // Print reader's status: 
-      my_reader.print_info (clog);
-
-      /* Select the 'header' store to be used for 
-       * current deserialization source:
-       */
-      my_reader.select_store ("header");
-
-      // Print reader's status: 
-      my_reader.print_info (clog);
-
-      // Loop on serialized records in this store:
-      while (my_reader.has_next ())
-	{
-	  datatools::utils::properties infos;
-	  my_reader.load_next (infos);
-	  infos.tree_dump (clog, "Properties loaded from the 'header' store: ");
-	}
-  
-      // Print reader's status:
-      my_reader.print_info (clog);
-
-      // Select the 'data' store:
-      my_reader.select_store ("data");
+      // Setup a brio reader:           
+      brio::reader my_reader ("test_io_2.root", verbose, debug);
 
       // Loop on serialized records in this store:
       while (my_reader.has_next ())
 	{
 	  datatools::test::data_t data;
 	  my_reader.load_next (data);
-	  data.tree_dump (clog, 
-			  "Data loaded from the 'data' store: ", 
-			  "", 
-			  false);
+	  if (dump) 
+	    {
+	      data.tree_dump (clog, "Data loaded from the *automatic* store: ");
+	    }
 	}
-
-      // Load from *automatic* store:
-      if (my_reader.has_automatic_store ())
-	{
-	  clog << "Reader has found an automatic store to be selected !" << endl;
-	  my_reader.select_automatic_store ();     
-	  datatools::utils::properties infos;
-	  my_reader.load_next (infos);
-	  infos.tree_dump (clog, "Properties loaded from the *automatic* store: ");
-	}
-
+  
       // Print reader's status:
-      my_reader.print_info (clog);
+      if (dump) my_reader.tree_dump (clog, "brio::reader: ");
 
-      // Close the file.
+      // Close the file:
       my_reader.close ();
   
     }
@@ -143,4 +102,4 @@ int main (int argc_, char ** argv_)
   return (error_code);
 }
 
-// end of test_reader.cxx
+// end of test_reader_2.cxx
