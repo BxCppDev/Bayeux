@@ -115,7 +115,7 @@ namespace datatools {
 	  out_ << indent << title_ << std::endl;
 	}
 	out_ << indent << i_tree_dumpable::tag << "Address : [" << this << ']' << std::endl;
-	out_ << indent << i_tree_dumpable::tag << "flags : " << __flags << std::endl;
+	out_ << indent << i_tree_dumpable::tag << "flags : '" << __flags << "'" << std::endl;
 	out_ << indent << i_tree_dumpable::tag << "ival  : "  << __ival << std::endl;
 	out_ << indent << i_tree_dumpable::tag << "dval  : "  
 	     << __dval << std::endl;
