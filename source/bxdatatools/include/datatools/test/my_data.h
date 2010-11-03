@@ -103,9 +103,9 @@ namespace datatools {
 
     public:
 
-      virtual void tree_dump (std::ostream & out_, 
-			      const std::string & title_, 
-			      const std::string & indent_, 
+      virtual void tree_dump (std::ostream & out_ = std::clog, 
+			      const std::string & title_ = "", 
+			      const std::string & indent_ = "", 
 			      bool inherit_ = false) const
       {
 	using namespace datatools::utils;
@@ -182,9 +182,9 @@ namespace datatools {
 
     public:
 
-      virtual void tree_dump (std::ostream & out_, 
-			      const std::string & title_, 
-			      const std::string & indent_, 
+      virtual void tree_dump (std::ostream & out_ = std::clog, 
+			      const std::string & title_ = "", 
+			      const std::string & indent_ = "", 
 			      bool inherit_ = false) const
       {
 	using namespace datatools::utils;
