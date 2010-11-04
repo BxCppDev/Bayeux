@@ -11,13 +11,13 @@
 //  BRIO_VERSION / 100 % 1000 is the minor version
 //  BRIO_VERSION / 100000     is the major version
 
-#define BRIO_VERSION 100
+#define BRIO_VERSION 200
 
 //  BRIO_LIB_VERSION must be defined to be the same as BRIO_VERSION
 //  but as a *string* in the form "x_y[_z]" where x is the major version
 //  number, y is the minor version number, and z is the patch level if not 0.
 
-#define BRIO_LIB_VERSION "0.1"
+#define BRIO_LIB_VERSION "0.2"
 
 #endif // __brio__brio_version_h
 
