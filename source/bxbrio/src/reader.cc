@@ -10,7 +10,7 @@ namespace brio {
   
   void reader::set_check_serial_tag (bool new_value_)
   {
-    //__only_if_not_opened ("checking_serial_tag");
+    //__only_if_not_opened ("brio::reader::checking_serial_tag");
     __check_serial_tag = new_value_; 
     return;
   }
@@ -22,7 +22,7 @@ namespace brio {
 
   void reader::_set_default ()
   {
-    this->base_io::_set_default ();
+    base_io::_set_default ();
     __allow_mixed_types_in_stores = false;
     __allow_automatic_store = true;
     __check_serial_tag = true;
@@ -31,32 +31,60 @@ namespace brio {
   }
  
   // ctor:
-  reader::reader (bool verbose_, bool debug_) : base_io ()
+  reader::reader () : base_io ()
   {
+    if (base_io::g_devel)
+      {
+	cerr << "DEVEL: " << "brio::reader::reader: "
+	     << "Entering..." << endl;
+      }
     _set_default ();
-    set_debug (debug_);
-    set_verbose (verbose_);
+    if (base_io::g_devel)
+      {
+	cerr << "DEVEL: " << "brio::reader::reader: "
+	     << "Exiting." << endl;
+      }
     return;
   }
  
   // ctor:
   reader::reader (const string & filename_, bool verbose_, bool debug_) : base_io ()
   {
+    if (base_io::g_devel)
+      {
+	cerr << "DEVEL: " << "brio::reader::reader: "
+	     << "Entering..." << endl;
+      }
     _set_default ();
     set_debug (debug_);
     set_verbose (verbose_);
-    this->open (filename_);
+    open (filename_);
+    if (base_io::g_devel)
+      {
+	cerr << "DEVEL: " << "brio::reader::reader: "
+	     << "Exiting." << endl;
+      }
     return;
   }
   
   // dtor:
   reader::~reader ()
   {
+    if (base_io::g_devel)
+      {
+	cerr << "DEVEL: " << "brio::reader::~reader: "
+	     << "Entering..." << endl;
+      }
     if (is_opened ()) 
       {
 	close ();
       }
     this->base_io::_reset ();
+    if (base_io::g_devel)
+      {
+	cerr << "DEVEL: " << "brio::reader::~reader: "
+	     << "Exiting." << endl;
+      }
     return;
   }
 
@@ -96,7 +124,7 @@ namespace brio {
 
   bool reader::has_previous (const string & label_) const
   {
-    _only_if_opened ("has_previous");
+    _only_if_opened ("brio::reader::has_previous");
     const store_info * ptr_si = _get_store_info (label_);
     if (ptr_si == 0)
       {
@@ -121,7 +149,7 @@ namespace brio {
 
   bool reader::has_next (const string & label_) const
   {
-    _only_if_opened ("has_next");
+    _only_if_opened ("brio::reader::has_next");
     const store_info * ptr_si = _get_store_info (label_);
     if (ptr_si == 0)
       {
@@ -147,7 +175,7 @@ namespace brio {
 
   void reader::rewind_store (const string & label_)
   {
-    _only_if_opened ("rewind_store");
+    _only_if_opened ("brio::reader::rewind_store");
     store_info * ptr_si = _get_store_info (label_);
     if (ptr_si == 0)
       {
@@ -162,7 +190,7 @@ namespace brio {
   
   void reader::unwind_store (const string & label_)
   {
-    _only_if_opened ("unwind_store");
+    _only_if_opened ("brio::reader::unwind_store");
     store_info * ptr_si = _get_store_info (label_);
     if (ptr_si == 0)
       {
@@ -362,10 +390,8 @@ namespace brio {
       {
 	_file->cd ();
 	_file->Close ();
-	delete _file;
-	_file = 0;
       }
-    _filename.clear ();
+    base_io::_reset ();
     return;
   }
   

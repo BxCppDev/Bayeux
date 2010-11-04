@@ -2,11 +2,13 @@
 /* base_io.cc
  */
 
-#include <brio/base_io.h>
+#include <brio/detail/base_io.h>
 
 namespace brio {
 
   using namespace std;
+  
+  bool base_io::g_devel = false;
 
   void base_io::_only_if_not_opened (const string & where_) const
   {
@@ -64,6 +66,15 @@ namespace brio {
 
   bool base_io::is_opened () const
   {
+    /*
+    cerr << "DEVEL: " << "brio::base_io::is_opened: "
+	 << "_file..." << hex << _file << dec << endl;
+    if (_file != 0)
+      {
+        cerr << "DEVEL: " << "brio::base_io::is_opened: "
+	     << "open=" << _file->IsOpen () << endl;
+      }
+    */
     return _file != 0 && _file->IsOpen ();
   }
 
@@ -211,34 +222,78 @@ namespace brio {
   {
     __debug = false;
     __verbose = false;
+    if (g_devel)
+      {
+	__debug = true;
+	__verbose = true;
+      }
     _file = 0;
+    _filename= "";
     _current_store = 0;
     return;
   }
 
+  // ctor:
   base_io::base_io ()
   {
-    _set_default ();
+    if (g_devel)
+      {
+	cerr << "DEVEL: " << "brio::base_io::base_io (1): "
+	     << "Entering..." << endl;
+      }
+    base_io::_set_default ();
+    if (g_devel)
+      {
+	cerr << "DEVEL: " << "brio::base_io::base_io (1): "
+	     << "Exiting." << endl;
+      }
     return;
   }
 
+  // ctor:
   base_io::base_io (bool verbose_, bool debug_)
   {
-    _set_default ();
+    if (g_devel)
+      {
+	cerr << "DEVEL: " << "brio::base_io::base_io (2): "
+	     << "Entering..." << endl;
+      }
+    base_io::_set_default ();
     __verbose = verbose_;
     __debug = debug_;
+    if (g_devel)
+      {
+	cerr << "DEVEL: " << "brio::base_io::base_io (2): "
+	     << "Exiting." << endl;
+      }
     return;
   }
   
+  // dtor:
   base_io::~base_io ()
   {
-    _reset ();
+    if (g_devel)
+      {
+	cerr << "DEVEL: " << "brio::base_io::~base_io: "
+	     << "Entering..." << endl;
+      }
+    base_io::_reset ();
+    if (g_devel)
+      {
+	cerr << "DEVEL: " << "brio::base_io::~base_io: "
+	     << "Exiting." << endl;
+      }
     return;
   }
 
   void base_io::_reset ()
   {
-    if (_file != 0)
+    if (g_devel)
+      {
+	cerr << "DEVEL: " << "brio::base_io::_reset: "
+	     << "Entering..." << endl;
+      }
+     if (_file != 0)
       {
 	if (_file->IsOpen ())
 	  {
@@ -246,7 +301,16 @@ namespace brio {
 	  }
 	_file = 0;
       }
-    _set_default ();
+    if (! _filename.empty ())
+      {
+	_filename.clear ();
+      }
+    base_io::_set_default ();
+    if (g_devel)
+      {
+	cerr << "DEVEL: " << "brio::base_io::_reset: "
+	     << "Exiting." << endl;
+      }
     return;
   }  
   

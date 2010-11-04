@@ -10,7 +10,8 @@
 
 #include <iostream>
 
-#include <brio/TArrayCMod.h>
+#include <brio/detail/TArrayCMod.h>
+
 #include "TBuffer.h"
 
 using namespace std;

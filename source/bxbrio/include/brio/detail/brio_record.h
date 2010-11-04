@@ -22,8 +22,8 @@
 #include <TObject.h>
 #include <TBuffer.h>
 #include <TString.h>
-//#include <TArrayC.h>
-#include <brio/TArrayCMod.h>
+
+#include <brio/detail/TArrayCMod.h>
 
 //
 // http://www.codeproject.com/KB/architecture/ratkfactory.aspx
@@ -35,7 +35,6 @@ public:
     
   TString  fSerialTag; 
   UInt_t   fVersionTag;
-  //TArrayC  fDataBuffer; // Char_t *fArray and fN (from TArray)
   TArrayCMod fDataBuffer; // Char_t *fArray and fN (from TArray)
 
 public: 

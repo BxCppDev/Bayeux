@@ -35,7 +35,7 @@
 #include <boost/filesystem.hpp>
 
 #include <brio/utils.h>
-#include <brio/base_io.h>
+#include <brio/detail/base_io.h>
 
 namespace brio {
 
@@ -100,7 +100,7 @@ namespace brio {
   public: 
 
     // ctor:
-    writer (bool verbose_ = false, bool debug_ = false);
+    writer ();
 
     // ctor:
     writer (const string & filename_, bool verbose_ = false, bool debug_ = false);

@@ -79,9 +79,11 @@ int main (int argc_, char ** argv_)
       } 
 
       // Declare a brio writer:           
-      brio::writer my_writer (verbose, debug);
+      brio::writer my_writer;
 
       /* Some setup before opening the output file */
+      my_writer.set_debug (debug);
+      my_writer.set_verbose (verbose);
 
       // Allow to use some stores with serialized objects of different types (dangerous):
       my_writer.set_allow_mixed_types_in_stores (with_mixed); 

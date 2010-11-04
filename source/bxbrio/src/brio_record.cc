@@ -2,7 +2,7 @@
 /* brio_record.cc
  */
 
-#include <brio/brio_record.h>
+#include <brio/detail/brio_record.h>
 
 ClassImp(brio_record)
  

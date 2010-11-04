@@ -32,6 +32,10 @@ namespace brio {
 
   class base_io : public datatools::utils::i_tree_dumpable
   { 
+  public: 
+
+    static bool g_devel;
+
   private:
    
     bool __debug;

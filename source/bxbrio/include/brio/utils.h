@@ -21,10 +21,14 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
+#include <map>
+
+#include <boost/cstdint.hpp>
 
 #include <TTree.h>
-#include <brio/brio_record.h>
-#include <boost/cstdint.hpp>
+
+#include <brio/detail/brio_record.h>
 
 namespace brio {
 

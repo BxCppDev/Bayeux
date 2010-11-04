@@ -30,8 +30,8 @@ extern void G__set_cpp_environmentbrio_dict();
 
 #include "TObject.h"
 #include "TMemberInspector.h"
-#include <brio/TArrayCMod.h>
-#include <brio/brio_record.h>
+#include <brio/detail/TArrayCMod.h>
+#include <brio/detail/brio_record.h>
 #include <algorithm>
 namespace std { }
 using namespace std;

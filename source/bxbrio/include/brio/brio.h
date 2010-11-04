@@ -65,8 +65,8 @@ fi
 #define __brio__brio_h 1
 
 #include <brio/brio_version.h>
-
-//#include <brio/dummy_brio.h>
+#include <brio/writer.h>
+#include <brio/reader.h>
 
 
 #endif // __brio__brio_h

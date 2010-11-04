@@ -37,7 +37,7 @@ public:
 
 
    // Workaround
-   //void Streamer(TBuffer &b); // let ClassDef build the Streamer
+   //void Streamer(TBuffer &b); // Let ClassDef build the Streamer
    void __Streamer(TBuffer &b); 
 
    ClassDef(TArrayCMod,1)  //Array of chars

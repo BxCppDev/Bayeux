@@ -36,7 +36,7 @@
 #include <boost/iostreams/device/array.hpp>
 
 #include <brio/utils.h>
-#include <brio/base_io.h>
+#include <brio/detail/base_io.h>
 
 namespace brio {
 
@@ -95,7 +95,7 @@ namespace brio {
   public: 
 
     // ctor:
-    reader (bool verbose_ = false, bool debug_ = false);
+    reader ();
 
     // ctor:
     reader (const string & filename_, bool verbose_ = false, bool debug_ = false);

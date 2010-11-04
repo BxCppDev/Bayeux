@@ -4,13 +4,18 @@ brio -- README
 1 - Description:
 
     The brio package implements some writer/reader classes that enable
-    to store/load (quasi-)portable binary archives from the Boost/Serialization
-    system using ROOT files as storage media. 
+    to store/load arbitrary serializable objects using (quasi-)portable 
+    binary archives from the Boost/Serialization system and ROOT files and trees 
+    as storage media. 
     While loading back the data, serialized objects can then be accessed non-sequentially.
+    Files may contains several 'stores' of archived data.
 
 2 - Documentation:
 
-    to do...
+    See the 'programs/test_data_io.cxx', 'include/brio/test/data.h'
+    and 'src/data/cc' files for a simple use case of serialization.
+
+    Other 'programs/test_XXX.cxx' programs show more features.
 
 3 - Installation:
 
@@ -109,7 +114,8 @@ brio -- README
        Francois Mauger <mauger@lpccaen.in2p3.fr>
 
     URL: 
+      https://nemo.lpc-caen.in2p3.fr/wiki/brio/
 
 --
-Last update: 2010-10-28 by Francois Mauger <mauger@lpccaen.in2p3.fr>
+Last update: 2010-11-04 by Francois Mauger <mauger@lpccaen.in2p3.fr>
 

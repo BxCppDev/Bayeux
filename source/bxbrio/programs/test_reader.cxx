@@ -69,10 +69,14 @@ int main (int argc_, char ** argv_)
       } 
 
       // Declare a brio reader:           
-      brio::reader my_reader (verbose, debug);
+      brio::reader my_reader;
+
+      /* Some setup before opening the output file */
+      my_reader.set_debug (debug); 
+      my_reader.set_verbose (verbose);
 
       // Set the flag to check serialization tags while loading archives:
-      my_reader. set_check_serial_tag (check_tag);
+      my_reader.set_check_serial_tag (check_tag);
 
       // Attach the brio reader to a ROOT file:
       my_reader.open ("test_io.root"); 

@@ -93,7 +93,6 @@ namespace brio {
  
   void writer::_set_default ()
   {
-    this->base_io::_set_default ();
     __locked = false;
     __allow_mixed_types_in_stores = false;
     __allow_automatic_store = true;
@@ -103,21 +102,39 @@ namespace brio {
   }
  
   // ctor:
-  writer::writer (bool verbose_, bool debug_) : base_io (verbose_, debug_)
+  writer::writer () : base_io ()
   {
+    if (base_io::g_devel)
+      {
+	cerr << "DEVEL: " << "brio::writer::writer (1): "
+	     << "Entering..." << endl;
+      }
     _set_default ();
-    set_debug (debug_);
-    set_verbose (verbose_);
+    if (base_io::g_devel)
+      {
+	cerr << "DEVEL: " << "brio::writer::writer (1): "
+	     << "Exiting." << endl;
+      }
     return;
   }
  
   // ctor:
   writer::writer (const string & filename_, bool verbose_, bool debug_) : base_io (verbose_, debug_)
   {
+    if (base_io::g_devel)
+      {
+	cerr << "DEVEL: " << "brio::writer::writer (2): "
+	     << "Entering..." << endl;
+      }
     _set_default ();
     set_debug (debug_);
     set_verbose (verbose_);
-    this->open (filename_);
+    open (filename_);
+    if (base_io::g_devel)
+      {
+	cerr << "DEVEL: " << "brio::writer::writer (2): "
+	     << "Exiting." << endl;
+      }
     return;
   }
   
@@ -359,10 +376,8 @@ namespace brio {
 	_file->cd ();
 	_file->Write ();
 	_file->Close ();
-	delete _file;
-	_file = 0;
       }
-    _filename.clear ();
+    base_io::_reset ();
     return;
   }
   
