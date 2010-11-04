@@ -3,6 +3,8 @@
 #ifndef __datatools__serialization__i_serializable_h
 #define __datatools__serialization__i_serializable_h 1
 
+#include <string>
+
 namespace datatools {
 
   namespace serialization {
@@ -10,7 +12,7 @@ namespace datatools {
     class i_serializable
       {
       public:
-	virtual const std::string & get_serial_tag() const = 0;
+	virtual const std::string & get_serial_tag () const = 0;
       };
     
   } // end of namespace serialization 

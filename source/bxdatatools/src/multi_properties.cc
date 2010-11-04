@@ -103,8 +103,7 @@ namespace datatools {
     {
       __properties.clear ();
     }
-
-	
+ 	
     void multi_properties::entry::tree_dump (ostream & out_, 
 					     const string & title_,
 					     const string & indent_,
@@ -787,10 +786,9 @@ namespace datatools {
       return;
     } /* end of multi_properties::__read */
  
-
     void multi_properties::dump (ostream & out_) const
     {
-      tree_dump (out_, "multi_properties:");
+      tree_dump (out_, "datatools::utils::multi_properties:");
       return;
     }
 	

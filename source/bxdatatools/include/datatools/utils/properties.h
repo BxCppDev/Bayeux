@@ -972,7 +972,7 @@ namespace datatools {
       }
 
       void
-      dump (std::ostream &) const;
+      dump (std::ostream & = clog) const;
 
       void
       dump_def () const

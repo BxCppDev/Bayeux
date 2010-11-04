@@ -152,7 +152,7 @@ namespace datatools {
 
 	virtual ~multi_properties ();
 
-	void dump (ostream & out_) const;
+	void dump (ostream & out_ = clog) const;
 
       private:
 

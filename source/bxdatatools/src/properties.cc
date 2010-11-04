@@ -2333,7 +2333,7 @@ namespace datatools {
 
       if (mode == MODE_HEADER_FOOTER) 
 	{
-	  out_ << "# End of list od properties." << std::endl;
+	  out_ << "# End of list of properties." << std::endl;
 	}
       return;
     }
