@@ -32,7 +32,8 @@ int main (int argc_ , char ** argv_)
 
       if (debug) datatools::utils::temp_file::g_devel = true;
     
-      datatools::utils::temp_file ftmp (temp_file_delete);
+      datatools::utils::temp_file ftmp;
+      ftmp.set_remove_at_destroy (temp_file_delete);
 
       clog << "Create a temporary file: " << endl;
       ftmp.create ("/tmp", "temp_");

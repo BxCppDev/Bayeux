@@ -36,6 +36,7 @@ namespace datatools {
 
     ofstream & temp_file::out ()
     {
+      if (g_devel) clog << "DEVEL: datatools::utils::temp_file::out: Entering..." << endl;
       if (! is_valid ())
 	{
 	  ostringstream message;
@@ -62,11 +63,13 @@ namespace datatools {
 	    }
 	  __write_open = true;
 	}
+      if (g_devel) clog << "DEVEL: datatools::utils::temp_file::out: Exiting." << endl;
       return __out;
     }
     
     ifstream & temp_file::in ()
     {
+      if (g_devel) clog << "DEVEL: datatools::utils::temp_file::in: Entering..." << endl;
       if (! is_valid ())
 	{
 	  ostringstream message;
@@ -93,14 +96,24 @@ namespace datatools {
 	    }
 	  __read_open = true;
 	}
+      if (g_devel) clog << "DEVEL: datatools::utils::temp_file::in: Exiting." << endl;
       return __in;
     }
 
     // ctor:
-    temp_file::temp_file (bool remove_at_destroy_)
+    temp_file::temp_file ()
     {
       _set_defaults ();
-      __remove_at_destroy = remove_at_destroy_;
+      return;
+    }
+
+    // ctor:
+    temp_file::temp_file (const char * pattern_, bool remove_at_destroy_)
+    {
+      _set_defaults ();
+      set_remove_at_destroy  (remove_at_destroy_);
+      string pattern = pattern_;
+      create ("", pattern);
       return;
     }
 
@@ -108,8 +121,29 @@ namespace datatools {
     temp_file::temp_file (string pattern_, bool remove_at_destroy_)
     {
       _set_defaults ();
-      __remove_at_destroy = remove_at_destroy_;
+      set_remove_at_destroy  (remove_at_destroy_);
       create ("", pattern_);
+      return;
+    }
+    
+    // ctor:
+    temp_file::temp_file (string path_dir_, const char * pattern_, bool remove_at_destroy_)
+    {
+      _set_defaults ();
+      set_remove_at_destroy  (remove_at_destroy_);
+      string pattern = pattern_;
+      create (path_dir_, pattern);
+      return;
+    }
+    
+    // ctor:
+    temp_file::temp_file (const char * path_dir_, const char * pattern_, bool remove_at_destroy_)
+    {
+      _set_defaults ();
+      set_remove_at_destroy  (remove_at_destroy_);
+      string pattern = pattern_;
+      string path_dir = path_dir_;
+      create (path_dir, pattern);
       return;
     }
     
@@ -117,7 +151,7 @@ namespace datatools {
     temp_file::temp_file (string path_dir_, string pattern_, bool remove_at_destroy_)
     {
       _set_defaults ();
-      __remove_at_destroy = remove_at_destroy_;
+      set_remove_at_destroy  (remove_at_destroy_);
       create (path_dir_, pattern_);
       return;
     }
@@ -253,6 +287,7 @@ namespace datatools {
     
     void temp_file::remove ()
     {
+      if (g_devel) clog << "DEVEL: datatools::utils::temp_file::remove: Entering..." << endl;
       close ();
       if (! __filename.empty ())
 	{
@@ -272,6 +307,7 @@ namespace datatools {
 	  __template = 0;
 	}     
       _set_defaults ();
+      if (g_devel) clog << "DEVEL: datatools::utils::temp_file::remove: Exiting." << endl;
       return;
     }
 

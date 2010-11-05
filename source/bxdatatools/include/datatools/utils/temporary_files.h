@@ -59,9 +59,15 @@ namespace datatools {
 
       ifstream & in ();
 
-      temp_file (bool remove_at_destroy_ = true);
+      temp_file ();
+
+      temp_file (const char * pattern_, bool remove_at_destroy_ = true);
 
       temp_file (string pattern_, bool remove_at_destroy_ = true);
+
+      temp_file (const char * path_dir_, const char * pattern_, bool remove_at_destroy_ = true);
+
+      temp_file (string path_dir_, const char * pattern_, bool remove_at_destroy_ = true);
 
       temp_file (string path_dir_, string pattern_, bool remove_at_destroy_ = true);
 
