@@ -262,7 +262,9 @@ namespace geomtools {
 	       <<  "mapping::__build:"<< "World ID = " << world_id << ' ' 
 	       << (world_id.is_valid () ? "[Valid]": "[Invalid]")<< endl;
 	}
-      placement top_placement (0.0, 0.0, 0.0);
+      placement top_placement (vector_3d (0.0, 0.0, 0.0),
+                               0,
+                               0.0);
 	
       //	const logical_volume * world_log 
       //  = __factory->get_logicals ().find ()->second;
