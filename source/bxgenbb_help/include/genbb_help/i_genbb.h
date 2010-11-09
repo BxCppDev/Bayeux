@@ -32,7 +32,12 @@ namespace genbb {
     virtual bool has_next () = 0;
 
     virtual void load_next (primary_event & event_, 
-			    bool compute_classification_ = true) = 0;
+			    bool compute_classification_ = true);
+
+  protected:
+
+    virtual void _load_next (primary_event & event_, 
+			    bool compute_classification_) = 0;
 
   };
 

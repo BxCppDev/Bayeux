@@ -42,6 +42,7 @@ namespace genbb {
   public:
     
     static const string SERIAL_TAG;
+    static const string OLD_SERIAL_TAG;
     
     virtual const string & get_serial_tag () const;
     

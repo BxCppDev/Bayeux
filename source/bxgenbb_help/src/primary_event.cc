@@ -3,13 +3,19 @@
  */
 
 #include <genbb_help/primary_event.h>
+#include <genbb_help/genbb_help.h>
 
 namespace genbb {
 
-  const std::string primary_event::SERIAL_TAG = "__genbb::primary_event__";
+  const std::string primary_event::SERIAL_TAG = "genbb::primary_event";
+  const std::string primary_event::OLD_SERIAL_TAG = "__genbb::primary_event__";
 
   const std::string & primary_event::get_serial_tag () const
   {
+    if (library_config::g_use_old_serialization_tag)
+      {
+	return primary_event::OLD_SERIAL_TAG;
+     }
     return primary_event::SERIAL_TAG;
   }
 

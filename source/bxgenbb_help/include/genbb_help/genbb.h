@@ -34,7 +34,7 @@ namespace genbb {
 
   using namespace std;
 
-  class genbb
+  class genbb : public i_genbb
   {
   public:
     static const size_t MAX_BUFFER_SIZE = 100000;
@@ -86,7 +86,9 @@ namespace genbb {
 
     virtual bool has_next ();
 
-    virtual void load_next (primary_event & event_, 
+  protected:
+
+    virtual void _load_next (primary_event & event_, 
 			    bool compute_classification_ = true);
 
   private:

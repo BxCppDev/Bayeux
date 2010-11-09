@@ -19,7 +19,7 @@ namespace genbb {
   }
 
   // ctor:
-  wgenbb::wgenbb ()
+  wgenbb::wgenbb () : i_genbb ()
   {
     if (wgenbb::__g_counter > 0)
       {
@@ -226,18 +226,18 @@ namespace genbb {
     return;
   }
 
-  void wgenbb::load_next (primary_event & event_, 
+  void wgenbb::_load_next (primary_event & event_, 
 			 bool compute_classification_)
   {
     if (__debug)
       {
-	clog << "debug: " << "wgenbb::load_next: "
+	clog << "debug: " << "wgenbb::_load_next: "
 	     << "Entering..."
 	     << endl;
       }
     if (! __initialized)
       {
-	throw runtime_error ("wgenbb::load_next: Not initialized !");
+	throw runtime_error ("wgenbb::_load_next: Not initialized !");
       }
     event_.reset ();
 
@@ -255,7 +255,7 @@ namespace genbb {
 	      &error);
     if (error != 0)
       {
-	throw runtime_error ("wgenbb::load_next: genbbsub failed !");
+	throw runtime_error ("wgenbb::_load_next: genbbsub failed !");
       }
 
     int evnum;
@@ -267,7 +267,7 @@ namespace genbb {
     double part_time = 0.0;
     npart = genevent.npfull;
     /*
-    clog << "DEVEL: " << "wgenbb::load_next: "
+    clog << "DEVEL: " << "wgenbb::_load_next: "
 	 << "npart=" << npart << endl;
     */
     for (int i = 0; i < npart; i++)
@@ -277,14 +277,14 @@ namespace genbb {
 	double x, y ,z, time_shift;
 	part_type = genevent.npgeant[i];
 	/*
-	clog << "DEVEL: " << "wgenbb::load_next: "
+	clog << "DEVEL: " << "wgenbb::_load_next: "
 	     << "part_type=" << part_type << endl;
 	*/
 	x = genevent.pmoment[i][0];
 	y = genevent.pmoment[i][1];
 	z = genevent.pmoment[i][2];
 	/*
-	clog << "DEVEL: " << "wgenbb::load_next: "
+	clog << "DEVEL: " << "wgenbb::_load_next: "
 	     << " px=" << x 
 	     << " py=" << y
 	     << " pz=" << z 
@@ -292,7 +292,7 @@ namespace genbb {
 	*/
 	time_shift = genevent.ptime[i];
 	/*
-	clog << "DEVEL: " << "wgenbb::load_next: "
+	clog << "DEVEL: " << "wgenbb::_load_next: "
 	     << "time_shift=" << time_shift << endl;
 	*/
 	part_time += time_shift; 
@@ -312,7 +312,7 @@ namespace genbb {
     __event_count++;
     if (__debug)
       {
-	clog << "debug: " << "wgenbb::load_next: "
+	clog << "debug: " << "wgenbb::_load_next: "
 	     << "Exiting."
 	     << endl;
       }

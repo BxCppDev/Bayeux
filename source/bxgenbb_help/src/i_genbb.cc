@@ -14,6 +14,13 @@ namespace genbb {
   {
   }
 
+  void i_genbb::load_next (primary_event & event_, 
+			   bool compute_classification_)
+  {
+    _load_next (event_, compute_classification_);
+    return;
+  }
+
 } // end of namespace genbb
 
 // end of i_genbb.cc

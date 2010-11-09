@@ -3,12 +3,14 @@
  */
 
 #include <genbb_help/primary_particle.h>
+#include <genbb_help/genbb_help.h>
 
 namespace genbb {
 
   using namespace std;
   
-  const string primary_particle::SERIAL_TAG = "__genbb::primary_particle__";
+  const string primary_particle::SERIAL_TAG = "genbb::primary_particle";
+  const string primary_particle::OLD_SERIAL_TAG = "__genbb::primary_particle__";
 
   bool primary_particle::is_valid () const
   {
@@ -91,6 +93,10 @@ namespace genbb {
 
   const string & primary_particle::get_serial_tag () const
   {
+    if (library_config::g_use_old_serialization_tag)
+      {
+	return primary_particle::OLD_SERIAL_TAG;
+     }
     return primary_particle::SERIAL_TAG;
   }
 
@@ -100,7 +106,6 @@ namespace genbb {
     if (is_electron ()) return -1;
     if (is_alpha ()) return +2;
     if (is_gamma ()) return 0.0;
-
     throw runtime_error ("primary_particle::get_charge: Unknown particle !");
   }
 

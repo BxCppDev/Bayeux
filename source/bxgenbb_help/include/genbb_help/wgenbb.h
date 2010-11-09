@@ -60,7 +60,7 @@ namespace genbb {
 
   using namespace std;
 
-  class wgenbb
+  class wgenbb : public i_genbb
   {
   public:
 
@@ -114,8 +114,12 @@ namespace genbb {
 
     virtual bool has_next ();
 
-    virtual void load_next (primary_event & event_, 
-			    bool compute_classification_ = true);
+  protected:
+
+    virtual void _load_next (primary_event & event_, 
+			     bool compute_classification_ = true);
+
+  public:
 
     void dump (ostream & = clog) const;
 

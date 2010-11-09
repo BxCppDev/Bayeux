@@ -89,7 +89,7 @@ namespace genbb {
     return __current.is_valid ();
   }
   
-  void genbb_mgr::load_next (primary_event & event_, 
+  void genbb_mgr::_load_next (primary_event & event_, 
 			     bool compute_classification_)
   {
     //provide the preloadedcurrent event:

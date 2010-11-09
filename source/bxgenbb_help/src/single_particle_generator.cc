@@ -188,7 +188,7 @@ namespace genbb {
   }
   
   // ctor:
-  single_particle_generator::single_particle_generator ()
+  single_particle_generator::single_particle_generator () : i_genbb ()
   {
     __debug = false;
     __initialized = false;
@@ -396,18 +396,18 @@ namespace genbb {
     return true;
   }
 
-  void single_particle_generator::load_next (primary_event & event_, 
-					     bool compute_classification_)
+  void single_particle_generator::_load_next (primary_event & event_, 
+					      bool compute_classification_)
   {
     if (__debug)
       {
-	clog << "debug: " << "genbb::load_next: "
+	clog << "debug: " << "single_particle_generator::_load_next: "
 	     << "Entering..."
 	     << endl;
       }
     if (! __initialized)
       {
-	throw runtime_error ("single_particle_generator::load_next: Generator is notlocked/initialized !");	
+	throw runtime_error ("single_particle_generator::_load_next: Generator is notlocked/initialized !");	
       }
     event_.reset ();
 
@@ -463,7 +463,7 @@ namespace genbb {
 
     if (__debug)
       {
-	clog << "debug: " << "single_particle_generator::load_next: "
+	clog << "debug: " << "single_particle_generator::_load_next: "
 	     << "Exiting."
 	     << endl;
       }

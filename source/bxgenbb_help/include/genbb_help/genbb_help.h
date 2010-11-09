@@ -60,7 +60,7 @@ fi
  *
  * \section misc_section Miscellaneous informations
  *
- * This section is empty.
+ * See https://nemo.lpc-caen.in2p3.fr/wiki/genbb_help for a few more informations.
  *
  */
 
@@ -74,6 +74,27 @@ fi
 #include <genbb_help/genbb_writer.h>
 #include <genbb_help/rng.h>
 #include <genbb_help/genbb_mgr.h>
+
+namespace genbb
+{
+  struct library_config
+  {
+    /**
+     *   The former genbb_help versions (prior to 1.1) have used
+     *   old-fashionned serialization tag for 'primary_particle'
+     *   and 'primary_event' classes.
+     *   This has been changed from version 1.2.
+     *   If set at true this flag will use the old tags.
+     *   Default is false.
+     */
+    static bool g_use_old_serialization_tag;
+    
+    // Set the \e old \e serialization \e tag flag:
+    static void set_use_old_serialization_tag (bool u_);
+    
+  };
+
+}
 
 #endif // __genbb_help__genbb_help_h
 

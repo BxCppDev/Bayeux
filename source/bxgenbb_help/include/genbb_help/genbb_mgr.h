@@ -118,8 +118,13 @@ namespace genbb {
 
     virtual bool has_next ();
 
-    virtual void load_next (primary_event & event_, 
-			    bool compute_classification_ = true);
+  protected:
+
+    // from 'i_genbb' interface:
+    virtual void _load_next (primary_event & event_, 
+			     bool compute_classification_ = true);
+
+  public:
 
     void dump (ostream & out_ = clog) const;
 

@@ -47,7 +47,7 @@ namespace genbb {
   }
   
   // ctor:
-  genbb::genbb ()
+  genbb::genbb () : i_genbb ()
   {
     __debug = false;
     __test = false;
@@ -265,12 +265,12 @@ namespace genbb {
     return true;
   }
 
-  void genbb::load_next (primary_event & event_, 
+  void genbb::_load_next (primary_event & event_, 
 			 bool compute_classification_)
   {
     if (__debug)
       {
-	clog << "debug: " << "genbb::load_next: "
+	clog << "debug: " << "genbb::_load_next: "
 	     << "Entering..."
 	     << endl;
       }
@@ -280,7 +280,7 @@ namespace genbb {
       {
 	if (__debug)
 	  {
-	    clog << "debug: " << "genbb::load_next: "
+	    clog << "debug: " << "genbb::_load_next: "
 		 << "Buffer is full !"
 		 << endl;
 	  }
@@ -317,7 +317,7 @@ namespace genbb {
     __event_count++;
     if (__debug)
       {
-	clog << "debug: " << "genbb::load_next: "
+	clog << "debug: " << "genbb::_load_next: "
 	     << "Exiting."
 	     << endl;
       }
