@@ -70,6 +70,8 @@
 #pragma once
 
 #include <istream>
+#include <string>
+#include <stdexcept>
 
 // basic headers
 #include <boost/version.hpp>
@@ -267,7 +269,7 @@ namespace eos {
 		{
 			typedef typename fp::detail::fp_traits<T>::type traits;
 
-			if (__portability_flag == quasi_portable_archive_common::strictly_portable_flag)
+			if (__portability_flag == quasi_portable_archive_common::restricted_portable_flag)
 			  {
 			// if you end here there are three possibilities:
 			// 1. you're serializing a long double which is not portable
@@ -392,10 +394,14 @@ namespace eos {
 				else set_library_version(input_library_version);
 			}
 			__portability_flag = quasi_portable_archive_common::quasi_portable_flag;
-			if (portability_flag_ == quasi_portable_archive_common::strictly_portable_flag)
+			if (portability_flag_ == quasi_portable_archive_common::restricted_portable_flag)
 	                {
 			       __portability_flag = portability_flag_;
 	                }
+			else if (portability_flag_ == quasi_portable_archive_common::strictly_portable_flag)
+			{
+			  throw std::runtime_error(std::string ("strict portable mode is not available yet !"));
+		        }
 		}
 
 

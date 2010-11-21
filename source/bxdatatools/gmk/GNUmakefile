@@ -187,23 +187,24 @@ help :
 	@echo "GNUmakefile usage "
 	@echo "----------------- "
 	@echo ""
-	@echo "make help      : print this help"
+	@echo "make help       : print this help"
 	@echo ""
-	@echo "make           : default as 'make lib'"
-	@echo "make lib       : build the shared library"
-	@echo "make bin       : build the shared production executables"
-	@echo "make bin_test  : build the shared test executables (not mandatory)"
-	@echo "make install   : generates install stuff"
-	@echo "                 - setup ($(LIBNAME).sh/$(LIBNAME).csh)"
-	@echo "                 - $(LIBNAME)-config scripts"
-	@echo "make uninstall : clean install stuff"
-	@echo "make clean     : clean all object/binaries"
+	@echo "make            : default as 'make lib'"
+	@echo "make lib        : build the shared library"
+	@echo "make bin        : build the shared production executables"
+	@echo "make bin_test   : build the shared test executables (not mandatory)"
+	@echo "make install    : generates install stuff"
+	@echo "                  - setup ($(LIBNAME).sh/$(LIBNAME).csh)"
+	@echo "                  - $(LIBNAME)-config scripts"
+	@echo "make uninstall  : clean install stuff"
+	@echo "make clean      : clean all object/binaries"
+	@echo "make clean_test : clean test binaries"
 	@echo ""
-	@echo "make system    : print system"
-	@echo "make test      : print some infos"
+	@echo "make system     : print system"
+	@echo "make test       : print some infos"
 	@echo ""
-	@echo "make dist      : make a source tarball ($(LIBNAME)-$(LIBVER).tar.gz)"
-	@echo "make bzdist    : make a source tarball ($(LIBNAME)-$(LIBVER).tar.bz2)"
+	@echo "make dist       : make a source tarball ($(LIBNAME)-$(LIBVER).tar.gz)"
+	@echo "make bzdist     : make a source tarball ($(LIBNAME)-$(LIBVER).tar.bz2)"
 	@echo ""
 
 .PHONY : test
@@ -260,7 +261,12 @@ install_no_eos_pba :
 .PHONY : clean_special
 clean_special :
 	@echo "NOTICE: Target 'clean_special'..." >&2
-	@#cd $(BASEDIR)/boost/vault; make clean
+	rm -f my_bag.conf my_bag_of_bags.conf
+	rm -f test_data_serialization.*_
+	rm -f test_multi_properties_*.conf
+	rm -f test_nans_ar.*
+	rm -f test_properties.*
+	rm -f test_serialization*_
 
 .PHONY : uninstall
 uninstall : 
@@ -299,6 +305,10 @@ clean : clean_special
 	find $(BASEDIR)/ -name "*~" -exec $(RM) \{\} \; 
 	test -d $(ARCHDIR)/ && $(RM) -r $(ARCHDIR) || echo -n ""
 	@echo "NOTICE: Cleaning done." >&2
+
+.PHONY : clean_bin_test
+clean_bin_test : 
+	find $(ARCHDIR)/bin -name "test_*" -a -executable -exec $(RM) \{\} \; 
 
 .PHONY : distclean
 distclean : uninstall clean

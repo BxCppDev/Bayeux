@@ -95,7 +95,7 @@ function print_usage ()
               without Python wrapper module
             --boost-version 1_34_1 : force Boost version (default: 1_38_0)
             --no-boost-version-check : skip Boost version check
-
+    $APPNAME deconfigure : deconfigure package 
     $APPNAME build [TARGET] : build package
             TARGET:
                 lib (default) : build the shared library
@@ -105,6 +105,7 @@ function print_usage ()
                 test_event_id : build only the 'test_event_id'  program
 
     $APPNAME doc        : generate doc
+    $APPNAME undoc      : remove doc
     $APPNAME clean      : clean package
     $APPNAME install    : install package
     $APPNAME uninstall  : uninstall package
@@ -139,6 +140,8 @@ while [ -n "$1" ]; do
 	if [ -z "${action_mode}" ]; then
 	    if [ "${arg}" = "configure" ]; then
 		action_mode="configure"	
+	    elif [ "${arg}" = "deconfigure" ]; then
+		action_mode="deconfigure"	
 	    elif [ "${arg}" = "build" ]; then
 		action_mode="build"	
 	    elif [ "${arg}" = "clean" ]; then
@@ -153,6 +156,16 @@ while [ -n "$1" ]; do
 		action_mode="check"	
 	    elif [ "${arg}" = "doc" ]; then
 		action_mode="doc"	
+	    elif [ "${arg}" = "undoc" ]; then
+		action_mode="undoc"	
+	    elif [ "${arg}" = "test" ]; then
+		action_mode="test"	
+	    elif [ "${arg}" = "untest" ]; then
+		action_mode="untest"	
+	    elif [ "${arg}" = "reset" ]; then
+		action_mode="reset"	
+	    elif [ "${arg}" = "list_of_actions" ]; then
+		action_mode="list_of_actions"	
 	    else
 		pkgtools__msg_error "Invalid argument!"
 		my_exit 1
@@ -337,10 +350,57 @@ function do_build_gmk ()
 
 #######################################################
 
+function do_test ()
+{
+    __pkgtools__at_function_enter do_test
+
+    if [ -d ${the_gmk_dir} ]; then
+	if [ -d ${the_python_dir} ]; then
+	    if [ -f ${without_python_flag_file} ]; then
+		source ${without_python_flag_file}
+	    fi
+	fi
+	do_build_gmk bin_test
+	local code=$?
+	__pkgtools__at_function_exit
+	return ${code}
+    fi
+
+    __pkgtools__at_function_exit
+    return 0
+}
+
+function do_untest ()
+{
+    __pkgtools__at_function_enter do_untest
+
+    if [ -d ${the_gmk_dir} ]; then
+	do_build_gmk clean_bin_test
+    fi
+
+    __pkgtools__at_function_exit
+    return 0
+}
+
+function do_undoc ()
+{
+    __pkgtools__at_function_enter do_undoc
+    opwd=$(pwd)
+
+    if [ -d ${the_base_dir}/doc/doxygen ]; then
+	rm -fr ${the_base_dir}/doc/doxygen
+    fi
+
+    cd ${opwd}
+    __pkgtools__at_function_exit
+    return 0
+}
+
 function do_clean ()
 {
     __pkgtools__at_function_enter do_clean
 
+    opwd=$(pwd)
     pkgtools__msg_info "Clean package '${pack_name}'..."
     if [ -d ${GMKDIR} ]; then
 	do_clean_gmk $@
@@ -351,21 +411,6 @@ function do_clean ()
 	fi
     fi 
 
-    opwd=$(pwd)
-    cd ${the_base_dir}/boost/vault
-    pkgtools__msg_info "Clean Boost vault contribution ($pwd)..."
-    make clean
-    if [ $? -ne 0 ]; then
-	pkgtools__msg_error "Clean Boost vault contribution from '${pack_name}' failed!"
-	__pkgtools__at_function_exit
-	return $?
-    fi
-
-    if [ -d ${the_base_dir}/doc/doxygen ]; then
-	rm -fr ${the_base_dir}/doc/doxygen
-    fi
-
-    #read TEST
     cd ${opwd}
     __pkgtools__at_function_exit
     return 0
@@ -605,7 +650,6 @@ function do_check ()
 
     pkgtools__msg_debug "skipped_dependencies = '${skipped_dependencies}'"
 
- 
     if [ ${skip_all_dependencies_check} -eq 0 ]; then
         # Check package dependencies:
 	check_dependencies ${skipped_dependencies}
@@ -645,6 +689,31 @@ function do_check ()
 	fi
  
     fi
+
+    __pkgtools__at_function_exit
+    return 0
+}
+
+function do_deconfigure ()
+{
+    __pkgtools__at_function_enter do_deconfigure
+
+    opwd=$(pwd)
+
+    test -f ${without_eos_pba_flag_file} && rm -f ${without_eos_pba_flag_file} 
+    test -f ${without_fpu_flag_file}     && rm -f ${without_fpu_flag_file} 
+    test -f ${without_python_flag_file}  && rm -f ${without_python_flag_file} 
+    test -f ${python_version_flag_file}  && rm -f ${python_version_flag_file} 
+   
+    cd ${the_base_dir}/boost/vault
+    pkgtools__msg_info "Remove the Boost vault contribution(s) in the '$(pwd)' directory..."
+    make clean
+    if [ $? -ne 0 ]; then
+	pkgtools__msg_error "Removal of the Boost vault contribution(s) from '${pack_name}' failed!"
+	__pkgtools__at_function_exit
+	return $?
+    fi
+    cd ${opwd}
 
     __pkgtools__at_function_exit
     return 0
@@ -851,7 +920,9 @@ EOF
 	test -f ${without_fpu_flag_file} && rm -f ${without_fpu_flag_file}
 	opwd=$(pwd)
 	cd ${the_base_dir}/boost/vault
+	pkgtools__msg_notice "Cleaning the '$(pwd)' directory..."
 	make clean 2>&1 > /dev/null
+	pkgtools__msg_notice "Populating the '$(pwd)' directory..."
 	make 2>&1 > /dev/null 
 	cd ${opwd}
     fi
@@ -1046,6 +1117,20 @@ function do_info ()
     return 0
 }
 
+function do_undoc ()
+{
+    __pkgtools__at_function_enter do_undoc
+    opwd=$(pwd)
+
+    if [ -d ${the_base_dir}/doc/doxygen ]; then
+	rm -fr ${the_base_dir}/doc/doxygen
+    fi
+
+    cd ${opwd}
+    __pkgtools__at_function_exit
+    return 0
+}
+
 function do_doc ()
 {
     __pkgtools__at_function_enter do_doc
@@ -1064,7 +1149,26 @@ function do_doc ()
     fi
     # doxygen -g ${the_base_dir}/pkgtools.d/${pack_name}.doxygen
     doxygen ${the_base_dir}/pkgtools.d/${pack_name}.doxygen 
-    
+ 
+    pkgtools__msg_notice "Doxygen documentation is at: ${the_base_dir}/doc/doxygen/html/index.html"
+    pkgtools__msg_notice "Please run: 'firefox file://$(pwd)/doc/doxygen/html/index.html &' or something similar..."
+   
+    __pkgtools__at_function_exit
+    return 0
+}
+
+function do_reset ()
+{
+    __pkgtools__at_function_enter do_reset
+
+    test -f .cflags.cache && rm -f .cflags.cache
+    test -f .ldflags.cache && rm -f .ldflags.cache
+
+    do_undoc
+    do_untest
+    do_clean
+    do_deconfigure
+
     __pkgtools__at_function_exit
     return 0
 }
@@ -1095,48 +1199,56 @@ function main ()
     if [ "${action_mode}" = "configure" ]; then
 	do_configure $@
 	if [ $? -ne 0 ]; then
-	    pkgtools__msg_error "Configure failed!"
-	    my_exit 1
+	    pkgtools__msg_error "Configure failed !"
+	    return 1
+	fi
+    fi
+
+    if [ "${action_mode}" = "deconfigure" ]; then
+	do_deconfigure $@
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "De-configure failed !"
+	    return 1
 	fi
     fi
 
     if [ "${action_mode}" = "build" ]; then
 	do_build $@
 	if [ $? -ne 0 ]; then
-	    pkgtools__msg_error "Build failed!"
-	    my_exit 1
+	    pkgtools__msg_error "Build failed !"
+	    return 1
 	fi
     fi
 
     if [ "${action_mode}" = "clean" ]; then
 	do_clean
 	if [ $? -ne 0 ]; then
-	    pkgtools__msg_error "Clean failed!"
-	    my_exit 1
+	    pkgtools__msg_error "Clean failed !"
+	    return 1
 	fi
     fi
 
     if [ "${action_mode}" = "install" ]; then
 	do_install
 	if [ $? -ne 0 ]; then
-	    pkgtools__msg_error "Install failed!"
-	    my_exit 1
+	    pkgtools__msg_error "Install failed !"
+	    return 1
 	fi
     fi
 
     if [ "${action_mode}" = "uninstall" ]; then
 	do_uninstall
 	if [ $? -ne 0 ]; then
-	    pkgtools__msg_error "Uninstall failed!"
-	    my_exit 1
+	    pkgtools__msg_error "Uninstall failed !"
+	    return 1
 	fi
     fi
 
     if [ "${action_mode}" = "info" ]; then
 	do_info
 	if [ $? -ne 0 ]; then
-	    pkgtools__msg_error "Info failed!"
-	    my_exit 1
+	    pkgtools__msg_error "Info failed !"
+	    return 1
 	fi
     fi
     
@@ -1152,14 +1264,51 @@ function main ()
     if [ "${action_mode}" = "doc" ]; then
 	do_doc
 	if [ $? -ne 0 ]; then
-	    pkgtools__msg_error "Documentation failed!"
+	    pkgtools__msg_error "Documentation failed !"
+	    return 1
+	fi
+    fi
+
+    if [ "${action_mode}" = "undoc" ]; then
+	do_undoc
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Documentation removal failed !"
+	    return 1
+	fi
+    fi
+
+    if [ "${action_mode}" = "test" ]; then
+	do_test
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Test material failed !"
+	    return 1
+	fi
+    fi
+
+    if [ "${action_mode}" = "untest" ]; then
+	do_untest
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Test material removal failed !"
 	    my_exit 1
 	fi
     fi
+
+    if [ "${action_mode}" = "reset" ]; then
+	do_reset
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Reset failed !"
+	    return 1
+	fi
+    fi
+
+    if [ "${action_mode}" = "list_of_actions" ]; then
+	echo "info check configure build install uninstall clean deconfigure doc undoc test untest reset list_of_actions" 
+	return 0
+    fi
+
     __pkgtools__at_function_exit
     return 0
 }
-
 
 #######################################
 

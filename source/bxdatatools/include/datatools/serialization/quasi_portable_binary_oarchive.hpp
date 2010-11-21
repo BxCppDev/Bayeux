@@ -70,6 +70,8 @@
 #pragma once
 
 #include <ostream>
+#include <string>
+#include <stdexcept>
 
 // basic headers
 #include <boost/version.hpp>
@@ -256,7 +258,7 @@ namespace eos {
 		{
 			typedef typename fp::detail::fp_traits<T>::type traits;
 
-			if (__portability_flag == quasi_portable_archive_common::strictly_portable_flag)
+			if (__portability_flag == quasi_portable_archive_common::restricted_portable_flag)
 			  {
 			// it is not supported to serialize infinity or not-a-number
 			if (!fp::isfinite(t)) throw portable_archive_exception(t);
@@ -368,10 +370,14 @@ namespace eos {
 				operator<<(archive_version);
 			}
 			__portability_flag = quasi_portable_archive_common::quasi_portable_flag;
-			if (portability_flag_ == quasi_portable_archive_common::strictly_portable_flag)
+			if (portability_flag_ == quasi_portable_archive_common::restricted_portable_flag)
 	                {
 			        __portability_flag = portability_flag_;
 	                }
+			else if (portability_flag_ == quasi_portable_archive_common::strictly_portable_flag)
+			{
+			  throw std::runtime_error(std::string ("strict portable mode is not available yet !"));
+		        }
 		}
 
 	private:
