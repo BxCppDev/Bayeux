@@ -242,6 +242,10 @@ clean : clean_special
 	find $(BASEDIR)/ -name "*~" -exec $(RM) \{\} \; 
 	test -d $(ARCHDIR)/ && $(RM) -r $(ARCHDIR) || echo -n ""
 
+.PHONY : clean_bin_test
+clean_bin_test : 
+	find $(ARCHDIR)/bin -name "test_*" -a -executable -exec $(RM) \{\} \; 
+
 .PHONY : distclean
 distclean : uninstall clean
 	@echo "Total cleaning..."
