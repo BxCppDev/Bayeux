@@ -47,7 +47,7 @@ namespace geomtools {
   
   const facet_vertex & facet3::get_vertex (int i_) const 
   {
-    if ((i_ < 0) && (i_ >= get_number_of_vertices ()))
+    if ((i_ < 0) || (i_ >= get_number_of_vertices ()))
       {
 	ostringstream message;
 	message << "facet3::get_vertex: "
@@ -88,7 +88,7 @@ namespace geomtools {
 
   const facet_vertex & facet4::get_vertex (int i_) const 
   {
-    if ((i_ < 0) && (i_ >= get_number_of_vertices ()))
+    if ((i_ < 0) || (i_ >= get_number_of_vertices ()))
       {
 	ostringstream message;
 	message << "facet4::get_vertex: "
