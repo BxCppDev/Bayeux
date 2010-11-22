@@ -23,6 +23,7 @@
 #  will not use the cflags/ldflags cache accelerator files
 #
 
+opwd=$(pwd)
 help=0
 
 SCRIPTNAME="cuts-config"
@@ -212,11 +213,14 @@ if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
 fi 
 
 if [ "x$opt" = "x--check" ]; then
+    cd ${THEPACK_ROOT}
     ${THEPACK_ROOT}/pkgtools.d/pkgtool check
     if [ $? -ne 0 ]; then
 	echo "$SCRIPTNAME: error: Check procedure failed!" >&2
+	cd ${opwd}
 	exit 1
     fi
+    cd ${opwd}
     exit 0
 fi 
 
