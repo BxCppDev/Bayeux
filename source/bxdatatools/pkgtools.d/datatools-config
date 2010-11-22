@@ -13,14 +13,15 @@
 #
 #
 # The following environment variables may be set to change 
-# the behaviour of the toto-config script:
+# the behaviour of the datatools-config script:
 #
 # export DATATOOLS_LDFLAGS_MODE="hardcoded_shared_lib_path"
 #  will force the usage of hardcoded path name while linking against
 #  a shared library (no use of -LPATH -lLIBNAME option)
 #
 # export DATATOOLS_USING_CACHE_FILES=0
-#  will not use the cflags/ldflags cache accelerator files
+# export DATATOOLS_USING_CACHE_FILES=1
+#  will not/will use the cflags/ldflags cache accelerator files
 #
 
 opwd=$(pwd)
@@ -38,7 +39,7 @@ THEPACK_ROOT=/usr/local
 if [ -n "${DATATOOLS_ROOT}" ]; then
     THEPACK_ROOT="${DATATOOLS_ROOT}" 
 else 
-    echo "$SCRIPTNAME: error: 'DATATOOLS_ROOT' environment variable is not defined!" 
+    echo "$SCRIPTNAME: error: 'DATATOOLS_ROOT' environment variable is not defined!" 1>&2
     exit 1
 fi
 
@@ -48,24 +49,30 @@ THEPACK_LIBDIR="$THEPACK_ROOT/${THE_SYSTEM}/lib"
 
 THEPACK_BINDIR="$THEPACK_ROOT/${THE_SYSTEM}/bin" 
 
-THEPACK_VERSION=0.1.0
+THEPACK_VERSION="?"
 if [ -f "$THEPACK_ROOT/VERSION" ]; then
     THEPACK_VERSION="$(cat $THEPACK_ROOT/VERSION)"    
 elif [ -f "$THEPACK_ROOT/pkgtools.d/package.info"  ]; then
     version=$(cat $THEPACK_ROOT/pkgtools.d/package.info | grep "version=" | cut -d'=' -f2 )    
-    THEPACK_VERSION=$version
+    THEPACK_VERSION=${version}
 fi
 
-using_cache_files=1
-if [ "X${DATATOOLS_USING_CACHE_FILES}" = "X0" ]; then
-    using_cache_files=${TOTO_USING_CACHE_FILES}
+using_cache_files=0
+if [ "x${DATATOOLS_USING_CACHE_FILES}" != "x" ]; then
+    if [ "x${DATATOOLS_USING_CACHE_FILES}" = "x0" ]; then
+	using_cache_files=0
+    else
+	using_cache_files=1
+    fi
 fi
+
+
 cflags_cache=${THEPACK_ROOT}/.cflags.cache
 ldflags_cache=${THEPACK_ROOT}/.ldflags.cache
 
 ldflags_mode=""
-if [ "X${TOTO_LDFLAGS_MODE}" != "X" ]; then
-    ldflags_mode="${TOTO_LDFLAGS_MODE}"
+if [ "x${DATATOOLS_LDFLAGS_MODE}" != "x" ]; then
+    ldflags_mode="${DATATOOLS_LDFLAGS_MODE}"
 fi
 
 # 2009-11-13 FM: add support for ser_bitset (vault)
@@ -88,7 +95,7 @@ fi
 opt=$1
 
 if [ "x$opt" = "x" ]; then
-    echo "$SCRIPTNAME: error: Missing option!" 
+    echo "$SCRIPTNAME: error: Missing option!" 1>&2
     help=1
 fi
 
@@ -302,7 +309,7 @@ if [ "x$opt" = "x--check" ]; then
     exit 0
 fi 
 
-echo "$SCRIPTNAME: error: Unknown option!" 
+echo "$SCRIPTNAME: error: Unknown option!" 1>&2
 $0 --help
 exit 1
 
