@@ -11,6 +11,8 @@
 # Feel free to modify this file if you use another system
 # to build/install this package (i.e. Autotools).
 #
+
+opwd=$(pwd)
 help=0
 
 SCRIPTNAME="genbb_help-config"
@@ -88,6 +90,7 @@ Known values for OPTION are:
   --help                print this help then exit
   --version             print version information
   --system              print system
+  --check               check dependencies and setup
 
 EOF
     exit 1
@@ -197,6 +200,18 @@ if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
 	"${f77_opt} "  \
 	"-lm "  \
 	| python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
+    exit 0
+fi 
+
+if [ "x$opt" = "x--check" ]; then
+    cd ${THEPACK_ROOT}
+    ${THEPACK_ROOT}/pkgtools.d/pkgtool check
+    if [ $? -ne 0 ]; then
+	echo "$SCRIPTNAME: error: Check procedure failed!" >&2
+	cd ${opwd}
+	exit 1
+    fi
+    cd ${opwd}
     exit 0
 fi 
 
