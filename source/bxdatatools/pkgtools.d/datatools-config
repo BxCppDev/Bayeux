@@ -23,6 +23,7 @@
 #  will not use the cflags/ldflags cache accelerator files
 #
 
+opwd=$(pwd)
 help=0
 
 SCRIPTNAME="datatools-config"
@@ -121,6 +122,7 @@ Known values for OPTION are:
   --with-eos-pba        print if Portable Binary Archive (EOS) is used
   --boost-version       print Boost version
   --clean-cache-files   clean compile/link cache files
+  --check               check dependencies and setup
 
 EOF
     exit 1
@@ -285,6 +287,18 @@ fi
 
 if [ "x$opt" = "x--boost-version" ]; then
     boost-config --version
+    exit 0
+fi 
+
+if [ "x$opt" = "x--check" ]; then
+    cd ${THEPACK_ROOT}
+    ${THEPACK_ROOT}/pkgtools.d/pkgtool check
+    if [ $? -ne 0 ]; then
+	echo "$SCRIPTNAME: error: Check procedure failed!" >&2
+	cd ${opwd}
+	exit 1
+    fi
+    cd ${opwd}
     exit 0
 fi 
 
