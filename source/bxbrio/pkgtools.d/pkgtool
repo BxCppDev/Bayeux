@@ -542,11 +542,20 @@ function do_build ()
 		source ${without_python_flag_file}
 	    fi
 	fi
-	do_build_gmk $@
-	local code=$?
-	__pkgtools__at_function_exit
-	return ${code}
-    fi
+	if [ "x$@" = "x" ]; then
+	    do_build_gmk bin
+	    if [ $? -ne 0 ]; then
+		__pkgtools__at_function_exit
+		return 1
+	    fi
+	else
+	    do_build_gmk $@
+	    if [ $? -ne 0 ]; then
+		__pkgtools__at_function_exit
+		return 1
+	    fi
+	fi
+     fi
 
     __pkgtools__at_function_exit
     return 0
@@ -1010,6 +1019,7 @@ function do_reset ()
 
     do_undoc
     do_untest
+    do_uninstall
     do_clean
     do_deconfigure
 
