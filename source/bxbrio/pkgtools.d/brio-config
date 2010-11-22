@@ -56,9 +56,13 @@ elif [ -f "${THEPACK_ROOT}/pkgtools.d/package.info"  ]; then
     THEPACK_VERSION=$version
 fi
 
-using_cache_files=1
-if [ "X${BRIO_USING_CACHE_FILES}" = "X0" ]; then
-    using_cache_files=${BRIO_USING_CACHE_FILES}
+using_cache_files=0 # default: do not use cache files 
+if [ "x${BRIO_USING_CACHE_FILES}" != "x" ]; then
+    if [ "x${BRIO_USING_CACHE_FILES}" = "x0" ]; then
+	using_cache_files=0
+    else
+	using_cache_files=1
+    fi
 fi
 cflags_cache=${THEPACK_ROOT}/.cflags.cache
 ldflags_cache=${THEPACK_ROOT}/.ldflags.cache
@@ -164,6 +168,7 @@ if [ "x$opt" = "x--cflags" ]; then
          "`root-config --cflags` "  \
 	    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py	    
 	) | tee ${cflags_cache}
+	test ${using_cache_files} -eq 0 && rm -f ${cflags_cache}
     fi
     exit 0
 fi
@@ -213,6 +218,7 @@ if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
          "`root-config --libs` "  \
 	    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
 	) | tee ${ldflags_cache}
+	test ${using_cache_files} -eq 0 && rm -f ${ldflags_cache}
     fi
     exit 0
 fi 
