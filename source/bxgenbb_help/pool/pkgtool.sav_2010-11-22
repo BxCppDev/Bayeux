@@ -50,7 +50,6 @@ do_usage=0
 
 use_g77=0
 use_gfortran=1
-configure_flag_file=${the_base_dir}/.${pack_name}.conf
 	
 function my_exit ()
 {
@@ -66,71 +65,19 @@ function print_usage ()
 
   Usage:
 
-    $APPNAME [Options] ACTION [ACTION OPTIONS]
-
-  Options:
-
-    -h 
-    --help    : print this help then exit
-
-    -d 
-    --debug   : print debug mode informations
-
-    -D 
-    --devel   : print devel mode informations
-
-    -v 
-    --verbose : verbose print
-
-    -i      
-    --interactive  : run in interactive mode (this is the default)
-
-    -b      
-    --batch        : run in batch mode (no user interaction)
+    $APPNAME -h         : print this help then exit
   
   Available modes are:
 
-    info       : print package info
-
-    check      : check dependencies
-
-    configure [OPTIONS] : configure package
+    $APPNAME info       : print package info
+    $APPNAME configure [OPTIONS] : configure package
            Options:
               --g77        use g77 Fortran compiler
               --gfortran   use gfortran Fortran compiler
-
-    deconfigure : deconfigure package 
-
-    build      : build package
-
-    clean      : clean package
-
-    install    : install package
- 
-    uninstall  : uninstall package
-
-    test       : build test material  
-
-    untest     : remove test material  
-
-    doc      : generate documentation
-
-    undoc    : remove documentation
-
-    reset    : uninstall, undoc, untest, clean, deconfigure package
-
-   Examples:
-
-    shell> pkgtool --help
-    shell> pkgtool info
-    shell> pkgtool check
-    shell> pkgtool configure
-    shell> pkgtool build
-    shell> pkgtool build bin
-    shell> pkgtool test
-    shell> pkgtool install
-
-    shell> pkgtool reset
+    $APPNAME build      : build package
+    $APPNAME clean      : clean package
+    $APPNAME install    : install package
+    $APPNAME uninstall  : uninstall package
 
 EOF
     return 0
@@ -187,8 +134,6 @@ while [ -n "$1" ]; do
 	if [ "x${action_mode}" = "x" ]; then
 	    if [ "$arg" = "configure" ]; then
 		action_mode="configure"	
-	    elif [ "$arg" = "deconfigure" ]; then
-		action_mode="deconfigure"	
 	    elif [ "$arg" = "build" ]; then
 		action_mode="build"	
 	    elif [ "$arg" = "clean" ]; then
@@ -203,16 +148,6 @@ while [ -n "$1" ]; do
 		action_mode="check"	
 	    elif [ "$arg" = "doc" ]; then
 		action_mode="doc"	
-	    elif [ "$arg" = "undoc" ]; then
-		action_mode="undoc"	
-	    elif [ "$arg" = "test" ]; then
-		action_mode="test"	
-	    elif [ "$arg" = "untest" ]; then
-		action_mode="untest"	
-	    elif [ "${arg}" = "reset" ]; then
-		action_mode="reset"	
-	    elif [ "${arg}" = "list_of_actions" ]; then
-		action_mode="list_of_actions"	
 	    else
 		pkgtools__msg_error "Invalid argument !"
 		my_exit 1
@@ -398,34 +333,20 @@ function do_clean ()
 {
     __pkgtools__at_function_enter do_clean
 
+    if [ -d ${the_base_dir}/doc/doxygen ]; then
+        rm -fr ${the_base_dir}/doc/doxygen
+    fi
+
     if [ -d ${the_gmk_dir} ]; then
 	do_clean_gmk $@
 	__pkgtools__at_function_exit
 	return $?
     fi 
 
-    test -f ${configure_flag_file} && rm -f ${configure_flag_file}
+    test -f ${the_base_dir}/.${pack_name}.conf && rm -f ${the_base_dir}/.${pack_name}.conf
 
     __pkgtools__at_function_exit
     return 1
-}
-
-###################################################################
-
-function do_deconfigure ()
-{
-    __pkgtools__at_function_enter do_deconfigure
-
-    opwd=$(pwd)
-    
-    #test -f ${without_python_flag_file}  && rm -f ${without_python_flag_file} 
-
-    test -f ${configure_flag_file} && rm -f ${configure_flag_file}
-
-    cd ${opwd}
-
-    __pkgtools__at_function_exit
-    return 0
 }
 
 function do_configure ()
@@ -495,9 +416,9 @@ function do_configure ()
 	F77_COMP=g77
 	pkgtools__msg_notice "Package '${pack_name}' build will use 'g77'"
     fi
-    echo "export F77_COMP=${F77_COMP}" > ${configure_flag_file}
+    echo "export F77_COMP=${F77_COMP}" > ${the_base_dir}/.${pack_name}.conf
 
-    pkgtools__msg_notice "File '${configure_flag_file}' has been generated."
+    pkgtools__msg_notice "File '${the_base_dir}/.${pack_name}.conf' has been generated."
 
     __pkgtools__at_function_exit
     return 0
@@ -507,8 +428,8 @@ function do_build ()
 {
     __pkgtools__at_function_enter do_build
 
-    if [ -f ${configure_flag_file} ]; then
-	source ${configure_flag_file}
+    if [ -f ${the_base_dir}/.${pack_name}.conf ]; then
+	source ${the_base_dir}/.${pack_name}.conf
 	pkgtools__msg_notice "Build procedure use the '${F77_COMP}' F77 compiler..."
     fi
 
@@ -518,19 +439,10 @@ function do_build ()
 		source ${without_python_flag_file}
 	    fi
 	fi
-	if [ "x$@" = "x" ]; then
-	    do_build_gmk bin
-	    if [ $? -ne 0 ]; then
-		__pkgtools__at_function_exit
-		return 1
-	    fi
-	else
-	    do_build_gmk $@
-	    if [ $? -ne 0 ]; then
-		__pkgtools__at_function_exit
-		return 1
-	    fi
-	fi
+	do_build_gmk $@
+	local code=$?
+	__pkgtools__at_function_exit
+	return ${code}
     fi
 
     __pkgtools__at_function_exit
@@ -852,42 +764,6 @@ function do_check ()
     return 0
 }
 
-##########################################################
-
-function do_test ()
-{
-    __pkgtools__at_function_enter do_test
-
-    if [ -d ${the_gmk_dir} ]; then
-	if [ -d ${the_python_dir} ]; then
-	    if [ -f ${without_python_flag_file} ]; then
-		source ${without_python_flag_file}
-	    fi
-	fi
-	do_build_gmk bin_test
-	local code=$?
-	__pkgtools__at_function_exit
-	return ${code}
-    fi
-
-    __pkgtools__at_function_exit
-    return 0
-}
-
-function do_untest ()
-{
-    __pkgtools__at_function_enter do_untest
-
-    if [ -d ${the_gmk_dir} ]; then
-	do_build_gmk clean_bin_test
-    fi
-
-    __pkgtools__at_function_exit
-    return 0
-}
-
-##########################################################
-
 function do_doc ()
 { 
     __pkgtools__at_function_enter do_doc
@@ -905,7 +781,6 @@ function do_doc ()
 	__pkgtools__at_function_exit
        return 1
     fi
-    # doxygen -g ${the_base_dir}/pkgtools.d/${pack_name}.doxygen
     doxygen ${the_base_dir}/pkgtools.d/${pack_name}.doxygen 
 
     pkgtools__msg_notice "Doxygen documentation is at: ${the_base_dir}/doc/doxygen/html/index.html"
@@ -915,40 +790,7 @@ function do_doc ()
     return 0
 }
 
-function do_undoc ()
-{
-    __pkgtools__at_function_enter do_undoc
-    opwd=$(pwd)
-
-    if [ -d ${the_base_dir}/doc/doxygen ]; then
-	rm -fr ${the_base_dir}/doc/doxygen
-    fi
-
-    cd ${opwd}
-    __pkgtools__at_function_exit
-    return 0
-}
-
-##########################################################
-
-function do_reset ()
-{
-    __pkgtools__at_function_enter do_reset
-
-    test -f .cflags.cache && rm -f .cflags.cache
-    test -f .ldflags.cache && rm -f .ldflags.cache
-
-    do_undoc
-    do_untest
-    do_uninstall
-    do_clean
-    do_deconfigure
-
-    __pkgtools__at_function_exit
-    return 0
-}
-
-##########################################################
+#######################################################
 
 function main ()
 {
@@ -956,7 +798,7 @@ function main ()
     
     # Some checks...
     if [ -z "${action_mode}" ]; then
-	pkgtools__msg_error "Missing action !"
+	pkgtools__msg_error "Missing running mode !"
 	print_usage
 	__pkgtools__at_function_exit
 	return 1
@@ -978,38 +820,10 @@ function main ()
     fi
     
     # Perform action...
-    
-    if [ "${action_mode}" = "info" ]; then
-	do_info $@
-	if [ $? -ne 0 ]; then
-	    pkgtools__msg_error "Print info failed !"
-	    __pkgtools__at_function_exit
-	    return 1
-	fi
-    fi
-    
-    if [ "${action_mode}" = "check" ]; then
-	do_check $@
-	if [ $? -ne 0 ]; then
-	    pkgtools__msg_error "Package check failed !"
-	    __pkgtools__at_function_exit
-	    return 1
-	fi
-    fi
-
     if [ "${action_mode}" = "configure" ]; then
 	do_configure $@
 	if [ $? -ne 0 ]; then
 	    pkgtools__msg_error "Package configuration failed !"
-	    __pkgtools__at_function_exit
-	    return 1
-	fi
-    fi
-    
-    if [ "${action_mode}" = "deconfigure" ]; then
-	do_deconfigure $@
-	if [ $? -ne 0 ]; then
-	    pkgtools__msg_error "Package de-configuration failed !"
 	    __pkgtools__at_function_exit
 	    return 1
 	fi
@@ -1059,45 +873,23 @@ function main ()
 	    return 1
 	fi
     fi
-
-    if [ "${action_mode}" = "undoc" ]; then
-	do_undoc
+    
+    if [ "${action_mode}" = "info" ]; then
+	do_info $@
 	if [ $? -ne 0 ]; then
-	    pkgtools__msg_error "Documentation removal failed!"
+	    pkgtools__msg_error "Print info failed !"
 	    __pkgtools__at_function_exit
 	    return 1
 	fi
     fi
-
-    if [ "${action_mode}" = "test" ]; then
-	do_test
+    
+    if [ "${action_mode}" = "check" ]; then
+	do_check $@
 	if [ $? -ne 0 ]; then
-	    pkgtools__msg_error "Test material failed!"
-	    return 1
-	fi
-    fi
-
-    if [ "${action_mode}" = "untest" ]; then
-	do_untest
-	if [ $? -ne 0 ]; then
-	    pkgtools__msg_error "Test material removal failed!"
-	    return 1
-	fi
-    fi
-
-    if [ "${action_mode}" = "reset" ]; then
-	do_reset
-	if [ $? -ne 0 ]; then
-	    pkgtools__msg_error "reset failed!"
+	    pkgtools__msg_error "Package check failed !"
 	    __pkgtools__at_function_exit
 	    return 1
 	fi
-    fi
-
-    if [ "${action_mode}" = "list_of_actions" ]; then
-	echo "list_of_actions info check configure deconfigure build clean install uninstall doc undoc test untest reset" 
-	__pkgtools__at_function_exit
-	return 0
     fi
 
     __pkgtools__at_function_exit

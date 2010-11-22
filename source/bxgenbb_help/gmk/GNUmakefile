@@ -1,5 +1,10 @@
 # -*- mode: makefile; -*- 
-# GNUmakefile (language C++)
+# GNUmakefile (language C++)
+
+test_bash=$(shell which bash)
+ifeq ($(test_bash),)
+$(error Sorry bash is not available on your system!)
+endif
 
 OS=$(shell uname -s)
 ifneq ($(OS),Linux)
@@ -115,30 +120,12 @@ endif
 DEPCPPFLAGS+=$(shell geomtools-config --cflags)
 DEPLDFLAGS+=$(shell geomtools-config --ldflags)
 
-# datatools dependency:
-#ifeq ($(shell which datatools-config),)
-#$(error Sorry datatools-config not found!)
-#endif
-#DEPCPPFLAGS+=$(shell datatools-config --cflags)
-#DEPLDFLAGS+=$(shell datatools-config --ldflags)
-
-# CLHEP dependency:
-#ifeq ($(shell which clhep-config),)
-#$(error Sorry clhep-config not found!)
-#endif
-#DEPCPPFLAGS+=$(shell clhep-config --include)
-#DEPLDFLAGS+=$(shell clhep-config --libs)
-
 # mygsl dependency:
 ifeq ($(shell which mygsl-config),)
 $(error Sorry mygsl-config not found!)
 endif
 DEPCPPFLAGS+=$(shell mygsl-config --cflags)
 DEPLDFLAGS+=$(shell mygsl-config --ldflags)
-
-# gsl dependency:
-#DEPCPPFLAGS+=$(shell gsl-config --cflags)
-#DEPLDFLAGS+=$(shell gsl-config --libs)
 
 #Here you should add stuff for 'CERNLIB':
 #DEPCPPFLAGS+=
@@ -249,7 +236,8 @@ objects := $(sources:%$(SOURCEEXT)=%$(OBJEXT))
 objectsWithPath := $(sources:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT))
 programs_all:= $(notdir $(shell ls $(PROGDIR)/*$(PROGEXT) 2> /dev/null))
 programs_test:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep ^test_)
-programs:= $(notdir $(shell ls $(PROGDIR)/*$(PROGEXT)))
+programs:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep -v ^test_)
+#$(notdir $(shell ls $(PROGDIR)/*$(PROGEXT)))
 binaries:= $(programs:%$(PROGEXT)=%$(BINEXT))
 binaries.static:= $(programs:%$(PROGEXT)=%.static$(BINEXT))
 binaries_test:= $(programs_test:%$(PROGEXT)=%$(BINEXT))
@@ -258,8 +246,11 @@ f77_headers := $(notdir $(shell ls $(INCDIR)/$(PACKAGENAME)/*$(F77_HEADEREXT)))
 f77_sources := $(notdir $(shell ls $(SRCDIR)/*$(F77_SOURCEEXT)))
 f77_objects := $(f77_sources:%$(F77_SOURCEEXT)=%$(F77_OBJEXT))
 f77_objectsWithPath := $(f77_sources:%$(F77_SOURCEEXT)=$(OBJDIR)/%$(F77_OBJEXT))
-f77_programs:= $(notdir $(shell ls $(PROGDIR)/*$(F77_PROGEXT)))
+f77_programs_all:= $(notdir $(shell ls $(PROGDIR)/*$(F77_PROGEXT) 2> /dev/null))
+f77_programs_test:= $(shell echo $(f77_programs_all) | tr ' ' '\n' | grep .F$ | grep ^test_)
+f77_programs:= $(shell echo $(f77_programs_all) | tr ' ' '\n' | grep .F$ | grep -v ^test_)
 f77_binaries:= $(f77_programs:%$(F77_PROGEXT)=%$(F77_BINEXT))
+f77_binaries_test:= $(f77_programs_test:%$(F77_PROGEXT)=%$(F77_BINEXT))
 
 
 .PHONY : help
@@ -302,9 +293,13 @@ test:
 	@echo "C++ binaries = $(binaries)"
 	@echo "C++ programs_test = $(programs_test)"
 	@echo "C++ binaries_test = $(binaries_test)"
-        @echo "F77 headers = $(f77_headers)"
-        @echo "F77 sources = $(f77_sources)"
-        @echo "F77 objects = $(f77_objects)"
+	@echo "F77 headers = $(f77_headers)"
+	@echo "F77 sources = $(f77_sources)"
+	@echo "F77 objects = $(f77_objects)"
+	@echo "F77 programs = $(f77_programs)"
+	@echo "F77 binaries = $(f77_binaries)"
+	@echo "F77 programs_test = $(f77_programs_test)"
+	@echo "F77 binaries_test = $(f77_binaries_test)"
 	@echo "arch dir = $(ARCHDIR)"
 	@echo "CPPFLAGS='$(CPPFLAGS)'"
 	@echo "LDFLAGS='$(LDFLAGS)'"
@@ -364,8 +359,12 @@ lib_shared : $(SHLIBFILE)
 .PHONY : clean
 clean : clean_special
 	@echo "Cleaning..."
-	find $(BASEDIR)/ -name "*~" -exec $(RM) \{\} \; 
+	find $(BASEDIR)/ -name "*~" -exec $(RM) \{\} \; || echo -n "" 
 	test -d $(ARCHDIR)/ && $(RM) -r $(ARCHDIR) || echo -n ""
+
+.PHONY : clean_bin_test
+clean_bin_test : 
+	find $(ARCHDIR)/bin -name "test_*" -a -executable -exec $(RM) \{\} \; || echo -n 
 
 .PHONY : distclean
 distclean : uninstall clean
@@ -387,7 +386,7 @@ bin_static : $(binaries_static)
 bin_shared : $(binaries) $(f77_binaries)
 
 .PHONY : bin_test_shared
-bin_test_shared : $(binaries_test)
+bin_test_shared : $(binaries_test) $(f77_binaries_test)
 
 $(LIBFILE) : $(objectsWithPath)  $(f77_objectsWithPath) 
 	@echo "Building static lib '$(@)'..."
