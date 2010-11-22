@@ -57,7 +57,7 @@ elif [ -f "$THEPACK_ROOT/pkgtools.d/package.info"  ]; then
     THEPACK_VERSION=${version}
 fi
 
-using_cache_files=0
+using_cache_files=0 # default: do not use cache files 
 if [ "x${DATATOOLS_USING_CACHE_FILES}" != "x" ]; then
     if [ "x${DATATOOLS_USING_CACHE_FILES}" = "x0" ]; then
 	using_cache_files=0
@@ -66,6 +66,7 @@ if [ "x${DATATOOLS_USING_CACHE_FILES}" != "x" ]; then
     fi
 fi
 
+echo "$SCRIPTNAME: warning: using cache files = ${using_cache_files}" 1>&2
 
 cflags_cache=${THEPACK_ROOT}/.cflags.cache
 ldflags_cache=${THEPACK_ROOT}/.ldflags.cache
@@ -75,7 +76,7 @@ if [ "x${DATATOOLS_LDFLAGS_MODE}" != "x" ]; then
     ldflags_mode="${DATATOOLS_LDFLAGS_MODE}"
 fi
 
-# 2009-11-13 FM: add support for ser_bitset (vault)
+# 2009-11-13 FM: add support for set_bitset (vault)
 with_boost_bitset=1
 ###if [ ! -L ${THEPACK_ROOT}/boost/vault/ser_bitset ]; then
 if [ ! -d ${THEPACK_ROOT}/boost/vault/local ]; then
@@ -182,6 +183,7 @@ if [ "x$opt" = "x--cflags" ]; then
             generate_cflags=1
         fi
     else
+	rm -f ${cflags_cache}
         generate_cflags=1
     fi
 
@@ -207,6 +209,7 @@ if [ "x$opt" = "x--cflags" ]; then
 		echo -n "`clhep-config --include` " 
 	    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py 
 	) | tee ${cflags_cache}
+	test ${using_cache_files} -eq 0 && rm -f ${cflags_cache}
     fi
     exit 0
 fi
@@ -240,6 +243,7 @@ if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
             generate_ldflags=1
         fi
     else
+	rm -f ${ldflags_cache}
         generate_ldflags=1
     fi
     
@@ -257,6 +261,7 @@ if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
 		echo -n "`clhep-config --libs` -lm "
             ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r 
 	) | tee ${ldflags_cache}
+	test ${using_cache_files} -eq 0 && rm -f ${ldflags_cache}
     fi
     exit 0
 fi 
