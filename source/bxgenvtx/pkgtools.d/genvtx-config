@@ -3,13 +3,6 @@
 # genvtx-config
 #
 # Note:
-# This is a default config script provided by
-# the mkskelpack program (from the PkgTools package).
-# It suits the use of some default GNU/makefile
-# generated in the package 'gmk' directory.
-#
-# Feel free to modify this file if you use another system
-# to build/install this package (i.e. Autotools).
 #
 
 opwd=$(pwd)
@@ -37,12 +30,12 @@ THEPACK_LIBDIR="${THEPACK_ROOT}/${THE_SYSTEM}/lib"
 
 THEPACK_BINDIR="${THEPACK_ROOT}/${THE_SYSTEM}/bin" 
 
-THEPACK_VERSION=0.1.0
+THEPACK_VERSION="?"
 if [ -f "${THEPACK_ROOT}/VERSION" ]; then
     THEPACK_VERSION="$(cat ${THEPACK_ROOT}/VERSION)"    
 elif [ -f "${THEPACK_ROOT}/pkgtools.d/package.info"  ]; then
     version=$(cat ${THEPACK_ROOT}/pkgtools.d/package.info | grep "version=" | cut -d'=' -f2 )    
-    THEPACK_VERSION=$version
+    THEPACK_VERSION=${version}
 fi
 
 opt=$1
