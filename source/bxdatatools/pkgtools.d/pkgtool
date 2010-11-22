@@ -962,9 +962,12 @@ function do_build ()
 	    source ${without_python_flag_file}
 	fi
 	do_build_gmk $@
-	__pkgtools__at_function_exit
-	return $?
+	if [ $? -ne 0 ]; then
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
     fi
+
     __pkgtools__at_function_exit
     return 1
 }
@@ -1166,6 +1169,7 @@ function do_reset ()
 
     do_undoc
     do_untest
+    do_uninstall
     do_clean
     do_deconfigure
 
@@ -1302,7 +1306,7 @@ function main ()
     fi
 
     if [ "${action_mode}" = "list_of_actions" ]; then
-	echo "info check configure build install uninstall clean deconfigure doc undoc test untest reset list_of_actions" 
+	echo "list_of_actions info check configure deconfigure build clean install uninstall doc undoc test untest reset" 
 	return 0
     fi
 
