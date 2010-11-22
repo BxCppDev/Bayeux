@@ -3,7 +3,7 @@
 /* datatools.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-02-25
- * Last modified: 2010-09-25
+ * Last modified: 2010-11-22
  * 
  * License: 
  * 
@@ -52,13 +52,9 @@
  * 
  *     shell> ./pkgtools.d/pkgtool build
  *
- *  3- Build binaries:
+ *  3- Build test binaries:
  *
- *     shell> ./pkgtools.d/pkgtool build bin
- *
- *  4- Build test binaries:
- *
- *     shell> ./pkgtools.d/pkgtool build bin_test
+ *     shell> ./pkgtools.d/pkgtool test
  *
  *  5- Build documentation:
  *
