@@ -175,6 +175,7 @@ help :
 	@echo "make lib       : build the shared library"
 	@echo "make bin       : build the shared production executables"
 	@echo "make bin_test  : build the shared test executables (not mandatory)"
+	@echo "make clean_bin_test  : remove test executables"
 	@echo "make install   : generates install stuff"
 	@echo "                 - setup ($(LIBNAME).sh/$(LIBNAME).csh)"
 	@echo "                 - $(LIBNAME)-config scripts"
@@ -182,14 +183,14 @@ help :
 	@echo "make clean     : clean all object/binaries"
 	@echo ""
 	@echo "make system    : print system"
-	@echo "make test      : print some infos"
+	@echo "make dump      : print some infos"
 	@echo ""
 	@echo "make dist      : make a source tarball ($(LIBNAME)-$(LIBVER).tar.gz)"
 	@echo "make bzdist    : make a source tarball ($(LIBNAME)-$(LIBVER).tar.bz2)"
 	@echo ""
 
-.PHONY : test
-test:
+.PHONY : dump
+dump:
 	@echo "PACKAGE_DIR='$(PACKAGE_DIR)'"
 	@echo "PACKAGENAME='$(PACKAGENAME)'"
 	@echo "COMPILER='$(COMPILER)'"
@@ -263,8 +264,12 @@ lib_shared : $(SHLIBFILE)
 .PHONY : clean
 clean : clean_special
 	@echo "Cleaning..."
-	find $(BASEDIR)/ -name "*~" -exec $(RM) \{\} \; 
+	find $(BASEDIR)/ -name "*~" -exec $(RM) \{\} \; || echo -n "" 
 	test -d $(ARCHDIR)/ && $(RM) -r $(ARCHDIR) || echo -n ""
+
+.PHONY : clean_bin_test
+clean_bin_test : 
+	find $(ARCHDIR)/bin -name "test_*" -a -executable -exec $(RM) \{\} \; || echo -n ""
 
 .PHONY : distclean
 distclean : uninstall clean
