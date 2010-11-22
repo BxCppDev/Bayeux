@@ -3,14 +3,6 @@
 # cuts-config
 #
 # Note:
-# This is a default config script provided by
-# the mkskelpack program (from the PkgTools package).
-# It suits the use of some default GNU/makefile
-# generated in the package 'gmk' directory.
-#
-# Feel free to modify this file if you use another system
-# to build/install this package (i.e. Autotools).
-#
 #
 # The following environment variables may be set to change 
 # the behaviour of the cuts-config script:
@@ -48,18 +40,23 @@ THEPACK_LIBDIR="${THEPACK_ROOT}/${THE_SYSTEM}/lib"
 
 THEPACK_BINDIR="${THEPACK_ROOT}/${THE_SYSTEM}/bin" 
 
-THEPACK_VERSION=0.1.0
+THEPACK_VERSION="?"
 if [ -f "${THEPACK_ROOT}/VERSION" ]; then
     THEPACK_VERSION="$(cat ${THEPACK_ROOT}/VERSION)"    
 elif [ -f "${THEPACK_ROOT}/pkgtools.d/package.info"  ]; then
     version=$(cat ${THEPACK_ROOT}/pkgtools.d/package.info | grep "version=" | cut -d'=' -f2 )    
-    THEPACK_VERSION=$version
+    THEPACK_VERSION=${version}
 fi
 
-using_cache_files=1
-if [ "X${CUTS_USING_CACHE_FILES}" = "X0" ]; then
-    using_cache_files=${CUTS_USING_CACHE_FILES}
+using_cache_files=0 # default: do not use cache files 
+if [ "x${CUTS_USING_CACHE_FILES}" != "x" ]; then
+    if [ "x${CUTS_USING_CACHE_FILES}" = "x0" ]; then
+	using_cache_files=0
+    else
+	using_cache_files=1
+    fi
 fi
+
 cflags_cache=${THEPACK_ROOT}/.cflags.cache
 ldflags_cache=${THEPACK_ROOT}/.ldflags.cache
 
@@ -159,10 +156,11 @@ if [ "x$opt" = "x--cflags" ]; then
 	    echo -n \
 		"-fPIC " \
 		"-I${THEPACK_INCLUDEDIR} "  \
-         "`datatools-config --cflags` "  \
+		"`datatools-config --cflags` "  \
 	    | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py	    
 	    #echo
 	) | tee ${cflags_cache}
+	test ${using_cache_files} -eq 0 && rm -f ${cflags_cache}
     fi
     exit 0
 fi
@@ -203,11 +201,11 @@ if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
 		else
 		    echo -n "-L${THEPACK_LIBDIR} -lcuts "
 		fi
-		echo -n ""  \
-         "`datatools-config --ldflags` "  \
-	    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
+		echo -n "`datatools-config --ldflags` "  \
+		    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
 	    #echo
 	) | tee ${ldflags_cache}
+	test ${using_cache_files} -eq 0 && rm -f ${ldflags_cache}
     fi
     exit 0
 fi 
