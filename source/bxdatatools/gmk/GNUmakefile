@@ -302,13 +302,13 @@ lib_shared : $(SHLIBFILE)
 .PHONY : clean
 clean : clean_special
 	@echo "NOTICE: Cleaning..." >&2
-	find $(BASEDIR)/ -name "*~" -exec $(RM) \{\} \; 
+	find $(BASEDIR)/ -name "*~" -exec $(RM) \{\} \;  || echo -n ""
 	test -d $(ARCHDIR)/ && $(RM) -r $(ARCHDIR) || echo -n ""
 	@echo "NOTICE: Cleaning done." >&2
 
 .PHONY : clean_bin_test
 clean_bin_test : 
-	find $(ARCHDIR)/bin -name "test_*" -a -executable -exec $(RM) \{\} \; 
+	find $(ARCHDIR)/bin -name "test_*" -a -executable -exec $(RM) \{\} \;  || echo -n ""
 
 .PHONY : distclean
 distclean : uninstall clean
