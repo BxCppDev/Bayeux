@@ -11,6 +11,6 @@ creation=2010-09-18
 author=Francois Mauger <mauger@lpccaen.in2p3.fr>
 copyright=GPL
 URL=https://nemo.lpc-caen.in2p3.fr/wiki/cuts
-SVN base repository=https://nemo.lpc-caen.in2p3.fr/browser/cuts
+SVN base repository=https://nemo.lpc-caen.in2p3.fr/svn/cuts
 #@HOOK 
 # end of package.info
