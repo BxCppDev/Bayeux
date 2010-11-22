@@ -361,6 +361,10 @@ clean : clean_special
 	@echo "Cleaning done."
 	@echo
 
+.PHONY : clean_bin_test
+clean_bin_test : 
+	find $(ARCHDIR)/bin -name "test_*" -a -executable -exec $(RM) \{\} \; 
+
 .PHONY : distclean
 distclean : uninstall clean
 	@echo "Total cleaning..."

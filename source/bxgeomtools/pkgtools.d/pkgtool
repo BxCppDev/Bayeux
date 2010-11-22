@@ -36,7 +36,7 @@ pkgtools__msg_not_using_date
 pkgtools__msg_using_color
 pkgtools__ui_not_using_gui
 
-pack_name="geomtools"
+pack_name=geomtools
 pack_name_upper=$(pkgtools__to_upper ${pack_name})
 pack_name_lower=$(pkgtools__to_lower ${pack_name})
 pack_gccver=$(pkgtools__get_gccver)
@@ -96,6 +96,8 @@ function print_usage ()
 
   Actions:
 
+    list_of_actions : print the list of possible actions
+
     info       : print package general informations
 
     configure [OPTIONS] : configure package 
@@ -114,9 +116,23 @@ EOF
               --skip-dependency-check PACKNAME
 EOF
     cat <<EOF
+
+    deconfigure : deconfigure package 
   
-    build [OPTIONS] : build package
+    build [OPTIONS] [TARGET] : build package
         OPTIONS : 
+        TARGET:
+           lib (default) : build the shared library
+           bin : build all executable programs (if any)
+           bin_test : build all executable test programs (if any)
+        or the name of a specific program, example:
+           test_dummy_${pack_name_lower} : build only the 'test_dummy_${pack_name_lower}'  program
+
+    clean      : clean package
+
+    test       : build test material  
+
+    untest     : remove test material  
 
     install    : install package
         OPTIONS : 
@@ -125,20 +141,24 @@ EOF
 
     uninstall  : uninstall package
 
-    clean      : clean package
+    doc      : generate documentation
+
+    undoc    : remove documentation
+
+    reset    : uninstall, undoc, untest, clean, deconfigure package
 
    Examples:
 
     shell> pkgtool --help
-    shell> pkgtool configure
+    shell> pkgtool info
     shell> pkgtool check
+    shell> pkgtool configure
     shell> pkgtool build
     shell> pkgtool build bin
-    shell> pkgtool build bin_test
+    shell> pkgtool test
     shell> pkgtool install
 
-    shell> pkgtool uninstall
-    shell> pkgtool clean
+    shell> pkgtool reset
 
 EOF
 }
@@ -181,6 +201,8 @@ while [ -n "$1" ]; do
 	if [ "x${action_mode}" = "x" ]; then
 	    if [ "$arg" = "configure" ]; then
 		action_mode="configure"	
+	    elif [ "$arg" = "deconfigure" ]; then
+		action_mode="deconfigure"	
 	    elif [ "$arg" = "build" ]; then
 		action_mode="build"	
 	    elif [ "$arg" = "clean" ]; then
@@ -195,6 +217,16 @@ while [ -n "$1" ]; do
 		action_mode="check"	
 	    elif [ "$arg" = "doc" ]; then
 		action_mode="doc"	
+	    elif [ "$arg" = "undoc" ]; then
+		action_mode="undoc"	
+	    elif [ "$arg" = "test" ]; then
+		action_mode="test"	
+	    elif [ "$arg" = "untest" ]; then
+		action_mode="untest"	
+	    elif [ "${arg}" = "reset" ]; then
+		action_mode="reset"	
+	    elif [ "${arg}" = "list_of_actions" ]; then
+		action_mode="list_of_actions"	
 	    else
 		pkgtools__msg_error "Invalid argument !"
 		my_exit 1
@@ -216,7 +248,65 @@ if [ $? -ne 0 ]; then
     pkgtools__ui_not_using_gui
 fi
 
-######################################################
+##########################################################
+
+function do_info ()
+{
+    __pkgtools__at_function_enter do_info
+
+    pkg_version="undefined"
+    pkg_lang="undefined"
+    pkg_creation="undefined"
+    pkg_authors="undefined"
+    pkg_deps="undefined"
+    pkg_url="undefined"
+    pkg_svn_rep="undefined"
+    pkg_desc="undefined"
+    if [ -f ./VERSION ]; then
+	pkg_version=$(cat ./VERSION)
+    fi
+    pkg_build="undefined"
+    if [ -d ${the_gmk_dir} -a -f ${the_gmk_dir}/GNUmakefile ]; then
+	pkg_build="GNU-make"
+    fi
+    if [ -f ./configure.ac -o -f ./configure.in ]; then
+	pkg_build="Autotools"
+    fi
+    echo "This is package '${pack_name}' (version ${pkg_version})" 
+    
+    pkgi_file="./pkgtools.d/package.info"
+    if [ -f ${pkgi_file} ]; then
+	pkg_lang=$(cat ${pkgi_file} | grep "language=" | cut -d= -f2)
+	pkg_creation=$(cat ${pkgi_file} | grep "creation=" | cut -d= -f2)
+	pkg_authors=$(cat ${pkgi_file} | grep "author=" | cut -d= -f2)
+	pkg_deps=$(cat ${pkgi_file} | grep "dependencies=" | cut -d= -f2-)
+	pkg_namespace=$(cat ${pkgi_file} | grep "namespace=" | cut -d= -f2)
+	pkg_url=$(cat ${pkgi_file} | grep "URL=" | cut -d= -f2)
+	pkg_svn_rep=$(cat ${pkgi_file} | grep "SVN base repository=" | cut -d= -f2)
+	pkg_desc=$(cat ${pkgi_file} | grep "description=" | cut -d= -f2)
+	test -z "${pkg_url}" && pkg_url="no URL"
+	test -z "${pkg_desc}" && pkg_desc="no description"
+	test -z "${pkg_svn_rep}" && pkg_svn_rep="no SVN repository"
+	echo -e "\tName                : ${pack_name}"
+	echo -e "\tVersion             : ${pkg_version}"
+	echo -e "\tDescription         : ${pkg_desc}"
+	echo -e "\tAuthors             : ${pkg_authors}"
+	echo -e "\tCreation date       : ${pkg_creation}"
+	echo -e "\tLanguage is         : ${pkg_lang}"
+	echo -e "\tDependencies are    : ${pkg_deps}"
+	if [ "${pkg_lang}" = "C++" ]; then
+	    echo -e "\tNamespace           : ${pkg_namespace}"
+	fi
+	echo -e "\tBuild method        : ${pkg_build}"
+	echo -e "\tURL                 : ${pkg_url}"
+	echo -e "\tSVN base repository : ${pkg_svn_rep}"
+    fi
+ 
+    __pkgtools__at_function_exit
+    return 0
+}
+
+#######################################################
 
 function check_gmk ()
 {
@@ -332,10 +422,6 @@ function do_clean ()
 	return $?
     fi 
 
-    if [ -d ${the_base_dir}/doc/doxygen ]; then
-        rm -fr ${the_base_dir}/doc/doxygen
-    fi
-
     __pkgtools__at_function_exit
     return 1
 }
@@ -378,7 +464,23 @@ function check_dependencies ()
     fi
 
     __pkgtools__at_function_exit
-    return 0;
+    return 0
+}
+
+###################################################################
+
+function do_deconfigure ()
+{
+    __pkgtools__at_function_enter do_deconfigure
+
+    opwd=$(pwd)
+    
+    test -f ${without_python_flag_file}  && rm -f ${without_python_flag_file} 
+
+    cd ${opwd}
+
+    __pkgtools__at_function_exit
+    return 0
 }
 
 function do_configure ()
@@ -513,6 +615,8 @@ function do_startup ()
     pkgtools__msg_warning "SH startup = ${the_base_dir}/${sh_ss}"
     cat ${the_pkgtools_dir}/package.sh.skel | sed -e "s@__PACKAGE_ROOT__@${GEOMTOOLS_ROOT}@g" -e "s@__PACKAGE_NAME__@${pack_name_upper}@g" -e "s@__Package_name__@${pack_name}@g" > ${the_base_dir}/${sh_ss} 
 
+  
+    
     pkgtools__msg_warning "CSH startup = ${the_base_dir}/${csh_ss}"
     cat ${the_pkgtools_dir}/package.csh.skel | sed -e "s@__PACKAGE_ROOT__@${GEOMTOOLS_ROOT}@g" -e "s@__PACKAGE_NAME__@${pack_name_upper}@g" -e "s@__Package_name__@${pack_name}@g" > ${the_base_dir}/${csh_ss}
 
@@ -618,6 +722,8 @@ EOF
     return 0
 }
 
+##########################################################
+
 function do_install ()
 {
     __pkgtools__at_function_enter do_install
@@ -669,7 +775,7 @@ function do_install ()
     ###
 
     cd ${opwd}
-    do_pkg_config_pc
+    #do_pkg_config_pc
     pkgtools__msg_debug "do_startup..."
     do_startup
     pkgtools__msg_debug "ok"
@@ -715,62 +821,6 @@ function do_uninstall ()
 	rm -f  ${the_base_dir}/.ldflags.cache
     fi
 
-    __pkgtools__at_function_exit
-    return 0
-}
-
-function do_info ()
-{
-    __pkgtools__at_function_enter do_info
-
-    pkg_version="undefined"
-    pkg_lang="undefined"
-    pkg_creation="undefined"
-    pkg_authors="undefined"
-    pkg_deps="undefined"
-    pkg_url="undefined"
-    pkg_svn_rep="undefined"
-    pkg_desc="undefined"
-    if [ -f ./VERSION ]; then
-	pkg_version=$(cat ./VERSION)
-    fi
-    pkg_build="undefined"
-    if [ -d ${the_gmk_dir} -a -f ${the_gmk_dir}/GNUmakefile ]; then
-	pkg_build="GNU-make"
-    fi
-    if [ -f ./configure.ac -o -f ./configure.in ]; then
-	pkg_build="Autotools"
-    fi
-    echo "This is package '${pack_name}' (version ${pkg_version})" 
-    
-    pkgi_file="./pkgtools.d/package.info"
-    if [ -f ${pkgi_file} ]; then
-	pkg_lang=$(cat ${pkgi_file} | grep "language=" | cut -d= -f2)
-	pkg_creation=$(cat ${pkgi_file} | grep "creation=" | cut -d= -f2)
-	pkg_authors=$(cat ${pkgi_file} | grep "author=" | cut -d= -f2)
-	pkg_deps=$(cat ${pkgi_file} | grep "dependencies=" | cut -d= -f2-)
-	pkg_namespace=$(cat ${pkgi_file} | grep "namespace=" | cut -d= -f2)
-	pkg_url=$(cat ${pkgi_file} | grep "URL=" | cut -d= -f2)
-	pkg_svn_rep=$(cat ${pkgi_file} | grep "SVN base repository=" | cut -d= -f2)
-	pkg_desc=$(cat ${pkgi_file} | grep "description=" | cut -d= -f2)
-	test -z "${pkg_url}" && pkg_url="no URL"
-	test -z "${pkg_desc}" && pkg_desc="no description"
-	test -z "${pkg_svn_rep}" && pkg_svn_rep="no SVN repository"
-	echo -e "\tName                : ${pack_name}"
-	echo -e "\tVersion             : ${pkg_version}"
-	echo -e "\tDescription         : ${pkg_desc}"
-	echo -e "\tAuthors             : ${pkg_authors}"
-	echo -e "\tCreation date       : ${pkg_creation}"
-	echo -e "\tLanguage is         : ${pkg_lang}"
-	echo -e "\tDependencies are    : ${pkg_deps}"
-	if [ "${pkg_lang}" = "C++" ]; then
-	    echo -e "\tNamespace           : ${pkg_namespace}"
-	fi
-	echo -e "\tBuild method        : ${pkg_build}"
-	echo -e "\tURL                 : ${pkg_url}"
-	echo -e "\tSVN base repository : ${pkg_svn_rep}"
-    fi
- 
     __pkgtools__at_function_exit
     return 0
 }
@@ -872,6 +922,42 @@ function do_check ()
     return 0
 }
 
+##########################################################
+
+function do_test ()
+{
+    __pkgtools__at_function_enter do_test
+
+    if [ -d ${the_gmk_dir} ]; then
+	if [ -d ${the_python_dir} ]; then
+	    if [ -f ${without_python_flag_file} ]; then
+		source ${without_python_flag_file}
+	    fi
+	fi
+	do_build_gmk bin_test
+	local code=$?
+	__pkgtools__at_function_exit
+	return ${code}
+    fi
+
+    __pkgtools__at_function_exit
+    return 0
+}
+
+function do_untest ()
+{
+    __pkgtools__at_function_enter do_untest
+
+    if [ -d ${the_gmk_dir} ]; then
+	do_build_gmk clean_bin_test
+    fi
+
+    __pkgtools__at_function_exit
+    return 0
+}
+
+##########################################################
+
 function do_doc ()
 { 
     __pkgtools__at_function_enter do_doc
@@ -893,7 +979,39 @@ function do_doc ()
     doxygen ${the_base_dir}/pkgtools.d/${pack_name}.doxygen 
 
     pkgtools__msg_notice "Doxygen documentation is at: ${the_base_dir}/doc/doxygen/html/index.html"
-   pkgtools__msg_notice "Please run: 'firefox file://$(pwd)/doc/doxygen/html/index.html &' or something similar..."
+    pkgtools__msg_notice "Please run: 'firefox file://$(pwd)/doc/doxygen/html/index.html &' or something similar..."
+
+    __pkgtools__at_function_exit
+    return 0
+}
+
+function do_undoc ()
+{
+    __pkgtools__at_function_enter do_undoc
+    opwd=$(pwd)
+
+    if [ -d ${the_base_dir}/doc/doxygen ]; then
+	rm -fr ${the_base_dir}/doc/doxygen
+    fi
+
+    cd ${opwd}
+    __pkgtools__at_function_exit
+    return 0
+}
+
+##########################################################
+
+function do_reset ()
+{
+    __pkgtools__at_function_enter do_reset
+
+    test -f .cflags.cache && rm -f .cflags.cache
+    test -f .ldflags.cache && rm -f .ldflags.cache
+
+    do_undoc
+    do_untest
+    do_clean
+    do_deconfigure
 
     __pkgtools__at_function_exit
     return 0
@@ -907,7 +1025,7 @@ function main ()
     
     # Some checks...
     if [ -z "${action_mode}" ]; then
-	pkgtools__msg_error "Missing running mode !"
+	pkgtools__msg_error "Missing action !"
 	print_usage
 	__pkgtools__at_function_exit
 	return 1
@@ -929,10 +1047,38 @@ function main ()
     fi
     
     # Perform action...
+    
+    if [ "${action_mode}" = "info" ]; then
+	do_info $@
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Print info failed !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
+    
+    if [ "${action_mode}" = "check" ]; then
+	do_check $@
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Package check failed !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
+
     if [ "${action_mode}" = "configure" ]; then
 	do_configure $@
 	if [ $? -ne 0 ]; then
 	    pkgtools__msg_error "Package configuration failed !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
+    
+    if [ "${action_mode}" = "deconfigure" ]; then
+	do_deconfigure $@
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Package de-configuration failed !"
 	    __pkgtools__at_function_exit
 	    return 1
 	fi
@@ -982,30 +1128,52 @@ function main ()
 	    return 1
 	fi
     fi
-    
-    if [ "${action_mode}" = "info" ]; then
-	do_info $@
+
+    if [ "${action_mode}" = "undoc" ]; then
+	do_undoc
 	if [ $? -ne 0 ]; then
-	    pkgtools__msg_error "Print info failed !"
+	    pkgtools__msg_error "Documentation removal failed!"
 	    __pkgtools__at_function_exit
 	    return 1
 	fi
     fi
-    
-    if [ "${action_mode}" = "check" ]; then
-	do_check $@
+
+    if [ "${action_mode}" = "test" ]; then
+	do_test
 	if [ $? -ne 0 ]; then
-	    pkgtools__msg_error "Package check failed !"
+	    pkgtools__msg_error "Test material failed!"
+	    return 1
+	fi
+    fi
+
+    if [ "${action_mode}" = "untest" ]; then
+	do_untest
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Test material removal failed!"
+	    return 1
+	fi
+    fi
+
+    if [ "${action_mode}" = "reset" ]; then
+	do_reset
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "reset failed!"
 	    __pkgtools__at_function_exit
 	    return 1
 	fi
+    fi
+
+    if [ "${action_mode}" = "list_of_actions" ]; then
+	echo "list_of_actions info check configure deconfigure build clean install uninstall doc undoc test untest reset" 
+	__pkgtools__at_function_exit
+	return 0
     fi
 
     __pkgtools__at_function_exit
     return 0
 }
 
-#######################################
+##########################################################
 
 main $@
 if [ $? -ne 0 ]; then

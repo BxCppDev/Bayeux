@@ -72,9 +72,9 @@
  *
  *     shell> ./pkgtools.d/pkgtool build bin
  *
- *  4- Build test binaries:
+ *  4- Build test material:
  *
- *     shell> ./pkgtools.d/pkgtool build bin_test
+ *     shell> ./pkgtools.d/pkgtool test
  *
  *  5- Build documentation:
  *
