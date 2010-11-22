@@ -599,6 +599,11 @@ function do_build ()
 	    fi
 	fi
 	if [ "x$@" = "x" ]; then
+	    do_build_gmk lib
+	    if [ $? -ne 0 ]; then
+		__pkgtools__at_function_exit
+		return 1
+	    fi
 	    do_build_gmk bin
 	    if [ $? -ne 0 ]; then
 		__pkgtools__at_function_exit
