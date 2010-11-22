@@ -121,11 +121,11 @@ DEPCPPFLAGS+=$(shell geomtools-config --cflags)
 DEPLDFLAGS+=$(shell geomtools-config --ldflags)
 
 # mygsl dependency:
-ifeq ($(shell which mygsl-config),)
-$(error Sorry mygsl-config not found!)
-endif
-DEPCPPFLAGS+=$(shell mygsl-config --cflags)
-DEPLDFLAGS+=$(shell mygsl-config --ldflags)
+# ifeq ($(shell which mygsl-config),)
+# $(error Sorry mygsl-config not found!)
+# endif
+# DEPCPPFLAGS+=$(shell mygsl-config --cflags)
+# DEPLDFLAGS+=$(shell mygsl-config --ldflags)
 
 #Here you should add stuff for 'CERNLIB':
 #DEPCPPFLAGS+=

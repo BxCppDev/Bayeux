@@ -1,15 +1,15 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # -*- mode: shell-script; -*-
 # genbb_help-config
 #
 # Note:
-# This is a default config script provided by
-# the mkskelpack program (from the PkgTools package).
-# It suits the use of some default GNU/makefile
-# generated in the package 'gmk' directory.
 #
-# Feel free to modify this file if you use another system
-# to build/install this package (i.e. Autotools).
+# The following environment variables may be set to change 
+# the behaviour of the genbb_help-config script:
+#
+# export GENBB_HELP_USING_CACHE_FILES=0
+# export GENBB_HELP_USING_CACHE_FILES=1
+#  will not/will use the cflags/ldflags cache accelerator files
 #
 
 opwd=$(pwd)
@@ -34,14 +34,24 @@ THEPACK_LIBDIR="${THEPACK_ROOT}/${THE_SYSTEM}/lib"
 
 THEPACK_BINDIR="${THEPACK_ROOT}/${THE_SYSTEM}/bin" 
 
-THEPACK_VERSION=0.1.0
+THEPACK_VERSION="?"
 if [ -f "${THEPACK_ROOT}/VERSION" ]; then
     THEPACK_VERSION="$(cat ${THEPACK_ROOT}/VERSION)"    
 elif [ -f "${THEPACK_ROOT}/pkgtools.d/package.info"  ]; then
     version=$(cat ${THEPACK_ROOT}/pkgtools.d/package.info | grep "version=" | cut -d'=' -f2 )    
-    THEPACK_VERSION=$version
+    THEPACK_VERSION=${version}
 fi
 
+using_cache_files=0 # default: do not use cache files 
+if [ "x${GENBB_HELP_USING_CACHE_FILES}" != "x" ]; then
+    if [ "x${GENBB_HELP_USING_CACHE_FILES}" = "x0" ]; then
+	using_cache_files=0
+    else
+	using_cache_files=1
+    fi
+fi
+cflags_cache=${THEPACK_ROOT}/.cflags.cache
+ldflags_cache=${THEPACK_ROOT}/.ldflags.cache
 
 cernlib_config=cernlib
 if [ "x${CERNLIB_CONFIG}" != "x" ]; then
@@ -90,6 +100,7 @@ Known values for OPTION are:
   --help                print this help then exit
   --version             print version information
   --system              print system
+  --clean-cache-files   clean compile/link cache files
   --check               check dependencies and setup
 
 EOF
@@ -110,6 +121,18 @@ if [ "x$opt" = "x--version" ]; then
     echo "${THEPACK_VERSION}"
     exit 0
 fi 
+
+if [ "x$opt" = "x--clean-cache-files" ]; then
+    if [ -f ${cflags_cache} ]; then
+	echo "${SCRIPTNAME}: NOTICE: Removing '${cflags_cache}' cache file !" >&2
+	rm -f ${cflags_cache}
+    fi
+    if [ -f ${ldflags_cache} ]; then
+	echo "${SCRIPTNAME}: NOTICE: Removing '${ldflags_cache}' cache file !" >&2
+	rm -f ${ldflags_cache}
+    fi
+    exit 0
+fi
 
 if [ "x$opt" = "x--incdir" ]; then
     echo "${THEPACK_INCLUDEDIR}" 
@@ -155,17 +178,38 @@ if [ "x$opt" = "x--cflags" ]; then
 	cernlib_cflags=
     fi
     ###
-    echo -n \
-        "-fPIC " \
-        "${f77_defines} " \
-	"-I${THEPACK_INCLUDEDIR} "  \
-	"`geomtools-config --cflags` "  \
-	"`mygsl-config --cflags` "  \
-	"`clhep-config --include` " \
-	"${cernlib_cflags} " \
-	| python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py
+
+    generate_cflags=0
+    if [ ${using_cache_files} -eq 1 ]; then
+	if [ -f ${cflags_cache} ]; then
+	    cat ${cflags_cache}
+	    exit 0
+	else
+	    generate_cflags=1
+	fi
+    else
+	generate_cflags=1
+    fi
+
+    if [ ${generate_cflags} -eq 1 ]; then
+	(
+	    (
+		echo -n \
+		    "-fPIC " \
+		    "${f77_defines} " \
+		    "-I${THEPACK_INCLUDEDIR} "  \
+		    "`geomtools-config --cflags` "  \
+		    "${cernlib_cflags} " 
+	    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py	    
+	) | tee ${cflags_cache}
+	test ${using_cache_files} -eq 0 && rm -f ${cflags_cache}
+    fi
     exit 0
 fi
+
+#	"`mygsl-config --cflags` "  \
+#	"`clhep-config --include` " \
+#
 
 if [ "x$opt" = "x--libdir" ]; then
     echo "${THEPACK_LIBDIR}"
@@ -192,16 +236,43 @@ if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
 	f77_opt=
     fi
     ###
-    echo -n "-L${THEPACK_LIBDIR} -lgenbb_help "  \
-	"`geomtools-config --ldflags` "  \
-	"`mygsl-config --ldflags` "  \
-	"`clhep-config --libs` "  \
-	"${cernlib_ldflags} "  \
-	"${f77_opt} "  \
-	"-lm "  \
-	| python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
+
+    generate_ldflags=0
+    if [ ${using_cache_files} -eq 1 ]; then
+	if [ -f ${ldflags_cache} ]; then
+	    cat ${ldflags_cache}
+	    exit 0
+	else
+	    generate_ldflags=1
+	fi
+    else
+	generate_ldflags=1
+    fi
+
+    if [ ${generate_ldflags} -eq 1 ]; then	
+	(
+	    (
+		echo -n "-L${THEPACK_LIBDIR} -lgenbb_help "  \
+		    "`geomtools-config --ldflags` "  \
+		    "${cernlib_ldflags} "  \
+		    "${f77_opt} "  \
+		    "-lm "  
+	    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
+	) | tee ${ldflags_cache}
+	test ${using_cache_files} -eq 0 && rm -f ${ldflags_cache}
+    fi
+    # echo -n "-L${THEPACK_LIBDIR} -lgenbb_help "  \
+    # 	"`geomtools-config --ldflags` "  \
+    # 	"${cernlib_ldflags} "  \
+    # 	"${f77_opt} "  \
+    # 	"-lm "  \
+    # 	| python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
     exit 0
 fi 
+
+#	"`mygsl-config --ldflags` "  \
+#	"`clhep-config --libs` "  \
+#
 
 if [ "x$opt" = "x--check" ]; then
     cd ${THEPACK_ROOT}
