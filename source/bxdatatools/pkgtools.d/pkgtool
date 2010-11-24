@@ -190,7 +190,7 @@ if [ ${do_usage} = 1 ]; then
 fi
 
 if [ -z "${action_mode}" ]; then
-    pkgtools__msg_error "Missing running mode!"
+    pkgtools__msg_error "Missing action mode!"
     print_usage
     my_exit 2
 fi
@@ -969,7 +969,7 @@ function do_build ()
     fi
 
     __pkgtools__at_function_exit
-    return 1
+    return 0
 }
 
 function do_startup ()
@@ -1293,7 +1293,7 @@ function main ()
 	do_untest
 	if [ $? -ne 0 ]; then
 	    pkgtools__msg_error "Test material removal failed !"
-	    my_exit 1
+	    return 1
 	fi
     fi
 
