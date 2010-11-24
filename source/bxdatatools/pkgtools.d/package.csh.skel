@@ -19,7 +19,7 @@ setenv __PACKAGE_NAME___BIN_DIR "${__PACKAGE_NAME___ROOT}/${system}/bin"
 setenv __PACKAGE_NAME___LIB_DIR "${__PACKAGE_NAME___ROOT}/${system}/lib"
 
 setenv PATH "${__PACKAGE_NAME___BIN_DIR}":${PATH}
-if ( $?PYTHONPATH ]; then
+if ( $?PYTHONPATH ) then
     setenv PYTHONPATH "${__PACKAGE_NAME___ROOT}/python:${PYTHONPATH}"
 else
     setenv PYTHONPATH "${__PACKAGE_NAME___ROOT}/python"
