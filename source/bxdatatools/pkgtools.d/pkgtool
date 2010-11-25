@@ -10,9 +10,6 @@
 # It suits  the use  of some default GNU/makefile generated in  
 # the package 'gmk' directory.  
 #
-# Feel free to modify  this file if you use  
-# another system to build/install this package (i.e. Autotools, CMT).
-#
 
 APPNAME="pkgtool"
 appname=${APPNAME} 
