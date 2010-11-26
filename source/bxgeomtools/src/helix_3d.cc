@@ -419,8 +419,15 @@ namespace geomtools {
 
   vector_3d helix_3d::get_direction_on_curve (const vector_3d & position_) const
   {
+    double    step_angle = 0.001;
     vector_3d dir;
-    throw runtime_error ("helix_3d::get_direction_on_curve: Not implemented yet !");
+    double    t_angle    = get_t ( position_ );
+    vector_3d pos_plus   = get_point ( t_angle + step_angle );
+    vector_3d pos_minus  = get_point ( t_angle - step_angle );
+
+    dir = pos_plus - pos_minus;
+    dir /= dir.mag();
+    
     return dir;
   }
 

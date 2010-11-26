@@ -106,6 +106,29 @@ main (int argc_, char ** argv_)
 	  std::cout << std::endl;
 	  std::cout << std::endl;
 	  
+	  for ( double t = my_helix_1.get_t1();
+		t <= my_helix_1.get_t2(); 
+		t += ( ( my_helix_1.get_t2() - my_helix_1.get_t1() ) / 2. ) )
+	    {
+	      geomtools::vector_3d position ( my_helix_1.get_point ( t ).x(),
+					      my_helix_1.get_point ( t ).y(),
+					      my_helix_1.get_point ( t ).z() );
+	      geomtools::vector_3d dir_vec = my_helix_1.get_direction_on_curve (position);
+
+	      std::cout << position.x() << " "
+			<< position.y() << " "
+			<< position.z() << std::endl;
+	      
+	      geomtools::vector_3d end_point = position + dir_vec;
+	      
+	      std::cout << end_point.x() << " "
+			<< end_point.y() << " "
+			<< end_point.z() << std::endl;
+
+	      std::cout << std::endl;
+	      std::cout << std::endl;	  
+	    }
+
 	  my_helix_2.print_xyz  ( std::cout, my_helix_2, 0.1, 0 );
 	}
 

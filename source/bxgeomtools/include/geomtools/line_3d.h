@@ -47,6 +47,16 @@ namespace geomtools {
 
   public: 
 
+    bool is_normal()
+    {
+      return isfinite (__first.x()) &&
+	isfinite (__first.y()) &&
+	isfinite (__first.z()) &&
+	isfinite (__last.x()) &&
+	isfinite (__last.y()) &&
+	isfinite (__last.z());
+    }
+
     virtual string get_shape_name () const;
 
     bool is_valid () const;

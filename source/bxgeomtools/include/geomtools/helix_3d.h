@@ -52,6 +52,17 @@ namespace geomtools {
 
   public: 
 
+    bool is_normal()
+    {
+      return isfinite(__radius) &&
+	isfinite(__step) &&
+	isfinite(__t1) &&
+	isfinite(__t2) &&
+        isfinite(__center.x()) &&
+	isfinite(__center.y()) &&
+	isfinite(__center.z());
+    }
+
     virtual string get_shape_name () const;
 
     bool is_valid () const;
