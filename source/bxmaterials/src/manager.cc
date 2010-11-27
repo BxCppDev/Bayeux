@@ -1,43 +1,43 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* manager.cc
  */
 
 #include <materials/manager.h>
 
 namespace mat {
-  
+
   bool manager::is_debug () const
   {
     return __debug;
   }
-  
+
   void manager::set_debug (bool new_value_)
   {
     __debug = new_value_;
     return;
   }
-  
+
   bool manager::is_locked () const
   {
     return __locked;
   }
-  
+
   const isotope_dict_t & manager::get_isotopes () const
   {
     return __isotopes;
   }
-  
+
   const element_dict_t & manager::get_elements () const
   {
     return __elements;
   }
-  
+
   const material_dict_t & manager::get_materials () const
   {
     return __materials;
   }
-  
-  
+
+
   // ctor:
   manager::manager ()
   {
@@ -45,7 +45,7 @@ namespace mat {
     __locked = false;
     return;
   }
-  
+
   // dtor:
   manager::~manager ()
   {
@@ -67,15 +67,15 @@ namespace mat {
     __locked = false;
     return;
   }
-  
+
   void manager::load (const datatools::utils::multi_properties & config_)
   {
     if (is_locked ())
       {
 	throw runtime_error ("mat::manager::load: Manager is locked !");
       }
-    
-    for (multi_properties::entries_ordered_col_t::const_iterator i 
+
+    for (multi_properties::entries_ordered_col_t::const_iterator i
            = config_.ordered_entries ().begin ();
          i != config_.ordered_entries ().end ();
          i++)
@@ -84,7 +84,7 @@ namespace mat {
         const string & name = e->get_key ();
         const string & type = e->get_meta ();
         const datatools::utils::properties & props = e->get_properties ();
-   
+
 	if (__debug)
 	  {
 	    clog << "DEBUG: " << "manager::load: " << "Name = '" << name << "'" << endl;
@@ -149,14 +149,14 @@ namespace mat {
 		    throw runtime_error (message.str ());
 		  }
 	      }
-	    material * matl = __creator.create_material (name, 
-							 props, 
-							 __elements, 
+	    material * matl = __creator.create_material (name,
+							 props,
+							 __elements,
 							 __materials);
 	    __materials[matl->get_name ()] = mat::smart_ref<material> ();
 	    __materials[matl->get_name ()].set_ref (matl);
-	    if (__debug) clog << "DEBUG: " << "manager::load: " 
-			      << "Add new material = '" 
+	    if (__debug) clog << "DEBUG: " << "manager::load: "
+			      << "Add new material = '"
 			      << matl->get_name () << "'" << endl;
 	    __ordered_materials.push_back (matl->get_name ());
 	  }
@@ -166,7 +166,7 @@ namespace mat {
 	      {
 		ostringstream message;
 		message << "manager::load: "
-			<< "Material with name '" << name 
+			<< "Material with name '" << name
 			<< "' already exists !";
 		throw runtime_error (message.str ());
 	      }
@@ -177,7 +177,7 @@ namespace mat {
 		  {
 		    ostringstream message;
 		    message << "manager::load: "
-			    << "Elements with name '" 
+			    << "Elements with name '"
 			    << name << "' already exists !";
 		    throw runtime_error (message.str ());
 		  }
@@ -187,7 +187,7 @@ namespace mat {
 		ostringstream message;
 		message << "manager::load: "
 			<< "Missing property 'material' for a material alias !";
-		throw runtime_error (message.str ());		
+		throw runtime_error (message.str ());
 	      }
 	    string alias_material = props.fetch_string ("material");
 	    material_dict_t::iterator found = __materials.find (alias_material);
@@ -209,28 +209,36 @@ namespace mat {
     return;
   }
 
-  void manager::tree_dump (ostream & out_,  
+  void manager::reset ()
+  {
+    __isotopes.clear ();
+    __elements.clear ();
+    __materials.clear ();
+    __ordered_materials.clear ();
+  }
+
+  void manager::tree_dump (ostream & out_,
 			   const string & title_,
 			   const string & indent_,
 			   bool inherit_) const
   {
     namespace du = datatools::utils;
-    string indent; 
+    string indent;
     if (! indent_.empty ()) indent = indent_;
-    if (! title_.empty ()) 
+    if (! title_.empty ())
       {
         out_ << indent << title_ << endl;
       }
-    
-    out_ << indent << i_tree_dumpable::tag 
-	 << "Debug : " << is_debug () << endl;   
-	 
+
+    out_ << indent << i_tree_dumpable::tag
+	 << "Debug : " << is_debug () << endl;
+
     {
       out_ << indent << du::i_tree_dumpable::tag
 	   << "Isotopes";
       if ( __isotopes.size () == 0)
 	{
-	  out_ << " : <empty>" << endl; 
+	  out_ << " : <empty>" << endl;
 	}
       else
         {
@@ -245,12 +253,12 @@ namespace mat {
 	      isotope_dict_t::const_iterator j = i;
 	      j++;
 	      out_ << indent << du::i_tree_dumpable::skip_tag;;
-	      if (j != __isotopes.end ()) 
+	      if (j != __isotopes.end ())
 		{
 		  out_ << du::i_tree_dumpable::tag;
 		  indent_oss << du::i_tree_dumpable::skip_tag;;
 		}
-	      else 
+	      else
 		{
 		  out_ << du::i_tree_dumpable::last_tag;
 		  indent_oss << du::i_tree_dumpable::last_skip_tag;;
@@ -259,14 +267,14 @@ namespace mat {
 	      i->second.get_ref ().tree_dump (out_, "", indent_oss.str ());
 	    }
         }
-    }  
-   
+    }
+
     {
       out_ << indent << du::i_tree_dumpable::tag
 	   << "Elements";
       if ( __elements.size () == 0)
 	{
-	  out_ << " : <empty>" << endl; 
+	  out_ << " : <empty>" << endl;
 	}
       else
         {
@@ -281,12 +289,12 @@ namespace mat {
 	      element_dict_t::const_iterator j = i;
 	      j++;
 	      out_ << indent << du::i_tree_dumpable::skip_tag;;
-	      if (j != __elements.end ()) 
+	      if (j != __elements.end ())
 		{
 		  out_ << du::i_tree_dumpable::tag;
 		  indent_oss << du::i_tree_dumpable::skip_tag;;
 		}
-	      else 
+	      else
 		{
 		  out_ << du::i_tree_dumpable::last_tag;
 		  indent_oss << du::i_tree_dumpable::last_skip_tag;;
@@ -295,14 +303,14 @@ namespace mat {
 	      i->second.get_ref ().tree_dump (out_, "", indent_oss.str ());
 	    }
         }
-    }     
-	    
+    }
+
     {
       out_ << indent << du::i_tree_dumpable::tag
 	   << "Materials";
       if ( __materials.size () == 0)
 	{
-	  out_ << " : <empty>" << endl; 
+	  out_ << " : <empty>" << endl;
 	}
       else
         {
@@ -317,12 +325,12 @@ namespace mat {
 	      material_dict_t::const_iterator j = i;
 	      j++;
 	      out_ << indent << du::i_tree_dumpable::skip_tag;;
-	      if (j != __materials.end ()) 
+	      if (j != __materials.end ())
 		{
 		  out_ << du::i_tree_dumpable::tag;
 		  indent_oss << du::i_tree_dumpable::skip_tag;;
 		}
-	      else 
+	      else
 		{
 		  out_ << du::i_tree_dumpable::last_tag;
 		  indent_oss << du::i_tree_dumpable::last_skip_tag;;
@@ -336,15 +344,15 @@ namespace mat {
 	      i->second.get_ref ().tree_dump (out_, "", indent_oss.str ());
 	    }
         }
-    }     
-	    
-	    
+    }
+
+
     {
       out_ << indent << du::i_tree_dumpable::tag
 	   << "Materials (ordered)";
       if ( __ordered_materials.size () == 0)
 	{
-	  out_ << " : <empty>" << endl; 
+	  out_ << " : <empty>" << endl;
 	}
       else
         {
@@ -359,12 +367,12 @@ namespace mat {
 	      list<string>::const_iterator j = i;
 	      j++;
 	      out_ << indent << du::i_tree_dumpable::skip_tag;;
-	      if (j != __ordered_materials.end ()) 
+	      if (j != __ordered_materials.end ())
 		{
 		  out_ << du::i_tree_dumpable::tag;
 		  indent_oss << du::i_tree_dumpable::skip_tag;;
 		}
-	      else 
+	      else
 		{
 		  out_ << du::i_tree_dumpable::last_tag;
 		  indent_oss << du::i_tree_dumpable::last_skip_tag;;
@@ -372,20 +380,20 @@ namespace mat {
 	      out_ << "Material '" << *i << "' " << endl;
 	    }
         }
-    }     
-     
-    out_ << indent << i_tree_dumpable::last_tag 
+    }
+
+    out_ << indent << i_tree_dumpable::last_tag
 	 << "Locked       : " << (is_locked()? "Yes": "No") << endl;
 
     return;
-    
+
   }
 
   void manager::export_gdml (ostream & out_) const
   {
     geomtools::gdml_writer GW;
     export_gdml (GW);
-    out_ << GW.get_stream (geomtools::gdml_writer::MATERIALS_SECTION).str ();    
+    out_ << GW.get_stream (geomtools::gdml_writer::MATERIALS_SECTION).str ();
   }
 
   void manager::export_gdml (geomtools::gdml_writer & gw_) const
@@ -396,11 +404,11 @@ namespace mat {
 	 i++)
       {
 	const isotope & iso = i->second.get_ref ();
-	gw_.add_isotope (i->first, 
+	gw_.add_isotope (i->first,
 			iso.get_Z (),
 			iso.get_A (),
 			iso.get_mass ()); // / (CLHEP::g /CLHEP::mole));
-		     
+
       } // end of loop on isotopes
 
     // export elements:
@@ -412,7 +420,7 @@ namespace mat {
 	if (elmt.is_built_by_isotopic_composition ())
 	  {
 	    map<string, double> fractions;
-	    for (isotope_weight_map_t::const_iterator j 
+	    for (isotope_weight_map_t::const_iterator j
 		   = elmt.get_composition ().begin ();
 		 j != elmt.get_composition ().end ();
 		 j++)
@@ -423,9 +431,9 @@ namespace mat {
 	  }
 	else
 	  {
-	    gw_.add_element (i->first, 
-			     elmt.get_Z (), 
-			     elmt.get_symbol (), 
+	    gw_.add_element (i->first,
+			     elmt.get_Z (),
+			     elmt.get_symbol (),
 			     elmt.get_molar_mass ());
 	  }
       } // end of loop on elements
@@ -436,23 +444,23 @@ namespace mat {
 	 i++)
       {
 	const string & material_name = *i;
-	material_dict_t::const_iterator found 
+	material_dict_t::const_iterator found
 	  = __materials.find (material_name);
 	if (found == __materials.end ())
 	  {
 	    ostringstream message;
 	    message << "manager::export_gdml: "
 		    << "Missing property 'material' for a material alias !";
-	    throw runtime_error (message.str ());		
+	    throw runtime_error (message.str ());
 	  }
 	const material & a_mat = found->second.get_ref ();
 
 	// composite by mean Z and A:
 	if (a_mat.is_composed_by_mean_z_a ())
 	  {
-	    gw_.add_material (material_name, 
-			     a_mat.get_mean_z (), 
-			     a_mat.get_density (), 
+	    gw_.add_material (material_name,
+			     a_mat.get_mean_z (),
+			     a_mat.get_density (),
 			     a_mat.get_mean_a ());
 	  }
 
@@ -475,9 +483,9 @@ namespace mat {
 	      {
 		formula = a_mat.grab_properties ().fetch_string ("formula");
 	      }
-	    gw_.add_material (material_name, 
-			     formula, 
-			     a_mat.get_density (), 
+	    gw_.add_material (material_name,
+			     formula,
+			     a_mat.get_density (),
 			     natoms_map);
 	  }
 
@@ -502,16 +510,16 @@ namespace mat {
 	      {
 		formula = a_mat.grab_properties ().fetch_string ("formula");
 	      }
-	    gw_.add_material (material_name, 
-			     formula, 
-			     a_mat.get_density (), 
+	    gw_.add_material (material_name,
+			     formula,
+			     a_mat.get_density (),
 			     fractions_map);
 	  }
       } // end of loop on materials
 
     return;
   }
-  
+
 } // end of namespace mat
 
 // end of manager.cc
