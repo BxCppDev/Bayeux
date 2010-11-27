@@ -358,9 +358,23 @@ function do_test ()
 	    fi
 	fi
 	do_build_gmk bin_test
-	local code=$?
-	__pkgtools__at_function_exit
-	return ${code}
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Build test program failed !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
+
+    test_prog=test_dummy_${pack_name_lower}
+    if [ -f ./programs/${test_prog}.cxx ]; then
+	LD_LIBRARY_PATH=$(pkgtools__get_sys)/lib:${LD_LIBRARY_PATH} ./$(pkgtools__get_sys)/bin/${test_prog} 
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Test program '${test_prog}' failure !"
+	    __pkgtools__at_function_exit
+	    return 1
+	else
+	    pkgtools__msg_notice "Test program '${test_prog}' success !"
+	fi
     fi
 
     __pkgtools__at_function_exit
@@ -372,7 +386,7 @@ function do_untest ()
     __pkgtools__at_function_enter do_untest
 
     if [ -d ${the_gmk_dir} ]; then
-	do_build_gmk clean_bin_test
+	do_clean_gmk clean_bin_test
     fi
 
     __pkgtools__at_function_exit
