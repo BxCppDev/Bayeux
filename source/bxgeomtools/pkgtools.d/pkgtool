@@ -967,7 +967,7 @@ function do_untest ()
     __pkgtools__at_function_enter do_untest
 
     if [ -d ${the_gmk_dir} ]; then
-	do_build_gmk clean_bin_test
+	do_clean_gmk clean_bin_test
     fi
 
     __pkgtools__at_function_exit
