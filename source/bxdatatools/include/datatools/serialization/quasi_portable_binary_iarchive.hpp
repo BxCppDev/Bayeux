@@ -340,8 +340,13 @@ namespace eos {
 
 			// it is vital to have version information!
 			// if we don't have any we assume boost 1.33
+#if BOOST_VERSION < 104000 
+			if (flags & no_header) set_library_version(3);
+#elif BOOST_VERSION < 104400
 			if (flags & no_header) set_library_version((version_type)3);
-
+#else
+			if (flags & no_header) set_library_version((library_version_type)3);
+#endif
 			// extract and check the magic eos byte
 			else if (load_signed_char() != magic_byte) 
 				throw archive_exception(archive_exception::invalid_signature);
@@ -349,7 +354,11 @@ namespace eos {
 			else
 			{
 				// extract version information
+#if BOOST_VERSION > 104300 
+				library_version_type input_library_version;
+#else
 				version_type input_library_version;
+#endif
 				operator>>(input_library_version);
 
 				// throw if file version is newer than we are
@@ -374,7 +383,13 @@ namespace eos {
 
 			// it is vital to have version information!
 			// if we don't have any we assume boost 1.33
+#if BOOST_VERSION < 104000 
+			if (flags & no_header) set_library_version(3);
+#elif BOOST_VERSION < 104400
 			if (flags & no_header) set_library_version((version_type)3);
+#else
+			if (flags & no_header) set_library_version((library_version_type)3);
+#endif
 
 			// extract and check the magic eos byte
 			else if (load_signed_char() != magic_byte) 
@@ -383,7 +398,11 @@ namespace eos {
 			else
 			{
 				// extract version information
+#if BOOST_VERSION > 104300 
+				library_version_type input_library_version;
+#else
 				version_type input_library_version;
+#endif
 				operator>>(input_library_version);
 
 				// throw if file version is newer than we are
