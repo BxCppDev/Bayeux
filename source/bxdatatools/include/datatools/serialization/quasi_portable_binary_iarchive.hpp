@@ -119,7 +119,8 @@ namespace fp = boost::spirit::math;
 #include <boost/type_traits/is_arithmetic.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
 
-#include <portable_archive_exception.hpp>
+//#include <portable_archive_exception.hpp>
+#include <datatools/serialization/quasi_portable_binary_archive_exception.hpp>
 #include <datatools/serialization/quasi_portable_binary_archive_common.hpp>
 
 // hint from Johan Rade: on VMS there is still support for

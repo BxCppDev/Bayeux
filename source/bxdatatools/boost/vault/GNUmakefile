@@ -26,7 +26,10 @@ BITSET_AND_MORE_URL="http://www.boostpro.com/vault/index.php?action=downloadfile
 all : install
 
 .PHONY : install
-install : install__fpu install__eos_pba install__endian #install__ser_bitset
+#install : install__fpu install__eos_pba install__endian #install__ser_bitset
+### 2010-12-06 FM: do not use EOS PBA anymore
+#install : install__fpu install__eos_pba install__endian
+install : install__fpu install__endian 
 
 .PHONY : clean
 clean : clean__fpu clean__eos_pba clean__endian #clean__ser_bitset
