@@ -13,7 +13,11 @@ test -f brio_dict.cc && rm -f brio_dict.cc
 rootcint brio_dict.cc \
  -c -I./include \
  include/brio/detail/TArrayCMod.h \
- include/brio/detail/brio_record.h 
+ include/brio/detail/brio_record.h > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "ERROR: make_dict.sh: ROOT dictionary generation failed ! Abort !"
+    exit 1 
+fi
 
 cat brio_dict.cc | sed \
   -e 's@#include "brio_dict.h"@#include <brio/detail/brio_dict.h>@g' \

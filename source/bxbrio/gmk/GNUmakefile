@@ -148,9 +148,12 @@ vpath %$(COBJEXT)     $(OBJDIR)
 vpath %$(CPROGEXT)    $(PROGDIR)
 
 headers := $(notdir $(shell ls $(INCDIR)/$(PACKAGENAME)/*$(HEADEREXT) 2> /dev/null))
+#headers := $(headers) brio_dict.h
 
 ### Basic sources list in arbitrary order:
+#sources_check := $(shell ls $(SRCDIR)/*$(SOURCEEXT) 2> /dev/null)
 sources := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT) 2> /dev/null))
+#sources := $(sources) brio_dict.cc
 
 ### If uncommented, this code force XXX.cc to be the last in library 
 # due to initialization of a static scoped pointer or similar stuff:
@@ -173,6 +176,11 @@ binaries.static:= $(programs:%$(PROGEXT)=%.static$(BINEXT))
 
 binaries_test:= $(programs_test:%$(PROGEXT)=%$(BINEXT))
 
+# ROOT dictionary
+dictionary_name := brio_dict
+dictionary_obj  := $(dictionary_name)$(OBJEXT)
+dictionary_src  := $(SRCDIR)/$(dictionary_name)$(SOURCEEXT)
+
 .PHONY : help
 help :
 	@echo "GNUmakefile usage "
@@ -191,14 +199,14 @@ help :
 	@echo "make clean     : clean all object/binaries"
 	@echo ""
 	@echo "make system    : print system"
-	@echo "make test      : print some infos"
+	@echo "make dump      : print some infos"
 	@echo ""
 	@echo "make dist      : make a source tarball ($(LIBNAME)-$(LIBVER).tar.gz)"
 	@echo "make bzdist    : make a source tarball ($(LIBNAME)-$(LIBVER).tar.bz2)"
 	@echo ""
 
-.PHONY : test
-test:
+.PHONY : dump
+dump:
 	@echo "PACKAGE_DIR='$(PACKAGE_DIR)'"
 	@echo "PACKAGENAME='$(PACKAGENAME)'"
 	@echo "COMPILER='$(COMPILER)'"
@@ -209,7 +217,9 @@ test:
 	@echo "SRCDIR='$(SRCDIR)'"
 	@echo "headers = $(headers)"
 	@echo "sources = $(sources)"
+	@echo "sources_check = $(sources_check)"
 	@echo "objects = $(objects)"
+	@echo "objectsWithPath = $(objectsWithPath)"
 	@echo "programs = $(programs)"
 	@echo "binaries = $(binaries)"
 	@echo "programs_test = $(programs_test)"
@@ -221,7 +231,7 @@ test:
 #########################################################################
 
 .PHONY : build_special
-build_special :
+build_special : 
 	@echo "Target 'build_special'..." >&2
 
 .PHONY : install
@@ -232,12 +242,26 @@ install :
 #########################################################################
 
 .PHONY : clean_special
-clean_special :
+clean_special : clean_dict
 	@echo "Target 'clean_special'..." >&2
 
 .PHONY : uninstall
 uninstall : 
 	@echo "Uninstalling..." >&2
+
+#.PHONY : build_dict
+#build_dict : brio_dict.cc
+#	@echo "Generating ROOT dictionary for TArrayCMod and brio_record classes..." >&2
+
+#brio_dict.cc :	
+#	cd ..; ./tools/make_dict.sh
+
+.PHONY : clean_dict
+clean_dict : 
+	@echo "Removing ROOT dictionary for TArrayCMod and brio_record classes..." >&2	
+	$(RM) $(INCDIR)/$(PACKAGENAME)/detail/brio_dict.h || echo -n ""
+	$(RM) $(SRCDIR)/brio_dict.cc || echo -n ""
+
 
 #########################################################################
 
@@ -278,7 +302,7 @@ distclean : uninstall clean
 
 .PHONY : bin
 bin : bin_shared
-
+ 
 .PHONY : bin_test
 bin_test : bin_test_shared
 
@@ -301,7 +325,7 @@ $(LIBFILE) : $(objectsWithPath)
 	  $(AR) -rusv $(LIBDIR)/$(LIBFILE) $(OBJDIR)/$(notdir $${file_object}) ; done
 	ranlib $(LIBDIR)/$(notdir $(@))
 
-$(SHLIBFILE) : $(objectsWithPath) 
+$(SHLIBFILE) : $(objectsWithPath) $(OBJDIR)/$(dictionary_obj) 
 	@echo "NOTICE: Building shared lib '$(@)'..." >&2
 	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
 	@test -n "$(objectsWithPath)" && $(LD) $(CXXFLAGS) $(SOFLAGS) $(^) -o $(LIBDIR)/$(notdir $(@)) || echo ""
@@ -320,6 +344,15 @@ $(OBJDIR)/%$(OBJEXT) : %$(SOURCEEXT) %$(HEADEREXT)
 	@echo "NOTICE: Compiling program '$(@)' with shared library..." >&2
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
 	$(CXX) -I. $(CPPFLAGS) $(CXXFLAGS) $< $(SHFLAGS) -o $(BINDIR)/$(notdir $(@))
+
+$(OBJDIR)/$(dictionary_obj) : TArrayCMod.h brio_record.h
+	@echo "Generating dictionary '$(dictionary_src)'..."
+	cd .. ; ./tools/make_dict.sh 
+	pwd
+	@#rootcint -f $(dictionary_src) -c -I$(INCDIR) $^
+	@echo "Compiling module '$(@)'..."
+	@test -d $(OBJDIR) || mkdir -p $(OBJDIR)
+	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $(dictionary_src) -o $(OBJDIR)/$(notdir $(@))
 
 .PHONY : dist
 dist : distclean
