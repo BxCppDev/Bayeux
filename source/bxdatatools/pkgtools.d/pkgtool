@@ -40,7 +40,7 @@ pack_config=${pack_name_lower}-config
 # startup scripts
 sh_ss=${pack_name_lower}.sh
 csh_ss=${pack_name_lower}.csh
-the_base_dir=.
+the_base_dir=$PWD
 boost_version_check=1
 #enforced_boost_version=1_38
 enforced_boost_version=1_38_0
@@ -476,7 +476,15 @@ function boost_eos_archive_trick_4_1 ()
 	cp -f ${pia_src} ${pia_src}.orig 
     fi
 
-    cat ${pia_src}.orig | sed 's@set_library_version(3)@set_library_version((version_type)3)@g' > ${pia_src}
+    local boost_version_rank=$(echo ${boost_version} | tr '_' '0')
+    if [ ${boost_version_rank} -ge 104000 -a ${boost_version_rank} -le 104300 ]; then
+        cat ${pia_src}.orig | sed 's@set_library_version(3)@set_library_version((version_type)3)@g' > ${pia_src}
+    elif [ ${boost_version_rank} -ge 104400 ]; then
+        cat ${pia_src}.orig |
+        sed -e 's@set_library_version(3)@set_library_version((library_version_type)3)@g' \
+            -e 's@version_type input_library_version;@library_version_type input_library_version;@g' > ${pia_src}
+    fi        
+    
 
     cd ${opwd}
 
