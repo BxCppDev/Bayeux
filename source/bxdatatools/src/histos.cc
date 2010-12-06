@@ -195,7 +195,7 @@ namespace datatools {
     }
   
 
-    std::vector<double> histos::get_x_values ()
+    void histos::get_x_values ( std::vector<double> & values_ )
     {
       std::vector<double> x_values;
       double x_step_size = ( __x_max - __x_min ) / (double)( __x_step );
@@ -203,10 +203,10 @@ namespace datatools {
       for ( int i = 0; i < __x_step; i++ )
         for ( int j = 0; j < __y_step; j++ )
           x_values.push_back ( __x_min + (double)(i) * x_step_size );
-      return x_values;
+      values_ = x_values;
     }
     
-    std::vector<double> histos::get_y_values ()
+    void histos::get_y_values ( std::vector<double> & values_ )
     {
       std::vector<double> y_values;
       double x_step_size = ( __x_max - __x_min ) / (double)( __x_step );
@@ -214,16 +214,16 @@ namespace datatools {
       for ( int i = 0; i < __x_step; i++ )
         for ( int j = 0; j < __y_step; j++ )
           y_values.push_back ( __y_min + (double)(j) * y_step_size );
-      return y_values;
+      values_ = y_values;
     }  
     
-    std::vector<double> histos::get_z_values ()
+    void histos::get_z_values ( std::vector<double> & values_ )
     {
       std::vector<double> z_values;
       for ( int i = 0; i < __x_step; i++ )
         for ( int j = 0; j < __y_step; j++ )
           z_values.push_back ( __histo_3d[i][j] );
-      return z_values;
+      values_ = z_values;
     }
     
     
@@ -269,7 +269,7 @@ namespace datatools {
 	   << "set palette rgbformulae -31, -36, -32" << std::endl
 	   << "set view 0, 0"  << std::endl
 	   << "unset surface"  << std::endl
-	   << "set dgrid 100,100,100" << std::endl
+	   << "set dgrid3d" << __y_step << "," << __x_step << ",2" << std::endl
 	   << "splot [" << __x_min << ":" << __x_max << "]"
 	   << "[" << __y_min << ":" << __y_max << "][0:*] '"
 	   << "histo_3d.his' u 1:2:3 with dots title 'histogram_3d'"

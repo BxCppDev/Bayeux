@@ -76,9 +76,9 @@ namespace datatools {
       void print ( std::ostream & );
       void help  ( std::ostream & );
 
-      std::vector<double> get_x_values ();
-      std::vector<double> get_y_values ();
-      std::vector<double> get_z_values ();
+      void get_x_values ( std::vector<double> & );
+      void get_y_values ( std::vector<double> & );
+      void get_z_values ( std::vector<double> & );
 
 
     private:
