@@ -136,7 +136,7 @@ ifeq ($(strip $(CERN_ROOT)),)
 $(error Sorry CERNLIB (env. CERN_ROOT) is not configured!)
 endif
 DEPCPPFLAGS+=-I$(CERN_ROOT)/include
-DEPLDFLAGS+=$(shell cernlib packlib mathlib kernlib geant321)
+DEPLDFLAGS+=$(shell cernlib packlib mathlib kernlib)
 
 # f2c dependency:
 ifeq ($(F77),g77)
