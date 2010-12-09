@@ -415,6 +415,11 @@ BOOST_SERIALIZATION_REGISTER_ARCHIVE(eos::polymorphic_portable_oarchive)
 #define BOOST_ARCHIVE_SERIALIZER_INCLUDED
 #endif
 
+// 2010-12-09: Add directive for special behaviour in Boost 1.45:
+#if BOOST_VERSION >= 104500
+#define BOOST_NO_MEMBER_TEMPLATE_FRIENDS
+#endif
+
 namespace boost { namespace archive {
 
 	// explicitly instantiate for this type of binary stream
