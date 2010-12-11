@@ -2360,17 +2360,21 @@ EOF
 	    which ${dep_cfg} > /dev/null 2>&1 
 	    if [ $? -ne 0 ]; then
 		has_config_script=0
+		pkgtools__msg_warning "Cannot find '${dep_cfg}' config script !"
 	    else
 		has_config_script=1
+		pkgtools__msg_notice "Found '${dep_cfg}' config script !"
 	    fi
 	    pkgtools__msg_debug "- Checking ${dep_name} executable..."
 	    dep_exe=
 	    which ${dep_name} > /dev/null 2>&1 
 	    if [ $? -ne 0 ]; then
 		has_executable=0
+		pkgtools__msg_warning "Cannot find '${dep_name}' executable !"
 	    else
 		dep_exe=${dep_name}
 		has_executable=1
+		pkgtools__msg_notice "Found '${dep_name}' executable !"
 	    fi
 	    
 	    if [ "x${dep_name}" != "x${dep_lower}" ]; then
@@ -2379,12 +2383,15 @@ EOF
 		if [ $? -eq 0 ]; then
 		    dep_exe=${dep_lower}
 		    has_executable=1
+		    pkgtools__msg_notice "Found '${dep_lower}' executable !"
+		else
+		    pkgtools__msg_warning "Cannot find '${dep_lower}' executable !"
 		fi
 	    fi
 	    
 	    if [ ${has_executable} -eq 0 -a ${has_config_script} -eq 0 ]; then
 		if [ ${dep_excluded} -eq 0 ]; then
-		    pkgtools__msg_error "Cannot check ${dep_name} through some script nor executable!"
+		    pkgtools__msg_error "Cannot check '${dep_name}' through some script nor executable !"
 		    __pkgtools__at_function_exit
 		    return 1
 		fi
@@ -2396,7 +2403,7 @@ EOF
 		if [ ${has_config_script} -eq 1 ]; then
 		    ${dep_cfg} --version > /dev/null 2>&1
 		    if [ $? -ne 0 ]; then
-			pkgtools__msg_warning "Cannot retrieve version information from the '${dep_cfg}' script!"
+			pkgtools__msg_warning "Cannot retrieve version information from the '${dep_cfg}' script !"
 		    else
 			dep_version=$(${dep_cfg} --version 2>&1)
 		    fi
@@ -2407,7 +2414,7 @@ EOF
 		if [ ${has_executable} -eq 1 -a ${dep_cfg} != ${dep_exe} ]; then
 		    ${dep_exe} --version > /dev/null 2>&1
 		    if [ $? -ne 0 ]; then
-			pkgtools__msg_warning "Cannot retrieve version information from the '${dep_exe}' executable!"
+			pkgtools__msg_warning "Cannot retrieve version information from the '${dep_exe}' executable !"
 		    else
 			dep_version=$(${dep_exe} --version 2>&1)
 		    fi

@@ -101,6 +101,7 @@ Known values for OPTION are:
   --help                print this help then exit
   --gsl-ldpath          print the path to GSL libraries             
   --gsl-incpath         print the path to GSL headers             
+  --gsl-version         print the GSL version             
   --version             print version information
   --system              print system
   --check               check dependencies and setup
@@ -250,6 +251,11 @@ fi
 if [ "x$opt" = "x--gsl-ldpath" ]; then
     gsl_ld_path=$(gsl-config --libs | tr -s ' ' | tr ' ' '\n' | grep "\-L")
     echo "${gsl_ld_path}"
+    exit 0
+fi
+
+if [ "x$opt" = "x--gsl-version" ]; then
+    echo "${gsl_version}"
     exit 0
 fi
 

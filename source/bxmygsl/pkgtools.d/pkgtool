@@ -459,8 +459,29 @@ function check_dependencies ()
     pkgtools__check_dependencies ${the_pkgtools_dir}/package.info $@
     if [ $? -ne 0 ]; then
 	pkgtools__msg_warning "Invalid dependency !"
+	pkgtools__msg_warning "A 'gsl-config' script from a valid GSL installation is expected !"
+	pkgtools__msg_warning "Please consider to use the 'gsl_help' package to build, install and setup GSL library on your system !"
 	__pkgtools__at_function_exit
 	return 1
+    fi
+
+    ### 2010-12-11 FM: add more checks:
+    if [ "x${GSL_BASE_DIR}" != "x" ]; then
+	pkgtools__msg_warning "The GSL_BASE_DIR is setup !"
+
+	if [ ! -d ${GSL_BASE_DIR} ]; then
+	    pkgtools__msg_error "The GSL_BASE_DIR='${GSL_BASE_DIR}' directory does not exist !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+	pkgtools__msg_notice "Using a special GSL installation from the '${GSL_BASE_DIR}' directory..."
+	local gsl_config=${GSL_BASE_DIR}/bin/gsl-config
+	if [ ! -x ${gsl_config} ]; then
+	    pkgtools__msg_error "The '${gsl_config}' script does not exist !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+	pkgtools__msg_notice "Special GSL library installation is '$(${gsl_config} --version)'."
     fi
 
     __pkgtools__at_function_exit
