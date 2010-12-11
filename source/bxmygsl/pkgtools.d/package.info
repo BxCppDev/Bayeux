@@ -11,6 +11,6 @@ creation=2007-12-02
 author=Francois Mauger <mauger@lpccaen.in2p3.fr>
 copyright=GPL
 URL=https://nemo.lpc-caen.in2p3.fr/wiki/mygsl
-SVN base repository=https://nemo.lpc-caen.in2p3.fr/browser/mygsl
+SVN base repository=https://nemo.lpc-caen.in2p3.fr/svn/mygsl
 #@HOOK 
 # end of package.info
