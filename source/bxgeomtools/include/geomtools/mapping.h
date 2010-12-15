@@ -63,6 +63,7 @@ namespace geomtools {
 
   public:
 
+    // tools to manipulate 'mapping' properties:
     static string make_key (const string & flag_);
 
     static void extract (const datatools::utils::properties & source_,
@@ -111,7 +112,7 @@ namespace geomtools {
       namespace du = datatools::utils;
       ostringstream oss;
       __indenter++;
-      oss << "test: " <<  du::io::devel << __indenter << endl;
+      oss << "test: " << du::io::devel << __indenter << endl;
       __indenter--;
     }
 

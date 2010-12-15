@@ -48,9 +48,9 @@ namespace geomtools {
   {
   private:  
 
-    geom_id          __invalid_geom_id;
-    const id_mgr *   __id_manager;
-    geom_info_dict_t __geom_infos;
+    geom_id          __invalid_geom_id; //! value of a invalid geometry ID
+    const id_mgr *   __id_manager;      //! the ID manager that knows about geometry categories and their relationship
+    geom_info_dict_t __geom_infos;      //! the dictionary of geometry informations addressed through IDs
     
   protected:
     

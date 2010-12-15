@@ -32,7 +32,7 @@ namespace geomtools {
 
   public:
 
-    // the following pure abstract methods should be implemented!
+    // the following pure abstract methods should be implemented.
 
     // check if 'id_' is valid:
     virtual bool validate_id (const geom_id & id_) const = 0;
