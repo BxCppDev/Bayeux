@@ -355,7 +355,7 @@ namespace genvtx {
       {
 	if (configuration_.has_key ("box_ref_name"))
 	  {
-	    box_user_ref_name = configuration_.fetch_real ("box_ref_name");
+	    box_user_ref_name = configuration_.fetch_string ("box_ref_name");
 	  }
       }
 
