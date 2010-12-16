@@ -21,9 +21,13 @@ composition.fraction_mass : real   [1]  =  1.0
 density        : real   = 1.2931
 density.unit   : string = "mg/cm3"
 state          : string = "gas"
+temperature      : real   = 300.
+temperature.unit : string = "kelvin"
+pressure         : real   = 1.
+pressure.unit    : string = "bar"
 composition.mode : string   = "fraction_mass"
 composition.names         : string [2]  = "Nitrogen" "Oxygen"
-composition.fraction_mass : real   [2]  =  0.7        0.3
+composition.fraction_mass : real   [2]  =  0.8        0.2
 
 
 [name="std::hydrogen_gas" type="material"]
@@ -35,6 +39,14 @@ composition.mode : string   = "fraction_mass"
 composition.names         : string [1]  = "Hydrogen"
 composition.fraction_mass : real   [1]  =  1.0
 
+[name="std::aluminium" type="material"]
+#@description Aluminium material
+density        : real   = 2.70
+density.unit   : string = "g/cm3"
+state          : string = "solid"
+composition.mode          : string      = "fraction_mass"
+composition.names         : string [1]  = "Aluminium"
+composition.fraction_mass : real   [1]  =  1.0
 
 [name="std::copper" type="material"]
 #@description Copper material
@@ -68,8 +80,8 @@ composition.names           : string  [2]  = "Hydrogen" "Oxygen"
 composition.number_of_atoms : integer [2]  =  2          1
 
 # Example of auxiliary properties :
-contamination.radiocontaminants : string [3] = "Bi-214" "Tl-208" "Pa-234"
-contamination.activities        : real   [3] =  20.e-6   5.e-6   25.e-6   
+#contamination.radiocontaminants : string [3] = "Bi-214" "Tl-208" "Pa-234"
+#contamination.activities        : real   [3] =  20.e-6   5.e-6   25.e-6   
 
 
 [name="std::diamond" type="material"]
@@ -157,7 +169,7 @@ composition.number_of_atoms : integer [2]  =     10         9
 
 
 [name="std::delrin" type="material"]
-#@description Delrin material
+#@description Delrin material (http://en.wikipedia.org/wiki/Polyoxymethylene)
 density          : real   = 1.42
 density.unit     : string = "g/cm3"
 state            : string = "solid"
@@ -167,12 +179,21 @@ composition.number_of_atoms : integer [3]  =      2         1       1
 
 
 [name="std::CsI" type="material"]
-#@description CsI material)
+#@description CsI scintillator material
 density          : real   = 4.51
 density.unit     : string = "g/cm3"
 state            : string = "solid"
 composition.mode            : string       = "number_of_atoms"
 composition.names           : string  [2]  = "Iodine" "Cesium"
+composition.number_of_atoms : integer [2]  =     1       1
+
+[name="std::NaI" type="material"]
+#@description NaI scintillator material
+density          : real   = 3.667
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [2]  = "Sodium" "Iodine"
 composition.number_of_atoms : integer [2]  =     1       1
 
 [name="std::plexiglass" type="material"]
@@ -223,14 +244,14 @@ composition.names         : string [6]  = "Silicium" "Oxygen" "Boron" "Sodium" "
 composition.fraction_mass : real   [6]  =  0.377      0.540    0.040   0.028    0.012  0.003
 
 
-# [name="std::inox" type="material"]
-# #@description Inox (70.3%Fe+10.3%Ni+17.3 %Cr+2.1%Mo by weight)
-# density          : real   = 8.0
-# density.unit     : string = "g/cm3"
-# state            : string = "solid"
-# composition.mode            : string     = "fraction_mass"
-# composition.names           : string [4] = "Iron" "Nickel" "Chromium" "Molybdenum" 
-# composition.number_of_atoms : real [4]  =  70.3   10.3     17.3       2.1
+[name="std::inox" type="material"]
+#@description Inox (70.3%Fe+10.3%Ni+17.3 %Cr+2.1%Mo by weight) (http://fr.wikipedia.org/wiki/Acier_inoxydable)
+density          : real   = 8.0
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode            : string     = "fraction_mass"
+composition.names           : string [4] = "Iron" "Nickel" "Chromium" "Molybdenum" 
+composition.number_of_atoms : real [4]   =  0.703  0.103    0.173      0.021
 
 
 # [name="std::inox_316L" type="material"]
@@ -242,5 +263,22 @@ composition.fraction_mass : real   [6]  =  0.377      0.540    0.040   0.028    
 # composition.names           : string [4] = "Iron" "Nickel" "Chromium" "Molybdenum" 
 # composition.number_of_atoms : real [4]  =  67.75  12.5     17.0       2.75
 
+[name="std::sapphire" type="material"]
+#@description sapphire material
+density          : real   = 4.0
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [2]  = "Aluminium" "Oxygen"
+composition.number_of_atoms : integer [2]  =  2          3
+
+[name="std::concrete" type="material"]
+#@description Concrete
+density          : real   = 1.14
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode          : string      = "fraction_mass"
+composition.names         : string [6]  = "Silicium" "Oxygen" "Calcium" "Aluminium" "Iron" "Hydrogen"
+composition.fraction_mass : real   [6]  =  0.227915   0.60541  0.04986  0.014245    0.00285 0.09972
 
 # end
