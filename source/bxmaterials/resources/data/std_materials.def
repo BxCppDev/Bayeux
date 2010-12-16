@@ -251,7 +251,7 @@ density.unit     : string = "g/cm3"
 state            : string = "solid"
 composition.mode            : string     = "fraction_mass"
 composition.names           : string [4] = "Iron" "Nickel" "Chromium" "Molybdenum" 
-composition.number_of_atoms : real [4]   =  0.703  0.103    0.173      0.021
+composition.fraction_mass   : real [4]   =  0.703  0.103    0.173      0.021
 
 
 # [name="std::inox_316L" type="material"]
@@ -261,7 +261,7 @@ composition.number_of_atoms : real [4]   =  0.703  0.103    0.173      0.021
 # state            : string = "solid"
 # composition.mode            : string     = "fraction_mass"
 # composition.names           : string [4] = "Iron" "Nickel" "Chromium" "Molybdenum" 
-# composition.number_of_atoms : real [4]  =  67.75  12.5     17.0       2.75
+# composition.fraction_mass   : real [4]  =  67.75  12.5     17.0       2.75
 
 [name="std::sapphire" type="material"]
 #@description sapphire material
