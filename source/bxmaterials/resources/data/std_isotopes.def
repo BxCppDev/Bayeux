@@ -535,7 +535,7 @@ a : integer = 80
 z : integer = 34
 a : integer = 82
 
-### Selenium
+### Bromine
 
 [name="Br-79" type="isotope"]
 #@description The Br-79 isotope
