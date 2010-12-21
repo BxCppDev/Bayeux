@@ -142,6 +142,13 @@ isotope.weights : real[5]   = 68.0769 26.2231 1.1399  3.6345  0.9256
 z               : integer   = 29
 isotope.names   : string[2] = "Cu-63" "Cu-65"
 isotope.weights : real[2]   =  69.17   30.83
+# NIST: isotope.weights : real[2]   =  69.15   30.85
+
+[name="Molybdenum" type="element"]
+#@description The Molybdenum natural element
+z               : integer   = 42
+isotope.names   : string[7] = "Mo-92" "Mo-94" "Mo-95" "Mo-96" "Mo-97" "Mo-98" "Mo-100"
+isotope.weights : real[7]   =  14.77    9.23   15.90   16.68    9.56   24.19    9.67
 
 [name="Silver" type="element"]
 #@description The Silver natural element

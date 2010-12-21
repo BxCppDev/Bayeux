@@ -591,6 +591,43 @@ a : integer = 85
 z : integer = 37
 a : integer = 87
 
+### Molybdenum
+
+[name="Mo-92" type="isotope"]
+#@description The Mo-92 isotope
+z : integer = 42
+a : integer = 92
+
+[name="Mo-94" type="isotope"]
+#@description The Mo-94 isotope
+z : integer = 42
+a : integer = 94
+
+[name="Mo-95" type="isotope"]
+#@description The Mo-95 isotope
+z : integer = 42
+a : integer = 95
+
+[name="Mo-96" type="isotope"]
+#@description The Mo-96 isotope
+z : integer = 42
+a : integer = 96
+
+[name="Mo-97" type="isotope"]
+#@description The Mo-97 isotope
+z : integer = 42
+a : integer = 97
+
+[name="Mo-98" type="isotope"]
+#@description The Mo-98 isotope
+z : integer = 42
+a : integer = 98
+
+[name="Mo-100" type="isotope"]
+#@description The Mo-100 isotope
+z : integer = 42
+a : integer = 100
+
 ### Silver
 
 [name="Ag-107" type="isotope"]

@@ -145,6 +145,11 @@ a               : real      = 63.546
 z               : integer   = 30
 a               : real      = 65.39
 
+[name="Molybdenum" type="element"]
+#@description The Molybdenum natural element
+z               : integer   = 42
+a               : real      = 95.96
+
 [name="Lead" type="element"]
 #@description The Lead natural element
 z               : integer   = 82
