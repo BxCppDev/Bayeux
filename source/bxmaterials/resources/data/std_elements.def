@@ -150,11 +150,11 @@ z               : integer   = 34
 isotope.names   : string[2] = "Se-74" "Se-76" "Se-77" "Se-78" "Se-80" "Se-82" 
 isotope.weights : real[2]   =   0.89    9.37    7.63   23.77   49.61    8.73
 
-[name="Selenium-82" type="element"]
-#@description The 82 Selenium enriched element
-z               : integer   = 34
-isotope.names   : string[1] = "Se-82"
-isotope.weights : real[1]   =   1.0
+# [name="Selenium-82" type="element"]
+# #@description The 82 Selenium enriched element
+# z               : integer   = 34
+# isotope.names   : string[1] = "Se-82"
+# isotope.weights : real[1]   =   1.0
 
 [name="Molybdenum" type="element"]
 #@description The Molybdenum natural element
