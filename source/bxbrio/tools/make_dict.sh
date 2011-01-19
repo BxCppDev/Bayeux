@@ -30,7 +30,7 @@ cat brio_dict.h | sed \
   > include/brio/detail/brio_dict.h
 
 test -f brio_dict.h && rm -f brio_dict.cc
-test -f brio_dict.h && rm -f brio_dict.h 
+test -f brio_dict.h && rm -f brio_dict.h
 
 ls -l include/brio/detail/brio_dict.h
 ls -l src/brio_dict.cc

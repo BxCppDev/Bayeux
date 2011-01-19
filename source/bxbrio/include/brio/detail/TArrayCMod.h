@@ -35,7 +35,6 @@ public:
    Double_t      GetAt(Int_t i) const { return 0.0; }
    void SetAt(Double_t x, Int_t i) { return; }
 
-
    // Workaround
    //void Streamer(TBuffer &b); // Let ClassDef build the Streamer
    void __Streamer(TBuffer &b); 
