@@ -96,8 +96,10 @@ function print_usage ()
 
     configure [OPTIONS] : configure package
            Options:
-              --g77        use g77 Fortran compiler
-              --gfortran   use gfortran Fortran compiler
+              --g77                   use g77 Fortran compiler
+              --gfortran              use gfortran Fortran compiler
+              --force-one-underscore  force one trailing underscore
+              --force-two-underscores force two trailing underscores
 
     deconfigure : deconfigure package 
 
@@ -432,18 +434,21 @@ function do_configure ()
 {
     __pkgtools__at_function_enter do_configure
 
-    skip_all_dependencies_check=0
-    skipped_dependencies=
+    local force_one_underscore=0
+    local force_two_underscores=0
+
+    local skip_all_dependencies_check=0
+    local skipped_dependencies=
     while [ -n "$1" ]; do
-	token="$1"
+	local token="$1"
 	    
 	if [ "x${token:0:1}" = "x-" ]; then
-	    opt=${token}
+	    local opt=${token}
 	    if [ "${opt}" = "-S" -o "${opt}" = "--skip-all-dependencies-check" ]; then
 		skip_all_dependencies_check=1
 	    elif [ "${opt}" = "-s" -o "${opt}" = "--skip-dependency-check" ]; then
 		shift 1
-		swpack=$1
+		local swpack=$1
 		if [ "x${skipped_dependencies}" = "x" ]; then
 		    skipped_dependencies=${swpack}
 		else
@@ -455,12 +460,16 @@ function do_configure ()
 	    elif [ "x${opt}" = "x--gfortran" ]; then
 		use_g77=0
 		use_gfortran=1
+	    elif [ "x${opt}" = "x--force-one-underscore" ]; then
+		force_one_underscore=1
+	    elif [ "x${opt}" = "x--force-two-underscores" ]; then
+		force_two_underscores=1
 	    else
                 # parse other configuration options...
 		pkgtools__msg_warning "Ignoring '${opt}' option !"
 	    fi
 	else
-	    arg=${token}
+	    local arg=${token}
 	    pkgtools__msg_warning "Ignoring '${arg}' argument !"
 	fi
 
@@ -496,7 +505,11 @@ function do_configure ()
 	pkgtools__msg_notice "Package '${pack_name}' build will use 'g77'"
     fi
     echo "export F77_COMP=${F77_COMP}" > ${configure_flag_file}
-
+    if [ ${force_one_underscore} -eq 1 ]; then
+	echo "export F77_ONE_UNDERSCORE=1" >> ${configure_flag_file}
+    elif [ ${force_two_underscores} -eq 1 ]; then
+	echo "export F77_TWO_UNDERSCORES=1" >> ${configure_flag_file}
+    fi
     pkgtools__msg_notice "File '${configure_flag_file}' has been generated."
 
     __pkgtools__at_function_exit

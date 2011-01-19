@@ -151,12 +151,30 @@ CPPFLAGS1=
 CPPFLAGS2=
 CPPFLAGS3=
 
+underscore_mode=one
+ifeq ($(F77),gfortran)
+underscore_mode=one
+endif
+
 ifeq ($(F77),g77)
+underscore_mode=two
+endif
+
+ifneq ($(F77_TWO_UNDERSCORES),)
+underscore_mode=two
+endif
+
+ifneq ($(F77_ONE_UNDERSCORE),)
+underscore_mode=one
+endif
+
+ifeq ($(underscore_mode),two)
 CPPFLAGS1+=-Dfermi_func_shape_only=fermi_func_shape_only__
 CPPFLAGS1+=-Dfermi_wrap=fermi_wrap__
 CPPFLAGS1+=-Dfermi_func=fermi_func__
 CPPFLAGS1+=-Dfermi_func_nr_approx=fermi_func_nr_approx__
 CPPFLAGS1+=-Drng_shoot_reset=rng_shoot_reset__
+CPPFLAGS1+=-Drng_shoot_flat=rng_shoot_flat__
 
 CPPFLAGS3+=-Dgenbbsub=genbbsub__
 CPPFLAGS3+=-Dset_random_seed=set_random_seed__
@@ -166,7 +184,7 @@ CPPFLAGS3+=-Dgenbb_init_enrange=genbb_init_enrange__
 CPPFLAGS3+=-Denrange=enrange__
 endif
 
-ifeq ($(F77),gfortran)
+ifeq ($(underscore_mode),one)
 CPPFLAGS1+=-Dfermi_func_shape_only=fermi_func_shape_only_
 CPPFLAGS1+=-Dfermi_wrap=fermi_wrap_
 CPPFLAGS1+=-Dfermi_func=fermi_func_
