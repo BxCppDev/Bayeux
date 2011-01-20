@@ -149,12 +149,12 @@ if [ "x$opt" = "x--cflags" ]; then
     if [ "x${f77_comp}" = "xg77" ]; then
 	f77_defines="\
 -Df2cFortran \
--Dgenbbsub=genbbsub__ \
--Dset_random_seed=set_random_seed__ \
--Dgrndm=grndm__ \
--Dgenevent=genevent__ \
--Dgenbb_init_enrange=genbb_init_enrange__ \
--Denrange=enrange__\
+-Dgenbbsub=genbbsub_ \
+-Dset_random_seed=set_random_seed_ \
+-Dgrndm=grndm_ \
+-Dgenevent=genevent_ \
+-Dgenbb_init_enrange=genbb_init_enrange_ \
+-Denrange=enrange_\
 "
 	cernlib_cflags="-I${CERN_ROOT}/include"
     fi

@@ -84,11 +84,8 @@ $(error no $(F77) is available!)
 #$(warning found $(F77) compiler!)
 endif
 
-
-#CXXFLAGS=-fPIC -Df2cFortran
-
 ifeq ($(F77),g77)
-F77FLAGS+=-fno-automatic -finit-local-zero -Wno-globals -fno-globals 
+F77FLAGS+=-fno-automatic -finit-local-zero -Wno-globals -fno-globals -fno-second-underscore
 endif
 
 ifeq ($(F77),gfortran)
@@ -100,8 +97,7 @@ ifeq ($(strip $(processor)),x86_64)
 dummy=$(shell echo "Processor: 64bits")
 else
 CXXFLAGS+= -Df2cFortran
-#-malign-double
-F77FLAGS+= #-malign-double
+#F77FLAGS+= #-malign-double
 endif
 
 
@@ -151,22 +147,25 @@ CPPFLAGS1=
 CPPFLAGS2=
 CPPFLAGS3=
 
+# Force only one underscore for extern Fortran77/C+ names:
 underscore_mode=one
-ifeq ($(F77),gfortran)
-underscore_mode=one
-endif
+$(warning Force only one underscore for extern Fortran77/C+ names)
 
-ifeq ($(F77),g77)
-underscore_mode=two
-endif
+#ifeq ($(F77),gfortran)
+#underscore_mode=one
+#endif
 
-ifneq ($(F77_TWO_UNDERSCORES),)
-underscore_mode=two
-endif
+#ifeq ($(F77),g77)
+#underscore_mode=two
+#endif
 
-ifneq ($(F77_ONE_UNDERSCORE),)
-underscore_mode=one
-endif
+#ifneq ($(F77_TWO_UNDERSCORES),)
+#underscore_mode=two
+#endif
+
+#ifneq ($(F77_ONE_UNDERSCORE),)
+#underscore_mode=one
+#endif
 
 ifeq ($(underscore_mode),two)
 CPPFLAGS1+=-Dfermi_func_shape_only=fermi_func_shape_only__
