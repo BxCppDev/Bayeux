@@ -85,7 +85,8 @@ $(error no $(F77) is available!)
 endif
 
 ifeq ($(F77),g77)
-F77FLAGS+=-fno-automatic -finit-local-zero -Wno-globals -fno-globals -fno-second-underscore
+F77FLAGS+=-fno-automatic -finit-local-zero -Wno-globals -fno-globals
+F77FLAGS+=-fno-second-underscore
 endif
 
 ifeq ($(F77),gfortran)
