@@ -44,7 +44,7 @@ endif
 # F77_COMP=gfortran
 ifneq ($(F77_COMP),)
 F77=$(F77_COMP)
-$(Force $(F77_COMP) compiler!)
+$(warning Force $(F77_COMP) compiler!)
 endif
 
 COMPILER=$(CC)$(shell $(CC) --version | head -1 | cut -d ' ' -f 3)
