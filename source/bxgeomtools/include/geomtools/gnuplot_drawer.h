@@ -59,6 +59,10 @@ namespace geomtools {
     static const string MODE_SOLID;
     static const string DEFAULT_MODE;
 
+    static const string FORCE_SHOW_PROPERTY_NAME;
+    static const string FORCE_SHOW_ENVELOP_PROPERTY_NAME;
+    static const string FORCE_SHOW_CHILDREN_PROPERTY_NAME;
+
     static void wait_for_key ();
 
     struct cstream
@@ -106,6 +110,10 @@ namespace geomtools {
     bool is_wired () const;
 
     bool is_initialized () const;
+
+    datatools::utils::properties & get_properties ();
+
+    const datatools::utils::properties & get_properties () const;
 
   protected:
 

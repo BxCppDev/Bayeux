@@ -21,6 +21,10 @@ namespace geomtools {
   const string gnuplot_drawer::MODE_SOLID = "solid";
   const string gnuplot_drawer::DEFAULT_MODE = MODE_WIRED;
 
+  const string gnuplot_drawer::FORCE_SHOW_PROPERTY_NAME          = "visibility.force_show";
+  const string gnuplot_drawer::FORCE_SHOW_ENVELOP_PROPERTY_NAME  = "visibility.force_show_envelop";
+  const string gnuplot_drawer::FORCE_SHOW_CHILDREN_PROPERTY_NAME = "visibility.force_show_children";
+
   bool gnuplot_drawer::g_devel = false;
 
   void gnuplot_drawer::wait_for_key ()
@@ -46,7 +50,7 @@ namespace geomtools {
  
   const string & gnuplot_drawer::get_view () const
   {
-    return __mode;
+    return __view;
   }
   
   void gnuplot_drawer::set_mode (const string & mode_)
@@ -57,6 +61,16 @@ namespace geomtools {
   const string & gnuplot_drawer::get_mode () const
   {
     return __mode;
+  }
+
+  datatools::utils::properties & gnuplot_drawer::get_properties ()
+  {
+    return __props;
+  }
+
+  const datatools::utils::properties & gnuplot_drawer::get_properties () const
+  {
+    return __props;
   }
 
   bool gnuplot_drawer::is_view_2d () const
@@ -124,11 +138,13 @@ namespace geomtools {
     __initialized = false;
     __view = gnuplot_drawer::DEFAULT_VIEW;
     __mode = gnuplot_drawer::DEFAULT_MODE;
+    return;
   }
   
   gnuplot_drawer::~gnuplot_drawer ()
   {
-   reset ();
+    reset ();
+    return;
   }
   
   void gnuplot_drawer::reset_cstreams ()
@@ -211,6 +227,13 @@ namespace geomtools {
 	  {
 	    shown = false;
 	  }
+
+	if (get_properties ().has_key (FORCE_SHOW_PROPERTY_NAME))
+	  {
+	    shown = get_properties ().fetch_boolean (FORCE_SHOW_PROPERTY_NAME);
+	  }
+
+
 	if (visibility::is_hidden_envelop (log_visu_config))
 	  {
 	    shown_envelop = false;
@@ -219,6 +242,11 @@ namespace geomtools {
 	  {
 	    cerr << "DEVEL: gnuplot_drawer::__draw: Show         = " << shown << endl;
 	    cerr << "DEVEL: gnuplot_drawer::__draw: Show envelop = " << shown_envelop << endl;
+	  }
+
+	if (get_properties ().has_key (FORCE_SHOW_ENVELOP_PROPERTY_NAME))
+	  {
+	    shown_envelop = get_properties ().fetch_boolean (FORCE_SHOW_ENVELOP_PROPERTY_NAME);
 	  }
 
 	if (shown && shown_envelop)
@@ -312,6 +340,11 @@ namespace geomtools {
 	    draw_children = false;
 	  }
 
+	if (get_properties ().has_key (FORCE_SHOW_CHILDREN_PROPERTY_NAME))
+	  {
+	    draw_children = get_properties ().fetch_boolean (FORCE_SHOW_CHILDREN_PROPERTY_NAME);
+	  }
+
 	if (devel)
 	  {
 	    cerr << "DEVEL: gnuplot_drawer::__draw: " 
@@ -338,18 +371,6 @@ namespace geomtools {
 	      {
 		draw_it = false;
 	      }
-	    //draw_it = true;
-	    /*
-		string visibility = log_child.parameters ().fetch_string ("visibility");
-		if (visibility == "invisible")
-		  {
-		    draw_it = false;
-		  }
-		if (visibility == "visible")
-		  {
-		    draw_it = true;
-		  }
-	    */
 	    if (! draw_it)
 	      {
 		continue;
