@@ -136,12 +136,13 @@ ifeq ($(strip $(GENBB_HELP_CERNLIB_INC)),)
 DEPCPPFLAGS+=-I$(CERN_ROOT)/include
 else
 DEPCPPFLAGS+=-I$(GENBB_HELP_CERNLIB_INC)
-fi
+endif
+
 ifeq ($(strip $(GENBB_HELP_CERNLIB_LIBS)),)
 DEPLDFLAGS+=$(shell cernlib packlib mathlib kernlib)
 else
 DEPLDFLAGS+=$(GENBB_HELP_CERNLIB_LIBS)
-fi
+endif
 
 # f2c dependency:
 ifeq ($(F77),g77)
