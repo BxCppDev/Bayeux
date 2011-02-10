@@ -85,8 +85,8 @@ DEPCPPFLAGS+=$(shell boost-config --cflags)
 DEPLDFLAGS+=$(shell boost-config --ldflags serialization iostreams filesystem)
 
 # CLHEP dependency :
-ifeq ($(strip $(CLHEP_LIB)),)
-$(error Sorry CLHEP is not configured, please define the CLHEP_LIB env)
+ifeq ($(strip $(shell which clhep-config 2> /dev/null)),)
+$(error Sorry CLHEP is not setup, cannot find 'clhep-config')
 endif
 DEPCPPFLAGS+=$(shell clhep-config --include)
 DEPLDFLAGS+=$(shell clhep-config --libs)
