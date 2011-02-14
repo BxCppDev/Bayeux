@@ -521,6 +521,10 @@ function do_build ()
     if [ -f ${configure_flag_file} ]; then
 	source ${configure_flag_file}
 	pkgtools__msg_notice "Build procedure use the '${F77_COMP}' F77 compiler..."
+    else
+	pkgtools__msg_notice "Cannot find '${configure_flag_file}' file ! Please configure first !"
+	__pkgtools__at_function_exit
+	return 1
     fi
 
     if [ -d ${the_gmk_dir} ]; then
@@ -653,6 +657,15 @@ EOF
 function do_install ()
 {
     __pkgtools__at_function_enter do_install
+
+    if [ -f ${configure_flag_file} ]; then
+	source ${configure_flag_file}
+	#pkgtools__msg_notice "Build procedure use the '${F77_COMP}' F77 compiler..."
+    else
+	pkgtools__msg_notice "Cannot find '${configure_flag_file}' file ! Please configure first !"
+	__pkgtools__at_function_exit
+	return 1
+    fi
 
     # reset default install options:
     install__ldflags_mode=""

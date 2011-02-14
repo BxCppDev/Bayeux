@@ -159,7 +159,7 @@ CPPFLAGS3=
 
 # Force only one underscore for extern Fortran77/C+ names:
 underscore_mode=one
-$(warning Force only one underscore for extern Fortran77/C+ names)
+$(warning Force only one underscore for extern Fortran77/C++ names)
 
 #ifeq ($(F77),gfortran)
 #underscore_mode=one
