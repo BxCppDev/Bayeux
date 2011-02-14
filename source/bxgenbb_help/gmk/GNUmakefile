@@ -90,7 +90,8 @@ F77FLAGS+=-fno-second-underscore
 endif
 
 ifeq ($(F77),gfortran)
-F77FLAGS+= 
+F77FLAGS+=
+###-O2
 endif
 
 processor=$(shell uname -p)
@@ -100,7 +101,6 @@ else
 CXXFLAGS+= -Df2cFortran
 #F77FLAGS+= #-malign-double
 endif
-
 
 CPPFLAGS=-I. -I$(INCDIR)
 LDFLAGS=-O -L$(LIBDIR) -l$(LIBNAME)
@@ -133,13 +133,13 @@ ifeq ($(strip $(CERN_ROOT)),)
 $(error Sorry CERNLIB (env. CERN_ROOT) is not configured!)
 endif
 ifeq ($(strip $(GENBB_HELP_CERNLIB_INC)),)
-DEPCPPFLAGS+=-I$(CERN_ROOT)/include
+#DEPCPPFLAGS+=-I$(CERN_ROOT)/include
 else
 DEPCPPFLAGS+=-I$(GENBB_HELP_CERNLIB_INC)
 endif
 
 ifeq ($(strip $(GENBB_HELP_CERNLIB_LIBS)),)
-DEPLDFLAGS+=$(shell cernlib packlib mathlib kernlib)
+#DEPLDFLAGS+=$(shell cernlib packlib mathlib kernlib)
 else
 DEPLDFLAGS+=$(GENBB_HELP_CERNLIB_LIBS)
 endif
@@ -178,10 +178,12 @@ $(warning Force only one underscore for extern Fortran77/C+ names)
 #endif
 
 ifeq ($(underscore_mode),two)
-CPPFLAGS1+=-Dfermi_func_shape_only=fermi_func_shape_only__
+#CPPFLAGS1+=-Dfermi_func_shape_only=fermi_func_shape_only__
+#CPPFLAGS1+=-Ddivdif_wrap=divdif_wrap__
+#CPPFLAGS1+=-Dgauss_wrap=gauss_wrap__
 CPPFLAGS1+=-Dfermi_wrap=fermi_wrap__
-CPPFLAGS1+=-Dfermi_func=fermi_func__
-CPPFLAGS1+=-Dfermi_func_nr_approx=fermi_func_nr_approx__
+#CPPFLAGS1+=-Dfermi_func=fermi_func__
+#CPPFLAGS1+=-Dfermi_func_nr_approx=fermi_func_nr_approx__
 CPPFLAGS1+=-Drng_shoot_reset=rng_shoot_reset__
 CPPFLAGS1+=-Drng_shoot_flat=rng_shoot_flat__
 
@@ -194,10 +196,12 @@ CPPFLAGS3+=-Denrange=enrange__
 endif
 
 ifeq ($(underscore_mode),one)
-CPPFLAGS1+=-Dfermi_func_shape_only=fermi_func_shape_only_
+#CPPFLAGS1+=-Dfermi_func_shape_only=fermi_func_shape_only_
+#CPPFLAGS1+=-Ddivdif_wrap=divdif_wrap_
+#CPPFLAGS1+=-Dgauss_wrap=gauss_wrap_
 CPPFLAGS1+=-Dfermi_wrap=fermi_wrap_
-CPPFLAGS1+=-Dfermi_func=fermi_func_
-CPPFLAGS1+=-Dfermi_func_nr_approx=fermi_func_nr_approx_
+#CPPFLAGS1+=-Dfermi_func=fermi_func_
+#CPPFLAGS1+=-Dfermi_func_nr_approx=fermi_func_nr_approx_
 CPPFLAGS1+=-Drng_shoot_reset=rng_shoot_reset_
 CPPFLAGS1+=-Drng_shoot_flat=rng_shoot_flat_
 
@@ -350,11 +354,11 @@ install :
 
 .PHONY : clean_special
 clean_special :
-	@echo "Target 'clean_special'..."
+	#@echo "Target 'clean_special'..."
 
 .PHONY : uninstall_special
 uninstall : 
-	@echo "Uninstalling..."
+	#@echo "Uninstalling..."
 	#test -L $(BINDIR)/$(LIBNAME)-config && $(RM) $(BINDIR)/$(LIBNAME)-config || echo -n ""
 	#test -f $(BASEDIR)/$(LIBNAME).sh && $(RM) $(BASEDIR)/$(LIBNAME).sh || echo -n ""
 	#test -f $(BASEDIR)/$(LIBNAME).csh && $(RM) $(BASEDIR)/$(LIBNAME).csh || echo -n ""

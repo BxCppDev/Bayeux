@@ -3,13 +3,14 @@ This is the 'genbb_help' package README file
 
 1 - Description:
 
-    GENBB wrapper package.
-    The GENBB Fortran library has been extracted from the
-    N3Nemos CVS repository. A 'genbb' script is provided to run
-    the generator.
+    The genbb_help package is built from the original Decay0 program
+    by Vladimir Tretyak. 
+    A 'genbb' script is provided to run the generator.
 
-    Some reader C++ class (genbb_mgr) enables to use the output
-    data file from 'genbb'.
+    Some reader C++ class (the genbb_mgr class) enables the use 
+    of the output data file from 'genbb' or run (the genbb and 
+    wgenbb classes) the core fortran generator on the fly from 
+    a C++ application.
 
 
 2 - Documentation:
@@ -24,8 +25,7 @@ This is the 'genbb_help' package README file
     We met some unexplained problems with some no 
     mandatory Fortran part of the library. 
     This has been removed.
-    
-    
+
 
 3 - Installation:
 

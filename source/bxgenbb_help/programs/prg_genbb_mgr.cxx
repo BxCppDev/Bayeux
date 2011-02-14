@@ -8,19 +8,20 @@
 
 #include <genbb_help/genbb_mgr.h>
 
-int
-main (int argc_, char ** argv_)
+using namespace std;
+
+int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
   try
     {  
       bool debug = false;
-      std::string genbb_file = "";
+      string genbb_file = "";
 
       int iarg = 1;
       while (iarg < argc_)
 	{
-	  std::string arg = argv_[iarg];
+	  string arg = argv_[iarg];
 	  if (arg[0] == '-')
 	    {
 	      if (arg == "-d" || arg == "--debug") debug = true;
@@ -37,7 +38,7 @@ main (int argc_, char ** argv_)
     
       if (genbb_file.empty ())
 	{
-	  throw std::runtime_error ("Missing GENBB generated events file!");
+	  throw runtime_error ("Missing GENBB generated events file!");
 	}
 
       genbb::genbb_mgr mgr;
@@ -58,24 +59,24 @@ main (int argc_, char ** argv_)
       while (mgr.has_next ())
 	{
 	  mgr.load_next (pe);
-	  pe.dump (std::cout);
-	  std::cout << std::endl;
+	  pe.dump (cout);
+	  cout << endl;
 	  count++;
 	}
       mgr.reset ();
 
-      std::clog << "Number of loaded events: " << count << std::endl; 
+      clog << "Number of loaded events: " << count << endl; 
       if (debug) mgr.dump ();
    
     }
-  catch (std::exception & x)
+  catch (exception & x)
     {
-      std::cerr << "error: " << x.what () << std::endl; 
+      cerr << "error: " << x.what () << endl; 
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      std::cerr << "error: " << "unexpected error!" << std::endl; 
+      cerr << "error: " << "unexpected error !" << endl; 
       error_code = EXIT_FAILURE;
     }
   return error_code;

@@ -53,11 +53,6 @@ fi
 cflags_cache=${THEPACK_ROOT}/.cflags.cache
 ldflags_cache=${THEPACK_ROOT}/.ldflags.cache
 
-cernlib_config=cernlib
-if [ "x${CERNLIB_CONFIG}" != "x" ]; then
-    cernlib_config=${CERNLIB_CONFIG}
-fi
-
 ### Notes:
 ###	"-lgfortran " 
 ###	"-lg2c "
@@ -156,7 +151,6 @@ if [ "x$opt" = "x--cflags" ]; then
 -Dgenbb_init_enrange=genbb_init_enrange_ \
 -Denrange=enrange_\
 "
-	cernlib_cflags="-I${CERN_ROOT}/include"
     fi
     if [ "x${f77_comp}" = "xgfortran" ]; then
 	f77_defines="\
@@ -168,14 +162,12 @@ if [ "x$opt" = "x--cflags" ]; then
 -Dgenbb_init_enrange=genbb_init_enrange_ \
 -Denrange=enrange_ \
 "
-	cernlib_cflags="-I${CERN_ROOT}/include"
     fi
     ####
     shift 1
     more=$1
     if [ "x${more}" = "x--no-f77" ]; then
 	f77_defines=
-	cernlib_cflags=
     fi
     ###
 
@@ -198,18 +190,13 @@ if [ "x$opt" = "x--cflags" ]; then
 		    "-fPIC " \
 		    "${f77_defines} " \
 		    "-I${THEPACK_INCLUDEDIR} "  \
-		    "`geomtools-config --cflags` "  \
-		    "${cernlib_cflags} " 
+		    "`geomtools-config --cflags` "
 	    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py	    
 	) | tee ${cflags_cache}
 	test ${using_cache_files} -eq 0 && rm -f ${cflags_cache}
     fi
     exit 0
 fi
-
-#	"`mygsl-config --cflags` "  \
-#	"`clhep-config --include` " \
-#
 
 if [ "x$opt" = "x--libdir" ]; then
     echo "${THEPACK_LIBDIR}"
@@ -227,12 +214,10 @@ if [ "x$opt" = "x--libs" ]; then
 fi 
 
 if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
-    cernlib_ldflags=`${cernlib_config} mathlib`
     ####
     shift 1
     more=$1
     if [ "x${more}" = "x--no-f77" ]; then
-	cernlib_ldflags=
 	f77_opt=
     fi
     ###
@@ -254,25 +239,14 @@ if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
 	    (
 		echo -n "-L${THEPACK_LIBDIR} -lgenbb_help "  \
 		    "`geomtools-config --ldflags` "  \
-		    "${cernlib_ldflags} "  \
 		    "${f77_opt} "  \
 		    "-lm "  
 	    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
 	) | tee ${ldflags_cache}
 	test ${using_cache_files} -eq 0 && rm -f ${ldflags_cache}
     fi
-    # echo -n "-L${THEPACK_LIBDIR} -lgenbb_help "  \
-    # 	"`geomtools-config --ldflags` "  \
-    # 	"${cernlib_ldflags} "  \
-    # 	"${f77_opt} "  \
-    # 	"-lm "  \
-    # 	| python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
     exit 0
 fi 
-
-#	"`mygsl-config --ldflags` "  \
-#	"`clhep-config --libs` "  \
-#
 
 if [ "x$opt" = "x--check" ]; then
     cd ${THEPACK_ROOT}

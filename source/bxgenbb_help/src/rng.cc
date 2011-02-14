@@ -1,19 +1,38 @@
 // -*- mode: c++; -*- 
-/* genbb_mgr.cc
+// rng.cc
+/*
+ * Copyright 2007-2011 F. Mauger
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Publi * License as published by
+ * the Free Software Foundation; either version 3 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Publi * License for more details.
+ * 
+ * You should have received a copy of the GNU General Publi * License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 #include <genbb_help/rng.h>
 
 namespace genbb {
-
+  
   mygsl::rng rng::g__ran ("mt19937", 0);
- 
+  
 } // end of namespace genbb
 
-int rng_shoot_reset (int seed_)
+int32_t rng_shoot_reset (int32_t * seed_)
 {
-  genbb::rng::g__ran.init ("mt19937", seed_);
-  return seed_;
+  std::clog << "NOTICE: " 
+	    << "genbb::rng_shoot_reset: " 
+	    << "Initialize the PRNG with seed '" << *seed_ << "'" <<  std::endl;
+  genbb::rng::g__ran.init ("mt19937", *seed_);
+  return *seed_;
 }
 
 float rng_shoot_flat ()
@@ -21,4 +40,4 @@ float rng_shoot_flat ()
   return (float) genbb::rng::g__ran.uniform ();
 }
 
-// end of genbb_mgr.cc
+// end of rng.cc

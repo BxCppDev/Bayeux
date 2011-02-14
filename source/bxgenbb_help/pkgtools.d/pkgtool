@@ -710,6 +710,7 @@ function do_install ()
     test -L ${sysdir}/bin/${pack_config} && rm -f ${sysdir}/bin/${pack_config} 
     ln -s -f ${the_pkgtools_dir}/${pack_config} ${sysdir}/bin/${pack_config}
     ln -s -f ${the_base_dir}/scripts/genbb ${sysdir}/bin/genbb
+    ln -s -f ${the_base_dir}/scripts/decay0 ${sysdir}/bin/decay0
 
     __pkgtools__at_function_exit
     return 0

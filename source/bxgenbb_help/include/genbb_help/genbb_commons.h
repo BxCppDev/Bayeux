@@ -4,6 +4,23 @@
  * Creation date: 2010-09-28
  * Last modified: 
  * 
+ * License: 
+ * Copyright 2007-2011 F. Mauger
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  * Description: 
  *   GENBB generator
  */
@@ -21,17 +38,18 @@ struct ENRANGE_t
   //	common/enrange/ebb1,ebb2,toallevents,levelE,chdspin
 public:
 
-  float ebb1;
-  float ebb2;
-  float toallevents;
-  int   levelE;
+  float   ebb1;
+  float   ebb2;
+  float   toallevents;
+  int32_t levelE;
 
-  void reset()
+  void reset ()
   {
     ebb1 = 0;
     ebb2 = 4.3; // MeV
     toallevents = 1.0;
     levelE = 0;
+    return;
   }
 
 };
@@ -68,6 +86,7 @@ public:
   GENEVENT_t ()
   {
     reset ();
+    return;
   }
 
   void reset ()
@@ -84,7 +103,7 @@ public:
 	  }
 	this->ptime[i] = 0.0F;
       }
-
+    return;
   }
 
 };

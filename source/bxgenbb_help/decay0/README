@@ -1,0 +1,34 @@
+
+README:
+-------
+
+Cd in the decay0 directory:
+
+   bash$ cd decay0 
+
+
+Test the decay0 program with CERNLIB:
+
+   Use the 'decay0_fixed.for' file because the original 'decay0.for' 
+   does not support gfortran.
+
+      bash$ gfortran decay0_fixed.for $(cernlib packlib mathlib) -o decay0_fixed
+
+   Run the executable:
+
+      bash$ ./decay0_fixed
+
+
+Generate genbb source files from the original 'decay0.for' program
+and add check stuff in 'decay0/src/' :
+
+    bash$ ./prepare_decay0.sh -c ./decay0.for
+
+
+Generate genbb source files from the original 'decay0.for' program
+and install it in the 'genbb_help' source tree:
+
+    bash$ ./prepare_decay0.sh ./decay0.for
+
+--
+FM

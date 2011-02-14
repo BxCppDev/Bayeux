@@ -8,6 +8,7 @@
 #include <list>
 
 #include <datatools/utils/utils.h>
+#include <datatools/utils/ioutils.h>
 #include <datatools/serialization/io_factory.h>
 
 #include <genbb_help/genbb_mgr.h>
@@ -77,20 +78,17 @@ int main (int argc_, char ** argv_)
 	{
 	  string infile = *i;
 	  datatools::utils::expand_path (infile);
-	  clog << "Input GENBB file = '" << infile << "'" << endl;
+	  clog << datatools::utils::io::notice << "Input GENBB file = '" << infile << "'" << endl;
 	  mgr.set (infile);
 	}
       if (debug) mgr.dump ();
 
       datatools::utils::expand_path (output_file);
-      clog << "Output Boost file = '" << output_file << "'" << endl;
+      clog << datatools::utils::io::notice << "Output Boost file = '" << output_file << "'" << endl;
 
       // initialize the manager:
       mgr.init ();
       if (debug) mgr.dump ();
-
-      // working primary event:
-      genbb::primary_event pe;
 
       datatools::serialization::data_writer writer;
 
@@ -101,25 +99,27 @@ int main (int argc_, char ** argv_)
       // main loop on primary events source:
       while (mgr.has_next ())
 	{
+	  // working primary event:
+	  genbb::primary_event pe;
 	  mgr.load_next (pe);
 	  writer.store (pe);
 	  count++;
 	}
       mgr.reset ();
 
-      clog << "Number of loaded events: " << count << endl; 
+      clog << datatools::utils::io::notice << "Number of loaded events: " << count << endl; 
       if (debug) mgr.dump ();
    
     }
   catch (exception & x)
     {
-      cerr << "g2b: error: " << x.what () << endl;
+      cerr << datatools::utils::io::error << "g2b: " << x.what () << endl;
       usage (cerr);
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "g2b: error: " << "unexpected error!" << endl; 
+      cerr << datatools::utils::io::error << "g2b: " << "Unexpected error !" << endl; 
       usage (cerr);
       error_code = EXIT_FAILURE;
     }

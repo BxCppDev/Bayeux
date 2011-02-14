@@ -1,7 +1,20 @@
-c     prog_genbb_1.F
+c prog_genbb_1.F
 c     
-c     
-c     
+c Copyright 2007-2011 F. Mauger
+c
+c This program is free software; you can redistribute it and/or modify
+c it under the terms of the GNU General Public License as published by
+c the Free Software Foundation; either version 3 of the License, or (at
+c your option) any later version.
+c 
+c This program is distributed in the hope that it will be useful, but
+c WITHOUT ANY WARRANTY; without even the implied warranty of
+c MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+c General Public License for more details.
+c 
+c You should have received a copy of the GNU General Public License
+c along with this program; if not, write to the Free Software
+c Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 c     
       program prog_genbb_1
       include 'genbb_help/genbb_commons.inc'
@@ -32,8 +45,7 @@ c
       irndmst = 0
       iwrfile = 0
       chfile = 'out.genbb'
-      seed = 0
-      
+      seed = 0  
 c     
 c     step 0: initialize random engine
 c     
@@ -66,10 +78,10 @@ c
       call genbbdia (i2bbs, chnuclide, ilevel, modebb, istart, ierror)
       if (ierror .ne. 0) then
          print * , 'prog_genbb_1: error: error in genbbdia'
-         print * , 'prog_genbb_1: error: abort!'
+         print * , 'prog_genbb_1: error: abort !'
          stop
       else
-         print * , 'prog_genbb_1: info: genbbdia ok!'
+         print * , 'prog_genbb_1: info: genbbdia ok !'
       endif
       call genbbparprint ()
 c     
@@ -82,7 +94,7 @@ c
          chfile='no file' ! trick
       endif
       if (idebug .eq. 1) 
-     +     print * , 'prog_genbb_1: info: genbbopen ok!'
+     +     print * , 'prog_genbb_1: info: genbbopen ok !'
 
 c     
 c     step 3: checks and initializations
@@ -95,11 +107,11 @@ c
       call genbbsub (i2bbs, chnuclide, ilevel, modebb, istart, ierror)
       if (ierror .ne. 0) then
          print * , 'prog_genbb_1: error: error in genbbsub'
-         print * , 'prog_genbb_1: error: abort!'
+         print * , 'prog_genbb_1: error: abort !'
          stop
       else
          if (idebug .eq. 1) then
-            print * , 'prog_genbb_1: info: genbbsub ok!'
+            print * , 'prog_genbb_1: info: genbbsub ok  !'
          endif
       endif
 c     
@@ -125,7 +137,7 @@ c
             print *,'prog_genbb_1: error: generation failed',
      +           ' at event ',
      +           ievent 
-            print *,'prog_genbb_1: error: abort!'
+            print *,'prog_genbb_1: error: abort !'
             stop
          else 
             if (iwrfile .ne. 0) call genbbsave ()              
@@ -140,11 +152,13 @@ c
      +     print * , 'prog_genbb_1: info: invoking genbbclose...'
       if (iwrfile .ne. 0) call genbbclose ()
       if (idebug .eq. 1) 
-     +     print * , 'prog_genbb_1: info: genbbclose ok!'
+     +     print * , 'prog_genbb_1: info: genbbclose ok !'
       if (idebug .eq. 1) print * , 'prog_genbb_1: info: end of run.'
       stop
       end
-c     
-c     
-c     end of prog_genbb_1.f
-
+c          
+c end of prog_genbb_1.F
+c
+c Local Variables: --
+c mode: fortran --
+c End: --
