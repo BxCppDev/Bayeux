@@ -145,7 +145,7 @@ density.unit     : string = "g/cm3"
 state            : string = "solid"
 composition.mode            : string       = "number_of_atoms"
 composition.names           : string  [2]  = "Hydrogen"  "Carbon"
-composition.number_of_atoms : integer [2]  =      9         10
+composition.number_of_atoms : integer [2]  =      8         8
 
 
 [name="std::NE110" type="material"]
