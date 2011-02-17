@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* cylindric_extrusion_boxed_model.cc
  */
 
@@ -7,12 +7,12 @@
 namespace geomtools {
 
   using namespace std;
-  
+
   const geomtools::i_shape_3d & cylindric_extrusion_boxed_model::get_solid () const
   {
     return *__solid;
   }
-     
+
   void cylindric_extrusion_boxed_model::set_extrusion_radius (double r_)
   {
     assert_unconstructed("cylindric_extrusion_boxed_model::set_extrusion_radius");
@@ -27,7 +27,7 @@ namespace geomtools {
     __extrusion_radius = r_;
     return;
   }
-     
+
   void cylindric_extrusion_boxed_model::set_mother_x (double x_)
   {
     assert_unconstructed("cylindric_extrusion_boxed_model::set_mother_x");
@@ -82,12 +82,12 @@ namespace geomtools {
   {
     return __mother_x;
   }
-  
+
   double cylindric_extrusion_boxed_model::get_mother_y () const
   {
     return __mother_y;
   }
-  
+
   double cylindric_extrusion_boxed_model::get_mother_z () const
   {
     return __mother_z;
@@ -109,8 +109,8 @@ namespace geomtools {
   {
     return "geomtools::cylindric_extrusion_boxed_model";
   }
-  
-  cylindric_extrusion_boxed_model::cylindric_extrusion_boxed_model () 
+
+  cylindric_extrusion_boxed_model::cylindric_extrusion_boxed_model ()
     : i_model ("cylindric_extrusion_boxed_model")
   {
     __material_name = "";
@@ -120,7 +120,7 @@ namespace geomtools {
     __extrusion_radius = numeric_limits<double>::quiet_NaN ();
     return;
   }
-  
+
   cylindric_extrusion_boxed_model::~cylindric_extrusion_boxed_model ()
   {
     return;
@@ -144,11 +144,11 @@ namespace geomtools {
       {
 	lunit_str = config_.fetch_string ("length_unit");
       }
- 
+
     if (config_.has_key ("x"))
       {
 	mother_x = config_.fetch_real ("x");
-      }  
+      }
     else
       {
  	ostringstream message;
@@ -204,7 +204,7 @@ namespace geomtools {
 		<< "Missing 'material.ref' property !";
 	throw runtime_error (message.str ());
       }
- 
+
     double lunit = CLHEP::mm;
     lunit = datatools::utils::units::get_length_unit_from (lunit_str);
 
@@ -212,7 +212,7 @@ namespace geomtools {
     mother_y *= lunit;
     mother_z *= lunit;
     extrusion_radius *= lunit;
-    
+
     if (extrusion_radius >= 0.5 * mother_x)
       {
 	ostringstream message;
@@ -253,7 +253,10 @@ namespace geomtools {
     placement p2 (vector_3d (0, 0, 0), 0, 0, 0);
     __extruded_solid.set_shape1 (__mother_box, p1);
     __extruded_solid.set_shape2 (__extrusion_cylinder, p2);
-    __extruded_solid.dump (std::clog);  
+    if (devel)
+      {
+        __extruded_solid.dump (std::clog);
+      }
 
     __extruded_log.set_name (i_model::make_logical_volume_name ("extruded_box"));
     __extruded_log.set_shape (__extruded_solid);
@@ -274,16 +277,16 @@ namespace geomtools {
       sd_ptr->zmin = -0.5 * __mother_z;
       sd_ptr->zmax = +0.5 * __mother_z;
       __extruded_solid.set_stackable_data (sd_ptr);
-      if (devel) 
+      if (devel)
 	{
 	  clog << "DEVEL: cylindric_extrusion_boxed_model::_at_construct: Entering..." << endl;
-	  sd_ptr->tree_dump (cerr, 
-			     "cylindric_extrusion_boxed_model::_at_construct: Stackable data: ", 
+	  sd_ptr->tree_dump (cerr,
+			     "cylindric_extrusion_boxed_model::_at_construct: Stackable data: ",
 			     "DEVEL: ");
 	}
     }
     __extruded_solid.set_user_draw ((void *) &cylindric_extrusion_boxed_model::gnuplot_draw_user_function);
-    __solid = &__extruded_solid;  
+    __solid = &__extruded_solid;
 
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (__extruded_solid);
@@ -293,9 +296,9 @@ namespace geomtools {
     return;
   }
 
-  void cylindric_extrusion_boxed_model::tree_dump (ostream & out_, 
-						   const string & title_ , 
-						   const string & indent_, 
+  void cylindric_extrusion_boxed_model::tree_dump (ostream & out_,
+						   const string & title_ ,
+						   const string & indent_,
 						   bool inherit_) const
   {
     bool devel = false;
@@ -304,40 +307,40 @@ namespace geomtools {
     if (! indent_.empty ()) indent = indent_;
     i_model::tree_dump (out_, title_, indent, true);
 
-    out_ << indent << i_tree_dumpable::tag 
+    out_ << indent << i_tree_dumpable::tag
 	 << "Material name : '" << get_material_name () << "'" << endl;
 
-    out_ << indent << i_tree_dumpable::tag 
+    out_ << indent << i_tree_dumpable::tag
 	 << "Mother X : " << get_mother_x () / CLHEP::mm << " mm" << endl;
 
-    out_ << indent << i_tree_dumpable::tag 
+    out_ << indent << i_tree_dumpable::tag
 	 << "Mother Y : " << get_mother_y () / CLHEP::mm << " mm" << endl;
 
-    out_ << indent << i_tree_dumpable::tag 
+    out_ << indent << i_tree_dumpable::tag
 	 << "Mother Z : " << get_mother_z () / CLHEP::mm << " mm" << endl;
 
-    out_ << indent << i_tree_dumpable::tag 
+    out_ << indent << i_tree_dumpable::tag
 	 << "Extrusion radius : " << get_extrusion_radius () / CLHEP::mm << " mm" << endl;
- 
- 
+
+
     {
-      out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
+      out_ << indent << i_tree_dumpable::inherit_tag (inherit_)
 	   << "Solid : " << endl;
       {
 	ostringstream indent_oss;
 	indent_oss << indent;
 	indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
 	__extruded_solid.tree_dump (out_, "", indent_oss.str ());
-      }   
+      }
     }
 
     return;
   }
 
-  void cylindric_extrusion_boxed_model::gnuplot_draw_user_function (std::ostream & out_, 
-								    const geomtools::vector_3d & position_, 
+  void cylindric_extrusion_boxed_model::gnuplot_draw_user_function (std::ostream & out_,
+								    const geomtools::vector_3d & position_,
 								    const geomtools::rotation_3d & rotation_,
-								    const geomtools::i_object_3d & obj_, 
+								    const geomtools::i_object_3d & obj_,
 								    void *)
   {
     const subtraction_3d * solid = dynamic_cast<const subtraction_3d *>(&obj_);
@@ -349,28 +352,28 @@ namespace geomtools {
 	throw runtime_error (message.str ());
       }
     const i_composite_shape_3d::shape_t & s1 = solid->get_shape1 ();
-    const i_composite_shape_3d::shape_t & s2 = solid->get_shape2 ();    
+    const i_composite_shape_3d::shape_t & s2 = solid->get_shape2 ();
     const i_shape_3d & sh1 = s1.get_shape ();
     const i_shape_3d & sh2 = s2.get_shape ();
-    
+
     // extract useful stuff (shapes and properties):
     const geomtools::box & mother_box = dynamic_cast<const geomtools::box &> (sh1);
     const geomtools::cylinder & extrusion_cylinder = dynamic_cast<const geomtools::cylinder &> (sh2);
-    
+
     // draw first shape:
     {
       placement mother_world_placement;
       mother_world_placement.set_translation (position_);
       mother_world_placement.set_orientation (rotation_);
-      
+
       placement world_item_placement;
-      mother_world_placement.child_to_mother (s1.get_placement (), 
-					      world_item_placement);  
+      mother_world_placement.child_to_mother (s1.get_placement (),
+					      world_item_placement);
       const vector_3d   & sh1_pos = world_item_placement.get_translation ();
       const rotation_3d & sh1_rot = world_item_placement.get_rotation ();
-      gnuplot_draw::draw_box (out_, 
-			      sh1_pos, 
-			      sh1_rot, 
+      gnuplot_draw::draw_box (out_,
+			      sh1_pos,
+			      sh1_rot,
 			      mother_box);
     }
 
@@ -380,23 +383,23 @@ namespace geomtools {
       placement mother_world_placement;
       mother_world_placement.set_translation (position_);
       mother_world_placement.set_orientation (rotation_);
-      
+
       placement world_item_placement;
-      mother_world_placement.child_to_mother (s1.get_placement (), 
-					      world_item_placement);  
+      mother_world_placement.child_to_mother (s1.get_placement (),
+					      world_item_placement);
       const vector_3d   & sh1_pos = world_item_placement.get_translation ();
       const rotation_3d & sh1_rot = world_item_placement.get_rotation ();
-      gnuplot_draw::draw_cylinder (out_, 
-				   sh1_pos, 
-				   sh1_rot, 
+      gnuplot_draw::draw_cylinder (out_,
+				   sh1_pos,
+				   sh1_rot,
 				   cyl);
     }
     return;
   }
 
-  // register this creator:   
+  // register this creator:
   geomtools::i_model::creator_registration<cylindric_extrusion_boxed_model> cylindric_extrusion_boxed_model::__CR;
-    
+
 } // end of namespace geomtools
 
 // end of cylindric_extrusion_boxed_model.cc
