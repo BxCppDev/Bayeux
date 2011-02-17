@@ -40,6 +40,8 @@ extern "C"
   float fermi_func_shape_only (float z_, float e_);
   
   float fermi_func (float z_, float e_, bool use_l0_ = false);
+  
+  float fermi_func_decay0 (float z_, float e_, bool devel_ = false);
 
   float fermi_wrap (float * z_, float * e_);
 

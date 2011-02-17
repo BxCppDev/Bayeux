@@ -31,21 +31,29 @@ int main (int argc_, char ** argv_)
       iarg++;
     }
     
-    double z = 44.;
+    double z = 34.;
     double a = a_from_z (z);
-    clog << "z=" << z << " a=" << a << endl; 
+    clog << "z=" << z << " a=" << a << endl;
+    // clog << "TEST: fermi @ 1.5 MeV" << fermi_func_decay0 (z, 1.5, true) << endl;
     for (double e = 0.0 * CLHEP::MeV; 
 	 e < 5. * CLHEP::MeV; 
-	 e += 0.01 * CLHEP::MeV)
+	 e += 0.01 * CLHEP::MeV);
+    for (int i = 1; i <= 121; i++)
       {
-	double e_MeV = e / CLHEP::MeV;
+	double e_MeV = 0.025 * i; //e / CLHEP::MeV;
 	double f1 = fermi_func_nr_approx (z, e_MeV);
 	double f2 = fermi_func_shape_only (z, e_MeV);
-	double f3 = fermi_func (z, e_MeV);
+	double f3 = fermi_func_decay0 (z, e_MeV);
+	double f4 = fermi_func (z, e_MeV);
+	// cout << e_MeV 
+	//      << ' ' << f1
+	//      << ' ' << f2 
+	//      << ' ' << f3 
+	//      << ' ' << f4
+	//      << endl;
 	cout << e_MeV 
-	     << ' ' << f1 
-	     << ' ' << f2 
-	     << ' ' << f3 << endl;
+	     << ' ' << f3 
+	     << endl;
       }
    
   }

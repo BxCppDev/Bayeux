@@ -45,6 +45,40 @@ float fermi_func_nr_approx (float z_, float e_)
   return (t / (1. - std::exp (-t)));
 }
 
+float fermi_func_decay0 (float z_, float e_, bool devel_)
+{ 
+  using namespace std;
+  bool test = devel_;
+  double e = e_; 
+  double z = z_; 
+  if (e < 50.e-6) e = 50.e-6;
+  if (test) clog << "DEVEL: genbb_help::fermi_func_decay0: e = " << e << endl;
+  double alfaz = z / 137.036;
+  if (test) clog << "DEVEL: genbb_help::fermi_func_decay0: alfaz = " << alfaz << endl;
+  double w = e / 0.511 + 1.;
+  if (test) clog << "DEVEL: genbb_help::fermi_func_decay0: w = " << w << endl;
+  double p = sqrt (w * w - 1.);
+  if (test) clog << "DEVEL: genbb_help::fermi_func_decay0: p = " << p << endl;
+  double y = alfaz * w / p;
+  if (test) clog << "DEVEL: genbb_help::fermi_func_decay0: y = " << y << endl;
+  double g = sqrt (1. - alfaz * alfaz);
+  if (test) clog << "DEVEL: genbb_help::fermi_func_decay0: g = " << g << endl;
+  //double carg = cmplx (g, y);
+  gsl_sf_result res_lnr, res_arg;
+  int status = gsl_sf_lngamma_complex_e (g, y, &res_lnr, &res_arg);
+  if (status != GSL_SUCCESS) 
+    {
+      cerr << "genbb_help::fermi_func_decay0: GSL error: " 
+	   << gsl_strerror (status) << endl;
+      throw runtime_error ("genbb_help::fermi_func_decay0: GSL error at 'gsl_sf_lngamma_complex_e' invocation!");
+    }
+  double lnr = res_lnr.val;
+  //double res = exp((2. * g - 2.)*log (p)) * exp (M_PI * y + 2. * lnr);
+  double res = pow (p, 2. * g - 2.) * exp (M_PI * y + 2. * lnr);
+  if (test) clog << "DEVEL: genbb_help::fermi_func_decay0: ----> res = " << res << endl;
+  return (res);
+}
+
 
 float fermi_func (float z_, float e_, bool use_l0_)
 {
@@ -55,11 +89,11 @@ float fermi_func (float z_, float e_, bool use_l0_)
   double emass = 0.510999084; // MeV 
   double alpha = 1.0 / 137.036;
   double hbarc = 197.3269631; // MeV.fm
-  double r0     = 1.2; // fm
-  double me     = emass; // MeV
-  double we     = e / emass + 1.; 
-  double pe     = sqrt (we * we - 1.);
-  double beta   = pe / we;
+  double r0    = 1.2; // fm
+  double me    = emass; // MeV
+  double we    = e / emass + 1.; 
+  double pe    = sqrt (we * we - 1.);
+  //double beta  = pe / we;
   /*
   clog << "genbb_help::fermi_func_2: DEVEL: p/beta==" 
 	    << pe << ' ' << beta << endl;
@@ -78,7 +112,7 @@ float fermi_func (float z_, float e_, bool use_l0_)
     {
       cerr << "genbb_help::fermi_func_2: GSL error: " 
 	   << gsl_strerror (status) << endl;
-      throw runtime_error ("genbb_help::fermi_func_2: GSL error at 'gsl_sf_lngamma_complex_e' invocation!");
+      throw runtime_error ("genbb_help::fermi_func_2: GSL error at 'gsl_sf_lngamma_complex_e' invocation !");
     }
   double lnr = res_lnr.val;
   //clog << "genbb_help::fermi_func_2: lnr=" << lnr << endl;
@@ -138,10 +172,8 @@ float fermi_func_shape_only (float z_, float e_)
 float fermi_wrap (float * z_, float * e_)
 {
   using namespace std;
-  //cerr << "DEVEL: fermi_wrap: z_=" << *z_ << endl;
-  //cerr << "DEVEL: fermi_wrap: e_=" << *e_ << endl;
-  float res = fermi_func (*z_, *e_, false);
-  //cerr << "DEVEL: fermi_wrap: res=" << res << endl;
+  //float res = fermi_func (*z_, *e_, false);
+  float res = fermi_func_decay0 (*z_, *e_);
   return res;
 }
 
