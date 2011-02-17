@@ -238,7 +238,7 @@ function main ()
 	cp ${GENBB_HELP_ROOT}/include/genbb_help/rng.h ${GENBB_HELP_ROOT}/decay0/src/genbb_help/
 	cp ${GENBB_HELP_ROOT}/src/fermi.cc ${GENBB_HELP_ROOT}/decay0/src/
 	cp ${GENBB_HELP_ROOT}/src/rng.cc ${GENBB_HELP_ROOT}/decay0/src/
-	cp ${GENBB_HELP_ROOT}/decay0/GNUmakefile ${GENBB_HELP_ROOT}/decay0/src/
+	cp ${GENBB_HELP_ROOT}/decay0/GNUmakefile.sample ${GENBB_HELP_ROOT}/decay0/src/GNUmakefile
     fi
 
     pkgtools__msg_notice "Adapting the '\${GENBB_HELP_ROOT}/decay0/src/GENBBsub.f' file..."

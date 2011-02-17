@@ -1,5 +1,5 @@
 #!/usr/bin/python
-
+# -*- mode: python; -*-
 
 import sys
 import os
@@ -29,8 +29,8 @@ def main (argv_) :
         return 1
     decay0_prog = argv_[1].strip ()
     sys.stderr.write ("NOTICE: Source file name is '%s'\n" % decay0_prog)
-    file = open (decay0_prog)
-    lines = file.readlines ()
+    f = open (decay0_prog)
+    lines = f.readlines ()
     routines=[]
     program_name = ""
     is_program = False
