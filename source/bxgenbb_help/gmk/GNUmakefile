@@ -1,5 +1,5 @@
 # -*- mode: makefile; -*- 
-# GNUmakefile (language C++)
+# GNUmakefile (language C++/F77)
 
 test_bash=$(shell which bash)
 ifeq ($(test_bash),)
@@ -91,7 +91,6 @@ endif
 
 ifeq ($(F77),gfortran)
 F77FLAGS+=
-###-O2
 endif
 
 processor=$(shell uname -p)
@@ -99,7 +98,6 @@ ifeq ($(strip $(processor)),x86_64)
 dummy=$(shell echo "Processor: 64bits")
 else
 CXXFLAGS+= -Df2cFortran
-#F77FLAGS+= #-malign-double
 endif
 
 CPPFLAGS=-I. -I$(INCDIR)
@@ -117,33 +115,6 @@ endif
 DEPCPPFLAGS+=$(shell geomtools-config --cflags)
 DEPLDFLAGS+=$(shell geomtools-config --ldflags)
 
-# mygsl dependency:
-# ifeq ($(shell which mygsl-config),)
-# $(error Sorry mygsl-config not found!)
-# endif
-# DEPCPPFLAGS+=$(shell mygsl-config --cflags)
-# DEPLDFLAGS+=$(shell mygsl-config --ldflags)
-
-#Here you should add stuff for 'CERNLIB':
-#DEPCPPFLAGS+=
-#DEPLDFLAGS+=
-
-# cernlib
-ifeq ($(strip $(CERN_ROOT)),)
-$(error Sorry CERNLIB (env. CERN_ROOT) is not configured!)
-endif
-ifeq ($(strip $(GENBB_HELP_CERNLIB_INC)),)
-#DEPCPPFLAGS+=-I$(CERN_ROOT)/include
-else
-DEPCPPFLAGS+=-I$(GENBB_HELP_CERNLIB_INC)
-endif
-
-ifeq ($(strip $(GENBB_HELP_CERNLIB_LIBS)),)
-#DEPLDFLAGS+=$(shell cernlib packlib mathlib kernlib)
-else
-DEPLDFLAGS+=$(GENBB_HELP_CERNLIB_LIBS)
-endif
-
 # f2c dependency:
 ifeq ($(F77),g77)
 DEPLDFLAGS+=-lg2c
@@ -155,75 +126,36 @@ endif
 
 CPPFLAGS1=
 CPPFLAGS2=
-CPPFLAGS3=
+CPPFLAGS_F77=
 
 # Force only one underscore for extern Fortran77/C+ names:
 underscore_mode=one
 $(warning Force only one underscore for extern Fortran77/C++ names)
 
-#ifeq ($(F77),gfortran)
-#underscore_mode=one
-#endif
-
-#ifeq ($(F77),g77)
-#underscore_mode=two
-#endif
-
-#ifneq ($(F77_TWO_UNDERSCORES),)
-#underscore_mode=two
-#endif
-
-#ifneq ($(F77_ONE_UNDERSCORE),)
-#underscore_mode=one
-#endif
-
-ifeq ($(underscore_mode),two)
-#CPPFLAGS1+=-Dfermi_func_shape_only=fermi_func_shape_only__
-#CPPFLAGS1+=-Ddivdif_wrap=divdif_wrap__
-#CPPFLAGS1+=-Dgauss_wrap=gauss_wrap__
-CPPFLAGS1+=-Dfermi_wrap=fermi_wrap__
-#CPPFLAGS1+=-Dfermi_func=fermi_func__
-#CPPFLAGS1+=-Dfermi_func_nr_approx=fermi_func_nr_approx__
-CPPFLAGS1+=-Drng_shoot_reset=rng_shoot_reset__
-CPPFLAGS1+=-Drng_shoot_flat=rng_shoot_flat__
-
-CPPFLAGS3+=-Dgenbbsub=genbbsub__
-CPPFLAGS3+=-Dset_random_seed=set_random_seed__
-CPPFLAGS3+=-Dgrndm=grndm__
-CPPFLAGS3+=-Dgenevent=genevent__
-CPPFLAGS3+=-Dgenbb_init_enrange=genbb_init_enrange__
-CPPFLAGS3+=-Denrange=enrange__
-endif
-
 ifeq ($(underscore_mode),one)
-#CPPFLAGS1+=-Dfermi_func_shape_only=fermi_func_shape_only_
-#CPPFLAGS1+=-Ddivdif_wrap=divdif_wrap_
-#CPPFLAGS1+=-Dgauss_wrap=gauss_wrap_
 CPPFLAGS1+=-Dfermi_wrap=fermi_wrap_
-#CPPFLAGS1+=-Dfermi_func=fermi_func_
-#CPPFLAGS1+=-Dfermi_func_nr_approx=fermi_func_nr_approx_
 CPPFLAGS1+=-Drng_shoot_reset=rng_shoot_reset_
 CPPFLAGS1+=-Drng_shoot_flat=rng_shoot_flat_
 
-CPPFLAGS3+=-Dgenbbsub=genbbsub_
-CPPFLAGS3+=-Dset_random_seed=set_random_seed_
-CPPFLAGS3+=-Dgrndm=grndm_
-CPPFLAGS3+=-Dgenbb_init_enrange=genbb_init_enrange_
-CPPFLAGS3+=-Dgenevent=genevent_
-CPPFLAGS3+=-Denrange=enrange_
+CPPFLAGS2+=-Dgenbbsub=genbbsub_
+CPPFLAGS2+=-Dset_random_seed=set_random_seed_
+CPPFLAGS2+=-Dgrndm=grndm_
+CPPFLAGS2+=-Dgenbb_init_enrange=genbb_init_enrange_
+CPPFLAGS2+=-Dgenevent=genevent_
+CPPFLAGS2+=-Denrange=enrange_
 endif
 
 ### End of dependencies.
 CPPFLAGS1+=$(DEPCPPFLAGS) 
-CPPFLAGS2+=$(DEPCPPFLAGS) 
+CPPFLAGS_F77+=$(DEPCPPFLAGS) 
 LDFLAGS1+=$(DEPLDFLAGS) 
 LDFLAGS1+=-lm 
 
-CPPFLAGS+=$(shell echo $(CPPFLAGS1) $(CPPFLAGS3) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py) 
+CPPFLAGS+=$(shell echo $(CPPFLAGS1) $(CPPFLAGS2) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py) 
 LDFLAGS+=$(shell echo $(LDFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r) 
 
 DUMMY=-I. -I$(INCDIR)
-F77CPPFLAGS+=$(shell echo $(CPPFLAGS1) $(CPPFLAGS2) $(DUMMY) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py)
+F77CPPFLAGS+=$(shell echo $(CPPFLAGS1) $(CPPFLAGS_F77) $(DUMMY) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py)
 
 CXXFLAGSSHFLAGS=-Wall -v
 STATICFLAGS=-static
@@ -268,7 +200,6 @@ objectsWithPath := $(sources:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT))
 programs_all:= $(notdir $(shell ls $(PROGDIR)/*$(PROGEXT) 2> /dev/null))
 programs_test:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep ^test_)
 programs:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep -v ^test_)
-#$(notdir $(shell ls $(PROGDIR)/*$(PROGEXT)))
 binaries:= $(programs:%$(PROGEXT)=%$(BINEXT))
 binaries.static:= $(programs:%$(PROGEXT)=%.static$(BINEXT))
 binaries_test:= $(programs_test:%$(PROGEXT)=%$(BINEXT))
@@ -294,7 +225,6 @@ help :
 	@echo "make           : default as 'make lib'"
 	@echo "make lib       : build the shared library"
 	@echo "make bin       : build the shared executables"
-	#@echo "make bin_test  : build the shared test executables (not mandatory)"
 	@echo "make install   : generates install stuff"
 	@echo "                 - $(LIBNAME)-config scripts"
 	@echo "make uninstall : clean install stuff"
@@ -359,11 +289,6 @@ clean_special :
 .PHONY : uninstall_special
 uninstall : 
 	#@echo "Uninstalling..."
-	#test -L $(BINDIR)/$(LIBNAME)-config && $(RM) $(BINDIR)/$(LIBNAME)-config || echo -n ""
-	#test -f $(BASEDIR)/$(LIBNAME).sh && $(RM) $(BASEDIR)/$(LIBNAME).sh || echo -n ""
-	#test -f $(BASEDIR)/$(LIBNAME).csh && $(RM) $(BASEDIR)/$(LIBNAME).csh || echo -n ""
-	#test -L $(BINDIR)/genbb && rm -f $(BINDIR)/genbb || echo -n ""
-
 
 ##########################################################
 

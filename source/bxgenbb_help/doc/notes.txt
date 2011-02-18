@@ -1,5 +1,125 @@
-Fortran routine used within genbb:
 
-rnd1
-rndm
-grndm
+Technical details about the building of the 'genbb_help' package
+
+F. Mauger <mauger@lpccaen.in2p3.fr>
+
+----------------------------------------------------------------
+
+A - Print the list of original fortran source files extracted from Decay0:
+
+bash$ ls -1 src/*.f| sed -e 's@src/@@g' | grep -v genbb_
+Ac228.f
+...
+Zr96.f
+
+Print the list of fortran source files added to the original ones
+or providing alternative to Decay0:
+
+bash$ ls -1 src/*.f| sed -e 's@src/@@g' | grep genbb_
+genbb_debug.f
+genbb_divdif.f
+genbb_fermi.f
+genbb_gauss.f
+genbb_io.f
+genbb_random.f
+genbb_tools.f
+
+Fortran include files for common blocks interface between C/Fortran:
+
+bash$ ls -1 include/genbb_help/*.inc
+include/genbb_help/dummy.inc
+include/genbb_help/genbb_commons.inc 
+
+B - C code and C++ classes that interface with the fortran code:
+
+bash$ ls -1 include/genbb_help/*.h
+
+General header:
+  genbb_help.h
+
+Version number macros:
+  genbb_help_version.h
+
+Sample header (unused) :
+  dummy_genbb_help.h
+
+Fermi function:
+  fermi.h
+
+Declaration of struct <-> fortran common blocks:
+  genbb_commons.h 
+
+Utility class for generating events in ASCII files 
+(obsolete used only within BiPo)
+  genbb_writer.h
+
+The data model for a GENBB/Decay0 event:
+  primary_event.h
+
+The data model for a GENBB/Decay0 primary particle:
+  primary_particle.h
+
+A static C++ PRNG used as the basic PRNG for the fortran code:
+  rng.h
+
+The abstract interface for every event generators:
+  i_genbb.h
+
+Specific event generators (typically used within sngenvertex):
+  single_particle_generator.h
+  genbb_mgr.h
+  genbb.h
+  wgenbb.h
+
+
+List of the C++ source files:
+
+bash$ ls -1 src/*.cc
+src/dummy_genbb_help.cc
+src/fermi.cc
+src/genbb.cc
+src/genbb_help.cc
+src/genbb_mgr.cc
+src/genbb_writer.cc
+src/i_genbb.cc
+src/primary_event.cc
+src/primary_particle.cc
+src/rng.cc
+src/single_particle_generator.cc
+src/wgenbb.cc
+
+C - Programs:
+
+Print test programs:
+
+  bash$ ls -1 programs/test_*
+ 
+Print production programs:
+
+bash$ ls -1 programs/* | grep -v test_
+
+Convert genbb ASCII output file to Boost/Serialization files 
+(using datatools::serialization):
+programs/g2b.cxx
+
+Dump generated events:
+  programs/prg_genbb_mgr.cxx
+
+Original Decay0 main program linked to the new genbb_help library:
+  programs/prog_DECAY0.F
+
+Basic generator programs:
+  programs/prog_genbb_1.F
+
+
+D - Building:
+
+The gmk/GNUmakefile shows how we currently build
+the genbb_help library and related executables.
+The mix of C++ and Fortran code implies some trick
+to map some object names and use some -DXXX=XXX_
+preprocessor directives.
+
+
+--
+
