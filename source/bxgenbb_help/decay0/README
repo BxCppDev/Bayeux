@@ -9,7 +9,13 @@ Cd in the 'decay0' directory:
 
    bash$ cd decay0 
 
-Test the decay0 program with CERNLIB:
+The 'decay0.for' file is the original file from Vladimir
+>>>
+Last updated: 23.01.2011.
+<<<
+
+
+Test the Decay0 program with CERNLIB:
 
    Use the 'decay0_fixed.for' file because the original 'decay0.for' 
    does not support gfortran.
