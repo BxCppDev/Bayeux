@@ -111,6 +111,7 @@ EOF
 
 the_decay0_for_file=
 check_prepare=0
+extract_original=0
 
 parse_switch=1
 while [ -n "$1" ]; do
@@ -143,6 +144,11 @@ while [ -n "$1" ]; do
 	    pkgtools__msg_devel "Using GUI" 	
 	elif [ "${opt}" = "-c" -o "${opt}" = "--check" ]; then
 	    check_prepare=1
+	    extract_original=0
+	elif [ "${opt}" = "-o" -o "${opt}" = "--extract-original" ]; then
+	    check_prepare=0
+	    extract_original=1
+	    pkgtools__msg_error "Unimplemented option '${opt}' !" 	    
 	else
 	    pkgtools__msg_error "Invalid option '${opt}' !" 
 	    my_exit 1
