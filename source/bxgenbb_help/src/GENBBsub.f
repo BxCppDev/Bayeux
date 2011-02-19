@@ -1888,8 +1888,6 @@ c     +                       modebb.eq.11.or.modebb.eq.12) then
 	endif
 	if(icurrent.ne.nevents) return
 	idummy=0 ! call rdmout(irndmfin)
-	print *,'final random integer = ',irndmfin
-	print *,'toallevents=',toallevents
 	return
 	end
 c
