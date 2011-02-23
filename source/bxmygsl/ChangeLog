@@ -4,3 +4,5 @@ This is the mygsl package ChangeLog
 
 2011-02-24 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
 	* change ctor/init/reset interface of the von_neumann_method PRNG class
+	* tag 1.2.3
+	
