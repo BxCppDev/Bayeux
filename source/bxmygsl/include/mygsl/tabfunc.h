@@ -24,6 +24,7 @@
 #include <limits>
 
 #include <mygsl/unary_eval.h>
+//#include <datatools/unary_eval.h>
 
 #include <gsl/gsl_interp.h>
 #include <gsl/gsl_spline.h>
@@ -47,6 +48,7 @@ namespace mygsl {
     static bool g_debug;
 
   private:
+
     bool               __verbose;
     bool               __table_locked;
     std::string        __interpolator_name;

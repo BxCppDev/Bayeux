@@ -329,8 +329,7 @@ namespace mygsl {
   {
     if (! is_table_locked ()) 
       {
-	throw std::runtime_error (
-				  "tabulated_function::eval: Object not locked!");
+	throw std::runtime_error ("tabulated_function::eval: Object not locked !");
       }
     double y = gsl_spline_eval (__gs, x_, __giacc);
     return y;
@@ -362,6 +361,7 @@ namespace mygsl {
 	add_point (x, y, false);
       }
     lock_table (interpolator_name);
+    return;
   }
 
   void tabulated_function::tabfunc_store (std::ostream & out_, void * context_) const
@@ -374,6 +374,7 @@ namespace mygsl {
       {
 	out_ << i->first << ' ' << i->second << ' ';
       } 
+    return;
   }
 
   void tabulated_function::print_points (std::ostream & out_, 

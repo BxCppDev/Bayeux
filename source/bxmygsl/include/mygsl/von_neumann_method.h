@@ -31,6 +31,7 @@ namespace mygsl {
   class von_neumann_method
     {
     public:
+
       static bool g_debug;
       static const double AUTO_FMAX;
       static const size_t DEFAULT_NSAMPLES   = 1000;
@@ -38,6 +39,7 @@ namespace mygsl {
       static const size_t NO_MAX_COUNTS      = 0;
 
     private:
+
       double __xmin;
       double __xmax;
       double __fmax;
@@ -45,6 +47,8 @@ namespace mygsl {
       size_t       __max_counts;
 
     public:
+
+      bool is_initialized () const;
 
       double get_xmin () const
       {
@@ -66,6 +70,8 @@ namespace mygsl {
 	return __max_counts;
       }
 
+      von_neumann_method ();
+
       von_neumann_method (double xmin_, 
 			  double xmax_, 
 			  unary_eval & func_, 
@@ -77,8 +83,10 @@ namespace mygsl {
 		 double xmax_, 
 		 unary_eval & func_, 
 		 double fmax_,
-		 size_t nsamples_,
-		 size_t max_counts_);
+		 size_t nsamples_ = 0,
+		 size_t max_counts_ = DEFAULT_MAX_COUNTS);
+
+      void reset ();
 
       double shoot (rng &);
 
