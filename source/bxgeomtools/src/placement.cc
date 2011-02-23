@@ -34,6 +34,7 @@ namespace geomtools {
     __rotation_axis = ROTATION_AXIS_INVALID;
     __rotation_angle = std::numeric_limits<double>::quiet_NaN ();
     __phi = __theta = __delta = std::numeric_limits<double>::quiet_NaN ();
+    return;
   }
 
   const vector_3d & 
@@ -123,6 +124,7 @@ namespace geomtools {
 	geomtools::create_rotation_from_zyz_euler_angles (__rotation, __phi, __theta, __delta);
       }
     __inverse_rotation = __rotation.inverse ();
+    return;
   }
   
   void placement::__compute_orientation_xyz ()
@@ -140,6 +142,7 @@ namespace geomtools {
 	geomtools::create_xyz (__rotation, __phi, __theta, __delta);
       }
     __inverse_rotation = __rotation.inverse ();
+    return;
   }
 
   bool placement::has_angles () const
@@ -157,6 +160,7 @@ namespace geomtools {
   {
     set_translation (x_, y_, z_);
     set_orientation (phi_, theta_, delta_);
+    return;
   }
 
   void placement::set (const vector_3d & t_, 
@@ -164,6 +168,7 @@ namespace geomtools {
   {
     set_translation (t_);
     set_orientation (phi_, theta_, delta_);
+    return;
   }
 
   void placement::set (double x_, double y_, double z_, 
@@ -171,6 +176,7 @@ namespace geomtools {
   {
     set_translation (x_, y_, z_);
     set_orientation (axis_, angle_);
+    return;
   }
 
   void placement::set (const vector_3d & t_, 
@@ -178,6 +184,7 @@ namespace geomtools {
   {
     set_translation (t_);
     set_orientation (axis_, angle_);
+    return;
   }
 
   void placement::set_orientation (int axis_, double angle_)
@@ -192,6 +199,7 @@ namespace geomtools {
     __theta = std::numeric_limits<double>::quiet_NaN ();
     __delta = std::numeric_limits<double>::quiet_NaN ();
     __compute_orientation ();
+    return;
   }
 
   void placement::set_orientation (double phi_, double theta_, double delta_)
@@ -202,6 +210,7 @@ namespace geomtools {
     __theta = theta_;
     __delta = delta_;
     __compute_orientation ();
+    return;
   }
 
   // Not recommended at all:
@@ -218,6 +227,7 @@ namespace geomtools {
 					   __phi,
 					   __theta,
 					   __delta);
+    return;
   }
 
   void placement::set_orientation_xyz (double phi_, double theta_, double delta_)
@@ -232,6 +242,7 @@ namespace geomtools {
 					   __phi,
 					   __theta,
 					   __delta);
+    return;
   }
   
   const rotation_3d & placement::get_inverse_rotation () const
@@ -365,6 +376,7 @@ namespace geomtools {
   {
     vector_3d v (child_pos_);
     mother_pos_ = v.transform (__inverse_rotation) + __translation;
+    return;
   }
 
   vector_3d placement::child_to_mother (const vector_3d & child_pos_) const
@@ -382,6 +394,7 @@ namespace geomtools {
     vector_3d b;
     mother_to_child (mother_dir_, b);
     child_dir_= b - a;
+    return;
   }
 
   vector_3d placement::mother_to_child_direction (const vector_3d & mother_dir_) const
@@ -399,6 +412,7 @@ namespace geomtools {
     vector_3d b;
     child_to_mother (child_dir_, b);
     mother_dir_= b - a;
+    return;
   }
 
   vector_3d placement::child_to_mother_direction (const vector_3d & child_dir_) const
@@ -430,6 +444,30 @@ namespace geomtools {
 					   pm_.__phi,
 					   pm_.__theta,
 					   pm_.__delta);
+    return;
+  }
+
+  void placement::relocate (const placement & wp2_, placement & lp2_) const
+  {
+    const placement & wp1 = *this;
+    //clog << "DEVEL: placement::relocate: T1      = " <<  wp1.get_translation () << endl;
+    //clog << "DEVEL: placement::relocate: T2      = " <<  wp2_.get_translation () << endl;
+    vector_3d ref = wp2_.get_translation (); 
+    //clog << "DEVEL: placement::relocate: ref     = " << ref << endl;
+    vector_3d new_ref;
+    wp1.mother_to_child (ref, new_ref);
+    //clog << "DEVEL: placement::relocate: new_ref = " << new_ref << endl;
+    lp2_.set_translation (new_ref);
+    lp2_.__phi = lp2_.__theta = lp2_.__delta = std::numeric_limits<double>::quiet_NaN ();
+
+    lp2_.__rotation         = wp2_.__rotation * wp1.__inverse_rotation;
+    lp2_.__inverse_rotation = lp2_.__rotation.inverse ();
+
+    // reconvert angles in ZYZ Euler representation from __rotation:
+    extract_zyz_euler_angle_from_rotation (lp2_.__rotation,
+					   lp2_.__phi,
+					   lp2_.__theta,
+					   lp2_.__delta);
     return;
   }
 
@@ -550,6 +588,7 @@ namespace geomtools {
       }
     oss << " (deg)";	
     str_ = oss.str ();
+    return;
   }
 
   ostream & operator<< (ostream & out_, const placement & pl_)

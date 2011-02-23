@@ -83,7 +83,7 @@ int main (int argc_, char ** argv_)
 	  my_id_mgr.set (gg_cell_id, "module", 4); // module==4
 	  my_id_mgr.set (gg_cell_id, "side",   1); // submodule==1 (front)
 	  my_id_mgr.set (gg_cell_id, "layer",  2); // layer #2
-	  my_id_mgr.set (gg_cell_id, "cell",  28); // cell #28
+	  my_id_mgr.set (gg_cell_id, "column", 28); // cell #28
 	  cout << "Geiger cell ID = " << gg_cell_id  
 	       << " in category '" 
 	       << my_id_mgr.get_category (gg_cell_id) 
@@ -102,26 +102,24 @@ int main (int argc_, char ** argv_)
 
 	      cout << "  Module number is : " 
 		   << my_id_mgr.get (gg_cell_id, "module") << endl;
-	      cout << "  Side number is :   " 
+	      cout << "  Side number is   : " 
 		   << my_id_mgr.get (gg_cell_id, "side") << endl;
-	      cout << "  Layer number is :  " 
+	      cout << "  Layer number is  : " 
 		   << my_id_mgr.get (gg_cell_id, "layer") << endl;
-	      cout << "  Cell number is :   " 
-		   << my_id_mgr.get (gg_cell_id, "cell") << endl;
+	      cout << "  Cell number is   : " 
+		   << my_id_mgr.get (gg_cell_id, "column") << endl;
 	    }
 
 	  clog << endl << "Extraction: " << endl;
 	  geomtools::geom_id module_id;
 	  // build the module ID:
 	  my_id_mgr.make_id ("module", module_id);
-	  //cout << "Module ID = " << module_id << endl;
 	  my_id_mgr.extract (gg_cell_id, module_id);
 	  cout << "Module ID = " << module_id << endl;
 
 	  geomtools::geom_id submodule_id;
 	  // build the module ID:
 	  my_id_mgr.make_id ("tracker_submodule", submodule_id);
-	  //cout << "Tracker submodule ID = " << submodule_id << endl;
 	  my_id_mgr.extract (gg_cell_id, submodule_id);
 	  cout << "Tracker submodule ID = " << submodule_id << endl;
 	  cout << endl << endl;

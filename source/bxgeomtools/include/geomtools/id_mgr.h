@@ -55,9 +55,10 @@ namespace geomtools {
       int    type;      // unique integral ID
       string inherits;  // the mother category from which the category is inherited
       string extends;   // the mother category from which the category is extented
-      vector<string> ancestors; // the list of ancestor categories
+      vector<string> ancestors;  // the list of ancestor categories
       vector<string> extends_by; // the addresses added by the extension
       vector<string> addresses;  // the full list of addresses
+      vector<int>    nbits;      // the number of bits used to encode addresses
 
     public:
 
@@ -116,7 +117,7 @@ namespace geomtools {
       //! returns the size of the list of addresses
       size_t get_depth () const;
 
-      //! returns the size of the list of extenting addresses
+      //! returns the size of the list of extending addresses
       size_t get_by_depth () const;
 
       //! create a geom ID with the proper type and depth
@@ -157,6 +158,8 @@ namespace geomtools {
     virtual ~id_mgr ();
 
     void init_from (const datatools::utils::multi_properties & mp_);
+
+    void initialize (const datatools::utils::multi_properties & mp_);
 
     void load (const string & filename_);
 

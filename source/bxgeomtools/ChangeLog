@@ -2,3 +2,7 @@ This is the geomtools package ChangeLog
 
 2008-12-10 : creation by Francois Mauger <mauger@lpccaen.in2p3.fr>
 
+2011-02-21 : Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* add placement::relocate method
+2011-02-22 : Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* GPL version 3 is now used for geomtools

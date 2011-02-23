@@ -42,7 +42,7 @@ by      : string[1] = "layer"
 
 [category="geiger_cell" type="12"]
 extends : string = "geiger_layer"
-by      : string[1] = "cell"
+by      : string[1] = "column"
 
 [category="geiger_cell_anodic_wire" type="13"]
 inherits : string = "geiger_cell"

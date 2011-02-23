@@ -82,6 +82,15 @@ namespace geomtools {
 	out_ << ' ' << '"' << addresses[i] << '"';
       }
     out_ << endl;
+    /*
+    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
+	 << "Nbits [" << nbits.size () << "] :";
+    for (int i = 0; i < nbits.size (); i++)
+      {
+	out_ << ' ' << '"' << nbits[i] << '"';
+      }
+    out_ << endl;
+    */
     return;
   }
 
@@ -144,6 +153,12 @@ namespace geomtools {
   // dtor:
   id_mgr::~id_mgr ()
   {
+  }
+
+  void id_mgr::initialize (const datatools::utils::multi_properties & mp_)
+  {
+    init_from (mp_);
+    return;
   }
 
   void id_mgr::init_from (const datatools::utils::multi_properties & mp_)
@@ -221,11 +236,64 @@ namespace geomtools {
 
 	category_info cat_entry;
 	cat_entry.category = category;
-	cat_entry.type     = type;
+	cat_entry.type     = type; 
+	vector<string> addresses_with_nbits;
 	if (props.has_key ("addresses"))
 	  {
 	    if (props.has_key ("addresses"))
-	    props.fetch ("addresses", cat_entry.addresses);
+	      {
+		props.fetch ("addresses", cat_entry.addresses);
+		/*
+		props.fetch ("addresses", addresses_with_nbits);
+		for (int i = 0; i < addresses_with_nbits.size (); i++)
+		  {
+		    const string & addr_nbits =  addresses_with_nbits [i];
+		    //  case 1 : addr_nbits = "toto"
+		    //  case 2 : addr_nbits = "toto[4]"
+		    int pos = addr_nbits.find ('[');
+		    if (pos == addr_nbits.npos)
+		      {
+			// case 1 :
+			cat_entry.addresses.push_back (addr_nbits);
+			cat_entry.nbits.push_back (32);
+		      }
+		    else
+		      {	
+			// case 2 :
+			string addr = addr_nbits.substr (0, pos);
+			// addr = "toto"
+			string tmp = addr_nbits.substr (pos + 1);
+			// tmp = "4]"
+			int pos2 = tmp.find (']');
+			if (pos2 == tmp.npos)
+			  {
+			    ostringstream message;
+			    message << "id_mgr::init_from: Invalid syntax for '" << addr_nbits << "' !";
+			    throw runtime_error (message.str ());
+			  }
+			// tmp2 = "4"
+			string tmp2 = tmp.substr (0, pos2);
+			istringstream iss (tmp2);
+			int nbits;
+			iss >> nbits;
+			if (! iss)
+			  {
+			    ostringstream message;
+			    message << "id_mgr::init_from: Invalid number of bits format for '" << tmp2 << "' !";
+			    throw runtime_error (message.str ());
+			  }
+			if (nbits < 1)
+			  {
+			    ostringstream message;
+			    message << "id_mgr::init_from: Invalid number of bits value (" << nbits << ") !";
+			    throw runtime_error (message.str ());
+			  }
+			cat_entry.addresses.push_back (addr);
+			cat_entry.nbits.push_back (nbits);
+		      }
+		  }// for
+		*/
+	      }
 	  }
 	else
 	  {
@@ -247,7 +315,8 @@ namespace geomtools {
 		if (i_inherits == __categories_by_name.end ())
 		  {
 		    ostringstream message;
-		    message << "id_mgr::init_from: Category '" << inherits << "' does not exist !";
+		    message << "id_mgr::init_from: Category '" << inherits 
+			    << "' does not exist !";
 		    throw runtime_error (message.str ());
 		  }
 		const category_info & inherits_entry = i_inherits->second;
@@ -269,7 +338,8 @@ namespace geomtools {
 		if (i_extends == __categories_by_name.end ())
 		  {
 		    ostringstream message;
-		    message << "id_mgr::init_from: Category '" << extends << "' does not exist !";
+		    message << "id_mgr::init_from: Category '" << extends 
+			    << "' does not exist !";
 		    throw runtime_error (message.str ());
 		  }
 		const category_info & extends_entry = i_extends->second;
@@ -285,7 +355,8 @@ namespace geomtools {
 		if (! props.has_key ("by"))
 		  {
 		    ostringstream message;
-		    message << "id_mgr::init_from: Missing '" << "by" << "' address extension property !";
+		    message << "id_mgr::init_from: Missing '" << "by" 
+			    << "' address extension property !";
 		    throw runtime_error (message.str ());
 		  }
 		cat_entry.extends = extends;
@@ -322,12 +393,14 @@ namespace geomtools {
     datatools::utils::fetch_path_with_env (fn);
     mp.read (fn);
     init_from (mp);
+    return;
   }
 
   void id_mgr::reset ()
   {
     __categories_by_type.clear ();
     __categories_by_name.clear ();
+    return;
   }
 
   void id_mgr::tree_dump (ostream & out_,

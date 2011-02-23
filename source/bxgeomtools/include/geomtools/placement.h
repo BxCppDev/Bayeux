@@ -78,6 +78,7 @@ namespace geomtools {
       const rotation_3d & get_inverse_rotation () const;
 
     public: 
+
       // i_placement interface:
       virtual size_t get_number_of_items () const;
    
@@ -173,6 +174,19 @@ namespace geomtools {
       //void mother_to_child (const placement &, placement &) const;
 
       void child_to_mother (const placement &, placement &) const;
+
+
+      /** Given two placements P1 and  P2 expressed in  some mother
+       * coordinate system,  recompute the relative placement P2 in  
+       * the coordinate system of placement P1 and store the result 
+       * in P2_1.
+       *
+       * Usage:
+       *
+       *   P1.relocate (P2, P2_1);
+       *
+       */
+      void relocate (const placement &, placement &) const;
 
       // i_tree_dump interface:
       virtual void tree_dump (ostream & out_  = clog, 
