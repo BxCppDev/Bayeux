@@ -45,6 +45,8 @@
 #include <genbb_help/i_genbb.h>
 #include <datatools/utils/units.h>
 #include <mygsl/rng.h>
+#include <mygsl/tabulated_function.h>
+#include <mygsl/von_neumann_method.h>
 
 namespace genbb {
 
@@ -53,15 +55,19 @@ namespace genbb {
   class single_particle_generator : public i_genbb
   {
   public:
+
     enum mode_t
       {
-	MODE_INVALID = 0,
-	MODE_MONOKINETIC = 1,
-	MODE_GAUSSIAN_ENERGY = 2,
-	MODE_ENERGY_RANGE = 3
+	MODE_INVALID         = -1,
+	MODE_MONOKINETIC     = 0,
+	MODE_GAUSSIAN_ENERGY = 1,
+	MODE_ENERGY_RANGE    = 2,
+	MODE_SPECTRUM        = 3,
+	MODE_DEFAULT         = MODE_MONOKINETIC
       };
-
+ 
   private: 
+
     bool   __debug;
     bool   __initialized;
     int    __particle_type;
@@ -72,7 +78,13 @@ namespace genbb {
     double __sigma_energy;
     double __min_energy;
     double __max_energy;
-    bool   __randomized_direction;
+
+    string __spectrum_interpolation_name;  
+    string __tabulated_energy_spectrum_filename;
+    mygsl::tabulated_function __energy_spectrum;
+    mygsl::von_neumann_method __VNM;
+
+    bool          __randomized_direction;
     unsigned long __seed;
     mygsl::rng    __random;
 
@@ -100,6 +112,12 @@ namespace genbb {
     double get_min_energy () const;
     double get_max_energy () const;
     void set_energy_range (double min_, double max_);
+
+    void set_energy_spectrum_filename (const string & filename_);
+
+  protected:
+    
+    void _init_energy_spectrum ();
   
   public: 
     // ctor:
@@ -117,7 +135,7 @@ namespace genbb {
   protected:
 
     virtual void _load_next (primary_event & event_, 
-			    bool compute_classification_ = true) ;
+			     bool compute_classification_ = true) ;
   private:
 
     void __at_init ();

@@ -202,6 +202,13 @@ namespace genbb {
   {
     return __max_energy;
   }
+
+  void single_particle_generator::set_energy_spectrum_filename (const string & filename_)
+  {
+    _check_locked ("single_particle_generator::set_energy_spectrum_filename");
+    __tabulated_energy_spectrum_filename = filename_;
+    return;
+  }
   
   // ctor:
   single_particle_generator::single_particle_generator () : i_genbb ()
@@ -222,6 +229,8 @@ namespace genbb {
     __max_energy = 0.0;
     datatools::utils::invalidate (__max_energy);
 
+    // GSL (mygsl::tabulated_function class)
+    __spectrum_interpolation_name = mygsl::tabulated_function::LINEAR_INTERP_NAME;
     __randomized_direction = true;
 
     __seed = 0;
@@ -235,6 +244,7 @@ namespace genbb {
       {
 	reset ();
       }
+    return;
   }
 
   void single_particle_generator::__at_reset ()
@@ -251,6 +261,11 @@ namespace genbb {
     datatools::utils::invalidate (__min_energy);
     datatools::utils::invalidate (__max_energy);
 
+    __VNM.reset ();
+    __energy_spectrum.reset ();
+    __tabulated_energy_spectrum_filename = "";
+    __spectrum_interpolation_name = mygsl::tabulated_function::LINEAR_INTERP_NAME;
+
     __randomized_direction = true;
 
     __random.reset ();
@@ -264,6 +279,7 @@ namespace genbb {
     if (! __initialized) return;
     __at_reset ();
     __initialized = false;
+    return;
   }
 
   void single_particle_generator::initialize (const datatools::utils::properties & config_)
@@ -326,6 +342,10 @@ namespace genbb {
 	else if (mode_str == "monokinetic")
 	  {
 	    set_mode (MODE_MONOKINETIC);
+	  }
+	else if (mode_str == "spectrum")
+	  {
+	    set_mode (MODE_SPECTRUM);
 	  }
 	else
 	  {
@@ -401,6 +421,15 @@ namespace genbb {
 	set_energy_range (min_energy, max_energy);
       }
 
+    if (__mode == MODE_SPECTRUM)
+      {
+	if (config_.has_key ("spectrum.data_file"))
+	  {
+	    string spectrum_filename = config_.fetch_string ("spectrum.data_file");
+	    set_energy_spectrum_filename (spectrum_filename);
+	  }
+      }
+
     __at_init ();
 
     __initialized  = true;
@@ -427,7 +456,6 @@ namespace genbb {
       }
     event_.reset ();
 
-    
     double kinetic_energy = -1.0;
     double mass = __particle_mass;
 
@@ -447,6 +475,11 @@ namespace genbb {
     if (__mode == MODE_ENERGY_RANGE)
       {
 	kinetic_energy = __random.flat (__min_energy, __max_energy);
+      }
+
+    if (__mode == MODE_SPECTRUM)
+      {
+	kinetic_energy = __VNM.shoot (__random);
       }
 
     double momentum = sqrt (kinetic_energy * (kinetic_energy + 2 * mass));
@@ -486,16 +519,113 @@ namespace genbb {
     return;
   }
 
+  void single_particle_generator::_init_energy_spectrum ()
+  {
+    using namespace std;
+    string filename = __tabulated_energy_spectrum_filename;
+    datatools::utils::fetch_path_with_env (filename);
+    if (__energy_spectrum.is_table_locked ()) 
+      {
+	ostringstream message;
+	message << "single_particle_generator::_init_energy_spectrum: "
+		<< "Tabulated energy spectrum is already locked !";
+	throw logic_error (message.str ());	
+      }
+    ifstream ifile;
+    ifile.open (filename.c_str ());
+    if (! ifile)
+      {
+	ostringstream message;
+	message << "single_particle_generator::_init_energy_spectrum: "
+		<< "Cannot open interpolation data file '"
+		<< __tabulated_energy_spectrum_filename << "' !";
+	throw logic_error (message.str ());	
+      }
+    string interpolator_name;
+    double energy_unit = CLHEP::MeV;
+    double ymax = -1.0;
+    while (! ifile.eof ())
+      {
+	string line;
+	getline (ifile, line);
+	if (line.empty ())
+	  {
+	    continue;
+	  } 
+	{
+	  istringstream lineiss (line);
+	  string word;
+	  lineiss >> word;
+	  if ((word.length () > 0) && (word[0] == '#'))
+	    {
+	      if (word == "#@interpolation_name")
+		{
+		  lineiss >> interpolator_name;
+		}
+	      else if (word == "#@energy_unit")
+		{
+		  string energy_unit_str;
+		  lineiss >> energy_unit_str;
+		  energy_unit = datatools::utils::units::get_energy_unit_from (energy_unit_str);
+		}
+	      continue;
+	    }
+	}
+	istringstream lineiss (line);
+	double x, y;
+	lineiss >> x >> y;
+	if (! lineiss)
+	  {
+	    ostringstream message;
+	    message << "single_particle_generator::_init_energy_spectrum: "
+		    << "Format error in interpolation data file '"
+		    << __tabulated_energy_spectrum_filename << "' !";
+	    throw logic_error (message.str ());	
+	  }
+	x *= energy_unit;
+	if (x < 0.0)
+	  {
+	    ostringstream message;
+	    message << "single_particle_generator::_init_energy_spectrum: "
+		    << "Invalid energy value (" << x << " < 0)!";
+	    throw out_of_range (message.str ());	
+	  }
+	if (y < 0.0)
+	  {
+	    ostringstream message;
+	    message << "single_particle_generator::_init_energy_spectrum: "
+		    << "Invalid spectrum value (" << y << " < 0)!";
+	    throw out_of_range (message.str ());	
+	  }
+	__energy_spectrum.add_point (x, y, false);
+	if (y > ymax) ymax = y;
+      }
+    if (interpolator_name.empty ())
+      {
+	interpolator_name = __spectrum_interpolation_name;
+      }
+    __energy_spectrum.lock_table (interpolator_name);
+    __VNM.init (__energy_spectrum.x_min (),
+		__energy_spectrum.x_max (),
+		__energy_spectrum,
+		ymax * 1.01);
+    return; 
+  }
+
   void single_particle_generator::__at_init ()
   {
-    __particle_type = primary_particle::get_particle_type_from_label (__particle_name)
-;
+    __particle_type = primary_particle::get_particle_type_from_label (__particle_name);
     __particle_mass = get_particle_mass_from_label (__particle_name);
     if (! datatools::utils::is_valid (__particle_mass))
       {
 	throw runtime_error ("single_particle_generator::__at_init: Particle mass is not defined !");		
       }
  
+    if (__mode == MODE_SPECTRUM)
+      {
+	_init_energy_spectrum ();
+      }
+
     __random.init ("mt19937", __seed);
     return;
   }
