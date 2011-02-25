@@ -60,14 +60,16 @@ c
       if (idebug .eq. 1) then
          print * , 'prog_genbb_1: info: starting...'
       endif
-      print * ,'prog_genbb_1: info: initialize ranlux:'
-      do i = 1, 5
-         call grndm (test_alea, 3)
-         print * ,'prog_genbb_1: info: alea=', 
-     +        test_alea (1), 
-     +        test_alea (2), 
-     +        test_alea (3)
-      enddo
+
+c$$$      print * ,'prog_genbb_1: info: initialize ranlux:'
+c$$$      do i = 1, 5
+c$$$         call grndm (test_alea, 3)
+c$$$         print * ,'prog_genbb_1: info: alea=', 
+c$$$     +        test_alea (1), 
+c$$$     +        test_alea (2), 
+c$$$     +        test_alea (3)
+c$$$      enddo
+
 c     
 c     step 1: dialog routine
 c     

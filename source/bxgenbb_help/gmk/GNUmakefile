@@ -95,9 +95,10 @@ endif
 
 processor=$(shell uname -p)
 ifeq ($(strip $(processor)),x86_64)
-dummy=$(shell echo "Processor: 64bits")
+dummy=$(shell echo "Processor: 64-bits")
 else
-CXXFLAGS+= -Df2cFortran
+#CXXFLAGS+= -Df2cFortran
+dummy=$(shell echo "Processor: 32-bits")
 endif
 
 CPPFLAGS=-I. -I$(INCDIR)

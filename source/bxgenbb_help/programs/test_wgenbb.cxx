@@ -17,6 +17,8 @@ int main (int argc_, char ** argv_)
     {  
       bool debug = false;
       bool test = false;
+      bool dump = false;
+      size_t max_count = 10;
 
       int iarg = 1;
       while (iarg < argc_)
@@ -25,12 +27,11 @@ int main (int argc_, char ** argv_)
 
 	  if (arg == "-d" || arg == "--debug") debug = true;
 	  if (arg == "-t" || arg == "--test") test = true;
-
+	  if (arg == "-D" || arg == "--dump") dump = true;
+	  if (arg == "-1000") max_count = 1000;
 	  iarg++;
 	}
     
-      genbb::wgenbb WGBB;
-
       datatools::utils::properties config;
       if (debug) config.store_flag ("debug");
       config.store ("seed", 314159);
@@ -43,10 +44,9 @@ int main (int argc_, char ** argv_)
       config.store ("energy_unit", "MeV");
       if (debug) config.tree_dump (clog, "Configuration: ", "debug: ");
  
-      // genbb input data files:
+      genbb::wgenbb WGBB;
+      WGBB.set_debug (debug);
       WGBB.initialize (config);
-
-      size_t max_count = 1000;
 
       // working primary event:
       genbb::primary_event pe;
@@ -58,7 +58,7 @@ int main (int argc_, char ** argv_)
 	      clog << "Count : " << i << endl;
 	    }
 	  WGBB.load_next (pe);
-	  if (debug) pe.dump ();
+	  if (dump) pe.dump ();
 	}
 
        if (debug) clog << "debug: " << "The end." << endl;

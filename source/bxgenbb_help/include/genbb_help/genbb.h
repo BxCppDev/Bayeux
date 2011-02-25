@@ -22,7 +22,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * 
  * Description: 
- *   GENBB generator
+ *   GENBB/Decay0 generator
  * 
  * History: 
  * 
@@ -52,7 +52,7 @@ namespace genbb {
   class genbb : public i_genbb
   {
   public:
-    static const size_t MAX_BUFFER_SIZE = 100000;
+    static const size_t MAX_BUFFER_SIZE     = 100000;
     static const size_t DEFAULT_BUFFER_SIZE = 10000;
 
     enum decay_type_t
@@ -61,12 +61,19 @@ namespace genbb {
       DECAY_TYPE_BACKGROUND = 2
     };
 
+    static const size_t TMP_DIR_BUFSZ = 1024;
+ 
   private:
+    bool   __initialized;
     bool   __debug;
     size_t __buffer_size;
     size_t __buffer_item;
     size_t __event_count;
-    string __fin;
+    size_t __buffer_count;
+    bool   __delete_conf_file;
+    bool   __delete_log_files;
+    bool   __delete_data_files;
+    bool   __delete_tmp_dir;
 
     int    __decay_type;
     string __decay_isotope;  
@@ -76,9 +83,11 @@ namespace genbb {
     ifstream * __genbb_in;
     bool       __test;
     string     __tmp_base_dir;
-    char       __tmp_dir[256];
+    string     __forced_tmp_dir;
+    char       __tmp_dir[TMP_DIR_BUFSZ];
     string     __genbb_conf;
     string     __genbb_data;
+    string     __genbb_log;
     ofstream   __genbb_conf_file;
     unsigned long __seed;
     mygsl::rng    __random;
@@ -86,6 +95,21 @@ namespace genbb {
   public:
 
     bool is_debug () const;
+ 
+    void set_debug (bool d_);
+
+    bool is_initialized () const;
+
+    void set_delete_conf_file (bool);
+    void set_delete_log_files (bool);
+    void set_delete_data_files (bool);
+    void set_delete_tmp_dir (bool);
+    void set_tmp_dir (const string &);
+    void set_tmp_base_dir (const string &);
+
+    const string & get_tmp_base_dir () const;
+
+    string get_tmp_dir () const;
 
     size_t get_buffer_size () const;
 
@@ -108,9 +132,9 @@ namespace genbb {
 
   private:
 
-    void __init ();
+    void __init ();  //> Initialize material associated to a new buffer file
 
-    void __clean ();
+    void __clean (); //> Clean material associated to the current buffer file
 
   };
 

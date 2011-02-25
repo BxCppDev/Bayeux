@@ -33,6 +33,12 @@ namespace genbb {
   {
     return __debug;
   }
+ 
+  void wgenbb::set_debug (bool d_)
+  {
+    __debug = d_;
+    return;
+  }
 
   // ctor:
   wgenbb::wgenbb () : i_genbb ()
@@ -53,6 +59,7 @@ namespace genbb {
       }  
     __decay_dbd_level = 0;  
     __decay_dbd_mode = 1;
+    __prng_mode = PRNG_MODE_DEFAULT;
     __seed = 0;
     datatools::utils::invalidate (__energy_min);
     datatools::utils::invalidate (__energy_max);
@@ -67,6 +74,7 @@ namespace genbb {
 	reset ();
       }
     //clog << "DEVEL: wgenbb::~wgenbb: Exiting." << endl;
+    return;
   }
 
   void wgenbb::__clean ()
@@ -95,8 +103,9 @@ namespace genbb {
     datatools::utils::invalidate (__energy_min);
     datatools::utils::invalidate (__energy_max);
 
+    __prng_mode = PRNG_MODE_DEFAULT;
     __seed = 0;
-    __random.reset ();
+    //__random.reset ();
 
     __initialized = false;
     return;
@@ -214,8 +223,12 @@ namespace genbb {
       }
 
     __set_decay_isotope (decay_isotope);
-    __random.init ("mt19937", __seed);
-
+    /*
+    if (__prng_mode == PRNG_MODE_RANDOMIZE_SEED)
+      {
+	__random.init ("mt19937", __seed);
+      }
+    */
     __init ();
 
     __initialized = true;
@@ -378,7 +391,13 @@ namespace genbb {
 	throw runtime_error (message.str ());
       }
 
-    int genbb_seed = __random.uniform_int (0xFFFFFFF);
+    int genbb_seed = __seed;
+    /*
+    if (__prng_mode == PRNG_MODE_RANDOMIZE_SEED)
+      {
+	genbb_seed = __random.uniform_int (0xFFFFFFF);
+      }
+    */
     set_random_seed (&genbb_seed);
     float test_alea[3];
     int sz = 3;

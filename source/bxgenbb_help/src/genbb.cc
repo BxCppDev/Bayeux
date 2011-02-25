@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-
+ 
 #include <genbb_help/genbb.h>
 
 #include <sys/types.h>
@@ -28,9 +28,44 @@ namespace genbb {
  
   using namespace std;
 
+  bool genbb::is_initialized () const
+  {
+    return __initialized;
+  }
+
   bool genbb::is_debug () const
   {
     return __debug;
+  }
+ 
+  void genbb::set_debug (bool d_)
+  {
+    __debug = d_;
+    return;
+  }
+
+  void genbb::set_delete_conf_file (bool d_)
+  {
+    __delete_conf_file = d_;
+    return;
+  }
+
+  void genbb::set_delete_log_files (bool d_)
+  {
+    __delete_log_files = d_;
+    return;
+  }
+
+  void genbb::set_delete_data_files (bool d_)
+  {
+    __delete_data_files = d_;
+    return;
+  }
+
+  void genbb::set_delete_tmp_dir (bool d_)
+  {
+    __delete_tmp_dir = d_;
+    return;
   }
 
   void genbb::__clean ()
@@ -40,44 +75,74 @@ namespace genbb {
 	if (__debug)
 	  {
 	    clog << "debug: " << "genbb::__clean: "
-		 << "Deleting current GENBB data input file stream '"
-		 << __fin << "'..."
-		 << endl;
+		 << "Deleting current GENBB data input file stream instance..." << endl;
 	  }
 	delete __genbb_in;
 	__genbb_in = 0;
       }
-   if (! __fin.empty () && boost::filesystem::exists (__fin.c_str ()))
+    if (! __genbb_data.empty () && boost::filesystem::exists (__genbb_data.c_str ()))
       {
-	if (__debug)
+	if (__delete_data_files)
 	  {
-	    clog << "debug: " << "genbb::__clean: "
-		 << "Removing previous GENBB data file '" << __fin << "'..."
-		 << endl;
+	    if (__debug)
+	      {
+		clog << "debug: " << "genbb::__clean: "
+		     << "Removing previous GENBB data file '" << __genbb_data << "'..."
+		     << endl;
+	      }
+	    unlink (__genbb_data.c_str ());
 	  }
- 	unlink (__fin.c_str ());
-	__fin = "";
+	__genbb_data = "";
       }
-    __fin = "";
+    if (! __genbb_log.empty () && boost::filesystem::exists (__genbb_log.c_str ()))
+      {
+	if (__delete_log_files)
+	  {
+	    if (__debug)
+	      {
+		clog << "debug: " << "genbb::__clean: "
+		     << "Removing previous GENBB log file '" << __genbb_log << "'..."
+		     << endl;
+	      }
+	    unlink (__genbb_log.c_str ());
+	  }
+	__genbb_log = "";
+      }
+    __genbb_data = "";
+    __genbb_log = "";
+    __buffer_count++;
     return;
   }
   
   // ctor:
   genbb::genbb () : i_genbb ()
   {
+    __initialized = false;
     __debug = false;
     __test = false;
+
     __buffer_size = DEFAULT_BUFFER_SIZE;
     __buffer_item = 0;
-    __genbb_in = 0;
     __event_count = 0;
+    __delete_conf_file = false;
+    __delete_log_files  = false;
+    __delete_data_files = true;
+    __delete_tmp_dir = false;
+
+    __genbb_in = 0;
+    __genbb_data = "";
+    __genbb_conf = "";
+    __genbb_log = "";
     __tmp_base_dir = "/tmp/${USER}";
+
     __decay_type = DECAY_TYPE_DBD;
     __decay_isotope = "Se82";  
     __decay_dbd_level = 0;  
     __decay_dbd_mode = 1;
+
     __seed = 0;
     __tmp_dir[0] = 0;
+    __buffer_count = 0;
     return;
   }
   
@@ -85,35 +150,109 @@ namespace genbb {
   genbb::~genbb ()
   {
     __clean ();
+    if (__initialized)
+      {
+	reset ();
+      }
+    return;
+  }
+
+  void genbb::set_tmp_dir (const string & td_)
+  {
+    if (__initialized)
+      {
+	throw logic_error ("genbb::set_tmp_base_dir: Operation prohibited ! Object is locked !");
+      }
+    __forced_tmp_dir = td_;
+    return;
+  }
+
+  void genbb::set_tmp_base_dir (const string & tbd_)
+  {
+    if (__initialized)
+      {
+	throw logic_error ("genbb::set_tmp_base_dir: Operation prohibited ! Object is locked !");
+      }
+    __tmp_base_dir = tbd_;
+    return;
+  }
+
+  const string & genbb::get_tmp_base_dir () const
+  {
+    return __tmp_base_dir;
+  }
+
+  string genbb::get_tmp_dir () const
+  {
+    if (__forced_tmp_dir.empty ())
+      {
+	return string(__tmp_dir);
+      }
+    return __forced_tmp_dir;
   }
 
   void genbb::reset ()
   {
+    if (! __initialized)
+      {
+	throw logic_error ("genbb::reset: Object is not initialized !");
+      }
     __clean ();
     __test = false;
     __buffer_size = DEFAULT_BUFFER_SIZE;
     __buffer_item = 0;
+    __buffer_count = 0;
+    if (__genbb_in != 0)
+      {
+	delete __genbb_in;
+      }
     __genbb_in = 0;
     __event_count = 0;
-    __tmp_base_dir = "/tmp/${USER}";
 
+    if (! __genbb_conf.empty () && boost::filesystem::exists (__genbb_conf.c_str ()))
+      {
+	if (__delete_conf_file)
+	  {
+	    unlink (__genbb_conf.c_str ());
+	  }
+      }
+    if (__delete_tmp_dir)
+      {
+	clog << "WARNING: genbb::reset: "
+	     << "Temporary working directory deletion not implemented yet !"
+	     << endl;
+      }
+    __tmp_dir[0] = 0;
+    __forced_tmp_dir;
+
+    __tmp_base_dir = "/tmp/${USER}";
     __decay_type = DECAY_TYPE_DBD;
     __decay_isotope = "Se82";  
     __decay_dbd_level = 0;  
     __decay_dbd_mode = 1;
 
-    __tmp_dir[0] = 0;
 
     __seed = 0;
     __random.reset ();
     __genbb_conf = "";
     __genbb_conf_file.close ();
     __genbb_data = "";
+    __genbb_log = "";
+    __delete_conf_file = false;
+    __delete_log_files  = false;
+    __delete_data_files = true;
+    __delete_tmp_dir = false;
+
+    __initialized = false;
     return;
   }
 
   void genbb::initialize (const datatools::utils::properties & config_)
   {
+    if (__initialized)
+      {
+	throw logic_error ("genbb::reset: Object is already initialized !");
+      }
 
     if (config_.has_flag ("debug"))
       {
@@ -197,52 +336,79 @@ namespace genbb {
     //clog << "DEVEL: genbb::initialize: Done." << endl;
     
     /***************/
-    datatools::utils::fetch_path_with_env (__tmp_base_dir);
 
+    // Temporary directory setup :
     {
-      if (! boost::filesystem::is_directory (__tmp_base_dir))
+      if (__forced_tmp_dir.empty ())
 	{
-	  ostringstream message;
-	  message << "genbb::initialize: Base temporary directory '"
-		  << __tmp_base_dir << "' does not exist !";
-	  __clean ();
-	  throw runtime_error (message.str());
+	  if (__tmp_base_dir.empty ())
+	    {
+	      ostringstream message;
+	      message << "genbb::initialize: Missing base temporary directory ! ";
+	      throw runtime_error (message.str());
+	    }
+	  datatools::utils::fetch_path_with_env (__tmp_base_dir);
+	  {
+	    if (! boost::filesystem::is_directory (__tmp_base_dir))
+	      {
+		ostringstream message;
+		message << "genbb::initialize: Base temporary directory '"
+			<< __tmp_base_dir << "' does not exist ! you should first create it !";
+		__clean ();
+		throw runtime_error (message.str());
+	      }
+	  }
+	
+	  ostringstream oss;
+	  oss << __tmp_base_dir << '/' << "genbb_help.XXXXXX";
+	  int i;
+	  for (i = 0; i < oss.str ().size (); i++)
+	    {
+	      __tmp_dir[i] = oss.str ()[i];
+	    }
+	  __tmp_dir[i] = 0;
+	
+	  char * ret = mkdtemp (__tmp_dir);
+	  if (ret == NULL)
+	    {
+	      ostringstream message;
+	      message << "genbb::initialize: Cannot create temporary directory in '"
+		      << __tmp_base_dir << "' !";
+	      throw runtime_error (message.str());
+	    }
 	}
-    }
-
-    {
-      ostringstream oss;
-      oss << __tmp_base_dir << '/' << "genbb_help.XXXXXX";
-      int i;
-      for (i = 0; i < oss.str ().size (); i++)
+      else
 	{
-	  __tmp_dir[i] = oss.str ()[i];
+	  datatools::utils::fetch_path_with_env (__forced_tmp_dir);
+	  if (__forced_tmp_dir.length () > (TMP_DIR_BUFSZ - 1))
+	    {
+	      ostringstream message;
+	      message << "genbb::initialize: Temporary directory name is too long (<" << TMP_DIR_BUFSZ << ")!";
+	      throw runtime_error (message.str());
+	      
+	    }
+	  if (! boost::filesystem::is_directory (__forced_tmp_dir))
+	    {
+	      ostringstream message;
+	      message << "genbb::initialize: Temporary directory '"
+		      << __forced_tmp_dir << "' does not exist ! You should first create it !";
+	      __clean ();
+	      throw runtime_error (message.str());
+	    }
+	  int i;
+	  for (i = 0; i < __forced_tmp_dir.size (); i++)
+	    {
+	      __tmp_dir[i] = __forced_tmp_dir[i];
+	    }
+	  __tmp_dir[i] = 0;
 	}
-      __tmp_dir[i] = 0;
-
-      //clog << "DEVEL: __tmp_dir='" << __tmp_dir << "'" << endl;
-      char * ret = mkdtemp (__tmp_dir);
-      if (ret == NULL)
-	{
-	  ostringstream message;
-	  message << "genbb::initialize: Cannot create temporary directory in '"
-		<< __tmp_base_dir << "' !";
-	  throw runtime_error (message.str());
-	}
-      //clog << "DEVEL: genbb::initialize: temp. dir.='" << __tmp_dir << "'" << endl;
 
       {
 	ostringstream oss;
 	oss << __tmp_dir << '/' << "genbb.conf";
 	__genbb_conf = oss.str ();
       }
-
-      {
-	ostringstream oss;
-	oss << __tmp_dir << '/' << "data.genbb";
-	__genbb_data = oss.str ();
-      }
-
+ 
       {
 	__genbb_conf_file.open (__genbb_conf.c_str ());
 	if (! __genbb_conf_file)
@@ -273,6 +439,8 @@ namespace genbb {
     }
 
     __init ();
+
+    __initialized = true;
     return;
   }
 
@@ -284,7 +452,9 @@ namespace genbb {
   void genbb::_load_next (primary_event & event_, 
 			 bool compute_classification_)
   {
-    if (__debug)
+    bool local_debug = __debug;
+    local_debug = false;
+    if (local_debug)
       {
 	clog << "debug: " << "genbb::_load_next: "
 	     << "Entering..."
@@ -294,12 +464,13 @@ namespace genbb {
 
     if (__buffer_item == __buffer_size)
       {
-	if (__debug)
+	if (local_debug)
 	  {
 	    clog << "debug: " << "genbb::_load_next: "
 		 << "Buffer is full !"
 		 << endl;
 	  }
+	__clean ();
 	__init ();
       }
 
@@ -331,7 +502,7 @@ namespace genbb {
 	event_.compute_classification ();
       }
     __event_count++;
-    if (__debug)
+    if (local_debug)
       {
 	clog << "debug: " << "genbb::_load_next: "
 	     << "Exiting."
@@ -359,17 +530,21 @@ namespace genbb {
 	     << endl;
       }
 
-    __clean ();
+    // build the Genbb/Decay0 output data file name : 
+    {
+      ostringstream oss;
+      oss << __tmp_dir << '/' << "data_" << __buffer_count << ".genbb";
+      __genbb_data = oss.str ();
+    }
 
     // reset counter:
-    __buffer_item = 0;
-    __fin = __genbb_data;
-    datatools::utils::fetch_path_with_env (__fin);
+    __buffer_item = 0; 
+    datatools::utils::fetch_path_with_env (__genbb_data);
  
     if (__debug)
       {
 	clog << "debug: " << "genbb::__init: "
-	     << "Generate a new GENBB buffer data file '" << __fin << "'..."
+	     << "Generate a new GENBB buffer data file '" << __genbb_data << "'..."
 	     << endl;
       }
    
@@ -380,11 +555,11 @@ namespace genbb {
 	  {
 	    clog << "debug: " << "genbb::__init: "
 		 << "Generate fake GENBB buffer data file '"
-		 << __fin << "'..."
+		 << __genbb_data << "'..."
 		 << endl;
 	  }
 	// generate fake GENBB buffer data:
-	ofstream ofs (__fin.c_str ());
+	ofstream ofs (__genbb_data.c_str ());
 	for (int i = 0; i < __buffer_size; i++)
 	  {
 	    ofs <<  "0  0.00000       2" << endl;
@@ -401,8 +576,8 @@ namespace genbb {
 	unsigned long genbb_seed = __random.uniform_int (0xFFFFFFF);
 
 	ostringstream genbb_log_file_ss;
-	genbb_log_file_ss << __tmp_dir << '/' << "genbb.log";
-	string genbb_log_file = genbb_log_file_ss.str ();
+	genbb_log_file_ss << __tmp_dir << '/' << "genbb_" << __buffer_count << ".log";
+	__genbb_log = genbb_log_file_ss.str ();
 	genbb_cmd << genbb_script << " "
 		  << "--temp-directory" << " "
 		  << __tmp_dir << " "
@@ -410,13 +585,13 @@ namespace genbb {
 		  << genbb_seed << " "
 		  << __buffer_size << " "
 		  << __genbb_data << " "
-		  << " > " << genbb_log_file << " 2>&1 ";
+		  << " > " << __genbb_log << " 2>&1 ";
 	int ret = system (genbb_cmd.str ().c_str ());
 	if (ret != 0)
 	  {
 	    ostringstream message;
 	    message << "genbb::__init: genbb command failed ! Check log file '"
-		    << genbb_log_file << "' !";
+		    << __genbb_log << "' !";
 	    __clean ();
 	    throw runtime_error (message.str());
 	  }
@@ -426,16 +601,23 @@ namespace genbb {
       {
 	clog << "debug: " << "genbb::__init: "
 	     << "Opening GENBB buffer data file '"
-	     << __fin << "'..."
+	     << __genbb_data << "'..."
 	     << endl;
       }
+    __genbb_in = 0;
     __genbb_in = new ifstream ();
-    __genbb_in->open (__fin.c_str ());
+    __genbb_in->open (__genbb_data.c_str ());
     if (! *__genbb_in)
       {
 	ostringstream message;
 	message << "genbb::__init: Cannot open file '"
-		<< __fin << "' !";
+		<< __genbb_data << "' !";
+	if (__genbb_in != 0)
+	  {
+	    delete __genbb_in;
+	    __genbb_in = 0;
+	  }
+	__genbb_data = "";
 	throw runtime_error (message.str());
       }
     if (__debug)

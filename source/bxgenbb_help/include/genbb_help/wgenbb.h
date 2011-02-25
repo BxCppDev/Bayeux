@@ -22,10 +22,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * 
  * Description: 
- *   Manager for GENBB input data
- * 
- * Description: 
- *   C++ wrapper GENBB generator
+ *   C++ wrapper GENBB/Decay0 generator
  * 
  * History: 
  * 
@@ -89,6 +86,14 @@ namespace genbb {
       DECAY_TYPE_BACKGROUND = 2
     };
 
+    enum prng_mode_t
+    {
+      PRNG_MODE_UNDEFINED      = 0,
+      PRNG_MODE_SET_SEED       = 1,
+      PRNG_MODE_RANDOMIZE_SEED = 2,
+      PRNG_MODE_DEFAULT        = PRNG_MODE_SET_SEED,
+    };
+
   private:
 
     static size_t __g_counter;
@@ -104,11 +109,12 @@ namespace genbb {
     int    __decay_dbd_mode;  
     size_t __event_count;
 
-    double __energy_min;
+    double __energy_min; 
     double __energy_max;
 
-    unsigned long __seed;
-    mygsl::rng    __random;
+    int           __prng_mode; //> Initalization mode for PRNG
+    unsigned long __seed;      //> PRNG seed
+    mygsl::rng    __random;    //> Local PRNG (not used)
 
   private:
 
@@ -117,6 +123,8 @@ namespace genbb {
   public:
 
     bool is_debug () const;
+ 
+    void set_debug (bool d_);
 
     size_t get_event_count () const;
 
