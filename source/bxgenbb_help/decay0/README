@@ -17,12 +17,14 @@ Last updated: 23.01.2011.
 
 Test the Decay0 program with CERNLIB:
 
+Only Ubuntu with CERNLIB/32bits/gfortran :
+
    Use the 'decay0_fixed.for' file because the original 'decay0.for' 
    does not support gfortran.
 
       bash$ gfortran decay0_fixed.for $(cernlib packlib mathlib) -o decay0_fixed
 
-   Run the executable to check if it runs:
+      Run the executable to check if it runs:
 
       bash$ ./decay0_fixed
 
@@ -62,4 +64,4 @@ and install it in the official 'genbb_help' source tree:
 
 --
 F.Mauger <mauger@lpccaen.in2p3.fr>
-Last update: 2011-02-18
+Last update: 2011-02-25
