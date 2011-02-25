@@ -7,19 +7,22 @@
 
 #include <datatools/utils/utils.h>
 
+using namespace std;
+
 int main (void)
 {
-  try 
+  try
     {
-      std::string path = "${HOME}/.ssh/config.${USER}";
-      std::string expanded = datatools::utils::expand_path (path);
+      string path = "${HOME}/.ssh/config.${USER}";
+      string expanded = datatools::utils::expand_path (path);
       datatools::utils::fetch_path_with_env (path);
-      std::clog << expanded << std::endl;
-      std::clog << path << std::endl;
+      clog << expanded << endl;
+      clog << path << endl;
+
     }
-  catch (std::exception & x)
+  catch (exception & x)
     {
-      std::cerr << "error: " << x.what () << std::endl;
+      cerr << "error: " << x.what () << endl;
       return EXIT_FAILURE;
     }
   return EXIT_SUCCESS;

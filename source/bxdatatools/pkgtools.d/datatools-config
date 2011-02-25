@@ -199,7 +199,7 @@ if [ "x$opt" = "x--cflags" ]; then
 		fi
 		if [ ${with_boost_eos_pba} -eq 1 ]; then
 		    echo -n "-DIOFACTORY_USE_EOS_PBA=1 "
-		    echo -n "-I${THEPACK_ROOT}/boost/vault/eos_pba "
+		    #echo -n "-I${THEPACK_ROOT}/boost/vault/eos_pba "
 		fi
 		if [ ${with_boost_fpu} -eq 1 ]; then
 		    echo -n "-DIOFACTORY_USE_FPU=1 "

@@ -46,6 +46,7 @@ int main (int argc_, char ** argv_)
 	      if (arg == "-txt") fmt = FORMAT_TXT;
 	      if (arg == "-bin") fmt = FORMAT_BIN;
 	      if (arg == "-test") test = true;
+	      if (arg == "-w") datatools::serialization::io_factory::g_warning = true;
 	    }
 	  else 
 	    {
@@ -88,9 +89,9 @@ int main (int argc_, char ** argv_)
 	  message << "Cannot guess mode for file '" << filename << "'!";
 	  throw runtime_error (message.str ());
 	}
-      clog << "mode = " << hex 
-	   << mode_guess
-	   << dec << endl;
+      if (debug) clog << "DEBUG: mode = " << hex 
+		      << mode_guess
+		      << dec << endl;
     
       if (boost::filesystem::exists (filename)) 
 	{
@@ -141,7 +142,8 @@ int main (int argc_, char ** argv_)
 	datatools::serialization::safe_serial<datatools::test::more_data_t> ss_more_data;
 
 	size_t counts = 0;
-	datatools::serialization::data_reader reader (filename);    
+	datatools::serialization::data_reader reader (filename);
+	reader.dump (clog);
 	while (reader.has_record_tag ()) 
 	  {
 	    if (debug) clog << "DEBUG: read next record..." << endl;

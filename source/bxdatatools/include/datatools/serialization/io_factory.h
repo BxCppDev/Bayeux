@@ -71,6 +71,7 @@ namespace datatools {
     {
     public:
       static bool g_debug;
+      static bool g_warning;
 
     public:
       static const int SUCCESS = 0; 
@@ -418,12 +419,25 @@ namespace datatools {
 		__load_binary<Data> (*__ibar_ptr, data_);
 	      }
 	  }
+	// 2011-02-25 FM:
+	catch (boost::archive::archive_exception & x) 
+	  {
+	    if (io_factory::g_warning)
+	      {
+		std::clog << "WARNING:  io_factory::load: archive exception is: " 
+			  << x.what () << std::endl;
+	      }
+	    throw x;
+	  }
 	catch (std::exception & x) 
 	  {
-	    std::cerr << "WARNING: io_factory::load: "
-		      << "cannot load data from archive: " 
-		      << x.what() << "!" 
-		      << std::endl;	      
+	    if (io_factory::g_warning)
+	      {
+		std::cerr << "WARNING: io_factory::load: "
+			  << "cannot load data from archive: " 
+			  << x.what() << "!" 
+			  << std::endl;	      
+	      }
 	    throw x;
 	  }
 	 
@@ -608,6 +622,8 @@ namespace datatools {
       // dtor
       virtual ~data_reader ();
 
+      void dump (std::ostream & out_ = std::clog) const;
+
     protected:
       template <typename Data>
       void _basic_load (Data & data_)
@@ -629,9 +645,24 @@ namespace datatools {
 		      << std::endl;
 	    */
 	  }
+	/*
+	// 2011-02-25 FM:
+	catch (boost::archive::archive_exception & x) 
+	{
+	  bool warn = io_factory::g_warning;
+	  if (warn)
+	    {
+	      std::clog << "WARNING: data_reader::_basic_load: archive exception is: " 
+			<< x.what () << std::endl;
+	    }
+	  __status   = STATUS_ERROR;
+	  __next_tag = EMPTY_RECORD_TAG;
+	  throw std::runtime_error (x.what ());
+	}
+	*/
 	catch (std::exception & x) 
 	  {
-	    bool warn = true;
+	    bool warn = io_factory::g_warning;
 
 	    //>>> 2008-11-13 FM: skip EOF message printing
 	    std::string msg = x.what ();
@@ -643,7 +674,7 @@ namespace datatools {
 	      {
 		std::cerr << "WARNING: data_reader::_basic_load(...): "
 			  << "cannot read data: exception="
-			  << x.what () << '!'
+			  << x.what () << " !"
 			  << std::endl;
 	      }
 	    //<<<

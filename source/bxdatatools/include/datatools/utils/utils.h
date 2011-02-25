@@ -1,3 +1,4 @@
+// -*- mode: c++; -*-
 // utils.h
 
 #ifndef __datatools__utils__utils_h
@@ -16,7 +17,7 @@
 #include <limits>
 
 namespace datatools {
-  
+
   namespace utils {
 
     // Invalidate a double float (using NaN):
@@ -29,8 +30,8 @@ namespace datatools {
      * Internally uses the 'getenv' function.
      */
     bool fetch_path_with_env (std::string & text_);
-    
-    /* This method is not very elegant. I use 
+
+    /* This method is not very elegant. I use
      * brute force, asking a shell to interpret the string via a 'system' call
      * and using a temporary file to save the result. Urrkkk!
      * That enables the expansion of environment variables embeded
@@ -40,8 +41,8 @@ namespace datatools {
      *
      */
     std::string expand_path (const std::string & path_str_);
-    
-    /** The function splits the string 'text_' using separators given 
+
+    /** The function splits the string 'text_' using separators given
      *  within a string 'separators_' and provides the list of tokens
      *  'words_'.
      *
@@ -52,10 +53,10 @@ namespace datatools {
     void split_string (const std::string & text_ ,
 		       const std::string & separators_ ,
 		       std::list<std::string> & words_);
-    
+
   } // namespace utils
 
-} // namespace datatools 
+} // namespace datatools
 
 #endif // __datatools__utils__utils_h
 

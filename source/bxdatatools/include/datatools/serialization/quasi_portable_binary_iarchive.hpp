@@ -337,21 +337,31 @@ namespace eos {
 		#endif
 			, boost::archive::basic_binary_iarchive<portable_iarchive>(flags)
 		{
+		  //std::cerr << "DEVEL: portable_iarchive::ctor: Entering..." << std::endl;
 			using namespace boost::archive;
 
 			// it is vital to have version information!
 			// if we don't have any we assume boost 1.33
 #if BOOST_VERSION < 104000 
-			if (flags & no_header) set_library_version(3);
+			if (flags & no_header) {
+			  //std::cerr << "DEVEL: portable_iarchive::ctor: BOOST_VERSION < 104000" << std::endl;
+			    set_library_version(3);
 #elif BOOST_VERSION < 104400
-			if (flags & no_header) set_library_version((version_type)3);
+		        if (flags & no_header) {
+			  //std::cerr << "DEVEL: portable_iarchive::ctor: BOOST_VERSION < 104400" << std::endl;
+			    set_library_version((version_type)3);
 #else
-			if (flags & no_header) set_library_version((library_version_type)3);
+			if (flags & no_header) {
+			  //std::cerr << "DEVEL: portable_iarchive::ctor: BOOST_VERSION >= 104400" << std::endl;
+			    set_library_version((library_version_type)3);
 #endif
+			}
 			// extract and check the magic eos byte
 			else if (load_signed_char() != magic_byte) 
-				throw archive_exception(archive_exception::invalid_signature);
-
+			  {
+			    //std::cerr << "DEVEL: portable_iarchive::ctor: throw..." << std::endl;
+			    throw archive_exception(archive_exception::invalid_signature);
+			  }
 			else
 			{
 				// extract version information
@@ -360,16 +370,24 @@ namespace eos {
 #else
 				version_type input_library_version;
 #endif
+				//std::cerr << "DEVEL: portable_iarchive::ctor: extract version information" << std::endl;
 				operator>>(input_library_version);
 
 				// throw if file version is newer than we are
 				if (input_library_version > archive_version)
-					throw archive_exception(archive_exception::unsupported_version);
-
+				  {
+				    std::cerr << "ERROR: portable_iarchive::ctor: Unsupported version ! " 
+					      <<  "Input library version " << input_library_version << " > archive version " << archive_version
+					      << " !" << std::endl;
+				    throw archive_exception(archive_exception::unsupported_version);
+				  }
 				// else set the library version accordingly
 				else set_library_version(input_library_version);
 			}
+			//std::cerr << "DEVEL: portable_iarchive::ctor: library version = " << get_library_version () << std::endl;
 			__portability_flag = quasi_portable_archive_common::quasi_portable_flag;
+			//std::cerr << "DEVEL: portable_iarchive::ctor: Exiting." << std::endl;
+			return;
 		}
 
 		portable_iarchive(std::istream& is, int portability_flag_, unsigned flags)
@@ -408,7 +426,13 @@ namespace eos {
 
 				// throw if file version is newer than we are
 				if (input_library_version > archive_version)
-					throw archive_exception(archive_exception::unsupported_version);
+				  {
+				    std::cerr << "ERROR: portable_iarchive::ctor: Unsupported version ! " 
+					      <<  "Input library version " << input_library_version << " > archive version " << archive_version
+					      << " !" << std::endl;
+
+				    throw archive_exception(archive_exception::unsupported_version);
+				  }
 
 				// else set the library version accordingly
 				else set_library_version(input_library_version);
@@ -422,6 +446,7 @@ namespace eos {
 			{
 			  throw std::runtime_error(std::string ("strict portable mode is not available yet !"));
 		        }
+			return;
 		}
 
 

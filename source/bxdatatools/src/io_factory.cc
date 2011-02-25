@@ -15,8 +15,8 @@ namespace datatools {
     const std::string io_factory::GZ_EXT    = "gz";
     const std::string io_factory::BZIP2_EXT = "bz2";
 
-    bool 
-    io_factory::g_debug = false;
+    bool io_factory::g_debug = false;
+    bool io_factory::g_warning = false;
 
     bool 
     io_factory::eof () const
@@ -104,10 +104,10 @@ namespace datatools {
       return ! is_no_append ();
     }
 
-    int 
-    io_factory::__init_read_archive ()
+    int io_factory::__init_read_archive ()
     {
-
+      //std::cerr << "DEVEL: io_factory::__init_read_archive: Entering..." << std::endl;
+ 
       if (is_text ()) 
 	{
 #ifdef IOFACTORY_USE_FPU
@@ -153,7 +153,9 @@ namespace datatools {
       else if (is_binary ()) 
 	{
 #ifdef IOFACTORY_USE_EOS_PBA
-	  __ibar_ptr = new eos::portable_iarchive (*__in);
+	  //std::cerr << "DEVEL: io_factory::__init_read_archive: IOFACTORY_USE_EOS_PBA" << std::endl;
+	  __ibar_ptr = new eos::portable_iarchive (*__in); 
+	  std::cerr << "DEVEL: io_factory::__init_read_archive: OK "<< __ibar_ptr->get_library_version ()  << std::endl;
 	  if (g_debug) 
 	    {
 	      std::clog << "DEBUG: io_factory::__init_read_archive: "
@@ -163,12 +165,14 @@ namespace datatools {
 #else
 	  __ibar_ptr = new boost::archive::binary_iarchive (*__in);
 #endif // IOFACTORY_USE_EOS_PBA
+	  //std::cerr << "DEVEL: io_factory::__init_read_archive: __ibar_ptr = " << __ibar_ptr << std::endl;
 	}
       else 
 	{
 	  throw std::runtime_error ("io_factory::__init_read_archive: format not supported!");
 	}
       __read_archive_is_initialized = true;
+      //std::cerr << "DEVEL: io_factory::__init_read_archive: Exiting." << std::endl;
       return 0;
     }
     
@@ -579,9 +583,9 @@ namespace datatools {
       return 0;
     }
     
-    void
-    io_factory::start_archive ()
+    void io_factory::start_archive ()
     {
+      //std::cerr << "DEVEL: io_factory::start_archive: Entering..." << std::endl;
       if (is_multi_archives ())
 	{
 	  if (g_debug) 
@@ -589,19 +593,20 @@ namespace datatools {
 	      std::clog << "DEBUG: io_factory::start_archive: multi..." 
 			<< std::endl;
 	    }
-	  if(is_read ())
+	  if (is_read ())
 	    {
 	      __init_read_archive ();
 	    }
-	  if(is_write ())
+	  if (is_write ())
 	    {
 	      __init_write_archive ();
 	    }
 	}
+      //std::cerr << "DEVEL: io_factory::start_archive: Exiting." << std::endl;
+      return;
     }
     
-    void
-    io_factory::stop_archive ()
+    void io_factory::stop_archive ()
     {
       if (is_multi_archives ())
 	{
@@ -619,6 +624,7 @@ namespace datatools {
 	      __reset_write_archive ();
 	    }
 	}
+     return;
     }
     
     void 
@@ -988,31 +994,51 @@ namespace datatools {
     }
 
     /***********************************************************/
+    void data_reader::dump (std::ostream & out_) const
+    {
+      using namespace std;
+      out_ << "data_reader::dump: " << endl;
+      out_ << " |-- " << "Status   : " << (__status== 0? "Ok": "Error") << endl;
+      out_ << " |   " << " |-- " << "Initialized      : " << is_initialized () << endl;
+      out_ << " |   " << " |-- " << "Mult. arch.      : " << is_multi_archives () << endl;
+      out_ << " |   " << " |-- " << "Single arch.     : " << is_single_archive () << endl;
+      out_ << " |   " << " |-- " << "Compressed       : " << is_compressed () << endl;
+      out_ << " |   " << " |-- " << "Gzipped          : " << is_gzip () << endl;
+      out_ << " |   " << " |-- " << "Bzipped          : " << is_bzip2 () << endl;
+      out_ << " |   " << " |-- " << "Text arch.       : " << is_text () << endl;
+      out_ << " |   " << " |-- " << "XML arch.        : " << is_xml () << endl;
+      out_ << " |   " << " `-- " << "Bin arch. (port) : " << is_portable_binary () << endl;
+      out_ << " |-- " << "Reader   : " << (__reader != 0? "Yes": "No") << endl;
+      out_ << " `-- " << "Next tag : '" << (__next_tag) << "'" << endl;
+      return;
+    }
 
     void 
     data_reader::__read_next_tag () 
     {
-      /*
-      std::cerr << "DEVEL: data_reader::__read_next_tag: Entering..." 
-	        << std::endl;
-      */
+      //std::cerr << "DEVEL: data_reader::__read_next_tag: Entering..." << std::endl;
       if (__status != STATUS_OK) 
 	{
+	  //std::cerr << "DEVEL: data_reader::__read_next_tag: Issue #1..." << std::endl;
 	  __next_tag = EMPTY_RECORD_TAG;
 	  return;
 	}
+      //std::cerr << "DEVEL: data_reader::__read_next_tag: Issue #1-b" << std::endl;
       try 
 	{
+	  //std::cerr << "DEVEL: data_reader::__read_next_tag: Issue #2-a " << std::endl;
 	  if (__reader->is_multi_archives ()) __reader->start_archive ();
+	  // std::cerr << "DEVEL: data_reader::__read_next_tag: Issue #2-b " << std::endl;
 	  std::string tag_id;
 	  tag_id = "";
 	  __next_tag = "";
 	  this->_basic_load (tag_id);
 	  __next_tag = tag_id;
+	  //std::cerr << "DEVEL: data_reader::__read_next_tag: Issue #2-c : __next_tag = " << __next_tag << std::endl;
 	}
       catch (std::runtime_error & x) 
 	{
-	  bool warn = true;
+	  bool warn =io_factory::g_warning;
 	  //>>> 2008-11-13 FM: skip EOF message printing
 	  std::string msg = x.what ();
 	  if (msg.find ("EOF") != msg.npos)
@@ -1023,15 +1049,26 @@ namespace datatools {
 	    {
 	      std::clog << "WARNING: data_reader::__read_next_tag: runtime_error=" 
 			<< x.what () << std::endl;
+	      if (io_factory::g_warning)
+		{
+		  std::clog << "WARNING: data_reader::__read_next_tag: runtime_error=" 
+			    << x.what () << std::endl;
+		}
 	    }
 	  //<<<
 	  __status   = STATUS_ERROR;
 	  __next_tag = EMPTY_RECORD_TAG;
 	}
+      // 2011-02-25 FM: 
+      catch (boost::archive::archive_exception & x) 
+	{
+	  std::clog << "WARNING: data_reader::__read_next_tag: archive exception is: " 
+		    << x.what () << std::endl;
+	  throw x;
+	}
       catch (std::exception & x) 
 	{
-	  bool warn = true;
-	  warn = false;
+	  bool warn = io_factory::g_warning;
 	  if (warn)
 	    {
 	      std::clog << "WARNING: data_reader::__read_next_tag: exception=" 
@@ -1051,6 +1088,7 @@ namespace datatools {
       std::cerr << "DEVEL: data_reader::__read_next_tag: Exiting." 
 		<< std::endl;
       */
+      return;
     }
 
     void 
