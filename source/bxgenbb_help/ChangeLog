@@ -1,3 +1,8 @@
+2011-02-27 : Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* function set_random_seed renamed in set_genbb_random_seed
+	due to collision name with the -Dset_random_seed=set_random_seed_
+	former directive that propagate through other packages and
+	mess up other libraries
 2011-02-13 : Francois Mauger <mauger@lpccaen.in2p3.fr>
 	* prepare version 2.0
 	* remove the CERNLIB dependency
