@@ -18,11 +18,11 @@ c You should have received a copy of the GNU General Public License
 c along with this program; if not, write to the Free Software
 c Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 c 
-      subroutine set_random_seed (seed_)
+      subroutine set_genbb_random_seed (seed_)
       implicit none
       integer*4 seed_, code
       integer*4 rng_shoot_reset
-      !print *, 'genbbran.f: set_random_seed: invoke "rng_shoot_reset"'
+      !print *, 'genbbran.f: set_genbb_random_seed: invoke "rng_shoot_reset"'
       code = rng_shoot_reset (seed_)
       return
       end

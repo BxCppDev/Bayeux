@@ -11,7 +11,7 @@ c     test_rnd2.F
       read * , seed
       !print * , '# Enter nshoots: '
       read * , nshoots
-      call set_random_seed (seed)
+      call set_genbb_random_seed (seed)
       do i = 1, nshoots
          call grndm (vec, 3)
 1000     format (3f8.4)

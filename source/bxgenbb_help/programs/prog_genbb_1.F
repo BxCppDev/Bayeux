@@ -55,7 +55,7 @@ c
          seed = time ()
       endif
       print * , 'prog_genbb_1: info: random seed=', seed
-      call set_random_seed (seed)
+      call set_genbb_random_seed (seed)
 
       if (idebug .eq. 1) then
          print * , 'prog_genbb_1: info: starting...'

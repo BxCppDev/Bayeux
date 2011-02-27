@@ -145,7 +145,7 @@ if [ "x$opt" = "x--cflags" ]; then
 	f77_defines="\
 -Df2cFortran \
 -Dgenbbsub=genbbsub_ \
--Dset_random_seed=set_random_seed_ \
+-Dset_genbb_random_seed=set_genbb_random_seed_ \
 -Dgrndm=grndm_ \
 -Dgenevent=genevent_ \
 -Dgenbb_init_enrange=genbb_init_enrange_ \
@@ -156,7 +156,7 @@ if [ "x$opt" = "x--cflags" ]; then
 	f77_defines="\
 -Df2cFortran \
 -Dgenbbsub=genbbsub_ \
--Dset_random_seed=set_random_seed_ \
+-Dset_genbb_random_seed=set_genbb_random_seed_ \
 -Dgrndm=grndm_ \
 -Dgenevent=genevent_ \
 -Dgenbb_init_enrange=genbb_init_enrange_ \

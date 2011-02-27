@@ -398,7 +398,7 @@ namespace genbb {
 	genbb_seed = __random.uniform_int (0xFFFFFFF);
       }
     */
-    set_random_seed (&genbb_seed);
+    set_genbb_random_seed (&genbb_seed);
     float test_alea[3];
     int sz = 3;
     grndm (test_alea, &sz);

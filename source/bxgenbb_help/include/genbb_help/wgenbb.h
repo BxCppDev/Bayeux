@@ -51,7 +51,7 @@
 
 extern "C" 
 { 
-  void set_random_seed (int *); 
+  void set_genbb_random_seed (int *); 
 
   void genbbparprint (void); 
 

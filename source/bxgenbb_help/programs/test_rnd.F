@@ -10,7 +10,7 @@ c     test_rnd.F
       read * , seed
       !print * , '# Enter nshoots: '
       read * , nshoots
-      call set_random_seed (seed)
+      call set_genbb_random_seed (seed)
       do i = 1, nshoots
          x = rnd1 (d)
 1000     format (f8.4)
