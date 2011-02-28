@@ -2,6 +2,8 @@
 /* reader.cc
  */
 
+#include <boost/filesystem.hpp>
+
 #include <brio/reader.h>
 
 namespace brio {
@@ -226,8 +228,11 @@ namespace brio {
     string default_extension = store_info::DEFAULT_FILE_EXTENSION;
     static size_t test_extension_size 
       = store_info::DEFAULT_FILE_EXTENSION.length ();
+    /*
     string extension = _filename.substr (_filename.length () - test_extension_size,
 					  test_extension_size);
+    */
+    string extension = boost::filesystem::extension (_filename);
     if (is_debug ())
       {
  	cerr << "DEBUG: "
