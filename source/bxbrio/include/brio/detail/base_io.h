@@ -60,7 +60,7 @@ namespace brio {
 
     virtual bool is_opened () const;
 
-    int64_t get_number_of_entries (const string & label_) const;
+    int64_t get_number_of_entries (const string & label_ = "") const;
 
     int64_t get_current_entry (const string & label_ = "") const;
 

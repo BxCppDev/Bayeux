@@ -69,7 +69,7 @@ int main (int argc_, char ** argv_)
       } 
 
       // Setup a brio reader:           
-      brio::reader my_reader ("test_io_2.root", verbose, debug);
+      brio::reader my_reader ("test_io_2.brio", verbose, debug);
 
       // Loop on serialized records in this store:
       datatools::test::data_t data;

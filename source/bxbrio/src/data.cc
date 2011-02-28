@@ -2,6 +2,7 @@
 /* data.cc
  */
 
+#include <cstdlib>
 #include <brio/test/data.h>
 
 namespace brio {
@@ -33,6 +34,43 @@ namespace brio {
     // dtor:
     data::~data ()
     {
+    }
+
+    void data::randomize ()
+    {
+      __bval = drand48 () < 0.5 ? false : true;
+      __cval = 'A' + (char) (drand48 () * 26);
+      __ival = 0 + (char) (drand48 () * 100);
+      __fval = (float) (drand48 () * -1.0);
+      __dval = drand48 () * 10.;
+      __sval = "Hello world !";
+      __dval_vec.clear ();
+      size_t sz = (size_t) (drand48 () * 10);
+      __dval_vec.reserve (sz);
+      for (int i = 0; i < sz; i++)
+	{
+	  __dval_vec.push_back (i * 1.0);
+	}
+      return;
+    }
+  
+    void data::dump (ostream & out_) const
+    {
+      out_ << "brio::test::data::dump: " << endl;
+      out_ << "|-- " << "bval  =  " << __bval << endl;
+      out_ << "|-- " << "cval  =  '" << __cval << "'" << endl;
+      out_ << "|-- " << "ival  =  " << __ival << endl;
+      out_ << "|-- " << "fval  =  " << __fval << endl;
+      out_ << "|-- " << "dval  =  " << __dval << endl;
+      out_ << "|-- " << "sval  =  '" << __sval << "'" << endl;
+      out_ << "`-- " << "dval_vec = {";
+      for (int i = 0; i < __dval_vec.size (); i++)
+	{
+	  if (i != 0) out_ << "; ";
+	  out_ << __dval_vec[i];
+	}
+      out_ << "}" << endl;
+      return;
     }
   
   } // end of namespace test

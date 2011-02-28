@@ -78,8 +78,7 @@ int main (int argc_, char ** argv_)
       {
 	clog << "notice: Store data..." << endl;         
 	// Declare a brio writer:  
-	brio::writer my_writer ("test_data_io.root");
-	//my_writer.add_store ("data");
+	brio::writer my_writer ("test_data_io.brio");
 	// Store `data' objects within the *automatic* store;
 	for (int i = 0; i < data_count; i++) 
 	  {
@@ -93,7 +92,7 @@ int main (int argc_, char ** argv_)
       {
 	clog << "notice: Load data..." << endl;         
 	// Declare a brio reader:           
-	brio::reader my_reader ("test_data_io.root");
+	brio::reader my_reader ("test_data_io.brio");
 	
 	// Load `data' objects from the *automatic* store;
 	while (my_reader.has_next ()) 
@@ -107,9 +106,9 @@ int main (int argc_, char ** argv_)
 
       if (delete_file)
 	{
-	  if (boost::filesystem::exists ("test_data_io.root"))
+	  if (boost::filesystem::exists ("test_data_io.brio"))
 	    {
-	      unlink ("test_data_io.root");
+	      unlink ("test_data_io.brio");
 	    }
 	}
 

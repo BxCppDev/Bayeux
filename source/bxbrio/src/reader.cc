@@ -147,6 +147,7 @@ namespace brio {
     return false;
   }
 
+
   bool reader::has_next (const string & label_) const
   {
     _only_if_opened ("brio::reader::has_next");
@@ -222,7 +223,7 @@ namespace brio {
 	throw runtime_error (message.str ());	
       }
     
-    string default_extension = ".root";
+    string default_extension = store_info::DEFAULT_FILE_EXTENSION;
     static size_t test_extension_size 
       = store_info::DEFAULT_FILE_EXTENSION.length ();
     string extension = _filename.substr (_filename.length () - test_extension_size,
@@ -238,7 +239,9 @@ namespace brio {
       {
 	cerr << "WARNING: "
 	     << "brio::reader::_at_open: "
-	     << "Using extension different from `.root' is not recommended !" 
+	     << "Using extension different from `" 
+	     << store_info::DEFAULT_FILE_EXTENSION 
+	     << "' is not recommended !" 
 	     << endl;
       }
     string mode = "READ";

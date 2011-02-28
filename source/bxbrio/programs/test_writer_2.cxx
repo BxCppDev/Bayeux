@@ -68,7 +68,7 @@ int main (int argc_, char ** argv_)
 	} 
 
       // Setup a brio writer:           
-      brio::writer my_writer ("test_io_2.root", verbose, debug);
+      brio::writer my_writer ("test_io_2.brio", verbose, debug);
 
       // Uncomment the following instruction to use a 'data' store:
       //my_writer.add_store ("data");

@@ -8,7 +8,8 @@ namespace brio {
 
   using namespace std;
 
-  const string store_info::DEFAULT_FILE_EXTENSION = ".root";
+  //const string store_info::DEFAULT_FILE_EXTENSION = ".root";
+  const string store_info::DEFAULT_FILE_EXTENSION = ".brio";
   const string store_info::DEFAULT_STORE_TITLE = "Serialization store";
   const string store_info::AUTOMATIC_STORE_LABEL = "__brio::automatic_store__";
 

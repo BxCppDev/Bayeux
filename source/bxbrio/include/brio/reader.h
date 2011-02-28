@@ -68,11 +68,6 @@ namespace brio {
     void set_check_serial_tag (bool new_value_ = true);
 
     bool is_check_serial_tag () const;
- 
-    // File open/close operations:
-    //void open (const string & filename_);
-
-    //void close ();
 
     /** Position current entry of store 'label' just before the first
      *  serialized object
@@ -147,7 +142,7 @@ namespace brio {
 	      if (! __allow_automatic_store)
 		{
 		  ostringstream message;
-		  message << "brio::writer::store: "
+		  message << "brio::reader::load: "
 			  << "No source store is selected nor default store is available !";
 		  throw runtime_error (message.str ());
 		}
@@ -159,7 +154,7 @@ namespace brio {
 	  else
 	    {
 	      ostringstream message;
-	      message << "brio::writer::store: "
+	      message << "brio::reader::load: "
 		      << "No source store with label '" << label_ << "' !";
 	      throw runtime_error (message.str ());
 	    }
@@ -213,8 +208,8 @@ namespace brio {
 	  // check overflow:
 	  if (nentry_ >= si.number_of_entries)
 	    {
-	      cerr << "DEVEL: nentry=" << nentry_ << endl;
-	      cerr << "DEVEL: si.number_of_entries=" << si.number_of_entries << endl;
+	      cerr << "DEVEL: brio::reader::_at_load: nentry=" << nentry_ << endl;
+	      cerr << "DEVEL: brio::reader::_at_load: si.number_of_entries=" << si.number_of_entries << endl;
 	      ostringstream message;
 	      message << "brio::reader::_at_load: "
 		      << "Source store '" << si.label << "' has "

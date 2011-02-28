@@ -1,5 +1,10 @@
 
 2010-10-28  Francois Mauger <mauger@lpccaen.in2p3.fr>
+        * creation of the brio package
+2011-02-28  Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* default brio file extension is ".brio"
+	* improve the brio::test::data class
+        * GPL-ization
+	* version 1.0.2
 
-        * creation of the brio package 
 

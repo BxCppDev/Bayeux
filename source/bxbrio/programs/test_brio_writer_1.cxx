@@ -1,13 +1,22 @@
+#include <cstdlib>
+#include <iostream>
 #include <brio/writer.h>
 #include <brio/test/data.h> /* a serializable sample class */
 
 int main (void)
 { 
-  brio::writer my_writer ("file.root");
+  using namespace std;
+
+  long seed = 12345;
+  srand48 (seed);
+
+  brio::writer my_writer ("file.brio");
   
   for (int i = 0; i < 10; i++) 
     {
       brio::test::data a_data;
+      a_data.randomize ();
+      a_data.dump (clog);
       my_writer.store (a_data);
     }
 

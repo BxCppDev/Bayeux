@@ -79,7 +79,7 @@ int main (int argc_, char ** argv_)
       my_reader.set_check_serial_tag (check_tag);
 
       // Attach the brio reader to a ROOT file:
-      my_reader.open ("test_io.root"); 
+      my_reader.open ("test_io.brio"); 
 
       // Print reader's status: 
       my_reader.print_info (clog);

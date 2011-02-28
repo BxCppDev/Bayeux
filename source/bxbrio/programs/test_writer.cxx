@@ -92,7 +92,7 @@ int main (int argc_, char ** argv_)
       my_writer.set_allow_automatic_store (true); 
 
       // Attach the brio writer to a ROOT file:
-      my_writer.open ("test_io.root"); 
+      my_writer.open ("test_io.brio"); 
 
       // Print writer's status: 
       my_writer.print_info (clog);
@@ -128,6 +128,7 @@ int main (int argc_, char ** argv_)
       // Create a `properties' container:
       datatools::utils::properties infos;
       infos.store_flag ("test");
+      infos.store ("library", "brio");
       infos.store ("io_system", "ROOT");
       infos.store ("archive_format", "portable_binary_archive");
       infos.store ("author", string (getenv ("USER")));

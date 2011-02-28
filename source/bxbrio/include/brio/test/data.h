@@ -77,6 +77,10 @@ namespace brio {
 	// Desctructor:
 	virtual ~data ();
 
+	void randomize ();
+
+	void dump (ostream & out_ = clog) const;
+
 	/* Here we may have many other member methods. */
 
       private:
