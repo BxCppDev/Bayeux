@@ -140,7 +140,7 @@ CPPFLAGS1+=-Drng_shoot_flat=rng_shoot_flat_
 
 CPPFLAGS2+=-Dgenbbsub=genbbsub_
 CPPFLAGS2+=-Dset_genbb_random_seed=set_genbb_random_seed_
-#CPPFLAGS2+=-Dgrndm=grndm_
+CPPFLAGS2+=-Dgrndm=grndm_
 CPPFLAGS2+=-Dgenbb_init_enrange=genbb_init_enrange_
 CPPFLAGS2+=-Dgenevent=genevent_
 CPPFLAGS2+=-Denrange=enrange_
