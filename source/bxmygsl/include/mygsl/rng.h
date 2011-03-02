@@ -1,14 +1,41 @@
 // gsl::rng.h
+/*
+ * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Boston, MA 02110-1301, USA.
+ *
+ */
 
 #ifndef __gsl__rng_h
 #define __gsl__rng_h 1
 
-#include <gsl/gsl_rng.h>
 #include <string>
 #include <map>
+#include <vector>
+
+#include <gsl/gsl_rng.h>
 #include <gsl/gsl_randist.h>
 
+// Not ready yet !
+//#include <boost/stdint.hpp>
+//#include <cstdint>
+
 namespace mygsl {
+
+  using namespace std;
 
   class rng
     {
@@ -16,12 +43,16 @@ namespace mygsl {
       
       static bool g_debug;
 
+      static const std::string DEFAULT_RNG_TYPE;
+
       struct initializer
       {
 	std::map<std::string, const gsl_rng_type *> dict;
 	initializer ();
 	~initializer ();
       };
+      
+      typedef vector<unsigned char> state_buffer_t;
 
     private:
 
@@ -37,13 +68,18 @@ namespace mygsl {
 
     public:
 
+      bool is_initialized () const;
+
+      void initialize (const std::string & id_ = "mt19937", 
+		       unsigned long int seed_ = 0);
+
       void init (const std::string & id_ = "mt19937", 
 		 unsigned long int seed_ = 0);
 
-      //rng ();
-      
-      //rng (const char * id_, unsigned long int seed_ = 0);
-      
+      void set_seed (unsigned long int seed_ = 0);
+
+      // rng ();
+            
       rng (const std::string & id_ = "mt19937", unsigned long int seed_ = 0);
 
       void reset ();
@@ -75,7 +111,13 @@ namespace mygsl {
       void to_stream (std::ostream &) const;
 
       void from_stream (std::istream &);
+
+      void to_buffer (state_buffer_t &) const;
+
+      void from_buffer (const state_buffer_t &);
    
+      size_t get_internal_state_size () const;
+
       // specific distributions:
  
       double flat (double a_, double b_) const;
@@ -121,3 +163,10 @@ namespace mygsl {
 #endif // __gsl__rng_h
 
 // end of gsl::rng.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/
