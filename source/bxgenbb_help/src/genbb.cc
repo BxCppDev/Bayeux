@@ -305,6 +305,36 @@ namespace genbb {
 	__tmp_base_dir = config_.fetch_string ("tmp_base_dir");
       }
 
+    if (config_.has_flag ("delete_conf_file"))
+      {
+	set_delete_conf_file (true);
+      }
+
+    if (config_.has_flag ("preserve_conf_file"))
+      {
+	set_delete_conf_file (false);
+      }
+
+    if (config_.has_flag ("delete_log_file"))
+      {
+	set_delete_log_file (true);
+      }
+
+    if (config_.has_flag ("preserve_log_file"))
+      {
+	set_delete_log_file (false);
+      }
+
+    if (config_.has_flag ("delete_data_file"))
+      {
+	set_delete_log_file (true);
+      }
+
+    if (config_.has_flag ("preserve_data_file"))
+      {
+	set_delete_log_file (false);
+      }
+
     if (config_.has_key ("decay_type"))
       {
 	string tmp = config_.fetch_string ("decay_type");
