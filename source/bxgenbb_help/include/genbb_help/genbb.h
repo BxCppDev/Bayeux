@@ -19,9 +19,11 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Boston, MA 02110-1301, USA.
  * 
  * Description: 
+ *
  *   GENBB/Decay0 generator
  * 
  * History: 
@@ -106,6 +108,8 @@ namespace genbb {
     void set_delete_tmp_dir (bool);
     void set_tmp_dir (const string &);
     void set_tmp_base_dir (const string &);
+    const mygsl::rng & get_random () const;
+    mygsl::rng & get_random ();
 
     const string & get_tmp_base_dir () const;
 

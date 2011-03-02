@@ -15,7 +15,9 @@
  * 
  * You should have received a copy of the GNU General Publi * License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Boston, MA 02110-1301, USA.
+ *
  */
 
 #include <genbb_help/genbb_mgr.h>
@@ -44,12 +46,14 @@ namespace genbb {
     __in = 0;
     __format = FORMAT_GENBB;
     set_format (format_);
+    return;
   }
   
   // dtor:
   genbb_mgr::~genbb_mgr ()
   {
     reset ();
+    return;
   }
   
   void genbb_mgr::set_format (const string & format_label_)
@@ -76,6 +80,7 @@ namespace genbb {
 	fmt = FORMAT_BOOST;
       }
     this->set_format (fmt);
+    return;
   }
   
   void genbb_mgr::set_format (int format_)
@@ -89,6 +94,7 @@ namespace genbb {
 	throw runtime_error ("genbb_mgr::set: Invalid format !");
       }
     __format = format_;
+    return;
   }
 
   void genbb_mgr::set (const string & filename_)
@@ -98,6 +104,7 @@ namespace genbb {
 	throw runtime_error ("genbb_mgr::set: Operation not allowed! Manager is locked!");
       }
     __filenames.push_back (filename_);
+    return;
   }
 
   bool genbb_mgr::has_next ()
@@ -175,6 +182,7 @@ namespace genbb {
       {
 	__load_next_boost ();
       }
+    return;
   }
     
   void genbb_mgr::__load_next_genbb ()
@@ -263,6 +271,7 @@ namespace genbb {
 	__fin.close ();
 	__in = 0;
       }
+    return;
   }
 
   void genbb_mgr::dump (ostream & out_) const
@@ -448,6 +457,7 @@ namespace genbb {
 
     __at_init ();
     __initialized = true;
+    return;
   }
 
   void genbb_mgr::reset ()

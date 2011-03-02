@@ -19,9 +19,11 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Boston, MA 02110-1301, USA.
  * 
  * Description: 
+ *
  *   C++ wrapper GENBB/Decay0 generator
  * 
  * History: 
@@ -81,17 +83,9 @@ namespace genbb {
 
     enum decay_type_t
     {
-      DECAY_TYPE_UNDEFINED = 0,
-      DECAY_TYPE_DBD = 1,
+      DECAY_TYPE_UNDEFINED  = 0,
+      DECAY_TYPE_DBD        = 1,
       DECAY_TYPE_BACKGROUND = 2
-    };
-
-    enum prng_mode_t
-    {
-      PRNG_MODE_UNDEFINED      = 0,
-      PRNG_MODE_SET_SEED       = 1,
-      PRNG_MODE_RANDOMIZE_SEED = 2,
-      PRNG_MODE_DEFAULT        = PRNG_MODE_SET_SEED,
     };
 
   private:
@@ -112,9 +106,9 @@ namespace genbb {
     double __energy_min; 
     double __energy_max;
 
-    int           __prng_mode; //> Initalization mode for PRNG
-    unsigned long __seed;      //> PRNG seed
-    mygsl::rng    __random;    //> Local PRNG (not used)
+    bool          __use_local_prng; //> Local PRNG flag
+    unsigned long __seed;           //> PRNG seed (local or global)
+    mygsl::rng    __random;         //> Local PRNG
 
   private:
 
@@ -125,6 +119,14 @@ namespace genbb {
     bool is_debug () const;
  
     void set_debug (bool d_);
+
+    bool use_local_prng () const;
+ 
+    void set_use_local_prng (bool u_);
+
+    const mygsl::rng & get_random () const;
+
+    mygsl::rng & get_random ();
 
     size_t get_event_count () const;
 

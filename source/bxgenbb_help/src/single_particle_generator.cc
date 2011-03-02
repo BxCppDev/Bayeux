@@ -247,6 +247,16 @@ namespace genbb {
     return;
   }
 
+  const mygsl::rng & single_particle_generator::get_random () const
+  {
+    return __random;
+  }
+
+  mygsl::rng & single_particle_generator::get_random ()
+  {
+    return __random;
+  }
+
   void single_particle_generator::__at_reset ()
   {
     __mode = MODE_INVALID;
@@ -626,7 +636,7 @@ namespace genbb {
 	_init_energy_spectrum ();
       }
 
-    __random.init ("mt19937", __seed);
+    __random.init ("taus2", __seed);
     return;
   }
 

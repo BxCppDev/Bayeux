@@ -15,7 +15,9 @@
  * 
  * You should have received a copy of the GNU General Publi * License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Boston, MA 02110-1301, USA.
+ *
  */
  
 #include <genbb_help/genbb.h>
@@ -66,6 +68,16 @@ namespace genbb {
   {
     __delete_tmp_dir = d_;
     return;
+  }
+
+  const mygsl::rng & genbb::get_random () const
+  {
+    return __random;
+  }
+
+  mygsl::rng & genbb::get_random ()
+  {
+    return __random;
   }
 
   void genbb::__clean ()
@@ -332,7 +344,7 @@ namespace genbb {
      }
  
     //clog << "DEVEL: genbb::initialize: Random init..." << endl;
-    __random.init ("mt19937", __seed);
+    __random.init ("taus2", __seed);
     //clog << "DEVEL: genbb::initialize: Done." << endl;
     
     /***************/

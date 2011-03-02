@@ -16,8 +16,8 @@ int main (int argc_, char ** argv_)
   try
     {  
       bool debug = false;
-      bool test = false;
-      bool dump = false;
+      bool test  = false;
+      bool dump  = false;
       size_t max_count = 10;
 
       int iarg = 1;
@@ -34,6 +34,7 @@ int main (int argc_, char ** argv_)
     
       datatools::utils::properties config;
       if (debug) config.store_flag ("debug");
+      config.store_flag ("local_prng");
       config.store ("seed", 314159);
       config.store ("decay_type", "DBD");
       config.store ("decay_isotope", "Se82");

@@ -19,7 +19,8 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Boston, MA 02110-1301, USA.
  * 
  * Description: 
  *   Manager for GENBB input data
@@ -43,7 +44,12 @@ namespace genbb {
 
   struct rng
   {
-    static mygsl::rng g__ran;
+    static const std::string DEFAULT_PRNG_ID;
+
+    static mygsl::rng   g__ran;
+    static mygsl::rng * g__ran_ptr;
+
+    static void set_genbb_external_prng (mygsl::rng & prng_);
   };
 
 } // end of namespace genbb

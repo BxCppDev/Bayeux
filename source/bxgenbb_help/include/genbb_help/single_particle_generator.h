@@ -19,9 +19,11 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-  * 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Boston, MA 02110-1301, USA.
+ * 
  * Description: 
+ *
  *   A generator of GENBB-like event with a single particle
  * 
  * History: 
@@ -59,11 +61,11 @@ namespace genbb {
     enum mode_t
       {
 	MODE_INVALID         = -1,
-	MODE_MONOKINETIC     = 0,
-	MODE_GAUSSIAN_ENERGY = 1,
-	MODE_ENERGY_RANGE    = 2,
-	MODE_SPECTRUM        = 3,
-	MODE_DEFAULT         = MODE_MONOKINETIC
+	MODE_MONOKINETIC     =  0,
+	MODE_GAUSSIAN_ENERGY =  1,
+	MODE_ENERGY_RANGE    =  2,
+	MODE_SPECTRUM        =  3,
+	MODE_DEFAULT         =  MODE_MONOKINETIC
       };
  
   private: 
@@ -85,8 +87,8 @@ namespace genbb {
     mygsl::von_neumann_method __VNM;
 
     bool          __randomized_direction;
-    unsigned long __seed;
-    mygsl::rng    __random;
+    unsigned long __seed; //> Local PRNG's seed
+    mygsl::rng    __random; //> Local PRNG
 
   protected:
     void _check_locked (const string & where_) const;
@@ -101,6 +103,8 @@ namespace genbb {
     void set_particle_name (const string &);
     double get_particle_mass () const;
     void set_particle_mass (double);
+    const mygsl::rng & get_random () const;
+    mygsl::rng & get_random ();
 
     int get_mode () const;
     void set_mode (int);
