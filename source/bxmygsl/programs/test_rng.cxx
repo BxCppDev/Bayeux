@@ -7,67 +7,70 @@
 
 #include <mygsl/rng.h>
 
+using namespace std;
+
 int main (int argc_ , char ** argv_)
 {
   try 
     {
       mygsl::rng::g_debug = true;
 
-      if (mygsl::rng::g_debug) mygsl::rng::print_dict (std::cerr);
+      if (mygsl::rng::g_debug) mygsl::rng::print_dict (clog);
 
-      std::string       rng_id = "mt19937";
+      string            rng_id = mygsl::rng::DEFAULT_RNG_TYPE;
       unsigned long int seed   = 12345;
     
       mygsl::rng r;
       r.init (rng_id,seed);
+      r.dump (clog);
 
       size_t nshoots = 3;
     
-      std::cerr << std::endl;
-      std::cerr << "name=" << r.name () << std::endl;
-      std::cerr << "min=" << r.min () << std::endl;
-      std::cerr << "max=" << r.max () << std::endl;
-      std::cerr << std::endl;
+      cerr << endl;
+      cerr << "name=" << r.name () << endl;
+      cerr << "min=" << r.min () << endl;
+      cerr << "max=" << r.max () << endl;
+      cerr << endl;
     
       for (int i = 0; i < nshoots; i++) 
 	{
 	  double ran = r.uniform ();
-	  std::cout << ran << std::endl;
+	  cout << ran << endl;
 	}
     
-      std::cerr << "store..." << std::endl;
+      cerr << "store..." << endl;
       r.store ("test_rng.state");
 
-      std::cerr << "load..." << std::endl;
+      cerr << "load..." << endl;
       r.load ("test_rng.state");
 
-      std::cerr << std::endl;
+      cerr << endl;
       for (int i = 0; i < nshoots; i++) 
 	{
 	  double ran = r.uniform ();
-	  std::cout << ran << std::endl;
+	  cout << ran << endl;
 	}
 
-      std::string sname = "test_rng_full.state";
-      std::ofstream ofstate (sname.c_str ());
+      string sname = "test_rng_full.state";
+      ofstream ofstate (sname.c_str ());
       r.to_stream (ofstate);
       ofstate.close ();
 
-      std::ifstream ifstate (sname.c_str ());
+      ifstream ifstate (sname.c_str ());
       r.from_stream (ifstate);
       ifstate.close ();
 
-      std::cerr << std::endl;
+      cerr << endl;
       for (int i = 0; i < nshoots; i++) 
 	{
 	  double ran = r.uniform ();
-	  std::cout << ran << std::endl;
+	  cout << ran << endl;
 	}
 
     }
-  catch (std::exception & x) 
+  catch (exception & x) 
     {
-      std::cerr << "ERROR: " << x.what () << std::endl;
+      cerr << "ERROR: " << x.what () << endl;
       return (EXIT_FAILURE);
     }
   return (EXIT_SUCCESS);

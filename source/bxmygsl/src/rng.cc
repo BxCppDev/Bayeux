@@ -31,8 +31,8 @@ namespace mygsl {
 
   bool rng::g_debug = false;
 
-  //const std::string rng::DEFAULT_RNG_TYPE = "taus2";
-  const std::string rng::DEFAULT_RNG_TYPE = "mt19937";
+  const std::string rng::DEFAULT_RNG_TYPE = "taus2";
+  //const std::string rng::DEFAULT_RNG_TYPE = "mt19937";
 
   void rng::default_setup ()
   {
@@ -63,6 +63,23 @@ namespace mygsl {
   }
 
   /*************************/
+
+	void rng::dump (ostream & out_) const
+	{
+		out_ << "mygsl::rng::dump: " << endl;
+		if (is_initialized ())
+			{
+				out_ << "|-- " << "Initialized   : " << is_initialized () << endl;
+				out_ << "|-- " << "PRNG name     : " << name () << endl;
+				out_ << "`-- " << "Internal state size : " << get_internal_state_size ()
+						 << endl;
+			}
+		else
+			{
+				out_ << "`-- " << "Initialized   : " << is_initialized () << endl;
+			}
+		return;
+	}
 
   bool rng::is_initialized () const
   {
