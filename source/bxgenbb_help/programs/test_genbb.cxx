@@ -21,6 +21,7 @@ int main (int argc_, char ** argv_)
       bool debug = false;
       bool test = false;
       bool dump = false;
+      bool preserve_data = false;
       size_t max_count = 27000;
 
       int iarg = 1;
@@ -31,6 +32,7 @@ int main (int argc_, char ** argv_)
 	  if (arg == "-d" || arg == "--debug") debug = true;
 	  if (arg == "-t" || arg == "--test") test = true;
 	  if (arg == "-D" || arg == "--dump") dump = true;
+	  if (arg == "-p") preserve_data = true;
 	  if (arg == "-10") max_count = 10;
 	  if (arg == "-100") max_count = 100;
 	  if (arg == "-1000") max_count = 1000;
@@ -42,6 +44,7 @@ int main (int argc_, char ** argv_)
       if (debug) config.store_flag ("debug");
       if (test) config.store_flag ("test");
       config.store ("seed", 314159);
+      if (preserve_data) config.store_flag ("preserve_data_files");
       config.store ("buffer_size", 10000);
       config.store ("decay_type", "DBD");
       config.store ("decay_isotope", "Se82");
@@ -51,9 +54,9 @@ int main (int argc_, char ** argv_)
  
       genbb::genbb GBB;
       GBB.set_debug (debug);
-      GBB.set_delete_conf_file (false);
-      GBB.set_delete_log_files (false);
-      GBB.set_delete_data_files (false);
+      //GBB.set_delete_conf_file (false);
+      //GBB.set_delete_log_files (false);
+      //GBB.set_delete_data_files (false);
       //GBB.set_tmp_base_dir ("/tmp/${USER}");
       string tmp_dir = "${HOME}/genbb_work.d";
       datatools::utils::fetch_path_with_env (tmp_dir);

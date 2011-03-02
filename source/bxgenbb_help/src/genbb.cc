@@ -315,24 +315,24 @@ namespace genbb {
 	set_delete_conf_file (false);
       }
 
-    if (config_.has_flag ("delete_log_file"))
+    if (config_.has_flag ("delete_log_files"))
       {
-	set_delete_log_file (true);
+	set_delete_log_files (true);
       }
 
-    if (config_.has_flag ("preserve_log_file"))
+    if (config_.has_flag ("preserve_log_files"))
       {
-	set_delete_log_file (false);
+	set_delete_log_files (false);
       }
 
-    if (config_.has_flag ("delete_data_file"))
+    if (config_.has_flag ("delete_data_files"))
       {
-	set_delete_log_file (true);
+	set_delete_data_files (true);
       }
 
-    if (config_.has_flag ("preserve_data_file"))
+    if (config_.has_flag ("preserve_data_files"))
       {
-	set_delete_log_file (false);
+	set_delete_data_files (false);
       }
 
     if (config_.has_key ("decay_type"))
