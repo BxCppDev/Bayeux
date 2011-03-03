@@ -216,6 +216,10 @@ function main ()
 	-e 's/chfile\*40/chfile\*256/g' \
  	-e 's/rndm(/rnd1(/g' \
 	-e 's/^d/c/g' \
+	-e "s/print *,'wait/!print *,'wait/g" \
+	-e "s/print *,'starting the generation/!print *,'starting the generation/g" \
+	-e "s/print *,'final random integer/!print *,'final random integer/g" \
+	-e "s/print *,'toallevents/!print *,'toallevents/g" \
 	> ${tmp_decay0_for}
 
     if [ ! -d ${GENBB_HELP_ROOT}/decay0/src ]; then
@@ -225,7 +229,6 @@ function main ()
     
     pkgtools__msg_notice "Extracting subroutines and function from the Decay0 main program file..."
     python process_decay0.py ${tmp_decay0_for}
-
 
     pkgtools__msg_notice "Removing original '\${GENBB_HELP_ROOT}/decay0/src/fermi.f' file..."
     mv ${GENBB_HELP_ROOT}/decay0/src/fermi.f ${GENBB_HELP_ROOT}/decay0/src/fermi.f.replaced
