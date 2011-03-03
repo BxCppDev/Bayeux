@@ -126,7 +126,7 @@ c fixed energies of two X-rays; no angular correlation
 	if(istartbb.ne.0) go to 1
 c calculate the theoretical energy spectrum of first particle with step
 c of 1 keV and find its maximum
-	print *,'wait, please: calculation of theoretical spectrum'
+	!print *,'wait, please: calculation of theoretical spectrum'
 	if(ebb1.lt.0.) ebb1=0.
 	if(ebb2.gt.e0) ebb2=e0
 	spmax=-1.
@@ -191,7 +191,7 @@ c	enddo
      +                /gauss(fe1_mod10,ebb1+1.e-4,ebb2+1.e-4,relerr)
 	endif
 	istartbb=1
-	print *,'starting the generation'
+	!print *,'starting the generation'
 c sampling the energies: first e-/e+
 c1	e1=e0*rnd1(d)
 1	if(modebb.ne.10) e1=ebb2*rnd1(d)
