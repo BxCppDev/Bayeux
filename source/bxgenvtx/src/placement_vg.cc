@@ -36,7 +36,7 @@ namespace genvtx {
   {
     if (__vg == 0)
       {
-	throw runtime_error ("placement_vg::get_vg: Missing vertex generator !");
+	throw runtime_error ("genvtx::placement_vg::get_vg: Missing vertex generator !");
       }
     return *__vg;
   }
@@ -87,11 +87,11 @@ namespace genvtx {
     bool devel = g_debug;
     if (__vg == 0)
       {
-	throw runtime_error ("placement_vg::_shoot_vertex: Missing vertex generator !");
+	throw runtime_error ("genvtx::placement_vg::_shoot_vertex: Missing vertex generator !");
       }
     if (! __placement.is_valid ())
       {
-	throw runtime_error ("placement_vg::_shoot_vertex: Invalid placement !");	
+	throw runtime_error ("genvtx::placement_vg::_shoot_vertex: Invalid placement !");	
       }
     geomtools::invalidate (vertex_);
     geomtools::vector_3d vertex;
@@ -110,8 +110,8 @@ namespace genvtx {
   i_vertex_generator * 
   placement_vg::create (const properties & configuration_, void * user_)
   {
-    cerr << "DEVEL: placement_vg::create: Entering..." << endl;
-    configuration_.tree_dump (cerr, "placement_vg::create: configuration:", "DEVEL: ");
+    cerr << "DEVEL: genvtx::placement_vg::create: Entering..." << endl;
+    configuration_.tree_dump (cerr, "genvtx::placement_vg::create: configuration:", "DEVEL: ");
     using namespace std;
     bool devel = false;
     double x, y, z;
@@ -129,7 +129,7 @@ namespace genvtx {
 	if (! get_vertex_generator_db ().has_vertex_generator (generator_id))
 	  {
 	    ostringstream message;
-	    message << "placement_vg::create: Invalid vertex generator id '"
+	    message << "genvtx::placement_vg::create: Invalid vertex generator id '"
 		    << generator_id << "' !";
 	    throw runtime_error (message.str ());
 	  }

@@ -24,7 +24,7 @@ namespace genvtx {
   {
     if (__open)
       {
-	throw runtime_error ("from_file_vg::set_filename: Cannot change source file name as source file is already opened !");
+	throw runtime_error ("genvtx::from_file_vg::set_filename: Cannot change source file name as source file is already opened !");
       }
     __filename = filename_;
   }
@@ -33,11 +33,11 @@ namespace genvtx {
   {
     if (__open)
       {
-	throw runtime_error ("from_file_vg::_open_source: Source file is already opened !");
+	throw runtime_error ("genvtx::from_file_vg::_open_source: Source file is already opened !");
       }
     if (__filename.empty ())
       {
-	throw runtime_error ("from_file_vg::_open_source: Missing source file name !");
+	throw runtime_error ("genvtx::from_file_vg::_open_source: Missing source file name !");
       } 
 
     datatools::utils::fetch_path_with_env (__filename);
@@ -45,14 +45,14 @@ namespace genvtx {
     if (! boost::filesystem::exists (__filename)) 
       {
 	ostringstream message;
-	message << "Source file '" << __filename << "' does not exist !";
+	message << "genvtx::from_file_vg::_open_source: Source file '" << __filename << "' does not exist !";
 	throw runtime_error (message.str ());
       }
     __source.open (__filename.c_str ());
     if (! __source)
       {
 	ostringstream message;
-	message << "Cannot open source file '" << __filename << "' !";
+	message << "genvtx::from_file_vg::_open_source: Cannot open source file '" << __filename << "' !";
 	throw runtime_error (message.str ());
       }
     __open = true;
@@ -63,7 +63,7 @@ namespace genvtx {
   {
     if (! __open)
       {
-	throw runtime_error ("from_file_vg::_close_source: Source file is not opened !");
+	throw runtime_error ("genvtx::from_file_vg::_close_source: Source file is not opened !");
       }
     __source.close ();
     __filename = "";
@@ -75,7 +75,7 @@ namespace genvtx {
   {
     if (__length_unit <= 0.0)
       {
-	throw runtime_error ("from_file_vg::set_length_unit: Invalid length unit !");	
+	throw runtime_error ("genvtx::from_file_vg::set_length_unit: Invalid length unit !");	
       }
     __length_unit = lu_;
   }
@@ -117,7 +117,7 @@ namespace genvtx {
   {
     if (! __open)
       {
-	throw runtime_error ("from_file_vg::_read_next: Source file is not opened !");
+	throw runtime_error ("genvtx::from_file_vg::_read_next: Source file is not opened !");
 	//_open_source ();
       }
     double x, y, z;
@@ -153,7 +153,7 @@ namespace genvtx {
 	  if (! iss)
 	    {
 	      ostringstream message;
-	      message << "'x y z' format error at invalid line '" << line << "' !";
+	      message << "genvtx::from_file_vg::_read_next: 'x y z' format error at invalid line '" << line << "' !";
 	      throw runtime_error (message.str ());
 	    }
 	  __next.set (x, y, z);
@@ -185,7 +185,7 @@ namespace genvtx {
   i_vertex_generator * 
   from_file_vg::create (const properties & configuration_, void * user_)
   {
-    cerr << "DEVEL: from_file_vg::create: Entering..." << endl;
+    cerr << "DEVEL: genvtx::from_file_vg::create: Entering..." << endl;
     configuration_.tree_dump (cerr, "from_file_vg::create: configuration:", "DEVEL: ");
     using namespace std;
     bool devel = false;

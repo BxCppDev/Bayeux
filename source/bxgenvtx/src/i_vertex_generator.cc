@@ -20,7 +20,7 @@ namespace genvtx {
     //debug = true;
     if (debug)
       {
-	clog << "******* DEVEL: i_vertex_generator::vertex_generator_db::vertex_generator_db: entering: " 
+	clog << "******* DEVEL: genvtx::i_vertex_generator::vertex_generator_db::vertex_generator_db: entering: " 
 	     << (test_? "TEST": "-") << endl;
       }
     return;
@@ -32,7 +32,7 @@ namespace genvtx {
     //debug = true;
     if (debug)
       {
-	clog << "******* DEVEL: i_vertex_generator::vertex_generator_db::~vertex_generator_db: entering..." 
+	clog << "******* DEVEL: genvtx::i_vertex_generator::vertex_generator_db::~vertex_generator_db: entering..." 
 	     << endl;
       }
     return;
@@ -50,7 +50,7 @@ namespace genvtx {
     if (found == __dict.end ())
       {
 	ostringstream message;
-	message << "i_vertex_generator::vertex_generator_db::get: "
+	message << "genvtx::i_vertex_generator::vertex_generator_db::get: "
 		<< "No vertex_generator creator with ID='" << vertex_generator_id_ << "'!";
 	throw runtime_error (message.str ());
       }
@@ -66,21 +66,21 @@ namespace genvtx {
     string vertex_generator_id = vertex_generator_id_;
     if (devel)
       {
-	clog << "DEVEL: i_vertex_generator::vertex_generator_db::register_vertex_generator: "
+	clog << "DEVEL: genvtx::i_vertex_generator::vertex_generator_db::register_vertex_generator: "
 	     << "vertex_generator_id='" << vertex_generator_id << "'"
 	     << endl;
       }
     if (has_vertex_generator (vertex_generator_id))
       {
 	ostringstream message;
-	message << "i_vertex_generator::vertex_generator_db::register_vertex_generator: " 
+	message << "genvtx::i_vertex_generator::vertex_generator_db::register_vertex_generator: " 
 		<< "Vertex_Generator ID '" << vertex_generator_id_ << "' is already used "
 		<< "within the vertex_generator factory dictionnary!";
 	throw runtime_error (message.str ());
       }
     if (devel)
       {
-	clog << "DEVEL: i_vertex_generator::vertex_generator_db::register_vertex_generator: "
+	clog << "DEVEL: genvtx::i_vertex_generator::vertex_generator_db::register_vertex_generator: "
 	     << "new '" << vertex_generator_id << "' vertex_generator ID!"
 	     << endl;
       }
@@ -88,16 +88,16 @@ namespace genvtx {
     if (vertex_generator_id.empty ())
       {
 	ostringstream message;
-	message << "i_vertex_generator::vertex_generator_db::register_vertex_generator: " 
+	message << "genvtx::i_vertex_generator::vertex_generator_db::register_vertex_generator: " 
 		<< "Empty vertex_generator ID!";
 	throw runtime_error (message.str ());
       }
     if (devel)
       {
-	clog << "DEVEL: i_vertex_generator::vertex_generator_db::register_vertex_generator: "
+	clog << "DEVEL: genvtx::i_vertex_generator::vertex_generator_db::register_vertex_generator: "
 	     << "insert vertex_generator ID='" << vertex_generator_id << "'!"
 	     << endl;
-	clog << "DEVEL: i_vertex_generator::vertex_generator_db::register_vertex_generator: "
+	clog << "DEVEL: genvtx::i_vertex_generator::vertex_generator_db::register_vertex_generator: "
 	     << "with creator address='" << hex 
 	     << (void *) creator_ << dec << "'"
 	     << endl;
@@ -110,9 +110,9 @@ namespace genvtx {
     size_t sz = get_dict ().size ();
     if (devel)
       {
-	clog << "DEVEL: i_vertex_generator::vertex_generator_db::register_vertex_generator: size="
+	clog << "DEVEL: genvtx::i_vertex_generator::vertex_generator_db::register_vertex_generator: size="
 	     << sz << " element" << (sz > 1? "s": "") << endl;
-	clog << "DEVEL: i_vertex_generator::vertex_generator_db::register_vertex_generator: "
+	clog << "DEVEL: genvtx::i_vertex_generator::vertex_generator_db::register_vertex_generator: "
 	     << "done."
 	     << endl;
       }
@@ -120,7 +120,7 @@ namespace genvtx {
 
   void i_vertex_generator::vertex_generator_db::dump_vertex_generators (ostream & out_)
   {
-    out_ << "List of vertex_generator creators in 'vertex_generator_db::__dict': ";
+    out_ << "List of vertex_generator creators in 'genvtx::vertex_generator_db::__dict': ";
     size_t sz = get_dict ().size ();
     out_ << sz << " element(s)" << endl;
     size_t count = 0; 
@@ -164,7 +164,7 @@ namespace genvtx {
   {
     if (! g__vertex_generator_db) 
       {
-	throw runtime_error ("i_vertex_generator::get_vertex_generator_db: Library build critical bug !");
+	throw runtime_error ("genvtx::i_vertex_generator::get_vertex_generator_db: Library build critical bug !");
       }
     return *(g__vertex_generator_db.get ());
   }

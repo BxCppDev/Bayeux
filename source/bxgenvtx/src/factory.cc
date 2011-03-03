@@ -28,9 +28,9 @@ namespace genvtx {
     if (found != __creators.end ())
       {
 	ostringstream message;
-	message << "factory::do_register: " 
+	message << "genvtx::factory::do_register: " 
 		<< "Vertex generator ID '" << vg_id_ << "' is already used "
-		<< "within the factory dictionary!";
+		<< "within the factory dictionary !";
 	if (abort_on_error)
 	  {
 	    throw runtime_error (message.str ());
@@ -45,8 +45,8 @@ namespace genvtx {
     if (vertex_generator_id.empty ())
       {
 	ostringstream message;
-	message << "factory::do_register: " 
-		<< "Missing vertex generator ID!";
+	message << "genvtx::factory::do_register: " 
+		<< "Missing vertex generator ID !";
 	throw runtime_error (message.str ());
       }
     __creators [vertex_generator_id] = creator_;
@@ -60,19 +60,19 @@ namespace genvtx {
     //devel = true;
     if (devel)
       {
-	clog << "DEVEL: factory::ctor: Initial vertex generators..." << endl;
+	clog << "DEVEL: genvtx::factory::ctor: Initial vertex generators..." << endl;
 	dump_vertex_generators (clog);
       }
     if (preload_)
       {
-	clog << "NOTICE: factory::ctor: " 
+	clog << "NOTICE: genvtx::factory::ctor: " 
 	     << "preload the global vertex generator dictionary!" << endl;
 	// preload local vertex generator dictionary with global vertex generator dictionary:
 	__creators = i_vertex_generator::get_vertex_generator_db ().get_dict ();
 	if (devel)
 	  {
-	    clog << "DEVEL: factory::ctor: " 
-		      << "Available vertex generators after preload:" << endl;
+	    clog << "DEVEL: genvtx::factory::ctor: " 
+		 << "Available vertex generators after preload:" << endl;
 	    dump_vertex_generators (clog);
 	  }
       }
@@ -94,7 +94,7 @@ namespace genvtx {
 
     if (devel) 
       {
-	cerr << "DEVEL: factory::create_vertex_generator: " 
+	cerr << "DEVEL: genvtx::factory::create_vertex_generator: " 
 	     << "VERTEX GENERATOR ID == '" << vg_id_ << "' " << endl;
       }
     // search for the vertex generator's label in the creators dictionary:
@@ -109,19 +109,19 @@ namespace genvtx {
       {
 	if (devel) 
 	  {
-	    cerr << "DEVEL: factory::create_vertex_generator: "
+	    cerr << "DEVEL: genvtx::factory::create_vertex_generator: "
 		 << "NULL VERTEX GENERATOR !" << endl;
 	  }
       }
     /*
-    else
+      else
       {
-	i_vertex_generator * a_vg = base_factory::create_vertex_generator (vertex_generator_id_,
-	vg_configuration_,user_);
-	if (a_vg != 0) 
-	  {
-	    return (a_vg);
-	  }
+      i_vertex_generator * a_vg = base_factory::create_vertex_generator (vertex_generator_id_,
+      vg_configuration_,user_);
+      if (a_vg != 0) 
+      {
+      return (a_vg);
+      }
       }
     */
 
@@ -130,7 +130,8 @@ namespace genvtx {
 
   void factory::dump_vertex_generators (ostream & out_) const
   {
-    out_ << "List of vertex generator creators in 'factory::__creators': ";
+    out_ << "genvtx::factory::dump_vertex_generators: " << endl
+	 << "List of vertex generator creators in 'factory::__creators': ";
     size_t sz = __creators.size ();
     out_ << sz << " element(s)" << endl;
     size_t count = 0; 

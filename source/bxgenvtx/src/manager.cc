@@ -26,14 +26,13 @@ namespace genvtx {
     return __rng_id;
   }
   
-  
   // ctor:
   manager::manager ()
   {
     __debug = false;
     __initialized = false;
     __rng_seed = 0; 
-    __rng_id = "mt19937";
+    __rng_id = "taus2";
   }
   
   // reset:
@@ -49,7 +48,7 @@ namespace genvtx {
   {
     if (__initialized)
       {
-	throw runtime_error ("manager::initialize: Already initialized !");
+	throw runtime_error ("genvtx::manager::initialize: Already initialized !");
       }
     __random.init (__rng_id, __rng_seed);
 
@@ -60,7 +59,7 @@ namespace genvtx {
   {
     if (! __initialized)
       {
-	throw runtime_error ("manager::reset: Not initialized !");
+	throw runtime_error ("genvtx::manager::reset: Not initialized !");
       }
 
     __initialized = false;

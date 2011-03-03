@@ -53,8 +53,8 @@ namespace genvtx {
   i_vertex_generator * 
   spot_vertex_generator::create (const properties & configuration_, void * user_)
   {
-    cerr << "DEVEL: spot_vertex_generator::create: Entering..." << endl;
-    configuration_.tree_dump (cerr, "spot_vertex_generator::create: configuration:", "DEVEL: ");
+    cerr << "DEVEL: genvtx::spot_vertex_generator::create: Entering..." << endl;
+    configuration_.tree_dump (cerr, "genvtx::spot_vertex_generator::create: configuration:", "DEVEL: ");
     using namespace std;
     bool devel = false;
     //devel = true;

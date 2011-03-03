@@ -13,7 +13,7 @@ namespace genvtx {
     if (__initialized)
       {
 	ostringstream message;
-	message << "box_vg::__assert_lock: " << where_ << ": "
+	message << "genvtx::box_vg::__assert_lock: " << where_ << ": "
 		<< "Object is locked !";
 	throw runtime_error (message.str());
       }
@@ -33,38 +33,38 @@ namespace genvtx {
   {
     if ((mode_ !=  MODE_BULK) && (mode_ !=  MODE_SURFACE))
       {
-	throw runtime_error ("box_vg::set_mode: Invalid mode !");
+	throw runtime_error ("genvtx::box_vg::set_mode: Invalid mode !");
       }
     __mode = mode_;
   }
 
   void box_vg::set_surface_mask (int surface_mask_)
   {
-    __assert_lock ("box_vg::set_surface_mask");
+    __assert_lock ("genvtx::box_vg::set_surface_mask");
     __surface_mask = surface_mask_;
   }
 
   void box_vg::set_skin_skip (double skin_skip_)
   {
-    __assert_lock ("box_vg::set_surface_mask");
+    __assert_lock ("genvtx::box_vg::set_surface_mask");
     __skin_skip = skin_skip_;
   }
 
   void box_vg::set_skin_thickness (double skin_thickness_)
   {
-    __assert_lock ("box_vg::set_skin_thickness");
+    __assert_lock ("genvtx::box_vg::set_skin_thickness");
     __skin_thickness = skin_thickness_;
   }
 
   void box_vg::set_bulk (double skin_thickness_)
   {
-    __assert_lock ("box_vg::set_bulk");
+    __assert_lock ("genvtx::box_vg::set_bulk");
     __mode = MODE_BULK;
   }
 
   void box_vg::set_surface (int surface_mask_)
   {
-    __assert_lock ("box_vg::set_surface");
+    __assert_lock ("genvtx::box_vg::set_surface");
     __mode = MODE_SURFACE;
     set_surface_mask (surface_mask_);
   }
@@ -76,13 +76,13 @@ namespace genvtx {
 
   void box_vg::set_box_ref (const geomtools::box & box_)
   {
-    __assert_lock ("box_vg::set_box_ref");
+    __assert_lock ("genvtx::box_vg::set_box_ref");
     __box_ref = &box_;
   }
 
   void box_vg::set_box (const geomtools::box & box_)
   {
-    __assert_lock ("box_vg::set_box");
+    __assert_lock ("genvtx::box_vg::set_box");
     __box = box_;
   }
 
@@ -122,7 +122,7 @@ namespace genvtx {
   {
     if (__initialized)
       {
-	throw runtime_error ("box_vg::init: Already initialized !");
+	throw runtime_error ("genvtx::box_vg::init: Already initialized !");
       }
     __init ();
     __initialized = true;
@@ -132,7 +132,7 @@ namespace genvtx {
   {
     if (! __initialized)
       {
-	throw runtime_error ("box_vg::reset: Not initialized !");
+	throw runtime_error ("genvtx::box_vg::reset: Not initialized !");
       }
     __reset ();
     __initialized = false;
@@ -145,10 +145,10 @@ namespace genvtx {
       {
 	if (__surface_mask == 0)
 	  {
-	    throw runtime_error ("box_vg::__init: Surface mask is null !");
+	    throw runtime_error ("genvtx::box_vg::__init: Surface mask is null !");
 	  }
 	double s = __box.get_surface (__surface_mask);
-	if (devel) clog << "DEVEL: box_vg::__init: Total surface = " << s << endl;
+	if (devel) clog << "DEVEL: genvtx::box_vg::__init: Total surface = " << s << endl;
 	__sum_weight[0] = __box.get_surface (__surface_mask & geomtools::box::FACE_BACK);
 	__sum_weight[1] = __box.get_surface (__surface_mask & geomtools::box::FACE_FRONT);
 	__sum_weight[2] = __box.get_surface (__surface_mask & geomtools::box::FACE_LEFT);
@@ -162,7 +162,7 @@ namespace genvtx {
 	      {
 		__sum_weight[i] += __sum_weight[i - 1];
 	      }
-	    if (devel) clog << "DEVEL: box_vg::__init: Surface weight [" << i << "] = " << __sum_weight[i] << endl;
+	    if (devel) clog << "DEVEL: genvtx::box_vg::__init: Surface weight [" << i << "] = " << __sum_weight[i] << endl;
 	  }
       }
   }
@@ -181,7 +181,7 @@ namespace genvtx {
 
   void box_vg::dump (ostream & out_) const
   {
-    out_ << "box_vg::dump: " << endl;
+    out_ << "genvtx::box_vg::dump: " << endl;
     if (has_box_ref ())
       {
 	out_ << "|-- " << "Box ref: " << *__box_ref << " [" << __box_ref << ']' << endl;
@@ -216,7 +216,7 @@ namespace genvtx {
       {
 	if (devel) 
 	  {
-	    clog << "DEVEL: box_vg::_shoot_vertex: "
+	    clog << "DEVEL: genvtx::box_vg::_shoot_vertex: "
 		 << "Bulk mode..." << endl;
 	  }
 	x = (random_.uniform () - 0.5) * (the_box->get_x () - __skin_thickness);
@@ -228,7 +228,7 @@ namespace genvtx {
       {
 	if (devel) 
 	  {
-	    clog << "DEVEL: box_vg::_shoot_vertex: "
+	    clog << "DEVEL: genvtx::box_vg::_shoot_vertex: "
 		 << "Surface mode..." << endl;
 	  }
 	double r0 = random_.uniform ();
@@ -289,8 +289,8 @@ namespace genvtx {
   i_vertex_generator * 
   box_vg::create (const properties & configuration_, void * user_)
   {
-    cerr << "DEVEL: box_vg::create: Entering..." << endl;
-    configuration_.tree_dump (cerr, "box_vg::create: configuration:", "DEVEL: ");
+    cerr << "DEVEL: genvtx::box_vg::create: Entering..." << endl;
+    configuration_.tree_dump (cerr, "genvtx::box_vg::create: configuration:", "DEVEL: ");
     using namespace std;
     bool devel = false;
     //devel = true;
@@ -322,7 +322,7 @@ namespace genvtx {
 	else
 	  {
 	    ostringstream message;
-	    message << "box_vg::create: Invalid mode '"
+	    message << "genvtx::box_vg::create: Invalid mode '"
 		    << mode_str << "' !";
 	    throw runtime_error (message.str ());
 	  }
@@ -439,7 +439,7 @@ namespace genvtx {
       {
 	if (user_ == 0)
 	  {
-	    throw runtime_error ("box_vg::create: No user data is provided !");
+	    throw runtime_error ("genvtx::box_vg::create: No user data is provided !");
 	  }
 
 	const geomtools::box * ext_box_ref = 0;
@@ -452,7 +452,7 @@ namespace genvtx {
 	      }
 	    catch (...)
 	      {
-		throw runtime_error ("box_vg::create: Cannot reference a 'geomtools::box' from 'user' pointer !");
+		throw runtime_error ("genvtx::box_vg::create: Cannot reference a 'geomtools::box' from 'user' pointer !");
 	      }
 	  }
 	else if (box_user_ref == vg_tools::SHAPE_REF_GETTER)
@@ -464,7 +464,7 @@ namespace genvtx {
 	      }
 	    catch (...)
 	      {
-		throw runtime_error ("box_vg::create: Cannot reference a 'i_object_3d::i_getter' from 'user' pointer !");
+		throw runtime_error ("genvtx::box_vg::create: Cannot reference a 'i_object_3d::i_getter' from 'user' pointer !");
 	      }
 
 	    const geomtools::i_object_3d * o3d = 0;
@@ -474,12 +474,12 @@ namespace genvtx {
 	      }
 	    catch (...)
 	      {
-		throw runtime_error ("box_vg::create: Cannot reference a 'i_object_3d' object from the 'getter' instance !");
+		throw runtime_error ("genvtx::box_vg::create: Cannot reference a 'i_object_3d' object from the 'getter' instance !");
 	      }
 
 	    if (o3d->get_shape_name () != "box")
 	      {
-		throw runtime_error ("box_vg::create: Reference 3D object is not a 'box' shape !");
+		throw runtime_error ("genvtx::box_vg::create: Reference 3D object is not a 'box' shape !");
 	      }
 
 	    try
@@ -488,17 +488,17 @@ namespace genvtx {
 	      }
 	    catch (...)
 	      {
-		throw runtime_error ("box_vg::create: Cannot reference a 'geomtools::box' from the generic 3D shape !");
+		throw runtime_error ("genvtx::box_vg::create: Cannot reference a 'geomtools::box' from the generic 3D shape !");
 	      }
 	  }
 	else 
 	  {
-	    throw runtime_error ("box_vg::create: Unknown mode for external shape referencing !");	    
+	    throw runtime_error ("genvtx::box_vg::create: Unknown mode for external shape referencing !");	    
 	  }
 
 	if (ext_box_ref == 0)
 	  {
-	    throw runtime_error ("box_vg::create: Cannot reference a box from 'user' pointer !");
+	    throw runtime_error ("genvtx::box_vg::create: Cannot reference a box from 'user' pointer !");
 	  }
 	ptr->set_box_ref (*ext_box_ref);
       }
