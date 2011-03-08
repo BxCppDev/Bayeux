@@ -255,6 +255,7 @@ namespace datatools {
 	using namespace std;
 	const Data & b = data_;
 	ar_ << b; 
+	return;
       }
 
       template <typename Data>
@@ -263,6 +264,7 @@ namespace datatools {
       {
 	const Data & b = data_;
 	ar_ << boost::serialization::make_nvp ("record", b);
+	return;
       }
 	
       template <typename Data>
@@ -270,12 +272,13 @@ namespace datatools {
       void __store_binary (eos::portable_oarchive & ar_, 
 			   const Data & data_)
 #else
-      void __store_binary (boost::archive::binary_oarchive & ar_, 
-			   const Data & data_)
+	void __store_binary (boost::archive::binary_oarchive & ar_, 
+			     const Data & data_)
 #endif // IOFACTORY_USE_EOS_PBA
       {
 	const Data & b = data_;
 	ar_ << b; 
+	return;
       }
 
       template <typename Data>
@@ -287,27 +290,27 @@ namespace datatools {
 	/*
         // 2009-05-26, FM:  
 	std::cerr << "DEVEL: io_factory::__load_text: archive class name='" 
-		  << typeid (ar_).name() << "'" 
-		  << std::endl;
+	<< typeid (ar_).name() << "'" 
+	<< std::endl;
 	std::cerr << "DEVEL: io_factory::__load_text: class name='" 
-		  << typeid (b).name() << "'" 
-		  << std::endl;
+	<< typeid (b).name() << "'" 
+	<< std::endl;
 	// Problem!
 	try 
-	  {
-	    ar_ >> b; 
-	    std::cerr << "DEVEL: io_factory::__load_text: deserialization is ok."
-		      << std::endl;
-	  }
+	{
+	ar_ >> b; 
+	std::cerr << "DEVEL: io_factory::__load_text: deserialization is ok."
+	<< std::endl;
+	}
 	catch (std::exception & x)
-	  {
-	    std::cerr << "DEVEL: io_factory::__load_text: EXCEPTION="
-		      << x.what ()
-		      << std::endl;
+	{
+	std::cerr << "DEVEL: io_factory::__load_text: EXCEPTION="
+	<< x.what ()
+	<< std::endl;
 	    
-	  }
+	}
 	std::cerr << "DEVEL: io_factory::__load_text: done" 
-		  << std::endl;
+	<< std::endl;
 	*/
       }
 
@@ -317,6 +320,7 @@ namespace datatools {
       {
 	Data & b = data_;
 	ar_ >> boost::serialization::make_nvp ("record", b);
+	return;
       }
 
       template <typename Data>
@@ -324,12 +328,13 @@ namespace datatools {
       void __load_binary (eos::portable_iarchive & ar_ , 
 			  Data & data_)
 #else
-      void __load_binary (boost::archive::binary_iarchive & ar_ , 
-			  Data & data_)
+	void __load_binary (boost::archive::binary_iarchive & ar_ , 
+			    Data & data_)
 #endif // IOFACTORY_USE_EOS_PBA
       {
 	Data & b = data_;
 	ar_ >> b; 
+	return;
       }
 
     public:
@@ -354,6 +359,7 @@ namespace datatools {
 	  {
 	    __store_binary<Data> (*__obar_ptr, data_);
 	  }
+	return;
       }
 
       template <typename Data>
@@ -402,9 +408,9 @@ namespace datatools {
 	    if (__itar_ptr != 0)
 	      {
 		/*
-		std::cerr << "DEVEL: io_factory::load: "
-			  << "load data from input text archive..." 
-			  << std::endl;	      
+		  std::cerr << "DEVEL: io_factory::load: "
+		  << "load data from input text archive..." 
+		  << std::endl;	      
 		*/
 		__load_text<Data> (*__itar_ptr, data_);
 		*__in_fs >> std::ws;
@@ -468,13 +474,14 @@ namespace datatools {
 			  << std::endl;
 	      } 
 	  }
+	return;
       }
 
     public:
   
       template <typename Data>
       friend io_factory & operator<< (io_factory & iof_, 
-		  const Data & data_)
+				      const Data & data_)
       {
 	iof_.store (data_);
 	return iof_;
@@ -482,7 +489,7 @@ namespace datatools {
 
       template <typename Data>
       friend io_factory & operator>> (io_factory & iof_, 
-		  Data & data_)
+				      Data & data_)
       {
 	iof_.load (data_);
 	return iof_;
@@ -492,9 +499,9 @@ namespace datatools {
       virtual // trick
 #endif // DATATOOLS_USE_TREE_DUMP
       void tree_dump (std::ostream & out_         = std::cerr, 
-		 const std::string & title_  = "",
-		 const std::string & indent_ = "",
-		 bool inherit_               = false) const;
+		      const std::string & title_  = "",
+		      const std::string & indent_ = "",
+		      bool inherit_               = false) const;
   
       void dump (std::ostream & out_) const;
 
@@ -566,6 +573,8 @@ namespace datatools {
 
     public:
 
+      bool is_error () const;
+
       const std::string & get_record_tag () const;
 
       bool has_record_tag () const;
@@ -602,11 +611,13 @@ namespace datatools {
       void init_multi (const std::string & filename_)
       {
 	init (filename_, using_multiple_archives);
+	return;
       }
 
       void init_single (const std::string & filename_)
       {
 	init (filename_, using_single_archive);
+	return;
       }
 
       void init (const std::string & filename_ , int mode_);
@@ -635,29 +646,29 @@ namespace datatools {
 	try 
 	  {
 	    /*
-	    std::cerr << "DEVEL: io_factory::_basic_load: class name='" 
-		      << typeid (data_).name() << "'" 
-		      << std::endl;
+	      std::cerr << "DEVEL: io_factory::_basic_load: class name='" 
+	      << typeid (data_).name() << "'" 
+	      << std::endl;
 	    */
 	    __reader->load (data_);
 	    /*
-	    std::cerr << "DEVEL: io_factory::_basic_load: ok" 
-		      << std::endl;
+	      std::cerr << "DEVEL: io_factory::_basic_load: ok" 
+	      << std::endl;
 	    */
 	  }
 	/*
 	// 2011-02-25 FM:
 	catch (boost::archive::archive_exception & x) 
 	{
-	  bool warn = io_factory::g_warning;
-	  if (warn)
-	    {
-	      std::clog << "WARNING: data_reader::_basic_load: archive exception is: " 
-			<< x.what () << std::endl;
-	    }
-	  __status   = STATUS_ERROR;
-	  __next_tag = EMPTY_RECORD_TAG;
-	  throw std::runtime_error (x.what ());
+	bool warn = io_factory::g_warning;
+	if (warn)
+	{
+	std::clog << "WARNING: data_reader::_basic_load: archive exception is: " 
+	<< x.what () << std::endl;
+	}
+	__status   = STATUS_ERROR;
+	__next_tag = EMPTY_RECORD_TAG;
+	throw std::runtime_error (x.what ());
 	}
 	*/
 	catch (std::exception & x) 
@@ -694,6 +705,7 @@ namespace datatools {
 	    __next_tag = EMPTY_RECORD_TAG;
 	    throw std::runtime_error ("data_reader::_basic_load: unexpected error!");
 	  }
+	return;
       }
 	
     public:
@@ -717,6 +729,7 @@ namespace datatools {
 	this->_basic_load (data_);
 	if (__reader->is_multi_archives ()) __reader->stop_archive ();
 	__read_next_tag ();
+	return;
       }
 
       template <typename Data>
@@ -725,6 +738,7 @@ namespace datatools {
 	datatools::serialization::i_serializable & i_ser =
 	  static_cast<datatools::serialization::i_serializable &> (data_);
 	this->load (i_ser.get_serial_tag (), data_);
+	return;
       }
 	
     };
@@ -796,6 +810,7 @@ namespace datatools {
 	    throw std::runtime_error ("data_writer::_basic_store(...): not initialized!");
 	  }
 	__writer->store<Data> (data_);
+	return;
       }
 
     public:
@@ -814,6 +829,7 @@ namespace datatools {
 	  {
 	    __writer->stop_archive ();
 	  }
+	return;
       }
 
       template <typename Data>
@@ -823,6 +839,7 @@ namespace datatools {
 	const datatools::serialization::i_serializable & i_ser =
 	  static_cast<const datatools::serialization::i_serializable &> (data_);
 	this->store<Data> (i_ser.get_serial_tag (), data_);
+	return;
       }
 
     };

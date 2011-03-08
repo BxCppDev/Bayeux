@@ -645,6 +645,7 @@ namespace datatools {
       __in_fs = 0;
       __out_fs = 0;
       __mode = io_factory::MODE_DEFAULT;
+      return;
     }
   
     int 
@@ -701,6 +702,7 @@ namespace datatools {
 #endif // IOFACTORY_USE_FPU         
       __ctor_defaults ();
       __init ("", mode_);
+      return;
     }
 
     // ctor
@@ -726,6 +728,7 @@ namespace datatools {
 #endif // IOFACTORY_USE_FPU         
       __ctor_defaults ();
       __init (stream_name_, mode_);
+      return;
     }
 
     // dtor
@@ -736,6 +739,7 @@ namespace datatools {
 	{
 	  std::clog << "DEBUG: io_factory::~io_factory." << std::endl;
 	}
+      return;
     }
 
     void 
@@ -802,12 +806,14 @@ namespace datatools {
       out_ << indent << last_tag 
 	   << "is_multi_archives : " << is_multi_archives () << std::endl;
 
+      return;
     }
 
     void 
     io_factory::dump (std::ostream & out_) const
     {
       io_factory::tree_dump (out_, "io_factory::dump:");
+      return;
     }
 
     int 
@@ -944,6 +950,7 @@ namespace datatools {
 	{
 	  throw std::runtime_error ("io_reader::io_reader: cannot force not-read mode!");
 	}
+      return;
     }
 
     io_reader::io_reader (const std::string & stream_name_, 
@@ -954,6 +961,7 @@ namespace datatools {
 	{
 	  throw std::runtime_error ("io_reader::io_reader: cannot force not-read mode!");
 	}
+      return;
     }
 
     io_reader::~io_reader ()
@@ -962,6 +970,7 @@ namespace datatools {
 	{
 	  std::clog << "DEBUG: io_reader::~io_reader." << std::endl;
 	}
+      return;
     }
 
     /***********************************************************/
@@ -973,6 +982,7 @@ namespace datatools {
 	{
 	  throw std::runtime_error ("io_writer::io_writer: cannot force write mode!");
 	}
+      return;
     }
 
     io_writer::io_writer (const std::string & stream_name_, 
@@ -983,7 +993,8 @@ namespace datatools {
 	{
 	  throw std::runtime_error ("io_writer::io_writer: cannot force read mode!");
 	}
-    }
+       return;
+   }
 
     io_writer::~io_writer ()
     {
@@ -991,6 +1002,7 @@ namespace datatools {
 	{
 	  std::clog << "DEBUG: io_writer::~io_writer." << std::endl;
 	}
+      return;
     }
 
     /***********************************************************/
@@ -1062,8 +1074,11 @@ namespace datatools {
       // 2011-02-25 FM: 
       catch (boost::archive::archive_exception & x) 
 	{
-	  std::clog << "WARNING: data_reader::__read_next_tag: archive exception is: " 
-		    << x.what () << std::endl;
+	  if (io_factory::g_warning)
+	    {
+	      std::clog << "WARNING: data_reader::__read_next_tag: archive exception is: " 
+			<< x.what () << std::endl;
+	    }
 	  __status   = STATUS_ERROR;
 	  __next_tag = EMPTY_RECORD_TAG;
 	  // throw x;
@@ -1093,6 +1108,11 @@ namespace datatools {
       return;
     }
 
+    bool data_reader::is_error () const
+    {
+      return __status == STATUS_ERROR;
+    }
+
     void 
     data_reader::__init_reader (const std::string & filename_, 
 				int mode_)
@@ -1100,6 +1120,7 @@ namespace datatools {
       __status = STATUS_OK;
       __reader = new io_reader (filename_, mode_);
       __read_next_tag ();
+      return;
     }
 
     void 
@@ -1112,6 +1133,7 @@ namespace datatools {
 	}
       __next_tag = "";
       __status = STATUS_OK;
+      return;
     }
 
     const std::string 
@@ -1256,6 +1278,7 @@ namespace datatools {
     data_reader::reset ()
     {
       __reset_reader ();
+      return;
     }
 
     void 
@@ -1278,6 +1301,7 @@ namespace datatools {
 	  mode |= io_factory::multi_archives; 
 	}
       __init_reader (filename_, mode);
+      return;
     }
 
     void 
@@ -1285,11 +1309,13 @@ namespace datatools {
     {
       __reset_reader ();
       __init_reader (filename_, mode_);
+      return;
     }
 
     data_reader::data_reader () 
     {
       __reader = 0;
+      return;
     }
 
     data_reader::data_reader (const std::string & filename_, 
@@ -1297,12 +1323,14 @@ namespace datatools {
     {
       __reader = 0;
       init (filename_, multiple_archives_);
+      return;
     }
 
     data_reader::data_reader (const std::string & filename_, int mode_)
     {
       __reader = 0;
       __init_reader (filename_, mode_);
+      return;
     }
 
     data_reader::~data_reader ()
@@ -1312,6 +1340,7 @@ namespace datatools {
 	{
 	  std::clog << "DEBUG: data_reader::~data_reader: Done." << std::endl;
 	}
+      return;
     }
 
     /***********************************************************/
@@ -1435,6 +1464,7 @@ namespace datatools {
 				int mode_)
     {
       __writer = new io_writer (filename_, mode_);
+      return;
     }
 
     void 
@@ -1445,12 +1475,14 @@ namespace datatools {
 	  delete __writer;
 	  __writer = 0;
 	}
-    }
+       return;
+   }
 
     void 
     data_writer::reset ()
     {
       __reset_writer ();
+      return;
     }
 
     void 
@@ -1478,7 +1510,8 @@ namespace datatools {
 	  mode |= io_factory::append; 
 	}
       __init_writer (filename_, mode);
-    }
+       return;
+   }
 
     void 
     data_writer::init (const std::string & filename_, 
@@ -1487,12 +1520,14 @@ namespace datatools {
       __reset_writer ();
       int mode = mode_;
       __init_writer (filename_, mode);
-    }
+       return;
+   }
 
     // ctor
     data_writer::data_writer () 
     {
       __writer = 0;
+      return;
     }
 
     // ctor
@@ -1502,6 +1537,7 @@ namespace datatools {
     {
       __writer = 0;
       init (filename_, multiple_archives_, append_mode_);
+      return;
     }
 
     // ctor
@@ -1509,6 +1545,7 @@ namespace datatools {
     {
       __writer = 0;
       __init_writer (filename_, mode_);
+      return;
     }
 
     // dtor
@@ -1519,6 +1556,7 @@ namespace datatools {
 	{
 	  std::clog << "DEBUG: data_writer::~data_writer." << std::endl;
 	}
+      return;
     }
  
   } // end of namespace serialization
