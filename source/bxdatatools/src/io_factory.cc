@@ -1064,7 +1064,9 @@ namespace datatools {
 	{
 	  std::clog << "WARNING: data_reader::__read_next_tag: archive exception is: " 
 		    << x.what () << std::endl;
-	  throw x;
+	  __status   = STATUS_ERROR;
+	  __next_tag = EMPTY_RECORD_TAG;
+	  // throw x;
 	}
       catch (std::exception & x) 
 	{

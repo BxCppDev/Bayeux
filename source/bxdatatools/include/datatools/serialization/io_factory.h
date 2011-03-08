@@ -424,7 +424,7 @@ namespace datatools {
 	  {
 	    if (io_factory::g_warning)
 	      {
-		std::clog << "WARNING:  io_factory::load: archive exception is: " 
+		std::clog << "WARNING: io_factory::load: archive exception is: " 
 			  << x.what () << std::endl;
 	      }
 	    throw x;
