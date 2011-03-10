@@ -5,7 +5,7 @@ version=1.2.4
 description=A wrapper C++ library for some GSL components
 language=C++
 namespace=mygsl
-dependencies=GSL
+dependencies=GSL[>=1.10]
 using_pkg_config=0
 creation=2007-12-02
 author=Francois Mauger <mauger@lpccaen.in2p3.fr>

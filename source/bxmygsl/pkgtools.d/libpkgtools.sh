@@ -48,7 +48,7 @@ if [ "x" = "x" ]; then
     __pkgtools__ui_user_yesno=${__pkgtools__ui_INVALID_YESNO}
     __pkgtools__ui_EMPTY_STRING=""
     __pkgtools__ui_user_string=${__pkgtools__ui_EMPTY_STRING}
-    __pkgtools__ui_INVALID_INTEGER=-200000000
+    __pkgtools__ui_INVALID_INTEGER=-2147483648
     __pkgtools__ui_user_integer=${__pkgtools__ui_INVALID_INTEGER}
 
     __pkgtools__ui_dialog_bin=dialog
@@ -115,7 +115,7 @@ EOF
 	    return 1
 	fi 
 	token=$(pkgtools__to_lower $1) 
-	test_float_py_tmp="/tmp/libpkgtools__test_float.py" 
+	test_float_py_tmp="/tmp/libpkgtools__is_float.py" 
 	if [ ! -f ${test_float_py_tmp} ]; then
 	    cat > ${test_float_py_tmp} <<EOF 
 import sys 
@@ -142,7 +142,7 @@ EOF
 	    return 1 # false
 	fi
 	token=$(pkgtools__to_lower $1)
-	test_int_py_tmp="/tmp/libpkgtools__test_int.py" 
+	test_int_py_tmp="/tmp/libpkgtools__is_integer.py" 
 	if [ ! -f ${test_int_py_tmp} ]; then
 	    cat > ${test_int_py_tmp} <<EOF
 import sys
@@ -231,7 +231,7 @@ EOF
 	return 0
     }
 
-
+    # maybe unuseful
     function pkgtools__ui_set_user_integer ()
     {
 	__pkgtools__at_function_enter pkgtools__ui_set_user_integer
@@ -246,6 +246,22 @@ EOF
 	return 0
     }
 
+
+    # maybe unuseful
+    function pkgtools__ui_reset_user_integer ()
+    {
+	__pkgtools__ui_user_integer=${__pkgtools__ui_INVALID_INTEGER}
+	return 0
+    }
+
+
+    # maybe unuseful
+    function pkgtools__ui_get_user_integer ()
+    {
+	__pkgtools__ui_user_integer=${__pkgtools__ui_INVALID_INTEGER}
+	echo ${__pkgtools__ui_user_integer}
+	return 0
+    }
 
     function pkgtools__ui_set_user_yesno ()
     {
@@ -819,6 +835,27 @@ EOF
 	return 1
     }
 
+
+    function pkgtools__get_so_extension ()
+    {
+	pkgtools__is_darwin
+	if [ $? -eq 0 ]; then
+	    echo ".dylib"
+	else    
+	    echo ".so"
+	fi
+	return 0
+    }
+
+    function pkgtools__get_usr_lib ()
+    {
+	if [ "X$(uname -m)" = "Xx86_64" ]; then
+	    echo "/usr/lib64"
+	else
+	    echo "/usr/lib"
+	fi
+	return 0
+    }
 
     function pkgtools__get_distribution_family ()
     {
@@ -1695,11 +1732,17 @@ EOF
 	    return 1
 	fi
 
-	${PKGTOOLS_ROOT}/programs/check_version.py ${version_to_be_checked} "${verdesc}"
-	if [ $? -ne 0 ]; then
-	    pkgtools__msg_devel "Version '${version_to_be_checked}' is not valid!"
+	if [ ! -x ${PKGTOOLS_ROOT}/programs/check_version.py ]; then
+	    pkgtools__msg_error "No '\${PKGTOOLS_ROOT}/programs/check_version.py}' is available ! Cannot check the validity of the version number ! Assuming it is ok !"
 	    __pkgtools__at_function_exit
 	    return 1
+	else
+	    ${PKGTOOLS_ROOT}/programs/check_version.py ${version_to_be_checked} "${verdesc}"
+	    if [ $? -ne 0 ]; then
+		pkgtools__msg_devel "Version '${version_to_be_checked}' is not valid!"
+		__pkgtools__at_function_exit
+		return 1
+	    fi
 	fi
 	__pkgtools__at_function_exit
 	return 0
@@ -2360,32 +2403,35 @@ EOF
 	    which ${dep_cfg} > /dev/null 2>&1 
 	    if [ $? -ne 0 ]; then
 		has_config_script=0
-		pkgtools__msg_warning "Cannot find '${dep_cfg}' config script !"
+		pkgtools__msg_info "Cannot find '${dep_cfg}' config script !"
 	    else
 		has_config_script=1
 		pkgtools__msg_notice "Found '${dep_cfg}' config script !"
 	    fi
-	    pkgtools__msg_debug "- Checking ${dep_name} executable..."
-	    dep_exe=
-	    which ${dep_name} > /dev/null 2>&1 
-	    if [ $? -ne 0 ]; then
-		has_executable=0
-		pkgtools__msg_warning "Cannot find '${dep_name}' executable !"
-	    else
-		dep_exe=${dep_name}
-		has_executable=1
-		pkgtools__msg_notice "Found '${dep_name}' executable !"
-	    fi
-	    
-	    if [ "x${dep_name}" != "x${dep_lower}" ]; then
-		pkgtools__msg_debug "- Checking ${dep_lower} executable..."
-		which ${dep_lower} > /dev/null 2>&1 
-		if [ $? -eq 0 ]; then
-		    dep_exe=${dep_lower}
-		    has_executable=1
-		    pkgtools__msg_notice "Found '${dep_lower}' executable !"
+
+	    if [ ${has_config_script} -eq 0 ]; then
+		pkgtools__msg_debug "- Checking ${dep_name} executable..."
+		dep_exe=
+		which ${dep_name} > /dev/null 2>&1 
+		if [ $? -ne 0 ]; then
+		    has_executable=0
+		    pkgtools__msg_info "Cannot find '${dep_name}' executable !"
 		else
-		    pkgtools__msg_warning "Cannot find '${dep_lower}' executable !"
+		    dep_exe=${dep_name}
+		    has_executable=1
+		    pkgtools__msg_notice "Found '${dep_name}' executable !"
+		fi
+		
+		if [ "x${dep_name}" != "x${dep_lower}" ]; then
+		    pkgtools__msg_debug "- Checking ${dep_lower} executable..."
+		    which ${dep_lower} > /dev/null 2>&1 
+		    if [ $? -eq 0 ]; then
+			dep_exe=${dep_lower}
+			has_executable=1
+			pkgtools__msg_notice "Found '${dep_lower}' executable !"
+		    else
+			pkgtools__msg_info "Cannot find '${dep_lower}' executable !"
+		    fi
 		fi
 	    fi
 	    
@@ -2433,7 +2479,28 @@ EOF
 		__pkgtools__at_function_exit
 		return 1
 	    fi
-	    pkgtools__msg_notice "${dep_name}${ver_str} seems to be properly setup!"
+
+	    ver_str_num=$(echo "${dep_version}" | tr '_' '.' | tr -c -d '0123456789\.')
+	    pkgtools__msg_devel "extracted version number '${ver_str_num}'"
+	    if [ "x${PKGTOOLS_ROOT}" != "x" ]; then 
+		if [ "x${ver_str_num}" != "x" ]; then	
+		    pkgtools__msg_notice "Check if version '${ver_str_num}' of '${dep_name}' is valid..."
+		    pkgtools__is_package_version_valid "${ver_str_num}" "${dep_version_info}"
+		    if [ $? -eq 0 ]; then
+			pkgtools__msg_notice "${dep_name} version ${ver_str_num} is valid."
+		    else
+			pkgtools__msg_error "${dep_name} version ${ver_str_num} is not valid ! Requirement for ${dep_name} version number is ${dep_version_info} !"
+			__pkgtools__at_function_exit
+			return 1
+		    fi
+		fi
+	    else
+		pkgtools__msg_warning "Some 'pkgtools' utilities are not installed ! Cannot check the validity of this version number ! "		
+		pkgtools__msg_warning "Please consider to install 'pkgtools' !"
+		pkgtools__msg_warning "Continue at your own risk !"	    
+	    fi
+
+	    pkgtools__msg_notice "${dep_name}${ver_str} seems to be properly setup !"
 	    
 	done
 	
@@ -2541,8 +2608,8 @@ EOF
 	pkgtools__is_ubuntu
 	if [ $? -eq 0 ]; then
 	    pkgtools__msg_notice "Is Ubuntu."
-
 	fi 
+	pkgtools__msg_notice "Shared library extension : $(pkgtools__get_so_extension)"
 
 	pkgtools__msg_notice "GSL configure utility: $(pkgtools__get_package_config_tool gsl)"
 
