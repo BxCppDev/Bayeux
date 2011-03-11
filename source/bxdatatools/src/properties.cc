@@ -4,20 +4,20 @@
 
 #include <datatools/utils/properties.h>
 
+#include <boost/archive/polymorphic_oarchive.hpp>
+#include <boost/archive/polymorphic_iarchive.hpp>
+
+BOOST_CLASS_EXPORT_IMPLEMENT(datatools::utils::properties) 
+
 namespace datatools {
 
   namespace utils {
 
     bool properties::g_debug                       = false;
+
+    /* 2010-06-01 FM: to be updated */ 
     const std::string properties::SERIAL_TAG       = "datatools::utils::properties";
     const std::string properties::data::SERIAL_TAG = "__datatools::utils::properties::data";
-
-    /* 2010-06-01 FM: to be updated 
-     */
-    /*
-      const std::string properties::SERIAL_TAG       = "datatools::utils::properties";
-      const std::string properties::data::SERIAL_TAG = "__datatools::utils::properties::data";
-    */
 
     const std::string & properties::get_serial_tag () const
     {
@@ -294,8 +294,8 @@ namespace datatools {
 	{
 	  if (is_boolean ()) return __boolean_values.size ();
 	  if (is_integer ()) return __integer_values.size ();
-	  if (is_real ()) return __real_values.size ();     
-	  if (is_string ()) return __string_values.size (); 
+	  if (is_real ())    return __real_values.size ();     
+	  if (is_string ())  return __string_values.size (); 
 	}
       else 
 	{
@@ -315,6 +315,7 @@ namespace datatools {
     {
       __flags  = 0;
       __init_values (type_,size_);
+      return;
     }
 
     properties::data::data (bool value_, int size_)
@@ -331,6 +332,7 @@ namespace datatools {
 	{
 	  set_value (value_, i);
 	}
+      return;
     }
 
     properties::data::data (int value_, int size_)
@@ -347,6 +349,7 @@ namespace datatools {
 	{
 	  set_value (value_, i);
 	}
+      return;
     }
 
     properties::data::data (double value_, int size_)
@@ -363,6 +366,7 @@ namespace datatools {
 	{
 	  set_value (value_, i);
 	}
+      return;
     }
 
     properties::data::data (const std::string & value_, int size_)
@@ -397,6 +401,7 @@ namespace datatools {
 		    << "code=" << code  << std::endl;
 	
 	}
+      return;
     }
 
     properties::data::data (const char * value_, int size_)
@@ -423,10 +428,12 @@ namespace datatools {
 	{
 	  set_value (tmp, i);
 	}
+      return;
     }
 
     properties::data::~data ()
     {
+      return;
     }
 
     /******************************************************/
@@ -587,7 +594,8 @@ namespace datatools {
       bool value;
       if ( get_value (value,index_) != ERROR_SUCCESS ) 
 	{
-	  throw std::runtime_error ("properties::data::get_boolean_value: type is not boolean!");    }
+	  throw std::runtime_error ("properties::data::get_boolean_value: type is not boolean!");   
+	}
       return value;
     }
 
@@ -635,6 +643,7 @@ namespace datatools {
     void properties::data::dump (std::ostream & out_) const
     {
       tree_dump (std::cout,"datatools::utils::properties::data");
+      return;
     }
 
     void properties::data::to_string (std::ostream & out_) const
@@ -654,7 +663,7 @@ namespace datatools {
       out_ << ':'
 	   << get_description (); 
       out_ << ']';
-	
+      return;	
     }
     
     void properties::data::tree_dump (std::ostream & out_, 
@@ -720,6 +729,7 @@ namespace datatools {
 	  out_ << du::i_tree_dumpable::inherit_tag (inherit_);
 	  out_ << "<no value>" << std::endl;
 	}
+      return;	
     }
     
     /**********************************************/
@@ -728,10 +738,12 @@ namespace datatools {
 
     properties::default_key_validator::default_key_validator ()
     {      
+      return;	
     }
 
     properties::default_key_validator:: ~default_key_validator ()
     {
+      return;	
     }
 
     bool properties::default_key_validator::operator () (const std::string & key_arg_) const
@@ -759,11 +771,13 @@ namespace datatools {
 	      throw std::runtime_error (message.str ());
 	    }
 	}
+      return;	
     }
 
     void properties::set_description (const std::string & desc_)
     {
       __description = desc_;
+      return;	
     }
 
     const std::string & properties::get_description () const
@@ -779,6 +793,7 @@ namespace datatools {
     void properties::set_debug (bool new_value_)
     {
       __debug = new_value_;
+      return;	
     }
 
     int32_t properties::size () const
@@ -791,6 +806,7 @@ namespace datatools {
       __clear_key_validator ();
       __key_validator = &key_validator_;
       __key_validator_deletion = false;
+      return;	
     }
     
     void properties::set_key_validator (const basic_key_validator * key_validator_, 
@@ -806,6 +822,7 @@ namespace datatools {
 	  __key_validator=key_validator_;
 	  __key_validator_deletion = deletion_on_destroy_;
 	}
+      return;	
     }
 
     void properties::set_default_key_validator ()
@@ -813,11 +830,13 @@ namespace datatools {
       __clear_key_validator ();
       __key_validator = &g_default_key_validator;// new default_key_validator;
       __key_validator_deletion = false; //true;
+      return;	
     }
 
     void properties::unset_key_validator ()
     {
       __clear_key_validator ();
+      return;	
     }
   
     // ctor:
@@ -826,6 +845,7 @@ namespace datatools {
     {
       set_description ("");
       set_default_key_validator ();
+      return;	
     }
 
     // ctor:
@@ -834,6 +854,7 @@ namespace datatools {
     {
       set_description (desc_);
       set_default_key_validator ();
+      return;	
     }
 
     // ctor:
@@ -843,6 +864,7 @@ namespace datatools {
     {
       set_description (desc_);
       set_key_validator (key_validator_);
+      return;	
     }
 
     // ctor:
@@ -851,6 +873,7 @@ namespace datatools {
     {
       set_description ("");
       set_key_validator (key_validator_);
+      return;	
     }
   
     // ctor:
@@ -861,6 +884,7 @@ namespace datatools {
     {
       set_description (desc_);
       set_key_validator (key_validator_,deletion_on_destroy_);
+      return;	
     }
 
     properties::properties (const basic_key_validator * key_validator_, 
@@ -869,6 +893,7 @@ namespace datatools {
     {
       set_description ("");
       set_key_validator (key_validator_, deletion_on_destroy_);
+      return;	
     }
 
     void properties::__clear_key_validator ()
@@ -881,12 +906,14 @@ namespace datatools {
 	    }
 	  __key_validator = 0;
 	}
+      return;	
     }
   
     // dtor:
     properties::~properties ()
     {
       properties::clear ();
+      return;	
     }
 
     void properties::erase (const std::string & key_)
@@ -899,6 +926,7 @@ namespace datatools {
 	  throw std::runtime_error (message.str ());	  
 	}
       __props.erase (found);
+      return;	
     }
 
     void properties::erase_all_starting_with (const std::string & key_prefix_)
@@ -947,6 +975,7 @@ namespace datatools {
 	  */
 	  p_.__props[*i] = ptmp.__props[*i];
 	}
+      return;	
     }
 
     void properties::export_not_starting_with (properties & p_, 
@@ -965,6 +994,7 @@ namespace datatools {
 	  properties & ptmp = const_cast<properties &> (*this);
 	  p_.__props[*i] = ptmp.__props[*i];
 	}
+      return;	
     }
 
     void properties::erase_all_ending_with (const std::string & key_suffix_)
@@ -1013,6 +1043,7 @@ namespace datatools {
 	  */
 	  p_.__props[*i] = ptmp.__props[*i];
 	}
+      return;	
     }
 
     void properties::export_not_ending_with (properties & p_, 
@@ -1031,11 +1062,13 @@ namespace datatools {
 	  properties & ptmp = const_cast<properties &> (*this);
 	  p_.__props[*i] = ptmp.__props[*i];
 	}
+      return;	
     }
 
     void properties::erase_all ()
     {
       __props.clear ();
+      return;	
     }
 
     void properties::clean (const std::string & key_)
@@ -1045,11 +1078,13 @@ namespace datatools {
 	{
 	  __props.erase (found);
 	}
+      return;	
     }
 
     void properties::clear ()
     {
       reset ();
+      return;	
     }
 
     void properties::reset ()
@@ -1058,6 +1093,7 @@ namespace datatools {
       __props.clear ();
       __clear_key_validator ();
       __debug = false;
+      return;	
     }
 
     void properties::keys_not_starting_with (properties::vkeys & keys_, 
@@ -1215,6 +1251,7 @@ namespace datatools {
       data * data_ptr = 0;
       __check_key (key_, &data_ptr);
       data_ptr->unlock ();
+      return;	
     }
     
     bool properties::is_locked (const std::string & key_) const
@@ -1226,13 +1263,13 @@ namespace datatools {
 
     std::string properties::make_private_key (const std::string & key_)
     {
-      if (key_is_private (key_)) return key_;
-      else
+      if (key_is_private (key_)) 
 	{
-	  std::ostringstream oss;
-	  oss << PRIVATE_PROPERTY_PREFIX << key_;
-	  return oss.str ();
+	  return key_;
 	}
+      std::ostringstream oss;
+      oss << PRIVATE_PROPERTY_PREFIX << key_;
+      return oss.str ();
     }
     
     bool properties::key_is_private (const std::string & key_)
@@ -1328,6 +1365,7 @@ namespace datatools {
 	  message << " !";
 	  throw std::runtime_error (message.str ());
 	}
+      return;
     }
   
     void properties::__check_key (const std::string & key_, 
@@ -1341,6 +1379,7 @@ namespace datatools {
 	  throw std::runtime_error (message.str ());
 	}
       *data_ = & (iter->second);
+      return;
     }
   
     void properties::__check_key (const std::string & key_, 
@@ -1354,6 +1393,7 @@ namespace datatools {
 	  throw std::runtime_error (message.str ());
 	}
       *data_ = & (iter->second);
+      return;
     }
 
     void properties::store_flag (const std::string & key_, 
@@ -1361,6 +1401,7 @@ namespace datatools {
                                  bool lock_)
     {
       store (key_, true, desc_, lock_);
+      return;
     }
   
     void properties::store (const std::string & key_, 
@@ -1374,6 +1415,7 @@ namespace datatools {
       a_data.set_description (desc_);
       __props[key_] = a_data;
       if (lock_) __props[key_].lock ();
+      return;
     }
 
     void properties::store (const std::string & key_, 
@@ -1387,6 +1429,7 @@ namespace datatools {
       a_data.set_description (desc_);
       __props[key_] = a_data;
       if ( lock_ ) __props[key_].lock ();
+      return;
     }
 
     void properties::store (const std::string & key_, 
@@ -1400,6 +1443,7 @@ namespace datatools {
       a_data.set_description (desc_);
       __props[key_] = a_data;
       if ( lock_ ) __props[key_].lock ();
+      return;
     }
 
     void properties::store (const std::string & key_, 
@@ -1413,6 +1457,7 @@ namespace datatools {
       a_data.set_description (desc_);
       __props[key_] = a_data;
       if ( lock_ ) __props[key_].lock ();
+      return;
     }
 
     void properties::store (const std::string & key_, 
@@ -1421,6 +1466,7 @@ namespace datatools {
 			    bool lock_)
     {
       properties::store (key_, std::string (value_), desc_, lock_);
+      return;
     }
 
     void properties::store (const std::string & key_, 
@@ -1442,6 +1488,7 @@ namespace datatools {
 	  __props[key_].set_value (values_[i], i);
 	}
       if (lock_) __props[key_].lock ();
+      return;
     }
   
     void properties::store (const std::string & key_, 
@@ -1463,6 +1510,7 @@ namespace datatools {
 	  __props[key_].set_value (values_[i], i);
 	}
       if (lock_) __props[key_].lock ();
+      return;
     }
   
     void properties::store (const std::string & key_, 
@@ -1484,6 +1532,7 @@ namespace datatools {
 	  __props[key_].set_value (values_[i], i);
 	}
       if (lock_) __props[key_].lock ();
+      return;
     }
   
     void properties::store (const std::string & key_, 
@@ -1505,6 +1554,7 @@ namespace datatools {
 	  __props[key_].set_value (values_[i], i);
 	}
       if (lock_) __props[key_].lock ();
+      return;
     }
   
     /**********************************/
@@ -1523,6 +1573,7 @@ namespace datatools {
 		  << data::get_error_message (error) << "!";
 	  throw std::runtime_error (message.str ());
 	}
+      return;
     }
 
     void properties::change (const std::string & key_, 
@@ -1539,7 +1590,8 @@ namespace datatools {
 		  << data::get_error_message (error) << "!";
 	  throw std::runtime_error (message.str ());
 	}
-    }
+       return;
+   }
 
     void properties::change (const std::string & key_, 
 			     double value_, 
@@ -1555,6 +1607,7 @@ namespace datatools {
 		  << data::get_error_message (error) << "!";
 	  throw std::runtime_error (message.str ());
 	}
+      return;
     }
 
     void properties::change (const std::string & key_, 
@@ -1572,6 +1625,7 @@ namespace datatools {
 		  << data::get_error_message (error) << "!";
 	  throw std::runtime_error (message.str ());
 	}
+      return;
     }
 
     void properties::change (const std::string & key_, 
@@ -1581,6 +1635,7 @@ namespace datatools {
       std::string value = "";
       if (value_ != 0) value = value_;
       change (key_,value,index_);
+      return;
     }
   
     void properties::change (const std::string & key_, 
@@ -1617,6 +1672,7 @@ namespace datatools {
 	      throw std::runtime_error (message.str ());
 	    }    
 	}
+      return;
     }
   
     void properties::change (const std::string & key_, 
@@ -1653,6 +1709,7 @@ namespace datatools {
 	      throw std::runtime_error (message.str ());
 	    }    
 	}
+      return;
     }
   
     void properties::change (const std::string & key_, 
@@ -1689,6 +1746,7 @@ namespace datatools {
 	      throw std::runtime_error (message.str ());
 	    }    
 	}
+      return;
     }
   
     void properties::change (const std::string & key_, 
@@ -1725,6 +1783,7 @@ namespace datatools {
 	      throw std::runtime_error (message.str ());
 	    }    
 	}
+      return;
     }
 
     /********************/
@@ -1732,6 +1791,7 @@ namespace datatools {
     void properties::update_flag (const std::string & key_)
     {
       update (key_, true);
+      return;
     }
 
     void properties::update (const std::string & key_, 
@@ -1745,6 +1805,7 @@ namespace datatools {
 	{
 	  store (key_, value_);
 	}
+      return;
     }
 
     void properties::update (const std::string & key_ , 
@@ -1760,6 +1821,7 @@ namespace datatools {
 	  //	  std::cerr << "DEVEL: properties::update: store : " << key_ << " at " << value_ << std::endl;
 	  store (key_, value_);
 	}
+      return;
     }
 
     void properties::update (const std::string & key_, 
@@ -1773,6 +1835,7 @@ namespace datatools {
 	{
 	  store (key_, value_);
 	}
+      return;
     }
 
     void properties::update (const std::string & key_, 
@@ -1786,6 +1849,7 @@ namespace datatools {
 	{
 	  store (key_, value_);
 	}
+      return;
     }
 
     void properties::update (const std::string & key_, 
@@ -1799,6 +1863,7 @@ namespace datatools {
 	{
 	  store (key_, values_);
 	}
+      return;
     }
 
     void properties::update (const std::string & key_, 
@@ -1812,6 +1877,7 @@ namespace datatools {
 	{
 	  store (key_, values_);
 	}
+      return;
     }
 
     void properties::update (const std::string & key_, 
@@ -1825,6 +1891,7 @@ namespace datatools {
 	{
 	  store (key_, values_);
 	}
+      return;
     }
 
     void properties::update (const std::string & key_, 
@@ -1838,6 +1905,7 @@ namespace datatools {
 	{
 	  store (key_, values_);
 	}
+      return;
     }
 
     /********************/
@@ -1855,6 +1923,7 @@ namespace datatools {
 		  << data::get_error_message (error) << "!";
 	  throw std::runtime_error (message.str ());
 	}    
+      return;
     }
 
     void properties::fetch (const std::string & key_, 
@@ -1870,6 +1939,7 @@ namespace datatools {
 		  << data::get_error_message (error) << "!";
 	  throw std::runtime_error (message.str ());
 	}    
+      return;
     }
 
     void properties::fetch (const std::string & key_, 
@@ -1885,6 +1955,7 @@ namespace datatools {
 		  << data::get_error_message (error) << "!";
 	  throw std::runtime_error (message.str ());
 	}    
+      return;
     }
 
     void properties::fetch (const std::string & key_, 
@@ -1900,6 +1971,7 @@ namespace datatools {
 		  << data::get_error_message (error) << "!";
 	  throw std::runtime_error (message.str ());
 	}    
+      return;
     }
     
     bool properties::has_flag (const std::string & key_) const
@@ -1975,6 +2047,7 @@ namespace datatools {
 	    }    
 	  values_[i] = val;
 	}
+      return;
     }
   
     void properties::fetch (const std::string & key_, 
@@ -2006,7 +2079,8 @@ namespace datatools {
 	    }    
 	  //values_[i]=val;
 	}
-    }
+       return;
+   }
   
     void properties::fetch (const std::string & key_,
 			    data::vdouble & values_) const
@@ -2037,6 +2111,7 @@ namespace datatools {
 	    }    
 	  //values_[i]=val;
 	}
+      return;
     }
   
     void properties::fetch (const std::string & key_, 
@@ -2068,6 +2143,7 @@ namespace datatools {
 	    }    
 	  //values_[i]=val;
 	}
+      return;
     }
 
 
@@ -2147,11 +2223,13 @@ namespace datatools {
 	      a_data.tree_dump (out_, "", indent_oss.str ());
 	    }
 	}
+      return;
     }
 
     void properties::dump (std::ostream & out_) const
     {
       tree_dump (out_, "datatools::utils::properties");
+      return;
     }
 
     void properties::write_config (const std::string & filename_, 
@@ -2181,6 +2259,7 @@ namespace datatools {
 		     config::write_public_only:
 		     config::write_private_also));
       a_cfg.write (*out, p_);
+      return;
     }
 
     void properties::read_config (const std::string & filename_, 
@@ -2199,6 +2278,7 @@ namespace datatools {
       config a_cfg;
       p_.clear ();
       a_cfg.read (fin, p_);
+      return;
     }
 
     /**********************************************************************/
@@ -2345,7 +2425,8 @@ namespace datatools {
 
     void properties::config::set_debug (bool debug_)
     {
-      __debug =debug_;
+      __debug = debug_;
+      return;
     }
 
     properties::config::config (bool use_smart_modulo_, 
@@ -2362,16 +2443,19 @@ namespace datatools {
       __comment_char = DEFAULT_COMMENT_CHAR;
       __assign_char  = DEFAULT_ASSIGN_CHAR;
       __desc_char    = DEFAULT_DESC_CHAR;
+      return;
     }
 
     properties::config::~config ()
     {
+      return;
     }
 
     void properties::config::read (std::istream & in_,
 				   properties & p_)
     {
       __read (in_,p_);
+      return;
     }
 
     void properties::config::__read (std::istream & in_,
@@ -3020,6 +3104,7 @@ namespace datatools {
 	    }
 	  dict_[key] = valoss.str ();
 	}
+      return;
     }
     
   } // end of namespace utils 

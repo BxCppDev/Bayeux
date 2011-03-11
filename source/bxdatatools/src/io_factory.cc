@@ -106,57 +106,67 @@ namespace datatools {
 
     int io_factory::__init_read_archive ()
     {
-      //std::cerr << "DEVEL: io_factory::__init_read_archive: Entering..." << std::endl;
+      bool devel = g_debug;
+      if (devel)
+	{
+	  std::clog << "DEBUG: io_factory::__init_read_archive: Entering..." << std::endl;
+	}
  
+      /*** text archive ***/
       if (is_text ()) 
 	{
 #ifdef IOFACTORY_USE_FPU
-	  if (g_debug) std::clog << "DEBUG: io_factory::__init_read_archive: "
+	  if (devel) std::clog << "DEBUG: io_factory::__init_read_archive: "
 				 << "text with FPU..." 
 				 << std::endl;
 	  __itar_ptr = new boost::archive::text_iarchive (*__in, 
 							  boost::archive::no_codecvt);
 #else
-	  if (g_debug) std::clog << "DEBUG: io_factory::__init_read_archive: "
+	  if (devel) std::clog << "DEBUG: io_factory::__init_read_archive: "
 				 << "text with no FPU..." 
 				 << std::endl;
 	  __itar_ptr = new boost::archive::text_iarchive (*__in);
 #endif // IOFACTORY_USE_FPU
-	  if (g_debug) 
+	  if (devel) 
 	    {
 	      std::clog << "DEBUG: io_factory::__init_read_archive: " 
 			<< "'boost::archive::text_iarchive' library version " 
 			<< __itar_ptr->get_library_version () << std::endl;
 	    }
 	}
+      /*** XML archive ***/
       else if (is_xml ()) 
 	{
 #ifdef IOFACTORY_USE_FPU
-	  if (g_debug) std::clog << "DEBUG: io_factory::__init_read_archive: "
+	  if (devel) std::clog << "DEBUG: io_factory::__init_read_archive: "
 				 << "XML with FPU..." 
 				 << std::endl;
 	  __ixar_ptr = new boost::archive::xml_iarchive (*__in, 
 							 boost::archive::no_codecvt);
 #else
-	  if (g_debug) std::clog << "DEBUG: io_factory::__init_read_archive: "
+	  if (devel) std::clog << "DEBUG: io_factory::__init_read_archive: "
 				 << "XML with no FPU..." 
 				 << std::endl;
 	  __ixar_ptr = new boost::archive::xml_iarchive (*__in);
 #endif // IOFACTORY_USE_FPU
-	  if (g_debug) 
+	  if (devel) 
 	    {
 	      std::clog << "DEBUG: io_factory::__init_read_archive: " 
 			<< "'boost::archive::xml_iarchive' library version " 
 			<< __ixar_ptr->get_library_version () << std::endl;
 	    }
 	}
-      else if (is_binary ()) 
+      /*** binary archive ***/
+      else if (is_binary ())
 	{
 #ifdef IOFACTORY_USE_EOS_PBA
-	  //std::cerr << "DEVEL: io_factory::__init_read_archive: IOFACTORY_USE_EOS_PBA" << std::endl;
+	  if (devel) 
+	    { 
+	      std::cerr << "DEBUG: io_factory::__init_read_archive: IOFACTORY_USE_EOS_PBA" << std::endl; 
+	    }
 	  __ibar_ptr = new eos::portable_iarchive (*__in); 
-	  std::cerr << "DEVEL: io_factory::__init_read_archive: OK "<< __ibar_ptr->get_library_version ()  << std::endl;
-	  if (g_debug) 
+	  //std::cerr << "DEVEL: io_factory::__init_read_archive: OK "<< __ibar_ptr->get_library_version ()  << std::endl;
+	  if (devel) 
 	    {
 	      std::clog << "DEBUG: io_factory::__init_read_archive: "
 			<< "'eos::portable_iarchive' library version " 
@@ -172,7 +182,10 @@ namespace datatools {
 	  throw std::runtime_error ("io_factory::__init_read_archive: format not supported!");
 	}
       __read_archive_is_initialized = true;
-      //std::cerr << "DEVEL: io_factory::__init_read_archive: Exiting." << std::endl;
+      if (devel) 
+	{ 
+	  std::clog << "DEVEL: io_factory::__init_read_archive: Exiting." << std::endl;
+	}
       return 0;
     }
     
@@ -615,11 +628,11 @@ namespace datatools {
 	      std::clog << "DEBUG: io_factory::stop_archive: multi..." 
 			<< std::endl;
 	    }
-	  if(is_read ())
+	  if (is_read ())
 	    {
 	      __reset_read_archive ();
 	    }
-	  if(is_write ())
+	  if (is_write ())
 	    {
 	      __reset_write_archive ();
 	    }
@@ -1028,25 +1041,40 @@ namespace datatools {
     void 
     data_reader::__read_next_tag () 
     {
-      //std::cerr << "DEVEL: data_reader::__read_next_tag: Entering..." << std::endl;
+      bool devel = false;
+      //devel = true;
+      if (devel) std::cerr << "DEVEL: data_reader::__read_next_tag: Entering..." << std::endl;
       if (__status != STATUS_OK) 
 	{
-	  //std::cerr << "DEVEL: data_reader::__read_next_tag: Issue #1..." << std::endl;
+	  if (devel) std::cerr << "DEVEL: data_reader::__read_next_tag: " 
+		    << "status != STATUS_Ok" << std::endl;
 	  __next_tag = EMPTY_RECORD_TAG;
 	  return;
 	}
-      //std::cerr << "DEVEL: data_reader::__read_next_tag: Issue #1-b" << std::endl;
+      if (devel) std::cerr << "DEVEL: data_reader::__read_next_tag: "
+		<< "Continue..." << std::endl;
       try 
 	{
-	  //std::cerr << "DEVEL: data_reader::__read_next_tag: Issue #2-a " << std::endl;
-	  if (__reader->is_multi_archives ()) __reader->start_archive ();
-	  // std::cerr << "DEVEL: data_reader::__read_next_tag: Issue #2-b " << std::endl;
+	  if (devel) std::cerr << "DEVEL: data_reader::__read_next_tag: " 
+			       << "try block starts..." << std::endl;
+	  if (__reader->is_multi_archives ()) 
+	    {
+	      if (devel) std::cerr << "DEVEL: data_reader::__read_next_tag: "
+				   << "multi-archives..." << std::endl;
+	      __reader->start_archive ();
+	    }
+	  if (devel) std::cerr << "DEVEL: data_reader::__read_next_tag: "
+			       << "Continue..." << std::endl;
 	  std::string tag_id;
 	  tag_id = "";
 	  __next_tag = "";
 	  this->_basic_load (tag_id);
+	  if (devel) std::cerr << "DEVEL: data_reader::__read_next_tag: "
+			       << "_basic_load done with tag_id = '" 
+			       << tag_id << "'" << std::endl;
 	  __next_tag = tag_id;
-	  //std::cerr << "DEVEL: data_reader::__read_next_tag: Issue #2-c : __next_tag = " << __next_tag << std::endl;
+	  if (devel) std::cerr << "DEVEL: data_reader::__read_next_tag: " 
+			       << "__next_tag = " << __next_tag << std::endl;
 	}
       catch (std::runtime_error & x) 
 	{
@@ -1070,6 +1098,8 @@ namespace datatools {
 	  //<<<
 	  __status   = STATUS_ERROR;
 	  __next_tag = EMPTY_RECORD_TAG;
+	  if (devel) std::cerr << "DEVEL: data_reader::__read_next_tag: "
+			       << "BOOOM !" << std::endl;
 	}
       // 2011-02-25 FM: 
       catch (boost::archive::archive_exception & x) 
@@ -1079,6 +1109,10 @@ namespace datatools {
 	      std::clog << "WARNING: data_reader::__read_next_tag: archive exception is: " 
 			<< x.what () << std::endl;
 	    }
+	  /*
+	    std::clog << "WARNING: data_reader::__read_next_tag: archive exception is: " 
+		    << x.what () << std::endl;
+	  */
 	  __status   = STATUS_ERROR;
 	  __next_tag = EMPTY_RECORD_TAG;
 	  // throw x;

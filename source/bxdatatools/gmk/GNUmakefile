@@ -115,7 +115,7 @@ DATATOOLS_NO_EOS_PBA=$(shell ls -1 $(PACKAGE_DIR)/gmk/datatools_without_eos_pba.
 EOS_PBA_FLAGS=
 ifeq ($(DATATOOLS_NO_EOS_PBA),)
 DATATOOLS_NO_EOS_PBA=0
-$(warning WARNING: datatools uses 'Quasi Portable Binary Archive' (from eos\' PBA) !) 
+$(warning WARNING: datatools uses 'Quasi Portable Binary Archive' (from eos PBA) !) 
 EOS_PBA_FLAGS=-DIOFACTORY_USE_EOS_PBA=1
 #DEPCPPFLAGS+=-I$(PACKAGE_DIR)/boost/vault/eos_pba
 else

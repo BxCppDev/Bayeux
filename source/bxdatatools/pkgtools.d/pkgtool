@@ -91,7 +91,7 @@ function print_usage ()
               with Python version VERSION (default: 2.5)
             --without-python :
               without Python wrapper module
-            --boost-version 1_34_1 : force Boost version (default: 1_38_0)
+            --boost-version 1_45_0 : force Boost version (default: 1_44_0)
             --no-boost-version-check : skip Boost version check
     $APPNAME deconfigure : deconfigure package 
     $APPNAME build [TARGET] : build package
@@ -423,6 +423,21 @@ function do_clean ()
 	fi
     fi 
 
+    pkgtools__msg_notice "Cleaning test files..."
+    rm -f ${the_base_dir}/test_serialization*.xml
+    rm -f ${the_base_dir}/test_serialization*.data
+    rm -f ${the_base_dir}/test_serialization*.txt
+    rm -f ${the_base_dir}/test_things.*
+    rm -f ${the_base_dir}/test_things_2.*
+    #rm -f ${the_base_dir}/my_bag.conf 
+    #rm -f ${the_base_dir}/my_bag_of_bags.conf
+    rm -f ${the_base_dir}/test_data_serialization.*
+    rm -f ${the_base_dir}/test_multi_properties_*.conf
+    rm -f ${the_base_dir}/test_nans_ar.*
+    rm -f ${the_base_dir}/test_properties.*
+    rm -f ${the_base_dir}/test_serialization_*.*
+    rm -f ${the_base_dir}/test_binary_serialization.*
+
     cd ${opwd}
     __pkgtools__at_function_exit
     return 0
@@ -606,6 +621,7 @@ function check_dependencies ()
 {
     __pkgtools__at_function_enter check_dependencies
 
+   
     pkgtools__check_dependencies ${the_pkgtools_dir}/package.info $@
     if [ $? -ne 0 ]; then
 	pkgtools__msg_warning "Invalid dependency !"

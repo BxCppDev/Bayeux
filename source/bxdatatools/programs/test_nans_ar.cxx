@@ -8,7 +8,9 @@
 
 #include <boost/filesystem.hpp>
 
-#include <datatools/serialization/serialization.h>
+#include <datatools/serialization/i_serializable.h>
+#include <datatools/serialization/io_factory.h>
+#include <datatools/serialization/safe_serial.h>
 
 using namespace std;
 
@@ -112,10 +114,12 @@ public:
 private:
   friend class boost::serialization::access;
   template<class Archive>
-  void serialize(Archive & ar, const unsigned int version)
+  void serialize(Archive & ar_, const unsigned int version_)
   {
-    ar & boost::serialization::make_nvp ("v1", __v1);
-    ar & boost::serialization::make_nvp ("v2", __v2);
+    ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
+    ar_ & boost::serialization::make_nvp ("v1", __v1);
+    ar_ & boost::serialization::make_nvp ("v2", __v2);
+    return;
   }
 };
 
@@ -125,7 +129,10 @@ ostream & operator<< (ostream & out_, const data_t & d_)
   return out_;
 }
 
-const string data_t::SERIAL_TAG = "__DATA__";
+const string data_t::SERIAL_TAG = "test_nans::data_t";
+
+BOOST_CLASS_EXPORT_KEY2(data_t, "test_nans::data_t")
+BOOST_CLASS_EXPORT_IMPLEMENT(data_t)
 
 const string & data_t::get_serial_tag () const
 {
@@ -204,7 +211,8 @@ int main (int argc_ , char ** argv_)
       {
 	clog << "NOTICE: writing..." << endl;
 	ds::safe_serial<data_t> ss_data;
-	ds::data_writer writer (filename, ds::using_multi_archives);
+	//ds::data_writer writer (filename, ds::using_multi_archives);
+	ds::data_writer writer (filename, ds::using_single_archive);
 	int counts = 10;
 	for (int i = 0; i < counts; i++) 
 	  {
@@ -222,7 +230,8 @@ int main (int argc_ , char ** argv_)
       {
 	clog << "NOTICE: reading..." << endl;
 	ds::safe_serial<data_t> ss_data;
-	ds::data_reader reader (filename, ds::using_multi_archives);    
+	//ds::data_reader reader (filename, ds::using_multi_archives);    
+	ds::data_reader reader (filename, ds::using_single_archive);    
 	int counts = 0;
 	while (reader.has_record_tag ()) 
 	  {

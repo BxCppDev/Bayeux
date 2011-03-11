@@ -19,6 +19,25 @@ namespace datatools {
       return x_ == x_;
     }
 
+    void plus_infinity (double & x_)
+    {
+       x_ = std::numeric_limits<double>::infinity ();
+       return;
+    }
+
+    void minus_infinity (double & x_)
+
+    {
+       x_ = -std::numeric_limits<double>::infinity ();
+       return;
+    }
+
+    void infinity (double & x_)
+    {
+      plus_infinity (x_);
+      return;
+    }
+
     bool fetch_path_with_env (std::string & text_)
     {
       std::string::size_type dollar;

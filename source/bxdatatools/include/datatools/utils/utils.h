@@ -26,6 +26,15 @@ namespace datatools {
     // Check if a double float is valid (not a NaN):
     bool is_valid (double x_);
 
+    // Set a double to +infinity:
+    void plus_infinity (double & x_);
+
+    // Set a double to -infinity:
+    void minus_infinity (double & x_);
+
+    // Set a double to +infinity:
+    void infinity (double & x_);
+
     /** Extract the expanded path computed from the 'text_' string.
      * Internally uses the 'getenv' function.
      */

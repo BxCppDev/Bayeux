@@ -1,5 +1,5 @@
 /* test_serialization.cxx */
-
+ 
 #include <cstdlib>
 #include <string>
 #include <iostream>
@@ -8,9 +8,9 @@
  
 #include <boost/filesystem.hpp>
 
+#include <datatools/serialization/io_factory.h>
+#include <datatools/serialization/safe_serial.h>
 #include <datatools/test/my_data.h>
-
-#include <datatools/serialization/serialization.h>
 
 using namespace std;
 
@@ -35,7 +35,7 @@ int main (int argc_, char ** argv_)
       int iarg = 1;
       while (iarg < argc_) 
 	{
-	  string arg=argv_[iarg];
+	  string arg = argv_[iarg];
 	  if (arg[0] == '-') 
 	    {
 	      if (arg == "-d") debug = true;
@@ -77,6 +77,8 @@ int main (int argc_, char ** argv_)
 	} 
 
       datatools::serialization::io_factory::g_debug = debug;
+      datatools::serialization::io_factory::io_factory::g_warning = debug;
+
       srand48 (seed);
       clog << "NOTICE: using filename '" << filename << "'" << endl;
 
@@ -136,11 +138,11 @@ int main (int argc_, char ** argv_)
       }
     
       {
-	clog << "NOTICE: reading..." << endl;
-
+	clog << endl << endl << "NOTICE: reading..." << endl;
+ 
 	datatools::serialization::safe_serial<datatools::test::data_t>      ss_data;
 	datatools::serialization::safe_serial<datatools::test::more_data_t> ss_more_data;
-
+ 
 	size_t counts = 0;
 	datatools::serialization::data_reader reader (filename);
 	reader.dump (clog);

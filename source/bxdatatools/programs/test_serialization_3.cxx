@@ -8,7 +8,9 @@
 
 #include <boost/filesystem.hpp>
 
-#include <datatools/serialization/serialization.h>
+#include <datatools/serialization/io_factory.h>
+#include <datatools/serialization/i_serializable.h>
+#include <datatools/serialization/safe_serial.h>
 
 using namespace std;
 
@@ -27,17 +29,23 @@ private:
   void serialize (Archive & ar_, 
 		  const unsigned int version_)
   {
+    ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
     ar_ & boost::serialization::make_nvp ("value", value);
+    return;
   }
 
 };
 
-const string data_t::SERIAL_TAG = "__DATA__";
+const string data_t::SERIAL_TAG = "data_t";
+
+BOOST_CLASS_EXPORT_KEY2 (data_t, "data_t")
 
 const string & data_t::get_serial_tag () const
 {
   return data_t::SERIAL_TAG;
 }
+
+BOOST_CLASS_EXPORT_IMPLEMENT (data_t)
 
 int main (int argc_, char ** argv_) 
 {
@@ -76,7 +84,7 @@ int main (int argc_, char ** argv_)
 
       if (filename.empty ()) 
 	{
-	  filename = "test_serialization_3.txt";
+	  filename = "test_serialization_3.xml";
 	} 
 
       datatools::serialization::io_factory::g_debug = debug;
@@ -131,7 +139,9 @@ int main (int argc_, char ** argv_)
 	datatools::serialization::safe_serial<data_t> ss_data;
 
 	size_t counts = 0;
-	datatools::serialization::data_reader reader (filename);    
+	datatools::serialization::data_reader reader (filename); 
+	reader.dump (clog);
+
 	while (reader.has_record_tag ()) 
 	  {
 	    if (debug) clog << "DEBUG: read next record..." << endl;

@@ -1,5 +1,28 @@
 // -*- mode: C++; -*- 
 /* io_factory.h */
+/* 
+ * Description :
+ *
+ *  Some generic reader and writer based on Boost archives.
+ *
+ * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Boston, MA 02110-1301, USA.
+ *
+ */ 
 
 #ifndef __datatools__serialization__io_factory_h
 #define __datatools__serialization__io_factory_h 1
@@ -27,27 +50,8 @@
 
 #include <boost/tokenizer.hpp>
 
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-
-#ifdef IOFACTORY_USE_EOS_PBA
-// portable binary archives by C. Pfligersdorffer
-// do not include 
-//#include <portable_iarchive.hpp>
-//#include <portable_oarchive.hpp>
-
-// 2010-10-29 FM: quasi portable binary I/O archives by C. Pfligersdorffer + F. Mauger
-// a replacement for the original portable binary archive by C. Pfligersdorffer that
-// do not handle NaNs, Infinites and denorm. floating values.
-#include <datatools/serialization/quasi_portable_binary_iarchive.hpp>
-#include <datatools/serialization/quasi_portable_binary_oarchive.hpp>
-#else
-// native portable binary archives: not recommended at all
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#endif
+// include the supported archives :
+#include <datatools/serialization/archives_list.h>
 
 #include <boost/iostreams/filtering_stream.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
@@ -692,7 +696,6 @@ namespace datatools {
 
 	    __status   = STATUS_ERROR;
 	    __next_tag = EMPTY_RECORD_TAG;
-
 	    throw std::runtime_error (x.what ());
 	  }
 	catch (...) 

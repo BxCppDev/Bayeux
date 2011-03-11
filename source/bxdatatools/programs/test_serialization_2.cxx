@@ -8,9 +8,8 @@
 
 #include <boost/filesystem.hpp>
 
+#include <datatools/serialization/io_factory.h>
 #include <datatools/test/my_data.h>
-
-#include <datatools/serialization/serialization.h>
 
 using namespace std;
 

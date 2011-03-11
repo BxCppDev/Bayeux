@@ -27,17 +27,23 @@ private:
   void serialize (Archive & ar_, 
 		  const unsigned int version_)
   {
+    ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
     ar_ & boost::serialization::make_nvp ("value", value);
+    return;
   }
 
 };
 
-const string data::SERIAL_TAG = "__DATA__";
+BOOST_CLASS_EXPORT_KEY2 (data, "data")
+
+const string data::SERIAL_TAG = "data";
 
 const string & data::get_serial_tag () const
 {
   return data::SERIAL_TAG;
 }
+
+BOOST_CLASS_EXPORT_IMPLEMENT (data)
 
 int main (void) 
 {
