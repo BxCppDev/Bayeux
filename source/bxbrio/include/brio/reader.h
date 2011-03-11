@@ -53,7 +53,7 @@ namespace brio {
 
   public: 
 
- 
+
     // setters:
 
     /** By default, serialization tag are checked each time
