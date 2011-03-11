@@ -177,7 +177,7 @@ if __name__ == '__main__':
         else:
             pass
 
-    theApp =  MkUniqueFlags ()
+    theApp = MkUniqueFlags ()
     theApp.set_debug (TheDebug);
     if TheLib :
         theApp.set_lib ()

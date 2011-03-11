@@ -394,6 +394,7 @@ namespace mat {
     geomtools::gdml_writer GW;
     export_gdml (GW);
     out_ << GW.get_stream (geomtools::gdml_writer::MATERIALS_SECTION).str ();
+    return;
   }
 
   void manager::export_gdml (geomtools::gdml_writer & gw_) const
