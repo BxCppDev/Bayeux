@@ -20,6 +20,7 @@ namespace genvtx {
   void placement_vg::set_placement (const geomtools::placement & new_value_)
   {
     __placement = new_value_;
+    return;
   }
 
   bool placement_vg::has_vg () const
@@ -52,6 +53,7 @@ namespace genvtx {
 	__vg = 0;
       }
     __owned = false;
+    return;
   }
 
   void placement_vg::set_vg (i_vertex_generator & new_value_)
@@ -59,6 +61,7 @@ namespace genvtx {
     __clear_vg ();
     __owned = false;
     __vg = &new_value_;
+    return;
   }
   
   void  placement_vg::set_vg (i_vertex_generator * new_value_)
@@ -66,6 +69,7 @@ namespace genvtx {
     __clear_vg ();
     __owned = true;
     __vg = new_value_;
+    return;
   }
   
   
@@ -74,11 +78,13 @@ namespace genvtx {
   {
     __owned = false;
     __vg = 0;
+    return;
   }
   
   placement_vg::~placement_vg ()
   {
     __clear_vg ();
+    return;
   }
   
   void placement_vg::_shoot_vertex (mygsl::rng & random_, 

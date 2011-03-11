@@ -27,6 +27,7 @@ namespace genvtx {
 	throw runtime_error ("genvtx::from_file_vg::set_filename: Cannot change source file name as source file is already opened !");
       }
     __filename = filename_;
+    return;
   }
 
   void from_file_vg::_open_source ()
@@ -57,6 +58,7 @@ namespace genvtx {
       }
     __open = true;
     _read_next ();
+    return;
   }
 
   void from_file_vg::_close_source ()
@@ -69,6 +71,7 @@ namespace genvtx {
     __filename = "";
     geomtools::invalidate (__next);
     __open = true;
+    return;
   }
 
   void from_file_vg::set_length_unit (double lu_)
@@ -78,6 +81,7 @@ namespace genvtx {
 	throw runtime_error ("genvtx::from_file_vg::set_length_unit: Invalid length unit !");	
       }
     __length_unit = lu_;
+    return;
   }
   
   double from_file_vg::get_length_unit () const
@@ -92,6 +96,7 @@ namespace genvtx {
     __open = false;
     geomtools::invalidate (__next);
     __length_unit = LENGTH_UNIT;
+    return;
   }
   
   from_file_vg::from_file_vg (const string & filename_)
@@ -102,6 +107,7 @@ namespace genvtx {
     __length_unit = LENGTH_UNIT;
     set_filename (filename_);
     _open_source ();
+    return;
   }
   
   // dtor:
@@ -111,6 +117,7 @@ namespace genvtx {
       {
 	_close_source ();
       }
+    return;
   }
 
   void from_file_vg::_read_next ()
@@ -164,6 +171,7 @@ namespace genvtx {
 	    break;
 	  }
       }
+    return;
   }
 
   bool from_file_vg::_has_next ()
@@ -177,6 +185,7 @@ namespace genvtx {
     // here apply the length unit:
     vertex_ = __next * __length_unit;
     _read_next ();
+    return;
   }
 
   /**********************************************************************/

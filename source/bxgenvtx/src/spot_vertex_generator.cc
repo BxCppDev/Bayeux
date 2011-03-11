@@ -14,37 +14,44 @@ namespace genvtx {
   void spot_vertex_generator::set_spot (const geomtools::vector_3d & new_value_)
   {
     __spot = new_value_;
+    return;
   }
   
   void spot_vertex_generator::set_spot (double x_, double y_, double z_)
   {
     __spot.set (x_, y_, z_);
+    return;
   }
   
   // ctor:
   spot_vertex_generator::spot_vertex_generator ()
   {
+    return;
   }
 
   spot_vertex_generator::spot_vertex_generator (double x_, double y_, double z_)
   {
     set_spot (x_, y_, z_);
+    return;
   }
 
   spot_vertex_generator::spot_vertex_generator (const geomtools::vector_3d & spot_)
   {
     __spot = spot_;
+    return;
   }
   
   // dtor:
   spot_vertex_generator::~spot_vertex_generator ()
   {
+    return;
   }
   
   void spot_vertex_generator::_shoot_vertex (mygsl::rng & random_, 
 			       geomtools::vector_3d & vertex_)
   {
     vertex_ = __spot;
+    return;
   }
 
   /**********************************************************************/

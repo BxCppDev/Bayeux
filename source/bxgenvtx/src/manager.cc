@@ -14,6 +14,7 @@ namespace genvtx {
   void manager::set_debug (bool new_value_)
   {
     __debug = new_value_;
+    return;
   }
   
   bool manager::is_initialized () const
@@ -33,6 +34,7 @@ namespace genvtx {
     __initialized = false;
     __rng_seed = 0; 
     __rng_id = "taus2";
+    return;
   }
   
   // reset:
@@ -42,6 +44,7 @@ namespace genvtx {
       {
 	reset ();
       }
+    return;
   }
   
   void manager::initialize ()
@@ -53,6 +56,7 @@ namespace genvtx {
     __random.init (__rng_id, __rng_seed);
 
     __initialized = true;
+    return;
   }
   
   void manager::reset ()
@@ -61,12 +65,13 @@ namespace genvtx {
       {
 	throw runtime_error ("genvtx::manager::reset: Not initialized !");
       }
-
     __initialized = false;
+    return;
   }
 
   void manager::shoot_vertex (geomtools::vector_3d & vertex_)
   {
+    return;
   }
   
 } // end of namespace genvtx

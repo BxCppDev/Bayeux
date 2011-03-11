@@ -17,6 +17,7 @@ namespace genvtx {
 		<< "Object is locked !";
 	throw runtime_error (message.str());
       }
+    return;
   }
 
   bool box_vg::is_initialized () const
@@ -36,30 +37,35 @@ namespace genvtx {
 	throw runtime_error ("genvtx::box_vg::set_mode: Invalid mode !");
       }
     __mode = mode_;
+    return;
   }
 
   void box_vg::set_surface_mask (int surface_mask_)
   {
     __assert_lock ("genvtx::box_vg::set_surface_mask");
     __surface_mask = surface_mask_;
+    return;
   }
 
   void box_vg::set_skin_skip (double skin_skip_)
   {
     __assert_lock ("genvtx::box_vg::set_surface_mask");
     __skin_skip = skin_skip_;
+    return;
   }
 
   void box_vg::set_skin_thickness (double skin_thickness_)
   {
     __assert_lock ("genvtx::box_vg::set_skin_thickness");
     __skin_thickness = skin_thickness_;
+    return;
   }
 
   void box_vg::set_bulk (double skin_thickness_)
   {
     __assert_lock ("genvtx::box_vg::set_bulk");
     __mode = MODE_BULK;
+    return;
   }
 
   void box_vg::set_surface (int surface_mask_)
@@ -67,6 +73,7 @@ namespace genvtx {
     __assert_lock ("genvtx::box_vg::set_surface");
     __mode = MODE_SURFACE;
     set_surface_mask (surface_mask_);
+    return;
   }
 
   bool box_vg::has_box_ref () const
@@ -78,12 +85,14 @@ namespace genvtx {
   {
     __assert_lock ("genvtx::box_vg::set_box_ref");
     __box_ref = &box_;
+    return;
   }
 
   void box_vg::set_box (const geomtools::box & box_)
   {
     __assert_lock ("genvtx::box_vg::set_box");
     __box = box_;
+    return;
   }
 
   const geomtools::box & box_vg::get_box_safe () const
@@ -111,11 +120,13 @@ namespace genvtx {
     __initialized = false;
     __box_ref = 0;
     __reset ();
+    return;
   }
   
   // dtor:
   box_vg::~box_vg ()
   {
+    return;
   }
 
   void box_vg::init ()
@@ -126,6 +137,7 @@ namespace genvtx {
       }
     __init ();
     __initialized = true;
+    return;
   }
 
   void box_vg::reset ()
@@ -136,7 +148,8 @@ namespace genvtx {
       }
     __reset ();
     __initialized = false;
-   }
+    return;
+  }
 
   void box_vg::__init ()
   {
@@ -165,6 +178,7 @@ namespace genvtx {
 	    if (devel) clog << "DEVEL: genvtx::box_vg::__init: Surface weight [" << i << "] = " << __sum_weight[i] << endl;
 	  }
       }
+    return;
   }
 
   void box_vg::__reset ()
@@ -177,6 +191,7 @@ namespace genvtx {
       {
 	__sum_weight[i] = 0.0;
       }
+    return;
   }
 
   void box_vg::dump (ostream & out_) const
@@ -194,6 +209,7 @@ namespace genvtx {
     out_ << "|-- " << "Surface mask: " << __surface_mask << endl;
     out_ << "|-- " << "Skin skip: " << __skin_skip << endl;
     out_ << "`-- " << "Skin thickness: " << __skin_thickness << endl;
+    return;
   }
   
   void box_vg::_shoot_vertex (mygsl::rng & random_, 

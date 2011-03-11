@@ -17,6 +17,7 @@ namespace genvtx {
 		<< "Object is locked !";
 	throw runtime_error (message.str());
       }
+    return;
   }
 
   bool cylinder_vg::is_initialized () const
@@ -36,30 +37,35 @@ namespace genvtx {
 	throw runtime_error ("genvtx::cylinder_vg::set_mode: Invalid mode !");
       }
     __mode = mode_;
+    return;
   }
 
   void cylinder_vg::set_surface_mask (int surface_mask_)
   {
     __assert_lock ("genvtx::cylinder_vg::set_surface_mask");
     __surface_mask = surface_mask_;
+    return;
   }
 
   void cylinder_vg::set_skin_skip (double skin_skip_)
   {
     __assert_lock ("genvtx::cylinder_vg::set_surface_mask");
     __skin_skip = skin_skip_;
+    return;
   }
 
   void cylinder_vg::set_skin_thickness (double skin_thickness_)
   {
     __assert_lock ("genvtx::cylinder_vg::set_skin_thickness");
     __skin_thickness = skin_thickness_;
+    return;
   }
 
   void cylinder_vg::set_bulk (double skin_thickness_)
   {
     __assert_lock ("genvtx::cylinder_vg::set_bulk");
     __mode = MODE_BULK;
+    return;
   }
 
   void cylinder_vg::set_surface (int surface_mask_)
@@ -67,12 +73,14 @@ namespace genvtx {
     __assert_lock ("genvtx::cylinder_vg::set_surface");
     __mode = MODE_SURFACE;
     set_surface_mask (surface_mask_);
+    return;
   }
 
   void cylinder_vg::set_cylinder (const geomtools::cylinder & cylinder_)
   {
     __assert_lock ("genvtx::cylinder_vg::set_cylinder");
     __cylinder = cylinder_;
+    return;
   }
 
   const geomtools::cylinder & cylinder_vg::get_cylinder () const
@@ -85,11 +93,13 @@ namespace genvtx {
   {
     __initialized = false;
     __reset ();
+    return;
   }
   
   // dtor:
   cylinder_vg::~cylinder_vg ()
   {
+    return;
   }
 
   void cylinder_vg::init ()
@@ -100,6 +110,7 @@ namespace genvtx {
       }
     __init ();
     __initialized = true;
+    return;
   }
 
   void cylinder_vg::reset ()
@@ -110,7 +121,8 @@ namespace genvtx {
       }
     __reset ();
     __initialized = false;
-   }
+    return;
+  }
 
   void cylinder_vg::__init ()
   {
@@ -136,6 +148,7 @@ namespace genvtx {
 	    if (devel) clog << "DEVEL: genvtx::cylinder_vg::__init: Surface weight [" << i << "] = " << __sum_weight[i] << endl;
 	  }
       }
+    return;
   }
 
   void cylinder_vg::__reset ()
@@ -148,6 +161,7 @@ namespace genvtx {
       {
 	__sum_weight[i] = 0.0;
       }
+    return;
   }
 
   void cylinder_vg::dump (ostream & out_) const
@@ -158,6 +172,7 @@ namespace genvtx {
     out_ << "|-- " << "Surface mask: " << __surface_mask << endl;
     out_ << "|-- " << "Skin skip: " << __skin_skip << endl;
     out_ << "`-- " << "Skin thickness: " << __skin_thickness << endl;
+    return;
   }
   
   void cylinder_vg::_shoot_vertex (mygsl::rng & random_, 

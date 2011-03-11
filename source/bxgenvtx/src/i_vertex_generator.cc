@@ -116,6 +116,7 @@ namespace genvtx {
 	     << "done."
 	     << endl;
       }
+    return;
   }
 
   void i_vertex_generator::vertex_generator_db::dump_vertex_generators (ostream & out_)
@@ -136,20 +137,24 @@ namespace genvtx {
 	     << dec << endl;
       }
     out_ << "end." << endl;
+    return;
   }
 
   i_vertex_generator::i_vertex_generator ()
   {
+    return;
   }
 
   i_vertex_generator::~i_vertex_generator ()
   {
+    return;
   }
 
   void i_vertex_generator::shoot_vertex (mygsl::rng & random_, 
 					 geomtools::vector_3d & vertex_)
   {
     _shoot_vertex (random_, vertex_);
+    return;
   }
 
   geomtools::vector_3d i_vertex_generator::shoot_vertex (mygsl::rng & random_)

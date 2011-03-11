@@ -18,6 +18,7 @@ namespace genvtx {
   void factory::set_debug (bool new_value_)
   {
     __debug = new_value_;
+    return;
   }
 
   void factory::do_register (const vg_creator_t & creator_,
@@ -50,6 +51,7 @@ namespace genvtx {
 	throw runtime_error (message.str ());
       }
     __creators [vertex_generator_id] = creator_;
+    return;
   }
 
   // ctor:
@@ -76,12 +78,14 @@ namespace genvtx {
 	    dump_vertex_generators (clog);
 	  }
       }
+    return;
   }
   
   // dtor:
   factory::~factory ()
   {
     __creators.clear ();
+    return;
   }
   
   i_vertex_generator * factory::create_vertex_generator (const string & vg_id_, 
@@ -146,6 +150,7 @@ namespace genvtx {
 	     << dec << endl;
       }
     out_ << "end." << endl;
+    return;
   }
   
 } // end of namespace genvtx
