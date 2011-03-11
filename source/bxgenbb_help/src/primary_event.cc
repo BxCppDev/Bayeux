@@ -15,7 +15,9 @@
  * 
  * You should have received a copy of the GNU General Publi * License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Boston, MA 02110-1301, USA.
+ *
  */
 
 #include <genbb_help/primary_event.h>
@@ -45,6 +47,7 @@ namespace genbb {
     time = -1.;
     particles.clear ();
     classification = "";
+    return;
   }
 
   double primary_event::get_total_kinetic_energy () const
@@ -64,17 +67,19 @@ namespace genbb {
   primary_event::primary_event ()
   {
     time = -1.;
+    return;
   }
   
   // dtor:
   primary_event::~primary_event ()
-  {
-    
+  {    
+    return;
   }
 
   void primary_event::set_time (double t_)
   {
     time = t_;
+    return;
   }
 
   double primary_event::get_time () const
@@ -95,6 +100,7 @@ namespace genbb {
   void primary_event::add_particle (const primary_particle & p_)
   {
     particles.push_back (p_);
+    return;
   }
 
   const std::string & primary_event::get_classification () const
@@ -105,11 +111,13 @@ namespace genbb {
   void primary_event::set_classification (const std::string & c_)
   {
     classification = c_;
+    return;
   }
 
   void primary_event::reset_classification ()
   {
     classification = "";
+    return;
   }
 
   void primary_event::compute_classification ()
@@ -138,6 +146,7 @@ namespace genbb {
 	  << n_alpha << 'a' 
 	  << n_others << 'X'; 
     set_classification (cl_ss.str ());
+    return;
   }
 
   void primary_event::dump (std::ostream & out_,
@@ -166,12 +175,14 @@ namespace genbb {
       {
 	out_ << indent << "`-- status: " << "<invalid>" << std::endl;
       }
+    return;
   }
   
   void primary_event::dump (std::ostream & out_,
 			    const std::string & indent_) const
   {
     dump (out_, "genbb::primary_event:", indent_); 
+    return;
   }
 
   void primary_event::rotate (double phi_, double theta_, double delta_)

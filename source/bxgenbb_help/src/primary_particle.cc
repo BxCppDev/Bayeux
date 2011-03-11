@@ -15,7 +15,8 @@
  * 
  * You should have received a copy of the GNU General Publi * License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Boston, MA 02110-1301, USA.
  */
 
 #include <genbb_help/primary_particle.h>
@@ -67,11 +68,13 @@ namespace genbb {
   void  primary_particle::set_time (double time_)
   {
     time = time_;
+    return;
   }
   
   void primary_particle::set_momentum (const geomtools::vector_3d & m_) 
   {
     momentum = m_;
+    return;
   }
   
   const geomtools::vector_3d & primary_particle::get_momentum () const
@@ -84,12 +87,14 @@ namespace genbb {
     type = UNDEF;
     time = 0.0;
     geomtools::invalidate (momentum);
+    return;
   }
 
   // ctor:
   primary_particle::primary_particle ()
   {
     reset ();
+    return;
   }
 
   // ctor:
@@ -100,11 +105,13 @@ namespace genbb {
     type = type_;
     time = time_;
     momentum = mom_;
+    return;
   }
 
   // dtor:
   primary_particle::~primary_particle ()
   {
+    return;
   }
 
   const string & primary_particle::get_serial_tag () const

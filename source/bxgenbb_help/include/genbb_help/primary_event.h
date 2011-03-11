@@ -19,7 +19,8 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Boston, MA 02110-1301, USA.
  * 
  * Description: 
  *   Primary event from the GENBB generator
@@ -43,7 +44,7 @@
 
 #include <geomtools/utils.h>
 
-#include <datatools/serialization/serialization.h>
+#include <datatools/serialization/i_serializable.h>
 #include <datatools/utils/units.h>
 
 #include <genbb_help/primary_particle.h>
@@ -118,6 +119,7 @@ namespace genbb {
       ar_ & boost::serialization::make_nvp ("time", time);
       ar_ & boost::serialization::make_nvp ("particles", particles);
       ar_ & boost::serialization::make_nvp ("classification", classification);
+      return;
     }
 
   };
