@@ -23,12 +23,14 @@ if [ "x" = "x" ]; then
     __pkgtools__distribution_version=
 
 
-    __pkgtools__msg_use_color=1
-    __pkgtools__msg_use_date=0
-    __pkgtools__msg_split_lines=0
-    __pkgtools__msg_verbose=0
-    __pkgtools__msg_debug=0
-    __pkgtools__msg_devel=0
+    __pkgtools__msg_use_color=1 # default: true
+    __pkgtools__msg_use_date=0  # default: false
+    __pkgtools__msg_split_lines=0 # default: false
+    __pkgtools__msg_quiet=0 # default: false
+    __pkgtools__msg_verbose=0 # default: false
+    __pkgtools__msg_warning=1 # default: true
+    __pkgtools__msg_debug=0 # default: false
+    __pkgtools__msg_devel=0 # default: false
 
     __pkgtools__msg_funcname_deps=
     __pkgtools__msg_funcname=
@@ -37,15 +39,16 @@ if [ "x" = "x" ]; then
 # UI utilities:
 #
 
-    __pkgtools__ui_interactive=1
-    __pkgtools__ui_gui=0
+    __pkgtools__ui_interactive=1 # default: true
+    __pkgtools__ui_gui=0 # default: false
     __pkgtools__ui_gui_type="dialog"
-    __pkgtools__ui_YES=0
-    __pkgtools__ui_NO=1
-    __pkgtools__ui_user_yesno=${__pkgtools__ui_YES}
+    __pkgtools__ui_INVALID_YESNO=-1
+    __pkgtools__ui_YES=1
+    __pkgtools__ui_NO=0
+    __pkgtools__ui_user_yesno=${__pkgtools__ui_INVALID_YESNO}
     __pkgtools__ui_EMPTY_STRING=""
     __pkgtools__ui_user_string=${__pkgtools__ui_EMPTY_STRING}
-    __pkgtools__ui_INVALID_INTEGER=-200000000
+    __pkgtools__ui_INVALID_INTEGER=-2147483648
     __pkgtools__ui_user_integer=${__pkgtools__ui_INVALID_INTEGER}
 
     __pkgtools__ui_dialog_bin=dialog
@@ -88,6 +91,7 @@ if [ "x" = "x" ]; then
     function pkgtools__get_temp_file ()
     {
 	echo ${__pkgtools__temp_file}
+	return 0
     }
 
 
@@ -95,12 +99,13 @@ if [ "x" = "x" ]; then
     {
 	cat 1>&2 <<EOF
 
-pkgtools dump:
+libpkgtools dump:
 
   Current function hierarchy = '${__pkgtools__msg_funcname_deps}'
   Current function name      = '${__pkgtools__msg_funcname}'
 
 EOF
+	return 0
     }
 
 
@@ -110,7 +115,7 @@ EOF
 	    return 1
 	fi 
 	token=$(pkgtools__to_lower $1) 
-	test_float_py_tmp="/tmp/pkgtools__test_float.py" 
+	test_float_py_tmp="/tmp/libpkgtools__is_float.py" 
 	if [ ! -f ${test_float_py_tmp} ]; then
 	    cat > ${test_float_py_tmp} <<EOF 
 import sys 
@@ -134,10 +139,10 @@ EOF
     function pkgtools__is_integer () 
     { 
 	if [ "x$1" = "x" ]; then 
-	    return 1 
+	    return 1 # false
 	fi
 	token=$(pkgtools__to_lower $1)
-	test_int_py_tmp="/tmp/pkgtools__test_int.py" 
+	test_int_py_tmp="/tmp/libpkgtools__is_integer.py" 
 	if [ ! -f ${test_int_py_tmp} ]; then
 	    cat > ${test_int_py_tmp} <<EOF
 import sys
@@ -152,9 +157,9 @@ EOF
 	fi
 	python ${test_int_py_tmp} ${token} > /dev/null 2>&1
 	if [ $? -eq 0 ]; then
-	    return 1
+	    return 1 # false
 	fi
-	return 0
+	return 0 # true
     }
 
 
@@ -165,45 +170,68 @@ EOF
     function pkgtools__ui_interactive ()
     {
 	__pkgtools__ui_interactive=1
+	return 0
     }
-
 
     function pkgtools__ui_batch ()
     {
 	__pkgtools__ui_interactive=0
+	return 0
     }
-
 
     function pkgtools__ui_is_interactive ()
     {
-	if [ ${__pkgtools__ui_interactive} -eq 0 ]; then
-	    return 1
+	if [ "x${PKGTOOLS_BATCH}" != "x" ]; then
+	    if  [ "x${PKGTOOLS_BATCH}" != "x0" ]; then
+		return 1 # false;
+	    fi
 	fi
-	return 0
+
+	if [ ${__pkgtools__ui_interactive} -eq 1 ]; then
+	    return 0 # true
+	fi
+	return 1 # false
     }
 
+    function pkgtools__ui_is_batch ()
+    {
+	pkgtools__ui_is_interactive
+	if [ $? -eq 0 ]; then
+	    return 1
+	fi
+	return 0 # true
+    }
 
     function pkgtools__ui_is_gui ()
     {
-	if [ ${__pkgtools__ui_gui} -eq 0 ]; then
-	    return 1
+	if [ ${__pkgtools__ui_gui} -eq 1 ]; then
+	    return 0 # true
 	fi
-	return 0
+	return 1 # false
     }
 
 
     function pkgtools__ui_using_gui ()
     {
+	__pkgtools__at_function_enter pkgtools__ui_using_gui
+	pkgtools__ui_is_batch
+	if [ $? -eq 0 ]; then
+	    pkgtools__msg_warning "Forcing interactive mode !"
+	    pkgtools__ui_interactive
+	fi
 	__pkgtools__ui_gui=1
+	__pkgtools__at_function_exit
+	return 0
     }
 
 
     function pkgtools__ui_not_using_gui ()
     {
 	__pkgtools__ui_gui=0
+	return 0
     }
 
-
+    # maybe unuseful
     function pkgtools__ui_set_user_integer ()
     {
 	__pkgtools__at_function_enter pkgtools__ui_set_user_integer
@@ -219,12 +247,28 @@ EOF
     }
 
 
+    # maybe unuseful
+    function pkgtools__ui_reset_user_integer ()
+    {
+	__pkgtools__ui_user_integer=${__pkgtools__ui_INVALID_INTEGER}
+	return 0
+    }
+
+
+    # maybe unuseful
+    function pkgtools__ui_get_user_integer ()
+    {
+	__pkgtools__ui_user_integer=${__pkgtools__ui_INVALID_INTEGER}
+	echo ${__pkgtools__ui_user_integer}
+	return 0
+    }
+
     function pkgtools__ui_set_user_yesno ()
     {
 	__pkgtools__at_function_enter pkgtools__ui_set_user_yesno
 	local yesno=$1
 	if [ -z "${yesno}" ]; then
-	    yesno=${__pkgtools__ui_YES}
+	    yesno=${__pkgtools__ui_INVALID_YESNO}
 	elif [ ${yesno} -eq ${__pkgtools__ui_YES} ]; then
 	    yesno=${__pkgtools__ui_YES}
 	elif [ ${yesno} -eq ${__pkgtools__ui_NO} ]; then
@@ -242,13 +286,15 @@ EOF
 
     function pkgtools__ui_reset_user_yesno ()
     {
-	__pkgtools__ui_user_yesno=${__pkgtools__ui_YES}
+	__pkgtools__ui_user_yesno=${__pkgtools__ui_INVALID_YESNO}
+	return 0
     }
 
 
     function pkgtools__ui_get_user_yesno ()
     {
 	echo ${__pkgtools__ui_user_yesno}
+	return 0
     }
 
 
@@ -273,7 +319,7 @@ EOF
     function pkgtools__ui_ask_user_yesno ()
     {
 	__pkgtools__at_function_enter pkgtools__ui_ask_user_yesno
-
+	pkgtools__ui_reset_user_yesno
 	local YES=${__pkgtools__ui_YES}
 	local NO=${__pkgtools__ui_NO}
 
@@ -304,6 +350,14 @@ EOF
 	fi
 	pkgtools__msg_devel "choices='${choices}'! "
 	
+	pkgtools__ui_is_batch
+	if [ $? -eq 0 ]; then
+	    pkgtools__msg_warning "Using default answer '${default_yesno}' !"
+	    pkgtools__ui_set_user_yesno ${default_yesno}
+	    __pkgtools__at_function_exit
+	    return 0	    
+	fi
+
 	if [ ${__pkgtools__ui_gui} -eq 0 ]; then
 	    echo -n "${question} ? " 1>&2
 	    echo -n "[${choices}] " 1>&2		
@@ -367,18 +421,21 @@ EOF
     function pkgtools__ui_set_user_string ()
     {
 	__pkgtools__ui_user_string="$1"
+	return 0
     }
  
 
     function pkgtools__ui_reset_user_string ()
     {
 	__pkgtools__ui_user_string=""
+	return 0
     }
 
 
     function pkgtools__ui_get_user_string ()
     {
 	echo ${__pkgtools__ui_user_string}
+	return 0
     }
 
 
@@ -390,6 +447,15 @@ EOF
 	shift 1
 	local default_string="$1"
 	shift 1
+
+	pkgtools__ui_is_batch
+	if [ $? -eq 0 ]; then
+	    pkgtools__msg_warning "Using default answer '${default_string}' !"
+	    pkgtools__ui_set_user_string "${default_string}"
+	    __pkgtools__at_function_exit
+	    return 0	    
+	fi
+
 	local user_string=""
 	if [ ${__pkgtools__ui_gui} -eq 0 ]; then
 	    echo -n "${title} " 1>&2
@@ -452,6 +518,7 @@ EOF
 	    ###pkgtools__devel_msg "D                ==> __pkgtools__msg_funcname_deps == '${__pkgtools__msg_funcname_deps}'"
 	fi
 	__pkgtools__msg_funcname=${fname}
+	return 0
     }
 
 
@@ -471,6 +538,7 @@ EOF
 	###pkgtools__devel_msg "D                ==> '${__pkgtools__msg_funcname_deps}'"
 	previous_fname=$(echo ${__pkgtools__msg_funcname_deps} | tr "@" "\n" | tail -1)
 	__pkgtools__msg_funcname=${previous_fname}
+	return 0
     }
 
 
@@ -478,6 +546,7 @@ EOF
     {
 	__pkgtools__msg_funcname=
 	__pkgtools__msg_funcname_deps=
+	return 0
     }
 
 
@@ -485,6 +554,7 @@ EOF
     {
 	pkgtools__set_funcname $1
 	pkgtools__msg_devel "Entering..."
+	return 0
     }
 
 
@@ -492,6 +562,7 @@ EOF
     {
 	pkgtools__msg_devel "Exiting."
 	pkgtools__unset_funcname
+	return 0
     }
 
 
@@ -502,12 +573,14 @@ EOF
     function pkgtools__to_lower ()
     {
 	echo $1 | tr "[A-Z]" "[a-z]"
+	return 0
     }
 
 
     function pkgtools__to_upper ()
     {
 	echo $1 | tr "[a-z]" "[A-Z]"
+	return 0
     }
 
     
@@ -554,6 +627,7 @@ EOF
         if [ ${__pkgtools__msg_use_color} -eq 1 ]; then
             echo -en "\\033[0;39m" 1>&2
         fi
+	return 0
     }
 
 
@@ -562,6 +636,7 @@ EOF
         if [ ${__pkgtools__msg_use_color} -eq 1 ]; then
             echo -en "\\033[1;1m" 1>&2
         fi
+	return 0
     }
 
 
@@ -570,6 +645,7 @@ EOF
         if [ ${__pkgtools__msg_use_color} -eq 1 ]; then
             echo -en "\\033[0;38m" 1>&2
         fi
+	return 0
     }
 
 
@@ -578,6 +654,7 @@ EOF
         if [ ${__pkgtools__msg_use_color} -eq 1 ]; then
             echo -en "\\033[0;31m" 1>&2
         fi
+	return 0
     }
 
 
@@ -586,6 +663,7 @@ EOF
         if [ ${__pkgtools__msg_use_color} -eq 1 ]; then
             echo -en "\\033[0;31m" 1>&2
         fi
+	return 0
     }
 
     function pkgtools__msg_color_green ()
@@ -593,6 +671,7 @@ EOF
         if [ ${__pkgtools__msg_use_color} -eq 1 ]; then
             echo -en "\\033[0;32m" 1>&2
         fi
+	return 0
     }
 
     function pkgtools__msg_color_brown ()
@@ -600,6 +679,7 @@ EOF
         if [ ${__pkgtools__msg_use_color} -eq 1 ]; then
             echo -en "\\033[0;33m" 1>&2
         fi
+	return 0
     }
 
     function pkgtools__msg_color_blue ()
@@ -607,6 +687,7 @@ EOF
         if [ ${__pkgtools__msg_use_color} -eq 1 ]; then
             echo -en "\\033[0;34m" 1>&2
         fi
+	return 0
     }
 
 
@@ -615,6 +696,7 @@ EOF
         if [ ${__pkgtools__msg_use_color} -eq 1 ]; then
             echo -en "\\033[0;35m" 1>&2
         fi
+	return 0
     }
 
     function pkgtools__msg_color_grey ()
@@ -622,6 +704,7 @@ EOF
         if [ ${__pkgtools__msg_use_color} -eq 1 ]; then
             echo -en "\\033[0;37m" 1>&2
         fi
+	return 0
     }
 
     function pkgtools__msg_color_white ()
@@ -629,6 +712,7 @@ EOF
         if [ ${__pkgtools__msg_use_color} -eq 1 ]; then
             echo -en "\\033[1;37m" 1>&2
         fi
+	return 0
     }
 
     function pkgtools__msg_color_black ()
@@ -636,6 +720,7 @@ EOF
         if [ ${__pkgtools__msg_use_color} -eq 1 ]; then
             echo -en "\\033[1;39m" 1>&2
         fi
+	return 0
     }
 
     function pkgtools__msg_color_reverse ()
@@ -643,6 +728,7 @@ EOF
         if [ ${__pkgtools__msg_use_color} -eq 1 ]; then
             echo -en "\\033[1;7m" 1>&2
         fi
+	return 0
     }
 
     function pkgtools__msg_color_no_reverse ()
@@ -650,6 +736,7 @@ EOF
         if [ ${__pkgtools__msg_use_color} -eq 1 ]; then
             echo -en "\\033[1;27m" 1>&2
         fi
+	return 0
     }
 
 
@@ -658,6 +745,7 @@ EOF
         if [ ${__pkgtools__msg_use_color} -eq 1 ]; then
             echo -en "" 1>&2
         fi
+	return 0
     }
 
 
@@ -666,6 +754,7 @@ EOF
         if [ ${__pkgtools__msg_use_color} -eq 1 ]; then
             echo -en "" 1>&2
         fi
+	return 0
     }
 
 
@@ -674,6 +763,7 @@ EOF
         if [ ${__pkgtools__msg_use_color} -eq 1 ]; then
             echo -en "\\033[1;m" 1>&2
         fi
+	return 0
     }
 
 
@@ -692,6 +782,7 @@ EOF
         pkgtools__msg_color_bright_red
 	echo -en "$@" 1>&2
         pkgtools__msg_color_normal
+	return 0
     }
 
 
@@ -713,18 +804,21 @@ EOF
     function pkgtools__get_os ()
     {  
 	echo "${__pkgtools__os}"
+	return 0
     }
     
 
     function pkgtools__get_arch ()
     {  
 	echo "${__pkgtools__arch}"
+	return 0
     }
     
 
     function pkgtools__get_sys ()
     {  
 	echo "$(pkgtools__get_os)-$(pkgtools__get_arch)"
+	return 0
     }
 
 
@@ -741,6 +835,27 @@ EOF
 	return 1
     }
 
+
+    function pkgtools__get_so_extension ()
+    {
+	pkgtools__is_darwin
+	if [ $? -eq 0 ]; then
+	    echo ".dylib"
+	else    
+	    echo ".so"
+	fi
+	return 0
+    }
+
+    function pkgtools__get_usr_lib ()
+    {
+	if [ "X$(uname -m)" = "Xx86_64" ]; then
+	    echo "/usr/lib64"
+	else
+	    echo "/usr/lib"
+	fi
+	return 0
+    }
 
     function pkgtools__get_distribution_family ()
     {
@@ -766,6 +881,7 @@ EOF
 	    fi
 	fi
 	echo "${__pkgtools__distribution_family}"
+	return 0
     }
 
 
@@ -824,6 +940,7 @@ EOF
 	    fi
 	fi
 	echo "${__pkgtools__distribution}"
+	return 0
     }
 
 
@@ -877,92 +994,161 @@ EOF
 	    fi
 	fi
 	echo "${__pkgtools__distribution_version}"
+	return 0
     }
 
 #
 # Message log utilities:
 #
 
+    function pkgtools__msg_using_warning ()
+    {
+	pkgtools__msg_using_warning
+	__pkgtools__msg_warning=1
+ 	return 0
+    }
+
+    function pkgtools__msg_not_using_warning ()
+    {
+	__pkgtools__msg_warning=0
+	return 0
+    }
+
     function pkgtools__msg_using_verbose ()
     {
 	__pkgtools__msg_verbose=1
+ 	return 0
     }
-
 
     function pkgtools__msg_not_using_verbose ()
     {
 	__pkgtools__msg_verbose=0
+	return 0
     }
 
+    function pkgtools__msg_using_quiet ()
+    {
+	pkgtools__msg_using_verbose
+	__pkgtools__msg_quiet=1
+ 	return 0
+    }
+
+    function pkgtools__msg_not_using_quiet ()
+    {
+	__pkgtools__msg_quiet=0
+	return 0
+    }
+
+    function pkgtools__msg_is_quiet ()
+    {
+	local quiet_ret=1 # false
+	if [ "x${PKGTOOLS_MSG_QUIET}" != "x" ]; then
+	    if [ "x${PKGTOOLS_MSG_QUIET}" != "x0" ]; then
+		quiet_ret=0 # false
+	    fi
+	else
+	    if [ ${__pkgtools__msg_quiet} -eq 1  ]; then
+		quiet_ret=0 # true 
+	    fi
+	fi	
+	return ${quiet_ret}
+    }
 
     function pkgtools__msg_using_debug ()
     {
 	__pkgtools__msg_debug=1
+	return 0
     }
-
 
     function pkgtools__msg_not_using_debug ()
     {
 	__pkgtools__msg_debug=0
+	return 0
     }
-
 
     function pkgtools__msg_using_devel ()
     {
 	__pkgtools__msg_devel=1
+	return 0
     }
-
 
     function pkgtools__msg_not_using_devel ()
     {
 	__pkgtools__msg_devel=0
+	return 0
     }
-
 
     function pkgtools__msg_using_date ()
     {
 	__pkgtools__msg_use_date=1
+	return 0
     }
-
 
     function pkgtools__msg_not_using_date ()
     {
 	__pkgtools__msg_use_date=0
+	return 0
     }
-
 
     function pkgtools__msg_using_color ()
     {
 	__pkgtools__msg_use_color=1
+	return 0
     }
     
-
     function pkgtools__msg_not_using_color ()
     {
 	__pkgtools__msg_use_color=0
 	pkgtools__msg_color_normal
+	return 0
     }
 
+    function __pkgtools__base_msg_prefix ()
+    {
+	local log_file=
+	if [ "x${PKGTOOLS_LOG_FILE}" != "x" ]; then
+	    log_file=${PKGTOOLS_LOG_FILE}
+	else
+	    log_file=/dev/null
+	fi
+	local msg_prefix="$1"
+	(
+	    (
+		echo -n "${msg_prefix}: "
+	    ) | tee -a ${log_file}
+	) 1>&2
+	return 0
+    }
 
     function __pkgtools__base_msg ()
     {
-	if [ ${__pkgtools__msg_use_date} -eq 1 ]; then
-	    date +%F-%T | tr -d '\n' 1>&2
-	    echo -n " @ " 1>&2
+	local log_file=
+	if [ "x${PKGTOOLS_LOG_FILE}" != "x" ]; then
+	    log_file=${PKGTOOLS_LOG_FILE}
+	else
+	    log_file=/dev/null
 	fi
-	if [ "x${appname}" != "x" ]; then
-	    echo -n "${appname}: " 1>&2
-	fi 
-	if [ "x${__pkgtools__msg_funcname}" != "x" ]; then
-	    echo -n "${__pkgtools__msg_funcname}: " 1>&2
-	fi 
-	if [ ${__pkgtools__msg_split_lines} -eq 1 ]; then
-	    echo "" 1>&2
-	    echo -n "  " 1>&2
-	fi
-	echo "$@" 1>&2
+	(
+	    (
+		if [ ${__pkgtools__msg_use_date} -eq 1 ]; then
+		    date +%F-%T | tr -d '\n'
+		    echo -n " @ "
+		fi
+		if [ "x${appname}" != "x" ]; then
+		    echo -n "${appname}: "
+		fi 
+		if [ "x${__pkgtools__msg_funcname}" != "x" ]; then
+		    echo -n "${__pkgtools__msg_funcname}: " 
+		fi 
+		if [ ${__pkgtools__msg_split_lines} -eq 1 ]; then
+		    echo "" 
+		    echo -n "  "
+		fi
+		echo "$@" 
+	    ) | tee -a ${log_file}
+	) 1>&2
+	return 0;
     }
-
 
     function __pkgtools__base_msg_2 ()
     {
@@ -987,7 +1173,7 @@ EOF
     function pkgtools__msg_err ()
     {
 	pkgtools__msg_color_red
-	echo -n "ERROR: " 1>&2
+	__pkgtools__base_msg_prefix "ERROR"
 	__pkgtools__base_msg $@
 	pkgtools__msg_color_normal
 
@@ -1015,8 +1201,11 @@ EOF
 
     function pkgtools__msg_warning ()
     {
+	if [ ${__pkgtools__msg_warning} -eq 0 ]; then
+	    return 0
+	fi
 	pkgtools__msg_color_violet
-	echo -n "WARNING: " 1>&2
+	__pkgtools__base_msg_prefix "WARNING"
 	__pkgtools__base_msg  $@
 	pkgtools__msg_color_normal
 
@@ -1037,12 +1226,17 @@ EOF
 
     function pkgtools__msg_info ()
     {
+	pkgtools__msg_is_quiet
+	if [ $? -eq 0 ]; then
+	    return 0
+	fi
+
 	if [ ${__pkgtools__msg_verbose} -eq 0 ]; then
 	    return 0
 	fi
 
 	pkgtools__msg_color_blue
-	echo -n "INFO: " 1>&2
+	__pkgtools__base_msg_prefix "INFO"
 	__pkgtools__base_msg  $@
 	pkgtools__msg_color_normal
 
@@ -1070,8 +1264,13 @@ EOF
 
     function pkgtools__msg_notice ()
     {
+	pkgtools__msg_is_quiet
+	if [ $? -eq 0 ]; then
+	    return 0
+	fi
+
 	pkgtools__msg_color_blue
-	echo -n "NOTICE: " 1>&2
+	__pkgtools__base_msg_prefix "NOTICE"
 	__pkgtools__base_msg "$@"
 	pkgtools__msg_color_normal
 
@@ -1105,7 +1304,7 @@ EOF
     function pkgtools__msg_highlight_notice ()
     {
 	pkgtools__msg_color_green
-	echo -n "NOTICE: " 1>&2
+	__pkgtools__base_msg_prefix "NOTICE"
 	__pkgtools__base_msg $@
 	pkgtools__msg_color_normal
 
@@ -1132,8 +1331,9 @@ EOF
 	ok=1
 	if [ ${ok} -eq 1 ]; then
 	    pkgtools__msg_color_reverse
-	    echo -n "DEVEL: " 1>&2
-	    __pkgtools__base_msg_2 $@
+	    __pkgtools__base_msg_prefix "DEVEL"
+	    __pkgtools__base_msg $@
+	    #__pkgtools__base_msg_2 $@
 	    pkgtools__msg_color_no_reverse
 	fi
 	pkgtools__msg_color_normal
@@ -1149,7 +1349,7 @@ EOF
 	ok=1
 	if [ ${ok} -eq 1 ]; then
 	    pkgtools__msg_color_brown
-	    echo -n "DEBUG: " 1>&2
+	    __pkgtools__base_msg_prefix "DEBUG"
 	    __pkgtools__base_msg  $@
 	    pkgtools__msg_color_normal
 	fi
@@ -1295,11 +1495,12 @@ bash> ./pkgtools.d/pkgtool --help
  * Using bash, a typical install sequence is:
  * 
  *  \verbatim
+bash> ./pkgtools.d/pkgtool [options...] info
 bash> ./pkgtools.d/pkgtool [options...] check [special options...]
 bash> ./pkgtools.d/pkgtool [options...] configure  [special options...]
 bash> ./pkgtools.d/pkgtool [options...] build 
 bash> ./pkgtools.d/pkgtool [options...] build bin 
-bash> ./pkgtools.d/pkgtool [options...] build bin_test 
+bash> ./pkgtools.d/pkgtool [options...] test 
 bash> ./pkgtools.d/pkgtool [options...] doc 
 bash> ./pkgtools.d/pkgtool [options...] install [special options...]
 \endverbatim
@@ -1319,6 +1520,12 @@ else
    echo "ERROR: No setup for the ${pack_name} package !" >&2
 fi
 \endverbatim
+ *
+ * Reseting the package:
+ *  \verbatim
+bash> ./pkgtools.d/pkgtool [options...] reset
+\endverbatim
+ *
  *
  * \section misc_section Miscellaneous informations
  *
@@ -1525,11 +1732,17 @@ EOF
 	    return 1
 	fi
 
-	${PKGTOOLS_ROOT}/programs/check_version.py ${version_to_be_checked} "${verdesc}"
-	if [ $? -ne 0 ]; then
-	    pkgtools__msg_devel "Version '${version_to_be_checked}' is not valid!"
+	if [ ! -x ${PKGTOOLS_ROOT}/programs/check_version.py ]; then
+	    pkgtools__msg_error "No '\${PKGTOOLS_ROOT}/programs/check_version.py}' is available ! Cannot check the validity of the version number ! Assuming it is ok !"
 	    __pkgtools__at_function_exit
 	    return 1
+	else
+	    ${PKGTOOLS_ROOT}/programs/check_version.py ${version_to_be_checked} "${verdesc}"
+	    if [ $? -ne 0 ]; then
+		pkgtools__msg_devel "Version '${version_to_be_checked}' is not valid!"
+		__pkgtools__at_function_exit
+		return 1
+	    fi
 	fi
 	__pkgtools__at_function_exit
 	return 0
@@ -2190,31 +2403,41 @@ EOF
 	    which ${dep_cfg} > /dev/null 2>&1 
 	    if [ $? -ne 0 ]; then
 		has_config_script=0
+		pkgtools__msg_info "Cannot find '${dep_cfg}' config script !"
 	    else
 		has_config_script=1
+		pkgtools__msg_notice "Found '${dep_cfg}' config script !"
 	    fi
-	    pkgtools__msg_debug "- Checking ${dep_name} executable..."
-	    dep_exe=
-	    which ${dep_name} > /dev/null 2>&1 
-	    if [ $? -ne 0 ]; then
-		has_executable=0
-	    else
-		dep_exe=${dep_name}
-		has_executable=1
-	    fi
-	    
-	    if [ "x${dep_name}" != "x${dep_lower}" ]; then
-		pkgtools__msg_debug "- Checking ${dep_lower} executable..."
-		which ${dep_lower} > /dev/null 2>&1 
-		if [ $? -eq 0 ]; then
-		    dep_exe=${dep_lower}
+
+	    if [ ${has_config_script} -eq 0 ]; then
+		pkgtools__msg_debug "- Checking ${dep_name} executable..."
+		dep_exe=
+		which ${dep_name} > /dev/null 2>&1 
+		if [ $? -ne 0 ]; then
+		    has_executable=0
+		    pkgtools__msg_info "Cannot find '${dep_name}' executable !"
+		else
+		    dep_exe=${dep_name}
 		    has_executable=1
+		    pkgtools__msg_notice "Found '${dep_name}' executable !"
+		fi
+		
+		if [ "x${dep_name}" != "x${dep_lower}" ]; then
+		    pkgtools__msg_debug "- Checking ${dep_lower} executable..."
+		    which ${dep_lower} > /dev/null 2>&1 
+		    if [ $? -eq 0 ]; then
+			dep_exe=${dep_lower}
+			has_executable=1
+			pkgtools__msg_notice "Found '${dep_lower}' executable !"
+		    else
+			pkgtools__msg_info "Cannot find '${dep_lower}' executable !"
+		    fi
 		fi
 	    fi
 	    
 	    if [ ${has_executable} -eq 0 -a ${has_config_script} -eq 0 ]; then
 		if [ ${dep_excluded} -eq 0 ]; then
-		    pkgtools__msg_error "Cannot check ${dep_name} through some script nor executable!"
+		    pkgtools__msg_error "Cannot check '${dep_name}' through some script nor executable !"
 		    __pkgtools__at_function_exit
 		    return 1
 		fi
@@ -2226,7 +2449,7 @@ EOF
 		if [ ${has_config_script} -eq 1 ]; then
 		    ${dep_cfg} --version > /dev/null 2>&1
 		    if [ $? -ne 0 ]; then
-			pkgtools__msg_warning "Cannot retrieve version information from the '${dep_cfg}' script!"
+			pkgtools__msg_warning "Cannot retrieve version information from the '${dep_cfg}' script !"
 		    else
 			dep_version=$(${dep_cfg} --version 2>&1)
 		    fi
@@ -2237,7 +2460,7 @@ EOF
 		if [ ${has_executable} -eq 1 -a ${dep_cfg} != ${dep_exe} ]; then
 		    ${dep_exe} --version > /dev/null 2>&1
 		    if [ $? -ne 0 ]; then
-			pkgtools__msg_warning "Cannot retrieve version information from the '${dep_exe}' executable!"
+			pkgtools__msg_warning "Cannot retrieve version information from the '${dep_exe}' executable !"
 		    else
 			dep_version=$(${dep_exe} --version 2>&1)
 		    fi
@@ -2256,7 +2479,28 @@ EOF
 		__pkgtools__at_function_exit
 		return 1
 	    fi
-	    pkgtools__msg_notice "${dep_name}${ver_str} seems to be properly setup!"
+
+	    ver_str_num=$(echo "${dep_version}" | tr '_' '.' | tr -c -d '0123456789\.')
+	    pkgtools__msg_devel "extracted version number '${ver_str_num}'"
+	    if [ "x${PKGTOOLS_ROOT}" != "x" ]; then 
+		if [ "x${ver_str_num}" != "x" ]; then	
+		    pkgtools__msg_notice "Check if version '${ver_str_num}' of '${dep_name}' is valid..."
+		    pkgtools__is_package_version_valid "${ver_str_num}" "${dep_version_info}"
+		    if [ $? -eq 0 ]; then
+			pkgtools__msg_notice "${dep_name} version ${ver_str_num} is valid."
+		    else
+			pkgtools__msg_error "${dep_name} version ${ver_str_num} is not valid ! Requirement for ${dep_name} version number is ${dep_version_info} !"
+			__pkgtools__at_function_exit
+			return 1
+		    fi
+		fi
+	    else
+		pkgtools__msg_warning "Some 'pkgtools' utilities are not installed ! Cannot check the validity of this version number ! "		
+		pkgtools__msg_warning "Please consider to install 'pkgtools' !"
+		pkgtools__msg_warning "Continue at your own risk !"	    
+	    fi
+
+	    pkgtools__msg_notice "${dep_name}${ver_str} seems to be properly setup !"
 	    
 	done
 	
@@ -2364,8 +2608,8 @@ EOF
 	pkgtools__is_ubuntu
 	if [ $? -eq 0 ]; then
 	    pkgtools__msg_notice "Is Ubuntu."
-
 	fi 
+	pkgtools__msg_notice "Shared library extension : $(pkgtools__get_so_extension)"
 
 	pkgtools__msg_notice "GSL configure utility: $(pkgtools__get_package_config_tool gsl)"
 
