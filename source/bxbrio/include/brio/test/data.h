@@ -96,10 +96,11 @@ namespace brio {
 	friend class boost::serialization::access; 
 
 	template<class Archive>
-	  void serialize (Archive            & ar_,       // an archive type (ASCII, XML or binary)
-			  const unsigned int   version_)  // the version number (here not used)
+	  void serialize (Archive & ar_,       // an archive type (ASCII, XML or binary)
+			  const unsigned int version_)  // the version number (here not used)
 	  {
-	    ar_ & boost::serialization::make_nvp ("bval", __bval);
+	    ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
+ 	    ar_ & boost::serialization::make_nvp ("bval", __bval);
 	    ar_ & boost::serialization::make_nvp ("cval", __cval);
 	    ar_ & boost::serialization::make_nvp ("ival", __ival);
 	    ar_ & boost::serialization::make_nvp ("fval", __fval);
@@ -113,6 +114,8 @@ namespace brio {
   } // namespace test 
 
 } // namespace brio 
+
+BOOST_CLASS_EXPORT_KEY2 (brio::test::data, "brio::test::data")
 
 #endif // __brio__test__data_h
 

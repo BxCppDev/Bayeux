@@ -13,11 +13,13 @@ namespace brio {
   void writer::lock ()
   {
     __locked = true;
+    return;
   }
 
   void writer::unlock ()
   {
     __locked = false;
+    return;
   }
 
   bool writer::is_locked () const
