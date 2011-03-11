@@ -4,7 +4,7 @@ This is the datatools package ChangeLog
 
 2008-09 : version 1.0
 	- first release tag
-	
+
 2008-09 : version 2.0
 	- add Portable Binary Archive support from pba_help package
 
@@ -15,23 +15,25 @@ This is the datatools package ChangeLog
 	./pkgtools.d/pkgtool build
 	./pkgtools.d/pkgtool build bin
 	./pkgtools.d/pkgtool install
-	
-2009-11-13 : F. Mauger, X. Garrido 
+
+2009-11-13 : F. Mauger, X. Garrido
 	- many fix
 	- support for Boost 1.40.0
 	  with EOS portable binary archive 3.1 + a trick (3.1)
 	- support for new serialization stuff:
 	http://www.boost.org/doc/libs/1_40_0/libs/serialization/doc/release.html#requirements
 	- support for std::bitset serialization stuff (vault) [to be checked]
-	
+
 2010-05-15 : F. Mauger, X. Garrido
 	- attempt to support Boost 1.43.0
 	  with EOS portable binary archive 4.1 + a trick (4.1)
-	
-2011-03-09 : F. Mauger
+
+2011-03-11 : F. Mauger
+	- prepare major version 3.0
 	- depends on Boost 1.44.0 (new serialization features)
 	- use a new serialization mechanism in 'properties' and
 	'multi_properties' classes that inherit the abstract
 	'i_serializable' class
 	- add the 'things' class (with the new serial. mechanism too)
+
 
