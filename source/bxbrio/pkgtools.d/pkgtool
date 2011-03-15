@@ -366,10 +366,6 @@ function do_clean ()
         rm -fr ${the_base_dir}/doc/doxygen
     fi
 
-    rm -f  ${the_base_dir}/test_*.brio
-    rm -f  ${the_base_dir}/file.brio
-    rm -f  ${the_base_dir}/file2.brio
-
     __pkgtools__at_function_exit
     return 1
 }
@@ -970,6 +966,11 @@ function do_untest ()
     if [ -d ${the_gmk_dir} ]; then
 	do_build_gmk clean_bin_test
     fi
+
+    pkgtools__msg_notice "Removing some test files..."   
+    rm -f  ${the_base_dir}/test_*.brio
+    rm -f  ${the_base_dir}/file.brio
+    rm -f  ${the_base_dir}/file2.brio
 
     __pkgtools__at_function_exit
     return 0

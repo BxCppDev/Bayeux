@@ -15,8 +15,8 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'dummy_brio'!" << endl; 
-  
+      clog << "Test program for class 'dummy_brio' !" << endl; 
+   
       bool debug = false;
 
       int iarg = 1;

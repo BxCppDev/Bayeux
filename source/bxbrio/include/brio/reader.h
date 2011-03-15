@@ -23,17 +23,16 @@
 #include <sstream>
 #include <string>
 
+#include <boost/filesystem.hpp>
+#include <boost/iostreams/stream.hpp>
+#include <boost/iostreams/device/array.hpp>
+
 #include <TFile.h>
 #include <TKey.h>
 
 #include <datatools/serialization/i_serializable.h>
-#include <datatools/serialization/quasi_portable_binary_iarchive.hpp>
+#include <boost/qpba/quasi_portable_binary_iarchive.hpp>
 #include <datatools/utils/utils.h>
-
-#include <boost/filesystem.hpp>
-
-#include <boost/iostreams/stream.hpp>
-#include <boost/iostreams/device/array.hpp>
 
 #include <brio/utils.h>
 #include <brio/detail/base_io.h>
@@ -283,8 +282,8 @@ namespace brio {
       
       // Deserialize from the archive:
       boost::iostreams::stream<boost::iostreams::array_source> input_stream (si.record.fDataBuffer.fArray, 
-									     si.record.fDataBuffer.fN);    
-      eos::portable_iarchive ia (input_stream);
+									     si.record.fDataBuffer.fN);
+      boost::archive::quasi_portable_binary_iarchive ia (input_stream);   
       ia >> data_;
       
       _current_store = &si;

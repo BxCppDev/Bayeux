@@ -7,8 +7,8 @@
 #include <exception>
 
 #include <brio/writer.h>
-#include <datatools/test/my_data.h>
 
+#include <datatools/test/my_data.h>
 #include <datatools/serialization/i_serializable.h>
 
 using namespace std;
@@ -24,6 +24,8 @@ int main (int argc_, char ** argv_)
       bool verbose = false;
       bool dump = false;
       size_t data_count = 10;
+      long seed = 314159;
+      
       int iarg = 1;
       while (iarg < argc_)
         {
@@ -66,6 +68,8 @@ int main (int argc_, char ** argv_)
             } 
           iarg++; 
 	} 
+ 
+      srand48 (seed);
 
       // Setup a brio writer:           
       brio::writer my_writer ("test_io_2.brio", verbose, debug);

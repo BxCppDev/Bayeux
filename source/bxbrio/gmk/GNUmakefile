@@ -94,6 +94,8 @@ DEPLDFLAGS+=$(shell root-config --libs)
 DEPCPPFLAGS+=$(shell datatools-config --cflags)
 DEPLDFLAGS+=$(shell datatools-config --ldflags)
 
+DEPLDFLAGS+=-pthread -lm -ldl -rdynamic
+
 #>>> Examples of dependencies stuff:
 
 # 'some_package':

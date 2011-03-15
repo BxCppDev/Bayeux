@@ -5,8 +5,6 @@
 #include <cstdlib>
 #include <brio/test/data.h>
 
-BOOST_CLASS_EXPORT_IMPLEMENT (brio::test::data)
-
 namespace brio {
 
   namespace test {
@@ -79,5 +77,7 @@ namespace brio {
   } // end of namespace test
   
 } // end of namespace brio
+ 
+BOOST_CLASS_EXPORT_IMPLEMENT (brio::test::data) 
 
 // end of data.cc

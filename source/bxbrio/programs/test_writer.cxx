@@ -1,16 +1,18 @@
 // -*- mode: c++ ; -*- 
 // test_writer.cxx
-
+ 
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
-#include <brio/writer.h>
 #include <datatools/test/my_data.h>
 #include <datatools/utils/properties.h>
 
 #include <datatools/serialization/i_serializable.h>
+
+#include <brio/test/data.h>
+#include <brio/writer.h>
 
 using namespace std;
 
@@ -19,7 +21,7 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'brio::writer'!" << endl; 
+      clog << "Test program for class 'brio::writer' !" << endl; 
   
       bool debug = false;
       bool verbose = false;
@@ -27,6 +29,8 @@ int main (int argc_, char ** argv_)
       bool dump = false;
       size_t data_count = 10;
       bool pre_set_stores = true;
+      long seed = 314159;
+
       int iarg = 1;
       while (iarg < argc_)
         {
@@ -76,7 +80,9 @@ int main (int argc_, char ** argv_)
               }
             } 
           iarg++; 
-      } 
+      }
+ 
+      srand48 (seed);
 
       // Declare a brio writer:           
       brio::writer my_writer;
@@ -117,6 +123,9 @@ int main (int argc_, char ** argv_)
 	    {
 	      my_writer.add_mixed_store ("mixed_data", 256000);
 	    }
+	  
+	  // Idem for a store labelled 'data': 
+	  my_writer.add_store ("data2", brio::test::data::SERIAL_TAG, 256000);
 
 	  // Lock the writer to prevent to add more stores:
 	  my_writer.lock ();
@@ -205,6 +214,22 @@ int main (int argc_, char ** argv_)
 
       // Unselect the current store:
       my_writer.unselect_store ();
+
+      /*
+      // Store a set of mixed data within the 'mixed' store:
+      if (my_writer.has_store ("data2"))
+	{
+	  my_writer.select_store ("data2");
+	  brio::test::data data;
+	  data.randomize ();
+	  if (dump) 
+	    {
+	      data.dump (clog);
+	    }
+	  // 
+	  //my_writer.store (data);
+	}
+      */
 
       // Store a properties object int the *automatic* store:
       {
