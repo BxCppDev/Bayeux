@@ -31,31 +31,12 @@
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
 
-#ifdef IOFACTORY_USE_EOS_PBA
-/* portable binary archives from the Boost/vault
- * by C. Pfligersdorffer:
- *   == do not include anymore ==
- */
-//#include <portable_iarchive.hpp>
-//#include <portable_oarchive.hpp>
-
-/* 2010-10-29 FM: quasi portable binary I/O archives by 
- * C. Pfligersdorffer + F. Mauger's hack
- * a replacement for the original portable binary archive by 
- * C. Pfligersdorffer that do not handle NaNs, Infinites and 
- * denorm. floating values.
- */
-
-#include <datatools/serialization/quasi_portable_binary_iarchive.hpp>
-#include <datatools/serialization/quasi_portable_binary_oarchive.hpp>
-
-/* #ifndef NO_EXPLICIT_TEMPLATE_INSTANTIATION */
-/* #define NO_EXPLICIT_TEMPLATE_INSTANTIATION */
-/* #endif */
-
+#ifdef IOFACTORY_USE_QPBA
+#include <boost/qpba/quasi_portable_binary_iarchive.hpp>
+#include <boost/qpba/quasi_portable_binary_oarchive.hpp>
 #else
-/* native portable binary archives: not recommended at all for it does not 
- * support float and double
+/* native portable binary archives: not recommended at all 
+ * for it does not support float and double
  */
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>

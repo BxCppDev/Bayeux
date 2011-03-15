@@ -111,22 +111,33 @@ endif
 ### support for std::bitset serialization:
 #DEPCPPFLAGS+=-I$(PACKAGE_DIR)/boost/vault/local
 
-DATATOOLS_NO_EOS_PBA=$(shell ls -1 $(PACKAGE_DIR)/gmk/datatools_without_eos_pba.config 2> /dev/null)
-EOS_PBA_FLAGS=
-ifeq ($(DATATOOLS_NO_EOS_PBA),)
-DATATOOLS_NO_EOS_PBA=0
-$(warning WARNING: datatools uses 'Quasi Portable Binary Archive' (from eos PBA) !) 
-EOS_PBA_FLAGS=-DIOFACTORY_USE_EOS_PBA=1
-#DEPCPPFLAGS+=-I$(PACKAGE_DIR)/boost/vault/eos_pba
+# DATATOOLS_NO_EOS_PBA=$(shell ls -1 $(PACKAGE_DIR)/gmk/datatools_without_eos_pba.config 2> /dev/null)
+# EOS_PBA_FLAGS=
+# ifeq ($(DATATOOLS_NO_EOS_PBA),)
+# DATATOOLS_NO_EOS_PBA=0
+# $(warning WARNING: datatools uses 'Quasi Portable Binary Archive' (from eos PBA) !) 
+# EOS_PBA_FLAGS=-DIOFACTORY_USE_EOS_PBA=1
+# #DEPCPPFLAGS+=-I$(PACKAGE_DIR)/boost/vault/eos_pba
+# else
+# DATATOOLS_NO_EOS_PBA=1
+# $(warning WARNING: datatools does not use EOS_PBA !)
+# endif
+
+DATATOOLS_NO_QPBA=$(shell ls -1 $(PACKAGE_DIR)/gmk/datatools_without_qpba.config 2> /dev/null)
+QPBA_FLAGS=
+ifeq ($(DATATOOLS_NO_QPBA),)
+DATATOOLS_NO_QPBA=0
+$(warning WARNING: datatools uses 'Quasi Portable Binary Archive' (from QPBA) !) 
+QPBA_FLAGS=-DIOFACTORY_USE_QPBA=1
 else
-DATATOOLS_NO_EOS_PBA=1
-$(warning WARNING: datatools does not use EOS_PBA !)
+DATATOOLS_NO_QPBA=1
+$(warning WARNING: datatools does not use QPBA !)
 endif
 
 CPPFLAGS1+=-DDATATOOLS_USE_TREE_DUMP=1
 
 ### End of dependencies.
-CPPFLAGS1+=$(EOS_PBA_FLAGS) $(FPU_FLAGS) $(DEPCPPFLAGS) 
+CPPFLAGS1+=$(QPBA_FLAGS) $(FPU_FLAGS) $(DEPCPPFLAGS) 
 LDFLAGS1+=$(DEPLDFLAGS) 
 
 # default with libmath dependency:
@@ -143,6 +154,7 @@ SHFLAGS=$(LDFLAGS) -ldl
 HEADEREXT=.h
 HEADEREXTPP=.hpp
 SOURCEEXT=.cc
+SOURCEEXTPP=.cpp
 PROGEXT=.cxx
 OBJEXT=.o
 LIBEXT=.a
@@ -153,16 +165,23 @@ BINEXT=
 vpath %$(HEADEREXT)  $(INCDIR)/$(PACKAGENAME)
 vpath %$(HEADEREXTPP)  $(INCDIR)/$(PACKAGENAME)
 vpath %$(SOURCEEXT)  $(SRCDIR)
+vpath %$(SOURCEEXTPP)  $(SRCDIR)
 vpath %$(PROGEXT)    $(PROGDIR)
 vpath %$(OBJEXT)     $(OBJDIR)
 vpath %$(LIBEXT)     $(LIBDIR)
 vpath %$(SHLIBEXT)   $(LIBDIR)
 vpath %$(BINEXT)     $(BINDIR)
 
-headers := $(notdir $(shell find $(INCDIR)/$(PACKAGENAME) -name "*$(HEADEREXT)" ))
+headers := $(notdir $(shell find $(INCDIR)/$(PACKAGENAME) -name "*$(HEADEREXT)" )) quasi_portable_binary_iarchive.hpp quasi_portable_binary_oarchive.hpp
 sources := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT)))
-objects := $(sources:%$(SOURCEEXT)=%$(OBJEXT))
-objectsWithPath := $(sources:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT))
+
+### If uncommented, this code force my_data.cc to be the last in library 
+# due to initialization of a static scoped pointer or similar stuff:
+#sources1 := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT) 2> /dev/null | sed -e "s@/my_data.cc@/@g"))
+#sources := $(sources1) my_data.cc
+
+objects := $(sources:%$(SOURCEEXT)=%$(OBJEXT)) 
+objectsWithPath := $(sources:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT)) 
 
 ##headers := $(notdir $(shell ls $(INCDIR)/$(PACKAGENAME)/*$(HEADEREXT) 2> /dev/null))
 #headers := $(notdir $(shell find $(INCDIR)/$(PACKAGENAME) -name "*$(HEADEREXT)" ))
@@ -236,25 +255,26 @@ build_special :
 
 .PHONY : install
 install : 
-	@test "x$(DATATOOLS_NO_EOS_PBA)" = "x1" && make install_no_eos_pba || make install_eos_pba
 
-.PHONY : install_eos_pba
-install_eos_pba :  
-	@echo "NOTICE: Installing with EOS_PBA..." >&2
-	@cat $(BASEDIR)/pkgtools.d/package.csh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).csh
-	@cat $(BASEDIR)/pkgtools.d/package.sh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).sh
-	@test -d $(BINDIR) || mkdir -p $(BINDIR)
-	@ln -s -f $(PACKAGE_ROOT)/pkgtools.d/$(LIBNAME)-config $(BINDIR)/$(LIBNAME)-config
-	@echo "NOTICE: Installing with EOS_PBA done." >&2
+#	#@test "x$(DATATOOLS_NO_QPBA)" = "x1" && make install_no_qpba || make install_qpba
 
-.PHONY : install_no_eos_pba
-install_no_eos_pba : 
-	@echo "NOTICE: Installing without EOS_PBA..." >&2
-	@cat $(BASEDIR)/pkgtools.d/package.csh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" -e "s@NO_EOS_PBA 0@NO_EOS_PBA 1@g" > $(BASEDIR)/$(LIBNAME).csh
-	@cat $(BASEDIR)/pkgtools.d/package.sh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" -e "s@NO_EOS_PBA=0@NO_EOS_PBA=1@g" > $(BASEDIR)/$(LIBNAME).sh
-	@test -d $(BINDIR) || mkdir -p $(BINDIR)
-	@ln -s -f $(PACKAGE_ROOT)/pkgtools.d/$(LIBNAME)-config $(BINDIR)/$(LIBNAME)-config
-	@echo "NOTICE: Installing without EOS_PBA done." >&2
+# .PHONY : install_eos_pba
+# install_eos_pba :  
+# 	@echo "NOTICE: Installing with EOS_PBA..." >&2
+# 	@cat $(BASEDIR)/pkgtools.d/package.csh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).csh
+# 	@cat $(BASEDIR)/pkgtools.d/package.sh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).sh
+# 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
+# 	@ln -s -f $(PACKAGE_ROOT)/pkgtools.d/$(LIBNAME)-config $(BINDIR)/$(LIBNAME)-config
+# 	@echo "NOTICE: Installing with EOS_PBA done." >&2
+
+# .PHONY : install_no_eos_pba
+# install_no_eos_pba : 
+# 	@echo "NOTICE: Installing without EOS_PBA..." >&2
+# 	@cat $(BASEDIR)/pkgtools.d/package.csh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" -e "s@NO_EOS_PBA 0@NO_EOS_PBA 1@g" > $(BASEDIR)/$(LIBNAME).csh
+# 	@cat $(BASEDIR)/pkgtools.d/package.sh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" -e "s@NO_EOS_PBA=0@NO_EOS_PBA=1@g" > $(BASEDIR)/$(LIBNAME).sh
+# 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
+# 	@ln -s -f $(PACKAGE_ROOT)/pkgtools.d/$(LIBNAME)-config $(BINDIR)/$(LIBNAME)-config
+# 	@echo "NOTICE: Installing without EOS_PBA done." >&2
 
 #########################################################################
 

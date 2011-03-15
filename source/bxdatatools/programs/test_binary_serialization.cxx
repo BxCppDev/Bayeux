@@ -5,9 +5,9 @@
 #include <fstream>
 #include <limits>
 
-// The binary (EOS) archives from Boost:
-#include <datatools/serialization/quasi_portable_binary_iarchive.hpp>
-#include <datatools/serialization/quasi_portable_binary_oarchive.hpp>
+// The quasi portable binary archives :
+#include <boost/qpba/quasi_portable_binary_iarchive.hpp>
+#include <boost/qpba/quasi_portable_binary_oarchive.hpp>
 
 #include <boost/cstdint.hpp>
 #include <boost/serialization/string.hpp>
@@ -20,7 +20,7 @@ int main (int argc_, char ** argv_)
   {
     clog << "Storing..." << endl;
     ofstream output_stream ("test_binary_serialization.data");
-    eos::portable_oarchive oa (output_stream);
+    boost::archive::quasi_portable_binary_oarchive oa (output_stream);
     clog << "Output archive is setup !" << endl;
     uint32_t i0 = 0; 
     uint32_t i1 = 42;  
@@ -56,7 +56,7 @@ int main (int argc_, char ** argv_)
   {
     clog << endl << endl << "Loading..." << endl;
     ifstream input_stream ("test_binary_serialization.data");
-    eos::portable_iarchive ia (input_stream);
+    boost::archive::quasi_portable_binary_iarchive ia (input_stream);
     clog << "Input archive is setup !" << endl;
     uint32_t i0; 
     uint32_t i1;  

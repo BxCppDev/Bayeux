@@ -28,12 +28,12 @@ This is the datatools package ChangeLog
 	- attempt to support Boost 1.43.0
 	  with EOS portable binary archive 4.1 + a trick (4.1)
 
-2011-03-11 : F. Mauger
+2011-03-15 : F. Mauger
 	- prepare major version 3.0
 	- depends on Boost 1.44.0 (new serialization features)
 	- use a new serialization mechanism in 'properties' and
 	'multi_properties' classes that inherit the abstract
 	'i_serializable' class
 	- add the 'things' class (with the new serial. mechanism too)
-
+	- new quasi_portable_binary_[i|o]archive classes
 

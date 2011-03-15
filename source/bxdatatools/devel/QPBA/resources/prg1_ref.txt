@@ -1,0 +1,1 @@
+22 serialization::archive 7 0 0 0 0 0  111 3.1415899999999999 2 pi 222 inf 9 +infinity 333 nan 3 Nan 444 -inf 9 -infinity

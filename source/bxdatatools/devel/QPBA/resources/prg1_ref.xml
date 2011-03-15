@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE boost_serialization>
+<boost_serialization signature="serialization::archive" version="7">
+<a0 class_id="0" tracking_level="0" version="0">
+	<a>0</a>
+	<x>0</x>
+	<s></s>
+</a0>
+<a1>
+	<a>111</a>
+	<x>3.1415899999999999</x>
+	<s>pi</s>
+</a1>
+<a2>
+	<a>222</a>
+	<x>inf</x>
+	<s>+infinity</s>
+</a2>
+<a3>
+	<a>333</a>
+	<x>nan</x>
+	<s>Nan</s>
+</a3>
+<a4>
+	<a>444</a>
+	<x>-inf</x>
+	<s>-infinity</s>
+</a4>
+</boost_serialization>
+

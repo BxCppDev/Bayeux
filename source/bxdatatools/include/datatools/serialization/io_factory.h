@@ -35,14 +35,13 @@
 #include <locale>
 #include <typeinfo>
 
-#ifdef IOFACTORY_USE_EOS_PBA
+#ifdef IOFACTORY_USE_QPBA
 // Force usage of `Floating point utilities' by Johan Råde
-// for `Portable binary archive' library by Christian Pfligersdorffer 
+// for `Quasi Portable Binary Archive' 
 #ifndef IOFACTORY_USE_FPU
 #define IOFACTORY_USE_FPU=1
 #endif
-#endif // IOFACTORY_USE_EOS_PBA
-
+#endif // IOFACTORY_USE_QPBA
 
 #ifdef IOFACTORY_USE_FPU
 #include <boost/math/nonfinite_num_facets.hpp>
@@ -101,13 +100,13 @@ namespace datatools {
       boost::archive::text_oarchive     * __otar_ptr;
       boost::archive::xml_iarchive      * __ixar_ptr;
       boost::archive::xml_oarchive      * __oxar_ptr;
-#ifdef IOFACTORY_USE_EOS_PBA
-      eos::portable_iarchive            * __ibar_ptr;
-      eos::portable_oarchive            * __obar_ptr;
+#ifdef IOFACTORY_USE_QPBA
+      boost::archive::quasi_portable_binary_iarchive * __ibar_ptr;
+      boost::archive::quasi_portable_binary_oarchive * __obar_ptr;
 #else
       boost::archive::binary_iarchive   * __ibar_ptr;
       boost::archive::binary_oarchive   * __obar_ptr;
-#endif // IOFACTORY_USE_EOS_PBA
+#endif // IOFACTORY_USE_QPBA
 
     public:
 	
@@ -187,7 +186,7 @@ namespace datatools {
 	
       bool is_binary () const;
 
-#ifdef IOFACTORY_USE_EOS_PBA
+#ifdef IOFACTORY_USE_QPBA
       bool is_portable_binary () const
       {
 	return is_binary () && true;
@@ -197,7 +196,7 @@ namespace datatools {
       {
 	return is_binary () && false;
       }
-#endif // IOFACTORY_USE_EOS_PBA	
+#endif // IOFACTORY_USE_QPBA	
 
       bool is_xml () const;
 
@@ -272,13 +271,13 @@ namespace datatools {
       }
 	
       template <typename Data>
-#ifdef IOFACTORY_USE_EOS_PBA
-      void __store_binary (eos::portable_oarchive & ar_, 
+#ifdef IOFACTORY_USE_QPBA
+      void __store_binary (boost::archive::quasi_portable_binary_oarchive & ar_, 
 			   const Data & data_)
 #else
 	void __store_binary (boost::archive::binary_oarchive & ar_, 
 			     const Data & data_)
-#endif // IOFACTORY_USE_EOS_PBA
+#endif // IOFACTORY_USE_QPBA
       {
 	const Data & b = data_;
 	ar_ << b; 
@@ -328,13 +327,13 @@ namespace datatools {
       }
 
       template <typename Data>
-#ifdef IOFACTORY_USE_EOS_PBA
-      void __load_binary (eos::portable_iarchive & ar_ , 
+#ifdef IOFACTORY_USE_QPBA
+      void __load_binary (boost::archive::quasi_portable_binary_iarchive & ar_ , 
 			  Data & data_)
 #else
 	void __load_binary (boost::archive::binary_iarchive & ar_ , 
 			    Data & data_)
-#endif // IOFACTORY_USE_EOS_PBA
+#endif // IOFACTORY_USE_QPBA
       {
 	Data & b = data_;
 	ar_ >> b; 

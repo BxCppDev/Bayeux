@@ -43,18 +43,18 @@ csh_ss=${pack_name_lower}.csh
 the_base_dir=$PWD
 boost_version_check=1
 #enforced_boost_version=1_38
-enforced_boost_version=1_38_0
+enforced_boost_version=1_44_0
 
 action_mode=""
 do_usage=0
 debug=0
 verbose=0
-eos_trick=0
+#eos_trick=0
 
 default_python_version=2.5
 python_version=${default_python_version}
 with_python=1
-apply_eos_archive_trick=0
+#apply_eos_archive_trick=0
 
 function my_exit ()
 {
@@ -77,10 +77,10 @@ function print_usage ()
     $APPNAME check       : check dependencies
     $APPNAME configure  [OPTIONS]: configure package 
             OPTIONS:
-            --with-eos-pba (default) :
-              depends on Portable Binary Archive boost vault extension
-            --without-eos-pba :
-              do not use Portable Binary Archive boost vault extension
+            --with-qpba (default) :
+              depends on Quasi Portable Binary Archive
+            --without-qpba :
+              do not use Quasi Portable Binary Archive
             --with-fpu (default) :
               depends on Floating Point Utilities boost vault extension
             --without-fpu :
@@ -91,7 +91,7 @@ function print_usage ()
               with Python version VERSION (default: 2.5)
             --without-python :
               without Python wrapper module
-            --boost-version 1_45_0 : force Boost version (default: 1_44_0)
+            --boost-version 1_44_0 : force Boost version (default: 1_44_0)
             --no-boost-version-check : skip Boost version check
     $APPNAME deconfigure : deconfigure package 
     $APPNAME build [TARGET] : build package
@@ -208,7 +208,7 @@ else
 fi
 #echo "Base package directory is '${the_base_dir}'!"
 
-without_eos_pba_flag_file=${the_base_dir}/gmk/datatools_without_eos_pba.config
+without_qpba_flag_file=${the_base_dir}/gmk/datatools_without_qpba.config
 without_fpu_flag_file=${the_base_dir}/gmk/datatools_without_fpu.config
 without_python_flag_file=${the_base_dir}/gmk/datatools_without_python.config
 python_version_flag_file=${the_base_dir}/gmk/datatools_python_version.config
@@ -453,7 +453,7 @@ function boost_eos_archive_trick ()
     fi
     local eos_trick_ver=""
     local boost_version_rank=$(echo ${boost_version} | tr '_' '0')
-    pkgtools__msg_notice "boost_eos_archive_trick: boost_version_rank=${boost_version_rank}"
+    pkgtools__msg_notice "boost_version_rank=${boost_version_rank}"
     if [ ${boost_version_rank} -ge 104200 ]; then
 	eos_trick_ver=4.1
     fi
@@ -463,7 +463,7 @@ function boost_eos_archive_trick ()
     
     # run the proper trick:
     if [ "x${eos_trick_ver}" = "x4.1" ]; then
-	pkgtools__msg_notice "boost_eos_archive_trick: Running trick 4.1..."
+	pkgtools__msg_notice "Running trick 4.1..."
 	boost_eos_archive_trick_4_1
 	__pkgtools__at_function_exit
 	return
@@ -474,7 +474,7 @@ function boost_eos_archive_trick ()
 	__pkgtools__at_function_exit
 	return
     fi
-    pkgtools__msg_notice "boost_eos_archive_trick: Exiting."
+    pkgtools__msg_notice "Exiting."
     __pkgtools__at_function_exit
     return
 }
@@ -501,7 +501,6 @@ function boost_eos_archive_trick_4_1 ()
             -e 's@version_type input_library_version;@library_version_type input_library_version;@g' > ${pia_src}
     fi        
     
-
     cd ${opwd}
 
     pkgtools__msg_notice "boost_eos_archive_trick_4_1: Exiting."
@@ -736,7 +735,7 @@ function do_deconfigure ()
 
     opwd=$(pwd)
 
-    test -f ${without_eos_pba_flag_file} && rm -f ${without_eos_pba_flag_file} 
+    test -f ${without_qpba_flag_file} && rm -f ${without_qpba_flag_file} 
     test -f ${without_fpu_flag_file}     && rm -f ${without_fpu_flag_file} 
     test -f ${without_python_flag_file}  && rm -f ${without_python_flag_file} 
     test -f ${python_version_flag_file}  && rm -f ${python_version_flag_file} 
@@ -767,7 +766,7 @@ function do_configure ()
 	with_python_wrapper=1
     fi
 
-    with_eos_pba=1
+    with_qpba=1
     with_fpu=1
     enforced_boost_version=
     python_version=
@@ -799,16 +798,16 @@ function do_configure ()
 		elif [ "x${opt}" = "x--without-python" ]; then
 		    with_python_wrapper=0
 		fi
-	    elif [ "x${opt}" = "x--with-eos-pba" ]; then
-		with_eos_pba=1
+	    elif [ "x${opt}" = "x--with-qpba" ]; then
+		with_qpba=1
 		with_fpu=1
-	    elif [ "x${opt}" = "x--without-eos-pba" ]; then
-		with_eos_pba=0
+	    elif [ "x${opt}" = "x--without-qpba" ]; then
+		with_qpba=0
 	    elif [ "x${opt}" = "x--with-fpu" ]; then
 		with_fpu=1
 	    elif [ "x${opt}" = "x--without-fpu" ]; then
 		with_fpu=0
-		with_eos_pba=0
+		with_qpba=0
 	    elif [ "x${opt}" = "x--boost-version" ]; then
 		shift 1
 		enforced_boost_version=$1
@@ -927,20 +926,19 @@ EOF
 	fi # with_python_wrapper
     fi # can_python_wrapper
 
-    ### Support for Quasi EOS Portable binary archives:
-    pkgtools__msg_notice "Quasi Portable Binary Archives (EOS) setup..."
-    if [ ${with_eos_pba} -eq 0 ]; then
-	pkgtools__msg_warning "Do not use Portable Binary Archives from the Boost vault!"
+    ### Support for Quasi Portable binary archives:
+    pkgtools__msg_notice "Quasi Portable Binary Archives setup..."
+    if [ ${with_qpba} -eq 0 ]; then
+	pkgtools__msg_warning "Do not use Portable Binary Archives !"
 
-	cat > ${without_eos_pba_flag_file} <<EOF 
+	cat > ${without_qpba_flag_file} <<EOF 
 # datatools does not use pba_help:
-export DATATOOLS_NO_EOS_PBA=1
+export DATATOOLS_NO_QPBA=1
 EOF
     else
 	# 2010-12-06 FM:
 	pkgtools__msg_notice "Use Quasi Portable Binary Archives !"
-	#pkgtools__msg_notice "Use Portable Binary Archives from the Boost vault!"
-	test -f ${without_eos_pba_flag_file} && rm -f ${without_eos_pba_flag_file}
+	test -f ${without_qpba_flag_file} && rm -f ${without_qpba_flag_file}
 	with_fpu=1
     fi
 
@@ -965,24 +963,24 @@ EOF
 	cd ${opwd}
     fi
 
-    ## 2010-12-06: Do not use the EOS archive trick anymore:
-    if [ ${apply_eos_archive_trick} -eq 1 ]; then
-    ### Special workaround for EOS Portable binary archives vs Boost version:
-	if [ ${with_eos_pba} -eq 1 ]; then
-	    local boost_version_rank=$(echo ${boost_version} | tr '_' '0')
-	    pkgtools__msg_notice "boost_version_rank=${boost_version_rank}"
-	    run_eos_archive_trick=0
-	    if [ ${boost_version_rank} -ge 104000 ]; then
-		run_eos_archive_trick=1
-	    fi
-	# 2009-11-12 FM: force the trick for debugging purpose: 
-	#run_eos_archive_trick=1
-	    if [ ${run_eos_archive_trick} -eq 1 ]; then
-		pkgtools__msg_warning "Using special trick for EOS portable archives!"
-		boost_eos_archive_trick ${eos_trick}
-	    fi
-	fi
-    fi
+    # ## 2010-12-06: Do not use the EOS archive trick anymore:
+    # if [ ${apply_eos_archive_trick} -eq 1 ]; then
+    # ### Special workaround for EOS Portable binary archives vs Boost version:
+    # 	if [ ${with_qpba} -eq 1 ]; then
+    # 	    local boost_version_rank=$(echo ${boost_version} | tr '_' '0')
+    # 	    pkgtools__msg_notice "boost_version_rank=${boost_version_rank}"
+    # 	    run_eos_archive_trick=0
+    # 	    if [ ${boost_version_rank} -ge 104000 ]; then
+    # 		run_eos_archive_trick=1
+    # 	    fi
+    # 	# 2009-11-12 FM: force the trick for debugging purpose: 
+    # 	#run_eos_archive_trick=1
+    # 	    if [ ${run_eos_archive_trick} -eq 1 ]; then
+    # 		pkgtools__msg_warning "Using special trick for EOS portable archives!"
+    # 		boost_eos_archive_trick ${eos_trick}
+    # 	    fi
+    # 	fi
+    # fi
 
     __pkgtools__at_function_exit
     return 0
@@ -993,8 +991,8 @@ function do_build ()
     __pkgtools__at_function_enter do_build
 
     if [ -d ${GMKDIR} ]; then
-	if [ -f ${without_eos_pba_flag_file} ]; then
-	    source ${without_eos_pba_flag_file}
+	if [ -f ${without_qpba_flag_file} ]; then
+	    source ${without_qpba_flag_file}
 	fi
 	if [ -f ${without_fpu_flag_file} ]; then
 	    source ${without_fpu_flag_file}
