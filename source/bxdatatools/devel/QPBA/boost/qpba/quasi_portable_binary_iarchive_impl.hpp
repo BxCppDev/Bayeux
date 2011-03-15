@@ -101,7 +101,7 @@ namespace boost {
       void init (unsigned int flags)
       {
 	//std::cerr << "DEVEL: quasi_portable_binary_iarchive_impl::init: Entering..." << std::endl;
-	if (m_portability == quasi_portable_binary_archive_common::strict_portability)
+	if (m_portability == (unsigned int) quasi_portable_binary_archive_common::strict_portability)
 	  {
 	    throw quasi_portable_binary_archive_exception ("quasi_portable_binary_iarchive_impl::init: strict portability mode is not implemented ! volunteers ?");
 	  }
@@ -115,7 +115,7 @@ namespace boost {
 	const std::string qpba_signature (BOOST_ARCHIVE_QPBA_SIGNATURE ());
 	bool qpba_signature_is_valid = true;
 	signed char check[4];
-	for (int i = 0; i < qpba_signature.length (); i++)
+	for (int i = 0; i < (int) qpba_signature.length (); i++)
 	  {
 	    check[i] = this->load_signed_char ();
 	    if (check[i] != qpba_signature[i])
