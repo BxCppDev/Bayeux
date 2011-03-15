@@ -1,4 +1,18 @@
+CAUTION :
 
+This is the basic directory for QPBA classes development.
+
+It contains the original source code of the quasi portable
+binary archives and test programs.
+
+Only the maintener of the package is allowed to modify
+source code in it as it is the original source of what we
+release in the datatools package.
+
+F. Mauger
+2011-03-15
+
+------------------------------------------------------------
 shell> cd ${DATATOOLS_ROOT}/devel/QPBA
 
 shell> ./proc.sh 
@@ -89,3 +103,6 @@ Infini: exponent==2^e-1 mantissa==0
 255 240 0 0 0 0 0 0 == bin:
 11111111.11110000.00000000.....
 -[ exp=2047 ][0] = -inf
+
+
+--
