@@ -94,7 +94,9 @@ function print_usage ()
             --boost-version 1_44_0 : force Boost version (default: 1_44_0)
             --no-boost-version-check : skip Boost version check
     $APPNAME deconfigure : deconfigure package 
-    $APPNAME build [TARGET] : build package
+    $APPNAME build [OPTION] [TARGET] : build package
+            OPTION: 
+                --parallel    : try to run make using parallel process
             TARGET:
                 lib (default) : build the shared library
                 bin : build all executable programs (if any)
@@ -257,12 +259,21 @@ function do_build_gmk ()
     __pkgtools__at_function_enter do_build_gmk
 
     if [ ! -d ${GMKDIR} ]; then 
-	pkgtools__msg_error "do_build_gmk: Missing '${GMKDIR}' directory!"
+	pkgtools__msg_error "Missing '${GMKDIR}' directory!"
 	__pkgtools__at_function_exit
 	return 1
     fi
     opwd=$(pwd)
     cd ${GMKDIR}
+    parallel_option=
+    pkgtools__msg_debug "Option='$1'"
+    if [ "x${1:0:1}" = "x-" ]; then
+	if [ "x$1" = "x--parallel" ]; then
+	    pkgtools__msg_warning "Using parallel build..."
+	    parallel_option="-j"
+	fi
+	shift 1
+    fi
     mk_lib=0
     mk_bin=0
     mk_bin_static=0
@@ -272,7 +283,7 @@ function do_build_gmk ()
     else
 	build_tag="$1"
     fi	
-    pkgtools__msg_info "do_build_gmk: target='${build_tag}'"
+    pkgtools__msg_info "target='${build_tag}'"
     old=0
     if [ $old -eq 1 ]; then
 	if [ -z "$1" ]; then
@@ -300,14 +311,14 @@ function do_build_gmk ()
 	fi
     #
 	if [ $mk_lib = 1 ]; then
-	    make 
+	    make ${parallel_option}
 	    if [ $? -ne 0 ]; then
 		__pkgtools__at_function_exit
 		return 1
 	    fi
 	fi
 	if [ $mk_bin = 1 ]; then
-	    make bin 
+	    make ${parallel_option} bin 
 	    if [ $? -ne 0 ]; then
 		__pkgtools__at_function_exit
 		return 1
@@ -318,7 +329,7 @@ function do_build_gmk ()
         #fi
     else
 	pkgtools__msg_info "Build target '${build_tag}'..."
-	make ${build_tag}
+	make ${parallel_option} ${build_tag}
 	if [ $? -ne 0 ]; then
 	    cd ${opwd} 
 	    pkgtools__msg_error "Build target '${build_tag}' failed!"

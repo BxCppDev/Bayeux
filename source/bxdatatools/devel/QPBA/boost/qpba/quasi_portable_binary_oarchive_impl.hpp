@@ -103,7 +103,7 @@ namespace boost {
       void init (unsigned int flags) 
       {
 	//std::cerr << "DEVEL: quasi_portable_binary_oarchive_impl::init: Entering..." << std::endl;
-	if (m_portability == quasi_portable_binary_archive_common::strict_portability)
+	if (m_portability == (unsigned int) quasi_portable_binary_archive_common::strict_portability)
 	  {
 	    throw quasi_portable_binary_archive_exception ("quasi_portable_binary_oarchive_impl::init: strict portability mode is not implemented ! volunteers ?");
 	  }
