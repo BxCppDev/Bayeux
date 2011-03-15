@@ -341,7 +341,7 @@ function do_build_gmk ()
     ### special Python wrapper/program:
     if [ ! -f ${without_python_flag_file} ]; then
 	cd ${python_dir}
-	make
+	make ${parallel_option}
 	if [ $? -ne 0 ]; then
 	    cd ${opwd} 
 	    pkgtools__msg_error "Build Python stuff failed!"
