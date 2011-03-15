@@ -255,6 +255,12 @@ build_special :
 
 .PHONY : install
 install : 
+	@echo "NOTICE: Installing..." >&2
+	@cat $(BASEDIR)/pkgtools.d/package.csh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).csh
+	@cat $(BASEDIR)/pkgtools.d/package.sh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).sh
+	@test -d $(BINDIR) || mkdir -p $(BINDIR)
+	@ln -s -f $(PACKAGE_ROOT)/pkgtools.d/$(LIBNAME)-config $(BINDIR)/$(LIBNAME)-config
+	@echo "NOTICE: Installing done." >&2
 
 #	#@test "x$(DATATOOLS_NO_QPBA)" = "x1" && make install_no_qpba || make install_qpba
 

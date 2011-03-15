@@ -390,6 +390,26 @@ function do_untest ()
 	do_clean_gmk clean_bin_test
     fi
 
+    pkgtools__msg_notice "Cleaning test files..."
+    rm -f ${the_base_dir}/test_basic_event.xml
+    rm -f ${the_base_dir}/test_binary_serialization.*
+    rm -f ${the_base_dir}/test_data_serialization.*
+    rm -f ${the_base_dir}/test_event_id.xml
+    rm -f ${the_base_dir}/test_multi_properties.conf
+    rm -f ${the_base_dir}/test_multi_properties.xml
+    rm -f ${the_base_dir}/test_multi_properties_2.conf
+    rm -f ${the_base_dir}/my_bag_of_bags.conf
+    rm -f ${the_base_dir}/test_nans_ar.*
+    rm -f ${the_base_dir}/test_properties.*
+    rm -f ${the_base_dir}/my_bag.conf 
+
+    rm -f ${the_base_dir}/test_serialization*.xml
+    rm -f ${the_base_dir}/test_serialization*.data
+    rm -f ${the_base_dir}/test_serialization*.txt
+
+    rm -f ${the_base_dir}/test_things.*
+    rm -f ${the_base_dir}/test_things_2.*
+
     __pkgtools__at_function_exit
     return 0
 }
@@ -423,20 +443,6 @@ function do_clean ()
 	fi
     fi 
 
-    pkgtools__msg_notice "Cleaning test files..."
-    rm -f ${the_base_dir}/test_serialization*.xml
-    rm -f ${the_base_dir}/test_serialization*.data
-    rm -f ${the_base_dir}/test_serialization*.txt
-    rm -f ${the_base_dir}/test_things.*
-    rm -f ${the_base_dir}/test_things_2.*
-    #rm -f ${the_base_dir}/my_bag.conf 
-    #rm -f ${the_base_dir}/my_bag_of_bags.conf
-    rm -f ${the_base_dir}/test_data_serialization.*
-    rm -f ${the_base_dir}/test_multi_properties_*.conf
-    rm -f ${the_base_dir}/test_nans_ar.*
-    rm -f ${the_base_dir}/test_properties.*
-    rm -f ${the_base_dir}/test_serialization_*.*
-    rm -f ${the_base_dir}/test_binary_serialization.*
 
     cd ${opwd}
     __pkgtools__at_function_exit
