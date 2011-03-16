@@ -11,14 +11,15 @@
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 // quasi_portable_binary_oarchive_impl.hpp
 
-// (C) Copyright 2011 Francois Mauger - <mauger@lpccaen.in2p3.fr>. 
 
+// (C) Copyright 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>. 
+//                    Christian Pfligersdorffer <christian.pfligersdorffer@eos.info>. 
+//
 // (C) Copyright 2002 Robert Ramey - http://www.rrsd.com . 
+//
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
-
-//  See http://www.boost.org for updates, documentation, and revision history.
 
 #include <ostream>
 #include <string>
@@ -105,7 +106,7 @@ namespace boost {
 	//std::cerr << "DEVEL: quasi_portable_binary_oarchive_impl::init: Entering..." << std::endl;
 	if (m_portability == (unsigned int) quasi_portable_binary_archive_common::strict_portability)
 	  {
-	    throw quasi_portable_binary_archive_exception ("quasi_portable_binary_oarchive_impl::init: strict portability mode is not implemented ! volunteers ?");
+	    throw quasi_portable_binary_archive_exception ("quasi_portable_binary_oarchive_impl::init: strict portability mode is not implemented ! any volunteers ?");
 	  }
 	
         if (0 != (flags & boost::archive::no_header))
@@ -355,6 +356,8 @@ namespace boost {
 	return;
       }
 
+      // Class ID related types:
+
       //! Saving class_id_type :
       void save (const class_id_type & cid) 
       {
@@ -365,6 +368,29 @@ namespace boost {
 	this->save<int16_t> (cid_value);
 	return;
       }
+
+      //! Saving class_id_reference_type :
+      void save (const class_id_reference_type & cir) 
+      {
+	int16_t cir_value = cir;
+	this->save<int16_t> (cir_value);
+	return;
+      }
+
+      //! Saving class_id_optional_type :
+      void save (const class_id_optional_type & ciro) 
+      {
+	/* see comment in 'boost/archive/basic_binary_oarchive.hpp'
+	 * "binary files don't include the optional information "
+	 */
+	/*
+	int16_t ciro_value = ciro;
+	this->save<int16_t> (ciro_value);
+	*/
+	return;
+      }
+
+      // Object ID related types :
 
       //! Saving object_id_type :
       void save (const object_id_type & oid) 
@@ -377,6 +403,16 @@ namespace boost {
 	return;
       }
 
+      //! Saving object_reference_type :
+      void save (const object_reference_type & ort) 
+      {
+	uint32_t ort_value = ort;
+	this->save<uint32_t> (ort_value);
+	return;
+      }
+
+      // Tracking type (a bool) :
+
       //! Saving tracking_type :
       void save (const tracking_type & t) 
       {
@@ -385,6 +421,30 @@ namespace boost {
 	// of type 'typedef uint_least32_t base_type'
 	bool tracking_value = t;
 	this->save (tracking_value);
+	return;
+      }
+
+      // Other stuff :
+
+      //! Saving serialization::collection_size_type :
+      void save (const serialization::collection_size_type & csz) 
+      {
+	//std::cerr << "DEVEL: quasi_portable_binary_oarchive_impl::save: Found collection_size_type !" << std::endl;
+	// 'boost::archive::serialization::collection_size_type' has a value 
+	// of type 'std::size_t', here we use a uint32_t:
+	uint32_t csz_value = csz;
+	this->save (csz_value);
+	return;
+      }
+
+      //! Saving serialization::item_version_type :
+      void save (const serialization::item_version_type & iv) 
+      {
+	//std::cerr << "DEVEL: quasi_portable_binary_oarchive_impl::save: Found item_version_type !" << std::endl;
+	// 'boost::archive::serialization::item_version_type' has a value 
+	// of type 'typedef unsigned int base_type', here we use a uint32_t:
+	uint32_t iv_value = iv;
+	this->save (iv_value);
 	return;
       }
 
