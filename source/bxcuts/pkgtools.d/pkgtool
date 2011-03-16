@@ -960,6 +960,8 @@ function do_test ()
 	__pkgtools__at_function_exit
 	return ${code}
     fi
+ 
+    pkgtools__msg_notice "Interactive test script is available from: '${the_base_dir}/tests/test_manager.sh'"
 
     __pkgtools__at_function_exit
     return 0
@@ -972,6 +974,10 @@ function do_untest ()
     if [ -d ${the_gmk_dir} ]; then
 	do_build_gmk clean_bin_test
     fi
+
+    pkgtools__msg_notice "Removing test files..."
+    rm -f ${the_base_dir}/test_manager.orig.data
+    rm -f ${the_base_dir}/test_manager.selected.data
 
     __pkgtools__at_function_exit
     return 0
