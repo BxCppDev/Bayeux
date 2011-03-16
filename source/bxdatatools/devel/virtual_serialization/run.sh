@@ -14,6 +14,12 @@ echo "Running Bprg0..." >&2
 echo "" >&2
 echo "Running Bprg1..." >&2
 ./Bprg1
+echo "" >&2
+echo "Running Bprg1bis..." >&2
+./Bprg1bis
+echo "" >&2
+echo "Running Bprg2..." >&2
+./Bprg2
 
 
 exit 0

@@ -7,5 +7,7 @@
 #include <boost/archive/xml_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
+#include <boost/qpba/quasi_portable_binary_iarchive.hpp>
+#include <boost/qpba/quasi_portable_binary_oarchive.hpp>
 
 #endif // __A__archives_hpp__
