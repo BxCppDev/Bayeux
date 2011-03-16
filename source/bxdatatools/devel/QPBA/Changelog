@@ -1,0 +1,29 @@
+The Quasi Portable Binary Archive (QPBA)
+========================================
+
+Change Log
+
+
+2011-03-16 FM:
+	* First release as a subpart of the 'datatools' package
+	at LPC Caen (SuperNEMO research group on neutrino physics)
+	* Depends on Boost 1.44.0.
+	* Use the 'boost::archive' namespace
+	* The "boost/archive/basic_archive.hpp" defines the following classes :
+		- library_version_type
+		- version_type
+		- class_id_type
+		- class_id_reference_type (through BOOST_ARCHIVE_STRONG_TYPEDEF)
+		- class_id_optional_type (through BOOST_ARCHIVE_STRONG_TYPEDEF)
+		- object_id_type
+		- object_reference_type (through BOOST_ARCHIVE_STRONG_TYPEDEF)
+		- tracking_type
+	The "boost/serialization/collection_size_type.hpp" defines also:
+		- collection_size_type
+	and "boost/serialization/item_version_type.hpp" defines:
+		- item_version_type
+
+	All  types above  are  given "[i/o]archive::save/load"  overloaded
+	methods  to  ensure  portable  (de)serialization of  the  integral
+	attributes within these classes.
+
