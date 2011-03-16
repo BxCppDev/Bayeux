@@ -949,19 +949,33 @@ function do_test ()
 {
     __pkgtools__at_function_enter do_test
 
-    if [ -d ${the_gmk_dir} ]; then
+   if [ -d ${the_gmk_dir} ]; then
 	if [ -d ${the_python_dir} ]; then
 	    if [ -f ${without_python_flag_file} ]; then
 		source ${without_python_flag_file}
 	    fi
 	fi
 	do_build_gmk bin_test
-	local code=$?
-	__pkgtools__at_function_exit
-	return ${code}
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Build test program failed !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
+
+    test_prog=test_dummy_${pack_name_lower}
+    if [ -f ./programs/${test_prog}.cxx ]; then
+	LD_LIBRARY_PATH=$(pkgtools__get_sys)/lib:${LD_LIBRARY_PATH} ./$(pkgtools__get_sys)/bin/${test_prog} 
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Test program '${test_prog}' failure !"
+	    __pkgtools__at_function_exit
+	    return 1
+	else
+	    pkgtools__msg_notice "Test program '${test_prog}' success !"
+	fi
     fi
  
-    pkgtools__msg_notice "Interactive test script is available from: '${the_base_dir}/tests/test_manager.sh'"
+    pkgtools__msg_notice "Additionnal interactive test script is available from: '${the_base_dir}/tests/test_manager.sh'"
 
     __pkgtools__at_function_exit
     return 0
