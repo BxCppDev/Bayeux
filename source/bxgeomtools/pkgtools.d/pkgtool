@@ -984,6 +984,10 @@ function do_untest ()
 	do_clean_gmk clean_bin_test
     fi
 
+    pkgtools__msg_notice "Removing test files..."
+    rm -f test_utils.txt 
+    rm -f test_utils2.txt 
+
     __pkgtools__at_function_exit
     return 0
 }
