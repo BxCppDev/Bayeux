@@ -8,6 +8,8 @@
 #include <string>
 #include <boost/archive/detail/decl.hpp>
 #include <boost/archive/basic_archive.hpp>
+#include <boost/serialization/collection_size_type.hpp>
+#include <boost/serialization/item_version_type.hpp>
 
 namespace boost {
   namespace archive {

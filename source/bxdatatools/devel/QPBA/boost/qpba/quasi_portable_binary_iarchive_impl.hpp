@@ -11,6 +11,10 @@
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 // quasi_portable_binary_iarchive_impl.hpp
 
+// (C) Copyright 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>. 
+//                    Christian Pfligersdorffer <christian.pfligersdorffer@eos.info>. 
+
+
 // (C) Copyright 2002 Robert Ramey - http://www.rrsd.com . 
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -395,6 +399,8 @@ namespace boost {
 	return;
       }
 
+      // Class ID related types:
+
       //! Saving class_id_type :
       void load (class_id_type & cid) 
       {
@@ -406,6 +412,33 @@ namespace boost {
 	cid = (class_id_type) cid_value;
 	return;
       }
+
+      //! Saving class_id_reference_type :
+      void load (class_id_reference_type & cir) 
+      {
+	int16_t cir_value;
+	this->load<int16_t> (cir_value);
+	class_id_type cid (cir_value);
+	cir = class_id_reference_type (cid);
+	return;
+      }
+
+      //! Saving class_id_optional_type :
+      void load (class_id_optional_type & cio) 
+      {
+	/* see comment in 'boost/archive/basic_binary_iarchive.hpp'
+	 * "binary files don't include the optional information "
+	 */
+	/*
+	int16_t cio_value;
+	this->load<int16_t> (cio_value);
+	class_id_type cid (cio_value);
+	cio = class_id_optional_type (cid);
+	*/
+	return;
+      }
+
+      // Object ID related types :
 
       //! Saving object_id_type :
       void load (object_id_type & oid) 
@@ -419,6 +452,18 @@ namespace boost {
 	return;
       }
 
+      //! Saving object_reference_type :
+      void load (object_reference_type & ort) 
+      {
+	uint32_t oid_value;
+	this->load<uint32_t> (oid_value);
+	object_id_type oid (oid_value);
+	ort = object_reference_type (oid);
+	return;
+      }
+
+      // Tracking type (a bool) :
+
       //! Saving tracking_type :
       void load (tracking_type & t) 
       {
@@ -431,7 +476,33 @@ namespace boost {
 	return;
       }
 
-      /*
+      // Other stuff :
+
+      //! Saving serialization::collection_size_type :
+      void load (serialization::collection_size_type & csz) 
+      {
+	//std::cerr << "DEVEL: quasi_portable_binary_iarchive_impl::save: Found collection_size_type !" << std::endl;
+	// 'boost::archive::serialization::collection_size_type' has a value 
+	// of type 'std::size_t', here we use a uint32_t:
+	uint32_t csz_value;
+	this->load (csz_value);
+	csz = (serialization::collection_size_type) csz_value;
+	return;
+      }
+
+      //! Saving serialization::item_version_type :
+      void load (serialization::item_version_type & iv) 
+      {
+	//std::cerr << "DEVEL: quasi_portable_binary_iarchive_impl::save: Found item_version_type !" << std::endl;
+	// 'boost::archive::serialization::item_version_type' has a value 
+	// of type 'typedef unsigned int base_type', here we use a uint32_t:
+	uint32_t iv_value;
+	this->load (iv_value);
+	iv = (serialization::item_version_type) iv_value;
+	return;
+      }
+
+       /*
       //! Saving class_name_type :
       void load (class_name_type & cn) 
       {
