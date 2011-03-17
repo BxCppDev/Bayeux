@@ -20,9 +20,15 @@
 
 #include <string>
 #include <list>
+#include <locale>
 
 #include <datatools/utils/i_tree_dump.h>
 #include <brio/utils.h>
+
+//#ifdef IOFACTORY_USE_FPU
+#include <boost/math/nonfinite_num_facets.hpp>
+#include <boost/filesystem.hpp>
+//#endif
 
 #include <TFile.h>
 
@@ -36,10 +42,28 @@ namespace brio {
 
     static bool g_devel;
 
+    static const string QPBA_LABEL;
+    static const string TEXT_LABEL;
+
+    enum format_t
+      {
+	FORMAT_UNDEFINED = 0,
+	FORMAT_QPBA      = 1,
+	FORMAT_TEXT      = 2
+      };
+
+    enum rw_t
+      {
+	RW_UNDEFINED = 0,
+	RW_READ      = 1,
+	RW_WRITE     = 2
+      };
+
   private:
    
     bool __debug;
     bool __verbose;
+    int  __format;
 
   protected:
     
@@ -47,8 +71,13 @@ namespace brio {
     TFile *           _file;
     store_info_dict_t _store_infos;
     store_info *      _current_store;
+    int               _rw;
+    std::locale    *  _default_locale;
+    std::locale    *  _locale;
 
   public: 
+
+    static int get_format (const string & format_str_);
 
     bool is_debug () const;
 
@@ -57,6 +86,22 @@ namespace brio {
     bool is_verbose () const;
 
     void set_verbose (bool);
+
+    bool is_reading () const;
+
+    bool is_writing () const;
+
+    bool is_format_qpba () const;
+
+    bool is_format_text () const;
+
+    int get_format () const;
+
+    void set_format (int format_);
+
+    void set_format (const string & format_str_);
+ 
+  public:
 
     virtual bool is_opened () const;
 
@@ -76,9 +121,11 @@ namespace brio {
 
     void unselect_store ();
 
-    base_io ();
+    base_io (int rw_);
 
-    base_io (bool verbose_, bool debug_);
+    base_io (int rw_, int format_, bool verbose_, bool debug_);
+
+    base_io (int rw_, bool verbose_, bool debug_);
 
     virtual ~base_io ();
 
@@ -97,8 +144,6 @@ namespace brio {
   protected:
 
     virtual void _at_open (const string & filename_) = 0;
-
-    virtual void _at_close () = 0;
 
     void _only_if_opened (const string & where_) const;
 

@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*- 
 /* writer.cc
- */
+ */ 
 
 #include <boost/filesystem.hpp>
 
@@ -80,17 +80,17 @@ namespace brio {
     __allow_mixed_types_in_stores = new_value_; 
     return;
   }
- 
+
   void writer::set_allow_automatic_store (bool new_value_)
   {
-    _only_if_not_opened ("set_allow_automatic_store");
+    _only_if_not_opened ("brio::writer::set_allow_automatic_store");
     __allow_automatic_store = new_value_; 
     return;
   }
 
   void writer::set_existing_file_protected (bool new_value_)
   {
-    _only_if_not_opened ("set_existing_file_protected");
+    _only_if_not_opened ("brio::writer::set_existing_file_protected");
     __existing_file_protected = new_value_; 
     return;
   }
@@ -106,14 +106,14 @@ namespace brio {
   }
  
   // ctor:
-  writer::writer () : base_io ()
+  writer::writer () : base_io (RW_WRITE)
   {
     if (base_io::g_devel)
       {
 	cerr << "DEVEL: " << "brio::writer::writer (1): "
 	     << "Entering..." << endl;
       }
-    _set_default ();
+    writer::_set_default ();
     if (base_io::g_devel)
       {
 	cerr << "DEVEL: " << "brio::writer::writer (1): "
@@ -123,16 +123,28 @@ namespace brio {
   }
  
   // ctor:
-  writer::writer (const string & filename_, bool verbose_, bool debug_) : base_io (verbose_, debug_)
+  writer::writer (const string & filename_, 
+		  bool verbose_, 
+		  bool debug_) 
+    : base_io (RW_WRITE)
   {
     if (base_io::g_devel)
       {
 	cerr << "DEVEL: " << "brio::writer::writer (2): "
 	     << "Entering..." << endl;
       }
-    _set_default ();
+    writer::_set_default ();
     set_debug (debug_);
     set_verbose (verbose_);
+    string ext = boost::filesystem::extension (filename_);
+    if (ext == store_info::TRIO_FILE_EXTENSION)
+      {
+	set_format (base_io::TEXT_LABEL);
+      }
+    else
+      {
+	set_format (base_io::QPBA_LABEL);
+      }
     open (filename_);
     if (base_io::g_devel)
       {
@@ -141,15 +153,50 @@ namespace brio {
       }
     return;
   }
+
+  // ctor:
+  writer::writer (const string & filename_, 
+		  const string & format_str_, 
+		  bool verbose_, 
+		  bool debug_) 
+    : base_io (RW_WRITE)
+  {
+    if (base_io::g_devel)
+      {
+	cerr << "DEVEL: " << "brio::writer::writer (3): "
+	     << "Entering..." << endl;
+      }
+    writer::_set_default ();
+    set_debug (debug_);
+    set_verbose (verbose_);
+    set_format (format_str_);
+    open (filename_);
+    if (base_io::g_devel)
+      {
+	cerr << "DEVEL: " << "brio::writer::writer (3): "
+	     << "Exiting." << endl;
+      }
+    return;
+  }
   
   // dtor:
   writer::~writer ()
   {
+    if (base_io::g_devel)
+      {
+	cerr << "DEVEL: " << "brio::writer::~writer: "
+	     << "Entering..." << endl;
+      }
     if (is_opened ()) 
       {
 	close ();
       }
     this->base_io::_reset ();
+    if (base_io::g_devel)
+      {
+	cerr << "DEVEL: " << "brio::writer::~writer: "
+	     << "Exiting." << endl;
+      }
     return;
   }
 
@@ -160,9 +207,9 @@ namespace brio {
   }
 
   void writer::tree_dump (std::ostream & out_, 
-			   const std::string & title_, 
-			   const std::string & indent_, 
-			   bool inherit_) const
+			  const std::string & title_, 
+			  const std::string & indent_, 
+			  bool inherit_) const
   {
     using namespace datatools::utils;
     std::string indent;
@@ -309,6 +356,13 @@ namespace brio {
 
   void writer::_at_open (const string & filename_)
   {
+    bool devel = false;
+    devel = is_debug ();
+    if (devel)
+      {
+	clog << "DEVEL: " << "brio::writer::_at_open: " 
+	     << "Entering..." << endl;
+      }
     _filename = filename_;
     datatools::utils::fetch_path_with_env (_filename);
     
@@ -326,10 +380,6 @@ namespace brio {
     string default_extension = store_info::DEFAULT_FILE_EXTENSION;
     static size_t test_extension_size 
       = store_info::DEFAULT_FILE_EXTENSION.length ();
-    /*
-    string extension = _filename.substr (_filename.length () - test_extension_size,
-					  test_extension_size);
-    */
     string extension = boost::filesystem::extension (_filename);
     if (is_debug ())
       {
@@ -338,12 +388,17 @@ namespace brio {
 	     << "Extension is `" << extension << "' !" 
 	     << endl;
      }
-    if (extension != store_info::DEFAULT_FILE_EXTENSION)
+    string expected_extension = store_info::DEFAULT_FILE_EXTENSION;
+    if (is_format_text ())
+      {
+	expected_extension = store_info::TRIO_FILE_EXTENSION;
+      }
+    if (extension != expected_extension)
       {
 	cerr << "WARNING: "
 	     << "brio::writer::_at_open: "
 	     << "Using extension different from `" 
-	     << store_info::DEFAULT_FILE_EXTENSION << "' is not recommended !" 
+	     << expected_extension << "' is not recommended !" 
 	     << endl;
       }
     string mode = "RECREATE";
@@ -374,18 +429,6 @@ namespace brio {
 	throw runtime_error (message.str ());	
       }
     _file->cd ();
-    return;
-  }
-
-  void writer::_at_close ()
-  {
-    if (_file != 0)
-      {
-	_file->cd ();
-	_file->Write ();
-	_file->Close ();
-      }
-    base_io::_reset ();
     return;
   }
   

@@ -26,6 +26,8 @@ int main (int argc_, char ** argv_)
       size_t data_count = 10;
       bool check_tag = true;
       int iarg = 1;
+      bool text = false;
+
       while (iarg < argc_)
         {
           string token = argv_[iarg];
@@ -79,7 +81,12 @@ int main (int argc_, char ** argv_)
       my_reader.set_check_serial_tag (check_tag);
 
       // Attach the brio reader to a ROOT file:
-      my_reader.open ("test_io.brio"); 
+      string filename = "test_io.brio";
+      if (text)
+	{
+	  filename = "test_io.trio";
+	}
+      my_reader.open (filename); 
 
       // Print reader's status: 
       my_reader.print_info (clog);

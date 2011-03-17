@@ -25,6 +25,8 @@ int main (int argc_, char ** argv_)
       bool verbose = false;
       bool dump = false;
       size_t data_count = 10;
+      bool text = false;
+     
       int iarg = 1;
       while (iarg < argc_)
         {
@@ -53,7 +55,11 @@ int main (int argc_, char ** argv_)
                  {
                    data_count = 100000;
                  }
- 	       else 
+ 	       else if ((option == "-t")) 
+		 {
+		  text = true; 
+		 }
+	       else 
                  { 
                     clog << "warning: ignoring option '" << option << "'!" << endl; 
                  }
@@ -69,7 +75,12 @@ int main (int argc_, char ** argv_)
       } 
 
       // Setup a brio reader:           
-      brio::reader my_reader ("test_io_2.brio", verbose, debug);
+      string filename = "test_io_2.brio";
+      if (text)
+	{
+	  filename = "test_io_2.trio";
+	}
+      brio::reader my_reader (filename, verbose, debug);
 
       // Loop on serialized records in this store:
       datatools::test::data_t data;

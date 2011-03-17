@@ -969,6 +969,7 @@ function do_untest ()
 
     pkgtools__msg_notice "Removing some test files..."   
     rm -f  ${the_base_dir}/test_*.brio
+    rm -f  ${the_base_dir}/test_*.trio
     rm -f  ${the_base_dir}/file.brio
     rm -f  ${the_base_dir}/file2.brio
 

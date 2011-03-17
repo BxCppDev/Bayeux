@@ -1,5 +1,5 @@
 // -*- mode: c++ ; -*- 
-/* reader.cc
+/* reader.cc 
  */
 
 #include <boost/filesystem.hpp>
@@ -33,37 +33,74 @@ namespace brio {
   }
  
   // ctor:
-  reader::reader () : base_io ()
+  reader::reader () : base_io (RW_READ)
   {
     if (base_io::g_devel)
       {
-	cerr << "DEVEL: " << "brio::reader::reader: "
+	cerr << "DEVEL: " << "brio::reader::reader(1): "
 	     << "Entering..." << endl;
       }
-    _set_default ();
+    reader::_set_default ();
     if (base_io::g_devel)
       {
-	cerr << "DEVEL: " << "brio::reader::reader: "
+	cerr << "DEVEL: " << "brio::reader::reader(1): "
 	     << "Exiting." << endl;
       }
     return;
   }
  
   // ctor:
-  reader::reader (const string & filename_, bool verbose_, bool debug_) : base_io ()
+  reader::reader (const string & filename_, 
+		  bool verbose_, 
+		  bool debug_)
+    : base_io (RW_READ)
   {
     if (base_io::g_devel)
       {
-	cerr << "DEVEL: " << "brio::reader::reader: "
+	cerr << "DEVEL: " << "brio::reader::reader(2): "
 	     << "Entering..." << endl;
       }
-    _set_default ();
+    reader::_set_default ();
     set_debug (debug_);
     set_verbose (verbose_);
+    string ext = boost::filesystem::extension (filename_);
+    if (ext == store_info::TRIO_FILE_EXTENSION)
+      {
+	set_format (base_io::TEXT_LABEL);
+      }
+    else
+      {
+	set_format (base_io::QPBA_LABEL);
+      }
     open (filename_);
     if (base_io::g_devel)
       {
-	cerr << "DEVEL: " << "brio::reader::reader: "
+	cerr << "DEVEL: " << "brio::reader::reader(2): "
+	     << "Exiting." << endl;
+      }
+    return;
+  }
+
+  // ctor:
+  reader::reader (const string & filename_, 
+		  const string & format_str_, 
+		  bool verbose_, 
+		  bool debug_)
+    : base_io (RW_READ)
+  {
+    if (base_io::g_devel)
+      {
+	cerr << "DEVEL: " << "brio::reader::reader(3): "
+	     << "Entering..." << endl;
+      }
+    reader::_set_default ();
+    set_debug (debug_);
+    set_verbose (verbose_);
+    set_format (format_str_);
+    open (filename_);
+    if (base_io::g_devel)
+      {
+	cerr << "DEVEL: " << "brio::reader::reader(3): "
 	     << "Exiting." << endl;
       }
     return;
@@ -174,7 +211,7 @@ namespace brio {
       }
     return false;
   }
-
+ 
 
   void reader::rewind_store (const string & label_)
   {
@@ -228,10 +265,6 @@ namespace brio {
     string default_extension = store_info::DEFAULT_FILE_EXTENSION;
     static size_t test_extension_size 
       = store_info::DEFAULT_FILE_EXTENSION.length ();
-    /*
-    string extension = _filename.substr (_filename.length () - test_extension_size,
-					  test_extension_size);
-    */
     string extension = boost::filesystem::extension (_filename);
     if (is_debug ())
       {
@@ -240,12 +273,17 @@ namespace brio {
 	     << "Extension is `" << extension << "' !" 
 	     << endl;
      }
-    if (extension != store_info::DEFAULT_FILE_EXTENSION)
+    string expected_extension = store_info::DEFAULT_FILE_EXTENSION;
+    if (is_format_text ())
+      {
+	expected_extension = store_info::TRIO_FILE_EXTENSION;
+      }
+    if (extension != expected_extension)
       {
 	cerr << "WARNING: "
 	     << "brio::reader::_at_open: "
 	     << "Using extension different from `" 
-	     << store_info::DEFAULT_FILE_EXTENSION 
+	     << expected_extension 
 	     << "' is not recommended !" 
 	     << endl;
       }
@@ -389,17 +427,6 @@ namespace brio {
 	clog << "DEVEL: " << "brio::reader::_at_open: " 
 	     << "Exiting." << endl;
       }
-    return;
-  }
-
-  void reader::_at_close ()
-  {
-    if (_file != 0)
-      {
-	_file->cd ();
-	_file->Close ();
-      }
-    base_io::_reset ();
     return;
   }
   

@@ -30,6 +30,7 @@ int main (int argc_, char ** argv_)
       size_t data_count = 10;
       bool pre_set_stores = true;
       long seed = 314159;
+      bool text = false;
 
       int iarg = 1;
       while (iarg < argc_)
@@ -66,7 +67,11 @@ int main (int argc_, char ** argv_)
                else if ((option == "-p")) 
                  {
                    pre_set_stores = false;
-                 } 
+                 }
+	       else if ((option == "-t")) 
+                 {
+		   text = true; 
+		 }
 	       else 
                  { 
                     clog << "warning: ignoring option '" << option << "'!" << endl; 
@@ -98,7 +103,17 @@ int main (int argc_, char ** argv_)
       my_writer.set_allow_automatic_store (true); 
 
       // Attach the brio writer to a ROOT file:
-      my_writer.open ("test_io.brio"); 
+      string filename = "test_io.brio";
+      if (text)
+	{
+	  clog << "notice: using '" << brio::writer::TEXT_LABEL << "' archive format !" << endl; 
+ 	  filename = "test_io.trio";
+	}
+      else
+	{
+	  clog << "notice: using '" << brio::writer::QPBA_LABEL << "' archive format !" << endl; 
+	}
+      my_writer.open (filename); 
 
       // Print writer's status: 
       my_writer.print_info (clog);
@@ -139,8 +154,8 @@ int main (int argc_, char ** argv_)
       infos.store_flag ("test");
       infos.store ("library", "brio");
       infos.store ("io_system", "ROOT");
-      infos.store ("archive_format", "portable_binary_archive");
-      infos.store ("author", string (getenv ("USER")));
+      infos.store ("archive_format", "portable archive");
+      infos.store ("author", "King Arthur");
       if (dump) 
 	{
 	  infos.tree_dump (clog, "Properties to be stored in the 'header' store: ");

@@ -25,6 +25,8 @@ int main (int argc_, char ** argv_)
       bool verbose = false;
       bool dump = false;
       size_t data_count = 10;
+      bool text = false;
+     
       int iarg = 1;
       while (iarg < argc_)
         {
@@ -53,6 +55,10 @@ int main (int argc_, char ** argv_)
                  {
                    data_count = 100000;
                  }
+	       else if ((option == "-t")) 
+		 {
+		  text = true; 
+		 }
  	       else 
                  { 
                     clog << "warning: ignoring option '" << option << "'!" << endl; 
@@ -69,7 +75,12 @@ int main (int argc_, char ** argv_)
       } 
 
       // Setup a brio reader:           
-      brio::reader my_reader ("test_io_2.brio", verbose, debug);
+      string filename = "test_io_2.brio";
+      if (text)
+	{
+	  filename = "test_io_2.trio";
+	}
+      brio::reader my_reader (filename, verbose, debug);
 
       // Loop on serialized records in this store:
       while (my_reader.has_next ())
@@ -81,7 +92,14 @@ int main (int argc_, char ** argv_)
 	      data.tree_dump (clog, "Data loaded from the *automatic* store: ");
 	    }
 	}
-  
+
+      {
+	my_reader.select_store ("dummy");
+	datatools::utils::properties infos;
+	my_reader.load (infos);
+	infos.tree_dump (clog, "Loaded infos");
+      }
+
       // Print reader's status:
       if (dump) my_reader.tree_dump (clog, "brio::reader: ");
 

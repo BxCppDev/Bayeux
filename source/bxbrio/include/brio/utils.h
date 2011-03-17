@@ -38,6 +38,8 @@ namespace brio {
   {
   public:
       
+    static const string BRIO_FILE_EXTENSION;
+    static const string TRIO_FILE_EXTENSION;
     static const string DEFAULT_FILE_EXTENSION;
     static const string DEFAULT_STORE_TITLE;
     static const string AUTOMATIC_STORE_LABEL;

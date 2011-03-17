@@ -31,6 +31,7 @@
 #include <TKey.h>
 
 #include <datatools/serialization/i_serializable.h>
+#include <boost/archive/text_iarchive.hpp>
 #include <boost/qpba/quasi_portable_binary_iarchive.hpp>
 #include <datatools/utils/utils.h>
 
@@ -50,8 +51,7 @@ namespace brio {
     bool __check_serial_tag;
     store_info * __automatic_store;
 
-  public: 
-
+  public:
 
     // setters:
 
@@ -92,7 +92,15 @@ namespace brio {
     reader ();
 
     // ctor:
-    reader (const string & filename_, bool verbose_ = false, bool debug_ = false);
+    reader (const string & filename_, 
+	    bool verbose_ = false, 
+	    bool debug_ = false);
+
+    // ctor:
+    reader (const string & filename_, 
+	    const string & format_str_,
+	    bool verbose_ = false, 
+	    bool debug_ = false);
 
     // dtor:
     virtual ~reader ();
@@ -164,8 +172,6 @@ namespace brio {
   protected:
 
     virtual void _at_open (const string & filename_);
-
-    virtual void _at_close ();
 
     template<class T>
     int _at_load (T & data_, 
@@ -283,8 +289,18 @@ namespace brio {
       // Deserialize from the archive:
       boost::iostreams::stream<boost::iostreams::array_source> input_stream (si.record.fDataBuffer.fArray, 
 									     si.record.fDataBuffer.fN);
-      boost::archive::quasi_portable_binary_iarchive ia (input_stream);   
-      ia >> data_;
+
+      if (is_format_qpba ())
+	{
+	  boost::archive::quasi_portable_binary_iarchive ia (input_stream);   
+	  ia >> data_;
+	}
+      if (is_format_text ())
+	{
+	  input_stream.imbue (*_locale);
+	  boost::archive::text_iarchive ia (input_stream);   
+	  ia >> data_;
+	}
       
       _current_store = &si;
       if (is_debug ())

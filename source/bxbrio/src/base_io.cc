@@ -3,12 +3,67 @@
  */
 
 #include <brio/detail/base_io.h>
+#include <boost/archive/codecvt_null.hpp>
 
 namespace brio {
 
   using namespace std;
   
   bool base_io::g_devel = false;
+
+  const string base_io::QPBA_LABEL = "qpba";
+  const string base_io::TEXT_LABEL = "text";
+   
+  // static : 
+  int base_io::get_format (const string & format_str_)
+  {
+    if (format_str_ == QPBA_LABEL) return FORMAT_QPBA;
+    if (format_str_ == TEXT_LABEL) return FORMAT_TEXT;
+    ostringstream message;
+    message << "brio::base_io::get_format: "
+	    << "Invalid format label '" << format_str_ << "' !";
+    throw logic_error (message.str ());
+  }
+
+  int base_io::get_format () const
+  {
+    return __format;
+  }
+
+  void base_io::set_format (int format_)
+  {
+    _only_if_not_opened ("brio::base_io::set_format");
+    __format = format_;
+    if (is_format_text ())
+      {
+	if (_default_locale == 0)
+	  {
+	    _default_locale = new std::locale (std::locale::classic (), 
+					       new boost::archive::codecvt_null<char>); 
+	  }
+	if (_locale == 0)
+	  {
+	    if (_rw == RW_READ)
+	      {
+		_locale = new std::locale (*_default_locale, 
+					   new boost::math::nonfinite_num_get<char>);
+	      }
+	    if (_rw == RW_WRITE)
+	      {
+		_locale = new std::locale (*_default_locale, 
+					   new boost::math::nonfinite_num_put<char>);
+	      }
+	  }
+
+      }
+    return;
+  }
+
+  void base_io::set_format (const string & format_str_)
+  {
+    set_format (base_io::get_format (format_str_));
+    return;
+  }
 
   void base_io::_only_if_not_opened (const string & where_) const
   {
@@ -64,18 +119,29 @@ namespace brio {
     return;
   }
 
+  bool base_io::is_reading () const
+  {
+    return _rw == RW_READ;
+  }
+
+  bool base_io::is_writing () const
+  {
+    return _rw == RW_WRITE;
+  }
+
+  bool base_io::is_format_qpba () const
+  {
+    return __format == FORMAT_QPBA;
+  }
+
+  bool base_io::is_format_text () const
+  {
+    return __format == FORMAT_TEXT;
+  }
+
   bool base_io::is_opened () const
   {
-    /*
-    cerr << "DEVEL: " << "brio::base_io::is_opened: "
-	 << "_file..." << hex << _file << dec << endl;
-    if (_file != 0)
-      {
-        cerr << "DEVEL: " << "brio::base_io::is_opened: "
-	     << "open=" << _file->IsOpen () << endl;
-      }
-    */
-    return _file != 0 && _file->IsOpen ();
+    return (_file != 0) && _file->IsOpen ();
   }
 
   void base_io::close ()
@@ -89,7 +155,13 @@ namespace brio {
       {
 	throw runtime_error ("brio::base_io::close: Not opened !");
       }
-    _at_close ();
+     if (_file != 0)
+      {
+ 	_file->cd ();
+	if (is_writing ()) _file->Write ();
+	_file->Close ();
+      }
+    base_io::_reset ();
     if (is_debug ())
       {
 	cerr << "DEBUG: " << "brio::base_io::close: "
@@ -108,6 +180,26 @@ namespace brio {
     if (is_opened ()) 
       {
 	throw runtime_error ("brio::base_io::open: Already opened !");
+      }
+    cerr << "DEVEL: " << "brio::base_io::open: "
+	 << "format = '" << __format << "'" << endl;
+    if (__format == FORMAT_UNDEFINED)
+      {
+	clog << "NOTICE: brio::base_io::open: "
+	     << "Guessing the archive format from the filename !" << endl; 
+	string file_extension = boost::filesystem::extension (filename_);
+	if (file_extension == store_info::TRIO_FILE_EXTENSION)
+	  {
+	    set_format (FORMAT_TEXT);
+	    clog << "NOTICE: brio::base_io::open: "
+		 << "Using '" << TEXT_LABEL << "' archive format !" << endl; 
+	  }
+	else
+	  {
+	    set_format (FORMAT_QPBA);
+	    clog << "NOTICE: brio::base_io::open: "
+		 << "Using '" << QPBA_LABEL << "' archive format !" << endl; 
+	  }
       }
     _at_open (filename_);
     if (is_debug ())
@@ -222,6 +314,7 @@ namespace brio {
   {
     __debug = false;
     __verbose = false;
+    __format = FORMAT_UNDEFINED;
     if (g_devel)
       {
 	__debug = true;
@@ -230,18 +323,24 @@ namespace brio {
     _file = 0;
     _filename= "";
     _current_store = 0;
+    _locale = 0;
+    _default_locale = 0;
     return;
   }
 
   // ctor:
-  base_io::base_io ()
+  base_io::base_io (int rw_)
   {
     if (g_devel)
       {
 	cerr << "DEVEL: " << "brio::base_io::base_io (1): "
 	     << "Entering..." << endl;
       }
+    _rw = rw_;
+    __format = FORMAT_UNDEFINED;
     base_io::_set_default ();
+    _default_locale = 0;
+    _locale = 0;
     if (g_devel)
       {
 	cerr << "DEVEL: " << "brio::base_io::base_io (1): "
@@ -251,16 +350,44 @@ namespace brio {
   }
 
   // ctor:
-  base_io::base_io (bool verbose_, bool debug_)
+  base_io::base_io (int rw_, bool verbose_, bool debug_)
   {
     if (g_devel)
       {
 	cerr << "DEVEL: " << "brio::base_io::base_io (2): "
 	     << "Entering..." << endl;
       }
+    _rw = rw_;
+    __format = FORMAT_UNDEFINED;
     base_io::_set_default ();
     __verbose = verbose_;
     __debug = debug_;
+    _default_locale = 0;
+    _locale = 0;
+    if (g_devel)
+      {
+	cerr << "DEVEL: " << "brio::base_io::base_io (2): "
+	     << "Exiting." << endl;
+      }
+    return;
+  }
+
+  // ctor:
+  base_io::base_io (int rw_, int format_ , bool verbose_, bool debug_)
+  {
+    if (g_devel)
+      {
+	cerr << "DEVEL: " << "brio::base_io::base_io (2): "
+	     << "Entering..." << endl;
+      }
+    _rw = rw_;
+    __format = FORMAT_UNDEFINED;
+    base_io::_set_default ();
+    __verbose = verbose_;
+    __debug = debug_;
+    _default_locale = 0;
+    _locale = 0;
+    set_format (format_);
     if (g_devel)
       {
 	cerr << "DEVEL: " << "brio::base_io::base_io (2): "
@@ -276,6 +403,16 @@ namespace brio {
       {
 	cerr << "DEVEL: " << "brio::base_io::~base_io: "
 	     << "Entering..." << endl;
+      }
+    if (_locale != 0)
+      {
+	delete _locale;
+	_locale = 0;
+      }
+    if (_default_locale != 0)
+      {
+	delete _default_locale;
+	_default_locale = 0;
       }
     base_io::_reset ();
     if (g_devel)
@@ -379,6 +516,10 @@ namespace brio {
 
     out_ << indent << i_tree_dumpable::tag << "Verbose : " << __verbose  << endl;
 
+    out_ << indent << i_tree_dumpable::tag << "Format: '" 
+	 << (__format == FORMAT_QPBA ? base_io::QPBA_LABEL : base_io::TEXT_LABEL) 
+	 << "'" << endl;
+
     out_ << indent << i_tree_dumpable::tag
 	 << "Opened: " << is_opened () << endl;
     if (is_opened ())
@@ -388,7 +529,7 @@ namespace brio {
 	     << "Filename: '" << _filename << "'" << endl;
 	out_ << indent << i_tree_dumpable::skip_tag 
 	     << i_tree_dumpable::last_tag 
-	     << "File: "<< hex << _file << dec << " (ROOT TFile)" << endl;
+	     << "File: " << hex << _file << dec << " (ROOT TFile)" << endl;
       }
  
     out_ << indent << i_tree_dumpable::tag << "Stores: ";

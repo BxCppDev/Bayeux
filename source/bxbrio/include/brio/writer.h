@@ -30,6 +30,7 @@
 #include <TFile.h>
 
 #include <datatools/serialization/i_serializable.h>
+#include <boost/archive/text_oarchive.hpp>
 #include <boost/qpba/quasi_portable_binary_oarchive.hpp>
 #include <datatools/utils/utils.h>
 
@@ -102,7 +103,16 @@ namespace brio {
     writer ();
 
     // ctor:
-    writer (const string & filename_, bool verbose_ = false, bool debug_ = false);
+    writer (const string & filename_, 
+	    bool verbose_ = false, 
+	    bool debug_ = false);
+
+
+    // ctor:
+    writer (const string & filename_, 
+	    const string & format_str_,
+	    bool verbose_ = false, 
+	    bool debug_ = false);
 
     // dtor:
     virtual ~writer ();
@@ -137,8 +147,6 @@ namespace brio {
 			     size_t buffer_size_);
 
     virtual void _at_open (const string & filename_);
-
-    virtual void _at_close ();
 
   public:
 
@@ -251,9 +259,18 @@ namespace brio {
       // Archiving is redirected to the buffer:
       namespace io = boost::iostreams;
       io::stream<io::back_insert_device<buffer_type> > output_stream (ptr_si->buffer);
-      boost::archive::quasi_portable_binary_oarchive oa (output_stream);
-      oa << data_;
-      output_stream.flush ();
+      if (is_format_qpba ())
+	{
+	  boost::archive::quasi_portable_binary_oarchive oa (output_stream);
+	  oa << data_;
+	}
+      if (is_format_text ())
+	{
+	  output_stream.imbue (*_locale);
+	  boost::archive::text_oarchive oa (output_stream);
+	  oa << data_;
+	}
+     output_stream.flush ();
 
       // Now the buffer contains the final sequence of bytes corresponding to 
       // the serialized output binary archive:
