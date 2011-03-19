@@ -9,12 +9,17 @@
 #include <datatools/test/my_data.h>
 #include <datatools/utils/properties.h>
 
-#include <datatools/serialization/i_serializable.h>
+/* high-level serialization code from the 'datatools' library 
+ * - released classes (properties)
+ * - test classes (data_t)
+ */
+#include <datatools/the_serializable.h> 
+#include <datatools/test/the_serializable.h> 
 
 #include <brio/test/data.h>
-#include <brio/writer.h>
+#include <brio/test/data.ipp> 
 
-typedef datatools::test::data_t data_type;
+#include <brio/writer.h>
 
 using namespace std;
 
@@ -95,7 +100,7 @@ int main (int argc_, char ** argv_)
       // Store `data' randomized objects within an *automatic* store;
       for (int i = 0; i < data_count; i++) 
 	{
-	  data_type data;
+	  datatools::test::data_t data;
 	  datatools::test::randomize_data (data);
 	  if (dump) 
 	    {

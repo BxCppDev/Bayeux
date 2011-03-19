@@ -22,13 +22,14 @@
 #include <list>
 #include <locale>
 
-#include <datatools/utils/i_tree_dump.h>
-#include <brio/utils.h>
-
 //#ifdef IOFACTORY_USE_FPU
 #include <boost/math/nonfinite_num_facets.hpp>
-#include <boost/filesystem.hpp>
 //#endif
+
+#include <boost/filesystem.hpp>
+
+#include <datatools/utils/i_tree_dump.h>
+#include <brio/utils.h>
 
 #include <TFile.h>
 
@@ -42,14 +43,16 @@ namespace brio {
 
     static bool g_devel;
 
-    static const string QPBA_LABEL;
+    static const string PBA_LABEL; // not implemented yet
     static const string TEXT_LABEL;
+    static const string QPBA_LABEL; // temporary solution
 
     enum format_t
       {
 	FORMAT_UNDEFINED = 0,
-	FORMAT_QPBA      = 1,
-	FORMAT_TEXT      = 2
+	FORMAT_PBA       = 1, // not implemented yet
+	FORMAT_TEXT      = 2,
+	FORMAT_QPBA      = 100 // temporary solution
       };
 
     enum rw_t
@@ -58,22 +61,6 @@ namespace brio {
 	RW_READ      = 1,
 	RW_WRITE     = 2
       };
-
-  private:
-   
-    bool __debug;
-    bool __verbose;
-    int  __format;
-
-  protected:
-    
-    string            _filename;
-    TFile *           _file;
-    store_info_dict_t _store_infos;
-    store_info *      _current_store;
-    int               _rw;
-    std::locale    *  _default_locale;
-    std::locale    *  _locale;
 
   public: 
 
@@ -91,7 +78,9 @@ namespace brio {
 
     bool is_writing () const;
 
-    bool is_format_qpba () const;
+    bool is_format_pba () const; // not implemented yet
+
+    bool is_format_qpba () const; // temporary solution
 
     bool is_format_text () const;
 
@@ -157,6 +146,21 @@ namespace brio {
 
     const store_info * _get_store_info (const string & label_ = "") const;
 
+  private:
+   
+    bool __debug;
+    bool __verbose;
+    int  __format;
+
+  protected:
+    
+    string            _filename;
+    TFile *           _file;
+    store_info_dict_t _store_infos;
+    store_info *      _current_store;
+    int               _rw;
+    std::locale    *  _default_locale;
+    std::locale    *  _locale;
 
   };
 

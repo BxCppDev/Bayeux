@@ -1,8 +1,14 @@
 #include <cstdlib>
 #include <iostream>
+
+#include <datatools/utils/properties.h>
+/* high-level serialization code from the 'datatools' library */
+#include <datatools/the_serializable.h> 
+
+#include <brio/test/data.h>
+#include <brio/test/data.ipp> 
+
 #include <brio/writer.h>
-#include <brio/test/data.h> /* a serializable sample class */
-#include <datatools/utils/properties.h> /* the (serializable) properties class from the datatools package */
 
 int main (void)
 { 

@@ -6,11 +6,15 @@
 #include <string>
 #include <exception>
 
+#include <boost/filesystem.hpp>
+
 #include <brio/writer.h>
 #include <brio/reader.h>
 #include <brio/test/data.h>
-
-#include <boost/filesystem.hpp>
+/* high-level serialization code from the 'brio' library 
+ * - test classes (brio::test::data)
+ */
+#include <brio/test/the_serializable.h>
 
 using namespace std;
 

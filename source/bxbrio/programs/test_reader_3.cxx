@@ -6,11 +6,16 @@
 #include <string>
 #include <exception>
 
-#include <brio/reader.h>
 #include <datatools/test/my_data.h>
 #include <datatools/utils/properties.h>
+/* high-level serialization code from the 'datatools' library 
+ * - released classes (properties)
+ * - test classes (data_t)
+ */
+#include <datatools/the_serializable.h> 
+#include <datatools/test/the_serializable.h> 
 
-#include <datatools/serialization/i_serializable.h>
+#include <brio/reader.h>
 
 using namespace std;
 

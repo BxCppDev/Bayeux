@@ -9,9 +9,16 @@
 #include <datatools/test/my_data.h>
 #include <datatools/utils/properties.h>
 
-#include <datatools/serialization/i_serializable.h>
+/* high-level serialization code from the 'datatools' library 
+ * - released classes (properties)
+ * - test classes (data_t)
+ */
+#include <datatools/the_serializable.h> 
+#include <datatools/test/the_serializable.h> 
 
 #include <brio/test/data.h>
+#include <brio/test/data.ipp> 
+
 #include <brio/writer.h>
 
 using namespace std;
@@ -260,6 +267,7 @@ int main (int argc_, char ** argv_)
       // Close the file.
       my_writer.close ();
   
+      clog << "The end." << endl;
     }
   catch (exception & x)
     { 

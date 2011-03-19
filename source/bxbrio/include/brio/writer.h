@@ -26,13 +26,15 @@
 #include <boost/iostreams/stream.hpp>
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/archive/text_oarchive.hpp>
+// future:
+//#include <boost/archive/portable_binary_oarchive.hpp>
+#include <boost/qpba/quasi_portable_binary_oarchive.hpp>
+
+#include <datatools/utils/utils.h>
+#include <datatools/serialization/i_serializable.h>
 
 #include <TFile.h>
-
-#include <datatools/serialization/i_serializable.h>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/qpba/quasi_portable_binary_oarchive.hpp>
-#include <datatools/utils/utils.h>
 
 #include <brio/utils.h>
 #include <brio/detail/base_io.h>
@@ -259,6 +261,15 @@ namespace brio {
       // Archiving is redirected to the buffer:
       namespace io = boost::iostreams;
       io::stream<io::back_insert_device<buffer_type> > output_stream (ptr_si->buffer);
+      /*
+      // 2011-03-19 FM: future 
+      if (is_format_pba ())
+	{
+	  boost::archive::portable_binary_oarchive oa (input_stream);   
+	  oa << data_;
+	}
+      */
+      // temporary solution :
       if (is_format_qpba ())
 	{
 	  boost::archive::quasi_portable_binary_oarchive oa (output_stream);

@@ -51,23 +51,6 @@ namespace brio {
 	 *  This member function returns the SERIAL_TAG above.
 	 */
 	virtual const std::string & get_serial_tag () const;
-
-      private:
-
-	bool     __bval; // A boolean 
-	int8_t   __cval; /* A signed char (8 bits) 
-			  * imples #include <boost/cstdint.hpp>
-			  */
-	int32_t  __ival; // A 32 bits signed integral  
-	float    __fval; // A 32 bits float  
-	double   __dval; // A 64 bits float
-	string   __sval; /** A STL string
-			  * implies #include <boost/serialization/string.hpp>
-			  */
-	std::vector<double> __dval_vec; /** a STL vector of 64 bits floats
-					 * implies #include <boost/serialization/vector.hpp>
-					 */
-      
 	
       public:
 
@@ -94,28 +77,30 @@ namespace brio {
 	 */
 
 	friend class boost::serialization::access; 
+	BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
 
-	template<class Archive>
-	  void serialize (Archive & ar_,       // an archive type (ASCII, XML or binary)
-			  const unsigned int version_)  // the version number (here not used)
-	  {
-	    ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
- 	    ar_ & boost::serialization::make_nvp ("bval", __bval);
-	    ar_ & boost::serialization::make_nvp ("cval", __cval);
-	    ar_ & boost::serialization::make_nvp ("ival", __ival);
-	    ar_ & boost::serialization::make_nvp ("fval", __fval);
-	    ar_ & boost::serialization::make_nvp ("dval", __dval);
-	    ar_ & boost::serialization::make_nvp ("sval", __sval);
-	    ar_ & boost::serialization::make_nvp ("dval_vec", __dval_vec);
-	    return;
-	  }
+      private:
+
+	bool     __bval; // A boolean 
+	int8_t   __cval; /* A signed char (8 bits) 
+			  * imples #include <boost/cstdint.hpp>
+			  */
+	int32_t  __ival; // A 32 bits signed integral  
+	float    __fval; // A 32 bits float  
+	double   __dval; // A 64 bits float
+	string   __sval; /** A STL string
+			  * implies #include <boost/serialization/string.hpp>
+			  */
+	std::vector<double> __dval_vec; /** a STL vector of 64 bits floats
+					 * implies #include <boost/serialization/vector.hpp>
+					 */
+      
+
       };
 
   } // namespace test 
 
 } // namespace brio 
-
-BOOST_CLASS_EXPORT_KEY2 (brio::test::data, "brio::test::data")
 
 #endif // __brio__test__data_h
 

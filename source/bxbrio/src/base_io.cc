@@ -11,12 +11,14 @@ namespace brio {
   
   bool base_io::g_devel = false;
 
+  const string base_io::PBA_LABEL  = "pba";
   const string base_io::QPBA_LABEL = "qpba";
   const string base_io::TEXT_LABEL = "text";
    
   // static : 
   int base_io::get_format (const string & format_str_)
   {
+    if (format_str_ == PBA_LABEL) return FORMAT_PBA;
     if (format_str_ == QPBA_LABEL) return FORMAT_QPBA;
     if (format_str_ == TEXT_LABEL) return FORMAT_TEXT;
     ostringstream message;
@@ -129,6 +131,11 @@ namespace brio {
     return _rw == RW_WRITE;
   }
 
+  bool base_io::is_format_pba () const
+  {
+    return __format == FORMAT_PBA;
+  }
+
   bool base_io::is_format_qpba () const
   {
     return __format == FORMAT_QPBA;
@@ -199,6 +206,11 @@ namespace brio {
 	    set_format (FORMAT_QPBA);
 	    clog << "NOTICE: brio::base_io::open: "
 		 << "Using '" << QPBA_LABEL << "' archive format !" << endl; 
+	    /*
+	    set_format (FORMAT_PBA);
+	    clog << "NOTICE: brio::base_io::open: "
+		 << "Using '" << PBA_LABEL << "' archive format !" << endl; 
+	    */
 	  }
       }
     _at_open (filename_);
@@ -516,6 +528,12 @@ namespace brio {
 
     out_ << indent << i_tree_dumpable::tag << "Verbose : " << __verbose  << endl;
 
+    /*
+   // 2011-03-19 FM: future
+    out_ << indent << i_tree_dumpable::tag << "Format: '" 
+	 << (__format == FORMAT_PBA ? base_io::PBA_LABEL : base_io::TEXT_LABEL) 
+	 << "'" << endl;
+    */
     out_ << indent << i_tree_dumpable::tag << "Format: '" 
 	 << (__format == FORMAT_QPBA ? base_io::QPBA_LABEL : base_io::TEXT_LABEL) 
 	 << "'" << endl;

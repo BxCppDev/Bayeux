@@ -1,7 +1,11 @@
 #include <iostream>
 
-#include <brio/reader.h>
 #include <brio/test/data.h> /* a serializable sample class */
+/* high-level serialization code from the 'brio' library 
+ * - test classes (brio::test::data)
+ */
+#include <brio/test/the_serializable.h>
+#include <brio/reader.h>
 
 int main (void)
 {
@@ -19,6 +23,7 @@ int main (void)
 	* traverses the store sequentially
 	*/
     }
+  my_reader.tree_dump (clog, "Reader : ");
   my_reader.rewind_store ();
   brio::test::data a_data;
   my_reader.load (a_data, 4);

@@ -26,14 +26,16 @@
 #include <boost/filesystem.hpp>
 #include <boost/iostreams/stream.hpp>
 #include <boost/iostreams/device/array.hpp>
+#include <boost/archive/text_iarchive.hpp>
+// future:
+//#include <boost/archive/portable_binary_iarchive.hpp>
+#include <boost/qpba/quasi_portable_binary_iarchive.hpp>
+
+#include <datatools/utils/utils.h>
+#include <datatools/serialization/i_serializable.h>
 
 #include <TFile.h>
 #include <TKey.h>
-
-#include <datatools/serialization/i_serializable.h>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/qpba/quasi_portable_binary_iarchive.hpp>
-#include <datatools/utils/utils.h>
 
 #include <brio/utils.h>
 #include <brio/detail/base_io.h>
@@ -289,7 +291,15 @@ namespace brio {
       // Deserialize from the archive:
       boost::iostreams::stream<boost::iostreams::array_source> input_stream (si.record.fDataBuffer.fArray, 
 									     si.record.fDataBuffer.fN);
-
+      /*
+      // 2011-03-19 FM: future 
+      if (is_format_pba ())
+	{
+	  boost::archive::portable_binary_iarchive ia (input_stream);   
+	  ia >> data_;
+	}
+      */
+      // temporary solution :
       if (is_format_qpba ())
 	{
 	  boost::archive::quasi_portable_binary_iarchive ia (input_stream);   

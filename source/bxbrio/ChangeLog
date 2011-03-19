@@ -6,5 +6,7 @@
 	* improve the brio::test::data class
         * GPL-ization
 	* version 1.1
-
+2011-03-19  Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* need datatools 3.0	
+	* adapt to the new serialization scheme of datatools
 

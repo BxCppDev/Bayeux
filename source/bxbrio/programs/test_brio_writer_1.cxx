@@ -1,7 +1,12 @@
 #include <cstdlib>
 #include <iostream>
-#include <brio/writer.h>
+
 #include <brio/test/data.h> /* a serializable sample class */
+/* high-level serialization code from the 'brio' library 
+ * - test classes (brio::test::data)
+ */
+#include <brio/test/the_serializable.h>
+#include <brio/writer.h>
 
 int main (void)
 { 
@@ -19,7 +24,6 @@ int main (void)
       a_data.dump (clog);
       my_writer.store (a_data);
     }
-
   my_writer.close (); // not mandatory (automatic at destruction)
 
   return 0;
