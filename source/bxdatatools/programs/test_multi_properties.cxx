@@ -8,7 +8,7 @@
 #include <vector>
 
 #include <datatools/utils/multi_properties.h>
-#include <datatools/serializables.h>
+#include <datatools/the_serializable.h>
 #include <datatools/serialization/io_factory.h>
 
 using namespace std;

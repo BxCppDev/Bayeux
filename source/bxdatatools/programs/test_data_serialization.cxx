@@ -21,8 +21,8 @@ int main (int argc_, char ** argv_)
     ofstream output_stream ("test_data_serialization.txt");
     boost::archive::text_oarchive oa (output_stream);
     
-    datatools::test::data my_data;
-    oa << my_data;
+    datatools::test::data a_data;
+    oa << a_data;
     output_stream.flush ();
   }
 
@@ -33,8 +33,8 @@ int main (int argc_, char ** argv_)
     ifstream input_stream ("test_data_serialization.txt");
     boost::archive::text_iarchive ia (input_stream);
     
-    datatools::test::data my_data;
-    ia >> my_data;
+    datatools::test::data a_data;
+    ia >> a_data;
   }
 
   return 0;

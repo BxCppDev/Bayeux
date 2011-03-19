@@ -35,5 +35,15 @@ This is the datatools package ChangeLog
 	'multi_properties' classes that inherit the abstract
 	'i_serializable' class
 	- add the 'things' class (with the new serial. mechanism too)
-	- new quasi_portable_binary_[i|o]archive classes
+	- new quasi_portable_binary_[i|o]archive classes (experimental)
 
+2011-03-19 : F. Mauger
+	- implement a new scheme for handling Boost/Serialization material
+	- separate "template serialize" implementation (*.ipp file) from declaration (*.h file)
+	- create new useful macros to ease the management of class export features and
+	template automatic instantiation
+	- add 'the_serializables.h' header to generate and manage dedicated code for serializable classes
+	in the package
+	- do not embed explicit serialization code in the shared  lib.
+	- use explicit serialization code only at the executable level (local static object)
+	- provide a lightweight and optional model for serialization

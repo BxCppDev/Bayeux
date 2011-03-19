@@ -40,19 +40,20 @@ int main (int argc_ , char ** argv_)
 	{
 	  size_t run_size = (size_t) (100000 * drand48 ());
 	  if (debug) cerr << "DEBUG: Run size = " << run_size << endl;
-	  CT.start ();
+	  CT.start (); // start the clock
 	  for (int i = 0; i < run_size; i++)
 	    {
 	      double t = drand48 () * 2 * M_PI;
 	      double x = cos (t);
 	      double y = sin (t);
 	    }
-	  CT.stop ();
+	  CT.stop (); // stop the clock
 	  cout << CT.get_last_elapsed_time () / CLHEP::second << endl;
 	}
 
       CT.tree_dump (clog, "Computing time: ", "NOTICE: ");
       CT.reset ();
+      clog << "Reset the 'computing time' tools !" << endl;
       CT.tree_dump (clog, "Computing time: ", "NOTICE: ");
 
     }
@@ -69,4 +70,4 @@ int main (int argc_ , char ** argv_)
   return error_code;
 }
 
-// end of test_dummy_datatools.cxx
+// end of test_time_tools.cxx

@@ -12,7 +12,7 @@
 #include <boost/cstdint.hpp>
 #include <boost/serialization/string.hpp>
 
-#include <datatools/serializables.h>
+#include <datatools/the_serializable.h>
 
 using namespace std;
 

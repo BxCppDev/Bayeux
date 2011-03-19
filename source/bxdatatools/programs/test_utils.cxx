@@ -14,11 +14,11 @@ int main (void)
   try
     {
       string path = "${HOME}/.ssh/config.${USER}";
+      clog << "Original path: '" << path << "'" << endl;
       string expanded = datatools::utils::expand_path (path);
       datatools::utils::fetch_path_with_env (path);
-      clog << expanded << endl;
-      clog << path << endl;
-
+      clog << "Derived expanded path : '" << expanded << "'" << endl;
+      clog << "Expanded path         : '" << path << "'" << endl;
     }
   catch (exception & x)
     {

@@ -6,14 +6,28 @@
 #include <string>
 #include <exception>
 
-#include <datatools/serialization/io_factory.h>
 
-#include <datatools/utils/properties.h>
+#include <datatools/serialization/i_serializable.h>
+//#include <datatools/serialization/archives_instantiation.h>
 
 // The serializable 'things' container :
 #include <datatools/utils/things.h>
+// The serializable 'properties' container :
+#include <datatools/utils/properties.h>
+
+/* Brute force: load all instantiation code for serializable classes in datatools:
+ * - properties
+ * - multi_properties
+ * - things...
+ *
+ */
+#include <datatools/the_serializable.h>
+
+// the datatools writer and reader classes:
+#include <datatools/serialization/io_factory.h>
  
 using namespace std;
+
 
 /*** the serializable A sample class ***/
 
@@ -23,21 +37,17 @@ public:
 
 	static const string SERIAL_TAG;
 
-private :
-
-  double m_value;
-
 public:
   
-  void set_value (double val_)
+  void set_value (double v)
   {
-    m_value = val_;
+    value_ = v;
     return;
   }
 
 	double get_value () const
 	{
-		return m_value;
+		return value_;
 	}
 
   A ();
@@ -52,35 +62,36 @@ public:
 
 private:
   friend class boost::serialization::access;
-  template<class Archive>
-  void serialize (Archive & ar_, const unsigned int file_version_);
+	BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
+
+private :
+
+  double value_;
 
 };
- 
-BOOST_CLASS_EXPORT_KEY2 (A, "test_things::A")
   
 const string A::SERIAL_TAG = "test_things::A";
-
+  
 template<class Archive>
-void A::serialize (Archive & ar_, const unsigned int file_version_)
+void A::serialize (Archive & ar, const unsigned int file_version)
 {
-	ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-	ar_ & boost::serialization::make_nvp ("value", m_value);
+	ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
+	ar & boost::serialization::make_nvp ("value", value_);
 	return;
 }
 
-void A::dump (ostream & out_) const
+void A::dump (ostream & out) const
 {
-  out_ << "A::dump : value = " << m_value << endl;
+  out << "A::dump : value = " << value_ << endl;
   return;
 }
 
-A::A () : m_value (0.0) 
+A::A () : value_ (0.0) 
 {
 	return;
 }
  
-A::A (double v_) : m_value (v_) 
+A::A (double v) : value_ (v) 
 {
 	return;
 }
@@ -94,11 +105,6 @@ const string & A::get_serial_tag () const
   return A::SERIAL_TAG;
 }
 
-/*** use some macros to implement serialization stuff for class A ***/
-#include <datatools/serialization/archives_instantiation.h>
-BOOST_CLASS_EXPORT_IMPLEMENT (A)
-DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(A)
-
 /*** serializable B  sample class ***/
 
 class B : public datatools::serialization::i_serializable
@@ -107,29 +113,25 @@ public:
 
 	static const string SERIAL_TAG;
 
-private:
-
-  int32_t m_index;
-
 public:
   
-  void set_index (int idx_)
+  void set_index (int i)
   {
-    m_index = idx_;
+    index_ = i;
     return;
   }
 
 	int32_t get_index () const
 	{
-		return m_index;
+		return index_;
 	}
 
-  B () : m_index (0)
+  B () : index_ (0)
   {
 		return;
   }
 
-  B (int i_) : m_index (i_)
+  B (int i) : index_ (i)
   {
 		return;
   }
@@ -145,41 +147,52 @@ public:
 private:
 
   friend class boost::serialization::access;
+	BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
 
-  template<class Archive>
-  void serialize (Archive & ar_, const unsigned int file_version_);
+private:
+
+  int32_t index_;
 
 };
 
-BOOST_CLASS_EXPORT_KEY2 (B, "test_things::B")
-
-const string B::SERIAL_TAG = "test_things::B";
-
 template<class Archive>
-void B::serialize (Archive & ar_, const unsigned int file_version_)
+void B::serialize (Archive & ar, const unsigned int file_version)
 {
-	ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-	ar_ & boost::serialization::make_nvp ("index", m_index);
+	ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
+	ar & boost::serialization::make_nvp ("index", index_);
 	return;
 }
+
+const string B::SERIAL_TAG = "test_things::B";
 
 const string & B::get_serial_tag () const
 {
   return B::SERIAL_TAG;
 }
 
-void B::dump (ostream & out_) const
+void B::dump (ostream & out) const
 {
-  out_ << "B::dump : index = " << m_index << endl;
+  out << "B::dump : index = " << index_ << endl;
   return;
 }
 
+/***********************************************************
+ * Boost/Serialization export/implement/instantiation code *
+ * for the A and B classes                                 *
+ ***********************************************************/
+
+/*** use some macros to implement serialization stuff for class A ***/
+BOOST_CLASS_EXPORT_KEY2 (A, "test_things::A")
+BOOST_CLASS_EXPORT_IMPLEMENT (A)
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(A)
+
 /*** use some macros to implement serialization stuff for class B ***/
+BOOST_CLASS_EXPORT_KEY2 (B, "test_things::B")
 BOOST_CLASS_EXPORT_IMPLEMENT (B)
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(B)
 
-/*** main ***/
 
+/*** main ***/
 int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;

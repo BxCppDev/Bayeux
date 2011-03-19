@@ -8,8 +8,13 @@
 
 #include <boost/filesystem.hpp>
 
+#include <boost/serialization/export.hpp>
+
+#include <datatools/serialization/utils.h>
+#include <datatools/serialization/archives_instantiation.h>
 #include <datatools/serialization/io_factory.h>
 #include <datatools/serialization/i_serializable.h>
+#include <datatools/serialization/i_serializable.ipp>
 #include <datatools/serialization/safe_serial.h>
 
 using namespace std;
@@ -25,15 +30,11 @@ public:
 
 private:
   friend class boost::serialization::access; 
-  template<class Archive>
-  void serialize (Archive & ar_, 
-		  const unsigned int version_);
+  BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
 
 };
 
 const string data_t::SERIAL_TAG = "data_t";
-
-BOOST_CLASS_EXPORT_KEY2 (data_t, "data_t")
 
 const string & data_t::get_serial_tag () const
 {
@@ -49,7 +50,7 @@ void data_t::serialize (Archive & ar_,
   return;
 }
 
-#include <datatools/serialization/archives_instantiation.h>
+BOOST_CLASS_EXPORT_KEY2 (data_t, "data_t")
 BOOST_CLASS_EXPORT_IMPLEMENT (data_t)
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(data_t)
 

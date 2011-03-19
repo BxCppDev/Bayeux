@@ -2,7 +2,8 @@
 /* 
  * Description :
  *
- *  Define a macro to implement serialization method for all supporte archives.
+ * Define some macro to instantiate serialization methods for all archives
+ * supported by datatools.
  *
  * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
  * 

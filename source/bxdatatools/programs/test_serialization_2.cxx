@@ -9,7 +9,13 @@
 #include <boost/filesystem.hpp>
 
 #include <datatools/serialization/io_factory.h>
+#include <datatools/serialization/safe_serial.h>
+
+// a serializable test class :
 #include <datatools/test/my_data.h>
+
+// activate serialization code (from the test section) :
+#include <datatools/test/the_serializable.h>
 
 using namespace std;
 

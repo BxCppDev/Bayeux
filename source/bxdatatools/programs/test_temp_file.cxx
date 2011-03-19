@@ -3,7 +3,6 @@
 
 #include <cstdlib>
 #include <iostream>
-#include <string>
 #include <exception>
 
 #include <datatools/utils/temporary_files.h>
@@ -24,8 +23,8 @@ int main (int argc_ , char ** argv_)
 	{
 	  string arg = argv_[iarg];
 
-	  if (arg == "-d" || arg == "--debug") debug =  true;
-	  if (arg == "-D" || arg == "--no-delete") temp_file_delete =  false;
+	  if (arg == "-d" || arg == "--debug") debug = true;
+	  if (arg == "-D" || arg == "--no-delete") temp_file_delete = false;
 
 	  iarg++;
 	}
@@ -69,4 +68,4 @@ int main (int argc_ , char ** argv_)
   return error_code;
 }
 
-// end of test_dummy_datatools.cxx
+// end of test_temp_file.cxx

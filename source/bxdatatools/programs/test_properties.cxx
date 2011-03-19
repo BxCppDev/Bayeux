@@ -7,7 +7,7 @@
 #include <exception>
 
 #include <datatools/utils/properties.h>
-#include <datatools/serializables.h>
+#include <datatools/the_serializable.h>
 #include <datatools/serialization/io_factory.h>
 
 using namespace std;
@@ -40,55 +40,55 @@ int main (int argc_, char ** argv_)
 
       clog << "========================================" << endl;
 
-      du::properties::data my_data ('I', 3);
-      my_data.dump (clog);
+      du::properties::data a_data ('I', 3);
+      a_data.dump (clog);
       clog << endl;
 
-      if (int error = my_data.set_value (666)) 
+      if (int error = a_data.set_value (666)) 
 	{
 	  clog << "1 - du::properties::data::set_value: " 
 	       << du::properties::data::get_error_message (error) 
 	       << "!" << endl;
 	}
-      my_data.lock ();
-      my_data.dump (clog);
+      a_data.lock ();
+      a_data.dump (clog);
       clog << endl;
 
-      if (int error = my_data.set_value (666, 2)) 
+      if (int error = a_data.set_value (666, 2)) 
 	{
 	  clog << "2 - du::properties::data::set_value: " 
 	       << du::properties::data::get_error_message (error) 
 	       << "!" << endl;
 	}
-      my_data.unlock ();
-      my_data.dump (clog);
+      a_data.unlock ();
+      a_data.dump (clog);
       clog << endl;
 
-      if (int error = my_data.set_value (666, 2)) 
+      if (int error = a_data.set_value (666, 2)) 
 	{
 	  clog << "3 - du::properties::data::set_value: " 
 	       << du::properties::data::get_error_message (error)
 	       << "!" << endl;
 	}
-      my_data.dump (clog);
+      a_data.dump (clog);
       clog << endl;
     
-      if (int error = my_data.set_value (666, 8)) 
+      if (int error = a_data.set_value (666, 8)) 
 	{
 	  clog << "4 - du::properties::data::set_value: " 
 	       << du::properties::data::get_error_message (error) 
 	       << "!" << endl;
 	}
-      my_data.dump (clog);
+      a_data.dump (clog);
       clog << endl;
     
-      if (int error = my_data.set_value ("bad value"))
+      if (int error = a_data.set_value ("bad value"))
 	{
 	  clog << "5 - du::properties::data::set_value: " 
 	       << du::properties::data::get_error_message (error) 
 	       << "!" << endl;
 	}
-      my_data.dump (clog);
+      a_data.dump (clog);
       clog << endl;
 
       clog << "========================================" << endl;

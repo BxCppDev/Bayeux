@@ -9,7 +9,7 @@
 
 #include <datatools/event/event_id.h>
 #include <datatools/serialization/io_factory.h>
-#include <datatools/serializables.h>
+#include <datatools/the_serializable.h>
 
 using namespace std;
 

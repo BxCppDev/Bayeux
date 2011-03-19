@@ -11,7 +11,7 @@
 
 #include <datatools/event/basic_event.h>
 
-#include <datatools/serializables.h>
+#include <datatools/the_serializable.h>
 #include <datatools/serialization/io_factory.h>
 
 using namespace std;

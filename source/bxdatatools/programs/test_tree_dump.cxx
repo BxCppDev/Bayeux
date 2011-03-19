@@ -10,10 +10,6 @@
 
 struct data_t : public datatools::utils::i_tree_dumpable
 {
-  int i;
-  double x;
-  std::string name;
-
   data_t () : i (0), x (3.145), name ("Hello, world!") {}
 
   virtual ~data_t () {};
@@ -36,13 +32,18 @@ struct data_t : public datatools::utils::i_tree_dumpable
     out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
 	 << "name = "  
 	 << name << std::endl; 
+    return;
   }
-  
+
+  // public attributes:
+  int i;
+  double x;
+  std::string name;
+ 
 };
 
 struct more_data_t : public data_t
 {
-  int log;
   more_data_t () : data_t (), log (1) {}
   virtual ~more_data_t () {};
   virtual void tree_dump (std::ostream & out_         = std::cerr, 
@@ -55,8 +56,11 @@ struct more_data_t : public data_t
     data_t::tree_dump (out_, title_, indent_, true);
     out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
 	 << "log  = "  << log << std::endl;
+    return;
   }
 
+  // public attribute:
+  int log;
 };
 
 int main (int argc_, char ** argv_)
@@ -79,13 +83,13 @@ int main (int argc_, char ** argv_)
 	  iarg++;
 	}
     
-      data_t my_data;
+      data_t a_data;
     
-      my_data.tree_dump (std::cout, "my data", ">>> ");
+      a_data.tree_dump (std::cout, "my data", ">>> ");
     
-      more_data_t my_data2;
+      more_data_t a_data2;
     
-      my_data2.tree_dump (std::cout, "my data (2)", ">>> ");
+      a_data2.tree_dump (std::cout, "my data (2)", ">>> ");
 
     }
   catch (std::exception & x)

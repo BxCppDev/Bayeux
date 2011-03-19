@@ -8,9 +8,9 @@
  
 #include <boost/filesystem.hpp>
 
+#include <datatools/serialization/io_factory.h>
+#include <datatools/serialization/safe_serial.h>
 #include <boost/serialization/bitset.hpp>
-
-#include <datatools/serialization/serialization.h>
 
 using namespace std;
 

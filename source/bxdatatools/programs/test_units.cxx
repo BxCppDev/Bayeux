@@ -87,9 +87,18 @@ int main (int argc_, char ** argv_)
       cout << "Pressure is : " 
 	   << pressure / CLHEP::atmosphere << " atm" << endl;
  
-      // this fails:
-      double fail = datatools::utils::units::get_value_with_unit ("3.14159 dummy");
- 
+      try
+	{
+	  // this fails:
+	  double fail = datatools::utils::units::get_value_with_unit ("3.14159 dummy");
+	}
+      catch (exception & x)
+	{
+	  clog << "As expected, the 'dummy' symbol is not a known unit !" << endl;
+	}
+
+      clog << "The end." << endl;
+      
     }
   catch (exception & x)
     {
