@@ -53,17 +53,21 @@ public:
 private:
   friend class boost::serialization::access;
   template<class Archive>
-  void serialize (Archive & ar_, const unsigned int file_version_)
-  {
-		ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-    ar_ & boost::serialization::make_nvp ("value", m_value);
-    return;
-  }
+  void serialize (Archive & ar_, const unsigned int file_version_);
+
 };
  
 BOOST_CLASS_EXPORT_KEY2 (A, "test_things::A")
   
 const string A::SERIAL_TAG = "test_things::A";
+  
+template<class Archive>
+void A::serialize (Archive & ar_, const unsigned int file_version_)
+{
+	ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
+	ar_ & boost::serialization::make_nvp ("value", m_value);
+	return;
+}
 
 void A::dump (ostream & out_) const
 {
@@ -89,6 +93,11 @@ const string & A::get_serial_tag () const
 {
   return A::SERIAL_TAG;
 }
+
+/*** use some macros to implement serialization stuff for class A ***/
+#include <datatools/serialization/archives_instantiation.h>
+BOOST_CLASS_EXPORT_IMPLEMENT (A)
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(A)
 
 /*** serializable B  sample class ***/
 
@@ -138,16 +147,19 @@ private:
   friend class boost::serialization::access;
 
   template<class Archive>
-  void serialize (Archive & ar_, const unsigned int file_version_)
-  {
-		ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-    ar_ & boost::serialization::make_nvp ("index", m_index);
-    return;
-  }
+  void serialize (Archive & ar_, const unsigned int file_version_);
 
 };
 
 BOOST_CLASS_EXPORT_KEY2 (B, "test_things::B")
+
+template<class Archive>
+void B::serialize (Archive & ar_, const unsigned int file_version_)
+{
+	ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
+	ar_ & boost::serialization::make_nvp ("index", m_index);
+	return;
+}
 
 const string B::SERIAL_TAG = "test_things::B";
 
@@ -162,10 +174,9 @@ void B::dump (ostream & out_) const
   return;
 }
 
-/*** some macro to implement serialization stuff for class A and B ***/
-
-BOOST_CLASS_EXPORT_IMPLEMENT (A)
+/*** use some macros to implement serialization stuff for class B ***/
 BOOST_CLASS_EXPORT_IMPLEMENT (B)
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(B)
 
 /*** main ***/
 

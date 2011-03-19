@@ -25,10 +25,8 @@
 #include <string>
 
 #include <boost/serialization/access.hpp>
-#include <boost/serialization/export.hpp>
-#include <boost/serialization/assume_abstract.hpp>
 
-#include <datatools/serialization/archives_list.h>
+#include <datatools/serialization/utils.h>
 
 namespace datatools {
   
@@ -43,13 +41,8 @@ namespace datatools {
     private:
       
       friend class boost::serialization::access;
-      
-      template<class Archive>
-	void serialize (Archive & ar_, const unsigned int file_version_)
-	{
-	  return;
-	}
-      
+      BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
+
     };
     
   } // end of namespace serialization 
@@ -60,10 +53,8 @@ namespace datatools {
   boost::serialization::make_nvp(							\
     "datatools__serialization__i_serializable",                                         \
     boost::serialization::base_object<datatools::serialization::i_serializable >(*this) \
-  )
+  )                                                                                     \
 /**/
-
-BOOST_SERIALIZATION_ASSUME_ABSTRACT(datatools::serialization::i_serializable)
 
 #endif // __datatools__serialization__i_serializable_h
 

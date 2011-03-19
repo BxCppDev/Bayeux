@@ -1,8 +1,11 @@
 // -*- mode: c++; -*-
 /** my_data.h 
  *
- * A serializable test class
+ * Two serializable test classes
  * 
+ * Use recommandations from:
+ *   http://www.boost.org/doc/libs/1_46_1/libs/serialization/doc/index.html
+ *
  */
 
 #ifndef __datatools__test__my_data_h
@@ -13,13 +16,7 @@
 #include <vector>
 
 #include <boost/cstdint.hpp>
-
-#include <boost/serialization/base_object.hpp>
-#include <boost/serialization/export.hpp>
 #include <boost/serialization/access.hpp>
-#include <boost/serialization/nvp.hpp>
-#include <boost/serialization/vector.hpp>
-#include <boost/serialization/string.hpp>
 
 #include <datatools/serialization/i_serializable.h>
 #include <datatools/utils/i_tree_dump.h>
@@ -66,18 +63,7 @@ namespace datatools {
     private:
 
       friend class boost::serialization::access; 
-
-      template<class Archive>
-      void serialize (Archive            & ar_, 
-		      const unsigned int   version_)
-      {
-	ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-	ar_ & boost::serialization::make_nvp ("flags", __flags);
-	ar_ & boost::serialization::make_nvp ("ival",  __ival);
-	ar_ & boost::serialization::make_nvp ("dval",  __dval);
-	ar_ & boost::serialization::make_nvp ("dvals", __dvals);
-	return;
-      }
+      BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
 
     public:
 
@@ -115,14 +101,7 @@ namespace datatools {
 
     private:
       friend class boost::serialization::access; 
-      template<class Archive>
-      void serialize (Archive &          ar_, 
-		      const unsigned int version_)
-      {
-	ar_ & BOOST_SERIALIZATION_BASE_OBJECT_NVP (data_t);
-	ar_ & boost::serialization::make_nvp ("name", __name);
-	return;
-      }
+      BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
 
     public:
 
@@ -140,10 +119,6 @@ namespace datatools {
   } // namespace test 
 
 } // namespace datatools 
-
-BOOST_CLASS_EXPORT_KEY2 (datatools::test::data_t, "datatools::test::data_t")
-
-BOOST_CLASS_EXPORT_KEY2 (datatools::test::more_data_t, "datatools::test::more_data_t")
 
 #endif // __datatools__test__my_data_h
 

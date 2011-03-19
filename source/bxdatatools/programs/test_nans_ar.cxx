@@ -7,8 +7,10 @@
 #include <stdexcept>
 
 #include <boost/filesystem.hpp>
+//#include <boost/serialization/export.hpp>
 
 #include <datatools/serialization/i_serializable.h>
+#include <datatools/serialization/i_serializable.ipp>
 #include <datatools/serialization/io_factory.h>
 #include <datatools/serialization/safe_serial.h>
 
@@ -131,8 +133,6 @@ ostream & operator<< (ostream & out_, const data_t & d_)
 
 const string data_t::SERIAL_TAG = "test_nans::data_t";
 
-BOOST_CLASS_EXPORT_KEY2(data_t, "test_nans::data_t")
-BOOST_CLASS_EXPORT_IMPLEMENT(data_t)
 
 const string & data_t::get_serial_tag () const
 {
@@ -148,6 +148,10 @@ void test ()
 		
   return;
 }
+
+// BOOST_CLASS_EXPORT_KEY2(data_t, "test_nans::data_t")
+// BOOST_CLASS_EXPORT_IMPLEMENT(data_t)
+// DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(data_t)
 
 int main (int argc_ , char ** argv_) 
 {

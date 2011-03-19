@@ -20,8 +20,6 @@
  */ 
  
 #include <datatools/utils/things.h>
- 
-BOOST_CLASS_EXPORT_IMPLEMENT(datatools::utils::things) 
 
 namespace datatools {
 
@@ -436,11 +434,11 @@ namespace datatools {
 				}
       return;
     }
-    
+
   }  // end of namespace utils
 
 }  // end of namespace datatools
-
+ 
 // end of things.cc
 /*
 ** Local Variables: --

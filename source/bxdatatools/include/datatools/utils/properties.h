@@ -49,21 +49,9 @@
 #include <functional>
 
 #include <boost/cstdint.hpp>
-
-#include <boost/archive/archive_exception.hpp>
-#include <boost/serialization/base_object.hpp>
-#include <boost/serialization/export.hpp>
 #include <boost/serialization/access.hpp>
-#include <boost/serialization/nvp.hpp>
-#include <boost/serialization/version.hpp>
-
-#include <boost/serialization/map.hpp>
-#include <boost/serialization/list.hpp>
-#include <boost/serialization/vector.hpp> // missing header: fixed 2010-03-16
-#include <boost/serialization/string.hpp>
 
 #include <datatools/serialization/i_serializable.h>
-
 #include <datatools/utils/i_tree_dump.h>
 #include <datatools/utils/i_clear.h>
 
@@ -282,42 +270,9 @@ namespace datatools {
 
 	//! Boost.Serialization hook.
 	friend class boost::serialization::access; 
-
-	//! Templatized serialization method for the Boost.Serialization library.
-	template<class Archive>
-	void serialize (Archive & ar_, const unsigned int   version_)
-	{
-	  /* 2011-03-09 : here we don't use the following macro
-	   *
-	   * ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-	   */
-	  ar_ & boost::serialization::make_nvp ("description", __description);
-	  ar_ & boost::serialization::make_nvp ("flags",       __flags);
-	  if (is_boolean ())
-	    {
-	      ar_ & boost::serialization::make_nvp ("boolean_values",
-						    __boolean_values);
-	    }
-	  if (is_integer ())
-	    {
-	      ar_ & boost::serialization::make_nvp ("integer_values",
-						    __integer_values);
-	    }
-	  if (is_real ())
-	    {
-	      ar_ & boost::serialization::make_nvp ("real_values", 
-						    __real_values);
-	    }
-	  if (is_string ())
-	    {
-	      ar_ & boost::serialization::make_nvp ("string_values",
-						    __string_values);
-	    }
-	  return;
-	}
+        BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
 
       };
-
 
     public: 
 
@@ -907,31 +862,17 @@ namespace datatools {
     private:
 
       friend class boost::serialization::access; 
+      BOOST_SERIALIZATION_SPLIT_MEMBER_SERIALIZE_DECLARATIONS()
+
+      /*
+      template<class Archive>
+      void save (Archive & ar_, const unsigned int version_) const;
 
       template<class Archive>
-      void save (Archive & ar_, const unsigned int version_) const
-      {
-	ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-	ar_ & boost::serialization::make_nvp ("description", __description);
-	ar_ & boost::serialization::make_nvp ("properties",  __props);	
-	return;
-      }
+      void load (Archive & ar_ , const unsigned int version_);
 
-      template<class Archive>
-      void load (Archive & ar_ , const unsigned int version_)
-      {
-	if (version_ >= 1)
-	  {
-	    /* from version 1 we inherit explicitely from the
-	     * 'datatools::serialization::i_serializable' abstract class
-	     */
-	    ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-	  }
-	ar_ & boost::serialization::make_nvp ("description", __description);
-	ar_ & boost::serialization::make_nvp ("properties",  __props);
-	return;
-      }
-      BOOST_SERIALIZATION_SPLIT_MEMBER()
+      BOOST_SERIALIZATION_SPLIT_MEMBER_HEADER()
+      */
 
       /** 2003-03-11 FM: old version of the serialize method :
 
@@ -1030,10 +971,6 @@ namespace datatools {
   } // end of namespace utils 
 
 } // end of namespace datatools 
-
-BOOST_CLASS_VERSION(datatools::utils::properties, 1)
-
-BOOST_CLASS_EXPORT_KEY2(datatools::utils::properties, "datatools::utils::properties")
 
 #endif // __datatools__utils__properties_h
 

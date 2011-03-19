@@ -6,9 +6,9 @@
 #include <string>
 #include <exception>
 
-#include <datatools/serialization/io_factory.h>
-#include <datatools/serialization/serialization.h>
 #include <datatools/utils/properties.h>
+#include <datatools/serializables.h>
+#include <datatools/serialization/io_factory.h>
 
 using namespace std;
 

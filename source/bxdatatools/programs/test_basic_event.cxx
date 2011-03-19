@@ -7,9 +7,12 @@
 #include <stdexcept>
 #include <vector>
 
-#include <datatools/event/basic_event.h>
-#include <datatools/serialization/io_factory.h>
 #include <boost/serialization/vector.hpp>
+
+#include <datatools/event/basic_event.h>
+
+#include <datatools/serializables.h>
+#include <datatools/serialization/io_factory.h>
 
 using namespace std;
 

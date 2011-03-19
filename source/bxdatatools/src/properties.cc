@@ -7,8 +7,6 @@
 #include <boost/archive/polymorphic_oarchive.hpp>
 #include <boost/archive/polymorphic_iarchive.hpp>
 
-BOOST_CLASS_EXPORT_IMPLEMENT(datatools::utils::properties) 
-
 namespace datatools {
 
   namespace utils {
@@ -3106,7 +3104,7 @@ namespace datatools {
 	}
       return;
     }
-    
+
   } // end of namespace utils 
 
 } // end of namespace datatools 

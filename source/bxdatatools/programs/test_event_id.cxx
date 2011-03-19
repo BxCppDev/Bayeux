@@ -5,9 +5,11 @@
 #include <iostream>
 #include <string>
 #include <stdexcept>
+#include <list>
 
-#include <datatools/serialization/io_factory.h>
 #include <datatools/event/event_id.h>
+#include <datatools/serialization/io_factory.h>
+#include <datatools/serializables.h>
 
 using namespace std;
 
@@ -44,25 +46,30 @@ int main (int argc_ , char ** argv_)
       clog << "Event id = " << my_id << endl;
       my_id.tree_dump (clog, "datatools::event::event_id:");
   
-      string filename = "test_event_id.xml";
+       string filename = "test_event_id.xml";
       {
+	list<datatools::event::event_id> ids;
 	datatools::serialization::data_writer writer(filename);
 	
 	for (int i = 0; i < 4; i++) 
 	  {
-	    my_id.set (666, i);
-	    writer.store (my_id);
+	    ids.push_back (datatools::event::event_id (666, i));
+	    ids.back ().tree_dump (clog, "event_id","<<< ");
+	    writer.store (ids.back ());
 	  }
       }
 
       {
+	list<datatools::event::event_id> ids;
 	datatools::serialization::data_reader reader (filename);
 	while (reader.has_record_tag ()) 
 	  {
-	    if (reader.record_tag_is (my_id.get_serial_tag ())) 
+	    if (reader.record_tag_is (datatools::event::event_id::SERIAL_TAG)) 
 	      {
-		reader.load (my_id);
-		my_id.tree_dump (clog, "event_id",">>> ");
+		datatools::event::event_id id;
+		ids.push_back (id);
+		reader.load (ids.back ());
+		ids.back ().tree_dump (clog, "event_id",">>> ");
 	      }
 	    else 
 	      {

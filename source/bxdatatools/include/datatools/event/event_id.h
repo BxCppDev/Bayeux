@@ -24,10 +24,9 @@
 #include <stdexcept>
 
 #include <boost/cstdint.hpp>
+#include <boost/serialization/access.hpp>
 
 #include <datatools/serialization/i_serializable.h>
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/nvp.hpp>
 
 #include <datatools/utils/i_tree_dump.h>
 #include <datatools/utils/i_clear.h>
@@ -44,10 +43,9 @@ namespace datatools {
      *
      *
      */
-    class event_id : public datatools::utils::i_tree_dumpable ,
-		     public datatools::utils::i_clear,
-		     public datatools::serialization::i_serializable     
- 
+    class event_id : public datatools::serialization::i_serializable ,
+		     public datatools::utils::i_tree_dumpable ,
+		     public datatools::utils::i_clear
     {
 
     public:
@@ -168,15 +166,8 @@ namespace datatools {
 
       //! Boost.Serialization hook.
       friend class boost::serialization::access; 
+      BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
 
-      //! Templatized serialization method for the Boost.Serialization library.
-      template<class Archive>
-      void serialize (Archive            & ar_ , 
-		const unsigned int   version_)
-      {
-	ar_ & boost::serialization::make_nvp ("run_number",__run_number);
-	ar_ & boost::serialization::make_nvp ("event_number",__event_number);
-      }
     };
 
     //! Predicate to check if an event_id equals another one.

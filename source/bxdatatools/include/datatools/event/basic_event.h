@@ -22,13 +22,14 @@
 #include <iostream>
 #include <string>
 
-
-#include <datatools/serialization/i_serializable.h>
+#include <boost/cstdint.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 
+#include <datatools/serialization/i_serializable.h>
 #include <datatools/utils/i_tree_dump.h>
 #include <datatools/utils/i_clear.h>
+
 #include <datatools/utils/properties.h>
 #include <datatools/event/event_id.h>
 
@@ -44,10 +45,9 @@ namespace datatools {
      *  Sample program: #programs/test_basic_event.cxx 
      *
      */
-    class basic_event : public datatools::utils::i_tree_dumpable,
-                        public datatools::utils::i_clear,
-			public datatools::serialization::i_serializable     
-
+    class basic_event : public datatools::serialization::i_serializable,
+			public datatools::utils::i_tree_dumpable,
+                        public datatools::utils::i_clear    
     {
     public:
       //! Serialization tag.
@@ -131,16 +131,8 @@ namespace datatools {
 
       //! Boost.Serialization hook.
       friend class boost::serialization::access; 
-
-      //! Templatized serialization method for the Boost.Serialization library.
-      template<class Archive>
-      void serialize (Archive            & ar_, 
-		      const unsigned int   version_)
-      {
-	ar_ & boost::serialization::make_nvp ("id",__id);
-	ar_ & boost::serialization::make_nvp ("properties",__properties);
-      }
-      
+      BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
+     
     };
 
   } // end of namespace event 

@@ -7,9 +7,9 @@
 #include <stdexcept>
 #include <vector>
 
-#include <datatools/serialization/io_factory.h>
-#include <datatools/serialization/serialization.h>
 #include <datatools/utils/multi_properties.h>
+#include <datatools/serializables.h>
+#include <datatools/serialization/io_factory.h>
 
 using namespace std;
 

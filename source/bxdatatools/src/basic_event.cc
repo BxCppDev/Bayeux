@@ -2,7 +2,6 @@
 /* basic_event.cc
  */
 
-
 #include <datatools/event/basic_event.h>
 
 namespace datatools {

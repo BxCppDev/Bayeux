@@ -144,8 +144,5 @@ namespace datatools {
   } // end of namespace test 
 
 } // end of namespace datatools 
- 
-BOOST_CLASS_EXPORT_IMPLEMENT (datatools::test::data_t)
-BOOST_CLASS_EXPORT_IMPLEMENT (datatools::test::more_data_t)
 
 // end of my_data.cc

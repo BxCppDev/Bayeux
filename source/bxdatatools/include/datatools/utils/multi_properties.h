@@ -45,18 +45,11 @@
 #include <datatools/utils/properties.h>
 
 #include <boost/cstdint.hpp>
-
-#include <boost/archive/archive_exception.hpp>
-#include <boost/serialization/base_object.hpp>
-#include <boost/serialization/export.hpp>
 #include <boost/serialization/access.hpp>
-#include <boost/serialization/nvp.hpp>
-#include <boost/serialization/version.hpp>
-
-#include <boost/serialization/map.hpp>
-#include <boost/serialization/string.hpp>
 
 #include <datatools/serialization/i_serializable.h>
+#include <datatools/utils/i_tree_dump.h>
+#include <datatools/utils/i_clear.h>
 
 using namespace std;
 
@@ -124,18 +117,7 @@ namespace datatools {
 	virtual const string & get_serial_tag () const;
 	  
 	friend class boost::serialization::access; 
-	template<class Archive>
-	void serialize (Archive & ar_, const unsigned int   version_)
-	{
-	  /* 2011-03-09 : here we don't use the following macro
-	   *
-	   * ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-	   */
-	  ar_ & boost::serialization::make_nvp ("key", __key);
-	  ar_ & boost::serialization::make_nvp ("meta", __meta);
-	  ar_ & boost::serialization::make_nvp ("properties", __properties);
-	  return;
-	}
+	BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
 
       public:
 	virtual void tree_dump (ostream & out_         = clog, 
@@ -210,53 +192,7 @@ namespace datatools {
     private:
 	
       friend class boost::serialization::access; 
-
-      template<class Archive>
-      void save (Archive & ar_, const unsigned int version_) const
-      {
-	ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-	ar_ & boost::serialization::make_nvp ("description",      __description);
-	ar_ & boost::serialization::make_nvp ("key_label",        __key_label);
-	ar_ & boost::serialization::make_nvp ("meta_label",       __meta_label);
-	ar_ & boost::serialization::make_nvp ("entries",          __entries);
-	ar_ & boost::serialization::make_nvp ("ordered_entries",  __ordered_entries);
-	return;
-      }
-
-      template<class Archive>
-      void load (Archive & ar_ , const unsigned int version_)
-      {
-	if (version_ >= 1)
-	  {
-	    /* from version 1 we inherit explicitely from the
-	     * 'datatools::serialization::i_serializable' abstract class
-	     */
-	    ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-	  }
-	ar_ & boost::serialization::make_nvp ("description",      __description);
-	ar_ & boost::serialization::make_nvp ("key_label",        __key_label);
-	ar_ & boost::serialization::make_nvp ("meta_label",       __meta_label);
-	ar_ & boost::serialization::make_nvp ("entries",          __entries);
-	ar_ & boost::serialization::make_nvp ("ordered_entries",  __ordered_entries);
-	return;
-      }
-      BOOST_SERIALIZATION_SPLIT_MEMBER()
-
-      /** 2003-03-11 FM: old version of the serialize method :
-
-      template<class Archive>
-      void serialize (Archive & ar_, const unsigned int version_)
-      {
-	ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-	ar_ & boost::serialization::make_nvp ("description", __description);
-	ar_ & boost::serialization::make_nvp ("key_label",  __key_label);
-	ar_ & boost::serialization::make_nvp ("meta_label",  __meta_label);
-	ar_ & boost::serialization::make_nvp ("entries",  __entries);
-	ar_ & boost::serialization::make_nvp ("ordered_entries",  __ordered_entries);
-	return;
-      }
-
-      */
+      BOOST_SERIALIZATION_SPLIT_MEMBER_SERIALIZE_DECLARATIONS()
 
     public:
 
@@ -301,10 +237,6 @@ namespace datatools {
   } // end of namespace utils 
 
 } // end of namespace datatools 
-
-BOOST_CLASS_VERSION(datatools::utils::multi_properties, 1)
-
-BOOST_CLASS_EXPORT_KEY2(datatools::utils::multi_properties, "datatools::utils::multi_properties")
 
 #endif // __datatools__utils__multi_properties_h
 

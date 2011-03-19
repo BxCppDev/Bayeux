@@ -2,8 +2,6 @@
   
 #include <datatools/utils/multi_properties.h>
 
-BOOST_CLASS_EXPORT_IMPLEMENT(datatools::utils::multi_properties) 
-
 using namespace std;
 
 namespace datatools {
@@ -924,5 +922,6 @@ namespace datatools {
   } // end of namespace utils 
 
 } // end of namespace datatools
+
 
 // end of multi_properties.cc

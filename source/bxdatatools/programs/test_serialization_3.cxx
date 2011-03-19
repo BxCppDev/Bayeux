@@ -27,12 +27,7 @@ private:
   friend class boost::serialization::access; 
   template<class Archive>
   void serialize (Archive & ar_, 
-		  const unsigned int version_)
-  {
-    ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-    ar_ & boost::serialization::make_nvp ("value", value);
-    return;
-  }
+		  const unsigned int version_);
 
 };
 
@@ -45,7 +40,18 @@ const string & data_t::get_serial_tag () const
   return data_t::SERIAL_TAG;
 }
 
+template<class Archive>
+void data_t::serialize (Archive & ar_, 
+			const unsigned int version_)
+{
+  ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
+  ar_ & boost::serialization::make_nvp ("value", value);
+  return;
+}
+
+#include <datatools/serialization/archives_instantiation.h>
 BOOST_CLASS_EXPORT_IMPLEMENT (data_t)
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(data_t)
 
 int main (int argc_, char ** argv_) 
 {

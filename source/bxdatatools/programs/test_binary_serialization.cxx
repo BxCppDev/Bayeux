@@ -12,6 +12,8 @@
 #include <boost/cstdint.hpp>
 #include <boost/serialization/string.hpp>
 
+#include <datatools/serializables.h>
+
 using namespace std;
 
 int main (int argc_, char ** argv_) 

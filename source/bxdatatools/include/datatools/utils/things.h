@@ -44,15 +44,12 @@
 #include <map>
 #include <typeinfo>
 
-#include <boost/archive/archive_exception.hpp>
-#include <boost/serialization/base_object.hpp>
-#include <boost/serialization/export.hpp>
+#include <boost/cstdint.hpp>
 #include <boost/serialization/access.hpp>
-#include <boost/serialization/nvp.hpp>
-#include <boost/serialization/string.hpp>
-#include <boost/serialization/map.hpp>
 
+#include <datatools/serialization/utils.h>
 #include <datatools/serialization/i_serializable.h>
+
 #include <datatools/utils/i_tree_dump.h>
 #include <datatools/utils/i_clear.h>
 
@@ -102,14 +99,7 @@ namespace datatools {
 
 			private:
 				friend class boost::serialization::access; 
-				template<class Archive>
-				void serialize (Archive & ar_, const unsigned int version_)
-				{
-					ar_ & boost::serialization::make_nvp ("description", description);
-					ar_ & boost::serialization::make_nvp ("flags",       flags);
-					ar_ & boost::serialization::make_nvp ("handle",      handle); 
-					return;
-				}
+        BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
 
 			public:
 
@@ -354,23 +344,13 @@ namespace datatools {
 
 			// serialization :
 			friend class boost::serialization::access;
-			template<class Archive>
-			void serialize (Archive & ar_, const unsigned int file_version_)
-			{
-				ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-				ar_ & boost::serialization::make_nvp ("name",        m_name);
-				ar_ & boost::serialization::make_nvp ("description", m_description);
-				ar_ & boost::serialization::make_nvp ("things",      m_things);
-				return;
-			}
+			BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
 
     };
 
   }  // end of namespace utils
 
 }  // end of namespace datatools
-
-BOOST_CLASS_EXPORT_KEY2(datatools::utils::things, "datatools::utils::things")
 
 #endif // __datatools__utils__things_h
 

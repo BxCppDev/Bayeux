@@ -114,6 +114,7 @@ namespace datatools {
       {
 	ar_ & boost::serialization::make_nvp ("properties", __properties);
 	ar_ & boost::serialization::make_nvp ("ref",        __ref);
+	return;
       }
 
     public:
