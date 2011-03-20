@@ -915,8 +915,6 @@ function do_test ()
 	fi
     fi
 
-
-
     __pkgtools__at_function_exit
     return 0
 }
