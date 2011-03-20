@@ -35,13 +35,13 @@
 #include <locale>
 #include <typeinfo>
 
-#ifdef IOFACTORY_USE_QPBA
+#ifdef IOFACTORY_USE_PBA
 // Force usage of `Floating point utilities' by Johan Råde
 // for `Quasi Portable Binary Archive' 
 #ifndef IOFACTORY_USE_FPU
 #define IOFACTORY_USE_FPU=1
 #endif
-#endif // IOFACTORY_USE_QPBA
+#endif // IOFACTORY_USE_PBA
 
 #ifdef IOFACTORY_USE_FPU
 #include <boost/math/nonfinite_num_facets.hpp>
@@ -100,13 +100,13 @@ namespace datatools {
       boost::archive::text_oarchive     * __otar_ptr;
       boost::archive::xml_iarchive      * __ixar_ptr;
       boost::archive::xml_oarchive      * __oxar_ptr;
-#ifdef IOFACTORY_USE_QPBA
+#ifdef IOFACTORY_USE_PBA
       boost::archive::quasi_portable_binary_iarchive * __ibar_ptr;
       boost::archive::quasi_portable_binary_oarchive * __obar_ptr;
 #else
       boost::archive::binary_iarchive   * __ibar_ptr;
       boost::archive::binary_oarchive   * __obar_ptr;
-#endif // IOFACTORY_USE_QPBA
+#endif // IOFACTORY_USE_PBA
 
     public:
 	
@@ -186,7 +186,7 @@ namespace datatools {
 	
       bool is_binary () const;
 
-#ifdef IOFACTORY_USE_QPBA
+#ifdef IOFACTORY_USE_PBA
       bool is_portable_binary () const
       {
 	return is_binary () && true;
@@ -196,7 +196,7 @@ namespace datatools {
       {
 	return is_binary () && false;
       }
-#endif // IOFACTORY_USE_QPBA	
+#endif // IOFACTORY_USE_PBA	
 
       bool is_xml () const;
 
@@ -271,13 +271,13 @@ namespace datatools {
       }
 	
       template <typename Data>
-#ifdef IOFACTORY_USE_QPBA
+#ifdef IOFACTORY_USE_PBA
       void __store_binary (boost::archive::quasi_portable_binary_oarchive & ar_, 
 			   const Data & data_)
 #else
 	void __store_binary (boost::archive::binary_oarchive & ar_, 
 			     const Data & data_)
-#endif // IOFACTORY_USE_QPBA
+#endif // IOFACTORY_USE_PBA
       {
 	const Data & b = data_;
 	ar_ << b; 
@@ -327,13 +327,13 @@ namespace datatools {
       }
 
       template <typename Data>
-#ifdef IOFACTORY_USE_QPBA
+#ifdef IOFACTORY_USE_PBA
       void __load_binary (boost::archive::quasi_portable_binary_iarchive & ar_ , 
 			  Data & data_)
 #else
 	void __load_binary (boost::archive::binary_iarchive & ar_ , 
 			    Data & data_)
-#endif // IOFACTORY_USE_QPBA
+#endif // IOFACTORY_USE_PBA
       {
 	Data & b = data_;
 	ar_ >> b; 

@@ -1,3 +1,4 @@
+/* -*- mode: c++; -*-
 /* datatools::serialization:: archives_instantiation.h */
 /* 
  * Description :
@@ -33,7 +34,7 @@
 template void T::serialize(A & ar, const unsigned int version);  \
 /**/
 
-#ifdef IOFACTORY_USE_QPBA
+#ifdef IOFACTORY_USE_PBA
 #define DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(T)		                      \
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::text_oarchive)                  \
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::text_iarchive)                  \
@@ -51,7 +52,7 @@ DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::xml_iarchi
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::binary_oarchive) \
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::binary_iarchive) \
 /**/
-#endif // ! IOFACTORY_USE_QPBA
+#endif // ! IOFACTORY_USE_PBA
 
 #endif // __datatools__serialization__archives_instantiation_h
 

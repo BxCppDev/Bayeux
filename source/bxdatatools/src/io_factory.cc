@@ -160,23 +160,25 @@ namespace datatools {
       /*** binary archive ***/
       else if (is_binary ())
 	{
-#ifdef IOFACTORY_USE_QPBA
+#ifdef IOFACTORY_USE_PBA
 	  if (devel) 
 	    { 
-	      std::cerr << "DEBUG: io_factory::__init_read_archive: IOFACTORY_USE_QPBA" << std::endl; 
+	      std::cerr << "DEBUG: io_factory::__init_read_archive: IOFACTORY_USE_PBA" << std::endl; 
 	    }
 	  __ibar_ptr = new boost::archive::quasi_portable_binary_iarchive (*__in);
 	  if (devel) 
 	    {
 	      std::cerr << "DEBUG: io_factory::__init_read_archive: library version = " 
 			<< __ibar_ptr->get_library_version ()  << std::endl;
+	      /*
 	      std::clog << "DEBUG: io_factory::__init_read_archive: "
 			<< "'quasi_portable_binary_iarchive' version " 
-			<< __ibar_ptr->get_qpba_version () << std::endl;
+			<< __ibar_ptr->get_pba_version () << std::endl;
+	      */
 	    }
 #else
 	  __ibar_ptr = new boost::archive::binary_iarchive (*__in);
-#endif // IOFACTORY_USE_QPBA
+#endif // IOFACTORY_USE_PBA
 	  //std::cerr << "DEVEL: io_factory::__init_read_archive: __ibar_ptr = " << __ibar_ptr << std::endl;
 	}
       else 
@@ -252,7 +254,7 @@ namespace datatools {
 	      std::clog << "DEBUG: io_factory::__init_read: file='" 
 			<< stream_name_ << "'" << std::endl;
 	    }
-#ifdef IOFACTORY_USE_QPBA
+#ifdef IOFACTORY_USE_PBA
 	  if (is_compressed () || is_binary ()) 
 	    {
 	      __fin = new std::ifstream (stream_name_.c_str (), 
@@ -260,12 +262,12 @@ namespace datatools {
 	    }
 	  else 
 	    {
-#endif // IOFACTORY_USE_QPBA
+#endif // IOFACTORY_USE_PBA
 	      __fin = new std::ifstream (stream_name_.c_str (), 
 					 std::ios_base::in);
-#ifdef IOFACTORY_USE_QPBA
+#ifdef IOFACTORY_USE_PBA
 	    }
-#endif // IOFACTORY_USE_QPBA
+#endif // IOFACTORY_USE_PBA
 	  if (! *__fin) 
 	    {
 	      throw std::runtime_error ("io_factory::__init_read: Cannot open input stream!");
@@ -383,7 +385,7 @@ namespace datatools {
 	}
       else if (is_binary ()) 
 	{
-#ifdef IOFACTORY_USE_QPBA
+#ifdef IOFACTORY_USE_PBA
 	  __obar_ptr = new boost::archive::quasi_portable_binary_oarchive (*__out);
 	  if (g_debug) 
 	    {
@@ -393,7 +395,7 @@ namespace datatools {
 	    }
 #else
 	  __obar_ptr = new boost::archive::binary_oarchive (*__out);
-#endif // IOFACTORY_USE_QPBA
+#endif // IOFACTORY_USE_PBA
 	}
       else 
 	{
@@ -437,12 +439,12 @@ namespace datatools {
 	    }
 
 	  std::ios_base::openmode open_mode = std::ios_base::out;
-#ifdef IOFACTORY_USE_QPBA
+#ifdef IOFACTORY_USE_PBA
 	  if (is_compressed () || is_binary ())
 	    { 
 	      open_mode |= std::ios_base::binary;
 	    }
-#endif // IOFACTORY_USE_QPBA
+#endif // IOFACTORY_USE_PBA
 	  if (is_append ())
 	    {
 	      if (is_single_archive ())
@@ -807,10 +809,10 @@ namespace datatools {
       out_ << indent << tag 
 	   << "is_text : " << is_text () << std::endl;
 
-#ifdef IOFACTORY_USE_QPBA
+#ifdef IOFACTORY_USE_PBA
       out_ << indent << tag 
 	   << "is_binary : " << is_binary () << std::endl;
-#endif // IOFACTORY_USE_QPBA    
+#endif // IOFACTORY_USE_PBA    
 
       out_ << indent << tag 
 	   << "is_xml : " << is_xml () << std::endl;

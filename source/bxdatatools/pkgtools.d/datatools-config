@@ -84,10 +84,10 @@ if [ ! -d ${THEPACK_ROOT}/boost/vault/local ]; then
     export DATATOOLS_NO_BITSET=1
 fi
 
-with_boost_qpba=1
+with_boost_pba=1
 with_boost_fpu=1
-if [ "x${DATATOOLS_NO_QPBA}" == "x1" ]; then
-    with_boost_qpba=0
+if [ "x${DATATOOLS_NO_PBA}" == "x1" ]; then
+    with_boost_pba=0
 fi
 if [ "x${DATATOOLS_NO_FPU}" == "x1" ]; then
     with_boost_fpu=0
@@ -127,7 +127,7 @@ Known values for OPTION are:
   --with-python         print if Python module is used
   --python-version      print Python version
   --with-fpu            print if Floating Point Utility is used
-  --with-qpba        print if Portable Binary Archive (EOS) is used
+  --with-pba            print if Portable Binary Archive is used
   --boost-version       print Boost version
   --clean-cache-files   clean compile/link cache files
   --check               check dependencies and setup
@@ -197,9 +197,9 @@ if [ "x$opt" = "x--cflags" ]; then
 		if [ ${with_boost_bitset} -eq 1 ]; then
 		    echo -n "-I${THEPACK_ROOT}/boost/vault/local "
 		fi
-		if [ ${with_boost_qpba} -eq 1 ]; then
-		    echo -n "-DIOFACTORY_USE_QPBA=1 "
-		    #echo -n "-I${THEPACK_ROOT}/boost/vault/qpba "
+		if [ ${with_boost_pba} -eq 1 ]; then
+		    echo -n "-DIOFACTORY_USE_PBA=1 "
+		    #echo -n "-I${THEPACK_ROOT}/boost/vault/pba "
 		fi
 		if [ ${with_boost_fpu} -eq 1 ]; then
 		    echo -n "-DIOFACTORY_USE_FPU=1 "
@@ -266,8 +266,8 @@ if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
     exit 0
 fi 
 
-if [ "x$opt" = "x--with-qpba" ]; then
-    echo "${with_boost_qpba}"
+if [ "x$opt" = "x--with-pba" ]; then
+    echo "${with_boost_pba}"
     exit 0
 fi 
 

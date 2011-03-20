@@ -31,7 +31,7 @@
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
 
-#ifdef IOFACTORY_USE_QPBA
+#ifdef IOFACTORY_USE_PBA
 #include <boost/qpba/quasi_portable_binary_iarchive.hpp>
 #include <boost/qpba/quasi_portable_binary_oarchive.hpp>
 #else
@@ -40,7 +40,7 @@
  */
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
-#endif
+#endif // IOFACTORY_USE_PBA
 
 #endif // __datatools__serialization__archives_list_h
 

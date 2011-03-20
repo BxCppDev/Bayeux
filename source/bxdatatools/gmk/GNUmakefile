@@ -115,7 +115,7 @@ endif
 # EOS_PBA_FLAGS=
 # ifeq ($(DATATOOLS_NO_EOS_PBA),)
 # DATATOOLS_NO_EOS_PBA=0
-# $(warning WARNING: datatools uses 'Quasi Portable Binary Archive' (from eos PBA) !) 
+# $(warning WARNING: datatools uses 'Portable Binary Archive' (from eos PBA) !) 
 # EOS_PBA_FLAGS=-DIOFACTORY_USE_EOS_PBA=1
 # #DEPCPPFLAGS+=-I$(PACKAGE_DIR)/boost/vault/eos_pba
 # else
@@ -123,21 +123,21 @@ endif
 # $(warning WARNING: datatools does not use EOS_PBA !)
 # endif
 
-DATATOOLS_NO_QPBA=$(shell ls -1 $(PACKAGE_DIR)/gmk/datatools_without_qpba.config 2> /dev/null)
-QPBA_FLAGS=
-ifeq ($(DATATOOLS_NO_QPBA),)
-DATATOOLS_NO_QPBA=0
-$(warning WARNING: datatools uses 'Quasi Portable Binary Archive' (from QPBA) !) 
-QPBA_FLAGS=-DIOFACTORY_USE_QPBA=1
+DATATOOLS_NO_PBA=$(shell ls -1 $(PACKAGE_DIR)/gmk/datatools_without_pba.config 2> /dev/null)
+PBA_FLAGS=
+ifeq ($(DATATOOLS_NO_PBA),)
+DATATOOLS_NO_PBA=0
+$(warning WARNING: datatools uses 'Portable Binary Archive' !) 
+PBA_FLAGS=-DIOFACTORY_USE_PBA=1
 else
-DATATOOLS_NO_QPBA=1
-$(warning WARNING: datatools does not use QPBA !)
+DATATOOLS_NO_PBA=1
+$(warning WARNING: datatools does not use PBA !)
 endif
 
 CPPFLAGS1+=-DDATATOOLS_USE_TREE_DUMP=1
 
 ### End of dependencies.
-CPPFLAGS1+=$(QPBA_FLAGS) $(FPU_FLAGS) $(DEPCPPFLAGS) 
+CPPFLAGS1+=$(PBA_FLAGS) $(FPU_FLAGS) $(DEPCPPFLAGS) 
 LDFLAGS1+=$(DEPLDFLAGS) 
 
 # default with libmath dependency:
@@ -262,7 +262,7 @@ install :
 	@ln -s -f $(PACKAGE_ROOT)/pkgtools.d/$(LIBNAME)-config $(BINDIR)/$(LIBNAME)-config
 	@echo "NOTICE: Installing done." >&2
 
-#	#@test "x$(DATATOOLS_NO_QPBA)" = "x1" && make install_no_qpba || make install_qpba
+#	#@test "x$(DATATOOLS_NO_PBA)" = "x1" && make install_no_pba || make install_pba
 
 # .PHONY : install_eos_pba
 # install_eos_pba :  

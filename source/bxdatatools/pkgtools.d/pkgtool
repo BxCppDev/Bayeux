@@ -77,10 +77,10 @@ function print_usage ()
     $APPNAME check       : check dependencies
     $APPNAME configure  [OPTIONS]: configure package 
             OPTIONS:
-            --with-qpba (default) :
-              depends on Quasi Portable Binary Archive
-            --without-qpba :
-              do not use Quasi Portable Binary Archive
+            --with-pba (default) :
+              depends on Portable Binary Archive
+            --without-pba :
+              do not use Portable Binary Archive
             --with-fpu (default) :
               depends on Floating Point Utilities boost vault extension
             --without-fpu :
@@ -210,7 +210,7 @@ else
 fi
 #echo "Base package directory is '${the_base_dir}'!"
 
-without_qpba_flag_file=${the_base_dir}/gmk/datatools_without_qpba.config
+without_pba_flag_file=${the_base_dir}/gmk/datatools_without_pba.config
 without_fpu_flag_file=${the_base_dir}/gmk/datatools_without_fpu.config
 without_python_flag_file=${the_base_dir}/gmk/datatools_without_python.config
 python_version_flag_file=${the_base_dir}/gmk/datatools_python_version.config
@@ -764,7 +764,7 @@ function do_deconfigure ()
 
     opwd=$(pwd)
 
-    test -f ${without_qpba_flag_file} && rm -f ${without_qpba_flag_file} 
+    test -f ${without_pba_flag_file} && rm -f ${without_pba_flag_file} 
     test -f ${without_fpu_flag_file}     && rm -f ${without_fpu_flag_file} 
     test -f ${without_python_flag_file}  && rm -f ${without_python_flag_file} 
     test -f ${python_version_flag_file}  && rm -f ${python_version_flag_file} 
@@ -795,7 +795,7 @@ function do_configure ()
 	with_python_wrapper=1
     fi
 
-    with_qpba=1
+    with_pba=1
     with_fpu=1
     enforced_boost_version=
     python_version=
@@ -827,16 +827,16 @@ function do_configure ()
 		elif [ "x${opt}" = "x--without-python" ]; then
 		    with_python_wrapper=0
 		fi
-	    elif [ "x${opt}" = "x--with-qpba" ]; then
-		with_qpba=1
+	    elif [ "x${opt}" = "x--with-pba" ]; then
+		with_pba=1
 		with_fpu=1
-	    elif [ "x${opt}" = "x--without-qpba" ]; then
-		with_qpba=0
+	    elif [ "x${opt}" = "x--without-pba" ]; then
+		with_pba=0
 	    elif [ "x${opt}" = "x--with-fpu" ]; then
 		with_fpu=1
 	    elif [ "x${opt}" = "x--without-fpu" ]; then
 		with_fpu=0
-		with_qpba=0
+		with_pba=0
 	    elif [ "x${opt}" = "x--boost-version" ]; then
 		shift 1
 		enforced_boost_version=$1
@@ -955,19 +955,19 @@ EOF
 	fi # with_python_wrapper
     fi # can_python_wrapper
 
-    ### Support for Quasi Portable binary archives:
-    pkgtools__msg_notice "Quasi Portable Binary Archives setup..."
-    if [ ${with_qpba} -eq 0 ]; then
+    ### Support for Portable binary archives:
+    pkgtools__msg_notice "Portable Binary Archives setup..."
+    if [ ${with_pba} -eq 0 ]; then
 	pkgtools__msg_warning "Do not use Portable Binary Archives !"
 
-	cat > ${without_qpba_flag_file} <<EOF 
+	cat > ${without_pba_flag_file} <<EOF 
 # datatools does not use pba_help:
-export DATATOOLS_NO_QPBA=1
+export DATATOOLS_NO_PBA=1
 EOF
     else
 	# 2010-12-06 FM:
-	pkgtools__msg_notice "Use Quasi Portable Binary Archives !"
-	test -f ${without_qpba_flag_file} && rm -f ${without_qpba_flag_file}
+	pkgtools__msg_notice "Use Portable Binary Archives !"
+	test -f ${without_pba_flag_file} && rm -f ${without_pba_flag_file}
 	with_fpu=1
     fi
 
@@ -995,7 +995,7 @@ EOF
     # ## 2010-12-06: Do not use the EOS archive trick anymore:
     # if [ ${apply_eos_archive_trick} -eq 1 ]; then
     # ### Special workaround for EOS Portable binary archives vs Boost version:
-    # 	if [ ${with_qpba} -eq 1 ]; then
+    # 	if [ ${with_pba} -eq 1 ]; then
     # 	    local boost_version_rank=$(echo ${boost_version} | tr '_' '0')
     # 	    pkgtools__msg_notice "boost_version_rank=${boost_version_rank}"
     # 	    run_eos_archive_trick=0
@@ -1020,8 +1020,8 @@ function do_build ()
     __pkgtools__at_function_enter do_build
 
     if [ -d ${GMKDIR} ]; then
-	if [ -f ${without_qpba_flag_file} ]; then
-	    source ${without_qpba_flag_file}
+	if [ -f ${without_pba_flag_file} ]; then
+	    source ${without_pba_flag_file}
 	fi
 	if [ -f ${without_fpu_flag_file} ]; then
 	    source ${without_fpu_flag_file}
