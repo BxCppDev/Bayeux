@@ -3,6 +3,7 @@
  */
 
 #include <cuts/multi_cut.h>
+#include <algorithm>
 
 namespace cuts {
 
