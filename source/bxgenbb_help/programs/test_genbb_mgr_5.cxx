@@ -7,6 +7,7 @@
 #include <exception>
 
 #include <datatools/utils/properties.h>
+
 #include <genbb_help/genbb_mgr.h>
 
 using namespace std;

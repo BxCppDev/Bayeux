@@ -10,6 +10,9 @@
 
 #include <genbb_help/genbb_mgr.h>
 
+/* Serialization dedicated code */
+#include <genbb_help/the_serializable.h>
+
 int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;

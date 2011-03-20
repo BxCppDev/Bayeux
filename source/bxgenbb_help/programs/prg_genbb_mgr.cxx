@@ -8,6 +8,9 @@
 
 #include <genbb_help/genbb_mgr.h>
 
+/* Serialization dedicated code */
+#include <genbb_help/the_serializable.h>
+
 using namespace std;
 
 int main (int argc_, char ** argv_)

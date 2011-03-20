@@ -13,6 +13,9 @@
 
 #include <genbb_help/genbb_mgr.h>
 
+/* Serialization dedicated code */
+#include <genbb_help/the_serializable.h>
+
 using namespace std;
 
 void usage (ostream & out_ = clog)

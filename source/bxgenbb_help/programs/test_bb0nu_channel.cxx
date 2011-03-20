@@ -10,9 +10,11 @@
 #include <boost/algorithm/string.hpp>
 
 #include <mygsl/rng.h>
-#include <genbb_help/genbb_mgr.h>
+
 #include <datatools/utils/ioutils.h>
 #include <datatools/utils/utils.h>
+
+#include <genbb_help/genbb_mgr.h>
 
 using namespace std;
 

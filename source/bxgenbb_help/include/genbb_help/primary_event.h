@@ -44,7 +44,9 @@
 
 #include <geomtools/utils.h>
 
+// Interface base class from datatools to support serialization tools:
 #include <datatools/serialization/i_serializable.h>
+
 #include <datatools/utils/units.h>
 
 #include <genbb_help/primary_particle.h>
@@ -63,10 +65,6 @@ namespace genbb {
     
   public:
     typedef std::list<primary_particle> particles_col_t;
-
-    double          time;
-    particles_col_t particles;
-    std::string     classification;
 
   public:
 
@@ -112,15 +110,13 @@ namespace genbb {
   private:
 
     friend class boost::serialization::access; 
-    template<class Archive>
-    void serialize (Archive            & ar_, 
-                    const unsigned int   version_)
-    {
-      ar_ & boost::serialization::make_nvp ("time", time);
-      ar_ & boost::serialization::make_nvp ("particles", particles);
-      ar_ & boost::serialization::make_nvp ("classification", classification);
-      return;
-    }
+    BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
+    
+  public:
+
+    double          time;
+    particles_col_t particles;
+    std::string     classification;
 
   };
 

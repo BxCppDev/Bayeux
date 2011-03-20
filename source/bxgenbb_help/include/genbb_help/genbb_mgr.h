@@ -19,7 +19,8 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Boston, MA 02110-1301, USA.
  * 
  * Description: 
  *   Manager for GENBB input data
@@ -39,20 +40,11 @@
 #include <string>
 #include <list>
 
-#include <boost/cstdint.hpp>
-
-#include <CLHEP/Units/SystemOfUnits.h>
-#include <CLHEP/Units/PhysicalConstants.h>
-#include <CLHEP/Vector/ThreeVector.h>
-
-#include <datatools/serialization/serialization.h>
 #include <datatools/serialization/io_factory.h>
 #include <datatools/utils/properties.h>
-#include <datatools/utils/utils.h>
-
-#include <geomtools/utils.h>
 
 #include <genbb_help/i_genbb.h>
+#include <genbb_help/primary_event.h>
 
 namespace genbb {
 

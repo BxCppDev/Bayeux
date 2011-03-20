@@ -40,12 +40,15 @@
 #include <string>
 #include <list>
 
+// Portable integral types (mandatory):
 #include <boost/cstdint.hpp>
 
-#include <geomtools/utils.h>
-
-#include <datatools/serialization/serialization.h>
 #include <datatools/utils/utils.h>
+
+// Interface base class from datatools to support serialization tools:
+#include <datatools/serialization/i_serializable.h>
+
+#include <geomtools/utils.h>
 
 namespace genbb {
 
@@ -85,12 +88,6 @@ namespace genbb {
     };
 
   public:
-    
-    int32_t              type;
-    string               particle_label;
-    double               mass;     // CLHEP energy unit
-    double               time;     // CLHEP time unit
-    geomtools::vector_3d momentum; // CLHEP momentum unit
 
     void reset ();
 
@@ -164,22 +161,7 @@ namespace genbb {
 
   private:
     friend class boost::serialization::access; 
-    template<class Archive>
-      void serialize (Archive            & ar_, 
-		      const unsigned int   version_)
-      {
-	ar_ & boost::serialization::make_nvp ("type", type);
-	if (type  == UNDEF)
-	  {
-	    ar_ & boost::serialization::make_nvp ("particle_label", particle_label);
-	  }
-	else
-	  {
-	    particle_label = get_particle_label_from_type (type);
-	  }
-	ar_ & boost::serialization::make_nvp ("time", time);
-	ar_ & boost::serialization::make_nvp ("momentum", momentum);
-      }
+    BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
 
   public:
  
@@ -188,6 +170,14 @@ namespace genbb {
     static string get_particle_label_from_type (int type_);
    
     static int get_particle_type_from_label (const string & label_);
+
+  public:
+    
+    int32_t              type;
+    string               particle_label;
+    double               mass;     // CLHEP energy unit
+    double               time;     // CLHEP time unit
+    geomtools::vector_3d momentum; // CLHEP momentum unit
 
   };
 
