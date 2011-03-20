@@ -5,9 +5,14 @@
 #define __brio__test__data_ipp 1
 
 #include <boost/serialization/base_object.hpp>
+
+// Support for XML 'key-value' based archives:
 #include <boost/serialization/nvp.hpp>
 
+// Support Boost serialization of STL vector templatized objects:
 #include <boost/serialization/vector.hpp> 
+
+// Support Boost serialization of STL string objects:
 #include <boost/serialization/string.hpp>
 
 #include <datatools/serialization/utils.h>

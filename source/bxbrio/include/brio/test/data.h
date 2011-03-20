@@ -15,15 +15,6 @@
 // Portable integral types (mandatory):
 #include <boost/cstdint.hpp>
 
-// Support for XML 'key-value' based archives:
-#include <boost/serialization/nvp.hpp>
-
-// Support Boost serialization of STL string objects:
-#include <boost/serialization/string.hpp>
-
-// Support Boost serialization of STL vector templatized objects:
-#include <boost/serialization/vector.hpp>
-
 // Interface base class from datatools to support serialization tools:
 #include <datatools/serialization/i_serializable.h>
 
