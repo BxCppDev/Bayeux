@@ -27,8 +27,8 @@ namespace datatools {
    
 		using namespace std;
 
-		bad_things_cast::bad_things_cast (const string & msg_) 
-			: std::exception (), m_message (msg_)
+		bad_things_cast::bad_things_cast (const string & a_msg) 
+			: std::exception (), m_message (a_msg)
 		{
 			return;
 		}
@@ -63,9 +63,9 @@ namespace datatools {
 			return ! is_not_const ();
 		}
 
-		void things::entry_t::set_const (bool const_)
+		void things::entry_t::set_const (bool a_const)
 		{
-			if (const_)
+			if (a_const)
 				{
 					flags |= MASK_CONST;
 				}
@@ -76,9 +76,9 @@ namespace datatools {
  			return;
 		}
 
-		void things::entry_t::set_description (const std::string & desc_)
+		void things::entry_t::set_description (const std::string & a_desc)
 		{
-			description = desc_;
+			description = a_desc;
 			return;
 		}
 				
@@ -92,36 +92,36 @@ namespace datatools {
 			return ! description.empty ();
 		}
 
-    void things::entry_t::tree_dump (std::ostream & out_, 
-																		 const std::string & title_,
-																		 const std::string & indent_,
-																		 bool inherit_) const
+    void things::entry_t::tree_dump (std::ostream & a_out, 
+																		 const std::string & a_title,
+																		 const std::string & a_indent,
+																		 bool a_inherit) const
     {
       namespace du = datatools::utils;
       std::string indent;
-      if (! indent_.empty () ) indent = indent_;
-      if (! title_.empty ()) 
+      if (! a_indent.empty () ) indent = a_indent;
+      if (! a_title.empty ()) 
 				{
-	  out_ << indent << title_ << std::endl;
+					a_out << indent << a_title << std::endl;
 				}
 			
       if (! description.empty ()) 
 				{
-					out_ << indent << du::i_tree_dumpable::tag 
+					a_out << indent << du::i_tree_dumpable::tag 
 							 << "Description  : '" <<  get_description () 
 							 << "'" << std::endl;
 				}
 
-      out_ << indent << du::i_tree_dumpable::tag 
+      a_out << indent << du::i_tree_dumpable::tag 
 					 << "Const  : " << is_const () << endl;
 
-      out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_) 
+      a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit) 
 					 << "Handle  : " << hex << handle << dec;
 			if (handle != 0)
 				{
-					out_ << " (serial tag: '" << handle->get_serial_tag () << "')";
+					a_out << " (serial tag: '" << handle->get_serial_tag () << "')";
 				}
-			out_ << endl;
+			a_out << endl;
 
       return;	
     }
@@ -141,9 +141,9 @@ namespace datatools {
 			return m_name;
 		}
 
-		things & things::set_name (const string & name_)
+		things & things::set_name (const string & a_name)
 		{
-			m_name = name_;
+			m_name = a_name;
 			return *this;
 		}
 
@@ -152,44 +152,60 @@ namespace datatools {
 			return m_description;
 		}
 
-		things & things::set_description (const string & desc_)
+		things & things::set_description (const string & a_desc)
 		{
-			m_description = desc_;
+			m_description = a_desc;
 			return *this;
 		}
-			
-		bool things::has (const string & name_) const
+
+		void things::get_names (vector<string> & the_names) const
 		{
-			if (name_.empty ())
+			the_names.clear ();
+			if (m_things.size () > the_names.capacity ())
+				{
+					the_names.reserve (m_things.size ());
+				}
+			for (dict_t::const_iterator i = m_things.begin ();
+					 i != m_things.end ();
+					 i++)
+				{
+					the_names.push_back (i->first);
+				}
+			return;
+		}
+			
+		bool things::has (const string & a_name) const
+		{
+			if (a_name.empty ())
 				{
 					ostringstream message;
 					message << "datatools::utils::things::has: Empty name !";
 					throw logic_error (message.str ());
 				}
-			dict_t::const_iterator found = m_things.find (name_);
+			dict_t::const_iterator found = m_things.find (a_name);
 			return (found != m_things.end ());
 		}
 			
-		bool things::is_constant (const string & name_) const
+		bool things::is_constant (const string & a_name) const
 		{
-			if (name_.empty ())
+			if (a_name.empty ())
 				{
 					ostringstream message;
 					message << "datatools::utils::things::is_constant: Empty name !";
 					throw logic_error (message.str ());
 				}
-			dict_t::const_iterator found = m_things.find (name_);
+			dict_t::const_iterator found = m_things.find (a_name);
 			if (found == m_things.end ())
 				{ 
 					ostringstream message;
-					message << "datatools::utils::things::is_constant: No stored object has name '" << name_ << "' !";
+					message << "datatools::utils::things::is_constant: No stored object has name '" << a_name << "' !";
 					throw logic_error (message.str ());
 				}
 			return found->second.is_const ();
 		}
 
 		
-		void things::set_constant (const string & name_, bool const_)
+		void things::set_constant (const string & a_name, bool a_const)
 		{
 			bool not_implemented_yet = true;
 			if (not_implemented_yet)
@@ -198,57 +214,57 @@ namespace datatools {
 					message << "datatools::utils::things::set_constant: Not implemented !";
 					throw logic_error (message.str ());					
 				}
-			if (name_.empty ())
+			if (a_name.empty ())
 				{
 					ostringstream message;
 					message << "datatools::utils::things::set_constant: Empty name !";
 					throw logic_error (message.str ());
 				}
-			dict_t::iterator found = m_things.find (name_);
+			dict_t::iterator found = m_things.find (a_name);
 			if (found == m_things.end ())
 				{
 					ostringstream message;
-					message << "datatools::utils::things::set_constant: No stored object has name '" << name_ << "' !";
+					message << "datatools::utils::things::set_constant: No stored object has name '" << a_name << "' !";
 					throw logic_error (message.str ());
 				}
-			found->second.set_const (const_);
+			found->second.set_const (a_const);
 			return;
 		}
 		
-		const string & things::get_description (const string & name_) const
+		const string & things::get_description (const string & a_name) const
 		{
-			if (name_.empty ())
+			if (a_name.empty ())
 				{
 					ostringstream message;
 					message << "datatools::utils::things::get_description: Empty name !";
 					throw logic_error (message.str ());
 				}
-			dict_t::const_iterator found = m_things.find (name_);
+			dict_t::const_iterator found = m_things.find (a_name);
 			if (found == m_things.end ())
 				{
 					ostringstream message;
-					message << "datatools::utils::things::get_description: No stored object has name '" << name_ << "' !";
+					message << "datatools::utils::things::get_description: No stored object has name '" << a_name << "' !";
 					throw logic_error (message.str ());
 				}
 			return found->second.description;
 		}
 
-		void things::set_description (const string & name_, const string & desc_)
+		void things::set_description (const string & a_name, const string & a_desc)
 		{
-			if (name_.empty ())
+			if (a_name.empty ())
 				{
 					ostringstream message;
 					message << "datatools::utils::things::set_description: Empty name !";
 					throw logic_error (message.str ());
 				}
-			dict_t::iterator found = m_things.find (name_);
+			dict_t::iterator found = m_things.find (a_name);
 			if (found == m_things.end ())
 				{
 					ostringstream message;
-					message << "datatools::utils::things::set_description: No stored object has name '" << name_ << "' !";
+					message << "datatools::utils::things::set_description: No stored object has name '" << a_name << "' !";
 					throw logic_error (message.str ());
 				}
-			found->second.description = desc_;
+			found->second.description = a_desc;
 			return;
 		}
 
@@ -262,52 +278,52 @@ namespace datatools {
 			return m_things.size () == 0;
 		}
 
-		void things::__add (const string & name_, 
-												datatools::serialization::i_serializable * obj_	,
-												const string & desc_,
-												bool const_)
+		void things::__add (const string & a_name, 
+												datatools::serialization::i_serializable * a_obj,
+												const string & a_desc,
+												bool a_const)
 		{
-			if (obj_ == 0)
+			if (a_obj == 0)
 				{
 					ostringstream message;
 					message << "datatools::utils::things::__add: Cannot add a NULL pointed object !";
 					throw runtime_error (message.str ());
 				}
-			if (name_.empty ())
+			if (a_name.empty ())
 				{
 					ostringstream message;
 					message << "datatools::utils::things::__add: Cannot add an object with an empty name !";
-					if (obj_ != 0)
+					if (a_obj != 0)
 						{
-							delete obj_;
+							delete a_obj;
 	  				}
 					throw logic_error (message.str ());
 				}
-			dict_t::const_iterator found = m_things.find (name_);
+			dict_t::const_iterator found = m_things.find (a_name);
 			if (found != m_things.end ())
 				{
 					ostringstream message; 
-					message << "datatools::utils::things::__add: An object with name '" << name_  
+					message << "datatools::utils::things::__add: An object with name '" << a_name  
 									<< "' is already stored in the dictionnary !";
 					throw logic_error (message.str ());
 				}
-			m_things[name_].set_description (desc_);
-			m_things[name_].set_const (const_);
-			m_things[name_].handle = obj_;
+			m_things[a_name].set_description (a_desc);
+			m_things[a_name].set_const (a_const);
+			m_things[a_name].handle = a_obj;
 			return;
 		} 
 
-		void things::remove (const string & name_)
+		void things::remove (const string & a_name)
 		{
-			if (name_.empty ())
+			if (a_name.empty ())
 				{
 					return;
 				}
-			dict_t::iterator found = m_things.find (name_);
+			dict_t::iterator found = m_things.find (a_name);
 			if (found == m_things.end ())
 				{
 					ostringstream message; 
-					message << "datatools::utils::things::remove: No object with name '" << name_  
+					message << "datatools::utils::things::remove: No object with name '" << a_name  
 									<< "' is stored in the dictionnary !";
 					throw logic_error (message.str ());
 				}
@@ -320,15 +336,15 @@ namespace datatools {
 			return;
 		}
 
-		void things::erase (const string & name_)
+		void things::erase (const string & a_name)
 		{
-			remove (name_);
+			remove (a_name);
 			return;
 		}
   
-		void things::dump (ostream & out_) const
+		void things::dump (ostream & a_out) const
 		{
-			tree_dump (out_, "datatools::utils::things:");
+			tree_dump (a_out, "datatools::utils::things:");
 			return;
 		}
 
@@ -363,10 +379,10 @@ namespace datatools {
 		}
       
 		// ctor:
-		things::things (const string & name_, const string & description_)
+		things::things (const string & a_name, const string & a_description)
 		{
-			set_name (name_);
-			set_description (description_);
+			set_name (a_name);
+			set_description (a_description);
 			return;
 		}
 
@@ -377,32 +393,32 @@ namespace datatools {
 			return;
 		}
 
-    void things::tree_dump (std::ostream & out_, 
-														const std::string & title_,
-				const std::string & indent_,
-														bool inherit_) const
+    void things::tree_dump (std::ostream & a_out, 
+														const std::string & a_title,
+														const std::string & a_indent,
+														bool a_inherit) const
     {
       namespace du = datatools::utils;
       std::string indent;
-      if (! indent_.empty ()) indent = indent_;
-      if (! title_.empty ()) 
+      if (! a_indent.empty ()) indent = a_indent;
+      if (! a_title.empty ()) 
 				{
-					out_ << indent << title_ << std::endl;
+					a_out << indent << a_title << std::endl;
 				}
 			
       if (! m_name.empty ()) 
 				{
-					out_ << indent << du::i_tree_dumpable::tag 
+					a_out << indent << du::i_tree_dumpable::tag 
 							 << "Name  : " <<  get_name () << std::endl;
 				}
 			if (! m_description.empty ()) 
 				{
-					out_ << indent << du::i_tree_dumpable::tag 
+					a_out << indent << du::i_tree_dumpable::tag 
 							 << "Description  : " <<  get_description () << std::endl;
 				}
       if (m_things.size () == 0) 
 				{
-					out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
+					a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)
 							 << "<no property>" << std::endl;
 				}
       else 
@@ -413,23 +429,23 @@ namespace datatools {
 						{
 							const std::string & key = i->first;
 							const entry_t & a_entry = i->second;
-							out_ << indent;
+							a_out << indent;
 							std::ostringstream indent_oss;
 							indent_oss << indent;
 							dict_t::const_iterator j = i; 
 							j++;
 							if (j == m_things.end ()) 
 								{
-									out_ << du::i_tree_dumpable::inherit_tag (inherit_);
-									indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+									a_out << du::i_tree_dumpable::inherit_tag (a_inherit);
+									indent_oss << du::i_tree_dumpable::inherit_skip_tag (a_inherit);
 								}
 							else 
 								{
-									out_ << du::i_tree_dumpable::tag;
+									a_out << du::i_tree_dumpable::tag;
 									indent_oss << du::i_tree_dumpable::skip_tag;
 								}
-							out_ << "Name : " << '"' << key << '"' << std::endl;
-							a_entry.tree_dump (out_, "", indent_oss.str ());
+							a_out << "Name : " << '"' << key << '"' << std::endl;
+							a_entry.tree_dump (a_out, "", indent_oss.str ());
 						}
 				}
       return;

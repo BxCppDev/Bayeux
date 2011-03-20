@@ -1,7 +1,7 @@
 /* things.h
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-03-08
- * Last modified : 2011-03-08
+ * Last modified : 2011-03-20
  * 
  * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
  * 
@@ -42,6 +42,7 @@
 #include <exception>
 #include <stdexcept>
 #include <map>
+#include <vector>
 #include <typeinfo>
 
 #include <boost/cstdint.hpp>
@@ -86,18 +87,15 @@ namespace datatools {
 
 		public:
 
-			static const bool constant = true;
+			static const bool constant     = true;
 			static const bool non_constant = ! constant;
 
 			struct entry_t : public datatools::utils::i_tree_dumpable
 			{
 				static const char MASK_CONST = 0x1;
 
-				string                                     description;
-				uint8_t                                    flags;
-				datatools::serialization::i_serializable * handle;
-
 			private:
+
 				friend class boost::serialization::access; 
         BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
 
@@ -109,7 +107,7 @@ namespace datatools {
 
 				bool is_const () const;
 
-				void set_const (bool const_ = true);
+				void set_const (bool a_const = true);
 
 				void set_description (const std::string &);
 				
@@ -117,10 +115,16 @@ namespace datatools {
 
 				bool has_description () const;
 
-				virtual void tree_dump (std::ostream & out_         = std::clog, 
-																const std::string & title_  = "",
-																const std::string & indent_ = "",
-																bool inherit_               = false) const;
+				virtual void tree_dump (std::ostream & a_out         = std::clog, 
+																const std::string & a_title  = "",
+																const std::string & a_indent = "",
+																bool a_inherit               = false) const;
+
+			public:
+
+				string                                     description;
+				uint8_t                                    flags;
+				datatools::serialization::i_serializable * handle;
 
 			};
 
@@ -128,12 +132,6 @@ namespace datatools {
 			typedef map<string, entry_t> dict_t;
 
 			static const string SERIAL_TAG;
-
-		private:
-
-			string m_name;
-			string m_description;
-			dict_t m_things;
       
 		public: 
 
@@ -151,7 +149,7 @@ namespace datatools {
 			things ();
       
 			// ctor:
-			things (const string & name_, const string & description_);
+			things (const string & a_name, const string & a_description);
       
 			// dtor:
 			virtual ~things ();
@@ -172,37 +170,40 @@ namespace datatools {
 
 			bool empty () const;
 			
-			bool has (const string & name_) const;
+			bool has (const string & a_name) const;
 			
-			bool is_constant (const string & name_) const;
+			bool is_constant (const string & a_name) const;
 			
 			//! not implemented :
-			void set_constant (const string & name_, bool = true);
+			void set_constant (const string & a_name, bool a_const = true);
 			
-			const string & get_description (const string & name_) const;
+			const string & get_description (const string & a_name) const;
 			
-			void set_description (const string & name_, const string & desc_);
+			void set_description (const string & a_name, const string & a_desc);
+
+			void get_names (vector<string> & the_names) const;
 
 		private:
 
-			void __add (const string & name_, 
-									datatools::serialization::i_serializable * obj_,
-									const string & desc_ = "",
-									bool const_ = false);
+			void __add (const string & a_name, 
+									datatools::serialization::i_serializable * a_obj,
+									const string & a_desc = "",
+									bool a_const = false);
 
 		public:
 
 			template<class T>
-			T & add (const string & name_, 
-							 const string & desc_ = "", 
-							 bool const_ = false)
+			T & add (const string & a_name, 
+							 const string & a_desc = "", 
+							 bool a_const = false)
 			{
 				T * new_obj = 0;
 				new_obj = new T;
 				if (new_obj == 0)
 					{
 						ostringstream message;
-						message << "datatools::utils::things::add<T>: Cannot allocate object '" << name_ << "' !";
+						message << "datatools::utils::things::add<T>: " 
+										<< "Cannot allocate object '" << a_name << "' !";
 						throw runtime_error (message.str ());
 					}
 				datatools::serialization::i_serializable * new_cast 
@@ -213,7 +214,7 @@ namespace datatools {
 							{
 								delete new_obj;
 							}
-						const type_info & ti = typeid(T);
+						const type_info & ti = typeid (T);
 						T tmp;
 						ostringstream message;
 						message << "datatools::utils::things::add<T>: Request type '" << ti.name () 
@@ -222,22 +223,22 @@ namespace datatools {
 										<< "' base class !";
 						throw bad_things_cast (message.str ());
 					}
-				this->__add (name_, new_cast, desc_, const_);
+				this->__add (a_name, new_cast, a_desc, a_const);
 				return *new_obj;
 			}
 
-			void remove (const string & name_);
+			void remove (const string & a_name);
 
-			void erase (const string & name_);
+			void erase (const string & a_name);
 
 			template<class T>
-			T * pop (const string & name_)
+			T * pop (const string & a_name)
 			{
-				dict_t::iterator found = m_things.find (name_);
+				dict_t::iterator found = m_things.find (a_name);
 				if (found == m_things.end ())
 					{
 						ostringstream message;
-						message << "datatools::utils::things::pop: No stored object has name '" << name_ << "' !";
+						message << "datatools::utils::things::pop: No stored object has name '" << a_name << "' !";
 						throw logic_error (message.str ());
 						return 0;
 					}
@@ -250,7 +251,7 @@ namespace datatools {
 						message << "datatools::utils::things::pop: Request type '" << ti.name () 
 										<< "' ('" << tmp.get_serial_tag () 
 										<< "') does not match the type '" << tf.name () 
-										<< "' of the stored object named '" << name_ 
+										<< "' of the stored object named '" << a_name 
 										<< "' ('" << found->second.handle->get_serial_tag () << "') !";
 						throw bad_things_cast (message.str ());
 					}
@@ -261,13 +262,13 @@ namespace datatools {
 			}
 
 			template<class T>
-			T & grab (const string & name_)
+			T & grab (const string & a_name)
 			{
-				dict_t::iterator found = m_things.find (name_);
+				dict_t::iterator found = m_things.find (a_name);
 				if (found == m_things.end ())
 					{
 						ostringstream message;
-						message << "datatools::utils::things::grab: No stored object has name '" << name_ << "' !";
+						message << "datatools::utils::things::grab: No stored object has name '" << a_name << "' !";
 						throw logic_error (message.str ());
 					}
 				const type_info & ti = typeid(T);
@@ -279,27 +280,27 @@ namespace datatools {
 						message << "datatools::utils::things::grab: Request type '" << ti.name () 
 										<< "' ('" << tmp.get_serial_tag () 
 										<< "') does not match the type '" << tf.name () 
-										<< "' of the stored object named '" << name_ 
+										<< "' of the stored object named '" << a_name 
 										<< "' ('" << found->second.handle->get_serial_tag () << "') !";
 						throw bad_things_cast (message.str ());
 					}
 				if (found->second.is_const ())
 					{
 						ostringstream message;
-						message << "datatools::utils::things::grab: Object named '" << name_ << "' is constant !";
+						message << "datatools::utils::things::grab: Object named '" << a_name << "' is constant !";
 						throw logic_error (message.str ());
 					}
 				return *(dynamic_cast<T *>(found->second.handle));
 			} 
 
 			template<class T>
-			bool is_a (const string & name_) const
+			bool is_a (const string & a_name) const
 			{
-				dict_t::const_iterator found = m_things.find (name_);
+				dict_t::const_iterator found = m_things.find (a_name);
 				if (found == m_things.end ())
 					{
 						ostringstream message;
-						message << "datatools::utils::things::is_a: No object named '" << name_ << "' !";
+						message << "datatools::utils::things::is_a: No object named '" << a_name << "' !";
 						throw logic_error (message.str ());
 					}
 				const type_info & ti = typeid(T);
@@ -308,13 +309,13 @@ namespace datatools {
 			}
 
 			template<class T>
-			const T & get (const string & name_) const
+			const T & get (const string & a_name) const
 			{
-				dict_t::const_iterator found = m_things.find (name_);
+				dict_t::const_iterator found = m_things.find (a_name);
 				if (found == m_things.end ())
 					{
 						ostringstream message;
-						message << "datatools::utils::things::get: No object named '" << name_ << "' !";
+						message << "datatools::utils::things::get: No object named '" << a_name << "' !";
 						throw logic_error (message.str ());
 					}
 				const type_info & ti = typeid(T);
@@ -326,25 +327,32 @@ namespace datatools {
 						message << "datatools::utils::things::get: Request type '" << ti.name () 
 										<< "' ('" << tmp.get_serial_tag () 
 										<< "') does not match the type '" << tf.name () 
-										<< "' of the stored object named '" << name_ 
+										<< "' of the stored object named '" << a_name 
 										<< "' ('" << found->second.handle->get_serial_tag () << "') !";
 						throw bad_things_cast (message.str ());
 					}
 				return *(dynamic_cast<const T *>(found->second.handle));
 			} 
 
-			virtual void tree_dump (std::ostream & out_         = std::clog, 
-															const std::string & title_  = "",
-															const std::string & indent_ = "",
-															bool inherit_               = false) const;
+			virtual void tree_dump (std::ostream & a_out         = std::clog, 
+															const std::string & a_title  = "",
+															const std::string & a_indent = "",
+															bool a_inherit               = false) const;
 
-			void dump (ostream & out_ = std::clog) const;
+			void dump (ostream & a_out = std::clog) const;
 
 		private:
 
 			// serialization :
 			friend class boost::serialization::access;
 			BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
+
+		private:
+
+			// Attributes : 
+			string m_name;
+			string m_description;
+			dict_t m_things;
 
     };
 
