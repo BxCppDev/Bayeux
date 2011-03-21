@@ -18,6 +18,7 @@
 
 #include <datatools/serialization/utils.h>
 #include <datatools/utils/things.h>
+#include <datatools/serialization/i_serializable.ipp>
 	 
 namespace datatools {
 		 

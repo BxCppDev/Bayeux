@@ -17,6 +17,8 @@
 #include <boost/serialization/string.hpp>
 
 #include <datatools/serialization/utils.h>
+
+#include <datatools/serialization/i_serializable.ipp>
 #include <datatools/event/basic_event.h>
 	 
 namespace datatools {

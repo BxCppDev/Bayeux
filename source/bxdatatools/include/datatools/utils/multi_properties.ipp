@@ -17,7 +17,11 @@
 #include <boost/serialization/string.hpp>
 
 #include <datatools/serialization/utils.h>
+
 #include <datatools/utils/multi_properties.h>
+
+#include <datatools/serialization/i_serializable.ipp>
+#include <datatools/utils/properties.ipp>
 	 
 namespace datatools {
 		 

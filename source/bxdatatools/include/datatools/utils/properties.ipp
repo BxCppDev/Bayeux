@@ -13,11 +13,13 @@
 
 #include <boost/serialization/map.hpp>
 #include <boost/serialization/list.hpp>
-#include <boost/serialization/vector.hpp> // missing header: fixed 2010-03-16
+#include <boost/serialization/vector.hpp>
 #include <boost/serialization/string.hpp>
 
 #include <datatools/serialization/utils.h>
 #include <datatools/utils/properties.h>
+
+#include <datatools/serialization/i_serializable.ipp>
 	 
 namespace datatools {
 		 
