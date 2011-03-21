@@ -192,7 +192,8 @@ namespace datatools {
     private:
 	
       friend class boost::serialization::access; 
-      BOOST_SERIALIZATION_SPLIT_MEMBER_SERIALIZE_DECLARATIONS()
+      BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
+      //BOOST_SERIALIZATION_SPLIT_MEMBER_SERIALIZE_DECLARATIONS()
 
     public:
 

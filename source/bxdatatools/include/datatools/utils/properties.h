@@ -148,7 +148,7 @@ namespace datatools {
 	__clear_values ();
 
 	int
-	__init_values (char type_ = TYPE_INTEGER_SYMBOL, int size_ = SCALAR_DEF);
+	__init_values (char a_type = TYPE_INTEGER_SYMBOL, int a_size = SCALAR_DEF);
 
       public:
 
@@ -174,13 +174,13 @@ namespace datatools {
 
 	bool is_unlocked () const;
 
-	int boolean (int size_ = SCALAR_DEF);
+	int boolean (int a_size = SCALAR_DEF);
 
-	int integer (int size_ = SCALAR_DEF);
+	int integer (int a_size = SCALAR_DEF);
 
-	int real (int size_ = SCALAR_DEF);
+	int real (int a_size = SCALAR_DEF);
 
-	int string (int size_ = SCALAR_DEF);
+	int string (int a_size = SCALAR_DEF);
 
 	int lock ();
 
@@ -225,23 +225,23 @@ namespace datatools {
 	static bool has_forbidden_char (const std::string &);
 
 	//ctor
-	data (char type_ = TYPE_INTEGER_SYMBOL ,
-	      int size_ = SCALAR_DEF);
+	data (char a_type = TYPE_INTEGER_SYMBOL ,
+	      int a_size = SCALAR_DEF);
 
-	data (bool value_,
-	      int size_ = SCALAR_DEF);
+	data (bool a_value,
+	      int a_size = SCALAR_DEF);
 
-	data (int value_,
-	      int size_ = SCALAR_DEF);
+	data (int a_value,
+	      int a_size = SCALAR_DEF);
 
-	data (double value_,
-	      int size_ = SCALAR_DEF);
+	data (double a_value,
+	      int a_size = SCALAR_DEF);
 
-	data (const std::string & value_,
-	      int size_ = SCALAR_DEF);
+	data (const std::string & a_value,
+	      int a_size = SCALAR_DEF);
 
-	data (const char * value_ ,
-	      int size_ = SCALAR_DEF);
+	data (const char * a_value ,
+	      int a_size = SCALAR_DEF);
 
 	// dtor
 	virtual ~data ();
@@ -397,14 +397,14 @@ namespace datatools {
     private: 
 
       void
-      __check_nokey (const std::string & key_) const;
+      __check_nokey (const std::string & a_key) const;
 
       void
-      __check_key (const std::string & key_,
+      __check_key (const std::string & a_key,
 		   data ** data_);
 
       void
-      __check_key (const std::string & key_,
+      __check_key (const std::string & a_key,
 		   const data ** data_) const;
 
 
@@ -446,52 +446,52 @@ namespace datatools {
       keys_ending_with (const std::string & key_suffix_) const;
 
       //! Lock the properties dictionary. 
-      void lock (const std::string & key_);
+      void lock (const std::string & a_key);
 
       //! Unlock the properties dictionary. 
-      void unlock (const std::string & key_);
+      void unlock (const std::string & a_key);
 
       //! Check if the instance is locked.
-      bool is_locked (const std::string & key_) const;
+      bool is_locked (const std::string & a_key) const;
 
       //! Return a static key.
-      static std::string make_private_key (const std::string & key_);
+      static std::string make_private_key (const std::string & a_key);
 
-      //! Check if a string matches a private 'key_'.
-      static bool key_is_private (const std::string & key_);
+      //! Check if a string matches a private 'a_key'.
+      static bool key_is_private (const std::string & a_key);
 
-      //! Check if a string matches a public 'key_'.
-      static bool key_is_public (const std::string & key_);
+      //! Check if a string matches a public 'a_key'.
+      static bool key_is_public (const std::string & a_key);
 
-      //! Check if data with name 'key_' is private.
-      bool is_private (const std::string & key_) const;
+      //! Check if data with name 'a_key' is private.
+      bool is_private (const std::string & a_key) const;
 
-      //! Check if data with name 'key_' is public.
-      bool is_public (const std::string & key_) const;
+      //! Check if data with name 'a_key' is public.
+      bool is_public (const std::string & a_key) const;
 
-      //! Check if data with name 'key_' is boolean.
-      bool is_boolean (const std::string & key_) const;
+      //! Check if data with name 'a_key' is boolean.
+      bool is_boolean (const std::string & a_key) const;
 
-      //! Check if data with name 'key_' is integer.
-      bool is_integer (const std::string & key_) const;
+      //! Check if data with name 'a_key' is integer.
+      bool is_integer (const std::string & a_key) const;
 
-      //! Check if data with name 'key_' is real.
-      bool is_real (const std::string & key_) const;
+      //! Check if data with name 'a_key' is real.
+      bool is_real (const std::string & a_key) const;
 
-      //! Check if data with name 'key_' is string.
-      bool is_string (const std::string & key_) const;
+      //! Check if data with name 'a_key' is string.
+      bool is_string (const std::string & a_key) const;
       
       //! Check if data with name 'string' is scalar.
-      bool is_scalar (const std::string & key_) const;
+      bool is_scalar (const std::string & a_key) const;
 
-      bool is_vector (const std::string & key_) const;
+      bool is_vector (const std::string & a_key) const;
 
-      int32_t size (const std::string & key_) const;
+      int32_t size (const std::string & a_key) const;
 
-      bool has_key (const std::string & key_) const;
+      bool has_key (const std::string & a_key) const;
 
-      //! Erase property with name key_.
-      void erase (const std::string & key_);
+      //! Erase property with name a_key.
+      void erase (const std::string & a_key);
 
       //! Erase all properties.
       void erase_all ();
@@ -520,7 +520,7 @@ namespace datatools {
       void export_not_ending_with (properties & p_, 
 				   const std::string & key_suffix__) const;
 
-      void clean (const std::string & key_);
+      void clean (const std::string & a_key);
 
       //! Reset method (from the datatools::utils::i_clear interface).
       virtual void clear ();
@@ -528,252 +528,252 @@ namespace datatools {
       //! Reset method
       void reset ();
  
-      void store_flag (const std::string & key_, 
+      void store_flag (const std::string & a_key, 
 		       const std::string & desc_ = "",
 		       bool lock_ = false);
 
-      void set_flag (const std::string & key_)
+      void set_flag (const std::string & a_key)
       {
-	store_flag (key_, "", false);
+	store_flag (a_key, "", false);
 	return;
       }
 
-      void unset_flag (const std::string & key_)
+      void unset_flag (const std::string & a_key)
       {
-	clean (key_);
+	clean (a_key);
 	return;
       }
 
-      void store (const std::string & key_, 
-		  bool value_, 
+      void store (const std::string & a_key, 
+		  bool a_value, 
 		  const std::string & desc_ = "",
 		  bool lock_ = false);
 
-      void store_boolean (const std::string & key_, 
-			  bool value_, 
+      void store_boolean (const std::string & a_key, 
+			  bool a_value, 
 			  const std::string & desc_ = "",
 			  bool lock_ = false)
       {
-	store (key_, value_, desc_, lock_); 
+	store (a_key, a_value, desc_, lock_); 
 	return;
       }
 
-      void store (const std::string & key_, 
-		  int value_, 
+      void store (const std::string & a_key, 
+		  int a_value, 
 		  const std::string & desc_ = "",
 		  bool lock_ = false);
       
-      void store_integer (const std::string & key_, 
-			  int value_, 
+      void store_integer (const std::string & a_key, 
+			  int a_value, 
 			  const std::string & desc_ = "",
 			  bool lock_ = false)
       {
-	store (key_, value_, desc_, lock_); 
+	store (a_key, a_value, desc_, lock_); 
 	return;
       }
 
-      void store (const std::string & key_, 
-		  double value_, 
+      void store (const std::string & a_key, 
+		  double a_value, 
 		  const std::string & desc_ = "",
 		  bool lock_ = false);
 
-      void store_real (const std::string & key_, 
-		       double value_, 
+      void store_real (const std::string & a_key, 
+		       double a_value, 
 		       const std::string & desc_ = "",
 		       bool lock_ = false)
       {
-	store (key_, value_, desc_, lock_); 
+	store (a_key, a_value, desc_, lock_); 
 	return;
       }
 
-      void store (const std::string & key_, 
-		  const std::string & value_, 
+      void store (const std::string & a_key, 
+		  const std::string & a_value, 
 		  const std::string & desc_ = "",
 		  bool lock_ = false);
 
-      void store_string (const std::string & key_, 
-			 const std::string & value_, 
+      void store_string (const std::string & a_key, 
+			 const std::string & a_value, 
 			 const std::string & desc_ = "",
 			 bool lock_ = false)
       {
-	store (key_, value_, desc_, lock_); 
+	store (a_key, a_value, desc_, lock_); 
 	return;
       }
 
-      void store (const std::string & key_, 
-		  const char * value_, 
+      void store (const std::string & a_key, 
+		  const char * a_value, 
 		  const std::string & desc_ = "",
 		  bool lock_ = false);
       
-      void store (const std::string & key_, 
-		  const data::vbool & values_, 
+      void store (const std::string & a_key, 
+		  const data::vbool & a_values, 
 		  const std::string & desc_ = "",
 		  bool lock_ = false);
       
-      void store (const std::string & key_, 
-		  const data::vint & values_, 
+      void store (const std::string & a_key, 
+		  const data::vint & a_values, 
 		  const std::string & desc_ = "",
 		  bool lock_ = false);
       
-      void store (const std::string & key_, 
-		  const data::vdouble & values_, 
+      void store (const std::string & a_key, 
+		  const data::vdouble & a_values, 
 		  const std::string & desc_ = "",
 		  bool lock_ = false);
 
-      void store (const std::string & key_, 
-		  const data::vstring & values_, 
+      void store (const std::string & a_key, 
+		  const data::vstring & a_values, 
 		  const std::string & desc_ = "",
 		  bool lock_ = false);
       
-      void change (const std::string & key_, 
-		   bool value_, 
+      void change (const std::string & a_key, 
+		   bool a_value, 
 		   int index_ = 0);
 
-      void change_boolean (const std::string & key_ , 
-			   bool value_ , 
+      void change_boolean (const std::string & a_key , 
+			   bool a_value , 
 			   int index_ = 0)
       {
-	change (key_, value_, index_);
+	change (a_key, a_value, index_);
 	return;
       }
       
-      void change (const std::string & key_ , 
-		   int value_ , 
+      void change (const std::string & a_key , 
+		   int a_value , 
 		   int index_ = 0);
       
-      void change_integer (const std::string & key_ , 
-			   int value_ , 
+      void change_integer (const std::string & a_key , 
+			   int a_value , 
 			   int index_ = 0)
       {
-	change (key_, value_, index_);
+	change (a_key, a_value, index_);
 	return;
       }
       
-      void change (const std::string & key_, 
-		   double value_, 
+      void change (const std::string & a_key, 
+		   double a_value, 
 		   int index_ = 0);
       
-      void change_real (const std::string & key_ , 
-			double value_ , 
+      void change_real (const std::string & a_key , 
+			double a_value , 
 			int index_ = 0)
       {
-	change (key_, value_, index_);
+	change (a_key, a_value, index_);
 	return;
       }
       
-      void change (const std::string & key_, 
-		   const std::string & value_, 
+      void change (const std::string & a_key, 
+		   const std::string & a_value, 
 		   int index_ = 0);
       
-      void change_string (const std::string & key_ , 
-			  const std::string & value_ , 
+      void change_string (const std::string & a_key , 
+			  const std::string & a_value , 
 			  int index_ = 0)
       {
-	change (key_, value_, index_);
+	change (a_key, a_value, index_);
       }
       
-      void change (const std::string & key_, 
-		   const char * value_, 
+      void change (const std::string & a_key, 
+		   const char * a_value, 
 		   int index_ = 0);
 
-      void change (const std::string & key_, 
-		   const data::vbool & values_);
+      void change (const std::string & a_key, 
+		   const data::vbool & a_values);
 
-      void change (const std::string & key_, 
-		   const data::vint & values_);
+      void change (const std::string & a_key, 
+		   const data::vint & a_values);
 
-      void change (const std::string & key_, 
-		   const data::vdouble & values_);
+      void change (const std::string & a_key, 
+		   const data::vdouble & a_values);
 
-      void change (const std::string & key_, 
-		   const data::vstring & values_);
+      void change (const std::string & a_key, 
+		   const data::vstring & a_values);
 
       /*****/
 
-      void update_flag (const std::string & key_);
+      void update_flag (const std::string & a_key);
 
-      void update (const std::string & key_, 
-		   bool value_);
+      void update (const std::string & a_key, 
+		   bool a_value);
 
-      void update_boolean (const std::string & key_, 
-			   bool value_)
+      void update_boolean (const std::string & a_key, 
+			   bool a_value)
       {
-	update (key_, value_);
+	update (a_key, a_value);
 	return;
       }
 
-      void update (const std::string & key_ , 
-		   int value_);
+      void update (const std::string & a_key , 
+		   int a_value);
 
-      void update_integer (const std::string & key_ , 
-			   int value_)
+      void update_integer (const std::string & a_key , 
+			   int a_value)
       {
-	update (key_, value_);
+	update (a_key, a_value);
 	return;
       }
 
-      void update (const std::string & key_, 
-		   double value_);
+      void update (const std::string & a_key, 
+		   double a_value);
 
-      void update_real (const std::string & key_, 
-			double value_)
+      void update_real (const std::string & a_key, 
+			double a_value)
       {
-	update (key_, value_);
+	update (a_key, a_value);
 	return;
       }
 
-      void update (const std::string & key_, 
-		   const std::string & value_);
+      void update (const std::string & a_key, 
+		   const std::string & a_value);
 
-      void update_string (const std::string & key_, 
-			  const std::string & value_)
+      void update_string (const std::string & a_key, 
+			  const std::string & a_value)
       {
-	update (key_, value_);
+	update (a_key, a_value);
       }
 
-      void update (const std::string & key_, 
-		   const data::vbool & values_);
+      void update (const std::string & a_key, 
+		   const data::vbool & a_values);
 
-      void update (const std::string & key_, 
-		   const data::vint & values_);
+      void update (const std::string & a_key, 
+		   const data::vint & a_values);
 
-      void update (const std::string & key_, 
-		   const data::vdouble & values_);
+      void update (const std::string & a_key, 
+		   const data::vdouble & a_values);
 
-      void update (const std::string & key_, 
-		   const data::vstring & values_);
+      void update (const std::string & a_key, 
+		   const data::vstring & a_values);
 
       /*****/ 
 
-      bool has_flag (const std::string & key_) const;
+      bool has_flag (const std::string & a_key) const;
 
-      void fetch (const std::string & key_, 
-		  bool   & value_, 
+      void fetch (const std::string & a_key, 
+		  bool   & a_value, 
 		  int index_ = 0) const;
       
-      void fetch (const std::string & key_, 
-		  int    & value_, 
+      void fetch (const std::string & a_key, 
+		  int    & a_value, 
 		  int index_ = 0) const;
       
-      void fetch (const std::string & key_, 
-		  double & value_, 
+      void fetch (const std::string & a_key, 
+		  double & a_value, 
 		  int index_ = 0) const;
       
-      void fetch (const std::string & key_, 
-		  std::string & value_, 
+      void fetch (const std::string & a_key, 
+		  std::string & a_value, 
 		  int index_ = 0) const;
       
-      void fetch (const std::string & key_ , 
-		  data::vbool & values_) const;
+      void fetch (const std::string & a_key , 
+		  data::vbool & a_values) const;
       
-      void fetch (const std::string & key_, 
-		  data::vint & values_) const;
+      void fetch (const std::string & a_key, 
+		  data::vint & a_values) const;
       
-      void fetch (const std::string & key_,
-		  data::vdouble & values_) const;
+      void fetch (const std::string & a_key,
+		  data::vdouble & a_values) const;
       
-      void fetch (const std::string & key_, 
-		  data::vstring & values_) const;
+      void fetch (const std::string & a_key, 
+		  data::vstring & a_values) const;
       
       bool fetch_boolean (const std::string &,
 			  int index_ = 0) const;
@@ -852,9 +852,9 @@ namespace datatools {
 			      const std::string & indent_ = "",
 			      bool inherit_               = false) const;
       
-      std::string  key_to_string (const std::string & key_) const;
+      std::string  key_to_string (const std::string & a_key) const;
 
-      std::string  key_to_property_string (const std::string & key_) const;
+      std::string  key_to_property_string (const std::string & a_key) const;
 
 
       virtual const std::string & get_serial_tag () const;
@@ -862,29 +862,8 @@ namespace datatools {
     private:
 
       friend class boost::serialization::access; 
-      BOOST_SERIALIZATION_SPLIT_MEMBER_SERIALIZE_DECLARATIONS()
-
-      /*
-      template<class Archive>
-      void save (Archive & ar_, const unsigned int version_) const;
-
-      template<class Archive>
-      void load (Archive & ar_ , const unsigned int version_);
-
-      BOOST_SERIALIZATION_SPLIT_MEMBER_HEADER()
-      */
-
-      /** 2003-03-11 FM: old version of the serialize method :
-
-      template<class Archive>
-      void serialize (Archive & ar_ , const unsigned int version_)
-      {
-	ar_ & boost::serialization::make_nvp ("description", __description);
-	ar_ & boost::serialization::make_nvp ("properties",  __props);
-	return;
-      }
-
-      */
+      BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
+      //BOOST_SERIALIZATION_SPLIT_MEMBER_SERIALIZE_DECLARATIONS()
 
     public:
 
@@ -929,25 +908,25 @@ namespace datatools {
 
       private:
 
-	void __read (std::istream & in_ , properties & p_);
+	void __read (std::istream & a_in, properties & a_prop);
 	
       public:
 	
 	bool is_debug () const;
 	
-	void set_debug (bool debug_);
+	void set_debug (bool a_debug);
 
 	// ctor
-	config (bool use_smart_modulo_ = true,
-		int mode_ = MODE_DEFAULT,
-		bool write_public_only_ = write_public_only);
+	config (bool use_smart_modulo = true,
+		int a_mode = MODE_DEFAULT,
+		bool write_public_only = write_public_only);
 
 	// dtor
 	virtual ~config ();
 
-	void read (std::istream & in_, properties & p_);
+	void read (std::istream & a_in, properties & a_prop);
 	
-	void write (std::ostream & out_, const properties & p_);
+	void write (std::ostream & a_out, const properties & a_prop);
        
 	static bool read_quoted_string (std::istream &,
 					std::string &);
@@ -955,16 +934,16 @@ namespace datatools {
 
       };
 
-      static void write_config (const std::string & filename_, 
-				const properties & p_,
-				bool use_smart_modulo_ = true,
-				bool write_public_only_ = true);
+      static void write_config (const std::string & a_filename, 
+				const properties & a_prop,
+				bool use_smart_modulo = true,
+				bool write_public_only = true);
       
-      static void  read_config (const std::string & filename_, 
-				properties & p_);
+      static void  read_config (const std::string & a_filename, 
+				properties & a_prop_);
 
-      static std::string build_property_key (const std::string & prefix_ ,
-					     const std::string & subkey_);
+      static std::string build_property_key (const std::string & a_prefix,
+					     const std::string & a_subkey);
       
     };
 

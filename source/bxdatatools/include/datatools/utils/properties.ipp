@@ -52,6 +52,7 @@ namespace datatools {
       return;
     }
 
+    /*
     template<class Archive>
     void properties::save (Archive & ar_, const unsigned int version_) const
     {
@@ -64,7 +65,24 @@ namespace datatools {
     template<class Archive>
     void properties::load (Archive & ar_ , const unsigned int version_)
     {
-      if (version_ >= 1)
+      if (version_ > 0)
+	{
+	  // from version 1 we inherit explicitely from the
+	  // 'datatools::serialization::i_serializable' abstract class
+	  ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
+	}
+      ar_ & boost::serialization::make_nvp ("description", __description);
+      ar_ & boost::serialization::make_nvp ("properties",  __props);
+      return;
+    }
+
+    BOOST_SERIALIZATION_SPLIT_MEMBER_SERIALIZE_IMPLEMENTATION(properties)
+    */
+
+    template<class Archive>
+    void properties::serialize (Archive & ar_ , const unsigned int version_)
+    {
+      if (version_ > 0)
 	{
 	  /* from version 1 we inherit explicitely from the
 	   * 'datatools::serialization::i_serializable' abstract class
@@ -75,8 +93,6 @@ namespace datatools {
       ar_ & boost::serialization::make_nvp ("properties",  __props);
       return;
     }
-
-    BOOST_SERIALIZATION_SPLIT_MEMBER_SERIALIZE_IMPLEMENTATION(properties)
 
   } // end of namespace utils 
 
