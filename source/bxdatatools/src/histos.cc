@@ -95,6 +95,12 @@ namespace datatools {
       __y_step = y_step_;
     }
   
+    double histos::get_z ( int i_, int j_ )
+    {
+      std::vector<double> z_values;
+      get_z_values ( z_values );
+      return z_values.at ( i_ * get_y_step() + j_ );
+    }
 
     void histos::set_x_range ( double x_min_, double x_max_ )
     {
@@ -158,7 +164,26 @@ namespace datatools {
 	    }
 	}
     }
+
   
+    void histos::do_ratio( histos & histo_3d_2_ )
+    {
+      if ( __x_min  == histo_3d_2_.get_x_min()  &&
+	   __x_max  == histo_3d_2_.get_x_max()  &&
+	   __x_step == histo_3d_2_.get_x_step() &&
+	   __y_min  == histo_3d_2_.get_y_min()  &&
+	   __y_max  == histo_3d_2_.get_y_max()  &&
+	   __y_step == histo_3d_2_.get_y_step() )
+	{
+	  for ( size_t i = 0; i < __x_step; i++ )
+	    for ( size_t j = 0; j < __y_step; j++ )
+	      if ( histo_3d_2_.get_z( i, j ) != 0. )
+		__histo_3d[i][j] /= histo_3d_2_.get_z( i, j );
+	      else
+		__histo_3d[i][j] = -1.;
+	}
+    }
+    
 
     void histos::x_normalize()
     {
@@ -255,8 +280,12 @@ namespace datatools {
     }
 
 
-    void histos::help ( std::ostream & out_ )
+    void histos::help ( std::ostream & out_, std::string file_ )
     {
+      std::string out_txt = "histo_3d.his";
+      if ( file_ != "" )
+	out_txt = file_;
+      
       out_ << std::endl
 	   << "** histos: gnuplot example: **" << std::endl
 	   << "------------------------------" << std::endl;
@@ -269,10 +298,10 @@ namespace datatools {
 	   << "set palette rgbformulae -31, -36, -32" << std::endl
 	   << "set view 0, 0"  << std::endl
 	   << "unset surface"  << std::endl
-	   << "set dgrid3d" << __y_step << "," << __x_step << ",2" << std::endl
+	   << "set dgrid3d " << __y_step << "," << __x_step << ",2" << std::endl
 	   << "splot [" << __x_min << ":" << __x_max << "]"
-	   << "[" << __y_min << ":" << __y_max << "][0:*] '"
-	   << "histo_3d.his' u 1:2:3 with dots title 'histogram_3d'"
+	   << "[" << __y_min << ":" << __y_max << "][0:*] '" << out_txt
+	   << "' u 1:2:3 with dots title 'histogram_3d'"
 	   << std::endl << std::endl;
     }
   }

@@ -52,6 +52,8 @@ namespace datatools {
       double get_y_min ();
       double get_y_max ();
       int    get_y_step();
+
+      double get_z ( int i_, int j_ );
 	    
       // set
       void set_debug  ( bool );
@@ -72,9 +74,10 @@ namespace datatools {
 
       void x_normalize();
       void y_normalize();
-
+      void do_ratio( histos & histo_3d_2_ );
+      
       void print ( std::ostream & );
-      void help  ( std::ostream & );
+      void help  ( std::ostream &, std::string file_ = "" );
 
       void get_x_values ( std::vector<double> & );
       void get_y_values ( std::vector<double> & );
