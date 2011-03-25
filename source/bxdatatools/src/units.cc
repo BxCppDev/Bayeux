@@ -4,6 +4,9 @@
 
 #include <datatools/utils/units.h>
 
+#include <CLHEP/Units/SystemOfUnits.h>
+#include <CLHEP/Units/PhysicalConstants.h>
+
 namespace datatools {
 
   namespace utils {

@@ -149,7 +149,7 @@ namespace datatools {
 			things ();
       
 			// ctor:
-			things (const string & a_name, const string & a_description);
+			things (const string & a_name, const string & a_description = "");
       
 			// dtor:
 			virtual ~things ();

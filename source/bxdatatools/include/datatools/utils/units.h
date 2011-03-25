@@ -3,7 +3,7 @@
 /* units.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-03-18
- * Last modified: 2010-03-18
+ * Last modified: 2011-03-25
  * 
  * License: 
  * 
@@ -26,9 +26,6 @@
 #include <string>
 #include <list>
 #include <limits>
-
-#include <CLHEP/Units/SystemOfUnits.h>
-#include <CLHEP/Units/PhysicalConstants.h>
 
 namespace datatools {
 
