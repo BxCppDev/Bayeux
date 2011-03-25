@@ -102,7 +102,7 @@ ifeq ($(DATATOOLS_NO_FPU),)
 DATATOOLS_NO_FPU=0
 $(warning WARNING: datatools uses 'Floating point utilities' (FPU) !)
 FPU_FLAGS=-DIOFACTORY_USE_FPU=1
-DEPCPPFLAGS+=-I$(PACKAGE_DIR)/boost/vault/fpu
+##DEPCPPFLAGS+=-I$(PACKAGE_DIR)/boost/vault/fpu
 else
 DATATOOLS_NO_FPU=1
 $(warning WARNING: datatools does not use FPU !)

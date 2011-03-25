@@ -203,8 +203,8 @@ if [ "x$opt" = "x--cflags" ]; then
 		fi
 		if [ ${with_boost_fpu} -eq 1 ]; then
 		    echo -n "-DIOFACTORY_USE_FPU=1 "
-		    echo -n "-I${THEPACK_ROOT}/boost/vault/fpu "
-		    echo -n "-I${THEPACK_ROOT}/boost/vault/endian "
+		    #echo -n "-I${THEPACK_ROOT}/boost/vault/fpu "
+		    #echo -n "-I${THEPACK_ROOT}/boost/vault/endian "
 		fi
 		echo -n "`clhep-config --include` " 
 	    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py 
