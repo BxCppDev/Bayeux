@@ -2,9 +2,7 @@
 // time_tools.cc
 
 #include <datatools/utils/time_tools.h>
-
-#include <CLHEP/Units/SystemOfUnits.h>
-#include <CLHEP/Units/PhysicalConstants.h>
+#include <datatools/utils/clhep_units.h>
 
 namespace datatools {
 

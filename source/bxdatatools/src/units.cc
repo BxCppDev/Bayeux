@@ -3,9 +3,7 @@
  */
 
 #include <datatools/utils/units.h>
-
-#include <CLHEP/Units/SystemOfUnits.h>
-#include <CLHEP/Units/PhysicalConstants.h>
+#include <datatools/utils/clhep_units.h>
 
 namespace datatools {
 
