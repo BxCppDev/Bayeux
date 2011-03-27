@@ -18,6 +18,12 @@
 
 #include <datatools/utils/units.h>
 
+// maybe this is a bad solution:
+// here we include the CLHEP headers in such a way the 
+// full system of units is available everywhere
+//#include <CLHEP/Units/SystemOfUnits.h>
+//#include <CLHEP/Units/PhysicalConstants.h>
+
 namespace geomtools {
 
   /* 2010-03-18 FM:
