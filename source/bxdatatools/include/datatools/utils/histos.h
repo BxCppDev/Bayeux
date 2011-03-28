@@ -53,9 +53,7 @@ namespace datatools {
       double get_y_max ();
       int    get_y_step();
 
-      double get_z ( int i_, int j_ );
-	    
-      // set
+     // set
       void set_debug  ( bool );
       void set_x_min  ( double );
       void set_x_max  ( double );
@@ -77,11 +75,15 @@ namespace datatools {
       void do_ratio( histos & histo_3d_2_ );
       
       void print ( std::ostream & );
+      void print2 ( std::ostream & );
       void help  ( std::ostream &, std::string file_ = "" );
 
       void get_x_values ( std::vector<double> & );
       void get_y_values ( std::vector<double> & );
       void get_z_values ( std::vector<double> & );
+
+      double get_z ( int i_, int j_ );
+      void   set_z ( int i_, int j_, double val_ );
 
 
     private:

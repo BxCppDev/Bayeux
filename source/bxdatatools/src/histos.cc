@@ -102,6 +102,11 @@ namespace datatools {
       return z_values.at ( i_ * get_y_step() + j_ );
     }
 
+    void histos::set_z ( int i_, int j_, double val_ )
+    {
+      __histo_3d[i_][j_] = val_;
+    }
+
     void histos::set_x_range ( double x_min_, double x_max_ )
     {
       set_x_min  ( x_min_ );
@@ -276,6 +281,44 @@ namespace datatools {
 	      if ( __debug ) std::cerr << __histo_3d[i][j] << '\t';
 	    }
 	  if ( __debug ) std::cerr << std::endl;
+	}
+    }
+    
+    
+    void histos::print2 ( std::ostream & out_ )
+    {
+      double x_step_size = ( __x_max - __x_min ) / (double)( __x_step );
+      double y_step_size = ( __y_max - __y_min ) / (double)( __y_step );
+    
+      out_ << "# Result"
+	   << std::endl;
+
+      for ( int i = 0; i < __x_step; i++ )
+	{
+	  for ( int j = 0; j < __y_step; j++ )
+	    {
+	      out_ << ( __x_min + (double)(i) * x_step_size ) << " "
+		   << ( __y_min + (double)(j) * y_step_size ) << " "
+		   << __histo_3d[i][j]
+		   << std::endl
+		   << ( __x_min + (double)(i) * x_step_size ) << " "
+		   << ( __y_min + ((double)(j)+1.) * y_step_size ) << " "
+		   << __histo_3d[i][j]
+		   << std::endl;
+	    }
+	  out_ << std::endl;
+	  for ( int j = 0; j < __y_step; j++ )
+	    {
+	      out_ << ( __x_min + ((double)(i)+1.) * x_step_size ) << " "
+		   << ( __y_min + (double)(j) * y_step_size ) << " "
+		   << __histo_3d[i][j]
+		   << std::endl
+		   << ( __x_min + ((double)(i)+1.) * x_step_size ) << " "
+		   << ( __y_min + ((double)(j)+1.) * y_step_size ) << " "
+		   << __histo_3d[i][j]
+		   << std::endl;
+	    }
+	  out_ << std::endl;
 	}
     }
 
