@@ -3,6 +3,7 @@
  */
 
 #include <materials/material.h>
+#include <datatools/utils/clhep_units.h>
 
 namespace mat {
 
