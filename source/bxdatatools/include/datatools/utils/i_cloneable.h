@@ -31,18 +31,74 @@
 #define __datatools__utils__i_cloneable_h 1
 
 namespace datatools {
-
+  
   namespace utils {
 
+    /** This is a pure abstract class that can be
+     *  inherited for class cloning service (only for 
+     *  copyable objects).
+     *
+     *  Some macros are provided for declaration and definition 
+     *  of a clone method within a class. Should be in public scope.
+     *
+     *  \b Example:
+     *
+     *  Header file (my_data.h):
+     *  @code
+     *  #include <datatools/utils/i_cloneable.h>
+     *
+     *  class my_data : public datatools::utils::i_cloneable
+     *  {
+     *    public:
+     *      DATATOOLS_CLONEABLE_DECLARATION(my_data)
+     *  };
+     *  @endcode
+     *
+     *  Implementation file (my_data.cc):
+     *  @code
+     *  #include <my_data.h>
+     *
+     *  DATATOOLS_CLONEABLE_IMPLEMENTATION(my_data) 
+     *  @endcode
+     *
+     * The \t my_data class must have a copy constructor (or a 
+     * default copy constructor provided by the compiler).
+     *
+     */     
     class i_cloneable
     {
     public:
+
       virtual i_cloneable * clone (void) const = 0;
+
+      virtual ~i_cloneable () {};
+
+    public:
+      /** Templatized static method for cloning
+       *  copyable objects.
+       */
+      template<class T>
+	static T * clone (const T & a_t)
+	{
+	  return new T(a_t);
+	}  
     };
+
 
   } // end of namespace utils 
 
 } // end of namespace datatools 
+
+#define DATATOOLS_CLONEABLE_DECLARATION(T)              \
+  virtual T * clone (void) const;                       \
+/**/
+
+#define DATATOOLS_CLONEABLE_IMPLEMENTATION(T)           \
+  T * T::clone (void) const                             \
+  {                                                     \
+    return i_cloneable::clone (*this);                  \
+  }                                                     \
+/**/
 
 #endif // __datatools__utils__i_cloneable_h
 

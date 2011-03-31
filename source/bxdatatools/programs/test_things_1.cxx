@@ -1,11 +1,13 @@
-// test_things_2.cxx
+// test_things_1.cxx
 
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <exception>
+#include <vector>
 
+#include <boost/foreach.hpp>
 
 #include <datatools/serialization/i_serializable.h>
 //#include <datatools/serialization/archives_instantiation.h>
@@ -64,7 +66,7 @@ private:
   friend class boost::serialization::access;
 	BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
 
-private :
+	private :
 
   double value_;
 
@@ -149,7 +151,7 @@ private:
   friend class boost::serialization::access;
 	BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
 
-private:
+	private:
 
   int32_t index_;
 
@@ -256,118 +258,78 @@ int main (int argc_, char ** argv_)
             }
           iarg++;
 				}
- 
-			string filename = "test_things_2.txt";
-			if (format == "xml")
-				{
-					filename = "test_things_2.xml";
-				}				
-			if (format == "binary")
-				{
-					filename = "test_things_2.data";
-				}				
-			filename = filename + compression;
 			
-			if (out)
-				{
-					// declare the 'bag' instance as a 'things' container:
-					datatools::utils::things bag ("bag1", "A bag with things in it");	
+			// declare the 'bag' instance as a 'things' container:
+			datatools::utils::things bag ("bag1", "A bag with things in it");	
 			
-					// add some objects of type 'A' and 'B' in it
-					// perform some on-the-fly setter on some of them :
-					bag.add<A> ("a1").set_value (666.6666);
-					bag.add<A> ("a2").set_value (3.1415);
-					bag.add<B> ("b1").set_index (7654321);
-					bag.add<B> ("b2").set_index (1);
-					bag.add<B> ("b3").set_index (2);
-					bag.add<A> ("a3").set_value (42.0);
-					bag.add<datatools::utils::properties> ("p1").set_description ("A list of properties");
-					bag.add<A> ("a4");
-					bag.grab<B> ("b3").set_index (7777); 
-					bag.grab<A> ("a4").set_value (1.6e-19); 
-					bag.add<B> ("b4");
-					// here we put a bag in the bag :
-					bag.add<datatools::utils::things> ("g1").set_name ("sub_bag").set_description ("A bag stored in another bag");
+			// add some objects of type 'A' and 'B' in it
+			// perform some on-the-fly setter on some of them :
+			bag.add<A> ("a1").set_value (666.6666);
+			bag.add<A> ("a2").set_value (3.1415);
+			bag.add<B> ("b1").set_index (7654321);
+			bag.add<B> ("b2").set_index (1);
+			bag.add<B> ("b3").set_index (2);
+			bag.add<A> ("a3").set_value (42.0);
+			bag.add<datatools::utils::properties> ("p1").set_description ("A list of properties");
+			bag.add<A> ("a4");
+			bag.grab<B> ("b3").set_index (7777); 
+			bag.grab<A> ("a4").set_value (1.6e-19); 
+			bag.add<B> ("b4");
+			// here we put a bag in the bag :
+			bag.add<datatools::utils::things> ("g1").set_name ("sub_bag").set_description ("A bag stored in another bag");
 
-					// fetch the 'propeties' container stored with name 'p1' :
-					datatools::utils::properties & p1 = bag.grab<datatools::utils::properties> ("p1");
-					p1.store_flag ("test");
-					p1.store ("version.major", 1);
-					p1.store ("version.minor", 2);
-					p1.store ("version.patch", 10);
-					p1.store ("pi", 3.14159);
+			// fetch the 'propeties' container stored with name 'p1' :
+			datatools::utils::properties & p1 = bag.grab<datatools::utils::properties> ("p1");
+			p1.store_flag ("test");
+			p1.store ("version.major", 1);
+			p1.store ("version.minor", 2);
+			p1.store ("version.patch", 10);
+			p1.store ("pi", 3.14159);
 
-					// fetch the 'things' container stored with name 'g1' :
-					datatools::utils::things & g1 = bag.grab<datatools::utils::things> ("g1");
-					g1.add<A> ("x1").set_value (33.0);
-					g1.add<A> ("x2").set_value (12.0);
-					g1.add<B> ("y1").set_index (7);
+			// fetch the 'things' container stored with name 'g1' :
+			datatools::utils::things & g1 = bag.grab<datatools::utils::things> ("g1");
+			g1.add<A> ("x1").set_value (33.0);
+			g1.add<A> ("x2").set_value (12.0);
+			g1.add<B> ("y1").set_index (7);
  
-					// dump the bag :
-					bag.dump (clog);
-				
-					// now we store the 'bag' contents within a Boost archive :
-					clog << "Store 'things'..." << endl;
-					datatools::serialization::data_writer writer (filename,
-																												datatools::serialization::using_multi_archives);
-					writer.store (bag);
-					clog << "Done." << endl << endl << endl;
-				}
+			// dump the bag :
+			bag.tree_dump (clog, "The bag:");
 
-			if (in)
+			// DO NOT COMPILE (NO PUBLIC COPY CONSTRUCTOR) :
+			/*
+			datatools::utils::things bag2 = bag;
+			*/
+
+			// DO NOT COMPILE (NO PUBLIC COPY CONSTRUCTOR) :
+			/*
+			vector<datatools::utils::things> bags;
+			datatools::utils::things dummy;
+			bags.push_back (dummy);
+			for (int i = 0; i < bags.size (); i++)
 				{
-					// declare the 'bag' instance as an empty 'things' container:
-					datatools::utils::things bag;
+					bags[i].tree_dump ();
+				} 
+			*/
 
-					// now we load the 'bag' from a Boost archive :
-					clog << "Load 'things'..." << endl;
-					datatools::serialization::data_reader reader (filename,
-																												datatools::serialization::using_multi_archives);
-					if (reader.has_record_tag ())
-						{
-							if (reader.record_tag_is (datatools::utils::things::SERIAL_TAG))
-								{
-									reader.load (bag);
-								}
-							else
-								{
-									cerr << "Unknown record tag !" << endl;
-								}
-						}
-					else
-						{
-							cerr << "Reader has no serialized data !" << endl;
-						}
-					clog << "Done." << endl;
-
-					// dump it and check that is has been properly restored
-					// from the serialization stream :
-					bag.dump (clog);
+			{
+				clog << endl << "A container of pointers to bags..." << endl;
+				typedef vector<datatools::utils::things *> bag_col_t;
+				bag_col_t bags;
+				bags.push_back (new datatools::utils::things ("O1", "a bag"));
+				bags.push_back (new datatools::utils::things ("O2", "another bag"));
+				bags.push_back (new datatools::utils::things ("O3", "yet another bag"));
 				
-					clog << "Fetching 'p1'..." << endl;
-					const datatools::utils::properties & p1 = bag.get<datatools::utils::properties> ("p1");
-					p1.tree_dump (clog, "p1");
- 
-					// fetch the 'things' container stored with name 'g1' :
-					datatools::utils::things & g1 = bag.grab<datatools::utils::things> ("g1");
-					g1.dump (clog);
-					if (g1.has ("x1") && g1.is_a<A> ("x1") )
-						{
-							const A & x1 = g1.get<A> ("x1");
-							x1.dump (clog);
-						}
-					if (g1.has ("x2") && g1.is_a<A> ("x2") )
-						{
-							const A & x2 = g1.get<A> ("x2");
-							x2.dump (clog);
-						}
-					if (g1.has ("y1") && g1.is_a<B> ("y1") )
-						{
-							const B & y1 = g1.get<B> ("y1");
-							y1.dump (clog);
-						}
-						
-				}
+				BOOST_FOREACH(datatools::utils::things * bag, bags)
+					{
+						if (bag != 0) bag->tree_dump (clog, "Stored bag: ");
+					}
+				
+				clog << "Delete stored bags..." << endl;
+				BOOST_FOREACH(datatools::utils::things * bag, bags)
+					{
+						if (bag != 0) delete bag;
+					}
+			}
 
     }
   catch (exception & x)
@@ -383,7 +345,7 @@ int main (int argc_, char ** argv_)
   return (error_code);
 }
  
-// end of test_things_2.cxx
+// end of test_things_1.cxx
 /*
 ** Local Variables: --
 ** mode: c++ --

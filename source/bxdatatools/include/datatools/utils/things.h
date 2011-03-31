@@ -46,6 +46,7 @@
 #include <typeinfo>
 
 #include <boost/cstdint.hpp>
+#include <boost/utility.hpp>
 #include <boost/serialization/access.hpp>
 
 #include <datatools/serialization/utils.h>
@@ -82,13 +83,17 @@ namespace datatools {
 
     class things : public datatools::serialization::i_serializable,
 									 public datatools::utils::i_tree_dumpable,
-									 public datatools::utils::i_clear 
+									 public datatools::utils::i_clear,
+									 private boost::noncopyable
+ 
     {
 
 		public:
 
 			static const bool constant     = true;
 			static const bool non_constant = ! constant;
+			static const bool copyable     = true;
+			static const bool noncopyable  = ! copyable;
 
 			struct entry_t : public datatools::utils::i_tree_dumpable
 			{
@@ -128,7 +133,6 @@ namespace datatools {
 
 			};
 
-			//typedef map<string, datatools::serialization::i_serializable *> dict_t;
 			typedef map<string, entry_t> dict_t;
 
 			static const string SERIAL_TAG;

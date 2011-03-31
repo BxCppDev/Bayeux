@@ -52,6 +52,7 @@
 #include <boost/serialization/access.hpp>
 
 #include <datatools/serialization/i_serializable.h>
+#include <datatools/utils/i_cloneable.h>
 #include <datatools/utils/i_tree_dump.h>
 #include <datatools/utils/i_clear.h>
 
@@ -68,9 +69,10 @@ namespace datatools {
      *  as well as arrays (std::vector) of these build-in types. 
      *
      */
-    class properties : public datatools::serialization::i_serializable ,
+    class properties : public datatools::serialization::i_serializable,
 		       public datatools::utils::i_tree_dumpable,
-		       public datatools::utils::i_clear 
+		       public datatools::utils::i_clear,
+		       public datatools::utils::i_cloneable 
     {
 
     public:
@@ -857,13 +859,16 @@ namespace datatools {
       std::string  key_to_property_string (const std::string & a_key) const;
 
 
+      //! From the datatools::serialization::i_serializable interface :
       virtual const std::string & get_serial_tag () const;
+
+      //! From the datatools::utils::i_cloneable interface :
+      DATATOOLS_CLONEABLE_DECLARATION (properties)
 
     private:
 
       friend class boost::serialization::access; 
       BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
-      //BOOST_SERIALIZATION_SPLIT_MEMBER_SERIALIZE_DECLARATIONS()
 
     public:
 

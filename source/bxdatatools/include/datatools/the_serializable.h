@@ -35,6 +35,7 @@ BOOST_CLASS_EXPORT_KEY2(datatools::utils::things, "datatools::utils::things")
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::utils::things)
 BOOST_CLASS_EXPORT_IMPLEMENT(datatools::utils::things) 
 
+
 /*********************************
  * datatools::event::event_id *
  *********************************/

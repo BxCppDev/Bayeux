@@ -38,11 +38,6 @@ namespace datatools {
 
     /****************************************************************/
 
-    const string & multi_properties::get_serial_tag () const
-    {
-      return multi_properties::SERIAL_TAG;
-    }
-
     const string & multi_properties::entry::get_serial_tag () const
     {
       return multi_properties::entry::SERIAL_TAG;
@@ -143,6 +138,13 @@ namespace datatools {
 
 
     /****************************************************************/
+
+    DATATOOLS_CLONEABLE_IMPLEMENTATION(multi_properties)
+
+    const string & multi_properties::get_serial_tag () const
+    {
+      return multi_properties::SERIAL_TAG;
+    }
 
     bool multi_properties::is_debug () const
     {

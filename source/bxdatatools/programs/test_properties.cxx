@@ -265,7 +265,7 @@ int main (int argc_, char ** argv_)
 
       clog << "========================================" << endl;
 
-      clog << "Enter a list of strings (\"hello\",\"world\"): " 
+      clog << "Enter a list of double-quoted strings (ex: \"my\" \"favorite\" \"color\" \"is\" \"blue\"): " 
 	   << endl;
       string as;
       getline (cin, as);
@@ -291,23 +291,25 @@ int main (int argc_, char ** argv_)
     
       clog << "========================================" << endl;
 
-      string s3 = "azerty";
+      clog << "Example of an invalid string: " << endl;
+      string s3 = "aze\"rty";
       clog << "s3='" << s3 << "'" << endl;
       if (du::properties::data::has_forbidden_char (s3)) 
 	{
-	  clog << "Oops! there are forbidden chars found in 's3'!" 
+	  clog << "Oops! As expected, there are forbidden chars found in s3='" << s3 << "' !" 
 	       << endl;
 	}
       else 
 	{
-	  clog << "'s3' is ok!" << endl;
+	  clog << "'s3' is ok !" << endl;
 	}
     
-      string s4 = "aze\"rty";
+      clog << "Example of a valid string: " << endl;
+      string s4 = "azerty";
       clog << "s4='" << s4 << "'" << endl;
       if (du::properties::data::has_forbidden_char (s4))
 	{
-	  clog << "Oops! there are forbidden chars found in 's4'!"
+	  clog << "Oops! As expected, there are forbidden chars found in s4='" << s4 << "' !" 
 	       << endl;
 	}
       else 

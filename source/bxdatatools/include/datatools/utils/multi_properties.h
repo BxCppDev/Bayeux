@@ -48,6 +48,7 @@
 #include <boost/serialization/access.hpp>
 
 #include <datatools/serialization/i_serializable.h>
+#include <datatools/utils/i_cloneable.h>
 #include <datatools/utils/i_tree_dump.h>
 #include <datatools/utils/i_clear.h>
 
@@ -60,7 +61,8 @@ namespace datatools {
     class multi_properties :    
       public datatools::serialization::i_serializable,
       public datatools::utils::i_clear,
-      public datatools::utils::i_tree_dumpable
+      public datatools::utils::i_tree_dumpable,
+      public datatools::utils::i_cloneable 
     {
     public:
       static const char OPEN;
@@ -188,6 +190,9 @@ namespace datatools {
     public:
 
       virtual const string & get_serial_tag () const;
+
+      //! From the datatools::utils::i_cloneable interface :
+      DATATOOLS_CLONEABLE_DECLARATION (multi_properties)
 
     private:
 	

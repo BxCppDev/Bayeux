@@ -894,6 +894,8 @@ namespace datatools {
       return;	
     }
 
+    DATATOOLS_CLONEABLE_IMPLEMENTATION(properties)
+ 
     void properties::__clear_key_validator ()
     {
       if (__key_validator != 0) 

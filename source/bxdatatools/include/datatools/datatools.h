@@ -25,7 +25,7 @@
  *
  *  This package depends on:
  *  - the Boost C++ library through the boost_help package available at:
- *    https://nemo.lpc-caen.in2p3.fr/svn/boost_help/  
+ *    https://nemo.lpc-caen.in2p3.fr/svn/boost_help/ (version 1.44 and above)
  *  - the CLHEP C++ library (version 2.0 and above)
  *
  * \section contents_section Contents
