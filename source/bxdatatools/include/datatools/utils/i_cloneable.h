@@ -30,6 +30,13 @@
 #ifndef __datatools__utils__i_cloneable_h
 #define __datatools__utils__i_cloneable_h 1
 
+#include <iostream>
+#include <typeinfo>
+
+#include <boost/scoped_ptr.hpp>
+#include <datatools/serialization/i_serializable.h>
+#include <datatools/utils/caster_utils.h>
+
 namespace datatools {
   
   namespace utils {
@@ -74,32 +81,45 @@ namespace datatools {
       virtual ~i_cloneable () {};
 
     public:
-      /** Templatized static method for cloning
-       *  copyable objects.
+      /** Templatized static method for cloning copyable objects.
        */
-      template<class T>
-	static T * clone (const T & a_t)
-	{
-	  return new T(a_t);
-	}  
+      template<class Cloneable>
+      static Cloneable * clone_it (const Cloneable & a_cloneable)
+      {
+	return new Cloneable (a_cloneable);
+      }  
     };
-
 
   } // end of namespace utils 
 
 } // end of namespace datatools 
 
-#define DATATOOLS_CLONEABLE_DECLARATION(T)              \
-  virtual T * clone (void) const;                       \
+#define DATATOOLS_CLONEABLE_DECLARATION(Cloneable)           \
+  virtual Cloneable * clone (void) const;                    \
 /**/
 
-#define DATATOOLS_CLONEABLE_IMPLEMENTATION(T)           \
-  T * T::clone (void) const                             \
-  {                                                     \
-    return i_cloneable::clone (*this);                  \
-  }                                                     \
+#define DATATOOLS_CLONEABLE_IMPLEMENTATION(Cloneable)              \
+  Cloneable * Cloneable::clone (void) const			   \
+  {                                                                \
+    return datatools::utils::i_cloneable::clone_it (*this);        \
+  }                                                                \
+/**/
+
+#define DATATOOLS_CLONEABLE_TO_SERIALIZABLE_CASTER_DECLARATION(Cloneable) \
+DATATOOLS_CASTER_DECLARATION(datatools::utils::i_cloneable,datatools::serialization::i_serializable, Cloneable,g_cloneable_to_serializable_caster,get_cloneable_to_serializable_caster) \
+/**/
+
+#define DATATOOLS_CLONEABLE_TO_SERIALIZABLE_CASTER_IMPLEMENTATION(Cloneable) \
+DATATOOLS_CASTER_IMPLEMENTATION(datatools::utils::i_cloneable,datatools::serialization::i_serializable, Cloneable,g_cloneable_to_serializable_caster,get_cloneable_to_serializable_caster) \
 /**/
 
 #endif // __datatools__utils__i_cloneable_h
 
 /* end of i_cloneable.h */
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

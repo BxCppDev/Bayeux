@@ -34,7 +34,7 @@ public:
   }
   void print () const
   {
-    cout << "prefix=\"" << prefix_ << "\" , " << "id=" << id_ << endl;
+    cout << "foo : prefix=\"" << prefix_ << "\" , " << "id=" << id_ << endl;
   }
 };
 
@@ -43,7 +43,6 @@ int main (int argc_ , char ** argv_)
   int error_code = EXIT_SUCCESS;
   try 
     {
-
       clog << "Test of the 'datatools::utils::i_cloneable' interface..." << endl; 
       bool debug = false;
 
@@ -90,7 +89,9 @@ int main (int argc_ , char ** argv_)
 	f4.print ();
 	foo * cf4 = datatools::utils::i_cloneable::clone (f4);
 	cf4->prime ().print ();
+	delete cf4;
       }
+
     }
   catch (exception & x)
     { 
