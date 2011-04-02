@@ -23,7 +23,8 @@
  * 
  * Description: 
  *
- *  An serializable handle object referencing an object through a shared pointer
+ *  An serializable handle object referencing an object through 
+ *  a shared pointer.
  *
  */
 
@@ -31,11 +32,13 @@
 #define __datatools__utils__handle_h 1
 
 #include <iostream>
-#include <typeinfo>
+#include <stdexcept>
 
 #include <boost/shared_ptr.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/shared_ptr.hpp>
+
+#include <datatools/utils/i_predicate.h>
 
 namespace datatools {
   
@@ -43,8 +46,8 @@ namespace datatools {
 
     /** A \t handle object is given the responsability to 
 		 *  handle an instance through its pointer using the shared pointer
-		 *  mechanism from Boost. The inner hidden pointer cannot be null
-		 *  and must be initialized with the 'new' construction operator.
+		 *  mechanism from Boost. The inner hidden pointer can be null.
+		 *  It must be initialized with the 'new' construction operator.
 		 *  The handle class is copyable and can be used within STL containers.
      *
      *  \b Example:
@@ -72,6 +75,9 @@ namespace datatools {
      *
      */     
 
+		// forward declaration :
+		template <class T> struct handle_predicate;
+
 		template <class T>
 		class handle
 		{
@@ -79,25 +85,59 @@ namespace datatools {
 
 		public:
 
-			handle (T * a_t_ptr = 0) : sp_ (a_t_ptr != 0 ? a_t_ptr : new T)
+			handle () : sp_ (new T)
 			{
 				return;
 			}
 
+			handle (T * a_t_ptr ) : sp_ (a_t_ptr)
+			{
+				return;
+			}
+
+			handle (const boost::shared_ptr<T> & a_sp) : sp_ (a_sp)
+			{
+			}
+
+			bool has_data () const
+			{
+				return sp_.get () != 0;
+			}
+
 			const T & get () const
 			{
+				if (sp_.get () == 0)
+					{
+						throw std::logic_error ("datatools::utils::handle::get: Handle has no data !");
+					}
 				return *sp_.get ();
 			}
 
 			T & get ()
 			{
+				if (sp_.get () == 0)
+					{
+						throw std::logic_error ("datatools::utils::handle::get: Handle has no data !");
+					}
 				return *sp_.get ();
 			}
 
-			T & reset (T * a_t_ptr = 0)
+			void reset ()
 			{
-				sp_.reset (a_t_ptr != 0 ? a_t_ptr : new T);
-				return *sp_.get ();
+				sp_.reset (new T);
+				return;
+			}
+
+			void reset (T * a_t_ptr)
+			{
+				sp_.reset (a_t_ptr);
+				return;
+			}
+
+			void reset (const boost::shared_ptr<T> & a_sp)
+			{
+				sp_ = a_sp;
+				return;
 			}
 
 		private:
@@ -108,8 +148,39 @@ namespace datatools {
 				ar & boost::serialization::make_nvp ("sp", sp_);
 				return;
 			}
+
+		public:
+
+			typedef handle_predicate<T> predicate_type;
+			
 		};
 
+		template <class T>
+		struct handle_predicate : public i_predicate <handle<T> >
+		{
+			const i_predicate<T> & predicate_;
+			bool                   no_data_means_false_;
+			
+			handle_predicate (const i_predicate<T> & a_predicate, 
+												bool a_no_data_means_false = true) 
+				: predicate_ (a_predicate), 
+					no_data_means_false_ (a_no_data_means_false)
+			{
+				return;
+			}
+			
+			bool operator () (const handle<T> & a_handle) const
+			{
+				if (! a_handle.has_data()) 
+					{
+						if (no_data_means_false_) return false;
+						throw std::logic_error ("datatools::utils::handle_predicate::operator (): Handle has no data !");
+					}
+				return (predicate_ (a_handle.get ()));
+			}
+			
+		};
+		 
   } // end of namespace utils 
 
 } // end of namespace datatools 

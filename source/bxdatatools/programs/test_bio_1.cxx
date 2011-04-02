@@ -13,6 +13,7 @@
 
 #include <datatools/serialization/memory_streambuf.h>
 #include <datatools/utils/time_tools.h>
+#include <datatools/utils/clhep_units.h>
 
 
 #include <boost/iostreams/device/array.hpp>

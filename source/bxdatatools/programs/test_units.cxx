@@ -7,6 +7,7 @@
 #include <exception>
 
 #include <datatools/utils/units.h>
+#include <datatools/utils/clhep_units.h>
 
 using namespace std;
 

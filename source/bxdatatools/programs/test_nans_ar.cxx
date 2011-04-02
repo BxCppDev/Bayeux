@@ -14,6 +14,12 @@
 #include <datatools/serialization/io_factory.h>
 #include <datatools/serialization/safe_serial.h>
 
+#if BOOST_VERSION < 103600
+namespace bm=boost::math;
+#else
+namespace bm=boost::spirit::math;
+#endif
+
 using namespace std;
 
 string get_fp_classify_label (int fpc_)
@@ -61,8 +67,8 @@ public:
   void info () const
   {
     clog << "DEVEL: info: " << endl;
-    clog << "DEVEL: v1 is " << get_fp_classify_label (boost::math::fpclassify (__v1)) << endl;
-    clog << "DEVEL: v2 is " << get_fp_classify_label (boost::math::fpclassify (__v2)) << endl;
+    clog << "DEVEL: v1 is " << get_fp_classify_label (bm::fpclassify (__v1)) << endl;
+    clog << "DEVEL: v2 is " << get_fp_classify_label (bm::fpclassify (__v2)) << endl;
     if (! isfinite (__v1))
       {
 	clog << "DEVEL: v1 is " << ((__v1 < 0)? " - ": " + ") << endl;

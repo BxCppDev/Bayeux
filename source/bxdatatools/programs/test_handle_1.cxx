@@ -39,7 +39,13 @@ private:
 private:
   friend class boost::serialization::access; 
   BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
-  public:
+
+public:
+  int32_t get_id () const
+  {
+    return id_;
+  }
+
   hit & set_id (int a_id)
   {
     id_ = a_id;
@@ -74,6 +80,15 @@ private:
   }
 };
 
+// define a predicate for the 'hit' class :
+struct hit_is_invalid_predicate : public datatools::utils::i_predicate <hit>
+{
+  bool operator () (const hit & a_hit) const
+  {
+    return (a_hit.get_id () < 0);
+  }
+};
+
 int  hit::g_count  = 0;
 bool hit::g_debug = false;
 
@@ -91,7 +106,7 @@ int main (int argc_ , char ** argv_)
   int error_code = EXIT_SUCCESS;
   try 
     {
-      clog << "Test of the 'boost::shared_ptr<>' class..." << endl; 
+      clog << "Test of the 'handle<>' template class..." << endl; 
       bool debug = false;
 
       int iarg =  1;
@@ -133,7 +148,7 @@ int main (int argc_ , char ** argv_)
 	  hh.reset (new hit (5, 987));
 	  hits.push_back (hh);
 
-	  hh.reset ();
+	  hh.reset (); // this one is invalid
 	  hits.push_back (hh);
 
 	  hits.push_back (hit_handle_t (new hit (20, 20000)));
@@ -145,7 +160,16 @@ int main (int argc_ , char ** argv_)
 	       i != hits.end ();
 	       i++)
 	    {
-	      i->get ().print ();
+	      if (i->has_data ()) i->get ().print ();
+	    }
+
+	  hit_is_invalid_predicate IP;
+	  hit_handle_t::predicate_type HP (IP);
+	  hit_handles_col_t::const_iterator found = find_if (hits.begin (), hits.end (), HP);
+	  if (found != hits.end ())
+	    {
+	      clog << "Found an invalid hit !" << endl;
+	      found->get().print ();
 	    }
 
 	  hit_handles_col_t hits2;
@@ -157,7 +181,7 @@ int main (int argc_ , char ** argv_)
 	       i != hits2.end ();
 	       i++)
 	    {
-	      i->get ().print ();
+	      if (i->has_data ()) i->get ().print ();
 	    }
 
 	  clog << "Erase +0 : " << endl;
@@ -173,7 +197,7 @@ int main (int argc_ , char ** argv_)
 	       i != hits.end ();
 	       i++)
 	    {
-	      i->get ().print ();
+	      if (i->has_data ()) i->get ().print ();
 	    }
 	  clog << endl << "Serialize..." << endl;
 	  {
@@ -213,14 +237,14 @@ int main (int argc_ , char ** argv_)
 		 i != hits.end ();
 		 i++)
 	      {
-		i->get ().print ();
+		if (i->has_data ()) i->get ().print ();
 	      }
 	    clog << "Hits2 (loaded) : " << endl;
 	    for (hit_handles_col_t::const_iterator i = hits2.begin ();
 		 i != hits2.end ();
 		 i++)
 	      {
-		i->get ().print ();
+		if (i->has_data ()) i->get ().print ();
 	      }
 	  }
 	  

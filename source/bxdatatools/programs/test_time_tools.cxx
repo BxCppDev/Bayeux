@@ -8,6 +8,7 @@
 #include <exception>
 
 #include <datatools/utils/time_tools.h>
+#include <datatools/utils/clhep_units.h>
 
 using namespace std;
 

@@ -122,7 +122,7 @@ namespace datatools {
     public:
 
       // predicate:
-      class has_flag : public std::unary_function<smart_ref_t,  string>
+      class has_flag : public std::unary_function<smart_ref_t, bool>
       {
 	string flag_;
       public:
