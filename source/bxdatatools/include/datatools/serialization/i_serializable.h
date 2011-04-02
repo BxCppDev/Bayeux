@@ -49,6 +49,19 @@ namespace datatools {
 
 } // end of namespace datatools 
 
+#define DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()	                        \
+      static const std::string SERIAL_TAG;                      	              	\
+      virtual const std::string & get_serial_tag () const;                              \
+/**/
+
+#define DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(ClassName,ClassSerialTag)	\
+  const std::string ClassName::SERIAL_TAG = ClassSerialTag;                             \
+  const std::string & ClassName::get_serial_tag () const                                \
+  {                                                                                     \
+    return ClassName::SERIAL_TAG;                                                       \
+  }                                                                                     \
+/**/
+
 #define DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP				\
   boost::serialization::make_nvp(							\
     "datatools__serialization__i_serializable",                                         \
