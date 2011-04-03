@@ -48,7 +48,7 @@ public:
   }
 };
 
-// define a predicate for the 'foo' class :
+// Define a predicate for the 'foo' class :
 struct foo_is_blue_predicate : public datatools::utils::i_predicate<foo>
 {
   bool operator () (const foo & a_foo) const
