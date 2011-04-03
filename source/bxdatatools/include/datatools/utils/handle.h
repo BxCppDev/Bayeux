@@ -1,5 +1,4 @@
-/* handle.h */
-//! \file datatools/utils/handle.h
+/* datatools/utils/handle.h */
 /* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-04-01
  * Last modified : 2011-04-01
@@ -40,12 +39,20 @@
 
 #include <datatools/utils/i_predicate.h>
 
+//! \file datatools/utils/handle.h
+
 namespace datatools {
   
   namespace utils {
 
-    /** A \t handle object is given the responsability to 
-		 *  handle an instance through its pointer using the shared pointer
+		//! Forward declaration :
+		template <class T> struct handle_predicate;
+
+		/*! \brief Templatized handle class that host a Boost shared pointer 
+		 *         and behaves like a reference. 
+		 *
+		 *	A \t handle object is given the responsability to 
+		 *  handle a class instance through its pointer using the shared pointer
 		 *  mechanism from Boost. The inner hidden pointer can be null.
 		 *  It must be initialized with the 'new' construction operator.
 		 *  The handle class is copyable and can be used within STL containers.
@@ -74,36 +81,67 @@ namespace datatools {
      *  @endcode
      *
      */     
-
-		// forward declaration :
-		template <class T> struct handle_predicate;
-
 		template <class T>
 		class handle
 		{
-			boost::shared_ptr<T> sp_;
+			boost::shared_ptr<T> sp_; /*!< The embedded shared pointer. */ 
 
 		public:
 
+			//! The default constructor.
+			/*!
+			 * The default constructor automatically allocate an object 
+			 * handled by the internal shared pointer.
+			 */
 			handle () : sp_ (new T)
 			{
 				return;
 			}
 
+			//! A constructor from a pointer to some on-the-fly allocated instance.
+			/*!
+			 * This constructor is given a pointer to some dynamically 
+			 * allocated instance and pass it to the internal shared pointer.
+			 *
+			 * Example:
+			 * @code
+			 * datatools::utils::handle<int> h (new int (3));															
+			 * @endcode
+			 * or
+			 * @code
+			 * int * pi = new int (3);
+			 * datatools::utils::handle<int> h (pi);															
+			 * @endcode
+			 *
+			 * \warning Never use such kind of mechanism to initialize a handle:
+			 * @code
+			 * int i = 3;
+			 * datatools::utils::handle<int> h (&i);															
+			 * @endcode
+			 *
+			 */
 			handle (T * a_t_ptr ) : sp_ (a_t_ptr)
 			{
 				return;
 			}
 
+			//! A constructor from a shared pointer of the same type.
+			/*!
+			 * This constructor is given a shared pointer that hosts (or ot)
+			 * a dynamically allocated instance. This internal pointer will then
+			 * been shared by both shared pointers.
+			 */
 			handle (const boost::shared_ptr<T> & a_sp) : sp_ (a_sp)
 			{
 			}
 
+			//! Check is some dynamically allocated instance is handled by the internal shared pointer.
 			bool has_data () const
 			{
 				return sp_.get () != 0;
 			}
 
+			//! Get a const reference to the hosted dynamically allocated instance.
 			const T & get () const
 			{
 				if (sp_.get () == 0)
@@ -113,6 +151,7 @@ namespace datatools {
 				return *sp_.get ();
 			}
 
+			//! Get a non-const reference to the hosted dynamically allocated instance.
 			T & get ()
 			{
 				if (sp_.get () == 0)
@@ -122,18 +161,21 @@ namespace datatools {
 				return *sp_.get ();
 			}
 
+			//! Reset the internal shared pointer with some new dynamically allocated instance created using its default constructor.
 			void reset ()
 			{
 				sp_.reset (new T);
 				return;
 			}
 
+			//! Reset the internal shared pointer with some new dynamically allocated instance.
 			void reset (T * a_t_ptr)
 			{
 				sp_.reset (a_t_ptr);
 				return;
 			}
 
+			//! Reset the internal shared pointer from another shared pointer.
 			void reset (const boost::shared_ptr<T> & a_sp)
 			{
 				sp_ = a_sp;
@@ -155,12 +197,49 @@ namespace datatools {
 			
 		};
 
+		/*! \brief Templatized predicate class associated to handle instance.
+		 *
+		 * The \t handle_predicate class is used to wrap a predicate object to some
+		 * instance and pass it to some algorithms (typically the std::find_if function)t.
+		 *
+		 * \b Example:
+		 * @code
+		 * #include <iostream>
+		 * #include <vector>
+		 * #include <algorithm>
+		 *
+		 * #include <datatools/utils/i_predicate.h>
+		 * #include <datatools/utils/handle.h>
+		 *
+		 * struct is_pi : public i_predicate <double>
+		 * {
+		 *   bool operator () (const double & a_number) const
+		 *   {
+		 *     return a_number = 3.1415926;
+		 *   }
+		 * };
+		 *
+		 * int main (void)
+		 * {
+		 *   is_pi DP;
+		 *   typedef handle<double> handle_type;
+		 *   handle_predicate<double> HP (DP);
+		 *   std::vector<handle_type> values;
+		 *   values.push_back (handle_type (new double (1.0)));
+		 *   values.push_back (handle_type (new double (3.1415926)));
+		 *   values.push_back (handle_type (new double (10.0)));
+		 *   std::vector<handle_type>::const_iterator it = 
+		 *     std::find_if (values.begin (), values.end (), HP);
+		 *   if (it != values.end ()) std::cout << 3Found PI !" << std::endl;
+		 *   return 0;
+		 * }
+		 * @encode
+		 *
+		 */
 		template <class T>
 		struct handle_predicate : public i_predicate <handle<T> >
 		{
-			const i_predicate<T> & predicate_;
-			bool                   no_data_means_false_;
-			
+			//! The default constructor.
 			handle_predicate (const i_predicate<T> & a_predicate, 
 												bool a_no_data_means_false = true) 
 				: predicate_ (a_predicate), 
@@ -169,6 +248,7 @@ namespace datatools {
 				return;
 			}
 			
+			//! The predicate method.
 			bool operator () (const handle<T> & a_handle) const
 			{
 				if (! a_handle.has_data()) 
@@ -178,7 +258,10 @@ namespace datatools {
 					}
 				return (predicate_ (a_handle.get ()));
 			}
-			
+
+			const i_predicate<T> & predicate_;           /*!< The embedded predicate. */ 
+			bool                   no_data_means_false_; /*!< A flag to indicate the behaviour in case of NULL pointer : predicate returns false (default) or throws an exception). */ 
+		 			
 		};
 		 
   } // end of namespace utils 
@@ -187,7 +270,7 @@ namespace datatools {
 
 #endif // __datatools__utils__handle_h 
 
-/* end of handle.h */
+/* end of datatools/utils/handle.h */
 /*
 ** Local Variables: --
 ** mode: c++ --

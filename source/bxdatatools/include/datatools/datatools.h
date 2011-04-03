@@ -26,21 +26,23 @@
  *  This package depends on:
  *  - the Boost C++ library through the boost_help package available at:
  *    https://nemo.lpc-caen.in2p3.fr/svn/boost_help/ (version 1.44 and above)
- *  - the CLHEP C++ library (version 2.0 and above)
+ *  - the CLHEP C++ library (version 2.0 and above for some mathematics 
+ *    and its systemof units)
  *
  * \section contents_section Contents
  *
  * \subsection utils_subsection The utils module
- *  The utils module contains some useful classes for many possible 
- *  applications. 
+ *  The utils module contains some useful classes and interfaces  
+ *  for many possible applications. 
  *
  * \subsection serialization_subsection The serialization module
- *  The utils module contains some classes dedicated to data serializarion
+ *  The serialization module contains some classes and macros 
+ *  dedicated to data serializarion
  *  through the Boost.Serialization library. 
  *  
  * \subsection event_subsection The event module
  *  The event module contains some classes dedicated to the representation of
- *  event model.
+ *  some event model for physics.
  *
  * \section build_section Installation instructions
  *

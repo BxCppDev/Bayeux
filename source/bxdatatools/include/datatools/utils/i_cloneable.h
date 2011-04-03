@@ -1,5 +1,4 @@
-/* i_cloneable.h */
-//! \file datatools/utils/cloneable.h
+/* datatools/utils/i_cloneable.h */
 /* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-03-24
  * Last modified : 2011-03-26
@@ -27,13 +26,14 @@
  *
  */
 
+//! \file datatools/utils/i_cloneable.h
+
 #ifndef __datatools__utils__i_cloneable_h
 #define __datatools__utils__i_cloneable_h 1
 
 #include <iostream>
 #include <typeinfo>
 
-#include <boost/scoped_ptr.hpp>
 #include <datatools/serialization/i_serializable.h>
 #include <datatools/utils/caster_utils.h>
 
@@ -41,7 +41,9 @@ namespace datatools {
   
   namespace utils {
 
-    /** This is a pure abstract class that can be
+		//! \brief A pure abstract class (interface) for inherited cloneable classes.
+		/**
+     * This is a pure abstract class that can be
      *  inherited for class cloning service (only for 
      *  copyable objects).
      *
@@ -76,17 +78,23 @@ namespace datatools {
     {
     public:
 
+     /**
+			* A pure virtual member.
+			* @return a pointer to a new instance of a cloneable class.
+			*/
       virtual i_cloneable * clone (void) const = 0;
 
+			/** The virtual destructor
+			 */
       virtual ~i_cloneable () {};
 
     public:
       /** Templatized static method for cloning copyable objects.
        */
-      template<class Cloneable>
-      static Cloneable * clone_it (const Cloneable & a_cloneable)
+      template<class Copyable>
+      static Copyable * clone_it (const Copyable & a_copyable)
       {
-	return new Cloneable (a_cloneable);
+				return new Copyable (a_copyable);
       }  
     };
 
@@ -94,28 +102,28 @@ namespace datatools {
 
 } // end of namespace datatools 
 
-#define DATATOOLS_CLONEABLE_DECLARATION(Cloneable)           \
-  virtual Cloneable * clone (void) const;                    \
-/**/
+#define DATATOOLS_CLONEABLE_DECLARATION(Cloneable)	\
+  virtual Cloneable * clone (void) const;						\
+	/**/
 
-#define DATATOOLS_CLONEABLE_IMPLEMENTATION(Cloneable)              \
-  Cloneable * Cloneable::clone (void) const			   \
-  {                                                                \
-    return datatools::utils::i_cloneable::clone_it (*this);        \
-  }                                                                \
-/**/
+#define DATATOOLS_CLONEABLE_IMPLEMENTATION(Copyable)				\
+  Copyable * Copyable::clone (void) const									\
+  {																													\
+    return datatools::utils::i_cloneable::clone_it (*this);	\
+  }																													\
+	/**/
 
 #define DATATOOLS_CLONEABLE_TO_SERIALIZABLE_CASTER_DECLARATION(Cloneable) \
-DATATOOLS_CASTER_DECLARATION(datatools::utils::i_cloneable,datatools::serialization::i_serializable, Cloneable,g_cloneable_to_serializable_caster,get_cloneable_to_serializable_caster) \
-/**/
+	DATATOOLS_CASTER_DECLARATION(datatools::utils::i_cloneable,datatools::serialization::i_serializable, Cloneable,g_cloneable_to_serializable_caster,get_cloneable_to_serializable_caster) \
+	/**/
 
 #define DATATOOLS_CLONEABLE_TO_SERIALIZABLE_CASTER_IMPLEMENTATION(Cloneable) \
-DATATOOLS_CASTER_IMPLEMENTATION(datatools::utils::i_cloneable,datatools::serialization::i_serializable, Cloneable,g_cloneable_to_serializable_caster,get_cloneable_to_serializable_caster) \
-/**/
+	DATATOOLS_CASTER_IMPLEMENTATION(datatools::utils::i_cloneable,datatools::serialization::i_serializable, Cloneable,g_cloneable_to_serializable_caster,get_cloneable_to_serializable_caster) \
+	/**/
 
 #endif // __datatools__utils__i_cloneable_h
 
-/* end of i_cloneable.h */
+/* end of datatools/utils/i_cloneable.h */
 /*
 ** Local Variables: --
 ** mode: c++ --

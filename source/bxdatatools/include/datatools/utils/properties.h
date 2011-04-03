@@ -1,6 +1,5 @@
 // -*- mode: c++; -*- 
-//! \file datatools/utils/properties.h
-/* properties.h
+/* datatools/utils/properties.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-02-19
  * Last modified: 2011-03-09
@@ -56,14 +55,16 @@
 #include <datatools/utils/i_tree_dump.h>
 #include <datatools/utils/i_clear.h>
 
+//! \file datatools/utils/properties.h
+
 using namespace std;
 
 namespace datatools {
 
   namespace utils {
 
-    /*! \brief A dictionary of arbitrary properties.
-     *
+    //! \brief A dictionary of arbitrary properties.
+    /**
      *  The properties class provides a container that holds
      *  many different data of different types (bool, int, double, string
      *  as well as arrays (std::vector) of these build-in types. 
@@ -83,7 +84,7 @@ namespace datatools {
       //! Serialization tag.
       static const std::string SERIAL_TAG;
 
-      //! Internal data stored within the dictionary.
+      //! \brief Internal data stored within the dictionary of the properties class.
       class data : public datatools::serialization::i_serializable     
       {
 
@@ -265,8 +266,7 @@ namespace datatools {
 		   bool inherit_               = false) const;
 
 	//! Return the serialization tag (from the datatools::serialization::i_serializable interface).
-	virtual const std::string &
-	get_serial_tag () const;
+	virtual const std::string & get_serial_tag () const;
 
       private:
 

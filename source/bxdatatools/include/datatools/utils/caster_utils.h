@@ -39,13 +39,18 @@ namespace datatools {
   
   namespace utils {
 
-    // Interface class with a cast method using covariant return types :
-    template<class From, class ToBase >
+    /*!<  \struct i_caster
+          \brief  Templatized abstract interface class with a cast method using covariant return types . 
+    */
+		template<class From, class ToBase >
     struct i_caster
     {
       virtual ToBase * cast (From *) = 0;
     };
 
+    /*!<  \struct caster
+          \brief  Templatized concrete caster class for casting pointers from a covariant class hierarchy to some other type. 
+    */
     template <class From, class ToBase, class ToDaughter>
     struct caster : public i_caster<From,ToBase>
     {

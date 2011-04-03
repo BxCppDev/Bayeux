@@ -55,14 +55,17 @@
 #include <datatools/utils/i_tree_dump.h>
 #include <datatools/utils/i_clear.h>
 
+//! \file datatools/utils/things.h
+
 namespace datatools {
 	
   namespace utils {
 
 		using namespace std;
 
-		/*** class bad_things_cast ***/
+		/* class bad_things_cast */
 		
+		//! \brief An exception for invalid cast operation within the \class things class.
 		class bad_things_cast : public exception
 		{
 		private:
@@ -79,8 +82,9 @@ namespace datatools {
 			
 		};
 
-		/*** class things ***/
+		/* class things  */
 
+		//! \brief A generic serializable and noncopyable container for arbitrary serializable objects.
     class things : public datatools::serialization::i_serializable,
 									 public datatools::utils::i_tree_dumpable,
 									 public datatools::utils::i_clear,
@@ -95,6 +99,7 @@ namespace datatools {
 			static const bool copyable     = true;
 			static const bool noncopyable  = ! copyable;
 
+			//! \brief Internal entry for serializable object storing in the \class thing class.
 			struct entry_t : public datatools::utils::i_tree_dumpable
 			{
 				static const char MASK_CONST = 0x1;
@@ -354,9 +359,9 @@ namespace datatools {
 		private:
 
 			// Attributes : 
-			string m_name;
-			string m_description;
-			dict_t m_things;
+			string m_name;        //!< The name of the container
+			string m_description; //!< The description of the container
+			dict_t m_things;      //!< The internal dictionary of objects
 
     };
 
