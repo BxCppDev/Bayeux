@@ -46,7 +46,9 @@ int main (int argc_ , char ** argv_)
 	    {
 	      double t = drand48 () * 2 * M_PI;
 	      double x = cos (t);
+	      CT.pause ();
 	      double y = sin (t);
+	      CT.resume ();
 	    }
 	  CT.stop (); // stop the clock
 	  cout << CT.get_last_elapsed_time () / CLHEP::second << endl;

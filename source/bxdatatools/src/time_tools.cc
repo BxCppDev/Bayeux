@@ -81,20 +81,33 @@ namespace datatools {
     computing_time::~computing_time ()
     {
     }
-    
-    void computing_time::start ()
+
+    void computing_time::resume ()
     {
-       if((gettimeofday(&__start, NULL)) == -1)
+      if((gettimeofday(&__start, NULL)) == -1)
 	 {
 	   ostringstream message;
-	   message << "datatools::utils::computing_time::start: "
+	   message << "datatools::utils::computing_time::resume: "
 		   << "gettimeofday failed !";
 	   throw runtime_error (message.str ());
 	 }
        return;
+     }
+    
+    void computing_time::start ()
+    {
+      resume();
+      return;
+    }
+ 
+    void computing_time::stop ()
+    {
+      pause ();
+      __counts++;
+      return;
     }
     
-    void computing_time::stop ()
+    void computing_time::pause ()
     {
       if((gettimeofday(&__stop, NULL)) == -1)
 	 {
@@ -110,7 +123,6 @@ namespace datatools {
 	+ diff.tv_usec * CLHEP::microsecond;
       __sum_time += elapsed_time;
       __sum2_time += (elapsed_time * elapsed_time);
-      __counts++;
       if (! datatools::utils::is_valid (__min_time))
 	{
 	  __min_time = elapsed_time;
@@ -241,7 +253,7 @@ namespace datatools {
       else
 	{
 	  out_ << indent << du::i_tree_dumpable::tag 
-	       << "Counts        : " << __counts << std::endl;
+	       << "Count(s)      : " << __counts << std::endl;
 	  out_ << indent << du::i_tree_dumpable::tag 
 	       << "Sum time      : " << __sum_time / CLHEP::second << " s" << std::endl;
 	  
@@ -262,7 +274,10 @@ namespace datatools {
 	       << "Mean time     : " <<  get_mean_time () / CLHEP::second << " s" << std::endl;
 
 	  out_ << indent <<  du::i_tree_dumpable::tag  
-	       << "Sigma time    : " <<  get_sigma_time () / CLHEP::second << " s" << std::endl;
+	       << "Sigma time    : ";
+	  if (isnan (get_sigma_time ())) out_ << '-';
+	  else out_ << get_sigma_time () / CLHEP::second << " s";
+	  out_ << std::endl;
 
 	  out_ << indent <<  du::i_tree_dumpable::inherit_tag (inherit_)  
 	       << "Last elapsed time : " <<  __last_elapsed_time / CLHEP::second << " s" << std::endl;

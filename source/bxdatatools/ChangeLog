@@ -47,3 +47,8 @@ This is the datatools package ChangeLog
 	- do not embed explicit serialization code in the shared  lib.
 	- use explicit serialization code only at the executable level (local static object)
 	- provide a lightweight and optional model for serialization
+2011-04-11 : F. Mauger
+	- add the 'handle' class base on boost::share_ptr<>
+	- add the 'handle_pool' class
+	- add pause/resume method in the computing_time class
+	

@@ -93,10 +93,13 @@ namespace datatools {
 			 * The default constructor automatically allocate an object 
 			 * handled by the internal shared pointer.
 			 */
-			handle () : sp_ (new T)
+			//handle () : sp_ (new T)
+			/*
+			handle () : sp_ (0)
 			{
 				return;
 			}
+			*/
 
 			//! A constructor from a pointer to some on-the-fly allocated instance.
 			/*!
@@ -120,7 +123,7 @@ namespace datatools {
 			 * @endcode
 			 *
 			 */
-			handle (T * a_t_ptr ) : sp_ (a_t_ptr)
+			handle (T * a_t_ptr = 0) : sp_ (a_t_ptr)
 			{
 				return;
 			}
@@ -133,6 +136,25 @@ namespace datatools {
 			 */
 			handle (const boost::shared_ptr<T> & a_sp) : sp_ (a_sp)
 			{
+				return;
+			}
+
+			virtual ~handle ()
+			{
+				/*
+				clog << "DEVEL: datatools::utils::handle::dtor: Entering..." << endl;
+				clog << "DEVEL: datatools::utils::handle::dtor:   Use count = " 
+						 << sp_.use_count () << endl;
+				*/
+				sp_.reset ();
+				//clog << "DEVEL: datatools::utils::handle::dtor: Exiting." << endl;
+				return;
+			}
+
+			size_t count () const
+			{
+				if (sp_.get () == 0) return 0;
+				return sp_.use_count ();
 			}
 
 			//! Check is some dynamically allocated instance is handled by the internal shared pointer.
@@ -161,15 +183,18 @@ namespace datatools {
 				return *sp_.get ();
 			}
 
+			/*
 			//! Reset the internal shared pointer with some new dynamically allocated instance created using its default constructor.
 			void reset ()
 			{
-				sp_.reset (new T);
+				sp_.reset (0);
+				//			sp_.reset (new T);
 				return;
 			}
+			*/
 
 			//! Reset the internal shared pointer with some new dynamically allocated instance.
-			void reset (T * a_t_ptr)
+			void reset (T * a_t_ptr = 0)
 			{
 				sp_.reset (a_t_ptr);
 				return;
@@ -183,6 +208,7 @@ namespace datatools {
 			}
 
 		private:
+
 			friend class boost::serialization::access; 
 			template <class Archive>
 			void serialize (Archive & ar, int version)

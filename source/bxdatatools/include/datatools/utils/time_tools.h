@@ -73,6 +73,10 @@ namespace datatools {
 
       void stop ();
 
+      void pause ();
+
+      void resume ();
+
       void reset ();
 
       virtual void tree_dump (std::ostream & out_ = std::clog, 
