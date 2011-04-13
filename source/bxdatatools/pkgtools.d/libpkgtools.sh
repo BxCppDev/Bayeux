@@ -813,8 +813,29 @@ EOF
 	echo "${__pkgtools__arch}"
 	return 0
     }
-    
 
+    function pkgtools__knows_number_of_processors ()
+    {	
+	if [ -f /proc/cpuinfo ]; then
+	    nbprocs=$(cat /proc/cpuinfo | grep ^processor | wc -l )
+	    if [ "x${nbprocs}" != "x" ]; then
+		return 0
+	    fi
+	fi
+	return 1
+    }
+
+    function pkgtools__get_number_of_processors ()
+    {
+	if [ -f /proc/cpuinfo ]; then
+	    nbprocs=$(cat /proc/cpuinfo | grep ^processor | wc -l )
+	    echo "${nbprocs}"
+	    return 0
+	fi
+	echo ""
+	return 1
+    }
+    
     function pkgtools__get_sys ()
     {  
 	echo "$(pkgtools__get_os)-$(pkgtools__get_arch)"
@@ -1873,11 +1894,11 @@ EOF
     #
     # Examples:
     #  
-    #  pack_cfg=$(pkgtools__get_package_config_tool tagada)
+    #  pack_cfg=$(pkgtools__get_package_config_tool blahblah)
     #
-    #  --> tagada-config  
+    #  --> blahblah-config  
     #
-    #  pack_cfg=$(pkgtools__get_package_config_tool tagada 1
+    #  pack_cfg=$(pkgtools__get_package_config_tool blahblah 1
     #
     #  --> pkg-config  
     #
@@ -2457,7 +2478,7 @@ EOF
 	    fi
 	    
 	    if [ "x${dep_version}" == "x" ]; then
-		if [ ${has_executable} -eq 1 -a ${dep_cfg} != ${dep_exe} ]; then
+		if [ ${has_executable} -eq 1 -a "${dep_cfg}" != "${dep_exe}" ]; then
 		    ${dep_exe} --version > /dev/null 2>&1
 		    if [ $? -ne 0 ]; then
 			pkgtools__msg_warning "Cannot retrieve version information from the '${dep_exe}' executable !"
@@ -2480,7 +2501,7 @@ EOF
 		return 1
 	    fi
 
-	    ver_str_num=$(echo "${dep_version}" | tr '_' '.' | tr -c -d '0123456789\.')
+	    ver_str_num=$(echo "${dep_version}" | tr '_' '.' | tr '/' '.' | tr -c -d '0123456789\.')
 	    pkgtools__msg_devel "extracted version number '${ver_str_num}'"
 	    if [ "x${PKGTOOLS_ROOT}" != "x" ]; then 
 		if [ "x${ver_str_num}" != "x" ]; then	
@@ -2609,6 +2630,12 @@ EOF
 	if [ $? -eq 0 ]; then
 	    pkgtools__msg_notice "Is Ubuntu."
 	fi 
+	pkgtools__knows_number_of_processors
+	if [ $? -eq 0 ]; then
+	    local nbprocs=$(pkgtools__get_number_of_processors)
+	    pkgtools__msg_notice "Number of processors : $(pkgtools__get_number_of_processors)" 
+	fi
+
 	pkgtools__msg_notice "Shared library extension : $(pkgtools__get_so_extension)"
 
 	pkgtools__msg_notice "GSL configure utility: $(pkgtools__get_package_config_tool gsl)"
@@ -2637,11 +2664,11 @@ EOF
 	    pkgtools__msg_warning "Python numpy is not setup."
 	fi 
 
-	pkgtools__check_python_module tagada >/dev/null 2>&1
+	pkgtools__check_python_module blahblah >/dev/null 2>&1
 	if [ $? -eq 0 ]; then
-	    pkgtools__msg_notice "Python tagada is setup."
+	    pkgtools__msg_notice "Python blahblah is setup."
 	else
-	    pkgtools__msg_warning "Python tagada is not setup."
+	    pkgtools__msg_warning "Python blahblah is not setup."
 	fi 
 
 	file="/usr/include/stdlib.h"
@@ -2740,7 +2767,7 @@ EOF
 	    pkgtools__msg_warning "Package '${pkname}' is not setup."
 	fi 
 
-	pkname=tagada
+	pkname=blahblah
 	pkgtools__check_package ${pkname} 
 	if [ $? -eq 0 ]; then
 	    pkgtools__msg_notice "Package '${pkname}' is setup."
@@ -2762,7 +2789,7 @@ EOF
 	    pkgtools__msg_warning "pkg-config does not manage the '${pkname}' package."
 	fi 
 
-	pkdesc=tagada
+	pkdesc=blahblah
 	pkname=$(pkgtools__get_package_name ${pkdesc}) 
 	pkgtools__msg_notice "${pkname} configure utility: '$(pkgtools__get_package_config_tool ${pkdesc})'"
 
