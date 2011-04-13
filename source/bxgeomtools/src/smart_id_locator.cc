@@ -11,6 +11,7 @@ namespace geomtools {
   void smart_id_locator::set_debug (bool d_)
   {
     __debug = d_;
+    return;
   }
 
   bool smart_id_locator::is_debug () const
@@ -98,6 +99,7 @@ namespace geomtools {
 	throw runtime_error (message.str ());
       }	
     __gmap = &gmap_;
+    return;
   }
 
   bool smart_id_locator::is_initialized () const
@@ -120,6 +122,7 @@ namespace geomtools {
     __last_found = 0;
     __ginfos.clear ();
     __initialized = false;
+    return;
   }
 
   void smart_id_locator::initialize (const string & rules_, 
@@ -276,8 +279,7 @@ namespace geomtools {
 
     if (__mode & MODE_LAST)
       {
-	// first search if one matched the last found object:
-
+	// first search if one matched the last found object :
 	if (__last_found != 0)
 	  {
 	    bool located = false;
@@ -296,7 +298,6 @@ namespace geomtools {
 		  }
 		return __last_found->get_id ();
 	      }
-	    
 	  }
       }
 
