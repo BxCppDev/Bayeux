@@ -82,16 +82,14 @@ namespace datatools {
 			
 		};
 
-		/* class things  */
+		/* class things */
 
 		//! \brief A generic serializable and noncopyable container for arbitrary serializable objects.
     class things : public datatools::serialization::i_serializable,
 									 public datatools::utils::i_tree_dumpable,
 									 public datatools::utils::i_clear,
 									 private boost::noncopyable
- 
     {
-
 		public:
 
 			static const bool constant     = true;
@@ -226,7 +224,8 @@ namespace datatools {
 						const type_info & ti = typeid (T);
 						T tmp;
 						ostringstream message;
-						message << "datatools::utils::things::add<T>: Request type '" << ti.name () 
+						message << "datatools::utils::things::add<T>: Request type '" 
+										<< ti.name () 
 										<< "' does not inherit from the '" 
 										<< "datatools::serialization::i_serializable"  
 										<< "' base class !";
@@ -247,7 +246,8 @@ namespace datatools {
 				if (found == m_things.end ())
 					{
 						ostringstream message;
-						message << "datatools::utils::things::pop: No stored object has name '" << a_name << "' !";
+						message << "datatools::utils::things::pop: No stored object has name '" 
+										<< a_name << "' !";
 						throw logic_error (message.str ());
 						return 0;
 					}
@@ -277,7 +277,8 @@ namespace datatools {
 				if (found == m_things.end ())
 					{
 						ostringstream message;
-						message << "datatools::utils::things::grab: No stored object has name '" << a_name << "' !";
+						message << "datatools::utils::things::grab: No stored object has name '" 
+										<< a_name << "' !";
 						throw logic_error (message.str ());
 					}
 				const type_info & ti = typeid(T);
@@ -296,7 +297,8 @@ namespace datatools {
 				if (found->second.is_const ())
 					{
 						ostringstream message;
-						message << "datatools::utils::things::grab: Object named '" << a_name << "' is constant !";
+						message << "datatools::utils::things::grab: Object named '" 
+										<< a_name << "' is constant !";
 						throw logic_error (message.str ());
 					}
 				return *(dynamic_cast<T *>(found->second.handle));

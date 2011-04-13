@@ -217,9 +217,9 @@ int main (int argc_ , char ** argv_)
 	  hits.clear ();
 	  clog << "Destroy 'hits2'..." << endl;
 	  hits2.clear ();
-	  clog << "Done." << endl;
-	
+	  clog << "Done." << endl;	
 	}
+
 	if (hit::g_debug) clog << "DEBUG: g_count=" << hit::g_count << endl;
 
 	{	
