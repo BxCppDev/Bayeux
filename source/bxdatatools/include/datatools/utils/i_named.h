@@ -22,9 +22,9 @@ namespace datatools {
       */
       virtual std::string get_name() = 0;
 
-      static bool is_anonymous(const i_named & a_named)
+      static bool is_anonymous (const i_named & a_named)
       {
-	return a_named.get_name ().empty ();
+				return const_cast<i_named &> (a_named).get_name ().empty ();
       }
 
     };

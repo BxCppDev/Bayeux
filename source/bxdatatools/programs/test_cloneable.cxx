@@ -27,16 +27,25 @@ public:
     prefix_ (a_prefix), id_ (a_id)
   {
   }
-  virtual datatools::utils::i_cloneable * clone (void) const
+
+  DATATOOLS_CLONEABLE_DECLARATION(foo)
+
+  /*
+  virtual foo * clone (void) const
   {
     foo * f = new foo (*this);
     return f;
   }
+  */
+
   void print () const
   {
     cout << "foo : prefix=\"" << prefix_ << "\" , " << "id=" << id_ << endl;
   }
+
 };
+
+DATATOOLS_CLONEABLE_IMPLEMENTATION(foo)
 
 int main (int argc_ , char ** argv_)
 {
@@ -87,7 +96,7 @@ int main (int argc_ , char ** argv_)
       {
 	foo f4 ("f4", 4);
 	f4.print ();
-	foo * cf4 = datatools::utils::i_cloneable::clone (f4);
+	foo * cf4 = datatools::utils::i_cloneable::clone_it (f4);
 	cf4->prime ().print ();
 	delete cf4;
       }
