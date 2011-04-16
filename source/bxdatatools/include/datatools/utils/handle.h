@@ -35,6 +35,7 @@
 
 #include <boost/shared_ptr.hpp>
 #include <boost/serialization/nvp.hpp>
+#include <boost/serialization/tracking.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 
 #include <datatools/utils/i_predicate.h>
@@ -151,16 +152,39 @@ namespace datatools {
 				return;
 			}
 
+			bool unique() const
+			{
+        return sp_.unique ();
+			}
+
 			size_t count () const
 			{
 				if (sp_.get () == 0) return 0;
 				return sp_.use_count ();
 			}
 
+			//! Check is no allocated instance is handled by the internal shared pointer.
+			bool is_null () const
+			{
+				return sp_.get () == 0;
+			}
+
 			//! Check is some dynamically allocated instance is handled by the internal shared pointer.
 			bool has_data () const
 			{
-				return sp_.get () != 0;
+				return ! is_null ();
+			}
+
+			void swap (handle<T> & other) // never throws
+			{
+				sp_.swap (other.sp_);
+				return;
+			}
+
+			void swap (boost::shared_ptr<T> & other) // never throws
+			{
+				sp_.swap (other);
+				return;
 			}
 
 			//! Get a const reference to the hosted dynamically allocated instance.
@@ -293,6 +317,38 @@ namespace datatools {
   } // end of namespace utils 
 
 } // end of namespace datatools 
+
+// From "boost/serialization/shared_ptr.hpp" :
+#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+    namespace boost {
+    namespace serialization{
+       // don't track shared pointers
+        template<class T>
+        struct tracking_level< ::datatools::utils::handle<T> > { 
+            typedef mpl::integral_c_tag tag;
+            #if BOOST_WORKAROUND(__MWERKS__, BOOST_TESTED_AT(0x3206))
+            typedef BOOST_DEDUCED_TYPENAME mpl::int_< ::boost::serialization::track_never> type;
+            #else
+            typedef mpl::int_< ::boost::serialization::track_never> type;
+            #endif
+            #if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x570))
+            BOOST_STATIC_CONSTANT(int, value = ::boost::serialization::track_never);
+            #else
+            BOOST_STATIC_CONSTANT(int, value = type::value);
+            #endif
+        };
+    }}
+    #define BOOST_SERIALIZATION_DATATOOLS_UTILS_HANDLE(T)
+#else
+    // define macro to let users of these compilers do this
+    #define BOOST_SERIALIZATION_DATATOOLS_UTILS_HANDLE(T)             \
+    BOOST_SERIALIZATION_SHARED_PTR(T)                                 \
+    BOOST_CLASS_TRACKING(                                             \
+        ::datatools::utils::handle< T >,                              \
+        ::boost::serialization::track_never                           \
+    )                                                                 \
+    /**/
+#endif
 
 #endif // __datatools__utils__handle_h 
 

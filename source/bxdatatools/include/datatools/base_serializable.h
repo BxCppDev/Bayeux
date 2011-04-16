@@ -12,7 +12,6 @@
  * datatools::serialization::i_serializable *
  ********************************************/
 
-#include <datatools/serialization/i_serializable.h>
 #include <datatools/serialization/i_serializable.ipp>
 BOOST_SERIALIZATION_ASSUME_ABSTRACT(datatools::serialization::i_serializable)
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::serialization::i_serializable)

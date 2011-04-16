@@ -28,6 +28,7 @@ public:
   {
   }
 
+  // use a macro to install the cloneable interface :
   DATATOOLS_CLONEABLE_DECLARATION(foo)
 
   /*
