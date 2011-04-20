@@ -67,6 +67,12 @@ namespace genbb {
 	MODE_SPECTRUM        =  3,
 	MODE_DEFAULT         =  MODE_MONOKINETIC
       };
+
+    enum spectrum_mode_t
+      {
+	SPECTRUM_MODE_TABFUNC = 0,
+	SPECTRUM_MODE_HISTPDF = 1
+      };
  
   private: 
 
@@ -81,10 +87,13 @@ namespace genbb {
     double __min_energy;
     double __max_energy;
 
+    int    __spectrum_mode;
     string __spectrum_interpolation_name;  
     string __tabulated_energy_spectrum_filename;
     mygsl::tabulated_function __energy_spectrum;
     mygsl::von_neumann_method __VNM;
+    mygsl::histogram          __energy_histo;
+    mygsl::histogram::pdf     __energy_histo_pdf;
 
     bool          __randomized_direction;
     unsigned long __seed; //> Local PRNG's seed
@@ -122,6 +131,8 @@ namespace genbb {
   protected:
     
     void _init_energy_spectrum ();
+    
+    void _init_histo_pdf ();
   
   public: 
     // ctor:

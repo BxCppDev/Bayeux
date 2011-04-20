@@ -356,6 +356,19 @@ namespace genbb {
 	else if (mode_str == "spectrum")
 	  {
 	    set_mode (MODE_SPECTRUM);
+	    __spectrum_mode = SPECTRUM_MODE_TABFUNC;
+	    if (config_.has_key ("spectrum.mode"))
+	      {
+		string spectrum_mode_str = config_.fetch_string ("spectrum.mode");
+		if (spectrum_mode_str == "tabulated_function")
+		  {
+		    __spectrum_mode = SPECTRUM_MODE_TABFUNC;
+		  }
+		else if (spectrum_mode_str == "histogram_pdf")
+		  {
+		    __spectrum_mode = SPECTRUM_MODE_HISTPDF;
+		  }
+	      }
 	  }
 	else
 	  {
@@ -489,7 +502,15 @@ namespace genbb {
 
     if (__mode == MODE_SPECTRUM)
       {
-	kinetic_energy = __VNM.shoot (__random);
+	if (__spectrum_mode == SPECTRUM_MODE_TABFUNC)
+	  {
+	    kinetic_energy = __VNM.shoot (__random);
+
+	  }
+	else if (__spectrum_mode == SPECTRUM_MODE_HISTPDF)
+	  {
+	    kinetic_energy = __energy_histo_pdf.sample (__random);
+	  }
       }
 
     double momentum = sqrt (kinetic_energy * (kinetic_energy + 2 * mass));
@@ -526,6 +547,16 @@ namespace genbb {
 	     << "Exiting."
 	     << endl;
       }
+    return;
+  }
+
+  void single_particle_generator::_init_energy_histo_pdf ()
+  {
+    // load histo
+
+    // XXX
+
+    __energy_histo_pdf.init (__energy_histo);
     return;
   }
 
@@ -633,8 +664,16 @@ namespace genbb {
  
     if (__mode == MODE_SPECTRUM)
       {
-	_init_energy_spectrum ();
-      }
+	if (__spectrum_mode == SPECTRUM_MODE_TABFUNC)
+	  {
+	    _init_energy_spectrum ();
+	  }
+	else if (__spectrum_mode == SPECTRUM_MODE_HISTPDF)
+	  {
+	    _init_energy_histo_pdf ();
+	  }
+	
+       }
 
     __random.init ("taus2", __seed);
     return;
