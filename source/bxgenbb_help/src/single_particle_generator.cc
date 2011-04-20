@@ -187,11 +187,11 @@ namespace genbb {
     _check_locked ("single_particle_generator::set_min_energy");
     if (min_ < 0.0)
       {
-	throw runtime_error ("single_particle_generator::set_mean_energy: Invalid min energy value (0 <= min energy) !");
+	throw runtime_error ("single_particle_generator::set_energy_range: Invalid min energy value (0 <= min energy) !");
       }
     if (max_ < min_)
       {
-	throw runtime_error ("single_particle_generator::set_mean_energy: Invalid max energy value (0 <= min energy < max energy) !");
+	throw runtime_error ("single_particle_generator::set_energy_range: Invalid max energy value (0 <= min energy < max energy) !");
       }
     __min_energy = min_;
     __max_energy = max_;
@@ -206,7 +206,7 @@ namespace genbb {
   void single_particle_generator::set_energy_spectrum_filename (const string & filename_)
   {
     _check_locked ("single_particle_generator::set_energy_spectrum_filename");
-    __tabulated_energy_spectrum_filename = filename_;
+    __energy_spectrum_filename = filename_;
     return;
   }
 
@@ -273,7 +273,7 @@ namespace genbb {
 
     __VNM.reset ();
     __energy_spectrum.reset ();
-    __tabulated_energy_spectrum_filename = "";
+    __energy_spectrum_filename = "";
     __spectrum_interpolation_name = mygsl::tabulated_function::LINEAR_INTERP_NAME;
 
     __randomized_direction = true;
@@ -451,6 +451,22 @@ namespace genbb {
 	    string spectrum_filename = config_.fetch_string ("spectrum.data_file");
 	    set_energy_spectrum_filename (spectrum_filename);
 	  }
+        double min_energy = __min_energy;
+        double max_energy = __max_energy;
+
+        if (config_.has_key ("spectrum.min_energy"))
+          {
+            min_energy = config_.fetch_real ("spectrum.min_energy");
+          }
+        min_energy *= energy_unit;
+
+        if (config_.has_key ("spectrum.min_energy"))
+          {
+            max_energy = config_.fetch_real ("spectrum.max_energy");
+          }
+        max_energy *= energy_unit;
+
+        set_energy_range (min_energy, max_energy);
       }
 
     __at_init ();
@@ -552,23 +568,101 @@ namespace genbb {
   void single_particle_generator::_init_energy_histo_pdf ()
   {
     using namespace std;
-    string filename = __tabulated_energy_spectrum_filename;
+    string filename = __energy_spectrum_filename;
     datatools::utils::fetch_path_with_env (filename);
-    ifstream ifstate (filename.c_str());
-    if (! ifstate)
+    ifstream ifile (filename.c_str());
+    if (! ifile)
       {
 	ostringstream message;
 	message << "single_particle_generator::_init_energy_histo_pdf: "
 		<< "Cannot open data file '"
-		<< __tabulated_energy_spectrum_filename << "' !";
+		<< __energy_spectrum_filename << "' !";
 	throw logic_error (message.str ());
       }
 
+    double energy_unit = CLHEP::MeV;
+    size_t nbins = 0;
+    double min = 0.0, max = 0.0;
     // load histo
-    __energy_histo.from_stream (ifstate);
-    ifstate.close ();
+    while (! ifile.eof ())
+      {
+	string line;
+	getline (ifile, line);
+	if (line.empty ())
+	  {
+	    continue;
+	  }
+        {
+          istringstream lineiss (line);
+          string word;
+          lineiss >> word;
+          if ((word.length () > 0) && (word[0] == '#'))
+            {
+              if (word == "#@limit_values")
+                {
+                  lineiss >> nbins >> min >> max;
+                  // initalize histo
+                  __energy_histo.init (nbins, min*energy_unit, max*energy_unit);
+              }
+              else if (word == "#@energy_unit")
+                {
+                  string energy_unit_str;
+                  lineiss >> energy_unit_str;
+                  energy_unit = datatools::utils::units::get_energy_unit_from (energy_unit_str);
+                }
+              continue;
+            }
+        }
 
-    //
+        if (!__energy_histo.bins ())
+          {
+            ostringstream message;
+            message << "single_particle_generator::_init_energy_histo_pdf: "
+                    << "Limits to histogram are not given in data file '"
+                    << __energy_spectrum_filename << "' !";
+            throw logic_error (message.str ());
+          }
+
+        istringstream lineiss (line);
+        double xmin, xmax;
+        double weight;
+        lineiss >> xmin >> xmax >> weight;
+        if (! lineiss)
+          {
+            ostringstream message;
+            message << "single_particle_generator::_init_energy_histo_pdf: "
+                    << "Format error in data file '"
+                    << __energy_spectrum_filename << "' !";
+            throw logic_error (message.str ());
+          }
+
+        xmin *= energy_unit;
+        xmax *= energy_unit;
+
+        if (xmin < 0.0 || xmax < 0.0)
+          {
+            ostringstream message;
+            message << "single_particle_generator::_init_energy_histo_pdf: "
+                    << "Invalid energy value < 0)!";
+            throw out_of_range (message.str ());
+          }
+        if (weight < 0.0)
+          {
+            ostringstream message;
+            message << "single_particle_generator::_init_energy_histo_pdf: "
+                    << "Invalid spectrum value (" << weight << " < 0)!";
+            throw out_of_range (message.str ());
+          }
+
+        // filling histogram
+        const double mean_energy = (xmin + xmax)/2.0;
+        if (mean_energy < __min_energy || mean_energy > __max_energy)
+          continue;
+
+        __energy_histo.fill (mean_energy, weight);
+      }
+
+    // Calculate histogram PDF
     __energy_histo_pdf.init (__energy_histo);
     return;
   }
@@ -584,7 +678,7 @@ namespace genbb {
       }
 
     using namespace std;
-    string filename = __tabulated_energy_spectrum_filename;
+    string filename = __energy_spectrum_filename;
     datatools::utils::fetch_path_with_env (filename);
     ifstream ifile;
     ifile.open (filename.c_str ());
@@ -593,7 +687,7 @@ namespace genbb {
 	ostringstream message;
 	message << "single_particle_generator::_init_energy_spectrum: "
 		<< "Cannot open interpolation data file '"
-		<< __tabulated_energy_spectrum_filename << "' !";
+		<< __energy_spectrum_filename << "' !";
 	throw logic_error (message.str ());
       }
     string interpolator_name;
@@ -623,7 +717,7 @@ namespace genbb {
 		  lineiss >> energy_unit_str;
 		  energy_unit = datatools::utils::units::get_energy_unit_from (energy_unit_str);
 		}
-	      continue;
+              continue;
 	    }
 	}
 	istringstream lineiss (line);
@@ -634,7 +728,7 @@ namespace genbb {
 	    ostringstream message;
 	    message << "single_particle_generator::_init_energy_spectrum: "
 		    << "Format error in interpolation data file '"
-		    << __tabulated_energy_spectrum_filename << "' !";
+		    << __energy_spectrum_filename << "' !";
 	    throw logic_error (message.str ());
 	  }
 	x *= energy_unit;
@@ -652,6 +746,10 @@ namespace genbb {
 		    << "Invalid spectrum value (" << y << " < 0)!";
 	    throw out_of_range (message.str ());
 	  }
+
+        if (x < __min_energy || x > __max_energy)
+          continue;
+
 	__energy_spectrum.add_point (x, y, false);
 	if (y > ymax) ymax = y;
       }

@@ -79,7 +79,10 @@ int main (int argc_, char ** argv_)
         }
 
       // generate an histogram
-      mygsl::histogram h (100, 0, 10.);
+      const size_t nbins = 100;
+      const double xmin = 0.0;
+      const double xmax = 10.0;
+      mygsl::histogram h (nbins, xmin, xmax);
 
       const size_t nshoots = 1000;
       for (int i= 0; i < nshoots; i++)
@@ -91,7 +94,10 @@ int main (int argc_, char ** argv_)
 
       std::string sname = "test_histogram.data";
       std::ofstream ofhist (sname.c_str());
-      h.to_stream (ofhist);
+      ofhist << "# energy spectrum for the 'single_particle_generator'" << endl;
+      ofhist << "#@energy_unit   MeV" << endl;
+      ofhist << "#@limit_values " << nbins << ' ' << xmin << ' ' << xmax << endl;
+      h.print (ofhist);
       ofhist.close ();
 
       genbb::single_particle_generator SPG;
@@ -136,8 +142,12 @@ int main (int argc_, char ** argv_)
        */
        config.store ("spectrum.mode", "histogram_pdf");
 
-      /* Possible values are: "keV", "MeV"... */
-      config.store ("spectrum.data_file", sname);
+       /* Possible values are: "keV", "MeV"... */
+       config.store ("spectrum.data_file", sname);
+
+       config.store ("energy_unit", "MeV");
+       config.store ("spectrum.min_energy", 0.0);
+       config.store ("spectrum.max_energy", 10.0);
 
       if (debug) config.tree_dump (clog, "Configuration: ", "debug: ");
 

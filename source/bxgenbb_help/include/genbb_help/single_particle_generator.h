@@ -90,7 +90,7 @@ namespace genbb {
 
     int    __spectrum_mode;
     string __spectrum_interpolation_name;
-    string __tabulated_energy_spectrum_filename;
+    string __energy_spectrum_filename;
     mygsl::tabulated_function __energy_spectrum;
     mygsl::von_neumann_method __VNM;
     mygsl::histogram          __energy_histo;
