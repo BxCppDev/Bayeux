@@ -1,33 +1,33 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* single_particle_generator.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-10-03
  * Last modified: 2010-10-03
- * 
- * License: 
+ *
+ * License:
  * Copyright 2007-2011 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- * 
- * Description: 
+ *
+ * Description:
  *
  *   A generator of GENBB-like event with a single particle
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
 #ifndef __genbb_help__single_particle_generator_h
@@ -49,6 +49,7 @@
 #include <mygsl/rng.h>
 #include <mygsl/tabulated_function.h>
 #include <mygsl/von_neumann_method.h>
+#include <mygsl/histogram.h>
 
 namespace genbb {
 
@@ -73,8 +74,8 @@ namespace genbb {
 	SPECTRUM_MODE_TABFUNC = 0,
 	SPECTRUM_MODE_HISTPDF = 1
       };
- 
-  private: 
+
+  private:
 
     bool   __debug;
     bool   __initialized;
@@ -88,7 +89,7 @@ namespace genbb {
     double __max_energy;
 
     int    __spectrum_mode;
-    string __spectrum_interpolation_name;  
+    string __spectrum_interpolation_name;
     string __tabulated_energy_spectrum_filename;
     mygsl::tabulated_function __energy_spectrum;
     mygsl::von_neumann_method __VNM;
@@ -102,7 +103,7 @@ namespace genbb {
   protected:
     void _check_locked (const string & where_) const;
 
-  public: 
+  public:
     bool is_debug () const;
     void set_debug (bool);
     bool is_initialized () const;
@@ -129,18 +130,18 @@ namespace genbb {
     void set_energy_spectrum_filename (const string & filename_);
 
   protected:
-    
+
     void _init_energy_spectrum ();
-    
-    void _init_histo_pdf ();
-  
-  public: 
+
+    void _init_energy_histo_pdf ();
+
+  public:
     // ctor:
     single_particle_generator ();
 
     // dtor:
     virtual ~single_particle_generator ();
-  
+
     void initialize (const datatools::utils::properties & config_);
 
     void reset ();
@@ -149,7 +150,7 @@ namespace genbb {
 
   protected:
 
-    virtual void _load_next (primary_event & event_, 
+    virtual void _load_next (primary_event & event_,
 			     bool compute_classification_ = true) ;
   private:
 
@@ -158,7 +159,7 @@ namespace genbb {
     void __at_reset ();
 
   public:
-    
+
     static double get_particle_mass_from_label (const string & particle_name_);
 
     static bool particle_name_is_valid (const string & particle_name_);
