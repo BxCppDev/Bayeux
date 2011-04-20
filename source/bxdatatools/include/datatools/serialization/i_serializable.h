@@ -38,6 +38,8 @@ namespace datatools {
 
       virtual const std::string & get_serial_tag () const = 0;
   
+      virtual ~i_serializable () {}
+
     private:
       
       friend class boost::serialization::access;

@@ -222,7 +222,6 @@ namespace datatools {
 								delete new_obj;
 							}
 						const type_info & ti = typeid (T);
-						T tmp;
 						ostringstream message;
 						message << "datatools::utils::things::add<T>: Request type '" 
 										<< ti.name () 

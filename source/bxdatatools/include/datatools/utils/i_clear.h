@@ -13,6 +13,9 @@ namespace datatools {
     class i_clear
     {
     public:
+  
+      //virtual ~i_clear () {}
+
      /**
       * A pure virtual member.
       * Clear (reset) the object's internals (typically empty a container).

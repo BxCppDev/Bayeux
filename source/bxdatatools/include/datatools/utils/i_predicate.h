@@ -13,6 +13,8 @@ namespace datatools {
     class i_predicate : public std::unary_function<const T &, bool>
     {
     public:
+ 
+      //virtual ~i_predicate () {}
       virtual bool operator () (const T & a_obj) const = 0;
     };
 

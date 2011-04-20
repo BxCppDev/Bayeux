@@ -221,7 +221,7 @@ int main (int argc_ , char ** argv_)
 	      pool.reset ();
 	    }
 	  CT.tree_dump (clog, "CT hit_handles_col_t (using pool)"); // 32 sec
-	  CT2.tree_dump (clog, "CT hit_handles_col_t (using pool)"); // 0.393747
+	  CT2.tree_dump (clog, "CT2 hit_handles_col_t (using pool)"); // 0.393747
 	}
       }
      

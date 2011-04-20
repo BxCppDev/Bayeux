@@ -249,7 +249,6 @@ int main (int argc_, char ** argv_)
 				// add some objects of type 'A' and 'B' in it
 				// perform some on-the-fly setter on some of them :
 				bag.add<A> ("a1", "The a1 object").set_value (666.6666);
-				
 			  bag.add<A> ("a2", "The a2 object").set_value (3.1415);
        	bag.add<B> ("b1", "The b1 object").set_index (7654321);
 				B & b2 = bag.add<B> ("b2", "A permanent object", datatools::utils::things::constant);

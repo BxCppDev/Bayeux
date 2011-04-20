@@ -366,6 +366,7 @@ namespace datatools {
 					if (s != 0)
 						{
 							delete s;
+							i->second.handle = 0;
 						}
 				}
 			m_things.clear ();

@@ -16,6 +16,8 @@ namespace datatools {
     class i_invokable
     {
     public:
+ 
+      virtual ~i_invokable () {}
 
       static int invoke (i_invokable &, datatools::utils::command &);
 
