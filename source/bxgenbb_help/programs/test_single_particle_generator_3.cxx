@@ -31,6 +31,8 @@ int main (int argc_, char ** argv_)
       bool randomized_direction = false;
       bool energy_range_mode = false;
 
+      string spectrum_data_file = "";
+
       int iarg = 1;
       while (iarg < argc_)
         {
@@ -59,6 +61,10 @@ int main (int argc_, char ** argv_)
                 {
                   many = 4;
                 }
+              else if ((option == "-i") || (option == "--spectrum-data-file"))
+                {
+                  spectrum_data_file = argv_[++iarg];
+                }
               else if ((option == "-r") || (option == "--randomized-direction"))
                 {
                   randomized_direction = true;
@@ -78,27 +84,30 @@ int main (int argc_, char ** argv_)
           iarg++;
         }
 
-      // generate an histogram
-      const size_t nbins = 100;
-      const double xmin = 0.0;
-      const double xmax = 10.0;
-      mygsl::histogram h (nbins, xmin, xmax);
-
-      const size_t nshoots = 1000;
-      for (int i= 0; i < nshoots; i++)
+      if (spectrum_data_file.empty ())
         {
-          double x = -std::log(drand48());
-          h.fill(x);
-        }
-      h.dump(std::cerr);
+          // generate an histogram
+          const size_t nbins = 100;
+          const double xmin = 0.0;
+          const double xmax = 10.0;
+          mygsl::histogram h (nbins, xmin, xmax);
 
-      std::string sname = "test_histogram.data";
-      std::ofstream ofhist (sname.c_str());
-      ofhist << "# energy spectrum for the 'single_particle_generator'" << endl;
-      ofhist << "#@energy_unit   MeV" << endl;
-      ofhist << "#@limit_values " << nbins << ' ' << xmin << ' ' << xmax << endl;
-      h.print (ofhist);
-      ofhist.close ();
+          const size_t nshoots = 1000;
+          for (int i= 0; i < nshoots; i++)
+            {
+              double x = -std::log(drand48());
+              h.fill(x);
+            }
+          h.dump(std::cerr);
+
+          spectrum_data_file = "test_histogram.data";
+          std::ofstream ofhist (spectrum_data_file.c_str());
+          ofhist << "# energy spectrum for the 'single_particle_generator'" << endl;
+          ofhist << "#@energy_unit MeV" << endl;
+          ofhist << "#@limits " << nbins << ' ' << xmin << ' ' << xmax << endl;
+          h.print (ofhist);
+          ofhist.close ();
+        }
 
       genbb::single_particle_generator SPG;
 
@@ -141,10 +150,9 @@ int main (int argc_, char ** argv_)
        *  using Von Neumann method
        */
        config.store ("spectrum.mode", "histogram_pdf");
+       config.store ("spectrum.data_file", spectrum_data_file);
 
        /* Possible values are: "keV", "MeV"... */
-       config.store ("spectrum.data_file", sname);
-
        config.store ("energy_unit", "MeV");
        config.store ("spectrum.min_energy", 0.0);
        config.store ("spectrum.max_energy", 10.0);

@@ -598,7 +598,7 @@ namespace genbb {
           lineiss >> word;
           if ((word.length () > 0) && (word[0] == '#'))
             {
-              if (word == "#@limit_values")
+              if (word == "#@limits")
                 {
                   lineiss >> nbins >> min >> max;
                   // initalize histo
@@ -614,7 +614,7 @@ namespace genbb {
             }
         }
 
-        if (!__energy_histo.bins ())
+        if (!nbins)
           {
             ostringstream message;
             message << "single_particle_generator::_init_energy_histo_pdf: "
