@@ -1106,21 +1106,21 @@ namespace datatools {
 			       << "BOOOM !" << std::endl;
 	}
       // 2011-02-25 FM: 
-      catch (boost::archive::archive_exception & x) 
+     /* catch (boost::archive::archive_exception & x) 
 	{
 	  if (io_factory::g_warning)
 	    {
 	      std::clog << "WARNING: data_reader::__read_next_tag: archive exception is: " 
 			<< x.what () << std::endl;
 	    }
-	  /*
+	  
 	    std::clog << "WARNING: data_reader::__read_next_tag: archive exception is: " 
 		    << x.what () << std::endl;
-	  */
+	  
 	  __status   = STATUS_ERROR;
 	  __next_tag = EMPTY_RECORD_TAG;
 	  // throw x;
-	}
+	}*/
       catch (std::exception & x) 
 	{
 	  bool warn = io_factory::g_warning;
