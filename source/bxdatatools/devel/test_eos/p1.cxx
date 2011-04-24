@@ -1,3 +1,11 @@
+// p1.cxx
+// author: Francois Mauger <maugeer@lpccaen.in2p3.fr>
+// date: 2011-04-21
+// what: a sample program that check the (de)serialization of finite
+//       and nonfinite floating number (float and double) using 
+//       eos portable binary archives
+// tested plateforms: Linux (32bits/i686 and 64bits/x86_64)
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -6,6 +14,7 @@
 #include <boost/cstdint.hpp>
 #include <boost/foreach.hpp>
 
+// have to include this :
 #include <cassert>
 #include <boost/serialization/item_version_type.hpp>
 
@@ -99,8 +108,9 @@ int main (void)
     }
   }
 
-  /*
-    od -t u1 p1.data 
+  /* the output 'p1.data' file is :
+
+    shell> od -t u1 p1.data 
     0000000 127   1   7   1   3   4   0   0 128 191   0   4   0   0 128  63
     0000020   1   3   4   0   0 128 255   4   0   0 128 127   4 255 255 255
     0000040 127   1   3   8   0   0   0   0   0   0 240 191   0   8   0   0
@@ -108,6 +118,7 @@ int main (void)
     0000100 255   8   0   0   0   0   0   0 240 127   8 255 255 255 255 255
     0000120 255 255 127
     0000123
+
   */
 
   {
@@ -176,3 +187,5 @@ int main (void)
   }
   return 0;
 }
+
+// end of p1.cxx
