@@ -147,7 +147,7 @@ namespace datatools {
 
     double units::get_volume_activity_unit_from (const string & str_)
     {
-      double Bq_per_m3 = 1. / CLHEP::second / CLHEP::m3;
+      double Bq_per_m3 =  CLHEP::becquerel / CLHEP::m3;
       if ((str_ == "Bq/m3"))  return 1.    * Bq_per_m3;
       if ((str_ == "mBq/m3")) return 1.e-3 * Bq_per_m3;
       if ((str_ == "uBq/m3")) return 1.e-6 * Bq_per_m3;

@@ -133,8 +133,7 @@ int main (int argc_, char ** argv_)
 	    clog << "Unit label = '" << unit_label << "'\n";
 	  }
 	double activity = mass_activity_value * mass_value;
-	double Bq_unit = 1. / CLHEP::second;
-	double uBq_unit = 1.e-6 * Bq_unit;
+	double uBq_unit = 1.e-6 * CLHEP::becquerel;
 	clog << "Activity value = " << activity / uBq_unit << " uBq\n";
 	
       }
