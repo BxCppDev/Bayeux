@@ -68,6 +68,16 @@ int main (int argc_, char ** argv_)
 	  throw runtime_error (message.str ());
 	}
       double lunit = datatools::utils::units::get_length_unit_from (sunit);
+
+      cout << "CLHEP basic units: " << endl;
+      cout << "  1 m    ==  " << CLHEP::m << endl;
+      cout << "    1 cm   ==  " << CLHEP::cm << endl;
+      cout << "    1 mm   ==  " << CLHEP::mm << endl;
+      cout << "  1 kg     ==  " << CLHEP::kg << endl;
+      cout << "    1 g  ==  " << CLHEP::g << endl;
+      cout << "  1 s      ==  " << CLHEP::second << endl;
+      cout << "    1 ms   ==  " << CLHEP::millisecond << endl;
+      cout << "    1 ns   ==  " << CLHEP::nanosecond << endl;
       
       // apply the unit to the value:
       length *= lunit;
@@ -98,8 +108,40 @@ int main (int argc_, char ** argv_)
 	  clog << "As expected, the 'dummy' symbol is not a known unit !" << endl;
 	}
 
-      clog << "The end." << endl;
+      {
+	double unit_value;
+	string unit_label;
+	if (datatools::utils::units::find_unit ("mBq/m3", unit_value, unit_label))
+	  {
+	    clog << "Unit label = '" << unit_label << "'\n";
+	    clog << "Unit value = " << unit_value << "\n";
+	  }
+      }
       
+      {
+	double mass_activity_value;
+	string unit_label;
+	if (datatools::utils::units::find_value_with_unit ("10 uBq/kg", mass_activity_value, unit_label))
+	  {
+	    clog << "Mass activity value = " << mass_activity_value << "\n";
+	    clog << "Unit label = '" << unit_label << "'\n";
+	  }
+	double mass_value;
+	if (datatools::utils::units::find_value_with_unit ("2 kg", mass_value, unit_label))
+	  {
+	    clog << "Mass value = " << mass_value << "\n";
+	    clog << "Unit label = '" << unit_label << "'\n";
+	  }
+	double activity = mass_activity_value * mass_value;
+	double Bq_unit = 1. / CLHEP::second;
+	double uBq_unit = 1.e-6 * Bq_unit;
+	clog << "Activity value = " << activity / uBq_unit << " uBq\n";
+	
+      }
+
+
+      clog << "The end." << endl; 
+     
     }
   catch (exception & x)
     {

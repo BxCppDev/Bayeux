@@ -86,30 +86,75 @@ namespace datatools {
       //! Get the CLHEP density unit from a string.
       static double get_density_unit_from (const string &);
 
+      //! Get the CLHEP activity unit from a string.
+      static double get_activity_unit_from (const string &);
+
+      //! Get the CLHEP surface activity unit from a string.
+      static double get_surface_activity_unit_from (const string &);
+
+      //! Get the CLHEP volume activity unit from a string.
+      static double get_volume_activity_unit_from (const string &);
+
+      //! Get the CLHEP mass activity unit from a string.
+      static double get_mass_activity_unit_from (const string &);
+
       //! Get the CLHEP unit from a string specifiying the unit type.
      /**
-       * Example:
+       * \b Example:
        *
+       *   \code
        *   double lu = datatools::utils::units::get_unit_from  ("length", "cm");
+       *   \endcode
        */
       static double get_unit_from (const string & unit_type_, 
 				   const string & unit_str_);
  
-      //! Get the CLHEP unspecified from a string.
+      //! Get the CLHEP unspecified unit from a string.
       /**
-       * Example:
+       * \b Example:
        *
+       *   \code
        *   double u = datatools::utils::units::get_unit ("cm");
+       *   \endcode
        */
       static double get_unit (const string & unit_str_);
 
+      //! Find the CLHEP unspecified unit and the associated unit label from a string.
+      /**
+       * \b Example:
+       *
+       *   \code
+       *   double unit_value;
+       *   string unit_label;
+       *   bool ok = datatools::utils::units:: find_unit ("cm", unit_value, unit_label);
+       *   cout << "Unit label = '" << unit_label << "'\n";
+       *   cout << "Unit value = " << unit_value << "\n";
+       *   \endcode
+       *
+       */
+      static bool find_unit (const string & unit_str_, double & unit_value_, string & unit_label_);
+
       //! Get a value from a string taking into account the unit symbol.
       /**
-       * Example:
+       * \b Example:
        *
+       *   \code
        *   double val = datatools::utils::units::get_value_with_unit ("2.54 cm");
+       *   \endcode
        */
       static double get_value_with_unit (const string & word_);
+
+     //! Get a value from a string taking into account the unit symbol.
+      /**
+       * \b Example:
+       *
+       *   \code
+       *   double value;
+       *   string unit_label;
+       *   bool ok = datatools::utils::units::find_value_with_unit ("2.54 cm", value, unit_label);
+       *   \endcode
+       */
+      static bool find_value_with_unit (const string & word_, double & value_, string & unit_label_);
   
     };
 
