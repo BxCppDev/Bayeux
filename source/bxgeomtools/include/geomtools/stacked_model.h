@@ -160,6 +160,7 @@ namespace geomtools {
     static creator_registration<stacked_model> __CR;
       
   public: 
+
     virtual void tree_dump (ostream & out_         = clog, 
 			    const string & title_  = "", 
 			    const string & indent_ = "", 

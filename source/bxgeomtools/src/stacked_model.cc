@@ -74,7 +74,7 @@ namespace geomtools {
 
   void stacked_model::set_stacking_axis (int a_)
   {
-    assert_unconstructed("stacked_model::set_stacking_axis");
+    assert_unconstructed ("stacked_model::set_stacking_axis");
 
     if ((a_ < STACKING_ALONG_X) || (a_ > STACKING_ALONG_Z))
       {
@@ -123,7 +123,7 @@ namespace geomtools {
 
   void stacked_model::add_stacked_model (int i_, const i_model & model_, const string & label_)
   {
-    assert_unconstructed("stacked_model::add_stacked_model");
+    assert_unconstructed ("stacked_model::add_stacked_model");
 
     stacked_dict_t::const_iterator found = __stacked_models.find (i_);
     if (found != __stacked_models.end ())
@@ -252,6 +252,7 @@ namespace geomtools {
   // dtor:
   stacked_model::~stacked_model ()
   {
+    return;
   }
   
   void stacked_model::_at_construct (const string & name_,

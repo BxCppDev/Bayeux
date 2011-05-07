@@ -205,10 +205,18 @@ namespace geomtools {
 
 
   //! Extract the ZYZ Euler angles from a rotation
+  // http://www.geometrictools.com/Documentation/EulerAngles.pdf
   void extract_zyz_euler_angle_from_rotation (const rotation_3d & rot_,
 					      double & a_,
 					      double & b_,
 					      double & c_);
+
+  // http://www.cgafaq.info/wiki/Euler_angles_from_matrix
+  // struct extract_euler_angle
+  // {
+  //   int i, neg, alt, rev;
+  //   extract_euler_angle ()  {}  
+  // };
 
   /********************/
 
@@ -280,6 +288,8 @@ namespace geomtools {
 		  const string & indent_ = "");
 
   void invalidate (rotation_3d & rot_);
+
+  void rectify (rotation_3d & rot_);
   
   void invalidate_rotation_3d (rotation_3d & rot_);
 

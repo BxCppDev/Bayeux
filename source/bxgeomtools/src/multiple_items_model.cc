@@ -96,6 +96,7 @@ namespace geomtools {
   {
     assert_unconstructed ("multiple_items_model::set_material_name");
     __material_name = m_;
+    return;
   }
 
   const string & multiple_items_model::get_material_name () const
@@ -189,12 +190,14 @@ namespace geomtools {
   multiple_items_model::multiple_items_model ()
     : i_boxed_model ()
   {
+    return;
   }
   
   // dtor:
   multiple_items_model::~multiple_items_model ()
   {
     //__items.clear ();
+    return;
   }
 
   void multiple_items_model::_at_construct (const string & name_,

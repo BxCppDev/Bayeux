@@ -161,6 +161,7 @@ namespace geomtools {
       {
 	clog << "DEVEL: i_model::model_db::model_db: Exiting. " << endl;
       }
+    return;
   }
 
   i_model::model_db::~model_db ()
@@ -178,6 +179,7 @@ namespace geomtools {
 	clog << "DEVEL: i_model::model_db::~model_db: Exiting." 
 	     << endl;
       }
+    return;
   }
  
   bool i_model::model_db::has_model (const string & model_id_) const
@@ -258,6 +260,7 @@ namespace geomtools {
 	     << "done."
 	     << endl;
       }
+    return;
   }
   
   void i_model::model_db::dump_models (ostream & out_)
@@ -278,6 +281,7 @@ namespace geomtools {
 	     << dec << endl;
       }
     out_ << "end." << endl;
+    return;
   }
   
   /************************************************/
@@ -295,6 +299,7 @@ namespace geomtools {
   void i_model::set_debug (bool new_value_)
   {
     __debug = new_value_;
+    return;
   }
    
   const string & i_model::get_name () const
@@ -305,6 +310,7 @@ namespace geomtools {
   void i_model::set_name (const string & name_)
   {
     __name = name_;
+    return;
   }
  
   const datatools::utils::properties & 
@@ -325,6 +331,7 @@ namespace geomtools {
     __constructed = false;
     __debug = false;
     set_name (name_);
+    return;
   }
 
   // dtor:
@@ -333,6 +340,7 @@ namespace geomtools {
     if (g_devel) clog << "DEVEL: i_model::~i_model: Entering..." << endl;
     __parameters.clear ();
     if (g_devel) clog << "DEVEL: i_model::~i_model: Exiting." << endl;
+    return;
   }
  
   const geomtools::logical_volume & i_model::get_logical () const
@@ -359,6 +367,7 @@ namespace geomtools {
 
   void i_model::_pre_construct (datatools::utils::properties & setup_)
   {
+    return;
   }
 
   void i_model::_post_construct (datatools::utils::properties & setup_)
@@ -449,7 +458,8 @@ namespace geomtools {
       indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
       _logical.tree_dump (out_, "", indent_oss.str ());
     }
-      
+
+    return;
   }
 
 } // end of namespace snemo

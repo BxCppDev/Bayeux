@@ -45,6 +45,7 @@ namespace geomtools {
     __mp.set_key_label ("name");
     __mp.set_meta_label ("type");
     __mp.set_description ("Geometry models setup");
+    return;
   }
   
   // dtor:
@@ -54,6 +55,7 @@ namespace geomtools {
       {
 	reset ();
       }
+    return;
   }
 
   void model_factory::load (const string & mprop_file_)
@@ -91,6 +93,7 @@ namespace geomtools {
 
   void model_factory::__unlock ()
   {
+    return;
   }
   
   void model_factory::unlock ()
@@ -98,6 +101,7 @@ namespace geomtools {
     if (! __locked) return;
     __unlock ();
     __locked = false;
+    return;
   }
   
   void model_factory::lock ()
@@ -108,6 +112,7 @@ namespace geomtools {
       }
     __lock ();
     __locked = true;
+    return;
   }
 
   void model_factory::reset ()
@@ -119,6 +124,7 @@ namespace geomtools {
     __logicals.clear ();
     __models.clear ();
     __mp.reset ();
+    return;
   }
 
   void model_factory::__construct ()
