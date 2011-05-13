@@ -141,15 +141,32 @@ namespace geomtools {
 
     out_ << first.x() << " " << first.y() << " " << first.z() << endl;
     out_ << last.x() << " " << last.y() << " " << last.z() << endl;
+    out_ << endl;
   }
 
 
-  bool line_3d::is_on_curve (const vector_3d & position_, 
-			     double tolerance_) const
+  double line_3d::get_distance_to_line ( const vector_3d & position_ ) const
   {
-    bool on_curve = false;
-    throw runtime_error ("line_3d::is_on_curve: Not implemented yet !");
-    return on_curve;
+    vector_3d A = position_ - __last;
+    vector_3d B = position_ - __first;
+
+    vector_3d u = __last - __first;
+    vector_3d d = A.cross( position_ );
+
+    double dist = d.mag() / u.mag();
+
+    if ( dist < A.mag() && dist < B.mag() )
+      return dist;
+    else if ( A.mag() < dist && A.mag() < B.mag() )
+      return A.mag();
+    else
+      return B.mag();
+  }
+
+  bool line_3d::is_on_curve ( const vector_3d & position_, 
+			      double tolerance_ ) const
+  {
+    return get_distance_to_line ( position_ ) <= tolerance_;
   }
 
   vector_3d line_3d::get_direction_on_curve (const vector_3d & position_) const

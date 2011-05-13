@@ -99,6 +99,8 @@ namespace geomtools {
     static void print_xyz (ostream & out_, 
 			   const line_3d & line_);
 
+    double get_distance_to_line ( const vector_3d & position_ ) const;
+
     virtual bool is_on_curve (const vector_3d & position_, 
 			      double tolerance_ = USING_PROPER_TOLERANCE) const;
 
