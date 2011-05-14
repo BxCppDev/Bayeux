@@ -6,6 +6,7 @@
 
 #include <boost/archive/polymorphic_oarchive.hpp>
 #include <boost/archive/polymorphic_iarchive.hpp>
+#include <boost/algorithm/string/replace.hpp>
 
 namespace datatools {
 
@@ -953,6 +954,32 @@ namespace datatools {
 	  erase (*i);
 	}
       return;	
+    }
+
+    void properties::export_and_rename_starting_with (properties & p_, 
+						      const std::string & key_prefix_,
+						      const std::string & new_prefix_) const
+    {
+     if (this == &p_)
+	{
+	  throw runtime_error ("properties::export_and_rename_starting_with: Self export is not allowed !");
+	}
+     keys_col_t ks;
+     this->keys_starting_with (ks, key_prefix_);
+     for (keys_col_t::const_iterator i = ks.begin ();
+	  i !=  ks.end ();
+	   i++)
+	{
+	  properties & ptmp = const_cast<properties &> (*this);
+	  /*
+	    clog << "DEVEL: properties::export_starting_with: property '" 
+            << *i << "'..." << endl;
+	  */
+	  string new_key = *i;
+	  boost::replace_first (new_key, key_prefix_, new_prefix_); 
+	  p_.__props[new_key] = ptmp.__props[*i];
+	}
+       return;	
     }
 
     void properties::export_starting_with (properties & p_, 

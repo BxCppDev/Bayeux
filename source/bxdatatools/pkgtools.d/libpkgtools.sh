@@ -2478,7 +2478,7 @@ EOF
 	    fi
 	    
 	    if [ "x${dep_version}" == "x" ]; then
-		if [ ${has_executable} -eq 1 -a "${dep_cfg}" != "${dep_exe}" ]; then
+		if [ ${has_executable} -eq 1 -a "x${dep_cfg}" != "x${dep_exe}" ]; then
 		    ${dep_exe} --version > /dev/null 2>&1
 		    if [ $? -ne 0 ]; then
 			pkgtools__msg_warning "Cannot retrieve version information from the '${dep_exe}' executable !"
