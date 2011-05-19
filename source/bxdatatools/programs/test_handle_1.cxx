@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_handle_1.cxx
 // Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
 
@@ -28,7 +28,7 @@ using namespace std;
 /** Some test class representing a hit (serializable)
  *
  */
-class hit 
+class hit
 {
 public:
   static int g_count;
@@ -37,7 +37,7 @@ private:
   int32_t   id_;
   double    tdc_;
 private:
-  friend class boost::serialization::access; 
+  friend class boost::serialization::access;
   BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
 
 public:
@@ -68,7 +68,7 @@ public:
     g_count++;
     if (g_debug) clog << "DEBUG: hit::ctor: g_count=" << g_count << endl;
   }
-  ~hit () 
+  ~hit ()
   {
     if (g_debug) clog << "DEBUG: hit::dtor: Destruction @" << this << "." << endl;
     g_count--;
@@ -93,7 +93,7 @@ int  hit::g_count  = 0;
 bool hit::g_debug = false;
 
 template<class Archive>
-void hit::serialize (Archive & ar_, 
+void hit::serialize (Archive & ar_,
 		     const unsigned int version_)
 {
   ar_ & boost::serialization::make_nvp ("id",  id_);
@@ -104,13 +104,13 @@ void hit::serialize (Archive & ar_,
 int main (int argc_ , char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
-  try 
+  try
     {
-      clog << "Test of the 'handle<>' template class..." << endl; 
+      clog << "Test of the 'handle<>' template class..." << endl;
       bool debug = false;
 
       int iarg =  1;
-      while (iarg < argc_) 
+      while (iarg < argc_)
 	{
           string arg = argv_[iarg];
 	  if ((arg == "-d") || (arg == "--debug")) debug = true;
@@ -212,17 +212,17 @@ int main (int argc_ , char ** argv_)
 	    oa << boost::serialization::make_nvp ("hits2", hits2);
 	  }
 	  clog << "Done." << endl;
-	
+
 	  clog << "Destroy 'hits'..." << endl;
 	  hits.clear ();
 	  clog << "Destroy 'hits2'..." << endl;
 	  hits2.clear ();
-	  clog << "Done." << endl;	
+	  clog << "Done." << endl;
 	}
 
 	if (hit::g_debug) clog << "DEBUG: g_count=" << hit::g_count << endl;
 
-	{	
+	{
 	  hit_handles_col_t hits;
 	  hit_handles_col_t hits2;
 	  if (hit::g_debug) clog << "DEBUG: g_count=" << hit::g_count << endl;
@@ -247,24 +247,24 @@ int main (int argc_ , char ** argv_)
 		if (i->has_data ()) i->get ().print ();
 	      }
 	  }
-	  
+
 	}
 	if (hit::g_debug) clog << "DEBUG: g_count=" << hit::g_count << endl;
       }
-     
+
     }
   catch (exception & x)
-    { 
-      clog << "error: " << x.what () << endl; 
+    {
+      clog << "error: " << x.what () << endl;
       error_code =  EXIT_FAILURE;
     }
-  catch (...) 
-    { 
-      clog << "error: " << "unexpected error!" << endl;  
-      error_code = EXIT_FAILURE; 
-    } 
+  catch (...)
+    {
+      clog << "error: " << "unexpected error!" << endl;
+      error_code = EXIT_FAILURE;
+    }
   return error_code;
-} 
- 
-// end of test_handle_1.cxx 
+}
+
+// end of test_handle_1.cxx
 

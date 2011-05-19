@@ -22,50 +22,50 @@
 using namespace std;
 
 namespace datatools {
-  
+
   namespace utils {
-    
+
     template <class Type>
-    class ostream_manipulator 
+    class ostream_manipulator
     {
     private:
       ostream & (*__function) (ostream &, const Type &);
       Type        __value;
 
     public:
-      ostream_manipulator (ostream & (*function_) (ostream & , const Type &), 
-			   const Type & value_)				
-	: __function (function_), __value (value_) 
-      { 
+      ostream_manipulator (ostream & (*function_) (ostream & , const Type &),
+			   const Type & value_)
+	: __function (function_), __value (value_)
+      {
       }
 
-      friend ostream & operator<<(ostream & os_,	
-				  const ostream_manipulator & os_manip_) 
+      friend ostream & operator<<(ostream & os_,
+				  const ostream_manipulator & os_manip_)
       {
 	return os_manip_.__function (os_, os_manip_.__value);
-      } 
-  
+      }
+
     };
-    
-    template <class Type> 
-    class ostream_manipulator_ref 
+
+    template <class Type>
+    class ostream_manipulator_ref
     {
     private:
       ostream & (*__function) (ostream & , Type &);
       Type    &   __value;
 
     public:
-      ostream_manipulator_ref (ostream & (*function_) (ostream &, Type &) , 
-			       Type & value_) 
+      ostream_manipulator_ref (ostream & (*function_) (ostream &, Type &) ,
+			       Type & value_)
 	: __function (function_) , __value (value_)
-      { 
+      {
       }
 
-      friend ostream & operator<< (ostream & os_, 
-				   const ostream_manipulator_ref & os_manip_) 
+      friend ostream & operator<< (ostream & os_,
+				   const ostream_manipulator_ref & os_manip_)
       {
 	return os_manip_.__function (os_, os_manip_.__value);
-      } 
+      }
     };
 
     struct io
@@ -90,14 +90,14 @@ namespace datatools {
 	size_t get_level () const;
 	// ctor:
 	indenter ();
-	
+
 	indenter & operator++ (int);
 	indenter & operator-- (int);
 	ostream & operator() (ostream &) const;
 	indenter & operator () (size_t);
 
-	friend ostream & operator<< (ostream &, 
-				     const indenter &); 
+	friend ostream & operator<< (ostream &,
+				     const indenter &);
       };
 
       static indenter indent;
@@ -139,12 +139,14 @@ namespace datatools {
       static ostream & debug (ostream &);
 
       static ostream & devel (ostream &);
-    
+
       static ostream & notice (ostream &);
 
       static ostream & warning (ostream &);
 
       static ostream & error (ostream &);
+
+      static ostream & verbose (ostream &);
 
       static ostream & tab (ostream &);
 
@@ -160,22 +162,22 @@ namespace datatools {
 
       static ostream & showbase (ostream &);
 
-      static ostream & ostream_width (ostream & os_, const int & n_); 
-    
-      static ostream_manipulator<int> width ( const int & n_); 
-    
-      static ostream & ostream_precision (ostream & os_, const int & n_); 
-    
-      static ostream_manipulator<int> precision (const int & n_); 
+      static ostream & ostream_width (ostream & os_, const int & n_);
+
+      static ostream_manipulator<int> width ( const int & n_);
+
+      static ostream & ostream_precision (ostream & os_, const int & n_);
+
+      static ostream_manipulator<int> precision (const int & n_);
 
       static string to_binary (const uint32_t & val_);
 
     };
 
     /*
-      string create_temporary (const string & template_, 
+      string create_temporary (const string & template_,
       const string & path_ = "")
-      { 
+      {
       char * sdn = ".";
       ostringstream oss;
       if (! path_.empty ())
@@ -184,26 +186,26 @@ namespace datatools {
       }
       char sfn[] = "/home/usr1/temp-XXXXXX";
       FILE * sfp;
-      
+
       if (! secure_dir(sdn)) {
-      // Handle error 
+      // Handle error
       }
-      
+
       int fd = mkstemp(sfn);
       if (fd == -1) {
-      // Handle error 
+      // Handle error
       }
-      
+
       if (unlink(sfn) == -1) {
-      // Handle error 
+      // Handle error
       }
-      
+
       }
     */
 
   } // namespace utils
 
-} // namespace datatools 
+} // namespace datatools
 
 #endif // __datatools__utils__ioutils_h
 

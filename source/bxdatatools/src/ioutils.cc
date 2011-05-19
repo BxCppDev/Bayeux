@@ -1,5 +1,5 @@
-// -*- mode: c++; -*- 
-// ioutils.cc 
+// -*- mode: c++; -*-
+// ioutils.cc
 
 #include <datatools/utils/ioutils.h>
 
@@ -57,35 +57,35 @@ namespace datatools {
     {
       if (__level > 0) __level--;
       return *this;
-    } 
+    }
 
     ostream & operator<< (ostream & out_, const io::indenter & indent_)
     {
       for (int i = 0; i < indent_.__width * indent_.__level; i++)
 	{
 	  out_ << ' ';
-	} 
+	}
       return out_;
-    } 
+    }
 
-    ostream & io::ostream_width (ostream & os_, const int & n_) 
+    ostream & io::ostream_width (ostream & os_, const int & n_)
     {
       os_.width ((int) n_);
       return os_;
     }
-    
-    ostream_manipulator<int> io::width (const int & n_)  
+
+    ostream_manipulator<int> io::width (const int & n_)
     {
       return ostream_manipulator<int> (&io::ostream_width, n_);
     }
-    
-    ostream & io::ostream_precision (ostream & os_, const int & n_) 
+
+    ostream & io::ostream_precision (ostream & os_, const int & n_)
     {
       os_.precision ((int) n_);
       return os_;
     }
-    
-    ostream_manipulator<int> io::precision( const int & n_ ) 
+
+    ostream_manipulator<int> io::precision( const int & n_ )
     {
       return ostream_manipulator<int> (&io::ostream_precision, n_);
     }
@@ -151,7 +151,7 @@ namespace datatools {
 #ifdef USING_NCURSES
 	  io::focus ();
 	  attrset (A_NORMAL);
-#else 
+#else
 #endif // USING_NCURSES
 	}
       return out_;
@@ -164,7 +164,7 @@ namespace datatools {
 #ifdef USING_NCURSES
 	  io::focus ();
 	  attrset (A_REVERSE);
-#else 
+#else
 #endif // USING_NCURSES
 	}
       return out_;
@@ -246,6 +246,12 @@ namespace datatools {
       return out_;
     }
 
+    ostream & io::verbose (ostream & out_)
+    {
+      out_ << "VERBOSE: ";
+      return out_;
+    }
+
     ostream & io::tab (ostream & out_)
     {
       out_ << '\t';
@@ -299,7 +305,7 @@ namespace datatools {
       for (int i = (nbits - 1); i >= 0; i--)
 	{
 	  bool abit;
-	  abit = (val_ >> i) & 0x1;  
+	  abit = (val_ >> i) & 0x1;
 	  //clog << "DEVEL: io::to_binary: bit[" << i << "]=" << abit << endl;
 	  if (! start & abit) start = true;
 	  if (! abit && ! start) continue;
@@ -311,6 +317,6 @@ namespace datatools {
 
   } // namespace utils
 
-} // namespace datatools 
+} // namespace datatools
 
 // end of ioutils.cc
