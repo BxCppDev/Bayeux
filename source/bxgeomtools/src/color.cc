@@ -1,6 +1,8 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* color.cc
  */
+
+#include <stdexcept>
 
 #include <geomtools/color.h>
 
@@ -19,21 +21,21 @@ namespace geomtools {
   const string color::orange  = "orange";
   const string color::grey    = "grey";
   const string color::default_color = color::grey;
- 
+
   // static:
   color::scoped_color_db_t color::g__color_db (new color_db ());
 
   // static:
   const color::color_db & color::get_color_db ()
   {
-    if (! g__color_db) 
+    if (! g__color_db)
       {
 	throw runtime_error ("color::get_color_db: Library build critical bug !");
       }
     return *(g__color_db.get ());
   }
 
-  int color::get_color (const string & name_) 
+  int color::get_color (const string & name_)
   {
     return color::get_color_db ().get_color (name_);
   }
@@ -48,18 +50,18 @@ namespace geomtools {
       }
     return acolor;
   }
- 
+
   color::color_db::color_db ()
   {
     bool devel = false;
     //devel = true;
     if (devel)
       {
-	clog << "DEVEL: color::color_db::color_db: Entering..." << endl; 
+	clog << "DEVEL: color::color_db::color_db: Entering..." << endl;
       }
     __map[color::white]   = -2;
     __map[color::black]   = -1;
-    __map[color::grey]    = 0; 
+    __map[color::grey]    = 0;
     __map[color::red]     = 1;
     __map[color::green]   = 2;
     __map[color::blue]    = 3;
@@ -67,7 +69,7 @@ namespace geomtools {
     __map[color::cyan]    = 5;
     __map[color::yellow]  = 6;
     __map[color::orange]  = 8;
- 
+
     if (devel)
       {
 	clog << "DEVEL: color::color_db::color_db: Exiting. " << endl;
@@ -80,15 +82,15 @@ namespace geomtools {
     //devel = true;
     if (devel)
       {
-	clog << "DEVEL: color::color_db::~color_db: Entering..." 
+	clog << "DEVEL: color::color_db::~color_db: Entering..."
 	     << endl;
-	clog << "DEVEL: color::color_db::~color_db: Clearing the dictionary of colors..." 
+	clog << "DEVEL: color::color_db::~color_db: Clearing the dictionary of colors..."
 	     << endl;
       }
     __map.clear ();
     if (devel)
       {
-	clog << "DEVEL: color::color_db::~color_db: Exiting." 
+	clog << "DEVEL: color::color_db::~color_db: Exiting."
 	     << endl;
       }
   }

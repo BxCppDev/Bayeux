@@ -1,6 +1,8 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* material.cc
- */ 
+ */
+
+#include <sstream>
 
 #include <geomtools/material.h>
 
@@ -25,14 +27,14 @@ namespace geomtools {
     key_oss << material::MATERIAL_PREFIX << key_;
     return key_oss.str ();
   }
-  
+
   void material::extract (const datatools::utils::properties & source_,
 			  datatools::utils::properties & target_)
   {
     source_.export_starting_with (target_, material::MATERIAL_PREFIX);
     return;
   }
- 
+
   bool material::has_flag (const datatools::utils::properties & config_,
 			      const string & flag_)
   {

@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* simple_shaped_model.cc
  */
 
@@ -7,17 +7,17 @@
 namespace geomtools {
 
   using namespace std;
- 
+
   bool simple_shaped_model::is_filled () const
   {
     return __filled_mode != filled_utils::FILLED_NONE;
   }
- 
+
   bool simple_shaped_model::is_filled_by_envelope () const
   {
     return __filled_mode == filled_utils::FILLED_BY_ENVELOPE;
   }
- 
+
   bool simple_shaped_model::is_filled_by_extrusion () const
   {
     return __filled_mode == filled_utils::FILLED_BY_EXTRUSION;
@@ -32,37 +32,37 @@ namespace geomtools {
   {
     return __internals;
   }
- 
+
   const geomtools::box & simple_shaped_model::get_box () const
   {
     return *__box;
   }
-  
+
   const geomtools::cylinder & simple_shaped_model::get_cylinder () const
   {
     return *__cylinder;
   }
-  
+
   const geomtools::tube & simple_shaped_model::get_tube () const
   {
     return *__tube;
   }
-  
+
   const geomtools::sphere & simple_shaped_model::get_sphere () const
   {
     return *__sphere;
   }
-  
+
   const geomtools::polycone & simple_shaped_model::get_polycone () const
   {
     return *__polycone;
   }
-  
+
   const geomtools::polyhedra & simple_shaped_model::get_polyhedra () const
   {
     return *__polyhedra;
   }
-  
+
   const geomtools::i_shape_3d & simple_shaped_model::get_solid () const
   {
     return *__solid;
@@ -82,12 +82,12 @@ namespace geomtools {
   {
     return __filled_material_name;
   }
-  
+
   string simple_shaped_model::get_model_id () const
   {
     return "geomtools::simple_shaped_model";
   }
-  
+
   // ctor:
   simple_shaped_model::simple_shaped_model () : i_model ()
   {
@@ -109,8 +109,8 @@ namespace geomtools {
     __filled_mode   = filled_utils::FILLED_NONE;
     return;
   }
- 
-  // dtor:  
+
+  // dtor:
   simple_shaped_model::~simple_shaped_model ()
   {
     __solid = 0;
@@ -123,7 +123,7 @@ namespace geomtools {
     if (__polycone != 0) delete __polycone;
     return;
   }
-  
+
   void simple_shaped_model::_at_construct (const string & name_,
 					   const datatools::utils::properties & config_,
 					   models_col_t * models_)
@@ -140,13 +140,13 @@ namespace geomtools {
     // Initialization:
     __material_name = material::MATERIAL_REF_UNKNOWN;
     __filled_material_name = material::MATERIAL_REF_UNKNOWN;
- 
+
     // parsing shape:
     if (config_.has_key ("shape_type"))
       {
 	shape_type = config_.fetch_string ("shape_type");
 	__shape_name = shape_type;
-      }  
+      }
     else
       {
  	ostringstream message;
@@ -168,7 +168,7 @@ namespace geomtools {
 	throw runtime_error (message.str ());
       }
 
-    // makes the embeded logical volume the default 
+    // makes the embeded logical volume the default
     // mother of daughter physical volumes:
     __daughter_owner_logical = & get_logical ();
 
@@ -212,15 +212,15 @@ namespace geomtools {
 		<< "Shape '" << shape_type << "' is not supported !";
 	throw runtime_error (message.str ());
       }
-     
+
     // set the envelope solid shape:
     get_logical ().set_shape (*__solid);
 
     // search for internal item to install within the model envelope:
     if (__daughter_owner_logical != 0)
       {
-	__internals.plug_internal_models (config_, 
-					  *__daughter_owner_logical, 
+	__internals.plug_internal_models (config_,
+					  *__daughter_owner_logical,
 					  models_);
       }
 
@@ -229,7 +229,7 @@ namespace geomtools {
   }
 
   /***********************************************************/
-  
+
   void simple_shaped_model::_construct_box (const string & name_,
 					    const datatools::utils::properties & config_,
 					    models_col_t * models_)
@@ -247,7 +247,7 @@ namespace geomtools {
       {
 	x = config_.fetch_real ("x");
 	x *= lunit;
-      }  
+      }
     else
       {
 	ostringstream message;
@@ -255,7 +255,7 @@ namespace geomtools {
 		<< "Missing box 'x' property !";
 	throw runtime_error (message.str ());
       }
-    
+
     if (config_.has_key ("y"))
       {
 	y = config_.fetch_real ("y");
@@ -268,7 +268,7 @@ namespace geomtools {
 		<< "Missing box 'y' property !";
 	throw runtime_error (message.str ());
       }
-    
+
     if (config_.has_key ("z"))
       {
 	z = config_.fetch_real ("z");
@@ -281,7 +281,7 @@ namespace geomtools {
 		<< "Missing box 'z' property !";
 	throw runtime_error (message.str ());
       }
-    
+
     // build the box:
     __box = new box (x, y, z);
     if (! __box->is_valid ())
@@ -290,10 +290,10 @@ namespace geomtools {
       }
     __solid = __box;
     get_logical ().set_material_ref (__material_name);
-    
+
     // search for internal item to install within the model envelope:
     __internals.plug_internal_models (config_, get_logical (), models_);
-    
+
     return;
   }
 
@@ -312,18 +312,18 @@ namespace geomtools {
 	string lunit_str = config_.fetch_string ("length_unit");
 	lunit = datatools::utils::units::get_length_unit_from (lunit_str);
       }
-    
+
     if (config_.has_key ("angle_unit"))
       {
 	string aunit_str = config_.fetch_string ("angle_unit");
 	aunit = datatools::utils::units::get_angle_unit_from (aunit_str);
       }
-    
+
     if (config_.has_key ("r"))
       {
 	r = config_.fetch_real ("r");
 	r *= lunit;
-      }  
+      }
     else
       {
 	ostringstream message;
@@ -331,7 +331,7 @@ namespace geomtools {
 		<< "Missing cylinder 'r' property !";
 	throw runtime_error (message.str ());
       }
-    
+
     if (config_.has_key ("z"))
       {
 	z = config_.fetch_real ("z");
@@ -344,7 +344,7 @@ namespace geomtools {
 		<< "Missing cylinder 'z' property !";
 	throw runtime_error (message.str ());
       }
-    
+
     // build the cylinder:
     __cylinder = new cylinder (r, z);
     if (! __cylinder->is_valid ())
@@ -355,7 +355,7 @@ namespace geomtools {
     get_logical ().set_material_ref (__material_name);
     // search for internal item to install within the model envelope:
     __internals.plug_internal_models (config_, get_logical (), models_);
-    
+
     return;
   }
 
@@ -375,18 +375,18 @@ namespace geomtools {
 	string lunit_str = config_.fetch_string ("length_unit");
 	lunit = datatools::utils::units::get_length_unit_from (lunit_str);
       }
-    
+
     if (config_.has_key ("angle_unit"))
       {
 	string aunit_str = config_.fetch_string ("angle_unit");
 	aunit = datatools::utils::units::get_angle_unit_from (aunit_str);
       }
-    
+
     if (config_.has_key ("r"))
       {
 	r = config_.fetch_real ("r");
 	r *= lunit;
-      }  
+      }
     else
       {
 	ostringstream message;
@@ -394,7 +394,7 @@ namespace geomtools {
 		<< "Missing sphere 'r' property !";
 	throw runtime_error (message.str ());
       }
-    
+
     // build the sphere:
     __sphere = new sphere (r);
     if (! __sphere->is_valid ())
@@ -405,7 +405,7 @@ namespace geomtools {
     get_logical ().set_material_ref (__material_name);
     // search for internal item to install within the model envelope:
     __internals.plug_internal_models (config_, get_logical (), models_);
-    
+
     return;
   }
 
@@ -426,7 +426,7 @@ namespace geomtools {
 	string lunit_str = config_.fetch_string ("length_unit");
 	lunit = datatools::utils::units::get_length_unit_from (lunit_str);
       }
-    
+
     if (config_.has_key ("angle_unit"))
       {
 	string aunit_str = config_.fetch_string ("angle_unit");
@@ -437,7 +437,7 @@ namespace geomtools {
       {
 	inner_r = config_.fetch_real ("inner_r");
 	inner_r *= lunit;
-      }  
+      }
     else
       {
 	ostringstream message;
@@ -447,12 +447,12 @@ namespace geomtools {
 	cerr << "WARNING: " << message.str () << " Using 0-default inner radius !" << endl;
 	inner_r = 0.0;
       }
-    
+
     if (config_.has_key ("outer_r"))
       {
 	outer_r = config_.fetch_real ("outer_r");
 	outer_r *= lunit;
-      }  
+      }
     else
       {
 	ostringstream message;
@@ -460,7 +460,7 @@ namespace geomtools {
 		<< "Missing tube 'outer_r' property !";
 	throw runtime_error (message.str ());
       }
-    
+
     if (config_.has_key ("z"))
       {
 	z = config_.fetch_real ("z");
@@ -502,7 +502,7 @@ namespace geomtools {
       {
 	__filled_mode = filled_utils::FILLED_NONE;
       }
-    
+
     // filling material:
     if (__filled_mode != filled_utils::FILLED_NONE)
       {
@@ -533,12 +533,12 @@ namespace geomtools {
 	__solid = __tube;
 	get_logical ().set_material_ref (__material_name);
       }
-    
+
     // build the tube by cylindric extrusion of a mother cylinder:
     if (__filled_mode == filled_utils::FILLED_BY_EXTRUSION)
       {
 	/*
-	 *          _____________________  
+	 *          _____________________
 	 *         |_____________________|
 	 *      _ _|_ _ _ _ _ _ _ _ _ _ _|_ _ _
 	 *     z'  |_____________________|      z
@@ -553,7 +553,7 @@ namespace geomtools {
 	  }
 	__solid = __cylinder;
 	get_logical ().set_material_ref (__material_name);
- 	// if the tube is extruded, add an extruded 'inner' cylinder 
+ 	// if the tube is extruded, add an extruded 'inner' cylinder
 	// within the 'outer' cylinder:
 	if (__tube->is_extruded ())
 	  {
@@ -581,7 +581,7 @@ namespace geomtools {
 	    __daughter_owner_logical = &__inner_logical;
 	  }
       }
-    
+
     // build the tube as a child of a mother cylinder:
     if (__filled_mode == filled_utils::FILLED_BY_ENVELOPE)
       {
@@ -596,7 +596,7 @@ namespace geomtools {
 	get_logical ().set_material_ref (__filled_material_name);
 	if (! __tube->is_extruded ())
 	  {
-	    // if the tube is not extruded, no daughter physical volumes can be placed 
+	    // if the tube is not extruded, no daughter physical volumes can be placed
 	    // within the 'outer' envelope cylinder:
 	    __daughter_owner_logical = 0;
 	  }
@@ -611,7 +611,7 @@ namespace geomtools {
 	    __inner_logical.set_shape (*__tube);
 	    if (visibility::has_color (config_))
 	      {
-		visibility::set_color (__inner_logical.parameters (), 
+		visibility::set_color (__inner_logical.parameters (),
 				       visibility::get_color (config_));
 	      }
 	    __inner_phys.set_name (i_model::make_physical_volume_name (inner_name.str ()));
@@ -625,7 +625,7 @@ namespace geomtools {
   }
 
   /*****************************************************/
-      
+
   void simple_shaped_model::_construct_polycone (const string & name_,
 						 const datatools::utils::properties & config_,
 						 models_col_t * models_)
@@ -635,7 +635,7 @@ namespace geomtools {
       {
 	devel = true;
       }
-    if (devel) 
+    if (devel)
       {
 	cerr << "DEVEL: simple_shaped_model::_construct_polycone: "
 	     << "Name = '" << name_ << "'"
@@ -656,7 +656,7 @@ namespace geomtools {
 	string lunit_str = config_.fetch_string ("length_unit");
 	lunit = datatools::utils::units::get_length_unit_from (lunit_str);
       }
-    
+
     if (config_.has_key ("angle_unit"))
       {
 	string aunit_str = config_.fetch_string ("angle_unit");
@@ -666,7 +666,7 @@ namespace geomtools {
     /*
     if (config_.has_key ("build_mode"))
       {
-	build_mode_label = config_.fetch_string ("build_mode"); 
+	build_mode_label = config_.fetch_string ("build_mode");
       }
     */
 
@@ -698,7 +698,7 @@ namespace geomtools {
       {
 	__filled_mode = filled_utils::FILLED_NONE;
       }
-    
+
     // filling material:
     if (__filled_mode != filled_utils::FILLED_NONE)
       {
@@ -715,7 +715,7 @@ namespace geomtools {
 	    throw runtime_error (message.str ());
 	  }
       }
-    
+
     __polycone = new polycone ();
     __polycone->initialize (config_);
     if (! __polycone->is_valid ())
@@ -723,17 +723,17 @@ namespace geomtools {
 	__polycone->tree_dump (cerr, "Invalid polycone: ", "ERROR:" );
 	throw runtime_error ("simple_shaped_model::_construct_polycone: Invalid polycone build parameters !");
       }
-    if (devel) 
+    if (devel)
       {
 	__polycone->tree_dump (cerr, "Polycone: ", "DEVEL:" );
       }
-    
+
     if (__filled_mode == filled_utils::FILLED_NONE)
       {
 	__solid = __polycone;
 	get_logical ().set_material_ref (__material_name);
       }
-     
+
      // build the polycone by extrusion of a mother polycone:
      if (__filled_mode == filled_utils::FILLED_BY_EXTRUSION)
       {
@@ -747,7 +747,7 @@ namespace geomtools {
 	__outer_shape = envelope_polycone;
 	__solid = __outer_shape;
 	get_logical ().set_material_ref (__material_name);
-	// if the polycone is extruded, add an extruded 'inner' polycone 
+	// if the polycone is extruded, add an extruded 'inner' polycone
 	// within the 'outer' polycone:
 	if (__polycone->is_extruded ())
 	  {
@@ -791,13 +791,13 @@ namespace geomtools {
 	get_logical ().set_material_ref (__filled_material_name);
 	if (! __polycone->is_extruded ())
 	  {
-	    // if the polycon is not extruded, no daughter physical volumes can be placed 
+	    // if the polycon is not extruded, no daughter physical volumes can be placed
 	    // within the 'outer' envelope polycone:
 	    __daughter_owner_logical = 0;
 	  }
 	else
 	  {
-	    // if the polycone is extruded, add the polycone 
+	    // if the polycone is extruded, add the polycone
 	    // within the 'outer' envelope polycone:
 	    __inner_placement.set (0, 0, 0, 0, 0, 0);
 	    ostringstream inner_name;
@@ -807,7 +807,7 @@ namespace geomtools {
 	    __inner_logical.set_shape (*__polycone);
 	    if (visibility::has_color (config_))
 	      {
-		visibility::set_color (__inner_logical.parameters (), 
+		visibility::set_color (__inner_logical.parameters (),
 				       visibility::get_color (config_));
 	      }
 	    __inner_phys.set_name (i_model::make_physical_volume_name (inner_name.str ()));
@@ -816,13 +816,13 @@ namespace geomtools {
 	    __inner_phys.set_mother (this->get_logical ());
 	  }
       }
- 
+
     return;
   }
 
 
   /*****************************************************/
-      
+
   void simple_shaped_model::_construct_polyhedra (const string & name_,
 						  const datatools::utils::properties & config_,
 						  models_col_t * models_)
@@ -832,7 +832,7 @@ namespace geomtools {
       {
 	devel = true;
       }
-    if (devel) 
+    if (devel)
       {
 	cerr << "DEVEL: simple_shaped_model::_construct_polyhedra: "
 	     << "Name = '" << name_ << "'"
@@ -848,7 +848,7 @@ namespace geomtools {
 	string lunit_str = config_.fetch_string ("length_unit");
 	lunit = datatools::utils::units::get_length_unit_from (lunit_str);
       }
-    
+
     if (config_.has_key ("angle_unit"))
       {
 	string aunit_str = config_.fetch_string ("angle_unit");
@@ -883,7 +883,7 @@ namespace geomtools {
       {
 	__filled_mode = filled_utils::FILLED_NONE;
       }
-    
+
     // filling material:
     if (__filled_mode != filled_utils::FILLED_NONE)
       {
@@ -900,7 +900,7 @@ namespace geomtools {
 	    throw runtime_error (message.str ());
 	  }
       }
-     
+
     __polyhedra = new polyhedra ();
     __polyhedra->initialize (config_);
     if (! __polyhedra->is_valid ())
@@ -908,16 +908,16 @@ namespace geomtools {
 	__polyhedra->tree_dump (cerr, "Invalid polyhedra: ", "ERROR:" );
 	throw runtime_error ("simple_shaped_model::_construct_polyhedra: Invalid polyhedra build parameters !");
       }
-    if (devel) 
+    if (devel)
       {
 	__polyhedra->tree_dump (cerr, "Polyhedra: ", "DEVEL:" );
-      }    
+      }
     if (__filled_mode == filled_utils::FILLED_NONE)
       {
 	__solid = __polyhedra;
 	get_logical ().set_material_ref (__material_name);
       }
-     
+
      // build the polyhedra by extrusion of a mother polyhedra:
      if (__filled_mode == filled_utils::FILLED_BY_EXTRUSION)
       {
@@ -931,7 +931,7 @@ namespace geomtools {
 	__outer_shape = envelope_polyhedra;
 	__solid = __outer_shape;
 	get_logical ().set_material_ref (__material_name);
-	// if the polyhedra is extruded, add an extruded 'inner' polyhedra 
+	// if the polyhedra is extruded, add an extruded 'inner' polyhedra
 	// within the 'outer' polyhedra:
 	if (__polyhedra->is_extruded ())
 	  {
@@ -975,13 +975,13 @@ namespace geomtools {
 	get_logical ().set_material_ref (__filled_material_name);
 	if (! __polyhedra->is_extruded ())
 	  {
-	    // if the polyhedra is not extruded, no daughter physical volumes can be placed 
+	    // if the polyhedra is not extruded, no daughter physical volumes can be placed
 	    // within the 'outer' envelope polyhedra:
 	    __daughter_owner_logical = 0;
 	  }
 	else
 	  {
-	    // if the polyhedra is extruded, add the polyhedra 
+	    // if the polyhedra is extruded, add the polyhedra
 	    // within the 'outer' envelope polyhedra:
 	    __inner_placement.set (0, 0, 0, 0, 0, 0);
 	    ostringstream inner_name;
@@ -991,7 +991,7 @@ namespace geomtools {
 	    __inner_logical.set_shape (*__polyhedra);
 	    if (visibility::has_color (config_))
 	      {
-		visibility::set_color (__inner_logical.parameters (), 
+		visibility::set_color (__inner_logical.parameters (),
 				       visibility::get_color (config_));
 	      }
 	    __inner_phys.set_name (i_model::make_physical_volume_name (inner_name.str ()));
@@ -1000,7 +1000,7 @@ namespace geomtools {
 	    __inner_phys.set_mother (this->get_logical ());
 	  }
       }
- 
+
     return;
   }
 
@@ -1009,7 +1009,7 @@ namespace geomtools {
   void simple_shaped_model::_post_construct (datatools::utils::properties & setup_)
   {
     bool devel = i_model::g_devel;
-    if (devel) 
+    if (devel)
       {
 	cerr << "DEVEL: " << "simple_shaped_model::_post_construct: "
 	     << "Entering..." << endl;
@@ -1037,7 +1037,7 @@ namespace geomtools {
     // 	      }
     // 	    */
     // 	  }
- 
+
     // 	if (is_filled_by_envelope  ())
     // 	  {
     // 	    visibility::extract (setup_, __daughter_owner_logical->parameters ());
@@ -1048,7 +1048,7 @@ namespace geomtools {
     // 	      }
     // 	    */
     // 	  }
-	
+
     //    }
     // else
     //   {
@@ -1059,9 +1059,9 @@ namespace geomtools {
 
   /*******************************************/
 
-  void simple_shaped_model::tree_dump (ostream & out_, 
-				       const string & title_ , 
-				       const string & indent_, 
+  void simple_shaped_model::tree_dump (ostream & out_,
+				       const string & title_ ,
+				       const string & indent_,
 				       bool inherit_) const
   {
      namespace du = datatools::utils;
@@ -1071,7 +1071,7 @@ namespace geomtools {
 
      // Shape name:
      {
-       out_ << indent << i_tree_dumpable::tag  
+       out_ << indent << i_tree_dumpable::tag
 	    << "Shape name : '" << get_shape_name () << "'" << endl;
      }
 
@@ -1086,7 +1086,7 @@ namespace geomtools {
 	   indent_oss << indent;
 	   indent_oss << du::i_tree_dumpable::skip_tag;
 	   __solid->tree_dump (out_, "", indent_oss.str ());
-	 }   
+	 }
        else
 	 {
 	   out_ << "<none>" << endl;
@@ -1096,28 +1096,28 @@ namespace geomtools {
      // filled material name:
      if (! __filled_material_name.empty ())
        {
-	 out_ << indent << i_tree_dumpable::tag  
+	 out_ << indent << i_tree_dumpable::tag
 	      << "Filled material name : '" << get_filled_material_name () << "'" << endl;
        }
 
      {
-       out_ << indent << i_tree_dumpable::tag  
+       out_ << indent << i_tree_dumpable::tag
 	    << "Filled mode : '" << __filled_mode << "'" << endl;
-       
+
      }
 
      // material name:
      {
-       out_ << indent << i_tree_dumpable::inherit_tag (inherit_)  
+       out_ << indent << i_tree_dumpable::inherit_tag (inherit_)
 	    << "Material name : '" << get_material_name () << "'" << endl;
      }
 
      return;
   }
-  
-  // register this creator:   
+
+  // register this creator:
   geomtools::i_model::creator_registration<simple_shaped_model> simple_shaped_model::__CR;
-    
+
 } // end of namespace geomtools
 
 // end of simple_shaped_model.cc

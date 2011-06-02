@@ -1,6 +1,8 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* visibility.cc
  */
+
+#include <sstream>
 
 #include <geomtools/visibility.h>
 
@@ -16,7 +18,7 @@ namespace geomtools {
   const string visibility::VISIBILITY_DAUGHTERS_HIDDEN_FLAG = "daughters.hidden";
   const string visibility::VISIBILITY_COLOR_PROPERTY        = "color";
   const string visibility::VISIBILITY_WIRED_CYLINDER_FLAG   = "wired_cylinder";
- 
+
   //const string visibility::VISIBILITY_FORCE_SHOWN_FLAG      = "daughters.invisible";
   //const string visibility::VISIBILITY_FORCE_HIDDEN_FLAG     = "daughters.visible";
 
@@ -26,14 +28,14 @@ namespace geomtools {
     key_oss << visibility::VISIBILITY_PREFIX << key_;
     return key_oss.str ();
   }
-  
+
   void visibility::extract (const datatools::utils::properties & source_,
 			    datatools::utils::properties & target_)
   {
     source_.export_starting_with (target_, visibility::VISIBILITY_PREFIX);
     return;
   }
- 
+
   bool visibility::has_flag (const datatools::utils::properties & config_,
 			     const string & flag_)
   {
@@ -71,12 +73,12 @@ namespace geomtools {
     return visibility::has_flag (config_, visibility::VISIBILITY_HIDDEN_ENVELOPE_FLAG);
   }
 
-  bool visibility::is_daughters_shown (const datatools::utils::properties & config_) 
+  bool visibility::is_daughters_shown (const datatools::utils::properties & config_)
   {
     return ! visibility::is_daughters_hidden (config_);
   }
 
-  bool visibility::is_daughters_hidden (const datatools::utils::properties & config_)  
+  bool visibility::is_daughters_hidden (const datatools::utils::properties & config_)
   {
     return visibility::has_flag (config_, visibility::VISIBILITY_DAUGHTERS_HIDDEN_FLAG);
   }
@@ -92,14 +94,14 @@ namespace geomtools {
     return config_.fetch_string (visibility::make_key (visibility::VISIBILITY_COLOR_PROPERTY));
   }
 
-  void visibility::set_color (datatools::utils::properties & config_, 
+  void visibility::set_color (datatools::utils::properties & config_,
 			      const string & color_)
   {
     config_.update (visibility::make_key (visibility::VISIBILITY_COLOR_PROPERTY), color_);
     return;
   }
 
-  bool visibility::is_wired_cylinder (const datatools::utils::properties & config_)  
+  bool visibility::is_wired_cylinder (const datatools::utils::properties & config_)
   {
     return visibility::has_flag (config_, visibility::VISIBILITY_WIRED_CYLINDER_FLAG);
   }

@@ -1,16 +1,16 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* i_shape_3d.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
  * Last modified: 2010-02-14
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *  Interface for 3D shaped volumes
  *
- * History: 
- * 
+ * History:
+ *
  */
 
 #ifndef __geomtools__i_shape_3d_h
@@ -43,9 +43,9 @@ namespace geomtools {
 
       /** Check if a 3D-shape can be stacked using some
        *  stacking algorithms. There are 2 checks:
-       *  \i check #1: checks if the instance owns a valid 
+       *  \i check #1: checks if the instance owns a valid
        *  embedded 'stackable_data' instance.
-       *  \i check #2: if check #1 fails, check if the instance inherits 
+       *  \i check #2: if check #1 fails, check if the instance inherits
        *  the 'i_stackable' interface.
        */
       static bool is_stackable (const i_shape_3d &);
@@ -67,7 +67,7 @@ namespace geomtools {
        */
       static bool pickup_stackable (const i_shape_3d &, stackable_data &);
 
-      static bool pickup_stackable_with_properties (const i_shape_3d & shape_, 
+      static bool pickup_stackable_with_properties (const i_shape_3d & shape_,
 						    stackable_data & sd_);
 
       const stackable_data & get_stackable_data () const;
@@ -79,7 +79,7 @@ namespace geomtools {
       void set_stackable_data (const stackable_data * sd_);
 
       virtual int get_dimensional () const;
-      
+
       double get_skin () const;
 
       void set_skin (double skin_);
@@ -102,23 +102,23 @@ namespace geomtools {
 
       // const box & get_bounding_box () const;
 
-      //virtual double 
+      //virtual double
       //	get_parameter(const std::string &) const = 0;
 
-      virtual bool is_inside (const vector_3d &, 
+      virtual bool is_inside (const vector_3d &,
 			      double skin_ = USING_PROPER_TOLERANCE) const = 0;
-      
-      virtual bool is_on_surface (const vector_3d &,
-				  int surface_mask_ = ALL_SURFACES, 
-				  double skin_ = USING_PROPER_TOLERANCE) const = 0; 
-      
-      virtual vector_3d get_normal_on_surface (const vector_3d & position_) const = 0;
-      
-      virtual bool is_outside (const vector_3d &,
-			       double skin_ = USING_PROPER_TOLERANCE) const; 
-      
 
-      virtual bool find_intercept (const vector_3d & from_, 
+      virtual bool is_on_surface (const vector_3d &,
+				  int surface_mask_ = ALL_SURFACES,
+				  double skin_ = USING_PROPER_TOLERANCE) const = 0;
+
+      virtual vector_3d get_normal_on_surface (const vector_3d & position_) const = 0;
+
+      virtual bool is_outside (const vector_3d &,
+			       double skin_ = USING_PROPER_TOLERANCE) const;
+
+
+      virtual bool find_intercept (const vector_3d & from_,
 				   const vector_3d & direction_,
 				   intercept_t & intercept_,
 				   double skin_ = USING_PROPER_TOLERANCE) const
@@ -130,13 +130,13 @@ namespace geomtools {
 	return intercept_.is_ok ();
       }
 
-      virtual void tree_dump (ostream & out_         = clog, 
-			      const string & title_  = "", 
-			      const string & indent_ = "", 
+      virtual void tree_dump (ostream & out_         = clog,
+			      const string & title_  = "",
+			      const string & indent_ = "",
 			      bool inherit_          = false) const;
- 
+
   };
-    
+
 } // end of namespace geomtools
 
 #endif // __geomtools__i_shape_3d_h

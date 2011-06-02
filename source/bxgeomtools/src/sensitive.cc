@@ -1,6 +1,8 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* sensitive.cc
  */
+
+#include <sstream>
 
 #include <geomtools/sensitive.h>
 
@@ -20,14 +22,14 @@ namespace geomtools {
     key_oss << sensitive::SENSITIVE_PREFIX << key_;
     return key_oss.str ();
   }
-  
+
   void sensitive::extract (const datatools::utils::properties & source_,
 			   datatools::utils::properties & target_)
   {
     source_.export_starting_with (target_, sensitive::SENSITIVE_PREFIX);
     return;
   }
- 
+
   bool sensitive::has_flag (const datatools::utils::properties & config_,
 			    const string & flag_)
   {
@@ -37,7 +39,7 @@ namespace geomtools {
   bool sensitive::has_key (const datatools::utils::properties & config_,
 			   const string & key_)
   {
-    return (config_.has_key (make_key (key_)));
+    return (config_.has_key (sensitive::make_key (key_)));
   }
 
   bool sensitive::is_sensitive (const datatools::utils::properties & config_)
@@ -66,7 +68,7 @@ namespace geomtools {
   {
     return sensitive::has_flag (config_, sensitive::SENSITIVE_RECORD_TRACK_ID_FLAG);
   }
-  
+
   bool sensitive::recording_primary_particle (const datatools::utils::properties & config_)
   {
     return sensitive::has_flag (config_, sensitive::SENSITIVE_RECORD_PRIMARY_PARTICLE_FLAG);

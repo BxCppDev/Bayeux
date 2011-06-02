@@ -1,17 +1,17 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* sensitive.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-03-13
  * Last modified: 2010-03-13
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *
  *  Utilities for sensitive reference.
  *
- * History: 
- * 
+ * History:
+ *
  */
 
 #ifndef __geomtools__sensitive_h

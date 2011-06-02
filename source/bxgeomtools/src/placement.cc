@@ -1,5 +1,5 @@
-// -*- mode: c++; -*- 
-/* placement.cc 
+// -*- mode: c++; -*-
+/* placement.cc
  */
 
 #include <geomtools/placement.h>
@@ -12,15 +12,15 @@ namespace geomtools {
   {
     return false;
   }
- 
+
   bool placement::has_only_one_rotation () const
   {
     return true;
   }
- 
+
   bool placement::is_valid () const
   {
-    return 
+    return
       geomtools::is_valid (__translation)
       && geomtools::is_valid (__rotation)
       && geomtools::is_valid (__inverse_rotation);
@@ -37,25 +37,25 @@ namespace geomtools {
     return;
   }
 
-  const vector_3d & 
+  const vector_3d &
   placement::get_translation () const
   {
     return __translation;
   }
-  
-  void 
+
+  void
   placement::set_translation (double x_, double y_, double z_)
   {
     set_translation (vector_3d (x_, y_, z_));
   }
 
-  void 
+  void
   placement::set_translation (const vector_3d & new_value_)
   {
     __translation = new_value_;
   }
-  
-  const rotation_3d & 
+
+  const rotation_3d &
   placement::get_rotation () const
   {
     return __rotation;
@@ -69,18 +69,18 @@ namespace geomtools {
   bool placement::is_zyz_rotation () const
   {
     return ! is_simple_rotation ();
-  } 
-  
+  }
+
   bool placement::is_rotation_x () const
   {
     return __rotation_axis == ROTATION_AXIS_X;
   }
-  
+
   bool placement::is_rotation_y () const
   {
     return __rotation_axis == ROTATION_AXIS_Y;
-  } 
-  
+  }
+
   bool placement::is_rotation_z () const
   {
     return __rotation_axis == ROTATION_AXIS_Z;
@@ -110,13 +110,13 @@ namespace geomtools {
   {
     return __delta;
   }
-  
+
   void placement::__compute_orientation ()
   {
     if (is_simple_rotation ())
       {
 	// X, Y or Z rotations:
-	geomtools::create_rotation_from_axis (__rotation, __rotation_axis, __rotation_angle);	
+	geomtools::create_rotation_from_axis (__rotation, __rotation_axis, __rotation_angle);
       }
     else
       {
@@ -127,15 +127,15 @@ namespace geomtools {
     __inverse_rotation = __rotation.inverse ();
     return;
   }
-  
+
   void placement::__compute_orientation_xyz ()
   {
     if (is_simple_rotation ())
       {
 	// X, Y or Z rotations:
-	geomtools::create_rotation_from_axis (__rotation, 
-					      __rotation_axis, 
-					      __rotation_angle);	
+	geomtools::create_rotation_from_axis (__rotation,
+					      __rotation_axis,
+					      __rotation_angle);
       }
     else
       {
@@ -157,7 +157,7 @@ namespace geomtools {
     return ((__phi == __phi) && (__theta == __theta) && (__delta == __delta));
   }
 
-  void placement::set (double x_, double y_, double z_, 
+  void placement::set (double x_, double y_, double z_,
 		       double phi_, double theta_, double delta_)
   {
     set_translation (x_, y_, z_);
@@ -165,7 +165,7 @@ namespace geomtools {
     return;
   }
 
-  void placement::set (const vector_3d & t_, 
+  void placement::set (const vector_3d & t_,
 		       double phi_, double theta_, double delta_)
   {
     set_translation (t_);
@@ -173,7 +173,7 @@ namespace geomtools {
     return;
   }
 
-  void placement::set (double x_, double y_, double z_, 
+  void placement::set (double x_, double y_, double z_,
 		       int axis_, double angle_)
   {
     set_translation (x_, y_, z_);
@@ -181,7 +181,7 @@ namespace geomtools {
     return;
   }
 
-  void placement::set (const vector_3d & t_, 
+  void placement::set (const vector_3d & t_,
 		       int axis_, double angle_)
   {
     set_translation (t_);
@@ -248,25 +248,25 @@ namespace geomtools {
 					   __delta);
     return;
   }
-  
+
   const rotation_3d & placement::get_inverse_rotation () const
   {
     return __inverse_rotation;
   }
- 
+
   // i_placement interface:
   size_t placement::get_number_of_items () const
   {
     return 1;
   }
 
-  size_t placement::compute_index_map (vector<uint32_t> & map_, 
+  size_t placement::compute_index_map (vector<uint32_t> & map_,
 				       int item_) const
   {
     if ((item_ < 0) || (item_ >= get_number_of_items ()))
       {
  	ostringstream message;
-	message << "placement::get_index_map: " 
+	message << "placement::get_index_map: "
 		<< "Invalid item index '" << item_ << "' !" << endl;
 	throw runtime_error (message.str ());
       }
@@ -274,7 +274,7 @@ namespace geomtools {
     map_.push_back (item_);
     return map_.size ();
   }
-  
+
   void placement::get_placement (int item_, placement & p_) const
   {
     if (item_ != 0)
@@ -296,7 +296,7 @@ namespace geomtools {
   }
 
   // ctor:
-  placement::placement (const vector_3d & translation_, 
+  placement::placement (const vector_3d & translation_,
 			double phi_,
 			double theta_,
 			double delta_) : i_placement ()
@@ -310,8 +310,8 @@ namespace geomtools {
   }
 
   // ctor:
-  placement::placement (const vector_3d & translation_, 
-			int axis_, 
+  placement::placement (const vector_3d & translation_,
+			int axis_,
 			double angle_) : i_placement ()
   {
     __rotation_axis = ROTATION_AXIS_INVALID;
@@ -325,7 +325,7 @@ namespace geomtools {
   // ctor:
   placement::placement (double x_,
 			double y_,
-			double z_, 
+			double z_,
 			double phi_,
 			double theta_,
 			double delta_) : i_placement ()
@@ -337,12 +337,12 @@ namespace geomtools {
     set_orientation (phi_, theta_, delta_);
     return;
   }
-  
+
   // ctor:
   placement::placement (double x_,
 			double y_,
-			double z_, 
-			int axis_, 
+			double z_,
+			int axis_,
 			double angle_) : i_placement ()
   {
     __rotation_axis = ROTATION_AXIS_INVALID;
@@ -352,7 +352,7 @@ namespace geomtools {
     set_orientation (axis_, angle_);
     return;
   }
-  
+
   // dtor:
   placement::~placement ()
   {
@@ -365,10 +365,10 @@ namespace geomtools {
     set_orientation (0., 0., 0.);
     return;
   }
-  
+
   // transformation methods:
 
-  void placement::mother_to_child (const vector_3d & mother_pos_, 
+  void placement::mother_to_child (const vector_3d & mother_pos_,
 				   vector_3d & child_pos_) const
   {
     vector_3d v = mother_pos_ - __translation;
@@ -383,7 +383,7 @@ namespace geomtools {
     return v;
   }
 
-  void placement::child_to_mother (const vector_3d & child_pos_ , 
+  void placement::child_to_mother (const vector_3d & child_pos_ ,
 				   vector_3d & mother_pos_) const
   {
     vector_3d v (child_pos_);
@@ -398,7 +398,7 @@ namespace geomtools {
     return v;
   }
 
-  void placement::mother_to_child_direction (const vector_3d & mother_dir_, 
+  void placement::mother_to_child_direction (const vector_3d & mother_dir_,
 					     vector_3d & child_dir_) const
   {
     vector_3d a;
@@ -415,8 +415,8 @@ namespace geomtools {
     mother_to_child_direction (mother_dir_,v);
     return v;
   }
-  
-  void placement::child_to_mother_direction (const vector_3d & child_dir_ , 
+
+  void placement::child_to_mother_direction (const vector_3d & child_dir_ ,
 					     vector_3d & mother_dir_) const
   {
     vector_3d a;
@@ -435,14 +435,14 @@ namespace geomtools {
   }
 
   /*
-  void placement::mother_to_child (const placement & pm_, placement & pc_) const
+uti  void placement::mother_to_child (const placement & pm_, placement & pc_) const
   {
     mother_to_child (pm_.__translation, pc_.__translation);
     pc_.__phi = pc_.__theta = pc_.__delta = std::numeric_limits<double>::quiet_NaN ();
     pm_.__rotation = pc_.__rotation * pc_.__rotation;
     pc_.__inverse_rotation = pc_.__rotation.inverse ();
   }
-  */ 
+  */
 
   void placement::child_to_mother (const placement & pc_, placement & pm_) const
   {
@@ -464,7 +464,7 @@ namespace geomtools {
     const placement & wp1 = *this;
     //clog << "DEVEL: placement::relocate: T1      = " <<  wp1.get_translation () << endl;
     //clog << "DEVEL: placement::relocate: T2      = " <<  wp2_.get_translation () << endl;
-    vector_3d ref = wp2_.get_translation (); 
+    vector_3d ref = wp2_.get_translation ();
     //clog << "DEVEL: placement::relocate: ref     = " << ref << endl;
     vector_3d new_ref;
     wp1.mother_to_child (ref, new_ref);
@@ -483,9 +483,9 @@ namespace geomtools {
     return;
   }
 
-  void placement::tree_dump (ostream & out_, 
-			     const string & title_, 
-			     const string & indent_, 
+  void placement::tree_dump (ostream & out_,
+			     const string & title_,
+			     const string & indent_,
 			     bool inherit_) const
   {
     namespace du = datatools::utils;
@@ -493,10 +493,10 @@ namespace geomtools {
     if (! indent_.empty ()) indent = indent_;
     this->i_placement::tree_dump (out_, title_, indent, true);
 
-    out_ << indent << i_tree_dumpable::tag << "Valid : " 
+    out_ << indent << i_tree_dumpable::tag << "Valid : "
 	 << is_valid ()  << endl;
 
-    out_ << indent << i_tree_dumpable::tag << "Translation : " 
+    out_ << indent << i_tree_dumpable::tag << "Translation : "
 	 << __translation  << endl;
 
     if (is_zyz_rotation ())
@@ -505,14 +505,14 @@ namespace geomtools {
 	     << (has_angles ()? "Yes": "No") << endl;
 	if (has_angles ())
 	  {
-	    out_ << indent << i_tree_dumpable::skip_tag 
+	    out_ << indent << i_tree_dumpable::skip_tag
 		 << i_tree_dumpable::tag << "Phi :   "
 		 << __phi / CLHEP::degree << " degree" << endl;
-	    out_ << indent << i_tree_dumpable::skip_tag 
+	    out_ << indent << i_tree_dumpable::skip_tag
 		 << i_tree_dumpable::tag << "Theta : "
 		 << __theta / CLHEP::degree << " degree"  << endl;
-	    out_ << indent << i_tree_dumpable::skip_tag 
-		 << i_tree_dumpable::last_tag << "Delta : " 
+	    out_ << indent << i_tree_dumpable::skip_tag
+		 << i_tree_dumpable::last_tag << "Delta : "
 		 << __delta / CLHEP::degree << " degree"  << endl;
 	  }
       }
@@ -529,9 +529,9 @@ namespace geomtools {
       oss_title << indent << i_tree_dumpable::tag << "Rotation :";
       ostringstream oss_indent;
       oss_indent << indent << i_tree_dumpable::skip_tag;
-      geomtools::tree_dump (__rotation, 
-			    out_, 
-			    oss_title.str (), 
+      geomtools::tree_dump (__rotation,
+			    out_,
+			    oss_title.str (),
 			    oss_indent.str ());
     }
 
@@ -540,24 +540,24 @@ namespace geomtools {
       oss_title << indent << i_tree_dumpable::inherit_tag (inherit_) << "Inverse rotation :";
       ostringstream oss_indent;
       oss_indent << indent << i_tree_dumpable::inherit_skip_tag (inherit_);
-      geomtools::tree_dump (__inverse_rotation, 
-			    out_, 
-			    oss_title.str (), 
+      geomtools::tree_dump (__inverse_rotation,
+			    out_,
+			    oss_title.str (),
 			    oss_indent.str ());
     }
 
     return;
    }
 
-  void 
-  placement::dump (ostream      & out_ , 
-		   const string & title_, 
+  void
+  placement::dump (ostream      & out_ ,
+		   const string & title_,
 		   const string & indent_) const
   {
     tree_dump (out_, title_, indent_);
     /*
     using namespace std;
-    string indent = indent_;    
+    string indent = indent_;
     string title = title_;
     if ( title.empty () ) title = title_;
     out_ << title << endl;
@@ -566,16 +566,16 @@ namespace geomtools {
     string last_tag  = "`-- ";
     string last_tagc = "    ";
 
-    out_ << indent << tag << "Translation : " 
+    out_ << indent << tag << "Translation : "
 	 << __translation  << endl;
     */
     /*
     tree_dump (__rotation, out_, tag + "Rotation :", indent + tagc);
-    tree_dump (__inverse_rotation, out_, 
+    tree_dump (__inverse_rotation, out_,
 	       last_tag + "Inverse rotation :", indent + last_tagc);
     */
   }
-    
+
   void placement::to_string (string & str_, const placement & pl_)
   {
     ostringstream oss;
@@ -598,7 +598,7 @@ namespace geomtools {
 	oss << ' ' << pl_.get_theta () / aunit;
 	oss << ' ' << pl_.get_delta () / aunit;
       }
-    oss << " (deg)";	
+    oss << " (deg)";
     str_ = oss.str ();
     return;
   }
@@ -610,7 +610,7 @@ namespace geomtools {
     out_ << s;
     return out_;
   }
-    
+
   bool placement::from_string (const string & str_, placement & pl_)
   {
     pl_.reset ();
@@ -649,8 +649,8 @@ namespace geomtools {
     x *= length_unit;
     y *= length_unit;
     z *= length_unit;
- 
-    string rotation_axis_label; 
+
+    string rotation_axis_label;
     int rotation_axis = -1;
     bool simple_rotation = false;
     oss >> ws;
@@ -689,7 +689,7 @@ namespace geomtools {
 	      }
 	    oss >> ws;
 	  }
- 	
+
       }
     phi *= angle_unit;
     if (! simple_rotation)
