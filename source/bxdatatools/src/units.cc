@@ -12,254 +12,254 @@ namespace datatools {
 
     using namespace std;
 
-    void units::_throw_bad_unit (const string & type_, const string & unit_str_)
+    void units::throw_bad_unit_ (const string & a_type, const string & a_unit_str)
     {
       ostringstream message;
-      message << "Invalid " << type_ << " unit :'" << unit_str_ << "' !";
+      message << "Invalid " << a_type << " unit :'" << a_unit_str << "' !";
       throw runtime_error (message.str ());
     }
   
-    double units::get_length_unit_from (const string & str_)
+    double units::get_length_unit_from (const string & a_word)
     {
-      if ((str_ == "angstrom")) return CLHEP::angstrom;
-      if ((str_ == "fm") || (str_ == "fermi")) return CLHEP::fermi;
-      if ((str_ == "nm") || (str_ == "nanometer")) return CLHEP::nanometer;
-      if ((str_ == "um") || (str_ == "micrometer")) return CLHEP::micrometer;
-      if ((str_ == "mm") || (str_ == "millimeter")) return CLHEP::millimeter;
-      if ((str_ == "cm") || (str_ == "centimeter")) return CLHEP::centimeter;
-      if ((str_ == "m") || (str_ == "meter")) return CLHEP::meter;
-      if ((str_ == "km") || (str_ == "kilometer")) return CLHEP::kilometer;
-      if ((str_ == "pc") || (str_ == "parsec")) return CLHEP::parsec;
-      if ((str_ == "inch")) return 2.54 * CLHEP::centimeter;
-      _throw_bad_unit ("length", str_);
+      if ((a_word == "angstrom")) return CLHEP::angstrom;
+      if ((a_word == "fm") || (a_word == "fermi")) return CLHEP::fermi;
+      if ((a_word == "nm") || (a_word == "nanometer")) return CLHEP::nanometer;
+      if ((a_word == "um") || (a_word == "micrometer")) return CLHEP::micrometer;
+      if ((a_word == "mm") || (a_word == "millimeter")) return CLHEP::millimeter;
+      if ((a_word == "cm") || (a_word == "centimeter")) return CLHEP::centimeter;
+      if ((a_word == "m") || (a_word == "meter")) return CLHEP::meter;
+      if ((a_word == "km") || (a_word == "kilometer")) return CLHEP::kilometer;
+      if ((a_word == "pc") || (a_word == "parsec")) return CLHEP::parsec;
+      if ((a_word == "inch")) return 2.54 * CLHEP::centimeter;
+      throw_bad_unit_ ("length", a_word);
     }
 
-    double units::get_surface_unit_from (const string & str_)
+    double units::get_surface_unit_from (const string & a_word)
     {
-      if ((str_ == "m2")) return CLHEP::meter2;
-      if ((str_ == "cm2")) return CLHEP::centimeter2;
-      if ((str_ == "mm2")) return CLHEP::millimeter2;
-      if ((str_ == "km2")) return CLHEP::kilometer2;
-      _throw_bad_unit ("surface", str_);
+      if ((a_word == "m2")) return CLHEP::meter2;
+      if ((a_word == "cm2")) return CLHEP::centimeter2;
+      if ((a_word == "mm2")) return CLHEP::millimeter2;
+      if ((a_word == "km2")) return CLHEP::kilometer2;
+      throw_bad_unit_ ("surface", a_word);
     }
 
-    double units::get_volume_unit_from (const string & str_)
+    double units::get_volume_unit_from (const string & a_word)
     {
-      if ((str_ == "m3")) return CLHEP::meter3;
-      if ((str_ == "cm3")) return CLHEP::centimeter3;
-      if ((str_ == "mm3")) return CLHEP::millimeter3;
-      if ((str_ == "km3")) return CLHEP::kilometer3;
-      _throw_bad_unit ("volume", str_);
+      if ((a_word == "m3")) return CLHEP::meter3;
+      if ((a_word == "cm3")) return CLHEP::centimeter3;
+      if ((a_word == "mm3")) return CLHEP::millimeter3;
+      if ((a_word == "km3")) return CLHEP::kilometer3;
+      throw_bad_unit_ ("volume", a_word);
     }
 
-    double units::get_time_unit_from (const string & str_)
+    double units::get_time_unit_from (const string & a_word)
     {
-      if ((str_ == "ps") || (str_ == "picosecond")) return CLHEP::picosecond;
-      if ((str_ == "ns") || (str_ == "nanosecond")) return CLHEP::nanosecond;
-      if ((str_ == "us") || (str_ == "microsecond")) return CLHEP::microsecond;
-      if ((str_ == "ms") || (str_ == "millisecond")) return CLHEP::millisecond;
-      if ((str_ == "s") || (str_ == "second")) return CLHEP::second;
-      if ((str_ == "minute")) return 60 * CLHEP::second;
-      if ((str_ == "h") || (str_ == "hour")) return 3600 * CLHEP::second;
-      _throw_bad_unit ("time", str_);
+      if ((a_word == "ps") || (a_word == "picosecond")) return CLHEP::picosecond;
+      if ((a_word == "ns") || (a_word == "nanosecond")) return CLHEP::nanosecond;
+      if ((a_word == "us") || (a_word == "microsecond")) return CLHEP::microsecond;
+      if ((a_word == "ms") || (a_word == "millisecond")) return CLHEP::millisecond;
+      if ((a_word == "s") || (a_word == "second")) return CLHEP::second;
+      if ((a_word == "minute")) return 60 * CLHEP::second;
+      if ((a_word == "h") || (a_word == "hour")) return 3600 * CLHEP::second;
+      throw_bad_unit_ ("time", a_word);
     }
 
-    double units::get_angle_unit_from (const string & str_)
+    double units::get_angle_unit_from (const string & a_word)
     {
-      if ((str_ == "rad") || (str_ == "radian")) return CLHEP::radian;
-      if ((str_ == "mrad") || (str_ == "milliradian")) return CLHEP::milliradian;
-      if ((str_ == "deg") || (str_ == "degree")) return CLHEP::degree;
-      _throw_bad_unit ("angle", str_);
+      if ((a_word == "rad") || (a_word == "radian")) return CLHEP::radian;
+      if ((a_word == "mrad") || (a_word == "milliradian")) return CLHEP::milliradian;
+      if ((a_word == "deg") || (a_word == "degree")) return CLHEP::degree;
+      throw_bad_unit_ ("angle", a_word);
     }
 
-    double units::get_solid_angle_unit_from (const string & str_)
+    double units::get_solid_angle_unit_from (const string & a_word)
     {
-      if ((str_ == "steradian")) return CLHEP::steradian;
-      _throw_bad_unit ("solid angle", str_);
+      if ((a_word == "steradian")) return CLHEP::steradian;
+      throw_bad_unit_ ("solid angle", a_word);
     }
 
-    double units::get_energy_unit_from (const string & str_)
+    double units::get_energy_unit_from (const string & a_word)
     {
-      if ((str_ == "eV") || (str_ == "electronvolt")) return CLHEP::electronvolt;
-      if ((str_ == "keV") || (str_ == "kiloelectronvolt")) return CLHEP::kiloelectronvolt;
-      if ((str_ == "MeV") || (str_ == "megaelectronvolt")) return CLHEP::megaelectronvolt;
-      if ((str_ == "GeV") || (str_ == "gigaelectronvolt")) return CLHEP::gigaelectronvolt;
-      if ((str_ == "TeV") || (str_ == "teraelectronvolt")) return CLHEP::teraelectronvolt;
-      if ((str_ == "PeV") || (str_ == "petaelectronvolt")) return CLHEP::petaelectronvolt;
-      if ((str_ == "J") || (str_ == "joule")) return CLHEP::joule;
-      _throw_bad_unit ("energy", str_);
+      if ((a_word == "eV") || (a_word == "electronvolt")) return CLHEP::electronvolt;
+      if ((a_word == "keV") || (a_word == "kiloelectronvolt")) return CLHEP::kiloelectronvolt;
+      if ((a_word == "MeV") || (a_word == "megaelectronvolt")) return CLHEP::megaelectronvolt;
+      if ((a_word == "GeV") || (a_word == "gigaelectronvolt")) return CLHEP::gigaelectronvolt;
+      if ((a_word == "TeV") || (a_word == "teraelectronvolt")) return CLHEP::teraelectronvolt;
+      if ((a_word == "PeV") || (a_word == "petaelectronvolt")) return CLHEP::petaelectronvolt;
+      if ((a_word == "J") || (a_word == "joule")) return CLHEP::joule;
+      throw_bad_unit_ ("energy", a_word);
     }
 
-    double units::get_mass_unit_from (const string & str_)
+    double units::get_mass_unit_from (const string & a_word)
     {
-      if ((str_ == "eV/c2")) return CLHEP::eV / CLHEP::c_squared;
-      if ((str_ == "MeV/c2")) return CLHEP::MeV / CLHEP::c_squared;
-      if ((str_ == "GeV/c2")) return CLHEP::GeV / CLHEP::c_squared;
-      if ((str_ == "kg") || (str_ == "kilogram")) return CLHEP::kilogram;
-      if ((str_ == "g") || (str_ == "gram")) return CLHEP::gram;
-      if ((str_ == "mg") || (str_ == "milligram")) return CLHEP::milligram;
-      if ((str_ == "ug") || (str_ == "microgram")) return 1.e-3 * CLHEP::milligram;
-      if ((str_ == "t") || (str_ == "ton")) return 1000. * CLHEP::kilogram;
-      _throw_bad_unit ("mass", str_);
+      if ((a_word == "eV/c2")) return CLHEP::eV / CLHEP::c_squared;
+      if ((a_word == "MeV/c2")) return CLHEP::MeV / CLHEP::c_squared;
+      if ((a_word == "GeV/c2")) return CLHEP::GeV / CLHEP::c_squared;
+      if ((a_word == "kg") || (a_word == "kilogram")) return CLHEP::kilogram;
+      if ((a_word == "g") || (a_word == "gram")) return CLHEP::gram;
+      if ((a_word == "mg") || (a_word == "milligram")) return CLHEP::milligram;
+      if ((a_word == "ug") || (a_word == "microgram")) return 1.e-3 * CLHEP::milligram;
+      if ((a_word == "t") || (a_word == "ton")) return 1000. * CLHEP::kilogram;
+      throw_bad_unit_ ("mass", a_word);
     }
 
-    double units::get_pressure_unit_from (const string & str_)
+    double units::get_pressure_unit_from (const string & a_word)
     {
-      if ((str_ == "mbar") || (str_ == "millibar")) return 1.0e-3 * CLHEP::bar;
-      if ((str_ == "bar")) return CLHEP::bar;
-      if ((str_ == "atmosphere")) return CLHEP::atmosphere;
-      if ((str_ == "Pa") || (str_ == "pascal")) return CLHEP::hep_pascal;
-      _throw_bad_unit ("pressure", str_);
+      if ((a_word == "mbar") || (a_word == "millibar")) return 1.0e-3 * CLHEP::bar;
+      if ((a_word == "bar")) return CLHEP::bar;
+      if ((a_word == "atmosphere")) return CLHEP::atmosphere;
+      if ((a_word == "Pa") || (a_word == "pascal")) return CLHEP::hep_pascal;
+      throw_bad_unit_ ("pressure", a_word);
     }
 
-    double units::get_magnetic_field_unit_from (const string & str_)
+    double units::get_magnetic_field_unit_from (const string & a_word)
     {
-      if ((str_ == "T") || (str_ == "tesla")) return CLHEP::tesla;
-      if ((str_ == "G") || (str_ == "gauss")) return CLHEP::gauss;
-      if ((str_ == "kG") || (str_ == "kilogauss")) return CLHEP::kilogauss;
-      _throw_bad_unit ("magnetic field", str_);
+      if ((a_word == "T") || (a_word == "tesla")) return CLHEP::tesla;
+      if ((a_word == "G") || (a_word == "gauss")) return CLHEP::gauss;
+      if ((a_word == "kG") || (a_word == "kilogauss")) return CLHEP::kilogauss;
+      throw_bad_unit_ ("magnetic field", a_word);
     }
 
-    double units::get_temperature_unit_from (const string & str_)
+    double units::get_temperature_unit_from (const string & a_word)
     {
-      if ((str_ == "kelvin")) return CLHEP::kelvin;
-      _throw_bad_unit ("temperature", str_);
+      if ((a_word == "kelvin")) return CLHEP::kelvin;
+      throw_bad_unit_ ("temperature", a_word);
     }
 
-    double units::get_density_unit_from (const string & str_)
+    double units::get_density_unit_from (const string & a_word)
     {
-      if ((str_ == "mg/cm3")) return CLHEP::milligram / CLHEP::cm3;
-      if ((str_ == "g/cm3")) return CLHEP::gram / CLHEP::cm3;
-      if ((str_ == "kg/m3")) return CLHEP::kg / CLHEP::m3;
-      _throw_bad_unit ("density", str_);
+      if ((a_word == "mg/cm3")) return CLHEP::milligram / CLHEP::cm3;
+      if ((a_word == "g/cm3")) return CLHEP::gram / CLHEP::cm3;
+      if ((a_word == "kg/m3")) return CLHEP::kg / CLHEP::m3;
+      throw_bad_unit_ ("density", a_word);
     }
 
-    double units::get_activity_unit_from (const string & str_)
+    double units::get_activity_unit_from (const string & a_word)
     {
-      if ((str_ == "Bq")) return 1. / CLHEP::second;
-      if ((str_ == "mBq")) return 1.e-3 / CLHEP::second;
-      if ((str_ == "uBq")) return 1.e-6 / CLHEP::second;
-      if ((str_ == "kBq")) return 1.e+3 / CLHEP::second;
-      if ((str_ == "MBq")) return 1.e+6 / CLHEP::second;
-      if ((str_ == "GBq")) return 1.e+9 / CLHEP::second;
-      _throw_bad_unit ("activity", str_);
+      if ((a_word == "Bq")) return 1. / CLHEP::second;
+      if ((a_word == "mBq")) return 1.e-3 / CLHEP::second;
+      if ((a_word == "uBq")) return 1.e-6 / CLHEP::second;
+      if ((a_word == "kBq")) return 1.e+3 / CLHEP::second;
+      if ((a_word == "MBq")) return 1.e+6 / CLHEP::second;
+      if ((a_word == "GBq")) return 1.e+9 / CLHEP::second;
+      throw_bad_unit_ ("activity", a_word);
     }
 
-    double units::get_volume_activity_unit_from (const string & str_)
+    double units::get_volume_activity_unit_from (const string & a_word)
     {
       double Bq_per_m3 =  CLHEP::becquerel / CLHEP::m3;
-      if ((str_ == "Bq/m3"))  return 1.    * Bq_per_m3;
-      if ((str_ == "mBq/m3")) return 1.e-3 * Bq_per_m3;
-      if ((str_ == "uBq/m3")) return 1.e-6 * Bq_per_m3;
-      if ((str_ == "kBq/m3")) return 1.e+3 * Bq_per_m3;
-      if ((str_ == "MBq/m3")) return 1.e+6 * Bq_per_m3;
-      if ((str_ == "GBq/m3")) return 1.e+9 * Bq_per_m3;
-      _throw_bad_unit ("volume_activity", str_);
+      if ((a_word == "Bq/m3"))  return 1.    * Bq_per_m3;
+      if ((a_word == "mBq/m3")) return 1.e-3 * Bq_per_m3;
+      if ((a_word == "uBq/m3")) return 1.e-6 * Bq_per_m3;
+      if ((a_word == "kBq/m3")) return 1.e+3 * Bq_per_m3;
+      if ((a_word == "MBq/m3")) return 1.e+6 * Bq_per_m3;
+      if ((a_word == "GBq/m3")) return 1.e+9 * Bq_per_m3;
+      throw_bad_unit_ ("volume_activity", a_word);
     }
 
-    double units::get_surface_activity_unit_from (const string & str_)
+    double units::get_surface_activity_unit_from (const string & a_word)
     {
       double Bq_per_m2 = 1. / CLHEP::second / CLHEP::m2;
-      if ((str_ == "Bq/m2"))  return 1.    * Bq_per_m2;
-      if ((str_ == "mBq/m2")) return 1.e-3 * Bq_per_m2;
-      if ((str_ == "uBq/m2")) return 1.e-6 * Bq_per_m2; 
-      if ((str_ == "kBq/m2")) return 1.e+3 * Bq_per_m2;
-      if ((str_ == "MBq/m2")) return 1.e+6 * Bq_per_m2;
-      if ((str_ == "GBq/m2")) return 1.e+9 * Bq_per_m2;
-      _throw_bad_unit ("surface_activity", str_);
+      if ((a_word == "Bq/m2"))  return 1.    * Bq_per_m2;
+      if ((a_word == "mBq/m2")) return 1.e-3 * Bq_per_m2;
+      if ((a_word == "uBq/m2")) return 1.e-6 * Bq_per_m2; 
+      if ((a_word == "kBq/m2")) return 1.e+3 * Bq_per_m2;
+      if ((a_word == "MBq/m2")) return 1.e+6 * Bq_per_m2;
+      if ((a_word == "GBq/m2")) return 1.e+9 * Bq_per_m2;
+      throw_bad_unit_ ("surface_activity", a_word);
     }
 
-    double units::get_mass_activity_unit_from (const string & str_)
+    double units::get_mass_activity_unit_from (const string & a_word)
     {
       double Bq_per_kg = 1. / CLHEP::second / CLHEP::kg;
-      if ((str_ == "Bq/kg"))  return 1.    * Bq_per_kg;
-      if ((str_ == "mBq/kg")) return 1.e-3 * Bq_per_kg;
-      if ((str_ == "uBq/kg")) return 1.e-6 * Bq_per_kg; 
-      if ((str_ == "kBq/kg")) return 1.e+3 * Bq_per_kg;
-      if ((str_ == "MBq/kg")) return 1.e+6 * Bq_per_kg;
-      if ((str_ == "GBq/kg")) return 1.e+9 * Bq_per_kg;
-      _throw_bad_unit ("mass_activity", str_);
+      if ((a_word == "Bq/kg"))  return 1.    * Bq_per_kg;
+      if ((a_word == "mBq/kg")) return 1.e-3 * Bq_per_kg;
+      if ((a_word == "uBq/kg")) return 1.e-6 * Bq_per_kg; 
+      if ((a_word == "kBq/kg")) return 1.e+3 * Bq_per_kg;
+      if ((a_word == "MBq/kg")) return 1.e+6 * Bq_per_kg;
+      if ((a_word == "GBq/kg")) return 1.e+9 * Bq_per_kg;
+      throw_bad_unit_ ("mass_activity", a_word);
     }
 
-    double units::get_unit_from (const string & unit_type_, 
-				 const string & unit_str_)
+    double units::get_unit_from (const string & a_unit_type, 
+				 const string & a_unit_str)
     {
-      if (unit_type_ == "length")
+      if (a_unit_type == "length")
 	{
-	  return get_length_unit_from (unit_str_);
+	  return get_length_unit_from (a_unit_str);
 	}
-      else if (unit_type_ == "surface")
+      else if (a_unit_type == "surface")
 	{
-	  return get_surface_unit_from (unit_str_);
+	  return get_surface_unit_from (a_unit_str);
 	}
-      else if (unit_type_ == "volume")
+      else if (a_unit_type == "volume")
 	{
-	  return get_volume_unit_from (unit_str_);
+	  return get_volume_unit_from (a_unit_str);
 	}
-      else if (unit_type_ == "time")
+      else if (a_unit_type == "time")
 	{
-	  return get_time_unit_from (unit_str_);
+	  return get_time_unit_from (a_unit_str);
 	}
-      else if (unit_type_ == "angle")
+      else if (a_unit_type == "angle")
 	{
-	  return get_angle_unit_from (unit_str_);
+	  return get_angle_unit_from (a_unit_str);
 	}
-      else if (unit_type_ == "solid_angle")
+      else if (a_unit_type == "solid_angle")
 	{
-	  return get_solid_angle_unit_from (unit_str_);
+	  return get_solid_angle_unit_from (a_unit_str);
 	}
-      else if (unit_type_ == "energy")
+      else if (a_unit_type == "energy")
 	{
-	  return get_energy_unit_from (unit_str_);
+	  return get_energy_unit_from (a_unit_str);
 	}
-      else if (unit_type_ == "mass")
+      else if (a_unit_type == "mass")
 	{
-	  return get_mass_unit_from (unit_str_);
+	  return get_mass_unit_from (a_unit_str);
 	}
-      else if (unit_type_ == "pressure")
+      else if (a_unit_type == "pressure")
 	{
-	  return get_pressure_unit_from (unit_str_);
+	  return get_pressure_unit_from (a_unit_str);
 	}
-      else if (unit_type_ == "magnetic_field")
+      else if (a_unit_type == "magnetic_field")
 	{
-	  return get_magnetic_field_unit_from (unit_str_);
+	  return get_magnetic_field_unit_from (a_unit_str);
 	}
-      else if (unit_type_ == "temperature")
+      else if (a_unit_type == "temperature")
 	{
-	  return get_temperature_unit_from (unit_str_);
+	  return get_temperature_unit_from (a_unit_str);
 	}
-      else if (unit_type_ == "density")
+      else if (a_unit_type == "density")
 	{
-	  return get_density_unit_from (unit_str_);
+	  return get_density_unit_from (a_unit_str);
 	}
-      else if (unit_type_ == "activity")
+      else if (a_unit_type == "activity")
 	{
-	  return get_activity_unit_from (unit_str_);
+	  return get_activity_unit_from (a_unit_str);
 	}
-      else if (unit_type_ == "surface_activity")
+      else if (a_unit_type == "surface_activity")
 	{
-	  return get_surface_activity_unit_from (unit_str_);
+	  return get_surface_activity_unit_from (a_unit_str);
 	}
-      else if (unit_type_ == "volume_activity")
+      else if (a_unit_type == "volume_activity")
 	{
-	  return get_volume_activity_unit_from (unit_str_);
+	  return get_volume_activity_unit_from (a_unit_str);
 	}
-      else if (unit_type_ == "mass_activity")
+      else if (a_unit_type == "mass_activity")
 	{
-	  return get_mass_activity_unit_from (unit_str_);
+	  return get_mass_activity_unit_from (a_unit_str);
 	}
       ostringstream message;
-      message << "Invalid " << unit_type_ << " of unit :'" << unit_type_ << "' !";
+      message << "Invalid " << a_unit_type << " of unit :'" << a_unit_type << "' !";
       throw runtime_error (message.str ());
     }
  
-    bool units::find_unit (const string & unit_str_, 
-			   double & unit_value_, 
-			   string & unit_label_)
+    bool units::find_unit (const string & a_unit_str, 
+			   double & a_unit_value, 
+			   string & a_unit_label)
     {
-      //clog << endl << "DEVEL: units::find_unit: Entering for '" << unit_str_ << "'" <<  endl;
-      unit_label_ = "";
-      unit_value_ = numeric_limits<double>::quiet_NaN ();
+      //clog << endl << "DEVEL: units::find_unit: Entering for '" << a_unit_str << "'" <<  endl;
+      a_unit_label = "";
+      a_unit_value = numeric_limits<double>::quiet_NaN ();
      
       static vector<string> ulabels;
       ulabels.reserve (20);
@@ -285,12 +285,12 @@ namespace datatools {
 	   i != ulabels.end ();
 	   i++)
 	{
-	  //clog << "DEVEL: units::find_unit: Checking " << *i << " for '" << unit_str_ << "'" <<  endl;
+	  //clog << "DEVEL: units::find_unit: Checking " << *i << " for '" << a_unit_str << "'" <<  endl;
 	  try
 	    {
 	      count++;
-	      unit_label_ = *i;
-	      val = get_unit_from (*i, unit_str_);
+	      a_unit_label = *i;
+	      val = get_unit_from (*i, a_unit_str);
 	      //clog << "DEVEL: units::find_unit: Found " << *i << endl;
 	      break;
 	    }
@@ -301,20 +301,20 @@ namespace datatools {
 	}
       if (! isnormal (val))
 	{
-	  unit_label_ = "";
-	  unit_value_ = val;
+	  a_unit_label = "";
+	  a_unit_value = val;
 	  return false;
 	}
-      unit_label_ = ulabels[count];
-      unit_value_ = val;
+      a_unit_label = ulabels[count];
+      a_unit_value = val;
       return true;
     }
 
-    double units::get_unit (const string & unit_str_)
+    double units::get_unit (const string & a_unit_str)
     {
       double unit_val;
       string unit_label;
-      bool res = find_unit (unit_str_, unit_val, unit_label);
+      bool res = find_unit (a_unit_str, unit_val, unit_label);
       if (! res)
 	{
 	  return numeric_limits<double>::quiet_NaN ();
@@ -345,7 +345,7 @@ namespace datatools {
 	{
 	  try
 	    {
-	      l = get_unit_from (*i, unit_str_);
+	      l = get_unit_from (*i, a_unit_str);
 	      break;
 	    }
 	  catch (exception & x)
@@ -354,7 +354,7 @@ namespace datatools {
 	}
       if (! isnormal (l))
 	{
-	  _throw_bad_unit ("type of", unit_str_);
+	  throw_bad_unit_ ("type of", a_unit_str);
 	}
       
       return l;
@@ -362,15 +362,15 @@ namespace datatools {
       return unit_val;
     }
 
-    bool units::find_value_with_unit (const string & word_, 
-				      double & value_, 
-				      string & unit_label_)
+    bool units::find_value_with_unit (const string & a_word, 
+				      double & a_value, 
+				      string & a_unit_label)
     {
-      value_ = numeric_limits<double>::quiet_NaN ();
-      unit_label_ = "";
+      a_value = numeric_limits<double>::quiet_NaN ();
+      a_unit_label = "";
 
       double val;
-      istringstream iss (word_);
+      istringstream iss (a_word);
       iss >> val;
       if (! iss)
 	{
@@ -395,17 +395,17 @@ namespace datatools {
 	      return false;
 	    }
 	  val *= any_unit_value;
-	  unit_label_ = any_unit_label;
+	  a_unit_label = any_unit_label;
 	}
-      value_ = val;
+      a_value = val;
       return true;
     }
 
-    double units::get_value_with_unit (const string & word_)
+    double units::get_value_with_unit (const string & a_word)
     {
       double unit_value = numeric_limits<double>::quiet_NaN ();
       string unit_label;
-      if (! find_value_with_unit (word_, unit_value, unit_label))
+      if (! find_value_with_unit (a_word, unit_value, unit_label))
 	{
 	  ostringstream message;
 	  message << "get_value_with_unit: Cannot parse a value with its units !";
@@ -415,7 +415,7 @@ namespace datatools {
       /*
      double val = numeric_limits<double>::quiet_NaN ();
 
-      istringstream iss (word_);
+      istringstream iss (a_word);
       iss >> val;
       if (! iss)
 	{

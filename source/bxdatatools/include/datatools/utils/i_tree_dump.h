@@ -4,11 +4,7 @@
 #define __datatools__utils__i_tree_dump_h 1
 
 #include <iostream>
-#include <iomanip>
 #include <string>
-#include <sstream>
-
-//#include <datatools/serialization/serialization.h>
 
 namespace datatools {
 
@@ -22,43 +18,41 @@ namespace datatools {
       static const std::string SKIP_TAG;
       static const std::string LAST_SKIP_TAG;
   
-      static std::ostream & last_skip_tag( std::ostream & out_ );
+      static std::ostream & last_skip_tag (std::ostream & a_out);
   
-      static std::ostream & skip_tag( std::ostream & out_ );
+      static std::ostream & skip_tag (std::ostream & a_out);
 
-      static std::ostream & last_tag( std::ostream & out_ );
+      static std::ostream & last_tag (std::ostream & a_out);
 
-      static std::ostream & tag( std::ostream & out_ );
+      static std::ostream & tag (std::ostream & a_out);
 
       class inherit_tag 
       {
-	bool __inherit;
+	bool inherit_;
       public:
     
-	inherit_tag( bool inherit_ ); 
+	inherit_tag (bool a_inherit); 
 
-	friend std::ostream & operator<<( std::ostream & out_ , 
-					  const inherit_tag & lt_ );
+	friend std::ostream & operator<< (std::ostream & a_out, 
+					  const inherit_tag & a_last_tag);
       };
 
       class inherit_skip_tag 
       {
-	bool __inherit;
+	bool inherit_;
       public:
     
-	inherit_skip_tag( bool inherit_ ); 
+	inherit_skip_tag (bool a_inherit); 
 
-	friend std::ostream & operator<<( std::ostream & out_ , 
-					  const inherit_skip_tag & lt_ );
+	friend std::ostream & operator<< (std::ostream & a_out, 
+					  const inherit_skip_tag & a_last_tag);
       };
 
-      virtual void tree_dump(std::ostream & out_         = std::cerr , 
-			     const std::string & title_  = "" ,
-			     const std::string & indent_ = "",
-			     bool inherit_               = false) const = 0;
+      virtual void tree_dump (std::ostream & a_out         = std::clog, 
+			      const std::string & a_title  = "",
+			      const std::string & a_indent = "",
+			      bool a_inherit               = false) const = 0;
     };
-    
-    //BOOST_IS_ABSTRACT(i_tree_dumpable)
 
   } // end of namespace utils 
 

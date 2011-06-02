@@ -3,15 +3,11 @@
 #ifndef __datatools__utils__command_h
 #define __datatools__utils__command_h 1
 
-#include <algorithm>
-#include <cstdlib> 
 #include <iostream>
 #include <stdexcept>
-#include <sstream>
 #include <string>
 #include <list>
-
-//#include <boost/python.hpp>
+#include <cstdlib> 
 
 namespace datatools {
 

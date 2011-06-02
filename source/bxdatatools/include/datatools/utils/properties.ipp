@@ -26,73 +26,46 @@ namespace datatools {
   namespace utils {
  
     template<class Archive>
-    void properties::data::serialize (Archive & ar_, 
-				      const unsigned int   version_)
+    void properties::data::serialize (Archive & a_ar, 
+				      const unsigned int a_version)
     {
-      ar_ & boost::serialization::make_nvp ("description", __description);
-      ar_ & boost::serialization::make_nvp ("flags",       __flags);
+      a_ar & boost::serialization::make_nvp ("description", description_);
+      a_ar & boost::serialization::make_nvp ("flags",       flags_);
       if (is_boolean ())
 	{
-	  ar_ & boost::serialization::make_nvp ("boolean_values",
-						__boolean_values);
+	  a_ar & boost::serialization::make_nvp ("boolean_values",
+						boolean_values_);
 	}
       if (is_integer ())
 	{
-	  ar_ & boost::serialization::make_nvp ("integer_values",
-						__integer_values);
+	  a_ar & boost::serialization::make_nvp ("integer_values",
+						integer_values_);
 	}
       if (is_real ())
 	{
-	  ar_ & boost::serialization::make_nvp ("real_values", 
-						__real_values);
+	  a_ar & boost::serialization::make_nvp ("real_values", 
+						real_values_);
 	}
       if (is_string ())
 	{
-	  ar_ & boost::serialization::make_nvp ("string_values",
-						__string_values);
+	  a_ar & boost::serialization::make_nvp ("string_values",
+						string_values_);
 	}
-      return;
-    }
-
-    /*
-    template<class Archive>
-    void properties::save (Archive & ar_, const unsigned int version_) const
-    {
-      ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-      ar_ & boost::serialization::make_nvp ("description", __description);
-      ar_ & boost::serialization::make_nvp ("properties",  __props);	
       return;
     }
     
     template<class Archive>
-    void properties::load (Archive & ar_ , const unsigned int version_)
+    void properties::serialize (Archive & a_ar , const unsigned int a_version)
     {
-      if (version_ > 0)
-	{
-	  // from version 1 we inherit explicitely from the
-	  // 'datatools::serialization::i_serializable' abstract class
-	  ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-	}
-      ar_ & boost::serialization::make_nvp ("description", __description);
-      ar_ & boost::serialization::make_nvp ("properties",  __props);
-      return;
-    }
-
-    BOOST_SERIALIZATION_SPLIT_MEMBER_SERIALIZE_IMPLEMENTATION(properties)
-    */
-
-    template<class Archive>
-    void properties::serialize (Archive & ar_ , const unsigned int version_)
-    {
-      if (version_ > 0)
+      if (a_version > 0)
 	{
 	  /* from version 1 we inherit explicitely from the
 	   * 'datatools::serialization::i_serializable' abstract class
 	   */
-	  ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
+	  a_ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
 	}
-      ar_ & boost::serialization::make_nvp ("description", __description);
-      ar_ & boost::serialization::make_nvp ("properties",  __props);
+      a_ar & boost::serialization::make_nvp ("description", description_);
+      a_ar & boost::serialization::make_nvp ("properties",  props_);
       return;
     }
 

@@ -2,6 +2,9 @@
   
 #include <datatools/utils/command.h>
 
+#include <sstream>
+#include <algorithm>
+
 namespace datatools {
 
   namespace utils {

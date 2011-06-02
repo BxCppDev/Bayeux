@@ -3,6 +3,8 @@
 
 #include <datatools/utils/ioutils.h>
 
+#include <sstream>
+
 using namespace std;
 
 namespace datatools {
@@ -17,7 +19,7 @@ namespace datatools {
 #endif // USING_NCURSES
 
     io::indenter io::indent;
-
+ 
     size_t io::indenter::get_width () const
     {
       return __width;

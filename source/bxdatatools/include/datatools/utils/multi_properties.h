@@ -36,21 +36,20 @@
 #define __datatools__utils__multi_properties_h 1
 
 #include <string>
-#include <fstream>
-#include <stdexcept>
-#include <list>
-#include <map>
-#include <string>
 
-#include <datatools/utils/properties.h>
+#include <fstream>
+#include <map>
+#include <list>
 
 #include <boost/cstdint.hpp>
 #include <boost/serialization/access.hpp>
 
+#include <datatools/utils/properties.h>
+
 #include <datatools/serialization/i_serializable.h>
-#include <datatools/utils/i_cloneable.h>
-#include <datatools/utils/i_tree_dump.h>
 #include <datatools/utils/i_clear.h>
+#include <datatools/utils/i_tree_dump.h>
+#include <datatools/utils/i_cloneable.h>
 
 using namespace std;
 
@@ -81,6 +80,7 @@ namespace datatools {
       static bool g_debug;
 
     public:
+
       class entry :    
 	public datatools::serialization::i_serializable,
 	public datatools::utils::i_tree_dumpable  
@@ -89,9 +89,9 @@ namespace datatools {
 	static const string SERIAL_TAG;
 
       private:
-	string     __key;
-	string     __meta;
-	properties __properties;
+	string     key_;
+	string     meta_;
+	properties properties_;
 
       public:
 
@@ -109,8 +109,8 @@ namespace datatools {
 
 	bool has_meta () const;
 
-	entry (const string & key_ = "", 
-	       const string & meta_ = "");
+	entry (const string & a_key = "", 
+	       const string & a_meta = "");
 
 	virtual ~entry ();
 
@@ -122,10 +122,10 @@ namespace datatools {
 	BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
 
       public:
-	virtual void tree_dump (ostream & out_         = clog, 
-				const string & title_  = "",
-				const string & indent_ = "",
-				bool inherit_          = false) const;
+	virtual void tree_dump (ostream & a_out          = clog, 
+				const string & a_title   = "",
+				const string & a_oindent = "",
+				bool a_oinherit          = false) const;
 
       };
 
@@ -136,12 +136,12 @@ namespace datatools {
 
     private:
 	
-      bool          __debug;
-      string        __description;
-      string        __key_label;
-      string        __meta_label;
-      entries_col_t __entries;
-      entries_ordered_col_t __ordered_entries;
+      bool                  debug_;
+      string                description_;
+      string                key_label_;
+      string                meta_label_;
+      entries_col_t         entries_;
+      entries_ordered_col_t ordered_entries_;
 
     public:
 
@@ -149,15 +149,15 @@ namespace datatools {
 
       void set_debug (bool = true);
 
-      void set_description (const string & description_);
+      void set_description (const string & a_description);
 
       const string & get_description () const;
 
-      void set_key_label (const string & key_label_);
+      void set_key_label (const string & a_key_label);
 
       const string & get_key_label () const;
 
-      void set_meta_label (const string & meta_label_);
+      void set_meta_label (const string & a_meta_label);
 
       const string & get_meta_label () const;
 	
@@ -171,21 +171,21 @@ namespace datatools {
 
       const entries_ordered_col_t & ordered_entries () const;
 
-      multi_properties (const string & key_label_ = "", 
-			const string & meta_label_ = "", 
-			const string & description_ = "", 
-			bool debug_ = false);
+      multi_properties (const string & a_key_label = "", 
+			const string & a_meta_label = "", 
+			const string & a_description = "", 
+			bool a_debug = false);
 
       virtual ~multi_properties ();
 
-      void dump (ostream & out_ = clog) const;
+      void dump (ostream & a_out = clog) const;
 
     private:
 
-      void __remove (const string & key_);
+      void remove_ (const string & a_key);
 
-      void __add (const string & key_, 
-		  const string & meta_ = "");
+      void add_ (const string & a_key, 
+		  const string & a_meta = "");
 
     public:
 
@@ -202,41 +202,41 @@ namespace datatools {
 
     public:
 
-      const entry & get (const string & key_) const;
+      const entry & get (const string & a_key) const;
 
-      entry & get (const string & key_);
+      entry & get (const string & a_key);
 
-      bool has_key (const string & key_) const;
+      bool has_key (const string & a_key) const;
 
-      void add (const string & key_, 
-		const string & meta_,
-		const properties & props_);
+      void add (const string & a_key, 
+		const string & a_meta,
+		const properties & a_props);
 
-      void add (const string & key_, 
-		const properties & props_);
+      void add (const string & a_key, 
+		const properties & a_props);
 
-      void add (const string & key_, 
-		const string & meta_ = "");
+      void add (const string & a_key, 
+		const string & a_meta = "");
 
-      void remove (const string & key_);
+      void remove (const string & a_key);
 
-      void write (const string & filename_,
-		  bool header_footer_ = true,
-		  bool write_private_ = false) const;
+      void write (const string & a_filename,
+		  bool a_header_footer = true,
+		  bool a_write_private = false) const;
 	
-      void read (const string & filename_,
-		 bool skip_private_ = false);
+      void read (const string & a_filename,
+		 bool a_skip_private = false);
 
     private:
 	
-      void __read (istream & in_, bool skip_private_);
+      void read_ (istream & a_in, bool a_skip_private);
 
     public:
 
-      virtual void tree_dump (ostream & out_         = clog, 
-			      const string & title_  = "",
-			      const string & indent_ = "",
-			      bool inherit_          = false) const;
+      virtual void tree_dump (ostream & a_out         = clog, 
+			      const string & a_title  = "",
+			      const string & a_indent = "",
+			      bool a_inherit          = false) const;
 	
     };
 

@@ -225,7 +225,7 @@ namespace datatools {
     
 
     int 
-    io_factory::__init_read (const std::string & stream_name_)
+    io_factory::__init_read (const std::string & a_stream_name)
     {
       __in_fs = new boost::iostreams::filtering_istream;
       if (is_gzip ()) 
@@ -238,7 +238,7 @@ namespace datatools {
 	  __in_fs->push (boost::iostreams::bzip2_decompressor ());
 	}
       
-      if (stream_name_.empty ()) 
+      if (a_stream_name.empty ()) 
 	{
 	  if (g_debug) 
 	    {
@@ -252,18 +252,18 @@ namespace datatools {
 	  if (g_debug) 
 	    {
 	      std::clog << "DEBUG: io_factory::__init_read: file='" 
-			<< stream_name_ << "'" << std::endl;
+			<< a_stream_name << "'" << std::endl;
 	    }
 #ifdef IOFACTORY_USE_PBA
 	  if (is_compressed () || is_binary ()) 
 	    {
-	      __fin = new std::ifstream (stream_name_.c_str (), 
+	      __fin = new std::ifstream (a_stream_name.c_str (), 
 					 std::ios_base::in | std::ios_base::binary);
 	    }
 	  else 
 	    {
 #endif // IOFACTORY_USE_PBA
-	      __fin = new std::ifstream (stream_name_.c_str (), 
+	      __fin = new std::ifstream (a_stream_name.c_str (), 
 					 std::ios_base::in);
 #ifdef IOFACTORY_USE_PBA
 	    }
@@ -406,7 +406,7 @@ namespace datatools {
     }
 
     int
-    io_factory::__init_write (const std::string & stream_name_)
+    io_factory::__init_write (const std::string & a_stream_name)
     {
       __out_fs = new boost::iostreams::filtering_ostream;
 
@@ -420,7 +420,7 @@ namespace datatools {
 	  __out_fs->push (boost::iostreams::bzip2_compressor ());
 	}
 
-      if (stream_name_.empty ())
+      if (a_stream_name.empty ())
 	{
 	  if (g_debug)
 	    {
@@ -435,7 +435,7 @@ namespace datatools {
 	  if (g_debug) 
 	    {
 	      std::clog << "DEBUG: io_factory::__init_write: file='" 
-			<< stream_name_ << "'"<< std::endl;
+			<< a_stream_name << "'"<< std::endl;
 	    }
 
 	  std::ios_base::openmode open_mode = std::ios_base::out;
@@ -458,7 +458,7 @@ namespace datatools {
 
 	      open_mode |= std::ios_base::app; 
 	    } 
-	  __fout = new std::ofstream (stream_name_.c_str (), open_mode);
+	  __fout = new std::ofstream (a_stream_name.c_str (), open_mode);
 	  if (!*__fout) 
 	    {
 	      throw std::runtime_error ("io_factory::__init_write: Cannot open output stream!");
@@ -568,9 +568,9 @@ namespace datatools {
     }
 
     int 
-    io_factory::__init (const std::string & stream_name_, int mode_)
+    io_factory::__init (const std::string & a_stream_name, int a_mode)
     {
-      __mode = mode_;
+      __mode = a_mode;
       if (is_read ()) 
 	{
 	  if (g_debug)
@@ -578,7 +578,7 @@ namespace datatools {
 	      std::clog << "DEBUG: io_factory::__init: read mode..." 
 			<< std::endl;
 	    }
-	  __init_read (stream_name_);
+	  __init_read (a_stream_name);
 	  if (is_single_archive ())
 	    {
 	      __init_read_archive ();
@@ -591,7 +591,7 @@ namespace datatools {
 	      std::clog << "DEBUG: io_factory::__init: write mode..." 
 			<< std::endl;
 	    }
-	  __init_write (stream_name_);
+	  __init_write (a_stream_name);
 	  if (is_single_archive ())
 	    {
 	      __init_write_archive ();
@@ -698,14 +698,14 @@ namespace datatools {
     }
 
     // ctor
-    io_factory::io_factory (int mode_)
+    io_factory::io_factory (int a_mode)
     {
 #ifdef IOFACTORY_USE_FPU
       __default_locale = 0;
       __locale = 0;
       __default_locale = new std::locale (std::locale::classic (), 
 					  new boost::archive::codecvt_null<char>);
-      bool write = ((mode_ & MASK_RW) != 0);
+      bool write = ((a_mode & MASK_RW) != 0);
       if (write)
 	{
 	  __locale = new std::locale (*__default_locale, 
@@ -718,20 +718,20 @@ namespace datatools {
 	}
 #endif // IOFACTORY_USE_FPU         
       __ctor_defaults ();
-      __init ("", mode_);
+      __init ("", a_mode);
       return;
     }
 
     // ctor
-    io_factory::io_factory (const std::string & stream_name_, 
-			    int mode_)
+    io_factory::io_factory (const std::string & a_stream_name, 
+			    int a_mode)
     {
 #ifdef IOFACTORY_USE_FPU
       __default_locale = 0;
       __locale = 0;
       __default_locale = new std::locale (std::locale::classic (), 
 					  new boost::archive::codecvt_null<char>);
-      bool write = ((mode_ & MASK_RW) != 0);
+      bool write = ((a_mode & MASK_RW) != 0);
       if (write)
 	{
 	  __locale = new std::locale (*__default_locale, 
@@ -744,7 +744,7 @@ namespace datatools {
 	}
 #endif // IOFACTORY_USE_FPU         
       __ctor_defaults ();
-      __init (stream_name_, mode_);
+      __init (a_stream_name, a_mode);
       return;
     }
 
@@ -760,86 +760,87 @@ namespace datatools {
     }
 
     void 
-    io_factory::tree_dump (std::ostream & out_, 
-			   const std::string & title_, 
-			   const std::string & indent_, 
-			   bool inherit_) const
+    io_factory::tree_dump (std::ostream & a_out, 
+			   const std::string & a_title, 
+			   const std::string & a_indent, 
+			   bool a_inherit) const
     {
-#ifdef DATATOOLS_USE_TREE_DUMP // tree_trick
+//#ifdef DATATOOLS_USE_TREE_DUMP // tree_trick
       namespace du = datatools::utils; // tree_trick
       std::ostringstream tag_ss, last_tag_ss; // tree_trick
       tag_ss << du::i_tree_dumpable::tag; // tree_trick
-      last_tag_ss << du::i_tree_dumpable::inherit_tag (inherit_); // tree_trick
+      last_tag_ss << du::i_tree_dumpable::inherit_tag (a_inherit); // tree_trick
       std::string tag = tag_ss.str (); // tree_trick
       std::string last_tag = last_tag_ss.str (); // tree_trick
+      /*
 #else // tree_trick
       std::string tag = "|-- ";
       std::string last_tag = "`-- ";
-      if (inherit_) last_tag = tag;
+      if (a_inherit) last_tag = tag;
 #endif //DATATOOLS_USE_TREE_DUMP // tree_trick
-
+      */
       std::string indent;
-      if (! indent_.empty ()) indent = indent_;
-      if (! title_.empty()) 
+      if (! a_indent.empty ()) indent = a_indent;
+      if (! a_title.empty()) 
 	{
-	  out_ << indent << title_ << std::endl;
+	  a_out << indent << a_title << std::endl;
 	}
 
-      out_ << indent << tag 
+      a_out << indent << tag 
 	   << "Mode  : " << std::hex << __mode << std::dec << std::endl;
 
-      out_ << indent << tag 
+      a_out << indent << tag 
 	   << "is_read  : " << is_read() << std::endl;
 
-      out_ << indent << tag 
+      a_out << indent << tag 
 	   << "is_write : " << is_write() << std::endl;
 
-      out_ << indent << tag 
+      a_out << indent << tag 
 	   << "is_compressed : " << is_compressed () << std::endl;
 
-      out_ << indent << tag 
+      a_out << indent << tag 
 	   << "is_uncompressed : " << is_uncompressed () << std::endl;
 
-      out_ << indent << tag 
+      a_out << indent << tag 
 	   << "is_gzip : " << is_gzip () << std::endl;
 
-      out_ << indent << tag 
+      a_out << indent << tag 
 	   << "is_bzip2 : " << is_bzip2 () << std::endl;
 
-      out_ << indent << tag 
+      a_out << indent << tag 
 	   << "is_text : " << is_text () << std::endl;
 
 #ifdef IOFACTORY_USE_PBA
-      out_ << indent << tag 
+      a_out << indent << tag 
 	   << "is_binary : " << is_binary () << std::endl;
 #endif // IOFACTORY_USE_PBA    
 
-      out_ << indent << tag 
+      a_out << indent << tag 
 	   << "is_xml : " << is_xml () << std::endl;
 
-      out_ << indent << tag 
+      a_out << indent << tag 
 	   << "is_single_archive : " << is_single_archive () << std::endl;
 
-      out_ << indent << last_tag 
+      a_out << indent << last_tag 
 	   << "is_multi_archives : " << is_multi_archives () << std::endl;
 
       return;
     }
 
     void 
-    io_factory::dump (std::ostream & out_) const
+    io_factory::dump (std::ostream & a_out) const
     {
-      io_factory::tree_dump (out_, "io_factory::dump:");
+      io_factory::tree_dump (a_out, "io_factory::dump:");
       return;
     }
 
     int 
-    io_factory::guess_mode_from_filename (const std::string & filename_, 
-					  int & mode_)
+    io_factory::guess_mode_from_filename (const std::string & a_filename, 
+					  int & a_mode)
     {
       int status = io_factory::SUCCESS;
       int mode = 0x0;
-      std::string fn = filename_;
+      std::string fn = a_filename;
       boost::char_separator<char> sep (".");
       typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
       tokenizer tokens (fn, sep);
@@ -954,14 +955,14 @@ namespace datatools {
 	      if (xml) mode |= io_factory::MODE_XML;
 	    }
 	}
-      mode_ = mode;
+      a_mode = mode;
       return status;
     }
 
     /***********************************************************/
 
-    io_reader::io_reader (int mode_) 
-      : io_factory(io_factory::MODE_READ | mode_)
+    io_reader::io_reader (int a_mode) 
+      : io_factory(io_factory::MODE_READ | a_mode)
     {
       if (! is_read ()) 
 	{
@@ -970,9 +971,9 @@ namespace datatools {
       return;
     }
 
-    io_reader::io_reader (const std::string & stream_name_, 
-			  int mode_)
-      : io_factory (stream_name_, io_factory::MODE_READ|mode_)
+    io_reader::io_reader (const std::string & a_stream_name, 
+			  int a_mode)
+      : io_factory (a_stream_name, io_factory::MODE_READ|a_mode)
     {
       if (! is_read ()) 
 	{
@@ -992,8 +993,8 @@ namespace datatools {
 
     /***********************************************************/
 
-    io_writer::io_writer (int mode_) 
-      : io_factory (io_factory::MODE_WRITE | mode_)
+    io_writer::io_writer (int a_mode) 
+      : io_factory (io_factory::MODE_WRITE | a_mode)
     {
       if (! is_read ()) 
 	{
@@ -1002,9 +1003,9 @@ namespace datatools {
       return;
     }
 
-    io_writer::io_writer (const std::string & stream_name_, 
-			  int mode_)
-      : io_factory (stream_name_, io_factory::MODE_WRITE | mode_)
+    io_writer::io_writer (const std::string & a_stream_name, 
+			  int a_mode)
+      : io_factory (a_stream_name, io_factory::MODE_WRITE | a_mode)
     {
       if (! is_write ()) 
 	{
@@ -1023,22 +1024,22 @@ namespace datatools {
     }
 
     /***********************************************************/
-    void data_reader::dump (std::ostream & out_) const
+    void data_reader::dump (std::ostream & a_out) const
     {
       using namespace std;
-      out_ << "data_reader::dump: " << endl;
-      out_ << " |-- " << "Status   : " << (__status== 0? "Ok": "Error") << endl;
-      out_ << " |   " << " |-- " << "Initialized      : " << is_initialized () << endl;
-      out_ << " |   " << " |-- " << "Mult. arch.      : " << is_multi_archives () << endl;
-      out_ << " |   " << " |-- " << "Single arch.     : " << is_single_archive () << endl;
-      out_ << " |   " << " |-- " << "Compressed       : " << is_compressed () << endl;
-      out_ << " |   " << " |-- " << "Gzipped          : " << is_gzip () << endl;
-      out_ << " |   " << " |-- " << "Bzipped          : " << is_bzip2 () << endl;
-      out_ << " |   " << " |-- " << "Text arch.       : " << is_text () << endl;
-      out_ << " |   " << " |-- " << "XML arch.        : " << is_xml () << endl;
-      out_ << " |   " << " `-- " << "Bin arch. (port) : " << is_portable_binary () << endl;
-      out_ << " |-- " << "Reader   : " << (__reader != 0? "Yes": "No") << endl;
-      out_ << " `-- " << "Next tag : '" << (__next_tag) << "'" << endl;
+      a_out << "data_reader::dump: " << endl;
+      a_out << " |-- " << "Status   : " << (__status== 0? "Ok": "Error") << endl;
+      a_out << " |   " << " |-- " << "Initialized      : " << is_initialized () << endl;
+      a_out << " |   " << " |-- " << "Mult. arch.      : " << is_multi_archives () << endl;
+      a_out << " |   " << " |-- " << "Single arch.     : " << is_single_archive () << endl;
+      a_out << " |   " << " |-- " << "Compressed       : " << is_compressed () << endl;
+      a_out << " |   " << " |-- " << "Gzipped          : " << is_gzip () << endl;
+      a_out << " |   " << " |-- " << "Bzipped          : " << is_bzip2 () << endl;
+      a_out << " |   " << " |-- " << "Text arch.       : " << is_text () << endl;
+      a_out << " |   " << " |-- " << "XML arch.        : " << is_xml () << endl;
+      a_out << " |   " << " `-- " << "Bin arch. (port) : " << is_portable_binary () << endl;
+      a_out << " |-- " << "Reader   : " << (__reader != 0? "Yes": "No") << endl;
+      a_out << " `-- " << "Next tag : '" << (__next_tag) << "'" << endl;
       return;
     }
 
@@ -1152,11 +1153,11 @@ namespace datatools {
     }
 
     void 
-    data_reader::__init_reader (const std::string & filename_, 
-				int mode_)
+    data_reader::__init_reader (const std::string & a_filename, 
+				int a_mode)
     {
       __status = STATUS_OK;
-      __reader = new io_reader (filename_, mode_);
+      __reader = new io_reader (a_filename, a_mode);
       __read_next_tag ();
       return;
     }
@@ -1307,9 +1308,9 @@ namespace datatools {
     }
 
     bool 
-    data_reader::record_tag_is (const std::string & tag_) const
+    data_reader::record_tag_is (const std::string & a_tag) const
     {
-      return __next_tag == tag_;
+      return __next_tag == a_tag;
     }
 
     void 
@@ -1320,33 +1321,33 @@ namespace datatools {
     }
 
     void 
-    data_reader::init (const std::string & filename_, 
-		       bool multiple_archives_)
+    data_reader::init (const std::string & a_filename, 
+		       bool a_multiple_archives)
     {
       __reset_reader ();
       int mode_guess;
-      if (io_factory::guess_mode_from_filename (filename_, mode_guess) 
+      if (io_factory::guess_mode_from_filename (a_filename, mode_guess) 
 	  != io_factory::SUCCESS) 
 	{
 	  std::ostringstream message;
 	  message << "data_reader::init: cannot guess mode for file '" 
-		  << filename_ << "'!";
+		  << a_filename << "'!";
 	  throw std::runtime_error (message.str ());
 	}
       int mode = mode_guess;
-      if (multiple_archives_)
+      if (a_multiple_archives)
 	{
 	  mode |= io_factory::multi_archives; 
 	}
-      __init_reader (filename_, mode);
+      __init_reader (a_filename, mode);
       return;
     }
 
     void 
-    data_reader::init (const std::string & filename_, int mode_)
+    data_reader::init (const std::string & a_filename, int a_mode)
     {
       __reset_reader ();
-      __init_reader (filename_, mode_);
+      __init_reader (a_filename, a_mode);
       return;
     }
 
@@ -1356,18 +1357,18 @@ namespace datatools {
       return;
     }
 
-    data_reader::data_reader (const std::string & filename_, 
-			      bool multiple_archives_)
+    data_reader::data_reader (const std::string & a_filename, 
+			      bool a_multiple_archives)
     {
       __reader = 0;
-      init (filename_, multiple_archives_);
+      init (a_filename, a_multiple_archives);
       return;
     }
 
-    data_reader::data_reader (const std::string & filename_, int mode_)
+    data_reader::data_reader (const std::string & a_filename, int a_mode)
     {
       __reader = 0;
-      __init_reader (filename_, mode_);
+      __init_reader (a_filename, a_mode);
       return;
     }
 
@@ -1498,10 +1499,10 @@ namespace datatools {
     }
 	
     void 
-    data_writer::__init_writer (const std::string & filename_, 
-				int mode_)
+    data_writer::__init_writer (const std::string & a_filename, 
+				int a_mode)
     {
-      __writer = new io_writer (filename_, mode_);
+      __writer = new io_writer (a_filename, a_mode);
       return;
     }
 
@@ -1524,40 +1525,40 @@ namespace datatools {
     }
 
     void 
-    data_writer::init (const std::string & filename_, 
-		       bool multiple_archives_, 
-		       bool append_mode_)
+    data_writer::init (const std::string & a_filename, 
+		       bool a_multiple_archives, 
+		       bool a_append_mode)
     {
       __reset_writer ();
       int mode_guess;
-      if (io_factory::guess_mode_from_filename (filename_, mode_guess) 
+      if (io_factory::guess_mode_from_filename (a_filename, mode_guess) 
 	  != io_factory::SUCCESS) 
 	{
 	  std::ostringstream message;
 	  message << "data_writer::init: cannot guess mode for file '" 
-		  << filename_ << "'!";
+		  << a_filename << "'!";
 	  throw std::runtime_error(message.str());
 	}
       int mode = mode_guess;
-      if (multiple_archives_)
+      if (a_multiple_archives)
 	{
 	  mode |= io_factory::multi_archives; 
 	}
-      if (append_mode_)
+      if (a_append_mode)
 	{
 	  mode |= io_factory::append; 
 	}
-      __init_writer (filename_, mode);
+      __init_writer (a_filename, mode);
        return;
    }
 
     void 
-    data_writer::init (const std::string & filename_, 
-		       int mode_)
+    data_writer::init (const std::string & a_filename, 
+		       int a_mode)
     {
       __reset_writer ();
-      int mode = mode_;
-      __init_writer (filename_, mode);
+      int mode = a_mode;
+      __init_writer (a_filename, mode);
        return;
    }
 
@@ -1569,20 +1570,20 @@ namespace datatools {
     }
 
     // ctor
-    data_writer::data_writer (const std::string & filename_, 
-			      bool multiple_archives_, 
-			      bool append_mode_)
+    data_writer::data_writer (const std::string & a_filename, 
+			      bool a_multiple_archives, 
+			      bool a_append_mode)
     {
       __writer = 0;
-      init (filename_, multiple_archives_, append_mode_);
+      init (a_filename, a_multiple_archives, a_append_mode);
       return;
     }
 
     // ctor
-    data_writer::data_writer (const std::string & filename_, int mode_)
+    data_writer::data_writer (const std::string & a_filename, int a_mode)
     {
       __writer = 0;
-      __init_writer (filename_, mode_);
+      __init_writer (a_filename, a_mode);
       return;
     }
 

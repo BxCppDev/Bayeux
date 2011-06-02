@@ -3,19 +3,9 @@
 #ifndef __datatools__utils__time_tools_h
 #define __datatools__utils__time_tools_h 1
 
-
-#include <cstdlib>
-#include <unistd.h>
 #include <iostream>
-#include <fstream>
-#include <string>
-#include <sstream>
-#include <stdexcept>
 #include <sys/time.h>
-#include <limits>
 
-#include <datatools/utils/utils.h>
-#include <datatools/utils/units.h>
 #include <datatools/utils/i_tree_dump.h>
 
 namespace datatools {
@@ -30,14 +20,14 @@ namespace datatools {
 
     private:
       
-      timeval __start;
-      timeval __stop;
-      size_t  __counts;
-      double  __sum_time;
-      double  __min_time;
-      double  __max_time;
-      double  __sum2_time;
-      double  __last_elapsed_time;
+      timeval start_;
+      timeval stop_;
+      size_t  counts_;
+      double  sum_time_;
+      double  min_time_;
+      double  max_time_;
+      double  sum2_time_;
+      double  last_elapsed_time_;
 
     public:
 
@@ -79,17 +69,17 @@ namespace datatools {
 
       void reset ();
 
-      virtual void tree_dump (std::ostream & out_ = std::clog, 
-			      const std::string & title_ = "",
-			      const std::string & indent_ = "",
-			      bool inherit_ = false) const;
+      virtual void tree_dump (std::ostream & a_out = std::clog, 
+			      const std::string & a_title = "",
+			      const std::string & a_indent = "",
+			      bool a_inherit = false) const;
 
 
     public:
 
-      static bool g_timeval_subtract (const timeval & stop_, 
-				      const timeval & start_,
-				      timeval & result_);
+      static bool g_timeval_subtract (const timeval & a_stop, 
+				      const timeval & a_start,
+				      timeval & a_result);
 
       static void g_compute_system_dead_time ();
 

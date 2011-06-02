@@ -21,11 +21,7 @@
 #ifndef __datatools__utils__histos_h
 #define __datatools__utils__histos_h 1
 
-#include <cstdlib>
-#include <math.h>
 #include <iostream>
-#include <string>
-#include <exception>
 #include <vector>
 
 

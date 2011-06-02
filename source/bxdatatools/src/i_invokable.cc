@@ -1,6 +1,10 @@
 /* i_invokable.cc */
 
 #include <datatools/utils/i_invokable.h>
+#include <datatools/utils/command.h>
+
+#include <iostream>
+#include <stdexcept>
 
 namespace datatools {
 
@@ -10,7 +14,7 @@ namespace datatools {
     void 
     i_invokable::do_invoke (datatools::utils::command & command_)
     {
-      throw command_not_implemented ("'i_invokable::invoke' method"); 
+      throw command_not_implemented ("'i_invokable::do_invoke' method should be implemented from a concrete daughter class !"); 
     }
 
     int 

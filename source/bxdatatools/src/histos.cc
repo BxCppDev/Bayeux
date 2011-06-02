@@ -1,9 +1,14 @@
 // -*- mode: c++; -*- 
 /* histos.cc
- * 
+ *  
  */
 
 #include <datatools/utils/histos.h>
+
+#include <cstdlib>
+#include <cmath>
+#include <string>
+#include <exception>
 
 namespace datatools {
 

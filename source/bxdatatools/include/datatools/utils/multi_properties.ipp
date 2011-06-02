@@ -28,42 +28,42 @@ namespace datatools {
   namespace utils {
  
     template<class Archive>
-    void multi_properties::entry::serialize (Archive & ar_, 
-					     const unsigned int   version_)
+    void multi_properties::entry::serialize (Archive & a_ar, 
+					     const unsigned int   a_version)
     {
-      ar_ & boost::serialization::make_nvp ("key", __key);
-      ar_ & boost::serialization::make_nvp ("meta", __meta);
-      ar_ & boost::serialization::make_nvp ("properties", __properties);
+      a_ar & boost::serialization::make_nvp ("key",        key_);
+      a_ar & boost::serialization::make_nvp ("meta",       meta_);
+      a_ar & boost::serialization::make_nvp ("properties", properties_);
       return;
     }
 
     /*
     template<class Archive>
-    void multi_properties::save (Archive & ar_, const unsigned int version_) const
+    void multi_properties::save (Archive & a_ar, const unsigned int a_version) const
     {
-      ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-      ar_ & boost::serialization::make_nvp ("description",      __description);
-      ar_ & boost::serialization::make_nvp ("key_label",        __key_label);
-      ar_ & boost::serialization::make_nvp ("meta_label",       __meta_label);
-      ar_ & boost::serialization::make_nvp ("entries",          __entries);
-      ar_ & boost::serialization::make_nvp ("ordered_entries",  __ordered_entries);
+      a_ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
+      a_ar & boost::serialization::make_nvp ("description",      __description);
+      a_ar & boost::serialization::make_nvp ("key_label",        __key_label);
+      a_ar & boost::serialization::make_nvp ("meta_label",       __meta_label);
+      a_ar & boost::serialization::make_nvp ("entries",          __entries);
+      a_ar & boost::serialization::make_nvp ("ordered_entries",  __ordered_entries);
       return;
     }
 
     template<class Archive>
-    void multi_properties::load (Archive & ar_ , const unsigned int version_)
+    void multi_properties::load (Archive & a_ar , const unsigned int a_version)
     {
-      if (version_ >= 1)
+      if (a_version >= 1)
 	{
 	  // from version 1 we inherit explicitely from the
 	  // 'datatools::serialization::i_serializable' abstract class
-	  ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
+	  a_ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
 	}
-      ar_ & boost::serialization::make_nvp ("description",      __description);
-      ar_ & boost::serialization::make_nvp ("key_label",        __key_label);
-      ar_ & boost::serialization::make_nvp ("meta_label",       __meta_label);
-      ar_ & boost::serialization::make_nvp ("entries",          __entries);
-      ar_ & boost::serialization::make_nvp ("ordered_entries",  __ordered_entries);
+      a_ar & boost::serialization::make_nvp ("description",      __description);
+      a_ar & boost::serialization::make_nvp ("key_label",        __key_label);
+      a_ar & boost::serialization::make_nvp ("meta_label",       __meta_label);
+      a_ar & boost::serialization::make_nvp ("entries",          __entries);
+      a_ar & boost::serialization::make_nvp ("ordered_entries",  __ordered_entries);
       return;
     }
     
@@ -71,19 +71,19 @@ namespace datatools {
     */
 
     template<class Archive>
-    void multi_properties::serialize (Archive & ar_ , const unsigned int version_)
+    void multi_properties::serialize (Archive & a_ar , const unsigned int a_version)
     {
-      if (version_ >= 1)
+      if (a_version >= 1)
 	{
 	  // from version 1 we inherit explicitely from the
 	  // 'datatools::serialization::i_serializable' abstract class
-	  ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
+	  a_ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
 	}
-      ar_ & boost::serialization::make_nvp ("description",      __description);
-      ar_ & boost::serialization::make_nvp ("key_label",        __key_label);
-      ar_ & boost::serialization::make_nvp ("meta_label",       __meta_label);
-      ar_ & boost::serialization::make_nvp ("entries",          __entries);
-      ar_ & boost::serialization::make_nvp ("ordered_entries",  __ordered_entries);
+      a_ar & boost::serialization::make_nvp ("description",      description_);
+      a_ar & boost::serialization::make_nvp ("key_label",        key_label_);
+      a_ar & boost::serialization::make_nvp ("meta_label",       meta_label_);
+      a_ar & boost::serialization::make_nvp ("entries",          entries_);
+      a_ar & boost::serialization::make_nvp ("ordered_entries",  ordered_entries_);
       return;
     }
 

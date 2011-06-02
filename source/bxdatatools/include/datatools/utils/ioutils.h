@@ -4,20 +4,24 @@
 #ifndef __datatools__utils__ioutils_h
 #define __datatools__utils__ioutils_h 1
 
-#include <cstdlib>
-#include <unistd.h>
 #include <iostream>
-#include <iomanip>
-#include <fstream>
-#include <string>
-#include <sstream>
-#include <stdexcept>
+
+#include <boost/cstdint.hpp>
+
+// #include <iomanip>
+
+// #include <cstdlib>
+// #include <unistd.h>
+// #include <iostream>
+// #include <iomanip>
+// #include <fstream>
+// #include <string>
+// #include <sstream>
+// #include <stdexcept>
 
 #ifdef USING_NCURSES
 #include <curses.h>
 #endif // USING_NCURSES
-
-#include <boost/cstdint.hpp>
 
 using namespace std;
 

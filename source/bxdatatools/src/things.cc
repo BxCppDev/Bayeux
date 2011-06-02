@@ -278,7 +278,7 @@ namespace datatools {
 			return m_things.size () == 0;
 		}
 
-		void things::__add (const string & a_name,
+		void things::add_ (const string & a_name,
 												datatools::serialization::i_serializable * a_obj,
 												const string & a_desc,
 												bool a_const)
@@ -286,13 +286,13 @@ namespace datatools {
 			if (a_obj == 0)
 				{
 					ostringstream message;
-					message << "datatools::utils::things::__add: Cannot add a NULL pointed object !";
+					message << "datatools::utils::things::add_: Cannot add a NULL pointed object !";
 					throw runtime_error (message.str ());
 				}
 			if (a_name.empty ())
 				{
 					ostringstream message;
-					message << "datatools::utils::things::__add: Cannot add an object with an empty name !";
+					message << "datatools::utils::things::add_: Cannot add an object with an empty name !";
 					if (a_obj != 0)
 						{
 							delete a_obj;
@@ -303,7 +303,7 @@ namespace datatools {
 			if (found != m_things.end ())
 				{
 					ostringstream message;
-					message << "datatools::utils::things::__add: An object with name '" << a_name
+					message << "datatools::utils::things::add_: An object with name '" << a_name
 									<< "' is already stored in the dictionnary !";
 					throw logic_error (message.str ());
 				}

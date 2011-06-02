@@ -45,8 +45,8 @@ namespace datatools {
     
     protected:
       //! Exception thrown in case of unrecognized unit symbol.
-      static void _throw_bad_unit (const string & type_, 
-				   const string & unit_str_);
+      static void throw_bad_unit_ (const string & a_type, 
+				   const string & a_unit_str);
 
     public:
 
@@ -106,8 +106,8 @@ namespace datatools {
        *   double lu = datatools::utils::units::get_unit_from  ("length", "cm");
        *   \endcode
        */
-      static double get_unit_from (const string & unit_type_, 
-				   const string & unit_str_);
+      static double get_unit_from (const string & a_unit_type, 
+				   const string & a_unit_str);
  
       //! Get the CLHEP unspecified unit from a string.
       /**
@@ -117,7 +117,7 @@ namespace datatools {
        *   double u = datatools::utils::units::get_unit ("cm");
        *   \endcode
        */
-      static double get_unit (const string & unit_str_);
+      static double get_unit (const string & a_unit_str);
 
       //! Find the CLHEP unspecified unit and the associated unit label from a string.
       /**
@@ -132,7 +132,7 @@ namespace datatools {
        *   \endcode
        *
        */
-      static bool find_unit (const string & unit_str_, double & unit_value_, string & unit_label_);
+      static bool find_unit (const string & a_unit_str, double & a_unit_value, string & a_unit_label);
 
       //! Get a value from a string taking into account the unit symbol.
       /**
@@ -142,7 +142,7 @@ namespace datatools {
        *   double val = datatools::utils::units::get_value_with_unit ("2.54 cm");
        *   \endcode
        */
-      static double get_value_with_unit (const string & word_);
+      static double get_value_with_unit (const string & a_word);
 
      //! Get a value from a string taking into account the unit symbol.
       /**
@@ -154,7 +154,7 @@ namespace datatools {
        *   bool ok = datatools::utils::units::find_value_with_unit ("2.54 cm", value, unit_label);
        *   \endcode
        */
-      static bool find_value_with_unit (const string & word_, double & value_, string & unit_label_);
+      static bool find_value_with_unit (const string & a_word, double & a_value, string & a_unit_label);
   
     };
 

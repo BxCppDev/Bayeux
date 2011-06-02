@@ -131,7 +131,7 @@ namespace datatools {
 
 			//! A constructor from a shared pointer of the same type.
 			/*!
-			 * This constructor is given a shared pointer that hosts (or ot)
+			 * This constructor is given a shared pointer that hosts (or not)
 			 * a dynamically allocated instance. This internal pointer will then
 			 * been shared by both shared pointers.
 			 */

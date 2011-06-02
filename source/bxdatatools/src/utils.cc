@@ -1,7 +1,16 @@
 // -*- mode: c++; -*-
 // utils.cc
-
+ 
 #include <datatools/utils/utils.h>
+#include <cstdlib>
+#include <unistd.h>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <stdexcept>
+#include <vector>
+#include <algorithm>
+#include <limits>
 
 #include <boost/tokenizer.hpp>
 
@@ -33,6 +42,35 @@ namespace datatools {
     }
 
     void infinity (double & x_)
+    {
+      plus_infinity (x_);
+      return;
+    }
+
+    void invalidate (float & x_)
+    {
+       x_ = std::numeric_limits<float>::quiet_NaN ();
+    }
+
+    bool is_valid (float x_)
+    {
+      return x_ == x_;
+    }
+
+    void plus_infinity (float & x_)
+    {
+       x_ = std::numeric_limits<float>::infinity ();
+       return;
+    }
+
+    void minus_infinity (float & x_)
+
+    {
+       x_ = -std::numeric_limits<float>::infinity ();
+       return;
+    }
+
+    void infinity (float & x_)
     {
       plus_infinity (x_);
       return;

@@ -37,6 +37,7 @@ namespace datatools {
     class smart_ref
     {
     public:
+
       typedef T            instance_t;
       typedef T &          reference_t;
       typedef const T &    const_reference_t;
@@ -62,9 +63,9 @@ namespace datatools {
 	return properties_;
       }
 
-      void set_properties (const datatools::utils::properties & props_)
+      void set_properties (const datatools::utils::properties & a_props)
       {
-	properties_ = props_;
+	properties_ = a_props;
       }
   
     public: 
@@ -76,19 +77,22 @@ namespace datatools {
       }
 
       // ctor:
-      smart_ref (const_reference_t obj_)
+      smart_ref (const_reference_t a_obj)
       {
-	set (obj_);
+	set (a_obj);
+ 	return;
       }
 
       // dtor:
       virtual ~smart_ref ()
       {
-      }
+	return;
+       }
   
-      void set (const_reference_t obj_)
+      void set (const_reference_t a_obj)
       {
-	ref_ = const_cast<pointer_t>(&obj_);
+	ref_ = const_cast<pointer_t>(&a_obj);
+	return;
       }
 
       const_reference_t get () const
@@ -99,7 +103,8 @@ namespace datatools {
       void reset ()
       {
 	ref_ = 0;
-      }
+	return;
+       }
 
       bool is_valid () const
       {
@@ -111,11 +116,11 @@ namespace datatools {
       friend class boost::serialization::access; 
       
       template<class Archive>
-      void serialize (Archive            & ar, 
-		      const unsigned int version) 
+      void serialize (Archive            & a_ar, 
+		      const unsigned int a_version) 
       {
-	ar & boost::serialization::make_nvp ("properties", properties_);
-	ar & boost::serialization::make_nvp ("ref",        ref_);
+	a_ar & boost::serialization::make_nvp ("properties", properties_);
+	a_ar & boost::serialization::make_nvp ("ref",        ref_);
 	return;
       }
 
@@ -126,9 +131,9 @@ namespace datatools {
       {
 	string flag_;
       public:
-	explicit has_flag (const string & flag)
+	explicit has_flag (const string & a_flag)
 	{
-	  flag_ = flag;
+	  flag_ = a_flag;
 	  return;
 	}
     

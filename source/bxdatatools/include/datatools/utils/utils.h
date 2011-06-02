@@ -4,64 +4,70 @@
 #ifndef __datatools__utils__utils_h
 #define __datatools__utils__utils_h 1
 
-#include <cstdlib>
-#include <unistd.h>
-#include <iostream>
-#include <fstream>
 #include <string>
-#include <sstream>
-#include <stdexcept>
-#include <vector>
-#include <algorithm>
 #include <list>
-#include <limits>
 
 namespace datatools {
 
   namespace utils {
 
-    // Invalidate a double float (using NaN):
-    void invalidate (double & x_);
+    // Invalidate a float (using NaN):
+    void invalidate (float & a_value);
 
-    // Check if a double float is valid (not a NaN):
-    bool is_valid (double x_);
+    // Check if a float is valid (not a NaN):
+    bool is_valid (float a_value);
+
+    // Set a float to +infinity:
+    void plus_infinity (float & a_value);
+
+    // Set a float to -infinity:
+    void minus_infinity (float & a_value);
+
+    // Set a float to +infinity:
+    void infinity (float & a_value);
+
+    // Invalidate a double (using NaN):
+    void invalidate (double & a_value);
+
+    // Check if a double is valid (not a NaN):
+    bool is_valid (double a_value);
 
     // Set a double to +infinity:
-    void plus_infinity (double & x_);
+    void plus_infinity (double & a_value);
 
     // Set a double to -infinity:
-    void minus_infinity (double & x_);
+    void minus_infinity (double & a_value);
 
     // Set a double to +infinity:
-    void infinity (double & x_);
+    void infinity (double & a_value);
 
-    /** Extract the expanded path computed from the 'text_' string.
+    /** Extract the expanded path computed from the 'a_word' string.
      * Internally uses the 'getenv' function.
      */
-    bool fetch_path_with_env (std::string & text_);
+    bool fetch_path_with_env (std::string & a_word);
 
     /* This method is not very elegant. I use
      * brute force, asking a shell to interpret the string via a 'system' call
      * and using a temporary file to save the result. Urrkkk!
      * That enables the expansion of environment variables embeded
-     * in the 'path_str_' string:
+     * in the 'a_path_str' string:
      *
      * Example: '$HOME/foo.dat' is expanded to '/home/<login>/foo.dat'
      *
      */
-    std::string expand_path (const std::string & path_str_);
+    std::string expand_path (const std::string & a_path_str);
 
-    /** The function splits the string 'text_' using separators given
-     *  within a string 'separators_' and provides the list of tokens
-     *  'words_'.
+    /** The function splits the string 'a_word' using separators given
+     *  within a string 'a_separators' and provides the list of tokens
+     *  'a_words'.
      *
      * The Boost library provides some powerful alternative through
      * the tokenizer class stuff.
      *
      */
-    void split_string (const std::string & text_ ,
-		       const std::string & separators_ ,
-		       std::list<std::string> & words_);
+    void split_string (const std::string & a_word ,
+		       const std::string & a_separators ,
+		       std::list<std::string> & a_words);
 
   } // namespace utils
 

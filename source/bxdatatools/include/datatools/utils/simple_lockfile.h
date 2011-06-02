@@ -14,12 +14,12 @@
 #define __datatools__utils__simple_lockfile_h 1
 
 // standard includes:
+/*
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <stdexcept>
 
-/*
 extern "C"
 {
 #include <lockfile.h>

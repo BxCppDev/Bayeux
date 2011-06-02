@@ -3,7 +3,7 @@
 #ifndef __datatools__utils__i_named_h
 #define __datatools__utils__i_named_h 1
 
-#include <datatools/serialization/serialization.h>
+#include <string>
 
 //! \file datatools/utils/i_named.h
 
@@ -15,6 +15,7 @@ namespace datatools {
     class i_named
     {
     public:
+			static const std::string ANONYMOUS_LABEL;
 
      /**
       * A pure virtual member.
@@ -22,10 +23,9 @@ namespace datatools {
       */
       virtual std::string get_name() = 0;
 
-      static bool is_anonymous (const i_named & a_named)
-      {
-				return const_cast<i_named &> (a_named).get_name ().empty ();
-      }
+      static bool has_a_name (const i_named & a_named);
+
+      static bool is_anonymous (const i_named & a_named);
 
     };
 

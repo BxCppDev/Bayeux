@@ -3,6 +3,7 @@
  */
 
 #include <datatools/test/my_data.h>
+#include <sstream>
 
 namespace datatools {
 
@@ -35,14 +36,14 @@ namespace datatools {
       return;
     }
 
-    data_t::data_t (char f_, int i_, double d_, size_t n_) 
+    data_t::data_t (char a_f, int a_i, double a_d, size_t a_n) 
     {
       init ();
-      __flags = f_;
-      __ival = i_;
-      __dval = d_;
+      __flags = a_f;
+      __ival = a_i;
+      __dval = a_d;
       double v = 10.;
-      for (int i = 0; i < (int) n_; i++) 
+      for (int i = 0; i < (int) a_n; i++) 
 	{
 	  __dvals.push_back (v);
 	  v *= 3.;
@@ -50,29 +51,29 @@ namespace datatools {
       return;
     }
       
-    void data_t::tree_dump (std::ostream & out_, 
-			    const std::string & title_, 
-			    const std::string & indent_, 
-			    bool inherit_) const
+    void data_t::tree_dump (std::ostream & a_out, 
+			    const std::string & a_title, 
+			    const std::string & a_indent, 
+			    bool a_inherit) const
     {
       using namespace datatools::utils;
       std::string indent;
-      if (! indent_.empty ()) indent = indent_;
-      if (! title_.empty ()) {
-	out_ << indent << title_ << std::endl;
+      if (! a_indent.empty ()) indent = a_indent;
+      if (! a_title.empty ()) {
+	a_out << indent << a_title << std::endl;
       }
-      out_ << indent << i_tree_dumpable::tag << "Address : [" << this << ']' << std::endl;
-      out_ << indent << i_tree_dumpable::tag << "flags : '" << __flags << "'" << std::endl;
-      out_ << indent << i_tree_dumpable::tag << "ival  : "  << __ival << std::endl;
-      out_ << indent << i_tree_dumpable::tag << "dval  : "  
+      a_out << indent << i_tree_dumpable::tag << "Address : [" << this << ']' << std::endl;
+      a_out << indent << i_tree_dumpable::tag << "flags : '" << __flags << "'" << std::endl;
+      a_out << indent << i_tree_dumpable::tag << "ival  : "  << __ival << std::endl;
+      a_out << indent << i_tree_dumpable::tag << "dval  : "  
 	   << __dval << std::endl;
-      out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
+      a_out << indent << i_tree_dumpable::inherit_tag (a_inherit) 
 	   << "dvals[" << __dvals.size () << "] : ";
       for (int i = 0; i < (int) __dvals.size (); i++)
 	{ 
-	  out_ << __dvals[i] << ' ';
+	  a_out << __dvals[i] << ' ';
 	}
-      out_ << std::endl;
+      a_out << std::endl;
       return;
     }
 
@@ -86,11 +87,11 @@ namespace datatools {
       return;
     }
 
-    more_data_t::more_data_t (char c_, int i_, double d_, size_t n_, 
-			      const std::string & name_) 
-      : data_t (c_, i_, d_, n_)
+    more_data_t::more_data_t (char a_c, int a_i, double a_d, size_t a_n, 
+			      const std::string & a_name) 
+      : data_t (a_c, a_i, a_d, a_n)
     {
-      __name = name_;
+      __name = a_name;
       return;
     }
 
@@ -104,40 +105,40 @@ namespace datatools {
       return more_data_t::SERIAL_TAG;
     }
       
-    void more_data_t::tree_dump (std::ostream & out_, 
-				 const std::string & title_, 
-				 const std::string & indent_, 
-				 bool inherit_) const
+    void more_data_t::tree_dump (std::ostream & a_out, 
+				 const std::string & a_title, 
+				 const std::string & a_indent, 
+				 bool a_inherit) const
     {
       using namespace datatools::utils;
       std::string indent;
-      if (! indent_.empty ()) indent = indent_;
-      data_t::tree_dump (out_, title_, indent_, true);
-      out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
+      if (! a_indent.empty ()) indent = a_indent;
+      data_t::tree_dump (a_out, a_title, a_indent, true);
+      a_out << indent << i_tree_dumpable::inherit_tag (a_inherit) 
 	   << "name = "  << __name << std::endl;
       return;
     } 
 
-    void randomize_data (data_t & data_)
+    void randomize_data (data_t & a_data)
     {
       const data_t d ((char) (32 + drand48 () * 90), 
 		      (int) (drand48 () * 1000), 
 		      (double) drand48 (), 
 		      1 + (size_t) (drand48 () * 5));
-      data_ = d;
+      a_data = d;
       return;
     }
 
-    void randomize_more_data (more_data_t & data_)
+    void randomize_more_data (more_data_t & a_data)
     {
       std::ostringstream name_oss;
-      name_oss << "data_" << (int) (drand48 () * 1000);
+      name_oss << "a_data" << (int) (drand48 () * 1000);
       const more_data_t md ((char) (32 + drand48 () * 90), 
 			    (int) (drand48 () * 1000), 
 			    (double) drand48 (), 
 			    1 + (size_t) (drand48 () * 5), 
 			    name_oss.str ());
-      data_ = md;
+      a_data = md;
       return;
     }
 

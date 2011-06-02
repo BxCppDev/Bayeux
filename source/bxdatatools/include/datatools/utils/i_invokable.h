@@ -3,7 +3,7 @@
 #ifndef __datatools__utils__i_invokable_h
 #define __datatools__utils__i_invokable_h 1
 
-#include <datatools/utils/command.h>
+//#include <datatools/utils/command.h>
 
 //! \file datatools/utils/i_invokable.h
 
@@ -11,6 +11,7 @@ namespace datatools {
 
   namespace utils {
 
+    class command;
 
     //! \brief An abstract class for inherited invokable classes.
     class i_invokable

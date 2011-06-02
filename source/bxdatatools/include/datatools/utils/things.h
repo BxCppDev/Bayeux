@@ -192,7 +192,7 @@ namespace datatools {
 
 		private:
 
-			void __add (const string & a_name, 
+			void add_ (const string & a_name, 
 									datatools::serialization::i_serializable * a_obj,
 									const string & a_desc = "",
 									bool a_const = false);
@@ -230,7 +230,7 @@ namespace datatools {
 										<< "' base class !";
 						throw bad_things_cast (message.str ());
 					}
-				this->__add (a_name, new_cast, a_desc, a_const);
+				this->add_ (a_name, new_cast, a_desc, a_const);
 				return *new_obj;
 			}
 

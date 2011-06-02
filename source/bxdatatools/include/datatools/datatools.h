@@ -90,17 +90,32 @@
 
 #include <datatools/datatools_version.h>
 
+#include <datatools/serialization/i_serializable.h>
 #include <datatools/serialization/io_factory.h>
-#include <datatools/serialization/serialization.h>
 
+#include <datatools/utils/bit_mask.h>
+#include <datatools/utils/caster_utils.h>
+#include <datatools/utils/clhep_units.h>
+#include <datatools/utils/command.h>
+#include <datatools/utils/handle.h>
+#include <datatools/utils/handle_pool.h>
+#include <datatools/utils/histos.h>
 #include <datatools/utils/i_clear.h>
+#include <datatools/utils/i_cloneable.h>
+#include <datatools/utils/i_invokable.h>
 #include <datatools/utils/i_named.h>
+#include <datatools/utils/ioutils.h>
+#include <datatools/utils/i_predicate.h>
 #include <datatools/utils/i_propinit.h>
 #include <datatools/utils/i_tree_dump.h>
-#include <datatools/utils/ioutils.h>
 #include <datatools/utils/multi_properties.h>
+//#include <datatools/utils/properties_commander.h>
 #include <datatools/utils/properties.h>
 #include <datatools/utils/simple_lockfile.h>
+#include <datatools/utils/smart_ref.h>
+#include <datatools/utils/temporary_files.h>
+#include <datatools/utils/things.h>
+#include <datatools/utils/time_tools.h>
 #include <datatools/utils/units.h>
 #include <datatools/utils/utils.h>
 

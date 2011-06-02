@@ -20,7 +20,8 @@ namespace datatools {
       * A pure virtual member.
       * Clear (reset) the object's internals (typically empty a container).
       */
-      virtual void clear() = 0;
+      virtual void clear () = 0;
+
     };
 
   } // end of namespace utils 

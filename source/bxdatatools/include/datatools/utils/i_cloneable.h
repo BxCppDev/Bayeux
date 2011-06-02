@@ -34,10 +34,15 @@
 #include <iostream>
 #include <typeinfo>
 
-#include <datatools/serialization/i_serializable.h>
+//#include <datatools/serialization/i_serializable.h>
 #include <datatools/utils/caster_utils.h>
 
+
 namespace datatools {
+  
+  namespace serialization {
+		class i_serializable; // forward declaration
+	}
   
   namespace utils {
 

@@ -4,16 +4,9 @@
 #ifndef __datatools__utils__temporary_files_h
 #define __datatools__utils__temporary_files_h 1
 
-#include <cstdlib>
-#include <unistd.h>
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <sstream>
-#include <stdexcept>
-
-#include <datatools/utils/utils.h>
-#include <boost/filesystem.hpp>
 
 namespace datatools {
   
@@ -28,20 +21,20 @@ namespace datatools {
       static const string DEFAULT_PATTERN;
 
     private:
-      bool   __remove_at_destroy;
-      string __path_dir;
-      string __pattern;
-      string __full_pattern;
-      string __filename;
-      bool   __read_open;
-      bool   __write_open;
-      char * __template;
-      ofstream __out;
-      ifstream __in;
+      bool   remove_at_destroy_;
+      string path_dir_;
+      string pattern_;
+      string full_pattern_;
+      string filename_;
+      bool   read_open_;
+      bool   write_open_;
+      char * template_;
+      ofstream out_;
+      ifstream in_;
 
     protected:
 
-      void _set_defaults ();
+      void set_defaults_ ();
 
     public:
 
@@ -61,19 +54,19 @@ namespace datatools {
 
       temp_file ();
 
-      temp_file (const char * pattern_, bool remove_at_destroy_ = true);
+      temp_file (const char * a_pattern, bool a_remove_at_destroy = true);
 
-      temp_file (string pattern_, bool remove_at_destroy_ = true);
+      temp_file (string a_pattern, bool a_remove_at_destroy = true);
 
-      temp_file (const char * path_dir_, const char * pattern_, bool remove_at_destroy_ = true);
+      temp_file (const char * a_path_dir, const char * a_pattern, bool a_remove_at_destroy = true);
 
-      temp_file (string path_dir_, const char * pattern_, bool remove_at_destroy_ = true);
+      temp_file (string a_path_dir, const char * a_pattern, bool a_remove_at_destroy = true);
 
-      temp_file (string path_dir_, string pattern_, bool remove_at_destroy_ = true);
+      temp_file (string a_path_dir, string a_pattern, bool a_remove_at_destroy = true);
 
       ~temp_file ();
 
-      void create (string path_dir_, string pattern_);
+      void create (string a_path_dir, string a_pattern);
       
       void close ();
       
