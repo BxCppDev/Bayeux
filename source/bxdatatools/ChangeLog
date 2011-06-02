@@ -51,4 +51,8 @@ This is the datatools package ChangeLog
 	- add the 'handle' class base on boost::share_ptr<>
 	- add the 'handle_pool' class
 	- add pause/resume method in the computing_time class
+2011-06-02 : F. Mauger
+	- fix coding style issues, excessive header inclusion
+	- some cleaning
+
 	
