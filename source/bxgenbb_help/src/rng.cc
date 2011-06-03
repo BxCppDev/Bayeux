@@ -20,6 +20,12 @@
  */
 
 #include <genbb_help/rng.h>
+ 
+#include <cstdlib>
+#include <stdexcept>
+#include <iostream>
+#include <sstream>
+#include <fstream>
 
 namespace genbb {
   

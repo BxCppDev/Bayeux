@@ -31,12 +31,9 @@
 
 #ifndef __genbb_help__rng_h
 
-#include <cstdlib>
-#include <stdexcept>
-#include <iostream>
-#include <sstream>
-#include <fstream>
 #include <string>
+
+#include <boost/cstdint.hpp>
 
 #include <mygsl/rng.h>
 

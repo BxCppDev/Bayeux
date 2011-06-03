@@ -33,23 +33,16 @@
 #ifndef __genbb_help__single_particle_generator_h
 #define __genbb_help__single_particle_generator_h 1
 
-#include <cstdlib>
-#include <cmath>
-#include <stdexcept>
-#include <iostream>
-#include <sstream>
-#include <fstream>
 #include <string>
 
-#include <datatools/utils/properties.h>
-#include <datatools/utils/utils.h>
-#include <geomtools/utils.h>
 #include <genbb_help/i_genbb.h>
-#include <datatools/utils/units.h>
+
 #include <mygsl/rng.h>
 #include <mygsl/tabulated_function.h>
 #include <mygsl/von_neumann_method.h>
 #include <mygsl/histogram.h>
+
+#include <datatools/utils/properties.h>
 
 namespace genbb {
 

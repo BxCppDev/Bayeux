@@ -56,8 +56,11 @@ all : lib
 PACKAGENAME=genbb_help
 UPACKAGENAME=$(shell echo "$(PACKAGENAME)" | tr "a-z" "A-Z")
 LIBNAME=$(shell echo "$(PACKAGENAME)" | tr "A-Z" "a-z")
+LIBNAMEF=$(shell echo "$(PACKAGENAME)" | tr "A-Z" "a-z")_f77
 LIBFILE=lib$(LIBNAME).a
+LIBFILEF=lib$(LIBNAME)_f77.a
 SHLIBFILE=lib$(LIBNAME)${SHLIBEXT}
+SHLIBFILE_F77=lib$(LIBNAME)_f77${SHLIBEXT}
 
 BASEDIR=..
 PACKAGE_ROOT=$(shell cd .. ; pwd)
@@ -102,7 +105,8 @@ dummy=$(shell echo "Processor: 32-bits")
 endif
 
 CPPFLAGS=-I. -I$(INCDIR)
-LDFLAGS=-O -L$(LIBDIR) -l$(LIBNAME)
+LDFLAGS_F77=-O -L$(LIBDIR) -l$(LIBNAMEF)
+LDFLAGS=-l$(LIBNAME) $(LDFLAGS_F77)
 
 DEPCPPFLAGS=
 DEPLDFLAGS=
@@ -151,9 +155,12 @@ CPPFLAGS1+=$(DEPCPPFLAGS)
 CPPFLAGS_F77+=$(DEPCPPFLAGS) 
 LDFLAGS1+=$(DEPLDFLAGS) 
 LDFLAGS1+=-lm 
+LDFLAGS1_F77+=$(shell mygsl-config --ldflags)  
+LDFLAGS1_F77+=-lm 
 
 CPPFLAGS+=$(shell echo $(CPPFLAGS1) $(CPPFLAGS2) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py) 
 LDFLAGS+=$(shell echo $(LDFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r) 
+LDFLAGS_F77+=$(shell echo $(LDFLAGS1_F77) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r) 
 
 DUMMY=-I. -I$(INCDIR)
 F77CPPFLAGS+=$(shell echo $(CPPFLAGS1) $(CPPFLAGS_F77) $(DUMMY) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py)
@@ -162,6 +169,7 @@ CXXFLAGSSHFLAGS=-Wall -v
 STATICFLAGS=-static
 
 SHFLAGS=$(LDFLAGS) -ldl 
+SHFLAGS_F77=$(LDFLAGS_F77) -ldl 
 
 HEADEREXT=.h
 SOURCEEXT=.cc
@@ -196,14 +204,35 @@ vpath %$(SHLIBEXT)   $(LIBDIR)
 
 headers := $(notdir $(shell ls $(INCDIR)/$(PACKAGENAME)/*$(HEADEREXT)))
 sources := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT)))
+sources := $(shell echo $(sources) | sed -e 's/rng.cc//g' -e 's/fermi.cc//g')
 objects := $(sources:%$(SOURCEEXT)=%$(OBJEXT))
+# objects := \
+# ../src/dummy_genbb_help.cc
+# ../src/fermi.cc
+# ../src/genbb.cc
+# ../src/genbb_help.cc
+# ../src/genbb_mgr.cc
+# ../src/genbb_writer.cc
+# ../src/i_genbb.cc
+# ../src/primary_event.cc
+# ../src/primary_particle.cc
+# ../src/rng.cc
+# ../src/single_particle_generator.cc
+# ../src/wgenbb.cc
+
 objectsWithPath := $(sources:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT))
+#objectsWithPath := $(shell echo $(objectsWithPath) | sed -e 's@$(LIBDIR)/rng.o@@g' -e 's@$(LIBDIR)/fermi.o@@g')
 programs_all:= $(notdir $(shell ls $(PROGDIR)/*$(PROGEXT) 2> /dev/null))
 programs_test:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep ^test_)
 programs:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep -v ^test_)
 binaries:= $(programs:%$(PROGEXT)=%$(BINEXT))
 binaries.static:= $(programs:%$(PROGEXT)=%.static$(BINEXT))
 binaries_test:= $(programs_test:%$(PROGEXT)=%$(BINEXT))
+
+crossed_headers := fermi.h rng.h
+crossed_sources := $(notdir $(shell ls $(SRCDIR)/fermi.cc $(SRCDIR)/rng.cc))
+crossed_objects := $(crossed_sources:%$(SOURCEEXT)=%$(OBJEXT))
+crossed_objectsWithPath := $(crossed_sources:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT))
 
 f77_headers := $(notdir $(shell ls $(INCDIR)/$(PACKAGENAME)/*$(F77_HEADEREXT)))
 f77_sources := $(notdir $(shell ls $(SRCDIR)/*$(F77_SOURCEEXT)))
@@ -248,20 +277,44 @@ test:
 	@echo "LIBVER='$(LIBVER)'"
 	@echo "INCDIR='$(INCDIR)'"
 	@echo "SRCDIR='$(SRCDIR)'"
+	@echo "LIBDIR='$(LIBDIR)'"
+	@echo ""
 	@echo "C++ headers = $(headers)"
+	@echo ""
 	@echo "C++ sources = $(sources)"
+	@echo ""
 	@echo "C++ objects = $(objects)"
+	@echo ""
+	@echo "C++ objectsWithPath = $(objectsWithPath)"
+	@echo ""
 	@echo "C++ programs = $(programs)"
+	@echo ""
 	@echo "C++ binaries = $(binaries)"
+	@echo ""
 	@echo "C++ programs_test = $(programs_test)"
+	@echo ""
 	@echo "C++ binaries_test = $(binaries_test)"
+	@echo ""
+	@echo "X headers = $(crossed_headers)"
+	@echo ""
+	@echo "X sources = $(crossed_sources)"
+	@echo ""
+	@echo "X objects = $(crossed_objects)"
+	@echo ""
 	@echo "F77 headers = $(f77_headers)"
+	@echo ""
 	@echo "F77 sources = $(f77_sources)"
+	@echo ""
 	@echo "F77 objects = $(f77_objects)"
+	@echo ""
 	@echo "F77 programs = $(f77_programs)"
+	@echo ""
 	@echo "F77 binaries = $(f77_binaries)"
+	@echo ""
 	@echo "F77 programs_test = $(f77_programs_test)"
+	@echo ""
 	@echo "F77 binaries_test = $(f77_binaries_test)"
+	@echo ""
 	@echo "arch dir = $(ARCHDIR)"
 	@echo "CPPFLAGS='$(CPPFLAGS)'"
 	@echo "LDFLAGS='$(LDFLAGS)'"
@@ -302,7 +355,7 @@ setup :
 	@echo "export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(PACKAGE_DIR)/$(SYSTEM)/lib"
 
 .PHONY : lib
-lib : lib_shared
+lib : lib_shared lib_shared_f77
 
 .PHONY : libs
 libs : lib_static lib_shared
@@ -312,6 +365,9 @@ lib_static : $(LIBFILE)
 
 .PHONY : lib_shared
 lib_shared : $(SHLIBFILE)
+
+.PHONY : lib_shared
+lib_shared_f77 : $(SHLIBFILE_F77)
 
 .PHONY : clean
 clean : clean_special
@@ -328,19 +384,22 @@ distclean : uninstall clean
 	@echo "Total cleaning..."
 
 .PHONY : bin
-bin : bin_shared
+bin : bin_shared bin_shared_f77
 
 .PHONY : bin_test
 bin_test : bin_test_shared
 
 .PHONY : bins
-bins : bin_shared bin_static 
+bins : bin_shared bin_shared_f77 bin_static 
 
 .PHONY : bin_static
 bin_static : $(binaries_static)
 
 .PHONY : bin_shared
-bin_shared : $(binaries) $(f77_binaries)
+bin_shared : $(binaries) 
+
+.PHONY : bin_shared
+bin_shared_f77 : $(f77_binaries)
 
 .PHONY : bin_test_shared
 bin_test_shared : $(binaries_test) $(f77_binaries_test)
@@ -352,7 +411,19 @@ $(LIBFILE) : $(objectsWithPath)  $(f77_objectsWithPath)
 	  $(AR) -rusv $(LIBDIR)/$(LIBFILE) $(OBJDIR)/$(notdir $${file_object}) ; done
 	ranlib $(LIBDIR)/$(notdir $(@))
 
-$(SHLIBFILE) : $(objectsWithPath) $(f77_objectsWithPath) 
+$(LIBFILEF) : $(f77_objectsWithPath) 
+	@echo "Building static lib '$(@)'..."
+	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
+	for file_object in $(objects); do \
+	  $(AR) -rusv $(LIBDIR)/$(LIBFILE) $(OBJDIR)/$(notdir $${file_object}) ; done
+	ranlib $(LIBDIR)/$(notdir $(@))
+
+$(SHLIBFILE) : $(objectsWithPath) #$(f77_objectsWithPath) 
+	@echo "Building shared lib '$(@)'..."
+	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
+	$(LD) $(CXXFLAGS) $(SOFLAGS) $(^) -o $(LIBDIR)/$(notdir $(@))
+
+$(SHLIBFILE_F77) : $(f77_objectsWithPath) $(crossed_objectsWithPath)  
 	@echo "Building shared lib '$(@)'..."
 	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
 	$(LD) $(CXXFLAGS) $(SOFLAGS) $(^) -o $(LIBDIR)/$(notdir $(@))
@@ -367,21 +438,20 @@ $(OBJDIR)/%$(F77_OBJEXT) : %$(F77_SOURCEEXT) #%$(F77_HEADEREXT)
 	@test -d $(OBJDIR) || mkdir -p $(OBJDIR)
 	$(F77) -c $(F77CPPFLAGS) $(F77FLAGS) $< -o $(OBJDIR)/$(notdir $(@))
 
-
 %.static$(BINEXT) : %$(PROGEXT) | lib_static
 	@echo "Compiling statically linked program '$(@)'..."
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
 	$(CXX) -I. $(CPPFLAGS) $(CXXFLAGS) $< $(STATICFLAGS) $(LDFLAGS) -o $(BINDIR)/$(notdir $(@))
 
-%$(BINEXT) : %$(PROGEXT) | lib_shared 
+%$(BINEXT) : %$(PROGEXT) | lib_shared lib_shared_f77 
 	@echo "Compiling program '$(@)' with shared library..."
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
-	$(CXX) -I. $(CPPFLAGS) $(CXXFLAGS) $< $(SHFLAGS) -o $(BINDIR)/$(notdir $(@))
+	$(CXX) -I. $(CPPFLAGS) $(CXXFLAGS) $< $(SHFLAGS) $(SHFLAGS_F77) -o $(BINDIR)/$(notdir $(@))
 
-%$(F77_BINEXT) : %$(F77_PROGEXT) | lib_shared 
+%$(F77_BINEXT) : %$(F77_PROGEXT) | lib_shared_f77 
 	@echo "Compiling F77 program '$(@)' with shared library..."
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
-	$(F77) -I. $(F77CPPFLAGS) $(F77FLAGS) $< $(SHFLAGS) -o $(BINDIR)/$(notdir $(@))
+	$(F77) -I. $(F77CPPFLAGS) $(F77FLAGS) $< $(SHFLAGS_F77) -o $(BINDIR)/$(notdir $(@))
 
 .PHONY : dist
 dist : distclean

@@ -32,7 +32,6 @@
 #ifndef __genbb_help__i_genbb_h
 #define __genbb_help__i_genbb_h 1
 
-#include <genbb_help/primary_particle.h>
 #include <genbb_help/primary_event.h>
 
 namespace genbb {

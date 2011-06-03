@@ -31,19 +31,8 @@
 #ifndef __genbb_help__genbb_writer_h
 #define __genbb_help__genbb_writer_h 1
 
-#include <cstdlib>
-#include <stdexcept>
-#include <iostream>
-#include <sstream>
-#include <fstream>
 #include <string>
-#include <list>
-
-#include <CLHEP/Units/SystemOfUnits.h>
-#include <CLHEP/Units/PhysicalConstants.h>
-#include <CLHEP/Vector/ThreeVector.h>
-
-//#include <datatools/serialization/io_factory.h>
+#include <iostream>
 
 #include <geomtools/utils.h>
 
@@ -59,14 +48,12 @@ namespace genbb {
     bool        __debug;
     std::string __fout;
 
-
   private:
 
     int    __Npart, __part_per_evt;
     int    __type, __seed;
     double __Emin, __Emax;
     double __phi_min, __phi_max;
-
 
   public:
 

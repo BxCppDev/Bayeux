@@ -32,19 +32,19 @@
 #ifndef __genbb_help__genbb_mgr_h
 #define __genbb_help__genbb_mgr_h 1
 
-#include <cstdlib>
-#include <stdexcept>
-#include <iostream>
-#include <sstream>
-#include <fstream>
 #include <string>
 #include <list>
-
-#include <datatools/serialization/io_factory.h>
-#include <datatools/utils/properties.h>
+#include <iostream>
+#include <fstream>
 
 #include <genbb_help/i_genbb.h>
 #include <genbb_help/primary_event.h>
+#include <datatools/serialization/io_factory.h>
+#include <datatools/utils/properties.h>
+
+// Implementation of serialization method for the 'primary_event' class, 
+// implies also <genbb_help/primary_particle.ipp> :
+#include <genbb_help/primary_event.ipp>
 
 namespace genbb {
 
@@ -78,34 +78,19 @@ namespace genbb {
 
     bool is_initialized () const;
 
-    bool is_debug () const
-    {
-      return __debug;
-    }
+    bool is_debug () const;
 
-    void set_debug (bool d_)
-    {
-      __debug = d_;
-    }
+    void set_debug (bool d_);
 
-    int get_format () const
-    {
-      return __format;
-    }
+    int get_format () const;
 
     void set_format (int format_ = FORMAT_GENBB);
 
     void set_format (const string & format_ = FORMAT_GENBB_LABEL);
 
-    bool is_format_genbb () const
-    {
-      return __format == FORMAT_GENBB;
-    }
+    bool is_format_genbb () const;
 
-    bool is_format_boost () const
-    {
-      return __format == FORMAT_BOOST;
-    }
+    bool is_format_boost () const;
 
     // ctor:
     genbb_mgr (int format_ = FORMAT_GENBB);

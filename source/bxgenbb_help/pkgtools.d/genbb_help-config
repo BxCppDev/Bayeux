@@ -209,7 +209,7 @@ if [ "x$opt" = "x--bindir" ]; then
 fi 
 
 if [ "x$opt" = "x--libs" ]; then
-    echo "-L${THEPACK_LIBDIR} -lgenbb_help "
+    echo "-L${THEPACK_LIBDIR} -lgenbb_help -lgenbb_help_f77 "
     exit 0
 fi 
 
@@ -237,7 +237,7 @@ if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
     if [ ${generate_ldflags} -eq 1 ]; then	
 	(
 	    (
-		echo -n "-L${THEPACK_LIBDIR} -lgenbb_help "  \
+		echo -n "-L${THEPACK_LIBDIR} -lgenbb_help -lgenbb_help_f77 "  \
 		    "`geomtools-config --ldflags` "  \
 		    "${f77_opt} "  \
 		    "-lm "  

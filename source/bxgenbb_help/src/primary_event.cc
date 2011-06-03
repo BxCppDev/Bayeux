@@ -21,7 +21,20 @@
  */
 
 #include <genbb_help/primary_event.h>
+
 #include <genbb_help/genbb_help.h>
+
+#include <cstdlib>
+#include <stdexcept>
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include <string>
+
+#include <boost/cstdint.hpp>
+
+#include <geomtools/utils.h>
+
 
 namespace genbb {
 

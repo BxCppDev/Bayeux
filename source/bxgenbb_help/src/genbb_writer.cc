@@ -21,8 +21,22 @@
  */
 
 #include <genbb_help/genbb_writer.h>
+
+
+#include <cstdlib>
+#include <stdexcept>
+#include <sstream>
+#include <fstream>
+#include <string>
+#include <list>
+
 //#include <genbb_help/primary_particle.ipp>
-#include <genbb_help/primary_event.ipp>
+//#include <genbb_help/primary_event.ipp>
+#include <genbb_help/primary_event.h>
+
+#include <CLHEP/Units/SystemOfUnits.h>
+#include <CLHEP/Units/PhysicalConstants.h>
+#include <CLHEP/Vector/ThreeVector.h>
 
 namespace genbb {
 

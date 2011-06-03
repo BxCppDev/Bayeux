@@ -34,18 +34,13 @@
 #define __genbb_help__genbb_h 1
 
 #include <iostream>
-#include <stdexcept>
-#include <string>
-#include <sstream>
 #include <fstream>
+#include <string>
 
 #include <genbb_help/i_genbb.h>
-
 #include <mygsl/rng.h>
 
 #include <datatools/utils/properties.h>
-#include <datatools/utils/utils.h>
-#include <boost/filesystem.hpp>
 
 namespace genbb {
 

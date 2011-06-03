@@ -21,7 +21,17 @@
  */
  
 #include <genbb_help/wgenbb.h>
+
+#include <stdexcept>
+#include <string>
+#include <sstream>
+#include <fstream>
+
 #include <genbb_help/rng.h>
+
+#include <datatools/utils/utils.h>
+#include <datatools/utils/units.h>
+#include <boost/filesystem.hpp>
 
 extern GENEVENT_DEF genevent;
 extern ENRANGE_DEF  enrange;

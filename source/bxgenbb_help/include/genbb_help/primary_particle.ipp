@@ -12,6 +12,7 @@
 #include <datatools/serialization/utils.h>
 
 #include <genbb_help/primary_particle.h>
+#include <geomtools/utils.ipp>
 
 namespace genbb {
 

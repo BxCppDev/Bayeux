@@ -34,10 +34,6 @@
 #define __genbb_help__wgenbb_h 1
 
 #include <iostream>
-#include <stdexcept>
-#include <string>
-#include <sstream>
-#include <fstream>
 
 #include <genbb_help/i_genbb.h>
 #include <genbb_help/genbb_commons.h>
@@ -45,9 +41,6 @@
 #include <mygsl/rng.h>
 
 #include <datatools/utils/properties.h>
-#include <datatools/utils/utils.h>
-#include <datatools/utils/units.h>
-#include <boost/filesystem.hpp>
 
 //#include <cfortran/cfortran.h> 
 

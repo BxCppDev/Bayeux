@@ -59,11 +59,6 @@ namespace genbb {
   {
   public:
     
-    static const string SERIAL_TAG;
-    static const string OLD_SERIAL_TAG;
-    
-    virtual const string & get_serial_tag () const;
-    
     enum particle_type
     {
       // Using GEANT3 definition from: 
@@ -158,18 +153,24 @@ namespace genbb {
 
     void dump (ostream & out_ = clog, 
 	       const string & indent_ = "") const;
-
-  private:
-    friend class boost::serialization::access; 
-    BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
-
-  public:
  
     static string get_label (int type_);
 
     static string get_particle_label_from_type (int type_);
    
     static int get_particle_type_from_label (const string & label_);
+
+  public:
+    
+    //! Serialization tag.
+    DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
+
+    static const std::string OLD_SERIAL_TAG;
+
+  private:
+
+    friend class boost::serialization::access; 
+    BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
 
   public:
     

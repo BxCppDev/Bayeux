@@ -25,6 +25,11 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <stdexcept>
+#include <sstream>
+
+#include <datatools/utils/utils.h>
+#include <boost/filesystem.hpp>
 
 namespace genbb {
  

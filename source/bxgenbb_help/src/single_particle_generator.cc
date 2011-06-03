@@ -15,10 +15,23 @@
  *
  * You should have received a copy of the GNU General Publi * License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Boston, MA 02110-1301, USA.
+ *
  */
 
 #include <genbb_help/single_particle_generator.h>
+
+#include <cstdlib>
+#include <cmath>
+#include <stdexcept>
+#include <iostream>
+#include <sstream>
+#include <fstream>
+
+#include <datatools/utils/utils.h>
+#include <geomtools/utils.h>
+#include <datatools/utils/units.h>
 
 namespace genbb {
 

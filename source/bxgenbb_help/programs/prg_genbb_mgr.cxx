@@ -9,6 +9,7 @@
 #include <genbb_help/genbb_mgr.h>
 
 /* Serialization dedicated code */
+#include <geomtools/the_serializable.h>
 #include <genbb_help/the_serializable.h>
 
 using namespace std;

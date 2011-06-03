@@ -20,6 +20,12 @@
 
 #include <genbb_help/fermi.h>
 
+#include <iostream>
+#include <cmath>
+#include <stdexcept>
+#include <gsl/gsl_sf.h>
+#include <CLHEP/Units/SystemOfUnits.h>
+
 double a_from_z (double z_)
 {
  return 0.0075 * z_ * z_ + 1.9 * z_ + 0.25;

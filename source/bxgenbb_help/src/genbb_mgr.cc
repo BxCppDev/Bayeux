@@ -25,18 +25,17 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <cstdlib>
+#include <stdexcept>
+#include <sstream>
 
 #include <CLHEP/Units/SystemOfUnits.h>
 #include <CLHEP/Units/PhysicalConstants.h>
 #include <CLHEP/Vector/ThreeVector.h>
 
 #include <datatools/utils/utils.h>
-
+ 
 #include <geomtools/utils.h>
-
-// Implementation of serialization method for the 'primary_event' class, 
-// implies also <genbb_help/primary_particle.ipp> :
-#include <genbb_help/primary_event.ipp>
 
 namespace genbb {
 
@@ -49,6 +48,31 @@ namespace genbb {
   {
     return __initialized;
   }
+
+   bool genbb_mgr::is_debug () const
+    {
+      return __debug;
+    }
+
+    void genbb_mgr::set_debug (bool d_)
+    {
+      __debug = d_;
+    }
+
+    int genbb_mgr::get_format () const
+    {
+      return __format;
+    }
+
+    bool genbb_mgr::is_format_genbb () const
+    {
+      return __format == FORMAT_GENBB;
+    }
+
+    bool genbb_mgr::is_format_boost () const
+    {
+      return __format == FORMAT_BOOST;
+    }
 
   // ctor:
   genbb_mgr::genbb_mgr (int format_)

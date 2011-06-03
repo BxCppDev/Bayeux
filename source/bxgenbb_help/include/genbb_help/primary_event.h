@@ -32,17 +32,8 @@
 #ifndef __genbb_help__primary_event_h
 #define __genbb_help__primary_event_h 1
 
-#include <cstdlib>
-#include <stdexcept>
-#include <iostream>
-#include <sstream>
-#include <fstream>
 #include <string>
 #include <list>
-
-#include <boost/cstdint.hpp>
-
-#include <geomtools/utils.h>
 
 // Interface base class from datatools to support serialization tools:
 #include <datatools/serialization/i_serializable.h>
@@ -56,12 +47,6 @@ namespace genbb {
   struct primary_event
     : public datatools::serialization::i_serializable 
   {
-  public:
-    
-    static const std::string SERIAL_TAG;
-    static const std::string OLD_SERIAL_TAG;
-    
-    virtual const std::string & get_serial_tag () const;
     
   public:
     typedef std::list<primary_particle> particles_col_t;
@@ -106,6 +91,13 @@ namespace genbb {
     void dump (std::ostream & out_,
 	       const std::string & title_,
 	       const std::string & indent_) const;
+
+  public:
+    
+    //! Serialization tag.
+    DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
+
+    static const std::string OLD_SERIAL_TAG;
 
   private:
 

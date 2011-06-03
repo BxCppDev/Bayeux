@@ -21,12 +21,6 @@
  *
  */
 
-#include <iostream>
-#include <cmath>
-#include <stdexcept>
-#include <gsl/gsl_sf.h>
-#include <CLHEP/Units/SystemOfUnits.h>
-
 #ifndef __genbb_help__fermi_h
 #define __genbb_help__fermi_h 1
 
