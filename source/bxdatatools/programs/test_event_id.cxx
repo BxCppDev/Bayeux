@@ -37,16 +37,23 @@ int main (int argc_ , char ** argv_)
 
       clog << "Event id = " << my_id << endl;
 
-      clog << "Enter event id [format=XXX_YYY] ? ";
-      cin >> my_id;
-      if (! cin) 
+      try
 	{
-	  throw runtime_error ("Format error!");
+	  clog << "Enter event id [format=XXX_YYY] ? ";
+	  cin >> my_id;
+	  if (! cin) 
+	    {
+	      throw runtime_error ("Format error!");
+	    }
+	  clog << "Event id = " << my_id << endl;
+	  my_id.tree_dump (clog, "datatools::event::event_id:");
 	}
-      clog << "Event id = " << my_id << endl;
-      my_id.tree_dump (clog, "datatools::event::event_id:");
-  
-       string filename = "test_event_id.xml";
+      catch (exception & x)
+	{
+	  cerr << "Format error !" << endl;
+	}
+
+      string filename = "test_event_id.xml";
       {
 	list<datatools::event::event_id> ids;
 	datatools::serialization::data_writer writer(filename);

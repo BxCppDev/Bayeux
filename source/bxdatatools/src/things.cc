@@ -128,13 +128,7 @@ namespace datatools {
 
 
 		/***************************************************/
-
-		const string things::SERIAL_TAG = "datatools::utils::things";
-
-		const string & things::get_serial_tag () const
-		{
-			return things::SERIAL_TAG;
-		}
+    DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (things,"datatools::utils::things")
 
 		const string & things::get_name () const
 		{

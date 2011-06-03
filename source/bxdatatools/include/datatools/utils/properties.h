@@ -76,7 +76,7 @@ namespace datatools {
       static bool g_debug;
 
       //! Serialization tag.
-      static const std::string SERIAL_TAG;
+      //static const std::string SERIAL_TAG;
 
       //! \brief Internal data stored within the dictionary of the properties class.
       class data : public datatools::serialization::i_serializable     
@@ -85,7 +85,7 @@ namespace datatools {
       public:
 
 	//! Serialization tag.
-	static const std::string SERIAL_TAG;
+	//static const std::string SERIAL_TAG;
 
 	static const int  ERROR_SUCCESS = 0;
 	static const int  ERROR_FAILURE = 1;
@@ -260,7 +260,9 @@ namespace datatools {
 		   bool a_inherit               = false) const;
 
 	//! Return the serialization tag (from the datatools::serialization::i_serializable interface).
-	virtual const std::string & get_serial_tag () const;
+	//virtual const std::string & get_serial_tag () const;
+
+	DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
 
       private:
 
@@ -767,11 +769,12 @@ namespace datatools {
       std::string  key_to_property_string (const std::string & a_key) const;
 
 
-      //! From the datatools::serialization::i_serializable interface :
-      virtual const std::string & get_serial_tag () const;
-
       //! From the datatools::utils::i_cloneable interface :
       DATATOOLS_CLONEABLE_DECLARATION (properties)
+
+      //! From the datatools::serialization::i_serializable interface :
+      //virtual const std::string & get_serial_tag () const;
+      DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
 
     private:
 

@@ -52,6 +52,7 @@ namespace datatools {
 } // end of namespace datatools 
 
 #define DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()	                        \
+  public:                                                                               \
       static const std::string SERIAL_TAG;                      	              	\
       virtual const std::string & get_serial_tag () const;                              \
 /**/

@@ -24,7 +24,6 @@
 #include <stdexcept>
 
 #include <boost/cstdint.hpp>
-#include <boost/serialization/access.hpp>
 
 #include <datatools/serialization/i_serializable.h>
 
@@ -50,9 +49,6 @@ namespace datatools {
 
     public:
 
-      //! Serialization tag.
-      static const std::string SERIAL_TAG;
-
       //! Constant value for an invalid run number.
       static const int  INVALID_RUN_NUMBER   = -1;
 
@@ -65,9 +61,9 @@ namespace datatools {
     private:
 
       //! The number of the run.
-      int32_t __run_number;
+      int32_t run_number_;
       //! The number of the event within the run.
-      int32_t __event_number;
+      int32_t event_number_;
 
     public:
 
@@ -154,13 +150,12 @@ namespace datatools {
 			      bool inherit_               = false) const;
 
       //! Shortcut to tree_dump.
-      void dump () const
-      {
-	tree_dump (std::clog);
-      }
+      void dump () const;
 
       //! Return the serialization tag (from the datatools::serialization::i_serializable interface).
-      virtual const std::string & get_serial_tag () const;
+
+      //! Serialization tag.
+      DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
 
     private:
 

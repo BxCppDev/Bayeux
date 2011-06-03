@@ -33,18 +33,10 @@ namespace datatools {
 
     const bool multi_properties::read_private_also = false;
 
-    const string multi_properties::SERIAL_TAG       = "datatools::utils::multi_properties";
-
-    const string multi_properties::entry::SERIAL_TAG = "__datatools::utils::multi_properties::entry";
-
     bool multi_properties::g_debug = false;
 
-    /****************************************************************/
-
-    const string & multi_properties::entry::get_serial_tag () const
-    {
-      return multi_properties::entry::SERIAL_TAG;
-    }
+    DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (multi_properties,"datatools:utils::multi_properties")
+    DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (multi_properties::entry,"datatools:utils::multi_properties::entry")
 
     const properties & multi_properties::entry::get_properties () const
     {
@@ -147,11 +139,6 @@ namespace datatools {
     /****************************************************************/
 
     DATATOOLS_CLONEABLE_IMPLEMENTATION(multi_properties)
-
-    const string & multi_properties::get_serial_tag () const
-    {
-      return multi_properties::SERIAL_TAG;
-    }
 
     bool multi_properties::is_debug () const
     {

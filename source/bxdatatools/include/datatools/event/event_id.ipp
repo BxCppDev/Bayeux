@@ -14,12 +14,12 @@ namespace datatools {
   namespace event {
     
     template<class Archive>
-    void event_id::serialize (Archive            & ar_ , 
-			      const unsigned int   version_)
+    void event_id::serialize (Archive            & a_archive , 
+			      const unsigned int   a_version)
     {
-      //ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-      ar_ & boost::serialization::make_nvp ("run_number",   __run_number);
-      ar_ & boost::serialization::make_nvp ("event_number", __event_number);
+      //a_archive & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
+      a_archive & boost::serialization::make_nvp ("run_number",   run_number_);
+      a_archive & boost::serialization::make_nvp ("event_number", event_number_);
       return;
     }
 

@@ -8,113 +8,116 @@ namespace datatools {
 
   namespace event {
 
-    const std::string event_id::SERIAL_TAG = "__EVENT_ID__";
 
-    const std::string & 
-    event_id::get_serial_tag () const
-    {
-      return  event_id::SERIAL_TAG;
-    }
+    DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (event_id,"datatools:event::event_id")
+    //const std::string event_id::SERIAL_TAG = "__EVENT_ID__";
 
     void 
     event_id::clear ()
     {
       set_run_number (INVALID_RUN_NUMBER);
       set_event_number (INVALID_EVENT_NUMBER);
+      return;
     }
 
     int 
     event_id::get_run_number () const
     {
-      return __run_number;
+      return run_number_;
     }
 
     int 
     event_id::get_event_number () const
     {
-      return __event_number;
+      return event_number_;
     }
 
     void 
-    event_id::set_run_number (int run_number_)
+    event_id::set_run_number (int a_run_number)
     {
-      __run_number = (run_number_ < 0)? INVALID_RUN_NUMBER: run_number_ ;    
+      run_number_ = (a_run_number < 0)? INVALID_RUN_NUMBER: a_run_number ;    
+      return;
     }
 
     void 
-    event_id::set_event_number (int event_number_)
+    event_id::set_event_number (int a_event_number)
     {
-      __event_number = (event_number_ < 0)? INVALID_EVENT_NUMBER: event_number_;
+      event_number_ = (a_event_number < 0)? INVALID_EVENT_NUMBER: a_event_number;
+      return;
     }
 
     void 
-    event_id::set (int run_number_, 
-		  int event_number_)
+    event_id::set (int a_run_number, 
+		  int a_event_number)
     {
-      set_run_number (run_number_);
-      set_event_number (event_number_);
+      set_run_number (a_run_number);
+      set_event_number (a_event_number);
     }
 
     event_id::event_id ()
     {
-      __run_number = INVALID_RUN_NUMBER;
-      __event_number = INVALID_EVENT_NUMBER;
+      run_number_ = INVALID_RUN_NUMBER;
+      event_number_ = INVALID_EVENT_NUMBER;
+      return;
     }
 
-    event_id::event_id ( int event_number_ )
+    event_id::event_id ( int a_event_number )
     {
-      __run_number = INVALID_RUN_NUMBER;
-      set_event_number (event_number_);
+      run_number_ = INVALID_RUN_NUMBER;
+      set_event_number (a_event_number);
+      return;
     }
 
-    event_id::event_id (int run_number_ , 
-		       int event_number_)
+    event_id::event_id (int a_run_number , 
+		       int a_event_number)
     {
-      set (run_number_,event_number_);
+      set (a_run_number,a_event_number);
+      return;
     }
   
     event_id::~event_id ()
     {
+      return;
     }
 
     bool
-    event_id::has (int run_number_, int event_number_) const
+    event_id::has (int a_run_number, int a_event_number) const
     {
-      return (__run_number == run_number_) 
-	&& (__event_number == event_number_);
+      return (run_number_ == a_run_number) 
+	&& (event_number_ == a_event_number);
     }
 
     bool 
     event_id::is_valid () const
     {
-      return (__run_number != INVALID_RUN_NUMBER) 
-	&& (__event_number != INVALID_EVENT_NUMBER);
+      return (run_number_ != INVALID_RUN_NUMBER) 
+	&& (event_number_ != INVALID_EVENT_NUMBER);
     }
 
     bool
-    event_id::operator== (const event_id & id_) const
+    event_id::operator== (const event_id & a_id) const
     {
-      return has (id_.__run_number, id_.__event_number);
+      return has (a_id.run_number_, a_id.event_number_);
     }
 
     bool
-    event_id::operator< (const event_id & id_) const
+    event_id::operator< (const event_id & a_id) const
     {
-      if (__run_number < id_.__run_number) return true;
-      if (__run_number == id_.__run_number) 
+      if (run_number_ < a_id.run_number_) return true;
+      if (run_number_ == a_id.run_number_) 
 	{
-	  if (__event_number < id_.__event_number) return true;	  
+	  if (event_number_ < a_id.event_number_) return true;	  
 	}
       return false;      
     }
 
     bool
-    event_id::operator> (const event_id & id_) const
+    event_id::operator> (const event_id & a_id) const
     {
-      if (__run_number > id_.__run_number) return true;
-      if (__run_number == id_.__run_number) 
+      if (run_number_ > a_id.run_number_) return true;
+      if (run_number_ == a_id.run_number_) 
 	{
-	  if (__event_number > id_.__event_number) return true;	  
+	  if (event_number_ > a_id.event_number_) return true;	  
 	}
       return false;      
     }
@@ -128,10 +131,10 @@ namespace datatools {
     }
   
     void 
-    event_id::from_string (const std::string & str_)
+    event_id::from_string (const std::string & a_word)
     {
       event_id id;
-      std::istringstream in (str_);
+      std::istringstream in (a_word);
       in >> id;
       if (! in) 
 	{
@@ -141,54 +144,60 @@ namespace datatools {
     }
 
     std::ostream & 
-    operator<< (std::ostream & out_ , 
-		const event_id & id_)
+    operator<< (std::ostream & a_out , 
+		const event_id & a_id)
     {
-      out_ << id_.get_run_number () << event_id::IO_FORMAT_SEP 
-	   << id_.get_event_number ();
-      return out_;
+      a_out << a_id.get_run_number () << event_id::IO_FORMAT_SEP 
+	   << a_id.get_event_number ();
+      return a_out;
     }
     
     std::istream & 
-    operator>> (std::istream & in_,
-		event_id & id_)
+    operator>> (std::istream & a_in,
+		event_id & a_id)
     {
       int r, e;
       char c = 0;
-      in_ >> r;
-      if (! in_) return in_;
-      in_ >> c;
-      if (! in_) return in_;
+      a_in >> r;
+      if (! a_in) return a_in;
+      a_in >> c;
+      if (! a_in) return a_in;
       if (c != event_id::IO_FORMAT_SEP) 
 	{
-	  in_.setstate (std::ios_base::failbit);
-	  return in_;
+	  a_in.setstate (std::ios_base::failbit);
+	  return a_in;
 	}
-      in_ >> e;
-      if (in_) 
+      a_in >> e;
+      if (a_in) 
 	{
-	  id_.set (r, e);
+	  a_id.set (r, e);
 	}
-      return in_;
+      return a_in;
     }
 
     void 
-    event_id::tree_dump (std::ostream & out_, 
-			 const std::string & title_,
-			 const std::string & indent_,
-			 bool inherit_) const
+    event_id::tree_dump (std::ostream & a_out, 
+			 const std::string & a_title,
+			 const std::string & a_indent,
+			 bool a_inherit) const
     {
       namespace du = datatools::utils;
       std::string indent;
-      if (! indent_.empty ()) indent = indent_;
-      if (! title_.empty ()) 
+      if (! a_indent.empty ()) indent = a_indent;
+      if (! a_title.empty ()) 
 	{
-	  out_ << indent << title_ << std::endl;
+	  a_out << indent << a_title << std::endl;
 	}
-      out_ << indent << du::i_tree_dumpable::tag 
-	   << "Run number   : " << __run_number << std::endl;
-      out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
-	   << "Event number : " << __event_number << std::endl;
+      a_out << indent << du::i_tree_dumpable::tag 
+	   << "Run number   : " << run_number_ << std::endl;
+      a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)
+	   << "Event number : " << event_number_ << std::endl;
+      return;
+    }
+      
+    void event_id::dump () const
+    {
+      tree_dump (std::clog);
     }
 
   } // end of namespace event 

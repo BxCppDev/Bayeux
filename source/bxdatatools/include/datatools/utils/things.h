@@ -138,11 +138,9 @@ namespace datatools {
 
 			typedef map<string, entry_t> dict_t;
 
-			static const string SERIAL_TAG;
-      
-		public: 
+      DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
 
-			virtual const string & get_serial_tag () const;
+		public: 
  
 			const string & get_name () const;
 

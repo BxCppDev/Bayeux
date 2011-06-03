@@ -18,26 +18,15 @@ namespace datatools {
 
     bool properties::g_debug                       = false;
 
-    /* 2010-06-01 FM: to be updated */ 
-    const std::string properties::SERIAL_TAG       = "datatools::utils::properties";
-    const std::string properties::data::SERIAL_TAG = "__datatools::utils::properties::data";
-
-    const std::string & properties::get_serial_tag () const
-    {
-      return properties::SERIAL_TAG;
-    } 
-
-    const std::string & properties::data::get_serial_tag () const
-    {
-      return properties::data::SERIAL_TAG;
-    }
-
     properties::default_key_validator properties::g_default_key_validator;
 
     const bool        properties::data::DEFAULT_VALUE_BOOLEAN = false;
     const int         properties::data::DEFAULT_VALUE_INTEGER = 0;
     const double      properties::data::DEFAULT_VALUE_REAL    = 0.0;
     const std::string properties::data::DEFAULT_VALUE_STRING  = "";
+
+    DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (properties,"datatools:utils::properties")
+    DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (properties::data,"datatools:utils::properties::data")
 
     bool properties::data::has_forbidden_char (const std::string & a_str)
     {

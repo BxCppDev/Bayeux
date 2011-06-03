@@ -30,8 +30,8 @@ namespace datatools {
 				 const unsigned int   version_)
     {
       ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-      ar_ & boost::serialization::make_nvp ("id", __id);
-      ar_ & boost::serialization::make_nvp ("properties",__properties);
+      ar_ & boost::serialization::make_nvp ("id",         id_);
+      ar_ & boost::serialization::make_nvp ("properties", properties_);
       return;
     }
 

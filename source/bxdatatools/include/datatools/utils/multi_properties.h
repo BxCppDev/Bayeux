@@ -75,7 +75,7 @@ namespace datatools {
       static const bool write_private_also;
       static const bool read_public_only;
       static const bool read_private_also;
-      static const string SERIAL_TAG;
+      //static const string SERIAL_TAG;
 
       static bool g_debug;
 
@@ -86,9 +86,10 @@ namespace datatools {
 	public datatools::utils::i_tree_dumpable  
       {
       public:
-	static const string SERIAL_TAG;
+	//static const string SERIAL_TAG;
 
       private:
+
 	string     key_;
 	string     meta_;
 	properties properties_;
@@ -116,8 +117,8 @@ namespace datatools {
 
       private:
 
-	virtual const string & get_serial_tag () const;
-	  
+        DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
+ 	  
 	friend class boost::serialization::access; 
 	BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
 
@@ -189,10 +190,10 @@ namespace datatools {
 
     public:
 
-      virtual const string & get_serial_tag () const;
-
       //! From the datatools::utils::i_cloneable interface :
       DATATOOLS_CLONEABLE_DECLARATION (multi_properties)
+
+      DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
 
     private:
 	

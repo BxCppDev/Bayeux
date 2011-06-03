@@ -23,8 +23,6 @@
 #include <string>
 
 #include <boost/cstdint.hpp>
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/nvp.hpp>
 
 #include <datatools/serialization/i_serializable.h>
 #include <datatools/utils/i_tree_dump.h>
@@ -49,15 +47,6 @@ namespace datatools {
 			public datatools::utils::i_tree_dumpable,
                         public datatools::utils::i_clear    
     {
-    public:
-      //! Serialization tag.
-      static const std::string SERIAL_TAG;
-
-    private:
-      //! Event ID.
-      event_id                     __id;
-      //! Dictionary of properties.
-      datatools::utils::properties __properties;
 
     public: 
 
@@ -65,22 +54,16 @@ namespace datatools {
       virtual void clear ();
 
       //! Set the event ID.
-      void id (const event_id & id_);
+      void id (const event_id & a_id);
 
       //! Set the event ID.
-      void set_id (const event_id & id_)
-      {
-	id  (id_);
-      }
+      void set_id (const event_id & a_id);
 
       //! Get the event ID (read-only).
       const event_id & id () const;
 
       //! Get the event ID (read-only).
-      const event_id & get_id () const
-      {
-	return id ();
-      }
+      const event_id & get_id () const;
 
       //! Get the event ID (left value).
       event_id & id ();
@@ -88,18 +71,12 @@ namespace datatools {
       //! Get the properties (read-only)..
       const datatools::utils::properties & properties () const;
 
-      const datatools::utils::properties & get_properties_ro () const
-      {
-	return properties ();
-      }
+      const datatools::utils::properties & get_properties_ro () const;
 
       //! Get the properties (left value).
       datatools::utils::properties & properties ();
 
-      datatools::utils::properties & get_properties_rw ()
-      {
-	return properties ();
-      }
+      datatools::utils::properties & get_properties_rw ();
 
     public: 
 
@@ -107,31 +84,33 @@ namespace datatools {
       basic_event ();
       
       //! Constructor on event ID.
-      basic_event (const event_id & id_);
+      basic_event (const event_id & a_id);
       
       //! Destructor.
       virtual ~basic_event ();
       
       //! Method for smart printing (from the datatools::utils::i_tree_dump interface).
-      virtual void tree_dump (std::ostream & out_         = std::cerr, 
-			      const std::string & title_  = "",
-			      const std::string & indent_ = "",
-			      bool inherit_               = false) const;
+      virtual void tree_dump (std::ostream & a_out         = std::cerr, 
+			      const std::string & a_title  = "",
+			      const std::string & a_indent = "",
+			      bool a_inherit               = false) const;
       
       //! Shortcut to tree_dump.
-      void dump () const
-      {
-	tree_dump (std::clog);
-      }
+      void dump () const;
 
       //! Return the serialization tag (from the datatools::serialization::i_serializable interface).
-      virtual const std::string & get_serial_tag () const;
+      DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
 
     private:
 
       //! Boost.Serialization hook.
       friend class boost::serialization::access; 
       BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
+
+    private:
+
+      event_id                     id_;         //!< Event ID.
+      datatools::utils::properties properties_; //!< Dictionary of properties.
      
     };
 

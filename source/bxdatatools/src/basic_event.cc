@@ -8,87 +8,116 @@ namespace datatools {
   
   namespace event {
 
-    const std::string basic_event::SERIAL_TAG = "__BASIC_EVENT__";
+    DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (basic_event,"datatools:event::basic_event")
+    //const std::string basic_event::SERIAL_TAG = "__BASIC_EVENT__";
 
-    const std::string & basic_event::get_serial_tag() const
+    void basic_event::dump () const
     {
-      return basic_event::SERIAL_TAG;
+      tree_dump (std::clog);
+      return;
     }
     
-    void basic_event::id( const event_id & id_ )
+    void basic_event::id (const event_id & a_id)
     {
-      __id=id_;
+      id_ = a_id;
+      return;
     }
     
-    const event_id & basic_event::id() const
+    const event_id & basic_event::id () const
     {
-      return __id;
-    }
-    
-    event_id & basic_event::id()
-    {
-      return __id;
-    }
-    
-    const datatools::utils::properties & basic_event::properties() const
-    {
-      return __properties;
-    }
-    
-    datatools::utils::properties & basic_event::properties()
-    {
-      return __properties;
+      return id_;
     }
 
-    void basic_event::clear()
+    void basic_event::set_id (const event_id & a_id)
     {
-      __id.clear();
-      __properties.clear();
+      id  (a_id);
+      return;
     }
     
-    basic_event::basic_event()
+    event_id & basic_event::id ()
     {
+      return id_;
+    }
+     
+    const event_id & basic_event::get_id () const
+    {
+      return id ();
     }
     
-    basic_event::basic_event( const event_id & id_ ) : __id(id_)
+    const datatools::utils::properties & basic_event::properties () const
     {
+      return properties_;
     }
     
-    basic_event::~basic_event()
+    datatools::utils::properties & basic_event::properties ()
     {
-      basic_event::clear();
+      return properties_;
     }
 
-    void basic_event::tree_dump( std::ostream & out_         , 
-				 const std::string & title_  ,
-				 const std::string & indent_ ,
-				 bool  inherit_               ) const
+    const datatools::utils::properties & basic_event::get_properties_ro () const
+    {
+      return properties ();
+    }
+
+    datatools::utils::properties & basic_event::get_properties_rw ()
+    {
+      return properties ();
+    }
+
+    void basic_event::clear ()
+    {
+      id_.clear ();
+      properties_.clear ();
+      return;
+    }
+    
+    basic_event::basic_event ()
+    {
+      return;
+    }
+    
+    basic_event::basic_event (const event_id & a_id) : id_ (a_id)
+    {
+      return;
+    }
+    
+    basic_event::~basic_event ()
+    {
+      basic_event::clear ();
+      return;
+    }
+
+    void basic_event::tree_dump (std::ostream & a_out         , 
+				 const std::string & a_title  ,
+				 const std::string & a_indent ,
+				 bool  a_inherit              ) const
     {
       std::string indent;
-      if ( !indent_.empty() ) indent = indent_;
-      if ( !title_.empty() ) {
-	out_ << indent << title_ << std::endl;
+      if (!a_indent.empty ()) indent = a_indent;
+      if (!a_title.empty ()) {
+	a_out << indent << a_title << std::endl;
       }
       namespace du = datatools::utils;
-      out_ << indent << du::i_tree_dumpable::tag 
+      a_out << indent << du::i_tree_dumpable::tag 
 	   << "Id : " << std::endl;
       {
 	std::ostringstream indent_oss;
 	indent_oss << indent;
 	indent_oss << du::i_tree_dumpable::skip_tag;
-	__id.tree_dump(out_,"",indent_oss.str());
+	id_.tree_dump (a_out,"",indent_oss.str ());
       }
 
-      out_ << indent << du::i_tree_dumpable::inherit_tag(inherit_)
+      a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)
 	   << "Properties : ";
-      if ( __properties.size() == 0 ) { out_ << "<empty>"; }
-      out_ << std::endl;
+      if (properties_.size () == 0) { a_out << "<empty>"; }
+      a_out << std::endl;
       {
 	std::ostringstream indent_oss;
 	indent_oss << indent;
-	indent_oss << du::i_tree_dumpable::inherit_skip_tag(inherit_);
-	__properties.tree_dump(out_,"",indent_oss.str());
+	indent_oss << du::i_tree_dumpable::inherit_skip_tag (a_inherit);
+	properties_.tree_dump (a_out,"",indent_oss.str ());
       }
+      return;
     }
     
   } // end of namespace event 
