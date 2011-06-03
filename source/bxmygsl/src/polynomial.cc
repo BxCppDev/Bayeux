@@ -2,6 +2,9 @@
 
 #include <mygsl/polynomial.h>
 
+#include <stdexcept>
+#include <sstream>
+
 namespace mygsl {
 
   size_t polynomial::get_ncoeffs () const

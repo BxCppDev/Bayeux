@@ -10,8 +10,6 @@
 #include <gsl/gsl_linalg.h>
 #include <gsl/gsl_errno.h>
 #include <vector>
-#include <cmath>
-#include <stdexcept>
 
 /*
  * Solve:  A.X = B

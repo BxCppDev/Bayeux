@@ -11,8 +11,6 @@
 #include <vector>
 #include <cmath>
 
-#include <gsl/gsl_errno.h>
-#include <gsl/gsl_math.h>
 #include <gsl/gsl_min.h>
 
 #include <mygsl/unary_eval.h>

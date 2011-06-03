@@ -22,12 +22,12 @@
 #ifndef __gsl__rng_h
 #define __gsl__rng_h 1
 
+#include <iostream>
 #include <string>
 #include <map>
 #include <vector>
 
 #include <gsl/gsl_rng.h>
-#include <gsl/gsl_randist.h>
 
 // Not ready yet !
 //#include <boost/stdint.hpp>

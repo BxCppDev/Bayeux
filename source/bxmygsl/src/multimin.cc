@@ -1,6 +1,12 @@
-// mygsl::multimin.cc
+// mygsl::multimin.cc 
 
 #include <mygsl/multimin.h>
+
+#include <algorithm>
+#include <sstream>
+#include <stdexcept>
+#include <string>
+#include <cmath>
 
 namespace mygsl {
 

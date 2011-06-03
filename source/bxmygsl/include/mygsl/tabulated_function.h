@@ -2,6 +2,6 @@
  *
  */
 
-# include <mygsl/tabfunc.h>
+#include <mygsl/tabfunc.h>
 
 /* end */

@@ -1,8 +1,30 @@
-// mygsl::multiparameter_system.cc
+// mygsl::multiparameter_system.cc 
 
 #include <mygsl/multiparameter_system.h>
 
+#include <stdexcept>
+#include <sstream>
+#include <fstream>
+#include <limits>
+#include <cmath>
+#include <algorithm>
+
+#include <mygsl/param_entry.h>
+
+
 namespace mygsl {
+
+  void multiparameter_system::load_params (const std::string & filename_)
+  {
+    load_parameters (filename_);
+    return;
+  }
+
+  void multiparameter_system::store_params (const std::string & filename_) const
+  {
+    store_parameters (filename_);
+    return;
+  }
 
   bool multiparameter_system::is_lock_params () const
   {

@@ -2,16 +2,25 @@
 
 #include <mygsl/unary_eval_with_derivative.h>
 
+#include <sstream>
+#include <stdexcept>
+#include <functional>
+#include <limits>
+
+#include <mygsl/numerical_differentiation.h>
+
 namespace mygsl {
   
   unary_eval_with_derivative::unary_eval_with_derivative ()
     : unary_eval ()
   {
+    return;
   }
   
   unary_eval_with_derivative::unary_eval_with_derivative (const interval & domain_)
     : unary_eval (domain_)
   {
+    return;
   }
   
   double unary_eval_with_derivative::eval (double x_) const
@@ -28,6 +37,7 @@ namespace mygsl {
   {
     f_ = this->eval_f (x_);
     df_ = this->eval_df (x_);
+    return;
   }
 
   double unary_eval_with_derivative::eval_df_numeric (double x_) const
@@ -76,7 +86,6 @@ namespace mygsl {
     //clog << "DEVEL: unary_eval_promoted_with_numeric_derivative::eval_f: " << endl;
     return (*__eval) (x_);
   }
-
 
 }
 

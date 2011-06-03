@@ -1,8 +1,12 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 /* mygsl::tabfunc.cc
  */
 
 #include <mygsl/tabfunc.h>
+
+#include <sstream>
+#include <stdexcept>
+#include <limits>
 
 namespace mygsl {
 

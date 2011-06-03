@@ -227,7 +227,7 @@ namespace mygsl {
     //__processed=true;
   }
 
-  static int main (int argc_,  char ** argv_) 
+  int fft_real::main (int argc_,  char ** argv_) 
   {
     bool debug=false;
     double t_step=0.5;

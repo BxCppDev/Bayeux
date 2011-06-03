@@ -17,9 +17,7 @@
 #ifndef __mygsl__von_neumann_method_h
 #define __mygsl__von_neumann_method_h 1
 
-#include <cmath>
 #include <iostream>
-#include <stdexcept>
 
 #include <mygsl/rng.h>
 #include <mygsl/unary_eval.h>

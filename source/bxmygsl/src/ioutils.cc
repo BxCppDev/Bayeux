@@ -2,6 +2,12 @@
 
 #include <mygsl/ioutils.h>
 
+#include <string>
+#include <sstream>
+#include <iomanip>
+#include <cmath>
+#include <limits>
+
 using namespace std;
 
 namespace mygsl

@@ -17,11 +17,6 @@
 #ifndef __mygsl__numerical_differentiation_h
 #define __mygsl__numerical_differentiation_h 1
 
-#include <functional>
-#include <limits>
-
-#include <gsl/gsl_deriv.h>
-
 #include <mygsl/unary_eval.h>
 #include <mygsl/interval.h>
 

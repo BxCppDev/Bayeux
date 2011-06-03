@@ -2,6 +2,9 @@
 
 #include <mygsl/linear_system_solver.h>
 
+#include <cmath>
+#include <stdexcept>
+
 namespace mygsl {
 
   using namespace std;

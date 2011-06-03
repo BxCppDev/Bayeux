@@ -6,14 +6,8 @@
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_fit.h>
 
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <stdexcept>
-#include <limits>
 #include <vector>
 
-#include <gsl/gsl_math.h>
 #include <gsl/gsl_poly.h>
 
 #include <mygsl/unary_eval.h>

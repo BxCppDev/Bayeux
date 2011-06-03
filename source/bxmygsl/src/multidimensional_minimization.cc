@@ -2,6 +2,11 @@
 
 #include <mygsl/multidimensional_minimization.h>
 
+#include <stdexcept>
+#include <sstream>
+#include <fstream>
+#include <limits>
+
 namespace mygsl {
 
   const size_t multidimensional_minimization::DEFAULT_MAX_ITER    = 1000;

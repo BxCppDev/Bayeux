@@ -4,16 +4,6 @@
 #define __mygsl__one_dimensional_root_finding_h 1
 
 
-#include <algorithm>
-#include <iostream>
-#include <sstream>
-#include <stdexcept>
-#include <string>
-#include <vector>
-#include <cmath>
-
-#include <gsl/gsl_errno.h>
-#include <gsl/gsl_math.h>
 #include <gsl/gsl_roots.h>
 
 #include <mygsl/unary_eval.h>

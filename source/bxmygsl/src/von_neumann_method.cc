@@ -1,6 +1,10 @@
 // mygsl::von_neumann_method.cc
 
 #include <mygsl/von_neumann_method.h>
+
+#include <cmath>
+#include <sstream>
+#include <stdexcept>
 #include <limits>
  
 namespace mygsl {

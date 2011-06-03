@@ -27,6 +27,8 @@
 
 #include <mygsl/rng.h>
 
+#include <gsl/gsl_randist.h>
+
 namespace mygsl {
 
   bool rng::g_debug = false;

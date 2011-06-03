@@ -16,12 +16,7 @@
 #ifndef __mygsl__mean_h
 #define __mygsl__mean_h 1
 
-#include <iostream>
-#include <sstream>
-#include <stdexcept>
-#include <functional>
-#include <limits>
-#include <cmath>
+#include <cstdlib>
 
 using namespace std;
 

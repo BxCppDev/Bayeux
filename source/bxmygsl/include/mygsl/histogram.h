@@ -23,12 +23,6 @@ namespace mygsl {
       
       static bool g_debug;
 
-    private:
-      double          __bin_spacing;
-      double          __underflow;
-      double          __overflow;
-      gsl_histogram * __h;
-
     public:
 
       bool is_uniform_bin_spacing () const;
@@ -168,9 +162,17 @@ namespace mygsl {
       friend histogram operator/ (const histogram & , 
 				  double);
 
+    private:
+
+      double          __bin_spacing;
+      double          __underflow;
+      double          __overflow;
+      gsl_histogram * __h;
+
+    public:
+
       class pdf
 	{
-	  gsl_histogram_pdf * __pdf;
 
 	public:
 
@@ -191,6 +193,10 @@ namespace mygsl {
 	    {
 	      return  gsl_histogram_pdf_sample (__pdf, ran_());
 	    }
+
+	private:
+
+	  gsl_histogram_pdf * __pdf;
 	  
 	};
 

@@ -8,11 +8,7 @@
 #include <sstream>
 #include <stdexcept>
 
-#include <gsl/gsl_errno.h>
-#include <gsl/gsl_matrix.h>
 #include <gsl/gsl_odeiv.h>
-
-//#include <mygsl/error.h>
 
 namespace mygsl {
 

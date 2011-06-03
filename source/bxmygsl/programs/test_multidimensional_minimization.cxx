@@ -6,12 +6,17 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <string>
 #include <cmath>
 #include <ctime>
+#include <limits>
+#include <stdexcept>
 
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_sf.h>
+#include <gsl/gsl_randist.h>
+
 #include <mygsl/rng.h>
 #include <mygsl/histogram.h>
 #include <mygsl/multidimensional_minimization.h>

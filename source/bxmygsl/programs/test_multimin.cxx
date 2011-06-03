@@ -27,6 +27,8 @@
 #include <mygsl/rng.h>
 #include <mygsl/histogram.h>
 #include <mygsl/multimin.h>
+#include <gsl/gsl_randist.h>
+
 
 /**********************************************************/
 double 

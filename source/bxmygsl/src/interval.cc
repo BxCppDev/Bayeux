@@ -1,6 +1,12 @@
 // mygsl::interval.cc
 
 #include <mygsl/interval.h>
+
+#include <sstream>
+#include <stdexcept>
+#include <functional>
+#include <limits>
+#include <cmath>
  
 namespace mygsl {
 

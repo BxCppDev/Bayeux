@@ -18,9 +18,7 @@
 #define __mygsl__permutation_h 1
 
 #include <iostream>
-#include <sstream>
-#include <stdexcept>
-#include <list>
+#include <string>
 
 #include <gsl/gsl_permutation.h>
 

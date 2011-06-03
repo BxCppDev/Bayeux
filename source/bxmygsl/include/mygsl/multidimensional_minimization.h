@@ -3,13 +3,7 @@
 #ifndef __mygsl__multidimensional_minimization_h
 #define __mygsl__multidimensional_minimization_h 1
 
-#include <algorithm>
-#include <iostream>
-#include <sstream>
-#include <stdexcept>
 #include <string>
-#include <vector>
-#include <cmath>
 
 #include <gsl/gsl_multimin.h>
 #include <gsl/gsl_vector.h>

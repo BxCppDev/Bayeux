@@ -3,21 +3,9 @@
 #ifndef __mygsl__multiparameter_system_h
 #define __mygsl__multiparameter_system_h 1
 
-#include <algorithm>
 #include <iostream>
-#include <fstream>
-#include <sstream>
-#include <stdexcept>
-#include <string>
-#include <map>
 #include <vector>
-#include <cmath>
 
-#include <gsl/gsl_vector.h>
-#include <gsl/gsl_blas.h>
-#include <gsl/gsl_multifit_nlin.h>
-
-#include <mygsl/unary_eval.h>
 #include <mygsl/param_entry.h>
 
 using namespace std;
@@ -92,19 +80,13 @@ namespace mygsl {
 
       void load_parameters (const std::string & filename_);
 
-      void load_params (const std::string & filename_)
-	{
-	  load_parameters (filename_);
-	}
+      void load_params (const std::string & filename_);
 
       void load_parameters (std::istream & in_ );
 
       void store_parameters (const std::string & filename_) const;
 
-      void store_params (const std::string & filename_) const
-	{
-	  store_parameters (filename_);
-	}
+      void store_params (const std::string & filename_) const;
 
       void store_parameters (std::ostream & out_) const;
 
@@ -146,6 +128,7 @@ namespace mygsl {
 	  get_auto_param (i).set_value_no_check (666.);
 	  get_auto_param (i).set_auto_computed (true);
 	}
+      return;
     }
   };
 

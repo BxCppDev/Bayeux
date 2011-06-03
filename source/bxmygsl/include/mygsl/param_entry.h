@@ -3,13 +3,8 @@
 #ifndef __mygsl__param_entry_h
 #define __mygsl__param_entry_h 1
 
-#include <algorithm>
 #include <iostream>
-#include <sstream>
 #include <string>
-#include <stdexcept>
-#include <cmath>
-#include <limits>
 
 #include <mygsl/best_value.h>
 

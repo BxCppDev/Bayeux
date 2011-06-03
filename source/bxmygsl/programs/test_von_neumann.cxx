@@ -1,6 +1,7 @@
 // test_von_neumann_method.cxx
 
 #include <cstdlib>
+#include <cmath>
 #include <iostream>
 #include <fstream>
 #include <string>

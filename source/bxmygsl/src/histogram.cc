@@ -1,5 +1,5 @@
 // mygsl::histogram.cc
-
+ 
 #include <mygsl/histogram.h>
 
 #include <stdexcept>

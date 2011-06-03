@@ -17,12 +17,9 @@
 #ifndef __mygsl__unary_eval_with_derivative_h
 #define __mygsl__unary_eval_with_derivative_h 1
 
-#include <functional>
-#include <limits>
 
 #include <mygsl/unary_eval.h>
 #include <mygsl/interval.h>
-#include <mygsl/numerical_differentiation.h>
 
 using namespace std;
 

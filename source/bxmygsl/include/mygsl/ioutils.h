@@ -4,16 +4,10 @@
 #define __mygsl__ioutils_h 1
 
 #include <iostream>
-#include <string>
-#include <sstream>
-#include <iomanip>
-#include <cmath>
-#include <limits>
 
 using namespace std;
 
 namespace mygsl {
-
 
   template <class Type> 
     class OstreamManipulator 

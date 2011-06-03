@@ -2,6 +2,14 @@
 
 #include <mygsl/linear_regression.h>
 
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <stdexcept>
+
+#include <gsl/gsl_errno.h>
+#include <gsl/gsl_fit.h>
+
 namespace mygsl {
 
   linear_regression::fit_data::fit_data ()

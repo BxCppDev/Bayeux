@@ -16,9 +16,6 @@
 #ifndef __mygsl__multi_eval_h
 #define __mygsl__multi_eval_h 1
 
-#include <sstream>
-#include <stdexcept>
-#include <functional>
 #include <vector>
 
 #include <mygsl/unary_eval.h>

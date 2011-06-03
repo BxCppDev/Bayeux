@@ -2,6 +2,10 @@
 
 #include <mygsl/permutation.h>
 
+#include <stdexcept>
+#include <sstream>
+#include <list>
+
 namespace mygsl {
 
   bool permutation::__check () const

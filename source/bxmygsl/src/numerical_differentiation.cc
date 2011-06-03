@@ -2,6 +2,13 @@
 
 #include <mygsl/numerical_differentiation.h>
 
+#include <stdexcept>
+#include <sstream>
+
+#include <functional>
+#include <limits>
+#include <gsl/gsl_deriv.h>
+
 namespace mygsl {
 
   double derivative_central (const unary_eval & eval_, double x_, double h_, double & abserr_ )

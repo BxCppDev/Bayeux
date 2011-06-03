@@ -2,6 +2,12 @@
 
 #include <mygsl/param_entry.h>
 
+#include <algorithm>
+#include <sstream>
+#include <stdexcept>
+#include <cmath>
+#include <limits>
+
 namespace mygsl {
 
   const double param_entry::NO_MIN_VALUE = -numeric_limits<double>::infinity (); 

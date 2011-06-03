@@ -2,6 +2,13 @@
 
 #include <mygsl/mean.h>
 
+#include <iostream>
+#include <sstream>
+#include <stdexcept>
+#include <functional>
+#include <limits>
+#include <cmath>
+
 namespace mygsl {
   
   size_t arithmetic_mean::get_n () const

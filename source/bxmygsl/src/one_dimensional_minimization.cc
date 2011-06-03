@@ -2,6 +2,9 @@
 
 #include <mygsl/one_dimensional_minimization.h>
 
+#include <gsl/gsl_errno.h>
+#include <gsl/gsl_math.h>
+
 namespace mygsl {
   
   const string one_dimensional_minimization::GOLDENSECTION_METHOD_LABEL = "goldensection";

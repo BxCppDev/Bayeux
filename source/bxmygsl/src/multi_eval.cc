@@ -1,6 +1,10 @@
-// mygsl::multi_eval.cc
+// mygsl::multi_eval.cc 
 
 #include <mygsl/multi_eval.h>
+
+#include <sstream>
+#include <stdexcept>
+#include <functional>
 
 namespace mygsl {
   

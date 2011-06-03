@@ -14,6 +14,7 @@
 #include <string>
 
 #include <mygsl/ode.h>
+#include <gsl/gsl_matrix.h>
 
 class test_ode_system : public mygsl::ode_system
 {

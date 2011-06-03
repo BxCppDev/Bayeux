@@ -20,7 +20,6 @@
 
 #include <functional>
 
-#include <gsl/gsl_math.h>
 #include <mygsl/interval.h>
 
 namespace mygsl {

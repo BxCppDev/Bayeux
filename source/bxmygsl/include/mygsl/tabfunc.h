@@ -17,14 +17,10 @@
 #define __mygsl__tabfunc_h 1
 
 #include <iostream>
-#include <sstream>
 #include <map>
 #include <string>
-#include <stdexcept>
-#include <limits>
 
 #include <mygsl/unary_eval.h>
-//#include <datatools/unary_eval.h>
 
 #include <gsl/gsl_interp.h>
 #include <gsl/gsl_spline.h>

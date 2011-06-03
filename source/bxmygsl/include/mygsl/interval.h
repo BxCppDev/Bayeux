@@ -30,11 +30,6 @@
 #define __mygsl__interval_h 1
 
 #include <iostream>
-#include <sstream>
-#include <stdexcept>
-#include <functional>
-#include <limits>
-#include <cmath>
 
 using namespace std;
 

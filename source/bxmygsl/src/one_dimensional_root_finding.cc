@@ -1,6 +1,17 @@
-// mygsl::one_dimensional_root_finding.cc
+// mygsl::one_dimensional_root_finding.cc 
 
 #include <mygsl/one_dimensional_root_finding.h>
+
+#include <algorithm>
+#include <iostream>
+#include <sstream>
+#include <stdexcept>
+#include <string>
+#include <vector>
+#include <cmath>
+
+#include <gsl/gsl_errno.h>
+#include <gsl/gsl_math.h>
 
 namespace mygsl {
   

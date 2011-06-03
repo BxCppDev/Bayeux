@@ -1,6 +1,7 @@
 // test_best_value.cxx
 
 #include <cstdlib>
+#include <cmath>
 #include <iostream>
 #include <fstream>
 #include <string>

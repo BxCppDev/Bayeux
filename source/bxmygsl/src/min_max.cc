@@ -1,6 +1,14 @@
-// mygsl::min_max.cc
+// mygsl::min_max.cc 
 
 #include <mygsl/min_max.h>
+
+#include <algorithm>
+#include <iostream>
+#include <sstream>
+#include <stdexcept>
+#include <string>
+#include <vector>
+#include <cmath>
 
 namespace mygsl {
 
@@ -27,12 +35,14 @@ namespace mygsl {
   min_max::min_max ()
   {
     reset ();
+    return;
   }
 
   void min_max::reset ()
   {
     __min = 0.0;
     __max = -1.0;
+    return;
   }
 
   void min_max::add (double value_)
@@ -53,6 +63,7 @@ namespace mygsl {
 	    __max = value_;
 	  }
       }    
+    return;
   }
 
 }
