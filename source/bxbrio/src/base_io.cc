@@ -3,7 +3,14 @@
  */
 
 #include <brio/detail/base_io.h>
+
 #include <boost/archive/codecvt_null.hpp>
+#include <boost/filesystem.hpp>
+
+#include <stdexcept>
+#include <sstream>
+
+#include <TFile.h>
 
 namespace brio {
 

@@ -26,12 +26,12 @@
 #include <boost/math/nonfinite_num_facets.hpp>
 //#endif
 
-#include <boost/filesystem.hpp>
-
 #include <datatools/utils/i_tree_dump.h>
 #include <brio/utils.h>
 
-#include <TFile.h>
+//#include <TFile.h>
+
+class TFile;
 
 namespace brio {
 

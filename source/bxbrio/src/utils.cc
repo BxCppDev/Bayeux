@@ -4,6 +4,14 @@
 
 #include <brio/utils.h>
 
+#include <cstdlib>
+#include <stdexcept>
+#include <iostream>
+#include <sstream>
+#include <string>
+
+#include <TTree.h>
+
 namespace brio {
 
   using namespace std;

@@ -1,10 +1,17 @@
 // -*- mode: c++ ; -*- 
 /* reader.cc 
- */
+ */ 
 
 #include <boost/filesystem.hpp>
+#include <cstdlib>
 
 #include <brio/reader.h>
+
+#include <TFile.h> 
+#include <TKey.h>
+
+#include <datatools/utils/utils.h>
+//#include <brio/utils.h>
 
 namespace brio {
 

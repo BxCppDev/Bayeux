@@ -16,19 +16,16 @@
 #ifndef __brio__utils_h
 #define __brio__utils_h 1
 
-#include <cstdlib>
-#include <stdexcept>
-#include <iostream>
-#include <sstream>
-#include <string>
 #include <vector>
 #include <map>
 
 #include <boost/cstdint.hpp>
 
-#include <TTree.h>
+//#include <TTree.h>
 
 #include <brio/detail/brio_record.h>
+
+class TTree;
 
 namespace brio {
 

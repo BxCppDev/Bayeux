@@ -17,13 +17,11 @@
 #ifndef __brio__reader_h
 #define __brio__reader_h 1
 
-#include <cstdlib>
-#include <stdexcept>
 #include <iostream>
+#include <stdexcept>
 #include <sstream>
 #include <string>
 
-#include <boost/filesystem.hpp>
 #include <boost/iostreams/stream.hpp>
 #include <boost/iostreams/device/array.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -31,14 +29,9 @@
 //#include <boost/archive/portable_binary_iarchive.hpp>
 #include <boost/qpba/quasi_portable_binary_iarchive.hpp>
 
-#include <datatools/utils/utils.h>
-#include <datatools/serialization/i_serializable.h>
-
-#include <TFile.h>
-#include <TKey.h>
-
-#include <brio/utils.h>
 #include <brio/detail/base_io.h>
+
+#include <TTree.h>
 
 namespace brio {
 

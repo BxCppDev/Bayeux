@@ -17,7 +17,6 @@
 #ifndef __brio__writer_h
 #define __brio__writer_h 1
 
-#include <cstdlib>
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
@@ -31,13 +30,10 @@
 //#include <boost/archive/portable_binary_oarchive.hpp>
 #include <boost/qpba/quasi_portable_binary_oarchive.hpp>
 
-#include <datatools/utils/utils.h>
-#include <datatools/serialization/i_serializable.h>
-
-#include <TFile.h>
-
-#include <brio/utils.h>
+//#include <brio/utils.h>
 #include <brio/detail/base_io.h>
+
+#include <TTree.h>
 
 namespace brio {
 

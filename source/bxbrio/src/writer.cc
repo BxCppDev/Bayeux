@@ -3,8 +3,15 @@
  */ 
 
 #include <boost/filesystem.hpp>
+#include <cstdlib>
+
+#include <TTree.h>
+#include <TFile.h>
 
 #include <brio/writer.h>
+
+#include <datatools/utils/utils.h>
+//#include <datatools/serialization/i_serializable.h>
 
 namespace brio {
 
