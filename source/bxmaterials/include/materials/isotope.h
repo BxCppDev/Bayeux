@@ -13,7 +13,6 @@
 
 #include <datatools/utils/properties.h>
 #include <datatools/utils/i_tree_dump.h>
-#include <materials/ch_symbol.h>
 
 namespace mat {
   

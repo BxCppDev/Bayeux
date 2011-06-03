@@ -16,13 +16,9 @@
 #ifndef __materials__manager_h
 #define __materials__manager_h 1
 
-#include <cstdlib>
-#include <stdexcept>
-#include <iostream>
-#include <sstream>
-#include <fstream>
+#include <ostream>
 #include <string>
-#include <map>
+#include <list>
 
 #include <materials/factory.h>
 #include <datatools/utils/multi_properties.h>

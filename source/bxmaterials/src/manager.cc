@@ -4,6 +4,16 @@
 
 #include <materials/manager.h>
 
+#include <stdexcept>
+#include <sstream>
+
+// #include <cstdlib>
+// #include <iostream>
+// #include <fstream>
+// #include <string>
+// #include <map>
+
+
 namespace mat {
 
   bool manager::is_debug () const

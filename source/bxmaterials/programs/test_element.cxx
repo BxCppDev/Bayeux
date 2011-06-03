@@ -6,8 +6,8 @@
 #include <string>
 #include <exception>
 
+#include <materials/isotope.h>
 #include <materials/element.h>
-
 
 using namespace std;
 

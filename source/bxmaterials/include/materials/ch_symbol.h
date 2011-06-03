@@ -27,9 +27,6 @@
 #define __materials__ch_symbol_h 1
 
 #include <string>
-#include <iostream>
-#include <sstream>
-#include <stdexcept>
 
 using namespace std;
 

@@ -3,7 +3,18 @@
  */
 
 #include <materials/material.h>
+
+#include <cstdlib>
+#include <stdexcept>
+#include <sstream>
+
+#include <vector>
+
 #include <datatools/utils/clhep_units.h>
+#include <datatools/utils/units.h>
+
+#include <materials/isotope.h>
+#include <materials/element.h>
 
 namespace mat {
 

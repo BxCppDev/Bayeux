@@ -4,6 +4,10 @@
 
 #include <materials/ch_symbol.h>
 
+#include <iostream>
+#include <sstream>
+#include <stdexcept>
+
 namespace mat {
 
   using namespace std;

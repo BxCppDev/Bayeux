@@ -20,23 +20,12 @@
 #ifndef __materials__material_h
 #define __materials__material_h 1
 
-#include <cstdlib>
-#include <stdexcept>
 #include <iostream>
-#include <sstream>
 #include <string>
-
-#include <vector>
 #include <map>
 
 #include <datatools/utils/i_tree_dump.h>
 #include <datatools/utils/properties.h>
-#include <datatools/utils/units.h>
-
-#include <materials/isotope.h>
-#include <materials/element.h>
-#include <materials/isotope.h>
-
 
 namespace mat {
   
@@ -44,6 +33,7 @@ namespace mat {
   using namespace datatools::utils;
   
   class material;
+  class element;
   
   struct compound_entry
   {

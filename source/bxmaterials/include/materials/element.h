@@ -19,20 +19,20 @@
 #ifndef __materials__element_h
 #define __materials__element_h 1
 
+#include <string>
 #include <vector>
 #include <map>
 
 #include <datatools/utils/properties.h>
 #include <datatools/utils/i_tree_dump.h>
 
-#include <materials/isotope.h>
-#include <materials/ch_symbol.h>
-
 namespace mat {
 
   using namespace std;
   using namespace datatools::utils;
   
+  class isotope;
+
   struct iso_entry
   {
     bool               owned;

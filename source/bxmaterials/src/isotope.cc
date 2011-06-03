@@ -2,9 +2,12 @@
 /* isotope.cc
  */
 
-#include <fstream>
-
 #include <materials/isotope.h>
+
+#include <fstream>
+#include <stdexcept>
+#include <sstream>
+#include <materials/ch_symbol.h>
 
 double endfline_to_double (const string & endfline_);
 double ame3line_to_double (const string & ame3_line_);

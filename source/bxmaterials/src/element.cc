@@ -2,9 +2,14 @@
 /* element.cc
  */
 
+#include <materials/element.h>
+
+#include <stdexcept>
+#include <sstream>
 #include <fstream>
 
-#include <materials/element.h>
+#include <materials/isotope.h>
+#include <materials/ch_symbol.h>
 
 namespace mat {
 

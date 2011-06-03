@@ -4,6 +4,7 @@
 
 #include <materials/factory.h>
 #include <datatools/utils/clhep_units.h>
+#include <datatools/utils/units.h>
 
 namespace mat {
 
