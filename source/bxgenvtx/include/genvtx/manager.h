@@ -16,19 +16,11 @@
 #ifndef __genvtx__manager_h
 #define __genvtx__manager_h 1
 
-#include <cstdlib>
-#include <stdexcept>
-#include <iostream>
-#include <iomanip>
-#include <sstream>
-#include <fstream>
 #include <string>
-#include <map>
-#include <algorithm>
 
 #include <mygsl/rng.h>
+
 #include <datatools/utils/properties.h>
-#include <geomtools/utils.h>
 #include <genvtx/i_vertex_generator.h>
 
 namespace genvtx {

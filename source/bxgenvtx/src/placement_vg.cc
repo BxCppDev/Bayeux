@@ -4,6 +4,13 @@
 
 #include <genvtx/placement_vg.h>
 
+#include <cstdlib>
+#include <stdexcept>
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include <string>
+
 namespace genvtx {
 
   

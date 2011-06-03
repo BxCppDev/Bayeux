@@ -16,19 +16,8 @@
 #ifndef __genvtx__from_file_vg_h
 #define __genvtx__from_file_vg_h 1
 
-#include <cstdlib>
-#include <stdexcept>
-#include <iostream>
-#include <iomanip>
-#include <sstream>
 #include <fstream>
 #include <string>
-#include <list>
-
-#include <boost/filesystem.hpp>
-
-#include <datatools/utils/utils.h>
-#include <datatools/utils/units.h>
 
 #include <genvtx/i_vertex_generator.h>
 

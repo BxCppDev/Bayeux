@@ -1,8 +1,17 @@
 // -*- mode: c++ ; -*- 
-/* cylinder_vg.cc
+/* cylinder_vg.cc 
  */
 
 #include <genvtx/cylinder_vg.h>
+
+#include <stdexcept>
+#include <sstream>
+// #include <cstdlib>
+// #include <iomanip>
+// #include <fstream>
+// #include <string>
+
+#include <datatools/utils/units.h>
 
 namespace genvtx {
 

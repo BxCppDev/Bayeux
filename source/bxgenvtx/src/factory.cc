@@ -4,8 +4,12 @@
 
 #include <genvtx/factory.h>
 
-namespace genvtx {
+#include <cstdlib>
+#include <stdexcept>
+#include <iostream>
 
+namespace genvtx {
+ 
   using namespace std;
 
   bool factory::g_devel = false;

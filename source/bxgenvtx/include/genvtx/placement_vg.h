@@ -16,13 +16,6 @@
 #ifndef __genvtx__placement_vg_h
 #define __genvtx__placement_vg_h 1
 
-#include <cstdlib>
-#include <stdexcept>
-#include <iostream>
-#include <sstream>
-#include <fstream>
-#include <string>
-
 #include <genvtx/i_vertex_generator.h>
 #include <geomtools/placement.h>
 

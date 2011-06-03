@@ -4,6 +4,12 @@
 
 #include <genvtx/spot_vertex_generator.h>
 
+#include <stdexcept>
+
+#include <cstdlib>
+
+#include <datatools/utils/units.h>
+
 namespace genvtx {
 
   const geomtools::vector_3d &  spot_vertex_generator::get_spot () const

@@ -16,11 +16,6 @@
 #ifndef __genvtx__spot_vertex_generator_h
 #define __genvtx__spot_vertex_generator_h 1
 
-#include <cstdlib>
-#include <stdexcept>
-
-#include <datatools/utils/units.h>
-
 #include <genvtx/i_vertex_generator.h>
 
 namespace genvtx {

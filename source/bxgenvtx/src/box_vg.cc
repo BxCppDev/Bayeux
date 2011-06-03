@@ -4,6 +4,15 @@
 
 #include <genvtx/box_vg.h>
 
+#include <stdexcept>
+#include <sstream>
+// #include <cstdlib>
+// #include <iomanip>
+// #include <fstream>
+// #include <string>
+
+#include <datatools/utils/units.h>
+
 namespace genvtx {
 
   bool box_vg::g_debug = false;

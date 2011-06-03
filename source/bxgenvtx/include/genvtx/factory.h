@@ -22,9 +22,6 @@
 #ifndef __genvtx__factory_h
 #define __genvtx__factory_h 1
 
-#include <cstdlib>
-#include <stdexcept>
-#include <iostream>
 #include <string>
 
 #include <genvtx/i_vertex_generator.h>

@@ -4,6 +4,18 @@
 
 #include <genvtx/from_file_vg.h>
 
+#include <cstdlib>
+#include <stdexcept>
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+#include <list>
+
+#include <boost/filesystem.hpp>
+
+#include <datatools/utils/utils.h>
+#include <datatools/utils/units.h>
+
 namespace genvtx {
 
   using namespace std;

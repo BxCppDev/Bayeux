@@ -5,7 +5,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <exception>
+#include <stdexcept>
 
 #include <datatools/utils/properties.h>
 #include <mygsl/rng.h>

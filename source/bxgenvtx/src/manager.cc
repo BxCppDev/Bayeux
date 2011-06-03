@@ -4,6 +4,17 @@
 
 #include <genvtx/manager.h>
 
+#include <cstdlib>
+#include <stdexcept>
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+#include <fstream>
+#include <map>
+#include <algorithm>
+
+#include <geomtools/utils.h>
+
 namespace genvtx {
 
   bool manager::is_debug () const

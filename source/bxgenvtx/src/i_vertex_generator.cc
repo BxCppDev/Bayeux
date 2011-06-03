@@ -4,6 +4,9 @@
 
 #include <genvtx/i_vertex_generator.h>
 
+#include <stdexcept>
+#include <sstream>
+
 namespace genvtx {
 
   using namespace std;

@@ -17,18 +17,12 @@
 #ifndef __genvtx__box_vg_h
 #define __genvtx__box_vg_h 1
 
-#include <cstdlib>
-#include <stdexcept>
 #include <iostream>
-#include <iomanip>
-#include <sstream>
-#include <fstream>
-#include <string>
 
 #include <genvtx/i_vertex_generator.h>
 
 #include <geomtools/box.h>
-#include <datatools/utils/units.h>
+//#include <datatools/utils/units.h>
 
 namespace genvtx {
   
