@@ -4,9 +4,14 @@
 
 #include <geomtools/geom_id.h>
 
+#include <stdexcept>
+#include <sstream>
+
 namespace geomtools {
+
  
-  const std::string geom_id::SERIAL_TAG = "__GEOM_ID__";
+  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (geom_id,"geomtools::geom_id")
+  //const std::string geom_id::SERIAL_TAG = "__GEOM_ID__";
 
   /*
   const string geom_id::GEOM_ID_PREFIX            = "geom_id.";
@@ -25,11 +30,6 @@ namespace geomtools {
    const char geom_id::IO_TYPE_INVALID      = '?';
    const char geom_id::IO_ADDRESS_INVALID   = '?';
    const char geom_id::IO_ID_CLOSE          = ']';
-
-  const std::string & geom_id::get_serial_tag () const
-  {
-    return geom_id::SERIAL_TAG;
-  }
 
   bool geom_id::is_type (uint32_t type_) const
   {

@@ -16,25 +16,17 @@
 #ifndef __geomtools__i_model_h
 #define __geomtools__i_model_h 1
 
-#include <cstdlib>
-#include <cmath>
-#include <stdexcept>
 #include <iostream>
-#include <iomanip>
-#include <sstream>
 #include <string>
-#include <map>
 
-#include <datatools/utils/properties.h>
+#include <boost/scoped_ptr.hpp>
+
 #include <datatools/utils/i_tree_dump.h>
+#include <datatools/utils/properties.h>
 
 #include <geomtools/logical_volume.h>
 #include <geomtools/detail/model_tools.h>
 
-#include <geomtools/sensitive.h>
-#include <geomtools/material.h>
-#include <geomtools/visibility.h>
-#include <geomtools/mapping_utils.h>
 
 namespace geomtools {
   

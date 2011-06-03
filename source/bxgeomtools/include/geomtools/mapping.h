@@ -19,18 +19,21 @@
 #define __geomtools__mapping_h 1
 
 #include <string>
-#include <stdexcept>
 #include <list>
 
 #include <datatools/utils/ioutils.h>
 
 #include <geomtools/utils.h>
 #include <geomtools/geom_map.h>
-#include <geomtools/physical_volume.h>
 
 namespace geomtools {
   
   using namespace std;
+
+  class model_factory;
+  class placement;
+  class logical_volume;
+  class geom_id;
 
   class mapping : public geom_map
   {

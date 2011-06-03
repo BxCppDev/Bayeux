@@ -4,6 +4,13 @@
 
 #include <geomtools/geom_map.h>
 
+#include <geomtools/id_mgr.h>
+
+//#include <geomtools/id_mgr.h>
+//#include <geomtools/placement.h>
+//#include <geomtools/model_factory.h>
+//#include <datatools/utils/properties.h>
+
 namespace geomtools {
 
   const geom_info_dict_t & geom_map::_get_geom_infos () const
@@ -49,11 +56,13 @@ namespace geomtools {
   {
     __invalid_geom_id.invalidate ();
     __id_manager = 0;
+    return;
   }
 
   geom_map::~geom_map ()
   {
     __geom_infos.clear ();
+    return;
   }
   
   bool geom_map::has_id_manager () const
@@ -64,6 +73,7 @@ namespace geomtools {
   void geom_map::set_id_manager (const id_mgr & mgr_)
   {
     __id_manager = &mgr_;
+    return;
   }
 
   bool geom_map::validate_id (const geom_id & id_) const
@@ -101,7 +111,8 @@ namespace geomtools {
   {
     gid_.invalidate ();
     gid_ = geom_map::get_geom_id (world_position_, type_, tolerance_);
-  };
+    return;
+  }
  
   void geom_map::get_geom_id (const vector_3d & world_position_, 
 			      const string & category_,
@@ -110,7 +121,8 @@ namespace geomtools {
   {
     gid_.invalidate ();
     gid_ = geom_map::get_geom_id (world_position_, category_, tolerance_);
-  };
+    return;
+  }
  
   bool geom_map::check_inside (const geom_info & ginfo_,
 			       const vector_3d & world_position_,

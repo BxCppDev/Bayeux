@@ -16,17 +16,9 @@
 #ifndef __geomtools__id_mgr_h
 #define __geomtools__id_mgr_h 1
 
-#include <cstdlib>
-#include <stdexcept>
-#include <iostream>
-#include <iomanip>
-#include <sstream>
-#include <fstream>
 #include <string>
-#include <map>
 #include <vector>
-
-#include <boost/algorithm/string.hpp>
+#include <map>
 
 #include <datatools/utils/utils.h>
 #include <datatools/utils/multi_properties.h>
@@ -62,55 +54,24 @@ namespace geomtools {
 
     public:
 
-      bool is_valid () const
-      {
-	return type != geom_id::INVALID_TYPE;
-      }
+      bool is_valid () const;
 
-      const string & get_category () const
-      {
-	return category;
-      }
+      const string & get_category () const;
 
-      bool has_ancestor (const string & cat_) const
-      {
-	return (find (ancestors.begin (), ancestors.end(), cat_)
-		!= ancestors.end ());
-      }
+      bool has_ancestor (const string & cat_) const;
 
-      void add_ancestor (const string & cat_)
-      {
-	if (! has_ancestor (cat_))
-	  {
-	    ancestors.push_back (cat_);
-	  }
-      }
+      void add_ancestor (const string & cat_);
 
-      int get_type () const
-      {
-	return type;
-      }
+      int get_type () const;
 
-      const string & get_inherits () const
-      {
-	return inherits;
-      }
+      const string & get_inherits () const;
 
-      bool is_inherited () const
-      {
-	return ! inherits.empty ();
-      }
+      bool is_inherited () const;
 
-      bool is_extension () const
-      {
-	return ! extends.empty ();
-      }
+      bool is_extension () const;
 
-      const string & get_extends () const
-      {
-	return extends;
-      }
-
+      const string & get_extends () const;
+ 
       // ctor:
       category_info ();
 

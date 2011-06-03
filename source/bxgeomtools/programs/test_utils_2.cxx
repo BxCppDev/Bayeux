@@ -9,8 +9,8 @@
 #include <geomtools/utils.h>
 #include <geomtools/gnuplot_draw.h>
 #include <geomtools/gnuplot_i.h>
-#include <datatools/serialization/serialization.h>
 #include <geomtools/gnuplot_drawer.h>
+#include <geomtools/box.h>
 
 using namespace std;
 

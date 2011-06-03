@@ -16,23 +16,21 @@
 #ifndef __geomtools__physical_volume_h
 #define __geomtools__physical_volume_h 1
 
-#include <stdexcept>
 #include <iostream>
-#include <sstream>
 #include <string>
 #include <map>
 
 #include <datatools/utils/properties.h>
 #include <datatools/utils/i_tree_dump.h>
 
-#include <geomtools/logical_volume.h>
-#include <geomtools/i_placement.h>
-
 namespace geomtools {
 
   using namespace std;
   using namespace datatools::utils;
  
+  class i_placement;
+  class logical_volume;
+
   class physical_volume
     : public datatools::utils::i_tree_dumpable
   {

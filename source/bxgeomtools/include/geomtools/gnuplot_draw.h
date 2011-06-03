@@ -16,32 +16,31 @@
 #ifndef __geomtools__gnuplot_draw_h
 #define __geomtools__gnuplot_draw_h 1
 
-#include <cmath>
-#include <stdexcept>
 #include <iostream>
 
 #include <geomtools/utils.h>
-#include <geomtools/placement.h>
-#include <geomtools/box.h>
-#include <geomtools/cylinder.h>
-#include <geomtools/sphere.h>
-#include <geomtools/tube.h>
-#include <geomtools/line_3d.h>
-#include <geomtools/polyline_3d.h>
-#include <geomtools/rectangle.h>
-#include <geomtools/circle.h>
-#include <geomtools/disk.h>
-#include <geomtools/regular_polygon.h>
-#include <geomtools/polycone.h>
-#include <geomtools/polyhedra.h>
-#include <geomtools/tessellation.h>
-#include <geomtools/union_3d.h>
-#include <geomtools/subtraction_3d.h>
-#include <geomtools/intersection_3d.h>
-
-#include <geomtools/color.h>
 
 namespace geomtools {
+
+  class i_object_3d;
+  class i_placement;
+  class placement;
+  class box;
+  class cylinder;
+  class sphere;
+  class tube;
+  class line_3d;
+  class polyline_3d;
+  class rectangle;
+  class circle;
+  class disk;
+  class regular_polygon;
+  class polycone;
+  class polyhedra;
+  class tessellated_solid;
+  class union_3d;
+  class subtraction_3d;
+  class intersection_3d;
 
   class gnuplot_draw
   {
@@ -78,10 +77,7 @@ namespace geomtools {
 
     static void 
     basic_draw_point (std::ostream & out_, 
-		      double x_, double y_, double z_)
-    {
-      basic_draw_point (out_, x_, y_, z_, true);
-    }
+		      double x_, double y_, double z_);
 
     static void 
     basic_draw_point (std::ostream &, 
@@ -90,26 +86,14 @@ namespace geomtools {
 
     static void 
     basic_draw_point (std::ostream & out_, 
-		      const vector_3d & v_)
-    {
-      basic_draw_point (out_, v_, true);
-    }
+		      const vector_3d & v_);
 
     static void 
     basic_draw_facet3 (std::ostream & out_, 
 		       const vector_3d & p1_, 
 		       const vector_3d & p2_, 
 		       const vector_3d & p3_,
-		       double color_ = 1.0)
-    {
-      basic_draw_point_with_color (out_, p1_, color_, true);
-      basic_draw_point_with_color (out_, p2_, color_, true);
-      out_ << endl;
-      basic_draw_point_with_color (out_, p3_, color_, true);
-      basic_draw_point_with_color (out_, p3_, color_, true);
-      out_ << endl;
-      out_ << endl;
-    }
+		       double color_ = 1.0);
 
     static void 
     basic_draw_facet3 (std::ostream & out_, 
@@ -117,16 +101,7 @@ namespace geomtools {
 		       const vector_3d & p2_, 
 		       const vector_3d & p3_, 
 		       const vector_3d & p4_,
-		       double color_ = 1.0)
-    {
-      basic_draw_point_with_color (out_, p1_, color_);
-      basic_draw_point_with_color (out_, p2_, color_);
-      out_ << endl;
-      basic_draw_point_with_color (out_, p4_, color_);
-      basic_draw_point_with_color (out_, p3_, color_);
-      out_ << endl;
-      out_ << endl;
-    }
+		       double color_ = 1.0);
 
     static void 
     basic_draw_polyline (std::ostream &, 

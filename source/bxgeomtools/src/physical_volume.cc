@@ -4,6 +4,11 @@
 
 #include <geomtools/physical_volume.h>
 
+#include <stdexcept>
+#include <sstream>
+#include <geomtools/logical_volume.h>
+#include <geomtools/i_placement.h>
+
 namespace geomtools {
 
   bool physical_volume::is_locked () const

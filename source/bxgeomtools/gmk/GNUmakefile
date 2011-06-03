@@ -198,6 +198,7 @@ sources1+=simple_boxed_model.cc
 sources1+=simple_shaped_model.cc 
 sources1+=simple_world_model.cc 
 sources1+=stacked_model.cc 
+sources1+=i_boxed_model.cc 
 # sources1+=stacked_boxed_model.cc 
 sources1+=surrounded_boxed_model.cc 
 sources1+=test_model_1.cc 

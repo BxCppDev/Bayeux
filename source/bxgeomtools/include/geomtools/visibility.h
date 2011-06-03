@@ -18,13 +18,8 @@
 
 #ifndef __geomtools__visibility_h
 #define __geomtools__visibility_h 1
-
-#include <iostream>
-#include <iomanip>
 #include <string>
-#include <limits>
-#include <cmath>
-#include <list>
+#include <iostream>
 
 #include <datatools/utils/properties.h>
 

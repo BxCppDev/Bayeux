@@ -17,24 +17,24 @@
 #define __geomtools__gdml_export_h 1
 
 #include <cstdlib>
-#include <stdexcept>
 #include <iostream>
-#include <iomanip>
 #include <sstream>
 #include <string>
+#include <list>
 
 #include <datatools/utils/utils.h>
 #include <datatools/utils/properties.h>
 
-#include <geomtools/detail/model_tools.h>
 #include <geomtools/model_factory.h>
 #include <geomtools/gdml_writer.h>
-#include <geomtools/units.h>
-#include <geomtools/utils.h>
-#include <geomtools/material.h>
-#include <geomtools/physical_volume.h>
-#include <geomtools/placement.h>
-#include <geomtools/regular_linear_placement.h>
+
+// #include <geomtools/detail/model_tools.h>
+// #include <geomtools/units.h>
+// #include <geomtools/utils.h>
+// #include <geomtools/material.h>
+// #include <geomtools/physical_volume.h>
+// #include <geomtools/placement.h>
+// #include <geomtools/regular_linear_placement.h>
 
 namespace geomtools {
 
@@ -47,21 +47,6 @@ namespace geomtools {
     static const string DEFAULT_LENGTH_UNIT;
     static const string DEFAULT_ANGLE_UNIT;
     static const string DEFAULT_DENSITY_UNIT;
-
-  private:
-    bool __debug;
-    datatools::utils::properties __parameters;
-    gdml_writer           __writer;
-    const model_factory * __factory;
-    string       __length_unit;
-    string       __angle_unit;
-    string       __density_unit;
-    list<string> __solid_refs;
-    list<string> __volumes_refs;
-    const ostringstream * __external_materials_stream;
-
-    bool __support_replica;
-    bool __support_auxiliary;
 
   public:
 
@@ -107,10 +92,23 @@ namespace geomtools {
 			       const string & model_name_);
 
   public:
+
     void attach_external_materials (const ostringstream & oss_);
 
-  public:
+  private:
+    bool __debug;
+    datatools::utils::properties __parameters;
+    gdml_writer           __writer;
+    const model_factory * __factory;
+    string       __length_unit;
+    string       __angle_unit;
+    string       __density_unit;
+    list<string> __solid_refs;
+    list<string> __volumes_refs;
+    const ostringstream * __external_materials_stream;
 
+    bool __support_replica;
+    bool __support_auxiliary;
 
   };
 

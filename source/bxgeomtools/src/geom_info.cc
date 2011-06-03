@@ -4,6 +4,8 @@
 
 #include <geomtools/geom_info.h>
 
+#include <geomtools/logical_volume.h>
+
 namespace geomtools {
 
   using namespace std;
@@ -11,65 +13,78 @@ namespace geomtools {
   const datatools::utils::properties & 
   geom_info::get_properties () const
   {
-    return __properties;
+    return properties_;
   }
 
   datatools::utils::properties & 
   geom_info::get_properties ()
   {
-    return __properties;
+    return properties_;
   }
   
   const placement & geom_info::get_world_placement () const
   {
-    return __world_placement;
+    return world_placement_;
   }
   
   const logical_volume & geom_info::get_logical () const
   {
-    return *__logical;
+    return *logical_;
   }
   
   const geom_id & geom_info::get_id () const
   {
-    return __id;
+    return gid_;
+  }
+ 
+  const geom_id & geom_info::get_gid () const
+  {
+    return gid_;
+  }
+ 
+  const geom_id & geom_info::get_geom_id () const
+  {
+    return gid_;
   }
   
   bool geom_info::has_logical () const
   {
-    return __logical != 0;
+    return logical_ != 0;
   }
      
   geom_info::geom_info ()
   {
-    __id.invalidate ();
-    __world_placement.set (0., 0., 0., 0., 0., 0.);
-    __logical = 0;
+    gid_.invalidate ();
+    world_placement_.set (0., 0., 0., 0., 0., 0.);
+    logical_ = 0;
+    return;
   }
    
-  geom_info::geom_info (const geom_id & id_)
+  geom_info::geom_info (const geom_id & a_id)
   {
-    __id = id_;
-    __world_placement.set (0., 0., 0., 0., 0., 0.);
-    __logical = 0;
+    gid_ = a_id;
+    world_placement_.set (0., 0., 0., 0., 0., 0.);
+    logical_ = 0;
+    return;
   }
     
-  geom_info::geom_info (const geom_id & id_, 
-			const placement & wp_,
-			const logical_volume & l_)
+  geom_info::geom_info (const geom_id & a_id, 
+			const placement & a_world_placement,
+			const logical_volume & a_logical_volume)
   {
-    __id = id_;
-    __world_placement = wp_;
-    __logical = &l_;
+    gid_ = a_id;
+    world_placement_ = a_world_placement;
+    logical_ = &a_logical_volume;
+    return;
   }
 
 
-  ostream & operator<< (ostream & out_, const geom_info & gi_)
+  ostream & operator<< (ostream & a_out, const geom_info & a_geom_info)
   {
-    out_ << "<" << gi_.__id << " @ "
-	 << "{" << gi_.__world_placement << "}"
-	 << " : " << gi_.__logical << " >";
-    return out_;
+    a_out << "<" << a_geom_info.gid_ << " @ "
+	 << "{" << a_geom_info.world_placement_ << "}"
+	 << " : " << a_geom_info.logical_ << " >";
+    return a_out;
   }
 
 } // end of namespace geomtools

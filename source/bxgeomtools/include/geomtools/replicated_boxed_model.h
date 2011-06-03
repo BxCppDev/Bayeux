@@ -16,20 +16,20 @@
 #ifndef __geomtools__replicated_boxed_model_h
 #define __geomtools__replicated_boxed_model_h 1
 
-#include <iostream>
 #include <string> 
-#include <exception>
-#include <limits> 
+#include <iostream>
 
 #include <geomtools/i_boxed_model.h>
-#include <geomtools/box.h>
-#include <geomtools/physical_volume.h>
 #include <geomtools/regular_linear_placement.h>
-#include <geomtools/visibility.h>
+#include <geomtools/physical_volume.h>
+#include <geomtools/box.h>
+
 
 namespace geomtools {
 
   using namespace std;
+
+  class box;
 
   // define a geometry model with a single box: 
   class replicated_boxed_model : public geomtools::i_boxed_model

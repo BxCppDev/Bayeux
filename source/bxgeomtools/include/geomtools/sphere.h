@@ -16,11 +16,9 @@
 #ifndef __geomtools__sphere_h
 #define __geomtools__sphere_h 1
 
-#include <cmath>
-#include <stdexcept>
-#include <iostream>
-#include <sstream>
 #include <string>
+#include <iostream>
+
 
 #include <geomtools/i_shape_3d.h>
 #include <geomtools/i_stackable.h>

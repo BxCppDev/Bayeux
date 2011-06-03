@@ -17,8 +17,9 @@
 #ifndef __geomtools__geom_info_h
 #define __geomtools__geom_info_h 1
 
-#include <datatools/utils/properties.h>
+#include <iostream>
 
+#include <datatools/utils/properties.h>
 #include <geomtools/geom_id.h>
 #include <geomtools/placement.h>
 #include <geomtools/logical_volume.h>
@@ -27,14 +28,11 @@ namespace geomtools {
 
   using namespace std;
 
+
+    class logical_volume;
+
     class geom_info
     {
-    private:
-
-      datatools::utils::properties __properties;
-      geom_id                      __id;
-      placement                    __world_placement;
-      const logical_volume *       __logical;
 
     public:
 
@@ -54,11 +52,22 @@ namespace geomtools {
 
       const geom_id & get_id () const;
 
+      const geom_id & get_gid () const;
+
+      const geom_id & get_geom_id () const;
+
       const datatools::utils::properties & get_properties () const;
 
       datatools::utils::properties & get_properties ();
 
       friend ostream & operator<< (ostream &, const geom_info &);
+
+    private:
+
+      datatools::utils::properties properties_;
+      geom_id                      gid_;
+      placement                    world_placement_;
+      const logical_volume *       logical_;
 
   };
 

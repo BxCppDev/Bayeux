@@ -22,20 +22,13 @@
 #ifndef __geomtools__geom_id_h
 #define __geomtools__geom_id_h 1
 
-#include <cstdlib>
-#include <stdexcept>
+
 #include <iostream>
-#include <sstream>
-#include <string>
 #include <vector>
-#include <list>
-#include <algorithm>
 
 #include <boost/cstdint.hpp>
 
 #include <datatools/serialization/i_serializable.h>
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/nvp.hpp>
 
 namespace geomtools {
 
@@ -45,7 +38,6 @@ namespace geomtools {
     public datatools::serialization::i_serializable
   {
   public:
-    static const string SERIAL_TAG;
     /*
     static const string GEOM_ID_PREFIX;
     static const string GEOM_ID_CATEGORY_PROPERTY;
@@ -63,10 +55,6 @@ namespace geomtools {
     static const char IO_TYPE_INVALID;
     static const char IO_ADDRESS_INVALID;
     static const char IO_ID_CLOSE;
-
-  private:  
-    uint32_t         __type;
-    vector<uint32_t> __address;
 
   public: 
 
@@ -146,26 +134,27 @@ namespace geomtools {
 
     friend istream & operator>> (istream & in_, geom_id & id_);
 
-    virtual const string & get_serial_tag () const;
-
     void make (int type_, int depth_);
     
     static void make (geom_id & id_, int type_, int depth_);
 
-  private:
-    
-    friend class boost::serialization::access; 
-    template<class Archive>
-    void serialize (Archive            & ar_ , 
-		    const unsigned int   version_)
-    {
-      ar_ & boost::serialization::make_nvp ("type", __type);
-      ar_ & boost::serialization::make_nvp ("address", __address);
-    }
-
   public:
     
     static bool sub_id_comp (uint32_t si1_, uint32_t si2_);
+
+    /* interface i_serializable */
+    DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
+
+  private:
+    
+    //! Boost.Serialization hook.
+    friend class boost::serialization::access; 
+    BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
+
+  private: 
+ 
+    uint32_t         __type;
+    vector<uint32_t> __address;
 
   };
 

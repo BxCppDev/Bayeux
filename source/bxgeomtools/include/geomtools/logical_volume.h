@@ -16,11 +16,9 @@
 #ifndef __geomtools__logical_volume_h
 #define __geomtools__logical_volume_h 1
 
-#include <stdexcept>
-#include <iostream>
-#include <sstream>
 #include <string>
 #include <map>
+
 
 #include <datatools/utils/properties.h>
 #include <datatools/utils/i_tree_dump.h>

@@ -4,6 +4,18 @@
 
 #include <geomtools/regular_polygon.h>
 
+#include <cstdlib>
+#include <cmath>
+#include <stdexcept>
+#include <iostream>
+#include <sstream>
+#include <string>
+
+#include <gsl/gsl_poly.h>
+
+#include <geomtools/i_shape_2d.h>
+#include <geomtools/utils.h>
+
 namespace geomtools {
 
   using namespace std;

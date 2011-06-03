@@ -17,7 +17,6 @@
 #define __geomtools__multiple_placement_h 1
 
 #include <iostream>
-#include <iomanip>
 #include <string>
 #include <vector>
 

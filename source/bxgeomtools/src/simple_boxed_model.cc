@@ -4,6 +4,16 @@
 
 #include <geomtools/simple_boxed_model.h>
 
+#include <iostream>
+#include <string> 
+#include <exception>
+#include <limits> 
+
+#include <datatools/utils/units.h>
+// #include <geomtools/visibility.h>
+// #include <geomtools/material.h>
+// #include <geomtools/sensitive.h>
+
 namespace geomtools {
 
   using namespace std;

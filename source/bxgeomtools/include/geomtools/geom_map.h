@@ -28,14 +28,9 @@
 #include <list>
 #include <algorithm>
 
+#include <geomtools/utils.h>
 #include <boost/cstdint.hpp>
 
-#include <datatools/utils/properties.h>
-
-#include <geomtools/utils.h>
-#include <geomtools/id_mgr.h>
-#include <geomtools/placement.h>
-#include <geomtools/model_factory.h>
 #include <geomtools/i_locator.h>
 #include <geomtools/geom_id.h>
 #include <geomtools/geom_info.h>
@@ -44,13 +39,11 @@ namespace geomtools {
 
   using namespace std;
 
+  class id_mgr;
+  class model_factory;
+
   class geom_map : public i_locator
   {
-  private:  
-
-    geom_id          __invalid_geom_id; //! value of a invalid geometry ID
-    const id_mgr *   __id_manager;      //! the ID manager that knows about geometry categories and their relationship
-    geom_info_dict_t __geom_infos;      //! the dictionary of geometry informations addressed through IDs
     
   protected:
     
@@ -110,6 +103,12 @@ namespace geomtools {
     static bool check_inside (const geom_info & ginfo_,
 			      const vector_3d & world_position_,
 			      double tolerance_);
+
+  private:  
+
+    geom_id          __invalid_geom_id; //! value of a invalid geometry ID
+    const id_mgr *   __id_manager;      //! the ID manager that knows about geometry categories and their relationship
+    geom_info_dict_t __geom_infos;      //! the dictionary of geometry informations addressed through IDs
 
   };
 

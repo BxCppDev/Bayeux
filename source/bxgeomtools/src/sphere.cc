@@ -4,6 +4,10 @@
 
 #include <geomtools/sphere.h>
 
+#include <cmath>
+#include <stdexcept>
+#include <sstream>
+
 namespace geomtools {
 
   const std::string sphere::SPHERE_LABEL = "sphere";

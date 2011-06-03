@@ -18,21 +18,11 @@
 #ifndef __geomtools__polyhedra_h
 #define __geomtools__polyhedra_h 1
 
-#include <cmath>
-#include <stdexcept>
 #include <iostream>
-#include <iomanip>
-#include <sstream>
 #include <string>
-#include <vector>
 #include <map>
-#include <fstream>
-
-#include <datatools/utils/utils.h>
-#include <datatools/utils/units.h>
 
 #include <geomtools/i_shape_3d.h>
-#include <geomtools/regular_polygon.h>
 #include <geomtools/i_stackable.h>
 
 namespace geomtools {

@@ -4,6 +4,9 @@
 
 #include <geomtools/subtraction_3d.h>
 
+#include <stdexcept>
+#include <sstream>
+
 namespace geomtools {
 
   const std::string subtraction_3d::SUBTRACTION_3D_LABEL = "subtraction_3d";

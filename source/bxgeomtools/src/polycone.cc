@@ -4,6 +4,20 @@
 
 #include <geomtools/polycone.h>
 
+#include <cmath>
+#include <stdexcept>
+#include <iomanip>
+#include <sstream>
+#include <vector>
+#include <fstream>
+
+#include <datatools/utils/utils.h>
+#include <datatools/utils/units.h>
+
+#include <mygsl/tabfunc.h>
+#include <mygsl/numerical_differentiation.h>
+#include <mygsl/interval.h>
+
 namespace geomtools {
  
   using namespace std;

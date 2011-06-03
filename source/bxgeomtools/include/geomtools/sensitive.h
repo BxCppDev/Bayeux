@@ -17,12 +17,7 @@
 #ifndef __geomtools__sensitive_h
 #define __geomtools__sensitive_h 1
 
-#include <iostream>
-#include <iomanip>
 #include <string>
-#include <limits>
-#include <cmath>
-#include <list>
 
 #include <datatools/utils/properties.h>
 

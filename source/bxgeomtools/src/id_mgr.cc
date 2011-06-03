@@ -4,6 +4,18 @@
 
 #include <geomtools/id_mgr.h>
 
+#include <stdexcept>
+#include <sstream>
+
+#include <cstdlib>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <map>
+#include <vector>
+
+#include <boost/algorithm/string.hpp>
+
 namespace geomtools {
 
   using namespace std;
@@ -13,6 +25,56 @@ namespace geomtools {
 
   bool id_mgr::g_devel = false;
 
+  bool id_mgr::category_info::is_valid () const
+  {
+    return type != geom_id::INVALID_TYPE;
+  }
+
+  const string & id_mgr::category_info::get_category () const
+  {
+    return category;
+  }
+
+  bool id_mgr::category_info::has_ancestor (const string & cat_) const
+  {
+    return (find (ancestors.begin (), ancestors.end(), cat_)
+	    != ancestors.end ());
+  }
+
+  void id_mgr::category_info::add_ancestor (const string & cat_)
+  {
+    if (! has_ancestor (cat_))
+      {
+	ancestors.push_back (cat_);
+      }
+    return;
+  }
+
+  const string & id_mgr::category_info::get_inherits () const
+  {
+    return inherits;
+  }
+
+  bool id_mgr::category_info::is_inherited () const
+  {
+    return ! inherits.empty ();
+  }
+
+  bool id_mgr::category_info::is_extension () const
+  {
+    return ! extends.empty ();
+  }
+
+  const string & id_mgr::category_info::get_extends () const
+  {
+    return extends;
+  }
+
+  int id_mgr::category_info::get_type () const
+  {
+    return type;
+  }
+  
   id_mgr::category_info::category_info ()
   {
     category = "";
@@ -63,7 +125,7 @@ namespace geomtools {
 	    out_ << ' ' << '"' << ancestors[i] << '"';
 	  }
 	out_ << endl;
-     }
+      }
     if (! extends.empty ())
       {
 	out_ << indent << du::i_tree_dumpable::tag
@@ -74,7 +136,7 @@ namespace geomtools {
 	    out_ << ' ' << '"' << extends_by[i] << '"';
 	  }
 	out_ << endl;
-     }
+      }
     out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
 	 << "Addresses [" << get_depth () << "] :";
     for (int i = 0; i < addresses.size (); i++)
@@ -83,13 +145,13 @@ namespace geomtools {
       }
     out_ << endl;
     /*
-    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
-	 << "Nbits [" << nbits.size () << "] :";
-    for (int i = 0; i < nbits.size (); i++)
+      out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
+      << "Nbits [" << nbits.size () << "] :";
+      for (int i = 0; i < nbits.size (); i++)
       {
-	out_ << ' ' << '"' << nbits[i] << '"';
+      out_ << ' ' << '"' << nbits[i] << '"';
       }
-    out_ << endl;
+      out_ << endl;
     */
     return;
   }
@@ -106,20 +168,20 @@ namespace geomtools {
   }
 
   /*
-  void id_mgr::category_info::make (geom_id & id_,
-				    uint32_t si0_,
-				    uint32_t si1_,
-				    uint32_t si2_,
-				    uint32_t si3_,
-				    uint32_t si4_,
-				    uint32_t si5_,
-				    uint32_t si6_,
-				    uint32_t si7_,
-				    uint32_t si8_,
-				    uint32_t si9_) const
-  {
+    void id_mgr::category_info::make (geom_id & id_,
+    uint32_t si0_,
+    uint32_t si1_,
+    uint32_t si2_,
+    uint32_t si3_,
+    uint32_t si4_,
+    uint32_t si5_,
+    uint32_t si6_,
+    uint32_t si7_,
+    uint32_t si8_,
+    uint32_t si9_) const
+    {
 
-  }
+    }
   */
 
   /***************************************/
@@ -244,53 +306,53 @@ namespace geomtools {
 	      {
 		props.fetch ("addresses", cat_entry.addresses);
 		/*
-		props.fetch ("addresses", addresses_with_nbits);
-		for (int i = 0; i < addresses_with_nbits.size (); i++)
+		  props.fetch ("addresses", addresses_with_nbits);
+		  for (int i = 0; i < addresses_with_nbits.size (); i++)
 		  {
-		    const string & addr_nbits =  addresses_with_nbits [i];
-		    //  case 1 : addr_nbits = "toto"
-		    //  case 2 : addr_nbits = "toto[4]"
-		    int pos = addr_nbits.find ('[');
-		    if (pos == addr_nbits.npos)
-		      {
-			// case 1 :
-			cat_entry.addresses.push_back (addr_nbits);
-			cat_entry.nbits.push_back (32);
-		      }
-		    else
-		      {	
-			// case 2 :
-			string addr = addr_nbits.substr (0, pos);
-			// addr = "toto"
-			string tmp = addr_nbits.substr (pos + 1);
-			// tmp = "4]"
-			int pos2 = tmp.find (']');
-			if (pos2 == tmp.npos)
-			  {
-			    ostringstream message;
-			    message << "id_mgr::init_from: Invalid syntax for '" << addr_nbits << "' !";
-			    throw runtime_error (message.str ());
-			  }
-			// tmp2 = "4"
-			string tmp2 = tmp.substr (0, pos2);
-			istringstream iss (tmp2);
-			int nbits;
-			iss >> nbits;
-			if (! iss)
-			  {
-			    ostringstream message;
-			    message << "id_mgr::init_from: Invalid number of bits format for '" << tmp2 << "' !";
-			    throw runtime_error (message.str ());
-			  }
-			if (nbits < 1)
-			  {
-			    ostringstream message;
-			    message << "id_mgr::init_from: Invalid number of bits value (" << nbits << ") !";
-			    throw runtime_error (message.str ());
-			  }
-			cat_entry.addresses.push_back (addr);
-			cat_entry.nbits.push_back (nbits);
-		      }
+		  const string & addr_nbits =  addresses_with_nbits [i];
+		  //  case 1 : addr_nbits = "toto"
+		  //  case 2 : addr_nbits = "toto[4]"
+		  int pos = addr_nbits.find ('[');
+		  if (pos == addr_nbits.npos)
+		  {
+		  // case 1 :
+		  cat_entry.addresses.push_back (addr_nbits);
+		  cat_entry.nbits.push_back (32);
+		  }
+		  else
+		  {	
+		  // case 2 :
+		  string addr = addr_nbits.substr (0, pos);
+		  // addr = "toto"
+		  string tmp = addr_nbits.substr (pos + 1);
+		  // tmp = "4]"
+		  int pos2 = tmp.find (']');
+		  if (pos2 == tmp.npos)
+		  {
+		  ostringstream message;
+		  message << "id_mgr::init_from: Invalid syntax for '" << addr_nbits << "' !";
+		  throw runtime_error (message.str ());
+		  }
+		  // tmp2 = "4"
+		  string tmp2 = tmp.substr (0, pos2);
+		  istringstream iss (tmp2);
+		  int nbits;
+		  iss >> nbits;
+		  if (! iss)
+		  {
+		  ostringstream message;
+		  message << "id_mgr::init_from: Invalid number of bits format for '" << tmp2 << "' !";
+		  throw runtime_error (message.str ());
+		  }
+		  if (nbits < 1)
+		  {
+		  ostringstream message;
+		  message << "id_mgr::init_from: Invalid number of bits value (" << nbits << ") !";
+		  throw runtime_error (message.str ());
+		  }
+		  cat_entry.addresses.push_back (addr);
+		  cat_entry.nbits.push_back (nbits);
+		  }
 		  }// for
 		*/
 	      }
@@ -511,7 +573,7 @@ namespace geomtools {
 	ostringstream message;
 	message << "id_mgr::check_inheritance: "
 		<< "No type '" << type << "' !";
-	  throw runtime_error (message.str ());
+	throw runtime_error (message.str ());
       }
     const category_info & ci = *(found->second);
 
@@ -528,16 +590,16 @@ namespace geomtools {
     const category_info & mci = *(found->second);
     if (ci.has_ancestor (mci.get_category ())) return true;
     /*
-    if (ci.is_inherited ())
+      if (ci.is_inherited ())
       {
-	return (ci.get_inherits () == mci.get_category ());
+      return (ci.get_inherits () == mci.get_category ());
       }
-    else
+      else
       {
-	if (ci.is_extension ())
-	  {
-	    return (ci.get_extends () == mci.get_category ());
-	  }
+      if (ci.is_extension ())
+      {
+      return (ci.get_extends () == mci.get_category ());
+      }
       }
     */
     return false;
@@ -831,7 +893,7 @@ namespace geomtools {
 	throw runtime_error (message.str ());
       }
     if (devel) clog << "id_mgr::compute_id_from_info: "
-	 << "Category is `" << category << "'" << endl;
+		    << "Category is `" << category << "'" << endl;
 
     if (! has_category_info (category))
       {
@@ -868,8 +930,8 @@ namespace geomtools {
 	  }
       } // end of mother ID import.
     if (devel) clog << "id_mgr::compute_id_from_info: "
-	 << "Preliminary geometry ID after mother import is `"
-	 << id_ << "' (" << current_address_index << " addresses already set)" << endl;
+		    << "Preliminary geometry ID after mother import is `"
+		    << id_ << "' (" << current_address_index << " addresses already set)" << endl;
 
     size_t number_of_remaining_addresses = id_.get_depth () - current_address_index;
     if (devel) clog << "id_mgr::compute_id_from_info: "
@@ -966,7 +1028,7 @@ namespace geomtools {
 		    message << "id_mgr::compute_id_from_info: "
 			    << "Missing address at index `" << i << "' !";
 		    throw runtime_error (message.str ());
-		      }
+		  }
 	      }
 	    id_.set (i + current_address_index, address_value);
 	  }

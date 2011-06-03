@@ -16,23 +16,15 @@
 #ifndef __geomtools__model_factory_h
 #define __geomtools__model_factory_h 1
 
-#include <cstdlib>
-#include <stdexcept>
 #include <iostream>
-#include <iomanip>
-#include <sstream>
-#include <fstream>
 #include <string>
-#include <map>
 
-#include <datatools/utils/properties.h>
 #include <datatools/utils/multi_properties.h>
 #include <datatools/utils/i_tree_dump.h>
 
-#include <geomtools/detail/model_tools.h>
-#include <geomtools/i_model.h>
 #include <geomtools/logical_volume.h>
-#include <geomtools/visibility.h>
+#include <geomtools/i_model.h>
+
 
 namespace geomtools {
 

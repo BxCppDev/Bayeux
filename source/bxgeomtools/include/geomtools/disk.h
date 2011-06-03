@@ -16,15 +16,6 @@
 #ifndef __geomtools__disk_h
 #define __geomtools__disk_h 1
 
-#include <cstdlib>
-#include <cmath>
-#include <stdexcept>
-#include <iostream>
-#include <sstream>
-#include <string>
-
-#include <gsl/gsl_poly.h>
-
 #include <geomtools/i_shape_2d.h>
 
 namespace geomtools {
@@ -36,9 +27,6 @@ namespace geomtools {
     
   public:
     static const string DISK_LABEL;
-    
-  private: 
-    double __r;
 
   public: 
 
@@ -85,6 +73,10 @@ namespace geomtools {
 			    const string & title_ = "", 
 			    const string & indent_ = "", 
 			    bool inherit_= false) const;
+    
+  private: 
+
+    double __radius;
  
   };
 

@@ -4,6 +4,14 @@
 
 #include <geomtools/i_model.h>
 
+#include <stdexcept>
+#include <iostream> 
+
+#include <geomtools/sensitive.h>
+#include <geomtools/material.h>
+#include <geomtools/visibility.h>
+#include <geomtools/mapping_utils.h>
+
 namespace geomtools {
   
   using namespace std;  
@@ -462,6 +470,6 @@ namespace geomtools {
     return;
   }
 
-} // end of namespace snemo
+} // end of namespace geomtools
 
 // end of i_model.cc

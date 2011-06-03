@@ -14,13 +14,8 @@
 #ifndef __geomtools__address_set_h
 #define __geomtools__address_set_h 1
 
-#include <cstdlib>
-#include <stdexcept>
 #include <iostream>
-#include <sstream>
-#include <string>
 #include <set>
-#include <algorithm>
 
 #include <boost/cstdint.hpp>
 
@@ -36,23 +31,24 @@ namespace geomtools {
     enum mode_t
     {
       MODE_INVALID = -1,
-      MODE_NONE = 0,
-      MODE_ALL = 1,
-      MODE_RANGE = 2,
-      MODE_LIST = 3,
+      MODE_NONE    = 0,
+      MODE_ALL     = 1,
+      MODE_RANGE   = 2,
+      MODE_LIST    = 3,
       MODE_DEFAULT = MODE_NONE
     };
 
   private:
-    bool     __reverse;
-    int      __mode;
-    uint32_t __range_min;
-    uint32_t __range_max;
-    set<uint32_t> __addrs;
+
+    bool          reverse_;
+    int           mode_;
+    uint32_t      range_min_;
+    uint32_t      range_max_;
+    set<uint32_t> addrs_;
 
   private:
-    void __reset_range ();
-    void __reset_list ();
+    void reset_range_ ();
+    void reset_list_ ();
 
   public:
     bool is_valid () const;
@@ -66,20 +62,20 @@ namespace geomtools {
     void set_mode_none ();
     void set_mode_all ();
     void set_mode_range ();
-    void set_range (uint32_t min_, uint32_t max_);
-    void set_mode_range (uint32_t min_, uint32_t max_);
+    void set_range (uint32_t a_min, uint32_t a_max);
+    void set_mode_range (uint32_t a_min, uint32_t a_max);
     void set_mode_list ();
-    void add_to_list (uint32_t val_);
-    bool match (uint32_t val_) const;
+    void add_to_list (uint32_t a_value);
+    bool match (uint32_t a_value) const;
 
     void reset ();
 
     // ctor:
     address_set ();
 
-    friend ostream & operator<< (ostream & out_, const address_set & i_);
+    friend ostream & operator<< (ostream & a_out, const address_set & a_addset);
 
-    friend istream & operator>> (istream & in_, address_set & i_);
+    friend istream & operator>> (istream & a_in, address_set & a_addset);
 
   };
 

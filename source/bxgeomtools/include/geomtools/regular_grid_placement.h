@@ -35,7 +35,6 @@
 #include <iomanip>
 #include <string>
 
-#include <geomtools/utils.h>
 #include <geomtools/i_placement.h>
 #include <geomtools/placement.h>
 

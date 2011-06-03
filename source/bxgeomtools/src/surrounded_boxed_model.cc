@@ -4,6 +4,19 @@
 
 #include <geomtools/surrounded_boxed_model.h>
 
+#include <exception>
+#include <limits> 
+#include <list> 
+#include <map> 
+
+#include <mygsl/min_max.h>
+
+#include <datatools/utils/ioutils.h>
+#include <datatools/utils/units.h>
+
+//#include <geomtools/regular_linear_placement.h>
+#include <geomtools/visibility.h>
+
 namespace geomtools {
 
   using namespace std;

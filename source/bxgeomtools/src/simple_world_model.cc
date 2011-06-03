@@ -4,6 +4,10 @@
 
 #include <geomtools/simple_world_model.h>
 
+#include <exception>
+#include <geomtools/visibility.h>
+#include <datatools/utils/units.h>
+
 namespace geomtools {
 
   using namespace std;

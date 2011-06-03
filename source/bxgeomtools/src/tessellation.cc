@@ -4,6 +4,14 @@
 
 #include <geomtools/tessellation.h>
 
+#include <sstream>
+#include <fstream>
+#include <cstdlib>
+#include <cmath>
+#include <stdexcept>
+
+#include <geomtools/utils.h>
+
 namespace geomtools {
 
   /*** facet_vertex ***/

@@ -4,6 +4,17 @@
 
 #include <geomtools/cylindric_extrusion_boxed_model.h>
 
+#include <mygsl/min_max.h>
+
+#include <datatools/utils/units.h>
+
+#include <geomtools/i_boxed_model.h>
+#include <geomtools/physical_volume.h>
+#include <geomtools/placement.h>
+#include <geomtools/visibility.h>
+#include <geomtools/gnuplot_draw.h>
+
+
 namespace geomtools {
 
   using namespace std;

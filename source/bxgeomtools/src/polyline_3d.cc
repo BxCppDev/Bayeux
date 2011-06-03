@@ -7,14 +7,12 @@
 namespace geomtools {
 
   using namespace std;
+ 
+  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (polyline_3d,"geomtools::polyline_3d")
 
-  const string polyline_3d::SERIAL_TAG = "__geomtools::polyline_3d__";
+  //const string polyline_3d::SERIAL_TAG = "__geomtools::polyline_3d__";
+
   const string polyline_3d::POLYLINE_3D_LABEL = "line_3d";
-
-  const string & polyline_3d::get_serial_tag () const
-  {
-    return polyline_3d::SERIAL_TAG;
-  }
 
   string polyline_3d::get_shape_name () const
   {
@@ -31,21 +29,25 @@ namespace geomtools {
   polyline_3d::set_closed (bool closed_)
   {
     __closed = closed_;
+    return;
   }
 
   polyline_3d::polyline_3d ()
   {
     __closed = DEFAULT_CLOSED;
+    return;
   }
 
   polyline_3d::polyline_3d (bool closed_)
   {
     set_closed (closed_);
+    return;
   }
 
   polyline_3d::~polyline_3d ()
   {
     __points.clear ();
+    return;
   }
 
   void 
@@ -53,12 +55,14 @@ namespace geomtools {
   {
     __closed = DEFAULT_CLOSED;
     __points.clear ();    
+    return;
   }
       
   void 
   polyline_3d::add (const vector_3d & p_)
   {
     __points.push_back (p_);
+    return;
   }
 
   bool 
@@ -130,6 +134,7 @@ namespace geomtools {
       {
 	bpl_.push_back (get_vertex (i));
       }
+    return;
   }
 
   basic_polyline_3d 
@@ -141,7 +146,7 @@ namespace geomtools {
   }
 
   bool polyline_3d::is_on_curve (const vector_3d & position_, 
-			     double tolerance_) const
+				 double tolerance_) const
   {
     bool on_curve = false;
     throw runtime_error ("polyline_3d::is_on_curve: Not implemented yet !");

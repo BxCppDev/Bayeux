@@ -11,6 +11,7 @@
 #include <geomtools/model_factory.h>
 #include <geomtools/gnuplot_drawer.h>
 #include <geomtools/gdml_export.h>
+#include <geomtools/placement.h>
 
 using namespace std;
 

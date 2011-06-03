@@ -9,6 +9,7 @@
 
 #include <geomtools/box.h>
 #include <geomtools/physical_volume.h>
+#include <geomtools/logical_volume.h>
 #include <geomtools/placement.h>
 
 using namespace std;

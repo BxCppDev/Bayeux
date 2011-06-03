@@ -18,16 +18,11 @@
 
 #include <iostream>
 #include <string> 
-#include <exception>
 
 #include <geomtools/i_model.h>
-
-#include <geomtools/box.h>
 #include <geomtools/placement.h>
+#include <geomtools/box.h>
 #include <geomtools/physical_volume.h>
-#include <geomtools/visibility.h>
-
-#include <geomtools/i_model.h>
 
 namespace geomtools {
 

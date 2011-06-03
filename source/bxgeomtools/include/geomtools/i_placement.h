@@ -17,8 +17,10 @@
 #define __geomtools__i_placement_h 1
 
 #include <iostream>
-#include <iomanip>
 #include <string>
+#include <vector>
+
+#include <boost/cstdint.hpp>
 
 #include <datatools/utils/i_tree_dump.h>
 

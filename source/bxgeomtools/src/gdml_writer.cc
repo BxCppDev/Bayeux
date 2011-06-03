@@ -4,6 +4,32 @@
 
 #include <geomtools/gdml_writer.h>
 
+#include <boost/algorithm/string.hpp>
+
+#include <stdexcept>
+#include <datatools/utils/units.h>
+
+/*
+#include <cstdlib>
+#include <iomanip>
+#include <list>
+
+#include <boost/algorithm/string.hpp>
+
+#include <datatools/utils/utils.h>
+#include <datatools/utils/properties.h>
+
+#include <geomtools/utils.h>
+//#include <geomtools/units.h>
+#include <datatools/utils/units.h>
+
+#include <geomtools/box.h>
+#include <geomtools/cylinder.h>
+#include <geomtools/tube.h>
+#include <geomtools/sphere.h>
+#include <geomtools/polycone.h>
+*/
+
 namespace geomtools {
 
   using namespace std;

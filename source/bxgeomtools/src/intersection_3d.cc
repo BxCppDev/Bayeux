@@ -4,6 +4,9 @@
 
 #include <geomtools/intersection_3d.h>
 
+#include <stdexcept>
+#include <sstream>
+
 namespace geomtools {
 
   const std::string intersection_3d::INTERSECTION_3D_LABEL = "intersection_3d";

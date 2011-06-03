@@ -4,6 +4,12 @@
 
 #include <geomtools/rotated_boxed_model.h>
 
+#include <exception>
+#include <limits> 
+
+#include <datatools/utils/units.h>
+
+
 namespace geomtools {
 
   using namespace std;

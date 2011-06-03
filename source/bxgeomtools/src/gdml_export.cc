@@ -1,11 +1,24 @@
 // -*- mode: c++ ; -*- 
 /* gdml_export.cc
- */
+ */ 
+
+#include <iomanip>
+#include <stdexcept>
 
 #include <geomtools/gdml_export.h>
 #include <geomtools/union_3d.h>
 #include <geomtools/subtraction_3d.h>
 #include <geomtools/intersection_3d.h>
+
+#include <geomtools/detail/model_tools.h>
+#include <geomtools/model_factory.h>
+#include <geomtools/gdml_writer.h>
+#include <geomtools/units.h>
+#include <geomtools/utils.h>
+#include <geomtools/material.h>
+#include <geomtools/physical_volume.h>
+#include <geomtools/placement.h>
+#include <geomtools/regular_linear_placement.h>
 
 namespace geomtools {
 

@@ -30,7 +30,7 @@ namespace geomtools {
    * class 'units' is now part of the 'datatools' package:
    * Here I just define an alias for convenience and backward compatibilty.
    */
-  // 2010-05-04 FM:
+  // 2010-05-04 FM: removed
   //typedef datatools::utils::units units;
 
 }

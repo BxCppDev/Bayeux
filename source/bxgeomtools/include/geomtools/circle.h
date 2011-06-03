@@ -16,14 +16,8 @@
 #ifndef __geomtools__circle_h
 #define __geomtools__circle_h 1
 
-#include <cstdlib>
-#include <cmath>
-#include <stdexcept>
 #include <iostream>
-#include <sstream>
 #include <string>
-
-#include <gsl/gsl_poly.h>
 
 #include <geomtools/i_shape_1d.h>
 
@@ -36,9 +30,6 @@ namespace geomtools {
     
   public:
     static const string CIRCLE_LABEL;
-    
-  private: 
-    double __r;
 
   public: 
 
@@ -48,9 +39,9 @@ namespace geomtools {
 
     double get_radius () const;
 
-    void set_r (double);
+    void set_r (double a_radius);
 
-    void set_diameter (double);
+    void set_diameter (double a_diameter);
  
     double get_diameter () const;
  
@@ -62,7 +53,7 @@ namespace geomtools {
     // ctor:
     circle ();
 
-    circle (double r_);
+    circle (double a_radius);
 
     // dtor:
     virtual ~circle ();
@@ -70,15 +61,19 @@ namespace geomtools {
     // methods:
     virtual string get_shape_name () const;
 
-    virtual void tree_dump (ostream & out_ = clog, 
-			    const string & title_ = "", 
-			    const string & indent_ = "", 
-			    bool inherit_= false) const;
+    virtual void tree_dump (ostream & a_out = clog, 
+			    const string & a_title = "", 
+			    const string & a_indent = "", 
+			    bool a_inherit= false) const;
 
     virtual bool is_on_curve (const vector_3d &, 
-			      double tolerance_ = i_object_3d::USING_PROPER_TOLERANCE) const;
+			      double a_tolerance = i_object_3d::USING_PROPER_TOLERANCE) const;
 
-    virtual vector_3d get_direction_on_curve (const vector_3d & position_) const;
+    virtual vector_3d get_direction_on_curve (const vector_3d & a_tposition) const;
+    
+  private: 
+
+    double radius_; //!< The radius of the circle (in arbitrary units).
   
   };
 

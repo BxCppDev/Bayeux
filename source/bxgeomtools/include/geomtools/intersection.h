@@ -16,14 +16,6 @@
 #ifndef __geomtools__intersection_h
 #define __geomtools__intersection_h 1
 
-#include <cmath>
-#include <stdexcept>
-#include <iostream>
-#include <sstream>
-#include <string>
-
-#include <datatools/utils/utils.h>
-
 #include <geomtools/utils.h>
 
 namespace geomtools {

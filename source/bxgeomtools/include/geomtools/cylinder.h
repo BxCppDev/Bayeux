@@ -42,43 +42,20 @@ namespace geomtools {
 			 | FACE_BOTTOM 
 			 | FACE_TOP)
 	};  
-
-    private: 
-
-      double __z;
-      double __r;
   
     public: 
     
-      double get_xmin () const
-      {
-	return -__r;
-      }
+      double get_xmin () const;
       
-      double get_xmax () const
-      {
-	return +__r;
-      }
+      double get_xmax () const;
       
-      double get_ymin () const
-      {
-	return -__r;
-      }
+      double get_ymin () const;
       
-      double get_ymax () const
-      {
-	return +__r;
-      }
+      double get_ymax () const;
       
-      double get_zmin () const
-      {
-	return -0.5*__z;
-      }
+      double get_zmin () const;
       
-      double get_zmax () const
-      {
-	return +0.5*__z;
-      }
+      double get_zmax () const;
       
       double get_z () const;
 
@@ -102,14 +79,13 @@ namespace geomtools {
 
       void set_alternative (double, double);
 
-  
     public: 
 
       // ctor:
       cylinder ();
 
       // ctor:
-      cylinder (double r_, double z_);
+      cylinder (double a_radius, double a_z);
 
       // dtor:
       virtual ~cylinder ();
@@ -125,33 +101,38 @@ namespace geomtools {
 
       void reset ();
 
-      double get_surface (int mask_ = FACE_ALL) const;
+      double get_surface (int a_mask = FACE_ALL) const;
 
       double get_volume () const;
 
       virtual bool is_inside (const vector_3d &, 
-			     double skin_ = USING_PROPER_SKIN) const;
+			     double a_skin = USING_PROPER_SKIN) const;
 
       virtual bool is_on_surface (const vector_3d &, 
-				 int mask_    = FACE_ALL, 
-				 double skin_ = USING_PROPER_SKIN) const;
+				 int a_mask    = FACE_ALL, 
+				 double a_skin = USING_PROPER_SKIN) const;
 
-      virtual vector_3d get_normal_on_surface (const vector_3d & position_) const;
+      virtual vector_3d get_normal_on_surface (const vector_3d & a_position) const;
 
-      virtual bool find_intercept (const vector_3d & from_, 
-				   const vector_3d & direction_,
-				   intercept_t & intercept_,
-				   double skin_ = USING_PROPER_SKIN) const;
+      virtual bool find_intercept (const vector_3d & a_from, 
+				   const vector_3d & a_direction,
+				   intercept_t & a_intercept,
+				   double a_skin = USING_PROPER_SKIN) const;
 
       friend ostream & operator<< (ostream &, const cylinder &);
 
       friend istream & operator>> (istream &, cylinder &);
 
-      virtual void tree_dump (ostream & out_         = clog, 
-			      const string & title_  = "", 
-			      const string & indent_ = "", 
-			      bool inherit_          = false) const;
+      virtual void tree_dump (ostream & a_out         = clog, 
+			      const string & a_title  = "", 
+			      const string & a_indent = "", 
+			      bool a_inherit          = false) const;
        
+
+    private: 
+
+      double z_;      //<! Height
+      double radius_; //<! Radius
 
     };
     

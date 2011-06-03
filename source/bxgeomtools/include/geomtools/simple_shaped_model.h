@@ -17,39 +17,29 @@
 #ifndef __geomtools__simple_shaped_model_h
 #define __geomtools__simple_shaped_model_h 1
 
-#include <iostream>
 #include <string> 
-#include <exception>
-#include <limits> 
 
-#include <datatools/utils/units.h>
 
 #include <geomtools/i_model.h>
-
-#include <geomtools/box.h>
-#include <geomtools/cylinder.h>
-#include <geomtools/tube.h>
-#include <geomtools/sphere.h>
-#include <geomtools/polycone.h>
-#include <geomtools/polyhedra.h>
-
 #include <geomtools/placement.h>
 #include <geomtools/physical_volume.h>
 #include <geomtools/logical_volume.h>
-
-#include <geomtools/visibility.h>
-#include <geomtools/material.h>
-#include <geomtools/sensitive.h>
-#include <geomtools/color.h>
-#include <geomtools/i_stackable.h>
-#include <geomtools/utils.h>
-//#include <geomtools/mapping.h>
-
 #include <geomtools/model_with_internal_items_tools.h>
+
+
 
 namespace geomtools {
 
   using namespace std;
+
+  class box;
+  class cylinder;
+  class tube;
+  class sphere;
+  class polycone;
+  class polyhedra;
+  class i_shape_3d;
+  class logical_volume;
 
   // define a geometry model made of a unique simple 3D shape: 
   class simple_shaped_model : public i_model

@@ -18,8 +18,6 @@
 
 #include <string>
 
-#include <datatools/utils/properties.h>
-
 #include <geomtools/utils.h>
 #include <geomtools/i_object_3d.h>
 

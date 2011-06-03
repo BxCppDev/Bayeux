@@ -8,7 +8,6 @@
 
 #include <geomtools/polyline_3d.h>
 #include <geomtools/gnuplot_draw.h>
-#include <datatools/serialization/serialization.h>
 
 using namespace std;
 using namespace geomtools;

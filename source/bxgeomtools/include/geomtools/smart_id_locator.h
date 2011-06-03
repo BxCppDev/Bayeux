@@ -18,22 +18,19 @@
 #define __geomtools__smart_id_locator_h 1
 
 #include <iostream>
-#include <sstream>
-#include <stdexcept>
+#include <string>
 #include <list>
 
 #include <boost/cstdint.hpp>
 
-#include <datatools/utils/ioutils.h>
-#include <datatools/utils/properties.h>
-
 #include <geomtools/i_locator.h>
-#include <geomtools/geom_map.h>
 #include <geomtools/id_selector.h>
 
 namespace geomtools {
 
   using namespace std;
+
+  class geom_map;
 
   class smart_id_locator : public i_locator
   {
@@ -101,7 +98,7 @@ namespace geomtools {
     virtual const geom_info & get_geom_info (const geom_id & id_) const;
 
     virtual const geom_id & get_geom_id (const vector_3d & world_position_, 
-					 int type_, 
+					 int type_ = geom_id::INVALID_TYPE, 
 					 double tolerance_ = i_object_3d::USING_PROPER_TOLERANCE) const;
 
 

@@ -4,6 +4,9 @@
 
 #include <geomtools/union_3d.h>
 
+#include <stdexcept>
+#include <sstream>
+
 namespace geomtools {
 
   const std::string union_3d::UNION_3D_LABEL = "union_3d";

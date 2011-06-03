@@ -4,6 +4,19 @@
 
 #include <geomtools/gnuplot_drawer.h>
 
+#include <stdexcept>
+
+#include <datatools/utils/i_tree_dump.h>
+
+#include <geomtools/model_factory.h>
+#include <geomtools/placement.h>
+#include <geomtools/physical_volume.h>
+
+#include <geomtools/color.h>
+#include <geomtools/visibility.h>
+#include <geomtools/gnuplot_draw.h>
+#include <geomtools/gnuplot_i.h>
+
 namespace geomtools {
 
   using namespace std;

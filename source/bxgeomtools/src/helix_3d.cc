@@ -8,14 +8,10 @@ namespace geomtools {
 
   using namespace std;
   
-  const string helix_3d::SERIAL_TAG = "__geomtools::helix_3d__";
   const string helix_3d::HELIX_3D_LABEL = "helix_3d";
 
-  const string & 
-  helix_3d::get_serial_tag () const
-  {
-    return helix_3d::SERIAL_TAG;
-  }
+  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (helix_3d,"geomtools::helix_3d")
+  //const string helix_3d::SERIAL_TAG = "__geomtools::helix_3d__";
 
   string helix_3d::get_shape_name () const
   {
@@ -33,6 +29,7 @@ namespace geomtools {
   {
     double qnan = numeric_limits<double>::quiet_NaN();
     __radius = qnan;
+    return;
   }
   
   const vector_3d & 
@@ -51,6 +48,7 @@ namespace geomtools {
   helix_3d::set_center (const vector_3d & new_value_)
   {
     __center = new_value_;
+    return;
   }
   
   double 
@@ -63,6 +61,7 @@ namespace geomtools {
   helix_3d::set_radius (double new_value_)
   {
     __radius = new_value_;
+    return;
   }
   
   double 
@@ -75,6 +74,7 @@ namespace geomtools {
   helix_3d::set_step (double new_value_)
   {
     __step = new_value_;
+    return;
   }
   
   double 
@@ -87,6 +87,7 @@ namespace geomtools {
   helix_3d::set_t1 (double new_value_)
   {
     __t1 = new_value_;
+    return;
   }
   
   double 
@@ -99,18 +100,21 @@ namespace geomtools {
   helix_3d::set_t2 (double new_value_)
   {
     __t2 = new_value_;
+    return;
   }
 
   void 
   helix_3d::set_angle1 (double new_value_)
   {
     __t1 = angle_to_t (new_value_);
+    return;
   }
 
   void 
   helix_3d::set_angle2 (double new_value_)
   {
     __t2 = angle_to_t (new_value_);
+    return;
   }
 
   double 
@@ -141,6 +145,7 @@ namespace geomtools {
     __step = 0.0;
     __t1 = 0.0;
     __t2 = 1.0;
+    return;
   }
   
   helix_3d::~helix_3d ()
@@ -153,6 +158,7 @@ namespace geomtools {
     double qnan = numeric_limits<double>::quiet_NaN();
     __t1 = qnan;
     __t2 = qnan;
+    return;
   }
 
   bool
@@ -341,6 +347,7 @@ namespace geomtools {
     geomtools::print_xyz (out_, helix_.get_center ());
     //out_ << endl << endl;
     out_ << endl;
+    return;
   }
   
   void helix_3d::tree_dump (ostream &      out_, 
@@ -399,6 +406,7 @@ namespace geomtools {
 	bpl_.push_back (get_point (t));
       }
     bpl_.push_back (get_last ());
+    return;
   }
 
   basic_polyline_3d 

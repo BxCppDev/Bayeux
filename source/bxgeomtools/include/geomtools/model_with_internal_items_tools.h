@@ -17,24 +17,13 @@
 #ifndef __geomtools__model_with_internal_items_tools_h
 #define __geomtools__model_with_internal_items_tools_h 1
 
-#include <cstdlib>
-#include <cmath>
-#include <stdexcept>
-#include <iostream>
-#include <iomanip>
-#include <sstream>
 #include <string>
-
-#include <datatools/utils/units.h>
-#include <datatools/utils/properties.h>
+#include <map>
 
 #include <geomtools/i_model.h>
 #include <geomtools/placement.h>
 #include <geomtools/physical_volume.h>
-#include <geomtools/logical_volume.h>
-#include <geomtools/utils.h>
-#include <geomtools/visibility.h>
-#include <geomtools/material.h>
+#include <datatools/utils/properties.h>
 
 namespace geomtools {
     

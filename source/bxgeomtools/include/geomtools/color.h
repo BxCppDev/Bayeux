@@ -19,13 +19,10 @@
 #define __geomtools__color_h 1
 
 #include <iostream>
-#include <iomanip>
 #include <string>
 #include <map>
 
 #include <boost/scoped_ptr.hpp>
-
-#include <datatools/utils/properties.h>
 
 namespace geomtools {
 
@@ -50,7 +47,7 @@ namespace geomtools {
   public:
     int    code;
     string name;
-    int    r, g, b;
+    int    red_amount, green_amount, blue_amount;
 
   public:
     // ctor:
@@ -64,8 +61,6 @@ namespace geomtools {
 
     class color_db
     {
-      color_map_t  __map;
-
     public:
       
       color_db ();
@@ -74,25 +69,29 @@ namespace geomtools {
 
       //bool has_color (const string & id_) const;
       
-      int get_color (const string & id_) const;
+      int get_color (const string & a_color_id) const;
       
       //void register_color (color, const string & id_);
       
       //void dump_colors (ostream & out_ = clog);
-      
+
+    private:
+
+      color_map_t map_of_colors_;
+     
     };
     
     typedef boost::scoped_ptr<color_db> scoped_color_db_t;
  
   private:
 
-    static scoped_color_db_t g__color_db;
+    static scoped_color_db_t g_color_db_;
     
   public:
     
     static const color_db & get_color_db ();
 
-    static int get_color (const string & name_);
+    static int get_color (const string & a_name);
 
   };
 

@@ -8,7 +8,9 @@
 
 #include <geomtools/utils.h>
 #include <geomtools/gnuplot_draw.h>
-#include <datatools/serialization/serialization.h>
+
+#include <geomtools/the_serializable.h>
+#include <datatools/serialization/io_factory.h>
 
 int 
 main (int argc_, char ** argv_)

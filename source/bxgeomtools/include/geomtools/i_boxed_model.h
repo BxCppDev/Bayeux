@@ -17,20 +17,24 @@
 #define __geomtools__i_boxed_model_h 1
 
 #include <geomtools/i_model.h>
-#include <geomtools/box.h>
 
 namespace geomtools {
 
   using namespace std;
 
+  class box;
+
   // define a geometry model with a box solid: 
   class i_boxed_model : public i_model 
   {
   public:
+
     virtual const geomtools::box & get_box () const = 0;
-    i_boxed_model (const string & name_ = "") : i_model (name_)
-    {
-    }
+
+    i_boxed_model (const string & a_name = "");
+
+    virtual ~i_boxed_model ();
+
   };
 
 } // end of namespace geomtools

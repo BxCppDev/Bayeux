@@ -16,18 +16,10 @@
 #ifndef __geomtools__simple_boxed_model_h
 #define __geomtools__simple_boxed_model_h 1
 
-#include <iostream>
 #include <string> 
-#include <exception>
-#include <limits> 
-
-#include <datatools/utils/units.h>
 
 #include <geomtools/i_boxed_model.h>
 #include <geomtools/box.h>
-#include <geomtools/visibility.h>
-#include <geomtools/material.h>
-#include <geomtools/sensitive.h>
 
 namespace geomtools {
 

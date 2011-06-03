@@ -4,6 +4,19 @@
 
 #include <geomtools/polyhedra.h>
 
+#include <cmath>
+#include <stdexcept>
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+#include <vector>
+#include <fstream>
+
+#include <datatools/utils/utils.h>
+#include <datatools/utils/units.h>
+
+#include <geomtools/regular_polygon.h>
+
 namespace geomtools {
  
   using namespace std;

@@ -12,6 +12,8 @@
 #include <stdexcept>
 #include <list>
 
+#include <datatools/serialization/i_serializable.h>
+
 #include <geomtools/i_shape_1d.h>
 #include <geomtools/utils.h>
 
@@ -24,7 +26,6 @@ namespace geomtools {
     public datatools::serialization::i_serializable
     {
     public:
-      static const string SERIAL_TAG;
       static const string POLYLINE_3D_LABEL;
 
       static const bool CLOSED = true;
@@ -34,10 +35,6 @@ namespace geomtools {
       static const bool DEFAULT_CLOSED = OPEN;
 
       typedef basic_polyline_3d point_col;
-
-    private:
-      bool      __closed;
-      point_col __points;
 
     public:
 
@@ -67,30 +64,31 @@ namespace geomtools {
       
       const vector_3d & get_vertex (int i_) const;
 
-      virtual const string & get_serial_tag () const;
-
       // inefficient algorithm:
       void make_vertex_collection (basic_polyline_3d &) const;
 
       // inefficient algorithm:
       basic_polyline_3d make_vertex_collection () const;
 
-    private:
-      friend class boost::serialization::access; 
-      template<class Archive>
-	void serialize (Archive            & ar_, 
-			const unsigned int   version_)
-	{
-	  ar_ & boost::serialization::make_nvp ("closed", __closed);
-	  ar_ & boost::serialization::make_nvp ("points", __points);
-	}
+    /* interface i_serializable */
+    DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
 
+    private:
+
+      friend class boost::serialization::access; 
+      BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
+ 
     public:
 
       virtual bool is_on_curve (const vector_3d & position_, 
 				double tolerance_ = USING_PROPER_TOLERANCE) const;
       
       virtual vector_3d get_direction_on_curve (const vector_3d & position_) const;
+
+    private:
+
+      bool      __closed;
+      point_col __points;
  
     }; 
  

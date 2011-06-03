@@ -10,6 +10,8 @@
 #include <geomtools/utils.h>
 #include <geomtools/gnuplot_draw.h>
 #include <geomtools/box.h>
+#include <geomtools/cylinder.h>
+#include <geomtools/placement.h>
 
 #include <CLHEP/Random/RanluxEngine.h>
 #include <CLHEP/Random/RandFlat.h>

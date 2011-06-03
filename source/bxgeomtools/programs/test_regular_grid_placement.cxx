@@ -12,6 +12,7 @@
 #include <geomtools/box.h>
 #include <geomtools/gnuplot_draw.h>
 #include <geomtools/gnuplot_drawer.h>
+#include <geomtools/gnuplot_i.h>
 
 using namespace std;
 

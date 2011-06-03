@@ -47,44 +47,20 @@ namespace geomtools {
 		       | FACE_TOP)
       };
 
-  private: 
-
-    double __x;
-    double __y;
-    double __z;
-
   public: 
     
-    double get_xmin () const
-    {
-      return -0.5*__x;
-    }
+    double get_xmin () const;
     
-    double get_xmax () const
-    {
-      return +0.5*__x;
-    }
+    double get_xmax () const;
     
-    double get_ymin () const
-    {
-      return -0.5*__y;
-    }
+    double get_ymin () const;
+      
+    double get_ymax () const;
     
-    double get_ymax () const
-    {
-      return +0.5*__y;
-    }
+    double get_zmin () const;
     
-    double get_zmin () const
-    {
-      return -0.5*__z;
-    }
+    double get_zmax () const;
     
-    double get_zmax () const
-    {
-      return +0.5*__z;
-    }
-
     double get_x () const;
 
     void set_x (double);
@@ -119,7 +95,7 @@ namespace geomtools {
     box ();
 
     // ctor:
-    box (double x_, double y_, double z_);
+    box (double a_x, double a_y, double a_z);
 
     // dtor:
     virtual ~box ();
@@ -136,33 +112,39 @@ namespace geomtools {
 
     void reset ();
 
-    double get_surface (int mask_ = FACE_ALL) const;
+    double get_surface (int a_mask = FACE_ALL) const;
 
     double get_volume () const;
 
     virtual bool is_inside (const vector_3d &, 
-	       double skin_ = USING_PROPER_SKIN) const;
+			    double a_skin = USING_PROPER_SKIN) const;
 
     // if 'skin' < 0 no skin is taken into account:
     virtual bool is_on_surface (const vector_3d & , 
-		   int mask_    = FACE_ALL , 
-		   double skin_ = USING_PROPER_SKIN) const;
+				int a_mask    = FACE_ALL , 
+				double a_skin = USING_PROPER_SKIN) const;
 
-    virtual vector_3d get_normal_on_surface (const vector_3d & position_) const;
+    virtual vector_3d get_normal_on_surface (const vector_3d & a_position) const;
 
     friend std::ostream & operator<< ( std::ostream & , const box & );
 
     friend std::istream & operator>> ( std::istream & , box & );
       
-    virtual bool find_intercept (const vector_3d & from_, 
-				 const vector_3d & direction_,
-				 intercept_t & intercept_,
-				 double skin_ = USING_PROPER_SKIN) const;
+    virtual bool find_intercept (const vector_3d & a_from, 
+				 const vector_3d & a_direction,
+				 intercept_t & a_intercept,
+				 double a_skin = USING_PROPER_SKIN) const;
 
-    virtual void tree_dump (ostream & out_         = clog, 
-			    const string & title_  = "", 
-			    const string & indent_ = "", 
-			    bool inherit_          = false) const;
+    virtual void tree_dump (ostream & a_out         = clog, 
+			    const string & a_title  = "", 
+			    const string & a_indent = "", 
+			    bool a_inherit          = false) const;
+
+  private: 
+
+    double x_; //!< Width (in arbitrary units)
+    double y_; //!< Length (in arbitrary units)
+    double z_; //!< Height (in arbitrary units)
        
   };
     

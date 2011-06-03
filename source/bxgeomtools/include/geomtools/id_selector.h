@@ -14,22 +14,17 @@
 #ifndef __geomtools__id_selector_h
 #define __geomtools__id_selector_h 1
 
-#include <cstdlib>
-#include <stdexcept>
-#include <iostream>
-#include <sstream>
 #include <string>
 #include <map>
-#include <algorithm>
 
-#include <boost/algorithm/string.hpp>
-
-#include <geomtools/address_set.h>
 #include <geomtools/id_mgr.h>
+#include <geomtools/address_set.h>
 
 namespace geomtools {
 
   using namespace std;
+
+  class geom_id;
 
   class id_selector
   {

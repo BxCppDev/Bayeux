@@ -4,18 +4,18 @@
 
 #include <geomtools/line_3d.h>
 
+#include <cmath>
+#include <stdexcept>
+#include <iostream>
+#include <sstream>
+
 namespace geomtools {
 
   using namespace std;
+ 
+  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (line_3d,"geomtools::line_3d")
 
-  const string line_3d::SERIAL_TAG = "__geomtools::line_3d__";
   const string line_3d::LINE_3D_LABEL = "line_3d";
-
-  const string & 
-  line_3d::get_serial_tag () const
-  {
-    return line_3d::SERIAL_TAG;
-  }
 
   string line_3d::get_shape_name () const
   {
@@ -33,6 +33,7 @@ namespace geomtools {
   {
     geomtools::invalidate (__first);
     geomtools::invalidate (__last);
+    return;
   }
   
   const vector_3d & 
@@ -42,9 +43,10 @@ namespace geomtools {
   }
   
   void 
-  line_3d::set_first (const vector_3d & new_value_)
+  line_3d::set_first (const vector_3d & a_first)
   {
-    __first = new_value_;
+    __first = a_first;
+    return;
   }
   
   const vector_3d & 
@@ -54,9 +56,10 @@ namespace geomtools {
   }
   
   void 
-  line_3d::set_last (const vector_3d & new_value_)
+  line_3d::set_last (const vector_3d & a_last)
   {
-    __last = new_value_;
+    __last = a_last;
+    return;
   }
   
   double line_3d::get_length () const
@@ -69,32 +72,36 @@ namespace geomtools {
   line_3d::line_3d () : i_shape_1d ()
   {
     invalidate ();
+    return;
   }
 
   // ctor/dtor:
-  line_3d::line_3d (const vector_3d & first_, const vector_3d & last_)
+  line_3d::line_3d (const vector_3d & a_first, const vector_3d & a_last)
   {
-    set_first (first_);
-    set_last (last_);
+    set_first (a_first);
+    set_last (a_last);
+    return;
   }
   
   line_3d::~line_3d ()
   {
+    return;
   }
 
   vector_3d 
-  line_3d::get_point (double t_) const
+  line_3d::get_point (double a_t) const
   {
-    vector_3d p = __first + (__last - __first) * t_;
+    vector_3d p = __first + (__last - __first) * a_t;
     return vector_3d (p);
   }
 
   void 
-  line_3d::make_vertex_collection (basic_polyline_3d & bpl_) const
+  line_3d::make_vertex_collection (basic_polyline_3d & a_bpl) const
   {
-    bpl_.clear ();
-    bpl_.push_back (__first);
-    bpl_.push_back (__last);
+    a_bpl.clear ();
+    a_bpl.push_back (__first);
+    a_bpl.push_back (__last);
+    return;
   }
 
   basic_polyline_3d 
@@ -134,39 +141,23 @@ namespace geomtools {
 
 
   void line_3d::print_xyz (ostream & out_, 
-			   const line_3d & line_)
+			   const line_3d & a_line)
   {
-    vector_3d first = line_.get_first();
-    vector_3d last  = line_.get_last();
+    vector_3d first = a_line.get_first();
+    vector_3d last  = a_line.get_last();
 
     out_ << first.x() << " " << first.y() << " " << first.z() << endl;
     out_ << last.x() << " " << last.y() << " " << last.z() << endl;
-    out_ << endl;
+    return;
   }
 
 
-  double line_3d::get_distance_to_line ( const vector_3d & position_ ) const
+  bool line_3d::is_on_curve (const vector_3d & position_, 
+			     double tolerance_) const
   {
-    vector_3d A = position_ - __last;
-    vector_3d B = position_ - __first;
-
-    vector_3d u = __last - __first;
-    vector_3d d = A.cross( position_ );
-
-    double dist = d.mag() / u.mag();
-
-    if ( dist < A.mag() && dist < B.mag() )
-      return dist;
-    else if ( A.mag() < dist && A.mag() < B.mag() )
-      return A.mag();
-    else
-      return B.mag();
-  }
-
-  bool line_3d::is_on_curve ( const vector_3d & position_, 
-			      double tolerance_ ) const
-  {
-    return get_distance_to_line ( position_ ) <= tolerance_;
+    bool on_curve = false;
+    throw runtime_error ("line_3d::is_on_curve: Not implemented yet !");
+    return on_curve;
   }
 
   vector_3d line_3d::get_direction_on_curve (const vector_3d & position_) const
@@ -179,7 +170,7 @@ namespace geomtools {
   /*
   void 
   line_3d::print_xyz (ostream & out_, 
-		      const line_3d & line_,
+		      const line_3d & a_line,
 		      double step_)
   {
     double delta_t = 0.01;
@@ -188,7 +179,7 @@ namespace geomtools {
 	 t < 1.0 + 0.001 * delta_t;
 	 t += delta_t)
       {
-	vector_3d v = line_.get_point (t);
+	vector_3d v = a_line.get_point (t);
 	vector_3d::print_xyz (out_, v);
       }
     out_ << endl << endl;

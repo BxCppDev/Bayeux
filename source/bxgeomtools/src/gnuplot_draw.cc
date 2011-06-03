@@ -3,11 +3,53 @@
  */
 
 #include <geomtools/gnuplot_draw.h>
+#include <cmath>
+#include <stdexcept>
+
+#include <geomtools/i_placement.h>
+#include <geomtools/i_object_3d.h>
+
+#include <geomtools/placement.h>
+#include <geomtools/box.h>
+#include <geomtools/cylinder.h>
+#include <geomtools/sphere.h>
+#include <geomtools/tube.h>
+#include <geomtools/line_3d.h>
+#include <geomtools/polyline_3d.h>
+#include <geomtools/rectangle.h>
+#include <geomtools/circle.h>
+#include <geomtools/disk.h>
+#include <geomtools/regular_polygon.h>
+#include <geomtools/polycone.h>
+#include <geomtools/polyhedra.h>
+#include <geomtools/tessellation.h>
+#include <geomtools/union_3d.h>
+#include <geomtools/subtraction_3d.h>
+#include <geomtools/intersection_3d.h>
+
+#include <geomtools/color.h>
+
 
 namespace geomtools {
 
   bool   gnuplot_draw::g_using_color   = false;
   double gnuplot_draw::g_current_color = 1.0;
+
+  void 
+  gnuplot_draw::basic_draw_point (std::ostream & out_, 
+				  double x_, double y_, double z_)
+  {
+    basic_draw_point (out_, x_, y_, z_, true);
+    return;
+  }
+
+  void 
+  gnuplot_draw::basic_draw_point (std::ostream & out_, 
+				 const vector_3d & v_)
+  {
+    basic_draw_point (out_, v_, true);
+    return;
+  }
 
   void 
   gnuplot_draw::basic_draw_point_with_color (std::ostream & out_, 
@@ -76,6 +118,41 @@ namespace geomtools {
 				    endl_);
     return;
   }
+
+  void 
+  gnuplot_draw::basic_draw_facet3 (std::ostream & out_, 
+				   const vector_3d & p1_, 
+				   const vector_3d & p2_, 
+				   const vector_3d & p3_,
+				   double color_)
+  {
+    basic_draw_point_with_color (out_, p1_, color_, true);
+    basic_draw_point_with_color (out_, p2_, color_, true);
+    out_ << endl;
+    basic_draw_point_with_color (out_, p3_, color_, true);
+    basic_draw_point_with_color (out_, p3_, color_, true);
+    out_ << endl;
+    out_ << endl;
+    return;
+  }
+
+   void 
+    gnuplot_draw::basic_draw_facet3 (std::ostream & out_, 
+		       const vector_3d & p1_, 
+		       const vector_3d & p2_, 
+		       const vector_3d & p3_, 
+		       const vector_3d & p4_,
+		       double color_)
+    {
+      basic_draw_point_with_color (out_, p1_, color_);
+      basic_draw_point_with_color (out_, p2_, color_);
+      out_ << endl;
+      basic_draw_point_with_color (out_, p4_, color_);
+      basic_draw_point_with_color (out_, p3_, color_);
+      out_ << endl;
+      out_ << endl;
+      return;
+    }
 
   void 
   gnuplot_draw::basic_draw_polyline (std::ostream & out_, 

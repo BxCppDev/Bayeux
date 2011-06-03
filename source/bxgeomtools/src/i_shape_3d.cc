@@ -11,17 +11,22 @@ namespace geomtools {
   const double i_shape_3d::DEFAULT_SKIN      = i_object_3d::DEFAULT_TOLERANCE;
   const double i_shape_3d::USING_PROPER_SKIN = i_object_3d::USING_PROPER_TOLERANCE;
 
-  bool i_shape_3d::is_stackable (const i_shape_3d & shape_)
+  bool i_shape_3d::is_composite () const
   {
-    if (shape_.has_stackable_data ())
+    return false;
+  }
+
+  bool i_shape_3d::is_stackable (const i_shape_3d & a_shape)
+  {
+    if (a_shape.has_stackable_data ())
       {
-	if (shape_.get_stackable_data ().is_valid ()) 
+	if (a_shape.get_stackable_data ().is_valid ()) 
 	  {
 	    return true;
 	  }
       }
     const i_stackable * the_stackable 
-      = dynamic_cast<const i_stackable *> (&shape_);
+      = dynamic_cast<const i_stackable *> (&a_shape);
     if (the_stackable != 0)
       {
 	return true;
@@ -29,108 +34,108 @@ namespace geomtools {
     return false;
   }
 
-  bool i_shape_3d::is_xmin_stackable (const i_shape_3d & shape_)
+  bool i_shape_3d::is_xmin_stackable (const i_shape_3d & a_shape)
   {
-    if (is_stackable (shape_)) return true;
-    if (stackable::has_xmin (shape_.properties ())) return true;
+    if (is_stackable (a_shape)) return true;
+    if (stackable::has_xmin (a_shape.properties ())) return true;
     return false;
   }
 
-  bool i_shape_3d::is_xmax_stackable (const i_shape_3d & shape_)
+  bool i_shape_3d::is_xmax_stackable (const i_shape_3d & a_shape)
   {
-    if (is_stackable (shape_)) return true;
-    if (stackable::has_xmax (shape_.properties ())) return true;
+    if (is_stackable (a_shape)) return true;
+    if (stackable::has_xmax (a_shape.properties ())) return true;
     return false;
   }
 
-  bool i_shape_3d::is_ymin_stackable (const i_shape_3d & shape_)
+  bool i_shape_3d::is_ymin_stackable (const i_shape_3d & a_shape)
   {
-    if (is_stackable (shape_)) return true;
-    if (stackable::has_ymin (shape_.properties ())) return true;
+    if (is_stackable (a_shape)) return true;
+    if (stackable::has_ymin (a_shape.properties ())) return true;
     return false;
   }
 
-  bool i_shape_3d::is_ymax_stackable (const i_shape_3d & shape_)
+  bool i_shape_3d::is_ymax_stackable (const i_shape_3d & a_shape)
   {
-    if (is_stackable (shape_)) return true;
-    if (stackable::has_ymax (shape_.properties ())) return true;
+    if (is_stackable (a_shape)) return true;
+    if (stackable::has_ymax (a_shape.properties ())) return true;
     return false;
   }
 
-  bool i_shape_3d::is_zmin_stackable (const i_shape_3d & shape_)
+  bool i_shape_3d::is_zmin_stackable (const i_shape_3d & a_shape)
   {
-    if (is_stackable (shape_)) return true;
-    if (stackable::has_zmin (shape_.properties ())) return true;
+    if (is_stackable (a_shape)) return true;
+    if (stackable::has_zmin (a_shape.properties ())) return true;
     return false;
   }
 
-  bool i_shape_3d::is_zmax_stackable (const i_shape_3d & shape_)
+  bool i_shape_3d::is_zmax_stackable (const i_shape_3d & a_shape)
   {
-    if (is_stackable (shape_)) return true;
-    if (stackable::has_zmax (shape_.properties ())) return true;
+    if (is_stackable (a_shape)) return true;
+    if (stackable::has_zmax (a_shape.properties ())) return true;
     return false;
   }
 
-  bool i_shape_3d::pickup_stackable_with_properties (const i_shape_3d & shape_, 
-						     stackable_data & sd_)
+  bool i_shape_3d::pickup_stackable_with_properties (const i_shape_3d & a_shape, 
+						     stackable_data & a_stackable_data)
   {
     bool ok = false;
-    ok = i_shape_3d::pickup_stackable (shape_, sd_);
+    ok = i_shape_3d::pickup_stackable (a_shape, a_stackable_data);
     if (ok)
       {
-	if (stackable::has_xmin (shape_.properties ()))
+	if (stackable::has_xmin (a_shape.properties ()))
 	  {
-	    sd_.xmin = stackable::get_xmin (shape_.properties ());
+	    a_stackable_data.xmin = stackable::get_xmin (a_shape.properties ());
 	  }
-	if (stackable::has_xmax (shape_.properties ()))
+	if (stackable::has_xmax (a_shape.properties ()))
 	  {
-	    sd_.xmax = stackable::get_xmax (shape_.properties ());
+	    a_stackable_data.xmax = stackable::get_xmax (a_shape.properties ());
 	  }
-	if (stackable::has_ymin (shape_.properties ()))
+	if (stackable::has_ymin (a_shape.properties ()))
 	  {
-	    sd_.ymin = stackable::get_ymin (shape_.properties ());
+	    a_stackable_data.ymin = stackable::get_ymin (a_shape.properties ());
 	  }
-	if (stackable::has_ymax (shape_.properties ()))
+	if (stackable::has_ymax (a_shape.properties ()))
 	  {
-	    sd_.ymax = stackable::get_ymax (shape_.properties ());
+	    a_stackable_data.ymax = stackable::get_ymax (a_shape.properties ());
 	  }
-	if (stackable::has_zmin (shape_.properties ()))
+	if (stackable::has_zmin (a_shape.properties ()))
 	  {
-	    sd_.zmin = stackable::get_zmin (shape_.properties ());
+	    a_stackable_data.zmin = stackable::get_zmin (a_shape.properties ());
 	  }
-	if (stackable::has_zmax (shape_.properties ()))
+	if (stackable::has_zmax (a_shape.properties ()))
 	  {
-	    sd_.zmax = stackable::get_zmax (shape_.properties ());
+	    a_stackable_data.zmax = stackable::get_zmax (a_shape.properties ());
 	  }
       }
     return ok;
   }
 
-  bool i_shape_3d::pickup_stackable (const i_shape_3d & shape_, 
-				     stackable_data & sd_)
+  bool i_shape_3d::pickup_stackable (const i_shape_3d & a_shape, 
+				     stackable_data & a_stackable_data)
   {
-    sd_.invalidate ();
+    a_stackable_data.invalidate ();
     bool ok = false;
-    if (shape_.has_stackable_data ())
+    if (a_shape.has_stackable_data ())
       {
-	if (shape_.get_stackable_data ().is_valid ()) 
+	if (a_shape.get_stackable_data ().is_valid ()) 
 	  {
-	    sd_ = shape_.get_stackable_data ();
+	    a_stackable_data = a_shape.get_stackable_data ();
 	    ok =  true;
 	  }
       }
     if (! ok)
       {
 	const i_stackable * the_stackable 
-	  = dynamic_cast<const i_stackable *> (&shape_);
+	  = dynamic_cast<const i_stackable *> (&a_shape);
 	if (the_stackable != 0)
 	  {
-	    sd_.xmin = the_stackable->get_xmin ();
-	    sd_.xmax = the_stackable->get_xmax ();
-	    sd_.ymin = the_stackable->get_ymin ();
-	    sd_.ymax = the_stackable->get_ymax ();
-	    sd_.zmin = the_stackable->get_zmin ();
-	    sd_.zmax = the_stackable->get_zmax ();
+	    a_stackable_data.xmin = the_stackable->get_xmin ();
+	    a_stackable_data.xmax = the_stackable->get_xmax ();
+	    a_stackable_data.ymin = the_stackable->get_ymin ();
+	    a_stackable_data.ymax = the_stackable->get_ymax ();
+	    a_stackable_data.zmin = the_stackable->get_zmin ();
+	    a_stackable_data.zmax = the_stackable->get_zmax ();
 	    ok = true;
 	  } 
       }
@@ -142,9 +147,9 @@ namespace geomtools {
     return get_tolerance ();
   }
    
-  void i_shape_3d::set_skin (double skin_)
+  void i_shape_3d::set_skin (double a_skin)
   {
-    set_tolerance (skin_);
+    set_tolerance (a_skin);
   }
  
   int i_shape_3d::get_dimensional () const
@@ -154,120 +159,136 @@ namespace geomtools {
 
   bool i_shape_3d::has_stackable_data () const
   {
-    return __stackable_data != 0;
+    return stackable_data_ != 0;
   }
 
   const stackable_data & i_shape_3d::get_stackable_data () const
   {
-    return *__stackable_data;
+    return *stackable_data_;
   }
 
-  void i_shape_3d::set_stackable_data (const stackable_data & sd_)
+  void i_shape_3d::set_stackable_data (const stackable_data & a_stackable_data)
   {
-    if (__stackable_data != 0)
+    if (stackable_data_ != 0)
       {
-	if (&sd_ == __stackable_data) return;
-	if (__owns_stackable_data)
+	if (&a_stackable_data == stackable_data_) return;
+	if (owns_stackable_data_)
 	  {
-	    delete __stackable_data;
-	    __stackable_data = 0;
+	    delete stackable_data_;
+	    stackable_data_ = 0;
 	  }
       }
-    __owns_stackable_data = false;
-    __stackable_data = &sd_;
+    owns_stackable_data_ = false;
+    stackable_data_ = &a_stackable_data;
     return;
   }
 
-  void i_shape_3d::set_stackable_data (const stackable_data * sd_)
+  void i_shape_3d::set_stackable_data (const stackable_data * a_stackable_data)
   {
-    if (__stackable_data != 0)
+    if (stackable_data_ != 0)
       {
-	if (sd_ == __stackable_data) return;
-	if (__owns_stackable_data)
+	if (a_stackable_data == stackable_data_) return;
+	if (owns_stackable_data_)
 	  {
-	    delete __stackable_data;
-	    __stackable_data = 0;
+	    delete stackable_data_;
+	    stackable_data_ = 0;
 	  }
       }
-    __owns_stackable_data = true;
-    __stackable_data = sd_;
+    owns_stackable_data_ = true;
+    stackable_data_ = a_stackable_data;
     return;
   }
      
   // ctor:
   i_shape_3d::i_shape_3d () : i_object_3d ()
   {
-    __owns_stackable_data = false;
-    __stackable_data = 0;
+    owns_stackable_data_ = false;
+    stackable_data_ = 0;
+    return;
   }
      
   // ctor:
-  i_shape_3d::i_shape_3d (double skin_) : i_object_3d (skin_)
+  i_shape_3d::i_shape_3d (double a_skin) : i_object_3d (a_skin)
   {
-    __owns_stackable_data = false;
-    __stackable_data = 0;
+    owns_stackable_data_ = false;
+    stackable_data_ = 0;
     /*
     clog << "DEVEL: i_shape_3d::i_shape_3d: i_object_3d::DEFAULT_TOLERANCE = " 
 	 << i_object_3d::DEFAULT_TOLERANCE << endl;
     clog << "DEVEL: i_shape_3d::i_shape_3d: i_shape_3d::DEFAULT_SKIN = " 
 	 << i_shape_3d::DEFAULT_SKIN << endl;
-    clog << "DEVEL: i_shape_3d::i_shape_3d: skin_ = " << skin_ << endl;
+    clog << "DEVEL: i_shape_3d::i_shape_3d: a_skin = " << a_skin << endl;
     */
+    return;
   }
   
   // dtor:
   i_shape_3d::~i_shape_3d ()
   {
-    if (__stackable_data == 0)
+    if (stackable_data_ == 0)
       {
-	if (__owns_stackable_data)
+	if (owns_stackable_data_)
 	  {
-	    delete __stackable_data;
-	    __stackable_data = 0;
+	    delete stackable_data_;
+	    stackable_data_ = 0;
 	  }
       }
+    return;
   }
 
-  bool i_shape_3d::is_outside (const vector_3d & pos_, 
-			       double skin_) const
+  bool i_shape_3d::is_outside (const vector_3d & a_position, 
+			       double a_skin) const
   {
-    return ! is_inside (pos_, skin_) 
-      && ! is_on_surface (pos_, ALL_SURFACES, skin_);
+    return ! is_inside (a_position, a_skin) 
+      && ! is_on_surface (a_position, ALL_SURFACES, a_skin);
   }
 
-  void i_shape_3d::tree_dump (ostream & out_, 
-			      const string & title_, 
-			      const string & indent_, 
-			      bool inherit_) const
+  void i_shape_3d::tree_dump (ostream & a_out, 
+			      const string & a_title, 
+			      const string & a_indent, 
+			      bool a_inherit) const
   {
     namespace du = datatools::utils;
     string indent;
-    if (! indent_.empty ()) indent = indent_;
-    i_object_3d::tree_dump (out_, title_, indent_, true);
+    if (! a_indent.empty ()) indent = a_indent;
+    i_object_3d::tree_dump (a_out, a_title, a_indent, true);
     if (i_shape_3d::is_stackable (*this))
       {
 	stackable_data SD;
 	i_shape_3d::pickup_stackable (*this, SD);
-	out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_) 
+	a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit) 
 	     << "Stackable data : ";
-	if (__stackable_data != 0)
+	if (stackable_data_ != 0)
 	  {
-	    out_ << "[plugged]";
+	    a_out << "[plugged]";
 	  }
 	else
 	  {
-	    out_ << "[native]";
+	    a_out << "[native]";
 	  }
-	out_ << endl;
+	a_out << endl;
 	ostringstream indent_oss;
 	indent_oss << indent;
-	indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
-	SD.tree_dump (out_, "", indent_oss.str ());
+	indent_oss << du::i_tree_dumpable::inherit_skip_tag (a_inherit);
+	SD.tree_dump (a_out, "", indent_oss.str ());
       }
     /*
-    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)  
-	 << "Stackable_data : " << (__stackable_data != 0? "Yes": "No") << endl;
+    a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)  
+	 << "Stackable_data : " << (stackable_data_ != 0? "Yes": "No") << endl;
     */
+    return;
+  }
+
+  bool i_shape_3d::find_intercept (const vector_3d & a_from, 
+				   const vector_3d & a_direction,
+				   intercept_t & a_intercept,
+				   double a_skin) const
+  {
+    // temporary:
+    // NOT IMPLEMENTED !
+    // default: no intercept on any face of the 3D shape...
+    a_intercept.reset ();
+    return a_intercept.is_ok ();
   }
 
 } // end of namespace geomtools

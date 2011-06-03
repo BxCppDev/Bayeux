@@ -4,6 +4,14 @@
 
 #include <geomtools/id_selector.h>
 
+#include <cstdlib>
+#include <stdexcept>
+#include <iostream>
+#include <sstream>
+#include <algorithm>
+
+#include <boost/algorithm/string.hpp>
+
 namespace geomtools {
   
 

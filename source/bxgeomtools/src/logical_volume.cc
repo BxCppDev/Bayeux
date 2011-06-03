@@ -3,6 +3,12 @@
  */
 
 #include <geomtools/logical_volume.h>
+
+#include <stdexcept>
+#include <iostream>
+#include <sstream>
+
+#include <geomtools/i_placement.h>
 #include <geomtools/physical_volume.h>
 
 namespace geomtools {

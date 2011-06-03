@@ -18,8 +18,6 @@
 
 #include <string>
 
-#include <datatools/utils/properties.h>
-
 #include <geomtools/i_shape_3d.h>
 #include <geomtools/placement.h>
 

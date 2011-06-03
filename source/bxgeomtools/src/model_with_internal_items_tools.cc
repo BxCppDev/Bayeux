@@ -4,6 +4,20 @@
 
 #include <geomtools/model_with_internal_items_tools.h>
 
+#include <cstdlib>
+#include <cmath>
+#include <stdexcept>
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+
+#include <datatools/utils/units.h>
+
+#include <geomtools/logical_volume.h>
+#include <geomtools/utils.h>
+#include <geomtools/visibility.h>
+#include <geomtools/material.h>
+
 namespace geomtools {
 
   using namespace std;  

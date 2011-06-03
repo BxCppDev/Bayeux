@@ -20,23 +20,12 @@
 #ifndef __geomtools__gdml_writer_h
 #define __geomtools__gdml_writer_h 1
 
-#include <cstdlib>
-#include <stdexcept>
 #include <iostream>
-#include <iomanip>
 #include <sstream>
 #include <string>
-#include <list>
 #include <map>
 
-#include <boost/algorithm/string.hpp>
-
-#include <datatools/utils/utils.h>
-#include <datatools/utils/properties.h>
-
 #include <geomtools/utils.h>
-//#include <geomtools/units.h>
-#include <datatools/utils/units.h>
 
 #include <geomtools/box.h>
 #include <geomtools/cylinder.h>

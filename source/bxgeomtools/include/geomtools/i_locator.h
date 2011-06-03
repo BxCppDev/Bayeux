@@ -60,7 +60,7 @@ namespace geomtools {
      *  returns the associated geom_id instance (from some internal table).
      */
     virtual const geom_id & get_geom_id (const vector_3d & a_position, 
-					 int a_type, 
+					 int a_type = geom_id::INVALID_TYPE, 
 					 double a_tolerance = i_object_3d::USING_PROPER_TOLERANCE) const = 0;
 
   };

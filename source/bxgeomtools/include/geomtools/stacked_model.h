@@ -17,22 +17,14 @@
 #ifndef __geomtools__stacked_model_h
 #define __geomtools__stacked_model_h 1
 
-#include <iostream>
 #include <string> 
-#include <exception>
-#include <limits> 
-
-#include <mygsl/min_max.h>
-
-#include <datatools/utils/units.h>
+#include <iostream>
+#include <map>
 
 #include <geomtools/i_boxed_model.h>
-#include <geomtools/i_stackable.h>
-#include <geomtools/box.h>
 #include <geomtools/physical_volume.h>
 #include <geomtools/placement.h>
-#include <geomtools/regular_linear_placement.h>
-#include <geomtools/visibility.h>
+#include <geomtools/box.h>
 
 namespace geomtools {
 

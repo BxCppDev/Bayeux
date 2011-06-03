@@ -4,6 +4,13 @@
 
 #include <geomtools/rectangle.h>
 
+#include <cstdlib>
+#include <cmath>
+#include <stdexcept>
+#include <sstream>
+
+#include <gsl/gsl_poly.h>
+
 namespace geomtools {
 
   using namespace std;

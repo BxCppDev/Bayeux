@@ -1,5 +1,5 @@
 // -*- mode: c++; -*- 
-/* i_composite_shape_3d.cc
+/* i_composite_shape_3d.cc 
  */
 
 #include <geomtools/i_composite_shape_3d.h>
@@ -17,17 +17,20 @@ namespace geomtools {
 	__delete = true;
 	sh_.__delete = false;
       }
+    return;
   }
 
   i_composite_shape_3d::shape_t::shape_t ()
   {
     __delete = false;
     __shape = 0;
+    return;
   }
 
   i_composite_shape_3d::shape_t::~shape_t ()
   {
     reset ();
+    return;
   }
 
   void 
@@ -38,6 +41,7 @@ namespace geomtools {
 	delete __shape;
 	__shape = 0;
       }    
+    return;
   }
 
   bool
@@ -85,6 +89,7 @@ namespace geomtools {
     sh_.__delete = false;
     sh_.__shape = &sh3d_;
     sh_.__placement = p_;
+    return;
   }
 
   void 
@@ -96,6 +101,7 @@ namespace geomtools {
     sh_.__delete = true;
     sh_.__shape = sh3d_;
     sh_.__placement = p_;
+    return;
   }
   
   void i_composite_shape_3d::shape_t::tree_dump (ostream & out_, 
@@ -166,15 +172,18 @@ namespace geomtools {
     out_ << "|-- shape2: " << std::endl;
     __shape2.dump (out_);
     out_ << "`-- end." << std::endl;
+    return;
   }
      
   i_composite_shape_3d::i_composite_shape_3d (double skin_)
   {
     set_skin (skin_);
+    return;
   }
   
   i_composite_shape_3d::~i_composite_shape_3d ()
   {
+    return;
   }
 
   bool 
@@ -187,18 +196,21 @@ namespace geomtools {
   i_composite_shape_3d::set_shape1 (i_shape_3d & sh3d_, const placement & p_)
   {
     shape_t::make_shape (sh3d_, p_, __shape1);
+    return;
   }
   
   void 
   i_composite_shape_3d::set_shape2 (i_shape_3d & sh3d_, const placement & p_)
   {
     shape_t::make_shape (sh3d_, p_, __shape2);
+    return;
   }
     
   void 
   i_composite_shape_3d::set_shape1 (i_shape_3d * sh3d_, const placement & p_)
   {
     shape_t::make_shape (sh3d_, p_, __shape1);
+    return;
   }
     
   void 
@@ -208,6 +220,7 @@ namespace geomtools {
     placement p1;
     shape_t::make_shape (sh3d1_, p1, __shape1);
     shape_t::make_shape (sh3d2_, p2_, __shape2);
+    return;
   }
     
   void 
@@ -217,12 +230,14 @@ namespace geomtools {
     placement p1;
     shape_t::make_shape (sh3d1_, p1, __shape1);
     shape_t::make_shape (sh3d2_, p2_, __shape2);
+    return;
   }
     
   void 
   i_composite_shape_3d::set_shape2 (i_shape_3d * sh3d_, const placement & p_)
   {
     shape_t::make_shape (sh3d_, p_, __shape2);
+    return;
   }
 
   const i_composite_shape_3d::shape_t & 

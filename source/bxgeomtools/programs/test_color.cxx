@@ -34,9 +34,9 @@ int main (int argc_, char ** argv_)
     geomtools::color color;
     color.code = 1;
     color.name = "red";
-    color.r = 1;
-    color.g = 0;
-    color.b = 0;
+    color.red_amount = 1;
+    color.green_amount = 0;
+    color.blue_amount = 0;
 
     string color_name = "green";
     int color_index = geomtools::color::get_color (color_name);

@@ -6,6 +6,8 @@
 
 #include <geomtools/material.h>
 
+#include <sstream>
+
 namespace geomtools {
 
   using namespace std;

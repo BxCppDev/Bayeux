@@ -3,124 +3,139 @@
  */
 
 #include <geomtools/address_set.h>
+#include <cstdlib>
+#include <stdexcept>
+#include <sstream>
+#include <string>
+#include <algorithm>
 
 namespace geomtools {
   
   bool address_set::is_valid () const
   {
-    return __mode != MODE_INVALID;
+    return mode_ != MODE_INVALID;
   }
 
   void address_set::invalidate ()
   {
     reset ();
-    __mode = MODE_INVALID;
+    mode_ = MODE_INVALID;
+    return;
   }
 
-  void address_set::__reset_list ()
+  void address_set::reset_list_ ()
   {
-    __addrs.clear ();
+    addrs_.clear ();
+    return;
   }
 
-  void address_set::__reset_range ()
+  void address_set::reset_range_ ()
   {
-    __range_min = 1;
-    __range_max = 0;
+    range_min_ = 1;
+    range_max_ = 0;
+    return;
   }
   
   bool address_set::is_reverse () const
   {
-    return __reverse;
+    return reverse_;
   }
  
-  void address_set::set_reverse (bool r_)
+  void address_set::set_reverse (bool a_reverse)
   {
-    __reverse = r_;
+    reverse_ = a_reverse;
+    return;
   }
  
   bool address_set::is_mode_none () const
   {
-    return __mode == MODE_NONE;
+    return mode_ == MODE_NONE;
   }
   
   bool address_set::is_mode_all () const
   {
-    return __mode == MODE_ALL;
+    return mode_ == MODE_ALL;
   }
   
   bool address_set::is_mode_range () const
   {
-    return __mode == MODE_RANGE;
+    return mode_ == MODE_RANGE;
   }
   
   bool address_set::is_mode_list () const
   {
-    return __mode == MODE_LIST;
+    return mode_ == MODE_LIST;
   }
   
   void address_set::set_mode_none ()
   {
-    __reset_range ();
-    __reset_list ();
-    __mode = MODE_NONE;
+    reset_range_ ();
+    reset_list_ ();
+    mode_ = MODE_NONE;
+    return;
   }
   
   void address_set::set_mode_all ()
   {
-    __reset_range ();
-    __reset_list ();
-    __mode = MODE_ALL;
+    reset_range_ ();
+    reset_list_ ();
+    mode_ = MODE_ALL;
+    return;
   }
   
   void address_set::set_mode_range ()
   {
-    __reset_list ();
-    __reset_range ();
-    __mode = MODE_RANGE;
+    reset_list_ ();
+    reset_range_ ();
+    mode_ = MODE_RANGE;
+    return;
   }
   
-  void address_set::set_range (uint32_t min_, uint32_t max_)
+  void address_set::set_range (uint32_t a_min, uint32_t a_max)
   {
     if (! is_mode_range ())
       {
 	set_mode_range ();
 	//throw runtime_error ("address_set::set_range: Range mode is not active !");
       }
-    if (min_ >  max_)
+    if (a_min >  a_max)
       {
-	__reset_range ();
+	reset_range_ ();
       }
     else
      {
-       __range_min = min_;
-       __range_max = max_;     
+       range_min_ = a_min;
+       range_max_ = a_max;     
      }
     return;
   }
   
-  void address_set::set_mode_range (uint32_t min_, uint32_t max_)
+  void address_set::set_mode_range (uint32_t a_min, uint32_t a_max)
   {
-    __mode = MODE_RANGE;
-    set_range (min_, max_);
+    mode_ = MODE_RANGE;
+    set_range (a_min, a_max);
+    return;
   }
 
   void address_set::set_mode_list ()
   {
-    __reset_list ();
-    __reset_range ();
-    __mode = MODE_LIST;
+    reset_list_ ();
+    reset_range_ ();
+    mode_ = MODE_LIST;
+    return;
   }
 
-  void address_set::add_to_list (uint32_t val_)
+  void address_set::add_to_list (uint32_t a_value)
   {
     if (! is_mode_list ())
       {
 	set_mode_list ();
       }
-    __addrs.insert (val_);
+    addrs_.insert (a_value);
+    return;
   }
 
-  bool address_set::match (uint32_t val_) const
+  bool address_set::match (uint32_t a_value) const
   {
     bool matched_value = false;
 
@@ -130,13 +145,13 @@ namespace geomtools {
       }
     else if (is_mode_range ())
       {
-	if (val_ < __range_min) matched_value = false;
-	else if (val_ > __range_max) matched_value = false;
+	if (a_value < range_min_) matched_value = false;
+	else if (a_value > range_max_) matched_value = false;
 	else matched_value = true;
       }
     else if (is_mode_list ())
       {
-	matched_value = __addrs.find (val_) != __addrs.end ();
+	matched_value = addrs_.find (a_value) != addrs_.end ();
       }
     else
       {
@@ -151,111 +166,113 @@ namespace geomtools {
 
   void address_set::reset ()
   {
-    __reverse = false; 
-    __mode = MODE_DEFAULT;
-    __reset_range ();
-    __reset_list ();
+    reverse_ = false; 
+    mode_ = MODE_DEFAULT;
+    reset_range_ ();
+    reset_list_ ();
+    return;
   }
 
   // ctor:
   address_set::address_set ()
   {
     reset ();
+    return;
   }
 
-  ostream & operator<< (ostream & out_, const address_set & as_)
+  ostream & operator<< (ostream & a_out, const address_set & a_addset)
   {
-    if (! as_.is_valid ())
+    if (! a_addset.is_valid ())
       {
-	out_ << "?";
-	return out_;
+	a_out << "?";
+	return a_out;
       }
-    if (as_.is_reverse ())
+    if (a_addset.is_reverse ())
       {
-	out_ << '!';
+	a_out << '!';
       }
-    if (as_.is_mode_none ())
+    if (a_addset.is_mode_none ())
       {
-	out_ << "{!}";
+	a_out << "{!}";
       }
-    else if (as_.is_mode_all ())
+    else if (a_addset.is_mode_all ())
       {
-	out_ << "{*}";
+	a_out << "{*}";
       }
-    else if (as_.is_mode_range ())
+    else if (a_addset.is_mode_range ())
       {
-	out_ << '[';
-	out_ << as_.__range_min;
-	out_ << ';';
-	out_ << as_.__range_max;
-	out_ << ']';
+	a_out << '[';
+	a_out << a_addset.range_min_;
+	a_out << ';';
+	a_out << a_addset.range_max_;
+	a_out << ']';
       }
     else
       {
-	out_ << '{';
-	for (set<uint32_t>::const_iterator i = as_.__addrs.begin ();
-	      i != as_.__addrs.end ();
+	a_out << '{';
+	for (set<uint32_t>::const_iterator i = a_addset.addrs_.begin ();
+	      i != a_addset.addrs_.end ();
 	     i++)
 	  {
 	    set<uint32_t>::const_iterator j = i;
 	    j++;
-	    out_ << *i;
-	    if (j != as_.__addrs.end ())
+	    a_out << *i;
+	    if (j != a_addset.addrs_.end ())
 	      {
-		out_ << ';';
+		a_out << ';';
 	      }
 	  }
-	out_ << '}';
+	a_out << '}';
       }
 
-    return out_;
+    return a_out;
   }
 
-  istream & operator>> (istream & in_, address_set & as_)
+  istream & operator>> (istream & a_in, address_set & a_addset)
   {
     //bool devel = true;
-    as_.invalidate ();
+    a_addset.invalidate ();
     bool reverse = false;
     bool mode_none = false;
     bool mode_all = false;
     bool mode_range = false;
     bool mode_list = false;
-    char c = in_.peek ();
+    char c = a_in.peek ();
     if (c == '!')
       {
-	in_.get ();
+	a_in.get ();
 	reverse = true;
-	c = in_.peek ();
+	c = a_in.peek ();
       }
     if (c == '{')
       {
-	in_.get ();
-	c = in_.peek ();
+	a_in.get ();
+	c = a_in.peek ();
 	if (c == '!')
 	  {
-	    in_.get ();
-	    c = in_.peek ();
+	    a_in.get ();
+	    c = a_in.peek ();
 	    if (c != '}')
 	      {
-		as_.invalidate ();
-		in_.setstate (ios::failbit);
-		return in_;
+		a_addset.invalidate ();
+		a_in.setstate (ios::failbit);
+		return a_in;
 	      }
-	    in_.get ();
-	    as_.set_mode_none ();
+	    a_in.get ();
+	    a_addset.set_mode_none ();
 	  }
 	else if (c == '*')
 	  {
-	    in_.get ();
-	    c = in_.peek ();
+	    a_in.get ();
+	    c = a_in.peek ();
 	    if (c != '}')
 	      {
-		as_.invalidate ();
-		in_.setstate (ios::failbit);
-		return in_;
+		a_addset.invalidate ();
+		a_in.setstate (ios::failbit);
+		return a_in;
 	      }
-	    in_.get ();
-	    as_.set_mode_all ();
+	    a_in.get ();
+	    a_addset.set_mode_all ();
 	  }
 	else
 	  {
@@ -264,26 +281,26 @@ namespace geomtools {
 	    while (true)
 	      {
 		uint32_t v;
-		in_ >> v >> ws;
-		if (! in_)
+		a_in >> v >> ws;
+		if (! a_in)
 		  {
-		    return in_;
+		    return a_in;
 		  }
 		//if (devel) cerr << "mode==LIST v=" << v << endl;
-		as_.add_to_list (v);
-		c = in_.peek ();
+		a_addset.add_to_list (v);
+		c = a_in.peek ();
 		if (c == '}') 
 		  {
-		    in_.get ();	
+		    a_in.get ();	
 		    break;
 		  }
 		if (c != ';') 
 		  {
-		    as_.invalidate ();
-		    in_.setstate (ios::failbit);
-		    return in_;
+		    a_addset.invalidate ();
+		    a_in.setstate (ios::failbit);
+		    return a_in;
 		  }
-		in_.get ();	
+		a_in.get ();	
 		//if (devel) cerr << "mode==LIST loop a new value" << endl;
 	      }
 	  }
@@ -291,48 +308,48 @@ namespace geomtools {
     else if (c == '[')
       {
 	// mode range:
-	in_.get ();
+	a_in.get ();
 	uint32_t min, max;
-	in_ >> min;
-	if (! in_)
+	a_in >> min;
+	if (! a_in)
 	  {
-	    as_.invalidate ();
-	    in_.setstate (ios::failbit);
-	    return in_;
+	    a_addset.invalidate ();
+	    a_in.setstate (ios::failbit);
+	    return a_in;
 	  }
-	c = in_.peek ();
+	c = a_in.peek ();
 	if (c != ';')
 	  {
-	    as_.invalidate ();
-	    in_.setstate (ios::failbit);
-	    return in_;
+	    a_addset.invalidate ();
+	    a_in.setstate (ios::failbit);
+	    return a_in;
 	  }
-	in_.get ();
-	in_ >> max;
-	if (! in_)
+	a_in.get ();
+	a_in >> max;
+	if (! a_in)
 	  {
-	    as_.invalidate ();
-	    in_.setstate (ios::failbit);
-	    return in_;
+	    a_addset.invalidate ();
+	    a_in.setstate (ios::failbit);
+	    return a_in;
 	  }
-	c = in_.peek ();
+	c = a_in.peek ();
 	if (c != ']')
 	  {
-	    as_.invalidate ();
-	    in_.setstate (ios::failbit);
-	    return in_;
+	    a_addset.invalidate ();
+	    a_in.setstate (ios::failbit);
+	    return a_in;
 	  }
-	in_.get ();
-	as_.set_range (min, max);
+	a_in.get ();
+	a_addset.set_range (min, max);
       }
     else
       {
-	as_.invalidate ();
-	in_.setstate (ios::failbit);
-	return in_;
+	a_addset.invalidate ();
+	a_in.setstate (ios::failbit);
+	return a_in;
       }
-    as_.set_reverse (reverse);
-    return in_;
+    a_addset.set_reverse (reverse);
+    return a_in;
   }
 
 } // end of namespace geomtools

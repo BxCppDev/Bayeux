@@ -22,16 +22,13 @@
 #include <exception>
 #include <limits> 
 
-#include <mygsl/min_max.h>
-
-#include <geomtools/i_boxed_model.h>
+#include <geomtools/i_model.h>
 #include <geomtools/box.h>
 #include <geomtools/cylinder.h>
 #include <geomtools/subtraction_3d.h>
-#include <geomtools/physical_volume.h>
+#include <geomtools/logical_volume.h>
 #include <geomtools/placement.h>
-#include <geomtools/visibility.h>
-#include <geomtools/gnuplot_draw.h>
+#include <geomtools/physical_volume.h>
 
 namespace geomtools {
 
@@ -105,6 +102,7 @@ namespace geomtools {
     static creator_registration<cylindric_extrusion_boxed_model> __CR;
       
   public: 
+
     virtual void tree_dump (ostream & out_         = clog, 
 			    const string & title_  = "", 
 			    const string & indent_ = "", 

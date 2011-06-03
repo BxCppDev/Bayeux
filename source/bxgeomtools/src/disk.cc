@@ -4,6 +4,16 @@
 
 #include <geomtools/disk.h>
 
+#include <cstdlib>
+#include <cmath>
+#include <stdexcept>
+#include <iostream>
+#include <sstream>
+#include <string>
+
+#include <gsl/gsl_poly.h>
+
+
 namespace geomtools {
 
   using namespace std;
@@ -17,7 +27,7 @@ namespace geomtools {
   
   double disk::get_r () const
   {
-    return __r;
+    return __radius;
   }
   
   double disk::get_radius () const
@@ -32,7 +42,7 @@ namespace geomtools {
 
   double disk::get_diameter () const
   {
-    return (__r + __r);
+    return (__radius + __radius);
   }
   
   void disk::set_r (double new_value_)
@@ -43,29 +53,29 @@ namespace geomtools {
 	message << "disk::set_r: Invalid '" << new_value_ << "' R value!";
 	throw logic_error (message.str ());
       }
-    __r = new_value_;
+    __radius = new_value_;
   }
   
    
   double disk::get_surface () const
   {
-    return M_PI * __r * __r;
+    return M_PI * __radius * __radius;
   }
 
   double disk::get_circumference () const
   {
-    return 2 * M_PI * __r;
+    return 2 * M_PI * __radius;
   }
 
   bool disk::is_valid () const
   {
-    return (__r > 0.0);
+    return (__radius > 0.0);
   }
   
   // ctor:
   disk::disk ()
   {
-    __r = -1.0;
+    __radius = -1.0;
   }
   
   // ctor:
@@ -89,7 +99,7 @@ namespace geomtools {
 
     double x = position_.x ();
     double y = position_.y ();
-    double r2 = (__r + 0.5 * tolerance) * (__r + 0.5 * tolerance);
+    double r2 = (__radius + 0.5 * tolerance) * (__radius + 0.5 * tolerance);
     double rho2 = x * x + y * y;
     if (rho2 > r2) 
       {
@@ -136,7 +146,7 @@ namespace geomtools {
 	double lambda2;
 	p2 = (ux * ux + uy * uy);
 	p1 = -2 * (ux * xf + uy * yf);
-	double r = pow (__r + 0.5 * tolerance_, 2);
+	double r = pow (__radius + 0.5 * tolerance_, 2);
 	p0 = xf * xf + yf * yf - r * r;
 	size_t nsol = 0;
 	nsol = gsl_poly_solve_quadratic (p2, p1, p0, &lambda1, &lambda2);

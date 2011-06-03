@@ -4,6 +4,13 @@
 
 #include <geomtools/mapping.h>
 
+#include <stdexcept>
+#include <sstream>
+#include <geomtools/physical_volume.h>
+#include <geomtools/model_factory.h>
+#include <geomtools/id_mgr.h>
+#include <geomtools/mapping_utils.h>
+
 namespace geomtools {
 
   using namespace std;

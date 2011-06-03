@@ -4,6 +4,21 @@
 
 #include <geomtools/multiple_items_model.h>
 
+#include <cstdlib>
+#include <cmath>
+#include <stdexcept>
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+
+#include <datatools/utils/units.h>
+
+#include <geomtools/placement.h>
+#include <geomtools/physical_volume.h>
+#include <geomtools/utils.h>
+#include <geomtools/visibility.h>
+#include <geomtools/material.h>
+
 namespace geomtools {
 
   using namespace std;  

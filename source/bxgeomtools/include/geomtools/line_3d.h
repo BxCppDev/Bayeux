@@ -17,14 +17,9 @@
 #ifndef __geomtools__line_3d_h
 #define __geomtools__line_3d_h 1
 
-#include <cmath>
-#include <stdexcept>
-#include <iostream>
-#include <sstream>
 #include <string>
 
-#include <datatools/serialization/serialization.h>
-
+#include <datatools/serialization/i_serializable.h>
 #include <datatools/utils/i_tree_dump.h>
 
 #include <geomtools/i_shape_1d.h>
@@ -40,10 +35,6 @@ namespace geomtools {
   {
   public: 
     static const string LINE_3D_LABEL;
-
-  private: 
-    vector_3d __first;
-    vector_3d __last;
 
   public: 
 
@@ -112,21 +103,18 @@ namespace geomtools {
     basic_polyline_3d make_vertex_collection () const;
 
     /* interface i_serializable */
-    static const string SERIAL_TAG;
-    
-    virtual const string & get_serial_tag () const;
-    
+    DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
   private:
       
-    friend class boost::serialization::access; 
     
-    template<class Archive>
-    void serialize (Archive            & ar_, 
-		    const unsigned int version_) 
-    {
-      ar_ & boost::serialization::make_nvp ("first", __first);
-      ar_ & boost::serialization::make_nvp ("last", __last);
-    }
+    //! Boost.Serialization hook.
+    friend class boost::serialization::access; 
+    BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
+
+  private: 
+
+    vector_3d __first;
+    vector_3d __last;
 
   };
 

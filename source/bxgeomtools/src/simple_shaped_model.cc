@@ -4,6 +4,29 @@
 
 #include <geomtools/simple_shaped_model.h>
 
+#include <iostream>
+#include <exception>
+#include <sstream>
+#include <limits> 
+
+#include <datatools/utils/units.h>
+
+#include <geomtools/box.h>
+#include <geomtools/cylinder.h>
+#include <geomtools/tube.h>
+#include <geomtools/sphere.h>
+#include <geomtools/polycone.h>
+#include <geomtools/polyhedra.h>
+
+
+#include <geomtools/visibility.h>
+#include <geomtools/material.h>
+#include <geomtools/sensitive.h>
+#include <geomtools/color.h>
+#include <geomtools/i_stackable.h>
+#include <geomtools/utils.h>
+#include <geomtools/mapping_utils.h>
+
 namespace geomtools {
 
   using namespace std;

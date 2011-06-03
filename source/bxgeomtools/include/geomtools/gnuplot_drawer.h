@@ -16,32 +16,20 @@
 #ifndef __geomtools__gnuplot_drawer_h
 #define __geomtools__gnuplot_drawer_h 1
 
-#include <cstdlib>
-#include <cmath>
-#include <stdexcept>
 #include <iostream>
-#include <iomanip>
-#include <sstream>
 #include <string>
-#include <map>
-#include <unistd.h>
+#include <sstream>
 
 #include <datatools/utils/properties.h>
-#include <datatools/utils/i_tree_dump.h>
-
-#include <geomtools/model_factory.h>
-#include <geomtools/placement.h>
-#include <geomtools/physical_volume.h>
-
-#include <geomtools/color.h>
-#include <geomtools/visibility.h>
-#include <geomtools/gnuplot_draw.h>
-#include <geomtools/gnuplot_i.h>
 
 namespace geomtools {
   
   using namespace std;  
   
+  class placement;
+  class model_factory;
+  class logical_volume;
+
   class gnuplot_drawer 
   {
   public:
@@ -75,6 +63,7 @@ namespace geomtools {
       cstream ()
       {
 	oss = 0;
+	return;
       }
     };
 

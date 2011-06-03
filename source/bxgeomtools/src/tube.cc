@@ -4,6 +4,12 @@
 
 #include <geomtools/tube.h>
 
+#include <cmath>
+#include <stdexcept>
+#include <sstream>
+
+#include <geomtools/cylinder.h>
+
 namespace geomtools {
 
   const std::string tube::TUBE_LABEL = "tube";

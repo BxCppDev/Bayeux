@@ -1,10 +1,13 @@
-// -*- mode: c++ ; -*-
+// -*- mode: c++ ; -*- 
 /* color.cc
- */
+ */ 
+
+#include <geomtools/color.h>
+#include <iomanip>
 
 #include <stdexcept>
 
-#include <geomtools/color.h>
+#include <datatools/utils/properties.h>
 
 namespace geomtools {
 
@@ -21,59 +24,60 @@ namespace geomtools {
   const string color::orange  = "orange";
   const string color::grey    = "grey";
   const string color::default_color = color::grey;
-
+ 
   // static:
-  color::scoped_color_db_t color::g__color_db (new color_db ());
+  color::scoped_color_db_t color::g_color_db_ (new color_db ());
 
   // static:
   const color::color_db & color::get_color_db ()
   {
-    if (! g__color_db)
+    if (! g_color_db_) 
       {
 	throw runtime_error ("color::get_color_db: Library build critical bug !");
       }
-    return *(g__color_db.get ());
+    return *(g_color_db_.get ());
   }
 
-  int color::get_color (const string & name_)
+  int color::get_color (const string & a_name) 
   {
-    return color::get_color_db ().get_color (name_);
+    return color::get_color_db ().get_color (a_name);
   }
 
-  int color::color_db::get_color (const string & name_) const
+  int color::color_db::get_color (const string & a_name) const
   {
-    int acolor = (__map.find (color::default_color))->second;
-    color_map_t::const_iterator i = __map.find (name_);
-    if (i != __map.end ())
+    int acolor = (map_of_colors_.find (color::default_color))->second;
+    color_map_t::const_iterator i = map_of_colors_.find (a_name);
+    if (i != map_of_colors_.end ())
       {
 	acolor = i->second;
       }
     return acolor;
   }
-
+ 
   color::color_db::color_db ()
   {
     bool devel = false;
     //devel = true;
     if (devel)
       {
-	clog << "DEVEL: color::color_db::color_db: Entering..." << endl;
+	clog << "DEVEL: color::color_db::color_db: Entering..." << endl; 
       }
-    __map[color::white]   = -2;
-    __map[color::black]   = -1;
-    __map[color::grey]    = 0;
-    __map[color::red]     = 1;
-    __map[color::green]   = 2;
-    __map[color::blue]    = 3;
-    __map[color::magenta] = 4;
-    __map[color::cyan]    = 5;
-    __map[color::yellow]  = 6;
-    __map[color::orange]  = 8;
-
+    map_of_colors_[color::white]   = -2;
+    map_of_colors_[color::black]   = -1;
+    map_of_colors_[color::grey]    = 0; 
+    map_of_colors_[color::red]     = 1;
+    map_of_colors_[color::green]   = 2;
+    map_of_colors_[color::blue]    = 3;
+    map_of_colors_[color::magenta] = 4;
+    map_of_colors_[color::cyan]    = 5;
+    map_of_colors_[color::yellow]  = 6;
+    map_of_colors_[color::orange]  = 8;
+ 
     if (devel)
       {
 	clog << "DEVEL: color::color_db::color_db: Exiting. " << endl;
       }
+    return;
   }
 
   color::color_db::~color_db ()
@@ -82,17 +86,18 @@ namespace geomtools {
     //devel = true;
     if (devel)
       {
-	clog << "DEVEL: color::color_db::~color_db: Entering..."
+	clog << "DEVEL: color::color_db::~color_db: Entering..." 
 	     << endl;
-	clog << "DEVEL: color::color_db::~color_db: Clearing the dictionary of colors..."
+	clog << "DEVEL: color::color_db::~color_db: Clearing the dictionary of colors..." 
 	     << endl;
       }
-    __map.clear ();
+    map_of_colors_.clear ();
     if (devel)
       {
-	clog << "DEVEL: color::color_db::~color_db: Exiting."
+	clog << "DEVEL: color::color_db::~color_db: Exiting." 
 	     << endl;
       }
+    return;
   }
 
   /********************************/
@@ -102,18 +107,20 @@ namespace geomtools {
     //clog << "NOTICE: color::color: Entering..." << endl;
     code = 0;
     name = default_color;
-    r = 0;
-    g = 0;
-    b = 0;
+    red_amount = 0;
+    green_amount = 0;
+    blue_amount = 0;
+    return;
   }
 
-  color::color (int code_, const string & name_, int r_, int g_, int b_)
+  color::color (int a_code, const string & a_name, int a_red, int a_green, int a_blue)
   {
-    code = code_;
-    name = name_;
-    r = r_;
-    g = g_;
-    b = b_;
+    code = a_code;
+    name = a_name;
+    red_amount = a_red;
+    green_amount = a_green;
+    blue_amount = a_blue;
+    return;
   }
 
 

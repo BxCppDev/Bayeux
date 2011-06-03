@@ -17,23 +17,13 @@
 #ifndef __geomtools__surrounded_boxed_model_h
 #define __geomtools__surrounded_boxed_model_h 1
 
-#include <iostream>
 #include <string> 
-#include <exception>
-#include <limits> 
-#include <list> 
-#include <map> 
-
-#include <mygsl/min_max.h>
-
-#include <datatools/utils/ioutils.h>
+#include <iostream>
 
 #include <geomtools/i_boxed_model.h>
 #include <geomtools/box.h>
 #include <geomtools/physical_volume.h>
 #include <geomtools/placement.h>
-#include <geomtools/regular_linear_placement.h>
-#include <geomtools/visibility.h>
 
 namespace geomtools {
 

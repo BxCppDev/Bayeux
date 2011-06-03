@@ -3,6 +3,17 @@
  */
 
 #include <geomtools/stacked_model.h>
+//
+#include <exception>
+#include <limits> 
+
+#include <mygsl/min_max.h>
+
+#include <datatools/utils/units.h>
+
+#include <geomtools/i_stackable.h>
+//#include <geomtools/regular_linear_placement.h>
+#include <geomtools/visibility.h>
 
 namespace geomtools {
 

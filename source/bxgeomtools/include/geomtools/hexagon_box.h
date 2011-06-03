@@ -68,12 +68,7 @@ namespace geomtools {
 		       | FACE_TOP)
       };
 
-      
-
-  private: 
-    double __radius;
-    double __z;
-
+ 
   public: 
     double get_radius () const;
 
@@ -142,6 +137,10 @@ namespace geomtools {
 
     static bool xy_is_on_hexagon (double r_, double x_, double y_, double skin_);
 
+  private: 
+
+    double __radius;
+    double __z;
 
   };
     

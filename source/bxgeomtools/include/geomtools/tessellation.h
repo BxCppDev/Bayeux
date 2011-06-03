@@ -15,20 +15,13 @@
 #ifndef __geomtools__tessellation_h
 #define __geomtools__tessellation_h 1
 
-#include <cstdlib>
-#include <cmath>
-#include <stdexcept>
 #include <iostream>
-#include <sstream>
-#include <fstream>
 #include <string>
 #include <map>
 
 #include <boost/cstdint.hpp>
 
-#include <geomtools/utils.h>
 #include <geomtools/i_shape_3d.h>
-#include <geomtools/box.h>
 
 namespace geomtools {
 

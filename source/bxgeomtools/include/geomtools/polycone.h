@@ -16,22 +16,10 @@
 #ifndef __geomtools__polycone_h
 #define __geomtools__polycone_h 1
 
-#include <cmath>
-#include <stdexcept>
 #include <iostream>
-#include <iomanip>
-#include <sstream>
 #include <string>
-#include <vector>
 #include <map>
-#include <fstream>
-
-#include <datatools/utils/utils.h>
-#include <datatools/utils/units.h>
-
-#include <mygsl/tabfunc.h>
-#include <mygsl/numerical_differentiation.h>
-#include <mygsl/interval.h>
+#include <limits>
 
 #include <geomtools/i_shape_3d.h>
 #include <geomtools/i_stackable.h>

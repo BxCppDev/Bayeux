@@ -4,6 +4,12 @@
 
 #include <geomtools/replicated_boxed_model.h>
 
+#include <exception>
+#include <limits> 
+
+#include <geomtools/physical_volume.h>
+#include <geomtools/visibility.h>
+
 namespace geomtools {
 
   using namespace std;
@@ -21,8 +27,8 @@ namespace geomtools {
   void replicated_boxed_model::set_number_of_items (size_t n_)
   {
     assert_unconstructed ("replicated_boxed_model::set_number_of_items");
-
     __number_of_items = n_;
+    return;
   }
   
   size_t replicated_boxed_model::get_number_of_items ()
@@ -60,6 +66,7 @@ namespace geomtools {
 	throw runtime_error (message.str ());
       }
     __boxed_model = &model_;
+    return;
   }
 
   const i_model & replicated_boxed_model::get_boxed_model () const
@@ -79,10 +86,12 @@ namespace geomtools {
     __y = numeric_limits<double>::quiet_NaN ();
     __z = numeric_limits<double>::quiet_NaN ();
     __number_of_items = 0;
+    return;
   }
   
   replicated_boxed_model::~replicated_boxed_model ()
   {
+    return;
   }
   
   void replicated_boxed_model::_at_construct (const string & name_,

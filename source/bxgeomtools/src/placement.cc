@@ -4,6 +4,13 @@
 
 #include <geomtools/placement.h>
 
+#include <iomanip>
+#include <sstream>
+#include <stdexcept>
+
+#include <datatools/utils/units.h>
+#include <datatools/utils/utils.h>
+
 namespace geomtools {
 
   using namespace std;

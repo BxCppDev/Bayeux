@@ -17,12 +17,10 @@
 #define __geomtools__placement_h 1
 
 #include <iostream>
-#include <iomanip>
 #include <string>
+#include <vector>
 
 #include <geomtools/i_placement.h>
-#include <datatools/utils/units.h>
-#include <datatools/utils/utils.h>
 
 namespace geomtools {
 

@@ -1,8 +1,12 @@
 // -*- mode: c++; -*- 
-/* regular_grid_placement.cc 
+/* regular_grid_placement.cc  
  */
 
 #include <geomtools/regular_grid_placement.h>
+
+#include <stdexcept>
+#include <sstream>
+#include <limits>
 
 namespace geomtools {
 
@@ -30,6 +34,7 @@ namespace geomtools {
   void regular_grid_placement::invalidate ()
   {
     reset ();
+    return;
   }
 
   bool regular_grid_placement::is_centered () const
@@ -40,16 +45,19 @@ namespace geomtools {
   void regular_grid_placement::set_centered (bool c_)
   {
     __centered = c_;
+    return;
   }
 
   void regular_grid_placement::set_column_step (double dx_)
   {
     __column_step = dx_;
+    return;
   }
 
   void regular_grid_placement::set_row_step (double dy_)
   {
     __row_step = dy_;
+    return;
   }
 
   void set_steps (double dx_, double dy_);
@@ -58,6 +66,7 @@ namespace geomtools {
   {
     set_column_step (dx_);
     set_row_step (dy_);
+    return;
   }
 
   double regular_grid_placement::get_column_step () const
@@ -112,11 +121,13 @@ namespace geomtools {
   void regular_grid_placement::set_number_of_columns (size_t nc_)
   {
     __number_of_columns = nc_;
+    return;
   }
 
   void regular_grid_placement::set_number_of_rows (size_t nr_)
   {
     __number_of_rows = nr_;
+    return;
   }
   
   size_t regular_grid_placement::get_number_of_rows () const
@@ -157,6 +168,7 @@ namespace geomtools {
   {
     int item = col_ + row_ * __number_of_columns;
     get_placement (item, p_);
+    return;
   }
 
   placement regular_grid_placement::get_placement (int col_, int row_) const
@@ -208,6 +220,7 @@ namespace geomtools {
     step.set (x, y, z);
     trans += step;
     p_.set_translation (trans);
+    return;
   }
 
   bool regular_grid_placement::is_mode_xy () const
@@ -237,12 +250,14 @@ namespace geomtools {
 	throw runtime_error ("regular_grid_placement: Invalid mode !");
       }
     __mode = mode_;
+    return;
   }
  
   // ctor:
   regular_grid_placement::regular_grid_placement () : i_placement ()
   {
     reset ();
+    return;
   }
 		
   // ctor:
@@ -261,11 +276,13 @@ namespace geomtools {
 	  number_of_rows_,
 	  mode_,
 	  centered_);
+    return;
   }
 
   // dtor:
   regular_grid_placement::~regular_grid_placement ()
   {
+    return;
   }
  
   void regular_grid_placement::init (const placement & basic_placement_, 
@@ -282,6 +299,7 @@ namespace geomtools {
     set_number_of_rows (number_of_rows_);
     set_mode (mode_);
     set_centered (centered_);
+    return;
   }
   
   void regular_grid_placement::reset ()
@@ -293,6 +311,7 @@ namespace geomtools {
     __number_of_rows = 0;
     __mode = MODE_XY;
     __centered = true;
+    return;
   }
     
   void regular_grid_placement::tree_dump (ostream & out_, 

@@ -16,22 +16,11 @@
 #ifndef __geomtools__utils_h
 #define __geomtools__utils_h 1
 
-#include <stdexcept>
-#include <iostream>
-#include <iomanip>
 #include <string>
-#include <limits>
-#include <cmath>
+#include <iostream>
 #include <list>
 
 #include <geomtools/clhep.h>
-#include <datatools/serialization/serialization.h>
-#include <boost/serialization/split_free.hpp>
-
-/** 
- *
- *
- */
 
 namespace geomtools {
 
@@ -524,8 +513,7 @@ namespace geomtools {
     static const string ROTATION_SUFFIX;
   };
 
-} // end of namespace geomtools
-
+} // end namespace geomtools
 
 //! Serialization stuff for CLHEP 'vector_3d'
 namespace boost {
@@ -533,80 +521,42 @@ namespace boost {
   namespace serialization {
     
     template<class Archive>
-    void save (Archive & ar_ , 
+    void save (Archive & a_ar , 
 	       const geomtools::vector_3d & v_,
-	       const unsigned int version_)
-    {
-      double x = v_.getX ();
-      double y = v_.getY ();
-      double z = v_.getZ ();
-      ar_ & boost::serialization::make_nvp ("x", x);
-      ar_ & boost::serialization::make_nvp ("y", y);
-      ar_ & boost::serialization::make_nvp ("z", z);
-    }
-    
+	       const unsigned int a_version);
+
     template<class Archive>
-    void load (Archive & ar_ , 
+    void load (Archive & a_ar , 
 	       geomtools::vector_3d & v_,
-	       const unsigned int version_)
-    {
-      double x;
-      double y;
-      double z;
-      ar_ & boost::serialization::make_nvp ("x", x);
-      ar_ & boost::serialization::make_nvp ("y", y);
-      ar_ & boost::serialization::make_nvp ("z", z);
-      v_.set (x, y, z);
-    }
-    
+	       const unsigned int a_version);
+
     template<class Archive>
-    void serialize (Archive & ar_,
-		    geomtools::vector_3d  & v_,
-		    const unsigned int version_)
-    {
-      boost::serialization::split_free (ar_, v_, version_);
-    } 
+    void serialize (Archive & a_ar,
+    		    geomtools::vector_3d  & v_,
+    		    const unsigned int a_version);
     
   } // namespace serialization
 
 } // namespace boost
 
-
-//! Serialization stuff for CLHEP 'vector_2d'
 namespace boost {
 
   namespace serialization {
     
     template<class Archive>
-    void save (Archive & ar_ , 
+    void save (Archive & a_ar , 
 	       const geomtools::vector_2d & v_,
-	       const unsigned int version_)
-    {
-      double x = v_.x ();
-      double y = v_.y ();
-      ar_ & boost::serialization::make_nvp ("x", x);
-      ar_ & boost::serialization::make_nvp ("y", y);
-    }
-    
+	       const unsigned int a_version);
+
     template<class Archive>
-    void load (Archive & ar_ , 
+    void load (Archive & a_ar , 
 	       geomtools::vector_2d & v_,
-	       const unsigned int version_)
-    {
-      double x;
-      double y;
-      ar_ & boost::serialization::make_nvp ("x", x);
-      ar_ & boost::serialization::make_nvp ("y", y);
-      v_.set (x, y);
-    }
+	       const unsigned int a_version);
     
     template<class Archive>
-    void serialize (Archive & ar_,
+    void serialize (Archive & a_ar,
 		    geomtools::vector_2d  & v_,
-		    const unsigned int version_)
-    {
-      boost::serialization::split_free (ar_, v_, version_);
-    } 
+		    const unsigned int a_version);
     
   } // namespace serialization
 
@@ -619,69 +569,19 @@ namespace boost {
   namespace serialization {
     
     template<class Archive>
-    void save (Archive & ar_ , 
+    void save (Archive & a_ar , 
 	       const geomtools::rotation_3d & r_,
-	       const unsigned int version_)
-    {
-      double rxx = r_.xx ();
-      ar_ & boost::serialization::make_nvp ("xx", rxx);
-      if (geomtools::is_valid (r_))
-	{
-	  double rxy, rxz, ryx, ryy, ryz, rzx, rzy, rzz;
-	  rxy = r_.xy ();
-	  rxz = r_.xz ();
-	  ryx = r_.yx ();
-	  ryy = r_.yy ();
-	  ryz = r_.yz ();
-	  rzx = r_.zx ();
-	  rzy = r_.zy ();
-	  rzz = r_.zz ();
-	  ar_ & boost::serialization::make_nvp ("xy", rxy);
-	  ar_ & boost::serialization::make_nvp ("xz", rxz);
-	  ar_ & boost::serialization::make_nvp ("yx", ryx);
-	  ar_ & boost::serialization::make_nvp ("yy", ryy);
-	  ar_ & boost::serialization::make_nvp ("yz", ryz);
-	  ar_ & boost::serialization::make_nvp ("zx", rzx);
-	  ar_ & boost::serialization::make_nvp ("zy", rzy);
-	  ar_ & boost::serialization::make_nvp ("zz", rzz);
-	}
-    }
-    
+	       const unsigned int a_version);
+
     template<class Archive>
-    void load (Archive & ar_ , 
-	       geomtools::rotation_3d & r_,
-	       const unsigned int version_)
-    {
-      double rxx (0.0), rxy (0.0), rxz (0.0);
-      double ryx (0.0), ryy (0.0), ryz (0.0);
-      double rzx (0.0), rzy (0.0), rzz (0.0);
-      ar_ & boost::serialization::make_nvp ("xx", rxx); 
-      if (rxx == rxx)
-	{
-	  ar_ & boost::serialization::make_nvp ("xy", rxy);
-	  ar_ & boost::serialization::make_nvp ("xz", rxz);
-	  ar_ & boost::serialization::make_nvp ("yx", ryx);
-	  ar_ & boost::serialization::make_nvp ("yy", ryy);
-	  ar_ & boost::serialization::make_nvp ("yz", ryz);
-	  ar_ & boost::serialization::make_nvp ("zx", rzx);
-	  ar_ & boost::serialization::make_nvp ("zy", rzy);
-	  ar_ & boost::serialization::make_nvp ("zz", rzz);
-	  r_ = geomtools::rotation_wrapper_t (rxx, rxy, rxz, ryx, ryy, ryz, rzx, rzy, rzz);
-	}
-      else 
-	{
-	  r_ = geomtools::rotation_3d ();
-	  geomtools::invalidate (r_);
-	}
-    }
-    
+    void load (Archive & a_ar , 
+    	       geomtools::rotation_3d & a_rotation,
+    	       const unsigned int a_version);
+
     template<class Archive>
-    void serialize (Archive & ar_,
-		    geomtools::rotation_3d  & r_,
-		    const unsigned int version_)
-    {
-      boost::serialization::split_free (ar_, r_, version_);
-    } 
+    void serialize (Archive & a_ar,
+		    geomtools::rotation_3d  & a_rotation,
+		    const unsigned int a_version);
     
   } // namespace serialization
 

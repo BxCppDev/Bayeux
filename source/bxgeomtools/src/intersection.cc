@@ -4,6 +4,14 @@
 
 #include <geomtools/intersection.h>
 
+#include <cmath>
+#include <stdexcept>
+#include <iostream>
+#include <sstream>
+#include <string>
+
+#include <datatools/utils/utils.h>
+
 namespace geomtools {
 
   namespace intersection {

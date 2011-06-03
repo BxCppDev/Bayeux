@@ -4,6 +4,13 @@
 
 #include <geomtools/circle.h>
 
+#include <cstdlib>
+#include <cmath>
+#include <stdexcept>
+#include <sstream>
+
+#include <gsl/gsl_poly.h>
+
 namespace geomtools {
 
   using namespace std;
@@ -17,7 +24,7 @@ namespace geomtools {
   
   double circle::get_r () const
   {
-    return __r;
+    return radius_;
   }
   
   double circle::get_radius () const
@@ -25,83 +32,88 @@ namespace geomtools {
     return get_r ();
   }
  
-  void circle::set_diameter (double new_value_)
+  void circle::set_diameter (double a_diameter)
   {
-    set_r (new_value_ * 0.5);
+    set_r (a_diameter * 0.5);
+    return;
   }
 
   double circle::get_diameter () const
   {
-    return (__r + __r);
+    return (radius_ + radius_);
   }
   
-  void circle::set_r (double new_value_)
+  void circle::set_r (double a_radius)
   {
-    if (new_value_ < 0.0 )
+    if (a_radius < 0.0 )
       {
 	ostringstream message;
-	message << "circle::set_r: Invalid '" << new_value_ << "' R value!";
+	message << "circle::set_r: Invalid '" << a_radius << "' R value!";
 	throw logic_error (message.str ());
       }
-    __r = new_value_;
+    radius_ = a_radius;
+    return;
   }
    
   double circle::get_surface () const
   {
-    return M_PI * __r * __r;
+    return M_PI * radius_ * radius_;
   }
 
   double circle::get_circumference () const
   {
-    return 2 * M_PI * __r;
+    return 2 * M_PI * radius_;
   }
   
   bool circle::is_valid () const
   {
-    return (__r > 0.0);
+    return (radius_ > 0.0);
   }
   
   // ctor:
   circle::circle ()
   {
-    __r = -1.0;
+    radius_ = -1.0;
+    return;
   }
 
   // ctor:
-  circle::circle (double r_)
+  circle::circle (double a_radius)
   {
-    set_r (r_);
+    set_r (a_radius);
+    return;
   }
   
   // dtor:
   circle::~circle ()
   {
+    return;
   }
 
-  void circle::tree_dump (ostream & out_, 
-			const string & title_, 
-			const string & indent_, 
-			bool inherit_) const
+  void circle::tree_dump (ostream & a_out, 
+			  const string & a_title, 
+			  const string & a_indent, 
+			  bool a_inherit) const
   {
     namespace du = datatools::utils;
     string indent;
-    if (! indent_.empty ()) indent = indent_;
-    i_object_3d::tree_dump (out_, title_, indent_, true);
+    if (! a_indent.empty ()) indent = a_indent;
+    i_object_3d::tree_dump (a_out, a_title, indent, true);
 
-    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)  
-	 << "R : " << get_r () / CLHEP::mm << " mm" << endl;
+    a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)  
+	 << "Radius : " << get_r () / CLHEP::mm << " mm" << endl;
     return;
   }
 
   bool circle::is_on_curve (const vector_3d &, 
-			    double tolerance_) const
+			    double a_tolerance) const
   {
     bool on_curve = false;
     throw runtime_error ("circle::is_on_curve: Not implemented yet !");
     return on_curve;
   }
 
-  vector_3d circle::get_direction_on_curve (const vector_3d & position_) const
+  vector_3d circle::get_direction_on_curve (const vector_3d & a_position) const
   {
     vector_3d dir;
     invalidate (dir);

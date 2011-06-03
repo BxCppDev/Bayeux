@@ -52,9 +52,9 @@ namespace geomtools {
 
     private:
 
-      double __tolerance; //!> Tolerance to check surface/curve belonging
-      datatools::utils::properties __properties; //!> List of properties
-      void * __user_draw; //!> An address that may point to some drawing function (may be used by the gnuplot renderer)
+      double __tolerance; //!< Tolerance to check surface/curve belonging
+      datatools::utils::properties __properties; //!< List of properties
+      void * __user_draw; //!< An address that may point to some drawing function (may be used by the gnuplot renderer)
 
     public:
 

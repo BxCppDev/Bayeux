@@ -16,17 +16,9 @@
 #ifndef __geomtools__regular_polygon_h
 #define __geomtools__regular_polygon_h 1
 
-#include <cstdlib>
-#include <cmath>
-#include <stdexcept>
-#include <iostream>
-#include <sstream>
 #include <string>
 
-#include <gsl/gsl_poly.h>
-
 #include <geomtools/i_shape_2d.h>
-#include <geomtools/utils.h>
 
 namespace geomtools {
 

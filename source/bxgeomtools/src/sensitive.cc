@@ -6,6 +6,8 @@
 
 #include <geomtools/sensitive.h>
 
+#include <sstream>
+
 namespace geomtools {
 
   using namespace std;

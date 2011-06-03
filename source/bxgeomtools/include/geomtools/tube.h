@@ -16,17 +16,15 @@
 #ifndef __geomtools__tube_h
 #define __geomtools__tube_h 1
 
-#include <cmath>
-#include <stdexcept>
 #include <iostream>
-#include <sstream>
 #include <string>
 
 #include <geomtools/i_shape_3d.h>
 #include <geomtools/i_stackable.h>
-#include <geomtools/cylinder.h>
 
 namespace geomtools {
+
+  class cylinder;
 
   class tube : public i_shape_3d, public i_stackable
   {

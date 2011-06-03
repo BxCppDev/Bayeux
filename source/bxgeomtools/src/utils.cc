@@ -1,8 +1,14 @@
 // -*- mode: c++; -*- 
 /* utils.cc 
- */
+ */  
 
 #include <geomtools/utils.h>
+
+#include <stdexcept>
+#include <sstream>
+#include <iomanip>
+#include <limits>
+#include <cmath>
 
 namespace geomtools {
 

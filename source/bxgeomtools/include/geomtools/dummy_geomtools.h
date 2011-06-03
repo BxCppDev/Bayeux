@@ -15,19 +15,19 @@
 #ifndef __geomtools__dummy_geomtools_h
 #define __geomtools__dummy_geomtools_h 1
 
-
-
 namespace geomtools {
 
   class dummy_geomtools
   {
   
-  // ctor/dtor:
   public: 
-    dummy_geomtools();
-    virtual ~dummy_geomtools();
-  
 
+    // ctor:
+    dummy_geomtools ();
+
+    // dtor:
+    virtual ~dummy_geomtools ();
+  
   };
 
 } // end of namespace geomtools

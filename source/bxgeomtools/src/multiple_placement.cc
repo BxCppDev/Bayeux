@@ -4,6 +4,9 @@
 
 #include <geomtools/multiple_placement.h>
 
+#include <stdexcept>
+#include <sstream>
+
 namespace geomtools {
 
   using namespace std;
@@ -21,11 +24,13 @@ namespace geomtools {
   void multiple_placement::invalidate ()
   {
     reset ();
+    return;
   }
 
   void multiple_placement::add (const placement & p_)
   {
     __placements.push_back (p_);
+    return;
   }
   
   const placement & multiple_placement::get_placement (int index_) const
@@ -61,22 +66,26 @@ namespace geomtools {
   void multiple_placement::get_placement (int item_, placement & p_) const
   {
     p_ = __placements[item_];
+    return;
   }
   
   // ctor:  
   multiple_placement::multiple_placement ()
   {
+    return;
   }
   
   // dtor:
   multiple_placement::~multiple_placement ()
   {
     reset ();
+    return;
   }
   
   void multiple_placement::reset ()
   {
     __placements.clear ();
+    return;
   }
     
   void multiple_placement::tree_dump (ostream & out_, 

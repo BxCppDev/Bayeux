@@ -4,7 +4,8 @@
 #include <cstdlib>
 #include <iostream>
 #include <string>
-#include <exception>
+#include <stdexcept>
+#include <sstream>
 
 #include <geomtools/address_set.h>
 

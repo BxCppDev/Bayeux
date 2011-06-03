@@ -4,6 +4,13 @@
 
 #include <geomtools/smart_id_locator.h>
 
+#include <geomtools/geom_map.h>
+
+#include <sstream>
+#include <stdexcept>
+
+#include <datatools/utils/ioutils.h>
+
 namespace geomtools {
 
   using namespace std;

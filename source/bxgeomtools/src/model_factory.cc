@@ -4,6 +4,17 @@
 
 #include <geomtools/model_factory.h>
 
+#include <stdexcept>
+#include <sstream>
+#include <fstream>
+#include <string>
+#include <map>
+
+#include <geomtools/detail/model_tools.h>
+#include <geomtools/i_model.h>
+#include <geomtools/logical_volume.h>
+#include <geomtools/visibility.h>
+
 namespace geomtools {
 
   using namespace std;

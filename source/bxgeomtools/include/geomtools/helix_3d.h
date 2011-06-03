@@ -25,12 +25,11 @@
 #include <string>
 #include <limits>
 
-#include <datatools/serialization/serialization.h>
-
 #include <geomtools/i_shape_1d.h>
 #include <geomtools/utils.h>
 
 #include <datatools/utils/i_tree_dump.h>
+#include <datatools/serialization/i_serializable.h>
 
 namespace geomtools {
 
@@ -42,13 +41,6 @@ namespace geomtools {
   {
   public: 
     static const string HELIX_3D_LABEL;
-
-  private: 
-    double    __radius;
-    vector_3d __center;
-    double    __step;
-    double    __t1;    // angle1 / (2 pi)
-    double    __t2;    // angle2 / (2 pi)
 
   public: 
 
@@ -155,27 +147,13 @@ namespace geomtools {
     basic_polyline_3d make_vertex_collection () const;
     
     /* interface i_serializable */
-    static const string SERIAL_TAG;
-    
-    virtual const string & get_serial_tag () const;
+    DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
   
   private:
       
+    //! Boost.Serialization hook.
     friend class boost::serialization::access; 
-    
-    template<class Archive>
-    void serialize (Archive            & ar_, 
-		    const unsigned int version_) 
-    {
-      ar_ & boost::serialization::make_nvp ("radius", __radius);
-      if (__radius == __radius)
-	{
-	  ar_ & boost::serialization::make_nvp ("center", __center);
-	  ar_ & boost::serialization::make_nvp ("step", __step);
-	  ar_ & boost::serialization::make_nvp ("t1", __t1);
-	  ar_ & boost::serialization::make_nvp ("t2", __t2);
-	}
-    }
+    BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
 
   public:
 
@@ -196,6 +174,14 @@ namespace geomtools {
 			      double tolerance_ = USING_PROPER_TOLERANCE) const;
 
     virtual vector_3d get_direction_on_curve (const vector_3d & position_) const;
+
+  private: 
+
+    double    __radius;
+    vector_3d __center;
+    double    __step;
+    double    __t1;    // angle1 / (2 pi)
+    double    __t2;    // angle2 / (2 pi)
 
   };
 

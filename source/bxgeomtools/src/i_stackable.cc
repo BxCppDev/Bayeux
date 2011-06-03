@@ -4,8 +4,8 @@
  
 #include <geomtools/i_stackable.h>
 
-#include <CLHEP/Units/SystemOfUnits.h>
-#include <CLHEP/Units/PhysicalConstants.h>
+#include <datatools/utils/clhep_units.h>
+#include <datatools/utils/units.h>
 
 namespace geomtools {
 

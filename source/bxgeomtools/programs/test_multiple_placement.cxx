@@ -12,6 +12,7 @@
 
 #include <geomtools/multiple_placement.h>
 #include <geomtools/box.h>
+#include <geomtools/gnuplot_i.h>
 #include <geomtools/gnuplot_draw.h>
 #include <geomtools/gnuplot_drawer.h>
 
