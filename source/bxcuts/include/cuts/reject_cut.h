@@ -16,8 +16,6 @@
 #ifndef __cuts__reject_cut_h
 #define __cuts__reject_cut_h 1
 
-#include <cstdlib>
-
 #include <cuts/i_cut.h>
 
 namespace cuts {

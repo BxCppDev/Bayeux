@@ -18,7 +18,6 @@
 #define __cuts__test__test_cuts_h 1
 
 #include <iostream>
-#include <stdexcept>
 
 #include <cuts/i_cut.h>
 #include <cuts/test/test_data.h>

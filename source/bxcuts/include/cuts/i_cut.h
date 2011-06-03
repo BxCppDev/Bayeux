@@ -18,7 +18,7 @@
 #define __cuts__i_cut_h 1
 
 #include <iostream>
-#include <stdexcept>
+#include <string>
 
 #include <boost/scoped_ptr.hpp>
 

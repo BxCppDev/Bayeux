@@ -1,8 +1,10 @@
 // -*- mode: c++ ; -*- 
-/* nor_cut.cc
+/* nor_cut.cc 
  */
 
 #include <cuts/nor_cut.h>
+
+#include <stdexcept>
 
 namespace cuts {
   

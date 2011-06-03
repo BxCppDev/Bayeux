@@ -16,10 +16,7 @@
 #ifndef __cuts__multi_cut_h
 #define __cuts__multi_cut_h 1
 
-#include <cstdlib>
-#include <stdexcept>
-#include <iostream>
-#include <sstream>
+#include <string>
 #include <list>
 
 #include <cuts/i_cut.h>

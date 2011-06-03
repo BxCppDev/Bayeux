@@ -16,6 +16,7 @@
 #ifndef __cuts__nand_cut_h
 #define __cuts__nand_cut_h 1
 
+#include <stdexcept>
 
 #include <cuts/i_binary_cut.h>
 

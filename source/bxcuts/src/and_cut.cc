@@ -4,7 +4,9 @@
 
 #include <cuts/and_cut.h>
 
-namespace cuts {
+#include <stdexcept>
+
+namespace cuts { 
   
   // ctor:
   and_cut::and_cut () : i_binary_cut ()

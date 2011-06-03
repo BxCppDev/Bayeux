@@ -3,6 +3,12 @@
  */
 
 #include <cuts/i_binary_cut.h>
+
+#include <cstdlib>
+#include <stdexcept>
+#include <iostream>
+#include <sstream>
+
 #include <cuts/factory.h> // for 'factory::get_creators'
 
 namespace cuts {

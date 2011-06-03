@@ -4,6 +4,8 @@
 
 #include <cuts/xnor_cut.h>
 
+#include <stdexcept>
+
 namespace cuts {
   
   // ctor:

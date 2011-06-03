@@ -4,6 +4,11 @@
 
 #include <cuts/factory.h>
 
+#include <cstdlib>
+#include <stdexcept>
+#include <iostream>
+#include <sstream>
+
 namespace cuts {
 
   using namespace std;
@@ -18,6 +23,7 @@ namespace cuts {
   void factory::set_debug (bool new_value_)
   {
     __debug = new_value_;
+    return;
   }
 
   void factory::do_register (const cut_creator_t & creator_,
@@ -51,6 +57,7 @@ namespace cuts {
 	throw runtime_error (message.str ());
       }
     _creators [cut_id] = creator_;
+    return;
   }
 
   // ctor:
@@ -76,12 +83,14 @@ namespace cuts {
 	*/
 	dump_cuts (clog, "Available cuts after preload:", "NOTICE: ");
       }
+    return;
   }
   
   // dtor:
   factory::~factory ()
   {
     _creators.clear ();
+    return;
   }
   
   i_cut * factory::create_cut (const string & cut_id_, 
@@ -159,6 +168,7 @@ namespace cuts {
 	     << dec << endl;
       }
     //out_ << indent_ << "end." << endl;
+    return;
   }
 
   const cut_creator_dict_t & factory::get_creators () const

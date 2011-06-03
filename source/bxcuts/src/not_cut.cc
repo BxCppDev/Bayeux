@@ -4,6 +4,11 @@
 
 #include <cuts/not_cut.h>
 
+#include <cstdlib>
+#include <stdexcept>
+#include <iostream>
+#include <sstream>
+
 namespace cuts {
 
   using namespace std;

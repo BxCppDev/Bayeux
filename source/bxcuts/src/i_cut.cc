@@ -4,6 +4,9 @@
 
 #include <cuts/i_cut.h>
 
+#include <stdexcept>
+#include <sstream>
+
 namespace cuts {
 
   bool i_cut::g_debug = false;

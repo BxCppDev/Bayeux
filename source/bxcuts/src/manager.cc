@@ -4,6 +4,13 @@
 
 #include <cuts/manager.h>
 
+#include <cstdlib>
+#include <stdexcept>
+#include <iostream>
+#include <sstream>
+
+//#include <cuts/factory.h>
+
 namespace cuts {
 
   using namespace std;

@@ -4,6 +4,9 @@
 
 #include <cuts/test/test_cuts.h>
 
+#include <stdexcept>
+#include <sstream>
+
 namespace cuts {
 
   namespace test {

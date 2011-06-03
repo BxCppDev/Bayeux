@@ -4,6 +4,8 @@
 
 #include <cuts/reject_cut.h>
 
+#include <cstdlib>
+
 namespace cuts {
 
   // ctor:

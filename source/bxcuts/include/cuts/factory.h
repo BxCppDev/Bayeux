@@ -22,9 +22,6 @@
 #ifndef __cuts__factory_h
 #define __cuts__factory_h 1
 
-#include <cstdlib>
-#include <stdexcept>
-#include <iostream>
 #include <string>
 
 #include <cuts/i_cut.h>

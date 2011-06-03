@@ -16,11 +16,6 @@
 #ifndef __cuts__i_binary_cut_h
 #define __cuts__i_binary_cut_h 1
 
-#include <cstdlib>
-#include <stdexcept>
-#include <iostream>
-#include <sstream>
-
 #include <cuts/i_cut.h>
 
 namespace cuts {

@@ -16,9 +16,6 @@
 #ifndef __cuts__manager_h
 #define __cuts__manager_h 1
 
-#include <cstdlib>
-#include <stdexcept>
-#include <iostream>
 #include <string>
 
 #include <cuts/factory.h>
@@ -27,6 +24,8 @@
 namespace cuts {
 
   using namespace std;
+
+  class factory;
 
   class manager
   {

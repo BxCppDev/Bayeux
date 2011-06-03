@@ -3,6 +3,11 @@
  */
 
 #include <cuts/multi_cut.h>
+
+#include <cstdlib>
+#include <stdexcept>
+#include <iostream>
+#include <sstream>
 #include <algorithm>
 
 namespace cuts {
