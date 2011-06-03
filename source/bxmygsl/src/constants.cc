@@ -2,11 +2,13 @@
 
 #include <mygsl/constants.h>
 
+#include <gsl/gsl_const_mksa.h>
+#include <gsl/gsl_const_cgsm.h>
+#include <gsl/gsl_const_num.h>
+
 namespace mygsl {
 
   namespace constants {
-
-  
   
     const double mksa::acre = GSL_CONST_MKSA_ACRE;
     const double mksa::angstrom = GSL_CONST_MKSA_ANGSTROM;

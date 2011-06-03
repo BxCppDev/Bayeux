@@ -3,15 +3,10 @@
 #ifndef __mygsl__constants_h 
 #define __mygsl__constants_h 1
 
-#include <gsl/gsl_const_mksa.h>
-#include <gsl/gsl_const_cgsm.h>
-#include <gsl/gsl_const_num.h>
-
 namespace mygsl {
 
   namespace constants {
 
-  
   class mksa
   {
   public:

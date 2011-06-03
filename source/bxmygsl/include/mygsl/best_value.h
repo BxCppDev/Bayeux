@@ -4,10 +4,7 @@
 #ifndef __mygsl__best_value_h
 #define __mygsl__best_value_h 1
 
-#include <limits>
 #include <iostream>
-#include <stdexcept>
-#include <cmath>
 
 using namespace std;
 

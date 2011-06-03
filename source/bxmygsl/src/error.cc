@@ -2,6 +2,10 @@
 
 #include <mygsl/error.h>
 
+#include <iostream>
+#include <sstream>
+#include <stdexcept>
+
 namespace mygsl {
   
   void error::to_string (const int gsl_errno_, 

@@ -3,12 +3,8 @@
 #ifndef __mygsl__error_h 
 #define __mygsl__error_h 1
 
-#include <gsl/gsl_errno.h>
-
-#include <iostream>
 #include <string>
-#include <sstream>
-#include <stdexcept>
+#include <gsl/gsl_errno.h>
 
 namespace mygsl {
 
@@ -43,9 +39,9 @@ namespace mygsl {
       static void set_gsl_default ();
 
       static void  default_handler(const char * reason_ ,
-			const char * file_ ,
-			int line_ ,
-			int gsl_errno_);
+				   const char * file_ ,
+				   int line_ ,
+				   int gsl_errno_);
 
     };
 

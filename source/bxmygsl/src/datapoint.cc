@@ -2,6 +2,13 @@
 
 #include <mygsl/datapoint.h>
 
+#include <string>
+#include <sstream>
+#include <stdexcept>
+
+#include <gsl/gsl_errno.h>
+#include <gsl/gsl_fit.h>
+
 namespace mygsl {
   
   datapoint::datapoint ()
@@ -9,6 +16,7 @@ namespace mygsl {
     __x = 0.0;
     __y = 0.0;
     __sigma = numeric_limits<double>::quiet_NaN ();
+    return;
   }
 
   datapoint::datapoint (double x_, 
@@ -18,6 +26,7 @@ namespace mygsl {
     __x = x_;
     __y = y_;
     __sigma = sigma_;
+    return;
   }
     
   const double & datapoint::x () const
@@ -50,7 +59,7 @@ namespace mygsl {
     out_ << odouble (p_.__x ) << ' ' 
 	 << odouble (p_.__y ) << ' ' 
 	 << odouble (p_.__sigma); 
-    return out_;
+    return out_; 
   }
 
   istream & operator>> (istream & in_ , datapoint & p_)

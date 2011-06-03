@@ -3,13 +3,7 @@
 #ifndef __mygsl__datapoint_h 
 #define __mygsl__datapoint_h 1
 
-#include <gsl/gsl_errno.h>
-#include <gsl/gsl_fit.h>
-
 #include <iostream>
-#include <string>
-#include <sstream>
-#include <stdexcept>
 #include <limits>
 
 #include <mygsl/ioutils.h>

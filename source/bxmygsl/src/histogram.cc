@@ -3,6 +3,7 @@
 #include <mygsl/histogram.h>
 
 #include <stdexcept>
+//#include <gsl/gsl_vector.h>
 
 namespace mygsl {
 
@@ -39,6 +40,7 @@ namespace mygsl {
     __bin_spacing = (max_ -  min_) / n_;
     __h = gsl_histogram_alloc (n_);
     gsl_histogram_set_ranges_uniform (__h, min_, max_);
+    return;
   }
 
   void histogram::init (const std::vector<double> & ranges_)
@@ -59,6 +61,7 @@ namespace mygsl {
     __h = gsl_histogram_alloc (n);
     const double & a = * (ranges_.begin ());
     gsl_histogram_set_ranges (__h, &a, ranges_.size ());
+    return;
   }
 
   histogram::histogram (size_t n_ , 
@@ -69,6 +72,7 @@ namespace mygsl {
     __bin_spacing = -1;
     __h = 0;
     init (n_, min_, max_);
+    return;
   }
 
   histogram::histogram (const std::vector<double> & ranges_)
@@ -78,6 +82,7 @@ namespace mygsl {
     __bin_spacing = -1;
     __h = 0;
     init (ranges_);
+    return;
   }
 
   histogram::~histogram ()
@@ -87,6 +92,7 @@ namespace mygsl {
 	gsl_histogram_free (__h);
 	__h = 0;
       }
+    return;
   }
 
   histogram::histogram (const histogram & h_ , int mode_)
@@ -103,6 +109,7 @@ namespace mygsl {
       size_t new_bins =  (size_t) mode_;
       rebin (new_bins);
     }
+    return;
   }
 
   histogram & histogram::operator= (const histogram & h_) 
@@ -138,6 +145,7 @@ namespace mygsl {
       return;
     }
     gsl_histogram_accumulate (__h,x_,weight_);
+    return;
   }
   
   void histogram::increment (double x_)
@@ -149,6 +157,7 @@ namespace mygsl {
       return;
     }
     gsl_histogram_increment (__h,x_);
+    return;
   }
 
   void histogram::fill (double x_ , double weight_)
@@ -162,6 +171,7 @@ namespace mygsl {
       return;
     }
     gsl_histogram_accumulate (__h,x_,weight_);
+    return;
   }
 
   double histogram::at (size_t i_) const
@@ -176,8 +186,7 @@ namespace mygsl {
   {
     if (i_ < 0) return __underflow;
     if (i_ >= __h->n) return __overflow;
-    return gsl_histogram_get (__h,i_);
-    
+    return gsl_histogram_get (__h,i_);   
   }
 
   bool histogram::find (double x_ , size_t & i_) const
@@ -217,7 +226,8 @@ namespace mygsl {
     __bin_spacing = -1.0;
     __underflow   = 0.0;
     __overflow    = 0.0;
-    return gsl_histogram_reset (__h);
+    gsl_histogram_reset (__h);
+    return;
   }
 
   bool histogram::can_rebin (size_t new_bins_) const
@@ -279,6 +289,7 @@ namespace mygsl {
     gsl_histogram_free (__h);
     __h = 0;
     __h = h2;
+    return;
   }
 
   double histogram::min_val () const
@@ -336,6 +347,7 @@ namespace mygsl {
 	    << ' ' << __h->bin[i]; 
     }
     out_ << ' ' << __underflow << ' ' << __overflow;
+    return;
   }
 
   void histogram::from_stream (std::istream & in_)
@@ -376,6 +388,7 @@ namespace mygsl {
     }
     __underflow=underflow;
     __overflow=overflow;
+    return;
   }
 
   void histogram::print (std::ostream & out_ , int precision_) const
@@ -389,6 +402,7 @@ namespace mygsl {
 	    << std::endl; 
     }
     out_ << "# " << __underflow << ' ' << __overflow << std::endl;
+    return;
   }
 
 
@@ -402,6 +416,7 @@ namespace mygsl {
     out_ << "  Mean  = " << mean () << std::endl;
     out_ << "  Sigma = " << sigma () << std::endl;
     out_ << "  Sum   = " << sum () << std::endl;
+    return;
   }
   
   double histogram::operator[] (size_t i_) const
@@ -429,41 +444,49 @@ namespace mygsl {
   void histogram::shift (double s_)
   {
     gsl_histogram_shift (__h,s_);
+    return;
   }
 
   void histogram::scale (double s_)
   {
     gsl_histogram_scale (__h,s_);
+    return;
   }
 
   void histogram::negate ()
   {
     gsl_histogram_scale (__h,-1.0);
+    return;
   }
  
   void histogram::zero ()
   {
     reset ();
+    return;
   }
  
   void histogram::add (const histogram & h_)
   {
     gsl_histogram_add (__h,h_.__h);
+    return;
   }
   
   void histogram::sub (const histogram & h_)
   {
     gsl_histogram_sub (__h,h_.__h);
+    return;
   }
   
   void histogram::mul (const histogram & h_)
   {
     gsl_histogram_mul (__h,h_.__h);
+    return;
   }
   
   void histogram::div (const histogram & h_)
   {
     gsl_histogram_div (__h,h_.__h);
+    return;
   }
   
   histogram & histogram::operator+= (const histogram & h_)
@@ -587,17 +610,20 @@ namespace mygsl {
   histogram::pdf::pdf (size_t n_)
   {
     __pdf  =0;
+    return;
   }
   
   histogram::pdf::pdf (const histogram & h_)
   {
     __pdf = 0;
     init (h_);
+    return;
   }
   
   histogram::pdf::~pdf ()
   {
     reset ();
+    return;
   }
   
   void histogram::pdf::init (const histogram & h_)
@@ -620,12 +646,14 @@ namespace mygsl {
       }
       gsl_histogram_pdf_init(__pdf,h_.__h);
     */
+    return;
   }
   
   void histogram::pdf::reset ()
   {
     gsl_histogram_pdf_free (__pdf);
     __pdf = 0;
+    return;
   }
   
   double histogram::pdf::sample (double r_)

@@ -2,6 +2,10 @@
 
 #include <mygsl/best_value.h>
 
+#include <limits>
+#include <stdexcept>
+#include <cmath>
+
 namespace mygsl {
 
   best_value::operator double ()
@@ -12,6 +16,7 @@ namespace mygsl {
   void best_value::set_value (double value_)
   {
     __value = value_;
+    return;
   }
 
   void best_value::set_error_low (double error_low_)
@@ -21,6 +26,7 @@ namespace mygsl {
 	throw runtime_error ("best_value::set_error_low: Invalid value for error low!");
       }
     __error_low = error_low_;
+    return;
   }
 
   void best_value::set_error_high (double error_high_)
@@ -30,6 +36,7 @@ namespace mygsl {
 	throw runtime_error ("best_value::set_error_high: Invalid value for error high!");
       }
     __error_high = error_high_;
+    return;
   }
 
   void best_value::reset ()
@@ -37,12 +44,14 @@ namespace mygsl {
     unset_value ();
     unset_errors ();
     unset_confidence_level ();
+    return;
   }
 
   void best_value::unset_errors ()
   {
     __error_low = 0.0;
     __error_high = 0.0;
+    return;
   }
 
   bool best_value::has_value () const
@@ -54,11 +63,13 @@ namespace mygsl {
   void best_value::unset_value ()
   {
     __value = numeric_limits<double>::quiet_NaN ();
+    return;
   }
 
   void best_value::unset_confidence_level ()
   {
     __confidence_level = numeric_limits<double>::quiet_NaN ();
+    return;
   }
 
   void best_value::set_confidence_level (double confidence_level_)
@@ -69,6 +80,7 @@ namespace mygsl {
 	throw runtime_error ("best_value::set_confidence_level: Invalid value for confidence level!");
       }
     __confidence_level = confidence_level_;
+    return;
   }
   
   double best_value::get_min_value () const
@@ -119,6 +131,7 @@ namespace mygsl {
   best_value::best_value ()
   {
     reset ();
+    return;
   }
   
   best_value::best_value (double value_)
@@ -128,6 +141,7 @@ namespace mygsl {
     set_error_low (0.0);
     set_error_high (0.0);
     unset_confidence_level ();
+    return;
   }
   
   best_value::best_value (double value_, 
@@ -138,6 +152,7 @@ namespace mygsl {
     set_error_low (error_);
     set_error_high (error_);
     unset_confidence_level ();
+    return;
   }
   
   best_value::best_value (double value_, 
@@ -149,6 +164,7 @@ namespace mygsl {
     set_error_low (error_);
     set_error_high (error_);
     set_confidence_level (CL_);
+    return;
   }
   
   best_value::best_value (double value_, 
@@ -161,6 +177,7 @@ namespace mygsl {
     set_error_low (error_low_);
     set_error_high (error_high_);
     set_confidence_level (CL_);
+    return;
   }
 
   ostream & operator<< (ostream & out_, const best_value & bv_)
