@@ -21,6 +21,7 @@
 #include <sstream>
 #include <string>
 #include <list>
+#include <algorithm>
 
 #include <datatools/utils/utils.h>
 #include <datatools/utils/properties.h>

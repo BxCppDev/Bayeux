@@ -410,8 +410,8 @@ namespace geomtools {
     const string & log_name = logical.get_name ();
 
     if (find (__volumes_refs.begin (),
-	      __volumes_refs.end (),
-	      log_name) != __volumes_refs.end ())
+              __volumes_refs.end (),
+              log_name) != __volumes_refs.end ())
       {
 	if (devel)
 	  {

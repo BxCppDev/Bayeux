@@ -340,7 +340,7 @@ Gnuplot& Gnuplot::showonscreen()
 //
 Gnuplot& Gnuplot::savetops(const std::string &filename)
 {
-  cmd("set terminal postscript color");
+  cmd("set terminal postscript solid color enhanced");
 
   std::ostringstream cmdstr;
   cmdstr << "set output \"" << filename << ".ps\"";
