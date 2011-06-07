@@ -1,16 +1,16 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* gdml_export.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-14
  * Last modified: 2010-02-14
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *   GDML export utility
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
 #ifndef __geomtools__gdml_export_h
@@ -21,7 +21,6 @@
 #include <sstream>
 #include <string>
 #include <list>
-#include <algorithm>
 
 #include <datatools/utils/utils.h>
 #include <datatools/utils/properties.h>
@@ -54,11 +53,11 @@ namespace geomtools {
     bool is_debug () const;
 
     void set_debug (bool d_);
-  
+
     bool is_auxiliary_supported () const;
 
     void add_auxiliary_support (bool s_ = true);
-  
+
     bool is_replica_supported () const;
 
     void add_replica_support (bool s_ = true);
@@ -74,7 +73,7 @@ namespace geomtools {
     // dtor:
     virtual ~gdml_export ();
 
-    virtual void export_gdml (const string & filename_, 
+    virtual void export_gdml (const string & filename_,
 			      const model_factory & factory_,
 			      const string & model_name_ = model_factory::DEFAULT_WORLD_LABEL);
 
@@ -88,7 +87,7 @@ namespace geomtools {
 
     virtual void _export_gdml_model (const i_model & model_);
 
-    virtual void _export_gdml (ostream & out_, 
+    virtual void _export_gdml (ostream & out_,
 			       const model_factory & factory_,
 			       const string & model_name_);
 

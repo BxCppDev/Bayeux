@@ -1,9 +1,10 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* gdml_export.cc
- */ 
+ */
 
 #include <iomanip>
 #include <stdexcept>
+#include <algorithm>
 
 #include <geomtools/gdml_export.h>
 #include <geomtools/union_3d.h>
@@ -83,7 +84,7 @@ namespace geomtools {
     __support_auxiliary = true;
     __support_replica = false;
   }
-  
+
   // dtor:
   gdml_export::~gdml_export ()
   {
@@ -94,7 +95,7 @@ namespace geomtools {
     __external_materials_stream = &oss_;
   }
 
-  void gdml_export::export_gdml (const string & filename_, 
+  void gdml_export::export_gdml (const string & filename_,
 				 const model_factory & factory_,
 				 const string & model_name_)
   {
@@ -130,7 +131,7 @@ namespace geomtools {
     return;
   }
 
-  void gdml_export::_export_gdml (ostream & out_, 
+  void gdml_export::_export_gdml (ostream & out_,
 				  const model_factory & factory_,
 				  const string & model_name_)
   {
@@ -150,7 +151,7 @@ namespace geomtools {
 		<< "Cannot find model '"
 		<< model_name_
 		<< "' !";
-	throw runtime_error (message.str ());	
+	throw runtime_error (message.str ());
       }
     const i_model & top_model = *(found->second);
     if (__external_materials_stream != 0)
@@ -205,15 +206,15 @@ namespace geomtools {
     __writer.add_material (material::MATERIAL_REF_DEFAULT,
 			   1.0,
 			   1. * CLHEP::g / CLHEP::cm3,
-			   1.00); 
+			   1.00);
     __writer.add_material (material::MATERIAL_REF_UNKNOWN,
 			   1.0,
 			   1. * CLHEP::g / CLHEP::cm3,
-			   1.00); 
+			   1.00);
     __writer.add_material (material::MATERIAL_REF_VACUUM,
 			   1.0,
 			   1.e-15 * CLHEP::g / CLHEP::cm3,
-			   1.00); 
+			   1.00);
 
     __writer.add_setup ("Setup", top_model.get_logical ().get_name ());
 
@@ -231,7 +232,7 @@ namespace geomtools {
 					const string & solid_name_)
   {
     bool devel = g_devel;
-    //devel = true; 
+    //devel = true;
     if (devel)
       {
 	clog << "DEVEL: gdml_export::_export_gdml_solid: Entering..." << endl;
@@ -245,7 +246,7 @@ namespace geomtools {
 		<< "Solid type '"
 		<< shape_name
 		<< "' is not valid !";
-	throw runtime_error (message.str ());	
+	throw runtime_error (message.str ());
      }
     if (! gdml_writer::solid_type_is_supported (shape_name))
       {
@@ -254,14 +255,14 @@ namespace geomtools {
 		<< "Solid type '"
 		<< shape_name
 		<< "' is not supported !";
-	throw runtime_error (message.str ());	
+	throw runtime_error (message.str ());
      }
     bool composite = false;
 
     if (shape_.is_composite ())
       {
 	/* GDML constraints:
-	 * One should check if placement of shape 1 in any composite 
+	 * One should check if placement of shape 1 in any composite
 	 * solid is NULL (translation & rotation).
 	 *
 	 */
@@ -273,16 +274,16 @@ namespace geomtools {
 	    string pos_ref = solid_name_ + ".union.pos_ref";
 	    string rot_ref = solid_name_ + ".union.rot_ref";;
 	    // only stores the solid #2 placement:
-	    __writer.add_position (pos_ref, 
-				   u.get_shape2 ().get_placement ().get_translation (), 
+	    __writer.add_position (pos_ref,
+				   u.get_shape2 ().get_placement ().get_translation (),
 				   __length_unit);
-	    __writer.add_rotation (rot_ref, 
-				   u.get_shape2 ().get_placement ().get_rotation (), 
+	    __writer.add_rotation (rot_ref,
+				   u.get_shape2 ().get_placement ().get_rotation (),
 				   __angle_unit);
 	    this->_export_gdml_solid (u.get_shape1 ().get_shape (), shape_ref_1);
 	    this->_export_gdml_solid (u.get_shape2 ().get_shape (), shape_ref_2);
 
-	    __writer.add_gdml_union (solid_name_, 
+	    __writer.add_gdml_union (solid_name_,
 				     shape_ref_1,
 				     shape_ref_2,
 				     pos_ref,
@@ -297,16 +298,16 @@ namespace geomtools {
 	    string rot_ref = solid_name_ + ".subtraction.rot_ref";;
 
 	    // only stores the solid #2 placement:
-	    __writer.add_position (pos_ref, 
-				   s.get_shape2 ().get_placement ().get_translation (), 
+	    __writer.add_position (pos_ref,
+				   s.get_shape2 ().get_placement ().get_translation (),
 				   __length_unit);
-	    __writer.add_rotation (rot_ref, 
-				   s.get_shape2 ().get_placement ().get_rotation (), 
+	    __writer.add_rotation (rot_ref,
+				   s.get_shape2 ().get_placement ().get_rotation (),
 				   __angle_unit);
 	    this->_export_gdml_solid (s.get_shape1 ().get_shape (), shape_ref_1);
 	    this->_export_gdml_solid (s.get_shape2 ().get_shape (), shape_ref_2);
 
-	    __writer.add_gdml_subtraction (solid_name_, 
+	    __writer.add_gdml_subtraction (solid_name_,
 					   shape_ref_1,
 					   shape_ref_2,
 					   pos_ref,
@@ -321,32 +322,32 @@ namespace geomtools {
 	    string rot_ref = solid_name_ + ".intersection.rot_ref";;
 
 	    // only stores the solid #2 placement:
-	    __writer.add_position (pos_ref, 
-				   i.get_shape2 ().get_placement ().get_translation (), 
+	    __writer.add_position (pos_ref,
+				   i.get_shape2 ().get_placement ().get_translation (),
 				   __length_unit);
-	    __writer.add_rotation (rot_ref, 
-				   i.get_shape2 ().get_placement ().get_rotation (), 
+	    __writer.add_rotation (rot_ref,
+				   i.get_shape2 ().get_placement ().get_rotation (),
 				   __angle_unit);
 	    this->_export_gdml_solid (i.get_shape1 ().get_shape (), shape_ref_1);
 	    this->_export_gdml_solid (i.get_shape2 ().get_shape (), shape_ref_2);
 
-	    __writer.add_gdml_intersection (solid_name_, 
+	    __writer.add_gdml_intersection (solid_name_,
 					    shape_ref_1,
 					    shape_ref_2,
 					    pos_ref,
 					    rot_ref);
 	  }
-	else	 
+	else
 	  {
 	    ostringstream message;
 	    message << "gdml_export::_export_gdml_solid: "
 		    << "Boolean solid type '"
 		    << shape_name
 		    << "' is not supported yet !";
-	    throw runtime_error (message.str ());	
-	  }	
-      } 
-    else 
+	    throw runtime_error (message.str ());
+	  }
+      }
+    else
       {
 	if (shape_name == "box")
 	  {
@@ -378,14 +379,14 @@ namespace geomtools {
 	    const polyhedra & p = static_cast<const polyhedra &> (shape_);
 	    __writer.add_polyhedra (solid_name_, p, __length_unit, __angle_unit);
 	  }
-	else 
+	else
 	  {
 	    ostringstream message;
 	    message << "gdml_export::_export_gdml_solid: "
 		    << "Simple solid type '"
 		    << shape_name
 		    << "' is not supported !";
-	    throw runtime_error (message.str ());	
+	    throw runtime_error (message.str ());
 	  }
       }
     __solid_refs.push_back (solid_name_);
@@ -396,7 +397,7 @@ namespace geomtools {
       }
     return;
   }
-  
+
   void gdml_export::_export_gdml_logical (const logical_volume & lv_)
   {
     bool devel = g_devel;
@@ -443,7 +444,7 @@ namespace geomtools {
 		<< "Logical volume '"
 		<< log_name
 		<< "' has no material !";
-	throw runtime_error (message.str ());		
+	throw runtime_error (message.str ());
       }
 
     bool skip = false;
@@ -457,9 +458,9 @@ namespace geomtools {
 
     if (! skip && logical.get_physicals ().size () == 0)
       {
-	__writer.add_volume (log_name, 
+	__writer.add_volume (log_name,
 			     material_ref,
-			     solid_ref, 
+			     solid_ref,
 			     auxprops);
 	skip = true;
       }
@@ -469,7 +470,7 @@ namespace geomtools {
       {
 	if (devel)
 	  {
-	    clog << endl << "DEVEL: gdml_export::_export_gdml_logical: " 
+	    clog << endl << "DEVEL: gdml_export::_export_gdml_logical: "
 		 << "**************"
 		 << " REPLICA "
 		 << "**************"
@@ -482,7 +483,7 @@ namespace geomtools {
 	const logical_volume & log_child = phys.get_logical ();
 	if (devel) clog << "DEVEL: gdml_export::_export_gdml_logical: "
 			<< "replica log_child=" << log_child.get_name () << endl;
-	    
+
 	_export_gdml_logical (log_child);
 	const i_placement * pp = &(phys.get_placement ());
 
@@ -497,17 +498,17 @@ namespace geomtools {
 	a_replicavol.volumeref = log_child.get_name ();
 	a_replicavol.number = pp->get_number_of_items ();
 	a_replicavol.mode = "replicate_along_axis";
-	if (RLP->is_replicant_x_axis ()) 
+	if (RLP->is_replicant_x_axis ())
 	  {
 	    a_replicavol.direction = "x";
 	    a_replicavol.width = RLP->get_step ().x ();
 	  }
-	else if (RLP->is_replicant_y_axis ()) 
+	else if (RLP->is_replicant_y_axis ())
 	  {
 	    a_replicavol.direction = "y";
 	    a_replicavol.width = RLP->get_step ().y ();
 	  }
-	else if (RLP->is_replicant_z_axis ()) 
+	else if (RLP->is_replicant_z_axis ())
 	  {
 	    a_replicavol.direction = "z";
 	    a_replicavol.width = RLP->get_step ().z ();
@@ -515,10 +516,10 @@ namespace geomtools {
 	a_replicavol.offset = 0.0;
 	if (devel) clog << "DEVEL: gdml_export::_export_gdml_logical: "
 			<< "add volume '" << log_name << "' (replica)..." << endl;
-	
-	__writer.add_replica_volume (log_name, 
+
+	__writer.add_replica_volume (log_name,
 				     material_ref,
-				     solid_ref, 
+				     solid_ref,
 				     a_replicavol,
 				     __length_unit,
 				     __angle_unit,
@@ -529,14 +530,14 @@ namespace geomtools {
     // there are children:
     if (! skip && (logical.get_physicals ().size () > 0))
       {
-	if (devel) 
+	if (devel)
 	  {
 	    clog << "DEVEL: gdml_export::_export_gdml_logical: Here we should export the daughter physicals..." << endl;
 	    clog << "DEVEL: gdml_export::_export_gdml_logical: List of daughter physicals:" << endl;
 
-	    for (logical_volume::physicals_col_t::const_iterator i 
-		   = logical.get_physicals ().begin (); 
-		 i != logical.get_physicals ().end (); 
+	    for (logical_volume::physicals_col_t::const_iterator i
+		   = logical.get_physicals ().begin ();
+		 i != logical.get_physicals ().end ();
 		 i++)
 	      {
 		const string & name = (i->first);
@@ -545,11 +546,11 @@ namespace geomtools {
 		     << "    name=" << name << "     " << "phys->name=" << phys.get_name () << endl;
 	      }
 	  }
-	
+
 	list<gdml_writer::physvol> physvols;
-	for (logical_volume::physicals_col_t::const_iterator i 
-	       = logical.get_physicals ().begin (); 
-	     i != logical.get_physicals ().end (); 
+	for (logical_volume::physicals_col_t::const_iterator i
+	       = logical.get_physicals ().begin ();
+	     i != logical.get_physicals ().end ();
 	     i++)
 	  {
 	    const physical_volume & phys = *(i->second);
@@ -558,15 +559,15 @@ namespace geomtools {
 	    const logical_volume & log_child = phys.get_logical ();
 	    if (devel) clog << "DEVEL: gdml_export::_export_gdml_logical: "
 			    << "log_child=" << log_child.get_name () << endl;
-	    
+
 	    _export_gdml_logical (log_child);
-	    
+
 	    const i_placement * pp = &(phys.get_placement ());
 	    bool multiple = false;
 	    size_t nitems = pp->get_number_of_items ();
 	    bool only_one_rotation = pp->has_only_one_rotation ();
 	    multiple = (nitems > 1);
-	    
+
 	    if (devel) clog << "DEVEL: gdml_export::_export_gdml_logical: "
 			    << "No replica... for '" << log_name << "'..." << endl;
 	    // XXX UUU
@@ -580,7 +581,7 @@ namespace geomtools {
 		ref_rot_name_oss << ".rot";
 	      }
 	    if (devel) clog << "DEVEL: gdml_export::_export_gdml_logical: "
-			    << "add placements for " << nitems 
+			    << "add placements for " << nitems
 			    << " items..." << endl;
 	    for (int i = 0; i < nitems; i++)
 	      {
@@ -593,10 +594,10 @@ namespace geomtools {
 		pos_name_oss << log_name << '.' << phys.get_name ();
 		if (multiple) pos_name_oss << "__" << i << "__";
 		pos_name_oss << io::POSITION_SUFFIX;
-		__writer.add_position (pos_name_oss.str (), 
-				       p.get_translation (), 
+		__writer.add_position (pos_name_oss.str (),
+				       p.get_translation (),
 				       __length_unit);
-		
+
 		if (devel) clog << "DEVEL: gdml_export::_export_gdml_logical: "
 				<< "add rotation..." << endl;
 		// register the rotation of item 'i':
@@ -623,10 +624,10 @@ namespace geomtools {
 		    add_rot = true;
 		  }
 		if (add_rot)
-		  { 
+		  {
 		    if (! is_identity (p.get_rotation ()))
 		      {
-			__writer.add_rotation (rot_name, 
+			__writer.add_rotation (rot_name,
 					       p.get_rotation (),
 					       __angle_unit);
 		      }
@@ -635,11 +636,11 @@ namespace geomtools {
 		  {
 		    rot_name = "";
 		  }
-		physvols.push_back (gdml_writer::physvol (log_child.get_name (), 
-							  pos_name_oss.str (), 
+		physvols.push_back (gdml_writer::physvol (log_child.get_name (),
+							  pos_name_oss.str (),
 							  rot_name));
 	      } // for ... items
-	    if (devel) 
+	    if (devel)
 		  {
 		    clog << "DEVEL: gdml_export::_export_gdml_logical: "
 			 << "add volume '" << log_name << "' with physvols=";
@@ -647,19 +648,19 @@ namespace geomtools {
 			 jj != physvols.end ();
 			 jj++)
 		      {
-			clog << '"' << jj->volumeref << '"' << ' '; 
+			clog << '"' << jj->volumeref << '"' << ' ';
 		      }
 		    clog  << endl;
 		  }
 	      }
-	__writer.add_volume (log_name, 
+	__writer.add_volume (log_name,
 			     material_ref,
-			     solid_ref, 
+			     solid_ref,
 			     physvols,
 			     auxprops);
 	skip = true;
       } // there are children:
-    
+
     __volumes_refs.push_back (log_name);
     if (devel)
       {
@@ -667,7 +668,7 @@ namespace geomtools {
       }
     return;
   }
-  
+
   void gdml_export::_export_gdml_model (const i_model & model_)
   {
     bool devel = g_devel;
@@ -685,7 +686,7 @@ namespace geomtools {
 		<< "Model '"
 		<< model.get_name ()
 		<< "' is not constructed !";
-	throw runtime_error (message.str ());	
+	throw runtime_error (message.str ());
       }
     _export_gdml_logical (model.get_logical ());
 
@@ -695,7 +696,7 @@ namespace geomtools {
       }
     return;
   }
-  
+
 } // end of namespace geomtools
 
 // end of gdml_export.cc
