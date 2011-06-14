@@ -9,7 +9,10 @@
 
 #include <datatools/event/event_id.h>
 #include <datatools/serialization/io_factory.h>
+
+#ifdef DATATOOLS_NO_EBIO 
 #include <datatools/the_serializable.h>
+#endif
 
 using namespace std;
 

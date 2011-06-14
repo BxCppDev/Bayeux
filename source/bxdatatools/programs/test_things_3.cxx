@@ -1,4 +1,4 @@
-// test_things_2.cxx
+// test_things_3.cxx
 
 #include <cstdlib>
 #include <iostream>
@@ -12,12 +12,12 @@
 
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/export.hpp>
-#include <datatools/serialization/i_serializable.h>
 
 // The serializable 'things' container :
 #include <datatools/utils/things.h>
 // The serializable 'properties' container :
 #include <datatools/utils/properties.h>
+#include <datatools/test/my_data.h>
 
 // the datatools writer and reader classes:
 #include <datatools/serialization/io_factory.h>
@@ -31,7 +31,7 @@
  */
 #include <datatools/the_serializable.h>
 #endif
- 
+
 using namespace std;
 
 
@@ -263,14 +263,14 @@ int main (int argc_, char ** argv_)
           iarg++;
 				}
  
-			string filename = "test_things_2.txt";
+			string filename = "test_things_3.txt";
 			if (format == "xml")
 				{
-					filename = "test_things_2.xml";
+					filename = "test_things_3.xml";
 				}				
 			if (format == "binary")
 				{
-					filename = "test_things_2.data";
+					filename = "test_things_3.data";
 				}				
 			filename = filename + compression;
 			
@@ -302,6 +302,9 @@ int main (int argc_, char ** argv_)
 					p1.store ("version.minor", 2);
 					p1.store ("version.patch", 10);
 					p1.store ("pi", 3.14159);
+
+					datatools::test::data_t & d1 = bag.add<datatools::test::data_t> ("d1");
+					datatools::test::more_data_t & d2 = bag.add<datatools::test::more_data_t> ("d2");
 
 					// fetch the 'things' container stored with name 'g1' :
 					datatools::utils::things & g1 = bag.grab<datatools::utils::things> ("g1");
@@ -353,6 +356,14 @@ int main (int argc_, char ** argv_)
 					clog << "Fetching 'p1'..." << endl;
 					const datatools::utils::properties & p1 = bag.get<datatools::utils::properties> ("p1");
 					p1.tree_dump (clog, "p1");
+					
+					clog << "Fetching 'd1'..." << endl;
+					const datatools::test::data_t & d1 = bag.get<datatools::test::data_t> ("d1");	
+					d1.tree_dump (clog, "d1");
+					
+					clog << "Fetching 'd2'..." << endl;
+					const datatools::test::more_data_t & d2 = bag.get<datatools::test::more_data_t> ("d2");	
+					d2.tree_dump (clog, "d2");
  
 					// fetch the 'things' container stored with name 'g1' :
 					datatools::utils::things & g1 = bag.grab<datatools::utils::things> ("g1");
@@ -372,7 +383,6 @@ int main (int argc_, char ** argv_)
 							const B & y1 = g1.get<B> ("y1");
 							y1.dump (clog);
 						}
-						
 				}
 
     }
@@ -389,7 +399,7 @@ int main (int argc_, char ** argv_)
   return (error_code);
 }
  
-// end of test_things_2.cxx
+// end of test_things_3.cxx
 /*
 ** Local Variables: --
 ** mode: c++ --

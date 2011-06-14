@@ -1,15 +1,14 @@
 // -*- mode: c++; -*- 
-// test_properties_2.cxx 
+// test_properties_2b.cxx 
 
 #include <cstdlib>
+#include <cmath>
 #include <iostream>
 #include <string>
 #include <exception>
 #include <vector>
 #include <map>
 
-#include <datatools/serialization/io_factory.h>
-#include <datatools/serialization/serialization.h>
 #include <datatools/utils/properties.h>
 
 using namespace std;
@@ -157,4 +156,4 @@ int main (int argc_, char ** argv_)
   return error_code;
 }
 
-// end of test_properties_2.cxx
+// end of test_properties_2b.cxx

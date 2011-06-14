@@ -11,8 +11,11 @@
 
 #include <datatools/event/basic_event.h>
 
-#include <datatools/the_serializable.h>
 #include <datatools/serialization/io_factory.h>
+
+#ifdef DATATOOLS_NO_EBIO 
+#include <datatools/the_serializable.h>
+#endif
 
 using namespace std;
 

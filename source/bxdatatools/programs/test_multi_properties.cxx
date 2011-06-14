@@ -8,8 +8,11 @@
 #include <vector>
 
 #include <datatools/utils/multi_properties.h>
-#include <datatools/the_serializable.h>
 #include <datatools/serialization/io_factory.h>
+
+#ifdef DATATOOLS_NO_EBIO 
+#include <datatools/the_serializable.h>
+#endif
 
 using namespace std;
 

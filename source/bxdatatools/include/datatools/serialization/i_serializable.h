@@ -51,26 +51,37 @@ namespace datatools {
 
 } // end of namespace datatools 
 
-#define DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()	                        \
-  public:                                                                               \
-      static const std::string SERIAL_TAG;                      	              	\
-      virtual const std::string & get_serial_tag () const;                              \
-/**/
+#define DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()		\
+  public:								\
+  static const std::string SERIAL_TAG;					\
+  virtual const std::string & get_serial_tag () const;			\
+  /**/
 
-#define DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(ClassName,ClassSerialTag)	\
-  const std::string ClassName::SERIAL_TAG = ClassSerialTag;                             \
-  const std::string & ClassName::get_serial_tag () const                                \
-  {                                                                                     \
-    return ClassName::SERIAL_TAG;                                                       \
-  }                                                                                     \
-/**/
+#define DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(ClassName,ClassSerialTag) \
+  const std::string ClassName::SERIAL_TAG = ClassSerialTag;		\
+  const std::string & ClassName::get_serial_tag () const		\
+  {									\
+    return ClassName::SERIAL_TAG;					\
+  }									\
+  /**/
 
-#define DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP				\
-  boost::serialization::make_nvp(							\
-    "datatools__serialization__i_serializable",                                         \
-    boost::serialization::base_object<datatools::serialization::i_serializable >(*this) \
-  )                                                                                     \
-/**/
+#define DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP		\
+  boost::serialization::make_nvp("datatools__serialization__i_serializable", \
+				 boost::serialization::base_object<datatools::serialization::i_serializable >(*this)) \
+  									\
+  /**/
+
+#define DATATOOLS_SERIALIZABLE_CLASS		  \
+  public datatools::serialization::i_serializable \
+  /**/
+
+#define DATATOOLS_SERIALIZATION_DECLARATION()	   \
+  public:					   \
+  DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION() \
+  private:					   \
+  friend class boost::serialization::access;	   \
+  BOOST_SERIALIZATION_SERIALIZE_DECLARATION()	   \
+  /**/
 
 #endif // __datatools__serialization__i_serializable_h
 

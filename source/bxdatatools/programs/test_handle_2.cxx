@@ -129,15 +129,15 @@ int main (int argc_ , char ** argv_)
        	clog << endl << "Test 1: " << endl;
 	{
 	  hit_handles_col_t hits;
-	  size_t nevents = 10000;
-	  size_t nhits = 1000;
+	  size_t nevents = 100;
+	  size_t nhits = 100;
 	  computing_time CT;
 	  computing_time CT2;
 	  ofstream foa ("test_handle_2a.txt");
 	  hits.reserve (nhits);
 	  for (int i = 0; i < nevents; i++)
 	    {
-	      if ((i % 1000) == 0) clog << "#i=" << i << endl;
+	      if ((i % 100) == 0) clog << "#i=" << i << endl;
 	      CT2.start ();
 	      for (int j = 0; j < nhits; j++)
 		{
@@ -162,15 +162,15 @@ int main (int argc_ , char ** argv_)
        	clog << endl << "Test 2: " << endl;
 	{
 	  hits_col_t hits;
-	  size_t nevents = 10000;
-	  size_t nhits = 1000;
+	  size_t nevents = 100;
+	  size_t nhits = 100;
 	  computing_time CT;
 	  computing_time CT2;
 	  ofstream foa ("test_handle_2b.txt");
 	  hits.reserve (nhits);
 	  for (int i = 0; i < nevents; i++)
 	    {
-	      if ((i % 1000) == 0) clog << "#i=" << i << endl;
+	      if ((i % 100) == 0) clog << "#i=" << i << endl;
 	      CT2.start ();
 	      for (int j = 0; j < nhits; j++)
 		{
@@ -194,8 +194,8 @@ int main (int argc_ , char ** argv_)
        	clog << endl << "Test 3: " << endl;
 	{
 	  hit_handles_col_t hits;
-	  size_t nevents = 10000;
-	  size_t nhits = 1000;
+	  size_t nevents = 100;
+	  size_t nhits = 100;
 	  handle_pool<hit> pool (nhits);
 	  computing_time CT;
 	  computing_time CT2;
@@ -203,7 +203,7 @@ int main (int argc_ , char ** argv_)
 	  hits.reserve (nhits);
 	  for (int i = 0; i < nevents; i++)
 	    {
-	      if ((i % 1000) == 0) clog << "#i=" << i << endl;
+	      if ((i % 100) == 0) clog << "#i=" << i << endl;
 	      CT2.start ();
 	      for (int j = 0; j < nhits; j++)
 		{

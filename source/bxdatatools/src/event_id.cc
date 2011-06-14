@@ -8,7 +8,6 @@ namespace datatools {
 
   namespace event {
 
-
     DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (event_id,"datatools:event::event_id")
     //const std::string event_id::SERIAL_TAG = "__EVENT_ID__";
 

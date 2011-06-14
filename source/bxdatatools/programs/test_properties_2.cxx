@@ -2,14 +2,13 @@
 // test_properties_2.cxx 
 
 #include <cstdlib>
+#include <cmath>
 #include <iostream>
 #include <string>
 #include <exception>
 #include <vector>
 #include <map>
 
-#include <datatools/serialization/io_factory.h>
-#include <datatools/serialization/serialization.h>
 #include <datatools/utils/properties.h>
 
 using namespace std;

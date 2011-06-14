@@ -1,6 +1,6 @@
 /* test_serialization_2.cxx */
 
-#include <cstdlib>
+#include <cstdlib> 
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -14,8 +14,9 @@
 // a serializable test class :
 #include <datatools/test/my_data.h>
 
-// activate serialization code (from the test section) :
-#include <datatools/test/the_serializable.h>
+#ifdef DATATOOLS_NO_EBIO 
+#include <datatools/the_serializable.h>
+#endif
 
 using namespace std;
 

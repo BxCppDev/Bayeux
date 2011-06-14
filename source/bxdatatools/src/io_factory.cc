@@ -765,20 +765,12 @@ namespace datatools {
 			   const std::string & a_indent, 
 			   bool a_inherit) const
     {
-//#ifdef DATATOOLS_USE_TREE_DUMP // tree_trick
       namespace du = datatools::utils; // tree_trick
       std::ostringstream tag_ss, last_tag_ss; // tree_trick
       tag_ss << du::i_tree_dumpable::tag; // tree_trick
       last_tag_ss << du::i_tree_dumpable::inherit_tag (a_inherit); // tree_trick
       std::string tag = tag_ss.str (); // tree_trick
       std::string last_tag = last_tag_ss.str (); // tree_trick
-      /*
-#else // tree_trick
-      std::string tag = "|-- ";
-      std::string last_tag = "`-- ";
-      if (a_inherit) last_tag = tag;
-#endif //DATATOOLS_USE_TREE_DUMP // tree_trick
-      */
       std::string indent;
       if (! a_indent.empty ()) indent = a_indent;
       if (! a_title.empty()) 

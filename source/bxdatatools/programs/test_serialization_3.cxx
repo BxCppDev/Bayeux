@@ -5,17 +5,17 @@
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
-
+ 
 #include <boost/filesystem.hpp>
-
-#include <boost/serialization/export.hpp>
 
 #include <datatools/serialization/utils.h>
 #include <datatools/serialization/archives_instantiation.h>
 #include <datatools/serialization/io_factory.h>
 #include <datatools/serialization/i_serializable.h>
-#include <datatools/serialization/i_serializable.ipp>
 #include <datatools/serialization/safe_serial.h>
+
+#include <datatools/serialization/i_serializable.ipp>
+#include <boost/serialization/export.hpp>
 
 using namespace std;
 
@@ -50,9 +50,10 @@ void data_t::serialize (Archive & ar_,
   return;
 }
 
-BOOST_CLASS_EXPORT_KEY2 (data_t, "data_t")
-BOOST_CLASS_EXPORT_IMPLEMENT (data_t)
-DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(data_t)
+// No need for registration here :
+// BOOST_CLASS_EXPORT_KEY2 (data_t, "data_t")
+// BOOST_CLASS_EXPORT_IMPLEMENT (data_t)
+// DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(data_t)
 
 int main (int argc_, char ** argv_) 
 {

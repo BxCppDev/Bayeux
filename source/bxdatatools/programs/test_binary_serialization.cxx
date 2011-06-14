@@ -12,7 +12,9 @@
 #include <boost/cstdint.hpp>
 #include <boost/serialization/string.hpp>
 
+#ifdef DATATOOLS_NO_EBIO 
 #include <datatools/the_serializable.h>
+#endif
 
 using namespace std;
 

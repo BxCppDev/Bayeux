@@ -36,6 +36,9 @@ pack_name=datatools
 pack_name_upper=$(pkgtools__to_upper ${pack_name})
 pack_name_lower=$(pkgtools__to_lower ${pack_name})
 pack_config=${pack_name_lower}-config
+config_db_file=${the_pkgtools_dir}/.config_db.info
+config_sh_file=${the_pkgtools_dir}/.config_db.sh
+config_csh_file=${the_pkgtools_dir}/.config_db.csh
 
 # startup scripts
 sh_ss=${pack_name_lower}.sh
@@ -54,6 +57,7 @@ verbose=0
 default_python_version=2.5
 python_version=${default_python_version}
 with_python=1
+
 #apply_eos_archive_trick=0
 
 function my_exit ()
@@ -91,6 +95,8 @@ function print_usage ()
               with Python version VERSION (default: 2.5)
             --without-python :
               without Python wrapper module
+            --with-embedded-boost-io :
+            --without-embedded-boost-io (default):
             --boost-version 1_44_0 : force Boost version (default: 1_44_0)
             --no-boost-version-check : skip Boost version check
     $APPNAME deconfigure : deconfigure package 
@@ -214,6 +220,7 @@ without_pba_flag_file=${the_base_dir}/gmk/datatools_without_pba.config
 without_fpu_flag_file=${the_base_dir}/gmk/datatools_without_fpu.config
 without_python_flag_file=${the_base_dir}/gmk/datatools_without_python.config
 python_version_flag_file=${the_base_dir}/gmk/datatools_python_version.config
+without_ebio_flag_file=${the_base_dir}/gmk/datatools_without_ebio.config
 
 if [ -d ${the_base_dir}/gmk ]; then
     GMKDIR=${the_base_dir}/gmk
@@ -763,11 +770,17 @@ function do_deconfigure ()
     __pkgtools__at_function_enter do_deconfigure
 
     opwd=$(pwd)
+ 
+    pkgtools__remove_file ${config_db_file}
+    pkgtools__remove_file ${config_sh_file}
+    pkgtools__remove_file ${config_csh_file}
 
-    test -f ${without_pba_flag_file} && rm -f ${without_pba_flag_file} 
-    test -f ${without_fpu_flag_file}     && rm -f ${without_fpu_flag_file} 
-    test -f ${without_python_flag_file}  && rm -f ${without_python_flag_file} 
-    test -f ${python_version_flag_file}  && rm -f ${python_version_flag_file} 
+    # old scheme is still here :
+    # test -f ${without_pba_flag_file}     && rm -f ${without_pba_flag_file} 
+    # test -f ${without_fpu_flag_file}     && rm -f ${without_fpu_flag_file} 
+    # test -f ${without_python_flag_file}  && rm -f ${without_python_flag_file} 
+    # test -f ${python_version_flag_file}  && rm -f ${python_version_flag_file} 
+    # test -f ${without_ebio_flag_file}    && rm -f ${without_ebio_flag_file} 
    
     cd ${the_base_dir}/boost/vault
     pkgtools__msg_info "Remove the Boost vault contribution(s) in the '$(pwd)' directory..."
@@ -787,46 +800,42 @@ function do_configure ()
 {
     __pkgtools__at_function_enter do_configure
 
-    can_python_wrapper=0
-    with_python_wrapper=0
+    pkgtools__remove_file ${config_db_file}
+    pkgtools__remove_file ${config_sh_file}
+    pkgtools__remove_file ${config_csh_file}
+    echo "# ${pack_name} configuration informations : " >> ${config_db_file}
+
+    local can_python_wrapper=0
+    local with_python_wrapper=0
     
     if [ -f ${the_python_dir}/__init__.py ]; then
 	can_python_wrapper=1
 	with_python_wrapper=1
     fi
 
-    with_pba=1
-    with_fpu=1
-    enforced_boost_version=
+    local with_pba=1
+    local with_fpu=1
+    local with_ebio=0
+    local enforced_boost_version=
     python_version=
-    skip_all_dependencies_check=0
-    skipped_dependencies=
+    local skip_all_dependencies_check=0
+    local skipped_dependencies=
     while [ -n "${1}" ]; do
-	token="$1"
-	    
+	local token="$1"
 	if [ "x${token:0:1}" = "x-" ]; then
-	    opt=${token}
+	    local opt=${token}
 	    if [ "${opt}" = "-S" -o "${opt}" = "--skip-all-dependencies-check" ]; then
 		skip_all_dependencies_check=1
 	    elif [ "${opt}" = "-s" -o "${opt}" = "--skip-dependency-check" ]; then
-		shift 1
-		swpack=$1
-		if [ "x${skipped_dependencies}" = "x" ]; then
-		    skipped_dependencies=${swpack}
-		else
-		    skipped_dependencies="${skipped_dependencies} ${swpack}"
-		fi
-	    elif [ ${can_python_wrapper} -eq 1 ]; then
-                # parse Python wrapper switches:
-		if [ "x${opt}" = "x--with-python" ]; then
-		    with_python_wrapper=1
-		elif [ "x${opt}" = "x--with-python-version" ]; then
+		{
 		    shift 1
-		    python_version=$1
-		    with_python_wrapper=1
-		elif [ "x${opt}" = "x--without-python" ]; then
-		    with_python_wrapper=0
-		fi
+		    swpack=$1
+		    if [ "x${skipped_dependencies}" = "x" ]; then
+			skipped_dependencies=${swpack}
+		    else
+			skipped_dependencies="${skipped_dependencies} ${swpack}"
+		    fi
+		}
 	    elif [ "x${opt}" = "x--with-pba" ]; then
 		with_pba=1
 		with_fpu=1
@@ -837,11 +846,30 @@ function do_configure ()
 	    elif [ "x${opt}" = "x--without-fpu" ]; then
 		with_fpu=0
 		with_pba=0
+	    elif [ "x${opt}" = "x-ebio" -o "x${opt}" = "x--with-embedded-boost-io" ]; then
+		with_ebio=1
+	    elif [ "x${opt}" = "x-no-ebio" -o "x${opt}" = "x--without-embedded-boost-io" ]; then
+		with_ebio=0
 	    elif [ "x${opt}" = "x--boost-version" ]; then
 		shift 1
 		enforced_boost_version=$1
 	    elif [ "x${opt}" = "x--no-boost-version-check" ]; then
 		boost_version_check=0
+	    elif [ ${can_python_wrapper} -eq 1 ]; then
+		{
+                # parse Python wrapper switches:
+		    if [ "x${opt}" = "x--with-python" ]; then
+			with_python_wrapper=1
+		    elif [ "x${opt}" = "x--with-python-version" ]; then
+			shift 1
+			python_version=$1
+			with_python_wrapper=1
+		    elif [ "x${opt}" = "x--without-python" ]; then
+			with_python_wrapper=0
+		    fi
+		}
+	    else	
+		pkgtools__msg_warning "Ignoring '${opt}' option !"
 	    fi
 	else
 	    arg=${token}
@@ -882,7 +910,11 @@ function do_configure ()
     if [ "x${enforced_boost_version}" = "x" ]; then
 	enforced_boost_version=${boost_version}
     fi
-    
+
+    if [ ${with_ebio} -ne 0 ]; then
+	pkgtools__msg_warning "Embedded pre-built Boost/Serialization code requires Boost >= 1.47"	
+    fi
+
     if [ "x${boost_version}" != "x${enforced_boost_version}" ]; then
 	pkgtools__msg_error "Boost has no version ${enforced_boost_version}!"
 	__pkgtools__at_function_exit
@@ -918,7 +950,6 @@ function do_configure ()
 		return 1
 	    fi
 	    pkgtools__msg_notice "Use Python wrapper module from Boost.Python !"
-	    test -f ${without_python_flag_file} && rm -f ${without_python_flag_file}
 	    boost_python_version="$(boost-config --python-version)"
 	    if [ "x${python_version}" = "x" ]; then
 		python_version=${boost_python_version}
@@ -948,10 +979,7 @@ function do_configure ()
 	    fi
 	else
 	    pkgtools__msg_warning "Do not use Python wrapper module from Boost.Python !"
-	    cat > ${without_python_flag_file} <<EOF 
-# ${pack_name} does not use python wrapper module:
-export ${pack_name_upper}_NO_PYTHON=1
-EOF
+	    pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_NO_PYTHON" 1
 	fi # with_python_wrapper
     fi # can_python_wrapper
 
@@ -959,15 +987,10 @@ EOF
     pkgtools__msg_notice "Portable Binary Archives setup..."
     if [ ${with_pba} -eq 0 ]; then
 	pkgtools__msg_warning "Do not use Portable Binary Archives !"
-
-	cat > ${without_pba_flag_file} <<EOF 
-# datatools does not use pba_help:
-export DATATOOLS_NO_PBA=1
-EOF
+	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_NO_PBA" 1
     else
 	# 2010-12-06 FM:
 	pkgtools__msg_notice "Use Portable Binary Archives !"
-	test -f ${without_pba_flag_file} && rm -f ${without_pba_flag_file}
 	with_fpu=1
     fi
 
@@ -975,14 +998,9 @@ EOF
     pkgtools__msg_notice "Floating Point Utilities setup..."
     if [ ${with_fpu} -eq 0 ]; then
 	pkgtools__msg_warning "Do not use Floating Point Utilities from the 'Boost/vault' package!"
-
-	cat > ${without_fpu_flag_file} <<EOF 
-# datatools does not use Floating Point Utilities:
-export DATATOOLS_NO_FPU=1
-EOF
+	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_NO_FPU" 1
     else
 	pkgtools__msg_notice "Use Floating Point Utilities from the Boost/vault!"
-	test -f ${without_fpu_flag_file} && rm -f ${without_fpu_flag_file}
 	opwd=$(pwd)
 	cd ${the_base_dir}/boost/vault
 	pkgtools__msg_notice "Cleaning the '$(pwd)' directory..."
@@ -990,6 +1008,15 @@ EOF
 	pkgtools__msg_notice "Populating the '$(pwd)' directory..."
 	make 2>&1 > /dev/null 
 	cd ${opwd}
+    fi
+
+    ### Support for Embedded Boost I/O:
+    pkgtools__msg_notice "Embedded Boost I/O:..."
+    if [ ${with_ebio} -eq 0 ]; then
+	pkgtools__msg_warning "Do not use Embedded Boost I/O !"
+	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_NO_EBIO" 1
+    else
+	pkgtools__msg_notice "Use Embedded Boost I/O !"
     fi
 
     # ## 2010-12-06: Do not use the EOS archive trick anymore:
@@ -1011,6 +1038,10 @@ EOF
     # 	fi
     # fi
 
+    echo "# end of ${pack_name} configuration informations."          >> ${config_db_file} 
+    cat ${config_db_file} | ${the_pkgtools_dir}/config_to_setup.py sh  > ${config_sh_file}
+    cat ${config_db_file} | ${the_pkgtools_dir}/config_to_setup.py csh > ${config_csh_file}
+
     __pkgtools__at_function_exit
     return 0
 }
@@ -1019,16 +1050,28 @@ function do_build ()
 {
     __pkgtools__at_function_enter do_build
 
+    if [ ! -f ${config_sh_file} ]; then
+	pkgtools__msg_error "Missing '${config_sh_file}' file ! Please first configure !"
+	__pkgtools__at_function_exit
+	return 1	
+    fi
+    source ${config_sh_file}
+
     if [ -d ${GMKDIR} ]; then
-	if [ -f ${without_pba_flag_file} ]; then
-	    source ${without_pba_flag_file}
-	fi
-	if [ -f ${without_fpu_flag_file} ]; then
-	    source ${without_fpu_flag_file}
-	fi
-	if [ -f ${without_python_flag_file} ]; then
-	    source ${without_python_flag_file}
-	fi
+
+	# if [ -f ${without_pba_flag_file} ]; then
+	#     source ${without_pba_flag_file}
+	# fi
+	# if [ -f ${without_fpu_flag_file} ]; then
+	#     source ${without_fpu_flag_file}
+	# fi
+	# if [ -f ${without_python_flag_file} ]; then
+	#     source ${without_python_flag_file}
+	# fi
+	# if [ -f ${without_ebio_flag_file} ]; then
+	#     source ${without_ebio_flag_file}
+	# fi
+
 	do_build_gmk $@
 	if [ $? -ne 0 ]; then
 	    __pkgtools__at_function_exit
@@ -1043,6 +1086,15 @@ function do_build ()
 function do_startup ()
 {
     __pkgtools__at_function_enter do_startup
+
+    pkgtools__msg_warning "SH startup = ${the_base_dir}/${sh_ss}"
+    cat ${the_pkgtools_dir}/package.sh.skel | sed -e "s@__PACKAGE_ROOT__@${GEOMTOOLS_ROOT}@g" -e "s@__PACKAGE_NAME__@${pack_name_upper}@g" -e "s@__Package_name__@${pack_name}@g" > ${the_base_dir}/${sh_ss} 
+
+    pkgtools__msg_warning "CSH startup = ${the_base_dir}/${csh_ss}"
+    cat ${the_pkgtools_dir}/package.csh.skel | sed -e "s@__PACKAGE_ROOT__@${GEOMTOOLS_ROOT}@g" -e "s@__PACKAGE_NAME__@${pack_name_upper}@g" -e "s@__Package_name__@${pack_name}@g" > ${the_base_dir}/${csh_ss}
+
+    cat ${config_sh_file}  >> ${the_base_dir}/${sh_ss}
+    cat ${config_csh_file} >> ${the_base_dir}/${csh_ss}
 
     cat<<EOF
 
@@ -1068,6 +1120,9 @@ function kill_startup ()
 {
     __pkgtools__at_function_enter kill_startup
 
+    test -f ${the_base_dir}/${sh_ss} && rm -f  ${the_base_dir}/${sh_ss} || echo -n ""
+    test -f ${the_base_dir}/${csh_ss} && rm -f  ${the_base_dir}/${csh_ss} || echo -n ""
+
     cat<<EOF
 Don't forget to remove environment variables in your startup scripts.
 Particularly, you should not source the following scripts anymore
@@ -1088,9 +1143,17 @@ function do_install ()
 {
     __pkgtools__at_function_enter do_install
 
+    if [ ! -f ${config_sh_file} ]; then
+	pkgtools__msg_error "Missing '${config_sh_file}' file ! Please first configure and build !"
+	__pkgtools__at_function_exit
+	return 1	
+    fi
+    source ${config_sh_file}
+
     pkgtools__msg_info "Install package '${pack_name}'..."
     opwd=$(pwd)
     cd ${GMKDIR}
+
     make install 
     if [ $? -ne 0 ]; then 
 	cd ${opwd}
@@ -1110,6 +1173,11 @@ function do_install ()
     pkgtools__msg_debug "do_startup..."
     do_startup
     pkgtools__msg_debug "ok"
+
+    local sysdir=${the_base_dir}/$(pkgtools__get_sys)
+    test -L ${sysdir}/bin/${pack_config} && rm -f ${sysdir}/bin/${pack_config} 
+    ln -s -f ${the_pkgtools_dir}/${pack_config} ${sysdir}/bin/${pack_config}
+
     __pkgtools__at_function_exit
     return 0
 }
@@ -1129,13 +1197,27 @@ function do_uninstall ()
     fi
 
     ### special Python wrapper/program:
-    cd ${python_dir}
-    make uninstall
-    cd ${GMKDIR}
+    if [ -d ${the_python_dir} ]; then
+	cd ${python_dir}
+	make uninstall
+	cd ${GMKDIR}
+    fi
     ###
 
     cd ${opwd}
     kill_startup
+
+    local sysdir=${the_base_dir}/$(pkgtools__get_sys)
+    test -L ${sysdir}/bin/${pack_config} && rm -f ${sysdir}/bin/${pack_config} 
+
+    if [ -f ${the_base_dir}/.cflags.cache ]; then
+	rm -f  ${the_base_dir}/.cflags.cache
+    fi
+
+    if [ -f ${the_base_dir}/.ldflags.cache ]; then
+	rm -f  ${the_base_dir}/.ldflags.cache
+    fi
+
     __pkgtools__at_function_exit
     return 0
 }

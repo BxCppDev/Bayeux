@@ -36,10 +36,10 @@ int main (int argc_ , char ** argv_)
 
       datatools::utils::computing_time CT;
 
-      size_t max_run = 100;
+      size_t max_run = 50;
       for (int run = 0; run < max_run; run++)
 	{
-	  size_t run_size = (size_t) (100000 * drand48 ());
+	  size_t run_size = (size_t) (10000 + 10000 * drand48 ());
 	  if (debug) cerr << "DEBUG: Run size = " << run_size << endl;
 	  CT.start (); // start the clock
 	  for (int i = 0; i < run_size; i++)

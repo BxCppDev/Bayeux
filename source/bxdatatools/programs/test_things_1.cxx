@@ -9,14 +9,22 @@
 
 #include <boost/foreach.hpp>
 
+#include <datatools/serialization/utils.h>
 #include <datatools/serialization/i_serializable.h>
-//#include <datatools/serialization/archives_instantiation.h>
+#include <datatools/serialization/archives_instantiation.h>
+
+// the datatools writer and reader classes:
+//#include <datatools/serialization/io_factory.h>
+
+#include <boost/serialization/nvp.hpp>
+#include <boost/serialization/export.hpp>
 
 // The serializable 'things' container :
 #include <datatools/utils/things.h>
 // The serializable 'properties' container :
 #include <datatools/utils/properties.h>
 
+#ifdef DATATOOLS_NO_EBIO 
 /* Brute force: load all instantiation/export code for serializable classes in datatools:
  * - properties
  * - multi_properties
@@ -24,9 +32,7 @@
  *
  */
 #include <datatools/the_serializable.h>
-
-// the datatools writer and reader classes:
-#include <datatools/serialization/io_factory.h>
+#endif
  
 using namespace std;
 
@@ -186,12 +192,12 @@ void B::dump (ostream & out) const
 /*** use some macros to implement serialization stuff for class A ***/
 BOOST_CLASS_EXPORT_KEY2 (A, "test_things::A")
 BOOST_CLASS_EXPORT_IMPLEMENT (A)
-DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(A)
+//DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(A)
 
 /*** use some macros to implement serialization stuff for class B ***/
 BOOST_CLASS_EXPORT_KEY2 (B, "test_things::B")
 BOOST_CLASS_EXPORT_IMPLEMENT (B)
-DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(B)
+//DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(B)
 
 
 /*** main ***/

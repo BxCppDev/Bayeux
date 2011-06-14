@@ -8,12 +8,9 @@
 #include <fstream>
 #include <string>
 #include <stdexcept>
-#include <vector>
 
 #include <boost/cstdint.hpp>
-#include <boost/serialization/vector.hpp>
 #include <boost/serialization/nvp.hpp>
-#include <boost/serialization/shared_ptr.hpp>
 
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -33,13 +30,17 @@ class hit : public datatools::serialization::i_serializable
 public:
   static int g_count;
   static bool g_debug;
-  DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
+
+  /** Macro for automatic generation of the 'get_serial_tag' method signature */
+  DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION();
+
 private:
   int32_t   id_;
   double    tdc_;
 private:
   friend class boost::serialization::access; 
-  BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
+  /** Macro for automatic generation of the 'serialize' method signature */
+  BOOST_SERIALIZATION_SERIALIZE_DECLARATION();
 
 public:
   hit & set_id (int a_id)
@@ -78,7 +79,9 @@ public:
 
 int  hit::g_count  = 0;
 bool hit::g_debug = false;
-DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(hit, "hit")
+
+/** Macro for automatic implementation of the 'get_serial_tag' method signature */
+DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(hit, "hit");
 
 template<class Archive>
 void hit::serialize (Archive & ar_, 
@@ -94,7 +97,7 @@ int main (int argc_ , char ** argv_)
   int error_code = EXIT_SUCCESS;
   try 
     {
-      clog << "Test of the 'boost::shared_ptr<>' class..." << endl; 
+      clog << "Test of features from the 'boost::serialization' lib..." << endl; 
       bool debug = false;
 
       int iarg =  1;

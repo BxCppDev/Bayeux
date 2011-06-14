@@ -59,18 +59,14 @@
 #include <boost/serialization/string.hpp>
 #include <datatools/serialization/i_serializable.h>
 
-//#ifdef DATATOOLS_USE_TREE_DUMP
 #include <datatools/utils/i_tree_dump.h>
-//#endif // DATATOOLS_USE_TREE_DUMP
 
 namespace datatools {
   
   namespace serialization {
     
     class io_factory 
-    //#ifdef DATATOOLS_USE_TREE_DUMP
       : public datatools::utils::i_tree_dumpable
-    //#endif // DATATOOLS_USE_TREE_DUMP
     {
     public:
       static bool g_debug;
@@ -498,9 +494,7 @@ namespace datatools {
 	return iof_;
       }
 
-      //#ifdef DATATOOLS_USE_TREE_DUMP
-      virtual // trick
-      //#endif // DATATOOLS_USE_TREE_DUMP
+      virtual
       void tree_dump (std::ostream & out_         = std::cerr, 
 		      const std::string & title_  = "",
 		      const std::string & indent_ = "",

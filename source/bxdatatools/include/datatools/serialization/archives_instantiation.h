@@ -1,5 +1,5 @@
 /* -*- mode: c++; -*-
-/* datatools::serialization:: archives_instantiation.h */
+/* datatools::serialization::archives_instantiation.h */
 /*
  * Description :
  *

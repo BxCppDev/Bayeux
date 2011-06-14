@@ -209,6 +209,12 @@ namespace datatools {
 
       bool has_key (const string & a_key) const;
 
+      bool has_section (const string & a_key) const;
+
+      const properties & get_section (const string & a_key) const;
+
+      properties & get_section (const string & a_key);
+
       void add (const string & a_key, 
 		const string & a_meta,
 		const properties & a_props);

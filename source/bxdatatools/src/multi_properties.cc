@@ -252,6 +252,11 @@ namespace datatools {
       return found != entries_.end ();
     }
 
+    bool multi_properties::has_section (const string & a_key) const
+    {
+      return has_key (a_key);
+    }
+
     const multi_properties::entry & 
     multi_properties::get (const string & a_key) const
     {
@@ -277,6 +282,18 @@ namespace datatools {
 	  throw runtime_error (message.str ());
 	}
       return found->second;
+    }
+
+    const properties & 
+    multi_properties::get_section (const string & a_key) const
+    {
+      return get (a_key).get_properties ();
+    }
+
+    properties & 
+    multi_properties::get_section (const string & a_key)
+    {
+      return get (a_key).get_properties ();
     }
 
     void multi_properties::remove_ (const string & a_key)

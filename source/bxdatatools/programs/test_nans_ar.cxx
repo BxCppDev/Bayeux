@@ -7,12 +7,12 @@
 #include <stdexcept>
 
 #include <boost/filesystem.hpp>
-//#include <boost/serialization/export.hpp>
 
 #include <datatools/serialization/i_serializable.h>
-#include <datatools/serialization/i_serializable.ipp>
 #include <datatools/serialization/io_factory.h>
 #include <datatools/serialization/safe_serial.h>
+
+#include <datatools/serialization/i_serializable.ipp>
 
 #if BOOST_VERSION < 103600
 namespace bm=boost::math;

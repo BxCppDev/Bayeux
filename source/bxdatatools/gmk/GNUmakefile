@@ -96,7 +96,6 @@ DEPCPPFLAGS+=-I$(PACKAGE_DIR)/boost/vault/endian
 ###DEPLDFLAGS+=-lcurses
 
 ### depends on Floating point utility:
-DATATOOLS_NO_FPU=$(shell ls -1 $(PACKAGE_DIR)/gmk/datatools_without_fpu.config 2> /dev/null)
 FPU_FLAGS=
 ifeq ($(DATATOOLS_NO_FPU),)
 DATATOOLS_NO_FPU=0
@@ -108,22 +107,19 @@ DATATOOLS_NO_FPU=1
 $(warning WARNING: datatools does not use FPU !)
 endif
 
-### support for std::bitset serialization:
-#DEPCPPFLAGS+=-I$(PACKAGE_DIR)/boost/vault/local
+### Use or not Embedded Boost I/O:
+EBIO_FLAGS=
+ifeq ($(DATATOOLS_NO_EBIO),)
+DATATOOLS_NO_EBIO=0
+$(warning WARNING: datatools uses 'Embedded Boost I/O' !)
+EBIO_FLAGS=
+else
+DATATOOLS_NO_EBIO=1
+EBIO_FLAGS=-DDATATOOLS_NO_EBIO=1
+$(warning WARNING: datatools does not use 'Embedded Boost I/O' !)
+endif
 
-# DATATOOLS_NO_EOS_PBA=$(shell ls -1 $(PACKAGE_DIR)/gmk/datatools_without_eos_pba.config 2> /dev/null)
-# EOS_PBA_FLAGS=
-# ifeq ($(DATATOOLS_NO_EOS_PBA),)
-# DATATOOLS_NO_EOS_PBA=0
-# $(warning WARNING: datatools uses 'Portable Binary Archive' (from eos PBA) !) 
-# EOS_PBA_FLAGS=-DIOFACTORY_USE_EOS_PBA=1
-# #DEPCPPFLAGS+=-I$(PACKAGE_DIR)/boost/vault/eos_pba
-# else
-# DATATOOLS_NO_EOS_PBA=1
-# $(warning WARNING: datatools does not use EOS_PBA !)
-# endif
-
-DATATOOLS_NO_PBA=$(shell ls -1 $(PACKAGE_DIR)/gmk/datatools_without_pba.config 2> /dev/null)
+### Use Portable Binary Archive :
 PBA_FLAGS=
 ifeq ($(DATATOOLS_NO_PBA),)
 DATATOOLS_NO_PBA=0
@@ -134,10 +130,8 @@ DATATOOLS_NO_PBA=1
 $(warning WARNING: datatools does not use PBA !)
 endif
 
-CPPFLAGS1+=-DDATATOOLS_USE_TREE_DUMP=1
-
 ### End of dependencies.
-CPPFLAGS1+=$(PBA_FLAGS) $(FPU_FLAGS) $(DEPCPPFLAGS) 
+CPPFLAGS1+=$(PBA_FLAGS) $(FPU_FLAGS) $(EBIO_FLAGS) $(DEPCPPFLAGS) 
 LDFLAGS1+=$(DEPLDFLAGS) 
 
 # default with libmath dependency:
@@ -256,10 +250,10 @@ build_special :
 .PHONY : install
 install : 
 	@echo "NOTICE: Installing..." >&2
-	@cat $(BASEDIR)/pkgtools.d/package.csh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).csh
-	@cat $(BASEDIR)/pkgtools.d/package.sh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).sh
+	@#cat $(BASEDIR)/pkgtools.d/package.csh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).csh
+	@#cat $(BASEDIR)/pkgtools.d/package.sh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).sh
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
-	@ln -s -f $(PACKAGE_ROOT)/pkgtools.d/$(LIBNAME)-config $(BINDIR)/$(LIBNAME)-config
+	@#ln -s -f $(PACKAGE_ROOT)/pkgtools.d/$(LIBNAME)-config $(BINDIR)/$(LIBNAME)-config
 	@echo "NOTICE: Installing done." >&2
 
 #	#@test "x$(DATATOOLS_NO_PBA)" = "x1" && make install_no_pba || make install_pba
@@ -297,9 +291,9 @@ clean_special :
 .PHONY : uninstall
 uninstall : 
 	@echo "NOTICE: Uninstalling..." >&2
-	test -L $(BINDIR)/$(LIBNAME)-config && $(RM) $(BINDIR)/$(LIBNAME)-config || echo -n ""
-	test -f $(BASEDIR)/$(LIBNAME).sh && $(RM) $(BASEDIR)/$(LIBNAME).sh || echo -n ""
-	test -f $(BASEDIR)/$(LIBNAME).csh && $(RM) $(BASEDIR)/$(LIBNAME).csh || echo -n ""
+	@#test -L $(BINDIR)/$(LIBNAME)-config && $(RM) $(BINDIR)/$(LIBNAME)-config || echo -n ""
+	@#test -f $(BASEDIR)/$(LIBNAME).sh && $(RM) $(BASEDIR)/$(LIBNAME).sh || echo -n ""
+	@#test -f $(BASEDIR)/$(LIBNAME).csh && $(RM) $(BASEDIR)/$(LIBNAME).csh || echo -n ""
 	@echo "NOTICE: Uninstalling done." >&2
 
 #########################################################################

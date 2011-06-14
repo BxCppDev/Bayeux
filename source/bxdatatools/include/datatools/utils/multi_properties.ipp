@@ -6,9 +6,8 @@
 
 #include <boost/archive/archive_exception.hpp>
 #include <boost/serialization/base_object.hpp>
-#include <boost/serialization/export.hpp>
-#include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
+//#include <boost/serialization/tracking.hpp>
 #include <boost/serialization/version.hpp>
 
 #include <boost/serialization/map.hpp>
@@ -92,5 +91,7 @@ namespace datatools {
 } // end of namespace datatools 
 
 BOOST_CLASS_VERSION(datatools::utils::multi_properties, 1)
+// BOOST_CLASS_TRACKING(datatools::utils::multi_properties, boost::serialization::track_always) 
+BOOST_CLASS_EXPORT_KEY2(datatools::utils::multi_properties, "datatools::utils::multi_properties")
 
 #endif // __datatools__utils__multi_properties_ipp

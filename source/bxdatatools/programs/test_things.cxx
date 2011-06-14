@@ -9,31 +9,34 @@
 
 #include <boost/scoped_ptr.hpp>
 
+#include <datatools/serialization/utils.h>
 #include <datatools/serialization/i_serializable.h>
-//#include <datatools/serialization/archives_instantiation.h>
+#include <datatools/serialization/archives_instantiation.h>
 
+#include <boost/serialization/nvp.hpp>
+#include <boost/serialization/export.hpp>
+ 
 // The serializable 'things' container :
 #include <datatools/utils/things.h>
 // The serializable 'properties' container :
 #include <datatools/utils/properties.h>
 
+#ifdef DATATOOLS_NO_EBIO 
 /* Brute force: load all instantiation code for serializable classes in datatools:
  * - properties
  * - multi_properties
- * - things...
+ * - things... 
  *
  */
 #include <datatools/the_serializable.h>
- 
+#endif
+
 using namespace std;
 
 /*** the serializable A sample class ***/
 
 class A : public datatools::serialization::i_serializable
 {
-public:
-
-	static const string SERIAL_TAG;
 
 public:
   
@@ -54,9 +57,13 @@ public:
 
   virtual ~A (); 
 
-  virtual const string & get_serial_tag () const;
-
   void dump (ostream & = clog) const;
+
+public:
+
+	static const string SERIAL_TAG;
+
+  virtual const string & get_serial_tag () const;
 
 private:
   friend class boost::serialization::access;
@@ -69,6 +76,11 @@ private :
 };
   
 const string A::SERIAL_TAG = "test_things::A";
+
+const string & A::get_serial_tag () const
+{
+  return A::SERIAL_TAG;
+}
   
 template<class Archive>
 void A::serialize (Archive & ar, const unsigned int file_version)
@@ -98,19 +110,10 @@ A::~A ()
 {
 }
 
-const string & A::get_serial_tag () const
-{
-  return A::SERIAL_TAG;
-}
-
 /*** serializable B  sample class ***/
 
 class B : public datatools::serialization::i_serializable
 {
-public:
-
-	static const string SERIAL_TAG;
-
 public:
   
   void set_index (int i)
@@ -140,6 +143,10 @@ public:
 
   void dump (ostream & = clog) const;
 
+public:
+
+	static const string SERIAL_TAG;
+
   virtual const string & get_serial_tag () const;
 
 private:
@@ -153,19 +160,19 @@ private:
 
 };
 
+const string B::SERIAL_TAG = "test_things::B";
+
+const string & B::get_serial_tag () const
+{
+  return B::SERIAL_TAG;
+}
+
 template<class Archive>
 void B::serialize (Archive & ar, const unsigned int file_version)
 {
 	ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
 	ar & boost::serialization::make_nvp ("index", index_);
 	return;
-}
-
-const string B::SERIAL_TAG = "test_things::B";
-
-const string & B::get_serial_tag () const
-{
-  return B::SERIAL_TAG;
 }
 
 void B::dump (ostream & out) const
@@ -182,12 +189,12 @@ void B::dump (ostream & out) const
 /*** use some macros to implement serialization stuff for class A ***/
 BOOST_CLASS_EXPORT_KEY2 (A, "test_things::A")
 BOOST_CLASS_EXPORT_IMPLEMENT (A)
-DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(A)
+//DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(A)
 
 /*** use some macros to implement serialization stuff for class B ***/
 BOOST_CLASS_EXPORT_KEY2 (B, "test_things::B")
 BOOST_CLASS_EXPORT_IMPLEMENT (B)
-DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(B)
+//DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(B)
 
 /*** main ***/
 int main (int argc_, char ** argv_)
@@ -200,7 +207,7 @@ int main (int argc_, char ** argv_)
       bool debug = false;
 			bool out   = true;
 			bool in    = true;
-			bool xml   = false;
+			bool xml   = true;
 
       int iarg = 1;
       while (iarg < argc_)
@@ -208,7 +215,7 @@ int main (int argc_, char ** argv_)
           string token = argv_[iarg];
 
           if (token[0] == '-')
-            {
+            { 
 							string option = token; 
 							if ((option == "-d") || (option == "--debug")) 
 								{
@@ -225,6 +232,10 @@ int main (int argc_, char ** argv_)
 							else if ((option == "-x") || (option == "--xml")) 
 								{
 									xml = true;
+								}
+							else if ((option == "-X") || (option == "--no-xml")) 
+								{
+									xml = false;
 								}
 							else 
 								{ 

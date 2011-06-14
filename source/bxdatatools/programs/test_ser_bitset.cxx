@@ -17,9 +17,9 @@ using namespace std;
 int main (int argc_, char ** argv_) 
 {
   // 2009-11-17 FM: do not compile with gcc 3 or 4 under SL @ CC:
-#if __GNUC__ < 1000
+  //#if __GNUC__ < 1000
   cerr << "ERROR: Do not compile under SL4/5 even with gcc 4!!!" << endl;
-#else
+  //#else
   try 
     {
       bool debug = false;
@@ -119,7 +119,7 @@ int main (int argc_, char ** argv_)
 #if __GNUC__ > 3
 	    clog << "bitset = " << bitset_data.get ().to_string () << endl;
 #endif
-	    writer.store ("__std::bitset__", bitset_data.get ());
+	    writer.store ("std::bitset", bitset_data.get ());
 	  }
 	clog << "NOTICE: writing done." << endl << endl;
       }
@@ -134,14 +134,14 @@ int main (int argc_, char ** argv_)
 	while (reader.has_record_tag ()) 
 	  {
 	    if (debug) clog << "DEBUG: read next record..." << endl;
-	    if (reader.record_tag_is ("__std::bitset__")) 
+	    if (reader.record_tag_is ("std::bitset")) 
 	      {
 		if (debug) clog << "DEBUG: making a new safe bitset..." 
 				<< endl;
 		bitset_data.make ();
 		if (debug) clog << "DEBUG: loading the new safe bitset..." 
 				<< endl;
-		reader.load ("__std::bitset__", bitset_data.get ());
+		reader.load ("std::bitset", bitset_data.get ());
 		if (debug) clog << "DEBUG: loading done." 
 				<< endl;
 #if __GNUC__ > 3
@@ -167,7 +167,7 @@ int main (int argc_, char ** argv_)
       cerr << "test_ser_bitset: ERROR: " << x.what () << endl;
       exit (EXIT_FAILURE);
     }
-#endif
+  //#endif
   return (EXIT_SUCCESS);
 }
 

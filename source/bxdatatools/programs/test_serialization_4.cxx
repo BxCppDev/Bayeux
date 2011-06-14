@@ -1,19 +1,19 @@
 /* test_serialization_4.cxx */
 
-#include <iostream>
+#include <iostream> 
 #include <string>
 #include <stdexcept>
 
 #include <boost/filesystem.hpp>
 
-#include <boost/serialization/export.hpp>
-
 #include <datatools/serialization/utils.h>
 #include <datatools/serialization/archives_instantiation.h>
 #include <datatools/serialization/io_factory.h>
 #include <datatools/serialization/i_serializable.h>
-#include <datatools/serialization/i_serializable.ipp>
 #include <datatools/serialization/safe_serial.h>
+
+#include <datatools/serialization/i_serializable.ipp>
+#include <boost/serialization/export.hpp>
 
 using namespace std;
 
@@ -49,9 +49,9 @@ const string & data::get_serial_tag () const
   return data::SERIAL_TAG;
 }
 
-BOOST_CLASS_EXPORT_KEY2 (data, "data")
-BOOST_CLASS_EXPORT_IMPLEMENT (data)
-DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(data)
+//BOOST_CLASS_EXPORT_KEY2 (data, "data")
+//BOOST_CLASS_EXPORT_IMPLEMENT (data)
+//DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(data)
 
 int main (void) 
 {

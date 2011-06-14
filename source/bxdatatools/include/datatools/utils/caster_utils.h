@@ -40,7 +40,7 @@ namespace datatools {
   namespace utils {
 
     /*!<  \struct i_caster
-          \brief  Templatized abstract interface class with a cast method using covariant return types . 
+			\brief  Templatized abstract interface class with a cast method using covariant return types . 
     */
 		template<class From, class ToBase >
     struct i_caster
@@ -49,23 +49,25 @@ namespace datatools {
     };
 
     /*!<  \struct caster
-          \brief  Templatized concrete caster class for casting pointers from a covariant class hierarchy to some other type. 
+			\brief  Templatized concrete caster class for casting pointers from a covariant class hierarchy to some other type. 
     */
     template <class From, class ToBase, class ToDaughter>
     struct caster : public i_caster<From,ToBase>
     {
       virtual ToDaughter * cast (From * a_ptr) 
       {
-	return reinterpret_cast<ToDaughter *> (a_ptr);
+				return reinterpret_cast<ToDaughter *> (a_ptr);
       }      
       virtual ~caster () 
       {
-	std::clog << "caster::dtor: "  
+				/*
+				std::clog << "caster::dtor: "  
                   << "Destroy the caster for type '" 
-		  << typeid (ToDaughter).name () << "' with base '" 
-		  << typeid (ToBase).name () << "' from type '" 
-		  << typeid (From).name () << "' !" << std::endl; 	
-	return;
+									<< typeid (ToDaughter).name () << "' with base '" 
+									<< typeid (ToBase).name () << "' from type '" 
+									<< typeid (From).name () << "' !" << std::endl; 	
+				*/
+				return;
       };
     };
 
@@ -74,30 +76,33 @@ namespace datatools {
 
 } // end of namespace datatools 
 
-#define DATATOOLS_CASTER_DECLARATION(From,ToBase,ToDaughter,CasterId,CasterGetter)      \
-  private:                                                                              \
+#define DATATOOLS_CASTER_DECLARATION(From,ToBase,ToDaughter,CasterId,CasterGetter) \
+  private:																															\
   static boost::scoped_ptr<datatools::utils::caster<From,ToBase,ToDaughter> > CasterId; \
-  public:                                                                               \
-  virtual datatools::utils::i_caster<From,ToBase> * CasterGetter () const;              \
-/**/
+public:																																	\
+ virtual datatools::utils::i_caster<From,ToBase> * CasterGetter () const;	\
+ /**/
 
-#define DATATOOLS_CASTER_IMPLEMENTATION(From,ToBase,ToDaughter,CasterId,CasterGetter)        \
+#define DATATOOLS_CASTER_IMPLEMENTATION(From,ToBase,ToDaughter,CasterId,CasterGetter)	\
   boost::scoped_ptr<datatools::utils::caster<From,ToBase,ToDaughter> > ToDaughter::CasterId; \
   datatools::utils::i_caster<From,ToBase> * ToDaughter::CasterGetter () const \
-  {                                                                           \
-    if (ToDaughter::CasterId.get () == 0)                                     \
-      {                                                                       \
-	std::clog << "ToDaughter::CasterGetter: "                             \
-                  << "Destroy the caster for type '"                          \
-		  << typeid (ToDaughter).name () << "' with base '"           \
-		  << typeid (ToBase).name () << "' from type '"               \
-		  << typeid (From).name () << "' !" << std::endl; 	      \
-	ToDaughter::CasterId.reset (	                                      \
-           new datatools::utils::caster<From,ToBase,ToDaughter>);             \
-      }                                                                       \
-    return ToDaughter::CasterId.get ();                                       \
-  }                                                                           \
-/**/
+  {																																			\
+    if (ToDaughter::CasterId.get () == 0)																\
+      {																																	\
+				ToDaughter::CasterId.reset (																		\
+																		new datatools::utils::caster<From,ToBase,ToDaughter>); \
+      }																																	\
+    return ToDaughter::CasterId.get ();																	\
+  }																																			\
+	/**/
+
+/*
+//std::clog << "ToDaughter::CasterGetter: "															\
+//          << "Destroy the caster for type '"													\
+//					<< typeid (ToDaughter).name () << "' with base '"						\
+//					<< typeid (ToBase).name () << "' from type '"								\
+//					<< typeid (From).name () << "' !" << std::endl;							\
+*/
 
 #endif // __datatools__utils__caster_utils_h
 

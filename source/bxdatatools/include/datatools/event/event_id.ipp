@@ -5,6 +5,7 @@
 #define __datatools__event__event_id_ipp 1
 
 #include <boost/serialization/nvp.hpp>
+// #include <boost/serialization/tracking.hpp>
 
 #include <datatools/serialization/utils.h>
 #include <datatools/event/event_id.h>
@@ -26,6 +27,9 @@ namespace datatools {
   } // end of namespace event 
 
 } // end of namespace datatools 
+
+// BOOST_CLASS_TRACKING(datatools::event::event_id, boost::serialization::track_always) 
+BOOST_CLASS_EXPORT_KEY2(datatools::event::event_id, "datatools::event::event_id")
 
 #endif // __datatools__event__event_id_ipp
 

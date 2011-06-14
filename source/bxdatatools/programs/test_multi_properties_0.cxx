@@ -19,7 +19,14 @@ int main (int argc_ , char ** argv_)
     e1.get_properties ().store_flag ("debug");
     e1.get_properties ().store ("colour", "blue");
     e1.get_properties ().store ("depth", 1.234);
-	
+
+    if (my_bag_of_bags.get_section ("display").has_key ("colour"))
+      {
+	clog << "Display section has colour : " 
+	     << my_bag_of_bags.get_section ("display").fetch_string ("colour") 
+	     << endl;
+      }	
+
     // Add a new 'water' bag;
     my_bag_of_bags.add ("water", "material_type");
     datatools::utils::multi_properties::entry & e2 = my_bag_of_bags.get ("water");
@@ -41,7 +48,10 @@ int main (int argc_ , char ** argv_)
     e3.get_properties ().store ("depth", 0.06);
 
     // Remove a bag from the bag of bags;
+    clog << "Remove section 'display'" << endl;
     my_bag_of_bags.remove ("display");
+
+    my_bag_of_bags.get_section ("shape").store ("author", "Pablo Picasso");
 
     // Save in ASCII file: 
     my_bag_of_bags.write ("my_bag_of_bags.conf", 
