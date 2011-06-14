@@ -86,12 +86,16 @@ fi
 
 with_boost_pba=1
 with_boost_fpu=1
+with_boost_python=1
 with_ebio=1
 if [ "x${DATATOOLS_NO_PBA}" == "x1" ]; then
     with_boost_pba=0
 fi
 if [ "x${DATATOOLS_NO_FPU}" == "x1" ]; then
     with_boost_fpu=0
+fi
+if [ "x${DATATOOLS_NO_PYTHON}" == "x1" ]; then
+    with_boost_python=0
 fi
 if [ "x${DATATOOLS_NO_EBIO}" == "x1" ]; then
     with_ebio=0
@@ -107,8 +111,6 @@ fi
 if [ "x$opt" = "x--help" -o "x$opt" = "x-h" -o "x$opt" = "x-?" ]; then
     help=1
 fi
-
-python_version_flag_file=${THEPACK_ROOT}/gmk/datatools_python_version.config
 
 if [ $help -eq 1 ]; then
     cat<<EOF
@@ -290,8 +292,8 @@ if [ "x$opt" = "x--with-ebio" ]; then
 fi 
 
 if [ "x$opt" = "x--python-version" ]; then
-    if [ -f ${python_version_flag_file} ]; then
-	cat ${python_version_flag_file}
+    if [ "x${DATATOOLS_PYTHON_VERSION}" != "x" ]; then
+	cat ${DATATOOLS_PYTHON_VERSION}
     else
 	echo -n "2.5"
 	echo -n " (assumed)" >&2
@@ -302,11 +304,7 @@ if [ "x$opt" = "x--python-version" ]; then
 fi 
 
 if [ "x$opt" = "x--with-python" ]; then
-    if [ -f ${python_version_flag_file} ]; then
-	echo "1"
-    else
-	echo "0"
-    fi
+    echo "${with_boost_python}"
     exit 0
 fi 
 

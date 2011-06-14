@@ -216,11 +216,7 @@ else
 fi
 #echo "Base package directory is '${the_base_dir}'!"
 
-without_pba_flag_file=${the_base_dir}/gmk/datatools_without_pba.config
-without_fpu_flag_file=${the_base_dir}/gmk/datatools_without_fpu.config
-without_python_flag_file=${the_base_dir}/gmk/datatools_without_python.config
-python_version_flag_file=${the_base_dir}/gmk/datatools_python_version.config
-without_ebio_flag_file=${the_base_dir}/gmk/datatools_without_ebio.config
+#python_version_flag_file=${the_base_dir}/gmk/datatools_python_version.config
 
 if [ -d ${the_base_dir}/gmk ]; then
     GMKDIR=${the_base_dir}/gmk
@@ -969,7 +965,7 @@ function do_configure ()
 		return 1
 	    else
 		pkgtools__msg_notice "Python ${python_version} is setup !"
-		echo "${python_version}" > ${python_version_flag_file}
+		pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_PYTHON_VERSION" "${python_version}"
 	    fi
 	    
 	    if [ "x${python_version}" != "x${boost_python_version}" ]; then
