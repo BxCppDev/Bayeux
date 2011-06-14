@@ -1,7 +1,7 @@
 // -*- mode: c++; -*- 
 /* line_3d.cc
  */
-
+ 
 #include <geomtools/line_3d.h>
 
 #include <cmath>
@@ -16,6 +16,16 @@ namespace geomtools {
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (line_3d,"geomtools::line_3d")
 
   const string line_3d::LINE_3D_LABEL = "line_3d";
+
+  bool line_3d::is_normal ()
+  {
+    return isfinite (__first.x()) &&
+      isfinite (__first.y()) &&
+      isfinite (__first.z()) &&
+      isfinite (__last.x()) &&
+      isfinite (__last.y()) &&
+      isfinite (__last.z());
+  }
 
   string line_3d::get_shape_name () const
   {
@@ -110,6 +120,12 @@ namespace geomtools {
     basic_polyline_3d bpl;
     make_vertex_collection (bpl);
     return bpl;
+  }
+
+  void line_3d::dump () const
+  {
+    tree_dump (clog);
+    return;
   }
   
   void line_3d::tree_dump (ostream &      out_, 

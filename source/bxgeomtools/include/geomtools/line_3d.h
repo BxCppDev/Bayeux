@@ -19,11 +19,11 @@
 
 #include <string>
 
-#include <datatools/serialization/i_serializable.h>
-#include <datatools/utils/i_tree_dump.h>
-
 #include <geomtools/i_shape_1d.h>
 #include <geomtools/utils.h>
+
+#include <datatools/utils/i_tree_dump.h>
+#include <datatools/serialization/i_serializable.h>
 
 namespace geomtools {
 
@@ -31,22 +31,14 @@ namespace geomtools {
 
   class line_3d : 
     public i_shape_1d,
-    public datatools::serialization::i_serializable
+    DATATOOLS_SERIALIZABLE_CLASS
   {
   public: 
     static const string LINE_3D_LABEL;
 
   public: 
 
-    bool is_normal()
-    {
-      return isfinite (__first.x()) &&
-	isfinite (__first.y()) &&
-	isfinite (__first.z()) &&
-	isfinite (__last.x()) &&
-	isfinite (__last.y()) &&
-	isfinite (__last.z());
-    }
+    bool is_normal();
 
     virtual string get_shape_name () const;
 
@@ -82,10 +74,7 @@ namespace geomtools {
 			    const string & indent_ = "",
 			    bool inherit_          = false) const;
 
-    void dump () const
-    {
-      tree_dump (clog);
-    }
+    void dump () const;
 
     static void print_xyz (ostream & out_, 
 			   const line_3d & line_);
@@ -102,19 +91,13 @@ namespace geomtools {
     
     basic_polyline_3d make_vertex_collection () const;
 
-    /* interface i_serializable */
-    DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
-  private:
-      
-    
-    //! Boost.Serialization hook.
-    friend class boost::serialization::access; 
-    BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
-
   private: 
 
     vector_3d __first;
     vector_3d __last;
+
+    /* interface i_serializable */
+    DATATOOLS_SERIALIZATION_DECLARATION();
 
   };
 

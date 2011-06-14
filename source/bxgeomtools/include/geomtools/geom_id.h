@@ -35,7 +35,7 @@ namespace geomtools {
   using namespace std;
 
   class geom_id : 
-    public datatools::serialization::i_serializable
+    DATATOOLS_SERIALIZABLE_CLASS
   {
   public:
     /*
@@ -142,19 +142,13 @@ namespace geomtools {
     
     static bool sub_id_comp (uint32_t si1_, uint32_t si2_);
 
-    /* interface i_serializable */
-    DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
-
-  private:
-    
-    //! Boost.Serialization hook.
-    friend class boost::serialization::access; 
-    BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
-
   private: 
  
     uint32_t         __type;
     vector<uint32_t> __address;
+
+    /* interface i_serializable */
+    DATATOOLS_SERIALIZATION_DECLARATION();
 
   };
 

@@ -23,7 +23,7 @@ namespace geomtools {
 
   class polyline_3d : 
     public i_shape_1d,
-    public datatools::serialization::i_serializable
+    DATATOOLS_SERIALIZABLE_CLASS
     {
     public:
       static const string POLYLINE_3D_LABEL;
@@ -69,14 +69,6 @@ namespace geomtools {
 
       // inefficient algorithm:
       basic_polyline_3d make_vertex_collection () const;
-
-    /* interface i_serializable */
-    DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
-
-    private:
-
-      friend class boost::serialization::access; 
-      BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
  
     public:
 
@@ -89,7 +81,10 @@ namespace geomtools {
 
       bool      __closed;
       point_col __points;
- 
+
+      /* interface i_serializable */
+      DATATOOLS_SERIALIZATION_DECLARATION();
+      
     }; 
  
 } // end of namespace geomtools

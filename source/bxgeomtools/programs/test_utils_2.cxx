@@ -85,7 +85,7 @@ int main (int argc_, char ** argv_)
       g1.showonscreen (); // window output
       gnuplot_drawer::wait_for_key ();
       usleep (200);
- 
+      unlink (tmp_filename.c_str ());
     }
   catch (exception & x)
     {

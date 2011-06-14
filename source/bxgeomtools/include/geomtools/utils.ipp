@@ -6,10 +6,10 @@
 
 #include <boost/archive/archive_exception.hpp>
 #include <boost/serialization/base_object.hpp>
-#include <boost/serialization/export.hpp>
-#include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
-#include <boost/serialization/version.hpp>
+//#include <boost/serialization/version.hpp>
+//#include <boost/serialization/tracking.hpp>
+#include <boost/serialization/export.hpp>
 #include <boost/serialization/split_free.hpp>
 
 #include <datatools/serialization/utils.h>
@@ -185,6 +185,15 @@ namespace boost {
   } // namespace serialization
 
 } // namespace boost
+
+//BOOST_CLASS_TRACKING(geomtools::vector_2d, boost::serialization::track_always) 
+BOOST_CLASS_EXPORT_KEY2(geomtools::vector_2d, "geomtools::vector_2d")
+
+//BOOST_CLASS_TRACKING(geomtools::vector_3d, boost::serialization::track_always) 
+BOOST_CLASS_EXPORT_KEY2(geomtools::vector_3d, "geomtools::vector_3d")
+
+//BOOST_CLASS_TRACKING(geomtools::rotation_3d, boost::serialization::track_always) 
+BOOST_CLASS_EXPORT_KEY2(geomtools::rotation_3d, "geomtools::rotation_3d")
 
 #endif // __geomtools__utils_ipp
 

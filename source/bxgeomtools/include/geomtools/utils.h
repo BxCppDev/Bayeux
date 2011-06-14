@@ -539,6 +539,7 @@ namespace boost {
 
 } // namespace boost
 
+//! Serialization stuff for CLHEP 'vector_2d'
 namespace boost {
 
   namespace serialization {
@@ -563,7 +564,7 @@ namespace boost {
 } // namespace boost
 
 
-//! Serialization stuff for CLHEP 'rotation'
+//! Serialization stuff for CLHEP 'rotation_3d'
 namespace boost {
 
   namespace serialization {

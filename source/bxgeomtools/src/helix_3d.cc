@@ -1,5 +1,5 @@
 // -*- mode: c++; -*- 
-/* helix_3d.cc
+/* helix_3d.cc 
  */
 
 #include <geomtools/helix_3d.h>
@@ -13,6 +13,18 @@ namespace geomtools {
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (helix_3d,"geomtools::helix_3d")
   //const string helix_3d::SERIAL_TAG = "__geomtools::helix_3d__";
 
+
+  bool helix_3d::is_normal ()
+  {
+    return isfinite(__radius) &&
+      isfinite(__step) &&
+      isfinite(__t1) &&
+      isfinite(__t2) &&
+      isfinite(__center.x()) &&
+      isfinite(__center.y()) &&
+      isfinite(__center.z());
+  }
+  
   string helix_3d::get_shape_name () const
   {
     return helix_3d::HELIX_3D_LABEL;
@@ -42,6 +54,12 @@ namespace geomtools {
   helix_3d::get_center ()
   {
     return __center;
+  }
+
+  const vector_3d & 
+  helix_3d::get_center_const () const
+  {
+    return get_center ();
   }
   
   void 
@@ -348,6 +366,11 @@ namespace geomtools {
     //out_ << endl << endl;
     out_ << endl;
     return;
+  }
+
+  void helix_3d::dump () const
+  {
+    tree_dump (clog);
   }
   
   void helix_3d::tree_dump (ostream &      out_, 

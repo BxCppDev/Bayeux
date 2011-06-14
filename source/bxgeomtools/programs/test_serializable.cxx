@@ -10,7 +10,15 @@
 
 #include <datatools/serialization/io_factory.h>
 
+#include <geomtools/geom_id.h>
+#include <datatools/utils/properties.h>
+
+#ifdef DATATOOLS_NO_EBIO 
+#include <datatools/the_serializable.h>
+#endif
+#ifdef GEOMTOOLS_NO_EBIO 
 #include <geomtools/the_serializable.h>
+#endif
 
 int main (int argc_, char ** argv_)
 {
@@ -29,13 +37,17 @@ int main (int argc_, char ** argv_)
       geomtools::rotation rot;
       geomtools::create_rotation(rot, 0.0, 90. * CLHEP::degree, 0.0);
       geomtools::tree_dump (rot, std::clog, "Rotation matrix 3D:");
+      clog << endl;
 
       {
 	namespace ds = datatools::serialization;
 	ds::data_writer writer;
 	writer.init ("test_utils.txt", 
 		     ds::using_multi_archives);
-	
+	datatools::utils::properties config;
+	config.store_flag ("test");
+	config.tree_dump (clog, "Config :");
+	writer.store (config);
 	for (int i = 0; i < 5; i++)
 	  {
 	    geomtools::vector_2d v (geomtools::random_tools::random_flat (),
@@ -45,6 +57,7 @@ int main (int argc_, char ** argv_)
 	    writer.store (geomtools::io::VECTOR_2D_SERIAL_TAG, v);
 	  }
 	writer.reset ();
+	clog << endl;
       }
 
       {
@@ -53,6 +66,10 @@ int main (int argc_, char ** argv_)
 	writer.init ("test_utils_3d.txt", 
 		     ds::using_multi_archives);
 	
+	datatools::utils::properties config;
+	config.store_flag ("test");
+	config.tree_dump (clog, "Config :");
+	writer.store (config);
 	for (int i = 0; i < 5; i++)
 	  {
 	    geomtools::vector_3d v (geomtools::random_tools::random_flat (),
@@ -63,6 +80,7 @@ int main (int argc_, char ** argv_)
 	    writer.store (geomtools::io::VECTOR_3D_SERIAL_TAG, v);
 	  }
 	writer.reset ();
+	clog << endl;
       }
 
       {
@@ -71,6 +89,10 @@ int main (int argc_, char ** argv_)
 	writer.init ("test_utils_gid.txt", 
 		     ds::using_multi_archives);
 	
+	datatools::utils::properties config;
+	config.store_flag ("test");
+	config.tree_dump (clog, "Config :");
+	writer.store (config);
 	for (int i = 0; i < 5; i++)
 	  {
 	    geomtools::geom_id gid (666, i);
@@ -79,6 +101,30 @@ int main (int argc_, char ** argv_)
 	    writer.store (geomtools::geom_id::SERIAL_TAG, gid);
 	  }
 	writer.reset ();
+	clog << endl;
+      }
+        
+      {
+	namespace ds = datatools::serialization;
+	ds::data_reader reader;
+	reader.init ("test_utils_gid.txt", 
+		     ds::using_multi_archives);
+	datatools::utils::properties config;
+	reader.load (config);
+	config.tree_dump (clog, "Config (LOADED) :");
+	int i = 0;
+	while (reader.has_record_tag ())
+	  {
+	    if (reader.get_record_tag () == geomtools::geom_id::SERIAL_TAG)
+	      {
+		geomtools::geom_id gid;
+		reader.load (gid);
+		std::clog << "gid[" << i << "] (LOADED) = " << gid << std::endl;
+	      }
+	    i++;
+	  }
+	reader.reset ();
+ 	clog << endl;
       }
         
       {
@@ -86,6 +132,9 @@ int main (int argc_, char ** argv_)
 	ds::data_reader reader;
 	reader.init ("test_utils.txt", 
 		     ds::using_multi_archives);
+	datatools::utils::properties config;
+	reader.load (config);
+	config.tree_dump (clog, "Config (LOADED) :");
 	int i = 0;
 	while (reader.has_record_tag ())
 	  {
@@ -93,18 +142,22 @@ int main (int argc_, char ** argv_)
 	      {
 		geomtools::vector_2d v;
 		reader.load (geomtools::io::VECTOR_2D_SERIAL_TAG, v);
-		std::clog << "v[" << i << "] = " << v << std::endl;
+		std::clog << "v[" << i << "] (LOADED) = " << v << std::endl;
 	      }
 	    i++;
 	  }
 	reader.reset ();
-      }
+ 	clog << endl;
+     }
        
       {
 	namespace ds = datatools::serialization;
 	ds::data_reader reader;
 	reader.init ("test_utils_3d.txt", 
 		     ds::using_multi_archives);
+	datatools::utils::properties config;
+	reader.load (config);
+	config.tree_dump (clog, "Config (LOADED) :");
 	int i = 0;
 	while (reader.has_record_tag ())
 	  {
@@ -112,11 +165,12 @@ int main (int argc_, char ** argv_)
 	      {
 		geomtools::vector_3d v;
 		reader.load (geomtools::io::VECTOR_3D_SERIAL_TAG, v);
-		std::clog << "v[" << i << "] = " << v << std::endl;
+		std::clog << "v[" << i << "] (LOADED) = " << v << std::endl;
 	      }
 	    i++;
 	  }
 	reader.reset ();
+	clog << endl;
       }
 
       {
@@ -168,6 +222,7 @@ int main (int argc_, char ** argv_)
 	    i++;
 	  }
 	reader.reset ();
+	clog << endl;
       }
 
       geomtools::create_rotation (rot, 
@@ -177,6 +232,7 @@ int main (int argc_, char ** argv_)
       geomtools::tree_dump (rot, std::clog, "Rotation matrix 3D (valid):"); 
       geomtools::invalidate (rot);
       geomtools::tree_dump (rot, std::clog, "Rotation matrix 3D (invalid):");
+      clog << endl;
  
     }
   catch (std::exception & x)

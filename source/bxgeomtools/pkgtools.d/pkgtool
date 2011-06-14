@@ -43,6 +43,9 @@ pack_gccver=$(pkgtools__get_gccver)
 pack_sys=$(pkgtools__get_sys_with_gccver)
 pack_sys=$(pkgtools__get_sys)
 pack_config=${pack_name_lower}-config
+config_db_file=${the_pkgtools_dir}/.config_db.info
+config_sh_file=${the_pkgtools_dir}/.config_db.sh
+config_csh_file=${the_pkgtools_dir}/.config_db.csh
 
 # startup scripts:
 sh_ss=${pack_name_lower}.sh
@@ -52,7 +55,6 @@ pc_file_skel=${pc_file}.skel
 
 action_mode=""
 with_python=0
-config_file=${the_pkgtools_dir}/${pack_name_lower}.config
 
 install__ldflags_mode=""
 install__using_cache_files=1
@@ -112,6 +114,8 @@ EOF
 EOF
     fi
     cat<<EOF
+              --with-embedded-boost-io 
+              --without-embedded-boost-io (default)
               --skip-all-dependencies-check
               --skip-dependency-check PACKNAME
 EOF
@@ -371,7 +375,6 @@ function do_build_gmk ()
 	return 1
     fi
     opwd=$(pwd)
-
     cd ${the_gmk_dir}
     mk_lib=0
     mk_bin=0
@@ -474,8 +477,10 @@ function do_deconfigure ()
     __pkgtools__at_function_enter do_deconfigure
 
     opwd=$(pwd)
-    
-    test -f ${without_python_flag_file}  && rm -f ${without_python_flag_file} 
+ 
+    pkgtools__remove_file ${config_db_file}
+    pkgtools__remove_file ${config_sh_file}
+    pkgtools__remove_file ${config_csh_file}
 
     cd ${opwd}
 
@@ -487,9 +492,15 @@ function do_configure ()
 {
     __pkgtools__at_function_enter do_configure
 
+    pkgtools__remove_file ${config_db_file}
+    pkgtools__remove_file ${config_sh_file}
+    pkgtools__remove_file ${config_csh_file}
+    echo "# ${pack_name} configuration informations : " >> ${config_db_file}
+
     prefix=""
     can_python_wrapper=0
     with_python_wrapper=0
+    with_ebio=0
     
     if [ -f ${the_python_dir}/__init__.py ]; then
 	can_python_wrapper=1
@@ -513,6 +524,13 @@ function do_configure ()
 		else
 		    skipped_dependencies="${skipped_dependencies} ${swpack}"
 		fi
+	    elif [ "${opt}" = "--prefix" ]; then
+		shift 1
+		prefix="$1"
+	    elif [ "x${opt}" = "x-ebio" -o "x${opt}" = "x--with-embedded-boost-io" ]; then
+		with_ebio=1
+	    elif [ "x${opt}" = "x-no-ebio" -o "x${opt}" = "x--without-embedded-boost-io" ]; then
+		with_ebio=0
 	    elif [ ${can_python_wrapper} -eq 1 ]; then
                 # parse Python wrapper switches:
 		if [ "x${opt}" = "x--with-python" ]; then
@@ -520,9 +538,6 @@ function do_configure ()
 		elif [ "x${opt}" = "x--without-python" ]; then
 		    with_python_wrapper=0
 		fi
-	    elif [ "${opt}" = "--prefix" ]; then
-		shift 1
-		prefix="$1"
 	    else
                 # parse other configuration options...
 		pkgtools__msg_warning "Ignoring '${opt}' option !"
@@ -573,16 +588,30 @@ function do_configure ()
 		return 1
 	    fi
 	    pkgtools__msg_notice "Use Python wrapper module from Boost.Python !"
-	    test -f ${without_python_flag_file} && rm -f ${without_python_flag_file}
 	else
 	    pkgtools__msg_warning "Do not use Python wrapper module from Boost.Python !"
-	    cat > ${without_python_flag_file} <<EOF 
-# ${pack_name} does not use python wrapper module:
-export ${pack_name_upper}_NO_PYTHON=1
-EOF
+	    pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_NO_PYTHON" 1
 	fi
 	
     fi
+
+    if [ ${with_ebio} -ne 0 ]; then
+	datatools_with_ebio=$(datatools-config --with-ebio)
+	if [ ${datatools_with_ebio} -eq 0 ]; then
+	    pkgtools__msg_warning "As datatools has no Embedded Boost I/O support, geomtools won't too !"
+	    with_ebio=0
+	else
+	    pkgtools__msg_warning "Embedded pre-built Boost/Serialization code !"	
+	fi
+    fi
+    if [ ${with_ebio} -eq 0 ]; then
+	pkgtools__msg_warning "${pack_name} will not embed pre-built Boost/Serialization code !"	
+	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_NO_EBIO" 1
+    fi
+
+    echo "# end of ${pack_name} configuration informations."          >> ${config_db_file} 
+    cat ${config_db_file} | ${the_pkgtools_dir}/config_to_setup.py sh  > ${config_sh_file}
+    cat ${config_db_file} | ${the_pkgtools_dir}/config_to_setup.py csh > ${config_csh_file}
 
     __pkgtools__at_function_exit
     return 0
@@ -591,6 +620,13 @@ EOF
 function do_build ()
 {
     __pkgtools__at_function_enter do_build
+
+    if [ ! -f ${config_sh_file} ]; then
+	pkgtools__msg_error "Missing '${config_sh_file}' file ! Please first configure !"
+	__pkgtools__at_function_exit
+	return 1	
+    fi
+    source ${config_sh_file}
 
     if [ -d ${the_gmk_dir} ]; then
 	if [ -d ${the_python_dir} ]; then
@@ -680,6 +716,9 @@ EOF
 EOF
     fi
 
+    cat ${config_sh_file}  >> ${the_base_dir}/${sh_ss}
+    cat ${config_csh_file} >> ${the_base_dir}/${csh_ss}
+
     cat<<EOF
 
 Setup scripts:
@@ -696,6 +735,7 @@ You may source these scripts at startup time
 (i.e. from your '~/.bashrc' or '~/.(t)cshrc' files).
 
 EOF
+
     __pkgtools__at_function_exit
     return 0
 }
@@ -746,6 +786,13 @@ function do_install ()
 {
     __pkgtools__at_function_enter do_install
 
+    if [ ! -f ${config_sh_file} ]; then
+	pkgtools__msg_error "Missing '${config_sh_file}' file ! Please first configure and build !"
+	__pkgtools__at_function_exit
+	return 1	
+    fi
+    source ${config_sh_file}
+
     # reset default install options:
     install__ldflags_mode=""
     install__using_cache_files=1
@@ -778,6 +825,7 @@ function do_install ()
     cd ${the_gmk_dir}
     make install 
     if [ $? -ne 0 ]; then 
+	pkgtools__msg_error "make install failed !"
 	cd ${opwd}
 	return 1
     fi
@@ -801,6 +849,7 @@ function do_install ()
     local sysdir=${the_base_dir}/$(pkgtools__get_sys)
     test -L ${sysdir}/bin/${pack_config} && rm -f ${sysdir}/bin/${pack_config} 
     ln -s -f ${the_pkgtools_dir}/${pack_config} ${sysdir}/bin/${pack_config}
+
     __pkgtools__at_function_exit
     return 0
 }
@@ -809,6 +858,7 @@ function do_uninstall ()
 {
     __pkgtools__at_function_enter do_uninstall
 
+    pkgtools__msg_info "Uninstall package '${pack_name}'..."
     opwd=$(pwd)
     cd ${the_gmk_dir}
     make uninstall 
@@ -985,8 +1035,16 @@ function do_untest ()
     fi
 
     pkgtools__msg_notice "Removing test files..."
-    rm -f test_utils.txt 
-    rm -f test_utils2.txt 
+    pkgtools_remove_file test_utils.txt 
+    pkgtools_remove_file test_utils2.txt 
+    pkgtools_remove_file test_box.data 
+    pkgtools_remove_file test_cylinder.data 
+    pkgtools_remove_file test_intersection_3d.data 
+    pkgtools_remove_file test_things.xml 
+    pkgtools_remove_file test_utils2.txt 
+    pkgtools_remove_file test_utils_3d.txt 
+    pkgtools_remove_file test_utils_gid.txt 
+    pkgtools_remove_file test_utils.txt 
 
     __pkgtools__at_function_exit
     return 0
@@ -1041,8 +1099,8 @@ function do_reset ()
 {
     __pkgtools__at_function_enter do_reset
 
-    test -f .cflags.cache && rm -f .cflags.cache
-    test -f .ldflags.cache && rm -f .ldflags.cache
+    pkgtools_remove_file ${the_base_dir}/.cflags.cache
+    pkgtools_remove_file ${the_base_dir}/.ldflags.cache
 
     do_undoc
     do_untest

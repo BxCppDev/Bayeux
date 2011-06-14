@@ -9,8 +9,11 @@
 #include <geomtools/utils.h>
 #include <geomtools/gnuplot_draw.h>
 
-#include <geomtools/the_serializable.h>
 #include <datatools/serialization/io_factory.h>
+
+#ifdef GEOMTOOLS_NO_EBIO
+#include <geomtools/the_serializable.h>
+#endif
 
 int 
 main (int argc_, char ** argv_)

@@ -37,23 +37,14 @@ namespace geomtools {
 
   class helix_3d : 
     public i_shape_1d,
-    public datatools::serialization::i_serializable  
+    DATATOOLS_SERIALIZABLE_CLASS
   {
   public: 
     static const string HELIX_3D_LABEL;
 
   public: 
 
-    bool is_normal()
-    {
-      return isfinite(__radius) &&
-	isfinite(__step) &&
-	isfinite(__t1) &&
-	isfinite(__t2) &&
-        isfinite(__center.x()) &&
-	isfinite(__center.y()) &&
-	isfinite(__center.z());
-    }
+    bool is_normal();
 
     virtual string get_shape_name () const;
 
@@ -63,10 +54,7 @@ namespace geomtools {
 
     const vector_3d & get_center () const;
 
-    const vector_3d & get_center_const () const
-    {
-      return get_center ();
-    }
+    const vector_3d & get_center_const () const;
 
     vector_3d & get_center ();
 
@@ -137,23 +125,11 @@ namespace geomtools {
 			    const string & indent_ = "",
 			    bool inherit_               = false) const;
 
-    void dump () const
-    {
-      tree_dump (clog);
-    }
+    void dump () const;
 
     void make_vertex_collection (basic_polyline_3d &, double angular_step_ = 0.0) const;
     
     basic_polyline_3d make_vertex_collection () const;
-    
-    /* interface i_serializable */
-    DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
-  
-  private:
-      
-    //! Boost.Serialization hook.
-    friend class boost::serialization::access; 
-    BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
 
   public:
 
@@ -182,6 +158,9 @@ namespace geomtools {
     double    __step;
     double    __t1;    // angle1 / (2 pi)
     double    __t2;    // angle2 / (2 pi)
+
+    /* interface i_serializable */
+    DATATOOLS_SERIALIZATION_DECLARATION();
 
   };
 
