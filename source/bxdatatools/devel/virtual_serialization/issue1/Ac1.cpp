@@ -44,9 +44,3 @@ std::ostream & operator<< (std::ostream & out, const A::c1 & c)
   out << "c1={i=" << c.get_i () << "}";
   return out;
 }
-
-#ifndef HERE
-#include "archives.hpp"
-#endif
-
-BOOST_CLASS_EXPORT_IMPLEMENT (A::c1)

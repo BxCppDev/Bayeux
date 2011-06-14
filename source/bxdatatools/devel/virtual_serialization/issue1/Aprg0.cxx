@@ -5,7 +5,7 @@
 
 #include <Ac1.hpp>
 #include <Ac2.hpp>
-#include <Bc3.hpp>
+#include <Ad1.hpp>
 
 int main (void)
 {
@@ -17,8 +17,8 @@ int main (void)
       A::c2 o2 ("test");
       std::cout << "o2 : " << o2 << std::endl;
 
-      B::c3 o3 (7);
-      std::cout << "o3 : " << o3 << std::endl;
+      A::d1 w1 (999, 333);
+      std::cout << "w1 : " << w1 << std::endl;
 
     }
   catch (std::exception &x)

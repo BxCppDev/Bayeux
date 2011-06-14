@@ -4,10 +4,7 @@
 #include <iostream>
 
 #include <boost/cstdint.hpp>
-#include <boost/serialization/base_object.hpp>
 #include <boost/serialization/access.hpp>
-#include <boost/serialization/export.hpp>
-#include <boost/serialization/string.hpp>
 
 #include "Abase.hpp"
 
@@ -38,24 +35,12 @@ namespace A {
     friend class boost::serialization::access;
       
     template<class Archive>
-    void serialize (Archive & ar, const unsigned int file_version)
-    {
-      ar & boost::serialization::make_nvp("A__base", boost::serialization::base_object<base>(*this));
-      ar & boost::serialization::make_nvp("name", m_name);
-      return;
-    }
-     
+    void serialize (Archive & ar, const unsigned int file_version);
+
   };
 
 } // end of namespace A
 
 std::ostream & operator<< (std::ostream &, const A::c2 &);
-
-BOOST_CLASS_EXPORT_KEY2 (A::c2, "A::c2")
-
-BOOST_CLASS_TYPE_INFO(
-    A::c2,
-    extended_type_info_no_rtti<A::c2>
-)
 
 #endif // __A__c2_hpp__

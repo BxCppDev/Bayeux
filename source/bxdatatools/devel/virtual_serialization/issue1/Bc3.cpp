@@ -26,14 +26,6 @@ namespace B {
     return m_c;
   }
 
-  /*
-  A::base * c3::clone () const
-  {
-    A::base * b = new c3 (this->m_c);
-    return b;
-  }
-  */
-
   const char * c3::get_key () const
   {
     return "B::c3";
@@ -45,7 +37,6 @@ namespace B {
     return;
   }
 
-
 } // end of namespace B
 
 std::ostream & operator<< (std::ostream & out, const B::c3 & c)
@@ -53,10 +44,3 @@ std::ostream & operator<< (std::ostream & out, const B::c3 & c)
   out << "c3={c=" << (int) c.get_c () << "}";
   return out;
 }
-
-
-#ifndef HERE
-#include "archives.hpp"
-#endif
-
-BOOST_CLASS_EXPORT_IMPLEMENT (B::c3)
