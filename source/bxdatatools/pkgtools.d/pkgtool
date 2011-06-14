@@ -1084,10 +1084,10 @@ function do_startup ()
     __pkgtools__at_function_enter do_startup
 
     pkgtools__msg_warning "SH startup = ${the_base_dir}/${sh_ss}"
-    cat ${the_pkgtools_dir}/package.sh.skel | sed -e "s@__PACKAGE_ROOT__@${GEOMTOOLS_ROOT}@g" -e "s@__PACKAGE_NAME__@${pack_name_upper}@g" -e "s@__Package_name__@${pack_name}@g" > ${the_base_dir}/${sh_ss} 
+    cat ${the_pkgtools_dir}/package.sh.skel | sed -e "s@__PACKAGE_ROOT__@${DATATOOLS_ROOT}@g" -e "s@__PACKAGE_NAME__@${pack_name_upper}@g" -e "s@__Package_name__@${pack_name}@g" > ${the_base_dir}/${sh_ss} 
 
     pkgtools__msg_warning "CSH startup = ${the_base_dir}/${csh_ss}"
-    cat ${the_pkgtools_dir}/package.csh.skel | sed -e "s@__PACKAGE_ROOT__@${GEOMTOOLS_ROOT}@g" -e "s@__PACKAGE_NAME__@${pack_name_upper}@g" -e "s@__Package_name__@${pack_name}@g" > ${the_base_dir}/${csh_ss}
+    cat ${the_pkgtools_dir}/package.csh.skel | sed -e "s@__PACKAGE_ROOT__@${DATATOOLS_ROOT}@g" -e "s@__PACKAGE_NAME__@${pack_name_upper}@g" -e "s@__Package_name__@${pack_name}@g" > ${the_base_dir}/${csh_ss}
 
     cat ${config_sh_file}  >> ${the_base_dir}/${sh_ss}
     cat ${config_csh_file} >> ${the_base_dir}/${csh_ss}

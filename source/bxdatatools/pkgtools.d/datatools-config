@@ -293,7 +293,7 @@ fi
 
 if [ "x$opt" = "x--python-version" ]; then
     if [ "x${DATATOOLS_PYTHON_VERSION}" != "x" ]; then
-	cat ${DATATOOLS_PYTHON_VERSION}
+	echo ${DATATOOLS_PYTHON_VERSION}
     else
 	echo -n "2.5"
 	echo -n " (assumed)" >&2
