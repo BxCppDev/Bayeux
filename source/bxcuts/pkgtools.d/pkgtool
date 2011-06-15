@@ -43,6 +43,9 @@ pack_gccver=$(pkgtools__get_gccver)
 pack_sys=$(pkgtools__get_sys_with_gccver)
 pack_sys=$(pkgtools__get_sys)
 pack_config=${pack_name_lower}-config
+config_db_file=${the_pkgtools_dir}/.config_db.info
+config_sh_file=${the_pkgtools_dir}/.config_db.sh
+config_csh_file=${the_pkgtools_dir}/.config_db.csh
 
 # startup scripts:
 sh_ss=${pack_name_lower}.sh
@@ -52,13 +55,10 @@ pc_file_skel=${pc_file}.skel
 
 action_mode=""
 with_python=0
-config_file=${the_pkgtools_dir}/${pack_name_lower}.config
 
 install__ldflags_mode=""
 install__using_cache_files=1
 
-without_python_flag_file=${the_base_dir}/gmk/${pack_name_lower}_without_python.config
-	
 function my_exit ()
 {
     exit $1
@@ -163,7 +163,8 @@ EOF
     shell> pkgtool reset
 
 EOF
-}
+    return
+} 
 
 #######################################################
 
@@ -396,17 +397,17 @@ function do_build_gmk ()
 
     ### special Python wrapper/program:
     if [ -d ${the_python_dir} ]; then
-	if [ ! -f ${without_python_flag_file} ]; then
-	    cd ${the_python_dir}
-	    make
-	    if [ $? -ne 0 ]; then
-		cd ${opwd} 
-		pkgtools__msg_error "Build Python stuff failed !"
-		__pkgtools__at_function_exit
-		return 1
-	    fi
-	    cd ${the_gmk_dir}
-	fi
+	# if [ ! -f ${without_python_flag_file} ]; then
+	#     cd ${the_python_dir}
+	#     make
+	#     if [ $? -ne 0 ]; then
+	# 	cd ${opwd} 
+	# 	pkgtools__msg_error "Build Python stuff failed !"
+	# 	__pkgtools__at_function_exit
+	# 	return 1
+	#     fi
+	#     cd ${the_gmk_dir}
+	# fi
     fi
     
     cd ${opwd}
@@ -476,9 +477,11 @@ function do_deconfigure ()
     __pkgtools__at_function_enter do_deconfigure
 
     opwd=$(pwd)
-    
-    test -f ${without_python_flag_file}  && rm -f ${without_python_flag_file} 
 
+    pkgtools__remove_file ${config_db_file}
+    pkgtools__remove_file ${config_sh_file}
+    pkgtools__remove_file ${config_csh_file}
+    
     cd ${opwd}
 
     __pkgtools__at_function_exit
@@ -489,14 +492,21 @@ function do_configure ()
 {
     __pkgtools__at_function_enter do_configure
 
-    prefix=""
-    can_python_wrapper=0
-    with_python_wrapper=0
+    pkgtools__remove_file ${config_db_file}
+    pkgtools__remove_file ${config_sh_file}
+    pkgtools__remove_file ${config_csh_file}
+    echo "# ${pack_name} configuration informations : " >> ${config_db_file}
+
+    local prefix=""
+    local can_python_wrapper=0
+    local with_python_wrapper=0
     
     if [ -f ${the_python_dir}/__init__.py ]; then
 	can_python_wrapper=1
 	with_python_wrapper=1
     fi
+    # Force no Python wrapper :
+    with_python_wrapper=0
 
     skip_all_dependencies_check=0
     skipped_dependencies=
@@ -515,16 +525,16 @@ function do_configure ()
 		else
 		    skipped_dependencies="${skipped_dependencies} ${swpack}"
 		fi
-	    elif [ ${can_python_wrapper} -eq 1 ]; then
-                # parse Python wrapper switches:
-		if [ "x${opt}" = "x--with-python" ]; then
-			with_python_wrapper=1
-		elif [ "x${opt}" = "x--without-python" ]; then
-		    with_python_wrapper=0
-		fi
 	    elif [ "${opt}" = "--prefix" ]; then
 		shift 1
 		prefix="$1"
+	    elif [ ${can_python_wrapper} -eq 1 ]; then
+                # parse Python wrapper switches:
+		if [ "x${opt}" = "x--with-python" ]; then
+		    with_python_wrapper=1
+		elif [ "x${opt}" = "x--without-python" ]; then
+		    with_python_wrapper=0
+		fi
 	    else
                 # parse other configuration options...
 		pkgtools__msg_warning "Ignoring '${opt}' option !"
@@ -575,16 +585,16 @@ function do_configure ()
 		return 1
 	    fi
 	    pkgtools__msg_notice "Use Python wrapper module from Boost.Python !"
-	    test -f ${without_python_flag_file} && rm -f ${without_python_flag_file}
 	else
 	    pkgtools__msg_warning "Do not use Python wrapper module from Boost.Python !"
-	    cat > ${without_python_flag_file} <<EOF 
-# ${pack_name} does not use python wrapper module:
-export ${pack_name_upper}_NO_PYTHON=1
-EOF
+	    pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_NO_PYTHON" 1
 	fi
 	
     fi
+
+    echo "# end of ${pack_name} configuration informations." >> ${config_db_file} 
+    cat ${config_db_file} | ${the_pkgtools_dir}/config_to_setup.py sh  > ${config_sh_file}
+    cat ${config_db_file} | ${the_pkgtools_dir}/config_to_setup.py csh > ${config_csh_file}
 
     __pkgtools__at_function_exit
     return 0
@@ -594,12 +604,14 @@ function do_build ()
 {
     __pkgtools__at_function_enter do_build
 
+    if [ ! -f ${config_sh_file} ]; then
+	pkgtools__msg_error "Missing '${config_sh_file}' file ! Please first configure !"
+	__pkgtools__at_function_exit
+	return 1	
+    fi
+    source ${config_sh_file}
+
     if [ -d ${the_gmk_dir} ]; then
-	if [ -d ${the_python_dir} ]; then
-	    if [ -f ${without_python_flag_file} ]; then
-		source ${without_python_flag_file}
-	    fi
-	fi
 	if [ "x$@" = "x" ]; then
 	    do_build_gmk lib
 	    if [ $? -ne 0 ]; then
@@ -683,6 +695,9 @@ EOF
 EOF
     fi
 
+    cat ${config_sh_file}  >> ${the_base_dir}/${sh_ss}
+    cat ${config_csh_file} >> ${the_base_dir}/${csh_ss}
+
     cat<<EOF
 
 Setup scripts:
@@ -749,15 +764,22 @@ function do_install ()
 {
     __pkgtools__at_function_enter do_install
 
+    if [ ! -f ${config_sh_file} ]; then
+	pkgtools__msg_error "Missing '${config_sh_file}' file ! Please first configure and build !"
+	__pkgtools__at_function_exit
+	return 1	
+    fi
+    source ${config_sh_file}
+
     # reset default install options:
-    install__ldflags_mode=""
-    install__using_cache_files=1
-    dummy=0
+    local install__ldflags_mode=""
+    local install__using_cache_files=1
+    local dummy=0
 
     while [ -n "$1" ]; do
-	token="$1"
+	local token="$1"
 	if [ "x${token:0:1}" = "x-" ]; then
-	    opt=${token}
+	    local opt=${token}
 	    if [ "${opt}" = "--dummy" ]; then
 		dummy=1
 	    elif [ "${opt}" = "--hardcoded-shared-lib-path" ]; then
@@ -777,7 +799,7 @@ function do_install ()
     done
 
     pkgtools__msg_info "Install package '${pack_name}'..."
-    opwd=$(pwd)
+    local opwd=$(pwd)
     cd ${the_gmk_dir}
     make install 
     if [ $? -ne 0 ]; then 
@@ -812,7 +834,7 @@ function do_uninstall ()
 {
     __pkgtools__at_function_enter do_uninstall
 
-    opwd=$(pwd)
+    local opwd=$(pwd)
     cd ${the_gmk_dir}
     make uninstall 
     if [ $? -ne 0 ]; then 
