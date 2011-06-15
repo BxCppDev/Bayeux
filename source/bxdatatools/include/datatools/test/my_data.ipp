@@ -4,7 +4,6 @@
 #ifndef __datatools__test__my_data_ipp
 #define __datatools__test__my_data_ipp 1
 
-#include <boost/archive/archive_exception.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/version.hpp>
@@ -14,6 +13,8 @@
 
 #include <datatools/serialization/utils.h>
 #include <datatools/test/my_data.h>
+
+#include <datatools/serialization/i_serializable.ipp>
 	 
 namespace datatools {
 		 
