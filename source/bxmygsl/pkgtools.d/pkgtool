@@ -517,9 +517,9 @@ function do_configure ()
     pkgtools__remove_file ${config_csh_file}
     echo "# ${pack_name} configuration informations : " >> ${config_db_file}
 
-    prefix=""
-    can_python_wrapper=0
-    with_python_wrapper=0
+    local prefix=""
+    local can_python_wrapper=0
+    local with_python_wrapper=0
     
     if [ -f ${the_python_dir}/__init__.py ]; then
 	can_python_wrapper=1
@@ -543,16 +543,16 @@ function do_configure ()
 		else
 		    skipped_dependencies="${skipped_dependencies} ${swpack}"
 		fi
-	    elif [ ${can_python_wrapper} -eq 1 ]; then
-                # parse Python wrapper switches:
-		if [ "x${opt}" = "x--with-python" ]; then
-			with_python_wrapper=1
-		elif [ "x${opt}" = "x--without-python" ]; then
-		    with_python_wrapper=0
-		fi
 	    elif [ "${opt}" = "--prefix" ]; then
 		shift 1
 		prefix="$1"
+	    elif [ ${can_python_wrapper} -eq 1 ]; then
+                # parse Python wrapper switches:
+		if [ "x${opt}" = "x--with-python" ]; then
+		    with_python_wrapper=1
+		elif [ "x${opt}" = "x--without-python" ]; then
+		    with_python_wrapper=0
+		fi
 	    else
                 # parse other configuration options...
 		pkgtools__msg_warning "Ignoring '${opt}' option !"
@@ -612,12 +612,8 @@ function do_configure ()
     fi
 
     echo "# end of ${pack_name} configuration informations." >> ${config_db_file} 
-    cat ${config_db_file} | ${the_pkgtools_dir}/config_to_setup.py sh > ${config_sh_file}
+    cat ${config_db_file} | ${the_pkgtools_dir}/config_to_setup.py sh  > ${config_sh_file}
     cat ${config_db_file} | ${the_pkgtools_dir}/config_to_setup.py csh > ${config_csh_file}
-
-    # cat ${config_db_file}
-    # cat ${config_sh_file}
-    # cat ${config_csh_file}
 
     __pkgtools__at_function_exit
     return 0
@@ -835,7 +831,7 @@ function do_install ()
 	return 1
     fi
 
-    cat ${config_sh_file} >> ${the_pkgtools_dir}/${pack_name_lower}.sh
+    cat ${config_sh_file}  >> ${the_pkgtools_dir}/${pack_name_lower}.sh
     cat ${config_csh_file} >> ${the_pkgtools_dir}/${pack_name_lower}.csh
 
     ### special Python wrapper/program:
