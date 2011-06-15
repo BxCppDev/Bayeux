@@ -165,7 +165,8 @@ namespace datatools {
 	    { 
 	      std::cerr << "DEBUG: io_factory::__init_read_archive: IOFACTORY_USE_PBA" << std::endl; 
 	    }
-	  __ibar_ptr = new boost::archive::quasi_portable_binary_iarchive (*__in);
+	  //__ibar_ptr = new boost::archive::quasi_portable_binary_iarchive (*__in);
+	  __ibar_ptr = new boost::archive::portable_binary_iarchive (*__in);
 	  if (devel) 
 	    {
 	      std::cerr << "DEBUG: io_factory::__init_read_archive: library version = " 
@@ -386,7 +387,8 @@ namespace datatools {
       else if (is_binary ()) 
 	{
 #ifdef IOFACTORY_USE_PBA
-	  __obar_ptr = new boost::archive::quasi_portable_binary_oarchive (*__out);
+	  //__obar_ptr = new boost::archive::quasi_portable_binary_oarchive (*__out);
+	  __obar_ptr = new boost::archive::portable_binary_oarchive (*__out);
 	  if (g_debug) 
 	    {
 	      std::clog << "DEBUG: io_factory::__init_write_archive: "

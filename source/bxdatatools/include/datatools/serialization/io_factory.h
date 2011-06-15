@@ -37,7 +37,7 @@
 
 #ifdef IOFACTORY_USE_PBA
 // Force usage of `Floating point utilities' by Johan Råde
-// for `Quasi Portable Binary Archive' 
+// for `Portable Binary Archive' 
 #ifndef IOFACTORY_USE_FPU
 #define IOFACTORY_USE_FPU=1
 #endif
@@ -97,8 +97,10 @@ namespace datatools {
       boost::archive::xml_iarchive      * __ixar_ptr;
       boost::archive::xml_oarchive      * __oxar_ptr;
 #ifdef IOFACTORY_USE_PBA
-      boost::archive::quasi_portable_binary_iarchive * __ibar_ptr;
-      boost::archive::quasi_portable_binary_oarchive * __obar_ptr;
+      // boost::archive::quasi_portable_binary_iarchive * __ibar_ptr;
+      // boost::archive::quasi_portable_binary_oarchive * __obar_ptr;
+      boost::archive::portable_binary_iarchive * __ibar_ptr;
+      boost::archive::portable_binary_oarchive * __obar_ptr;
 #else
       boost::archive::binary_iarchive   * __ibar_ptr;
       boost::archive::binary_oarchive   * __obar_ptr;
@@ -268,11 +270,11 @@ namespace datatools {
 	
       template <typename Data>
 #ifdef IOFACTORY_USE_PBA
-      void __store_binary (boost::archive::quasi_portable_binary_oarchive & a_ar, 
+      void __store_binary (boost::archive::portable_binary_oarchive & a_ar, 
 			   const Data & a_data)
 #else
-	void __store_binary (boost::archive::binary_oarchive & a_ar, 
-			     const Data & a_data)
+      void __store_binary (boost::archive::binary_oarchive & a_ar, 
+	                   const Data & a_data)
 #endif // IOFACTORY_USE_PBA
       {
 	const Data & b = a_data;
@@ -324,7 +326,7 @@ namespace datatools {
 
       template <typename Data>
 #ifdef IOFACTORY_USE_PBA
-      void __load_binary (boost::archive::quasi_portable_binary_iarchive & a_ar , 
+      void __load_binary (boost::archive::portable_binary_iarchive & a_ar , 
 			  Data & a_data)
 #else
 	void __load_binary (boost::archive::binary_iarchive & a_ar , 

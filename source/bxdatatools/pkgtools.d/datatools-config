@@ -26,6 +26,7 @@
 
 opwd=$(pwd)
 help=0
+debug=1
 
 SCRIPTNAME="datatools-config"
 COMP=gcc
@@ -57,12 +58,14 @@ elif [ -f "$THEPACK_ROOT/pkgtools.d/package.info"  ]; then
     THEPACK_VERSION=${version}
 fi
 
+echo "DEVEL: DATATOOLS_USING_CACHE_FILES=${DATATOOLS_USING_CACHE_FILES}" 1>&2
+
 using_cache_files=0 # default: do not use cache files 
 if [ "x${DATATOOLS_USING_CACHE_FILES}" != "x" ]; then
-    if [ "x${DATATOOLS_USING_CACHE_FILES}" = "x0" ]; then
-	using_cache_files=0
-    else
+    if [ "x${DATATOOLS_USING_CACHE_FILES}" = "x1" ]; then
 	using_cache_files=1
+    else
+	using_cache_files=0
     fi
 fi
 
@@ -70,6 +73,10 @@ fi
 
 cflags_cache=${THEPACK_ROOT}/.cflags.cache
 ldflags_cache=${THEPACK_ROOT}/.ldflags.cache
+if [ ${using_cache_files} -eq 0 ]; then
+    test -d ${cflags_cache} && rm -f ${cflags_cache}
+    test -d ${ldflags_cache} && rm -f ${ldflags_cache}
+fi
 
 ldflags_mode=""
 if [ "x${DATATOOLS_LDFLAGS_MODE}" != "x" ]; then
@@ -190,7 +197,7 @@ if [ "x$opt" = "x--cflags" ]; then
             generate_cflags=1
         fi
     else
-	rm -f ${cflags_cache}
+	test -f ${cflags_cache} && rm -f ${cflags_cache}
         generate_cflags=1
     fi
 
@@ -253,7 +260,7 @@ if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
             generate_ldflags=1
         fi
     else
-	rm -f ${ldflags_cache}
+	test -f ${ldflags_cache} && rm -f ${ldflags_cache}
         generate_ldflags=1
     fi
     

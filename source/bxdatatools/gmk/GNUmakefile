@@ -92,7 +92,7 @@ DEPCPPFLAGS+=$(shell clhep-config --include)
 DEPLDFLAGS+=$(shell clhep-config --libs)
 
 ### depends on Endian:
-DEPCPPFLAGS+=-I$(PACKAGE_DIR)/boost/vault/endian
+#DEPCPPFLAGS+=-I$(PACKAGE_DIR)/boost/vault/endian
 ###DEPLDFLAGS+=-lcurses
 
 ### depends on Floating point utility:

@@ -18,6 +18,15 @@ p1.data : p1
 p1.data.md5 : p1.data
 	@md5sum p1.data > p1.data.md5
 
+p2 : p2.cxx
+	$(CXX) $< -o $@ $(CPPFLAGS) $(LDFLAGS)
+
+p2.data : p2
+	@./p2
+
+p2.data.md5 : p2.data
+	@md5sum p2.data > p2.data.md5
+
 .PHONY :
 reference : p1.data.md5 p1.data
 	test -d references || mkdir references
@@ -31,5 +40,8 @@ clean :
 	$(RM) p1
 	$(RM) p1.data
 	$(RM) p1.data.md5
+	$(RM) p2
+	$(RM) p2.data
+	$(RM) p2.data.md5
 
 # end
