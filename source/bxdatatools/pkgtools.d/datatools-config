@@ -58,7 +58,7 @@ elif [ -f "$THEPACK_ROOT/pkgtools.d/package.info"  ]; then
     THEPACK_VERSION=${version}
 fi
 
-echo "DEVEL: DATATOOLS_USING_CACHE_FILES=${DATATOOLS_USING_CACHE_FILES}" 1>&2
+#echo "DATATOOLS_USING_CACHE_FILES=${DATATOOLS_USING_CACHE_FILES}" 1>&2
 
 using_cache_files=0 # default: do not use cache files 
 if [ "x${DATATOOLS_USING_CACHE_FILES}" != "x" ]; then
