@@ -4,6 +4,7 @@
 #ifndef __brio__test__data_ipp
 #define __brio__test__data_ipp 1
 
+// Support for inheritance from an serializable class :
 #include <boost/serialization/base_object.hpp>
 
 // Support for XML 'key-value' based archives:
@@ -17,6 +18,8 @@
 
 #include <datatools/serialization/utils.h>
 #include <brio/test/data.h>
+
+#include <datatools/serialization/i_serializable.ipp>
 	 
 namespace brio {
 		 
@@ -40,6 +43,8 @@ namespace brio {
   } // end of namespace test 
 
 } // end of namespace brio 
+
+BOOST_CLASS_EXPORT_KEY2(brio::test::data, "brio::test::data")
 
 #endif // __brio__test__data_ipp
 

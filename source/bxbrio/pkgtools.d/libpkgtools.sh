@@ -2366,7 +2366,7 @@ EOF
     {
 	__pkgtools__at_function_enter pkgtools__check_dependencies
 	
-	pack_info="$1"
+	local pack_info="$1"
 	shift 1
 	
 	if [ ! -f ${pack_info} ]; then
@@ -2375,17 +2375,17 @@ EOF
 	    return 0
 	fi
 
-	skipped_dependencies="$@"
+	local skipped_dependencies="$@"
 	if [ "x${skipped_dependencies}" != "x" ]; then
 	    pkgtools__msg_debug "Will skip dependency check for ${skipped_dependencies}..."
 	fi
 
-	deps=$(cat ${pack_info} | grep "dependencies=" | cut -d= -f2- | tr '\t' ' ' | tr -s ' ' | tr ';' '\n' | sed -e 's/ /___/g')
+	local deps=$(cat ${pack_info} | grep "dependencies=" | cut -d= -f2- | tr '\t' ' ' | tr -s ' ' | tr ';' '\n' | sed -e 's/ /___/g')
 	pkgtools__msg_debug "Checking deps='${deps}'"
 	for adep in ${deps}; do
-	    tdep=$(echo "${adep}@" | cut -d'@' -f1)
-	    dep=$(echo ${tdep} | sed -e 's/___/ /g')
-	    dep_name=$(echo "${dep}[" | cut -d'[' -f1 | tr -d ' ')
+	    local tdep=$(echo "${adep}@" | cut -d'@' -f1)
+	    local dep=$(echo ${tdep} | sed -e 's/___/ /g')
+	    local dep_name=$(echo "${dep}[" | cut -d'[' -f1 | tr -d ' ')
 	    
             # skip check for dependency within the 'skipped_dependencies' list:
 	    echo "${skipped_dependencies}" | grep ${dep_name} >/dev/null 2>&1
@@ -2394,13 +2394,13 @@ EOF
 		continue
 	    fi
 	    pkgtools__msg_notice "Checking ${dep_name} setup..."
-	    dep_version_info=$(echo "${dep}[" | cut -d'[' -f2 | cut -d']' -f1)
-	    dep_sublibs=$(echo "${adep}@" | cut -d'@' -f2 | sed -e 's/^(//g' -e 's/)$//g')
-	    dep_version=$(echo "${adep}/" | cut -d'/' -f2)
-	    dep_lower=$(pkgtools__to_lower ${dep_name})
-	    dep_upper=$(pkgtools__to_upper ${dep_name})
-	    dep_cfg=$(get_dependency_package_config ${dep_name})
-	    sublibs=$(echo ${dep_sublibs} | tr "A-Z" "a-z" | tr -d [[:space:]] | tr ',' ' ')
+	    local dep_version_info=$(echo "${dep}[" | cut -d'[' -f2 | cut -d']' -f1)
+	    local dep_sublibs=$(echo "${adep}@" | cut -d'@' -f2 | sed -e 's/^(//g' -e 's/)$//g')
+	    local dep_version=$(echo "${adep}/" | cut -d'/' -f2)
+	    local dep_lower=$(pkgtools__to_lower ${dep_name})
+	    local dep_upper=$(pkgtools__to_upper ${dep_name})
+	    local dep_cfg=$(get_dependency_package_config ${dep_name})
+	    local sublibs=$(echo ${dep_sublibs} | tr "A-Z" "a-z" | tr -d [[:space:]] | tr ',' ' ')
 	    pkgtools__msg_debug "Package dependency     =  '${dep}'"
 	    pkgtools__msg_debug "- Package name         =  '${dep_name}'"
 	    pkgtools__msg_debug "- Package version info =  '${dep_version_info}'"
@@ -2412,14 +2412,14 @@ EOF
 	    pkgtools__msg_debug "- Sublibs      =  '${sublibs}'"
 	    
 	    local dep_excluded=0
-	    check_excl=$(echo ${dep_version_info} | tr -d [:space:])
+	    local check_excl=$(echo ${dep_version_info} | tr -d [:space:])
 	    if [ "x${check_excl}" = "x!" ]; then
 		dep_excluded=1
 	    fi	    
 	    pkgtools__msg_debug "- Excluded     =  '${dep_excluded}'"
 	      
-	    has_config_script=0
-	    has_executable=0
+	    local has_config_script=0
+	    local has_executable=0
 	    pkgtools__msg_debug "- Checking ${dep_cfg} file..."
 	    which ${dep_cfg} > /dev/null 2>&1 
 	    if [ $? -ne 0 ]; then
@@ -2432,7 +2432,7 @@ EOF
 
 	    if [ ${has_config_script} -eq 0 ]; then
 		pkgtools__msg_debug "- Checking ${dep_name} executable..."
-		dep_exe=
+		local dep_exe=
 		which ${dep_name} > /dev/null 2>&1 
 		if [ $? -ne 0 ]; then
 		    has_executable=0
@@ -2478,7 +2478,7 @@ EOF
 	    fi
 	    
 	    if [ "x${dep_version}" == "x" ]; then
-		if [ ${has_executable} -eq 1 -a ${dep_cfg} != ${dep_exe} ]; then
+		if [ ${has_executable} -eq 1 -a "x${dep_cfg}" != "x${dep_exe}" ]; then
 		    ${dep_exe} --version > /dev/null 2>&1
 		    if [ $? -ne 0 ]; then
 			pkgtools__msg_warning "Cannot retrieve version information from the '${dep_exe}' executable !"
@@ -2559,6 +2559,22 @@ EOF
 	return 0;
     }
 
+    function pkgtools__remove_file ()
+    {
+	__pkgtools__at_function_enter pkgtools__remove_file 
+
+	filename="$1"
+	if [ "x${filename}" = "x" ]; then
+	    pkgtools__msg_error "Missing filename !"
+	    __pkgtools__at_function_exit
+	    return 1    
+	fi
+	if [ -f ${filename} ]; then
+	    rm -f ${filename}
+	fi
+	__pkgtools__at_function_exit
+	return 0;
+    }
 
     function pkgtools__cfg_load_property ()
     {
@@ -2606,10 +2622,9 @@ EOF
 	echo "${property_key}=${property_value}" >> ${cfg_file}
 
 	__pkgtools__at_function_exit
-	return 0;
+	return 0
     }
-
-
+   
     function pkgtools__test ()
     {
 	__pkgtools__at_function_enter pkgtools__test

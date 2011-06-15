@@ -8,15 +8,11 @@
 
 #include <datatools/test/my_data.h>
 #include <datatools/utils/properties.h>
-
-/* high-level serialization code from the 'datatools' library 
- * - released classes (properties)
- * - test classes (data_t)
- */
-#include <datatools/the_serializable.h> 
-#include <datatools/test/the_serializable.h> 
-
 #include <brio/test/data.h>
+
+// Serialization implementation code :
+#include <datatools/test/my_data.ipp>
+#include <datatools/utils/properties.ipp>
 #include <brio/test/data.ipp> 
 
 #include <brio/writer.h>

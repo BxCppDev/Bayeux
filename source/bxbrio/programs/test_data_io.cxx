@@ -11,10 +11,9 @@
 #include <brio/writer.h>
 #include <brio/reader.h>
 #include <brio/test/data.h>
-/* high-level serialization code from the 'brio' library 
- * - test classes (brio::test::data)
- */
-#include <brio/test/the_serializable.h>
+
+// Serialization code :
+#include <brio/test/data.ipp>
 
 using namespace std;
 

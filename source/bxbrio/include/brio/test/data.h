@@ -28,21 +28,9 @@ namespace brio {
     /** A sample serializable class using datatools and/or brio serialization  
      *  concept.
      */
-    class data : public datatools::serialization::i_serializable     
+    class data : DATATOOLS_SERIALIZABLE_CLASS     
       {
-      public:
 
-	/** A constant static string member that store the serialization tag
-	 *  for this class.
-	 */
-	static const std::string SERIAL_TAG; 
-
-	/** Mandatory for we inherit from the 
-	 *  `datatools::serialization::i_serializable' abstract interface:
-	 *  This member function returns the SERIAL_TAG above.
-	 */
-	virtual const std::string & get_serial_tag () const;
-	
       public:
 
 	// Here we provide a default constructor:
@@ -53,22 +41,7 @@ namespace brio {
 
 	void randomize ();
 
-	void dump (ostream & out_ = clog) const;
-
-	/* Here we may have many other member methods. */
-
-      private:
-
-	/* Boost serialization concept implies to add the following 
-	 * private template `serialize' method in our class. This acts
-	 * as a streamer.
-	 *
-	 * Here each field member is serialized.
-	 *
-	 */
-
-	friend class boost::serialization::access; 
-	BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
+	void dump (ostream & a_out = clog, const string & a_title = "") const;
 
       private:
 
@@ -85,7 +58,9 @@ namespace brio {
 	std::vector<double> __dval_vec; /** a STL vector of 64 bits floats
 					 * implies #include <boost/serialization/vector.hpp>
 					 */
-      
+
+	/* interface i_serializable */
+	DATATOOLS_SERIALIZATION_DECLARATION();
 
       };
 

@@ -1,10 +1,10 @@
 #include <iostream>
 
 #include <brio/test/data.h> /* a serializable sample class */
-/* high-level serialization code from the 'brio' library 
- * - test classes (brio::test::data)
- */
-#include <brio/test/the_serializable.h>
+
+// Serialization code :
+#include <brio/test/data.ipp>
+
 #include <brio/reader.h>
 
 int main (void)
@@ -27,7 +27,11 @@ int main (void)
   my_reader.rewind_store ();
   brio::test::data a_data;
   my_reader.load (a_data, 4);
-  a_data.dump (clog);
+  {
+    ostringstream title;
+    title << "Data #" << 4 << ": ";
+    a_data.dump (clog, title.str ());
+  }
   my_reader.close (); // not mandatory (automatic at destruction)
  
   return 0; 

@@ -150,18 +150,14 @@ vpath %$(COBJEXT)     $(OBJDIR)
 vpath %$(CPROGEXT)    $(PROGDIR)
 
 headers := $(notdir $(shell ls $(INCDIR)/$(PACKAGENAME)/*$(HEADEREXT) 2> /dev/null))
-#headers := $(headers) brio_dict.h
 
 ### Basic sources list in arbitrary order:
 #sources_check := $(shell ls $(SRCDIR)/*$(SOURCEEXT) 2> /dev/null)
 sources := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT) 2> /dev/null))
-#sources := $(sources) brio_dict.cc
 
 ### If uncommented, this code force XXX.cc to be the last in library 
 # due to initialization of a static scoped pointer or similar stuff:
 #sources1 := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT) 2> /dev/null | sed -e "s@/brio_record.cc@/@g"))
-
-#sources := $(sources1) brio_record.cc
 
 csources := $(notdir $(shell ls $(SRCDIR)/*$(CSOURCEEXT) 2> /dev/null))
 objects := $(sources:%$(SOURCEEXT)=%$(OBJEXT))

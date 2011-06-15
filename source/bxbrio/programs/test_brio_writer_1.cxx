@@ -2,10 +2,10 @@
 #include <iostream>
 
 #include <brio/test/data.h> /* a serializable sample class */
-/* high-level serialization code from the 'brio' library 
- * - test classes (brio::test::data)
- */
-#include <brio/test/the_serializable.h>
+
+// Serialization code :
+#include <brio/test/data.ipp> 
+
 #include <brio/writer.h>
 
 int main (void)
@@ -21,7 +21,11 @@ int main (void)
     {
       brio::test::data a_data;
       a_data.randomize ();
-      a_data.dump (clog);
+      {
+	ostringstream title;
+	title << "Data #" << i << ": ";
+	a_data.dump (clog, title.str ());
+      }
       my_writer.store (a_data);
     }
   my_writer.close (); // not mandatory (automatic at destruction)

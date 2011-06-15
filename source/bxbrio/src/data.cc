@@ -9,13 +9,8 @@ namespace brio {
 
   namespace test {
 
-    const std::string data::SERIAL_TAG = "brio::test::data";
-  
-    const std::string & data::get_serial_tag () const
-    {
-      return data::SERIAL_TAG;
-    }
-  
+    DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (data,"brio::test::data")
+
     // ctor:
     data::data ()
     {
@@ -55,22 +50,29 @@ namespace brio {
       return;
     }
   
-    void data::dump (ostream & out_) const
+    void data::dump (ostream & a_out, const string & a_title) const
     {
-      out_ << "brio::test::data::dump: " << endl;
-      out_ << "|-- " << "bval  =  " << __bval << endl;
-      out_ << "|-- " << "cval  =  '" << __cval << "'" << endl;
-      out_ << "|-- " << "ival  =  " << __ival << endl;
-      out_ << "|-- " << "fval  =  " << __fval << endl;
-      out_ << "|-- " << "dval  =  " << __dval << endl;
-      out_ << "|-- " << "sval  =  '" << __sval << "'" << endl;
-      out_ << "`-- " << "dval_vec = {";
+      if (a_title.empty ())
+	{
+	  a_out << "brio::test::data::dump: " << endl;
+	}
+      else
+	{
+	  a_out << a_title << endl;
+	}
+      a_out << "|-- " << "bval  =  " << __bval << endl;
+      a_out << "|-- " << "cval  =  '" << __cval << "'" << endl;
+      a_out << "|-- " << "ival  =  " << __ival << endl;
+      a_out << "|-- " << "fval  =  " << __fval << endl;
+      a_out << "|-- " << "dval  =  " << __dval << endl;
+      a_out << "|-- " << "sval  =  '" << __sval << "'" << endl;
+      a_out << "`-- " << "dval_vec = {";
       for (int i = 0; i < __dval_vec.size (); i++)
 	{
-	  if (i != 0) out_ << "; ";
-	  out_ << __dval_vec[i];
+	  if (i != 0) a_out << "; ";
+	  a_out << __dval_vec[i];
 	}
-      out_ << "}" << endl;
+      a_out << "}" << endl;
       return;
     }
   
