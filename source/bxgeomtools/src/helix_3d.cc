@@ -11,7 +11,6 @@ namespace geomtools {
   const string helix_3d::HELIX_3D_LABEL = "helix_3d";
 
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (helix_3d,"geomtools::helix_3d")
-  //const string helix_3d::SERIAL_TAG = "__geomtools::helix_3d__";
 
 
   bool helix_3d::is_normal ()

@@ -50,18 +50,27 @@ fi
 
 using_cache_files=0 # default: do not use cache files 
 if [ "x${GEOMTOOLS_USING_CACHE_FILES}" != "x" ]; then
-    if [ "x${GEOMTOOLS_USING_CACHE_FILES}" = "x0" ]; then
-	using_cache_files=0
-    else
+    if [ "x${GEOMTOOLS_USING_CACHE_FILES}" = "x1" ]; then
 	using_cache_files=1
+    else
+	using_cache_files=0
     fi
 fi
 cflags_cache=${THEPACK_ROOT}/.cflags.cache
 ldflags_cache=${THEPACK_ROOT}/.ldflags.cache
+if [ ${using_cache_files} -eq 0 ]; then
+    test -d ${cflags_cache} && rm -f ${cflags_cache}
+    test -d ${ldflags_cache} && rm -f ${ldflags_cache}
+fi
 
 ldflags_mode=""
 if [ "X${GEOMTOOLS_LDFLAGS_MODE}" != "X" ]; then
     ldflags_mode="${GEOMTOOLS_LDFLAGS_MODE}"
+fi
+
+with_ebio=1
+if [ "x${GEOMTOOLS_NO_EBIO}" == "x1" ]; then
+    with_ebio=0
 fi
 
 opt=$1
@@ -117,26 +126,26 @@ if [ "x$opt" = "x--version" ]; then
     echo "${THEPACK_VERSION}"
     exit 0
 fi 
-if [ "x$opt" = "x--with-ebio" ]; then
-    if [ "x${GEOMTOOLS_NO_EBIO}" = "x1" ]; then
-	echo "0"
-    else
-	echo "1"
-    fi
-    exit 0
-fi 
 
 if [ "x$opt" = "x--python-version" ]; then
-    echo ${DATATOOLS_PYTHON_VERSION}
+    if [ "x${DATATOOLS_PYTHON_VERSION}" != "x" ]; then
+	echo ${DATATOOLS_PYTHON_VERSION}
+    else
+	echo -n "2.5"
+	echo -n " (assumed)" >&2
+	echo ""
+	exit 1
+    fi
     exit 0
 fi 
 
 if [ "x$opt" = "x--with-python" ]; then
-    if [ -f ${python_version_flag_file} ]; then
-	echo "1"
-    else
-	echo "0"
-    fi
+    echo "${with_boost_python}"
+    exit 0
+fi 
+
+if [ "x$opt" = "x--with-ebio" ]; then
+    echo "${with_ebio}"
     exit 0
 fi 
 
@@ -177,11 +186,17 @@ if [ "x$opt" = "x--cflags" ]; then
 	    
     if [ ${generate_cflags} -eq 1 ]; then
 	(
-	    echo -n \
-		"-fPIC " \
-		"-I${THEPACK_INCLUDEDIR} "  \
-		"`datatools-config --cflags` "  \
-		"`mygsl-config --cflags` "  \
+	    (
+		echo -n \
+		    "-fPIC " \
+		    "-I${THEPACK_INCLUDEDIR} "  
+		if [ ${with_ebio} -eq 0 ]; then
+		    echo -n "-DGEOMTOOLS_NO_EBIO=1 "
+		fi
+		echo -n \
+		    "`datatools-config --cflags` "  \
+		    "`mygsl-config --cflags` "  
+	    ) \
 	    | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py	    
 	) | tee ${cflags_cache}
 	test ${using_cache_files} -eq 0 && rm -f ${cflags_cache}
