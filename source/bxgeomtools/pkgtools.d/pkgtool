@@ -1002,7 +1002,7 @@ function do_test ()
 		source ${without_python_flag_file}
 	    fi
 	fi
-	do_build_gmk bin_test
+	do_build bin_test
 	if [ $? -ne 0 ]; then
 	    pkgtools__msg_error "Build test program failed !"
 	    __pkgtools__at_function_exit
