@@ -367,24 +367,24 @@ function do_test ()
     __pkgtools__at_function_enter do_test
 
     if [ -d ${the_gmk_dir} ]; then
-	if [ -d ${the_python_dir} ]; then
-	    if [ -f ${without_python_flag_file} ]; then
-		source ${without_python_flag_file}
-	    fi
-	fi
-	do_build_gmk test_dummy_${pack_name_lower}
+	# if [ -d ${the_python_dir} ]; then
+	#     if [ -f ${without_python_flag_file} ]; then
+	# 	source ${without_python_flag_file}
+	#     fi
+	# fi
+	do_build test_dummy_${pack_name_lower}
 	if [ $? -ne 0 ]; then
 	    pkgtools__msg_error "Build test program failed !"
 	    __pkgtools__at_function_exit
 	    return 1
 	fi
-	do_build_gmk test_properties
+	do_build test_properties
 	if [ $? -ne 0 ]; then
 	    pkgtools__msg_error "Build 'test_properties' sample program failed !"
 	    __pkgtools__at_function_exit
 	    return 1
 	fi
-	do_build_gmk test_things
+	do_build test_things
 	if [ $? -ne 0 ]; then
 	    pkgtools__msg_error "Build 'test_things' sample program failed !"
 	    __pkgtools__at_function_exit
