@@ -43,6 +43,9 @@ pack_gccver=$(pkgtools__get_gccver)
 pack_sys=$(pkgtools__get_sys_with_gccver)
 pack_sys=$(pkgtools__get_sys)
 pack_config=${pack_name_lower}-config
+config_db_file=${the_pkgtools_dir}/.config_db.info
+config_sh_file=${the_pkgtools_dir}/.config_db.sh
+config_csh_file=${the_pkgtools_dir}/.config_db.csh
 
 # startup scripts:
 sh_ss=${pack_name_lower}.sh
@@ -52,12 +55,9 @@ pc_file_skel=${pc_file}.skel
 
 action_mode=""
 with_python=0
-config_file=${the_pkgtools_dir}/${pack_name_lower}.config
 
 install__ldflags_mode=""
 install__using_cache_files=1
-
-without_python_flag_file=${the_base_dir}/gmk/${pack_name_lower}_without_python.config
 	
 function my_exit ()
 {
@@ -476,8 +476,10 @@ function do_deconfigure ()
     __pkgtools__at_function_enter do_deconfigure
 
     opwd=$(pwd)
-    
-    test -f ${without_python_flag_file}  && rm -f ${without_python_flag_file} 
+ 
+    pkgtools__remove_file ${config_db_file}
+    pkgtools__remove_file ${config_sh_file}
+    pkgtools__remove_file ${config_csh_file}
 
     cd ${opwd}
 
@@ -488,10 +490,14 @@ function do_deconfigure ()
 function do_configure ()
 {
     __pkgtools__at_function_enter do_configure
+ 
+    pkgtools__remove_file ${config_db_file}
+    pkgtools__remove_file ${config_sh_file}
+    pkgtools__remove_file ${config_csh_file}
 
-    prefix=""
-    can_python_wrapper=0
-    with_python_wrapper=0
+    local prefix=""
+    local can_python_wrapper=0
+    local with_python_wrapper=0
     
     if [ -f ${the_python_dir}/__init__.py ]; then
 	can_python_wrapper=1
@@ -575,16 +581,16 @@ function do_configure ()
 		return 1
 	    fi
 	    pkgtools__msg_notice "Use Python wrapper module from Boost.Python !"
-	    test -f ${without_python_flag_file} && rm -f ${without_python_flag_file}
 	else
 	    pkgtools__msg_warning "Do not use Python wrapper module from Boost.Python !"
-	    cat > ${without_python_flag_file} <<EOF 
-# ${pack_name} does not use python wrapper module:
-export ${pack_name_upper}_NO_PYTHON=1
-EOF
+	    pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_NO_PYTHON" 1
 	fi
 	
     fi
+
+    echo "# end of ${pack_name} configuration informations."          >> ${config_db_file} 
+    cat ${config_db_file} | ${the_pkgtools_dir}/config_to_setup.py sh  > ${config_sh_file}
+    cat ${config_db_file} | ${the_pkgtools_dir}/config_to_setup.py csh > ${config_csh_file}
 
     __pkgtools__at_function_exit
     return 0
@@ -594,12 +600,14 @@ function do_build ()
 {
     __pkgtools__at_function_enter do_build
 
+    if [ ! -f ${config_sh_file} ]; then
+	pkgtools__msg_error "Missing '${config_sh_file}' file ! Please first configure !"
+	__pkgtools__at_function_exit
+	return 1	
+    fi
+    source ${config_sh_file}
+
     if [ -d ${the_gmk_dir} ]; then
-	if [ -d ${the_python_dir} ]; then
-	    if [ -f ${without_python_flag_file} ]; then
-		source ${without_python_flag_file}
-	    fi
-	fi
 	if [ "x$@" = "x" ]; then
 	    do_build_gmk lib
 	    if [ $? -ne 0 ]; then
@@ -683,6 +691,9 @@ EOF
 EOF
     fi
 
+    cat ${config_sh_file}  >> ${the_base_dir}/${sh_ss}
+    cat ${config_csh_file} >> ${the_base_dir}/${csh_ss}
+
     cat<<EOF
 
 Setup scripts:
@@ -748,6 +759,13 @@ EOF
 function do_install ()
 {
     __pkgtools__at_function_enter do_install
+
+    if [ ! -f ${config_sh_file} ]; then
+	pkgtools__msg_error "Missing '${config_sh_file}' file ! Please first configure and build !"
+	__pkgtools__at_function_exit
+	return 1	
+    fi
+    source ${config_sh_file}
 
     # reset default install options:
     install__ldflags_mode=""
