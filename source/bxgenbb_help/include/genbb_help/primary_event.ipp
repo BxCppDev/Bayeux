@@ -6,6 +6,7 @@
 
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
+#include <boost/serialization/version.hpp>
 
 #include <boost/serialization/list.hpp> 
 #include <boost/serialization/string.hpp>
@@ -13,6 +14,7 @@
 #include <datatools/serialization/utils.h>
 
 #include <genbb_help/primary_event.h>
+#include <datatools/serialization/i_serializable.ipp>
 #include <genbb_help/primary_particle.ipp>
 
 namespace genbb {
@@ -20,17 +22,22 @@ namespace genbb {
   using namespace std;
 
     template<class Archive>
-    void primary_event::serialize (Archive            & ar, 
-                   		   const unsigned int   version)
+    void primary_event::serialize (Archive            & a_ar, 
+                   		   const unsigned int   a_version)
     {
-      //ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;    
-      ar & boost::serialization::make_nvp ("time", time);
-      ar & boost::serialization::make_nvp ("particles", particles);
-      ar & boost::serialization::make_nvp ("classification", classification);
+      if (a_version > 0)
+	{
+	  a_ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;    
+	}
+      a_ar & boost::serialization::make_nvp ("time", time);
+      a_ar & boost::serialization::make_nvp ("particles", particles);
+      a_ar & boost::serialization::make_nvp ("classification", classification);
       return;
     }
 
 } // end of namespace genbb
+
+BOOST_CLASS_VERSION(genbb::primary_event, 1)
 
 #endif // __genbb_help__primary_event_ipp
 

@@ -14,7 +14,9 @@
 #include <genbb_help/genbb_mgr.h>
 
 /* Serialization dedicated code */
+#ifdef GEOMTOOLS_NO_EBIO
 #include <geomtools/the_serializable.h>
+#endif
 #include <genbb_help/the_serializable.h>
 
 using namespace std;

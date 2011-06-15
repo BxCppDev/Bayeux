@@ -42,9 +42,9 @@ endif
 # Choices:
 # F77_COMP=g77
 # F77_COMP=gfortran
-ifneq ($(F77_COMP),)
-F77=$(F77_COMP)
-$(warning Force $(F77_COMP) compiler!)
+ifneq ($(GENBB_HELP_F77_COMP),)
+F77=$(GENBB_HELP_F77_COMP)
+$(warning Force $(GENBB_HELP_F77_COMP) compiler!)
 endif
 
 COMPILER=$(CC)$(shell $(CC) --version | head -1 | cut -d ' ' -f 3)
@@ -150,8 +150,20 @@ CPPFLAGS2+=-Dgenevent=genevent_
 CPPFLAGS2+=-Denrange=enrange_
 endif
 
+### Use or not Embedded Boost I/O:
+EBIO_FLAGS=
+ifneq ($(GENBB_HELP_NO_EBIO),1)
+GENBB_HELP_NO_EBIO=0
+#$(warning WARNING: genbb_help uses 'Embedded Boost I/O' !)
+EBIO_FLAGS=
+else
+GENBB_HELP_NO_EBIO=1
+EBIO_FLAGS=-DGENBB_HELP_NO_EBIO=1
+#$(warning WARNING: genbb_help does not use 'Embedded Boost I/O' !)
+endif
+
 ### End of dependencies.
-CPPFLAGS1+=$(DEPCPPFLAGS) 
+CPPFLAGS1+=$(EBIO_FLAGS) $(DEPCPPFLAGS) 
 CPPFLAGS_F77+=$(DEPCPPFLAGS) 
 LDFLAGS1+=$(DEPLDFLAGS) 
 LDFLAGS1+=-lm 

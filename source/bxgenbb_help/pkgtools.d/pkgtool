@@ -32,6 +32,9 @@ pack_gccver=$(pkgtools__get_gccver)
 pack_sys=$(pkgtools__get_sys_with_gccver)
 pack_sys=$(pkgtools__get_sys)
 pack_config=${pack_name_lower}-config
+config_db_file=${the_pkgtools_dir}/.config_db.info
+config_sh_file=${the_pkgtools_dir}/.config_db.sh
+config_csh_file=${the_pkgtools_dir}/.config_db.csh
 
 
 # startup scripts:
@@ -42,7 +45,7 @@ pc_file_skel=${pc_file}.skel
 
 action_mode=""
 with_python=0
-config_file=${the_pkgtools_dir}/${pack_name_lower}.config
+#config_file=${the_pkgtools_dir}/${pack_name_lower}.config
 
 the_base_dir=.
 
@@ -50,7 +53,7 @@ do_usage=0
 
 use_g77=0
 use_gfortran=1
-configure_flag_file=${the_base_dir}/.${pack_name}.conf
+#configure_flag_file=${the_base_dir}/.${pack_name}.conf
 	
 function my_exit ()
 {
@@ -404,7 +407,7 @@ function do_clean ()
 	return $?
     fi 
 
-    test -f ${configure_flag_file} && rm -f ${configure_flag_file}
+    #test -f ${configure_flag_file} && rm -f ${configure_flag_file}
 
     __pkgtools__at_function_exit
     return 1
@@ -417,10 +420,12 @@ function do_deconfigure ()
     __pkgtools__at_function_enter do_deconfigure
 
     opwd=$(pwd)
-    
-    #test -f ${without_python_flag_file}  && rm -f ${without_python_flag_file} 
+ 
+    pkgtools__remove_file ${config_db_file}
+    pkgtools__remove_file ${config_sh_file}
+    pkgtools__remove_file ${config_csh_file}
 
-    test -f ${configure_flag_file} && rm -f ${configure_flag_file}
+    #test -f ${configure_flag_file} && rm -f ${configure_flag_file}
 
     cd ${opwd}
 
@@ -432,8 +437,22 @@ function do_configure ()
 {
     __pkgtools__at_function_enter do_configure
 
+    pkgtools__remove_file ${config_db_file}
+    pkgtools__remove_file ${config_sh_file}
+    pkgtools__remove_file ${config_csh_file}
+    echo "# ${pack_name} configuration informations : " >> ${config_db_file}
+
     #local force_one_underscore=0
     #local force_two_underscores=0
+    local prefix=""
+    local can_python_wrapper=0
+    local with_python_wrapper=0
+    local with_ebio=0
+    
+    if [ -f ${the_python_dir}/__init__.py ]; then
+	can_python_wrapper=1
+	with_python_wrapper=1
+    fi
 
     local skip_all_dependencies_check=0
     local skipped_dependencies=
@@ -462,6 +481,17 @@ function do_configure ()
 	    #	force_one_underscore=1
 	    #elif [ "x${opt}" = "x--force-two-underscores" ]; then
 	    #	force_two_underscores=1
+	    # elif [ "x${opt}" = "x-ebio" -o "x${opt}" = "x--with-embedded-boost-io" ]; then
+	    # 	with_ebio=1
+	    # elif [ "x${opt}" = "x-no-ebio" -o "x${opt}" = "x--without-embedded-boost-io" ]; then
+	    # 	with_ebio=0
+	    elif [ ${can_python_wrapper} -eq 1 ]; then
+                # parse Python wrapper switches:
+		if [ "x${opt}" = "x--with-python" ]; then
+		    with_python_wrapper=1
+		elif [ "x${opt}" = "x--without-python" ]; then
+		    with_python_wrapper=0
+		fi
 	    else
                 # parse other configuration options...
 		pkgtools__msg_warning "Ignoring '${opt}' option !"
@@ -477,6 +507,10 @@ function do_configure ()
     if [ "x${prefix}" != "x" ]; then
 	pkgtools__msg_warning "Installation prefix is '${prefix}' ! Unsupported option !"
     fi
+
+    # if [ ${can_python_wrapper} -eq 1 ]; then
+    # 	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_NO_PYTHON" 1
+    # fi
 
     # please enter a list of software components you don't want
     # to check:
@@ -502,13 +536,34 @@ function do_configure ()
 	F77_COMP=g77
 	pkgtools__msg_notice "Package '${pack_name}' build will use 'g77'"
     fi
-    echo "export F77_COMP=${F77_COMP}" > ${configure_flag_file}
+    #echo "export F77_COMP=${F77_COMP}" > ${configure_flag_file}
 #    if [ ${force_one_underscore} -eq 1 ]; then
 #	echo "export F77_ONE_UNDERSCORE=1" >> ${configure_flag_file}
 #    elif [ ${force_two_underscores} -eq 1 ]; then
 #	echo "export F77_TWO_UNDERSCORES=1" >> ${configure_flag_file}
 #    fi
-    pkgtools__msg_notice "File '${configure_flag_file}' has been generated."
+    #pkgtools__msg_notice "File '${configure_flag_file}' has been generated."
+    pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_F77_COMP" "${F77_COMP}"
+
+    if [ ${with_ebio} -ne 0 ]; then
+	pkgtools__msg_notice "Embedded Boost I/O support..."
+	datatools_with_ebio=$(datatools-config --with-ebio)
+	if [ ${datatools_with_ebio} -eq 0 ]; then
+	    pkgtools__msg_warning "As datatools has no Embedded Boost I/O support, genb_help won't too !"
+	    with_ebio=0
+	else
+	    pkgtools__msg_warning "Embedded pre-built Boost/Serialization code is not supported !"
+	    with_ebio=0	
+	fi
+    fi
+    if [ ${with_ebio} -eq 0 ]; then
+	pkgtools__msg_warning "${pack_name} will not embed pre-built Boost/Serialization code !"	
+	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_NO_EBIO" 1
+    fi
+
+    echo "# end of ${pack_name} configuration informations." >> ${config_db_file} 
+    cat ${config_db_file} | ${the_pkgtools_dir}/config_to_setup.py sh  > ${config_sh_file}
+    cat ${config_db_file} | ${the_pkgtools_dir}/config_to_setup.py csh > ${config_csh_file}
 
     __pkgtools__at_function_exit
     return 0
@@ -518,21 +573,29 @@ function do_build ()
 {
     __pkgtools__at_function_enter do_build
 
-    if [ -f ${configure_flag_file} ]; then
-	source ${configure_flag_file}
-	pkgtools__msg_notice "Build procedure use the '${F77_COMP}' F77 compiler..."
-    else
-	pkgtools__msg_notice "Cannot find '${configure_flag_file}' file ! Please configure first !"
+    if [ ! -f ${config_sh_file} ]; then
+	pkgtools__msg_error "Missing '${config_sh_file}' file ! Please first configure !"
 	__pkgtools__at_function_exit
-	return 1
+	return 1	
     fi
+    source ${config_sh_file}
+    pkgtools__msg_notice "Build procedure use the '${GENBB_HELP_F77_COMP}' F77 compiler..."
+
+    # if [ -f ${configure_flag_file} ]; then
+    # 	source ${configure_flag_file}
+    # 	pkgtools__msg_notice "Build procedure use the '${F77_COMP}' F77 compiler..."
+    # else
+    # 	pkgtools__msg_notice "Cannot find '${configure_flag_file}' file ! Please configure first !"
+    # 	__pkgtools__at_function_exit
+    # 	return 1
+    # fi
 
     if [ -d ${the_gmk_dir} ]; then
-	if [ -d ${the_python_dir} ]; then
-	    if [ -f ${without_python_flag_file} ]; then
-		source ${without_python_flag_file}
-	    fi
-	fi
+	# if [ -d ${the_python_dir} ]; then
+	#     if [ -f ${without_python_flag_file} ]; then
+	# 	source ${without_python_flag_file}
+	#     fi
+	# fi
 	if [ "x$@" = "x" ]; then
 	    do_build_gmk lib
 	    if [ $? -ne 0 ]; then
@@ -611,6 +674,9 @@ EOF
 EOF
     fi
 
+    cat ${config_sh_file}  >> ${the_base_dir}/${sh_ss}
+    cat ${config_csh_file} >> ${the_base_dir}/${csh_ss}
+
     cat<<EOF
 
 Setup scripts:
@@ -658,14 +724,21 @@ function do_install ()
 {
     __pkgtools__at_function_enter do_install
 
-    if [ -f ${configure_flag_file} ]; then
-	source ${configure_flag_file}
-	#pkgtools__msg_notice "Build procedure use the '${F77_COMP}' F77 compiler..."
-    else
-	pkgtools__msg_notice "Cannot find '${configure_flag_file}' file ! Please configure first !"
+    if [ ! -f ${config_sh_file} ]; then
+	pkgtools__msg_error "Missing '${config_sh_file}' file ! Please first configure and build !"
 	__pkgtools__at_function_exit
-	return 1
+	return 1	
     fi
+    source ${config_sh_file}
+
+    # if [ -f ${configure_flag_file} ]; then
+    # 	source ${configure_flag_file}
+    # 	#pkgtools__msg_notice "Build procedure use the '${F77_COMP}' F77 compiler..."
+    # else
+    # 	pkgtools__msg_notice "Cannot find '${configure_flag_file}' file ! Please configure first !"
+    # 	__pkgtools__at_function_exit
+    # 	return 1
+    # fi
 
     # reset default install options:
     install__ldflags_mode=""
@@ -703,9 +776,12 @@ function do_install ()
 	return 1
     fi
 
+    cat ${config_sh_file}  >> ${the_pkgtools_dir}/${pack_name_lower}.sh
+    cat ${config_csh_file} >> ${the_pkgtools_dir}/${pack_name_lower}.csh
+
     ### special Python wrapper/program:
     if [ -d ${the_python_dir} ]; then
-	if [ ! -f ${without_python_flag_file} ]; then
+	if [ "x${GENBB_HELP_NO_PYTHON}" != "x1" ]; then
 	    cd ${the_python_dir}
 	    make install
 	    cd ${the_gmk_dir}

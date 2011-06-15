@@ -38,7 +38,9 @@
 
 namespace genbb {
 
-  const std::string primary_event::SERIAL_TAG = "genbb::primary_event";
+  //DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (primary_event_3d,"genbb::primary_event")
+
+  const std::string primary_event::SERIAL_TAG     = "genbb::primary_event";
   const std::string primary_event::OLD_SERIAL_TAG = "__genbb::primary_event__";
 
   const std::string & primary_event::get_serial_tag () const

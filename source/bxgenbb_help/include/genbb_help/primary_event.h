@@ -45,7 +45,7 @@
 namespace genbb {
 
   struct primary_event
-    : public datatools::serialization::i_serializable 
+    : DATATOOLS_SERIALIZABLE_CLASS 
   {
     
   public:
@@ -91,24 +91,19 @@ namespace genbb {
     void dump (std::ostream & out_,
 	       const std::string & title_,
 	       const std::string & indent_) const;
-
-  public:
-    
-    //! Serialization tag.
-    DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
-
-    static const std::string OLD_SERIAL_TAG;
-
-  private:
-
-    friend class boost::serialization::access; 
-    BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
     
   public:
 
     double          time;
     particles_col_t particles;
     std::string     classification;
+
+    /* interface i_serializable */
+    DATATOOLS_SERIALIZATION_DECLARATION();
+
+  public:
+
+    static const std::string OLD_SERIAL_TAG;
 
   };
 

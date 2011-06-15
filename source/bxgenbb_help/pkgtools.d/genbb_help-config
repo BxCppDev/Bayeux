@@ -26,7 +26,7 @@ else
     exit 1
 fi
 
-PACK_CONF=${GENBB_HELP_ROOT}/.genbb_help.conf
+#PACK_CONF=${GENBB_HELP_ROOT}/.genbb_help.conf
 
 THEPACK_INCLUDEDIR="${THEPACK_ROOT}/include" 
 
@@ -56,7 +56,8 @@ ldflags_cache=${THEPACK_ROOT}/.ldflags.cache
 ### Notes:
 ###	"-lgfortran " 
 ###	"-lg2c "
-f77_comp=$(cat ${PACK_CONF} | grep F77_COMP= | cut -d= -f2)
+f77_comp=${GENBB_HELP_F77_COMP} 
+#$(cat ${PACK_CONF} | grep F77_COMP= | cut -d= -f2)
 
 #>>> 2009-03-01 FM:
 # Remove  -lg2c link option for we now use gfortran...
