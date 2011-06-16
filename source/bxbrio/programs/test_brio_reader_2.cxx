@@ -11,9 +11,10 @@
 
 int main (void)
 {
-  using namespace std; 
+  using namespace std;
 
-  brio::reader my_reader ("file2.brio");  
+  //  brio::reader my_reader ("file2.brio");
+  brio::reader my_reader ("/tmp/sng4_0.brio");
 
   // check the existence of a store named 'header' :
   if (! my_reader.has_store ("header"))
@@ -27,7 +28,7 @@ int main (void)
   datatools::utils::properties the_setup;
   my_reader.load (the_setup); // load a 'properties' object from the active store
   the_setup.dump ();
-  
+
   // check the existence of a store named 'data' :
   if (! my_reader.has_store ("data"))
     {
@@ -37,12 +38,12 @@ int main (void)
   // make the store named 'data' active for reading data :
   my_reader.select_store ("data");
   clog << "Data store has " << my_reader.get_number_of_entries () << " record(s)." << endl;
-  while (my_reader.has_next ())  
+  while (my_reader.has_next ())
     {
        brio::test::data a_data;
        my_reader.load_next (a_data); // load another 'data' object from the active store
-       // or : my_reader.load (a_data); 
-       /* default 'load' behaviour 
+       // or : my_reader.load (a_data);
+       /* default 'load' behaviour
 	* traverses the store sequentially
 	*/
     }
@@ -52,6 +53,6 @@ int main (void)
   a_data.dump (clog);
 
   my_reader.close (); // not mandatory (automatic at destruction)
- 
-  return 0; 
+
+  return 0;
 }
