@@ -117,8 +117,10 @@ namespace genbb {
     double mass;
     datatools::utils::invalidate (mass);
 
-    if (particle_name_ == "electron" || particle_name_ == "positron"
-	|| particle_name_ == "e+" || particle_name_ == "e-")
+    if (particle_name_ == "electron" ||
+        particle_name_ == "positron" ||
+        particle_name_ == "e+"       ||
+        particle_name_ == "e-")
       {
 	mass = CLHEP::electron_mass_c2;
       }
@@ -143,7 +145,8 @@ namespace genbb {
 	mass = 938.272013 * CLHEP::MeV;
       }
 
-    if (particle_name_ == "mu-" || particle_name_ == "mu+")
+    if (particle_name_ == "mu-" ||
+        particle_name_ == "mu+")
       {
 	mass = 105.658369 * CLHEP::MeV;
       }
@@ -307,7 +310,6 @@ namespace genbb {
 
   void single_particle_generator::initialize (const datatools::utils::properties & config_)
   {
-
     if (config_.has_flag ("debug"))
       {
 	set_debug (true);
@@ -797,7 +799,6 @@ namespace genbb {
 	  {
 	    _init_energy_histo_pdf ();
 	  }
-
        }
 
     __random.init ("taus2", __seed);

@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // primary_particle.cc
 /*
  * Copyright 2007-2011 F. Mauger
@@ -7,15 +7,15 @@
  * it under the terms of the GNU General Publi * License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Publi * License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Publi * License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
 
@@ -25,7 +25,7 @@
 namespace genbb {
 
   using namespace std;
-  
+
   const string primary_particle::SERIAL_TAG = "genbb::primary_particle";
   const string primary_particle::OLD_SERIAL_TAG = "__genbb::primary_particle__";
 
@@ -47,41 +47,41 @@ namespace genbb {
       }
     return;
   }
-  
+
   int primary_particle::get_type () const
   {
     return type;
   }
-  
+
   void  primary_particle::set_type (int type_)
   {
     type = type_;
     particle_label = get_particle_label_from_type (type);
     return;
   }
-  
+
   double primary_particle::get_time () const
   {
     return time;
   }
-  
+
   void  primary_particle::set_time (double time_)
   {
     time = time_;
     return;
   }
-  
-  void primary_particle::set_momentum (const geomtools::vector_3d & m_) 
+
+  void primary_particle::set_momentum (const geomtools::vector_3d & m_)
   {
     momentum = m_;
     return;
   }
-  
+
   const geomtools::vector_3d & primary_particle::get_momentum () const
   {
     return momentum;
   }
-  
+
   void primary_particle::reset ()
   {
     type = UNDEF;
@@ -98,8 +98,8 @@ namespace genbb {
   }
 
   // ctor:
-  primary_particle::primary_particle (int32_t type_, 
-				      double time_, 
+  primary_particle::primary_particle (int32_t type_,
+				      double time_,
 				      const geomtools::vector_3d & mom_)
   {
     type = type_;
@@ -136,37 +136,37 @@ namespace genbb {
   {
     if (is_positron () || is_electron ())
       {
-	return CLHEP::electron_mass_c2; 
+	return CLHEP::electron_mass_c2;
       }
 
-    if (is_alpha ()) 
+    if (is_alpha ())
       {
 	return 3.727417 * CLHEP::GeV;
       }
 
-    if (is_gamma ()) 
+    if (is_gamma ())
       {
 	return 0.0;
       }
 
-    if (type == NEUTRON) 
+    if (type == NEUTRON)
       {
-	return 939.565560 * CLHEP::MeV; 
+	return 939.565560 * CLHEP::MeV;
       }
 
-    if (type == PROTON) 
+    if (type == PROTON)
       {
-	return 938.272013 * CLHEP::MeV; 
+	return 938.272013 * CLHEP::MeV;
       }
 
     if (type == MUON_PLUS || type == MUON_MINUS)
       {
-	return 105.658369 * CLHEP::MeV; 
-      } 
+	return 105.658369 * CLHEP::MeV;
+      }
 
-    if (type == NEUTRINO) 
+    if (type == NEUTRINO)
       {
-	return 0.0 * CLHEP::MeV; 
+	return 0.0 * CLHEP::MeV;
       }
     double a_mass;
     datatools::utils::invalidate (a_mass);
@@ -182,7 +182,7 @@ namespace genbb {
   double primary_particle::get_kinetic_energy () const
   {
     double mass = get_mass ();
-    double kinetic_energy 
+    double kinetic_energy
       = sqrt (momentum.mag () * momentum.mag () + mass * mass) - mass;
     return kinetic_energy;
   }
@@ -195,13 +195,13 @@ namespace genbb {
   void primary_particle::dump (ostream & out_, const string & indent_) const
   {
     string indent = indent_;
-    
+
     out_ << indent << "genbb::primary_particle:" << endl;
     double mass = get_mass ();
     double energy = get_kinetic_energy ();
-    
+
     out_ << indent << "|-- Type: " << type;
-    if (type != UNDEF) 
+    if (type != UNDEF)
       {
 	out_ << " (" << get_particle_label_from_type (type) << ')';
       }
@@ -213,14 +213,14 @@ namespace genbb {
     time_oss << time / CLHEP::ns;
     out_ << indent << "|-- Time: " << time_oss.str ()
 	 << " ns" << endl;
-    out_ << indent << "|-- Kinetic energy: " << energy / CLHEP::MeV 
+    out_ << indent << "|-- Kinetic energy: " << energy / CLHEP::MeV
 	 << " MeV" << endl;
-    out_ << indent << "`-- Momentum: " 
-	 << momentum / CLHEP::MeV 
+    out_ << indent << "`-- Momentum: "
+	 << momentum / CLHEP::MeV
 	 << " MeV" << endl;
     return;
   }
-  
+
   string primary_particle::get_label (int type_)
   {
     switch (type_)
@@ -248,7 +248,7 @@ namespace genbb {
   {
     return primary_particle::get_label (type_);
   }
-    
+
   int primary_particle::get_particle_type_from_label (const string & label_)
   {
     if (label_ == "electron" || label_ == "e-")
@@ -313,7 +313,7 @@ namespace genbb {
       }
     else return primary_particle::UNDEF;
   }
- 
+
 } // end of namespace genbb
 
 // end of primary_particle.cc
