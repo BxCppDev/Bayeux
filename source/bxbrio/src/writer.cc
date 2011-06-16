@@ -11,7 +11,6 @@
 #include <brio/writer.h>
 
 #include <datatools/utils/utils.h>
-//#include <datatools/serialization/i_serializable.h>
 
 namespace brio {
 
@@ -150,7 +149,7 @@ namespace brio {
       }
     else
       {
-	set_format (base_io::QPBA_LABEL);
+	set_format (base_io::PBA_LABEL);
       }
     open (filename_);
     if (base_io::g_devel)

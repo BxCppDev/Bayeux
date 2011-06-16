@@ -13,8 +13,7 @@ int main (void)
 {
   using namespace std;
 
-  //  brio::reader my_reader ("file2.brio");
-  brio::reader my_reader ("/tmp/sng4_0.brio");
+  brio::reader my_reader ("file2.brio");
 
   // check the existence of a store named 'header' :
   if (! my_reader.has_store ("header"))

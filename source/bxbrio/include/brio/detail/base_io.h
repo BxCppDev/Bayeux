@@ -45,14 +45,12 @@ namespace brio {
 
     static const string PBA_LABEL; // not implemented yet
     static const string TEXT_LABEL;
-    static const string QPBA_LABEL; // temporary solution
 
     enum format_t
       {
 	FORMAT_UNDEFINED = 0,
 	FORMAT_PBA       = 1, // not implemented yet
 	FORMAT_TEXT      = 2,
-	FORMAT_QPBA      = 100 // temporary solution
       };
 
     enum rw_t
@@ -79,8 +77,6 @@ namespace brio {
     bool is_writing () const;
 
     bool is_format_pba () const; // not implemented yet
-
-    bool is_format_qpba () const; // temporary solution
 
     bool is_format_text () const;
 

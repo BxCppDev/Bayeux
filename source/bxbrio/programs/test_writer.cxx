@@ -114,7 +114,7 @@ int main (int argc_, char ** argv_)
 	}
       else
 	{
-	  clog << "notice: using '" << brio::writer::QPBA_LABEL << "' archive format !" << endl; 
+	  clog << "notice: using '" << brio::writer::PBA_LABEL << "' archive format !" << endl; 
 	}
       my_writer.open (filename); 
 
