@@ -87,6 +87,11 @@ if [ "x${f77_comp}" = "xg77" ]; then
     f77_opt=-lg2c
 fi
 
+with_ebio=1
+if [ "x${GENBB_HELP_NO_EBIO}" == "x1" ]; then
+    with_ebio=0
+fi
+
 opt=$1
 
 if [ "x$opt" = "x" ]; then
@@ -135,6 +140,11 @@ fi
 
 if [ "x$opt" = "x--version" ]; then
     echo "${THEPACK_VERSION}"
+    exit 0
+fi 
+
+if [ "x$opt" = "x--with-ebio" ]; then
+    echo "${with_ebio}"
     exit 0
 fi 
 
@@ -213,8 +223,11 @@ if [ "x$opt" = "x--cflags" ]; then
 		echo -n \
 		    "-fPIC " \
 		    "${f77_defines} " \
-		    "-I${THEPACK_INCLUDEDIR} "  \
-		    "`geomtools-config --cflags` "
+		    "-I${THEPACK_INCLUDEDIR} "
+		if [ ${with_ebio} -eq 0 ]; then
+ 	            echo -n "-DGENBB_HELP_NO_EBIO=1 "
+                fi
+		echo -n "`geomtools-config --cflags` "
 	    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py	    
 	) | tee ${cflags_cache_effective}
 	test ${using_cache_files} -eq 0 && rm -f ${cflags_cache}
