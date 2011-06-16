@@ -10,6 +10,6 @@ creation=2008-12-10
 author=Francois Mauger <mauger@lpccaen.in2p3.fr>
 copyright=GPL
 URL=https://nemo.lpc-caen.in2p3.fr/wiki/geomtools
-SVN base repository=https://nemo.lpc-caen.in2p3.fr/browser/geomtools
+SVN base repository=https://nemo.lpc-caen.in2p3.fr/svn/geomtools
 #@HOOK 
 # end of package.info
