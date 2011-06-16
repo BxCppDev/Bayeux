@@ -4,6 +4,7 @@
 
 #include <stdexcept>
 #include <sstream>
+#include <cmath> // for std::abs
 
 namespace mygsl {
 
@@ -118,7 +119,8 @@ namespace mygsl {
 		first = false;	    
 	      }
 	    out_.unsetf (ios::showpos);
-	    out_ << abs(__c[deg]);
+	    // 2011-06-16 FM: add std::abs to remove template ambiguity for some compiler :
+	    out_ << std::abs(__c[deg]);
 	    if (deg >= 1)
 	      {
 		out_ << ' ' << prod_sym << ' ' << 'X';
