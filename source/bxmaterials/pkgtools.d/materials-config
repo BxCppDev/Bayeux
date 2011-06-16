@@ -36,6 +36,38 @@ elif [ -f "${THEPACK_ROOT}/pkgtools.d/package.info"  ]; then
     version=$(cat ${THEPACK_ROOT}/pkgtools.d/package.info | grep "version=" | cut -d'=' -f2 )    
     THEPACK_VERSION=${version}
 fi
+THEPACK_LABEL="materials-${THEPACK_VERSION}" 
+
+using_cache_files=0 # default: do not use cache files 
+if [ "x${MATERIALS_USING_CACHE_FILES}" != "x" ]; then
+    if [ "x${MATERIALS_USING_CACHE_FILES}" = "x1" ]; then
+	using_cache_files=1
+    else
+	using_cache_files=0
+    fi
+fi
+
+cache_dir=/tmp/${USER}
+if [ ${using_cache_files} -eq 1 ]; then
+    if [ "x${PKGTOOLS_CACHE_DIR}" != "x" ]; then
+	cache_dir=${PKGTOOLS_CACHE_DIR}
+    fi
+    if [ ! -d ${cache_dir} ]; then
+	mkdir -p ${cache_dir}
+	if [ $? -ne 0 ]; then
+	    echo "$SCRIPTNAME: error: Cannot create cache directory !" 1>&2
+	    exit 1
+	fi
+    fi
+fi
+
+cflags_cache=${cache_dir}/.${THEPACK_LABEL}.cflags.cache
+ldflags_cache=${cache_dir}/.${THEPACK_LABEL}.ldflags.cache
+### not sure the right place to do it :
+if [ ${using_cache_files} -eq 0 ]; then
+    test -d ${cflags_cache} && rm -f ${cflags_cache}
+    test -d ${ldflags_cache} && rm -f ${ldflags_cache}
+fi
 
 opt=$1
 
@@ -98,13 +130,32 @@ if [ "x$opt" = "x--include" ]; then
 fi
 
 if [ "x$opt" = "x--cflags" ]; then
-    echo -n \
-        "-fPIC " \
-	"-I${THEPACK_INCLUDEDIR} "  \
-         "`geomtools-config --include` "  \
-    | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py
+    generate_cflags=0
+    cflags_cache_effective=${cflags_cache}
+    if [ ${using_cache_files} -eq 1 ]; then
+        if [ -f ${cflags_cache} ]; then
+            cat ${cflags_cache}
+            exit 0
+        else
+            generate_cflags=1
+        fi
+    else
+	test -f ${cflags_cache} && rm -f ${cflags_cache}
+        generate_cflags=1
+	cflags_cache_effective=
+    fi
 
-    echo
+    if [ ${generate_cflags} -eq 1 ]; then
+	(
+	    (
+                echo -n \
+                    "-fPIC " \
+	            "-I${THEPACK_INCLUDEDIR} "  \
+                    "`geomtools-config --include` "
+            ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py
+        ) | tee ${cflags_cache_effective}
+	test ${using_cache_files} -eq 0 && rm -f ${cflags_cache}
+    fi
     exit 0
 fi
 
@@ -124,11 +175,30 @@ if [ "x$opt" = "x--libs" ]; then
 fi 
 
 if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
-    echo -n "-L${THEPACK_LIBDIR} -lmaterials "  \
-         "`geomtools-config --libs` "  \
-    | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
+    generate_ldflags=0
+    ldflags_cache_effective=${ldflags_cache}
+    if [ ${using_cache_files} -eq 1 ]; then
+        if [ -f ${ldflags_cache} ]; then
+            cat ${ldflags_cache}
+            exit 0
+        else
+            generate_ldflags=1
+        fi
+    else
+	test -f ${ldflags_cache} && rm -f ${ldflags_cache}
+        generate_ldflags=1
+	ldflags_cache_effective=
+    fi
     
-    echo
+    if [ ${generate_ldflags} -eq 1 ]; then      
+        (
+            (
+                echo -n "-L${THEPACK_LIBDIR} -lmaterials "  \
+                    "`geomtools-config --libs` "
+            ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
+        ) | tee ${ldflags_cache_effective}
+ 	test ${using_cache_files} -eq 0 && rm -f ${ldflags_cache}
+    fi
     exit 0
 fi 
 
