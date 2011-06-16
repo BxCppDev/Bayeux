@@ -56,13 +56,26 @@ if [ "x${CUTS_USING_CACHE_FILES}" != "x" ]; then
 	using_cache_files=1
     fi
 fi
+cache_dir=/tmp/${USER}
+if [ ${using_cache_files} -eq 1 ]; then
+    if [ "x${PKGTOOLS_CACHE_DIR}" != "x" ]; then
+	cache_dir=${PKGTOOLS_CACHE_DIR}
+    fi
+    if [ ! -d ${cache_dir} ]; then
+	mkdir -p ${cache_dir}
+	if [ $? -ne 0 ]; then
+	    echo "$SCRIPTNAME: error: Cannot create cache directory !" 1>&2
+	    exit 1
+	fi
+    fi
+fi
 
-cflags_cache=${THEPACK_ROOT}/.cflags.cache
-ldflags_cache=${THEPACK_ROOT}/.ldflags.cache
-
-ldflags_mode=""
-if [ "X${CUTS_LDFLAGS_MODE}" != "X" ]; then
-    ldflags_mode="${CUTS_LDFLAGS_MODE}"
+cflags_cache=${cache_dir}/.${THEPACK_LABEL}.cflags.cache
+ldflags_cache=${cache_dir}/.${THEPACK_LABEL}.ldflags.cache
+### not sure the right place to do it :
+if [ ${using_cache_files} -eq 0 ]; then
+    test -d ${cflags_cache} && rm -f ${cflags_cache}
+    test -d ${ldflags_cache} && rm -f ${ldflags_cache}
 fi
 
 opt=$1
@@ -140,14 +153,17 @@ fi
 
 if [ "x$opt" = "x--cflags" ]; then
     generate_cflags=0
+    cflags_cache_effective=${cflags_cache}
     if [ ${using_cache_files} -eq 1 ]; then
 	if [ -f ${cflags_cache} ]; then
 	    cat ${cflags_cache}
 	    exit 0
 	else
 	    generate_cflags=1
-	fi
+ 	fi
     else
+	test -f ${cflags_cache} && rm -f ${cflags_cache}
+	cflags_cache_effective=
 	generate_cflags=1
     fi
 	    
@@ -159,7 +175,7 @@ if [ "x$opt" = "x--cflags" ]; then
 		"`datatools-config --cflags` "  \
 	    | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py	    
 	    #echo
-	) | tee ${cflags_cache}
+	) | tee ${cflags_cache_effective}
 	test ${using_cache_files} -eq 0 && rm -f ${cflags_cache}
     fi
     exit 0
@@ -182,6 +198,7 @@ fi
 
 if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
     generate_ldflags=0
+    ldflags_cache_effective=${ldflags_cache}
     if [ ${using_cache_files} -eq 1 ]; then
 	if [ -f ${ldflags_cache} ]; then
 	    cat ${ldflags_cache}
@@ -190,7 +207,9 @@ if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
 	    generate_ldflags=1
 	fi
     else
+	test -f ${ldflags_cache} && rm -f ${ldflags_cache}
 	generate_ldflags=1
+	ldflags_cache_effective=
     fi
     
     if [ ${generate_ldflags} -eq 1 ]; then	
@@ -201,10 +220,9 @@ if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
 		else
 		    echo -n "-L${THEPACK_LIBDIR} -lcuts "
 		fi
-		echo -n "`datatools-config --ldflags` "  \
-		    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
-	    #echo
-	) | tee ${ldflags_cache}
+		echo -n "`datatools-config --ldflags` "  
+	    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
+	) | tee ${ldflags_cache_effective}
 	test ${using_cache_files} -eq 0 && rm -f ${ldflags_cache}
     fi
     exit 0

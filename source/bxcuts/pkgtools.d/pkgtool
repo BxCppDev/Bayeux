@@ -972,11 +972,6 @@ function do_test ()
     __pkgtools__at_function_enter do_test
 
    if [ -d ${the_gmk_dir} ]; then
-	if [ -d ${the_python_dir} ]; then
-	    if [ -f ${without_python_flag_file} ]; then
-		source ${without_python_flag_file}
-	    fi
-	fi
 	do_build_gmk bin_test
 	if [ $? -ne 0 ]; then
 	    pkgtools__msg_error "Build test program failed !"
@@ -1068,8 +1063,8 @@ function do_reset ()
 {
     __pkgtools__at_function_enter do_reset
 
-    test -f .cflags.cache && rm -f .cflags.cache
-    test -f .ldflags.cache && rm -f .ldflags.cache
+    #test -f .cflags.cache && rm -f .cflags.cache
+    #test -f .ldflags.cache && rm -f .ldflags.cache
 
     do_undoc
     do_untest
