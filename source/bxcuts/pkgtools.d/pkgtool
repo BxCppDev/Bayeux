@@ -396,7 +396,7 @@ function do_build_gmk ()
     fi
 
     ### special Python wrapper/program:
-    if [ -d ${the_python_dir} ]; then
+    # if [ -d ${the_python_dir} ]; then
 	# if [ ! -f ${without_python_flag_file} ]; then
 	#     cd ${the_python_dir}
 	#     make
@@ -408,7 +408,7 @@ function do_build_gmk ()
 	#     fi
 	#     cd ${the_gmk_dir}
 	# fi
-    fi
+    # fi
     
     cd ${opwd}
     __pkgtools__at_function_exit
