@@ -171,8 +171,8 @@ sources := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT)))
 
 ### If uncommented, this code force my_data.cc to be the last in library 
 # due to initialization of a static scoped pointer or similar stuff:
-#sources1 := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT) 2> /dev/null | sed -e "s@/my_data.cc@/@g"))
-#sources := $(sources1) my_data.cc
+sources1 := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT) 2> /dev/null | sed -e "s@/base_service.cc@/@g"))
+sources := $(sources1) base_service.cc
 
 objects := $(sources:%$(SOURCEEXT)=%$(OBJEXT)) 
 objectsWithPath := $(sources:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT)) 

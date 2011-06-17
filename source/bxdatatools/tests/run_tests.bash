@@ -215,6 +215,7 @@ test_serialization \
 test_serialization_2 \
 test_serialization_3 \
 test_serialization_4 \
+test_service_manager \
 test_shared_ptr_0 \
 test_shared_ptr_1 \
 test_smart_ref \

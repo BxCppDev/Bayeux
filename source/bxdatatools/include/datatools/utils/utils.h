@@ -4,12 +4,20 @@
 #ifndef __datatools__utils__utils_h
 #define __datatools__utils__utils_h 1
 
+#include <cstdlib>
 #include <string>
 #include <list>
 
 namespace datatools {
 
   namespace utils {
+
+    enum return_code_type
+      {
+	SUCCESS = EXIT_SUCCESS,
+	ERROR   = EXIT_FAILURE,
+	FAILURE   = EXIT_FAILURE
+      };
 
     // Invalidate a float (using NaN):
     void invalidate (float & a_value);
