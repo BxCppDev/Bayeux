@@ -2,11 +2,11 @@
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-20
  * Last modified : 2011-06-20
- * 
+ *
  * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
- * Description: 
- * 
+ *
+ * Description:
+ *
  *  A test sample program that illustrate how to use a dummy service.
  *
  * Usage:
@@ -31,7 +31,7 @@
 using namespace std;
 using namespace datatools::service;
 using namespace datatools::utils;
- 
+
 using namespace std;
 
 int main (int argc_, char ** argv_)
@@ -40,8 +40,8 @@ int main (int argc_, char ** argv_)
 
   try
     {
-      clog << "Test program for class 'datatools::service::dummy_service' !" << endl; 
-  
+      clog << "Test program for class 'datatools::service::dummy_service' !" << endl;
+
       bool debug = false;
 
       int iarg = 1;
@@ -51,57 +51,57 @@ int main (int argc_, char ** argv_)
 
           if (token[0] == '-')
             {
-							string option = token; 
-							if ((option == "-d") || (option == "--debug")) 
+							string option = token;
+							if ((option == "-d") || (option == "--debug"))
 								{
-									debug = true; 
-								} 
-							else 
-								{ 
-									clog << io::warning << "ignoring option '" << option << "'!" << endl; 
+									debug = true;
+								}
+							else
+								{
+									clog << io::warning << "ignoring option '" << option << "'!" << endl;
 								}
             }
           else
             {
-              string argument = token; 
-              { 
-								clog << io::warning << "ignoring argument '" << argument << "'!" << endl; 
+              string argument = token;
+              {
+								clog << io::warning << "ignoring argument '" << argument << "'!" << endl;
               }
             }
           iarg++;
 				}
 
-			base_service::g_debug = debug; 
+			base_service::g_debug = debug;
 			{
 				// Setup the configuration parameters of the service:
 				properties DS_config;
 				if (debug) DS_config.store_flag ("debug");
 				DS_config.store ("label", "test_service::label");
-				
+
 				dummy_service DS;
-				
+
 				// Initialize the event record processing service :
-				if (debug) clog << io::debug << "Initializing service '" << TS.get_name () << "'..." << endl;
+				if (debug) clog << io::debug << "Initializing service '" << DS.get_name () << "'..." << endl;
 				DS.initialize_standalone (DS_config);
 				if (debug) clog << io::debug << "Done." << endl;
-				
+
 				clog << "Dummy service label is '" << DS.get_label () << "'" << endl;
-				 
+
 				// Terminate the test service :
 				if (debug) clog << io::debug << "Terminating service '" << DS.get_name () << "'..." << endl;
-				DS.reset ();		
+				DS.reset ();
 				if (debug) clog << io::debug << "Done." << endl;
 			}
 
 }
   catch (exception & x)
     {
-      cerr << "error: " << x.what () << endl; 
+      cerr << "error: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);
