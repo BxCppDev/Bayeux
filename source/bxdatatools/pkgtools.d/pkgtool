@@ -1007,6 +1007,7 @@ function do_configure ()
 	pkgtools__msg_warning "Do not use Embedded Boost I/O !"
 	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_NO_EBIO" 1
     else
+	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_NO_EBIO" 0
 	pkgtools__msg_notice "Use Embedded Boost I/O !"
     fi
 

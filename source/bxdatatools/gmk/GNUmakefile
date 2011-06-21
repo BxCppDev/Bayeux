@@ -109,10 +109,9 @@ endif
 
 ### Use or not Embedded Boost I/O:
 EBIO_FLAGS=
-ifeq ($(DATATOOLS_NO_EBIO),)
+ifneq ($(DATATOOLS_NO_EBIO),1)
 DATATOOLS_NO_EBIO=0
 $(warning WARNING: datatools uses 'Embedded Boost I/O' !)
-EBIO_FLAGS=
 else
 DATATOOLS_NO_EBIO=1
 EBIO_FLAGS=-DDATATOOLS_NO_EBIO=1
