@@ -605,8 +605,11 @@ function do_configure ()
 	fi
     fi
     if [ ${with_ebio} -eq 0 ]; then
-	pkgtools__msg_warning "${pack_name} will not embed pre-built Boost/Serialization code !"	
+	pkgtools__msg_warning "${pack_name} will not embed pre-built Boost/Serialization code !"
 	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_NO_EBIO" 1
+    else
+	pkgtools__msg_warning "${pack_name} will embed pre-built Boost/Serialization code !"	
+	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_NO_EBIO" 0        
     fi
 
     echo "# end of ${pack_name} configuration informations."          >> ${config_db_file} 
