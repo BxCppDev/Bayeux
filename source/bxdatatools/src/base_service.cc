@@ -24,7 +24,7 @@
 
 #include <datatools/services/service_tools.h>
 #include <datatools/services/base_service.h>
-#include <datatools/services/service_manager.h>
+//#include <datatools/services/service_manager.h>
 #include <datatools/utils/properties.h>
 #include <datatools/utils/ioutils.h>
 
@@ -42,18 +42,6 @@ namespace datatools {
 		base_service::get_name () const
 		{
 			return name_;
-		}
-
-		// default behaviour : 
-		string base_service::service_id () const
-		{
-			return get_name ();
-		}
-				
-		// default behaviour :
-		service_creator_type base_service::service_creator () const
-		{
-			return 0;
 		}
   
 		void
@@ -89,16 +77,6 @@ namespace datatools {
 			version_ = a_version;
 			return;
 		}
-	
-		bool base_service::has_meta () const
-		{
-			return ! get_meta ().empty ();
-		}
-
-		string base_service::get_meta () const
-		{
-			return string ("");
-		}
 
 		void base_service::fetch_dependencies (service_dependency_dict_type & a_dependency_list) const
 		{
@@ -114,17 +92,18 @@ namespace datatools {
 				description_ (a_service_description),
 				version_ (a_service_version)
 		{
-			service_manager_ = 0;
+			//service_manager_ = 0;
 			return;
 		}
 
 		// dtor:
 		base_service::~base_service ()
 		{
-			service_manager_ = 0;
+			//service_manager_ = 0;
 			return;
 		}
 
+		/*
 		bool base_service::has_service_manager () const
 		{
 			return service_manager_ != 0;
@@ -148,7 +127,8 @@ namespace datatools {
 			service_manager_ = &a_service_manager;
 			return;
 		}
- 
+		*/
+
 		void base_service::tree_dump (ostream & a_out , 
 																	const string & a_title,
 																	const string & a_indent,
@@ -230,30 +210,38 @@ namespace datatools {
 			return (found->second);
 		}
 
-		void base_service::service_creator_db::register_service_creator (service_creator_type service_creator_, 
-																																		 const string & service_id_)
+		void 
+		base_service::service_creator_db::register_service_creator2 ()
+		{
+			return;
+		}
+
+		void 
+		base_service::service_creator_db::register_service_creator (
+      const service_creator_type & a_service_creator, 
+		  const string & a_service_id)
 		{
 			bool devel = g_debug;
 			//devel = true;
-			using namespace std;
-			string service_id = service_id_;
+			using namespace std; 
+			string service_id = a_service_id;
 			if (devel)
 				{
-					clog << "DEVEL: base_service::service_creator_db::register_service_creator: "
+					clog << "DEVEL: datatools::service::base_service::service_creator_db::register_service_creator: "
 							 << "service_id='" << service_id << "'"
 							 << endl;
 				}
 			if (has_service_creator (service_id))
 				{
 					ostringstream message;
-					message << "base_service::service_creator_db::register_service_creator: " 
-									<< "Cut creator ID '" << service_id_ << "' is already used "
+					message << "datatools::service::base_service::service_creator_db::register_service_creator: " 
+									<< "Cut creator ID '" << service_id << "' is already used "
 									<< "within the cut factory dictionnary !";
 					throw runtime_error (message.str ());
 				}
 			if (devel)
 				{
-					clog << "DEVEL: base_service::service_creator_db::register_service_creator: "
+					clog << "DEVEL: datatools::service::base_service::service_creator_db::register_service_creator: "
 							 << "new '" << service_id << "' cut creator  ID !"
 							 << endl;
 				}
@@ -261,30 +249,30 @@ namespace datatools {
 			if (service_id.empty ())
 				{
 					ostringstream message;
-					message << "base_service::service_creator_db::register_service_creator: " 
+					message << "datatools::service::base_service::service_creator_db::register_service_creator: " 
 									<< "Empty cut creator ID !";
 					throw runtime_error (message.str ());
 				}
 			if (devel)
 				{
-					clog << "DEVEL: base_service::service_creator_db::register_service_creator:  "
+					clog << "DEVEL: datatools::service::base_service::service_creator_db::register_service_creator:  "
 							 << "insert cut creator ID='" << service_id << "'!"
 							 << endl;
-					clog << "DEVEL: base_service::service_creator_db::register_service_creator: "
+					clog << "DEVEL: datatools::service::base_service::service_creator_db::register_service_creator: "
 							 << "with creator address='" << hex 
-							 << (void *) service_creator_ << dec << "'"
+							 << (void *) a_service_creator << dec << "'"
 							 << endl;
 				}
 			pair<string, service_creator_type> a_pair;
 			a_pair.first = service_id;
-			a_pair.second = service_creator_;
+			a_pair.second = a_service_creator;
 			dict_.insert (a_pair);
 			size_t sz = get_dict ().size ();
 			if (devel)
 				{
-					clog << "DEVEL: base_service::service_creator_db::register_service_creator: size="
+					clog << "DEVEL: datatools::service::base_service::service_creator_db::register_service_creator: size="
 							 << sz << " element" << (sz > 1? "s": "") << endl;
-					clog << "DEVEL: base_service::service_creator_db::register_service_creator: "
+					clog << "DEVEL: datatools::service::base_service::service_creator_db::register_service_creator: "
 							 << "done."
 							 << endl;
 				}
@@ -316,9 +304,15 @@ namespace datatools {
 		{
 			if (! g_service_creator_db_) 
 				{
-					throw runtime_error ("base_service::get_service_creator_db: Library has a critical bug !");
+					throw runtime_error ("datatools::service::base_service::get_service_creator_db: Library has a critical bug !");
 				}
 			return *(g_service_creator_db_.get ());
+		}
+
+		int base_service::initialize_standalone (const datatools::utils::properties & a_config)
+		{
+			service_dict_type dummy;
+			return  initialize (a_config, dummy);
 		}
 
 	}  // end of namespace service

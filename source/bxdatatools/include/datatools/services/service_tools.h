@@ -36,14 +36,13 @@
 #include <string>
 #include <map>
 
+#include <boost/cstdint.hpp>
+
 #include <datatools/utils/handle.h>
 #include <datatools/utils/i_tree_dump.h>
+#include <datatools/utils/properties.h>
 
 namespace datatools {
-
-	namespace utils {
-		class properties;
-	}
 
 	namespace service {
 		
@@ -53,7 +52,7 @@ namespace datatools {
 		
 		typedef datatools::utils::handle<base_service> service_handle_type;
 		
-		/** Constants to measure the level of dependance between services:
+		/** Constants to measure the level of dependance between services :
 		 */
 		enum dependency_level_type
       {
@@ -64,7 +63,7 @@ namespace datatools {
 				UNKNWON_DEPENDENCY  = -1
       };
 		
-		/** Record that store informations about the dependency  between services:
+		/** Record that store informations about the dependency  between services :
 		 */
 		struct dependency_info_type
 		{
@@ -86,21 +85,25 @@ namespace datatools {
 
 			enum status_type
 				{
-					STATUS_OK                = 0,
-					STATUS_BROKEN_DEPENDENCY = 1
+					STATUS_BLANK             = 0x0,
+					STATUS_CREATED           = 0x1,
+					STATUS_INITIALIZED       = 0x2,
+					STATUS_BROKEN_DEPENDENCY = 0x4
 				};
 			
 			string                       service_name;    //!< The name of the service
 			string                       service_id;      //!< The ID (type) of the service
+			datatools::utils::properties service_config;  //!< The configuration of the service 
+			uint32_t                     service_status;  //!< The status of the service
 			service_handle_type          service_handle;  //!< The handle for the allocated service
 			service_dependency_dict_type service_masters; //!< The list of services the service depends on (by names)
 			dependency_level_dict_type   service_slaves;  //!< The list of depending services (by names)
-			uint32_t                     service_status;  //!< The status of the service
 			
 			service_entry ();
 
 			bool can_be_dropped () const;
-	
+			bool has_slave (const string & a_service_name) const;
+			void remove_slave (const string & a_service_name);
 			virtual void tree_dump (ostream & a_out         = clog, 
 															const string & a_title  = "",
 															const string & a_indent = "",
@@ -110,11 +113,25 @@ namespace datatools {
 
 		typedef map<string, service_entry> service_dict_type;
 
-		typedef datatools::service:: base_service * (*service_creator_type) (const datatools::utils::properties & a_configuration, 
-																																				 datatools::service::service_dict_type * a_service_dict,
-																																				 void * a_user);
+		/*
+		struct i_service_creator
+		{
+			virtual datatools::service::base_service * allocate () = 0;
+			virtual void initialize (base_service &, 
+															 const datatools::utils::properties & a_configuration, 
+															 datatools::service::service_dict_type & a_service_dict) = 0;
+		};
+		*/
+
+		typedef datatools::service::base_service * 
+		(*service_creator_type) (const datatools::utils::properties & a_configuration, 
+														 datatools::service::service_dict_type & a_service_dict,
+														 base_service * a_ptr);
 		
 		typedef map<string, service_creator_type> service_creator_dict_type;
+
+
+
 
 	}  // end of namespace service
 

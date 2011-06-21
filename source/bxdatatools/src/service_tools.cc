@@ -43,6 +43,21 @@ namespace datatools {
 			return;
 		}
 				
+		bool service_entry::has_slave (const string & a_service_name) const
+		{
+			dependency_level_dict_type::const_iterator found = service_slaves.find (a_service_name);
+			return (found != service_slaves.end ()) && (found->second == STRICT_DEPENDENCY);
+		}
+
+		void service_entry::remove_slave (const string & a_service_name)
+		{
+			dependency_level_dict_type::iterator found = service_slaves.find (a_service_name);
+			if (found != service_slaves.end ())
+				{
+					service_slaves.erase (found);
+				}
+			return;
+		}
 
 		bool service_entry::can_be_dropped () const
 		{
@@ -161,7 +176,28 @@ namespace datatools {
 			a_out << indent << du::i_tree_dumpable::tag 
 						<< "Can be dropped   : " << can_be_dropped () << endl;
 			a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit) 
-						<< "Service status   : " << service_status << endl;
+						<< "Service status   : " << service_status;
+			{
+				size_t count = 0;
+				ostringstream status_info;
+				if (service_status & service_entry::STATUS_CREATED)
+					{
+						if (count) status_info << ',';
+						status_info << "created";
+						count++;
+					}
+				if (service_status & service_entry::STATUS_INITIALIZED)
+					{
+						if (count) status_info << ',';
+						status_info << "initialized";
+						count++;
+					}
+				if (count)
+					{
+						a_out << ' ' << '(' << status_info.str () << ')';
+					}
+			}
+			a_out << endl;
 				
 			return;
 		}

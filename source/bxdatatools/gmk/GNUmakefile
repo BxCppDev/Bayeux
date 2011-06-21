@@ -169,7 +169,7 @@ vpath %$(BINEXT)     $(BINDIR)
 headers := $(notdir $(shell find $(INCDIR)/$(PACKAGENAME) -name "*$(HEADEREXT)" )) quasi_portable_binary_iarchive.hpp quasi_portable_binary_oarchive.hpp
 sources := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT)))
 
-### If uncommented, this code force my_data.cc to be the last in library 
+### If uncommented, this code force base_service.cc to be the last in library 
 # due to initialization of a static scoped pointer or similar stuff:
 sources1 := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT) 2> /dev/null | sed -e "s@/base_service.cc@/@g"))
 sources := $(sources1) base_service.cc

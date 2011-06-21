@@ -30,7 +30,6 @@
 
 namespace datatools {
 
-
 	namespace service {
 
 		void service_manager::set_name (const string & a_name)
@@ -65,17 +64,6 @@ namespace datatools {
 			debug_ = a_debug;
 			return;
 		}
-
-		bool service_manager::is_abort_on_error () const
-		{
-			return abort_on_error_;
-		}
-
-		void service_manager::set_abort_on_error (bool a_abort_on_error)
-		{
-			abort_on_error_ = a_abort_on_error;
-			return;
-		}
 		
 		void service_manager::set_preload_ (bool a_preload)
 		{
@@ -90,6 +78,140 @@ namespace datatools {
 		bool service_manager::is_initialized () const
 		{
 			return initialized_;
+		}
+
+		void service_manager::create_service_ (service_entry & a_service_entry)
+		{
+			if (! (a_service_entry.service_status & service_entry::STATUS_CREATED))
+				{
+					if (is_debug ())
+						{
+							clog << "datatools::service::service_manager::create_service_: " 
+									 << "Creating service named '" 
+									 <<  a_service_entry.service_name
+									 << "'..."
+									 << endl;
+						}
+					service_creator_dict_type::iterator found_creator 
+						= creators_.find (a_service_entry.service_id);
+					if (found_creator == creators_.end ())
+						{
+							ostringstream message;
+							message << "datatools::service::service_manager::create_service_: " 
+											<< "Cannot find service creator with ID '" 
+											<< a_service_entry.service_id << "' for service named '" 
+											<< a_service_entry.service_name << "' !";
+							throw logic_error (message.str ());									
+						}
+					service_creator_type & the_service_creator = found_creator->second;
+					base_service * ptr = the_service_creator (a_service_entry.service_config, 
+																										services_, 
+																										0);
+					a_service_entry.service_handle.reset (ptr);
+					a_service_entry.service_status |= service_entry::STATUS_CREATED;
+				}
+			return;
+		}
+
+		void service_manager::reset_service_ (service_entry & a_service_entry)
+		{
+			if (! (a_service_entry.service_status & service_entry::STATUS_INITIALIZED))
+				{
+					base_service & the_service = a_service_entry.service_handle.get ();
+					the_service.reset ();
+					a_service_entry.service_status ^= service_entry::STATUS_INITIALIZED;
+					for (service_dependency_dict_type::iterator i = a_service_entry.service_masters.begin ();
+							 i != a_service_entry.service_masters.end ();
+							 i++)
+						{
+							const string & master_name = i->first;
+							service_dict_type::iterator found = services_.find (master_name);
+							if (found != services_.end ())
+								{
+									service_entry & the_master_entry = found->second;
+									the_master_entry.remove_slave (a_service_entry.service_name);									
+									if (is_debug ())
+										{
+											clog << "datatools::service::service_manager::create_service_: " 
+													 << "Remove slave '" 
+													 <<  a_service_entry.service_name
+													 << "' from master '" << the_master_entry.service_name
+													 << "' !"
+													 << endl;
+										}
+								}
+						}
+					/*	
+					for (service_dict_type::iterator it = services_.begin ();
+							 it != services_.end ();
+							 it++)
+						{
+							service_entry & the_service_entry = it->second;
+							if (the_service_entry.has_slave (a_service_entry.service_name))
+								{
+									the_service_entry.remove_slave (a_service_entry.service_name);
+								}
+
+						}
+					*/
+				}
+			return;
+		}
+
+		void service_manager::initialize_service_ (service_entry & a_service_entry)
+		{
+			// If not created, first do it :
+			if (! (a_service_entry.service_status & service_entry::STATUS_CREATED))
+				{
+					create_service_ (a_service_entry);
+				}
+
+			// If not initialized, do it :
+			if (! (a_service_entry.service_status & service_entry::STATUS_INITIALIZED))
+				{
+					if (is_debug ())
+						{
+							clog << "datatools::service::service_manager::initialize_service_: " 
+									 << "Initializing service named '" 
+									 <<  a_service_entry.service_name
+									 << "'..."
+									 << endl;
+						}
+					base_service & the_service = a_service_entry.service_handle.get ();
+					service_creator_dict_type::iterator found_creator 
+						= creators_.find (a_service_entry.service_id);
+					if (found_creator == creators_.end ())
+						{
+							ostringstream message;
+							message << "datatools::service::service_manager::initialize_service_: " 
+											<< "Cannot find service creator with id '" 
+											<< a_service_entry.service_id << "' for service named '" 
+											<< a_service_entry.service_name << "' !";
+							throw logic_error (message.str ());									
+						}
+					service_creator_type & the_service_creator = found_creator->second;
+					base_service * ptr = the_service_creator (a_service_entry.service_config, 
+																										services_, 
+																										&the_service);
+					if (ptr == 0)
+						{
+							ostringstream message;
+							message << "datatools::service::service_manager::get: " 
+											<< "Cannot initialize service named '" 
+											<< a_service_entry.service_name << "' !";
+							throw logic_error (message.str ());									
+						}
+					a_service_entry.service_status |= service_entry::STATUS_INITIALIZED;
+				}
+			return;
+		}
+
+		void service_manager::load (const string & a_service_name,
+																const string & a_service_id,
+																const datatools::utils::properties & a_config)
+		{
+			load_service_ (a_service_name, a_service_id, a_config); 
+			return;
 		}
 
 		void service_manager::load (const datatools::utils::multi_properties & a_config)
@@ -116,9 +238,9 @@ namespace datatools {
 					 i != a_config.ordered_entries ().end ();
 					 i++)
 				{
-					multi_properties::entry * e = *i;
-					const string & service_name = e->get_key ();
-					const string & service_id = e->get_meta ();
+					multi_properties::entry * mpe = *i;
+					const string & service_name = mpe->get_key ();
+					const string & service_id = mpe->get_meta ();
 					if (debug)
 						{
 							cerr << "DEVEL: " 
@@ -127,20 +249,21 @@ namespace datatools {
 									 << " with ID '" << service_id << "'..."
 									 << endl;	
 						}
-					if (services_.find (service_name) != services_.end ())
-						{
-							ostringstream message;
-							message << "manager::load: "
-											<< "Service with name '" << service_name << "' already exists !";
-							throw logic_error (message.str ());
-						}
-					load_service (service_name, service_id, e->get_properties ()); 
+					load_service_ (service_name, service_id, mpe->get_properties ()); 
 				}
 			return;
 		}
 
-		void service_manager::at_initialize_ (const datatools::utils::properties & a_config)
+		void service_manager::initialize (const datatools::utils::properties & a_config)
 		{
+			if (is_initialized ())
+				{
+					ostringstream message;
+					message << "datatools::service::service_manager::initialize: "
+									<< "Manager is already initialized !";
+					throw logic_error (message.str());	      
+				}
+
 			if (! is_debug ())
 				{
 					if (a_config.has_flag ("debug"))
@@ -192,6 +315,7 @@ namespace datatools {
 					}
 			}
 
+			initialized_ = true;
 			return;
 		}
 
@@ -204,45 +328,6 @@ namespace datatools {
 		}
 		
 
-		void service_manager::initialize (const datatools::utils::properties & a_config)
-		{
-			if (initialized_)
-				{
-					ostringstream message;
-					message << "datatools::service::service_manager::initialize: "
-									<< "Manager is already initialized !";
-					throw logic_error (message.str());	      
-				}
-			at_initialize_ (a_config);
-			initialized_ = true;
-			return;
-		}
-
-
-		void service_manager::at_reset_ ()
-		{
-			// if (services_.size () > 0)
-			// 	{
-			// 		for (service_dict_type::iterator i = services_.begin ();
-			// 				 i != services_.end ();
-			// 				 i++)
-			// 			{
-			// 				if (i->second != 0)
-			// 					{
-			// 						delete i->second;
-			// 					}
-			// 			}
-			// 		services_.clear ();
-			// 	}
-			services_.clear ();
-
-			creators_.clear ();
-
-			abort_on_error_ = true;
-			return;
-		}
-
-
 		void service_manager::reset ()
 		{
 			if (! initialized_)
@@ -252,8 +337,46 @@ namespace datatools {
 									<< "Manager is not initialized !";
 					throw logic_error (message.str());	      
 				}
-
-			at_reset_ ();
+			size_t count = services_.size ();
+			size_t initial_size = services_.size ();
+			while (services_.size () > 0)
+				{
+					for (service_dict_type::iterator it = services_.begin ();
+							 it != services_.end ();
+							 it++)
+						{
+							service_entry & the_service_entry = it->second;
+							if (the_service_entry.can_be_dropped ())
+								{									
+									if (is_debug ())
+										{
+											cerr << "DEBUG: " 
+													 << "datatools::service::service_manager::reset: "
+													 << "Removing service '" << the_service_entry.service_name << "'..."
+													 << endl;						
+										}
+									reset_service_ (the_service_entry);
+									services_.erase (it);
+									--count;
+									break;
+								}
+						}
+					if (count == initial_size)
+						{
+							break;
+						}
+				} 
+			if (services_.size () > 0)
+				{
+					cerr << "WARNING: " 
+							 << "datatools::service::service_manager::reset: "
+							 << "There are some left services !"
+							 << endl;						
+				}
+			services_.clear ();
+			creators_.clear ();
+			force_initialization_at_load_ = false;
+			preload_ = true;
 
 			initialized_ = false;
 			return;
@@ -263,17 +386,24 @@ namespace datatools {
 		// ctor :
 		service_manager::service_manager (const string & a_name, 
 																			const string & a_description, 
-																			bool a_preload,
-																			bool a_abort_on_error,
-																			bool a_debug)
+																			uint32_t a_flag)
 		{
 			initialized_ = false;			
-			set_debug (a_debug);
-			set_abort_on_error (a_abort_on_error);
 			set_name (a_name);
 			set_description (a_description);
-			set_preload_ (a_preload);
-			user_resources_ = 0;
+
+			set_debug (a_flag & DEBUG);
+			force_initialization_at_load_ = false;
+			if (a_flag & FORCE_INITIALIZATION_AT_LOAD)
+				{
+					force_initialization_at_load_ = true;
+				}
+			bool preload = true;
+			if (a_flag & NO_PRELOAD)
+				{
+					preload = false;
+				}
+			set_preload_ (preload);
 			return;
 		}
 
@@ -292,7 +422,7 @@ namespace datatools {
 		 *   SERVICES   *
 		 ****************/
 
-		bool service_manager::has_service (const string & a_service_name) const
+		bool service_manager::has (const string & a_service_name) const
 		{
 			return services_.find (a_service_name) != services_.end ();
 		}
@@ -310,13 +440,13 @@ namespace datatools {
 		}
 
 
-		bool service_manager::can_drop_service (const string & a_service_name)
+		bool service_manager::can_drop (const string & a_service_name)
 		{
 			service_dict_type::const_iterator found = services_.find (a_service_name);
 			if (found == services_.end ())
 				{
 					ostringstream message;
-					message << "datatools::service::service_manager::can_drop_service: "
+					message << "datatools::service::service_manager::can_drop: "
 									<< "Service '" << a_service_name << "' does not exist !";
 					throw logic_error (message.str());	      
 				}
@@ -324,9 +454,9 @@ namespace datatools {
 		}
      
 
-		int service_manager::drop_service (const string & a_service_name)
+		void service_manager::drop (const string & a_service_name)
 		{
-			service_dict_type::const_iterator found = services_.find (a_service_name);
+			service_dict_type::iterator found = services_.find (a_service_name);
 			if (found == services_.end ())
 				{
 					ostringstream message;
@@ -334,71 +464,46 @@ namespace datatools {
 									<< "Service '" << a_service_name << "' does not exist !";
 					throw logic_error (message.str());	      
 				}
-
-			const service_entry & the_service_entry = found->second;
+			service_entry & the_service_entry = found->second;
 			if (! found->second.can_be_dropped ())
 				{
 					ostringstream message;
 					message << "datatools::service::service_manager::drop_service: "
 									<< "Service '" << a_service_name 
 									<< "' cannot be dropped because of existing dependent services !";
-					if (is_abort_on_error ())
-						{
-							throw logic_error (message.str());
-						}
-					clog << "ERROR: " << message.str () << endl;					
-					return datatools::utils::FAILURE;
+					throw logic_error (message.str());
 				}
-			return datatools::utils::SUCCESS;
+			if (is_debug ())
+				{
+					cerr << "DEBUG: " 
+							 << "datatools::service::service_manager::drop: "
+							 << "Reset & remove service '" << a_service_name << "' !"
+							 << endl;						
+				}
+			reset_service_ (the_service_entry);
+			services_.erase (found);
+			return;
 		}
 
 
-		int service_manager::load_service (const string & a_service_name,
-																			 const string & a_service_id,
-																			 const datatools::utils::properties & a_service_config,
-																			 bool a_replace)
+		void service_manager::load_service_ (const string & a_service_name,
+																				 const string & a_service_id,
+																				 const datatools::utils::properties & a_service_config)
 		{
 			bool debug = is_debug ();
 			if (debug)
 				{
 					cerr << "DEVEL: " 
-							 << "datatools::service::service_manager::load_service: "
+							 << "datatools::service::service_manager::load_service_: "
 							 << "Entering..."
 							 << endl;	
 				}
-			if (has_service (a_service_name))
+			if (has (a_service_name))
 				{
-					if (! a_replace)
-						{
-							ostringstream message;
-							message << "datatools::service::service_manager::load_service: "
-											<< "Service '" << a_service_name << "' already exists !";
-							if (is_abort_on_error ())
-								{
-									throw logic_error (message.str());	      
-								}
-							clog << "ERROR: " << message.str () << endl;
-							return datatools::utils::FAILURE;
-						}
-					else
-						{
-							if (can_drop_service (a_service_name))
-								{
-									drop_service (a_service_name);
-								}
-							else
-								{
-									ostringstream message;
-									message << "datatools::service::service_manager::load_service: "
-													<< "Cannot drop service '" << a_service_name << "' !";
-									if (is_abort_on_error ())
-										{
-											throw logic_error (message.str());	      
-										}
-									clog << "ERROR: " << message.str () << endl;
-									return datatools::utils::FAILURE;
-								}
-						}
+					ostringstream message;
+					message << "datatools::service::service_manager::load_service_: "
+									<< "Service '" << a_service_name << "' already exists !";
+					throw logic_error (message.str());
 				}
 			{
 				// Add a new entry :
@@ -407,98 +512,38 @@ namespace datatools {
 				if (debug)
 					{
 						cerr << "DEVEL: " 
-								 << "datatools::service::service_manager::load_service: "
+								 << "datatools::service::service_manager::load_service_: "
 								 << "Add an entry for service '" << a_service_name << "'..."
 								 << endl;	
 					}
 				services_[a_service_name] = dummy_service_entry;
-				if (debug)
-					{
-						cerr << "DEVEL: " 
-								 << "datatools::service::service_manager::load_service: "
-								 << "Done."
-								 << endl;	
-					}
 			}
 			// fetch a reference on it and update :
 			service_entry & the_service_entry = services_.find (a_service_name)->second;
+			the_service_entry.service_id     = a_service_id;		
+			the_service_entry.service_config = a_service_config;
+			the_service_entry.service_status = service_entry::STATUS_BLANK;
 			if (debug)
 				{
 					cerr << "DEVEL: " 
-							 << "datatools::service::service_manager::load_service: "
+							 << "datatools::service::service_manager::load_service_: "
 							 << "Fetch..."
 							 << endl;	
 				}
-			the_service_entry.service_id     = a_service_id;
-			the_service_entry.service_status = service_entry::STATUS_OK; // default status is OK.
-			// search for the service creator for this ID : 
-			service_creator_dict_type::iterator found = creators_.find (a_service_id);
-			if (found == creators_.end ())
+			create_service_ (the_service_entry);
+			vector<string> strict_dependencies;
+			if (a_service_config.has_key ("dependencies.strict"))
 				{
-					ostringstream message;
-					message << "datatools::service::service_manager::load_service: "
-									<< "Could not find a service creator for ID '" << a_service_id 
-									<< "' for service '" << a_service_name << "' !";
-					if (is_abort_on_error ())
-						{
-							throw logic_error (message.str());	      
-						}
-					clog << "ERROR: " << message.str () << endl;
-					services_.erase (a_service_name);
-					return datatools::utils::FAILURE;								
+					a_service_config.fetch ("dependencies.strict", strict_dependencies);
+				}
+			for (int i = 0; i < strict_dependencies.size (); i++)
+				{
+					// XXX the_service_entry.service_masters;
 				}
 
-			if (debug)
-				{
-					cerr << "DEVEL: " 
-							 << "datatools::service::service_manager::load_service: "
-							 << "TEST 1"
-							 << endl;	
-				}
+			// XXX:
+			//the_service_entry.service_handle.get ().fetch_dependencies (the_service_entry.service_masters);
 
-			// here we have a creator :
-			service_creator_type a_creator = found->second;
-			// invoke the creator and allocate a new service object using configuration parameters from
-			// the 'a_service_config' properties container and the current dictionnary of services 'services_';
-			// 'user_resources_' is a anonymous (void) pointer to some arbitrary external data structure (optional).
-			base_service * a_new_service = a_creator (a_service_config, 
-																								&services_, 
-																								user_resources_);
-			if (a_new_service == 0)
-				{
-					ostringstream message;
-					message << "datatools::service::service_manager::load_service: "
-									<< "Could not load a new service '" << a_service_name << "' with type '" << a_service_id << "' !";
-					if (is_abort_on_error ())
-						{
-							throw logic_error (message.str());	      
-						}
-					clog << "ERROR: " 
-							 << message.str () << endl;
-					services_.erase (a_service_name);
-					return datatools::utils::FAILURE;								
-				}
-
-			if (debug)
-				{
-					cerr << "DEVEL: " 
-							 << "datatools::service::service_manager::load_service: "
-							 << "TEST 2"
-							 << endl;	
-				}
-			// attach the service to this manager :
-			a_new_service->set_service_manager (*this);
-			// let the embedded handle manage the pointer of the new service :
-			the_service_entry.service_handle.reset (a_new_service);
-			if (debug)
-				{
-					cerr << "DEVEL: " 
-							 << "datatools::service::service_manager::load_service: "
-							 << "TEST 3"
-							 << endl;	
-				}
-			// check if the new service has dependencies on other services :
-			a_new_service->fetch_dependencies(the_service_entry.service_masters);
 			for (service_dependency_dict_type::const_iterator j 
 						 = the_service_entry.service_masters.begin ();
 					 j != the_service_entry.service_masters.end ();
@@ -506,7 +551,7 @@ namespace datatools {
 				{ 
 					const string & master_service_name = j->first;
 					cerr << "DEVEL: " 
-							 << "datatools::service::service_manager::load_service: "
+							 << "datatools::service::service_manager::load_service_: "
 							 << "Master '" << master_service_name << "' "
 							 << endl;	
 					continue;
@@ -517,13 +562,13 @@ namespace datatools {
 					if (master_depinfo.level == STRICT_DEPENDENCY)
 						{
 							cerr << "DEVEL: " 
-									 << "datatools::service::service_manager::load_service: "
+									 << "datatools::service::service_manager::load_service_: "
 									 << "Master '" << master_service_name << "' is a strict dependency !"
 									 << endl;	
 							if (found == services_.end ())
 								{
 									ostringstream message;
-									message << "datatools::service::service_manager::load_service: "
+									message << "datatools::service::service_manager::load_service_: "
 													<< "Could not find service named '" << master_service_name 
 													<< "' on which the new service '" << a_service_name << "' depends !";
 									if (is_abort_on_error ())
@@ -551,16 +596,19 @@ namespace datatools {
 						}
 					*/
 				}
+			if (force_initialization_at_load_)
+				{
+					initialize_service_ (the_service_entry);
+				}
 			if (debug)
 				{
 					cerr << "DEVEL: " 
-							 << "datatools::service::service_manager::load_service: "
+							 << "datatools::service::service_manager::load_service_: "
 							 << "Exiting."
 							 << endl;	
 				}
-			return datatools::utils::SUCCESS;
+			return;
 		}
-
 
 		void service_manager::dump_services (ostream & a_out,
 																				 const string & a_title,
@@ -607,15 +655,51 @@ namespace datatools {
 						if (count == sz) a_out << "`-- "; 
 						else a_out << "|-- ";
 						const string & service_name = it->first;
+						const service_entry & the_service_entry = it->second;
 						const base_service & a_service = it->second.service_handle.get ();
-						a_out << "Name : '" << service_name << "'  Type : '" << a_service.service_id () << "'"
-									 << endl;
+						a_out << "Name : '" << service_name << "'  Type : '" << the_service_entry.service_id << "' ";
+						a_out << '(';
+						int count = 0;
+						if (the_service_entry.service_status & service_entry::STATUS_INITIALIZED)
+							{
+								a_out << "initialized";
+								count++;
+							}
+						if (the_service_entry.service_status & service_entry::STATUS_BROKEN_DEPENDENCY)
+							{
+								if (count>0) a_out << '/',
+								a_out << "broken";
+								count++;
+							}
+						a_out << ')';
+						a_out << endl;
 					}
 			}
  
 			return;
 		}
-		
+
+		/*
+		service_handle_type & service_manager::get_service (const string & a_service_name)
+		{
+			service_dict_type::iterator found = services_.find (a_service_name);
+			if (found == services_.end ())
+				{
+					ostringstream message;
+					message << "datatools::service::service_manager::get_service: "
+									<< "No service named '" << a_service_name < "' is available !";
+					throw logic_error (message.str ());										
+				}
+			const string & service_name = found->first;
+			service_entry & service_entry = found->second;
+			if (! (service_entry.service_status & service_entry::STATUS_INITIALIZED))
+				{
+							
+				}
+			return service_entry.handle;
+		} 
+		*/
+
 		/****************
 		 *   CREATORS   *
 		 ****************/
@@ -637,7 +721,8 @@ namespace datatools {
 									<< "Ignore preload request !";
 					clog << "WARNING: " << message.str () << endl;
 				}
-			const service_creator_dict_type & global_dict = base_service::get_service_creator_db ().get_dict ();
+			const service_creator_dict_type & global_dict 
+				= base_service::get_service_creator_db ().get_dict ();
 			if (devel)
 				{
 					cerr << "DEVEL: " 
@@ -659,15 +744,7 @@ namespace datatools {
 									 << "Preloading '" << a_service_id << "' @ " << a_service_creator
 									 << endl;
 						}
-					int status = register_creator (a_service_creator, a_service_id);
-					if (status != datatools::utils::SUCCESS)
-						{
-							ostringstream message;
-							message << "datatools::service::service_manager::preload_global_dict_: "
-											<< "Cannot register service creator with ID '" << a_service_id << "' !";
-							clog << "WARNING: " 
-									 << message.str () << endl;
-						}
+					register_creator (a_service_creator, a_service_id);
 				}
 			return;
 		}
@@ -687,65 +764,56 @@ namespace datatools {
 			return creators_.find (a_service_id) != creators_.end ();
 		}
 
-		int service_manager::unregister_creator (const string & a_service_id)
+		void service_manager::unregister_creator (const string & a_service_id)
 		{
 			service_creator_dict_type::iterator found = creators_.find (a_service_id);
 			if (found != creators_.end ())
 				{
 					creators_.erase (found);
 				}
-			return datatools::utils::SUCCESS;
+			return;
 		}
 
-		int service_manager::register_creator (const service_creator_type & a_service_creator,
+		void service_manager::register_creator (const service_creator_type & a_service_creator,
 																					 const string & a_service_id)
 		{
-			cerr << "DEVEL: " 
-					 << "datatools::service::service_manager::register_creator: "
-					 << "Entering..."
-					 << endl;
-			cerr << "DEVEL: " 
-					 << "datatools::service::service_manager::register_creator: "
-					 << "Service ID is '" << a_service_id << "'..."
-					 << endl;
+			bool devel = false;
+			if (devel) 
+				{			
+					cerr << "DEVEL: " 
+							 << "datatools::service::service_manager::register_creator: "
+							 << "Entering..."
+							 << endl;
+					cerr << "DEVEL: " 
+							 << "datatools::service::service_manager::register_creator: "
+							 << "Service ID is '" << a_service_id << "'..."
+							 << endl;
+				}
 			if (a_service_id.empty ())
 				{
 					ostringstream message;
 					message << "service_manager::register_creator: " 
 									<< "Missing service ID !";
-					if (is_abort_on_error ())
-						{
-							throw logic_error (message.str ());
-						}
-					clog << "ERROR: " 
-							 << message.str () << endl;
-					return datatools::utils::ERROR;
+					throw logic_error (message.str ());
 				}
 			service_creator_dict_type::const_iterator found = creators_.find (a_service_id);
 			if (found != creators_.end ())
 				{
 					ostringstream message;
-					message << "service_manager::register_creator: " 
+					message << "datatools::service::service_manager::register_creator: " 
 									<< "Service ID '" << a_service_id << "' is already used "
 									<< "within the factory dictionary !";
-					if (is_abort_on_error ())
-						{
-							throw logic_error (message.str ());
-						}
-					else 
-						{
-							message << ' ' << "Overwriting current value...";
-							clog << "ERROR: " 
-									 << message.str () << endl;
-							return datatools::utils::ERROR;
-						}
+					throw logic_error (message.str ());
 				}
-			cerr << "DEVEL: " 
-					 << "datatools::service::service_manager::register_creator: "
-					 << "Store it with ID '" << a_service_id << "'..."
-					 << endl;
+			if (devel) 
+				{			
+					cerr << "DEVEL: " 
+							 << "datatools::service::service_manager::register_creator: "
+							 << "Store it with ID '" << a_service_id << "'..."
+							 << endl;
+				}
 			creators_ [a_service_id] = a_service_creator;
-			return datatools::utils::SUCCESS;
+			return;
 		}
 
 		void service_manager::tree_dump (ostream & a_out , 
@@ -770,11 +838,9 @@ namespace datatools {
 			a_out << indent << du::i_tree_dumpable::tag 
 						<< "Debug          : " << debug_ << endl;
 			a_out << indent << du::i_tree_dumpable::tag 
-						<< "Abort on error : " << abort_on_error_ << endl;
-			a_out << indent << du::i_tree_dumpable::tag 
 						<< "Preload        : " << preload_ << endl;
 			a_out << indent << du::i_tree_dumpable::tag 
-						<< "Initialized    : " << is_initialized () << endl;
+						<< "Force initialization : " << force_initialization_at_load_ << endl;
 
 			{
 				a_out << indent << du::i_tree_dumpable::tag 
@@ -836,8 +902,8 @@ namespace datatools {
 					}				
 			}
 
-			a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)
-						<< "User resources : " << user_resources_ << endl;
+			a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit) 
+						<< "Initialized    : " << is_initialized () << endl;
 				
 			return;
 		}
