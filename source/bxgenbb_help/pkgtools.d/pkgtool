@@ -481,10 +481,10 @@ function do_configure ()
 	    #	force_one_underscore=1
 	    #elif [ "x${opt}" = "x--force-two-underscores" ]; then
 	    #	force_two_underscores=1
-	    # elif [ "x${opt}" = "x-ebio" -o "x${opt}" = "x--with-embedded-boost-io" ]; then
-	    # 	with_ebio=1
-	    # elif [ "x${opt}" = "x-no-ebio" -o "x${opt}" = "x--without-embedded-boost-io" ]; then
-	    # 	with_ebio=0
+	    elif [ "x${opt}" = "x-ebio" -o "x${opt}" = "x--with-embedded-boost-io" ]; then
+	    	with_ebio=1
+	    elif [ "x${opt}" = "x-no-ebio" -o "x${opt}" = "x--without-embedded-boost-io" ]; then
+	    	with_ebio=0
 	    elif [ ${can_python_wrapper} -eq 1 ]; then
                 # parse Python wrapper switches:
 		if [ "x${opt}" = "x--with-python" ]; then
@@ -552,13 +552,16 @@ function do_configure ()
 	    pkgtools__msg_warning "As datatools has no Embedded Boost I/O support, genb_help won't too !"
 	    with_ebio=0
 	else
-	    pkgtools__msg_warning "Embedded pre-built Boost/Serialization code is not supported !"
-	    with_ebio=0	
+#	    pkgtools__msg_warning "Embedded pre-built Boost/Serialization code is not supported !"
+	    with_ebio=1	
 	fi
     fi
     if [ ${with_ebio} -eq 0 ]; then
-	pkgtools__msg_warning "${pack_name} will not embed pre-built Boost/Serialization code !"	
+	pkgtools__msg_warning "${pack_name} will not embed pre-built Boost/Serialization code !"
 	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_NO_EBIO" 1
+    else
+	pkgtools__msg_warning "${pack_name} will embed pre-built Boost/Serialization code !"	
+	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_NO_EBIO" 0        
     fi
 
     echo "# end of ${pack_name} configuration informations." >> ${config_db_file} 
