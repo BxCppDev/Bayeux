@@ -1,7 +1,7 @@
 /* test_service_manager.cxx
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-09
- * Last modified : 2011-06-17 
+ * Last modified : 2011-06-22
  * 
  * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
  * 
@@ -11,7 +11,7 @@
  *
  * Usage:
  *
- *  ${SNCORE_BIN_DIR}/test_service --debug
+ *  ${SNCORE_BIN_DIR}/test_service_manager --debug
  *
  */
 
@@ -69,6 +69,7 @@ DATATOOLS_SERVICE_CLASS_DECLARE(test_service)
 };
 
 const string test_service::DEFAULT_LABEL = "test_service::label";
+
 void test_service::set_label (const string & a_label)
 {
 	label_ = a_label;
@@ -262,7 +263,7 @@ int main (int argc_, char ** argv_)
 				if (SM.has ("test_2") && SM.is_a<test_service> ("test_2"))
 					{
 						// Access to a service by (const) reference through its name and class :
-						const test_service & TS =  SM.get<test_service> ("test_2");
+						const test_service & TS = SM.get<test_service> ("test_2");
 						clog << "Test service 'test_2' has label '" << TS.get_label () << "'" << endl;
 					}
 				if (SM.has ("test_2") && SM.is_a<test_service> ("test_2"))
