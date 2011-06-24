@@ -109,13 +109,21 @@ namespace datatools {
 																										0);
 					a_service_entry.service_handle.reset (ptr);
 					a_service_entry.service_status |= service_entry::STATUS_CREATED;
+					if (is_debug ())
+						{
+							clog << "datatools::service::service_manager::create_service_: " 
+									 << "Service named '" 
+									 <<  a_service_entry.service_name
+									 << "' has been created !"
+									 << endl;
+						}
 				}
 			return;
 		}
 
 		void service_manager::reset_service_ (service_entry & a_service_entry)
 		{
-			if (! (a_service_entry.service_status & service_entry::STATUS_INITIALIZED))
+			if (a_service_entry.service_status & service_entry::STATUS_INITIALIZED)
 				{
 					base_service & the_service = a_service_entry.service_handle.get ();
 					the_service.reset ();
@@ -330,6 +338,12 @@ namespace datatools {
 
 		void service_manager::reset ()
 		{
+			if (is_debug ())
+				{
+					cerr << "DEBUG: " << "datatools::service::service_manager::reset: "
+							 << "Entering..."
+							 << endl;
+				}
 			if (! initialized_)
 				{
 					ostringstream message;
@@ -379,6 +393,12 @@ namespace datatools {
 			preload_ = true;
 
 			initialized_ = false;
+			if (is_debug ())
+				{
+					cerr << "DEBUG: " << "datatools::service::service_manager::reset: "
+							 << "Exiting."
+							 << endl;
+				}
 			return;
 		}
 
