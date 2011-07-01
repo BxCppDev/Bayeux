@@ -95,7 +95,6 @@ DEPLDFLAGS+=$(shell $(gsl_config) --libs)
 CPPFLAGS+=$(DEPCPPFLAGS)
 
 DEPLDFLAGS_SORTED=$(shell echo $(DEPLDFLAGS) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r)
-
 LDFLAGS+=$(DEPLDFLAGS_SORTED) 
 
 LDFLAGS+=-lm 
