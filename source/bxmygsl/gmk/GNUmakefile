@@ -92,8 +92,11 @@ DEPCPPFLAGS+=$(shell $(gsl_config) --cflags)
 DEPLDFLAGS+=$(shell $(gsl_config) --libs)
 
 ### End of dependencies
-CPPFLAGS+=$(DEPCPPFLAGS) 
-LDFLAGS+=$(DEPLDFLAGS) 
+CPPFLAGS+=$(DEPCPPFLAGS)
+
+DEPLDFLAGS_SORTED=$(shell echo $(DEPLDFLAGS) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r)
+
+LDFLAGS+=$(DEPLDFLAGS_SORTED) 
 
 LDFLAGS+=-lm 
 CXXFLAGSSHFLAGS=-Wall -v
@@ -278,7 +281,8 @@ $(LIBFILE) : $(objectsWithPath)
 $(SHLIBFILE) : $(objectsWithPath) 
 	@echo "Building shared lib '$(@)'..."
 	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
-	$(LD) $(CXXFLAGS) $(SOFLAGS) $(^) -o $(LIBDIR)/$(notdir $(@))
+	@#$(LD) $(CXXFLAGS) $(SOFLAGS) $(^) -o $(LIBDIR)/$(notdir $(@))
+	$(LD) $(CXXFLAGS) $(SOFLAGS) $(^) $(DEPLDFLAGS_SORTED) -o $(LIBDIR)/$(notdir $(@))
 
 $(OBJDIR)/%$(OBJEXT) : %$(SOURCEEXT) %$(HEADEREXT)
 	@echo "Compiling module '$(@)'..."
