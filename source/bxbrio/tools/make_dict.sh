@@ -7,7 +7,7 @@ Prepare class dictionnary and streamer stuff for classes:
  - brio_record
 
 EOF
-test -f brio_dict.h && rm -f brio_dict.h
+test -f brio_dict.h  && rm -f brio_dict.h
 test -f brio_dict.cc && rm -f brio_dict.cc
 
 rootcint brio_dict.cc \

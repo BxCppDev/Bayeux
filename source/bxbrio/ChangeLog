@@ -9,4 +9,7 @@
 2011-03-19  Francois Mauger <mauger@lpccaen.in2p3.fr>
 	* need datatools 3.0	
 	* adapt to the new serialization scheme of datatools
+2011-07-01 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* explicit linking with dependency shared libs
+	* pre-tag 2.1
 

@@ -113,7 +113,10 @@ LDFLAGS1+=$(DEPLDFLAGS)
 LDFLAGS1+=-lm 
 
 CPPFLAGS+=$(shell echo $(CPPFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py) 
-LDFLAGS+=$(shell echo $(LDFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r) 
+#LDFLAGS+=$(shell echo $(LDFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r) 
+
+DEPLDFLAGS_SORTED=$(shell echo $(LDFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r)
+LDFLAGS+=$(DEPLDFLAGS_EXT)
 
 CXXFLAGSSHFLAGS=-Wall -v
 STATICFLAGS=-static
@@ -326,7 +329,7 @@ $(LIBFILE) : $(objectsWithPath)
 $(SHLIBFILE) : $(objectsWithPath) $(OBJDIR)/$(dictionary_obj) 
 	@echo "NOTICE: Building shared lib '$(@)'..." >&2
 	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
-	@test -n "$(objectsWithPath)" && $(LD) $(CXXFLAGS) $(SOFLAGS) $(^) -o $(LIBDIR)/$(notdir $(@)) || echo ""
+	@test -n "$(objectsWithPath)" && $(LD) $(CXXFLAGS) $(SOFLAGS) $(^) $(DEPLDFLAGS_SORTED) -o $(LIBDIR)/$(notdir $(@)) || echo ""
 
 $(OBJDIR)/%$(OBJEXT) : %$(SOURCEEXT) %$(HEADEREXT)
 	@echo "NOTICE: Compiling module '$(@)'..." >&2
