@@ -116,7 +116,7 @@ CPPFLAGS+=$(shell echo $(CPPFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkunique
 #LDFLAGS+=$(shell echo $(LDFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r) 
 
 DEPLDFLAGS_SORTED=$(shell echo $(LDFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r)
-LDFLAGS+=$(DEPLDFLAGS_EXT)
+LDFLAGS+=$(DEPLDFLAGS_SORTED)
 
 CXXFLAGSSHFLAGS=-Wall -v
 STATICFLAGS=-static
