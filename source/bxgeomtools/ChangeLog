@@ -6,3 +6,8 @@ This is the geomtools package ChangeLog
 	* add placement::relocate method
 2011-02-22 : Francois Mauger <mauger@lpccaen.in2p3.fr>
 	* GPL version 3 is now used for geomtools
+2011-03-19  Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* need datatools 3.0	
+2011-07-01 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* explicit linking with dependency shared libs
+	* pre-tag 2.1
