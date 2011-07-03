@@ -129,15 +129,32 @@ DATATOOLS_NO_PBA=1
 $(warning WARNING: datatools does not use PBA !)
 endif
 
+
+### Use or not Embedded Boost I/O:
+KWSYS_FLAGS=
+ifneq ($(DATATOOLS_NO_KWSYS),1)
+DATATOOLS_NO_KWSYS=0
+DEPLDFLAGS+=-lkwsys -lkwsys_c 
+$(warning WARNING: datatools uses 'Embedded kwsys' !)
+else
+DATATOOLS_NO_KWSYS=1
+KWSYS_FLAGS=-DDATATOOLS_NO_KWSYS=1
+$(warning WARNING: datatools does not use 'Embedded kwsys' !)
+endif
+
 ### End of dependencies.
-CPPFLAGS1+=$(PBA_FLAGS) $(FPU_FLAGS) $(EBIO_FLAGS) $(DEPCPPFLAGS) 
+CPPFLAGS1+=$(PBA_FLAGS) $(FPU_FLAGS) $(EBIO_FLAGS) $(KWSYS_FLAGS) $(DEPCPPFLAGS) 
 LDFLAGS1+=$(DEPLDFLAGS) 
 
 # default with libmath dependency:
 LDFLAGS1+=-lm 
 
 CPPFLAGS+=$(shell echo $(CPPFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py) 
-LDFLAGS+=$(shell echo $(LDFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r) 
+ifneq ($(DATATOOLS_NO_KWSYS),1)
+DEPLDFLAGS_SORTED=-L$(LIBDIR) 
+endif
+DEPLDFLAGS_SORTED+=$(shell echo $(LDFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r)
+LDFLAGS+=$(DEPLDFLAGS_EXT)
 
 CXXFLAGSSHFLAGS=-Wall -v
 STATICFLAGS=-static
@@ -170,9 +187,12 @@ sources := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT)))
 
 ### If uncommented, this code force base_service.cc to be the last in library 
 # due to initialization of a static scoped pointer or similar stuff:
-sources1 := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT) 2> /dev/null | sed -e "s@/base_service.cc@/@g"))
+sources1 := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT) 2> /dev/null | sed -e "s@/base_service.cc@/@g" -e "s@/library_loader.cc@/@g"))
 sources := $(sources1) base_service.cc
-
+ifneq ($(DATATOOLS_NO_KWSYS),1)
+$(warning WARNING: datatools uses the 'library_loader' class !)
+sources := $(sources) library_loader.cc
+endif
 objects := $(sources:%$(SOURCEEXT)=%$(OBJEXT)) 
 objectsWithPath := $(sources:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT)) 
 
@@ -187,6 +207,7 @@ objectsWithPath := $(sources:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT))
 programs_all:= $(notdir $(shell ls $(PROGDIR)/*$(PROGEXT) 2> /dev/null))
 
 programs_test:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep ^test_)
+programs_kwsys_test:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep ^kwsys_test_)
 programs:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep -v ^test_)
 
 binaries:= $(programs:%$(PROGEXT)=%$(BINEXT))
@@ -235,6 +256,7 @@ test:
 	@echo "programs = $(programs)"
 	@echo "binaries = $(binaries)"
 	@echo "programs_test = $(programs_test)"
+	@echo "kwsys_programs_test = $(kwsys_programs_test)"
 	@echo "binaries_test = $(binaries_test)"
 	@echo "arch dir = $(ARCHDIR)"
 	@echo "CPPFLAGS='$(CPPFLAGS)'"
@@ -365,7 +387,7 @@ $(LIBFILE) : $(objectsWithPath)
 $(SHLIBFILE) : $(objectsWithPath) 
 	@echo "NOTICE: Building shared lib '$(@)'..." >&2
 	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
-	@test -n "$(objectsWithPath)" && $(LD) $(CXXFLAGS) $(SOFLAGS) $(^) -o $(LIBDIR)/$(notdir $(@)) || echo ""
+	@test -n "$(objectsWithPath)" && $(LD) $(CXXFLAGS) $(SOFLAGS) $(^) $(DEPLDFLAGS_SORTED) -o $(LIBDIR)/$(notdir $(@)) || echo ""
 	@echo "NOTICE: Building shared lib '$(@)' done." >&2
 	@echo
 

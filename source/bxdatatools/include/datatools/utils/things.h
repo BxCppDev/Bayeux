@@ -1,7 +1,7 @@
 /* things.h
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-03-08
- * Last modified : 2011-03-20
+ * Last modified : 2011-06-29
  * 
  * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
  * 
@@ -209,7 +209,7 @@ namespace datatools {
 						ostringstream message;
 						message << "datatools::utils::things::add<T>: " 
 										<< "Cannot allocate object '" << a_name << "' !";
-						throw runtime_error (message.str ());
+						throw logic_error (message.str ());
 					}
 				datatools::serialization::i_serializable * new_cast 
 					= dynamic_cast<datatools::serialization::i_serializable *> (new_obj); 

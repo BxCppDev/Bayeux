@@ -112,5 +112,10 @@ This is the 'datatools' package README file
     Francois Mauger <mauger@lpccaen.in2p3.fr>
     Arnaud Chapon <chapon@lpccaen.in2p3.fr>
 
+Note:
+
+about Cmake:
+  http://rachid.koucha.free.fr/tech_corner/cmake_manual.html#Project_1:_Generation_of_an_executable
+
 --
 Last update: 2009-04-07 by Francois Mauger <mauger@lpccaen.in2p3.fr>

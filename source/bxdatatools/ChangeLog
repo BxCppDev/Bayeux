@@ -28,7 +28,7 @@ This is the datatools package ChangeLog
 	- attempt to support Boost 1.43.0
 	  with EOS portable binary archive 4.1 + a trick (4.1)
 
-2011-03-15 : F. Mauger
+2011-03-15 : by F. Mauger
 	- prepare major version 3.0
 	- depends on Boost 1.44.0 (new serialization features)
 	- use a new serialization mechanism in 'properties' and
@@ -37,7 +37,7 @@ This is the datatools package ChangeLog
 	- add the 'things' class (with the new serial. mechanism too)
 	- new quasi_portable_binary_[i|o]archive classes (experimental)
 
-2011-03-19 : F. Mauger
+2011-03-19 : by F. Mauger
 	- implement a new scheme for handling Boost/Serialization material
 	- separate "template serialize" implementation (*.ipp file) from declaration (*.h file)
 	- create new useful macros to ease the management of class export features and
@@ -47,12 +47,16 @@ This is the datatools package ChangeLog
 	- do not embed explicit serialization code in the shared  lib.
 	- use explicit serialization code only at the executable level (local static object)
 	- provide a lightweight and optional model for serialization
-2011-04-11 : F. Mauger
+2011-04-11 : by F. Mauger
 	- add the 'handle' class base on boost::share_ptr<>
 	- add the 'handle_pool' class
 	- add pause/resume method in the computing_time class
-2011-06-02 : F. Mauger
+2011-06-02 : by F. Mauger
 	- fix coding style issues, excessive header inclusion
 	- some cleaning
+2011-06-15 : by F. Mauger
+	- tag version 3.1.2
+2011-07-01 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* explicit linking with dependency shared libs
+	* pre-tag 3.1.3
 
-	

@@ -85,9 +85,16 @@ namespace datatools {
 		template <class T>
 		class handle
 		{
+
 			boost::shared_ptr<T> sp_; /*!< The embedded shared pointer. */ 
 
 		public:
+
+			typedef T value_type;
+			typedef value_type * reference_type;
+			typedef const reference_type const_reference_type;
+			typedef value_type * pointer_type;
+			typedef const pointer_type const_pointer_type;
 
 			//! The default constructor.
 			/*!

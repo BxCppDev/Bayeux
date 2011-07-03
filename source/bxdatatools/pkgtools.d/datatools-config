@@ -111,6 +111,7 @@ with_boost_pba=1
 with_boost_fpu=1
 with_boost_python=1
 with_ebio=1
+with_kwsys=1
 if [ "x${DATATOOLS_NO_PBA}" == "x1" ]; then
     with_boost_pba=0
 fi
@@ -122,6 +123,9 @@ if [ "x${DATATOOLS_NO_PYTHON}" == "x1" ]; then
 fi
 if [ "x${DATATOOLS_NO_EBIO}" == "x1" ]; then
     with_ebio=0
+fi
+if [ "x${DATATOOLS_NO_KWSYS}" == "x1" ]; then
+    with_kwsys=0
 fi
 
 opt=$1
@@ -158,6 +162,7 @@ Known values for OPTION are:
   --with-fpu            print if Floating Point Utility is used
   --with-pba            print if Portable Binary Archive is used
   --with-ebio           print if Boost/Serialization binary code is pre-built and embedded in the shared library
+  --with-kwsys          print if kwsys is used
   --boost-version       print Boost version
   --clean-cache-files   clean compile/link cache files
   --check               check dependencies and setup
@@ -241,6 +246,9 @@ if [ "x$opt" = "x--cflags" ]; then
 		if [ ${with_ebio} -eq 0 ]; then
 		    echo -n "-DDATATOOLS_NO_EBIO=1 "
 		fi
+		if [ ${with_kwsys} -eq 0 ]; then
+		    echo -n "-DDATATOOLS_NO_KWSYS=1 "
+		fi
 		echo -n "`clhep-config --include` " 
 	    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py 
 	) | tee ${cflags_cache_effective}
@@ -291,15 +299,22 @@ if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
                     echo -n "${THEPACK_LIBDIR}/libdatatools.so "
 		else
                     echo -n "-L${THEPACK_LIBDIR} -ldatatools "
-		fi
-		
+		fi		
 		echo -n "-L${THEPACK_LIBDIR} -ldatatools "  
 		echo -n "`boost-config --ldflags serialization iostreams filesystem system` " 
 		echo -n "`clhep-config --libs` -lm "
+		if [ ${with_kwsys} -eq 1 ]; then
+		    echo -n "-lkwsys -lkwsys_c -ldl "
+		fi
             ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r 
 	) | tee ${ldflags_cache_effective}
 	test ${using_cache_files} -eq 0 && rm -f ${ldflags_cache}
     fi
+    exit 0
+fi 
+
+if [ "x$opt" = "x--with-kwsys" ]; then
+    echo "${with_kwsys}"
     exit 0
 fi 
 

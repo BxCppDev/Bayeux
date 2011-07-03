@@ -255,10 +255,16 @@ function do_run ()
     cd ${tmp_test_dir}
     count=0
     error_count=0
+    missing_count=0
     for exe in ${test_exe} ; do
 	let count=count+1
 	pkgtools__msg_notice "Running ${exe}..."
 	bin=${DATATOOLS_BIN_DIR}/${exe}
+	if [ ! -x ${bin} ]; then
+	    pkgtools__msg_warning "No '${bin}' exectuable avalaible ! Please first build it !"
+	    let missing_count=missing_count+1
+	    continue
+	fi
 	if [ "${exe}" = "test_command" ]; then
 	    echo "exec name arg1 arg2" | ${bin} >> tests.log 2>&1
 	    if [ $? -ne 0 ]; then
@@ -293,8 +299,9 @@ function do_run ()
     done
  
     pkgtools__msg_notice "Log file is '$(pwd)/tests.log'"
-    pkgtools__msg_notice "Total Number of executable  = ${count}"
-    pkgtools__msg_notice "Number of failed executable = ${error_count}"
+    pkgtools__msg_notice "Total Number of executable   = ${count}"
+    pkgtools__msg_notice "Number of missing executable = ${missing_count}"
+    pkgtools__msg_notice "Number of failed executable  = ${error_count}"
    
     cd ${opwd}
 
