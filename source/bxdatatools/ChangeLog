@@ -59,4 +59,7 @@ This is the datatools package ChangeLog
 2011-07-01 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
 	* explicit linking with dependency shared libs
 	* pre-tag 3.1.3
+2011-07-03 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* embedded kwsys library
+	* add library_loader class (kwsys-based)
 
