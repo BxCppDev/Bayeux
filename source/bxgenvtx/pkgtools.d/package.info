@@ -5,7 +5,7 @@ version=2.1
 description=A library for vertex generation
 language=C++
 namespace=genvtx
-dependencies=geomtools[>= 2.0]
+dependencies=geomtools[>=2.0]
 using_pkg_config=0
 creation=2010-02-13
 author=Francois Mauger <mauger@lpccaen.in2p3.fr>

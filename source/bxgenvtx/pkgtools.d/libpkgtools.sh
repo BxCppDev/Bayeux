@@ -1774,6 +1774,22 @@ EOF
 # Software check utilities:
 #
 
+    function pkgtools__executable_exists ()
+    {
+        exe=$1
+        if [ "x${exe}" = "x" ]; then
+            pkgtools__msg_error "Missing binary name!"
+            return 1
+        fi
+        
+        which ${exe} 2>&1 > /dev/null
+        if [ $? -ne 0 ]; then
+            return 1
+        fi
+        
+        return 0 # true
+    }
+
     function pkgtools__check_python_module ()
     {
 	__pkgtools__at_function_enter pkgtools__check_python_module
@@ -2421,7 +2437,7 @@ EOF
 	    local has_config_script=0
 	    local has_executable=0
 	    pkgtools__msg_debug "- Checking ${dep_cfg} file..."
-	    which ${dep_cfg} > /dev/null 2>&1 
+	    pkgtools__executable_exists ${dep_cfg}
 	    if [ $? -ne 0 ]; then
 		has_config_script=0
 		pkgtools__msg_info "Cannot find '${dep_cfg}' config script !"
@@ -2433,7 +2449,7 @@ EOF
 	    if [ ${has_config_script} -eq 0 ]; then
 		pkgtools__msg_debug "- Checking ${dep_name} executable..."
 		local dep_exe=
-		which ${dep_name} > /dev/null 2>&1 
+		pkgtools__executable_exists ${dep_name} 
 		if [ $? -ne 0 ]; then
 		    has_executable=0
 		    pkgtools__msg_info "Cannot find '${dep_name}' executable !"
