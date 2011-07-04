@@ -54,6 +54,10 @@ namespace geomtools {
 
     public:
 
+      bool has_subaddress (const string & a_label, int a_count = 1) const;
+
+      int get_subaddress_index (const string & a_label, int a_count = 1) const;
+
       bool is_valid () const;
 
       const string & get_category () const;

@@ -30,6 +30,24 @@ namespace geomtools {
     return type != geom_id::INVALID_TYPE;
   }
 
+  bool id_mgr::category_info::has_subaddress (const string & a_label, int a_count) const
+  {
+    for (int i = 0; i < addresses.size (); i++)
+      {
+	if (addresses[i] == a_label) return true;
+      }
+    return false;
+  }
+
+  int id_mgr::category_info::get_subaddress_index (const string & a_label, int a_count) const
+  {
+    for (int i = 0; i < addresses.size (); i++)
+      {
+	if (addresses[i] == a_label) return i;
+      }
+    return -1;
+  }
+
   const string & id_mgr::category_info::get_category () const
   {
     return category;
