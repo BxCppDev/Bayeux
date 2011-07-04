@@ -152,6 +152,9 @@ namespace geomtools {
     //! returns the category associated to an ID:
     const string & get_category (const geom_id &) const;
 
+    //! return the type associated to a category:
+    uint32_t get_category_type (const string & a_category) const;
+
     //! returns the value of the address 'what' from an ID:
     int get (const geom_id &, const string & what_) const;
 

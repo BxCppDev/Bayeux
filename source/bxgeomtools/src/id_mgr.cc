@@ -563,6 +563,20 @@ namespace geomtools {
     return *(found->second);
   }
 
+  uint32_t id_mgr::get_category_type (const string & a_category) const
+  {
+    categories_by_name_col_t::const_iterator found
+      = __categories_by_name.find (a_category);
+    if (found == __categories_by_name.end ())
+      {
+	ostringstream message;
+	message << "id_mgr::get_type: "
+		<< "Unregistered category with name '" << a_category << "' !";
+	throw runtime_error (message.str ());
+      }
+    return found->second.get_type ();
+  }
+
   const id_mgr::category_info &
   id_mgr::get_category_info (const string & name_) const
   {
