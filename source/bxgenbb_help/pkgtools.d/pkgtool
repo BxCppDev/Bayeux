@@ -407,8 +407,6 @@ function do_clean ()
 	return $?
     fi 
 
-    #test -f ${configure_flag_file} && rm -f ${configure_flag_file}
-
     __pkgtools__at_function_exit
     return 1
 }

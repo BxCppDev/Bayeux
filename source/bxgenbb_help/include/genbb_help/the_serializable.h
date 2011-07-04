@@ -13,7 +13,6 @@
 
 //#include <datatools/serialization/archives_instantiation.h>
 //#include <boost/serialization/export.hpp>
-#include <genbb_help/the_serializable.h>
 
 /***************************
  * genbb::primary_particle *

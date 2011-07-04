@@ -171,8 +171,14 @@ LDFLAGS1_F77+=$(shell mygsl-config --ldflags)
 LDFLAGS1_F77+=-lm 
 
 CPPFLAGS+=$(shell echo $(CPPFLAGS1) $(CPPFLAGS2) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py) 
-LDFLAGS+=$(shell echo $(LDFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r) 
-LDFLAGS_F77+=$(shell echo $(LDFLAGS1_F77) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r) 
+
+# LDFLAGS+=$(shell echo $(LDFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r)
+DEPLDFLAGS_SORTED=$(shell echo $(LDFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r)
+LDFLAGS+=$(DEPLDFLAGS_SORTED)
+
+#LDFLAGS_F77+=$(shell echo $(LDFLAGS1_F77) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r) 
+DEPLDFLAGS_F77_SORTED=$(shell echo $(LDFLAGS1_F77) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r) 
+LDFLAGS_F77+=$(DEPLDFLAGS_F77_SORTED)
 
 DUMMY=-I. -I$(INCDIR)
 F77CPPFLAGS+=$(shell echo $(CPPFLAGS1) $(CPPFLAGS_F77) $(DUMMY) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py)
@@ -433,12 +439,12 @@ $(LIBFILEF) : $(f77_objectsWithPath)
 $(SHLIBFILE) : $(objectsWithPath) #$(f77_objectsWithPath) 
 	@echo "Building shared lib '$(@)'..."
 	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
-	$(LD) $(CXXFLAGS) $(SOFLAGS) $(^) -o $(LIBDIR)/$(notdir $(@))
+	$(LD) $(CXXFLAGS) $(SOFLAGS) $(^) $(DEPLDFLAGS_SORTED) -o $(LIBDIR)/$(notdir $(@))
 
 $(SHLIBFILE_F77) : $(f77_objectsWithPath) $(crossed_objectsWithPath)  
 	@echo "Building shared lib '$(@)'..."
 	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
-	$(LD) $(CXXFLAGS) $(SOFLAGS) $(^) -o $(LIBDIR)/$(notdir $(@))
+	$(LD) $(CXXFLAGS) $(SOFLAGS) $(^) $(DEPLDFLAGS_F77_SORTED) -o $(LIBDIR)/$(notdir $(@))
 
 $(OBJDIR)/%$(OBJEXT) : %$(SOURCEEXT) %$(HEADEREXT)
 	@echo "Compiling module '$(@)'..."
