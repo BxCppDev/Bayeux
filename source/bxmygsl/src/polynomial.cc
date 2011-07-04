@@ -35,17 +35,20 @@ namespace mygsl {
 	  }
       }
     __c.at (i_) = c_;
+    return;
   }
   
   polynomial::polynomial (size_t degree_)
   {
     __c.assign (degree_ + 1, 0.0);
     __c [degree_] = 1.0;
+    return;
   }
   
   polynomial::polynomial (double c0_)
   {
     __c.assign (1, c0_);
+    return;
   }
   
   polynomial::polynomial (double c0_, double c1_)
@@ -53,6 +56,7 @@ namespace mygsl {
     __c.assign (2, 0.0);
     __c [0] = c0_;
     __c [1] = c1_;
+    return;
   }
   
   polynomial::polynomial (double c0_, double c1_, double c2_)
@@ -61,21 +65,25 @@ namespace mygsl {
     __c [0] = c0_;
     __c [1] = c1_;
     __c [2] = c2_;
+    return;
   }
   
   polynomial::polynomial (const vector<double> & c_)
   {
     __c = c_;
+    return;
   }
   
   polynomial::polynomial (const polynomial & p_)
   {
     __c = p_.__c;
+    return;
   }
   
   polynomial::~polynomial ()
   {
     __c.clear ();
+    return;
   }
    
   double polynomial::eval (double x_) const
@@ -256,6 +264,7 @@ namespace mygsl {
 	__ws = gsl_poly_complex_workspace_alloc (sz_);
 	__sz = sz_;
       }
+    return;
   }
 
   void polynomial::solver::__reset ()
@@ -267,6 +276,7 @@ namespace mygsl {
 	__sz = 0;
       }
     __status = GSL_EFAILED;
+    return;
   }
 
   polynomial::solver::solver (size_t sz_)
@@ -275,11 +285,13 @@ namespace mygsl {
     __sz = 0;
     __ws = 0;
     __init (sz_);
+    return;
   }
 
   polynomial::solver::~solver ()
   {
     __reset ();
+    return;
   }
 
   bool polynomial::solver::solve (const polynomial & p_)
