@@ -47,6 +47,8 @@ action_mode=""
 with_python=0
 #config_file=${the_pkgtools_dir}/${pack_name_lower}.config
 
+default_bio_mode=""
+
 the_base_dir=.
 
 do_usage=0
@@ -339,7 +341,11 @@ function do_build_gmk ()
     build_tag=""
     if [ -z "$1" ]; then
         build_tag="lib"
-    else
+ 	if [ "x${GENBB_HELP_XBIO}" = "x1" ]; then
+	    pkgtools__msg_notice "Build target is 'lib_xbio'"
+	    build_tag="lib_xbio"
+	fi
+   else
         build_tag="$1"
     fi  
     pkgtools__msg_notice "Build target is '${build_tag}'"
@@ -445,7 +451,20 @@ function do_configure ()
     local prefix=""
     local can_python_wrapper=0
     local with_python_wrapper=0
+
+    local bio_mode=${default_bio_mode}
     local with_ebio=0
+    local with_xbio=0
+    local force_bio=0
+    datatools_with_xbio=$(datatools-config --with-xbio)
+    if [ ${datatools_with_xbio} -eq 1 ]; then
+	bio_mode="auxiliary"
+    fi
+    datatools_with_ebio=$(datatools-config --with-ebio)
+    if [ ${datatools_with_ebio} -eq 1 ]; then
+	bio_mode="embedded"
+    fi
+    pkgtools__msg_debug "bio_mode=${bio_mode}"	
     
     if [ -f ${the_python_dir}/__init__.py ]; then
 	can_python_wrapper=1
@@ -475,14 +494,18 @@ function do_configure ()
 	    elif [ "x${opt}" = "x--gfortran" ]; then
 		use_g77=0
 		use_gfortran=1
+	    elif [ "x${opt}" = "x-nbio" -o "x${opt}" = "x--without-boost-io" ]; then
+		bio_mode=""
+	    elif [ "x${opt}" = "x-ebio" -o "x${opt}" = "x--with-embedded-boost-io" ]; then
+		bio_mode="embedded"
+	    elif [ "x${opt}" = "x-xbio" -o "x${opt}" = "x--with-auxiliary-boost-io" ]; then
+		bio_mode="auxiliary"
+	    elif [ "x${opt}" = "x--force-boost-io-mode" ]; then
+		force_bio=1
 	    #elif [ "x${opt}" = "x--force-one-underscore" ]; then
 	    #	force_one_underscore=1
 	    #elif [ "x${opt}" = "x--force-two-underscores" ]; then
 	    #	force_two_underscores=1
-	    elif [ "x${opt}" = "x-ebio" -o "x${opt}" = "x--with-embedded-boost-io" ]; then
-	    	with_ebio=1
-	    elif [ "x${opt}" = "x-no-ebio" -o "x${opt}" = "x--without-embedded-boost-io" ]; then
-	    	with_ebio=0
 	    elif [ ${can_python_wrapper} -eq 1 ]; then
                 # parse Python wrapper switches:
 		if [ "x${opt}" = "x--with-python" ]; then
@@ -543,25 +566,69 @@ function do_configure ()
     #pkgtools__msg_notice "File '${configure_flag_file}' has been generated."
     pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_F77_COMP" "${F77_COMP}"
 
-    if [ ${with_ebio} -ne 0 ]; then
-	pkgtools__msg_notice "Embedded Boost I/O support..."
-	datatools_with_ebio=$(datatools-config --with-ebio)
-	if [ ${datatools_with_ebio} -eq 0 ]; then
-	    pkgtools__msg_warning "As datatools has no Embedded Boost I/O support, genb_help won't too !"
-	    with_ebio=0
-	else
-#	    pkgtools__msg_warning "Embedded pre-built Boost/Serialization code is not supported !"
-	    with_ebio=1	
-	fi
-    fi
-    if [ ${with_ebio} -eq 0 ]; then
-	pkgtools__msg_warning "${pack_name} will not embed pre-built Boost/Serialization code !"
-	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_NO_EBIO" 1
-    else
-	pkgtools__msg_warning "${pack_name} will embed pre-built Boost/Serialization code !"	
-	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_NO_EBIO" 0        
+    #########
+
+    if [ "x${bio_mode}" = "xembedded" ]; then
+	with_ebio=1
+	with_xbio=0
+	pkgtools__msg_warning "Embedded pre-built Boost/Serialization code requires Boost >= 1.47"	
+    elif [ "x${bio_mode}" = "xauxiliary" ]; then
+	with_ebio=0
+	with_xbio=1
+	pkgtools__msg_warning "Auxiliary pre-built Boost/Serialization code requires Boost >= 1.47"	
     fi
 
+    if [ ${with_xbio} -eq 1 ]; then
+	datatools_with_xbio=$(datatools-config --with-xbio)
+	if [ ${datatools_with_xbio} -ne 1 ]; then
+	    if [ ${force_bio} -eq 1 ]; then
+		pkgtools__msg_warning "genbb_help will have auxiliary Boost I/O DLL support but datatools does not !"
+	    else
+		pkgtools__msg_error "As datatools has no auxiliary Boost I/O DLL support, genbb_help should not itself !"
+		__pkgtools__at_function_exit
+		return 1
+	    fi
+	else
+	    pkgtools__msg_warning "Use pre-built Boost/Serialization code in auxiliary DLL !"	
+	fi
+    fi
+    if [ ${with_ebio} -eq 1 ]; then
+	datatools_with_ebio=$(datatools-config --with-ebio)
+	if [ ${datatools_with_ebio} -ne 1 ]; then
+	    if [ ${force_bio} -eq 1 ]; then
+		pkgtools__msg_warning "genbb_help will have embedded Boost I/O code support but datatools does not !"
+	    else
+		pkgtools__msg_error "As datatools has no embedded Boost I/O code support, genbb_help should not itself !"
+		__pkgtools__at_function_exit
+		return 1
+	    fi
+	else
+	    pkgtools__msg_warning "Use pre-built embedded Boost/Serialization code !"	
+	fi
+	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_NO_EBIO" 1
+    fi
+    
+    ### Support for Embedded Boost I/O:
+    pkgtools__msg_notice "Embedded Boost I/O:..."
+    if [ ${with_ebio} -eq 0 ]; then
+	pkgtools__msg_warning "Do not use Embedded Boost I/O !"
+	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_EBIO" 0
+    else
+	pkgtools__msg_notice "Use Embedded Boost I/O !"
+	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_EBIO" 1
+    fi
+    ### Support for Auxiliary Boost I/O DLL:
+    if [ ${with_xbio} -eq 0 ]; then
+	pkgtools__msg_warning "Do not use Auxiliary Boost I/O !"
+	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_XBIO" 0
+    else
+	pkgtools__msg_notice "Use Auxiliary Boost I/O !"
+	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_XBIO" 1
+    fi
+
+
+
+########
     echo "# end of ${pack_name} configuration informations." >> ${config_db_file} 
     cat ${config_db_file} | ${the_pkgtools_dir}/config_to_setup.py sh  > ${config_sh_file}
     cat ${config_db_file} | ${the_pkgtools_dir}/config_to_setup.py csh > ${config_csh_file}

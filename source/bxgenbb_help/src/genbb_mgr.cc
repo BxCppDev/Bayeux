@@ -181,9 +181,11 @@ namespace genbb {
 	    if (is_debug ()) clog << "DEVEL: genbb_mgr::__load_next_boost: filename = '" << filename << "'" << endl;
 	    return;
 	  }
+	datatools::utils::fetch_path_with_env (filename);
 	__reader.init (filename, 
 		       datatools::serialization::using_multi_archives);
 	__current_filename = filename;
+	return;
       }
 
     if (! __reader.is_initialized ())
@@ -241,7 +243,7 @@ namespace genbb {
 	    if (is_debug ()) clog << "DEVEL: genbb_mgr::__load_next: filename = '" << filename << "'" << endl;
 	    return;
 	  }
-
+	datatools::utils::fetch_path_with_env (filename);
 	if (is_debug ()) clog << "DEVEL: genbb_mgr::__load_next: filename = '" << filename << "'" << endl;
 	__fin.close ();
 	__fin.open (filename.c_str ());

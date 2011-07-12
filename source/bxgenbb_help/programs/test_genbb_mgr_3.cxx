@@ -6,15 +6,14 @@
 #include <string>
 #include <exception>
 
-#include <datatools/serialization/io_factory.h>
-
 #include <genbb_help/genbb_mgr.h>
 
-/* Serialization dedicated code */
-// #ifdef GEOMTOOLS_NO_EBIO
-// #include <geomtools/the_serializable.h>
-// #endif
-#include <genbb_help/the_serializable.h>
+#include <datatools/serialization/io_factory.h>
+
+// Some pre-processor guard about Boost I/O usage and linkage :
+//#include <datatools/serialization/bio_guard.h>
+//#include <geomtools/serialization/bio_guard.h>
+#include <genbb_help/serialization/bio_guard.h>
 
 int main (int argc_, char ** argv_)
 {
@@ -36,9 +35,9 @@ int main (int argc_, char ** argv_)
       genbb::genbb_mgr mgr;
 
       // genbb input data files:
-      mgr.set ("resources/bipo212_1.genbb");
-      mgr.set ("resources/bipo212_2.genbb");
-      mgr.set ("resources/bipo212_3.genbb");
+      mgr.set ("${GENBB_HELP_ROOT}/resources/bipo212_1.genbb");
+      mgr.set ("${GENBB_HELP_ROOT}/resources/bipo212_2.genbb");
+      mgr.set ("${GENBB_HELP_ROOT}/resources/bipo212_3.genbb");
       if (debug) mgr.dump ();
 
       // initialize the manager:

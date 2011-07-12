@@ -39,9 +39,7 @@ ifeq ($(OS),Darwin)
   STATICFLAGS=
 endif
 
-# Choices:
-# F77_COMP=g77
-# F77_COMP=gfortran
+# Choices: F77_COMP=g77 or F77_COMP=gfortran
 ifneq ($(GENBB_HELP_F77_COMP),)
 F77=$(GENBB_HELP_F77_COMP)
 $(warning Force $(GENBB_HELP_F77_COMP) compiler!)
@@ -55,11 +53,15 @@ all : lib
 
 PACKAGENAME=genbb_help
 UPACKAGENAME=$(shell echo "$(PACKAGENAME)" | tr "a-z" "A-Z")
-LIBNAME=$(shell echo "$(PACKAGENAME)" | tr "A-Z" "a-z")
-LIBNAMEF=$(shell echo "$(PACKAGENAME)" | tr "A-Z" "a-z")_f77
+LPACKAGENAME=$(shell echo "$(PACKAGENAME)" | tr "A-Z" "a-z")
+LIBNAME=$(LPACKAGENAME)
+LIBNAME_BIO=$(LIBNAME)_bio
+LIBNAMEF=$(LIBNAME)_f77
 LIBFILE=lib$(LIBNAME).a
+LIBFILE_BIO=lib$(LIBNAME_BIO).a
 LIBFILEF=lib$(LIBNAME)_f77.a
 SHLIBFILE=lib$(LIBNAME)${SHLIBEXT}
+SHLIBFILE_BIO=lib$(LIBNAME_BIO)${SHLIBEXT}
 SHLIBFILE_F77=lib$(LIBNAME)_f77${SHLIBEXT}
 
 BASEDIR=..
@@ -77,14 +79,13 @@ OBJDIR=$(ARCHDIR)/obj
 LIBDIR=$(ARCHDIR)/lib
 BINDIR=$(ARCHDIR)/bin
 
-CXXFLAGS=-fPIC
+FPICFLAG=-fPIC
+CXXFLAGS=$(FPICFLAG)
+F77FLAGS=$(FPICFLAG)
 
-F77FLAGS=-fPIC
 test_f77=$(shell which $(F77))
 ifeq ($(test_f77),)
 $(error no $(F77) is available!)
-#else
-#$(warning found $(F77) compiler!)
 endif
 
 ifeq ($(F77),g77)
@@ -104,12 +105,14 @@ else
 dummy=$(shell echo "Processor: 32-bits")
 endif
 
-CPPFLAGS=-I. -I$(INCDIR)
-LDFLAGS_F77=-O -L$(LIBDIR) -l$(LIBNAMEF)
-LDFLAGS=-l$(LIBNAME) $(LDFLAGS_F77)
+binlibdep=lib
 
-DEPCPPFLAGS=
-DEPLDFLAGS=
+###########################################################################
+DEPCPPFLAGS_CXX=
+DEPLDFLAGS_CXX=
+DEPCPPFLAGS_F77=
+DEPLDFLAGS_F77=
+
 ### Dependencies:
 #DEP_HOOK
 
@@ -117,77 +120,108 @@ DEPLDFLAGS=
 ifeq ($(shell which geomtools-config),)
 $(error Sorry geomtools-config not found!)
 endif
-DEPCPPFLAGS+=$(shell geomtools-config --cflags)
-DEPLDFLAGS+=$(shell geomtools-config --ldflags)
+DEPCPPFLAGS_CXX+=$(shell geomtools-config --cflags)
+DEPLDFLAGS_CXX+=$(shell geomtools-config --ldflags)
 
 # f2c dependency:
 ifeq ($(F77),g77)
-DEPLDFLAGS+=-lg2c
+DEPLDFLAGS_CXX+=-lg2c
 endif
 
 ifeq ($(F77),gfortran)
-DEPLDFLAGS+=-lgfortran
-endif
-
-CPPFLAGS1=
-CPPFLAGS2=
-CPPFLAGS_F77=
-
-# Force only one underscore for extern Fortran77/C+ names:
-underscore_mode=one
-$(warning Force only one underscore for extern Fortran77/C++ names)
-
-ifeq ($(underscore_mode),one)
-CPPFLAGS1+=-Dfermi_wrap=fermi_wrap_
-CPPFLAGS1+=-Drng_shoot_reset=rng_shoot_reset_
-CPPFLAGS1+=-Drng_shoot_flat=rng_shoot_flat_
-
-CPPFLAGS2+=-Dgenbbsub=genbbsub_
-CPPFLAGS2+=-Dset_genbb_random_seed=set_genbb_random_seed_
-CPPFLAGS2+=-Dgrndm=grndm_
-CPPFLAGS2+=-Dgenbb_init_enrange=genbb_init_enrange_
-CPPFLAGS2+=-Dgenevent=genevent_
-CPPFLAGS2+=-Denrange=enrange_
+DEPLDFLAGS_CXX+=-lgfortran
 endif
 
 ### Use or not Embedded Boost I/O:
-EBIO_FLAGS=
-ifneq ($(GENBB_HELP_NO_EBIO),1)
-GENBB_HELP_NO_EBIO=0
-#$(warning WARNING: genbb_help uses 'Embedded Boost I/O' !)
-EBIO_FLAGS=
+EBIO_CFLAGS=
+EBIO_LDFLAGS=
+ifeq ($(GENBB_HELP_EBIO),1)
+GENBB_HELP_EBIO=1
+EBIO_CFLAGS=-DGENBB_HELP_EBIO=1
+$(warning WARNING: genbb_help uses 'Embedded Boost I/O' !)
 else
-GENBB_HELP_NO_EBIO=1
-EBIO_FLAGS=-DGENBB_HELP_NO_EBIO=1
-#$(warning WARNING: genbb_help does not use 'Embedded Boost I/O' !)
+GENBB_HELP_EBIO=0
+EBIO_CFLAGS=-DGENBB_HELP_EBIO=0
+$(warning WARNING: genbb_help does not use 'Embedded Boost I/O' !)
 endif
 
+### Use or not Embedded Boost I/O:
+XBIO_CFLAGS=
+XBIO_LDFLAGS=
+ifeq ($(GENBB_HELP_XBIO),1)
+GENBB_HELP_XBIO=1
+XBIO_CFLAGS=-DGENBB_HELP_XBIO=1
+XBIO_LDFLAGS=-l$(LIBNAME_BIO)
+binlibdep=lib_xbio
+$(warning WARNING: genbb_help uses 'Auxiliary Boost I/O' !)
+else
+GENBB_HELP_XBIO=0
+XBIO_CFLAGS=-DGENBB_HELP_XBIO=0
+$(warning WARNING: genbb_help does not use 'Auxiliary Boost I/O' !)
+endif
+
+$(warning WARNING: genbb_help EBIO_FLAGS=$(EBIO_CFLAGS)) 
+$(warning WARNING: genbb_help XBIO_FLAGS=$(XBIO_CFLAGS)) 
+
+# mygsl dependency :
+DEPCPPFLAGS_F77+=$(shell mygsl-config --cflags)  
+DEPLDFLAGS_F77+=$(shell mygsl-config --ldflags)  
+
+DEPCPPFLAGS_CXX+=$(shell mygsl-config --cflags)  
+DEPLDFLAGS_CXX+=$(shell mygsl-config --ldflags)  
+
 ### End of dependencies.
-CPPFLAGS1+=$(EBIO_FLAGS) $(DEPCPPFLAGS) 
-CPPFLAGS_F77+=$(DEPCPPFLAGS) 
-LDFLAGS1+=$(DEPLDFLAGS) 
-LDFLAGS1+=-lm 
-LDFLAGS1_F77+=$(shell mygsl-config --ldflags)  
-LDFLAGS1_F77+=-lm 
+###########################################################################
+DEPCPPFLAGS_CXX+=$(EBIO_CFLAGS) $(XBIO_CFLAGS) $(DEPCPPFLAGS) 
 
-CPPFLAGS+=$(shell echo $(CPPFLAGS1) $(CPPFLAGS2) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py) 
+CPPFLAGS_DEFFUNC1=
+CPPFLAGS_DEFFUNC2=
+# Force only one underscore for extern Fortran77/C+ names:
+underscore_mode=one
+$(warning Force only one underscore for extern Fortran77/C++ names)
+ifeq ($(underscore_mode),one)
+CPPFLAGS_DEFFUNC1+=-Dfermi_wrap=fermi_wrap_
+CPPFLAGS_DEFFUNC1+=-Drng_shoot_reset=rng_shoot_reset_
+CPPFLAGS_DEFFUNC1+=-Drng_shoot_flat=rng_shoot_flat_
 
-# LDFLAGS+=$(shell echo $(LDFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r)
-DEPLDFLAGS_SORTED=$(shell echo $(LDFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r)
-LDFLAGS+=$(DEPLDFLAGS_SORTED)
+CPPFLAGS_DEFFUNC2+=-Dgenbbsub=genbbsub_
+CPPFLAGS_DEFFUNC2+=-Dset_genbb_random_seed=set_genbb_random_seed_
+CPPFLAGS_DEFFUNC2+=-Dgrndm=grndm_
+CPPFLAGS_DEFFUNC2+=-Dgenbb_init_enrange=genbb_init_enrange_
+CPPFLAGS_DEFFUNC2+=-Dgenevent=genevent_
+CPPFLAGS_DEFFUNC2+=-Denrange=enrange_
+endif
 
-#LDFLAGS_F77+=$(shell echo $(LDFLAGS1_F77) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r) 
-DEPLDFLAGS_F77_SORTED=$(shell echo $(LDFLAGS1_F77) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r) 
+### F77 code:
+DEPCPPFLAGS_F77_SORTED=$(shell echo $(DEPCPPFLAGS_F77) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py) 
+CPPFLAGS_F77=-I$(INCDIR)
+CPPFLAGS_F77+=$(CPPFLAGS_DEFFUNC1)
+CPPFLAGS_F77+=$(DEPCPPFLAGS_F77_SORTED) 
+
+DEPLDFLAGS_F77_SORTED=$(shell echo $(DEPLDFLAGS_F77) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r) 
+LDFLAGS_F77=-O -L$(LIBDIR) -l$(LIBNAMEF)
 LDFLAGS_F77+=$(DEPLDFLAGS_F77_SORTED)
 
-DUMMY=-I. -I$(INCDIR)
-F77CPPFLAGS+=$(shell echo $(CPPFLAGS1) $(CPPFLAGS_F77) $(DUMMY) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py)
+$(warning WARNING: genbb_help DEPCPPFLAGS_F77_SORTED=$(DEPCPPFLAGS_F77_SORTED))  
+$(warning WARNING: genbb_help DEPLDFLAGS_F77_SORTED=$(DEPLDFLAGS_F77_SORTED)) 
 
-CXXFLAGSSHFLAGS=-Wall -v
-STATICFLAGS=-static
+### C++ code:
+DEPCPPFLAGS_CXX_SORTED=$(shell echo $(DEPCPPFLAGS_CXX) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py) 
+CPPFLAGS_CXX=-I$(INCDIR)
+CPPFLAGS_CXX+=$(CPPFLAGS_DEFFUNC1)
+CPPFLAGS_CXX+=$(CPPFLAGS_DEFFUNC2)
+CPPFLAGS_CXX+=$(DEPCPPFLAGS_CXX_SORTED) 
 
-SHFLAGS=$(LDFLAGS) -ldl 
-SHFLAGS_F77=$(LDFLAGS_F77) -ldl 
+DEPLDFLAGS_CXX_SORTED=$(shell echo $(DEPLDFLAGS_CXX) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r) 
+LDFLAGS_CXX=-O -L$(LIBDIR) -l$(LIBNAME) -l$(LIBNAMEF)
+LDFLAGS_CXX+=$(DEPLDFLAGS_CXX_SORTED)
+
+# Special additional link flag for BIO DLL and executable :
+LIBLDFLAGS=-L$(LIBDIR) -l$(LIBNAMEF)  
+LIBLDFLAGS_BIO=-L$(LIBDIR) -l$(LIBNAME) -l$(LIBNAMEF)  
+EXELDFLAGS_BIO=-L$(LIBDIR) $(XBIO_LDFLAGS) -l$(LIBNAME) -l$(LIBNAMEF)    
+
+#########################################################################################
 
 HEADEREXT=.h
 SOURCEEXT=.cc
@@ -221,25 +255,25 @@ vpath %$(LIBEXT)     $(LIBDIR)
 vpath %$(SHLIBEXT)   $(LIBDIR)
 
 headers := $(notdir $(shell ls $(INCDIR)/$(PACKAGENAME)/*$(HEADEREXT)))
-sources := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT)))
-sources := $(shell echo $(sources) | sed -e 's/rng.cc//g' -e 's/fermi.cc//g')
+sources1 := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT)))
+sources1 := $(shell echo $(sources1) | sed -e 's/rng.cc//g' -e 's/fermi.cc//g' -e 's/the_serializable.cc//g')
+
+# standard mode : 
+ifeq ($(GENBB_HELP_EBIO),0)
+sources := $(sources1)
+else
+# only for GENBB_HELP_EBIO==1 mode :
+sources := the_serializable.cc $(sources1)
+endif
+
+sources_bio :=  $(notdir $(shell ls $(SRCDIR)/the_serializable$(SOURCEEXT) 2> /dev/null))
+
 objects := $(sources:%$(SOURCEEXT)=%$(OBJEXT))
-# objects := \
-# ../src/dummy_genbb_help.cc
-# ../src/fermi.cc
-# ../src/genbb.cc
-# ../src/genbb_help.cc
-# ../src/genbb_mgr.cc
-# ../src/genbb_writer.cc
-# ../src/i_genbb.cc
-# ../src/primary_event.cc
-# ../src/primary_particle.cc
-# ../src/rng.cc
-# ../src/single_particle_generator.cc
-# ../src/wgenbb.cc
 
 objectsWithPath := $(sources:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT))
-#objectsWithPath := $(shell echo $(objectsWithPath) | sed -e 's@$(LIBDIR)/rng.o@@g' -e 's@$(LIBDIR)/fermi.o@@g')
+objects_bio := $(sources_bio:%$(SOURCEEXT)=%$(OBJEXT)) 
+objectsWithPath_bio := $(sources_bio:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT)) 
+
 programs_all:= $(notdir $(shell ls $(PROGDIR)/*$(PROGEXT) 2> /dev/null))
 programs_test:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep ^test_)
 programs:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep -v ^test_)
@@ -262,6 +296,7 @@ f77_programs:= $(shell echo $(f77_programs_all) | tr ' ' '\n' | grep .F$ | grep 
 f77_binaries:= $(f77_programs:%$(F77_PROGEXT)=%$(F77_BINEXT))
 f77_binaries_test:= $(f77_programs_test:%$(F77_PROGEXT)=%$(F77_BINEXT))
 
+#################################################################################"
 
 .PHONY : help
 help :
@@ -285,8 +320,8 @@ help :
 	@echo "make bzdist    : make a source tarball ($(LIBNAME)-$(LIBVER).tar.bz2)"
 	@echo ""
 
-.PHONY : test
-test:
+.PHONY : dump
+dump:
 	@echo "PACKAGE_DIR='$(PACKAGE_DIR)'"
 	@echo "PACKAGENAME='$(PACKAGENAME)'"
 	@echo "COMPILER='$(COMPILER)'"
@@ -302,6 +337,10 @@ test:
 	@echo "C++ sources = $(sources)"
 	@echo ""
 	@echo "C++ objects = $(objects)"
+	@echo ""
+	@echo "C++ sources (bio) = $(sources_bio)"
+	@echo ""
+	@echo "C++ objects (bio) = $(objects_bio)"
 	@echo ""
 	@echo "C++ objectsWithPath = $(objectsWithPath)"
 	@echo ""
@@ -345,12 +384,8 @@ build_special :
 
 .PHONY : install
 install : 
-	@#echo "Installing..."
-	@#cat $(BASEDIR)/pkgtools.d/package.csh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).csh
-	@#cat $(BASEDIR)/pkgtools.d/package.sh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).sh
+	@echo "Installing..."
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
-	@#ln -s -f $(PACKAGE_ROOT)/pkgtools.d/$(LIBNAME)-config $(BINDIR)/$(LIBNAME)-config
-	@#ln -s -f $(PACKAGE_ROOT)/scripts/genbb $(BINDIR)/genbb
 
 ##########################################################
 
@@ -372,19 +407,29 @@ system :
 setup :
 	@echo "export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(PACKAGE_DIR)/$(SYSTEM)/lib"
 
+.PHONY : lib_xbio
+lib_xbio : lib lib_bio
+
 .PHONY : lib
-lib : lib_shared lib_shared_f77
+lib : lib_shared_f77 lib_shared 
+
+.PHONY : lib_bio
+lib_bio : lib_shared_bio
+
+.PHONY : lib_shared_bio
+lib_shared_bio : $(SHLIBFILE_BIO) lib_shared
+	@echo "SHLIBFILE_BIO=$(SHLIBFILE_BIO)"
 
 .PHONY : libs
-libs : lib_static lib_shared
+libs : lib_shared
 
-.PHONY : lib_static
-lib_static : $(LIBFILE)
+# .PHONY : lib_static
+# lib_static : $(LIBFILE)
 
 .PHONY : lib_shared
 lib_shared : $(SHLIBFILE)
 
-.PHONY : lib_shared
+.PHONY : lib_shared_f77
 lib_shared_f77 : $(SHLIBFILE_F77)
 
 .PHONY : clean
@@ -408,10 +453,10 @@ bin : bin_shared bin_shared_f77
 bin_test : bin_test_shared
 
 .PHONY : bins
-bins : bin_shared bin_shared_f77 bin_static 
+bins : bin_shared bin_shared_f77 #bin_static 
 
-.PHONY : bin_static
-bin_static : $(binaries_static)
+# .PHONY : bin_static
+# bin_static : $(binaries_static)
 
 .PHONY : bin_shared
 bin_shared : $(binaries) 
@@ -422,24 +467,41 @@ bin_shared_f77 : $(f77_binaries)
 .PHONY : bin_test_shared
 bin_test_shared : $(binaries_test) $(f77_binaries_test)
 
-$(LIBFILE) : $(objectsWithPath)  $(f77_objectsWithPath) 
-	@echo "Building static lib '$(@)'..."
-	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
-	for file_object in $(objects); do \
-	  $(AR) -rusv $(LIBDIR)/$(LIBFILE) $(OBJDIR)/$(notdir $${file_object}) ; done
-	ranlib $(LIBDIR)/$(notdir $(@))
+%$(BINEXT) : %$(PROGEXT) | lib_shared lib_shared_f77 $(binlibdep)
+	@echo "Compiling program '$(@)' with shared library..."
+	@test -d $(BINDIR) || mkdir -p $(BINDIR)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS_CXX) $< $(EXELDFLAGS_BIO) $(LDFLAGS_CXX) -o $(BINDIR)/$(notdir $(@))
 
-$(LIBFILEF) : $(f77_objectsWithPath) 
-	@echo "Building static lib '$(@)'..."
-	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
-	for file_object in $(objects); do \
-	  $(AR) -rusv $(LIBDIR)/$(LIBFILE) $(OBJDIR)/$(notdir $${file_object}) ; done
-	ranlib $(LIBDIR)/$(notdir $(@))
+%$(F77_BINEXT) : %$(F77_PROGEXT) | lib_shared_f77 
+	@echo "Compiling F77 program '$(@)' with shared library..."
+	@test -d $(BINDIR) || mkdir -p $(BINDIR)
+	$(F77) $(F77FLAGS) $(CPPFLAGS_F77) $< $(LDFLAGS_F77) -o $(BINDIR)/$(notdir $(@))
 
-$(SHLIBFILE) : $(objectsWithPath) #$(f77_objectsWithPath) 
+# $(LIBFILE) : $(objectsWithPath)  $(f77_objectsWithPath) 
+# 	@echo "Building static lib '$(@)'..."
+# 	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
+# 	for file_object in $(objects); do \
+# 	  $(AR) -rusv $(LIBDIR)/$(LIBFILE) $(OBJDIR)/$(notdir $${file_object}) ; done
+# 	ranlib $(LIBDIR)/$(notdir $(@))
+
+# $(LIBFILEF) : $(f77_objectsWithPath) 
+# 	@echo "Building static lib '$(@)'..."
+# 	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
+# 	for file_object in $(objects); do \
+# 	  $(AR) -rusv $(LIBDIR)/$(LIBFILE) $(OBJDIR)/$(notdir $${file_object}) ; done
+# 	ranlib $(LIBDIR)/$(notdir $(@))
+
+$(SHLIBFILE_BIO) : $(objectsWithPath_bio) #| $(SHLIBFILE) 
+	@echo "NOTICE: Building shared auxiliary BIO lib '$(@)'..." >&2
+	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
+	@test -n "$(objectsWithPath_bio)" && $(LD) $(CXXFLAGS) $(SOFLAGS) $(^) $(LIBLDFLAGS_BIO) $(DEPLDFLAGS_CXX_SORTED) -o $(LIBDIR)/$(notdir $(@)) || echo ""
+	@echo "NOTICE: Building shared lib '$(@)' done." >&2
+	@echo
+
+$(SHLIBFILE) : $(objectsWithPath) | $(SHLIBFILE_F77) 
 	@echo "Building shared lib '$(@)'..."
 	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
-	$(LD) $(CXXFLAGS) $(SOFLAGS) $(^) $(DEPLDFLAGS_SORTED) -o $(LIBDIR)/$(notdir $(@))
+	$(LD) $(CXXFLAGS) $(SOFLAGS) $(^) $(LIBLDFLAGS) $(DEPLDFLAGS_CXX_SORTED) -o $(LIBDIR)/$(notdir $(@))
 
 $(SHLIBFILE_F77) : $(f77_objectsWithPath) $(crossed_objectsWithPath)  
 	@echo "Building shared lib '$(@)'..."
@@ -449,27 +511,12 @@ $(SHLIBFILE_F77) : $(f77_objectsWithPath) $(crossed_objectsWithPath)
 $(OBJDIR)/%$(OBJEXT) : %$(SOURCEEXT) %$(HEADEREXT)
 	@echo "Compiling module '$(@)'..."
 	@test -d $(OBJDIR) || mkdir -p $(OBJDIR)
-	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< -o $(OBJDIR)/$(notdir $(@))
+	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS_CXX) $< -o $(OBJDIR)/$(notdir $(@))
 
 $(OBJDIR)/%$(F77_OBJEXT) : %$(F77_SOURCEEXT) #%$(F77_HEADEREXT)
 	@echo "Compiling F77 module '$(@)'..."
 	@test -d $(OBJDIR) || mkdir -p $(OBJDIR)
-	$(F77) -c $(F77CPPFLAGS) $(F77FLAGS) $< -o $(OBJDIR)/$(notdir $(@))
-
-%.static$(BINEXT) : %$(PROGEXT) | lib_static
-	@echo "Compiling statically linked program '$(@)'..."
-	@test -d $(BINDIR) || mkdir -p $(BINDIR)
-	$(CXX) -I. $(CPPFLAGS) $(CXXFLAGS) $< $(STATICFLAGS) $(LDFLAGS) -o $(BINDIR)/$(notdir $(@))
-
-%$(BINEXT) : %$(PROGEXT) | lib_shared lib_shared_f77 
-	@echo "Compiling program '$(@)' with shared library..."
-	@test -d $(BINDIR) || mkdir -p $(BINDIR)
-	$(CXX) -I. $(CPPFLAGS) $(CXXFLAGS) $< $(SHFLAGS) $(SHFLAGS_F77) -o $(BINDIR)/$(notdir $(@))
-
-%$(F77_BINEXT) : %$(F77_PROGEXT) | lib_shared_f77 
-	@echo "Compiling F77 program '$(@)' with shared library..."
-	@test -d $(BINDIR) || mkdir -p $(BINDIR)
-	$(F77) -I. $(F77CPPFLAGS) $(F77FLAGS) $< $(SHFLAGS_F77) -o $(BINDIR)/$(notdir $(@))
+	$(F77) -c $(F77FLAGS) $(CPPFLAGS_F77) $< -o $(OBJDIR)/$(notdir $(@))
 
 .PHONY : dist
 dist : distclean

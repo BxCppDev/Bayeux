@@ -87,9 +87,13 @@ if [ "x${f77_comp}" = "xg77" ]; then
     f77_opt=-lg2c
 fi
 
-with_ebio=1
-if [ "x${GENBB_HELP_NO_EBIO}" == "x1" ]; then
-    with_ebio=0
+with_ebio=0
+with_xbio=0
+if [ "x${GENBB_HELP_EBIO}" == "x1" ]; then
+    with_ebio=1
+fi
+if [ "x${GENBB_HELP_XBIO}" == "x1" ]; then
+    with_xbio=1
 fi
 
 opt=$1
@@ -115,9 +119,11 @@ Known values for OPTION are:
   --bindir              print binary directory
   --include             print include path pre-processor flags without dependencies 
   --cflags              print include path pre-processor flags with dependencies
-  --libs                print library linking information, without dependencies
-  --ldflags             
-  --libs-depends        print library linking information, with dependencies
+  --libs    [option]    print library linking information, without dependencies
+  --ldflags [option]           
+  --libs-depends [option] print library linking information, with dependencies
+      Options:          --xbio  with linkage against the `libgeomtools_bio.so' DLL
+                        --no-xbio  without linkage against the `libgeomtools_bio.so' DLL
   --help                print this help then exit
   --version             print version information
   --system              print system
@@ -147,6 +153,11 @@ if [ "x$opt" = "x--with-ebio" ]; then
     echo "${with_ebio}"
     exit 0
 fi 
+
+if [ "x$opt" = "x--with-xbio" ]; then
+    echo "${with_xbio}"
+    exit 0
+fi
 
 if [ "x$opt" = "x--clean-cache-files" ]; then
     if [ -f ${cflags_cache} ]; then
@@ -224,9 +235,16 @@ if [ "x$opt" = "x--cflags" ]; then
 		    "-fPIC " \
 		    "${f77_defines} " \
 		    "-I${THEPACK_INCLUDEDIR} "
-		if [ ${with_ebio} -eq 0 ]; then
- 	            echo -n "-DGENBB_HELP_NO_EBIO=1 "
-                fi
+		if [ ${with_ebio} -eq 1 ]; then
+		    echo -n "-DGEOMTOOLS_EBIO=1 "
+		else
+		    echo -n "-DGEOMTOOLS_EBIO=0 "
+		fi
+		if [ ${with_xbio} -eq 1 ]; then
+		    echo -n "-DGEOMTOOLS_XBIO=1 "
+		else
+		    echo -n "-DGEOMTOOLS_XBIO=0 "
+		fi
 		echo -n "`geomtools-config --cflags` "
 	    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py	    
 	) | tee ${cflags_cache_effective}
@@ -245,8 +263,24 @@ if [ "x$opt" = "x--bindir" ]; then
     exit 0
 fi 
 
+# compute default linkage :
+bio_ldflags=
+bio_ldflags_HC=
+if [ ${with_xbio} -eq 1 ]; then
+    bio_ldflags=-lgenbb_help_bio
+    bio_ldflags_HC=${THEPACK_LIBDIR}/libgenbb_help_bio.so
+fi
+
 if [ "x$opt" = "x--libs" ]; then
-    echo "-L${THEPACK_LIBDIR} -lgenbb_help -lgenbb_help_f77 "
+    if [ "x$opt2" = "x--no-xbio" ]; then
+	bio_ldflags=
+	bio_ldflags_HC=
+    fi
+    if [ "x$opt2" = "x--xbio" -a ${with_xbio} -eq 1 ]; then
+	bio_ldflags=-lgenbb_help_bio
+	bio_ldflags_HC=${THEPACK_LIBDIR}/libgenbb_help_bio.so
+    fi
+    echo "-L${THEPACK_LIBDIR} ${bio_ldflags} -lgenbb_help -lgenbb_help_f77 "
     exit 0
 fi 
 
@@ -277,10 +311,23 @@ if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
     if [ ${generate_ldflags} -eq 1 ]; then	
 	(
 	    (
-		echo -n "-L${THEPACK_LIBDIR} -lgenbb_help -lgenbb_help_f77 "  \
-		    "`geomtools-config --ldflags` "  \
-		    "${f77_opt} "  \
-		    "-lm "  
+		if [ "x$opt2" = "x--no-xbio" ]; then
+		    bio_ldflags=
+		    bio_ldflags_HC=
+		fi
+		if [ "x$opt2" = "x--xbio" -a ${with_xbio} -eq 1 ]; then
+		    bio_ldflags=-lgenbb_help_bio
+		    bio_ldflags_HC=${THEPACK_LIBDIR}/libgenbb_help_bio.so
+		fi
+		if [ "X${ldflags_mode}" = "Xhardcoded_shared_lib_path" ]; then
+		    echo -n "${bio_ldflags_HC} "
+		    echo -n "${THEPACK_LIBDIR}/libgenbb_help.so "
+		else
+		    echo -n "-L${THEPACK_LIBDIR} ${bio_ldflags} -lgeomtools "
+		fi
+		echo -n "`geomtools-config --ldflags` " 
+		echo -n "${f77_opt} " 
+		echo -n "-lm " 
 	    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
 	) | tee ${ldflags_cache_effective}
 	test ${using_cache_files} -eq 0 && rm -f ${ldflags_cache}

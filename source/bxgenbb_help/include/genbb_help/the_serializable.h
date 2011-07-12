@@ -4,15 +4,17 @@
 #ifndef __genbb_help__the_serializable_h__
 #define __genbb_help__the_serializable_h__ 1
 
+#include <datatools/serialization/archives_list.h>
+//#include <datatools/serialization/archives_instantiation.h>
+#include <genbb_help/the_serializable.ipp>
+
 /** CAUTION:
- *  For now (2011-03-20), the genbb_help serializable classes are not exported,
+ *  For now (2011-07-11), the genbb_help serializable classes are not exported,
  *  only their serialization methods are instantiated for all archives.
  *  - genbb::primary_particle
  *  - genbb::primary_event
  */
 
-//#include <datatools/serialization/archives_instantiation.h>
-//#include <boost/serialization/export.hpp>
 
 /***************************
  * genbb::primary_particle *
@@ -24,8 +26,7 @@
  * genbb::primary_event *
  ************************/
 
-#include <genbb_help/primary_event.ipp>
-//BOOST_CLASS_EXPORT_IMPLEMENT(genbb::primary_event) 
+BOOST_CLASS_EXPORT_IMPLEMENT(genbb::primary_event) 
 
 #endif // __genbb_help__the_serializable_h__
 

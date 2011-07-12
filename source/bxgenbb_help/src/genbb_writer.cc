@@ -97,6 +97,7 @@ namespace genbb {
 		  << std::endl;
 	  }
       }
+    return;
   }
   
 
@@ -121,6 +122,7 @@ namespace genbb {
 		<< "All the parameters of the writer are not well defined. Abort!";
 	throw std::runtime_error ( message.str() );
       }
+    return;
   }
   
 
@@ -136,7 +138,8 @@ namespace genbb {
     out_ << "|-- energy max:    " << __Emax         << std::endl;
     out_ << "|-- phi_min:       " << __phi_min    << std::endl;
     out_ << "`-- phi_max:       " << __phi_max    << std::endl;
-  }
+     return;
+ }
 
 
   // ctor:
@@ -152,11 +155,13 @@ namespace genbb {
     __phi_min      =  1.;
     __phi_max      = -1.;
     srand48 ( __seed );
+    return;
   }
   
   // dtor:
   genbb_writer::~genbb_writer ()
   {
+    return;
   }
 
 

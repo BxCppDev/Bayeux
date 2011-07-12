@@ -9,15 +9,15 @@
 
 #include <datatools/utils/utils.h>
 #include <datatools/utils/ioutils.h>
-#include <datatools/serialization/io_factory.h>
 
 #include <genbb_help/genbb_mgr.h>
 
-/* Serialization dedicated code */
-#ifdef GEOMTOOLS_NO_EBIO
-#include <geomtools/the_serializable.h>
-#endif
-#include <genbb_help/the_serializable.h>
+#include <datatools/serialization/io_factory.h>
+
+// Some pre-processor guard about Boost I/O usage and linkage :
+//#include <datatools/serialization/bio_guard.h>
+#include <geomtools/serialization/bio_guard.h>
+#include <genbb_help/serialization/bio_guard.h>
 
 using namespace std;
 
