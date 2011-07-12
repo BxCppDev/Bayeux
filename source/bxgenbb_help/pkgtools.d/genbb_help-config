@@ -236,16 +236,17 @@ if [ "x$opt" = "x--cflags" ]; then
 		    "${f77_defines} " \
 		    "-I${THEPACK_INCLUDEDIR} "
 		if [ ${with_ebio} -eq 1 ]; then
-		    echo -n "-DGEOMTOOLS_EBIO=1 "
+		    echo -n "-DGENBB_HELP_EBIO=1 "
 		else
-		    echo -n "-DGEOMTOOLS_EBIO=0 "
+		    echo -n "-DGENBB_HELP_EBIO=0 "
 		fi
 		if [ ${with_xbio} -eq 1 ]; then
-		    echo -n "-DGEOMTOOLS_XBIO=1 "
+		    echo -n "-DGENBB_HELP_XBIO=1 "
 		else
-		    echo -n "-DGEOMTOOLS_XBIO=0 "
+		    echo -n "-DGENBB_HELP_XBIO=0 "
 		fi
 		echo -n "`geomtools-config --cflags` "
+		echo 
 	    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py	    
 	) | tee ${cflags_cache_effective}
 	test ${using_cache_files} -eq 0 && rm -f ${cflags_cache}
