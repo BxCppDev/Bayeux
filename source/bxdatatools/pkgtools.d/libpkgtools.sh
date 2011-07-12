@@ -1774,6 +1774,22 @@ EOF
 # Software check utilities:
 #
 
+    function pkgtools__executable_exists ()
+    {
+        exe=$1
+        if [ "x${exe}" = "x" ]; then
+            pkgtools__msg_error "Missing binary name!"
+            return 1
+        fi
+        
+        which ${exe} 2>&1 > /dev/null
+        if [ $? -ne 0 ]; then
+            return 1
+        fi
+        
+        return 0 # true
+    }
+
     function pkgtools__check_python_module ()
     {
 	__pkgtools__at_function_enter pkgtools__check_python_module

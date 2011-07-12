@@ -58,6 +58,8 @@ default_python_version=2.5
 python_version=${default_python_version}
 with_python=1
 
+default_bio_mode=""
+
 kwsys_dir=${the_base_dir}/kwsys
 
 #apply_eos_archive_trick=0
@@ -83,22 +85,15 @@ function print_usage ()
     $APPNAME check       : check dependencies
     $APPNAME configure  [OPTIONS]: configure package 
             OPTIONS:
-            --with-pba (default) :
-              depends on Portable Binary Archive
-            --without-pba :
-              do not use Portable Binary Archive
-            --with-fpu (default) :
-              depends on Floating Point Utilities boost vault extension
-            --without-fpu :
-              do not use Floating Point Utilities boost vault extension
             --with-python :
               with Python wrapper module (default)
             --with-python-version VERSION :
               with Python version VERSION (default: 2.5)
             --without-python :
               without Python wrapper module
-            --with-embedded-boost-io :
-            --without-embedded-boost-io (default):
+            --without-boost-io  (default):
+            --with-embedded-boost-io :  embedded precompiled Boost/Serialization code
+            --with-auxiliary-boost-io : auxiliary precompiled Boost/Serialization DLL
             --boost-version 1_44_0 : force Boost version (default: 1_44_0)
             --no-boost-version-check : skip Boost version check
     $APPNAME deconfigure : deconfigure package 
@@ -285,6 +280,9 @@ function do_build_gmk ()
     build_tag=""
     if [ -z "$1" ]; then
 	build_tag="lib"
+	if [ "x${DATATOOLS_XBIO}" = "x1" ]; then
+	    build_tag="lib_xbio"
+	fi
     else
 	build_tag="$1"
     fi	
@@ -432,6 +430,7 @@ function do_untest ()
 
     rm -f ${the_base_dir}/test_things.*
     rm -f ${the_base_dir}/test_things_2.*
+    rm -f ${the_base_dir}/test_things_3.*
 
     __pkgtools__at_function_exit
     return 0
@@ -524,118 +523,118 @@ function boost_eos_archive_trick ()
     return
 }
 
-function boost_eos_archive_trick_4_1 ()
-{
-    __pkgtools__at_function_enter boost_eos_archive_trick_4_1
+# function boost_eos_archive_trick_4_1 ()
+# {
+#     __pkgtools__at_function_enter boost_eos_archive_trick_4_1
 
-    opwd=$(pwd) 
-    cd ${the_base_dir}/boost/vault/eos
+#     opwd=$(pwd) 
+#     cd ${the_base_dir}/boost/vault/eos
 
-    ### fix input archive:
-    pia_src=portable_iarchive.hpp
-    if [ ! -f ${pia_src}.orig ]; then
-	cp -f ${pia_src} ${pia_src}.orig 
-    fi
+#     ### fix input archive:
+#     pia_src=portable_iarchive.hpp
+#     if [ ! -f ${pia_src}.orig ]; then
+# 	cp -f ${pia_src} ${pia_src}.orig 
+#     fi
 
-    local boost_version_rank=$(echo ${boost_version} | tr '_' '0')
-    if [ ${boost_version_rank} -ge 104000 -a ${boost_version_rank} -le 104300 ]; then
-        cat ${pia_src}.orig | sed 's@set_library_version(3)@set_library_version((version_type)3)@g' > ${pia_src}
-    elif [ ${boost_version_rank} -ge 104400 ]; then
-        cat ${pia_src}.orig |
-        sed -e 's@set_library_version(3)@set_library_version((library_version_type)3)@g' \
-            -e 's@version_type input_library_version;@library_version_type input_library_version;@g' > ${pia_src}
-    fi        
+#     local boost_version_rank=$(echo ${boost_version} | tr '_' '0')
+#     if [ ${boost_version_rank} -ge 104000 -a ${boost_version_rank} -le 104300 ]; then
+#         cat ${pia_src}.orig | sed 's@set_library_version(3)@set_library_version((version_type)3)@g' > ${pia_src}
+#     elif [ ${boost_version_rank} -ge 104400 ]; then
+#         cat ${pia_src}.orig |
+#         sed -e 's@set_library_version(3)@set_library_version((library_version_type)3)@g' \
+#             -e 's@version_type input_library_version;@library_version_type input_library_version;@g' > ${pia_src}
+#     fi        
     
-    cd ${opwd}
+#     cd ${opwd}
 
-    pkgtools__msg_notice "boost_eos_archive_trick_4_1: Exiting."
-    __pkgtools__at_function_exit
-    return
-}
+#     pkgtools__msg_notice "boost_eos_archive_trick_4_1: Exiting."
+#     __pkgtools__at_function_exit
+#     return
+# }
 
-function boost_eos_archive_trick_3_1 ()
-{
-    __pkgtools__at_function_enter boost_eos_archive_trick_3_1
+# function boost_eos_archive_trick_3_1 ()
+# {
+#     __pkgtools__at_function_enter boost_eos_archive_trick_3_1
 
-    pkgtools__msg_notice "boost_eos_archive_trick_3_1: From 'http://www.boost.org/doc/libs/1_40_0/libs/serialization/doc/release.html#requirements'"
+#     pkgtools__msg_notice "boost_eos_archive_trick_3_1: From 'http://www.boost.org/doc/libs/1_40_0/libs/serialization/doc/release.html#requirements'"
 
-    opwd=$(pwd) 
-    cd ${the_base_dir}/boost/vault/eos
+#     opwd=$(pwd) 
+#     cd ${the_base_dir}/boost/vault/eos
 
-    ### input archive:
-    pia_src=portable_iarchive.hpp
-    if [ ! -f ${pia_src}.orig ]; then
-	cp -f ${pia_src} ${pia_src}.orig 
-    fi
-    ### output archive:	
-    poa_src=portable_oarchive.hpp
-    if [ ! -f ${poa_src}.orig ]; then
-	cp -f ${poa_src} ${poa_src}.orig 
-    fi
+#     ### input archive:
+#     pia_src=portable_iarchive.hpp
+#     if [ ! -f ${pia_src}.orig ]; then
+# 	cp -f ${pia_src} ${pia_src}.orig 
+#     fi
+#     ### output archive:	
+#     poa_src=portable_oarchive.hpp
+#     if [ ! -f ${poa_src}.orig ]; then
+# 	cp -f ${poa_src} ${poa_src}.orig 
+#     fi
 
-    version=2
+#     version=2
 
-    if [ ${version} -eq 2 ]; then
-        ### input archive:
-	cp -f ../eos_trick/portable_iarchive.trick.hpp ${pia_src}
-        ### output archive:
-	cp -f ../eos_trick/portable_oarchive.trick.hpp ${poa_src}
-    fi
+#     if [ ${version} -eq 2 ]; then
+#         ### input archive:
+# 	cp -f ../eos_trick/portable_iarchive.trick.hpp ${pia_src}
+#         ### output archive:
+# 	cp -f ../eos_trick/portable_oarchive.trick.hpp ${poa_src}
+#     fi
 
-    if [ ${version} -eq 1 ]; then
-        ### input archive:
+#     if [ ${version} -eq 1 ]; then
+#         ### input archive:
 
-	cat >>portable_iarchive__trick_1.hpp<<EOF
-#if BOOST_VERSION < 104000
-#include <boost/archive/impl/archive_pointer_iserializer.ipp>
-#else 
-#ifndef __eos_archive_serializer_map
-#define __eos_archive_serializer_map
-#include <boost/archive/impl/archive_serializer_map.ipp>
-#endif
-#endif 
-EOF
+# 	cat >>portable_iarchive__trick_1.hpp<<EOF
+# #if BOOST_VERSION < 104000
+# #include <boost/archive/impl/archive_pointer_iserializer.ipp>
+# #else 
+# #ifndef __eos_archive_serializer_map
+# #define __eos_archive_serializer_map
+# #include <boost/archive/impl/archive_serializer_map.ipp>
+# #endif
+# #endif 
+# EOF
 	
-	cat >>portable_iarchive__trick_2.hpp<<EOF
-#if BOOST_VERSION < 104000
-	template class detail::archive_pointer_iserializer<eos::portable_iarchive>;
-#else 
-	template class detail::archive_serializer_map<eos::portable_iarchive>;
-#endif 
-EOF
-	cat ${pia_src}.orig | sed 's@#include <boost/archive/impl/archive_pointer_iserializer.ipp>@#include "portable_iarchive__trick_1.hpp"@g' > ${pia_src}.tmp1
-	cat ${pia_src}.tmp1 | sed 's@^[[:space:]*]template class detail::archive_pointer_iserializer<eos::portable_iarchive>;@#include "portable_iarchive__trick_2.hpp"@g' > ${pia_src}
-	rm -f ${pia_src}.tmp1
+# 	cat >>portable_iarchive__trick_2.hpp<<EOF
+# #if BOOST_VERSION < 104000
+# 	template class detail::archive_pointer_iserializer<eos::portable_iarchive>;
+# #else 
+# 	template class detail::archive_serializer_map<eos::portable_iarchive>;
+# #endif 
+# EOF
+# 	cat ${pia_src}.orig | sed 's@#include <boost/archive/impl/archive_pointer_iserializer.ipp>@#include "portable_iarchive__trick_1.hpp"@g' > ${pia_src}.tmp1
+# 	cat ${pia_src}.tmp1 | sed 's@^[[:space:]*]template class detail::archive_pointer_iserializer<eos::portable_iarchive>;@#include "portable_iarchive__trick_2.hpp"@g' > ${pia_src}
+# 	rm -f ${pia_src}.tmp1
 	
-        ### output archive:	
-	cat >>portable_oarchive__trick_1.hpp<<EOF
-#if BOOST_VERSION < 104000
-#include <boost/archive/impl/archive_pointer_iserializer.ipp>
-#else 
-#ifndef __eos_archive_serializer_map
-#define __eos_archive_serializer_map
-#include <boost/archive/impl/archive_serializer_map.ipp>
-#endif 
-#endif 
-EOF
+#         ### output archive:	
+# 	cat >>portable_oarchive__trick_1.hpp<<EOF
+# #if BOOST_VERSION < 104000
+# #include <boost/archive/impl/archive_pointer_iserializer.ipp>
+# #else 
+# #ifndef __eos_archive_serializer_map
+# #define __eos_archive_serializer_map
+# #include <boost/archive/impl/archive_serializer_map.ipp>
+# #endif 
+# #endif 
+# EOF
 	
-	cat >>portable_oarchive__trick_2.hpp<<EOF
-#if BOOST_VERSION < 104000
-	template class detail::archive_pointer_iserializer<eos::portable_oarchive>;
-#else 
-	template class detail::archive_serializer_map<eos::portable_oarchive>;
-#endif 
-EOF
+# 	cat >>portable_oarchive__trick_2.hpp<<EOF
+# #if BOOST_VERSION < 104000
+# 	template class detail::archive_pointer_iserializer<eos::portable_oarchive>;
+# #else 
+# 	template class detail::archive_serializer_map<eos::portable_oarchive>;
+# #endif 
+# EOF
 	
-	cat ${poa_src}.orig | sed 's@#include <boost/archive/impl/archive_pointer_oserializer.ipp>@#include "portable_oarchive__trick_1.hpp"@g' > ${poa_src}.tmp1
-	cat ${poa_src}.tmp1 | sed 's@^[[:space:]*]template class detail::archive_pointer_oserializer<eos::portable_oarchive>;@#include "portable_oarchive__trick_2.hpp"@g' > ${poa_src}
-	rm -f ${poa_src}.tmp1
-    fi
+# 	cat ${poa_src}.orig | sed 's@#include <boost/archive/impl/archive_pointer_oserializer.ipp>@#include "portable_oarchive__trick_1.hpp"@g' > ${poa_src}.tmp1
+# 	cat ${poa_src}.tmp1 | sed 's@^[[:space:]*]template class detail::archive_pointer_oserializer<eos::portable_oarchive>;@#include "portable_oarchive__trick_2.hpp"@g' > ${poa_src}
+# 	rm -f ${poa_src}.tmp1
+#     fi
 
-    cd ${opwd}
+#     cd ${opwd}
 
-    pkgtools__msg_notice "boost_eos_archive_trick_3_1: Exiting."
-}
+#     pkgtools__msg_notice "boost_eos_archive_trick_3_1: Exiting."
+# }
 
 function get_dependency_package_config ()
 {  
@@ -783,23 +782,16 @@ function do_deconfigure ()
     pkgtools__remove_file ${config_db_file}
     pkgtools__remove_file ${config_sh_file}
     pkgtools__remove_file ${config_csh_file}
-
-    # old scheme is still here :
-    # test -f ${without_pba_flag_file}     && rm -f ${without_pba_flag_file} 
-    # test -f ${without_fpu_flag_file}     && rm -f ${without_fpu_flag_file} 
-    # test -f ${without_python_flag_file}  && rm -f ${without_python_flag_file} 
-    # test -f ${python_version_flag_file}  && rm -f ${python_version_flag_file} 
-    # test -f ${without_ebio_flag_file}    && rm -f ${without_ebio_flag_file} 
    
-    cd ${the_base_dir}/boost/vault
-    pkgtools__msg_info "Remove the Boost vault contribution(s) in the '$(pwd)' directory..."
-    make clean
-    if [ $? -ne 0 ]; then
-	pkgtools__msg_error "Removal of the Boost vault contribution(s) from '${pack_name}' failed!"
-	__pkgtools__at_function_exit
-	return $?
-    fi
-    cd ${opwd}
+    # cd ${the_base_dir}/boost/vault
+    # pkgtools__msg_info "Remove the Boost vault contribution(s) in the '$(pwd)' directory..."
+    # make clean
+    # if [ $? -ne 0 ]; then
+    # 	pkgtools__msg_error "Removal of the Boost vault contribution(s) from '${pack_name}' failed!"
+    # 	__pkgtools__at_function_exit
+    # 	return $?
+    # fi
+    # cd ${opwd}
 
     __pkgtools__at_function_exit
     return 0
@@ -823,9 +815,9 @@ function do_configure ()
 	with_python_wrapper=1
     fi
 
-    local with_pba=1
-    local with_fpu=1
+    local bio_mode=${default_bio_mode}
     local with_ebio=0
+    local with_xbio=0
     local enforced_boost_version=
     python_version=
     local skip_all_dependencies_check=0
@@ -846,24 +838,12 @@ function do_configure ()
 			skipped_dependencies="${skipped_dependencies} ${swpack}"
 		    fi
 		}
-	    elif [ "x${opt}" = "x--with-kwsys" ]; then
-		with_kwsys=1
-	    elif [ "x${opt}" = "x--without-kwsys" ]; then
-		with_kwsys=0
-	    elif [ "x${opt}" = "x--with-pba" ]; then
-		with_pba=1
-		with_fpu=1
-	    elif [ "x${opt}" = "x--without-pba" ]; then
-		with_pba=0
-	    elif [ "x${opt}" = "x--with-fpu" ]; then
-		with_fpu=1
-	    elif [ "x${opt}" = "x--without-fpu" ]; then
-		with_fpu=0
-		with_pba=0
+	    elif [ "x${opt}" = "x-nbio" -o "x${opt}" = "x--without-boost-io" ]; then
+		bio_mode=""
 	    elif [ "x${opt}" = "x-ebio" -o "x${opt}" = "x--with-embedded-boost-io" ]; then
-		with_ebio=1
-	    elif [ "x${opt}" = "x-no-ebio" -o "x${opt}" = "x--without-embedded-boost-io" ]; then
-		with_ebio=0
+		bio_mode="embedded"
+	    elif [ "x${opt}" = "x-xbio" -o "x${opt}" = "x--with-auxiliary-boost-io" ]; then
+		bio_mode="auxiliary"
 	    elif [ "x${opt}" = "x--boost-version" ]; then
 		shift 1
 		enforced_boost_version=$1
@@ -925,8 +905,14 @@ function do_configure ()
 	enforced_boost_version=${boost_version}
     fi
 
-    if [ ${with_ebio} -ne 0 ]; then
+    if [ "x${bio_mode}" = "xembedded" ]; then
+	with_ebio=1
+	with_xbio=0
 	pkgtools__msg_warning "Embedded pre-built Boost/Serialization code requires Boost >= 1.47"	
+    elif [ "x${bio_mode}" = "xauxiliary" ]; then
+	with_ebio=0
+	with_xbio=1
+	pkgtools__msg_warning "Auxiliary pre-built Boost/Serialization code requires Boost >= 1.47"	
     fi
 
     if [ "x${boost_version}" != "x${enforced_boost_version}" ]; then
@@ -997,50 +983,31 @@ function do_configure ()
 	fi # with_python_wrapper
     fi # can_python_wrapper
 
-    ### Support for Portable binary archives:
-    pkgtools__msg_notice "Portable Binary Archives setup..."
-    if [ ${with_pba} -eq 0 ]; then
-	pkgtools__msg_warning "Do not use Portable Binary Archives !"
-	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_NO_PBA" 1
-    else
-	# 2010-12-06 FM:
-	pkgtools__msg_notice "Use Portable Binary Archives !"
-	with_fpu=1
-    fi
-
-    ### Support for Floating Point Utilities:
-    pkgtools__msg_notice "Floating Point Utilities setup..."
-    if [ ${with_fpu} -eq 0 ]; then
-	pkgtools__msg_warning "Do not use Floating Point Utilities from the 'Boost/vault' package!"
-	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_NO_FPU" 1
-    else
-	pkgtools__msg_notice "Use Floating Point Utilities from the Boost/vault!"
-	opwd=$(pwd)
-	cd ${the_base_dir}/boost/vault
-	pkgtools__msg_notice "Cleaning the '$(pwd)' directory..."
-	make clean 2>&1 > /dev/null
-	pkgtools__msg_notice "Populating the '$(pwd)' directory..."
-	make 2>&1 > /dev/null 
-	cd ${opwd}
-    fi
-
     ### Support for Embedded Boost I/O:
     pkgtools__msg_notice "Embedded Boost I/O:..."
     if [ ${with_ebio} -eq 0 ]; then
 	pkgtools__msg_warning "Do not use Embedded Boost I/O !"
-	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_NO_EBIO" 1
+	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_EBIO" 0
     else
-	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_NO_EBIO" 0
 	pkgtools__msg_notice "Use Embedded Boost I/O !"
+	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_EBIO" 1
+    fi
+    ### Support for Auxiliary Boost I/O DLL:
+    if [ ${with_xbio} -eq 0 ]; then
+	pkgtools__msg_warning "Do not use Auxiliary Boost I/O !"
+	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_XBIO" 0
+    else
+	pkgtools__msg_notice "Use Auxiliary Boost I/O !"
+	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_XBIO" 1
     fi
 
     ### Support for KWSYS:
     pkgtools__msg_notice "Embedded KWSYS"
     if [ ${with_kwsys} -eq 0 ]; then
 	pkgtools__msg_warning "Do not use KWSYS !"
-	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_NO_KWSYS" 1
+	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_KWSYS" 0
     else
-	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_NO_KWSYS" 0
+	pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_KWSYS" 1
 	pkgtools__msg_notice "Use Embedded KWSYS !"
 
 	if [ -d ${kwsys_dir} ]; then
@@ -1161,19 +1128,6 @@ function do_build ()
     fi
 
     if [ -d ${GMKDIR} ]; then
-
-	# if [ -f ${without_pba_flag_file} ]; then
-	#     source ${without_pba_flag_file}
-	# fi
-	# if [ -f ${without_fpu_flag_file} ]; then
-	#     source ${without_fpu_flag_file}
-	# fi
-	# if [ -f ${without_python_flag_file} ]; then
-	#     source ${without_python_flag_file}
-	# fi
-	# if [ -f ${without_ebio_flag_file} ]; then
-	#     source ${without_ebio_flag_file}
-	# fi
 
 	do_build_gmk $@
 	if [ $? -ne 0 ]; then

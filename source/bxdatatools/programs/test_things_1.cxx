@@ -24,18 +24,10 @@
 // The serializable 'properties' container :
 #include <datatools/utils/properties.h>
 
-#ifdef DATATOOLS_NO_EBIO 
-/* Brute force: load all instantiation/export code for serializable classes in datatools:
- * - properties
- * - multi_properties
- * - things...
- *
- */
-#include <datatools/the_serializable.h>
-#endif
+// Some pre-processor guard about Boost I/O usage and linkage :
+#include <datatools/serialization/bio_guard.h>
  
 using namespace std;
-
 
 /*** the serializable A sample class ***/
 

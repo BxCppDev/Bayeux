@@ -44,10 +44,14 @@ all : lib
 
 PACKAGENAME=datatools
 UPACKAGENAME=$(shell echo "$(PACKAGENAME)" | tr "a-z" "A-Z")
-LIBNAME=$(shell echo "$(PACKAGENAME)" | tr "A-Z" "a-z")
+LPACKAGENAME=$(shell echo "$(PACKAGENAME)" | tr "A-Z" "a-z")
+LIBNAME=$(LPACKAGENAME)
+LIBNAME_BIO=$(LIBNAME)_bio
 LIBFILE=lib$(LIBNAME).a
+LIBFILE_BIO=lib$(LIBNAME_BIO).a
 SHLIBFILE=lib$(LIBNAME)${SHLIBEXT}
-LIBVER=$(shell cat ../VERSION |tr -d '\n')
+SHLIBFILE_BIO=lib$(LIBNAME_BIO)${SHLIBEXT}
+LIBVER=$(shell cat ../VERSION | tr -d '\n')
 
 BASEDIR=..
 PACKAGE_ROOT=$(shell cd .. ; pwd)
@@ -68,6 +72,8 @@ BINDIR=$(ARCHDIR)/bin
 CXXFLAGS=-fPIC
 CPPFLAGS=-I. -I$(INCDIR)
 LDFLAGS=-O -L$(LIBDIR) -l$(LIBNAME)
+
+binlibdep=lib
 
 DEPCPPFLAGS=
 DEPLDFLAGS=
@@ -92,74 +98,75 @@ DEPCPPFLAGS+=$(shell clhep-config --include)
 DEPLDFLAGS+=$(shell clhep-config --libs)
 
 ### depends on Endian:
-#DEPCPPFLAGS+=-I$(PACKAGE_DIR)/boost/vault/endian
 ###DEPLDFLAGS+=-lcurses
 
-### depends on Floating point utility:
-FPU_FLAGS=
-ifeq ($(DATATOOLS_NO_FPU),)
-DATATOOLS_NO_FPU=0
-$(warning WARNING: datatools uses 'Floating point utilities' (FPU) !)
-FPU_FLAGS=-DIOFACTORY_USE_FPU=1
-##DEPCPPFLAGS+=-I$(PACKAGE_DIR)/boost/vault/fpu
-else
-DATATOOLS_NO_FPU=1
-$(warning WARNING: datatools does not use FPU !)
-endif
+# BIO_MODE=""
+# BIO_MODE="embedded"
+# BIO_MODE="auxiliary"
 
 ### Use or not Embedded Boost I/O:
-EBIO_FLAGS=
-ifneq ($(DATATOOLS_NO_EBIO),1)
-DATATOOLS_NO_EBIO=0
+EBIO_CFLAGS=
+EBIO_LDFLAGS=
+ifeq ($(DATATOOLS_EBIO),1)
+DATATOOLS_EBIO=1
+EBIO_CFLAGS=-DDATATOOLS_EBIO=1
 $(warning WARNING: datatools uses 'Embedded Boost I/O' !)
 else
-DATATOOLS_NO_EBIO=1
-EBIO_FLAGS=-DDATATOOLS_NO_EBIO=1
+DATATOOLS_EBIO=0
+EBIO_CFLAGS=-DDATATOOLS_EBIO=0
 $(warning WARNING: datatools does not use 'Embedded Boost I/O' !)
 endif
 
-### Use Portable Binary Archive :
-PBA_FLAGS=
-ifeq ($(DATATOOLS_NO_PBA),)
-DATATOOLS_NO_PBA=0
-$(warning WARNING: datatools uses 'Portable Binary Archive' !) 
-PBA_FLAGS=-DIOFACTORY_USE_PBA=1
-else
-DATATOOLS_NO_PBA=1
-$(warning WARNING: datatools does not use PBA !)
-endif
-
-
 ### Use or not Embedded Boost I/O:
-KWSYS_FLAGS=
-ifneq ($(DATATOOLS_NO_KWSYS),1)
-DATATOOLS_NO_KWSYS=0
-DEPLDFLAGS+=-lkwsys -lkwsys_c 
-$(warning WARNING: datatools uses 'Embedded kwsys' !)
+XBIO_CFLAGS=
+XBIO_LDFLAGS=
+ifeq ($(DATATOOLS_XBIO),1)
+DATATOOLS_XBIO=1
+XBIO_CFLAGS=-DDATATOOLS_XBIO=1
+XBIO_LDFLAGS=-l$(LIBNAME_BIO)
+binlibdep=lib_xbio
+$(warning WARNING: datatools uses 'Auxiliary Boost I/O' !)
 else
-DATATOOLS_NO_KWSYS=1
-KWSYS_FLAGS=-DDATATOOLS_NO_KWSYS=1
-$(warning WARNING: datatools does not use 'Embedded kwsys' !)
+DATATOOLS_XBIO=0
+XBIO_CFLAGS=-DDATATOOLS_XBIO=0
+$(warning WARNING: datatools does not use 'Auxiliary Boost I/O' !)
 endif
+
+### Use or not KWSYS (2011-07-09 FM: always use it) :
+DEPLDFLAGS+=-lkwsys -lkwsys_c 
+
+# 2011-07-09 FM : commented out
+# KWSYS_FLAGS=
+# ifneq ($(DATATOOLS_NO_KWSYS),1)
+# DATATOOLS_NO_KWSYS=0
+# DEPLDFLAGS+=-lkwsys -lkwsys_c 
+# $(warning WARNING: datatools uses 'Embedded kwsys' !)
+# else
+# DATATOOLS_NO_KWSYS=1
+# KWSYS_FLAGS=-DDATATOOLS_NO_KWSYS=1
+# $(warning WARNING: datatools does not use 'Embedded kwsys' !)
+# endif
 
 ### End of dependencies.
-CPPFLAGS1+=$(PBA_FLAGS) $(FPU_FLAGS) $(EBIO_FLAGS) $(KWSYS_FLAGS) $(DEPCPPFLAGS) 
+CPPFLAGS1+=$(EBIO_CFLAGS) $(XBIO_CFLAGS) $(DEPCPPFLAGS) 
 LDFLAGS1+=$(DEPLDFLAGS) 
 
 # default with libmath dependency:
 LDFLAGS1+=-lm 
 
 CPPFLAGS+=$(shell echo $(CPPFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py) 
-ifneq ($(DATATOOLS_NO_KWSYS),1)
-DEPLDFLAGS_SORTED=-L$(LIBDIR) 
-endif
-DEPLDFLAGS_SORTED+=$(shell echo $(LDFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r)
+# ifneq ($(DATATOOLS_NO_KWSYS),1)
+# DEPLDFLAGS_SORTED=-L$(LIBDIR) 
+# endif
+DEPLDFLAGS_SORTED+=-L$(LIBDIR) $(shell echo $(LDFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r)
 LDFLAGS+=$(DEPLDFLAGS_SORTED)
+
+# Special additional link flag for BIO DLL and executable :
+LIBLDFLAGS_BIO=-L$(LIBDIR) -l$(LIBNAME) 
+EXELDFLAGS_BIO=-L$(LIBDIR) $(XBIO_LDFLAGS) -l$(LIBNAME)  
 
 CXXFLAGSSHFLAGS=-Wall -v
 STATICFLAGS=-static
-
-SHFLAGS=$(LDFLAGS) -ldl 
 
 HEADEREXT=.h
 HEADEREXTPP=.hpp
@@ -172,47 +179,48 @@ BINEXT=
 
 .SUFFIXES : $(HEADEREXT) $(HEADEREXTPP) $(SOURCEEXT) $(PROGEXT) $(OBJEXT) $(LIBEXT) $(SHLIBEXT) $(BINEXT)
 
-vpath %$(HEADEREXT)  $(INCDIR)/$(PACKAGENAME)
-vpath %$(HEADEREXTPP)  $(INCDIR)/$(PACKAGENAME)
-vpath %$(SOURCEEXT)  $(SRCDIR)
-vpath %$(SOURCEEXTPP)  $(SRCDIR)
-vpath %$(PROGEXT)    $(PROGDIR)
-vpath %$(OBJEXT)     $(OBJDIR)
-vpath %$(LIBEXT)     $(LIBDIR)
-vpath %$(SHLIBEXT)   $(LIBDIR)
-vpath %$(BINEXT)     $(BINDIR)
+vpath %$(HEADEREXT)   $(INCDIR)/$(PACKAGENAME)
+vpath %$(HEADEREXTPP) $(INCDIR)/$(PACKAGENAME)
+vpath %$(SOURCEEXT)   $(SRCDIR)
+vpath %$(SOURCEEXTPP) $(SRCDIR)
+vpath %$(PROGEXT)     $(PROGDIR)
+vpath %$(OBJEXT)      $(OBJDIR)
+vpath %$(LIBEXT)      $(LIBDIR)
+vpath %$(SHLIBEXT)    $(LIBDIR)
+vpath %$(BINEXT)      $(BINDIR)
 
-headers := $(notdir $(shell find $(INCDIR)/$(PACKAGENAME) -name "*$(HEADEREXT)" )) quasi_portable_binary_iarchive.hpp quasi_portable_binary_oarchive.hpp
+headers := $(notdir $(shell find $(INCDIR)/$(PACKAGENAME) -name "*$(HEADEREXT)" )) 
 sources := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT)))
 
 ### If uncommented, this code force base_service.cc to be the last in library 
 # due to initialization of a static scoped pointer or similar stuff:
-sources1 := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT) 2> /dev/null | sed -e "s@/base_service.cc@/@g" -e "s@/library_loader.cc@/@g"))
-sources := $(sources1) base_service.cc
-ifneq ($(DATATOOLS_NO_KWSYS),1)
-$(warning WARNING: datatools uses the 'library_loader' class !)
-sources := $(sources) library_loader.cc
+sources1 := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT) 2> /dev/null | sed -e "s@/base_service.cc@/@g" -e "s@/the_serializable.cc@/@g"))
+
+### the_serializable.cc has a specizal treatment :
+ifeq ($(DATATOOLS_EBIO),1)
+sources := the_serializable.cc $(sources1) 
 endif
+sources := $(sources1) base_service.cc 
+sources_bio :=  $(notdir $(shell ls $(SRCDIR)/the_serializable$(SOURCEEXT) 2> /dev/null))
+
+### -e "s@/library_loader.cc@/@g"
+
+# ifneq ($(DATATOOLS_NO_KWSYS),1)
+# # $(warning WARNING: datatools uses the 'library_loader' class !)
+# sources := $(sources) library_loader.cc
+# endif
 objects := $(sources:%$(SOURCEEXT)=%$(OBJEXT)) 
 objectsWithPath := $(sources:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT)) 
-
-##headers := $(notdir $(shell ls $(INCDIR)/$(PACKAGENAME)/*$(HEADEREXT) 2> /dev/null))
-#headers := $(notdir $(shell find $(INCDIR)/$(PACKAGENAME) -name "*$(HEADEREXT)" ))
-#sources := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT)))
-#sources := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT) 2> /dev/null))
-#objects := $(sources:%$(SOURCEEXT)=%$(OBJEXT))
-#objectsWithPath := $(sources:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT))
-
+objects_bio := $(sources_bio:%$(SOURCEEXT)=%$(OBJEXT)) 
+objectsWithPath_bio := $(sources_bio:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT)) 
 
 programs_all:= $(notdir $(shell ls $(PROGDIR)/*$(PROGEXT) 2> /dev/null))
-
 programs_test:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep ^test_)
 programs_kwsys_test:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep ^kwsys_test_)
 programs:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep -v ^test_)
 
 binaries:= $(programs:%$(PROGEXT)=%$(BINEXT))
-binaries.static:= $(programs:%$(PROGEXT)=%.static$(BINEXT))
-
+#binaries.static:= $(programs:%$(PROGEXT)=%.static$(BINEXT))
 binaries_test:= $(programs_test:%$(PROGEXT)=%$(BINEXT))
 
 .PHONY : help
@@ -240,8 +248,8 @@ help :
 	@echo "make bzdist     : make a source tarball ($(LIBNAME)-$(LIBVER).tar.bz2)"
 	@echo ""
 
-.PHONY : test
-test:
+.PHONY : dump
+dump:
 	@echo "PACKAGE_DIR='$(PACKAGE_DIR)'"
 	@echo "PACKAGENAME='$(PACKAGENAME)'"
 	@echo "COMPILER='$(COMPILER)'"
@@ -253,6 +261,8 @@ test:
 	@echo "headers = $(headers)"
 	@echo "sources = $(sources)"
 	@echo "objects = $(objects)"
+	@echo "sources_bio = $(sources_bio)"
+	@echo "objects_bio = $(objects_bio)"
 	@echo "programs = $(programs)"
 	@echo "binaries = $(binaries)"
 	@echo "programs_test = $(programs_test)"
@@ -277,45 +287,15 @@ install :
 	@#ln -s -f $(PACKAGE_ROOT)/pkgtools.d/$(LIBNAME)-config $(BINDIR)/$(LIBNAME)-config
 	@echo "NOTICE: Installing done." >&2
 
-#	#@test "x$(DATATOOLS_NO_PBA)" = "x1" && make install_no_pba || make install_pba
-
-# .PHONY : install_eos_pba
-# install_eos_pba :  
-# 	@echo "NOTICE: Installing with EOS_PBA..." >&2
-# 	@cat $(BASEDIR)/pkgtools.d/package.csh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).csh
-# 	@cat $(BASEDIR)/pkgtools.d/package.sh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).sh
-# 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
-# 	@ln -s -f $(PACKAGE_ROOT)/pkgtools.d/$(LIBNAME)-config $(BINDIR)/$(LIBNAME)-config
-# 	@echo "NOTICE: Installing with EOS_PBA done." >&2
-
-# .PHONY : install_no_eos_pba
-# install_no_eos_pba : 
-# 	@echo "NOTICE: Installing without EOS_PBA..." >&2
-# 	@cat $(BASEDIR)/pkgtools.d/package.csh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" -e "s@NO_EOS_PBA 0@NO_EOS_PBA 1@g" > $(BASEDIR)/$(LIBNAME).csh
-# 	@cat $(BASEDIR)/pkgtools.d/package.sh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" -e "s@NO_EOS_PBA=0@NO_EOS_PBA=1@g" > $(BASEDIR)/$(LIBNAME).sh
-# 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
-# 	@ln -s -f $(PACKAGE_ROOT)/pkgtools.d/$(LIBNAME)-config $(BINDIR)/$(LIBNAME)-config
-# 	@echo "NOTICE: Installing without EOS_PBA done." >&2
-
 #########################################################################
 
 .PHONY : clean_special
 clean_special :
 	@echo "NOTICE: Target 'clean_special'..." >&2
-	rm -f my_bag.conf my_bag_of_bags.conf
-	rm -f test_data_serialization.*_
-	rm -f test_multi_properties_*.conf
-	rm -f test_nans_ar.*
-	rm -f test_properties.*
-	rm -f test_serialization*_
 
 .PHONY : uninstall
 uninstall : 
-	@echo "NOTICE: Uninstalling..." >&2
-	@#test -L $(BINDIR)/$(LIBNAME)-config && $(RM) $(BINDIR)/$(LIBNAME)-config || echo -n ""
-	@#test -f $(BASEDIR)/$(LIBNAME).sh && $(RM) $(BASEDIR)/$(LIBNAME).sh || echo -n ""
-	@#test -f $(BASEDIR)/$(LIBNAME).csh && $(RM) $(BASEDIR)/$(LIBNAME).csh || echo -n ""
-	@echo "NOTICE: Uninstalling done." >&2
+	@echo "NOTICE: Nothing special..." >&2
 
 #########################################################################
 
@@ -323,13 +303,14 @@ uninstall :
 system :
 	@echo "$(SYSTEM)"
 
-#.PHONY : setup
-#setup :
-#	@echo "export PATH=$(PACKAGE_DIR)/$(SYSTEM)/bin:$(PATH)"
-#	@echo "export LD_LIBRARY_PATH=$(PACKAGE_DIR)/$(SYSTEM)/lib:$(LD_LIBRARY_PATH)"
+.PHONY : lib_xbio
+lib_xbio : lib lib_bio
 
 .PHONY : lib
 lib : lib_shared
+
+.PHONY : lib_bio
+lib_bio : lib_shared_bio
 
 .PHONY : libs
 libs : lib_static lib_shared
@@ -339,6 +320,11 @@ lib_static : $(LIBFILE)
 
 .PHONY : lib_shared
 lib_shared : $(SHLIBFILE)
+	@#echo "SHLIBFILE=$(SHLIBFILE)"
+
+.PHONY : lib_shared_bio lib_shared
+lib_shared_bio : $(SHLIBFILE_BIO)
+	@#echo "SHLIBFILE_BIO=$(SHLIBFILE_BIO)"
 
 .PHONY : clean
 clean : clean_special
@@ -362,11 +348,11 @@ bin : bin_shared
 bin_test : bin_test_shared
 
 .PHONY : bins
-bins : bin_shared bin_static 
+bins : bin_shared #bin_static 
 
-.PHONY : bin_static
-bin_static : $(binaries_static)
-	@echo "NOTICE: Building static binaries done." >&2
+# .PHONY : bin_static
+# bin_static : $(binaries_static)
+# 	@echo "NOTICE: Building static binaries done." >&2
 
 .PHONY : bin_shared
 bin_shared : $(binaries)
@@ -391,21 +377,30 @@ $(SHLIBFILE) : $(objectsWithPath)
 	@echo "NOTICE: Building shared lib '$(@)' done." >&2
 	@echo
 
+$(SHLIBFILE_BIO) : $(objectsWithPath_bio) 
+	@echo "NOTICE: Building shared auxiliary BIO lib '$(@)'..." >&2
+	@#echo "NOTICE: DEPLDFLAGS_SORTED=$(DEPLDFLAGS_SORTED)" >&2
+	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
+	@test -n "$(objectsWithPath_bio)" && $(LD) $(CXXFLAGS) $(SOFLAGS) $(^) $(LIBLDFLAGS_BIO) $(DEPLDFLAGS_SORTED) -o $(LIBDIR)/$(notdir $(@)) || echo ""
+	@echo "NOTICE: Building shared lib '$(@)' done." >&2
+	@echo
+
 $(OBJDIR)/%$(OBJEXT) : %$(SOURCEEXT) 
 	@echo "NOTICE: Compiling module '$(@)'..." >&2
 	@test -d $(OBJDIR) || mkdir -p $(OBJDIR)
 	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< -o $(OBJDIR)/$(notdir $(@))
 
-%.static$(BINEXT) : %$(PROGEXT) | lib_static
-	@echo "NOTICE: Compiling statically linked program '$(@)'..." >&2
-	@test -d $(BINDIR) || mkdir -p $(BINDIR)
-	$(CXX) -I. -I$(PROGDIR) $(CPPFLAGS) $(CXXFLAGS) $< $(STATICFLAGS) $(LDFLAGS) -o $(BINDIR)/$(notdir $(@))
+# %.static$(BINEXT) : %$(PROGEXT) | lib_static
+# 	@echo "NOTICE: Compiling statically linked program '$(@)'..." >&2
+# 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
+# 	$(CXX) -I. -I$(PROGDIR) $(CPPFLAGS) $(CXXFLAGS) $< $(STATICFLAGS) $(LDFLAGS) -o $(BINDIR)/$(notdir $(@))
 
 ### 2009-11-12 FM: remove --shared flags (produce segmentation fault)
-%$(BINEXT) : %$(PROGEXT) | lib_shared 
+%$(BINEXT) : %$(PROGEXT) | lib_shared $(binlibdep)
+	@echo "NOTICE: EXELDFLAGS_BIO=$(EXELDFLAGS_BIO)" >&2
 	@echo "NOTICE: Compiling program '$(@)' with shared library..." >&2
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
-	$(CXX) -I. -I$(PROGDIR) $(CPPFLAGS) $(CXXFLAGS) $< $(SHFLAGS) -o $(BINDIR)/$(notdir $(@))
+	$(CXX) -I. -I$(PROGDIR) $(CPPFLAGS) $(CXXFLAGS) $< $(EXELDFLAGS_BIO) $(DEPLDFLAGS_SORTED) -o $(BINDIR)/$(notdir $(@))
 
 .PHONY : dist
 dist : distclean

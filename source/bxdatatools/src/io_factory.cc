@@ -116,18 +116,11 @@ namespace datatools {
       /*** text archive ***/
       if (is_text ()) 
 	{
-#ifdef IOFACTORY_USE_FPU
 	  if (devel) std::clog << "DEBUG: io_factory::__init_read_archive: "
 				 << "text with FPU..." 
 				 << std::endl;
 	  __itar_ptr = new boost::archive::text_iarchive (*__in, 
 							  boost::archive::no_codecvt);
-#else
-	  if (devel) std::clog << "DEBUG: io_factory::__init_read_archive: "
-				 << "text with no FPU..." 
-				 << std::endl;
-	  __itar_ptr = new boost::archive::text_iarchive (*__in);
-#endif // IOFACTORY_USE_FPU
 	  if (devel) 
 	    {
 	      std::clog << "DEBUG: io_factory::__init_read_archive: " 
@@ -138,18 +131,8 @@ namespace datatools {
       /*** XML archive ***/
       else if (is_xml ()) 
 	{
-#ifdef IOFACTORY_USE_FPU
-	  if (devel) std::clog << "DEBUG: io_factory::__init_read_archive: "
-				 << "XML with FPU..." 
-				 << std::endl;
 	  __ixar_ptr = new boost::archive::xml_iarchive (*__in, 
 							 boost::archive::no_codecvt);
-#else
-	  if (devel) std::clog << "DEBUG: io_factory::__init_read_archive: "
-				 << "XML with no FPU..." 
-				 << std::endl;
-	  __ixar_ptr = new boost::archive::xml_iarchive (*__in);
-#endif // IOFACTORY_USE_FPU
 	  if (devel) 
 	    {
 	      std::clog << "DEBUG: io_factory::__init_read_archive: " 
@@ -160,26 +143,12 @@ namespace datatools {
       /*** binary archive ***/
       else if (is_binary ())
 	{
-#ifdef IOFACTORY_USE_PBA
-	  if (devel) 
-	    { 
-	      std::cerr << "DEBUG: io_factory::__init_read_archive: IOFACTORY_USE_PBA" << std::endl; 
-	    }
-	  //__ibar_ptr = new boost::archive::quasi_portable_binary_iarchive (*__in);
 	  __ibar_ptr = new boost::archive::portable_binary_iarchive (*__in);
 	  if (devel) 
 	    {
 	      std::cerr << "DEBUG: io_factory::__init_read_archive: library version = " 
 			<< __ibar_ptr->get_library_version ()  << std::endl;
-	      /*
-	      std::clog << "DEBUG: io_factory::__init_read_archive: "
-			<< "'quasi_portable_binary_iarchive' version " 
-			<< __ibar_ptr->get_pba_version () << std::endl;
-	      */
 	    }
-#else
-	  __ibar_ptr = new boost::archive::binary_iarchive (*__in);
-#endif // IOFACTORY_USE_PBA
 	  //std::cerr << "DEVEL: io_factory::__init_read_archive: __ibar_ptr = " << __ibar_ptr << std::endl;
 	}
       else 
@@ -255,7 +224,6 @@ namespace datatools {
 	      std::clog << "DEBUG: io_factory::__init_read: file='" 
 			<< a_stream_name << "'" << std::endl;
 	    }
-#ifdef IOFACTORY_USE_PBA
 	  if (is_compressed () || is_binary ()) 
 	    {
 	      __fin = new std::ifstream (a_stream_name.c_str (), 
@@ -263,12 +231,9 @@ namespace datatools {
 	    }
 	  else 
 	    {
-#endif // IOFACTORY_USE_PBA
 	      __fin = new std::ifstream (a_stream_name.c_str (), 
 					 std::ios_base::in);
-#ifdef IOFACTORY_USE_PBA
 	    }
-#endif // IOFACTORY_USE_PBA
 	  if (! *__fin) 
 	    {
 	      throw std::runtime_error ("io_factory::__init_read: Cannot open input stream!");
@@ -277,7 +242,6 @@ namespace datatools {
 	}
 
       __in = __in_fs;
-#ifdef IOFACTORY_USE_FPU
       if (is_text () || is_xml ())
 	{
 	  if (g_debug)
@@ -288,7 +252,6 @@ namespace datatools {
 	    }
 	  __in->imbue (*__locale);
 	}
-#endif // IOFACTORY_USE_FPU
 
       return 0;
     }
@@ -332,7 +295,6 @@ namespace datatools {
 	}
       if (is_text ()) 
 	{
-#ifdef IOFACTORY_USE_FPU 
 	  if (g_debug) 
 	    {
 	      std::clog << "DEBUG: io_factory::__init_write_archive: "
@@ -341,15 +303,6 @@ namespace datatools {
 	    }
 	  __otar_ptr = new boost::archive::text_oarchive (*__out, 
 							  boost::archive::no_codecvt);	  
-#else
-	  if (g_debug) 
-	    {
-	      std::clog << "DEBUG: io_factory::__init_write_archive: "
-			<< "without FPU: text archive..." 
-			<< std::endl;
-	    }
-	  __otar_ptr = new boost::archive::text_oarchive (*__out);
-#endif // IOFACTORY_USE_FPU
 	  if (g_debug) 
 	    {
 	      std::clog << "DEBUG: io_factory::__init_write_archive: "
@@ -359,7 +312,6 @@ namespace datatools {
 	}
       else if (is_xml ()) 
 	{
-#ifdef IOFACTORY_USE_FPU
 	  if (g_debug) 
 	    {
 	      std::clog << "DEBUG: io_factory::__init_write_archive: "
@@ -368,15 +320,6 @@ namespace datatools {
 	    }
 	  __oxar_ptr = new boost::archive::xml_oarchive (*__out, 
 							 boost::archive::no_codecvt);
-#else
-	  if (g_debug) 
-	    {
-	      std::clog << "DEBUG: io_factory::__init_write_archive: "
-			<< "without FPU: XML archive..." 
-			<< std::endl;
-	    }
-	  __oxar_ptr = new boost::archive::xml_oarchive (*__out);
-#endif // IOFACTORY_USE_FPU
 	  if (g_debug) 
 	    {
 	      std::clog << "DEBUG: io_factory::__init_write_archive: "
@@ -386,18 +329,13 @@ namespace datatools {
 	}
       else if (is_binary ()) 
 	{
-#ifdef IOFACTORY_USE_PBA
-	  //__obar_ptr = new boost::archive::quasi_portable_binary_oarchive (*__out);
 	  __obar_ptr = new boost::archive::portable_binary_oarchive (*__out);
 	  if (g_debug) 
 	    {
 	      std::clog << "DEBUG: io_factory::__init_write_archive: "
-			<< "'boost::archive::quasi_portable_binary_oarchive' library version " 
+			<< "'boost::archive::portable_binary_oarchive' library version " 
 			<< __obar_ptr->get_library_version () << std::endl;
 	    }
-#else
-	  __obar_ptr = new boost::archive::binary_oarchive (*__out);
-#endif // IOFACTORY_USE_PBA
 	}
       else 
 	{
@@ -441,12 +379,10 @@ namespace datatools {
 	    }
 
 	  std::ios_base::openmode open_mode = std::ios_base::out;
-#ifdef IOFACTORY_USE_PBA
 	  if (is_compressed () || is_binary ())
 	    { 
 	      open_mode |= std::ios_base::binary;
 	    }
-#endif // IOFACTORY_USE_PBA
 	  if (is_append ())
 	    {
 	      if (is_single_archive ())
@@ -469,7 +405,6 @@ namespace datatools {
 	}
 
       __out = __out_fs;
-#ifdef IOFACTORY_USE_FPU
       if (is_text () || is_xml ())
 	{ 
 	  if (g_debug) 
@@ -479,7 +414,6 @@ namespace datatools {
 	    }
 	  __out->imbue (*__locale);
 	}
-#endif // IOFACTORY_USE_FPU
 
       if (g_debug) 
 	{
@@ -683,7 +617,6 @@ namespace datatools {
 	  __reset_write ();
 	}
       __ctor_defaults ();
-#ifdef IOFACTORY_USE_FPU
       if (g_debug) std::clog << "DEBUG: io_factory::__reset: Use FPU" << std::endl;
       if (__locale)
 	{
@@ -695,14 +628,12 @@ namespace datatools {
 	  delete __default_locale;
 	  __default_locale = 0;
 	}
-#endif // IOFACTORY_USE_FPU     
       return 0;
     }
 
     // ctor
     io_factory::io_factory (int a_mode)
     {
-#ifdef IOFACTORY_USE_FPU
       __default_locale = 0;
       __locale = 0;
       __default_locale = new std::locale (std::locale::classic (), 
@@ -718,7 +649,6 @@ namespace datatools {
 	  __locale = new std::locale (*__default_locale, 
 				      new boost::math::nonfinite_num_get<char>);
 	}
-#endif // IOFACTORY_USE_FPU         
       __ctor_defaults ();
       __init ("", a_mode);
       return;
@@ -728,7 +658,6 @@ namespace datatools {
     io_factory::io_factory (const std::string & a_stream_name, 
 			    int a_mode)
     {
-#ifdef IOFACTORY_USE_FPU
       __default_locale = 0;
       __locale = 0;
       __default_locale = new std::locale (std::locale::classic (), 
@@ -744,7 +673,6 @@ namespace datatools {
 	  __locale = new std::locale (*__default_locale, 
 				      new boost::math::nonfinite_num_get<char>);
 	}
-#endif // IOFACTORY_USE_FPU         
       __ctor_defaults ();
       __init (a_stream_name, a_mode);
       return;
@@ -804,10 +732,8 @@ namespace datatools {
       a_out << indent << tag 
 	   << "is_text : " << is_text () << std::endl;
 
-#ifdef IOFACTORY_USE_PBA
       a_out << indent << tag 
 	   << "is_binary : " << is_binary () << std::endl;
-#endif // IOFACTORY_USE_PBA    
 
       a_out << indent << tag 
 	   << "is_xml : " << is_xml () << std::endl;

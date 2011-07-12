@@ -253,12 +253,24 @@ function do_run ()
 	mkdir ${tmp_test_dir}
     fi
     cd ${tmp_test_dir}
+
+    cat >> tests.log<<EOF
+****************************************************
+Starting tests...
+****************************************************
+EOF
     count=0
     error_count=0
     missing_count=0
     for exe in ${test_exe} ; do
 	let count=count+1
 	pkgtools__msg_notice "Running ${exe}..."
+	cat >> tests.log<<EOF
+
+****************************************************
+Running ${exe}...
+****************************************************
+EOF
 	bin=${DATATOOLS_BIN_DIR}/${exe}
 	if [ ! -x ${bin} ]; then
 	    pkgtools__msg_warning "No '${bin}' exectuable avalaible ! Please first build it !"
@@ -302,7 +314,14 @@ function do_run ()
     pkgtools__msg_notice "Total Number of executable   = ${count}"
     pkgtools__msg_notice "Number of missing executable = ${missing_count}"
     pkgtools__msg_notice "Number of failed executable  = ${error_count}"
-   
+     
+    cat >> tests.log<<EOF
+
+****************************************************
+Tests stop here.
+****************************************************
+EOF
+  
     cd ${opwd}
 
     __pkgtools__at_function_exit

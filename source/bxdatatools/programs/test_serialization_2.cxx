@@ -14,9 +14,8 @@
 // a serializable test class :
 #include <datatools/test/my_data.h>
 
-#ifdef DATATOOLS_NO_EBIO 
-#include <datatools/the_serializable.h>
-#endif
+// Some pre-processor guard about Boost I/O usage and linkage :
+#include <datatools/serialization/bio_guard.h>
 
 using namespace std;
 

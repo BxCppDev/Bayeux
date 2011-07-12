@@ -10,9 +10,8 @@
 #include <datatools/event/event_id.h>
 #include <datatools/serialization/io_factory.h>
 
-#ifdef DATATOOLS_NO_EBIO 
-#include <datatools/the_serializable.h>
-#endif
+// Some pre-processor guard about Boost I/O usage and linkage :
+#include <datatools/serialization/bio_guard.h>
 
 using namespace std;
 
@@ -58,6 +57,7 @@ int main (int argc_ , char ** argv_)
 
       string filename = "test_event_id.xml";
       {
+	clog << "Storing..." << endl;
 	list<datatools::event::event_id> ids;
 	datatools::serialization::data_writer writer(filename);
 	
@@ -70,7 +70,8 @@ int main (int argc_ , char ** argv_)
       }
 
       {
-	list<datatools::event::event_id> ids;
+	clog << "Loading..." << endl;
+ 	list<datatools::event::event_id> ids;
 	datatools::serialization::data_reader reader (filename);
 	while (reader.has_record_tag ()) 
 	  {

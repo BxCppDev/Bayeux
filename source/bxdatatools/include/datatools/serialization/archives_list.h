@@ -30,19 +30,8 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
-
-#ifdef IOFACTORY_USE_PBA
-/* #include <boost/qpba/quasi_portable_binary_iarchive.hpp> */
-/* #include <boost/qpba/quasi_portable_binary_oarchive.hpp> */
 #include <boost/archive/portable_binary_iarchive.hpp>
 #include <boost/archive/portable_binary_oarchive.hpp>
-#else
-/* native portable binary archives: not recommended at all 
- * for it does not support float and double
- */
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#endif // IOFACTORY_USE_PBA
 
 #endif // __datatools__serialization__archives_list_h
 

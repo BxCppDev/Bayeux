@@ -10,9 +10,8 @@
 #include <datatools/utils/multi_properties.h>
 #include <datatools/serialization/io_factory.h>
 
-#ifdef DATATOOLS_NO_EBIO 
-#include <datatools/the_serializable.h>
-#endif
+// Some pre-processor guard about Boost I/O usage and linkage :
+#include <datatools/serialization/bio_guard.h>
 
 using namespace std;
 
@@ -88,7 +87,7 @@ int main (int argc_ , char ** argv_)
 		  du::multi_properties::write_private_also);  
  
 	{
-	  clog << endl << "Serializing..." << endl;
+	  clog << endl << "Serializing in XML archive file..." << endl;
 	  string filename = "test_multi_properties.xml";
 	  clog << "Writing to '" << filename << "' ..." << endl;
 	  datatools::serialization::data_writer writer (filename);
@@ -108,6 +107,16 @@ int main (int argc_ , char ** argv_)
 	mp.write ("test_multi_properties_2.conf", 
 		  du::multi_properties::with_header_footer,
 		  du::multi_properties::write_public_only);  
+ 
+	{
+	  clog << endl << "Deserializing from XML archive file..." << endl;
+	  string filename = "test_multi_properties.xml";
+	  clog << "Loading from '" << filename << "' ..." << endl;
+	  datatools::serialization::data_reader reader (filename);
+	  reader.load (mp);
+	  clog << "Deserialization is done." << endl;
+	  mp.dump (clog);
+	}
        }
  
     }

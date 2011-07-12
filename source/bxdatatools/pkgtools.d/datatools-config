@@ -12,7 +12,7 @@
 # to build/install this package (i.e. Autotools).
 #
 #
-# The following environment variables may be set to change 
+# The following environment variables may be set to change
 # the behaviour of the datatools-config script:
 #
 # export DATATOOLS_LDFLAGS_MODE="hardcoded_shared_lib_path"
@@ -38,30 +38,30 @@ THE_SYSTEM="$(uname -s)-$(uname -m | sed -e 's/ //g')${COMPILER}"
 
 THEPACK_ROOT=/usr/local
 if [ -n "${DATATOOLS_ROOT}" ]; then
-    THEPACK_ROOT="${DATATOOLS_ROOT}" 
-else 
+    THEPACK_ROOT="${DATATOOLS_ROOT}"
+else
     echo "$SCRIPTNAME: error: 'DATATOOLS_ROOT' environment variable is not defined!" 1>&2
     exit 1
 fi
 
-THEPACK_INCLUDEDIR="$THEPACK_ROOT/include" 
+THEPACK_INCLUDEDIR="$THEPACK_ROOT/include"
 
-THEPACK_LIBDIR="$THEPACK_ROOT/${THE_SYSTEM}/lib" 
+THEPACK_LIBDIR="$THEPACK_ROOT/${THE_SYSTEM}/lib"
 
-THEPACK_BINDIR="$THEPACK_ROOT/${THE_SYSTEM}/bin" 
+THEPACK_BINDIR="$THEPACK_ROOT/${THE_SYSTEM}/bin"
 
 THEPACK_VERSION="?"
 if [ -f "$THEPACK_ROOT/VERSION" ]; then
-    THEPACK_VERSION="$(cat $THEPACK_ROOT/VERSION)"    
+    THEPACK_VERSION="$(cat $THEPACK_ROOT/VERSION)"
 elif [ -f "$THEPACK_ROOT/pkgtools.d/package.info"  ]; then
-    version=$(cat $THEPACK_ROOT/pkgtools.d/package.info | grep "version=" | cut -d'=' -f2 )    
+    version=$(cat $THEPACK_ROOT/pkgtools.d/package.info | grep "version=" | cut -d'=' -f2 )
     THEPACK_VERSION=${version}
 fi
-THEPACK_LABEL="datatools-${THEPACK_VERSION}" 
+THEPACK_LABEL="datatools-${THEPACK_VERSION}"
 
 #echo "DATATOOLS_USING_CACHE_FILES=${DATATOOLS_USING_CACHE_FILES}" 1>&2
 
-using_cache_files=0 # default: do not use cache files 
+using_cache_files=0 # default: do not use cache files
 if [ "x${DATATOOLS_USING_CACHE_FILES}" != "x" ]; then
     if [ "x${DATATOOLS_USING_CACHE_FILES}" = "x1" ]; then
 	using_cache_files=1
@@ -99,36 +99,23 @@ if [ "x${DATATOOLS_LDFLAGS_MODE}" != "x" ]; then
     ldflags_mode="${DATATOOLS_LDFLAGS_MODE}"
 fi
 
-# 2009-11-13 FM: add support for set_bitset (vault)
-with_boost_bitset=1
-###if [ ! -L ${THEPACK_ROOT}/boost/vault/ser_bitset ]; then
-if [ ! -d ${THEPACK_ROOT}/boost/vault/local ]; then
-    with_boost_bitset=0
-    export DATATOOLS_NO_BITSET=1
-fi
-
-with_boost_pba=1
-with_boost_fpu=1
 with_boost_python=1
-with_ebio=1
-with_kwsys=1
-if [ "x${DATATOOLS_NO_PBA}" == "x1" ]; then
-    with_boost_pba=0
-fi
-if [ "x${DATATOOLS_NO_FPU}" == "x1" ]; then
-    with_boost_fpu=0
-fi
 if [ "x${DATATOOLS_NO_PYTHON}" == "x1" ]; then
     with_boost_python=0
 fi
-if [ "x${DATATOOLS_NO_EBIO}" == "x1" ]; then
-    with_ebio=0
+with_ebio=0
+with_xbio=0
+if [ "x${DATATOOLS_EBIO}" == "x1" ]; then
+    with_ebio=1
 fi
-if [ "x${DATATOOLS_NO_KWSYS}" == "x1" ]; then
-    with_kwsys=0
+if [ "x${DATATOOLS_XBIO}" == "x1" ]; then
+    with_xbio=1
 fi
 
 opt=$1
+shift 1
+opt2=$1
+shift 1
 
 if [ "x$opt" = "x" ]; then
     echo "$SCRIPTNAME: error: Missing option!" 1>&2
@@ -149,42 +136,42 @@ Known values for OPTION are:
   --incdir              print include directory
   --libdir              print library directory
   --bindir              print binary directory
-  --include             print include path pre-processor flags without dependencies 
+  --include             print include path pre-processor flags without dependencies
   --cflags              print include path pre-processor flags with dependencies
-  --libs                print library linking information, without dependencies
-  --ldflags             
-  --libs-depends        print library linking information, with dependencies
+  --libs    [option]    print library linking information, without dependencies
+  --ldflags [option]
+  --libs-depends [option] print library linking information, with dependencies
+      Options:          --xbio  with linkage against the `libdatatools_bio.so' DLL
+                        --no-xbio  without linkage against the `libdatatools_bio.so' DLL
   --help                print this help then exit
   --version             print version information
   --system              print system
   --with-python         print if Python module is used
   --python-version      print Python version
-  --with-fpu            print if Floating Point Utility is used
-  --with-pba            print if Portable Binary Archive is used
   --with-ebio           print if Boost/Serialization binary code is pre-built and embedded in the shared library
-  --with-kwsys          print if kwsys is used
+  --with-xbio           print if Boost/Serialization binary code is pre-built in an auxiliary I/O shared library
   --boost-version       print Boost version
   --clean-cache-files   clean compile/link cache files
   --check               check dependencies and setup
 
 EOF
     exit 1
-fi 
+fi
 
 if [ "x$opt" = "x--system" ]; then
     echo "${THE_SYSTEM}"
     exit 0
-fi 
+fi
 
 if [ "x$opt" = "x--prefix" ]; then
     echo "${THEPACK_ROOT}"
     exit 0
-fi 
+fi
 
 if [ "x$opt" = "x--version" ]; then
     echo "${THEPACK_VERSION}"
     exit 0
-fi 
+fi
 
 if [ "x$opt" = "x--clean-cache-files" ]; then
     if [ -f ${cflags_cache} ]; then
@@ -199,12 +186,12 @@ if [ "x$opt" = "x--clean-cache-files" ]; then
 fi
 
 if [ "x$opt" = "x--incdir" ]; then
-    echo "${THEPACK_INCLUDEDIR}" 
+    echo "${THEPACK_INCLUDEDIR}"
     exit 0
 fi
 
 if [ "x$opt" = "x--include" ]; then
-    echo "-I${THEPACK_INCLUDEDIR} " 
+    echo "-I${THEPACK_INCLUDEDIR} "
     exit 0
 fi
 
@@ -231,26 +218,18 @@ if [ "x$opt" = "x--cflags" ]; then
 		    "-fPIC " \
 		    "-I${THEPACK_INCLUDEDIR} "  \
 		    "`boost-config --cflags` "
-		if [ ${with_boost_bitset} -eq 1 ]; then
-		    echo -n "-I${THEPACK_ROOT}/boost/vault/local "
+		if [ ${with_ebio} -eq 1 ]; then
+		    echo -n "-DDATATOOLS_EBIO=1 "
+		else
+		    echo -n "-DDATATOOLS_EBIO=0 "
 		fi
-		if [ ${with_boost_pba} -eq 1 ]; then
-		    echo -n "-DIOFACTORY_USE_PBA=1 "
-		    #echo -n "-I${THEPACK_ROOT}/boost/vault/pba "
+		if [ ${with_xbio} -eq 1 ]; then
+		    echo -n "-DDATATOOLS_XBIO=1 "
+		else
+		    echo -n "-DDATATOOLS_XBIO=0 "
 		fi
-		if [ ${with_boost_fpu} -eq 1 ]; then
-		    echo -n "-DIOFACTORY_USE_FPU=1 "
-		    #echo -n "-I${THEPACK_ROOT}/boost/vault/fpu "
-		    #echo -n "-I${THEPACK_ROOT}/boost/vault/endian "
-		fi
-		if [ ${with_ebio} -eq 0 ]; then
-		    echo -n "-DDATATOOLS_NO_EBIO=1 "
-		fi
-		if [ ${with_kwsys} -eq 0 ]; then
-		    echo -n "-DDATATOOLS_NO_KWSYS=1 "
-		fi
-		echo -n "`clhep-config --include` " 
-	    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py 
+		echo -n "`clhep-config --include` "
+	    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py
 	) | tee ${cflags_cache_effective}
 	test ${using_cache_files} -eq 0 && rm -f ${cflags_cache}
     fi
@@ -260,21 +239,38 @@ fi
 if [ "x$opt" = "x--libdir" ]; then
     echo "${THEPACK_LIBDIR}"
     exit 0
-fi 
+fi
 
 if [ "x$opt" = "x--bindir" ]; then
     echo "${THEPACK_BINDIR}"
     exit 0
-fi 
+fi
 
+# compute default linkage :
+bio_ldflags=
+bio_ldflags_HC=
+if [ ${with_xbio} -eq 1 ]; then
+    bio_ldflags=-ldatatools_bio
+    bio_ldflags_HC=${THEPACK_LIBDIR}/libdatatools_bio.so
+fi
 if [ "x$opt" = "x--libs" ]; then
+    if [ "x$opt2" = "x--no-xbio" ]; then
+	bio_ldflags=
+	bio_ldflags_HC=
+    fi
+    if [ "x$opt2" = "x--xbio" -a ${with_xbio} -eq 1 ]; then
+	bio_ldflags=-ldatatools_bio
+	bio_ldflags_HC=${THEPACK_LIBDIR}/libdatatools_bio.so
+    fi
     if [ "X${ldflags_mode}" = "Xhardcoded_shared_lib_path" ]; then
+        echo -n "${bio_ldflags_HC} "
         echo -n "${THEPACK_LIBDIR}/libdatatools.so "
     else
-        echo -n "-L${THEPACK_LIBDIR} -ldatatools "
+        echo -n "-L${THEPACK_LIBDIR} ${bio_ldflags} -ldatatools "
     fi
+    echo
     exit 0
-fi 
+fi
 
 if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
     generate_ldflags=0
@@ -291,47 +287,43 @@ if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
         generate_ldflags=1
 	ldflags_cache_effective=
     fi
-    
-    if [ ${generate_ldflags} -eq 1 ]; then      
+
+    if [ ${generate_ldflags} -eq 1 ]; then
         (
             (
-		if [ "X${ldflags_mode}" = "Xhardcoded_shared_lib_path" ]; then
-                    echo -n "${THEPACK_LIBDIR}/libdatatools.so "
-		else
-                    echo -n "-L${THEPACK_LIBDIR} -ldatatools "
-		fi		
-		echo -n "-L${THEPACK_LIBDIR} -ldatatools "  
-		echo -n "`boost-config --ldflags serialization iostreams filesystem system` " 
-		echo -n "`clhep-config --libs` -lm "
-		if [ ${with_kwsys} -eq 1 ]; then
-		    echo -n "-lkwsys -lkwsys_c -ldl "
+		if [ "x$opt2" = "x--no-xbio" ]; then
+		    bio_ldflags=
+		    bio_ldflags_HC=
 		fi
-            ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r 
+		if [ "x$opt2" = "x--xbio" -a ${with_xbio} -eq 1 ]; then
+		    bio_ldflags=-ldatatools_bio
+		    bio_ldflags_HC=${THEPACK_LIBDIR}/libdatatools_bio.so
+		fi
+		if [ "X${ldflags_mode}" = "Xhardcoded_shared_lib_path" ]; then
+		    echo -n "${bio_ldflags_HC} "
+		    echo -n "${THEPACK_LIBDIR}/libdatatools.so "
+		else
+		    echo -n "-L${THEPACK_LIBDIR} ${bio_ldflags} -ldatatools "
+		fi
+		echo -n "`boost-config --ldflags serialization iostreams filesystem system` "
+		echo -n "`clhep-config --libs` -lm "
+		echo -n "-lkwsys -lkwsys_c -ldl "
+            ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
 	) | tee ${ldflags_cache_effective}
 	test ${using_cache_files} -eq 0 && rm -f ${ldflags_cache}
     fi
     exit 0
-fi 
-
-if [ "x$opt" = "x--with-kwsys" ]; then
-    echo "${with_kwsys}"
-    exit 0
-fi 
-
-if [ "x$opt" = "x--with-pba" ]; then
-    echo "${with_boost_pba}"
-    exit 0
-fi 
-
-if [ "x$opt" = "x--with-fpu" ]; then
-    echo "${with_boost_fpu}"
-    exit 0
-fi 
+fi
 
 if [ "x$opt" = "x--with-ebio" ]; then
     echo "${with_ebio}"
     exit 0
-fi 
+fi
+
+if [ "x$opt" = "x--with-xbio" ]; then
+    echo "${with_xbio}"
+    exit 0
+fi
 
 if [ "x$opt" = "x--python-version" ]; then
     if [ "x${DATATOOLS_PYTHON_VERSION}" != "x" ]; then
@@ -343,17 +335,17 @@ if [ "x$opt" = "x--python-version" ]; then
 	exit 1
     fi
     exit 0
-fi 
+fi
 
 if [ "x$opt" = "x--with-python" ]; then
     echo "${with_boost_python}"
     exit 0
-fi 
+fi
 
 if [ "x$opt" = "x--boost-version" ]; then
     boost-config --version
     exit 0
-fi 
+fi
 
 if [ "x$opt" = "x--check" ]; then
     cd ${THEPACK_ROOT}
@@ -365,7 +357,7 @@ if [ "x$opt" = "x--check" ]; then
     fi
     cd ${opwd}
     exit 0
-fi 
+fi
 
 echo "$SCRIPTNAME: error: Unknown option!" 1>&2
 $0 --help

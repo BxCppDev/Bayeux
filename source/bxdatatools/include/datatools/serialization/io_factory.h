@@ -35,17 +35,7 @@
 #include <locale>
 #include <typeinfo>
 
-#ifdef IOFACTORY_USE_PBA
-// Force usage of `Floating point utilities' by Johan Råde
-// for `Portable Binary Archive' 
-#ifndef IOFACTORY_USE_FPU
-#define IOFACTORY_USE_FPU=1
-#endif
-#endif // IOFACTORY_USE_PBA
-
-#ifdef IOFACTORY_USE_FPU
 #include <boost/math/nonfinite_num_facets.hpp>
-#endif
 
 #include <boost/tokenizer.hpp>
 
@@ -85,10 +75,8 @@ namespace datatools {
       boost::iostreams::filtering_ostream * __out_fs;
       std::ifstream  * __fin;
       std::ofstream  * __fout;
-#ifdef IOFACTORY_USE_FPU
       std::locale    * __default_locale;
       std::locale    * __locale;
-#endif // IOFACTORY_USE_FPU
 
       bool                                __read_archive_is_initialized;
       bool                                __write_archive_is_initialized;
@@ -96,15 +84,8 @@ namespace datatools {
       boost::archive::text_oarchive     * __otar_ptr;
       boost::archive::xml_iarchive      * __ixar_ptr;
       boost::archive::xml_oarchive      * __oxar_ptr;
-#ifdef IOFACTORY_USE_PBA
-      // boost::archive::quasi_portable_binary_iarchive * __ibar_ptr;
-      // boost::archive::quasi_portable_binary_oarchive * __obar_ptr;
       boost::archive::portable_binary_iarchive * __ibar_ptr;
       boost::archive::portable_binary_oarchive * __obar_ptr;
-#else
-      boost::archive::binary_iarchive   * __ibar_ptr;
-      boost::archive::binary_oarchive   * __obar_ptr;
-#endif // IOFACTORY_USE_PBA
 
     public:
 	
@@ -184,17 +165,10 @@ namespace datatools {
 	
       bool is_binary () const;
 
-#ifdef IOFACTORY_USE_PBA
       bool is_portable_binary () const
       {
 	return is_binary () && true;
       }
-#else
-      bool is_portable_binary () const
-      {
-	return is_binary () && false;
-      }
-#endif // IOFACTORY_USE_PBA	
 
       bool is_xml () const;
 
@@ -269,13 +243,8 @@ namespace datatools {
       }
 	
       template <typename Data>
-#ifdef IOFACTORY_USE_PBA
       void __store_binary (boost::archive::portable_binary_oarchive & a_ar, 
 			   const Data & a_data)
-#else
-      void __store_binary (boost::archive::binary_oarchive & a_ar, 
-	                   const Data & a_data)
-#endif // IOFACTORY_USE_PBA
       {
 	const Data & b = a_data;
 	a_ar << b; 
@@ -288,31 +257,6 @@ namespace datatools {
       {
 	Data & b = a_data;
 	a_ar >> b; 
-	/*
-        // 2009-05-26, FM:  
-	std::cerr << "DEVEL: io_factory::__load_text: archive class name='" 
-	<< typeid (a_ar).name() << "'" 
-	<< std::endl;
-	std::cerr << "DEVEL: io_factory::__load_text: class name='" 
-	<< typeid (b).name() << "'" 
-	<< std::endl;
-	// Problem!
-	try 
-	{
-	a_ar >> b; 
-	std::cerr << "DEVEL: io_factory::__load_text: deserialization is ok."
-	<< std::endl;
-	}
-	catch (std::exception & x)
-	{
-	std::cerr << "DEVEL: io_factory::__load_text: EXCEPTION="
-	<< x.what ()
-	<< std::endl;
-	    
-	}
-	std::cerr << "DEVEL: io_factory::__load_text: done" 
-	<< std::endl;
-	*/
       }
 
       template <typename Data>
@@ -325,13 +269,8 @@ namespace datatools {
       }
 
       template <typename Data>
-#ifdef IOFACTORY_USE_PBA
       void __load_binary (boost::archive::portable_binary_iarchive & a_ar , 
 			  Data & a_data)
-#else
-	void __load_binary (boost::archive::binary_iarchive & a_ar , 
-			    Data & a_data)
-#endif // IOFACTORY_USE_PBA
       {
 	Data & b = a_data;
 	a_ar >> b; 
@@ -408,11 +347,6 @@ namespace datatools {
 	  {
 	    if (__itar_ptr != 0)
 	      {
-		/*
-		  std::cerr << "DEVEL: io_factory::load: "
-		  << "load data from input text archive..." 
-		  << std::endl;	      
-		*/
 		__load_text<Data> (*__itar_ptr, a_data);
 		*__in_fs >> std::ws;
 	      }
