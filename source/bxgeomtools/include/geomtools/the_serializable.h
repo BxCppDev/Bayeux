@@ -6,7 +6,8 @@
 
 #include <boost/serialization/export.hpp>
 
-#include <datatools/serialization/archives_instantiation.h>
+#include <datatools/serialization/archives_list.h>
+//#include <datatools/serialization/archives_instantiation.h>
 #include <geomtools/the_serializable.ipp>
 
 /**********************

@@ -1,4 +1,4 @@
-# -*- mode: makefile; -*- 
+# -*- mode: makefile; -*-
 # GNUmakefile (language C++)
 
 OS=$(shell uname -s)
@@ -43,9 +43,13 @@ all : lib
 
 PACKAGENAME=geomtools
 UPACKAGENAME=$(shell echo "$(PACKAGENAME)" | tr "a-z" "A-Z")
-LIBNAME=$(shell echo "$(PACKAGENAME)" | tr "A-Z" "a-z")
+LPACKAGENAME=$(shell echo "$(PACKAGENAME)" | tr "A-Z" "a-z")
+LIBNAME=$(LPACKAGENAME)
+LIBNAME_BIO=$(LIBNAME)_bio
 LIBFILE=lib$(LIBNAME).a
+LIBFILE_BIO=lib$(LIBNAME_BIO).a
 SHLIBFILE=lib$(LIBNAME)${SHLIBEXT}
+SHLIBFILE_BIO=lib$(LIBNAME_BIO)${SHLIBEXT}
 LIBVER=$(shell cat ../VERSION |tr -d '\n')
 
 BASEDIR=..
@@ -67,6 +71,8 @@ CXXFLAGS=-fPIC
 CPPFLAGS=-I. -I$(INCDIR)
 LDFLAGS=-O -L$(LIBDIR) -l$(LIBNAME)
 
+binlibdep=lib
+
 DEPCPPFLAGS=
 DEPLDFLAGS=
 ### Dependencies:
@@ -80,14 +86,14 @@ DEPCPPFLAGS+=$(shell mygsl-config --cflags)
 DEPLDFLAGS+=$(shell mygsl-config --ldflags)
 
 # CLHEP dependency:
-ifeq ($(strip $(CLHEP_BASE_DIR)),)
-$(error Sorry CLHEP is not configured!)
-endif
-ifeq ($(shell which clhep-config),)
-$(error Sorry clhep-config not found!)
-endif
-DEPCPPFLAGS+=$(shell clhep-config --include)
-DEPLDFLAGS+=$(shell clhep-config --libs)
+# ifeq ($(strip $(CLHEP_BASE_DIR)),)
+# $(error Sorry CLHEP is not configured!)
+# endif
+# ifeq ($(shell which clhep-config),)
+# $(error Sorry clhep-config not found!)
+# endif
+# DEPCPPFLAGS+=$(shell clhep-config --include)
+# DEPLDFLAGS+=$(shell clhep-config --libs)
 
 # datatools:
 ifeq ($(shell which datatools-config),)
@@ -97,34 +103,53 @@ DEPCPPFLAGS+=$(shell datatools-config --cflags)
 DEPLDFLAGS+=$(shell datatools-config --ldflags)
 
 ### Use or not Embedded Boost I/O:
-EBIO_FLAGS=
-ifneq ($(GEOMTOOLS_NO_EBIO),1)
-GEOMTOOLS_NO_EBIO=0
+EBIO_CFLAGS=
+EBIO_LDFLAGS=
+ifeq ($(GEOMTOOLS_EBIO),1)
+GEOMTOOLS_EBIO=1
+EBIO_CFLAGS=-DGEOMTOOLS_EBIO=1
 $(warning WARNING: geomtools uses 'Embedded Boost I/O' !)
-EBIO_FLAGS=
 else
-GEOMTOOLS_NO_EBIO=1
-EBIO_FLAGS=-DGEOMTOOLS_NO_EBIO=1
+GEOMTOOLS_EBIO=0
+EBIO_CFLAGS=-DGEOMTOOLS_EBIO=0
 $(warning WARNING: geomtools does not use 'Embedded Boost I/O' !)
 endif
 
+### Use or not Embedded Boost I/O:
+XBIO_CFLAGS=
+XBIO_LDFLAGS=
+ifeq ($(GEOMTOOLS_XBIO),1)
+GEOMTOOLS_XBIO=1
+XBIO_CFLAGS=-DGEOMTOOLS_XBIO=1
+XBIO_LDFLAGS=-l$(LIBNAME_BIO)
+binlibdep=lib_xbio
+$(warning WARNING: geomtools uses 'Auxiliary Boost I/O' !)
+else
+GEOMTOOLS_XBIO=0
+XBIO_CFLAGS=-DGEOMTOOLS_XBIO=0
+$(warning WARNING: geomtools does not use 'Auxiliary Boost I/O' !)
+endif
+
+$(warning WARNING: geomtools EBIO_FLAGS=$(EBIO_CFLAGS))
+$(warning WARNING: geomtools XBIO_FLAGS=$(XBIO_CFLAGS))
+
 ### End of dependencies.
-CPPFLAGS1+=$(EBIO_FLAGS) $(DEPCPPFLAGS) 
-CPPFLAGS1+=$(DEPCPPFLAGS) 
-LDFLAGS1+=$(DEPLDFLAGS) 
+CPPFLAGS1+=$(EBIO_CFLAGS) $(XBIO_CFLAGS) $(DEPCPPFLAGS)
+LDFLAGS1+=$(DEPLDFLAGS)
 
 # default with libmath dependency:
-LDFLAGS1+=-lm 
+LDFLAGS1+=-lm
 
-CPPFLAGS+=$(shell echo $(CPPFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py) 
-#LDFLAGS+=$(shell echo $(LDFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r) 
+CPPFLAGS+=$(shell echo $(CPPFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py)
 DEPLDFLAGS_SORTED=$(shell echo $(LDFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r)
 LDFLAGS+=$(DEPLDFLAGS_SORTED)
 
+# Special additional link flag for BIO DLL and executable :
+LIBLDFLAGS_BIO=-L$(LIBDIR) -l$(LIBNAME)
+EXELDFLAGS_BIO=-L$(LIBDIR) $(XBIO_LDFLAGS) -l$(LIBNAME)
+
 CXXFLAGSSHFLAGS=-Wall -v
 STATICFLAGS=-static
-
-SHFLAGS=$(LDFLAGS) -ldl 
 
 HEADEREXT=.h
 SOURCEEXT=.cc
@@ -132,11 +157,6 @@ PROGEXT=.cxx
 OBJEXT=.o
 LIBEXT=.a
 BINEXT=
-
-#CHEADEREXT=.h
-#CSOURCEEXT=.c
-#CPROGEXT=.c
-#COBJEXT=.o
 
 .SUFFIXES : $(HEADEREXT) $(SOURCEEXT) $(PROGEXT) $(OBJEXT) $(LIBEXT) $(SHLIBEXT) $(BINEXT)
 
@@ -149,125 +169,118 @@ vpath %$(LIBEXT)     $(LIBDIR)
 vpath %$(SHLIBEXT)   $(LIBDIR)
 vpath %$(BINEXT)     $(BINDIR)
 
-#vpath %$(CHEADEREXT)  $(INCDIR)/$(PACKAGENAME)
-#vpath %$(CSOURCEEXT)  $(SRCDIR)
-#vpath %$(COBJEXT)     $(OBJDIR)
-#vpath %$(CPROGEXT)    $(PROGDIR)
-
 headers := $(notdir $(shell ls $(INCDIR)/$(PACKAGENAME)/*$(HEADEREXT) 2> /dev/null))
-
-#sources := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT) 2> /dev/null))
-#sources1 := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT) 2> /dev/null | sed -e 's@ i_object_3d.cc@ @g' -e 's@ i_shape_3d.cc@ @g' -e 's@ i_model.cc@ @g'  -e 's@ color.cc@ @g' -e 's@ material.cc@ @g' -e 's@ utils.cc@ @g'))
 
 sources1=
 sources1+=address_set.cc
 sources1+=any_shape_3d.cc
-sources1+=dummy_geomtools.cc 
-sources1+=gdml_export.cc 
-sources1+=gdml_writer.cc 
+sources1+=dummy_geomtools.cc
+sources1+=gdml_export.cc
+sources1+=gdml_writer.cc
 sources1+=geom_id.cc
-sources1+=geom_info.cc 
-sources1+=geom_map.cc 
-sources1+=gnuplot_draw.cc 
-sources1+=gnuplot_drawer.cc 
-sources1+=gnuplot_i.cc 
-sources1+=hexagon_box.cc 
-sources1+=id_mgr.cc 
-sources1+=id_selector.cc 
-sources1+=i_locator.cc  
-sources1+=intersection.cc  
-sources1+=i_placement.cc 
-sources1+=i_stackable.cc 
-sources1+=logical_volume.cc 
-sources1+=mapping.cc 
-sources1+=mapping_utils.cc  
-sources1+=model_factory.cc 
-sources1+=model_with_internal_items_tools.cc 
-sources1+=multiple_items_model.cc 
-sources1+=physical_volume.cc 
+sources1+=geom_info.cc
+sources1+=geom_map.cc
+sources1+=gnuplot_draw.cc
+sources1+=gnuplot_drawer.cc
+sources1+=gnuplot_i.cc
+sources1+=hexagon_box.cc
+sources1+=id_mgr.cc
+sources1+=id_selector.cc
+sources1+=i_locator.cc
+sources1+=intersection.cc
+sources1+=i_placement.cc
+sources1+=i_stackable.cc
+sources1+=logical_volume.cc
+sources1+=mapping.cc
+sources1+=mapping_utils.cc
+sources1+=model_factory.cc
+sources1+=model_with_internal_items_tools.cc
+sources1+=multiple_items_model.cc
+sources1+=physical_volume.cc
 
-sources1+=multiple_placement.cc 
-sources1+=regular_grid_placement.cc 
-sources1+=regular_linear_placement.cc 
-sources1+=placement.cc 
+sources1+=multiple_placement.cc
+sources1+=regular_grid_placement.cc
+sources1+=regular_linear_placement.cc
+sources1+=placement.cc
 
-sources1+=regular_polygon.cc 
-sources1+=sensitive.cc 
-sources1+=smart_id_locator.cc 
+sources1+=regular_polygon.cc
+sources1+=sensitive.cc
+sources1+=smart_id_locator.cc
 
 # One-dimensional objects:
-sources1+=helix_3d.cc 
-sources1+=line_3d.cc 
-sources1+=polyline_3d.cc 
-sources1+=circle.cc 
+sources1+=helix_3d.cc
+sources1+=line_3d.cc
+sources1+=polyline_3d.cc
+sources1+=circle.cc
 
 # Two-dimensional objects:
-sources1+=rectangle.cc 
-sources1+=disk.cc 
+sources1+=rectangle.cc
+sources1+=disk.cc
 
 # Models:
-sources1+=cylindric_extrusion_boxed_model.cc 
-sources1+=replicated_boxed_model.cc 
-sources1+=rotated_boxed_model.cc 
-sources1+=simple_boxed_model.cc 
-sources1+=simple_shaped_model.cc 
-sources1+=simple_world_model.cc 
-sources1+=stacked_model.cc 
-sources1+=i_boxed_model.cc 
-# sources1+=stacked_boxed_model.cc 
-sources1+=surrounded_boxed_model.cc 
-sources1+=test_model_1.cc 
-sources1+=test_model_2.cc 
-sources1+=test_world_model.cc 
+sources1+=cylindric_extrusion_boxed_model.cc
+sources1+=replicated_boxed_model.cc
+sources1+=rotated_boxed_model.cc
+sources1+=simple_boxed_model.cc
+sources1+=simple_shaped_model.cc
+sources1+=simple_world_model.cc
+sources1+=stacked_model.cc
+sources1+=i_boxed_model.cc
+# sources1+=stacked_boxed_model.cc
+sources1+=surrounded_boxed_model.cc
+sources1+=test_model_1.cc
+sources1+=test_model_2.cc
+sources1+=test_world_model.cc
 
 # 3D shapes:
-sources1+=cylinder.cc 
+sources1+=cylinder.cc
 sources1+=box.cc
-sources1+=sphere.cc 
-sources1+=tube.cc 
-sources1+=tessellation.cc 
-sources1+=polycone.cc 
-sources1+=polyhedra.cc 
+sources1+=sphere.cc
+sources1+=tube.cc
+sources1+=tessellation.cc
+sources1+=polycone.cc
+sources1+=polyhedra.cc
 
 # 3D composite  shapes:
-sources1+=subtraction_3d.cc 
-sources1+=union_3d.cc 
-sources1+=intersection_3d.cc 
-sources1+=i_composite_shape_3d.cc 
+sources1+=subtraction_3d.cc
+sources1+=union_3d.cc
+sources1+=intersection_3d.cc
+sources1+=i_composite_shape_3d.cc
 
 sources1+=i_model.cc
 
-sources1+=i_shape_1d.cc 
-sources1+=i_shape_2d.cc 
-sources1+=i_shape_3d.cc 
-sources1+=i_object_3d.cc 
+sources1+=i_shape_1d.cc
+sources1+=i_shape_2d.cc
+sources1+=i_shape_3d.cc
+sources1+=i_object_3d.cc
 
-sources1+=visibility.cc 
-sources1+=color.cc 
-sources1+=material.cc 
+sources1+=visibility.cc
+sources1+=color.cc
+sources1+=material.cc
 sources1+=utils.cc
-sources1+=the_serializable.cc
-sources := $(sources1)
 
-#-e 's@ visibility.cc@ @g'
+# standard mode :
+ifeq ($(GEOMTOOLS_EBIO),0)
+sources  := $(sources1)
+else
+# only for GEOMTOOLS_EBIO==1 mode :
+sources := the_serializable.cc $(sources1)
+endif
 
-### - force i_object_3d.cc to be the last in library 
-### - force XXX.cc to be the last in library due to initialization of a static scoped pointer
-#sources := $(sources1) i_model.cc i_shape_3d.cc i_object_3d.cc color.cc material.cc utils.cc
-#visibility.cc
+# only for GEOMTOOLS_XBIO==1 mode :
+sources_bio :=  $(notdir $(shell ls $(SRCDIR)/the_serializable$(SOURCEEXT) 2> /dev/null))
 
-#csources := $(notdir $(shell ls $(SRCDIR)/*$(CSOURCEEXT) 2> /dev/null))
 objects := $(sources:%$(SOURCEEXT)=%$(OBJEXT))
 objectsWithPath := $(sources:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT))
-#cobjects := $(csources:%$(CSOURCEEXT)=%$(COBJEXT))
-#cobjectsWithPath := $(csources:%$(CSOURCEEXT)=$(OBJDIR)/%$(COBJEXT))
+objects_bio := $(sources_bio:%$(SOURCEEXT)=%$(OBJEXT))
+objectsWithPath_bio := $(sources_bio:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT))
 programs_all:= $(notdir $(shell ls $(PROGDIR)/*$(PROGEXT) 2> /dev/null))
 
 programs_test:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep ^test_)
 programs:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep -v ^test_)
 
 binaries:= $(programs:%$(PROGEXT)=%$(BINEXT))
-binaries.static:= $(programs:%$(PROGEXT)=%.static$(BINEXT))
+#binaries.static:= $(programs:%$(PROGEXT)=%.static$(BINEXT))
 
 binaries_test:= $(programs_test:%$(PROGEXT)=%$(BINEXT))
 
@@ -299,8 +312,8 @@ help :
 test1:
 	@echo "sources = $(sources)"
 
-.PHONY : test
-test:
+.PHONY : dump
+dump:
 	@echo "PACKAGE_DIR='$(PACKAGE_DIR)'"
 	@echo "PACKAGENAME='$(PACKAGENAME)'"
 	@echo "COMPILER='$(COMPILER)'"
@@ -312,6 +325,8 @@ test:
 	@echo "headers = $(headers)"
 	@echo "sources = $(sources)"
 	@echo "objects = $(objects)"
+	@echo "sources_bio = $(sources_bio)"
+	@echo "objects_bio = $(objects_bio)"
 	@echo "programs = $(programs)"
 	@echo "binaries = $(binaries)"
 	@echo "programs_test = $(programs_test)"
@@ -327,10 +342,8 @@ build_special :
 	@echo "Target 'build_special'..."
 
 .PHONY : install
-install : 
+install :
 	@echo "Installing..."
-	@# cat $(BASEDIR)/pkgtools.d/package.csh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).csh
-	@# cat $(BASEDIR)/pkgtools.d/package.sh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).sh
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
 	@ln -s -f $(PACKAGE_ROOT)/pkgtools.d/$(LIBNAME)-config $(BINDIR)/$(LIBNAME)-config
 
@@ -341,11 +354,8 @@ clean_special :
 	@echo "Target 'clean_special'..."
 
 .PHONY : uninstall
-uninstall : 
+uninstall :
 	@echo "Uninstalling..."
-	#test -L $(BINDIR)/$(LIBNAME)-config && $(RM) $(BINDIR)/$(LIBNAME)-config || echo -n ""
-	#test -f $(BASEDIR)/$(LIBNAME).sh && $(RM) $(BASEDIR)/$(LIBNAME).sh || echo -n ""
-	#test -f $(BASEDIR)/$(LIBNAME).csh && $(RM) $(BASEDIR)/$(LIBNAME).csh || echo -n ""
 
 #########################################################################
 
@@ -353,22 +363,28 @@ uninstall :
 system :
 	@echo "$(SYSTEM)"
 
-.PHONY : setup
-setup :
-	@echo "export PATH=$(PACKAGE_DIR)/$(SYSTEM)/bin:$(PATH)"
-	@echo "export LD_LIBRARY_PATH=$(PACKAGE_DIR)/$(SYSTEM)/lib:$(LD_LIBRARY_PATH)"
+.PHONY : lib_xbio
+lib_xbio : lib lib_bio
 
 .PHONY : lib
 lib : lib_shared
 
+.PHONY : lib_bio
+lib_bio : lib_shared_bio
+
 .PHONY : libs
 libs : lib_static lib_shared
 
-.PHONY : lib_static
-lib_static : $(LIBFILE)
+# .PHONY : lib_static
+# lib_static : $(LIBFILE)
 
 .PHONY : lib_shared
 lib_shared : $(SHLIBFILE)
+	@echo "SHLIBFILE=$(SHLIBFILE)"
+
+.PHONY : lib_shared_bio
+lib_shared_bio : $(SHLIBFILE_BIO) lib_shared
+	@echo "SHLIBFILE_BIO=$(SHLIBFILE_BIO)"
 
 .PHONY : clean
 clean : clean_special
@@ -379,7 +395,7 @@ clean : clean_special
 	@echo
 
 .PHONY : clean_bin_test
-clean_bin_test : 
+clean_bin_test :
 	find $(ARCHDIR)/bin -name "test_*" -a -executable -exec $(RM) \{\} \;  || echo -n ""
 
 .PHONY : distclean
@@ -394,10 +410,10 @@ bin : bin_shared
 bin_test : bin_test_shared
 
 .PHONY : bins
-bins : bin_shared bin_static 
+bins : bin_shared #bin_static
 
-.PHONY : bin_static
-bin_static : $(binaries_static)
+# .PHONY : bin_static
+# bin_static : $(binaries_static)
 
 .PHONY : bin_shared
 bin_shared : $(binaries)
@@ -405,16 +421,29 @@ bin_shared : $(binaries)
 .PHONY : bin_test_shared
 bin_test_shared : ${binaries_test}
 
-$(LIBFILE) : $(objectsWithPath) 
-	@echo "Building static lib '$(@)'..."
+%$(BINEXT) : %$(PROGEXT) | lib_shared $(binlibdep)
+	@echo "Compiling program '$(@)' with shared library..."
+	@test -d $(BINDIR) || mkdir -p $(BINDIR)
+	$(CXX) -I. $(CPPFLAGS) $(CXXFLAGS) $< $(EXELDFLAGS_BIO) $(DEPLDFLAGS_SORTED) -o $(BINDIR)/$(notdir $(@))
+
+# $(LIBFILE) : $(objectsWithPath)
+# 	@echo "Building static lib '$(@)'..."
+# 	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
+# 	for file_object in $(objects); do \
+# 	  $(AR) -rusv $(LIBDIR)/$(LIBFILE) $(OBJDIR)/$(notdir $${file_object}) ; done
+# 	ranlib $(LIBDIR)/$(notdir $(@))
+# 	@echo "Building static lib '$(@)' done."
+# 	@echo
+
+$(SHLIBFILE_BIO) : $(objectsWithPath_bio)
+	@echo "NOTICE: Building shared auxiliary BIO lib '$(@)'..." >&2
+	@echo "NOTICE: DEPLDFLAGS_SORTED=$(DEPLDFLAGS_SORTED)" >&2
 	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
-	for file_object in $(objects); do \
-	  $(AR) -rusv $(LIBDIR)/$(LIBFILE) $(OBJDIR)/$(notdir $${file_object}) ; done
-	ranlib $(LIBDIR)/$(notdir $(@))
-	@echo "Building static lib '$(@)' done."
+	@test -n "$(objectsWithPath_bio)" && $(LD) $(CXXFLAGS) $(SOFLAGS) $(^) $(LIBLDFLAGS_BIO) $(DEPLDFLAGS_SORTED) -o $(LIBDIR)/$(notdir $(@)) || echo ""
+	@echo "NOTICE: Building shared lib '$(@)' done." >&2
 	@echo
 
-$(SHLIBFILE) : $(objectsWithPath) 
+$(SHLIBFILE) : $(objectsWithPath)
 	@echo "Building shared lib '$(@)'..."
 	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
 	@test -n "$(objectsWithPath)" && $(LD) $(CXXFLAGS) $(SOFLAGS) $(^) $(DEPLDFLAGS_SORTED) -o $(LIBDIR)/$(notdir $(@)) || echo ""
@@ -426,15 +455,10 @@ $(OBJDIR)/%$(OBJEXT) : %$(SOURCEEXT) %$(HEADEREXT)
 	@test -d $(OBJDIR) || mkdir -p $(OBJDIR)
 	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< -o $(OBJDIR)/$(notdir $(@))
 
-%.static$(BINEXT) : %$(PROGEXT) | lib_static
-	@echo "Compiling statically linked program '$(@)'..."
-	@test -d $(BINDIR) || mkdir -p $(BINDIR)
-	$(CXX) -I. $(CPPFLAGS) $(CXXFLAGS) $< $(STATICFLAGS) $(LDFLAGS) -o $(BINDIR)/$(notdir $(@))
-
-%$(BINEXT) : %$(PROGEXT) | lib_shared 
-	@echo "Compiling program '$(@)' with shared library..."
-	@test -d $(BINDIR) || mkdir -p $(BINDIR)
-	$(CXX) -I. $(CPPFLAGS) $(CXXFLAGS) $< $(SHFLAGS) -o $(BINDIR)/$(notdir $(@))
+# %.static$(BINEXT) : %$(PROGEXT) | lib_static
+# 	@echo "Compiling statically linked program '$(@)'..."
+# 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
+# 	$(CXX) -I. $(CPPFLAGS) $(CXXFLAGS) $< $(STATICFLAGS) $(LDFLAGS) -o $(BINDIR)/$(notdir $(@))
 
 .PHONY : dist
 dist : distclean

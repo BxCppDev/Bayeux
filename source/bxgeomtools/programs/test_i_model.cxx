@@ -49,7 +49,7 @@ int main (int argc_, char ** argv_)
       datatools::utils::properties setup;
       setup.store ("width",      44.0); // mm
       setup.store ("height",     25.0); // mm
-      setup.store ("material",   "copper"); 
+      setup.store ("material.ref",   "copper"); 
       setup.store ("visibility", true); 
 
       geomtools::i_model::g_devel = debug;

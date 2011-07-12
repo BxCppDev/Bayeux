@@ -7,25 +7,21 @@
 #include <stdexcept>
 
 #include <geomtools/utils.h>
+#include <geomtools/geom_id.h>
+#include <geomtools/geomtools_version.h>
+#include <datatools/utils/properties.h>
 
 #include <datatools/serialization/io_factory.h>
 
-#include <geomtools/geom_id.h>
-#include <datatools/utils/properties.h>
-
-#ifdef DATATOOLS_NO_EBIO 
-#include <datatools/the_serializable.h>
-#endif
-#ifdef GEOMTOOLS_NO_EBIO 
-#include <geomtools/the_serializable.h>
-#endif
+// Some pre-processor guard about Boost I/O usage and linkage :
+#include <datatools/serialization/bio_guard.h>
+#include <geomtools/serialization/bio_guard.h>
 
 int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
   try 
     {
-
       geomtools::vector_2d pos2d;
       pos2d.set (1., 2.);
       std::clog << "Vector 2D: " << pos2d << std::endl;
@@ -91,6 +87,9 @@ int main (int argc_, char ** argv_)
 	
 	datatools::utils::properties config;
 	config.store_flag ("test");
+	config.store ("library", "geomtools");
+	config.store ("version", GEOMTOOLS_LIB_VERSION);
+	config.store ("executable", "test_serializable");
 	config.tree_dump (clog, "Config :");
 	writer.store (config);
 	for (int i = 0; i < 5; i++)

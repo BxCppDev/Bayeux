@@ -11,9 +11,8 @@
 
 #include <datatools/serialization/io_factory.h>
 
-#ifdef GEOMTOOLS_NO_EBIO
-#include <geomtools/the_serializable.h>
-#endif
+// Some pre-processor guard about Boost I/O usage and linkage :
+#include <geomtools/serialization/bio_guard.h>
 
 int 
 main (int argc_, char ** argv_)
@@ -58,6 +57,7 @@ main (int argc_, char ** argv_)
       std::cout << std::endl;
 
       {
+	std::cout << "Serialize..." << std::endl;
 	namespace ds = datatools::serialization;
 	ds::data_writer writer;
 	writer.init ("test_utils.txt", 
@@ -73,9 +73,11 @@ main (int argc_, char ** argv_)
 	    writer.store (geomtools::io::VECTOR_3D_SERIAL_TAG, v);
 	  }
 	writer.reset ();
+	std::cout << "Done" << std::endl << std::endl;
       }
 
       {
+	std::cout << "Deserialize..." << std::endl;
 	namespace ds = datatools::serialization;
 	ds::data_reader reader;
 	reader.init ("test_utils.txt", 
@@ -92,9 +94,11 @@ main (int argc_, char ** argv_)
 	    i++;
 	  }
 	reader.reset ();
+	std::cout << "Done" << std::endl << std::endl;
       }
 
       {
+	std::cout << "Serialize (2)..." << std::endl;
 	namespace ds = datatools::serialization;
 	ds::data_writer writer;
 	writer.init ("test_utils2.txt", 
@@ -121,9 +125,11 @@ main (int argc_, char ** argv_)
 	    writer.store (geomtools::io::ROTATION_3D_SERIAL_TAG, r);
 	  }
 	writer.reset ();
+	std::cout << "Done" << std::endl << std::endl;
       }
 
       {
+	std::cout << "Deserialize (2)..." << std::endl;
 	namespace ds = datatools::serialization;
 	ds::data_reader reader;
 	reader.init ("test_utils2.txt", 
@@ -143,6 +149,7 @@ main (int argc_, char ** argv_)
 	    i++;
 	  }
 	reader.reset ();
+	std::cout << "Done" << std::endl << std::endl;
       }
 
       geomtools::create_rotation(rot, 
