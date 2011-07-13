@@ -2,11 +2,11 @@
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-09
  * Last modified : 2011-06-22
- * 
+ *
  * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
- * Description: 
- * 
+ *
+ * Description:
+ *
  *  A test sample program that illustrate how to create a service manager.
  *
  * Usage:
@@ -35,7 +35,7 @@ using namespace datatools::service;
 using namespace datatools::utils;
 
 /** An event record test processing service:
- *  it adds a simple text property (namely the 'label') 
+ *  it adds a simple text property (namely the 'label')
  *  in the event header of any processed event.
  *
  */
@@ -62,8 +62,8 @@ DATATOOLS_SERVICE_CLASS_DECLARE(test_service)
 
 	string label_;
 
-	/* Macro to declare the registration interface of this service 
-	 * in the database with a default creator :			
+	/* Macro to declare the registration interface of this service
+	 * in the database with a default creator :
 	 */
 	DATATOOLS_SERVICE_REGISTRATION_INTERFACE (test_service);
 };
@@ -85,7 +85,7 @@ const string & test_service::get_label () const
 DATATOOLS_SERVICE_CONSTRUCTOR_IMPLEMENT_HEAD(test_service,							\
 																						 "Test",										\
 																						 "An event record processor test service", \
-																						 "0.1") 
+																						 "0.1")
 {
 	label_ = "";
 	return;
@@ -103,13 +103,13 @@ DATATOOLS_SERVICE_IS_INITIALIZED_IMPLEMENT_HEAD(test_service)
 DATATOOLS_SERVICE_INITIALIZE_IMPLEMENT_HEAD(test_service,				\
 																						a_config,						\
 																						a_dictionnary)
-{	
+{
 	/* const datatools::utils::properties & a_config
 	 * service_dict_type *                  a_dictionary
 	 * void *                               a_user_resource
 	 */
 
-	if (label_.empty ())
+	if (!is_initialized ())
 		{
 			// If the label is not setup yet, pickup from the configuration list:
 			if (a_config.has_key ("label"))
@@ -127,9 +127,9 @@ DATATOOLS_SERVICE_INITIALIZE_IMPLEMENT_HEAD(test_service,				\
 
 	return datatools::utils::SUCCESS;
 }
-	
+
 // Reset hook :
-DATATOOLS_SERVICE_RESET_IMPLEMENT_HEAD(test_service) 
+DATATOOLS_SERVICE_RESET_IMPLEMENT_HEAD(test_service)
 {
 	label_ = "";
 	return datatools::utils::SUCCESS;
@@ -149,10 +149,10 @@ DATATOOLS_SERVICE_RESET_IMPLEMENT_HEAD(test_service)
 // 		dit.id      = "dummy_service";  // name of the service
 // 		dit.version = "";      // requested version
 // 		dit.meta    = "debug"; // meta information
-// 		dit.level   = OPTIONAL_DEPENDENCY; // 
+// 		dit.level   = OPTIONAL_DEPENDENCY; //
 // 		a_dependency_list["foo"] = dit;
 // 	}
-// 	return; 
+// 	return;
 // }
 
 /** Auto-registration of this service class in a central service Db */
@@ -161,15 +161,15 @@ DATATOOLS_SERVICE_REGISTRATION_IMPLEMENT(test_service, "test_service")
 /************************************************************/
 
 using namespace std;
- 
+
 int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
 
   try
     {
-      clog << "Test program for class 'datatools::service::service_manager' !" << endl; 
-  
+      clog << "Test program for class 'datatools::service::service_manager' !" << endl;
+
       bool debug = false;
 
       int iarg = 1;
@@ -179,57 +179,61 @@ int main (int argc_, char ** argv_)
 
           if (token[0] == '-')
             {
-							string option = token; 
-							if ((option == "-d") || (option == "--debug")) 
+							string option = token;
+							if ((option == "-d") || (option == "--debug"))
 								{
-									debug = true; 
-								} 
-							else 
-								{ 
-									clog << io::warning << "ignoring option '" << option << "'!" << endl; 
+									debug = true;
+								}
+							else
+								{
+									clog << io::warning << "ignoring option '" << option << "'!" << endl;
 								}
             }
           else
             {
-              string argument = token; 
-              { 
-								clog << io::warning << "ignoring argument '" << argument << "'!" << endl; 
+              string argument = token;
+              {
+								clog << io::warning << "ignoring argument '" << argument << "'!" << endl;
               }
             }
           iarg++;
 				}
 
-			base_service::g_debug = debug; 
-			base_service::get_service_creator_db ().dump_service_creators (clog);			
+			base_service::g_debug = debug;
+			base_service::get_service_creator_db ().dump_service_creators (clog);
 
 			{
 				// Setup the configuration parameters of the service:
 				properties TS_config;
 				if (debug) TS_config.store_flag ("debug");
 				TS_config.store ("label", "test_service::label");
-				
+
 				test_service TS;
-				
+
 				// Initialize the event record processing service :
-				if (debug) clog << io::debug << "Initializing service '" << TS.get_name () << "'..." << endl;
+				if (debug) clog << io::debug
+                        << "Initializing service '"
+                        << TS.get_name () << "'..." << endl;
 				TS.initialize_standalone (TS_config);
 				if (debug) clog << io::debug << "Done." << endl;
-				
+
 				clog << "Test service label is '" << TS.get_label () << "'" << endl;
-				 
+
 				// Terminate the test service :
-				if (debug) clog << io::debug << "Terminating service '" << TS.get_name () << "'..." << endl;
-				TS.reset ();		
+				if (debug) clog << io::debug
+                        << "Terminating service '"
+                        << TS.get_name () << "'..." << endl;
+				TS.reset ();
 				if (debug) clog << io::debug << "Done." << endl;
 			}
 
 			{
 				uint32_t SM_flags = service_manager::BLANK;
-				if (debug) 
+				if (debug)
 					{
 						SM_flags |= service_manager::DEBUG;
 					}
-				service_manager SM ("SM", "A test service manager", SM_flags); 
+				service_manager SM ("SM", "A test service manager", SM_flags);
 				SM.tree_dump (clog, "Service manager : ");
 
 				// Create a multi_property container:
@@ -291,12 +295,12 @@ int main (int argc_, char ** argv_)
 		}
   catch (exception & x)
     {
-      cerr << "error: " << x.what () << endl; 
+      cerr << "error: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);

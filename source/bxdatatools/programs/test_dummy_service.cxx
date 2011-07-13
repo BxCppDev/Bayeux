@@ -28,7 +28,6 @@
 #include <datatools/services/dummy_service.h>
 #include <datatools/utils/utils.h>
 
-using namespace std;
 using namespace datatools::service;
 using namespace datatools::utils;
 

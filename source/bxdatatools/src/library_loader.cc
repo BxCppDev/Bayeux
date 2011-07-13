@@ -1,5 +1,5 @@
-// -*- mode: c++; -*- 
-/* library_loader.cc 
+// -*- mode: c++; -*-
+/* library_loader.cc
  */
 
 #include <datatools/utils/library_loader.h>
@@ -21,11 +21,11 @@
 #include <datatools/utils/multi_properties.h>
 
 namespace datatools {
-  
+
   namespace utils {
 
     /*
-   library_loader::scoped_library_loader_type 
+   library_loader::scoped_library_loader_type
    library_loader::g_library_loader_;
     */
 
@@ -64,17 +64,17 @@ namespace datatools {
 	  if (status != 1)
 	    {
 	      ostringstream message;
-	      message << "library_entry_type::dtor: The '" 
-		      << name << "' library was not closed ! kwsys says: '" 
+	      message << "library_entry_type::dtor: The '"
+		      << name << "' library was not closed ! kwsys says: '"
 		      << kwsys::DynamicLoader::LastError () << "' !";
 	      cerr << "ERROR: " << message.str () << endl;
-	    }		
+	    }
 	}
       handle = 0;
       return;
     }
 
-    void library_entry_type::print (ostream & a_out, 
+    void library_entry_type::print (ostream & a_out,
                                    const string & a_indent) const
     {
       a_out << a_indent << "|-- Name      : " << name << endl;
@@ -112,7 +112,7 @@ namespace datatools {
     /*******************
      *  library_loader *
      *******************/
- 
+
     bool library_loader::is_debug () const
     {
       return flags_ & debug;
@@ -148,13 +148,13 @@ namespace datatools {
 	}
       return;
     }
-    
+
     bool library_loader::allowing_unregistered () const
     {
       return flags_ | allow_unregistered;
     }
 
-    symbol_ptr library_loader::get_symbol_address (const string & a_lib_name, 
+    symbol_ptr library_loader::get_symbol_address (const string & a_lib_name,
 						   const string & a_symbol)
     {
       /*
@@ -162,9 +162,9 @@ namespace datatools {
 	{
 	  ostringstream message;
 	  message << "datatools::utils::library_loader::get_symbol_address: "
-		  << "The shared library file '" 
+		  << "The shared library file '"
 		  << a_lib_name << "' is not loaded !";
-	  throw logic_error (message.str ());   
+	  throw logic_error (message.str ());
 	}
       */
       handle_library_entry_dict_type::const_iterator found = libraries_.find (a_lib_name);
@@ -172,17 +172,17 @@ namespace datatools {
 	{
 	  ostringstream message;
 	  message << "datatools::utils::library_loader::get_symbol_address: "
-		  << "The shared library file '" 
+		  << "The shared library file '"
 		  << a_lib_name << "' is not registered !";
-	  throw logic_error (message.str ());   
+	  throw logic_error (message.str ());
 	}
       if (found->second.get ().handle == 0)
 	{
 	  ostringstream message;
 	  message << "datatools::utils::library_loader::get_symbol_address: "
-		  << "The shared library file '" 
+		  << "The shared library file '"
 		  << a_lib_name << "' is not loaded !";
-	  throw logic_error (message.str ());   
+	  throw logic_error (message.str ());
 	}
       symbol_ptr the_symptr = kwsys::DynamicLoader::GetSymbolAddress (found->second.get ().handle, a_symbol.c_str());
       return the_symptr;
@@ -206,7 +206,7 @@ namespace datatools {
 
     int library_loader::close_all ()
     {
-      while (! stacked_libraries_.empty ()) 
+      while (! stacked_libraries_.empty ())
 	{
 	  if (g_devel) clog << "DEVEL: " << "library_loader::close_all: LOOP ****************" << endl;
 	  handle_library_entry_type & hle = stacked_libraries_.front ();
@@ -221,7 +221,7 @@ namespace datatools {
 	      library_entry_type & le = hle.get ();
 	      if (le.handle != 0)
 		{
-		  if (is_debug ()) 
+		  if (is_debug ())
 		    {
 		      clog << "DEBUG: " << "datatools::utils::library_loader::close_all: "
 			   << "Closing library '" << le.name << "'..." << endl;
@@ -230,30 +230,30 @@ namespace datatools {
 		  if (status != 1)
 		    {
 		      ostringstream message;
-		      message << "library_entry_type::dtor: The '" 
-			      << le.name << "' library was not closed ! kwsys says: '" 
+		      message << "library_entry_type::dtor: The '"
+			      << le.name << "' library was not closed ! kwsys says: '"
 			      << kwsys::DynamicLoader::LastError () << "' !";
 		      cerr << "ERROR: " << message.str () << endl;
 		      //return;
-		    }		
+		    }
 		  else
 		    {
 		      le.handle = 0;
 		      stacked_libraries_.pop_front (); // remove top element
 		      if (g_devel) cerr << "DEVEL: " << "Stack size " << stacked_libraries_.size () << endl;
 		    }
-		  if (g_devel) 
+		  if (g_devel)
 		    {
 		      clog << "DEVEL: datatools::utils::library_loader::dtor: "
-			   << "Removing library stacked entry '" << le.name << "'..." 
+			   << "Removing library stacked entry '" << le.name << "'..."
 			   << endl;
-		    } 
-		}	  
+		    }
+		}
 	    }
 	}
       return EXIT_SUCCESS;
     }
-  
+
     // dtor :
     library_loader::~library_loader ()
     {
@@ -266,7 +266,7 @@ namespace datatools {
       if (g_devel) clog << "DEVEL: datatools::utils::library_loader::dtor: Exiting.\n";
       return;
     }
-    
+
     bool library_loader::has (const string & a_lib_name) const
     {
       return libraries_.find (a_lib_name) != libraries_.end ();
@@ -304,7 +304,7 @@ namespace datatools {
       le.version     = a_lib_version;
       le.directory    = a_lib_directory;
       le.full_path    = a_lib_full_path;
- 
+
       if (le.filename.empty ())
 	{
 	  ostringstream filename_ss;
@@ -313,11 +313,11 @@ namespace datatools {
 	  filename_ss << kwsys::DynamicLoader::LibExtension();
 	  if (! le.version.empty ())
 	    {
-	      filename_ss << le.version;	      
+	      filename_ss << le.version;
 	    }
 	  le.filename = filename_ss.str ();
 	}
-     
+
       if (le.full_path.empty ())
 	{
 	  ostringstream full_path_ss;
@@ -336,9 +336,9 @@ namespace datatools {
       if (le.full_path.empty ())
 	{
 	  ostringstream message;
-	  message << "datatools::utils::library_loader::registration: The shared library file '" 
+	  message << "datatools::utils::library_loader::registration: The shared library file '"
 		  << le.name << "' has no valid path !";
-	  throw logic_error (message.str ());   
+	  throw logic_error (message.str ());
 	}
 
       if (! le.directory.empty ())
@@ -350,41 +350,41 @@ namespace datatools {
 	  if (! boost::filesystem::exists (check))
 	    {
 	      ostringstream message;
-	      message << "datatools::utils::library_loader::registration: The shared library file '" 
+	      message << "datatools::utils::library_loader::registration: The shared library file '"
 		      << le.name << "' has no valid file '" << le.full_path << "' !";
-	      throw logic_error (message.str ());   
+	      throw logic_error (message.str ());
 	    }
 	}
       le.handle = 0;
       le.autoload = a_autoload;
       return EXIT_SUCCESS;
     }
- 
-    int library_loader::load (const string & a_lib_name, 
-			      const string & a_directory, 
-			      const string & a_filename, 
+
+    int library_loader::load (const string & a_lib_name,
+			      const string & a_directory,
+			      const string & a_filename,
 			      const string & a_full_lib_path,
 			      const string & a_version)
     {
-      handle_library_entry_dict_type::iterator found 
+      handle_library_entry_dict_type::iterator found
         = libraries_.find (a_lib_name);
       if (found == libraries_.end ())
         {
 	  if (! allowing_unregistered ())
 	    {
-	      cerr << "ERROR: " 
-		   << "datatools::utils::library_loader::load: " 
+	      cerr << "ERROR: "
+		   << "datatools::utils::library_loader::load: "
 		   << "Library '"
 		   << a_lib_name << "' is not registered !" << endl;
 	      return EXIT_FAILURE;
 	    }
 	  else
 	    {
-	      int status = registration (a_lib_name, 
-					 a_directory, 
-					 a_filename, 
-					 a_full_lib_path, 
-					 a_version, 
+	      int status = registration (a_lib_name,
+					 a_directory,
+					 a_filename,
+					 a_full_lib_path,
+					 a_version,
 					 true);
 	      if (status != EXIT_SUCCESS)
 		{
@@ -392,7 +392,7 @@ namespace datatools {
                   message << "library_entry_type::load: "
 			  << "Cannot register library '" << a_lib_name << "' !";
 		  cerr << "ERROR: " << message.str () << endl;
-		  return EXIT_FAILURE;		  
+		  return EXIT_FAILURE;
 		}
 	      found = libraries_.find (a_lib_name);
 	    }
@@ -405,53 +405,53 @@ namespace datatools {
 	{
 	  stacked_libraries_.push_front (found->second);
 	}
-      else 
+      else
 	{
 	  ostringstream message;
-	  message << a_lib_name << " library was not loaded ! kwsys says: '" 
+	  message << a_lib_name << " library was not loaded ! kwsys says: '"
 		  << kwsys::DynamicLoader::LastError () << "' !";
 	  cerr << "ERROR: " << message.str () << endl;
 	}
       return EXIT_SUCCESS;
     }
-   
+
     int library_loader::close (const string & a_lib_name)
     {
        if (! is_loaded (a_lib_name))
         {
-	  cerr << "ERROR: " 
-	       << "datatools::utils::library_loader::close: " 
+	  cerr << "ERROR: "
+	       << "datatools::utils::library_loader::close: "
 	       << "No loaded library '" << a_lib_name << "' to be closed !" << endl;
 	  return EXIT_FAILURE;
         }
       if (stacked_libraries_.front ().get ().name != a_lib_name)
 	{
-	  cerr << "ERROR: " 
-	       << "datatools::utils::library_loader::close: " 
+	  cerr << "ERROR: "
+	       << "datatools::utils::library_loader::close: "
 	       << "Cannot close library '"
 	       << a_lib_name << "' !" << endl;
-	  return EXIT_FAILURE;	  
+	  return EXIT_FAILURE;
 	}
-      handle_library_entry_dict_type::iterator found 
+      handle_library_entry_dict_type::iterator found
         = libraries_.find (a_lib_name);
       handle_library_entry_type & hle = found->second;
       library_entry_type & le = hle.get ();
-      
+
       int status = kwsys::DynamicLoader::CloseLibrary (le.handle);
       if (status != 1)
 	{
 	  ostringstream message;
-	  message << "The '" << le.name << "' library was not closed ! kwsys says: '" 
+	  message << "The '" << le.name << "' library was not closed ! kwsys says: '"
 		  << kwsys::DynamicLoader::LastError () << "' !";
 	  clog << "ERROR: " << message.str () << endl;
-	  return EXIT_FAILURE;      
-	}	  
+	  return EXIT_FAILURE;
+	}
       else
 	{
 	  stacked_libraries_.front ().get ().handle = 0;
 	  stacked_libraries_.pop_front ();
 	}
-      return EXIT_SUCCESS;      
+      return EXIT_SUCCESS;
     }
 
     void library_loader::init_ ()
@@ -484,18 +484,18 @@ namespace datatools {
 	      config_filename_ = "${DATATOOLS_ROOT}/resources/test/test_library_loader.conf";
 	    }
 	}
-      if (g_devel) 
+      if (g_devel)
 	{
 	  clog << "DEVEL: " << "datatools::utils::library_loader::init_: "
-	       << "Using library loader config file = '" 
-	       << config_filename_<< "' !" << endl; 
+	       << "Using library loader config file = '"
+	       << config_filename_<< "' !" << endl;
 	}
 
       if (config_filename_.empty ())
         {
 	  clog << "WARNING: " << "datatools::utils::library_loader::init_: "
-	       << "No library loader config file is available !" 
-	       << endl; 
+	       << "No library loader config file is available !"
+	       << endl;
           return;
         }
       using namespace datatools::utils;
@@ -506,12 +506,12 @@ namespace datatools {
       BOOST_FOREACH(const multi_properties::entry * ptr, config.ordered_entries ())
        {
 	 const multi_properties::entry & e = *ptr;
-	 if (g_devel) 
+	 if (g_devel)
 	   {
 	      clog << "DEVEL: "
-		   << "datatools::utils::library_loader::init_: " 
-		   << "Settings for library '" 
-		   << e.get_key () << "'..." << endl; 
+		   << "datatools::utils::library_loader::init_: "
+		   << "Settings for library '"
+		   << e.get_key () << "'..." << endl;
 	    }
           const properties & lib_properties = e.get_properties ();
           string             lib_name      = e.get_key ();
@@ -520,7 +520,7 @@ namespace datatools {
           string             lib_full_path = "";
           string             lib_version = "";
 	  bool               lib_autoload  = false;
- 
+
           if (lib_properties.has_key ("full_path"))
             {
               lib_full_path = lib_properties.fetch_string ("full_path");
@@ -529,28 +529,28 @@ namespace datatools {
 	    {
 	      if (lib_properties.has_key ("directory"))
 		{
-		  lib_directory = lib_properties.fetch_string ("directory");      
+		  lib_directory = lib_properties.fetch_string ("directory");
 		}
 	      if (lib_properties.has_key ("filename"))
 		{
-		  lib_filename = lib_properties.fetch_string ("filename");      
+		  lib_filename = lib_properties.fetch_string ("filename");
 		}
 	    }
-	  
+
 	  if (lib_properties.has_flag ("autoload"))
             {
               lib_autoload = lib_properties.fetch_boolean ("autoload");
             }
-	  
+
 	  if (lib_properties.has_key ("version"))
             {
               lib_version = lib_properties.fetch_string ("version");
             }
 
-	  if (g_devel) 
+	  if (g_devel)
 	    {
 	      clog << "DEVEL: "
-		   << "datatools::utils::library_loader::init_: " 
+		   << "datatools::utils::library_loader::init_: "
 		   << "Registration of library='" << lib_name << "'..." << endl;
 	    }
 	  int status = registration (lib_name,
@@ -564,13 +564,13 @@ namespace datatools {
 	      ostringstream message;
 	      message << "library_entry_type::load: "
 		      << "Cannot register library '" << lib_name << "' !";
-	      throw logic_error (message.str ());   
+	      throw logic_error (message.str ());
 	    }
 
 	  if (lib_autoload)
 	    {
 	      clog << "NOTICE: "
-		   << "datatools::utils::library_loader::init_: " 
+		   << "datatools::utils::library_loader::init_: "
 		   << "Automatic loading of library  '" << lib_name << "'..."
 		   << endl;
 	      int load_status = load (lib_name);
@@ -578,10 +578,10 @@ namespace datatools {
 		{
                   ostringstream message;
                   message << "datatools::utils::library_loader::init_: "
-			  << "Automatic loading of library='" 
+			  << "Automatic loading of library='"
 			  << lib_name << "' failed !";
-                  throw logic_error (message.str ());                   
-		}	     
+                  throw logic_error (message.str ());
+		}
 	    }
           continue;
        } // BOOST_FOREACH
@@ -596,7 +596,7 @@ namespace datatools {
       a_out << "Flags              : " << flags_ << endl;
       a_out << "Configuration file : '" << config_filename_ << "'" << endl;
       a_out << "List of registered shared libraries :" << endl;
-      for (handle_library_entry_dict_type::const_iterator i 
+      for (handle_library_entry_dict_type::const_iterator i
              = libraries_.begin ();
            i != libraries_.end ();
            i++)
@@ -641,33 +641,33 @@ namespace datatools {
     }
 
     /*
-    library_loader & 
+    library_loader &
     library_loader::get_library_loader ()
     {
       if (! g_library_loader_)
         {
-	  if (g_devel) 
+	  if (g_devel)
 	    {
 	      clog << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << endl;
 	      clog << "DEVEL: datatools::utils::library_loader::get_library_loader: "
-		   << "Instantiating the global library loader..." 
+		   << "Instantiating the global library loader..."
 		   << endl;
-	    } 
+	    }
           g_library_loader_.reset (new library_loader ());
-	  if (g_devel) 
+	  if (g_devel)
 	    {
 	      clog << "DEVEL: datatools::utils::library_loader::get_library_loader: "
-		   << "Done." 
+		   << "Done."
 		   << endl;
 	      clog << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << endl;
-	    } 
+	    }
         }
       return *g_library_loader_;
     }
     */
 
-  } // end of namespace utils 
+  } // end of namespace utils
 
-} // end of namespace datatools 
+} // end of namespace datatools
 
 // end of properties.cc

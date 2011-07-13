@@ -217,9 +217,9 @@ namespace datatools {
 		}
 
 		void
-		base_service::service_creator_db::register_service_creator (
-      const service_creator_type & a_service_creator,
-		  const string & a_service_id)
+		base_service::service_creator_db::register_service_creator
+    (const service_creator_type & a_service_creator,
+     const string & a_service_id)
 		{
 			bool devel = g_debug;
 			//devel = true;
@@ -227,7 +227,8 @@ namespace datatools {
 			string service_id = a_service_id;
 			if (devel)
 				{
-					clog << "DEVEL: datatools::service::base_service::service_creator_db::register_service_creator: "
+					clog << "DEVEL: "
+               << "datatools::service::base_service::service_creator_db::register_service_creator: "
 							 << "service_id='" << service_id << "'"
 							 << endl;
 				}
@@ -242,7 +243,7 @@ namespace datatools {
 			if (devel)
 				{
 					clog << "DEVEL: datatools::service::base_service::service_creator_db::register_service_creator: "
-							 << "new '" << service_id << "' cut creator  ID !"
+							 << "new '" << service_id << "' cut creator ID !"
 							 << endl;
 				}
 
