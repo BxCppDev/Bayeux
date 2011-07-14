@@ -323,8 +323,9 @@ if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
 		if [ "X${ldflags_mode}" = "Xhardcoded_shared_lib_path" ]; then
 		    echo -n "${bio_ldflags_HC} "
 		    echo -n "${THEPACK_LIBDIR}/libgenbb_help.so "
+		    echo -n "${THEPACK_LIBDIR}/libgenbb_help_f77.so "
 		else
-		    echo -n "-L${THEPACK_LIBDIR} ${bio_ldflags} -lgeomtools "
+		    echo -n "-L${THEPACK_LIBDIR} ${bio_ldflags} -lgenbb_help -lgenbb_help_f77 "
 		fi
 		echo -n "`geomtools-config --ldflags` " 
 		echo -n "${f77_opt} " 
