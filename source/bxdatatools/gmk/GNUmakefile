@@ -133,13 +133,13 @@ $(warning WARNING: datatools does not use 'Auxiliary Boost I/O' !)
 endif
 
 ### Use or not KWSYS (2011-07-09 FM: always use it) :
-DEPLDFLAGS+=-lkwsys -lkwsys_c 
+DEPLDFLAGS+=-lkwsys -lkwsys_c
 
 # 2011-07-09 FM : commented out
 # KWSYS_FLAGS=
 # ifneq ($(DATATOOLS_NO_KWSYS),1)
 # DATATOOLS_NO_KWSYS=0
-# DEPLDFLAGS+=-lkwsys -lkwsys_c 
+# DEPLDFLAGS+=-lkwsys -lkwsys_c
 # $(warning WARNING: datatools uses 'Embedded kwsys' !)
 # else
 # DATATOOLS_NO_KWSYS=1
@@ -148,22 +148,22 @@ DEPLDFLAGS+=-lkwsys -lkwsys_c
 # endif
 
 ### End of dependencies.
-CPPFLAGS1+=$(EBIO_CFLAGS) $(XBIO_CFLAGS) $(DEPCPPFLAGS) 
-LDFLAGS1+=$(DEPLDFLAGS) 
+CPPFLAGS1+=$(EBIO_CFLAGS) $(XBIO_CFLAGS) $(DEPCPPFLAGS)
+LDFLAGS1+=$(DEPLDFLAGS)
 
 # default with libmath dependency:
-LDFLAGS1+=-lm 
+LDFLAGS1+=-lm
 
-CPPFLAGS+=$(shell echo $(CPPFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py) 
+CPPFLAGS+=$(shell echo $(CPPFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py)
 # ifneq ($(DATATOOLS_NO_KWSYS),1)
-# DEPLDFLAGS_SORTED=-L$(LIBDIR) 
+# DEPLDFLAGS_SORTED=-L$(LIBDIR)
 # endif
 DEPLDFLAGS_SORTED+=-L$(LIBDIR) $(shell echo $(LDFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r)
 LDFLAGS+=$(DEPLDFLAGS_SORTED)
 
 # Special additional link flag for BIO DLL and executable :
-LIBLDFLAGS_BIO=-L$(LIBDIR) -l$(LIBNAME) 
-EXELDFLAGS_BIO=-L$(LIBDIR) $(XBIO_LDFLAGS) -l$(LIBNAME)  
+LIBLDFLAGS_BIO=-L$(LIBDIR) -l$(LIBNAME)
+EXELDFLAGS_BIO=-L$(LIBDIR) $(XBIO_LDFLAGS) -l$(LIBNAME)
 
 CXXFLAGSSHFLAGS=-Wall -v
 STATICFLAGS=-static
@@ -189,18 +189,20 @@ vpath %$(LIBEXT)      $(LIBDIR)
 vpath %$(SHLIBEXT)    $(LIBDIR)
 vpath %$(BINEXT)      $(BINDIR)
 
-headers := $(notdir $(shell find $(INCDIR)/$(PACKAGENAME) -name "*$(HEADEREXT)" )) 
+headers := $(notdir $(shell find $(INCDIR)/$(PACKAGENAME) -name "*$(HEADEREXT)" ))
 sources := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT)))
 
-### If uncommented, this code force base_service.cc to be the last in library 
+### If uncommented, this code force base_service.cc to be the last in library
 # due to initialization of a static scoped pointer or similar stuff:
 sources1 := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT) 2> /dev/null | sed -e "s@/base_service.cc@/@g" -e "s@/the_serializable.cc@/@g"))
 
 ### the_serializable.cc has a specizal treatment :
 ifeq ($(DATATOOLS_EBIO),1)
-sources := the_serializable.cc $(sources1) 
+sources := the_serializable.cc $(sources1)
+else
+sources := $(sources1)
 endif
-sources := $(sources1) base_service.cc 
+sources += base_service.cc
 sources_bio :=  $(notdir $(shell ls $(SRCDIR)/the_serializable$(SOURCEEXT) 2> /dev/null))
 
 ### -e "s@/library_loader.cc@/@g"
@@ -209,10 +211,10 @@ sources_bio :=  $(notdir $(shell ls $(SRCDIR)/the_serializable$(SOURCEEXT) 2> /d
 # # $(warning WARNING: datatools uses the 'library_loader' class !)
 # sources := $(sources) library_loader.cc
 # endif
-objects := $(sources:%$(SOURCEEXT)=%$(OBJEXT)) 
-objectsWithPath := $(sources:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT)) 
-objects_bio := $(sources_bio:%$(SOURCEEXT)=%$(OBJEXT)) 
-objectsWithPath_bio := $(sources_bio:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT)) 
+objects := $(sources:%$(SOURCEEXT)=%$(OBJEXT))
+objectsWithPath := $(sources:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT))
+objects_bio := $(sources_bio:%$(SOURCEEXT)=%$(OBJEXT))
+objectsWithPath_bio := $(sources_bio:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT))
 
 programs_all:= $(notdir $(shell ls $(PROGDIR)/*$(PROGEXT) 2> /dev/null))
 programs_test:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep ^test_)
@@ -279,7 +281,7 @@ build_special :
 	@echo "NOTICE: Target 'build_special'..." >&2
 
 .PHONY : install
-install : 
+install :
 	@echo "NOTICE: Installing..." >&2
 	@#cat $(BASEDIR)/pkgtools.d/package.csh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).csh
 	@#cat $(BASEDIR)/pkgtools.d/package.sh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).sh
@@ -294,7 +296,7 @@ clean_special :
 	@echo "NOTICE: Target 'clean_special'..." >&2
 
 .PHONY : uninstall
-uninstall : 
+uninstall :
 	@echo "NOTICE: Nothing special..." >&2
 
 #########################################################################
@@ -334,7 +336,7 @@ clean : clean_special
 	@echo "NOTICE: Cleaning done." >&2
 
 .PHONY : clean_bin_test
-clean_bin_test : 
+clean_bin_test :
 	find $(ARCHDIR)/bin -name "test_*" -a -executable -exec $(RM) \{\} \;  || echo -n ""
 
 .PHONY : distclean
@@ -348,7 +350,7 @@ bin : bin_shared
 bin_test : bin_test_shared
 
 .PHONY : bins
-bins : bin_shared #bin_static 
+bins : bin_shared #bin_static
 
 # .PHONY : bin_static
 # bin_static : $(binaries_static)
@@ -362,7 +364,7 @@ bin_shared : $(binaries)
 .PHONY : bin_test_shared
 bin_test_shared : $(binaries_test)
 
-$(LIBFILE) : $(objectsWithPath) 
+$(LIBFILE) : $(objectsWithPath)
 	@echo "NOTICE: Building static lib '$(@)'..." >&2
 	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
 	for file_object in $(objects); do \
@@ -370,14 +372,14 @@ $(LIBFILE) : $(objectsWithPath)
 	ranlib $(LIBDIR)/$(notdir $(@))
 	@echo "NOTICE: Building static lib '$(@)' done." >&2
 
-$(SHLIBFILE) : $(objectsWithPath) 
+$(SHLIBFILE) : $(objectsWithPath)
 	@echo "NOTICE: Building shared lib '$(@)'..." >&2
 	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
 	@test -n "$(objectsWithPath)" && $(LD) $(CXXFLAGS) $(SOFLAGS) $(^) $(DEPLDFLAGS_SORTED) -o $(LIBDIR)/$(notdir $(@)) || echo ""
 	@echo "NOTICE: Building shared lib '$(@)' done." >&2
 	@echo
 
-$(SHLIBFILE_BIO) : $(objectsWithPath_bio) 
+$(SHLIBFILE_BIO) : $(objectsWithPath_bio)
 	@echo "NOTICE: Building shared auxiliary BIO lib '$(@)'..." >&2
 	@#echo "NOTICE: DEPLDFLAGS_SORTED=$(DEPLDFLAGS_SORTED)" >&2
 	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
@@ -385,7 +387,7 @@ $(SHLIBFILE_BIO) : $(objectsWithPath_bio)
 	@echo "NOTICE: Building shared lib '$(@)' done." >&2
 	@echo
 
-$(OBJDIR)/%$(OBJEXT) : %$(SOURCEEXT) 
+$(OBJDIR)/%$(OBJEXT) : %$(SOURCEEXT)
 	@echo "NOTICE: Compiling module '$(@)'..." >&2
 	@test -d $(OBJDIR) || mkdir -p $(OBJDIR)
 	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< -o $(OBJDIR)/$(notdir $(@))
