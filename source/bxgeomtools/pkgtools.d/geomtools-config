@@ -4,7 +4,7 @@
 #
 # Note:
 #
-# The following environment variables may be set to change 
+# The following environment variables may be set to change
 # the behaviour of the geomtools-config script:
 #
 # export GEOMTOOLS_LDFLAGS_MODE="hardcoded_shared_lib_path"
@@ -36,28 +36,28 @@ THE_SYSTEM="$(uname -s)-$(uname -m | sed -e 's/ //g')${COMPILER}"
 
 THEPACK_ROOT=/usr/local
 if [ -n "${GEOMTOOLS_ROOT}" ]; then
-    THEPACK_ROOT="${GEOMTOOLS_ROOT}" 
-else 
-    echo "${SCRIPTNAME}: error: 'GEOMTOOLS_ROOT' environment variable is not defined!" 
+    THEPACK_ROOT="${GEOMTOOLS_ROOT}"
+else
+    echo "${SCRIPTNAME}: error: 'GEOMTOOLS_ROOT' environment variable is not defined!"
     my_exit 1
 fi
 
-THEPACK_INCLUDEDIR="${THEPACK_ROOT}/include" 
+THEPACK_INCLUDEDIR="${THEPACK_ROOT}/include"
 
-THEPACK_LIBDIR="${THEPACK_ROOT}/${THE_SYSTEM}/lib" 
+THEPACK_LIBDIR="${THEPACK_ROOT}/${THE_SYSTEM}/lib"
 
-THEPACK_BINDIR="${THEPACK_ROOT}/${THE_SYSTEM}/bin" 
+THEPACK_BINDIR="${THEPACK_ROOT}/${THE_SYSTEM}/bin"
 
 THEPACK_VERSION="?"
 if [ -f "${THEPACK_ROOT}/VERSION" ]; then
-    THEPACK_VERSION="$(cat ${THEPACK_ROOT}/VERSION)"    
+    THEPACK_VERSION="$(cat ${THEPACK_ROOT}/VERSION)"
 elif [ -f "${THEPACK_ROOT}/pkgtools.d/package.info"  ]; then
-    version=$(cat ${THEPACK_ROOT}/pkgtools.d/package.info | grep "version=" | cut -d'=' -f2 )    
+    version=$(cat ${THEPACK_ROOT}/pkgtools.d/package.info | grep "version=" | cut -d'=' -f2 )
     THEPACK_VERSION=${version}
 fi
-THEPACK_LABEL="geomtools-${THEPACK_VERSION}" 
+THEPACK_LABEL="geomtools-${THEPACK_VERSION}"
 
-using_cache_files=0 # default: do not use cache files 
+using_cache_files=0 # default: do not use cache files
 if [ "x${GEOMTOOLS_USING_CACHE_FILES}" != "x" ]; then
     if [ "x${GEOMTOOLS_USING_CACHE_FILES}" = "x1" ]; then
 	using_cache_files=1
@@ -112,7 +112,7 @@ opt2=$1
 shift 1
 
 if [ "x$opt" = "x" ]; then
-    echo "${SCRIPTNAME}: error: Missing option!" 
+    echo "${SCRIPTNAME}: error: Missing option!"
     help=1
 fi
 
@@ -130,10 +130,10 @@ Known values for OPTION are:
   --incdir              print include directory
   --libdir              print library directory
   --bindir              print binary directory
-  --include             print include path pre-processor flags without dependencies 
+  --include             print include path pre-processor flags without dependencies
   --cflags              print include path pre-processor flags with dependencies
   --libs    [option]    print library linking information, without dependencies
-  --ldflags [option]           
+  --ldflags [option]
   --libs-depends [option] print library linking information, with dependencies
       Options:          --xbio  with linkage against the `libgeomtools_bio.so' DLL
                         --no-xbio  without linkage against the `libgeomtools_bio.so' DLL
@@ -144,29 +144,29 @@ Known values for OPTION are:
   --clean-cache-files   clean compile/link cache files
   --with-python         print if Python module is used
   --python-version      print Python version
-  --with-ebio           print if Boost/Serialization binary code is pre-built 
+  --with-ebio           print if Boost/Serialization binary code is pre-built
                         and embedded in the `libgeomtools.so' shared library
-  --with-xbio           print if Boost/Serialization binary code is pre-built in 
+  --with-xbio           print if Boost/Serialization binary code is pre-built in
                         the `libgeomtools_bio.so' auxiliary I/O shared library
 
 EOF
     my_exit 1
-fi 
+fi
 
 if [ "x$opt" = "x--system" ]; then
     echo "${THE_SYSTEM}"
     my_exit 0
-fi 
+fi
 
 if [ "x$opt" = "x--prefix" ]; then
     echo "${THEPACK_ROOT}"
     my_exit 0
-fi 
+fi
 
 if [ "x$opt" = "x--version" ]; then
     echo "${THEPACK_VERSION}"
     my_exit 0
-fi 
+fi
 
 if [ "x$opt" = "x--python-version" ]; then
     if [ "x${DATATOOLS_PYTHON_VERSION}" != "x" ]; then
@@ -178,17 +178,17 @@ if [ "x$opt" = "x--python-version" ]; then
 	my_exit 1
     fi
     my_exit 0
-fi 
+fi
 
 if [ "x$opt" = "x--with-python" ]; then
     echo "${with_boost_python}"
     my_exit 0
-fi 
+fi
 
 if [ "x$opt" = "x--with-ebio" ]; then
     echo "${with_ebio}"
     my_exit 0
-fi 
+fi
 
 if [ "x$opt" = "x--with-xbio" ]; then
     echo "${with_xbio}"
@@ -208,12 +208,12 @@ if [ "x$opt" = "x--clean-cache-files" ]; then
 fi
 
 if [ "x$opt" = "x--incdir" ]; then
-    echo "${THEPACK_INCLUDEDIR}" 
+    echo "${THEPACK_INCLUDEDIR}"
     my_exit 0
 fi
 
 if [ "x$opt" = "x--include" ]; then
-    echo "-I${THEPACK_INCLUDEDIR} " 
+    echo "-I${THEPACK_INCLUDEDIR} "
     my_exit 0
 fi
 
@@ -232,13 +232,13 @@ if [ "x$opt" = "x--cflags" ]; then
         generate_cflags=1
 	cflags_cache_effective=
     fi
-	    
+
     if [ ${generate_cflags} -eq 1 ]; then
 	(
 	    (
 		echo -n \
 		    "-fPIC " \
-		    "-I${THEPACK_INCLUDEDIR} "  
+		    "-I${THEPACK_INCLUDEDIR} "
 		if [ ${with_ebio} -eq 1 ]; then
 		    echo -n "-DGEOMTOOLS_EBIO=1 "
 		else
@@ -251,9 +251,9 @@ if [ "x$opt" = "x--cflags" ]; then
 		fi
 		echo -n \
 		    "`datatools-config --cflags` "  \
-		    "`mygsl-config --cflags` "  
-		echo 
-	    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py	    
+		    "`mygsl-config --cflags` "
+		echo
+	    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py
 	) | tee ${cflags_cache_effective}
 	test ${using_cache_files} -eq 0 && rm -f ${cflags_cache}
     fi
@@ -263,12 +263,12 @@ fi
 if [ "x$opt" = "x--libdir" ]; then
     echo "${THEPACK_LIBDIR}"
     my_exit 0
-fi 
+fi
 
 if [ "x$opt" = "x--bindir" ]; then
     echo "${THEPACK_BINDIR}"
     my_exit 0
-fi 
+fi
 
 # compute default linkage :
 bio_ldflags=
@@ -287,13 +287,14 @@ if [ "x$opt" = "x--libs" ]; then
 	bio_ldflags_HC=${THEPACK_LIBDIR}/libgeomtools_bio.so
     fi
     if [ "X${ldflags_mode}" = "Xhardcoded_shared_lib_path" ]; then
-	echo -n "${bio_ldflags_HC} ${THEPACK_LIBDIR}/libgeomtools.so "
+	echo -n "${bio_ldflags_HC} "
+        echo -n "${THEPACK_LIBDIR}/libgeomtools.so "
     else
-	echo -n "-L${THEPACK_LIBDIR} -lgeomtools "
+        echo -n "-L${THEPACK_LIBDIR} ${bio_ldflags} -lgeomtools "
     fi
-    echo -n "-L${THEPACK_LIBDIR} ${bio_ldflags} -lgeomtools "
+    echo
     my_exit 0
-fi 
+fi
 
 if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
     generate_ldflags=0
@@ -310,8 +311,8 @@ if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
         generate_ldflags=1
 	ldflags_cache_effective=
     fi
-    
-    if [ ${generate_ldflags} -eq 1 ]; then	
+
+    if [ ${generate_ldflags} -eq 1 ]; then
 	(
 	    (
 		if [ "x$opt2" = "x--no-xbio" ]; then
@@ -328,15 +329,15 @@ if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
 		else
 		    echo -n "-L${THEPACK_LIBDIR} ${bio_ldflags} -lgeomtools "
 		fi
-		echo -n "`datatools-config --ldflags` " 
-		echo -n "`mygsl-config --ldflags` " 
-		echo 
+		echo -n "`datatools-config --ldflags` "
+		echo -n "`mygsl-config --ldflags` "
+		echo
 	    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
 	) | tee ${ldflags_cache_effective}
 	test ${using_cache_files} -eq 0 && rm -f ${ldflags_cache}
     fi
     my_exit 0
-fi 
+fi
 
 if [ "x$opt" = "x--check" ]; then
     cd ${THEPACK_ROOT}
@@ -348,7 +349,7 @@ if [ "x$opt" = "x--check" ]; then
     fi
     cd ${opwd}
     my_exit 0
-fi 
+fi
 
 echo "$SCRIPTNAME: error: Unknown option '${opt}'!"  >&2
 $0 --help
