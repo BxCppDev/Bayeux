@@ -437,7 +437,7 @@ namespace geomtools {
 			      *  Default is 0.
 			      */
     int       __face;   //! The index of the impact face on the shape
-    vector_3d __impact; //! The impact pointon the surface
+    vector_3d __impact; //! The impact point on the surface
 
   public:
 
