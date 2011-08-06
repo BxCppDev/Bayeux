@@ -69,7 +69,8 @@ BINDIR=$(ARCHDIR)/bin
 
 CXXFLAGS=-fPIC
 CPPFLAGS=-I. -I$(INCDIR)
-LDFLAGS=-O -L$(LIBDIR) -l$(LIBNAME)
+#LDFLAGS=-O -L$(LIBDIR) -l$(LIBNAME)
+LDFLAGS=-O $(ABSLIBDIR)/lib$(LIBNAME)${SHLIBEXT}
 
 binlibdep=lib
 
@@ -373,7 +374,7 @@ lib : lib_shared
 lib_bio : lib_shared_bio
 
 .PHONY : libs
-libs : lib_static lib_shared
+libs : lib_shared
 
 # .PHONY : lib_static
 # lib_static : $(LIBFILE)
