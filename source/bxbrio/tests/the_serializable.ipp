@@ -4,15 +4,13 @@
 #ifndef __brio__test__the_serializable_ipp__
 #define __brio__test__the_serializable_ipp__ 1
 
-#include <boost/serialization/export.hpp>
-
 #include <datatools/serialization/archives_instantiation.h>
 
 /****************************
  * brio::test::data_t *
  ****************************/
 
-#include <brio/test/data.ipp>
+#include <brio_test_data.ipp>
 
 #endif // __brio__test__the_serializable_ipp__
 

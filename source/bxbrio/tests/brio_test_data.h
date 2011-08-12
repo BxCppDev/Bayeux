@@ -1,5 +1,5 @@
 // -*- mode: c++; -*-
-/** data.h 
+/** brio_test_data.h 
  *
  * A serializable sample class
  * 
@@ -70,4 +70,4 @@ namespace brio {
 
 #endif // __brio__test__data_h
 
-/* end of data.h */
+/* end of brio_test_data.h */

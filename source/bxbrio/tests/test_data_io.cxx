@@ -10,10 +10,10 @@
 
 #include <brio/writer.h>
 #include <brio/reader.h>
-#include <brio/test/data.h>
+#include <brio_test_data.cc>
 
 // Serialization code :
-#include <brio/test/data.ipp>
+#include <brio_test_data.ipp>
 
 using namespace std;
 

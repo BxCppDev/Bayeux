@@ -1,9 +1,9 @@
 // -*- mode: c++ ; -*- 
-/* data.cc
+/* brio_test_data.cc
  */
 
 #include <cstdlib>
-#include <brio/test/data.h>
+#include <brio_test_data.h>
 
 namespace brio {
 
@@ -80,4 +80,4 @@ namespace brio {
   
 } // end of namespace brio
 
-// end of data.cc
+// end of brio_test_data.cc

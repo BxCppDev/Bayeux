@@ -1,5 +1,5 @@
 // -*- mode: c++; -*- 
-//! \file brio/test/data.ipp
+//! \file brio_test_data.ipp
 
 #ifndef __brio__test__data_ipp
 #define __brio__test__data_ipp 1
@@ -17,7 +17,7 @@
 #include <boost/serialization/string.hpp>
 
 #include <datatools/serialization/utils.h>
-#include <brio/test/data.h>
+#include <brio_test_data.h>
 
 #include <datatools/serialization/i_serializable.ipp>
 	 
@@ -43,8 +43,6 @@ namespace brio {
   } // end of namespace test 
 
 } // end of namespace brio 
-
-BOOST_CLASS_EXPORT_KEY2(brio::test::data, "brio::test::data")
 
 #endif // __brio__test__data_ipp
 

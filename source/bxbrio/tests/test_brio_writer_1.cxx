@@ -1,10 +1,10 @@
 #include <cstdlib>
 #include <iostream>
 
-#include <brio/test/data.h> /* a serializable sample class */
+#include <brio_test_data.cc> /* a serializable sample class */
 
 // Serialization code :
-#include <brio/test/data.ipp> 
+#include <brio_test_data.ipp> 
 
 #include <brio/writer.h>
 

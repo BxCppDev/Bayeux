@@ -6,15 +6,14 @@
 #include <string>
 #include <exception>
 
-
-#include <datatools/test/my_data.h>
 #include <datatools/utils/properties.h>
-#include <brio/test/data.h>
+#include <datatools_test_my_data.cc>
+#include <brio_test_data.cc>
 
 // Serialization implementation code :
-#include <datatools/test/my_data.ipp>
 #include <datatools/utils/properties.ipp>
-#include <brio/test/data.ipp> 
+#include <datatools_test_my_data.ipp>
+#include <brio_test_data.ipp> 
 
 #include <brio/reader.h>
 

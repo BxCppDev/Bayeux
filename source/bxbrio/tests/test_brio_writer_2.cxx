@@ -2,11 +2,11 @@
 #include <iostream>
 
 #include <datatools/utils/properties.h>
-#include <brio/test/data.h>
+#include <brio_test_data.cc>
 
 // Serialization code :
 #include <datatools/utils/properties.ipp>
-#include <brio/test/data.ipp>
+#include <brio_test_data.ipp>
 
 #include <brio/writer.h>
 

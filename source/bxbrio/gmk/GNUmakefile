@@ -62,6 +62,7 @@ PACKAGE_DIR=$(shell cd ${BASEDIR} ; pwd)
 INCDIR=$(BASEDIR)/include
 SRCDIR=$(BASEDIR)/src
 PROGDIR=$(BASEDIR)/programs
+TESTDIR=$(BASEDIR)/tests
 SCRIPTSDIR=$(BASEDIR)/scripts
 RESDIR=$(BASEDIR)/resources
 ARCHDIR=$(BASEDIR)/$(SYSTEM)
@@ -93,8 +94,8 @@ DEPLDFLAGS+=$(shell root-config --libs)
 #endif
 DEPCPPFLAGS+=$(shell datatools-config --cflags)
 DEPLDFLAGS+=$(shell datatools-config --ldflags)
-
 DEPLDFLAGS+=-pthread -lm -ldl -rdynamic
+datatools_testdir=$(shell datatools-config --prefix)/tests
 
 #>>> Examples of dependencies stuff:
 
@@ -142,6 +143,7 @@ vpath %$(HEADEREXT)  $(INCDIR)/$(PACKAGENAME)/detail
 vpath %$(HEADEREXT)  $(INCDIR)/$(PACKAGENAME)/test
 vpath %$(SOURCEEXT)  $(SRCDIR)
 vpath %$(PROGEXT)    $(PROGDIR)
+vpath test_%$(PROGEXT)  $(TESTDIR)
 vpath %$(OBJEXT)     $(OBJDIR)
 vpath %$(LIBEXT)     $(LIBDIR)
 vpath %$(SHLIBEXT)   $(LIBDIR)
@@ -168,8 +170,9 @@ objectsWithPath := $(sources:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT))
 cobjects := $(csources:%$(CSOURCEEXT)=%$(COBJEXT))
 cobjectsWithPath := $(csources:%$(CSOURCEEXT)=$(OBJDIR)/%$(COBJEXT))
 programs_all:= $(notdir $(shell ls $(PROGDIR)/*$(PROGEXT) 2> /dev/null))
+programs_test:= $(notdir $(shell ls $(TESTDIR)/test_*$(PROGEXT) 2> /dev/null))
 
-programs_test:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep ^test_)
+#programs_test:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep ^test_)
 programs:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep -v ^test_)
 
 binaries:= $(programs:%$(PROGEXT)=%$(BINEXT))
@@ -340,6 +343,11 @@ $(OBJDIR)/%$(OBJEXT) : %$(SOURCEEXT) %$(HEADEREXT)
 	@echo "NOTICE: Compiling statically linked program '$(@)'..." >&2
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
 	$(CXX) -I. $(CPPFLAGS) $(CXXFLAGS) $< $(STATICFLAGS) $(LDFLAGS) -o $(BINDIR)/$(notdir $(@))
+
+test_%$(BINEXT) : test_%$(PROGEXT) | lib_shared 
+	@echo "NOTICE: Compiling test_program '$(@)' with shared library..." >&2
+	@test -d $(BINDIR) || mkdir -p $(BINDIR)
+	$(CXX) -I. -I$(TESTDIR) -I$(datatools_testdir) $(CPPFLAGS) $(CXXFLAGS) $< $(SHFLAGS) -o $(BINDIR)/$(notdir $(@))
 
 %$(BINEXT) : %$(PROGEXT) | lib_shared 
 	@echo "NOTICE: Compiling program '$(@)' with shared library..." >&2
