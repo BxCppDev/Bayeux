@@ -47,6 +47,6 @@ namespace datatools {
 } // end of namespace datatools 
 
 // BOOST_CLASS_TRACKING(datatools::utils::things, boost::serialization::track_always) 
-BOOST_CLASS_EXPORT_KEY2(datatools::utils::things, "datatools::utils::things")
+//BOOST_CLASS_EXPORT_KEY2(datatools::utils::things, "datatools::utils::things")
 
 #endif // __datatools__utils__things_ipp

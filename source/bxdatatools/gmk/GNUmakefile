@@ -61,6 +61,7 @@ PACKAGE_DIR=$(shell cd ${BASEDIR} ; pwd)
 INCDIR=$(BASEDIR)/include
 SRCDIR=$(BASEDIR)/src
 PROGDIR=$(BASEDIR)/programs
+TESTDIR=$(BASEDIR)/tests
 SCRIPTSDIR=$(BASEDIR)/scripts
 RESDIR=$(BASEDIR)/resources
 ARCHDIR=$(BASEDIR)/$(SYSTEM)
@@ -96,13 +97,6 @@ $(error Sorry CLHEP is not setup, cannot find 'clhep-config')
 endif
 DEPCPPFLAGS+=$(shell clhep-config --include)
 DEPLDFLAGS+=$(shell clhep-config --libs)
-
-### depends on Endian:
-###DEPLDFLAGS+=-lcurses
-
-# BIO_MODE=""
-# BIO_MODE="embedded"
-# BIO_MODE="auxiliary"
 
 ### Use or not Embedded Boost I/O:
 EBIO_CFLAGS=
@@ -184,6 +178,7 @@ vpath %$(HEADEREXTPP) $(INCDIR)/$(PACKAGENAME)
 vpath %$(SOURCEEXT)   $(SRCDIR)
 vpath %$(SOURCEEXTPP) $(SRCDIR)
 vpath %$(PROGEXT)     $(PROGDIR)
+vpath test_%$(PROGEXT) $(TESTDIR)
 vpath %$(OBJEXT)      $(OBJDIR)
 vpath %$(LIBEXT)      $(LIBDIR)
 vpath %$(SHLIBEXT)    $(LIBDIR)
@@ -216,10 +211,12 @@ objectsWithPath := $(sources:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT))
 objects_bio := $(sources_bio:%$(SOURCEEXT)=%$(OBJEXT))
 objectsWithPath_bio := $(sources_bio:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT))
 
-programs_all:= $(notdir $(shell ls $(PROGDIR)/*$(PROGEXT) 2> /dev/null))
-programs_test:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep ^test_)
-programs_kwsys_test:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep ^kwsys_test_)
-programs:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep -v ^test_)
+programs_all := $(notdir $(shell ls $(PROGDIR)/*$(PROGEXT) 2> /dev/null))
+programs_test := $(notdir $(shell ls $(TESTDIR)/*$(PROGEXT) 2> /dev/null))
+#programs_test := $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep ^test_)
+#programs_kwsys_test := $(notdir $(shell ls $(TESTDIR)/^kwsys_test_*$(PROGEXT) 2> /dev/null))
+#programs_kwsys_test := $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep ^kwsys_test_)
+programs := $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep -v ^test_)
 
 binaries:= $(programs:%$(PROGEXT)=%$(BINEXT))
 #binaries.static:= $(programs:%$(PROGEXT)=%.static$(BINEXT))
@@ -268,7 +265,7 @@ dump:
 	@echo "programs = $(programs)"
 	@echo "binaries = $(binaries)"
 	@echo "programs_test = $(programs_test)"
-	@echo "kwsys_programs_test = $(kwsys_programs_test)"
+	#@echo "kwsys_programs_test = $(kwsys_programs_test)"
 	@echo "binaries_test = $(binaries_test)"
 	@echo "arch dir = $(ARCHDIR)"
 	@echo "CPPFLAGS='$(CPPFLAGS)'"
@@ -403,6 +400,12 @@ $(OBJDIR)/%$(OBJEXT) : %$(SOURCEEXT)
 	@echo "NOTICE: Compiling program '$(@)' with shared library..." >&2
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
 	$(CXX) -I. -I$(PROGDIR) $(CPPFLAGS) $(CXXFLAGS) $< $(EXELDFLAGS_BIO) $(DEPLDFLAGS_SORTED) -o $(BINDIR)/$(notdir $(@))
+
+test_%$(BINEXT) : test_%$(PROGEXT) | lib_shared $(binlibdep)
+	@echo "NOTICE: EXELDFLAGS_BIO=$(EXELDFLAGS_BIO)" >&2
+	@echo "NOTICE: Compiling program '$(@)' with shared library..." >&2
+	@test -d $(BINDIR) || mkdir -p $(BINDIR)
+	$(CXX) -I. -I$(TESTDIR) $(CPPFLAGS) $(CXXFLAGS) $< $(EXELDFLAGS_BIO) $(DEPLDFLAGS_SORTED) -o $(BINDIR)/$(notdir $(@))
 
 .PHONY : dist
 dist : distclean

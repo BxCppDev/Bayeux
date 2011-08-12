@@ -43,7 +43,7 @@
  * datatools::test::more_data_t *
  ********************************/
 
-#include <datatools/test/my_data.ipp>
+//#include <datatools/test/my_data.ipp>
 
 #endif // __datatools__the_serializable_ipp__
 

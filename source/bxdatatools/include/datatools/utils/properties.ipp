@@ -74,6 +74,6 @@ namespace datatools {
 
 BOOST_CLASS_VERSION(datatools::utils::properties, 1)
 // BOOST_CLASS_TRACKING(datatools::utils::properties, boost::serialization::track_always) 
-BOOST_CLASS_EXPORT_KEY2(datatools::utils::properties, "datatools::utils::properties")
+//BOOST_CLASS_EXPORT_KEY2(datatools::utils::properties, "datatools::utils::properties")
 
 #endif // __datatools__utils__properties_ipp

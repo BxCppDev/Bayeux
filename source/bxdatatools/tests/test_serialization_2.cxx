@@ -12,10 +12,21 @@
 #include <datatools/serialization/safe_serial.h>
 
 // a serializable test class :
-#include <datatools/test/my_data.h>
+//#include <datatools/test/my_data.h>
+//#include <datatools/test/my_data.ipp>
+#include <my_data.cc>
+#include <my_data.ipp>
 
 // Some pre-processor guard about Boost I/O usage and linkage :
-#include <datatools/serialization/bio_guard.h>
+//#include <datatools/serialization/bio_guard.h>
+
+// Special Boost serialization export/registration code :
+/*
+BOOST_CLASS_EXPORT_KEY2(datatools::test::data_t, "datatools::test::data_t")
+BOOST_CLASS_EXPORT_IMPLEMENT(datatools::test::data_t)
+BOOST_CLASS_EXPORT_KEY2(datatools::test::more_data_t, "datatools::test::more_data_t")
+BOOST_CLASS_EXPORT_IMPLEMENT(datatools::test::more_data_t)
+*/
 
 using namespace std;
 

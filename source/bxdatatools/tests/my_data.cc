@@ -2,7 +2,8 @@
 /* my_data.cc 
  */
 
-#include <datatools/test/my_data.h>
+//#include <datatools/test/my_data.h>
+#include <my_data.h>
 #include <sstream>
 
 namespace datatools {

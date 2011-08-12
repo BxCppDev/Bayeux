@@ -12,7 +12,9 @@
 #include <boost/serialization/string.hpp>
 
 #include <datatools/serialization/utils.h>
-#include <datatools/test/my_data.h>
+
+//#include <datatools/test/my_data.h>
+#include <my_data.h>
 
 #include <datatools/serialization/i_serializable.ipp>
 	 
@@ -37,10 +39,6 @@ namespace datatools {
 				 const unsigned int a_version)
     {
       a_ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP (data_t);
-      /*
-      boost::serialization::void_cast_register(static_cast<more_data_t *>(NULL),
-					       static_cast<data_t *>(NULL));
-      */
       a_ar & boost::serialization::make_nvp ("name", __name);
       return;
     }
@@ -48,9 +46,6 @@ namespace datatools {
   } // end of namespace test 
 
 } // end of namespace datatools 
-
-BOOST_CLASS_EXPORT_KEY2(datatools::test::data_t, "datatools::test::data_t")
-BOOST_CLASS_EXPORT_KEY2(datatools::test::more_data_t, "datatools::test::more_data_t")
 
 #endif // __datatools__test__my_data_ipp
 

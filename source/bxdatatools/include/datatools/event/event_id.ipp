@@ -29,7 +29,7 @@ namespace datatools {
 } // end of namespace datatools 
 
 // BOOST_CLASS_TRACKING(datatools::event::event_id, boost::serialization::track_always) 
-BOOST_CLASS_EXPORT_KEY2(datatools::event::event_id, "datatools::event::event_id")
+//BOOST_CLASS_EXPORT_KEY2(datatools::event::event_id, "datatools::event::event_id")
 
 #endif // __datatools__event__event_id_ipp
 

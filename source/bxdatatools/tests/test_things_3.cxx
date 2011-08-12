@@ -17,7 +17,10 @@
 #include <datatools/utils/things.h>
 // The serializable 'properties' container :
 #include <datatools/utils/properties.h>
-#include <datatools/test/my_data.h>
+
+//#include <datatools/test/my_data.h>
+#include <my_data.cc>
+#include <my_data.ipp>
 
 // the datatools writer and reader classes:
 #include <datatools/serialization/io_factory.h>
@@ -182,12 +185,18 @@ void B::dump (ostream & out) const
 /*** use some macros to implement serialization stuff for class A ***/
 BOOST_CLASS_EXPORT_KEY2 (A, "test_things::A")
 BOOST_CLASS_EXPORT_IMPLEMENT (A)
-//DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(A)
 
 /*** use some macros to implement serialization stuff for class B ***/
 BOOST_CLASS_EXPORT_KEY2 (B, "test_things::B")
 BOOST_CLASS_EXPORT_IMPLEMENT (B)
-//DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(B)
+
+/*** use some macros to implement serialization stuff for class datatools::test::data_t ***/
+BOOST_CLASS_EXPORT_KEY2 (datatools::test::data_t, "datatools::test::data_t")
+BOOST_CLASS_EXPORT_IMPLEMENT (datatools::test::data_t)
+
+/*** use some macros to implement serialization stuff for class datatools::test::more_data_t ***/
+BOOST_CLASS_EXPORT_KEY2 (datatools::test::more_data_t, "datatools::test::more_data_t")
+BOOST_CLASS_EXPORT_IMPLEMENT (datatools::test::more_data_t)
 
 
 /*** main ***/
