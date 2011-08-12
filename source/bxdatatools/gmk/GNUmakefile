@@ -415,7 +415,7 @@ test_%$(BINEXT) : test_%$(PROGEXT) | lib_shared $(binlibdep)
 	@echo "NOTICE: EXELDFLAGS_BIO=$(EXELDFLAGS_BIO)" >&2
 	@echo "NOTICE: Compiling program '$(@)' with shared library..." >&2
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
-	$(CXX) -I. -I$(PROGDIR) $(shell $(python_config) --cflags) $(CPPFLAGS) $(CXXFLAGS) $< $(EXELDFLAGS_BIO) $(DEPLDFLAGS_SORTED) -o $(BINDIR)/$(notdir $(@))
+	$(CXX) -I. -I$(PROGDIR) $(python_cflags) $(CPPFLAGS) $(CXXFLAGS) $< $(EXELDFLAGS_BIO) $(DEPLDFLAGS_SORTED) -o $(BINDIR)/$(notdir $(@))
 
 .PHONY : dist
 dist : distclean
