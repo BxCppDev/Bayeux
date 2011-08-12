@@ -215,9 +215,7 @@ fi
 
 #python_version_flag_file=${the_base_dir}/gmk/datatools_python_version.config
 
-if [ -d ${the_base_dir}/gmk ]; then
-    GMKDIR=${the_base_dir}/gmk
-else
+if [ ! -d ${the_base_dir}/gmk ]; then
     pkgtools__msg_error "Missing gmk directory! Please run 'pkgtools.d/pkgtool' from the base package directory!"
     my_exit 1
 fi
@@ -229,13 +227,13 @@ function do_clean_gmk ()
 {
     __pkgtools__at_function_enter do_clean_gmk
 
-    if [ ! -d ${GMKDIR} ]; then
-	pkgtools__msg_error "do_clean_gmk: Missing '${GMKDIR}' directory!"
+    if [ ! -d ${the_gmk_dir} ]; then
+	pkgtools__msg_error "do_clean_gmk: Missing '${the_gmk_dir}' directory!"
 	__pkgtools__at_function_exit
 	return 1
     fi
     opwd=$(pwd)
-    cd ${GMKDIR}
+    cd ${the_gmk_dir}
     make clean
     if [ $? -ne 0 ]; then
 	cd ${opwd}
@@ -246,7 +244,7 @@ function do_clean_gmk ()
     ### special Python wrapper/program:
     cd ${python_dir}
     make clean
-    cd ${GMKDIR}
+    cd ${the_gmk_dir}
     ###
 
     cd ${opwd}
@@ -258,13 +256,13 @@ function do_build_gmk ()
 {
     __pkgtools__at_function_enter do_build_gmk
 
-    if [ ! -d ${GMKDIR} ]; then
-	pkgtools__msg_error "Missing '${GMKDIR}' directory!"
+    if [ ! -d ${the_gmk_dir} ]; then
+	pkgtools__msg_error "Missing '${the_gmk_dir}' directory!"
 	__pkgtools__at_function_exit
 	return 1
     fi
     opwd=$(pwd)
-    cd ${GMKDIR}
+    cd ${the_gmk_dir}
     parallel_option=
     pkgtools__msg_debug "Option='$1'"
     if [ "x${1:0:1}" = "x-" ]; then
@@ -351,7 +349,7 @@ function do_build_gmk ()
 	    __pkgtools__at_function_exit
 	    return 1
 	fi
-	cd ${GMKDIR}
+	cd ${the_gmk_dir}
     fi
     ###
 
@@ -461,7 +459,7 @@ function do_clean ()
 	rm -f ${the_base_dir}/$(pkgtools__get_sys)/lib/libkwsys_c.so
     fi
 
-    if [ -d ${GMKDIR} ]; then
+    if [ -d ${the_gmk_dir} ]; then
 	do_clean_gmk $@
 	if [ $? -ne 0 ]; then
 	    pkgtools__msg_error "Clean package '${pack_name}' failed!"
@@ -1115,7 +1113,29 @@ function do_build ()
 	fi
     fi
 
-    if [ -d ${GMKDIR} ]; then
+    if [ -d ${the_gmk_dir} ]; then
+	if [ "x$@" = "x" ]; then
+	    do_build_gmk lib
+	    if [ $? -ne 0 ]; then
+		__pkgtools__at_function_exit
+		return 1
+	    fi
+            # Additional material to be built:
+	    do_build_gmk bin
+	    if [ $? -ne 0 ]; then
+	    	__pkgtools__at_function_exit
+	    	return 1
+	    fi
+	else
+	    do_build_gmk $@
+	    if [ $? -ne 0 ]; then
+		__pkgtools__at_function_exit
+		return 1
+	    fi
+	fi
+    fi
+
+    if [ -d ${the_gmk_dir} ]; then
 
 	do_build_gmk $@
 	if [ $? -ne 0 ]; then
@@ -1197,7 +1217,7 @@ function do_install ()
 
     pkgtools__msg_info "Install package '${pack_name}'..."
     opwd=$(pwd)
-    cd ${GMKDIR}
+    cd ${the_gmk_dir}
 
     make install
     if [ $? -ne 0 ]; then
@@ -1210,7 +1230,7 @@ function do_install ()
     if [ ! -f ${without_python_flag_file} ]; then
 	cd ${python_dir}
 	make install
-	cd ${GMKDIR}
+	cd ${the_gmk_dir}
     fi
     ###
 
@@ -1233,7 +1253,7 @@ function do_uninstall ()
 
     pkgtools__msg_info "Uninstall package '${pack_name}'..."
     opwd=$(pwd)
-    cd ${GMKDIR}
+    cd ${the_gmk_dir}
     make uninstall
     if [ $? -ne 0 ]; then
 	cd ${opwd}
@@ -1245,7 +1265,7 @@ function do_uninstall ()
     if [ -d ${the_python_dir} ]; then
 	cd ${python_dir}
 	make uninstall
-	cd ${GMKDIR}
+	cd ${the_gmk_dir}
     fi
     ###
 
@@ -1280,7 +1300,7 @@ function do_info ()
 	pkg_version=$(cat ./VERSION)
     fi
     pkg_build="undefined"
-    if [ -d ${GMKDIR} -a -f ${GMKDIR}/GNUmakefile ]; then
+    if [ -d ${the_gmk_dir} -a -f ${the_gmk_dir}/GNUmakefile ]; then
 	pkg_build="GNU-make"
     fi
     if [ -f ./configure.ac -o -f ./configure.in ]; then

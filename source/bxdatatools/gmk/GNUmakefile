@@ -74,6 +74,17 @@ CXXFLAGS=-fPIC
 CPPFLAGS=-I. -I$(INCDIR)
 LDFLAGS=-O -L$(LIBDIR) -l$(LIBNAME)
 
+# python
+PYVERSION=$(shell boost-config --python-version)
+ifeq ($(shell which python${PYVERSION}),)
+$(error Sorry Python ${PYVERSION} not found!)
+endif
+python_bin=python${PYVERSION}
+python_version=$(shell $(python_bin) -V 2>&1 | tr -s ' ' | cut -d' ' -f2 | cut -d'.' -f1,2)
+python_config=python$(python_version)-config
+python_cflags=$(shell $(python_config) --cflags)
+python_ldflags=$(shell $(python_config) --ldflags)
+
 binlibdep=lib
 
 DEPCPPFLAGS=
@@ -394,18 +405,17 @@ $(OBJDIR)/%$(OBJEXT) : %$(SOURCEEXT)
 # 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
 # 	$(CXX) -I. -I$(PROGDIR) $(CPPFLAGS) $(CXXFLAGS) $< $(STATICFLAGS) $(LDFLAGS) -o $(BINDIR)/$(notdir $(@))
 
-### 2009-11-12 FM: remove --shared flags (produce segmentation fault)
+test_%$(BINEXT) : test_%$(PROGEXT) | lib_shared $(binlibdep)
+	@echo "NOTICE: EXELDFLAGS_BIO=$(EXELDFLAGS_BIO)" >&2
+	@echo "NOTICE: Compiling test program '$(@)' with shared library..." >&2
+	@test -d $(BINDIR) || mkdir -p $(BINDIR)
+	$(CXX) -I. -I$(TESTDIR) $(CPPFLAGS) $(CXXFLAGS) $< $(EXELDFLAGS_BIO) $(DEPLDFLAGS_SORTED) -o $(BINDIR)/$(notdir $(@))
+
 %$(BINEXT) : %$(PROGEXT) | lib_shared $(binlibdep)
 	@echo "NOTICE: EXELDFLAGS_BIO=$(EXELDFLAGS_BIO)" >&2
 	@echo "NOTICE: Compiling program '$(@)' with shared library..." >&2
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
-	$(CXX) -I. -I$(PROGDIR) $(CPPFLAGS) $(CXXFLAGS) $< $(EXELDFLAGS_BIO) $(DEPLDFLAGS_SORTED) -o $(BINDIR)/$(notdir $(@))
-
-test_%$(BINEXT) : test_%$(PROGEXT) | lib_shared $(binlibdep)
-	@echo "NOTICE: EXELDFLAGS_BIO=$(EXELDFLAGS_BIO)" >&2
-	@echo "NOTICE: Compiling program '$(@)' with shared library..." >&2
-	@test -d $(BINDIR) || mkdir -p $(BINDIR)
-	$(CXX) -I. -I$(TESTDIR) $(CPPFLAGS) $(CXXFLAGS) $< $(EXELDFLAGS_BIO) $(DEPLDFLAGS_SORTED) -o $(BINDIR)/$(notdir $(@))
+	$(CXX) -I. -I$(PROGDIR) $(shell $(python_config) --cflags) $(CPPFLAGS) $(CXXFLAGS) $< $(EXELDFLAGS_BIO) $(DEPLDFLAGS_SORTED) -o $(BINDIR)/$(notdir $(@))
 
 .PHONY : dist
 dist : distclean
