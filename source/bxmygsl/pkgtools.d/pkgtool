@@ -58,8 +58,6 @@ with_python=0
 
 install__ldflags_mode=""
 install__using_cache_files=1
-
-without_python_flag_file=${the_base_dir}/gmk/${pack_name_lower}_without_python.config
 	
 function my_exit ()
 {
@@ -345,16 +343,17 @@ function do_clean_gmk ()
 	return 1
     fi
 
-    ### special Python wrapper/program:
-    if [ -d ${the_python_dir} ]; then
-	cd ${the_python_dir}
-	make clean
-	if [ $? -ne 0 ]; then 
-	    cd ${opwd}
-	    __pkgtools__at_function_exit
-	    return 1
-	fi
-    fi
+    # ### special Python wrapper/program:
+    # if [ -d ${the_python_dir} ]; then
+    # 	cd ${the_python_dir}
+    # 	make clean
+    # 	if [ $? -ne 0 ]; then 
+    # 	    cd ${opwd}
+    # 	    __pkgtools__at_function_exit
+    # 	    return 1
+    # 	fi
+    # fi
+
     cd ${the_gmk_dir}
 
     cd ${opwd}
@@ -394,20 +393,6 @@ function do_build_gmk ()
 	return 1
     fi
 
-    ### special Python wrapper/program:
-    if [ -d ${the_python_dir} ]; then
-	if [ ! -f ${without_python_flag_file} ]; then
-	    cd ${the_python_dir}
-	    make
-	    if [ $? -ne 0 ]; then
-		cd ${opwd} 
-		pkgtools__msg_error "Build Python stuff failed !"
-		__pkgtools__at_function_exit
-		return 1
-	    fi
-	    cd ${the_gmk_dir}
-	fi
-    fi
     
     cd ${opwd}
     __pkgtools__at_function_exit
@@ -631,11 +616,6 @@ function do_build ()
     source ${config_sh_file}
 
     if [ -d ${the_gmk_dir} ]; then
-	if [ -d ${the_python_dir} ]; then
-	    if [ -f ${without_python_flag_file} ]; then
-		source ${without_python_flag_file}
-	    fi
-	fi
 	if [ "x$@" = "x" ]; then
 	    do_build_gmk lib
 	    if [ $? -ne 0 ]; then
@@ -643,11 +623,11 @@ function do_build ()
 		return 1
 	    fi
             # Additional material to be built:
-	    # do_build_gmk bin
-	    # if [ $? -ne 0 ]; then
-	    # 	__pkgtools__at_function_exit
-	    # 	return 1
-	    # fi
+	    do_build_gmk bin
+	    if [ $? -ne 0 ]; then
+	    	__pkgtools__at_function_exit
+	    	return 1
+	    fi
 	else
 	    do_build_gmk $@
 	    if [ $? -ne 0 ]; then
@@ -834,15 +814,15 @@ function do_install ()
     cat ${config_sh_file}  >> ${the_pkgtools_dir}/${pack_name_lower}.sh
     cat ${config_csh_file} >> ${the_pkgtools_dir}/${pack_name_lower}.csh
 
-    ### special Python wrapper/program:
-    if [ -d ${the_python_dir} ]; then
-	if [ ! -f ${without_python_flag_file} ]; then
-	    cd ${the_python_dir}
-	    make install
-	    cd ${the_gmk_dir}
-	fi
-    fi
-    ###
+    # ### special Python wrapper/program:
+    # if [ -d ${the_python_dir} ]; then
+    # 	if [ ! -f ${without_python_flag_file} ]; then
+    # 	    cd ${the_python_dir}
+    # 	    make install
+    # 	    cd ${the_gmk_dir}
+    # 	fi
+    # fi
+    # ###
 
     cd ${opwd}
     #do_pkg_config_pc
@@ -999,11 +979,11 @@ function do_test ()
     __pkgtools__at_function_enter do_test
 
     if [ -d ${the_gmk_dir} ]; then
-	if [ -d ${the_python_dir} ]; then
-	    if [ -f ${without_python_flag_file} ]; then
-		source ${without_python_flag_file}
-	    fi
-	fi
+	# if [ -d ${the_python_dir} ]; then
+	#     if [ -f ${without_python_flag_file} ]; then
+	# 	source ${without_python_flag_file}
+	#     fi
+	# fi
 	do_build_gmk bin_test
 	if [ $? -ne 0 ]; then
 	    pkgtools__msg_error "Build test program failed !"
