@@ -18,9 +18,8 @@
 // The serializable 'properties' container :
 #include <datatools/utils/properties.h>
 
-//#include <datatools/test/my_data.h>
-#include <my_data.cc>
-#include <my_data.ipp>
+#include <datatools_test_my_data.cc>
+#include <datatools_test_my_data.ipp>
 
 // the datatools writer and reader classes:
 #include <datatools/serialization/io_factory.h>

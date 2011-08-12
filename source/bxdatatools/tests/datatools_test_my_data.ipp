@@ -13,8 +13,7 @@
 
 #include <datatools/serialization/utils.h>
 
-//#include <datatools/test/my_data.h>
-#include <my_data.h>
+#include <datatools_test_my_data.h>
 
 #include <datatools/serialization/i_serializable.ipp>
 	 

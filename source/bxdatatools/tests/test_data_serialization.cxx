@@ -8,8 +8,7 @@
 #include <boost/archive/text_iarchive.hpp>
 
 // The user's class:
-//#include <datatools/test/data.h>
-#include <data.h>
+#include <datatools_test_data.h>
 
 using namespace std;
 

@@ -4,7 +4,7 @@
 #include <string>
 #include <iostream>
 #include <sstream>
-#include <stdexcept>
+#include <stdexcept> 
 
 #include <boost/filesystem.hpp>
 
@@ -12,10 +12,8 @@
 #include <datatools/serialization/safe_serial.h>
 
 // a serializable test class :
-//#include <datatools/test/my_data.h>
-//#include <datatools/test/my_data.ipp>
-#include <my_data.cc>
-#include <my_data.ipp>
+#include <datatools_test_my_data.cc>
+#include <datatools_test_my_data.ipp>
 
 // Some pre-processor guard about Boost I/O usage and linkage :
 //#include <datatools/serialization/bio_guard.h>
