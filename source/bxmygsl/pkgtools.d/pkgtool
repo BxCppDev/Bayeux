@@ -635,11 +635,7 @@ function do_build ()
 		return 1
 	    fi
 	fi
-	# do_build_gmk $@
-	# local code=$?
-	# __pkgtools__at_function_exit
-	# return ${code}
-    fi
+   fi
 
     __pkgtools__at_function_exit
     return 0
