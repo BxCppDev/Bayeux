@@ -54,6 +54,7 @@ PACKAGE_DIR=$(shell cd ${BASEDIR} ; pwd)
 INCDIR=$(BASEDIR)/include
 SRCDIR=$(BASEDIR)/src
 PROGDIR=$(BASEDIR)/programs
+TESTDIR=$(BASEDIR)/tests
 SCRIPTSDIR=$(BASEDIR)/scripts
 RESDIR=$(BASEDIR)/resources
 ARCHDIR=$(BASEDIR)/$(SYSTEM)
@@ -119,6 +120,7 @@ vpath %$(OBJEXT)     $(OBJDIR)
 vpath %$(LIBEXT)     $(LIBDIR)
 vpath %$(SHLIBEXT)   $(LIBDIR)
 vpath %$(BINEXT)     $(BINDIR)
+vpath test_%$(PROGEXT) $(TESTDIR)
 
 headers := $(notdir $(shell ls $(INCDIR)/$(PACKAGENAME)/*$(HEADEREXT)))
 sources := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT)))
@@ -126,8 +128,9 @@ objects := $(sources:%$(SOURCEEXT)=%$(OBJEXT))
 objectsWithPath := $(sources:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT))
 
 programs_all:= $(notdir $(shell ls $(PROGDIR)/*$(PROGEXT) 2> /dev/null))
+programs_test := $(notdir $(shell ls $(TESTDIR)/*$(PROGEXT) 2> /dev/null))
 
-programs_test:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep ^test_)
+#programs_test:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep ^test_)
 programs:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep -v ^test_)
 
 binaries:= $(programs:%$(PROGEXT)=%$(BINEXT))
@@ -165,8 +168,8 @@ help :
 	@echo "make bzdist    : make a source tarball ($(LIBNAME)-$(LIBVER).tar.bz2)"
 	@echo ""
 
-.PHONY : test
-test:
+.PHONY : dump
+dump:
 	@echo "Default GSL version='$(gsl_version_def)'"
 	@echo "Default GSL prefix='$(gsl_prefix_def)'"
 	@echo "Default GSL config='$(gsl_config_def)'"
@@ -292,6 +295,11 @@ $(OBJDIR)/%$(OBJEXT) : %$(SOURCEEXT) %$(HEADEREXT)
 	@echo "Compiling statically linked program '$(@)'..."
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $< $(STATICFLAGS) $(LDFLAGS) -o $(BINDIR)/$(notdir $(@))
+
+test_%$(BINEXT) : test_%$(PROGEXT) | lib_shared 
+	@echo "Compiling test program '$(@)' with shared library..."
+	@test -d $(BINDIR) || mkdir -p $(BINDIR)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $< $(SHFLAGS) -o $(BINDIR)/$(notdir $(@))
 
 %$(BINEXT) : %$(PROGEXT) | lib_shared 
 	@echo "Compiling program '$(@)' with shared library..."
