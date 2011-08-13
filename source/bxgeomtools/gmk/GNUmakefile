@@ -60,6 +60,7 @@ PACKAGE_DIR=$(shell cd ${BASEDIR} ; pwd)
 INCDIR=$(BASEDIR)/include
 SRCDIR=$(BASEDIR)/src
 PROGDIR=$(BASEDIR)/programs
+TESTDIR=$(BASEDIR)/tests
 SCRIPTSDIR=$(BASEDIR)/scripts
 RESDIR=$(BASEDIR)/resources
 ARCHDIR=$(BASEDIR)/$(SYSTEM)
@@ -165,6 +166,7 @@ vpath %$(HEADEREXT)  $(INCDIR)/$(PACKAGENAME)
 vpath %$(HEADEREXT)  $(INCDIR)/$(PACKAGENAME)/test
 vpath %$(SOURCEEXT)  $(SRCDIR)
 vpath %$(PROGEXT)    $(PROGDIR)
+vpath test_%$(PROGEXT) $(TESTDIR)
 vpath %$(OBJEXT)     $(OBJDIR)
 vpath %$(LIBEXT)     $(LIBDIR)
 vpath %$(SHLIBEXT)   $(LIBDIR)
@@ -227,11 +229,11 @@ sources1+=simple_shaped_model.cc
 sources1+=simple_world_model.cc
 sources1+=stacked_model.cc
 sources1+=i_boxed_model.cc
-# sources1+=stacked_boxed_model.cc
 sources1+=surrounded_boxed_model.cc
-sources1+=test_model_1.cc
-sources1+=test_model_2.cc
-sources1+=test_world_model.cc
+
+# sources1+=test_model_1.cc
+# sources1+=test_model_2.cc
+# sources1+=test_world_model.cc
 
 # 3D shapes:
 sources1+=cylinder.cc
@@ -276,8 +278,9 @@ objectsWithPath := $(sources:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT))
 objects_bio := $(sources_bio:%$(SOURCEEXT)=%$(OBJEXT))
 objectsWithPath_bio := $(sources_bio:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT))
 programs_all:= $(notdir $(shell ls $(PROGDIR)/*$(PROGEXT) 2> /dev/null))
+programs_test:= $(notdir $(shell ls $(TESTDIR)/test_*$(PROGEXT) 2> /dev/null))
 
-programs_test:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep ^test_)
+# programs_test:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep ^test_)
 programs:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep -v ^test_)
 
 binaries:= $(programs:%$(PROGEXT)=%$(BINEXT))
@@ -346,7 +349,7 @@ build_special :
 install :
 	@echo "Installing..."
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
-	@ln -s -f $(PACKAGE_ROOT)/pkgtools.d/$(LIBNAME)-config $(BINDIR)/$(LIBNAME)-config
+	@#ln -s -f $(PACKAGE_ROOT)/pkgtools.d/$(LIBNAME)-config $(BINDIR)/$(LIBNAME)-config
 
 #########################################################################
 
@@ -421,6 +424,11 @@ bin_shared : $(binaries)
 
 .PHONY : bin_test_shared
 bin_test_shared : ${binaries_test}
+
+test_%$(BINEXT) : test_%$(PROGEXT) | lib_shared $(binlibdep)
+	@echo "Compiling test program '$(@)' with shared library..."
+	@test -d $(BINDIR) || mkdir -p $(BINDIR)
+	$(CXX) -I. -I$(TESTDIR) $(CPPFLAGS) $(CXXFLAGS) $< $(EXELDFLAGS_BIO) $(DEPLDFLAGS_SORTED) -o $(BINDIR)/$(notdir $(@))
 
 %$(BINEXT) : %$(PROGEXT) | lib_shared $(binlibdep)
 	@echo "Compiling program '$(@)' with shared library..."

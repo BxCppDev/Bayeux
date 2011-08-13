@@ -27,7 +27,7 @@
 #include <geomtools/physical_volume.h>
 #include <geomtools/visibility.h>
 
-#include <geomtools/test/test_model_1.h>
+#include <geomtools_test_model_1.h>
 
 namespace geomtools {
 

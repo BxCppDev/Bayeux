@@ -1,8 +1,8 @@
 // -*- mode: c++ ; -*- 
-/* test_model_2.cc
+/* geomtools_test_model_2.cc
  */
 
-#include <geomtools/test/test_model_2.h>
+#include <geomtools_test_model_2.h>
 
 namespace geomtools {
 
@@ -317,4 +317,4 @@ namespace geomtools {
        
 } // end of namespace geomtools
 
-// end of test_model_2.cc
+// end of geomtools_test_model_2.cc

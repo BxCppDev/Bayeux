@@ -9,7 +9,7 @@
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/version.hpp>
 //#include <boost/serialization/tracking.hpp>
-#include <boost/serialization/export.hpp>
+//#include <boost/serialization/export.hpp>
 
 #include <boost/serialization/vector.hpp>
 
@@ -38,7 +38,7 @@ namespace geomtools {
 
 BOOST_CLASS_VERSION(geomtools::geom_id, 1)
 //BOOST_CLASS_TRACKING(geomtools::geom_id, boost::serialization::track_always) 
-BOOST_CLASS_EXPORT_KEY2(geomtools::geom_id, "geomtools::geom_id")
+//BOOST_CLASS_EXPORT_KEY2(geomtools::geom_id, "geomtools::geom_id")
 
 #endif // __geomtools__geom_id_ipp
 

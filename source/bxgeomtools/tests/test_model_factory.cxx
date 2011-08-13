@@ -13,6 +13,11 @@
 #include <geomtools/gdml_export.h>
 #include <geomtools/placement.h>
 
+// Additional registered test geometry models :
+#include <geomtools_test_model_1.cc>
+#include <geomtools_test_model_2.cc>
+#include <geomtools_test_world_model.cc>
+
 using namespace std;
 
 int main (int argc_, char ** argv_)
@@ -106,7 +111,7 @@ int main (int argc_, char ** argv_)
 
       if (setup_filename.empty ())
 	{
-	  setup_filename = "${GEOMTOOLS_ROOT}/resources/test/test_geometry_models.setup";
+	  setup_filename = "${GEOMTOOLS_ROOT}/tests/test_geometry_models.setup";
 	} 
       datatools::utils::fetch_path_with_env (setup_filename);
       factory.load (setup_filename);

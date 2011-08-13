@@ -6,7 +6,7 @@
 #include <string> 
 #include <exception>
 
-#include <geomtools/test/test_model_1.h>
+#include <geomtools_test_model_1.cc>
 
 using namespace std;
 

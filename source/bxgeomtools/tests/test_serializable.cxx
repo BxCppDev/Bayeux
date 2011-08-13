@@ -10,9 +10,11 @@
 #include <geomtools/geom_id.h>
 #include <geomtools/geomtools_version.h>
 #include <datatools/utils/properties.h>
+#include <datatools/utils/multi_properties.h>
 
 #include <datatools/serialization/io_factory.h>
-
+#include <datatools/serialization/check.h>
+ 
 // Some pre-processor guard about Boost I/O usage and linkage :
 #include <datatools/serialization/bio_guard.h>
 #include <geomtools/serialization/bio_guard.h>
@@ -22,6 +24,7 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try 
     {
+
       geomtools::vector_2d pos2d;
       pos2d.set (1., 2.);
       std::clog << "Vector 2D: " << pos2d << std::endl;
@@ -52,7 +55,11 @@ int main (int argc_, char ** argv_)
 	    std::clog << "v[" << i << "] = " << v << std::endl;
 	    writer.store (geomtools::io::VECTOR_2D_SERIAL_TAG, v);
 	  }
+	/*
+	datatools::utils::multi_properties mconfig;
+	writer.store (mconfig);
 	writer.reset ();
+	*/
 	clog << endl;
       }
 
@@ -143,9 +150,17 @@ int main (int argc_, char ** argv_)
 		reader.load (geomtools::io::VECTOR_2D_SERIAL_TAG, v);
 		std::clog << "v[" << i << "] (LOADED) = " << v << std::endl;
 	      }
+	    else
+	      {
+		break;
+	      }
 	    i++;
 	  }
+	/*
+	datatools::utils::multi_properties mconfig;
+	reader.load (mconfig);
 	reader.reset ();
+	*/
  	clog << endl;
      }
        
@@ -232,6 +247,8 @@ int main (int argc_, char ** argv_)
       geomtools::invalidate (rot);
       geomtools::tree_dump (rot, std::clog, "Rotation matrix 3D (invalid):");
       clog << endl;
+
+      //datatools::serialization::check ();
  
     }
   catch (std::exception & x)

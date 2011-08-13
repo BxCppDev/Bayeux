@@ -221,6 +221,7 @@ test_subtraction_3d \
 test_tessellated_solid \
 test_tube \
 test_utils \
+test_model_factory \
 "
 
 ### test_multiple_placement 
@@ -295,6 +296,12 @@ EOF
 	    fi 
 	elif [ "${exe}" = "test_tube" ]; then
 	    echo "{tube 900 1000 1000}" | ${bin} >> tests.log 2>&1
+	    if [ $? -ne 0 ]; then
+		let error_count=error_count+1
+		pkgtools__msg_notice "${exe} failed !"
+	    fi 
+	elif [ "${exe}" = "test_model_factory" ]; then
+	    echo world | ${bin} -D >> tests.log 2>&1
 	    if [ $? -ne 0 ]; then
 		let error_count=error_count+1
 		pkgtools__msg_notice "${exe} failed !"
