@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* utils.cc
  */
 
@@ -12,9 +12,14 @@
 
 #include <TTree.h>
 
+#include <boost/filesystem.hpp>
+
 namespace brio {
 
   using namespace std;
+
+  const int store_info::SUCCESS = 0;
+  const int store_info::ERROR   = 1;
 
   //const string store_info::DEFAULT_FILE_EXTENSION = ".root";
   const string store_info::BRIO_FILE_EXTENSION = ".brio";
@@ -77,7 +82,31 @@ namespace brio {
     p_record = 0;
     return;
   }
-  
+
+  int
+  store_info::guess_mode_from_filename (const std::string & a_filename,
+                                        int & a_mode)
+  {
+    int status = store_info::SUCCESS;
+    int mode = 0x0;
+
+    if (boost::filesystem::extension (a_filename) == store_info::BRIO_FILE_EXTENSION)
+      {
+        mode |= store_info::MODE_BRIO;
+      }
+    else if (boost::filesystem::extension (a_filename) == store_info::TRIO_FILE_EXTENSION)
+      {
+        mode |= store_info::MODE_TRIO;
+      }
+    else
+      {
+        status = store_info::ERROR;
+      }
+
+    a_mode = mode;
+    return status;
+  }
+
 } // end of namespace brio
 
 // end of utils.cc

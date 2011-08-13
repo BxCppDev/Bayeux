@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* base_io.cc
  */
 
@@ -15,13 +15,13 @@
 namespace brio {
 
   using namespace std;
-  
+
   bool base_io::g_devel = false;
 
   const string base_io::PBA_LABEL  = "pba";
   const string base_io::TEXT_LABEL = "text";
-   
-  // static : 
+
+  // static :
   int base_io::get_format (const string & format_str_)
   {
     if (format_str_ == PBA_LABEL) return FORMAT_PBA;
@@ -45,19 +45,19 @@ namespace brio {
       {
 	if (_default_locale == 0)
 	  {
-	    _default_locale = new std::locale (std::locale::classic (), 
-					       new boost::archive::codecvt_null<char>); 
+	    _default_locale = new std::locale (std::locale::classic (),
+					       new boost::archive::codecvt_null<char>);
 	  }
 	if (_locale == 0)
 	  {
 	    if (_rw == RW_READ)
 	      {
-		_locale = new std::locale (*_default_locale, 
+		_locale = new std::locale (*_default_locale,
 					   new boost::math::nonfinite_num_get<char>);
 	      }
 	    if (_rw == RW_WRITE)
 	      {
-		_locale = new std::locale (*_default_locale, 
+		_locale = new std::locale (*_default_locale,
 					   new boost::math::nonfinite_num_put<char>);
 	      }
 	  }
@@ -102,15 +102,15 @@ namespace brio {
       }
     return;
   }
- 
+
   bool base_io::is_debug () const
   {
     return __debug;
   }
-  
+
   void base_io::set_debug (bool new_value_)
   {
-    __debug = new_value_; 
+    __debug = new_value_;
     return;
   }
 
@@ -118,10 +118,10 @@ namespace brio {
   {
     return __verbose;
   }
-  
+
   void base_io::set_verbose (bool new_value_)
   {
-    __verbose = new_value_; 
+    __verbose = new_value_;
     return;
   }
 
@@ -151,13 +151,13 @@ namespace brio {
   }
 
   void base_io::close ()
-  { 
-    if (is_debug ())  
+  {
+    if (is_debug ())
       {
 	cerr << "DEBUG: " << "brio::base_io::close: "
 	     << "Entering..." << endl;
       }
-    if (! is_opened ()) 
+    if (! is_opened ())
       {
 	throw runtime_error ("brio::base_io::close: Not opened !");
       }
@@ -175,7 +175,7 @@ namespace brio {
       }
     return;
   }
-  
+
   void base_io::open (const string & filename_)
   {
     if (is_debug ())
@@ -183,28 +183,28 @@ namespace brio {
 	cerr << "DEBUG: " << "brio::base_io::open: "
 	     << "Entering with filename '" << filename_ << "'" << endl;
       }
-    if (is_opened ()) 
+    if (is_opened ())
       {
 	throw runtime_error ("brio::base_io::open: Already opened !");
       }
-    cerr << "DEVEL: " << "brio::base_io::open: "
-	 << "format = '" << __format << "'" << endl;
+    // cerr << "DEVEL: " << "brio::base_io::open: "
+    //      << "format = '" << __format << "'" << endl;
     if (__format == FORMAT_UNDEFINED)
       {
 	clog << "NOTICE: brio::base_io::open: "
-	     << "Guessing the archive format from the filename !" << endl; 
+	     << "Guessing the archive format from the filename !" << endl;
 	string file_extension = boost::filesystem::extension (filename_);
 	if (file_extension == store_info::TRIO_FILE_EXTENSION)
 	  {
 	    set_format (FORMAT_TEXT);
 	    clog << "NOTICE: brio::base_io::open: "
-		 << "Using '" << TEXT_LABEL << "' archive format !" << endl; 
+		 << "Using '" << TEXT_LABEL << "' archive format !" << endl;
 	  }
 	else
 	  {
 	    set_format (FORMAT_PBA);
 	    clog << "NOTICE: brio::base_io::open: "
-		 << "Using '" << PBA_LABEL << "' archive format !" << endl; 
+		 << "Using '" << PBA_LABEL << "' archive format !" << endl;
 	  }
       }
     _at_open (filename_);
@@ -229,7 +229,7 @@ namespace brio {
 	message << "brio::base_io::get_serialization_tag: "
 		<< "No automatic store (with label '"
 		<< store_info::AUTOMATIC_STORE_LABEL << "') is available !";
-	throw runtime_error (message.str ());	
+	throw runtime_error (message.str ());
       }
     select_store (store_info::AUTOMATIC_STORE_LABEL);
     return;
@@ -293,7 +293,7 @@ namespace brio {
   }
 
   void base_io::unselect_store ()
-  { 
+  {
     _current_store = 0;
   }
 
@@ -315,7 +315,7 @@ namespace brio {
       }
     return;
   }
-  
+
   void base_io::_set_default ()
   {
     __debug = false;
@@ -401,7 +401,7 @@ namespace brio {
       }
     return;
   }
-  
+
   // dtor:
   base_io::~base_io ()
   {
@@ -455,8 +455,8 @@ namespace brio {
 	     << "Exiting." << endl;
       }
     return;
-  }  
-  
+  }
+
 
   void base_io::get_list_of_stores (list<string> & list_) const
   {
@@ -469,7 +469,7 @@ namespace brio {
       }
     return;
   }
-  
+
   store_info * base_io::_get_store_info (const string & label_)
   {
     if (label_.empty ())
@@ -503,12 +503,12 @@ namespace brio {
     base_io * ptr_io = const_cast<base_io *> (this);
     store_info * ptr_si = ptr_io->_get_store_info (label_);
     c_ptr_si = const_cast<store_info *> (ptr_si);
-    return c_ptr_si; 
+    return c_ptr_si;
   }
 
-  void base_io::tree_dump (std::ostream & out_, 
-			   const std::string & title_, 
-			   const std::string & indent_, 
+  void base_io::tree_dump (std::ostream & out_,
+			   const std::string & title_,
+			   const std::string & indent_,
 			   bool inherit_) const
   {
     using namespace datatools::utils;
@@ -523,24 +523,24 @@ namespace brio {
     out_ << indent << i_tree_dumpable::tag << "Verbose : " << __verbose  << endl;
 
     // 2011-06-16 FM: restored
-    out_ << indent << i_tree_dumpable::tag << "Format: '" 
-	 << (__format == FORMAT_PBA ? base_io::PBA_LABEL : base_io::TEXT_LABEL) 
+    out_ << indent << i_tree_dumpable::tag << "Format: '"
+	 << (__format == FORMAT_PBA ? base_io::PBA_LABEL : base_io::TEXT_LABEL)
 	 << "'" << endl;
 
     out_ << indent << i_tree_dumpable::tag
 	 << "Opened: " << is_opened () << endl;
     if (is_opened ())
       {
-	out_ << indent << i_tree_dumpable::skip_tag 
-	     << i_tree_dumpable::tag 
+	out_ << indent << i_tree_dumpable::skip_tag
+	     << i_tree_dumpable::tag
 	     << "Filename: '" << _filename << "'" << endl;
-	out_ << indent << i_tree_dumpable::skip_tag 
-	     << i_tree_dumpable::last_tag 
+	out_ << indent << i_tree_dumpable::skip_tag
+	     << i_tree_dumpable::last_tag
 	     << "File: " << hex << _file << dec << " (ROOT TFile)" << endl;
       }
- 
+
     out_ << indent << i_tree_dumpable::tag << "Stores: ";
-    if (_store_infos.size () > 0) 
+    if (_store_infos.size () > 0)
       {
 	out_ << _store_infos.size ();
       }
@@ -559,7 +559,7 @@ namespace brio {
 	j++;
 	string tag = "|-- ";
 	string skip_tag = "|   ";
-	
+
 	if (j ==  _store_infos.end ())
 	  {
 	    tag = "`-- ";
@@ -578,17 +578,17 @@ namespace brio {
 	out_ << endl;
 	out_ << indent << "|   " << skip_tag << "|-- " << "Number of entries = " << si.number_of_entries << " " << endl;
 	out_ << indent << "|   " << skip_tag << "`-- " << "Current entry     = ";
-	if (si.current_entry < 0) 
+	if (si.current_entry < 0)
 	  {
 	    out_ << "<rewind>";
 	  }
-	else if (si.current_entry >= si.number_of_entries) 
+	else if (si.current_entry >= si.number_of_entries)
 	  {
 	    out_ << "<unwind>";
 	  }
 	else
 	  {
-	    out_ << '#' << si.current_entry << " in [ 0 : " << (si.number_of_entries - 1) << " ]"; 
+	    out_ << '#' << si.current_entry << " in [ 0 : " << (si.number_of_entries - 1) << " ]";
 	  }
 	out_ << endl;
       }
@@ -608,7 +608,7 @@ namespace brio {
 
     return;
   }
-    
+
 } // end of namespace brio
 
 // end of base_io.cc

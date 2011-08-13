@@ -1,13 +1,13 @@
-// -*- mode: c++ ; -*- 
-/* reader.cc 
- */ 
+// -*- mode: c++ ; -*-
+/* reader.cc
+ */
 
 #include <boost/filesystem.hpp>
 #include <cstdlib>
 
 #include <brio/reader.h>
 
-#include <TFile.h> 
+#include <TFile.h>
 #include <TKey.h>
 
 #include <datatools/utils/utils.h>
@@ -15,11 +15,11 @@
 namespace brio {
 
   using namespace std;
-  
+
   void reader::set_check_serial_tag (bool new_value_)
   {
     //__only_if_not_opened ("brio::reader::checking_serial_tag");
-    __check_serial_tag = new_value_; 
+    __check_serial_tag = new_value_;
     return;
   }
 
@@ -37,7 +37,7 @@ namespace brio {
     __automatic_store = 0;
     return;
   }
- 
+
   // ctor:
   reader::reader () : base_io (RW_READ)
   {
@@ -54,10 +54,10 @@ namespace brio {
       }
     return;
   }
- 
+
   // ctor:
-  reader::reader (const string & filename_, 
-		  bool verbose_, 
+  reader::reader (const string & filename_,
+		  bool verbose_,
 		  bool debug_)
     : base_io (RW_READ)
   {
@@ -88,9 +88,9 @@ namespace brio {
   }
 
   // ctor:
-  reader::reader (const string & filename_, 
-		  const string & format_str_, 
-		  bool verbose_, 
+  reader::reader (const string & filename_,
+		  const string & format_str_,
+		  bool verbose_,
 		  bool debug_)
     : base_io (RW_READ)
   {
@@ -111,7 +111,7 @@ namespace brio {
       }
     return;
   }
-  
+
   // dtor:
   reader::~reader ()
   {
@@ -120,7 +120,7 @@ namespace brio {
 	cerr << "DEVEL: " << "brio::reader::~reader: "
 	     << "Entering..." << endl;
       }
-    if (is_opened ()) 
+    if (is_opened ())
       {
 	close ();
       }
@@ -139,31 +139,31 @@ namespace brio {
     return;
   }
 
-  void reader::tree_dump (std::ostream & out_, 
-			   const std::string & title_, 
-			   const std::string & indent_, 
+  void reader::tree_dump (std::ostream & out_,
+			   const std::string & title_,
+			   const std::string & indent_,
 			   bool inherit_) const
   {
     using namespace datatools::utils;
     std::string indent;
     if (! indent_.empty ()) indent = indent_;
     base_io::tree_dump (out_, title_, indent_, true);
-    
-    out_ <<  indent << i_tree_dumpable::tag 
+
+    out_ <<  indent << i_tree_dumpable::tag
 	 << "Allow automatic store: " << __allow_automatic_store << endl;
-    
+
     if (__automatic_store != 0)
       {
-	out_ <<  indent << i_tree_dumpable::tag 
+	out_ <<  indent << i_tree_dumpable::tag
 	     << "Automatic store: '" << __automatic_store->label << "'" << endl;
       }
 
-    out_ <<  indent << i_tree_dumpable::tag 
+    out_ <<  indent << i_tree_dumpable::tag
 	 << "Allow mixed types in stores: " << __allow_mixed_types_in_stores << endl;
 
-    out_ <<  indent << i_tree_dumpable::inherit_tag (inherit_)  
+    out_ <<  indent << i_tree_dumpable::inherit_tag (inherit_)
 	 << "Check serial tag: " << __check_serial_tag << endl;
-    
+
     return;
   }
 
@@ -176,9 +176,9 @@ namespace brio {
 	ostringstream message;
 	message << "brio::reader::has_previous: "
 		<< "Missing explicit and valid store label !";
-	throw runtime_error (message.str ());	    
+	throw runtime_error (message.str ());
       }
-    if (ptr_si->number_of_entries == 0) 
+    if (ptr_si->number_of_entries == 0)
       {
 	return false;
       }
@@ -199,12 +199,12 @@ namespace brio {
     const store_info * ptr_si = _get_store_info (label_);
     if (ptr_si == 0)
       {
-	ostringstream message;
-	message << "brio::reader::has_next: "
-		<< "Missing explicit and valid store label !";
-	throw runtime_error (message.str ());	    
+  ostringstream message;
+	 message << "brio::reader::has_next: "
+	 	<< "Missing explicit and valid store label !";
+throw runtime_error (message.str ());
       }
-    if (ptr_si->number_of_entries == 0) 
+    if (ptr_si->number_of_entries == 0)
       {
 	return false;
       }
@@ -217,7 +217,7 @@ namespace brio {
       }
     return false;
   }
- 
+
 
   void reader::rewind_store (const string & label_)
   {
@@ -228,12 +228,12 @@ namespace brio {
 	ostringstream message;
 	message << "brio::reader::rewind_store: "
 		<< "Missing explicit and valid store label !";
-	throw runtime_error (message.str ());	    
+	throw runtime_error (message.str ());
       }
     ptr_si->current_entry = -1;
     return;
   }
-  
+
   void reader::unwind_store (const string & label_)
   {
     _only_if_opened ("brio::reader::unwind_store");
@@ -243,7 +243,7 @@ namespace brio {
 	ostringstream message;
 	message << "brio::reader::unwind_store: "
 		<< "Missing explicit and valid store label !";
-	throw runtime_error (message.str ());	    
+	throw runtime_error (message.str ());
       }
     ptr_si->current_entry = ptr_si->number_of_entries;
     return;
@@ -255,7 +255,7 @@ namespace brio {
     devel = is_debug ();
     if (devel)
       {
-	clog << "DEVEL: " << "brio::reader::_at_open: " 
+	clog << "DEVEL: " << "brio::reader::_at_open: "
 	     << "Entering..." << endl;
       }
     _filename = filename_;
@@ -265,18 +265,18 @@ namespace brio {
 	ostringstream message;
 	message << "brio::reader::_at_open: "
 		<< "File '" << _filename << "' does not exist ! Abort !";
-	throw runtime_error (message.str ());	
+	throw runtime_error (message.str ());
       }
-    
+
     string default_extension = store_info::DEFAULT_FILE_EXTENSION;
-    static size_t test_extension_size 
+    static size_t test_extension_size
       = store_info::DEFAULT_FILE_EXTENSION.length ();
     string extension = boost::filesystem::extension (_filename);
     if (is_debug ())
       {
  	cerr << "DEBUG: "
 	     << "brio::reader::_at_open: "
-	     << "Extension is `" << extension << "' !" 
+	     << "Extension is `" << extension << "' !"
 	     << endl;
      }
     string expected_extension = store_info::DEFAULT_FILE_EXTENSION;
@@ -288,9 +288,9 @@ namespace brio {
       {
 	cerr << "WARNING: "
 	     << "brio::reader::_at_open: "
-	     << "Using extension different from `" 
-	     << expected_extension 
-	     << "' is not recommended !" 
+	     << "Using extension different from `"
+	     << expected_extension
+	     << "' is not recommended !"
 	     << endl;
       }
     string mode = "READ";
@@ -300,7 +300,7 @@ namespace brio {
 	ostringstream message;
 	message << "brio::reader::_at_open: "
 		<< "Cannot open file '" << _filename << "' !";
-	throw runtime_error (message.str ());	
+	throw runtime_error (message.str ());
       }
     if (_file->IsOpen ())
       {
@@ -316,7 +316,7 @@ namespace brio {
 	ostringstream message;
 	message << "brio::reader::_at_open: "
 		<< "File '" << _filename << "' is not opened !";
-	throw runtime_error (message.str ());	
+	throw runtime_error (message.str ());
       }
     _file->cd ();
 
@@ -324,8 +324,8 @@ namespace brio {
     TList * list_of_keys = _file->GetListOfKeys ();
     if (devel)
       {
-	clog << "DEVEL: " << "brio::reader::_at_open: " 
-	     << "# entries: " << list_of_keys->GetEntries () << endl; 
+	clog << "DEVEL: " << "brio::reader::_at_open: "
+	     << "# entries: " << list_of_keys->GetEntries () << endl;
       }
     TIter next (list_of_keys);
     while (TObject * obj_key = next ())
@@ -344,7 +344,7 @@ namespace brio {
 	    continue;
 	  }
 	if (devel)
-	  {	
+	  {
 	    key->Print ();
 	  }
 	// create a new store:
@@ -353,8 +353,8 @@ namespace brio {
 	  _store_infos [store_label] = si;
 	}
 	store_info & the_si = _store_infos.find (store_label)->second;
-	the_si.label = store_label;	
-	the_si.serialization_tag = "";	
+	the_si.label = store_label;
+	the_si.serialization_tag = "";
 	the_si.tree = 0;
 	the_si.p_record = &the_si.record;
 
@@ -365,13 +365,13 @@ namespace brio {
 	  {
 	    ostringstream message;
 	    message << "brio::reader::_at_open: "
-		    << "Cannot retrieve store's tree labelled '" << store_label.c_str () 
+		    << "Cannot retrieve store's tree labelled '" << store_label.c_str ()
 		    << "' from  file '" << _filename << "' !";
-	    throw runtime_error (message.str ());  	    
+	    throw runtime_error (message.str ());
 	  }
 	the_si.tree = the_tree;
 	if (devel)
-	  {	
+	  {
 	    the_si.tree->Print ();
 	  }
 
@@ -380,9 +380,9 @@ namespace brio {
 	  {
 	    ostringstream message;
 	    message << "brio::reader::_at_open: "
-		    << "The store's tree labelled '" << store_label.c_str () 
+		    << "The store's tree labelled '" << store_label.c_str ()
 		    << "' from  file '" << _filename << "' has not an unique branch ! Unsupported format !";
-	    throw runtime_error (message.str ());  	    	    
+	    throw runtime_error (message.str ());
 	  }
 	TObject * obj_branch = obj_array->At (0);
 	TBranch * the_branch = dynamic_cast<TBranch *> (obj_branch);
@@ -390,9 +390,9 @@ namespace brio {
 	  {
 	    ostringstream message;
 	    message << "brio::reader::_at_open: "
-		    << "Cannot retrieve a valid branch from the store's tree labelled '" << store_label.c_str () 
+		    << "Cannot retrieve a valid branch from the store's tree labelled '" << store_label.c_str ()
 		    << "' from  file '" << _filename << "' !";
-	    throw runtime_error (message.str ());  	    	    
+	    throw runtime_error (message.str ());
 	  }
 	string branch_name = the_branch->GetName ();
 	the_si.serialization_tag = branch_name;
@@ -403,9 +403,9 @@ namespace brio {
 	the_si.number_of_entries = the_si.tree->GetEntries ();
 	the_si.current_entry = -1; // rewind entry  position
 	the_si.tree->SetBranchAddress (branch_name.c_str (), &the_si.p_record);
-	the_si.tree->SetBranchStatus (branch_name.c_str (), 1);	
+	the_si.tree->SetBranchStatus (branch_name.c_str (), 1);
 	the_branch->SetAutoDelete (kFALSE);
-	
+
 	// tag if the automatic store label has been found:
 	if (store_label == store_info::AUTOMATIC_STORE_LABEL)
 	  {
@@ -418,7 +418,7 @@ namespace brio {
 
       } // while
 
- 
+
     // If the conventional automatic store is found, make it the current selected one:
     if (_store_infos.size () >= 1)
       {
@@ -429,13 +429,13 @@ namespace brio {
       }
 
     if (devel)
-      {	
-	clog << "DEVEL: " << "brio::reader::_at_open: " 
+      {
+	clog << "DEVEL: " << "brio::reader::_at_open: "
 	     << "Exiting." << endl;
       }
     return;
   }
-  
+
 } // end of namespace brio
 
 // end of reader.cc
