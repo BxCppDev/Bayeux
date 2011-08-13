@@ -2,7 +2,7 @@
 /* test_cuts.cc
  */
 
-#include <cuts/test/test_cuts.h>
+#include <cuts_test_cuts.h>
 
 #include <stdexcept>
 #include <sstream>

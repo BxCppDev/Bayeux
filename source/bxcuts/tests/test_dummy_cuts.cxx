@@ -1,12 +1,12 @@
 // -*- mode: c++ ; -*- 
-// test_and_cut.cxx
+// test_dummy_cuts.cxx
 
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
-#include <cuts/and_cut.h>
+#include <cuts/dummy_cuts.h>
 
 using namespace std;
 
@@ -15,7 +15,7 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'and_cut'!" << endl; 
+      clog << "Test program for class 'cuts::dummy_cuts'!" << endl; 
   
       bool debug = false;
 
@@ -53,7 +53,7 @@ int main (int argc_, char ** argv_)
           iarg++;
       }
     
-      cuts::and_cut my_and_cut;
+      cuts::dummy_cuts my_dummy_cuts;
     
       // Here you may put stuff for testing the class...
 
@@ -71,4 +71,4 @@ int main (int argc_, char ** argv_)
   return (error_code);
 }
 
-// end of test_and_cut.cxx
+// end of test_dummy_cuts.cxx

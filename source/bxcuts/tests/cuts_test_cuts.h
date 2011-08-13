@@ -20,7 +20,8 @@
 #include <iostream>
 
 #include <cuts/i_cut.h>
-#include <cuts/test/test_data.h>
+
+#include <cuts_test_data.h>
 
 namespace cuts {
 

@@ -1,5 +1,5 @@
 // -*- mode: c++ ; -*- 
-// test_manager.cxx
+// cuts::test_manager.cxx
 
 #include <cstdlib>
 #include <iostream>
@@ -13,7 +13,10 @@
 #include <datatools/utils/multi_properties.h>
 
 #include <cuts/manager.h>
-#include <cuts/test/test_data.h>
+#include <cuts_test_data.h>
+
+// Additional registered test cuts :
+#include <cuts_test_cuts.cc>
 
 using namespace std;
 
@@ -22,7 +25,7 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'manager'!" << endl; 
+      clog << "Test program for class 'cuts::manager' !" << endl; 
   
       bool debug = false;
       long seed = 314159;
@@ -74,7 +77,7 @@ int main (int argc_, char ** argv_)
 
       if (cut_def_filename.empty ())
 	{ 
-	  cut_def_filename = "${CUTS_ROOT}/resources/test_cuts_def.conf";
+	  cut_def_filename = "${CUTS_ROOT}/tests/test_cuts_def.conf";
 	}
       datatools::utils::fetch_path_with_env (cut_def_filename);
       config.read (cut_def_filename);
@@ -241,4 +244,4 @@ int main (int argc_, char ** argv_)
   return (error_code);
 }
 
-// end of test_manager.cxx
+// end of cuts::test_manager.cxx
