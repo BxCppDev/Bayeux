@@ -10,10 +10,10 @@ fi
 #
 
 ${MATERIALS_ROOT}/$(materials-config --system)/bin/test_manager -g \
-  ${MATERIALS_ROOT}/resources/test_isotopes.def \
-  ${MATERIALS_ROOT}/resources/test_elements.def \
-  ${MATERIALS_ROOT}/resources/test_materials.def \
-  ${MATERIALS_ROOT}/resources/test_materials_aliases.def
+  ${MATERIALS_ROOT}/tests/test_isotopes.def \
+  ${MATERIALS_ROOT}/tests/test_elements.def \
+  ${MATERIALS_ROOT}/tests/test_materials.def \
+  ${MATERIALS_ROOT}/tests/test_materials_aliases.def
 
 exit 0
 

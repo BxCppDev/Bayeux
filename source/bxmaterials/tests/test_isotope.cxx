@@ -115,8 +115,14 @@ int main (int argc_, char ** argv_)
       //  my isotope 6 :        
 
       cerr << endl;
-      mat::isotope my_isotope_6("Unknown Sodium-45",11,45,0);  
-      my_isotope_6.tree_dump (cout,  "my_isotope 6");  
+      try
+	{
+	mat::isotope my_isotope_6("Unknown Sodium-45",11,45,0);  
+	}
+      catch (exception & x)
+	{
+	  clog << "As expected, Sodium-45 is not valid !" << endl;
+	}
 
     }
   catch (exception & x)

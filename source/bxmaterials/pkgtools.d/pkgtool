@@ -105,14 +105,14 @@ function print_usage ()
     configure [OPTIONS] : configure package 
         OPTIONS : 
 EOF
-    if [ -f ${the_python_dir}/__init__.py ]; then
-	cat <<EOF
-              --with-python :
-                 with Boost Python wrapper module (default)
-              --without-python :
-                 without Boost Python wrapper module
-EOF
-    fi
+#     if [ -f ${the_python_dir}/__init__.py ]; then
+# 	cat <<EOF
+#               --with-python :
+#                  with Boost Python wrapper module (default)
+#               --without-python :
+#                  without Boost Python wrapper module
+# EOF
+#     fi
     cat<<EOF
               --skip-all-dependencies-check
               --skip-dependency-check PACKNAME
@@ -346,15 +346,15 @@ function do_clean_gmk ()
     fi
 
     ### special Python wrapper/program:
-    if [ -d ${the_python_dir} ]; then
-	cd ${the_python_dir}
-	make clean
-	if [ $? -ne 0 ]; then 
-	    cd ${opwd}
-	    __pkgtools__at_function_exit
-	    return 1
-	fi
-    fi
+    # if [ -d ${the_python_dir} ]; then
+    # 	cd ${the_python_dir}
+    # 	make clean
+    # 	if [ $? -ne 0 ]; then 
+    # 	    cd ${opwd}
+    # 	    __pkgtools__at_function_exit
+    # 	    return 1
+    # 	fi
+    # fi
     cd ${the_gmk_dir}
 
     cd ${opwd}
@@ -395,19 +395,19 @@ function do_build_gmk ()
     fi
 
     ### special Python wrapper/program:
-    if [ -d ${the_python_dir} ]; then
-	if [ ! -f ${without_python_flag_file} ]; then
-	    cd ${the_python_dir}
-	    make
-	    if [ $? -ne 0 ]; then
-		cd ${opwd} 
-		pkgtools__msg_error "Build Python stuff failed !"
-		__pkgtools__at_function_exit
-		return 1
-	    fi
-	    cd ${the_gmk_dir}
-	fi
-    fi
+    # if [ -d ${the_python_dir} ]; then
+    # 	if [ build_python ]; then
+    # 	    cd ${the_python_dir}
+    # 	    make
+    # 	    if [ $? -ne 0 ]; then
+    # 		cd ${opwd} 
+    # 		pkgtools__msg_error "Build Python stuff failed !"
+    # 		__pkgtools__at_function_exit
+    # 		return 1
+    # 	    fi
+    # 	    cd ${the_gmk_dir}
+    # 	fi
+    # fi
     
     cd ${opwd}
     __pkgtools__at_function_exit
@@ -496,13 +496,12 @@ function do_configure ()
     pkgtools__remove_file ${config_csh_file}
 
     local prefix=""
-    local can_python_wrapper=0
-    local with_python_wrapper=0
-    
-    if [ -f ${the_python_dir}/__init__.py ]; then
-	can_python_wrapper=1
-	with_python_wrapper=1
-    fi
+    # local can_python_wrapper=0
+    # local with_python_wrapper=0   
+    # if [ -f ${the_python_dir}/__init__.py ]; then
+    # 	can_python_wrapper=1
+    # 	with_python_wrapper=1
+    # fi
 
     skip_all_dependencies_check=0
     skipped_dependencies=
@@ -521,16 +520,16 @@ function do_configure ()
 		else
 		    skipped_dependencies="${skipped_dependencies} ${swpack}"
 		fi
-	    elif [ ${can_python_wrapper} -eq 1 ]; then
-                # parse Python wrapper switches:
-		if [ "x${opt}" = "x--with-python" ]; then
-			with_python_wrapper=1
-		elif [ "x${opt}" = "x--without-python" ]; then
-		    with_python_wrapper=0
-		fi
 	    elif [ "${opt}" = "--prefix" ]; then
 		shift 1
 		prefix="$1"
+	    # elif [ ${can_python_wrapper} -eq 1 ]; then
+            #     # parse Python wrapper switches:
+	    # 	if [ "x${opt}" = "x--with-python" ]; then
+	    # 		with_python_wrapper=1
+	    # 	elif [ "x${opt}" = "x--without-python" ]; then
+	    # 	    with_python_wrapper=0
+	    # 	fi
 	    else
                 # parse other configuration options...
 		pkgtools__msg_warning "Ignoring '${opt}' option !"
@@ -562,31 +561,29 @@ function do_configure ()
 	fi
     fi
 
-    if [ ${can_python_wrapper} -eq 1 ]; then
-
-	if [ ${with_python_wrapper} -eq 1 ]; then
-	    pkgtools__msg_notice "Check Boost.Python avaibility !"
-	    which boost-config > /dev/null
-	    if [ $? -ne 0 ]; then
-		pkgtools__msg_error "Boost is not setup !"
-		pkgtools__msg_error "The 'boost_help' package is not setup !"
-		__pkgtools__at_function_exit
-		return 1
-	    fi
-	    pkgtools__msg_info "The 'boost_help' package seems ok !"
-	    boost_python_check=$(boost-config --librairies | grep python)
-	    if [ "x${boost_python_check}" = "x" ]; then
-		pkgtools__msg_error "No Boost.Python library !"
-		__pkgtools__at_function_exit
-		return 1
-	    fi
-	    pkgtools__msg_notice "Use Python wrapper module from Boost.Python !"
-	else
-	    pkgtools__msg_warning "Do not use Python wrapper module from Boost.Python !"
-	    pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_NO_PYTHON" 1
-	fi
-	
-    fi
+    # if [ ${can_python_wrapper} -eq 1 ]; then
+    # 	if [ ${with_python_wrapper} -eq 1 ]; then
+    # 	    pkgtools__msg_notice "Check Boost.Python avaibility !"
+    # 	    which boost-config > /dev/null
+    # 	    if [ $? -ne 0 ]; then
+    # 		pkgtools__msg_error "Boost is not setup !"
+    # 		pkgtools__msg_error "The 'boost_help' package is not setup !"
+    # 		__pkgtools__at_function_exit
+    # 		return 1
+    # 	    fi
+    # 	    pkgtools__msg_info "The 'boost_help' package seems ok !"
+    # 	    boost_python_check=$(boost-config --librairies | grep python)
+    # 	    if [ "x${boost_python_check}" = "x" ]; then
+    # 		pkgtools__msg_error "No Boost.Python library !"
+    # 		__pkgtools__at_function_exit
+    # 		return 1
+    # 	    fi
+    # 	    pkgtools__msg_notice "Use Python wrapper module from Boost.Python !"
+    # 	else
+    # 	    pkgtools__msg_warning "Do not use Python wrapper module from Boost.Python !"
+    # 	    pkgtools__cfg_store_property ${config_db_file} "${pack_name_upper}_NO_PYTHON" 1
+    # 	fi
+    # fi
 
     echo "# end of ${pack_name} configuration informations."          >> ${config_db_file} 
     cat ${config_db_file} | ${the_pkgtools_dir}/config_to_setup.py sh  > ${config_sh_file}
@@ -627,10 +624,6 @@ function do_build ()
 		return 1
 	    fi
 	fi
-	# do_build_gmk $@
-	# local code=$?
-	# __pkgtools__at_function_exit
-	# return ${code}
      fi
 
     __pkgtools__at_function_exit
@@ -804,13 +797,13 @@ function do_install ()
     fi
 
     ### special Python wrapper/program:
-    if [ -d ${the_python_dir} ]; then
-	if [ ! -f ${without_python_flag_file} ]; then
-	    cd ${the_python_dir}
-	    make install
-	    cd ${the_gmk_dir}
-	fi
-    fi
+    # if [ -d ${the_python_dir} ]; then
+    # 	if [ build_python ]; then
+    # 	    cd ${the_python_dir}
+    # 	    make install
+    # 	    cd ${the_gmk_dir}
+    # 	fi
+    # fi
     ###
 
     cd ${opwd}
@@ -840,11 +833,11 @@ function do_uninstall ()
     fi
 
     ### special Python wrapper/program:
-    if [ -d ${the_python_dir} ]; then
-	cd ${the_python_dir}
-	make uninstall
-	cd ${the_gmk_dir}
-    fi 
+    # if [ -d ${the_python_dir} ]; then
+    # 	cd ${the_python_dir}
+    # 	make uninstall
+    # 	cd ${the_gmk_dir}
+    # fi
 
     cd ${opwd}
     kill_startup
@@ -868,41 +861,41 @@ function do_check ()
 {
     __pkgtools__at_function_enter do_check
 
-    can_python_wrapper=0
-    with_python_wrapper=0
-    if [ -f ${the_python_dir}/__init__.py ]; then
-	can_python_wrapper=1
-	with_python_wrapper=1
-    fi
+    # can_python_wrapper=0
+    # with_python_wrapper=0
+    # if [ -f ${the_python_dir}/__init__.py ]; then
+    # 	can_python_wrapper=1
+    # 	with_python_wrapper=1
+    # fi
 
-    skip_all_dependencies_check=0
-    skipped_dependencies=
+    local skip_all_dependencies_check=0
+    local skipped_dependencies=
     while [ -n "$1" ]; do
-	token="$1"
+	local token="$1"
 	    
 	if [ "x${token:0:1}" = "x-" ]; then
-	    opt=${token}
+	    local opt=${token}
 	    if [ "${opt}" = "-S" -o "${opt}" = "--skip-all-dependencies-check" ]; then
 		skip_all_dependencies_check=1
 	    elif [ "${opt}" = "-s" -o "${opt}" = "--skip-dependency-check" ]; then
 		shift 1
-		swpack=$1
+		local swpack=$1
 		pkgtools__msg_debug "swpack = '${swpack}'"
 		if [ "x${skipped_dependencies}" = "x" ]; then
 		    skipped_dependencies=${swpack}
 		else
 		    skipped_dependencies="${skipped_dependencies} ${swpack}"
 		fi
-	    elif [ ${can_python_wrapper} -eq 1 ]; then
-                # parse Python wrapper switches:
-		if [ "x${opt}" = "x--with-python" ]; then
-			with_python_wrapper=1
-		elif [ "x${opt}" = "x--without-python" ]; then
-		    with_python_wrapper=0
-		fi
 	    elif [ "${opt}" = "--prefix" ]; then
 		shift 1
 		prefix="$1"
+	    # elif [ ${can_python_wrapper} -eq 1 ]; then
+            #     # parse Python wrapper switches:
+	    # 	if [ "x${opt}" = "x--with-python" ]; then
+	    # 		with_python_wrapper=1
+	    # 	elif [ "x${opt}" = "x--without-python" ]; then
+	    # 	    with_python_wrapper=0
+	    # 	fi
 	    else
                 # parse other configuration options...
 		pkgtools__msg_warning "Ignoring '${opt}' option !"
@@ -911,39 +904,32 @@ function do_check ()
 	    arg=${token}
 	    pkgtools__msg_warning "Ignoring '${arg}' argument !"
 	fi
-
 	shift 1
     done
 
     pkgtools__msg_debug "skipped_dependencies = '${skipped_dependencies}'"
 
-    ok=1
-    if [ ${can_python_wrapper} -eq 1 ]; then
-
-	if [ ${with_python_wrapper} -eq 1 ]; then
-	    pkgtools__msg_notice "Check Boost.Python avaibility !"
-	    which boost-config > /dev/null
-	    if [ $? -ne 0 ]; then
-		pkgtools__msg_error "Boost is not setup !"
-		pkgtools__msg_error "The 'boost_help' package is not setup !"
-		ok=0
-		#__pkgtools__at_function_exit
-		#return 1
-	    fi
-	    pkgtools__msg_info "The 'boost_help' package seems ok !"
-	    boost_python_check=$(boost-config --librairies | grep python)
-	    if [ "x${boost_python_check}" = "x" ]; then
-		pkgtools__msg_error "No Boost.Python library !"
-		ok=0
-		#__pkgtools__at_function_exit
-		#return 1
-	    fi
-	    pkgtools__msg_notice "Python wrapper module from Boost.Python is usable  !"
-	else
-	    pkgtools__msg_error "Python wrapper module from Boost.Python is not usable !"
-	fi
- 
-    fi
+    # local ok=1
+    # if [ ${can_python_wrapper} -eq 1 ]; then
+    # 	if [ ${with_python_wrapper} -eq 1 ]; then
+    # 	    pkgtools__msg_notice "Check Boost.Python avaibility !"
+    # 	    which boost-config > /dev/null
+    # 	    if [ $? -ne 0 ]; then
+    # 		pkgtools__msg_error "Boost is not setup !"
+    # 		pkgtools__msg_error "The 'boost_help' package is not setup !"
+    # 		ok=0
+    # 	    fi
+    # 	    pkgtools__msg_info "The 'boost_help' package seems ok !"
+    # 	    boost_python_check=$(boost-config --librairies | grep python)
+    # 	    if [ "x${boost_python_check}" = "x" ]; then
+    # 		pkgtools__msg_error "No Boost.Python library !"
+    # 		ok=0
+    # 	    fi
+    # 	    pkgtools__msg_notice "Python wrapper module from Boost.Python is usable  !"
+    # 	else
+    # 	    pkgtools__msg_error "Python wrapper module from Boost.Python is not usable !"
+    # 	fi 
+    # fi
  
     if [ ${skip_all_dependencies_check} -eq 0 ]; then
         # Check package dependencies:
@@ -968,11 +954,6 @@ function do_test ()
     __pkgtools__at_function_enter do_test
 
     if [ -d ${the_gmk_dir} ]; then
-	if [ -d ${the_python_dir} ]; then
-	    if [ -f ${without_python_flag_file} ]; then
-		source ${without_python_flag_file}
-	    fi
-	fi
 	do_build_gmk bin_test
 	if [ $? -ne 0 ]; then
 	    pkgtools__msg_error "Build test program failed !"

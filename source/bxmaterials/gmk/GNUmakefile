@@ -62,6 +62,7 @@ PACKAGE_DIR=$(shell cd ${BASEDIR} ; pwd)
 INCDIR=$(BASEDIR)/include
 SRCDIR=$(BASEDIR)/src
 PROGDIR=$(BASEDIR)/programs
+TESTDIR=$(BASEDIR)/tests
 SCRIPTSDIR=$(BASEDIR)/scripts
 RESDIR=$(BASEDIR)/resources
 ARCHDIR=$(BASEDIR)/$(SYSTEM)
@@ -166,6 +167,7 @@ COBJEXT=.o
 
 vpath %$(HEADEREXT)  $(INCDIR)/$(PACKAGENAME)
 vpath %$(SOURCEEXT)  $(SRCDIR)
+vpath test_%$(PROGEXT)    $(TESTDIR)
 vpath %$(PROGEXT)    $(PROGDIR)
 vpath %$(OBJEXT)     $(OBJDIR)
 vpath %$(LIBEXT)     $(LIBDIR)
@@ -185,8 +187,8 @@ objectsWithPath := $(sources:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT))
 cobjects := $(csources:%$(CSOURCEEXT)=%$(COBJEXT))
 cobjectsWithPath := $(csources:%$(CSOURCEEXT)=$(OBJDIR)/%$(COBJEXT))
 programs_all:= $(notdir $(shell ls $(PROGDIR)/*$(PROGEXT) 2> /dev/null))
-
-programs_test:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep ^test_)
+programs_test:= $(notdir $(shell ls $(TESTDIR)/test_*$(PROGEXT) 2> /dev/null))
+#programs_test:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep ^test_)
 programs:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep -v ^test_)
 
 binaries:= $(programs:%$(PROGEXT)=%$(BINEXT))
@@ -249,10 +251,10 @@ build_special :
 .PHONY : install
 install : 
 	@echo "Installing..."
-	@cat $(BASEDIR)/pkgtools.d/package.csh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).csh
-	@cat $(BASEDIR)/pkgtools.d/package.sh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).sh
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
-	@ln -s -f $(PACKAGE_ROOT)/pkgtools.d/$(LIBNAME)-config $(BINDIR)/$(LIBNAME)-config
+	# @#cat $(BASEDIR)/pkgtools.d/package.csh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).csh
+	# @#cat $(BASEDIR)/pkgtools.d/package.sh.skel | sed -e "s@__PACKAGE_ROOT__@$(PACKAGE_ROOT)@g" -e "s@__PACKAGE_NAME__@$(UPACKAGENAME)@g" -e "s@__Package_name__@$(PACKAGENAME)@g" > $(BASEDIR)/$(LIBNAME).sh
+	# @#ln -s -f $(PACKAGE_ROOT)/pkgtools.d/$(LIBNAME)-config $(BINDIR)/$(LIBNAME)-config
 
 #########################################################################
 
@@ -263,9 +265,9 @@ clean_special :
 .PHONY : uninstall
 uninstall : 
 	@echo "Uninstalling..."
-	test -L $(BINDIR)/$(LIBNAME)-config && $(RM) $(BINDIR)/$(LIBNAME)-config || echo -n ""
-	test -f $(BASEDIR)/$(LIBNAME).sh && $(RM) $(BASEDIR)/$(LIBNAME).sh || echo -n ""
-	test -f $(BASEDIR)/$(LIBNAME).csh && $(RM) $(BASEDIR)/$(LIBNAME).csh || echo -n ""
+	# @#test -L $(BINDIR)/$(LIBNAME)-config && $(RM) $(BINDIR)/$(LIBNAME)-config || echo -n ""
+	# @#test -f $(BASEDIR)/$(LIBNAME).sh && $(RM) $(BASEDIR)/$(LIBNAME).sh || echo -n ""
+	# @#test -f $(BASEDIR)/$(LIBNAME).csh && $(RM) $(BASEDIR)/$(LIBNAME).csh || echo -n ""
 
 #########################################################################
 
@@ -282,10 +284,10 @@ setup :
 lib : lib_shared
 
 .PHONY : libs
-libs : lib_static lib_shared
+libs : lib_shared
 
-.PHONY : lib_static
-lib_static : $(LIBFILE)
+# .PHONY : lib_static
+# lib_static : $(LIBFILE)
 
 .PHONY : lib_shared
 lib_shared : $(SHLIBFILE)
@@ -311,10 +313,10 @@ bin : bin_shared
 bin_test : bin_test_shared
 
 .PHONY : bins
-bins : bin_shared bin_static 
+bins : bin_shared #bin_static 
 
-.PHONY : bin_static
-bin_static : $(binaries_static)
+# .PHONY : bin_static
+# bin_static : $(binaries_static)
 
 .PHONY : bin_shared
 bin_shared : $(binaries)
@@ -322,12 +324,12 @@ bin_shared : $(binaries)
 .PHONY : bin_test_shared
 bin_test_shared : $(binaries_test)
 
-$(LIBFILE) : $(objectsWithPath) 
-	@echo "Building static lib '$(@)'..."
-	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
-	for file_object in $(objects); do \
-	  $(AR) -rusv $(LIBDIR)/$(LIBFILE) $(OBJDIR)/$(notdir $${file_object}) ; done
-	ranlib $(LIBDIR)/$(notdir $(@))
+# $(LIBFILE) : $(objectsWithPath) 
+# 	@echo "Building static lib '$(@)'..."
+# 	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
+# 	for file_object in $(objects); do \
+# 	  $(AR) -rusv $(LIBDIR)/$(LIBFILE) $(OBJDIR)/$(notdir $${file_object}) ; done
+# 	ranlib $(LIBDIR)/$(notdir $(@))
 
 $(SHLIBFILE) : $(objectsWithPath) 
 	@echo "Building shared lib '$(@)'..."
@@ -339,10 +341,15 @@ $(OBJDIR)/%$(OBJEXT) : %$(SOURCEEXT) %$(HEADEREXT)
 	@test -d $(OBJDIR) || mkdir -p $(OBJDIR)
 	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< -o $(OBJDIR)/$(notdir $(@))
 
-%.static$(BINEXT) : %$(PROGEXT) | lib_static
-	@echo "Compiling statically linked program '$(@)'..."
+# %.static$(BINEXT) : %$(PROGEXT) | lib_static
+# 	@echo "Compiling statically linked program '$(@)'..."
+# 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
+# 	$(CXX) -I. $(CPPFLAGS) $(CXXFLAGS) $< $(STATICFLAGS) $(LDFLAGS) -o $(BINDIR)/$(notdir $(@))
+
+test_%$(BINEXT) : test_%$(PROGEXT) | lib_shared 
+	@echo "Compiling test program '$(@)' with shared library..."
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
-	$(CXX) -I. $(CPPFLAGS) $(CXXFLAGS) $< $(STATICFLAGS) $(LDFLAGS) -o $(BINDIR)/$(notdir $(@))
+	$(CXX) -I. -I$(TESTDIR) $(CPPFLAGS) $(CXXFLAGS) $< $(SHFLAGS) -o $(BINDIR)/$(notdir $(@))
 
 %$(BINEXT) : %$(PROGEXT) | lib_shared 
 	@echo "Compiling program '$(@)' with shared library..."

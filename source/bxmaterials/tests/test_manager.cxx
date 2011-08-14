@@ -57,11 +57,6 @@ int main (int argc_, char ** argv_)
 	      parsing_options = false;
               string argument = token; 
               input_files.push_back (argument);
-	      /*
-              { 
-                clog << "warning: ignoring argument '" << argument << "'!" << endl; 
-              }
-	      */
             }
           iarg++;
       }
