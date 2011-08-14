@@ -839,7 +839,7 @@ namespace datatools {
 		}
 	      else if (ext == XML_EXT) // || ext == "XML")
 		{
-		  format=xml=true;
+		  format = xml = true;
 		  if (io_factory::g_debug)
 		    {
 		      std::clog << "DEBUG: io_factory::guess_mode_from_filename: "

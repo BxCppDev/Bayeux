@@ -498,7 +498,7 @@ namespace datatools {
 
       void __read_next_tag ();
 
-      void __init_reader (const std::string & filename_, int mode_);
+      void __init_reader (const std::string & a_filename, int a_mode);
 
       void __reset_reader ();
 
@@ -536,35 +536,35 @@ namespace datatools {
 
       bool is_xml () const;
 
-      void init (const std::string & filename_,
-		 bool multiple_archives_ = using_single_archive);
+      void init (const std::string & a_filename,
+		 bool a_multiple_archives = using_single_archive);
 
-      void init_multi (const std::string & filename_)
+      void init_multi (const std::string & a_filename)
       {
-	init (filename_, using_multiple_archives);
+	init (a_filename, using_multiple_archives);
 	return;
       }
 
-      void init_single (const std::string & filename_)
+      void init_single (const std::string & a_filename)
       {
-	init (filename_, using_single_archive);
+	init (a_filename, using_single_archive);
 	return;
       }
 
-      void init (const std::string & filename_ , int mode_);
+      void init (const std::string & a_filename, int a_mode);
 
       // ctor
       data_reader ();
 
-      data_reader (const std::string & filename_,
-		   bool multiple_archives_ = using_single_archive);
+      data_reader (const std::string & a_filename,
+		   bool a_multiple_archives = using_single_archive);
 
-      data_reader (const std::string & filename_, int mode_);
+      data_reader (const std::string & a_filename, int a_mode);
 
       // dtor
       virtual ~data_reader ();
 
-      void dump (std::ostream & out_ = std::clog) const;
+      void dump (std::ostream & a_out = std::clog) const;
 
     protected:
       template <typename Data>
@@ -681,7 +681,7 @@ namespace datatools {
 
     private:
 
-      void __init_writer (const std::string & filename_ , int mode_);
+      void __init_writer (const std::string & a_filename, int a_mode);
 
       void __reset_writer ();
 
@@ -713,6 +713,18 @@ namespace datatools {
       void init (const std::string & a_filename,
 		 bool a_multiple_archives = using_single_archive,
 		 bool a_append_mode = no_append_mode);
+
+      void init_multi (const std::string & a_filename)
+      {
+	init (a_filename, using_multiple_archives);
+	return;
+      }
+
+      void init_single (const std::string & a_filename)
+      {
+	init (a_filename, using_single_archive);
+	return;
+      }
 
       void init (const std::string & a_filename,
 		 int a_mode);

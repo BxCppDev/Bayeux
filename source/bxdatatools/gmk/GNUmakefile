@@ -138,7 +138,7 @@ $(warning WARNING: datatools does not use 'Auxiliary Boost I/O' !)
 endif
 
 ### Use or not KWSYS (2011-07-09 FM: always use it) :
-DEPLDFLAGS+=-lkwsys -lkwsys_c
+DEPLDFLAGS+=-L$(LIBDIR) -lkwsys -lkwsys_c
 
 # 2011-07-09 FM : commented out
 # KWSYS_FLAGS=
@@ -163,7 +163,7 @@ CPPFLAGS+=$(shell echo $(CPPFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkunique
 # ifneq ($(DATATOOLS_NO_KWSYS),1)
 # DEPLDFLAGS_SORTED=-L$(LIBDIR)
 # endif
-DEPLDFLAGS_SORTED+=-L$(LIBDIR) $(shell echo $(LDFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r)
+DEPLDFLAGS_SORTED=$(shell echo $(LDFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r)
 LDFLAGS+=$(DEPLDFLAGS_SORTED)
 
 # Special additional link flag for BIO DLL and executable :
@@ -217,9 +217,10 @@ sources_bio :=  $(notdir $(shell ls $(SRCDIR)/the_serializable$(SOURCEEXT) 2> /d
 # # $(warning WARNING: datatools uses the 'library_loader' class !)
 # sources := $(sources) library_loader.cc
 # endif
-objects := $(sources:%$(SOURCEEXT)=%$(OBJEXT))
-objectsWithPath := $(sources:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT))
-objects_bio := $(sources_bio:%$(SOURCEEXT)=%$(OBJEXT))
+
+objects             := $(sources:%$(SOURCEEXT)=%$(OBJEXT))
+objectsWithPath     := $(sources:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT))
+objects_bio         := $(sources_bio:%$(SOURCEEXT)=%$(OBJEXT))
 objectsWithPath_bio := $(sources_bio:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT))
 
 programs_all := $(notdir $(shell ls $(PROGDIR)/*$(PROGEXT) 2> /dev/null))
@@ -229,9 +230,9 @@ programs_test := $(notdir $(shell ls $(TESTDIR)/*$(PROGEXT) 2> /dev/null))
 #programs_kwsys_test := $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep ^kwsys_test_)
 programs := $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep -v ^test_)
 
-binaries:= $(programs:%$(PROGEXT)=%$(BINEXT))
+binaries      := $(programs:%$(PROGEXT)=%$(BINEXT))
+binaries_test := $(programs_test:%$(PROGEXT)=%$(BINEXT))
 #binaries.static:= $(programs:%$(PROGEXT)=%.static$(BINEXT))
-binaries_test:= $(programs_test:%$(PROGEXT)=%$(BINEXT))
 
 .PHONY : help
 help :
@@ -281,6 +282,7 @@ dump:
 	@echo "arch dir = $(ARCHDIR)"
 	@echo "CPPFLAGS='$(CPPFLAGS)'"
 	@echo "LDFLAGS='$(LDFLAGS)'"
+	@echo "LDFLAGS_SORTED='$(DEPLDFLAGS_SORTED)'"
 
 #########################################################################
 
@@ -354,7 +356,7 @@ distclean : uninstall clean
 .PHONY : bin
 bin : bin_shared
 
-.PHONY : bin
+.PHONY : bin_test
 bin_test : bin_test_shared
 
 .PHONY : bins
@@ -372,13 +374,13 @@ bin_shared : $(binaries)
 .PHONY : bin_test_shared
 bin_test_shared : $(binaries_test)
 
-$(LIBFILE) : $(objectsWithPath)
-	@echo "NOTICE: Building static lib '$(@)'..." >&2
-	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
-	for file_object in $(objects); do \
-	  $(AR) -rusv $(LIBDIR)/$(LIBFILE) $(OBJDIR)/$(notdir $${file_object}) ; done
-	ranlib $(LIBDIR)/$(notdir $(@))
-	@echo "NOTICE: Building static lib '$(@)' done." >&2
+# $(LIBFILE) : $(objectsWithPath)
+# 	@echo "NOTICE: Building static lib '$(@)'..." >&2
+# 	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
+# 	for file_object in $(objects); do \
+# 	  $(AR) -rusv $(LIBDIR)/$(LIBFILE) $(OBJDIR)/$(notdir $${file_object}) ; done
+# 	ranlib $(LIBDIR)/$(notdir $(@))
+# 	@echo "NOTICE: Building static lib '$(@)' done." >&2
 
 $(SHLIBFILE) : $(objectsWithPath)
 	@echo "NOTICE: Building shared lib '$(@)'..." >&2
@@ -389,7 +391,7 @@ $(SHLIBFILE) : $(objectsWithPath)
 
 $(SHLIBFILE_BIO) : $(objectsWithPath_bio)
 	@echo "NOTICE: Building shared auxiliary BIO lib '$(@)'..." >&2
-	@#echo "NOTICE: DEPLDFLAGS_SORTED=$(DEPLDFLAGS_SORTED)" >&2
+	@echo "NOTICE: DEPLDFLAGS_SORTED=$(DEPLDFLAGS_SORTED)" >&2
 	@test -d $(LIBDIR) || mkdir -p $(LIBDIR)
 	@test -n "$(objectsWithPath_bio)" && $(LD) $(CXXFLAGS) $(SOFLAGS) $(^) $(LIBLDFLAGS_BIO) $(DEPLDFLAGS_SORTED) -o $(LIBDIR)/$(notdir $(@)) || echo ""
 	@echo "NOTICE: Building shared lib '$(@)' done." >&2
