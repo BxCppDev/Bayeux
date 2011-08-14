@@ -90,7 +90,7 @@ int main (int argc_, char ** argv_)
 	string vg_id = "genvtx::from_file_vg";
 	clog << "Generating vertices from a '" << vg_id << "' generator:" << endl;
 	datatools::utils::properties vg_configuration;
-	vg_configuration.store ("filename", "${GENVTX_ROOT}/resources/vertices.data");
+	vg_configuration.store ("filename", "${GENVTX_ROOT}/tests/vertices.data");
 	vg = my_factory.create_vertex_generator (vg_id, 
 						 vg_configuration);
 	if (vg == 0)

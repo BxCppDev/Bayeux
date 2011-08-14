@@ -1,0 +1,17 @@
+
+
+Test and sample programs for the genvtx library:
+
+bash> cd $GENVTX_ROOT
+
+bash> ./tests/run_tests.bash run
+bash> ./tests/run_tests.bash clean
+
+Interactive/grpahics tests :
+
+bash> gnuplot tests/test_box_vg.gp
+bash> gnuplot tests/test_cylinder_vg.gp
+bash> gnuplot tests/test_placement_vg.gp
+
+--
+Updated: 2011-08-14
