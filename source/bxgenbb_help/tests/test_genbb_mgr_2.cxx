@@ -29,7 +29,7 @@ int main (int argc_, char ** argv_)
 	}
     
       genbb::genbb_mgr mgr;
-      mgr.set ("${GENBB_HELP_ROOT}/resources/se82_0nubb_mn.genbb");
+      mgr.set ("${GENBB_HELP_ROOT}/tests/data/se82_0nubb_mn.genbb");
       if (debug) mgr.dump ();
       mgr.init ();
       mgr.dump ();

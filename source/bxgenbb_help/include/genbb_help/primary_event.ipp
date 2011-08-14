@@ -7,7 +7,7 @@
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/version.hpp>
-#include <boost/serialization/export.hpp>
+//#include <boost/serialization/export.hpp>
 
 #include <boost/serialization/list.hpp> 
 #include <boost/serialization/string.hpp>
@@ -39,7 +39,7 @@ namespace genbb {
 } // end of namespace genbb
 
 BOOST_CLASS_VERSION(genbb::primary_event, 1)
-BOOST_CLASS_EXPORT_KEY2(genbb::primary_event, "genbb::primary_event")
+//BOOST_CLASS_EXPORT_KEY2(genbb::primary_event, "genbb::primary_event")
 
 #endif // __genbb_help__primary_event_ipp
 

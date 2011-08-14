@@ -1,5 +1,5 @@
 // -*- mode: c++; -*- 
-// test_genbb_mgr_4.cxx
+// test_genbb_mgr.cxx
 
 #include <cstdlib>
 #include <iostream>
@@ -25,16 +25,15 @@ int main (int argc_, char ** argv_)
 	  iarg++;
 	}
     
-      // set format to Boost archive:
-      genbb::genbb_mgr mgr (genbb::genbb_mgr::FORMAT_BOOST);
+      genbb::genbb_mgr mgr;
 
-      // Boost archive input data files:
-      mgr.set ("${GENBB_HELP_ROOT}/resources/bipo212_1.boost.txt.gz");
-      mgr.set ("${GENBB_HELP_ROOT}/resources/bipo212_2.boost.txt.gz");
-      mgr.set ("${GENBB_HELP_ROOT}/resources/bipo212_3.boost.txt.gz");
+      // genbb input data files:
+      mgr.set ("${GENBB_HELP_ROOT}/tests/data/bipo212_1.genbb");
+      mgr.set ("${GENBB_HELP_ROOT}/tests/data/bipo212_2.genbb");
+      mgr.set ("${GENBB_HELP_ROOT}/tests/data/bipo212_3.genbb");
       if (debug) mgr.dump ();
 
-      // initialize/lock the manager:
+      // initialize the manager:
       mgr.init ();
       if (debug) mgr.dump ();
 
@@ -68,4 +67,4 @@ int main (int argc_, char ** argv_)
   return error_code;
 }
 
-// end of test_genbb_mgr_4.cxx
+// end of test_genbb_mgr.cxx

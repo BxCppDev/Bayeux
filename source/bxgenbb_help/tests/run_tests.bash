@@ -185,6 +185,32 @@ if [ $? -ne 0 ]; then
 fi
 
 ##########################################################
+# test_exe="\
+# test_bb0nu_channel \
+# test_bb0nu_channel_2 \
+# test_bb0nu_cos_theta \
+# test_beta.f77.exe \
+# test_dummy_genbb_help \
+# test_fermi \
+# test_fermi_f.f77.exe \
+# test_genbb \
+# test_genbb_help_serialization \
+# test_genbb_mgr \
+# test_genbb_mgr_2 \
+# test_genbb_mgr_3 \
+# test_genbb_mgr_4 \
+# test_genbb_mgr_5 \
+# test_genbb_writer \
+# test_primary_event \
+# test_rnd2.f77.exe \
+# test_rnd.f77.exe \
+# test_single_particle_generator \
+# test_single_particle_generator_2 \
+# test_single_particle_generator_3 \
+# test_wgenbb \
+# g2b \
+# prog_DECAY0.f77.exe \
+# "
 
 test_exe="\
 test_dummy_genbb_help \
@@ -271,9 +297,9 @@ EOF
 	    fi
 	elif [ "${exe}" = "g2b" ]; then
 	    ${bin} \
-		${GENBB_HELP_ROOT}/resources/bipo212_1.genbb \
-		${GENBB_HELP_ROOT}/resources/bipo212_2.genbb \
-		${GENBB_HELP_ROOT}/resources/bipo212_3.genbb \
+		${GENBB_HELP_ROOT}/tests/data/bipo212_1.genbb \
+		${GENBB_HELP_ROOT}/tests/data/bipo212_2.genbb \
+		${GENBB_HELP_ROOT}/tests/data/bipo212_3.genbb \
 		bipo212_all.txt.gz  >> tests.log 2>&1
 	    if [ $? -ne 0 ]; then
 		let error_count=error_count+1

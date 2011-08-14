@@ -72,6 +72,7 @@ PACKAGE_DIR=$(shell cd ${BASEDIR} ; pwd)
 INCDIR=$(BASEDIR)/include
 SRCDIR=$(BASEDIR)/src
 PROGDIR=$(BASEDIR)/programs
+TESTDIR=$(BASEDIR)/tests
 SCRIPTSDIR=$(BASEDIR)/scripts
 RESDIR=$(BASEDIR)/resources
 ARCHDIR=$(BASEDIR)/$(SYSTEM)
@@ -242,6 +243,7 @@ BINEXT=
 vpath %$(HEADEREXT)  $(INCDIR)/$(PACKAGENAME)
 vpath %$(SOURCEEXT)  $(SRCDIR)
 vpath %$(PROGEXT)    $(PROGDIR)
+vpath test_%$(PROGEXT)    $(TESTDIR)
 vpath %$(OBJEXT)     $(OBJDIR)
 vpath %$(BINEXT)     $(BINDIR)
 
@@ -249,6 +251,7 @@ vpath %$(F77_HEADEREXT)  $(INCDIR)/$(PACKAGENAME)
 vpath %$(F77_SOURCEEXT)  $(SRCDIR)
 vpath %$(F77_OBJEXT)     $(OBJDIR)
 vpath %$(F77_PROGEXT)    $(PROGDIR)
+vpath test_%$(F77_PROGEXT)    $(TESTDIR)
 vpath %$(F77_BINEXT)     $(BINDIR)
 
 vpath %$(LIBEXT)     $(LIBDIR)
@@ -275,10 +278,11 @@ objects_bio := $(sources_bio:%$(SOURCEEXT)=%$(OBJEXT))
 objectsWithPath_bio := $(sources_bio:%$(SOURCEEXT)=$(OBJDIR)/%$(OBJEXT)) 
 
 programs_all:= $(notdir $(shell ls $(PROGDIR)/*$(PROGEXT) 2> /dev/null))
-programs_test:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep ^test_)
+programs_test:= $(notdir $(shell ls $(TESTDIR)/test_*$(PROGEXT) 2> /dev/null))
+#programs_test:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep ^test_)
 programs:= $(shell echo $(programs_all) | tr ' ' '\n' | grep .cxx$ | grep -v ^test_)
 binaries:= $(programs:%$(PROGEXT)=%$(BINEXT))
-binaries.static:= $(programs:%$(PROGEXT)=%.static$(BINEXT))
+#binaries.static:= $(programs:%$(PROGEXT)=%.static$(BINEXT))
 binaries_test:= $(programs_test:%$(PROGEXT)=%$(BINEXT))
 
 crossed_headers := fermi.h rng.h
@@ -291,7 +295,8 @@ f77_sources := $(notdir $(shell ls $(SRCDIR)/*$(F77_SOURCEEXT)))
 f77_objects := $(f77_sources:%$(F77_SOURCEEXT)=%$(F77_OBJEXT))
 f77_objectsWithPath := $(f77_sources:%$(F77_SOURCEEXT)=$(OBJDIR)/%$(F77_OBJEXT))
 f77_programs_all:= $(notdir $(shell ls $(PROGDIR)/*$(F77_PROGEXT) 2> /dev/null))
-f77_programs_test:= $(shell echo $(f77_programs_all) | tr ' ' '\n' | grep .F$ | grep ^test_)
+f77_programs_test:= $(notdir $(shell ls $(TESTDIR)/test_*$(F77_PROGEXT) 2> /dev/null))
+#f77_programs_test:= $(shell echo $(f77_programs_all) | tr ' ' '\n' | grep .F$ | grep ^test_)
 f77_programs:= $(shell echo $(f77_programs_all) | tr ' ' '\n' | grep .F$ | grep -v ^test_)
 f77_binaries:= $(f77_programs:%$(F77_PROGEXT)=%$(F77_BINEXT))
 f77_binaries_test:= $(f77_programs_test:%$(F77_PROGEXT)=%$(F77_BINEXT))
@@ -467,15 +472,25 @@ bin_shared_f77 : $(f77_binaries)
 .PHONY : bin_test_shared
 bin_test_shared : $(binaries_test) $(f77_binaries_test)
 
-%$(BINEXT) : %$(PROGEXT) | lib_shared lib_shared_f77 $(binlibdep)
-	@echo "Compiling program '$(@)' with shared library..."
+test_%$(F77_BINEXT) : test_%$(F77_PROGEXT) | lib_shared_f77 
+	@echo "Compiling test F77 program '$(@)' with shared library..."
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS_CXX) $< $(EXELDFLAGS_BIO) $(LDFLAGS_CXX) -o $(BINDIR)/$(notdir $(@))
+	$(F77) -I$(TESTDIR) $(F77FLAGS) $(CPPFLAGS_F77) $< $(LDFLAGS_F77) -o $(BINDIR)/$(notdir $(@))
+
+test_%$(BINEXT) : test_%$(PROGEXT) | lib_shared lib_shared_f77 $(binlibdep)
+	@echo "Compiling test C++ program '$(@)' with shared library..."
+	@test -d $(BINDIR) || mkdir -p $(BINDIR)
+	$(CXX) -I$(TESTDIR) $(CXXFLAGS) $(CPPFLAGS_CXX) $< $(EXELDFLAGS_BIO) $(LDFLAGS_CXX) -o $(BINDIR)/$(notdir $(@))
 
 %$(F77_BINEXT) : %$(F77_PROGEXT) | lib_shared_f77 
 	@echo "Compiling F77 program '$(@)' with shared library..."
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
 	$(F77) $(F77FLAGS) $(CPPFLAGS_F77) $< $(LDFLAGS_F77) -o $(BINDIR)/$(notdir $(@))
+
+%$(BINEXT) : %$(PROGEXT) | lib_shared lib_shared_f77 $(binlibdep)
+	@echo "Compiling C++ program '$(@)' with shared library..."
+	@test -d $(BINDIR) || mkdir -p $(BINDIR)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS_CXX) $< $(EXELDFLAGS_BIO) $(LDFLAGS_CXX) -o $(BINDIR)/$(notdir $(@))
 
 # $(LIBFILE) : $(objectsWithPath)  $(f77_objectsWithPath) 
 # 	@echo "Building static lib '$(@)'..."

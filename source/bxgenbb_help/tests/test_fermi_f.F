@@ -10,10 +10,10 @@ c     test_fermi_f.F
       do i=1,500
          e = emin + i * de
          f0 = fermi (z, e)
-         f1 = fermi_cern (z, e)
-         f2 = fermi_cern_2 (z, e)
-1000     format (f8.4, ' ', f8.4, ' ', f8.4, ' ', f8.4)
-         print 1000 ,e,f0,f1,f2
+         !f1 = fermi_cern (z, e)
+         !f2 = fermi_cern_2 (z, e)
+1000     format (f8.4, ' ', f8.4) !, ' ', f8.4, ' ', f8.4)
+         print 1000 ,e,f0 !,f1,f2
       enddo
       stop
       end

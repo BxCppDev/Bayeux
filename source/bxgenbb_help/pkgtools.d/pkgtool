@@ -649,23 +649,14 @@ function do_build ()
     source ${config_sh_file}
     pkgtools__msg_notice "Build procedure use the '${GENBB_HELP_F77_COMP}' F77 compiler..."
 
-    # if [ -f ${configure_flag_file} ]; then
-    # 	source ${configure_flag_file}
-    # 	pkgtools__msg_notice "Build procedure use the '${F77_COMP}' F77 compiler..."
-    # else
-    # 	pkgtools__msg_notice "Cannot find '${configure_flag_file}' file ! Please configure first !"
-    # 	__pkgtools__at_function_exit
-    # 	return 1
-    # fi
-
     if [ -d ${the_gmk_dir} ]; then
-	# if [ -d ${the_python_dir} ]; then
-	#     if [ -f ${without_python_flag_file} ]; then
-	# 	source ${without_python_flag_file}
-	#     fi
-	# fi
 	if [ "x$@" = "x" ]; then
-	    do_build_gmk lib
+            lib_build_tag="lib"
+ 	    if [ "x${GENBB_HELP_XBIO}" = "x1" ]; then
+		pkgtools__msg_notice "Build target is 'lib_xbio'"
+		lib_build_tag="lib_xbio"
+	    fi
+	    do_build_gmk ${lib_build_tag}
 	    if [ $? -ne 0 ]; then
 		__pkgtools__at_function_exit
 		return 1
