@@ -196,6 +196,15 @@ composition.mode            : string       = "number_of_atoms"
 composition.names           : string  [2]  = "Sodium" "Iodine"
 composition.number_of_atoms : integer [2]  =     1       1
 
+[name="std::SiO2" type="material"]
+#@description SiO2 silicon detector material
+density          : real   = 2.320
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [2]  = "Silicium" "Oxygen"
+composition.number_of_atoms : integer [2]  =     1       2
+
 [name="std::plexiglass" type="material"]
 #@description Plexiglass material (PMMA = C5H8O2)
 density          : real   = 1.190
