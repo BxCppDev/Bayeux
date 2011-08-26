@@ -79,13 +79,6 @@ fi
 f77_comp=${GENBB_HELP_F77_COMP} 
 #$(cat ${PACK_CONF} | grep F77_COMP= | cut -d= -f2)
 
-#>>> 2009-03-01 FM:
-# Remove  -lg2c link option for we now use gfortran...
-#<<<
-f77_opt=-lgfortran
-if [ "x${f77_comp}" = "xg77" ]; then
-    f77_opt=-lg2c
-fi
 
 with_ebio=0
 with_xbio=0
@@ -97,6 +90,8 @@ if [ "x${GENBB_HELP_XBIO}" == "x1" ]; then
 fi
 
 opt=$1
+shift 1
+
 
 if [ "x$opt" = "x" ]; then
     echo "${SCRIPTNAME}: error: Missing option!" 
@@ -121,9 +116,11 @@ Known values for OPTION are:
   --cflags              print include path pre-processor flags with dependencies
   --libs    [option]    print library linking information, without dependencies
   --ldflags [option]           
-  --libs-depends [option] print library linking information, with dependencies
-      Options:          --xbio  with linkage against the `libgeomtools_bio.so' DLL
-                        --no-xbio  without linkage against the `libgeomtools_bio.so' DLL
+  --libs-depends [option] printS library linking information, with dependencies
+      Options:          --with-xbio-lib        with linkage against the 'libgenbb_help_bio.so' DLL
+                        --without-xbio-lib     without linkage against the 'libgenbb_help_bio.so' DLL
+                        --with-fortran-lib     with linkage against the 'libgenbb_help_f77.so' DLL
+                        --without-fortran-lib  without linkage against the 'libgenbb_help_f77.so' DLL
   --help                print this help then exit
   --version             print version information
   --system              print system
@@ -182,7 +179,8 @@ if [ "x$opt" = "x--include" ]; then
 fi
 
 if [ "x$opt" = "x--cflags" ]; then
-
+    opt2="$1"
+    shift 1
     if [ "x${f77_comp}" = "xg77" ]; then
 	f77_defines="\
 -Df2cFortran \
@@ -206,9 +204,7 @@ if [ "x$opt" = "x--cflags" ]; then
 "
     fi
     ####
-    shift 1
-    more=$1
-    if [ "x${more}" = "x--no-f77" ]; then
+    if [ "x${opt2}" = "x--no-f77" ]; then
 	f77_defines=
     fi
     ###
@@ -267,32 +263,93 @@ fi
 # compute default linkage :
 bio_ldflags=
 bio_ldflags_HC=
+with_fortran_lib=1
 if [ ${with_xbio} -eq 1 ]; then
     bio_ldflags=-lgenbb_help_bio
     bio_ldflags_HC=${THEPACK_LIBDIR}/libgenbb_help_bio.so
 fi
+#>>> 2009-03-01 FM:
+# Remove  -lg2c link option for we now use gfortran...
+#<<<
+f77_link_opt=-lgfortran
+if [ "x${f77_comp}" = "xg77" ]; then
+    f77_link_opt=-lg2c
+fi
 
 if [ "x$opt" = "x--libs" ]; then
-    if [ "x$opt2" = "x--no-xbio" ]; then
-	bio_ldflags=
-	bio_ldflags_HC=
+    f77_ldflags=
+    #f77_ldflags_HC=
+    while [ "x$1" != "x" ]; do
+	#echo "DEVEL: Option == '$1'" >&2
+	option="$1"
+	if [ "${option}" = "--no-f77" ]; then
+	    f77_link_opt=
+	elif [ "${option}" = "--with-fortran-lib" ]; then
+	    with_fortran_lib=1
+	elif [ "${option}" = "--without-fortran-lib" ]; then 
+	    with_fortran_lib=0
+	elif [ "${option}" = "--no-xbio" -o "${option}" = "--without-xbio-lib" ]; then 
+	    bio_ldflags=
+	    #bio_ldflags_HC=
+	elif [ ${with_xbio} -eq 1 ]; then 
+	    if [ "${option}" = "--xbio" -o "${option}" = "--with-xbio-lib"  ]; then 
+		bio_ldflags=-lgenbb_help_bio
+		#bio_ldflags_HC=${THEPACK_LIBDIR}/libgenbb_help_bio.so
+	    fi
+	fi
+	shift 1
+    done
+    ###
+
+    if [ ${with_fortran_lib} -eq 1 ]; then
+	f77_ldflags=-lgenbb_help_f77
+	#f77_ldflags_HC=${THEPACK_LIBDIR}/libgenbb_help_f77.so
+    else
+	f77_ldflags=
+	#f77_ldflags_HC=
+	#f77_link_opt=
     fi
-    if [ "x$opt2" = "x--xbio" -a ${with_xbio} -eq 1 ]; then
-	bio_ldflags=-lgenbb_help_bio
-	bio_ldflags_HC=${THEPACK_LIBDIR}/libgenbb_help_bio.so
-    fi
-    echo "-L${THEPACK_LIBDIR} ${bio_ldflags} -lgenbb_help -lgenbb_help_f77 "
+    echo -n "-L${THEPACK_LIBDIR} "
+    echo -n "${bio_ldflags} "
+    echo -n "-lgenbb_help "
+    echo -n "${f77_ldflags} "
+    echo ""
     exit 0
 fi 
 
 if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
-    ####
-    shift 1
-    more=$1
-    if [ "x${more}" = "x--no-f77" ]; then
-	f77_opt=
-    fi
+    f77_ldflags=
+    f77_ldflags_HC=
+    while [ "x$1" != "x" ]; do
+	#echo "DEVEL: Option == '$1'" >&2
+	option="$1"
+	if [ "${option}" = "--no-f77" ]; then
+	    f77_link_opt=
+	elif [ "${option}" = "--with-fortran-lib" ]; then
+	    with_fortran_lib=1
+	elif [ "${option}" = "--without-fortran-lib" ]; then 
+	    with_fortran_lib=0
+	elif [ "${option}" = "--no-xbio" -o "${option}" = "--without-xbio-lib" ]; then 
+	    bio_ldflags=
+	    bio_ldflags_HC=
+	elif [ ${with_xbio} -eq 1 ]; then 
+	    if [ "${option}" = "--xbio" -o "${option}" = "--with-xbio-lib"  ]; then 
+		bio_ldflags=-lgenbb_help_bio
+		bio_ldflags_HC=${THEPACK_LIBDIR}/libgenbb_help_bio.so
+	    fi
+	fi
+	shift 1
+    done
     ###
+
+    if [ ${with_fortran_lib} -eq 1 ]; then
+	f77_ldflags=-lgenbb_help_f77
+	f77_ldflags_HC=${THEPACK_LIBDIR}/libgenbb_help_f77.so
+    else
+	f77_ldflags=
+	f77_ldflags_HC=
+	f77_link_opt=
+    fi
 
     generate_ldflags=0
     ldflags_cache_effective=${ldflags_cache}
@@ -312,23 +369,18 @@ if [ "x$opt" = "x--libs-depends" -o "x$opt" = "x--ldflags" ]; then
     if [ ${generate_ldflags} -eq 1 ]; then	
 	(
 	    (
-		if [ "x$opt2" = "x--no-xbio" ]; then
-		    bio_ldflags=
-		    bio_ldflags_HC=
-		fi
-		if [ "x$opt2" = "x--xbio" -a ${with_xbio} -eq 1 ]; then
-		    bio_ldflags=-lgenbb_help_bio
-		    bio_ldflags_HC=${THEPACK_LIBDIR}/libgenbb_help_bio.so
-		fi
 		if [ "X${ldflags_mode}" = "Xhardcoded_shared_lib_path" ]; then
 		    echo -n "${bio_ldflags_HC} "
 		    echo -n "${THEPACK_LIBDIR}/libgenbb_help.so "
-		    echo -n "${THEPACK_LIBDIR}/libgenbb_help_f77.so "
+		    echo -n "${f77_ldflags_HC} "
 		else
-		    echo -n "-L${THEPACK_LIBDIR} ${bio_ldflags} -lgenbb_help -lgenbb_help_f77 "
+		    echo -n "-L${THEPACK_LIBDIR} "
+		    echo -n "${bio_ldflags} "
+		    echo -n "-lgenbb_help "
+		    echo -n "${f77_ldflags} "
 		fi
 		echo -n "`geomtools-config --ldflags` " 
-		echo -n "${f77_opt} " 
+		echo -n "${f77_link_opt} " 
 		echo -n "-lm " 
 	    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py -r
 	) | tee ${ldflags_cache_effective}
