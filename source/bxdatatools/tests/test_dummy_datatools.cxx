@@ -12,10 +12,11 @@ using namespace std;
 
 int main (int argc_ , char ** argv_)
 {
+  cerr << "****** STARTS" << endl; 
   int error_code = EXIT_SUCCESS;
   try 
     {
-      clog << "Test of the 'dummy_datatools' class..." << endl; 
+      cerr << "****** Test of the 'dummy_datatools' class..." << endl; 
   
       bool debug = false;
 
@@ -42,6 +43,7 @@ int main (int argc_ , char ** argv_)
       cerr << "error: " << "unexpected error!" << endl; 
       error_code = EXIT_FAILURE;
     }
+  cerr << "****** THE END" << endl; 
   return error_code;
 }
 

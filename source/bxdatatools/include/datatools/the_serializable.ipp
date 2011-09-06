@@ -38,13 +38,6 @@
  *********************************/
 #include <datatools/event/basic_event.ipp>
 
-/********************************
- * datatools::test::data_t      *
- * datatools::test::more_data_t *
- ********************************/
-
-//#include <datatools/test/my_data.ipp>
-
 #endif // __datatools__the_serializable_ipp__
 
 /* end of datatools::the_serializable.ipp */

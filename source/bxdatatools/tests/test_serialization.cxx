@@ -19,18 +19,19 @@
 //#include <datatools/serialization/bio_guard.h>
 
 // Special Boost serialization export/registration code :
-/*
+
 BOOST_CLASS_EXPORT_KEY2(datatools::test::data_t, "datatools::test::data_t")
 BOOST_CLASS_EXPORT_IMPLEMENT(datatools::test::data_t)
 BOOST_CLASS_EXPORT_KEY2(datatools::test::more_data_t, "datatools::test::more_data_t")
 BOOST_CLASS_EXPORT_IMPLEMENT(datatools::test::more_data_t)
-*/
+
 #include <datatools/serialization/check.h>
 
 using namespace std;
 
 int main (int argc_, char ** argv_) 
 {
+  cerr << "**************** Starting program..." << endl;
   try 
     {
       bool debug = false;

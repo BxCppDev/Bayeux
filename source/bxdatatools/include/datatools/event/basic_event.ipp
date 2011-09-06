@@ -4,10 +4,10 @@
 #ifndef __datatools__event__basic_event_ipp
 #define __datatools__event__basic_event_ipp 1
 
+#include <datatools/event/basic_event.h>
+
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
-
-#include <datatools/event/basic_event.h>
 
 #include <datatools/serialization/utils.h>
 #include <datatools/serialization/i_serializable.ipp>
@@ -31,9 +31,6 @@ namespace datatools {
   } // end of namespace event 
 
 } // end of namespace datatools 
-
-// BOOST_CLASS_TRACKING(datatools::event::basic_event, boost::serialization::track_always) 
-BOOST_CLASS_EXPORT_KEY2(datatools::event::basic_event, "datatools::event::basic_event")
 
 #endif // __datatools__event__basic_event_ipp
 

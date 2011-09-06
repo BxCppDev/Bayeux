@@ -868,6 +868,9 @@ namespace datatools {
 
 } // end of namespace datatools 
 
+#include <boost/serialization/export.hpp>
+BOOST_CLASS_EXPORT_KEY2(datatools::utils::properties, "datatools::utils::properties")
+
 #endif // __datatools__utils__properties_h
 
 // end of properties.h

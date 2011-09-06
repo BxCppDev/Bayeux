@@ -4,20 +4,18 @@
 #ifndef __datatools__utils__things_ipp
 #define __datatools__utils__things_ipp 1
 
+#include <datatools/utils/things.h>
+
 #include <boost/archive/archive_exception.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
-#include <boost/serialization/version.hpp>
-//#include <boost/serialization/tracking.hpp> 
-
-#include <boost/serialization/map.hpp>
-#include <boost/serialization/list.hpp>
-#include <boost/serialization/vector.hpp> // missing header: fixed 2010-03-16
-#include <boost/serialization/string.hpp>
 
 #include <datatools/serialization/utils.h>
-#include <datatools/utils/things.h>
 #include <datatools/serialization/i_serializable.ipp>
+#include <boost/serialization/map.hpp>
+#include <boost/serialization/list.hpp>
+#include <boost/serialization/vector.hpp>
+#include <boost/serialization/string.hpp>
 	 
 namespace datatools {
 		 
@@ -45,8 +43,5 @@ namespace datatools {
   } // end of namespace utils 
 
 } // end of namespace datatools 
-
-// BOOST_CLASS_TRACKING(datatools::utils::things, boost::serialization::track_always) 
-//BOOST_CLASS_EXPORT_KEY2(datatools::utils::things, "datatools::utils::things")
 
 #endif // __datatools__utils__things_ipp

@@ -368,6 +368,9 @@ namespace datatools {
 
 }  // end of namespace datatools
 
+#include <boost/serialization/export.hpp>
+BOOST_CLASS_EXPORT_KEY2(datatools::utils::things, "datatools::utils::things")
+
 #endif // __datatools__utils__things_h
 
 // end of things.h
