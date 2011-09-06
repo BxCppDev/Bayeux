@@ -438,7 +438,7 @@ namespace mat {
   }
 
 //________________________________________________________________________
-  void element::set_molar_mass(const double molar_mass_)
+  void element::set_molar_mass(double molar_mass_)
     {
       if (__composition.size () > 0)
 	{
