@@ -166,6 +166,9 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
+#include <boost/serialization/export.hpp>
+BOOST_CLASS_EXPORT_KEY2(geomtools::helix_3d, "geomtools::helix_3d")
+
 #endif // __geomtools__helix_3d_h
 
 // end of helix_3d.h

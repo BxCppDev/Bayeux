@@ -150,8 +150,8 @@ LDFLAGS+=$(DEPLDFLAGS_SORTED)
 LIBLDFLAGS_BIO=-L$(LIBDIR) -l$(LIBNAME)
 EXELDFLAGS_BIO=-L$(LIBDIR) $(XBIO_LDFLAGS) -l$(LIBNAME)
 
-CXXFLAGSSHFLAGS=-Wall -v
-STATICFLAGS=-static
+#CXXFLAGSSHFLAGS=-Wall -v
+#STATICFLAGS=-static
 
 HEADEREXT=.h
 SOURCEEXT=.cc
@@ -264,7 +264,7 @@ sources1+=utils.cc
 
 # standard mode :
 ifeq ($(GEOMTOOLS_EBIO),0)
-sources  := $(sources1)
+sources := $(sources1)
 else
 # only for GEOMTOOLS_EBIO==1 mode :
 sources := the_serializable.cc $(sources1)

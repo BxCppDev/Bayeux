@@ -277,6 +277,7 @@ if [ ${with_xbio} -eq 1 ]; then
     bio_ldflags=-lgeomtools_bio
     bio_ldflags_HC=${THEPACK_LIBDIR}/libgeomtools_bio.so
 fi
+
 if [ "x$opt" = "x--libs" ]; then
     if [ "x$opt2" = "x--no-xbio" ]; then
 	bio_ldflags=

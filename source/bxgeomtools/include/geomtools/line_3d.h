@@ -103,6 +103,9 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
+#include <boost/serialization/export.hpp>
+BOOST_CLASS_EXPORT_KEY2(geomtools::line_3d, "geomtools::line_3d")
+
 #endif // __geomtools__line_3d_h
 
 // end of line_3d.h

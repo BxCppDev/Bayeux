@@ -588,6 +588,12 @@ namespace boost {
 
 } // namespace boost
 
+
+#include <boost/serialization/export.hpp>
+BOOST_CLASS_EXPORT_KEY2(geomtools::vector_2d,   "geomtools::vector_2d")
+BOOST_CLASS_EXPORT_KEY2(geomtools::vector_3d,   "geomtools::vector_3d")
+BOOST_CLASS_EXPORT_KEY2(geomtools::rotation_3d, "geomtools::rotation_3d")
+
 #endif // __geomtools__utils_h
 
 // end of utils.h

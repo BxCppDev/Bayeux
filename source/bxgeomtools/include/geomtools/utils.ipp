@@ -7,9 +7,6 @@
 #include <boost/archive/archive_exception.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
-//#include <boost/serialization/version.hpp>
-//#include <boost/serialization/tracking.hpp>
-//#include <boost/serialization/export.hpp>
 #include <boost/serialization/split_free.hpp>
 
 #include <datatools/serialization/utils.h>
@@ -116,22 +113,22 @@ namespace boost {
     // Rotation 3D :
     template<class Archive>
     void save (Archive & a_ar , 
-	       const geomtools::rotation_3d & r_,
+	       const geomtools::rotation_3d & a_rotation,
 	       const unsigned int a_version)
     {
-      double rxx = r_.xx ();
+      double rxx = a_rotation.xx ();
       a_ar & boost::serialization::make_nvp ("xx", rxx);
-      if (geomtools::is_valid (r_))
+      if (geomtools::is_valid (a_rotation))
 	{
 	  double rxy, rxz, ryx, ryy, ryz, rzx, rzy, rzz;
-	  rxy = r_.xy ();
-	  rxz = r_.xz ();
-	  ryx = r_.yx ();
-	  ryy = r_.yy ();
-	  ryz = r_.yz ();
-	  rzx = r_.zx ();
-	  rzy = r_.zy ();
-	  rzz = r_.zz ();
+	  rxy = a_rotation.xy ();
+	  rxz = a_rotation.xz ();
+	  ryx = a_rotation.yx ();
+	  ryy = a_rotation.yy ();
+	  ryz = a_rotation.yz ();
+	  rzx = a_rotation.zx ();
+	  rzy = a_rotation.zy ();
+	  rzz = a_rotation.zz ();
 	  a_ar & boost::serialization::make_nvp ("xy", rxy);
 	  a_ar & boost::serialization::make_nvp ("xz", rxz);
 	  a_ar & boost::serialization::make_nvp ("yx", ryx);
@@ -146,7 +143,7 @@ namespace boost {
     
     template<class Archive>
     void load (Archive & a_ar , 
-	       geomtools::rotation_3d & r_,
+	       geomtools::rotation_3d & a_rotation,
 	       const unsigned int a_version)
     {
       double rxx (0.0), rxy (0.0), rxz (0.0);
@@ -163,22 +160,22 @@ namespace boost {
 	  a_ar & boost::serialization::make_nvp ("zx", rzx);
 	  a_ar & boost::serialization::make_nvp ("zy", rzy);
 	  a_ar & boost::serialization::make_nvp ("zz", rzz);
-	  r_ = geomtools::rotation_wrapper_t (rxx, rxy, rxz, ryx, ryy, ryz, rzx, rzy, rzz);
+	  a_rotation = geomtools::rotation_wrapper_t (rxx, rxy, rxz, ryx, ryy, ryz, rzx, rzy, rzz);
 	}
       else 
 	{
-	  r_ = geomtools::rotation_3d ();
-	  geomtools::invalidate (r_);
+	  a_rotation = geomtools::rotation_3d ();
+	  geomtools::invalidate (a_rotation);
 	}
       return;
     }
     
     template<class Archive>
     void serialize (Archive & a_ar,
-		    geomtools::rotation_3d  & r_,
+		    geomtools::rotation_3d  & a_rotation,
 		    const unsigned int a_version)
     {
-      boost::serialization::split_free (a_ar, r_, a_version);
+      boost::serialization::split_free (a_ar, a_rotation, a_version);
       return;
     } 
     
@@ -186,14 +183,6 @@ namespace boost {
 
 } // namespace boost
 
-//BOOST_CLASS_TRACKING(geomtools::vector_2d, boost::serialization::track_always) 
-//BOOST_CLASS_EXPORT_KEY2(geomtools::vector_2d, "geomtools::vector_2d")
-
-//BOOST_CLASS_TRACKING(geomtools::vector_3d, boost::serialization::track_always) 
-//BOOST_CLASS_EXPORT_KEY2(geomtools::vector_3d, "geomtools::vector_3d")
-
-//BOOST_CLASS_TRACKING(geomtools::rotation_3d, boost::serialization::track_always) 
-//BOOST_CLASS_EXPORT_KEY2(geomtools::rotation_3d, "geomtools::rotation_3d")
 
 #endif // __geomtools__utils_ipp
 

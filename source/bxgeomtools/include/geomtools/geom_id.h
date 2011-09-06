@@ -154,6 +154,9 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
+#include <boost/serialization/export.hpp>
+BOOST_CLASS_EXPORT_KEY2(geomtools::geom_id, "geomtools::geom_id")
+
 #endif // __geomtools__geom_id_h
 
 // end of geom_id.h

@@ -420,7 +420,7 @@ function do_build_gmk ()
 	do_python=1
     fi
     if [ ${do_python} -a -d ${the_python_dir} ]; then
-	if [ "x${pack_name_upper}_NO_PYTHON" != "x1" ]; then
+	if [ "xGEOMTOOLS_NO_PYTHON" != "x1" ]; then
 	    cd ${the_python_dir}
 	    make
 	    if [ $? -ne 0 ]; then
@@ -818,7 +818,6 @@ You may source these scripts at startup time
 (i.e. from your '~/.bashrc' or '~/.(t)cshrc' files).
 
 EOF
-
     __pkgtools__at_function_exit
     return 0
 }

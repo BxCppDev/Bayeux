@@ -1,4 +1,4 @@
-// test_things.cxx
+// test_serializable_2.cxx
 
 #include <cstdlib>
 #include <iostream>
@@ -480,7 +480,7 @@ int main (int argc_, char ** argv_)
   return (error_code);
 }
  
-// end of test_things.cxx
+// end of test_serializable_2.cxx
 /*
 ** Local Variables: --
 ** mode: c++ --

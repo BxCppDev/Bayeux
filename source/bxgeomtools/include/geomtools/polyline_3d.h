@@ -89,6 +89,9 @@ namespace geomtools {
  
 } // end of namespace geomtools
 
+#include <boost/serialization/export.hpp>
+BOOST_CLASS_EXPORT_KEY2(geomtools::polyline_3d, "geomtools::polyline_3d")
+
 #endif // __geomtools__polyline_3d_h
 
 // end of box.h

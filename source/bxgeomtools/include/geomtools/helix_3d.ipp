@@ -8,8 +8,6 @@
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/version.hpp>
-//#include <boost/serialization/tracking.hpp>
-//#include <boost/serialization/export.hpp>
 
 #include <datatools/serialization/utils.h>
 #include <geomtools/helix_3d.h>
@@ -41,8 +39,6 @@ namespace geomtools {
 } // end of namespace geomtools 
 
 BOOST_CLASS_VERSION(geomtools::helix_3d, 1)
-//BOOST_CLASS_TRACKING(geomtools::helix_3d, boost::serialization::track_always) 
-//BOOST_CLASS_EXPORT_KEY2(geomtools::helix_3d, "geomtools::helix_3d")
 
 #endif // __geomtools__helix_3d_ipp
 
