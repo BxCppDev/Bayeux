@@ -4,19 +4,16 @@
 #ifndef __genbb_help__primary_event_ipp
 #define __genbb_help__primary_event_ipp 1
 
+#include <genbb_help/primary_event.h>
+
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
-#include <boost/serialization/version.hpp>
-//#include <boost/serialization/export.hpp>
-
-#include <boost/serialization/list.hpp> 
-#include <boost/serialization/string.hpp>
 
 #include <datatools/serialization/utils.h>
-
-#include <genbb_help/primary_event.h>
 #include <datatools/serialization/i_serializable.ipp>
 #include <genbb_help/primary_particle.ipp>
+#include <boost/serialization/list.hpp> 
+#include <boost/serialization/string.hpp>
 
 namespace genbb {
 
@@ -38,8 +35,8 @@ namespace genbb {
 
 } // end of namespace genbb
 
+#include <boost/serialization/version.hpp>
 BOOST_CLASS_VERSION(genbb::primary_event, 1)
-//BOOST_CLASS_EXPORT_KEY2(genbb::primary_event, "genbb::primary_event")
 
 #endif // __genbb_help__primary_event_ipp
 

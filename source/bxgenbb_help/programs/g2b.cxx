@@ -15,22 +15,22 @@
 #include <datatools/serialization/io_factory.h>
 
 // Some pre-processor guard about Boost I/O usage and linkage :
-//#include <datatools/serialization/bio_guard.h>
 #include <geomtools/serialization/bio_guard.h>
 #include <genbb_help/serialization/bio_guard.h>
 
 using namespace std;
 
-void usage (ostream & out_ = clog)
+void usage (ostream & a_out = clog)
 {
-  out_ << "g2b -- convert GENBB files to Boost archive file" << endl;
-  out_ << "Usage: g2b [OPTION]... [INFILE1] [INFILE2]... [OUTFILE]" << endl;
-  out_ << " Options: " << endl;
-  out_ << "   -d|--debug  : print debug info" << endl; 
-  out_ << "   -h|--help   : print help" << endl; 
+  a_out << "g2b -- convert GENBB files to Boost archive file" << endl;
+  a_out << "Usage: g2b [OPTION]... [INFILE1] [INFILE2]... [OUTFILE]" << endl;
+  a_out << " Options: " << endl;
+  a_out << "   -d|--debug  : print debug info" << endl; 
+  a_out << "   -h|--help   : print help" << endl; 
+  return;
 } 
  
-int main (int argc_, char ** argv_)
+int main (int a_argc, char ** a_argv)
 {
   int error_code = EXIT_SUCCESS;
   try
@@ -40,10 +40,9 @@ int main (int argc_, char ** argv_)
       string       output_file;
 
       int iarg = 1;
-      while (iarg < argc_)
+      while (iarg < a_argc)
 	{
-	  string arg = argv_[iarg];
-
+	  string arg = a_argv[iarg];
 	  if (arg[0] == '-')
 	    {
 	      if (arg == "-d" || arg == "--debug") debug = true;
@@ -54,7 +53,7 @@ int main (int argc_, char ** argv_)
 	    }
 	  else 
 	    {
-	      if (iarg < (argc_ - 1))
+	      if (iarg < (a_argc - 1))
 		{
 		  input_files.push_back (arg);
 		}
@@ -63,7 +62,6 @@ int main (int argc_, char ** argv_)
 		  output_file = arg;
 		}
 	    }
-
 	  iarg++;
 	}
     
@@ -71,6 +69,7 @@ int main (int argc_, char ** argv_)
 	{
 	  throw runtime_error ("Missing input GENBB files!");
 	}
+
       if (output_file.empty ())
 	{
 	  throw runtime_error ("Missing output Boost files!");

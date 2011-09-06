@@ -75,7 +75,7 @@ namespace genbb {
 
     void compute_classification ();
 
-    void rotate (double phi_, double theta_, double delta_);
+    void rotate (double a_phi, double a_theta, double a_delta);
 
     double get_total_kinetic_energy () const;
 
@@ -85,12 +85,12 @@ namespace genbb {
     // dtor:
     virtual ~primary_event ();
 
-    void dump (std::ostream & out_ = std::clog,
-	       const std::string & indent_ = "") const;
+    void dump (std::ostream & a_out = std::clog,
+	       const std::string & a_indent = "") const;
 
-    void dump (std::ostream & out_,
-	       const std::string & title_,
-	       const std::string & indent_) const;
+    void dump (std::ostream & a_out,
+	       const std::string & a_title,
+	       const std::string & a_indent) const;
     
   public:
 
@@ -103,11 +103,15 @@ namespace genbb {
 
   public:
 
+    // trick to support old tag :
     static const std::string OLD_SERIAL_TAG;
 
   };
 
 } // end of namespace genbb
+
+#include <boost/serialization/export.hpp>
+BOOST_CLASS_EXPORT_KEY2(genbb::primary_event, "genbb::primary_event")
 
 #endif // __genbb_help__primary_event_h
 

@@ -8,28 +8,31 @@
 
 #include <genbb_help/genbb_writer.h>
 
-void usage(std::ostream & out_)
+using namespace std;
+
+void usage (ostream & a_out)
 {
-  out_ << "\ntest_genbb_writer usage:" << std::endl;
-  out_ << "\n To generate a GENBB files with tuned properties:" << std::endl;
-  out_ << "   shell>$ test_genbb_writer [options]" << std::endl;
-  out_ << "\nExample: " << std::endl;
-  out_ << "   shell>$ test_genbb_writer -d -N 100000 --type e-"
-       << std::endl;
-  out_ << "                 --energy-min 0. --energy-max 5."
-       << std::endl;
-  out_ << "                 --phi-min 0. --phi-max 90."
-       << std::endl;
-  out_ << "                 --seed 314159"
-       << std::endl;
-  out_ << "                 --outfile /scratch/test_genbb_writer.data"
-       << std::endl;
-  out_ << std::endl;
-  out_ << std::endl;
+  a_out << "\ntest_genbb_writer usage:" << endl;
+  a_out << "\n To generate a GENBB files with tuned properties:" << endl;
+  a_out << "   shell>$ test_genbb_writer [options]" << endl;
+  a_out << "\nExample: " << endl;
+  a_out << "   shell>$ test_genbb_writer -d -N 100000 --type e-"
+       << endl;
+  a_out << "                 --energy-min 0. --energy-max 5."
+       << endl;
+  a_out << "                 --phi-min 0. --phi-max 90."
+       << endl;
+  a_out << "                 --seed 314159"
+       << endl;
+  a_out << "                 --outfile /scratch/test_genbb_writer.data"
+       << endl;
+  a_out << endl;
+  a_out << endl;
+  return;
 }
 
 
-int main (int argc_, char ** argv_)
+int main (int a_argc, char ** a_argv)
 {
   int error_code = EXIT_SUCCESS;
   try
@@ -39,15 +42,15 @@ int main (int argc_, char ** argv_)
 
       int N = -1;
       int seed = 314159;
-      std::string type = "";
+      string type = "";
       double Emin = -1., Emax = -1.;
       double phi_min = -1., phi_max = -1.;
-      std::string file_out = "";
+      string file_out = "";
 
       int iarg = 1;
-      while (iarg < argc_)
+      while (iarg < a_argc)
 	{
-	  std::string arg = argv_[iarg];
+	  string arg = a_argv[iarg];
 	  if (arg[0] == '-')
 	    {
 	      if (arg == "-d" || arg == "--debug" )
@@ -56,56 +59,56 @@ int main (int argc_, char ** argv_)
 		}
 	      else if (arg == "-h" || arg == "--help" )
 		{
-		  usage ( std::clog );
+		  usage ( clog );
 		  return 0;
 		}
 	      else if ( arg == "-s" || arg == "--seed" ) 
 		{
 		  ;
-		  if ( ++iarg < argc_ )
-		    seed = atoi ( argv_[iarg] );
+		  if ( ++iarg < a_argc )
+		    seed = atoi ( a_argv[iarg] );
 		}
 	      else if ( arg == "-N") 
 		{
 		  ;
-		  if ( ++iarg < argc_ )
-		    N = atoi ( argv_[iarg] );
+		  if ( ++iarg < a_argc )
+		    N = atoi ( a_argv[iarg] );
 		}
 	      else if ( arg == "-t" || arg == "--type" ) 
 		{
 		  ;
-		  if (++iarg < argc_)
-		    type = argv_[iarg];
+		  if (++iarg < a_argc)
+		    type = a_argv[iarg];
 		}
 	      else if ( arg == "-Emin" || arg == "--energy-min") 
 		{
 		  ;
-		  if ( ++iarg < argc_ )
-		    Emin = atof ( argv_[iarg] );
+		  if ( ++iarg < a_argc )
+		    Emin = atof ( a_argv[iarg] );
 		}
 	      else if ( arg == "-Emax" || arg == "--energy-max") 
 		{
 		  ;
-		  if ( ++iarg < argc_ )
-		    Emax = atof ( argv_[iarg] );
+		  if ( ++iarg < a_argc )
+		    Emax = atof ( a_argv[iarg] );
 		}
 	      else if ( arg == "-phi_min" || arg == "--phi-min") 
 		{
 		  ;
-		  if ( ++iarg < argc_ )
-		    phi_min = atof ( argv_[iarg] );
+		  if ( ++iarg < a_argc )
+		    phi_min = atof ( a_argv[iarg] );
 		}
 	      else if ( arg == "-phi_max" || arg == "--phi-max") 
 		{
 		  ;
-		  if ( ++iarg < argc_ )
-		    phi_max = atof ( argv_[iarg] );
+		  if ( ++iarg < a_argc )
+		    phi_max = atof ( a_argv[iarg] );
 		}
 	      else if (arg == "-o" || arg == "--outfile") 
 		{
 		  ;
-		  if (++iarg < argc_)
-		    file_out = argv_[iarg];
+		  if (++iarg < a_argc)
+		    file_out = a_argv[iarg];
 		}
 	    }
 	  iarg++;
@@ -114,7 +117,7 @@ int main (int argc_, char ** argv_)
     if ( N < 0 || Emin < 0 || Emax < 0 || 
 	 phi_min < 0 || phi_max > 180. )
       {
-	usage ( std::clog );
+	usage ( clog );
 	return 1;
       }
       genbb::genbb_writer writer;
@@ -140,19 +143,19 @@ int main (int argc_, char ** argv_)
 	writer.set_type ( -1 );
 
       if ( debug )
-	writer.dump( std::clog );
+	writer.dump( clog );
 
       writer.run();
 
     }
-  catch (std::exception & x)
+  catch (exception & x)
     {
-      std::cerr << "error: " << x.what () << std::endl; 
+      cerr << "error: " << x.what () << endl; 
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      std::cerr << "error: " << "unexpected error!" << std::endl; 
+      cerr << "error: " << "unexpected error!" << endl; 
       error_code = EXIT_FAILURE;
     }
   return error_code;

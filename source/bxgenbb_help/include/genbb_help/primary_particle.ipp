@@ -4,15 +4,13 @@
 #ifndef __genbb_help__primary_particle_ipp
 #define __genbb_help__primary_particle_ipp 1
 
+#include <genbb_help/primary_particle.h>
+
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
-#include <boost/serialization/version.hpp>
-
 #include <boost/serialization/string.hpp>
 
 #include <datatools/serialization/utils.h>
-
-#include <genbb_help/primary_particle.h>
 #include <datatools/serialization/i_serializable.ipp>
 #include <geomtools/utils.ipp>
 
@@ -44,6 +42,7 @@ namespace genbb {
 
 } // end of namespace genbb
 
+#include <boost/serialization/version.hpp>
 BOOST_CLASS_VERSION(genbb::primary_particle, 1)
 
 #endif // __genbb_help__primary_particle_ipp

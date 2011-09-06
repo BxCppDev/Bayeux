@@ -55,7 +55,7 @@ namespace genbb {
   using namespace std;
 
   struct primary_particle 
-    : public datatools::serialization::i_serializable 
+    : DATATOOLS_SERIALIZABLE_CLASS 
   {
   public:
     
@@ -144,33 +144,21 @@ namespace genbb {
     primary_particle ();
 
     // ctor:
-    primary_particle (int32_t type_, 
-		      double time_, 
+    primary_particle (int32_t a_type, 
+		      double a_time, 
 		      const geomtools::vector_3d &);
 
     // dtor:
     virtual ~primary_particle ();
 
     void dump (ostream & out_ = clog, 
-	       const string & indent_ = "") const;
+	       const string & a_indent = "") const;
  
-    static string get_label (int type_);
+    static string get_label (int a_type);
 
-    static string get_particle_label_from_type (int type_);
+    static string get_particle_label_from_type (int a_type);
    
-    static int get_particle_type_from_label (const string & label_);
-
-  public:
-    
-    //! Serialization tag.
-    DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
-
-    static const std::string OLD_SERIAL_TAG;
-
-  private:
-
-    friend class boost::serialization::access; 
-    BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
+    static int get_particle_type_from_label (const string & a_label);
 
   public:
     
@@ -179,6 +167,14 @@ namespace genbb {
     double               mass;     // CLHEP energy unit
     double               time;     // CLHEP time unit
     geomtools::vector_3d momentum; // CLHEP momentum unit
+
+  public:
+
+    // trick to support old tag :
+    static const std::string OLD_SERIAL_TAG;
+
+    /* interface i_serializable */
+    DATATOOLS_SERIALIZATION_DECLARATION();
 
   };
 
