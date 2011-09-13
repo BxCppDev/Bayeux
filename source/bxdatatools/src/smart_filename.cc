@@ -522,7 +522,7 @@ namespace datatools {
           if (a_config.has_key ("incremental.stop"))
             {
               incremental_stopping = a_config.fetch_integer ("incremental.stop");
-              if (incremental_stopping == 0)
+              if (incremental_stopping < 0)
                 {
                   throw logic_error ("datatools::utils::smart_filename::initialize: Invalid negative stopping value !");
                 }
@@ -537,7 +537,7 @@ namespace datatools {
           if (a_config.has_key ("incremental.start"))
             {
               incremental_starting = a_config.fetch_integer ("incremental.start");
-              if (incremental_starting == 0)
+              if (incremental_starting < 0)
                 {
                   throw logic_error ("datatools::utils::smart_filename::initialize: Invalid negative starting value !");
                 }
