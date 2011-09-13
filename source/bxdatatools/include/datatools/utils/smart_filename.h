@@ -42,16 +42,16 @@
 
 namespace datatools {
 
-	namespace utils {
+  namespace utils {
 
-		using namespace std;
+    using namespace std;
 
-		class smart_filename
-		{
+    class smart_filename
+    {
     public: 
 
-			typedef vector<string> list_type;
-			typedef list_type::const_iterator const_iterator;
+      typedef vector<string> list_type;
+      typedef list_type::const_iterator const_iterator;
  
       bool is_debug () const;
       
@@ -67,49 +67,49 @@ namespace datatools {
  
       bool is_incremental () const;
       
-			bool is_valid () const;
+      bool is_valid () const;
 
-			size_t size () const;
+      size_t size () const;
 
       const_iterator begin () const;
 
-			const_iterator end () const;
+      const_iterator end () const;
 
-			const string & operator[] (int a_index) const;
+      const string & operator[] (int a_index) const;
 
-			// single mode :
-			void set (const string & a_filename);
+      // single mode :
+      void set (const string & a_filename);
 
-			// list mode :
-			void add (const string & a_filename);
+      // list mode :
+      void add (const string & a_filename);
 
-			void reset ();    
+      void reset ();    
 
-		protected:  
+    protected:  
      
-			void _set_mode (int);
+      void _set_mode (int);
       
-			// list:
-			void _add_list (const string & a_filename);
+      // list:
+      void _add_list (const string & a_filename);
 
-			void _set_list_allow_duplication (bool);
+      void _set_list_allow_duplication (bool);
 
-			// incremental/list:
+      // incremental/list:
       void _set_current_index (int);
 
     public: 
 
-			static const string MODE_SINGLE_LABEL;
-			static const string MODE_LIST_LABEL;
-			static const string MODE_INCREMENTAL_LABEL;
+      static const string MODE_SINGLE_LABEL;
+      static const string MODE_LIST_LABEL;
+      static const string MODE_INCREMENTAL_LABEL;
 
-			enum mode_t
-				{
-					MODE_INVALID     =  0,
-					MODE_SINGLE      =  1,
-					MODE_LIST        =  2,
-					MODE_INCREMENTAL =  4
-				};
+      enum mode_t
+        {
+          MODE_INVALID     =  0,
+          MODE_SINGLE      =  1,
+          MODE_LIST        =  2,
+          MODE_INCREMENTAL =  4
+        };
 
       // ctor:
       smart_filename ();
@@ -117,44 +117,44 @@ namespace datatools {
       // dtor:
       virtual ~smart_filename ();
     
-			static void make_single (smart_filename & a_smart_filename,
-															 const string & a_filename);
-			
-			static void make_list (smart_filename & a_smart_filename,
-														 bool a_allow_duplication = false);
+      static void make_single (smart_filename & a_smart_filename,
+                               const string & a_filename);
+      
+      static void make_list (smart_filename & a_smart_filename,
+                             bool a_allow_duplication = false);
 
-			static void make_list (smart_filename & a_smart_filename,
-														 const string & a_list_file, 
-														 bool a_allow_duplication = false);
+      static void make_list (smart_filename & a_smart_filename,
+                             const string & a_list_file, 
+                             bool a_allow_duplication = false);
 
    
-			static void make_incremental (smart_filename & a_smart_filename,
-																		const string & a_path, 
-																		const string & a_prefix,
-																		const string & a_extension,
-																		int a_stopping_index,
-																		int a_starting_index = 0,
-																		int a_increment_index = 1);
+      static void make_incremental (smart_filename & a_smart_filename,
+                                    const string & a_path, 
+                                    const string & a_prefix,
+                                    const string & a_extension,
+                                    int a_stopping_index,
+                                    int a_starting_index = 0,
+                                    int a_increment_index = 1);
 
-			void initialize (const properties & a_config);
+      void initialize (const properties & a_config);
 
-			void print_list_of_filenames (ostream & a_out) const;
+      void print_list_of_filenames (ostream & a_out) const;
 
-			void store_list_of_filenames (const string & a_list_filename, 
-																		bool a_append = true) const;
+      void store_list_of_filenames (const string & a_list_filename, 
+                                    bool a_append = true) const;
 
-			void dump (ostream & a_out = clog) const;
+      void dump (ostream & a_out = clog) const;
 
     private: 
 
       bool      _debug_;
       uint32_t  _mode_;
-			list_type _list_;
+      list_type _list_;
       bool      _list_allow_duplication_;
      
-		};
+    };
 
-	}  // end of namespace utils
+  }  // end of namespace utils
 
 }  // end of namespace datatools
 
