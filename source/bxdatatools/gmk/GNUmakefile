@@ -407,6 +407,12 @@ $(OBJDIR)/%$(OBJEXT) : %$(SOURCEEXT)
 # 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
 # 	$(CXX) -I. -I$(PROGDIR) $(CPPFLAGS) $(CXXFLAGS) $< $(STATICFLAGS) $(LDFLAGS) -o $(BINDIR)/$(notdir $(@))
 
+# test_icu_pba_1%$(BINEXT) : test_icu_pba_1%$(PROGEXT) | lib_shared $(binlibdep)
+# 	@echo "NOTICE: EXELDFLAGS_BIO=$(EXELDFLAGS_BIO)" >&2
+# 	@echo "NOTICE: Compiling test program '$(@)' with shared library..." >&2
+# 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
+# 	$(CXX) -I. -I$(TESTDIR) $(CPPFLAGS) $(icu-config --cppflags) $(CXXFLAGS) $< $(EXELDFLAGS_BIO) $(DEPLDFLAGS_SORTED) $(icu-config --ldflags --ldflags --ldflags-layout ) -o $(BINDIR)/$(notdir $(@))
+
 test_%$(BINEXT) : test_%$(PROGEXT) | lib_shared $(binlibdep)
 	@echo "NOTICE: EXELDFLAGS_BIO=$(EXELDFLAGS_BIO)" >&2
 	@echo "NOTICE: Compiling test program '$(@)' with shared library..." >&2
