@@ -30,7 +30,7 @@ namespace datatools {
     */
 
     bool library_loader::g_devel = false;
-    bool library_loader::g_test = false;
+    bool library_loader::g_test  = false;
 
     /***********************
      *  library_entry_type *
@@ -133,7 +133,7 @@ namespace datatools {
 
     bool library_loader::is_test () const
     {
-      return flags_ | test;
+      return flags_ & test;
     }
 
     void library_loader::set_allow_unregistered (bool a_allow_unregistered)
@@ -151,7 +151,7 @@ namespace datatools {
 
     bool library_loader::allowing_unregistered () const
     {
-      return flags_ | allow_unregistered;
+      return flags_ & allow_unregistered;
     }
 
     symbol_ptr library_loader::get_symbol_address (const string & a_lib_name,
@@ -301,7 +301,7 @@ namespace datatools {
       library_entry_type & le = libraries_[a_lib_name].get ();
       le.name         = a_lib_name;
       le.filename     = a_lib_filename;
-      le.version     = a_lib_version;
+      le.version      = a_lib_version;
       le.directory    = a_lib_directory;
       le.full_path    = a_lib_full_path;
 
@@ -311,7 +311,7 @@ namespace datatools {
 	  filename_ss << kwsys::DynamicLoader::LibPrefix();
 	  filename_ss << le.name;
 	  filename_ss << kwsys::DynamicLoader::LibExtension();
-	  if (! le.version.empty ())
+          if (! le.version.empty ())
 	    {
 	      filename_ss << le.version;
 	    }
@@ -514,12 +514,12 @@ namespace datatools {
 		   << e.get_key () << "'..." << endl;
 	    }
           const properties & lib_properties = e.get_properties ();
-          string             lib_name      = e.get_key ();
-	  string             lib_filename  = e.get_meta ();
-	  string             lib_directory = "";
-          string             lib_full_path = "";
-          string             lib_version = "";
-	  bool               lib_autoload  = false;
+          string             lib_name       = e.get_key ();
+	  string             lib_filename   = e.get_meta ();
+	  string             lib_directory  = "";
+          string             lib_full_path  = "";
+          string             lib_version    = "";
+	  bool               lib_autoload   = false;
 
           if (lib_properties.has_key ("full_path"))
             {
