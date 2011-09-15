@@ -64,17 +64,17 @@ namespace datatools {
       string directory;
       string filename;
       string full_path;
-			string version;
-			bool   autoload;
-			int    status;
-			kwsys::DynamicLoader::LibraryHandle handle;
+      string version;
+      bool   autoload;
+      int    status;
+      kwsys::DynamicLoader::LibraryHandle handle;
 
       library_entry_type (const string & a_name = "",
                           const string & a_directory = "",
-													const string & a_filename = "",
+                          const string & a_filename = "",
                           const string & a_full_path = "",
-													const string & a_version = "",
-													bool a_autoload = true);
+                          const string & a_version = "",
+                          bool a_autoload = true);
 
       virtual ~library_entry_type ();
 
@@ -90,55 +90,55 @@ namespace datatools {
       static bool g_devel;
       static bool g_test;
  
-			enum flag_type
-				{
-					debug              = bit_mask::bit00,
-					allow_unregistered = bit_mask::bit01,
-					auto_all           = bit_mask::bit02,
-					auto_none          = bit_mask::bit03,
-					test               = bit_mask::bit10
-				};
+      enum flag_type
+        {
+          debug              = bit_mask::bit00,
+          allow_unregistered = bit_mask::bit01,
+          auto_all           = bit_mask::bit02,
+          auto_none          = bit_mask::bit03,
+          test               = bit_mask::bit10
+        };
 
     private:
 
-			uint32_t  flags_; //!< Not used yet
+      uint32_t  flags_; //!< Not used yet
       string    config_filename_;
       handle_library_entry_stack_type stacked_libraries_;
       handle_library_entry_dict_type  libraries_;
 
     public:
 
-			bool is_debug () const;
+      bool is_debug () const;
 
-			void set_debug (bool);
+      void set_debug (bool);
 
-			void set_allow_unregistered (bool);
+      void set_allow_unregistered (bool);
 
-			bool allowing_unregistered () const;
+      bool allowing_unregistered () const;
 
-			bool is_test () const;
+      bool is_test () const;
 
       library_loader (uint32_t the_flags = 0, 
-											const string & dll_config_file = "");
+                      const string & dll_config_file = "");
 
       virtual ~library_loader ();
 
-			bool has (const string & a_lib_name) const;
+      bool has (const string & a_lib_name) const;
 
       bool is_loaded (const string & a_lib_name) const;
 
-			int registration (const string & a_lib_name,
-												const string & a_lib_directory = "",
-												const string & a_lib_filename = "",
-												const string & a_lib_full_path = "",
-												const string & a_lib_version = "",
-												bool           a_autoload = false);
+      int registration (const string & a_lib_name,
+                        const string & a_lib_directory = "",
+                        const string & a_lib_filename = "",
+                        const string & a_lib_full_path = "",
+                        const string & a_lib_version = "",
+                        bool           a_autoload = false);
 
       int load (const string & a_lib_name, 
-								const string & a_lib_directory= "", 
-								const string & a_lib_filename = "",
-								const string & a_lib_full_path = "",
-								const string & a_lib_version = "");
+                const string & a_lib_directory= "", 
+                const string & a_lib_filename = "",
+                const string & a_lib_full_path = "",
+                const string & a_lib_version = "");
 
       int close (const string & a_lib_name);
 
@@ -146,8 +146,8 @@ namespace datatools {
 
       void print (ostream & a_out = clog) const;
 
-			symbol_ptr get_symbol_address (const string & a_lib_name,
-																		 const string & a_symbol);
+      symbol_ptr get_symbol_address (const string & a_lib_name,
+                                     const string & a_symbol);
 
     protected:
 
