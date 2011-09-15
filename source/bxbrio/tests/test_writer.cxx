@@ -149,6 +149,35 @@ int main (int argc_, char ** argv_)
 	  my_writer.lock ();
 	}
 
+      if (my_writer.has_store_with_serial_tag ("data2", brio::test::data::SERIAL_TAG))
+	{
+	  clog << "notice: found a store labelled '" << "data2"
+	       << "' with serial tag '" << brio::test::data::SERIAL_TAG << "'..." << endl;
+	}
+
+      if (my_writer.has_mixed_store ("mixed_data"))
+	{
+	  clog << "notice: found a mixed store labelled '" << "mixed_data"
+	       << "'..." << endl;
+	}
+      else
+	{
+	  clog << "notice: cannot find a mixed store labelled '" << "mixed_data"
+	       << "'..." << endl;
+	}
+
+      if (! my_writer.has_store_with_serial_tag ("data2", "errors"))
+	{
+	  clog << "notice: cannot find a store labelled '" << "data2"
+	       << "' with serial tag '" << "errors" << "'..." << endl;
+	}
+
+      if (! my_writer.has_store_with_serial_tag ("data3", "dummy"))
+	{
+	  clog << "notice: cannot find a store labelled '" << "data3"
+	       << "' with serial tag '" << "dummy" << "'..." << endl;
+	}
+
       // Print writer's status:
       my_writer.print_info (clog);
 
@@ -173,7 +202,7 @@ int main (int argc_, char ** argv_)
       infos.store ("name", "King Arthur");
       infos.store ("favorite_colour", "blue");
       infos.store ("favorite_animal", "swallow");
-      infos.store ("favorite_fruit", "coconut");
+      infos.store ("favorite_fruit",  "coconut");
       if (dump) 
 	{
 	  infos.tree_dump (clog, "Another properties to be stored in the 'header' store: ");

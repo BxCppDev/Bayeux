@@ -247,6 +247,30 @@ namespace brio {
     return found != _store_infos.end ();
   }
 
+  bool base_io::has_store_with_serial_tag (const string & label_, const string & serial_tag_) const
+  {
+    store_info_dict_t::const_iterator found = _store_infos.find (label_);
+    if (found == _store_infos.end ()) return false;
+    const store_info & the_si = found->second;
+    if (the_si.has_dedicated_serialization_tag ())
+      {
+	if (the_si.get_serialization_tag () == serial_tag_) return true;
+      }
+    return false;
+  }
+
+  bool base_io::has_mixed_store (const string & label_) const
+  {
+    store_info_dict_t::const_iterator found = _store_infos.find (label_);
+    if (found == _store_infos.end ()) return false;
+    const store_info & the_si = found->second;
+    if (! the_si.has_dedicated_serialization_tag ())
+      {
+	return true;
+      }
+    return false;
+  }
+
   const string & base_io::get_serialization_tag (const string & label_) const
   {
     _only_if_opened ("brio::base_io::get_serialization_tag");

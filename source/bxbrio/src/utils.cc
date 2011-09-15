@@ -89,7 +89,6 @@ namespace brio {
   {
     int status = store_info::SUCCESS;
     int mode = 0x0;
-
     if (boost::filesystem::extension (a_filename) == store_info::BRIO_FILE_EXTENSION)
       {
         mode |= store_info::MODE_BRIO;
@@ -102,7 +101,6 @@ namespace brio {
       {
         status = store_info::ERROR;
       }
-
     a_mode = mode;
     return status;
   }

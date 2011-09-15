@@ -43,6 +43,8 @@ namespace brio {
     static const string POSTPONED_DEDICATED_SERIAL_TAG_LABEL;
     static const string NO_DEDICATED_SERIAL_TAG_LABEL;
 
+  public:
+    // make all attributes public:
     string       label;
     string       serialization_tag;
     size_t       bufsize; // used only by the writer
@@ -53,6 +55,7 @@ namespace brio {
     int64_t      number_of_entries;
     int64_t      current_entry;
 
+  public:
     const string & get_label () const;
     const string & get_serialization_tag () const;
     bool has_dedicated_serialization_tag () const;

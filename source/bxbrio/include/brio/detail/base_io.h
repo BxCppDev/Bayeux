@@ -98,6 +98,10 @@ namespace brio {
 
     bool has_store (const string & label_) const;
 
+    bool has_store_with_serial_tag (const string & label_, const string & serial_tag_) const;
+
+    bool has_mixed_store (const string & label_) const;
+
     void select_store (const string & label_);
 
     bool has_automatic_store () const;
