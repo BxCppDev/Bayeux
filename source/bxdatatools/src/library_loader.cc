@@ -29,7 +29,7 @@ namespace datatools {
    library_loader::g_library_loader_;
     */
 
-    bool library_loader::g_devel = false;
+    bool library_loader::g_devel = true;
     bool library_loader::g_test  = false;
 
     /***********************
@@ -60,7 +60,7 @@ namespace datatools {
     {
       if (handle != 0)
 	{
-	  int status = kwsys::DynamicLoader::CloseLibrary (handle);
+          int status = kwsys::DynamicLoader::CloseLibrary (handle);
 	  if (status != 1)
 	    {
 	      ostringstream message;
@@ -75,7 +75,7 @@ namespace datatools {
     }
 
     void library_entry_type::print (ostream & a_out,
-                                   const string & a_indent) const
+                                    const string & a_indent) const
     {
       a_out << a_indent << "|-- Name      : " << name << endl;
       if (! directory.empty ())
@@ -208,16 +208,22 @@ namespace datatools {
     {
       while (! stacked_libraries_.empty ())
 	{
-	  if (g_devel) clog << "DEVEL: " << "library_loader::close_all: LOOP ****************" << endl;
+	  if (g_devel)
+            clog << "DEVEL: " << "datatools::utils::library_loader::close_all: "
+                 << "library_loader::close_all: LOOP ****************" << endl;
 	  handle_library_entry_type & hle = stacked_libraries_.front ();
 	  if (! hle.has_data ())
 	    {
-	      if (g_devel) cerr << "DEVEL: " << "library_loader::close_all: NO DATA ****************" << endl;
+	      if (g_devel)
+                clog << "DEVEL: " << "datatools::utils::library_loader::close_all: "
+                     << "library_loader::close_all: NO DATA ****************" << endl;
 	      stacked_libraries_.pop_front (); // remove top element
 	    }
 	  else
 	    {
-	      if (g_devel) cerr << "DEVEL: " << "library_loader::close_all: DATA *****************" << endl;
+	      if (g_devel)
+                clog << "DEVEL: " << "datatools::utils::library_loader::close_all: "
+                     << "library_loader::close_all: DATA *****************" << endl;
 	      library_entry_type & le = hle.get ();
 	      if (le.handle != 0)
 		{
@@ -230,21 +236,31 @@ namespace datatools {
 		  if (status != 1)
 		    {
 		      ostringstream message;
-		      message << "library_entry_type::dtor: The '"
+		      message << "datatools::utils::library_loader::close_all: The '"
 			      << le.name << "' library was not closed ! kwsys says: '"
 			      << kwsys::DynamicLoader::LastError () << "' !";
 		      cerr << "ERROR: " << message.str () << endl;
 		      //return;
 		    }
-		  else
-		    {
-		      le.handle = 0;
-		      stacked_libraries_.pop_front (); // remove top element
-		      if (g_devel) cerr << "DEVEL: " << "Stack size " << stacked_libraries_.size () << endl;
-		    }
+
+                  // 2011/09/19: F.M & X.G: Even if the return status
+		  // from kwsys::DynamicLoader::CloseLibrary is not 0,
+		  // the library is closed by kwsys, so we removed the
+		  // library entry from the library stack. Actually
+		  // the return status is really not explicit and can
+		  // not be used.
+
+                  // else
+		  //   {
+                  le.handle = 0;
+                  stacked_libraries_.pop_front (); // remove top element
+                  if (g_devel)
+                    clog << "DEVEL: " << "datatools::utils::library_loader::close_all: "
+                         << "Stack size " << stacked_libraries_.size () << endl;
+		    // }
 		  if (g_devel)
 		    {
-		      clog << "DEVEL: datatools::utils::library_loader::dtor: "
+		      clog << "DEVEL: " << "datatools::utils::library_loader::close_all: "
 			   << "Removing library stacked entry '" << le.name << "'..."
 			   << endl;
 		    }
@@ -259,9 +275,9 @@ namespace datatools {
     {
       if (g_devel) clog << "DEVEL: datatools::utils::library_loader::dtor: Entering...\n";
       if (g_devel) print (cerr);
-      if (g_devel) cerr << "DEVEL: datatools::utils::library_loader::dtor: " << "close_all...\n";
+      if (g_devel) clog << "DEVEL: datatools::utils::library_loader::dtor: " << "close_all...\n";
       close_all ();
-      if (g_devel) cerr << "DEVEL: datatools::utils::library_loader::dtor: " << "clear...\n";
+      if (g_devel) clog << "DEVEL: datatools::utils::library_loader::dtor: " << "clear...\n";
       libraries_.clear ();
       if (g_devel) clog << "DEVEL: datatools::utils::library_loader::dtor: Exiting.\n";
       return;
