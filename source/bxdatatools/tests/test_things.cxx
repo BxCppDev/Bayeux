@@ -277,6 +277,14 @@ int main (int argc_, char ** argv_)
 						const A & a2 = bag.get<A> ("a2"); 
 						a2.dump (clog);
 					}
+				if (bag.has_serial_tag ("a2", "test_things::A"))
+					{
+						clog << "As expected, the 'a2' object has serial tag 'test_things::A' !" << endl;
+					}
+				if (! bag.has_serial_tag ("a2", "test_things::B"))
+					{
+						clog << "As expected, the 'a2' object has no serial tag 'test_things::B' !" << endl;
+					}
 				if (bag.has ("b1") && ! bag.is_a<A> ("b1"))
 					{
 						clog << "As expected, the 'b1' object is not an instance of A !" << endl;

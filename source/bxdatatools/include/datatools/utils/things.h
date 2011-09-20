@@ -176,6 +176,8 @@ namespace datatools {
 			bool empty () const;
 			
 			bool has (const string & a_name) const;
+
+			bool has_serial_tag (const string & a_name, const string & a_serial_tag) const;
 			
 			bool is_constant (const string & a_name) const;
 			

@@ -180,6 +180,19 @@ namespace datatools {
 			return (found != m_things.end ());
 		}
 
+		bool things::has_serial_tag (const string & a_name, 
+																 const string & a_serial_tag) const
+		{
+			dict_t::const_iterator found = m_things.find (a_name);
+			if (found == m_things.end ())
+				{
+					ostringstream message;
+					message << "datatools::utils::things::has_serial_tag: No object named '" << a_name << "' !";
+					throw logic_error (message.str ());
+				}
+			return found->second.handle->get_serial_tag () == a_serial_tag;
+		}
+
 		bool things::is_constant (const string & a_name) const
 		{
 			if (a_name.empty ())
