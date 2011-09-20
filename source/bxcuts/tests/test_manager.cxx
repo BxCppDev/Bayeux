@@ -180,7 +180,7 @@ int main (int argc_, char ** argv_)
       bool has_red = false;
       bool has_green = false;
       bool has_blue = false;
-      clog << "Selection: " << endl;
+      clog << "NOTICE: Selection... " << endl;
       for (list<cuts::test::data>::iterator i = points.begin ();
 	   i != points.end ();
 	   i++)

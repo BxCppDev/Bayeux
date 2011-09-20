@@ -235,7 +235,7 @@ Running ${exe}...
 EOF
 	bin=${CUTS_BIN_DIR}/${exe}
 	if [ ! -x ${bin} ]; then
-	    pkgtools__msg_warning "No '${bin}' exectuable avalaible ! Please first build it !"
+	    pkgtools__msg_warning "No '${bin}' executable avalaible ! Please first build it !"
 	    let missing_count=missing_count+1
 	    continue
 	fi
