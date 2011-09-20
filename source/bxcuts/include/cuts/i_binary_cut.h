@@ -37,9 +37,9 @@ namespace cuts {
   public: 
 
     // ctor:
-    i_binary_cut (const string & a_process_name, 
-		  const string & a_process_description = "", 
-		  const string & a_process_version = "", 
+    i_binary_cut (const string & a_cut_name, 
+		  const string & a_cut_description = "", 
+		  const string & a_cut_version = "", 
 		  int a_debug_level = 0);
    
     // dtor:

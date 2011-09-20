@@ -117,13 +117,13 @@ namespace cuts {
   }
 
   // ctor:
-  i_cut::i_cut (const string & a_process_name, 
-                const string & a_process_description, 
-                const string & a_process_version, 
+  i_cut::i_cut (const string & a_cut_name, 
+                const string & a_cut_description, 
+                const string & a_cut_version, 
                 int a_debug_level)
-    : name_ (a_process_name),
-      description_ (a_process_description),
-      version_ (a_process_version)
+    : name_ (a_cut_name),
+      description_ (a_cut_description),
+      version_ (a_cut_version)
   {
     initialized_ = false;
     debug_level_ = a_debug_level;
@@ -202,7 +202,7 @@ namespace cuts {
     return _user_data_ != 0;
   }
 
-  void * i_cut::_get_user_data ()
+  void * i_cut::_get_user_data () const
   {
     return _user_data_;
   }

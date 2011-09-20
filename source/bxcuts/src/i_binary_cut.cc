@@ -55,13 +55,13 @@ namespace cuts {
   }
   
   // ctor:
-  i_binary_cut::i_binary_cut (const string & a_process_name, 
-			      const string & a_process_description, 
-			      const string & a_process_version, 
+  i_binary_cut::i_binary_cut (const string & a_cut_name, 
+			      const string & a_cut_description, 
+			      const string & a_cut_version, 
 			      int a_debug_level) :
-    cuts::i_cut (a_process_name, 
-		 a_process_description, 
-		 a_process_version,
+    cuts::i_cut (a_cut_name, 
+		 a_cut_description, 
+		 a_cut_version,
 		 a_debug_level)
   {
     return;

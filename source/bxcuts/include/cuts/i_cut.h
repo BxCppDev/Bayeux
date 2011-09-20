@@ -103,7 +103,7 @@ namespace cuts {
 
     void set_initialized_ (bool a_initialized);
 
-    void * _get_user_data ();
+    void * _get_user_data () const;
 
     virtual void _prepare_cut ();
 
@@ -142,9 +142,9 @@ namespace cuts {
   public: 
 
     // ctor:
-    i_cut (const string & a_process_name, 
-           const string & a_process_description = "", 
-           const string & a_process_version = "", 
+    i_cut (const string & a_cut_name, 
+           const string & a_cut_description = "", 
+           const string & a_cut_version = "", 
            int           a_debug_level = 0);
     
     // dtor:
