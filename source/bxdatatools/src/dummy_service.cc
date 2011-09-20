@@ -71,7 +71,7 @@ namespace datatools {
     // dtor:
     dummy_service::~dummy_service ()
     {
-      if (! dummy_service::is_initialized ())
+      if (dummy_service::is_initialized ())
 				{
 					dummy_service::reset ();
 				}

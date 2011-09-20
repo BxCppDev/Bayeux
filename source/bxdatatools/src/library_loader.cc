@@ -24,11 +24,6 @@ namespace datatools {
 
   namespace utils {
 
-    /*
-   library_loader::scoped_library_loader_type
-   library_loader::g_library_loader_;
-    */
-
     bool library_loader::g_devel = true;
     bool library_loader::g_test  = false;
 
