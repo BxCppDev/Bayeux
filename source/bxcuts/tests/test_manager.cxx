@@ -3,6 +3,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <sstream>
 #include <stdexcept>
@@ -10,13 +11,15 @@
 #include <map>
 
 #include <datatools/utils/utils.h>
-#include <datatools/utils/multi_properties.h>
-
-#include <cuts/manager.h>
+#include <datatools/utils/properties.h> 
+ 
+#include <cuts/cut_manager.h>
 #include <cuts_test_data.h>
 
 // Additional registered test cuts :
-#include <cuts_test_cuts.cc>
+#include <cuts_test_range_cut.cc>
+#include <cuts_test_sphere_cut.cc>
+#include <cuts_test_color_cut.cc>
 
 using namespace std;
 
@@ -25,11 +28,11 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'cuts::manager' !" << endl; 
+      clog << "Test program for class 'cuts::cut_manager' !" << endl; 
   
       bool debug = false;
       long seed = 314159;
-      string cut_def_filename = "";
+      string config_filename = "";
       string cut_name = "";
 
       int iarg = 1;
@@ -46,15 +49,16 @@ int main (int argc_, char ** argv_)
                  }
                else 
                  { 
-                    clog << "warning: ignoring option '" << option << "'!" << endl; 
+                    clog << "warning: ignoring option '" 
+			 << option << "'!" << endl; 
                  }
             }
           else
             {
               string argument = token; 
-	      if (cut_def_filename.empty ())
+	      if (config_filename.empty ())
 		{ 
-		  cut_def_filename = argument;
+		  config_filename = argument;
 		}
 	      else if (cut_name.empty ())
 		{ 
@@ -62,7 +66,8 @@ int main (int argc_, char ** argv_)
 		}
 	      else
 		{ 
-		  clog << "warning: ignoring argument '" << argument << "'!" << endl; 
+		  clog << "warning: ignoring argument '" 
+		       << argument << "'!" << endl; 
 		}
 	    }
 	  iarg++;
@@ -70,33 +75,34 @@ int main (int argc_, char ** argv_)
     
       srand48 (seed);
 
-      cuts::i_cut::g_debug = debug;
-      cuts::manager my_manager;
+      cuts::cut_manager my_cut_manager;
 
-      datatools::utils::multi_properties config ("name", "type");
+      datatools::utils::properties cut_manager_config;
 
-      if (cut_def_filename.empty ())
+      if (config_filename.empty ())
 	{ 
-	  cut_def_filename = "${CUTS_ROOT}/tests/test_cuts_def.conf";
+	  config_filename = "${CUTS_ROOT}/tests/config/test_cut_manager.conf";
 	}
-      datatools::utils::fetch_path_with_env (cut_def_filename);
-      config.read (cut_def_filename);
-  
+      datatools::utils::fetch_path_with_env (config_filename);
+      datatools::utils::properties::read_config (config_filename,
+						 cut_manager_config);
+
       if (cut_name.empty ())
 	{ 
 	  cut_name = "selector";
 	}    
+      clog << "NOTICE: Cut name is '" << cut_name << "'" << endl; 
 
-      my_manager.set_debug (debug);
-      my_manager.initialize (config);
+      my_cut_manager.set_debug (debug);
+      my_cut_manager.initialize (cut_manager_config);
       cuts::i_cut * the_cut = 0;
-      if (! my_manager.has_cut (cut_name))
+      if (! my_cut_manager.has (cut_name))
 	{
 	  ostringstream message;
 	  message << "No cut with name '" << cut_name << "' !";
-	  throw runtime_error (message.str ());    
+	  throw logic_error (message.str ());    
 	}
-      the_cut = my_manager.get_cut (cut_name);
+      the_cut = &my_cut_manager.get (cut_name);
 
       // build a collection of points:
       list<cuts::test::data> points;
@@ -166,13 +172,22 @@ int main (int argc_, char ** argv_)
 
       // apply the selection:
       map<string,ostringstream *> ss;
+      ss["black"] = new ostringstream ();
+      ss["red"]   = new ostringstream ();
+      ss["green"] = new ostringstream ();
+      ss["blue"]  = new ostringstream ();
+      bool has_black = false;
+      bool has_red = false;
+      bool has_green = false;
+      bool has_blue = false;
       clog << "Selection: " << endl;
       for (list<cuts::test::data>::iterator i = points.begin ();
 	   i != points.end ();
 	   i++)
 	{
 	  the_cut->set_user_data (&*i);
-	  if (the_cut->accept () == cuts::i_cut::ACCEPT)
+	  int status = the_cut->process ();
+	  if (status == cuts::i_cut::ACCEPTED)
 	    {
 	      ostringstream * pss = 0;
 	      if (i->color == cuts::test::data::BLACK)
@@ -182,6 +197,7 @@ int main (int argc_, char ** argv_)
 		      ss["black"] = new ostringstream ();
 		    }
 		  pss = ss["black"];
+		  has_black = true;
 		}
 	      else if (i->color == cuts::test::data::RED)
 		{
@@ -190,6 +206,7 @@ int main (int argc_, char ** argv_)
 		      ss["red"] = new ostringstream ();
 		    }
 		  pss = ss["red"];
+		  has_red = true;
 		}
 	      else if (i->color == cuts::test::data::GREEN)
 		{
@@ -198,6 +215,7 @@ int main (int argc_, char ** argv_)
 		      ss["green"] = new ostringstream ();
 		    }
 		  pss = ss["green"];
+		  has_green = true;
 		}
 	      else if (i->color == cuts::test::data::BLUE)
 		{
@@ -206,6 +224,7 @@ int main (int argc_, char ** argv_)
 		      ss["blue"] = new ostringstream ();
 		    }
 		  pss = ss["blue"];
+		  has_blue = true;
 		}
 	      if (pss != 0) 
 		{
@@ -213,7 +232,7 @@ int main (int argc_, char ** argv_)
 		}
 	    }
 	} // for
-      my_manager.reset ();
+      my_cut_manager.reset ();
 
       {
 	// print selected points in colored streams:
@@ -224,6 +243,22 @@ int main (int argc_, char ** argv_)
 	  {
 	    fselected << "# " << i->first << endl;
 	    fselected << i->second->str ();
+	    if (i->first == "black" && ! has_black) 
+	      {
+		fselected << "1000 1000 1000" << endl;
+	      }
+	    if (i->first == "red" && ! has_red) 
+	      {
+		fselected << "1000 1000 1000" << endl;
+	      }
+	    if (i->first == "blue" && ! has_blue) 
+	      {
+		fselected << "1000 1000 1000" << endl;
+	      }
+	    if (i->first == "green" && ! has_green) 
+	      {
+		fselected << "1000 1000 1000" << endl;
+	      }
 	    fselected << endl;
 	    fselected << endl;
 	    delete i->second;

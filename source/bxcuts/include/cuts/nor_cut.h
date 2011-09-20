@@ -26,31 +26,12 @@ namespace cuts {
   public: 
 
     // ctor:
-    nor_cut ();
-
-    // ctor:
-    nor_cut (i_cut &, i_cut &);
-
-    // dtor:
-    virtual ~nor_cut ();
-
-  protected:
-
-    virtual bool _accept (); 
+    CUT_INTERFACE_NORESET_CTOR_DTOR (nor_cut);
 
   private:
 
-    static creator_registration<nor_cut> __CR;
-
-  public:
-
-    virtual string cut_id () const;
-
-    virtual cut_creator_t cut_creator () const;
-
-    static i_cut * create (const properties & configuration_, 
-			   cut_dict_t * cut_dict_,
-			   void * user_ = 0);
+    // Macro to automate the registration of the cut :
+    CUT_REGISTRATION_INTERFACE(nor_cut);
 
   };
 

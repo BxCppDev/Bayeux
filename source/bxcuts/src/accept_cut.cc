@@ -4,50 +4,56 @@
 
 #include <cuts/accept_cut.h>
 
+#include <stdexcept>
+#include <sstream>
+
 namespace cuts {
+    
+  using namespace std;
+
+  // Registration instantiation macro :
+  CUT_REGISTRATION_IMPLEMENT(accept_cut, "cuts::accept_cut");
 
   // ctor:
-  accept_cut::accept_cut () : i_cut ()
+  CUT_CONSTRUCTOR_IMPLEMENT_HEAD (accept_cut,
+				  a_debug_devel,
+				  "cuts::accept_cut",
+				  "Always accept cut",
+				  "1.0")
   {
+    return;
   }
   
   // dtor:
-  accept_cut::~accept_cut ()
-  {
-  }
- 
-  void accept_cut::set_user_data (void *)
-  {
-  }
+  CUT_DEFAULT_DESTRUCTOR_IMPLEMENT (accept_cut)
 
-  bool accept_cut::_accept ()
+  CUT_ACCEPT_IMPLEMENT_HEAD(accept_cut)
   {
-    return i_cut::ACCEPT;
+    return i_cut::ACCEPTED;
   } 
 
-  // static method used within a cut factory:
-  i_cut * accept_cut::create (const properties & configuration_, 
-			      cut_dict_t * cut_dict_,
-			      void * user_)
+  CUT_INITIALIZE_IMPLEMENT_HEAD(accept_cut,
+				a_configuration,
+				a_service_manager,
+				a_dict)
   {
     using namespace std;
-
-    // create a new parameterized 'accept_cut' instance:
-    accept_cut * ptr = new accept_cut;
-    return ptr;	
+    if (is_initialized ())
+      {
+	ostringstream message;
+	message << "cuts::accept_cut::initialize: "
+		<< "Cut '" << get_name () << "' is already initialized ! ";
+	throw logic_error (message.str ());
+      }
+    set_initialized_ (true);
+    return;	
   }
 
-  // register this creator:   
-  i_cut::creator_registration<accept_cut> accept_cut::__CR;
- 
-  string accept_cut::cut_id () const
+  CUT_RESET_IMPLEMENT_HEAD (accept_cut) 
   {
-    return "cuts::accept_cut";
-  }
-  
-  cut_creator_t accept_cut::cut_creator () const
-  {
-    return accept_cut::create;
+    this->i_cut::reset ();
+    set_initialized_ (false);
+    return;
   }
   
 } // end of namespace cuts

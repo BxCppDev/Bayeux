@@ -4,130 +4,142 @@
 
 #include <cuts/i_binary_cut.h>
 
-#include <cstdlib>
 #include <stdexcept>
-#include <iostream>
 #include <sstream>
 
-#include <cuts/factory.h> // for 'factory::get_creators'
+#include <datatools/utils/properties.h>
 
 namespace cuts {
 
   using namespace std;
 
-  void i_binary_cut::set_cut_1 (i_cut & cut_1_)
+  void i_binary_cut::set_cut_1 (cut_handle_type & a_cut_handle)
   {
-    if (&cut_1_ == this)
+    if (&a_cut_handle.get () == this)
       {
 	ostringstream message;
-	message << "i_binary_cut::set_cut_1: "
-		<< "Binary cut with self-reference is not allowed !";
-	throw runtime_error (message.str ( ));
+	message << "cuts::i_binary_cut::set_cut_1: "
+		<< "Self-referenced not_cut is not allowed !";
+	throw logic_error (message.str ( ));
       }
-    _cut_1 = &cut_1_;
+    _handle_1 = a_cut_handle;
     return;
   }
-  
-  void i_binary_cut::set_cut_2 (i_cut & cut_2_)
+
+  void i_binary_cut::set_cut_2 (cut_handle_type & a_cut_handle)
   {
-    if (&cut_2_ == this)
+    if (&a_cut_handle.get () == this)
       {
 	ostringstream message;
-	message << "i_binary_cut::set_cut_2: "
-		<< "Binary cut with self-reference is not allowed !";
-	throw runtime_error (message.str ( ));
+	message << "cuts::i_binary_cut::set_cut_2: "
+		<< "Self-referenced not_cut is not allowed !";
+	throw logic_error (message.str ( ));
       }
-    _cut_2 = &cut_2_;
+    _handle_2 = a_cut_handle;
     return;
   }
    
-  void i_binary_cut::set_cuts (i_cut & cut_1_, i_cut & cut_2_)
+  void i_binary_cut::set_cuts (cut_handle_type & a_cut_handle_1, 
+			       cut_handle_type & a_cut_handle_2)
   {
-    set_cut_1 (cut_1_);
-    set_cut_2 (cut_2_);
+    set_cut_1 (a_cut_handle_1);
+    set_cut_2 (a_cut_handle_2);
     return;
   }
     
-  void i_binary_cut::set_user_data (void * user_data_)
+  void i_binary_cut::set_user_data (void * a_user_data)
   {
-    if (_cut_1 == 0) 
-      {
-	throw std::runtime_error ("i_binary_cut::set_user_data: Null 'cut 1' !");
-      }
-    _cut_1->set_user_data (user_data_);
-    if (_cut_2 == 0) 
-      {
-	throw std::runtime_error ("i_binary_cut::set_user_data: Null 'cut 2' !");
-      }
-    _cut_2->set_user_data (user_data_);
+    _handle_1.get ().set_user_data (a_user_data);
+    _handle_2.get ().set_user_data (a_user_data);
     return;
   }
   
   // ctor:
-  i_binary_cut::i_binary_cut ()
+  i_binary_cut::i_binary_cut (const string & a_process_name, 
+			      const string & a_process_description, 
+			      const string & a_process_version, 
+			      int a_debug_level) :
+    cuts::i_cut (a_process_name, 
+		 a_process_description, 
+		 a_process_version,
+		 a_debug_level)
   {
-    _cut_1 = 0;
-    _cut_2 = 0;
+    return;
   }
-
-  // ctor:
-  i_binary_cut::i_binary_cut (i_cut & cut_1_, i_cut & cut_2_)
-  {
-    set_cuts (cut_1_, cut_2_);
-  }
-  
+ 
   // dtor:
-  i_binary_cut::~i_binary_cut ()
+  CUT_DEFAULT_DESTRUCTOR_IMPLEMENT(i_binary_cut)
+ 
+  CUT_RESET_IMPLEMENT_HEAD (i_binary_cut) 
   {
+    _handle_1.reset ();
+    _handle_2.reset ();
+    this->i_cut::reset ();
+    set_initialized_ (false);
+    return;
   }
 
-  void i_binary_cut::install_cuts (const properties & configuration_, 
-				   cut_dict_t * cut_dict_, 
-				   i_binary_cut & binary_cut_)
+  void i_binary_cut::_install_cuts (const datatools::utils::properties & a_configuration,
+				    cuts::cut_handle_dict_type & a_cut_dict)
   {
-    i_cut * cut_1 = 0;
-    i_cut * cut_2 = 0;
-    string cut_1_name;
-    string cut_2_name;
-    if (configuration_.has_key ("cut_1"))
+    if (! _handle_1.has_data ())
       {
-	cut_1_name = configuration_.fetch_string ("cut_1");
-      }
-    else
-      {
-	throw runtime_error ("i_binary_cut::create: Missing 'cut_1' name property !");
+	string cut_name;
+	if (a_configuration.has_key ("cut_1"))
+	  {
+	    cut_name = a_configuration.fetch_string ("cut_1");
+	  }
+	else
+	  {
+	    throw logic_error ("cuts::i_binary_cut::_install_cuts: Missing 'cut_1' name property !");
+	  }
+	
+	cut_handle_dict_type::iterator found = a_cut_dict.find (cut_name);
+	if (found == a_cut_dict.end ())
+	  {
+	    ostringstream message;
+	    message << "cuts::i_binary_cut::_install_cuts: "
+		    << "Can't find any cut named '" << cut_name 
+		    << "' from the external dictionnary ! ";
+	    throw logic_error (message.str ());
+	  }
+	this->set_cut_1 (found->second);
       }
 
-    if (configuration_.has_key ("cut_2"))
+    if (! _handle_2.has_data ())
       {
-	cut_2_name = configuration_.fetch_string ("cut_2");
-      }
-    else
-      {
-	throw runtime_error ("i_binary_cut::create: Missing 'cut_2' name property !");
+	string cut_name;
+	if (a_configuration.has_key ("cut_2"))
+	  {
+	    cut_name = a_configuration.fetch_string ("cut_2");
+	  }
+	else
+	  {
+	    throw logic_error ("cuts::i_binary_cut::_install_cuts: Missing 'cut_2' name property !");
+	  }
+	
+	cut_handle_dict_type::iterator found = a_cut_dict.find (cut_name);
+	if (found == a_cut_dict.end ())
+	  {
+	    ostringstream message;
+	    message << "cuts::i_binary_cut::_install_cuts: "
+		    << "Can't find any cut named '" << cut_name 
+		    << "' from the external dictionnary ! ";
+	    throw logic_error (message.str ());
+	  }
+	this->set_cut_2 (found->second);
       }
 
-    cut_dict_t::iterator it_cut_1 = cut_dict_->find (cut_1_name);
-    if (it_cut_1 == cut_dict_->end ())
+    if (! _handle_1.has_data ())
       {
-	ostringstream message;
-	message << "i_binary_cut::create: "
-		<< "No cut named '" << cut_1_name << "' !";
-	throw runtime_error (message.str ());
+	throw logic_error ("cuts::i_binary_cut::_install_cuts: Null 'cut 1' !");
       }
-    cut_1 = it_cut_1->second;
 
-    cut_dict_t::iterator it_cut_2 = cut_dict_->find (cut_2_name);
-    if (it_cut_2 == cut_dict_->end ())
+    if (! _handle_2.has_data ())
       {
-	ostringstream message;
-	message << "i_binary_cut::create: "
-		<< "No cut named '" << cut_2_name << "' !";
-	throw runtime_error (message.str());
+	throw logic_error ("cuts::i_binary_cut::_install_cuts: Null 'cut 2' !");
       }
-    cut_2 = it_cut_2->second;
-    binary_cut_.set_cuts (*cut_1, *cut_2);
-    
+      
     return;
   }
   

@@ -7,6 +7,9 @@
 #include <exception>
 
 #include <cuts/and_cut.h>
+#include <cuts/accept_cut.h>
+#include <cuts/reject_cut.h>
+#include <cuts/cut_tools.h>
 
 using namespace std;
 
@@ -31,31 +34,46 @@ int main (int argc_, char ** argv_)
                  {
                    debug = true;
                  }
-               /* Here you may add more switches...
-                * else if (...) 
-                *  { 
-                *    ... 
-                *  }
-                */
                else 
                  { 
-                    clog << "warning: ignoring option '" << option << "'!" << endl; 
+		   clog << "warning: ignoring option '" << option << "'!" << endl; 
                  }
             }
           else
             {
               string argument = token; 
-              /* Here you may add more argument handlers... */
               { 
                 clog << "warning: ignoring argument '" << argument << "'!" << endl; 
               }
             }
           iarg++;
       }
-    
+
+      cuts::cut_handle_type ha1 (new cuts::accept_cut);
+      cuts::cut_handle_type ha2 (new cuts::accept_cut);
+      cuts::cut_handle_type hr1 (new cuts::reject_cut);
+      cuts::cut_handle_type hr2 (new cuts::reject_cut);
+
       cuts::and_cut my_and_cut;
-    
-      // Here you may put stuff for testing the class...
+      my_and_cut.set_cuts (ha1, ha2);
+      //my_and_cut.set_cuts (ha1, hr1);
+      //my_and_cut.set_cuts (hr1, hr2);
+
+      int i;
+      my_and_cut.set_user_data (&i);
+      int status = my_and_cut.process ();
+      if (status == cuts::i_cut::ACCEPTED)
+	{
+	  clog << "Accepted !" << endl;
+	}
+      else if (status == cuts::i_cut::REJECTED)
+	{
+	  clog << "Rejected !" << endl;
+	}
+      else
+ 	{
+	  cerr << "Unapplicable !" << endl;
+	}
 
     }
   catch (exception & x)

@@ -17,41 +17,46 @@
 #define __cuts__i_binary_cut_h 1
 
 #include <cuts/i_cut.h>
+#include <cuts/cut_macros.h>
 
 namespace cuts {
   
-  class i_binary_cut : public i_cut
+  CUT_CLASS_DECLARE (i_binary_cut)
   {
-  protected: 
-    
-    i_cut * _cut_1;
-    i_cut * _cut_2;
     
   public: 
     
-    void set_cut_1 (i_cut &);
+    void set_cut_1 (cut_handle_type &);
     
-    void set_cut_2 (i_cut &);
+    void set_cut_2 (cut_handle_type &);
     
-    void set_cuts (i_cut &, i_cut &);
+    void set_cuts (cut_handle_type &, cut_handle_type &);
     
     virtual void set_user_data (void *);
     
   public: 
 
     // ctor:
-    i_binary_cut ();
-    
-    // ctor:
-    i_binary_cut (i_cut &, i_cut &);
-    
+    i_binary_cut (const string & a_process_name, 
+		  const string & a_process_description = "", 
+		  const string & a_process_version = "", 
+		  int a_debug_level = 0);
+   
     // dtor:
-    virtual ~i_binary_cut ();
+    CUT_DESTRUCTOR_DECLARE (i_binary_cut);
 
-    static void install_cuts (const properties & configuration_, 
-			      cut_dict_t * cut_dict_, 
-			      i_binary_cut & binary_cut_);
+    CUT_RESET_DECLARE ();
+
+  protected:
+
+    void _install_cuts (const datatools::utils::properties & a_configuration,
+			cuts::cut_handle_dict_type & a_cut_dict);
   
+  protected: 
+    
+    cut_handle_type _handle_1;
+    cut_handle_type _handle_2;
+
   };
 
 } // end of namespace cuts

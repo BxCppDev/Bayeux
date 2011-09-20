@@ -5,71 +5,63 @@
 #include <cuts/xnor_cut.h>
 
 #include <stdexcept>
+#include <sstream>
 
-namespace cuts {
+#include <datatools/utils/properties.h>
+
+namespace cuts { 
+
+  using namespace std;
+  
+  // Registration instantiation macro :
+  CUT_REGISTRATION_IMPLEMENT(xnor_cut, "cuts::xnor_cut");
   
   // ctor:
-  xnor_cut::xnor_cut () : i_binary_cut ()
+  xnor_cut::xnor_cut (int a_debug_level) 
+    : i_binary_cut ("cuts::xnor_cut",
+		    "Xnor cut",
+		    "1.0",
+		    a_debug_level)
   {
+    return;
   }
-
-  // ctor:
-  xnor_cut::xnor_cut (i_cut & cut_1_, i_cut & cut_2_) : 
-    i_binary_cut (cut_1_, cut_2_)
-  {
-  }
-  
+ 
   // dtor:
-  xnor_cut::~xnor_cut ()
+  CUT_DEFAULT_DESTRUCTOR_IMPLEMENT (xnor_cut)
+
+  CUT_ACCEPT_IMPLEMENT_HEAD(xnor_cut)
   {
+    int status_1 = _handle_1.get ().process ();
+    int status_2 = _handle_2.get ().process ();
+    if ((status_1 < 0) || (status_2 < 0))
+      {
+	return INAPPLICABLE;
+      }
+    if ((status_1 + status_2) == 1) 
+      {
+	return (REJECTED);
+      }
+    return (ACCEPTED);
   }
 
-  bool xnor_cut::_accept ()
-  {
-    if (_cut_1 == 0) 
-      {
-	throw std::runtime_error ("xnor_cut::_accept: Null 'cut 1' !");
-      }
-    if (_cut_2 == 0) 
-      {
-	throw std::runtime_error ("xnor_cut::_accept: Null 'cut 2' !");
-      }
-    int c1 = (_cut_1->accept () == ACCEPT) ? 1 : 0;
-    int c2 = (_cut_2->accept () == ACCEPT) ? 1 : 0;
-    if ((c1 + c2) == 1) 
-      {
-	return (REJECT);
-      }
-    else 
-      {
-	return (ACCEPT);
-      }
-  }
-
-  // static method used within a cut factory:
-  i_cut * xnor_cut::create (const properties & configuration_, 
-			    cut_dict_t * cut_dict_,
-			    void * user_)
+  CUT_INITIALIZE_IMPLEMENT_HEAD(xnor_cut,
+				a_configuration,
+				a_service_manager,
+				a_cut_dict)
   {
     using namespace std;
+    if (is_initialized ())
+      {
+	ostringstream message;
+	message << "cuts::xnor_cut::initialize: "
+		<< "Cut '" << get_name () << "' is already initialized ! ";
+	throw logic_error (message.str ());
+      }
 
-    // create a new parameterized 'xnor_cut' instance:
-    xnor_cut * cut_ptr = new xnor_cut;
-    i_binary_cut::install_cuts (configuration_, cut_dict_, *cut_ptr);
-    return cut_ptr;	 
-  }
+    this->i_binary_cut::_install_cuts (a_configuration,a_cut_dict);
 
-  // register this creator:   
-  i_cut::creator_registration<xnor_cut> xnor_cut::__CR;
- 
-  string xnor_cut::cut_id () const
-  {
-    return "cuts::xnor_cut";
-  }
-  
-  cut_creator_t xnor_cut::cut_creator () const
-  {
-    return xnor_cut::create;
+    set_initialized_ (true);
+    return;	 
   }
   
 } // end of namespace cuts

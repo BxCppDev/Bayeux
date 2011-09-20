@@ -16,7 +16,6 @@
 #ifndef __cuts__xnor_cut_h
 #define __cuts__xnor_cut_h 1
 
-
 #include <cuts/i_binary_cut.h>
 
 namespace cuts {
@@ -27,31 +26,12 @@ namespace cuts {
   public: 
 
     // ctor:
-    xnor_cut ();
-
-    // ctor:
-    xnor_cut (i_cut &, i_cut &);
-
-    // dtor:
-    virtual ~xnor_cut ();
-
-  protected:
-
-    virtual bool _accept (); 
+    CUT_INTERFACE_NORESET_CTOR_DTOR (xnor_cut);
 
   private:
 
-    static creator_registration<xnor_cut> __CR;
-
-  public:
-
-    virtual string cut_id () const;
-
-    virtual cut_creator_t cut_creator () const;
-
-    static i_cut * create (const properties & configuration_, 
-			   cut_dict_t * cut_dict_,
-			   void * user_ = 0);
+    // Macro to automate the registration of the cut :
+    CUT_REGISTRATION_INTERFACE(xnor_cut);
 
   };
 

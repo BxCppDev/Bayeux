@@ -4,118 +4,123 @@
 
 #include <cuts/not_cut.h>
 
-#include <cstdlib>
 #include <stdexcept>
-#include <iostream>
 #include <sstream>
+
+#include <datatools/utils/properties.h>
 
 namespace cuts {
 
   using namespace std;
+  
+  // Registration instantiation macro :
+  CUT_REGISTRATION_IMPLEMENT(not_cut, "cuts::not_cut");
 
-  void not_cut::set_cut (i_cut & cut_)
+  void not_cut::set_cut (cut_handle_type & a_cut_handle)
   {
-    if (&cut_ == this)
+    if (&a_cut_handle.get () == this)
       {
 	ostringstream message;
-	message << "not_cut::set_cut: "
-		<< "Binary cut with self-reference is not allowed !";
-	throw runtime_error (message.str ( ));
+	message << "cuts::not_cut::set_cut: "
+		<< "Self-referenced not_cut is not allowed !";
+	throw logic_error (message.str ( ));
       }
-    _cut = &cut_;
+    _handle = a_cut_handle;
     return;
   }
     
-  void not_cut::set_user_data (void * user_data_)
+  void not_cut::set_user_data (void * a_user_data)
   {
-    if (_cut == 0) 
-      {
-	throw std::runtime_error ("not_cut::set_user_data: Null 'cut' !");
-      }
-    _cut->set_user_data (user_data_);
+    _handle.get ().set_user_data (a_user_data);
     return;
   }
   
   // ctor:
-  not_cut::not_cut ()
+  CUT_CONSTRUCTOR_IMPLEMENT_HEAD (not_cut,
+				  a_debug_devel,
+				  "cuts::not_cut",
+				  "Not cut",
+				  "1.0")
   {
-    _cut = 0;
+    return;
   }
 
-  // ctor:
-  not_cut::not_cut (i_cut & cut_)
-  {
-    set_cut (cut_);
-  }
   
   // dtor:
-  not_cut::~not_cut ()
+  CUT_DEFAULT_DESTRUCTOR_IMPLEMENT (not_cut)
+
+
+  CUT_ACCEPT_IMPLEMENT_HEAD(not_cut)
   {
+    if (! _handle.has_data ()) 
+      {
+	throw std::runtime_error ("not_cut::_accept: Handle has no 'cut' !");
+      }
+    int status = _handle.get ().process ();
+    if (status == REJECTED) 
+      {
+	return ACCEPTED;
+      }
+    else  if (status == ACCEPTED) 
+      {
+	return REJECTED;
+      }
+    return status;
   }
 
-  bool not_cut::_accept ()
+
+  CUT_RESET_IMPLEMENT_HEAD (not_cut) 
   {
-    if (_cut == 0) 
-      {
-	throw std::runtime_error ("not_cut::_accept: Null 'cut' !");
-      }
-    if (_cut->accept () == ACCEPT) 
-      {
-	return (REJECT);
-      }
-    else 
-      {
-	return (ACCEPT);
-      }
+    
+    _handle.reset ();
+    this->i_cut::reset ();
+    set_initialized_ (false);
+    return;
   }
 
-  // static method used within a cut factory:
-  i_cut * not_cut::create (const properties & configuration_, 
-			   cut_dict_t * cut_dict_,
-			   void * user_)
+
+  CUT_INITIALIZE_IMPLEMENT_HEAD(not_cut,
+				a_configuration,
+				a_service_manager,
+				a_cut_dict)
   {
     using namespace std;
-
-    i_cut * a_cut = 0;
-    string cut_name;
-    if (configuration_.has_key ("cut"))
-      {
-	cut_name = configuration_.fetch_string ("cut");
-      }
-    else
-      {
-	throw runtime_error ("xor_cut::create: Missing 'cut' name property !");
-      }
-
-    cut_dict_t::iterator it_cut = cut_dict_->find (cut_name);
-    if (it_cut == cut_dict_->end())
+    if (is_initialized ())
       {
 	ostringstream message;
-	message << "xor_cut::create: "
-		<< "No cut named '" << cut_name << "' !";
-	throw runtime_error (message.str());
+	message << "cuts::not_cut::initialize: "
+		<< "Cut '" << get_name () << "' is already initialized ! ";
+	throw logic_error (message.str ());
       }
-    a_cut = it_cut->second;
 
-    // create a new parameterized 'not_cut' instance:
-    not_cut * cut_ptr = new not_cut;
-    cut_ptr->set_cut (*a_cut);
-    return cut_ptr;	
+    if (! _handle.has_data ())
+      {
+	string cut_name;
+	if (a_configuration.has_key ("cut"))
+	  {
+	    cut_name = a_configuration.fetch_string ("cut");
+	  }
+	else
+	  {
+	    throw logic_error ("cuts::not_cut::initialize: Missing 'cut' name property !");
+	  }
+	
+	cut_handle_dict_type::iterator found = a_cut_dict.find (cut_name);
+	if (found == a_cut_dict.end ())
+	  {
+	    ostringstream message;
+	    message << "cuts::not_cut::initialize: "
+		    << "Can't find any cut named '" << cut_name 
+		    << "' from the external dictionnary ! ";
+	    throw logic_error (message.str ());
+	  }
+	this->set_cut (found->second);
+      }
+
+    set_initialized_ (true);
+    return;	
   }
 
-  // register this creator:   
-  i_cut::creator_registration<not_cut> not_cut::__CR;
- 
-  string not_cut::cut_id () const
-  {
-    return "cuts::not_cut";
-  }
-  
-  cut_creator_t not_cut::cut_creator () const
-  {
-    return not_cut::create;
-  }
-  
 } // end of namespace cuts
 
 // end of not_cut.cc

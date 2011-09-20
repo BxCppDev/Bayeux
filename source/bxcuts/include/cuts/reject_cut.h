@@ -17,40 +17,22 @@
 #define __cuts__reject_cut_h 1
 
 #include <cuts/i_cut.h>
+#include <cuts/cut_macros.h>
 
 namespace cuts {
 
-  class reject_cut : public i_cut
+  CUT_CLASS_DECLARE (reject_cut)
   {
     
   public: 
+
     // ctor:
-    reject_cut ();
-
-    // dtor:
-    virtual ~reject_cut ();
-  
-    virtual void set_user_data (void *);
-
-  protected:
-
-    virtual bool _accept (); 
-
-    /*************************************/
+    CUT_INTERFACE_CTOR_DTOR (reject_cut);
 
   private:
 
-    static creator_registration<reject_cut> __CR;
-
-  public:
-
-    virtual string cut_id () const;
-
-    virtual cut_creator_t cut_creator () const;
-
-    static i_cut * create (const properties & configuration_, 
-			   cut_dict_t * cut_dict_,
-			   void * user_ = 0);
+    // Macro to automate the registration of the cut :
+    CUT_REGISTRATION_INTERFACE(reject_cut);
 
   };
 

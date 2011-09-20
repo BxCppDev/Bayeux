@@ -31,12 +31,6 @@ int main (int argc_, char ** argv_)
                  {
                    debug = true;
                  }
-               /* Here you may add more switches...
-                * else if (...) 
-                *  { 
-                *    ... 
-                *  }
-                */
                else 
                  { 
                     clog << "warning: ignoring option '" << option << "'!" << endl; 
@@ -45,7 +39,6 @@ int main (int argc_, char ** argv_)
           else
             {
               string argument = token; 
-              /* Here you may add more argument handlers... */
               { 
                 clog << "warning: ignoring argument '" << argument << "'!" << endl; 
               }
@@ -54,8 +47,14 @@ int main (int argc_, char ** argv_)
       }
     
       cuts::accept_cut my_accept_cut;
-    
-      // Here you may put stuff for testing the class...
+      int i;
+      my_accept_cut.set_user_data (&i);
+      int status = my_accept_cut.process ();
+      if (status == cuts::i_cut::ACCEPTED)
+	{
+	  clog << "Accepted !" << endl;
+	}
+
 
     }
   catch (exception & x)

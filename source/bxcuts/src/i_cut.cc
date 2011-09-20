@@ -1,208 +1,261 @@
-// -*- mode: c++ ; -*- 
 /* i_cut.cc
+ * 
+ * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Boston, MA 02110-1301, USA.
+ * 
  */
-
-#include <cuts/i_cut.h>
 
 #include <stdexcept>
 #include <sstream>
 
+#include <cuts/i_cut.h>
+
+#include <datatools/utils/properties.h>
+#include <datatools/utils/ioutils.h>
+#include <datatools/services/service_manager.h>
+
 namespace cuts {
 
-  bool i_cut::g_debug = false;
+  bool 
+  i_cut::is_debug () const
+  {
+    return debug_level_ > 0;
+  }
+    
+  void 
+  i_cut::set_debug (bool a_debug)
+  {
+    if (a_debug)
+      {
+        debug_level_ = 1;
+      }
+    else
+      {
+        debug_level_ = 0;
+      }
+    return;
+  }
 
-  i_cut::scoped_cut_creator_db_t i_cut::g__cut_creator_db (new cut_creator_db (true));
+  bool i_cut::is_initialized () const
+  {
+    return initialized_;
+  }
 
-  const bool i_cut::ACCEPT = true;
-  const bool i_cut::REJECT = false;
+  void i_cut::set_initialized_ (bool a_initialized)
+  {
+    initialized_ = a_initialized;
+    return;
+  }
+
+  int
+  i_cut::get_debug_level () const
+  {
+    return debug_level_;
+  }
+  
+  void
+  i_cut::set_debug_level (int a_new_value)
+  {
+    if (a_new_value < 0) 
+      {
+        debug_level_ = 0;
+      }
+    else 
+      {
+        debug_level_ = a_new_value;
+      }
+    return;
+  }
+  
+  const string &
+  i_cut::get_name () const
+  {
+    return name_;
+  }
+  
+  void
+  i_cut::set_name_ (const string & a_new_value)
+  {
+    name_ = a_new_value;
+    return;
+  }
+    
+  const string & i_cut::get_description () const
+  {
+    return description_;
+  }
+    
+  void i_cut::set_description (const string & a_description)
+  {
+    description_ = a_description;
+    return;
+  }
+
+  const string & i_cut::get_version () const
+  {
+    return version_;
+  }
+   
+  void i_cut::set_version (const string & a_version)
+  {
+    version_ = a_version;
+    return;
+  }
 
   // ctor:
-  i_cut::i_cut ()
+  i_cut::i_cut (const string & a_process_name, 
+                const string & a_process_description, 
+                const string & a_process_version, 
+                int a_debug_level)
+    : name_ (a_process_name),
+      description_ (a_process_description),
+      version_ (a_process_version)
   {
-    __user_data = 0;
+    initialized_ = false;
+    debug_level_ = a_debug_level;
+    _user_data_ = 0;
+    return;
   }
   
   // dtor:
   i_cut::~i_cut ()
   {
+    _user_data_ = 0;
+		if (initialized_)
+      {
+        ostringstream message;
+        message << "cuts::i_cut::~i_cut: "
+                << "Cut '" << name_ << "' " 
+                << "still has its 'initialized' flag on ! "
+                << "Possible bug !";
+        throw logic_error (message.str ());
+      }
+    return;
+  }
+
+  void i_cut::print (ostream & a_out) const
+  {
+    this->tree_dump (a_out, "Base cut :");
+    return;
+  }
+
+  void i_cut::tree_dump (ostream & a_out , 
+                         const string & a_title,
+                         const string & a_indent,
+                         bool a_inherit) const
+  {
+    namespace du = datatools::utils;
+    string indent;
+    if (! a_indent.empty ())
+      {
+        indent = a_indent;
+      }
+    if ( ! a_title.empty () ) 
+      {
+        a_out << indent << a_title << endl;
+      }  
+    a_out << indent << du::i_tree_dumpable::tag 
+          << "Cut name        : '" << name_ << "'" << endl;
+    a_out << indent << du::i_tree_dumpable::tag 
+          << "Cut description : '" << description_ << "'" << endl;
+    a_out << indent << du::i_tree_dumpable::tag 
+          << "Cut version     : '" << version_ << "'" << endl;
+    a_out << indent << du::i_tree_dumpable::tag 
+          << "Cut debug level : " << debug_level_ << endl;
+    a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)
+          << "Cut initialized : " << is_initialized () << endl;      
+    return;
+  }
+   
+  void i_cut::initialize_standalone (const datatools::utils::properties & a_config)
+  {
+    datatools::service::service_manager dummy;
+    cut_handle_dict_type dummy2;
+    initialize (a_config, dummy, dummy2);
+    return;
+  }
+   
+  void i_cut::initialize_with_service (const datatools::utils::properties & a_config,
+                                       datatools::service::service_manager & a_service_manager)
+  {
+    cut_handle_dict_type dummy;
+    initialize (a_config, a_service_manager, dummy);
+    return;
   }
   
   bool i_cut::has_user_data () const
   {
-    return __user_data != 0;
+    return _user_data_ != 0;
   }
 
   void * i_cut::_get_user_data ()
   {
-    return __user_data;
+    return _user_data_;
   }
 
-  void i_cut::set_user_data (void * user_data_)
+  void i_cut::set_user_data (void * a_user_data)
   {
-    __user_data = user_data_;
+    _user_data_ = a_user_data;
+    return;
   }
 
   void i_cut::unset_user_data ()
   {
-    __user_data = 0;
-  }
-
-  bool i_cut::operator() ()
-  {
-    return this->accept () == ACCEPT;
+    _user_data_ = 0;
+    return;
   }
 
   void i_cut::_prepare_cut ()
   {
+    return;
   }
 
   void i_cut::_finish_cut ()
   {
+    return;
   }
 
-  bool i_cut::accept ()
+  int i_cut::process ()
   {
     _prepare_cut ();
-    bool ok = _accept ();
+    int status = _accept ();
     _finish_cut ();
-    return ok;
+    return status;
   }
 
-  /***************************************************/
-
-  i_cut::cut_creator_db::cut_creator_db (bool test_)
+  int i_cut::operator() ()
   {
-    bool debug = g_debug;
-    //debug = true;
-    if (debug)
-      {
-	clog << "DEVEL: i_cut::cut_creator_db::cut_creator_db: "
-	     << "Entering: " 
-	     << (test_? "TEST": "-") << endl;
-      }
-    return;    
+    return this->process ();
   }
 
-  i_cut::cut_creator_db::~cut_creator_db ()
+  void i_cut::reset () 
   {
-    if (g_debug)
-      {
-	clog << "DEVEL: i_cut::cut_creator_db::~cut_creator_db: Entering... " 
-	     << endl;
-      }
-    return;
-  }
- 
-  bool i_cut::cut_creator_db::has_cut_creator (const string & cut_id_) const
-  {
-    return __dict.find (cut_id_) != __dict.end ();
-  }
-
-  cut_creator_t & 
-  i_cut::cut_creator_db::get_cut_creator (const string & cut_id_)
-  {
-    cut_creator_dict_t::iterator found = __dict.find (cut_id_);
-    if (found == __dict.end ())
-      {
-	ostringstream message;
-	message << "i_cut::cut_creator_db::get_cut_creator: "
-		<< "No cut creator with ID='" << cut_id_ << "'!";
-	throw runtime_error (message.str ());
-      }
-    return (found->second);
-  }
-
-  void i_cut::cut_creator_db::register_cut_creator (cut_creator_t cut_creator_, 
-						    const string & cut_id_)
-  {
-    bool devel = g_debug;
-    //devel = true;
-    using namespace std;
-    string cut_id = cut_id_;
-    if (devel)
-      {
-	clog << "DEVEL: i_cut::cut_creator_db::register_cut_creator: "
-	     << "cut_id='" << cut_id << "'"
-	     << endl;
-      }
-    if (has_cut_creator (cut_id))
-      {
-	ostringstream message;
-	message << "i_cut::cut_creator_db::register_cut_creator: " 
-		<< "Cut creator ID '" << cut_id_ << "' is already used "
-		<< "within the cut factory dictionnary !";
-	throw runtime_error (message.str ());
-      }
-    if (devel)
-      {
-	clog << "DEVEL: i_cut::cut_creator_db::register_cut_creator: "
-	     << "new '" << cut_id << "' cut creator  ID !"
-	     << endl;
-      }
-    
-    if (cut_id.empty ())
-      {
-	ostringstream message;
-	message << "i_cut::cut_creator_db::register_cut_creator: " 
-		<< "Empty cut creator ID !";
-	throw runtime_error (message.str ());
-      }
-    if (devel)
-      {
-	clog << "DEVEL: i_cut::cut_creator_db::register_cut_creator:  "
-	     << "insert cut creator ID='" << cut_id << "'!"
-	     << endl;
-	clog << "DEVEL: i_cut::cut_creator_db::register_cut_creator: "
-	     << "with creator address='" << hex 
-	     << (void *) cut_creator_ << dec << "'"
-	     << endl;
-      }
-    pair<string, cut_creator_t> a_pair;
-    a_pair.first = cut_id;
-    a_pair.second = cut_creator_;
-    __dict.insert (a_pair);
-    size_t sz = get_dict ().size ();
-    if (devel)
-      {
-	clog << "DEVEL: i_cut::cut_creator_db::register_cut_creator: size="
-	     << sz << " element" << (sz > 1? "s": "") << endl;
-	clog << "DEVEL: i_cut::cut_creator_db::register_cut_creator: "
-	     << "done."
-	     << endl;
-      }
+    _user_data_ = 0;
+		//set_initialized_ (false);
     return;
   }
 
-  void i_cut::cut_creator_db::dump_cut_creators (ostream & out_)
-  {
-    out_ << "List of cut creators in 'cut_creator_db::__dict': ";
-    size_t sz = get_dict ().size ();
-    out_ << sz << " element(s)" << endl;
-    size_t count = 0; 
-    for (cut_creator_dict_t::const_iterator it = get_dict ().begin ();
-	 it != get_dict ().end ();
-	 it++) 
-      {
-	count++;
-	if (count == sz) out_ << "`-- "; 
-	else out_ << "|-- ";
-	out_ << it->first << ": " 
-	     << hex << (void *) it->second 
-	     << dec << endl;
-      }
-    out_ << "end." << endl;
-    return;
-  }
-     
-  i_cut::cut_creator_db & i_cut::get_cut_creator_db ()
-  {
-    if (! g__cut_creator_db) 
-      {
-	throw runtime_error ("i_cut::get_cut_creator_db: Library has a critical bug !");
-      }
-    return *(g__cut_creator_db.get ());
-  }
-  
-} // end of namespace cuts
+}  // end of namespace cuts
 
-// end of dummy_cuts.cc
+// end of i_cut.cc
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

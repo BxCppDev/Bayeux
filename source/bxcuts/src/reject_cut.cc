@@ -4,52 +4,56 @@
 
 #include <cuts/reject_cut.h>
 
-#include <cstdlib>
+#include <stdexcept>
+#include <sstream>
 
 namespace cuts {
+  
+  using namespace std;
+
+  // Registration instantiation macro :
+  CUT_REGISTRATION_IMPLEMENT(reject_cut, "cuts::reject_cut");
 
   // ctor:
-  reject_cut::reject_cut () : i_cut ()
+  CUT_CONSTRUCTOR_IMPLEMENT_HEAD (reject_cut,
+				  a_debug_devel,
+				  "cuts::reject_cut",
+				  "Always reject cut",
+				  "1.0")
   {
+    return;
   }
   
   // dtor:
-  reject_cut::~reject_cut ()
-  {
-  }
- 
-  void reject_cut::set_user_data (void *)
-  {
-  }
+  CUT_DEFAULT_DESTRUCTOR_IMPLEMENT (reject_cut)
 
-  bool reject_cut::_accept ()
+  CUT_ACCEPT_IMPLEMENT_HEAD(reject_cut)
   {
-    return i_cut::REJECT;
+    return i_cut::REJECTED;
   } 
 
-  // static method used within a cut factory:
-  i_cut * reject_cut::create (const properties & configuration_, 
-			      cut_dict_t * cut_dict_,
-			      void * user_)
+  CUT_INITIALIZE_IMPLEMENT_HEAD(reject_cut,
+				a_configuration,
+				a_service_manager,
+				a_dict)
   {
     using namespace std;
-
-    // create a new parameterized 'reject_cut' instance:
-    reject_cut * ptr = new reject_cut;
-    return ptr;	
+    if (is_initialized ())
+      {
+	ostringstream message;
+	message << "cuts::reject_cut::initialize: "
+		<< "Cut '" << get_name () << "' is already initialized ! ";
+	throw logic_error (message.str ());
+      }
+    set_initialized_ (true);
+    return;	
   }
 
-  // register this creator:   
-  i_cut::creator_registration<reject_cut> reject_cut::__CR;
- 
-  string reject_cut::cut_id () const
+  CUT_RESET_IMPLEMENT_HEAD (reject_cut) 
   {
-    return "cuts::reject_cut";
-  }
-  
-  cut_creator_t reject_cut::cut_creator () const
-  {
-    return reject_cut::create;
+    this->i_cut::reset ();
+    set_initialized_ (false);
+    return;
   }
   
 } // end of namespace cuts

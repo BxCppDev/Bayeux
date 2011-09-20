@@ -1,200 +1,225 @@
-// -*- mode: c++ ; -*- 
 /* i_cut.h
- * Author (s) : Francois Mauger <mauger@lpccaen.in2p3.fr>
- * Creation date: 2010-09-18
- * Last modified: 2010-09-20
+ * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Creation date : 2011-06-07
+ * Last modified : 2011-06-07
  * 
- * License: 
- */
-
-/** 
+ * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Boston, MA 02110-1301, USA.
+ *
+ * 
+ * 
  * Description: 
- * A pure abstract class that interface a generic cut
- *   on some arbitrary data.
+ *
+ *   Base cut.
+ * 
+ * History: 
  * 
  */
 
 #ifndef __cuts__i_cut_h
 #define __cuts__i_cut_h 1
 
-#include <iostream>
+#include <ostream>
 #include <string>
 
-#include <boost/scoped_ptr.hpp>
+#include <cuts/cut_tools.h>
 
-#include <cuts/detail/cut_tools.h>
+#include <boost/cstdlib.hpp>
+
+#include <datatools/utils/i_tree_dump.h>
+
+namespace datatools {
+  namespace utils {
+    class properties;
+  }}
+
+namespace datatools {
+  namespace service {
+    class service_manager;
+  }}
 
 namespace cuts {
 
-  class i_cut
+  using namespace std;
+
+  class i_cut : public datatools::utils::i_tree_dumpable
   {
   public:
-
-    static const bool ACCEPT;
-    static const bool REJECT;
-
-    static bool g_debug;
-
-  private:
-
-    void * __user_data;
-
-  protected:
-
-    void * _get_user_data ();
-
+        
+    enum result_type
+      {
+        INAPPLICABLE = -1,
+        REJECTED     = 0,
+        ACCEPTED     = 1
+      };
 
   public: 
 
-    // ctor:
-    i_cut ();
+    bool is_debug () const;
+    
+    void set_debug (bool);
 
-    // dtor:
-    virtual ~i_cut ();
+    int get_debug_level () const;
+    
+    void set_debug_level (int);
+    
+    const string & get_name () const;
+    
+    const string & get_description () const;
+    
+    void set_description (const string & a_description);
+
+    const string & get_version () const;
+   
+    void set_version (const string & a_version);
+ 
+    bool is_initialized () const;
   
     bool has_user_data () const;
 
     virtual void set_user_data (void *);
 
     virtual void unset_user_data ();
-
-    virtual bool accept (); 
  
-    bool operator() ();
-
+    int operator() ();
+   
   protected:
+
+    void set_name_ (const string & a_name);
+
+    void set_initialized_ (bool a_initialized);
+
+    void * _get_user_data ();
 
     virtual void _prepare_cut ();
 
     virtual void _finish_cut ();
 
-    virtual bool _accept () = 0; 
+		// Pure virtual selection method  (invoked by process)
+    virtual int _accept () = 0; 
 
-    /**************************************************/
-    
   public:
-    // pure virtual methods for vertex generator factory stuff:
-    virtual string cut_id () const = 0;
+   
+    virtual void initialize_standalone (const datatools::utils::properties & a_config);
 
-    virtual cut_creator_t cut_creator () const = 0;
+    virtual void initialize_with_service (const datatools::utils::properties & a_config,
+                                          datatools::service::service_manager & a_service_manager);
 
-    /**************************************************/
-    class cut_creator_db
-    {
-      cut_creator_dict_t  __dict;
+    /** The main initialization method (post-construction):
+     * @param a_config the container of configuration parameters
+     * @param a_cut_dictionnary a dictionnary of existing 'cuts' which can be used
+     *        to build the current cut (used in the framework of a factory)
+     * @param a_service_manager a manager for external services
+     */
 
-    public:
+    virtual void initialize (const datatools::utils::properties & a_config,
+                             datatools::service::service_manager & a_service_manager,
+                             cut_handle_dict_type & a_cut_dictionnary) = 0;
+      
+    /** The main cut processing method
+     * @return the status 
+     */
+    virtual int process ();
 
-      cut_creator_db (bool = false);
+    /** The main termination method :
+     */
+    virtual void reset ();
+      
+  public: 
 
-      virtual ~cut_creator_db ();
+    // ctor:
+    i_cut (const string & a_process_name, 
+           const string & a_process_description = "", 
+           const string & a_process_version = "", 
+           int           a_debug_level = 0);
+    
+    // dtor:
+    virtual ~i_cut ();
 
-      const cut_creator_dict_t & get_dict () const
-      {
-	return __dict;
-      }
-	  
-      cut_creator_dict_t & get_dict ()
-      {
-	return __dict;
-      }
+    virtual void tree_dump (ostream & a_out         = clog, 
+                            const string & a_title  = "",
+                            const string & a_indent = "",
+                            bool a_inherit          = false) const;
 
-      bool has_cut_creator (const string & cut_id_) const;
- 
-      cut_creator_t & get_cut_creator (const string & cut_id_);
+    void print (ostream & a_out = clog) const;
+        
 
-      void register_cut_creator (cut_creator_t, const string & cut_id_);
+  public:
 
-      void dump_cut_creators (ostream & out_ = clog);
+    static bool g_devel;
 
-    }; // cut_creator_db
+  protected: 
 
-    /**************************************************/
- 
-    typedef boost::scoped_ptr<cut_creator_db> scoped_cut_creator_db_t;
+    bool   initialized_;    //!< The initialization flag
+
+    string name_;           //!< The name of the cut
+    
+    string description_;    //!< The description of the cut
+    
+    string version_;        //!< The version of the cut
+
+    int    debug_level_;    //!< The debug level of the cut
 
   private:
 
-    static scoped_cut_creator_db_t g__cut_creator_db;
-
-  public:
-      
-    static cut_creator_db & get_cut_creator_db ();
-
-  protected:
-
-    /* utility to enable auto-registering of some cut 
-     * in the global dictionary:
-     *
-     * The templatized class 'cut_t' must inherits from 'i_cut'
-     * and implements the following methods:
-     *  - string        cut_id () const
-     *  - cut_creator_t cut_creator () const
-     *
-     */
-    template <class cut_t>
-    class creator_registration
-    {
-      cut_t __cut;
-
-    public:
-
-      creator_registration ()
-      {
-	bool devel = g_debug;
-	//devel = true;
-	using namespace std;
-	if (devel) clog << "DEVEL: i_cut::creator_registration::ctor: "
-			<< "Entering..."
-			<< endl;
-	string cut_id = __cut.cut_id ();
-	if (devel) clog << "DEVEL: i_cut::creator_registration::ctor: "
-			<< "cut_id='" << cut_id << "'"
-			<< endl;
-	
-	cut_creator_t cut_creator = __cut.cut_creator ();
-	if (devel) clog << "DEVEL: i_cut::creator_registration::ctor: "
-			<< "cut_creator='" << hex << (void *) cut_creator << dec << "'"
-			<< endl;
-    
-	try
-	  { 
-	    bool test = false;
-	    //test = true;
-	    if (! test)
-	      {
-		if (devel) 
-		  {
-		    clog << "DEVEL: i_cut::creator_registration::ctor: "
-			 << "register_cut_creator='" << cut_id << " @ " 
-			 << hex << (void *) cut_creator << dec << "'"
-			 << endl;
-		  }
-		i_cut::get_cut_creator_db ().register_cut_creator (cut_creator,
-								   cut_id);
-	      }
-	  }
-	catch (exception & x)
-	  {
-	    cerr << "ERROR: i_cut::creator_registration::ctor: " 
-		 << x.what () << endl;
-	  }
-	catch (...)
-	  {
-	    cerr << "ERROR: i_cut::creator_registration::ctor: " 
-		 << "unexpected!" << endl;
-	  }
-	if (devel) clog << "DEVEL: i_cut::creator_registration::ctor: "
-			<< "Exiting."
-			<< endl;
-      }
-
-    };
+    void * _user_data_;
     
   };
-
-} // end of namespace cuts
+      
+  /* Utility to enable auto-registering of a Cut class
+   * in the global dictionary:
+   *
+   * The templatized class 'Cut' must inherits from 'i_cut':
+   */
+  template <class Cut>
+  struct default_creator_registration
+  {
+  public:
+    static i_cut * 
+    g_default_cut_creator (const datatools::utils::properties & a_cut_config, 
+                           datatools::service::service_manager & a_service_manager,
+                           cut_handle_dict_type & a_cut_dictionary)
+    {
+      Cut * new_cut = new Cut; 
+      new_cut->initialize (a_cut_config,
+                           a_service_manager, 
+                           a_cut_dictionary);
+      return new_cut;
+    }
+        
+    // ctor :
+    default_creator_registration (const string & a_cut_id) 
+    {
+      cut_tools::get_cut_creator_db ().register_cut_creator (default_creator_registration<Cut>::g_default_cut_creator,
+                                                             a_cut_id);
+      return;
+    }
+        
+  };
+  
+}  // end of namespace cuts
 
 #endif // __cuts__i_cut_h
 
-// end of dummy_cuts.h
+// end of i_cut.h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

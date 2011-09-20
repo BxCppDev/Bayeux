@@ -4,70 +4,64 @@
 
 #include <cuts/nand_cut.h>
 
-namespace cuts {
-  
-  // ctor:
-  nand_cut::nand_cut () : i_binary_cut ()
-  {
-  }
+#include <stdexcept>
+#include <sstream>
 
-  // ctor:
-  nand_cut::nand_cut (i_cut & cut_1_, i_cut & cut_2_) : 
-    i_binary_cut (cut_1_, cut_2_)
-  {
-  }
+#include <datatools/utils/properties.h>
+
+namespace cuts { 
+
+  using namespace std;
   
+  // Registration instantiation macro :
+  CUT_REGISTRATION_IMPLEMENT(nand_cut, "cuts::nand_cut");
+  
+  // ctor:
+  nand_cut::nand_cut (int a_debug_level) 
+    : i_binary_cut ("cuts::nand_cut",
+		    "Nand cut",
+		    "1.0",
+		    a_debug_level)
+  {
+    return;
+  }
+ 
   // dtor:
-  nand_cut::~nand_cut ()
+  CUT_DEFAULT_DESTRUCTOR_IMPLEMENT (nand_cut)
+
+  CUT_ACCEPT_IMPLEMENT_HEAD(nand_cut)
   {
+    int status_1 = _handle_1.get ().process ();
+    int status_2 = _handle_2.get ().process ();
+    if ((status_1 < 0) || (status_2 < 0))
+      {
+	return INAPPLICABLE;
+      }
+    if ((status_1 + status_2) == 2) 
+      {
+	return (REJECTED);
+      }
+    return (ACCEPTED);
   }
 
-  bool nand_cut::_accept ()
-  {
-    if (_cut_1 == 0) 
-      {
-	throw std::runtime_error ("nand_cut::_accept: Null 'cut 1' !");
-      }
-    if (_cut_2 == 0) 
-      {
-	throw std::runtime_error ("nand_cut::_accept: Null 'cut 2' !");
-      }
-    int c1 = (_cut_1->accept () == ACCEPT) ? 1 : 0;
-    int c2 = (_cut_2->accept () == ACCEPT) ? 1 : 0;
-    if ((c1 + c2) == 2) 
-      {
-	return (REJECT);
-      }
-    else 
-      {
-	return (ACCEPT);
-      }
-  }
-
-  // static method used within a cut factory:
-  i_cut * nand_cut::create (const properties & configuration_, 
-			    cut_dict_t * cut_dict_,
-			    void * user_)
+  CUT_INITIALIZE_IMPLEMENT_HEAD(nand_cut,
+				a_configuration,
+				a_service_manager,
+				a_cut_dict)
   {
     using namespace std;
-    
-    // create a new parameterized 'nand_cut' instance:
-    nand_cut * cut_ptr = new nand_cut;
-    i_binary_cut::install_cuts (configuration_, cut_dict_, *cut_ptr);
-    return cut_ptr;	 
-  }
-  
-  // register this creator:   
-  i_cut::creator_registration<nand_cut> nand_cut::__CR;
- 
-  string nand_cut::cut_id () const
-  {
-    return "cuts::nand_cut";
-  }
-  
-  cut_creator_t nand_cut::cut_creator () const
-  {
-    return nand_cut::create;
+    if (is_initialized ())
+      {
+	ostringstream message;
+	message << "cuts::nand_cut::initialize: "
+		<< "Cut '" << get_name () << "' is already initialized ! ";
+	throw logic_error (message.str ());
+      }
+
+    this->i_binary_cut::_install_cuts (a_configuration,a_cut_dict);
+
+    set_initialized_ (true);
+    return;	 
   }
   
 } // end of namespace cuts

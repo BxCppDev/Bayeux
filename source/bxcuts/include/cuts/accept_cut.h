@@ -17,40 +17,22 @@
 #define __cuts__accept_cut_h 1
 
 #include <cuts/i_cut.h>
+#include <cuts/cut_macros.h>
 
 namespace cuts {
 
-  class accept_cut : public i_cut
+  CUT_CLASS_DECLARE (accept_cut)
   {
     
   public: 
+
     // ctor:
-    accept_cut ();
-
-    // dtor:
-    virtual ~accept_cut ();
-  
-    virtual void set_user_data (void *);
-
-  protected:
-
-    virtual bool _accept (); 
-
-    /*************************************/
+    CUT_INTERFACE_CTOR_DTOR(accept_cut);
 
   private:
 
-    static creator_registration<accept_cut> __CR;
-
-  public:
-
-    virtual string cut_id () const;
-
-    virtual cut_creator_t cut_creator () const;
-
-    static i_cut * create (const properties & configuration_, 
-			   cut_dict_t * cut_dict_,
-			   void * user_ = 0);
+    // Macro to automate the registration of the cut :
+    CUT_REGISTRATION_INTERFACE(accept_cut);
 
   };
 

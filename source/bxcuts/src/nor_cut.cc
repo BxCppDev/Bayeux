@@ -1,77 +1,69 @@
 // -*- mode: c++ ; -*- 
-/* nor_cut.cc 
+/* nor_cut.cc
  */
 
 #include <cuts/nor_cut.h>
 
 #include <stdexcept>
+#include <sstream>
 
-namespace cuts {
+#include <datatools/utils/properties.h>
+
+namespace cuts { 
+
+  using namespace std;
+  
+  // Registration instantiation macro :
+  CUT_REGISTRATION_IMPLEMENT(nor_cut, "cuts::nor_cut");
   
   // ctor:
-  nor_cut::nor_cut () : i_binary_cut ()
+  nor_cut::nor_cut (int a_debug_level) 
+    : i_binary_cut ("cuts::nor_cut",
+		    "Nor cut",
+		    "1.0",
+		    a_debug_level)
   {
-  }
-
-  // ctor:
-  nor_cut::nor_cut (i_cut & cut_1_, i_cut & cut_2_) : 
-    i_binary_cut (cut_1_, cut_2_)
-  {
-  }
-  
-  // dtor:
-  nor_cut::~nor_cut ()
-  {
-  }
-
-  bool nor_cut::_accept ()
-  {
-    if (_cut_1 == 0) 
-      {
-	throw std::runtime_error ("nor_cut::_accept: Null 'cut 1' !");
-      }
-    if (_cut_2 == 0) 
-      {
-	throw std::runtime_error ("nor_cut::_accept: Null 'cut 2' !");
-      }
-    int c1 = (_cut_1->accept () == ACCEPT) ? 1 : 0;
-    int c2 = (_cut_2->accept () == ACCEPT) ? 1 : 0;
-    if ((c1 + c2) == 0) 
-      {
-	return (ACCEPT);
-      }
-    else 
-      {
-	return (REJECT);
-      }
+    return;
   }
  
-  // static method used within a cut factory:
-  i_cut * nor_cut::create (const properties & configuration_, 
-			   cut_dict_t * cut_dict_,
-			   void * user_)
+  // dtor:
+  CUT_DEFAULT_DESTRUCTOR_IMPLEMENT (nor_cut)
+
+  CUT_ACCEPT_IMPLEMENT_HEAD(nor_cut)
+  {
+    int status_1 = _handle_1.get ().process ();
+    int status_2 = _handle_2.get ().process ();
+    if ((status_1 < 0) || (status_2 < 0))
+      {
+	return INAPPLICABLE;
+      }
+    if ((status_1 + status_2) == 0) 
+      {
+	return (ACCEPTED);
+      }
+    return (REJECTED);
+  }
+
+  CUT_INITIALIZE_IMPLEMENT_HEAD(nor_cut,
+				a_configuration,
+				a_service_manager,
+				a_cut_dict)
   {
     using namespace std;
-    
-    // create a new parameterized 'nor_cut' instance:
-    nor_cut * cut_ptr = new nor_cut;
-    i_binary_cut::install_cuts (configuration_, cut_dict_, *cut_ptr);
-    return cut_ptr;	 
+    if (is_initialized ())
+      {
+	ostringstream message;
+	message << "cuts::nor_cut::initialize: "
+		<< "Cut '" << get_name () << "' is already initialized ! ";
+	throw logic_error (message.str ());
+      }
+
+    this->i_binary_cut::_install_cuts (a_configuration,a_cut_dict);
+
+    set_initialized_ (true);
+    return;	 
   }
   
-  // register this creator:   
-  i_cut::creator_registration<nor_cut> nor_cut::__CR;
- 
-  string nor_cut::cut_id () const
-  {
-    return "cuts::nor_cut";
-  }
-  
-  cut_creator_t nor_cut::cut_creator () const
-  {
-    return nor_cut::create;
-  }
- 
 } // end of namespace cuts
 
 // end of nor_cut.cc

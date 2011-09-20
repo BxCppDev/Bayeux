@@ -26,36 +26,29 @@ int main (int argc_, char ** argv_)
 
           if (token[0] == '-')
             {
-               string option = token; 
-               if ((option == "-d") || (option == "--debug")) 
-                 {
-                   debug = true;
-                 }
-               /* Here you may add more switches...
-                * else if (...) 
-                *  { 
-                *    ... 
-                *  }
-                */
-               else 
-                 { 
-                    clog << "warning: ignoring option '" << option << "'!" << endl; 
-                 }
+	      string option = token; 
+	      if ((option == "-d") || (option == "--debug")) 
+		{
+		  debug = true;
+		}
+              else 
+		{ 
+		  clog << "warning: ignoring option '" 
+		       << option << "'!" << endl; 
+		}
             }
           else
             {
               string argument = token; 
-              /* Here you may add more argument handlers... */
               { 
-                clog << "warning: ignoring argument '" << argument << "'!" << endl; 
+                clog << "warning: ignoring argument '" 
+		     << argument << "'!" << endl; 
               }
             }
           iarg++;
       }
     
       cuts::dummy_cuts my_dummy_cuts;
-    
-      // Here you may put stuff for testing the class...
 
     }
   catch (exception & x)

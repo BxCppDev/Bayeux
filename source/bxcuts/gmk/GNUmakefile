@@ -151,8 +151,8 @@ headers := $(notdir $(shell ls $(INCDIR)/$(PACKAGENAME)/*$(HEADEREXT) 2> /dev/nu
 
 ### If uncommented, this code force i_cut.cc to be the last in library 
 # due to initialization of a static scoped pointer or similar stuff:
-sources1 := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT) 2> /dev/null | sed -e "s@/i_cut.cc@/@g"))
-sources := $(sources1) i_cut.cc
+sources1 := $(notdir $(shell ls $(SRCDIR)/*$(SOURCEEXT) 2> /dev/null | sed -e "s@/cut_tools.cc@/@g"))
+sources := $(sources1) cut_tools.cc
 
 csources := $(notdir $(shell ls $(SRCDIR)/*$(CSOURCEEXT) 2> /dev/null))
 objects := $(sources:%$(SOURCEEXT)=%$(OBJEXT))
