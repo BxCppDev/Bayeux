@@ -139,8 +139,9 @@ namespace datatools {
 					return (ti == tf); 
 				}
 
-				/**  @param a_service_name The name of the service to be checked
-				 *   @return a reference to the service instance requested by name and type
+				/** Deprecated, please use the 'grab' method.  
+				 * @param a_service_name The name of the service to be checked
+				 *   @return a mutable reference to the service instance requested by name and type
 				 */
 				template<class T>
 				T & get (const string & a_service_name)
@@ -162,6 +163,19 @@ namespace datatools {
 					return dynamic_cast<T &> (the_service_entry.service_handle.get ());
 				}
 
+				/**  Same as previous mutable 'get' method
+				 *   @param a_service_name The name of the service to be checked
+				 *   @return a mutable reference to the service instance requested by name and type
+				 */
+				template<class T>
+				T & grab (const string & a_service_name)
+				{
+					return get<T> (a_service_name);
+				}
+
+				/**  @param a_service_name The name of the service to be checked
+				 *   @return a const reference to the service instance requested by name and type
+				 */
 				template<class T>
 				const T & get (const string & a_service_name) const
 				{
