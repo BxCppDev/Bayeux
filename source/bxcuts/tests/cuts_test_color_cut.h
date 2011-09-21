@@ -37,7 +37,7 @@ namespace cuts {
  
       void set_color (int a_color);
 
-     public:
+    public:
 
       CUT_INTERFACE_CTOR_DTOR (color_cut);
 

@@ -54,7 +54,11 @@ namespace cuts {
   class cut_service : public datatools::service::base_service
     {
     public:
-                   
+              
+			bool is_debug () const;
+			
+			void set_debug (bool);
+     
       bool owns_cut_manager () const;
              
       const cut_manager & get_cut_manager () const;
@@ -85,6 +89,7 @@ namespace cuts {
 
     private:
 
+			bool          _debug_;        //!< Debug flag
       bool          _owns_manager_; //!< Flag for embedded cut manager ownership
       cut_manager * _cut_manager_;  //!< Handle to the embedded cut manager
 

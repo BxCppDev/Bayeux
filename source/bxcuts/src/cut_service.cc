@@ -31,7 +31,18 @@ namespace cuts {
   
   /** Auto-registration of this service class in a central service Db */
   DATATOOLS_SERVICE_REGISTRATION_IMPLEMENT(cut_service, "cuts::cut_service")
-
+             
+	bool cut_service::is_debug () const
+	{
+		return _debug_;
+	}
+	
+	void cut_service::set_debug (bool a_debug)
+	{
+		_debug_ = a_debug;
+		return;
+	}
+	
   bool cut_service::owns_cut_manager () const
   {
     return _cut_manager_ != 0 && _owns_manager_;
@@ -46,7 +57,7 @@ namespace cuts {
                 << "No embedded cut manager is defined !"
                 << endl;
         throw logic_error (message.str ());
-     }
+      }
     return *_cut_manager_;
   }
   
@@ -78,32 +89,51 @@ namespace cuts {
   int cut_service::initialize (const datatools::utils::properties & a_config,
                                datatools::service::service_dict_type & a_service_dict)
   {
-    //bool debug = false;
+		if (is_initialized ())
+			{
+				ostringstream message;
+				message << "cuts::cut_service::initialize: "
+								<< "Service '" << get_name () << "' is already initialized ! ";
+				throw logic_error (message.str ());
+			}
+		
+		if (a_config.has_flag ("debug"))
+			{
+				set_debug (true);
+			}
 
     if (_cut_manager_ == 0)
       {
         if (a_config.has_key ("cut_manager.config"))
           {
-	    string config_filename = a_config.fetch_string ("cut_manager.config");
-	    datatools::utils::properties cut_manager_config;
-	    datatools::utils::fetch_path_with_env (config_filename);
-	    
-	    datatools::utils::properties::read_config (config_filename,
-						       cut_manager_config);
-	    _cut_manager_ = new cut_manager;
-	    _owns_manager_ = true;
-            //_cut_manager_->set_debug (debug);
+            string config_filename = a_config.fetch_string ("cut_manager.config");
+            datatools::utils::properties cut_manager_config;
+            datatools::utils::fetch_path_with_env (config_filename);
+      
+            datatools::utils::properties::read_config (config_filename,
+                                                       cut_manager_config);
+            _cut_manager_ = new cut_manager;
+            _owns_manager_ = true;
+            _cut_manager_->set_debug (is_debug ());
             _cut_manager_->initialize (cut_manager_config);
           }
       }
-    return EXIT_SUCCESS;
+ 
+		return EXIT_SUCCESS;
   }
 
   int cut_service::reset ()
   {
+       if (! is_initialized ())
+          {
+            ostringstream message;
+            message << "cuts::cut_service::reset: "
+                    << "Service '" << get_name () << "' is not initialized ! ";
+            throw logic_error (message.str ());
+          }
     if (_owns_manager_ && _cut_manager_ != 0)
       {
-	_cut_manager_->reset ();
+        _cut_manager_->reset ();
         delete _cut_manager_;
         _cut_manager_ = 0;
       }
@@ -116,6 +146,7 @@ namespace cuts {
     : base_service ("cuts::cut_service",
                     "A cut service")
   {
+		_debug_ = false;
     _owns_manager_ = false;
     _cut_manager_ = 0; 
     return;
