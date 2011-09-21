@@ -86,7 +86,7 @@ namespace cuts {
 
     cut_handle_dict_type & get_cuts ();
 
-    const cut_handle_dict_type & get_cuts ()const ;
+    const cut_handle_dict_type & get_cuts () const;
 
     bool is_initialized () const;
 

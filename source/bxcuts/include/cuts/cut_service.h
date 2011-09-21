@@ -52,53 +52,53 @@ namespace cuts {
   class cut_manager;
   
   class cut_service : public datatools::service::base_service
-    {
-    public:
+  {
+  public:
               
-			bool is_debug () const;
-			
-			void set_debug (bool);
+    bool is_debug () const;
+      
+    void set_debug (bool);
      
-      bool owns_cut_manager () const;
+    bool owns_cut_manager () const;
              
-      const cut_manager & get_cut_manager () const;
+    const cut_manager & get_cut_manager () const;
              
-      cut_manager & grab_cut_manager ();
+    cut_manager & grab_cut_manager ();
                                 
-      void set_cut_manager (const cut_manager & a_cut_manager);
+    void set_cut_manager (const cut_manager & a_cut_manager);
         
-    public:
+  public:
 
-      virtual bool is_initialized () const;
+    virtual bool is_initialized () const;
 
-      virtual int initialize (const datatools::utils::properties & a_config,
-                              datatools::service::service_dict_type & a_service_dict); 
+    virtual int initialize (const datatools::utils::properties & a_config,
+                            datatools::service::service_dict_type & a_service_dict); 
 
-      virtual int reset ();
+    virtual int reset ();
                   
-    public: 
+  public: 
 
-      // ctor:
-      cut_service ();
+    // ctor:
+    cut_service ();
         
-      // dtor:
-      virtual ~cut_service ();
+    // dtor:
+    virtual ~cut_service ();
         
-      virtual void tree_dump (ostream & a_out         = clog, 
-                              const string & a_title  = "",
-                              const string & a_indent = "",
-                              bool a_inherit          = false) const;
+    virtual void tree_dump (ostream & a_out         = clog, 
+                            const string & a_title  = "",
+                            const string & a_indent = "",
+                            bool a_inherit          = false) const;
 
-    private:
+  private:
 
-			bool          _debug_;        //!< Debug flag
-      bool          _owns_manager_; //!< Flag for embedded cut manager ownership
-      cut_manager * _cut_manager_;  //!< Handle to the embedded cut manager
+    bool          _debug_;        //!< Debug flag
+    bool          _owns_manager_; //!< Flag for embedded cut manager ownership
+    cut_manager * _cut_manager_;  //!< Handle to the embedded cut manager
 
-      // Registration :
-      DATATOOLS_SERVICE_REGISTRATION_INTERFACE (cut_service);
+    // Registration :
+    DATATOOLS_SERVICE_REGISTRATION_INTERFACE (cut_service);
                  
-    };
+  };
 
 }  // end of namespace cuts
 
