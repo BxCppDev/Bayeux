@@ -96,6 +96,12 @@ namespace cuts {
       {
 	cut_handle_type & ch = *i;
 	int status = ch.get ().process ();
+	if (is_debug ())
+	  {
+	    clog << "DEBUG: " << "cuts::multi_or_cut::process: " 
+		 << "Cut status = " << status 
+		 << endl;
+	  }
 	if (status == ACCEPTED)
 	  {
 	    return status;
@@ -120,6 +126,11 @@ namespace cuts {
 	message << "cuts::multi_or_cut::initialize: "
 		<< "Cut '" << get_name () << "' is already initialized ! ";
 	throw logic_error (message.str ());
+      }
+
+    if (a_configuration.has_flag ("debug"))
+      {
+	set_debug (true); 
       }
 
     if (_cuts_.size () == 0) 
