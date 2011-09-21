@@ -62,6 +62,8 @@ namespace cuts {
       bool owns_cut_manager () const;
              
       const cut_manager & get_cut_manager () const;
+             
+      cut_manager & grab_cut_manager ();
                                 
       void set_cut_manager (const cut_manager & a_cut_manager);
         

@@ -48,6 +48,19 @@ namespace cuts {
     return _cut_manager_ != 0 && _owns_manager_;
   }
 
+	cut_manager & cut_service::grab_cut_manager ()
+  {
+    if (_cut_manager_ == 0)
+      {
+        ostringstream message;
+        message << "cuts::cut_service::grab_cut_manager: "
+                << "No embedded cut manager is defined !"
+                << endl;
+        throw logic_error (message.str ());
+      }
+    return *_cut_manager_;
+  }
+
   const cut_manager & cut_service::get_cut_manager () const
   {
     if (_cut_manager_ == 0)
