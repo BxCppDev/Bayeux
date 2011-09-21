@@ -24,7 +24,7 @@ namespace datatools {
 
   namespace utils {
 
-    bool library_loader::g_devel = true;
+    bool library_loader::g_devel = false;
     bool library_loader::g_test  = false;
 
     /***********************
@@ -204,21 +204,27 @@ namespace datatools {
       while (! stacked_libraries_.empty ())
 	{
 	  if (g_devel)
-            clog << "DEVEL: " << "datatools::utils::library_loader::close_all: "
-                 << "library_loader::close_all: LOOP ****************" << endl;
+	    {
+	      clog << "DEVEL: " << "datatools::utils::library_loader::close_all: "
+		   << "library_loader::close_all: LOOP ****************" << endl;
+	    }
 	  handle_library_entry_type & hle = stacked_libraries_.front ();
 	  if (! hle.has_data ())
 	    {
 	      if (g_devel)
-                clog << "DEVEL: " << "datatools::utils::library_loader::close_all: "
-                     << "library_loader::close_all: NO DATA ****************" << endl;
+		{
+		  clog << "DEVEL: " << "datatools::utils::library_loader::close_all: "
+		       << "library_loader::close_all: NO DATA ****************" << endl;
+		}
 	      stacked_libraries_.pop_front (); // remove top element
 	    }
 	  else
 	    {
 	      if (g_devel)
-                clog << "DEVEL: " << "datatools::utils::library_loader::close_all: "
-                     << "library_loader::close_all: DATA *****************" << endl;
+		{
+		  clog << "DEVEL: " << "datatools::utils::library_loader::close_all: "
+		       << "library_loader::close_all: DATA *****************" << endl;
+		}
 	      library_entry_type & le = hle.get ();
 	      if (le.handle != 0)
 		{
@@ -250,9 +256,11 @@ namespace datatools {
                   le.handle = 0;
                   stacked_libraries_.pop_front (); // remove top element
                   if (g_devel)
-                    clog << "DEVEL: " << "datatools::utils::library_loader::close_all: "
-                         << "Stack size " << stacked_libraries_.size () << endl;
-		    // }
+		    {
+		      clog << "DEVEL: " << "datatools::utils::library_loader::close_all: "
+			   << "Stack size " << stacked_libraries_.size () << endl;
+		    }
+		  // }
 		  if (g_devel)
 		    {
 		      clog << "DEVEL: " << "datatools::utils::library_loader::close_all: "
