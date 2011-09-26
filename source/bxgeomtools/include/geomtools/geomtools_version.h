@@ -11,13 +11,13 @@
 //  GEOMTOOLS_VERSION / 100 % 1000 is the minor version
 //  GEOMTOOLS_VERSION / 100000     is the major version
 
-#define GEOMTOOLS_VERSION 200001
+#define GEOMTOOLS_VERSION 200101
 
 //  GEOMTOOLS_LIB_VERSION must be defined to be the same as GEOMTOOLS_VERSION
 //  but as a *string* in the form "x.y[.z]" where x is the major version
 //  number, y is the minor version number, and z is the patch level if not 0.
 
-#define GEOMTOOLS_LIB_VERSION "2.1"
+#define GEOMTOOLS_LIB_VERSION "2.1.1"
 
 #endif // __geomtools__geomtools_version_h
 
