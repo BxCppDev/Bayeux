@@ -22,14 +22,10 @@
 #include <list>
 #include <locale>
 
-//#ifdef IOFACTORY_USE_FPU
 #include <boost/math/nonfinite_num_facets.hpp>
-//#endif
 
 #include <datatools/utils/i_tree_dump.h>
 #include <brio/utils.h>
-
-//#include <TFile.h>
 
 class TFile;
 
