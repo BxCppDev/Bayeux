@@ -915,7 +915,7 @@ function do_install ()
 
     ### special Python wrapper/program:
     if [ -d ${the_python_dir} ]; then
-	if [ "x${pack_name_upper}_NO_PYTHON" != "x1" ]; then
+	if [ "x${GEOMTOOLS_NO_PYTHON}" != "x1" ]; then
 	    cd ${the_python_dir}
 	    make install
 	    cd ${the_gmk_dir}
