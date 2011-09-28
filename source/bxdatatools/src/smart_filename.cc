@@ -485,7 +485,7 @@ namespace datatools {
                 }
               smart_filename::make_list (*this, allow_duplicate);
               a_config.fetch ("list.filenames", list_vec);
-              for (int i = 0; i  < list_vec.size (); i++)
+              for (int i = 0; i < (int) list_vec.size (); i++)
                 {
                   this->add (list_vec[i]);
                 }

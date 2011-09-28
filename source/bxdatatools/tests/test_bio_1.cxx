@@ -43,7 +43,7 @@ void print_info (const vector<char> & v_)
   
   size_t imax = 40;
   bool b = false;
-  for (int i = 0; i < v_.size ();)
+  for (size_t i = 0; i < v_.size ();)
     {
       clog << v_[i];
       i++;
@@ -56,7 +56,7 @@ void print_info (const vector<char> & v_)
   if (b)
     {
       clog << " ... ";
-      for (int i = v_.size () - 20; i < v_.size (); i++)
+      for (size_t i = v_.size () - 20; i < v_.size (); i++)
 	{
 	  clog << v_[i];
 	}
@@ -83,7 +83,7 @@ int main (int argc_, char ** argv_)
 
 	vector<char> v1;
 	v1.assign (max_data_sz, '\0');
-	for (int i = 0; i < v1.size (); i++)
+	for (int i = 0; i < (int) v1.size (); i++)
 	  {
 	    v1[i] = 32 + i % 64; 
 	  }
@@ -128,7 +128,7 @@ int main (int argc_, char ** argv_)
 	clog << "Reading from a char array (version 1)..." << endl;
 
 	char * data = new char[max_data_sz];
-	for (int i = 0; i < max_data_sz; i++) 
+	for (int i = 0; i < (int) max_data_sz; i++) 
 	  {
 	    data[i] =  32 + i % 64;
 	  }
@@ -172,7 +172,7 @@ int main (int argc_, char ** argv_)
 	clog << "Reading from a char array (version 2)..." << endl;
 
 	char * data = new char[max_data_sz];
-	for (int i = 0; i < max_data_sz; i++) 
+	for (int i = 0; i < (int) max_data_sz; i++) 
 	  {
 	    data[i] =  32 + i % 64;
 	  }
@@ -227,7 +227,7 @@ int main (int argc_, char ** argv_)
 
 	std::vector<double> data (max_data_sz, 0.0);
 	srand48 (12345);
-	for (int i = 0; i < data. size(); i++) 
+	for (int i = 0; i < (int) data.size (); i++) 
 	  {
 	    data[i] = drand48 ();
 	  }
@@ -256,7 +256,7 @@ int main (int argc_, char ** argv_)
 
 	std::vector<double> data (max_data_sz, 0.0);
 	srand48 (12345);
-	for (int i = 0; i < data. size(); i++) 
+	for (int i = 0; i < (int) data.size (); i++) 
 	  {
 	    data[i] = drand48 ();
 	  }

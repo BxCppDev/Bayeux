@@ -556,7 +556,7 @@ namespace datatools {
 				{
 					a_service_config.fetch ("dependencies.strict", strict_dependencies);
 				}
-			for (int i = 0; i < strict_dependencies.size (); i++)
+			for (int i = 0; i < (int) strict_dependencies.size (); i++)
 				{
 					// XXX the_service_entry.service_masters;
 				}
@@ -676,7 +676,7 @@ namespace datatools {
 						else a_out << "|-- ";
 						const string & service_name = it->first;
 						const service_entry & the_service_entry = it->second;
-						const base_service & a_service = it->second.service_handle.get ();
+						//const base_service & a_service = the_service_entry.service_handle.get ();
 						a_out << "Name : '" << service_name << "'  Type : '" << the_service_entry.service_id << "' ";
 						a_out << '(';
 						int count = 0;
@@ -886,7 +886,7 @@ namespace datatools {
 			}
 
 			{
-				size_t count = 0;
+				//size_t count = 0;
 				a_out << indent << du::i_tree_dumpable::tag
 							<< "Services       : ";
 				size_t sz = services_.size ();

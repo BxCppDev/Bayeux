@@ -4,6 +4,7 @@
 #ifndef __datatools__serialization__check_h__
 #define __datatools__serialization__check_h__ 1
 
+#include <iostream>
 #include <set>
 #include <boost/assert.hpp>
 #include <cstring>

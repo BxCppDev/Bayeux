@@ -1,4 +1,4 @@
-/* -*- mode: c++; -*-
+/* -*- mode: c++; -*- */
 /* datatools::serialization::archives_instantiation.h */
 /*
  * Description :
@@ -36,12 +36,14 @@ template void T::serialize (A & ar, const unsigned int version);  \
 /**/
 
 #define DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL_IN(T)	\
+  DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::polymorphic_iarchive) \
   DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::text_iarchive) \
   DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::xml_iarchive) \
   DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::portable_binary_iarchive) \
   /**/
 
 #define DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL_OUT(T)	\
+  DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::polymorphic_oarchive) \
   DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::text_oarchive) \
   DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::xml_oarchive) \
   DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::portable_binary_oarchive) \
@@ -58,12 +60,14 @@ template void boost::serialization::serialize (A & ar, T & object, const unsigne
 /**/
 
 #define DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE_ALL_IN(T) \
+  DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::polymorphic_iarchive) \
   DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::text_iarchive) \
   DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::xml_iarchive) \
   DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::portable_binary_iarchive) \
   /**/
 
 #define DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE_ALL_OUT(T) \
+  DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::polymorphic_oarchive) \
   DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::text_oarchive) \
   DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::xml_oarchive) \
   DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::portable_binary_oarchive) \

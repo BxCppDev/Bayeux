@@ -15,6 +15,8 @@
 
 // The serializable 'things' container :
 #include <datatools/utils/things.h>
+#include <datatools/utils/things.ipp>
+
 // The serializable 'properties' container :
 #include <datatools/utils/properties.h>
 

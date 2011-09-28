@@ -67,7 +67,7 @@ namespace datatools {
 	      return;
 	    }
 	  buffer_.reserve (a_size);
-	  for (int i = current_size; i < a_size; i++)
+	  for (int i = current_size; i < (int) a_size; i++)
 	    {
 #ifdef DATATOOLS_UTILS_HANDLE_POOL_DEVEL
 	      clog << "DEVEL: " << "handle_pool<T>::_resize:   Add a handle with a new element...\n";

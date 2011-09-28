@@ -12,10 +12,11 @@
 
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/export.hpp>
-#include <datatools/serialization/i_serializable.h>
 
 // The serializable 'things' container :
 #include <datatools/utils/things.h>
+#include <datatools/utils/things.ipp>
+
 // The serializable 'properties' container :
 #include <datatools/utils/properties.h>
 

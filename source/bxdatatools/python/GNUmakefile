@@ -130,6 +130,8 @@ LDFLAGS1+=-lm
 CPPFLAGS+=$(shell echo $(CPPFLAGS1) | sed -e "s/-Wstrict-prototypes//g" | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py ) 
 LDFLAGS+=$(shell echo $(LDFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py -r) 
 
+#$(warning ----------------> CPPFLAGS=$(CPPFLAGS) )
+
 .PHONY : all
 all : lib
 

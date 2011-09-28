@@ -241,7 +241,7 @@ namespace datatools {
       template_ = new char [full_pattern_.size () + 10];
       template_[0] = '\0';
       if (devel) clog << "DEVEL: datatools::utils::temp_file::create: buffer is allocated !" << endl;
-      for (int i = 0; i < full_pattern_.size (); i++)
+      for (int i = 0; i < (int) full_pattern_.size (); i++)
 	{
 	  template_[i] = full_pattern_[i];
 	}

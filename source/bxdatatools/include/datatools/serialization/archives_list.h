@@ -26,6 +26,8 @@
 #ifndef __datatools__serialization__archives_list_h
 #define __datatools__serialization__archives_list_h 1
 
+#include <boost/archive/polymorphic_iarchive.hpp>
+#include <boost/archive/polymorphic_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/xml_iarchive.hpp>

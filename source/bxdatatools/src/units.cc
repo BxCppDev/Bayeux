@@ -5,6 +5,7 @@
 #include <datatools/utils/units.h>
 #include <datatools/utils/clhep_units.h>
 #include <vector>
+#include <limits>
 
 namespace datatools {
 
@@ -32,6 +33,7 @@ namespace datatools {
       if ((a_word == "pc") || (a_word == "parsec")) return CLHEP::parsec;
       if ((a_word == "inch")) return 2.54 * CLHEP::centimeter;
       throw_bad_unit_ ("length", a_word);
+      return numeric_limits<double>::quiet_NaN ();
     }
 
     double units::get_surface_unit_from (const string & a_word)
@@ -41,6 +43,7 @@ namespace datatools {
       if ((a_word == "mm2")) return CLHEP::millimeter2;
       if ((a_word == "km2")) return CLHEP::kilometer2;
       throw_bad_unit_ ("surface", a_word);
+      return numeric_limits<double>::quiet_NaN ();
     }
 
     double units::get_volume_unit_from (const string & a_word)
@@ -50,6 +53,7 @@ namespace datatools {
       if ((a_word == "mm3")) return CLHEP::millimeter3;
       if ((a_word == "km3")) return CLHEP::kilometer3;
       throw_bad_unit_ ("volume", a_word);
+      return numeric_limits<double>::quiet_NaN ();
     }
 
     double units::get_time_unit_from (const string & a_word)
@@ -62,6 +66,7 @@ namespace datatools {
       if ((a_word == "minute")) return 60 * CLHEP::second;
       if ((a_word == "h") || (a_word == "hour")) return 3600 * CLHEP::second;
       throw_bad_unit_ ("time", a_word);
+      return numeric_limits<double>::quiet_NaN ();
     }
 
     double units::get_angle_unit_from (const string & a_word)
@@ -70,12 +75,14 @@ namespace datatools {
       if ((a_word == "mrad") || (a_word == "milliradian")) return CLHEP::milliradian;
       if ((a_word == "deg") || (a_word == "degree")) return CLHEP::degree;
       throw_bad_unit_ ("angle", a_word);
+      return numeric_limits<double>::quiet_NaN ();
     }
 
     double units::get_solid_angle_unit_from (const string & a_word)
     {
       if ((a_word == "steradian")) return CLHEP::steradian;
       throw_bad_unit_ ("solid angle", a_word);
+      return numeric_limits<double>::quiet_NaN ();
     }
 
     double units::get_energy_unit_from (const string & a_word)
@@ -88,6 +95,7 @@ namespace datatools {
       if ((a_word == "PeV") || (a_word == "petaelectronvolt")) return CLHEP::petaelectronvolt;
       if ((a_word == "J") || (a_word == "joule")) return CLHEP::joule;
       throw_bad_unit_ ("energy", a_word);
+      return numeric_limits<double>::quiet_NaN ();
     }
 
     double units::get_mass_unit_from (const string & a_word)
@@ -101,6 +109,7 @@ namespace datatools {
       if ((a_word == "ug") || (a_word == "microgram")) return 1.e-3 * CLHEP::milligram;
       if ((a_word == "t") || (a_word == "ton")) return 1000. * CLHEP::kilogram;
       throw_bad_unit_ ("mass", a_word);
+      return numeric_limits<double>::quiet_NaN ();
     }
 
     double units::get_pressure_unit_from (const string & a_word)
@@ -110,6 +119,7 @@ namespace datatools {
       if ((a_word == "atmosphere")) return CLHEP::atmosphere;
       if ((a_word == "Pa") || (a_word == "pascal")) return CLHEP::hep_pascal;
       throw_bad_unit_ ("pressure", a_word);
+      return numeric_limits<double>::quiet_NaN ();
     }
 
     double units::get_magnetic_field_unit_from (const string & a_word)
@@ -118,12 +128,14 @@ namespace datatools {
       if ((a_word == "G") || (a_word == "gauss")) return CLHEP::gauss;
       if ((a_word == "kG") || (a_word == "kilogauss")) return CLHEP::kilogauss;
       throw_bad_unit_ ("magnetic field", a_word);
+      return numeric_limits<double>::quiet_NaN ();
     }
 
     double units::get_temperature_unit_from (const string & a_word)
     {
       if ((a_word == "kelvin")) return CLHEP::kelvin;
       throw_bad_unit_ ("temperature", a_word);
+      return numeric_limits<double>::quiet_NaN ();
     }
 
     double units::get_density_unit_from (const string & a_word)
@@ -132,6 +144,7 @@ namespace datatools {
       if ((a_word == "g/cm3")) return CLHEP::gram / CLHEP::cm3;
       if ((a_word == "kg/m3")) return CLHEP::kg / CLHEP::m3;
       throw_bad_unit_ ("density", a_word);
+      return numeric_limits<double>::quiet_NaN ();
     }
 
     double units::get_activity_unit_from (const string & a_word)
@@ -143,6 +156,7 @@ namespace datatools {
       if ((a_word == "MBq")) return 1.e+6 / CLHEP::second;
       if ((a_word == "GBq")) return 1.e+9 / CLHEP::second;
       throw_bad_unit_ ("activity", a_word);
+      return numeric_limits<double>::quiet_NaN ();
     }
 
     double units::get_volume_activity_unit_from (const string & a_word)
@@ -155,6 +169,7 @@ namespace datatools {
       if ((a_word == "MBq/m3")) return 1.e+6 * Bq_per_m3;
       if ((a_word == "GBq/m3")) return 1.e+9 * Bq_per_m3;
       throw_bad_unit_ ("volume_activity", a_word);
+      return numeric_limits<double>::quiet_NaN ();
     }
 
     double units::get_surface_activity_unit_from (const string & a_word)
@@ -167,18 +182,20 @@ namespace datatools {
       if ((a_word == "MBq/m2")) return 1.e+6 * Bq_per_m2;
       if ((a_word == "GBq/m2")) return 1.e+9 * Bq_per_m2;
       throw_bad_unit_ ("surface_activity", a_word);
+      return numeric_limits<double>::quiet_NaN ();
     }
 
     double units::get_mass_activity_unit_from (const string & a_word)
     {
       double Bq_per_kg = 1. / CLHEP::second / CLHEP::kg;
       if ((a_word == "Bq/kg"))  return 1.    * Bq_per_kg;
-      if ((a_word == "mBq/kg")) return 1.e-3 * Bq_per_kg;
-      if ((a_word == "uBq/kg")) return 1.e-6 * Bq_per_kg; 
-      if ((a_word == "kBq/kg")) return 1.e+3 * Bq_per_kg;
-      if ((a_word == "MBq/kg")) return 1.e+6 * Bq_per_kg;
-      if ((a_word == "GBq/kg")) return 1.e+9 * Bq_per_kg;
-      throw_bad_unit_ ("mass_activity", a_word);
+      else if ((a_word == "mBq/kg")) return 1.e-3 * Bq_per_kg;
+      else if ((a_word == "uBq/kg")) return 1.e-6 * Bq_per_kg; 
+      else if ((a_word == "kBq/kg")) return 1.e+3 * Bq_per_kg;
+      else if ((a_word == "MBq/kg")) return 1.e+6 * Bq_per_kg;
+      else if ((a_word == "GBq/kg")) return 1.e+9 * Bq_per_kg;
+      else throw_bad_unit_ ("mass_activity", a_word);
+      return numeric_limits<double>::quiet_NaN ();
     }
 
     double units::get_unit_from (const string & a_unit_type, 
@@ -251,6 +268,7 @@ namespace datatools {
       ostringstream message;
       message << "Invalid " << a_unit_type << " of unit :'" << a_unit_type << "' !";
       throw runtime_error (message.str ());
+      return numeric_limits<double>::quiet_NaN ();
     }
  
     bool units::find_unit (const string & a_unit_str, 

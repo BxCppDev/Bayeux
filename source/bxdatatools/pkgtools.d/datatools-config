@@ -229,7 +229,7 @@ if [ "x$opt" = "x--cflags" ]; then
 		    echo -n "-DDATATOOLS_XBIO=0 "
 		fi
 		echo -n "`clhep-config --include` "
-	    ) | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py
+	    ) | sed -e "s/-Wstrict-prototypes//g" -e "s/-Wall//g" | python ${THEPACK_ROOT}/pkgtools.d/mkuniqueflags.py
 	) | tee ${cflags_cache_effective}
 	test ${using_cache_files} -eq 0 && rm -f ${cflags_cache}
     fi

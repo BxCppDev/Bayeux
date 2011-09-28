@@ -25,7 +25,7 @@
 #include <datatools/utils/properties.h>
 
 // Some pre-processor guard about Boost I/O usage and linkage :
-#include <datatools/serialization/bio_guard.h>
+//#include <datatools/serialization/bio_guard.h>
  
 using namespace std;
 

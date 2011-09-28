@@ -159,7 +159,10 @@ LDFLAGS1+=$(DEPLDFLAGS)
 # default with libmath dependency:
 LDFLAGS1+=-lm
 
-CPPFLAGS+=$(shell echo $(CPPFLAGS1) | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py)
+CPPFLAGS+=$(shell echo $(CPPFLAGS1) | sed -e "s/-Wstrict-prototypes//g" -e "s/-Wall//g" | python $(PACKAGE_ROOT)/pkgtools.d/mkuniqueflags.py)
+$(warning WARNING: CPPFLAGS1=$(CPPFLAGS1) )
+$(warning WARNING: CPPFLAGS=$(CPPFLAGS) )
+
 # ifneq ($(DATATOOLS_NO_KWSYS),1)
 # DEPLDFLAGS_SORTED=-L$(LIBDIR)
 # endif
@@ -423,7 +426,8 @@ test_%$(BINEXT) : test_%$(PROGEXT) | lib_shared $(binlibdep)
 	@echo "NOTICE: EXELDFLAGS_BIO=$(EXELDFLAGS_BIO)" >&2
 	@echo "NOTICE: Compiling program '$(@)' with shared library..." >&2
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
-	$(CXX) -I. -I$(PROGDIR) $(python_cflags) $(CPPFLAGS) $(CXXFLAGS) $< $(EXELDFLAGS_BIO) $(DEPLDFLAGS_SORTED) -o $(BINDIR)/$(notdir $(@))
+	$(CXX) -I. $(CPPFLAGS) $(CXXFLAGS) $< $(EXELDFLAGS_BIO) $(DEPLDFLAGS_SORTED) -o $(BINDIR)/$(notdir $(@))
+	#$(CXX) -I. -I$(PROGDIR) $(python_cflags) $(CPPFLAGS) $(CXXFLAGS) $< $(EXELDFLAGS_BIO) $(DEPLDFLAGS_SORTED) -o $(BINDIR)/$(notdir $(@))
 
 .PHONY : dist
 dist : distclean

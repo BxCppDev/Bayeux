@@ -65,7 +65,7 @@ namespace datatools {
 					 i != service_slaves.end ();
 					 i++)
 				{
-					const string & the_slave_name = i->first;
+					//const string & the_slave_name = i->first;
 					int level = i->second;
 					if (level == STRICT_DEPENDENCY)
 						{

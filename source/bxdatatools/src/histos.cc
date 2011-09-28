@@ -160,9 +160,9 @@ namespace datatools {
       double x_step_size = ( __x_max - __x_min ) / (double)( __x_step );
       double y_step_size = ( __y_max - __y_min ) / (double)( __y_step );
     
-      for ( size_t i = 0; i < __x_step; i++ )
+      for ( int i = 0; i < __x_step; i++ )
 	{
-	  for ( size_t j = 0; j < __y_step; j++ )
+	  for ( int j = 0; j < __y_step; j++ )
 	    {
 	      if ( x_    >  ( __x_min + (double)(i)   * x_step_size )
 		   && x_ <= ( __x_min + (double)(i+1) * x_step_size )
@@ -185,8 +185,8 @@ namespace datatools {
 	   __y_max  == histo_3d_2_.get_y_max()  &&
 	   __y_step == histo_3d_2_.get_y_step() )
 	{
-	  for ( size_t i = 0; i < __x_step; i++ )
-	    for ( size_t j = 0; j < __y_step; j++ )
+	  for ( int i = 0; i < __x_step; i++ )
+	    for ( int j = 0; j < __y_step; j++ )
 	      if ( histo_3d_2_.get_z( i, j ) != 0. )
 		__histo_3d[i][j] /= histo_3d_2_.get_z( i, j );
 	      else
@@ -197,14 +197,14 @@ namespace datatools {
 
     void histos::x_normalize()
     {
-      for ( size_t i = 0; i < __x_step; i++ )
+      for ( int i = 0; i < __x_step; i++ )
 	{
 	  double i_sum = 0;
 	
-	  for ( size_t j = 0; j < __y_step; j++ )
+	  for ( int j = 0; j < __y_step; j++ )
 	    i_sum += __histo_3d[i][j];
 	
-	  for ( size_t j = 0; j < __y_step; j++ )
+	  for ( int j = 0; j < __y_step; j++ )
 	    {
 	      if ( __histo_3d[i][j] != 0 )
 		__histo_3d[i][j] /= i_sum;
@@ -214,14 +214,14 @@ namespace datatools {
   
     void histos::y_normalize()
     {
-      for ( size_t j = 0; j < __y_step; j++ )
+      for ( int j = 0; j < __y_step; j++ )
 	{
 	  double j_sum = 0;
 	
-	  for ( size_t i = 0; i < __x_step; i++ )
+	  for ( int i = 0; i < __x_step; i++ )
 	    j_sum += __histo_3d[i][j];
 	
-	  for ( size_t i = 0; i < __x_step; i++ )
+	  for ( int i = 0; i < __x_step; i++ )
 	    {
 	      if ( __histo_3d[i][j] != 0 )
 		__histo_3d[i][j] /= j_sum;
@@ -234,7 +234,7 @@ namespace datatools {
     {
       std::vector<double> x_values;
       double x_step_size = ( __x_max - __x_min ) / (double)( __x_step );
-      double y_step_size = ( __y_max - __y_min ) / (double)( __y_step );
+      //double y_step_size = ( __y_max - __y_min ) / (double)( __y_step );
       for ( int i = 0; i < __x_step; i++ )
         for ( int j = 0; j < __y_step; j++ )
           x_values.push_back ( __x_min + (double)(i) * x_step_size );
@@ -244,7 +244,7 @@ namespace datatools {
     void histos::get_y_values ( std::vector<double> & values_ )
     {
       std::vector<double> y_values;
-      double x_step_size = ( __x_max - __x_min ) / (double)( __x_step );
+      //double x_step_size = ( __x_max - __x_min ) / (double)( __x_step );
       double y_step_size = ( __y_max - __y_min ) / (double)( __y_step );
       for ( int i = 0; i < __x_step; i++ )
         for ( int j = 0; j < __y_step; j++ )

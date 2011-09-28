@@ -177,7 +177,7 @@ namespace datatools {
 	cerr << "|-- Buffer size:     " << __buffer.size () << endl;
 	cerr << "|-- Buffer capacity: " << __buffer.capacity () << endl;
 	cerr << "|-- Buffer contains: `";
-	for (int i = 0; i < __buffer.size (); i++)
+	for (int i = 0; i < (int) __buffer.size (); i++)
 	  {
 	    cerr << __buffer[i];
 	  }
@@ -243,8 +243,8 @@ namespace datatools {
 	  }
 
 	const size_t capacity = __buffer.capacity ();
-	const size_t max_size = __buffer.max_size ();
-	const size_t size     = __buffer.size ();
+	//const size_t max_size = __buffer.max_size ();
+	//const size_t size     = __buffer.size ();
 	/*
 	  std::cerr << "vector_output_buffer::overflow: capacity=" << capacity << std::endl;
 	  std::cerr << "vector_output_buffer::overflow: capacity=" << __max_capacity << std::endl;

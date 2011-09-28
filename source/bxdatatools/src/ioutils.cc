@@ -63,7 +63,7 @@ namespace datatools {
 
     ostream & operator<< (ostream & out_, const io::indenter & indent_)
     {
-      for (int i = 0; i < indent_.__width * indent_.__level; i++)
+      for (int i = 0; i < (int) (indent_.__width * indent_.__level); i++)
 	{
 	  out_ << ' ';
 	}

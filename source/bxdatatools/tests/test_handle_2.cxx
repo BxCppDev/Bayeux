@@ -135,11 +135,11 @@ int main (int argc_ , char ** argv_)
 	  computing_time CT2;
 	  ofstream foa ("test_handle_2a.txt");
 	  hits.reserve (nhits);
-	  for (int i = 0; i < nevents; i++)
+	  for (int i = 0; i < (int) nevents; i++)
 	    {
 	      if ((i % 100) == 0) clog << "#i=" << i << endl;
 	      CT2.start ();
-	      for (int j = 0; j < nhits; j++)
+	      for (int j = 0; j < (int) nhits; j++)
 		{
 		  hit_handle_t hh (new hit (j, j * 10. ));
 		  hits.push_back (hh);
@@ -168,11 +168,11 @@ int main (int argc_ , char ** argv_)
 	  computing_time CT2;
 	  ofstream foa ("test_handle_2b.txt");
 	  hits.reserve (nhits);
-	  for (int i = 0; i < nevents; i++)
+	  for (int i = 0; i < (int) nevents; i++)
 	    {
 	      if ((i % 100) == 0) clog << "#i=" << i << endl;
 	      CT2.start ();
-	      for (int j = 0; j < nhits; j++)
+	      for (int j = 0; j < (int) nhits; j++)
 		{
 		  hits.push_back (hit (j, j * 10. ));
 		}
@@ -201,11 +201,11 @@ int main (int argc_ , char ** argv_)
 	  computing_time CT2;
 	  ofstream foa ("test_handle_2c.txt");
 	  hits.reserve (nhits);
-	  for (int i = 0; i < nevents; i++)
+	  for (int i = 0; i < (int) nevents; i++)
 	    {
 	      if ((i % 100) == 0) clog << "#i=" << i << endl;
 	      CT2.start ();
-	      for (int j = 0; j < nhits; j++)
+	      for (int j = 0; j < (int) nhits; j++)
 		{
 		  hits.push_back (pool.create ());
 		  hits.back ().get ().set_id (j).set_tdc (j * 10.);

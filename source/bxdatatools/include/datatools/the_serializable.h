@@ -14,8 +14,7 @@
  * datatools::serialization::i_serializable *
  ********************************************/
 
-//BOOST_CLASS_EXPORT_IMPLEMENT(datatools::serialization::i_serializable) 
-
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::serialization::i_serializable)
 
 /********************************
  * datatools::utils::properties *

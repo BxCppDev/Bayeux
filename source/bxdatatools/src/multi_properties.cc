@@ -328,7 +328,8 @@ namespace datatools {
 	      clog << endl;
 	    }
 	}
-      size_t n = entries_.erase (a_key);
+      //size_t n = entries_.erase (a_key);
+      entries_.erase (a_key);
       return;
     }
 
