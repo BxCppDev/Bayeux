@@ -82,7 +82,7 @@ endif
 python_bin=python${PYVERSION}
 python_version=$(shell $(python_bin) -V 2>&1 | tr -s ' ' | cut -d' ' -f2 | cut -d'.' -f1,2)
 python_config=python$(python_version)-config
-python_cflags=$(shell $(python_config) --cflags)
+python_cflags=$(shell $(python_config) --cflags | sed -e "s/-Wstrict-prototypes//g" -e "s/-Wall//g" )
 python_ldflags=$(shell $(python_config) --ldflags)
 
 binlibdep=lib
@@ -99,8 +99,8 @@ endif
 ifeq ($(shell which boost-config),)
 $(error Sorry boost-config not found!)
 endif
-DEPCPPFLAGS+=$(shell boost-config --cflags)
-DEPLDFLAGS+=$(shell boost-config --ldflags serialization iostreams filesystem)
+DEPCPPFLAGS+=$(shell boost-config --cflags serialization iostreams filesystem )
+DEPLDFLAGS+=$(shell boost-config --ldflags serialization iostreams filesystem )
 
 # CLHEP dependency :
 ifeq ($(strip $(shell which clhep-config 2> /dev/null)),)
@@ -426,8 +426,9 @@ test_%$(BINEXT) : test_%$(PROGEXT) | lib_shared $(binlibdep)
 	@echo "NOTICE: EXELDFLAGS_BIO=$(EXELDFLAGS_BIO)" >&2
 	@echo "NOTICE: Compiling program '$(@)' with shared library..." >&2
 	@test -d $(BINDIR) || mkdir -p $(BINDIR)
-	$(CXX) -I. $(CPPFLAGS) $(CXXFLAGS) $(python_cflags) $< $(EXELDFLAGS_BIO) $(DEPLDFLAGS_SORTED) -o $(BINDIR)/$(notdir $(@))
-	#$(CXX) -I. -I$(PROGDIR) $(python_cflags) $(CPPFLAGS) $(CXXFLAGS) $< $(EXELDFLAGS_BIO) $(DEPLDFLAGS_SORTED) -o $(BINDIR)/$(notdir $(@))
+	@$(CXX) -I. $(CPPFLAGS) $(CXXFLAGS) $(python_cflags) $< $(EXELDFLAGS_BIO) $(DEPLDFLAGS_SORTED) -o $(BINDIR)/$(notdir $(@))
+	@#$(CXX) -I. $(CPPFLAGS) $(CXXFLAGS)  $< $(EXELDFLAGS_BIO) $(DEPLDFLAGS_SORTED) -o $(BINDIR)/$(notdir $(@))
+	@#$(CXX) -I. -I$(PROGDIR) $(python_cflags) $(CPPFLAGS) $(CXXFLAGS) $< $(EXELDFLAGS_BIO) $(DEPLDFLAGS_SORTED) -o $(BINDIR)/$(notdir $(@))
 
 .PHONY : dist
 dist : distclean
