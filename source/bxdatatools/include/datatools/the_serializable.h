@@ -16,6 +16,7 @@
 
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::serialization::i_serializable)
 
+
 /********************************
  * datatools::utils::properties *
  ********************************/
@@ -28,14 +29,14 @@ BOOST_CLASS_EXPORT_IMPLEMENT(datatools::utils::properties)
  * datatools::utils::multi_properties *
  **************************************/
 
-//DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::utils::multi_properties)
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::utils::multi_properties)
 BOOST_CLASS_EXPORT_IMPLEMENT(datatools::utils::multi_properties) 
 
 
 /****************************
  * datatools::utils::things *
  ****************************/
-//DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::utils::things)
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::utils::things)
 BOOST_CLASS_EXPORT_IMPLEMENT(datatools::utils::things) 
 
 

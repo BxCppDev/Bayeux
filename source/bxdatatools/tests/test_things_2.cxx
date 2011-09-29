@@ -11,11 +11,10 @@
 #include <datatools/serialization/archives_instantiation.h>
 
 #include <boost/serialization/nvp.hpp>
-#include <boost/serialization/export.hpp>
 
 // The serializable 'things' container :
 #include <datatools/utils/things.h>
-#include <datatools/utils/things.ipp>
+//#include <datatools/utils/things.ipp>
 
 // The serializable 'properties' container :
 #include <datatools/utils/properties.h>
@@ -179,6 +178,8 @@ void B::dump (ostream & out) const
  * Boost/Serialization export/implement/instantiation code *
  * for the A and B classes                                 *
  ***********************************************************/
+
+#include <boost/serialization/export.hpp>
 
 /*** use some macros to implement serialization stuff for class A ***/
 BOOST_CLASS_EXPORT_KEY2 (A, "test_things::A")
