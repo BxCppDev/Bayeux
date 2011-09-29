@@ -67,6 +67,10 @@ int main (int argc_, char ** argv_)
 	reader.load (bag1);							
 
 	bag1.tree_dump (clog, "Bag (reload) : ");
+
+	const genbb::primary_event & e1 = bag1.get<genbb::primary_event> ("e1");
+	e1.dump (clog, "Primary event : ");
+
       }
     }
   catch (std::exception & x)
