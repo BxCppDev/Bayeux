@@ -7,7 +7,6 @@
 #include <boost/archive/archive_exception.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
-#include <boost/serialization/version.hpp>
 
 #include <boost/serialization/vector.hpp>
 
@@ -34,6 +33,7 @@ namespace geomtools {
 
 } // end of namespace geomtools 
 
+#include <boost/serialization/version.hpp>
 BOOST_CLASS_VERSION(geomtools::geom_id, 1)
 
 #endif // __geomtools__geom_id_ipp

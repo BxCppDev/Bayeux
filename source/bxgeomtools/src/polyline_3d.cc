@@ -10,9 +10,7 @@ namespace geomtools {
  
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (polyline_3d,"geomtools::polyline_3d")
 
-  //const string polyline_3d::SERIAL_TAG = "__geomtools::polyline_3d__";
-
-  const string polyline_3d::POLYLINE_3D_LABEL = "line_3d";
+  const string polyline_3d::POLYLINE_3D_LABEL = "polyline_3d";
 
   string polyline_3d::get_shape_name () const
   {
@@ -82,11 +80,11 @@ namespace geomtools {
   {
     if (is_empty ())
       {
-	throw runtime_error ("polyline_3d::get_point: Empty point collection!");
+	throw logic_error ("polyline_3d::get_point: Empty point collection!");
       }
     if ((i_ < 0) || (i_ >= (int) __points.size ()))
       {
-	throw runtime_error ("polyline_3d::get_point: Invalid point index!");
+	throw logic_error ("polyline_3d::get_point: Invalid point index!");
       }
     int i = 0;
     point_col::const_iterator it = __points.begin ();
@@ -111,7 +109,7 @@ namespace geomtools {
   {
     if (is_empty ())
       {
-	throw runtime_error ("polyline_3d::get_vertex: Empty vertex collection!");
+	throw logic_error ("polyline_3d::get_vertex: Empty vertex collection!");
       }
 
     if (! is_closed ())
@@ -121,7 +119,7 @@ namespace geomtools {
     
     if ((i_ < 0) || (i_ >= get_number_of_vertex ()))
       {
-	throw runtime_error ("polyline_3d::get_vertex: Invalid vertex index!");
+	throw logic_error ("polyline_3d::get_vertex: Invalid vertex index!");
       }
     return get_point (i_ % get_number_of_points ());
   }
@@ -149,14 +147,14 @@ namespace geomtools {
 				 double tolerance_) const
   {
     bool on_curve = false;
-    throw runtime_error ("polyline_3d::is_on_curve: Not implemented yet !");
+    throw logic_error ("polyline_3d::is_on_curve: Not implemented yet !");
     return on_curve;
   }
 
   vector_3d polyline_3d::get_direction_on_curve (const vector_3d & position_) const
   {
     vector_3d dir;
-    throw runtime_error ("polyline_3d::get_direction_on_curve: Not implemented yet !");
+    throw logic_error ("polyline_3d::get_direction_on_curve: Not implemented yet !");
     return dir;
   }
 

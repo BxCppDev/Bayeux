@@ -125,7 +125,7 @@ namespace geomtools {
 	 << "Shape name : \"" << get_shape_name () << "\"" << endl;
 
     out_ << indent << i_tree_dumpable::tag 
-	 << "Tolerance  = " << __tolerance / CLHEP::mm << " mm" << endl;
+	 << "Tolerance  = " << __tolerance << endl; /* / CLHEP::mm << " mm" << endl; */
 
     {
       out_ << indent << du::i_tree_dumpable::tag

@@ -23,6 +23,9 @@
 // The serializable 'properties' container :
 #include <datatools/utils/properties.h>
 #include <geomtools/geom_id.h>
+#include <geomtools/line_3d.h>
+#include <geomtools/helix_3d.h>
+#include <geomtools/polyline_3d.h>
 
 // Some pre-processor guard about Boost I/O usage and linkage :
 #include <datatools/serialization/bio_guard.h>
@@ -252,6 +255,14 @@ int main (int argc_, char ** argv_)
 						bag.add<datatools::utils::properties> ("p1", "A property store").set_description ("A list of properties");
 					}
 
+					{
+						geomtools::line_3d & l1 = bag.add<geomtools::line_3d> ("l1", "A 3D line");
+						l1.set_first (geomtools::vector_3d (0.,0.,0.));
+						l1.set_last (geomtools::vector_3d (1.,1.,1.));
+						bag.add<geomtools::helix_3d> ("h1", "A 3D helix");
+						bag.add<geomtools::polyline_3d> ("pl1", "A 3D polyline");
+					}
+
 					// basic dump :
 					bag.dump (clog);
 				
@@ -454,6 +465,17 @@ int main (int argc_, char ** argv_)
 						p1.tree_dump(clog, "p1");
 						}
 					*/
+					if (bag.has ("l1"))
+						{
+							const geomtools::line_3d & l1 = bag.get<geomtools::line_3d> ("l1");
+							l1.tree_dump (clog, "3D-line 'l1':");
+						}
+
+					if (bag.has ("pl1"))
+						{
+							const geomtools::polyline_3d & pl1 = bag.get<geomtools::polyline_3d> ("pl1");
+							pl1.tree_dump (clog, "3D-polyline 'pl1':");
+						}
 
 					if (bag.has ("a1"))
 						{

@@ -149,8 +149,8 @@ namespace geomtools {
 	 << __last
 	 << endl;
     out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_) 
-	 << "Lenght : " 
-	 << get_length() / CLHEP::mm << " mm"
+	 << "Length : " 
+	 << get_length() /* / CLHEP::mm << " mm"*/
 	 << endl;
     return;
   }
@@ -172,14 +172,14 @@ namespace geomtools {
 			     double tolerance_) const
   {
     bool on_curve = false;
-    throw runtime_error ("line_3d::is_on_curve: Not implemented yet !");
+    throw logic_error ("line_3d::is_on_curve: Not implemented yet !");
     return on_curve;
   }
 
   vector_3d line_3d::get_direction_on_curve (const vector_3d & position_) const
   {
     vector_3d dir;
-    throw runtime_error ("line_3d::get_direction_on_curve: Not implemented yet !");
+    throw logic_error ("line_3d::get_direction_on_curve: Not implemented yet !");
     return dir;
   }
 

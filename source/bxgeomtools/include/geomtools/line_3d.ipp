@@ -7,7 +7,6 @@
 #include <boost/archive/archive_exception.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
-#include <boost/serialization/version.hpp>
 
 #include <datatools/serialization/utils.h>
 #include <geomtools/line_3d.h>
@@ -32,6 +31,7 @@ namespace geomtools {
 
 } // end of namespace geomtools 
 
+#include <boost/serialization/version.hpp>
 BOOST_CLASS_VERSION(geomtools::line_3d, 1)
 
 #endif // __geomtools__line_3d_ipp
