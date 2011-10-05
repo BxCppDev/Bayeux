@@ -1,0 +1,6 @@
+Variable 'b' is              : 1 (bool)
+Variable 'c' is              : 'B'  (char)
+Variable 'answer' is         : 42 (unsigned 32-bit integer)
+Variable 'computing_time' is : 7500000 (single precision 32-bit float)
+Variable 'e' is              : 2.71828182845905 (double precision 64-bit float)
+Variable 'slogan' is         : "DON'T PANIC" (std::string)

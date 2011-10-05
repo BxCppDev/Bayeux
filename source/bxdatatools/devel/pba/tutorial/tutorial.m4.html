@@ -1,0 +1,411 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="styles/boost.css" type="text/css">
+<link rel="stylesheet" href="styles/style.css" type="text/css">
+<!--link rel="home" href="./index.html"   title="The Boost Portable Binary Archives"-->
+<!--link rel="up"   href="XXX.html" title=""-->
+<!--link rel="prev" href="YYY.html" title=""-->
+<!--link rel="next" href="ZZZ.html" title=""-->
+<title>Serialization - Portable Binary Archives Tutorial</title>
+</head>
+
+<!--------------------------------------------------------------------------------->
+
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+
+<table cellpadding="2" width="100%">
+  <tr> 
+    <td valign="top" width="300"> 
+      <h3><a href="../../../index.htm">
+          <img height="86" width="277" alt="Boost" src="./images/boost.png" border="0"></a></h3>
+    </td>
+
+    <td valign="top"> 
+      <h1 align="center">Boost/Serialization &dash; Portable Binary Archives</h1>
+      <h2 align="center">Tutorial</h2>
+    </td>
+  </tr>
+
+<!--tr-->
+<!--td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="./images/boost.png"></td-->
+<!--td align="center"><a href="../../../index.html">Home</a></td-->
+<!--td align="center"><a href="../../../libs/libraries.htm">Libraries</a></td-->
+<!--td align="center"><a href="http://www.boost.org/.htm">Serialization</a></td-->
+<!--td align="center"><a href="http://www.boost.org/users/people.html">People</a></td-->
+<!--td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td-->
+<!--td align="center"><a href="../../../more/index.htm">More</a></td-->
+<!--/tr-->
+</table>
+
+<!--------------------------------------------------------------------------------->
+<hr>
+<dl class="index">
+  <dt><a href="#Quick_start">Quick start</a></dt>
+
+  <dt><a href="#Format">Format</a></dt>
+
+  <dt><a href="#Samples">Samples</a></dt>
+</dl>
+
+<p>
+</p>
+
+<!--------------------------------------------------------------------------------->
+<h2><a name="Quick_start"></a>Quick start</h2>
+
+Are you impatient ? If so, this section is for you.
+
+<h3><a name="Quick_start:store_1"></a>How to store some simple data types in a <i>portable binary output archive</i></h2>
+
+<p>
+The <a href="./code/tutorial_pba_0.cpp" >tutorial_pba_0.cpp</a> sample
+program uses a <tt>boost:archive::portable_binary_oarchive</tt> object
+attached  to  a standard  output  file stream  to  store  a couple  of
+variables  of primitive  types (<tt>bool</tt>,  <tt>char</tt>, integer
+numbers, floating numbers and even a standard <tt>string</tt>).
+</p>
+
+
+<p>
+include(`tutorial_pba_0.cpp.html')
+</p>
+
+<p>
+The executable create the <tt>pba_0.data</tt> file which contains the following bytes:
+<pre>include(`pba_0.bin')</pre>
+here obtained invoking <tt>od -t u1 pba_0.data</tt> on a GNU/Linux system.
+This format is explained in details below.
+</p>
+
+<p>
+Note: One should notice that this program makes use of the <i>typedef-ed</i> integer types
+from the <tt>boost/cstdint.hpp</tt> header (<tt>uint32_t</tt>...). It is a strong 
+recommendation (mandatory !) that ensures cross-environment portability of integer numbers.
+</p>
+
+<h3><a name="Quick_start:load_1"></a>How to load some simple data from a <i>portable binary input archive</i></h2>
+
+<p>
+The <a href="./code/tutorial_pba_1.cpp" >tutorial_pba_1.cpp</a> sample
+program uses a <tt>boost:archive::portable_binary_iarchive</tt> object
+attached  to  a standard  input  file stream  to  load  the
+variables  of primitive  types (<tt>bool</tt>,  <tt>char</tt>, integer
+numbers, floating numbers and even a standard <tt>string</tt>)
+previously stored by the <a href="./code/tutorial_pba_0.cpp" >tutorial_pba_0.cpp</a>.
+program in the <tt>pba_0.data</tt> file.
+</p>
+
+
+<p>
+include(`tutorial_pba_1.cpp.html')
+</p>
+
+<p>
+The executable  read the <tt>pba_0.data</tt> file  and deserialize its
+contents; it then prints the restored values of the variables:
+<pre>include(`tutorial_pba_1.out')</pre>
+</p>
+
+<!--------------------------------------------------------------------------------->
+<h2><a name="Format"></a>Format</h2>
+
+<p>
+This section  aims to detail  the intrinsic format of  portable binary
+archives (PBA). We will analyse the byte contents of the sample binary
+archive  created  by   the  <tt>tutorial_pba_0.cpp</tt>  program  (see
+previous section).
+</p>
+
+<p>
+Like any other archive format within Boost/Serialization, a PBA starts
+with  a header  (this is  the default  behaviour but it  is  possible to
+deactivate  the   use  of  this   header  using  a  special   flag  at
+construction).  This header is made of two informations :
+<ul>
+  <li>
+    a <em>magic byte</em> which equals  the expression <tt>'e' |  'o' |
+    's'</tt>, which gives:
+      <pre>127</pre>
+  <li>
+    the Boost  library version number  which is encoded as  an integer
+    number.
+    <p>The PBA  encoding of integer  numbers first stores  the minimal
+      number   of  non  zero   bytes  needed   to  store   the  binary
+      representation of  the integer value, then the  bytes are stored
+      starting  from  the  less  significant ones.   For  the  library
+      version number we have here:
+      <pre>1 9</pre>
+      where  <tt>1</tt> is  the number  of  byte needed  to store  the
+      value <tt>9</tt> which comes  with the Serialization library for
+      Boost version 1.47.
+</ul>
+</p>
+</p>
+
+<p>
+Now we are done with the header, let's have a look on the serialized data.
+</p>
+
+<ul>
+<li>
+The first variable  is of boolean type with  value <tt>true</tt>. Here
+the  PBA  conventionnaly  encode   the  <tt>true</tt>  value  has  the
+character  <tt>'T'</tt> which  is  stored as  the corresponding  ASCII
+integer value (<tt>84</tt>). This uses only one byte:
+<pre>1  84</pre>
+</p>
+
+<li>The    next    variable     is    a    8-bit    character    taking
+value <tt>'B'</tt>. Again it PBA  encode it as its ASCII integer value
+(<tt>66</tt>) which needs only one bytes. This gives:
+<pre>1  66</pre>
+</p>
+
+<li>Then we have an unsigned 32-bit integer with value <tt>42</tt>.  As
+the natural  binary 32-bit encoding of this value (< 255) only needs 
+one  non-zero byte, the PBA stores :
+<pre>1  42</pre>
+</p>
+
+<li>The   next   variable   is   a   single   precision   number   with
+value <tt>7.5e6</tt>.  Following the IEEE 754 standard one thus uses 4
+bytes  to encode  the  sign bit,  the  8-bit exponent  and the  23-bit
+significant   (mantissa).    As   <tt>7.5e6</tt>  can   be   rewritten
+in <tt><font color="red">+</font><font color="magenta">1</font>.<font color="green">78813934</font>
+&times;  2<sup><font color="blue">22</font></sup></tt>,  we have  the
+following bits contents:<br>
+<br>
+<tt><font color="red">0</font><font color="blue">10010101</font><font 
+color="magenta">1</font><font color="green">11001001110000111000000</font></tt><br><br>
+where the not stored <i>phantom bit</i> is conventionaly set at <font color="magenta">1</font>
+and the exponent is stored after being shifted conventionaly by <tt>2<sup>7</sup>-1=127</tt>, thus
+<tt>(<font color="blue">10010101</font>)<sub>2</sub>=(149)<sub>10</sub></tt> .<br>
+
+<br>
+Packing these bits using 4 bytes, we get:<br><br>
+<table border="1">
+<tr align="center">
+<td><tt><font color="red">0</font><font color="blue">1001010</font></tt></td>
+<td><tt><font color="blue">1</font><font color="green">1100100</font></tt></td>
+<td><tt><font color="green">11100001</font></tt></td>
+<td><tt><font color="green">11000000</font></tt></td>
+</tr>
+<tr align="center">
+<td><tt>74</tt></td>
+<td><tt>228</tt></td>
+<td><tt>225</tt></td>
+<td><tt>192</tt></td>
+</tr>
+</table>
+<br>
+
+Thus the PBA uses the <tt id="pre">4</tt> following bytes in reverse order:
+<pre>192 225 228 74</pre>
+
+<li>The next floating number 2.71828182845905 = 
+<tt><font color="red">+</font>dnl
+<font color="magenta">1</font>.<font color="green">35914091422952</font>
+&times;  2<sup>(<font color="blue">1024</font>-1023)</sup></tt>,  
+is stored using <tt id="pre">8</tt> bytes using the double precision 64-bit IEEE 754 scheme:
+<br><br>
+<table border="1">
+<tr align="center">
+<td><tt><font color="red">0</font><font color="blue">1000000</font></tt></td>
+<td><tt><font color="blue">0000</font><font color="green">0101</font></tt></td>
+<td><tt><font color="green">11011111</font></tt></td>
+<td><tt><font color="green">00001010</font></tt></td>
+<td><tt><font color="green">10001011</font></tt></td>
+<td><tt><font color="green">00010100</font></tt></td>
+<td><tt><font color="green">01010111</font></tt></td>
+<td><tt><font color="green">01110100</font></tt></td>
+</tr>
+<tr align="center">
+<td><tt>64</tt></td>
+<td><tt>5</tt></td>
+<td><tt>191</tt></td>
+<td><tt>10</tt></td>
+<td><tt>139</tt></td>
+<td><tt>20</tt></td>
+<td><tt>87</tt></td>
+<td><tt>116</tt></td>
+</tr>
+</table>
+<br>
+
+Thus the PBA uses the following <tt id="pre">8</tt> bytes :
+<pre>116 87 20 139 10 191 5 64</pre>
+
+<li>Finally the string <tt>"DON'T PANIC"</tt> is stored:
+  <ul>
+    <li>
+      first is given the number of bytes (characters)
+      using the PBA integer encoding scheme: <br>
+<pre>1  11</pre>
+    <li> then the array of 11 characters is given using the corresponding
+      ASCII code:
+<br><br>
+<table border="1">
+<tr align="center">
+<td><tt>D</td>
+<td><tt>O</td>
+<td><tt>N</td>
+<td><tt>'</td>
+<td><tt>T</td>
+<td><tt> </td>
+<td><tt>P</td>
+<td><tt>A</td>
+<td><tt>N</td>
+<td><tt>I</td>
+<td><tt>C</td>
+ </tr>
+<tr align="center">
+<td><tt>68</td>
+<td><tt>79</td>
+<td><tt>78</td>
+<td><tt>39</td>
+<td><tt>84</td>
+<td><tt>32</td>
+<td><tt>80</td>
+<td><tt>65</td>
+<td><tt>78</td>
+<td><tt>73</td>
+<td><tt>67</td>
+</tr>
+</table>
+<br>
+<pre>68  79  78  39  84  32  80 65  78  73  67 </pre>
+  </ul>
+
+</ul>
+
+</p>
+
+<p>
+Now the contents of the <tt>pba_0.data</tt> file is fully
+understood :
+<pre>include(`pba_0.bin')</pre> 
+
+More details about the format will be given in other examples.
+</p>
+<!--------------------------------------------------------------------------------->
+<h2><a name="Samples"></a>Samples</h2>
+ 
+<!------------------------------------------------------------->
+<h3><a name="Samples:1"></a>Using an archive without header</h3>
+
+As  mentioned before,  it  is  possible to  create  a portable  binary
+archive    without     header.    This    is     done    by    passing
+the <tt>boost::archive::no_header</tt> flag  to the constructor of the
+output archive.  The input archive that  is supposed to  read the data
+file must also be given the same flag.
+ 
+<p>
+include(`tutorial_pba_2.cpp.html') 
+</p>
+
+
+<p>
+The resulting <tt>pba_1.data</tt> file contains the following bytes:
+<pre>include(`pba_1.bin')</pre>
+where only the value of the integer 
+<tt>(666)<sub>10</sub>=(1010011010)<sub>2</sub></tt> 
+is stored using 2 bytes:
+<br><br>
+<table border="1">
+<tr align="center">
+<td><tt>00000010</tt> </td>
+<td><tt>10011010</tt> </td>
+</tr>
+<td><tt>2</tt> </td>
+<td><tt>154</tt> </td>
+</tr>
+</table>
+</p>
+
+<!------------------------------------------------------------->
+<h3><a name="Samples:2"></a>Handling special float values</h3>
+
+The PBA  has been  designed in  the aims to  handle single  and double
+precision floating numbers, including non-finite and special  values:
+<ul>
+<li>&pm;infinity
+<li>NaN
+<li>denormalized numbers
+</ul>
+
+The <a href="./code/tutorial_pba_3.cpp" >tutorial_pba_3.cpp</a> sample
+illustrates the use of special serialization cases for single precision
+floating numbers:
+<p>
+include(`tutorial_pba_3.cpp.html')
+</p>
+
+The <tt>"pba_2.data"</tt> output data file thus contains the following bytes:
+<pre>include(`pba_2.bin')</pre>
+where:
+<ul>
+  
+  <li><tt id="pre">127   1   9</tt> is the standard archive header
+    
+  <li><tt id="pre">4</tt> bytes are used to encode the value of &pi; (reversed order):
+    <br><br>
+    <table border="1">
+      <tr align="center">
+	<td><tt>64</tt></td>
+	<td><tt>73</tt></td>
+	<td><tt>15</tt></td>
+	<td><tt>219</tt></td>
+      </tr>
+      <tr align="center">
+	<td><tt><font color="red">0</font><font color="blue">1000000</font></tt></td>
+	<td><tt><font color="blue">0</font><font color="green">1001001</font></tt></td>
+	<td><tt><font color="green">00001111</font></tt></td>
+	<td><tt><font color="green">11011011</font></tt></td>
+      </tr>
+    </table>
+    <br>
+    And &pi; = <tt><font color="red">+</font><font color="magenta">1</font>.<font color="green">5707963</font>
+      &times;  2<sup>(<font color="blue">128</font>-127)</sup></tt> = <tt>3.14159265</tt>.
+    
+  <li>The value zero is stored using only one <tt id="pre">0</tt> byte
+    
+  <li>a denormalized value then comes with only <tt id="pre">3</tt> bytes :
+    <br><br> 
+    <table border="1">
+      <tr align="center" background="#EEEEEE">
+	<td><tt></tt></td>
+	<td><tt>1</tt></td>
+	<td><tt>22</tt></td>
+	<td><tt>194</tt></td>
+      </tr>
+      <tr align="center">
+	<td><tt><font color="red">0</font><font color="blue">0000000</font></tt></td>
+	<td><tt><font color="blue">0</font><font color="green">0000001</font></tt></td>
+	<td><tt><font color="green">00010110</font></tt></td>
+	<td><tt><font color="green">11000010</font></tt></td>
+      </tr>
+    </table>
+    <br>
+    Here the value is <tt><font color="red">+</font><font color="magenta">0</font>.<font color="green">017014027</font>
+      &times;  2<sup>(<font color="blue">0</font>-127)</sup></tt> = <tt>0.9999946 10<sup>-40</sup></tt> which, as expected
+    for denormalized numbers, misses the requested value <tt>10<sup>-40</sup></tt> by the relative error <tt>5.4 10<sup>-6</sup></tt>,
+    larger than the machine roundoff precision (<tt>10<sup>-7</sup></tt>).
+  
+</ul>
+
+<!--------------------------------------------------------------------------------->
+<hr>
+<p>Revised 2011-10-04 
+<p><i>&copy; Copyright <a href="mailto:mauger@lpccaen.in2p3.fr">François Mauger</a> 2011.<br>
+Distributed under the Boost Software License, Version 1.0.<br> 
+(See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+</i>
+</p>
+
+</body>
+
+</html>
+<!-- end of tutorial.html -->
