@@ -1,7 +1,31 @@
-README
+README -- The Boost/Serialization Portable Binary Archive Tutorial
 
-The is the Boost/Serialization Portable Binary Archive Tutorial
+This directory contains the source  code and the scripts used to build
+the  PBA HTML  tutorial. It  has been  designed to  run in  Linux with
+the help of various standard tools:
+
+ - GNU bash (to prepare the final HTML source tree)
+ - GNU recode (to manipulate special charsets)
+ - GNU enscript (to prepare HTML rendering of the C++ sample programs)
+ - GNU awk (to extract HTML snippet from the enscript output)
+ - GNU m4 (to generate the main HTML page)
+ - GNU make (to automate the build sequence)
+ - firefox (to browse the HTML page)
+
+A  recent version  of  the Boost  library  (1.47.0) and  gcc (>4)  are
+required to build the sample programs,  run them on the build host and
+format their output to be integrated within the HTML tutorial page.
+
+The  author usually  performs the  build on  a Ubuntu  Linux (>=11.04).
+However,  provided  the proper  tools  are  installed  and setup,  any
+*nix-like system should be okay.
+
+How to build the tutorial HTML tree :
+
+shell> make
+shell> make install
+
 
 --
 F. Mauger <mauger@lpccaen.in2p3.fr>
-Update: 2011-10-02
+Update: 2011-10-15

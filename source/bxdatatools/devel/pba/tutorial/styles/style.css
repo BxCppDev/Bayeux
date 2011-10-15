@@ -13,7 +13,8 @@ pre{
   BORDER-TOP: gray 1pt solid;
   BORDER-LEFT: gray 1pt solid;
   BORDER-BOTTOM: gray 1pt solid;
-  MARGIN-LEFT: 0pt;
+  MARGIN-LEFT: 1pt;
+  MARGIN-RIGHT: 1pt;
   background-color: #EEEEEE;
   /*font-size: smaller;*/
 }

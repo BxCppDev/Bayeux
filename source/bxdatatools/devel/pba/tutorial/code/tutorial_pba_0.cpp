@@ -14,7 +14,7 @@
  * the Boost/Serialization library. 
  *
  * This quick start example shows how to store some variables
- * of basic types (bool, integer, floating numbers, STL string) 
+ * of basic types (bool, integer, floating point numbers, STL string) 
  * using the portable binary archive format associated to a 
  * standard output file stream.
  *
@@ -28,8 +28,6 @@
 
 int main (void)
 {
-  using namespace std;
-
   // The name for the example data file :  
   std::string filename = "pba_0.data"; 
 
@@ -42,7 +40,7 @@ int main (void)
   std::string slogan         = "DON'T PANIC";
   
   // Open an output file stream in binary mode :
-  std::ofstream fout (filename.c_str (), ios_base::binary);
+  std::ofstream fout (filename.c_str (), std::ios_base::binary);
   
   // Create an output portable binary archive attached to the output file :
   boost::archive::portable_binary_oarchive opba (fout);

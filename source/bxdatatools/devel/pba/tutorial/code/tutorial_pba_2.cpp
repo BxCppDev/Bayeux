@@ -14,14 +14,15 @@
  * the Boost/Serialization library. 
  *
  * This sample program shows how to use a portable binary archive 
- * without a header.
+ * to store/load floating point numbers including non-finite and 
+ * special (denormalized) values.
  *
  */
 
 #include <string>
 #include <fstream>
+#include <limits>
 
-#include <boost/cstdint.hpp>
 #include <boost/archive/portable_binary_oarchive.hpp>
 #include <boost/archive/portable_binary_iarchive.hpp>
 
@@ -30,35 +31,68 @@ int main (void)
   using namespace std;
 
   // The name for the example data file :  
-  std::string filename = "pba_1.data"; 
+  string filename = "pba_2.data"; 
 
   {
-    // Some variable to be stored :
-    uint32_t answer = 666;
+    // A normal single precision floating point number :
+    float pi = 3.14159265; 
+
+    // Single precision zeroed floating point number :
+    float zero = 0.0;
+
+    // A denormalized single precision floating point number :
+    float tiny = 1.e-40;
+    
+    // A single precision floating point number with `+Infinity' value :
+    float plus_infinity = numeric_limits<float>::infinity ();
+    
+    // A single precision floating point number with `-Infinity' value :
+    float minus_infinity = -numeric_limits<float>::infinity ();
+    
+    // A single precision `Not-a-Number' (NaN):
+    float nan = numeric_limits<float>::quiet_NaN ();
     
     // Open an output file stream in binary mode :
-    std::ofstream fout (filename.c_str (), ios_base::binary);
+    ofstream fout (filename.c_str (), ios_base::binary);
     
     // Create an output portable binary archive attached to the output file :
-    boost::archive::portable_binary_oarchive opba (fout, boost::archive::no_header);
+    boost::archive::portable_binary_oarchive opba (fout);
     
-    // Store (serializing) variables :
-    opba & answer;
+    // Store (serialize) variables :
+    opba & pi & zero & tiny & plus_infinity & minus_infinity & nan;
   }
 
   { 
-    // Some variable to be loaded :
-    uint32_t answer;
+    // Single precision floating point numbers to be loaded :
+    float x[6];
 
     // Open an input file stream in binary mode :
     ifstream fin (filename.c_str (), ios_base::binary);
   
     // Create an input portable binary archive attached to the input file :
-    boost::archive::portable_binary_iarchive ipba (fin, boost::archive::no_header);
+    boost::archive::portable_binary_iarchive ipba (fin);
   
-    // Loading (de-serializing) variables using the same 
+    // Load (de-serialize) variables using the same 
     // order than for serialization :
-    ipba & answer;
+    for (int i = 0; i < 6; ++i)
+      {
+	ipba & x[i];
+      }
+
+    // Print :
+    for (int i = 0; i < 6; ++i)
+      {
+	cout.precision (8);
+	cout << "Loaded x[" << i << "] = " << x[i];
+	switch (fp::fpclassify(x[i]))
+	  {
+	  case FP_NAN: cout << " (NaN)"; break;
+	  case FP_INFINITE: cout << " (infinite)"; break;
+	  case FP_SUBNORMAL: cout << " (denormalized)"; break;
+	  case FP_NORMAL:  cout << " (normalized)"; break;
+	  }
+	cout << endl;
+      }
   }
 
   return 0;   

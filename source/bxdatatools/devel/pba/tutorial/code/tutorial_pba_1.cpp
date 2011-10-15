@@ -14,7 +14,7 @@
  * the Boost/Serialization package. 
  *
  * This quick start example shows how to load some variables
- * of basic types (bool, integer, floating numbers, STL string) 
+ * of basic types (bool, integer, floating point numbers, STL string) 
  * using the portable binary archive format associated to a 
  * standard input file stream. 
  *
