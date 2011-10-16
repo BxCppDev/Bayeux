@@ -21,46 +21,19 @@ H4
 {
     FONT-SIZE: 108%;
 }
+/*
 BODY
 {
     FONT-SIZE: 100%;
     BACKGROUND-COLOR: #ffffff;
     COLOR: #000000;
 }
+*/
+/*
 PRE
 {
     MARGIN-LEFT: 2em;
     FONT-FAMILY: Courier,
                  monospace;
 }
-CODE
-{
-    FONT-FAMILY: Courier,
-                 monospace;
-}
-CODE.as_pre
-{
-    white-space: pre;
-}
-.index
-{
-    TEXT-ALIGN: left;
-}
-.page-index
-{
-    TEXT-ALIGN: left;
-}
-.definition
-{
-    TEXT-ALIGN: left;
-}
-.footnote
-{
-    FONT-SIZE: 66%;
-    VERTICAL-ALIGN: super;
-    TEXT-DECORATION: none;
-}
-.function-semantics
-{
-    CLEAR: left;
-}
+*/

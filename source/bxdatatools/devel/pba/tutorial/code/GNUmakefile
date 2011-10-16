@@ -19,6 +19,7 @@ bin : \
  tutorial_pba_8 \
  tutorial_pba_9 \
  tutorial_pba_10 \
+ tutorial_pba_10b \
  tutorial_pba_11
 
 .PHONY : run 
@@ -33,6 +34,7 @@ run : run_tutorial_pba_0 \
       run_tutorial_pba_8 \
       run_tutorial_pba_9 \
       run_tutorial_pba_10 \
+      run_tutorial_pba_10b \
       run_tutorial_pba_11
 
 .PHONY : clean 
@@ -49,6 +51,7 @@ clean : clean_html_code
 	$(RM) tutorial_pba_8
 	$(RM) tutorial_pba_9
 	$(RM) tutorial_pba_10
+	$(RM) tutorial_pba_10b
 	$(RM) tutorial_pba_11
 	$(RM) *.data
 	$(RM) *.bin
@@ -114,6 +117,15 @@ run_tutorial_pba_10 : tutorial_pba_10
 	@ echo "Running $<..."
 	@ ./$< > tutorial_pba_10.out 2>&1 || echo -n
 	@ cat tutorial_pba_10.out
+	@ cat pba_10.data.gz | gunzip - | od -t u1 | cut -d' ' -f2- > pba_10.tmp
+	@ (cat pba_10.tmp | head -4 ; echo "...") > pba_10_head.bin
+	@ $(RM) pba_10.tmp
+
+
+run_tutorial_pba_10b : tutorial_pba_10b
+	@ echo "Running $<..."
+	@ ./$< > tutorial_pba_10b.out 2>&1 || echo -n
+	@ cat tutorial_pba_10b.out
 
 run_tutorial_pba_11 : tutorial_pba_11
 	@ echo "Running $<..."

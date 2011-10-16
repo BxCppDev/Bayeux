@@ -65,7 +65,7 @@ document.getElementById('tutorial_pba_11_cpp').style.display='none';
 
   <dt><a href="#Samples">Examples</a><br>
     <ul>
-      <li><a href="#Samples:1">Handling special float values</a></li>
+      <li><a href="#Samples:1">Handling special floating point values</a></li>
       <li><a href="#Samples:2">Forbidding the serialization of non finite float values</a></li>
       <li><a href="#Samples:3">Serializing integer numbers</a></li>
       <li><a href="#Samples:4">Using PBA serialization with a memory buffer</a></li>
@@ -108,8 +108,9 @@ This format is explained in details below.
 <p>Note:
 <ul>
 <li> the  output of the  byte content in the <tt class="fs">pba_0.data</tt> file
-can   be  obtained   invoking  some   command  like   '<tt>od   -t  u1
-pba_0.data</tt>' on a GNU/Linux system.<br>
+can   be  obtained   invoking  some   command  like
+ <tt style="font-size: 12px; font-weight: bold; color: #ffffff; background-color: black;" >&nbsp;od   -t  u1 pba_0.data&nbsp;</tt> 
+on a GNU/Linux system.<br>
 <li> one   should  notice   that   this   program   makes  use   of
 the         <i>typedef-ed</i>        integer         types        from
 the <tt class="fs">boost/cstdint.hpp</tt> header  (<tt class="code">uint32_t</tt>...). It is a
@@ -119,7 +120,8 @@ the <a href="#Samples">Examples section</a>).
 </ul>
 </p>
 
-<a href="#top"class="button" >To top</a>
+mym4_html_to_top
+
 <h3><a name="Quick_start:load_1"></a>How to load some simple data from a <i>portable binary input archive</i></h2>
 
 <p>
@@ -141,7 +143,8 @@ restored values of the variables:
 <pre>include([[tutorial_pba_1.out]])</pre>
 </p>
 
-<a href="#top"class="button" >To top</a>
+mym4_html_to_top
+
 <!--------------------------------------------------------------------------------->
 <hr>
 <h2><a name="Format"></a>Format</h2>
@@ -221,8 +224,7 @@ value <tt>7.5&times;10<sup>6</sup></tt>.   Following the IEEE 754 standard  one 
 the       <font      color="blue">8-bit       exponent</font>      and
 the   <font    color="green">23-bit   significant</font>   (mantissa).
 As          <tt>7.5&times;10<sup>6</sup></tt>          can          be          rewritten
-in <tt><font color="red">+</font><font color="magenta">1</font>.<font color="green">78813934</font>
-&times;  2<sup><font  color="blue">22</font></sup></tt>,  we have  the
+in <tt><font color="red">+</font><font color="magenta">1</font>.<font color="green">78813934</font>&times;2<sup><font  color="blue">22</font></sup></tt>,  we have  the
 following bits contents:<br>
 <br>
 <tt><font color="red">0</font><font color="blue">10010101</font><font color="magenta">1</font><font color="green">11001001110000111000000</font></tt><br><br>
@@ -257,8 +259,7 @@ from the least significant byte to the most significant byte), giving :
 
 <li>The next floating number 2.71828182845905 = 
 <tt><font color="red">+</font>dnl
-<font color="magenta">1</font>.<font color="green">35914091422952</font>
-&times;  2<sup>(<font color="blue">1024</font>-1023)</sup></tt>,  
+<font color="magenta">1</font>.<font color="green">35914091422952</font>&times;2<sup>(<font color="blue">1024</font>-1023)</sup></tt>,  
 is stored using the double precision IEEE 754  64-bit pattern (using the conventionnal exponent shift <tt>2<sup>10</sup>-1=1023</tt>):
 <br><br>
 <table border="1">
@@ -346,15 +347,15 @@ negative      integer     numbers)      will      be     given      in
 the <a href="#Samples">sample codes</a> below.
 </p>
 
-<br><a href="#top"class="button" >To top</a>
+mym4_html_to_top
+
 <!--------------------------------------------------------------------------------->
 <hr>
 <h2><a name="Samples"></a>Examples</h2>
  
 
-<!--br><a href="#top"class="button" >To top</a-->
 <!------------------------------------------------------------->
-<h3><a name="Samples:1"></a>Handling special float values</h3>
+<h3><a name="Samples:1"></a>Handling special floating point values</h3>
 
 <p>
 The PBA  has been  designed in  the aims to  handle single  and double
@@ -400,8 +401,7 @@ where:
       </tr>
     </table>
     <br>
-    and &pi; = <tt><font color="red">+</font><font color="magenta">1</font>.<font color="green">5707963</font>
-      &times;  2<sup>(<font color="blue">128</font>-127)</sup></tt> = <tt>3.14159265</tt>.
+    and &pi; = <tt><font color="red">+</font><font color="magenta">1</font>.<font color="green">5707963</font>&times;2<sup>(<font color="blue">128</font>-127)</sup></tt> = <tt>3.14159265</tt>.
     
   <li>the     value    <i>zero</i>     is     stored    using     only
   one <tt class="byte">0</tt> byte (this is called <i>zero optimization</i> and this save bytes for storage).
@@ -424,13 +424,12 @@ where:
     </table>
     <br>
     Here                           the                           value
-      is <tt><font color="red">+</font><font color="magenta">0</font>.<font color="green">017014027</font>
-      &times;    2<sup>(<font    color="blue">0</font>-127)</sup></tt>
-      =  <tt>0.9999946 10<sup>-40</sup></tt>  which,  as expected  for
+      is <tt><font color="red">+</font><font color="magenta">0</font>.<font color="green">017014027</font>&times;2<sup>(<font    color="blue">0</font>-127)</sup></tt>
+      =  <tt>0.9999946&times;10<sup>-40</sup></tt>  which,  as expected  for
       denormalized       numbers,      misses       the      requested
       value  <tt>10<sup>-40</sup></tt>   by  the  relative   error  of
-      magnitude <tt>5.4 10<sup>-6</sup></tt>, which is larger than the machine
-      roundoff precision (<tt>10<sup>-7</sup></tt> for the single precision scheme).
+      magnitude <tt>5.4&times;10<sup>-6</sup></tt>, which is larger than the machine
+      roundoff precision (~<tt>10<sup>-7</sup></tt> for the single precision scheme).
     
   <li>the +&#8734; value is stored using one byte for the <i>size</i> 
     plus <tt class="byte">4</tt> content bytes, fulfilling the IEEE 754 standard,
@@ -492,7 +491,8 @@ where:
 </ul>
 </p>
 
-<br><a href="#top"class="button" >To top</a>
+mym4_html_to_top
+
 <!------------------------------------------------------------->
 <h3><a name="Samples:2"></a>Forbidding the serialization of non finite float values</h3>
 
@@ -519,7 +519,8 @@ include([[tutorial_pba_3.out]])
 </pre>
 </p>
 
-<br><a href="#top"class="button" >To top</a>
+mym4_html_to_top
+
 <!------------------------------------------------------------->
 <h3><a name="Samples:3"></a>Serializing integer numbers</h3>
 
@@ -613,7 +614,8 @@ unique <tt>0</tt> byte (zero optimization). Note this approach is also
 used for floating point numbers.
 </p>
 
-<br><a href="#top"class="button" >To top</a>
+mym4_html_to_top
+
 <!------------------------------------------------------------->
 <h3><a name="Samples:4"></a>Using PBA serialization with a memory buffer</h3>
 
@@ -659,7 +661,7 @@ this trait using such a trick, unless you know what you are doing
 and all the consequences !
 </p>
 
-<br><a href="#top"class="button" >To top</a>
+mym4_html_to_top
 
 <!------------------------------------------------------------->
 <h3><a name="Samples:5"></a>An alternative to PBA using text or XML archives made portable</h3>
@@ -747,10 +749,11 @@ include([[tutorial_pba_9.out]])
 </pre>
 </p>
 
-
+<p>
 mym4_html_source_code(tutorial_pba_9)
+</p>
 
-<br><a href="#top"class="button" >To top</a>
+mym4_html_to_top
 
 <!------------------------------------------------------------->
 <h3><a name="Samples:6"></a>Using PBA serialization associated with on-the-fly (de)compressed file streams</h3>
@@ -763,18 +766,29 @@ provided by the Boost/Iostreams library. The class contains a large
 STL vector of double precision floating point numbers with arbitrary values: 
 </p>
 
-
 mym4_html_source_code(tutorial_pba_10)
 
-<p>The resulting compressed <tt class="fs">pba_10.data.gz</tt> file contains 1574 bytes.
+<p>The resulting compressed <tt class="fs">pba_10.data.gz</tt> file contains 1,574 bytes.
 This has to be compared with the size of the plain (uncompressed) 
-binary archive which equals 9001 bytes:
+binary archive which equals 9,001 bytes:
+
+<pre class="byte">include([[pba_10_head.bin]])</pre>
+
+which can be interpreted as :
 <ul>
-<li> 3 bytes for the usual archive header,
-<li> 3 bytes to store the class ID (=0), object ID (=0) and tracking level (=0),
-<li> 3 bytes to store the size of the vector (1000) using the PBA representation of integers,
-<li> 999 non-zero floating point values each using 9 bytes (1 byte for the size and 8 bytes for the contents),
-<li> 1 zero floating point value that uses only one 0 byte (zero optimization).
+<li> 3  bytes for  the usual archive  header : <tt  class="byte">127 1
+9</tt>,
+<li>   2   <i>zero-optimized</i>  bytes   to   store   the  class   ID
+  and  the       class       version :<tt  class="byte">0 0</tt>,
+<li> 3  bytes to  store the size  of the  vector (1000) using  the PBA
+representation of integers (<tt class="byte">2 232 3</tt>),
+<li> 1  <i>zero-optimized</i> byte to  store the class version  of the
+objects      stored       in      the      STL       vector      (here
+the primitive <tt class="code">double</tt> type) : <tt class="byte">0</tt>,
+<li> 999 non-zero double precision floating point values (including non-finite values) each using 9 bytes (1 byte for
+the <i>size</i> and 8 bytes for the <i>content</i>) : <tt class="byte">8 ? ? ? ? ?
+? ? ?</tt>,
+<li>  1 zero  floating point  value that  uses only  one <i>zero-optimized</i>  byte : <tt class="byte">0</tt>.
 </ul>
 Thus one here achieves a very interesting compression level.
 </p>
@@ -783,8 +797,8 @@ It is also possible to use BZIP2 in a similar fashion
 (using ressources from the <tt class="fs">boost/iostreams/filter/bzip2.hpp</tt> header
 in place of <tt class="fs">boost/iostreams/filter/gzip.hpp</tt>).
 </p>
-<br><a href="#top"class="button" >To top</a>
 
+mym4_html_to_top
 <!------------------------------------------------------------->
 <h3><a name="Samples:7"></a>A simple PBA versus text archive benchmark test</h3>
 
@@ -809,14 +823,15 @@ The PBA concept is thus a valuable candidate for such applications.
 <p>
 One can also consider the sizes of the resulting archive files:
 <ul>
-<li><tt class="fs">pba_11.data</tt> (PBA) : 90000010 bytes
-<li><tt class="fs">pba_11.txt</tt> (text archive) : 189000040 bytes
+<li><tt class="fs">pba_11.data</tt> (PBA) : 90,000,010 bytes
+<li><tt class="fs">pba_11.txt</tt> (text archive) : 189,000,040 bytes
 </ul>
 The PBA allows to save a typical factor 2 in storage space compared to text archive.
 This is another strong argument for using PBA.
 </p>
 
-<br><a href="#top"class="button" >To top</a>
+mym4_html_to_top
+
 <!--------------------------------------------------------------------------------->
 <hr>
 <p>Revised 2011-10-16 

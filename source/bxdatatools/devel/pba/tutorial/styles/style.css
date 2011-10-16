@@ -1,89 +1,88 @@
 
 body
 {
-   font-size: 12pt;
- }
-pre{
-  BORDER-RIGHT: gray 1pt solid;
-  BORDER-TOP: gray 1pt solid;
-  BORDER-LEFT: gray 1pt solid;
-  BORDER-BOTTOM: gray 1pt solid;
-  MARGIN-LEFT: 0pt;
+  font-size: 12pt;
+  }
+
+pre
+{
+  border-right:     gray 1pt solid;
+  border-top:       gray 1pt solid;
+  border-left:      gray 1pt solid;
+  border-bottom:    gray 1pt solid;
+  margin-left:      0pt;
   background-color: #EEEEEE;
-  font-size: smaller;
-}
+  font-size:        smaller;
+  }
 
-.button { 
-          color : black;
-          background-color : #FFFFFF;
-          border-style: outset;
-          }
+.button 
+{ 
+  color :            black;
+  background-color : #FFFFFF;
+  border-radius:     0px;
+  border:            outset 3px #d6d6d6;
+  text-decoration :  none;
+  outline:none;
+  }
 
-/*
-tt{ 
-  font-size: larger;
-}
-*/
+.fs 
+{
+  font-family: courier; 
+  font-size:   11pt;
+  font-weight: bold;
+  color:       maroon;
+  }
 
-.fs {
-      font-family: courier; 
-      /*font-size:   larger;*/
-      font-weight: bold;
-      color:       maroon;
-     }
+.code_string 
+{
+  font-family:  courier; 
+  font-size:    11pt;
+  font-weight:  bold;
+  color:        #bc8f8f;
+  }
 
-.code_string {
-               font-family:      courier; 
-               /*font-size:        larger;*/
-               font-weight:   bold;
-               color:            #bc8f8f;
-               /*background-color: #eeeeee;*/
-               }
-
-.code {
+.code 
+{
   /*
-  top: 0;
-  border-style:     inset;
-  margin-top:       5pt;
-  margin-bottom:    5pt;
-  margin-left:      5pt;
-  margin-right:     5pt;
-  border-width:     2px 2px 2px 2px ;
-  */
-  font-family:      courier; 
-  /*font-size:        larger;*/
-        font-weight: bold;
-  color:            #228b22;
-  /*background-color: #eeeeee;*/
- /* font-size:        10pt; */
- /* background-color: #dddddd; */
-}
+     top: 0;
+     border-style:     inset;
+     margin-top:       5pt;
+     margin-bottom:    5pt;
+     margin-left:      5pt;
+     margin-right:     5pt;
+     border-width:     2px 2px 2px 2px ;
+     */
+  font-family: courier; 
+  font-size:   11pt;
+  font-weight: bold;
+  color:       #228b22;
+  }
 
 .byte
 { 
-  border-right: gray 1pt solid;
-  border-top: gray 1pt solid;
-  border-left: gray 1pt solid;
-  border-bottom: gray 1pt solid;
-  margin-left: 2pt;
-  margin-right: 2pt;
+  border-right:     gray 1pt solid;
+  border-top:       gray 1pt solid;
+  border-left:      gray 1pt solid;
+  border-bottom:    gray 1pt solid;
+  margin-left:      2pt;
+  margin-right:     2pt;
   font-family:      courier; 
-  /*font-size:        larger;*/
+  font-size:        11pt;
   font-weight:      bold;
   color:            #000000;
   background-color: #eeeeee;
-} 
+  } 
 
-#pre{
-  BORDER-RIGHT: gray 1pt solid;
-  BORDER-TOP: gray 1pt solid;
-  BORDER-LEFT: gray 1pt solid;
-  BORDER-BOTTOM: gray 1pt solid;
-  MARGIN-LEFT: 1pt;
-  MARGIN-RIGHT: 1pt;
+#pre
+{
+  border-right:     gray 1pt solid;
+  border-top:       gray 1pt solid;
+  border-left:      gray 1pt solid;
+  border-bottom:    gray 1pt solid;
+  margin-left:      1pt;
+  margin-right:     1pt;
   background-color: #EEEEEE;
-  /*font-size: smaller;*/
-}
+  }
 
 /*
 (C) Copyright 2011 François Mauger. 

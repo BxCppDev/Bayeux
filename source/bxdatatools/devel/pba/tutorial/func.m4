@@ -18,6 +18,21 @@ define([[mym4_html_source_code]],[[dnl
 <div id="[[$1]]_cpp" >include([[$1.cpp.html]])</div><br></div>
 ]])dnl
 dnl
+define([[mym4_html_to_top2]],[[dnl
+<div style="background-color: #ccc; padding: 4px 2px; border: 1px" >
+<a href="#top" class="button" >To top</a>
+</div>
+]])dnl
+dnl
+define([[mym4_html_to_top]],[[dnl
+<!--div style="background-color: #ccc; padding: 4px 2px; border: 1px" -->
+<!--img src="images/c++-source-code.png" height="20pt" style="float:left" /-->
+<div>
+<a href="#top" class="button" >To top</a> 
+<!--div id="[[$1]]_cpp" ></div--><br>
+</div>
+]])dnl
+dnl
 dnl
 dnl
 dnl end of func.m4
