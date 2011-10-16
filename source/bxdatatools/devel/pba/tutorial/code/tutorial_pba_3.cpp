@@ -44,17 +44,19 @@ int main (void)
       // Open an output file stream in binary mode :
       ofstream fout (filename.c_str (), ios_base::binary);
     
-      // Create an output portable binary archive attached to the output file,
-      // using the special 'boost::archive::no_infnan' flag :
-      boost::archive::portable_binary_oarchive opba (fout, boost::archive::no_infnan);
-    
-      // Store (serialize) variables :
-      for (int i = 0; i < 5; ++i)
-        {
-          clog << "Serializing value : " << x[i] << " ... ";
-          opba & x[i];
-          clog << "Ok !" << endl;
-        }
+      {
+	// Create an output portable binary archive attached to the output file,
+	// using the special 'boost::archive::no_infnan' flag :
+	boost::archive::portable_binary_oarchive opba (fout, boost::archive::no_infnan);
+	
+	// Store (serialize) variables :
+	for (int i = 0; i < 5; ++i)
+	  {
+	    clog << "Serializing value : " << x[i] << " ... ";
+	    opba & x[i];
+	    clog << "Ok !" << endl;
+	  }
+      }
     }
   catch (exception & x)
     {

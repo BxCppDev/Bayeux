@@ -13,9 +13,9 @@
  * users of the portable binary archive in the framework of 
  * the Boost/Serialization library. 
  *
- * This quick start example shows how the standard I/O streams
- * does not support the read/write operations of floating point value
- * in a portable way.
+ * This example shows how the default behaviour of standard 
+ * I/O streams does not support the read/write operations of 
+ * non-finite floating point values in a portable way.
  *
  */
 

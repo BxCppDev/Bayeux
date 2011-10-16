@@ -42,11 +42,13 @@ int main (void)
   // Open an output file stream in binary mode :
   std::ofstream fout (filename.c_str (), std::ios_base::binary);
   
-  // Create an output portable binary archive attached to the output file :
-  boost::archive::portable_binary_oarchive opba (fout);
-  
-  // Store (serializing) variables :
-  opba & b & c & answer & computing_time & e & slogan;
+  {
+    // Create an output portable binary archive attached to the output file :
+    boost::archive::portable_binary_oarchive opba (fout);
+    
+    // Store (serializing) variables :
+    opba & b & c & answer & computing_time & e & slogan;
+  }
 
   return 0;   
 }

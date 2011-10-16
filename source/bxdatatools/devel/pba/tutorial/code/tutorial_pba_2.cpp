@@ -55,11 +55,13 @@ int main (void)
     // Open an output file stream in binary mode :
     ofstream fout (filename.c_str (), ios_base::binary);
     
-    // Create an output portable binary archive attached to the output file :
-    boost::archive::portable_binary_oarchive opba (fout);
-    
-    // Store (serialize) variables :
-    opba & pi & zero & tiny & plus_infinity & minus_infinity & nan;
+    {
+      // Create an output portable binary archive attached to the output file :
+      boost::archive::portable_binary_oarchive opba (fout);
+      
+      // Store (serialize) variables :
+      opba & pi & zero & tiny & plus_infinity & minus_infinity & nan;
+    }
   }
 
   { 
@@ -69,15 +71,17 @@ int main (void)
     // Open an input file stream in binary mode :
     ifstream fin (filename.c_str (), ios_base::binary);
   
-    // Create an input portable binary archive attached to the input file :
-    boost::archive::portable_binary_iarchive ipba (fin);
-  
-    // Load (de-serialize) variables using the same 
-    // order than for serialization :
-    for (int i = 0; i < 6; ++i)
-      {
-	ipba & x[i];
-      }
+    {
+      // Create an input portable binary archive attached to the input file :
+      boost::archive::portable_binary_iarchive ipba (fin);
+      
+      // Load (de-serialize) variables using the same 
+      // order than for serialization :
+      for (int i = 0; i < 6; ++i)
+	{
+	  ipba & x[i];
+	}
+    }
 
     // Print :
     for (int i = 0; i < 6; ++i)

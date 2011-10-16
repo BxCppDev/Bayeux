@@ -59,8 +59,8 @@ struct foo : boost::noncopyable
 
 };
 
-// A templatized copy function for serializable classes.
-// Here we use PBA associated to a memory buffer :
+// A templatized copy function for Boost/Serialization equipped classes.
+// Here we use PBAs associated to a memory buffer :
 template <class Serializable>
 void copy (const Serializable & source, Serializable & target)
 {
@@ -85,7 +85,6 @@ void copy (const Serializable & source, Serializable & target)
 
 int main (void)
 {
-
   // Some instance of the 'foo' class :
   foo dummy;
   dummy.status = 1;

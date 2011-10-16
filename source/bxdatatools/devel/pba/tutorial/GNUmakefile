@@ -33,7 +33,7 @@ prepare :
 
 tutorial.html : tutorial.m4.html
 	test -f .prepare || make prepare
-	m4 -I./code/ $< > $@
+	m4 -I./code/ --debug=V func.m4 $< > $@
 
 
 

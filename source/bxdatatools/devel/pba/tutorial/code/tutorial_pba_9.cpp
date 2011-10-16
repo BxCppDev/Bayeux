@@ -16,7 +16,8 @@
  * This example shows how to load some variables of basic 
  * types (bool, char, integer, floating point numbers, STL string) 
  * using the text or XML archive format associated to a 
- * standard input file stream.
+ * standard file input stream supporting portable non-finite
+ * floating point values.
  *
  */
 
@@ -35,7 +36,7 @@
 
 using namespace std;
 
-void example_text_in (void)
+void do_text_in (void)
 {
   // The name for the example data text file :  
   string filename = "pba_8.txt"; 
@@ -57,11 +58,13 @@ void example_text_in (void)
 			new boost::math::nonfinite_num_get<char>);
   fin.imbue (infnan_locale);
  
-  // Create an input text archive attached to the input file :
-  boost::archive::text_iarchive ita (fin, boost::archive::no_codecvt);
-  
-  // Store (serializing) variables :
-  ita & b & c & answer & value & precision & question;
+  {
+    // Create an input text archive attached to the input file :
+    boost::archive::text_iarchive ita (fin, boost::archive::no_codecvt);
+    
+    // Store (serializing) variables :
+    ita & b & c & answer & value & precision & question;
+  }
 
   clog << "Loaded values from text archive are: " << endl;
   clog << "  b         = " << b << endl;
@@ -74,7 +77,7 @@ void example_text_in (void)
   return;   
 }
 
-void example_xml_in (void)
+void do_xml_in (void)
 {
   // The name for the example data text file :  
   string filename = "pba_8.xml"; 
@@ -97,16 +100,18 @@ void example_xml_in (void)
 			new boost::math::nonfinite_num_get<char>);
   fin.imbue (infnan_locale);
 
-  // Create an output text archive attached to the output file :
-  boost::archive::xml_iarchive ixa (fin, boost::archive::no_codecvt);
-  
-  // Store (serializing) variables :
-  ixa & BOOST_SERIALIZATION_NVP(b)
-    & BOOST_SERIALIZATION_NVP(c)
-    & BOOST_SERIALIZATION_NVP(answer)
-    & BOOST_SERIALIZATION_NVP(value)
-    & BOOST_SERIALIZATION_NVP(precision) 
-    & BOOST_SERIALIZATION_NVP(question);
+  {
+    // Create an output text archive attached to the output file :
+    boost::archive::xml_iarchive ixa (fin, boost::archive::no_codecvt);
+    
+    // Store (serializing) variables :
+    ixa & BOOST_SERIALIZATION_NVP(b)
+      & BOOST_SERIALIZATION_NVP(c)
+      & BOOST_SERIALIZATION_NVP(answer)
+      & BOOST_SERIALIZATION_NVP(value)
+      & BOOST_SERIALIZATION_NVP(precision) 
+      & BOOST_SERIALIZATION_NVP(question);
+  }
 
   clog << "Loaded values from XML archive are: " << endl;
   clog << "  b         = " << b << endl;
@@ -121,10 +126,8 @@ void example_xml_in (void)
 
 int main (void)
 {
-  example_text_in ();
-
-  example_xml_in ();
-
+  do_text_in ();
+  do_xml_in ();
   return 0;
 }
 

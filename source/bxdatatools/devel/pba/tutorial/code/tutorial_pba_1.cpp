@@ -45,13 +45,15 @@ int main (void)
   // Open an input file stream in binary mode :
   ifstream fin (filename.c_str (), ios_base::binary);
   
-  // Create an input portable binary archive attached to the input file :
-  boost::archive::portable_binary_iarchive ipba (fin);
-  
-  // Loading (de-serializing) variables using the same 
-  // order than for serialization (see tutorial_pba_0.cpp) :
-  ipba & b & c & answer & computing_time & e & slogan;
-  
+  {
+    // Create an input portable binary archive attached to the input file :
+    boost::archive::portable_binary_iarchive ipba (fin);
+    
+    // Loading (de-serializing) variables using the same 
+    // order than for serialization (see tutorial_pba_0.cpp) :
+    ipba & b & c & answer & computing_time & e & slogan;
+  }
+
   cout.precision (15);
   cout << "Variable 'b' is              : " << b << " " << "(bool)" << endl;
   cout << "Variable 'c' is              : '" << c << "' " << " " << "(char)" << endl;

@@ -50,11 +50,13 @@ int main (void)
     // Open an output file stream in binary mode :
     ofstream fout (filename.c_str (), ios_base::binary);
     
-    // Create an output portable binary archive attached to the output file :
-    boost::archive::portable_binary_oarchive opba (fout);
-    
-    // Store (serialize) variables :
-    opba & t & c & u & b & B & s & S & l & L & ll & LL;
+    {
+      // Create an output portable binary archive attached to the output file :
+      boost::archive::portable_binary_oarchive opba (fout);
+      
+      // Store (serialize) variables :
+      opba & t & c & u & b & B & s & S & l & L & ll & LL;
+    }
   }
 
   { 
@@ -75,12 +77,14 @@ int main (void)
     // Open an input file stream in binary mode :
     ifstream fin (filename.c_str (), ios_base::binary);
   
-    // Create an input portable binary archive attached to the input file :
-    boost::archive::portable_binary_iarchive ipba (fin);
-  
-    // Load (de-serialize) variables using the same 
-    // order than for serialization :
-    ipba & t & c & u & b & B & s & S & l & L & ll & LL;
+    {
+      // Create an input portable binary archive attached to the input file :
+      boost::archive::portable_binary_iarchive ipba (fin);
+      
+      // Load (de-serialize) variables using the same 
+      // order than for serialization :
+      ipba & t & c & u & b & B & s & S & l & L & ll & LL;
+    }
 
     clog << "t  = " << t << " (bool)" << endl;
     clog << "c  = '" << c << "' (char)" << endl;

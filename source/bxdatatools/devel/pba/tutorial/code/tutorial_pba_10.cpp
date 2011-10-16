@@ -21,7 +21,6 @@
 #include <string>
 #include <fstream>
 #include <limits>
-#include <locale>
 #include <vector>
 
 #include <boost/cstdint.hpp>
@@ -155,10 +154,8 @@ void do_gzipped_in (void)
 
 int main (void)
 {
-  do_gzipped_out ();
-      
+  do_gzipped_out (); 
   do_gzipped_in ();
-
   return 0;
 }
 

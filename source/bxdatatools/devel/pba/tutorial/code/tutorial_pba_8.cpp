@@ -16,7 +16,8 @@
  * This example shows how to store some variables
  * of basic types (bool, integer, floating point numbers, STL string) 
  * using the text or XML archive format associated to a 
- * standard output file stream.
+ * standard output file stream supporting portable non-finite
+ * floating point values.
  *
  */
 
@@ -34,7 +35,7 @@
 
 using namespace std;
 
-void example_text_out (void)
+void do_text_out (void)
 {
   // The name for the example data text file :  
   string filename = "pba_8.txt"; 
@@ -57,16 +58,18 @@ void example_text_out (void)
 			new boost::math::nonfinite_num_put<char>);
   fout.imbue (infnan_locale);
   
-  // Create an output text archive attached to the output file :
-  boost::archive::text_oarchive ota (fout, boost::archive::no_codecvt);
-  
-  // Store (serializing) variables :
-  ota & b & c & answer & value & precision & question;
+  {
+    // Create an output text archive attached to the output file :
+    boost::archive::text_oarchive ota (fout, boost::archive::no_codecvt);
+    
+    // Store (serializing) variables :
+    ota & b & c & answer & value & precision & question;
+  }
 
   return;   
 }
 
-void example_xml_out (void)
+void do_xml_out (void)
 {
   // The name for the example data XML file :  
   string filename = "pba_8.xml"; 
@@ -89,26 +92,26 @@ void example_xml_out (void)
 			new boost::math::nonfinite_num_put<char>);
   fout.imbue (infnan_locale);
    
-  // Create an output text archive attached to the output file :
-  boost::archive::xml_oarchive oxa (fout, boost::archive::no_codecvt);
-  
-  // Store (serializing) variables :
-  oxa & BOOST_SERIALIZATION_NVP(b)
-    & BOOST_SERIALIZATION_NVP(c)
-    & BOOST_SERIALIZATION_NVP(answer)
-    & BOOST_SERIALIZATION_NVP(value)
-    & BOOST_SERIALIZATION_NVP(precision) 
-    & BOOST_SERIALIZATION_NVP(question);
+  {
+    // Create an output text archive attached to the output file :
+    boost::archive::xml_oarchive oxa (fout, boost::archive::no_codecvt);
+    
+    // Store (serializing) variables :
+    oxa & BOOST_SERIALIZATION_NVP(b)
+      & BOOST_SERIALIZATION_NVP(c)
+      & BOOST_SERIALIZATION_NVP(answer)
+      & BOOST_SERIALIZATION_NVP(value)
+      & BOOST_SERIALIZATION_NVP(precision) 
+      & BOOST_SERIALIZATION_NVP(question);
+  }
 
   return;   
 }
 
 int main (void)
 {
-  example_text_out ();
-
-  example_xml_out ();
-
+  do_text_out ();
+  do_xml_out ();
   return 0;
 }
 

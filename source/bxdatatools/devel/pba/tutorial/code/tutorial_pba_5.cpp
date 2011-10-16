@@ -39,25 +39,28 @@ int main (void)
 
   {
     // Some data to be stored :
-    bool t = true;
-    char c = 'c';
+    bool    t = true;
+    char    c = 'c';
     int16_t s = +16;
     int32_t l = -128;
     int64_t ll = +10000000000;
-    float  pi = 3.14159;
-    double nan = numeric_limits<double>::quiet_NaN ();
-    string hello = "World !";
+    float   pi = 3.14159;
+    double  nan = numeric_limits<double>::quiet_NaN ();
+    string  hello = "World !";
 
     buffer.reserve (1024); // pre-allocate some memory
 
     // The output stream interface to the buffer :
     boost::iostreams::stream<boost::iostreams::back_insert_device<buffer_type> > output_stream (buffer);
-    
-    // Create an output portable binary archive attached to the output file :
-    boost::archive::portable_binary_oarchive opba (output_stream, boost::archive::no_header);
-    
-    // Store (serialize) variables :
-    opba & t & c & s & l & ll & pi & nan & hello;
+
+    {    
+      // Create an output portable binary archive attached to the output file :
+      boost::archive::portable_binary_oarchive opba (output_stream);
+      
+      // Store (serialize) variables :
+      opba & t & c & s & l & ll & pi & nan & hello;
+    }
+
   }
 
   clog << "Buffer content is " << buffer.size () << " bytes : " << endl << "  ";
@@ -70,24 +73,26 @@ int main (void)
 
   { 
     // Some data to be loaded :
-    bool t;
-    char c;
+    bool    t;
+    char    c;
     int16_t s;
     int32_t l;
     int64_t ll;
-    float  pi;
-    double nan;
-    string hello;
+    float   pi;
+    double  nan;
+    string  hello;
 
     // The input stream interface to the buffer :
     boost::iostreams::stream<boost::iostreams::array_source> input_stream (&buffer[0], 
 									   buffer.size ());
 
-    // Create an input portable binary archive attached to the input file :
-    boost::archive::portable_binary_iarchive ipba (input_stream, boost::archive::no_header);
-  
-    // Load (de-serialize) variables :
-    ipba & t & c & s & l & ll & pi & nan & hello;
+    {
+      // Create an input portable binary archive attached to the input file :
+      boost::archive::portable_binary_iarchive ipba (input_stream);
+      
+      // Load (de-serialize) variables :
+      ipba & t & c & s & l & ll & pi & nan & hello;
+    }
 
     clog << "Loaded values from the buffer are: " << endl;
     clog << "  t  = " << t << " (bool)" << endl;
