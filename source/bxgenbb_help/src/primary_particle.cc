@@ -60,6 +60,41 @@ namespace genbb {
     return;
   }
 
+  bool primary_particle::is_gamma () const
+  {
+    return get_type () == GAMMA;
+  }
+  
+  bool primary_particle::is_positron () const
+  {
+    return get_type () == POSITRON;
+  }
+  
+  bool primary_particle::is_electron () const
+  {
+    return get_type () == ELECTRON;
+  }
+  
+  bool primary_particle::is_alpha () const
+  {
+    return get_type () == ALPHA;
+  }
+  
+  bool primary_particle::is_neutron () const
+  {
+    return get_type () == NEUTRON;
+  }
+    
+  bool primary_particle::is_muon_plus () const
+  {
+    return get_type () == MUON_PLUS;
+  }
+
+  bool primary_particle::is_muon_minus () const
+  {
+    return get_type () == MUON_MINUS;
+  }
+
   double primary_particle::get_time () const
   {
     return time;
@@ -129,7 +164,14 @@ namespace genbb {
     if (is_electron ()) return -1;
     if (is_alpha ()) return +2;
     if (is_gamma ()) return 0.0;
-    throw runtime_error ("primary_particle::get_charge: Unknown particle !");
+    if (is_muon_plus ()) return +1;
+    if (is_muon_minus ()) return -1;
+    throw logic_error ("primary_particle::get_charge: Unknown particle !");
+  }
+
+  bool primary_particle::mass_is_known () const
+  {
+    return datatools::utils::is_valid (get_mass ());
   }
 
   double primary_particle::get_mass () const
@@ -171,7 +213,6 @@ namespace genbb {
     double a_mass;
     datatools::utils::invalidate (a_mass);
     return a_mass;
-    //throw runtime_error ("primary_particle::get_mass: Unknown particle !");
   }
 
   double primary_particle::get_beta () const
@@ -181,9 +222,10 @@ namespace genbb {
 
   double primary_particle::get_kinetic_energy () const
   {
-    double mass = get_mass ();
+    double the_mass = get_mass ();
     double kinetic_energy
-      = sqrt (momentum.mag () * momentum.mag () + mass * mass) - mass;
+      = sqrt (momentum.mag () * momentum.mag () + the_mass * the_mass) 
+      - the_mass;
     return kinetic_energy;
   }
 

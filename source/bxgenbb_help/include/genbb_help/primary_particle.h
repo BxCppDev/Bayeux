@@ -101,30 +101,19 @@ namespace genbb {
 
     bool is_valid () const;
 
-    bool is_gamma () const
-    {
-      return get_type () == GAMMA;
-    }
+    bool is_gamma () const;
+    
+    bool is_positron () const;
+    
+    bool is_electron () const;
+    
+    bool is_alpha () const;
+    
+    bool is_neutron () const;
+    
+    bool is_muon_plus () const;
 
-    bool is_positron () const
-    {
-      return get_type () == POSITRON;
-    }
-
-    bool is_electron () const
-    {
-      return get_type () == ELECTRON;
-    }
-
-    bool is_alpha () const
-    {
-      return get_type () == ALPHA;
-    }
-
-    bool is_neutron () const
-    {
-      return get_type () == NEUTRON;
-    }
+    bool is_muon_minus () const;
 
     void set_momentum (const geomtools::vector_3d & m_);
 
@@ -133,6 +122,8 @@ namespace genbb {
     double get_charge () const; // in unit of e
 
     double get_mass () const; // in unit of energy
+
+    bool mass_is_known () const;
 
     double get_total_energy () const;
 
