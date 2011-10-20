@@ -870,14 +870,14 @@ namespace geomtools {
     // parse ID info:
     string id_info = id_info_;
     boost::trim (id_info);
-    if (devel) clog << "id_mgr::compute_id_from_info: Entering..." << endl;
+    if (devel) clog << "DEVEL: geomtools::id_mgr::compute_id_from_info: Entering..." << endl;
 
-    if (devel) clog << "id_mgr::compute_id_from_info: "
+    if (devel) clog << "DEVEL: geomtools::id_mgr::compute_id_from_info: "
 		    << "ID info is `" << id_info << "'" << endl;
     if (id_info.size () < 5)
       {
 	ostringstream message;
-	message << "id_mgr::compute_id_from_info: "
+	message << "geomtools::id_mgr::compute_id_from_info: "
 		<< "Invalid syntax for ID info `"
 		<< id_info_ << "' !";
 	throw runtime_error (message.str ());
@@ -885,7 +885,7 @@ namespace geomtools {
     if (id_info[0] != '[')
       {
 	ostringstream message;
-	message << "id_mgr::compute_id_from_info: "
+	message << "geomtools::id_mgr::compute_id_from_info: "
 		<< "Invalid syntax for ID info `"
 		<< id_info_ << "'; missing opening character !";
 	throw runtime_error (message.str ());
@@ -893,13 +893,13 @@ namespace geomtools {
     if (id_info[id_info.size () - 1 ] != ']')
       {
 	ostringstream message;
-	message << "id_mgr::compute_id_from_info: "
+	message << "geomtools::id_mgr::compute_id_from_info: "
 		<< "Invalid syntax for ID info `"
 		<< id_info_ << "'; missing closing character !";
 	throw runtime_error (message.str ());
       }
     string core_info = id_info.substr (1, id_info.size () - 2);
-    if (devel) clog << "id_mgr::compute_id_from_info: "
+    if (devel) clog << "DEVEL: geomtools::id_mgr::compute_id_from_info: "
 		    << "Core info is `" << core_info << "'" << endl;
 
     typedef vector<string> split_vector_type;
@@ -908,7 +908,7 @@ namespace geomtools {
     if (split_vec.size () < 1 || split_vec.size () > 2)
       {
 	ostringstream message;
-	message << "id_mgr::compute_id_from_info: "
+	message << "geomtools::id_mgr::compute_id_from_info: "
 		<< "Invalid syntax for ID info `"
 		<< id_info_ << "'; Invalid number of `:' separator !";
 	throw runtime_error (message.str ());
@@ -920,24 +920,24 @@ namespace geomtools {
     if (category.empty ())
       {
 	ostringstream message;
-	message << "id_mgr::compute_id_from_info: "
+	message << "geomtools::id_mgr::compute_id_from_info: "
 		<< "Missing category token !";
 	throw runtime_error (message.str ());
       }
-    if (devel) clog << "id_mgr::compute_id_from_info: "
+    if (devel) clog << "DEVEL: geomtools::id_mgr::compute_id_from_info: "
 		    << "Category is `" << category << "'" << endl;
 
     if (! has_category_info (category))
       {
 	ostringstream message;
-	message << "id_mgr::compute_id_from_info: "
+	message << "geomtools::id_mgr::compute_id_from_info: "
 		<< "Unknown category `" << category << "' !";
 	throw runtime_error (message.str ());
       }
     const category_info & ci = get_category_info (category);
     if (devel) ci.tree_dump (clog, "Category info:");
     ci.create (id_);
-    if (devel) clog << "id_mgr::compute_id_from_info: "
+    if (devel) clog << "DEVEL: geomtools::id_mgr::compute_id_from_info: "
 		    << "Preliminary geometry ID is `" << id_ << "'" << endl;
 
     // Eventually import mother ID stuff:
@@ -947,7 +947,7 @@ namespace geomtools {
       {
 	const category_info & mother_ci = get_category_info (mother_id_.get_type ());
 	if (devel) mother_ci.tree_dump (clog, "Mother category info:");
-	if (devel) clog << "id_mgr::compute_id_from_info: "
+	if (devel) clog << "DEVEL: geomtools::id_mgr::compute_id_from_info: "
 			<< "Mother ID `" << mother_id_ << "'" << endl;
 	bool import_mother = false;
 	if (ci.has_ancestor (mother_ci.get_category ()))
@@ -961,12 +961,12 @@ namespace geomtools {
 	    current_address_index = mother_id_.get_depth ();
 	  }
       } // end of mother ID import.
-    if (devel) clog << "id_mgr::compute_id_from_info: "
+    if (devel) clog << "DEVEL: geomtools::id_mgr::compute_id_from_info: "
 		    << "Preliminary geometry ID after mother import is `"
 		    << id_ << "' (" << current_address_index << " addresses already set)" << endl;
 
     size_t number_of_remaining_addresses = id_.get_depth () - current_address_index;
-    if (devel) clog << "id_mgr::compute_id_from_info: "
+    if (devel) clog << "DEVEL: geomtools::id_mgr::compute_id_from_info: "
 		    << "Number of remaining addresses = " << number_of_remaining_addresses
 		    << endl;
 
@@ -985,17 +985,17 @@ namespace geomtools {
     if (parse_address)
       {
 	string addresses_token = split_vec[1];
-	if (devel) clog << "id_mgr::compute_id_from_info: "
+	if (devel) clog << "DEVEL: geomtools::id_mgr::compute_id_from_info: "
 			<< "Addresses info is `" << addresses_token << "'" << endl;
 	split_vector_type split_addr;
 	boost::split (split_addr, addresses_token, boost::algorithm::is_any_of (","));
 	if (split_addr.size () != number_of_remaining_addresses)
 	  {
-	    ci.tree_dump (clog, "Category info:");
-	    clog << "id_mgr::compute_id_from_info: "
+	    ci.tree_dump (clog, "Category info:", "INFO: geomtools::id_mgr::compute_id_from_info: ");
+	    clog << "ERROR: geomtools::id_mgr::compute_id_from_info: "
 		 << "Number of remaining addresses = " << number_of_remaining_addresses << endl;
 	    ostringstream message;
-	    message << "id_mgr::compute_id_from_info: "
+	    message << "geomtools::id_mgr::compute_id_from_info: "
 		    << "Invalid number of remaining addresses info for category `"
 		    << category << "' from token `" << addresses_token << "' "
 		    << " with mother ID " << mother_id_ << " (mother=`" << mother_category << "') [";
@@ -1021,7 +1021,7 @@ namespace geomtools {
 	    if (split_add_info.size () != 2)
 	      {
 		ostringstream message;
-		message << "id_mgr::compute_id_from_info: "
+		message << "geomtools::id_mgr::compute_id_from_info: "
 			<< "Invalid address information `" << add_info << "' !";
 		throw runtime_error (message.str ());
 	      }
@@ -1029,7 +1029,7 @@ namespace geomtools {
 	    if (ci.addresses[i + current_address_index] != addr_label)
 	      {
 		ostringstream message;
-		message << "id_mgr::compute_id_from_info: "
+		message << "geomtools::id_mgr::compute_id_from_info: "
 			<< "Invalid address label `" << addr_label << "' !";
 		throw runtime_error (message.str ());
 	      }
@@ -1042,7 +1042,7 @@ namespace geomtools {
 	      if (! iss)
 		{
 		  ostringstream message;
-		  message << "id_mgr::compute_id_from_info: "
+		  message << "geomtools::id_mgr::compute_id_from_info: "
 			  << "Invalid address value `" << addr_val_str << "' !";
 		  throw runtime_error (message.str ());
 		}
@@ -1057,7 +1057,7 @@ namespace geomtools {
 		else
 		  {
 		    ostringstream message;
-		    message << "id_mgr::compute_id_from_info: "
+		    message << "geomtools::id_mgr::compute_id_from_info: "
 			    << "Missing address at index `" << i << "' !";
 		    throw runtime_error (message.str ());
 		  }
@@ -1066,7 +1066,7 @@ namespace geomtools {
 	  }
       }
 
-    if (devel) clog << "id_mgr::compute_id_from_info: Exiting." << endl << endl;
+    if (devel) clog << "geomtools::id_mgr::compute_id_from_info: Exiting." << endl << endl;
     return EXIT_SUCCESS;
   }
 
