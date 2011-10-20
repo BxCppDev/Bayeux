@@ -58,12 +58,21 @@ composition.names         : string [1]  = "Copper"
 composition.fraction_mass : real   [1]  =  1.0
 
 [name="std::iron" type="material"]
-#@description Copper material
+#@description Iron material
 density        : real   = 7.874 
 density.unit   : string = "g/cm3"
 state          : string = "solid"
 composition.mode          : string      = "fraction_mass"
 composition.names         : string [1]  = "Iron"
+composition.fraction_mass : real   [1]  =  1.0
+
+[name="std::lead" type="material"]
+#@description Lead material
+density        : real   = 11.35
+density.unit   : string = "g/cm3"
+state          : string = "solid"
+composition.mode          : string      = "fraction_mass"
+composition.names         : string [1]  = "Lead"
 composition.fraction_mass : real   [1]  =  1.0
 
 [name="std::water" type="material"]
