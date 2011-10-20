@@ -596,8 +596,6 @@ namespace geomtools {
 	cerr << "DEVEL: gnuplot_drawer::draw: GNUPLOT command is :" << endl
 	     << cmdstr.str () << endl;
       }
-    cerr << "*********** DEVEL: gnuplot_drawer::draw: GNUPLOT command is :" << endl
-	 << cmdstr.str () << endl;
     if (! cmdstr.str ().empty ())
       {
 	g1.cmd (cmdstr.str ());
