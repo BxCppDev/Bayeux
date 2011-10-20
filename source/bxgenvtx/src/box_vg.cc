@@ -355,7 +355,7 @@ namespace genvtx {
 
     if (configuration_.has_key ("box_ref"))
       {
-	box_user_ref = configuration_.fetch_string ("box_ref");;
+	box_user_ref = configuration_.fetch_string ("box_ref");
       }
 
     if (box_user_ref == vg_tools::SHAPE_REF_NONE)
