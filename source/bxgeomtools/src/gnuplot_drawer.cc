@@ -26,7 +26,7 @@ namespace geomtools {
   const string gnuplot_drawer::VIEW_2D_XZ = "xz";
   const string gnuplot_drawer::VIEW_2D_YZ = "yz";
   const string gnuplot_drawer::VIEW_3D    = "xyz";
-  const string gnuplot_drawer::DEFAULT_VIEW  = gnuplot_drawer::VIEW_3D;
+  const string gnuplot_drawer::DEFAULT_VIEW = gnuplot_drawer::VIEW_3D;
 
   const int    gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT = 1000;
 
@@ -59,6 +59,7 @@ namespace geomtools {
   void gnuplot_drawer::set_view (const string & view_)
   {
     __view = view_;
+    return;
   }
  
   const string & gnuplot_drawer::get_view () const
@@ -69,6 +70,7 @@ namespace geomtools {
   void gnuplot_drawer::set_mode (const string & mode_)
   {
     __mode = mode_;
+    return;
   }
 
   const string & gnuplot_drawer::get_mode () const
@@ -192,6 +194,7 @@ namespace geomtools {
     __view = gnuplot_drawer::DEFAULT_VIEW;
     __mode = gnuplot_drawer::DEFAULT_MODE;
     __initialized = false;
+    return;
   }
   
   /****************************************************/
@@ -593,6 +596,8 @@ namespace geomtools {
 	cerr << "DEVEL: gnuplot_drawer::draw: GNUPLOT command is :" << endl
 	     << cmdstr.str () << endl;
       }
+    cerr << "*********** DEVEL: gnuplot_drawer::draw: GNUPLOT command is :" << endl
+	 << cmdstr.str () << endl;
     if (! cmdstr.str ().empty ())
       {
 	g1.cmd (cmdstr.str ());
