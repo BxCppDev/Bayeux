@@ -59,9 +59,9 @@ namespace geomtools {
 	else
 	  {
 	    ostringstream message;
-	    message << "smart_id_locator::_construct: "
+	    message << "geomtools::smart_id_locator::_construct: "
 		    << "Missing criterion for building the smart list of IDs !";
-	    throw runtime_error (message.str ());	    
+	    throw logic_error (message.str ());	    
 	  }
 
 	if (valid)
@@ -76,7 +76,7 @@ namespace geomtools {
 	if (is_debug ())
 	  {
 	    clog << datatools::utils::io::debug 
-		 << "smart_id_locator::_construct: "
+		 << "geomtools::smart_id_locator::_construct: "
 		 << "Number of entries with type (" << __type << ") = "
 		 << __ginfos.size ()
 		 << endl;
@@ -87,7 +87,7 @@ namespace geomtools {
 	if (is_debug ())
 	  {
 	    clog << datatools::utils::io::debug 
-		 << "smart_id_locator::_construct: "
+		 << "geomtools::smart_id_locator::_construct: "
 		 << "Number of entries selected by the ID selector = "
 		 << __ginfos.size ()
 		 << endl;
@@ -101,9 +101,9 @@ namespace geomtools {
     if (is_initialized ())
       {
 	ostringstream message;
-	message << "smart_id_locator::set_gmap: Operation prohibited ! "
+	message << "geomtools::smart_id_locator::set_gmap: Operation prohibited ! "
 		<< "Locator is already initialized !";
-	throw runtime_error (message.str ());
+	throw logic_error (message.str ());
       }	
     __gmap = &gmap_;
     return;
@@ -119,9 +119,9 @@ namespace geomtools {
     if (! is_initialized ())
       {
 	ostringstream message;
-	message << "smart_id_locator::reset: "
+	message << "geomtools::smart_id_locator::reset: "
 		<< "Locator is not initialized !";
-	throw runtime_error (message.str ());
+	throw logic_error (message.str ());
       }
     __mode = MODE_INVALID;
     __type = geom_id::INVALID_TYPE;
@@ -138,16 +138,16 @@ namespace geomtools {
     if (is_initialized ())
       {
 	ostringstream message;
-	message << "smart_id_locator::initialize: "
+	message << "geomtools::smart_id_locator::initialize: "
 		<< "Locator is already initialized !";
-	throw runtime_error (message.str ());
+	throw logic_error (message.str ());
       }
     if (__gmap == 0)
       {
 	ostringstream message;
-	message << "smart_id_locator::initialize: "
+	message << "geomtools::smart_id_locator::initialize: "
 		<< "Missing geoemtry map ! Use the 'set_gmap' method before !";
-	throw runtime_error (message.str ());	
+	throw logic_error (message.str ());	
       }
     __idsel.set_id_mgr (__gmap->get_id_manager ());
     try
@@ -157,9 +157,9 @@ namespace geomtools {
     catch (exception & x)
       {
 	ostringstream message;
-	message << "smart_id_locator::initialize: "
+	message << "geomtools::smart_id_locator::initialize: "
 		<< "ID selector failed: " << x.what ();
-	throw runtime_error (message.str ());
+	throw logic_error (message.str ());
       }
     
     __mode = mode_;
@@ -177,17 +177,17 @@ namespace geomtools {
     if (is_initialized ())
       {
 	ostringstream message;
-	message << "smart_id_locator::initialize: "
+	message << "geomtools::smart_id_locator::initialize: "
 		<< "Locator is already initialized !";
-	throw runtime_error (message.str ());
+	throw logic_error (message.str ());
       }
 
     if (type_ == geom_id::INVALID_TYPE)
       {
 	ostringstream message;
-	message << "smart_id_locator::_construct: "
+	message << "geomtools::smart_id_locator::_construct: "
 		<< "Invalid geometry info type (" << type_ << ")";
-	throw runtime_error (message.str ());
+	throw logic_error (message.str ());
       }
     
     __mode = mode_;
@@ -267,6 +267,7 @@ namespace geomtools {
       {
 	reset ();
       }
+    return;
   }
 
   bool smart_id_locator::validate_id (const geom_id & id_) const
@@ -298,7 +299,7 @@ namespace geomtools {
 		if (is_debug ())
 		  {
 		    clog << datatools::utils::io::debug 
-			 << "smart_id_locator::get_geom_id: "
+			 << "geomtools::smart_id_locator::get_geom_id: "
 			 << "Last found entry match ("
 			 << __last_found->get_id () << ")"
 			 << endl;
@@ -336,7 +337,7 @@ namespace geomtools {
 	    if (is_debug ())
 	      {
 		clog << datatools::utils::io::debug 
-		     << "smart_id_locator::get_geom_id: "
+		     << "geomtools::smart_id_locator::get_geom_id: "
 		     << "New entry match ("
 		     << ginfo->get_id () << ")"
 		     << endl;
@@ -351,7 +352,7 @@ namespace geomtools {
 
   void smart_id_locator::dump (ostream & out_) const
   {
-    out_ << "smart_id_locator::dump: " << endl;
+    out_ << "geomtools::smart_id_locator::dump: " << endl;
     out_ << "|-- Debug:       " << __debug << endl;
     out_ << "|-- Initialized: " << __initialized << endl;
     out_ << "|-- Mode:        " << __mode << endl;
