@@ -40,6 +40,7 @@ namespace datatools {
     i_tree_dumpable::inherit_tag::inherit_tag (bool a_inherit) 
       : inherit_ (a_inherit) 
     {
+      return;
     }
   
     std::ostream & operator<< (std::ostream & a_out, 
@@ -53,6 +54,7 @@ namespace datatools {
     i_tree_dumpable::inherit_skip_tag::inherit_skip_tag (bool a_inherit) 
       : inherit_ (a_inherit) 
     {
+      return;
     }
   
     std::ostream & operator<< (std::ostream & a_out, 
@@ -63,7 +65,6 @@ namespace datatools {
       return a_out;
     }
   
-
   } // end of namespace utils 
 
 } // end of namespace datatools 

@@ -40,17 +40,17 @@ namespace datatools {
 
     const properties & multi_properties::entry::get_properties () const
     {
-      return properties_;
+      return _properties_;
     }
 
     properties & multi_properties::entry::get_properties ()
     {
-      return properties_;
+      return _properties_;
     }
 
     const string & multi_properties::entry::get_key () const
     {
-      return key_;
+      return _key_;
     }
 
     void multi_properties::entry::set_key (const string & a_key)
@@ -61,24 +61,24 @@ namespace datatools {
 	  message << "multi_properties::entry::set_key: Missing key !";
 	  throw runtime_error (message.str ());
 	}
-      key_ = a_key;
+      _key_ = a_key;
       return;
     }
 
     const string & multi_properties::entry::get_meta () const
     {
-     return meta_;
+     return _meta_;
     }
 
     void multi_properties::entry::set_meta (const string & a_meta)
     {
-      meta_ = a_meta;
+      _meta_ = a_meta;
       return;
     }
 
     bool multi_properties::entry::has_meta () const
     {
-      return (! meta_.empty ());
+      return (! _meta_.empty ());
     }
 
     multi_properties::entry::entry (const string & a_key, 
@@ -94,7 +94,7 @@ namespace datatools {
 
     multi_properties::entry::~entry ()
     {
-      properties_.clear ();
+      _properties_.clear ();
       return;
     }
  	
@@ -112,15 +112,15 @@ namespace datatools {
 	}
 
       a_out << indent << du::i_tree_dumpable::tag 
-	   << "Key         : \"" <<  key_ << "\"" << endl;
+	   << "Key         : \"" <<  _key_ << "\"" << endl;
 
       a_out << indent << du::i_tree_dumpable::tag 
-	   << "Meta        : \"" <<  meta_ << "\"" << endl;
+	   << "Meta        : \"" <<  _meta_ << "\"" << endl;
       
       {
 	a_out << indent << du::i_tree_dumpable::inherit_tag (inherit_)
 	     << "Properties : ";
-	if (properties_.size () == 0) 
+	if (_properties_.size () == 0) 
 	  {
 	    a_out << "<empty>"; 
 	  }
@@ -129,7 +129,7 @@ namespace datatools {
 	  ostringstream indent_oss;
 	  indent_oss << indent;
 	  indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
-	  properties_.tree_dump (a_out, "", indent_oss.str ());
+	  _properties_.tree_dump (a_out, "", indent_oss.str ());
 	}
       }
       return;
@@ -142,23 +142,23 @@ namespace datatools {
 
     bool multi_properties::is_debug () const
     {
-      return debug_;
+      return _debug_;
     }
     
     void multi_properties::set_debug (bool a_debug)
     {
-      debug_ = a_debug;
+      _debug_ = a_debug;
       return;
     }
 
     const string & multi_properties::get_description () const
     {
-      return description_;
+      return _description_;
     }
 
     void multi_properties::set_description (const string & a_description)
     {
-      description_ = a_description;
+      _description_ = a_description;
       return;
     }
 
@@ -168,41 +168,41 @@ namespace datatools {
 	{
 	  throw runtime_error ("multi_properties::set_key_label: Empty key label is not allowed !");
 	}
-      key_label_ = a_key_label;
+      _key_label_ = a_key_label;
       return;
     }
 
     const string & multi_properties::get_key_label () const
     {
-      return key_label_;
+      return _key_label_;
     }
 
     void multi_properties::set_meta_label (const string & a_meta_label)
     {
-     meta_label_ = a_meta_label;
+     _meta_label_ = a_meta_label;
       return;
     }
 
     const string & multi_properties::get_meta_label () const
     {
-      return meta_label_;
+      return _meta_label_;
     }
 	
     size_t multi_properties::size () const
     {
-      if (ordered_entries_.size () != entries_.size ()) 
+      if (_ordered_entries_.size () != _entries_.size ()) 
 	{
 	  throw runtime_error ("multi_properties::size: Containers are broken !");
 	}
-      return entries_.size ();
+      return _entries_.size ();
     }
 
     void multi_properties::reset ()
     {
-      key_label_ = DEFAULT_KEY_LABEL;
-      meta_label_ = DEFAULT_META_LABEL;
-      ordered_entries_.clear ();
-      entries_.clear ();
+      _key_label_ = DEFAULT_KEY_LABEL;
+      _meta_label_ = DEFAULT_META_LABEL;
+      _ordered_entries_.clear ();
+      _entries_.clear ();
       return;
     }
 
@@ -214,13 +214,13 @@ namespace datatools {
 
     const multi_properties::entries_col_t & multi_properties::entries () const
     {
-      return entries_;
+      return _entries_;
     }
 
     const multi_properties::entries_ordered_col_t & 
     multi_properties::ordered_entries () const
     {
-      return ordered_entries_;
+      return _ordered_entries_;
     }
 
     // ctor:
@@ -229,9 +229,9 @@ namespace datatools {
 					const string & a_description,
 					bool a_debug)
     { 
-      debug_ = a_debug;
-      key_label_ = DEFAULT_KEY_LABEL;
-      meta_label_ = DEFAULT_META_LABEL;
+      _debug_ = a_debug;
+      _key_label_ = DEFAULT_KEY_LABEL;
+      _meta_label_ = DEFAULT_META_LABEL;
       if (! a_key_label.empty ()) set_key_label (a_key_label);
       //if (! a_meta_label.empty ()) 
       set_meta_label (a_meta_label);
@@ -248,8 +248,8 @@ namespace datatools {
 
     bool multi_properties::has_key (const string & a_key) const
     {
-      entries_col_t::const_iterator found = entries_.find (a_key);
-      return found != entries_.end ();
+      entries_col_t::const_iterator found = _entries_.find (a_key);
+      return found != _entries_.end ();
     }
 
     bool multi_properties::has_section (const string & a_key) const
@@ -260,8 +260,8 @@ namespace datatools {
     const multi_properties::entry & 
     multi_properties::get (const string & a_key) const
     {
-      entries_col_t::const_iterator found = entries_.find (a_key);
-      if (found == entries_.end ())
+      entries_col_t::const_iterator found = _entries_.find (a_key);
+      if (found == _entries_.end ())
 	{
 	  ostringstream message;
 	  message << "multi_properties::get: Key '"
@@ -273,8 +273,8 @@ namespace datatools {
     
     multi_properties::entry & multi_properties::get (const string & a_key)
     {
-      entries_col_t::iterator found = entries_.find (a_key);
-      if (found == entries_.end ())
+      entries_col_t::iterator found = _entries_.find (a_key);
+      if (found == _entries_.end ())
 	{
 	  ostringstream message;
 	  message << "multi_properties::get: Key '"
@@ -298,17 +298,17 @@ namespace datatools {
 
     void multi_properties::remove_ (const string & a_key)
     {
-      bool devel = debug_;
+      bool devel = _debug_;
       //devel = true;
-      entries_ordered_col_t::iterator found = ordered_entries_.end ();
+      entries_ordered_col_t::iterator found = _ordered_entries_.end ();
        if (devel)
 	{
 	  clog << "DEVEL: multi_properties::add_: "
 	       << "Removing key '" << a_key << "'";
 	  clog << endl;
 	}
-       for (entries_ordered_col_t::iterator i = ordered_entries_.begin ();
-	   i != ordered_entries_.end ();
+       for (entries_ordered_col_t::iterator i = _ordered_entries_.begin ();
+	   i != _ordered_entries_.end ();
 	   i++)
 	{
 	  entry * e = *i;
@@ -318,9 +318,9 @@ namespace datatools {
 	      break;
 	    }
 	}
-      if (found != ordered_entries_.end ())
+      if (found != _ordered_entries_.end ())
 	{
-	  ordered_entries_.erase (found);
+	  _ordered_entries_.erase (found);
 	  if (devel)
 	    {
 	      clog << "DEVEL: multi_properties::add_: "
@@ -328,15 +328,15 @@ namespace datatools {
 	      clog << endl;
 	    }
 	}
-      //size_t n = entries_.erase (a_key);
-      entries_.erase (a_key);
+      //size_t n = _entries_.erase (a_key);
+      _entries_.erase (a_key);
       return;
     }
 
     void multi_properties::remove (const string & a_key)
     {
-      entries_col_t::iterator found = entries_.find (a_key);
-      if (found == entries_.end ())
+      entries_col_t::iterator found = _entries_.find (a_key);
+      if (found == _entries_.end ())
 	{
 	  ostringstream message;
 	  message << "multi_properties::remove: Key '"
@@ -350,9 +350,9 @@ namespace datatools {
     void multi_properties::add_ (const string & a_key, 
 				  const string & a_meta)
     {
-      bool devel = debug_;
+      bool devel = _debug_;
       //devel = true;
-      if (entries_.find (a_key) != entries_.end ())
+      if (_entries_.find (a_key) != _entries_.end ())
 	{
 	  ostringstream message;
 	  message << "multi_properties::add_: Key '"
@@ -366,8 +366,8 @@ namespace datatools {
 	  if (! a_meta.empty()) clog << " with meta '" << a_meta << "'";
 	  clog << endl;
 	}
-      entries_[a_key] = entry (a_key, a_meta);
-      ordered_entries_.push_back (&entries_[a_key]);
+      _entries_[a_key] = entry (a_key, a_meta);
+      _ordered_entries_.push_back (&_entries_[a_key]);
       return;
     }
 
@@ -382,7 +382,7 @@ namespace datatools {
 				const properties & a_props)
     {
       add_ (a_key);
-      entries_[a_key].get_properties () = a_props;
+      _entries_[a_key].get_properties () = a_props;
       return;
     }
 
@@ -391,7 +391,7 @@ namespace datatools {
 				const properties & a_props)
     {
       add_ (a_key, a_meta);
-      entries_[a_key].get_properties () = a_props;
+      _entries_[a_key].get_properties () = a_props;
       return;
     }
 
@@ -430,8 +430,8 @@ namespace datatools {
       fout << "#@meta_label  " << '"' << get_meta_label ()<< '"' << endl;
       fout << endl;
 
-      for (entries_col_t::const_iterator i = entries_.begin ();
-	   i != entries_.end ();
+      for (entries_col_t::const_iterator i = _entries_.begin ();
+	   i != _entries_.end ();
 	   i++)
 	{
 	  const string & name = i->first;
@@ -495,18 +495,18 @@ namespace datatools {
 	  throw runtime_error (message.str ());
 	}
 
-      read_ (fin, a_skip_private);
+      _read_ (fin, a_skip_private);
       return;
     } 
 
-    void multi_properties::read_ (istream & in_,
+    void multi_properties::_read_ (istream & in_,
 				   bool a_skip_private)
     {
       bool devel = multi_properties::g_debug;
       //devel = true;
       if (devel)
 	{
-	  clog << "DEVEL: multi_properties::read_: Entering..." << endl;
+	  clog << "DEVEL: multi_properties::_read_: Entering..." << endl;
 	  tree_dump (cerr, "DUMP: " , "DEVEL: ");
 	}
       string line_in;
@@ -592,24 +592,24 @@ namespace datatools {
 			  string key_label;
 			  if (! properties::config::read_quoted_string (iss, key_label))
 			    {
-			      throw runtime_error ("multi_properties::read_: Unquoted value for 'key_label'");
+			      throw runtime_error ("multi_properties::_read_: Unquoted value for 'key_label'");
 			    }
 			  string tmp;
 			  getline (iss, tmp);
 			  if (! key_label.empty ()) 
 			    {
 			      mprop_key_label = key_label;
-			      if (key_label_.empty ())
+			      if (_key_label_.empty ())
 				{
 				  set_key_label (mprop_key_label);
 				}
 			      else
 				{
-				  if (key_label_ != mprop_key_label)
+				  if (_key_label_ != mprop_key_label)
 				    {
 				      ostringstream message;
-				      message << "multi_properties::read_: Incompatible key label '"
-					      << mprop_key_label << "' with setup '" << key_label_ << "' !";
+				      message << "multi_properties::_read_: Incompatible key label '"
+					      << mprop_key_label << "' with setup '" << _key_label_ << "' !";
 				      throw runtime_error (message.str ());
 				    }
 				}
@@ -621,34 +621,34 @@ namespace datatools {
 			  string meta_label;
 			  if (! properties::config::read_quoted_string (iss, meta_label))
 			    {
-			      throw runtime_error ("multi_properties::read_: Unquoted value for 'meta_label'");
+			      throw runtime_error ("multi_properties::_read_: Unquoted value for 'meta_label'");
 			    }
 			  string tmp;
 			  getline (iss, tmp);
 			  if (meta_label.empty ()) 
 			    {
-			      if (! meta_label_.empty ())
+			      if (! _meta_label_.empty ())
 				{
 				  ostringstream message;
-				  message << "multi_properties::read_: " 
-					  << "Missing meta label with setup '" << meta_label_ << "' !";
+				  message << "multi_properties::_read_: " 
+					  << "Missing meta label with setup '" << _meta_label_ << "' !";
 				  throw runtime_error (message.str ());
 				}
 			    }
 			  else
 			    {
 			      mprop_meta_label = meta_label;
-			      if (meta_label_.empty ())
+			      if (_meta_label_.empty ())
 				{
 				  set_meta_label (mprop_meta_label);
 				}
 			      else
 				{
-				  if (meta_label_ != mprop_meta_label)
+				  if (_meta_label_ != mprop_meta_label)
 				    {
 				      ostringstream message;
-				      message << "multi_properties::read_: Incompatible meta label '"
-					      << mprop_meta_label << "' with setup '" << meta_label_ << "' !";
+				      message << "multi_properties::_read_: Incompatible meta label '"
+					      << mprop_meta_label << "' with setup '" << _meta_label_ << "' !";
 				      throw runtime_error (message.str ());
 				    }
 				}
@@ -674,14 +674,14 @@ namespace datatools {
 		      if (key_label != get_key_label ())
 			{
 			  ostringstream message;
-			  message << "multi_properties::read_: Incompatible key label '"
-				  << key_label << "' with setup '" << key_label_ << "' !";
+			  message << "multi_properties::_read_: Incompatible key label '"
+				  << key_label << "' with setup '" << _key_label_ << "' !";
 			  throw runtime_error (message.str ());
 			}
 		      if (! properties::config::read_quoted_string (iss, new_key)) 
 			{
 			  ostringstream message;
-			  message << "multi_properties::read_: "
+			  message << "multi_properties::_read_: "
 				  << "Cannot read quoted string key value !" ;
 			  throw runtime_error (message.str ());
 			}
@@ -696,14 +696,14 @@ namespace datatools {
 			      if (meta_label != get_meta_label ())
 				{
 				  ostringstream message;
-				  message << "multi_properties::read_: Incompatible meta label '"
-					  << meta_label << "' with setup '" << meta_label_ << "' !";
+				  message << "multi_properties::_read_: Incompatible meta label '"
+					  << meta_label << "' with setup '" << _meta_label_ << "' !";
 				  throw runtime_error (message.str ());
 				}
 			      if (! properties::config::read_quoted_string (iss, new_meta)) 
 				{
 				  ostringstream message;
-				  message << "multi_properties::read_: "
+				  message << "multi_properties::_read_: "
 					  << "Cannot read quoted string meta value!" ;
 				  throw runtime_error (message.str ());
 				}
@@ -714,7 +714,7 @@ namespace datatools {
 			  if (! get_meta_label ().empty ())
 			    {
 				  ostringstream message;
-				  message << "multi_properties::read_: "
+				  message << "multi_properties::_read_: "
 					  << "Expected meta record '" << get_meta_label () << '=' 
 					  << "\"???\"" << "' is missing !" ;
 				  throw runtime_error (message.str ());			      
@@ -726,7 +726,7 @@ namespace datatools {
 		      if (c != ']')
 			{
 			  ostringstream message;
-			  message << "multi_properties::read_: "
+			  message << "multi_properties::_read_: "
 				  << "Cannot read 'key/meta' closing symbol !" ;
 			  throw runtime_error (message.str ());
 			}
@@ -737,14 +737,14 @@ namespace datatools {
 		      // append line to the current block stream:
 		      if (devel)
 			{
-			  clog << "DEVEL: multi_properties::read_: " 
+			  clog << "DEVEL: multi_properties::_read_: " 
 			       << "Append line " << "'"  << line << "'" << endl;
 			}
 		      current_block_oss << line << endl;
 		    }
 		  if (devel)
 		    {
-		      clog << "DEVEL: multi_properties::read_: " 
+		      clog << "DEVEL: multi_properties::_read_: " 
 			   << "'"  << line << "'" << endl;
 		    }
 		} // !skip_line
@@ -769,7 +769,7 @@ namespace datatools {
 			{
 			  if (devel)
 			    {
-			      clog << "DEVEL: multi_properties::read_: Skip loading of '" 
+			      clog << "DEVEL: multi_properties::_read_: Skip loading of '" 
 				   << current_key << "'" << endl;
 			    }
 			  load_it = false;
@@ -780,7 +780,7 @@ namespace datatools {
 		    {
 		      if (devel)
 			{
-			  clog << "DEVEL: multi_properties::read_: Add '" 
+			  clog << "DEVEL: multi_properties::_read_: Add '" 
 			       << current_key << "'" << endl;
 			}
 		      add (current_key, current_meta);
@@ -788,7 +788,7 @@ namespace datatools {
 		      properties::config pcr;
 		      if (devel)
 			{
-			  clog << "DEVEL: multi_properties::read_: Block:" << endl;
+			  clog << "DEVEL: multi_properties::_read_: Block:" << endl;
 			  clog << ">>>" << endl;
 			  clog << current_block_oss.str ();
 			  clog << "<<<" << endl;
@@ -806,7 +806,7 @@ namespace datatools {
 	} // while ( *_in ) 
 
       return;
-    } /* end of multi_properties::read_ */
+    } /* end of multi_properties::_read_ */
  
     void multi_properties::dump (ostream & a_out) const
     {
@@ -827,19 +827,19 @@ namespace datatools {
 	  a_out << indent << a_title << endl;
 	}
      
-      if (! description_.empty ()) 
+      if (! _description_.empty ()) 
 	{
 	  a_out << indent << du::i_tree_dumpable::tag 
 	       << "Description  : " <<  get_description () << endl;
 	}
 
-      if (! key_label_.empty ()) 
+      if (! _key_label_.empty ()) 
 	{
 	  a_out << indent << du::i_tree_dumpable::tag 
 	       << "Key label    : \"" <<  get_key_label () << "\"" << endl;
 	}
 
-      if (! meta_label_.empty ()) 
+      if (! _meta_label_.empty ()) 
 	{
 	  a_out << indent << du::i_tree_dumpable::tag 
 	       << "Meta label   : \"" <<  get_meta_label () << "\"" << endl;
@@ -848,17 +848,17 @@ namespace datatools {
       {
 	a_out << indent << du::i_tree_dumpable::tag
 	     << "Entries      : ";
-	if (entries_.size () == 0) 
+	if (_entries_.size () == 0) 
 	  {
 	    a_out << "<empty>"; 
 	  }
 	else
 	  {
-	    a_out << "[" << entries_.size () << "]";
+	    a_out << "[" << _entries_.size () << "]";
 	  }
 	a_out << endl;
-	for (entries_col_t::const_iterator i = entries_.begin ();
-	     i != entries_.end () ;
+	for (entries_col_t::const_iterator i = _entries_.begin ();
+	     i != _entries_.end () ;
 	     i++) 
 	  {
 	    const string & key = i->first;
@@ -872,7 +872,7 @@ namespace datatools {
 	    //indent_oss << du::i_tree_dumpable::inherit_skip_tag (a_inherit);
 	    a_out << du::i_tree_dumpable::skip_tag;
 	    indent_oss << du::i_tree_dumpable::skip_tag;
-	    if (j == entries_.end ()) 
+	    if (j == _entries_.end ()) 
 	      {
 		a_out << du::i_tree_dumpable::last_tag;
 		indent_oss << du::i_tree_dumpable::inherit_skip_tag (a_inherit);
@@ -896,17 +896,17 @@ namespace datatools {
 	int rank = 0;
 	a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)
 	     << "Ordered entries      : ";
-	if (ordered_entries_.size () == 0) 
+	if (_ordered_entries_.size () == 0) 
 	  {
 	    a_out << "<empty>"; 
 	  }
 	else
 	  {
-	    a_out << "[" << ordered_entries_.size () << "]";
+	    a_out << "[" << _ordered_entries_.size () << "]";
 	  }
 	a_out << endl;
-	for (entries_ordered_col_t::const_iterator i = ordered_entries_.begin ();
-	     i != ordered_entries_.end () ;
+	for (entries_ordered_col_t::const_iterator i = _ordered_entries_.begin ();
+	     i != _ordered_entries_.end () ;
 	     i++) 
 	  {
 	    const entry * p_entry = *i;
@@ -917,7 +917,7 @@ namespace datatools {
 	    j++;
 	    a_out << du::i_tree_dumpable::inherit_skip_tag (a_inherit);
 	    indent_oss << du::i_tree_dumpable::inherit_skip_tag (a_inherit);
-	    if (j == ordered_entries_.end ()) 
+	    if (j == _ordered_entries_.end ()) 
 	      {
 		a_out << du::i_tree_dumpable::last_tag;
 		indent_oss << du::i_tree_dumpable::inherit_skip_tag (a_inherit);

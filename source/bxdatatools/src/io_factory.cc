@@ -23,68 +23,68 @@ namespace datatools {
     io_factory::eof () const
     {
       if (is_write ()) return false;
-      if (__in != 0 && __in->eof ()) return true;
+      if (_in_ != 0 && _in_->eof ()) return true;
       return false;
     }
 
     bool
     io_factory::is_read () const
     {
-      return (__mode & MASK_RW) == 0;
+      return (_mode_ & MASK_RW) == 0;
     }
 
     bool
     io_factory::is_write () const
     {
-      return (__mode & MASK_RW) != 0;
+      return (_mode_ & MASK_RW) != 0;
     }
 
     bool
     io_factory::is_compressed () const
     {
-      return (__mode & MASK_COMPRESSION) != 0;
+      return (_mode_ & MASK_COMPRESSION) != 0;
     }
 
     bool
     io_factory::is_uncompressed () const
     {
-      return (__mode & MASK_COMPRESSION) == 0;
+      return (_mode_ & MASK_COMPRESSION) == 0;
     }
 
     bool
     io_factory::is_gzip () const
     {
-      return (__mode & MASK_COMPRESSION) == MODE_GZIP;
+      return (_mode_ & MASK_COMPRESSION) == MODE_GZIP;
     }
 
     bool
     io_factory::is_bzip2 () const
     {
-      return (__mode & MASK_COMPRESSION) == MODE_BZIP2;
+      return (_mode_ & MASK_COMPRESSION) == MODE_BZIP2;
     }
 
     bool
     io_factory::is_text () const
     {
-      return (__mode & MASK_FORMAT) == MODE_TEXT;
+      return (_mode_ & MASK_FORMAT) == MODE_TEXT;
     }
 
     bool
     io_factory::is_binary () const
     {
-      return (__mode & MASK_FORMAT) == MODE_BINARY;
+      return (_mode_ & MASK_FORMAT) == MODE_BINARY;
     }
 
     bool
     io_factory::is_xml () const
     {
-      return (__mode & MASK_FORMAT) == MODE_XML;
+      return (_mode_ & MASK_FORMAT) == MODE_XML;
     }
 
     bool
     io_factory::is_single_archive () const
     {
-      return (__mode & MASK_MULTIARCHIVE) == MODE_UNIQUE_ARCHIVE;
+      return (_mode_ & MASK_MULTIARCHIVE) == MODE_UNIQUE_ARCHIVE;
     }
 
     bool
@@ -96,7 +96,7 @@ namespace datatools {
     bool
     io_factory::is_no_append () const
     {
-      return (__mode & MASK_APPEND) == MODE_NO_APPEND;
+      return (_mode_ & MASK_APPEND) == MODE_NO_APPEND;
     }
 
     bool
@@ -105,191 +105,191 @@ namespace datatools {
       return ! is_no_append ();
     }
 
-    int io_factory::__init_read_archive ()
+    int io_factory::_init_read_archive_ ()
     {
       bool devel = g_debug;
       if (devel)
 	{
-	  std::clog << "DEBUG: io_factory::__init_read_archive: Entering..." << std::endl;
+	  std::clog << "DEBUG: io_factory::_init_read_archive_: Entering..." << std::endl;
 	}
 
       /*** text archive ***/
       if (is_text ())
 	{
-	  if (devel) std::clog << "DEBUG: io_factory::__init_read_archive: "
+	  if (devel) std::clog << "DEBUG: io_factory::_init_read_archive_: "
 				 << "text with FPU..."
 				 << std::endl;
-	  __itar_ptr = new boost::archive::text_iarchive (*__in,
+	  _itar_ptr_ = new boost::archive::text_iarchive (*_in_,
 							  boost::archive::no_codecvt);
 	  if (devel)
 	    {
-	      std::clog << "DEBUG: io_factory::__init_read_archive: "
+	      std::clog << "DEBUG: io_factory::_init_read_archive_: "
 			<< "'boost::archive::text_iarchive' library version "
-			<< __itar_ptr->get_library_version () << std::endl;
+			<< _itar_ptr_->get_library_version () << std::endl;
 	    }
 	}
       /*** XML archive ***/
       else if (is_xml ())
 	{
-	  __ixar_ptr = new boost::archive::xml_iarchive (*__in,
+	  _ixar_ptr_ = new boost::archive::xml_iarchive (*_in_,
 							 boost::archive::no_codecvt);
 	  if (devel)
 	    {
-	      std::clog << "DEBUG: io_factory::__init_read_archive: "
+	      std::clog << "DEBUG: io_factory::_init_read_archive_: "
 			<< "'boost::archive::xml_iarchive' library version "
-			<< __ixar_ptr->get_library_version () << std::endl;
+			<< _ixar_ptr_->get_library_version () << std::endl;
 	    }
 	}
       /*** binary archive ***/
       else if (is_binary ())
 	{
-	  __ibar_ptr = new boost::archive::portable_binary_iarchive (*__in);
+	  _ibar_ptr_ = new boost::archive::portable_binary_iarchive (*_in_);
 	  if (devel)
 	    {
-	      std::cerr << "DEBUG: io_factory::__init_read_archive: library version = "
-			<< __ibar_ptr->get_library_version ()  << std::endl;
+	      std::cerr << "DEBUG: io_factory::_init_read_archive_: library version = "
+			<< _ibar_ptr_->get_library_version ()  << std::endl;
 	    }
-	  //std::cerr << "DEVEL: io_factory::__init_read_archive: __ibar_ptr = " << __ibar_ptr << std::endl;
+	  //std::cerr << "DEVEL: io_factory::_init_read_archive_: _ibar_ptr_ = " << _ibar_ptr_ << std::endl;
 	}
       else
 	{
-	  throw std::runtime_error ("io_factory::__init_read_archive: format not supported!");
+	  throw std::runtime_error ("io_factory::_init_read_archive_: format not supported!");
 	}
-      __read_archive_is_initialized = true;
+      _read_archive_is_initialized_ = true;
       if (devel)
 	{
-	  std::clog << "DEVEL: io_factory::__init_read_archive: Exiting." << std::endl;
+	  std::clog << "DEVEL: io_factory::_init_read_archive_: Exiting." << std::endl;
 	}
       return 0;
     }
 
     int
-    io_factory::__reset_read_archive ()
+    io_factory::_reset_read_archive_ ()
     {
-      if (! __read_archive_is_initialized)
+      if (! _read_archive_is_initialized_)
 	{
 	  return 0;
 	}
 
-      if (__itar_ptr != 0)
+      if (_itar_ptr_ != 0)
 	{
-	  delete __itar_ptr;
-	  __itar_ptr = 0;
+	  delete _itar_ptr_;
+	  _itar_ptr_ = 0;
 	}
 
-      if (__ixar_ptr != 0)
+      if (_ixar_ptr_ != 0)
 	{
-	  delete __ixar_ptr;
-	  __ixar_ptr = 0;
+	  delete _ixar_ptr_;
+	  _ixar_ptr_ = 0;
 	}
 
-      if (__ibar_ptr != 0)
+      if (_ibar_ptr_ != 0)
 	{
-	  delete __ibar_ptr;
-	  __ibar_ptr = 0;
+	  delete _ibar_ptr_;
+	  _ibar_ptr_ = 0;
 	}
 
-      __read_archive_is_initialized = false;
+      _read_archive_is_initialized_ = false;
       return 0;
     }
 
 
     int
-    io_factory::__init_read (const std::string & a_stream_name)
+    io_factory::_init_read_ (const std::string & a_stream_name)
     {
-      __in_fs = new boost::iostreams::filtering_istream;
+      _in_fs_ = new boost::iostreams::filtering_istream;
       if (is_gzip ())
 	{
-	  __in_fs->push (boost::iostreams::gzip_decompressor ());
+	  _in_fs_->push (boost::iostreams::gzip_decompressor ());
 	}
 
       if (is_bzip2 ())
 	{
-	  __in_fs->push (boost::iostreams::bzip2_decompressor ());
+	  _in_fs_->push (boost::iostreams::bzip2_decompressor ());
 	}
 
       if (a_stream_name.empty ())
 	{
 	  if (g_debug)
 	    {
-	      std::clog << "DEBUG: io_factory::__init_read: cin..."
+	      std::clog << "DEBUG: io_factory::_init_read_: cin..."
 			<< std::endl;
 	    }
-	  __in_fs->push (std::cin);
+	  _in_fs_->push (std::cin);
 	}
       else
 	{
 	  if (g_debug)
 	    {
-	      std::clog << "DEBUG: io_factory::__init_read: file='"
+	      std::clog << "DEBUG: io_factory::_init_read_: file='"
 			<< a_stream_name << "'" << std::endl;
 	    }
 	  if (is_compressed () || is_binary ())
 	    {
-	      __fin = new std::ifstream (a_stream_name.c_str (),
+	      _fin_ = new std::ifstream (a_stream_name.c_str (),
 					 std::ios_base::in | std::ios_base::binary);
 	    }
 	  else
 	    {
-	      __fin = new std::ifstream (a_stream_name.c_str (),
+	      _fin_ = new std::ifstream (a_stream_name.c_str (),
 					 std::ios_base::in);
 	    }
-	  if (! *__fin)
+	  if (! *_fin_)
 	    {
-	      throw std::runtime_error ("io_factory::__init_read: Cannot open input stream!");
+	      throw std::runtime_error ("io_factory::_init_read_: Cannot open input stream!");
 	    }
-	  __in_fs->push (*__fin);
+	  _in_fs_->push (*_fin_);
 	}
 
-      __in = __in_fs;
+      _in_ = _in_fs_;
       if (is_text () || is_xml ())
 	{
 	  if (g_debug)
 	    {
-	      std::clog << "DEBUG: io_factory::__init_read: "
+	      std::clog << "DEBUG: io_factory::_init_read_: "
 			<< "FPU: stream.imbue..."
 			<< std::endl;
 	    }
-	  __in->imbue (*__locale);
+	  _in_->imbue (*_locale_);
 	}
 
       return 0;
     }
 
     int
-    io_factory::__reset_read ()
+    io_factory::_reset_read_ ()
     {
       if (g_debug)
 	{
-	  std::clog << "DEBUG: io_factory::__reset_read:..." << std::endl;
+	  std::clog << "DEBUG: io_factory::_reset_read_:..." << std::endl;
 	}
 
-      if (__in != 0)
+      if (_in_ != 0)
 	{
-	  __in = 0;
+	  _in_ = 0;
 	}
 
-      if (__in_fs != 0)
+      if (_in_fs_ != 0)
 	{
-	  __in_fs->reset ();
-	  delete __in_fs;
-	  __in_fs = 0;
+	  _in_fs_->reset ();
+	  delete _in_fs_;
+	  _in_fs_ = 0;
 	}
 
-      if (__fin != 0)
+      if (_fin_ != 0)
 	{
-	  __fin->close ();
-	  delete __fin;
-	  __fin = 0;
+	  _fin_->close ();
+	  delete _fin_;
+	  _fin_ = 0;
 	}
 
       return 0;
     }
 
     int
-    io_factory::__init_write_archive ()
+    io_factory::_init_write_archive_ ()
     {
-      if (__write_archive_is_initialized)
+      if (_write_archive_is_initialized_)
 	{
 	  return 0;
 	}
@@ -297,84 +297,84 @@ namespace datatools {
 	{
 	  if (g_debug)
 	    {
-	      std::clog << "DEBUG: io_factory::__init_write_archive: "
+	      std::clog << "DEBUG: io_factory::_init_write_archive_: "
 			<< "with FPU: text archive..."
 			<< std::endl;
 	    }
-	  __otar_ptr = new boost::archive::text_oarchive (*__out,
+	  _otar_ptr_ = new boost::archive::text_oarchive (*_out_,
 							  boost::archive::no_codecvt);
 	  if (g_debug)
 	    {
-	      std::clog << "DEBUG: io_factory::__init_write_archive: "
+	      std::clog << "DEBUG: io_factory::_init_write_archive_: "
 			<< "'boost::archive::text_oarchive' library version "
-			<< __otar_ptr->get_library_version () << std::endl;
+			<< _otar_ptr_->get_library_version () << std::endl;
 	    }
 	}
       else if (is_xml ())
 	{
 	  if (g_debug)
 	    {
-	      std::clog << "DEBUG: io_factory::__init_write_archive: "
+	      std::clog << "DEBUG: io_factory::_init_write_archive_: "
 			<< "with FPU: XML archive..."
 			<< std::endl;
 	    }
-	  __oxar_ptr = new boost::archive::xml_oarchive (*__out,
+	  _oxar_ptr_ = new boost::archive::xml_oarchive (*_out_,
 							 boost::archive::no_codecvt);
 	  if (g_debug)
 	    {
-	      std::clog << "DEBUG: io_factory::__init_write_archive: "
+	      std::clog << "DEBUG: io_factory::_init_write_archive_: "
 			<< "'boost::archive::xml_oarchive' library version "
-			<< __oxar_ptr->get_library_version () << std::endl;
+			<< _oxar_ptr_->get_library_version () << std::endl;
 	    }
 	}
       else if (is_binary ())
 	{
-	  __obar_ptr = new boost::archive::portable_binary_oarchive (*__out);
+	  _obar_ptr_ = new boost::archive::portable_binary_oarchive (*_out_);
 	  if (g_debug)
 	    {
-	      std::clog << "DEBUG: io_factory::__init_write_archive: "
+	      std::clog << "DEBUG: io_factory::_init_write_archive_: "
 			<< "'boost::archive::portable_binary_oarchive' library version "
-			<< __obar_ptr->get_library_version () << std::endl;
+			<< _obar_ptr_->get_library_version () << std::endl;
 	    }
 	}
       else
 	{
-	  throw std::runtime_error ("io_factory::__init_write_archive: format not supported!");
+	  throw std::runtime_error ("io_factory::_init_write_archive_: format not supported!");
 	}
-      __write_archive_is_initialized = true;
+      _write_archive_is_initialized_ = true;
       return 0;
     }
 
     int
-    io_factory::__init_write (const std::string & a_stream_name)
+    io_factory::_init_write_ (const std::string & a_stream_name)
     {
-      __out_fs = new boost::iostreams::filtering_ostream;
+      _out_fs_ = new boost::iostreams::filtering_ostream;
 
       if (is_gzip ())
 	{
-	  __out_fs->push(boost::iostreams::gzip_compressor ());
+	  _out_fs_->push(boost::iostreams::gzip_compressor ());
 	}
 
       if (is_bzip2 ())
 	{
-	  __out_fs->push (boost::iostreams::bzip2_compressor ());
+	  _out_fs_->push (boost::iostreams::bzip2_compressor ());
 	}
 
       if (a_stream_name.empty ())
 	{
 	  if (g_debug)
 	    {
-	      std::clog << "DEBUG: io_factory::__init_write: cout..."
+	      std::clog << "DEBUG: io_factory::_init_write_: cout..."
 			<< std::endl;
 	    }
-	  __out_fs->push (std::cout);
+	  _out_fs_->push (std::cout);
 	  return 0;
 	}
       else
 	{
 	  if (g_debug)
 	    {
-	      std::clog << "DEBUG: io_factory::__init_write: file='"
+	      std::clog << "DEBUG: io_factory::_init_write_: file='"
 			<< a_stream_name << "'"<< std::endl;
 	    }
 
@@ -388,7 +388,7 @@ namespace datatools {
 	      if (is_single_archive ())
 		{
 		  std::ostringstream message;
-		  message << "io_factory::__init_write: "
+		  message << "io_factory::_init_write_: "
 			  << "append mode does not work for 'io_factory::single_archive' mode! "
 			  << "Please consider to use the 'io_factory::multi_archives' mode instead!" ;
 		  throw std::runtime_error(message.str ());
@@ -396,141 +396,141 @@ namespace datatools {
 
 	      open_mode |= std::ios_base::app;
 	    }
-	  __fout = new std::ofstream (a_stream_name.c_str (), open_mode);
-	  if (!*__fout)
+	  _fout_ = new std::ofstream (a_stream_name.c_str (), open_mode);
+	  if (!*_fout_)
 	    {
-	      throw std::runtime_error ("io_factory::__init_write: Cannot open output stream!");
+	      throw std::runtime_error ("io_factory::_init_write_: Cannot open output stream!");
 	    }
-	  __out_fs->push (*__fout);
+	  _out_fs_->push (*_fout_);
 	}
 
-      __out = __out_fs;
+      _out_ = _out_fs_;
       if (is_text () || is_xml ())
 	{
 	  if (g_debug)
 	    {
-	      std::clog << "DEBUG: io_factory::__init_write: stream.imbue"
+	      std::clog << "DEBUG: io_factory::_init_write_: stream.imbue"
 			<< std::endl;
 	    }
-	  __out->imbue (*__locale);
+	  _out_->imbue (*_locale_);
 	}
 
       if (g_debug)
 	{
-	  std::clog << "DEBUG: io_factory::__init_write: mode='"
-		    << std::hex << __mode << std::dec << "'" << std::endl;
+	  std::clog << "DEBUG: io_factory::_init_write_: mode='"
+		    << std::hex << _mode_ << std::dec << "'" << std::endl;
 	}
       return 0;
     }
 
 
     int
-    io_factory::__reset_write_archive ()
+    io_factory::_reset_write_archive_ ()
     {
-      if (! __write_archive_is_initialized)
+      if (! _write_archive_is_initialized_)
 	{
 	  return 0;
 	}
 
-      if (__otar_ptr != 0)
+      if (_otar_ptr_ != 0)
 	{
 	  if (g_debug)
 	    {
-	      std::clog << "DEBUG: io_factory::__reset_write_archive: "
+	      std::clog << "DEBUG: io_factory::_reset_write_archive_: "
 			<< "delete TXT archive!" << std::endl;
 	    }
-	  delete __otar_ptr;
-	  __otar_ptr = 0;
-	  //*__out << ' '; // add a white space at the end of text archive.
-	  *__out << std::endl; // add a new line at the end of text archive.
+	  delete _otar_ptr_;
+	  _otar_ptr_ = 0;
+	  //*_out_ << ' '; // add a white space at the end of text archive.
+	  *_out_ << std::endl; // add a new line at the end of text archive.
 	}
 
-      if (__oxar_ptr != 0)
+      if (_oxar_ptr_ != 0)
 	{
 	  if (g_debug)
 	    {
-	      std::clog << "DEBUG: io_factory::__reset_write_archive: "
+	      std::clog << "DEBUG: io_factory::_reset_write_archive_: "
 			<< "delete XML archive!" << std::endl;
 	    }
-	  delete __oxar_ptr;
-	  __oxar_ptr = 0;
+	  delete _oxar_ptr_;
+	  _oxar_ptr_ = 0;
 	}
 
-      if (__obar_ptr != 0)
+      if (_obar_ptr_ != 0)
 	{
 	  if (g_debug)
 	    {
-	      std::clog << "DEBUG: io_factory::__reset_write_archive: "
+	      std::clog << "DEBUG: io_factory::_reset_write_archive_: "
 			<< "delete binary archive!" << std::endl;
 	    }
-	  delete __obar_ptr;
-	  __obar_ptr = 0;
+	  delete _obar_ptr_;
+	  _obar_ptr_ = 0;
 	}
 
-      __write_archive_is_initialized = false;
+      _write_archive_is_initialized_ = false;
       return 0;
     }
 
     int
-    io_factory::__reset_write ()
+    io_factory::_reset_write_ ()
     {
       if (g_debug)
 	{
-	  std::clog << "DEBUG: io_factory::__reset_write:..." << std::endl;
+	  std::clog << "DEBUG: io_factory::_reset_write_:..." << std::endl;
 	}
 
-      if (__out != 0)
+      if (_out_ != 0)
 	{
-	  __out->flush ();
-	  __out=0;
+	  _out_->flush ();
+	  _out_=0;
 	}
 
-      if (__out_fs != 0)
+      if (_out_fs_ != 0)
 	{
-	  __out_fs->flush ();
-	  __out_fs->reset ();
-	  delete __out_fs;
-	  __out_fs = 0;
+	  _out_fs_->flush ();
+	  _out_fs_->reset ();
+	  delete _out_fs_;
+	  _out_fs_ = 0;
 	}
 
-      if (__fout != 0)
+      if (_fout_ != 0)
 	{
-	  __fout->close ();
-	  delete __fout;
-	  __fout = 0;
+	  _fout_->close ();
+	  delete _fout_;
+	  _fout_ = 0;
 	}
 
       return 0;
     }
 
     int
-    io_factory::__init (const std::string & a_stream_name, int a_mode)
+    io_factory::_init_ (const std::string & a_stream_name, int a_mode)
     {
-      __mode = a_mode;
+      _mode_ = a_mode;
       if (is_read ())
 	{
 	  if (g_debug)
 	    {
-	      std::clog << "DEBUG: io_factory::__init: read mode..."
+	      std::clog << "DEBUG: io_factory::_init_: read mode..."
 			<< std::endl;
 	    }
-	  __init_read (a_stream_name);
+	  _init_read_ (a_stream_name);
 	  if (is_single_archive ())
 	    {
-	      __init_read_archive ();
+	      _init_read_archive_ ();
 	    }
 	}
       else
 	{
 	  if (g_debug)
 	    {
-	      std::clog << "DEBUG: io_factory::__init: write mode..."
+	      std::clog << "DEBUG: io_factory::_init_: write mode..."
 			<< std::endl;
 	    }
-	  __init_write (a_stream_name);
+	  _init_write_ (a_stream_name);
 	  if (is_single_archive ())
 	    {
-	      __init_write_archive ();
+	      _init_write_archive_ ();
 	    }
 	}
       return 0;
@@ -548,11 +548,11 @@ namespace datatools {
 	    }
 	  if (is_read ())
 	    {
-	      __init_read_archive ();
+	      _init_read_archive_ ();
 	    }
 	  if (is_write ())
 	    {
-	      __init_write_archive ();
+	      _init_write_archive_ ();
 	    }
 	}
       //std::cerr << "DEVEL: io_factory::start_archive: Exiting." << std::endl;
@@ -570,63 +570,63 @@ namespace datatools {
 	    }
 	  if (is_read ())
 	    {
-	      __reset_read_archive ();
+	      _reset_read_archive_ ();
 	    }
 	  if (is_write ())
 	    {
-	      __reset_write_archive ();
+	      _reset_write_archive_ ();
 	    }
 	}
      return;
     }
 
     void
-    io_factory::__ctor_defaults ()
+    io_factory::_ctor_defaults_ ()
     {
-      __write_archive_is_initialized = false;
-      __read_archive_is_initialized  = false;
-      __in = 0;
-      __out = 0;
-      __fin = 0;
-      __fout = 0;
-      __itar_ptr = 0;
-      __otar_ptr = 0;
-      __ixar_ptr = 0;
-      __oxar_ptr = 0;
-      __ibar_ptr = 0;
-      __obar_ptr = 0;
-      __in_fs = 0;
-      __out_fs = 0;
-      __mode = io_factory::MODE_DEFAULT;
+      _write_archive_is_initialized_ = false;
+      _read_archive_is_initialized_  = false;
+      _in_ = 0;
+      _out_ = 0;
+      _fin_ = 0;
+      _fout_ = 0;
+      _itar_ptr_ = 0;
+      _otar_ptr_ = 0;
+      _ixar_ptr_ = 0;
+      _oxar_ptr_ = 0;
+      _ibar_ptr_ = 0;
+      _obar_ptr_ = 0;
+      _in_fs_ = 0;
+      _out_fs_ = 0;
+      _mode_ = io_factory::MODE_DEFAULT;
       return;
     }
 
     int
-    io_factory::__reset ()
+    io_factory::_reset_ ()
     {
 
       if (is_read ())
 	{
-	  __reset_read_archive ();
-	  __reset_read ();
+	  _reset_read_archive_ ();
+	  _reset_read_ ();
 	}
 
       if (is_write ())
 	{
-	  __reset_write_archive ();
-	  __reset_write ();
+	  _reset_write_archive_ ();
+	  _reset_write_ ();
 	}
-      __ctor_defaults ();
-      if (g_debug) std::clog << "DEBUG: io_factory::__reset: Use FPU" << std::endl;
-      if (__locale)
+      _ctor_defaults_ ();
+      if (g_debug) std::clog << "DEBUG: io_factory::_reset_: Use FPU" << std::endl;
+      if (_locale_)
 	{
-	  delete __locale;
-	  __locale = 0;
+	  delete _locale_;
+	  _locale_ = 0;
 	}
-      if (__default_locale)
+      if (_default_locale_)
 	{
-	  delete __default_locale;
-	  __default_locale = 0;
+	  delete _default_locale_;
+	  _default_locale_ = 0;
 	}
       return 0;
     }
@@ -634,23 +634,23 @@ namespace datatools {
     // ctor
     io_factory::io_factory (int a_mode)
     {
-      __default_locale = 0;
-      __locale = 0;
-      __default_locale = new std::locale (std::locale::classic (),
+      _default_locale_ = 0;
+      _locale_ = 0;
+      _default_locale_ = new std::locale (std::locale::classic (),
 					  new boost::archive::codecvt_null<char>);
       bool write = ((a_mode & MASK_RW) != 0);
       if (write)
 	{
-	  __locale = new std::locale (*__default_locale,
+	  _locale_ = new std::locale (*_default_locale_,
 				      new boost::math::nonfinite_num_put<char>);
 	}
       else
 	{
-	  __locale = new std::locale (*__default_locale,
+	  _locale_ = new std::locale (*_default_locale_,
 				      new boost::math::nonfinite_num_get<char>);
 	}
-      __ctor_defaults ();
-      __init ("", a_mode);
+      _ctor_defaults_ ();
+      _init_ ("", a_mode);
       return;
     }
 
@@ -658,30 +658,30 @@ namespace datatools {
     io_factory::io_factory (const std::string & a_stream_name,
 			    int a_mode)
     {
-      __default_locale = 0;
-      __locale = 0;
-      __default_locale = new std::locale (std::locale::classic (),
+      _default_locale_ = 0;
+      _locale_ = 0;
+      _default_locale_ = new std::locale (std::locale::classic (),
 					  new boost::archive::codecvt_null<char>);
       bool write = ((a_mode & MASK_RW) != 0);
       if (write)
 	{
-	  __locale = new std::locale (*__default_locale,
+	  _locale_ = new std::locale (*_default_locale_,
 				      new boost::math::nonfinite_num_put<char>);
 	}
       else
 	{
-	  __locale = new std::locale (*__default_locale,
+	  _locale_ = new std::locale (*_default_locale_,
 				      new boost::math::nonfinite_num_get<char>);
 	}
-      __ctor_defaults ();
-      __init (a_stream_name, a_mode);
+      _ctor_defaults_ ();
+      _init_ (a_stream_name, a_mode);
       return;
     }
 
     // dtor
     io_factory::~io_factory ()
     {
-      __reset ();
+      _reset_ ();
       if (io_factory::g_debug)
 	{
 	  std::clog << "DEBUG: io_factory::~io_factory." << std::endl;
@@ -709,7 +709,7 @@ namespace datatools {
 	}
 
       a_out << indent << tag
-	   << "Mode  : " << std::hex << __mode << std::dec << std::endl;
+	   << "Mode  : " << std::hex << _mode_ << std::dec << std::endl;
 
       a_out << indent << tag
 	   << "is_read  : " << is_read() << std::endl;
@@ -948,7 +948,7 @@ namespace datatools {
     {
       using namespace std;
       a_out << "data_reader::dump: " << endl;
-      a_out << " |-- " << "Status   : " << (__status== 0? "Ok": "Error") << endl;
+      a_out << " |-- " << "Status   : " << (_status_== 0? "Ok": "Error") << endl;
       a_out << " |   " << " |-- " << "Initialized      : " << is_initialized () << endl;
       a_out << " |   " << " |-- " << "Mult. arch.      : " << is_multi_archives () << endl;
       a_out << " |   " << " |-- " << "Single arch.     : " << is_single_archive () << endl;
@@ -958,48 +958,48 @@ namespace datatools {
       a_out << " |   " << " |-- " << "Text arch.       : " << is_text () << endl;
       a_out << " |   " << " |-- " << "XML arch.        : " << is_xml () << endl;
       a_out << " |   " << " `-- " << "Bin arch. (port) : " << is_portable_binary () << endl;
-      a_out << " |-- " << "Reader   : " << (__reader != 0? "Yes": "No") << endl;
-      a_out << " `-- " << "Next tag : '" << (__next_tag) << "'" << endl;
+      a_out << " |-- " << "Reader   : " << (_reader_ != 0? "Yes": "No") << endl;
+      a_out << " `-- " << "Next tag : '" << (_next_tag_) << "'" << endl;
       return;
     }
 
     void
-    data_reader::__read_next_tag ()
+    data_reader::_read_next_tag_ ()
     {
       bool devel = false;
       //devel = true;
-      if (devel) std::cerr << "DEVEL: data_reader::__read_next_tag: Entering..." << std::endl;
-      if (__status != STATUS_OK)
+      if (devel) std::cerr << "DEVEL: data_reader::_read_next_tag_: Entering..." << std::endl;
+      if (_status_ != STATUS_OK)
 	{
-	  if (devel) std::cerr << "DEVEL: data_reader::__read_next_tag: "
+	  if (devel) std::cerr << "DEVEL: data_reader::_read_next_tag_: "
 		    << "status != STATUS_Ok" << std::endl;
-	  __next_tag = EMPTY_RECORD_TAG;
+	  _next_tag_ = EMPTY_RECORD_TAG;
 	  return;
 	}
-      if (devel) std::cerr << "DEVEL: data_reader::__read_next_tag: "
+      if (devel) std::cerr << "DEVEL: data_reader::_read_next_tag_: "
 		<< "Continue..." << std::endl;
       try
 	{
-	  if (devel) std::cerr << "DEVEL: data_reader::__read_next_tag: "
+	  if (devel) std::cerr << "DEVEL: data_reader::_read_next_tag_: "
 			       << "try block starts..." << std::endl;
-	  if (__reader->is_multi_archives ())
+	  if (_reader_->is_multi_archives ())
 	    {
-	      if (devel) std::cerr << "DEVEL: data_reader::__read_next_tag: "
+	      if (devel) std::cerr << "DEVEL: data_reader::_read_next_tag_: "
 				   << "multi-archives..." << std::endl;
-	      __reader->start_archive ();
+	      _reader_->start_archive ();
 	    }
-	  if (devel) std::cerr << "DEVEL: data_reader::__read_next_tag: "
+	  if (devel) std::cerr << "DEVEL: data_reader::_read_next_tag_: "
 			       << "Continue..." << std::endl;
 	  std::string tag_id;
 	  tag_id = "";
-	  __next_tag = "";
+	  _next_tag_ = "";
 	  this->_basic_load (tag_id);
-	  if (devel) std::cerr << "DEVEL: data_reader::__read_next_tag: "
+	  if (devel) std::cerr << "DEVEL: data_reader::_read_next_tag_: "
 			       << "_basic_load done with tag_id = '"
 			       << tag_id << "'" << std::endl;
-	  __next_tag = tag_id;
-	  if (devel) std::cerr << "DEVEL: data_reader::__read_next_tag: "
-			       << "__next_tag = " << __next_tag << std::endl;
+	  _next_tag_ = tag_id;
+	  if (devel) std::cerr << "DEVEL: data_reader::_read_next_tag_: "
+			       << "_next_tag_ = " << _next_tag_ << std::endl;
 	}
       catch (std::runtime_error & x)
 	{
@@ -1012,18 +1012,18 @@ namespace datatools {
 	    }
 	  if (warn)
 	    {
-	      std::clog << "WARNING: data_reader::__read_next_tag: runtime_error="
+	      std::clog << "WARNING: data_reader::_read_next_tag_: runtime_error="
 			<< x.what () << std::endl;
 	      if (io_factory::g_warning)
 		{
-		  std::clog << "WARNING: data_reader::__read_next_tag: runtime_error="
+		  std::clog << "WARNING: data_reader::_read_next_tag_: runtime_error="
 			    << x.what () << std::endl;
 		}
 	    }
 	  //<<<
-	  __status   = STATUS_ERROR;
-	  __next_tag = EMPTY_RECORD_TAG;
-	  if (devel) std::cerr << "DEVEL: data_reader::__read_next_tag: "
+	  _status_   = STATUS_ERROR;
+	  _next_tag_ = EMPTY_RECORD_TAG;
+	  if (devel) std::cerr << "DEVEL: data_reader::_read_next_tag_: "
 			       << "BOOOM !" << std::endl;
 	}
       // 2011-02-25 FM:
@@ -1031,15 +1031,15 @@ namespace datatools {
 	{
 	  if (io_factory::g_warning)
 	    {
-	      std::clog << "WARNING: data_reader::__read_next_tag: archive exception is: "
+	      std::clog << "WARNING: data_reader::_read_next_tag_: archive exception is: "
 			<< x.what () << std::endl;
 	    }
 
-	    std::clog << "WARNING: data_reader::__read_next_tag: archive exception is: "
+	    std::clog << "WARNING: data_reader::_read_next_tag_: archive exception is: "
 		    << x.what () << std::endl;
 
-	  __status   = STATUS_ERROR;
-	  __next_tag = EMPTY_RECORD_TAG;
+	  _status_   = STATUS_ERROR;
+	  _next_tag_ = EMPTY_RECORD_TAG;
 	  // throw x;
 	}*/
       catch (std::exception & x)
@@ -1047,21 +1047,21 @@ namespace datatools {
 	  bool warn = io_factory::g_warning;
 	  if (warn)
 	    {
-	      std::clog << "WARNING: data_reader::__read_next_tag: exception="
+	      std::clog << "WARNING: data_reader::_read_next_tag_: exception="
 			<< x.what () << std::endl;
 	    }
-	  __status   = STATUS_ERROR;
-	  __next_tag = EMPTY_RECORD_TAG;
+	  _status_   = STATUS_ERROR;
+	  _next_tag_ = EMPTY_RECORD_TAG;
 	}
       catch (...)
 	{
-	  std::clog << "WARNING: data_reader::__read_next_tag: "
+	  std::clog << "WARNING: data_reader::_read_next_tag_: "
 		    << "unexpected exception!" << std::endl;
-	  __status   = STATUS_ERROR;
-	  __next_tag = EMPTY_RECORD_TAG;
+	  _status_   = STATUS_ERROR;
+	  _next_tag_ = EMPTY_RECORD_TAG;
 	}
       /*
-      std::cerr << "DEVEL: data_reader::__read_next_tag: Exiting."
+      std::cerr << "DEVEL: data_reader::_read_next_tag_: Exiting."
 		<< std::endl;
       */
       return;
@@ -1069,29 +1069,29 @@ namespace datatools {
 
     bool data_reader::is_error () const
     {
-      return __status == STATUS_ERROR;
+      return _status_ == STATUS_ERROR;
     }
 
     void
-    data_reader::__init_reader (const std::string & a_filename,
+    data_reader::_init_reader_ (const std::string & a_filename,
 				int a_mode)
     {
-      __status = STATUS_OK;
-      __reader = new io_reader (a_filename, a_mode);
-      __read_next_tag ();
+      _status_ = STATUS_OK;
+      _reader_ = new io_reader (a_filename, a_mode);
+      _read_next_tag_ ();
       return;
     }
 
     void
-    data_reader::__reset_reader ()
+    data_reader::_reset_reader_ ()
     {
-      if (__reader != 0)
+      if (_reader_ != 0)
 	{
-	  delete __reader;
-	  __reader = 0;
+	  delete _reader_;
+	  _reader_ = 0;
 	}
-      __next_tag = "";
-      __status = STATUS_OK;
+      _next_tag_ = "";
+      _status_ = STATUS_OK;
       return;
     }
 
@@ -1101,14 +1101,14 @@ namespace datatools {
     const std::string &
     data_reader::get_record_tag () const
     {
-      if (__status != STATUS_OK) return EMPTY_RECORD_TAG;
-      return __next_tag;
+      if (_status_ != STATUS_OK) return EMPTY_RECORD_TAG;
+      return _next_tag_;
     }
 
     bool
     data_reader::is_initialized () const
     {
-      return __reader != 0;
+      return _reader_ != 0;
     }
 
     bool
@@ -1126,7 +1126,7 @@ namespace datatools {
 	  message << "data_reader::is_compressed: reader is not initialized!";
 	  throw std::runtime_error (message.str ());
 	}
-      return __reader->is_compressed ();
+      return _reader_->is_compressed ();
     }
 
     bool
@@ -1138,7 +1138,7 @@ namespace datatools {
 	  message << "data_reader::is_gzip: reader is not initialized!";
 	  throw std::runtime_error (message.str ());
 	}
-      return __reader->is_gzip ();
+      return _reader_->is_gzip ();
     }
 
     bool
@@ -1150,7 +1150,7 @@ namespace datatools {
 	  message << "data_reader::is_text: reader is not initialized!";
 	  throw std::runtime_error (message.str ());
 	}
-      return __reader->is_text ();
+      return _reader_->is_text ();
     }
 
     bool
@@ -1162,7 +1162,7 @@ namespace datatools {
 	  message << "data_reader::is_binary: reader is not initialized!";
 	  throw std::runtime_error (message.str ());
 	}
-      return __reader->is_binary ();
+      return _reader_->is_binary ();
     }
 
     bool
@@ -1174,7 +1174,7 @@ namespace datatools {
 	  message << "data_reader::is_portable_binary: reader is not initialized!";
 	  throw std::runtime_error (message.str ());
 	}
-      return __reader->is_portable_binary ();
+      return _reader_->is_portable_binary ();
     }
 
     bool
@@ -1186,7 +1186,7 @@ namespace datatools {
 	  message << "data_reader::is_xml: reader is not initialized!";
 	  throw std::runtime_error (message.str ());
 	}
-      return __reader->is_xml ();
+      return _reader_->is_xml ();
     }
 
     bool
@@ -1198,7 +1198,7 @@ namespace datatools {
 	  message << "data_reader::is_bzip2: reader is not initialized!";
 	  throw std::runtime_error (message.str ());
 	}
-      return __reader->is_bzip2 ();
+      return _reader_->is_bzip2 ();
     }
 
     bool
@@ -1216,27 +1216,27 @@ namespace datatools {
 	  message << "data_reader::is_multi_archives: reader is not initialized!";
 	  throw std::runtime_error (message.str ());
 	}
-      return __reader->is_multi_archives ();
+      return _reader_->is_multi_archives ();
     }
 
     bool
     data_reader::has_record_tag () const
     {
-      if (__status != STATUS_OK) return false;
-      if (__next_tag.empty()) return false;
+      if (_status_ != STATUS_OK) return false;
+      if (_next_tag_.empty()) return false;
       return true;
     }
 
     bool
     data_reader::record_tag_is (const std::string & a_tag) const
     {
-      return __next_tag == a_tag;
+      return _next_tag_ == a_tag;
     }
 
     void
     data_reader::reset ()
     {
-      __reset_reader ();
+      _reset_reader_ ();
       return;
     }
 
@@ -1244,7 +1244,7 @@ namespace datatools {
     data_reader::init (const std::string & a_filename,
 		       bool a_multiple_archives)
     {
-      __reset_reader ();
+      _reset_reader_ ();
       int mode_guess;
       if (io_factory::guess_mode_from_filename (a_filename, mode_guess)
 	  != io_factory::SUCCESS)
@@ -1259,36 +1259,36 @@ namespace datatools {
 	{
 	  mode |= io_factory::multi_archives;
 	}
-      __init_reader (a_filename, mode);
+      _init_reader_ (a_filename, mode);
       return;
     }
 
     void
     data_reader::init (const std::string & a_filename, int a_mode)
     {
-      __reset_reader ();
-      __init_reader (a_filename, a_mode);
+      _reset_reader_ ();
+      _init_reader_ (a_filename, a_mode);
       return;
     }
 
     data_reader::data_reader ()
     {
-      __reader = 0;
+      _reader_ = 0;
       return;
     }
 
     data_reader::data_reader (const std::string & a_filename,
 			      bool a_multiple_archives)
     {
-      __reader = 0;
+      _reader_ = 0;
       init (a_filename, a_multiple_archives);
       return;
     }
 
     data_reader::data_reader (const std::string & a_filename, int a_mode)
     {
-      __reader = 0;
-      __init_reader (a_filename, a_mode);
+      _reader_ = 0;
+      _init_reader_ (a_filename, a_mode);
       return;
     }
 
@@ -1307,7 +1307,7 @@ namespace datatools {
     bool
     data_writer::is_initialized () const
     {
-      return __writer != 0;
+      return _writer_ != 0;
     }
 
     bool
@@ -1325,7 +1325,7 @@ namespace datatools {
 	  message << "data_writer::is_compressed: writer is not initialized!";
 	  throw std::runtime_error (message.str ());
 	}
-      return __writer->is_compressed ();
+      return _writer_->is_compressed ();
     }
 
     bool
@@ -1337,7 +1337,7 @@ namespace datatools {
 	  message << "data_writer::is_gzip: writer is not initialized!";
 	  throw std::runtime_error (message.str ());
 	}
-      return __writer->is_gzip ();
+      return _writer_->is_gzip ();
     }
 
     bool
@@ -1349,7 +1349,7 @@ namespace datatools {
 	  message << "data_writer::is_text: writer is not initialized!";
 	  throw std::runtime_error (message.str ());
 	}
-      return __writer->is_text ();
+      return _writer_->is_text ();
     }
 
     bool
@@ -1361,7 +1361,7 @@ namespace datatools {
 	  message << "data_writer::is_binary: writer is not initialized!";
 	  throw std::runtime_error (message.str ());
 	}
-      return __writer->is_binary ();
+      return _writer_->is_binary ();
     }
 
     bool
@@ -1373,7 +1373,7 @@ namespace datatools {
 	  message << "data_writer::is_portable_binary: writer is not initialized!";
 	  throw std::runtime_error (message.str ());
 	}
-      return __writer->is_portable_binary ();
+      return _writer_->is_portable_binary ();
     }
 
     bool
@@ -1385,7 +1385,7 @@ namespace datatools {
 	  message << "data_writer::is_xml: writer is not initialized!";
 	  throw std::runtime_error (message.str ());
 	}
-      return __writer->is_xml ();
+      return _writer_->is_xml ();
     }
 
     bool
@@ -1397,7 +1397,7 @@ namespace datatools {
 	  message << "data_writer::is_bzip2: writer is not initialized!";
 	  throw std::runtime_error (message.str ());
 	}
-      return __writer->is_bzip2 ();
+      return _writer_->is_bzip2 ();
     }
 
     bool
@@ -1415,24 +1415,24 @@ namespace datatools {
 	  message << "data_writer::is_multi_archives: writer is not initialized!";
 	  throw std::runtime_error (message.str ());
 	}
-      return __writer->is_multi_archives ();
+      return _writer_->is_multi_archives ();
     }
 
     void
-    data_writer::__init_writer (const std::string & a_filename,
+    data_writer::_init_writer_ (const std::string & a_filename,
 				int a_mode)
     {
-      __writer = new io_writer (a_filename, a_mode);
+      _writer_ = new io_writer (a_filename, a_mode);
       return;
     }
 
     void
-    data_writer::__reset_writer ()
+    data_writer::_reset_writer_ ()
     {
-      if (__writer != 0)
+      if (_writer_ != 0)
 	{
-	  delete __writer;
-	  __writer = 0;
+	  delete _writer_;
+	  _writer_ = 0;
 	}
        return;
    }
@@ -1440,7 +1440,7 @@ namespace datatools {
     void
     data_writer::reset ()
     {
-      __reset_writer ();
+      _reset_writer_ ();
       return;
     }
 
@@ -1449,7 +1449,7 @@ namespace datatools {
 		       bool a_multiple_archives,
 		       bool a_append_mode)
     {
-      __reset_writer ();
+      _reset_writer_ ();
       int mode_guess;
       if (io_factory::guess_mode_from_filename (a_filename, mode_guess)
 	  != io_factory::SUCCESS)
@@ -1468,7 +1468,7 @@ namespace datatools {
 	{
 	  mode |= io_factory::append;
 	}
-      __init_writer (a_filename, mode);
+      _init_writer_ (a_filename, mode);
        return;
    }
 
@@ -1476,16 +1476,28 @@ namespace datatools {
     data_writer::init (const std::string & a_filename,
 		       int a_mode)
     {
-      __reset_writer ();
+      _reset_writer_ ();
       int mode = a_mode;
-      __init_writer (a_filename, mode);
-       return;
-   }
+      _init_writer_ (a_filename, mode);
+      return;
+    }
 
+    void data_writer::init_multi (const std::string & a_filename)
+    {
+      init (a_filename, using_multiple_archives);
+      return;
+    }
+    
+    void data_writer::init_single (const std::string & a_filename)
+    {
+      init (a_filename, using_single_archive);
+      return;
+    }
+    
     // ctor
     data_writer::data_writer ()
     {
-      __writer = 0;
+      _writer_ = 0;
       return;
     }
 
@@ -1494,7 +1506,7 @@ namespace datatools {
 			      bool a_multiple_archives,
 			      bool a_append_mode)
     {
-      __writer = 0;
+      _writer_ = 0;
       init (a_filename, a_multiple_archives, a_append_mode);
       return;
     }
@@ -1502,8 +1514,8 @@ namespace datatools {
     // ctor
     data_writer::data_writer (const std::string & a_filename, int a_mode)
     {
-      __writer = 0;
-      __init_writer (a_filename, a_mode);
+      _writer_ = 0;
+      _init_writer_ (a_filename, a_mode);
       return;
     }
 

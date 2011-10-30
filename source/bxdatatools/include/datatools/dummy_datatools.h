@@ -16,36 +16,19 @@
 #ifndef __datatools__dummy_datatools_h
 #define __datatools__dummy_datatools_h 1
 
-// standard includes:
-// <here you may add some standard '#include' directives>
-
-// miscellaneous includes:
-// <here you may add some '#include' directives>
-
 namespace datatools {
 
   class dummy_datatools
   {
-  
-  // typedefs declarations:
-  
-  // static constants declarations:
-  
-  // static declarations:
-  
-  // non static fields declarations:
-  
-  // getters/setters declarations:
-  public: 
-  
-  // ctor/dtor:
-  public: 
-    dummy_datatools();
-    virtual ~dummy_datatools();
-  
-  // methods:
-    // <here you may define more class methods>
 
+  public:
+ 
+    // ctor:
+    dummy_datatools ();
+
+    // dtor:
+    virtual ~dummy_datatools ();
+  
   };
 
 } // end of namespace datatools

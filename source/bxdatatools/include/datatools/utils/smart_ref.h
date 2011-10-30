@@ -48,24 +48,24 @@ namespace datatools {
 
     private: 
 
-      pointer_t                    ref_;
-      datatools::utils::properties properties_;
+      pointer_t                    _ref_;
+      datatools::utils::properties _properties_;
 
     public: 
 
       const datatools::utils::properties & get_properties () const
       {
-	return properties_;
+	return _properties_;
       }
     
       datatools::utils::properties & get_properties ()
       {
-	return properties_;
+	return _properties_;
       }
 
       void set_properties (const datatools::utils::properties & a_props)
       {
-	properties_ = a_props;
+	_properties_ = a_props;
       }
   
     public: 
@@ -73,7 +73,7 @@ namespace datatools {
       // ctor:
       smart_ref ()
       {
-	ref_ = 0;
+	_ref_ = 0;
       }
 
       // ctor:
@@ -91,24 +91,24 @@ namespace datatools {
   
       void set (const_reference_t a_obj)
       {
-	ref_ = const_cast<pointer_t>(&a_obj);
+	_ref_ = const_cast<pointer_t>(&a_obj);
 	return;
       }
 
       const_reference_t get () const
       {
-	return *ref_;
+	return *_ref_;
       }
 
       void reset ()
       {
-	ref_ = 0;
+	_ref_ = 0;
 	return;
        }
 
       bool is_valid () const
       {
-	return ref_ != 0;
+	return _ref_ != 0;
       }
 
     private:
@@ -119,8 +119,8 @@ namespace datatools {
       void serialize (Archive            & a_ar, 
 		      const unsigned int a_version) 
       {
-	a_ar & boost::serialization::make_nvp ("properties", properties_);
-	a_ar & boost::serialization::make_nvp ("ref",        ref_);
+	a_ar & boost::serialization::make_nvp ("properties", _properties_);
+	a_ar & boost::serialization::make_nvp ("ref",        _ref_);
 	return;
       }
 
@@ -129,18 +129,18 @@ namespace datatools {
       // predicate:
       class has_flag : public std::unary_function<smart_ref_t, bool>
       {
-	string flag_;
+	string _flag_;
       public:
 	explicit has_flag (const string & a_flag)
 	{
-	  flag_ = a_flag;
+	  _flag_ = a_flag;
 	  return;
 	}
     
 	bool operator () (const smart_ref_t & a_smart_ref) const
 	{
 	  if (! a_smart_ref.is_valid ()) return false;
-	  return (a_smart_ref.get_properties ().has_flag (flag_));
+	  return (a_smart_ref.get_properties ().has_flag (_flag_));
 	}
       };
     

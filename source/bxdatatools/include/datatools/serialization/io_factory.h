@@ -67,25 +67,25 @@ namespace datatools {
       static const int ERROR   = 1;
 
     private:
-      int            __mode;
-      std::istream * __in;
-      std::ostream * __out;
+      int            _mode_;
+      std::istream * _in_;
+      std::ostream * _out_;
 
-      boost::iostreams::filtering_istream * __in_fs;
-      boost::iostreams::filtering_ostream * __out_fs;
-      std::ifstream  * __fin;
-      std::ofstream  * __fout;
-      std::locale    * __default_locale;
-      std::locale    * __locale;
+      boost::iostreams::filtering_istream * _in_fs_;
+      boost::iostreams::filtering_ostream * _out_fs_;
+      std::ifstream  * _fin_;
+      std::ofstream  * _fout_;
+      std::locale    * _default_locale_;
+      std::locale    * _locale_;
 
-      bool                                __read_archive_is_initialized;
-      bool                                __write_archive_is_initialized;
-      boost::archive::text_iarchive     * __itar_ptr;
-      boost::archive::text_oarchive     * __otar_ptr;
-      boost::archive::xml_iarchive      * __ixar_ptr;
-      boost::archive::xml_oarchive      * __oxar_ptr;
-      boost::archive::portable_binary_iarchive * __ibar_ptr;
-      boost::archive::portable_binary_oarchive * __obar_ptr;
+      bool                                _read_archive_is_initialized_;
+      bool                                _write_archive_is_initialized_;
+      boost::archive::text_iarchive     * _itar_ptr_;
+      boost::archive::text_oarchive     * _otar_ptr_;
+      boost::archive::xml_iarchive      * _ixar_ptr_;
+      boost::archive::xml_oarchive      * _oxar_ptr_;
+      boost::archive::portable_binary_iarchive * _ibar_ptr_;
+      boost::archive::portable_binary_oarchive * _obar_ptr_;
 
     public:
 
@@ -182,27 +182,27 @@ namespace datatools {
 
     private:
 
-      int __init_read_archive ();
+      int _init_read_archive_ ();
 
-      int __init_read (const std::string & a_stream_nam);
+      int _init_read_ (const std::string & a_stream_nam);
 
-      int __reset_read_archive ();
+      int _reset_read_archive_ ();
 
-      int __reset_read ();
+      int _reset_read_ ();
 
-      int __init_write_archive ();
+      int _init_write_archive_ ();
 
-      int __init_write (const std::string & a_stream_name);
+      int _init_write_ (const std::string & a_stream_name);
 
-      int __reset_write_archive ();
+      int _reset_write_archive_ ();
 
-      int __reset_write ();
+      int _reset_write_ ();
 
-      int __init (const std::string & a_stream_name, int a_mode);
+      int _init_ (const std::string & a_stream_name, int a_mode);
 
-      void __ctor_defaults ();
+      void _ctor_defaults_ ();
 
-      int __reset ();
+      int _reset_ ();
 
     public:
 
@@ -224,7 +224,7 @@ namespace datatools {
     private:
 
       template <typename Data>
-      void __store_text (boost::archive::text_oarchive & a_ar,
+      void _store_text_ (boost::archive::text_oarchive & a_ar,
 			 const Data & a_data)
       {
 	const Data & b = a_data;
@@ -233,7 +233,7 @@ namespace datatools {
       }
 
       template <typename Data>
-      void __store_xml (boost::archive::xml_oarchive & a_ar,
+      void _store_xml_ (boost::archive::xml_oarchive & a_ar,
 			const Data & a_data)
       {
 	const Data & b = a_data;
@@ -242,7 +242,7 @@ namespace datatools {
       }
 
       template <typename Data>
-      void __store_binary (boost::archive::portable_binary_oarchive & a_ar,
+      void _store_binary_ (boost::archive::portable_binary_oarchive & a_ar,
 			   const Data & a_data)
       {
 	const Data & b = a_data;
@@ -251,7 +251,7 @@ namespace datatools {
       }
 
       template <typename Data>
-      void __load_text (boost::archive::text_iarchive & a_ar,
+      void _load_text_ (boost::archive::text_iarchive & a_ar,
 			Data & a_data)
       {
 	Data & b = a_data;
@@ -259,7 +259,7 @@ namespace datatools {
       }
 
       template <typename Data>
-      void __load_xml (boost::archive::xml_iarchive & a_ar ,
+      void _load_xml_ (boost::archive::xml_iarchive & a_ar ,
 		       Data & a_data)
       {
 	Data & b = a_data;
@@ -268,7 +268,7 @@ namespace datatools {
       }
 
       template <typename Data>
-      void __load_binary (boost::archive::portable_binary_iarchive & a_ar ,
+      void _load_binary_ (boost::archive::portable_binary_iarchive & a_ar ,
 			  Data & a_data)
       {
 	Data & b = a_data;
@@ -283,19 +283,19 @@ namespace datatools {
       {
 	if (! is_write ())
 	  {
-	    throw std::runtime_error ("io_factory::store: Not a writer factory!");
+	    throw std::logic_error ("io_factory::store: Not a writer factory!");
 	  }
-	if (__otar_ptr != 0)
+	if (_otar_ptr_ != 0)
 	  {
-	    __store_text<Data> (*__otar_ptr, a_data);
+	    _store_text_<Data> (*_otar_ptr_, a_data);
 	  }
-	else if (__oxar_ptr != 0)
+	else if (_oxar_ptr_ != 0)
 	  {
-	    __store_xml<Data> (*__oxar_ptr, a_data);
+	    _store_xml_<Data> (*_oxar_ptr_, a_data);
 	  }
-	else if (__obar_ptr != 0)
+	else if (_obar_ptr_ != 0)
 	  {
-	    __store_binary<Data> (*__obar_ptr, a_data);
+	    _store_binary_<Data> (*_obar_ptr_, a_data);
 	  }
 	return;
       }
@@ -305,57 +305,57 @@ namespace datatools {
       {
 	if (! is_read ())
 	  {
-	    throw std::runtime_error ("io_factory::load: not a reader factory!");
+	    throw std::logic_error ("io_factory::load: not a reader factory!");
 	  }
-	if (__in_fs == 0)
+	if (_in_fs_ == 0)
 	  {
-	    throw std::runtime_error ("io_factory::load: no input stream!");
+	    throw std::logic_error ("io_factory::load: no input stream!");
 	  }
 	/* 2008-10-03 FM: add EOF check code*/
 	//>>>
-	if (*__in_fs)
+	if (*_in_fs_)
 	  {
 	    // 2009-03-08 FM: Is it possible to have better EOF check code
 	    // here for unzipped text and XML archives?
 	    char c = 0;
-	    __in_fs->get (c);
-	    if (__in_fs)
+	    _in_fs_->get (c);
+	    if (_in_fs_)
 	      {
-		__in_fs->putback (c);
+		_in_fs_->putback (c);
 	      }
 	  }
 	//<<<
-	if (! *__in_fs)
+	if (! *_in_fs_)
 	  {
-	    if (__in_fs->eof ())
+	    if (_in_fs_->eof ())
 	      {
-		throw std::runtime_error ("io_factory::load: input stream at EOF!");
+		throw std::logic_error ("io_factory::load: input stream at EOF!");
 	      }
-	    if (__in_fs->fail ())
+	    if (_in_fs_->fail ())
 	      {
-		throw std::runtime_error ("io_factory::load: input stream in fail status!");
+		throw std::logic_error ("io_factory::load: input stream in fail status!");
 	      }
-	    if (__in_fs->bad ())
+	    if (_in_fs_->bad ())
 	      {
-		throw std::runtime_error ("io_factory::load: input stream in bad status!");
+		throw std::logic_error ("io_factory::load: input stream in bad status!");
 	      }
 	  }
 
 	try
 	  {
-	    if (__itar_ptr != 0)
+	    if (_itar_ptr_ != 0)
 	      {
-		__load_text<Data> (*__itar_ptr, a_data);
-		*__in_fs >> std::ws;
+		_load_text_<Data> (*_itar_ptr_, a_data);
+		*_in_fs_ >> std::ws;
 	      }
-	    else if (__ixar_ptr != 0)
+	    else if (_ixar_ptr_ != 0)
 	      {
-		__load_xml<Data> (*__ixar_ptr, a_data);
-		*__in_fs >> std::ws;
+		_load_xml_<Data> (*_ixar_ptr_, a_data);
+		*_in_fs_ >> std::ws;
 	      }
-	    else if (__ibar_ptr != 0)
+	    else if (_ibar_ptr_ != 0)
 	      {
-		__load_binary<Data> (*__ibar_ptr, a_data);
+		_load_binary_<Data> (*_ibar_ptr_, a_data);
 	      }
 	  }
 	// 2011-02-25 FM:
@@ -386,22 +386,22 @@ namespace datatools {
 		      << "cannot load data from archive: "
 		      << "unexpected exception" << "!"
 		      << std::endl;
-	    throw std::runtime_error("io_factory::load: internal exception!");
+	    throw std::logic_error("io_factory::load: internal exception!");
 	  }
 
-	if (! *__in_fs)
+	if (! *_in_fs_)
 	  {
-	    if (__in_fs->fail ())
+	    if (_in_fs_->fail ())
 	      {
 		std::cerr << "WARNING: io_factory::load: input stream is now in fail status!"
 			  << std::endl;
 	      }
-	    if (__in_fs->eof ())
+	    if (_in_fs_->eof ())
 	      {
 		std::cerr << "WARNING: io_factory::load: input stream is now in EOF status!"
 			  << std::endl;
 	      }
-	    if (__in_fs->bad ())
+	    if (_in_fs_->bad ())
 	      {
 		std::cerr << "WARNING: io_factory::load: input stream is now in bad status!"
 			  << std::endl;
@@ -490,17 +490,17 @@ namespace datatools {
       static const std::string EMPTY_RECORD_TAG;
 
     private:
-      int         __status;
-      io_reader * __reader;
-      std::string __next_tag;
+      int         _status_;
+      io_reader * _reader_;
+      std::string _next_tag_;
 
     private:
 
-      void __read_next_tag ();
+      void _read_next_tag_ ();
 
-      void __init_reader (const std::string & a_filename, int a_mode);
+      void _init_reader_ (const std::string & a_filename, int a_mode);
 
-      void __reset_reader ();
+      void _reset_reader_ ();
 
     public:
 
@@ -570,9 +570,9 @@ namespace datatools {
       template <typename Data>
       void _basic_load (Data & a_data)
       {
-	if (__reader == 0)
+	if (_reader_ == 0)
 	  {
-	    throw std::runtime_error ("data_reader::_basic_load(...): not initialized!");
+	    throw std::logic_error ("data_reader::_basic_load(...): not initialized!");
 	  }
 	try
 	  {
@@ -581,7 +581,7 @@ namespace datatools {
 	      << typeid (a_data).name() << "'"
 	      << std::endl;
 	    */
-	    __reader->load (a_data);
+	    _reader_->load (a_data);
 	    /*
 	      std::cerr << "DEVEL: io_factory::_basic_load: ok"
 	      << std::endl;
@@ -597,9 +597,9 @@ namespace datatools {
 	std::clog << "WARNING: data_reader::_basic_load: archive exception is: "
 	<< x.what () << std::endl;
 	}
-	__status   = STATUS_ERROR;
-	__next_tag = EMPTY_RECORD_TAG;
-	throw std::runtime_error (x.what ());
+	_status_   = STATUS_ERROR;
+	_next_tag_ = EMPTY_RECORD_TAG;
+	throw std::logic_error (x.what ());
 	}
 	*/
 	catch (std::exception & x)
@@ -621,9 +621,9 @@ namespace datatools {
 	      }
 	    //<<<
 
-	    __status   = STATUS_ERROR;
-	    __next_tag = EMPTY_RECORD_TAG;
-	    throw std::runtime_error (x.what ());
+	    _status_   = STATUS_ERROR;
+	    _next_tag_ = EMPTY_RECORD_TAG;
+	    throw std::logic_error (x.what ());
 	  }
 	catch (...)
 	  {
@@ -631,9 +631,9 @@ namespace datatools {
 		      << "cannot read data: "
 		      << "unexpected exception" << '!'
 		      << std::endl;
-	    __status   = STATUS_ERROR;
-	    __next_tag = EMPTY_RECORD_TAG;
-	    throw std::runtime_error ("data_reader::_basic_load: unexpected error!");
+	    _status_   = STATUS_ERROR;
+	    _next_tag_ = EMPTY_RECORD_TAG;
+	    throw std::logic_error ("data_reader::_basic_load: unexpected error!");
 	  }
 	return;
       }
@@ -644,7 +644,7 @@ namespace datatools {
       {
 	if (! has_record_tag ())
 	  {
-	    throw std::runtime_error ("data_reader::load(...): no more record tag!");
+	    throw std::logic_error ("data_reader::load(...): no more record tag!");
 	  }
 
 	if (get_record_tag () != a_tag)
@@ -653,12 +653,12 @@ namespace datatools {
 	    message << "data_reader::load(...): unexpected tag ('"
 		    << get_record_tag ()
 		    << " != " << a_tag << "')!" ;
-	    throw std::runtime_error(message.str());
+	    throw std::logic_error(message.str());
 	  }
 
 	this->_basic_load (a_data);
-	if (__reader->is_multi_archives ()) __reader->stop_archive ();
-	__read_next_tag ();
+	if (_reader_->is_multi_archives ()) _reader_->stop_archive ();
+	_read_next_tag_ ();
 	return;
       }
 
@@ -677,15 +677,16 @@ namespace datatools {
 
     class data_writer
     {
-      io_writer * __writer;
+      io_writer * _writer_;
 
     private:
 
-      void __init_writer (const std::string & a_filename, int a_mode);
+      void _init_writer_ (const std::string & a_filename, int a_mode);
 
-      void __reset_writer ();
+      void _reset_writer_ ();
 
     public:
+
       bool is_initialized () const;
 
       bool is_multi_archives () const;
@@ -714,20 +715,11 @@ namespace datatools {
 		 bool a_multiple_archives = using_single_archive,
 		 bool a_append_mode = no_append_mode);
 
-      void init_multi (const std::string & a_filename)
-      {
-	init (a_filename, using_multiple_archives);
-	return;
-      }
+      void init_multi (const std::string & a_filename);
 
-      void init_single (const std::string & a_filename)
-      {
-	init (a_filename, using_single_archive);
-	return;
-      }
+      void init_single (const std::string & a_filename);
 
-      void init (const std::string & a_filename,
-		 int a_mode);
+      void init (const std::string & a_filename, int a_mode);
 
       // ctor
       data_writer ();
@@ -743,14 +735,15 @@ namespace datatools {
       virtual ~data_writer ();
 
     protected:
+
       template <typename Data>
       void _basic_store (const Data & a_data)
       {
-	if (__writer == 0)
+	if (_writer_ == 0)
 	  {
-	    throw std::runtime_error ("data_writer::_basic_store(...): not initialized!");
+	    throw std::logic_error ("data_writer::_basic_store(...): not initialized!");
 	  }
-	__writer->store<Data> (a_data);
+	_writer_->store<Data> (a_data);
 	return;
       }
 
@@ -759,15 +752,15 @@ namespace datatools {
       template <typename Data>
       void store (const std::string & a_tag, const Data & a_data)
       {
-	if (__writer->is_multi_archives ())
+	if (_writer_->is_multi_archives ())
 	  {
-	    __writer->start_archive ();
+	    _writer_->start_archive ();
 	  }
 	this->_basic_store<std::string> (a_tag);
 	this->_basic_store<Data> (a_data);
-	if (__writer->is_multi_archives ())
+	if (_writer_->is_multi_archives ())
 	  {
-	    __writer->stop_archive ();
+	    _writer_->stop_archive ();
 	  }
 	return;
       }

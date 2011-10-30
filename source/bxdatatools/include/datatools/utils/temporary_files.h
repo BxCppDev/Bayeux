@@ -17,24 +17,25 @@ namespace datatools {
     class temp_file
     {
     public:
+
       static bool g_devel;
       static const string DEFAULT_PATTERN;
 
     private:
-      bool   remove_at_destroy_;
-      string path_dir_;
-      string pattern_;
-      string full_pattern_;
-      string filename_;
-      bool   read_open_;
-      bool   write_open_;
-      char * template_;
-      ofstream out_;
-      ifstream in_;
+      bool   _remove_at_destroy_;
+      string _path_dir_;
+      string _pattern_;
+      string _full_pattern_;
+      string _filename_;
+      bool   _read_open_;
+      bool   _write_open_;
+      char * _template_;
+      ofstream _out_;
+      ifstream _in_;
 
     protected:
 
-      void set_defaults_ ();
+      void _set_defaults ();
 
     public:
 

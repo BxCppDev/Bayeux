@@ -8,17 +8,6 @@
 
 #include <boost/cstdint.hpp>
 
-// #include <iomanip>
-
-// #include <cstdlib>
-// #include <unistd.h>
-// #include <iostream>
-// #include <iomanip>
-// #include <fstream>
-// #include <string>
-// #include <sstream>
-// #include <stdexcept>
-
 #ifdef USING_NCURSES
 #include <curses.h>
 #endif // USING_NCURSES
@@ -33,20 +22,20 @@ namespace datatools {
     class ostream_manipulator
     {
     private:
-      ostream & (*__function) (ostream &, const Type &);
-      Type        __value;
+      ostream & (*_function_) (ostream &, const Type &);
+      Type        _value_;
 
     public:
       ostream_manipulator (ostream & (*function_) (ostream & , const Type &),
 			   const Type & value_)
-	: __function (function_), __value (value_)
+	: _function_ (function_), _value_ (value_)
       {
       }
 
       friend ostream & operator<<(ostream & os_,
 				  const ostream_manipulator & os_manip_)
       {
-	return os_manip_.__function (os_, os_manip_.__value);
+	return os_manip_._function_ (os_, os_manip_._value_);
       }
 
     };
@@ -55,38 +44,38 @@ namespace datatools {
     class ostream_manipulator_ref
     {
     private:
-      ostream & (*__function) (ostream & , Type &);
-      Type    &   __value;
+      ostream & (*_function_) (ostream & , Type &);
+      Type    &   _value_;
 
     public:
       ostream_manipulator_ref (ostream & (*function_) (ostream &, Type &) ,
 			       Type & value_)
-	: __function (function_) , __value (value_)
+	: _function_ (function_) , _value_ (value_)
       {
       }
 
       friend ostream & operator<< (ostream & os_,
 				   const ostream_manipulator_ref & os_manip_)
       {
-	return os_manip_.__function (os_, os_manip_.__value);
+	return os_manip_._function_ (os_, os_manip_._value_);
       }
     };
 
     struct io
     {
     private:
-      static bool g__colored_stream;
+      static bool g_colored_stream_;
 #ifdef USING_NCURSES
-      static SCREEN * g__screen;
+      static SCREEN * g_screen_;
 #endif // USING_NCURSES
-      static io g__io;
+      static io g_io_;
 
     public:
 
       class indenter
       {
-	size_t __width;
-	size_t __level;
+	size_t _width_;
+	size_t _level_;
 
       public:
 

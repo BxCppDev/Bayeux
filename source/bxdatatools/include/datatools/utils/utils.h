@@ -54,7 +54,10 @@ namespace datatools {
      */
     bool fetch_path_with_env (std::string & a_word);
 
-    /* This method is not very elegant. I use
+    /** Extract the expanded path computed from the 'a_word' string.
+     * Internally uses the system's shell.
+     *
+     * This method is not very elegant. I use
      * brute force, asking a shell to interpret the string via a 'system' call
      * and using a temporary file to save the result. Urrkkk!
      * That enables the expansion of environment variables embeded
@@ -70,7 +73,7 @@ namespace datatools {
      *  'a_words'.
      *
      * The Boost library provides some powerful alternative through
-     * the tokenizer class stuff.
+     * the tokenizer class.
      *
      */
     void split_string (const std::string & a_word ,

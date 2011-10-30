@@ -70,7 +70,7 @@ namespace datatools {
 		{
 		private:
 			
-			string m_message;
+			string _message_;
 			
 		public:
 			
@@ -181,6 +181,8 @@ namespace datatools {
 			
 			bool is_constant (const string & a_name) const;
 			
+			bool is_mutable (const string & a_name) const;
+			
 			//! not implemented :
 			void set_constant (const string & a_name, bool a_const = true);
 			
@@ -192,7 +194,7 @@ namespace datatools {
 
 		private:
 
-			void add_ (const string & a_name, 
+			void _add_ (const string & a_name, 
 									datatools::serialization::i_serializable * a_obj,
 									const string & a_desc = "",
 									bool a_const = false);
@@ -230,7 +232,7 @@ namespace datatools {
 										<< "' base class !";
 						throw bad_things_cast (message.str ());
 					}
-				this->add_ (a_name, new_cast, a_desc, a_const);
+				this->_add_ (a_name, new_cast, a_desc, a_const);
 				return *new_obj;
 			}
 
@@ -241,8 +243,8 @@ namespace datatools {
 			template<class T>
 			T * pop (const string & a_name)
 			{
-				dict_t::iterator found = m_things.find (a_name);
-				if (found == m_things.end ())
+				dict_t::iterator found = _things_.find (a_name);
+				if (found == _things_.end ())
 					{
 						ostringstream message;
 						message << "datatools::utils::things::pop: No stored object has name '" 
@@ -265,15 +267,15 @@ namespace datatools {
 					}
 				T * ptr = dynamic_cast<T *>(found->second.handle);
 				found->second.handle = 0;
-				m_things.erase (found);
+				_things_.erase (found);
 				return ptr;
 			}
 
 			template<class T>
 			T & grab (const string & a_name)
 			{
-				dict_t::iterator found = m_things.find (a_name);
-				if (found == m_things.end ())
+				dict_t::iterator found = _things_.find (a_name);
+				if (found == _things_.end ())
 					{
 						ostringstream message;
 						message << "datatools::utils::things::grab: No stored object has name '" 
@@ -306,8 +308,8 @@ namespace datatools {
 			template<class T>
 			bool is_a (const string & a_name) const
 			{
-				dict_t::const_iterator found = m_things.find (a_name);
-				if (found == m_things.end ())
+				dict_t::const_iterator found = _things_.find (a_name);
+				if (found == _things_.end ())
 					{
 						ostringstream message;
 						message << "datatools::utils::things::is_a: No object named '" << a_name << "' !";
@@ -321,8 +323,8 @@ namespace datatools {
 			template<class T>
 			const T & get (const string & a_name) const
 			{
-				dict_t::const_iterator found = m_things.find (a_name);
-				if (found == m_things.end ())
+				dict_t::const_iterator found = _things_.find (a_name);
+				if (found == _things_.end ())
 					{
 						ostringstream message;
 						message << "datatools::utils::things::get: No object named '" << a_name << "' !";
@@ -360,9 +362,9 @@ namespace datatools {
 		private:
 
 			// Attributes : 
-			string m_name;        //!< The name of the container
-			string m_description; //!< The description of the container
-			dict_t m_things;      //!< The internal dictionary of objects
+			string _name_;        //!< The name of the container
+			string _description_; //!< The description of the container
+			dict_t _things_;      //!< The internal dictionary of objects
 
     };
 

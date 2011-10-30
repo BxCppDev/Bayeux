@@ -218,6 +218,10 @@ if [ "x$opt" = "x--cflags" ]; then
 		    "-fPIC " \
 		    "-I${THEPACK_INCLUDEDIR} "  \
 		    "`boost-config --cflags` "
+
+ # 2011-09-29 FM: 
+ # Should be "boost-config --cflags serialization iostreams filesystem system"
+
 		if [ ${with_ebio} -eq 1 ]; then
 		    echo -n "-DDATATOOLS_EBIO=1 "
 		else

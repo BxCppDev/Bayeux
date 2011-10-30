@@ -30,18 +30,18 @@ namespace datatools {
 
     const string & dummy_service::get_label () const
     {
-      return label_;
+      return _label_;
     }
 
     void dummy_service::set_label (const string & a_label)
     {
-      label_ = a_label;
+      _label_ = a_label;
       return;
     }
 
     bool dummy_service::is_initialized () const
     {
-      return ! label_.empty ();
+      return ! _label_.empty ();
     }
 
     int dummy_service::initialize (const datatools::utils::properties & a_config,
@@ -55,7 +55,7 @@ namespace datatools {
 
     int dummy_service::reset ()
     {
-      label_ = "";
+      _label_ = "";
       return EXIT_SUCCESS;
     }
 
@@ -64,7 +64,7 @@ namespace datatools {
       : base_service ("datatools::service::dummy",
 		      "A dummy service")
     {
-      label_ = "";
+      _label_ = "";
       return;
     }
 
@@ -86,7 +86,7 @@ namespace datatools {
       namespace du = datatools::utils;
       this->base_service::tree_dump (a_out, a_title, a_indent, true);
       a_out << a_indent << du::i_tree_dumpable::inherit_tag (a_inherit)
-						<< "Label : '" << label_ << "'" << endl;
+						<< "Label : '" << _label_ << "'" << endl;
 
       return;
     }

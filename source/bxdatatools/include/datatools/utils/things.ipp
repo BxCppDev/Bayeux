@@ -34,9 +34,9 @@ namespace datatools {
     void things::serialize (Archive & ar_, const unsigned int file_version_)
     {
       ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-      ar_ & boost::serialization::make_nvp ("name",        m_name);
-      ar_ & boost::serialization::make_nvp ("description", m_description);
-      ar_ & boost::serialization::make_nvp ("things",      m_things);
+      ar_ & boost::serialization::make_nvp ("name",        _name_);
+      ar_ & boost::serialization::make_nvp ("description", _description_);
+      ar_ & boost::serialization::make_nvp ("things",      _things_);
       return;
     }
 

@@ -21,6 +21,7 @@ namespace datatools {
     void invalidate (double & x_)
     {
        x_ = std::numeric_limits<double>::quiet_NaN ();
+       return;
     }
 
     bool is_valid (double x_)
@@ -50,6 +51,7 @@ namespace datatools {
     void invalidate (float & x_)
     {
        x_ = std::numeric_limits<float>::quiet_NaN ();
+       return;
     }
 
     bool is_valid (float x_)
@@ -259,6 +261,7 @@ namespace datatools {
 	  // find start of next word
 	  start = text_.find_first_not_of (separators_, stop+1);
 	}
+       return;
     }
 
   } // namespace utils

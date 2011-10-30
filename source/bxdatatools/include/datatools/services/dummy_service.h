@@ -79,7 +79,7 @@ namespace datatools {
 
 		private:
 
-			string label_;
+			string _label_;
 
 			// Registration :
 			DATATOOLS_SERVICE_REGISTRATION_INTERFACE (dummy_service);

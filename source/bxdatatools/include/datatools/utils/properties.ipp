@@ -25,27 +25,27 @@ namespace datatools {
     void properties::data::serialize (Archive & a_ar, 
 				      const unsigned int a_version)
     {
-      a_ar & boost::serialization::make_nvp ("description", description_);
-      a_ar & boost::serialization::make_nvp ("flags",       flags_);
+      a_ar & boost::serialization::make_nvp ("description", _description_);
+      a_ar & boost::serialization::make_nvp ("flags",       _flags_);
       if (is_boolean ())
 	{
 	  a_ar & boost::serialization::make_nvp ("boolean_values",
-						boolean_values_);
+						_boolean_values_);
 	}
       if (is_integer ())
 	{
 	  a_ar & boost::serialization::make_nvp ("integer_values",
-						integer_values_);
+						_integer_values_);
 	}
       if (is_real ())
 	{
 	  a_ar & boost::serialization::make_nvp ("real_values", 
-						real_values_);
+						_real_values_);
 	}
       if (is_string ())
 	{
 	  a_ar & boost::serialization::make_nvp ("string_values",
-						string_values_);
+						_string_values_);
 	}
       return;
     }
@@ -60,8 +60,8 @@ namespace datatools {
 	   */
 	  a_ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
 	}
-      a_ar & boost::serialization::make_nvp ("description", description_);
-      a_ar & boost::serialization::make_nvp ("properties",  props_);
+      a_ar & boost::serialization::make_nvp ("description", _description_);
+      a_ar & boost::serialization::make_nvp ("properties",  _props_);
       return;
     }
 

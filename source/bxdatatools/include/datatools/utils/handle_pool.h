@@ -55,7 +55,7 @@ namespace datatools {
 #ifdef DATATOOLS_UTILS_HANDLE_POOL_DEVEL
 	  clog << "DEVEL: " << "handle_pool<T>::_resize: Entering...\n";
 #endif
-	  size_t current_size = buffer_.size ();
+	  size_t current_size = _buffer.size ();
 #ifdef DATATOOLS_UTILS_HANDLE_POOL_DEVEL
 	  clog << "DEVEL: " << "handle_pool<T>::_resize:   current_size = " << current_size << "\n";
 #endif
@@ -66,15 +66,15 @@ namespace datatools {
 #endif
 	      return;
 	    }
-	  buffer_.reserve (a_size);
+	  _buffer.reserve (a_size);
 	  for (int i = current_size; i < (int) a_size; i++)
 	    {
 #ifdef DATATOOLS_UTILS_HANDLE_POOL_DEVEL
 	      clog << "DEVEL: " << "handle_pool<T>::_resize:   Add a handle with a new element...\n";
 #endif
-	      buffer_.push_back (handle_type (new element_type));
+	      _buffer.push_back (handle_type (new element_type));
 	    }
-	  number_of_used_item_ = 0; 
+	  _number_of_used_item = 0; 
 #ifdef DATATOOLS_UTILS_HANDLE_POOL_DEVEL
 	  clog << "DEVEL: " << "handle_pool<T>::_resize: Exiting.\n";
 #endif
@@ -84,28 +84,28 @@ namespace datatools {
 
 	void clear ()
 	{
-	  buffer_.clear ();
+	  _buffer.clear ();
 	  return;
 	}
 
 	size_t get_capacity () const
 	{
-	  return buffer_.size ();
+	  return _buffer.size ();
 	}
 
 	size_t get_number_of_used_item () const
 	{
-	  return number_of_used_item_;
+	  return _number_of_used_item;
 	}
 
 	void reset ()
 	{
-	  number_of_used_item_ = 0;
+	  _number_of_used_item = 0;
 	  return;
 	}
 	void resize (size_t a_size)
 	{
-	  if (number_of_used_item_ > 0)
+	  if (_number_of_used_item > 0)
 	    {
 	      throw std::logic_error ("datatools::utils::handle_pool<T>::resize: Operation not allowed !");
 	    }
@@ -117,7 +117,7 @@ namespace datatools {
 #ifdef DATATOOLS_UTILS_HANDLE_POOL_DEVEL
 	    clog << "DEVEL: " << "handle_pool<T>::ctor: Entering...\n";
 #endif
-	    number_of_used_item_ = 0;
+	    _number_of_used_item = 0;
 #ifdef DATATOOLS_UTILS_HANDLE_POOL_DEVEL
 	    clog << "DEVEL: " << "handle_pool<T>::ctor: Exiting.\n";
 #endif
@@ -128,7 +128,7 @@ namespace datatools {
 #ifdef DATATOOLS_UTILS_HANDLE_POOL_DEVEL
 	    clog << "DEVEL: " << "handle_pool<T>::ctor: Entering...\n";
 #endif
-	    number_of_used_item_ = 0;
+	    _number_of_used_item = 0;
 	    _resize (a_size);
 #ifdef DATATOOLS_UTILS_HANDLE_POOL_DEVEL
 	    clog << "DEVEL: " << "handle_pool<T>::ctor: Exiting.\n";
@@ -140,12 +140,12 @@ namespace datatools {
 #ifdef DATATOOLS_UTILS_HANDLE_POOL_DEVEL
 	    clog << "DEVEL: " << "handle_pool<T>::dtor: Entering...\n";
 	    clog << "DEVEL: " << "handle_pool<T>::dtor: "
-		 << "  buffer size is " << buffer_.size () << "\n";
+		 << "  buffer size is " << _buffer.size () << "\n";
 	    clog << "DEVEL: " << "handle_pool<T>::dtor: " 
-		 << " number of used element " << number_of_used_item_ << "\n";
+		 << " number of used element " << _number_of_used_item << "\n";
 #endif
-	    number_of_used_item_ = 0;
-	    buffer_.clear ();
+	    _number_of_used_item = 0;
+	    _buffer.clear ();
 #ifdef DATATOOLS_UTILS_HANDLE_POOL_DEVEL
 	    clog << "DEVEL: " << "handle_pool<T>::dtor: Exiting.\n";
 #endif
@@ -155,28 +155,28 @@ namespace datatools {
 	{
 #ifdef DATATOOLS_UTILS_HANDLE_POOL_DEVEL
 	  clog << "DEVEL: " << "handle_pool<T>::create: Entering...\n";
-	  clog << "DEVEL: " << "handle_pool<T>::create:   buffer size is " << buffer_.size () << "\n";
+	  clog << "DEVEL: " << "handle_pool<T>::create:   buffer size is " << _buffer.size () << "\n";
 	  clog << "DEVEL: " << "handle_pool<T>::create: " 
-	       << "  number of used element " << number_of_used_item_ << "\n";
+	       << "  number of used element " << _number_of_used_item << "\n";
 #endif
-	  if (number_of_used_item_ < buffer_.size ())
+	  if (_number_of_used_item < _buffer.size ())
 	    {
 #ifdef DATATOOLS_UTILS_HANDLE_POOL_DEVEL
 	      clog << "DEVEL: " << "handle_pool<T>::create: " 
-		   << "  Use a pre-allocated element @ position " << number_of_used_item_  << " \n";
+		   << "  Use a pre-allocated element @ position " << _number_of_used_item  << " \n";
 	      clog << "DEVEL: " << "handle_pool<T>::create: Exiting.\n";
 #endif
-	      return buffer_[number_of_used_item_++];
+	      return _buffer[_number_of_used_item++];
 	    }
 	  element_type * ptr = new element_type;
-	  buffer_.push_back (handle_type (ptr));
-	  number_of_used_item_++;
+	  _buffer.push_back (handle_type (ptr));
+	  _number_of_used_item++;
 #ifdef DATATOOLS_UTILS_HANDLE_POOL_DEVEL
 	  clog << "DEVEL: " << "handle_pool<T>::create: " 
-	       << "  Use a newly allocated element @ position " << (number_of_used_item_ - 1) << " \n";
+	       << "  Use a newly allocated element @ position " << (_number_of_used_item - 1) << " \n";
 	  clog << "DEVEL: " << "handle_pool<T>::create: Exiting.\n";
 #endif
-	  return buffer_.back ();
+	  return _buffer.back ();
 	}
 
 	void dump (ostream & a_out, const string & a_title, bool short_ = true) const
@@ -186,9 +186,9 @@ namespace datatools {
 	      a_out << a_title << " : " << endl;
 	    }
 	  a_out << "|-- " << "Capacity     : " << get_capacity () << endl;
-	  a_out << "|-- " << "# Used items : " << number_of_used_item_ << endl;
+	  a_out << "|-- " << "# Used items : " << _number_of_used_item << endl;
 	  a_out << "`-- " << "Items @ " << endl;
-	  for (int i = 0; i < buffer_.size (); i++)
+	  for (int i = 0; i < _buffer.size (); i++)
 	    {
 	      if (short_)
 		{
@@ -196,8 +196,8 @@ namespace datatools {
 		  if (i >= max_short) continue;
 		}
 	      a_out << "    ";
-	      const handle_type & h = buffer_[i];
-	      if (i < buffer_.size () - 1)
+	      const handle_type & h = _buffer[i];
+	      if (i < _buffer.size () - 1)
 		{
 		  a_out << "|-- ";
 		}
@@ -217,13 +217,24 @@ namespace datatools {
 	    }
 	  return;
 	}
+
       protected:
-	std::vector<handle_type> buffer_;
-	size_t number_of_used_item_;
+
+	std::vector<handle_type> _buffer;
+	size_t _number_of_used_item;
+
       };
 
   } // namespace utils 
 
 } // namespace datatools 
 
-#endif // __datatools__utils__handle_pool_h 1
+#endif // __datatools__utils__handle_pool_h
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/
+

@@ -11,35 +11,35 @@ namespace datatools {
 
   namespace utils {
 
-    bool io::g__colored_stream = false;
-    io   io::g__io;
+    bool io::g_colored_stream_ = false;
+    io   io::g_io_;
 
 #ifdef USING_NCURSES
-    SCREEN * io::g__screen = 0;
+    SCREEN * io::g_screen_ = 0;
 #endif // USING_NCURSES
 
     io::indenter io::indent;
  
     size_t io::indenter::get_width () const
     {
-      return __width;
+      return _width_;
     }
 
     size_t io::indenter::get_level () const
     {
-      return __level;
+      return _level_;
     }
 
     // ctor:
     io::indenter::indenter ()
     {
-      __width = 4;
-      __level = 0;
+      _width_ = 4;
+      _level_ = 0;
     }
 
     io::indenter & io::indenter::operator () (size_t l_)
     {
-      this->__level = l_;
+      this->_level_ = l_;
       return *this;
     }
 
@@ -51,19 +51,19 @@ namespace datatools {
 
     io::indenter & io::indenter::operator++ (int)
     {
-      __level++;
+      _level_++;
       return *this;
     }
 
     io::indenter & io::indenter::operator-- (int)
     {
-      if (__level > 0) __level--;
+      if (_level_ > 0) _level_--;
       return *this;
     }
 
     ostream & operator<< (ostream & out_, const io::indenter & indent_)
     {
-      for (int i = 0; i < (int) (indent_.__width * indent_.__level); i++)
+      for (int i = 0; i < (int) (indent_._width_ * indent_._level_); i++)
 	{
 	  out_ << ' ';
 	}
@@ -94,20 +94,20 @@ namespace datatools {
 
     bool io::is_colored ()
     {
-      return g__colored_stream;
+      return g_colored_stream_;
     }
 
 #ifdef USING_NCURSES
     void io::focus ()
     {
-      if (g__screen) set_term (g__screen);
+      if (g_screen_) set_term (g_screen_);
     }
 #endif // USING_NCURSES
 
     void io::set_colored (bool c_)
     {
-      if (io::g__colored_stream && c_) return;
-      if (! io::g__colored_stream && ! c_) return;
+      if (io::g_colored_stream_ && c_) return;
+      if (! io::g_colored_stream_ && ! c_) return;
       if (c_)
 	{
 #ifdef USING_NCURSES
@@ -119,31 +119,32 @@ namespace datatools {
 	    {
 	      term = term_env;
 	    }
-	  g__screen = newterm (term.c_str (), stdout, stdin);
-	  set_term (g__screen);
+	  g_screen_ = newterm (term.c_str (), stdout, stdin);
+	  set_term (g_screen_);
 	  initscr ();
 	  nocbreak ();
 	  echo ();
 	  nonl ();
 	  intrflush (stdscr, FALSE);
 #endif // USING_NCURSES
-	  io::g__colored_stream = true;
+	  io::g_colored_stream_ = true;
 	}
       else
 	{
 #ifdef USING_NCURSES
-	  if (g__screen)
+	  if (g_screen_)
 	    {
-	      set_term (g__screen);
+	      set_term (g_screen_);
 	      endwin ();
-	      delscreen (g__screen);
-	      g__screen = 0;
+	      delscreen (g_screen_);
+	      g_screen_ = 0;
 	      resetty ();
 	      clog << "io::set_colored: Close curses stuff." << endl;
 	    }
 #endif // USING_NCURSES
-	  io::g__colored_stream = false;
+	  io::g_colored_stream_ = false;
 	}
+      return;
     }
 
     ostream & io::normal (ostream & out_)
@@ -322,3 +323,10 @@ namespace datatools {
 } // namespace datatools
 
 // end of ioutils.cc
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

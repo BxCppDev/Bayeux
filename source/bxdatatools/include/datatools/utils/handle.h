@@ -86,8 +86,6 @@ namespace datatools {
 		class handle
 		{
 
-			boost::shared_ptr<T> sp_; /*!< The embedded shared pointer. */ 
-
 		public:
 
 			typedef T value_type;
@@ -101,9 +99,9 @@ namespace datatools {
 			 * The default constructor automatically allocate an object 
 			 * handled by the internal shared pointer.
 			 */
-			//handle () : sp_ (new T)
+			//handle () : _sp_ (new T)
 			/*
-			handle () : sp_ (0)
+			handle () : _sp_ (0)
 			{
 				return;
 			}
@@ -131,7 +129,7 @@ namespace datatools {
 			 * @endcode
 			 *
 			 */
-			handle (T * a_t_ptr = 0) : sp_ (a_t_ptr)
+			handle (T * a_t_ptr = 0) : _sp_ (a_t_ptr)
 			{
 				return;
 			}
@@ -142,7 +140,7 @@ namespace datatools {
 			 * a dynamically allocated instance. This internal pointer will then
 			 * been shared by both shared pointers.
 			 */
-			handle (const boost::shared_ptr<T> & a_sp) : sp_ (a_sp)
+			handle (const boost::shared_ptr<T> & a_sp) : _sp_ (a_sp)
 			{
 				return;
 			}
@@ -152,28 +150,28 @@ namespace datatools {
 				/*
 				clog << "DEVEL: datatools::utils::handle::dtor: Entering..." << endl;
 				clog << "DEVEL: datatools::utils::handle::dtor:   Use count = " 
-						 << sp_.use_count () << endl;
+						 << _sp_.use_count () << endl;
 				*/
-				sp_.reset ();
+				_sp_.reset ();
 				//clog << "DEVEL: datatools::utils::handle::dtor: Exiting." << endl;
 				return;
 			}
 
 			bool unique() const
 			{
-        return sp_.unique ();
+        return _sp_.unique ();
 			}
 
 			size_t count () const
 			{
-				if (sp_.get () == 0) return 0;
-				return sp_.use_count ();
+				if (_sp_.get () == 0) return 0;
+				return _sp_.use_count ();
 			}
 
 			//! Check is no allocated instance is handled by the internal shared pointer.
 			bool is_null () const
 			{
-				return sp_.get () == 0;
+				return _sp_.get () == 0;
 			}
 
 			//! Check is some dynamically allocated instance is handled by the internal shared pointer.
@@ -184,42 +182,42 @@ namespace datatools {
 
 			void swap (handle<T> & other) // never throws
 			{
-				sp_.swap (other.sp_);
+				_sp_.swap (other._sp_);
 				return;
 			}
 
 			void swap (boost::shared_ptr<T> & other) // never throws
 			{
-				sp_.swap (other);
+				_sp_.swap (other);
 				return;
 			}
 
 			//! Get a const reference to the hosted dynamically allocated instance.
 			const T & get () const
 			{
-				if (sp_.get () == 0)
+				if (_sp_.get () == 0)
 					{
 						throw std::logic_error ("datatools::utils::handle::get: Handle has no data !");
 					}
-				return *sp_.get ();
+				return *_sp_.get ();
 			}
 
 			//! Get a non-const reference to the hosted dynamically allocated instance.
 			T & get ()
 			{
-				if (sp_.get () == 0)
+				if (_sp_.get () == 0)
 					{
 						throw std::logic_error ("datatools::utils::handle::get: Handle has no data !");
 					}
-				return *sp_.get ();
+				return *_sp_.get ();
 			}
 
 			/*
 			//! Reset the internal shared pointer with some new dynamically allocated instance created using its default constructor.
 			void reset ()
 			{
-				sp_.reset (0);
-				//			sp_.reset (new T);
+				_sp_.reset (0);
+				//			_sp_.reset (new T);
 				return;
 			}
 			*/
@@ -227,14 +225,14 @@ namespace datatools {
 			//! Reset the internal shared pointer with some new dynamically allocated instance.
 			void reset (T * a_t_ptr = 0)
 			{
-				sp_.reset (a_t_ptr);
+				_sp_.reset (a_t_ptr);
 				return;
 			}
 
 			//! Reset the internal shared pointer from another shared pointer.
 			void reset (const boost::shared_ptr<T> & a_sp)
 			{
-				sp_ = a_sp;
+				_sp_ = a_sp;
 				return;
 			}
 
@@ -244,13 +242,17 @@ namespace datatools {
 			template <class Archive>
 			void serialize (Archive & ar, int version)
 			{
-				ar & boost::serialization::make_nvp ("sp", sp_);
+				ar & boost::serialization::make_nvp ("sp", _sp_);
 				return;
 			}
 
 		public:
 
 			typedef handle_predicate<T> predicate_type;
+
+		private:
+
+			boost::shared_ptr<T> _sp_; /*!< The embedded shared pointer. */ 
 			
 		};
 
@@ -296,11 +298,13 @@ namespace datatools {
 		template <class T>
 		struct handle_predicate : public i_predicate <handle<T> >
 		{
+		public:
+
 			//! The default constructor.
 			handle_predicate (const i_predicate<T> & a_predicate, 
 												bool a_no_data_means_false = true) 
-				: predicate_ (a_predicate), 
-					no_data_means_false_ (a_no_data_means_false)
+				: _predicate_ (a_predicate), 
+					_no_data_means_false_ (a_no_data_means_false)
 			{
 				return;
 			}
@@ -310,14 +314,16 @@ namespace datatools {
 			{
 				if (! a_handle.has_data()) 
 					{
-						if (no_data_means_false_) return false;
+						if (_no_data_means_false_) return false;
 						throw std::logic_error ("datatools::utils::handle_predicate::operator (): Handle has no data !");
 					}
-				return (predicate_ (a_handle.get ()));
+				return (_predicate_ (a_handle.get ()));
 			}
 
-			const i_predicate<T> & predicate_;           /*!< The embedded predicate. */ 
-			bool                   no_data_means_false_; /*!< A flag to indicate the behaviour in case of NULL pointer : predicate returns false (default) or throws an exception). */ 
+		private:
+
+			const i_predicate<T> & _predicate_;           /*!< The embedded predicate. */ 
+			bool                   _no_data_means_false_; /*!< A flag to indicate the behaviour in case of NULL pointer : predicate returns false (default) or throws an exception). */ 
 		 			
 		};
 		 

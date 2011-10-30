@@ -27,12 +27,12 @@ namespace datatools {
 
     size_t computing_time::get_counts () const
     {
-      return counts_;
+      return _counts_;
     }
 
     double computing_time::get_last_elapsed_time () const
     {
-      return last_elapsed_time_;
+      return _last_elapsed_time_;
     }
 
     double computing_time::get_total_time () const
@@ -42,41 +42,41 @@ namespace datatools {
 
     double computing_time::get_sum_time () const
     {
-      return sum_time_;
+      return _sum_time_;
     }
 
     double computing_time::get_sum2_time () const
     {
-      return sum2_time_;
+      return _sum2_time_;
     }
 
     double computing_time::get_min_time () const
     {
-      return min_time_;
+      return _min_time_;
     }
 
     double computing_time::get_max_time () const
     {
-      return max_time_;
+      return _max_time_;
     }
  
     double computing_time::get_mean_time () const
     {
-      if (counts_ == 0) 
+      if (_counts_ == 0) 
 	{
 	  return numeric_limits<double>::quiet_NaN ();
 	}
-      return sum_time_ / counts_;
+      return _sum_time_ / _counts_;
     }
 
     double computing_time::get_sigma_time () const
     {
-      if (counts_ < 2) 
+      if (_counts_ < 2) 
 	{
 	  return numeric_limits<double>::quiet_NaN ();
 	}
       double m = get_mean_time ();
-      double m2 = sum2_time_ / counts_;
+      double m2 = _sum2_time_ / _counts_;
       return sqrt (m2 - (m * m));
     }
 
@@ -99,7 +99,7 @@ namespace datatools {
 
     void computing_time::resume ()
     {
-      if((gettimeofday(&start_, NULL)) == -1)
+      if((gettimeofday(&_start_, NULL)) == -1)
 	 {
 	   ostringstream message;
 	   message << "datatools::utils::computing_time::resume: "
@@ -118,13 +118,13 @@ namespace datatools {
     void computing_time::stop ()
     {
       pause ();
-      counts_++;
+      _counts_++;
       return;
     }
     
     void computing_time::pause ()
     {
-      if((gettimeofday(&stop_, NULL)) == -1)
+      if((gettimeofday(&_stop_, NULL)) == -1)
 	 {
 	   ostringstream message;
 	   message << "datatools::utils::computing_time::start: "
@@ -133,53 +133,53 @@ namespace datatools {
 	 }
       double elapsed_time = 0.0;
       timeval diff;
-      g_timeval_subtract (stop_, start_, diff);
+      g_timeval_subtract (_stop_, _start_, diff);
       elapsed_time = diff.tv_sec * CLHEP::second 
 	+ diff.tv_usec * CLHEP::microsecond;
-      sum_time_ += elapsed_time;
-      sum2_time_ += (elapsed_time * elapsed_time);
-      if (! datatools::utils::is_valid (min_time_))
+      _sum_time_ += elapsed_time;
+      _sum2_time_ += (elapsed_time * elapsed_time);
+      if (! datatools::utils::is_valid (_min_time_))
 	{
-	  min_time_ = elapsed_time;
+	  _min_time_ = elapsed_time;
 	}
-      else if (elapsed_time < min_time_)
+      else if (elapsed_time < _min_time_)
 	{
-	  min_time_ = elapsed_time;
+	  _min_time_ = elapsed_time;
 	}
-      if (! datatools::utils::is_valid (max_time_))
+      if (! datatools::utils::is_valid (_max_time_))
 	{
-	  max_time_ = elapsed_time;
+	  _max_time_ = elapsed_time;
 	}
-      else if (elapsed_time > max_time_)
+      else if (elapsed_time > _max_time_)
 	{
-	  max_time_ = elapsed_time;
+	  _max_time_ = elapsed_time;
 	}
-      last_elapsed_time_ = elapsed_time;
-      start_.tv_sec = 0;
-      start_.tv_usec = 0;
-      stop_.tv_sec = 0;
-      stop_.tv_usec = 0;
+      _last_elapsed_time_ = elapsed_time;
+      _start_.tv_sec = 0;
+      _start_.tv_usec = 0;
+      _stop_.tv_sec = 0;
+      _stop_.tv_usec = 0;
       return;
     }
 
     void computing_time::reset ()
     {
-      start_.tv_sec = 0;
-      start_.tv_usec = 0;
-      stop_.tv_sec = 0;
-      stop_.tv_usec = 0;
-      counts_ = 0;
-      sum_time_ = 0.0;
-      sum2_time_ = 0.0;
-      datatools::utils::invalidate (min_time_);
-      datatools::utils::invalidate (max_time_);
-      datatools::utils::invalidate (last_elapsed_time_);
+      _start_.tv_sec = 0;
+      _start_.tv_usec = 0;
+      _stop_.tv_sec = 0;
+      _stop_.tv_usec = 0;
+      _counts_ = 0;
+      _sum_time_ = 0.0;
+      _sum2_time_ = 0.0;
+      datatools::utils::invalidate (_min_time_);
+      datatools::utils::invalidate (_max_time_);
+      datatools::utils::invalidate (_last_elapsed_time_);
       return;
     }
 
     bool computing_time::is_stopped () const
     {
-      return ((start_.tv_sec == 0) && (start_.tv_usec == 0));
+      return ((_start_.tv_sec == 0) && (_start_.tv_usec == 0));
     }
 
     bool computing_time::is_started () const
@@ -260,7 +260,7 @@ namespace datatools {
       a_out << indent << du::i_tree_dumpable::tag
 	   << "System dead time   : " << g_system_dead_time / CLHEP::microsecond << " us" << std::endl;	  
 
-      if (counts_ == 0)
+      if (_counts_ == 0)
 	{
 	  a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)  
 	       << "No statistics" << std::endl;	  
@@ -268,19 +268,19 @@ namespace datatools {
       else
 	{
 	  a_out << indent << du::i_tree_dumpable::tag 
-	       << "Count(s)      : " << counts_ << std::endl;
+	       << "Count(s)      : " << _counts_ << std::endl;
 	  a_out << indent << du::i_tree_dumpable::tag 
-	       << "Sum time      : " << sum_time_ / CLHEP::second << " s" << std::endl;
+	       << "Sum time      : " << _sum_time_ / CLHEP::second << " s" << std::endl;
 	  
 	  a_out << indent << du::i_tree_dumpable::tag 
-	       << "Min time      : " << min_time_ / CLHEP::second << " s" << std::endl;
+	       << "Min time      : " << _min_time_ / CLHEP::second << " s" << std::endl;
 	  
 	  a_out << indent << du::i_tree_dumpable::tag 
-	       << "Max time      : " <<  max_time_ / CLHEP::second << " s" << std::endl;
+	       << "Max time      : " <<  _max_time_ / CLHEP::second << " s" << std::endl;
 	  
 	  a_out << indent << du::i_tree_dumpable::tag 
 	       << "Sum squ. time : " 
-	       << sum2_time_ / (CLHEP::second * CLHEP::second) << " s²" << std::endl;
+	       << _sum2_time_ / (CLHEP::second * CLHEP::second) << " s²" << std::endl;
 
 	  a_out << indent << du::i_tree_dumpable::tag 
 	       << "Total time    : " <<  get_total_time () / CLHEP::second << " s" << std::endl;
@@ -295,7 +295,7 @@ namespace datatools {
 	  a_out << std::endl;
 
 	  a_out << indent <<  du::i_tree_dumpable::inherit_tag (a_inherit)  
-	       << "Last elapsed time : " <<  last_elapsed_time_ / CLHEP::second << " s" << std::endl;
+	       << "Last elapsed time : " <<  _last_elapsed_time_ / CLHEP::second << " s" << std::endl;
 	}
 
       return;

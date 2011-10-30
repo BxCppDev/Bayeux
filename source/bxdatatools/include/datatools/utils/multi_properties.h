@@ -90,9 +90,9 @@ namespace datatools {
 
       private:
 
-	string     key_;
-	string     meta_;
-	properties properties_;
+	string     _key_;
+	string     _meta_;
+	properties _properties_;
 
       public:
 
@@ -133,16 +133,16 @@ namespace datatools {
     public:
 
       typedef map<string, entry> entries_col_t;
-      typedef list<entry *> entries_ordered_col_t;
+      typedef list<entry *>      entries_ordered_col_t;
 
     private:
 	
-      bool                  debug_;
-      string                description_;
-      string                key_label_;
-      string                meta_label_;
-      entries_col_t         entries_;
-      entries_ordered_col_t ordered_entries_;
+      bool                  _debug_;
+      string                _description_;
+      string                _key_label_;
+      string                _meta_label_;
+      entries_col_t         _entries_;
+      entries_ordered_col_t _ordered_entries_;
 
     public:
 
@@ -236,7 +236,7 @@ namespace datatools {
 
     private:
 	
-      void read_ (istream & a_in, bool a_skip_private);
+      void _read_ (istream & a_in, bool a_skip_private);
 
     public:
 

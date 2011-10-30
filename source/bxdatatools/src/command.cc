@@ -57,42 +57,43 @@ namespace datatools {
     bool 
     command::is_with_options () const
     {
-      return __with_options;
+      return _with_options_;
     }
 
     bool 
     command::has_option (const std::string & opt_) const
     {
-      return (std::find (__options.begin (),
-			 __options.end (), opt_) != __options.end ());
+      return (std::find (_options_.begin (),
+                         _options_.end (), opt_) != _options_.end ());
     }
 
     void  
     command::force_with_options ()
     {
-      __with_options = true;
-      std::list<std::string> arg_tmp = __arguments;
-      __arguments.clear ();
+      _with_options_ = true;
+      std::list<std::string> arg_tmp = _arguments_;
+      _arguments_.clear ();
       for (std::list<std::string>::const_iterator i 
-	     = arg_tmp.begin ();
-	   i != arg_tmp.end ();
-	   i++)
-	{
-	  if (token_is_option (*i))
-	    {
-	      add_option (*i);
-	    }
-	  else
-	    {
-	      add_argument (*i);
-	    }
-	}
+             = arg_tmp.begin ();
+           i != arg_tmp.end ();
+           i++)
+        {
+          if (token_is_option (*i))
+            {
+              add_option (*i);
+            }
+          else
+            {
+              add_argument (*i);
+            }
+        }
+      return;
     }
 
     std::string 
     command::get_name () const
     {
-      return __name;
+      return _name_;
     }
 
     bool
@@ -110,123 +111,130 @@ namespace datatools {
     bool 
     command::is_success () const
     {
-      return __error_code == SUCCESS;
+      return _error_code_ == SUCCESS;
     }
 
     bool 
     command::is_pass () const
     {
-      return __error_code == PASS;
+      return _error_code_ == PASS;
     }
 
     std::string 
     command::get_returns () const
     {
-      return __returns;
+      return _returns_;
     }
 
     void 
     command::set_returns (const std::string & ret_)
     {
-      __returns = ret_;
+      _returns_ = ret_;
+      return;
     }
     
     void
     command::set_pass ()
     {
       set_error_code (PASS);
+      return;
     }
     
     void
     command::set_error ()
     {
       set_error_code (ERROR);
+      return;
     }
     
     void
     command::set_success ()
     {
       set_error_code (SUCCESS);
+      return;
     }
 
     void
     command::set_error_code (int code_)
     {
-      __error_code = code_;
+      _error_code_ = code_;
+      return;
     }
   
     void 
     command::set_error_message (const std::string & msg_)
     {
-      __error_message = msg_;
+      _error_message_ = msg_;
     }
 
     /*
-    void 
-    command::set_error_message (const char * msg_)
-    {
+      void 
+      command::set_error_message (const char * msg_)
+      {
       set_error_message (std::string (msg_));
-    }
+      }
     */
 
     int 
     command::get_error_code () const
     {
-      return __error_code;
+      return _error_code_;
     }
 
     std::string 
     command::get_error_message () const
     {
-      return __error_message;
+      return _error_message_;
     }
 
     void 
     command::set_name (const std::string & name_)
     {
-      __name = name_;
+      _name_ = name_;
+      return;
     }
 
     size_t
     command::get_number_of_arguments () const
     {
-      return __arguments.size ();
+      return _arguments_.size ();
     }
 
     void 
     command::add_argument (const std::string & arg_)
     {
-      __arguments.push_back (arg_);
+      _arguments_.push_back (arg_);
+      return;
     }
 
     std::string 
     command::get_argument (int i_) const
     {
-      if ( (i_ < 0) || (i_ >= (int) __arguments.size ())) 
-	{
-	  return std::string ("");
-	}
+      if ( (i_ < 0) || (i_ >= (int) _arguments_.size ())) 
+        {
+          return std::string ("");
+        }
       int count = 0;
       for (std::list<std::string>::const_iterator i 
-	     = __arguments.begin ();
-	   i != __arguments.end ();
-	   i++)
-	{
-	  if (count == i_) return *i;
-	  count++;
-	}
+             = _arguments_.begin ();
+           i != _arguments_.end ();
+           i++)
+        {
+          if (count == i_) return *i;
+          count++;
+        }
       return std::string ("");
     }
 
     std::string 
     command::pop_argument ()
     {
-      if (__arguments.size () > 0) 
-	{
-	  std::string arg = __arguments.front ();
-	  __arguments.pop_front ();  
-	  return arg;
-	}
+      if (_arguments_.size () > 0) 
+        {
+          std::string arg = _arguments_.front ();
+          _arguments_.pop_front ();  
+          return arg;
+        }
       return std::string ("");
     }
   
@@ -234,92 +242,97 @@ namespace datatools {
       std::string 
       command::get_argument (int i_) const
       {
-      if (i_ < 0 || i_ >= __arguments.size ())
+      if (i_ < 0 || i_ >= _arguments_.size ())
       {
       return std::string ();
       }
       else 
       {
-	
+        
       }
-      return __arguments;
+      return _arguments_;
       }
     */
 
     void
     command::reset_output ()
     {
-      __returns = "";
-      __error_code = SUCCESS;
-      __error_message = "";
+      _returns_ = "";
+      _error_code_ = SUCCESS;
+      _error_message_ = "";
+      return;
     }
 
     void
     command::reset ()
     {
-      __name = "";
-      __arguments.clear ();
-      __options.clear ();
+      _name_ = "";
+      _arguments_.clear ();
+      _options_.clear ();
       reset_output ();
     }
 
     command::command ()
     {
-      __with_options = false;
-      __name = "";
-      __returns = "";
-      __error_code = SUCCESS;
-      __error_message = "";
+      _with_options_ = false;
+      _name_ = "";
+      _returns_ = "";
+      _error_code_ = SUCCESS;
+      _error_message_ = "";
+      return;
     }
 
     command::command (const std::string & command_line_)
     {
-      __with_options = false;
-      __name = "";
-      __returns = "";
-      __error_code = SUCCESS;
-      __error_message = "";
+      _with_options_ = false;
+      _name_ = "";
+      _returns_ = "";
+      _error_code_ = SUCCESS;
+      _error_message_ = "";
       if (! command_line_.empty ())
-	{
-	  init (command_line_, __with_options);
-	}
+        {
+          init (command_line_, _with_options_);
+        }
+      return;
     }
 
     command::command (const std::string & command_line_, 
-		      bool with_options_)
+                      bool with_options_)
     {
-      __with_options = with_options_;
-      __name = "";
-      __returns = "";
-      __error_code = SUCCESS;
-      __error_message = "";
+      _with_options_ = with_options_;
+      _name_ = "";
+      _returns_ = "";
+      _error_code_ = SUCCESS;
+      _error_message_ = "";
       if (! command_line_.empty ())
-	{
-	  init (command_line_, __with_options);
-	}
+        {
+          init (command_line_, _with_options_);
+        }
+      return;
     }
 
     command::~command ()
     {
       reset ();
+      return;
     }
 
     std::string 
     command::get_option (int i_) const
     {
-      if ( (i_ < 0) || (i_ >= (int) __options.size ())) 
-	{
-	  return std::string ("");
-	}
+      if ( (i_ < 0) || (i_ >= (int) _options_.size ())) 
+        {
+          return std::string ("");
+        }
       int count = 0;
       for (std::list<std::string>::const_iterator i 
-	     = __options.begin ();
-	   i != __options.end ();
-	   i++)
-	{
-	  if (count == i_) return *i;
-	  count++;
-	}
+             = _options_.begin ();
+           i != _options_.end ();
+           i++)
+        {
+          if (count == i_) return *i;
+          count++;
+        }
       return std::string ("");
     }
 
@@ -327,31 +340,31 @@ namespace datatools {
     size_t
     command::get_number_of_options () const
     {
-      return __options.size ();
+      return _options_.size ();
     }
     
     void 
     command::add_option (const std::string & opt_)
     {
       if (is_with_options ())
-	{
-	  __options.push_back (opt_);
-	}
+        {
+          _options_.push_back (opt_);
+        }
       else
-	{
-	  throw std::runtime_error ("command::add_option: Options are not allowed!");
-	}
+        {
+          throw std::runtime_error ("command::add_option: Options are not allowed!");
+        }
     }
     
     std::string 
     command::pop_option ()
     {
-      if (__options.size () > 0) 
-	{
-	  std::string arg = __options.front ();
-	  __options.pop_front ();  
-	  return arg;
-	}
+      if (_options_.size () > 0) 
+        {
+          std::string arg = _options_.front ();
+          _options_.pop_front ();  
+          return arg;
+        }
       return std::string ("");
     }
 
@@ -359,35 +372,37 @@ namespace datatools {
     command::init (const std::string & command_line_)
     {
       this->init (command_line_, false);
+      return;
     }
   
     void 
     command::init (const std::string & command_line_, bool with_options_)
     {
       reset ();
-      __with_options = with_options_;
+      _with_options_ = with_options_;
       std::istringstream iss (command_line_);
       std::string a_command;
       iss >> a_command;
       set_name (a_command);
       iss >> std::ws;
       while (iss) 
-	{
-	  std::string a_token;    
-	  iss >> a_token;
-	  if (iss) 
-	    {
-	      if (token_is_option (a_token) && is_with_options ()) 
-		{
-		  add_option (a_token);
-		}
-	      else
-		{
-		  add_argument (a_token);
-		}
-	    }
-	  iss >> std::ws;
-	}
+        {
+          std::string a_token;    
+          iss >> a_token;
+          if (iss) 
+            {
+              if (token_is_option (a_token) && is_with_options ()) 
+                {
+                  add_option (a_token);
+                }
+              else
+                {
+                  add_argument (a_token);
+                }
+            }
+          iss >> std::ws;
+        }
+      return;
     }
 
     void 
@@ -395,76 +410,80 @@ namespace datatools {
     {
       if (pos_<1) return;
       for (int i=0; i<pos_; i++)
-	{
-	  __name = __arguments.front ();
-	  __arguments.pop_front ();  
-	}
+        {
+          _name_ = _arguments_.front ();
+          _arguments_.pop_front ();  
+        }
+      return;
     }
   
     /* 
-    void 
-    command::shift_option (int pos_)
-    {
-      if (pos_<1) return;
-      for (int i=0; i<pos_; i++)
-	{
-	  __options.pop_front ();  
-	}
-    }
+       void 
+       command::shift_option (int pos_)
+       {
+       if (pos_<1) return;
+       for (int i=0; i<pos_; i++)
+       {
+       _options_.pop_front ();  
+       }
+       }
     */
 
     void 
     command::shift ()
     {
       shift_one ();
+      return;
     }
   
     /*
-    void 
-    command::shift_option ()
-    {
+      void 
+      command::shift_option ()
+      {
       shift_option (0);
-    }
+      }
     */
 
     void 
     command::shift_one ()
     {
       shift (1);
+      return;
     }
 
     void 
     command::dump (std::ostream & out_) const
     {
       out_ << "datatools::utils::command: " << std::endl;
-      out_ << "|--" << "Name : " << __name << std::endl;
+      out_ << "|--" << "Name : " << _name_ << std::endl;
       int i = 0;
       out_ << "|--" << "With options : " 
-	   << (is_with_options ()? "Yes": "No") << std::endl;
+           << (is_with_options ()? "Yes": "No") << std::endl;
       if (is_with_options ())
-	{
-	  for (std::list<std::string>::const_iterator it = 
-		 __options.begin ();
-	       it != __options.end ();
-	       it++)
-	    {
-	      out_ << "|--" << "Options #" << i 
-		   << ":  '" << *it << "'" << std::endl;
-	      i++;
-	    }
-	  i = 0;
-	}
+        {
+          for (std::list<std::string>::const_iterator it = 
+                 _options_.begin ();
+               it != _options_.end ();
+               it++)
+            {
+              out_ << "|--" << "Options #" << i 
+                   << ":  '" << *it << "'" << std::endl;
+              i++;
+            }
+          i = 0;
+        }
       for (std::list<std::string>::const_iterator it = 
-	     __arguments.begin ();
-	   it != __arguments.end ();
-	   it++)
-	{
-	  out_ << "|--" << "Argument #" << i 
-	       << ":  '" << *it << "'" << std::endl;
-	  i++;
-	}
-      out_  << "|--" << "Error code : " << __error_code << std::endl;
-      out_  << "`--" << "Error message : '" << __error_message << "'" << std::endl;
+             _arguments_.begin ();
+           it != _arguments_.end ();
+           it++)
+        {
+          out_ << "|--" << "Argument #" << i 
+               << ":  '" << *it << "'" << std::endl;
+          i++;
+        }
+      out_  << "|--" << "Error code : " << _error_code_ << std::endl;
+      out_  << "`--" << "Error message : '" << _error_message_ << "'" << std::endl;
+      return;
     }
 
     /* 
@@ -487,36 +506,43 @@ namespace datatools {
     command_error::command_error (const std::string & message_) :
       std::runtime_error ("command: error: " + message_)
     {
+      return;
     }
 
     command_not_found::command_not_found (const std::string & message_) :
       command_error ("command not found: " + message_)
     {
+      return;
     }
 
     missing_argument::missing_argument (const std::string & message_) :
       command_error ("missing argument: " + message_)
     {
+      return;
     }
 
     invalid_argument::invalid_argument (const std::string & message_) :
       command_error ("invalid argument: " + message_)
     {
+      return;
     }
 
     invalid_number_of_arguments::invalid_number_of_arguments (const std::string & message_) :
       command_error ("invalid number of arguments: " + message_)
     {
+      return;
     }
 
     command_failed::command_failed (const std::string & message_) :
       command_error ("command failed: " + message_)
     {
+      return;
     }
 
     command_not_implemented::command_not_implemented (const std::string & message_) :
       command_error ("command not implemented: " + message_)
     {
+      return;
     }
 
   } // end of namespace utils 
@@ -524,3 +550,10 @@ namespace datatools {
 } // end of namespace datatools
 
 // end of command.cc
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

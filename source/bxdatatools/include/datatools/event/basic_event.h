@@ -6,9 +6,9 @@
  * Last modified: 2008-02-25
  * 
  * License: 
- * 
- * 
+ *  
  * Description: 
+ *
  *   A generic basic event model
  *
  * History: 
@@ -44,7 +44,7 @@ namespace datatools {
      *
      */
     class basic_event : public datatools::serialization::i_serializable,
-			public datatools::utils::i_tree_dumpable,
+                        public datatools::utils::i_tree_dumpable,
                         public datatools::utils::i_clear    
     {
 
@@ -91,9 +91,9 @@ namespace datatools {
       
       //! Method for smart printing (from the datatools::utils::i_tree_dump interface).
       virtual void tree_dump (std::ostream & a_out         = std::cerr, 
-			      const std::string & a_title  = "",
-			      const std::string & a_indent = "",
-			      bool a_inherit               = false) const;
+                              const std::string & a_title  = "",
+                              const std::string & a_indent = "",
+                              bool a_inherit               = false) const;
       
       //! Shortcut to tree_dump.
       void dump () const;
@@ -101,16 +101,16 @@ namespace datatools {
       //! Return the serialization tag (from the datatools::serialization::i_serializable interface).
       DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
 
-    private:
+      private:
 
       //! Boost.Serialization hook.
       friend class boost::serialization::access; 
       BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
 
-    private:
+      private:
 
-      event_id                     id_;         //!< Event ID.
-      datatools::utils::properties properties_; //!< Dictionary of properties.
+      event_id                     _id_;         //!< Event ID.
+      datatools::utils::properties _properties_; //!< Dictionary of properties.
      
     };
 

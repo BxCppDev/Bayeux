@@ -18,13 +18,13 @@ namespace datatools {
     
     void basic_event::id (const event_id & a_id)
     {
-      id_ = a_id;
+      _id_ = a_id;
       return;
     }
     
     const event_id & basic_event::id () const
     {
-      return id_;
+      return _id_;
     }
 
     void basic_event::set_id (const event_id & a_id)
@@ -35,7 +35,7 @@ namespace datatools {
     
     event_id & basic_event::id ()
     {
-      return id_;
+      return _id_;
     }
      
     const event_id & basic_event::get_id () const
@@ -45,12 +45,12 @@ namespace datatools {
     
     const datatools::utils::properties & basic_event::properties () const
     {
-      return properties_;
+      return _properties_;
     }
     
     datatools::utils::properties & basic_event::properties ()
     {
-      return properties_;
+      return _properties_;
     }
 
     const datatools::utils::properties & basic_event::get_properties_ro () const
@@ -65,8 +65,8 @@ namespace datatools {
 
     void basic_event::clear ()
     {
-      id_.clear ();
-      properties_.clear ();
+      _id_.clear ();
+      _properties_.clear ();
       return;
     }
     
@@ -75,7 +75,7 @@ namespace datatools {
       return;
     }
     
-    basic_event::basic_event (const event_id & a_id) : id_ (a_id)
+    basic_event::basic_event (const event_id & a_id) : _id_ (a_id)
     {
       return;
     }
@@ -87,34 +87,34 @@ namespace datatools {
     }
 
     void basic_event::tree_dump (std::ostream & a_out         , 
-				 const std::string & a_title  ,
-				 const std::string & a_indent ,
-				 bool  a_inherit              ) const
+                                 const std::string & a_title  ,
+                                 const std::string & a_indent ,
+                                 bool  a_inherit              ) const
     {
       std::string indent;
       if (!a_indent.empty ()) indent = a_indent;
       if (!a_title.empty ()) {
-	a_out << indent << a_title << std::endl;
+        a_out << indent << a_title << std::endl;
       }
       namespace du = datatools::utils;
       a_out << indent << du::i_tree_dumpable::tag 
-	   << "Id : " << std::endl;
+            << "Id : " << std::endl;
       {
-	std::ostringstream indent_oss;
-	indent_oss << indent;
-	indent_oss << du::i_tree_dumpable::skip_tag;
-	id_.tree_dump (a_out,"",indent_oss.str ());
+        std::ostringstream indent_oss;
+        indent_oss << indent;
+        indent_oss << du::i_tree_dumpable::skip_tag;
+        _id_.tree_dump (a_out,"",indent_oss.str ());
       }
 
       a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)
-	   << "Properties : ";
-      if (properties_.size () == 0) { a_out << "<empty>"; }
+            << "Properties : ";
+      if (_properties_.size () == 0) { a_out << "<empty>"; }
       a_out << std::endl;
       {
-	std::ostringstream indent_oss;
-	indent_oss << indent;
-	indent_oss << du::i_tree_dumpable::inherit_skip_tag (a_inherit);
-	properties_.tree_dump (a_out,"",indent_oss.str ());
+        std::ostringstream indent_oss;
+        indent_oss << indent;
+        indent_oss << du::i_tree_dumpable::inherit_skip_tag (a_inherit);
+        _properties_.tree_dump (a_out,"",indent_oss.str ());
       }
       return;
     }

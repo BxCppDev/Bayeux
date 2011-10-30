@@ -80,7 +80,7 @@ namespace datatools {
 
       protected:
 
-				void set_name_ (const string & a_name);
+				void _set_name (const string & a_name);
 
       public:
 
@@ -103,11 +103,11 @@ namespace datatools {
 
 			protected:
 
-				string name_;           //!< The name of the service
+				string _name;           //!< The name of the service
 
-				string description_;    //!< The description of the service
+				string _description;    //!< The description of the service
 
-				string version_;        //!< The version of the service
+				string _version;        //!< The version of the service
 
 				/**************************************************/
 
@@ -115,7 +115,9 @@ namespace datatools {
 
 				class service_creator_db
 				{
-					service_creator_dict_type  dict_;
+				private:
+
+					service_creator_dict_type  _dict_;
 
 				public:
 
@@ -136,7 +138,6 @@ namespace datatools {
 
 					void register_service_creator2 ();
 
-
 					void dump_service_creators (ostream & a_out = clog);
 
 				}; // service_creator_db
@@ -145,7 +146,7 @@ namespace datatools {
 
 			private:
 
-				static scoped_service_creator_db_t g_service_creator_db_;
+				static scoped_service_creator_db_t _g_service_creator_db_;
 
 			public:
 

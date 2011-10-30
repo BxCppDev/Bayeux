@@ -34,10 +34,12 @@ namespace datatools {
 
   namespace event {
 
-    /*! \brief A simple event ID object based on a run number and an event number.
-     *        Run and event numbers are represented by 32 bits signed integrals.
+    /*! \brief A simple event ID object based on a run number 
+     *        and an event number. Run and event numbers are 
+     *        represented by 32 bits signed integrals.
      *
-     *  The event_id class is serializable through the Boost.Serialization library.
+     *  The event_id class is serializable through the 
+     *  Boost.Serialization library.
      *  Utilities for standard I/O streams is also provided.
      *
      *
@@ -57,13 +59,6 @@ namespace datatools {
 
       //! Format separator character used in the to_string and from_string methods.
       static const char IO_FORMAT_SEP = '_';
-
-    private:
-
-      //! The number of the run.
-      int32_t run_number_;
-      //! The number of the event within the run.
-      int32_t event_number_;
 
     public:
 
@@ -159,6 +154,11 @@ namespace datatools {
 
     private:
 
+      int32_t _run_number_;   //!< The number of the run.
+      int32_t _event_number_; //!< The number of the event within the run.
+
+    private:
+
       //! Boost.Serialization hook.
       friend class boost::serialization::access; 
       BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
@@ -171,18 +171,19 @@ namespace datatools {
      */
     class event_id_equal_predicate : public std::unary_function<event_id, bool>
     {
-      event_id __id;
+      event_id _id_;
       
     public:
       
       event_id_equal_predicate (const event_id & id_)
       {
-	__id = id_;
+	_id_ = id_;
+	return;
       }
       
       bool operator () (const event_id & id_) const
       {
-	return __id == id_;
+	return _id_ == id_;
       }
       
     };

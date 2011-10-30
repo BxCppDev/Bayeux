@@ -20,28 +20,28 @@ namespace datatools {
     const string temp_file::DEFAULT_PATTERN = "tmp_";
     bool temp_file::g_devel = false;
 
-    void temp_file::set_defaults_ ()
+    void temp_file::_set_defaults ()
     {
-      remove_at_destroy_ = true;
-      template_ = 0;
-      read_open_ = false;
-      write_open_ = false;
+      _remove_at_destroy_ = true;
+      _template_ = 0;
+      _read_open_ = false;
+      _write_open_ = false;
       return;
     }
 
     bool temp_file::is_valid () const
     {
-      return template_ != 0;
+      return _template_ != 0;
     }
 
     bool temp_file::is_read_open () const
     {
-      return read_open_;
+      return _read_open_;
     }
 
     bool temp_file::is_write_open () const
     {
-      return write_open_;
+      return _write_open_;
     }
 
     ofstream & temp_file::out ()
@@ -52,29 +52,29 @@ namespace datatools {
 	  ostringstream message;
 	  message << "datatools::utils::temp_file::out: "
 		  << "Temporary file has not been created yet !";
-	  throw runtime_error (message.str ());	  
+	  throw logic_error (message.str ());	  
 	}
-      if (read_open_)
+      if (_read_open_)
 	{
 	  ostringstream message;
 	  message << "datatools::utils::temp_file::out: "
-		  << "Temporary file '" << filename_ << "' is already open in read mode !";
-	  throw runtime_error (message.str ());	  
+		  << "Temporary file '" << _filename_ << "' is already open in read mode !";
+	  throw logic_error (message.str ());	  
 	}
-      if (! write_open_)
+      if (! _write_open_)
 	{
-	  out_.open (filename_.c_str ());
-	  if (! out_)
+	  _out_.open (_filename_.c_str ());
+	  if (! _out_)
 	    {
 	      ostringstream message;
 	      message << "datatools::utils::temp_file::out: "
-		      << "Cannot open temporary file '" << filename_ << "' in write mode !";
+		      << "Cannot open temporary file '" << _filename_ << "' in write mode !";
 	      throw runtime_error (message.str ());	  	      
 	    }
-	  write_open_ = true;
+	  _write_open_ = true;
 	}
       if (g_devel) clog << "DEVEL: datatools::utils::temp_file::out: Exiting." << endl;
-      return out_;
+      return _out_;
     }
     
     ifstream & temp_file::in ()
@@ -85,42 +85,42 @@ namespace datatools {
 	  ostringstream message;
 	  message << "datatools::utils::temp_file::in: "
 		  << "Temporary file has not been created yet !";
-	  throw runtime_error (message.str ());
+	  throw logic_error (message.str ());
 	}
-      if (write_open_)
+      if (_write_open_)
 	{
 	  ostringstream message;
 	  message << "datatools::utils::temp_file::in: "
-		  << "Temporary file '" << filename_ << "' is already open in write mode !";
-	  throw runtime_error (message.str ());	  
+		  << "Temporary file '" << _filename_ << "' is already open in write mode !";
+	  throw logic_error (message.str ());	  
 	}
-      if (! read_open_)
+      if (! _read_open_)
 	{
-	  in_.open (filename_.c_str ());
-	  if (! out_)
+	  _in_.open (_filename_.c_str ());
+	  if (! _out_)
 	    {
 	      ostringstream message;
 	      message << "datatools::utils::temp_file::in: "
-		      << "Cannot open temporary file '" << filename_ << "' in read mode !";
+		      << "Cannot open temporary file '" << _filename_ << "' in read mode !";
 	      throw runtime_error (message.str ());	  	      
 	    }
-	  read_open_ = true;
+	  _read_open_ = true;
 	}
       if (g_devel) clog << "DEVEL: datatools::utils::temp_file::in: Exiting." << endl;
-      return in_;
+      return _in_;
     }
 
     // ctor:
     temp_file::temp_file ()
     {
-      set_defaults_ ();
+      _set_defaults ();
       return;
     }
 
     // ctor:
     temp_file::temp_file (const char * a_pattern, bool a_remove_at_destroy)
     {
-      set_defaults_ ();
+      _set_defaults ();
       set_remove_at_destroy  (a_remove_at_destroy);
       string pattern = a_pattern;
       create ("", pattern);
@@ -130,7 +130,7 @@ namespace datatools {
     // ctor:
     temp_file::temp_file (string a_pattern, bool a_remove_at_destroy)
     {
-      set_defaults_ ();
+      _set_defaults ();
       set_remove_at_destroy  (a_remove_at_destroy);
       create ("", a_pattern);
       return;
@@ -139,7 +139,7 @@ namespace datatools {
     // ctor:
     temp_file::temp_file (string a_path_dir, const char * a_pattern, bool a_remove_at_destroy)
     {
-      set_defaults_ ();
+      _set_defaults ();
       set_remove_at_destroy  (a_remove_at_destroy);
       string pattern = a_pattern;
       create (a_path_dir, pattern);
@@ -149,7 +149,7 @@ namespace datatools {
     // ctor:
     temp_file::temp_file (const char * a_path_dir, const char * a_pattern, bool a_remove_at_destroy)
     {
-      set_defaults_ ();
+      _set_defaults ();
       set_remove_at_destroy  (a_remove_at_destroy);
       string pattern = a_pattern;
       string path_dir = a_path_dir;
@@ -160,7 +160,7 @@ namespace datatools {
     // ctor:
     temp_file::temp_file (string a_path_dir, string a_pattern, bool a_remove_at_destroy)
     {
-      set_defaults_ ();
+      _set_defaults ();
       set_remove_at_destroy  (a_remove_at_destroy);
       create (a_path_dir, a_pattern);
       return;
@@ -169,20 +169,20 @@ namespace datatools {
     // dtor:
     temp_file::~temp_file ()
     {
-      if (remove_at_destroy_)
+      if (_remove_at_destroy_)
 	{
 	  if (g_devel)
 	    {
 	      clog << "DEVEL: datatools::utils::temp_file::dtor: "
 		   << "Deleting the file with name '"
-		   << filename_ << "'" << endl;
+		   << _filename_ << "'" << endl;
 	    }
 	  remove ();
 	}
-      if (template_ != 0)
+      if (_template_ != 0)
 	{
-	  delete template_;
-	  template_ = 0;
+	  delete _template_;
+	  _template_ = 0;
 	}
       return;
     }
@@ -195,30 +195,30 @@ namespace datatools {
 	  ostringstream message;
 	  message << "datatools::utils::temp_file::create: "
 		  << "Temporary file with name '"
-		  << filename_ << "' has already been created !";
-	  throw runtime_error (message.str ());
+		  << _filename_ << "' has already been created !";
+	  throw logic_error (message.str ());
 	} 
       if (a_path_dir.empty ())
 	{
-	  path_dir_ = ".";
+	  _path_dir_ = ".";
 	}
       else
 	{
-	  path_dir_ = a_path_dir;
-	  fetch_path_with_env (path_dir_);
+	  _path_dir_ = a_path_dir;
+	  fetch_path_with_env (_path_dir_);
 	}
-      if (! boost::filesystem::is_directory (path_dir_))
+      if (! boost::filesystem::is_directory (_path_dir_))
 	{
 	  ostringstream message;
 	  message << "datatools::utils::temp_file::create: "
 		  << "Directory with name '"
-		  << path_dir_ << "' does not exist !";
+		  << _path_dir_ << "' does not exist !";
 	  throw runtime_error (message.str ());	  
 	}
 
       if (a_pattern.empty ())
 	{
-	  pattern_ = DEFAULT_PATTERN;
+	  _pattern_ = DEFAULT_PATTERN;
 	}
       else 
 	{
@@ -229,53 +229,54 @@ namespace datatools {
 	      message << "datatools::utils::temp_file::create: "
 		      << "Invalid pattern for filename ! Pattern '"
 		      << a_pattern << "' contains invalid character(s) !";
-	      throw runtime_error (message.str ());	  
+	      throw logic_error (message.str ());	  
 	    }
-	  pattern_ = a_pattern;
+	  _pattern_ = a_pattern;
 	}
       ostringstream filename_oss;
-      filename_oss << path_dir_ << '/' << pattern_ << "XXXXXX";
-      full_pattern_ = filename_oss.str ();
-      if (devel) clog << "DEVEL: datatools::utils::temp_file::create: full_pattern is '" << full_pattern_ << "' !" << endl;
+      filename_oss << _path_dir_ << '/' << _pattern_ << "XXXXXX";
+      _full_pattern_ = filename_oss.str ();
+      if (devel) clog << "DEVEL: datatools::utils::temp_file::create: full_pattern is '" << _full_pattern_ << "' !" << endl;
 
-      template_ = new char [full_pattern_.size () + 10];
-      template_[0] = '\0';
+      _template_ = new char [_full_pattern_.size () + 10];
+      _template_[0] = '\0';
       if (devel) clog << "DEVEL: datatools::utils::temp_file::create: buffer is allocated !" << endl;
-      for (int i = 0; i < (int) full_pattern_.size (); i++)
+      for (int i = 0; i < (int) _full_pattern_.size (); i++)
 	{
-	  template_[i] = full_pattern_[i];
+	  _template_[i] = _full_pattern_[i];
 	}
-      template_[full_pattern_.size ()] = '\0';
-      if (devel) clog << "DEVEL: datatools::utils::temp_file::create: template= '" << template_ << "'" << endl;
+      _template_[_full_pattern_.size ()] = '\0';
+      if (devel) clog << "DEVEL: datatools::utils::temp_file::create: template= '" << _template_ << "'" << endl;
 
-      int err = mkstemp (template_);
+      int err = mkstemp (_template_);
       if (err == -1)
 	{
 	  ostringstream message;
 	  message << "datatools::utils::temp_file::create: "
 		  << "Cannot create temporary file using pattern '"
-		  << full_pattern_ << "' !";
-	  if (template_ != 0) 
+		  << _full_pattern_ << "' !";
+	  if (_template_ != 0) 
 	    {
-	      delete template_;
+	      delete _template_;
 	    }
-	  template_ = 0;
+	  _template_ = 0;
 	  throw runtime_error (message.str ());
 	} 
-      if (devel) clog << "DEVEL: datatools::utils::temp_file::create: Template is '" << template_ << "' !" << endl;
-      filename_ = template_;
-      if (devel) clog << "DEVEL: datatools::utils::temp_file::create: Filename is '" << filename_ << "' !" << endl;
+      if (devel) clog << "DEVEL: datatools::utils::temp_file::create: Template is '" << _template_ << "' !" << endl;
+      _filename_ = _template_;
+      if (devel) clog << "DEVEL: datatools::utils::temp_file::create: Filename is '" << _filename_ << "' !" << endl;
       return;
     }
 
     const string & temp_file::get_filename () const
     {
-      return filename_;
+      return _filename_;
     }
 
     void temp_file::set_remove_at_destroy (bool r_)
     {
-      remove_at_destroy_ = r_;
+      _remove_at_destroy_ = r_;
+      return;
     }
       
     void temp_file::close ()
@@ -283,14 +284,14 @@ namespace datatools {
       if (is_read_open ())
 	{
 	  if (g_devel) clog << "DEVEL: datatools::utils::temp_file::close: closing read file mode !" << endl;
-	  in_.close ();
-	  read_open_ = false;
+	  _in_.close ();
+	  _read_open_ = false;
 	}      
       if (is_write_open ())
 	{
 	  if (g_devel) clog << "DEVEL: datatools::utils::temp_file::close: closing write file mode !" << endl;
-	  out_.close ();
-	  write_open_ = false;
+	  _out_.close ();
+	  _write_open_ = false;
 	}      
       return;
     }
@@ -299,24 +300,24 @@ namespace datatools {
     {
       if (g_devel) clog << "DEVEL: datatools::utils::temp_file::remove: Entering..." << endl;
       close ();
-      if (! filename_.empty ())
+      if (! _filename_.empty ())
 	{
-	  int err = unlink (filename_.c_str ());
+	  int err = unlink (_filename_.c_str ());
 	  if (err == -1)
 	    {
 	      ostringstream message;
 	      message << "datatools::utils::temp_file::remove: "
 		      << "Cannot delete temporary file '"
-		      << filename_ << "' !";
+		      << _filename_ << "' !";
 	      throw runtime_error (message.str ());
 	    } 
 	}
-      if (template_ != 0)
+      if (_template_ != 0)
 	{
-	  delete template_;
-	  template_ = 0;
+	  delete _template_;
+	  _template_ = 0;
 	}     
-      set_defaults_ ();
+      _set_defaults ();
       if (g_devel) clog << "DEVEL: datatools::utils::temp_file::remove: Exiting." << endl;
       return;
     }

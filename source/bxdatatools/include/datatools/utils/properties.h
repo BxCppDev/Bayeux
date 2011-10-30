@@ -133,12 +133,12 @@ namespace datatools {
 	 *  TTT == type bits 
 	 *  0   == unused
 	 */
-	uint8_t     flags_; 
-	std::string description_;
-	vbool       boolean_values_;
-	vint        integer_values_;
-	vdouble     real_values_;
-	vstring     string_values_;
+	uint8_t     _flags_; 
+	std::string _description_;
+	vbool       _boolean_values_;
+	vint        _integer_values_;
+	vdouble     _real_values_;
+	vstring     _string_values_;
 
       private:
 	void
@@ -315,21 +315,21 @@ namespace datatools {
 
     private: 
 
-      bool                        debug_;
-      std::string                 description_;
-      pmap                        props_;
-      const basic_key_validator * key_validator_;
-      bool                        key_validator_deletion_;
+      bool                        _debug_;
+      std::string                 _description_;
+      pmap                        _props_;
+      const basic_key_validator * _key_validator_;
+      bool                        _key_validator_deletion_;
 
       // getters/setters declarations:
 
     private: 
 
       void
-      validate_key_ (const std::string & a_key_arg) const;
+      _validate_key_ (const std::string & a_key_arg) const;
 
       void
-      clear_key_validator_ ();
+      _clear_key_validator_ ();
 
     public: 
       static const std::string PRIVATE_PROPERTY_PREFIX;
@@ -395,14 +395,14 @@ namespace datatools {
     private: 
 
       void
-      check_nokey_ (const std::string & a_key) const;
+      _check_nokey_ (const std::string & a_key) const;
 
       void
-      check_key_ (const std::string & a_key,
+      _check_key_ (const std::string & a_key,
 		   data ** a_data);
 
       void
-      check_key_ (const std::string & a_key,
+      _check_key_ (const std::string & a_key,
 		   const data ** a_data) const;
 
 
@@ -813,15 +813,15 @@ namespace datatools {
 
       private:
 
-	bool   debug_;
-	int    mode_;
-	bool   use_smart_modulo_;
-	bool   write_public_only_;
-	size_t read_line_count_;
-	char   continuation_char_;
-	char   comment_char_;
-	char   assign_char_;
-	char   desc_char_;
+	bool   _debug_;
+	int    _mode_;
+	bool   _use_smart_modulo_;
+	bool   _write_public_only_;
+	size_t _read_line_count_;
+	char   _continuation_char_;
+	char   _comment_char_;
+	char   _assign_char_;
+	char   _desc_char_;
 
       private:
 

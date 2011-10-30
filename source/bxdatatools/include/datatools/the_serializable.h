@@ -44,14 +44,12 @@ BOOST_CLASS_EXPORT_IMPLEMENT(datatools::utils::things)
  * datatools::event::event_id *
  *********************************/
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::event::event_id)
-// BOOST_CLASS_EXPORT_IMPLEMENT(datatools::event::event_id) 
 
 
 // /*********************************
 //  * datatools::event::basic_event *
 //  *********************************/
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::event::basic_event)
-// BOOST_CLASS_EXPORT_IMPLEMENT(datatools::event::basic_event) 
 
 #endif // __datatools__the_serializable_h__
 

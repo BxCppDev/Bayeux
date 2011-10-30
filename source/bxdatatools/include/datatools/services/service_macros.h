@@ -107,12 +107,12 @@
 #define DATATOOLS_SERVICE_REGISTRATION_INTERFACE(SERVICE_CLASS_NAME)            \
 	private:                                                                      \
 	static datatools::service::default_creator_registration<SERVICE_CLASS_NAME>   \
-	g_default_registration_;                                                      \
+	_g_default_registration_;                                                     \
 	/**/
 
 #define DATATOOLS_SERVICE_REGISTRATION_IMPLEMENT(SERVICE_CLASS_NAME,SERVICE_ID) \
 	datatools::service::default_creator_registration<SERVICE_CLASS_NAME>          \
-	SERVICE_CLASS_NAME::g_default_registration_ (SERVICE_ID);                     \
+	SERVICE_CLASS_NAME::_g_default_registration_ (SERVICE_ID);                    \
 	/**/
 
 

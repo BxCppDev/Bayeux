@@ -22,7 +22,7 @@ namespace datatools {
 
   namespace utils {
 
-    /*!<  \struct bit_mask
+    /**!  \struct bit_mask
           \brief Some useful constants to manipulate bits typically within an unsigned integer of 32 bits. 
     */
     struct bit_mask

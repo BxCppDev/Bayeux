@@ -8,6 +8,7 @@
  * License: 
  * 
  * Description: 
+ *
  *   Utilities for units (CLHEP)
  * 
  * History: 
@@ -45,7 +46,7 @@ namespace datatools {
     
     protected:
       //! Exception thrown in case of unrecognized unit symbol.
-      static void throw_bad_unit_ (const string & a_type, 
+      static void _throw_bad_unit (const string & a_type, 
 				   const string & a_unit_str);
 
     public:

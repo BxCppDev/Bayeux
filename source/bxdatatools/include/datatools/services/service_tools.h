@@ -113,25 +113,12 @@ namespace datatools {
 
 		typedef map<string, service_entry> service_dict_type;
 
-		/*
-		struct i_service_creator
-		{
-			virtual datatools::service::base_service * allocate () = 0;
-			virtual void initialize (base_service &, 
-															 const datatools::utils::properties & a_configuration, 
-															 datatools::service::service_dict_type & a_service_dict) = 0;
-		};
-		*/
-
 		typedef datatools::service::base_service * 
 		(*service_creator_type) (const datatools::utils::properties & a_configuration, 
 														 datatools::service::service_dict_type & a_service_dict,
 														 base_service * a_ptr);
 		
 		typedef map<string, service_creator_type> service_creator_dict_type;
-
-
-
 
 	}  // end of namespace service
 

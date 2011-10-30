@@ -101,10 +101,10 @@ namespace datatools {
 
     private:
 
-      uint32_t  flags_; //!< Not used yet
-      string    config_filename_;
-      handle_library_entry_stack_type stacked_libraries_;
-      handle_library_entry_dict_type  libraries_;
+      uint32_t  _flags_; //!< Not used yet
+      string    _config_filename_;
+      handle_library_entry_stack_type _stacked_libraries_;
+      handle_library_entry_dict_type  _libraries_;
 
     public:
 
@@ -151,7 +151,7 @@ namespace datatools {
 
     protected:
 
-      void init_ ();
+      void _init ();
 
     };
 

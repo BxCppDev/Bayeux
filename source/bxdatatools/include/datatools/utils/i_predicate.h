@@ -14,23 +14,25 @@ namespace datatools {
     {
     public:
  
-      //virtual ~i_predicate () {}
       virtual bool operator () (const T & a_obj) const = 0;
     };
 
     template<class Mother, class Daughter>
     class mother_to_daughter_predicate : public i_predicate<Daughter>
     {
-      i_predicate<Mother> * mother_predicate_;
+      i_predicate<Mother> * _mother_predicate_;
+
     public:
+
       mother_to_daughter_predicate (i_predicate<Mother> & a_mother_predicate)
 	{
-	  mother_predicate_ = &a_mother_predicate;
+	  _mother_predicate_ = &a_mother_predicate;
 	  return;
 	}
+
       virtual bool operator () (const Daughter & a_obj) const
       {
-	return (*mother_predicate_) (a_obj);
+	return (*_mother_predicate_) (a_obj);
       }
     };
 
@@ -41,3 +43,10 @@ namespace datatools {
 #endif // __datatools__utils__i_predicate_h
 
 /* end of i_predicate.h */
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

@@ -17,8 +17,8 @@ namespace datatools {
     void event_id::serialize (Archive            & a_archive , 
 			      const unsigned int   a_version)
     {
-      a_archive & boost::serialization::make_nvp ("run_number",   run_number_);
-      a_archive & boost::serialization::make_nvp ("event_number", event_number_);
+      a_archive & boost::serialization::make_nvp ("run_number",   _run_number_);
+      a_archive & boost::serialization::make_nvp ("event_number", _event_number_);
       return;
     }
 

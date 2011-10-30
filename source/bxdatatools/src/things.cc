@@ -28,7 +28,7 @@ namespace datatools {
 		using namespace std;
 
 		bad_things_cast::bad_things_cast (const string & a_msg)
-			: std::exception (), m_message (a_msg)
+			: std::exception (), _message_ (a_msg)
 		{
 			return;
 		}
@@ -40,7 +40,7 @@ namespace datatools {
 
 		const char * bad_things_cast::what () const throw ()
 		{
-			return m_message.c_str ();
+			return _message_.c_str ();
 		}
 
 		/***************************************************/
@@ -132,35 +132,35 @@ namespace datatools {
 
 		const string & things::get_name () const
 		{
-			return m_name;
+			return _name_;
 		}
 
 		things & things::set_name (const string & a_name)
 		{
-			m_name = a_name;
+			_name_ = a_name;
 			return *this;
 		}
 
 		const string & things::get_description () const
 		{
-			return m_description;
+			return _description_;
 		}
 
 		things & things::set_description (const string & a_desc)
 		{
-			m_description = a_desc;
+			_description_ = a_desc;
 			return *this;
 		}
 
 		void things::get_names (vector<string> & the_names) const
 		{
 			the_names.clear ();
-			if (m_things.size () > the_names.capacity ())
+			if (_things_.size () > the_names.capacity ())
 				{
-					the_names.reserve (m_things.size ());
+					the_names.reserve (_things_.size ());
 				}
-			for (dict_t::const_iterator i = m_things.begin ();
-					 i != m_things.end ();
+			for (dict_t::const_iterator i = _things_.begin ();
+					 i != _things_.end ();
 					 i++)
 				{
 					the_names.push_back (i->first);
@@ -176,15 +176,15 @@ namespace datatools {
 					message << "datatools::utils::things::has: Empty name !";
 					throw logic_error (message.str ());
 				}
-			dict_t::const_iterator found = m_things.find (a_name);
-			return (found != m_things.end ());
+			dict_t::const_iterator found = _things_.find (a_name);
+			return (found != _things_.end ());
 		}
 
 		bool things::has_serial_tag (const string & a_name, 
 																 const string & a_serial_tag) const
 		{
-			dict_t::const_iterator found = m_things.find (a_name);
-			if (found == m_things.end ())
+			dict_t::const_iterator found = _things_.find (a_name);
+			if (found == _things_.end ())
 				{
 					ostringstream message;
 					message << "datatools::utils::things::has_serial_tag: No object named '" << a_name << "' !";
@@ -201,8 +201,8 @@ namespace datatools {
 					message << "datatools::utils::things::is_constant: Empty name !";
 					throw logic_error (message.str ());
 				}
-			dict_t::const_iterator found = m_things.find (a_name);
-			if (found == m_things.end ())
+			dict_t::const_iterator found = _things_.find (a_name);
+			if (found == _things_.end ())
 				{
 					ostringstream message;
 					message << "datatools::utils::things::is_constant: No stored object has name '" << a_name << "' !";
@@ -211,6 +211,10 @@ namespace datatools {
 			return found->second.is_const ();
 		}
 
+		bool things::is_mutable (const string & a_name) const
+		{
+			return ! this->is_constant (a_name);
+		}
 
 		void things::set_constant (const string & a_name, bool a_const)
 		{
@@ -227,8 +231,8 @@ namespace datatools {
 					message << "datatools::utils::things::set_constant: Empty name !";
 					throw logic_error (message.str ());
 				}
-			dict_t::iterator found = m_things.find (a_name);
-			if (found == m_things.end ())
+			dict_t::iterator found = _things_.find (a_name);
+			if (found == _things_.end ())
 				{
 					ostringstream message;
 					message << "datatools::utils::things::set_constant: No stored object has name '" << a_name << "' !";
@@ -246,8 +250,8 @@ namespace datatools {
 					message << "datatools::utils::things::get_description: Empty name !";
 					throw logic_error (message.str ());
 				}
-			dict_t::const_iterator found = m_things.find (a_name);
-			if (found == m_things.end ())
+			dict_t::const_iterator found = _things_.find (a_name);
+			if (found == _things_.end ())
 				{
 					ostringstream message;
 					message << "datatools::utils::things::get_description: No stored object has name '" << a_name << "' !";
@@ -264,8 +268,8 @@ namespace datatools {
 					message << "datatools::utils::things::set_description: Empty name !";
 					throw logic_error (message.str ());
 				}
-			dict_t::iterator found = m_things.find (a_name);
-			if (found == m_things.end ())
+			dict_t::iterator found = _things_.find (a_name);
+			if (found == _things_.end ())
 				{
 					ostringstream message;
 					message << "datatools::utils::things::set_description: No stored object has name '" << a_name << "' !";
@@ -277,15 +281,15 @@ namespace datatools {
 
 		size_t things::size () const
 		{
-			return m_things.size ();
+			return _things_.size ();
 		}
 
 		bool things::empty () const
 		{
-			return m_things.size () == 0;
+			return _things_.size () == 0;
 		}
 
-		void things::add_ (const string & a_name,
+		void things::_add_ (const string & a_name,
 												datatools::serialization::i_serializable * a_obj,
 												const string & a_desc,
 												bool a_const)
@@ -293,30 +297,30 @@ namespace datatools {
 			if (a_obj == 0)
 				{
 					ostringstream message;
-					message << "datatools::utils::things::add_: Cannot add a NULL pointed object !";
+					message << "datatools::utils::things::_add_: Cannot add a NULL pointed object !";
 					throw runtime_error (message.str ());
 				}
 			if (a_name.empty ())
 				{
 					ostringstream message;
-					message << "datatools::utils::things::add_: Cannot add an object with an empty name !";
+					message << "datatools::utils::things::_add_: Cannot add an object with an empty name !";
 					if (a_obj != 0)
 						{
 							delete a_obj;
 	  				}
 					throw logic_error (message.str ());
 				}
-			dict_t::const_iterator found = m_things.find (a_name);
-			if (found != m_things.end ())
+			dict_t::const_iterator found = _things_.find (a_name);
+			if (found != _things_.end ())
 				{
 					ostringstream message;
-					message << "datatools::utils::things::add_: An object with name '" << a_name
+					message << "datatools::utils::things::_add_: An object with name '" << a_name
 									<< "' is already stored in the dictionnary !";
 					throw logic_error (message.str ());
 				}
-			m_things[a_name].set_description (a_desc);
-			m_things[a_name].set_const (a_const);
-			m_things[a_name].handle = a_obj;
+			_things_[a_name].set_description (a_desc);
+			_things_[a_name].set_const (a_const);
+			_things_[a_name].handle = a_obj;
 			return;
 		}
 
@@ -326,8 +330,8 @@ namespace datatools {
 				{
 					return;
 				}
-			dict_t::iterator found = m_things.find (a_name);
-			if (found == m_things.end ())
+			dict_t::iterator found = _things_.find (a_name);
+			if (found == _things_.end ())
 				{
 					ostringstream message;
 					message << "datatools::utils::things::remove: No object with name '" << a_name
@@ -339,7 +343,7 @@ namespace datatools {
 					delete found->second.handle;
 					found->second.handle = 0;
 				}
-			m_things.erase (found);
+			_things_.erase (found);
 			return;
 		}
 
@@ -358,15 +362,15 @@ namespace datatools {
 		void things::reset ()
 		{
 			this->clear ();
-			m_description.clear ();
-			m_name.clear ();
+			_description_.clear ();
+			_name_.clear ();
 			return;
 		}
 
 		void things::clear ()
 		{
-			for (dict_t::iterator i = m_things.begin ();
-					 i != m_things.end ();
+			for (dict_t::iterator i = _things_.begin ();
+					 i != _things_.end ();
 					 i++)
 				{
 					datatools::serialization::i_serializable * s = i->second.handle;
@@ -376,7 +380,7 @@ namespace datatools {
 							i->second.handle = 0;
 						}
 				}
-			m_things.clear ();
+			_things_.clear ();
 			return;
 		}
 
@@ -414,25 +418,25 @@ namespace datatools {
 					a_out << indent << a_title << std::endl;
 				}
 
-      if (! m_name.empty ())
+      if (! _name_.empty ())
 				{
 					a_out << indent << du::i_tree_dumpable::tag
 							 << "Name  : " <<  get_name () << std::endl;
 				}
-			if (! m_description.empty ())
+			if (! _description_.empty ())
 				{
 					a_out << indent << du::i_tree_dumpable::tag
 							 << "Description  : " <<  get_description () << std::endl;
 				}
-      if (m_things.size () == 0)
+      if (_things_.size () == 0)
 				{
 					a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)
 							 << "<no property>" << std::endl;
 				}
       else
 				{
-					for (dict_t::const_iterator i = m_things.begin ();
-							 i != m_things.end () ;
+					for (dict_t::const_iterator i = _things_.begin ();
+							 i != _things_.end () ;
 							 i++)
 						{
 							const std::string & key = i->first;
@@ -442,7 +446,7 @@ namespace datatools {
 							indent_oss << indent;
 							dict_t::const_iterator j = i;
 							j++;
-							if (j == m_things.end ())
+							if (j == _things_.end ())
 								{
 									a_out << du::i_tree_dumpable::inherit_tag (a_inherit);
 									indent_oss << du::i_tree_dumpable::inherit_skip_tag (a_inherit);
