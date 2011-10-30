@@ -61,7 +61,7 @@ namespace cuts {
       _y0_ = 0.0;
       _z0_ = 0.0;
       _reversed_ = false;
-      set_initialized_ (false);
+      _set_initialized (false);
       return;
     }
 
@@ -146,7 +146,7 @@ namespace cuts {
       this->set_center (center[0], center[1], center[2]);
       this->set_reversed (reversed);
 
-      set_initialized_ (true);
+      _set_initialized (true);
       return;   
     }
 

@@ -74,7 +74,7 @@ namespace cuts {
     
     _handle.reset ();
     this->i_cut::reset ();
-    set_initialized_ (false);
+    _set_initialized (false);
     return;
   }
 
@@ -117,7 +117,7 @@ namespace cuts {
 	this->set_cut (found->second);
       }
 
-    set_initialized_ (true);
+    _set_initialized (true);
     return;	
   }
 

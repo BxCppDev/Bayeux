@@ -60,7 +60,7 @@ namespace cuts {
 
     this->i_binary_cut::_install_cuts (a_configuration,a_cut_dict);
 
-    set_initialized_ (true);
+    _set_initialized (true);
     return;	 
   }
   

@@ -95,13 +95,13 @@ namespace cuts {
 
   private: 
 
-    bool debug_;
-    bool verbose_;
-    bool locked_;
+    bool _debug_;
+    bool _verbose_;
+    bool _locked_;
 
   protected:
 
-    cut_creator_dict_type creators_;
+    cut_creator_dict_type _creators;
 
   };
 

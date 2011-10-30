@@ -31,34 +31,34 @@ namespace cuts {
  
   bool cut_factory::is_locked () const
   {
-    return locked_;
+    return _locked_;
   }
   
   void cut_factory::set_locked (bool a_locked)
   {
-    locked_ = a_locked;
+    _locked_ = a_locked;
     return;
   }
 
   bool cut_factory::is_debug () const
   {
-    return debug_;
+    return _debug_;
   }
   
   void cut_factory::set_debug (bool a_debug)
   {
-    debug_ = a_debug;
+    _debug_ = a_debug;
     return;
   }
 
   bool cut_factory::is_verbose () const
   {
-    return verbose_;
+    return _verbose_;
   }
   
   void cut_factory::set_verbose (bool a_verbose)
   {
-    verbose_ = a_verbose;
+    _verbose_ = a_verbose;
     return;
   }
 
@@ -90,8 +90,8 @@ namespace cuts {
                  << message.str () << endl;
           }
       }
-    cut_creator_dict_type::const_iterator found = creators_.find (a_cut_id);
-    if (found != creators_.end ())
+    cut_creator_dict_type::const_iterator found = _creators.find (a_cut_id);
+    if (found != _creators.end ())
       {
         ostringstream message;
         message << "cuts::cut_factory::do_register: " 
@@ -108,16 +108,16 @@ namespace cuts {
                  << message.str () << endl;
           }
       }
-    creators_[cut_id] = a_cut_creator;
+    _creators[cut_id] = a_cut_creator;
     return;
   }
 
   // ctor:
   cut_factory::cut_factory (unsigned int a_flag)
   {
-    debug_ = a_flag & debug;
-    verbose_ = a_flag & verbose;
-    locked_ = false;
+    _debug_ = a_flag & debug;
+    _verbose_ = a_flag & verbose;
+    _locked_ = false;
     bool preload = true;
     if (a_flag & no_preload)
       {
@@ -134,7 +134,7 @@ namespace cuts {
              << "Preloading the global cuts dictionary..." << endl;
         // preload local cut creator dictionary with the 
         // global cut creator dictionary :
-        creators_ = cut_tools::get_cut_creator_db ().get_dict ();
+        _creators = cut_tools::get_cut_creator_db ().get_dict ();
         tree_dump (clog, "Factory after preload:", "NOTICE: ");
       }
     return;
@@ -155,8 +155,8 @@ namespace cuts {
       }
 
     // search for the cut's label in the creators dictionary:
-    cut_creator_dict_type::iterator found = creators_.find (a_cut_id);
-    if (found != creators_.end ())
+    cut_creator_dict_type::iterator found = _creators.find (a_cut_id);
+    if (found != _creators.end ())
       {
         cut_creator_type a_creator = found->second;
         i_cut * new_cut_ptr = a_creator (a_cut_configuration,
@@ -181,7 +181,7 @@ namespace cuts {
   // dtor:
   cut_factory::~cut_factory ()
   {
-    creators_.clear ();
+    _creators.clear ();
     return;
   }
 
@@ -210,12 +210,12 @@ namespace cuts {
 
     a_out << indent << du::i_tree_dumpable::tag 
           << "Creators      : ";
-    size_t sz = creators_.size ();
+    size_t sz = _creators.size ();
     a_out << sz << " element" << (sz < 2? "": "s") << endl;
     ostringstream indent_ss;
     int count = 0;
-    for (cut_creator_dict_type::const_iterator it = creators_.begin ();
-         it != creators_.end ();
+    for (cut_creator_dict_type::const_iterator it = _creators.begin ();
+         it != _creators.end ();
          it++) 
       {
         count++;
@@ -242,12 +242,12 @@ namespace cuts {
 
   const cut_creator_dict_type & cut_factory::get_creators () const
   {
-    return creators_;
+    return _creators;
   }
 
   cut_creator_dict_type & cut_factory::get_creators ()
   {
-    return creators_;
+    return _creators;
   }
 
 }  // end of namespace cuts

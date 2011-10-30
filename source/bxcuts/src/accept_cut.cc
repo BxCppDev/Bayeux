@@ -45,14 +45,14 @@ namespace cuts {
 		<< "Cut '" << get_name () << "' is already initialized ! ";
 	throw logic_error (message.str ());
       }
-    set_initialized_ (true);
+    _set_initialized (true);
     return;	
   }
 
   CUT_RESET_IMPLEMENT_HEAD (accept_cut) 
   {
     this->i_cut::reset ();
-    set_initialized_ (false);
+    _set_initialized (false);
     return;
   }
   

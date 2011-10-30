@@ -75,7 +75,7 @@ namespace cuts {
     _handle_1.reset ();
     _handle_2.reset ();
     this->i_cut::reset ();
-    set_initialized_ (false);
+    _set_initialized (false);
     return;
   }
 

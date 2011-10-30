@@ -20,8 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  * Boston, MA 02110-1301, USA.
  *
- * 
- * 
  * Description: 
  *
  *   Base cut.
@@ -62,9 +60,9 @@ namespace cuts {
         
     enum result_type
       {
-        INAPPLICABLE = -1,
-        REJECTED     = 0,
-        ACCEPTED     = 1
+        INAPPLICABLE = -1, //!< Returned by the 'process' method when applying some cut makes no sense in the current context
+        REJECTED     = 0, //!< Returned by the 'process' method when some cut is not passed 
+        ACCEPTED     = 1 //!< Returned by the 'process' method when some cut is passed 
       };
 
   public: 
@@ -99,9 +97,9 @@ namespace cuts {
    
   protected:
 
-    void set_name_ (const string & a_name);
+    void _set_name (const string & a_name);
 
-    void set_initialized_ (bool a_initialized);
+    void _set_initialized (bool a_initialized);
 
     void * _get_user_data () const;
 
@@ -162,19 +160,19 @@ namespace cuts {
 
     static bool g_devel;
 
-  protected: 
+  private: 
 
-    bool   initialized_;    //!< The initialization flag
-
-    string name_;           //!< The name of the cut
+    string _name;           //!< The name of the cut
     
-    string description_;    //!< The description of the cut
+    string _description;    //!< The description of the cut
     
-    string version_;        //!< The version of the cut
+    string _version;        //!< The version of the cut
 
-    int    debug_level_;    //!< The debug level of the cut
+		//private:
 
-  private:
+    bool   _initialized_;    //!< The initialization flag
+
+    int    _debug_level_;    //!< The debug level of the cut
 
     void * _user_data_;
     

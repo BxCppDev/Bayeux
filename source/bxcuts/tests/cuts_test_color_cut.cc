@@ -40,7 +40,7 @@ namespace cuts {
     { 
       _color_ = data::BLACK;   
       this->i_cut::reset ();
-      set_initialized_ (false);
+      _set_initialized (false);
       return;
     }
 
@@ -104,7 +104,7 @@ namespace cuts {
 
       this->set_color (color);
 
-      set_initialized_ (true);
+      _set_initialized (true);
       return;	
     }
   

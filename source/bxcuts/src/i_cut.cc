@@ -33,7 +33,7 @@ namespace cuts {
   bool 
   i_cut::is_debug () const
   {
-    return debug_level_ > 0;
+    return _debug_level_ > 0;
   }
     
   void 
@@ -41,30 +41,30 @@ namespace cuts {
   {
     if (a_debug)
       {
-        debug_level_ = 1;
+        _debug_level_ = 1;
       }
     else
       {
-        debug_level_ = 0;
+        _debug_level_ = 0;
       }
     return;
   }
 
   bool i_cut::is_initialized () const
   {
-    return initialized_;
+    return _initialized_;
   }
 
-  void i_cut::set_initialized_ (bool a_initialized)
+  void i_cut::_set_initialized (bool a_initialized)
   {
-    initialized_ = a_initialized;
+    _initialized_ = a_initialized;
     return;
   }
 
   int
   i_cut::get_debug_level () const
   {
-    return debug_level_;
+    return _debug_level_;
   }
   
   void
@@ -72,11 +72,11 @@ namespace cuts {
   {
     if (a_new_value < 0) 
       {
-        debug_level_ = 0;
+        _debug_level_ = 0;
       }
     else 
       {
-        debug_level_ = a_new_value;
+        _debug_level_ = a_new_value;
       }
     return;
   }
@@ -84,35 +84,35 @@ namespace cuts {
   const string &
   i_cut::get_name () const
   {
-    return name_;
+    return _name;
   }
   
   void
-  i_cut::set_name_ (const string & a_new_value)
+  i_cut::_set_name (const string & a_new_value)
   {
-    name_ = a_new_value;
+    _name = a_new_value;
     return;
   }
     
   const string & i_cut::get_description () const
   {
-    return description_;
+    return _description;
   }
     
   void i_cut::set_description (const string & a_description)
   {
-    description_ = a_description;
+    _description = a_description;
     return;
   }
 
   const string & i_cut::get_version () const
   {
-    return version_;
+    return _version;
   }
    
   void i_cut::set_version (const string & a_version)
   {
-    version_ = a_version;
+    _version = a_version;
     return;
   }
 
@@ -121,12 +121,12 @@ namespace cuts {
                 const string & a_cut_description, 
                 const string & a_cut_version, 
                 int a_debug_level)
-    : name_ (a_cut_name),
-      description_ (a_cut_description),
-      version_ (a_cut_version)
+    : _name (a_cut_name),
+      _description (a_cut_description),
+      _version (a_cut_version)
   {
-    initialized_ = false;
-    debug_level_ = a_debug_level;
+    _initialized_ = false;
+    _debug_level_ = a_debug_level;
     _user_data_ = 0;
     return;
   }
@@ -135,11 +135,11 @@ namespace cuts {
   i_cut::~i_cut ()
   {
     _user_data_ = 0;
-		if (initialized_)
+		if (_initialized_)
       {
         ostringstream message;
         message << "cuts::i_cut::~i_cut: "
-                << "Cut '" << name_ << "' " 
+                << "Cut '" << _name << "' " 
                 << "still has its 'initialized' flag on ! "
                 << "Possible bug !";
         throw logic_error (message.str ());
@@ -169,13 +169,13 @@ namespace cuts {
         a_out << indent << a_title << endl;
       }  
     a_out << indent << du::i_tree_dumpable::tag 
-          << "Cut name        : '" << name_ << "'" << endl;
+          << "Cut name        : '" << _name << "'" << endl;
     a_out << indent << du::i_tree_dumpable::tag 
-          << "Cut description : '" << description_ << "'" << endl;
+          << "Cut description : '" << _description << "'" << endl;
     a_out << indent << du::i_tree_dumpable::tag 
-          << "Cut version     : '" << version_ << "'" << endl;
+          << "Cut version     : '" << _version << "'" << endl;
     a_out << indent << du::i_tree_dumpable::tag 
-          << "Cut debug level : " << debug_level_ << endl;
+          << "Cut debug level : " << _debug_level_ << endl;
     a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)
           << "Cut initialized : " << is_initialized () << endl;      
     return;
@@ -245,7 +245,6 @@ namespace cuts {
   void i_cut::reset () 
   {
     _user_data_ = 0;
-		//set_initialized_ (false);
     return;
   }
 

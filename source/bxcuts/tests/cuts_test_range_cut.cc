@@ -75,7 +75,7 @@ namespace cuts {
       _min_ = 0.0;
       _max_ = 1.0;
       _reversed_ = false;
-      set_initialized_ (false);
+      _set_initialized (false);
       return;
     }
 
@@ -180,7 +180,7 @@ namespace cuts {
       this->set_range (min, max);
       this->set_reversed (reversed);
 
-      set_initialized_ (true);
+      _set_initialized (true);
       return;   
     }
 

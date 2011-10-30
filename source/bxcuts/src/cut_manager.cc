@@ -36,28 +36,28 @@ namespace cuts {
   
   bool cut_manager::is_debug () const
   {
-    return flags_ & DEBUG;
+    return _flags_ & DEBUG;
   }
   
   bool cut_manager::is_verbose () const
   {
-    return flags_ & VERBOSE;
+    return _flags_ & VERBOSE;
   }
   
   bool cut_manager::is_no_preload () const
   {
-    return flags_ & FACTORY_NOPRELOAD;
+    return _flags_ & FACTORY_NOPRELOAD;
   }
   
   void cut_manager::set_debug (bool a_debug)
   {
     if (a_debug)
       {
-        flags_ |= DEBUG;
+        _flags_ |= DEBUG;
       }
     else
       {
-        flags_ ^= DEBUG;
+        _flags_ ^= DEBUG;
       }
     return;
   }
@@ -66,11 +66,11 @@ namespace cuts {
   {
     if (a_verbose)
       {
-        flags_ |= VERBOSE;
+        _flags_ |= VERBOSE;
       }
     else
       {
-        flags_ ^= VERBOSE;
+        _flags_ ^= VERBOSE;
       }
     return;
   }
@@ -78,43 +78,43 @@ namespace cuts {
   // ctor:
   cut_manager::cut_manager (uint32_t the_flags)
   {
-    initialized_ = false;
-    flags_ = the_flags;
-    factory_ = 0;
-    service_manager_owner_ = false;
-    service_manager_ = 0;
+    _initialized_ = false;
+    _flags_ = the_flags;
+    _factory_ = 0;
+    _service_manager_owner_ = false;
+    _service_manager_ = 0;
     return;
   }
 
   bool cut_manager::has_service_manager () const
   {
-    return service_manager_ != 0;
+    return _service_manager_ != 0;
   }
 
   const datatools::service::service_manager & 
   cut_manager::get_service_manager () const
   {
-    if (service_manager_ == 0)
+    if (_service_manager_ == 0)
       {
         ostringstream message;
         message << "cuts::cut_manager::get_service_manager: "
                 << "Cut manager is no service manager !";
         throw logic_error (message.str ());           
       }
-    return *service_manager_;
+    return *_service_manager_;
   }
 
   datatools::service::service_manager & 
   cut_manager::get_service_manager ()
   {
-    if (service_manager_ == 0)
+    if (_service_manager_ == 0)
       {
         ostringstream message;
         message << "cuts::cut_manager::get_service_manager: "
                 << "Cut manager is no service manager !";
         throw logic_error (message.str ());           
       }
-    return *service_manager_;
+    return *_service_manager_;
   }
 
   void cut_manager::set_service_manager (datatools::service::service_manager & a_service_manager)
@@ -126,8 +126,8 @@ namespace cuts {
                 << "Cut manager is already initialized !";
         throw logic_error (message.str ());
       }
-    service_manager_owner_ = false;
-    service_manager_ = &a_service_manager;
+    _service_manager_owner_ = false;
+    _service_manager_ = &a_service_manager;
     return;
   }
 
@@ -156,22 +156,22 @@ namespace cuts {
                 << "Cut manager is already initialized !";
         throw logic_error (message.str ());
       }
-    if (service_manager_ != 0)
+    if (_service_manager_ != 0)
       {
         ostringstream message;
         message << "cuts::cut_manager::install_service_manager: "
                 << "Cut manager has already an embedded service manager !";
         throw logic_error (message.str ());           
       }
-    service_manager_ = new datatools::service::service_manager;
+    _service_manager_ = new datatools::service::service_manager;
     if (is_verbose ())
       {
         clog << datatools::utils::io::notice
              << "cuts::cut_manager::install_service_manager: " 
              << "Initializing the embedded service manager..." << endl; 
       }
-    service_manager_->initialize (a_service_manager_configuration);
-    service_manager_owner_ = true;
+    _service_manager_->initialize (a_service_manager_configuration);
+    _service_manager_owner_ = true;
     if (is_debug ())
       {
         clog << datatools::utils::io::debug
@@ -183,7 +183,7 @@ namespace cuts {
 
   bool cut_manager::is_initialized () const
   {
-    return initialized_;
+    return _initialized_;
   }
       
   void cut_manager::initialize (const datatools::utils::properties & a_setup)
@@ -208,12 +208,12 @@ namespace cuts {
 
     if (a_setup.has_flag ("factory.no_preload"))
       {
-        flags_ |= FACTORY_NOPRELOAD;
+        _flags_ |= FACTORY_NOPRELOAD;
       }
 
     if (a_setup.has_flag ("factory.debug"))
       {
-        flags_ |= FACTORY_DEBUG;
+        _flags_ |= FACTORY_DEBUG;
       }
 
     // Embed a  service manager :
@@ -248,15 +248,15 @@ namespace cuts {
     // Allocate a cut factory :
     {
       uint32_t factory_flags = cut_factory::blank;
-      if (flags_ & FACTORY_NOPRELOAD)
+      if (_flags_ & FACTORY_NOPRELOAD)
         {
           factory_flags |= cut_factory::no_preload;
         }
-      if (flags_ & FACTORY_DEBUG)
+      if (_flags_ & FACTORY_DEBUG)
         {
           factory_flags |= cut_factory::debug;
         }
-      factory_ = new cut_factory (factory_flags);
+      _factory_ = new cut_factory (factory_flags);
     }
 
     // Check if some service manager is available :
@@ -292,7 +292,7 @@ namespace cuts {
         load_cuts_ (configs);
       }
 
-    initialized_ = true;
+    _initialized_ = true;
     return;
   }
 
@@ -317,10 +317,10 @@ namespace cuts {
           }
         const string & cut_id   = the_entry.get_meta ();
         const properties & cut_config = the_entry.get_properties ();  
-        cut_handle_type handle = factory_->create_cut (cut_id, 
-                                                       cut_config,
-                                                       *service_manager_,
-                                                       cuts_);
+        cut_handle_type handle = _factory_->create_cut (cut_id, 
+                                                        cut_config,
+                                                        *_service_manager_,
+                                                        _cuts_);
         if (! handle.has_data ())
           {
             ostringstream message;
@@ -339,7 +339,7 @@ namespace cuts {
                  << message.str ()
                  << endl;
           }
-        cuts_[cut_name] = handle;
+        _cuts_[cut_name] = handle;
       }
     return;
   }
@@ -354,44 +354,44 @@ namespace cuts {
         throw logic_error (message.str ());
       }
  
-    cuts_.clear ();
+    _cuts_.clear ();
 
-    if (factory_ != 0)
+    if (_factory_ != 0)
       {
-        delete factory_;
-        factory_ = 0;
+        delete _factory_;
+        _factory_ = 0;
       }
 
-    if (service_manager_owner_)
+    if (_service_manager_owner_)
       {
-        if (service_manager_ != 0)
+        if (_service_manager_ != 0)
           {
-            delete service_manager_;
+            delete _service_manager_;
           }
       }
-    service_manager_ = 0;
-    service_manager_owner_ = false;
-    flags_ = BLANK;
-    initialized_ = false;
+    _service_manager_ = 0;
+    _service_manager_owner_ = false;
+    _flags_ = BLANK;
+    _initialized_ = false;
     return;
   }
       
   bool cut_manager::has (const string & a_cut_name) const
   {
-    return cuts_.find (a_cut_name) != cuts_.end ();
+    return _cuts_.find (a_cut_name) != _cuts_.end ();
   }
      
   void cut_manager::remove (const string & a_cut_name)
   {
-    cuts_.erase (a_cut_name);
+    _cuts_.erase (a_cut_name);
     return;
   }
 
   i_cut & 
   cut_manager::get (const string & a_cut_name)
   {
-    cut_handle_dict_type::iterator found = cuts_.find (a_cut_name);
-    if (found == cuts_.end ())
+    cut_handle_dict_type::iterator found = _cuts_.find (a_cut_name);
+    if (found == _cuts_.end ())
       {
         ostringstream message;
         message << "cuts::cut_manager::get: "
@@ -405,8 +405,8 @@ namespace cuts {
   cut_manager::get (const string & a_cut_name) const
   {
     cut_handle_dict_type::const_iterator found 
-      = cuts_.find (a_cut_name);
-    if (found == cuts_.end ())
+      = _cuts_.find (a_cut_name);
+    if (found == _cuts_.end ())
       {
         ostringstream message;
         message << "cuts::cut_manager::get: "
@@ -418,12 +418,12 @@ namespace cuts {
 
   cut_handle_dict_type & cut_manager::get_cuts ()
   {
-    return cuts_;
+    return _cuts_;
   }
 
   const cut_handle_dict_type & cut_manager::get_cuts () const 
   {
-    return cuts_;
+    return _cuts_;
   }
       
   const cut_factory & cut_manager::get_factory () const 
@@ -435,7 +435,7 @@ namespace cuts {
                 << "Cut manager is not initialized !";
         throw logic_error (message.str ());
       }
-    return *factory_;
+    return *_factory_;
   }
 
   void cut_manager::tree_dump (ostream & a_out, 
@@ -458,26 +458,26 @@ namespace cuts {
     a_out << indent << du::i_tree_dumpable::tag 
           << "Initialized       : " << is_initialized () << endl;
     a_out << indent << du::i_tree_dumpable::tag 
-          << "Flags             : " << flags_ << endl;
+          << "Flags             : " << _flags_ << endl;
 
     if (is_initialized ())
       {
         a_out << indent << du::i_tree_dumpable::tag 
-              << "Factory           : " << factory_ << endl;
+              << "Factory           : " << _factory_ << endl;
         ostringstream indent_ss;
         indent_ss << indent << du::i_tree_dumpable::skip_tag;
-        factory_->tree_dump (clog, "", indent_ss.str ());
+        _factory_->tree_dump (clog, "", indent_ss.str ());
       }
 
     if (is_initialized ())
       {
-        size_t sz = cuts_.size ();
+        size_t sz = _cuts_.size ();
         a_out << indent << du::i_tree_dumpable::tag 
               << "Cuts           : " << sz << " element" << (sz < 2? "": "s")  << endl;
         ostringstream indent_ss;
         int count = 0;
-        for (cut_handle_dict_type::const_iterator it = cuts_.begin ();
-             it != cuts_.end ();
+        for (cut_handle_dict_type::const_iterator it = _cuts_.begin ();
+             it != _cuts_.end ();
              it++) 
           {
             count++;
@@ -501,10 +501,10 @@ namespace cuts {
           << "Service manager   :" ;
     if (has_service_manager ())
       {
-        a_out << " @ " << service_manager_ << endl;
+        a_out << " @ " << _service_manager_ << endl;
         ostringstream indent_ss;
         indent_ss << indent << du::i_tree_dumpable::skip_tag;
-        service_manager_->tree_dump (clog, "", indent_ss.str ()); 
+        _service_manager_->tree_dump (clog, "", indent_ss.str ()); 
       }
     else
       {
@@ -512,7 +512,7 @@ namespace cuts {
       }
 
     a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)  
-          << "Owns service manager  : " << service_manager_owner_ << endl;
+          << "Owns service manager  : " << _service_manager_owner_ << endl;
 
     return;
   }

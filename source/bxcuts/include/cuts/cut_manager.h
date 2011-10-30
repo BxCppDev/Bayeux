@@ -121,12 +121,12 @@ namespace cuts {
 
   private:
 
-    bool                 initialized_; //!< Initialization status
-    uint32_t             flags_;       //!< Some flags
-    cut_factory        * factory_;     //!< Handle to the embedded cut factory
-    cut_handle_dict_type cuts_;        //!< Dictionnary of cuts
-    bool                                  service_manager_owner_; //!< Owner flag for the embedded service manager
-    datatools::service::service_manager * service_manager_;       //!< Handle to the embedded service manager
+    bool                 _initialized_; //!< Initialization status
+    uint32_t             _flags_;       //!< Some flags
+    cut_factory        * _factory_;     //!< Handle to the embedded cut factory
+    cut_handle_dict_type _cuts_;        //!< Dictionnary of cuts
+    bool                                  _service_manager_owner_; //!< Owner flag for the embedded service manager
+    datatools::service::service_manager * _service_manager_;       //!< Handle to the embedded service manager
 
   };
 
