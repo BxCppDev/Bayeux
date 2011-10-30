@@ -10,12 +10,12 @@ void brio_record::reset ()
 {
   fDataBuffer.Clear ();
   /*
-  if (fDataBuffer.fArray != 0)
+    if (fDataBuffer.fArray != 0)
     {
-      delete [] fDataBuffer.fArray;
-      fDataBuffer.fArray = 0;
+    delete [] fDataBuffer.fArray;
+    fDataBuffer.fArray = 0;
     }
-  fDataBuffer.fN = 0;
+    fDataBuffer.fN = 0;
   */
   return;
 }

@@ -6,16 +6,16 @@
 
 namespace brio {
 
-  
-  
   // ctor:
   dummy_brio::dummy_brio ()
   {
+    return;
   }
   
   // dtor:
   dummy_brio::~dummy_brio ()
   {
+    return;
   }
   
 } // end of namespace brio
