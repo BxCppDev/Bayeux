@@ -30,13 +30,13 @@ namespace mat {
   {
   private:
 
-    bool            __debug;
-    factory         __creator;
-    isotope_dict_t  __isotopes;
-    element_dict_t  __elements;
-    material_dict_t __materials;
-    list<string>    __ordered_materials;
-    bool            __locked;
+    bool            _debug_;
+    factory         _creator_;
+    isotope_dict_t  _isotopes_;
+    element_dict_t  _elements_;
+    material_dict_t _materials_;
+    list<string>    _ordered_materials_;
+    bool            _locked_;
 
   public:
     bool is_debug () const;

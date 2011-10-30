@@ -64,19 +64,19 @@ namespace mat {
     //! Normal Constructor. 
     /*!
       \param name_ : Name of the element
-      \param Z_ : Z of the element 
+      \param z_ : Z of the element 
       \param build_ : On the fly building 
     */ 
-    element (const string & name_, int Z_, bool build_ = false);   
+    element (const string & name_, int z_, bool build_ = false);   
     
     //! Normal Constructor. 
     /*!
       \param name_ : Name of the element
-      \param Z_ : Z of the element 
-      \param A_ : Molar mass of the element 
+      \param z_ : Z of the element 
+      \param molar_mass_ : Molar mass of the element 
       \param build_ : On the fly building 
     */ 
-    element (const string & name_, int Z_, double molar_mass_, bool build_ = false);   
+    element (const string & name_, int z_, double molar_mass_, bool build_ = false);   
 
     //! Normal Constructor. 
     /*!
@@ -91,55 +91,72 @@ namespace mat {
     /* private attribute */    
   private :   
     
-    string     __name;            //!<  Name
-    string     __symbol;          //!<  Chemical symbol of the element 
-    int        __Z;               //!<  Number of protons of the element   
-    isotope_weight_map_t   __composition;  //!<  Isotopic composition of the element [std::map<string,  iso_entry>]
-    double     __molar_mass;      //!<  Molar mass in [g/mol]     
-    properties __properties;      //!<  datatools properties
-    bool       __locked;          //!<  boolean flag : true when composition is validated & derived properties are computed
+    string     _name_;            //!<  Name
+    string     _symbol_;          //!<  Chemical symbol of the element 
+    int        _z_;               //!<  Number of protons of the element   
+    isotope_weight_map_t   _composition_;  //!<  Isotopic composition of the element [std::map<string,  iso_entry>]
+    double     _molar_mass_;      //!<  Molar mass in [g/mol]     
+    properties _properties_;      //!<  datatools properties
+    bool       _locked_;          //!<  boolean flag : true when composition is validated & derived properties are computed
         
     /* private set & find methods */    
   private :       
      
-    //    void   __init ();               //!<  Initialize or reinitialize  Z, symbol, composition, molar mass and lock attribute   
-    void   __norm_weights ();       //!<  Normalize sum of weights to unity 	                     
-    void   __compute_molar_mass (); //!<  Compute molar mass in[g/mol]   
-    void   __set_molar_mass (double molar_mass_);  //!< Set the molar mass in [g/mol]                                  
-    void   __lock ();   //!<  Lock the element : boolean flag '__locked' is set to true when composition is valid & derived properties are computed.              
-    void   __unlock (); //!<  Unlock the element - boolean flag '__locked' is set to false.       	 
+    //    void   _init_ ();               //!<  Initialize or reinitialize  Z, symbol, composition, molar mass and lock attribute   
+    void   _norm_weights_ ();       //!<  Normalize sum of weights to unity 	                     
+    void   _compute_molar_mass_ (); //!<  Compute molar mass in[g/mol]   
+
+    void   _set_molar_mass_ (double molar_mass_);  //!< Set the molar mass in [g/mol]                 
+                 
+    void   _lock_ ();   //!<  Lock the element : boolean flag '_locked_' is set to true when composition is valid & derived properties are computed.              
+    void   _unlock_ (); //!<  Unlock the element - boolean flag '_locked_' is set to false.       	 
 				     					  	 
     /* public methods */ 
   public :
     bool   is_built_by_isotopic_composition () const;
+
     void   set_name (const string  & name_); //!<  Set the name of the element           
-    void   set_Z (int  Z_);            //!<  Set the Z (number of protons) & the chemical symbol of the element.      
-    void   set_Z (const string  & symbol_);  //!<  Set the Z (number of protons) & the chemical symbol of the element.  
+    void   set_z (int z_);            //!<  Set the Z (number of protons) & the chemical symbol of the element.   
+   
+    void   set_z (const string  & symbol_);  //!<  Set the Z (number of protons) & the chemical symbol of the element.  
+
     void   set_molar_mass(double molar_mass_); //!<  Set the molar mass of the element.  
-    void   add_isotope (const isotope & iso_ref_ , double weight_ = 1.0, bool owned_ = false);  //!<  Add an isotope with weight          
-    void   add_isotope (const isotope * iso_ptr_ , double weight_ = 1.0);   //!<  Add an isotope with weight                                        
-    void   build ();            //!<  Build the element : norm weights, compute molar mass and lock (or not).                
+
+    void   add_isotope (const isotope & iso_ref_ , double weight_ = 1.0, bool owned_ = false);  //!<  Add an isotope with weight 
+         
+    void   add_isotope (const isotope * iso_ptr_ , double weight_ = 1.0);   //!<  Add an isotope with weight    
+                                    
+    void   build ();            //!<  Build the element : norm weights, compute molar mass and lock (or not). 
+               
     void   build_from_nist ();  //!<  Build the element using nist composition data, then normalize weights, compute molar mass and lock (or not).  
                                               
  
     /* public retrieval methods */
   public : 
       
-    const string & get_name () const {return __name;}              //!<  Return the name.       
-    const string & get_symbol () const {return __symbol;}          //!<  Return the chemical symbol. 
-    int get_Z () const {return __Z;}                    //!<  Return the number of protons (Z).             
-    double get_molar_mass () const {return  __molar_mass;} //!<  Return the molar mass [g/mol].           
-    bool is_locked () const {return __locked;}           //!<  Return true if composition is valid, weights are normalized and molar mass is computed.       
+    const string & get_name () const {return _name_;}              //!<  Return the name.       
+
+    const string & get_symbol () const {return _symbol_;}          //!<  Return the chemical symbol. 
+
+    int get_z () const {return _z_;}                    //!<  Return the number of protons (Z).             
+
+    double get_molar_mass () const {return _molar_mass_;} //!<  Return the molar mass [g/mol].           
+
+    bool is_locked () const {return _locked_;}           //!<  Return true if composition is valid, weights are normalized and molar mass is computed.    
+   
     const isotope_weight_map_t & get_composition () const  
     {
-      return __composition;
+      return _composition_;
     }
 
-    const properties & grab_properties () const {return __properties;} //!< Get reference of datatools::properties private attribute
+    const properties & grab_properties () const {return _properties_;} //!< Get reference of datatools::properties private attribute
 
-    properties & grab_properties () {return __properties;}     //!<Get reference of datatools::properties private attribute
+    properties & grab_properties () {return _properties_;} //!< Get reference of datatools::properties private attribute
    
-    virtual void tree_dump (ostream & out_  = clog,  const string & title_  = "",  const string & indent_ = "",  bool inherit_ = false) const;  //!<  print info virtual method
+    virtual void tree_dump (ostream & out_  = clog,  
+			    const string & title_  = "",  
+			    const string & indent_ = "", 
+			    bool inherit_ = false) const;  //!<  print info virtual method
 
 
   }; // end of class element

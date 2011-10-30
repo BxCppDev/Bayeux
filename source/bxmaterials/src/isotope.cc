@@ -17,13 +17,14 @@ namespace mat {
   //________________________________________________________________________// ctor
   isotope::isotope ()
   {
-    __Z = 0;
-    __A = 0;
-    __I = 0;
+    _z_ = 0;
+    _a_ = 0;
+    _i_ = 0;
 
-    __is_known = false;
+    _is_known_ = false;
 
-    __init ();
+    _init_ ();
+    return;
   }
 
   //________________________________________________________________________// ctor
@@ -35,58 +36,60 @@ namespace mat {
       If name_ is set to '', it will be automatically initialize to 'Ch-A(I)' or '?-0'
     */
 
-    __set_name ( name_ );
+    _set_name_ ( name_ );
 
-    __Z = 0;
-    __A = 0;
-    __I = 0;
+    _z_ = 0;
+    _a_ = 0;
+    _i_ = 0;
 
-    __is_known = false;
+    _is_known_ = false;
 
-    __init ();
+    _init_ ();
+    return;
   }
 
 
   //________________________________________________________________________ // ctor
-  isotope::isotope (const string & name_, const int Z_ , const int A_ , const int I_, bool build_)
+  isotope::isotope (const string & name_, const int z_ , const int A_ , const int i_, bool build_)
   {
     /*!
       \param name_ : ID name
-      \param Z_ : Number of protons  ( 0 <  Z  <= chemical_symbol::NB_CHEMICAL_SYMBOLS)
+      \param z_ : Number of protons  ( 0 <  Z  <= chemical_symbol::NB_CHEMICAL_SYMBOLS)
       \param A_ : Number of nucleons (Z <= A  <= 293)
-      \param I_  : Isomeric state { 0 = ground state =' ' ; 1 = first excited ='M' ;  2 =.....='N'  ;  3 = third excited='O' }
+      \param i_  : Isomeric state { 0 = ground state =' ' ; 1 = first excited ='M' ;  2 =.....='N'  ;  3 = third excited='O' }
 
       Default : Isotope in ground state (I=0)
 
       If name_ is set to '', it will be automatically initialize to 'Ch-A(I)' or '?-0'
     */
-    __set_name ( name_ );
+    _set_name_ ( name_ );
 
-    set_ZAI (Z_ , A_, I_);
+    set_zai (z_ , A_, i_);
 
     if (build_) build ();
+    return;
   }
 
   //________________________________________________________________________ // ctor
   isotope::isotope(const string & name_,
-		   const string & ch_symbol_ ,
-		   const int A_ ,
-		   const int I_,
-		   bool build_)
+                   const string & ch_symbol_ ,
+                   const int A_ ,
+                   const int i_,
+                   bool build_)
   {
     /*!
       \param name_ : ID name
       \param ch_symbol_ : Chemical symbol ( "H " <=  Ch  <= "Ei")
       \param A_ : Number of nucleons (Z <= A  <= 293)
-      \param I_  : Isomeric state { 0 = ground state =' ' ; 1 = first excited ='M' ;  2 =.....='N'  ;  3 = third excited='O' }
+      \param i_  : Isomeric state { 0 = ground state =' ' ; 1 = first excited ='M' ;  2 =.....='N'  ;  3 = third excited='O' }
 
       Default : Isotope in ground state (I=0)
 
       If name_ is set to '', it will be automatically initialize to 'Ch-A(I)' or '?-0'
     */
-    __set_name ( name_ );
+    _set_name_ ( name_ );
 
-    set_ZAI (chemical_symbol::Z_from_symbol (ch_symbol_) , A_, I_);
+    set_zai (chemical_symbol::z_from_symbol (ch_symbol_) , A_, i_);
     if (build_) build ();
     return;
   }
@@ -94,27 +97,29 @@ namespace mat {
   //________________________________________________________________________  dtor:
   isotope::~isotope ()
   {
+    return;
   }
 
   //________________________________________________________________________
-  void isotope::__init ()
+  void isotope::_init_ ()
   {
-    if( __name.length () == 0  ||  __name.find ("?-0") != string::npos )
+    if( _name_.length () == 0  ||  _name_.find ("?-0") != string::npos )
       {
-	__set_name( get_ZAI_name () );
+        _set_name_( get_zai_name () );
       }
 
-    __mass=0.;
-    __err_mass=0.;
+    _mass_=0.;
+    _err_mass_=0.;
 
-    __half_life_time = -1.;
-    __err_half_life_time = -1.;
+    _half_life_time_ = -1.;
+    _err_half_life_time_ = -1.;
+    return;
   }
 
   //________________________________________________________________________
-  void isotope::__check_ZA ()
+  void isotope::_check_za_ ()
   {
-    __is_known = false;
+    _is_known_ = false;
 
     //-----------------  Open an ifstream from file mass.mas03  ----------------------------
 
@@ -122,49 +127,50 @@ namespace mat {
 
     if (getenv("MATERIALS_ROOT")==NULL)
       {
-	ostringstream message;
-	message << "isotope::__check_ZA : env. variable '$MATERIALS_ROOT'  not found !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "isotope::_check_za_ : env. variable '$MATERIALS_ROOT'  not found !";
+        throw runtime_error (message.str ());
       }
     else
       {
-	tape_name.assign(getenv("MATERIALS_ROOT"));
-	tape_name +="/resources/mass.mas03";
+        tape_name.assign(getenv("MATERIALS_ROOT"));
+        tape_name +="/resources/mass.mas03";
       }
 
     ifstream ifstr_tape;
     ifstr_tape.open(tape_name.c_str ());
     if(! ifstr_tape.is_open ())
       {
-	ostringstream message;
-	message << "isotope::__check_ZA : ifstream  '" << tape_name<< "'  not found !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "isotope::_check_za_ : ifstream  '" << tape_name<< "'  not found !";
+        throw runtime_error (message.str ());
       }
 
 
     //----------------------------  Read the ifstream  ----------------------------
 
-    __is_known  = false;
+    _is_known_  = false;
 
     string ame03_line;
 
     for(int i = 0 ; i<=39 ; i++) getline(ifstr_tape, ame03_line);
 
-    while( !__is_known && getline(ifstr_tape, ame03_line) )
+    while( !_is_known_ && getline(ifstr_tape, ame03_line) )
       {
-	if( atoi((ame03_line.substr(9, 5)).c_str ()) == __Z  &&  atoi((ame03_line.substr(14, 5)).c_str ()) == __A )
-	  {
-	    __is_known =true ;
-	  }
+        if( atoi((ame03_line.substr(9, 5)).c_str ()) == _z_  &&  atoi((ame03_line.substr(14, 5)).c_str ()) == _a_ )
+          {
+            _is_known_ =true ;
+          }
       }
 
-    if(!__is_known)
+    if(!_is_known_)
       {
-	ostringstream message;
-	message<< "isotope::__check_ZA: " << get_name ()<<endl;
-	message << "  -> (Z, A) values : (" << __Z<< ", "<< __A<< ") not found in database ['" << tape_name<<"'] !"<<endl;
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message<< "isotope::_check_za_: " << get_name ()<<endl;
+        message << "  -> (Z, A) values : (" << _z_<< ", "<< _a_<< ") not found in database ['" << tape_name<<"'] !"<<endl;
+        throw runtime_error (message.str ());
       }
+    return;
   }
 
   //________________________________________________________________________
@@ -173,26 +179,28 @@ namespace mat {
     /*!
       \param name_ : ID name
     */
-    __set_name( name_ );
+    _set_name_( name_ );
+    return;
   }
 
   //________________________________________________________________________
-  void isotope::set_ZAI ( const  int Z_, const int A_, const int I_ )
+  void isotope::set_zai ( const  int z_, const int A_, const int I_ )
   {
     /*!
-      \param Z_ : Number of protons  ( 0 <  Z  <= chemical_symbol::NB_CHEMICAL_SYMBOLS)
+      \param z_ : Number of protons  ( 0 <  Z  <= chemical_symbol::NB_CHEMICAL_SYMBOLS)
       \param A_ : Number of nucleons (Z <= A  <= 293)
       \param I_  : Isomeric state { 0 = ground state =' ' ; 1 = first excited ='M' ;  2 =.....='N'  ;  3 = third excited='O' }
 
       Default : Isotope in ground state (I=0)
     */
-    __set_Z (Z_);
-    __set_A (A_);
-    __set_I (I_);
+    _set_z_ (z_);
+    _set_a_ (A_);
+    _set_i_ (I_);
 
-    __check_ZA ();
+    _check_za_ ();
 
-    __init ();
+    _init_ ();
+    return;
   }
 
   //________________________________________________________________________
@@ -203,7 +211,8 @@ namespace mat {
       \param mass_       : Mass in gramm per mol  [g/mol]
       \param err_mass_ : Mass error in gramm per mol  [g/mol]
     */
-    __set_mass (mass_, err_mass_);
+    _set_mass_ (mass_, err_mass_);
+    return;
   }
 
 
@@ -220,32 +229,32 @@ namespace mat {
 
     if (getenv ("MATERIALS_ROOT") == NULL)
       {
-	ostringstream message;
-	message << "isotope::find_mass : env. variable '$MATERIALS_ROOT'  not found !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "isotope::find_mass : env. variable '$MATERIALS_ROOT'  not found !";
+        throw runtime_error (message.str ());
       }
     else
       {
-	tape_name.assign(getenv ("MATERIALS_ROOT"));
-	tape_name += "/resources/";
-	tape_name += input_file_name_;
+        tape_name.assign(getenv ("MATERIALS_ROOT"));
+        tape_name += "/resources/";
+        tape_name += input_file_name_;
       }
 
     ifstream ifstr_tape;
     ifstr_tape.open (tape_name.c_str ());
     if (! ifstr_tape.is_open ())
       {
-	ostringstream message;
-	message << "isotope::find_mass () : ifstream  '" << tape_name << "'  not found !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "isotope::find_mass () : ifstream  '" << tape_name << "'  not found !";
+        throw runtime_error (message.str ());
       }
 
 
     //----------------------------  Read the ifstream  ----------------------------
 
     bool is_za_found  = false;
-    __mass = -1.;
-    __err_mass = -1.;
+    _mass_ = -1.;
+    _err_mass_ = -1.;
 
     string ame03_line;
 
@@ -253,39 +262,39 @@ namespace mat {
 
     while ( ! is_za_found && getline (ifstr_tape, ame03_line) )
       {
-	string z_str = ame03_line.substr (9, 5);
-	string a_str = ame03_line.substr (14, 5);
-	//cerr << "DEVEL: find_mass: z_str=" << z_str << endl;
-	//cerr << "DEVEL: find_mass: a_str=" << a_str << endl;
-	if ( (atoi (z_str.c_str ()) == __Z) && (atoi (a_str.c_str ()) == __A))
-	  {
-	    is_za_found = true;
-	    string m_str = ame03_line.substr(96, 4);
-	    string m2_str = ame03_line.substr(100, 12);
-	    string m3_str = ame03_line.substr(113, 11);
-	    //cerr << "DEVEL: find_mass:   m_str=" << m_str << endl;
-	    //cerr << "DEVEL: find_mass:   m2_str=" << m2_str << endl;
-	    //cerr << "DEVEL: find_mass:   m3_str=" << m3_str << endl;
-	    double mass = ame3line_to_double (m_str);
-	    double mass_default = ame3line_to_double (m2_str) * 1.E-6;
-	    double error_mass = ame3line_to_double (m3_str) * 1.E-6;
-	    //cerr << "DEVEL: find_mass:   mass=" << mass << " amu" << endl;
-	    //cerr << "DEVEL: find_mass:   mass_default=" << mass_default << " amu" << endl;
-	    //cerr << "DEVEL: find_mass:   error_mass=" << error_mass << " amu" << endl;
-	    __set_mass (mass + mass_default, error_mass);
-	  }
+        string z_str = ame03_line.substr (9, 5);
+        string a_str = ame03_line.substr (14, 5);
+        //cerr << "DEVEL: find_mass: z_str=" << z_str << endl;
+        //cerr << "DEVEL: find_mass: a_str=" << a_str << endl;
+        if ( (atoi (z_str.c_str ()) == _z_) && (atoi (a_str.c_str ()) == _a_))
+          {
+            is_za_found = true;
+            string m_str = ame03_line.substr(96, 4);
+            string m2_str = ame03_line.substr(100, 12);
+            string m3_str = ame03_line.substr(113, 11);
+            //cerr << "DEVEL: find_mass:   m_str=" << m_str << endl;
+            //cerr << "DEVEL: find_mass:   m2_str=" << m2_str << endl;
+            //cerr << "DEVEL: find_mass:   m3_str=" << m3_str << endl;
+            double mass = ame3line_to_double (m_str);
+            double mass_default = ame3line_to_double (m2_str) * 1.E-6;
+            double error_mass = ame3line_to_double (m3_str) * 1.E-6;
+            //cerr << "DEVEL: find_mass:   mass=" << mass << " amu" << endl;
+            //cerr << "DEVEL: find_mass:   mass_default=" << mass_default << " amu" << endl;
+            //cerr << "DEVEL: find_mass:   error_mass=" << error_mass << " amu" << endl;
+            _set_mass_ (mass + mass_default, error_mass);
+          }
       }
     //cerr << "DEVEL: find_mass: " << "ZA found: " << is_za_found << endl;
 
     if (! is_za_found)
       {
-	ostringstream message;
-	message << "isotope::find_mass: Z A values : '" << __Z << " " << __A << "' not found in '"
-		<< tape_name << "' !";
-	throw runtime_error (message.str ());
-	/*
-	cerr<<endl<< endl<< "!!! WARNING !!! isotope::find_mass (): Z A values : '" << __Z<< " "<< __A<< "' not found in file mass.mas03 !"<< endl<< endl;
-	*/
+        ostringstream message;
+        message << "isotope::find_mass: Z A values : '" << _z_ << " " << _a_ << "' not found in '"
+                << tape_name << "' !";
+        throw runtime_error (message.str ());
+        /*
+          cerr<<endl<< endl<< "!!! WARNING !!! isotope::find_mass (): Z A values : '" << _z_<< " "<< _a_<< "' not found in file mass.mas03 !"<< endl<< endl;
+        */
       }
     return;
   }
@@ -298,7 +307,8 @@ namespace mat {
       \param half_life_time_       : Half-life time in second [s]
       \param err_half_life_time_ : Half-life time error in second [s]
     */
-    __set_half_life_time(half_life_time_, err_half_life_time_ );
+    _set_half_life_time_(half_life_time_, err_half_life_time_ );
+    return;
   }
 
 
@@ -306,84 +316,85 @@ namespace mat {
   //________________________________________________________________________
   const string & isotope::get_ch_symbol () const
   {
-    return chemical_symbol::symbol_from_Z(__Z);
+    return chemical_symbol::symbol_from_z(_z_);
   }
 
   //________________________________________________________________________
-  string isotope::get_ZAI_name ()  const
+  string isotope::get_zai_name ()  const
   {
 
-    if( __Z ==0 && __A ==0 && __I ==0)
+    if( _z_ ==0 && _a_ ==0 && _i_ ==0)
       {
-	return "?-0";
+        return "?-0";
       }
-
     else
       {
-	// Chemical symbol :
+        // Chemical symbol :
 
-	string ZAI_name = get_ch_symbol ();
+        string zai_name = get_ch_symbol ();
 
-	// Number of nucleons :
+        // Number of nucleons :
 
-	ZAI_name += "-";
-	std::stringstream s_A;
-	s_A<<__A;
-	ZAI_name += s_A.str ();
+        zai_name += "-";
+        std::stringstream s_A;
+        s_A<<_a_;
+        zai_name += s_A.str ();
 
-	// Isomeric state
+        // Isomeric state
 
-	if(__I>0)
-	  {
-	    char I_buffer[][4] = { " ", "M", "N", "O"};
-	    ZAI_name+= "(";
-	    ZAI_name+= I_buffer[__I];
-	    ZAI_name+= ")";
-	  }
-	return ZAI_name;
+        if(_i_>0)
+          {
+            char I_buffer[][4] = { " ", "M", "N", "O"};
+            zai_name+= "(";
+            zai_name+= I_buffer[_i_];
+            zai_name+= ")";
+          }
+        return zai_name;
       }
   }
 
 
   //________________________________________________________________________
-  void isotope::__set_Z( const  int Z_)
+  void isotope::_set_z_( const  int z_)
   {
     /*!
-      \param Z_ : Number of protons  ( 0 <  Z  <= chemical_symbol::NB_CHEMICAL_SYMBOLS)
+      \param z_ : Number of protons  ( 0 <  Z  <= chemical_symbol::NB_CHEMICAL_SYMBOLS)
     */
 
-    if(  Z_ >  0  &&  Z_ <= chemical_symbol::NB_CHEMICAL_SYMBOLS )
+    if(  z_ >  0  &&  z_ <= chemical_symbol::NB_CHEMICAL_SYMBOLS )
       {
-	__Z = Z_;
+        _z_ = z_;
       }
     else
       {
-	ostringstream message;
-	message<< "isotope::__set_Z (): " << get_name ()<<endl;
-	message << "       -> invalid value : '" << __Z<< "' !"<<endl;
-	throw logic_error (message.str ());
+        ostringstream message;
+        message<< "isotope::_set_z_ (): " << get_name ()<<endl;
+        message << "       -> invalid value : '" << _z_<< "' !"<<endl;
+        throw logic_error (message.str ());
       }
+    return;
   }
   //________________________________________________________________________
-  void isotope::__set_A( const  int A_)
+  void isotope::_set_a_( const  int A_)
   {
     /*!
       \param A_ : Number of nucleons  ( 0 <  Z  <= chemical_symbol::NB_CHEMICAL_SYMBOLS)
     */
 
-    if(  A_ >= __Z  &&  A_ <= 293)
+    if(  A_ >= _z_  &&  A_ <= 293)
       {
-	__A = A_;
+        _a_ = A_;
       }
     else
       {
-	ostringstream message;
-	message << "isotope::__set_A () : Invalid A value : '" << A_ << "' !";
-	throw logic_error (message.str ());
+        ostringstream message;
+        message << "isotope::_set_a_ () : Invalid A value : '" << A_ << "' !";
+        throw logic_error (message.str ());
       }
+    return;
   }
   //________________________________________________________________________
-  void isotope::__set_I( const  int I_)
+  void isotope::_set_i_( const  int I_)
   {
     /*!
       \param I_ : Isomeric state { 0 = ground state =' ' ; 1 = first excited ='M' ;  2 =.....='N'  ;  3 = third excited='O' }
@@ -391,66 +402,68 @@ namespace mat {
 
     if(  I_ >= GROUND_STATE  &&  I_ <= THIRD_EXCITED )
       {
-	__I = I_;
+        _i_ = I_;
       }
     else
       {
-	ostringstream message;
-	message << "isotope::__set_I () : Invalid I value : '" << I_ << "' !";
-	throw logic_error (message.str ());
-      }
-  }
-
-  //________________________________________________________________________
-  void isotope::__set_name(const string & name_)
-  {
-    /*!
-      \param name_ : ID name
-    */
-    __name = name_;
-  }
-
-  //________________________________________________________________________
-  void  isotope::__set_mass(const double mass_, const double err_mass_)
-  {
-    if ((mass_ < 0.) || (err_mass_ < 0.))
-      {
-	ostringstream message;
-	message << "isotope:::__set_mass () : Invalid mass (+_ error) values : '" << mass_ << "' '" << err_mass_ << " '!";
-	throw logic_error (message.str ());
-      }
-    else
-      {
-	//cerr << "DEVEL: isotope::__set_mass: mass=" << mass_ << endl;
-	//cerr << "DEVEL: isotope::__set_mass: error mass=" << err_mass_ << endl;
-	__mass = mass_;
-	__err_mass = err_mass_;
+        ostringstream message;
+        message << "isotope::_set_i_ () : Invalid I value : '" << I_ << "' !";
+        throw logic_error (message.str ());
       }
     return;
   }
 
   //________________________________________________________________________
-  void   isotope::__set_half_life_time(const double half_life_time_ , const double err_half_life_time_)
+  void isotope::_set_name_(const string & name_)
+  {
+    /*!
+      \param name_ : ID name
+    */
+    _name_ = name_;
+    return;
+  }
+
+  //________________________________________________________________________
+  void  isotope::_set_mass_(const double mass_, const double err_mass_)
+  {
+    if ((mass_ < 0.) || (err_mass_ < 0.))
+      {
+        ostringstream message;
+        message << "isotope:::_set_mass_ () : Invalid mass (+_ error) values : '" << mass_ << "' '" << err_mass_ << " '!";
+        throw logic_error (message.str ());
+      }
+    else
+      {
+        //cerr << "DEVEL: isotope::_set_mass_: mass=" << mass_ << endl;
+        //cerr << "DEVEL: isotope::_set_mass_: error mass=" << err_mass_ << endl;
+        _mass_ = mass_;
+        _err_mass_ = err_mass_;
+      }
+    return;
+  }
+
+  //________________________________________________________________________
+  void   isotope::_set_half_life_time_(const double half_life_time_ , const double err_half_life_time_)
   {
     if(  half_life_time_ < 0. || err_half_life_time_ < 0. )
       {
-	ostringstream message;
-	message << "isotope:::__set_half_life_time () : Invalid half_life_time value : '"
-		<< half_life_time_  << " +- '"
-		<< err_half_life_time_<< "' !";
-	throw logic_error (message.str ());
+        ostringstream message;
+        message << "isotope:::_set_half_life_time_ () : Invalid half_life_time value : '"
+                << half_life_time_  << " +- '"
+                << err_half_life_time_<< "' !";
+        throw logic_error (message.str ());
       }
 
     else if ( half_life_time_ == 0. && err_half_life_time_ == 0. )
 
       {
-	__half_life_time = half_life_time_;
-	__err_half_life_time = err_half_life_time_;
+        _half_life_time_ = half_life_time_;
+        _err_half_life_time_ = err_half_life_time_;
       }
     else
       {
-	__half_life_time = half_life_time_;
-	__err_half_life_time = err_half_life_time_;
+        _half_life_time_ = half_life_time_;
+        _err_half_life_time_ = err_half_life_time_;
       }
     return;
   }
@@ -467,23 +480,23 @@ namespace mat {
 
     if (getenv("MATERIALS_ROOT")==NULL)
       {
-	ostringstream message;
-	message << "isotope::find_decay : env. variable '$MATERIALS_ROOT'  not found !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "isotope::find_decay : env. variable '$MATERIALS_ROOT'  not found !";
+        throw runtime_error (message.str ());
       }
     else
       {
-	tape_name.assign(getenv("MATERIALS_ROOT"));
-	tape_name +="/resources/";
-	tape_name +=input_file_name_;
+        tape_name.assign(getenv("MATERIALS_ROOT"));
+        tape_name +="/resources/";
+        tape_name +=input_file_name_;
       }
     ifstream ifstr_tape;
     ifstr_tape.open(tape_name.c_str ());
     if(!ifstr_tape.is_open ())
       {
-	ostringstream message;
-	message << "isotope::find_decay () : ifstream  '" << tape_name<< "'  not founded !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "isotope::find_decay () : ifstream  '" << tape_name<< "'  not founded !";
+        throw runtime_error (message.str ());
       }
 
 
@@ -498,83 +511,83 @@ namespace mat {
 
     while( !is_zai_found && getline(ifstr_tape, endf6_line) )
       {
-	if(endf6_line.find("451    5")!=string::npos)
-	  {
-	    if( atoi((endf6_line.substr(0, 3)).c_str ()) == __Z  &&  atoi((endf6_line.substr(7, 3)).c_str ()) == __A
-		&&  !endf6_I[__I].compare(endf6_line.substr(10, 1))    )
-	      {
-		is_zai_found  = true ;
-		/*  symbol  = endf6_line.substr(4, 2)    /    data_base = endf6_line.substr(11, 7)    /    name = endf6_line.substr(0, 11) */
-	      }
-	  }
+        if(endf6_line.find("451    5")!=string::npos)
+          {
+            if( atoi((endf6_line.substr(0, 3)).c_str ()) == _z_  &&  atoi((endf6_line.substr(7, 3)).c_str ()) == _a_
+                &&  !endf6_I[_i_].compare(endf6_line.substr(10, 1))    )
+              {
+                is_zai_found  = true ;
+                /*  symbol  = endf6_line.substr(4, 2)    /    data_base = endf6_line.substr(11, 7)    /    name = endf6_line.substr(0, 11) */
+              }
+          }
       }
     if(!is_zai_found)
       {
-	ostringstream message;
-	message<< "isotope::find_decay: " << get_name ()<<endl;
-	message << "       -> Z A I values : '" << __Z<< " "<< __A<< " "<<  __I<< "' not found in '" << tape_name<<"' !"<<endl;
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message<< "isotope::find_decay: " << get_name ()<<endl;
+        message << "       -> Z A I values : '" << _z_<< " "<< _a_<< " "<<  _i_<< "' not found in '" << tape_name<<"' !"<<endl;
+        throw runtime_error (message.str ());
       }
     else
       {
-	while( !is_data_found  && getline(ifstr_tape, endf6_line) )
-	  {
-	    if(endf6_line.find("457    1")!=string::npos)
-	      {
-		if((endfline_to_double(endf6_line.substr(0, 11)))!=(1000.*get_Z ()+get_A ()))
-		  {
-		    ostringstream message;
-		    message << "isotope::find_decay : ZAI not consistent !";
-		    throw runtime_error (message.str ());
-		  }
-		else
-		  {
-		    is_data_found  = true ;
+        while( !is_data_found  && getline(ifstr_tape, endf6_line) )
+          {
+            if(endf6_line.find("457    1")!=string::npos)
+              {
+                if((endfline_to_double(endf6_line.substr(0, 11)))!=(1000.*get_z ()+get_a ()))
+                  {
+                    ostringstream message;
+                    message << "isotope::find_decay : zai not consistent !";
+                    throw runtime_error (message.str ());
+                  }
+                else
+                  {
+                    is_data_found  = true ;
 
-		    getline(ifstr_tape, endf6_line);
+                    getline(ifstr_tape, endf6_line);
 
-		    __set_half_life_time( endfline_to_double(endf6_line.substr(0, 11)) , endfline_to_double(endf6_line.substr(11, 11)));
-		  }
-	      }
-	  }
+                    _set_half_life_time_( endfline_to_double(endf6_line.substr(0, 11)) , endfline_to_double(endf6_line.substr(11, 11)));
+                  }
+              }
+          }
 
-	if (! is_data_found)
-	  {
-	    /*  ostringstream message;
-		message << "isotope::find_decay () : 457 data not found in jeff-3.1 for Z A I values : '" << __Z<< " "<< __A<< " "<<  __I<< "' !"<< endl;
-		throw runtime_error (message.str ()); */
-	    cerr << "isotope::find_decay () : 457 data not found in jeff-3.1 for Z A I values : '" << __Z<< " "<< __A<< " "<<  __I<< "' !"<< endl;
-	  }
-	else
-	  {
-	  }
+        if (! is_data_found)
+          {
+            /*  ostringstream message;
+                message << "isotope::find_decay () : 457 data not found in jeff-3.1 for Z A I values : '" << _z_<< " "<< _a_<< " "<<  _i_<< "' !"<< endl;
+                throw runtime_error (message.str ()); */
+            cerr << "isotope::find_decay () : 457 data not found in jeff-3.1 for Z A I values : '" << _z_<< " "<< _a_<< " "<<  _i_<< "' !"<< endl;
+          }
+        else
+          {
+          }
       }
     return;
   }
 
   //________________________________________________________________________
   bool isotope::has_mass_data () const {
-    if ((__mass > 0.) && (__err_mass >= 0.)) return true;
+    if ((_mass_ > 0.) && (_err_mass_ >= 0.)) return true;
     else  return false;
   }
 
   //________________________________________________________________________
   bool isotope::has_decay_data () const {
-    if ((__half_life_time >= 0.) && (__err_half_life_time >=0.)) return true;
+    if ((_half_life_time_ >= 0.) && (_err_half_life_time_ >=0.)) return true;
     else  return false;
   }
 
 
   //________________________________________________________________________
   bool isotope::is_stable () const {
-    if( __half_life_time == 0. && __err_half_life_time == 0. ) return true;
+    if( _half_life_time_ == 0. && _err_half_life_time_ == 0. ) return true;
     else  return false;
   }
 
 
   //________________________________________________________________________
   bool  isotope::is_known () const {
-    return __is_known;
+    return _is_known_;
   }
 
 
@@ -582,19 +595,19 @@ namespace mat {
   bool isotope::is_locked () const {
     if(is_known () && has_mass_data ())
       {
-	if (is_stable ())
-	  {
-	    return true;
-	  }
-	else if (has_decay_data ())
-	  {
-	    return true;
-	  }
-	else
-	  {
-	    // accept locked isotope without decay data
-	    return true;
-	  }
+        if (is_stable ())
+          {
+            return true;
+          }
+        else if (has_decay_data ())
+          {
+            return true;
+          }
+        else
+          {
+            // accept locked isotope without decay data
+            return true;
+          }
       }
     return false;
   }
@@ -606,7 +619,7 @@ namespace mat {
     find_mass ();
     if (use_decay_db)
       {
-	find_decay ();
+        find_decay ();
       }
     return;
   }
@@ -622,9 +635,9 @@ namespace mat {
 
   //________________________________________________________________________
   void isotope::tree_dump (ostream & out_,
-			   const string & title_,
-			   const string & indent_,
-			   bool inherit_) const
+                           const string & title_,
+                           const string & indent_,
+                           bool inherit_) const
   {
 
     namespace du = datatools::utils;
@@ -635,80 +648,80 @@ namespace mat {
         out_ << indent << title_ << endl;
       }
     out_ << indent << i_tree_dumpable::tag
-	 << "Name       :'" << get_name () << "'" << endl;
+         << "Name       :'" << get_name () << "'" << endl;
     if (is_known ())
       {
-	out_ << indent << i_tree_dumpable::tag
-	     << "Z, A, I    : " << get_Z () << ", "
-	     <<  get_A () << ", " << get_I () << "" << endl;
-	out_ << indent << i_tree_dumpable::tag
-	     << "ZAI name   : '" << get_ZAI_name () << "'"  <<endl;
+        out_ << indent << i_tree_dumpable::tag
+             << "Z, A, I    : " << get_z () << ", "
+             <<  get_a () << ", " << get_i () << "" << endl;
+        out_ << indent << i_tree_dumpable::tag
+             << "zai name   : '" << get_zai_name () << "'"  <<endl;
       }
     else
       {
-	out_ << indent << i_tree_dumpable::tag
-	     << "Z, A, I    : "
-	     <<  "no data ( default values : "
-	     << get_Z () << ", " << get_A () << ", "
-	     << get_I () <<" ) " << endl;
-	out_ << indent << i_tree_dumpable::tag
-	     << "ZAI name   : " << "no data (default values : '"
-	     << get_ZAI_name () << "') " << endl;
+        out_ << indent << i_tree_dumpable::tag
+             << "Z, A, I    : "
+             <<  "no data ( default values : "
+             << get_z () << ", " << get_a () << ", "
+             << get_i () <<" ) " << endl;
+        out_ << indent << i_tree_dumpable::tag
+             << "zai name   : " << "no data (default values : '"
+             << get_zai_name () << "') " << endl;
       }
 
     if (has_mass_data ())
       {
-	out_ << indent << i_tree_dumpable::tag
-	     << "Mass       : "<<  get_mass () << " +- "
-	     << get_err_mass () << " [g/mol]" << endl;
+        out_ << indent << i_tree_dumpable::tag
+             << "Mass       : "<<  get_mass () << " +- "
+             << get_err_mass () << " [g/mol]" << endl;
       }
     else
       {
-	out_ << indent << i_tree_dumpable::tag
-	     << "Mass       : " <<  "no data ( default values : "
-	     << get_mass () << " +- " << get_err_mass ()
-	     << " [g/mol] ) " << endl;
+        out_ << indent << i_tree_dumpable::tag
+             << "Mass       : " <<  "no data ( default values : "
+             << get_mass () << " +- " << get_err_mass ()
+             << " [g/mol] ) " << endl;
       }
 
     if (has_decay_data ())
       {
-	if (is_stable ()) out_ << indent << i_tree_dumpable::tag << "Stable     : true"   << endl;
+        if (is_stable ()) out_ << indent << i_tree_dumpable::tag << "Stable     : true"   << endl;
 
-	if (! is_stable ())
+        if (! is_stable ())
           {
-	    out_ << indent << i_tree_dumpable::tag << "Unstable   : ";
-	    out_ << "T1/2 = "
-		 << get_half_life_time () << " +- "
-		 << get_err_half_life_time () << " [s]" << endl;
-	  }
+            out_ << indent << i_tree_dumpable::tag << "Unstable   : ";
+            out_ << "T1/2 = "
+                 << get_half_life_time () << " +- "
+                 << get_err_half_life_time () << " [s]" << endl;
+          }
       }
     else
       {
         out_ << indent << i_tree_dumpable::tag
-	     << "Stability  : " <<  "no data (default values : ";
-	if(is_stable ()) out_ << "stable & ";
-	if(! is_stable ()) out_ << "unstable & ";
-	out_ << " T1/2 = " << get_half_life_time ()
-	     << " +- " << get_half_life_time () << " [s] )" << endl;
+             << "Stability  : " <<  "no data (default values : ";
+        if(is_stable ()) out_ << "stable & ";
+        if(! is_stable ()) out_ << "unstable & ";
+        out_ << " T1/2 = " << get_half_life_time ()
+             << " +- " << get_half_life_time () << " [s] )" << endl;
       }
 
-    if(__properties.size () != 0)
+    if(_properties_.size () != 0)
       {
         out_ << indent << du::i_tree_dumpable::tag << "Properties : " << endl;
-	ostringstream indent_oss;
-	indent_oss << indent;
-	indent_oss << du::i_tree_dumpable::skip_tag;
-	__properties.tree_dump (out_, "", indent_oss.str ());
+        ostringstream indent_oss;
+        indent_oss << indent;
+        indent_oss << du::i_tree_dumpable::skip_tag;
+        _properties_.tree_dump (out_, "", indent_oss.str ());
       }
     else
       {
         out_ << indent << i_tree_dumpable::tag
-	     << "Properties : " <<  "empty" << endl;
+             << "Properties : " <<  "empty" << endl;
       }
 
 
     out_ << indent << i_tree_dumpable::last_tag
-	 << "Locked     : " << (is_locked ()? "Yes": "No") << endl;
+         << "Locked     : " << (is_locked ()? "Yes": "No") << endl;
 
     return;
   }
@@ -741,7 +754,7 @@ double endfline_to_double (const string & endf_line)
     {
       ostringstream message;
       message << "endfline_to_double: Invalid format for real: '"
-	      << s_number << "' !";
+              << s_number << "' !";
       throw runtime_error (message.str ());
       //return 0;
     }
@@ -764,7 +777,7 @@ double ame3line_to_double(const string & ame3_line)
     {
       ostringstream message;
       message << "ame3line_to_double: Invalid format for real: '"
-	      << s_number << "' !";
+              << s_number << "' !";
       throw runtime_error (message.str ());
       //return 0;
     }

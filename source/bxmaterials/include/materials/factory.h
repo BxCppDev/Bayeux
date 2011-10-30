@@ -33,30 +33,31 @@ namespace mat {
   class factory
   {
   private: 
-    bool __debug;
+    bool _debug_;
 
   public: 
     bool is_debug () const;
     void set_debug (bool);
   
-  // ctor/dtor:
   public: 
 
+    // ctor:
     factory ();
 
+    // dtor:
     virtual ~factory ();
   
     isotope * create_isotope (const string & name_, 
-			      const datatools::utils::properties & config_) const;
+                              const datatools::utils::properties & config_) const;
   
     element * create_element (const string & name_,
-			      const datatools::utils::properties & config_, 
-			      const isotope_dict_t & isotopes_) const;
+                              const datatools::utils::properties & config_, 
+                              const isotope_dict_t & isotopes_) const;
   
     material * create_material (const string & name_, 
-				const datatools::utils::properties & config_, 
-				const element_dict_t & elements_, 
-				const material_dict_t & materials_) const;
+                                const datatools::utils::properties & config_, 
+                                const element_dict_t & elements_, 
+                                const material_dict_t & materials_) const;
     
 
   };

@@ -52,7 +52,7 @@ int main (int argc_, char ** argv_)
 	}
 
       string symbol = "H";
-      cout << "Symbol='" << symbol << "' Z=" << mat::chemical_symbol::Z_from_symbol (symbol)  << endl;
+      cout << "Symbol='" << symbol << "' Z=" << mat::chemical_symbol::z_from_symbol (symbol)  << endl;
 
     }
   catch (exception & x)

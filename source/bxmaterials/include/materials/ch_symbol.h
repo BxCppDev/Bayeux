@@ -40,9 +40,9 @@ namespace mat {
   
     static const string table[NB_CHEMICAL_SYMBOLS];
 
-    static int Z_from_symbol (const string & symbol_);
+    static int z_from_symbol (const string & symbol_);
     
-    static const string & symbol_from_Z (int Z_);
+    static const string & symbol_from_z (int z_);
 
   };
 

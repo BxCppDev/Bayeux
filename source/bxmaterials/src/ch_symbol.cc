@@ -13,7 +13,7 @@ namespace mat {
   using namespace std;
 
   const string chemical_symbol::table[chemical_symbol::NB_CHEMICAL_SYMBOLS] = {
-    "n", "H", "He", "Li", "Be", "B","C", "N", "O", "F", "Ne",			
+    "n", "H", "He", "Li", "Be", "B","C", "N", "O", "F", "Ne",                   
     "Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar", "K", "Ca", "Sc", "Ti", "V", "Cr", "Mn", "Fe", 
     "Co", "Ni", "Cu", "Zn", "Ga", "Ge","As", "Se", "Br", "Kr", "Rb", "Sr", "Y", "Zr", "Nb", "Mo", 
     "Tc", "Ru", "Rh", "Pd", "Ag", "Cd", "In", "Sn", "Sb", "Te", "I", "Xe","Cs", "Ba", "La", "Ce", 
@@ -22,46 +22,46 @@ namespace mat {
     "Th", "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm", "Md", "No", "Lr", "Rf", 
     "Db", "Sg", "Bh", "Hs", "Mt", "Ds",  "Rg", "Ec", "Ed", "Ee", "Ef", "Eg", "Eh", "Ei" };
   
-  int chemical_symbol::Z_from_symbol(const string & symbol_)
+  int chemical_symbol::z_from_symbol(const string & symbol_)
   {
-    //clog << "DEVEL: Z_from_symbol: symbol='" << symbol_ << "'" << endl;
+    //clog << "DEVEL: z_from_symbol: symbol='" << symbol_ << "'" << endl;
     bool is_symbol_found = false; 
-					    
-    int i_Z = 0;
+                                            
+    int i_z = 0;
     
-    while(!is_symbol_found && i_Z < NB_CHEMICAL_SYMBOLS) 
+    while(!is_symbol_found && i_z < NB_CHEMICAL_SYMBOLS) 
       {
-	//clog << "DEVEL: Z_from_symbol: i_Z=" << i_Z << "   TABLE='" << chemical_symbol::table[i_Z] << "'" << endl;
-        if (symbol_ == chemical_symbol::table[i_Z]) 
-	  {
-	    is_symbol_found = true;
-	    //clog << "DEVEL: Z_from_symbol: YES" << endl;	    
-	  }
-        i_Z++;
+        //clog << "DEVEL: z_from_symbol: i_z=" << i_z << "   TABLE='" << chemical_symbol::table[i_z] << "'" << endl;
+        if (symbol_ == chemical_symbol::table[i_z]) 
+          {
+            is_symbol_found = true;
+            //clog << "DEVEL: z_from_symbol: YES" << endl;          
+          }
+        i_z++;
       }
-    //clog << "DEVEL: Z_from_symbol: i_Z=" << i_Z << endl;
+    //clog << "DEVEL: z_from_symbol: i_z=" << i_z << endl;
       
     if(! is_symbol_found)
       {
-	ostringstream message;
-	message << endl << "ch_symbol::Z_from_symbol(): '" 
-		<< symbol_ << "' not found !" << endl;
-	throw runtime_error (message.str ());
-      }	      
-    else return(i_Z-1);
+        ostringstream message;
+        message << endl << "ch_symbol::z_from_symbol(): '" 
+                << symbol_ << "' not found !" << endl;
+        throw logic_error (message.str ());
+      }       
+    else return(i_z-1);
   }
   
-  const string & chemical_symbol::symbol_from_Z (int Z_)
+  const string & chemical_symbol::symbol_from_z (int z_)
   {
-    if( Z_ >= 1  &&  Z_ < NB_CHEMICAL_SYMBOLS)
+    if( z_ >= 1  &&  z_ < NB_CHEMICAL_SYMBOLS)
       {
-        return chemical_symbol::table[Z_];
+        return chemical_symbol::table[z_];
       }
     else
       {
-	ostringstream message;
-	message << endl<< "mat::ch_symbol::symbol_from_Z:  Z value : '" << Z_<<"' not tabulated !"<<endl;
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << endl<< "mat::ch_symbol::symbol_from_z:  Z value : '" << z_<<"' not tabulated !"<<endl;
+        throw logic_error (message.str ());
       }
   };
  

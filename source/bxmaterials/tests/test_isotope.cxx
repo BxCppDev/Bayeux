@@ -52,7 +52,7 @@ int main (int argc_, char ** argv_)
       cerr << endl;
       my_isotope_0.tree_dump ( cout, "my isotope 0");   
      
-      my_isotope_0.set_ZAI (1,1);
+      my_isotope_0.set_zai (1,1);
       cerr << endl;
       my_isotope_0.tree_dump ( cout, "my isotope 0");     
         
@@ -68,7 +68,7 @@ int main (int argc_, char ** argv_)
       cerr << endl;
       my_isotope_1.tree_dump ( cout, "my isotope 1");   
      
-      my_isotope_1.set_ZAI(1,1,1);
+      my_isotope_1.set_zai(1,1,1);
       my_isotope_1.find_mass ();
       my_isotope_1.set_decay (1.5,1.5);
       cerr << endl;
@@ -78,7 +78,7 @@ int main (int argc_, char ** argv_)
       //  my isotope 2 :       
 
       mat::isotope my_isotope_2; 
-      my_isotope_2.set_ZAI(1,2);
+      my_isotope_2.set_zai(1,2);
       cerr << endl;
       my_isotope_2.tree_dump (cout, "my_isotope 2");  
       my_isotope_2.find_mass (); 
