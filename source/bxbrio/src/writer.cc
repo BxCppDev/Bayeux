@@ -18,19 +18,19 @@ namespace brio {
 
   void writer::lock ()
   {
-    __locked = true;
+    _locked_ = true;
     return;
   }
 
   void writer::unlock ()
   {
-    __locked = false;
+    _locked_ = false;
     return;
   }
 
   bool writer::is_locked () const
   {
-    return __locked;
+    return _locked_;
   }
 
   void writer::__only_if_unlocked (const string & where_) const
@@ -44,7 +44,7 @@ namespace brio {
 	    message << where_ << ": ";
 	  }
 	message << "Operation prohibited; writer is locked !";
-	throw runtime_error (message.str ());
+	throw logic_error (message.str ());
       }
     return;
   }
@@ -60,54 +60,54 @@ namespace brio {
 	    message << where_ << ": ";
 	  }
 	message << "Operation prohibited; writer is locked !";
-	throw runtime_error (message.str ());
+	throw logic_error (message.str ());
       }
     return;
   }
 
   bool writer::is_existing_file_protected () const
   {
-    return __existing_file_protected;
+    return _existing_file_protected_;
   }
 
   bool writer::is_allow_mixed_types_in_stores () const
   {
-    return __allow_mixed_types_in_stores;
+    return _allow_mixed_types_in_stores_;
   }
 
   bool writer::is_allow_automatic_store () const
   {
-    return __allow_automatic_store;
+    return _allow_automatic_store_;
   }
  
   void writer::set_allow_mixed_types_in_stores (bool new_value_)
   {
     _only_if_not_opened ("set_allow_mixed_types_in_stores");
-    __allow_mixed_types_in_stores = new_value_; 
+    _allow_mixed_types_in_stores_ = new_value_; 
     return;
   }
 
   void writer::set_allow_automatic_store (bool new_value_)
   {
     _only_if_not_opened ("brio::writer::set_allow_automatic_store");
-    __allow_automatic_store = new_value_; 
+    _allow_automatic_store_ = new_value_; 
     return;
   }
 
   void writer::set_existing_file_protected (bool new_value_)
   {
     _only_if_not_opened ("brio::writer::set_existing_file_protected");
-    __existing_file_protected = new_value_; 
+    _existing_file_protected_ = new_value_; 
     return;
   }
  
   void writer::_set_default ()
   {
-    __locked = false;
-    __allow_mixed_types_in_stores = false;
-    __allow_automatic_store = true;
-    __existing_file_protected = false;
-    __automatic_store = 0;
+    _locked_ = false;
+    _allow_mixed_types_in_stores_ = false;
+    _allow_automatic_store_ = true;
+    _existing_file_protected_ = false;
+    _automatic_store_ = 0;
     return;
   }
  
@@ -223,19 +223,19 @@ namespace brio {
     base_io::tree_dump (out_, title_, indent_, true);
     
     out_ <<  indent << i_tree_dumpable::tag 
-	 << "Allow automatic store: " << __allow_automatic_store << endl;
+	 << "Allow automatic store: " << _allow_automatic_store_ << endl;
 
-    if (__automatic_store != 0)
+    if (_automatic_store_ != 0)
       {
 	out_ <<  indent << i_tree_dumpable::tag 
-	     << "Automatic store: '" << __automatic_store->label << "'" << endl;
+	     << "Automatic store: '" << _automatic_store_->label << "'" << endl;
       }
 
     out_ <<  indent << i_tree_dumpable::tag 
-	 << "Allow mixed types in stores: " << __allow_mixed_types_in_stores << endl;
+	 << "Allow mixed types in stores: " << _allow_mixed_types_in_stores_ << endl;
 
     out_ <<  indent << i_tree_dumpable::inherit_tag (inherit_)  
-	 << "Locked: " << __locked << endl;
+	 << "Locked: " << _locked_ << endl;
    
     return;
   }
@@ -248,7 +248,7 @@ namespace brio {
 	message << "brio::writer::add_store: "
 		<< "Missing serialization tag for store with label '"
 		<< label_ << "' !";
-	throw runtime_error (message.str ());	
+	throw logic_error (message.str ());	
       }
     store_info * si = _add_store (label_, serial_tag_, buffer_size_);
     if (si == 0)
@@ -270,12 +270,12 @@ namespace brio {
 
   int writer::add_mixed_store (const string & label_, size_t buffer_size_)
   {
-    if (! __allow_mixed_types_in_stores)
+    if (! _allow_mixed_types_in_stores_)
       {
 	ostringstream message;
 	  message << "brio::writer::add_mixed_store: "
 		  << "Stores with mixed data types are not allowed !";
-	  throw runtime_error (message.str ());
+	  throw logic_error (message.str ());
       }
     store_info * si = _add_store (label_, store_info::NO_DEDICATED_SERIAL_TAG_LABEL, buffer_size_);
     if (si == 0)
@@ -296,15 +296,15 @@ namespace brio {
 	ostringstream message;
 	message << "brio::writer::_add_store: "
 		<< "Empty label !";
-	throw runtime_error (message.str ());
+	throw logic_error (message.str ());
       }  
-    if (! __allow_automatic_store 
+    if (! _allow_automatic_store_ 
 	&& (label_ == store_info::AUTOMATIC_STORE_LABEL))
       {
 	ostringstream message;
 	message << "brio::writer::_add_store: "
 		<< "Label '" << label_ << "' for a conventional automatic store is not allowed !";
-	throw runtime_error (message.str ());	
+	throw logic_error (message.str ());	
       }
 
     if (is_verbose ())
@@ -318,7 +318,7 @@ namespace brio {
 	ostringstream message;
 	message << "brio::writer::_add_store: "
 		<< "Store with label '" << label_ << "' already exists !";
-	throw runtime_error (message.str ());
+	throw logic_error (message.str ());
       }
 
     // create a new store:
@@ -355,7 +355,7 @@ namespace brio {
     _current_store = &the_si;
     if (label_ == store_info::AUTOMATIC_STORE_LABEL)
       {
-	__automatic_store = _current_store;
+	_automatic_store_ = _current_store;
       }
     return _current_store;
   } 
@@ -379,7 +379,7 @@ namespace brio {
 	    ostringstream message;
 	    message << "brio::writer::_at_open: "
 		    << "File '" << _filename << "' already exists ! Abort !";
-	    throw runtime_error (message.str ());	
+	    throw logic_error (message.str ());	
 	  }
       }
 

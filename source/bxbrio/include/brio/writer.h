@@ -40,11 +40,11 @@ namespace brio {
   {    
   private: 
 
-    bool __locked;
-    bool __allow_mixed_types_in_stores;
-    bool __allow_automatic_store;
-    bool __existing_file_protected;
-    store_info * __automatic_store;
+    bool _locked_;
+    bool _allow_mixed_types_in_stores_;
+    bool _allow_automatic_store_;
+    bool _existing_file_protected_;
+    store_info * _automatic_store_;
 
   public: 
 
@@ -156,12 +156,12 @@ namespace brio {
 	  if (a_label.empty ())
 	    {
 	      // if we do not allow automatic store, this is a critical error:
-	      if (! __allow_automatic_store)
+	      if (! _allow_automatic_store_)
 		{
 		  ostringstream message;
 		  message << "brio::writer::store: "
 			  << "No target store is selected nor target !";
-		  throw runtime_error (message.str ());
+		  throw logic_error (message.str ());
 		}
 	      else
 		{
@@ -184,7 +184,7 @@ namespace brio {
 	  ostringstream message;
 	  message << "brio::writer::store: "
 		  << "Could not determine any store to save data !";
-	  throw runtime_error (message.str ());
+	  throw logic_error (message.str ());
 	}
 
       if (is_debug())
@@ -229,7 +229,7 @@ namespace brio {
 		      << "' serialization tag "
 		      << "in the store labelled '" << ptr_si->label << "' with dedicated `"
 		      << ptr_si->get_serialization_tag () << "' serialization tag !";
-	      throw runtime_error (message.str ());
+	      throw logic_error (message.str ());
 	    }     
 	}
 

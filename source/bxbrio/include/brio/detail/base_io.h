@@ -144,9 +144,9 @@ namespace brio {
 
   private:
    
-    bool __debug;
-    bool __verbose;
-    int  __format;
+    bool _debug_;
+    bool _verbose_;
+    int  _format_;
 
   protected:
     

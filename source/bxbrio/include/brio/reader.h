@@ -40,10 +40,10 @@ namespace brio {
   {    
   private: 
 
-    bool __allow_mixed_types_in_stores;
-    bool __allow_automatic_store;
-    bool __check_serial_tag;
-    store_info * __automatic_store;
+    bool _allow_mixed_types_in_stores_;
+    bool _allow_automatic_store_;
+    bool _check_serial_tag_;
+    store_info * _automatic_store_;
 
   public:
 
@@ -140,16 +140,16 @@ namespace brio {
 	  if (label_.empty ())
 	    {
 	      // if we do not allow automatic store, this is a critical error:
-	      if (! __allow_automatic_store)
+	      if (! _allow_automatic_store_)
 		{
 		  ostringstream message;
 		  message << "brio::reader::load: "
 			  << "No source store is selected nor default store is available !";
-		  throw runtime_error (message.str ());
+		  throw logic_error (message.str ());
 		}
 	      else
 		{
-		  ptr_si = __automatic_store;
+		  ptr_si = _automatic_store_;
 		}
 	    }
 	  else
@@ -157,7 +157,7 @@ namespace brio {
 	      ostringstream message;
 	      message << "brio::reader::load: "
 		      << "No source store with label '" << label_ << "' !";
-	      throw runtime_error (message.str ());
+	      throw logic_error (message.str ());
 	    }
 	}
       return _at_load<T> (data_, ptr_si, nentry_);
@@ -179,7 +179,7 @@ namespace brio {
 	}
       store_info & si = *ptr_si_;
 
-      if (__check_serial_tag)
+      if (_check_serial_tag_)
 	{
 	  // We check if the serialization tag from the store matches the data's one:
 	  if (si.has_dedicated_serialization_tag () 
@@ -189,7 +189,7 @@ namespace brio {
 	      message << "brio::reader::_at_load: "
 		      << "Data serialization tag '" << data_.get_serial_tag () 
 		      << "' does not match source store's serialization tag '" << si.get_serialization_tag () << "' !";
-	      throw runtime_error (message.str ());
+	      throw logic_error (message.str ());
 	    }
 	}
       
@@ -198,7 +198,7 @@ namespace brio {
 	  ostringstream message;
 	  message << "brio::reader::_at_load: "
 		  << "Source store '" << si.label << "' has no entry !";
-	  throw runtime_error (message.str ());
+	  throw logic_error (message.str ());
 	}
       
       int64_t nentry = nentry_;
@@ -213,7 +213,7 @@ namespace brio {
 	      message << "brio::reader::_at_load: "
 		      << "Source store '" << si.label << "' has "
 		      << "no serialized entry at index '" << nentry_ << "' !";
-	      throw runtime_error (message.str ());
+	      throw logic_error (message.str ());
 	    }
 	}
       else
@@ -242,7 +242,7 @@ namespace brio {
 		  << nentry << "' at entry # " << nentry 
 		  << " in source store labelled '" << si.label.c_str () 
 		  << "' from  file '" << _filename << "' !";
-	  throw runtime_error (message.str ());  	    	    
+	  throw logic_error (message.str ());  	    	    
 	}
       else if (ret == -1)
 	{
@@ -258,7 +258,7 @@ namespace brio {
 	  si.current_entry = nentry;
 	}
       
-      if (__check_serial_tag)
+      if (_check_serial_tag_)
 	{
 	  /* We may be confused with stores without dedicated serialization tag.
 	   * Here we test if data and the entry's serial tags match:
@@ -275,7 +275,7 @@ namespace brio {
 			  << nentry << "' with serial tag '" << serial_tag << "' in (mixed) source store labelled '" << si.label.c_str () 
 			  << "' from  file '" << _filename << "' does not match the requested '" 
 			  << data_.get_serial_tag () << "' data type !";
-		  throw runtime_error (message.str ());  	    	    
+		  throw logic_error (message.str ());  	    	    
 		}
 	    }
 	}

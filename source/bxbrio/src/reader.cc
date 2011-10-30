@@ -19,22 +19,22 @@ namespace brio {
   void reader::set_check_serial_tag (bool new_value_)
   {
     //__only_if_not_opened ("brio::reader::checking_serial_tag");
-    __check_serial_tag = new_value_;
+    _check_serial_tag_ = new_value_;
     return;
   }
 
   bool reader::is_check_serial_tag () const
   {
-    return __check_serial_tag;
+    return _check_serial_tag_;
   }
 
   void reader::_set_default ()
   {
     base_io::_set_default ();
-    __allow_mixed_types_in_stores = false;
-    __allow_automatic_store = true;
-    __check_serial_tag = true;
-    __automatic_store = 0;
+    _allow_mixed_types_in_stores_ = false;
+    _allow_automatic_store_ = true;
+    _check_serial_tag_ = true;
+    _automatic_store_ = 0;
     return;
   }
 
@@ -150,19 +150,19 @@ namespace brio {
     base_io::tree_dump (out_, title_, indent_, true);
 
     out_ <<  indent << i_tree_dumpable::tag
-	 << "Allow automatic store: " << __allow_automatic_store << endl;
+	 << "Allow automatic store: " << _allow_automatic_store_ << endl;
 
-    if (__automatic_store != 0)
+    if (_automatic_store_ != 0)
       {
 	out_ <<  indent << i_tree_dumpable::tag
-	     << "Automatic store: '" << __automatic_store->label << "'" << endl;
+	     << "Automatic store: '" << _automatic_store_->label << "'" << endl;
       }
 
     out_ <<  indent << i_tree_dumpable::tag
-	 << "Allow mixed types in stores: " << __allow_mixed_types_in_stores << endl;
+	 << "Allow mixed types in stores: " << _allow_mixed_types_in_stores_ << endl;
 
     out_ <<  indent << i_tree_dumpable::inherit_tag (inherit_)
-	 << "Check serial tag: " << __check_serial_tag << endl;
+	 << "Check serial tag: " << _check_serial_tag_ << endl;
 
     return;
   }
@@ -176,7 +176,7 @@ namespace brio {
 	ostringstream message;
 	message << "brio::reader::has_previous: "
 		<< "Missing explicit and valid store label !";
-	throw runtime_error (message.str ());
+	throw logic_error (message.str ());
       }
     if (ptr_si->number_of_entries == 0)
       {
@@ -202,7 +202,7 @@ namespace brio {
   ostringstream message;
 	 message << "brio::reader::has_next: "
 	 	<< "Missing explicit and valid store label !";
-throw runtime_error (message.str ());
+throw logic_error (message.str ());
       }
     if (ptr_si->number_of_entries == 0)
       {
@@ -228,7 +228,7 @@ throw runtime_error (message.str ());
 	ostringstream message;
 	message << "brio::reader::rewind_store: "
 		<< "Missing explicit and valid store label !";
-	throw runtime_error (message.str ());
+	throw logic_error (message.str ());
       }
     ptr_si->current_entry = -1;
     return;
@@ -243,7 +243,7 @@ throw runtime_error (message.str ());
 	ostringstream message;
 	message << "brio::reader::unwind_store: "
 		<< "Missing explicit and valid store label !";
-	throw runtime_error (message.str ());
+	throw logic_error (message.str ());
       }
     ptr_si->current_entry = ptr_si->number_of_entries;
     return;
@@ -316,7 +316,7 @@ throw runtime_error (message.str ());
 	ostringstream message;
 	message << "brio::reader::_at_open: "
 		<< "File '" << _filename << "' is not opened !";
-	throw runtime_error (message.str ());
+	throw logic_error (message.str ());
       }
     _file->cd ();
 
@@ -367,7 +367,7 @@ throw runtime_error (message.str ());
 	    message << "brio::reader::_at_open: "
 		    << "Cannot retrieve store's tree labelled '" << store_label.c_str ()
 		    << "' from  file '" << _filename << "' !";
-	    throw runtime_error (message.str ());
+	    throw logic_error (message.str ());
 	  }
 	the_si.tree = the_tree;
 	if (devel)
@@ -398,7 +398,7 @@ throw runtime_error (message.str ());
 	the_si.serialization_tag = branch_name;
 	if (branch_name == store_info::NO_DEDICATED_SERIAL_TAG_LABEL)
 	  {
-	    __allow_mixed_types_in_stores = true;
+	    _allow_mixed_types_in_stores_ = true;
 	  }
 	the_si.number_of_entries = the_si.tree->GetEntries ();
 	the_si.current_entry = -1; // rewind entry  position
@@ -409,8 +409,8 @@ throw runtime_error (message.str ());
 	// tag if the automatic store label has been found:
 	if (store_label == store_info::AUTOMATIC_STORE_LABEL)
 	  {
-	    __allow_automatic_store = true;
-	    __automatic_store = &the_si;
+	    _allow_automatic_store_ = true;
+	    _automatic_store_ = &the_si;
 	  }
 
 	// The last found store is made the current selected one by default:
@@ -422,9 +422,9 @@ throw runtime_error (message.str ());
     // If the conventional automatic store is found, make it the current selected one:
     if (_store_infos.size () >= 1)
       {
-	if (__automatic_store != 0)
+	if (_automatic_store_ != 0)
 	  {
-	    _current_store = __automatic_store;
+	    _current_store = _automatic_store_;
 	  }
       }
 

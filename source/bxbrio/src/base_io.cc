@@ -34,13 +34,13 @@ namespace brio {
 
   int base_io::get_format () const
   {
-    return __format;
+    return _format_;
   }
 
   void base_io::set_format (int format_)
   {
     _only_if_not_opened ("brio::base_io::set_format");
-    __format = format_;
+    _format_ = format_;
     if (is_format_text ())
       {
 	if (_default_locale == 0)
@@ -105,23 +105,23 @@ namespace brio {
 
   bool base_io::is_debug () const
   {
-    return __debug;
+    return _debug_;
   }
 
   void base_io::set_debug (bool new_value_)
   {
-    __debug = new_value_;
+    _debug_ = new_value_;
     return;
   }
 
   bool base_io::is_verbose () const
   {
-    return __verbose;
+    return _verbose_;
   }
 
   void base_io::set_verbose (bool new_value_)
   {
-    __verbose = new_value_;
+    _verbose_ = new_value_;
     return;
   }
 
@@ -137,12 +137,12 @@ namespace brio {
 
   bool base_io::is_format_pba () const
   {
-    return __format == FORMAT_PBA;
+    return _format_ == FORMAT_PBA;
   }
 
   bool base_io::is_format_text () const
   {
-    return __format == FORMAT_TEXT;
+    return _format_ == FORMAT_TEXT;
   }
 
   bool base_io::is_opened () const
@@ -188,8 +188,8 @@ namespace brio {
 	throw runtime_error ("brio::base_io::open: Already opened !");
       }
     // cerr << "DEVEL: " << "brio::base_io::open: "
-    //      << "format = '" << __format << "'" << endl;
-    if (__format == FORMAT_UNDEFINED)
+    //      << "format = '" << _format_ << "'" << endl;
+    if (_format_ == FORMAT_UNDEFINED)
       {
 	clog << "NOTICE: brio::base_io::open: "
 	     << "Guessing the archive format from the filename !" << endl;
@@ -342,13 +342,13 @@ namespace brio {
 
   void base_io::_set_default ()
   {
-    __debug = false;
-    __verbose = false;
-    __format = FORMAT_UNDEFINED;
+    _debug_ = false;
+    _verbose_ = false;
+    _format_ = FORMAT_UNDEFINED;
     if (g_devel)
       {
-	__debug = true;
-	__verbose = true;
+	_debug_ = true;
+	_verbose_ = true;
       }
     _file = 0;
     _filename= "";
@@ -367,7 +367,7 @@ namespace brio {
 	     << "Entering..." << endl;
       }
     _rw = rw_;
-    __format = FORMAT_UNDEFINED;
+    _format_ = FORMAT_UNDEFINED;
     base_io::_set_default ();
     _default_locale = 0;
     _locale = 0;
@@ -388,10 +388,10 @@ namespace brio {
 	     << "Entering..." << endl;
       }
     _rw = rw_;
-    __format = FORMAT_UNDEFINED;
+    _format_ = FORMAT_UNDEFINED;
     base_io::_set_default ();
-    __verbose = verbose_;
-    __debug = debug_;
+    _verbose_ = verbose_;
+    _debug_ = debug_;
     _default_locale = 0;
     _locale = 0;
     if (g_devel)
@@ -411,10 +411,10 @@ namespace brio {
 	     << "Entering..." << endl;
       }
     _rw = rw_;
-    __format = FORMAT_UNDEFINED;
+    _format_ = FORMAT_UNDEFINED;
     base_io::_set_default ();
-    __verbose = verbose_;
-    __debug = debug_;
+    _verbose_ = verbose_;
+    _debug_ = debug_;
     _default_locale = 0;
     _locale = 0;
     set_format (format_);
@@ -542,13 +542,13 @@ namespace brio {
       out_ << indent << title_ << endl;
     }
 
-    out_ << indent << i_tree_dumpable::tag << "Debug : " << __debug  << endl;
+    out_ << indent << i_tree_dumpable::tag << "Debug : " << _debug_  << endl;
 
-    out_ << indent << i_tree_dumpable::tag << "Verbose : " << __verbose  << endl;
+    out_ << indent << i_tree_dumpable::tag << "Verbose : " << _verbose_  << endl;
 
     // 2011-06-16 FM: restored
     out_ << indent << i_tree_dumpable::tag << "Format: '"
-	 << (__format == FORMAT_PBA ? base_io::PBA_LABEL : base_io::TEXT_LABEL)
+	 << (_format_ == FORMAT_PBA ? base_io::PBA_LABEL : base_io::TEXT_LABEL)
 	 << "'" << endl;
 
     out_ << indent << i_tree_dumpable::tag
