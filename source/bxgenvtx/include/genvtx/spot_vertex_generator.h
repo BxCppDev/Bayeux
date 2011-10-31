@@ -22,8 +22,6 @@ namespace genvtx {
 
   class spot_vertex_generator : public i_vertex_generator
   {
-  private: 
-    geomtools::vector_3d __spot;
 
   public: 
     const geomtools::vector_3d & get_spot () const;
@@ -49,19 +47,23 @@ namespace genvtx {
   protected:
   
     virtual void _shoot_vertex (mygsl::rng & random_, 
-				geomtools::vector_3d & vertex_);
+                                geomtools::vector_3d & vertex_);
 
   public:
 
     virtual string vg_id () const;
 
-    virtual vg_creator_t vg_creator () const;
+    virtual vg_creator_type vg_creator () const;
 
     static i_vertex_generator * create (const properties & configuration_, void * user_ = 0);
+
+  private: 
+
+    geomtools::vector_3d _spot_;
  
   private:
 
-    static creator_registration<spot_vertex_generator> __CR;
+    static creator_registration<spot_vertex_generator> g_cr_;
 
   };
 

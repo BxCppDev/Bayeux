@@ -12,70 +12,69 @@
 #include <string>
 
 namespace genvtx {
-
   
   const geomtools::placement & placement_vg::get_placement () const
   {
-    return __placement;
+    return _placement_;
   }
   
   geomtools::placement & placement_vg::get_placement ()
   {
-    return __placement;
+    return _placement_;
   }
   
   void placement_vg::set_placement (const geomtools::placement & new_value_)
   {
-    __placement = new_value_;
+    _placement_ = new_value_;
     return;
   }
 
   bool placement_vg::has_vg () const
   {
-    return __vg != 0;
+    return _vg_ != 0;
   }
 
   bool placement_vg::is_owned () const
   {
-    return __owned;
+    return _owned_;
   }
   
   const i_vertex_generator & placement_vg::get_vg () const
   {
-    if (__vg == 0)
+    if (_vg_ == 0)
       {
-	throw runtime_error ("genvtx::placement_vg::get_vg: Missing vertex generator !");
+        throw runtime_error ("genvtx::placement_vg::get_vg: Missing vertex generator !");
       }
-    return *__vg;
+    return *_vg_;
   }
 
-  void placement_vg::__clear_vg ()
+  void placement_vg::_clear_vg_ ()
   {
-    if (__vg != 0)
+    if (_vg_ != 0)
       {
-	if (__owned)
-	  {
-	    delete __vg;
-	  }
-	__vg = 0;
+        if (_owned_)
+          {
+            delete _vg_;
+          }
+        _vg_ = 0;
       }
-    __owned = false;
+    _owned_ = false;
     return;
   }
 
   void placement_vg::set_vg (i_vertex_generator & new_value_)
   {
-    __clear_vg ();
-    __owned = false;
-    __vg = &new_value_;
+    _clear_vg_ ();
+    _owned_ = false;
+    _vg_ = &new_value_;
     return;
   }
   
   void  placement_vg::set_vg (i_vertex_generator * new_value_)
   {
-    __clear_vg ();
-    __owned = true;
-    __vg = new_value_;
+    _clear_vg_ ();
+    _owned_ = true;
+    _vg_ = new_value_;
     return;
   }
   
@@ -83,36 +82,36 @@ namespace genvtx {
   // ctor/dtor:
   placement_vg::placement_vg ()
   {
-    __owned = false;
-    __vg = 0;
+    _owned_ = false;
+    _vg_ = 0;
     return;
   }
   
   placement_vg::~placement_vg ()
   {
-    __clear_vg ();
+    _clear_vg_ ();
     return;
   }
   
   void placement_vg::_shoot_vertex (mygsl::rng & random_, 
-				    geomtools::vector_3d & vertex_)
+                                    geomtools::vector_3d & vertex_)
   {
     bool devel = g_debug;
-    if (__vg == 0)
+    if (_vg_ == 0)
       {
-	throw runtime_error ("genvtx::placement_vg::_shoot_vertex: Missing vertex generator !");
+        throw runtime_error ("genvtx::placement_vg::_shoot_vertex: Missing vertex generator !");
       }
-    if (! __placement.is_valid ())
+    if (! _placement_.is_valid ())
       {
-	throw runtime_error ("genvtx::placement_vg::_shoot_vertex: Invalid placement !");	
+        throw runtime_error ("genvtx::placement_vg::_shoot_vertex: Invalid placement !");       
       }
     geomtools::invalidate (vertex_);
     geomtools::vector_3d vertex;
     geomtools::invalidate (vertex);
-    __vg->shoot_vertex (random_, vertex);
+    _vg_->shoot_vertex (random_, vertex);
     if (geomtools::is_valid (vertex))
       {
-	__placement.child_to_mother (vertex, vertex_);
+        _placement_.child_to_mother (vertex, vertex_);
       }
     return;
   }
@@ -138,46 +137,46 @@ namespace genvtx {
 
     if (configuration_.has_key ("generator.id"))
       {
-	generator_id = configuration_.fetch_string ("generator.id");
-	if (! get_vertex_generator_db ().has_vertex_generator (generator_id))
-	  {
-	    ostringstream message;
-	    message << "genvtx::placement_vg::create: Invalid vertex generator id '"
-		    << generator_id << "' !";
-	    throw runtime_error (message.str ());
-	  }
-	vg_creator_t vgc = get_vertex_generator_db ().get_vertex_generator (generator_id);
-	// vg = 
+        generator_id = configuration_.fetch_string ("generator.id");
+        if (! get_vertex_generator_db ().has_vertex_generator (generator_id))
+          {
+            ostringstream message;
+            message << "genvtx::placement_vg::create: Invalid vertex generator id '"
+                    << generator_id << "' !";
+            throw runtime_error (message.str ());
+          }
+        vg_creator_type vgc = get_vertex_generator_db ().get_vertex_generator (generator_id);
+        // vg = 
       }
 
     if (configuration_.has_key ("placement.x"))
       {
-	x = configuration_.fetch_real ("placement.x");
+        x = configuration_.fetch_real ("placement.x");
       }
 
     if (configuration_.has_key ("placement.y"))
       {
-	y = configuration_.fetch_real ("placement.y");
+        y = configuration_.fetch_real ("placement.y");
       }
 
     if (configuration_.has_key ("placement.z"))
       {
-	z = configuration_.fetch_real ("placement.z");
+        z = configuration_.fetch_real ("placement.z");
       }
 
     if (configuration_.has_key ("placement.phi"))
       {
-	phi = configuration_.fetch_real ("placement.phi");
+        phi = configuration_.fetch_real ("placement.phi");
       }
 
     if (configuration_.has_key ("placement.theta"))
       {
-	theta = configuration_.fetch_real ("placement.theta");
+        theta = configuration_.fetch_real ("placement.theta");
       }
 
     if (configuration_.has_key ("placement.delta"))
       {
-	delta = configuration_.fetch_real ("placement.delta");
+        delta = configuration_.fetch_real ("placement.delta");
       }
 
     // create a new parameterized 'placement_vg' instance:
@@ -185,7 +184,7 @@ namespace genvtx {
     geomtools::placement pl (x, y, z, phi, theta, delta);
     ptr->set_placement (pl);
     ptr->set_vg (vg);
-    return ptr;	
+    return ptr; 
   }
 
   string placement_vg::vg_id () const
@@ -193,13 +192,13 @@ namespace genvtx {
     return "genvtx::placement_vg";
   }
 
-  vg_creator_t placement_vg::vg_creator () const
+  vg_creator_type placement_vg::vg_creator () const
   {
     return placement_vg::create;
   }
 
   // register this creator:   
-  i_vertex_generator::creator_registration<placement_vg> placement_vg::__CR;
+  i_vertex_generator::creator_registration<placement_vg> placement_vg::g_cr_;
   
 } // end of namespace genvtx
 

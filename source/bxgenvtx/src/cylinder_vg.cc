@@ -6,10 +6,6 @@
 
 #include <stdexcept>
 #include <sstream>
-// #include <cstdlib>
-// #include <iomanip>
-// #include <fstream>
-// #include <string>
 
 #include <datatools/utils/units.h>
 
@@ -17,91 +13,91 @@ namespace genvtx {
 
   bool cylinder_vg::g_debug = false;
 
-  void cylinder_vg::__assert_lock (const string & where_)
+  void cylinder_vg::_assert_lock_ (const string & where_)
   {
-    if (__initialized)
+    if (_initialized_)
       {
-	ostringstream message;
-	message << "genvtx::cylinder_vg::__assert_lock: " << where_ << ": "
-		<< "Object is locked !";
-	throw runtime_error (message.str());
+        ostringstream message;
+        message << "genvtx::cylinder_vg::_assert_lock_: " << where_ << ": "
+                << "Object is locked !";
+        throw runtime_error (message.str());
       }
     return;
   }
 
   bool cylinder_vg::is_initialized () const
   {
-    return __initialized;
+    return _initialized_;
   }
 
   int cylinder_vg::get_mode () const
   {
-    return __mode;
+    return _mode_;
   }
 
   void cylinder_vg::set_mode (int mode_)
   {
     if ((mode_ !=  MODE_BULK) && (mode_ !=  MODE_SURFACE))
       {
-	throw runtime_error ("genvtx::cylinder_vg::set_mode: Invalid mode !");
+        throw runtime_error ("genvtx::cylinder_vg::set_mode: Invalid mode !");
       }
-    __mode = mode_;
+    _mode_ = mode_;
     return;
   }
 
   void cylinder_vg::set_surface_mask (int surface_mask_)
   {
-    __assert_lock ("genvtx::cylinder_vg::set_surface_mask");
-    __surface_mask = surface_mask_;
+    _assert_lock_ ("genvtx::cylinder_vg::set_surface_mask");
+    _surface_mask_ = surface_mask_;
     return;
   }
 
   void cylinder_vg::set_skin_skip (double skin_skip_)
   {
-    __assert_lock ("genvtx::cylinder_vg::set_surface_mask");
-    __skin_skip = skin_skip_;
+    _assert_lock_ ("genvtx::cylinder_vg::set_surface_mask");
+    _skin_skip_ = skin_skip_;
     return;
   }
 
   void cylinder_vg::set_skin_thickness (double skin_thickness_)
   {
-    __assert_lock ("genvtx::cylinder_vg::set_skin_thickness");
-    __skin_thickness = skin_thickness_;
+    _assert_lock_ ("genvtx::cylinder_vg::set_skin_thickness");
+    _skin_thickness_ = skin_thickness_;
     return;
   }
 
   void cylinder_vg::set_bulk (double skin_thickness_)
   {
-    __assert_lock ("genvtx::cylinder_vg::set_bulk");
-    __mode = MODE_BULK;
+    _assert_lock_ ("genvtx::cylinder_vg::set_bulk");
+    _mode_ = MODE_BULK;
     return;
   }
 
   void cylinder_vg::set_surface (int surface_mask_)
   {
-    __assert_lock ("genvtx::cylinder_vg::set_surface");
-    __mode = MODE_SURFACE;
+    _assert_lock_ ("genvtx::cylinder_vg::set_surface");
+    _mode_ = MODE_SURFACE;
     set_surface_mask (surface_mask_);
     return;
   }
 
   void cylinder_vg::set_cylinder (const geomtools::cylinder & cylinder_)
   {
-    __assert_lock ("genvtx::cylinder_vg::set_cylinder");
-    __cylinder = cylinder_;
+    _assert_lock_ ("genvtx::cylinder_vg::set_cylinder");
+    _cylinder_ = cylinder_;
     return;
   }
 
   const geomtools::cylinder & cylinder_vg::get_cylinder () const
   {
-    return __cylinder;
+    return _cylinder_;
   }
   
   // ctor:
   cylinder_vg::cylinder_vg ()
   {
-    __initialized = false;
-    __reset ();
+    _initialized_ = false;
+    _reset_ ();
     return;
   }
   
@@ -113,62 +109,62 @@ namespace genvtx {
 
   void cylinder_vg::init ()
   {
-    if (__initialized)
+    if (_initialized_)
       {
-	throw runtime_error ("genvtx::cylinder_vg::init: Already initialized !");
+        throw runtime_error ("genvtx::cylinder_vg::init: Already initialized !");
       }
-    __init ();
-    __initialized = true;
+    _init_ ();
+    _initialized_ = true;
     return;
   }
 
   void cylinder_vg::reset ()
   {
-    if (! __initialized)
+    if (! _initialized_)
       {
-	throw runtime_error ("genvtx::cylinder_vg::reset: Not initialized !");
+        throw runtime_error ("genvtx::cylinder_vg::reset: Not initialized !");
       }
-    __reset ();
-    __initialized = false;
+    _reset_ ();
+    _initialized_ = false;
     return;
   }
 
-  void cylinder_vg::__init ()
+  void cylinder_vg::_init_ ()
   {
     bool devel = g_debug;
-    if (__mode == MODE_SURFACE) 
+    if (_mode_ == MODE_SURFACE) 
       {
-	if (__surface_mask == 0)
-	  {
-	    throw runtime_error ("genvtx::cylinder_vg::__init: Surface mask is null !");
-	  }
-	double s = __cylinder.get_surface (__surface_mask);
-	if (devel) clog << "DEVEL: genvtx::cylinder_vg::__init: Total surface = " << s << endl;
-	__sum_weight[0] = __cylinder.get_surface (__surface_mask & geomtools::cylinder::FACE_SIDE);
-	__sum_weight[1] = __cylinder.get_surface (__surface_mask & geomtools::cylinder::FACE_BOTTOM);
-	__sum_weight[2] = __cylinder.get_surface (__surface_mask & geomtools::cylinder::FACE_TOP);
-	for (int i = 0; i < 3; i++) 
-	   {
-	    __sum_weight[i] /= s;
-	    if (i > 0) 
-	      {
-		__sum_weight[i] += __sum_weight[i - 1];
-	      }
-	    if (devel) clog << "DEVEL: genvtx::cylinder_vg::__init: Surface weight [" << i << "] = " << __sum_weight[i] << endl;
-	  }
+        if (_surface_mask_ == 0)
+          {
+            throw runtime_error ("genvtx::cylinder_vg::_init_: Surface mask is null !");
+          }
+        double s = _cylinder_.get_surface (_surface_mask_);
+        if (devel) clog << "DEVEL: genvtx::cylinder_vg::_init_: Total surface = " << s << endl;
+        _sum_weight_[0] = _cylinder_.get_surface (_surface_mask_ & geomtools::cylinder::FACE_SIDE);
+        _sum_weight_[1] = _cylinder_.get_surface (_surface_mask_ & geomtools::cylinder::FACE_BOTTOM);
+        _sum_weight_[2] = _cylinder_.get_surface (_surface_mask_ & geomtools::cylinder::FACE_TOP);
+        for (int i = 0; i < 3; i++) 
+          {
+            _sum_weight_[i] /= s;
+            if (i > 0) 
+              {
+                _sum_weight_[i] += _sum_weight_[i - 1];
+              }
+            if (devel) clog << "DEVEL: genvtx::cylinder_vg::_init_: Surface weight [" << i << "] = " << _sum_weight_[i] << endl;
+          }
       }
     return;
   }
 
-  void cylinder_vg::__reset ()
+  void cylinder_vg::_reset_ ()
   {
-    __mode = MODE_DEFAULT;
-    __surface_mask = geomtools::cylinder::FACE_ALL;
-    __skin_skip = 0.0;
-    __skin_thickness = 0.0;
+    _mode_ = MODE_DEFAULT;
+    _surface_mask_ = geomtools::cylinder::FACE_ALL;
+    _skin_skip_ = 0.0;
+    _skin_thickness_ = 0.0;
     for (int i = 0; i < 3; i++)
       {
-	__sum_weight[i] = 0.0;
+        _sum_weight_[i] = 0.0;
       }
     return;
   }
@@ -176,78 +172,78 @@ namespace genvtx {
   void cylinder_vg::dump (ostream & out_) const
   {
     out_ << "genvtx::cylinder_vg::dump: " << endl;
-    out_ << "|-- " << "Cylinder: " << __cylinder << endl;
-    out_ << "|-- " << "Mode: " << __mode << endl;
-    out_ << "|-- " << "Surface mask: " << __surface_mask << endl;
-    out_ << "|-- " << "Skin skip: " << __skin_skip << endl;
-    out_ << "`-- " << "Skin thickness: " << __skin_thickness << endl;
+    out_ << "|-- " << "Cylinder: " << _cylinder_ << endl;
+    out_ << "|-- " << "Mode: " << _mode_ << endl;
+    out_ << "|-- " << "Surface mask: " << _surface_mask_ << endl;
+    out_ << "|-- " << "Skin skip: " << _skin_skip_ << endl;
+    out_ << "`-- " << "Skin thickness: " << _skin_thickness_ << endl;
     return;
   }
   
   void cylinder_vg::_shoot_vertex (mygsl::rng & random_, 
-			      geomtools::vector_3d & vertex_)
+                                   geomtools::vector_3d & vertex_)
   {
     bool devel = g_debug;
-    if (! __initialized)
+    if (! _initialized_)
       {
-	init ();
+        init ();
       }
     geomtools::invalidate (vertex_);
     double r, t;
     double t_max = 2. * M_PI;
     t = random_.uniform () * t_max;
     double x, y, z;
-    if (__mode == MODE_BULK) 
+    if (_mode_ == MODE_BULK) 
       {
-	if (devel) 
-	  {
-	    clog << "DEVEL: genvtx::cylinder_vg::_shoot_vertex: "
-		 << "Bulk mode..." << endl;
-	  }
-	double r_max = __cylinder.get_r () - 0.5 * __skin_thickness;
-	r = sqrt (random_.uniform ()) * r_max;
-	z = (random_.uniform () - 0.5) * (__cylinder.get_z () - __skin_thickness);
+        if (devel) 
+          {
+            clog << "DEVEL: genvtx::cylinder_vg::_shoot_vertex: "
+                 << "Bulk mode..." << endl;
+          }
+        double r_max = _cylinder_.get_r () - 0.5 * _skin_thickness_;
+        r = sqrt (random_.uniform ()) * r_max;
+        z = (random_.uniform () - 0.5) * (_cylinder_.get_z () - _skin_thickness_);
       }
 
-    if (__mode == MODE_SURFACE) 
+    if (_mode_ == MODE_SURFACE) 
       {
-	if (devel) 
-	  {
-	    clog << "DEVEL: genvtx::cylinder_vg::_shoot_vertex: "
-		 << "Surface mode..." << endl;
-	  }
-	double r0 = random_.uniform ();
+        if (devel) 
+          {
+            clog << "DEVEL: genvtx::cylinder_vg::_shoot_vertex: "
+                 << "Surface mode..." << endl;
+          }
+        double r0 = random_.uniform ();
 
-	double delta_thick = 0.0;
-	if (__skin_thickness > 0.0) 
-	  {
-	    double r3 = random_.uniform ();
-	    delta_thick = (r3 - 0.5) * __skin_thickness;
-	  }
-	
-	if (r0 < __sum_weight[0]) 
-	  {
-	    double r_min  = __cylinder.get_r () 
-	      + __skin_skip
-	      - 0.5 * __skin_thickness;
-	    double r_max  = r_min + __skin_thickness;
-	    double r_min2 = r_min * r_min;
-	    double r_max2 = r_max * r_max;
-	    r = (sqrt (r_min2 + random_.uniform () * (r_max2 - r_min2)));
-	    z = +(random_.uniform () - 0.5) * (__cylinder.get_z ());
-	  }
-	else if (r0 < __sum_weight[1]) 
-	  {
-	    double r_max = __cylinder.get_r ();
-	    r = sqrt (random_.uniform ()) * r_max;
-	    z = -(__cylinder.get_half_z () + __skin_skip + delta_thick);
-	  }
-	else if (r0 < __sum_weight[2]) 
-	  {
-	    double r_max = __cylinder.get_r ();
-	    r = sqrt (random_.uniform ()) * r_max;
-	    z = +(__cylinder.get_half_z () + __skin_skip + delta_thick);
-	  }
+        double delta_thick = 0.0;
+        if (_skin_thickness_ > 0.0) 
+          {
+            double r3 = random_.uniform ();
+            delta_thick = (r3 - 0.5) * _skin_thickness_;
+          }
+        
+        if (r0 < _sum_weight_[0]) 
+          {
+            double r_min  = _cylinder_.get_r () 
+              + _skin_skip_
+              - 0.5 * _skin_thickness_;
+            double r_max  = r_min + _skin_thickness_;
+            double r_min2 = r_min * r_min;
+            double r_max2 = r_max * r_max;
+            r = (sqrt (r_min2 + random_.uniform () * (r_max2 - r_min2)));
+            z = +(random_.uniform () - 0.5) * (_cylinder_.get_z ());
+          }
+        else if (r0 < _sum_weight_[1]) 
+          {
+            double r_max = _cylinder_.get_r ();
+            r = sqrt (random_.uniform ()) * r_max;
+            z = -(_cylinder_.get_half_z () + _skin_skip_ + delta_thick);
+          }
+        else if (r0 < _sum_weight_[2]) 
+          {
+            double r_max = _cylinder_.get_r ();
+            r = sqrt (random_.uniform ()) * r_max;
+            z = +(_cylinder_.get_half_z () + _skin_skip_ + delta_thick);
+          }
       }
     x = r * cos (t); 
     y = r * sin (t); 
@@ -277,38 +273,38 @@ namespace genvtx {
 
     if (configuration_.has_key ("mode"))
       {
-	string mode_str = configuration_.fetch_string ("mode");
-	if (mode_str == "surface")
-	  {
-	    mode = MODE_SURFACE;
-	  }
-	else if (mode_str == "bulk")
-	  {
-	    mode = MODE_BULK;
-	  }
-	else
-	  {
-	    ostringstream message;
-	    message << "genvtx::cylinder_vg::create: Invalid mode '"
-		    << mode_str << "' !";
-	    throw runtime_error (message.str ());
-	  }
+        string mode_str = configuration_.fetch_string ("mode");
+        if (mode_str == "surface")
+          {
+            mode = MODE_SURFACE;
+          }
+        else if (mode_str == "bulk")
+          {
+            mode = MODE_BULK;
+          }
+        else
+          {
+            ostringstream message;
+            message << "genvtx::cylinder_vg::create: Invalid mode '"
+                    << mode_str << "' !";
+            throw runtime_error (message.str ());
+          }
       }
 
     if (configuration_.has_key ("skin_skip"))
       {
-	skin_skip = configuration_.fetch_real ("skin_skip");
+        skin_skip = configuration_.fetch_real ("skin_skip");
       }
 
     if (configuration_.has_key ("skin_thickness"))
       {
-	skin_thickness = configuration_.fetch_real ("skin_thickness");
+        skin_thickness = configuration_.fetch_real ("skin_thickness");
       }
 
     // create a new parameterized 'cylinder_vg' instance:
     cylinder_vg * ptr = new cylinder_vg;
     //ptr->set_spot (x, y, z);
-    return ptr;	
+    return ptr; 
   }
 
   string cylinder_vg::vg_id () const
@@ -316,13 +312,13 @@ namespace genvtx {
     return "genvtx::cylinder_vg";
   }
 
-  vg_creator_t cylinder_vg::vg_creator () const
+  vg_creator_type cylinder_vg::vg_creator () const
   {
     return cylinder_vg::create;
   }
 
   // register this creator:   
-  i_vertex_generator::creator_registration<cylinder_vg> cylinder_vg::__CR;
+  i_vertex_generator::creator_registration<cylinder_vg> cylinder_vg::g_cr_;
   
 } // end of namespace genvtx
 

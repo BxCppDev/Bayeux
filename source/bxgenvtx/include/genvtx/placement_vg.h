@@ -7,7 +7,8 @@
  * License: 
  * 
  * Description: 
- *   Vertex generator with placement
+ *
+ *   Vertex generator with placement.
  * 
  * History: 
  * 
@@ -23,11 +24,6 @@ namespace genvtx {
 
   class placement_vg : public i_vertex_generator
   {
-  private: 
-    geomtools::placement __placement;
-    bool                 __owned;
-    i_vertex_generator * __vg;
-
   public: 
 
     const geomtools::placement & get_placement () const;
@@ -47,15 +43,17 @@ namespace genvtx {
     void set_vg (i_vertex_generator *);
   
   private:
-    void __clear_vg ();
 
-  // ctor/dtor:
+    void _clear_vg_ ();
+
   public: 
 
+    // ctor:
     placement_vg ();
 
+    // dtor:
     placement_vg (const i_vertex_generator &, 
-		  const geomtools::placement &);
+                  const geomtools::placement &);
 
     virtual ~placement_vg ();
   
@@ -63,20 +61,25 @@ namespace genvtx {
 
     virtual string vg_id () const;
 
-    virtual vg_creator_t vg_creator () const;
+    virtual vg_creator_type vg_creator () const;
 
     static i_vertex_generator * create (const properties & configuration_, void * user_ = 0);
   
   protected:
   
     virtual void _shoot_vertex (mygsl::rng & random_, 
-				geomtools::vector_3d & vertex_);
- 
+                                geomtools::vector_3d & vertex_);
+
+  private: 
+
+    geomtools::placement _placement_;
+    bool                 _owned_;
+    i_vertex_generator * _vg_;
+
   private:
 
-    static creator_registration<placement_vg> __CR;
+    static creator_registration<placement_vg> g_cr_;
   
-
   };
 
 } // end of namespace genvtx

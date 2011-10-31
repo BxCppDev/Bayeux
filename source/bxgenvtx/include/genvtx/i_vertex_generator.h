@@ -31,7 +31,7 @@ namespace genvtx {
   class i_vertex_generator
   {
   
-  // ctor/dtor:
+    // ctor/dtor:
   public: 
 
     static bool g_debug;
@@ -53,12 +53,12 @@ namespace genvtx {
     // pure virtual methods for vertex generator factory stuff:
     virtual string vg_id () const = 0;
 
-    virtual vg_creator_t vg_creator () const = 0;
+    virtual vg_creator_type vg_creator () const = 0;
 
     /**************************************************/
     class vertex_generator_db
     {
-      vertex_generator_creator_dict_t  __dict;
+      vertex_generator_creator_dict_type  _dict_;
 
     public:
 
@@ -66,31 +66,25 @@ namespace genvtx {
 
       virtual ~vertex_generator_db ();
 
-      const vertex_generator_creator_dict_t & get_dict () const
-      {
-	return __dict;
-      }
-	  
-      vertex_generator_creator_dict_t & get_dict ()
-      {
-	return __dict;
-      }
-
+      const vertex_generator_creator_dict_type & get_dict () const;
+      
+      vertex_generator_creator_dict_type & get_dict ();
+      
       bool has_vertex_generator (const string & vertex_generator_id_) const;
  
-      vg_creator_t & get_vertex_generator (const string & vertex_generator_id_);
+      vg_creator_type & get_vertex_generator (const string & vertex_generator_id_);
 
-      void register_vertex_generator (vg_creator_t, const string & vertex_generator_id_);
+      void register_vertex_generator (vg_creator_type, const string & vertex_generator_id_);
 
       void dump_vertex_generators (ostream & out_ = clog);
 
     };
  
-    typedef boost::scoped_ptr<vertex_generator_db> scoped_vertex_generator_db_t;
+    typedef boost::scoped_ptr<vertex_generator_db> scoped_vertex_generator_db_type;
 
   private:
 
-    static scoped_vertex_generator_db_t g__vertex_generator_db;
+    static scoped_vertex_generator_db_type g_vertex_generator_db_;
 
   public:
       
@@ -112,65 +106,63 @@ namespace genvtx {
     template <class vg_t>
     class creator_registration
     {
-      vg_t __vg;
+      vg_t _vg_;
 
     public:
 
       creator_registration ()
       {
-	bool devel = g_debug;
-	//devel = true;
-	using namespace std;
-	if (devel) clog << "DEVEL: i_vertex_generator::creator_registration::ctor: "
-			<< "Entering..."
-			<< endl;
-	string vg_id = __vg.vg_id ();
-	if (devel) clog << "DEVEL: i_vertex_generator::creator_registration::ctor: "
-			<< "vg_id='" << vg_id << "'"
-			<< endl;
-	
-	vg_creator_t vg_creator = __vg.vg_creator ();
-	if (devel) clog << "DEVEL: i_vertex_generator::creator_registration::ctor: "
-			<< "vg_creator='" << hex << (void *) vg_creator << dec << "'"
-			<< endl;
+        bool devel = g_debug;
+        //devel = true;
+        using namespace std;
+        if (devel) clog << "DEVEL: i_vertex_generator::creator_registration::ctor: "
+                        << "Entering..."
+                        << endl;
+        string vg_id = _vg_.vg_id ();
+        if (devel) clog << "DEVEL: i_vertex_generator::creator_registration::ctor: "
+                        << "vg_id='" << vg_id << "'"
+                        << endl;
+        
+        vg_creator_type vg_creator = _vg_.vg_creator ();
+        if (devel) clog << "DEVEL: i_vertex_generator::creator_registration::ctor: "
+                        << "vg_creator='" << hex << (void *) vg_creator << dec << "'"
+                        << endl;
     
-	try
-	  { 
-	    bool test = false;
-	    //test = true;
-	    if (! test)
-	      {
-		if (devel) 
-		  {
-		    clog << "DEVEL: i_vertex_generator::creator_registration::ctor: "
-			 << "register_vg='" << vg_id << " @ " 
-			 << hex << (void *) vg_creator << dec << "'"
-			 << endl;
-		  }
-		i_vertex_generator::get_vertex_generator_db ().register_vertex_generator (vg_creator,
-											  vg_id);
-	      }
-	  }
-	catch (exception & x)
-	  {
-	    cerr << "i_vertex_generator::creator_registration::ctor: ERROR: " 
-		 << x.what () << endl;
-	  }
-	catch (...)
-	  {
-	    cerr << "i_vertex_generator::creator_registration::ctor: ERROR: " 
-		 << "unexpected!" << endl;
-	  }
-	if (devel) clog << "i_vertex_generator::creator_registration::ctor: "
-			<< "Exiting."
-			<< endl;
+        try
+          { 
+            bool test = false;
+            //test = true;
+            if (! test)
+              {
+                if (devel) 
+                  {
+                    clog << "DEVEL: i_vertex_generator::creator_registration::ctor: "
+                         << "register_vg='" << vg_id << " @ " 
+                         << hex << (void *) vg_creator << dec << "'"
+                         << endl;
+                  }
+                i_vertex_generator::get_vertex_generator_db ().register_vertex_generator (vg_creator,
+                                                                                          vg_id);
+              }
+          }
+        catch (exception & x)
+          {
+            cerr << "i_vertex_generator::creator_registration::ctor: ERROR: " 
+                 << x.what () << endl;
+          }
+        catch (...)
+          {
+            cerr << "i_vertex_generator::creator_registration::ctor: ERROR: " 
+                 << "unexpected!" << endl;
+          }
+        if (devel) clog << "i_vertex_generator::creator_registration::ctor: "
+                        << "Exiting."
+                        << endl;
       }
 
     };
 
   };
-
-
 
 } // end of namespace genvtx
 

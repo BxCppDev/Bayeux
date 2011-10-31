@@ -6,15 +6,16 @@
 
 namespace genvtx {
 
-  
-  
-  // ctor/dtor:
+  // ctor:
   dummy_genvtx::dummy_genvtx ()
   {
+    return;
   }
   
+  // dtor:
   dummy_genvtx::~dummy_genvtx ()
   {
+    return;
   }
   
 } // end of namespace genvtx

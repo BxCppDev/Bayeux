@@ -15,19 +15,18 @@
 #ifndef __genvtx__dummy_genvtx_h
 #define __genvtx__dummy_genvtx_h 1
 
-
-
 namespace genvtx {
 
   class dummy_genvtx
   {
-  
-  // ctor/dtor:
+    
   public: 
+    // ctor:
     dummy_genvtx ();
-    virtual ~dummy_genvtx ();
-  
 
+    // dtor:
+    virtual ~dummy_genvtx ();
+    
   };
 
 } // end of namespace genvtx

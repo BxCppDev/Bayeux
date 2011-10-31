@@ -19,64 +19,64 @@ namespace genvtx {
 
   bool manager::is_debug () const
   {
-    return __debug;
+    return _debug_;
   }
   
   void manager::set_debug (bool new_value_)
   {
-    __debug = new_value_;
+    _debug_ = new_value_;
     return;
   }
   
   bool manager::is_initialized () const
   {
-    return __initialized;
+    return _initialized_;
   }
   
   const string & manager::get_rng_id () const
   {
-    return __rng_id;
+    return _rng_id_;
   }
   
   // ctor:
   manager::manager ()
   {
-    __debug = false;
-    __initialized = false;
-    __rng_seed = 0; 
-    __rng_id = "taus2";
+    _debug_ = false;
+    _initialized_ = false;
+    _rng_seed_ = 0; 
+    _rng_id_ = "taus2";
     return;
   }
   
   // reset:
   manager::~manager ()
   {
-    if (__initialized) 
+    if (_initialized_) 
       {
-	reset ();
+        reset ();
       }
     return;
   }
   
   void manager::initialize ()
   {
-    if (__initialized)
+    if (_initialized_)
       {
-	throw runtime_error ("genvtx::manager::initialize: Already initialized !");
+        throw logic_error ("genvtx::manager::initialize: Already initialized !");
       }
-    __random.init (__rng_id, __rng_seed);
+    _random_.init (_rng_id_, _rng_seed_);
 
-    __initialized = true;
+    _initialized_ = true;
     return;
   }
   
   void manager::reset ()
   {
-    if (! __initialized)
+    if (! _initialized_)
       {
-	throw runtime_error ("genvtx::manager::reset: Not initialized !");
+        throw logic_error ("genvtx::manager::reset: Not initialized !");
       }
-    __initialized = false;
+    _initialized_ = false;
     return;
   }
 

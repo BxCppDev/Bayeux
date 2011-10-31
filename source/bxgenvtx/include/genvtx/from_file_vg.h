@@ -31,11 +31,11 @@ namespace genvtx {
     static const double LENGTH_UNIT;
 
   private: 
-    string   __filename;
-    bool     __open;
-    ifstream __source;
-    geomtools::vector_3d __next;
-    double   __length_unit; // length unit (default == 1); 
+    string   _filename_;
+    bool     _open_;
+    ifstream _source_;
+    geomtools::vector_3d _next_;
+    double   _length_unit_; // length unit (default == 1); 
 
   protected:
 
@@ -59,30 +59,32 @@ namespace genvtx {
 
     double get_length_unit () const;
   
-  // ctor/dtor:
   public: 
 
+    // ctor:
     from_file_vg ();
 
+    // ctor:
     from_file_vg (const string & filename_);
 
+    // dtor:
     virtual ~from_file_vg ();
  
     // pure virtual methods for vertex generator factory stuff:
     virtual string vg_id () const;
 
-    virtual vg_creator_t vg_creator () const;
+    virtual vg_creator_type vg_creator () const;
 
     static i_vertex_generator * create (const properties & configuration_, void * user_ = 0);
  
   protected:
   
     virtual void _shoot_vertex (mygsl::rng & random_, 
-				geomtools::vector_3d & vertex_);
+                                geomtools::vector_3d & vertex_);
  
   private:
 
-    static creator_registration<from_file_vg> __CR;
+    static creator_registration<from_file_vg> g_cr_;
 
   };
 

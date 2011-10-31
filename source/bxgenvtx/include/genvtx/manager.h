@@ -29,20 +29,15 @@ namespace genvtx {
 
   class manager
   {
-  private: 
-    bool              __debug;
-    bool              __initialized;
-    unsigned long int __rng_seed;
-    string            __rng_id; 
-    mygsl::rng        __random;
+  public: 
 
-  public: 
     bool is_debug () const;
+
     void set_debug (bool);
+
     bool is_initialized () const;
+
     const string & get_rng_id () const;
-  
-  public: 
 
     // ctor:
     manager ();
@@ -56,6 +51,14 @@ namespace genvtx {
 
     void shoot_vertex (geomtools::vector_3d & vertex_);
  
+  private: 
+
+    bool              _debug_;
+    bool              _initialized_;
+    unsigned long int _rng_seed_;
+    string            _rng_id_; 
+    mygsl::rng        _random_;
+
   };
 
 } // end of namespace genvtx

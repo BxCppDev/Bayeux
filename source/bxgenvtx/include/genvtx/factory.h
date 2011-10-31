@@ -33,33 +33,37 @@ namespace genvtx {
   class factory
   {
   public: 
+
     static bool g_devel;
 
-  private: 
-    bool                            __debug;
-    vertex_generator_creator_dict_t __creators;
-
   public: 
+
     bool is_debug () const;
+
     void set_debug (bool);
   
   public: 
+
     // ctor:
     factory (bool preload_ = true);
 
     // dtor:
     virtual ~factory ();
  
-    void do_register (const vg_creator_t & creator_, 
-		      const string & vg_id_ = "");
+    void do_register (const vg_creator_type & creator_, 
+                      const string & vg_id_ = "");
     
     // from the i_vertex_generator:
     virtual i_vertex_generator * 
     create_vertex_generator (const string & vg_id_,
-			     const datatools::utils::properties & vg_configuration_, 
-			     void * user_ = 0);
+                             const datatools::utils::properties & vg_configuration_, 
+                             void * user_ = 0);
     
     void dump_vertex_generators (ostream & out_ = clog) const;
+
+  private: 
+    bool                               _debug_;
+    vertex_generator_creator_dict_type _creators_;
     
   };
 

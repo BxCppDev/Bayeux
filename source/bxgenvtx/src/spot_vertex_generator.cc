@@ -14,18 +14,18 @@ namespace genvtx {
 
   const geomtools::vector_3d &  spot_vertex_generator::get_spot () const
   {
-    return __spot;
+    return _spot_;
   }
   
   void spot_vertex_generator::set_spot (const geomtools::vector_3d & new_value_)
   {
-    __spot = new_value_;
+    _spot_ = new_value_;
     return;
   }
   
   void spot_vertex_generator::set_spot (double x_, double y_, double z_)
   {
-    __spot.set (x_, y_, z_);
+    _spot_.set (x_, y_, z_);
     return;
   }
   
@@ -43,7 +43,7 @@ namespace genvtx {
 
   spot_vertex_generator::spot_vertex_generator (const geomtools::vector_3d & spot_)
   {
-    __spot = spot_;
+    _spot_ = spot_;
     return;
   }
   
@@ -54,9 +54,9 @@ namespace genvtx {
   }
   
   void spot_vertex_generator::_shoot_vertex (mygsl::rng & random_, 
-			       geomtools::vector_3d & vertex_)
+                                             geomtools::vector_3d & vertex_)
   {
-    vertex_ = __spot;
+    vertex_ = _spot_;
     return;
   }
 
@@ -80,36 +80,36 @@ namespace genvtx {
 
     if (configuration_.has_key ("spot.x"))
       {
-	x = configuration_.fetch_real ("spot.x");
+        x = configuration_.fetch_real ("spot.x");
       }
 
     if (configuration_.has_key ("spot.y"))
       {
-	y = configuration_.fetch_real ("spot.y");
+        y = configuration_.fetch_real ("spot.y");
       }
 
     if (configuration_.has_key ("spot.z"))
       {
-	z = configuration_.fetch_real ("spot.z");
+        z = configuration_.fetch_real ("spot.z");
       }
 
     if (configuration_.has_key ("spot.length_unit"))
       {
-	lunit_str = configuration_.fetch_string ("spot.length_unit");
-	lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+        lunit_str = configuration_.fetch_string ("spot.length_unit");
+        lunit = datatools::utils::units::get_length_unit_from (lunit_str);
       }
 
     if (! lunit_str.empty ())
       {
-	x *= lunit;
-	y *= lunit;
-	z *= lunit;
+        x *= lunit;
+        y *= lunit;
+        z *= lunit;
       }
 
     // create a new parameterized 'spot_vertex_generator' instance:
     spot_vertex_generator * ptr = new spot_vertex_generator;
     ptr->set_spot (x, y, z);
-    return ptr;	
+    return ptr; 
   }
 
   string spot_vertex_generator::vg_id () const
@@ -117,13 +117,13 @@ namespace genvtx {
     return "genvtx::spot_vertex_generator";
   }
 
-  vg_creator_t spot_vertex_generator::vg_creator () const
+  vg_creator_type spot_vertex_generator::vg_creator () const
   {
     return spot_vertex_generator::create;
   }
 
   // register this creator:   
-  i_vertex_generator::creator_registration<spot_vertex_generator> spot_vertex_generator::__CR;
+  i_vertex_generator::creator_registration<spot_vertex_generator> spot_vertex_generator::g_cr_;
 
 } // end of namespace genvtx
 

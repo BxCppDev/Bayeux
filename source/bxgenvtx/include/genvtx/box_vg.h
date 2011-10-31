@@ -22,7 +22,6 @@
 #include <genvtx/i_vertex_generator.h>
 
 #include <geomtools/box.h>
-//#include <datatools/utils/units.h>
 
 namespace genvtx {
   
@@ -31,26 +30,26 @@ namespace genvtx {
   public: 
     static bool g_debug;
 
-    enum mode_t
+    enum mode_type
       {
-	MODE_BULK = 0,
-	MODE_SURFACE = 1,
-	MODE_DEFAULT = MODE_BULK
+        MODE_BULK = 0,
+        MODE_SURFACE = 1,
+        MODE_DEFAULT = MODE_BULK
       };
     
   private:
-    bool           __initialized;
-    geomtools::box __box;
-    const geomtools::box * __box_ref;
-    int            __mode;
-    int            __surface_mask;
-    double         __skin_skip;
-    double         __skin_thickness;
-    double         __sum_weight[6];
+    bool           _initialized_;
+    geomtools::box _box_;
+    const geomtools::box * _box_ref_;
+    int            _mode_;
+    int            _surface_mask_;
+    double         _skin_skip_;
+    double         _skin_thickness_;
+    double         _sum_weight_[6];
 
   private:    
 
-    void __assert_lock (const string & where_);
+    void _assert_lock_ (const string & where_);
 
   public: 
 
@@ -96,27 +95,27 @@ namespace genvtx {
 
   private:
 
-    void __init ();
+    void _init_ ();
 
-    void __reset ();
+    void _reset_ ();
 
   public:
 
     virtual string vg_id () const;
 
-    virtual vg_creator_t vg_creator () const;
+    virtual vg_creator_type vg_creator () const;
 
     static i_vertex_generator * create (const properties & configuration_, 
-					void * user_ = 0);
+                                        void * user_ = 0);
   
   protected:
   
     virtual void _shoot_vertex (mygsl::rng & random_, 
-				geomtools::vector_3d & vertex_);
+                                geomtools::vector_3d & vertex_);
  
   private:
 
-    static creator_registration<box_vg> __CR;
+    static creator_registration<box_vg> g_cr_;
   
   };
 
