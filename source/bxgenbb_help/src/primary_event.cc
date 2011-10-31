@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- Mode: c++; -*- 
 // primary_event.cc
 /*
  * Copyright 2007-2011 F. Mauger
@@ -47,8 +47,8 @@ namespace genbb {
   {
     if (library_config::g_use_old_serialization_tag)
       {
-	return primary_event::OLD_SERIAL_TAG;
-     }
+        return primary_event::OLD_SERIAL_TAG;
+      }
     return primary_event::SERIAL_TAG;
   }
 
@@ -69,11 +69,11 @@ namespace genbb {
   {
     double tke = 0.;
     for (particles_col_t::const_iterator i = particles.begin ();
-	 i != particles.end ();
-	 i++)
+         i != particles.end ();
+         i++)
       {
-	const primary_particle & p = *i;
-	tke += p.get_kinetic_energy ();
+        const primary_particle & p = *i;
+        tke += p.get_kinetic_energy ();
       }
     return tke;
   }
@@ -143,58 +143,58 @@ namespace genbb {
     size_t n_alpha = 0;
     size_t n_others = 0;
     for (particles_col_t::const_iterator i = particles.begin ();
-	 i != particles.end ();
-	 i++)
+         i != particles.end ();
+         i++)
       {
-	const primary_particle & p = *i;
-	if (p.is_electron ()) n_eminus++;
-	else if (p.is_positron ()) n_eplus++;
-	else if (p.is_gamma ()) n_gamma++;
-	else if (p.is_alpha ()) n_alpha++;
-	else n_others++;
+        const primary_particle & p = *i;
+        if (p.is_electron ()) n_eminus++;
+        else if (p.is_positron ()) n_eplus++;
+        else if (p.is_gamma ()) n_gamma++;
+        else if (p.is_alpha ()) n_alpha++;
+        else n_others++;
       }
     std::ostringstream cl_ss;
       
     cl_ss << n_eminus << 'e' 
-	  << n_eplus << 'p' 
-	  << n_gamma << 'g' 
-	  << n_alpha << 'a' 
-	  << n_others << 'X'; 
+          << n_eplus << 'p' 
+          << n_gamma << 'g' 
+          << n_alpha << 'a' 
+          << n_others << 'X'; 
     set_classification (cl_ss.str ());
     return;
   }
 
   void primary_event::dump (std::ostream & out_,
-			    const std::string & title_,
-			    const std::string & indent_) const
+                            const std::string & title_,
+                            const std::string & indent_) const
   {
     std::string indent = indent_;
     if (! title_.empty ())
       {
-	out_ << indent << title_ << std::endl;
+        out_ << indent << title_ << std::endl;
       }
     if (is_valid ())
       {
-	out_ << indent << "|-- time: " << time / CLHEP::second << " s" << std::endl;
-	out_ << indent << "|-- #particles: " << particles.size () << std::endl;
-	for (particles_col_t::const_iterator it = particles.begin ();
-	     it != particles.end ();
-	     it++)
-	  {
-	    it->dump (out_, (indent + "|   ")); 
-	  }
-	out_ << indent << "`-- classification: '" << get_classification () 
-	     << "'" << std::endl;
+        out_ << indent << "|-- time: " << time / CLHEP::second << " s" << std::endl;
+        out_ << indent << "|-- #particles: " << particles.size () << std::endl;
+        for (particles_col_t::const_iterator it = particles.begin ();
+             it != particles.end ();
+             it++)
+          {
+            it->dump (out_, (indent + "|   ")); 
+          }
+        out_ << indent << "`-- classification: '" << get_classification () 
+             << "'" << std::endl;
       }
     else 
       {
-	out_ << indent << "`-- status: " << "<invalid>" << std::endl;
+        out_ << indent << "`-- status: " << "<invalid>" << std::endl;
       }
     return;
   }
   
   void primary_event::dump (std::ostream & out_,
-			    const std::string & indent_) const
+                            const std::string & indent_) const
   {
     dump (out_, "genbb::primary_event:", indent_); 
     return;
@@ -206,13 +206,13 @@ namespace genbb {
     geomtools::create_rotation_3d (rot, phi_, theta_, delta_);
     rot.invert ();
     for (particles_col_t::iterator i = particles.begin ();
-	 i != particles.end ();
-	 i++)
+         i != particles.end ();
+         i++)
       {
-	primary_particle & p = *i;
-	geomtools::vector_3d & momentum = p.momentum;
-	geomtools::vector_3d rotated_momentum = rot * momentum;
-	momentum = rotated_momentum;
+        primary_particle & p = *i;
+        geomtools::vector_3d & momentum = p.momentum;
+        geomtools::vector_3d rotated_momentum = rot * momentum;
+        momentum = rotated_momentum;
       }
 
     return;

@@ -49,7 +49,8 @@ namespace genbb {
   {
     
   public:
-    typedef std::list<primary_particle> particles_col_t;
+    typedef std::list<primary_particle> particles_col_t; // to be removed
+    typedef particles_col_t particles_col_type;
 
   public:
 
@@ -86,11 +87,11 @@ namespace genbb {
     virtual ~primary_event ();
 
     void dump (std::ostream & a_out = std::clog,
-	       const std::string & a_indent = "") const;
+               const std::string & a_indent = "") const;
 
     void dump (std::ostream & a_out,
-	       const std::string & a_title,
-	       const std::string & a_indent) const;
+               const std::string & a_title,
+               const std::string & a_indent) const;
     
   public:
 

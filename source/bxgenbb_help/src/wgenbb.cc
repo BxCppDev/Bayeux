@@ -40,49 +40,49 @@ namespace genbb {
  
   using namespace std;
 
-  size_t wgenbb::__g_counter = 0;
+  size_t wgenbb::_g_counter_ = 0;
 
   bool wgenbb::is_debug () const
   {
-    return __debug;
+    return _debug_;
   }
  
   void wgenbb::set_debug (bool d_)
   {
-    __debug = d_;
+    _debug_ = d_;
     return;
   }
 
   // ctor:
   wgenbb::wgenbb () : i_genbb ()
   {
-    if (wgenbb::__g_counter > 0)
+    if (wgenbb::_g_counter_ > 0)
       {
 	throw runtime_error ("genbb::wgenbb::wgenbb: Only one instance of wgenbb is allowed !");
       }
-    wgenbb::__g_counter++;
-    __debug = false;
-    __initialized = false;
-    __event_count = 0;
-    __decay_type = DECAY_TYPE_UNDEFINED;
-    __decay_isotope = "";
+    wgenbb::_g_counter_++;
+    _debug_ = false;
+    _initialized_ = false;
+    _event_count_ = 0;
+    _decay_type_ = DECAY_TYPE_UNDEFINED;
+    _decay_isotope_ = "";
     for (int i = 0; i < 32; i++)
       {
-	__c_decay_isotope[i] = 0;
+	_c_decay_isotope_[i] = 0;
       }  
-    __decay_dbd_level = 0;  
-    __decay_dbd_mode = 1;
-    __use_local_prng = false;
-    __seed = 0;
-    datatools::utils::invalidate (__energy_min);
-    datatools::utils::invalidate (__energy_max);
+    _decay_dbd_level_ = 0;  
+    _decay_dbd_mode_ = 1;
+    _use_local_prng_ = false;
+    _seed_ = 0;
+    datatools::utils::invalidate (_energy_min_);
+    datatools::utils::invalidate (_energy_max_);
     return;
   }
   
   // dtor:
   wgenbb::~wgenbb ()
   {
-    if (__initialized)
+    if (_initialized_)
       {
 	reset ();
       }
@@ -92,79 +92,79 @@ namespace genbb {
 
   const mygsl::rng & wgenbb::get_random () const
   {
-    if (! __use_local_prng)
+    if (! _use_local_prng_)
       {
-	return genbb::rng::g__ran;
+	return genbb::rng::g_ran;
       }
-    return __random;
+    return _random_;
   }
 
   mygsl::rng & wgenbb::get_random ()
   {
-    if (! __use_local_prng)
+    if (! _use_local_prng_)
       {
-	return genbb::rng::g__ran;
+	return genbb::rng::g_ran;
       }
-    return __random;
+    return _random_;
   }
 
-  void wgenbb::__clean ()
+  void wgenbb::_clean_ ()
   {
     return;
   }
 
   void wgenbb::reset ()
   {
-    if (! __initialized)
+    if (! _initialized_)
       {
 	return;
       }
-    __clean ();
-    __event_count = 0;
+    _clean_ ();
+    _event_count_ = 0;
 
-    __decay_type = DECAY_TYPE_UNDEFINED;
+    _decay_type_ = DECAY_TYPE_UNDEFINED;
     for (int i = 0; i < 32; i++)
       {
-	__c_decay_isotope[i] = 0;
+	_c_decay_isotope_[i] = 0;
       }  
-    __decay_isotope = "";  
-    __decay_dbd_level = 0;  
-    __decay_dbd_mode = 1;
+    _decay_isotope_ = "";  
+    _decay_dbd_level_ = 0;  
+    _decay_dbd_mode_ = 1;
 
-    datatools::utils::invalidate (__energy_min);
-    datatools::utils::invalidate (__energy_max);
+    datatools::utils::invalidate (_energy_min_);
+    datatools::utils::invalidate (_energy_max_);
 
-    __seed = 0;
+    _seed_ = 0;
     if (use_local_prng ())
       {
 	clog << "NOTICE: " << "genbb::wgenbb::reset: "
 	     << "Reseting the local PRNG..." << endl;
-	__random.reset ();
+	_random_.reset ();
       }
-    __use_local_prng = false;
+    _use_local_prng_ = false;
 
-    __initialized = false;
+    _initialized_ = false;
     return;
   }
 
   bool wgenbb::use_local_prng () const
   {
-    return __use_local_prng;
+    return _use_local_prng_;
   }
  
   void wgenbb::set_use_local_prng (bool u_)
   {
-    if (__initialized)
+    if (_initialized_)
       {
 	throw runtime_error ("genbb::wgenbb::set_use_local_prng: Already initialized !");
       }
-    __use_local_prng = u_;
+    _use_local_prng_ = u_;
     return;
   }
 
   void wgenbb::initialize (const datatools::utils::properties & config_)
   {
-    if (__initialized)
+    if (_initialized_)
       {
 	throw runtime_error ("genbb::wgenbb::initialize: Already initialized !");
       }
@@ -178,7 +178,7 @@ namespace genbb {
 
     if (config_.has_flag ("debug"))
       {
-	__debug = true;
+	_debug_ = true;
       }
 
     if (config_.has_key ("local_prng"))
@@ -193,7 +193,7 @@ namespace genbb {
 	  {
 	    throw runtime_error ("genbb::wgenbb::initialize: Invalid seed value (>=0) !");
 	  }
-	__seed = seed;
+	_seed_ = seed;
       }
     if (config_.has_key ("energy_unit"))
       {
@@ -209,7 +209,7 @@ namespace genbb {
 	    throw runtime_error ("genbb::wgenbb::initialize: Invalid maximum value !");
 	  }
 	emax *= energy_unit;
-	__energy_max = emax;
+	_energy_max_ = emax;
       }
 
     if (config_.has_key ("energy_min"))
@@ -220,7 +220,7 @@ namespace genbb {
 	    throw runtime_error ("genbb::wgenbb::initialize: Invalid minimum value !");
 	  }
 	emin *= energy_unit;
-	__energy_min = emin;
+	_energy_min_ = emin;
       }
 
     if (! config_.has_key ("decay_type"))
@@ -241,12 +241,12 @@ namespace genbb {
 	  }
 	if (tmp == "background") 
 	  {
-	    __decay_type = DECAY_TYPE_BACKGROUND;
+	    _decay_type_ = DECAY_TYPE_BACKGROUND;
 	  }
 
 	if (tmp == "DBD") 
 	  {
-	    __decay_type = DECAY_TYPE_DBD;
+	    _decay_type_ = DECAY_TYPE_DBD;
 
 	    if (! config_.has_key ("decay_dbd_level"))
 	      {
@@ -254,7 +254,7 @@ namespace genbb {
 		message << "genbb::wgenbb::initialize: Missing DBD decay level !";
 		throw runtime_error (message.str());
 	      }
-	    __decay_dbd_level = config_.fetch_integer ("decay_dbd_level");
+	    _decay_dbd_level_ = config_.fetch_integer ("decay_dbd_level");
 
 	    if (! config_.has_key ("decay_dbd_mode"))
 	      {
@@ -262,7 +262,7 @@ namespace genbb {
 		message << "genbb::wgenbb::initialize: Missing DBD decay mode !";
 		throw runtime_error (message.str());
 	      }
-	    __decay_dbd_mode = config_.fetch_integer ("decay_dbd_mode");
+	    _decay_dbd_mode_ = config_.fetch_integer ("decay_dbd_mode");
 	  }
 
      }
@@ -278,40 +278,40 @@ namespace genbb {
 	decay_isotope = config_.fetch_string ("decay_isotope");
       }
 
-    __set_decay_isotope (decay_isotope);
+    _set_decay_isotope_ (decay_isotope);
 
     if (use_local_prng ())
       {
 	clog << "NOTICE: " << "genbb::wgenbb::initialize: "
 	     << "Initializing the local PRNG..." << endl;
-	__random.init ("taus2", __seed);
+	_random_.init ("taus2", _seed_);
 	clog << "NOTICE: " << "genbb::wgenbb::initialize: "
 	     << "Installing the local PRNG as the global PRNG for the fortran interface..." << endl;
-	genbb::rng::set_genbb_external_prng (__random);
+	genbb::rng::set_genbb_external_prng (_random_);
       }
 
-    __init ();
+    _init_ ();
 
-    __initialized = true;
+    _initialized_ = true;
     return;
   }
 
   bool wgenbb::has_next ()
   {
-    return __initialized;
+    return _initialized_;
   }
 
-  void wgenbb::__set_decay_isotope (const string & di_)
+  void wgenbb::_set_decay_isotope_ (const string & di_)
   {
-    __decay_isotope = di_;
+    _decay_isotope_ = di_;
     size_t sz = di_.length ();
     if (sz >= 15)
       {
-	throw runtime_error ("genbb::wgenbb::__set_decay_isotope: Decay isotope string too long !");
+	throw runtime_error ("genbb::wgenbb::_set_decay_isotope_: Decay isotope string too long !");
       }
     for (int i = 0; i < sz; i++)
       {
-	__c_decay_isotope[i] = di_[i];
+	_c_decay_isotope_[i] = di_[i];
       }
     return;
   }
@@ -319,13 +319,13 @@ namespace genbb {
   void wgenbb::_load_next (primary_event & event_, 
 			 bool compute_classification_)
   {
-    if (__debug)
+    if (_debug_)
       {
 	clog << "debug: " << "genbb::wgenbb::_load_next: "
 	     << "Entering..."
 	     << endl;
       }
-    if (! __initialized)
+    if (! _initialized_)
       {
 	throw runtime_error ("genbb::wgenbb::_load_next: Not initialized !");
       }
@@ -337,10 +337,10 @@ namespace genbb {
     // reset Fortran common block:
     genevent.reset ();
 
-    genbbsub (&__decay_type, 
-	      __c_decay_isotope, 
-	      &__decay_dbd_level, 
-	      &__decay_dbd_mode, 
+    genbbsub (&_decay_type_, 
+	      _c_decay_isotope_, 
+	      &_decay_dbd_level_, 
+	      &_decay_dbd_mode_, 
 	      &start,
 	      &error);
     if (error != 0)
@@ -399,8 +399,8 @@ namespace genbb {
 	event_.compute_classification ();
       }
     //event_.dump (clog , "GENBB event: ", "DEVEL: ");
-    __event_count++;
-    if (__debug)
+    _event_count_++;
+    if (_debug_)
       {
 	clog << "debug: " << "genbb::wgenbb::_load_next: "
 	     << "Exiting."
@@ -411,7 +411,7 @@ namespace genbb {
 
   size_t wgenbb::get_event_count () const
   {
-    return __event_count;
+    return _event_count_;
   }
 
   double wgenbb::get_to_all_events () const
@@ -419,51 +419,51 @@ namespace genbb {
     return 1.0 * enrange.toallevents;
   }
 
-  void wgenbb::__init ()
+  void wgenbb::_init_ ()
   {
-    if (__debug)
+    if (_debug_)
       {
-	clog << "debug: " << "genbb::wgenbb::__init: "
+	clog << "debug: " << "genbb::wgenbb::_init_: "
 	     << "Entering..."
 	     << endl;
       }
 
-    if (__decay_type == DECAY_TYPE_UNDEFINED)
+    if (_decay_type_ == DECAY_TYPE_UNDEFINED)
       {
-	throw runtime_error ("genbb::wgenbb::__init: Decay type is not defined !");	
+	throw runtime_error ("genbb::wgenbb::_init_: Decay type is not defined !");	
       }
 
     enrange.reset ();
-    if (datatools::utils::is_valid (__energy_min))
+    if (datatools::utils::is_valid (_energy_min_))
       {
-	clog << "NOTICE: wgenbb::__init: Setting energy min to " << __energy_min / CLHEP::MeV << " MeV" << endl;
-	enrange.ebb1 = (float) (__energy_min / CLHEP::MeV);	
+	clog << "NOTICE: wgenbb::_init_: Setting energy min to " << _energy_min_ / CLHEP::MeV << " MeV" << endl;
+	enrange.ebb1 = (float) (_energy_min_ / CLHEP::MeV);	
       }
-    if (datatools::utils::is_valid (__energy_max))
+    if (datatools::utils::is_valid (_energy_max_))
       {
-	clog << "NOTICE: wgenbb::__init: Setting energy max to " << __energy_max / CLHEP::MeV << " MeV" << endl;
-	enrange.ebb2 = (float) (__energy_max / CLHEP::MeV);	
+	clog << "NOTICE: wgenbb::_init_: Setting energy max to " << _energy_max_ / CLHEP::MeV << " MeV" << endl;
+	enrange.ebb2 = (float) (_energy_max_ / CLHEP::MeV);	
       }
     if (enrange.ebb1 >= enrange.ebb2)
       {
 	ostringstream message;
-	message << "genbb::wgenbb::__init: "
+	message << "genbb::wgenbb::_init_: "
 		<< "Invalid energy range !";
 	throw runtime_error (message.str ());
       }
 
-    if (! __use_local_prng)
+    if (! _use_local_prng_)
       {
-	int genbb_seed = __seed;
+	int genbb_seed = _seed_;
 	set_genbb_random_seed (&genbb_seed);
       }
     /*
     float test_alea[3];
     int sz = 3;
     grndm (test_alea, &sz);
-    if (__debug)
+    if (_debug_)
       {
-	clog << "DEBUG: wgenbb::__init: test_alea=" 
+	clog << "DEBUG: wgenbb::_init_: test_alea=" 
 	     << test_alea[0] << ' ' 
 	     << test_alea[2] << ' ' 
 	     << test_alea[2] << endl;
@@ -471,20 +471,20 @@ namespace genbb {
     */
     int error;
     int start = -1;
-    genbbsub (&__decay_type, 
-	      __c_decay_isotope, 
-	      &__decay_dbd_level, 
-	      &__decay_dbd_mode, 
+    genbbsub (&_decay_type_, 
+	      _c_decay_isotope_, 
+	      &_decay_dbd_level_, 
+	      &_decay_dbd_mode_, 
 	      &start,
 	      &error);
     if (error != 0)
       {
-	throw runtime_error ("genbb::wgenbb::__init: genbbsub failed !");
+	throw runtime_error ("genbb::wgenbb::_init_: genbbsub failed !");
       }
 
-    if (__debug)
+    if (_debug_)
       {
-	clog << "debug: " << "genbb::wgenbb::__init: "
+	clog << "debug: " << "genbb::wgenbb::_init_: "
 	     << "Exiting."
 	     << endl;
       }
@@ -496,16 +496,16 @@ namespace genbb {
     const string tag = "|-- ";
     const string last_tag = "`-- ";
     out_ << "C++ GENBB wrapper: " << endl;
-    out_ << tag << "debug            : " << __debug << endl;
-    out_ << tag << "decay_type       : " << __decay_type << endl;
-    out_ << tag << "decay_isotope    : " << __decay_isotope << endl;
-    out_ << tag << "decay_dbd_level  : " << __decay_dbd_level << endl;
-    out_ << tag << "decay_dbd_mode   : " << __decay_dbd_mode << endl;
-    out_ << tag << "event_count      : " << __event_count << endl;
-    out_ << tag << "energy_min       : " << __energy_min / CLHEP::keV << " keV" << endl;
-    out_ << tag << "energy_max       : " << __energy_max / CLHEP::keV << " keV" << endl;
-    out_ << tag << "use local PRNG   : " << __use_local_prng << endl;
-    out_ << last_tag << "seed             : " << __seed << endl;
+    out_ << tag << "debug            : " << _debug_ << endl;
+    out_ << tag << "decay_type       : " << _decay_type_ << endl;
+    out_ << tag << "decay_isotope    : " << _decay_isotope_ << endl;
+    out_ << tag << "decay_dbd_level  : " << _decay_dbd_level_ << endl;
+    out_ << tag << "decay_dbd_mode   : " << _decay_dbd_mode_ << endl;
+    out_ << tag << "event_count      : " << _event_count_ << endl;
+    out_ << tag << "energy_min       : " << _energy_min_ / CLHEP::keV << " keV" << endl;
+    out_ << tag << "energy_max       : " << _energy_max_ / CLHEP::keV << " keV" << endl;
+    out_ << tag << "use local PRNG   : " << _use_local_prng_ << endl;
+    out_ << last_tag << "seed             : " << _seed_ << endl;
     return;
   }
 

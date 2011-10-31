@@ -43,63 +43,59 @@ namespace genbb {
   class genbb_writer
   {
 
- private:
-
-    bool        __debug;
-    std::string __fout;
-
   private:
 
-    int    __Npart, __part_per_evt;
-    int    __type, __seed;
-    double __Emin, __Emax;
-    double __phi_min, __phi_max;
+    bool        _debug_;
+    std::string _fout_;
+
+    int    _npart_, _part_per_evt_;
+    int    _type_, _seed_;
+    double _emin_, _emax_;
+    double _phi_min_, _phi_max_;
 
   public:
 
     void run();
 
     void set_seed ( int seed_ )
-    { __seed = seed_; }
-    int get_seed() const { return __seed; }
+    { _seed_ = seed_; }
+    int get_seed() const { return _seed_; }
 
     void set_npart ( int npart_ )
-    { __Npart = npart_; }
-    int get_npart() const { return __Npart; }
+    { _npart_ = npart_; }
+    int get_npart() const { return _npart_; }
 
     void set_part_per_evt ( int part_per_evt_ )
-    { __part_per_evt = part_per_evt_; }
-    int get_part_per_evt() const { return __part_per_evt; }
+    { _part_per_evt_ = part_per_evt_; }
+    int get_part_per_evt() const { return _part_per_evt_; }
 
     void set_type ( int type_ )
-    { __type = type_; }
-    int get_type() const { return __type; }
+    { _type_ = type_; }
+    int get_type() const { return _type_; }
 
     void set_Emin ( double Emin_ )
-    { __Emin = Emin_; }
-    double get_Emin() const { return __Emin; }
+    { _emin_ = Emin_; }
+    double get_Emin() const { return _emin_; }
 
     void set_Emax ( double Emax_ )
-    { __Emax = Emax_; }
-    double get_Emax() const { return __Emax; }
+    { _emax_ = Emax_; }
+    double get_Emax() const { return _emax_; }
 
     void set_phi_min ( double phi_min_ )
-    { __phi_min = phi_min_; }
-    double get_phi_min() const { return __phi_min; }
+    { _phi_min_ = phi_min_; }
+    double get_phi_min() const { return _phi_min_; }
 
     void set_phi_max ( double phi_max_ )
-    { __phi_max = phi_max_; }
-    double get_phi_max() const { return __phi_max; }
+    { _phi_max_ = phi_max_; }
+    double get_phi_max() const { return _phi_max_; }
 
-    void set_outfile ( std::string fout_ ) { __fout = fout_; }
-    std::string get_outfile() const { return __fout; }
-
-
-  public:
+    void set_outfile ( std::string fout_ ) { _fout_ = fout_; }
+    std::string get_outfile() const { return _fout_; }
 
     void set_debug ( bool d_ )
-    {__debug = d_; }
-    bool is_debug () const { return __debug; }
+    {_debug_ = d_; }
+
+    bool is_debug () const { return _debug_; }
 
     void dump ( std::ostream & out_ ) const;
 
@@ -113,7 +109,7 @@ namespace genbb {
 
     double myrandom ( double min_, double max_ );
 
-    void init();
+    void init ();
 
   };
 

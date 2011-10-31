@@ -52,7 +52,7 @@ namespace genbb {
   {
   public:
 
-    enum mode_t
+    enum mode_type
       {
 	MODE_INVALID         = -1,
 	MODE_MONOKINETIC     =  0,
@@ -62,36 +62,11 @@ namespace genbb {
 	MODE_DEFAULT         =  MODE_MONOKINETIC
       };
 
-    enum spectrum_mode_t
+    enum spectrum_mode_type
       {
 	SPECTRUM_MODE_TABFUNC = 0,
 	SPECTRUM_MODE_HISTPDF = 1
       };
-
-  private:
-
-    bool   __debug;
-    bool   __initialized;
-    int    __particle_type;
-    string __particle_name;
-    double __particle_mass;
-    int    __mode;
-    double __mean_energy;
-    double __sigma_energy;
-    double __min_energy;
-    double __max_energy;
-
-    int    __spectrum_mode;
-    string __spectrum_interpolation_name;
-    string __energy_spectrum_filename;
-    mygsl::tabulated_function __energy_spectrum;
-    mygsl::von_neumann_method __VNM;
-    mygsl::histogram          __energy_histo;
-    mygsl::histogram::pdf     __energy_histo_pdf;
-
-    bool          __randomized_direction;
-    unsigned long __seed; //> Local PRNG's seed
-    mygsl::rng    __random; //> Local PRNG
 
   protected:
     void _check_locked (const string & where_) const;
@@ -147,15 +122,40 @@ namespace genbb {
 			     bool compute_classification_ = true) ;
   private:
 
-    void __at_init ();
+    void _at_init_ ();
 
-    void __at_reset ();
+    void _at_reset_ ();
 
   public:
 
     static double get_particle_mass_from_label (const string & particle_name_);
 
     static bool particle_name_is_valid (const string & particle_name_);
+
+  private:
+
+    bool   _debug_;
+    bool   _initialized_;
+    int    _particle_type_;
+    string _particle_name_;
+    double _particle_mass_;
+    int    _mode_;
+    double _mean_energy_;
+    double _sigma_energy_;
+    double _min_energy_;
+    double _max_energy_;
+
+    int    _spectrum_mode_;
+    string _spectrum_interpolation_name_;
+    string _energy_spectrum_filename_;
+    mygsl::tabulated_function _energy_spectrum_;
+    mygsl::von_neumann_method _vnm_;
+    mygsl::histogram          _energy_histo_;
+    mygsl::histogram::pdf     _energy_histo_pdf_;
+
+    bool          _randomized_direction_;
+    unsigned long _seed_; //!< Local PRNG's seed
+    mygsl::rng    _random_; //!< Local PRNG
 
   };
 

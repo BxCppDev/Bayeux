@@ -43,8 +43,8 @@ namespace genbb {
   {
     static const std::string DEFAULT_PRNG_ID;
 
-    static mygsl::rng   g__ran;
-    static mygsl::rng * g__ran_ptr;
+    static mygsl::rng   g_ran;
+    static mygsl::rng * g_ran_ptr;
 
     static void set_genbb_external_prng (mygsl::rng & prng_);
   };

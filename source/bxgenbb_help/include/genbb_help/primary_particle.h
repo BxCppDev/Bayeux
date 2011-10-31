@@ -119,6 +119,14 @@ namespace genbb {
 
     const geomtools::vector_3d & get_momentum () const;
 
+    void set_vertex (const geomtools::vector_3d & v_);
+
+    const geomtools::vector_3d & get_vertex () const;
+
+    bool has_vertex () const;
+
+    void invalidate_vertex ();
+
     double get_charge () const; // in unit of e
 
     double get_mass () const; // in unit of energy
@@ -158,6 +166,7 @@ namespace genbb {
     double               mass;     // CLHEP energy unit
     double               time;     // CLHEP time unit
     geomtools::vector_3d momentum; // CLHEP momentum unit
+    geomtools::vector_3d vertex;   // CLHEP position unit
 
   public:
 

@@ -59,35 +59,6 @@ namespace genbb {
     };
 
     static const size_t TMP_DIR_BUFSZ = 1024;
- 
-  private:
-    bool   __initialized;
-    bool   __debug;
-    size_t __buffer_size;
-    size_t __buffer_item;
-    size_t __event_count;
-    size_t __buffer_count;
-    bool   __delete_conf_file;
-    bool   __delete_log_files;
-    bool   __delete_data_files;
-    bool   __delete_tmp_dir;
-
-    int    __decay_type;
-    string __decay_isotope;  
-    int    __decay_dbd_level;  
-    int    __decay_dbd_mode;  
-
-    ifstream * __genbb_in;
-    bool       __test;
-    string     __tmp_base_dir;
-    string     __forced_tmp_dir;
-    char       __tmp_dir[TMP_DIR_BUFSZ];
-    string     __genbb_conf;
-    string     __genbb_data;
-    string     __genbb_log;
-    ofstream   __genbb_conf_file;
-    unsigned long __seed;
-    mygsl::rng    __random;
 
   public:
 
@@ -98,12 +69,19 @@ namespace genbb {
     bool is_initialized () const;
 
     void set_delete_conf_file (bool);
+
     void set_delete_log_files (bool);
+
     void set_delete_data_files (bool);
+
     void set_delete_tmp_dir (bool);
+
     void set_tmp_dir (const string &);
+
     void set_tmp_base_dir (const string &);
+
     const mygsl::rng & get_random () const;
+
     mygsl::rng & get_random ();
 
     const string & get_tmp_base_dir () const;
@@ -131,9 +109,38 @@ namespace genbb {
 
   private:
 
-    void __init ();  //> Initialize material associated to a new buffer file
+    void _init_ ();  //> Initialize material associated to a new buffer file
 
-    void __clean (); //> Clean material associated to the current buffer file
+    void _clean_ (); //> Clean material associated to the current buffer file
+ 
+  private:
+    bool   _initialized_;
+    bool   _debug_;
+    size_t _buffer_size_;
+    size_t _buffer_item_;
+    size_t _event_count_;
+    size_t _buffer_count_;
+    bool   _delete_conf_file_;
+    bool   _delete_log_files_;
+    bool   _delete_data_files_;
+    bool   _delete_tmp_dir_;
+
+    int    _decay_type_;
+    string _decay_isotope_;  
+    int    _decay_dbd_level_;  
+    int    _decay_dbd_mode_;  
+
+    ifstream * _genbb_in_;
+    bool       _test_;
+    string     _tmp_base_dir_;
+    string     _forced_tmp_dir_;
+    char       _tmp_dir_[TMP_DIR_BUFSZ];
+    string     _genbb_conf_;
+    string     _genbb_data_;
+    string     _genbb_log_;
+    ofstream   _genbb_conf_file_;
+    unsigned long _seed_;
+    mygsl::rng    _random_;
 
   };
 

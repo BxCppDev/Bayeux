@@ -44,58 +44,58 @@ namespace genbb {
   {
     init ();
 
-    std::ofstream __out ( __fout.c_str() );
+    std::ofstream out ( _fout_.c_str() );
 
     double ElectronMass = CLHEP::electron_mass_c2;
     double AlphaMass    = 3.72738 *CLHEP::GeV;
 
-    for ( int i = 0; i < __Npart; i++ )
+    for ( int i = 0; i < _npart_; i++ )
       {
-	__out << i << " "
-	      << 0 << " "
-	      << __part_per_evt
-	      << std::endl;
+        out << i << " "
+            << 0 << " "
+            << _part_per_evt_
+            << std::endl;
 
-	for ( int j = 0; j < __part_per_evt; j++ )
-	  {
+        for ( int j = 0; j < _part_per_evt_; j++ )
+          {
 
-	    double KineticEnergy      = myrandom ( __Emin, __Emax );
-	    double cos_phi            = myrandom ( std::cos ( __phi_min ), std::cos ( __phi_max ) );
-	    double phi                = std::acos ( cos_phi );
-	    // double phi                = myrandom ( __phi_min, __phi_max );
+            double KineticEnergy      = myrandom ( _emin_, _emax_ );
+            double cos_phi            = myrandom ( std::cos ( _phi_min_ ), std::cos ( _phi_max_ ) );
+            double phi                = std::acos ( cos_phi );
+            // double phi                = myrandom ( _phi_min_, _phi_max_ );
 
-	    double theta              = myrandom ( 0., 2*M_PI );
-	    double RelativisticEnergy = 0.;
-	    double TotalMomentum      = 0.;
-	    
-	    if ( __type == 2 || __type == 3 ) // e+ / e-
-	      {
-		RelativisticEnergy = KineticEnergy + ElectronMass;
-		TotalMomentum = std::sqrt( RelativisticEnergy * RelativisticEnergy
-					   - ElectronMass * ElectronMass );
-	      }
-	    else if ( __type == 47 )          // alpha
-	      {
-		RelativisticEnergy = KineticEnergy + AlphaMass;
-		TotalMomentum = std::sqrt( RelativisticEnergy * RelativisticEnergy
-					   - AlphaMass * AlphaMass );
-	      }
-	    else     	  	  	      // gamma
-	      {
-		TotalMomentum = KineticEnergy;
-	      }
-	    
-	    double x_mom = TotalMomentum * cos ( theta ) * sin ( phi );
-	    double y_mom = TotalMomentum * sin ( theta ) * sin ( phi );
-	    double z_mom = TotalMomentum * cos ( phi );
-	    
-	    __out << __type << " "
-		  << x_mom << " "
-		  << y_mom << " "
-		  << z_mom << " "
-		  << 0
-		  << std::endl;
-	  }
+            double theta              = myrandom ( 0., 2*M_PI );
+            double RelativisticEnergy = 0.;
+            double TotalMomentum      = 0.;
+            
+            if ( _type_ == 2 || _type_ == 3 ) // e+ / e-
+              {
+                RelativisticEnergy = KineticEnergy + ElectronMass;
+                TotalMomentum = std::sqrt( RelativisticEnergy * RelativisticEnergy
+                                           - ElectronMass * ElectronMass );
+              }
+            else if ( _type_ == 47 )          // alpha
+              {
+                RelativisticEnergy = KineticEnergy + AlphaMass;
+                TotalMomentum = std::sqrt( RelativisticEnergy * RelativisticEnergy
+                                           - AlphaMass * AlphaMass );
+              }
+            else                              // gamma
+              {
+                TotalMomentum = KineticEnergy;
+              }
+            
+            double x_mom = TotalMomentum * cos ( theta ) * sin ( phi );
+            double y_mom = TotalMomentum * sin ( theta ) * sin ( phi );
+            double z_mom = TotalMomentum * cos ( phi );
+            
+            out << _type_ << " "
+                << x_mom << " "
+                << y_mom << " "
+                << z_mom << " "
+                << 0
+                << std::endl;
+          }
       }
     return;
   }
@@ -109,18 +109,18 @@ namespace genbb {
 
   void genbb_writer::init ()
   {
-    if ( __Npart < 0        ||
-	 __part_per_evt < 0 ||
-	 __type == -1       ||
-	 __Emin < 0         ||
-	 __Emax < 0         ||
-	 __phi_min < 0      ||
-	 __phi_max > M_PI    )
+    if ( _npart_ < 0        ||
+         _part_per_evt_ < 0 ||
+         _type_ == -1       ||
+         _emin_ < 0         ||
+         _emax_ < 0         ||
+         _phi_min_ < 0      ||
+                     _phi_max_ > M_PI    )
       {
-	std::ostringstream message;
-	message << "genbb_writer::init: "
-		<< "All the parameters of the writer are not well defined. Abort!";
-	throw std::runtime_error ( message.str() );
+        std::ostringstream message;
+        message << "genbb_writer::init: "
+                << "All the parameters of the writer are not well defined. Abort!";
+        throw std::runtime_error ( message.str() );
       }
     return;
   }
@@ -129,32 +129,32 @@ namespace genbb {
   void genbb_writer::dump ( std::ostream & out_ ) const
   {
     out_ << "genbb_writer::dump: " << std::endl;
-    out_ << "|-- debug:         " << __debug        << std::endl;
-    out_ << "|-- outfile:       " << __fout         << std::endl;
-    out_ << "|-- Nb particles:  " << __Npart        << std::endl;
-    out_ << "|-- part / evt:    " << __part_per_evt << std::endl;
-    out_ << "|-- particle type: " << __type         << std::endl;
-    out_ << "|-- energy min:    " << __Emin         << std::endl;
-    out_ << "|-- energy max:    " << __Emax         << std::endl;
-    out_ << "|-- phi_min:       " << __phi_min    << std::endl;
-    out_ << "`-- phi_max:       " << __phi_max    << std::endl;
-     return;
- }
+    out_ << "|-- debug:         " << _debug_        << std::endl;
+    out_ << "|-- outfile:       " << _fout_         << std::endl;
+    out_ << "|-- Nb particles:  " << _npart_        << std::endl;
+    out_ << "|-- part / evt:    " << _part_per_evt_ << std::endl;
+    out_ << "|-- particle type: " << _type_         << std::endl;
+    out_ << "|-- energy min:    " << _emin_         << std::endl;
+    out_ << "|-- energy max:    " << _emax_         << std::endl;
+    out_ << "|-- phi_min:       " << _phi_min_    << std::endl;
+    out_ << "`-- phi_max:       " << _phi_max_    << std::endl;
+    return;
+  }
 
 
   // ctor:
   genbb_writer::genbb_writer ()
   {
-    __debug        = false;
-    __seed         = 314159;
-    __Npart        = -1;
-    __part_per_evt = 1;
-    __type         = -1;
-    __Emin         = -1.;
-    __Emax         = -1.;
-    __phi_min      =  1.;
-    __phi_max      = -1.;
-    srand48 ( __seed );
+    _debug_        = false;
+    _seed_         = 314159;
+    _npart_        = -1;
+    _part_per_evt_ = 1;
+    _type_         = -1;
+    _emin_         = -1.;
+    _emax_         = -1.;
+    _phi_min_      =  1.;
+    _phi_max_      = -1.;
+    srand48 ( _seed_ );
     return;
   }
   

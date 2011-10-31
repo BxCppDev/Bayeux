@@ -106,9 +106,9 @@ namespace genbb {
     return;
   }
 
-  void primary_particle::set_momentum (const geomtools::vector_3d & m_)
+  void primary_particle::set_momentum (const geomtools::vector_3d & v_)
   {
-    momentum = m_;
+    momentum = v_;
     return;
   }
 
@@ -117,11 +117,34 @@ namespace genbb {
     return momentum;
   }
 
+  void primary_particle::set_vertex (const geomtools::vector_3d & m_)
+  {
+    vertex = m_;
+    return;
+  }
+
+  const geomtools::vector_3d & primary_particle::get_vertex () const
+  {
+    return vertex;
+  }
+
+  bool primary_particle::has_vertex () const
+  {
+    return geomtools::is_valid (vertex);
+  }
+
+  void primary_particle::invalidate_vertex ()
+  {
+    geomtools::invalidate_vector_3d (vertex);
+    return;
+  }
+
   void primary_particle::reset ()
   {
     type = UNDEF;
     time = 0.0;
     geomtools::invalidate (momentum);
+    this->invalidate_vertex ();
     return;
   }
 
@@ -160,13 +183,27 @@ namespace genbb {
 
   double primary_particle::get_charge () const
   {
-    if (is_positron ()) return +1;
-    if (is_electron ()) return -1;
-    if (is_alpha ()) return +2;
-    if (is_gamma ()) return 0.0;
-    if (is_muon_plus ()) return +1;
-    if (is_muon_minus ()) return -1;
-    throw logic_error ("primary_particle::get_charge: Unknown particle !");
+    double c = 0.0;
+    if (is_gamma ()) c = 0.0;
+    else if (is_positron ()) c = +1.0;
+    else if (is_electron ()) c = -1.0;
+    else if (get_type () == NEUTRINO) c = 0.0;
+    else if (is_muon_plus ()) c = +1.0;
+    else if (is_muon_minus ()) c = -1.0;
+    else if (get_type () == PION_0) c = 0.0;
+    else if (get_type () == PION_PLUS) c = +1.0;
+    else if (get_type () == PION_MINUS) c = -1.0;
+    else if (get_type () == NEUTRON) c = 0.0;
+    else if (get_type () == PROTON) c = +1.0;
+    else if (get_type () == DEUTERON) c = +1.0;
+    else if (get_type () == TRITIUM) c = +1.0;
+    else if (is_alpha ()) c = +2.0;
+    else if (get_type () == HE3) c = +2.0;
+    else
+      {
+	throw logic_error ("primary_particle::get_charge: Unknown particle !");
+      }
+    return c;
   }
 
   bool primary_particle::mass_is_known () const
@@ -176,42 +213,44 @@ namespace genbb {
 
   double primary_particle::get_mass () const
   {
+    double a_mass;
+    datatools::utils::invalidate (a_mass);
+
     if (is_positron () || is_electron ())
       {
-	return CLHEP::electron_mass_c2;
+	a_mass = CLHEP::electron_mass_c2;
       }
 
     if (is_alpha ())
       {
-	return 3.727417 * CLHEP::GeV;
+	a_mass = 3.727417 * CLHEP::GeV;
       }
 
     if (is_gamma ())
       {
-	return 0.0;
+	a_mass = 0.0;
       }
 
     if (type == NEUTRON)
       {
-	return 939.565560 * CLHEP::MeV;
+	a_mass = 939.565560 * CLHEP::MeV;
       }
 
     if (type == PROTON)
       {
-	return 938.272013 * CLHEP::MeV;
+	a_mass = 938.272013 * CLHEP::MeV;
       }
 
     if (type == MUON_PLUS || type == MUON_MINUS)
       {
-	return 105.658369 * CLHEP::MeV;
+	a_mass = 105.658369 * CLHEP::MeV;
       }
 
     if (type == NEUTRINO)
       {
-	return 0.0 * CLHEP::MeV;
+	a_mass = 0.0 * CLHEP::MeV;
       }
-    double a_mass;
-    datatools::utils::invalidate (a_mass);
+
     return a_mass;
   }
 
@@ -257,9 +296,20 @@ namespace genbb {
 	 << " ns" << endl;
     out_ << indent << "|-- Kinetic energy: " << energy / CLHEP::MeV
 	 << " MeV" << endl;
-    out_ << indent << "`-- Momentum: "
+    out_ << indent << "|-- Momentum: "
 	 << momentum / CLHEP::MeV
 	 << " MeV" << endl;
+    out_ << indent << "`-- Vertex: ";
+    if (has_vertex ())
+      {
+	out_ << vertex / CLHEP::mm
+	     << " mm" << endl;
+      }
+    else
+      {
+	out_ << "no" << endl;
+      }
+    
     return;
   }
 

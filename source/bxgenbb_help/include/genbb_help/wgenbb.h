@@ -42,8 +42,6 @@
 
 #include <datatools/utils/properties.h>
 
-//#include <cfortran/cfortran.h> 
-
 extern "C" 
 { 
   void set_genbb_random_seed (int *); 
@@ -83,29 +81,7 @@ namespace genbb {
 
   private:
 
-    static size_t __g_counter;
-
-  private:
-    bool   __debug;
-    bool   __initialized;
-
-    int    __decay_type;
-    string __decay_isotope;  
-    char   __c_decay_isotope[32];
-    int    __decay_dbd_level;  
-    int    __decay_dbd_mode;  
-    size_t __event_count;
-
-    double __energy_min; 
-    double __energy_max;
-
-    bool          __use_local_prng; //> Local PRNG flag
-    unsigned long __seed;           //> PRNG seed (local or global)
-    mygsl::rng    __random;         //> Local PRNG
-
-  private:
-
-    void __set_decay_isotope (const string & di_);
+    void _set_decay_isotope_ (const string & di_);
 
   public:
 
@@ -146,9 +122,32 @@ namespace genbb {
 
   private:
 
-    void __init ();
+    void _init_ ();
 
-    void __clean ();
+    void _clean_ ();
+
+  private:
+
+    static size_t _g_counter_;
+
+  private:
+
+    bool   _debug_;
+    bool   _initialized_;
+
+    int    _decay_type_;
+    string _decay_isotope_;  
+    char   _c_decay_isotope_[32];
+    int    _decay_dbd_level_;  
+    int    _decay_dbd_mode_;  
+    size_t _event_count_;
+
+    double _energy_min_; 
+    double _energy_max_;
+
+    bool          _use_local_prng_; //> Local PRNG flag
+    unsigned long _seed_;           //> PRNG seed (local or global)
+    mygsl::rng    _random_;         //> Local PRNG
 
   };
 

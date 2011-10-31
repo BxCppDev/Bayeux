@@ -46,41 +46,41 @@ namespace genbb {
 
   bool genbb_mgr::is_initialized () const
   {
-    return __initialized;
+    return _initialized_;
   }
 
    bool genbb_mgr::is_debug () const
     {
-      return __debug;
+      return _debug_;
     }
 
     void genbb_mgr::set_debug (bool d_)
     {
-      __debug = d_;
+      _debug_ = d_;
     }
 
     int genbb_mgr::get_format () const
     {
-      return __format;
+      return _format_;
     }
 
     bool genbb_mgr::is_format_genbb () const
     {
-      return __format == FORMAT_GENBB;
+      return _format_ == FORMAT_GENBB;
     }
 
     bool genbb_mgr::is_format_boost () const
     {
-      return __format == FORMAT_BOOST;
+      return _format_ == FORMAT_BOOST;
     }
 
   // ctor:
   genbb_mgr::genbb_mgr (int format_)
   {
-    __debug = false;
-    __initialized = false;
-    __in = 0;
-    __format = FORMAT_GENBB;
+    _debug_ = false;
+    _initialized_ = false;
+    _in_ = 0;
+    _format_ = FORMAT_GENBB;
     set_format (format_);
     return;
   }
@@ -94,9 +94,9 @@ namespace genbb {
   
   void genbb_mgr::set_format (const string & format_label_)
   {
-    if (__initialized)
+    if (_initialized_)
       {
-	throw runtime_error ("genbb_mgr::set: Operation not allowed ! Manager is locked !");
+	throw logic_error ("genbb_mgr::set: Operation not allowed ! Manager is locked !");
       }
     int fmt = FORMAT_GENBB;
     if ((format_label_ != FORMAT_GENBB_LABEL) 
@@ -105,7 +105,7 @@ namespace genbb {
 	ostringstream message;
 	message << "genbb_mgr::set: Invalid format label '" 
 		<< format_label_ << "' !";
-	throw runtime_error (message.str ());
+	throw logic_error (message.str ());
       }
     if (format_label_ == FORMAT_GENBB_LABEL) 
       {
@@ -121,162 +121,162 @@ namespace genbb {
   
   void genbb_mgr::set_format (int format_)
   {
-    if (__initialized)
+    if (_initialized_)
       {
-	throw runtime_error ("genbb_mgr::set: Operation not allowed ! Manager is locked !");
+	throw logic_error ("genbb_mgr::set: Operation not allowed ! Manager is locked !");
       }
     if ((format_ != FORMAT_GENBB) && (format_ != FORMAT_BOOST))
       {
-	throw runtime_error ("genbb_mgr::set: Invalid format !");
+	throw logic_error ("genbb_mgr::set: Invalid format !");
       }
-    __format = format_;
+    _format_ = format_;
     return;
   }
 
   void genbb_mgr::set (const string & filename_)
   {
-    if (__initialized)
+    if (_initialized_)
       {
-	throw runtime_error ("genbb_mgr::set: Operation not allowed! Manager is locked!");
+	throw logic_error ("genbb_mgr::set: Operation not allowed! Manager is locked!");
       }
-    __filenames.push_back (filename_);
+    _filenames_.push_back (filename_);
     return;
   }
 
   bool genbb_mgr::has_next ()
   {
-    return __current.is_valid ();
+    return _current_.is_valid ();
   }
   
   void genbb_mgr::_load_next (primary_event & event_, 
 			     bool compute_classification_)
   {
     //provide the preloadedcurrent event:
-    event_ = __current;
+    event_ = _current_;
     if (compute_classification_) 
       {
 	event_.compute_classification ();
       }
     // try to load the next event:
-    __load_next ();
+    _load_next_ ();
     return;
   }
 
-  void genbb_mgr::__load_next_boost ()
+  void genbb_mgr::_load_next_boost_ ()
   {
-    if (! __reader.is_initialized ())
+    if (! _reader_.is_initialized ())
       {
 	string filename;
 
-	if (__filenames.size () == 0)
+	if (_filenames_.size () == 0)
 	  { 
-	    if (is_debug ()) clog << "genbb_mgr::__load_next_boost: no more filenames!" << endl;
+	    if (is_debug ()) clog << "genbb_mgr::_load_next_boost_: no more filenames!" << endl;
 	    return;
 	  }
 
-	filename = __filenames.front ();
-	__filenames.pop_front ();
+	filename = _filenames_.front ();
+	_filenames_.pop_front ();
 	if (filename.empty ()) 
 	  {
-	    if (is_debug ()) clog << "DEVEL: genbb_mgr::__load_next_boost: filename = '" << filename << "'" << endl;
+	    if (is_debug ()) clog << "DEVEL: genbb_mgr::_load_next_boost_: filename = '" << filename << "'" << endl;
 	    return;
 	  }
 	datatools::utils::fetch_path_with_env (filename);
-	__reader.init (filename, 
+	_reader_.init (filename, 
 		       datatools::serialization::using_multi_archives);
-	__current_filename = filename;
+	_current_filename_ = filename;
 	return;
       }
 
-    if (! __reader.is_initialized ())
+    if (! _reader_.is_initialized ())
       {
-	 throw runtime_error ("genbb_mgr::__load_next_boost: Reader is not initialized !");  
+	 throw logic_error ("genbb_mgr::_load_next_boost_: Reader is not initialized !");  
       }
 
-    if (! __reader.has_record_tag ())
+    if (! _reader_.has_record_tag ())
       {
-	 throw runtime_error ("genbb_mgr::__load_next_boost: Reader has no data !");  
+	 throw logic_error ("genbb_mgr::_load_next_boost_: Reader has no data !");  
       }
-    if (__reader.record_tag_is (primary_event::SERIAL_TAG)) 
+    if (_reader_.record_tag_is (primary_event::SERIAL_TAG)) 
       {
-	__reader.load (__current);
+	_reader_.load (_current_);
       }
-    if (! __reader.has_record_tag ())
+    if (! _reader_.has_record_tag ())
       {
-	__reader.reset ();
+	_reader_.reset ();
       }
 
     return;
   }
 
-  void genbb_mgr::__load_next ()
+  void genbb_mgr::_load_next_ ()
   {
-    __current.reset ();
-    if (__format == FORMAT_GENBB)
+    _current_.reset ();
+    if (_format_ == FORMAT_GENBB)
       {
-	__load_next_genbb ();
+	_load_next_genbb_ ();
       }
-    if (__format == FORMAT_BOOST)
+    if (_format_ == FORMAT_BOOST)
       {
-	__load_next_boost ();
+	_load_next_boost_ ();
       }
     return;
   }
     
-  void genbb_mgr::__load_next_genbb ()
+  void genbb_mgr::_load_next_genbb_ ()
   {
-    if (__in == 0)
+    if (_in_ == 0)
       {
-	if (is_debug ()) clog << "genbb_mgr::__load_next: no input stream!" << endl;
+	if (is_debug ()) clog << "genbb_mgr::_load_next_genbb_: no input stream!" << endl;
 	string filename;
 
-	if (__filenames.size () == 0)
+	if (_filenames_.size () == 0)
 	  { 
-	    if (is_debug ()) clog << "genbb_mgr::__load_next: no more filenames!" << endl;
+	    if (is_debug ()) clog << "genbb_mgr::_load_next_genbb_: no more filenames!" << endl;
 	    return;
 	  }
 
-	filename = __filenames.front ();
-	__filenames.pop_front ();
+	filename = _filenames_.front ();
+	_filenames_.pop_front ();
 	if (filename.empty ()) 
 	  {
-	    if (is_debug ()) clog << "DEVEL: genbb_mgr::__load_next: filename = '" << filename << "'" << endl;
+	    if (is_debug ()) clog << "DEVEL: genbb_mgr::_load_next_genbb_: filename = '" << filename << "'" << endl;
 	    return;
 	  }
 	datatools::utils::fetch_path_with_env (filename);
-	if (is_debug ()) clog << "DEVEL: genbb_mgr::__load_next: filename = '" << filename << "'" << endl;
-	__fin.close ();
-	__fin.open (filename.c_str ());
-	if (! __fin)
+	if (is_debug ()) clog << "DEVEL: genbb_mgr::_load_next_genbb_: filename = '" << filename << "'" << endl;
+	_fin_.close ();
+	_fin_.open (filename.c_str ());
+	if (! _fin_)
 	  {
 	    ostringstream message;
-	    message << "genbb_mgr::__load_next: cannot open file '"
+	    message << "genbb_mgr::_load_next_genbb_: cannot open file '"
 		    << filename << "'!";
 	    throw runtime_error (message.str ());
 	  }
-	__in = &__fin;
-	__current_filename = filename;
+	_in_ = &_fin_;
+	_current_filename_ = filename;
       }
   
-    if (is_debug ()) clog << "DEVEL: genbb_mgr::__load_next: __in = " << __in << endl;
+    if (is_debug ()) clog << "DEVEL: genbb_mgr::_load_next_genbb_: _in_ = " << _in_ << endl;
 
-    if (! *__in)
+    if (! *_in_)
       {
 	ostringstream message;
-	message << "genbb_mgr::__load_next: cannot load event!";
+	message << "genbb_mgr::_load_next_genbb_: cannot load event!";
 	throw runtime_error (message.str ());
       }
     int evnum;
     double time;
     int npart;
-    *__in >> ws >> evnum >> time >> npart;
-    if (! *__in)
+    *_in_ >> ws >> evnum >> time >> npart;
+    if (! *_in_)
       {
 	ostringstream message;
-	message << "genbb_mgr::__load_next: format error!";
-	throw runtime_error (message.str ());
+	message << "genbb_mgr::_load_next_genbb_: format error!";
+	throw logic_error (message.str ());
       }
-    __current.time = time * CLHEP::second;
+    _current_.time = time * CLHEP::second;
     double part_time = 0.0;
     for (int i = 0; i < npart; i++)
       {
@@ -284,30 +284,30 @@ namespace genbb {
 	int part_type;
 	double x, y ,z, time_shift;
 	// 2009-07-14 FM: Vladimir Tretyak email about particles' time shifts: 
-	//*__in >> ws >> pp.type >> x >> y >> z >> pp.time; 
-	*__in >> ws >> part_type >> x >> y >> z >> time_shift;
+	//*_in_ >> ws >> pp.type >> x >> y >> z >> pp.time; 
+	*_in_ >> ws >> part_type >> x >> y >> z >> time_shift;
 	part_time += time_shift; 
 	pp.set_type (part_type);
 	pp.set_time (part_time * CLHEP::second); // GENBB unit is s
 	
-	if (! *__in)
+	if (! *_in_)
 	  {
 	    ostringstream message;
-	    message << "genbb_mgr::__load_next: format error!";
-	    __fin.close ();
-	    __in = 0;
-	    throw runtime_error (message.str ());
+	    message << "genbb_mgr::_load_next_genbb_: format error!";
+	    _fin_.close ();
+	    _in_ = 0;
+	    throw logic_error (message.str ());
 	  }
 	geomtools::vector_3d p (x, y, z);
 	p *= CLHEP::MeV; // GENBB unit is MeV/c
 	pp.set_momentum (p);
-	__current.add_particle (pp);
+	_current_.add_particle (pp);
       }
-    *__in >> ws;
-    if (__fin.eof ())
+    *_in_ >> ws;
+    if (_fin_.eof ())
       {
-	__fin.close ();
-	__in = 0;
+	_fin_.close ();
+	_in_ = 0;
       }
     return;
   }
@@ -315,19 +315,19 @@ namespace genbb {
   void genbb_mgr::dump (ostream & out_) const
   {
     out_ << "genbb_mgr::dump: " << endl;
-    out_ << "|-- Debug : " << __debug << endl;
-    out_ << "|-- Initialized : " << __initialized << endl;
-    out_ << "|-- Format : " << (__format == FORMAT_GENBB? "GENBB": "Boost")<< endl;
-    out_ << "|-- Current input file: '" << __current_filename << "'" << endl;
+    out_ << "|-- Debug : " << _debug_ << endl;
+    out_ << "|-- Initialized : " << _initialized_ << endl;
+    out_ << "|-- Format : " << (_format_ == FORMAT_GENBB? "GENBB": "Boost")<< endl;
+    out_ << "|-- Current input file: '" << _current_filename_ << "'" << endl;
     out_ << "|-- List of remaining input files : " << endl;
-    for (list<string>::const_iterator it = __filenames.begin ();
-	 it != __filenames.end ();
+    for (list<string>::const_iterator it = _filenames_.begin ();
+	 it != _filenames_.end ();
 	 it++)
       {
 	list<string>::const_iterator jt = it;
 	jt++;
 	out_ << "|   ";
-	if (jt == __filenames.end ())
+	if (jt == _filenames_.end ())
 	  {
 	    out_ << "`-- ";
 	  }
@@ -337,32 +337,32 @@ namespace genbb {
 	  }
 	out_ << "Filename : '" << *it << "'" << endl; 
       } 
-    if (__format == FORMAT_GENBB)
+    if (_format_ == FORMAT_GENBB)
       {
-	out_ << "|-- GENBB current file address : " << hex << __in 
+	out_ << "|-- GENBB current file address : " << hex << _in_ 
 	     << dec << endl;
       }
-    if (__format == FORMAT_BOOST)
+    if (_format_ == FORMAT_BOOST)
       {
 	out_ << "|-- Current Boost reader : " 
-	     << (__reader.is_initialized ()? "Yes": "No") << endl;
+	     << (_reader_.is_initialized ()? "Yes": "No") << endl;
       }
     out_ << "`-- Current event: " << endl;
-    __current.dump (out_, "    "); 
+    _current_.dump (out_, "    "); 
     return;
   }
 
   void genbb_mgr::init ()
   {
-    if (__initialized) return;
-    __at_init ();
-    __initialized = true;
+    if (_initialized_) return;
+    _at_init_ ();
+    _initialized_ = true;
     return;
   }
 
-  void genbb_mgr::__at_init ()
+  void genbb_mgr::_at_init_ ()
   {
-    __load_next ();
+    _load_next_ ();
     return;
   }
 
@@ -374,9 +374,9 @@ namespace genbb {
 
   void genbb_mgr::initialize (const datatools::utils::properties & config_)
   {
-    if (__initialized) 
+    if (_initialized_) 
       {
-	throw runtime_error ("genbb_mgr::initialize: Already initialized !");
+	throw logic_error ("genbb_mgr::initialize: Already initialized !");
       }
     
     if (config_.has_flag ("debug"))
@@ -391,7 +391,7 @@ namespace genbb {
       }
     else
       {
-	throw runtime_error ("genbb_mgr::initialize: Missing 'format' of input files !");	
+	throw logic_error ("genbb_mgr::initialize: Missing 'format' of input files !");	
       }
 
     // try to build a list of input filenames from a pattern:
@@ -403,7 +403,7 @@ namespace genbb {
 	input_files_pattern = config_.fetch_string ("input_files.pattern");
 	if (input_files_pattern.empty ())
 	  {
-	    throw runtime_error ("genbb_mgr::initialize: Input files pattern is empty !");	
+	    throw logic_error ("genbb_mgr::initialize: Input files pattern is empty !");	
 	  }
 	if (config_.has_key ("input_files.directory"))
 	  {
@@ -451,7 +451,7 @@ namespace genbb {
 	    ostringstream message;
 	    message << "genbb_mgr::initialize: Cannot open list of input files '"
 		    << tmp_file << "' !";
-	    throw runtime_error (message.str());
+	    throw logic_error (message.str());
 	  }
 	while (fin)
 	  {
@@ -486,50 +486,50 @@ namespace genbb {
 	}
       else
 	{
-	  if (__filenames.empty ()) 
+	  if (_filenames_.empty ()) 
 	  {
-	    throw runtime_error ("genbb_mgr::initialize: Missing 'input_files' of input files !");	
+	    throw logic_error ("genbb_mgr::initialize: Missing list of input files !");	
 	  }
 	}
     }
 
-    __at_init ();
-    __initialized = true;
+    _at_init_ ();
+    _initialized_ = true;
     return;
   }
 
   void genbb_mgr::reset ()
   {
-    if (! __initialized) return;
-    __at_reset ();
-    __initialized = false;
+    if (! _initialized_) return;
+    _at_reset_ ();
+    _initialized_ = false;
     return;
   }
 
-  void genbb_mgr::__at_reset ()
+  void genbb_mgr::_at_reset_ ()
   {
-    __current_filename = "";
-    __filenames.clear ();
+    _current_filename_ = "";
+    _filenames_.clear ();
 
     // "genbb"
-    if (__format == FORMAT_GENBB)
+    if (_format_ == FORMAT_GENBB)
       {
-	if (__in != 0)
+	if (_in_ != 0)
 	  {
-	    __in = 0; 
-	    __fin.close ();
+	    _in_ = 0; 
+	    _fin_.close ();
 	  }
       }
 
     // "boost":
-    if (__format == FORMAT_BOOST)
+    if (_format_ == FORMAT_BOOST)
       {
-	if (__reader.is_initialized ())
+	if (_reader_.is_initialized ())
 	  {
-	    __reader.reset ();
+	    _reader_.reset ();
 	  }
       }
-    __format = FORMAT_GENBB;
+    _format_ = FORMAT_GENBB;
 
     return;
   }

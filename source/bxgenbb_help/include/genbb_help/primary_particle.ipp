@@ -37,13 +37,26 @@ namespace genbb {
       }
     a_ar & boost::serialization::make_nvp ("time", time);
     a_ar & boost::serialization::make_nvp ("momentum", momentum);
-    return;
+    if (a_version > 1)
+      {
+	// vertex attribute was introduced with version 2
+	a_ar & boost::serialization::make_nvp ("vertex", vertex);
+      }
+    else
+      {
+	// if load from version < 2, use an invalidated vertex attribute.
+	if (Archive::is_loading::value)
+	  {
+	    geomtools::invalidate (vertex);
+	  }
+      }
+   return;
   }
 
 } // end of namespace genbb
 
 #include <boost/serialization/version.hpp>
-BOOST_CLASS_VERSION(genbb::primary_particle, 1)
+BOOST_CLASS_VERSION(genbb::primary_particle, 2)
 
 #endif // __genbb_help__primary_particle_ipp
 

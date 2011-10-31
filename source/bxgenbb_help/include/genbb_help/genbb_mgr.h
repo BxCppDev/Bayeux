@@ -54,7 +54,7 @@ namespace genbb {
   {
   public:
 
-    enum format_t
+    enum format_type
       {
 	FORMAT_GENBB = 0,
 	FORMAT_BOOST = 1
@@ -62,17 +62,6 @@ namespace genbb {
 
     static const string FORMAT_GENBB_LABEL;
     static const string FORMAT_BOOST_LABEL;
-
-  private:
-    bool __debug;
-    bool __initialized;
-    list<string> __filenames;
-    string      __current_filename;
-    int         __format;
-    istream * __in;
-    ifstream  __fin;
-    datatools::serialization::data_reader __reader;
-    primary_event  __current;
 
   public: 
 
@@ -122,15 +111,27 @@ namespace genbb {
 
   private:
 
-    void __at_init ();
+    void _at_init_ ();
 
-    void __at_reset ();
+    void _at_reset_ ();
 
-    void __load_next ();
+    void _load_next_ ();
 
-    void __load_next_genbb ();
+    void _load_next_genbb_ ();
 
-    void __load_next_boost ();
+    void _load_next_boost_ ();
+
+  private:
+
+    bool _debug_;
+    bool _initialized_;
+    list<string> _filenames_;
+    string      _current_filename_;
+    int         _format_;
+    istream * _in_;
+    ifstream  _fin_;
+    datatools::serialization::data_reader _reader_;
+    primary_event  _current_;
 
   };
 
