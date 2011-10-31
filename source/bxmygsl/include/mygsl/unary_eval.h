@@ -31,7 +31,7 @@ namespace mygsl {
 
   private:
 
-    interval __domain; // domain of validity
+    interval _domain_; // domain of validity
 
   public:
 
@@ -64,7 +64,7 @@ namespace mygsl {
   {
   private:
 
-    const native_eval * __native_eval;
+    const native_eval * _native_eval_;
     
   public:
 

@@ -14,24 +14,26 @@ namespace mygsl {
 
   class fft_real
   {
-    bool   __initialized;
-    size_t _n;
-    double _start;
-    double _stop;
-    double _step;       // grid interval/scanning period
-    double _F0;         // scanning frequency
-    double * _data;     // sampled data
-    double * _data_rec; 
-    double * _freq;
-    double * _tmp;
-    double _Nyquist_freq;
-    double _min_freq_cutoff;
-    double _max_freq_cutoff;
+  private:
+
+    bool   _initialized_;
+    size_t _n_;
+    double _start_;
+    double _stop_;
+    double _step_;       // grid interval/scanning period
+    double _F0_;         // scanning frequency
+    double * _data_;     // sampled data
+    double * _data_rec_; 
+    double * _freq_;
+    double * _tmp_;
+    double _Nyquist_freq_;
+    double _min_freq_cutoff_;
+    double _max_freq_cutoff_;
 
     // gsl stuff:
-    gsl_fft_real_wavetable *        __the_real;
-    gsl_fft_halfcomplex_wavetable * __hc;
-    gsl_fft_real_workspace *        __work;
+    gsl_fft_real_wavetable *        _the_real_;
+    gsl_fft_halfcomplex_wavetable * _hc_;
+    gsl_fft_real_workspace *        _work_;
 
   public:
 
@@ -62,7 +64,7 @@ namespace mygsl {
 
   private:
 
-    void __process_filter ();
+    void _process_filter_ ();
 
   public:
 

@@ -10,27 +10,29 @@ namespace mygsl {
   
   size_t multi_eval::get_dimension () const
   {
-    return __domains.size ();
+    return _domains_.size ();
   }
   
   multi_eval::multi_eval (size_t dimension_)
   {  
-    __domains.assign (dimension_, interval::make_no_limit ());
+    _domains_.assign (dimension_, interval::make_no_limit ());
+    return;
   }
   
   multi_eval::~multi_eval ()
   {
-    __domains.clear ();
+    _domains_.clear ();
+    return;
   }
 
   bool multi_eval::is_valid (int i_, double x_) const
   {
-    return __domains[i_].is_in (x_);
+    return _domains_[i_].is_in (x_);
   }
 
   bool multi_eval::is_valid (const double * x_) const
   {
-    for (int i = 0; i < __domains.size (); i++)
+    for (int i = 0; i < _domains_.size (); i++)
       {
 	if (! is_valid (i, x_[i])) return false;
       }
@@ -39,12 +41,12 @@ namespace mygsl {
   
   interval & multi_eval::get_domain (int i_)
   {
-    return __domains[i_];
+    return _domains_[i_];
   }  
   
   const interval & multi_eval::get_domain (int i_) const
   {
-    return __domains[i_];
+    return _domains_[i_];
   }  
 
   double multi_eval::operator () (const double * x_) const
@@ -52,17 +54,18 @@ namespace mygsl {
     return evaluate (x_);
   }
 
-  void multi_eval::__check_dimension (size_t dim_) const
+  void multi_eval::_check_dimension_ (size_t dim_) const
   {
     if (dim_ != get_dimension ())
       {
-	throw runtime_error ("multi_eval::__check_dimension: Invalid dimension!");
+	throw runtime_error ("multi_eval::_check_dimension_: Invalid dimension!");
       }
+    return;
   }
   
   double multi_eval::evaluate (double x_) const
   {
-    __check_dimension (1);
+    _check_dimension_ (1);
     double v[1];
     v[0] = x_;
     return evaluate (v);
@@ -70,7 +73,7 @@ namespace mygsl {
   
   double multi_eval::evaluate (double x_, double y_) const
   {
-    __check_dimension (2);
+    _check_dimension_ (2);
     double v[2];
     v[0] = x_;
     v[1] = y_;
@@ -79,7 +82,7 @@ namespace mygsl {
   
   double multi_eval::evaluate (double x_, double y_, double z_) const
   {
-    __check_dimension (3);
+    _check_dimension_ (3);
     double v[3];
     v[0] = x_;
     v[1] = y_;
@@ -121,54 +124,56 @@ namespace mygsl {
 
   bool unary_eval_from_multi::is_valid (double x_) const
   {
-    return __multi_eval->is_valid (__index, x_);
+    return _multi_eval_->is_valid (_index_, x_);
   }
  
   const double & unary_eval_from_multi::param (int i_) const
   {
-    if ((i_ < 0) || (i_ >= __params.size ()))
+    if ((i_ < 0) || (i_ >= _params_.size ()))
       {
 	ostringstream message;
 	message << "unary_eval_from_multi::param: Invalid parameter index!";
 	throw runtime_error (message.str ());
       }
-    return __params[i_];
+    return _params_[i_];
   }
 
   double & unary_eval_from_multi::param (int i_)
   {
-    if ((i_ < 0) || (i_ >= __params.size ()))
+    if ((i_ < 0) || (i_ >= _params_.size ()))
       {
 	ostringstream message;
 	message << "unary_eval_from_multi::param: Invalid parameter index!";
 	throw runtime_error (message.str ());
       }
-    return __params[i_];
+    return _params_[i_];
   }
 
   void unary_eval_from_multi::set_index (int i_)
   {
-    if ((i_ < 0) || (i_ >= __multi_eval->get_dimension ()))
+    if ((i_ < 0) || (i_ >= _multi_eval_->get_dimension ()))
       {
 	ostringstream message;
 	message << "unary_eval_from_multi::set_index: Invalid parameter index!";
 	throw runtime_error (message.str ());
       }
-    __index = i_;
+    _index_ = i_;
+    return;
   }
 
   void unary_eval_from_multi::init (const multi_eval & multi_eval_, int i_, const vector<double> & params_)
   {
-    __multi_eval = &multi_eval_;
+    _multi_eval_ = &multi_eval_;
     set_index (i_);
-    if (params_.size () != __multi_eval->get_dimension ())
+    if (params_.size () != _multi_eval_->get_dimension ())
       {
 	ostringstream message;
 	message << "unary_eval_from_multi::init: Invalid const parameters dimension ";
 	throw runtime_error (message.str ());
       }
-    __index = i_;
-    __params = params_;
+    _index_ = i_;
+    _params_ = params_;
+    return;
   }
   
   unary_eval_from_multi::unary_eval_from_multi (const multi_eval & multi_eval_, 
@@ -176,6 +181,7 @@ namespace mygsl {
 						const vector<double> & params_)
   {
     init (multi_eval_, i_, params_);
+    return;
   }
 
   unary_eval_from_multi::unary_eval_from_multi (const multi_eval & multi_eval_, 
@@ -189,21 +195,23 @@ namespace mygsl {
 	v[i] = params_[i];
       }
     init (multi_eval_, i_, v);
+    return;
   }
 
   unary_eval_from_multi::~unary_eval_from_multi ()
   {
-    __params.clear ();
-    __multi_eval = 0;
+    _params_.clear ();
+    _multi_eval_ = 0;
+    return;
   }
   
   double unary_eval_from_multi::eval (double x_) const
   {
-    double backup = __params [__index];
+    double backup = _params_ [_index_];
     unary_eval_from_multi * tmp = const_cast<unary_eval_from_multi *>(this);
-    tmp->__params[__index] = x_;
-    double res = __multi_eval->evaluate (__params);
-    tmp->__params [__index] = backup;
+    tmp->_params_[_index_] = x_;
+    double res = _multi_eval_->evaluate (_params_);
+    tmp->_params_ [_index_] = backup;
     return res;
   }
   

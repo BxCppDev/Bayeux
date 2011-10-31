@@ -13,69 +13,73 @@ namespace mygsl {
 
   linear_system_solver::linear_system_solver (size_t dimension_)
   {
-    __dimension = 0;
-    __p = 0;
-    __x = 0; 
-    __vva = 0;
-    __vvb = 0;
-    if (dimension_ > 0) __init (dimension_);
+    _dimension_ = 0;
+    _p_ = 0;
+    _x_ = 0; 
+    _vva_ = 0;
+    _vvb_ = 0;
+    if (dimension_ > 0) _init_ (dimension_);
+    return;
   }
 
   linear_system_solver::~linear_system_solver ()
   {
-    __reset ();
+    _reset_ ();
+    return;
   }
 
-  void linear_system_solver::__reset ()
+  void linear_system_solver::_reset_ ()
   {
     if (g_debug) 
       {
-	std::clog << "DEVEL: linear_system_solver::__reset: entering..." 
+	std::clog << "DEVEL: linear_system_solver::_reset_: entering..." 
 		  << endl;
       }
-    if (__x) gsl_vector_free (__x);
-    if (__p) gsl_permutation_free (__p);
+    if (_x_) gsl_vector_free (_x_);
+    if (_p_) gsl_permutation_free (_p_);
 
-    gsl_vector_free (__vva);
-    gsl_vector_free (__vvb);
-    __vva = 0;
-    __vvb = 0;
-    //__va.clear ();
-    //__vb.clear ();
-    __dimension = 0;
+    gsl_vector_free (_vva_);
+    gsl_vector_free (_vvb_);
+    _vva_ = 0;
+    _vvb_ = 0;
+    //_va_.clear ();
+    //_vb_.clear ();
+    _dimension_ = 0;
+    return;
   }
 
-  void linear_system_solver::__init (size_t dimension_)
+  void linear_system_solver::_init_ (size_t dimension_)
   {
     if (g_debug) 
       {
-	std::clog << "DEVEL: linear_system_solver::__init: entering..." 
+	std::clog << "DEVEL: linear_system_solver::_init_: entering..." 
 		  << endl;
       }
     if (dimension_ < 1)
       {
-	throw runtime_error ("linear_system_solver::__init: Invalid dimension");
+	throw runtime_error ("linear_system_solver::_init_: Invalid dimension");
 	return;
       }
-    __dimension = dimension_;
-    //__va.assign (__dimension * __dimension, 0.0);
-    //__vb.assign (__dimension, 0.0);
-    __vva = gsl_vector_calloc (__dimension * __dimension);
-    __vvb = gsl_vector_calloc (__dimension);    
-    __m = gsl_matrix_view_array (__vva->data, __dimension, __dimension);
-    __b = gsl_vector_view_array (__vvb->data, __dimension);
-    __p = gsl_permutation_alloc (__dimension);
-    __x = gsl_vector_alloc (__dimension);
+    _dimension_ = dimension_;
+    //_va_.assign (_dimension_ * _dimension_, 0.0);
+    //_vb_.assign (_dimension_, 0.0);
+    _vva_ = gsl_vector_calloc (_dimension_ * _dimension_);
+    _vvb_ = gsl_vector_calloc (_dimension_);    
+    _m_ = gsl_matrix_view_array (_vva_->data, _dimension_, _dimension_);
+    _b_ = gsl_vector_view_array (_vvb_->data, _dimension_);
+    _p_ = gsl_permutation_alloc (_dimension_);
+    _x_ = gsl_vector_alloc (_dimension_);
+    return;
   }
 
   bool linear_system_solver::is_initialized () const
   {
-    return (__dimension > 0);
+    return (_dimension_ > 0);
   }
 
   size_t linear_system_solver::get_dimension () const
   {
-    return __dimension;
+    return _dimension_;
   }
 
   int linear_system_solver::solve (const vector<double> & a_, 
@@ -90,29 +94,29 @@ namespace mygsl {
 	std::cerr << "ERROR: linear_system_solver::solve: Invalid system dimensions!" << endl;
 	return EXIT_FAILURE;
       }
-    if (dim != __vvb->size)
+    if (dim != _vvb_->size)
       {
 	std::clog << "WARNING: linear_system_solver::solve: Redimensioning system!" << endl;
-	__reset ();
-	__init (dim);
+	_reset_ ();
+	_init_ (dim);
       }
     // input values:
     for (int i = 0; i < a_.size (); i++)
       {
-	gsl_vector_set (__vva, (size_t) i, a_[i]);
+	gsl_vector_set (_vva_, (size_t) i, a_[i]);
       }
     for (int i = 0; i < b_.size (); i++)
       {
-	gsl_vector_set (__vvb, (size_t) i, b_[i]);
+	gsl_vector_set (_vvb_, (size_t) i, b_[i]);
       }
     // computing:
     int s;
-    if (gsl_linalg_LU_decomp (&__m.matrix, __p, &s))
+    if (gsl_linalg_LU_decomp (&_m_.matrix, _p_, &s))
       {
 	std::cerr << "ERROR: linear_system_solver::solve: Cannot do LU decomposition!" << endl;
 	return EXIT_FAILURE;
       }
-    if (gsl_linalg_LU_solve (&__m.matrix, __p, &__b.vector, __x))
+    if (gsl_linalg_LU_solve (&_m_.matrix, _p_, &_b_.vector, _x_))
       {
 	std::cerr << "ERROR: linear_system_solver::solve: Cannot do LU solving!" << endl;
 	return EXIT_FAILURE;
@@ -120,18 +124,18 @@ namespace mygsl {
     if (debug)
       {
 	clog << "DEBUG: linear_system_solver::solve: x = (";
-	for (int i = 0; i < __dimension; i++)
+	for (int i = 0; i < _dimension_; i++)
 	  {
-	    clog << ' ' << gsl_vector_get (__x, i);
+	    clog << ' ' << gsl_vector_get (_x_, i);
 	  }
 	clog << ')' << endl;
       }
     // output values:
-    x_.reserve (__dimension);
+    x_.reserve (_dimension_);
     double check = 0.0;
-    for (int i = 0; i < __dimension; i++)
+    for (int i = 0; i < _dimension_; i++)
       {
-	x_[i] = gsl_vector_get (__x, i);
+	x_[i] = gsl_vector_get (_x_, i);
 	check += x_[i];
       }
     if (! isnormal (check))

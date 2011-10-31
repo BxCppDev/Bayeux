@@ -15,31 +15,52 @@ namespace mygsl {
 
   bool von_neumann_method::is_initialized () const
   {
-    return __func != 0;
+    return _func_ != 0;
   }
+
+  double von_neumann_method::get_xmin () const
+  {
+    return _xmin_;
+  }
+
+  double von_neumann_method::get_xmax () const
+  {
+    return _xmax_;
+  }
+
+  double von_neumann_method::get_fmax () const
+  {
+    return _fmax_;
+  }
+
+  size_t von_neumann_method::get_max_counts () const
+  {
+    return _max_counts_;
+  }
+
 
   von_neumann_method::von_neumann_method ()
   {
-    __xmin = std::numeric_limits<double>::quiet_NaN ();
-    __xmax = std::numeric_limits<double>::quiet_NaN ();
-    __fmax = std::numeric_limits<double>::quiet_NaN ();
-    __func = 0;
-    __max_counts = DEFAULT_MAX_COUNTS;
+    _xmin_ = std::numeric_limits<double>::quiet_NaN ();
+    _xmax_ = std::numeric_limits<double>::quiet_NaN ();
+    _fmax_ = std::numeric_limits<double>::quiet_NaN ();
+    _func_ = 0;
+    _max_counts_ = DEFAULT_MAX_COUNTS;
     return;
   }
 
   von_neumann_method::von_neumann_method (double xmin_, 
-					  double xmax_, 
-					  unary_eval & func_, 
-					  double fmax_,
-					  size_t nsamples_,
-					  size_t max_counts_)
+                                          double xmax_, 
+                                          unary_eval & func_, 
+                                          double fmax_,
+                                          size_t nsamples_,
+                                          size_t max_counts_)
   {
-    __xmin = std::numeric_limits<double>::quiet_NaN ();
-    __xmax = std::numeric_limits<double>::quiet_NaN ();
-    __fmax = std::numeric_limits<double>::quiet_NaN ();
-    __func = 0;
-    __max_counts = DEFAULT_MAX_COUNTS;
+    _xmin_ = std::numeric_limits<double>::quiet_NaN ();
+    _xmax_ = std::numeric_limits<double>::quiet_NaN ();
+    _fmax_ = std::numeric_limits<double>::quiet_NaN ();
+    _func_ = 0;
+    _max_counts_ = DEFAULT_MAX_COUNTS;
     init (xmin_, xmax_, func_, fmax_, nsamples_, max_counts_);
     return;
   }
@@ -47,111 +68,111 @@ namespace mygsl {
   void von_neumann_method::dump (std::ostream & out_) const
   {
     out_ << "von_neumann_method:" << std::endl;
-    out_ << "|-- x(min)      : " << __xmin << std::endl;
-    out_ << "|-- x(max)      : " << __xmax << std::endl;
-    out_ << "|-- f(max)      : " << __fmax << std::endl;
-    out_ << "|-- func        : " << std::hex << __func 
-	 << std::dec << std::endl;
-    out_ << "`-- counts(max) : " << __max_counts << std::endl;
+    out_ << "|-- x(min)      : " << _xmin_ << std::endl;
+    out_ << "|-- x(max)      : " << _xmax_ << std::endl;
+    out_ << "|-- f(max)      : " << _fmax_ << std::endl;
+    out_ << "|-- func        : " << std::hex << _func_ 
+         << std::dec << std::endl;
+    out_ << "`-- counts(max) : " << _max_counts_ << std::endl;
     return;
   }
 
   void von_neumann_method::reset ()
   {
     if (! is_initialized ()) return;
-    __xmin = std::numeric_limits<double>::quiet_NaN ();
-    __xmax = std::numeric_limits<double>::quiet_NaN ();
-    __fmax = std::numeric_limits<double>::quiet_NaN ();
-    __func = 0;
-    __max_counts = DEFAULT_MAX_COUNTS;
+    _xmin_ = std::numeric_limits<double>::quiet_NaN ();
+    _xmax_ = std::numeric_limits<double>::quiet_NaN ();
+    _fmax_ = std::numeric_limits<double>::quiet_NaN ();
+    _func_ = 0;
+    _max_counts_ = DEFAULT_MAX_COUNTS;
     return;
   }
 
   void von_neumann_method::init (double xmin_, 
-				 double xmax_, 
-				 unary_eval & func_, 
-				 double fmax_,
-				 size_t nsamples_,
-				 size_t max_counts_)
+                                 double xmax_, 
+                                 unary_eval & func_, 
+                                 double fmax_,
+                                 size_t nsamples_,
+                                 size_t max_counts_)
   {
     using namespace std;
     if (is_initialized ()) 
       {
-	ostringstream message;
-	message << "von_neumann_method::init: "
-		<< "Method is already initalized !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "von_neumann_method::init: "
+                << "Method is already initalized !";
+        throw runtime_error (message.str ());
       }
     if (g_debug)
       {
-	clog << "DEBUG: von_neumann_method::init: Entering..." 
-		  << endl;
+        clog << "DEBUG: von_neumann_method::init: Entering..." 
+             << endl;
       }
     if (xmin_ > xmax_)
       {
-	throw runtime_error ("von_neumann_method::init: invalid range!");
+        throw runtime_error ("von_neumann_method::init: invalid range!");
       }
-    __xmin = xmin_;
-    __xmax = xmax_;
+    _xmin_ = xmin_;
+    _xmax_ = xmax_;
     if (max_counts_ < 10)
       {
-	throw runtime_error ("von_neumann_method::init: invalid maximum number of tries!");
+        throw runtime_error ("von_neumann_method::init: invalid maximum number of tries!");
       }
-    __max_counts = max_counts_;
-    __func = &func_;
+    _max_counts_ = max_counts_;
+    _func_ = &func_;
 
     if (fmax_ > AUTO_FMAX)
       {
-	__fmax = fmax_;
+        _fmax_ = fmax_;
       }
     else 
       {
-	if (g_debug)
-	  {
-	    clog << "DEBUG: von_neumann_method::init: searching for 'f(max)'..." 
-		  << endl;
-	  }
-	double fmax = -1.0;
-	double f1 = -1.0;
-	double f2 = -1.0;
-	double dfmax = -1.0;
-	if (nsamples_ < 2)
-	  {
-	    throw runtime_error ("von_neumann_method::init: Invalid sampling!");
-	  }
-	double dx = (__xmax - __xmin) / nsamples_;
-	for (double x = __xmin;
-	     x <  (__xmax + 0.5 *dx);
-	     x += dx)
-	  {
-	    double f = (*__func) (x);
-	    if (f1 < 0.0)
-	      {
-		f1 = f;
-	      }
-	    else 
-	      {
-		f1 = f2;
-	      }
-	    f2 = f;
-	    if ( abs (f) > fmax)
-	      {
-		fmax = abs (f);
-		double df = (f2 - f1) / dx;
-		if (abs (df) > dfmax) dfmax = abs (df);
-	      }
-	  }
-	__fmax = fmax + dfmax * 2. * dx;
-	if (g_debug)
-	  {
-	    clog << "DEBUG: von_neumann_method::init: found 'f(max)' = "
-		      << __fmax << endl;
-	  }
+        if (g_debug)
+          {
+            clog << "DEBUG: von_neumann_method::init: searching for 'f(max)'..." 
+                 << endl;
+          }
+        double fmax = -1.0;
+        double f1 = -1.0;
+        double f2 = -1.0;
+        double dfmax = -1.0;
+        if (nsamples_ < 2)
+          {
+            throw runtime_error ("von_neumann_method::init: Invalid sampling!");
+          }
+        double dx = (_xmax_ - _xmin_) / nsamples_;
+        for (double x = _xmin_;
+             x <  (_xmax_ + 0.5 *dx);
+             x += dx)
+          {
+            double f = (*_func_) (x);
+            if (f1 < 0.0)
+              {
+                f1 = f;
+              }
+            else 
+              {
+                f1 = f2;
+              }
+            f2 = f;
+            if ( abs (f) > fmax)
+              {
+                fmax = abs (f);
+                double df = (f2 - f1) / dx;
+                if (abs (df) > dfmax) dfmax = abs (df);
+              }
+          }
+        _fmax_ = fmax + dfmax * 2. * dx;
+        if (g_debug)
+          {
+            clog << "DEBUG: von_neumann_method::init: found 'f(max)' = "
+                 << _fmax_ << endl;
+          }
       }
     if (g_debug)
       {
-	clog << "DEBUG: von_neumann_method::init: Exiting." 
-		  << endl;
+        clog << "DEBUG: von_neumann_method::init: Exiting." 
+             << endl;
       }
     return;
   }
@@ -159,23 +180,23 @@ namespace mygsl {
   double von_neumann_method::shoot (rng & ran_)
   {
     double res;
-    size_t max_counts = __max_counts;
+    size_t max_counts = _max_counts_;
     size_t counts = 0;
     while (true)
       {
-	double x = ran_.flat (__xmin, __xmax);
-	double y = ran_.flat (0.0, __fmax);
-	counts++;
-	double f = (*__func) (x);
-	if (y < f)
-	  {
-	    res = x;
-	    break;
-	  } 
-	if ((max_counts > 0) && (counts > max_counts))
-	  {
-	    throw runtime_error ("von_neumann_method::shoot: maximum number of tries has been reached!");
-	  }
+        double x = ran_.flat (_xmin_, _xmax_);
+        double y = ran_.flat (0.0, _fmax_);
+        counts++;
+        double f = (*_func_) (x);
+        if (y < f)
+          {
+            res = x;
+            break;
+          } 
+        if ((max_counts > 0) && (counts > max_counts))
+          {
+            throw runtime_error ("von_neumann_method::shoot: maximum number of tries has been reached!");
+          }
       } 
     return res;
   }

@@ -9,46 +9,45 @@
 namespace mygsl {
 
   class error
-    {
-    private:
+  {
+  public:
 
-      static bool  __active;
-      static error __singleton;
- 
-      error ();
+    static void to_string (const int gsl_errno_ , 
+                           std::string & err_string_);
 
-      ~error ();
+    static std::string to_string (const int gsl_errno_);
 
-    public:
+    static void set_handler (gsl_error_handler_t &);
 
-      static void to_string (const int gsl_errno_ , 
-			     std::string & err_string_);
+    static void off ();
 
-      static std::string to_string (const int gsl_errno_);
+    static void on ();
 
-    public:
+    static void set_default ();
 
-      static void set_handler (gsl_error_handler_t &);
+    static void set_gsl_default ();
 
-      static void off ();
+    static void  default_handler(const char * reason_ ,
+                                 const char * file_ ,
+                                 int line_ ,
+                                 int gsl_errno_);
+  private:
 
-      static void on ();
+    error ();
 
-      static void set_default ();
+    ~error ();
 
-      static void set_gsl_default ();
+  private:
 
-      static void  default_handler(const char * reason_ ,
-				   const char * file_ ,
-				   int line_ ,
-				   int gsl_errno_);
+    static bool  _active_;
+    static error _singleton_;
 
-    };
+  };
 
-#define MYGSL_ERROR(reason_, gsl_errno_) \
-       do { \
-       gsl_error (reason_, __FILE__, __LINE__, gsl_errno_) ; \
-       } while (0)
+#define MYGSL_ERROR(reason_, gsl_errno_)                        \
+  do {                                                          \
+    gsl_error (reason_, __FILE__, __LINE__, gsl_errno_) ;       \
+  } while (0)
  
 }
 

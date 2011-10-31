@@ -20,11 +20,11 @@ namespace mygsl {
 
     private:
 
-      bool       __lock_params;
-      params_col __params;
-      params_col __free_params;
-      params_col __auto_params;
-      params_col __const_params;
+      bool       _lock_params_;
+      params_col _params_;
+      params_col _free_params_;
+      params_col _auto_params_;
+      params_col _const_params_;
 
     public:
 
@@ -107,10 +107,10 @@ namespace mygsl {
        * public:
        *   void multiparameter_system::compute_automatic_params ()
        *     {
-       *       for (int i = 0; i < __auto_params.size (); i++)
+       *       for (int i = 0; i < _auto_params_.size (); i++)
        *	 {
-       *	   __auto_params[i]->set_value (666.);
-       *	   __auto_params[i]->set_auto_computed (true);
+       *	   _auto_params_[i]->set_value (666.);
+       *	   _auto_params_[i]->set_auto_computed (true);
        *	 }
        *     }
        * };

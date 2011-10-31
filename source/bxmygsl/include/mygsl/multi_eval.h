@@ -28,10 +28,8 @@ namespace mygsl {
   class multi_eval
   {
   public:
-    typedef vector<interval> multi_domain;
 
-  private:
-    multi_domain __domains;
+    typedef vector<interval> multi_domain;
 
   public:
 
@@ -45,7 +43,7 @@ namespace mygsl {
 
   private:
     
-    void __check_dimension (size_t dim_) const;
+    void _check_dimension_ (size_t dim_) const;
 
   public:
 
@@ -73,14 +71,15 @@ namespace mygsl {
     
     // to feed the GSL gsl_function interface:
     static double g_function (const double * x_, void * functor_);
+
+  private:
+
+    multi_domain _domains_;
     
   };
 
   class unary_eval_from_multi : public unary_eval
   {
-    int                __index;
-    const multi_eval * __multi_eval;
-    vector<double>     __params;
     
   public:
 
@@ -109,6 +108,12 @@ namespace mygsl {
   protected:
 
    double eval (double x_) const;
+
+  private:
+
+    int                _index_;
+    const multi_eval * _multi_eval_;
+    vector<double>     _params_;
 
   };
 

@@ -57,11 +57,11 @@ namespace mygsl {
 
     private:
 
-      bool   __min_included;
-      bool   __max_included;
-      double __min;
-      double __max;
-      double __eps;
+      bool   _min_included_;
+      bool   _max_included_;
+      double _min_;
+      double _max_;
+      double _eps_;
 
     public:
 

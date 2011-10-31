@@ -24,10 +24,6 @@ namespace mygsl {
 
   class arithmetic_mean 
     {
-    private:
-      size_t __n;
-      double __sum;
-      double __sum_of_squared;
     public:
       bool is_valid () const;
       size_t get_n () const;
@@ -40,13 +36,14 @@ namespace mygsl {
       void reset ();
       void add (double value_);
       void remove (double value_);
-    };
+     private:
+      size_t _n_;
+      double _sum_;
+      double _sum_of_squared_;
+   };
 
   class weighted_mean 
     {
-    private:
-      double __weight;
-      double __weighted_sum;
     public:
       bool is_valid () const;
       double get_weight () const;
@@ -55,6 +52,9 @@ namespace mygsl {
       weighted_mean ();
       void reset ();
       void add (double value_, double weight_);
+    private:
+      double _weight_;
+      double _weighted_sum_;
     };
 
 } // end of namespace mygsl

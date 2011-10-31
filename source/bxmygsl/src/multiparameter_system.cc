@@ -28,45 +28,45 @@ namespace mygsl {
 
   bool multiparameter_system::is_lock_params () const
   {
-    return __lock_params;
+    return _lock_params_;
   }
   
   size_t multiparameter_system::get_number_of_params () const
   {
-    return __params.size ();
+    return _params_.size ();
   }
   
   size_t multiparameter_system::get_number_of_free_params () const
   {
-    return __free_params.size ();
+    return _free_params_.size ();
   }
   
   size_t multiparameter_system::get_number_of_auto_params () const
   {
-    return __auto_params.size ();
+    return _auto_params_.size ();
   }
   
   size_t multiparameter_system::get_number_of_const_params () const
   {
-    return __const_params.size ();
+    return _const_params_.size ();
   }
 
   void multiparameter_system::init ()
   {
     lock_params ();
-    for (int i = 0; i < __auto_params.size (); i++)
+    for (int i = 0; i < _auto_params_.size (); i++)
       {
 	/*
 	cerr << "DEVEL: multiparameter_system::init: " 
 	     << "check wheter automatic parameter '" 
-	     << __auto_params[i]->get_name ()
+	     << _auto_params_[i]->get_name ()
 	     << "' has been computed..." << endl;
 	*/
-	if (! __auto_params[i]->is_auto_computed ())
+	if (! _auto_params_[i]->is_auto_computed ())
 	  {
 	    ostringstream message;
 	    message << "multiparameter_system::init: "
-		    << "automatic parameter '" << __auto_params[i]->get_name ()
+		    << "automatic parameter '" << _auto_params_[i]->get_name ()
 		    << "' has not been computed! Please do it in the overloaded 'compute_auto_params' method!";
 	    throw runtime_error (message.str ());
 	  }
@@ -82,7 +82,7 @@ namespace mygsl {
 	     << "entering..."
 	     << endl;
       }
-    if (__lock_params) 
+    if (_lock_params_) 
       {
 	unlock_params ();
       }
@@ -92,9 +92,9 @@ namespace mygsl {
 	     << "clearing free/auto/const params arrays..."
 	     << endl;
       }
-    __free_params.clear ();
-    __auto_params.clear ();
-    __const_params.clear ();
+    _free_params_.clear ();
+    _auto_params_.clear ();
+    _const_params_.clear ();
     if (devel)
       {
 	clog << "DEVEL: multiparameter_system::reset: "
@@ -105,13 +105,13 @@ namespace mygsl {
 	     << "deleting params..."
 	     << endl;
       }
-    for (int i = 0; i < __params.size (); i++)
+    for (int i = 0; i < _params_.size (); i++)
       {
-	if (__params[i] != 0)
+	if (_params_[i] != 0)
 	  {
-	    delete __params[i];
+	    delete _params_[i];
 	  }
-	__params[i] = 0;
+	_params_[i] = 0;
       }    
     if (devel)
       {
@@ -119,37 +119,37 @@ namespace mygsl {
 	     << "done."
 	     << endl;
       }
-    __params.clear ();
+    _params_.clear ();
   }
 
   void multiparameter_system::lock_params ()
   {
-    if (__lock_params) 
+    if (_lock_params_) 
       {
 	unlock_params ();
       }	
     compute_automatic_params ();
-    __lock_params = true;	
+    _lock_params_ = true;	
   }
 
   void multiparameter_system::unlock_params ()
   {
-    __lock_params = false;
+    _lock_params_ = false;
   }
   
   bool multiparameter_system::has_param_with_name (const string & name_) const
   {
-    return find_if (__params.begin (), 
-		    __params.end (), 
-		    param_ptr_has_name (name_)) != __params.end ();
+    return find_if (_params_.begin (), 
+		    _params_.end (), 
+		    param_ptr_has_name (name_)) != _params_.end ();
   }
 
   const param_entry & multiparameter_system::get_param_by_name (const string & name_) const
   {
-    params_col::const_iterator found = find_if (__params.begin (), 
-				__params.end (), 
+    params_col::const_iterator found = find_if (_params_.begin (), 
+				_params_.end (), 
 				param_ptr_has_name (name_));
-    if (found == __params.end ())
+    if (found == _params_.end ())
       {
 	ostringstream message;
 	message << "multiparameter_system::get_param_by_name: No parameter named '" << name_ << "'!"; 
@@ -160,10 +160,10 @@ namespace mygsl {
 
   param_entry & multiparameter_system::get_param_by_name (const string & name_)
   {
-    params_col::iterator found = find_if (__params.begin (), 
-				__params.end (), 
+    params_col::iterator found = find_if (_params_.begin (), 
+				_params_.end (), 
 				param_ptr_has_name (name_));
-    if (found == __params.end ())
+    if (found == _params_.end ())
       {
 	ostringstream message;
 	message << "multiparameter_system::get_param_by_name: No parameter named '" << name_ << "'!"; 
@@ -174,32 +174,32 @@ namespace mygsl {
 
   const param_entry & multiparameter_system::get_param (int i_) const
   {
-    return *(__params[i_]);
+    return *(_params_[i_]);
   }
 
   param_entry & multiparameter_system::get_param (int i_)
   {
-    return *(__params[i_]);
+    return *(_params_[i_]);
   }
 
   const param_entry & multiparameter_system::get_free_param (int i_) const
   {
-    return * (__free_params[i_]);
+    return * (_free_params_[i_]);
   }
 
   param_entry & multiparameter_system::get_free_param (int i_)
   {
-    return *__free_params.at (i_);
+    return *_free_params_.at (i_);
   }
 
   const param_entry & multiparameter_system::get_auto_param (int i_) const
   {
-    return * (__auto_params[i_]);
+    return * (_auto_params_[i_]);
   }
 
   param_entry & multiparameter_system::get_auto_param (int i_)
   {
-    return *__auto_params.at (i_);
+    return *_auto_params_.at (i_);
   }
 
   void multiparameter_system::add_param (const param_entry & pe_, const string & comment_)
@@ -212,9 +212,9 @@ namespace mygsl {
 	message << "system is locked!";
 	throw std::runtime_error (message.str ());            
       }
-    if (std::find_if (__params.begin (), 
-		      __params.end (), 
-		      param_ptr_has_name (pe_.get_name ())) != __params.end ()) 
+    if (std::find_if (_params_.begin (), 
+		      _params_.end (), 
+		      param_ptr_has_name (pe_.get_name ())) != _params_.end ()) 
       {
 	std::ostringstream message;
 	message << "multiparameter_system::add_param: ";
@@ -226,16 +226,16 @@ namespace mygsl {
 
     param_entry * new_pe = new param_entry (pe_);
     if (devel) new_pe->print (clog, "multiparameter_system::add_param: New entry", "DEVEL: ");
-    __params.push_back (new_pe);
+    _params_.push_back (new_pe);
     if (! comment_.empty ())new_pe->set_comment (comment_);
-    params_col::reverse_iterator last = __params.rbegin ();
+    params_col::reverse_iterator last = _params_.rbegin ();
     //clog << "DEVEL: last_pe= " << last  << endl;
 
     if (devel) 
       {
-	for (int i = 0; i < __params.size (); i++)
+	for (int i = 0; i < _params_.size (); i++)
 	  {
-	    __params[i]->print (clog, "multiparameter_system::add_param: List of params", "DEVEL: ");
+	    _params_[i]->print (clog, "multiparameter_system::add_param: List of params", "DEVEL: ");
 	  }
       }
     param_entry * last_pe = *last; 
@@ -248,17 +248,17 @@ namespace mygsl {
       }
     if (last_pe->is_free ())
       {
-	__free_params.push_back (last_pe);
+	_free_params_.push_back (last_pe);
 	clog << "DEVEL: free '" << last_pe->get_name () << "' pushed!" << endl;
       }
     else if (last_pe->is_auto ())
       {
-	__auto_params.push_back (last_pe);
+	_auto_params_.push_back (last_pe);
 	clog << "DEVEL: auto '" << last_pe->get_name () << "' pushed!" << endl;
       }
     else if (last_pe->is_const ())
       {
-	__const_params.push_back (last_pe);
+	_const_params_.push_back (last_pe);
 	clog << "DEVEL: const '" << last_pe->get_name () << "' pushed!" << endl;
       }
   }
@@ -274,7 +274,7 @@ namespace mygsl {
   // ctor:
   multiparameter_system::multiparameter_system ()
   {
-    __lock_params = false;
+    _lock_params_ = false;
   }
 
   // dtor:
@@ -285,9 +285,9 @@ namespace mygsl {
 
   void multiparameter_system::print_line (std::ostream & out_) const
   {
-    for (int i = 0; i < __params.size (); i++)
+    for (int i = 0; i < _params_.size (); i++)
       {
-	out_ << __params[i]->get_value () << ' ';
+	out_ << _params_[i]->get_value () << ' ';
       }
   }
       
@@ -304,26 +304,26 @@ namespace mygsl {
       {
 	out_ << indent << title_ << ":" << endl;
       }
-    out_ << indent << tag << "Locked: " << __lock_params << endl;
-    out_ << indent << tag << "Number of parameters : " << __params.size () << endl;
-    out_ << indent << stag << tag << "Number of free parameters  : " << __free_params.size () << endl;
-    out_ << indent << stag << tag << "Number of const parameters : " << __const_params.size () << endl;
-    out_ << indent << stag << ltag << "Number of auto parameters  : " << __auto_params.size () << endl;
+    out_ << indent << tag << "Locked: " << _lock_params_ << endl;
+    out_ << indent << tag << "Number of parameters : " << _params_.size () << endl;
+    out_ << indent << stag << tag << "Number of free parameters  : " << _free_params_.size () << endl;
+    out_ << indent << stag << tag << "Number of const parameters : " << _const_params_.size () << endl;
+    out_ << indent << stag << ltag << "Number of auto parameters  : " << _auto_params_.size () << endl;
     out_ << indent << ltag << "Parameters: " << endl;
-    for (int i = 0; i < __params.size (); i++)
+    for (int i = 0; i < _params_.size (); i++)
       {
 	string atag = tag;
 	string atag2 = stag;
-	if (i == (__params.size () - 1)) 
+	if (i == (_params_.size () - 1)) 
 	  {
 	    atag  = ltag;
 	    atag2 = sltag;
 	  }
 	ostringstream title_ss, indent_ss;
-	title_ss << atag << "Parameter '" << __params[i]->get_name () << "'";
+	title_ss << atag << "Parameter '" << _params_[i]->get_name () << "'";
 	indent_ss << indent << sltag << atag2; // << sltag << atag2;
 	out_ << indent << sltag << title_ss.str () << ":" << endl;
-	__params[i]->print (out_, "", indent_ss.str ()); 
+	_params_[i]->print (out_, "", indent_ss.str ()); 
       }
   }
 

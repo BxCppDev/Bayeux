@@ -26,42 +26,42 @@ using namespace std;
 namespace mygsl {
 
   class unary_eval_with_derivative : public unary_eval
-    {
+  {
 
-    public:
+  public:
 
-      unary_eval_with_derivative ();
+    unary_eval_with_derivative ();
 
-      unary_eval_with_derivative (const interval & domain_);
+    unary_eval_with_derivative (const interval & domain_);
       
-      virtual double eval_f (double x_) const = 0;
+    virtual double eval_f (double x_) const = 0;
 
-      virtual double eval_df_numeric (double x_) const;
+    virtual double eval_df_numeric (double x_) const;
       
-      virtual double eval_df (double x_) const;
+    virtual double eval_df (double x_) const;
 
-      virtual void eval_fdf (double x_, double & f_, double & df_) const;
+    virtual void eval_fdf (double x_, double & f_, double & df_) const;
       
-      double eval (double x_) const;
+    double eval (double x_) const;
       
 
-    };
+  };
    
   class unary_eval_promoted_with_numeric_derivative : public unary_eval_with_derivative
-    {
-    private:
+  {
+  private:
 
-      const unary_eval * __eval;
+    const unary_eval * _eval_;
       
-    public:
+  public:
 
-      bool is_valid (double x_) const;
+    bool is_valid (double x_) const;
       
-      unary_eval_promoted_with_numeric_derivative (const unary_eval & eval_);
+    unary_eval_promoted_with_numeric_derivative (const unary_eval & eval_);
       
-      double eval_f (double x_) const;
+    double eval_f (double x_) const;
       
-    };
+  };
 
 } // end of namespace mygsl
 

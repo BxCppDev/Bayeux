@@ -13,40 +13,40 @@ namespace mygsl {
   
   size_t arithmetic_mean::get_n () const
   {
-    return __n;
+    return _n_;
   }
 
   double arithmetic_mean::get_sum () const
   {
-    return __sum;
+    return _sum_;
   }
 
   double arithmetic_mean::get_sum_of_squared () const
   {
-    return __sum_of_squared;
+    return _sum_of_squared_;
   }
 
   bool arithmetic_mean::is_valid () const
   {
-    return __n > 0;
+    return _n_ > 0;
   }
 
   double arithmetic_mean::get_mean () const
   {
-    if (__n == 0)
+    if (_n_ == 0)
       {
 	throw runtime_error ("arithmetic_mean::get_mean: Not enough value !");
       }
-    return __sum / __n;
+    return _sum_ / _n_;
   }
 
   double arithmetic_mean::get_mean_of_squared () const
   {
-    if (__n == 0)
+    if (_n_ == 0)
       {
 	throw runtime_error ("arithmetic_mean::get_mean_of_squared: Not enough value !");
       }
-    return __sum_of_squared / __n;
+    return _sum_of_squared_ / _n_;
   }
 
   double arithmetic_mean::get_variance (bool bessel_correction_) const
@@ -56,9 +56,9 @@ namespace mygsl {
     if (bessel_correction_)
       {
 	nlim = 2;
-	v *= (__n / (__n - 1));
+	v *= (_n_ / (_n_ - 1));
       }
-    if (__n < nlim)
+    if (_n_ < nlim)
       {
 	throw runtime_error ("arithmetic_mean::get_variance: Not enough value !");
       }
@@ -70,70 +70,76 @@ namespace mygsl {
   arithmetic_mean::arithmetic_mean ()
   {
     reset ();
+    return;
   }
 
   void arithmetic_mean::reset ()
   {
-    __n = 0;
-    __sum = 0.0;
-    __sum_of_squared = 0.0;
+    _n_ = 0;
+    _sum_ = 0.0;
+    _sum_of_squared_ = 0.0;
+    return;
   }
 
   void arithmetic_mean::add (double value_)
   {
-    __n++;
-    __sum += value_;
-    __sum_of_squared += (value_ * value_);
+    _n_++;
+    _sum_ += value_;
+    _sum_of_squared_ += (value_ * value_);
+    return;
   }
 
   void arithmetic_mean::remove (double value_)
   {
-    if (__n == 0)
+    if (_n_ == 0)
       {
 	throw runtime_error ("arithmetic_mean::remove: Cannot remove any values !");
       }
-    __n--;
-    __sum -= value_;
-    __sum_of_squared -= (value_ * value_);
+    _n_--;
+    _sum_ -= value_;
+    _sum_of_squared_ -= (value_ * value_);
   }
   
   /***************************************/
 
   double weighted_mean::get_weight () const
   {
-    return __weight;
+    return _weight_;
   }
 
   double weighted_mean::get_weighted_sum () const
   {
-    return __weighted_sum;
+    return _weighted_sum_;
   }
 
   bool weighted_mean::is_valid () const
   {
-    return __weight != 0.0;
+    return _weight_ != 0.0;
   }
 
   double weighted_mean::get_mean () const
   {
-    return __weighted_sum / __weight;
+    return _weighted_sum_ / _weight_;
   }
   
   weighted_mean::weighted_mean ()
   {
     reset ();
+    return;
   }
 
   void weighted_mean::reset ()
   {
-    __weight = 0;
-    __weighted_sum = 0.0;
+    _weight_ = 0;
+    _weighted_sum_ = 0.0;
+    return;
   }
 
   void weighted_mean::add (double value_, double weight_)
   {
-    __weight += weight_ ;
-    __weighted_sum += value_ * weight_;
+    _weight_ += weight_ ;
+    _weighted_sum_ += value_ * weight_;
+    return;
   }
 
 }

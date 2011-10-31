@@ -1,3 +1,4 @@
+// -*- mode : c++; -*- 
 // mygsl::ode.h
 
 #ifndef __mygsl__ode_h 
@@ -17,38 +18,38 @@ namespace mygsl {
   public:
     static bool g_debug;
 
-    virtual bool has_jacobian() const
+    virtual bool has_jacobian () const
     {
       return false;
     }
 
-    virtual size_t get_dimension() const = 0;
+    virtual size_t get_dimension () const = 0;
 
-    virtual int compute_derivatives( double         t_ , 
-				     const double * y_ ,
-				     double       * f_  ) = 0;
+    virtual int compute_derivatives ( double         t_ , 
+                                      const double * y_ ,
+                                      double       * f_  ) = 0;
  
-    virtual int compute_jacobian( double         t_    , 
-				  const double * y_    ,
-				  double  *      dfdy_ ,
-				  double  *      dfdt_  ); 
+    virtual int compute_jacobian ( double         t_    , 
+                                   const double * y_    ,
+                                   double  *      dfdy_ ,
+                                   double  *      dfdt_  ); 
 
-    virtual void to_double_star( double * y_ , size_t dimension_ ) const = 0;
+    virtual void to_double_star ( double * y_ , size_t dimension_ ) const = 0;
 
-    virtual void from_double_star( const double * y_ , size_t dimension_ ) = 0;
+    virtual void from_double_star ( const double * y_ , size_t dimension_ ) = 0;
 
 
     // GSL interface:
-    static int gsl_ode_function( double t_ ,
-			 const double * y_ ,
-			 double * f_ ,
-			 void * params_ );
+    static int gsl_ode_function ( double t_ ,
+                                  const double * y_ ,
+                                  double * f_ ,
+                                  void * params_ );
 
-    static int gsl_ode_jacobian( double t_ ,
-			 const double * y_ ,
-			 double * dfdy_ ,
-			 double * dfdt_ ,
-			 void * params_ );
+    static int gsl_ode_jacobian ( double t_ ,
+                                  const double * y_ ,
+                                  double * dfdy_ ,
+                                  double * dfdt_ ,
+                                  void * params_ );
   };
  
 
@@ -62,111 +63,112 @@ namespace mygsl {
     {
 
     public:
-      virtual void action( double   t_ , 
-			   double * y_ , 
-			   size_t   dim_ ) = 0;
+      virtual void action ( double   t_ , 
+                            double * y_ , 
+                            size_t   dim_ ) = 0;
 
-      void operator()( double   t_ , 
-		       double * y_ , 
-		       size_t   dim_  )
+      void operator () ( double   t_ , 
+                         double * y_ , 
+                         size_t   dim_  )
       {
-	action(t_,y_,dim_);
+        action (t_,y_,dim_);
       }
 
     };
 
     struct default_step_action : public at_step_action
     {
-      virtual void action( double t_ , double * y_ , size_t dim_ );
+      virtual void action ( double t_ , double * y_ , size_t dim_ );
     };
 
-    static default_step_action __default_step_action;
+    static default_step_action _default_step_action_;
 
   private:
-    ode_system *                __ode_sys;
+    ode_system *                _ode_sys_;
 
     // GSL stuff:
-    std::string                 __type;
-    const gsl_odeiv_step_type * __step_type;
-    gsl_odeiv_step *            __step;
-    gsl_odeiv_control *         __control;
-    gsl_odeiv_evolve *          __evolve;
-    gsl_odeiv_system            __system;
-    bool                        __has_jacobian;
-    bool                        __regular;
-    double                      __epsabs;
-    double                      __epsrel;
+    std::string                 _type_;
+    const gsl_odeiv_step_type * _step_type_;
+    gsl_odeiv_step *            _step_;
+    gsl_odeiv_control *         _control_;
+    gsl_odeiv_evolve *          _evolve_;
+    gsl_odeiv_system            _system_;
+    bool                        _has_jacobian_;
+    bool                        _regular_;
+    double                      _epsabs_;
+    double                      _epsrel_;
 
     // internal state:
-    double                      __t_begin;
-    double                      __t_end;
-    double                      __h;
-    double                      __t;
-    double *                    __y;
+    double                      _t_begin_;
+    double                      _t_end_;
+    double                      _h_;
+    double                      _t_;
+    double *                    _y_;
 
     // hook step function:
-    at_step_action *            __at_step_action;
+    at_step_action *            _at_step_action_;
 
   public:
 
-    bool is_regular() const;
+    bool is_regular () const;
 
-    void regular();
+    void regular ();
 
-    void not_regular();
+    void not_regular ();
 
-    void unset_step_action();
+    void unset_step_action ();
 
-    void set_default_step_action();
+    void set_default_step_action ();
 
-    void set_step_action( at_step_action & asd_ );
+    void set_step_action ( at_step_action & asd_ );
 
-    static bool type_is_valid( const std::string & type_ );
+    static bool type_is_valid ( const std::string & type_ );
 
-    static bool type_requires_jacobian( const std::string & type_ );
+    static bool type_requires_jacobian ( const std::string & type_ );
 
-    static void print_types( std::ostream & );
+    static void print_types ( std::ostream & );
 
-    const std::string & get_type() const;
+    const std::string & get_type () const;
  
-    void set_type( const std::string & type_ ); 
+    void set_type ( const std::string & type_ ); 
 
-    size_t get_dimension() const;
+    size_t get_dimension () const;
 
-    ode_driver( ode_system & sys_ , 
-		const std::string & type_ = DEFAULT_TYPE ,
-		double epsabs_   = 1.e-6, 
-		double epsrel_   = 1.e-6,
-		bool   regular_  = false );
+    ode_driver ( ode_system & sys_ , 
+                 const std::string & type_ = DEFAULT_TYPE ,
+                 double epsabs_   = 1.e-6, 
+                 double epsrel_   = 1.e-6,
+                 bool   regular_  = false );
     
-    void reset();
+    void reset ();
 
-    virtual ~ode_driver();
+    virtual ~ode_driver ();
 
   private:
 
-    void __init_step();
+    void _init_step_ ();
 
   public:
 
-    void init();
+    void init ();
 
   protected:
     
-    void _at_step_hook();
+    void _at_step_hook ();
 
   private:
 
-    int __inner_run_not_regular();
+    int _inner_run_not_regular_ ();
 
-    int __inner_run_regular();
+    int _inner_run_regular_ ();
 
-    void __init_run();
+    void _init_run_ ();
     
-    void __done_run();
+    void _done_run_ ();
     
   public:
-    int run( double t_begin_ , double t_end_ , double h_ );
+
+    int run ( double t_begin_ , double t_end_ , double h_ );
     
   };
   

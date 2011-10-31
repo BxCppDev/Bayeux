@@ -37,16 +37,16 @@ namespace mygsl {
 
   private:
 
-    size_t              __dimension;
-    bool __use_gsl_vector;
-    std::vector<double> __va;
-    std::vector<double> __vb;
-    gsl_vector *        __vva;
-    gsl_vector *        __vvb;
-    gsl_matrix_view     __m;
-    gsl_vector_view     __b;
-    gsl_permutation *   __p;
-    gsl_vector *        __x;
+    size_t              _dimension_;
+    //bool                _use_gsl_vector_;
+    std::vector<double> _va_;
+    std::vector<double> _vb_;
+    gsl_vector *        _vva_;
+    gsl_vector *        _vvb_;
+    gsl_matrix_view     _m_;
+    gsl_vector_view     _b_;
+    gsl_permutation *   _p_;
+    gsl_vector *        _x_;
 
   public:
 
@@ -60,9 +60,9 @@ namespace mygsl {
 
   private:
 
-    void __reset ();
+    void _reset_ ();
 
-    void __init (size_t dimension_);
+    void _init_ (size_t dimension_);
 
   public:
 

@@ -12,13 +12,13 @@ namespace mygsl {
   
   unary_eval::unary_eval ()
   {
-    __domain = interval::make_no_limit ();
+    _domain_ = interval::make_no_limit ();
     return;
   }
   
   unary_eval::unary_eval (const interval & domain_)
   {
-    __domain = domain_;
+    _domain_ = domain_;
     return;
   }
   
@@ -29,17 +29,17 @@ namespace mygsl {
 
   bool unary_eval::is_valid (double x_) const
   {
-    return __domain.is_in (x_);
+    return _domain_.is_in (x_);
   }
   
   interval & unary_eval::get_domain ()
   {
-    return __domain;
+    return _domain_;
   }  
   
   const interval & unary_eval::get_domain () const
   {
-    return __domain;
+    return _domain_;
   }  
 
   double unary_eval::operator () (double x_) const
@@ -51,10 +51,10 @@ namespace mygsl {
   {
     if (! is_valid (x_))
       {
-	ostringstream message;
-	message << "unary_eval::evaluate: "
-		<< "value '" << x_ << "' is out of the evaluation domain!";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "unary_eval::evaluate: "
+                << "value '" << x_ << "' is out of the evaluation domain!";
+        throw runtime_error (message.str ());
       }
     return eval (x_);
   }
@@ -71,10 +71,10 @@ namespace mygsl {
   
   void unary_eval_from_native::set_native_eval (const native_eval & native_)
   {
-    __native_eval = &native_;
+    _native_eval_ = &native_;
     /*
-     * clog << "DEVEL: addr(native) = " << __native_eval << endl;
-     * clog << "DEVEL: addr(native) = " << (void *) (*__native_eval) << endl;
+     * clog << "DEVEL: addr(native) = " << _native_eval_ << endl;
+     * clog << "DEVEL: addr(native) = " << (void *) (*_native_eval_) << endl;
      */
     return;
   }
@@ -87,7 +87,7 @@ namespace mygsl {
   }
   
   unary_eval_from_native::unary_eval_from_native (const native_eval & native_,
-						  const interval & domain_)
+                                                  const interval & domain_)
     : unary_eval (domain_)
   {
     set_native_eval (native_);
@@ -96,13 +96,13 @@ namespace mygsl {
   
   unary_eval_from_native::~unary_eval_from_native ()
   {
-    __native_eval = 0;
+    _native_eval_ = 0;
     return;
   }
   
   double unary_eval_from_native::eval (double x_) const 
   {
-    return (*__native_eval) (x_);
+    return (*_native_eval_) (x_);
   }
   
 }

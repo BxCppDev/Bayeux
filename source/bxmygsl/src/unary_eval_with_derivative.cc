@@ -47,22 +47,22 @@ namespace mygsl {
     double df_abserr = 0.0;
     if (! is_valid (x_))
       {
-	ostringstream message;
-	message << "unary_eval_with_derivative::eval: "
-		<< "value '" << x_ << "' is out of the evaluation domain!";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "unary_eval_with_derivative::eval: "
+                << "value '" << x_ << "' is out of the evaluation domain!";
+        throw runtime_error (message.str ());
       }
     if (get_domain ().is_in_safe (x_))
       {
-	df = derivative_central (*this, x_, h, df_abserr);
+        df = derivative_central (*this, x_, h, df_abserr);
       }
     else if (get_domain ().is_in_min_unsafe (x_))
       {
-	df = derivative_forward (*this, x_, h, df_abserr);
+        df = derivative_forward (*this, x_, h, df_abserr);
       }
     else if (get_domain ().is_in_max_unsafe (x_))
       {
-	df = derivative_backward (*this, x_, h, df_abserr);
+        df = derivative_backward (*this, x_, h, df_abserr);
       }
     return df;
   }
@@ -72,19 +72,19 @@ namespace mygsl {
   unary_eval_promoted_with_numeric_derivative::unary_eval_promoted_with_numeric_derivative (const unary_eval & eval_)
     : unary_eval_with_derivative ()
   {
-    __eval = &eval_;
+    _eval_ = &eval_;
   } 
 
   bool unary_eval_promoted_with_numeric_derivative::is_valid (double x_) const
   {
     //clog << "DEVEL: unary_eval_promoted_with_numeric_derivative::is_valid: " << endl;
-    return __eval->is_valid (x_);
+    return _eval_->is_valid (x_);
   }
 
   double unary_eval_promoted_with_numeric_derivative::eval_f (double x_) const 
   {
     //clog << "DEVEL: unary_eval_promoted_with_numeric_derivative::eval_f: " << endl;
-    return (*__eval) (x_);
+    return (*_eval_) (x_);
   }
 
 }

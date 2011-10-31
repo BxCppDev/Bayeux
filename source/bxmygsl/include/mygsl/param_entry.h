@@ -1,3 +1,4 @@
+// -*- mode : c++; -*- 
 // mygsl::param_entry.h
 
 #ifndef __mygsl__param_entry_h
@@ -13,245 +14,221 @@ using namespace std;
 namespace mygsl {
 
   class param_entry
-    {
-    public:
+  {
+  public:
 
-      static const double NO_MIN_VALUE;
-      static const double NO_MAX_VALUE;
-      static const double NO_VALUE;
-      static const double DEFAULT_STEP;
-      static const double AUTO_STEP;
-      static const string AUTO_LABEL;
-      static const string FREE_LABEL;
-      static const string CONST_LABEL;
+    static const double NO_MIN_VALUE;
+    static const double NO_MAX_VALUE;
+    static const double NO_VALUE;
+    static const double DEFAULT_STEP;
+    static const double AUTO_STEP;
+    static const string AUTO_LABEL;
+    static const string FREE_LABEL;
+    static const string CONST_LABEL;
 
-      enum limit_t
-	{
-	  LIMIT_NO    = 0x0,
-	  LIMIT_MIN   = 0x1,
-	  LIMIT_MAX   = 0x2,
-	  LIMIT_RANGE = LIMIT_MIN | LIMIT_MAX
-	};
+    enum limit_t
+      {
+        LIMIT_NO    = 0x0,
+        LIMIT_MIN   = 0x1,
+        LIMIT_MAX   = 0x2,
+        LIMIT_RANGE = LIMIT_MIN | LIMIT_MAX
+      };
 
-      enum type_t
-	{
-	  TYPE_NULL  = 0x0,
-	  TYPE_FREE  = 0x1,
-	  TYPE_CONST = 0x2,
-	  TYPE_AUTO  = 0x4,
-	  TYPE_AUTO_COMPUTED = 0x8
-	};
+    enum type_t
+      {
+        TYPE_NULL  = 0x0,
+        TYPE_FREE  = 0x1,
+        TYPE_CONST = 0x2,
+        TYPE_AUTO  = 0x4,
+        TYPE_AUTO_COMPUTED = 0x8
+      };
 
-    private:
+  private:
 
-      string __name;
-      int    __type;
-      int    __limit;
-      double __min;
-      double __max;
-      double __value;
-      double __step;
-      string __comment;
-      best_value __best_value;
+    param_entry (const string & name_ = "parameter");
 
-    private:
+  public:
 
-      param_entry (const string & name_ = "parameter");
+    bool has_step () const;
 
-    public:
+    bool has_value () const;
 
-      bool has_step () const
-	{
-	  return __step == __step;
-	}
+    const string & get_name () const;
 
-      bool has_value () const
-	{
-	  return __value == __value;
-	}
+    const string & get_comment () const;
 
-      const string & get_name () const
-	{
-	  return __name;
-	}
+    void set_name (const string & name_);
 
-      const string & get_comment () const
-	{
-	  return __comment;
-	}
+    void set_comment (const string & comment_);
 
-      void set_name (const string & name_)
-	{
-	  __name = name_;
-	}
+    void set_best_value (const best_value & best_value_);
 
-      void set_comment (const string & comment_)
-	{
-	  __comment = comment_;
-	}
+    void reset_best_value ();
 
-      void set_best_value (const best_value & best_value_);
+    bool is_auto_computed () const;
 
-      void reset_best_value ();
+    void set_auto_computed (bool = true);
 
-      bool is_auto_computed () const;
+    bool has_best_value () const;
 
-      void set_auto_computed (bool = true);
+    const best_value & get_best_value () const;
 
-      bool has_best_value () const;
+    best_value & get_best_value ();
 
-      const best_value & get_best_value () const
-	{
-	  return __best_value;
-	}
+    bool is_const () const;
 
-      best_value & get_best_value ()
-	{
-	  return __best_value;
-	}
+    bool is_free () const;
 
-      bool is_const () const;
+    bool is_auto () const;
 
-      bool is_free () const;
+    bool has_limit () const;
 
-      bool is_auto () const;
+    bool has_no_limit () const;
 
-      bool has_limit () const {return __limit != LIMIT_NO; }
+    bool has_min () const;
 
-      bool has_no_limit () const {return __limit == LIMIT_NO; }
+    bool has_max () const;
 
-      bool has_min () const {return __limit & LIMIT_MIN; }
+    //bool is_in_range (double value_) const;
 
-      bool has_max () const {return __limit & LIMIT_MAX; }
+    bool is_in_range () const;
 
-      //bool is_in_range (double value_) const;
+    bool is_in_safe_range () const;
 
-      bool is_in_range () const;
+    //bool is_in_safe_range (double value_) const;
 
-      bool is_in_safe_range () const;
+    bool is_in_range_but_close_to_min () const;
 
-      //bool is_in_safe_range (double value_) const;
+    bool is_in_range_but_close_to_max () const;
 
-      bool is_in_range_but_close_to_min () const;
+    double get_overflow () const;
 
-      bool is_in_range_but_close_to_max () const;
+    double get_underflow () const;
 
-      double get_overflow () const;
+    double get_dist_to_min () const;
 
-      double get_underflow () const;
+    double get_dist_to_max () const;
 
-      double get_dist_to_min () const;
+    double get_dist_to_limit () const;
 
-      double get_dist_to_max () const;
+    double get_sign_limit () const;
 
-      double get_dist_to_limit () const;
+    double get_value () const;
 
-      double get_sign_limit () const;
+    double get_value_safe () const;
 
-      double get_value () const;
+    double get_value_safe (double & dist_) const;
 
-      double get_value_safe () const;
+    double get_step () const;
 
-      double get_value_safe (double & dist_) const;
+    double get_min () const;
 
-      double get_step () const;
+    double get_max () const;
 
-      double get_min () const;
+    void set_min_max (double min_, double max_);
 
-      double get_max () const;
+    void set_min (double min_);
 
-      void set_min_max (double min_, double max_);
+    void set_no_min ();
 
-      void set_min (double min_);
+    void set_max (double max_);
 
-      void set_no_min ();
+    void set_no_max ();
 
-      void set_max (double max_);
+    void set_step (double step_);
 
-      void set_no_max ();
+    void set_value (double value_);
 
-      void set_step (double step_);
-
-      void set_value (double value_);
-
-      void set_value_no_check (double value_);
+    void set_value_no_check (double value_);
   
-      bool check_value () const;
+    bool check_value () const;
     
-      static param_entry make_auto (const string & name_,
-				    double step_ = AUTO_STEP);
+    static param_entry make_auto (const string & name_,
+                                  double step_ = AUTO_STEP);
       
-      static param_entry make_auto_range (const string & name_,
-					  double min_,
-					  double max_,
-					  double step_ = AUTO_STEP); 
+    static param_entry make_auto_range (const string & name_,
+                                        double min_,
+                                        double max_,
+                                        double step_ = AUTO_STEP); 
       
-      static param_entry make_auto_min (const string & name_,
-					double min_,
-					double step_ = AUTO_STEP); 
+    static param_entry make_auto_min (const string & name_,
+                                      double min_,
+                                      double step_ = AUTO_STEP); 
       
-      static param_entry make_auto_max (const string & name_,
-					double max_,
-					double step_ = AUTO_STEP); 
+    static param_entry make_auto_max (const string & name_,
+                                      double max_,
+                                      double step_ = AUTO_STEP); 
       
-      static param_entry make_free (const string & name_,
-				    double value_,
-				    double step_ = AUTO_STEP);
+    static param_entry make_free (const string & name_,
+                                  double value_,
+                                  double step_ = AUTO_STEP);
       
-      static param_entry make_free_range (const string & name_,
-					  double min_,
-					  double max_,
-					  double value_,
-					  double step_ = AUTO_STEP);	
+    static param_entry make_free_range (const string & name_,
+                                        double min_,
+                                        double max_,
+                                        double value_,
+                                        double step_ = AUTO_STEP);      
       
-      static param_entry make_free_min (const string & name_,
-					double min_,
-					double value_,
-					double step_ = AUTO_STEP);	
+    static param_entry make_free_min (const string & name_,
+                                      double min_,
+                                      double value_,
+                                      double step_ = AUTO_STEP);        
       
-      static param_entry make_free_max (const string & name_,
-					double max_,
-					double value_,
-					double step_ = AUTO_STEP);	
+    static param_entry make_free_max (const string & name_,
+                                      double max_,
+                                      double value_,
+                                      double step_ = AUTO_STEP);        
       
-      static param_entry make_const (const string & name_,
-				     double value_);
+    static param_entry make_const (const string & name_,
+                                   double value_);
       
-      void print (ostream & out_ = clog, 
-		  const string & title_ = "Parameter", 
-		  const string & indent_ = "") const;
+    void print (ostream & out_ = clog, 
+                const string & title_ = "Parameter", 
+                const string & indent_ = "") const;
 
-      void print_status (ostream & out_ = clog) const;
+    void print_status (ostream & out_ = clog) const;
 
-    };
+  private:
+
+    string _name_;
+    int    _type_;
+    int    _limit_;
+    double _min_;
+    double _max_;
+    double _value_;
+    double _step_;
+    string _comment_;
+    best_value _best_value_;
+
+  };
 
   // predicate:
   struct param_has_name : unary_function<bool,param_entry>
   {
-    string __name;
+    string _name_;
 
-    param_has_name (const string & name_) : __name (name_) 
+    param_has_name (const string & name_) : _name_ (name_) 
     {
     }
 
     bool operator () (const param_entry & pe_)
     {
-      return pe_.get_name () == __name;
+      return pe_.get_name () == _name_;
     }
   };
 
   // predicate:
   struct param_ptr_has_name : unary_function<bool,param_entry *>
   {
-    string __name;
+    string _name_;
 
-    param_ptr_has_name (const string & name_) : __name (name_) 
+    param_ptr_has_name (const string & name_) : _name_ (name_) 
     {
     }
 
     bool operator () (const param_entry * pe_)
     {
-      return pe_->get_name () == __name;
+      return pe_->get_name () == _name_;
     }
   };
 
@@ -260,6 +237,7 @@ namespace mygsl {
   {
     param_is_free ()  
     {
+      return;
     }
 
     bool operator () (const param_entry & pe_)
@@ -273,6 +251,7 @@ namespace mygsl {
   {
     param_is_const ()  
     {
+      return;
     }
 
     bool operator () (const param_entry & pe_)
@@ -286,6 +265,7 @@ namespace mygsl {
   {
     param_is_auto ()  
     {
+      return;
     }
 
     bool operator () (const param_entry & pe_)

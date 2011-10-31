@@ -29,123 +29,118 @@
 
 #include <gsl/gsl_rng.h>
 
-// Not ready yet !
-//#include <boost/stdint.hpp>
-//#include <cstdint>
-
 namespace mygsl {
 
   using namespace std;
 
   class rng
-	{
-	public:
+  {
+  public:
       
-		static bool g_debug;
+    static bool g_debug;
 
-		static const std::string DEFAULT_RNG_TYPE;
+    static const std::string DEFAULT_RNG_TYPE;
 
-		struct initializer
-		{
-			std::map<std::string, const gsl_rng_type *> dict;
-			initializer ();
-			~initializer ();
-		};
+    struct initializer
+    {
+      std::map<std::string, const gsl_rng_type *> dict;
+      initializer ();
+      ~initializer ();
+    };
       
-		typedef vector<unsigned char> state_buffer_t;
+    typedef vector<unsigned char> state_buffer_type;
 
-	private:
+  private:
 
-		static initializer g__initializer;
+    static initializer g_initializer_;
 
-		gsl_rng * __r;
+    gsl_rng * _r_;
 
-	public:
+  public:
 
-		static void default_setup ();
+    static void default_setup ();
 
-		static void print_dict (std::ostream &);
+    static void print_dict (std::ostream &);
 
-	public:
+  public:
 
-		bool is_initialized () const;
+    bool is_initialized () const;
 
-		void initialize (const std::string & id_ = "mt19937", 
-										 unsigned long int seed_ = 0);
+    void initialize (const std::string & id_ = "mt19937", 
+                     unsigned long int seed_ = 0);
 
-		void init (const std::string & id_ = "mt19937", 
-							 unsigned long int seed_ = 0);
+    void init (const std::string & id_ = "mt19937", 
+               unsigned long int seed_ = 0);
 
-		void set_seed (unsigned long int seed_ = 0);
+    void set_seed (unsigned long int seed_ = 0);
 
-		// rng ();
+    // rng ();
             
-		rng (const std::string & id_ = "mt19937", unsigned long int seed_ = 0);
+    rng (const std::string & id_ = "mt19937", unsigned long int seed_ = 0);
 
-		void reset ();
+    void reset ();
       
-		virtual ~rng ();
+    virtual ~rng ();
 
-		rng (const rng &); // not implemented
+    rng (const rng &); // not implemented
 
-		void dump (ostream & = clog) const;
+    void dump (ostream & = clog) const;
 
-		rng & operator= (const rng &); // not implemented
+    rng & operator= (const rng &); // not implemented
       
-		unsigned long int get ();
+    unsigned long int get ();
       
-		double uniform ();
+    double uniform ();
       
-		double uniform_pos ();
+    double uniform_pos ();
       
-		unsigned long int uniform_int (unsigned long int n_);
+    unsigned long int uniform_int (unsigned long int n_);
       
-		std::string name () const;
+    std::string name () const;
       
-		unsigned long int min () const;
+    unsigned long int min () const;
       
-		unsigned long int max () const;
+    unsigned long int max () const;
  
-		void store (const std::string & filename_) const;
+    void store (const std::string & filename_) const;
 
-		void load (const std::string & filename_);
+    void load (const std::string & filename_);
 
-		void to_stream (std::ostream &) const;
+    void to_stream (std::ostream &) const;
 
-		void from_stream (std::istream &);
+    void from_stream (std::istream &);
 
-		void to_buffer (state_buffer_t &) const;
+    void to_buffer (state_buffer_type &) const;
 
-		void from_buffer (const state_buffer_t &);
+    void from_buffer (const state_buffer_type &);
    
-		size_t get_internal_state_size () const;
+    size_t get_internal_state_size () const;
 
-		// specific distributions:
+    // specific distributions:
  
-		double flat (double a_, double b_) const;
+    double flat (double a_, double b_) const;
       
-		double gaussian (double sigma_ = 1.0) const;
+    double gaussian (double sigma_ = 1.0) const;
       
-		double gaussian (double mu_, double sigma_) const;
+    double gaussian (double mu_, double sigma_) const;
 
-		double gaussian_tail (double min_, double sigma_ = 1.0) const;
+    double gaussian_tail (double min_, double sigma_ = 1.0) const;
 
-		double exponential (double sigma_ = 1.0) const;
+    double exponential (double sigma_ = 1.0) const;
 
-		double chisquare (double nu_ = 1.0) const;
+    double chisquare (double nu_ = 1.0) const;
 
-		unsigned long int poisson (double mu_) const;
+    unsigned long int poisson (double mu_) const;
 
-		unsigned long int bernoulli (double p_ = 0.5) const;
+    unsigned long int bernoulli (double p_ = 0.5) const;
 
-		unsigned long int binomial (double p_, 
-																unsigned long int n_) const;
+    unsigned long int binomial (double p_, 
+                                unsigned long int n_) const;
 
-		// 2009-11-08 FM: to be used as a functor:
-		double operator () (void);
+    // 2009-11-08 FM: to be used as a functor:
+    double operator () (void);
 
-
-	};
+  };
   
 }
 

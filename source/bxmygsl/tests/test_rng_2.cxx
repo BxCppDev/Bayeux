@@ -23,7 +23,7 @@ int main (int argc_ , char ** argv_)
       mygsl::rng r;
       r.init (rng_id, seed);
     
-      mygsl::rng::state_buffer_t buffer_init;
+      mygsl::rng::state_buffer_type buffer_init;
       clog << "Storing the initial internal state in some buffer..." << endl;
       r.to_buffer (buffer_init);
       clog << endl;
@@ -42,7 +42,7 @@ int main (int argc_ , char ** argv_)
 	}
     
       clog << "Storing the internal state in some buffer..." << endl;
-      mygsl::rng::state_buffer_t buffer;
+      mygsl::rng::state_buffer_type buffer;
       r.to_buffer (buffer);
 
       clog << "Fire some other values :" << endl;

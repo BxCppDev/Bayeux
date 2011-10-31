@@ -115,14 +115,14 @@ namespace mygsl {
     // predicate:
     struct param_has_name : std::unary_function<bool,param_entry>
     {
-      std::string __name;
-      param_has_name (const std::string & name_) : __name (name_) 
+      std::string _name_;
+      param_has_name (const std::string & name_) : _name_ (name_) 
       {
 	return;
       }
       bool operator () (const param_entry & pe_)
       {
-	return pe_.name == __name;
+	return pe_.name == _name_;
       }
     };
 
@@ -167,19 +167,19 @@ namespace mygsl {
 
   protected:
 
-    bool                     __lock_params;
-    std::vector<param_entry> __params;
+    bool                     _lock_params;
+    std::vector<param_entry> _params;
 
   private:
 
-    size_t __free_dimension;
-    size_t __auto_dimension;
+    size_t _free_dimension_;
+    size_t _auto_dimension_;
  
-    void __update_free_dimension ();
+    void _update_free_dimension_ ();
 
-    void __update_auto_dimension ();
+    void _update_auto_dimension_ ();
 
-    void __update_dimensions ();
+    void _update_dimensions_ ();
 
   public:
  
@@ -320,37 +320,37 @@ namespace mygsl {
 			   double f_);
     };
       
-    static default_step_action __default_step_action;
+    static default_step_action _default_step_action_;
       
   private:
 
-    bool __verbose;
-    int  __mode;
-    const gsl_multimin_fdfminimizer_type * __algo_fdf;
-    const gsl_multimin_fminimizer_type   * __algo_f;
-    gsl_multimin_fdfminimizer * __fdfmin;
-    gsl_multimin_fminimizer   * __fmin;
-    gsl_multimin_function       __f;
-    gsl_multimin_function_fdf   __fdf;
-    gsl_vector                * __x;
-    gsl_vector                * __ss;
-    multimin_system           * __sys;
+    bool _verbose_;
+    int  _mode_;
+    const gsl_multimin_fdfminimizer_type * _algo_fdf_;
+    const gsl_multimin_fminimizer_type   * _algo_f_;
+    gsl_multimin_fdfminimizer * _fdfmin_;
+    gsl_multimin_fminimizer   * _fmin_;
+    gsl_multimin_function       _f_;
+    gsl_multimin_function_fdf   _fdf_;
+    gsl_vector                * _x_;
+    gsl_vector                * _ss_;
+    multimin_system           * _sys_;
 
-    double                      __fdf_step_size;
-    double                      __fdf_tol;
-    size_t                      __max_iter;
-    size_t                      __n_iter;
+    double                      _fdf_step_size_;
+    double                      _fdf_tol_;
+    size_t                      _max_iter_;
+    size_t                      _n_iter_;
 
-    double                      __fval;
-    int                         __stopping;
-    double                      __epsabs;
+    double                      _fval_;
+    int                         _stopping_;
+    double                      _epsabs_;
 
     // hook step function:
-    at_step_action *            __at_step_action;
+    at_step_action *            _at_step_action_;
 
-    void __init_algorithm (const std::string & name_);
+    void _init_algorithm_ (const std::string & name_);
 
-    void __set_mode (int mode_);
+    void _set_mode_ (int mode_);
 
   public:
 
@@ -377,11 +377,15 @@ namespace mygsl {
 
     virtual ~multimin ();
 
+  protected:
+
     void _at_step_hook (int status_ ,
 			size_t iter_ , 
 			double * x_ , 
 			size_t   dim_ , 
 			double f_);
+
+  public:
 
     int minimize (double epsabs_);
 

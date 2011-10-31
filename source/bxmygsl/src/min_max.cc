@@ -14,22 +14,22 @@ namespace mygsl {
 
   double min_max::get_min () const
   {
-    return __min;
+    return _min_;
   }
 
   double min_max::get_max () const
   {
-    return __max;
+    return _max_;
   }
 
   bool min_max::is_valid () const
   {
-    return __min <= __max;
+    return _min_ <= _max_;
   }
 
   double min_max::get_median () const
   {
-    return 0.5 * (__min + __max);
+    return 0.5 * (_min_ + _max_);
   }
   
   min_max::min_max ()
@@ -40,27 +40,27 @@ namespace mygsl {
 
   void min_max::reset ()
   {
-    __min = 0.0;
-    __max = -1.0;
+    _min_ = 0.0;
+    _max_ = -1.0;
     return;
   }
 
   void min_max::add (double value_)
   {
-    if (__min > __max)
+    if (_min_ > _max_)
       {
-	__min = value_;
-	__max = value_;
+	_min_ = value_;
+	_max_ = value_;
       }
     else
       {
-	if (value_ < __min)
+	if (value_ < _min_)
 	  {
-	    __min = value_;
+	    _min_ = value_;
 	  }
-	if (value_ > __max)
+	if (value_ > _max_)
 	  {
-	    __max = value_;
+	    _max_ = value_;
 	  }
       }    
     return;

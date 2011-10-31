@@ -1,3 +1,4 @@
+// -*- mode:c++; -*- 
 // mygsl::datapoint.h
 
 #ifndef __mygsl__datapoint_h 
@@ -13,37 +14,40 @@ using namespace std;
 namespace mygsl {
 
   class datapoint
-    {
-    private:
+  {
 
-      double __x, __y, __sigma;
+  public:
 
-    public:
+    datapoint ();
 
-      datapoint ();
+    datapoint (double x_, 
+	       double y_, 
+	       double sigma_ = numeric_limits<double>::quiet_NaN ());
 
-      datapoint (double x_, 
-		 double y_, 
-		 double sigma_ = numeric_limits<double>::quiet_NaN ());
+    const double & x () const;
 
-      const double & x () const;
+    const double & y () const;
 
-      const double & y () const;
+    const double & sigma () const;
 
-      const double & sigma () const;
+    bool has_sigma () const;
 
-      bool has_sigma () const;
+    bool is_weighted () const;
 
-      bool is_weighted () const;
+    friend ostream & operator<< (ostream &, const datapoint &);
 
-      friend ostream & operator<< (ostream &, const datapoint &);
+    friend istream & operator>> (istream &, datapoint &);
 
-      friend istream & operator>> (istream &, datapoint &);
+    static bool comp_by_x (const datapoint & p1_, 
+			   const datapoint & p2_);
 
-      static bool comp_by_x (const datapoint & p1_, 
-			     const datapoint & p2_);
+  private:
 
-    };
+    double _x_;
+    double _y_;
+    double _sigma_;
+
+  };
 
 }
 

@@ -45,26 +45,20 @@ namespace mygsl {
 
   private:
 
-    bool               __verbose;
-    bool               __table_locked;
-    std::string        __interpolator_name;
-    points_map_t       __points;
-    gsl_spline *       __gs;
-    gsl_interp_accel * __giacc;
-    double             __x_min;
-    double             __x_max;
+    bool               _verbose_;
+    bool               _table_locked_;
+    std::string        _interpolator_name_;
+    points_map_t       _points_;
+    gsl_spline *       _gs_;
+    gsl_interp_accel * _giacc_;
+    double             _x_min_;
+    double             _x_max_;
 
   public:
 
-    bool is_verbose () const
-    {
-      return __verbose;
-    }
+    bool is_verbose () const;
 
-    void set_verbose (bool v_ = true)
-    {
-      __verbose = v_;
-    }
+    void set_verbose (bool v_ = true);
 
     bool is_valid (double x_) const;
 
@@ -72,7 +66,7 @@ namespace mygsl {
 
     const points_map_t & points () const;
 
-    static const std::string & default_interpolator_name();
+    static const std::string & default_interpolator_name ();
 
     static bool interpolator_name_is_valid (const std::string & name_);
 
@@ -111,8 +105,8 @@ namespace mygsl {
     virtual void tabfunc_store (std::ostream & out_ , void * context_ = 0) const;
 
     void print_points (std::ostream & out_ , 
-		       const std::string & header_comment_ = "" ,
-		       const std::string & footer_comment_ = "") const;
+                       const std::string & header_comment_ = "" ,
+                       const std::string & footer_comment_ = "") const;
 
   };
 

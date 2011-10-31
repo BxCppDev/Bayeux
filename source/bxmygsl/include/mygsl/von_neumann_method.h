@@ -8,7 +8,9 @@
  * 
  * 
  * Description: 
- *   Abstract interface for R to R functor
+ *
+ *  A Von Neumann Pseudo Random Number generator
+ *  for an arbitrary  R to R functor used as the density function.
  *
  * History: 
  * 
@@ -27,70 +29,58 @@ using namespace std;
 namespace mygsl {
 
   class von_neumann_method
-    {
-    public:
+  {
+  public:
 
-      static bool g_debug;
-      static const double AUTO_FMAX;
-      static const size_t DEFAULT_NSAMPLES   = 1000;
-      static const size_t DEFAULT_MAX_COUNTS = 10000;
-      static const size_t NO_MAX_COUNTS      = 0;
+    static bool g_debug;
+    static const double AUTO_FMAX;
+    static const size_t DEFAULT_NSAMPLES   = 1000;
+    static const size_t DEFAULT_MAX_COUNTS = 10000;
+    static const size_t NO_MAX_COUNTS      = 0;
 
-    private:
+  private:
 
-      double __xmin;
-      double __xmax;
-      double __fmax;
-      unary_eval * __func;
-      size_t       __max_counts;
+    double _xmin_;
+    double _xmax_;
+    double _fmax_;
+    unary_eval * _func_;
+    size_t       _max_counts_;
 
-    public:
+  public:
 
-      bool is_initialized () const;
+    bool is_initialized () const;
 
-      double get_xmin () const
-      {
-	return __xmin;
-      }
+    double get_xmin () const;
+ 
+    double get_xmax () const;
+ 
+    double get_fmax () const;
 
-      double get_xmax () const
-      {
-	return __xmax;
-      }
+    size_t get_max_counts () const;
 
-      double get_fmax () const
-      {
-	return __fmax;
-      }
+    von_neumann_method ();
 
-      size_t get_max_counts () const
-      {
-	return __max_counts;
-      }
+    von_neumann_method (double xmin_, 
+                        double xmax_, 
+                        unary_eval & func_, 
+                        double fmax_ = AUTO_FMAX,
+                        size_t nsamples_ = DEFAULT_NSAMPLES,
+                        size_t max_counts_ = DEFAULT_MAX_COUNTS);
 
-      von_neumann_method ();
+    void init (double xmin_, 
+               double xmax_, 
+               unary_eval & func_, 
+               double fmax_,
+               size_t nsamples_ = 0,
+               size_t max_counts_ = DEFAULT_MAX_COUNTS);
 
-      von_neumann_method (double xmin_, 
-			  double xmax_, 
-			  unary_eval & func_, 
-			  double fmax_ = AUTO_FMAX,
-			  size_t nsamples_ = DEFAULT_NSAMPLES,
-			  size_t max_counts_ = DEFAULT_MAX_COUNTS);
+    void reset ();
 
-      void init (double xmin_, 
-		 double xmax_, 
-		 unary_eval & func_, 
-		 double fmax_,
-		 size_t nsamples_ = 0,
-		 size_t max_counts_ = DEFAULT_MAX_COUNTS);
+    double shoot (rng &);
 
-      void reset ();
+    void dump (std::ostream & out_ = std::clog) const;
 
-      double shoot (rng &);
-
-      void dump (std::ostream & out_ = std::clog) const;
-
-    };
+  };
 
 } // end of namespace mygsl
 

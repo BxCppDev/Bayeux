@@ -164,10 +164,10 @@ namespace mygsl {
 
     private:
 
-      double          __bin_spacing;
-      double          __underflow;
-      double          __overflow;
-      gsl_histogram * __h;
+      double          _bin_spacing_;
+      double          _underflow_;
+      double          _overflow_;
+      gsl_histogram * _h_;
 
     public:
 
@@ -191,12 +191,12 @@ namespace mygsl {
 	  template<class _ran_functor_t>
 	    double sample (_ran_functor_t & ran_)
 	    {
-	      return  gsl_histogram_pdf_sample (__pdf, ran_());
+	      return  gsl_histogram_pdf_sample (_pdf_, ran_());
 	    }
 
 	private:
 
-	  gsl_histogram_pdf * __pdf;
+	  gsl_histogram_pdf * _pdf_;
 	  
 	};
 

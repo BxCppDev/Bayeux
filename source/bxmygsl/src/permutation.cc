@@ -8,30 +8,31 @@
 
 namespace mygsl {
 
-  bool permutation::__check () const
+  bool permutation::_check_ () const
   {
-    if (__perm  == 0) return false;
+    if (_perm_  == 0) return false;
     if (size () == 0) return false;
     return true;
   }
 
-  void permutation::__check_throw (size_t i_, const string & where_) const
+  void permutation::_check_throw_ (size_t i_, const string & where_) const
   {
-    if (! __check ())
+    if (! _check_ ())
       {
-	ostringstream message;
-	message << "permutation::" << where_ << ": "
-		<< "Permutation is not initialized!";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "permutation::" << where_ << ": "
+                << "Permutation is not initialized!";
+        throw runtime_error (message.str ());
       }
     if (i_ >= size ())
       {
-	ostringstream message;
-	message << "permutation::" << where_ << ": "
-		<< "Invalid permutation index " << i_ 
-		<< "!";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "permutation::" << where_ << ": "
+                << "Invalid permutation index " << i_ 
+                << "!";
+        throw runtime_error (message.str ());
       }
+    return;
   }
 
   bool permutation::is_initialized () const
@@ -42,52 +43,53 @@ namespace mygsl {
   const size_t * permutation::data () const
   {
     if (size () == 0) return 0;
-    return gsl_permutation_data (__perm);
+    return gsl_permutation_data (_perm_);
   }
 
   size_t permutation::inversions () const
   {
-    __check_throw (0, "inversions");
-    return gsl_permutation_inversions (__perm);
+    _check_throw_ (0, "inversions");
+    return gsl_permutation_inversions (_perm_);
   }
 
   size_t permutation::linear_cycles () const
   {
-    __check_throw (0, "linear_cycles");
-    return gsl_permutation_linear_cycles (__perm);
+    _check_throw_ (0, "linear_cycles");
+    return gsl_permutation_linear_cycles (_perm_);
   }
 
   size_t permutation::canonical_cycles () const
   {
-    __check_throw (0, "canonical_cycles");
-    return gsl_permutation_canonical_cycles (__perm);
+    _check_throw_ (0, "canonical_cycles");
+    return gsl_permutation_canonical_cycles (_perm_);
   }
 
   size_t permutation::get (size_t i_) const
   {
-    __check_throw (i_, "get");
-    return gsl_permutation_get (__perm, i_);
+    _check_throw_ (i_, "get");
+    return gsl_permutation_get (_perm_, i_);
   }
   
   void permutation::swap (size_t i_, size_t j_)
   {
-    __check_throw (i_, "swap");
-    __check_throw (j_, "swap");
+    _check_throw_ (i_, "swap");
+    _check_throw_ (j_, "swap");
     if (i_ == j_) return;
-    gsl_permutation_swap (__perm, i_, j_);
+    gsl_permutation_swap (_perm_, i_, j_);
+    return;
   }
 
   bool permutation::is_valid () const
   {
-    if (! __check ()) return false;
-    return gsl_permutation_valid (__perm);
+    if (! _check_ ()) return false;
+    return gsl_permutation_valid (_perm_);
   }
 
   size_t permutation::size () const
   {
-    if (__perm != 0)
+    if (_perm_ != 0)
       {
-	return gsl_permutation_size (__perm);
+        return gsl_permutation_size (_perm_);
       }
     return 0;
   }
@@ -95,31 +97,35 @@ namespace mygsl {
   // ctor:
   permutation::permutation ()
   {
-    __perm = 0;
+    _perm_ = 0;
+    return;
   }
 
   // ctor:
   permutation::permutation (size_t sz_)
   {
-    __perm = 0;
+    _perm_ = 0;
     init (sz_);
+    return;
   }
 
   // ctor:
   permutation::permutation (const permutation & p_)
   {
-    __perm = 0;
+    _perm_ = 0;
     size_t sz = p_.size ();
     if (sz > 0)
       {
-	__perm = gsl_permutation_calloc (sz);
+        _perm_ = gsl_permutation_calloc (sz);
       }
+    return;
   }
 
   // dtor:
   permutation::~permutation ()
   {
     reset ();
+    return;
   }
 
   permutation & permutation::operator= (const permutation & p_)
@@ -128,11 +134,11 @@ namespace mygsl {
     size_t sz = p_.size ();
     if (size () != sz)
       {
-	reset ();
+        reset ();
       }
     if (sz > 0)
       {
-	gsl_permutation_memcpy (__perm, p_.__perm);
+        gsl_permutation_memcpy (_perm_, p_._perm_);
       }
  
     return *this;
@@ -140,70 +146,72 @@ namespace mygsl {
 
   void permutation::reset ()
   {
-    if (__perm != 0)
+    if (_perm_ != 0)
       {
-	gsl_permutation_free (__perm);
-	__perm = 0;
+        gsl_permutation_free (_perm_);
+        _perm_ = 0;
       }
   }
 
   void permutation::init (size_t sz_)
   {
-    if (__perm != 0)
+    if (_perm_ != 0)
       {
-	reset ();
+        reset ();
       }
     if (sz_ > 0)
       {
-	__perm = gsl_permutation_calloc (sz_);
+        _perm_ = gsl_permutation_calloc (sz_);
       }
-    if (__perm == 0) 
+    if (_perm_ == 0) 
       {
-	ostringstream message;
-	message << "permutation::init: "
-		<< "Cannot allocate permutation with size " 
-		<< sz_ << "!";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "permutation::init: "
+                << "Cannot allocate permutation with size " 
+                << sz_ << "!";
+        throw runtime_error (message.str ());
       }
+    return;
   }
 
   void permutation::reverse ()
   {
-    __check_throw (0, "reverse");
-    gsl_permutation_reverse (__perm);
+    _check_throw_ (0, "reverse");
+    gsl_permutation_reverse (_perm_);
+    return;
   }
 
   bool permutation::inverse (permutation & p_)
   {
-    __check_throw (0, "inverse");
+    _check_throw_ (0, "inverse");
     p_.init (this->size ());
-    return gsl_permutation_inverse (p_.__perm, this->__perm) == GSL_SUCCESS;
+    return gsl_permutation_inverse (p_._perm_, this->_perm_) == GSL_SUCCESS;
   }
 
   bool permutation::canonical_to_linear (permutation & p_)
   {
-    __check_throw (0, "canonical_to_linear");
+    _check_throw_ (0, "canonical_to_linear");
     p_.init (this->size ());
-    return gsl_permutation_canonical_to_linear (p_.__perm, this->__perm) == GSL_SUCCESS;
+    return gsl_permutation_canonical_to_linear (p_._perm_, this->_perm_) == GSL_SUCCESS;
   }
 
   bool permutation::linear_to_canonical (permutation & p_)
   {
-    __check_throw (0, "linear_to_canonical");
+    _check_throw_ (0, "linear_to_canonical");
     p_.init (this->size ());
-    return gsl_permutation_linear_to_canonical (p_.__perm, this->__perm) == GSL_SUCCESS;
+    return gsl_permutation_linear_to_canonical (p_._perm_, this->_perm_) == GSL_SUCCESS;
   }
 
   bool permutation::next ()
   {
-    __check_throw (0, "next");
-    return gsl_permutation_next (__perm) == GSL_SUCCESS;
+    _check_throw_ (0, "next");
+    return gsl_permutation_next (_perm_) == GSL_SUCCESS;
   }
 
   bool permutation::previous ()
   {
-    __check_throw (0, "previous");
-    return gsl_permutation_prev (__perm) == GSL_SUCCESS;
+    _check_throw_ (0, "previous");
+    return gsl_permutation_prev (_perm_) == GSL_SUCCESS;
   }
 
   permutation & permutation::operator++ ()
@@ -222,13 +230,14 @@ namespace mygsl {
   {
     for (int i = 0; i < size (); i++)
       {
-	if (i != 0)
-	  {
-	    out_ << ' ';
-	  }
-	out_ << dec << get (i);
+        if (i != 0)
+          {
+            out_ << ' ';
+          }
+        out_ << dec << get (i);
       }
-   if (eol_) out_ << endl;
+    if (eol_) out_ << endl;
+    return;
   }
   
   ostream & operator<< (ostream & out_, const permutation & p_)
@@ -236,11 +245,11 @@ namespace mygsl {
     out_ << '(';
     for (int i = 0; i < p_.size (); i++)
       {
-	if (i != 0)
-	  {
-	    out_ << ", ";
-	  }
-	out_ << p_.get (i);
+        if (i != 0)
+          {
+            out_ << ", ";
+          }
+        out_ << p_.get (i);
       }
     out_ << ')';
     return out_;
@@ -255,66 +264,66 @@ namespace mygsl {
     list<size_t> values;
     if (! in_)
       {
-	in_.putback (c);
-	return in_;
+        in_.putback (c);
+        return in_;
       }
     if (c != '(')
       {
-	in_.putback (c);
-	in_.setstate (ios::failbit);
-	return in_;
+        in_.putback (c);
+        in_.setstate (ios::failbit);
+        return in_;
       }
     c = 0;
     in_.get (c);
     if (! in_)
       {
-	in_.putback (c);
-	return in_;
+        in_.putback (c);
+        return in_;
       }
     if (c != ')')
       {
-	in_.putback (c);
+        in_.putback (c);
       }
     else
       {
-	return in_;
+        return in_;
       }
     while (true)
       {
-	size_t val;
-	in_ >> val;
-	if (! in_)
-	  {
-	    return in_;
-	  }
-	count++;
-	values.push_back (val);
-	c = 0;
-	in_.get (c);
-	if (! in_)
-	  {
-	    in_.putback (c);
-	    return in_;
-	  }
-	if ((c != ',' ) && (c != ')'))
-	  {
-	    in_.putback (c);
-	    in_.setstate (ios::failbit);
-	    return in_;	    
-	  }
-	if (c == ')')
-	  {
-	    break;
-	  }
+        size_t val;
+        in_ >> val;
+        if (! in_)
+          {
+            return in_;
+          }
+        count++;
+        values.push_back (val);
+        c = 0;
+        in_.get (c);
+        if (! in_)
+          {
+            in_.putback (c);
+            return in_;
+          }
+        if ((c != ',' ) && (c != ')'))
+          {
+            in_.putback (c);
+            in_.setstate (ios::failbit);
+            return in_;     
+          }
+        if (c == ')')
+          {
+            break;
+          }
       }
     if (count > 0)
       {
-	p_.init (count);
-	for (int i = 0; i < count; i++)
-	  {
-	    p_.__perm->data[i] = values.front ();
-	    values.pop_front ();
-	  }
+        p_.init (count);
+        for (int i = 0; i < count; i++)
+          {
+            p_._perm_->data[i] = values.front ();
+            values.pop_front ();
+          }
       }
     return in_;
   }

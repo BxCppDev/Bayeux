@@ -14,23 +14,23 @@ namespace mygsl {
     {
     private:
 
-      ostream & (*__function) (ostream &, const Type & );
+      ostream & (*_function_) (ostream &, const Type & );
 
-      Type             __value;
+      Type _value_;
   
     public:
-      OstreamManipulator(ostream & (*function_) (ostream &, 
-						 const Type & ), 
-			 const Type & value_)
-	: __function(function_),__value(value_) 
-	{ 
-	}
+    OstreamManipulator(ostream & (*function_) (ostream &, 
+                                               const Type & ), 
+                       const Type & value_)
+      : _function_(function_),_value_(value_) 
+      { 
+      }
 
       friend ostream & operator<< (ostream & os_, 
-				   const OstreamManipulator & os_manip_)
-	{
-	  return os_manip_.__function (os_, os_manip_.__value);
-	} 
+                                   const OstreamManipulator & os_manip_)
+      {
+        return os_manip_._function_ (os_, os_manip_._value_);
+      } 
     };
 
   template <class Type> 
@@ -38,23 +38,23 @@ namespace mygsl {
     {
     private:
 
-      istream & (*__function) (istream &, Type &);
+      istream & (*_function_) (istream &, Type &);
 
-      Type         &   __value;
+      Type & _value_;
 
     public:
 
       IstreamManipulatorRef (istream & (*function_) (istream &, Type &),
-			     Type & value_)
-	: __function (function_), __value (value_) 
-	{ 
-	}
+                             Type & value_)
+        : _function_ (function_), _value_ (value_) 
+      { 
+      }
       
       friend istream & operator>> (istream & is_, 
-				   const IstreamManipulatorRef & is_manip_) 
-	{
-	  return is_manip_.__function (is_, is_manip_.__value);
-	} 
+                                   const IstreamManipulatorRef & is_manip_) 
+      {
+        return is_manip_._function_ (is_, is_manip_._value_);
+      } 
     };
 
 
@@ -67,14 +67,14 @@ namespace mygsl {
   IstreamManipulatorRef<double> idouble (double & x_); 
   
   class ioutils
-    {
-    public:
+  {
+  public:
 
-      static const string NAN_STRING;
-      static const string INF_POS_STRING;
-      static const string INF_NEG_STRING;
+    static const string NAN_STRING;
+    static const string INF_POS_STRING;
+    static const string INF_NEG_STRING;
  
-    };
+  };
  
 }
 

@@ -22,9 +22,6 @@ namespace mygsl {
 
   class min_max 
     {
-    private:
-      double __min;
-      double __max;
     public:
       bool is_valid () const;
       double get_min () const;
@@ -33,7 +30,10 @@ namespace mygsl {
       min_max ();
       void reset ();
       void add (double value_);
-    };
+    private:
+      double _min_;
+      double _max_;
+     };
 
 } // end of namespace mygsl
 
