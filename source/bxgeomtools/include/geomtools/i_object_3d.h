@@ -34,84 +34,84 @@ namespace geomtools {
 
   class i_object_3d :
     public datatools::utils::i_tree_dumpable
+  {
+  public:
+    enum dimensional_t
+      {
+        DIMENSIONAL_0 = 0,
+        DIMENSIONAL_1 = 1,
+        DIMENSIONAL_2 = 2,
+        DIMENSIONAL_3 = 3
+      };
+
+  public:
+    static const uint32_t ALL_SURFACES;
+    static const uint32_t NO_SURFACES;
+    static const double DEFAULT_TOLERANCE;
+    static const double USING_PROPER_TOLERANCE;
+
+  public:
+
+    bool has_user_draw () const;
+
+    void set_user_draw (void * user_draw_);
+
+    void * get_user_draw () const;
+
+    // must be implemented from inherited classes:
+    virtual int get_dimensional () const = 0;
+
+    double get_tolerance () const;
+
+    void set_tolerance (double tolerance_);
+
+    datatools::utils::properties & properties ();
+
+    const datatools::utils::properties & properties () const;
+
+    virtual std::string get_shape_name () const = 0;
+
+    virtual bool is_composite () const;
+
+    virtual void compute_bounding_box (box & bb_);
+
+  public:
+
+    i_object_3d ();
+
+    i_object_3d (double tolerance_);
+
+    virtual ~i_object_3d ();
+
+    virtual void reset ();
+
+    virtual void tree_dump (ostream & out_         = clog, 
+                            const string & title_  = "", 
+                            const string & indent_ = "", 
+                            bool inherit_          = false) const;
+      
+
+  private:
+
+    double _tolerance_; //!< Tolerance to check surface/curve belonging
+    datatools::utils::properties _properties_; //!< List of properties
+    void * _user_draw_; //!< An address that may point to some drawing function (may be used by the gnuplot renderer)
+
+  public:
+
+    /*** Object 3D getter ***/
+    class i_getter
     {
     public:
-      enum dimensional_t
-      {
-	DIMENSIONAL_0 = 0,
-	DIMENSIONAL_1 = 1,
-	DIMENSIONAL_2 = 2,
-	DIMENSIONAL_3 = 3
-      };
-
-    public:
-      static const uint32_t ALL_SURFACES;
-      static const uint32_t NO_SURFACES;
-      static const double DEFAULT_TOLERANCE;
-      static const double USING_PROPER_TOLERANCE;
-
-    private:
-
-      double __tolerance; //!< Tolerance to check surface/curve belonging
-      datatools::utils::properties __properties; //!< List of properties
-      void * __user_draw; //!< An address that may point to some drawing function (may be used by the gnuplot renderer)
-
-    public:
-
-      bool has_user_draw () const;
-
-      void set_user_draw (void * user_draw_);
-
-      void * get_user_draw () const;
-
-      // must be implemented from inherited classes:
-      virtual int get_dimensional () const = 0;
-
-      double get_tolerance () const;
-
-      void set_tolerance (double tolerance_);
-
-      datatools::utils::properties & properties ();
-
-      const datatools::utils::properties & properties () const;
-
-      virtual std::string get_shape_name () const = 0;
-
-      virtual bool is_composite () const;
-
-      virtual void compute_bounding_box (box & bb_);
-
-    public:
-
-      i_object_3d ();
-
-      i_object_3d (double tolerance_);
-
-      virtual ~i_object_3d ();
-
-      virtual void reset ();
-
-      virtual void tree_dump (ostream & out_         = clog, 
-			      const string & title_  = "", 
-			      const string & indent_ = "", 
-			      bool inherit_          = false) const;
-      
-
-    public:
-
-      /*** Object 3D getter ***/
-      class i_getter
-      {
-      public:
-	
-	virtual const i_object_3d * get (const string & name_, 
-					 const datatools::utils::properties & params_) = 0;
-	
-	const i_object_3d * get (const string & name_);
-	
-      };
-      
+        
+      virtual const i_object_3d * get (const string & name_, 
+                                       const datatools::utils::properties & params_) = 0;
+        
+      const i_object_3d * get (const string & name_);
+        
     };
+      
+  };
     
 } // end of namespace geomtools
 

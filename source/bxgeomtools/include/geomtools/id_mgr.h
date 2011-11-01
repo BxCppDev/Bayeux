@@ -92,9 +92,9 @@ namespace geomtools {
       void dump (ostream & = clog) const;
 
       virtual void tree_dump (ostream & out_        = clog,
-			      const string & title_  = "",
-			      const string & indent_ = "",
-			      bool inherit_          = false) const;
+                              const string & title_  = "",
+                              const string & indent_ = "",
+                              bool inherit_          = false) const;
 
     };
 
@@ -102,11 +102,6 @@ namespace geomtools {
 
     typedef map<string, category_info>      categories_by_name_col_t;
     typedef map<int, const category_info *> categories_by_type_col_t;
-
-  private:
-    bool __debug;
-    categories_by_name_col_t __categories_by_name;
-    categories_by_type_col_t __categories_by_type;
 
   public:
     bool is_debug () const;
@@ -131,9 +126,9 @@ namespace geomtools {
     void reset ();
 
     virtual void tree_dump (ostream & out_         = clog,
-			    const string & title_  = "",
-			    const string & indent_ = "",
-			    bool inherit_          = false) const;
+                            const string & title_  = "",
+                            const string & indent_ = "",
+                            bool inherit_          = false) const;
 
     bool has_category_info (int) const;
 
@@ -163,7 +158,7 @@ namespace geomtools {
 
     //! check if an ID inherits or extends a candidate mother ID:
     bool check_inheritance (const geom_id & mother_id_,
-			    const geom_id & id_) const;
+                            const geom_id & id_) const;
 
     //! extract the part of the address of some child ID that
     //  is inherited from a mother ID.
@@ -177,14 +172,14 @@ namespace geomtools {
     string id_to_human_readable_format_string (const geom_id & id_) const;
 
     void make_id (geom_id & id_,
-		  uint32_t address_) const;
+                  uint32_t address_) const;
 
     void make_id (const string & category_, geom_id & id_) const;
 
     /*
-    void make_extended (const geom_id & mother_id_,
-			geom_id & id_,
-			uint32_t address_) const;
+      void make_extended (const geom_id & mother_id_,
+      geom_id & id_,
+      uint32_t address_) const;
     */
 
     /** Given a string representing the geometry ID "[module:module=0]"
@@ -200,16 +195,22 @@ namespace geomtools {
      *  of the `submodule' category.
      */
     int compute_id_from_info (geom_id & id_,
-			      const geom_id & mother_id_,
-			      const string & id_info_,
-			      const vector<uint32_t> & items_index_) const;
+                              const geom_id & mother_id_,
+                              const string & id_info_,
+                              const vector<uint32_t> & items_index_) const;
 
     int compute_id_from_info (geom_id & id_,
-			      const geom_id & mother_id_,
-			      const string & id_info_,
-			      uint32_t nitem0_ = geom_id::INVALID_ADDRESS,
-			      uint32_t nitem1_ = geom_id::INVALID_ADDRESS,
-			      uint32_t nitem2_ = geom_id::INVALID_ADDRESS) const;
+                              const geom_id & mother_id_,
+                              const string & id_info_,
+                              uint32_t nitem0_ = geom_id::INVALID_ADDRESS,
+                              uint32_t nitem1_ = geom_id::INVALID_ADDRESS,
+                              uint32_t nitem2_ = geom_id::INVALID_ADDRESS) const;
+
+  private:
+
+    bool _debug_;
+    categories_by_name_col_t _categories_by_name_;
+    categories_by_type_col_t _categories_by_type_;
   };
 
 } // end of namespace geomtools

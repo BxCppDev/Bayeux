@@ -31,15 +31,11 @@ namespace geomtools {
 
   public:
     static const std::string ANY_SHAPE_3D_LABEL;
-    enum faces_mask_t
+    enum faces_mask_type
       {
 	FACE_NONE = FACE_NONE_BIT,
 	FACE_ALL  = 0xFFFFFFFF
       };
-
-  private: 
-    string __shape_name;
-    box    __bounding_box;
 
   public: 
 
@@ -83,6 +79,11 @@ namespace geomtools {
 				 const vector_3d & direction_,
 				 intercept_t & intercept_,
 				 double skin_ = USING_PROPER_SKIN) const;
+
+  private: 
+
+    string _shape_name_;
+    box    _bounding_box_;
        
   };
     

@@ -44,23 +44,14 @@ namespace geomtools {
     //static const string DEFAULT_WORLD_NAME;
     
     typedef geomtools::models_col_t models_col_t;
-    
-  private: 
-    bool __debug;
-    bool __constructed;
-    datatools::utils::properties __parameters;
-    string __name;
-    
-  protected:
-    geomtools::logical_volume _logical;
-    
+     
   public: 
 
     void assert_constructed (const string & where_, 
-		             const string & what_ = "") const;
+                             const string & what_ = "") const;
 
     void assert_unconstructed (const string & where_, 
-			       const string & what_ = "") const;
+                               const string & what_ = "") const;
 
     bool is_constructed () const;
     
@@ -85,28 +76,39 @@ namespace geomtools {
     virtual ~i_model ();
     
     virtual void tree_dump (ostream & out_         = clog, 
-			    const string & title_  = "", 
-			    const string & indent_ = "", 
-			    bool inherit_          = false) const;
+                            const string & title_  = "", 
+                            const string & indent_ = "", 
+                            bool inherit_          = false) const;
     
     const geomtools::logical_volume & get_logical () const;
 
     geomtools::logical_volume & get_logical ();
     
     virtual void construct (const string & name_,
-			    const datatools::utils::properties & setup_,
-			    models_col_t * models_ = 0);
+                            const datatools::utils::properties & setup_,
+                            models_col_t * models_ = 0);
  
     /**************************************************/
      
   protected:
+
     virtual void _pre_construct (datatools::utils::properties & setup_);
+
     virtual void _post_construct (datatools::utils::properties & setup_);
  
     virtual void _at_construct (const string & name_,
-				const datatools::utils::properties & setup_,
-				models_col_t * models_ = 0);
+                                const datatools::utils::properties & setup_,
+                                models_col_t * models_ = 0);
     
+   
+  private: 
+    bool _debug_;
+    bool _constructed_;
+    datatools::utils::properties _parameters_;
+    string _name_;
+    
+  protected:
+    geomtools::logical_volume _logical;
 
     /**************************************************/
       
@@ -126,12 +128,12 @@ namespace geomtools {
       
       const model_creator_dict_t & get_dict () const
       {
-	return __dict;
+        return __dict;
       }
       
       model_creator_dict_t & get_dict ()
       {
-	return __dict;
+        return __dict;
       }
       
       bool has_model (const string & model_id_) const;
@@ -177,61 +179,61 @@ namespace geomtools {
     public:
 
       static i_model * creator (const string & name_,
-				const properties & configuration_,
-				models_col_t * models_ = 0)
+                                const properties & configuration_,
+                                models_col_t * models_ = 0)
       {
-	i_model * model = new model_type;
-	model->construct (name_, configuration_, models_);
-	return model;
+        i_model * model = new model_type;
+        model->construct (name_, configuration_, models_);
+        return model;
       }
 
       creator_registration ()
       {
-	bool devel = g_devel;
-	using namespace std;
-	if (devel) clog << "DEVEL: i_model::creator_registration::ctor: "
-			<< "Entering..."
-			<< endl;
-	string model_id = __model.get_model_id ();
-	if (devel) clog << "DEVEL: i_model::creator_registration::ctor: "
-			<< "model_id='" << model_id << "'"
-			<< endl;
+        bool devel = g_devel;
+        using namespace std;
+        if (devel) clog << "DEVEL: i_model::creator_registration::ctor: "
+                        << "Entering..."
+                        << endl;
+        string model_id = __model.get_model_id ();
+        if (devel) clog << "DEVEL: i_model::creator_registration::ctor: "
+                        << "model_id='" << model_id << "'"
+                        << endl;
 
-	model_creator_t model_creator 
-	  = i_model::creator_registration<model_type>::creator;
-	if (devel) clog << "DEVEL: i_model::creator_registration::ctor: "
-			<< "model creator='" << hex << (void *) model_creator << dec << "'"
-			<< endl;
-	
-	try
-	  { 
-	    bool test = false;
-	    //test = true;
-	    if (! test)
-	      {
-		if (devel) 
-		  {
-		    clog << "DEVEL: i_model::creator_registration::ctor: "
-			 << "register model='" << model_id << " @ " 
-			 << hex << (void *) model_creator << dec << "'"
-			 << endl;
-		  }
-		i_model::get_model_db ().register_model (model_creator, model_id);
-	      }
-	  }
-	catch (exception & x)
-	  {
-	    cerr << "i_model::creator_registration::ctor: ERROR: " 
-		 << x.what () << endl;
-	  }
-	catch (...)
-	  {
-	    cerr << "i_model::creator_registration::ctor: ERROR: " 
-		 << "unexpected!" << endl;
-	  }
-	if (devel) clog << "i_model::creator_registration::ctor: "
-			<< "Exiting."
-			<< endl;
+        model_creator_t model_creator 
+          = i_model::creator_registration<model_type>::creator;
+        if (devel) clog << "DEVEL: i_model::creator_registration::ctor: "
+                        << "model creator='" << hex << (void *) model_creator << dec << "'"
+                        << endl;
+        
+        try
+          { 
+            bool test = false;
+            //test = true;
+            if (! test)
+              {
+                if (devel) 
+                  {
+                    clog << "DEVEL: i_model::creator_registration::ctor: "
+                         << "register model='" << model_id << " @ " 
+                         << hex << (void *) model_creator << dec << "'"
+                         << endl;
+                  }
+                i_model::get_model_db ().register_model (model_creator, model_id);
+              }
+          }
+        catch (exception & x)
+          {
+            cerr << "i_model::creator_registration::ctor: ERROR: " 
+                 << x.what () << endl;
+          }
+        catch (...)
+          {
+            cerr << "i_model::creator_registration::ctor: ERROR: " 
+                 << "unexpected!" << endl;
+          }
+        if (devel) clog << "i_model::creator_registration::ctor: "
+                        << "Exiting."
+                        << endl;
       }
 
     }; // template <class model_type> class creator_registration
@@ -245,17 +247,17 @@ namespace geomtools {
     static string make_physical_volume_name (const string & basename_);
 
     static string make_physical_volume_name_per_item (const string & basename_, 
-						      int i_);
+                                                      int i_);
 
     static string make_physical_volume_name_per_item (const string & basename_, 
-						      int i_, int j_);
+                                                      int i_, int j_);
 
     static string make_physical_volume_name (const string & basename_,
-					     int nitems_);
+                                             int nitems_);
 
     static string make_physical_volume_name (const string & basename_,
-					     int ncols_,
-					     int nrows_);
+                                             int ncols_,
+                                             int nrows_);
 
     static string extract_label_from_physical_volume_name (const string & physical_volume_name_);
 

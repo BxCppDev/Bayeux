@@ -19,12 +19,12 @@ namespace geomtools {
 
   bool line_3d::is_normal ()
   {
-    return isfinite (__first.x()) &&
-      isfinite (__first.y()) &&
-      isfinite (__first.z()) &&
-      isfinite (__last.x()) &&
-      isfinite (__last.y()) &&
-      isfinite (__last.z());
+    return isfinite (_first_.x()) &&
+      isfinite (_first_.y()) &&
+      isfinite (_first_.z()) &&
+      isfinite (_last_.x()) &&
+      isfinite (_last_.y()) &&
+      isfinite (_last_.z());
   }
 
   string line_3d::get_shape_name () const
@@ -35,46 +35,46 @@ namespace geomtools {
   bool 
   line_3d::is_valid () const
   {
-    return (geomtools::is_valid (__first) && geomtools::is_valid (__last));
+    return (geomtools::is_valid (_first_) && geomtools::is_valid (_last_));
   }
   
   void 
   line_3d::invalidate ()
   {
-    geomtools::invalidate (__first);
-    geomtools::invalidate (__last);
+    geomtools::invalidate (_first_);
+    geomtools::invalidate (_last_);
     return;
   }
   
   const vector_3d & 
   line_3d::get_first () const
   {
-    return __first;
+    return _first_;
   }
   
   void 
   line_3d::set_first (const vector_3d & a_first)
   {
-    __first = a_first;
+    _first_ = a_first;
     return;
   }
   
   const vector_3d & 
   line_3d::get_last () const
   {
-    return __last;
+    return _last_;
   }
   
   void 
   line_3d::set_last (const vector_3d & a_last)
   {
-    __last = a_last;
+    _last_ = a_last;
     return;
   }
   
   double line_3d::get_length () const
   {
-    double l = (__last - __first).mag ();
+    double l = (_last_ - _first_).mag ();
     return l;
   }
   
@@ -101,7 +101,7 @@ namespace geomtools {
   vector_3d 
   line_3d::get_point (double a_t) const
   {
-    vector_3d p = __first + (__last - __first) * a_t;
+    vector_3d p = _first_ + (_last_ - _first_) * a_t;
     return vector_3d (p);
   }
 
@@ -109,8 +109,8 @@ namespace geomtools {
   line_3d::make_vertex_collection (basic_polyline_3d & a_bpl) const
   {
     a_bpl.clear ();
-    a_bpl.push_back (__first);
-    a_bpl.push_back (__last);
+    a_bpl.push_back (_first_);
+    a_bpl.push_back (_last_);
     return;
   }
 
@@ -129,9 +129,9 @@ namespace geomtools {
   }
   
   void line_3d::tree_dump (ostream &      out_, 
-			   const string & title_,
-			   const string & indent_,
-			   bool           inherit_) const
+                           const string & title_,
+                           const string & indent_,
+                           bool           inherit_) const
   {
     namespace du = datatools::utils;
     string indent;
@@ -141,23 +141,23 @@ namespace geomtools {
       }
     i_object_3d::tree_dump (out_, title_, indent_, true);
     out_ << indent << du::i_tree_dumpable::tag 
-	 << "First : " 
-	 << __first 
-	 << endl;
+         << "First : " 
+         << _first_ 
+         << endl;
     out_ << indent << du::i_tree_dumpable::tag
-	 << "Last : " 
-	 << __last
-	 << endl;
+         << "Last : " 
+         << _last_
+         << endl;
     out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_) 
-	 << "Length : " 
-	 << get_length() /* / CLHEP::mm << " mm"*/
-	 << endl;
+         << "Length : " 
+         << get_length() /* / CLHEP::mm << " mm"*/
+         << endl;
     return;
   }
 
 
   void line_3d::print_xyz (ostream & out_, 
-			   const line_3d & a_line)
+                           const line_3d & a_line)
   {
     vector_3d first = a_line.get_first();
     vector_3d last  = a_line.get_last();
@@ -169,7 +169,7 @@ namespace geomtools {
 
 
   bool line_3d::is_on_curve (const vector_3d & position_, 
-			     double tolerance_) const
+                             double tolerance_) const
   {
     bool on_curve = false;
     throw logic_error ("line_3d::is_on_curve: Not implemented yet !");
@@ -184,22 +184,22 @@ namespace geomtools {
   }
 
   /*
-  void 
-  line_3d::print_xyz (ostream & out_, 
-		      const line_3d & a_line,
-		      double step_)
-  {
+    void 
+    line_3d::print_xyz (ostream & out_, 
+    const line_3d & a_line,
+    double step_)
+    {
     double delta_t = 0.01;
     if (step_ > 0.0) delta_t = step_;
     for (double t = 0;
-	 t < 1.0 + 0.001 * delta_t;
-	 t += delta_t)
-      {
-	vector_3d v = a_line.get_point (t);
-	vector_3d::print_xyz (out_, v);
-      }
+    t < 1.0 + 0.001 * delta_t;
+    t += delta_t)
+    {
+    vector_3d v = a_line.get_point (t);
+    vector_3d::print_xyz (out_, v);
+    }
     out_ << endl << endl;
-  }
+    }
   */
   
 } // end of namespace geomtools

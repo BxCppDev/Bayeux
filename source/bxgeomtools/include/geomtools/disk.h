@@ -76,7 +76,7 @@ namespace geomtools {
     
   private: 
 
-    double __radius;
+    double _radius_;
  
   };
 

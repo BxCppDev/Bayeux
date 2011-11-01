@@ -13,10 +13,12 @@ namespace geomtools {
       
   i_shape_2d::i_shape_2d (double skin_) : i_object_3d (skin_)
   {
+    return;
   }
   
   i_shape_2d::~i_shape_2d ()
   {
+    return;
   }
 
 } // end of namespace geomtools

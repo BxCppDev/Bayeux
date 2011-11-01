@@ -12,58 +12,65 @@ namespace geomtools {
 
   void any_shape_3d::compute_bounding_box (box & bb_)
   {
-    bb_ = __bounding_box;
+    bb_ = _bounding_box_;
+    return;
   }
 
   void any_shape_3d::set_bounding_box (const box & bounding_box_)
   {
-    __bounding_box = bounding_box_;
+    _bounding_box_ = bounding_box_;
+    return;
   }
 
   const box & any_shape_3d::get_bounding_box () const
   {
-    return __bounding_box;
+    return _bounding_box_;
   }
 
   string any_shape_3d::get_shape_name () const
   {
-    return __shape_name;
+    return _shape_name_;
   }
 
   void any_shape_3d::set_shape_name (const string & shape_name_)
   {
-    __shape_name = shape_name_;
+    _shape_name_ = shape_name_;
+    return;
   }
 
   // ctor:
   any_shape_3d::any_shape_3d () : i_shape_3d ()
   {
-    __bounding_box.reset ();
+    _bounding_box_.reset ();
+    return;
   }
 
   any_shape_3d::any_shape_3d (const string & shape_name_) : i_shape_3d (DEFAULT_TOLERANCE)
   {
-    __bounding_box.reset ();
+    _bounding_box_.reset ();
     set_shape_name (shape_name_);
+    return;
   }
   
   // dtor:
   any_shape_3d::~any_shape_3d ()
   {
+    return;
   }
 
   bool 
   any_shape_3d::is_valid () const
   {
-    return (! __shape_name.empty ());
+    return (! _shape_name_.empty ());
   }
 
   void 
   any_shape_3d::reset ()
   {
-    __bounding_box.reset ();
-    __shape_name= "";
+    _bounding_box_.reset ();
+    _shape_name_= "";
     i_shape_3d::reset ();
+    return;
   }
 
   bool 

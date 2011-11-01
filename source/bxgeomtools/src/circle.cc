@@ -24,7 +24,7 @@ namespace geomtools {
   
   double circle::get_r () const
   {
-    return radius_;
+    return _radius_;
   }
   
   double circle::get_radius () const
@@ -40,7 +40,7 @@ namespace geomtools {
 
   double circle::get_diameter () const
   {
-    return (radius_ + radius_);
+    return (_radius_ + _radius_);
   }
   
   void circle::set_r (double a_radius)
@@ -51,29 +51,29 @@ namespace geomtools {
 	message << "circle::set_r: Invalid '" << a_radius << "' R value!";
 	throw logic_error (message.str ());
       }
-    radius_ = a_radius;
+    _radius_ = a_radius;
     return;
   }
    
   double circle::get_surface () const
   {
-    return M_PI * radius_ * radius_;
+    return M_PI * _radius_ * _radius_;
   }
 
   double circle::get_circumference () const
   {
-    return 2 * M_PI * radius_;
+    return 2 * M_PI * _radius_;
   }
   
   bool circle::is_valid () const
   {
-    return (radius_ > 0.0);
+    return (_radius_ > 0.0);
   }
   
   // ctor:
   circle::circle ()
   {
-    radius_ = -1.0;
+    _radius_ = -1.0;
     return;
   }
 

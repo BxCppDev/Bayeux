@@ -24,19 +24,19 @@
 namespace geomtools {
 
   class i_shape_1d : public i_object_3d
-    {
-    public:
+  {
+  public:
 
-      virtual int get_dimensional () const;
+    virtual int get_dimensional () const;
 
-      i_shape_1d (double tolerance_ = i_object_3d::DEFAULT_TOLERANCE);
+    i_shape_1d (double tolerance_ = i_object_3d::DEFAULT_TOLERANCE);
 
-      virtual ~i_shape_1d ();
+    virtual ~i_shape_1d ();
 
-      virtual bool is_on_curve (const vector_3d &, 
-				double tolerance_ = i_object_3d::USING_PROPER_TOLERANCE) const = 0;
+    virtual bool is_on_curve (const vector_3d &, 
+                              double tolerance_ = i_object_3d::USING_PROPER_TOLERANCE) const = 0;
 
-      virtual vector_3d get_direction_on_curve (const vector_3d & position_) const = 0;
+    virtual vector_3d get_direction_on_curve (const vector_3d & position_) const = 0;
  
   };
     

@@ -11,7 +11,7 @@ namespace geomtools {
   double 
   hexagon_box::get_radius () const
   {
-    return __radius;
+    return _radius_;
   }
 
   double 
@@ -31,17 +31,17 @@ namespace geomtools {
   {
     if (new_value_ < 0.0 )
       {
-	std::ostringstream message;
-	message << "hexagon_box::set_radius: Invalid '" << new_value_ << "' radius value!";
-	throw std::logic_error (message.str ());
+        std::ostringstream message;
+        message << "hexagon_box::set_radius: Invalid '" << new_value_ << "' radius value!";
+        throw std::logic_error (message.str ());
       }
-    __radius = new_value_;
+    _radius_ = new_value_;
   }
   
   double 
   hexagon_box::get_z () const
   {
-    return __z;
+    return _z_;
   }
   
   void 
@@ -49,17 +49,17 @@ namespace geomtools {
   {
     if (new_value_ < 0.0) 
       {
-	std::ostringstream message;
-	message << "hexagon_box::set_z: Invalid '" << new_value_ << "' Z value!";
-	throw std::logic_error (message.str ());
+        std::ostringstream message;
+        message << "hexagon_box::set_z: Invalid '" << new_value_ << "' Z value!";
+        throw std::logic_error (message.str ());
       }
-    __z = new_value_;
+    _z_ = new_value_;
   }
   
   double 
   hexagon_box::get_half_z () const
   {
-    return __z * 0.5;
+    return _z_ * 0.5;
   }
   
   void
@@ -104,39 +104,39 @@ namespace geomtools {
     int mask = mask_;
     if (mask_ == (int) ALL_SURFACES) mask = FACE_ALL;
 
-    double side_surf = get_side () * __z;
+    double side_surf = get_side () * _z_;
     double top_bottom_surf = 1.5 * std::sqrt(3.) * get_side () * get_side ();
     if (mask & FACE_BACK) 
       {
-	s += side_surf;
+        s += side_surf;
       }
     if (mask & FACE_FRONT) 
       {
-	s += side_surf;
+        s += side_surf;
       }
     if (mask & FACE_BACK_LEFT) 
       {
-	s += side_surf;
+        s += side_surf;
       }
     if (mask & FACE_BACK_RIGHT)
       {
-	s += side_surf;
+        s += side_surf;
       }
     if (mask & FACE_FRONT_RIGHT)
       {
-	s += side_surf;
+        s += side_surf;
       }
     if (mask & FACE_FRONT_LEFT) 
       {
-	s += side_surf;
+        s += side_surf;
       }
     if (mask & FACE_BOTTOM) 
       {
-	s += top_bottom_surf;
+        s += top_bottom_surf;
       }
     if (mask & FACE_TOP) 
       {
-	s += top_bottom_surf;
+        s += top_bottom_surf;
       }
     return s;
   }
@@ -165,13 +165,13 @@ namespace geomtools {
   double 
   hexagon_box::get_volume () const 
   {
-    return hexagon_box::get_surface (FACE_BOTTOM) * __z;
+    return hexagon_box::get_surface (FACE_BOTTOM) * _z_;
   }
 
   bool 
   hexagon_box::is_valid () const
   {
-    return (__radius > 0.0 && __z > 0.0);
+    return (_radius_ > 0.0 && _z_ > 0.0);
   }
 
   void 
@@ -182,8 +182,8 @@ namespace geomtools {
   void 
   hexagon_box::reset ()
   {
-    __radius = -1.0;
-    __z = -1.0;
+    _radius_ = -1.0;
+    _z_ = -1.0;
   }
 
   bool 
@@ -216,12 +216,12 @@ namespace geomtools {
   {
     double skin = get_skin ();
     if (skin_ > USING_PROPER_SKIN) skin = skin_;
-    if (std::abs (point_.z ()) > (0.5 * __z - 0.5 * skin)) return false;
+    if (std::abs (point_.z ()) > (0.5 * _z_ - 0.5 * skin)) return false;
 
-    if (! xy_is_in_hexagon (__radius - 0.5 * skin, 
-			    point_.x (), 
-			    point_.y (), 
-			    0.0)) return false;
+    if (! xy_is_in_hexagon (_radius_ - 0.5 * skin, 
+                            point_.x (), 
+                            point_.y (), 
+                            0.0)) return false;
     std::clog << "hexagon_box::is_inside: ok " << std::endl;
     return true;
   }
@@ -244,61 +244,61 @@ namespace geomtools {
 
   bool 
   hexagon_box::is_on_surface (const vector_3d & point_ , 
-			      int    mask_ ,
-			      double skin_) const
+                              int    mask_ ,
+                              double skin_) const
   {
     /*
-    bool debug = false;
-    double skin = get_skin ();
-    if (skin_ > USING_PROPER_SKIN) skin = 2 * skin_;
+      bool debug = false;
+      double skin = get_skin ();
+      if (skin_ > USING_PROPER_SKIN) skin = 2 * skin_;
 
-    int mask = mask_;
-    if (mask_ == (int) ALL_SURFACES) mask = FACE_ALL;
+      int mask = mask_;
+      if (mask_ == (int) ALL_SURFACES) mask = FACE_ALL;
 
-    double hskin = 0.5 * skin;
-    if (mask & FACE_BACK) 
+      double hskin = 0.5 * skin;
+      if (mask & FACE_BACK) 
       {
-	if ((std::abs (point_.x () + 0.5 * __x) < hskin) 
-	    && (std::abs (point_.y ()) < 0.5 * __y)
-	    && (std::abs (point_.z ()) < 0.5 * __z)) return true;
+      if ((std::abs (point_.x () + 0.5 * __x) < hskin) 
+      && (std::abs (point_.y ()) < 0.5 * __y)
+      && (std::abs (point_.z ()) < 0.5 * _z_)) return true;
       }
-    if (mask & FACE_FRONT) 
+      if (mask & FACE_FRONT) 
       {
-	if ((std::abs (point_.x () - 0.5 * __x) < hskin)
-	     && (std::abs (point_.y ()) < 0.5 * __y)
-	    && (std::abs (point_.z ()) < 0.5 * __z)) return true;
+      if ((std::abs (point_.x () - 0.5 * __x) < hskin)
+      && (std::abs (point_.y ()) < 0.5 * __y)
+      && (std::abs (point_.z ()) < 0.5 * _z_)) return true;
       }
-    if (mask & FACE_LEFT) 
+      if (mask & FACE_LEFT) 
       {
-	if ((std::abs (point_.y () + 0.5 * __y) < hskin) 
-	    && (std::abs (point_.x ()) < 0.5 * __x)
-	    && (std::abs (point_.z ()) < 0.5 * __z)) return true;
+      if ((std::abs (point_.y () + 0.5 * __y) < hskin) 
+      && (std::abs (point_.x ()) < 0.5 * __x)
+      && (std::abs (point_.z ()) < 0.5 * _z_)) return true;
       }
-    if (mask & FACE_RIGHT) 
+      if (mask & FACE_RIGHT) 
       {
-	if (debug)
-	  {
-	    std::clog << "DEVEL: hexagon_box::is_on_surface: FACE_RIGHT" << std::endl;
-	    std::clog << "DEVEL: hexagon_box::is_on_surface: hskin=" << hskin << std::endl;
-	    std::clog << "DEVEL: hexagon_box::is_on_surface: point=" << point_ << std::endl;
-	    std::clog << "DEVEL: hexagon_box::is_on_surface: dim radius=" << __radius << std::endl;
-	    std::clog << "DEVEL: hexagon_box::is_on_surface: dim z=" << __z << std::endl;
-	  }
-	if ((std::abs (point_.y () - 0.5 * __y) < hskin) 
-	    && (std::abs (point_.x ()) < 0.5 * __x)
-	    && (std::abs (point_.z ()) < 0.5 * __z)) return true;
+      if (debug)
+      {
+      std::clog << "DEVEL: hexagon_box::is_on_surface: FACE_RIGHT" << std::endl;
+      std::clog << "DEVEL: hexagon_box::is_on_surface: hskin=" << hskin << std::endl;
+      std::clog << "DEVEL: hexagon_box::is_on_surface: point=" << point_ << std::endl;
+      std::clog << "DEVEL: hexagon_box::is_on_surface: dim radius=" << _radius_ << std::endl;
+      std::clog << "DEVEL: hexagon_box::is_on_surface: dim z=" << _z_ << std::endl;
       }
-    if (mask & FACE_BOTTOM) 
-      {
-	if ((std::abs (point_.z () + 0.5 * __z) < hskin) 
-	    && (std::abs (point_.x ()) < 0.5 * __x)
-	    && (std::abs (point_.y ()) < 0.5 * __y)) return true;
+      if ((std::abs (point_.y () - 0.5 * __y) < hskin) 
+      && (std::abs (point_.x ()) < 0.5 * __x)
+      && (std::abs (point_.z ()) < 0.5 * _z_)) return true;
       }
-    if (mask & FACE_TOP) 
+      if (mask & FACE_BOTTOM) 
       {
-	if ((std::abs (point_.z () - 0.5 * __z) < hskin) 
-	    && (std::abs (point_.x ()) < 0.5 * __x)
-	    && (std::abs (point_.y ()) < 0.5 * __y)) return true;
+      if ((std::abs (point_.z () + 0.5 * _z_) < hskin) 
+      && (std::abs (point_.x ()) < 0.5 * __x)
+      && (std::abs (point_.y ()) < 0.5 * __y)) return true;
+      }
+      if (mask & FACE_TOP) 
+      {
+      if ((std::abs (point_.z () - 0.5 * _z_) < hskin) 
+      && (std::abs (point_.x ()) < 0.5 * __x)
+      && (std::abs (point_.y ()) < 0.5 * __y)) return true;
       }
     */
     return false;
@@ -306,59 +306,59 @@ namespace geomtools {
 
   bool 
   hexagon_box::find_intercept (const vector_3d & from_, 
-		       const vector_3d & direction_,
-		       intercept_t & intercept_,
-		       double skin_) const
+                               const vector_3d & direction_,
+                               intercept_t & intercept_,
+                               double skin_) const
   {
     /*
-    bool debug = false;
-    const unsigned int NFACES = 6;
-    double t[NFACES];
-    t[BACK]   = -(get_half_x () + from_[vector_3d::X]) 
+      bool debug = false;
+      const unsigned int NFACES = 6;
+      double t[NFACES];
+      t[BACK]   = -(get_half_x () + from_[vector_3d::X]) 
       / direction_[vector_3d::X];
-    t[FRONT]  = +(get_half_x () - from_[vector_3d::X]) 
+      t[FRONT]  = +(get_half_x () - from_[vector_3d::X]) 
       / direction_[vector_3d::X];
-    t[LEFT]   = -(get_half_y () + from_[vector_3d::Y]) 
+      t[LEFT]   = -(get_half_y () + from_[vector_3d::Y]) 
       / direction_[vector_3d::Y];
-    t[RIGHT]  = +(get_half_y () - from_[vector_3d::Y]) 
+      t[RIGHT]  = +(get_half_y () - from_[vector_3d::Y]) 
       / direction_[vector_3d::Y];
-    t[BOTTOM] = -(get_half_z () + from_[vector_3d::Z]) 
+      t[BOTTOM] = -(get_half_z () + from_[vector_3d::Z]) 
       / direction_[vector_3d::Z];
-    t[TOP]    = +(get_half_z () - from_[vector_3d::Z])
+      t[TOP]    = +(get_half_z () - from_[vector_3d::Z])
       / direction_[vector_3d::Z];
 
-    double t_min = -1.0;
-    int face_min = 0;
-    for (int i = 0; i < (int) NFACES; i++)
+      double t_min = -1.0;
+      int face_min = 0;
+      for (int i = 0; i < (int) NFACES; i++)
       {
-	double ti = t[i];
-	if (debug)
-	  {
-	    std::clog << "DEVEL: hexagon_box::find_intercept: t[" << i << "]= "
-		      << ti << " t_min=" << t_min 
-		      << " face_min=" << face_min 
-		      << std::endl;
-	  }
-	if (std::isnormal (ti) && (ti > 0.0))
-	  {
-	    int face_bit = (0x1 << i); // face mask
-	    vector_3d intercept = from_ + direction_ * ti;
-	    if (is_on_surface (intercept, face_bit, skin_))
-	      {
-		if ((t_min < 0.0) || (ti < t_min))
-		  {
-		    t_min = ti;
-		    face_min = face_bit;
-		  }
-	      }
-	  }
+      double ti = t[i];
+      if (debug)
+      {
+      std::clog << "DEVEL: hexagon_box::find_intercept: t[" << i << "]= "
+      << ti << " t_min=" << t_min 
+      << " face_min=" << face_min 
+      << std::endl;
+      }
+      if (std::isnormal (ti) && (ti > 0.0))
+      {
+      int face_bit = (0x1 << i); // face mask
+      vector_3d intercept = from_ + direction_ * ti;
+      if (is_on_surface (intercept, face_bit, skin_))
+      {
+      if ((t_min < 0.0) || (ti < t_min))
+      {
+      t_min = ti;
+      face_min = face_bit;
+      }
+      }
+      }
       }
     */
     intercept_.reset ();
     /*
-    if (face_min > 0) 
+      if (face_min > 0) 
       {
-	intercept_.set (0, face_min, from_ + direction_ * t_min);
+      intercept_.set (0, face_min, from_ + direction_ * t_min);
       }
     */
     return intercept_.is_ok ();
@@ -368,8 +368,8 @@ namespace geomtools {
   operator<< (std::ostream & out_, const hexagon_box & b_)
   {
     out_ << '{' << hexagon_box::HEXAGON_BOX_LABEL << ' ' 
-	 << b_.__radius << ' ' 
-	 << b_.__z << '}';
+         << b_._radius_ << ' ' 
+         << b_._z_ << '}';
     return out_;
   }
 
@@ -381,38 +381,38 @@ namespace geomtools {
     in_.get (c);
     if (c != '{') 
       {
-	in_.clear (std::ios_base::failbit);
-	return in_;
+        in_.clear (std::ios_base::failbit);
+        return in_;
       } 
     std::string name;
     in_ >> name;
     if (name != hexagon_box::HEXAGON_BOX_LABEL) 
       {
-	in_.clear (std::ios_base::failbit);
-	return in_;
+        in_.clear (std::ios_base::failbit);
+        return in_;
       } 
     double r, z;
     in_ >> r >> z;
     if (! in_) 
       {
-	in_.clear (std::ios_base::failbit);
-	return in_;
+        in_.clear (std::ios_base::failbit);
+        return in_;
       } 
     c = 0;
     in_.get (c);
     if (c != '}') 
       {
-	in_.clear (std::ios_base::failbit);
-	return in_;
+        in_.clear (std::ios_base::failbit);
+        return in_;
       } 
     try 
       {
-	b_.set (r,z);
+        b_.set (r,z);
       }
     catch (...)
       {
-	b_.reset ();
-	in_.clear (std::ios_base::failbit);
+        b_.reset ();
+        in_.clear (std::ios_base::failbit);
       }
     return in_;
   }

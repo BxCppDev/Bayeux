@@ -13,239 +13,256 @@ namespace geomtools {
 
   bool physical_volume::is_locked () const
   {
-    return __locked;
+    return _locked_;
   }
 
   void physical_volume::lock ()
   {
-    __locked = true;
+    _locked_ = true;
+    return;
   }
 
   void physical_volume::unlock ()
   {
-    __locked = false;
+    _locked_ = false;
+    return;
   }
  
   const string & physical_volume::get_name () const
   {
-    return __name;
+    return _name_;
   }
   
   void physical_volume::set_name (const string & name_)
   {
-    __name = name_;
+    _name_ = name_;
+    return;
   }
   
   const properties & physical_volume::parameters () const
   {
-    return __parameters;
+    return _parameters_;
   }
   
   properties & physical_volume::parameters ()
   {
-    return __parameters;
+    return _parameters_;
   }
 
   bool physical_volume::has_placement () const
   {
-    return __placement != 0;
+    return _placement_ != 0;
   }
 
   void physical_volume::set_placement (const i_placement * p_)
   {
-    __clear_placement ();
+    _clear_placement_ ();
     if (p_ != 0)
       {
-	__own_placement = true;
-	__placement = p_;
+        _own_placement_ = true;
+        _placement_ = p_;
       }
+    return;
   }
 
   void physical_volume::set_placement (const i_placement & p_)
   {
-    __clear_placement ();
-    __own_placement = false;
-    __placement = &p_;
+    _clear_placement_ ();
+    _own_placement_ = false;
+    _placement_ = &p_;
+    return;
   }
   
   const i_placement & physical_volume::get_placement () const
   {
     /*
-    clog << "**** DEVEL: physical_volume::get_placement: " 
-	 << __placement
-	 << endl; 
+      clog << "**** DEVEL: physical_volume::get_placement: " 
+      << _placement_
+      << endl; 
     */
-    if (! __placement)
+    if (! _placement_)
       {
-	throw runtime_error ("physical_volume::get_placement: Missing placement !");
+        throw runtime_error ("physical_volume::get_placement: Missing placement !");
       }
-    return *__placement;
+    return *_placement_;
   }
 
   bool physical_volume::has_logical () const
   {
-    return __logical != 0;
+    return _logical_ != 0;
   }
 
-  void physical_volume::__clear_placement ()
+  void physical_volume::_clear_placement_ ()
   {
-    if (__placement != 0)
+    if (_placement_ != 0)
       {
-	if (__own_placement)
-	  {
-	    delete __placement;
-	  }
-	__placement = 0;
-	__own_placement = false;
+        if (_own_placement_)
+          {
+            delete _placement_;
+          }
+        _placement_ = 0;
+        _own_placement_ = false;
       }
+    return;
   }
  
-  void physical_volume::__clear_logical ()
+  void physical_volume::_clear_logical_ ()
   {
-    if (__logical != 0)
+    if (_logical_ != 0)
       {
-	if (__own_logical)
-	  {
-	    delete __logical;
-	  }
-	__logical = 0;
-	__own_logical = false;
+        if (_own_logical_)
+          {
+            delete _logical_;
+          }
+        _logical_ = 0;
+        _own_logical_ = false;
       }
+    return;
   }
     
   void physical_volume::set_logical (const logical_volume & logical_)
   {
-    __clear_logical ();
-    __own_logical = false;
-    __logical = &logical_;
+    _clear_logical_ ();
+    _own_logical_ = false;
+    _logical_ = &logical_;
+    return;
   }
 
   void physical_volume::set_logical (const logical_volume * logical_)
   {
-    __clear_logical ();
+    _clear_logical_ ();
     if (logical_ != 0)
       {
-	__own_logical = true;
-	__logical = logical_;
+        _own_logical_ = true;
+        _logical_ = logical_;
       }
+    return;
   }
 
   const logical_volume & physical_volume::get_logical () const
   {
-    if (! __logical)
+    if (! _logical_)
       {
-	throw runtime_error ("physical_volume::get_logical: Missing logical !");
+        throw runtime_error ("physical_volume::get_logical: Missing logical !");
       }
-    return *__logical;
+    return *_logical_;
   }
 
   bool physical_volume::has_mother () const
   {
-    return __mother != 0;
+    return _mother_ != 0;
   }
     
   void physical_volume::set_mother (const logical_volume & mother_)
   {
-    __mother = &mother_;
+    _mother_ = &mother_;
     logical_volume & the_mother = const_cast<logical_volume &> (mother_);
     the_mother.add_physical (*this, this->get_name ());
+    return;
   }
   
   physical_volume::physical_volume ()
   {
-    __locked = false;
-    __own_placement = false;
-    __placement = 0;
-    __own_logical = false;
-    __logical = 0;
-    __mother = 0;
+    _locked_ = false;
+    _own_placement_ = false;
+    _placement_ = 0;
+    _own_logical_ = false;
+    _logical_ = 0;
+    _mother_ = 0;
+    return;
   }
   
   physical_volume::physical_volume (const string & name_)
   {
-    __locked = false;
-    __own_placement = false;
-    __placement = 0;
-    __own_logical = false;
-    __logical = 0;
-    __mother = 0;
+    _locked_ = false;
+    _own_placement_ = false;
+    _placement_ = 0;
+    _own_logical_ = false;
+    _logical_ = 0;
+    _mother_ = 0;
     set_name (name_);
+    return;
   }
 
   physical_volume::physical_volume (const string & name_, 
-				    const logical_volume & logical_,
-				    const logical_volume & mother_,
-				    const i_placement    & placement_)
+                                    const logical_volume & logical_,
+                                    const logical_volume & mother_,
+                                    const i_placement    & placement_)
   {
-    __locked = false;
-    __own_placement = false;
-    __placement = 0;
-    __own_logical = false;
-    __logical = 0;
-    __mother = 0;
+    _locked_ = false;
+    _own_placement_ = false;
+    _placement_ = 0;
+    _own_logical_ = false;
+    _logical_ = 0;
+    _mother_ = 0;
     set_name (name_);
     set_logical (logical_);    
     set_mother (mother_);    
     set_placement (placement_);    
+    return;
   }
   
   physical_volume::physical_volume (const string & name_, 
-				    const logical_volume * logical_,
-				    const logical_volume & mother_,
-				    const i_placement    & placement_)
+                                    const logical_volume * logical_,
+                                    const logical_volume & mother_,
+                                    const i_placement    & placement_)
   {
-    __locked = false;
-    __own_placement = false;
-    __placement = 0;
-    __own_logical = false;
-    __logical = 0;
+    _locked_ = false;
+    _own_placement_ = false;
+    _placement_ = 0;
+    _own_logical_ = false;
+    _logical_ = 0;
     set_name (name_);
     set_logical (logical_);    
     set_mother (mother_);    
     set_placement (placement_);    
+    return;
   }
 
   physical_volume::physical_volume (const string & name_, 
-				    const logical_volume & logical_,
-				    const logical_volume & mother_,
-				    const i_placement    * placement_)
+                                    const logical_volume & logical_,
+                                    const logical_volume & mother_,
+                                    const i_placement    * placement_)
   {
-    __locked = false;
-    __own_placement = false;
-    __placement = 0;
-    __own_logical = false;
-    __logical = 0;
+    _locked_ = false;
+    _own_placement_ = false;
+    _placement_ = 0;
+    _own_logical_ = false;
+    _logical_ = 0;
     set_name (name_);
     set_logical (logical_);    
     set_mother (mother_);    
     set_placement (placement_);    
+    return;
   }
   
   physical_volume::physical_volume (const string & name_, 
-				    const logical_volume * logical_,
-				    const logical_volume & mother_,
-				    const i_placement    * placement_)
+                                    const logical_volume * logical_,
+                                    const logical_volume & mother_,
+                                    const i_placement    * placement_)
   {
-    __locked = false;
-    __own_logical = false;
-    __logical = 0;
+    _locked_ = false;
+    _own_logical_ = false;
+    _logical_ = 0;
     set_name (name_);
     set_logical (logical_);    
     set_mother (mother_);    
     set_placement (placement_);    
+    return;
   }
  
   physical_volume::~physical_volume ()
   {
-    __locked = false;
-    __clear_placement ();
-    __clear_logical ();
+    _locked_ = false;
+    _clear_placement_ ();
+    _clear_logical_ ();
+    return;
   }
 
   void physical_volume::tree_dump (ostream & out_, 
-				   const string & title_, 
-				   const string & indent_, 
-				   bool inherit_) const
+                                   const string & title_, 
+                                   const string & indent_, 
+                                   bool inherit_) const
   {
     namespace du = datatools::utils;
     string indent;
@@ -256,67 +273,67 @@ namespace geomtools {
       }
 
     out_ << indent << i_tree_dumpable::tag 
-	 << "Name      : \"" << __name << "\"" << std::endl;
+         << "Name      : \"" << _name_ << "\"" << std::endl;
 
     out_ << indent << i_tree_dumpable::tag 
-	 << "Locked    : " << (__locked? "Yes": "No") << std::endl;
+         << "Locked    : " << (_locked_? "Yes": "No") << std::endl;
 
     {
       // parameters:
       out_ << indent << du::i_tree_dumpable::tag
-	   << "Parameters : ";
-      if ( __parameters.size () == 0) 
-	{
-	  out_ << "<empty>"; 
-	}
+           << "Parameters : ";
+      if ( _parameters_.size () == 0) 
+        {
+          out_ << "<empty>"; 
+        }
       out_ << std::endl;
       {
-	std::ostringstream indent_oss;
+        std::ostringstream indent_oss;
         indent_oss << indent;
         indent_oss << du::i_tree_dumpable::skip_tag;
-        __parameters.tree_dump (out_,"",indent_oss.str ());
+        _parameters_.tree_dump (out_,"",indent_oss.str ());
       }      
     }
 
     {
       // Logical:
-	out_ << indent << i_tree_dumpable::tag 
-	     << "Logical : ";
-	if (has_logical ())
-	  {
-	    out_ << "\"" << __logical->get_name () << "\" " 
-		 << (__own_logical? "(owned)": "(not owned)");
-	  }
-	else
-	  {
-	    out_ << "<no logical>";
-	  }
-	out_ << std::endl; 
+      out_ << indent << i_tree_dumpable::tag 
+           << "Logical : ";
+      if (has_logical ())
+        {
+          out_ << "\"" << _logical_->get_name () << "\" " 
+               << (_own_logical_? "(owned)": "(not owned)");
+        }
+      else
+        {
+          out_ << "<no logical>";
+        }
+      out_ << std::endl; 
     }
 
     {
       out_ << indent << i_tree_dumpable::tag 
-	   << "Placement : " << endl;
+           << "Placement : " << endl;
       ostringstream oss_indent;
       oss_indent << indent << i_tree_dumpable::skip_tag;
-      __placement->tree_dump (out_, 
-			      "", 
-			      oss_indent.str (), 
-			      false);
+      _placement_->tree_dump (out_, 
+                              "", 
+                              oss_indent.str (), 
+                              false);
     }
 
     {
       // Mother:
       out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
-	   << "Mother = ";
+           << "Mother = ";
       if (has_mother ())
-	{
-	  out_ << "\"" << __mother->get_name () << "\"";
-	}
+        {
+          out_ << "\"" << _mother_->get_name () << "\"";
+        }
       else
-	{
-	  out_ << "<no mother>";
-	}
+        {
+          out_ << "<no mother>";
+        }
       out_ << std::endl; 
     }
     return;

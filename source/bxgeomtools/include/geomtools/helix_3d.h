@@ -121,9 +121,9 @@ namespace geomtools {
 
     /* interface i_tree_dumpable */
     virtual void tree_dump (ostream & out_         = cerr, 
-			    const string & title_  = "",
-			    const string & indent_ = "",
-			    bool inherit_               = false) const;
+                            const string & title_  = "",
+                            const string & indent_ = "",
+                            bool inherit_               = false) const;
 
     void dump () const;
 
@@ -140,24 +140,24 @@ namespace geomtools {
     static double angle_to_t (double angle_);
     
     static void print_xyz (ostream & out_, 
-			   const helix_3d & helix_, 
-			   double step_angle_ = 0.0,
-			   int expand_ = 0);
+                           const helix_3d & helix_, 
+                           double step_angle_ = 0.0,
+                           int expand_ = 0);
 
   public:
 
     virtual bool is_on_curve (const vector_3d & position_, 
-			      double tolerance_ = USING_PROPER_TOLERANCE) const;
+                              double tolerance_ = USING_PROPER_TOLERANCE) const;
 
     virtual vector_3d get_direction_on_curve (const vector_3d & position_) const;
 
   private: 
 
-    double    __radius;
-    vector_3d __center;
-    double    __step;
-    double    __t1;    // angle1 / (2 pi)
-    double    __t2;    // angle2 / (2 pi)
+    double    _radius_;
+    vector_3d _center_;
+    double    _step_;
+    double    _t1_;    // angle1 / (2 pi)
+    double    _t2_;    // angle2 / (2 pi)
 
     /* interface i_serializable */
     DATATOOLS_SERIALIZATION_DECLARATION();

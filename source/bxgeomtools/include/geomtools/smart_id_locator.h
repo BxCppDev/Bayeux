@@ -37,23 +37,11 @@ namespace geomtools {
   public:
     enum mode_t
       {
-	MODE_INVALID = 0,
-	MODE_LAST    = 1, 
-	MODE_DEFAULT = MODE_LAST
+        MODE_INVALID = 0,
+        MODE_LAST    = 1, 
+        MODE_DEFAULT = MODE_LAST
       };
 
-
-  private:
-    bool              __debug;
-    bool              __initialized;
-    int               __mode;
-    uint32_t          __type;
-    id_selector       __idsel;
-    const geom_map *  __gmap;
-
-    //! Optimization data
-    list<const geom_info *> __ginfos;
-    const geom_info * __last_found;
 
   public:
 
@@ -70,12 +58,12 @@ namespace geomtools {
     smart_id_locator (const geom_map & gmap_);
     
     smart_id_locator (const geom_map & gmap_, 
-		      uint32_t type_,
-		      int mode_ = MODE_DEFAULT);
+                      uint32_t type_,
+                      int mode_ = MODE_DEFAULT);
     
     smart_id_locator (const geom_map & gmap_, 
-		      const string & rules_,
-		      int mode_ = MODE_DEFAULT);
+                      const string & rules_,
+                      int mode_ = MODE_DEFAULT);
 
     virtual ~smart_id_locator ();
 
@@ -98,11 +86,24 @@ namespace geomtools {
     virtual const geom_info & get_geom_info (const geom_id & id_) const;
 
     virtual const geom_id & get_geom_id (const vector_3d & world_position_, 
-					 int type_ = geom_id::INVALID_TYPE, 
-					 double tolerance_ = i_object_3d::USING_PROPER_TOLERANCE) const;
+                                         int type_ = geom_id::INVALID_TYPE, 
+                                         double tolerance_ = i_object_3d::USING_PROPER_TOLERANCE) const;
 
 
     void dump (ostream & out_ = clog) const;
+
+  private:
+
+    bool              _debug_;
+    bool              _initialized_;
+    int               _mode_;
+    uint32_t          _type_;
+    id_selector       _idsel_;
+    const geom_map *  _gmap_;
+
+    //! Optimization data
+    list<const geom_info *> _ginfos_;
+    const geom_info * _last_found_;
 
   };
 

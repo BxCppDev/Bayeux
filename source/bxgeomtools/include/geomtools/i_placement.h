@@ -59,9 +59,9 @@ namespace geomtools {
     virtual void get_placement (int item_, placement & p_) const = 0;
     
     virtual void tree_dump (ostream & out_         = clog, 
-			    const string & title_  = "", 
-			    const string & indent_ = "", 
-			    bool inherit_          = false) const;
+                            const string & title_  = "", 
+                            const string & indent_ = "", 
+                            bool inherit_          = false) const;
     
   };
 

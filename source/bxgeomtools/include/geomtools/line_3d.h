@@ -64,25 +64,25 @@ namespace geomtools {
     line_3d ();
 
     line_3d (const vector_3d & first_, 
-	     const vector_3d & last_);
+             const vector_3d & last_);
 
     virtual ~line_3d ();
 
     /* interface i_tree_dumpable */
     virtual void tree_dump (ostream & out_         = clog, 
-			    const string & title_  = "",
-			    const string & indent_ = "",
-			    bool inherit_          = false) const;
+                            const string & title_  = "",
+                            const string & indent_ = "",
+                            bool inherit_          = false) const;
 
     void dump () const;
 
     static void print_xyz (ostream & out_, 
-			   const line_3d & line_);
+                           const line_3d & line_);
 
     double get_distance_to_line ( const vector_3d & position_ ) const;
 
     virtual bool is_on_curve (const vector_3d & position_, 
-			      double tolerance_ = USING_PROPER_TOLERANCE) const;
+                              double tolerance_ = USING_PROPER_TOLERANCE) const;
 
     virtual vector_3d get_direction_on_curve (const vector_3d & position_) const;
  
@@ -93,8 +93,8 @@ namespace geomtools {
 
   private: 
 
-    vector_3d __first;
-    vector_3d __last;
+    vector_3d _first_;
+    vector_3d _last_;
 
     /* interface i_serializable */
     DATATOOLS_SERIALIZATION_DECLARATION();

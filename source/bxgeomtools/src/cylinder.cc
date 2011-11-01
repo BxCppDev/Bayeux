@@ -12,38 +12,38 @@ namespace geomtools {
     
       double cylinder::get_xmin () const
       {
-	return -radius_;
+	return -_radius_;
       }
       
       double cylinder::get_xmax () const
       {
-	return +radius_;
+	return +_radius_;
       }
       
       double cylinder::get_ymin () const
       {
-	return -radius_;
+	return -_radius_;
       }
       
       double cylinder::get_ymax () const
       {
-	return +radius_;
+	return +_radius_;
       }
       
       double cylinder::get_zmin () const
       {
-	return -0.5*z_;
+	return -0.5*_z_;
       }
       
       double cylinder::get_zmax () const
       {
-	return +0.5*z_;
+	return +0.5*_z_;
       }
 
   double 
   cylinder::get_r () const
   {
-    return radius_;
+    return _radius_;
   }
   
   void 
@@ -55,7 +55,7 @@ namespace geomtools {
 	message << "cylinder::set_r: Invalid '" << a_radius << "' R value!";
 	throw logic_error (message.str ());
       }
-    radius_ = a_radius;
+    _radius_ = a_radius;
     return;
   }
   
@@ -68,19 +68,20 @@ namespace geomtools {
   double 
   cylinder::get_diameter () const
   {
-    return (radius_ + radius_);
+    return (_radius_ + _radius_);
   }
   
   void 
   cylinder::set_diameter (double a_diameter)
   {
     set_r (a_diameter * 0.5);
+    return;
   }
 
   double 
   cylinder::get_z () const
   {
-    return z_;
+    return _z_;
   }
   
   void 
@@ -92,14 +93,14 @@ namespace geomtools {
 	message << "cylinder::set_z: Invalid '" << a_z << "' Z value!";
 	throw logic_error (message.str ());
       }
-    z_ = a_z;
+    _z_ = a_z;
     return;
   }
   
   double 
   cylinder::get_half_z () const
   {
-    return z_ * 0.5;
+    return _z_ * 0.5;
   }
   
   void
@@ -158,15 +159,15 @@ namespace geomtools {
 
     if (mask & FACE_SIDE) 
       {
-	s += 2 * M_PI * radius_ * z_;
+	s += 2 * M_PI * _radius_ * _z_;
       }
     if (mask & FACE_BOTTOM) 
       {
-	s += M_PI * radius_ * radius_;
+	s += M_PI * _radius_ * _radius_;
       }
     if (mask & FACE_TOP) 
       {
-	s += M_PI * radius_ * radius_;
+	s += M_PI * _radius_ * _radius_;
       }
     return s;
   }
@@ -174,7 +175,7 @@ namespace geomtools {
   double 
   cylinder::get_volume () const 
   {
-    return M_PI * radius_ * radius_ * z_;
+    return M_PI * _radius_ * _radius_ * _z_;
   }
 
   double 
@@ -197,20 +198,22 @@ namespace geomtools {
   bool 
   cylinder::is_valid () const
   {
-    return (radius_ > 0.0 && z_ > 0.0);
+    return (_radius_ > 0.0 && _z_ > 0.0);
   }
 
 
   void 
   cylinder::init ()
   {
+    return;
   }
 
   void 
   cylinder::reset ()
   {
-    radius_ = -1.0;
-    z_ = -1.0;
+    _radius_ = -1.0;
+    _z_ = -1.0;
+    return;
   }
 
   bool 
@@ -220,8 +223,8 @@ namespace geomtools {
     if (a_skin > USING_PROPER_SKIN) skin = a_skin;
 
     double r = hypot (a_position.x (), a_position.y ());
-    if ( r > radius_ + 0.5 * skin ) return false;
-    if ( abs (a_position.z ()) > 0.5 *z_ + 0.5 * skin ) return false;
+    if ( r > _radius_ + 0.5 * skin ) return false;
+    if ( abs (a_position.z ()) > 0.5 *_z_ + 0.5 * skin ) return false;
     return true;
   }
 
@@ -255,18 +258,18 @@ namespace geomtools {
     double r = hypot (a_position.x (), a_position.y ());
     if (mask & FACE_BOTTOM) 
       {
-	if ((abs (a_position.z () + 0.5 * z_) < hskin) 
-	    && (r < (radius_ + hskin))) return true;
+	if ((abs (a_position.z () + 0.5 * _z_) < hskin) 
+	    && (r < (_radius_ + hskin))) return true;
       } 
     if (mask & FACE_TOP) 
       {
-	if ((abs (a_position.z () - 0.5 * z_) < hskin) 
-	    && (r < (radius_ + hskin))) return true;
+	if ((abs (a_position.z () - 0.5 * _z_) < hskin) 
+	    && (r < (_radius_ + hskin))) return true;
       }
     if (mask & FACE_SIDE) 
       {
-	if ((abs (a_position.z ()) < (0.5 * z_ + hskin))   
-	    && (abs (r - radius_) < hskin)) return true;
+	if ((abs (a_position.z ()) < (0.5 * _z_ + hskin))   
+	    && (abs (r - _radius_) < hskin)) return true;
       }
     return false;
   }
@@ -294,7 +297,7 @@ namespace geomtools {
     double dy = a_direction.y ();
     a = dx * dx + dy * dy;
     b = 2. * (dx * x0 + dy * y0);
-    c = x0 * x0 + y0 * y0 - radius_ * radius_;
+    c = x0 * x0 + y0 * y0 - _radius_ * _radius_;
     double delta = b * b - 4. * a * c;
     double ts[2];
     if (debug)
@@ -355,8 +358,8 @@ namespace geomtools {
     
     double z0 = a_from.z ();
     double dz = a_direction.z ();
-    t[CYL_BOTTOM] = (-0.5 * z_ - z0) / dz;
-    t[CYL_TOP]    = (+0.5 * z_ - z0) / dz;
+    t[CYL_BOTTOM] = (-0.5 * _z_ - z0) / dz;
+    t[CYL_TOP]    = (+0.5 * _z_ - z0) / dz;
 
     double t_min = -1.0;
     int face_min = 0;
@@ -395,8 +398,8 @@ namespace geomtools {
   ostream & operator<< (ostream & a_out, const cylinder & a_cylinder)
   {
     a_out << '{' << cylinder::CYLINDER_LABEL << ' ' 
-	 << a_cylinder.radius_ << ' ' 
-	 << a_cylinder.z_ << '}';
+	 << a_cylinder._radius_ << ' ' 
+	 << a_cylinder._z_ << '}';
     return a_out;
   }
 

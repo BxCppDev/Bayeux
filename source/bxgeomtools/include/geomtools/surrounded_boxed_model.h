@@ -50,44 +50,24 @@ namespace geomtools {
     public:
       const string & get_label () const
       {
-	return label;
+        return label;
       }
       const i_model & get_model () const
       {
-	return *model;
+        return *model;
       }
       const placement & get_placement () const
       {
-	return placmt;
+        return placmt;
       }
       const physical_volume & get_physical_volume () const
       {
-	return phys;
+        return phys;
       }
     };
 
     typedef map<int, surrounding_item> surrounding_dict_t;
     typedef map<string, int> labels_dict_t;
-
-  private:
-    bool __debug;
-
-    //static list<string> __g_position_labels;
-    list<string>        __position_labels;
-    string              __material_name;
-
-    const i_model *     __surrounded_model;
-    string              __surrounded_label;
-    placement           __surrounded_placmt;
-    physical_volume     __surrounded_phys;
-
-    surrounding_dict_t  __surrounding_items;
-    labels_dict_t       __surrounding_labels;
-    bool                __centered_x;
-    bool                __centered_y;
-    bool                __centered_z;
-
-    geomtools::box __solid;
 
   private:
 
@@ -134,19 +114,40 @@ namespace geomtools {
   protected:
   
     virtual void _at_construct (const string & name_,
-				const datatools::utils::properties & config_,
-				models_col_t * models_ = 0);
+                                const datatools::utils::properties & config_,
+                                models_col_t * models_ = 0);
 
   private:
 
-    static creator_registration<surrounded_boxed_model> __CR;
+    static creator_registration<surrounded_boxed_model> _g_cr_;
       
   public: 
+
     virtual void tree_dump (ostream & out_         = clog, 
-			    const string & title_  = "", 
-			    const string & indent_ = "", 
-			    bool inherit_          = false) const;
-  
+                            const string & title_  = "", 
+                            const string & indent_ = "", 
+                            bool inherit_          = false) const;
+ 
+  private:
+
+    bool _debug_;
+
+    list<string>        _position_labels_;
+    string              _material_name_;
+
+    const i_model *     _surrounded_model_;
+    string              _surrounded_label_;
+    placement           _surrounded_placmt_;
+    physical_volume     _surrounded_phys_;
+
+    surrounding_dict_t  _surrounding_items_;
+    labels_dict_t       _surrounding_labels_;
+    bool                _centered_x_;
+    bool                _centered_y_;
+    bool                _centered_z_;
+
+    geomtools::box      _solid_;
+ 
   };
 
 } // end of namespace geomtools

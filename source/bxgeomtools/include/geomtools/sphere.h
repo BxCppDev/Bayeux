@@ -31,49 +31,45 @@ namespace geomtools {
 
     enum faces_mask_t
       {
-	FACE_NONE   = FACE_NONE_BIT,
-	FACE_SIDE   = 0x1,
-	FACE_ALL    = FACE_SIDE
+        FACE_NONE   = FACE_NONE_BIT,
+        FACE_SIDE   = 0x1,
+        FACE_ALL    = FACE_SIDE
       };  
   
   public:
 
     static const std::string SPHERE_LABEL;
   
-  private: 
-
-    double __r;
-  
   public: 
     
     double get_xmin () const
     {
-      return -__r;
+      return -_r_;
     }
     
     double get_xmax () const
     {
-      return +__r;
+      return +_r_;
     }
     
     double get_ymin () const
     {
-      return -__r;
+      return -_r_;
     }
     
     double get_ymax () const
     {
-      return +__r;
+      return +_r_;
     }
     
     double get_zmin () const
     {
-      return -__r;
+      return -_r_;
     }
     
     double get_zmax () const
     {
-      return +__r;
+      return +_r_;
     }
 
     double get_r () const;
@@ -110,18 +106,18 @@ namespace geomtools {
     double get_volume () const;
 
     virtual bool is_inside (const vector_3d &, 
-			    double skin_ = USING_PROPER_SKIN) const;
+                            double skin_ = USING_PROPER_SKIN) const;
     
     virtual bool is_on_surface (const vector_3d & , 
-				int mask_    = FACE_ALL , 
-				double skin_ = USING_PROPER_SKIN) const;
+                                int mask_    = FACE_ALL , 
+                                double skin_ = USING_PROPER_SKIN) const;
 
     virtual vector_3d get_normal_on_surface (const vector_3d & position_) const;
     
     virtual bool find_intercept (const vector_3d & from_, 
-				 const vector_3d & direction_,
-				 intercept_t & intercept_,
-				 double skin_ = USING_PROPER_SKIN) const;
+                                 const vector_3d & direction_,
+                                 intercept_t & intercept_,
+                                 double skin_ = USING_PROPER_SKIN) const;
 
     friend std::ostream & 
     operator<< (std::ostream &, const sphere &);
@@ -130,9 +126,13 @@ namespace geomtools {
     operator>> (std::istream &, sphere &);
 
     virtual void tree_dump (ostream & out_         = clog, 
-			    const string & title_  = "", 
-			    const string & indent_ = "", 
-			    bool inherit_          = false) const;
+                            const string & title_  = "", 
+                            const string & indent_ = "", 
+                            bool inherit_          = false) const;
+  
+  private: 
+
+    double _r_;
     
   };
 

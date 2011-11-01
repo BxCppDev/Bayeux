@@ -30,7 +30,7 @@ namespace geomtools {
   }
   
   void stackable::extract (const datatools::utils::properties & source_,
-			    datatools::utils::properties & target_)
+                           datatools::utils::properties & target_)
   {
     source_.export_starting_with (target_, stackable::STACKABLE_PREFIX);
     return;
@@ -101,50 +101,50 @@ namespace geomtools {
   /****************************/
 
   void stackable::set_xmin (datatools::utils::properties & target_,
-			    double xmin_)
+                            double xmin_)
   {
     target_.store (stackable::make_key (stackable::STACKABLE_XMIN_PROPERTY),
-		   xmin_);
+                   xmin_);
     return;
   }
 
   void stackable::set_xmax (datatools::utils::properties & target_,
-			    double xmax_)
+                            double xmax_)
   {
     target_.store (stackable::make_key (stackable::STACKABLE_XMAX_PROPERTY),
-		   xmax_);
+                   xmax_);
     return;
   }
 
   void stackable::set_ymin (datatools::utils::properties & target_,
-			    double ymin_)
+                            double ymin_)
   {
     target_.store (stackable::make_key (stackable::STACKABLE_YMIN_PROPERTY),
-		   ymin_);
+                   ymin_);
     return;
   }
 
   void stackable::set_ymax (datatools::utils::properties & target_,
-			    double ymax_)
+                            double ymax_)
   {
     target_.store (stackable::make_key (stackable::STACKABLE_YMAX_PROPERTY),
-		   ymax_);
+                   ymax_);
     return;
   }
 
   void stackable::set_zmin (datatools::utils::properties & target_,
-			    double zmin_)
+                            double zmin_)
   {
     target_.store (stackable::make_key (stackable::STACKABLE_ZMIN_PROPERTY),
-		   zmin_);
+                   zmin_);
     return;
   }
 
   void stackable::set_zmax (datatools::utils::properties & target_,
-			    double zmax_)
+                            double zmax_)
   {
     target_.store (stackable::make_key (stackable::STACKABLE_ZMAX_PROPERTY),
-		   zmax_);
+                   zmax_);
     return;
   }
 
@@ -198,7 +198,7 @@ namespace geomtools {
   }
   
   void stackable::set (datatools::utils::properties & target_, 
-		       const i_stackable & sd_)
+                       const i_stackable & sd_)
   {
     set_xmin (target_, sd_.get_xmin ());
     set_xmax (target_, sd_.get_xmax ());
@@ -221,72 +221,72 @@ namespace geomtools {
     string length_unit_key = stackable::make_key (stackable::STACKABLE_LENGTH_UNIT_PROPERTY);
     if (config_.has_key (length_unit_key))
       {
-	string length_unit_str = config_.fetch_string (length_unit_key);
-	lunit = datatools::utils::units::get_length_unit_from (length_unit_str);
+        string length_unit_str = config_.fetch_string (length_unit_key);
+        lunit = datatools::utils::units::get_length_unit_from (length_unit_str);
       }
 
     string stackable_limits_key = stackable::make_key (stackable::STACKABLE_LIMITS_PROPERTY);
     if (config_.has_key (stackable_limits_key))
       {
-	vector<double> limits;
-	config_.fetch (stackable_limits_key, limits);
-	if (limits.size () != 6)
-	  {
-	    ostringstream message;
-	    message << "stackable_data::initialize: "
-		    << "Stacking limits vector should provide 6 dimensions !";
-	    throw runtime_error (message.str ());
-	  }
-	xmin = limits[0] *= lunit;
-	ymin = limits[2] *= lunit;
-	zmin = limits[4] *= lunit;
-	xmax = limits[1] *= lunit;
-	ymax = limits[3] *= lunit;
-	zmax = limits[5] *= lunit;
+        vector<double> limits;
+        config_.fetch (stackable_limits_key, limits);
+        if (limits.size () != 6)
+          {
+            ostringstream message;
+            message << "stackable_data::initialize: "
+                    << "Stacking limits vector should provide 6 dimensions !";
+            throw runtime_error (message.str ());
+          }
+        xmin = limits[0] *= lunit;
+        ymin = limits[2] *= lunit;
+        zmin = limits[4] *= lunit;
+        xmax = limits[1] *= lunit;
+        ymax = limits[3] *= lunit;
+        zmax = limits[5] *= lunit;
       }
     else 
       {
-	string xmin_key = stackable::make_key (stackable::STACKABLE_XMIN_PROPERTY);
-	if (config_.has_key (xmin_key))
-	  {
-	    xmin = config_.fetch_real (xmin_key);
-	    xmin *= lunit;
-	  }
-	
-	string xmax_key = stackable::make_key (stackable::STACKABLE_XMAX_PROPERTY);
-	if (config_.has_key (xmax_key))
-	  {
-	    xmax = config_.fetch_real (xmax_key);
-	    xmax *= lunit;
-	  }
-	
-	string ymin_key = stackable::make_key (stackable::STACKABLE_YMIN_PROPERTY);
-	if (config_.has_key (ymin_key))
-	  {
-	    ymin = config_.fetch_real (ymin_key);
-	    ymin *= lunit;
-	  }
-	
-	string ymax_key = stackable::make_key (stackable::STACKABLE_YMAX_PROPERTY);
-	if (config_.has_key (ymax_key))
-	  {
-	    ymax = config_.fetch_real (ymax_key);
-	    ymax *= lunit;
-	  }
-	
-	string zmin_key = stackable::make_key (stackable::STACKABLE_ZMIN_PROPERTY);
-	if (config_.has_key (zmin_key))
-	  {
-	    zmin = config_.fetch_real (zmin_key);
-	    zmin *= lunit;
-	  }
-	
-	string zmax_key = stackable::make_key (stackable::STACKABLE_ZMAX_PROPERTY);
-	if (config_.has_key (zmax_key))
-	  {
-	    zmax = config_.fetch_real (zmax_key);
-	    zmax *= lunit;
-	  }
+        string xmin_key = stackable::make_key (stackable::STACKABLE_XMIN_PROPERTY);
+        if (config_.has_key (xmin_key))
+          {
+            xmin = config_.fetch_real (xmin_key);
+            xmin *= lunit;
+          }
+        
+        string xmax_key = stackable::make_key (stackable::STACKABLE_XMAX_PROPERTY);
+        if (config_.has_key (xmax_key))
+          {
+            xmax = config_.fetch_real (xmax_key);
+            xmax *= lunit;
+          }
+        
+        string ymin_key = stackable::make_key (stackable::STACKABLE_YMIN_PROPERTY);
+        if (config_.has_key (ymin_key))
+          {
+            ymin = config_.fetch_real (ymin_key);
+            ymin *= lunit;
+          }
+        
+        string ymax_key = stackable::make_key (stackable::STACKABLE_YMAX_PROPERTY);
+        if (config_.has_key (ymax_key))
+          {
+            ymax = config_.fetch_real (ymax_key);
+            ymax *= lunit;
+          }
+        
+        string zmin_key = stackable::make_key (stackable::STACKABLE_ZMIN_PROPERTY);
+        if (config_.has_key (zmin_key))
+          {
+            zmin = config_.fetch_real (zmin_key);
+            zmin *= lunit;
+          }
+        
+        string zmax_key = stackable::make_key (stackable::STACKABLE_ZMAX_PROPERTY);
+        if (config_.has_key (zmax_key))
+          {
+            zmax = config_.fetch_real (zmax_key);
+            zmax *= lunit;
+          }
       }
 
     return is_valid ();
@@ -320,9 +320,9 @@ namespace geomtools {
   }
  
   void stackable_data::tree_dump (ostream & out_, 
-				  const string & title_, 
-				  const string & indent_, 
-				  bool inherit_) const
+                                  const string & title_, 
+                                  const string & indent_, 
+                                  bool inherit_) const
   { 
     namespace du = datatools::utils;
     string indent;
@@ -337,8 +337,8 @@ namespace geomtools {
     out_ << indent << du::i_tree_dumpable::tag << "ymax = " << ymax << endl;
     out_ << indent << du::i_tree_dumpable::tag << "zmin = " << zmin << endl;
     out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
-	 << "zmax = " << zmax << endl;
-   return;
+         << "zmax = " << zmax << endl;
+    return;
   }
   
   void stackable_data::dump (ostream & out_) const

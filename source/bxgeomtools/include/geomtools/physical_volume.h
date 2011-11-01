@@ -34,21 +34,12 @@ namespace geomtools {
   class physical_volume
     : public datatools::utils::i_tree_dumpable
   {
-  private:
-    string     __name;
-    bool       __locked;
-    properties __parameters;
-    bool                   __own_placement;
-    const i_placement *    __placement;
-    bool                   __own_logical;
-    const logical_volume * __logical;
-    const logical_volume * __mother;
 
   private:
     
-    void __clear_logical ();
+    void _clear_logical_ ();
     
-    void __clear_placement ();
+    void _clear_placement_ ();
     
   public:
 
@@ -93,31 +84,42 @@ namespace geomtools {
     physical_volume (const string & name_);
 
     physical_volume (const string & name_, 
-		     const logical_volume & logical_,
-		     const logical_volume & mother_,
-		     const i_placement    & placement_);
+                     const logical_volume & logical_,
+                     const logical_volume & mother_,
+                     const i_placement    & placement_);
 
     physical_volume (const string & name_, 
-		     const logical_volume * logical_,
-		     const logical_volume & mother_,
-		     const i_placement    & placement_);
+                     const logical_volume * logical_,
+                     const logical_volume & mother_,
+                     const i_placement    & placement_);
     
     physical_volume (const string & name_,   
-		     const logical_volume & logical_,
-		     const logical_volume & mother_,
-		     const i_placement    * placement_);
+                     const logical_volume & logical_,
+                     const logical_volume & mother_,
+                     const i_placement    * placement_);
     
     physical_volume (const string & name_,  
-		     const logical_volume * logical_,
-		     const logical_volume & mother_,
-		     const i_placement    * placement_);
+                     const logical_volume * logical_,
+                     const logical_volume & mother_,
+                     const i_placement    * placement_);
 
     virtual ~physical_volume ();
 
     virtual void tree_dump (ostream & out_         = clog, 
-			    const string & title_  = "", 
-			    const string & indent_ = "", 
-			    bool inherit_          = false) const;
+                            const string & title_  = "", 
+                            const string & indent_ = "", 
+                            bool inherit_          = false) const;
+  private:
+
+    string     _name_;
+    bool       _locked_;
+    properties _parameters_;
+    bool                   _own_placement_;
+    const i_placement *    _placement_;
+    bool                   _own_logical_;
+    const logical_volume * _logical_;
+    const logical_volume * _mother_;
+
   public:
 
     typedef map<string, const physical_volume *> dict_t;

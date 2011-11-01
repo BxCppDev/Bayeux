@@ -76,39 +76,39 @@ namespace geomtools {
     virtual const geom_info & get_geom_info (const geom_id &) const;
 
     virtual const geom_id & get_geom_id (const vector_3d & world_position_,
-					 int type_,
-					 double tolerance_ = i_object_3d::USING_PROPER_TOLERANCE) const;
+                                         int type_,
+                                         double tolerance_ = i_object_3d::USING_PROPER_TOLERANCE) const;
 
     /*****************************/
 
     virtual bool has_geom_info (const geom_id &) const;
 
     void get_geom_id (const vector_3d & world_position_,
-		      int type_,
-		      geom_id & gid_,
-		      double tolerance_ = i_object_3d::USING_PROPER_TOLERANCE) const;
+                      int type_,
+                      geom_id & gid_,
+                      double tolerance_ = i_object_3d::USING_PROPER_TOLERANCE) const;
 
     void get_geom_id (const vector_3d & world_position_,
-		      const string & category_,
-		      geom_id & gid_,
-		      double tolerance_ = i_object_3d::USING_PROPER_TOLERANCE) const;
+                      const string & category_,
+                      geom_id & gid_,
+                      double tolerance_ = i_object_3d::USING_PROPER_TOLERANCE) const;
 
     virtual const geom_id & get_geom_id (const vector_3d & world_position_,
-					 const string & category_,
-					 double tolerance_ = i_object_3d::USING_PROPER_TOLERANCE) const;
+                                         const string & category_,
+                                         double tolerance_ = i_object_3d::USING_PROPER_TOLERANCE) const;
 
     virtual void build_from (const model_factory & factory_,
-			     const string & mother_ = "world");
+                             const string & mother_ = "world");
 
     static bool check_inside (const geom_info & ginfo_,
-			      const vector_3d & world_position_,
-			      double tolerance_);
+                              const vector_3d & world_position_,
+                              double tolerance_);
 
   private:
 
-    geom_id          __invalid_geom_id; //! value of a invalid geometry ID
-    const id_mgr *   __id_manager;      //! the ID manager that knows about geometry categories and their relationship
-    geom_info_dict_t __geom_infos;      //! the dictionary of geometry informations addressed through IDs
+    geom_id          _invalid_geom_id_; //!< value of a invalid geometry ID
+    const id_mgr *   _id_manager_;      //!< the ID manager that knows about geometry categories and their relationship
+    geom_info_dict_t _geom_infos_;      //!< the dictionary of geometry informations addressed through IDs
 
   };
 

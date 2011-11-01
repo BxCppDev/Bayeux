@@ -25,245 +25,246 @@ namespace geomtools {
 
   bool model_factory::is_locked () const
   {
-    return __locked;
+    return _locked_;
   }
 
   bool model_factory::is_debug () const
   {
-    return __debug;
+    return _debug_;
   }
 
   void model_factory::set_debug (bool new_value_)
   {
-    __debug = new_value_;
+    _debug_ = new_value_;
+    return;
   }
 
   const models_col_t & model_factory::get_models () const
   {
-    return __models;
+    return _models_;
   }
 
   const logical_volume::dict_t & model_factory::get_logicals () const
   {
-    return __logicals;
+    return _logicals_;
   }
 
   // ctor:
   model_factory::model_factory (bool debug_)
   {
-    __debug = debug_;
-    __locked = false;
-    __mp.set_key_label ("name");
-    __mp.set_meta_label ("type");
-    __mp.set_description ("Geometry models setup");
+    _debug_ = debug_;
+    _locked_ = false;
+    _mp_.set_key_label ("name");
+    _mp_.set_meta_label ("type");
+    _mp_.set_description ("Geometry models setup");
     return;
   }
 
   // dtor:
   model_factory::~model_factory ()
   {
-    if (__locked)
+    if (_locked_)
       {
-	reset ();
+        reset ();
       }
     return;
   }
 
   void model_factory::load (const string & mprop_file_)
   {
-    bool devel = g_devel || __debug;
-    if (__locked)
+    bool devel = g_devel || _debug_;
+    if (_locked_)
       {
-	throw runtime_error ("model_factory::init: Factory is locked !");
+        throw runtime_error ("model_factory::init: Factory is locked !");
       }
 
     //cerr << "********** DEVEL: model_factory::load: Go !" << endl;
-    //__mp.set_debug (devel);
-    __mp.read (mprop_file_);
+    //_mp_.set_debug (devel);
+    _mp_.read (mprop_file_);
     //cerr << "********** DEVEL: model_factory::load: Done !" << endl;
     //usleep (200);
 
     if (devel)
       {
-	__mp.dump (clog);
+        _mp_.dump (clog);
       }
 
     return;
   }
 
-  void model_factory::__lock ()
+  void model_factory::_lock_ ()
   {
-    if (__locked)
+    if (_locked_)
       {
-	throw runtime_error ("model_factory::init: Already locked !");
+        throw runtime_error ("model_factory::init: Already locked !");
       }
-    __construct ();
-    __mp.reset ();
+    _construct_ ();
+    _mp_.reset ();
     return;
   }
 
-  void model_factory::__unlock ()
+  void model_factory::_unlock_ ()
   {
     return;
   }
 
   void model_factory::unlock ()
   {
-    if (! __locked) return;
-    __unlock ();
-    __locked = false;
+    if (! _locked_) return;
+    _unlock_ ();
+    _locked_ = false;
     return;
   }
 
   void model_factory::lock ()
   {
-    if (__locked)
+    if (_locked_)
       {
-	throw runtime_error ("model_factory::init: Already locked !");
+        throw runtime_error ("model_factory::init: Already locked !");
       }
-    __lock ();
-    __locked = true;
+    _lock_ ();
+    _locked_ = true;
     return;
   }
 
   void model_factory::reset ()
   {
-    if (__locked)
+    if (_locked_)
       {
-	unlock ();
+        unlock ();
       }
-    __logicals.clear ();
-    __models.clear ();
-    __mp.reset ();
+    _logicals_.clear ();
+    _models_.clear ();
+    _mp_.reset ();
     return;
   }
 
-  void model_factory::__construct ()
+  void model_factory::_construct_ ()
   {
     bool devel = g_devel;
     if (devel)
       {
-	clog << "DEVEL: model_factory::__construct: "
-	     << "Entering..." << endl;
+        clog << "DEVEL: model_factory::_construct_: "
+             << "Entering..." << endl;
       }
     for (datatools::utils::multi_properties::entries_ordered_col_t::const_iterator i
-	   = __mp.ordered_entries ().begin ();
-	 i != __mp.ordered_entries ().end ();
-	 i++)
+           = _mp_.ordered_entries ().begin ();
+         i != _mp_.ordered_entries ().end ();
+         i++)
       {
-	const datatools::utils::multi_properties::entry * ptr_entry = *i;
-	const datatools::utils::multi_properties::entry & e = *ptr_entry;
-	string name = e.get_key ();
-	string type = e.get_meta ();
+        const datatools::utils::multi_properties::entry * ptr_entry = *i;
+        const datatools::utils::multi_properties::entry & e = *ptr_entry;
+        string name = e.get_key ();
+        string type = e.get_meta ();
 
-	model_creator_t & creator = i_model::get_model_db ().get_model (type);
-	if (devel)
-	  {
-	    clog << "DEVEL: model_factory::__construct: "
-		 << "About to create a new model of type \"" << type
-		 << "\" with name \"" << name << "\"..." << endl;
-	  }
-	i_model * model = 0;
-	model = creator (name,
-			 e.get_properties (),
-			 &__models);
-	if (model != 0)
-	  {
-	    e.get_properties ().export_starting_with (model->get_logical ().parameters (),
-						      visibility::VISIBILITY_PREFIX);
+        model_creator_t & creator = i_model::get_model_db ().get_model (type);
+        if (devel)
+          {
+            clog << "DEVEL: model_factory::_construct_: "
+                 << "About to create a new model of type \"" << type
+                 << "\" with name \"" << name << "\"..." << endl;
+          }
+        i_model * model = 0;
+        model = creator (name,
+                         e.get_properties (),
+                         &_models_);
+        if (model != 0)
+          {
+            e.get_properties ().export_starting_with (model->get_logical ().parameters (),
+                                                      visibility::VISIBILITY_PREFIX);
 
-	    __models[name] = model;
-	    string log_name = model->get_logical ().get_name ();
-	    __logicals[log_name] = &(model->get_logical ());
-	    if (devel) model->tree_dump (clog, "New model is:", "DEVEL: model_factory::__construct: ");
-	  }
-	else
-	  {
-	    cerr << "ERROR: model_factory::__construct: "
-		 << "Cannot create model of type \"" << type
-		 << "\" with name \"" << name << "\"..." << endl;
-	  }
+            _models_[name] = model;
+            string log_name = model->get_logical ().get_name ();
+            _logicals_[log_name] = &(model->get_logical ());
+            if (devel) model->tree_dump (clog, "New model is:", "DEVEL: model_factory::_construct_: ");
+          }
+        else
+          {
+            cerr << "ERROR: model_factory::_construct_: "
+                 << "Cannot create model of type \"" << type
+                 << "\" with name \"" << name << "\"..." << endl;
+          }
       }
     if (devel)
       {
-	clog << "DEVEL: model_factory::__construct: "
-	     << "Exiting." << endl;
+        clog << "DEVEL: model_factory::_construct_: "
+             << "Exiting." << endl;
       }
     return;
   }
 
   void model_factory::tree_dump (ostream & out_,
-				 const string & title_,
-				 const string & indent_,
-				 bool inherit_) const
+                                 const string & title_,
+                                 const string & indent_,
+                                 bool inherit_) const
   {
     namespace du = datatools::utils;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     if (! title_.empty ())
       {
-	out_ << indent << title_ << endl;
+        out_ << indent << title_ << endl;
       }
     /*
       out_ << indent << du::i_tree_dumpable::tag
-      << "Debug : " <<  __debug << endl;
+      << "Debug : " <<  _debug_ << endl;
     */
 
     out_ << indent << du::i_tree_dumpable::tag
-	 << "Locked  : " <<  (__locked? "Yes": "No") << endl;
+         << "Locked  : " <<  (_locked_? "Yes": "No") << endl;
 
     {
       out_ << indent << du::i_tree_dumpable::tag
-	   << "Multi-properties : ";
-      if ( __mp.entries ().size () == 0)
-	{
-	  out_ << "<empty>";
-	}
+           << "Multi-properties : ";
+      if ( _mp_.entries ().size () == 0)
+        {
+          out_ << "<empty>";
+        }
       out_ << endl;
       {
-	ostringstream indent_oss;
-	indent_oss << indent;
-	indent_oss << du::i_tree_dumpable::skip_tag;
-	__mp.tree_dump (out_, "", indent_oss.str ());
+        ostringstream indent_oss;
+        indent_oss << indent;
+        indent_oss << du::i_tree_dumpable::skip_tag;
+        _mp_.tree_dump (out_, "", indent_oss.str ());
       }
     }
 
     {
       out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
-	   << "Models : ";
-      if ( __models.size () == 0)
-	{
-	  out_ << "<empty>";
-	}
+           << "Models : ";
+      if ( _models_.size () == 0)
+        {
+          out_ << "<empty>";
+        }
       else
-	{
-	  out_ << "[" << __models.size () << "]";
-	}
+        {
+          out_ << "[" << _models_.size () << "]";
+        }
       out_ << endl;
-      for (models_col_t::const_iterator i = __models.begin ();
-	   i != __models.end ();
-	   i++)
-	{
-	  const string & key = i->first;
-	  const i_model * a_model = i->second;
-	  ostringstream indent_oss;
-	  out_ << indent << du::i_tree_dumpable::inherit_skip_tag (inherit_);
-	  indent_oss << indent << du::i_tree_dumpable::inherit_skip_tag (inherit_);
-	  models_col_t::const_iterator j = i;
-	  j++;
-	  if (j == __models.end ())
-	    {
-	      out_ << du::i_tree_dumpable::inherit_tag (inherit_);
-	      indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
-	    }
-	  else
-	    {
-	      out_ << du::i_tree_dumpable::tag;
-	      indent_oss << du::i_tree_dumpable::skip_tag;
-	    }
-	  out_ << "Model : " << '"' << key << '"' << endl;
-	  a_model->tree_dump (out_, "", indent_oss.str ());
-	}
+      for (models_col_t::const_iterator i = _models_.begin ();
+           i != _models_.end ();
+           i++)
+        {
+          const string & key = i->first;
+          const i_model * a_model = i->second;
+          ostringstream indent_oss;
+          out_ << indent << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+          indent_oss << indent << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+          models_col_t::const_iterator j = i;
+          j++;
+          if (j == _models_.end ())
+            {
+              out_ << du::i_tree_dumpable::inherit_tag (inherit_);
+              indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+            }
+          else
+            {
+              out_ << du::i_tree_dumpable::tag;
+              indent_oss << du::i_tree_dumpable::skip_tag;
+            }
+          out_ << "Model : " << '"' << key << '"' << endl;
+          a_model->tree_dump (out_, "", indent_oss.str ());
+        }
     }
 
     return;

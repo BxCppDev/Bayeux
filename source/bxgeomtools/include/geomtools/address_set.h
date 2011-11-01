@@ -28,7 +28,7 @@ namespace geomtools {
  
   public:
     
-    enum mode_t
+    enum mode_type
     {
       MODE_INVALID = -1,
       MODE_NONE    = 0,
@@ -39,16 +39,8 @@ namespace geomtools {
     };
 
   private:
-
-    bool          reverse_;
-    int           mode_;
-    uint32_t      range_min_;
-    uint32_t      range_max_;
-    set<uint32_t> addrs_;
-
-  private:
-    void reset_range_ ();
-    void reset_list_ ();
+    void _reset_range_ ();
+    void _reset_list_ ();
 
   public:
     bool is_valid () const;
@@ -77,6 +69,13 @@ namespace geomtools {
 
     friend istream & operator>> (istream & a_in, address_set & a_addset);
 
+  private:
+
+    bool          _reverse_;
+    int           _mode_;
+    uint32_t      _range_min_;
+    uint32_t      _range_max_;
+    set<uint32_t> _addresses_;
   };
 
 } // end of namespace geomtools

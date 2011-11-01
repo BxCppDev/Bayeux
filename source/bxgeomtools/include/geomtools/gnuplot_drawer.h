@@ -60,25 +60,14 @@ namespace geomtools {
       ostringstream * oss;
       int color;
 
-      cstream ()
-      {
-	oss = 0;
-	return;
-      }
+      cstream ();
     };
 
-    typedef map<string, cstream> cstreams_col_t;
+    typedef map<string, cstream> cstreams_col_type;
 
   public:
 
     static bool g_devel;
-
-  private:
-    bool             __initialized;
-    cstreams_col_t   __cstreams;
-    datatools::utils::properties __props;
-    string __view;
-    string __mode;
 
   public:
 
@@ -114,8 +103,6 @@ namespace geomtools {
 
     virtual ~gnuplot_drawer ();
 
-    //void init ();
-
     void reset ();
 
     void reset_cstreams ();
@@ -124,26 +111,34 @@ namespace geomtools {
  
   private:
     
-    void __draw (const logical_volume & log_,
-		 const placement & p_,
-		 int max_display_level_ = 0);
+    void _draw_ (const logical_volume & log_,
+                 const placement & p_,
+                 int max_display_level_ = 0);
     
   public:
 
     void draw (const logical_volume & log_,
-	       const placement & p_,
-	       int max_display_level_,
-	       const string & name_);
+               const placement & p_,
+               int max_display_level_,
+               const string & name_);
 
     void draw (const model_factory & mf_,
-	       const string & model_name_,
-	       const placement & p_,
-	       int max_display_level_);
+               const string & model_name_,
+               const placement & p_,
+               int max_display_level_);
 
     void draw_logical (const model_factory & mf_,
-		       const string & model_name_,
-		       const placement & p_,
-		       int max_display_level_);
+                       const string & model_name_,
+                       const placement & p_,
+                       int max_display_level_);
+
+  private:
+
+    bool             _initialized_;
+    cstreams_col_type   _cstreams_;
+    datatools::utils::properties _props_;
+    string _view_;
+    string _mode_;
 
   }; // class gnuplot_drawer
   

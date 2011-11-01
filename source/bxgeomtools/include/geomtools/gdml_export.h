@@ -28,14 +28,6 @@
 #include <geomtools/model_factory.h>
 #include <geomtools/gdml_writer.h>
 
-// #include <geomtools/detail/model_tools.h>
-// #include <geomtools/units.h>
-// #include <geomtools/utils.h>
-// #include <geomtools/material.h>
-// #include <geomtools/physical_volume.h>
-// #include <geomtools/placement.h>
-// #include <geomtools/regular_linear_placement.h>
-
 namespace geomtools {
 
   using namespace std;
@@ -74,41 +66,42 @@ namespace geomtools {
     virtual ~gdml_export ();
 
     virtual void export_gdml (const string & filename_,
-			      const model_factory & factory_,
-			      const string & model_name_ = model_factory::DEFAULT_WORLD_LABEL);
+                              const model_factory & factory_,
+                              const string & model_name_ = model_factory::DEFAULT_WORLD_LABEL);
 
   protected:
 
     // export solid
     virtual void _export_gdml_solid (const i_shape_3d & shape_,
-				     const string & log_name_);
+                                     const string & log_name_);
 
     virtual void _export_gdml_logical (const logical_volume & factory_);
 
     virtual void _export_gdml_model (const i_model & model_);
 
     virtual void _export_gdml (ostream & out_,
-			       const model_factory & factory_,
-			       const string & model_name_);
+                               const model_factory & factory_,
+                               const string & model_name_);
 
   public:
 
     void attach_external_materials (const ostringstream & oss_);
 
   private:
-    bool __debug;
-    datatools::utils::properties __parameters;
-    gdml_writer           __writer;
-    const model_factory * __factory;
-    string       __length_unit;
-    string       __angle_unit;
-    string       __density_unit;
-    list<string> __solid_refs;
-    list<string> __volumes_refs;
-    const ostringstream * __external_materials_stream;
 
-    bool __support_replica;
-    bool __support_auxiliary;
+    bool _debug_;
+    datatools::utils::properties _parameters_;
+    gdml_writer           _writer_;
+    const model_factory * _factory_;
+    string       _length_unit_;
+    string       _angle_unit_;
+    string       _density_unit_;
+    list<string> _solid_refs_;
+    list<string> _volumes_refs_;
+    const ostringstream * _external_materials_stream_;
+
+    bool _support_replica_;
+    bool _support_auxiliary_;
 
   };
 

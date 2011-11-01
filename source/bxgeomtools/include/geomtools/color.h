@@ -57,7 +57,7 @@ namespace geomtools {
     color (int, const string &, int, int, int);
 
     /*** general color map ***/
-    typedef map<string, int> color_map_t;
+    typedef map<string, int> color_map_type;
 
     class color_db
     {
@@ -77,15 +77,15 @@ namespace geomtools {
 
     private:
 
-      color_map_t map_of_colors_;
+      color_map_type map_of_colors_;
      
     };
     
-    typedef boost::scoped_ptr<color_db> scoped_color_db_t;
+    typedef boost::scoped_ptr<color_db> scoped_color_db_type;
  
   private:
 
-    static scoped_color_db_t g_color_db_;
+    static scoped_color_db_type _g_color_db_;
     
   public:
     

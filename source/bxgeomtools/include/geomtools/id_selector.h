@@ -28,11 +28,6 @@ namespace geomtools {
 
   class id_selector
   {
-  private:
-
-    const id_mgr                * __id_mgr; 
-    const id_mgr::category_info * __cat_info;
-    map<int, address_set> __addr_sets;
 
   public:
 
@@ -55,6 +50,12 @@ namespace geomtools {
     bool match (const geom_id & gid_) const;
 
     void dump (ostream & out_ = clog, const string & title_ = "") const;
+
+  private:
+
+    const id_mgr                * _id_mgr_; //!< Handle to a geometry ID manager
+    const id_mgr::category_info * _cat_info_; //!< Handle to some 'category info' object
+    map<int, address_set> _addr_sets_; //!< Collection of address sets
 
   };
 

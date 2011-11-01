@@ -36,10 +36,10 @@ namespace geomtools {
     struct item
     {
     public:
-      string             __label;
-      const i_model *    __model;
-      placement          __placement;
-      physical_volume    __phys;
+      string             _label_;
+      const i_model *    _model_;
+      placement          _placement_;
+      physical_volume    _phys_;
 
     public:
       item ();
@@ -55,10 +55,6 @@ namespace geomtools {
 
     typedef map<string, item> item_dict_t;
 
-  private:
-
-    item_dict_t      __items;
-
   public:
 
     model_with_internal_items_tools ();
@@ -68,16 +64,20 @@ namespace geomtools {
     const item & get_item (const string &) const;
     item & get_item (const string &);
     void add_item (const string & label_, 
-		   const i_model & model_,
-		   const placement & placement_);
+                   const i_model & model_,
+                   const placement & placement_);
     bool has_item (const string &) const;
     size_t get_number_of_items () const;
     const item_dict_t & get_items () const;
     item_dict_t & get_items ();
 
     void plug_internal_models (const datatools::utils::properties & setup_,
-			       logical_volume & log_,
-			       models_col_t * models_);
+                               logical_volume & log_,
+                               models_col_t * models_);
+
+  private:
+
+    item_dict_t      _items_;
 
   };
 

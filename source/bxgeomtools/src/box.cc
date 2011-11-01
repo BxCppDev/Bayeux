@@ -10,38 +10,38 @@ namespace geomtools {
     
   double box::get_xmin () const
   {
-    return -0.5 * x_;
+    return -0.5 * _x_;
   }
     
   double box::get_xmax () const
   {
-    return +0.5 * x_;
+    return +0.5 * _x_;
   }
     
   double box::get_ymin () const
   {
-    return -0.5 * y_;
+    return -0.5 * _y_;
   }
     
   double box::get_ymax () const
   {
-    return +0.5 * y_;
+    return +0.5 * _y_;
   }
     
   double box::get_zmin () const
   {
-    return -0.5 * z_;
+    return -0.5 * _z_;
   }
     
   double box::get_zmax () const
   {
-    return +0.5 * z_;
+    return +0.5 * _z_;
   }
 
   double 
   box::get_x () const
   {
-    return x_;
+    return _x_;
   }
   
   void 
@@ -53,14 +53,14 @@ namespace geomtools {
 	message << "geomtools::box::set_x: Invalid '" << a_x << "' X value!";
 	throw std::logic_error (message.str ());
       }
-    x_ = a_x;
+    _x_ = a_x;
     return;
   }
   
   double 
   box::get_half_x () const
   {
-    return x_ * 0.5;
+    return _x_ * 0.5;
   }
   
   void 
@@ -73,13 +73,13 @@ namespace geomtools {
   double 
   box::get_y () const
   {
-    return y_;
+    return _y_;
   }
 
   double 
   box::get_half_y () const
   {
-    return y_ * 0.5;
+    return _y_ * 0.5;
   }
   
   void 
@@ -98,14 +98,14 @@ namespace geomtools {
 	message << "geomtools::box::set_y: Invalid '" << a_y << "' Y value!";
 	throw std::logic_error (message.str ());
       }
-    y_ = a_y;
+    _y_ = a_y;
     return;
   }
   
   double 
   box::get_z () const
   {
-    return z_;
+    return _z_;
   }
   
   void 
@@ -117,14 +117,14 @@ namespace geomtools {
 	message << "geomtools::box::set_z: Invalid '" << a_z << "' Z value!";
 	throw std::logic_error (message.str ());
       }
-    z_ = a_z;
+    _z_ = a_z;
     return;
   }
   
   double 
   box::get_half_z () const
   {
-    return z_ * 0.5;
+    return _z_ * 0.5;
   }
   
   void
@@ -156,9 +156,9 @@ namespace geomtools {
   box::box () : i_shape_3d (DEFAULT_SKIN)
   {
     //clog << "DEVEL: box::box: skin_ = " << skin_ << endl;
-    x_ = -1.0;
-    y_ = -1.0;
-    z_ = -1.0;
+    _x_ = -1.0;
+    _y_ = -1.0;
+    _z_ = -1.0;
     return;
   }
 
@@ -190,27 +190,27 @@ namespace geomtools {
 
     if (mask & FACE_BACK) 
       {
-	s += y_ * z_;
+	s += _y_ * _z_;
       }
     if (mask & FACE_FRONT) 
       {
-	s += y_ * z_;
+	s += _y_ * _z_;
       }
     if (mask & FACE_LEFT) 
       {
-	s += x_ * z_;
+	s += _x_ * _z_;
       }
     if (mask & FACE_RIGHT)
       {
-	s += x_ * z_;
+	s += _x_ * _z_;
       }
     if (mask & FACE_BOTTOM) 
       {
-	s += x_ * y_;
+	s += _x_ * _y_;
       }
     if (mask & FACE_TOP) 
       {
-	s += x_ * y_;
+	s += _x_ * _y_;
       }
     return s;
   }
@@ -236,13 +236,13 @@ namespace geomtools {
   double 
   box::get_volume () const 
   {
-    return x_ * y_ * z_;
+    return _x_ * _y_ * _z_;
   }
 
   bool 
   box::is_valid () const
   {
-    return (x_ > 0.0 && y_ > 0.0 && z_ > 0.0);
+    return (_x_ > 0.0 && _y_ > 0.0 && _z_ > 0.0);
   }
 
   void 
@@ -253,9 +253,9 @@ namespace geomtools {
   void 
   box::reset ()
   {
-    x_ = -1.0;
-    y_ = -1.0;
-    z_ = -1.0;
+    _x_ = -1.0;
+    _y_ = -1.0;
+    _z_ = -1.0;
     i_object_3d::reset ();
   }
 
@@ -265,9 +265,9 @@ namespace geomtools {
     double skin = get_skin ();
     if (a_skin > USING_PROPER_SKIN) skin = a_skin;
 
-    if (std::abs (a_position.x ()) > 0.5 * x_ + 0.5 * skin) return false;
-    if (std::abs (a_position.y ()) > 0.5 * y_ + 0.5 * skin) return false;
-    if (std::abs (a_position.z ()) > 0.5 * z_ + 0.5 * skin) return false;
+    if (std::abs (a_position.x ()) > 0.5 * _x_ + 0.5 * skin) return false;
+    if (std::abs (a_position.y ()) > 0.5 * _y_ + 0.5 * skin) return false;
+    if (std::abs (a_position.z ()) > 0.5 * _z_ + 0.5 * skin) return false;
     return true;
   }
 
@@ -300,21 +300,21 @@ namespace geomtools {
     double hskin = 0.5 * skin;
     if (mask & FACE_BACK) 
       {
-	if ((std::abs (a_position.x () + 0.5 * x_) < hskin) 
-	    && (std::abs (a_position.y ()) < 0.5 * y_)
-	    && (std::abs (a_position.z ()) < 0.5 * z_)) return true;
+	if ((std::abs (a_position.x () + 0.5 * _x_) < hskin) 
+	    && (std::abs (a_position.y ()) < 0.5 * _y_)
+	    && (std::abs (a_position.z ()) < 0.5 * _z_)) return true;
       }
     if (mask & FACE_FRONT) 
       {
-	if ((std::abs (a_position.x () - 0.5 * x_) < hskin)
-	    && (std::abs (a_position.y ()) < 0.5 * y_)
-	    && (std::abs (a_position.z ()) < 0.5 * z_)) return true;
+	if ((std::abs (a_position.x () - 0.5 * _x_) < hskin)
+	    && (std::abs (a_position.y ()) < 0.5 * _y_)
+	    && (std::abs (a_position.z ()) < 0.5 * _z_)) return true;
       }
     if (mask & FACE_LEFT) 
       {
-	if ((std::abs (a_position.y () + 0.5 * y_) < hskin) 
-	    && (std::abs (a_position.x ()) < 0.5 * x_)
-	    && (std::abs (a_position.z ()) < 0.5 * z_)) return true;
+	if ((std::abs (a_position.y () + 0.5 * _y_) < hskin) 
+	    && (std::abs (a_position.x ()) < 0.5 * _x_)
+	    && (std::abs (a_position.z ()) < 0.5 * _z_)) return true;
       }
     if (mask & FACE_RIGHT) 
       {
@@ -323,25 +323,25 @@ namespace geomtools {
 	    std::clog << "DEVEL: box::is_on_surface: FACE_RIGHT" << std::endl;
 	    std::clog << "DEVEL: box::is_on_surface: hskin=" << hskin << std::endl;
 	    std::clog << "DEVEL: box::is_on_surface: point=" << a_position << std::endl;
-	    std::clog << "DEVEL: box::is_on_surface: dim x=" << 0.5 * x_ << std::endl;
-	    std::clog << "DEVEL: box::is_on_surface: dim y=" << 0.5 * y_ << std::endl;
-	    std::clog << "DEVEL: box::is_on_surface: dim z=" << 0.5 * z_ << std::endl;
+	    std::clog << "DEVEL: box::is_on_surface: dim x=" << 0.5 * _x_ << std::endl;
+	    std::clog << "DEVEL: box::is_on_surface: dim y=" << 0.5 * _y_ << std::endl;
+	    std::clog << "DEVEL: box::is_on_surface: dim z=" << 0.5 * _z_ << std::endl;
 	  }
-	if ((std::abs (a_position.y () - 0.5 * y_) < hskin) 
-	    && (std::abs (a_position.x ()) < 0.5 * x_)
-	    && (std::abs (a_position.z ()) < 0.5 * z_)) return true;
+	if ((std::abs (a_position.y () - 0.5 * _y_) < hskin) 
+	    && (std::abs (a_position.x ()) < 0.5 * _x_)
+	    && (std::abs (a_position.z ()) < 0.5 * _z_)) return true;
       }
     if (mask & FACE_BOTTOM) 
       {
-	if ((std::abs (a_position.z () + 0.5 * z_) < hskin) 
-	    && (std::abs (a_position.x ()) < 0.5 * x_)
-	    && (std::abs (a_position.y ()) < 0.5 * y_)) return true;
+	if ((std::abs (a_position.z () + 0.5 * _z_) < hskin) 
+	    && (std::abs (a_position.x ()) < 0.5 * _x_)
+	    && (std::abs (a_position.y ()) < 0.5 * _y_)) return true;
       }
     if (mask & FACE_TOP) 
       {
-	if ((std::abs (a_position.z () - 0.5 * z_) < hskin) 
-	    && (std::abs (a_position.x ()) < 0.5 * x_)
-	    && (std::abs (a_position.y ()) < 0.5 * y_)) return true;
+	if ((std::abs (a_position.z () - 0.5 * _z_) < hskin) 
+	    && (std::abs (a_position.x ()) < 0.5 * _x_)
+	    && (std::abs (a_position.y ()) < 0.5 * _y_)) return true;
       }
     return false;
   }
@@ -406,9 +406,9 @@ namespace geomtools {
   operator<< (std::ostream & a_out, const box & a_box)
   {
     a_out << '{' << box::BOX_LABEL << ' ' 
-	  << a_box.x_ << ' ' 
-	  << a_box.y_ << ' ' 
-	  << a_box.z_ << '}';
+	  << a_box._x_ << ' ' 
+	  << a_box._y_ << ' ' 
+	  << a_box._z_ << '}';
     return a_out;
   }
 

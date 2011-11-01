@@ -40,8 +40,8 @@ namespace geomtools {
   }
 
   void print_xy (ostream & out_, 
-		 const vector_2d & p_,
-		 bool endl_)
+                 const vector_2d & p_,
+                 bool endl_)
   {
     out_ << p_.x () << ' ' <<  p_.y ();
     if (endl_) out_ << endl;
@@ -123,8 +123,8 @@ namespace geomtools {
   }
 
   void print_xyz (ostream & out_, 
-		  const vector_3d & p_,
-		  bool endl_)
+                  const vector_3d & p_,
+                  bool endl_)
   {
     out_ << p_.x () << ' ' <<  p_.y () << ' ' << p_.z ();
     if (endl_) out_ << endl;
@@ -150,18 +150,18 @@ namespace geomtools {
   }
 
   void create (vector_3d & v_,
-	       double x_,
-	       double y_,
-	       double z_)
+               double x_,
+               double y_,
+               double z_)
   {
     create_xyz (v_, x_, y_, z_);
     return;
   }
 
   void create_xyz (vector_3d & v_,
-		   double x_,
-		   double y_,
-		   double z_)
+                   double x_,
+                   double y_,
+                   double z_)
   {
     v_.setX (x_);
     v_.setY (y_);
@@ -170,26 +170,26 @@ namespace geomtools {
   }
 
   void create_polar (vector_3d & v_,
-		     double r_,
-		     double theta_,
-		     double z_)
+                     double r_,
+                     double theta_,
+                     double z_)
   {
     create_xyz (v_,
-		r_ * cos (theta_),
-		r_ * sin (theta_),
-		z_);   
+                r_ * cos (theta_),
+                r_ * sin (theta_),
+                z_);   
     return;
   }
 
   void create_spherical (vector_3d & v_,
-			 double r_,
-			 double phi_,
-			 double theta_)
+                         double r_,
+                         double phi_,
+                         double theta_)
   {
     create_xyz (v_,
-		r_ * sin (theta_) * cos (phi_),
-		r_ * sin (theta_) * sin (phi_),
-		r_ * cos (theta_));   
+                r_ * sin (theta_) * cos (phi_),
+                r_ * sin (theta_) * sin (phi_),
+                r_ * cos (theta_));   
     return;
   }
 
@@ -218,15 +218,15 @@ namespace geomtools {
   }
 
   bool are_near (const vector_3d & vec1_, 
-		 const vector_3d & vec2_,
-		 double tolerance_)
+                 const vector_3d & vec2_,
+                 double tolerance_)
   {
     return vec1_.isNear (vec2_, tolerance_); // from CLHEP
   }
 
   bool are_near_vector_3d (const vector_3d & vec1_, 
-			   const vector_3d & vec2_,
-			   double tolerance_)
+                           const vector_3d & vec2_,
+                           double tolerance_)
   {
     return are_near (vec1_, vec2_, tolerance_);
   }
@@ -234,14 +234,14 @@ namespace geomtools {
   /******/
 
   void print_xy (ostream & out_, 
-		 const basic_polyline_2d & p_,
-		 bool endl_)
+                 const basic_polyline_2d & p_,
+                 bool endl_)
   {
     for (basic_polyline_2d::const_iterator i = p_.begin ();
-	 i != p_.end ();
-	 i++)
+         i != p_.end ();
+         i++)
       {
-	print_xy (out_, *i, true);
+        print_xy (out_, *i, true);
       }
     if (endl_) out_ << endl;
     return;
@@ -276,14 +276,14 @@ namespace geomtools {
   /******/
 
   void print_xyz (ostream & out_, 
-		  const basic_polyline_3d & p_,
-		  bool endl_)
+                  const basic_polyline_3d & p_,
+                  bool endl_)
   {
     for (basic_polyline_3d::const_iterator i = p_.begin ();
-	 i != p_.end ();
-	 i++)
+         i != p_.end ();
+         i++)
       {
-	print_xyz (out_, *i, true);
+        print_xyz (out_, *i, true);
       }
     if (endl_) out_ << endl;
     return;
@@ -325,7 +325,7 @@ namespace geomtools {
     double * last_addr = xx_addr + 9;
     for (double * p = xx_addr; p < last_addr; p++)
       {
-	*p = 0.0;
+        *p = 0.0;
       }
     *xx_addr = qnan;
     xx_addr += 4;
@@ -345,11 +345,11 @@ namespace geomtools {
     //cerr << "DEVEL: geomtools::rectify (rotation_3d &): epsilon=" << epsilon <<" \n";
     for (double * p = xx_addr; p < last_addr; p++)
       {
-	//cerr << "DEVEL: geomtools::rectify (rotation_3d &): *p=" << *p <<" \n";
-	if (std::abs (*p) < epsilon) 
-	  {
-	    *p = 0.0;
-	  }
+        //cerr << "DEVEL: geomtools::rectify (rotation_3d &): *p=" << *p <<" \n";
+        if (std::abs (*p) < epsilon) 
+          {
+            *p = 0.0;
+          }
       }
     //cerr << "DEVEL: geomtools::rectify (rotation_3d &): Exiting.\n";
     return;
@@ -372,9 +372,9 @@ namespace geomtools {
   }
    
   void create_zyz (rotation_3d & rot_,
-		   double phi_,
-		   double theta_,
-		   double delta_)
+                   double phi_,
+                   double theta_,
+                   double delta_)
   {
     rotation_3d r1, r2, r3;
     r1.rotateZ (-phi_);
@@ -385,18 +385,18 @@ namespace geomtools {
   }
 
   void create (rotation_3d & rot_,
-	       double phi_,
-	       double theta_,
-	       double delta_)
+               double phi_,
+               double theta_,
+               double delta_)
   {
     create_zyz (rot_, phi_, theta_, delta_);
     return;
   }
    
   void create_zxz (rotation_3d & rot_,
-		   double phi_,
-		   double theta_,
-		   double psi_)
+                   double phi_,
+                   double theta_,
+                   double psi_)
   {
     rotation_3d r1, r2, r3;
     r1.rotateZ (-phi_);
@@ -407,9 +407,9 @@ namespace geomtools {
   }
    
   void create_xyz (rotation_3d & rot_,
-		   double phi_,
-		   double theta_,
-		   double psi_)
+                   double phi_,
+                   double theta_,
+                   double psi_)
   {
     rotation_3d r1, r2, r3;
     r1.rotateX (-phi_);
@@ -420,27 +420,27 @@ namespace geomtools {
   }
 
   void create_rotation_3d (rotation_3d & rot_,
-			   double phi_,
-			   double theta_,
-			   double delta_)
+                           double phi_,
+                           double theta_,
+                           double delta_)
   {
     create (rot_, phi_, theta_, delta_);
     return;
   }
 
   void create_rotation_from_zyz_euler_angles (rotation_3d & rot_,
-					      double phi_,
-					      double theta_,
-					      double delta_)
+                                              double phi_,
+                                              double theta_,
+                                              double delta_)
   {
     create (rot_, phi_, theta_, delta_);    
     return;
   }
 
   void create_rotation (rotation_3d & rot_,
-			double phi_,
-			double theta_,
-			double delta_)
+                        double phi_,
+                        double theta_,
+                        double delta_)
   {
     create (rot_, phi_, theta_, delta_);
     return;
@@ -515,8 +515,8 @@ namespace geomtools {
   }
 
   void create_rotation_from_axis (rotation_3d & rot_,
-				  int axis_,
-				  double angle_)
+                                  int axis_,
+                                  double angle_)
   {
     /*
       clog << "DEVEL: create_rotation_from_axis: "
@@ -524,39 +524,39 @@ namespace geomtools {
     */
     if (! check_rotation_axis (axis_))
       {
-	throw runtime_error ("create_rotation_from_axis: Invalid rotation axis !");
+        throw runtime_error ("create_rotation_from_axis: Invalid rotation axis !");
       }
     rotation_3d r;
     if (axis_ == ROTATION_AXIS_X)
       {
-	r.rotateX (-angle_);
+        r.rotateX (-angle_);
       }
     if (axis_ == ROTATION_AXIS_Y)
       {
-	r.rotateY (-angle_);
+        r.rotateY (-angle_);
       }
     if (axis_ == ROTATION_AXIS_Z)
       {
-	r.rotateZ (-angle_);
+        r.rotateZ (-angle_);
       }
     rot_ = r;
     return;
   }
 
   void create_rotation (rotation_3d & rot_,
-			int axis_,
-			double angle_)
+                        int axis_,
+                        double angle_)
   {
     create_rotation_from_axis (rot_, axis_, angle_);
   }
 
   void create_rotation (rotation_3d & rot_,
-			int axis_,
-			int special_angle_)
+                        int axis_,
+                        int special_angle_)
   {
     if (! check_special_rotation_angle (special_angle_))
       {
-	throw runtime_error ("create_rotation_from: Invalid special angle !");
+        throw runtime_error ("create_rotation_from: Invalid special angle !");
       }
     double angle = get_special_rotation_angle (special_angle_);
     create_rotation (rot_, axis_, angle);
@@ -564,19 +564,19 @@ namespace geomtools {
   }
 
   void create_rotation_from (rotation_3d & rot_,
-			     const string & s_)
+                             const string & s_)
   {
     throw runtime_error ("create_rotation_from: Not implemented yet !");
     /*
-    istringstream iss (s_);
-    string token;
-    getline (iss, token, '(');
-    if (! iss)
+      istringstream iss (s_);
+      string token;
+      getline (iss, token, '(');
+      if (! iss)
       {
-	invalidate_rotation_3d (rot_);
-	return;
+      invalidate_rotation_3d (rot_);
+      return;
       }
-    {
+      {
       if (token != "rotation")
       {
       }
@@ -585,9 +585,9 @@ namespace geomtools {
   }
 
   void extract_xyz_euler_angle_from_rotation (const rotation_3d & rot_,
-					      double & a_,
-					      double & b_,
-					      double & c_)
+                                              double & a_,
+                                              double & b_,
+                                              double & c_)
   {
     // http://www.geometrictools.com/Documentation/EulerAngles.pdf
     rotation_3d rot = rot_.inverse ();
@@ -607,26 +607,26 @@ namespace geomtools {
     
     if (r02 < (+1 - epsilon))
       {
-	if (r02 > (-1 + epsilon))
-	  {
-	    thetaY = asin (r02);
-	    thetaX = atan2 (-r12, r22);
-	    thetaZ = atan2 (-r01, r00);
-	  }
-	else // r02 = -1
-	  {
-	    // Not a unique solution: thetaZ - thetaX = atan2(r10,r11)
-	    thetaY = -0.5 * M_PI;
-	    thetaX = -atan2 (r10, r11);
-	    thetaZ = 0;
-	  }
+        if (r02 > (-1 + epsilon))
+          {
+            thetaY = asin (r02);
+            thetaX = atan2 (-r12, r22);
+            thetaZ = atan2 (-r01, r00);
+          }
+        else // r02 = -1
+          {
+            // Not a unique solution: thetaZ - thetaX = atan2(r10,r11)
+            thetaY = -0.5 * M_PI;
+            thetaX = -atan2 (r10, r11);
+            thetaZ = 0;
+          }
       }
     else // r02 = +1
       {
-	// Not a unique solution: thetaZ + thetaX = atan2(r10,r11)
-	thetaY = +0.5 * M_PI;
-	thetaX = atan2 (r10, r11);
-	thetaZ = 0;
+        // Not a unique solution: thetaZ + thetaX = atan2(r10,r11)
+        thetaY = +0.5 * M_PI;
+        thetaX = atan2 (r10, r11);
+        thetaZ = 0;
       }
     thetaX *= CLHEP::radian;
     thetaY *= CLHEP::radian;
@@ -644,15 +644,15 @@ namespace geomtools {
   }
 
   /*
-  void extract_xyz_euler_angle_from_rotation (const rotation_3d & rot_,
-					      double & a_,
-					      double & b_,
-					      double & c_)
-  {
+    void extract_xyz_euler_angle_from_rotation (const rotation_3d & rot_,
+    double & a_,
+    double & b_,
+    double & c_)
+    {
     
-     // [ xx  xy  xz ]
-     // [ yx  yy  yz ]
-     // [ zx  zy  zz ]
+    // [ xx  xy  xz ]
+    // [ yx  yy  yz ]
+    // [ zx  zy  zz ]
     double xx = rot_.xx ();
     double yx = rot_.yx ();
     double yy = rot_.yy ();
@@ -664,17 +664,17 @@ namespace geomtools {
     //  see also: http://en.wikipedia.org/wiki/Euler_angles -> Table of matrices
     double cosb = sqrt (xx * xx + yx * yx); 
     if (cosb > 16 * numeric_limits<double>::epsilon ()) 
-      {
-	a_ = -atan2 ( zy, zz) * CLHEP::radian;
-	b_ = -atan2 (-zx, cosb) * CLHEP::radian;
-	c_ = -atan2 ( yx, xx) * CLHEP::radian;
-      }
+    {
+    a_ = -atan2 ( zy, zz) * CLHEP::radian;
+    b_ = -atan2 (-zx, cosb) * CLHEP::radian;
+    c_ = -atan2 ( yx, xx) * CLHEP::radian;
+    }
     else
-      {
-	a_ = -atan2 (-yz, yy) * CLHEP::radian;
-	b_ = -atan2 (-zx, cosb) * CLHEP::radian;
-	c_ = 0. * CLHEP::radian;
-      }
+    {
+    a_ = -atan2 (-yz, yy) * CLHEP::radian;
+    b_ = -atan2 (-zx, cosb) * CLHEP::radian;
+    c_ = 0. * CLHEP::radian;
+    }
     if (a_ < 0.0) a_ += 360. * CLHEP::degree;
     if (b_ < 0.0) b_ += 360. * CLHEP::degree;
     if (c_ < 0.0) c_ += 360. * CLHEP::degree;
@@ -682,13 +682,13 @@ namespace geomtools {
     if (std::abs (b_) < 16 * numeric_limits<double>::epsilon()) b_ = 0.0;
     if (std::abs (c_) < 16 * numeric_limits<double>::epsilon()) c_ = 0.0;
     return;
-  }
+    }
   */
 
   void extract_zyz_euler_angle_from_rotation (const rotation_3d & rot_,
-					      double & a_,
-					      double & b_,
-					      double & c_)
+                                              double & a_,
+                                              double & b_,
+                                              double & c_)
   {
     /* Rotation matrix elements :
      *  [ xx  xy  xz ]
@@ -733,26 +733,26 @@ namespace geomtools {
 
     if (r22 < (1 - epsilon))
       {
-	if (r22 > (-1 + epsilon))
-	  {
-	    thetaY = acos (r22);
-	    thetaZ0 = atan2 (r12, r02);
-	    thetaZ1 = atan2 (r21, -r20);
-	  }
-	else // r22 = -1
-	  {
-	    // Not a unique solution: thetaZ1 - thetaZ0 = atan2(r10,r11)
-	    thetaY = M_PI;
-	    thetaZ0 = -atan2 (r10, r11);
-	    thetaZ1 = 0;
-	  }
+        if (r22 > (-1 + epsilon))
+          {
+            thetaY = acos (r22);
+            thetaZ0 = atan2 (r12, r02);
+            thetaZ1 = atan2 (r21, -r20);
+          }
+        else // r22 = -1
+          {
+            // Not a unique solution: thetaZ1 - thetaZ0 = atan2(r10,r11)
+            thetaY = M_PI;
+            thetaZ0 = -atan2 (r10, r11);
+            thetaZ1 = 0;
+          }
       }
     else // r22 = +1
       {
-	// Not a unique solution: thetaZ1 + thetaZ0 = atan2(r10,r11)
-	thetaY = 0;
-	thetaZ0 = atan2 (r10, r11);
-	thetaZ1 = 0;
+        // Not a unique solution: thetaZ1 + thetaZ0 = atan2(r10,r11)
+        thetaY = 0;
+        thetaZ0 = atan2 (r10, r11);
+        thetaZ1 = 0;
       }
 
     thetaY  *= CLHEP::radian;
@@ -786,46 +786,46 @@ namespace geomtools {
     c_ = numeric_limits<double>::quiet_NaN ();
     
     double abs_s2 = sqrt (zx * zx + zy * zy); 
-     if (abs_s2 > epsilon)
-      {
-	cerr << "DEVEL: |s2| != 0" << endl;
-	a_ = atan2 (zy, zx) * CLHEP::radian;
-	c_ = atan2 (yz, -xz) * CLHEP::radian;
-	double s1 = sin (a_);
-	if (std::abs (s1) > epsilon)
-	  {
-	    b_ = atan2 (zy, s1 * zz) * CLHEP::radian;
-	  }
-	else 
-	  {
-	    double s3 = sin (c_);
-	    if (std::abs (s3) > epsilon)
-	      {
-		b_ = atan2 (yz, s3 * zz) * CLHEP::radian;
-	      }
-	    else
-	      {
-		b_ = atan2 (zx, cos(a_) * zz) * CLHEP::radian;
-	      }
-	  }
-      }
-     else
-      {
-	cerr << "DEVEL: |s2| == 0" << endl;
-	double c2 = zz;
-	if (c2 > 0.5) 
-	  {
-	    b_ = 0.0;
-	    c_ = 0.0;
-	    a_ = atan2 (xy, xx) * CLHEP::radian; 
-	  }
-	else 
-	  {
-	    b_ = 180.0 * CLHEP::degree;
-	    c_ = 0.0;
-	    a_ = atan2 (-xy, -xx) * CLHEP::radian; 
-	  }
-       }
+    if (abs_s2 > epsilon)
+    {
+    cerr << "DEVEL: |s2| != 0" << endl;
+    a_ = atan2 (zy, zx) * CLHEP::radian;
+    c_ = atan2 (yz, -xz) * CLHEP::radian;
+    double s1 = sin (a_);
+    if (std::abs (s1) > epsilon)
+    {
+    b_ = atan2 (zy, s1 * zz) * CLHEP::radian;
+    }
+    else 
+    {
+    double s3 = sin (c_);
+    if (std::abs (s3) > epsilon)
+    {
+    b_ = atan2 (yz, s3 * zz) * CLHEP::radian;
+    }
+    else
+    {
+    b_ = atan2 (zx, cos(a_) * zz) * CLHEP::radian;
+    }
+    }
+    }
+    else
+    {
+    cerr << "DEVEL: |s2| == 0" << endl;
+    double c2 = zz;
+    if (c2 > 0.5) 
+    {
+    b_ = 0.0;
+    c_ = 0.0;
+    a_ = atan2 (xy, xx) * CLHEP::radian; 
+    }
+    else 
+    {
+    b_ = 180.0 * CLHEP::degree;
+    c_ = 0.0;
+    a_ = atan2 (-xy, -xx) * CLHEP::radian; 
+    }
+    }
     if (std::abs (a_) < 16 * numeric_limits<double>::epsilon ()) a_ = 0.0;
     if (std::abs (b_) < 16 * numeric_limits<double>::epsilon ()) b_ = 0.0;
     if (std::abs (c_) < 16 * numeric_limits<double>::epsilon ()) c_ = 0.0;
@@ -833,19 +833,19 @@ namespace geomtools {
     if (b_ < 0.0) b_ += 360. * CLHEP::degree;
     if (c_ < 0.0) c_ += 360. * CLHEP::degree;
     return;
-  } 
+    } 
   */
 
   /*
-  void extract_zyz_euler_angle_from_rotation (const rotation_3d & rot_,
-					      double & a_,
-					      double & b_,
-					      double & c_)
-  {
+    void extract_zyz_euler_angle_from_rotation (const rotation_3d & rot_,
+    double & a_,
+    double & b_,
+    double & c_)
+    {
     
-      // [ xx  xy  xz ]
-      // [ yx  yy  yz ]
-      // [ zx  zy  zz ]
+    // [ xx  xy  xz ]
+    // [ yx  yy  yz ]
+    // [ zx  zy  zz ]
      
     double xx = rot_.xx ();
     double xy = rot_.xy ();
@@ -861,57 +861,57 @@ namespace geomtools {
     double sinb = sqrt (zx * zx + zy * zy); 
     double cosb = zz;
     if (sinb > 16 * numeric_limits<double>::epsilon ()) 
-      {	
-	cerr << "DEVEL: sinb != 0" << endl;
-	// a_ = atan2 ( zy, -zx) * CLHEP::radian;
-	// b_ = atan2 ( sinb, zz) * CLHEP::radian;
-	// c_ = atan2 ( yz, xz) * CLHEP::radian;	
-	a_ = atan2 ( zy, zx) * CLHEP::radian;
-	c_ = atan2 ( yz, -xz) * CLHEP::radian;	
-	double c1 = cos (a_);
-	double s3 = sin (c_);
-	if ((std::abs (c1) > 16 * numeric_limits<double>::epsilon ()))
-	  {
-	    cerr << "DEVEL: cosa != 0" << endl;
-	    if (std::abs (s3) > 16 * numeric_limits<double>::epsilon ())
-	      {
-		b_ = atan2 ( c1*yz, c1*s3*zz) * CLHEP::radian;
-	      }
-	    else 
-	      {
-		if (xx * s3 > 0.0)
-		  {
-		    b_ = atan2 ( -zy, zz) * CLHEP::radian;
-		  }
-		else
-		  {
-		    b_ = atan2 ( zy, zz) * CLHEP::radian;
-		  }
-	      }
-	  }
-	else
-	  {
-	    cerr << "DEVEL: cosa == 0" << endl;
-	  }
-      }
+    {   
+    cerr << "DEVEL: sinb != 0" << endl;
+    // a_ = atan2 ( zy, -zx) * CLHEP::radian;
+    // b_ = atan2 ( sinb, zz) * CLHEP::radian;
+    // c_ = atan2 ( yz, xz) * CLHEP::radian;    
+    a_ = atan2 ( zy, zx) * CLHEP::radian;
+    c_ = atan2 ( yz, -xz) * CLHEP::radian;      
+    double c1 = cos (a_);
+    double s3 = sin (c_);
+    if ((std::abs (c1) > 16 * numeric_limits<double>::epsilon ()))
+    {
+    cerr << "DEVEL: cosa != 0" << endl;
+    if (std::abs (s3) > 16 * numeric_limits<double>::epsilon ())
+    {
+    b_ = atan2 ( c1*yz, c1*s3*zz) * CLHEP::radian;
+    }
+    else 
+    {
+    if (xx * s3 > 0.0)
+    {
+    b_ = atan2 ( -zy, zz) * CLHEP::radian;
+    }
     else
-      {
-	cerr << "DEVEL: sinb == 0" << endl;
-	if (cosb < 0)
-	  {
-	    a_ = (atan2 ( yx, xx) * CLHEP::radian - 180. * CLHEP::degree);
-	    cerr << "DEVEL: cosb < 0 " << endl;
-	    b_ = 180. * CLHEP::degree;
-	    c_ = 0.0;
-	  }
-	else
-	  {
-	    cerr << "DEVEL: cosb > 0 " << endl;
-	    a_ = atan2 ( yx, xx) * CLHEP::radian;
-	    b_ = 0. * CLHEP::radian;
-	    c_ = 0. * CLHEP::radian;
-	  }
-      }
+    {
+    b_ = atan2 ( zy, zz) * CLHEP::radian;
+    }
+    }
+    }
+    else
+    {
+    cerr << "DEVEL: cosa == 0" << endl;
+    }
+    }
+    else
+    {
+    cerr << "DEVEL: sinb == 0" << endl;
+    if (cosb < 0)
+    {
+    a_ = (atan2 ( yx, xx) * CLHEP::radian - 180. * CLHEP::degree);
+    cerr << "DEVEL: cosb < 0 " << endl;
+    b_ = 180. * CLHEP::degree;
+    c_ = 0.0;
+    }
+    else
+    {
+    cerr << "DEVEL: cosb > 0 " << endl;
+    a_ = atan2 ( yx, xx) * CLHEP::radian;
+    b_ = 0. * CLHEP::radian;
+    c_ = 0. * CLHEP::radian;
+    }
+    }
     if (std::abs (a_) < 16 * numeric_limits<double>::epsilon ()) a_ = 0.0;
     if (std::abs (b_) < 16 * numeric_limits<double>::epsilon ()) b_ = 0.0;
     if (std::abs (c_) < 16 * numeric_limits<double>::epsilon ()) c_ = 0.0;
@@ -922,8 +922,8 @@ namespace geomtools {
     if (b_ < 0.0) b_ += 360. * CLHEP::degree;
     if (c_ < 0.0) c_ += 360. * CLHEP::degree;
     return;
-  }
-*/
+    }
+  */
 
   bool is_identity (const rotation_3d & rot_)
   {
@@ -937,9 +937,9 @@ namespace geomtools {
   }
   
   void tree_dump (const rotation_3d & rot_,
-		  ostream & out_ , 
-		  const string & title_, 
-		  const string & indent_)
+                  ostream & out_ , 
+                  const string & title_, 
+                  const string & indent_)
   {
     string title = title_;
     string indent = indent_;
@@ -949,22 +949,22 @@ namespace geomtools {
     string last_tagc = "    ";
     if (is_valid (rot_))
       {
-	out_ << indent << last_tag << "[ ( " <<
-	  setw (11) << setprecision (6) << rot_.xx () << "   " <<
-	  setw (11) << setprecision (6) << rot_.xy () << "   " <<
-	  setw (11) << setprecision (6) << rot_.xz () << ")" << endl;
-	out_ << indent << last_tagc << "  ( " <<
-	  setw (11) << setprecision (6) << rot_.yx () << "   " <<
-	  setw (11) << setprecision (6) << rot_.yy () << "   " <<
-	  setw (11) << setprecision (6) << rot_.yz () << ")" << endl;
-	out_ << indent << last_tagc << "  ( " <<
-	  setw (11) << setprecision (6) << rot_.zx () << "   " <<
-	  setw (11) << setprecision (6) << rot_.zy () << "   " <<
-	  setw (11) << setprecision (6) << rot_.zz () << ") ]" << endl;
+        out_ << indent << last_tag << "[ ( " <<
+          setw (11) << setprecision (6) << rot_.xx () << "   " <<
+          setw (11) << setprecision (6) << rot_.xy () << "   " <<
+          setw (11) << setprecision (6) << rot_.xz () << ")" << endl;
+        out_ << indent << last_tagc << "  ( " <<
+          setw (11) << setprecision (6) << rot_.yx () << "   " <<
+          setw (11) << setprecision (6) << rot_.yy () << "   " <<
+          setw (11) << setprecision (6) << rot_.yz () << ")" << endl;
+        out_ << indent << last_tagc << "  ( " <<
+          setw (11) << setprecision (6) << rot_.zx () << "   " <<
+          setw (11) << setprecision (6) << rot_.zy () << "   " <<
+          setw (11) << setprecision (6) << rot_.zz () << ") ]" << endl;
       }
     else 
       {
-	out_ << indent << last_tag << "[" << "invalid" << "]" << endl;
+        out_ << indent << last_tag << "[" << "invalid" << "]" << endl;
       }
     return;
   }

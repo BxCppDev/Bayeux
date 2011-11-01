@@ -31,8 +31,8 @@ namespace geomtools {
   typedef list<vector_3d> basic_polyline_3d;
 
   void print_xy (ostream & out_, 
-		 const vector_2d & p_,
-		 bool endl_ = true);
+                 const vector_2d & p_,
+                 bool endl_ = true);
 
   string to_xy (const vector_2d & p_);
 
@@ -45,8 +45,8 @@ namespace geomtools {
   /******/
 
   void print_xyz (ostream & out_, 
-		  const vector_3d & p_,
-		  bool endl_ = true);
+                  const vector_3d & p_,
+                  bool endl_ = true);
 
   void print (ostream & out_, const vector_3d & p_);
 
@@ -61,8 +61,8 @@ namespace geomtools {
   /******/
 
   void print_xy (ostream & out_, 
-		 const basic_polyline_2d & p_,
-		 bool endl_ = true);
+                 const basic_polyline_2d & p_,
+                 bool endl_ = true);
 
   string to_xy (const basic_polyline_2d & p_);
 
@@ -75,8 +75,8 @@ namespace geomtools {
   /******/
 
   void print_xyz (ostream & out_, 
-		  const basic_polyline_3d & p_,
-		  bool endl_ = true);
+                  const basic_polyline_3d & p_,
+                  bool endl_ = true);
 
   string to_xyz (const basic_polyline_3d & p_);
 
@@ -126,9 +126,9 @@ namespace geomtools {
 
     enum filled_t
       {
-	FILLED_NONE         = 0,
-	FILLED_BY_ENVELOPE  = 1,
-	FILLED_BY_EXTRUSION = 2
+        FILLED_NONE         = 0,
+        FILLED_BY_ENVELOPE  = 1,
+        FILLED_BY_EXTRUSION = 2
       };
 
     static const string FILLED_NONE_LABEL;
@@ -143,62 +143,62 @@ namespace geomtools {
 
   //! Create a rotation using ZYZ Euler angles
   void create_zyz (rotation_3d & rot_,
-		   double phi_,
-		   double theta_,
-		   double delta_);
+                   double phi_,
+                   double theta_,
+                   double delta_);
 
   //! Create a rotation (default is using ZYZ Euler angles)
   void create (rotation_3d & rot_,
-	       double phi_,
-	       double theta_,
-	       double delta_);
+               double phi_,
+               double theta_,
+               double delta_);
 
   //! Create a rotation using ZXZ Euler angles
   void create_zxz (rotation_3d & rot_,
-		   double phi_,
-		   double theta_,
-		   double psi_);
+                   double phi_,
+                   double theta_,
+                   double psi_);
 
   //! Create a rotation using XYZ Euler angles
   void create_xyz (rotation_3d & rot_,
-		   double phi_,
-		   double theta_,
-		   double psi_);
+                   double phi_,
+                   double theta_,
+                   double psi_);
    
   //! Create a rotation (default is using ZYZ Euler angles)
   void create_rotation_3d (rotation_3d & rot_,
-			   double phi_,
-			   double theta_,
-			   double delta_);
+                           double phi_,
+                           double theta_,
+                           double delta_);
   
   //! Create a rotation (default is using ZYZ Euler angles)
   void create_rotation_from_zyz_euler_angles (rotation_3d & rot_,
-					      double phi_,
-					      double theta_,
-					      double delta_);
+                                              double phi_,
+                                              double theta_,
+                                              double delta_);
 
   //! Create a rotation (default is using ZYZ Euler angles)
   void create_rotation (rotation_3d & rot_,
-			double phi_,
-			double theta_,
-			double delta_);
+                        double phi_,
+                        double theta_,
+                        double delta_);
 
   //! Check if a rotation is the identity
   bool is_identity (const rotation_3d & rot_);
 
   //! Extract the XYZ Euler angles from a rotation
   void extract_xyz_euler_angle_from_rotation (const rotation_3d & rot_,
-					      double & a_,
-					      double & b_,
-					      double & c_);
+                                              double & a_,
+                                              double & b_,
+                                              double & c_);
 
 
   //! Extract the ZYZ Euler angles from a rotation
   // http://www.geometrictools.com/Documentation/EulerAngles.pdf
   void extract_zyz_euler_angle_from_rotation (const rotation_3d & rot_,
-					      double & a_,
-					      double & b_,
-					      double & c_);
+                                              double & a_,
+                                              double & b_,
+                                              double & c_);
 
   // http://www.cgafaq.info/wiki/Euler_angles_from_matrix
   // struct extract_euler_angle
@@ -253,28 +253,28 @@ namespace geomtools {
   /********************/
 
   void create_rotation_from_axis (rotation_3d & rot_,
-				  int axis_,
-				  double angle_);
+                                  int axis_,
+                                  double angle_);
 
   void create_rotation (rotation_3d & rot_,
-			int axis_,
-			double angle_);
+                        int axis_,
+                        double angle_);
 
   void create_rotation (rotation_3d & rot_,
-			int axis_,
-			int special_angle_);
+                        int axis_,
+                        int special_angle_);
   
   void create_rotation_from (rotation_3d & rot_,
-			     const string &);
+                             const string &);
   
   void reset (rotation_3d & rot_);
   
   void reset_rotation_3d (rotation_3d & rot_);
   
   void tree_dump (const rotation_3d & rot_,
-		  ostream & out_, 
-		  const string & title_ = "", 
-		  const string & indent_ = "");
+                  ostream & out_, 
+                  const string & title_ = "", 
+                  const string & indent_ = "");
 
   void invalidate (rotation_3d & rot_);
 
@@ -288,24 +288,24 @@ namespace geomtools {
 
   /******/
   void create (vector_3d &,
-	       double x_,
-	       double y_,
-	       double z_);
+               double x_,
+               double y_,
+               double z_);
 
   void create_xyz (vector_3d &,
-		   double x_,
-		   double y_,
-		   double z_);
+                   double x_,
+                   double y_,
+                   double z_);
 
   void create_polar (vector_3d &,
-		     double r_,
-		     double theta_,
-		     double z_);
+                     double r_,
+                     double theta_,
+                     double z_);
 
   void create_spherical (vector_3d &,
-			 double r_,
-			 double phi_,
-			 double theta_);
+                         double r_,
+                         double phi_,
+                         double theta_);
 
   void invalidate (vector_3d & vec_);
   
@@ -316,12 +316,12 @@ namespace geomtools {
   bool is_valid_vector_3d (const vector_3d & vec_);
 
   bool are_near (const vector_3d & vec1_, 
-		 const vector_3d & vec2_,
-		 double tolerance_ = constants::DEFAULT_TOLERANCE);
+                 const vector_3d & vec2_,
+                 double tolerance_ = constants::DEFAULT_TOLERANCE);
 
   bool are_near_vector_3d (const vector_3d & vec1_, 
-			   const vector_3d & vec2_,
-			   double tolerance_);
+                           const vector_3d & vec2_,
+                           double tolerance_);
 
   /*****/
 
@@ -380,8 +380,8 @@ namespace geomtools {
    */
   template <class ran_func>
   void randomize_orthogonal_direction (ran_func & ran_, 
-				       const vector_3d & dir_, 
-				       vector_3d & ran_dir_)
+                                       const vector_3d & dir_, 
+                                       vector_3d & ran_dir_)
   {
     double theta = 2. * M_PI * ran_ ();
     double dx = cos (theta);
@@ -390,9 +390,9 @@ namespace geomtools {
     double dir_theta = dir_.theta ();
     double dir_phi = dir_.phi ();
     clog << "theta (dir) = " 
-	      << 180.* dir_theta / M_PI << "°" << endl;
+         << 180.* dir_theta / M_PI << "°" << endl;
     clog << "phi (dir) = " 
-	      << 180.* dir_phi / M_PI << "°"  << endl;
+         << 180.* dir_phi / M_PI << "°"  << endl;
     rotation_3d dir_rot;
     create_rotation_3d (dir_rot, dir_phi, dir_theta, 0.0);
     rotation_3d dir_inverse_rot;
@@ -405,7 +405,7 @@ namespace geomtools {
 
   template <class ran_func>
   vector_3d randomize_orthogonal_direction (ran_func & ran_, 
-					    const vector_3d & ref_dir_)
+                                            const vector_3d & ref_dir_)
   {
     vector_3d dir;
     randomize_direction (ran_, ref_dir_, dir);
@@ -418,11 +418,11 @@ namespace geomtools {
   {
   public:
     rotation_wrapper_t (double mxx_, double mxy_, double mxz_, 
-			double myx_, double myy_, double myz_,
-			double mzx_, double mzy_, double mzz_) 
+                        double myx_, double myy_, double myz_,
+                        double mzx_, double mzy_, double mzz_) 
       : rotation_3d (mxx_, mxy_, mxz_, 
-		     myx_, myy_, myz_,
-		     mzx_, mzy_, mzz_) {}
+                     myx_, myy_, myz_,
+                     mzx_, mzy_, mzz_) {}
   };
 
   /** Class intercept_t hosts the paramater of the intercept 
@@ -433,9 +433,9 @@ namespace geomtools {
   private:
 
     int       __shape_index; /** The index of the sub-shape
-			      *  for composite shapes only.
-			      *  Default is 0.
-			      */
+                              *  for composite shapes only.
+                              *  Default is 0.
+                              */
     int       __face;   //! The index of the impact face on the shape
     vector_3d __impact; //! The impact point on the surface
 
@@ -522,18 +522,18 @@ namespace boost {
     
     template<class Archive>
     void save (Archive & a_ar , 
-	       const geomtools::vector_3d & v_,
-	       const unsigned int a_version);
+               const geomtools::vector_3d & v_,
+               const unsigned int a_version);
 
     template<class Archive>
     void load (Archive & a_ar , 
-	       geomtools::vector_3d & v_,
-	       const unsigned int a_version);
+               geomtools::vector_3d & v_,
+               const unsigned int a_version);
 
     template<class Archive>
     void serialize (Archive & a_ar,
-    		    geomtools::vector_3d  & v_,
-    		    const unsigned int a_version);
+                    geomtools::vector_3d  & v_,
+                    const unsigned int a_version);
     
   } // namespace serialization
 
@@ -546,18 +546,18 @@ namespace boost {
     
     template<class Archive>
     void save (Archive & a_ar , 
-	       const geomtools::vector_2d & v_,
-	       const unsigned int a_version);
+               const geomtools::vector_2d & v_,
+               const unsigned int a_version);
 
     template<class Archive>
     void load (Archive & a_ar , 
-	       geomtools::vector_2d & v_,
-	       const unsigned int a_version);
+               geomtools::vector_2d & v_,
+               const unsigned int a_version);
     
     template<class Archive>
     void serialize (Archive & a_ar,
-		    geomtools::vector_2d  & v_,
-		    const unsigned int a_version);
+                    geomtools::vector_2d  & v_,
+                    const unsigned int a_version);
     
   } // namespace serialization
 
@@ -571,18 +571,18 @@ namespace boost {
     
     template<class Archive>
     void save (Archive & a_ar , 
-	       const geomtools::rotation_3d & r_,
-	       const unsigned int a_version);
+               const geomtools::rotation_3d & r_,
+               const unsigned int a_version);
 
     template<class Archive>
     void load (Archive & a_ar , 
-    	       geomtools::rotation_3d & a_rotation,
-    	       const unsigned int a_version);
+               geomtools::rotation_3d & a_rotation,
+               const unsigned int a_version);
 
     template<class Archive>
     void serialize (Archive & a_ar,
-		    geomtools::rotation_3d  & a_rotation,
-		    const unsigned int a_version);
+                    geomtools::rotation_3d  & a_rotation,
+                    const unsigned int a_version);
     
   } // namespace serialization
 

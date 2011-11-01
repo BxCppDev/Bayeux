@@ -13,81 +13,81 @@ namespace geomtools {
   
   bool address_set::is_valid () const
   {
-    return mode_ != MODE_INVALID;
+    return _mode_ != MODE_INVALID;
   }
 
   void address_set::invalidate ()
   {
     reset ();
-    mode_ = MODE_INVALID;
+    _mode_ = MODE_INVALID;
     return;
   }
 
-  void address_set::reset_list_ ()
+  void address_set::_reset_list_ ()
   {
-    addrs_.clear ();
+    _addresses_.clear ();
     return;
   }
 
-  void address_set::reset_range_ ()
+  void address_set::_reset_range_ ()
   {
-    range_min_ = 1;
-    range_max_ = 0;
+    _range_min_ = 1;
+    _range_max_ = 0;
     return;
   }
   
   bool address_set::is_reverse () const
   {
-    return reverse_;
+    return _reverse_;
   }
  
   void address_set::set_reverse (bool a_reverse)
   {
-    reverse_ = a_reverse;
+    _reverse_ = a_reverse;
     return;
   }
  
   bool address_set::is_mode_none () const
   {
-    return mode_ == MODE_NONE;
+    return _mode_ == MODE_NONE;
   }
   
   bool address_set::is_mode_all () const
   {
-    return mode_ == MODE_ALL;
+    return _mode_ == MODE_ALL;
   }
   
   bool address_set::is_mode_range () const
   {
-    return mode_ == MODE_RANGE;
+    return _mode_ == MODE_RANGE;
   }
   
   bool address_set::is_mode_list () const
   {
-    return mode_ == MODE_LIST;
+    return _mode_ == MODE_LIST;
   }
   
   void address_set::set_mode_none ()
   {
-    reset_range_ ();
-    reset_list_ ();
-    mode_ = MODE_NONE;
+    _reset_range_ ();
+    _reset_list_ ();
+    _mode_ = MODE_NONE;
     return;
   }
   
   void address_set::set_mode_all ()
   {
-    reset_range_ ();
-    reset_list_ ();
-    mode_ = MODE_ALL;
+    _reset_range_ ();
+    _reset_list_ ();
+    _mode_ = MODE_ALL;
     return;
   }
   
   void address_set::set_mode_range ()
   {
-    reset_list_ ();
-    reset_range_ ();
-    mode_ = MODE_RANGE;
+    _reset_list_ ();
+    _reset_range_ ();
+    _mode_ = MODE_RANGE;
     return;
   }
   
@@ -100,28 +100,28 @@ namespace geomtools {
       }
     if (a_min >  a_max)
       {
-	reset_range_ ();
+	_reset_range_ ();
       }
     else
      {
-       range_min_ = a_min;
-       range_max_ = a_max;     
+       _range_min_ = a_min;
+       _range_max_ = a_max;     
      }
     return;
   }
   
   void address_set::set_mode_range (uint32_t a_min, uint32_t a_max)
   {
-    mode_ = MODE_RANGE;
+    _mode_ = MODE_RANGE;
     set_range (a_min, a_max);
     return;
   }
 
   void address_set::set_mode_list ()
   {
-    reset_list_ ();
-    reset_range_ ();
-    mode_ = MODE_LIST;
+    _reset_list_ ();
+    _reset_range_ ();
+    _mode_ = MODE_LIST;
     return;
   }
 
@@ -131,7 +131,7 @@ namespace geomtools {
       {
 	set_mode_list ();
       }
-    addrs_.insert (a_value);
+    _addresses_.insert (a_value);
     return;
   }
 
@@ -145,13 +145,13 @@ namespace geomtools {
       }
     else if (is_mode_range ())
       {
-	if (a_value < range_min_) matched_value = false;
-	else if (a_value > range_max_) matched_value = false;
+	if (a_value < _range_min_) matched_value = false;
+	else if (a_value > _range_max_) matched_value = false;
 	else matched_value = true;
       }
     else if (is_mode_list ())
       {
-	matched_value = addrs_.find (a_value) != addrs_.end ();
+	matched_value = _addresses_.find (a_value) != _addresses_.end ();
       }
     else
       {
@@ -166,10 +166,10 @@ namespace geomtools {
 
   void address_set::reset ()
   {
-    reverse_ = false; 
-    mode_ = MODE_DEFAULT;
-    reset_range_ ();
-    reset_list_ ();
+    _reverse_ = false; 
+    _mode_ = MODE_DEFAULT;
+    _reset_range_ ();
+    _reset_list_ ();
     return;
   }
 
@@ -202,22 +202,22 @@ namespace geomtools {
     else if (a_addset.is_mode_range ())
       {
 	a_out << '[';
-	a_out << a_addset.range_min_;
+	a_out << a_addset._range_min_;
 	a_out << ';';
-	a_out << a_addset.range_max_;
+	a_out << a_addset._range_max_;
 	a_out << ']';
       }
     else
       {
 	a_out << '{';
-	for (set<uint32_t>::const_iterator i = a_addset.addrs_.begin ();
-	      i != a_addset.addrs_.end ();
+	for (set<uint32_t>::const_iterator i = a_addset._addresses_.begin ();
+	      i != a_addset._addresses_.end ();
 	     i++)
 	  {
 	    set<uint32_t>::const_iterator j = i;
 	    j++;
 	    a_out << *i;
-	    if (j != a_addset.addrs_.end ())
+	    if (j != a_addset._addresses_.end ())
 	      {
 		a_out << ';';
 	      }

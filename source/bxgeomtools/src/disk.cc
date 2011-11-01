@@ -27,7 +27,7 @@ namespace geomtools {
   
   double disk::get_r () const
   {
-    return __radius;
+    return _radius_;
   }
   
   double disk::get_radius () const
@@ -42,7 +42,7 @@ namespace geomtools {
 
   double disk::get_diameter () const
   {
-    return (__radius + __radius);
+    return (_radius_ + _radius_);
   }
   
   void disk::set_r (double new_value_)
@@ -53,29 +53,29 @@ namespace geomtools {
 	message << "disk::set_r: Invalid '" << new_value_ << "' R value!";
 	throw logic_error (message.str ());
       }
-    __radius = new_value_;
+    _radius_ = new_value_;
   }
   
    
   double disk::get_surface () const
   {
-    return M_PI * __radius * __radius;
+    return M_PI * _radius_ * _radius_;
   }
 
   double disk::get_circumference () const
   {
-    return 2 * M_PI * __radius;
+    return 2 * M_PI * _radius_;
   }
 
   bool disk::is_valid () const
   {
-    return (__radius > 0.0);
+    return (_radius_ > 0.0);
   }
   
   // ctor:
   disk::disk ()
   {
-    __radius = -1.0;
+    _radius_ = -1.0;
   }
   
   // ctor:
@@ -99,7 +99,7 @@ namespace geomtools {
 
     double x = position_.x ();
     double y = position_.y ();
-    double r2 = (__radius + 0.5 * tolerance) * (__radius + 0.5 * tolerance);
+    double r2 = (_radius_ + 0.5 * tolerance) * (_radius_ + 0.5 * tolerance);
     double rho2 = x * x + y * y;
     if (rho2 > r2) 
       {
@@ -146,7 +146,7 @@ namespace geomtools {
 	double lambda2;
 	p2 = (ux * ux + uy * uy);
 	p1 = -2 * (ux * xf + uy * yf);
-	double r = pow (__radius + 0.5 * tolerance_, 2);
+	double r = pow (_radius_ + 0.5 * tolerance_, 2);
 	p0 = xf * xf + yf * yf - r * r;
 	size_t nsol = 0;
 	nsol = gsl_poly_solve_quadratic (p2, p1, p0, &lambda1, &lambda2);

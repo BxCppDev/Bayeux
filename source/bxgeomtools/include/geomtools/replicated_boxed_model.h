@@ -34,18 +34,6 @@ namespace geomtools {
   // define a geometry model with a single box: 
   class replicated_boxed_model : public geomtools::i_boxed_model
   {
-  private:
-
-    const i_model *            __boxed_model;
-    regular_linear_placement   __boxed_replica_placement;
-    physical_volume            __boxed_phys;
-
-    size_t         __number_of_items;
-    double         __x;
-    double         __y;
-    double         __z;
-
-    geomtools::box __solid;
 
   public: 
 
@@ -73,18 +61,28 @@ namespace geomtools {
   protected:
   
     virtual void _at_construct (const string & name_,
-				const datatools::utils::properties & config_,
-				models_col_t * models_ = 0);
+                                const datatools::utils::properties & config_,
+                                models_col_t * models_ = 0);
 
   private:
 
-    static creator_registration<replicated_boxed_model> __CR;
+    static creator_registration<replicated_boxed_model> _g_cr_;
       
   public: 
     virtual void tree_dump (ostream & out_         = clog, 
-			    const string & title_  = "", 
-			    const string & indent_ = "", 
-			    bool inherit_          = false) const;
+                            const string & title_  = "", 
+                            const string & indent_ = "", 
+                            bool inherit_          = false) const;
+  private:
+
+    const i_model *            _boxed_model_;
+    regular_linear_placement   _boxed_replica_placement_;
+    physical_volume            _boxed_phys_;
+    size_t         _number_of_items_;
+    double         _x_;
+    double         _y_;
+    double         _z_;
+    geomtools::box _solid_;
   
   };
 

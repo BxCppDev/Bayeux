@@ -26,16 +26,16 @@ namespace geomtools {
   const string color::default_color = color::grey;
  
   // static:
-  color::scoped_color_db_t color::g_color_db_ (new color_db ());
+  color::scoped_color_db_type color::_g_color_db_ (new color_db ());
 
   // static:
   const color::color_db & color::get_color_db ()
   {
-    if (! g_color_db_) 
+    if (! _g_color_db_) 
       {
 	throw runtime_error ("color::get_color_db: Library build critical bug !");
       }
-    return *(g_color_db_.get ());
+    return *(_g_color_db_.get ());
   }
 
   int color::get_color (const string & a_name) 
@@ -46,7 +46,7 @@ namespace geomtools {
   int color::color_db::get_color (const string & a_name) const
   {
     int acolor = (map_of_colors_.find (color::default_color))->second;
-    color_map_t::const_iterator i = map_of_colors_.find (a_name);
+    color_map_type::const_iterator i = map_of_colors_.find (a_name);
     if (i != map_of_colors_.end ())
       {
 	acolor = i->second;

@@ -33,66 +33,72 @@ namespace geomtools {
 
   bool gdml_export::is_debug () const
   {
-    return __debug;
+    return _debug_;
   }
 
   void gdml_export::set_debug (bool d_)
   {
-    __debug = d_;
+    _debug_ = d_;
+    return;
   }
 
   bool gdml_export::is_auxiliary_supported () const
   {
-    return __support_auxiliary;
+    return _support_auxiliary_;
   }
 
   void gdml_export::add_auxiliary_support (bool s_)
   {
-    __support_auxiliary = s_;
+    _support_auxiliary_ = s_;
+    return;
   }
 
 
   bool gdml_export::is_replica_supported () const
   {
-    return __support_replica;
+    return _support_replica_;
   }
 
   void gdml_export::add_replica_support (bool s_)
   {
-    __support_replica = s_;
+    _support_replica_ = s_;
+    return;
   }
 
   const datatools::utils::properties & gdml_export::parameters () const
   {
-    return __parameters;
+    return _parameters_;
   }
 
   datatools::utils::properties & gdml_export::parameters ()
   {
-    return __parameters;
+    return _parameters_;
   }
 
   // ctor:
   gdml_export::gdml_export ()
   {
-    __debug = false;
-    __factory = 0;
-    __length_unit = DEFAULT_LENGTH_UNIT;
-    __angle_unit = DEFAULT_ANGLE_UNIT;
-    __density_unit = DEFAULT_DENSITY_UNIT;
-    __external_materials_stream = 0;
-    __support_auxiliary = true;
-    __support_replica = false;
+    _debug_ = false;
+    _factory_ = 0;
+    _length_unit_ = DEFAULT_LENGTH_UNIT;
+    _angle_unit_ = DEFAULT_ANGLE_UNIT;
+    _density_unit_ = DEFAULT_DENSITY_UNIT;
+    _external_materials_stream_ = 0;
+    _support_auxiliary_ = true;
+    _support_replica_ = false;
+    return;
   }
 
   // dtor:
   gdml_export::~gdml_export ()
   {
+    return;
   }
 
   void gdml_export::attach_external_materials (const ostringstream & oss_)
   {
-    __external_materials_stream = &oss_;
+    _external_materials_stream_ = &oss_;
+    return;
   }
 
   void gdml_export::export_gdml (const string & filename_,
@@ -141,8 +147,8 @@ namespace geomtools {
       {
 	clog << "DEVEL: gdml_export::export_gdml: Entering..." << endl;
       }
-    __factory = &factory_;
-    const models_col_t & models = __factory->get_models ();
+    _factory_ = &factory_;
+    const models_col_t & models = _factory_->get_models ();
     models_col_t::const_iterator found = models.find (model_name_);
     if (found == models.end ())
       {
@@ -154,12 +160,12 @@ namespace geomtools {
 	throw runtime_error (message.str ());
       }
     const i_model & top_model = *(found->second);
-    if (__external_materials_stream != 0)
+    if (_external_materials_stream_ != 0)
       {
 	clog << "NOTICE: gdml_export::export_gdml: Attach a stream with materials external definitions." << endl;
-	__writer.attach_external_materials (*__external_materials_stream);
+	_writer_.attach_external_materials (*_external_materials_stream_);
       }
-    __writer.init ();
+    _writer_.init ();
     _export_gdml_model (top_model);
 
     string xml_version  = gdml_writer::DEFAULT_XML_VERSION;
@@ -167,59 +173,59 @@ namespace geomtools {
     string xsi          = gdml_writer::DEFAULT_XSI;
     string gdml_schema  = gdml_writer::DEFAULT_REMOTE_GDML_SCHEMA;
 
-    if (__parameters.has_key ("xml_version"))
+    if (_parameters_.has_key ("xml_version"))
       {
-	xml_version = __parameters.fetch_string ("xml_version");
+	xml_version = _parameters_.fetch_string ("xml_version");
       }
 
-    if (__parameters.has_key ("xml_encoding"))
+    if (_parameters_.has_key ("xml_encoding"))
       {
-	xml_encoding = __parameters.fetch_string ("xml_encoding");
+	xml_encoding = _parameters_.fetch_string ("xml_encoding");
       }
 
-    if (__parameters.has_key ("xsi"))
+    if (_parameters_.has_key ("xsi"))
       {
-	xsi = __parameters.fetch_string ("xsi");
+	xsi = _parameters_.fetch_string ("xsi");
       }
 
-    if (__parameters.has_key ("gdml_schema"))
+    if (_parameters_.has_key ("gdml_schema"))
       {
-	gdml_schema = __parameters.fetch_string ("gdml_schema");
+	gdml_schema = _parameters_.fetch_string ("gdml_schema");
       }
 
-    if (__parameters.has_key ("length_unit"))
+    if (_parameters_.has_key ("length_unit"))
       {
-	__length_unit = __parameters.fetch_string ("length_unit");
+	_length_unit_ = _parameters_.fetch_string ("length_unit");
       }
 
-    if (__parameters.has_key ("angle_unit"))
+    if (_parameters_.has_key ("angle_unit"))
       {
-	__angle_unit = __parameters.fetch_string ("angle_unit");
+	_angle_unit_ = _parameters_.fetch_string ("angle_unit");
       }
 
-    if (__parameters.has_key ("density_unit"))
+    if (_parameters_.has_key ("density_unit"))
       {
-	__density_unit = __parameters.fetch_string ("density_unit");
+	_density_unit_ = _parameters_.fetch_string ("density_unit");
       }
 
     // add a fake material:
-    __writer.add_material (material::MATERIAL_REF_DEFAULT,
+    _writer_.add_material (material::MATERIAL_REF_DEFAULT,
 			   1.0,
 			   1. * CLHEP::g / CLHEP::cm3,
 			   1.00);
-    __writer.add_material (material::MATERIAL_REF_UNKNOWN,
+    _writer_.add_material (material::MATERIAL_REF_UNKNOWN,
 			   1.0,
 			   1. * CLHEP::g / CLHEP::cm3,
 			   1.00);
-    __writer.add_material (material::MATERIAL_REF_VACUUM,
+    _writer_.add_material (material::MATERIAL_REF_VACUUM,
 			   1.0,
 			   1.e-15 * CLHEP::g / CLHEP::cm3,
 			   1.00);
 
-    __writer.add_setup ("Setup", top_model.get_logical ().get_name ());
+    _writer_.add_setup ("Setup", top_model.get_logical ().get_name ());
 
-    __writer.full_write (out_, xml_version, xml_encoding, gdml_schema, xsi);
-    __writer.reset ();
+    _writer_.full_write (out_, xml_version, xml_encoding, gdml_schema, xsi);
+    _writer_.reset ();
 
     if (devel)
       {
@@ -274,16 +280,16 @@ namespace geomtools {
 	    string pos_ref = solid_name_ + ".union.pos_ref";
 	    string rot_ref = solid_name_ + ".union.rot_ref";;
 	    // only stores the solid #2 placement:
-	    __writer.add_position (pos_ref,
+	    _writer_.add_position (pos_ref,
 				   u.get_shape2 ().get_placement ().get_translation (),
-				   __length_unit);
-	    __writer.add_rotation (rot_ref,
+				   _length_unit_);
+	    _writer_.add_rotation (rot_ref,
 				   u.get_shape2 ().get_placement ().get_rotation (),
-				   __angle_unit);
+				   _angle_unit_);
 	    this->_export_gdml_solid (u.get_shape1 ().get_shape (), shape_ref_1);
 	    this->_export_gdml_solid (u.get_shape2 ().get_shape (), shape_ref_2);
 
-	    __writer.add_gdml_union (solid_name_,
+	    _writer_.add_gdml_union (solid_name_,
 				     shape_ref_1,
 				     shape_ref_2,
 				     pos_ref,
@@ -298,16 +304,16 @@ namespace geomtools {
 	    string rot_ref = solid_name_ + ".subtraction.rot_ref";;
 
 	    // only stores the solid #2 placement:
-	    __writer.add_position (pos_ref,
+	    _writer_.add_position (pos_ref,
 				   s.get_shape2 ().get_placement ().get_translation (),
-				   __length_unit);
-	    __writer.add_rotation (rot_ref,
+				   _length_unit_);
+	    _writer_.add_rotation (rot_ref,
 				   s.get_shape2 ().get_placement ().get_rotation (),
-				   __angle_unit);
+				   _angle_unit_);
 	    this->_export_gdml_solid (s.get_shape1 ().get_shape (), shape_ref_1);
 	    this->_export_gdml_solid (s.get_shape2 ().get_shape (), shape_ref_2);
 
-	    __writer.add_gdml_subtraction (solid_name_,
+	    _writer_.add_gdml_subtraction (solid_name_,
 					   shape_ref_1,
 					   shape_ref_2,
 					   pos_ref,
@@ -322,16 +328,16 @@ namespace geomtools {
 	    string rot_ref = solid_name_ + ".intersection.rot_ref";;
 
 	    // only stores the solid #2 placement:
-	    __writer.add_position (pos_ref,
+	    _writer_.add_position (pos_ref,
 				   i.get_shape2 ().get_placement ().get_translation (),
-				   __length_unit);
-	    __writer.add_rotation (rot_ref,
+				   _length_unit_);
+	    _writer_.add_rotation (rot_ref,
 				   i.get_shape2 ().get_placement ().get_rotation (),
-				   __angle_unit);
+				   _angle_unit_);
 	    this->_export_gdml_solid (i.get_shape1 ().get_shape (), shape_ref_1);
 	    this->_export_gdml_solid (i.get_shape2 ().get_shape (), shape_ref_2);
 
-	    __writer.add_gdml_intersection (solid_name_,
+	    _writer_.add_gdml_intersection (solid_name_,
 					    shape_ref_1,
 					    shape_ref_2,
 					    pos_ref,
@@ -352,32 +358,32 @@ namespace geomtools {
 	if (shape_name == "box")
 	  {
 	    const box & b = static_cast<const box &> (shape_);
-	    __writer.add_box (solid_name_, b, __length_unit);
+	    _writer_.add_box (solid_name_, b, _length_unit_);
 	  }
 	else if (shape_name == "cylinder")
 	  {
 	    const cylinder & c = static_cast<const cylinder &> (shape_);
-	    __writer.add_cylinder (solid_name_, c, __length_unit, __angle_unit);
+	    _writer_.add_cylinder (solid_name_, c, _length_unit_, _angle_unit_);
 	  }
 	else if (shape_name == "tube")
 	  {
 	    const tube & t = static_cast<const tube &> (shape_);
-	    __writer.add_tube (solid_name_, t, __length_unit, __angle_unit);
+	    _writer_.add_tube (solid_name_, t, _length_unit_, _angle_unit_);
 	  }
 	else if (shape_name == "sphere")
 	  {
 	    const sphere & s = static_cast<const sphere &> (shape_);
-	    __writer.add_orb (solid_name_, s, __length_unit, __angle_unit);
+	    _writer_.add_orb (solid_name_, s, _length_unit_, _angle_unit_);
 	  }
 	else if (shape_name == "polycone")
 	  {
 	    const polycone & p = static_cast<const polycone &> (shape_);
-	    __writer.add_polycone (solid_name_, p, __length_unit, __angle_unit);
+	    _writer_.add_polycone (solid_name_, p, _length_unit_, _angle_unit_);
 	  }
 	else if (shape_name == "polyhedra")
 	  {
 	    const polyhedra & p = static_cast<const polyhedra &> (shape_);
-	    __writer.add_polyhedra (solid_name_, p, __length_unit, __angle_unit);
+	    _writer_.add_polyhedra (solid_name_, p, _length_unit_, _angle_unit_);
 	  }
 	else
 	  {
@@ -389,7 +395,7 @@ namespace geomtools {
 	    throw runtime_error (message.str ());
 	  }
       }
-    __solid_refs.push_back (solid_name_);
+    _solid_refs_.push_back (solid_name_);
 
     if (devel)
       {
@@ -410,9 +416,9 @@ namespace geomtools {
     const geomtools::logical_volume & logical = lv_;
     const string & log_name = logical.get_name ();
 
-    if (find (__volumes_refs.begin (),
-              __volumes_refs.end (),
-              log_name) != __volumes_refs.end ())
+    if (find (_volumes_refs_.begin (),
+              _volumes_refs_.end (),
+              log_name) != _volumes_refs_.end ())
       {
 	if (devel)
 	  {
@@ -458,7 +464,7 @@ namespace geomtools {
 
     if (! skip && logical.get_physicals ().size () == 0)
       {
-	__writer.add_volume (log_name,
+	_writer_.add_volume (log_name,
 			     material_ref,
 			     solid_ref,
 			     auxprops);
@@ -466,7 +472,7 @@ namespace geomtools {
       }
 
     // there is a replica children:
-    if (! skip && (__support_replica && logical.is_replica ()))
+    if (! skip && (_support_replica_ && logical.is_replica ()))
       {
 	if (devel)
 	  {
@@ -517,12 +523,12 @@ namespace geomtools {
 	if (devel) clog << "DEVEL: gdml_export::_export_gdml_logical: "
 			<< "add volume '" << log_name << "' (replica)..." << endl;
 
-	__writer.add_replica_volume (log_name,
+	_writer_.add_replica_volume (log_name,
 				     material_ref,
 				     solid_ref,
 				     a_replicavol,
-				     __length_unit,
-				     __angle_unit,
+				     _length_unit_,
+				     _angle_unit_,
 				     auxprops);
 	skip = true;
       }
@@ -594,9 +600,9 @@ namespace geomtools {
 		pos_name_oss << log_name << '.' << phys.get_name ();
 		if (multiple) pos_name_oss << "__" << i << "__";
 		pos_name_oss << io::POSITION_SUFFIX;
-		__writer.add_position (pos_name_oss.str (),
+		_writer_.add_position (pos_name_oss.str (),
 				       p.get_translation (),
-				       __length_unit);
+				       _length_unit_);
 
 		if (devel) clog << "DEVEL: gdml_export::_export_gdml_logical: "
 				<< "add rotation..." << endl;
@@ -627,9 +633,9 @@ namespace geomtools {
 		  {
 		    if (! is_identity (p.get_rotation ()))
 		      {
-			__writer.add_rotation (rot_name,
+			_writer_.add_rotation (rot_name,
 					       p.get_rotation (),
-					       __angle_unit);
+					       _angle_unit_);
 		      }
 		  }
 		if (is_identity (p.get_rotation ()))
@@ -653,7 +659,7 @@ namespace geomtools {
 		    clog  << endl;
 		  }
 	      }
-	__writer.add_volume (log_name,
+	_writer_.add_volume (log_name,
 			     material_ref,
 			     solid_ref,
 			     physvols,
@@ -661,7 +667,7 @@ namespace geomtools {
 	skip = true;
       } // there are children:
 
-    __volumes_refs.push_back (log_name);
+    _volumes_refs_.push_back (log_name);
     if (devel)
       {
 	clog << "DEVEL: gdml_export::_export_gdml_logical: Exiting." << endl;

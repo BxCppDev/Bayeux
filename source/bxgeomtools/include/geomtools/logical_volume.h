@@ -42,16 +42,8 @@ namespace geomtools {
     static const string HAS_REPLICA_FLAG;
 
   private:
-    string     __name;
-    bool       __locked;
-    properties __parameters;
-    bool       __own_shape;
-    const i_shape_3d * __shape;
-    physicals_col_t  __physicals;
-
-  private:
     
-    void __clear_shape ();
+    void _clear_shape_ ();
 
   public:
 
@@ -90,9 +82,9 @@ namespace geomtools {
     virtual ~logical_volume ();
 
     virtual void tree_dump (ostream & out_         = clog, 
-			    const string & title_  = "", 
-			    const string & indent_ = "", 
-			    bool inherit_          = false) const;
+                            const string & title_  = "", 
+                            const string & indent_ = "", 
+                            bool inherit_          = false) const;
 
     bool has_physical (const string & name_) const;
 
@@ -107,6 +99,16 @@ namespace geomtools {
     void add_physical (const physical_volume & phys_, const string & name_ = "");
 
     bool is_replica () const;
+
+
+  private:
+
+    string     _name_;
+    bool       _locked_;
+    properties _parameters_;
+    bool       _own_shape_;
+    const i_shape_3d * _shape_;
+    physicals_col_t  _physicals_;
 
   public:
 

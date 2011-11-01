@@ -73,7 +73,7 @@ namespace geomtools {
     
   private: 
 
-    double radius_; //!< The radius of the circle (in arbitrary units).
+    double _radius_; //!< The radius of the circle (in arbitrary units).
   
   };
 

@@ -33,46 +33,46 @@ namespace geomtools {
   // by some simple rotation:
   class rotated_boxed_model : public geomtools::i_boxed_model
   {
+
+  public: 
+    void set_boxed_model (const i_model &);
+    const i_model & get_boxed_model () const;
+    virtual const geomtools::box & get_box () const;
+    const geomtools::box & get_solid () const;
+
+  public:
+  
+    rotated_boxed_model ();
+  
+    virtual ~rotated_boxed_model ();
+
+  public:
+
+    virtual string get_model_id () const;
+
+  protected:
+  
+    virtual void _at_construct (const string & name_,
+                                const datatools::utils::properties & config_,
+                                models_col_t * models_ = 0);
+
+  private:
+
+    static creator_registration<rotated_boxed_model> _g_cr_;
+      
+  public: 
+    virtual void tree_dump (ostream & out_         = clog, 
+                            const string & title_  = "", 
+                            const string & indent_ = "", 
+                            bool inherit_          = false) const;
   private:
     
-      const i_model *  __boxed_model;
-      placement        __boxed_placement;
-      physical_volume  __boxed_phys;
-      geomtools::box   __solid;
-
-    public: 
-      void set_boxed_model (const i_model &);
-      const i_model & get_boxed_model () const;
-      virtual const geomtools::box & get_box () const;
-      const geomtools::box & get_solid () const;
-
-    public:
+    const i_model *  _boxed_model_;
+    placement        _boxed_placement_;
+    physical_volume  _boxed_phys_;
+    geomtools::box   _solid_;
   
-      rotated_boxed_model ();
-  
-      virtual ~rotated_boxed_model ();
-
-    public:
-
-      virtual string get_model_id () const;
-
-    protected:
-  
-      virtual void _at_construct (const string & name_,
-				  const datatools::utils::properties & config_,
-				  models_col_t * models_ = 0);
-
-    private:
-
-      static creator_registration<rotated_boxed_model> __CR;
-      
-    public: 
-      virtual void tree_dump (ostream & out_         = clog, 
-                              const string & title_  = "", 
-                              const string & indent_ = "", 
-                              bool inherit_          = false) const;
-  
-    };
+  };
 
 } // end of namespace geomtools
 

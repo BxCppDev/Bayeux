@@ -24,12 +24,12 @@ namespace geomtools {
   
   double rectangle::get_x () const
   {
-    return __x;
+    return _x_;
   }
   
   double rectangle::get_y () const
   {
-    return __y;
+    return _y_;
   }
   
   void rectangle::set_x (double new_value_)
@@ -40,7 +40,7 @@ namespace geomtools {
 	message << "rectangle::set_x: Invalid '" << new_value_ << "' X value!";
 	throw logic_error (message.str ());
       }
-    __x = new_value_;
+    _x_ = new_value_;
   }
   
   void rectangle::set_y (double new_value_)
@@ -51,34 +51,34 @@ namespace geomtools {
 	message << "rectangle::set_y: Invalid '" << new_value_ << "' Y value!";
 	throw logic_error (message.str ());
       }
-    __y = new_value_;
+    _y_ = new_value_;
   }
   
   double rectangle::get_diagonal () const
   {
-    return  hypot (__x, __y);
+    return  hypot (_x_, _y_);
   }
    
   double rectangle::get_surface () const
   {
-    return  __x * __y;
+    return  _x_ * _y_;
   }
 
   double rectangle::get_circumference () const
   {
-    return 2 * (__x + __y);
+    return 2 * (_x_ + _y_);
   }
 
   bool rectangle::is_valid () const
   {
-    return (__x > 0.0) && (__y > 0.0);
+    return (_x_ > 0.0) && (_y_ > 0.0);
   }
   
   // ctor:
   rectangle::rectangle ()
   {
-    __x = -1.0;
-    __y = -1.0;
+    _x_ = -1.0;
+    _y_ = -1.0;
   }
 
   // ctor:
@@ -105,11 +105,11 @@ namespace geomtools {
       }
     double x = position_.x ();
     double y = position_.y ();
-    if (std::abs (x) > (0.5 * (__x + tolerance)))
+    if (std::abs (x) > (0.5 * (_x_ + tolerance)))
       {
 	return false;
       }
-    if (std::abs (y) > (0.5 * (__y + tolerance)))
+    if (std::abs (y) > (0.5 * (_y_ + tolerance)))
       {
 	return false;
       }

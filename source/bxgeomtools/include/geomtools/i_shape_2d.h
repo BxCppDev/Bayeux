@@ -24,32 +24,33 @@
 namespace geomtools {
 
   class i_shape_2d : public i_object_3d
-    {
-    public:
-      enum face_t
+  {
+  public:
+
+    enum face_type
       {
-	FACE_NONE = 0x0,
-	FACE_UP   = 0x1,
-	FACE_DOWN = 0x2,
-	FACE_ALL  = FACE_UP | FACE_DOWN
+        FACE_NONE = 0x0,
+        FACE_UP   = 0x1,
+        FACE_DOWN = 0x2,
+        FACE_ALL  = FACE_UP | FACE_DOWN
       };
 
-      virtual int get_dimensional () const;
+    virtual int get_dimensional () const;
 
-      i_shape_2d (double tolerance_ = i_object_3d::DEFAULT_TOLERANCE);
+    i_shape_2d (double tolerance_ = i_object_3d::DEFAULT_TOLERANCE);
 
-      virtual ~i_shape_2d ();
+    virtual ~i_shape_2d ();
       
-      virtual bool is_on_surface (const vector_3d & position_,
-				  double skin_ = USING_PROPER_TOLERANCE) const = 0; 
+    virtual bool is_on_surface (const vector_3d & position_,
+                                double skin_ = USING_PROPER_TOLERANCE) const = 0; 
       
-      virtual vector_3d get_normal_on_surface (const vector_3d & position_,
-					       bool up_ = true) const = 0;
+    virtual vector_3d get_normal_on_surface (const vector_3d & position_,
+                                             bool up_ = true) const = 0;
 
-      virtual bool find_intercept (const vector_3d & from_, 
-				   const vector_3d & direction_,
-				   intercept_t & intercept_,
-				   double skin_ = USING_PROPER_TOLERANCE) const = 0;
+    virtual bool find_intercept (const vector_3d & from_, 
+                                 const vector_3d & direction_,
+                                 intercept_t & intercept_,
+                                 double skin_ = USING_PROPER_TOLERANCE) const = 0;
  
   };
     

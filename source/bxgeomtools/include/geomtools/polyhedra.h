@@ -38,15 +38,15 @@ namespace geomtools {
 
     enum faces_mask_t
       {
-	FACE_NONE       = FACE_NONE_BIT,
-	FACE_INNER_SIDE = 0x1,
-	FACE_OUTER_SIDE = 0x2,
-	FACE_BOTTOM     = 0x4,
-	FACE_TOP        = 0x8,
-	FACE_ALL        = (FACE_INNER_SIDE
-		       | FACE_OUTER_SIDE
-		       | FACE_BOTTOM 
-		       | FACE_TOP)
+        FACE_NONE       = FACE_NONE_BIT,
+        FACE_INNER_SIDE = 0x1,
+        FACE_OUTER_SIDE = 0x2,
+        FACE_BOTTOM     = 0x4,
+        FACE_TOP        = 0x8,
+        FACE_ALL        = (FACE_INNER_SIDE
+                           | FACE_OUTER_SIDE
+                           | FACE_BOTTOM 
+                           | FACE_TOP)
       };  
 
     /**
@@ -78,21 +78,21 @@ namespace geomtools {
 
   private:
 
-    size_t   __n_sides;
-    rz_col_t __points;
-    double  __top_surface;
-    double  __bottom_surface;
-    double  __side_surface;
-    double  __outer_side_surface;
-    double  __inner_side_surface;
-    double  __outer_volume;
-    double  __inner_volume;
-    double  __volume;
-    double  __z_min;
-    double  __z_max;
-    double  __r_max;
-    double  __xy_max;
-    bool    __extruded;
+    size_t   _n_sides_;
+    rz_col_t _points_;
+    double  _top_surface_;
+    double  _bottom_surface_;
+    //double  _side_surface_;
+    double  _outer_side_surface_;
+    double  _inner_side_surface_;
+    double  _outer_volume_;
+    double  _inner_volume_;
+    double  _volume_;
+    double  _z_min_;
+    double  _z_max_;
+    double  _r_max_;
+    double  _xy_max_;
+    bool    _extruded_;
     
   public: 
 
@@ -101,50 +101,50 @@ namespace geomtools {
     //>>> stackable interface:
     double get_xmin () const
     {
-      return -__xy_max;
+      return -_xy_max_;
     }
     
     double get_xmax () const
     {
-      return +__xy_max;
+      return +_xy_max_;
     }
     
     double get_ymin () const
     {
-      return -__xy_max;
+      return -_xy_max_;
     }
     
     double get_ymax () const
     {
-      return +__xy_max;
+      return +_xy_max_;
     }
     
     double get_zmin () const
     {
-      return __z_min;
+      return _z_min_;
     }
     
     double get_zmax () const
     {
-      return __z_max;
+      return _z_max_;
     }
     //<<<
 
     double get_r_max () const;
 
     vector_3d get_corner (int zplane_index_, 
-			  int corner_index_, 
-			  bool inner_ = false) const;
+                          int corner_index_, 
+                          bool inner_ = false) const;
 
   private:
 
-    void __compute_surfaces ();
+    void _compute_surfaces_ ();
 
-    void __compute_volume ();
+    void _compute_volume_ ();
 
-    void __compute_limits ();
+    void _compute_limits_ ();
 
-    void __compute_all ();
+    void _compute_all_ ();
 
   public:
 
@@ -193,13 +193,13 @@ namespace geomtools {
     double get_parameter ( const string & flag_ ) const;
 
     virtual bool is_inside (const vector_3d &, 
-			    double skin_ = USING_PROPER_SKIN) const;
+                            double skin_ = USING_PROPER_SKIN) const;
 
     // if 'skin' < 0 no skin is taken into account:
     virtual bool 
     is_on_surface (const vector_3d & , 
-		   int mask_    = FACE_ALL , 
-		   double skin_ = USING_PROPER_SKIN) const;
+                   int mask_    = FACE_ALL , 
+                   double skin_ = USING_PROPER_SKIN) const;
 
     virtual vector_3d get_normal_on_surface (const vector_3d & position_) const;
 
@@ -208,14 +208,14 @@ namespace geomtools {
     friend istream & operator>> (istream &, polyhedra &);
       
     virtual bool find_intercept (const vector_3d & from_, 
-				 const vector_3d & direction_,
-				 intercept_t & intercept_,
-				 double skin_ = USING_PROPER_SKIN) const;
+                                 const vector_3d & direction_,
+                                 intercept_t & intercept_,
+                                 double skin_ = USING_PROPER_SKIN) const;
 
     virtual void tree_dump (ostream & out_         = clog, 
-			    const string & title_  = "", 
-			    const string & indent_ = "", 
-			    bool inherit_          = false) const;
+                            const string & title_  = "", 
+                            const string & indent_ = "", 
+                            bool inherit_          = false) const;
 
   };
 

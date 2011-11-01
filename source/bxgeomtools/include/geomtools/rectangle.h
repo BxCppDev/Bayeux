@@ -30,10 +30,6 @@ namespace geomtools {
     
   public:
     static const string RECTANGLE_LABEL;
-    
-  private: 
-    double __x;
-    double __y;
 
   public: 
 
@@ -81,6 +77,11 @@ namespace geomtools {
 			    const string & title_ = "", 
 			    const string & indent_ = "", 
 			    bool inherit_= false) const;
+    
+  private: 
+
+    double _x_;
+    double _y_;
  
   };
 

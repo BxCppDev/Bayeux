@@ -24,13 +24,13 @@ namespace geomtools {
 	 */
 	a_ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
       }
-    a_ar & boost::serialization::make_nvp ("radius", __radius);
-    if (__radius == __radius)
+    a_ar & boost::serialization::make_nvp ("radius", _radius_);
+    if (_radius_ == _radius_)
       {
-	a_ar & boost::serialization::make_nvp ("center", __center);
-	a_ar & boost::serialization::make_nvp ("step", __step);
-	a_ar & boost::serialization::make_nvp ("t1", __t1);
-	a_ar & boost::serialization::make_nvp ("t2", __t2);
+	a_ar & boost::serialization::make_nvp ("center", _center_);
+	a_ar & boost::serialization::make_nvp ("step", _step_);
+	a_ar & boost::serialization::make_nvp ("t1", _t1_);
+	a_ar & boost::serialization::make_nvp ("t2", _t2_);
       }
     return;
   }

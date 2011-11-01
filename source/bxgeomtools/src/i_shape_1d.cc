@@ -13,10 +13,12 @@ namespace geomtools {
      
   i_shape_1d::i_shape_1d (double tolerance_) : i_object_3d (tolerance_)
   {
+    return;
   }
   
   i_shape_1d::~i_shape_1d ()
   {
+    return;
   }
 
 } // end of namespace geomtools

@@ -39,10 +39,10 @@ namespace geomtools {
   {
   public:
     /*
-    static const string GEOM_ID_PREFIX;
-    static const string GEOM_ID_CATEGORY_PROPERTY;
-    static const int    GEOM_ID_WORLD_TYPE;
-    static const string GEOM_ID_WORLD_CATEGORY;
+      static const string GEOM_ID_PREFIX;
+      static const string GEOM_ID_CATEGORY_PROPERTY;
+      static const int    GEOM_ID_WORLD_TYPE;
+      static const string GEOM_ID_WORLD_CATEGORY;
     */
 
     static const uint32_t INVALID_TYPE;
@@ -73,15 +73,15 @@ namespace geomtools {
     void set (int, uint32_t val_);
     
     void set_address (uint32_t si0_, 
-		      uint32_t si1_ = INVALID_ADDRESS, 
-		      uint32_t si2_ = INVALID_ADDRESS, 
-		      uint32_t si3_ = INVALID_ADDRESS, 
-		      uint32_t si4_ = INVALID_ADDRESS, 
-		      uint32_t si5_ = INVALID_ADDRESS, 
-		      uint32_t si6_ = INVALID_ADDRESS, 
-		      uint32_t si7_ = INVALID_ADDRESS, 
-		      uint32_t si8_ = INVALID_ADDRESS, 
-		      uint32_t si9_ = INVALID_ADDRESS);
+                      uint32_t si1_ = INVALID_ADDRESS, 
+                      uint32_t si2_ = INVALID_ADDRESS, 
+                      uint32_t si3_ = INVALID_ADDRESS, 
+                      uint32_t si4_ = INVALID_ADDRESS, 
+                      uint32_t si5_ = INVALID_ADDRESS, 
+                      uint32_t si6_ = INVALID_ADDRESS, 
+                      uint32_t si7_ = INVALID_ADDRESS, 
+                      uint32_t si8_ = INVALID_ADDRESS, 
+                      uint32_t si9_ = INVALID_ADDRESS);
 
     void reset_address ();
 
@@ -90,16 +90,16 @@ namespace geomtools {
 
     // ctor:
     geom_id (uint32_t type_, 
-	     uint32_t si0_, 
-	     uint32_t si1_ = INVALID_ADDRESS, 
-	     uint32_t si2_ = INVALID_ADDRESS, 
-	     uint32_t si3_ = INVALID_ADDRESS, 
-	     uint32_t si4_ = INVALID_ADDRESS, 
-	     uint32_t si5_ = INVALID_ADDRESS, 
-	     uint32_t si6_ = INVALID_ADDRESS, 
-	     uint32_t si7_ = INVALID_ADDRESS, 
-	     uint32_t si8_ = INVALID_ADDRESS, 
-	     uint32_t si9_ = INVALID_ADDRESS);
+             uint32_t si0_, 
+             uint32_t si1_ = INVALID_ADDRESS, 
+             uint32_t si2_ = INVALID_ADDRESS, 
+             uint32_t si3_ = INVALID_ADDRESS, 
+             uint32_t si4_ = INVALID_ADDRESS, 
+             uint32_t si5_ = INVALID_ADDRESS, 
+             uint32_t si6_ = INVALID_ADDRESS, 
+             uint32_t si7_ = INVALID_ADDRESS, 
+             uint32_t si8_ = INVALID_ADDRESS, 
+             uint32_t si9_ = INVALID_ADDRESS);
 
     // dtor:
     virtual ~geom_id ();
@@ -144,8 +144,8 @@ namespace geomtools {
 
   private: 
  
-    uint32_t         __type;
-    vector<uint32_t> __address;
+    uint32_t         _type_;
+    vector<uint32_t> _addresses_;
 
     /* interface i_serializable */
     DATATOOLS_SERIALIZATION_DECLARATION();

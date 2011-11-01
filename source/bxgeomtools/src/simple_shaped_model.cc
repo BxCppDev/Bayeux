@@ -33,77 +33,77 @@ namespace geomtools {
 
   bool simple_shaped_model::is_filled () const
   {
-    return __filled_mode != filled_utils::FILLED_NONE;
+    return _filled_mode_ != filled_utils::FILLED_NONE;
   }
 
   bool simple_shaped_model::is_filled_by_envelope () const
   {
-    return __filled_mode == filled_utils::FILLED_BY_ENVELOPE;
+    return _filled_mode_ == filled_utils::FILLED_BY_ENVELOPE;
   }
 
   bool simple_shaped_model::is_filled_by_extrusion () const
   {
-    return __filled_mode == filled_utils::FILLED_BY_EXTRUSION;
+    return _filled_mode_ == filled_utils::FILLED_BY_EXTRUSION;
   }
 
   MWIM & simple_shaped_model::get_internals ()
   {
-    return __internals;
+    return _internals_;
   }
 
   const MWIM & simple_shaped_model::get_internals () const
   {
-    return __internals;
+    return _internals_;
   }
 
   const geomtools::box & simple_shaped_model::get_box () const
   {
-    return *__box;
+    return *_box_;
   }
 
   const geomtools::cylinder & simple_shaped_model::get_cylinder () const
   {
-    return *__cylinder;
+    return *_cylinder_;
   }
 
   const geomtools::tube & simple_shaped_model::get_tube () const
   {
-    return *__tube;
+    return *_tube_;
   }
 
   const geomtools::sphere & simple_shaped_model::get_sphere () const
   {
-    return *__sphere;
+    return *_sphere_;
   }
 
   const geomtools::polycone & simple_shaped_model::get_polycone () const
   {
-    return *__polycone;
+    return *_polycone_;
   }
 
   const geomtools::polyhedra & simple_shaped_model::get_polyhedra () const
   {
-    return *__polyhedra;
+    return *_polyhedra_;
   }
 
   const geomtools::i_shape_3d & simple_shaped_model::get_solid () const
   {
-    return *__solid;
+    return *_solid_;
   }
 
   const string & simple_shaped_model::get_shape_name () const
   {
-    return __shape_name;
+    return _shape_name_;
   }
 
   const string & simple_shaped_model::get_material_name () const
   {
-    return __material_name;
+    return _material_name_;
   }
 
   const string & simple_shaped_model::get_filled_material_name () const
   {
-    return __filled_material_name;
+    return _filled_material_name_;
   }
 
   string simple_shaped_model::get_model_id () const
@@ -114,86 +114,86 @@ namespace geomtools {
   // ctor:
   simple_shaped_model::simple_shaped_model () : i_model ()
   {
-    __box = 0;
-    __cylinder = 0;
-    __tube = 0;
-    __sphere = 0;
-    __polycone = 0;
-    __solid = 0;
-    __inner_shape = 0;
-    __outer_shape = 0;
-    __daughter_owner_logical = 0;
-    __visibility_logical = 0;
+    _box_ = 0;
+    _cylinder_ = 0;
+    _tube_ = 0;
+    _sphere_ = 0;
+    _polycone_ = 0;
+    _solid_ = 0;
+    _inner_shape_ = 0;
+    _outer_shape_ = 0;
+    _daughter_owner_logical_ = 0;
+    _visibility_logical_ = 0;
     //cerr << "DEVEL: 1 *****" << "  "  << "*****" << endl;
-    __shape_name = ""; // no defined shape
+    _shape_name_ = ""; // no defined shape
     //cerr << "DEVEL: 2 *****" << material::MATERIAL_REF_UNKNOWN << "*****" << endl;
-    __material_name = ""; //material::MATERIAL_REF_UNKNOWN;
-    __filled_material_name = ""; //material::MATERIAL_REF_UNKNOWN;
-    __filled_mode   = filled_utils::FILLED_NONE;
+    _material_name_ = ""; //material::MATERIAL_REF_UNKNOWN;
+    _filled_material_name_ = ""; //material::MATERIAL_REF_UNKNOWN;
+    _filled_mode_   = filled_utils::FILLED_NONE;
     return;
   }
 
   // dtor:
   simple_shaped_model::~simple_shaped_model ()
   {
-    __solid = 0;
-    if (__inner_shape != 0) delete __inner_shape;
-    if (__outer_shape != 0) delete __outer_shape;
-    if (__box != 0) delete __box;
-    if (__cylinder != 0) delete __cylinder;
-    if (__tube != 0) delete __tube;
-    if (__sphere != 0) delete __sphere;
-    if (__polycone != 0) delete __polycone;
+    _solid_ = 0;
+    if (_inner_shape_ != 0) delete _inner_shape_;
+    if (_outer_shape_ != 0) delete _outer_shape_;
+    if (_box_ != 0) delete _box_;
+    if (_cylinder_ != 0) delete _cylinder_;
+    if (_tube_ != 0) delete _tube_;
+    if (_sphere_ != 0) delete _sphere_;
+    if (_polycone_ != 0) delete _polycone_;
     return;
   }
 
   void simple_shaped_model::_at_construct (const string & name_,
-					   const datatools::utils::properties & config_,
-					   models_col_t * models_)
+                                           const datatools::utils::properties & config_,
+                                           models_col_t * models_)
   {
     bool devel = i_model::g_devel;
     if (config_.has_key ("devel"))
       {
-	devel = true;
+        devel = true;
       }
     if (devel) clog << "DEVEL: simple_shaped_model::_at_construct: Entering..." << endl;
     set_name (name_);
     string shape_type = "";
 
     // Initialization:
-    __material_name = material::MATERIAL_REF_UNKNOWN;
-    __filled_material_name = material::MATERIAL_REF_UNKNOWN;
+    _material_name_ = material::MATERIAL_REF_UNKNOWN;
+    _filled_material_name_ = material::MATERIAL_REF_UNKNOWN;
 
     // parsing shape:
     if (config_.has_key ("shape_type"))
       {
-	shape_type = config_.fetch_string ("shape_type");
-	__shape_name = shape_type;
+        shape_type = config_.fetch_string ("shape_type");
+        _shape_name_ = shape_type;
       }
     else
       {
- 	ostringstream message;
-	message << "simple_shaped_model::_at_construct: "
-		<< "Missing 'shape_type' property !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "simple_shaped_model::_at_construct: "
+                << "Missing 'shape_type' property !";
+        throw runtime_error (message.str ());
       }
 
     // parsing material:
     if (config_.has_key ("material.ref"))
       {
-	__material_name = config_.fetch_string ("material.ref");
+        _material_name_ = config_.fetch_string ("material.ref");
       }
     else
       {
-	ostringstream message;
-	message << "simple_shaped_model::_at_construct: "
-		<< "Missing 'material.ref' property !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "simple_shaped_model::_at_construct: "
+                << "Missing 'material.ref' property !";
+        throw runtime_error (message.str ());
       }
 
     // makes the embeded logical volume the default
     // mother of daughter physical volumes:
-    __daughter_owner_logical = & get_logical ();
+    _daughter_owner_logical_ = & get_logical ();
 
     // set the logical name:
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
@@ -201,50 +201,50 @@ namespace geomtools {
     // Box case:
     if (shape_type == "box")
       {
-	_construct_box (name_, config_, models_);
+        _construct_box (name_, config_, models_);
       }
     // Cylinder case:
     else if (shape_type == "cylinder")
       {
-	_construct_cylinder (name_, config_, models_);
+        _construct_cylinder (name_, config_, models_);
       }
     // Sphere case:
     else if (shape_type == "sphere")
       {
-	_construct_sphere (name_, config_, models_);
-     }
+        _construct_sphere (name_, config_, models_);
+      }
     // Tube case:
     else if (shape_type == "tube")
       {
-	_construct_tube (name_, config_, models_);
+        _construct_tube (name_, config_, models_);
       }
     // Polycone case:
     else if (shape_type == "polycone")
       {
-	_construct_polycone (name_, config_, models_);
+        _construct_polycone (name_, config_, models_);
       }
     // Polyhedra case:
     else if (shape_type == "polyhedra")
       {
-	_construct_polyhedra (name_, config_, models_);
+        _construct_polyhedra (name_, config_, models_);
       }
     else
       {
-	ostringstream message;
-	message << "simple_shaped_model::_at_construct: "
-		<< "Shape '" << shape_type << "' is not supported !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "simple_shaped_model::_at_construct: "
+                << "Shape '" << shape_type << "' is not supported !";
+        throw runtime_error (message.str ());
       }
 
     // set the envelope solid shape:
-    get_logical ().set_shape (*__solid);
+    get_logical ().set_shape (*_solid_);
 
     // search for internal item to install within the model envelope:
-    if (__daughter_owner_logical != 0)
+    if (_daughter_owner_logical_ != 0)
       {
-	__internals.plug_internal_models (config_,
-					  *__daughter_owner_logical,
-					  models_);
+        _internals_.plug_internal_models (config_,
+                                          *_daughter_owner_logical_,
+                                          models_);
       }
 
     if (devel) clog << "DEVEL: simple_shaped_model::_at_construct: Exiting." << endl;
@@ -254,68 +254,68 @@ namespace geomtools {
   /***********************************************************/
 
   void simple_shaped_model::_construct_box (const string & name_,
-					    const datatools::utils::properties & config_,
-					    models_col_t * models_)
+                                            const datatools::utils::properties & config_,
+                                            models_col_t * models_)
   {
     double lunit = CLHEP::mm;
     double x, y, z;
 
     if (config_.has_key ("length_unit"))
       {
-	string lunit_str = config_.fetch_string ("length_unit");
-	lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+        string lunit_str = config_.fetch_string ("length_unit");
+        lunit = datatools::utils::units::get_length_unit_from (lunit_str);
       }
 
     if (config_.has_key ("x"))
       {
-	x = config_.fetch_real ("x");
-	x *= lunit;
+        x = config_.fetch_real ("x");
+        x *= lunit;
       }
     else
       {
-	ostringstream message;
-	message << "simple_boxed_model::_construct_box: "
-		<< "Missing box 'x' property !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "simple_boxed_model::_construct_box: "
+                << "Missing box 'x' property !";
+        throw runtime_error (message.str ());
       }
 
     if (config_.has_key ("y"))
       {
-	y = config_.fetch_real ("y");
-	y *= lunit;
+        y = config_.fetch_real ("y");
+        y *= lunit;
       }
     else
       {
-	ostringstream message;
-	message << "simple_boxed_model::_construct_box: "
-		<< "Missing box 'y' property !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "simple_boxed_model::_construct_box: "
+                << "Missing box 'y' property !";
+        throw runtime_error (message.str ());
       }
 
     if (config_.has_key ("z"))
       {
-	z = config_.fetch_real ("z");
-	z *= lunit;
+        z = config_.fetch_real ("z");
+        z *= lunit;
       }
     else
       {
-	ostringstream message;
-	message << "simple_boxed_model::_construct_box: "
-		<< "Missing box 'z' property !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "simple_boxed_model::_construct_box: "
+                << "Missing box 'z' property !";
+        throw runtime_error (message.str ());
       }
 
     // build the box:
-    __box = new box (x, y, z);
-    if (! __box->is_valid ())
+    _box_ = new box (x, y, z);
+    if (! _box_->is_valid ())
       {
-	throw runtime_error ("simple_shaped_model::_construct_box: Invalid box dimensions !");
+        throw runtime_error ("simple_shaped_model::_construct_box: Invalid box dimensions !");
       }
-    __solid = __box;
-    get_logical ().set_material_ref (__material_name);
+    _solid_ = _box_;
+    get_logical ().set_material_ref (_material_name_);
 
     // search for internal item to install within the model envelope:
-    __internals.plug_internal_models (config_, get_logical (), models_);
+    _internals_.plug_internal_models (config_, get_logical (), models_);
 
     return;
   }
@@ -323,8 +323,8 @@ namespace geomtools {
   /***********************************************************/
 
   void simple_shaped_model::_construct_cylinder (const string & name_,
-						 const datatools::utils::properties & config_,
-						 models_col_t * models_)
+                                                 const datatools::utils::properties & config_,
+                                                 models_col_t * models_)
   {
     double lunit = CLHEP::mm;
     double aunit = CLHEP::degree;
@@ -332,52 +332,52 @@ namespace geomtools {
 
     if (config_.has_key ("length_unit"))
       {
-	string lunit_str = config_.fetch_string ("length_unit");
-	lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+        string lunit_str = config_.fetch_string ("length_unit");
+        lunit = datatools::utils::units::get_length_unit_from (lunit_str);
       }
 
     if (config_.has_key ("angle_unit"))
       {
-	string aunit_str = config_.fetch_string ("angle_unit");
-	aunit = datatools::utils::units::get_angle_unit_from (aunit_str);
+        string aunit_str = config_.fetch_string ("angle_unit");
+        aunit = datatools::utils::units::get_angle_unit_from (aunit_str);
       }
 
     if (config_.has_key ("r"))
       {
-	r = config_.fetch_real ("r");
-	r *= lunit;
+        r = config_.fetch_real ("r");
+        r *= lunit;
       }
     else
       {
-	ostringstream message;
-	message << "simple_boxed_model::_construct_cylinder: "
-		<< "Missing cylinder 'r' property !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "simple_boxed_model::_construct_cylinder: "
+                << "Missing cylinder 'r' property !";
+        throw runtime_error (message.str ());
       }
 
     if (config_.has_key ("z"))
       {
-	z = config_.fetch_real ("z");
-	z *= lunit;
+        z = config_.fetch_real ("z");
+        z *= lunit;
       }
     else
       {
-	ostringstream message;
-	message << "simple_boxed_model::_construct_cylinder: "
-		<< "Missing cylinder 'z' property !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "simple_boxed_model::_construct_cylinder: "
+                << "Missing cylinder 'z' property !";
+        throw runtime_error (message.str ());
       }
 
     // build the cylinder:
-    __cylinder = new cylinder (r, z);
-    if (! __cylinder->is_valid ())
+    _cylinder_ = new cylinder (r, z);
+    if (! _cylinder_->is_valid ())
       {
-	throw runtime_error ("simple_shaped_model::_construct_cylinder: Invalid cylinder dimensions !");
+        throw runtime_error ("simple_shaped_model::_construct_cylinder: Invalid cylinder dimensions !");
       }
-    __solid = __cylinder;
-    get_logical ().set_material_ref (__material_name);
+    _solid_ = _cylinder_;
+    get_logical ().set_material_ref (_material_name_);
     // search for internal item to install within the model envelope:
-    __internals.plug_internal_models (config_, get_logical (), models_);
+    _internals_.plug_internal_models (config_, get_logical (), models_);
 
     return;
   }
@@ -385,8 +385,8 @@ namespace geomtools {
   /***********************************************************/
 
   void simple_shaped_model::_construct_sphere (const string & name_,
-					       const datatools::utils::properties & config_,
-					       models_col_t * models_)
+                                               const datatools::utils::properties & config_,
+                                               models_col_t * models_)
   {
     string material_name = material::MATERIAL_REF_UNKNOWN;
     double lunit = CLHEP::mm;
@@ -395,39 +395,39 @@ namespace geomtools {
 
     if (config_.has_key ("length_unit"))
       {
-	string lunit_str = config_.fetch_string ("length_unit");
-	lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+        string lunit_str = config_.fetch_string ("length_unit");
+        lunit = datatools::utils::units::get_length_unit_from (lunit_str);
       }
 
     if (config_.has_key ("angle_unit"))
       {
-	string aunit_str = config_.fetch_string ("angle_unit");
-	aunit = datatools::utils::units::get_angle_unit_from (aunit_str);
+        string aunit_str = config_.fetch_string ("angle_unit");
+        aunit = datatools::utils::units::get_angle_unit_from (aunit_str);
       }
 
     if (config_.has_key ("r"))
       {
-	r = config_.fetch_real ("r");
-	r *= lunit;
+        r = config_.fetch_real ("r");
+        r *= lunit;
       }
     else
       {
-	ostringstream message;
-	message << "simple_boxed_model::_construct_sphere: "
-		<< "Missing sphere 'r' property !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "simple_boxed_model::_construct_sphere: "
+                << "Missing sphere 'r' property !";
+        throw runtime_error (message.str ());
       }
 
     // build the sphere:
-    __sphere = new sphere (r);
-    if (! __sphere->is_valid ())
+    _sphere_ = new sphere (r);
+    if (! _sphere_->is_valid ())
       {
-	throw runtime_error ("simple_shaped_model::_construct_sphere: Invalid sphere dimension !");
-	  }
-    __solid = __sphere;
-    get_logical ().set_material_ref (__material_name);
+        throw runtime_error ("simple_shaped_model::_construct_sphere: Invalid sphere dimension !");
+      }
+    _solid_ = _sphere_;
+    get_logical ().set_material_ref (_material_name_);
     // search for internal item to install within the model envelope:
-    __internals.plug_internal_models (config_, get_logical (), models_);
+    _internals_.plug_internal_models (config_, get_logical (), models_);
 
     return;
   }
@@ -435,8 +435,8 @@ namespace geomtools {
   /***********************************************************/
 
   void simple_shaped_model::_construct_tube (const string & name_,
-					     const datatools::utils::properties & config_,
-					     models_col_t * models_)
+                                             const datatools::utils::properties & config_,
+                                             models_col_t * models_)
   {
     string filled_material_name = material::MATERIAL_REF_UNKNOWN;
     double lunit = CLHEP::mm;
@@ -446,202 +446,202 @@ namespace geomtools {
 
     if (config_.has_key ("length_unit"))
       {
-	string lunit_str = config_.fetch_string ("length_unit");
-	lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+        string lunit_str = config_.fetch_string ("length_unit");
+        lunit = datatools::utils::units::get_length_unit_from (lunit_str);
       }
 
     if (config_.has_key ("angle_unit"))
       {
-	string aunit_str = config_.fetch_string ("angle_unit");
-	aunit = datatools::utils::units::get_angle_unit_from (aunit_str);
+        string aunit_str = config_.fetch_string ("angle_unit");
+        aunit = datatools::utils::units::get_angle_unit_from (aunit_str);
       }
 
     if (config_.has_key ("inner_r"))
       {
-	inner_r = config_.fetch_real ("inner_r");
-	inner_r *= lunit;
+        inner_r = config_.fetch_real ("inner_r");
+        inner_r *= lunit;
       }
     else
       {
-	ostringstream message;
-	message << "simple_boxed_model::_construct_tube: "
-		<< "Missing tube 'inner_r' property !";
-	//throw runtime_error (message.str ());
-	cerr << "WARNING: " << message.str () << " Using 0-default inner radius !" << endl;
-	inner_r = 0.0;
+        ostringstream message;
+        message << "simple_boxed_model::_construct_tube: "
+                << "Missing tube 'inner_r' property !";
+        //throw runtime_error (message.str ());
+        cerr << "WARNING: " << message.str () << " Using 0-default inner radius !" << endl;
+        inner_r = 0.0;
       }
 
     if (config_.has_key ("outer_r"))
       {
-	outer_r = config_.fetch_real ("outer_r");
-	outer_r *= lunit;
+        outer_r = config_.fetch_real ("outer_r");
+        outer_r *= lunit;
       }
     else
       {
-	ostringstream message;
-	message << "simple_boxed_model::_construct_tube: "
-		<< "Missing tube 'outer_r' property !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "simple_boxed_model::_construct_tube: "
+                << "Missing tube 'outer_r' property !";
+        throw runtime_error (message.str ());
       }
 
     if (config_.has_key ("z"))
       {
-	z = config_.fetch_real ("z");
-	z *= lunit;
+        z = config_.fetch_real ("z");
+        z *= lunit;
       }
     else
       {
-	ostringstream message;
-	message << "simple_boxed_model::_construct_tube: "
-		    << "Missing tube 'z' property !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "simple_boxed_model::_construct_tube: "
+                << "Missing tube 'z' property !";
+        throw runtime_error (message.str ());
       }
 
     // filled mode:
     if (config_.has_key ("filled_mode"))
       {
-	filled_mode_label = config_.fetch_string ("filled_mode");
-	if (filled_mode_label == filled_utils::FILLED_NONE_LABEL)
-	  {
-	    __filled_mode = filled_utils::FILLED_NONE;
-	  }
-	else if (filled_mode_label == filled_utils::FILLED_BY_ENVELOPE_LABEL)
-	  {
-	    __filled_mode = filled_utils::FILLED_BY_ENVELOPE;
-	  }
-	else if (filled_mode_label == filled_utils::FILLED_BY_EXTRUSION_LABEL)
-	  {
-	    __filled_mode = filled_utils::FILLED_BY_EXTRUSION;
-	  }
-	else
-	  {
-	    ostringstream message;
-	    message << "simple_boxed_model::_construct_tube: "
-		    << "Invalid mode '" << filled_mode_label << "' property !";
-	    throw runtime_error (message.str ());
-	  }
+        filled_mode_label = config_.fetch_string ("filled_mode");
+        if (filled_mode_label == filled_utils::FILLED_NONE_LABEL)
+          {
+            _filled_mode_ = filled_utils::FILLED_NONE;
+          }
+        else if (filled_mode_label == filled_utils::FILLED_BY_ENVELOPE_LABEL)
+          {
+            _filled_mode_ = filled_utils::FILLED_BY_ENVELOPE;
+          }
+        else if (filled_mode_label == filled_utils::FILLED_BY_EXTRUSION_LABEL)
+          {
+            _filled_mode_ = filled_utils::FILLED_BY_EXTRUSION;
+          }
+        else
+          {
+            ostringstream message;
+            message << "simple_boxed_model::_construct_tube: "
+                    << "Invalid mode '" << filled_mode_label << "' property !";
+            throw runtime_error (message.str ());
+          }
       }
     else
       {
-	__filled_mode = filled_utils::FILLED_NONE;
+        _filled_mode_ = filled_utils::FILLED_NONE;
       }
 
     // filling material:
-    if (__filled_mode != filled_utils::FILLED_NONE)
+    if (_filled_mode_ != filled_utils::FILLED_NONE)
       {
-	// parsing material:
-	if (config_.has_key ("material.filled.ref"))
-	  {
-	    __material_name = config_.fetch_string ("material.filled.ref");
-	  }
-	else
-	  {
-	    ostringstream message;
-	    message << "simple_shaped_model::_construct_tube: "
-		    << "Missing 'material.filled.ref' property !";
-	    throw runtime_error (message.str ());
-	  }
+        // parsing material:
+        if (config_.has_key ("material.filled.ref"))
+          {
+            _material_name_ = config_.fetch_string ("material.filled.ref");
+          }
+        else
+          {
+            ostringstream message;
+            message << "simple_shaped_model::_construct_tube: "
+                    << "Missing 'material.filled.ref' property !";
+            throw runtime_error (message.str ());
+          }
       }
 
     // build the tube:
-    __tube = new tube (inner_r, outer_r, z);
-    if (! __tube->is_valid ())
+    _tube_ = new tube (inner_r, outer_r, z);
+    if (! _tube_->is_valid ())
       {
-	throw runtime_error ("simple_shaped_model::_construct_tube: Invalid  tube dimensions !");
+        throw runtime_error ("simple_shaped_model::_construct_tube: Invalid  tube dimensions !");
       }
 
     // use the plain tube as solid envelope of the model:
-    if (__filled_mode == filled_utils::FILLED_NONE)
+    if (_filled_mode_ == filled_utils::FILLED_NONE)
       {
-	__solid = __tube;
-	get_logical ().set_material_ref (__material_name);
+        _solid_ = _tube_;
+        get_logical ().set_material_ref (_material_name_);
       }
 
     // build the tube by cylindric extrusion of a mother cylinder:
-    if (__filled_mode == filled_utils::FILLED_BY_EXTRUSION)
+    if (_filled_mode_ == filled_utils::FILLED_BY_EXTRUSION)
       {
-	/*
-	 *          _____________________
-	 *         |_____________________|
-	 *      _ _|_ _ _ _ _ _ _ _ _ _ _|_ _ _
-	 *     z'  |_____________________|      z
-	 *         |_____________________|
-	 */
-	// make the envelope a cylinder:
-	__cylinder = new cylinder;
-	__tube->compute_outer_cylinder (*__cylinder);
-	if (! __cylinder->is_valid ())
-	  {
-	    throw runtime_error ("simple_shaped_model::_construct_tube: Invalid 'outer' cylinder dimensions !");
-	  }
-	__solid = __cylinder;
-	get_logical ().set_material_ref (__material_name);
- 	// if the tube is extruded, add an extruded 'inner' cylinder
-	// within the 'outer' cylinder:
-	if (__tube->is_extruded ())
-	  {
-	    cylinder * inner_cyl = new cylinder;
-	    __tube->compute_inner_cylinder (*inner_cyl);
-	    if (! inner_cyl->is_valid ())
-	      {
-		delete inner_cyl;
-		throw runtime_error ("simple_shaped_model::_at_construct: Invalid 'inner' cylinder dimensions !");
-	      }
-	    __inner_shape = inner_cyl;
-	    // inner placement for the extrusion:
-	    __inner_placement.set (0, 0, 0, 0, 0, 0);
-	    ostringstream inner_name;
-	    inner_name << "__" << get_logical ().get_name () << ".tube_by_extrusion";
-	    __inner_logical.set_name (i_model::make_logical_volume_name (inner_name.str ()));
-	    __inner_logical.set_material_ref (__filled_material_name);
-	    __inner_logical.set_shape (*__inner_shape); // pass a reference -> logical has not the shape ownership
-	    __inner_phys.set_name (i_model::make_physical_volume_name (inner_name.str ()));
-	    __inner_phys.set_placement (__inner_placement);
-	    __inner_phys.set_logical (__inner_logical);
-	    __inner_phys.set_mother (this->get_logical ());
+        /*
+         *          _____________________
+         *         |_____________________|
+         *      _ _|_ _ _ _ _ _ _ _ _ _ _|_ _ _
+         *     z'  |_____________________|      z
+         *         |_____________________|
+         */
+        // make the envelope a cylinder:
+        _cylinder_ = new cylinder;
+        _tube_->compute_outer_cylinder (*_cylinder_);
+        if (! _cylinder_->is_valid ())
+          {
+            throw runtime_error ("simple_shaped_model::_construct_tube: Invalid 'outer' cylinder dimensions !");
+          }
+        _solid_ = _cylinder_;
+        get_logical ().set_material_ref (_material_name_);
+        // if the tube is extruded, add an extruded 'inner' cylinder
+        // within the 'outer' cylinder:
+        if (_tube_->is_extruded ())
+          {
+            cylinder * inner_cyl = new cylinder;
+            _tube_->compute_inner_cylinder (*inner_cyl);
+            if (! inner_cyl->is_valid ())
+              {
+                delete inner_cyl;
+                throw runtime_error ("simple_shaped_model::_at_construct: Invalid 'inner' cylinder dimensions !");
+              }
+            _inner_shape_ = inner_cyl;
+            // inner placement for the extrusion:
+            _inner_placement_.set (0, 0, 0, 0, 0, 0);
+            ostringstream inner_name;
+            inner_name << "__" << get_logical ().get_name () << ".tube_by_extrusion";
+            _inner_logical_.set_name (i_model::make_logical_volume_name (inner_name.str ()));
+            _inner_logical_.set_material_ref (_filled_material_name_);
+            _inner_logical_.set_shape (*_inner_shape_); // pass a reference -> logical has not the shape ownership
+            _inner_phys_.set_name (i_model::make_physical_volume_name (inner_name.str ()));
+            _inner_phys_.set_placement (_inner_placement_);
+            _inner_phys_.set_logical (_inner_logical_);
+            _inner_phys_.set_mother (this->get_logical ());
 
-	    // makes the child extrusion the mother of daughter physical volumes:
-	    __daughter_owner_logical = &__inner_logical;
-	  }
+            // makes the child extrusion the mother of daughter physical volumes:
+            _daughter_owner_logical_ = &_inner_logical_;
+          }
       }
 
     // build the tube as a child of a mother cylinder:
-    if (__filled_mode == filled_utils::FILLED_BY_ENVELOPE)
+    if (_filled_mode_ == filled_utils::FILLED_BY_ENVELOPE)
       {
-	// make the envelope a cylinder:
-	__cylinder = new cylinder;
-	__tube->compute_outer_cylinder (*__cylinder);
-	if (! __cylinder->is_valid ())
-	  {
-	    throw runtime_error ("simple_shaped_model::_construct_tube: Invalid 'outer' cylinder dimensions !");
-	  }
-	__solid = __cylinder;
-	get_logical ().set_material_ref (__filled_material_name);
-	if (! __tube->is_extruded ())
-	  {
-	    // if the tube is not extruded, no daughter physical volumes can be placed
-	    // within the 'outer' envelope cylinder:
-	    __daughter_owner_logical = 0;
-	  }
-	else
-	  {
-	    // if the tube is extruded, add the tube within the 'outer' envelope cylinder:
-	    __inner_placement.set (0, 0, 0, 0, 0, 0);
-	    ostringstream inner_name;
-	    inner_name << "__" << get_logical ().get_name () << ".tube_by_envelope";
-	    __inner_logical.set_name (i_model::make_logical_volume_name (inner_name.str ()));
-	    __inner_logical.set_material_ref (__material_name);
-	    __inner_logical.set_shape (*__tube);
-	    if (visibility::has_color (config_))
-	      {
-		visibility::set_color (__inner_logical.parameters (),
-				       visibility::get_color (config_));
-	      }
-	    __inner_phys.set_name (i_model::make_physical_volume_name (inner_name.str ()));
-	    __inner_phys.set_placement (__inner_placement);
-	    __inner_phys.set_logical (__inner_logical);
-	    __inner_phys.set_mother (this->get_logical ());
-	  }
+        // make the envelope a cylinder:
+        _cylinder_ = new cylinder;
+        _tube_->compute_outer_cylinder (*_cylinder_);
+        if (! _cylinder_->is_valid ())
+          {
+            throw runtime_error ("simple_shaped_model::_construct_tube: Invalid 'outer' cylinder dimensions !");
+          }
+        _solid_ = _cylinder_;
+        get_logical ().set_material_ref (_filled_material_name_);
+        if (! _tube_->is_extruded ())
+          {
+            // if the tube is not extruded, no daughter physical volumes can be placed
+            // within the 'outer' envelope cylinder:
+            _daughter_owner_logical_ = 0;
+          }
+        else
+          {
+            // if the tube is extruded, add the tube within the 'outer' envelope cylinder:
+            _inner_placement_.set (0, 0, 0, 0, 0, 0);
+            ostringstream inner_name;
+            inner_name << "__" << get_logical ().get_name () << ".tube_by_envelope";
+            _inner_logical_.set_name (i_model::make_logical_volume_name (inner_name.str ()));
+            _inner_logical_.set_material_ref (_material_name_);
+            _inner_logical_.set_shape (*_tube_);
+            if (visibility::has_color (config_))
+              {
+                visibility::set_color (_inner_logical_.parameters (),
+                                       visibility::get_color (config_));
+              }
+            _inner_phys_.set_name (i_model::make_physical_volume_name (inner_name.str ()));
+            _inner_phys_.set_placement (_inner_placement_);
+            _inner_phys_.set_logical (_inner_logical_);
+            _inner_phys_.set_mother (this->get_logical ());
+          }
       }
 
     return;
@@ -650,19 +650,19 @@ namespace geomtools {
   /*****************************************************/
 
   void simple_shaped_model::_construct_polycone (const string & name_,
-						 const datatools::utils::properties & config_,
-						 models_col_t * models_)
+                                                 const datatools::utils::properties & config_,
+                                                 models_col_t * models_)
   {
     bool devel = i_model::g_devel;
     if (config_.has_key ("devel"))
       {
-	devel = true;
+        devel = true;
       }
     if (devel)
       {
-	cerr << "DEVEL: simple_shaped_model::_construct_polycone: "
-	     << "Name = '" << name_ << "'"
-	     << endl;
+        cerr << "DEVEL: simple_shaped_model::_construct_polycone: "
+             << "Name = '" << name_ << "'"
+             << endl;
       }
     string filled_material_name = material::MATERIAL_REF_UNKNOWN;
     double lunit = CLHEP::mm;
@@ -676,168 +676,168 @@ namespace geomtools {
 
     if (config_.has_key ("length_unit"))
       {
-	string lunit_str = config_.fetch_string ("length_unit");
-	lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+        string lunit_str = config_.fetch_string ("length_unit");
+        lunit = datatools::utils::units::get_length_unit_from (lunit_str);
       }
 
     if (config_.has_key ("angle_unit"))
       {
-	string aunit_str = config_.fetch_string ("angle_unit");
-	aunit = datatools::utils::units::get_angle_unit_from (aunit_str);
+        string aunit_str = config_.fetch_string ("angle_unit");
+        aunit = datatools::utils::units::get_angle_unit_from (aunit_str);
       }
 
     /*
-    if (config_.has_key ("build_mode"))
+      if (config_.has_key ("build_mode"))
       {
-	build_mode_label = config_.fetch_string ("build_mode");
+      build_mode_label = config_.fetch_string ("build_mode");
       }
     */
 
     // filled mode:
     if (config_.has_key ("filled_mode"))
       {
-	filled_mode_label = config_.fetch_string ("filled_mode");
-	if (filled_mode_label == filled_utils::FILLED_NONE_LABEL)
-	  {
-	    __filled_mode = filled_utils::FILLED_NONE;
-	  }
-	else if (filled_mode_label == filled_utils::FILLED_BY_ENVELOPE_LABEL)
-	  {
-	    __filled_mode = filled_utils::FILLED_BY_ENVELOPE;
-	  }
-	else if (filled_mode_label == filled_utils::FILLED_BY_EXTRUSION_LABEL)
-	  {
-	    __filled_mode = filled_utils::FILLED_BY_EXTRUSION;
-	  }
-	else
-	  {
-	    ostringstream message;
-	    message << "simple_boxed_model::_at_construct: "
-		    << "Invalid mode '" << filled_mode_label << "' property !";
-	    throw runtime_error (message.str ());
-	  }
+        filled_mode_label = config_.fetch_string ("filled_mode");
+        if (filled_mode_label == filled_utils::FILLED_NONE_LABEL)
+          {
+            _filled_mode_ = filled_utils::FILLED_NONE;
+          }
+        else if (filled_mode_label == filled_utils::FILLED_BY_ENVELOPE_LABEL)
+          {
+            _filled_mode_ = filled_utils::FILLED_BY_ENVELOPE;
+          }
+        else if (filled_mode_label == filled_utils::FILLED_BY_EXTRUSION_LABEL)
+          {
+            _filled_mode_ = filled_utils::FILLED_BY_EXTRUSION;
+          }
+        else
+          {
+            ostringstream message;
+            message << "simple_boxed_model::_at_construct: "
+                    << "Invalid mode '" << filled_mode_label << "' property !";
+            throw runtime_error (message.str ());
+          }
       }
     else
       {
-	__filled_mode = filled_utils::FILLED_NONE;
+        _filled_mode_ = filled_utils::FILLED_NONE;
       }
 
     // filling material:
-    if (__filled_mode != filled_utils::FILLED_NONE)
+    if (_filled_mode_ != filled_utils::FILLED_NONE)
       {
-	// parsing material:
-	if (config_.has_key ("material.filled.ref"))
-	  {
-	    __material_name = config_.fetch_string ("material.filled.ref");
-	  }
-	else
-	  {
-	    ostringstream message;
-	    message << "simple_shaped_model::_construct_polycone: "
-		    << "Missing 'material.filled.ref' property !";
-	    throw runtime_error (message.str ());
-	  }
+        // parsing material:
+        if (config_.has_key ("material.filled.ref"))
+          {
+            _material_name_ = config_.fetch_string ("material.filled.ref");
+          }
+        else
+          {
+            ostringstream message;
+            message << "simple_shaped_model::_construct_polycone: "
+                    << "Missing 'material.filled.ref' property !";
+            throw runtime_error (message.str ());
+          }
       }
 
-    __polycone = new polycone ();
-    __polycone->initialize (config_);
-    if (! __polycone->is_valid ())
+    _polycone_ = new polycone ();
+    _polycone_->initialize (config_);
+    if (! _polycone_->is_valid ())
       {
-	__polycone->tree_dump (cerr, "Invalid polycone: ", "ERROR:" );
-	throw runtime_error ("simple_shaped_model::_construct_polycone: Invalid polycone build parameters !");
+        _polycone_->tree_dump (cerr, "Invalid polycone: ", "ERROR:" );
+        throw runtime_error ("simple_shaped_model::_construct_polycone: Invalid polycone build parameters !");
       }
     if (devel)
       {
-	__polycone->tree_dump (cerr, "Polycone: ", "DEVEL:" );
+        _polycone_->tree_dump (cerr, "Polycone: ", "DEVEL:" );
       }
 
-    if (__filled_mode == filled_utils::FILLED_NONE)
+    if (_filled_mode_ == filled_utils::FILLED_NONE)
       {
-	__solid = __polycone;
-	get_logical ().set_material_ref (__material_name);
+        _solid_ = _polycone_;
+        get_logical ().set_material_ref (_material_name_);
       }
 
-     // build the polycone by extrusion of a mother polycone:
-     if (__filled_mode == filled_utils::FILLED_BY_EXTRUSION)
+    // build the polycone by extrusion of a mother polycone:
+    if (_filled_mode_ == filled_utils::FILLED_BY_EXTRUSION)
       {
-	// make the envelope a polycone:
-	polycone * envelope_polycone = new polycone;
-	__polycone->compute_outer_polycone (*envelope_polycone);
-	if (! envelope_polycone->is_valid ())
-	  {
-	    throw runtime_error ("simple_shaped_model::_construct_polycone: Invalid envelope polycone !");
-	  }
-	__outer_shape = envelope_polycone;
-	__solid = __outer_shape;
-	get_logical ().set_material_ref (__material_name);
-	// if the polycone is extruded, add an extruded 'inner' polycone
-	// within the 'outer' polycone:
-	if (__polycone->is_extruded ())
-	  {
-	    polycone * inner_pol = new polycone;
-	    __polycone->compute_inner_polycone (*inner_pol);
-	    if (! inner_pol->is_valid ())
-	      {
-		delete inner_pol;
-		throw runtime_error ("simple_shaped_model::_construct_polycone: Invalid 'inner' polycone dimensions !");
-	      }
-	    __inner_shape = inner_pol;
-	    // inner placement for the extrusion:
-	    __inner_placement.set (0, 0, 0, 0, 0, 0);
-	    ostringstream inner_name;
-	    inner_name << "__" << get_logical ().get_name () << ".polycone_by_extrusion";
-	    __inner_logical.set_name (i_model::make_logical_volume_name (inner_name.str ()));
-	    __inner_logical.set_material_ref (__filled_material_name);
-	    __inner_logical.set_shape (*__inner_shape); // pass a reference -> logical has not the shape ownership
-	    __inner_phys.set_name (i_model::make_physical_volume_name (inner_name.str ()));
-	    __inner_phys.set_placement (__inner_placement);
-	    __inner_phys.set_logical (__inner_logical);
-	    __inner_phys.set_mother (this->get_logical ());
+        // make the envelope a polycone:
+        polycone * envelope_polycone = new polycone;
+        _polycone_->compute_outer_polycone (*envelope_polycone);
+        if (! envelope_polycone->is_valid ())
+          {
+            throw runtime_error ("simple_shaped_model::_construct_polycone: Invalid envelope polycone !");
+          }
+        _outer_shape_ = envelope_polycone;
+        _solid_ = _outer_shape_;
+        get_logical ().set_material_ref (_material_name_);
+        // if the polycone is extruded, add an extruded 'inner' polycone
+        // within the 'outer' polycone:
+        if (_polycone_->is_extruded ())
+          {
+            polycone * inner_pol = new polycone;
+            _polycone_->compute_inner_polycone (*inner_pol);
+            if (! inner_pol->is_valid ())
+              {
+                delete inner_pol;
+                throw runtime_error ("simple_shaped_model::_construct_polycone: Invalid 'inner' polycone dimensions !");
+              }
+            _inner_shape_ = inner_pol;
+            // inner placement for the extrusion:
+            _inner_placement_.set (0, 0, 0, 0, 0, 0);
+            ostringstream inner_name;
+            inner_name << "__" << get_logical ().get_name () << ".polycone_by_extrusion";
+            _inner_logical_.set_name (i_model::make_logical_volume_name (inner_name.str ()));
+            _inner_logical_.set_material_ref (_filled_material_name_);
+            _inner_logical_.set_shape (*_inner_shape_); // pass a reference -> logical has not the shape ownership
+            _inner_phys_.set_name (i_model::make_physical_volume_name (inner_name.str ()));
+            _inner_phys_.set_placement (_inner_placement_);
+            _inner_phys_.set_logical (_inner_logical_);
+            _inner_phys_.set_mother (this->get_logical ());
 
-	    // makes the child extrusion the mother of daughter physical volumes:
-	    __daughter_owner_logical = &__inner_logical;
-	  }
+            // makes the child extrusion the mother of daughter physical volumes:
+            _daughter_owner_logical_ = &_inner_logical_;
+          }
       }
 
-     // build the polycone as a filled child of a mother filled polycone:
-     if (__filled_mode == filled_utils::FILLED_BY_ENVELOPE)
+    // build the polycone as a filled child of a mother filled polycone:
+    if (_filled_mode_ == filled_utils::FILLED_BY_ENVELOPE)
       {
-	// make the envelope a cylinder:
-	polycone * outer_polycone = new polycone;
-	__polycone->compute_outer_polycone (*outer_polycone);
-	if (! outer_polycone->is_valid ())
-	  {
-	    throw runtime_error ("simple_shaped_model::_construct_tube: Invalid 'outer' cylinder dimensions !");
-	  }
-	__outer_shape = outer_polycone;
-	__solid = __outer_shape;
-	get_logical ().set_material_ref (__filled_material_name);
-	if (! __polycone->is_extruded ())
-	  {
-	    // if the polycon is not extruded, no daughter physical volumes can be placed
-	    // within the 'outer' envelope polycone:
-	    __daughter_owner_logical = 0;
-	  }
-	else
-	  {
-	    // if the polycone is extruded, add the polycone
-	    // within the 'outer' envelope polycone:
-	    __inner_placement.set (0, 0, 0, 0, 0, 0);
-	    ostringstream inner_name;
-	    inner_name << "__" << get_logical ().get_name () << ".polycone_by_envelope";
-	    __inner_logical.set_name (i_model::make_logical_volume_name (inner_name.str ()));
-	    __inner_logical.set_material_ref (__material_name);
-	    __inner_logical.set_shape (*__polycone);
-	    if (visibility::has_color (config_))
-	      {
-		visibility::set_color (__inner_logical.parameters (),
-				       visibility::get_color (config_));
-	      }
-	    __inner_phys.set_name (i_model::make_physical_volume_name (inner_name.str ()));
-	    __inner_phys.set_placement (__inner_placement);
-	    __inner_phys.set_logical (__inner_logical);
-	    __inner_phys.set_mother (this->get_logical ());
-	  }
+        // make the envelope a cylinder:
+        polycone * outer_polycone = new polycone;
+        _polycone_->compute_outer_polycone (*outer_polycone);
+        if (! outer_polycone->is_valid ())
+          {
+            throw runtime_error ("simple_shaped_model::_construct_tube: Invalid 'outer' cylinder dimensions !");
+          }
+        _outer_shape_ = outer_polycone;
+        _solid_ = _outer_shape_;
+        get_logical ().set_material_ref (_filled_material_name_);
+        if (! _polycone_->is_extruded ())
+          {
+            // if the polycon is not extruded, no daughter physical volumes can be placed
+            // within the 'outer' envelope polycone:
+            _daughter_owner_logical_ = 0;
+          }
+        else
+          {
+            // if the polycone is extruded, add the polycone
+            // within the 'outer' envelope polycone:
+            _inner_placement_.set (0, 0, 0, 0, 0, 0);
+            ostringstream inner_name;
+            inner_name << "__" << get_logical ().get_name () << ".polycone_by_envelope";
+            _inner_logical_.set_name (i_model::make_logical_volume_name (inner_name.str ()));
+            _inner_logical_.set_material_ref (_material_name_);
+            _inner_logical_.set_shape (*_polycone_);
+            if (visibility::has_color (config_))
+              {
+                visibility::set_color (_inner_logical_.parameters (),
+                                       visibility::get_color (config_));
+              }
+            _inner_phys_.set_name (i_model::make_physical_volume_name (inner_name.str ()));
+            _inner_phys_.set_placement (_inner_placement_);
+            _inner_phys_.set_logical (_inner_logical_);
+            _inner_phys_.set_mother (this->get_logical ());
+          }
       }
 
     return;
@@ -847,19 +847,19 @@ namespace geomtools {
   /*****************************************************/
 
   void simple_shaped_model::_construct_polyhedra (const string & name_,
-						  const datatools::utils::properties & config_,
-						  models_col_t * models_)
+                                                  const datatools::utils::properties & config_,
+                                                  models_col_t * models_)
   {
     bool devel = i_model::g_devel;
     if (config_.has_key ("devel"))
       {
-	devel = true;
+        devel = true;
       }
     if (devel)
       {
-	cerr << "DEVEL: simple_shaped_model::_construct_polyhedra: "
-	     << "Name = '" << name_ << "'"
-	     << endl;
+        cerr << "DEVEL: simple_shaped_model::_construct_polyhedra: "
+             << "Name = '" << name_ << "'"
+             << endl;
       }
     string filled_material_name = material::MATERIAL_REF_UNKNOWN;
     double lunit = CLHEP::mm;
@@ -868,160 +868,160 @@ namespace geomtools {
 
     if (config_.has_key ("length_unit"))
       {
-	string lunit_str = config_.fetch_string ("length_unit");
-	lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+        string lunit_str = config_.fetch_string ("length_unit");
+        lunit = datatools::utils::units::get_length_unit_from (lunit_str);
       }
 
     if (config_.has_key ("angle_unit"))
       {
-	string aunit_str = config_.fetch_string ("angle_unit");
-	aunit = datatools::utils::units::get_angle_unit_from (aunit_str);
+        string aunit_str = config_.fetch_string ("angle_unit");
+        aunit = datatools::utils::units::get_angle_unit_from (aunit_str);
       }
 
     // filled mode:
     if (config_.has_key ("filled_mode"))
       {
-	filled_mode_label = config_.fetch_string ("filled_mode");
-	if (filled_mode_label == filled_utils::FILLED_NONE_LABEL)
-	  {
-	    __filled_mode = filled_utils::FILLED_NONE;
-	  }
-	else if (filled_mode_label == filled_utils::FILLED_BY_ENVELOPE_LABEL)
-	  {
-	    __filled_mode = filled_utils::FILLED_BY_ENVELOPE;
-	  }
-	else if (filled_mode_label == filled_utils::FILLED_BY_EXTRUSION_LABEL)
-	  {
-	    __filled_mode = filled_utils::FILLED_BY_EXTRUSION;
-	  }
-	else
-	  {
-	    ostringstream message;
-	    message << "simple_boxed_model::_at_construct: "
-		    << "Invalid mode '" << filled_mode_label << "' property !";
-	    throw runtime_error (message.str ());
-	  }
+        filled_mode_label = config_.fetch_string ("filled_mode");
+        if (filled_mode_label == filled_utils::FILLED_NONE_LABEL)
+          {
+            _filled_mode_ = filled_utils::FILLED_NONE;
+          }
+        else if (filled_mode_label == filled_utils::FILLED_BY_ENVELOPE_LABEL)
+          {
+            _filled_mode_ = filled_utils::FILLED_BY_ENVELOPE;
+          }
+        else if (filled_mode_label == filled_utils::FILLED_BY_EXTRUSION_LABEL)
+          {
+            _filled_mode_ = filled_utils::FILLED_BY_EXTRUSION;
+          }
+        else
+          {
+            ostringstream message;
+            message << "simple_boxed_model::_at_construct: "
+                    << "Invalid mode '" << filled_mode_label << "' property !";
+            throw runtime_error (message.str ());
+          }
       }
     else
       {
-	__filled_mode = filled_utils::FILLED_NONE;
+        _filled_mode_ = filled_utils::FILLED_NONE;
       }
 
     // filling material:
-    if (__filled_mode != filled_utils::FILLED_NONE)
+    if (_filled_mode_ != filled_utils::FILLED_NONE)
       {
-	// parsing material:
-	if (config_.has_key ("material.filled.ref"))
-	  {
-	    __material_name = config_.fetch_string ("material.filled.ref");
-	  }
-	else
-	  {
-	    ostringstream message;
-	    message << "simple_shaped_model::_construct_polyhedra: "
-		    << "Missing 'material.filled.ref' property !";
-	    throw runtime_error (message.str ());
-	  }
+        // parsing material:
+        if (config_.has_key ("material.filled.ref"))
+          {
+            _material_name_ = config_.fetch_string ("material.filled.ref");
+          }
+        else
+          {
+            ostringstream message;
+            message << "simple_shaped_model::_construct_polyhedra: "
+                    << "Missing 'material.filled.ref' property !";
+            throw runtime_error (message.str ());
+          }
       }
 
-    __polyhedra = new polyhedra ();
-    __polyhedra->initialize (config_);
-    if (! __polyhedra->is_valid ())
+    _polyhedra_ = new polyhedra ();
+    _polyhedra_->initialize (config_);
+    if (! _polyhedra_->is_valid ())
       {
-	__polyhedra->tree_dump (cerr, "Invalid polyhedra: ", "ERROR:" );
-	throw runtime_error ("simple_shaped_model::_construct_polyhedra: Invalid polyhedra build parameters !");
+        _polyhedra_->tree_dump (cerr, "Invalid polyhedra: ", "ERROR:" );
+        throw runtime_error ("simple_shaped_model::_construct_polyhedra: Invalid polyhedra build parameters !");
       }
     if (devel)
       {
-	__polyhedra->tree_dump (cerr, "Polyhedra: ", "DEVEL:" );
+        _polyhedra_->tree_dump (cerr, "Polyhedra: ", "DEVEL:" );
       }
-    if (__filled_mode == filled_utils::FILLED_NONE)
+    if (_filled_mode_ == filled_utils::FILLED_NONE)
       {
-	__solid = __polyhedra;
-	get_logical ().set_material_ref (__material_name);
-      }
-
-     // build the polyhedra by extrusion of a mother polyhedra:
-     if (__filled_mode == filled_utils::FILLED_BY_EXTRUSION)
-      {
-	// make the envelope a polyhedra:
-	polyhedra * envelope_polyhedra = new polyhedra;
-	__polyhedra->compute_outer_polyhedra (*envelope_polyhedra);
-	if (! envelope_polyhedra->is_valid ())
-	  {
-	    throw runtime_error ("simple_shaped_model::_construct_polyhedra: Invalid envelope polyhedra !");
-	  }
-	__outer_shape = envelope_polyhedra;
-	__solid = __outer_shape;
-	get_logical ().set_material_ref (__material_name);
-	// if the polyhedra is extruded, add an extruded 'inner' polyhedra
-	// within the 'outer' polyhedra:
-	if (__polyhedra->is_extruded ())
-	  {
-	    polyhedra * inner_pol = new polyhedra;
-	    __polyhedra->compute_inner_polyhedra (*inner_pol);
-	    if (! inner_pol->is_valid ())
-	      {
-		delete inner_pol;
-		throw runtime_error ("simple_shaped_model::_construct_polyhedra: Invalid 'inner' polyhedra dimensions !");
-	      }
-	    __inner_shape = inner_pol;
-	    // inner placement for the extrusion:
-	    __inner_placement.set (0, 0, 0, 0, 0, 0);
-	    ostringstream inner_name;
-	    inner_name << "__" << get_logical ().get_name () << ".polyhedra_by_extrusion";
-	    __inner_logical.set_name (i_model::make_logical_volume_name (inner_name.str ()));
-	    __inner_logical.set_material_ref (__filled_material_name);
-	    __inner_logical.set_shape (*__inner_shape); // pass a reference -> logical has not the shape ownership
-	    __inner_phys.set_name (i_model::make_physical_volume_name (inner_name.str ()));
-	    __inner_phys.set_placement (__inner_placement);
-	    __inner_phys.set_logical (__inner_logical);
-	    __inner_phys.set_mother (this->get_logical ());
-
-	    // makes the child extrusion the mother of daughter physical volumes:
-	    __daughter_owner_logical = &__inner_logical;
-	  }
+        _solid_ = _polyhedra_;
+        get_logical ().set_material_ref (_material_name_);
       }
 
-     // build the polyhedra as a filled child of a mother filled polyhedra:
-     if (__filled_mode == filled_utils::FILLED_BY_ENVELOPE)
+    // build the polyhedra by extrusion of a mother polyhedra:
+    if (_filled_mode_ == filled_utils::FILLED_BY_EXTRUSION)
       {
-	// make the envelope a cylinder:
-	polyhedra * outer_polyhedra = new polyhedra;
-	__polyhedra->compute_outer_polyhedra (*outer_polyhedra);
-	if (! outer_polyhedra->is_valid ())
-	  {
-	    throw runtime_error ("simple_shaped_model::_construct_tube: Invalid 'outer' cylinder dimensions !");
-	  }
-	__outer_shape = outer_polyhedra;
-	__solid = __outer_shape;
-	get_logical ().set_material_ref (__filled_material_name);
-	if (! __polyhedra->is_extruded ())
-	  {
-	    // if the polyhedra is not extruded, no daughter physical volumes can be placed
-	    // within the 'outer' envelope polyhedra:
-	    __daughter_owner_logical = 0;
-	  }
-	else
-	  {
-	    // if the polyhedra is extruded, add the polyhedra
-	    // within the 'outer' envelope polyhedra:
-	    __inner_placement.set (0, 0, 0, 0, 0, 0);
-	    ostringstream inner_name;
-	    inner_name << "__" << get_logical ().get_name () << ".polyhedra_by_envelope";
-	    __inner_logical.set_name (i_model::make_logical_volume_name (inner_name.str ()));
-	    __inner_logical.set_material_ref (__material_name);
-	    __inner_logical.set_shape (*__polyhedra);
-	    if (visibility::has_color (config_))
-	      {
-		visibility::set_color (__inner_logical.parameters (),
-				       visibility::get_color (config_));
-	      }
-	    __inner_phys.set_name (i_model::make_physical_volume_name (inner_name.str ()));
-	    __inner_phys.set_placement (__inner_placement);
-	    __inner_phys.set_logical (__inner_logical);
-	    __inner_phys.set_mother (this->get_logical ());
-	  }
+        // make the envelope a polyhedra:
+        polyhedra * envelope_polyhedra = new polyhedra;
+        _polyhedra_->compute_outer_polyhedra (*envelope_polyhedra);
+        if (! envelope_polyhedra->is_valid ())
+          {
+            throw runtime_error ("simple_shaped_model::_construct_polyhedra: Invalid envelope polyhedra !");
+          }
+        _outer_shape_ = envelope_polyhedra;
+        _solid_ = _outer_shape_;
+        get_logical ().set_material_ref (_material_name_);
+        // if the polyhedra is extruded, add an extruded 'inner' polyhedra
+        // within the 'outer' polyhedra:
+        if (_polyhedra_->is_extruded ())
+          {
+            polyhedra * inner_pol = new polyhedra;
+            _polyhedra_->compute_inner_polyhedra (*inner_pol);
+            if (! inner_pol->is_valid ())
+              {
+                delete inner_pol;
+                throw runtime_error ("simple_shaped_model::_construct_polyhedra: Invalid 'inner' polyhedra dimensions !");
+              }
+            _inner_shape_ = inner_pol;
+            // inner placement for the extrusion:
+            _inner_placement_.set (0, 0, 0, 0, 0, 0);
+            ostringstream inner_name;
+            inner_name << "__" << get_logical ().get_name () << ".polyhedra_by_extrusion";
+            _inner_logical_.set_name (i_model::make_logical_volume_name (inner_name.str ()));
+            _inner_logical_.set_material_ref (_filled_material_name_);
+            _inner_logical_.set_shape (*_inner_shape_); // pass a reference -> logical has not the shape ownership
+            _inner_phys_.set_name (i_model::make_physical_volume_name (inner_name.str ()));
+            _inner_phys_.set_placement (_inner_placement_);
+            _inner_phys_.set_logical (_inner_logical_);
+            _inner_phys_.set_mother (this->get_logical ());
+
+            // makes the child extrusion the mother of daughter physical volumes:
+            _daughter_owner_logical_ = &_inner_logical_;
+          }
+      }
+
+    // build the polyhedra as a filled child of a mother filled polyhedra:
+    if (_filled_mode_ == filled_utils::FILLED_BY_ENVELOPE)
+      {
+        // make the envelope a cylinder:
+        polyhedra * outer_polyhedra = new polyhedra;
+        _polyhedra_->compute_outer_polyhedra (*outer_polyhedra);
+        if (! outer_polyhedra->is_valid ())
+          {
+            throw runtime_error ("simple_shaped_model::_construct_tube: Invalid 'outer' cylinder dimensions !");
+          }
+        _outer_shape_ = outer_polyhedra;
+        _solid_ = _outer_shape_;
+        get_logical ().set_material_ref (_filled_material_name_);
+        if (! _polyhedra_->is_extruded ())
+          {
+            // if the polyhedra is not extruded, no daughter physical volumes can be placed
+            // within the 'outer' envelope polyhedra:
+            _daughter_owner_logical_ = 0;
+          }
+        else
+          {
+            // if the polyhedra is extruded, add the polyhedra
+            // within the 'outer' envelope polyhedra:
+            _inner_placement_.set (0, 0, 0, 0, 0, 0);
+            ostringstream inner_name;
+            inner_name << "__" << get_logical ().get_name () << ".polyhedra_by_envelope";
+            _inner_logical_.set_name (i_model::make_logical_volume_name (inner_name.str ()));
+            _inner_logical_.set_material_ref (_material_name_);
+            _inner_logical_.set_shape (*_polyhedra_);
+            if (visibility::has_color (config_))
+              {
+                visibility::set_color (_inner_logical_.parameters (),
+                                       visibility::get_color (config_));
+              }
+            _inner_phys_.set_name (i_model::make_physical_volume_name (inner_name.str ()));
+            _inner_phys_.set_placement (_inner_placement_);
+            _inner_phys_.set_logical (_inner_logical_);
+            _inner_phys_.set_mother (this->get_logical ());
+          }
       }
 
     return;
@@ -1034,48 +1034,48 @@ namespace geomtools {
     bool devel = i_model::g_devel;
     if (devel)
       {
-	cerr << "DEVEL: " << "simple_shaped_model::_post_construct: "
-	     << "Entering..." << endl;
+        cerr << "DEVEL: " << "simple_shaped_model::_post_construct: "
+             << "Entering..." << endl;
       }
     //material::extract (setup_, get_logical ().parameters ());
     sensitive::extract (setup_, get_logical ().parameters ());
     visibility::extract (setup_, get_logical ().parameters ());
-    if (__solid)
+    if (_solid_)
       {
-	stackable::extract (setup_, __solid->properties ());
+        stackable::extract (setup_, _solid_->properties ());
       }
-    if (__daughter_owner_logical != 0)
+    if (_daughter_owner_logical_ != 0)
       {
-	mapping_utils::extract (setup_, __daughter_owner_logical->parameters ());
+        mapping_utils::extract (setup_, _daughter_owner_logical_->parameters ());
       }
     // if (is_filled ())
     //   {
-    // 	if (is_filled_by_extrusion  ())
-    // 	  {
-    // 	    visibility::extract (setup_, __inner_logical.parameters ());
-    // 	    /*
-    // 	    if (__visibility_logical != 0)
-    // 	      {
-    // 		visibility::extract (setup_, __inner_logical.parameters ());
-    // 	      }
-    // 	    */
-    // 	  }
+    //  if (is_filled_by_extrusion  ())
+    //    {
+    //      visibility::extract (setup_, _inner_logical_.parameters ());
+    //      /*
+    //      if (_visibility_logical_ != 0)
+    //        {
+    //          visibility::extract (setup_, _inner_logical_.parameters ());
+    //        }
+    //      */
+    //    }
 
-    // 	if (is_filled_by_envelope  ())
-    // 	  {
-    // 	    visibility::extract (setup_, __daughter_owner_logical->parameters ());
-    // 	    /*
-    // 	    if (__visibility_logical != 0)
-    // 	      {
-    // 		visibility::extract (setup_, __daughter_owner_logical->parameters ());
-    // 	      }
-    // 	    */
-    // 	  }
+    //  if (is_filled_by_envelope  ())
+    //    {
+    //      visibility::extract (setup_, _daughter_owner_logical_->parameters ());
+    //      /*
+    //      if (_visibility_logical_ != 0)
+    //        {
+    //          visibility::extract (setup_, _daughter_owner_logical_->parameters ());
+    //        }
+    //      */
+    //    }
 
     //    }
     // else
     //   {
-    // 	visibility::extract (setup_, get_logical ().parameters ());
+    //  visibility::extract (setup_, get_logical ().parameters ());
     //   }
     return;
   }
@@ -1083,63 +1083,63 @@ namespace geomtools {
   /*******************************************/
 
   void simple_shaped_model::tree_dump (ostream & out_,
-				       const string & title_ ,
-				       const string & indent_,
-				       bool inherit_) const
+                                       const string & title_ ,
+                                       const string & indent_,
+                                       bool inherit_) const
   {
-     namespace du = datatools::utils;
-     string indent;
-     if (! indent_.empty ()) indent = indent_;
-     i_model::tree_dump (out_, title_, indent, true);
+    namespace du = datatools::utils;
+    string indent;
+    if (! indent_.empty ()) indent = indent_;
+    i_model::tree_dump (out_, title_, indent, true);
 
-     // Shape name:
-     {
-       out_ << indent << i_tree_dumpable::tag
-	    << "Shape name : '" << get_shape_name () << "'" << endl;
-     }
+    // Shape name:
+    {
+      out_ << indent << i_tree_dumpable::tag
+           << "Shape name : '" << get_shape_name () << "'" << endl;
+    }
 
-     // solid:
-     {
-       out_ << indent << i_tree_dumpable::tag
-	    << "Solid : ";
-       if (__solid != 0)
-	 {
-	   out_ << endl;
-	   ostringstream indent_oss;
-	   indent_oss << indent;
-	   indent_oss << du::i_tree_dumpable::skip_tag;
-	   __solid->tree_dump (out_, "", indent_oss.str ());
-	 }
-       else
-	 {
-	   out_ << "<none>" << endl;
-	 }
-     }
+    // solid:
+    {
+      out_ << indent << i_tree_dumpable::tag
+           << "Solid : ";
+      if (_solid_ != 0)
+        {
+          out_ << endl;
+          ostringstream indent_oss;
+          indent_oss << indent;
+          indent_oss << du::i_tree_dumpable::skip_tag;
+          _solid_->tree_dump (out_, "", indent_oss.str ());
+        }
+      else
+        {
+          out_ << "<none>" << endl;
+        }
+    }
 
-     // filled material name:
-     if (! __filled_material_name.empty ())
-       {
-	 out_ << indent << i_tree_dumpable::tag
-	      << "Filled material name : '" << get_filled_material_name () << "'" << endl;
-       }
+    // filled material name:
+    if (! _filled_material_name_.empty ())
+      {
+        out_ << indent << i_tree_dumpable::tag
+             << "Filled material name : '" << get_filled_material_name () << "'" << endl;
+      }
 
-     {
-       out_ << indent << i_tree_dumpable::tag
-	    << "Filled mode : '" << __filled_mode << "'" << endl;
+    {
+      out_ << indent << i_tree_dumpable::tag
+           << "Filled mode : '" << _filled_mode_ << "'" << endl;
 
-     }
+    }
 
-     // material name:
-     {
-       out_ << indent << i_tree_dumpable::inherit_tag (inherit_)
-	    << "Material name : '" << get_material_name () << "'" << endl;
-     }
+    // material name:
+    {
+      out_ << indent << i_tree_dumpable::inherit_tag (inherit_)
+           << "Material name : '" << get_material_name () << "'" << endl;
+    }
 
-     return;
+    return;
   }
 
   // register this creator:
-  geomtools::i_model::creator_registration<simple_shaped_model> simple_shaped_model::__CR;
+  geomtools::i_model::creator_registration<simple_shaped_model> simple_shaped_model::_g_cr_;
 
 } // end of namespace geomtools
 

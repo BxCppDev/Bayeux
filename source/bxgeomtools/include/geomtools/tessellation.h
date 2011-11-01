@@ -61,32 +61,32 @@ namespace geomtools {
   class facet3 : public i_facet
   {
   private:
-    const facet_vertex * __v[3];
+    const facet_vertex * _vertices_[3];
 
   public:
     virtual size_t get_number_of_vertices () const;
     virtual const facet_vertex & get_vertex (int i_) const;
     facet3 ();
     facet3 (const facet_vertex & v1_, 
-	    const facet_vertex & v2_, 
-	    const facet_vertex & v3_);
+            const facet_vertex & v2_, 
+            const facet_vertex & v3_);
 
   };
 
   class facet4 : public i_facet
   {
   private:
-    const facet_vertex * __v[4];
+    const facet_vertex * _vertices_[4];
   private:
-  bool __is_valid () const;
+    bool __is_valid () const;
   public:
-  virtual size_t get_number_of_vertices () const;
+    virtual size_t get_number_of_vertices () const;
     virtual const facet_vertex & get_vertex (int i_) const;
     facet4 ();
     facet4 (const facet_vertex & v1_, 
-	    const facet_vertex & v2_, 
-	    const facet_vertex & v3_, 
-	    const facet_vertex & v4_);
+            const facet_vertex & v2_, 
+            const facet_vertex & v3_, 
+            const facet_vertex & v4_);
 
   };
 
@@ -104,10 +104,10 @@ namespace geomtools {
     static const int MAX_VERTEX     = 0x0FFFFFFF;
     
   private:
-    bool           __locked;
-    bool           __consistent;
-    vertices_col_t __vertices;
-    facets_col_t   __facets;
+    bool           _locked_;
+    bool           _consistent_;
+    vertices_col_t _vertices_;
+    facets_col_t   _facets_;
     
   public:
       
@@ -122,13 +122,13 @@ namespace geomtools {
     const facets_col_t & facets () const;
     int add_vertex (unsigned int vtx_key_, const facet_vertex & vtx_);
     int add_vertex (unsigned int vtx_key_, 
-		    double x_, double y_, double z_);
+                    double x_, double y_, double z_);
     void add_facet (unsigned int facet_key_, 
-		    int ivtx0_, int ivtx1_, int ivtx2_, int ivtx3_ = INVALID_VERTEX);
+                    int ivtx0_, int ivtx1_, int ivtx2_, int ivtx3_ = INVALID_VERTEX);
     void add_facet3 (unsigned int facet_key_, 
-		     int ivtx0_, int ivtx1_, int ivtx2_);
+                     int ivtx0_, int ivtx1_, int ivtx2_);
     void add_facet4 (unsigned int facet_key_, 
-		     int ivtx0_, int ivtx1_, int ivtx2_, int ivtx3_);
+                     int ivtx0_, int ivtx1_, int ivtx2_, int ivtx3_);
     void lock ();
     void unlock ();
     void print_xyz (ostream & out_) const;
@@ -137,19 +137,19 @@ namespace geomtools {
     //void initialize (const string & filename_);
       
     virtual bool is_inside (const vector_3d &, 
-			    double skin_ = USING_PROPER_SKIN) const;
+                            double skin_ = USING_PROPER_SKIN) const;
 
     // if 'skin' < 0 no skin is taken into account:
     virtual bool is_on_surface (const vector_3d & , 
-				int index_   = FACE_ALL , 
-				double skin_ = USING_PROPER_SKIN) const;
+                                int index_   = FACE_ALL , 
+                                double skin_ = USING_PROPER_SKIN) const;
     
     virtual vector_3d get_normal_on_surface (const vector_3d & position_) const;
     
     virtual bool find_intercept (const vector_3d & from_, 
-				 const vector_3d & direction_,
-				 intercept_t & intercept_,
-				 double skin_ = USING_PROPER_SKIN) const;
+                                 const vector_3d & direction_,
+                                 intercept_t & intercept_,
+                                 double skin_ = USING_PROPER_SKIN) const;
     
   private:
     bool __check ();

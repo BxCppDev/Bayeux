@@ -21,7 +21,7 @@ namespace geomtools {
 
   const geomtools::i_shape_3d & cylindric_extrusion_boxed_model::get_solid () const
   {
-    return *__solid;
+    return *_solid_;
   }
 
   void cylindric_extrusion_boxed_model::set_extrusion_radius (double r_)
@@ -35,7 +35,7 @@ namespace geomtools {
 		<< "Invalid R " << r_ / CLHEP::mm << " mm !";
 	throw runtime_error (message.str ());
       }
-    __extrusion_radius = r_;
+    _extrusion_radius_ = r_;
     return;
   }
 
@@ -50,7 +50,7 @@ namespace geomtools {
 		<< "Invalid X " << x_ / CLHEP::mm << " mm !";
 	throw runtime_error (message.str ());
       }
-    __mother_x = x_;
+    _mother_x_ = x_;
     return;
   }
 
@@ -65,7 +65,7 @@ namespace geomtools {
 		<< "Invalid Y " << y_ / CLHEP::mm << " mm !";
 	throw runtime_error (message.str ());
       }
-    __mother_y = y_;
+    _mother_y_ = y_;
     return;
   }
 
@@ -80,40 +80,40 @@ namespace geomtools {
 		<< "Invalid Z " << z_ / CLHEP::mm << " mm !";
 	throw runtime_error (message.str ());
       }
-    __mother_z = z_;
+    _mother_z_ = z_;
     return;
   }
 
   double cylindric_extrusion_boxed_model::get_extrusion_radius () const
   {
-    return __extrusion_radius;
+    return _extrusion_radius_;
   }
 
   double cylindric_extrusion_boxed_model::get_mother_x () const
   {
-    return __mother_x;
+    return _mother_x_;
   }
 
   double cylindric_extrusion_boxed_model::get_mother_y () const
   {
-    return __mother_y;
+    return _mother_y_;
   }
 
   double cylindric_extrusion_boxed_model::get_mother_z () const
   {
-    return __mother_z;
+    return _mother_z_;
   }
 
   void cylindric_extrusion_boxed_model::set_material_name (const string & mn_)
   {
     assert_unconstructed("cylindric_extrusion_boxed_model::set_material_name");
 
-    __material_name = mn_;
+    _material_name_ = mn_;
   }
 
   const string & cylindric_extrusion_boxed_model::get_material_name () const
   {
-    return __material_name;
+    return _material_name_;
   }
 
   string cylindric_extrusion_boxed_model::get_model_id () const
@@ -124,11 +124,11 @@ namespace geomtools {
   cylindric_extrusion_boxed_model::cylindric_extrusion_boxed_model ()
     : i_model ("cylindric_extrusion_boxed_model")
   {
-    __material_name = "";
-    __mother_x = numeric_limits<double>::quiet_NaN ();
-    __mother_y = numeric_limits<double>::quiet_NaN ();
-    __mother_z = numeric_limits<double>::quiet_NaN ();
-    __extrusion_radius = numeric_limits<double>::quiet_NaN ();
+    _material_name_ = "";
+    _mother_x_ = numeric_limits<double>::quiet_NaN ();
+    _mother_y_ = numeric_limits<double>::quiet_NaN ();
+    _mother_z_ = numeric_limits<double>::quiet_NaN ();
+    _extrusion_radius_ = numeric_limits<double>::quiet_NaN ();
     return;
   }
 
@@ -247,47 +247,47 @@ namespace geomtools {
     set_mother_z (mother_z);
     set_extrusion_radius (extrusion_radius);
 
-    __mother_box.reset ();
-    __mother_box.set_x (get_mother_x ());
-    __mother_box.set_y (get_mother_y ());
-    __mother_box.set_z (get_mother_z ());
-    if (! __mother_box.is_valid ())
+    _mother_box_.reset ();
+    _mother_box_.set_x (get_mother_x ());
+    _mother_box_.set_y (get_mother_y ());
+    _mother_box_.set_z (get_mother_z ());
+    if (! _mother_box_.is_valid ())
       {
 	throw runtime_error ("cylindric_extrusion_boxed_model::_at_construct: Invalid box dimensions !");
       }
 
-    __extrusion_cylinder.set_diameter (2 * get_extrusion_radius ());
+    _extrusion_cylinder_.set_diameter (2 * get_extrusion_radius ());
     double eps = 1.0e-5 * CLHEP::mm;
-    __extrusion_cylinder.set_z (get_mother_z () + eps);
+    _extrusion_cylinder_.set_z (get_mother_z () + eps);
 
     placement p1 (vector_3d (0, 0, 0), 0, 0, 0);
     placement p2 (vector_3d (0, 0, 0), 0, 0, 0);
-    __extruded_solid.set_shape1 (__mother_box, p1);
-    __extruded_solid.set_shape2 (__extrusion_cylinder, p2);
+    _extruded_solid_.set_shape1 (_mother_box_, p1);
+    _extruded_solid_.set_shape2 (_extrusion_cylinder_, p2);
     if (devel)
       {
-        __extruded_solid.dump (std::clog);
+        _extruded_solid_.dump (std::clog);
       }
 
-    __extruded_log.set_name (i_model::make_logical_volume_name ("extruded_box"));
-    __extruded_log.set_shape (__extruded_solid);
-    __extruded_log.set_material_ref (__material_name);
-    __extruded_placement.set (vector_3d (0, 0, 0), 0, 0, 0);
+    _extruded_log_.set_name (i_model::make_logical_volume_name ("extruded_box"));
+    _extruded_log_.set_shape (_extruded_solid_);
+    _extruded_log_.set_material_ref (_material_name_);
+    _extruded_placement_.set (vector_3d (0, 0, 0), 0, 0, 0);
 
-    __extruded_phys.set_name (i_model::make_physical_volume_name ("extruded_box"));
-    __extruded_phys.set_placement (__extruded_placement);
-    __extruded_phys.set_logical (__extruded_log);
-    __extruded_phys.set_mother (get_logical ());
+    _extruded_phys_.set_name (i_model::make_physical_volume_name ("extruded_box"));
+    _extruded_phys_.set_placement (_extruded_placement_);
+    _extruded_phys_.set_logical (_extruded_log_);
+    _extruded_phys_.set_mother (get_logical ());
     // Install default 'stackable data' pointer in the shape:
     {
       geomtools::stackable_data * sd_ptr = new geomtools::stackable_data;
-      sd_ptr->xmin = -0.5 * __mother_x;
-      sd_ptr->xmax = +0.5 * __mother_x;
-      sd_ptr->ymin = -0.5 * __mother_y;
-      sd_ptr->ymax = +0.5 * __mother_y;
-      sd_ptr->zmin = -0.5 * __mother_z;
-      sd_ptr->zmax = +0.5 * __mother_z;
-      __extruded_solid.set_stackable_data (sd_ptr);
+      sd_ptr->xmin = -0.5 * _mother_x_;
+      sd_ptr->xmax = +0.5 * _mother_x_;
+      sd_ptr->ymin = -0.5 * _mother_y_;
+      sd_ptr->ymax = +0.5 * _mother_y_;
+      sd_ptr->zmin = -0.5 * _mother_z_;
+      sd_ptr->zmax = +0.5 * _mother_z_;
+      _extruded_solid_.set_stackable_data (sd_ptr);
       if (devel)
 	{
 	  clog << "DEVEL: cylindric_extrusion_boxed_model::_at_construct: Entering..." << endl;
@@ -296,11 +296,11 @@ namespace geomtools {
 			     "DEVEL: ");
 	}
     }
-    __extruded_solid.set_user_draw ((void *) &cylindric_extrusion_boxed_model::gnuplot_draw_user_function);
-    __solid = &__extruded_solid;
+    _extruded_solid_.set_user_draw ((void *) &cylindric_extrusion_boxed_model::gnuplot_draw_user_function);
+    _solid_ = &_extruded_solid_;
 
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
-    get_logical ().set_shape (__extruded_solid);
+    get_logical ().set_shape (_extruded_solid_);
     get_logical ().set_material_ref (material_name);
 
     if (devel) clog << "DEVEL: cylindric_extrusion_boxed_model::_at_construct: Exiting." << endl;
@@ -341,7 +341,7 @@ namespace geomtools {
 	ostringstream indent_oss;
 	indent_oss << indent;
 	indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
-	__extruded_solid.tree_dump (out_, "", indent_oss.str ());
+	_extruded_solid_.tree_dump (out_, "", indent_oss.str ());
       }
     }
 
@@ -409,7 +409,7 @@ namespace geomtools {
   }
 
   // register this creator:
-  geomtools::i_model::creator_registration<cylindric_extrusion_boxed_model> cylindric_extrusion_boxed_model::__CR;
+  geomtools::i_model::creator_registration<cylindric_extrusion_boxed_model> cylindric_extrusion_boxed_model::_g_cr_;
 
 } // end of namespace geomtools
 

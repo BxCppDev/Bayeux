@@ -24,11 +24,11 @@ namespace geomtools {
  
   bool regular_grid_placement::is_valid () const
   {
-    return (__number_of_columns > 0)
-      && (__number_of_rows > 0) 
-      && __basic_placement.is_valid ()
-      && isnormal (__column_step)
-      && isnormal (__row_step);
+    return (_number_of_columns_ > 0)
+      && (_number_of_rows_ > 0) 
+      && _basic_placement_.is_valid ()
+      && isnormal (_column_step_)
+      && isnormal (_row_step_);
   }
 
   void regular_grid_placement::invalidate ()
@@ -39,24 +39,24 @@ namespace geomtools {
 
   bool regular_grid_placement::is_centered () const
   {
-    return __centered;
+    return _centered_;
   }
 
   void regular_grid_placement::set_centered (bool c_)
   {
-    __centered = c_;
+    _centered_ = c_;
     return;
   }
 
   void regular_grid_placement::set_column_step (double dx_)
   {
-    __column_step = dx_;
+    _column_step_ = dx_;
     return;
   }
 
   void regular_grid_placement::set_row_step (double dy_)
   {
-    __row_step = dy_;
+    _row_step_ = dy_;
     return;
   }
 
@@ -71,12 +71,12 @@ namespace geomtools {
 
   double regular_grid_placement::get_column_step () const
   {
-    return __column_step;
+    return _column_step_;
   }
 
   double regular_grid_placement::get_row_step () const
   {
-    return __row_step;
+    return _row_step_;
   }
 
   double regular_grid_placement::get_x_step () const
@@ -105,59 +105,59 @@ namespace geomtools {
 
   void regular_grid_placement::set_basic_placement (const placement & bp_)
   {
-    __basic_placement = bp_;
+    _basic_placement_ = bp_;
   }
   
   const placement & regular_grid_placement::get_basic_placement () const
   {
-    return __basic_placement;
+    return _basic_placement_;
   }
   
   placement & regular_grid_placement::get_basic_placement ()
   {
-    return __basic_placement;
+    return _basic_placement_;
   }
 
   void regular_grid_placement::set_number_of_columns (size_t nc_)
   {
-    __number_of_columns = nc_;
+    _number_of_columns_ = nc_;
     return;
   }
 
   void regular_grid_placement::set_number_of_rows (size_t nr_)
   {
-    __number_of_rows = nr_;
+    _number_of_rows_ = nr_;
     return;
   }
   
   size_t regular_grid_placement::get_number_of_rows () const
   {
-    return __number_of_rows;
+    return _number_of_rows_;
   }
   
   size_t regular_grid_placement::get_number_of_columns () const
   {
-    return __number_of_columns;
+    return _number_of_columns_;
   }
   
   size_t regular_grid_placement::get_number_of_items () const
   {
-    return __number_of_columns * __number_of_rows;
+    return _number_of_columns_ * _number_of_rows_;
   }
 
   size_t regular_grid_placement::compute_index_map (vector<uint32_t> & map_, 
-						    int item_) const
+                                                    int item_) const
   {
     if ((item_ < 0) || (item_ >= get_number_of_items ()))
       {
- 	ostringstream message;
-	message << "regular_grid_placement::compute_index_map: " 
-		<< "Invalid item index '" << item_ << "' !" << endl;
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "regular_grid_placement::compute_index_map: " 
+                << "Invalid item index '" << item_ << "' !" << endl;
+        throw runtime_error (message.str ());
       }
     uint32_t nitem = (uint32_t) item_;
-    uint32_t icol = nitem % __number_of_columns;
-    uint32_t irow = nitem / __number_of_columns;
+    uint32_t icol = nitem % _number_of_columns_;
+    uint32_t irow = nitem / _number_of_columns_;
     map_.clear ();
     map_.push_back (icol);
     map_.push_back (irow);
@@ -166,7 +166,7 @@ namespace geomtools {
 
   void regular_grid_placement::get_placement (int col_, int row_, placement & p_) const
   {
-    int item = col_ + row_ * __number_of_columns;
+    int item = col_ + row_ * _number_of_columns_;
     get_placement (item, p_);
     return;
   }
@@ -180,42 +180,42 @@ namespace geomtools {
   
   void regular_grid_placement::get_placement (int item_, placement & p_) const
   {
-    p_ = __basic_placement;
+    p_ = _basic_placement_;
     vector_3d trans = p_.get_translation ();
     vector_3d step;
     double x, y, z;
     if (is_mode_xy ())
       {
-	x = (item_ % __number_of_columns) * __column_step;
-	y = (item_ / __number_of_columns) * __row_step;
-	z = 0.0;
-	if (__centered)
-	  {
-	    x -= 0.5 * (__number_of_columns - 1) * __column_step;
-	    y -= 0.5 * (__number_of_rows    - 1) * __row_step;
-	  }
+        x = (item_ % _number_of_columns_) * _column_step_;
+        y = (item_ / _number_of_columns_) * _row_step_;
+        z = 0.0;
+        if (_centered_)
+          {
+            x -= 0.5 * (_number_of_columns_ - 1) * _column_step_;
+            y -= 0.5 * (_number_of_rows_    - 1) * _row_step_;
+          }
       }
     if (is_mode_xz ())
       {
-	x = (item_ % __number_of_columns) * __column_step;
-	z = (item_ / __number_of_columns) * __row_step;
-	y = 0.0;
-	if (__centered)
-	  {
-	    x -= 0.5 * (__number_of_columns - 1) * __column_step;
-	    z -= 0.5 * (__number_of_rows    - 1) * __row_step;
-	  }
+        x = (item_ % _number_of_columns_) * _column_step_;
+        z = (item_ / _number_of_columns_) * _row_step_;
+        y = 0.0;
+        if (_centered_)
+          {
+            x -= 0.5 * (_number_of_columns_ - 1) * _column_step_;
+            z -= 0.5 * (_number_of_rows_    - 1) * _row_step_;
+          }
       }
     if (is_mode_yz ())
       {
-	y = (item_ % __number_of_columns) * __column_step;
-	z = (item_ / __number_of_columns) * __row_step;
-	x = 0.0;
-	if (__centered)
-	  {
-	    y -= 0.5 * (__number_of_columns - 1) * __column_step;
-	    z -= 0.5 * (__number_of_rows    - 1) * __row_step;
-	  }
+        y = (item_ % _number_of_columns_) * _column_step_;
+        z = (item_ / _number_of_columns_) * _row_step_;
+        x = 0.0;
+        if (_centered_)
+          {
+            y -= 0.5 * (_number_of_columns_ - 1) * _column_step_;
+            z -= 0.5 * (_number_of_rows_    - 1) * _row_step_;
+          }
       }
     step.set (x, y, z);
     trans += step;
@@ -225,31 +225,31 @@ namespace geomtools {
 
   bool regular_grid_placement::is_mode_xy () const
   {
-    return __mode == MODE_XY;
+    return _mode_ == MODE_XY;
   }
 
   bool regular_grid_placement::is_mode_yz () const
   {
-    return __mode == MODE_YZ;
+    return _mode_ == MODE_YZ;
   }
   
   bool regular_grid_placement::is_mode_xz () const
   {
-    return __mode == MODE_XZ;
+    return _mode_ == MODE_XZ;
   }
 
   int regular_grid_placement::get_mode () const
   {
-    return __mode;
+    return _mode_;
   }
 
   void regular_grid_placement::set_mode (int mode_)
   {
     if ((mode_ < MODE_XY) || (mode_ > MODE_XZ))
       {
-	throw runtime_error ("regular_grid_placement: Invalid mode !");
+        throw runtime_error ("regular_grid_placement: Invalid mode !");
       }
-    __mode = mode_;
+    _mode_ = mode_;
     return;
   }
  
@@ -259,23 +259,23 @@ namespace geomtools {
     reset ();
     return;
   }
-		
+                
   // ctor:
   regular_grid_placement::regular_grid_placement (const placement & basic_placement_, 
-					double column_step_,
-					double row_step_,
-					size_t number_of_columns_,
-					size_t number_of_rows_,
-					int mode_,
-					bool centered_) : i_placement ()
+                                                  double column_step_,
+                                                  double row_step_,
+                                                  size_t number_of_columns_,
+                                                  size_t number_of_rows_,
+                                                  int mode_,
+                                                  bool centered_) : i_placement ()
   {
     init (basic_placement_,
-	  column_step_,
-	  row_step_,
-	  number_of_columns_,
-	  number_of_rows_,
-	  mode_,
-	  centered_);
+          column_step_,
+          row_step_,
+          number_of_columns_,
+          number_of_rows_,
+          mode_,
+          centered_);
     return;
   }
 
@@ -286,12 +286,12 @@ namespace geomtools {
   }
  
   void regular_grid_placement::init (const placement & basic_placement_, 
-					double column_step_,
-					double row_step_,
-					size_t number_of_columns_,
-					size_t number_of_rows_,
-					int mode_,
-					bool centered_)
+                                     double column_step_,
+                                     double row_step_,
+                                     size_t number_of_columns_,
+                                     size_t number_of_rows_,
+                                     int mode_,
+                                     bool centered_)
   {
     set_basic_placement (basic_placement_);
     set_steps (column_step_, row_step_);
@@ -304,20 +304,20 @@ namespace geomtools {
   
   void regular_grid_placement::reset ()
   {
-    __basic_placement.invalidate ();
-    __column_step = std::numeric_limits<double>::quiet_NaN();
-    __row_step = std::numeric_limits<double>::quiet_NaN();
-    __number_of_columns = 0;
-    __number_of_rows = 0;
-    __mode = MODE_XY;
-    __centered = true;
+    _basic_placement_.invalidate ();
+    _column_step_ = std::numeric_limits<double>::quiet_NaN();
+    _row_step_ = std::numeric_limits<double>::quiet_NaN();
+    _number_of_columns_ = 0;
+    _number_of_rows_ = 0;
+    _mode_ = MODE_XY;
+    _centered_ = true;
     return;
   }
     
   void regular_grid_placement::tree_dump (ostream & out_, 
-					    const string & title_, 
-					    const string & indent_, 
-					    bool inherit_) const
+                                          const string & title_, 
+                                          const string & indent_, 
+                                          bool inherit_) const
   {
     namespace du = datatools::utils;
     string indent;
@@ -329,28 +329,28 @@ namespace geomtools {
       oss_title << indent << i_tree_dumpable::tag << "Basic placement :";
       ostringstream oss_indent;
       oss_indent << indent << i_tree_dumpable::skip_tag;
-      __basic_placement.tree_dump (out_, 
-				   oss_title.str (), 
-				   oss_indent.str ());
+      _basic_placement_.tree_dump (out_, 
+                                   oss_title.str (), 
+                                   oss_indent.str ());
     }
 
     out_ << indent << i_tree_dumpable::tag << "Mode : " 
-	 << __mode  << endl;
+         << _mode_  << endl;
 
     out_ << indent << i_tree_dumpable::tag << "Column step : " 
-	 << __column_step  << endl;
+         << _column_step_  << endl;
 
     out_ << indent << i_tree_dumpable::tag << "Row step : " 
-	 << __row_step  << endl;
+         << _row_step_  << endl;
 
     out_ << indent << i_tree_dumpable::tag << "Number of columns : " 
-	 << __number_of_columns  << endl;
+         << _number_of_columns_  << endl;
 
     out_ << indent << i_tree_dumpable::tag << "Number of rows : " 
-	 << __number_of_rows  << endl;
+         << _number_of_rows_  << endl;
 
     out_ << indent << i_tree_dumpable::inherit_tag (inherit_)  
-	 << "Centered :" << is_centered () << endl;
+         << "Centered :" << is_centered () << endl;
 
     return;
   }

@@ -32,48 +32,48 @@ namespace geomtools {
   {
     if (n_sides_ < MIN_NUMBER_OF_SIDES)
       {
-	ostringstream message;
-	message << "polyhedra::set_n_sides: " 
-		<< "Invalid number of sides '" << n_sides_ << "'" << endl;
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "polyhedra::set_n_sides: " 
+                << "Invalid number of sides '" << n_sides_ << "'" << endl;
+        throw runtime_error (message.str ());
       }
-    __n_sides = n_sides_;
+    _n_sides_ = n_sides_;
     return;
   }
 
   bool polyhedra::is_extruded () const
   {
-    return __extruded;
+    return _extruded_;
   }
 
   size_t polyhedra::get_n_sides () const
   {
-    return __n_sides;
+    return _n_sides_;
   }
 
   double polyhedra::get_z_min () const
   {
-    return __z_min;
+    return _z_min_;
   }
 
   double polyhedra::get_z_max () const
   {
-    return __z_max;
+    return _z_max_;
   }
 
   double polyhedra::get_xy_max () const
   {
-    return __xy_max;
+    return _xy_max_;
   }
     
   double polyhedra::get_r_max () const
   {
-    return __r_max;
+    return _r_max_;
   }
 
   const polyhedra::rz_col_t & polyhedra::points () const
   {
-    return __points;
+    return _points_;
   }
  
   // ctor:
@@ -95,138 +95,138 @@ namespace geomtools {
  
     if (setup_.has_key ("length_unit"))
       {
-	string lunit_str = setup_.fetch_string ("length_unit");
-	lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+        string lunit_str = setup_.fetch_string ("length_unit");
+        lunit = datatools::utils::units::get_length_unit_from (lunit_str);
       }
 
     if (setup_.has_key ("build_mode"))
       {
-	build_mode_label = setup_.fetch_string ("build_mode");
+        build_mode_label = setup_.fetch_string ("build_mode");
       }
 
     if (build_mode_label == "points")
       {
-	vector<double> zs;
-	vector<double> rmins;
-	vector<double> rmaxs;
-	double rmin;
-	datatools::utils::invalidate (rmin);
-	size_t n_sides;
+        vector<double> zs;
+        vector<double> rmins;
+        vector<double> rmaxs;
+        double rmin;
+        datatools::utils::invalidate (rmin);
+        size_t n_sides;
 
-	if (setup_.has_key ("sides"))
-	  {
-	    int ns = setup_.fetch_integer ("sides");
-	    if (ns < MIN_NUMBER_OF_SIDES)
-	      {
-		ostringstream message;
-		message << "polyhedra::initialize: "
-			<< "'sides' is not large enough !";
-		throw runtime_error (message.str ());
-	      }
-	    n_sides = ns;
-	  }
+        if (setup_.has_key ("sides"))
+          {
+            int ns = setup_.fetch_integer ("sides");
+            if (ns < MIN_NUMBER_OF_SIDES)
+              {
+                ostringstream message;
+                message << "polyhedra::initialize: "
+                        << "'sides' is not large enough !";
+                throw runtime_error (message.str ());
+              }
+            n_sides = ns;
+          }
 
-	if (setup_.has_key ("list_of_z"))
-	  {
-	    setup_.fetch ("list_of_z", zs);
-	    if (zs.size () < 2)
-	      {
-		ostringstream message;
-		message << "polyhedra::initialize: "
-			<< "'list_of_z' has not enough points !";
-		throw runtime_error (message.str ());
-	      }
-	  }
-	else
-	  {
-	    ostringstream message;
-	    message << "polyhedra::initialize: "
-		    << "Missing 'list_of_z' property !";
-	    throw runtime_error (message.str ());
-	  }
+        if (setup_.has_key ("list_of_z"))
+          {
+            setup_.fetch ("list_of_z", zs);
+            if (zs.size () < 2)
+              {
+                ostringstream message;
+                message << "polyhedra::initialize: "
+                        << "'list_of_z' has not enough points !";
+                throw runtime_error (message.str ());
+              }
+          }
+        else
+          {
+            ostringstream message;
+            message << "polyhedra::initialize: "
+                    << "Missing 'list_of_z' property !";
+            throw runtime_error (message.str ());
+          }
 
-	if (setup_.has_key ("list_of_rmax"))
-	  {
-	    setup_.fetch ("list_of_rmax", rmaxs);
-	    if (rmaxs.size () != zs.size ())
-	      {
-		ostringstream message;
-		message << "polyhedra::initialize: "
-			<< "'list_of_z' and 'list_of_rmax' have not the same size !";
-		throw runtime_error (message.str ());		    
-	      }
-	  }
-	else
-	  {
-	    ostringstream message;
-	    message << "polyhedra::initialize: "
-		    << "Missing 'list_of_rmax' property !";
-	    throw runtime_error (message.str ());
-	  }
+        if (setup_.has_key ("list_of_rmax"))
+          {
+            setup_.fetch ("list_of_rmax", rmaxs);
+            if (rmaxs.size () != zs.size ())
+              {
+                ostringstream message;
+                message << "polyhedra::initialize: "
+                        << "'list_of_z' and 'list_of_rmax' have not the same size !";
+                throw runtime_error (message.str ());               
+              }
+          }
+        else
+          {
+            ostringstream message;
+            message << "polyhedra::initialize: "
+                    << "Missing 'list_of_rmax' property !";
+            throw runtime_error (message.str ());
+          }
 
-	if (setup_.has_key ("list_of_rmin"))
-	  {
-	    setup_.fetch ("list_of_rmin", rmins);
-	    if (rmins.size () != zs.size ())
-	      {
-		ostringstream message;
-		message << "polyhedra::initialize: "
-			<< "'list_of_rmin' and 'list_of_rmax' have not the same size !";
-		throw runtime_error (message.str ());
-		    
-	      }
-	  }
-	else if (setup_.has_key ("rmin"))
-	  {
-	    rmin = setup_.fetch_real ("rmin", rmin);
-	    rmin *= lunit;
-	  }
-	else
-	  {
-	    rmin = 0.0 * lunit;
-	  }
-	    
-	this->set_n_sides (n_sides);
-	for (int i = 0; i < zs.size (); i++)
-	  {
-	    double a_z = zs[i];
-	    double a_rmin;
-	    if (datatools::utils::is_valid (rmin))
-	      {
-		a_rmin = rmin;
-	      }
-	    else
-	      {
-		a_rmin = rmins[i];
-	      }
-	    double a_rmax = rmaxs[i];
-	    this->add (a_z, a_rmin, a_rmax, false);
-	  }
-	this->__compute_all ();	  
+        if (setup_.has_key ("list_of_rmin"))
+          {
+            setup_.fetch ("list_of_rmin", rmins);
+            if (rmins.size () != zs.size ())
+              {
+                ostringstream message;
+                message << "polyhedra::initialize: "
+                        << "'list_of_rmin' and 'list_of_rmax' have not the same size !";
+                throw runtime_error (message.str ());
+                    
+              }
+          }
+        else if (setup_.has_key ("rmin"))
+          {
+            rmin = setup_.fetch_real ("rmin", rmin);
+            rmin *= lunit;
+          }
+        else
+          {
+            rmin = 0.0 * lunit;
+          }
+            
+        this->set_n_sides (n_sides);
+        for (int i = 0; i < zs.size (); i++)
+          {
+            double a_z = zs[i];
+            double a_rmin;
+            if (datatools::utils::is_valid (rmin))
+              {
+                a_rmin = rmin;
+              }
+            else
+              {
+                a_rmin = rmins[i];
+              }
+            double a_rmax = rmaxs[i];
+            this->add (a_z, a_rmin, a_rmax, false);
+          }
+        this->_compute_all_ ();   
       }
     else if (build_mode_label == "datafile")
       {
-	string datafile;
-	if (setup_.has_key ("datafile"))
-	  {
-	    datafile = setup_.fetch_string ("datafile");
-	  }  
-	else
-	  {
-	    ostringstream message;
-	    message << "polyhedra::initialize: "
-		    << "Missing 'datafile' property !";
-	    throw runtime_error (message.str ());
-	  }
-	datatools::utils::fetch_path_with_env (datafile);
-	this->initialize (datafile);
+        string datafile;
+        if (setup_.has_key ("datafile"))
+          {
+            datafile = setup_.fetch_string ("datafile");
+          }  
+        else
+          {
+            ostringstream message;
+            message << "polyhedra::initialize: "
+                    << "Missing 'datafile' property !";
+            throw runtime_error (message.str ());
+          }
+        datatools::utils::fetch_path_with_env (datafile);
+        this->initialize (datafile);
       }
     else 
       {
-	ostringstream message;
-	message << "polyhedra::initialize: "
-		<< "Invalid build mode '" << build_mode_label << "' !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "polyhedra::initialize: "
+                << "Invalid build mode '" << build_mode_label << "' !";
+        throw runtime_error (message.str ());
       }
 
     return;
@@ -242,11 +242,11 @@ namespace geomtools {
     ifs.open (filename.c_str ());
     if (! ifs)
       {
-	ostringstream message;
-	message << "polyhedra::initialize: " 
-		<< "Cannot open data file '"
-		<< filename << "' !";
-	throw runtime_error (message.str ()); 
+        ostringstream message;
+        message << "polyhedra::initialize: " 
+                << "Cannot open data file '"
+                << filename << "' !";
+        throw runtime_error (message.str ()); 
       }
     size_t count = 0;
     double length_unit = CLHEP::mm;
@@ -257,180 +257,180 @@ namespace geomtools {
 
     while (! ifs.eof ())
       {
-	string line;
-	getline (ifs, line);
-	//cerr << "DEVEL: polyhedra::initialize: " << "line = '" << line << "'" << endl;
-	count++;
-	{
-	  istringstream iss (line);
-	  string  word;
-	  iss >> word;
-	  if (word.empty ()) continue;
-	  if (word[0] == '#') 
-	    {
-	      if (word.size () >= 2)
-		{
-		  if (word == "#@sides")
-		    {
-		      int ns;
-		      iss >> ns;
-		      if (! iss)
-			{
-			  ostringstream message;
-			  message << "polyhedra::initialize: " 
-				  << "Invalid format for the number of sides directive in data file '"
-				  << filename << "' at line " << count << " !";
-			  throw runtime_error (message.str ()); 
-			}
-		      if (ns < MIN_NUMBER_OF_SIDES)
-			{
-			  ostringstream message;
-			  message << "polyhedra::initialize: " 
-				  << "Number of sides is not large enough in data file '"
-				  << filename << "' at line " << count << " !";
-			  throw runtime_error (message.str ()); 
-			}
-		      nsides = (size_t) ns;
-		      set_n_sides (nsides);
-		    }
-		  else if (word == "#@length_unit")
-		    {
-		      string unit_str;
-		      iss >> unit_str;
-		      if (! iss)
-			{
-			  ostringstream message;
-			  message << "polyhedra::initialize: " 
-				  << "Invalid format for the length unit directive in data file '"
-				  << filename << "' at line " << count << " !";
-			  throw runtime_error (message.str ()); 
-			}
-		      length_unit = datatools::utils::units::get_length_unit_from (unit_str);
-		    }
-		  else if (word == "#@ignore_rmin")
-		    {
-		      ignore_rmin = true;
-		    }
-		  else if (word == "#@z_factor")
-		    {
-		      iss >> z_factor;
-		      if (! iss)
-			{
-			  ostringstream message;
-			  message << "polyhedra::initialize: " 
-				  << "Invalid format for the Z-factor directive in data file '"
-				  << filename << "' at line " << count << " !";
-			  throw runtime_error (message.str ()); 
-			}
-		    }
-		  else if (word == "#@r_factor")
-		    {
-		      iss >> r_factor;
-		      if (! iss)
-			{
-			  ostringstream message;
-			  message << "polyhedra::initialize: " 
-				  << "Invalid format for the R-factor directive in data file '"
-				  << filename << "' at line " << count << " !";
-			  throw runtime_error (message.str ()); 
-			}
-		    }
-		}
-	      continue;
-	    }
-	}
-	// parse (z,r1) or (z,r1,r2) formated lines:
-	{
-	  istringstream iss (line);
-	  double z, r1, r2;
-	  datatools::utils::invalidate (z);
-	  datatools::utils::invalidate (r1);
-	  datatools::utils::invalidate (r2);
-	  iss >> z;
-	  if (! iss)
-	    {
-	      ostringstream message;
-	      message << "polyhedra::initialize: " 
-		      << "Format error for 'z' in data file '"
-		      << filename << "' at line " << count << " !";
-	      throw runtime_error (message.str ()); 
-	    }
-	  iss >> r1;
-	  if (! iss)
-	    {
-	      ostringstream message;
-	      message << "polyhedra::initialize: " 
-		      << "Format error for 'r1' in data file '"
-		      << filename << "' at line " << count << " !";
-	      throw runtime_error (message.str ()); 
-	    }
-	  // try to read a third column:
-	  string token;
-	  iss >> token;
-	  if (token.length () == 0)
-	    {
-	      // two columns format:
-	      r2 = r1;
-	      datatools::utils::invalidate (r1);
-	    }
-	  else
-	    {
-	      if (token[0] == '#')
-		{
-		  // if line ends with a comment: this is two columns format !
-		  r2 = r1;
-		  datatools::utils::invalidate (r1);
-		}
-	      else 
-		{
-		  // try three columns format (z, r1, r2):
-		  istringstream iss2 (token);
-		  iss2 >> r2;
-		  if (! iss2)
-		    {
-		      ostringstream message;
-		      message << "polyhedra::initialize: " 
-			      << "Format error for 'r2' in data file '"
-			      << filename << "' at line " << count << " !";
-		      throw runtime_error (message.str ()); 
-		    }	    
-		  if (ignore_rmin)
-		    {
-		      datatools::utils::invalidate (r1);
-		    }
-		}
-	    }
-	  if (datatools::utils::is_valid (r2) && (r2 < 0.0))
-	    {
-	      ostringstream message;
-	      message << "polyhedra::initialize: " 
-		      << "Invalid value '" << r2 << "' for '2' in data file '"
-		      << filename << "' at line " << count << " !";
-	      throw runtime_error (message.str ()); 
-	    }
-	  double tz, tr1, tr2;
-	  tz  = z  * z_factor * length_unit;
-	  tr1 = r1 * r_factor * length_unit;
-	  tr2 = r2 * r_factor * length_unit;
-	  if (datatools::utils::is_valid (r1))
-	    {
-	      this->add (tz, tr1, tr2, false);
-	    }
-	  else
-	    {
-	      this->add (tz, tr2, false);
-	    }
-	}
+        string line;
+        getline (ifs, line);
+        //cerr << "DEVEL: polyhedra::initialize: " << "line = '" << line << "'" << endl;
+        count++;
+        {
+          istringstream iss (line);
+          string  word;
+          iss >> word;
+          if (word.empty ()) continue;
+          if (word[0] == '#') 
+            {
+              if (word.size () >= 2)
+                {
+                  if (word == "#@sides")
+                    {
+                      int ns;
+                      iss >> ns;
+                      if (! iss)
+                        {
+                          ostringstream message;
+                          message << "polyhedra::initialize: " 
+                                  << "Invalid format for the number of sides directive in data file '"
+                                  << filename << "' at line " << count << " !";
+                          throw runtime_error (message.str ()); 
+                        }
+                      if (ns < MIN_NUMBER_OF_SIDES)
+                        {
+                          ostringstream message;
+                          message << "polyhedra::initialize: " 
+                                  << "Number of sides is not large enough in data file '"
+                                  << filename << "' at line " << count << " !";
+                          throw runtime_error (message.str ()); 
+                        }
+                      nsides = (size_t) ns;
+                      set_n_sides (nsides);
+                    }
+                  else if (word == "#@length_unit")
+                    {
+                      string unit_str;
+                      iss >> unit_str;
+                      if (! iss)
+                        {
+                          ostringstream message;
+                          message << "polyhedra::initialize: " 
+                                  << "Invalid format for the length unit directive in data file '"
+                                  << filename << "' at line " << count << " !";
+                          throw runtime_error (message.str ()); 
+                        }
+                      length_unit = datatools::utils::units::get_length_unit_from (unit_str);
+                    }
+                  else if (word == "#@ignore_rmin")
+                    {
+                      ignore_rmin = true;
+                    }
+                  else if (word == "#@z_factor")
+                    {
+                      iss >> z_factor;
+                      if (! iss)
+                        {
+                          ostringstream message;
+                          message << "polyhedra::initialize: " 
+                                  << "Invalid format for the Z-factor directive in data file '"
+                                  << filename << "' at line " << count << " !";
+                          throw runtime_error (message.str ()); 
+                        }
+                    }
+                  else if (word == "#@r_factor")
+                    {
+                      iss >> r_factor;
+                      if (! iss)
+                        {
+                          ostringstream message;
+                          message << "polyhedra::initialize: " 
+                                  << "Invalid format for the R-factor directive in data file '"
+                                  << filename << "' at line " << count << " !";
+                          throw runtime_error (message.str ()); 
+                        }
+                    }
+                }
+              continue;
+            }
+        }
+        // parse (z,r1) or (z,r1,r2) formated lines:
+        {
+          istringstream iss (line);
+          double z, r1, r2;
+          datatools::utils::invalidate (z);
+          datatools::utils::invalidate (r1);
+          datatools::utils::invalidate (r2);
+          iss >> z;
+          if (! iss)
+            {
+              ostringstream message;
+              message << "polyhedra::initialize: " 
+                      << "Format error for 'z' in data file '"
+                      << filename << "' at line " << count << " !";
+              throw runtime_error (message.str ()); 
+            }
+          iss >> r1;
+          if (! iss)
+            {
+              ostringstream message;
+              message << "polyhedra::initialize: " 
+                      << "Format error for 'r1' in data file '"
+                      << filename << "' at line " << count << " !";
+              throw runtime_error (message.str ()); 
+            }
+          // try to read a third column:
+          string token;
+          iss >> token;
+          if (token.length () == 0)
+            {
+              // two columns format:
+              r2 = r1;
+              datatools::utils::invalidate (r1);
+            }
+          else
+            {
+              if (token[0] == '#')
+                {
+                  // if line ends with a comment: this is two columns format !
+                  r2 = r1;
+                  datatools::utils::invalidate (r1);
+                }
+              else 
+                {
+                  // try three columns format (z, r1, r2):
+                  istringstream iss2 (token);
+                  iss2 >> r2;
+                  if (! iss2)
+                    {
+                      ostringstream message;
+                      message << "polyhedra::initialize: " 
+                              << "Format error for 'r2' in data file '"
+                              << filename << "' at line " << count << " !";
+                      throw runtime_error (message.str ()); 
+                    }       
+                  if (ignore_rmin)
+                    {
+                      datatools::utils::invalidate (r1);
+                    }
+                }
+            }
+          if (datatools::utils::is_valid (r2) && (r2 < 0.0))
+            {
+              ostringstream message;
+              message << "polyhedra::initialize: " 
+                      << "Invalid value '" << r2 << "' for '2' in data file '"
+                      << filename << "' at line " << count << " !";
+              throw runtime_error (message.str ()); 
+            }
+          double tz, tr1, tr2;
+          tz  = z  * z_factor * length_unit;
+          tr1 = r1 * r_factor * length_unit;
+          tr2 = r2 * r_factor * length_unit;
+          if (datatools::utils::is_valid (r1))
+            {
+              this->add (tz, tr1, tr2, false);
+            }
+          else
+            {
+              this->add (tz, tr2, false);
+            }
+        }
       }
-    this->__compute_all ();	    
+    this->_compute_all_ ();         
     return;
   }
 
-  void polyhedra::__compute_all ()
+  void polyhedra::_compute_all_ ()
   {
-    __compute_surfaces ();
-    __compute_volume ();
-    __compute_limits ();
+    _compute_surfaces_ ();
+    _compute_volume_ ();
+    _compute_limits_ ();
     return;
   }
 
@@ -438,15 +438,15 @@ namespace geomtools {
   {
     if (rmax_ < 0.0)
       {
-	throw runtime_error ("polyhedra::add: Invalid negative 'rmax' !");
+        throw runtime_error ("polyhedra::add: Invalid negative 'rmax' !");
       }
     r_min_max RMM;
     RMM.rmin = 0.0;
     RMM.rmax = rmax_;
-    __points[z_] = RMM;
-    if (__points.size () > 1)
+    _points_[z_] = RMM;
+    if (_points_.size () > 1)
       {
-	if (compute_) __compute_all ();
+        if (compute_) _compute_all_ ();
       }
     return;
   }
@@ -455,139 +455,139 @@ namespace geomtools {
   {
     if (rmin_ < 0.0)
       {
-	throw runtime_error ("polyhedra::add: Invalid negative 'rmin' !");
+        throw runtime_error ("polyhedra::add: Invalid negative 'rmin' !");
       }
     if (rmax_ < rmin_)
       {
-	throw runtime_error ("polyhedra::add: Invalid value for 'rmax' !");
+        throw runtime_error ("polyhedra::add: Invalid value for 'rmax' !");
       }
     r_min_max RMM;
-    if (rmin_ > 0.0) __extruded = true;
+    if (rmin_ > 0.0) _extruded_ = true;
     RMM.rmin = rmin_;
     RMM.rmax = rmax_;
-    __points[z_] = RMM;
-    if (__points.size () > 1)
+    _points_[z_] = RMM;
+    if (_points_.size () > 1)
       {
-	if (compute_) __compute_all ();
+        if (compute_) _compute_all_ ();
       }
     return;
   }
 
   bool polyhedra::is_valid () const
   {
-    return (__n_sides >= 3) && (__points.size () > 1);
+    return (_n_sides_ >= 3) && (_points_.size () > 1);
   }
   
   void polyhedra::reset ()
   {
-    __n_sides = 0;
-    __points.clear ();
-    __top_surface = numeric_limits<double>::quiet_NaN();
-    __bottom_surface = numeric_limits<double>::quiet_NaN();
-    __inner_side_surface = numeric_limits<double>::quiet_NaN();
-    __outer_side_surface = numeric_limits<double>::quiet_NaN();
-    __inner_volume = numeric_limits<double>::quiet_NaN();
-    __outer_volume = numeric_limits<double>::quiet_NaN();
-    __volume = numeric_limits<double>::quiet_NaN();
-    __z_min = __z_max = __r_max = __xy_max = numeric_limits<double>::quiet_NaN();
-    __extruded = false;
+    _n_sides_ = 0;
+    _points_.clear ();
+    _top_surface_ = numeric_limits<double>::quiet_NaN();
+    _bottom_surface_ = numeric_limits<double>::quiet_NaN();
+    _inner_side_surface_ = numeric_limits<double>::quiet_NaN();
+    _outer_side_surface_ = numeric_limits<double>::quiet_NaN();
+    _inner_volume_ = numeric_limits<double>::quiet_NaN();
+    _outer_volume_ = numeric_limits<double>::quiet_NaN();
+    _volume_ = numeric_limits<double>::quiet_NaN();
+    _z_min_ = _z_max_ = _r_max_ = _xy_max_ = numeric_limits<double>::quiet_NaN();
+    _extruded_ = false;
     return;
   }
 
-  void polyhedra::__compute_limits ()
+  void polyhedra::_compute_limits_ ()
   {
     if (! is_valid ()) return;
-    __z_min = __z_max = __r_max = __xy_max = numeric_limits<double>::quiet_NaN ();  
+    _z_min_ = _z_max_ = _r_max_ = _xy_max_ = numeric_limits<double>::quiet_NaN ();  
     double max_radius = numeric_limits<double>::quiet_NaN ();
-    for (rz_col_t::const_iterator i = __points.begin ();
-	 i != __points.end ();
-	 i++)
+    for (rz_col_t::const_iterator i = _points_.begin ();
+         i != _points_.end ();
+         i++)
       {
-	double z    = i->first;
-	double rmax = i->second.rmax;
-	if (! datatools::utils::is_valid (__z_min))
-	  {
-	    __z_min = z;
-	  }
-	else if (z < __z_min)
-	  {
-	    __z_min = z;
-	  }
-	if (! datatools::utils::is_valid (__z_max))
-	  {
-	    __z_max = z;
-	  }
-	else if (z > __z_max)
-	  {
-	    __z_max = z;
-	  }
-	if (! datatools::utils::is_valid (max_radius))
-	  {
-	    max_radius = rmax;
-	  }
-	else if (rmax > max_radius)
-	  {
-	    max_radius = rmax;
-	  }
+        double z    = i->first;
+        double rmax = i->second.rmax;
+        if (! datatools::utils::is_valid (_z_min_))
+          {
+            _z_min_ = z;
+          }
+        else if (z < _z_min_)
+          {
+            _z_min_ = z;
+          }
+        if (! datatools::utils::is_valid (_z_max_))
+          {
+            _z_max_ = z;
+          }
+        else if (z > _z_max_)
+          {
+            _z_max_ = z;
+          }
+        if (! datatools::utils::is_valid (max_radius))
+          {
+            max_radius = rmax;
+          }
+        else if (rmax > max_radius)
+          {
+            max_radius = rmax;
+          }
       }
-    __r_max = max_radius;
+    _r_max_ = max_radius;
     // compute the XY-bounding box:
-    double alpha = 2.0 * M_PI / __n_sides;
-    for (int i = 0; i < __n_sides; i++)
+    double alpha = 2.0 * M_PI / _n_sides_;
+    for (int i = 0; i < _n_sides_; i++)
       {
-	double theta = alpha * i;
-	double xs  = __r_max * cos (theta);
-	double ys  = __r_max * sin (theta);
-	double axs = abs (xs);
-	double ays = abs (ys);
-	if (! datatools::utils::is_valid (__xy_max))
-	  {
-	    __xy_max = axs;
-	  }
-	if (axs > __xy_max)
-	  {
-	    __xy_max = axs;
-	  }
-	if (ays > __xy_max)
-	  {
-	    __xy_max = ays;
-	  }	
+        double theta = alpha * i;
+        double xs  = _r_max_ * cos (theta);
+        double ys  = _r_max_ * sin (theta);
+        double axs = abs (xs);
+        double ays = abs (ys);
+        if (! datatools::utils::is_valid (_xy_max_))
+          {
+            _xy_max_ = axs;
+          }
+        if (axs > _xy_max_)
+          {
+            _xy_max_ = axs;
+          }
+        if (ays > _xy_max_)
+          {
+            _xy_max_ = ays;
+          }     
       }
-   return;
+    return;
   }
 
   vector_3d polyhedra::get_corner (int zplane_index_, 
-				   int corner_index_,
-				   bool inner_) const
+                                   int corner_index_,
+                                   bool inner_) const
   {
     vector_3d corner;
     geomtools::invalidate (corner);
-    double delta_phi = 2. * M_PI / __n_sides;
-    if ((zplane_index_ < 0)  || (zplane_index_ > __points.size ()))
+    double delta_phi = 2. * M_PI / _n_sides_;
+    if ((zplane_index_ < 0)  || (zplane_index_ > _points_.size ()))
       {
-	ostringstream message;
-	message << "polyhedra::get_corner: "
-		<< "Invalid Z-plane index (" << zplane_index_ << ") !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "polyhedra::get_corner: "
+                << "Invalid Z-plane index (" << zplane_index_ << ") !";
+        throw runtime_error (message.str ());
       }
-    if ((corner_index_ < 0)  || (corner_index_ > __n_sides))
+    if ((corner_index_ < 0)  || (corner_index_ > _n_sides_))
       {
-	ostringstream message;
-	message << "polyhedra::get_corner: "
-		<< "Invalid corner index (" << corner_index_ << ") !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "polyhedra::get_corner: "
+                << "Invalid corner index (" << corner_index_ << ") !";
+        throw runtime_error (message.str ());
       }
     size_t zcount = 0;
-    rz_col_t::const_iterator i = __points.begin ();
-    for (; i != __points.end (); i++)
+    rz_col_t::const_iterator i = _points_.begin ();
+    for (; i != _points_.end (); i++)
       {
-	if (zcount == zplane_index_) 
-	  {
-	    break;
-	  }
-	zcount++;
+        if (zcount == zplane_index_) 
+          {
+            break;
+          }
+        zcount++;
       }
-    //   if (i != __points.end ())
+    //   if (i != _points_.end ())
     //  {
     double z = i->first;
     double rmin = i->second.rmin;
@@ -602,169 +602,169 @@ namespace geomtools {
     return corner;
   }
 
-  void polyhedra::__compute_surfaces ()
+  void polyhedra::_compute_surfaces_ ()
   {
     if (! is_valid ()) return;
     
     // bottom surface:
     {
-      rz_col_t::const_iterator i = __points.begin ();
+      rz_col_t::const_iterator i = _points_.begin ();
       double z0 = i->first;
       double rmin0 = i->second.rmin;
       double rmax0 = i->second.rmax;
-      regular_polygon bottom_inner_polygon (__n_sides, rmin0);
-      regular_polygon bottom_outer_polygon (__n_sides, rmax0);
-      __bottom_surface = bottom_outer_polygon.get_surface ()
-	- bottom_inner_polygon.get_surface ();
+      regular_polygon bottom_inner_polygon (_n_sides_, rmin0);
+      regular_polygon bottom_outer_polygon (_n_sides_, rmax0);
+      _bottom_surface_ = bottom_outer_polygon.get_surface ()
+        - bottom_inner_polygon.get_surface ();
     }
 
     // outer side surface:
     {
-      rz_col_t::const_iterator i = __points.begin ();
+      rz_col_t::const_iterator i = _points_.begin ();
       double z0 = i->first;
       double rmin0 = i->second.rmin;
       double rmax0 = i->second.rmax;
       double s = 0.0;
-      rz_col_t::const_iterator j = __points.begin ();
+      rz_col_t::const_iterator j = _points_.begin ();
       j++;
-      while (j != __points.end ())
-	{
-	  double z1 = j->first;
-	  double rmin1 = j->second.rmin;
-	  double rmax1 = j->second.rmax;
-	  // See: http://en.wikipedia.org/wiki/Frustum#Surface_Area
-	  size_t n = __n_sides;
-	  double angle = M_PI / n;
-	  double a1 = 2 * rmax0 * sin (angle); 
-	  double a2 = 2 * rmax1 * sin (angle); 
-	  double a1_2 = a1 * a1;
-	  double a2_2 = a2 * a2;
-	  double h = abs (z1 - z0);
-	  double A = 0.25 
-	    * M_PI 
-	    * (
-	       (a1_2 + a2_2) / tan (angle) 
-	       + 
-	       sqrt ((a1_2 - a2_2) * (a1_2 - a2_2) / (cos (angle) * cos (angle))
-		     + 4 * h * h * (a1_2 + a2_2) * (a1_2 + a2_2)));
-	  s += A;
-	  // increment:
-	  j++;
-	  z0 = z1;
-	  rmin0 = rmin1;
-	  rmax0 = rmax1;
-	}
-      __outer_side_surface = s;
+      while (j != _points_.end ())
+        {
+          double z1 = j->first;
+          double rmin1 = j->second.rmin;
+          double rmax1 = j->second.rmax;
+          // See: http://en.wikipedia.org/wiki/Frustum#Surface_Area
+          size_t n = _n_sides_;
+          double angle = M_PI / n;
+          double a1 = 2 * rmax0 * sin (angle); 
+          double a2 = 2 * rmax1 * sin (angle); 
+          double a1_2 = a1 * a1;
+          double a2_2 = a2 * a2;
+          double h = abs (z1 - z0);
+          double A = 0.25 
+            * M_PI 
+            * (
+               (a1_2 + a2_2) / tan (angle) 
+               + 
+               sqrt ((a1_2 - a2_2) * (a1_2 - a2_2) / (cos (angle) * cos (angle))
+                     + 4 * h * h * (a1_2 + a2_2) * (a1_2 + a2_2)));
+          s += A;
+          // increment:
+          j++;
+          z0 = z1;
+          rmin0 = rmin1;
+          rmax0 = rmax1;
+        }
+      _outer_side_surface_ = s;
     
       // top surface:
-      regular_polygon top_inner_polygon (__n_sides, rmin0);
-      regular_polygon top_outer_polygon (__n_sides, rmax0);
-      __top_surface = top_outer_polygon.get_surface ()
-	- top_inner_polygon.get_surface ();
+      regular_polygon top_inner_polygon (_n_sides_, rmin0);
+      regular_polygon top_outer_polygon (_n_sides_, rmax0);
+      _top_surface_ = top_outer_polygon.get_surface ()
+        - top_inner_polygon.get_surface ();
     }
  
     {
       // inner side surface:
-      rz_col_t::const_iterator i = __points.begin ();
+      rz_col_t::const_iterator i = _points_.begin ();
       double z0 = i->first;
       double rmin0 = i->second.rmin;
       double rmax0 = i->second.rmax;
       double s = 0.0;
       rz_col_t::const_iterator j = i;
       j++;
-      while (j != __points.end ())
-	{
-	  double z1 = j->first;
-	  double rmin1 = j->second.rmin;
-	  double rmax1 = j->second.rmax;
-	  // See: http://en.wikipedia.org/wiki/Frustum#Surface_Area
-	  size_t n = __n_sides;
-	  double angle = M_PI / n;
-	  double a1 = 2 * rmin0 * sin (angle); 
-	  double a2 = 2 * rmin1 * sin (angle); 
-	  double a1_2 = a1 * a1;
-	  double a2_2 = a2 * a2;
-	  double h = abs (z1 - z0);
-	  double A = 0.25 
-	    * M_PI 
-	    * (
-	       (a1_2 + a2_2) / tan (angle) 
-	       + 
-	       sqrt ((a1_2 - a2_2) * (a1_2 - a2_2) / (cos (angle) * cos (angle))
-		     + 4 * h * h * (a1_2 + a2_2) * (a1_2 + a2_2)));
-	  s += A;
-	  // increment:
-	  j++;
-	  z0 = z1;
-	  rmin0 = rmin1;
-	  rmax0 = rmax1;
-	}
-      __inner_side_surface = s;
+      while (j != _points_.end ())
+        {
+          double z1 = j->first;
+          double rmin1 = j->second.rmin;
+          double rmax1 = j->second.rmax;
+          // See: http://en.wikipedia.org/wiki/Frustum#Surface_Area
+          size_t n = _n_sides_;
+          double angle = M_PI / n;
+          double a1 = 2 * rmin0 * sin (angle); 
+          double a2 = 2 * rmin1 * sin (angle); 
+          double a1_2 = a1 * a1;
+          double a2_2 = a2 * a2;
+          double h = abs (z1 - z0);
+          double A = 0.25 
+            * M_PI 
+            * (
+               (a1_2 + a2_2) / tan (angle) 
+               + 
+               sqrt ((a1_2 - a2_2) * (a1_2 - a2_2) / (cos (angle) * cos (angle))
+                     + 4 * h * h * (a1_2 + a2_2) * (a1_2 + a2_2)));
+          s += A;
+          // increment:
+          j++;
+          z0 = z1;
+          rmin0 = rmin1;
+          rmax0 = rmax1;
+        }
+      _inner_side_surface_ = s;
     }
      
     return;
   }
   
-  void polyhedra::__compute_volume ()
+  void polyhedra::_compute_volume_ ()
   {
     if (! is_valid ()) return;
     double vext = 0.0;
     double vint = 0.0;
     // Outer envelope:
     {
-      rz_col_t::const_iterator i = __points.begin ();
+      rz_col_t::const_iterator i = _points_.begin ();
       double z0 = i->first;
       double rmax0 = i->second.rmax;
       rz_col_t::const_iterator j = i;
       j++;
-      while (j != __points.end ())
-	{
-	  double z1 = j->first;
-	  double rmax1 = j->second.rmax;
-	  // See: http://en.wikipedia.org/wiki/Frustum# Volume
-	  size_t n = __n_sides;
-	  double angle = M_PI / n;
-	  double a1 = 2 * rmax0 * sin (angle); 
-	  double a2 = 2 * rmax1 * sin (angle); 
-	  double h = abs (z1 - z0);
-	  double V = n * h * (a1 * a1 + a2 * a2 + a1 * a2) / tan (angle) / 12;
-	  vext += V;
-	  // increment:
-	  j++;
-	  z0 = z1;
-	  rmax0 = rmax1;
-	}
+      while (j != _points_.end ())
+        {
+          double z1 = j->first;
+          double rmax1 = j->second.rmax;
+          // See: http://en.wikipedia.org/wiki/Frustum# Volume
+          size_t n = _n_sides_;
+          double angle = M_PI / n;
+          double a1 = 2 * rmax0 * sin (angle); 
+          double a2 = 2 * rmax1 * sin (angle); 
+          double h = abs (z1 - z0);
+          double V = n * h * (a1 * a1 + a2 * a2 + a1 * a2) / tan (angle) / 12;
+          vext += V;
+          // increment:
+          j++;
+          z0 = z1;
+          rmax0 = rmax1;
+        }
     }
 
     // Inner envelope:
     {
-      rz_col_t::const_iterator i = __points.begin ();
+      rz_col_t::const_iterator i = _points_.begin ();
       double z0 = i->first;
       double rmin0 = i->second.rmin;
       rz_col_t::const_iterator j = i;
       j++;
-      while (j != __points.end ())
-	{
-	  double z1 = j->first;
-	  double rmin1 = j->second.rmin;
-	  // See: http://en.wikipedia.org/wiki/Frustum# Volume
-	  size_t n = __n_sides;
-	  double angle = M_PI / n;
-	  double a1 = 2 * rmin0 * sin (angle); 
-	  double a2 = 2 * rmin1 * sin (angle); 
-	  double h = abs (z1 - z0);
-	  double V = n * h * (a1 * a1 + a2 * a2 + a1 * a2) / tan (angle) / 12;
-	  vint += V;
-	  // increment:
-	  j++;
-	  z0 = z1;
-	  rmin0 = rmin1;
-	}
+      while (j != _points_.end ())
+        {
+          double z1 = j->first;
+          double rmin1 = j->second.rmin;
+          // See: http://en.wikipedia.org/wiki/Frustum# Volume
+          size_t n = _n_sides_;
+          double angle = M_PI / n;
+          double a1 = 2 * rmin0 * sin (angle); 
+          double a2 = 2 * rmin1 * sin (angle); 
+          double h = abs (z1 - z0);
+          double V = n * h * (a1 * a1 + a2 * a2 + a1 * a2) / tan (angle) / 12;
+          vint += V;
+          // increment:
+          j++;
+          z0 = z1;
+          rmin0 = rmin1;
+        }
     }
 
-    __outer_volume = vext;
-    __inner_volume = vint;
-    __volume = __outer_volume - __inner_volume;
+    _outer_volume_ = vext;
+    _inner_volume_ = vint;
+    _volume_ = _outer_volume_ - _inner_volume_;
     return;
   }
 
@@ -772,19 +772,19 @@ namespace geomtools {
   {
     ip_.reset ();
     ip_.set_n_sides (this->get_n_sides ());
-    for (polyhedra::rz_col_t::const_iterator i = __points.begin ();
-	 i != __points.end ();
-	 i++)
+    for (polyhedra::rz_col_t::const_iterator i = _points_.begin ();
+         i != _points_.end ();
+         i++)
       {
-	double z = i->first;
-	double rmax = i->second.rmin;
-	bool add_it = true;
-	if (add_it)
-	  {
-	    ip_.add (z, rmax, false);
-	  }
+        double z = i->first;
+        double rmax = i->second.rmin;
+        bool add_it = true;
+        if (add_it)
+          {
+            ip_.add (z, rmax, false);
+          }
       }
-    ip_.__compute_all ();
+    ip_._compute_all_ ();
     return;
   }
 
@@ -792,15 +792,15 @@ namespace geomtools {
   {
     op_.reset ();
     op_.set_n_sides (this->get_n_sides ());
-    for (polyhedra::rz_col_t::const_iterator i = __points.begin ();
-	 i != __points.end ();
-	 i++)
+    for (polyhedra::rz_col_t::const_iterator i = _points_.begin ();
+         i != _points_.end ();
+         i++)
       {
-	double z = i->first;
-	double rmax = i->second.rmax;
-	op_.add (z, 0.0, rmax, false);
+        double z = i->first;
+        double rmax = i->second.rmax;
+        op_.add (z, 0.0, rmax, false);
       }
-    op_.__compute_all ();
+    op_._compute_all_ ();
     return;
   }
 
@@ -812,26 +812,26 @@ namespace geomtools {
     if (mask_ == (int) ALL_SURFACES) mask = FACE_ALL;
     if (mask & FACE_INNER_SIDE) 
       {
-	s += __inner_side_surface;
+        s += _inner_side_surface_;
       }
     if (mask & FACE_OUTER_SIDE) 
       {
-	s += __outer_side_surface;
+        s += _outer_side_surface_;
       }
     if (mask & FACE_BOTTOM) 
       {
-	s += __bottom_surface;
+        s += _bottom_surface_;
       }
     if (mask & FACE_TOP) 
       {
-	s += __top_surface;
+        s += _top_surface_;
       }
     return s;
   }
 
   double polyhedra::get_volume () const
   {
-    return __volume;
+    return _volume_;
   }
 
   double polyhedra::get_parameter ( const string & flag_ ) const
@@ -851,7 +851,7 @@ namespace geomtools {
   }
 
   bool polyhedra::is_inside (const vector_3d & point_, 
-			     double skin_) const
+                             double skin_) const
   {
     throw runtime_error ("polyhedra::is_inside: Not implemented yet !");
     double skin = get_skin ();
@@ -863,14 +863,14 @@ namespace geomtools {
     double r = hypot (point_.x (), point_.y ());
     if (r > get_r_max () + 0.5 * skin) return false;
     /*
-      for (rz_col_t::const_iterator i = __points.begin ();
-      i != __points.end ();
+      for (rz_col_t::const_iterator i = _points_.begin ();
+      i != _points_.end ();
       i++)
       {
       double z1 = i->first;
       rz_col_t::const_iterator j = i;
       j++;
-      if (j == __points.end ())
+      if (j == _points_.end ())
       {
       break;
       }
@@ -906,14 +906,14 @@ namespace geomtools {
       else if (is_on_surface (position_, FACE_TOP)) normal.set (0.0, 0.0, +1.0); 
       else if (is_on_surface (position_, FACE_SIDE)) 
       {
-      for (rz_col_t::const_iterator i = __points.begin ();
-      i != __points.end ();
+      for (rz_col_t::const_iterator i = _points_.begin ();
+      i != _points_.end ();
       i++)
       {
       double z1 = i->first;
       rz_col_t::const_iterator j = i;
       j++;
-      if (j == __points.end ())
+      if (j == _points_.end ())
       {
       break;
       }
@@ -935,8 +935,8 @@ namespace geomtools {
   }
 
   bool polyhedra::is_on_surface (const vector_3d & point_ , 
-				 int    mask_ ,
-				 double skin_) const
+                                 int    mask_ ,
+                                 double skin_) const
   {
     throw runtime_error ("polyhedra::is_on_surface: Not implemented yet !");
     double skin = get_skin ();
@@ -952,30 +952,30 @@ namespace geomtools {
 
       if (mask & FACE_BOTTOM) 
       {
-      double zbottom = __points.begin ()->first;
-      double rbottom = __points.begin ()->second;
+      double zbottom = _points_.begin ()->first;
+      double rbottom = _points_.begin ()->second;
       if ((abs(z - zbottom) < hskin) 
       && (r < (rbottom + hskin))) return true;
       } 
 
       if (mask & FACE_TOP) 
       {
-      double ztop = __points.rbegin ()->first;
-      double rtop = __points.rbegin ()->second;
+      double ztop = _points_.rbegin ()->first;
+      double rtop = _points_.rbegin ()->second;
       if ((abs(z - ztop) < hskin) 
       && (r < (rtop + hskin))) return true;
       } 
     
       if (mask & FACE_SIDE) 
       {
-      for (rz_col_t::const_iterator i = __points.begin ();
-      i != __points.end ();
+      for (rz_col_t::const_iterator i = _points_.begin ();
+      i != _points_.end ();
       i++)
       {
       double z1 = i->first;
       rz_col_t::const_iterator j = i;
       j++;
-      if (j == __points.end ())
+      if (j == _points_.end ())
       {
       break;
       }
@@ -1001,9 +1001,9 @@ namespace geomtools {
   }
       
   bool polyhedra::find_intercept (const vector_3d & from_, 
-				  const vector_3d & direction_,
-				  intercept_t & intercept_,
-				  double skin_) const
+                                  const vector_3d & direction_,
+                                  intercept_t & intercept_,
+                                  double skin_) const
   {
     throw runtime_error ("polyhedra::find_intercept: Not implemented yet !");
     return false;
@@ -1012,16 +1012,16 @@ namespace geomtools {
   ostream & operator<< (ostream & out_, const polyhedra & p_)
   {
     out_ << '{' << polyhedra::POLYHEDRA_LABEL;
-    out_ << ' ' << p_.__n_sides;
-    out_ << ' ' << p_.__points.size ();
-    for (polyhedra::rz_col_t::const_iterator i = p_.__points.begin ();
-	 i != p_.__points.end ();
-	 i++)
+    out_ << ' ' << p_._n_sides_;
+    out_ << ' ' << p_._points_.size ();
+    for (polyhedra::rz_col_t::const_iterator i = p_._points_.begin ();
+         i != p_._points_.end ();
+         i++)
       {
-	double z = i->first;
-	double rmin = i->second.rmin;
-	double rmax = i->second.rmax;
-	out_ << ' ' << z << ' ' << rmin << ' ' << rmax;
+        double z = i->first;
+        double rmin = i->second.rmin;
+        double rmax = i->second.rmax;
+        out_ << ' ' << z << ' ' << rmin << ' ' << rmax;
       }
     out_ << '}';
     return out_;
@@ -1034,15 +1034,15 @@ namespace geomtools {
     in_.get (c);
     if (c != '{') 
       {
-	in_.clear (ios_base::failbit);
-	return in_;
+        in_.clear (ios_base::failbit);
+        return in_;
       } 
     string name;
     in_ >> name;
     if (name != polyhedra::POLYHEDRA_LABEL) 
       {
-	in_.clear (ios_base::failbit);
-	return in_;
+        in_.clear (ios_base::failbit);
+        return in_;
       } 
     size_t n_sides;
     in_ >> n_sides;
@@ -1051,37 +1051,37 @@ namespace geomtools {
     in_ >> n;
     for (int i = 0; i < n; i++)
       {
-	double rmin, rmax, z;
-	in_ >> z >> rmin >> rmax;
-	if (! in_) 
-	  {
-	    in_.clear (ios_base::failbit);
-	    return in_;
-	  } 
-	try 
-	  {
-	    p_.add (z, rmin, rmax);
-	  }
-	catch (...)
-	  {
-	    p_.reset ();
-	    in_.clear (ios_base::failbit);
-	  }	
+        double rmin, rmax, z;
+        in_ >> z >> rmin >> rmax;
+        if (! in_) 
+          {
+            in_.clear (ios_base::failbit);
+            return in_;
+          } 
+        try 
+          {
+            p_.add (z, rmin, rmax);
+          }
+        catch (...)
+          {
+            p_.reset ();
+            in_.clear (ios_base::failbit);
+          }     
       }
     c = 0;
     in_.get (c);
     if (c != '}') 
       {
-	in_.clear (ios_base::failbit);
-	return in_;
+        in_.clear (ios_base::failbit);
+        return in_;
       } 
     return in_;
   }
 
   void polyhedra::tree_dump (ostream & out_, 
-			     const string & title_, 
-			     const string & indent_, 
-			     bool inherit_) const
+                             const string & title_, 
+                             const string & indent_, 
+                             bool inherit_) const
   {
     namespace du = datatools::utils;
     string indent;
@@ -1089,29 +1089,29 @@ namespace geomtools {
     i_shape_3d::tree_dump (out_, title_, indent_, true);
 
     out_ << indent << du::i_tree_dumpable::tag 
-	 << "N(sides) : " << get_n_sides () << endl;
+         << "N(sides) : " << get_n_sides () << endl;
     out_ << indent << du::i_tree_dumpable::tag 
-	 << "Z(min) : " << get_z_min () / CLHEP::mm << " mm" << endl;
+         << "Z(min) : " << get_z_min () / CLHEP::mm << " mm" << endl;
     out_ << indent << du::i_tree_dumpable::tag 
-	 << "Z(max) : " << get_z_max () / CLHEP::mm << " mm" << endl;
+         << "Z(max) : " << get_z_max () / CLHEP::mm << " mm" << endl;
     out_ << indent << du::i_tree_dumpable::tag 
-	 << "R(max) : " << get_r_max () / CLHEP::mm << " mm" << endl;
+         << "R(max) : " << get_r_max () / CLHEP::mm << " mm" << endl;
     out_ << indent << du::i_tree_dumpable::tag 
-	 << "Extruded : " << is_extruded () << endl;
+         << "Extruded : " << is_extruded () << endl;
     out_ << indent << du::i_tree_dumpable::tag 
-	 << "Number of points : " << __points.size () << endl;
+         << "Number of points : " << _points_.size () << endl;
     out_ << indent << du::i_tree_dumpable::tag 
-	 << "Volume : " << get_volume () / CLHEP::cm3 << " cm3" << endl;
+         << "Volume : " << get_volume () / CLHEP::cm3 << " cm3" << endl;
     out_ << indent << du::i_tree_dumpable::tag 
-	 << "Bottom surface : " << get_surface (FACE_BOTTOM) / CLHEP::cm2 << " cm2" << endl;
+         << "Bottom surface : " << get_surface (FACE_BOTTOM) / CLHEP::cm2 << " cm2" << endl;
     out_ << indent << du::i_tree_dumpable::tag 
-	 << "Top surface : " << get_surface (FACE_TOP) / CLHEP::cm2 << " cm2" << endl;
+         << "Top surface : " << get_surface (FACE_TOP) / CLHEP::cm2 << " cm2" << endl;
     out_ << indent << du::i_tree_dumpable::tag 
-	 << "Outer side surface : " << get_surface (FACE_OUTER_SIDE) / CLHEP::cm2 << " cm2" << endl;
+         << "Outer side surface : " << get_surface (FACE_OUTER_SIDE) / CLHEP::cm2 << " cm2" << endl;
     out_ << indent << du::i_tree_dumpable::tag 
-	 << "Inner side surface : " << get_surface (FACE_INNER_SIDE) / CLHEP::cm2 << " cm2" << endl;
+         << "Inner side surface : " << get_surface (FACE_INNER_SIDE) / CLHEP::cm2 << " cm2" << endl;
     out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
-	 << "Total surface : " << get_surface (FACE_ALL) / CLHEP::cm2 << " cm2" << endl;
+         << "Total surface : " << get_surface (FACE_ALL) / CLHEP::cm2 << " cm2" << endl;
     return;
   }
   

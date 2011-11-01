@@ -14,64 +14,64 @@ namespace geomtools {
   //const std::string geom_id::SERIAL_TAG = "__GEOM_ID__";
 
   /*
-  const string geom_id::GEOM_ID_PREFIX            = "geom_id.";
-  const string geom_id::GEOM_ID_CATEGORY_PROPERTY = "category";
-  const int    geom_id::GEOM_ID_WORLD_TYPE        = 0;
-  const string geom_id::GEOM_ID_WORLD_CATEGORY    = "world";
+    const string geom_id::GEOM_ID_PREFIX            = "geom_id.";
+    const string geom_id::GEOM_ID_CATEGORY_PROPERTY = "category";
+    const int    geom_id::GEOM_ID_WORLD_TYPE        = 0;
+    const string geom_id::GEOM_ID_WORLD_CATEGORY    = "world";
   */
 
-   const uint32_t geom_id::INVALID_TYPE          = 0xFFFFFFFF;
-   const uint32_t geom_id::INVALID_ADDRESS       = 0xFFFFFFFF;
-   const size_t   geom_id::DEFAULT_ADDRESS_DEPTH = 10;
+  const uint32_t geom_id::INVALID_TYPE          = 0xFFFFFFFF;
+  const uint32_t geom_id::INVALID_ADDRESS       = 0xFFFFFFFF;
+  const size_t   geom_id::DEFAULT_ADDRESS_DEPTH = 10;
   
-   const char geom_id::IO_ID_OPEN           = '[';
-   const char geom_id::IO_ID_SEPARATOR      = ':';
-   const char geom_id::IO_ADDRESS_SEPARATOR = '.';
-   const char geom_id::IO_TYPE_INVALID      = '?';
-   const char geom_id::IO_ADDRESS_INVALID   = '?';
-   const char geom_id::IO_ID_CLOSE          = ']';
+  const char geom_id::IO_ID_OPEN           = '[';
+  const char geom_id::IO_ID_SEPARATOR      = ':';
+  const char geom_id::IO_ADDRESS_SEPARATOR = '.';
+  const char geom_id::IO_TYPE_INVALID      = '?';
+  const char geom_id::IO_ADDRESS_INVALID   = '?';
+  const char geom_id::IO_ID_CLOSE          = ']';
 
   bool geom_id::is_type (uint32_t type_) const
   {
-    return __type == type_;
+    return _type_ == type_;
   }
 
   void geom_id::set_depth (size_t depth_)
   {
-    size_t sz = __address.size ();
+    size_t sz = _addresses_.size ();
     if (depth_ > sz)
       {
-	for (int i = sz; i < depth_; i++)
-	  {
-	    __address.push_back (INVALID_ADDRESS);
-	  }
+        for (int i = sz; i < depth_; i++)
+          {
+            _addresses_.push_back (INVALID_ADDRESS);
+          }
       }
     else 
       {
-	__address.resize (depth_);
-	for (int i = sz; i < depth_; i++)
-	  {
-	    __address.push_back (INVALID_ADDRESS);
-	  }
+        _addresses_.resize (depth_);
+        for (int i = sz; i < depth_; i++)
+          {
+            _addresses_.push_back (INVALID_ADDRESS);
+          }
       }
     return;
   }
 
   size_t geom_id::get_depth () const
   {
-    return __address.size ();
+    return _addresses_.size ();
   }
 
   uint32_t geom_id::get (int i_) const
   {
-    return __address.at (i_);
+    return _addresses_.at (i_);
   }
 
   void geom_id::reset_address ()
   {
-    for (int i = 0; i < __address.size (); i++)
+    for (int i = 0; i < _addresses_.size (); i++)
       {  
-	__address.at (i) = geom_id::INVALID_ADDRESS;
+        _addresses_.at (i) = geom_id::INVALID_ADDRESS;
       }
     return;
   }
@@ -80,46 +80,48 @@ namespace geomtools {
   {
     if (i_ < 0) 
       {
-	throw runtime_error ("geom_id::set: Invalid sub-address index !");
+        throw runtime_error ("geom_id::set: Invalid sub-address index !");
       }
     else 
       {
-	if (i_ < __address.size ()) 
-	  {
-	    __address[i_] = val_;
-	  }
-	else
-	  {
-	    for (int j = __address.size (); j <= i_; j++)
-	      {  
-		uint32_t v = geom_id::INVALID_ADDRESS;
-		__address.push_back (v);
-	      }
-	    __address[i_] = val_;
-	  }
+        if (i_ < _addresses_.size ()) 
+          {
+            _addresses_[i_] = val_;
+          }
+        else
+          {
+            for (int j = _addresses_.size (); j <= i_; j++)
+              {  
+                uint32_t v = geom_id::INVALID_ADDRESS;
+                _addresses_.push_back (v);
+              }
+            _addresses_[i_] = val_;
+          }
       }
+    return;
   }
   
   uint32_t geom_id::get_type () const
   {
-    return __type;
+    return _type_;
   }
   
   void geom_id::set_type (uint32_t new_value_)
   {
-    __type = new_value_;
+    _type_ = new_value_;
+    return;
   }
 
   void geom_id::set_address (uint32_t si0_, 
-			     uint32_t si1_, 
-			     uint32_t si2_, 
-			     uint32_t si3_, 
-			     uint32_t si4_, 
-			     uint32_t si5_, 
-			     uint32_t si6_, 
-			     uint32_t si7_, 
-			     uint32_t si8_, 
-			     uint32_t si9_)
+                             uint32_t si1_, 
+                             uint32_t si2_, 
+                             uint32_t si3_, 
+                             uint32_t si4_, 
+                             uint32_t si5_, 
+                             uint32_t si6_, 
+                             uint32_t si7_, 
+                             uint32_t si8_, 
+                             uint32_t si9_)
   {
     //if (si0_ == INVALID_ADDRESS) return;
     set (0, si0_);
@@ -141,166 +143,174 @@ namespace geomtools {
     set (8, si8_);
     if (si9_ == INVALID_ADDRESS) return;
     set (9, si9_);
+    return;
   }
   
   // ctor:
   geom_id::geom_id ()
   {
-    __type = geom_id::INVALID_TYPE;
-    __address.reserve (geom_id::DEFAULT_ADDRESS_DEPTH);
+    _type_ = geom_id::INVALID_TYPE;
+    _addresses_.reserve (geom_id::DEFAULT_ADDRESS_DEPTH);
+    return;
   }
 
   geom_id::geom_id (uint32_t type_, 
-		    uint32_t si0_, 
-		    uint32_t si1_, 
-		    uint32_t si2_, 
-		    uint32_t si3_, 
-		    uint32_t si4_, 
-		    uint32_t si5_, 
-		    uint32_t si6_, 
-		    uint32_t si7_, 
-		    uint32_t si8_, 
-		    uint32_t si9_)
+                    uint32_t si0_, 
+                    uint32_t si1_, 
+                    uint32_t si2_, 
+                    uint32_t si3_, 
+                    uint32_t si4_, 
+                    uint32_t si5_, 
+                    uint32_t si6_, 
+                    uint32_t si7_, 
+                    uint32_t si8_, 
+                    uint32_t si9_)
   {  
-    __type = geom_id::INVALID_TYPE;
+    _type_ = geom_id::INVALID_TYPE;
     set_type (type_);
-    __address.reserve (geom_id::DEFAULT_ADDRESS_DEPTH);
+    _addresses_.reserve (geom_id::DEFAULT_ADDRESS_DEPTH);
     set_address (si0_, 
-		 si1_, 
-		 si2_, 
-		 si3_, 
-		 si4_, 
-		 si5_, 
-		 si6_, 
-		 si7_, 
-		 si8_, 
-		 si9_);
+                 si1_, 
+                 si2_, 
+                 si3_, 
+                 si4_, 
+                 si5_, 
+                 si6_, 
+                 si7_, 
+                 si8_, 
+                 si9_);
     /* 
-    if (type_ == INVALID_TYPE) return;
-    __type = type_;
-    if (si0_ == INVALID_ADDRESS) return;
-    __address.push_back (si0_);
-    if (si1_ == INVALID_ADDRESS) return;
-    __address.push_back (si1_);
-    if (si2_ == INVALID_ADDRESS) return;
-    __address.push_back (si2_);
-    if (si3_ == INVALID_ADDRESS) return;
-    __address.push_back (si3_);
-    if (si4_ == INVALID_ADDRESS) return;
-    __address.push_back (si4_);
-    if (si5_ == INVALID_ADDRESS) return;
-    __address.push_back (si5_);
-    if (si6_ == INVALID_ADDRESS) return;
-    __address.push_back (si6_);
-    if (si7_ == INVALID_ADDRESS) return;
-    __address.push_back (si7_);
-    if (si8_ == INVALID_ADDRESS) return;
-    __address.push_back (si8_);
-    if (si9_ == INVALID_ADDRESS) return;
-    __address.push_back (si9_);
+       if (type_ == INVALID_TYPE) return;
+       _type_ = type_;
+       if (si0_ == INVALID_ADDRESS) return;
+       _addresses_.push_back (si0_);
+       if (si1_ == INVALID_ADDRESS) return;
+       _addresses_.push_back (si1_);
+       if (si2_ == INVALID_ADDRESS) return;
+       _addresses_.push_back (si2_);
+       if (si3_ == INVALID_ADDRESS) return;
+       _addresses_.push_back (si3_);
+       if (si4_ == INVALID_ADDRESS) return;
+       _addresses_.push_back (si4_);
+       if (si5_ == INVALID_ADDRESS) return;
+       _addresses_.push_back (si5_);
+       if (si6_ == INVALID_ADDRESS) return;
+       _addresses_.push_back (si6_);
+       if (si7_ == INVALID_ADDRESS) return;
+       _addresses_.push_back (si7_);
+       if (si8_ == INVALID_ADDRESS) return;
+       _addresses_.push_back (si8_);
+       if (si9_ == INVALID_ADDRESS) return;
+       _addresses_.push_back (si9_);
     */
+    return;
   }
   
   // dtor:
   geom_id::~geom_id ()
   {
-    __address.clear ();
+    _addresses_.clear ();
+    return;
   }
   
   void geom_id::reset ()
   {
-    __type = INVALID_TYPE;
-    __address.clear ();
-    __address.reserve (DEFAULT_ADDRESS_DEPTH);   
+    _type_ = INVALID_TYPE;
+    _addresses_.clear ();
+    _addresses_.reserve (DEFAULT_ADDRESS_DEPTH);   
+    return;
   }
 
   void geom_id::invalidate ()
   {
-    __type = INVALID_TYPE;
-    for (int i = 0; i < __address.size(); i++)
+    _type_ = INVALID_TYPE;
+    for (int i = 0; i < _addresses_.size(); i++)
       {
-	__address[i] = INVALID_ADDRESS;
+        _addresses_[i] = INVALID_ADDRESS;
       }
+    return;
   }
     
   bool geom_id::is_valid () const
   {
-    if (__type == INVALID_TYPE)
+    if (_type_ == INVALID_TYPE)
       {
-	return false;
+        return false;
       }
-    if (__address.size () == 0)
+    if (_addresses_.size () == 0)
       {
-	return false;
+        return false;
       }
-    for (int i = 0; i < __address.size (); i++)
+    for (int i = 0; i < _addresses_.size (); i++)
       {
-	if (__address[i] == INVALID_ADDRESS)
-	  {
-	    return false;
-	  }
+        if (_addresses_[i] == INVALID_ADDRESS)
+          {
+            return false;
+          }
       }
     return true;
   }
 
   void geom_id::inherits_from (const geom_id & source_)
   {
-    if (this->__address.size () < source_.__address.size ())
+    if (this->_addresses_.size () < source_._addresses_.size ())
       {
-	throw runtime_error ("geom_id::inherits_from: Incompatible address depth !");
+        throw runtime_error ("geom_id::inherits_from: Incompatible address depth !");
       }
-    for (int i = 0; i < source_.__address.size (); i++) 
+    for (int i = 0; i < source_._addresses_.size (); i++) 
       {
-	set (i, source_.__address[i]);
+        set (i, source_._addresses_[i]);
       }
     return;
   }
 
   void geom_id::extract_to (geom_id & target_) const
   {
-    if (this->__address.size () < target_.__address.size ())
+    if (this->_addresses_.size () < target_._addresses_.size ())
       {
-	throw runtime_error ("geom_id::extract: Incompatible address depth !");
+        throw runtime_error ("geom_id::extract: Incompatible address depth !");
       }
-    for (int i = 0; i < target_.__address.size (); i++) 
+    for (int i = 0; i < target_._addresses_.size (); i++) 
       {
-	target_.set (i, this->__address[i]);
+        target_.set (i, this->_addresses_[i]);
       }
+    return;
   }
 
   void geom_id::extract_from (const geom_id & source_)
   {
     source_.extract_to (*this);
+    return;
   }
 
   ostream & operator<< (ostream & out_, const geom_id & id_)
   {
     out_ << geom_id::IO_ID_OPEN;
 
-    if (id_.__type != geom_id::INVALID_TYPE) 
+    if (id_._type_ != geom_id::INVALID_TYPE) 
       {
-	out_ << id_.__type;
+        out_ << id_._type_;
       }
     else 
       {
-	out_ << geom_id::IO_TYPE_INVALID;
+        out_ << geom_id::IO_TYPE_INVALID;
       }
 
     out_ << geom_id::IO_ID_SEPARATOR;
-    for (int i = 0; i < id_.__address.size (); i++) 
+    for (int i = 0; i < id_._addresses_.size (); i++) 
       {
-	if (id_.__address[i] != geom_id::INVALID_ADDRESS) 
-	  {
-	    out_ << id_.__address[i];
-	  }
-	else 
-	  {
-	    out_ << geom_id::IO_ADDRESS_INVALID;
-	  }
-	if (i < id_.__address.size () - 1)
-	  {
-	    out_ << geom_id::IO_ADDRESS_SEPARATOR;
-	  }
+        if (id_._addresses_[i] != geom_id::INVALID_ADDRESS) 
+          {
+            out_ << id_._addresses_[i];
+          }
+        else 
+          {
+            out_ << geom_id::IO_ADDRESS_INVALID;
+          }
+        if (i < id_._addresses_.size () - 1)
+          {
+            out_ << geom_id::IO_ADDRESS_SEPARATOR;
+          }
       }
     out_ << geom_id::IO_ID_CLOSE;
     return out_;
@@ -311,105 +321,105 @@ namespace geomtools {
     char open = in_.peek ();
     if (in_.eof ())
       {
-	return in_;
+        return in_;
       }
     if (open != geom_id::IO_ID_OPEN)
       {
-	in_.setstate (ios::failbit);
-	return in_;
+        in_.setstate (ios::failbit);
+        return in_;
       }
     else
       {
-	in_.get ();
+        in_.get ();
       }
 
     char check = in_.peek ();
     if (in_.eof ())
       {
-	in_.setstate (ios::failbit);
-	return in_;
+        in_.setstate (ios::failbit);
+        return in_;
       } 
     if (check != geom_id::IO_TYPE_INVALID)
       {
-	in_ >> id_.__type;
-	if (! in_)
-	  {
-	    return in_;
-	  }
+        in_ >> id_._type_;
+        if (! in_)
+          {
+            return in_;
+          }
       }
     else
       {
-	id_.__type = geom_id::INVALID_TYPE;
-	in_.get ();
+        id_._type_ = geom_id::INVALID_TYPE;
+        in_.get ();
       }
 
     char separator = in_.peek ();
     if (in_.eof ())
       {
-	in_.setstate (ios::failbit);
-	return in_;
+        in_.setstate (ios::failbit);
+        return in_;
       }
     if (separator != geom_id::IO_ID_SEPARATOR)
       {
-	in_.setstate (ios::failbit);
-	return in_;
+        in_.setstate (ios::failbit);
+        return in_;
       }
     else
       {
-	in_.get ();
+        in_.get ();
       }
     int count = 0;
-    id_.__address.clear ();
-    id_.__address.reserve (geom_id::DEFAULT_ADDRESS_DEPTH);
+    id_._addresses_.clear ();
+    id_._addresses_.reserve (geom_id::DEFAULT_ADDRESS_DEPTH);
     while (true)
       {
-	char check = in_.peek ();
-	if (in_.eof ())
-	  {
-	    return in_;
-	  } 
-	uint32_t val;
-	if (check == geom_id::IO_ADDRESS_INVALID)
-	  {
-	    id_.set (count, geom_id::INVALID_ADDRESS);
-	    in_.get ();
-	  }
-	else
-	  {
-	    in_ >> val;
-	    if (! in_)
-	      {
-		return in_;
-	      } 
-	    id_.set (count, val);
-	  }
+        char check = in_.peek ();
+        if (in_.eof ())
+          {
+            return in_;
+          } 
+        uint32_t val;
+        if (check == geom_id::IO_ADDRESS_INVALID)
+          {
+            id_.set (count, geom_id::INVALID_ADDRESS);
+            in_.get ();
+          }
+        else
+          {
+            in_ >> val;
+            if (! in_)
+              {
+                return in_;
+              } 
+            id_.set (count, val);
+          }
 
-	char sep = in_.peek ();
-	if (in_.eof ())
-	  {
-	    in_.setstate (ios::failbit);
-	    return in_;
-	  }
-	if (sep == geom_id::IO_ID_CLOSE)
-	  {
-	    in_.get ();
-	    break;
-	  }
-	else if (sep != geom_id::IO_ADDRESS_SEPARATOR)
-	  {
-	    in_.setstate (ios::failbit);
-	    return in_;
-	  }
-	else
-	  {
-	    in_.get ();
-	  }
-	count++;
-	if (count == 100)
-	  {
-	    in_.setstate (ios::failbit);
-	    return in_;
-	  }
+        char sep = in_.peek ();
+        if (in_.eof ())
+          {
+            in_.setstate (ios::failbit);
+            return in_;
+          }
+        if (sep == geom_id::IO_ID_CLOSE)
+          {
+            in_.get ();
+            break;
+          }
+        else if (sep != geom_id::IO_ADDRESS_SEPARATOR)
+          {
+            in_.setstate (ios::failbit);
+            return in_;
+          }
+        else
+          {
+            in_.get ();
+          }
+        count++;
+        if (count == 100)
+          {
+            in_.setstate (ios::failbit);
+            return in_;
+          }
       }
 
     return in_;
@@ -422,37 +432,37 @@ namespace geomtools {
 
   int geom_id::compare (const geom_id & id1_, const geom_id & id2_)
   {
-    if (id1_.__type < id2_.__type)
+    if (id1_._type_ < id2_._type_)
       {
-	return -1;
+        return -1;
       }
-    else if (id1_.__type > id2_.__type)
+    else if (id1_._type_ > id2_._type_)
       {
-	return +1;
+        return +1;
       }
     else
       {
-	if (lexicographical_compare(id1_.__address.begin (),
-				    id1_.__address.end (),
-				    id2_.__address.begin (),
-				    id2_.__address.end ()))
-	  {
-	    return -1;
-	  }
-	else
-	  {
-	    if (lexicographical_compare(id2_.__address.begin (),
-					id2_.__address.end (),
-					id1_.__address.begin (),
-					id1_.__address.end ()))
-	      {
-		return +1;
-	      }
-	    else
-	      {
-		return 0;
-	      }
-	  }
+        if (lexicographical_compare(id1_._addresses_.begin (),
+                                    id1_._addresses_.end (),
+                                    id2_._addresses_.begin (),
+                                    id2_._addresses_.end ()))
+          {
+            return -1;
+          }
+        else
+          {
+            if (lexicographical_compare(id2_._addresses_.begin (),
+                                        id2_._addresses_.end (),
+                                        id1_._addresses_.begin (),
+                                        id1_._addresses_.end ()))
+              {
+                return +1;
+              }
+            else
+              {
+                return 0;
+              }
+          }
       }
   }
 
@@ -492,11 +502,13 @@ namespace geomtools {
     set_type (type_);
     set_depth (depth_);
     set_address (INVALID_ADDRESS);     
+    return;
   }
 
   void geom_id::make (geom_id & id_, int type_, int depth_)
   {
     id_.make (type_, depth_);
+    return;
   }
    
 } // end of namespace geomtools

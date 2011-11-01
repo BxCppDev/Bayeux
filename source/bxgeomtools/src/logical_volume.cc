@@ -19,91 +19,97 @@ namespace geomtools {
 
   bool logical_volume::is_locked () const
   {
-    return __locked;
+    return _locked_;
   }
 
   void logical_volume::lock ()
   {
-    __locked = true;
+    _locked_ = true;
+    return;
   }
 
   void logical_volume::unlock ()
   {
-    __locked = false;
+    _locked_ = false;
+    return;
   }
  
   const string & logical_volume::get_name () const
   {
-    return __name;
+    return _name_;
   }
   
   void logical_volume::set_name (const string & name_)
   {
-    __name = name_;
+    _name_ = name_;
+    return;
   }
   
   const properties & logical_volume::parameters () const
   {
-    return __parameters;
+    return _parameters_;
   }
   
   properties & logical_volume::parameters ()
   {
-    return __parameters;
+    return _parameters_;
   }
 
   bool logical_volume::has_shape () const
   {
-    return __shape != 0;
+    return _shape_ != 0;
   }
 
-  void logical_volume::__clear_shape ()
+  void logical_volume::_clear_shape_ ()
   {
-    if (__shape != 0)
+    if (_shape_ != 0)
       {
-	if (__own_shape)
-	  {
-	    delete __shape;
-	  }
-	__shape = 0;
-	__own_shape = false;
+        if (_own_shape_)
+          {
+            delete _shape_;
+          }
+        _shape_ = 0;
+        _own_shape_ = false;
       }
+    return;
   }
 
   void logical_volume::set_shape (const i_shape_3d & shape_)
   {
-    __clear_shape ();
-    __own_shape = false;
-    __shape = &shape_;
+    _clear_shape_ ();
+    _own_shape_ = false;
+    _shape_ = &shape_;
+    return;
   }
 
   void logical_volume::set_shape (const i_shape_3d * shape_)
   {
-    __clear_shape ();
+    _clear_shape_ ();
     if (shape_ != 0)
       {
-	__own_shape = true;
-	__shape = shape_;
+        _own_shape_ = true;
+        _shape_ = shape_;
       }
+    return;
   }
 
   const i_shape_3d & logical_volume::get_shape () const
   {
-    if (! __shape)
+    if (! _shape_)
       {
-	ostringstream message;
-	message << "logical_volume::get_shape: Missing shape for logical '"
-		<< get_name () << "' !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "logical_volume::get_shape: Missing shape for logical '"
+                << get_name () << "' !";
+        throw runtime_error (message.str ());
       }
-    return *__shape;
+    return *_shape_;
   }
  
   bool logical_volume::has_material_ref () const
   {
-    if (material::has_key (__parameters, material::MATERIAL_REF_PROPERTY))
+    if (material::has_key (_parameters_, material::MATERIAL_REF_PROPERTY))
       {
-	return (__parameters.is_string  (material::make_key (material::MATERIAL_REF_PROPERTY)));
+        return (_parameters_.is_string  (material::make_key (material::MATERIAL_REF_PROPERTY)));
       }
     return false;
   }
@@ -112,7 +118,7 @@ namespace geomtools {
   {
     if (has_material_ref ())
       {
-	return (__parameters.fetch_string  (material::make_key (material::MATERIAL_REF_PROPERTY)));
+        return (_parameters_.fetch_string  (material::make_key (material::MATERIAL_REF_PROPERTY)));
       }
     return material::MATERIAL_REF_UNKNOWN;
   }
@@ -122,136 +128,142 @@ namespace geomtools {
     string mr = material_ref_;
     if (mr.empty ())
       {
-	mr = material::MATERIAL_REF_DEFAULT;
+        mr = material::MATERIAL_REF_DEFAULT;
       }
-    __parameters.update (material::make_key (material::MATERIAL_REF_PROPERTY), material_ref_);
+    _parameters_.update (material::make_key (material::MATERIAL_REF_PROPERTY), material_ref_);
+    return;
   }
 
   logical_volume::logical_volume ()
   {
-    __locked = false;
-    __own_shape = false;
-    __shape = 0;
+    _locked_ = false;
+    _own_shape_ = false;
+    _shape_ = 0;
+    return;
   }
 
   logical_volume::logical_volume (const string & name_)
   {
-    __locked = false;
-    __own_shape = false;
-    __shape = 0;
+    _locked_ = false;
+    _own_shape_ = false;
+    _shape_ = 0;
     set_name (name_);
+    return;
   }
 
   logical_volume::logical_volume (const string & name_, 
-				  const i_shape_3d & shape_)
+                                  const i_shape_3d & shape_)
   {
-    __locked = false;
-    __own_shape = false;
-    __shape = 0;
+    _locked_ = false;
+    _own_shape_ = false;
+    _shape_ = 0;
     set_name (name_);
     set_shape (shape_);
+    return;
   }
 
   logical_volume::logical_volume (const string & name_, 
-				  const i_shape_3d * shape_)
+                                  const i_shape_3d * shape_)
   {
-    __locked = false;
-    __own_shape = false;
-    __shape = 0;
+    _locked_ = false;
+    _own_shape_ = false;
+    _shape_ = 0;
     set_name (name_);
     set_shape (shape_);    
+    return;
   }
   
   logical_volume::~logical_volume ()
   {
-    __locked = false;
-    __clear_shape ();
+    _locked_ = false;
+    _clear_shape_ ();
+    return;
   }
  
   bool logical_volume::has_physical (const string & name_) const
   {
-    return (__physicals.find (name_) != __physicals.end ());
+    return (_physicals_.find (name_) != _physicals_.end ());
   }
 
   const logical_volume::physicals_col_t & 
   logical_volume::get_physicals () const
   {
-    return __physicals;
+    return _physicals_;
   }
 
   const physical_volume & logical_volume::get_physical (const string & name_) const
   {
-    physicals_col_t::const_iterator found = __physicals.find (name_);
-    if (found == __physicals.end ())
+    physicals_col_t::const_iterator found = _physicals_.find (name_);
+    if (found == _physicals_.end ())
       {
-	ostringstream message;
-	message << "logical_volume::get_physical: "
-		<< "Name '" << name_ << "' is not used !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "logical_volume::get_physical: "
+                << "Name '" << name_ << "' is not used !";
+        throw runtime_error (message.str ());
       }
     return *(found->second);
   }
     
   void logical_volume::add_physical (const physical_volume & phys_,
-				     const string & name_)
+                                     const string & name_)
   {
-    if (__physicals.find (name_) != __physicals.end ())
+    if (_physicals_.find (name_) != _physicals_.end ())
       {
-	ostringstream message;
-	message << "logical_volume::add_physical: "
-		<< "name '" << name_ << "' is already used !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "logical_volume::add_physical: "
+                << "name '" << name_ << "' is already used !";
+        throw runtime_error (message.str ());
       }
     string name;
     if (name_.empty ())
       {
-	name = phys_.get_name ();
+        name = phys_.get_name ();
       }
     else
       {
-	name = name_;
+        name = name_;
       }
     if (name.empty ())
       {
-	throw runtime_error ("logical_volume::add_physical: Missing physical's name !");
+        throw runtime_error ("logical_volume::add_physical: Missing physical's name !");
       }
-    if (__parameters.has_flag (HAS_REPLICA_FLAG))
+    if (_parameters_.has_flag (HAS_REPLICA_FLAG))
       {
-	ostringstream message;
-	message << "logical_volume::add_physical: "
-		<< "Cannot add more physical volume for a 'replica' already exists !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "logical_volume::add_physical: "
+                << "Cannot add more physical volume for a 'replica' already exists !";
+        throw runtime_error (message.str ());
       }
     if (phys_.get_placement ().is_replica ())
       {
-	if (__physicals.size () > 0)
-	  {
-	    ostringstream message;
-	    message << "logical_volume::add_physical: "
-		    << "Cannot add a 'replica' physical volume for other physicals already exist !";
-	    throw runtime_error (message.str ());
-	  }
-	__parameters.store_flag (HAS_REPLICA_FLAG);
+        if (_physicals_.size () > 0)
+          {
+            ostringstream message;
+            message << "logical_volume::add_physical: "
+                    << "Cannot add a 'replica' physical volume for other physicals already exist !";
+            throw runtime_error (message.str ());
+          }
+        _parameters_.store_flag (HAS_REPLICA_FLAG);
       }
 
-    __physicals[name] = &phys_;
+    _physicals_[name] = &phys_;
     return;
   }
 
   bool logical_volume::is_replica () const
   {
-    if (__physicals.size () != 1) return false;
-    const physical_volume & phys = *(__physicals.begin ()->second);
+    if (_physicals_.size () != 1) return false;
+    const physical_volume & phys = *(_physicals_.begin ()->second);
     const i_placement & pl = phys.get_placement ();
     return pl.is_replica ();
     // alternative:
-    //return __parameters.has_flag (HAS_REPLICA_FLAG);
+    //return _parameters_.has_flag (HAS_REPLICA_FLAG);
   }
 
   void logical_volume::tree_dump (ostream & out_, 
-				  const string & title_, 
-				  const string & indent_, 
-				  bool inherit_) const
+                                  const string & title_, 
+                                  const string & indent_, 
+                                  bool inherit_) const
   {
     namespace du = datatools::utils;
     string indent;
@@ -261,15 +273,15 @@ namespace geomtools {
         out_ << indent << title_ << endl;
       }
     out_ << indent << i_tree_dumpable::tag 
-	 << "Name       : \"" << __name << "\"" << endl;
+         << "Name       : \"" << _name_ << "\"" << endl;
 
     out_ << indent << i_tree_dumpable::tag 
-	 << "Locked     : " << (__locked? "Yes": "No") << endl;
+         << "Locked     : " << (_locked_? "Yes": "No") << endl;
 
     {
       out_ << indent << du::i_tree_dumpable::tag
-	   << "Parameters : ";
-      if ( __parameters.size () == 0) 
+           << "Parameters : ";
+      if ( _parameters_.size () == 0) 
         {
           out_ << "<empty>"; 
         }
@@ -278,48 +290,48 @@ namespace geomtools {
         ostringstream indent_oss;
         indent_oss << indent;
         indent_oss << du::i_tree_dumpable::skip_tag;
-        __parameters.tree_dump (out_,"",indent_oss.str ());
+        _parameters_.tree_dump (out_,"",indent_oss.str ());
       }
     }
     
     {
       out_ << indent << i_tree_dumpable::tag 
-	   << "Shape : ";
+           << "Shape : ";
       if (has_shape ())
-	{
-	  out_ << "'" << __shape->get_shape_name () << "' " 
-	       << (__own_shape? "(owned)": "(not owned)");
-	}
+        {
+          out_ << "'" << _shape_->get_shape_name () << "' " 
+               << (_own_shape_? "(owned)": "(not owned)");
+        }
       else
-	{
-	  out_ << "<no shape>";
-	}
+        {
+          out_ << "<no shape>";
+        }
       out_ << endl; 
       {
-	ostringstream indent_oss;
-	indent_oss << indent;
-	indent_oss << du::i_tree_dumpable::skip_tag;
-	__shape->tree_dump (out_,"",indent_oss.str ());
+        ostringstream indent_oss;
+        indent_oss << indent;
+        indent_oss << du::i_tree_dumpable::skip_tag;
+        _shape_->tree_dump (out_,"",indent_oss.str ());
       }
     }
       
     {
       out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
-	   << "Physicals : ";
-      if (__physicals.size ())
-	{
-	  for (physicals_col_t::const_iterator i = __physicals.begin ();
-	       i != __physicals.end ();
-	       i++)
-	    {
-	      out_ << i->first << ' ';
-	    }
-	  out_ << endl; 
-	}
+           << "Physicals : ";
+      if (_physicals_.size ())
+        {
+          for (physicals_col_t::const_iterator i = _physicals_.begin ();
+               i != _physicals_.end ();
+               i++)
+            {
+              out_ << i->first << ' ';
+            }
+          out_ << endl; 
+        }
       else
-	{
-	  out_ << "<none>" << endl;
-	}
+        {
+          out_ << "<none>" << endl;
+        }
     }
 
     return;

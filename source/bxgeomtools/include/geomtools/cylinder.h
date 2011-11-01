@@ -32,7 +32,7 @@ namespace geomtools {
     public:
       static const string CYLINDER_LABEL;
 
-      enum faces_mask_t
+      enum faces_mask_type
 	{
 	  FACE_NONE   = FACE_NONE_BIT,
 	  FACE_SIDE   = 0x1,
@@ -131,8 +131,8 @@ namespace geomtools {
 
     private: 
 
-      double z_;      //<! Height
-      double radius_; //<! Radius
+      double _z_;      //<! Height
+      double _radius_; //<! Radius
 
     };
     

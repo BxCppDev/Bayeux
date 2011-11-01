@@ -10,11 +10,13 @@ namespace geomtools {
   // ctor:
   i_placement::i_placement ()
   {
+    return;
   }
 
   // dtor:
   i_placement::~i_placement ()
   {
+    return;
   }
  
   bool i_placement::has_only_one_rotation () const
@@ -35,9 +37,9 @@ namespace geomtools {
   }
 
   void i_placement::tree_dump (ostream & out_, 
-			       const string & title_, 
-			       const string & indent_, 
-			       bool inherit_) const
+                               const string & title_, 
+                               const string & indent_, 
+                               bool inherit_) const
   {
     namespace du = datatools::utils;
     string indent;
@@ -47,7 +49,7 @@ namespace geomtools {
         out_ << indent << title_ << std::endl;
       }
     out_ << indent << i_tree_dumpable::inherit_tag (inherit_)  
-	 << "Number of items  = " << get_number_of_items () << std::endl;
+         << "Number of items  = " << get_number_of_items () << std::endl;
     return;
   }
  

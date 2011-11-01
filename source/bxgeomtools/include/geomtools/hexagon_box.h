@@ -44,32 +44,33 @@ namespace geomtools {
      *            front
      *              |
      *            x |
-     *	  
+     *    
      */ 
 
-    enum faces_mask_t
+    enum faces_mask_type
       {
-	FACE_NONE   = FACE_NONE_BIT,
-	FACE_BACK         = 0x1,
-	FACE_FRONT        = 0x2,
-	FACE_FRONT_LEFT   = 0x4,
-	FACE_FRONT_RIGHT  = 0x8,
-	FACE_BACK_LEFT    = 0x10,
-	FACE_BACK_RIGHT   = 0x20,
-	FACE_BOTTOM       = 0x40,
-	FACE_TOP          = 0x80,
-	FACE_ALL    = (FACE_BACK
-		       | FACE_FRONT 
-		       | FACE_BACK_LEFT  
-		       | FACE_BACK_RIGHT 
-		       | FACE_FRONT_LEFT 
-		       | FACE_FRONT_RIGHT 
-		       | FACE_BOTTOM 
-		       | FACE_TOP)
+        FACE_NONE   = FACE_NONE_BIT,
+        FACE_BACK         = 0x1,
+        FACE_FRONT        = 0x2,
+        FACE_FRONT_LEFT   = 0x4,
+        FACE_FRONT_RIGHT  = 0x8,
+        FACE_BACK_LEFT    = 0x10,
+        FACE_BACK_RIGHT   = 0x20,
+        FACE_BOTTOM       = 0x40,
+        FACE_TOP          = 0x80,
+        FACE_ALL    = (FACE_BACK
+                       | FACE_FRONT 
+                       | FACE_BACK_LEFT  
+                       | FACE_BACK_RIGHT 
+                       | FACE_FRONT_LEFT 
+                       | FACE_FRONT_RIGHT 
+                       | FACE_BOTTOM 
+                       | FACE_TOP)
       };
 
  
   public: 
+
     double get_radius () const;
 
     double get_side () const;
@@ -113,12 +114,12 @@ namespace geomtools {
     double get_volume () const;
 
     virtual bool is_inside (const vector_3d &, 
-			    double skin_ = USING_PROPER_SKIN) const;
+                            double skin_ = USING_PROPER_SKIN) const;
 
     // if 'skin' < 0 no skin is taken into account:
     virtual bool is_on_surface (const vector_3d & , 
-				int mask_    = FACE_ALL , 
-				double skin_ = USING_PROPER_SKIN) const;
+                                int mask_    = FACE_ALL , 
+                                double skin_ = USING_PROPER_SKIN) const;
 
     virtual vector_3d get_normal_on_surface (const vector_3d & position_) const;
 
@@ -127,9 +128,9 @@ namespace geomtools {
     friend std::istream & operator>> (std::istream & , hexagon_box &);
       
     virtual bool find_intercept (const vector_3d & from_, 
-				 const vector_3d & direction_,
-				 intercept_t & intercept_,
-				 double skin_ = USING_PROPER_SKIN) const;
+                                 const vector_3d & direction_,
+                                 intercept_t & intercept_,
+                                 double skin_ = USING_PROPER_SKIN) const;
        
     static bool xy_is_in_hexagon (double r_, double x_, double y_, double skin_);
 
@@ -139,8 +140,8 @@ namespace geomtools {
 
   private: 
 
-    double __radius;
-    double __z;
+    double _radius_;
+    double _z_;
 
   };
     

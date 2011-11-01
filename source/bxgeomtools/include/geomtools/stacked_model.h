@@ -45,10 +45,10 @@ namespace geomtools {
 
     enum stacking_axis_t
       {
-	STACKING_ALONG_INVALID = -1,
-	STACKING_ALONG_X = AXIS_X,
-	STACKING_ALONG_Y = AXIS_Y,
-	STACKING_ALONG_Z = AXIS_Z
+        STACKING_ALONG_INVALID = -1,
+        STACKING_ALONG_X = AXIS_X,
+        STACKING_ALONG_Y = AXIS_Y,
+        STACKING_ALONG_Z = AXIS_Z
       };
 
     struct stacked_item
@@ -74,19 +74,19 @@ namespace geomtools {
 
       const string & get_label () const
       {
-	return label;
+        return label;
       }
       const i_model & get_model () const
       {
-	return *model;
+        return *model;
       }
       const placement & get_placement () const
       {
-	return placmt;
+        return placmt;
       }
       const physical_volume & get_physical_volume () const
       {
-	return phys;
+        return phys;
       }
     };
 
@@ -95,19 +95,8 @@ namespace geomtools {
 
   private:
 
-    string         __material_name;
-    int            __stacking_axis;
-    stacked_dict_t __stacked_models;
-    labels_dict_t  __labels;
-
-    geomtools::box __solid;
-    double         __numerics_play;
-    double         __mechanics_play;
-
-  private:
-
-    int __get_stacking_axis () const;
-    const string & __get_material_name () const;
+    int _get_stacking_axis_ () const;
+    const string & _get_material_name_ () const;
 
   public: 
     const string & get_material_name () const;
@@ -144,19 +133,29 @@ namespace geomtools {
   protected:
   
     virtual void _at_construct (const string & name_,
-				const datatools::utils::properties & config_,
-				models_col_t * models_ = 0);
+                                const datatools::utils::properties & config_,
+                                models_col_t * models_ = 0);
 
   private:
 
-    static creator_registration<stacked_model> __CR;
+    static creator_registration<stacked_model> _g_cr_;
       
   public: 
 
     virtual void tree_dump (ostream & out_         = clog, 
-			    const string & title_  = "", 
-			    const string & indent_ = "", 
-			    bool inherit_          = false) const;
+                            const string & title_  = "", 
+                            const string & indent_ = "", 
+                            bool inherit_          = false) const;
+
+  private:
+
+    string         _material_name_;
+    int            _stacking_axis_;
+    stacked_dict_t _stacked_models_;
+    labels_dict_t  _labels_;
+    geomtools::box _solid_;
+    double         _numerics_play_;
+    double         _mechanics_play_;
   
   };
 

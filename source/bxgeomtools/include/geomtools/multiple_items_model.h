@@ -33,7 +33,7 @@ namespace geomtools {
 
   private:
 
-    const string & __get_material_name () const;
+    const string & _get_material_name_ () const;
 
   public: 
 
@@ -58,23 +58,25 @@ namespace geomtools {
 
   public: 
     virtual void tree_dump (ostream & out_         = clog, 
-			    const string & title_  = "", 
-			    const string & indent_ = "", 
-			    bool inherit_          = false) const;
+                            const string & title_  = "", 
+                            const string & indent_ = "", 
+                            bool inherit_          = false) const;
 
   protected:
 
     virtual void _at_construct (const string & label_,
-				const datatools::utils::properties & config_,
-				models_col_t * models_ = 0);
-  private:
-    static i_model::creator_registration<multiple_items_model> __CR;
+                                const datatools::utils::properties & config_,
+                                models_col_t * models_ = 0);
 
   private:
 
-    string           __material_name;
-    box              __solid;
-    MWIM             __internals;
+    string           _material_name_;
+    box              _solid_;
+    MWIM             _internals_;
+
+  private:
+
+    static i_model::creator_registration<multiple_items_model> _g_cr_;
 
   };
 

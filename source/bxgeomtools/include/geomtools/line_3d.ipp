@@ -24,8 +24,8 @@ namespace geomtools {
 	 */
 	a_ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
       }
-    a_ar & boost::serialization::make_nvp ("first", __first);
-    a_ar & boost::serialization::make_nvp ("last", __last);
+    a_ar & boost::serialization::make_nvp ("first", _first_);
+    a_ar & boost::serialization::make_nvp ("last",  _last_);
     return;
   }
 

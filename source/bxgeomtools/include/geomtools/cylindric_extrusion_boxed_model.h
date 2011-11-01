@@ -42,21 +42,7 @@ namespace geomtools {
     static const string LABEL_PROPERTY_PREFIX;
     static const string EXTRUSION_LABEL;
 
-  private:
-
-    string           __material_name;
-    double           __mother_x, __mother_y, __mother_z;
-    double           __extrusion_radius;
-
-    geomtools::box            __mother_box;
-    geomtools::cylinder       __extrusion_cylinder;
-    geomtools::subtraction_3d __extruded_solid;
-
-    logical_volume            __extruded_log;
-    placement                 __extruded_placement;
-    physical_volume           __extruded_phys;
-
-    geomtools::i_shape_3d * __solid;
+  public:
 
     void set_material_name (const string &);
 
@@ -99,7 +85,7 @@ namespace geomtools {
 
   private:
 
-    static creator_registration<cylindric_extrusion_boxed_model> __CR;
+    static creator_registration<cylindric_extrusion_boxed_model> _g_cr_;
       
   public: 
 
@@ -113,6 +99,22 @@ namespace geomtools {
 					    const geomtools::rotation_3d &,
 					    const geomtools::i_object_3d &, 
 					    void * = 0);
+
+  private:
+
+    string           _material_name_;
+    double           _mother_x_, _mother_y_, _mother_z_;
+    double           _extrusion_radius_;
+
+    geomtools::box            _mother_box_;
+    geomtools::cylinder       _extrusion_cylinder_;
+    geomtools::subtraction_3d _extruded_solid_;
+
+    logical_volume            _extruded_log_;
+    placement                 _extruded_placement_;
+    physical_volume           _extruded_phys_;
+
+    geomtools::i_shape_3d * _solid_;
   
   };
 

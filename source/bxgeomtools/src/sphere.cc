@@ -15,7 +15,7 @@ namespace geomtools {
   double 
   sphere::get_r () const
   {
-    return __r;
+    return _r_;
   }
   
   double 
@@ -29,12 +29,12 @@ namespace geomtools {
   {
     if  (new_value_ < 0.0) 
       {
-	std::ostringstream message;
-	message << "sphere::set_r: Invalid '" 
-		<< new_value_ << "' R value!";
-	throw std::logic_error (message.str ());
+        std::ostringstream message;
+        message << "sphere::set_r: Invalid '" 
+                << new_value_ << "' R value!";
+        throw std::logic_error (message.str ());
       }
-    __r =new_value_;
+    _r_ =new_value_;
   }
 
   void 
@@ -70,7 +70,7 @@ namespace geomtools {
     double s = 0.0;
     if  (mask_ & FACE_SIDE) 
       {
-	s += 4.0 * M_PI * __r * __r;
+        s += 4.0 * M_PI * _r_ * _r_;
       }
     return s;
   }
@@ -78,19 +78,19 @@ namespace geomtools {
   double 
   sphere::get_volume () const 
   {
-    return 4.0 * M_PI * __r * __r * __r / 3.0;
+    return 4.0 * M_PI * _r_ * _r_ * _r_ / 3.0;
   }
 
   bool 
   sphere::is_valid () const
   {
-    return  (__r > 0.0);
+    return  (_r_ > 0.0);
   }
 
   void 
   sphere::reset ()
   {
-    __r = -1.0;
+    _r_ = -1.0;
   }
 
   std::string 
@@ -106,7 +106,7 @@ namespace geomtools {
     if  (skin_ > USING_PROPER_SKIN) skin = skin_;
 
     double r = point_.mag ();
-    if  (r > __r + 0.5 * skin) return false;
+    if  (r > _r_ + 0.5 * skin) return false;
     return true;
   }
 
@@ -129,16 +129,16 @@ namespace geomtools {
     invalidate (normal);
     if (is_on_surface (position_, FACE_SIDE)) 
       {
-	normal = position_;
-	normal.unit ();
+        normal = position_;
+        normal.unit ();
       }
     return (normal);
   }
 
   bool 
   sphere::is_on_surface (const vector_3d & point_, 
-			 int mask_    , 
-			 double skin_) const
+                         int mask_    , 
+                         double skin_) const
   {
     bool debug = false;
     //debug = true;
@@ -152,28 +152,28 @@ namespace geomtools {
     double r = point_.mag ();
     if (debug)
       {
-	std::clog << "DEVEL: sphere::is_on_surface: r= "
-		  << r
-		  << std::endl;
-	std::clog << "DEVEL: sphere::is_on_surface: R= "
-		  << __r
-		  << std::endl;
-	std::clog << "DEVEL: sphere::is_on_surface: hskin= "
-		  << hskin
-		  << std::endl;
+        std::clog << "DEVEL: sphere::is_on_surface: r= "
+                  << r
+                  << std::endl;
+        std::clog << "DEVEL: sphere::is_on_surface: R= "
+                  << _r_
+                  << std::endl;
+        std::clog << "DEVEL: sphere::is_on_surface: hskin= "
+                  << hskin
+                  << std::endl;
       }
     if (mask & FACE_SIDE) 
       {
-	if (std::abs (r - __r) < hskin) return true;
+        if (std::abs (r - _r_) < hskin) return true;
       }
     return false;
   }
   
   bool 
   sphere::find_intercept (const vector_3d & from_, 
-			  const vector_3d & direction_,
-			  intercept_t & intercept_,
-			  double skin_) const
+                          const vector_3d & direction_,
+                          intercept_t & intercept_,
+                          double skin_) const
   {
     bool debug = false;
     //debug = true;
@@ -190,101 +190,101 @@ namespace geomtools {
     double dz = direction_.z ();
     a = dx * dx + dy * dy + dz * dz;
     b = 2. * (dx * x0 + dy * y0 + dz * z0);
-    c = x0 * x0 + y0 * y0 + z0 * z0 - __r * __r;
+    c = x0 * x0 + y0 * y0 + z0 * z0 - _r_ * _r_;
     double delta = b * b - 4. * a * c;
     double ts[2];
     if (debug)
       {
-	std::clog << "DEVEL: sphere::find_intercept: from= "
-		  << from_
-		  << std::endl;
-	std::clog << "DEVEL: sphere::find_intercept: direction= "
-		  << direction_
-		  << std::endl;
-	std::clog << "DEVEL: sphere::find_intercept: a= "
-		  << a
-		  << std::endl;
-	std::clog << "DEVEL: sphere::find_intercept: b= "
-		  << b
-		  << std::endl;
-	std::clog << "DEVEL: sphere::find_intercept: c= "
-		  << c
-		  << std::endl;
-	std::clog << "DEVEL: sphere::find_intercept: delta= "
-		  << delta
-		  << std::endl;
+        std::clog << "DEVEL: sphere::find_intercept: from= "
+                  << from_
+                  << std::endl;
+        std::clog << "DEVEL: sphere::find_intercept: direction= "
+                  << direction_
+                  << std::endl;
+        std::clog << "DEVEL: sphere::find_intercept: a= "
+                  << a
+                  << std::endl;
+        std::clog << "DEVEL: sphere::find_intercept: b= "
+                  << b
+                  << std::endl;
+        std::clog << "DEVEL: sphere::find_intercept: c= "
+                  << c
+                  << std::endl;
+        std::clog << "DEVEL: sphere::find_intercept: delta= "
+                  << delta
+                  << std::endl;
       }
     if (delta >= 0.0)
       {
-	double q = std::sqrt (delta);
-	double n = a + a;
-	ts[0] = (- b + q) / n;
-	ts[1] = (- b - q) / n;
+        double q = std::sqrt (delta);
+        double n = a + a;
+        ts[0] = (- b + q) / n;
+        ts[1] = (- b - q) / n;
       }
     if (debug)
       {
-	std::clog << "DEVEL: sphere::find_intercept: ts[" << 0 << "]= "
-		  << ts[0]
-		  << std::endl;
-	std::clog << "DEVEL: sphere::find_intercept: ts[" << 1 << "]= "
-		  << ts[1]
-		  << std::endl;
+        std::clog << "DEVEL: sphere::find_intercept: ts[" << 0 << "]= "
+                  << ts[0]
+                  << std::endl;
+        std::clog << "DEVEL: sphere::find_intercept: ts[" << 1 << "]= "
+                  << ts[1]
+                  << std::endl;
       }
     for (int i = 0; i < 2; i++)
       {
-	double tsi = ts[i];
-	if (std::isnormal (tsi) && (tsi > 0.0))
-	  {
-	    if (t[SPH_SIDE] < 0) 
-	      {
-		t[SPH_SIDE] = tsi;
-	      }
-	    else 
-	      {
-		if (tsi < t[SPH_SIDE]) 
-		  {
-		    t[SPH_SIDE] = tsi;
-		  }
-	      }
-	  }
+        double tsi = ts[i];
+        if (std::isnormal (tsi) && (tsi > 0.0))
+          {
+            if (t[SPH_SIDE] < 0) 
+              {
+                t[SPH_SIDE] = tsi;
+              }
+            else 
+              {
+                if (tsi < t[SPH_SIDE]) 
+                  {
+                    t[SPH_SIDE] = tsi;
+                  }
+              }
+          }
       }
     
     double t_min = -1.0;
     int face_min = 0;
     for (int i = 0; i < (int) NFACES; i++)
       {
-	double ti = t[i];
-	if (debug)
-	  {
-	    std::clog << "DEVEL: sphere::find_intercept: t[" << i << "]= "
-		      << ti << " t_min=" << t_min 
-		      << " face_min=" << face_min 
-		      << std::endl;
-	  }
-	if (std::isnormal (ti) && (ti > 0.0))
-	  {
-	    int face_bit = (0x1 << i); // face mask
-	    vector_3d intercept = from_ + direction_ * ti;
-	    if (is_on_surface (intercept, face_bit, skin_))
-	      {
-		if ((t_min < 0.0) || (ti < t_min))
-		  {
-		    t_min = ti;
-		    face_min = face_bit;
-		  }
-	      }
-	  }
-	if (debug)
-	  {
-	    std::clog << "DEVEL: sphere::find_intercept: t_min=" << t_min 
-		      << " face_min=" << face_min 
-		      << std::endl;
-	  }
+        double ti = t[i];
+        if (debug)
+          {
+            std::clog << "DEVEL: sphere::find_intercept: t[" << i << "]= "
+                      << ti << " t_min=" << t_min 
+                      << " face_min=" << face_min 
+                      << std::endl;
+          }
+        if (std::isnormal (ti) && (ti > 0.0))
+          {
+            int face_bit = (0x1 << i); // face mask
+            vector_3d intercept = from_ + direction_ * ti;
+            if (is_on_surface (intercept, face_bit, skin_))
+              {
+                if ((t_min < 0.0) || (ti < t_min))
+                  {
+                    t_min = ti;
+                    face_min = face_bit;
+                  }
+              }
+          }
+        if (debug)
+          {
+            std::clog << "DEVEL: sphere::find_intercept: t_min=" << t_min 
+                      << " face_min=" << face_min 
+                      << std::endl;
+          }
       }
     intercept_.reset ();
     if (face_min > 0) 
       {
-	intercept_.set (0, face_min, from_ + direction_ * t_min);
+        intercept_.set (0, face_min, from_ + direction_ * t_min);
       }
     return intercept_.is_ok ();
   }
@@ -293,7 +293,7 @@ namespace geomtools {
   operator<< (std::ostream & out_, const sphere & s_)
   {
     out_ << '{' << sphere::SPHERE_LABEL << ' ' 
-	 << s_.__r << '}'; 
+         << s_._r_ << '}'; 
     return out_;
   }
 
@@ -305,46 +305,46 @@ namespace geomtools {
     in_.get (c);
     if (c != '{') 
       {
-	in_.clear (std::ios_base::failbit);
-	return in_;
+        in_.clear (std::ios_base::failbit);
+        return in_;
       } 
     std::string name;
     in_ >> name;
     if (name != sphere::SPHERE_LABEL) 
       {
-	in_.clear (std::ios_base::failbit);
-	return in_;
+        in_.clear (std::ios_base::failbit);
+        return in_;
       } 
     double r;
     in_ >> r;
     if (! in_) 
       {
-	in_.clear (std::ios_base::failbit);
-	return in_;
+        in_.clear (std::ios_base::failbit);
+        return in_;
       } 
     c = 0;
     in_.get (c);
     if (c != '}') 
       {
-	in_.clear (std::ios_base::failbit);
-	return in_;
+        in_.clear (std::ios_base::failbit);
+        return in_;
       } 
     try 
       {
-	s_.set (r);
+        s_.set (r);
       }
     catch (...) 
       {
-	s_.reset ();
-	in_.clear (std::ios_base::failbit);
+        s_.reset ();
+        in_.clear (std::ios_base::failbit);
       }
     return in_;
   }
 
   void sphere::tree_dump (ostream & out_, 
-			    const string & title_, 
-			    const string & indent_, 
-			    bool inherit_) const
+                          const string & title_, 
+                          const string & indent_, 
+                          bool inherit_) const
   {
     namespace du = datatools::utils;
     string indent;
@@ -352,7 +352,7 @@ namespace geomtools {
     i_object_3d::tree_dump (out_, title_, indent_, true);
 
     out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)  
-	 << "R : " << get_r () / CLHEP::mm << " mm" << endl;
+         << "R : " << get_r () / CLHEP::mm << " mm" << endl;
     return;
   }
 

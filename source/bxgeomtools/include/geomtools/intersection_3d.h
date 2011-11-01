@@ -35,18 +35,18 @@ namespace geomtools {
     virtual ~intersection_3d ();
 
     virtual bool is_inside (const vector_3d & position_, 
-			    double skin_ = USING_PROPER_SKIN) const;
+                            double skin_ = USING_PROPER_SKIN) const;
     
     virtual bool is_on_surface (const vector_3d & position_, 
-				int mask_    = ALL_SURFACES, 
-				double skin_ = USING_PROPER_SKIN) const;
+                                int mask_    = ALL_SURFACES, 
+                                double skin_ = USING_PROPER_SKIN) const;
 
     virtual vector_3d get_normal_on_surface (const vector_3d & position_) const;
     
     virtual  bool find_intercept (const vector_3d & from_, 
-				  const vector_3d & direction_,
-				  intercept_t & intercept_,
-				  double skin_ = USING_PROPER_SKIN) const;
+                                  const vector_3d & direction_,
+                                  intercept_t & intercept_,
+                                  double skin_ = USING_PROPER_SKIN) const;
     
   };
   

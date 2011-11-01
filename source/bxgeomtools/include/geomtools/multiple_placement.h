@@ -28,52 +28,55 @@ namespace geomtools {
 
   class multiple_placement
     : public i_placement
-    {
-    public:
-      typedef vector<placement> placement_col_t;
+  {
+  public:
 
-    private:
-      placement_col_t __placements;
+    typedef vector<placement> placement_col_t;
 
-    public:
+  public:
  
-      virtual bool is_replica () const;
+    virtual bool is_replica () const;
  
-      bool is_valid () const;
+    bool is_valid () const;
 
-      void invalidate ();
+    void invalidate ();
 
-      void add (const placement & p_);
+    void add (const placement & p_);
 
-      const placement & get_placement (int index_) const;
+    const placement & get_placement (int index_) const;
 
-      placement & get_placement (int index_);
+    placement & get_placement (int index_);
 
-    public: 
-      // i_placement interface:
-      virtual size_t get_number_of_items () const;
+  public: 
+    // i_placement interface:
+    virtual size_t get_number_of_items () const;
    
-      virtual void get_placement (int item_, placement & p_) const;
+    virtual void get_placement (int item_, placement & p_) const;
 
-      virtual size_t compute_index_map (vector<uint32_t> & map_, 
-					int item_) const;
+    virtual size_t compute_index_map (vector<uint32_t> & map_, 
+                                      int item_) const;
 
-    public: 
-      // ctor:
-      multiple_placement ();
-		
-      // dtor:
-      virtual ~multiple_placement ();
+  public: 
 
-      virtual void reset ();
+    // ctor:
+    multiple_placement ();
+                
+    // dtor:
+    virtual ~multiple_placement ();
 
-      // i_tree_dump interface:
-      virtual void tree_dump (ostream & out_ = clog, 
-			      const string & title_ = "geomutils::multiple_placement", 
-			      const string & indent_ = "", 
-			      bool inherit_ = false) const;
+    virtual void reset ();
 
-    };
+    // i_tree_dump interface:
+    virtual void tree_dump (ostream & out_ = clog, 
+                            const string & title_ = "geomutils::multiple_placement", 
+                            const string & indent_ = "", 
+                            bool inherit_ = false) const;
+
+  private:
+
+    placement_col_t _placements_;
+
+  };
 
 } // end of namespace geomtools
 

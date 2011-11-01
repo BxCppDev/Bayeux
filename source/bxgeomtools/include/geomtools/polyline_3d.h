@@ -24,68 +24,68 @@ namespace geomtools {
   class polyline_3d : 
     public i_shape_1d,
     DATATOOLS_SERIALIZABLE_CLASS
-    {
-    public:
-      static const string POLYLINE_3D_LABEL;
+  {
+  public:
+    static const string POLYLINE_3D_LABEL;
 
-      static const bool CLOSED = true;
-      static const bool closed = CLOSED;
-      static const bool OPEN   = false;
-      static const bool open   = OPEN;
-      static const bool DEFAULT_CLOSED = OPEN;
+    static const bool CLOSED = true;
+    static const bool closed = CLOSED;
+    static const bool OPEN   = false;
+    static const bool open   = OPEN;
+    static const bool DEFAULT_CLOSED = OPEN;
 
-      typedef basic_polyline_3d point_col;
+    typedef basic_polyline_3d point_col;
 
-    public:
+  public:
 
-      virtual string get_shape_name () const;
+    virtual string get_shape_name () const;
 
-      bool is_closed () const;
+    bool is_closed () const;
 
-      void set_closed (bool);
+    void set_closed (bool);
 
-      bool is_empty () const;
+    bool is_empty () const;
 
-      polyline_3d ();
+    polyline_3d ();
 
-      polyline_3d (bool closed_);
+    polyline_3d (bool closed_);
 
-      virtual ~polyline_3d ();
+    virtual ~polyline_3d ();
 
-      void clear ();
+    void clear ();
 
-      void add (const vector_3d &);
+    void add (const vector_3d &);
 
-      int get_number_of_points () const;
+    int get_number_of_points () const;
       
-      const vector_3d & get_point (int i_) const;
+    const vector_3d & get_point (int i_) const;
 
-      int get_number_of_vertex () const;
+    int get_number_of_vertex () const;
       
-      const vector_3d & get_vertex (int i_) const;
+    const vector_3d & get_vertex (int i_) const;
 
-      // inefficient algorithm:
-      void make_vertex_collection (basic_polyline_3d &) const;
+    // inefficient algorithm:
+    void make_vertex_collection (basic_polyline_3d &) const;
 
-      // inefficient algorithm:
-      basic_polyline_3d make_vertex_collection () const;
+    // inefficient algorithm:
+    basic_polyline_3d make_vertex_collection () const;
  
-    public:
+  public:
 
-      virtual bool is_on_curve (const vector_3d & position_, 
-				double tolerance_ = USING_PROPER_TOLERANCE) const;
+    virtual bool is_on_curve (const vector_3d & position_, 
+                              double tolerance_ = USING_PROPER_TOLERANCE) const;
       
-      virtual vector_3d get_direction_on_curve (const vector_3d & position_) const;
+    virtual vector_3d get_direction_on_curve (const vector_3d & position_) const;
 
-    private:
+  private:
 
-      bool      __closed;
-      point_col __points;
+    bool      _closed_;
+    point_col _points_;
 
-      /* interface i_serializable */
-      DATATOOLS_SERIALIZATION_DECLARATION();
+    /* interface i_serializable */
+    DATATOOLS_SERIALIZATION_DECLARATION();
       
-    }; 
+  }; 
  
 } // end of namespace geomtools
 

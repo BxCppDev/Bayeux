@@ -38,13 +38,6 @@ namespace geomtools {
     static const string DEFAULT_WORLD_LABEL;
     static bool g_devel;
 
-  private: 
-    bool __locked;
-    bool __debug;
-    datatools::utils::multi_properties __mp;
-    models_col_t           __models;
-    logical_volume::dict_t __logicals;
-
   public: 
 
     bool is_locked () const;
@@ -75,19 +68,27 @@ namespace geomtools {
 
   private:
 
-    void __lock ();
+    void _lock_ ();
 
-    void __unlock ();
+    void _unlock_ ();
 
-    void __construct ();
+    void _construct_ ();
 
   public:
     
     virtual void tree_dump (std::ostream & out_         = clog, 
-			    const std::string & title_  = "",
-			    const std::string & indent_ = "",
-			    bool inherit_               = false) const;
-    
+                            const std::string & title_  = "",
+                            const std::string & indent_ = "",
+                            bool inherit_               = false) const;
+
+  private: 
+
+    bool _locked_;
+    bool _debug_;
+    datatools::utils::multi_properties _mp_;
+    models_col_t           _models_;
+    logical_volume::dict_t _logicals_;
+
   };
 
 } // end of namespace geomtools

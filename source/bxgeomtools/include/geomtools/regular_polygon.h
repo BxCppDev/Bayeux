@@ -32,8 +32,8 @@ namespace geomtools {
  
     enum mode_t
       {
-	BUILD_BY_RADIUS  = 1,
-	BUILD_BY_APOTHEM = 2
+        BUILD_BY_RADIUS  = 1,
+        BUILD_BY_APOTHEM = 2
       };   
 
   private: 
@@ -59,8 +59,8 @@ namespace geomtools {
      *   (A0B)   : reference angle
      */
 
-    uint32_t __n_sides; //! The number of sides/vertices of the polygon
-    double   __r;       //! The radius of the polygon, i.e. the distance from center to vertices (circumradius)
+    uint32_t _n_sides_; //! The number of sides/vertices of the polygon
+    double   _r_;       //! The radius of the polygon, i.e. the distance from center to vertices (circumradius)
 
   public: 
 
@@ -107,20 +107,20 @@ namespace geomtools {
     virtual string get_shape_name () const;
       
     virtual bool is_on_surface (const vector_3d &,
-				double tolerance_ = USING_PROPER_TOLERANCE) const; 
+                                double tolerance_ = USING_PROPER_TOLERANCE) const; 
     
     virtual vector_3d get_normal_on_surface (const vector_3d & position_,
-					     bool up_ = true) const;
+                                             bool up_ = true) const;
     
     virtual bool find_intercept (const vector_3d & from_, 
-				 const vector_3d & direction_,
-				 intercept_t & intercept_,
-				 double tolerance_ = USING_PROPER_TOLERANCE) const;
+                                 const vector_3d & direction_,
+                                 intercept_t & intercept_,
+                                 double tolerance_ = USING_PROPER_TOLERANCE) const;
 
     virtual void tree_dump (ostream & out_ = clog, 
-			    const string & title_ = "", 
-			    const string & indent_ = "", 
-			    bool inherit_= false) const;
+                            const string & title_ = "", 
+                            const string & indent_ = "", 
+                            bool inherit_= false) const;
  
   };
 

@@ -49,8 +49,8 @@ namespace geomtools {
   
     enum mode_flags_t
       {
-	MODE_NULL = 0x0,
-	MODE_WIRED_CYLINDER = 0x1
+        MODE_NULL = 0x0,
+        MODE_WIRED_CYLINDER = 0x1
       };
 
   public: 
@@ -60,265 +60,265 @@ namespace geomtools {
 
     static void 
     basic_draw_point_with_color (std::ostream &, 
-				 double x_, double y_, double z_, 
-				 double color_,
-				 bool endl_ = true);
+                                 double x_, double y_, double z_, 
+                                 double color_,
+                                 bool endl_ = true);
 
     static void 
     basic_draw_point_with_color (std::ostream & out_, 
-				 const vector_3d & point_,
-				 double color_,
-				 bool   endl_ = true);
+                                 const vector_3d & point_,
+                                 double color_,
+                                 bool   endl_ = true);
 
     static void 
     basic_draw_point (std::ostream &, 
-		      double x_, double y_, double z_,
-		      bool endl_);
+                      double x_, double y_, double z_,
+                      bool endl_);
 
     static void 
     basic_draw_point (std::ostream & out_, 
-		      double x_, double y_, double z_);
+                      double x_, double y_, double z_);
 
     static void 
     basic_draw_point (std::ostream &, 
-		      const vector_3d &,
-		      bool endl_);
+                      const vector_3d &,
+                      bool endl_);
 
     static void 
     basic_draw_point (std::ostream & out_, 
-		      const vector_3d & v_);
+                      const vector_3d & v_);
 
     static void 
     basic_draw_facet3 (std::ostream & out_, 
-		       const vector_3d & p1_, 
-		       const vector_3d & p2_, 
-		       const vector_3d & p3_,
-		       double color_ = 1.0);
+                       const vector_3d & p1_, 
+                       const vector_3d & p2_, 
+                       const vector_3d & p3_,
+                       double color_ = 1.0);
 
     static void 
     basic_draw_facet3 (std::ostream & out_, 
-		       const vector_3d & p1_, 
-		       const vector_3d & p2_, 
-		       const vector_3d & p3_, 
-		       const vector_3d & p4_,
-		       double color_ = 1.0);
+                       const vector_3d & p1_, 
+                       const vector_3d & p2_, 
+                       const vector_3d & p3_, 
+                       const vector_3d & p4_,
+                       double color_ = 1.0);
 
     static void 
     basic_draw_polyline (std::ostream &, 
-			 const polyline_t &);
+                         const polyline_t &);
     
     static void 
     draw_line (std::ostream &, 
-	       const vector_3d &, 
-	       const vector_3d &);
+               const vector_3d &, 
+               const vector_3d &);
     
     static void 
     draw_line (std::ostream &, 
-	       const line_3d &);
+               const line_3d &);
     
     static void 
     draw_polyline  (std::ostream &, 
-		    const vector_3d &, 
-		    const rotation_3d &,  
-		    const polyline_t &, 
-		    bool = false);
+                    const vector_3d &, 
+                    const rotation_3d &,  
+                    const polyline_t &, 
+                    bool = false);
     
     static void 
     draw_polyline  (std::ostream &, 
-		    const vector_3d &, 
-		    const rotation_3d &,  
-		    const polyline_3d &, 
-		    bool = false);
+                    const vector_3d &, 
+                    const rotation_3d &,  
+                    const polyline_3d &, 
+                    bool = false);
     
     static void 
     draw_segment  (std::ostream &, 
-		   const vector_3d &, 
-		   const rotation_3d &,  
-		   const vector_3d &, 
-		   const vector_3d &);
+                   const vector_3d &, 
+                   const rotation_3d &,  
+                   const vector_3d &, 
+                   const vector_3d &);
     
     static void 
     draw_segment  (std::ostream &, 
-		   const vector_3d &, 
-		   const rotation_3d &,  
-		   const line_3d &);
+                   const vector_3d &, 
+                   const rotation_3d &,  
+                   const line_3d &);
 
     static void 
     draw_line  (std::ostream &, 
-		   const vector_3d &, 
-		   const rotation_3d &,  
-		   const line_3d &);
+                const vector_3d &, 
+                const rotation_3d &,  
+                const line_3d &);
      
     static void 
     draw_rectangle (std::ostream &, 
-		    const vector_3d &, 
-		    const rotation_3d &,  
-		    double, 
-		    double, 
-		    bool = false);
+                    const vector_3d &, 
+                    const rotation_3d &,  
+                    double, 
+                    double, 
+                    bool = false);
      
     static void 
     draw_rectangle (std::ostream &, 
-		    const vector_3d &, 
-		    const rotation_3d &,  
-		    const rectangle &,
-		    bool = false);
+                    const vector_3d &, 
+                    const rotation_3d &,  
+                    const rectangle &,
+                    bool = false);
      
     static void 
     draw_circle (std::ostream &, 
-		 const vector_3d &, 
-		 const rotation_3d &,
-		 double, 
-		 size_t = 36 );
+                 const vector_3d &, 
+                 const rotation_3d &,
+                 double, 
+                 size_t = 36 );
      
     static void 
     draw_circle (std::ostream &, 
-		 const vector_3d &, 
-		 const rotation_3d &,
-		 const circle & , 
-		 size_t = 36 );
+                 const vector_3d &, 
+                 const rotation_3d &,
+                 const circle & , 
+                 size_t = 36 );
       
     static void 
     draw_disk (std::ostream &, 
-		 const vector_3d &, 
-		 const rotation_3d &,
-		 double, 
-		 size_t = 36 );
+               const vector_3d &, 
+               const rotation_3d &,
+               double, 
+               size_t = 36 );
       
     static void 
     draw_disk (std::ostream &, 
-		 const vector_3d &, 
-		 const rotation_3d &,
-		 const disk & , 
-		 size_t = 36 );
+               const vector_3d &, 
+               const rotation_3d &,
+               const disk & , 
+               size_t = 36 );
       
     static void 
     draw_regular_polygon (std::ostream &, 
-			  const vector_3d &, 
-			  const rotation_3d &,
-			  const regular_polygon &,
-			  bool draw_radius_ = false);
+                          const vector_3d &, 
+                          const rotation_3d &,
+                          const regular_polygon &,
+                          bool draw_radius_ = false);
    
     static void 
     draw_box (std::ostream &, 
-	      const vector_3d &, 
-	      const rotation_3d &,
-	      double, 
-	      double, 
-	      double);
+              const vector_3d &, 
+              const rotation_3d &,
+              double, 
+              double, 
+              double);
 
     static void 
     draw_box (std::ostream &, 
-	      const vector_3d &, 
-	      const rotation_3d &,
-	      const box &);
+              const vector_3d &, 
+              const rotation_3d &,
+              const box &);
 
     static void 
     draw_cylinder (std::ostream &, 
-		   const vector_3d &, 
-		   const rotation_3d &,
-		   double, 
-		   double, 
-		   size_t = 36);
+                   const vector_3d &, 
+                   const rotation_3d &,
+                   double, 
+                   double, 
+                   size_t = 36);
 
     static void 
     draw_cylinder (std::ostream &, 
-		   const vector_3d &, 
-		   const rotation_3d &,
-		   const cylinder &, 
-		   size_t = 36);
+                   const vector_3d &, 
+                   const rotation_3d &,
+                   const cylinder &, 
+                   size_t = 36);
 
     static void 
     draw_tube (std::ostream &, 
-	       const vector_3d &, 
-	       const rotation_3d &,
-	       double, 
-	       double, 
-	       double, 
-	       size_t = 36);
+               const vector_3d &, 
+               const rotation_3d &,
+               double, 
+               double, 
+               double, 
+               size_t = 36);
 
     static void 
     draw_tube (std::ostream &, 
-	       const vector_3d &, 
-	       const rotation_3d &,
-	       const tube &, 
-	       size_t = 36);
+               const vector_3d &, 
+               const rotation_3d &,
+               const tube &, 
+               size_t = 36);
 
     static void 
     draw_sphere (std::ostream &, 
-		 const vector_3d &, 
-		 const rotation_3d &,
-		 double, 
-		 size_t = 36,
-		 size_t = 16);
+                 const vector_3d &, 
+                 const rotation_3d &,
+                 double, 
+                 size_t = 36,
+                 size_t = 16);
 
     static void 
     draw_sphere (std::ostream &, 
-		 const vector_3d &, 
-		 const rotation_3d &,
-		 const sphere &, 
-		 size_t = 36,
-		 size_t = 16);
+                 const vector_3d &, 
+                 const rotation_3d &,
+                 const sphere &, 
+                 size_t = 36,
+                 size_t = 16);
 
     static void 
     draw_polycone (std::ostream &, 
-		   const vector_3d &, 
-		   const rotation_3d &,
-		   const polycone &, 
-		   size_t = 36);
+                   const vector_3d &, 
+                   const rotation_3d &,
+                   const polycone &, 
+                   size_t = 36);
 
     static void 
     draw_polyhedra (std::ostream &, 
-		   const vector_3d &, 
-		   const rotation_3d &,
-		   const polyhedra &);
+                    const vector_3d &, 
+                    const rotation_3d &,
+                    const polyhedra &);
 
     static void 
     draw_tessellated (std::ostream &, 
-		      const vector_3d &, 
-		      const rotation_3d &,
-		      const tessellated_solid &);
+                      const vector_3d &, 
+                      const rotation_3d &,
+                      const tessellated_solid &);
 
     static void 
     draw_union_3d (std::ostream &, 
-		   const vector_3d &, 
-		   const rotation_3d &,
-		   const union_3d &);
+                   const vector_3d &, 
+                   const rotation_3d &,
+                   const union_3d &);
 
     static void 
     draw_intersection_3d (std::ostream &, 
-			  const vector_3d &, 
-			  const rotation_3d &,
-			  const intersection_3d &);
+                          const vector_3d &, 
+                          const rotation_3d &,
+                          const intersection_3d &);
 
     static void 
     draw_subtraction_3d (std::ostream &, 
-			 const vector_3d &, 
-			 const rotation_3d &,
-			 const subtraction_3d &);
+                         const vector_3d &, 
+                         const rotation_3d &,
+                         const subtraction_3d &);
 
     // draw factory:
      
     typedef void (*draw_user_function_t) (std::ostream &, 
-					  const vector_3d &, 
-					  const rotation_3d &,
-					  const i_object_3d &, 
-					  void *);
+                                          const vector_3d &, 
+                                          const rotation_3d &,
+                                          const i_object_3d &, 
+                                          void *);
  
     static void basic_draw (ostream & out_,
-			    const vector_3d & position_, 
-			    const rotation_3d & rotation_, 
-			    const i_object_3d & o_,
-			    unsigned long mode_ = gnuplot_draw::MODE_NULL);
+                            const vector_3d & position_, 
+                            const rotation_3d & rotation_, 
+                            const i_object_3d & o_,
+                            unsigned long mode_ = gnuplot_draw::MODE_NULL);
   
     static void draw (ostream & out_, 
-		     const i_placement &, 
-		     const i_object_3d &);
+                      const i_placement &, 
+                      const i_object_3d &);
  
     static void draw (ostream & out_, 
-		     const i_placement &, 
-		     const i_object_3d &,
-		     unsigned long mode_);
+                      const i_placement &, 
+                      const i_object_3d &,
+                      unsigned long mode_);
 
   };
 

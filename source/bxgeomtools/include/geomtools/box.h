@@ -142,9 +142,9 @@ namespace geomtools {
 
   private: 
 
-    double x_; //!< Width (in arbitrary units)
-    double y_; //!< Length (in arbitrary units)
-    double z_; //!< Height (in arbitrary units)
+    double _x_; //!< Width (in arbitrary units)
+    double _y_; //!< Length (in arbitrary units)
+    double _z_; //!< Height (in arbitrary units)
        
   };
     

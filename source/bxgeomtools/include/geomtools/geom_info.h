@@ -28,46 +28,45 @@ namespace geomtools {
 
   using namespace std;
 
+  class logical_volume;
 
-    class logical_volume;
+  class geom_info
+  {
 
-    class geom_info
-    {
+  public:
 
-    public:
+    geom_info ();
 
-      geom_info ();
+    geom_info (const geom_id &);
 
-      geom_info (const geom_id &);
+    geom_info (const geom_id &, 
+               const placement &,
+               const logical_volume &);
 
-      geom_info (const geom_id &, 
-		 const placement &,
-		 const logical_volume &);
+    bool has_logical () const;
 
-      bool has_logical () const;
+    const placement & get_world_placement () const;
 
-      const placement & get_world_placement () const;
+    const logical_volume & get_logical () const;
 
-      const logical_volume & get_logical () const;
+    const geom_id & get_id () const;
 
-      const geom_id & get_id () const;
+    const geom_id & get_gid () const;
 
-      const geom_id & get_gid () const;
+    const geom_id & get_geom_id () const;
 
-      const geom_id & get_geom_id () const;
+    const datatools::utils::properties & get_properties () const;
 
-      const datatools::utils::properties & get_properties () const;
+    datatools::utils::properties & get_properties ();
 
-      datatools::utils::properties & get_properties ();
+    friend ostream & operator<< (ostream &, const geom_info &);
 
-      friend ostream & operator<< (ostream &, const geom_info &);
+  private:
 
-    private:
-
-      datatools::utils::properties properties_;
-      geom_id                      gid_;
-      placement                    world_placement_;
-      const logical_volume *       logical_;
+    datatools::utils::properties _properties_;
+    geom_id                      _gid_;
+    placement                    _world_placement_;
+    const logical_volume *       _logical_;
 
   };
 

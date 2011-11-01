@@ -45,24 +45,10 @@ namespace geomtools {
 
     enum mode_t
       {
-	MODE_NONE = 0,
-	MODE_ONLY = 1,
-	MODE_EXCLUDED = 2
+        MODE_NONE = 0,
+        MODE_ONLY = 1,
+        MODE_EXCLUDED = 2
       };
-
-  private:
-
-    bool                           __initialized;
-    const model_factory  *         __factory;
-    const logical_volume *         __top_logical;
-    size_t                         __depth; // running depth at build
-
-    size_t                         __max_depth;
-    int                            __mode;
-    list<string>                   __only_excluded_list;
-    
-    // debug display utility:
-    datatools::utils::io::indenter __indenter;
 
   public:
 
@@ -70,13 +56,13 @@ namespace geomtools {
     static string make_key (const string & flag_);
 
     static void extract (const datatools::utils::properties & source_,
-			 datatools::utils::properties & target_);
+                         datatools::utils::properties & target_);
 
     static bool has_flag (const datatools::utils::properties & config_,
-			  const string & flag_);
+                          const string & flag_);
 
     static bool has_key (const datatools::utils::properties & config_,
-			 const string & key_);
+                         const string & key_);
  
     bool is_initialized () const;
     bool is_mode_none () const;
@@ -96,28 +82,35 @@ namespace geomtools {
     void initialize (const datatools::utils::properties & config_);
     
     virtual void build_from (const model_factory & factory_,
-			     const string & mother_ = "world");
+                             const string & mother_ = "world");
 
   private:
 
-    void __build ();
+    void _build_ ();
 
-    void __build_logical_children (const logical_volume & log_, 
-				   const placement & mother_world_placement_,
-				   const geom_id & mother_id_);
+    void _build_logical_children_ (const logical_volume & log_, 
+                                   const placement & mother_world_placement_,
+                                   const geom_id & mother_id_);
 
   public:
 
     void dump_dictionnary (ostream & out_) const;
 
-    void test () 
-    {
-      namespace du = datatools::utils;
-      ostringstream oss;
-      __indenter++;
-      oss << "test: " << du::io::devel << __indenter << endl;
-      __indenter--;
-    }
+    void test ();
+
+  private:
+
+    bool                           _initialized_;
+    const model_factory  *         _factory_;
+    const logical_volume *         _top_logical_;
+    size_t                         _depth_; //!< Running depth at build
+
+    size_t                         _max_depth_;
+    int                            _mode_;
+    list<string>                   _only_excluded_list_;
+    
+    // debug display utility:
+    datatools::utils::io::indenter _indenter_;
 
   };
 

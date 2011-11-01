@@ -29,57 +29,53 @@ namespace geomtools {
   class tube : public i_shape_3d, public i_stackable
   {
   public:
-    enum faces_mask_t
+    enum faces_mask_type
       {
-	FACE_NONE       = FACE_NONE_BIT,
-	FACE_OUTER_SIDE = 0x1,
-	FACE_BOTTOM     = 0x2,
-	FACE_TOP        = 0x4,
-	FACE_INNER_SIDE = 0x8,
-	FACE_ALL        = (FACE_OUTER_SIDE 
-			   | FACE_BOTTOM 
-			   | FACE_TOP 
-			   | FACE_INNER_SIDE)
+        FACE_NONE       = FACE_NONE_BIT,
+        FACE_OUTER_SIDE = 0x1,
+        FACE_BOTTOM     = 0x2,
+        FACE_TOP        = 0x4,
+        FACE_INNER_SIDE = 0x8,
+        FACE_ALL        = (FACE_OUTER_SIDE 
+                           | FACE_BOTTOM 
+                           | FACE_TOP 
+                           | FACE_INNER_SIDE)
       };  
   
   public:
+
     static const std::string TUBE_LABEL;
-  
-  private: 
-    double __z;
-    double __inner_r;
-    double __outer_r;
   
   public: 
     
     double get_xmin () const
     {
-      return -__outer_r;
+      return -_outer_r_;
     }
     
     double get_xmax () const
     {
-      return +__outer_r;
+      return +_outer_r_;
     }
     
     double get_ymin () const
     {
-      return -__outer_r;
+      return -_outer_r_;
     }
     
     double get_ymax () const
     {
-      return +__outer_r;
+      return +_outer_r_;
     }
     
     double get_zmin () const
     {
-      return -0.5*__z;
+      return -0.5*_z_;
     }
     
     double get_zmax () const
     {
-      return +0.5*__z;
+      return +0.5*_z_;
     }
 
     double get_z () const;
@@ -130,18 +126,18 @@ namespace geomtools {
     double get_volume () const;
 
     virtual bool is_inside (const vector_3d &, 
-			    double skin_ = USING_PROPER_SKIN) const;
+                            double skin_ = USING_PROPER_SKIN) const;
     
     virtual bool is_on_surface (const vector_3d &, 
-				int mask_    = FACE_ALL, 
-				double skin_ = USING_PROPER_SKIN) const;
+                                int mask_    = FACE_ALL, 
+                                double skin_ = USING_PROPER_SKIN) const;
 
     virtual vector_3d get_normal_on_surface (const vector_3d & position_) const;
     
     virtual bool find_intercept (const vector_3d & from_, 
-				 const vector_3d & direction_,
-				 intercept_t & intercept_,
-				 double skin_ = USING_PROPER_SKIN) const;
+                                 const vector_3d & direction_,
+                                 intercept_t & intercept_,
+                                 double skin_ = USING_PROPER_SKIN) const;
 
     friend std::ostream & 
     operator<< (std::ostream &, const tube &);
@@ -150,9 +146,15 @@ namespace geomtools {
     operator>> (std::istream &, tube &);
 
     virtual void tree_dump (ostream & out_         = clog, 
-			    const string & title_  = "", 
-			    const string & indent_ = "", 
-			    bool inherit_          = false) const;
+                            const string & title_  = "", 
+                            const string & indent_ = "", 
+                            bool inherit_          = false) const;
+  
+  private: 
+
+    double _z_;
+    double _inner_r_;
+    double _outer_r_;
 
   };
 
