@@ -10,4 +10,7 @@ This is the mygsl package ChangeLog
 2011-07-01 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
 	* explicit linking of libmygsl.so with libgsl[cblas].so
 	* pre-tag 2.1
+2011-11-01 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* fix coding style
+	
 
