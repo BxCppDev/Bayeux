@@ -94,7 +94,7 @@ public:
     // reset Fortran common block:
     this->npfull = 0;
     this->tevst = 0.0F;
-    for (int i = 0; i < GENBB_MAX_NB_PARTICLES; i++)
+    for (int i = 0; i < (int) GENBB_MAX_NB_PARTICLES; i++)
       {
 	this->npgeant[i] = 0;
 	for (int j = 0; j < 3; j++)
