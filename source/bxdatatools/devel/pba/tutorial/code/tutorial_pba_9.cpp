@@ -72,7 +72,7 @@ void do_text_in (void)
   clog << "  answer    = " << answer << endl;
   clog << "  value     = " << value << endl;
   clog << "  precision = " << precision << endl;
-  clog << "  question    = \"" << question << "\"" << endl;
+  clog << "  question  = \"" << question << "\"" << endl;
 
   return;   
 }
@@ -119,7 +119,7 @@ void do_xml_in (void)
   clog << "  answer    = " << answer << endl;
   clog << "  value     = " << value << endl;
   clog << "  precision = " << precision << endl;
-  clog << "  question    = \"" << question << "\"" << endl;
+  clog << "  question  = \"" << question << "\"" << endl;
 
   return;   
 }

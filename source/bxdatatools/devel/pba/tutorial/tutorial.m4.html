@@ -1,3 +1,4 @@
+dnl tutorial.m4.html
 include(`func.m4')
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -55,7 +56,7 @@ document.getElementById('tutorial_pba_11_cpp').style.display='none';
 <dl class="index">
   <dt><a href="#Quick_start">Quick start</a><br>
     <ul>
-      <li><a href="#Quick_start:store_1">How to store some simple data types in a <i>portable binary output archive</i></a></li>
+      <li><a href="#Quick_start:store_1">How to store some simple data in a <i>portable binary output archive</i></a></li>
       <li><a href="#Quick_start:load_1">How to load some simple data from a <i>portable binary input archive</i></a></li>
     </ul>
   </dt>
@@ -85,7 +86,7 @@ document.getElementById('tutorial_pba_11_cpp').style.display='none';
 Are you impatient to enjoy the Boost Portable Binary Archives (PBA) ? 
 If so, this section is for you.
 
-<h3><a name="Quick_start:store_1"></a>How to store some simple data types in a <i>portable binary output archive</i></h2>
+<h3><a name="Quick_start:store_1"></a>How to store some simple data in a <i>portable binary output archive</i></h2>
 
 <p>
 The <tt class="fs">tutorial_pba_0.cpp</tt> sample
@@ -790,7 +791,7 @@ the <i>size</i> and 8 bytes for the <i>content</i>) : <tt class="byte">8 ? ? ? ?
 ? ? ?</tt>,
 <li>  1 zero  floating point  value that  uses only  one <i>zero-optimized</i>  byte : <tt class="byte">0</tt>.
 </ul>
-Thus one here achieves a very interesting compression level.
+Thus one here achieves a very interesting <i>compression</i> level.
 </p>
 <p>
 It is also possible to use BZIP2 in a similar fashion
@@ -834,8 +835,9 @@ mym4_html_to_top
 
 <!--------------------------------------------------------------------------------->
 <hr>
-<p>Revised 2011-10-16 
-<p><i>&copy; Copyright <a href="mailto:mauger@lpccaen.in2p3.fr">François Mauger</a> 2011.<br>
+<p>Revised 2011-11-07 
+<p><i>&copy; Copyright <a href="mailto:mauger@lpccaen.in2p3.fr">François Mauger</a>, 
+<a href="mailto:Christian.Pfligersdorffer@eos.info">Christian Pfligersdorffer</a> 2011.<br>
 Distributed under the Boost Software License, Version 1.0.<br> 
 (See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 </i>
@@ -845,3 +847,4 @@ Distributed under the Boost Software License, Version 1.0.<br>
 
 </html>
 <!-- end of tutorial.html -->
+dnl end of tutorial.m4.html

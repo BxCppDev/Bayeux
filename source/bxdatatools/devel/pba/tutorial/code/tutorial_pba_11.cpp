@@ -176,10 +176,10 @@ int main (void)
     my_data.print (clog, "Loaded data from text archive");
   }
   
-  clog << "PBA store I/O elapsed time  : " << elapsed_time_pba_out << " (second)" << endl;
-  clog << "PBA load I/O elapsed time   : " << elapsed_time_text_out << " (second)" << endl;  
-  clog << "Text store I/O elapsed time : " << elapsed_time_pba_in << " (second)" << endl;
-  clog << "Text load I/O elapsed time  : " << elapsed_time_text_in << " (second)" << endl;
+  clog << "PBA  store I/O elapsed time : " << elapsed_time_pba_out  << " (second)" << endl;
+  clog << "Text store I/O elapsed time : " << elapsed_time_text_out << " (second)" << endl;  
+  clog << "PBA  load  I/O elapsed time : " << elapsed_time_pba_in   << " (second)" << endl;
+  clog << "Text load  I/O elapsed time : " << elapsed_time_text_in  << " (second)" << endl;
 
   return 0;
 }

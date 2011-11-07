@@ -1,4 +1,4 @@
-
+# Top level GNUMakefile
 
 .PHONY : all
 all: tutorial.html
@@ -16,7 +16,7 @@ show: tutorial.html
 	firefox file://$(shell pwd)/$< &
 
 .PHONY : clean
-clean: up
+clean : up
 	find . -name "*~" -exec $(RM) \{\} \;
 	cd code; make clean
 	$(RM) .prepare
@@ -33,7 +33,7 @@ prepare :
 
 tutorial.html : tutorial.m4.html
 	test -f .prepare || make prepare
-	m4 -I./code/ --debug=V func.m4 $< > $@
+	m4 -I./code/ --debug=V func.m4 $< > $@ || echo -n ""
 
 
 
