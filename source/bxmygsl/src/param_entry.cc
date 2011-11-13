@@ -10,14 +10,14 @@
 
 namespace mygsl {
 
-  const double param_entry::NO_MIN_VALUE = -numeric_limits<double>::infinity (); 
-  const double param_entry::NO_MAX_VALUE = numeric_limits<double>::infinity (); 
-  const double param_entry::NO_VALUE     = numeric_limits<double>::quiet_NaN (); 
-  const double param_entry::DEFAULT_STEP = 1.0; 
-  const double param_entry::AUTO_STEP = 0.0; 
-  const string param_entry::AUTO_LABEL = "auto"; 
-  const string param_entry::FREE_LABEL = "free"; 
-  const string param_entry::CONST_LABEL = "const"; 
+  const double param_entry::NO_MIN_VALUE = -numeric_limits<double>::infinity ();
+  const double param_entry::NO_MAX_VALUE = numeric_limits<double>::infinity ();
+  const double param_entry::NO_VALUE     = numeric_limits<double>::quiet_NaN ();
+  const double param_entry::DEFAULT_STEP = 1.0;
+  const double param_entry::AUTO_STEP = 0.0;
+  const string param_entry::AUTO_LABEL = "auto";
+  const string param_entry::FREE_LABEL = "free";
+  const string param_entry::CONST_LABEL = "const";
 
   bool param_entry::has_step () const
   {
@@ -62,41 +62,41 @@ namespace mygsl {
     return _best_value_;
   }
 
-  bool param_entry::has_limit () const 
+  bool param_entry::has_limit () const
   {
-    return _limit_ != LIMIT_NO; 
+    return _limit_ != LIMIT_NO;
   }
 
-  bool param_entry::has_no_limit () const 
+  bool param_entry::has_no_limit () const
   {
-    return _limit_ == LIMIT_NO; 
+    return _limit_ == LIMIT_NO;
   }
 
-  bool param_entry::has_min () const 
+  bool param_entry::has_min () const
   {
-    return _limit_ & LIMIT_MIN; 
+    return _limit_ & LIMIT_MIN;
   }
 
-  bool param_entry::has_max () const 
+  bool param_entry::has_max () const
   {
-    return _limit_ & LIMIT_MAX; 
+    return _limit_ & LIMIT_MAX;
   }
 
-  bool param_entry::is_const () const 
-  { 
-    return _type_ & TYPE_CONST; 
+  bool param_entry::is_const () const
+  {
+    return _type_ & TYPE_CONST;
   }
 
-  bool param_entry::is_free () const 
-  { 
-    return _type_ & TYPE_FREE; 
+  bool param_entry::is_free () const
+  {
+    return _type_ & TYPE_FREE;
   }
 
-  bool param_entry::is_auto () const 
-  { 
-    return _type_ & TYPE_AUTO; 
+  bool param_entry::is_auto () const
+  {
+    return _type_ & TYPE_AUTO;
   }
- 
+
   void param_entry::set_best_value (const best_value & best_value_)
   {
     /*
@@ -112,7 +112,7 @@ namespace mygsl {
     _best_value_ = best_value_;
     return;
   }
- 
+
   void param_entry::reset_best_value ()
   {
     _best_value_.reset ();
@@ -128,13 +128,13 @@ namespace mygsl {
   {
     if (is_auto ())
       {
-        if (auto_) 
+        if (auto_)
           {
             _type_ |= TYPE_AUTO_COMPUTED;
           }
         else
           {
-            _type_ ^= TYPE_AUTO_COMPUTED;
+            _type_ &= TYPE_AUTO_COMPUTED;
           }
       }
     return;
@@ -142,13 +142,13 @@ namespace mygsl {
 
   bool param_entry::has_best_value () const
   {
-    return _best_value_.has_value (); 
+    return _best_value_.has_value ();
   }
 
   double param_entry::get_dist_to_min () const
   {
     double dist = 0.0;
-    if (has_min ()) 
+    if (has_min ())
       {
         dist = get_value () - _min_;
       }
@@ -158,7 +158,7 @@ namespace mygsl {
   double param_entry::get_overflow () const
   {
     double overflow = 0.0;
-    if (has_max ()) 
+    if (has_max ())
       {
         if (get_value () > _max_)
           {
@@ -171,7 +171,7 @@ namespace mygsl {
   double param_entry::get_underflow () const
   {
     double underflow = 0.0;
-    if (has_min ()) 
+    if (has_min ())
       {
         if (get_value () < _min_)
           {
@@ -184,7 +184,7 @@ namespace mygsl {
   double param_entry::get_dist_to_max () const
   {
     double dist = 0.0;
-    if (has_max ()) 
+    if (has_max ())
       {
         dist = get_value () - _max_;
       }
@@ -193,14 +193,14 @@ namespace mygsl {
 
   double param_entry::get_sign_limit () const
   {
-    if (has_min ()) 
+    if (has_min ())
       {
         if (get_value () < _min_)
           {
             return -1.0;
           }
       }
-    if (has_max ()) 
+    if (has_max ())
       {
         if (get_value () > _max_)
           {
@@ -226,7 +226,7 @@ namespace mygsl {
   {
     if (has_min ())
       {
-        if ((get_value () >= _min_) 
+        if ((get_value () >= _min_)
             && (get_value () < (_min_ + get_step ()))
             )
           {
@@ -240,7 +240,7 @@ namespace mygsl {
   {
     if (has_max ())
       {
-        if ((get_value () <= _max_) 
+        if ((get_value () <= _max_)
             && (get_value () > (_max_ - get_step ()))
             )
           {
@@ -253,7 +253,7 @@ namespace mygsl {
   bool param_entry::is_in_safe_range () const
   {
     bool ok = true;
-    if (has_limit ()) 
+    if (has_limit ())
       {
         if (ok && has_min () && (get_value () < (_min_ + get_step ()))) ok = false;
         if (ok && has_max () && (get_value () > (_max_ - get_step ()))) ok = false;
@@ -264,7 +264,7 @@ namespace mygsl {
   bool param_entry::is_in_range () const
   {
     bool ok = true;
-    if (has_limit ()) 
+    if (has_limit ())
       {
         if (ok && has_min () && (get_value () < _min_)) ok = false;
         if (ok && has_max () && (get_value () > _max_)) ok = false;
@@ -325,7 +325,7 @@ namespace mygsl {
         throw logic_error ("mygsl::param_entry::set_value_no_check: Cannot change value for this parameter is 'const'!");
       }
     _value_ = value_;
-    if (is_auto ()) 
+    if (is_auto ())
       {
         set_auto_computed (true);
       }
@@ -335,14 +335,14 @@ namespace mygsl {
   void param_entry::set_no_max ()
   {
     _limit_ ^= param_entry::LIMIT_MAX;
-    _max_ = param_entry::NO_MAX_VALUE; 
+    _max_ = param_entry::NO_MAX_VALUE;
     return;
   }
 
   void param_entry::set_no_min ()
   {
     _limit_ ^= param_entry::LIMIT_MIN;
-    _min_ = param_entry::NO_MIN_VALUE; 
+    _min_ = param_entry::NO_MIN_VALUE;
     return;
   }
 
@@ -358,9 +358,9 @@ namespace mygsl {
     if (min_ >= max_)
       {
         ostringstream message;
-        message << "mygsl::param_entry::set_min_max: " 
-                << "Invalid min/max range" 
-                << " [" << min_ << ":" << max_ << "] " 
+        message << "mygsl::param_entry::set_min_max: "
+                << "Invalid min/max range"
+                << " [" << min_ << ":" << max_ << "] "
                 << "for parameter '" << get_name () << "'!";
         throw logic_error (message.str ());
       }
@@ -386,16 +386,16 @@ namespace mygsl {
           {
             _step_ = (_max_ - _min_) / 100.0;
           }
-        else 
+        else
           {
             _step_ = DEFAULT_STEP;
           }
       }
     else
-      { 
+      {
         if (has_min () && has_max ())
           {
-            if (step_ > (_max_ - _min_)) 
+            if (step_ > (_max_ - _min_))
               {
                 std::ostringstream message;
                 message << "param_entry::set_step: ";
@@ -407,7 +407,7 @@ namespace mygsl {
       }
      return;
  }
-  
+
   bool param_entry::check_value () const
   {
     return is_in_range ();
@@ -417,7 +417,7 @@ namespace mygsl {
   {
     double old_val = _value_;
     set_value_no_check (value_);
-    if (! is_in_range ()) 
+    if (! is_in_range ())
       {
         _value_ = old_val;
         std::ostringstream message;
@@ -432,18 +432,18 @@ namespace mygsl {
 
   param_entry::param_entry (const string & name_)
   {
-    _name_  = name_;  
+    _name_  = name_;
     _type_  = param_entry::TYPE_FREE;
     _limit_ = param_entry::LIMIT_NO;
-    _min_   = param_entry::NO_MIN_VALUE; 
-    _max_   = param_entry::NO_MAX_VALUE; 
+    _min_   = param_entry::NO_MIN_VALUE;
+    _max_   = param_entry::NO_MAX_VALUE;
     _value_ = param_entry::NO_VALUE;
     _step_  = DEFAULT_STEP;
     reset_best_value ();
     return;
   }
 
-  param_entry 
+  param_entry
   param_entry::make_auto (const std::string & name_, double step_)
   {
     param_entry pe (name_);
@@ -452,9 +452,9 @@ namespace mygsl {
     return pe;
   }
 
-  param_entry  
-  param_entry::make_auto_min (const std::string & name_, 
-                              double min_, 
+  param_entry
+  param_entry::make_auto_min (const std::string & name_,
+                              double min_,
                               double step_)
   {
     param_entry pe (name_);
@@ -464,9 +464,9 @@ namespace mygsl {
     return pe;
   }
 
-  param_entry  
-  param_entry::make_auto_max (const std::string & name_, 
-                              double max_, 
+  param_entry
+  param_entry::make_auto_max (const std::string & name_,
+                              double max_,
                               double step_)
   {
     param_entry pe (name_);
@@ -476,9 +476,9 @@ namespace mygsl {
     return pe;
   }
 
-  param_entry  
-  param_entry::make_auto_range (const std::string & name_, 
-                                double min_, 
+  param_entry
+  param_entry::make_auto_range (const std::string & name_,
+                                double min_,
                                 double max_,
                                 double step_)
   {
@@ -489,7 +489,7 @@ namespace mygsl {
     return pe;
   }
 
-  param_entry 
+  param_entry
   param_entry::make_const (const std::string & name_ ,
                            double value_)
   {
@@ -499,7 +499,7 @@ namespace mygsl {
     return pe;
   }
 
-  param_entry 
+  param_entry
   param_entry::make_free (const std::string & name_,
                           double value_,
                           double step_)
@@ -511,7 +511,7 @@ namespace mygsl {
     return pe;
   }
 
-  param_entry 
+  param_entry
   param_entry::make_free_min (const std::string & name_,
                               double min_,
                               double value_,
@@ -525,7 +525,7 @@ namespace mygsl {
     return pe;
   }
 
-  param_entry 
+  param_entry
   param_entry::make_free_max (const std::string & name_,
                               double max_,
                               double value_,
@@ -538,8 +538,8 @@ namespace mygsl {
     pe.set_step (step_);
     return pe;
   }
- 
-  param_entry 
+
+  param_entry
   param_entry::make_free_range (const std::string & name_,
                                 double min_,
                                 double max_,
@@ -554,8 +554,8 @@ namespace mygsl {
     return pe;
   }
 
-  void param_entry::print (ostream & out_, 
-                           const string & title_, 
+  void param_entry::print (ostream & out_,
+                           const string & title_,
                            const string & indent_) const
   {
     string indent = indent_;
@@ -566,8 +566,8 @@ namespace mygsl {
         out_ << indent << title_ << ":" << endl;
       }
     out_ << indent << tag << "Name :      '" << get_name () << "'" << endl;
-    out_ << indent << tag << "Type:       '" 
-         << (is_free () ? FREE_LABEL : (is_const () ? CONST_LABEL : AUTO_LABEL)) 
+    out_ << indent << tag << "Type:       '"
+         << (is_free () ? FREE_LABEL : (is_const () ? CONST_LABEL : AUTO_LABEL))
          << "'"  << endl;
     out_ << indent << tag << "Minimum:    ";
     if (! has_min ())
@@ -616,7 +616,7 @@ namespace mygsl {
         out_ << "<not computed yet>";
       }
     out_ << endl;
-    if (! is_const ()) 
+    if (! is_const ())
       {
         out_ << indent << tag << "Step:       " << get_step () << endl;
         if (has_best_value ())
@@ -628,7 +628,7 @@ namespace mygsl {
             out_ << indent << tag << "Best value: " << "<no best value>" << endl;
           }
       }
-    out_ << indent << ltag << "Comment:   " 
+    out_ << indent << ltag << "Comment:   "
          << (get_comment ().empty ()? "<no comment>" : get_comment ()) << endl;
     return;
   }
