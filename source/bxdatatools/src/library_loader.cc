@@ -121,7 +121,7 @@ namespace datatools {
  	}
       else
 	{
-	  _flags_ ^= debug;
+	  _flags_ &= debug;
 	}
       return;
     }
@@ -139,7 +139,7 @@ namespace datatools {
 	}
       else
 	{
-	  _flags_ ^= allow_unregistered;
+	  _flags_ &= allow_unregistered;
 	}
       return;
     }
