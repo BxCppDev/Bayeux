@@ -313,7 +313,6 @@ namespace datatools {
        return;
    }
     
-    
     void histos::print2 ( std::ostream & out_ )
     {
       double x_step_size = ( _x_max_ - _x_min_ ) / (double)( _x_step_ );
@@ -362,7 +361,6 @@ namespace datatools {
       out_ << std::endl
 	   << "** histos: gnuplot example: **" << std::endl
 	   << "------------------------------" << std::endl;
-    
       out_ << "set autoscale"  << std::endl
 	   << "set xlabel 'x'" << std::endl
 	   << "set ylabel 'y'" << std::endl
@@ -374,11 +372,31 @@ namespace datatools {
 	   << "set dgrid3d " << _y_step_ << "," << _x_step_ << ",2" << std::endl
 	   << "splot [" << _x_min_ << ":" << _x_max_ << "]"
 	   << "[" << _y_min_ << ":" << _y_max_ << "][0:*] '" << out_txt
-	   << "' u 1:2:3 with dots title 'histogram_3d'"
+	   << "' u 1:2:3 with dots title 'histogram 3d'"
 	   << std::endl << std::endl;
        return;
    }
 
+    
+    void histos::help2 ( std::ostream & out_, std::string file_ )
+    {
+      std::string out_txt = "histo_3d.his";
+      if ( file_ != "" )
+      out_txt = file_;
+      
+      out_ << std::endl
+	   << "** histos: gnuplot example: **" << std::endl
+	   << "------------------------------" << std::endl;
+      out_ << "set autoscale"  << std::endl
+	   << "set xlabel 'x'" << std::endl
+	   << "set ylabel 'y'" << std::endl
+	   << "set zlabel 'N'" << std::endl
+	   << "set hidden3d"       << std::endl
+	   << "splot [" << _x_min_ << ":" << _x_max_ << "]"
+	   << "[" << _y_min_ << ":" << _y_max_ << "][0:*] '" << out_txt
+	   << "' u 1:2:3 with lines title 'histogram 3d'"
+	   << std::endl << std::endl;
+    }
   }
   
 } // end of histos.cc

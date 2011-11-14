@@ -70,9 +70,10 @@ namespace datatools {
       void y_normalize();
       void do_ratio( histos & histo_3d_2_ );
       
-      void print ( std::ostream & );
+      void print  ( std::ostream & );
+      void help   ( std::ostream &, std::string file_ = "" );
       void print2 ( std::ostream & );
-      void help  ( std::ostream &, std::string file_ = "" );
+      void help2  ( std::ostream &, std::string file_ = "" );
 
       void get_x_values ( std::vector<double> & );
       void get_y_values ( std::vector<double> & );
