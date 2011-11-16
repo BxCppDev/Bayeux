@@ -77,8 +77,8 @@ namespace datatools {
     void histos::set_x_min ( double x_min_ )
     {
       _x_min_ = x_min_;
-       return;
-   }
+			return;
+		}
   
     void histos::set_x_max ( double x_max_ )
     {
@@ -127,8 +127,8 @@ namespace datatools {
     {
       set_x_min  ( x_min_ );
       set_x_max  ( x_max_ );
-       return;
-   }
+			return;
+		}
 
     void histos::set_y_range ( double y_min_, double y_max_ )
     {
@@ -159,95 +159,137 @@ namespace datatools {
       _histo_3d_.resize ( _x_step_ );
     
       for ( size_t i = 0; i < _histo_3d_.size(); i++ )
-	{
-	  _histo_3d_[i].resize ( _y_step_ );
+				{
+					_histo_3d_[i].resize ( _y_step_ );
 
-	  for ( size_t j = 0; j < _histo_3d_[i].size(); j++ )
-	    {
-	      _histo_3d_[i][j] = 0;
-	    }
-	}
-       return;
-   }
+					for ( size_t j = 0; j < _histo_3d_[i].size(); j++ )
+						{
+							_histo_3d_[i][j] = 0;
+						}
+				}
+			return;
+		}
 
 
-    void histos::build ( double x_, double y_ )
+    void histos::build ( double x_, double y_, double weight_ )
     {
       double x_step_size = ( _x_max_ - _x_min_ ) / (double)( _x_step_ );
       double y_step_size = ( _y_max_ - _y_min_ ) / (double)( _y_step_ );
     
       for ( int i = 0; i < _x_step_; i++ )
-	{
-	  for ( int j = 0; j < _y_step_; j++ )
-	    {
-	      if ( x_    >  ( _x_min_ + (double)(i)   * x_step_size )
-		   && x_ <= ( _x_min_ + (double)(i+1) * x_step_size )
-		   && y_ >  ( _y_min_ + (double)(j)   * y_step_size )
-		   && y_ <= ( _y_min_ + (double)(j+1) * y_step_size ) )
-		{
-		  _histo_3d_[i][j]++;
+				{
+					for ( int j = 0; j < _y_step_; j++ )
+						{
+							if ( x_    >  ( _x_min_ + (double)(i)   * x_step_size )
+									 && x_ <= ( _x_min_ + (double)(i+1) * x_step_size )
+									 && y_ >  ( _y_min_ + (double)(j)   * y_step_size )
+									 && y_ <= ( _y_min_ + (double)(j+1) * y_step_size ) )
+								{
+									_histo_3d_[i][j] += weight_;
+								}
+						}
+				}
+			return;
 		}
-	    }
-	}
-       return;
-   }
 
   
-    void histos::do_ratio( histos & histo_3d_2_ )
+    void histos::do_ratio( histos & histo_3d_2_, double n_, double m_ )
     {
       if ( _x_min_  == histo_3d_2_.get_x_min()  &&
-	   _x_max_  == histo_3d_2_.get_x_max()  &&
-	   _x_step_ == histo_3d_2_.get_x_step() &&
-	   _y_min_  == histo_3d_2_.get_y_min()  &&
-	   _y_max_  == histo_3d_2_.get_y_max()  &&
-	   _y_step_ == histo_3d_2_.get_y_step() )
-	{
-	  for ( int i = 0; i < _x_step_; i++ )
-	    for ( int j = 0; j < _y_step_; j++ )
-	      if ( histo_3d_2_.get_z( i, j ) != 0. )
-		_histo_3d_[i][j] /= histo_3d_2_.get_z( i, j );
-	      else
-		_histo_3d_[i][j] = -1.;
-	}
-       return;
-   }
+					 _x_max_  == histo_3d_2_.get_x_max()  &&
+					 _x_step_ == histo_3d_2_.get_x_step() &&
+					 _y_min_  == histo_3d_2_.get_y_min()  &&
+					 _y_max_  == histo_3d_2_.get_y_max()  &&
+					 _y_step_ == histo_3d_2_.get_y_step() )
+				{
+					for ( int i = 0; i < _x_step_; i++ )
+						for ( int j = 0; j < _y_step_; j++ )
+							if ( histo_3d_2_.get_z( i, j ) != 0. )
+								_histo_3d_[i][j] /= histo_3d_2_.get_z( i, j ) * m_ / n_ ;
+							else
+								_histo_3d_[i][j] = -1.;
+				}
+			return;
+		}
     
 
     void histos::x_normalize()
     {
       for ( int i = 0; i < _x_step_; i++ )
-	{
-	  double i_sum = 0;
+				{
+					double i_sum = 0;
 	
-	  for ( int j = 0; j < _y_step_; j++ )
-	    i_sum += _histo_3d_[i][j];
+					for ( int j = 0; j < _y_step_; j++ )
+						i_sum += _histo_3d_[i][j];
 	
-	  for ( int j = 0; j < _y_step_; j++ )
-	    {
-	      if ( _histo_3d_[i][j] != 0 )
-		_histo_3d_[i][j] /= i_sum;
-	    }
-	}
-        return;
-  }
+					for ( int j = 0; j < _y_step_; j++ )
+						{
+							if ( _histo_3d_[i][j] != 0 )
+								_histo_3d_[i][j] /= i_sum;
+						}
+				}
+			return;
+		}
   
+		void histos::do_ratio_sqrt ( histos & histo_3d_2_, double n_, double m_ )
+		{
+			if ( _x_min_  == histo_3d_2_.get_x_min()  &&
+					 _x_max_  == histo_3d_2_.get_x_max()  &&
+					 _x_step_ == histo_3d_2_.get_x_step() &&
+					 _y_min_  == histo_3d_2_.get_y_min()  &&
+					 _y_max_  == histo_3d_2_.get_y_max()  &&
+					 _y_step_ == histo_3d_2_.get_y_step() )
+				{
+					for ( size_t i = 0; i < _x_step_; i++ )
+						for ( size_t j = 0; j < _y_step_; j++ )
+							if ( histo_3d_2_.get_z( i, j ) != 0. )
+								_histo_3d_[i][j] /= ( sqrt ( histo_3d_2_.get_z( i, j ) * m_ ) / n_ );
+							else
+								_histo_3d_[i][j] = -1.;
+				}
+		}
+ 
+		void histos::compute_significance ( histos & histo_3d_2_, double n_, double m_ )
+		{
+			if ( _x_min_  == histo_3d_2_.get_x_min()  &&
+					 _x_max_  == histo_3d_2_.get_x_max()  &&
+					 _x_step_ == histo_3d_2_.get_x_step() &&
+					 _y_min_  == histo_3d_2_.get_y_min()  &&
+					 _y_max_  == histo_3d_2_.get_y_max()  &&
+					 _y_step_ == histo_3d_2_.get_y_step() )
+				{
+					for ( size_t i = 0; i < _x_step_; i++ )
+						for ( size_t j = 0; j < _y_step_; j++ )
+							if ( histo_3d_2_.get_z( i, j ) != 0. )
+								{
+									double current_val = _histo_3d_[i][j];
+									_histo_3d_[i][j] /= ( sqrt ( histo_3d_2_.get_z( i, j ) * m_
+																							 + current_val * n_ )
+																				/ n_ );
+								}
+							else
+								_histo_3d_[i][j] = -1.;
+				}
+		}
+ 
+
     void histos::y_normalize()
     {
       for ( int j = 0; j < _y_step_; j++ )
-	{
-	  double j_sum = 0;
+				{
+					double j_sum = 0;
 	
-	  for ( int i = 0; i < _x_step_; i++ )
-	    j_sum += _histo_3d_[i][j];
+					for ( int i = 0; i < _x_step_; i++ )
+						j_sum += _histo_3d_[i][j];
 	
-	  for ( int i = 0; i < _x_step_; i++ )
-	    {
-	      if ( _histo_3d_[i][j] != 0 )
-		_histo_3d_[i][j] /= j_sum;
-	    }
-	}
-       return;
-   }
+					for ( int i = 0; i < _x_step_; i++ )
+						{
+							if ( _histo_3d_[i][j] != 0 )
+								_histo_3d_[i][j] /= j_sum;
+						}
+				}
+			return;
+		}
   
 
     void histos::get_x_values ( std::vector<double> & values_ )
@@ -271,8 +313,8 @@ namespace datatools {
         for ( int j = 0; j < _y_step_; j++ )
           y_values.push_back ( _y_min_ + (double)(j) * y_step_size );
       values_ = y_values;
-       return;
-   }  
+			return;
+		}  
     
     void histos::get_z_values ( std::vector<double> & values_ )
     {
@@ -281,8 +323,8 @@ namespace datatools {
         for ( int j = 0; j < _y_step_; j++ )
           z_values.push_back ( _histo_3d_[i][j] );
       values_ = z_values;
-       return;
-   }
+			return;
+		}
     
     
     void histos::print ( std::ostream & out_ )
@@ -291,27 +333,27 @@ namespace datatools {
       double y_step_size = ( _y_max_ - _y_min_ ) / (double)( _y_step_ );
     
       out_ << "# Result"
-	   << std::endl;
+					 << std::endl;
 
       if ( _debug_ ) std::cerr << std::endl
-			       << "histos::print: DEBUG: Result : "
-			       << std::endl;
+															 << "histos::print: DEBUG: Result : "
+															 << std::endl;
     
       for ( int i = 0; i < _x_step_; i++ )
-	{
-	  for ( int j = 0; j < _y_step_; j++ )
-	    {
-	      out_ << ( _x_min_ + (double)(i) * x_step_size ) << " "
-		   << ( _y_min_ + (double)(j) * y_step_size ) << " "
-		   << _histo_3d_[i][j]
-		   << std::endl;
+				{
+					for ( int j = 0; j < _y_step_; j++ )
+						{
+							out_ << ( _x_min_ + (double)(i) * x_step_size ) << " "
+									 << ( _y_min_ + (double)(j) * y_step_size ) << " "
+									 << _histo_3d_[i][j]
+									 << std::endl;
 	    
-	      if ( _debug_ ) std::cerr << _histo_3d_[i][j] << '\t';
-	    }
-	  if ( _debug_ ) std::cerr << std::endl;
-	}
-       return;
-   }
+							if ( _debug_ ) std::cerr << _histo_3d_[i][j] << '\t';
+						}
+					if ( _debug_ ) std::cerr << std::endl;
+				}
+			return;
+		}
     
     void histos::print2 ( std::ostream & out_ )
     {
@@ -319,83 +361,83 @@ namespace datatools {
       double y_step_size = ( _y_max_ - _y_min_ ) / (double)( _y_step_ );
     
       out_ << "# Result"
-	   << std::endl;
+					 << std::endl;
 
       for ( int i = 0; i < _x_step_; i++ )
-	{
-	  for ( int j = 0; j < _y_step_; j++ )
-	    {
-	      out_ << ( _x_min_ + (double)(i) * x_step_size ) << " "
-		   << ( _y_min_ + (double)(j) * y_step_size ) << " "
-		   << _histo_3d_[i][j]
-		   << std::endl
-		   << ( _x_min_ + (double)(i) * x_step_size ) << " "
-		   << ( _y_min_ + ((double)(j)+1.) * y_step_size ) << " "
-		   << _histo_3d_[i][j]
-		   << std::endl;
-	    }
-	  out_ << std::endl;
-	  for ( int j = 0; j < _y_step_; j++ )
-	    {
-	      out_ << ( _x_min_ + ((double)(i)+1.) * x_step_size ) << " "
-		   << ( _y_min_ + (double)(j) * y_step_size ) << " "
-		   << _histo_3d_[i][j]
-		   << std::endl
-		   << ( _x_min_ + ((double)(i)+1.) * x_step_size ) << " "
-		   << ( _y_min_ + ((double)(j)+1.) * y_step_size ) << " "
-		   << _histo_3d_[i][j]
-		   << std::endl;
-	    }
-	  out_ << std::endl;
-	}
-        return;
-  }
+				{
+					for ( int j = 0; j < _y_step_; j++ )
+						{
+							out_ << ( _x_min_ + (double)(i) * x_step_size ) << " "
+									 << ( _y_min_ + (double)(j) * y_step_size ) << " "
+									 << _histo_3d_[i][j]
+									 << std::endl
+									 << ( _x_min_ + (double)(i) * x_step_size ) << " "
+									 << ( _y_min_ + ((double)(j)+1.) * y_step_size ) << " "
+									 << _histo_3d_[i][j]
+									 << std::endl;
+						}
+					out_ << std::endl;
+					for ( int j = 0; j < _y_step_; j++ )
+						{
+							out_ << ( _x_min_ + ((double)(i)+1.) * x_step_size ) << " "
+									 << ( _y_min_ + (double)(j) * y_step_size ) << " "
+									 << _histo_3d_[i][j]
+									 << std::endl
+									 << ( _x_min_ + ((double)(i)+1.) * x_step_size ) << " "
+									 << ( _y_min_ + ((double)(j)+1.) * y_step_size ) << " "
+									 << _histo_3d_[i][j]
+									 << std::endl;
+						}
+					out_ << std::endl;
+				}
+			return;
+		}
 
 
     void histos::help ( std::ostream & out_, std::string file_ )
     {
       std::string out_txt = "histo_3d.his";
       if ( file_ != "" )
-	out_txt = file_;
+				out_txt = file_;
       
       out_ << std::endl
-	   << "** histos: gnuplot example: **" << std::endl
-	   << "------------------------------" << std::endl;
+					 << "** histos: gnuplot example: **" << std::endl
+					 << "------------------------------" << std::endl;
       out_ << "set autoscale"  << std::endl
-	   << "set xlabel 'x'" << std::endl
-	   << "set ylabel 'y'" << std::endl
-	   << "set zlabel 'N'" << std::endl
-	   << "set pm3d"       << std::endl
-	   << "set palette rgbformulae -31, -36, -32" << std::endl
-	   << "set view 0, 0"  << std::endl
-	   << "unset surface"  << std::endl
-	   << "set dgrid3d " << _y_step_ << "," << _x_step_ << ",2" << std::endl
-	   << "splot [" << _x_min_ << ":" << _x_max_ << "]"
-	   << "[" << _y_min_ << ":" << _y_max_ << "][0:*] '" << out_txt
-	   << "' u 1:2:3 with dots title 'histogram 3d'"
-	   << std::endl << std::endl;
-       return;
-   }
+					 << "set xlabel 'x'" << std::endl
+					 << "set ylabel 'y'" << std::endl
+					 << "set zlabel 'N'" << std::endl
+					 << "set pm3d"       << std::endl
+					 << "set palette rgbformulae -31, -36, -32" << std::endl
+					 << "set view 0, 0"  << std::endl
+					 << "unset surface"  << std::endl
+					 << "set dgrid3d " << _y_step_ << "," << _x_step_ << ",2" << std::endl
+					 << "splot [" << _x_min_ << ":" << _x_max_ << "]"
+					 << "[" << _y_min_ << ":" << _y_max_ << "][0:*] '" << out_txt
+					 << "' u 1:2:3 with dots title 'histogram 3d'"
+					 << std::endl << std::endl;
+			return;
+		}
 
     
     void histos::help2 ( std::ostream & out_, std::string file_ )
     {
       std::string out_txt = "histo_3d.his";
       if ( file_ != "" )
-      out_txt = file_;
+				out_txt = file_;
       
       out_ << std::endl
-	   << "** histos: gnuplot example: **" << std::endl
-	   << "------------------------------" << std::endl;
+					 << "** histos: gnuplot example: **" << std::endl
+					 << "------------------------------" << std::endl;
       out_ << "set autoscale"  << std::endl
-	   << "set xlabel 'x'" << std::endl
-	   << "set ylabel 'y'" << std::endl
-	   << "set zlabel 'N'" << std::endl
-	   << "set hidden3d"       << std::endl
-	   << "splot [" << _x_min_ << ":" << _x_max_ << "]"
-	   << "[" << _y_min_ << ":" << _y_max_ << "][0:*] '" << out_txt
-	   << "' u 1:2:3 with lines title 'histogram 3d'"
-	   << std::endl << std::endl;
+					 << "set xlabel 'x'" << std::endl
+					 << "set ylabel 'y'" << std::endl
+					 << "set zlabel 'N'" << std::endl
+					 << "set hidden3d"       << std::endl
+					 << "splot [" << _x_min_ << ":" << _x_max_ << "]"
+					 << "[" << _y_min_ << ":" << _y_max_ << "][0:*] '" << out_txt
+					 << "' u 1:2:3 with lines title 'histogram 3d'"
+					 << std::endl << std::endl;
     }
   }
   

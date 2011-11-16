@@ -64,11 +64,17 @@ namespace datatools {
       void set_y_range ( double, double, int );
 
       void init();
-      void build ( double, double );
+      void build ( double, double, double weight = 1. );
 
       void x_normalize();
       void y_normalize();
-      void do_ratio( histos & histo_3d_2_ );
+
+      void do_ratio( histos & histo_3d_2_,
+		     double n_ = 1., double m_ = 1. );
+      void do_ratio_sqrt ( histos & histo_3d_2_,
+			   double n_ = 1., double m_ = 1. );
+      void compute_significance ( histos & histo_3d_2_,
+				  double n_ = 1., double m_ = 1. );
       
       void print  ( std::ostream & );
       void help   ( std::ostream &, std::string file_ = "" );
