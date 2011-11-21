@@ -135,8 +135,8 @@ namespace geomtools {
     geomtools::polyhedra * _polyhedra_;
 
     geomtools::i_shape_3d * _solid_;
-    geomtools::i_shape_3d * _inner_shape_; //!> for filled tube or polycone or polyhedra
-    geomtools::i_shape_3d * _outer_shape_; //!> for mother polycone or polyhedra
+    geomtools::i_shape_3d * _inner_shape_; //!< for filled tube or polycone or polyhedra
+    geomtools::i_shape_3d * _outer_shape_; //!< for mother polycone or polyhedra
 
     placement               _inner_placement_;
     logical_volume          _inner_logical_;

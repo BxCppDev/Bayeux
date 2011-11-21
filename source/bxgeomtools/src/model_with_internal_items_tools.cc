@@ -85,6 +85,14 @@ namespace geomtools {
     
   bool model_with_internal_items_tools::has_item (const string & label_) const
   {
+    if (label_.length () == 0)
+      {
+        ostringstream message;
+        message << "model_with_internal_items_tools::has_item: "
+                << "Empty label !"
+                << endl;
+        throw logic_error (message.str ());
+      }
     return _items_.find (label_) != _items_.end ();      
   }
     
@@ -98,7 +106,7 @@ namespace geomtools {
         message << "model_with_internal_items_tools::get_item: "
                 << "No item with label '" << label_ << "'"
                 << endl;
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     return found->second;
   }
@@ -122,6 +130,16 @@ namespace geomtools {
                                                   const i_model & model_,
                                                   const placement & placement_)
   {
+    /*
+    for (item_dict_t::const_iterator i = _items_.begin ();
+	 i != _items_.end ();
+	 i++)
+      {
+	clog << "DEVEL: model_with_internal_items_tools::add_item: "
+	     << "Label = '" << i->first << "'"
+	     << endl;
+      }
+    */	 
     if (has_item (label_))
       {
         ostringstream message;
@@ -197,7 +215,7 @@ namespace geomtools {
       {
         ostringstream message;
         message << "model_with_internal_items_tools::_at_construct: "
-                << "Missing logicals dictionary !"; 
+                << "Missing dictionary of models !"; 
         throw runtime_error (message.str ());
       }
 
@@ -223,7 +241,7 @@ namespace geomtools {
               ostringstream message;
               message << "model_with_internal_items_tools::_at_construct: "
                       << "Missing '" << item_placement_oss.str () << "' property !"; 
-              throw runtime_error (message.str ());
+              throw logic_error (message.str ());
             }
           // parse placement:
           bool res_parsing = true;
@@ -240,7 +258,7 @@ namespace geomtools {
               ostringstream message;
               message << "model_with_internal_items_tools::_at_construct: "
                       << "Item's placement parsing failed !"; 
-              throw runtime_error (message.str ());
+              throw logic_error (message.str ());
             }
         }
 
@@ -257,7 +275,7 @@ namespace geomtools {
               ostringstream message;
               message << "model_with_internal_items_tools::_at_construct: "
                       << "Missing '" << item_model_key_oss.str () << "' property !"; 
-              throw runtime_error (message.str ());
+              throw logic_error (message.str ());
             }
           {
             models_col_t::const_iterator found = 
@@ -272,11 +290,12 @@ namespace geomtools {
                 message << "model_with_internal_items_tools::_at_construct: "
                         << "Cannot find model with name '" 
                         << item_model_name << "' !";
-                throw runtime_error (message.str ());
+                throw logic_error (message.str ());
               }
           }
         }
 
+	//clog << "DEVEL: adding internal item : " << item_label << endl;
         add_item (item_label, *item_model, item_placement);
         physical_volume & item_phys = get_item (item_label).get_physical_volume ();
         const placement & item_plcmt = get_item (item_label).get_placement ();

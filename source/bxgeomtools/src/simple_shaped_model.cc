@@ -175,7 +175,7 @@ namespace geomtools {
         ostringstream message;
         message << "simple_shaped_model::_at_construct: "
                 << "Missing 'shape_type' property !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
 
     // parsing material:
@@ -188,7 +188,7 @@ namespace geomtools {
         ostringstream message;
         message << "simple_shaped_model::_at_construct: "
                 << "Missing 'material.ref' property !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
 
     // makes the embeded logical volume the default
@@ -233,15 +233,21 @@ namespace geomtools {
         ostringstream message;
         message << "simple_shaped_model::_at_construct: "
                 << "Shape '" << shape_type << "' is not supported !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
 
     // set the envelope solid shape:
     get_logical ().set_shape (*_solid_);
 
     // search for internal item to install within the model envelope:
+    /**
+     // 2011-11-21 FM : was
     if (_daughter_owner_logical_ != 0)
+    */
+     // 2011-11-21 FM : try this to forbid a second plug attempt...
+    if (_daughter_owner_logical_ != 0 && _internals_.get_number_of_items () == 0)
       {
+	//clog << "DEVEL: simple_shaped_model::_at_construct: _daughter_owner_logical_ && plug_internal_models..." << endl;
         _internals_.plug_internal_models (config_,
                                           *_daughter_owner_logical_,
                                           models_);
@@ -315,6 +321,7 @@ namespace geomtools {
     get_logical ().set_material_ref (_material_name_);
 
     // search for internal item to install within the model envelope:
+    //clog << "DEVEL: simple_shaped_model::_construct_box: plug_internal_models..." << endl;
     _internals_.plug_internal_models (config_, get_logical (), models_);
 
     return;
@@ -377,7 +384,8 @@ namespace geomtools {
     _solid_ = _cylinder_;
     get_logical ().set_material_ref (_material_name_);
     // search for internal item to install within the model envelope:
-    _internals_.plug_internal_models (config_, get_logical (), models_);
+    //clog << "DEVEL: simple_shaped_model::_construct_cylinder: plug_internal_models..." << endl;
+     _internals_.plug_internal_models (config_, get_logical (), models_);
 
     return;
   }
@@ -427,6 +435,7 @@ namespace geomtools {
     _solid_ = _sphere_;
     get_logical ().set_material_ref (_material_name_);
     // search for internal item to install within the model envelope:
+    //clog << "DEVEL: simple_shaped_model::_construct_sphere: plug_internal_models..." << endl;
     _internals_.plug_internal_models (config_, get_logical (), models_);
 
     return;
