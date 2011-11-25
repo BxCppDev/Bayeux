@@ -688,6 +688,14 @@ namespace geomtools {
     return ci.get_category () == category_;
   }
 
+  bool id_mgr::inherits (const geom_id & id_,
+			 const string & category_) const
+  {
+    int id_type = id_.get_type ();
+    const category_info & ci = get_category_info (id_type);
+    return ci.has_ancestor (category_);
+  }
+
   bool id_mgr::has (const geom_id & id_, const string & what_) const
   {
     int id_type = id_.get_type ();

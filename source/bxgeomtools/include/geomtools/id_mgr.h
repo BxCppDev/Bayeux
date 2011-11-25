@@ -141,6 +141,9 @@ namespace geomtools {
     //! check the category of an ID:
     bool is_category (const geom_id & id_, const string & category_) const;
 
+    //! check if an ID inherits a category:
+    bool inherits (const geom_id & id_, const string & category_) const;
+
     //! check is an ID has an address 'what':
     bool has (const geom_id &, const string & what_) const;
 
