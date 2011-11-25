@@ -1,0 +1,330 @@
+%% basic_concepts.tex
+
+\section{Basic concepts}
+
+\subsection{Logical volumes and physical volumes}
+
+\pn  First of  all, the  \texttt{geomtools} GMI  provides  an abstract
+interface that allows the description of the hierarchical relationship
+between physical objects in a geometry setup.
+
+\pn The key  concept is the \emph{logical volume}  which describes the
+fundamental  geometry properties  of  a  3D-object in  a  way that  is
+independant of its  placement in the whole setup.  This is illustrated
+on figure  \ref{fig:lv:0} where  several \emph{objects} (copies)  of a
+the same \emph{type} are placed within a setup.
+
+It  this crucial to  distinguish the  \emph{logical description}  of a
+chair  from its \emph{physical  implementations} (placements))  in the
+  virtual world :
+  \begin{itemize}
+
+  \item the \emph{logical volume} concept implement the description of
+    intrinsic geoemtry properties (the \emph{type}),
+
+  \item the  \emph{physical volume} concept  implement the description
+    of the placement (position/rotation matrix) of an instance of some
+    \emph{logical  volume}  in the  geometry  setup (the  instantiated
+    \emph{object}).
+
+  \end{itemize}
+
+\begin{figure}[h]
+\begin{center}
+\scalebox{0.75}{\input{\pdftextpath/fig_lv_0.pdftex_t}}
+\end{center}
+\caption{Several copies of a same type of object can be placed in the virtual 
+geometry setup.}\label{fig:lv:0}
+\end{figure}
+
+So what is a \emph{logical  volume} ? Following the approach of the GDML langage
+and GEANT4 modelling interface, we can list the informations that fully describe
+an instance of logical volume :
+
+\begin{itemize}
+
+\item   a  unique  \emph{name}   that  will   allow  to   address  the
+  \emph{logical volume}  object non-ambiguously in a  database of many
+  \emph{logical  volumes}.\\  \pn  Examples:  \TT{chair},  \TT{table},
+  \TT{desk},     \TT{bedroom},     \TT{bathroom},    \TT{city\_house},
+  \TT{cottage}\dots
+  
+\item  a 3D  shape that  will  define the  physical bounds  in the  3D
+  virtual   space.\\  \pn   Examples:  a   \emph{box}   of  dimensions
+  3$\times$2$\times$1.3 m$^3$,  a \emph{cylinder} of  radius $r$=25 cm
+  and height $h$=75 cm\dots
+
+\item An optional list of daughter volumes that are fully contained in
+  the  bounding limits  (the 3D  shape)  of the  logical volume.  This
+  implies that we know where  to place these daughter volumes. We thus
+  need to provide  not only their own \emph{logical  volumes} but also
+  their position  and orientation  (placement) in the  current logical
+  volume that is called the \emph{mother} volume.
+
+\end{itemize}
+
+Figure \ref{fig:lv:1} shows two  different descriptions of some simple
+volumes.  Despite  their external envelopes  share the same  shape and
+dimensions,  the  left  and   right  ''boxed''  logical  volumes  have
+significant differences.   They do  not have the  same colour  (may be
+because  they are  made with  different  materials) and  the blue  one
+contains  some  daughter  box  objects  while  the  left  one  has  no
+daughters. As the blue logical volume contains two tiny red boxes, we must
+provide the coordinates (position/rotation) for the placement of these
+daughter volumes. More it is obvious that the red boxes are copies 
+(\emph{physical volumes} that share the same description; we must
+also provide the description of this third \emph{logical volume}.
+
+\begin{figure}[h]
+\begin{center}
+\scalebox{0.75}{\input{\pdftextpath/fig_lv_1.pdftex_t}}
+\end{center}
+\caption{Two  different  simple  logical  volumes.}\label{fig:lv:1}
+\end{figure}
+
+We see  here that  the full  description of a  geometry setup  will be
+given by a  more or less complex hierarchy  of physical volumes nested
+in logical  volumes, in turn nested  in physical volume  at the parent
+level and so on\dots
+
+Typically the geometry description looks like a large tree
+of an arbitrary depth which depends on the number of nested
+hierarchy levels:
+\begin{ShellVerbatim}
+"world.log"(top-level of the hierarchy)
+|-- Material: "air"
+|-- Colour: "transparent"
+|-- Shape: "box" with x,y,z=(30,20,10) m 
+`-- Daughters:
+    |-- Physical: "house_0.phys"
+    |    |-- Position/rotation = (3,-2,0) m / R(Oz, 90°)
+    |    `-- Logical: "house.log"
+    |        |-- Material: "air"
+    |        |-- Colour: "transparent"
+    |        |-- Shape: "box" with x,y,z=(30,20,10) m 
+    |        `-- Daughters:
+    |            |-- Physical: "ground_floor.phys"
+    |            |   |-- Position/rotation = (1,2,0) m / R(Oz,0°)
+    |            |   `-- Logical: "ground_floor.log"
+    |            |       |-- Material: "concrete"
+    |            |       |-- Colour: "gray"
+    |            |       |-- Shape: "box" with x,y,z=(...) m 
+    |            |       `-- Daughters:
+    |            |           |-- Physical: "kitchen.phys"
+    |            |           |    |-- Position...
+    |            |           |    `-- Logical: "kitchen.log"
+    :            :           :
+    |-- Physical: "house_1.phys"
+    |    |-- Position/rotation = (3,-2,0) m / R(Oz, 90°)
+    |    `-- Logical: "house.log"
+    |        |-- Material: "air"
+    |        |-- Colour: "transparent"
+    |        |-- Shape: "box" with x,y,z=(30,20,10) m 
+    |        `-- Daughters:
+    |            |-- Physical: "ground_floor.phys"
+    :            :   
+    |            `-- Physical: "last_floor.phys"
+    :
+\end{ShellVerbatim}
+%%$
+
+\pn Practically, the \texttt{geomtools} API provides
+two classes:
+\begin{itemize}
+\item the \texttt{geomtools::logical\_volume} class,
+\item the \texttt{geomtools::physical\_volume} class.
+\end{itemize}
+\pn Basically its  API is a clone  of what can be found  in the GEANT4
+program library. This is natural as both APIs follow the GDML geometry
+modelling approach. However \texttt{geomtools} allows to associate arbitrary
+properties to any logical or physical object. This allows
+client applications to benefit of some tools for storage and/or fetching
+high-level meta-data. This mechanism is used to pass visualization informations
+to some 3D-display program (visibility, colour\dots), material information
+for physics simulation programs (GEANT4), directives to the numbering scheme
+manager (\emph{mapping})\dots Some naming conventions are of course needed
+to ease the extraction of arbitrary informations by topic. This
+feature relies on the \texttt{datatools::utils::properties} container class.
+By essence, the availability of this functionnality make this mechanism
+extensible to other applications. 
+
+\subsection{Geometry models}
+
+\pn If the \texttt{geomtools} API had proposes only a rewritting
+of the GEANT4 interface and/or the GDML modelling approach, even with a few
+more features added in it, it would have been of limited interest.
+Indeed this API is \emph{based} on a similar interface to GEANT4/GDML, but
+implements higher level functionnalities.
+
+The key  idea here is  to obtain a  very compact and efficient  way to
+describe  a geometry  setup without  entering the  guts of  the nested
+logical/physical  volume   hierarchy  and  the   expertise  needed  to
+manipulate and navigate through this hierarchy. More, we would like to
+implement some tools to:
+\begin{itemize}
+
+\item automate the construction of a transcient virtual geometry model
+  using  a \emph{geometry  engine} that  uses  only a  limited set  of
+  configuration  parameters  to  build   a    hierarchy  of
+  3D-volumes of arbitrary complexity,
+
+\item benefit of a collection  of generic objects that represents very
+  often  used geometry patterns  : volumes  with very  familiar shapes
+  (box, cylinder\dots), stacked volumes, replicated volumes, composite
+  volumes (union, intersection, differences)\dots,
+
+\item  automate   a  simple   3D-rendering  for  fast   debugging  and
+  developpement,
+
+\item automate the  conversion of any geometry model  in the format of
+  another API (GDML, GEANT4, ROOT\dots),
+
+\item automated the management of a numbering scheme policy,
+
+\item enable some arbitrary meta-data to be attached to any node
+  of the hierarchy tree,
+
+\item  enable  extension  with  possible new  geometry  primitives  or
+  hard-coded descriptions of new  logical volumes if generixity cannot
+  be achieved,
+
+\item interoperability between generic components and hard-coded components,
+
+\item be human-friendly with ASCII file based configurations,
+
+\item hide  the complex memory  management of the  transcient geometry
+  model\footnote{You may  have a look on  GEANT4 detector construction
+    and all the pointers users have to play with !}.
+
+\end{itemize}
+
+Within  GDML,  part  of  this features  (flexibility,  human  readable
+configuration  files,  some  filters  to  GEANT4  and  ROOT\dots)  are
+addressed   through  the   grammar  and   syntax  of   this  XML-based
+language. However, the manipulation of XML files turns to be difficult
+as  the  complexity of  the  geometry  system  increases. Despite  the
+possibility  to use  \emph{parametrized  logical volumes},  on-the-fly
+computed  positionning  is  limited.   More  it  does  not  provide  a
+standalone  transcient  geometry  model  :  you  have  to  choose  the
+transcient model from the GEANT4  or ROOT library but it is difficult 
+to used both systems in  cooperation  within  the same  program  
+or  in  the context  of  a
+third-party application that has its own modelling scheme and approach
+(your data  analysis and event reconstruction  for example).  However,
+GDML files are a  good interface medium and we will use this technique
+ as the core of the interface with GEANT4.
+
+As  the  handling of  many  logical/physical  volumes  is complex  and
+request some programming expertise (memory management, pointers, knowledge
+of some specific API\dots),
+\texttt{geomtools} proposes a special concept to automated and hide
+most parts of  this low-level techniques, still providing  the user or
+external application a way  to manipulate the concepts of hierarchical
+geoemtry  modelling.  A  new  interface  has been  implemented  :  the
+\emph{geometry model}.
+
+A  \emph{geometry  model}  has  the  responsability  to  describe  the
+characteristics  of a  given \emph{logical  volume}, in  such a  way a
+logical volume is always  instantiated through its associated geometry
+model. However, a  geometry model is for the logical  volume what is a
+class for  an object.  Thus  a geometry model may  have parametrization
+facilities that enable to  instantiate different kinds of \emph{logical
+  volumes}; such logical volumes will be rather similar because 
+they are managed/created by the same \emph{geometry driver} and 
+they will \emph{behaves} in the same way, .
+
+The difference between the \emph{geometry model} and the \emph{logical
+  volume} concepts is not obvious for very simple 3D objects (a simple
+box or cylinder without any  daughter volumes): the geometry model for
+a simple box-shaped  volume made of copper will  be responsible of the
+instantiation of the logical volume  made of a box shape associated to
+copper     material.     The      figure     below     represent     a
+\texttt{simple\_boxed\_model}   geoemtry  model   that   is  able   to
+instantiate a logical volume  named \TT{my\_green\_box}.  The user (on
+the    left)    just    has    to    send    a    request    to    the
+\texttt{simple\_boxed\_model} object that behaves like a \emph{logical
+  volume     factory}    and     instantiates     automatically    the
+\TT{my\_box}  logical  volume  given some  specific  parameters
+($w$, $h$, $d$, colour, material\dots) that are passed when the user's
+request is submitted.
+
+\begin{center}
+\scalebox{0.75}{\input{\pdftextpath/fig_gm_0.pdftex_t}}
+\end{center}
+
+
+\pn Introducing  the
+\emph{geometry model} layer just adds  an intermediate step but does not
+add functionnalities.  We could have directly create the logical 
+volume by hand using low-level functionnalities of the API :
+
+\begin{center}
+\scalebox{0.75}{\input{\pdftextpath/fig_gm_1.pdftex_t}}
+\end{center}
+
+However, as soon  as we want to manipulate some
+complex logical  volumes, the  difference is fondamental.   Suppose we
+want to  build a logical volume  that stacks three  boxes of different
+dimensions along  an arbitrary axis. To  get this in  GEANT4, you will
+have to  instantiate first the three logical  volumes corresponding to
+each box. Then you will create a logical volume, choose a shape for it
+(say  a  box), compute  its  dimensions  from  the dimensions  of  the
+internal boxes you want to  stack, position the daughter boxes (yes we
+speak about daughter  physical volumes) along the given  axis, check that there
+is no overlapping volumes and that daughters are fully contained in the
+mother box :
+
+\begin{center}
+\scalebox{0.75}{\input{\pdftextpath/fig_gm_2.pdftex_t}}
+\end{center}
+
+This is some work ! Each time you will  have to stack objects in this way, you
+will have to reproduce this algorithm, manage the memory associated to
+the volumes, compute all  requested geometry parameters. In real life,
+it appears  that stacking  volume is a  frequent operation :  in fact
+this is a current  \emph{geometry modelling pattern}.  This is exactly
+the moment for a dedicated  \emph{geometry model} to enter the scene !
+It is possible  to implement a generic algorithm of  which the task is
+to  perform all  the  complex operations  needed  to obtain  a set  of
+stacked  volumes enclosed in  some mother  volume.  Not  only the geometry
+model for constructing such stacked volumes  
+will use this algorithm, it  will also
+manage al  the internals  : memory stuff,  mother/daughter relationships,
+conventionnal naming of the internal objects/volumes :
+
+\begin{center}
+\scalebox{0.75}{\input{\pdftextpath/fig_gm_3.pdftex_t}}
+\end{center}
+
+Practically,  the designer  of  a virtual  geometry  setup will  never
+directly manipulate logical and/or physical volumes. He will deal only
+with geometry models.  This  approach defers the complex technical
+part of the modelling to the \texttt{geomtools} embedded geometry engine.
+The user can concentrate only on the building of the fondamental
+objects that enter the composition of the setup and their relative 
+relationships in terms of hierarchy.
+
+Of  course, logical  and physical  volumes  still exist  and are  used
+within the  internals of the \texttt{geomtools}  engine. These objects
+are the  core of the  hierarchy geometry tree.  So it is  natural that
+developpers  will still have  to handle  logical and  physical volumes
+when thay design  new geometry model classes and  propose extension to
+the library of already available models.
+
+A \emph{model factory} class has been implemented as the main engine
+responsible of the construction of a geometry hierarchy. Given some
+geometry configuration files, it automates the allocation of requested 
+geometry models, checks (partially) the coherence of the system, generates the 
+associated logical and physical volumes and makes a full transcient
+geometry model available. The class is \texttt{geomtools::model\_factory}.
+
+More all generic and primitive models available from the core library
+benefit of an automated class registration mechanism based on some
+internal lookup table. The instantiation
+of geometry models is thus completely transparent, as well as memory
+management issues. This mechanism also extends to the geometry model classes
+implemented by developpers to handle special cases where no
+combination of the existing pre-registred models can cover users' needs.
+This makes the system rather generic and extensible.
+
+%% end of basic_concepts.tex

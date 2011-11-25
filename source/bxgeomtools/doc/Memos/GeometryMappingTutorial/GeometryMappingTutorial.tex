@@ -1,0 +1,147 @@
+%% GeometryMappingTutorial.tex
+%%
+%%
+\documentclass[a4paper,12pt]{article}
+
+\usepackage[T1]{fontenc} 
+\usepackage{ucs} 
+\usepackage[utf8x]{inputenc} 
+%%french%%\usepackage[frenchb]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{latexsym}
+\usepackage{verbatim}
+\usepackage{moreverb}
+\usepackage{fancyvrb}
+\usepackage{alltt} 
+\usepackage{eurosym} 
+\usepackage{hyperref}
+\usepackage{colortbl}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{pgf}
+
+\addtolength{\textwidth}{+2cm}
+\addtolength{\textheight}{+3cm}
+\addtolength{\topmargin}{-1.5cm}
+\addtolength{\oddsidemargin}{-1cm}
+
+\newcommand{\basepath}{.}
+\newcommand{\imagepath}{\basepath/images}
+\newcommand{\codingpath}{\basepath/coding}
+\newcommand{\pdftextpath}{\basepath/pdftex_t}
+\newcommand{\pdftexpath}{\basepath/pdftex}
+
+\input{include/Software_declare_verbatim.tex}
+
+%% Example :
+%% \VerbatimInput[frame=single,
+%% numbers=left,
+%% numbersep=2pt,
+%% firstline=1,
+%% fontsize=\small,
+%% showspaces=false]{\codingpath/code_snippet.cxx}
+%% \caption{Some code snippet.}\label{fig:code_snippet}
+
+\newcommand{\pn}{\par\noindent}
+\newcommand{\TT}[1]{"\texttt{#1}"}
+
+\title{Geometry mapping tutorial\\%
+{\small{(Software/geomtools/GeometryMappingTutorial -- version 0.1)}}}
+\author{F. Mauger <\texttt{mauger@lpccaen.in2p3.fr}>}
+\date{2011-11-22}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Abstract...
+\end{abstract}
+
+\tableofcontents
+
+\section{Introduction}
+
+\pn Introduction\dots
+
+\pagebreak
+
+\input{gid.tex}
+
+\pagebreak
+\input{gid_concepts}
+
+\pagebreak
+\input{id_mgr}
+
+\pagebreak
+\input{mapping}
+
+%% %% Material specific to memos in some "Software" category :
+%% \begin{ShellVerbatim}
+%% bash-3.2$ ls -l
+%% total 20
+%% -rw-r--r-- 1 mauger mauger    0 2011-11-16 10:16 ChangeLog
+%% drwxr-xr-x 2 mauger mauger 4096 2011-11-16 10:24 doc
+%% drwxr-xr-x 2 mauger mauger 4096 2011-11-16 15:25 lib
+%% -rw-r--r-- 1 mauger mauger 1180 2011-11-16 10:24 README
+%% drwxr-xr-x 2 mauger mauger 4096 2011-11-16 16:06 resources
+%% drwxr-xr-x 2 mauger mauger 4096 2011-11-16 15:42 scripts
+%% \end{ShellVerbatim}
+%% %%$
+
+%% \pn \texttt{MakeMemo} path is:
+%% \begin{PathVerbatim}
+%% /sps/nemo/scratch/mauger/sw/Memos/MakeMemo/trunk
+%% \end{PathVerbatim}
+%% %%$
+
+%% \pn Code snippet can be included (see figure \ref{fig:code_snippet}).
+
+%% \begin{figure}
+%% \VerbatimInput[frame=single,
+%% numbers=left,
+%% numbersep=2pt,
+%% firstline=1,
+%% fontsize=\small,
+%% showspaces=false]{\codingpath/code_snippet.cxx}
+%% \caption{Some code snippet.}\label{fig:code_snippet}
+%% \end{figure}
+
+%% \pn Also we can print verbatim code on-the-fly with special references 
+%% to lines \ref{vrb:important} and \ref{vrb:alt} :
+%% \begin{CppVerbatim}
+%% double pi = 3.14159;
+%% double x = 11.3 * CLHEP::mm; // important \label{vrb:important}
+%% double y = 2.3 * CLHEP::cm;
+%% double t = 1.2 * CLHEP::ns;  // also important \label{vrb:alt}
+%% \end{CppVerbatim}
+%% %%$
+
+%% \pn See also how to include a combined PDF/LaTeX figure from
+%% XFig (see figure \ref{fig:sketch_package})
+
+%% \begin{figure}
+%% \begin{center}
+%% \scalebox{0.75}{\input{\pdftextpath/sketch_package.pdftex_t}}
+%% \end{center}
+%% \caption{The figure caption.}\label{fig:sketch_package}
+%% \end{figure}
+
+\section{Conclusion}
+
+\pn The conclusion\dots
+
+%% \pn Here is the SuperNEMO logo as a plain PDF image :
+%% \begin{center}
+%% \includegraphics[width=0.25\linewidth]{\imagepath/snemo_logo.pdf}
+%% \end{center}
+
+\pn This is the end.
+
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% end of GeometryMappingTutorial.tex

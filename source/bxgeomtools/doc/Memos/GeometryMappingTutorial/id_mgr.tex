@@ -1,0 +1,323 @@
+%% id_mgr.tex
+
+\section{The GID manager}
+
+\subsection{Requirements to setup a numbering scheme policy}
+
+\pn Within \texttt{geomtools},  a class named \verb+geomtools::id_mgr+
+has been designed to activate  a numbering scheme policy for a virtual
+geometry setup and enable the  interpretation of the GID associated to
+some volumes  in this setup. Following the concepts we have investigated
+in the previous section, a \verb+geomtools::id_mgr+
+instance is initialized with some special directives that specify :
+
+\begin{itemize}
+
+\item  a  list  of  \emph{geometry  categories}  with  their  uniquely
+  associated \emph{type}  values and also a human  readable label (the
+  \emph{category} name or  label). 
+
+\item for each \emph{geometry category}, some rules that describes the
+  hierarchical relationships (\emph{inherit}/\emph{extend to}) 
+  with the other categories of objects.
+
+\end{itemize}
+
+\pn  In the current  implementation, these  configuration informations
+are stored in a \\
+\texttt{datatools::utils::multi\_properties} container
+and  used   to  create  an   internal  lookup  table  (based   on  the
+\texttt{std::map}  class).   Each   section  of  this  multi-container
+concerns a specific \emph{geometry  category} of which the \emph{name}
+is the primary  key to access useful information.   The section stores
+some configuration parameters  that reflect the \emph{hierarchy rules}
+between categories.
+
+
+\subsection{Configuration file format}
+
+\pn   Practically,   the  \texttt{datatools::utils::multi\_properties}
+configuration  container is  saved as  an ASCII  file using  its human
+friendly readable format.  Let's  consider the domestic world explored
+so far to illustrate the syntax of this file !
+
+\pn First of all, the header of the file must contain the following
+meta comments:
+
+\begin{ShellVerbatim}
+#@description The description of geometry category in the domestic model
+#@key_label   "category"
+#@meta_label  "type"
+\end{ShellVerbatim}
+%%$
+
+Then we must add the default top-level category, namely \TT{world} which
+implements a only-one level addresses path with a value labelled \TT{world} :
+\begin{ShellVerbatim}
+[category="world" type="0"]
+addresses : string[1] = "world"
+\end{ShellVerbatim}
+%%$
+
+This design could allow in the future to run simultaneously
+some \emph{parallel} virtual world, each having a different 
+\TT{world} number, but sharing the same \TT{world} category.
+
+Now it's time to enter the description of the categories
+of domestic objects.
+We start with the \TT{house} category to which we allocate
+the type \texttt{1} and a 1-level addresses path with a single 
+\TT{house\_number} value:
+\begin{ShellVerbatim}
+[category="house" type="1"]
+addresses : string[1] = "house_number"
+\end{ShellVerbatim}
+%%$
+Note that the category label \TT{house}, as well as
+the address label \TT{house\_number}, will be usable by the user through
+a human friendly interface. This will allow people not to memorize
+all the true numbers used in this system and will provide simple methods
+to retrieve useful geometry informations.
+
+Now we are done with houses, let's define the rules for the \TT{floor} category
+with type \texttt{2} :
+\begin{ShellVerbatim}
+[category="floor" type="2"]
+extends : string    = "house"
+by      : string[1] = "floor_number"
+\end{ShellVerbatim}
+%%$
+which tells (\texttt{extends}) that any object of the \TT{floor} category 
+is contained by another object of the \TT{house} category.
+More, as any house can contains several floors, we need some additionnal 
+one-level depth appended to the full addresses path. The \texttt{by}
+directive thus define the additional \TT{floor\_number}.
+Given this rule, the \texttt{id\_mgr} instance will
+automatically use a two-level addresses path for any floor object:
+the first integer value is the   \TT{house\_number} inherited from
+the mother house object, followed by
+a second integer which corresponds to the \TT{floor\_number}.
+Example: \verb+[2:666.9]+ means the floor number \texttt{9} 
+in house number \texttt{666}.
+
+The numbering scheme for the \TT{room}, \TT{table}, \TT{chair}, \TT{bed} 
+and \TT{cupboard}  categories is similar:
+\begin{ShellVerbatim}
+[category="room" type="3"]
+extends : string    = "floor"
+by      : string[1] = "room_number"
+\end{ShellVerbatim}
+%%$
+this gives GID like:  \verb+[3:666.9.7]+ means the room number \texttt{7}
+on floor number \texttt{9} 
+in house number \texttt{666}.
+
+\begin{ShellVerbatim}
+[category="table" type="4"]
+extends : string    = "room"
+by      : string[1] = "table_number"
+
+[category="chair" type="6"]
+extends : string    = "room"
+by      : string[1] = "chair_number"
+
+[category="bed" type="9"]
+extends : string    = "room"
+by      : string[1] = "bed_number"
+
+[category="cupboard" type="12"]
+extends : string    = "room"
+by      : string[1] = "cupboard_number"
+\end{ShellVerbatim}
+%%$
+leading respectiveley to GIDs like:
+\verb+[4:666.9.7.0]+,
+\verb+[6:666.9.7.2]+,
+\verb+[9:666.9.7.1]+ and \verb+[12:666.9.7.0]+.
+
+The case of the \TT{small\_drawer} is special because
+there can be only one of such object that belongs to a given table.
+This is specified with:
+\begin{ShellVerbatim}
+[category="small_drawer" type="34"]
+inherits : string    = "table"
+\end{ShellVerbatim}
+%%$
+and gives GIDs like: \verb+[34:666.9.7.0]+ for the unique
+drawer of table \verb+[4:666.9.7.0]+.
+
+Drawer for cupboard use the \emph{extend by} technique:
+\begin{ShellVerbatim}
+[category="large_drawer" type="35"]
+extends : string    = "cupboard"
+by      : string[1] = "drawer_number"
+\end{ShellVerbatim}
+%%$
+and gives GIDs like: \verb+[35:666.9.7.0.2]+ for the
+drawer numbered \texttt{2} in the \verb+[34:666.9.7.0]+ cupboard.
+
+Of course more \emph{category records} can be added to the file
+if it is needed:
+\begin{ShellVerbatim}
+[category="fork" type="105"]
+extends : string    = "small_drawer"
+by      : string[1] = "fork_number"
+
+[category="spoon" type="106"]
+extends : string    = "small_drawer"
+by      : string[1] = "spoon_number"
+
+[category="knife" type="107"]
+extends : string    = "small_drawer"
+by      : string[1] = "knife_number"
+\end{ShellVerbatim}
+
+There is also a special useful case. Suppose we are allowed
+to place a special type of jewelry box in any drawer of a cupboard.
+We then write a new hierarchy rule :
+\begin{ShellVerbatim}
+[category="jewelry_box" type="110"]
+extends : string    = "large_drawer"
+by      : string[1] = "box_number"
+\end{ShellVerbatim}
+So far so good. Assume now that each jewelry box can contains
+up to 4 jewels that can only be placed in one of the
+four available compartments :
+
+    \begin{center}
+      \scalebox{1.0}{\input{\pdftextpath/fig_chest_0.pdftex_t}}
+    \end{center}
+As it can be seen on the above figure,
+each compartment can be naturally located in a abstract
+two-dimensional space using the value of its row number
+\textbf{and} the value of its column number.
+The addresses path of a given jewel will thus be determined 
+first by the addresses path from the box it lies in, then
+with the information of both row and column numbers.
+Such a rule can be written with : 
+\begin{ShellVerbatim}
+[category="jewel" type="111"]
+extends : string    = "jewelry_box"
+by      : string[2] = "row_number" "column_number"
+\end{ShellVerbatim}
+\pn where  two additionnal numbers (with their  human readable labels)
+have been appended (one-shot extension) to the address path. Of course
+the  choice   of  ordering   the  row  and   column  numbers   is  set
+conventionally. At  least we know how  to build the GID  of any jewel.
+Example: \verb+[111:666.9.7.0.2.0.1.0]+ reads : \\
+ ''I'm a  (beautiful) jewel
+hidden in the top/left (\TT{row}=\texttt{1}, \TT{column}=\texttt{0})
+compartment  of the  unique jewelry  box stored  in the  drawer number
+\texttt{2} of the  only cupboard in the room  number \texttt{7} on the
+9th floor of the Devil's house''. Now you have its GID, 
+I guess you are now able to steal it !
+
+\pagebreak
+\subsection{Code snippets}
+
+\subsubsection{Initializing a GID manager object}
+
+\pn The  following sample program illustrates the  initialization of a
+\emph{GID     manager},      using     an     instance      of     the
+\texttt{geomtools::id\_mgr}          class          using          the
+\TT{domestic\_categories.lis} configuration file.
+
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=1,
+fontsize=\small,
+showspaces=false]{\codingpath/domestic_1.cxx}
+
+\pagebreak
+The \TT{domestic\_categories.lis} file contains the description
+of the domestic categories we have proposed in the previous section :
+
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=1,
+fontsize=\small,
+showspaces=false]{\codingpath/domestic_categories.lis}
+
+\pagebreak
+The program  first parses the  file. It constructs an  internal lookup
+table  that  stores  all  the  informations  needed  to  describe  the
+hierarchical  relationships between  all kind  of objects.  Finally it
+prints the contents of the categories lookup table :
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=1,
+fontsize=\small,
+showspaces=false]{\codingpath/domestic_1.out}
+
+\pagebreak
+\subsubsection{Creating some GIDs following the hierarchy rules of a GID manager object}
+
+\pn     This    new     sample    program     uses     the    previous
+\TT{domestic\_categories.lis}   configuration  file.   It   creates  a
+specific GID in a  given \emph{category} (\TT{room}) through the human
+friendly  interface of the  \texttt{geomtools::id\_mgr} class.  Here a
+first GID is  created from scratch then the GID of  a parent object is
+automatically extracted and finally the  GID of a daughter object in a
+given category is created :
+
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=1,
+fontsize=\small,
+showspaces=false]{\codingpath/domestic_2.cxx}
+
+\pn The program prints :
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=1,
+fontsize=\small,
+showspaces=false]{\codingpath/domestic_2.out}
+\pagebreak
+
+\subsubsection{Creating a large number of GIDs with optimized techniques}
+
+\pn   The    next   sample    program   still   uses    the   previous
+\TT{domestic\_categories.lis} configuration file to initialize the GID
+manager.   It  accesses  to  the  database  of  categories  through  a
+\texttt{geomtools::id\_mgr::category\_info}  object  fetched from  the
+GID  manager.   It then  uses  the  available  informations about  the
+hierarchy rules to manipulate GID  objects at very low-level, i.e.  by
+direct manipulation of the type value and the values/subaddress of the
+addresses path at  any level :
+
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=1,
+fontsize=\small,
+showspaces=false]{\codingpath/domestic_3.cxx}
+
+\pn The program prints :
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=1,
+fontsize=\small,
+showspaces=false]{\codingpath/domestic_3.out}
+ 
+\pn Such a technique should be  favored when one needs to manipulate a
+large number of  GIDs or even a few GIDs  very frequently.  Indeed the
+human-friendly    methods     provided    by    the     GID    manager
+(\texttt{geomtools::id\_mgr}) class are  based on searching algorithms
+in various associative containers keyed by \texttt{string} objects. If
+these methods are often used, some performance issues are expected. It
+is  thus  more  efficient  to  directly use  the  integer  values  for
+\emph{types} and \emph{addresses}  indexes, rather than human friendly
+labels. Here the human-friendly methods are used once at the beginning
+of  the program to  retrieve useful  addressing information  stored in
+integer values;  then it is  straightforward to reuse  this addressing
+parameters a  large number of  times, without further  request through
+the human friendly interface of the GID manager.
+
+
+%% end of id_mgr.tex

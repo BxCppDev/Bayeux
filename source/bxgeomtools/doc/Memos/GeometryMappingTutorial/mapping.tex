@@ -1,0 +1,46 @@
+
+%% mapping.tex
+
+\section{Geometry mapping and associated tools}
+
+\pn In the previous section, we have presented the basic concepts (GID, 
+hierarchy rules, GID manager) used in the \texttt{geomtools} library.
+Now it is time to introduce some high-level functionnalities that can be
+implemented on top of these low-level concepts : \emph{geometry mapping}
+and \emph{locators}.
+
+\subsection{Geometry mapping}
+
+The key concept of \emph{geometry mapping} is to allow the users to benefit
+of some automated (or semi-automated) database of all (or part of) the 
+objects that belongs to a geometry hierarchical setup. Such a database
+will naturally use the object's GID as the primary keys for accessing some 
+meta-data associated to an object.
+
+As seen  in the previous sections,  it is possible to  define some non
+ambiguous  \emph{hierarchy  rules}   to  reflect  the  mother/daughter
+relationships between objects  of a virtual geometry setup.  This is a
+task  for  the   GID  manager  object,  which  is   available  in  the
+library. 
+
+However,  when designing the  numbering scheme,  there are  still many
+arbitrary choices that have to  be made by the architect/developper of
+the geometry  model :  ''Do we start  the values of  subaddresses from
+\texttt{0} or \texttt{1} when  several replicates of some category are
+placed  in  a  mother volume  ?'',  ''What  value  is chosen  for  the
+subaddress  of the  left part  of  this tracking  chamber ?'',  ''What
+integer  values are  associated to  the  North, South,  West and  East
+directions ?''\dots  So we need some additional  conventions and rules
+to finalize the  addressing scheme. Then we will  be able to establish
+and build the full list of GIDs that makes sense in our application.
+
+If we consider the above \emph{domestic} virtual world, we have 
+implicitely used such rules on top of the hierarchy rules. We now need
+some tools to automatically inform the geometry model of these rules.
+Let's build such a virtual setup with the tools provided
+by geoemtools. Then we will see how to enrich this model
+with special \emph{mapping directives}. 
+
+\subsection{A toy model}
+
+%% end of mapping.tex

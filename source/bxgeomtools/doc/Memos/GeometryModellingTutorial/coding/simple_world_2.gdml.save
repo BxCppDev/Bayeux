@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd"  >
+
+<define>
+
+<position name="world.log.setup.phys.pos" x="400" y="500" z="500" unit="mm" />
+
+<rotation name="world.log.setup.phys.rot" x="59.6187448575295" y="-8.64916510528758" z="-84.9616312267025" unit="deg" />
+
+</define>
+
+
+<materials>
+
+<material name="__default__" Z="1" >
+  <D value="1" unit="g/cm3" />
+  <atom value="1" />
+</material >
+
+<material name="__unknown__" Z="1" >
+  <D value="1" unit="g/cm3" />
+  <atom value="1" />
+</material >
+
+<material name="vacuum" Z="1" >
+  <D value="1e-15" unit="g/cm3" />
+  <atom value="1" />
+</material >
+
+</materials>
+
+
+<solids>
+
+<box name="world.log.solid" x="1500" y="1500" z="1500" lunit="mm" />
+
+<box name="small_red_box.log.solid" x="200" y="250" z="150" lunit="mm" />
+
+</solids>
+
+
+<structure>
+
+<volume name="small_red_box.log" >
+  <materialref ref="__default__" />
+  <solidref    ref="small_red_box.log.solid" />
+
+  <auxiliary auxtype="material.ref"  auxvalue="__default__" />
+  <auxiliary auxtype="visibility.color"  auxvalue="red" />
+  <auxiliary auxtype="visibility.hidden"  auxvalue="0" />
+
+</volume>
+
+<volume name="world.log" >
+  <materialref ref="vacuum" />
+  <solidref    ref="world.log.solid" />
+
+  <physvol>
+    <volumeref   ref="small_red_box.log" />
+    <positionref ref="world.log.setup.phys.pos" />
+    <rotationref ref="world.log.setup.phys.rot" />
+  </physvol>
+
+
+  <auxiliary auxtype="material.ref"  auxvalue="vacuum" />
+  <auxiliary auxtype="visibility.color"  auxvalue="green" />
+  <auxiliary auxtype="visibility.daughters.hidden"  auxvalue="0" />
+  <auxiliary auxtype="visibility.hidden"  auxvalue="0" />
+
+</volume>
+
+</structure>
+
+
+<setup name="Setup" version="1.0" >
+  <world ref="world.log" />
+</setup>
+
+
+</gdml>
+

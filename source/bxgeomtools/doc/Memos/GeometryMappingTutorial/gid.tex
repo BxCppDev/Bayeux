@@ -1,0 +1,154 @@
+%% gid.tex
+
+\section{Geometry identifiers}
+
+\subsection{Presentation of the concept}
+
+\pn A \emph{geometry  identifier}, also known as  \emph{GID} or \emph{geom
+  ID}, is an unique identifier associated to a geometry volume that is
+part of a  geometry hierarchy. The figure \ref{fig:0}  shows a virtual
+geometry setup made  of a collection of dictinct volumes  (A, B, C, D,
+E, F, G) placed in a  reference frame (doted rectangle).  Here some of
+the volumes  (F, G) are  included in another  one (E); this  implies a
+natural hierarchy relationship between these last 3 volumes : volume E
+is the mother of volumes F an  G; volumes F and G are the daughters of
+volume E.
+
+\begin{figure}[h]
+\begin{center}
+\scalebox{0.75}{\input{\pdftextpath/fig_0.pdftex_t}}
+\end{center}
+\caption{A simple geometry setup.}\label{fig:0}
+\end{figure}
+
+%\clearpage
+\pn In  an application  that depends  on  and manipulates  such a  virtual
+geometry setup,  it may  be interesting to  have access to  an unified
+identification scheme for all or  part of the volumes.  In the present
+case, volumes  labelled A,  B, E, F  and G  are each associated  to an
+unique \emph{geometry identifier} (blue rounded boxes);  
+on the other hand volumes  C and D
+do not  benefit of  such association,  because it may be  not needed  
+in the specific context of the application.
+
+\pn Within the  \texttt{geomtools} program  library, the association  of a
+geometry  volume placed in  the virtual  setup and  its GID  is called
+\emph{geometry  mapping}.   Using such  a  concept,  it is  possible to
+implement some techniques/algorithms that enable for example to:
+
+\begin{itemize}
+
+\item retrieve  the properties of a  volume given its  GID : placement
+  (position  and rotation  matrix)  in the  reference  frame (or  some
+  arbitrary  relative frame),  shape,  color, material  or any  useful
+  property in the context of the application.
+\begin{center}
+\scalebox{1.0}{\input{\pdftextpath/fig_1.pdftex_t}}
+\end{center}
+
+\item  find/compute the  GID associated  to a  volume that  contains a
+  given position P within the geometry setup :
+\begin{center}
+\scalebox{1.0}{\input{\pdftextpath/fig_2.pdftex_t}}
+\end{center}
+
+\end{itemize}
+
+\pn These techniques can be implemented as \emph{locator} algorithms.
+
+\pn But wait ! The following figure shows the case where the point Q
+is inside both volumes E \textbf{and} G ;
+\begin{center}
+\scalebox{1.0}{\input{\pdftextpath/fig_3.pdftex_t}}
+\end{center}
+
+\pn It means that, in general,  the determination of the GID associated to
+the volume  where a point lies  in can be ambiguous.  The final result
+depends on what the user/application expects or at which depth of the
+hierarchy the search is performed. In the present case, the ambiguity 
+can be removed if one gives an additional information to the search
+\emph{locator} algorithm. Such an information could be:
+\begin{itemize}
+\item the maximum depth of the volume hierarchy,
+\item a specific depth of the volume hierarchy,
+\item the \emph{category} of the object which is expected to 
+  contain the given position $Q$.
+\end{itemize}
+
+\subsection{Design of the \texttt{geomtools::geom\_id} class}
+ 
+\pn The above considerations give us some hints to design the implementation of
+a \emph{geometry identifier} class. The minimal useful embedded information
+to uniquely describe a volume could imply:
+\begin{itemize}
+
+\item  the specification  of the  \emph{category} of  object  a volume
+  belongs   to:  a  physical   volume  is   thus  interpreted   as  an
+  \emph{instance} of the \emph{geometry cateogory},
+
+\item some informations that  describe the full hierarchical path from
+  the top level  mother volume that contains the  considered volume to
+  the effective depth of the volume in this hierarchy.
+
+\end{itemize}
+
+\pn This approach is used in \texttt{geomtools} to implement
+the \texttt{geomtools::geom\_id} class.
+
+\pn A GID is thus composed of the following attributes :
+\begin{itemize}
+
+\item the  \emph{geometry category}  is stored as  an \texttt{integer}
+  value for  storage optimization and fast  manipulation. This integer
+  value is named the \emph{type}  of the GID (or \emph{geometry type}). 
+  Conventionnaly the value
+  \texttt{-1}  means that  the type  is  not defined  (or not  valid).
+  Value  \texttt{0} is  reserved  to  the top  level  category of  the
+  geometry  setup \footnote{in the terminology of the
+    GEANT4 program library,  it  corresponds  to  the
+  unique \emph{world volume}}. All values  greater than \texttt{0} can be used
+  to  represent   the  \emph{type}  of   some  volume.  \\It   is  the
+  responsability of  the application  to manage the  classification of
+  different categories of volumes hosted in the setup and associate an
+  unique type integer value to any given category.
+
+\item  a  collection of  successive  \emph{addresses}  that allows  to
+  identify/traverse the  different levels  of the hierarchy  that host
+  the  corresponding  volume. These  addresses  are  implemented as  a
+  vector of integers. The size  of this vector points out the position
+  depth  of  the  volume  in  some  hierarchical  relationship.   Each
+  \emph{address}  in  the  vector  is  an  integer  value  with  value
+  \texttt{-1} if  not defined  (not valid) and  \texttt{0} or  more if
+  valid. \\It is  the responsability of the application  to allocate a
+  meaning to each  address in the collection. It  is expected that the
+  ordering of  addresses in the collection  reflects some hierarchical
+  placement relationship between the volume  and its mother volume, grand-mother
+  volume (if any)\dots this logics is managed by the application.
+  
+\end{itemize}
+
+\pn    So,    within     \texttt{geomtools},    instances    of    the
+\texttt{geomtools::geom\_id} class are represented using the following
+format :
+\begin{center}
+\verb+[TYPE:ADDR0.ADDR1.+$\cdots$\verb+.ADDRN]+
+\end{center}
+\pn where \verb+TYPE+ is the value of the type (geometry category) and
+\verb+ADDRN+ are  the value of each  address at several  depths of the
+geometry hierarchy.
+
+\pn Examples : \verb+[6:0]+,  \verb+[6:1]+, \verb+[6:2]+
+\verb+[12:2.0]+, \verb+[12:2.1]+, \verb+[18:2.0.3]+, \verb+[18:2.0.4]+.
+
+\pn  It  should be  mentionned  that the  \texttt{geomtools::geom\_id}
+class  is  a  low-level  class  used to  store  the  raw  informations
+corresponding to  the geometry  identifier associated to  some volume.
+The  choice  for  using  integers   as  the  basic  support  to  store
+information  has been made  for convenience  and performance  both for
+storage and  manipulation.  All  the \emph{intelligence} that  gives some
+meaning to  the values used to  store the \emph{type}, as  well as the
+interpretation of  the vector of \emph{addresses}, must  be managed at
+higher  level.  The  \texttt{geomtools::id\_mgr} class  is responsible
+for such features.
+
+%% end of gid.tex

@@ -1,0 +1,44 @@
+# domestic_categories.lis
+
+#@description The description of geometry category in the domestic model
+#@key_label   "category"
+#@meta_label  "type"
+
+[category="world" type="0"]
+addresses : string[1] = "world"
+
+[category="house" type="1"]
+addresses : string[1] = "house_number"
+
+[category="floor" type="2"]
+extends : string    = "house"
+by      : string[1] = "floor_number"
+
+[category="room" type="3"]
+extends : string    = "floor"
+by      : string[1] = "room_number"
+
+[category="table" type="4"]
+extends : string    = "room"
+by      : string[1] = "table_number"
+
+[category="chair" type="6"]
+extends : string    = "room"
+by      : string[1] = "chair_number"
+
+[category="bed" type="9"]
+extends : string    = "room"
+by      : string[1] = "bed_number"
+
+[category="cupboard" type="12"]
+extends : string    = "room"
+by      : string[1] = "cupboard_number"
+
+[category="small_drawer" type="34"]
+inherits : string    = "table"
+
+[category="large_drawer" type="35"]
+extends : string    = "cupboard"
+by      : string[1] = "drawer_number"
+
+# end of domestic_categories.lis
