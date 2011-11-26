@@ -35,15 +35,6 @@
 
 \input{include/Software_declare_verbatim.tex}
 
-%% Example :
-%% \VerbatimInput[frame=single,
-%% numbers=left,
-%% numbersep=2pt,
-%% firstline=1,
-%% fontsize=\small,
-%% showspaces=false]{\codingpath/code_snippet.cxx}
-%% \caption{Some code snippet.}\label{fig:code_snippet}
-
 \newcommand{\pn}{\par\noindent}
 \newcommand{\TT}[1]{"\texttt{#1}"}
 
@@ -62,102 +53,61 @@ In this note, we explain the principles and tools
 for modelling a virtual geometry setup within \texttt{geomtools}.
 \end{abstract}
 
+\tableofcontents
+
 \section{Introduction}
 
 \pn  The \texttt{geomtools} program  library provides  some high-level
 general  purpose  utility classes  and  embedded  algorithms to  build
-virtual geometry models in easy way.  It has been designed as the main
-tool  for  feeding  external   programs  with  a  standalone  geometry
-description,   using  some   automated  exprting/filtering   tools  to
+virtual geometry models in a  somewhat easy way.  It has been designed
+as  the main  tool for  feeding  external programs  with a  standalone
+geometry description, using some automated exporting/filtering tools to
 interface with these third-party programs and libraries. In the fields
 of experimental  high energy and  nuclear physics, those  programs are
-typically in charge of the simulation of particle tracking through the
-virtual  model  of  a  detector  (GEANT4),  reconstruction  algorithm,
-visualization software. Unfortunately, there is not one single generic
-and    standard   tool    or   even    paradigm   to    achieve   such
-functionnalities. Usually,  software libraries use  their own geometry
-modelling  scheme, with  strategy, optimization  and  various policies
-that  can make  them non-interoperable.  Particularly, the  choice for
-such  a tool  can prevent  the user  of client  application to  use in
-parallel another tool with different modeling techniques.
+typically in charge of :
+\begin{itemize}
+\item the simulation of particle tracks through the
+virtual  geometry model  of  a  detector  (GEANT4),  
+\item reconstruction  algorithm,
+\item visualization software,
+\item various step of the data analysis. 
+\end{itemize}
+Unfortunately, there  is not one  single generic and standard  tool or
+even  paradigm  to achieve  such  functionnalities. Usually,  software
+libraries  use their  own geometry  modelling scheme,  with  their own
+strategy, optimization and various policies  that can make them non or
+hardly interoperable.   Particularly, the choice  for such a  tool can
+prevent the user of client application to use in parallel another tool
+with different modeling techniques.
 
 \pn  Because of  this,  we have  implemented  some geometry  modelling
-interface (GMI)  and tools that, we  hope, are supposed  to allow some
-interfaces     compatible     with     other    geometry     modelling
-implementations. There  is no hope  to cover all  functionnalities you
-can   dream  about.    However,  the   geometry  modelling   tools  in
-\texttt{geomtools}  try  to  address   most  practical  cases  in  the
-framework  of  our  experimental  activities  :  detector  simulation,
-visualization, reconstruction and data analysis.
+interface (GMI)  and tools  that, we hope,  are supposed to  allow the
+making  of new  interfaces  compatible with  other geometry  modelling
+implementations.   Of  course,  there   is  no   hope  to   cover  all
+functionnalities  you  could   dream  about.   However,  the  geometry
+modelling tools  in \texttt{geomtools}  try to address  most practical
+cases  in the  framework  of our  experimental  activities :  detector
+simulation, visualization, reconstruction and data analysis.
 
 \pn  The  \texttt{geomtools} GMI  relies  on  some standard  modelling
 approach that  have intrinsic limitations. Any  virtual geometry model
 managed by  \texttt{geomtools} uses a hierarchical  system to describe
-the  physical 3D-objects  in  a  geometry setup.  It  deals only  with
-placement  of daughter  objects in  their mother  volume. There  is no
-possibility to handle overlapping volumes or complex nested geometries
-with cyclic  mother/daughter relationship. This apporach  is shared by
-the GDML language, the GEANT4  and ROOT libraries which are compatible
-with this  paradigm.  So it  is expected that  \texttt{geomtools} will
-interface naturally with these implementations.
+the  physical 3D-objects  in a  geometry  setup.  It  deals only  with
+placement of daughter objects in their mother volume at several levels
+of  a possibly  large hierarchy.  There  is no  possibility to  handle
+overlapping   volumes  or  complex   nested  geometries   with  cyclic
+mother/daughter  relationship. This  apporach  is shared  by the  GDML
+language, the GEANT4 and ROOT libraries which are compatible with this
+paradigm.  So  it is  expected that \texttt{geomtools}  will interface
+naturally with these implementations.
+\pagebreak
 
 \input{basic_concepts.tex}
 
-\pagebreak
+\clearpage
 \input{use_cases.tex}
 
-\pagebreak
-
-%% %% Material specific to memos in some "Software" category :
-%% \begin{ShellVerbatim}
-%% bash-3.2$ ls -l
-%% total 20
-%% -rw-r--r-- 1 mauger mauger    0 2011-11-16 10:16 ChangeLog
-%% drwxr-xr-x 2 mauger mauger 4096 2011-11-16 10:24 doc
-%% drwxr-xr-x 2 mauger mauger 4096 2011-11-16 15:25 lib
-%% -rw-r--r-- 1 mauger mauger 1180 2011-11-16 10:24 README
-%% drwxr-xr-x 2 mauger mauger 4096 2011-11-16 16:06 resources
-%% drwxr-xr-x 2 mauger mauger 4096 2011-11-16 15:42 scripts
-%% \end{ShellVerbatim}
-%% %%$
-
-%% \pn \texttt{MakeMemo} path is:
-%% \begin{PathVerbatim}
-%% /sps/nemo/scratch/mauger/sw/Memos/MakeMemo/trunk
-%% \end{PathVerbatim}
-%% %%$
-
-%% \pn Code snippet can be included (see figure \ref{fig:code_snippet}).
-
-%% \begin{figure}
-%% \VerbatimInput[frame=single,
-%% numbers=left,
-%% numbersep=2pt,
-%% firstline=1,
-%% fontsize=\small,
-%% showspaces=false]{\codingpath/code_snippet.cxx}
-%% \caption{Some code snippet.}\label{fig:code_snippet}
-%% \end{figure}
-
-%% \pn Also we can print verbatim code on-the-fly with special references 
-%% to lines \ref{vrb:important} and \ref{vrb:alt} :
-%% \begin{CppVerbatim}
-%% double pi = 3.14159;
-%% double x = 11.3 * CLHEP::mm; // important \label{vrb:important}
-%% double y = 2.3 * CLHEP::cm;
-%% double t = 1.2 * CLHEP::ns;  // also important \label{vrb:alt}
-%% \end{CppVerbatim}
-%% %%$
-
-%% \pn See also how to include a combined PDF/LaTeX figure from
-%% XFig (see figure \ref{fig:sketch_package})
-
-%% \begin{figure}
-%% \begin{center}
-%% \scalebox{0.75}{\input{\pdftextpath/sketch_package.pdftex_t}}
-%% \end{center}
-%% \caption{The figure caption.}\label{fig:sketch_package}
-%% \end{figure}
+\clearpage
 
 \section{Conclusion}
 

@@ -40,6 +40,9 @@ clean : clean_pdftex clean_pdftex_t
 	$(RM) $(LATEX_MAIN_SRC_FILE).log
 	$(RM) $(LATEX_MAIN_SRC_FILE).aux
 	$(RM) $(LATEX_MAIN_SRC_FILE).out
+	$(RM) $(LATEX_MAIN_SRC_FILE).toc
+	$(RM) $(LATEX_MAIN_SRC_FILE).top
+	$(RM) $(LATEX_MAIN_SRC_FILE).tos
 
 .PHONY : clean_pdftex
 clean_pdftex : 

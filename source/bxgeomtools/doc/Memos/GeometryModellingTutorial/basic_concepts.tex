@@ -238,7 +238,7 @@ The difference between the \emph{geometry model} and the \emph{logical
 box or cylinder without any  daughter volumes): the geometry model for
 a simple box-shaped  volume made of copper will  be responsible of the
 instantiation of the logical volume  made of a box shape associated to
-copper     material.     The      figure     below     represent     a
+copper     material.     The      figure     \ref{fig:gm:0}     represents     a
 \texttt{simple\_boxed\_model}   geoemtry  model   that   is  able   to
 instantiate a logical volume  named \TT{my\_green\_box}.  The user (on
 the    left)    just    has    to    send    a    request    to    the
@@ -248,19 +248,27 @@ the    left)    just    has    to    send    a    request    to    the
 ($w$, $h$, $d$, colour, material\dots) that are passed when the user's
 request is submitted.
 
+\begin{figure}[h]
 \begin{center}
 \scalebox{0.75}{\input{\pdftextpath/fig_gm_0.pdftex_t}}
 \end{center}
+\caption{Instantiation of  a logical  volume through a  geoemtry model
+  driver.}\label{fig:gm:0}
+\end{figure}
 
 
-\pn Introducing  the
-\emph{geometry model} layer just adds  an intermediate step but does not
-add functionnalities.  We could have directly create the logical 
-volume by hand using low-level functionnalities of the API :
+\pn  Introducing   the  \emph{geometry  model}  layer   just  adds  an
+intermediate step  but does not  add functionnalities.  We  could have
+directly   create  the   logical  volume   by  hand   using  low-level
+functionnalities of the API (figure \ref{fig:gm:1}).
 
+\begin{figure}[h]
 \begin{center}
 \scalebox{0.75}{\input{\pdftextpath/fig_gm_1.pdftex_t}}
 \end{center}
+\caption{Instantiation of  a logical  volume through the native
+API.}\label{fig:gm:1}
+\end{figure}
 
 However, as soon  as we want to manipulate some
 complex logical  volumes, the  difference is fondamental.   Suppose we
@@ -272,11 +280,15 @@ each box. Then you will create a logical volume, choose a shape for it
 internal boxes you want to  stack, position the daughter boxes (yes we
 speak about daughter  physical volumes) along the given  axis, check that there
 is no overlapping volumes and that daughters are fully contained in the
-mother box :
+mother box. Such case is illustrated on figure \ref{fig:gm:2}.
 
+\begin{figure}[h]
 \begin{center}
 \scalebox{0.75}{\input{\pdftextpath/fig_gm_2.pdftex_t}}
 \end{center}
+\caption{Instantiation of  a complex logical  volume through the native
+API.}\label{fig:gm:2}
+\end{figure}
 
 This is some work ! Each time you will  have to stack objects in this way, you
 will have to reproduce this algorithm, manage the memory associated to
@@ -290,41 +302,46 @@ stacked  volumes enclosed in  some mother  volume.  Not  only the geometry
 model for constructing such stacked volumes  
 will use this algorithm, it  will also
 manage al  the internals  : memory stuff,  mother/daughter relationships,
-conventionnal naming of the internal objects/volumes :
+conventionnal naming of the internal objects/volumes (figure \ref{fig:gm:3}).
 
+\begin{figure}[h]
 \begin{center}
 \scalebox{0.75}{\input{\pdftextpath/fig_gm_3.pdftex_t}}
 \end{center}
+\caption{Instantiation of  a complex logical  volume through a smart
+geometry model driver.}\label{fig:gm:3}
+\end{figure}
 
 Practically,  the designer  of  a virtual  geometry  setup will  never
 directly manipulate logical and/or physical volumes. He will deal only
-with geometry models.  This  approach defers the complex technical
-part of the modelling to the \texttt{geomtools} embedded geometry engine.
-The user can concentrate only on the building of the fondamental
-objects that enter the composition of the setup and their relative 
+with geometry models.  This approach defers the complex technical part
+of the  modelling to the \texttt{geomtools}  embedded geometry engine.
+The  user can  concentrate only  on  the building  of the  fondamental
+objects that  enter the  composition of the  setup and  their relative
 relationships in terms of hierarchy.
 
 Of  course, logical  and physical  volumes  still exist  and are  used
 within the  internals of the \texttt{geomtools}  engine. These objects
-are the  core of the  hierarchy geometry tree.  So it is  natural that
+are the  core of the hierarchy  geometry tree.  So it  is natural that
 developpers  will still have  to handle  logical and  physical volumes
-when thay design  new geometry model classes and  propose extension to
-the library of already available models.
+when  they  design  new  geometry  model/driver  classes  and  propose
+extension to the library of already available models.
 
-A \emph{model factory} class has been implemented as the main engine
-responsible of the construction of a geometry hierarchy. Given some
-geometry configuration files, it automates the allocation of requested 
-geometry models, checks (partially) the coherence of the system, generates the 
-associated logical and physical volumes and makes a full transcient
-geometry model available. The class is \texttt{geomtools::model\_factory}.
+A \emph{model factory}  class has been implemented as  the main engine
+responsible of  the construction of a geometry  hierarchy.  Given some
+geometry configuration files, it automates the allocation of requested
+geometry  models,  checks (partially)  the  coherence  of the  system,
+generates the associated logical and physical volumes and makes a full
+transcient geometry model  available to the user.  The  class is named
+\texttt{geomtools::model\_factory}.
 
-More all generic and primitive models available from the core library
-benefit of an automated class registration mechanism based on some
-internal lookup table. The instantiation
-of geometry models is thus completely transparent, as well as memory
-management issues. This mechanism also extends to the geometry model classes
-implemented by developpers to handle special cases where no
-combination of the existing pre-registred models can cover users' needs.
-This makes the system rather generic and extensible.
+More  all generic  and primitive  geometry models  available  from the
+library benefit of an  automated class registration mechanism based on
+some internal  lookup table. The  instantiation of geometry  models is
+thus  completely transparent,  as  well as  memory management  issues.
+This mechanism also extends  to the geometry model classes implemented
+by developpers  to handle  special cases where  no combination  of the
+existing pre-registred models can  cover users' needs.  This makes the
+system rather generic and extensible.
 
 %% end of basic_concepts.tex

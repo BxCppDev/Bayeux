@@ -42,12 +42,28 @@ numbers=left,%
 numbersep=2pt%
 }
 
+%% \DeclareFloatingEnvironment[
+%% fileext=lop,
+%% listname={List of programs},
+%% name=Program,
+%% placement=thbp,
+%% within=section,
+%% chapterlistsgaps=off,
+%% ]{program}
 \floatstyle{plain}
-\newfloat{program}{thp}{lop}%[section]
+\newfloat{program}{thp}{lop}
 \floatname{program}{Program}
 
+%% \DeclareFloatingEnvironment[
+%% fileext=lop,
+%% listname={List of samples},
+%% name=Sample,
+%% placement=thbp,
+%% within=section,
+%% chapterlistsgaps=off,
+%% ]{sample}
 \floatstyle{plain}
-\newfloat{sample}{thbp}{los}%[section]
+\newfloat{sample}{thbp}{los}
 \floatname{sample}{Sample}
 
 %% end of declare_verbatim.tex
