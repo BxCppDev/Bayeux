@@ -99,8 +99,8 @@ endif
 ifeq ($(shell which boost-config),)
 $(error Sorry boost-config not found!)
 endif
-DEPCPPFLAGS+=$(shell boost-config --cflags serialization iostreams filesystem )
-DEPLDFLAGS+=$(shell boost-config --ldflags serialization iostreams filesystem )
+DEPCPPFLAGS+=$(shell boost-config --cflags serialization iostreams filesystem system)
+DEPLDFLAGS+=$(shell boost-config --ldflags serialization iostreams filesystem system)
 
 # CLHEP dependency :
 ifeq ($(strip $(shell which clhep-config 2> /dev/null)),)
