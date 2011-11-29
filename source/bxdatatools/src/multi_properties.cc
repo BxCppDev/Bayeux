@@ -112,17 +112,21 @@ namespace datatools {
 	}
 
       a_out << indent << du::i_tree_dumpable::tag 
-	   << "Key         : \"" <<  _key_ << "\"" << endl;
+	   << "Key        : \"" <<  _key_ << "\"" << endl;
 
       a_out << indent << du::i_tree_dumpable::tag 
-	   << "Meta        : \"" <<  _meta_ << "\"" << endl;
+	   << "Meta       : \"" <<  _meta_ << "\"" << endl;
       
       {
 	a_out << indent << du::i_tree_dumpable::inherit_tag (inherit_)
-	     << "Properties : ";
+	      << "Properties : ";
 	if (_properties_.size () == 0) 
 	  {
 	    a_out << "<empty>"; 
+	  }
+	else
+	  {
+	    a_out << '[' << _properties_.size () << ']';
 	  }
 	a_out << endl;
 	{
@@ -430,12 +434,13 @@ namespace datatools {
       fout << "#@meta_label  " << '"' << get_meta_label ()<< '"' << endl;
       fout << endl;
 
-      for (entries_col_t::const_iterator i = _entries_.begin ();
-	   i != _entries_.end ();
+      for (entries_ordered_col_t::const_iterator i = _ordered_entries_.begin ();
+	   i != _ordered_entries_.end ();
 	   i++)
 	{
-	  const string & name = i->first;
-	  const entry & an_entry = i->second;
+	  const entry * pentry = *i;
+	  const string & name = pentry->get_key ();
+	  const entry & an_entry = *pentry;
 
 	  if (devel) clog << "DEVEL: multi_properties::write: "
 			  << "write_private = '" << a_write_private << "'" << endl;
