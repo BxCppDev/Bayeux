@@ -40,6 +40,7 @@
 #include <vector>
 #include <list>
 #include <map>
+#include <stdexcept>
 
 #include <boost/cstdint.hpp>
 #include <boost/serialization/access.hpp>
@@ -488,6 +489,10 @@ namespace datatools {
 
       bool has_key (const std::string & a_key) const;
 
+      // 2011-11-27 FM: could be useful
+      //! Rename a property with a new name.
+      //void rename (const std::string & a_key, const std::string & a_new_key);
+
       //! Erase property with name a_key.
       void erase (const std::string & a_key);
 
@@ -509,7 +514,65 @@ namespace datatools {
 
       void export_not_starting_with (properties & a_props, 
 				     const std::string & a_key_prefix) const;
-      
+
+      // 2011-11-27 FM:      
+      template <class key_predicate>
+      void export_if (properties & props_, 
+		      const key_predicate & predicate_) const
+      {
+	if (this == &props_)
+	  {
+	    throw logic_error ("properties::export_if: Self export is not allowed !");
+	  }
+	keys_col_t ks;
+	for (pmap::const_iterator iter = _props_.begin ();
+	     iter != _props_.end ();
+	     iter++)
+	  {
+	    if (predicate_ (iter->first))
+	      {
+		ks.push_back (iter->first);
+	      }
+	  }
+ 	for (keys_col_t::const_iterator i = ks.begin ();
+	     i !=  ks.end ();
+	     i++)
+	  {
+	    properties & ptmp = const_cast<properties &> (*this);
+	    props_._props_[*i] = ptmp._props_[*i];
+	  }
+	return;
+      }
+
+      // 2011-11-27 FM:      
+      template <class key_predicate>
+      void export_not_if (properties & props_, 
+		      const key_predicate & predicate_) const
+      {
+	if (this == &props_)
+	  {
+	    throw logic_error ("properties::export_not_if: Self export is not allowed !");
+	  }
+	keys_col_t ks;
+	for (pmap::const_iterator iter = _props_.begin ();
+	     iter != _props_.end ();
+	     iter++)
+	  {
+	    if (! predicate_ (iter->first))
+	      {
+		ks.push_back (iter->first);
+	      }
+	  }
+ 	for (keys_col_t::const_iterator i = ks.begin ();
+	     i !=  ks.end ();
+	     i++)
+	  {
+	    properties & ptmp = const_cast<properties &> (*this);
+	    props_._props_[*i] = ptmp._props_[*i];
+	  }
+	return;
+      }
+
       //! Erase all properties ending with a_key_suffix
       void erase_all_ending_with (const std::string & a_key_suffix);
       
