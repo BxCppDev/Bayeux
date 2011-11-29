@@ -1,0 +1,9 @@
+# -*- mode: change-log; -*-
+# ChangeLog of the DatatoolsContainerTutorial memo
+2011-11-27/07:29	F. Mauger  <mauger@lpccaen.in2p3.fr>
+	* Creation
+2011-11-29/09:01	F. Mauger  <mauger@lpccaen.in2p3.fr>
+	* SVN: first commit
+	* DocDB : first submission
+	* DatatoolsContainerTutorial.tex : preliminary version
+

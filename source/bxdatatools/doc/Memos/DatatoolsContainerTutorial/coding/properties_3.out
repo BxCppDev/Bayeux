@@ -1,0 +1,50 @@
+Original container :
+|-- Description  : A test properties container
+|-- Name : "debug.filename"
+|   |-- Type  : string (scalar)
+|   `-- Value : "debug.log"
+|-- Name : "debug.level"
+|   |-- Type  : integer (scalar)
+|   `-- Value : 1
+|-- Name : "program_name"
+|   |-- Description  : prog
+|   |-- Type  : boolean (scalar)
+|   `-- Value : 1
+`-- Name : "test"
+    |-- Type  : boolean (scalar)
+    `-- Value : 1
+
+Exported properties container with the 'debug.' key prefix :
+|-- Name : "debug.filename"
+|   |-- Type  : string (scalar)
+|   `-- Value : "debug.log"
+`-- Name : "debug.level"
+    |-- Type  : integer (scalar)
+    `-- Value : 1
+
+Exported properties container without the 'debug.' key prefix :
+|-- Name : "program_name"
+|   |-- Description  : prog
+|   |-- Type  : boolean (scalar)
+|   `-- Value : 1
+`-- Name : "test"
+    |-- Type  : boolean (scalar)
+    `-- Value : 1
+
+Exported properties container with the 'name' string in key :
+|-- Name : "debug.filename"
+|   |-- Type  : string (scalar)
+|   `-- Value : "debug.log"
+`-- Name : "program_name"
+    |-- Description  : prog
+    |-- Type  : boolean (scalar)
+    `-- Value : 1
+
+Exported properties container without the 'name' string in key :
+|-- Name : "debug.level"
+|   |-- Type  : integer (scalar)
+|   `-- Value : 1
+`-- Name : "test"
+    |-- Type  : boolean (scalar)
+    `-- Value : 1
+

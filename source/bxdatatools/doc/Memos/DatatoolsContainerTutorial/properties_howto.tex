@@ -1,0 +1,806 @@
+%% properties_howto.tex
+
+\section{The \texttt{datatools::utils::properties} class}\label{sec:properties}
+
+\subsection{Introduction}
+
+The \texttt{datatools::utils::properties}  class is designed to  be an useful
+container of arbitrary  \emph{properties}.  In the \texttt{datatools}'
+terminology, a  \emph{property} is a  variable of a simple  type which
+has :
+\begin{itemize}
+\item a  \emph{name} which can be  used to uniquely  identify and thus
+  access to it,
+\item a \emph{value} of a  certain \emph{type} which is supposed to be
+  the material used by an user or a client application.
+\end{itemize}
+
+As  an example,  let's build  the virtual  representation of  a simple
+geometry  3D-object, namely  a cube,  using \emph{properties}.  We may
+choose the following list of \emph{properties} :
+
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+Name    &    Value  & Type \\
+\hline
+\hline
+\TT{dimension} & 28.7 cm   & real  \\
+\hline
+\TT{colour}    & \TT{blue} & string  \\
+\hline         
+\TT{material}  & \TT{copper} & string  \\
+\hline
+\TT{price}     & 2.36 \euro & real \\
+\hline
+\TT{available} & true       & boolean \\
+\hline
+\TT{nb\_in\_stock} & 65     & integer \\
+\hline
+\TT{manufacturer}  & \TT{The ACME International Company}  & string \\
+\hline
+\TT{reference\_number}  & \TT{234/12.456}  & string \\
+\hline
+\end{tabular}
+\end{center}
+
+As it can be seen in the example above, this list of \emph{properties}
+makes possible to figure  out non-ambiguously the main characteristics
+of  an  object.   We   should  have  writen,  its  main  \emph{static}
+characteristics, because the table above does not contain informations
+about the  \emph{behavior} and \emph{dynamic}  characteristics of this
+cube.
+
+
+\subsection{Header file and instantiation}
+
+\pn In order to use \texttt{datatools::utils::properties} objects, one
+must use the following include directive:
+\begin{CppVerbatim} 
+#include <datatools/utils/properties.h>
+\end{CppVerbatim}
+
+\pn The declaration of a  \texttt{datatools::utils::properties} instance
+can be simply done with:
+\begin{CppVerbatim} 
+datatools::utils::properties my_properties_container;
+\end{CppVerbatim}
+\pn Note the use of the nested \texttt{datatools::utils} namespace.
+Alternatively one can use :
+\begin{CppVerbatim} 
+using namespace datatools::utils;
+properties my_properties_container;
+\end{CppVerbatim}
+\pn or:
+\begin{CppVerbatim} 
+namespace du = datatools::utils;
+du::properties my_properties_container;
+\end{CppVerbatim}
+
+\subsection{Design}
+
+\subsubsection{Naming scheme}
+
+The \texttt{datatools::utils::properties} class is implemented through
+a \texttt{std::map}  container as a  dictionnary (or lookup  table) of
+\emph{records}.  A  record   contains  all  informations  to  uniquely
+identify  a  given  property :  name,  type,  value  and a  few  other
+attributes. On the  point of view of the  user, implementation details
+are not important.
+
+First  of  all,   when  one  wants  to  store   a  property  within  a
+\texttt{datatools::utils::properties} container object, we must choose
+it  a \emph{name}  (or \emph{key}).  This name  must be  unique  in this
+container, so it must not be already used by another property record.
+
+The name must fulfill some rules:
+\begin{itemize}
+
+\item it must not be the empty string (\verb+""+),
+
+\item it must contains  only digits (0\dots9), alphabetical characters
+  (\verb+'a'+  to \verb+'z'+  and  \verb+'A'+ to  \verb+'Z'+) and  the
+  underscore (\verb+'_'+) or dot (\verb+'.'+) characters,
+
+\item it must not start with a digit,
+
+\item it must not end with a dot.
+
+\end{itemize}
+
+\pn Table \ref{tab::properties:keys:0}  shows some valid and invalid
+choices   for   names   to   be   used   as   property   keys   in   a
+\texttt{datatools::utils::properties} object.
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+Key      &   Validity \\
+\hline
+\hline
+\TT{a}                 &     yes  \\
+\hline
+\TT{debug\_level}      &     yes  \\
+\hline
+\TT{\_hello\_}         &     yes  \\
+\hline
+\TT{FirstName}         &     yes  \\
+\hline
+\TT{\_\_status}        &     yes  \\
+\hline
+\TT{logging.filename}  &     yes  \\
+\hline
+\TT{b.}                &     no  \\
+\hline
+\TT{\$\{DOC\}}         &     no  \\
+\hline
+\TT{007}               &     no  \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Example of names (keys) supported or not supported
+by the \texttt{datatools::utils::properties} class.}
+\label{tab::properties:keys:0}
+\end{table}
+
+This default  behavior can be  changed by attaching  another \emph{key
+  validator} object to the  container. However, this functionnality is
+out of the scope of this tutorial.
+
+\subsubsection{Supported types}
+
+Now we have chosen the name  (key) for a property, we must indicate of
+which   type  it   is.  Only   four   types  are   supported  by   the
+\texttt{datatools::utils::properties}  class, both in  a \emph{scalar}
+version (one  single value) or in a  \emph{array} version (implemented
+as  a  \texttt{std::vector}).  These  types  are given  in  table
+\ref{tab::properties:types:0}.
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|c|c|l|}
+\hline
+Label      &   Implementation & Range \\
+\hline
+\hline
+boolean (flags) & \texttt{bool} & false or true (0 or 1)  \\
+\hline
+integer    & 32 bits signed integers & from $-2^{31}$ to $+2^{31}-1$ \\
+\hline
+real       & \texttt{double}  & IEEE-754 64 bit encoded double \\
+           &                  & precision floating point numbers \\
+\hline
+string     &  \texttt{std::string} & any character string not \\
+           &                       & containing the double quote \\
+           &                       & character(\verb+'"'+) \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Property         types        supported         by        the
+  \texttt{datatools::utils::properties} class.}
+\label{tab::properties:types:0}
+\end{table}
+
+
+
+\subsubsection{Additional property's traits}
+
+When one stores a new property in a \emph{properties} container, it is
+possible to provide an arbitrary string that describes it.
+
+More it  is also possible to  mark it as  \emph{non-mutable}. It means
+that it will not be possible to further modify its value. However, the
+property still can be erased.
+
+It is also possible to use \emph{private} properties.  Conventionnaly,
+private  properties  have  a  name/key starting  with  two  underscores
+(example: \TT{\_\_secret)}. The \emph{private} trait can trigger different
+I/O behaviors (see below).
+
+\subsubsection{Vector properties}
+
+As mentionned above, a property can store a single (scalar) typed value
+as well as an array of values of the same type. The size of such an array
+can be zero or whatever number of elements. It is only limited
+by the available memory and possible limitations of the implementation
+(here we use \texttt{std::vector} templatized containers).
+
+\subsubsection{Meta informations}
+
+Aside some internal data structures used to implement the dictionnary
+of property records, a \texttt{datatools::utils::properties} object
+has a \emph{debug} flag which is not supposed to be activated in some production
+program and a \emph{description} string which can be used to store
+some  arbitrary text formated meta-information.
+
+
+\subsubsection{Constructors}
+
+The \texttt{datatools::utils::properties} class provides a few useful
+constructors.
+
+The default  constructor initializes an empty  container of properties
+and   fulfills   most   needs   in   realistic   use   cases.   Sample
+\ref{sample:properties:0}   shows  the  syntax   used  to   declare  a
+properties container object.
+
+\begin{sample}[h]
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=1,
+%%lastline=9,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_0.cxx}
+\caption{The declaration of a default empty \emph{properties}
+object and a documented (with an embedded description) empty \emph{properties}
+object.}
+\label{sample:properties:0}
+\end{sample}
+
+
+\subsubsection{Interface methods}
+
+There     are     many     methods     available     to     manipulate
+\texttt{datatools::utils::properties} container objects.
+
+\pn Non mutable methods :
+
+\begin{itemize}
+
+\item  \texttt{get\_description}   returns  the  embedded  description
+  character string (if any),
+
+\item \texttt{keys} builds a list of the keys of all objects stored in
+  the container,
+
+\item  \texttt{is\_locked} informs  if  the container  is locked  (its
+  contents cannot be changed),
+
+\item  \texttt{size} returns the  number of  properties stored  in the
+  container,
+
+\item \texttt{has\_key} informs if  the container containes a property
+  with a given key/name,
+
+\item  \texttt{is\_boolean},  \texttt{is\_integer}, \texttt{is\_real},
+  \texttt{is\_string} inform  if a stored  property is of  some given
+  type,
+
+\item \texttt{is\_scalar}  informs if a  stored property is  scalar (a
+  single value is stored) or not,
+
+\item \texttt{is\_vector}  informs if a stored property  is vector (an
+  array of values of the same type is stored) or not,
+
+\item \texttt{has\_flag}  informs if a stored  boolean property exists
+  and has the \TT{true} value,
+
+\item \texttt{fetch\_boolean} returns the value of an existing boolean
+  property (flag) stored in the container.
+  
+\item \texttt{fetch\_integer} returns the value of an existing integer
+  property stored in the container.
+   
+\item  \texttt{fetch\_real}  returns the  value  of  an existing  real
+  property stored in the container.
+  
+\item \texttt{fetch\_string}  returns the value of  an existing string
+  property stored in the container.
+  
+\item  various  \texttt{fetch}  and  \texttt{fetch\_XXX\_YYY}  methods
+  return  the  value  of  an  existing property  of  some  given  type
+  \texttt{XXX}  (\texttt{boolean}, \texttt{integer},  \texttt{real} or
+  \texttt{string})  and   given  size  \texttt{YYY}  (\texttt{scalar},
+  \texttt{vector})  stored in  the  container.  In  case  of a  vector
+  property, the index of value in the internal array can be passed.
+  
+\item \texttt{tree\_dump}  prints the content  of the container  in an
+  ASCII readable format.
+
+\end{itemize}
+
+\pn A large set of mutable methods are available :
+
+\begin{itemize}
+
+\item \texttt{store\_flag}  and \texttt{set\_flag} adds  a new boolean
+  property in the container with a given key (the key must not already
+  exist), the value is set at \TT{true} by default
+
+\item \texttt{store\_boolean} adds a new boolean property in the container
+with a given key (the key must not already exist), the value is set on user 
+choice,
+
+\item \texttt{store\_integer} adds a new integer property in the container
+with a given key (the key must not already exist), the value is set on user 
+choice,
+
+\item \texttt{store\_real} adds a new real property in the container
+with a given key (the key must not already exist), the value is set on user 
+choice,
+
+\item \texttt{store\_string} adds a new string property in the container
+with a given key (the key must not already exist), the value is set on user 
+choice,
+
+\item various overloaded \texttt{store}  methods add a new property of
+  a given type (scalar, vector) in the container with a given key (the
+  key must not already exist), the value is set at user choice,
+
+\item  various \texttt{change\_XXX}  methods  modify the  value of  an
+  existing   property    of   type   \texttt{XXX}   (\texttt{boolean},
+  \texttt{integer},  \texttt{real} or \texttt{string}).  In case  of a
+  vector  property,  the index  of  the value  to  be  changed in  the
+  internal array can be passed.
+
+\item various  overloaded \texttt{change} methods modify  the value of
+  an existing  property of a given  type and size  (scalar, vector) in
+  the container.  The value is set at user choice. In case of a vector
+  property, the index of the value to be changed in the internal array
+  can be passed.
+
+\item \texttt{update\_flag} adds a new boolean true value using a given
+key or update it at its true value is it already exists.
+
+\item \texttt{update\_XXX}  methods update the  value or add it  if it
+  does not exist yet. The value is set at user choice.
+
+\item various overloaded \texttt{update} methods behave like
+the one described above.
+
+\item \texttt{erase}  erase the property with a given key
+
+\item \texttt{erase\_all}  erase all stored properties,
+
+\item \texttt{erase\_all\_starting\_with}  erase all stored properties
+with a key that starts with a given prefix,
+
+\item \texttt{erase\_all\_not\_starting\_with}  erase all stored properties
+with a key that does not start with a given prefix,
+,
+
+\item \texttt{erase\_all\_ending\_with}  erase all stored properties
+with a key that ends with a given prefix,
+
+\item \texttt{erase\_all\_not\_ending\_with}  erase all stored properties
+with a key that does not end with a given prefix,
+
+\item \texttt{lock}  locks the container  for all mutable  methods but
+  the \texttt{unlock} method,
+
+\item  \texttt{unlock} unlocks the container if it was locked
+  previously.
+
+\item  \texttt{reset} and \texttt{clear} completely blank the contents
+of the container (its description and its dictionnary of properties).
+
+\end{itemize}
+
+%\clearpage
+
+\subsubsection{Exporting features}
+
+The \texttt{datatools::utils::properties} class  is copyable. It means
+that it is possible to use the affectation operator (\verb+operator=+)
+to affect the value of one container property object to another one. A
+copy   constructor   is    also   available.    The   program   source
+\ref{program:properties:2} shows how two containers can be initialized
+by copy  of an  original one.  The output printed  is shown  on sample
+\ref{sample:properties:2}.
+
+
+\begin{program}[h]
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=1,
+%%lastline=88,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_2.cxx}
+\caption{A program that uses the assignment operator and copy constructor
+for  \texttt{datatools::utils::properties} objects.}
+\label{program:properties:2}
+\end{program}
+
+\begin{sample}[h]
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=1,
+%lastline=3,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_2.out}
+\caption{The output of the program \ref{program:properties:2}.}
+\label{sample:properties:2}
+\end{sample}
+
+These plain copying functionalities are obviously extremely useful and
+are implemented  by default in  the library. However, it  is sometimes
+desirable  to export  only a  subset  of properties  from an  original
+properties  container and \emph{install}  these subset  inside another
+properties container : this  is called \emph{exporting properties}. It
+realize some kind of partial  copy of some original container (source)
+to another one (target).
+
+Several  export methods  are  implemented,  all need  to  be passed  a
+reference to  the target container and  some string that is  used as a
+prefix for properties' keys:
+
+\begin{itemize}
+
+\item   \texttt{export\_starting\_with}   install,   in   the   target
+  container, a copy  of each property, of which the  key starts with a
+  given prefix,
+
+\item  \texttt{export\_not\_starting\_with}  install,  in  the  target
+  container, a copy of each property,  of which the key does not start
+  with a given prefix,
+
+\item  \texttt{export\_and\_rename\_starting\_with}  install,  in  the
+  target container, a  copy of each property, of  which the key starts
+  with  a given  prefix;  copied  properties are  renamed  with a  new
+  prefix,
+
+\item \texttt{export\_if} (template) install, in the target container,
+  a  copy  of  each  property,  of  which the  key  fulfills  a  given
+  predicate,
+
+\item  \texttt{export\_not\_if}  (template)  install,  in  the  target
+  container,  a copy  of  each property,  of  which the  key does  not
+  fulfill a given predicate.
+
+\end{itemize}
+
+The program source  \ref{program:properties:3} shows how properties
+containers can be initialized by exporting original properties from
+an  original   one.   The  output   printed  is  shown   on  sample
+\ref{sample:properties:3}.
+
+
+\begin{program}[h]
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=1,
+%%lastline=88,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_3.cxx}
+\caption{A  program  that  uses  \texttt{datatools::utils::properties}
+  class' exporting methods.}
+\label{program:properties:3}
+\end{program}
+
+\begin{sample}[h]
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=1,
+%lastline=3,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_3.out}
+\caption{The output of the program \ref{program:properties:3}.}
+\label{sample:properties:3}
+\end{sample}
+
+%\clearpage
+
+\subsubsection{Serialization and I/O features}
+
+The \texttt{datatools::utils::properties}  container class is equipped
+with some I/O  functionnalities. There are two techniques  that can be
+used to \emph{serialize} a properties container object :
+
+\begin{itemize}
+
+\item ASCII  formatting in standard I/O streams:  this technique makes
+  possible  to store  and  load properties  objects  from simple  text
+  files.  It uses an ASCII human readable format. The full dictionnary
+  of  properties  is  thus  recorder  in an  non-ambiguous  way.  Such
+  approach is extremely useful to implement configuration files.
+
+\item High level  serialization using the Boost/Serialization library.
+  Some  dedicated  template methods  are  implemented  to fulfill  the
+  Boost/Serialization API. Boost text, XML and binary I/O archives are
+  supported.  The  \texttt{datatools::utils::properties} class  itself
+  fulfill some  special serialization  interface that makes  it usable
+  with    some     advanced    serialization    mechanism\footnote{The
+    \texttt{datatools::serialization::i\_serializable}            class
+    interface}.  The description  of this feature is out  of the scope
+  of this document.
+
+\end{itemize} 
+
+\pn  Let's  concentrate on  the  ASCII  I/O  functionnalities: \\  the
+\texttt{datatools::utils::properties::config} class  is responsible to
+write/read  to/from ASCII formated  standard streams.   Utility static
+wrapper  methods are  provided  to perform  such  I/O operations  with
+files.  By default  only  \emph{non-private} properties  are saved  or
+loaded.
+
+The program source  \ref{program:properties:4} shows how to use
+this class to dump the ASCII format on the terminal or
+a file. The  output   printed  is  shown   on  sample
+\ref{sample:properties:4}, the contents of the saved file
+is shown on sample \ref{sample:properties:4}.
+
+
+\begin{program}[h]
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=1,
+%%lastline=88,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_4.cxx}
+\caption{Save        and       load        functionnalities       with
+  \texttt{datatools::utils::properties}   objects.    Note  that   the
+  description   of  the   container  itself   is  printed   through  a
+  meta-comment (line starting  with the \TT{\#@config} prefix).  Also,
+  some  properties  have  been  originaly stored  with  an  associated
+  transcient description  string. This  information is also  saved for
+  convenience  in the  ASCII file  using special  meta-comments (lines
+  starting with \TT{\#@description} prefix).}
+\label{program:properties:4}
+\end{program}
+
+
+\begin{sample}[h]
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=1,
+%lastline=3,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_4.out}
+\caption{The output of the program \ref{program:properties:4}.}
+\label{sample:properties:4}
+\end{sample}
+
+\begin{sample}[h]
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=1,
+%lastline=3,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_4.conf.save}
+\caption{The   contents  of   the  file   generated  by   the  program
+  \ref{program:properties:4}.  Note the  string property \TT{name} has
+  no description.}
+\label{sample:properties:4}
+\end{sample}
+%\clearpage
+
+Of course,  it is  perfectly possible to  create a  configuration file
+that  respect this  format using  your  favorite text  editor or  some
+external  script.  It  is  then possible  to  ask a  given program  to
+initialize a properties container  using this input file.  The program
+source  \ref{program:properties:5}  shows   such  an  example  with  a
+hand-edited  configuration  file  (sample  \ref{sample:properties:5}).
+The    output     of    the    program    is     shown    in    sample
+\ref{sample:properties:5out}.
+
+\begin{sample}[h]
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=1,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_5.conf}
+\caption{A configuration file created \emph{by hand} to be used by the
+  program  \ref{program:properties:5}.   Note   that  if  a  backslash, 
+  immediately followed by  a newline character, is added
+  at the end  of a given line,  the parser assumes the line continues
+  on the next line in the file.}
+\label{sample:properties:5}
+\end{sample}
+
+\begin{program}[h]
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=1,
+%%lastline=88,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_5.cxx}
+\caption{Initialization   of  a  \texttt{datatools::utils::properties}
+  container  through  the  reading  of the  ASCII  configuration  file
+  (sample \ref{sample:properties:5})}.
+\label{program:properties:5}
+\end{program}
+
+\begin{sample}[h]
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=1,
+%lastline=3,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_5.out}
+\caption{The output of the program \ref{program:properties:5}.}
+\label{sample:properties:5out}
+\end{sample}
+
+\clearpage
+\subsection{Examples}
+
+\subsubsection{Store and fetch boolean properties}
+
+\pn  Sample code  for  adding  boolean properties  and/or  flags in  a
+properties  container (by  convention a  flag is  an  existing boolean
+property with value \emph{true}) :
+
+\pn
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=10,
+lastline=17,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_6.cxx}
+
+\pn Sample code for checking  the existence of some boolean properties
+(flags) in a properties container and fetch the associated value :
+
+\pn
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=19,
+lastline=43,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_6.cxx}
+
+\pn Sample code to store a vector of boolean values :
+
+\pn
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=46,
+lastline=49,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_6.cxx}
+
+\pn Sample code to fetch a vector of boolean values :
+\pn
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=53,
+lastline=57,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_6.cxx}
+
+
+\subsubsection{Store and fetch integer properties}
+
+
+\pn  Sample  code  for  adding  integer  properties  in  a  properties
+container :
+
+\pn
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=10,
+lastline=14,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_7.cxx}
+
+\pn Sample code for checking  the existence of some integer properties
+in a properties container and fetch the associated value :
+
+\pn
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=16,
+lastline=28,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_7.cxx}
+
+%% XXX
+%\end{document}
+
+\pn Sample code to store a vector of integer values :
+
+\pn
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=31,
+lastline=36,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_7.cxx}
+
+\pn Sample code to fetch a vector of integer values :
+\pn
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=40,
+lastline=46,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_7.cxx}
+
+\pn Sample code to get the size of a vector of integer values :
+\pn
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=53,
+lastline=54,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_7.cxx}
+
+\pn Sample code to fetch a value at given index of a vector of integer values :
+\pn
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=56,
+lastline=57,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_7.cxx}
+
+\pn Sample code to change a scalar integer value. The \texttt{change} methods
+request that the property exists and has the right type :
+\pn
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=59,
+lastline=59,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_7.cxx}
+
+\pn Sample code to change a value at given index from a vector of integers :
+\pn
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=60,
+lastline=60,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_7.cxx}
+
+\pn Sample code to update some integer scalar values. The \texttt{update} 
+methods request that the property has the right type is it already exists,
+otherwise it is created :
+\pn
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=65,
+lastline=66,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_7.cxx}
+
+\subsubsection{Store and fetch real properties}
+
+The real properties are handled  is the same way the integer properties
+are.   The  \texttt{store},  \texttt{store\_real},  \texttt{is\_real},
+\texttt{change},        \texttt{change\_real},        \texttt{update},
+\texttt{update\_real},  \texttt{fetch},  \texttt{fetch\_real},
+\texttt{fetch\_real\_scalar},
+\texttt{fetch\_real\_vector}  methods
+are implemented.
+
+\subsubsection{Store and fetch string properties}
+
+
+The  string  properties  are  handled  is the  same  way  the  integer
+properties    are.    The    \texttt{store},   \texttt{store\_string},
+\texttt{is\_string},     \texttt{change},     \texttt{change\_string},
+\texttt{update},        \texttt{update\_string},       \texttt{fetch},
+\texttt{fetch\_string},
+\texttt{fetch\_string\_scalar},
+\texttt{fetch\_string\_vector} methods are implemented.
+
+\pn  Reminder:  a  string  value  cannot  contents  the  double  quote
+character, because it is used as the string delimiter character.
+
+%% end of properties_howto.tex

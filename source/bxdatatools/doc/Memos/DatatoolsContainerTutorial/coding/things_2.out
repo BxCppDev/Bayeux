@@ -1,0 +1,20 @@
+The bag: 
+|-- Description  : A test things container
+|-- Name : "dummy"
+|   |-- Const  : 0
+|   `-- Handle  : 0x985abd8 (serial tag: 'storable_type')
+`-- Name : "foo"
+    |-- Const  : 0
+    `-- Handle  : 0x985ab70 (serial tag: 'datatools:utils::properties')
+
+foo : 
+`-- Name : "test"
+    |-- Type  : boolean (scalar)
+    `-- Value : 1
+dummy's value = 12345
+
+The bag: 
+|-- Description  : A test things container
+`-- Name : "dummy"
+    |-- Const  : 0
+    `-- Handle  : 0x985abd8 (serial tag: 'storable_type')

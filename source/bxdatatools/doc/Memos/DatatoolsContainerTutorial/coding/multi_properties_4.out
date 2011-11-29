@@ -1,0 +1,54 @@
+A multi-properties container restored from a file :
+|-- Description  : A test multi-properties container
+|-- Key label    : "name"
+|-- Meta label   : "type"
+|-- Entries      : [3]
+|   |-- Entry : "debug"
+|   |   |-- Key        : "debug"
+|   |   |-- Meta       : "debug::config"
+|   |   `-- Properties : [3]
+|   |       |-- Name : "active"
+|   |       |   |-- Type  : boolean (scalar)
+|   |       |   `-- Value : 1
+|   |       |-- Name : "filename"
+|   |       |   |-- Type  : string (scalar)
+|   |       |   `-- Value : "/tmp/debug.out"
+|   |       `-- Name : "level"
+|   |           |-- Type  : integer (scalar)
+|   |           `-- Value : 3
+|   |-- Entry : "math"
+|   |   |-- Key        : "math"
+|   |   |-- Meta       : "math::config"
+|   |   `-- Properties : [3]
+|   |       |-- Name : "big"
+|   |       |   |-- Type  : real (scalar)
+|   |       |   `-- Value : 1e+300
+|   |       |-- Name : "digit"
+|   |       |   |-- Type  : integer (scalar)
+|   |       |   `-- Value : 12
+|   |       `-- Name : "pi"
+|   |           |-- Type  : real (scalar)
+|   |           `-- Value : 3.14159
+|   `-- Entry : "test"
+|       |-- Key        : "test"
+|       |-- Meta       : "test::config"
+|       `-- Properties : [5]
+|           |-- Name : "bird"
+|           |   |-- Type  : string (scalar)
+|           |   `-- Value : "African swallow"
+|           |-- Name : "color"
+|           |   |-- Type  : string (scalar)
+|           |   `-- Value : "blue"
+|           |-- Name : "number_of_witches"
+|           |   |-- Type  : integer (scalar)
+|           |   `-- Value : 1
+|           |-- Name : "quest"
+|           |   |-- Type  : string (scalar)
+|           |   `-- Value : "The search for the Holly Grail"
+|           `-- Name : "using_excalibur"
+|               |-- Type  : boolean (scalar)
+|               `-- Value : 1
+`-- Ordered entries      : [3]
+    |-- Entry [rank=0] : "test"
+    |-- Entry [rank=1] : "debug"
+    `-- Entry [rank=2] : "math"

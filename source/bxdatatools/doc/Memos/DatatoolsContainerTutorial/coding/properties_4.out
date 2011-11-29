@@ -1,0 +1,37 @@
+ASCII formatted printing of the properties container : 
+----------------------------------------------------
+# List of properties (datatools::utils::properties):
+
+#@config A test properties container
+
+#@description The debug level
+debug.level : integer = 1
+
+name : string = "Monty"
+
+#@description The approximated value of pi
+pi : real = 3.14159
+
+#@description A boolean value
+test : boolean = 1
+
+# End of list of properties.
+----------------------------------------------------
+
+The properties container restored from the file :
+|-- Description  : A test properties container
+|-- Name : "debug.level"
+|   |-- Description  : The debug level
+|   |-- Type  : integer (scalar)
+|   `-- Value : 1
+|-- Name : "name"
+|   |-- Type  : string (scalar)
+|   `-- Value : "Monty"
+|-- Name : "pi"
+|   |-- Description  : The approximated value of pi
+|   |-- Type  : real (scalar)
+|   `-- Value : 3.14159
+`-- Name : "test"
+    |-- Description  : A boolean value
+    |-- Type  : boolean (scalar)
+    `-- Value : 1
