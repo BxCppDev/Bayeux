@@ -1,6 +1,6 @@
 # domestic_categories.lis
 
-#@description The description of geometry category in the domestic model
+#@description The description of geometry categories in the domestic model
 #@key_label   "category"
 #@meta_label  "type"
 

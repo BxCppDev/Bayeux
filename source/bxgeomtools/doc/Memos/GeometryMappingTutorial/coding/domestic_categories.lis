@@ -1,6 +1,6 @@
 # domestic_categories.lis
 
-#@description The description of geometry category in the domestic model
+#@description Description of geometry categories
 #@key_label   "category"
 #@meta_label  "type"
 
@@ -40,5 +40,17 @@ inherits : string    = "table"
 [category="large_drawer" type="35"]
 extends : string    = "cupboard"
 by      : string[1] = "drawer_number"
+
+[category="mailbox" type="40"]
+extends : string    = "room"
+by      : string[1] = "mailbox_number"
+
+[category="mailcolumn" type="41"]
+extends : string    = "mailbox"
+by      : string[1] = "column"
+
+[category="mailrow" type="42"]
+extends : string    = "mailcolumn"
+by      : string[1] = "row"
 
 # end of domestic_categories.lis

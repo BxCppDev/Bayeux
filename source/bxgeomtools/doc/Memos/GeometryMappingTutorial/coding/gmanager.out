@@ -1,0 +1,105 @@
+List of models: 
+  bed.model
+  bed_blanket.model
+  bed_body.model
+  bed_leg.model
+  chair.model
+  chair_back.model
+  chair_leg.model
+  chair_seat.model
+  coussin.model
+  cupboard.model
+  cupboard_body.model
+  cupboard_plateau.model
+  drawer_handle.model
+  floor_0.model
+  floor_1.model
+  house.model
+  large_drawer.model
+  large_drawer_box.model
+  large_mail_column.model
+  large_mailbox.model
+  mail_box.model
+  room_0.model
+  room_0_with_tables.model
+  room_1.model
+  room_1_with_bed.model
+  small_drawer.model
+  small_drawer_box.model
+  small_mailbox.model
+  small_mailbox_column.model
+  table.model
+  table_leg.model
+  table_plateau.model
+  twin_bed.model
+  world
+
+Congratulations ! Mapping has been built !
+List of available GIDs : 
+  Geom ID : [0:0]
+  Geom ID : [1:666]
+  Geom ID : [2:666.0]
+  Geom ID : [2:666.1]
+  Geom ID : [3:666.0.0]
+  Geom ID : [3:666.0.1]
+  Geom ID : [3:666.1.0]
+  Geom ID : [3:666.1.1]
+  Geom ID : [3:666.1.2]
+  Geom ID : [3:666.1.3]
+  Geom ID : [4:666.0.1.0]
+  Geom ID : [4:666.0.1.1]
+  Geom ID : [6:666.0.1.0]
+  Geom ID : [6:666.0.1.1]
+  Geom ID : [6:666.0.1.2]
+  Geom ID : [6:666.0.1.3]
+  Geom ID : [6:666.1.1.0]
+  Geom ID : [6:666.1.3.0]
+  Geom ID : [9:666.0.0.0]
+  Geom ID : [9:666.0.0.1]
+  Geom ID : [9:666.1.0.0]
+  Geom ID : [9:666.1.1.0]
+  Geom ID : [9:666.1.2.0]
+  Geom ID : [9:666.1.3.0]
+  Geom ID : [12:666.0.0.0]
+  Geom ID : [12:666.0.1.0]
+  Geom ID : [12:666.1.0.0]
+  Geom ID : [12:666.1.2.0]
+  Geom ID : [34:666.0.1.0]
+  Geom ID : [34:666.0.1.1]
+  Geom ID : [35:666.0.0.0.0]
+  Geom ID : [35:666.0.0.0.1]
+  Geom ID : [35:666.0.0.0.2]
+  Geom ID : [35:666.0.0.0.3]
+  Geom ID : [35:666.0.1.0.0]
+  Geom ID : [35:666.0.1.0.1]
+  Geom ID : [35:666.0.1.0.2]
+  Geom ID : [35:666.0.1.0.3]
+  Geom ID : [35:666.1.0.0.0]
+  Geom ID : [35:666.1.0.0.1]
+  Geom ID : [35:666.1.0.0.2]
+  Geom ID : [35:666.1.0.0.3]
+  Geom ID : [35:666.1.2.0.0]
+  Geom ID : [35:666.1.2.0.1]
+  Geom ID : [35:666.1.2.0.2]
+  Geom ID : [35:666.1.2.0.3]
+  Geom ID : [40:666.0.1.7]
+  Geom ID : [40:666.0.1.9]
+
+Press [Enter] to continue...
+         line 0: warning: Skipping unreadable file ".tmp_gnuplot_drawer_blue_85e2nJ"
+         line 0: warning: No usable data in this plot to auto-scale axis range
+         line 0: warning: Skipping unreadable file ".tmp_gnuplot_drawer_cyan_vMNm09"
+         line 0: warning: No usable data in this plot to auto-scale axis range
+         line 0: warning: Skipping unreadable file ".tmp_gnuplot_drawer_green_iSMHCA"
+         line 0: warning: No usable data in this plot to auto-scale axis range
+         line 0: warning: Skipping unreadable file ".tmp_gnuplot_drawer_grey_tYF3e1"
+         line 0: warning: No usable data in this plot to auto-scale axis range
+         line 0: warning: Skipping unreadable file ".tmp_gnuplot_drawer_magenta_eHZpRr"
+         line 0: warning: No usable data in this plot to auto-scale axis range
+         line 0: warning: Skipping unreadable file ".tmp_gnuplot_drawer_red_H40NtS"
+         line 0: warning: No usable data in this plot to auto-scale axis range
+
+gnuplot> splot ".tmp_gnuplot_drawer_blue_85e2nJ" using 1:2:3 notitle with lines lt 3  lw 0.5 , ".tmp_gnuplot_drawer_cyan_vMNm09" using 1:2:3 notitle with lines lt 5  lw 0.5 , ".tmp_gnuplot_drawer_green_iSMHCA" using 1:2:3 notitle with lines lt 2  lw 0.5 , ".tmp_gnuplot_drawer_grey_tYF3e1" using 1:2:3 notitle with lines lt 0  lw 0.5 , ".tmp_gnuplot_drawer_magenta_eHZpRr" using 1:2:3 notitle with lines lt 4  lw 0.5 , ".tmp_gnuplot_drawer_red_H40NtS" using 1:2:3 notitle with lines lt 1  lw 0.5 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ^
+         line 0: All points x value undefined
+

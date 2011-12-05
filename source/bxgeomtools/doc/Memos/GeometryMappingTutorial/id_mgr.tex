@@ -24,12 +24,13 @@ instance is initialized with some special directives that specify :
 \end{itemize}
 
 \pn  In the current  implementation, these  configuration informations
-are stored in a \\
-\texttt{datatools::utils::multi\_properties} container
-and  used   to  create  an   internal  lookup  table  (based   on  the
+are   stored  in  a   \\  \texttt{datatools::utils::multi\_properties}
+container  \footnote{seed  the  ''\emph{Using  container  objects  in}
+  \texttt{datatool}''  tutorial  from  the \texttt{datatools}  program
+  library.}  and used to create an internal lookup table (based on the
 \texttt{std::map}  class).   Each   section  of  this  multi-container
 concerns a specific \emph{geometry  category} of which the \emph{name}
-is the primary  key to access useful information.   The section stores
+is the primary  key to access useful informations.   The section stores
 some configuration parameters  that reflect the \emph{hierarchy rules}
 between categories.
 
@@ -37,11 +38,11 @@ between categories.
 \subsection{Configuration file format}
 
 \pn   Practically,   the  \texttt{datatools::utils::multi\_properties}
-configuration  container is  saved as  an ASCII  file using  its human
+configuration  container is  saved as  an ASCII  file using a human
 friendly readable format.  Let's  consider the domestic world explored
-so far to illustrate the syntax of this file !
+in the previous sections to illustrate the syntax of this file !
 
-\pn First of all, the header of the file must contain the following
+First of all, the header of the file must contain the following
 meta comments:
 
 \begin{ShellVerbatim}
@@ -50,9 +51,12 @@ meta comments:
 #@meta_label  "type"
 \end{ShellVerbatim}
 %%$
+\pn Note that the description line is optionnal and the \emph{key} and
+\emph{label} ones are mandatory.
 
 Then we must add the default top-level category, namely \TT{world} which
-implements a only-one level addresses path with a value labelled \TT{world} :
+implements a only-one level addresses path with a value labelled \TT{world}.
+The \texttt{type} is set at \texttt{0} by convention of the library :
 \begin{ShellVerbatim}
 [category="world" type="0"]
 addresses : string[1] = "world"
@@ -76,8 +80,8 @@ addresses : string[1] = "house_number"
 Note that the category label \TT{house}, as well as
 the address label \TT{house\_number}, will be usable by the user through
 a human friendly interface. This will allow people not to memorize
-all the true numbers used in this system and will provide simple methods
-to retrieve useful geometry informations.
+all the integer numbers used in this system and will provide simple methods
+to retrieve useful geometry informations through character strings.
 
 Now we are done with houses, let's define the rules for the \TT{floor} category
 with type \texttt{2} :
@@ -91,7 +95,7 @@ which tells (\texttt{extends}) that any object of the \TT{floor} category
 is contained by another object of the \TT{house} category.
 More, as any house can contains several floors, we need some additionnal 
 one-level depth appended to the full addresses path. The \texttt{by}
-directive thus define the additional \TT{floor\_number}.
+directive thus defines the additional \TT{floor\_number}.
 Given this rule, the \texttt{id\_mgr} instance will
 automatically use a two-level addresses path for any floor object:
 the first integer value is the   \TT{house\_number} inherited from
@@ -130,7 +134,7 @@ extends : string    = "room"
 by      : string[1] = "cupboard_number"
 \end{ShellVerbatim}
 %%$
-leading respectiveley to GIDs like:
+leading respectively to GIDs like:
 \verb+[4:666.9.7.0]+,
 \verb+[6:666.9.7.2]+,
 \verb+[9:666.9.7.1]+ and \verb+[12:666.9.7.0]+.
@@ -210,7 +214,7 @@ hidden in the top/left (\TT{row}=\texttt{1}, \TT{column}=\texttt{0})
 compartment  of the  unique jewelry  box stored  in the  drawer number
 \texttt{2} of the  only cupboard in the room  number \texttt{7} on the
 9th floor of the Devil's house''. Now you have its GID, 
-I guess you are now able to steal it !
+I guess you are able to steal the treasure !
 
 \pagebreak
 \subsection{Code snippets}
@@ -313,11 +317,12 @@ in various associative containers keyed by \texttt{string} objects. If
 these methods are often used, some performance issues are expected. It
 is  thus  more  efficient  to  directly use  the  integer  values  for
 \emph{types} and \emph{addresses}  indexes, rather than human friendly
-labels. Here the human-friendly methods are used once at the beginning
-of  the program to  retrieve useful  addressing information  stored in
-integer values;  then it is  straightforward to reuse  this addressing
-parameters a  large number of  times, without further  request through
-the human friendly interface of the GID manager.
+string labels.  Here the human-friendly  methods are used once  at the
+beginning of  the program  to retrieve useful  addressing informations
+stored as  integer values  (category \emph{types} and  address index);
+then it is straightforward to reuse this addressing parameters a large
+number of  times, without further  request through the  human friendly
+interface of the GID manager.
 
 
 %% end of id_mgr.tex

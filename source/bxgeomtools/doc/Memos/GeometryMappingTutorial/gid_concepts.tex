@@ -13,7 +13,6 @@ mother-to-daughter relationship between them.
 \pn  We start first  by the  definition of  the set  of \emph{geometry
   categories}  the objects belongs  to.  For  now, we  have 10  of such
 \emph{type} of objects :
-
 \begin{itemize}
   
 \item the \emph{category} \TT{house} is associated to the \emph{type}
@@ -85,9 +84,10 @@ mother-to-daughter relationship between them.
 
 \pn  The  only  constraint   here  is  that  both  \emph{type}  values
 (implemented as  integers) and \emph{category}  labels (implemented as
-character strings) are  unique for a given GID  manager. We needs here
-some kind  of look-up table with unique  \emph{key/value} pairs (table
-\ref{tab:id_map:0}).
+character strings) are unique within a given context of an application
+(i.e.  the  scope of  a  particular  \emph{geometry  ID manager},  see
+below).  We  needs  here  some  kind  of  look-up  table  with  unique
+\emph{key/value} pairs (table \ref{tab:id_map:0}).
 
 \pn  Then   we  give  the   rules  that  describes   the  hierarchical
 relationships between different categories  of objects. In our present
@@ -110,7 +110,7 @@ domestic world :
   
 \item a \emph{table} can have zero or only one \emph{small drawer},
   
-\item a \emph{cupboard} can have zero or up to 4 \emph{large drawer},
+\item a \emph{cupboard} can have zero or up to 4 \emph{large drawers},
   
 \item a \emph{bed} can host zero or more \emph{blankets},
   
@@ -169,7 +169,7 @@ that belongs to this world. We can associate to each of them an unique
   only  way to  distinguish  them  is to  allocate  to them  different
   addresses.  The  addresses path  still has to  reflect to  fact that
   they    both   belong    to   the    \emph{Devil's    house}   (with
-  \TT{house\_number}=666).   So  thay  must  share  this  hierarchical
+  \TT{house\_number}=666).   So  they  must  share  this  hierarchical
   information. Finally  the minimal information  needed to distinguish
   both floor is to  allocate and additionnal \emph{floor number} (thus
   another integer number).
@@ -196,12 +196,12 @@ depth) addressing scheme.
 
 \item  Now we  can play  the  same game  for the  \emph{rooms}. It  is
   obvious that  all 3 rooms in  the Devil's house share  the same type
-  (set  conventionnaly at \texttt{3})  and belongs  to the  same house
-  (\TT{house\_number}=\texttt{666}).     However     thay    can    be
+  (set  conventionnaly at \texttt{3})  and belong to the  same house
+  (\TT{house\_number}=\texttt{666}).     However     they    can    be
   distinguished     by    two     different     informations:    their
   \TT{floor\_number}   and    a   new   level    of   address:   their
   \TT{room\_number}  with  respect to  the  floor  they  lie in.  This
-  enables us to allocate a unique GID to each of them:
+  enables us to allocate a unique GID to each of them :
   \begin{itemize}
  
   \item Large room at ground floor: GID is \verb+[2:666.0.0]+ where we
@@ -210,7 +210,7 @@ depth) addressing scheme.
  
   \item Small room at ground floor: GID is \verb+[2:666.0.1]+ where we
     chose  the next available  \TT{room\_number}=1 because  the former
-    room already used \TT{room\_number}=0.
+    room already used \\ \TT{room\_number}=0.
 
   \item Unique  room at first floor: GID  is \verb+[2:666.1.0]+ where
     we chose  to start  the numbering  of rooms at  this a  floor with
@@ -271,7 +271,8 @@ would add more and more cupboards in this room : \TT{cupboard\_number}=\texttt{1
 
 \pn  We have  clearly identified  one kind  of  hierarchy relationship
 between  different  \emph{categories}  of   objects  in  term  of  the
-\emph{extension}  of the  addresses path  by some  additionnal address
+\emph{extension}  of the mother container's 
+ addresses path  by some  additionnal address
 value(s)  (integer   numbers).  These  appended   numbers  enable  the
 distinction between different objects of  the same type located in the
 same  container object.  This concept  is closed  to  the \emph{mother
@@ -299,7 +300,7 @@ the  \TT{small\_drawer} category in place of \texttt{4} for the
 \TT{large\_drawer} objects that belong  to the newly added cupboard in
 the  same  room.  In  this   case  we  must  use  a  \emph{extend  by}
 relationship because  an additionnal \TT{drawer\_number}  is needed to
-distinguish the 4 possible drawers  in a cupboard. So, in this virtual
+distinguish the 4 possible drawers for a given cupboard. So, in this virtual
 world,  the GID of  a \TT{small\_drawer}  has some  4-levels addresses
 path but the  GID of a \TT{large\_drawer} has  some 5-levels addresses
 path. This  cleary shows that in  this approach, the  structure of the
@@ -310,16 +311,19 @@ mother object).  We can imagine  that there is no  physical difference
 (shape, color, dimensions) between the model of the drawer inserted in
 a table and  the model of the drawer inserted in  a cupboard. They can
 have the  same physical  properties and thus  share a  common physical
-description. However, the way \emph{we  use} a generic drawer 
-defines another level of properties:
-\begin{itemize}
-\item a drawer for a table  must belong to an object of the \TT{table}
-  category and can contains  objects of the \TT{pencil} category; this
-  defines the \TT{small\_drawer} category,
-\item  a  drawer for  a  cupboard  must belong  to  an  object of  the
-  \TT{cupboard} category  and can  contains objects of  the \TT{shirt}
-  or \TT{tights} category; this defines the \TT{large\_drawer} category.
-\end{itemize}
+description. 
+
+%% XXX to be discussed...
+%% However, the way \emph{we  use} a generic drawer 
+%% defines another level of properties:
+%% \begin{itemize}
+%% \item a drawer for a table  must belong to an object of the \TT{table}
+%%   category and can contains  objects of the \TT{pencil} category; this
+%%   defines the \TT{small\_drawer} category,
+%% \item  a  drawer for  a  cupboard  must belong  to  an  object of  the
+%%   \TT{cupboard} category  and can  contains objects of  the \TT{shirt}
+%%   or \TT{tights} category; this defines the \TT{large\_drawer} category.
+%% \end{itemize}
 
 \subsection{Numbering scheme is an arbitrary choice within an application}
 
@@ -335,7 +339,7 @@ arbitrary way of thinking :
 \begin{itemize}
 \item Case 1 :
    Here  all  box  objects  are  considered  to  belong  to  the
-    \TT{any\_box} category (with  \texttt{type=0}). 
+    \TT{any\_box} category (with  \texttt{type=1}). 
 
     \begin{tabular}{|c|c|}
       \hline
@@ -350,10 +354,11 @@ arbitrary way of thinking :
     
     \pn We  don't take  into account the  mother/daughter relationship
     between the  red and the green  boxes, then between  the green and
-    the  blue box. This  corresponds to  a \emph{flat}  geometry model
+    the  blue boxes. This  corresponds to  a \emph{flat}  numbering scheme
     where we don't need to  know anything about the internal hierarchy
-    of  the geometry  setup.  So  we don't  need to  set  any specific
-    \emph{hierarchy rules}  but one  : the top-level  volume (world)
+    of  the geometry  setup.  Obviously, the numbering scheme does not
+    need to  rely on  any specific
+    \emph{hierarchy rules}  but a single one  : the top-level  volume (world)
     contains some objects of category \TT{any\_box}.
 
     \pn We get 3 GIDs with the same \emph{type} and some distinct
@@ -362,16 +367,16 @@ arbitrary way of thinking :
       \scalebox{1.0}{\input{\pdftextpath/fig_alt_0.pdftex_t}}
     \end{center}
 
-    \pn Note  that in this case,  the physical structure  of the setup
-    does rely on several level of nested volumes, but we simply do not
-    consider this fact while choosing the abstract numbering scheme
-    and building the GIDs.
+    \pn To summarize  this simple use case, the  physical structure of
+    the setup  does rely  on several levels  of nested volumes,  but we
+    simply do not consider this geometrical fact if we choose 
+    this flat numbering scheme and build the objects' GIDs from this policy.
 
 
-\item Case 2 :
- Here  we take into account the hierarchical relationships
-    between the three  box  objects. The lookup table now defines
-    3 different \emph{categories} with 3 associated \emph{types} :
+\item Case 2 : Here we  do take into account the geometry hierarchical
+  relationships between  the three box  objects. The lookup  table now
+  defines 3 different \emph{categories} with 3 associated \emph{types}
+  :
 
     \begin{tabular}{|c|c|}
       \hline
@@ -388,7 +393,7 @@ arbitrary way of thinking :
       \hline
     \end{tabular}
 
-    \pn Some \emph{hierarchy rules} are also given :
+    \pn Some \emph{hierarchy rules} are also needed :
 
     \begin{itemize}
 
@@ -405,16 +410,16 @@ arbitrary way of thinking :
 
     \end{itemize}
 
-    \pn The resulting GIDs associated to the 3 boxes is now :
+    \pn The resulting GIDs associated to the 3 boxes are now :
     
     \begin{center}
       \scalebox{1.0}{\input{\pdftextpath/fig_alt_1.pdftex_t}}
     \end{center}
 
-    \pn GIDs are not only distinct by their \emph{type} but also
-    by the depth of their addresses path, with reflect the hierachical
-    nature of thier respective placements. Of course, this way of doing 
-    is richer than the \emph{flat} model.
+    \pn Here GIDs are not  only distinguished by their \emph{type} but
+    also  by the  depth of  their addresses  pathes, with  reflect the
+    hierachical nature of their respective placements. Of course, this
+    way of doing is richer than the \emph{flat} numbering model.
 \end{itemize}
 
 \pn Finally,  it turns  out that the  choice for the  numbering scheme
@@ -432,8 +437,8 @@ the  hierarchical   (mother/daughter)  approach  --   there  are  some
 (realistic)  cases that  cannot be  addressed  or with  at least  some
 difficulties or limitations.
 
-\pn The first of these case is the \emph{door}. Let's consider again a
-domestic case with two adjacent rooms on the same floor of some house.
+\pn The first of these cases is the \emph{door case}. Let's consider again a
+domestic setup with two adjacent rooms on the same floor of some house.
 
 \begin{center}
   \scalebox{1.0}{\input{\pdftextpath/fig_house_4.pdftex_t}}

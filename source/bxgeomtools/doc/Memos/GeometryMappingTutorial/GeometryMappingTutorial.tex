@@ -20,6 +20,7 @@
 \usepackage{epsfig}
 \usepackage{graphicx}
 \usepackage{pgf}
+\usepackage{float}
 
 \addtolength{\textwidth}{+2cm}
 \addtolength{\textheight}{+3cm}
@@ -34,19 +35,10 @@
 
 \input{include/Software_declare_verbatim.tex}
 
-%% Example :
-%% \VerbatimInput[frame=single,
-%% numbers=left,
-%% numbersep=2pt,
-%% firstline=1,
-%% fontsize=\small,
-%% showspaces=false]{\codingpath/code_snippet.cxx}
-%% \caption{Some code snippet.}\label{fig:code_snippet}
-
 \newcommand{\pn}{\par\noindent}
 \newcommand{\TT}[1]{"\texttt{#1}"}
 
-\title{Geometry mapping tutorial\\%
+\title{Geometry mapping with \texttt{geomtools}\\%
 {\small{(Software/geomtools/GeometryMappingTutorial -- version 0.1)}}}
 \author{F. Mauger <\texttt{mauger@lpccaen.in2p3.fr}>}
 \date{2011-11-22}
@@ -57,89 +49,53 @@
 \maketitle
 
 \begin{abstract}
-Abstract...
+In this note, we explain the principles and tools
+for the creation and manipulation of numbering scheme policies
+and geometry mapping functionnalities within \texttt{geomtools}.
 \end{abstract}
 
 \tableofcontents
+%% \newcommand*\FancyVerbStartString{}
+%% \newcommand*\FancyVerbStopString{}
 
 \section{Introduction}
 
-\pn Introduction\dots
+\pn To be done\dots
 
+\vskip 5mm
+\pn
+Subversion repository:\\
+\texttt{https://nemo.lpc-caen.in2p3.fr/svn/geomtools/}
+\pn
+DocDB reference: \texttt{NemoDocDB-doc-1996}
+\pn
+References: see also
+\textit{Geometry modelling with \texttt{geomtools}} (\texttt{NemoDocDB-doc-1995})
 \pagebreak
 
 \input{gid.tex}
 
 \pagebreak
-\input{gid_concepts}
+\input{gid_concepts.tex}
 
 \pagebreak
-\input{id_mgr}
+\input{id_mgr.tex}
 
 \pagebreak
-\input{mapping}
+\input{mapping.tex}
 
-%% %% Material specific to memos in some "Software" category :
-%% \begin{ShellVerbatim}
-%% bash-3.2$ ls -l
-%% total 20
-%% -rw-r--r-- 1 mauger mauger    0 2011-11-16 10:16 ChangeLog
-%% drwxr-xr-x 2 mauger mauger 4096 2011-11-16 10:24 doc
-%% drwxr-xr-x 2 mauger mauger 4096 2011-11-16 15:25 lib
-%% -rw-r--r-- 1 mauger mauger 1180 2011-11-16 10:24 README
-%% drwxr-xr-x 2 mauger mauger 4096 2011-11-16 16:06 resources
-%% drwxr-xr-x 2 mauger mauger 4096 2011-11-16 15:42 scripts
-%% \end{ShellVerbatim}
-%% %%$
+\pagebreak
+\input{geom_info.tex}
 
-%% \pn \texttt{MakeMemo} path is:
-%% \begin{PathVerbatim}
-%% /sps/nemo/scratch/mauger/sw/Memos/MakeMemo/trunk
-%% \end{PathVerbatim}
-%% %%$
-
-%% \pn Code snippet can be included (see figure \ref{fig:code_snippet}).
-
-%% \begin{figure}
-%% \VerbatimInput[frame=single,
-%% numbers=left,
-%% numbersep=2pt,
-%% firstline=1,
-%% fontsize=\small,
-%% showspaces=false]{\codingpath/code_snippet.cxx}
-%% \caption{Some code snippet.}\label{fig:code_snippet}
-%% \end{figure}
-
-%% \pn Also we can print verbatim code on-the-fly with special references 
-%% to lines \ref{vrb:important} and \ref{vrb:alt} :
-%% \begin{CppVerbatim}
-%% double pi = 3.14159;
-%% double x = 11.3 * CLHEP::mm; // important \label{vrb:important}
-%% double y = 2.3 * CLHEP::cm;
-%% double t = 1.2 * CLHEP::ns;  // also important \label{vrb:alt}
-%% \end{CppVerbatim}
-%% %%$
-
-%% \pn See also how to include a combined PDF/LaTeX figure from
-%% XFig (see figure \ref{fig:sketch_package})
-
-%% \begin{figure}
-%% \begin{center}
-%% \scalebox{0.75}{\input{\pdftextpath/sketch_package.pdftex_t}}
-%% \end{center}
-%% \caption{The figure caption.}\label{fig:sketch_package}
-%% \end{figure}
-
+\pagebreak
 \section{Conclusion}
 
-\pn The conclusion\dots
+\pn To be done\dots
 
-%% \pn Here is the SuperNEMO logo as a plain PDF image :
-%% \begin{center}
-%% \includegraphics[width=0.25\linewidth]{\imagepath/snemo_logo.pdf}
-%% \end{center}
+\pagebreak
+\appendix
 
-\pn This is the end.
+\input{appendix.tex}
 
 \end{document}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
