@@ -326,7 +326,7 @@ The  Boost/Serialization  library implements  three  kinds of  archives
 \item the text archives use an  ASCII format is not strictly portable
 by default because it does not handle non-finite values for
  floating point numbers, however, for integer types, it is ok,
-provided that the resources in texttt{boost/cstdint.hpp} are used,
+provided that the resources in \texttt{boost/cstdint.hpp} are used,
 
 %% that can be made portable
 %%   if some special care is taken :
@@ -351,15 +351,15 @@ limitation as the text archives,
 
 \end{itemize}
 
-Practically the text and XML  archives can be made portable because we
-use special  features from the  standard iostream library in  order to
-store and  load NaNs  and infinite values  correctly.  The use  of the
+Practically the text  and XML archives can be made  portable if we use
+special features from the standard  iostream library in order to store
+and  load  NaNs  and  infinite  values  correctly.   The  use  of  the
 \texttt{boost/cstdint.hpp}  header  implies  portability  for  integer
 numbers.  In  order to benefit  of the advantages of  binary formatted
 archives (fastness and compactness  of storage), the portability issue
 can  be  solved  using   some  contributed  library  from  Boost  (the
 \emph{floating  point utilities}  by John  Rade) coupled  with special
-version of the portable binary archive by Christian Pfligersdorffer.
+implementation of a portable binary archive by Christian Pfligersdorffer.
 
  %%  This should be  extensively tested  to make  sure we
 %% won't meet  problems. First encouraging  tests have been  performed to
@@ -506,21 +506,21 @@ this   simple  technique.    Archive  files   generated   through  the
 \texttt{datatools::serialization::data\_writer} may be compared with a
 magnetic  tape.   Particularly,   if  the  serialization  flow  failed
 somewhere  in the  middle of  the stream  media, the  stream  from the
-failure point to its the end is likely to be unusable.
+failure point to its end is likely to be unusable.
 
 
-\pn Note  that the reader class has  at least some method  to check of
-some  data are available  from the  stream. This  is shown  in program
-\ref{program:bs:3X}.  The program  serializes two  different  types of
+\pn Note that  the reader class has some method to  check if some data
+are   available  from   the  stream.    This  is   shown   in  program
+\ref{program:bs:3X}.   The program serializes  two different  types of
 objects in  some arbitrary order.  Then  we assume that  we don't know
 the number of  serialized objects at load time and  also we don't know
 their ordering in  the serialization stream.  The program  thus uses a
 deserialization  loop   that  checks  the   stored  \emph{record  tag}
-associated  to   the  next  object  from  the   archive  stream;  this
-determines/guess which \emph{deserialization driver} has to be used to
-load this specific  object. Of course, one needs at  least to known in
-advance the  various types of  the serialized objects and  provide the
-associated deserialization drivers.
+associated to the  next object from the archive  stream; this approach
+allow to determine/guess which \emph{deserialization driver} has to be
+used to load the next object from the stream.  Of course, one needs at
+least to known in advance  the various types of the serialized objects
+and provide the associated deserialization drivers.
 
 \begin{program}[h]
 \VerbatimInput[frame=single,
@@ -749,7 +749,7 @@ firstline=8,
 fontsize=\footnotesize,
 showspaces=false]{\codingpath/sdata2.ipp}
 \caption{The definition of  the \texttt{serialize} template method for
-  the serializable \texttt{sdata} class.  }
+  the serializable \texttt{sdata} class (this version uses a macro).  }
 \label{sample:bs:5c}
 \end{sample}
 
@@ -828,7 +828,7 @@ showspaces=false]{\codingpath/data_6.cxx}
 \label{sample:ps:6d}
 \end{sample}
 
-When  one create some  new serializable  \texttt{foo} class  with this
+When  one creates some  new serializable  \texttt{foo} class  with this
 technique, it  is strongly recommended to split  the interface (header
 file   \texttt{foo.h}   as    in   sample   \ref{sample:ps:6a}),   the
 implementation   (source    file   \texttt{foo.cc}   as    in   sample
