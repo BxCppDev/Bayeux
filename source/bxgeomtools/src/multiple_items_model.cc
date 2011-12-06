@@ -433,7 +433,8 @@ namespace geomtools {
     return;
   }
 
-  i_model::creator_registration<multiple_items_model> multiple_items_model::_g_cr_;
+  // registration :   
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(multiple_items_model);
 
 } // end of namespace geomtools
 

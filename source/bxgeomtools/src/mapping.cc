@@ -427,8 +427,6 @@ namespace geomtools {
                     geom_info item_gi (item_id,
                                        world_item_placement,
                                        phys_logical);
-
-
                     bool add_it = true;
                     if (! is_mode_none ())
                       {

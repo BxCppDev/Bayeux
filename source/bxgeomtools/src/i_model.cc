@@ -258,7 +258,6 @@ namespace geomtools {
     a_pair.first = model_id;
     a_pair.second = creator_;
     __dict.insert (a_pair);
-    //__dict[model_id] = creator_;
     size_t sz = get_dict ().size ();
     if (devel)
       {
@@ -320,7 +319,18 @@ namespace geomtools {
     _name_ = name_;
     return;
   }
- 
+
+  bool i_model::is_phantom_solid () const
+  {
+    return _phantom_solid;
+  }
+
+  void i_model::_set_phantom_solid (bool ps_)
+  {
+    _phantom_solid = ps_;
+    return;
+  }
+  
   const datatools::utils::properties & 
   i_model::parameters () const
   {
@@ -339,6 +349,7 @@ namespace geomtools {
     _constructed_ = false;
     _debug_ = false;
     set_name (name_);
+    _phantom_solid = false;
     return;
   }
 
@@ -375,6 +386,10 @@ namespace geomtools {
 
   void i_model::_pre_construct (datatools::utils::properties & setup_)
   {
+    if (setup_.has_flag (i_model::PHANTOM_SOLID_FLAG))
+      {
+	_set_phantom_solid (true);
+      }
     return;
   }
 

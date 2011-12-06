@@ -19,11 +19,14 @@
 
 #include <string> 
 #include <iostream>
+#include <vector>
 
 #include <geomtools/i_boxed_model.h>
 #include <geomtools/box.h>
 #include <geomtools/physical_volume.h>
 #include <geomtools/placement.h>
+#include <geomtools/model_macros.h>
+#include <geomtools/model_with_internal_items_tools.h>
 
 namespace geomtools {
 
@@ -31,7 +34,7 @@ namespace geomtools {
 
   // define a geometry model with some surrounded boxed models along
   // a specific axis (X, Y or Z)
-  class surrounded_boxed_model : public geomtools::i_boxed_model
+  class surrounded_boxed_model : GEOMTOOLS_BOXED_MODEL_INHERIT
   {
   public:
 
@@ -116,10 +119,6 @@ namespace geomtools {
     virtual void _at_construct (const string & name_,
                                 const datatools::utils::properties & config_,
                                 models_col_t * models_ = 0);
-
-  private:
-
-    static creator_registration<surrounded_boxed_model> _g_cr_;
       
   public: 
 
@@ -132,7 +131,7 @@ namespace geomtools {
 
     bool _debug_;
 
-    list<string>        _position_labels_;
+    vector<string>      _position_labels_;
     string              _material_name_;
 
     const i_model *     _surrounded_model_;
@@ -145,9 +144,15 @@ namespace geomtools {
     bool                _centered_x_;
     bool                _centered_y_;
     bool                _centered_z_;
-
     geomtools::box      _solid_;
- 
+
+    // 2011-12-05 FM : add support for additional internal objects :
+    // internal items :
+    MWIM                    _internals_;
+
+    // registration interface :
+    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(surrounded_boxed_model);
+
   };
 
 } // end of namespace geomtools

@@ -39,7 +39,7 @@ namespace geomtools {
   class logical_volume;
 
   // define a geometry model made of a unique simple 3D shape: 
-  class simple_shaped_model : public i_model
+  class simple_shaped_model : GEOMTOOLS_MODEL_INHERIT
   {
 
   public: 
@@ -110,10 +110,6 @@ namespace geomtools {
                                        const datatools::utils::properties & config_,
                                        models_col_t * models_);
       
-  private:
-
-    static creator_registration<simple_shaped_model> _g_cr_;
-      
   public: 
 
     virtual void tree_dump (ostream & out_         = clog, 
@@ -145,8 +141,11 @@ namespace geomtools {
     logical_volume        * _daughter_owner_logical_;
     logical_volume        * _visibility_logical_;
 
-    // internal items:
+    // internal items :
     MWIM                    _internals_;
+ 
+    // registration interface :
+    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(simple_shaped_model);
   
   };
 

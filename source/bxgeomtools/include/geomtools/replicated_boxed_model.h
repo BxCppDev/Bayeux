@@ -32,7 +32,7 @@ namespace geomtools {
   class box;
 
   // define a geometry model with a single box: 
-  class replicated_boxed_model : public geomtools::i_boxed_model
+  class replicated_boxed_model : GEOMTOOLS_BOXED_MODEL_INHERIT
   {
 
   public: 
@@ -63,10 +63,6 @@ namespace geomtools {
     virtual void _at_construct (const string & name_,
                                 const datatools::utils::properties & config_,
                                 models_col_t * models_ = 0);
-
-  private:
-
-    static creator_registration<replicated_boxed_model> _g_cr_;
       
   public: 
     virtual void tree_dump (ostream & out_         = clog, 
@@ -83,6 +79,9 @@ namespace geomtools {
     double         _y_;
     double         _z_;
     geomtools::box _solid_;
+
+    // registration interface :
+    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(replicated_boxed_model);
   
   };
 

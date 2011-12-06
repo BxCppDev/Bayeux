@@ -1147,8 +1147,8 @@ namespace geomtools {
     return;
   }
 
-  // register this creator:
-  geomtools::i_model::creator_registration<simple_shaped_model> simple_shaped_model::_g_cr_;
+  // registration :   
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(simple_shaped_model);
 
 } // end of namespace geomtools
 

@@ -317,9 +317,8 @@ namespace geomtools {
     return;
   }
 
-   
-  // register this creator:   
-  geomtools::i_model::creator_registration<replicated_boxed_model> replicated_boxed_model::_g_cr_;
+  // registration :   
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(replicated_boxed_model);
       
 } // end of namespace geomtools
 

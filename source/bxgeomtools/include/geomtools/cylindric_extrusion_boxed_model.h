@@ -23,6 +23,7 @@
 #include <limits> 
 
 #include <geomtools/i_model.h>
+#include <geomtools/model_macros.h>
 #include <geomtools/box.h>
 #include <geomtools/cylinder.h>
 #include <geomtools/subtraction_3d.h>
@@ -35,7 +36,7 @@ namespace geomtools {
   using namespace std;
 
   // define a geometry model:
-  class cylindric_extrusion_boxed_model : public i_model
+  class cylindric_extrusion_boxed_model : GEOMTOOLS_MODEL_INHERIT
   {
   public:
 
@@ -82,11 +83,7 @@ namespace geomtools {
     virtual void _at_construct (const string & name_,
 				const datatools::utils::properties & config_,
 				models_col_t * models_ = 0);
-
-  private:
-
-    static creator_registration<cylindric_extrusion_boxed_model> _g_cr_;
-      
+     
   public: 
 
     virtual void tree_dump (ostream & out_         = clog, 
@@ -115,7 +112,10 @@ namespace geomtools {
     physical_volume           _extruded_phys_;
 
     geomtools::i_shape_3d * _solid_;
-  
+
+    // registration interface :
+    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(cylindric_extrusion_boxed_model);
+   
   };
 
 } // end of namespace geomtools

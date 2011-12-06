@@ -27,7 +27,6 @@
 #include <geomtools/logical_volume.h>
 #include <geomtools/detail/model_tools.h>
 
-
 namespace geomtools {
   
   using namespace std;  
@@ -56,6 +55,8 @@ namespace geomtools {
     bool is_constructed () const;
     
     bool is_debug () const;
+
+    bool is_phantom_solid () const;
     
     void set_name (const string & name_); 
     
@@ -66,7 +67,11 @@ namespace geomtools {
     const datatools::utils::properties & parameters () const;
     
     datatools::utils::properties & parameters ();
-    
+
+  protected :
+ 
+    void _set_phantom_solid (bool);
+   
   public: 
 
     // ctor:
@@ -108,6 +113,7 @@ namespace geomtools {
     string _name_;
     
   protected:
+    bool                      _phantom_solid;
     geomtools::logical_volume _logical;
 
     /**************************************************/
@@ -264,6 +270,8 @@ namespace geomtools {
   }; // class i_model
   
 } // end of namespace snemo
+
+#include <geomtools/model_macros.h>
 
 #endif // __geomtools__i_model_h
 

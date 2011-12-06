@@ -466,9 +466,8 @@ namespace geomtools {
     return;
   }
 
-  
-  // register this creator:   
-  geomtools::i_model::creator_registration<rotated_boxed_model> rotated_boxed_model::_g_cr_;
+  // registration :   
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(rotated_boxed_model);
        
 } // end of namespace geomtools
 

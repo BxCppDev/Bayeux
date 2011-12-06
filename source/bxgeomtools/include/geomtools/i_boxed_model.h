@@ -17,6 +17,7 @@
 #define __geomtools__i_boxed_model_h 1
 
 #include <geomtools/i_model.h>
+#include <geomtools/model_macros.h>
 
 namespace geomtools {
 
@@ -25,7 +26,7 @@ namespace geomtools {
   class box;
 
   // define a geometry model with a box solid: 
-  class i_boxed_model : public i_model 
+  class i_boxed_model : GEOMTOOLS_MODEL_INHERIT 
   {
   public:
 
@@ -38,6 +39,10 @@ namespace geomtools {
   };
 
 } // end of namespace geomtools
+
+#define GEOMTOOLS_BOXED_MODEL_INHERIT 					\
+  public geomtools::i_boxed_model					\
+  /**/
 
 #endif // __geomtools__i_boxed_model_h
 

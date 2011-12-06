@@ -28,7 +28,7 @@ namespace geomtools {
     
   using namespace std;  
  
-  class multiple_items_model : public i_boxed_model
+  class multiple_items_model : GEOMTOOLS_BOXED_MODEL_INHERIT
   {
 
   private:
@@ -74,9 +74,8 @@ namespace geomtools {
     box              _solid_;
     MWIM             _internals_;
 
-  private:
-
-    static i_model::creator_registration<multiple_items_model> _g_cr_;
+    // registration interface :
+    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(multiple_items_model);
 
   };
 

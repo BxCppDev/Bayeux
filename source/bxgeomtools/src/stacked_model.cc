@@ -782,6 +782,19 @@ namespace geomtools {
 
     if (devel) cerr << "DEVEL: stacked_model::_at_construct: " << "step 7" << endl;
 
+    // 2011-12-05 FM : add support for additional internal objects :
+    if (_internals_.get_number_of_items () == 0)
+      {
+	if (devel) cerr << endl << endl 
+	     << "DEVEL ****************************"
+	     << "DEVEL: stacked_model::_at_construct: process MWIM"
+	     << endl
+	     << endl;
+       _internals_.plug_internal_models (config_,
+					 get_logical (),
+					 models_);
+      }
+
     if (devel) clog << "DEVEL: stacked_model::_at_construct: Exiting." << endl;
     return;
   }
@@ -830,8 +843,8 @@ namespace geomtools {
     return;
   }
 
-  // register this creator:   
-  geomtools::i_model::creator_registration<stacked_model> stacked_model::_g_cr_;
+  // registration :   
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(stacked_model);
       
 } // end of namespace geomtools
 

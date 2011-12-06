@@ -116,7 +116,9 @@ namespace geomtools {
     if (label.empty ())
       {
         ostringstream label_oss;
-        label_oss << SURROUNDING_LABEL << "__" << i_ << "__";
+	// 2011-12-05 FM : change the default
+	//label_oss << SURROUNDING_LABEL << "__" << i_ << "__";
+	label_oss << SURROUNDING_LABEL << "_" << _position_labels_[i_];
         label = label_oss.str ();
       }
     else
@@ -244,6 +246,7 @@ namespace geomtools {
   // dtor:
   surrounded_boxed_model::~surrounded_boxed_model ()
   {
+    return;
   }
   
   void surrounded_boxed_model::_at_construct (const string & name_,
@@ -406,7 +409,7 @@ namespace geomtools {
     /*** loop over surrounding models ***/
     {
       int ipos = BACK;
-      for (list<string>::const_iterator ilabel = _position_labels_.begin ();
+      for (vector<string>::const_iterator ilabel = _position_labels_.begin ();
            ilabel != _position_labels_.end ();
            ilabel++, ipos++)
         {
@@ -758,6 +761,19 @@ namespace geomtools {
         si.phys.set_logical (si.model->get_logical ());
         si.phys.set_mother (get_logical ());
       }
+
+    // 2011-12-05 FM : add support for additional internal objects :
+    if (_internals_.get_number_of_items () == 0)
+      {
+	if (devel) cerr << endl << endl 
+	     << "DEVEL ****************************"
+	     << "DEVEL: surrounded_boxed_model::_at_construct: process MWIM"
+	     << endl
+	     << endl;
+       _internals_.plug_internal_models (config_,
+					 get_logical (),
+					 models_);
+      }
     
     if (devel) clog << datatools::utils::io::devel 
                     << "surrounded_boxed_model::_at_construct: Exiting." << endl;
@@ -817,9 +833,9 @@ namespace geomtools {
     return;
   }
   
-  // register this creator:   
-  geomtools::i_model::creator_registration<surrounded_boxed_model> surrounded_boxed_model::_g_cr_;
-       
+  // registration :   
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(surrounded_boxed_model);
+
 } // end of namespace geomtools
 
 // end of surrounded_boxed_model.cc

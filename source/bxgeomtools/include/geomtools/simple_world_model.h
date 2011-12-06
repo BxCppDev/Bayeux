@@ -20,6 +20,7 @@
 #include <string> 
 
 #include <geomtools/i_model.h>
+#include <geomtools/model_macros.h>
 #include <geomtools/placement.h>
 #include <geomtools/box.h>
 #include <geomtools/physical_volume.h>
@@ -29,7 +30,7 @@ namespace geomtools {
   using namespace std;
 
   // define a geometry model with a single box: 
-  class simple_world_model : public geomtools::i_model 
+  class simple_world_model : GEOMTOOLS_MODEL_INHERIT 
   {
   public:
 
@@ -54,10 +55,6 @@ namespace geomtools {
     virtual void _at_construct (const string & name_,
                                 const datatools::utils::properties & setup_,
                                 models_col_t * models_ = 0);
-
-  private:
-
-    static creator_registration<simple_world_model> _g_cr_;
       
   public: 
 
@@ -76,6 +73,9 @@ namespace geomtools {
     double                      _world_y_;
     double                      _world_z_;
     string                      _material_;
+
+    // registration interface :
+    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(simple_world_model);
   
   };
 

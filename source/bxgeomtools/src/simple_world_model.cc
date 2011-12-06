@@ -293,9 +293,9 @@ namespace geomtools {
 
     return;
   }
-  
-  // register this creator:   
-  geomtools::i_model::creator_registration<simple_world_model> simple_world_model::_g_cr_;
+
+  // registration :   
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(simple_world_model);
        
 } // end of namespace geomtools
 
