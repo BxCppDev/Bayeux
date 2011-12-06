@@ -152,7 +152,7 @@ material.ref : string = "wood"
 visibility.hidden : boolean = 0
 visibility.color  : string  = "red"
 
-[name="coussin.model" type="geomtools::simple_shaped_model"]
+[name="bolster.model" type="geomtools::simple_shaped_model"]
 shape_type   : string = "cylinder"
 r            : real   = 10.0
 z            : real   = 85.0
@@ -175,7 +175,7 @@ visibility.color  : string  = "grey"
 
 internal_item.labels : string[7] = \
 		         "leg_0" "leg_1" "leg_2" "leg_3" \
-                         "body" "coussin" "blanket"
+                         "body" "bolster" "blanket"
 
 internal_item.model.leg_0       : string  = "bed_leg.model"
 internal_item.placement.leg_0   : string  = "+100 +50 0 (cm)"
@@ -192,8 +192,8 @@ internal_item.placement.leg_3   : string  = "-100 +50 0 (cm)"
 internal_item.model.body        : string  = "bed_body.model"
 internal_item.placement.body    : string  = "0 0 -10 (cm)"
 
-internal_item.model.coussin        : string  = "coussin.model"
-internal_item.placement.coussin    : string  = "+85 0 +15 (cm) @ 90 90 (degree)"
+internal_item.model.bolster        : string  = "bolster.model"
+internal_item.placement.bolster    : string  = "+85 0 +15 (cm) @ 90 90 (degree)"
 
 internal_item.model.blanket        : string  = "bed_blanket.model"
 internal_item.placement.blanket    : string  = "-15 0 +10 (cm)"

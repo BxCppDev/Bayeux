@@ -3,11 +3,11 @@ List of models:
   bed_blanket.model
   bed_body.model
   bed_leg.model
+  bolster.model
   chair.model
   chair_back.model
   chair_leg.model
   chair_seat.model
-  coussin.model
   cupboard.model
   cupboard_body.model
   cupboard_plateau.model
@@ -86,20 +86,20 @@ List of available GIDs :
   Geom ID : [40:666.0.1.9]
 
 Press [Enter] to continue...
-         line 0: warning: Skipping unreadable file ".tmp_gnuplot_drawer_blue_85e2nJ"
+         line 0: warning: Skipping unreadable file ".tmp_gnuplot_drawer_blue_uOsDva"
          line 0: warning: No usable data in this plot to auto-scale axis range
-         line 0: warning: Skipping unreadable file ".tmp_gnuplot_drawer_cyan_vMNm09"
+         line 0: warning: Skipping unreadable file ".tmp_gnuplot_drawer_cyan_XwSTl3"
          line 0: warning: No usable data in this plot to auto-scale axis range
-         line 0: warning: Skipping unreadable file ".tmp_gnuplot_drawer_green_iSMHCA"
+         line 0: warning: Skipping unreadable file ".tmp_gnuplot_drawer_green_owHacW"
          line 0: warning: No usable data in this plot to auto-scale axis range
-         line 0: warning: Skipping unreadable file ".tmp_gnuplot_drawer_grey_tYF3e1"
+         line 0: warning: Skipping unreadable file ".tmp_gnuplot_drawer_grey_pyAs2O"
          line 0: warning: No usable data in this plot to auto-scale axis range
-         line 0: warning: Skipping unreadable file ".tmp_gnuplot_drawer_magenta_eHZpRr"
+         line 0: warning: Skipping unreadable file ".tmp_gnuplot_drawer_magenta_YJ7KSH"
          line 0: warning: No usable data in this plot to auto-scale axis range
-         line 0: warning: Skipping unreadable file ".tmp_gnuplot_drawer_red_H40NtS"
+         line 0: warning: Skipping unreadable file ".tmp_gnuplot_drawer_red_TIo6IA"
          line 0: warning: No usable data in this plot to auto-scale axis range
 
-gnuplot> splot ".tmp_gnuplot_drawer_blue_85e2nJ" using 1:2:3 notitle with lines lt 3  lw 0.5 , ".tmp_gnuplot_drawer_cyan_vMNm09" using 1:2:3 notitle with lines lt 5  lw 0.5 , ".tmp_gnuplot_drawer_green_iSMHCA" using 1:2:3 notitle with lines lt 2  lw 0.5 , ".tmp_gnuplot_drawer_grey_tYF3e1" using 1:2:3 notitle with lines lt 0  lw 0.5 , ".tmp_gnuplot_drawer_magenta_eHZpRr" using 1:2:3 notitle with lines lt 4  lw 0.5 , ".tmp_gnuplot_drawer_red_H40NtS" using 1:2:3 notitle with lines lt 1  lw 0.5 
+gnuplot> splot ".tmp_gnuplot_drawer_blue_uOsDva" using 1:2:3 notitle with lines lt 3  lw 0.5 , ".tmp_gnuplot_drawer_cyan_XwSTl3" using 1:2:3 notitle with lines lt 5  lw 0.5 , ".tmp_gnuplot_drawer_green_owHacW" using 1:2:3 notitle with lines lt 2  lw 0.5 , ".tmp_gnuplot_drawer_grey_pyAs2O" using 1:2:3 notitle with lines lt 0  lw 0.5 , ".tmp_gnuplot_drawer_magenta_YJ7KSH" using 1:2:3 notitle with lines lt 4  lw 0.5 , ".tmp_gnuplot_drawer_red_TIo6IA" using 1:2:3 notitle with lines lt 1  lw 0.5 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ^
          line 0: All points x value undefined
 

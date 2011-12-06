@@ -420,16 +420,16 @@ showspaces=false]{\codingpath/gmanager.out}
   \begin{itemize}
     \item not limit  the generation of the dictionary  to some maximum
       depth in the hierarchy:
-      \begin{verbatim}
+      \begin{CppVerbatim}
 the_mapping.set_max_depth (geomtools::mapping::NO_MAX_DEPTH);
-      \end{verbatim}
+      \end{CppVerbatim}
     \item  not generate  the entries  that correspond  to  the objects
       identified as mail  compartments (the \TT{mailrow} category) and
       columns of mail compartments (the \TT{mailcolumn} category) :
-     \begin{verbatim}
+     \begin{CppVerbatim}
 the_mapping.add_excluded ("mailrow");
 the_mapping.add_excluded ("mailcolumn");
-      \end{verbatim}
+      \end{CppVerbatim}
 
      The  list  of GIDs  associated  to  the generated  \emph{geometry
        information}      entries      is      given     id      sample
@@ -443,8 +443,11 @@ the_mapping.add_excluded ("mailcolumn");
          lastline=86,
          fontsize=\footnotesize,
          showspaces=false]{\codingpath/gmanager.out}
-       \caption{The  list of \emph{geometry
-           information} entries   in program \ref{program:mapping:2}.}
+       \caption{The  list of  \emph{geometry  information} entries  in
+         program  \ref{program:mapping:2}. Here the  GID corresponding
+         to the  \TT{mailrow} (type=42) and  \TT{mailcolumn} (type=41)
+         have not been generated because of a the use of 
+         some special mapping  exclusion directives (see text).}
        \label{sample:mapping:gm:1}
      \end{sample}
 
