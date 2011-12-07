@@ -687,7 +687,7 @@ namespace datatools {
 			{
 			  ostringstream message;
 			  message << "multi_properties::_read_: "
-				  << "Cannot read quoted string key value !" ;
+				  << "Cannot read quoted string key value from line '" << line << "' !" ;
 			  throw runtime_error (message.str ());
 			}
 		      iss >> ws;
@@ -709,7 +709,7 @@ namespace datatools {
 				{
 				  ostringstream message;
 				  message << "multi_properties::_read_: "
-					  << "Cannot read quoted string meta value!" ;
+					  << "Cannot read quoted string meta value from line '" << line << "' !" ;
 				  throw runtime_error (message.str ());
 				}
 			    }
