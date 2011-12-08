@@ -814,6 +814,13 @@ namespace datatools {
 
       std::string fetch_string_vector (const std::string & a_name , int a_index) const;
 
+      std::string fetch_path (const std::string &,
+			      int a_index = 0) const;
+
+      std::string fetch_path_scalar (const std::string & a_name) const;
+
+      std::string fetch_path_vector (const std::string & a_name , int a_index) const;
+
       void dump (std::ostream & = clog) const;
 
       void dump_def () const;

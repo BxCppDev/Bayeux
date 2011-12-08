@@ -58,8 +58,8 @@ namespace datatools {
       if (a_key.empty ())
 	{
 	  ostringstream message;
-	  message << "multi_properties::entry::set_key: Missing key !";
-	  throw runtime_error (message.str ());
+	  message << "datatools::utils::multi_properties::entry::set_key: Missing key !";
+	  throw logic_error (message.str ());
 	}
       _key_ = a_key;
       return;
@@ -170,7 +170,7 @@ namespace datatools {
     {
       if (a_key_label.empty ())
 	{
-	  throw runtime_error ("multi_properties::set_key_label: Empty key label is not allowed !");
+	  throw logic_error ("datatools::utils::multi_properties::set_key_label: Empty key label is not allowed !");
 	}
       _key_label_ = a_key_label;
       return;
@@ -196,7 +196,7 @@ namespace datatools {
     {
       if (_ordered_entries_.size () != _entries_.size ()) 
 	{
-	  throw runtime_error ("multi_properties::size: Containers are broken !");
+	  throw logic_error ("datatools::utils::multi_properties::size: Containers are broken !");
 	}
       return _entries_.size ();
     }
@@ -268,9 +268,9 @@ namespace datatools {
       if (found == _entries_.end ())
 	{
 	  ostringstream message;
-	  message << "multi_properties::get: Key '"
+	  message << "datatools::utils::multi_properties::get: Key '"
 		  <<  a_key << "' is not used !";
-	  throw runtime_error (message.str ());
+	  throw logic_error (message.str ());
 	}
       return found->second;
     }
@@ -281,9 +281,9 @@ namespace datatools {
       if (found == _entries_.end ())
 	{
 	  ostringstream message;
-	  message << "multi_properties::get: Key '"
+	  message << "datatools::utils::multi_properties::get: Key '"
 		  <<  a_key << "' is not used !";
-	  throw runtime_error (message.str ());
+	  throw logic_error (message.str ());
 	}
       return found->second;
     }
@@ -307,7 +307,7 @@ namespace datatools {
       entries_ordered_col_t::iterator found = _ordered_entries_.end ();
        if (devel)
 	{
-	  clog << "DEVEL: multi_properties::add_: "
+	  clog << "DEVEL: datatools::utils::multi_properties::add_: "
 	       << "Removing key '" << a_key << "'";
 	  clog << endl;
 	}
@@ -327,7 +327,7 @@ namespace datatools {
 	  _ordered_entries_.erase (found);
 	  if (devel)
 	    {
-	      clog << "DEVEL: multi_properties::add_: "
+	      clog << "DEVEL: datatools::utils::multi_properties::add_: "
 		   << "Removing ordered key '" << a_key << "'...";
 	      clog << endl;
 	    }
@@ -343,9 +343,9 @@ namespace datatools {
       if (found == _entries_.end ())
 	{
 	  ostringstream message;
-	  message << "multi_properties::remove: Key '"
+	  message << "datatools::utils::multi_properties::remove: Key '"
 		  <<  a_key << "' is not used !";
-	  throw runtime_error (message.str ());
+	  throw logic_error (message.str ());
 	}
       multi_properties::remove_ (a_key);
       return;
@@ -359,13 +359,13 @@ namespace datatools {
       if (_entries_.find (a_key) != _entries_.end ())
 	{
 	  ostringstream message;
-	  message << "multi_properties::add_: Key '"
+	  message << "datatools::utils::multi_properties::add_: Key '"
 		  <<  a_key << "' is already used !";
-	  throw runtime_error (message.str ());
+	  throw logic_error (message.str ());
 	}
       if (devel)
 	{
-	  clog << "DEVEL: multi_properties::add_: "
+	  clog << "DEVEL: datatools::utils::multi_properties::add_: "
 	       << "Adding key '" << a_key << "'";
 	  if (! a_meta.empty()) clog << " with meta '" << a_meta << "'";
 	  clog << endl;
@@ -406,17 +406,17 @@ namespace datatools {
       bool devel = multi_properties::g_debug;
       if (devel) 
 	{
-	  clog << "DEVEL: multi_properties::write: Entering..." << endl;
-	  clog << "DEVEL: multi_properties::write: Filename : '"
+	  clog << "DEVEL: datatools::utils::multi_properties::write: Entering..." << endl;
+	  clog << "DEVEL: datatools::utils::multi_properties::write: Filename : '"
 	       << a_filename << "'." << endl;
 	}
       ofstream fout (a_filename.c_str ());
       if (! fout)
 	{
 	  ostringstream message;
-	  message << "multi_properties::write: Cannot open file '"
+	  message << "datatools::utils::multi_properties::write: Cannot open file '"
 		  <<  a_filename << "'!";
-	  throw runtime_error (message.str ());
+	  throw logic_error (message.str ());
 	}
  
       properties::config pcfg (true, 
@@ -442,22 +442,22 @@ namespace datatools {
 	  const string & name = pentry->get_key ();
 	  const entry & an_entry = *pentry;
 
-	  if (devel) clog << "DEVEL: multi_properties::write: "
+	  if (devel) clog << "DEVEL: datatools::utils::multi_properties::write: "
 			  << "write_private = '" << a_write_private << "'" << endl;
 	  
 	  if (! a_write_private)
 	    {
-	      if (devel) clog << "DEVEL: multi_properties::write: "
+	      if (devel) clog << "DEVEL: datatools::utils::multi_properties::write: "
 			      << "name = '" << name << "'" << endl;
 	      if (properties::key_is_private (name))
 		{
-		  if (devel) clog << "DEVEL: multi_properties::write: "
+		  if (devel) clog << "DEVEL: datatools::utils::multi_properties::write: "
 				  << "private" << endl;
 		  continue;
 		}
 	    }
 
-	  if (devel) clog << "DEVEL: multi_properties::write: Name = '" << name << "'" << endl;
+	  if (devel) clog << "DEVEL: datatools::utils::multi_properties::write: Name = '" << name << "'" << endl;
 
 	  fout << multi_properties::OPEN
 	       << get_key_label () << '=' 
@@ -487,17 +487,17 @@ namespace datatools {
       bool devel = false;
       if (devel) 
 	{
-	  clog << "DEVEL: multi_properties::read: Entering..." << endl;
-	  clog << "DEVEL: multi_properties::read: Filename : '"
+	  clog << "DEVEL: datatools::utils::multi_properties::read: Entering..." << endl;
+	  clog << "DEVEL: datatools::utils::multi_properties::read: Filename : '"
 	       << a_filename << "'." << endl;
 	}
       ifstream fin (a_filename.c_str ());
       if (! fin)
 	{
 	  ostringstream message;
-	  message << "multi_properties::read: Cannot open file '"
+	  message << "datatools::utils::multi_properties::read: Cannot open file '"
 		  <<  a_filename << "'!";
-	  throw runtime_error (message.str ());
+	  throw logic_error (message.str ());
 	}
 
       _read_ (fin, a_skip_private);
@@ -511,7 +511,7 @@ namespace datatools {
       //devel = true;
       if (devel)
 	{
-	  clog << "DEVEL: multi_properties::_read_: Entering..." << endl;
+	  clog << "DEVEL: datatools::utils::multi_properties::_read_: Entering..." << endl;
 	  tree_dump (cerr, "DUMP: " , "DEVEL: ");
 	}
       string line_in;
@@ -597,7 +597,7 @@ namespace datatools {
 			  string key_label;
 			  if (! properties::config::read_quoted_string (iss, key_label))
 			    {
-			      throw runtime_error ("multi_properties::_read_: Unquoted value for 'key_label'");
+			      throw logic_error ("datatools::utils::multi_properties::_read_: Unquoted value for 'key_label'");
 			    }
 			  string tmp;
 			  getline (iss, tmp);
@@ -613,9 +613,9 @@ namespace datatools {
 				  if (_key_label_ != mprop_key_label)
 				    {
 				      ostringstream message;
-				      message << "multi_properties::_read_: Incompatible key label '"
+				      message << "datatools::utils::multi_properties::_read_: Incompatible key label '"
 					      << mprop_key_label << "' with setup '" << _key_label_ << "' !";
-				      throw runtime_error (message.str ());
+				      throw logic_error (message.str ());
 				    }
 				}
 			    }
@@ -626,7 +626,7 @@ namespace datatools {
 			  string meta_label;
 			  if (! properties::config::read_quoted_string (iss, meta_label))
 			    {
-			      throw runtime_error ("multi_properties::_read_: Unquoted value for 'meta_label'");
+			      throw logic_error ("datatools::utils::multi_properties::_read_: Unquoted value for 'meta_label'");
 			    }
 			  string tmp;
 			  getline (iss, tmp);
@@ -635,9 +635,9 @@ namespace datatools {
 			      if (! _meta_label_.empty ())
 				{
 				  ostringstream message;
-				  message << "multi_properties::_read_: " 
+				  message << "datatools::utils::multi_properties::_read_: " 
 					  << "Missing meta label with setup '" << _meta_label_ << "' !";
-				  throw runtime_error (message.str ());
+				  throw logic_error (message.str ());
 				}
 			    }
 			  else
@@ -652,9 +652,9 @@ namespace datatools {
 				  if (_meta_label_ != mprop_meta_label)
 				    {
 				      ostringstream message;
-				      message << "multi_properties::_read_: Incompatible meta label '"
+				      message << "datatools::utils::multi_properties::_read_: Incompatible meta label '"
 					      << mprop_meta_label << "' with setup '" << _meta_label_ << "' !";
-				      throw runtime_error (message.str ());
+				      throw logic_error (message.str ());
 				    }
 				}
 			    }
@@ -679,16 +679,16 @@ namespace datatools {
 		      if (key_label != get_key_label ())
 			{
 			  ostringstream message;
-			  message << "multi_properties::_read_: Incompatible key label '"
+			  message << "datatools::utils::multi_properties::_read_: Incompatible key label '"
 				  << key_label << "' with setup '" << _key_label_ << "' !";
-			  throw runtime_error (message.str ());
+			  throw logic_error (message.str ());
 			}
 		      if (! properties::config::read_quoted_string (iss, new_key)) 
 			{
 			  ostringstream message;
-			  message << "multi_properties::_read_: "
+			  message << "datatools::utils::multi_properties::_read_: "
 				  << "Cannot read quoted string key value from line '" << line << "' !" ;
-			  throw runtime_error (message.str ());
+			  throw logic_error (message.str ());
 			}
 		      iss >> ws;
 		      char dummy = iss.peek ();
@@ -701,16 +701,16 @@ namespace datatools {
 			      if (meta_label != get_meta_label ())
 				{
 				  ostringstream message;
-				  message << "multi_properties::_read_: Incompatible meta label '"
+				  message << "datatools::utils::multi_properties::_read_: Incompatible meta label '"
 					  << meta_label << "' with setup '" << _meta_label_ << "' !";
-				  throw runtime_error (message.str ());
+				  throw logic_error (message.str ());
 				}
 			      if (! properties::config::read_quoted_string (iss, new_meta)) 
 				{
 				  ostringstream message;
-				  message << "multi_properties::_read_: "
+				  message << "datatools::utils::multi_properties::_read_: "
 					  << "Cannot read quoted string meta value from line '" << line << "' !" ;
-				  throw runtime_error (message.str ());
+				  throw logic_error (message.str ());
 				}
 			    }
 			}
@@ -719,10 +719,10 @@ namespace datatools {
 			  if (! get_meta_label ().empty ())
 			    {
 				  ostringstream message;
-				  message << "multi_properties::_read_: "
+				  message << "datatools::utils::multi_properties::_read_: "
 					  << "Expected meta record '" << get_meta_label () << '=' 
 					  << "\"???\"" << "' is missing !" ;
-				  throw runtime_error (message.str ());			      
+				  throw logic_error (message.str ());			      
 			    }
 			}
 		      iss >> ws;
@@ -731,9 +731,9 @@ namespace datatools {
 		      if (c != ']')
 			{
 			  ostringstream message;
-			  message << "multi_properties::_read_: "
+			  message << "datatools::utils::multi_properties::_read_: "
 				  << "Cannot read 'key/meta' closing symbol !" ;
-			  throw runtime_error (message.str ());
+			  throw logic_error (message.str ());
 			}
 		      process_block = true;
 		    }
@@ -742,14 +742,14 @@ namespace datatools {
 		      // append line to the current block stream:
 		      if (devel)
 			{
-			  clog << "DEVEL: multi_properties::_read_: " 
+			  clog << "DEVEL: datatools::utils::multi_properties::_read_: " 
 			       << "Append line " << "'"  << line << "'" << endl;
 			}
 		      current_block_oss << line << endl;
 		    }
 		  if (devel)
 		    {
-		      clog << "DEVEL: multi_properties::_read_: " 
+		      clog << "DEVEL: datatools::utils::multi_properties::_read_: " 
 			   << "'"  << line << "'" << endl;
 		    }
 		} // !skip_line
@@ -774,7 +774,7 @@ namespace datatools {
 			{
 			  if (devel)
 			    {
-			      clog << "DEVEL: multi_properties::_read_: Skip loading of '" 
+			      clog << "DEVEL: datatools::utils::multi_properties::_read_: Skip loading of '" 
 				   << current_key << "'" << endl;
 			    }
 			  load_it = false;
@@ -785,7 +785,7 @@ namespace datatools {
 		    {
 		      if (devel)
 			{
-			  clog << "DEVEL: multi_properties::_read_: Add '" 
+			  clog << "DEVEL: datatools::utils::multi_properties::_read_: Add '" 
 			       << current_key << "'" << endl;
 			}
 		      add (current_key, current_meta);
@@ -793,7 +793,7 @@ namespace datatools {
 		      properties::config pcr;
 		      if (devel)
 			{
-			  clog << "DEVEL: multi_properties::_read_: Block:" << endl;
+			  clog << "DEVEL: datatools::utils::multi_properties::_read_: Block:" << endl;
 			  clog << ">>>" << endl;
 			  clog << current_block_oss.str ();
 			  clog << "<<<" << endl;
