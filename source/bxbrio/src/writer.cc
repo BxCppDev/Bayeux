@@ -340,6 +340,8 @@ namespace brio {
     tree_title << label_.c_str () << " tree for binary archive serialization";
     _file->cd ();
     the_si.tree = new TTree (label_.c_str (), tree_title.str ().c_str ());
+    // 2011-12-09 FM : Force affectation of the tree's current directory :
+    the_si.tree->SetDirectory (_file);
     the_si.p_record = &the_si.record;
     int splitlevel = 0; // no branch-splitting of the streamed 'brio_record' instance
     const string * branch_name = &the_si.serialization_tag;
