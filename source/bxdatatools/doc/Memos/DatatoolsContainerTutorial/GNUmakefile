@@ -22,10 +22,10 @@ vpath %.pdftex_t $(PDFTEX_T_DIR)
 
 # Automaticaly build the list of Fig files to be processed
 # by fig2dev : 
-fig_files           := $(notdir $(shell ls $(XFIG_DIR)/*.fig))  
-fig2pdfsrc_files    := $(notdir $(shell ls $(XFIG_DIR)/*.fig))  
-fig2pdftex_files    := $(fig2pdfsrc_files:%.fig=%.pdf)
-fig2pdftex_t_files  := $(fig2pdfsrc_files:%.fig=%.pdftex_t)
+# fig_files           := $(notdir $(shell ls $(XFIG_DIR)/*.fig))  
+# fig2pdfsrc_files    := $(notdir $(shell ls $(XFIG_DIR)/*.fig))  
+# fig2pdftex_files    := $(fig2pdfsrc_files:%.fig=%.pdf)
+# fig2pdftex_t_files  := $(fig2pdfsrc_files:%.fig=%.pdftex_t)
 
 .PHONY : all
 all : pdf
@@ -41,7 +41,7 @@ install : pdf
 	cp -f ${LATEX_MAIN_SRC_FILE}.pdf ../
 
 .PHONY : clean
-clean : clean_pdftex clean_pdftex_t
+clean : #clean_pdftex clean_pdftex_t 
 	$(RM) *~
 	$(RM) ${XFIG_DIR}/*.fig.bak
 	$(RM) $(LATEX_MAIN_SRC_FILE).pdf
@@ -73,7 +73,7 @@ $(LATEX_MAIN_SRC_FILE).pdf : $(LATEX_MAIN_SRC_FILE).tex special
 	pdflatex $<
 
 .PHONY : special
-special : images fig2pdftex_t 
+special : images #fig2pdftex_t 
 	@echo "special: Nothing to do here for now..."
 
 .PHONY : images

@@ -1,0 +1,63 @@
+
+datatools installation instructions:
+------------------------------------
+
+First check that third party libraries are installed and setup :
+ - CLHEP :
+    bash$ echo ${CLHEP_ROOT_DIR}
+  or
+    bash$ which clhep-config
+    bash$ clhep-config --prefix
+    bash$ clhep-config --version
+  
+ - Boost
+
+  bash$ echo ${BOOST_ROOT}
+  bash$ echo ${BOOST_VERSION}
+
+ - kwsys  
+
+  to be done.
+
+Change to the datatools base directory :
+
+  bash$ cd <datatools base dir>
+
+Create a build directory :
+
+  bash$ mkdir build
+  bash$ cd build
+
+1 - First try :
+---------------
+
+For a first try, you can build it in 
+a special local subdirectory :
+
+  bash$ cmake \
+   -Wno-dev \
+   -DDATATOOLS_WITH_INSTALL_HERE=ON \
+   -DCMAKE_BUILD_TYPE:STRING=Release \
+   ..
+  bash$ make
+  bash$ make doc
+  bash$ make install
+
+Uninstall :
+
+  bash$ make uninstall
+
+Remove the temporary build directory :
+
+  bash$ cd build
+  bash$ rm -fr build
+  
+
+
+--
+
+   
+
+
+
+

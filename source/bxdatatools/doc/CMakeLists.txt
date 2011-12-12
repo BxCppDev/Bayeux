@@ -61,10 +61,12 @@ if(DOXYGEN_FOUND)
 
     # copy necessary doc files
     file(GLOB image_files ${DOXYGEN_INPUT_DIR}/doc/api/images/*)
-    foreach(file ${image_files})
-        get_filename_component(filename ${file} NAME)
-        configure_file(${file} ${DOXYGEN_OUTPUT_DIR}/${DOXYGEN_OUTPUT_TYPE}/${filename} COPYONLY)
-    endforeach()
+    foreach ( file ${image_files} )
+        if ( NOT IS_DIRECTORY ${file} )
+          get_filename_component( filename ${file} NAME )
+          configure_file (${file} ${DOXYGEN_OUTPUT_DIR}/${DOXYGEN_OUTPUT_TYPE}/${filename} COPYONLY )
+        endif ()
+    endforeach ()
 
     # target setup
     add_custom_target(doc
