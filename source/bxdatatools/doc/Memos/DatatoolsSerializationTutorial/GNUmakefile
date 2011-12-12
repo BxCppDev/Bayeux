@@ -32,6 +32,14 @@ all : pdf
 
 LATEX_MAIN_SRC_FILE=DatatoolsSerializationTutorial
 
+.PHONY : uninstall
+uninstall : 
+	rm -f ../${LATEX_MAIN_SRC_FILE}.pdf 
+
+.PHONY : install
+install : pdf
+	cp -f ${LATEX_MAIN_SRC_FILE}.pdf ../
+
 .PHONY : clean
 clean : clean_pdftex clean_pdftex_t
 	$(RM) *~
