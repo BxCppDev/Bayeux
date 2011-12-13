@@ -96,8 +96,9 @@ int main (int argc_, char ** argv_)
       if (boost::filesystem::exists (filename)) 
 	{
 	  ostringstream message;
-	  message << "File '" << filename << "' already exists!";
-	  throw runtime_error (message.str ());
+	  message << "File '" << filename << "' already exists !";
+	  clog << "WARNING: " << message.str () << " Remove it !" << endl; 
+	  unlink (filename.c_str ());
 	}
       
       const size_t BSSZ = 8;
@@ -148,7 +149,7 @@ int main (int argc_, char ** argv_)
 		clog << "bitset = " << bitset_data.get ().to_string () << endl;
 #endif
 	      }
-	    else 
+	    else  
 	      {
 		string bad_tag = reader.get_record_tag ();
 		clog << "ERROR: unknown data tag '" 

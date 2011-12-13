@@ -115,7 +115,8 @@ int main (int argc_, char ** argv_)
 	{
 	  ostringstream message;
 	  message << "File '" << filename << "' already exists!";
-	  throw runtime_error (message.str ());
+	  clog << "WARNING: " << message.str () << " Remove it !" << endl; 
+	  unlink (filename.c_str ());
 	}
     
       {

@@ -65,7 +65,7 @@ int main (int argc_ , char ** argv_)
 	  libname = "crypto"; // or "curses" ...
 	}
 
-      string LL_config = "${DATATOOLS_ROOT}/resources/test/test_library_loader.conf";
+      string LL_config = "${DATATOOLS_ROOT}/tests/config/test_library_loader.conf";
       uint32_t LL_flags = datatools::utils::library_loader::allow_unregistered;
       datatools::utils::library_loader LL (LL_flags, LL_config);
       datatools::utils::library_loader LL2 (LL_flags, LL_config);
@@ -73,11 +73,11 @@ int main (int argc_ , char ** argv_)
       clog << " Loading 'ssl'..." << endl;
       LL.load ("ssl");
  
-      clog << "Loading 'mygsl'..." << endl;
-      LL.load ("mygsl");
+      // clog << "Loading 'mygsl'..." << endl;
+      // LL.load ("mygsl");
 
-      clog << "Loading 'geomtools'..." << endl;
-      LL.load ("geomtools");
+      // clog << "Loading 'geomtools'..." << endl;
+      // LL.load ("geomtools");
 
       clog << "Loading '" << libname << "'..." << endl;
       LL.load (libname);

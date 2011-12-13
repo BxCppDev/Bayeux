@@ -41,6 +41,8 @@ a special local subdirectory :
    ..
   bash$ make
   bash$ make doc
+  bash$ make test
+  bash$ make clean_test
   bash$ make install
 
 Uninstall :

@@ -250,7 +250,7 @@ function do_run ()
     pkgtools__msg_notice "First clean the test temporary directory..."
     do_clean
     if [ ! -d ${tmp_test_dir} ]; then
-	mkdir ${tmp_test_dir}
+	mkdir -p ${tmp_test_dir}
     fi
     cd ${tmp_test_dir}
 

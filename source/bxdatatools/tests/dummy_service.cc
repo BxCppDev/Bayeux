@@ -19,7 +19,8 @@
  *
  */
 
-#include <datatools/services/dummy_service.h>
+//#include <datatools/services/dummy_service.h>
+#include "dummy_service.h"
 
 namespace datatools {
 

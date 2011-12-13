@@ -25,8 +25,11 @@
 #include <datatools/utils/properties.h>
 #include <datatools/utils/multi_properties.h>
 
-#include <datatools/services/dummy_service.h>
 #include <datatools/utils/utils.h>
+
+//#include <datatools/services/dummy_service.h>
+#include "dummy_service.h"
+#include "dummy_service.cc"
 
 using namespace datatools::service;
 using namespace datatools::utils;

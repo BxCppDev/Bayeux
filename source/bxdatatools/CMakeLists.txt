@@ -71,6 +71,7 @@ endif ()
 string ( REGEX REPLACE ".[0-9]+$" "" _boost_short_version "${_boost_version}" )
 message (STATUS "Boost short version is : '${_boost_short_version}'")
 set ( Boost_ADDITIONAL_VERSIONS "${_boost_short_version}" "${_boost_version}" )
+set ( Boost_NO_SYSTEM_PATHS ON )
 set ( _boost_requested_components filesystem serialization iostreams system )
 
 find_package ( Boost ${_boost_version} REQUIRED COMPONENTS ${_boost_requested_components} )
@@ -78,24 +79,64 @@ if ( Boost_FOUND )
      message (STATUS "Found Boost ${_boost_version}")
      message (STATUS "  Boost_VERSION          = ${Boost_VERSION}")
      message (STATUS "  Boost_LIB_VERSION      = ${Boost_LIB_VERSION}")
+     message (STATUS "  Boost_INCLUDE_DIRS     = ${Boost_INCLUDE_DIRS}")
+     #message (STATUS "  Boost_LIBRARIES        = ${Boost_LIBRARIES}")
      include_directories ( ${Boost_INCLUDE_DIRS} )
 else ()
      message (FATAL_ERROR "Cannot find Boost ${_boost_version} library !")
 endif ()
 
 ### Depends on CLHEP:
-set (_clhep_version 2.1.0.1 )
-find_package( CLHEP ${_clhep_version} REQUIRED)
+set ( _clhep_version 2.1.0.1 )
+find_package ( CLHEP ${_clhep_do_version} REQUIRED )
 if ( CLHEP_FOUND )
-     message (STATUS "Found CLHEP ${_clhep_version}")
+     message ( STATUS "Found CLHEP ${_clhep_version}" )
      include_directories ( ${CLHEP_INCLUDE_DIRS} )
+     message (STATUS "CLHEP_LIBRARIES : ${CLHEP_LIBRARIES}")
 else ()
-     message (FATAL_ERROR "Cannot find CLHEP ${_clhep_version} library !")
+     message ( FATAL_ERROR "Cannot find CLHEP ${_clhep_version} library !" )
 endif ()
+
+### Depends on GSL:
+# set ( _gsl_version 1.14 )
+# find_package ( GSL ${_gsl_version} REQUIRED )
+# if ( GSL_FOUND )
+#      message ( STATUS "Found GSL ${_gsl_version}" )
+#      include_directories ( ${GSL_INCLUDE_DIRS} )
+# else ()
+#      message ( FATAL_ERROR "Cannot find GSL ${_gsl_version} library !" )
+# endif ()
+
+### Depends on XercesC:
+# set ( _xercesc_version 3.1.1 )
+# find_package ( XercesC ${_xercesc_version} REQUIRED )
+# if ( XercesC_FOUND )
+#      message ( STATUS "Found XercesC ${_xercesc_version}" )
+#      include_directories ( ${XercesC_INCLUDE_DIRS} )
+# else ()
+#      message ( FATAL_ERROR "Cannot find XercesC ${_xercesc_version} library !" )
+# endif ()
 
 # ----------------------------------------------------------------------
 # Options :
 #
+
+option ( DATATOOLS_WITH_EMBEDDED_KWSYS
+         "Use an embedded kwsys library" 
+     	 OFF )
+
+### Depends on kwsys:
+if ( NOT DATATOOLS_WITH_EMBEDDED_KWSYS )
+  set (_kwsys_version 0.1.0 )
+  find_package ( KWSYS ${_kwsys_version} REQUIRED )
+  if ( KWSYS_FOUND )
+     message (STATUS "Found KWSYS ${_kwsys_version}")
+     include_directories ( ${KWSYS_INCLUDE_DIRS} )
+     message (STATUS "KWSYS_LIBRARIES : ${KWSYS_LIBRARIES}")
+  else ()
+     message (FATAL_ERROR "Cannot find kwsys ${_kwsys_version} library !")
+  endif ()
+endif ()
 
 option ( DATATOOLS_WITH_DEBUG
          "Build the datatools project using debugging code"
@@ -115,7 +156,7 @@ option ( DATATOOLS_WITH_DOC
 
 option ( DATATOOLS_WITH_TEST 
          "Build the datatools test material" 
- 	 OFF )
+ 	 ON )
 
 if (UNIX OR APPLE)
   option ( DATATOOLS_WITH_CONFIG_SCRIPT 
@@ -145,10 +186,6 @@ if ( DATATOOLS_WITH_INSTALL_HERE )
   message ( STATUS "Please run 'cmake uninstall' to uninstall this build" )
   add_custom_target (uninstall cmake -E remove_directory ${datatools_here_install_prefix} )
 endif ( DATATOOLS_WITH_INSTALL_HERE )
-
-option ( DATATOOLS_WITH_EMBEDDED_KWSYS
-         "Use an embedded kwsys library" 
-     	 OFF )
 
 message ( STATUS "DATATOOLS_WITH_DEBUG           : " "${DATATOOLS_WITH_DEBUG}" )
 message ( STATUS "DATATOOLS_WITH_BIO             : " "${DATATOOLS_WITH_BIO}" )
@@ -315,6 +352,7 @@ endif ()
 # Add testing - always for now.
 #
 if ( DATATOOLS_WITH_TEST )
+  enable_testing () 
   add_subdirectory (tests)
 endif ()
 
@@ -324,10 +362,6 @@ endif ()
 
 include ( ${DATATOOLS_SOURCE_DIR}/cmake/Packaging.cmake OPTIONAL )
 
-message ( STATUS "INSTALL_BIN_DIR     : ${INSTALL_BIN_DIR}" )
-message ( STATUS "INSTALL_INCLUDE_DIR : ${INSTALL_INCLUDE_DIR}" )
-message ( STATUS "INSTALL_LIB_DIR     : ${INSTALL_LIB_DIR}" )
 message ( STATUS "INSTALL_MISC_DIR    : ${INSTALL_MISC_DIR}" )
-message ( STATUS "DATATOOLS_BIN_DIR   : ${DATATOOLS_BIN_DIR}" )
 
 # - end of top level CMakeLists.txt for datatools project.

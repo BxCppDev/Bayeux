@@ -25,21 +25,16 @@ BOOST_CLASS_EXPORT_IMPLEMENT(datatools::test::data_t)
 BOOST_CLASS_EXPORT_KEY2(datatools::test::more_data_t, "datatools::test::more_data_t")
 BOOST_CLASS_EXPORT_IMPLEMENT(datatools::test::more_data_t)
 
-#include <datatools/serialization/check.h>
-
 using namespace std;
 
 int main (int argc_, char ** argv_) 
 {
-  cerr << "**************** Starting program..." << endl;
   try 
     {
       bool debug = false;
       long seed  = 12345;
       string filename = "";
       size_t nrecords = 3;
-
-      datatools::serialization::check ();
 
       enum format_t
 	{
@@ -117,7 +112,8 @@ int main (int argc_, char ** argv_)
 	{
 	  ostringstream message;
 	  message << "File '" << filename << "' already exists!";
-	  throw runtime_error (message.str ());
+	  clog << "WARNING: " << message.str () << " Remove it !" << endl; 
+	  unlink (filename.c_str ());
 	}
     
       {

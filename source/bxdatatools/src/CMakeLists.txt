@@ -56,14 +56,14 @@ list( REMOVE_ITEM datatools_SOURCES "${PROJECT_SOURCE_DIR}/src/the_serializable.
 list( REMOVE_ITEM datatools_SOURCES "${PROJECT_SOURCE_DIR}/src/base_service.cc" )
 list (APPEND datatools_SOURCES "${PROJECT_SOURCE_DIR}/src/base_service.cc" )
 
-message ( AUTHOR_WARNING "datatools_SOURCES=${datatools_SOURCES}" )
+#message ( AUTHOR_WARNING "datatools_SOURCES=${datatools_SOURCES}" )
 
 if (DATATOOLS_WITH_BIO)
   set (datatools_bio_SOURCES 
        ${PROJECT_SOURCE_DIR}/include/datatools/the_serializable.ipp
        ${PROJECT_SOURCE_DIR}/include/datatools/the_serializable.h
        ${PROJECT_SOURCE_DIR}/src/the_serializable.cc)
-  message ( AUTHOR_WARNING "datatools_bio_SOURCES=${datatools_bio_SOURCES}" )
+  #message ( AUTHOR_WARNING "datatools_bio_SOURCES=${datatools_bio_SOURCES}" )
 endif (DATATOOLS_WITH_BIO)
 
 #----------------------------------------------------------------------------
@@ -72,7 +72,6 @@ endif (DATATOOLS_WITH_BIO)
 include_directories ( ${CLHEP_INCLUDE_DIRS}
 		      ${Boost_INCLUDE_DIRS}
 		      ${PROJECT_SOURCE_DIR}/include	
-		      ${CMAKE_INSTALL_INCDIR}/include
                     )
 
 add_library (datatools SHARED  
