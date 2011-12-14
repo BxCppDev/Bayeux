@@ -62,4 +62,8 @@ This is the datatools package ChangeLog
 2011-07-03 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
 	* embedded kwsys library
 	* add library_loader class (kwsys-based)
+2011-12-14 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* ./pkgtools.d/pkgtool make '--with-auxiliary-boost-io' configure option the default
+	* cleaning
+	* doc add pre-built PDF memos
 

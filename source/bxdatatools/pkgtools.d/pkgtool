@@ -58,7 +58,7 @@ default_python_version=2.5
 python_version=${default_python_version}
 with_python=1
 
-default_bio_mode=""
+default_bio_mode="auxiliary"
 
 kwsys_dir=${the_base_dir}/kwsys
 
@@ -91,9 +91,9 @@ function print_usage ()
               with Python version VERSION (default: 2.5)
             --without-python :
               without Python wrapper module
-            --without-boost-io  (default):
+            --without-boost-io 
             --with-embedded-boost-io :  embedded precompiled Boost/Serialization code
-            --with-auxiliary-boost-io : auxiliary precompiled Boost/Serialization DLL
+            --with-auxiliary-boost-io : auxiliary precompiled Boost/Serialization DLL (default)
             --boost-version 1_44_0 : force Boost version (default: 1_44_0)
             --no-boost-version-check : skip Boost version check
     $APPNAME deconfigure : deconfigure package
