@@ -22,15 +22,15 @@ function do_datatools_setup ()
 	return 1
     fi
     
-    export DATATOOLS_ROOT=@CMAKE_INSTALL_PREFIX@
-    export DATATOOLS_ROOT_DIR=@CMAKE_INSTALL_PREFIX@
-    export DATATOOLS_NAME=@datatools_PACKAGE_NAME@
-    export DATATOOLS_VERSION=@datatools_VERSION@
-    export DATATOOLS_BIN_DIR=@CMAKE_INSTALL_PREFIX@/bin
-    export DATATOOLS_ETC_DIR=@CMAKE_INSTALL_PREFIX@/etc
-    export DATATOOLS_LIB_DIR=@CMAKE_INSTALL_PREFIX@/lib
-    export DATATOOLS_INCLUDE_DIR=@CMAKE_INSTALL_PREFIX@/include
-    export DATATOOLS_RESOURCES_DIR=@CMAKE_INSTALL_PREFIX@/share/@CMAKE_PROJECT_NAME@/resources
+    export DATATOOLS_ROOT="@CMAKE_INSTALL_PREFIX@"
+    export DATATOOLS_ROOT_DIR="@CMAKE_INSTALL_PREFIX@"
+    export DATATOOLS_NAME="@datatools_PACKAGE_NAME@"
+    export DATATOOLS_VERSION="@datatools_VERSION_STR@"
+    export DATATOOLS_BIN_DIR="@CMAKE_INSTALL_PREFIX@/bin"
+    export DATATOOLS_ETC_DIR="@CMAKE_INSTALL_PREFIX@/etc"
+    export DATATOOLS_LIB_DIR="@CMAKE_INSTALL_PREFIX@/lib"
+    export DATATOOLS_INCLUDE_DIR="@CMAKE_INSTALL_PREFIX@/include"
+    export DATATOOLS_RESOURCES_DIR="@CMAKE_INSTALL_PREFIX@/share/@CMAKE_PROJECT_NAME@/resources"
 
     if [ -n "${PATH}" ]; then
 	export PATH="${DATATOOLS_BIN_DIR}:${PATH}"
@@ -72,6 +72,14 @@ function do_datatools_setup ()
  	# update python_path...
     fi
 
+    if [ "x@DATATOOLS_WITH_CMAKE_FIND_MODULE@" = "xON" ]; then
+	if [ -n "${CMAKE_MODULE_PATH}" ]; then 
+            export CMAKE_MODULE_PATH="@CMAKE_INSTALL_PREFIX@/@DATATOOLS_CMAKE_MODULE_INSTALL_DIR@:${CMAKE_MODULE_PATH}"
+	else
+            export CMAKE_MODULE_PATH="@CMAKE_INSTALL_PREFIX@/@DATATOOLS_CMAKE_MODULE_INSTALL_DIR@"
+	fi
+    fi
+   
     echo "NOTICE: do_datatools_setup: Setup datatools done." 1>&2
     return 0
 }

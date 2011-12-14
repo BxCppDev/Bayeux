@@ -2,48 +2,132 @@
 datatools installation instructions:
 ------------------------------------
 
+1 - Third-party software setup :
+--------------------------------
+
+CLHEP and Boost libraries must be installed and setup.
+
 First check that third party libraries are installed and setup :
+
  - CLHEP :
     bash$ echo ${CLHEP_ROOT_DIR}
-  or
+   or :
     bash$ which clhep-config
     bash$ clhep-config --prefix
     bash$ clhep-config --version
   
- - Boost
+ - Boost :
+    bash$ echo ${BOOST_ROOT}
+    bash$ echo ${BOOST_VERSION}
+   or :
+    bash$ which boost-config
+    bash$ boost-config --prefix
+    bash$ boost-config --version
 
-  bash$ echo ${BOOST_ROOT}
-  bash$ echo ${BOOST_VERSION}
-
- - kwsys  
+ - kwsys :
 
   to be done.
 
-Change to the datatools base directory :
+With Cadfael:
 
-  bash$ cd <datatools base dir>
+bash $ do_cadfael_clhep_setup
+NOTICE: do_cadfael_clhep_setup: Setup Cadfael/CLHEP...
+NOTICE: do_cadfael_setup: Setup Cadfael version 0.1.0...
+NOTICE: do_cadfael_setup: Setup Cadfael version 0.1.0 done.
+NOTICE: do_cadfael_clhep_setup: Cadfael/CLHEP 2.1.0.1 is setup.
+NOTICE: do_cadfael_clhep_setup: Setup Cadfael/CLHEP done.
 
-Create a build directory :
+bash$ clhep-config --prefix
+/scratch/sw/Cadfael/install/Cadfael-0.1.0
 
-  bash$ mkdir build
-  bash$ cd build
+bash$ clhep-config --version
+CLHEP 2.1.0.1
 
-1 - First try :
+bash$ do_cadfael_boost_setup
+NOTICE: do_cadfael_boost_setup: Setup Cadfael/Boost...
+NOTICE: do_cadfael_boost_setup: Cadfael/Boost 1.47.0 is setup.
+NOTICE: do_cadfael_boost_setup: Setup Cadfael/Boost done.
+
+bash$ boost-config --prefix
+/scratch/sw/Cadfael/install/Cadfael-0.1.0
+
+bash$ boost-config --version
+1.47.0
+
+
+2 - First try :
 ---------------
 
-For a first try, you can build it in 
-a special local subdirectory :
+Change to the datatools base directory :
 
-  bash$ cmake \
+bash$ cd <datatools base dir>
+
+Create a 'build' directory :
+
+bash$ mkdir build
+bash$ cd build
+
+For a first try, you can build it in a special local subdirectory (here in 
+the '<datatools base dir>.install_Linux-i686/' directory) :
+
+bash$ cmake \
    -Wno-dev \
    -DDATATOOLS_WITH_INSTALL_HERE=ON \
    -DCMAKE_BUILD_TYPE:STRING=Release \
    ..
-  bash$ make
-  bash$ make doc
-  bash$ make test
-  bash$ make clean_test
-  bash$ make install
+-- The C compiler identification is GNU
+-- The CXX compiler identification is GNU
+...
+-- Configuring done
+-- Generating done
+-- Build files have been written to: <datatools base dir>/build
+
+bash$ make
+
+Generate the documentation :
+
+bash$ make doc
+
+Perform tests :
+
+bash$ make test
+
+Clean test material :
+
+bash$ make clean_test
+
+Installation (here in the '<datatools base dir>.install_Linux-i686/' directory) :
+
+bash$ make install
+
+Setup :
+
+  Back to the base source directory :
+
+  bash$ cd ..
+
+  Load the definition of the datatools setup function :
+
+  bash$ source .install_Linux-i686/etc/datatools_setup.sh 
+  NOTICE: do_datatools_setup: Please setup 'datatools' with 'do_datatools_setup'.
+
+  Invoke the datatools setup function :
+
+  bash$ do_datatools_setup
+  NOTICE: do_datatools_setup: Setup datatools...
+  NOTICE: do_datatools_setup: Setup datatools done.
+
+  bash$ which datatools-config 
+  <datatools base dir>/.install_Linux-i686/bin/datatools-config
+
+  bash$ datatools-config --prefix
+  <datatools base dir>/.install_Linux-i686
+
+  bash$ datatools-config --cflags
+  ...
+
+  bash$ datatools-config --ldflags
+  ...
 
 Uninstall :
 
@@ -54,7 +138,6 @@ Remove the temporary build directory :
   bash$ cd build
   bash$ rm -fr build
   
-
 
 --
 

@@ -66,3 +66,6 @@ set (INSTALL_RESOURCES_DIR ${INSTALL_MISC_DIR}/resources )
 # setup MacOSX build environment if necessary
 include ( ${CMAKE_SOURCE_DIR}/cmake/MacOSX.cmake )
 
+
+message ( STATUS "INSTALL_MISC_DIR      : ${INSTALL_MISC_DIR}" )
+message ( STATUS "INSTALL_RESOURCES_DIR : ${INSTALL_RESOURCES_DIR}" )

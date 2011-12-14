@@ -78,22 +78,22 @@ Known values for OPTION are:
   --incdir              print include directory
   --libdir              print library directory
   --bindir              print binary directory
+  --resources-dir       print resources directory
   --include             print include path pre-processor flags without dependencies
   --cflags              print include path pre-processor flags with dependencies
   --libs    [option]    print library linking information, without dependencies
   --ldflags [option]
-      Options:          --bio     with linkage against the 'libdatatools_bio.so' DLL (default)
-                        --no-bio  without linkage against the 'libdatatools_bio.so' DLL
-  --with-python-wrapper print if Python wrappermodule is used
-  --with-bio            print if Boost/Serialization binary code is pre-built in an auxiliary I/O shared library
+      Options: --with-bio     with linkage against the 'libdatatools_bio.so' DLL (default)
+               --without-bio  without linkage against the 'libdatatools_bio.so' DLL
+  --with-python-wrapper print if Python wrapper module is used
+  --with-bio            print if Boost/Serialization binary code is pre-built 
+                        in an auxiliary I/O shared library
   --boost-version       print Boost version
   --clhep-version       print CLHEP version
 
 EOF
     my_exit 1
 fi
-
-###  --resources-dir       print resources directory
 
 if [ "x${option}" = "x--system" ]; then
     echo "${datatools_system}"
@@ -115,10 +115,10 @@ if [ "x${option}" = "x--include-dir" -o "x${option}" = "x--incdir" ]; then
     my_exit 0
 fi
 
-# if [ "x${option}" = "x--resources-dir" ]; then
-#     echo "${datatools_resources_dir}"
-#     my_exit 0
-# fi
+if [ "x${option}" = "x--resources-dir" ]; then
+    echo "${datatools_resources_dir}"
+    my_exit 0
+fi
 
 if [ "x${option}" = "x--include" ]; then
     echo "-I${datatools_include_dir} "
