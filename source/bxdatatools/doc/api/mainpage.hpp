@@ -22,11 +22,13 @@
  *
  * \code
  * #include <datatools/utils/properties.h>
- * #include <string>
  * #include <iostream>
- * 
- * int main()
+ *
+ * using namespace std;
+ *
+ * int main ()
  * {
+ *   {
  *     datatools::utils::properties parameters;
  *     parameters.set_description ("A list of configuration parameters");
  *     parameters.store_flag ("debug", "A flag that activates debugging functionalities");
@@ -34,7 +36,30 @@
  *     parameters.store ("pi", 3.14159, "The approximated value of Pi");
  *     parameters.store ("max_users", 7, "The maximum number of users");
  *
- *     return 0;
+ *     datatools::utils::properties::write_config ("params.conf", parameters);
+ *   }
+ *
+ *   {
+ *     datatools::utils::properties parameters;
+ *     datatools::utils::properties::read_config ("params.conf", parameters);
+ *     if ( parameters.has_flag (debug) )
+ *       {
+ *          cout << "Debug mode is activated." << endl;
+ *       }
+ *     if ( parameters.has_key ("author") )
+ *       {
+ *          cout << "Author is : " << parameters.fetch_string ("author") << endl;
+ *       }
+ *     if ( parameters.has_key ("pi") )
+ *       {
+ *          cout << "Pi value is : " << parameters.fetch_real ("pi") << endl;
+ *       }
+ *     if ( parameters.has_key ("max_users") )
+ *       {
+ *          cout << "Max number of users is : " << parameters.fetch_integer ("max_users") << endl;
+ *       }
+ *   }
+ *   return 0;
  * }
  * \endcode
  *
@@ -44,7 +69,7 @@
  *
  * \verbatim
  * Copyright (C) 2011 François Mauger, LPC Caen CNRS/IN2P3 and Université de Caen Basse-Normandie
- * Contact: mauger@lpccaen.in2p3.fr)
+ * Contact: mauger@lpccaen.in2p3.fr
  * 
  * This file is part of the datatools library.
  * 
