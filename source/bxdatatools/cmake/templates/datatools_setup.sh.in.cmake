@@ -63,13 +63,12 @@ function do_datatools_setup ()
     fi
 
     if [ "x@DATATOOLS_WITH_PYTHON_WRAPPER@" = "xON" ]; then
-	echo "WARNING: do_datatools_setup: Setup datatools' Python wrapper not implement yet !" 1>&2
+     	# update python_path...
 	if [ -n "${PYTHONPATH}" ]; then 
             export PYTHONPATH="@CMAKE_INSTALL_PREFIX@/lib/datatools/python:${PYTHONPATH}"
 	else
             export PYTHONPATH="@CMAKE_INSTALL_PREFIX@/lib/datatools/python"
 	fi
- 	# update python_path...
     fi
 
     if [ "x@DATATOOLS_WITH_CMAKE_FIND_MODULE@" = "xON" ]; then

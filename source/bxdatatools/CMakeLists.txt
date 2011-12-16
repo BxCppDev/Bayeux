@@ -180,21 +180,22 @@ if ( UNIX OR APPLE )
   option ( DATATOOLS_WITH_INSTALL_HERE
            "Installation path is stored in the datatools source tree" 
      	   OFF )
+
+  message ( STATUS "Default install prefix : " "${CMAKE_INSTALL_PREFIX}" )
+
+  if ( DATATOOLS_WITH_INSTALL_HERE )
+    message ( STATUS "DEBUG: DATATOOLS_WITH_INSTALL_HERE" )
+    set ( _datatools_here_install_prefix 
+          "${PROJECT_SOURCE_DIR}/.install_${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}"
+         )
+    set ( CMAKE_INSTALL_PREFIX 
+          "${_datatools_here_install_prefix}" 
+  	  CACHE PATH "datatools installation prefix" FORCE
+        )
+    message ( STATUS "Please run 'cmake uninstall' to uninstall this build" )
+    add_custom_target (uninstall cmake -E remove_directory ${_datatools_here_install_prefix} )
+  endif ( DATATOOLS_WITH_INSTALL_HERE )
 endif ()
-
-#message ( STATUS "Default install prefix : " "${CMAKE_INSTALL_PREFIX}" )
-
-if ( DATATOOLS_WITH_INSTALL_HERE )
-  set ( datatools_here_install_prefix 
-        "${PROJECT_SOURCE_DIR}/.install_${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}" 
-       )
-  set ( CMAKE_INSTALL_PREFIX 
-        "${datatools_here_install_prefix}" 
-      )
-
-  message ( STATUS "Please run 'cmake uninstall' to uninstall this build" )
-  add_custom_target (uninstall cmake -E remove_directory ${datatools_here_install_prefix} )
-endif ( DATATOOLS_WITH_INSTALL_HERE )
 
 message ( STATUS "DATATOOLS_WITH_DEBUG           : " "${DATATOOLS_WITH_DEBUG}" )
 message ( STATUS "DATATOOLS_WITH_BIO             : " "${DATATOOLS_WITH_BIO}" )
@@ -202,13 +203,13 @@ message ( STATUS "DATATOOLS_WITH_PYTHON_WRAPPER  : " "${DATATOOLS_WITH_PYTHON_WR
 if (UNIX OR APPLE)
   message ( STATUS "DATATOOLS_WITH_CONFIG_SCRIPT   : " "${DATATOOLS_WITH_CONFIG_SCRIPT}" )
   message ( STATUS "DATATOOLS_WITH_PKGCONFIG       : " "${DATATOOLS_WITH_PKGCONFIG}" )
+  message ( STATUS "DATATOOLS_WITH_INSTALL_HERE    : " "${DATATOOLS_WITH_INSTALL_HERE}" )
 endif (UNIX OR APPLE)
 message ( STATUS "DATATOOLS_WITH_DOC             : " "${DATATOOLS_WITH_DOC}" )
 message ( STATUS "DATATOOLS_WITH_TEST            : " "${DATATOOLS_WITH_TEST}" )
 message ( STATUS "DATATOOLS_WITH_EMBEDDED_KWSYS  : " "${DATATOOLS_WITH_EMBEDDED_KWSYS}" )
-message ( STATUS "DATATOOLS_WITH_INSTALL_HERE    : " "${DATATOOLS_WITH_INSTALL_HERE}" )
-message ( STATUS "datatools install prefix       : " "${CMAKE_INSTALL_PREFIX}" )
-message ( STATUS "datatools install Python dir   : " "${CMAKE_INSTALL_PYTHONDIR}" )
+message ( STATUS "CMAKE_INSTALL_PREFIX           : " "${CMAKE_INSTALL_PREFIX}" )
+message ( STATUS "CMAKE_INSTALL_PYTHONDIR        : " "${CMAKE_INSTALL_PYTHONDIR}" )
 
 # ----------------------------------------------------------------------
 # Embedded kwsys API
@@ -321,12 +322,16 @@ endif ()
 if ( DATATOOLS_WITH_CMAKE_FIND_MODULE )
   set ( _find_module_install_dir ${INSTALL_MISC_DIR}/cmake/Modules ) 
 
-  install ( FILES ${PROJECT_SOURCE_DIR}/cmake/Modules/FindDatatools.cmake
+  configure_file ( "${PROJECT_SOURCE_DIR}/cmake/Modules/FindDatatools.cmake.in"
+                   "${PROJECT_BINARY_DIR}/cmake/Modules/FindDatatools.cmake" @ONLY )
+
+  install ( FILES ${PROJECT_BINARY_DIR}/cmake/Modules/FindDatatools.cmake
             DESTINATION ${_find_module_install_dir}
             COMPONENT utils
            )
 
-  set ( DATATOOLS_CMAKE_MODULE_INSTALL_DIR ${_find_module_install_dir} CACHE STRING "The CMake Module subdirectory" )
+  set ( DATATOOLS_CMAKE_MODULE_INSTALL_DIR ${_find_module_install_dir} 
+        CACHE PATH "The CMake Module subdirectory" FORCE )
 
   message ( STATUS "DATATOOLS_CMAKE_MODULE_INSTALL_DIR = '${DATATOOLS_CMAKE_MODULE_INSTALL_DIR}' " )
 endif ()
@@ -359,7 +364,7 @@ install ( FILES README.txt COPYING.txt LICENSE.GPL3.txt
          )
 
 #----------------------------------------------------------------------------
-# Add documentation.
+# Add Python wrapping.
 #
 if ( DATATOOLS_WITH_PYTHON_WRAPPER )
   set ( CMAKE_USE_PYTHON_VERSION "2.7" "2.6" )
