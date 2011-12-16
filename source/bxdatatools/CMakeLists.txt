@@ -74,13 +74,17 @@ set ( Boost_ADDITIONAL_VERSIONS "${_boost_short_version}" "${_boost_version}" )
 set ( Boost_NO_SYSTEM_PATHS ON )
 set ( _boost_requested_components filesystem serialization iostreams system )
 
+if ( DATATOOLS_WITH_PYTHON_WRAPPER )
+  set ( _boost_requested_components ${_boost_requested_components} python )
+endif ()
+
 find_package ( Boost ${_boost_version} REQUIRED COMPONENTS ${_boost_requested_components} )
 if ( Boost_FOUND )
      message ( STATUS "Found Boost ${_boost_version}")
      message ( STATUS "  Boost_VERSION          = ${Boost_VERSION}" )
      message ( STATUS "  Boost_LIB_VERSION      = ${Boost_LIB_VERSION}" )
      message ( STATUS "  Boost_INCLUDE_DIRS     = ${Boost_INCLUDE_DIRS}" )
-     #message ( STATUS "  Boost_LIBRARIES        = ${Boost_LIBRARIES}" )
+     message ( STATUS "  Boost_LIBRARIES        = ${Boost_LIBRARIES}" )
      include_directories ( ${Boost_INCLUDE_DIRS} )
 else ()
      message ( FATAL_ERROR "Cannot find Boost ${_boost_version} library !" )
@@ -121,9 +125,10 @@ endif ()
 # Options :
 #
 
-option ( DATATOOLS_WITH_EMBEDDED_KWSYS
-         "Use an embedded kwsys library" 
-     	 OFF )
+#option ( DATATOOLS_WITH_EMBEDDED_KWSYS
+#         "Use an embedded kwsys library" 
+#     	 OFF )
+set ( DATATOOLS_WITH_EMBEDDED_KWSYS OFF )
 
 ### Depends on kwsys:
 if ( NOT DATATOOLS_WITH_EMBEDDED_KWSYS )
@@ -203,6 +208,7 @@ message ( STATUS "DATATOOLS_WITH_TEST            : " "${DATATOOLS_WITH_TEST}" )
 message ( STATUS "DATATOOLS_WITH_EMBEDDED_KWSYS  : " "${DATATOOLS_WITH_EMBEDDED_KWSYS}" )
 message ( STATUS "DATATOOLS_WITH_INSTALL_HERE    : " "${DATATOOLS_WITH_INSTALL_HERE}" )
 message ( STATUS "datatools install prefix       : " "${CMAKE_INSTALL_PREFIX}" )
+message ( STATUS "datatools install Python dir   : " "${CMAKE_INSTALL_PYTHONDIR}" )
 
 # ----------------------------------------------------------------------
 # Embedded kwsys API
@@ -221,8 +227,8 @@ if ( DATATOOLS_WITH_EMBEDDED_KWSYS )
 
   set (KWSYS_NAMESPACE kwsys)
   set (KWSYS_HEADER_ROOT ${PROJECT_BINARY_DIR})
-  set (KWSYS_BUILD_SHARED 1)
-  set (KWSYS_STANDALONE 1)
+  set (KWSYS_BUILD_SHARED ON)
+  set (KWSYS_STANDALONE OFF)
   set (KWSYS_INSTALL_BIN_DIR bin)
   set (KWSYS_INSTALL_LIB_DIR lib)
   set (KWSYS_INSTALL_INCLUDE_DIR include)
@@ -230,24 +236,24 @@ if ( DATATOOLS_WITH_EMBEDDED_KWSYS )
   set (KWSYS_INSTALL_COMPONENT_NAME_RUNTIME Runtime)
   set (KWSYS_INSTALL_COMPONENT_NAME_DEVELOPMENT Development)
 
-  set (KWSYS_USE_Base64 0)
-  set (KWSYS_USE_Directory 0)
+  set (KWSYS_USE_Base64 1)
+  set (KWSYS_USE_Directory 1)
   set (KWSYS_USE_DynamicLoader 1)
-  set (KWSYS_USE_Glob 0)
-  set (KWSYS_USE_MD5 0)
-  set (KWSYS_USE_Process 0)
-  set (KWSYS_USE_RegularExpression 0)
-  set (KWSYS_USE_Registry 0)
-  set (KWSYS_USE_System 0)
-  set (KWSYS_USE_SystemTools 0)
-  set (KWSYS_USE_CommandLineArguments 0)
-  set (KWSYS_USE_FundamentalType 0)
-  set (KWSYS_USE_Terminal 0)
-  set (KWSYS_USE_IOStream 0)
-  set (KWSYS_USE_DateStamp 0)
-  set (KWSYS_USE_String 0)
-  set (KWSYS_USE_SystemInformation 0)
-  set (KWSYS_USE_CPU 0)
+  set (KWSYS_USE_Glob 1)
+  set (KWSYS_USE_MD5 1)
+  set (KWSYS_USE_Process 1)
+  set (KWSYS_USE_RegularExpression 1)
+  set (KWSYS_USE_Registry 1)
+  set (KWSYS_USE_System 1)
+  set (KWSYS_USE_SystemTools 1)
+  set (KWSYS_USE_CommandLineArguments 1)
+  set (KWSYS_USE_FundamentalType 1)
+  set (KWSYS_USE_Terminal 1)
+  set (KWSYS_USE_IOStream 1)
+  set (KWSYS_USE_DateStamp 1)
+  set (KWSYS_USE_String 1)
+  set (KWSYS_USE_SystemInformation 1)
+  set (KWSYS_USE_CPU 1)
 
   add_subdirectory ( kwsys )
 
@@ -346,11 +352,42 @@ if ( UNIX OR APPLE )
             )
 
   endif ()
-endif ()
+endif ()  
 
 install ( FILES README.txt COPYING.txt LICENSE.GPL3.txt
           DESTINATION ${INSTALL_MISC_DIR}
          )
+
+#----------------------------------------------------------------------------
+# Add documentation.
+#
+if ( DATATOOLS_WITH_PYTHON_WRAPPER )
+  set ( CMAKE_USE_PYTHON_VERSION "2.7" "2.6" )
+  find_package ( PythonInterp REQUIRED )
+  set ( CMAKE_USE_PYTHON_VERSION "2.7" "2.6" )
+  find_package ( PythonLibs REQUIRED )
+
+  # We need to force the cache to disable Python if we didn't find any
+  # of the needed components
+  message ( STATUS "Boost_PYTHON_LIBRARY = ${Boost_PYTHON_LIBRARY}" )
+  message ( STATUS "PYTHON_INCLUDE_DIRS  = ${PYTHON_INCLUDE_DIRS}" )
+  message ( STATUS "PYTHON_EXECUTABLE    = ${PYTHON_EXECUTABLE}" )
+  message ( STATUS "PYTHON_LIBRARIES     = ${PYTHON_LIBRARIES}" )
+  message ( STATUS "PYTHON_DEBUG_LIBRARIES = ${PYTHON_DEBUG_LIBRARIES}" )
+
+  if (NOT Boost_PYTHON_LIBRARY OR NOT PYTHON_INCLUDE_DIRS OR NOT PYTHON_EXECUTABLE)
+     message ( STATUS "Missing Python stuff " )
+     set ( DATATOOLS_WITH_PYTHON_WRAPPER OFF CACHE BOOL "Enable Python wrapping of datatools, requires Boost.Python" FORCE)
+  endif ()
+endif () 
+  
+set ( CMAKE_INSTALL_PYTHONDIR "" )
+message ( STATUS "CMAKE_INSTALL_PYTHONDIR = '${CMAKE_INSTALL_PYTHONDIR}' " )
+
+if ( DATATOOLS_WITH_PYTHON_WRAPPER )
+    message ( STATUS "Add subdirectory 'wrapping/python' " )
+    add_subdirectory ( wrapping/python )
+endif () 
 
 #----------------------------------------------------------------------------
 # Add documentation.
@@ -364,7 +401,7 @@ endif ()
 #
 if ( DATATOOLS_WITH_TEST )
   enable_testing () 
-  add_subdirectory ( tests )
+  add_subdirectory ( testing )
 endif ()
 
 ###############################

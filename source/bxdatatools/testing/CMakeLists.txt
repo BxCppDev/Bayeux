@@ -28,16 +28,16 @@ list ( SORT datatools_tests_programs_list )
 #message ( STATUS "************ PROJECT_BINARY_DIR   : ${PROJECT_BINARY_DIR}" )
 
 # include files search paths
-include_directories(
+include_directories (
     ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/include
     ${CLHEP_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
-    ${PROJECT_SOURCE_DIR}/tests
+    ${PROJECT_SOURCE_DIR}/testing
 )
 
 if ( NOT DATATOOLS_WITH_EMBEDDED_KWSYS )
-  include_directories(
+  include_directories (
       ${KWSYS_INCLUDE_DIRS}
   )
 endif ()
@@ -45,9 +45,8 @@ endif ()
 # linker search paths
 link_directories( ${CMAKE_INSTALL_PREFIX}/lib )
 
-message ( STATUS "GSL libraries   : ${GSL_LIBRARIES}" )
-message ( STATUS "CLHEP libraries : ${CLHEP_LIBRARIES}" )
-message ( STATUS "KWSYS libraries : ${KWSYS_LIBRARIES}" )
+#message ( STATUS "CLHEP libraries : ${CLHEP_LIBRARIES}" )
+#message ( STATUS "KWSYS libraries : ${KWSYS_LIBRARIES}" )
 
 option (DATATOOLS_ALL_TESTS "Perform all possible tests" ON)
 message ( STATUS "Performing all available tests : ${DATATOOLS_ALL_TESTS}" )
@@ -68,6 +67,13 @@ foreach ( test_program ${datatools_tests_programs_list} )
   # last thing we have to do is to tell CMake what libraries 
   # our executable needs,
   list (APPEND test_libraries "datatools" ${CLHEP_LIBRARIES} ${Boost_LIBRARIES} )
+  #message ( STATUS "DEVEL ====== Boost_LIBRARIES=${Boost_LIBRARIES}" )
+  #message ( STATUS "DEVEL ====== Boost_PYTHON_LIBRARY=${Boost_PYTHON_LIBRARY}" )
+  if ( Boost_PYTHON_FOUND )
+     list (APPEND test_libraries ${PYTHON_LIBRARIES} )
+  endif () 
+  #${PYTHON_LIBRARIES}
+
   if ( NOT DATATOOLS_WITH_EMBEDDED_KWSYS )
     list (APPEND test_libraries ${KWSYS_LIBRARIES} )
   else ()
@@ -80,12 +86,12 @@ foreach ( test_program ${datatools_tests_programs_list} )
     list (INSERT test_libraries 0 "datatools_bio" )
   endif ()
 
-  #message ( STATUS "Test libraries : ${test_libraries}" )
+  #message ( STATUS "DEVEL ===== Test libraries : ${test_libraries}" )
 
   target_link_libraries ( ${test_executable} ${test_libraries} )
 
   add_test ( NAME ${test_executable}.run
-             COMMAND ${PROJECT_SOURCE_DIR}/tests/testDriver.bash 
+             COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
                      --tmp-dir ${_test_tmp_dir}
                      --prefix ${PROJECT_SOURCE_DIR} 
                      --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>

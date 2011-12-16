@@ -15,6 +15,7 @@ function my_exit ()
 appname=${APPNAME} 
 appversion=0.1 
 the_base_dir=$(pwd)
+debug=0
 
 function print_usage ()
 {
@@ -56,6 +57,8 @@ while [ -n "$1" ]; do
 	if [ "${opt}" = "-h" -o "${opt}" = "--help" ]; then
 	    print_usage
 	    my_exit 0
+	elif [ "${opt}" = "-d" -o "${opt}" = "--debug" ]; then
+	    debug=1
 	elif [ "${opt}" = "--version" ]; then
 	    echo ${appversion}
 	    my_exit 0
@@ -91,10 +94,12 @@ while [ -n "$1" ]; do
     shift 1
 done
 
-echo "NOTICE: ${appname}: the_action_mode=${the_action_mode}" >&2
-echo "NOTICE: ${appname}: tmp_test_dir=${tmp_test_dir}" >&2
-echo "NOTICE: ${appname}: exe_test=${exe_test}" >&2
-echo "NOTICE: ${appname}: prefix_test_dir=${prefix_test_dir}" >&2
+if [ ${debug} -ne 0 ]; then  
+    echo "DEBUG: ${appname}: the_action_mode=${the_action_mode}" >&2
+    echo "DEBUG: ${appname}: tmp_test_dir=${tmp_test_dir}" >&2
+    echo "DEBUG: ${appname}: exe_test=${exe_test}" >&2
+    echo "DEBUG: ${appname}: prefix_test_dir=${prefix_test_dir}" >&2
+fi
 
 ##########################################################
 test_exe="test_basic_event \

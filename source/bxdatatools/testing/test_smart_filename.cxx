@@ -137,7 +137,7 @@ int main (int argc_, char ** argv_)
         cout << endl << "*** Smart filename (from config file) : " << endl;
         smart_filename sf6;
         properties config6;
-        string file6 = "${DATATOOLS_ROOT}/tests/config/test_smart_filename_1.conf";
+        string file6 = "${DATATOOLS_ROOT}/testing/config/test_smart_filename_1.conf";
         fetch_path_with_env (file6);
         properties::read_config (file6, config6);
         sf6.initialize (config6);
@@ -148,7 +148,7 @@ int main (int argc_, char ** argv_)
         cout << endl << "*** Smart filename (from config file) : " << endl;
         smart_filename sf7;
         properties config7;
-        string file7 = "${DATATOOLS_ROOT}/tests/config/test_smart_filename_2.conf";
+        string file7 = "${DATATOOLS_ROOT}/testing/config/test_smart_filename_2.conf";
         fetch_path_with_env (file7);
         properties::read_config (file7, config7);
         sf7.initialize (config7);
@@ -159,7 +159,7 @@ int main (int argc_, char ** argv_)
         cout << endl << "*** Smart filename (from config file) : " << endl;
         smart_filename sf8;
         properties config8;
-        string file8 = "${DATATOOLS_ROOT}/tests/config/test_smart_filename_3.conf";
+        string file8 = "${DATATOOLS_ROOT}/testing/config/test_smart_filename_3.conf";
         fetch_path_with_env (file8);
         properties::read_config (file8, config8);
         sf8.initialize (config8);
@@ -170,7 +170,7 @@ int main (int argc_, char ** argv_)
         cout << endl << "*** Smart filename (from config file) : " << endl;
         smart_filename sf9;
         properties config9;
-        string file9 = "${DATATOOLS_ROOT}/tests/config/test_smart_filename_4.conf";
+        string file9 = "${DATATOOLS_ROOT}/testing/config/test_smart_filename_4.conf";
         fetch_path_with_env (file9);
         properties::read_config (file9, config9);
         sf9.initialize (config9);
@@ -181,7 +181,7 @@ int main (int argc_, char ** argv_)
         cout << endl << "*** Smart filename (from config file) : " << endl;
         smart_filename sf10;
         properties config10;
-        string file10 = "${DATATOOLS_ROOT}/tests/config/test_smart_filename_5.conf";
+        string file10 = "${DATATOOLS_ROOT}/testing/config/test_smart_filename_5.conf";
         fetch_path_with_env (file10);
         properties::read_config (file10, config10);
         sf10.initialize (config10);
