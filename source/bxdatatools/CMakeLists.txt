@@ -272,6 +272,9 @@ add_subdirectory ( src )
 # Configuration files :
 #
 
+set ( _find_module_install_dir ${INSTALL_MISC_DIR}/cmake/Modules ) 
+message ( STATUS "************ ${DATATOOLS_CMAKE_MODULE_INSTALL_DIR}" )
+
 configure_file ( "${PROJECT_SOURCE_DIR}/cmake/templates/datatools_config.h.in.cmake"
                  "${PROJECT_BINARY_DIR}/include/datatools/datatools_config.h" @ONLY )
 
@@ -320,7 +323,6 @@ if ( DATATOOLS_WITH_BIO )
 endif ()
 
 if ( DATATOOLS_WITH_CMAKE_FIND_MODULE )
-  set ( _find_module_install_dir ${INSTALL_MISC_DIR}/cmake/Modules ) 
 
   configure_file ( "${PROJECT_SOURCE_DIR}/cmake/Modules/FindDatatools.cmake.in"
                    "${PROJECT_BINARY_DIR}/cmake/Modules/FindDatatools.cmake" @ONLY )

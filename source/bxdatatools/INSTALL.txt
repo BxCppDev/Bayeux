@@ -12,7 +12,7 @@ First check that third party libraries are installed and setup :
 With Cadfael:
 
 {{{
-bash $ do_cadfael_clhep_setup
+bash$ do_cadfael_clhep_setup
 NOTICE: do_cadfael_clhep_setup: Setup Cadfael/CLHEP...
 NOTICE: do_cadfael_setup: Setup Cadfael version 0.1.0...
 NOTICE: do_cadfael_setup: Setup Cadfael version 0.1.0 done.
@@ -30,6 +30,12 @@ bash$ boost-config --prefix
 /scratch/sw/Cadfael/install/Cadfael-0.1.0
 bash$ boost-config --version
 1.47.0
+bash$ do_cadfael_kwsys_setup 
+NOTICE: do_cadfael_kwsys_setup: Setup Cadfael/kwsys...
+NOTICE: do_cadfael_kwsys_setup: Cadfael/kwsys 0.1.0 is setup.
+NOTICE: do_cadfael_kwsys_setup: Setup Cadfael/kwsys done.
+bash$ kwsys-config --version
+0.1.0
 }}}
 
 
