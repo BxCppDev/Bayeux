@@ -92,7 +92,7 @@ endif ()
 
 ### Depends on CLHEP:
 set ( _clhep_version 2.1.0.1 )
-find_package ( CLHEP ${_clhep_do_version} REQUIRED )
+find_package ( CLHEP ${_clhep_version} REQUIRED )
 if ( CLHEP_FOUND )
      message ( STATUS "Found CLHEP ${_clhep_version}" )
      include_directories ( ${CLHEP_INCLUDE_DIRS} )
