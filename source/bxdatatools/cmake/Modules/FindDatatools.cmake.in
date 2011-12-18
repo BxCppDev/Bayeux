@@ -61,7 +61,7 @@ set ( DATATOOLS_LIBRARIES_DEPEND
       @Boost_LIBRARIES@
       @CLHEP_LIBRARIES@ 
       @KWSYS_LIBRARIES@ 
-      "lm"
+      "m"
     )
 
 if (DATATOOLS_WITH_PYTHON_WRAPPER)
