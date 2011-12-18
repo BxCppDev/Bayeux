@@ -72,10 +72,11 @@ string ( REGEX REPLACE ".[0-9]+$" "" _boost_short_version "${_boost_version}" )
 message ( STATUS "Boost short version is : '${_boost_short_version}'" )
 set ( Boost_ADDITIONAL_VERSIONS "${_boost_short_version}" "${_boost_version}" )
 set ( Boost_NO_SYSTEM_PATHS ON )
-set ( _boost_requested_components filesystem serialization iostreams system )
+set ( _boost_requested_components filesystem serialization iostreams system 
+      CACHE STRING "List of requested Boost components" FORCE )
 
 if ( DATATOOLS_WITH_PYTHON_WRAPPER )
-  set ( _boost_requested_components ${_boost_requested_components} python )
+  set ( _boost_requested_components ${_boost_requested_components} python CACHE STRING "List of requested Boost components" FORCE )
 endif ()
 
 find_package ( Boost ${_boost_version} REQUIRED COMPONENTS ${_boost_requested_components} )
@@ -101,6 +102,17 @@ else ()
      message ( FATAL_ERROR "Cannot find CLHEP ${_clhep_version} library !" )
 endif ()
 
+### Depends on kwsys:
+set ( _kwsys_version 0.1.0 )
+find_package ( KWSYS ${_kwsys_version} REQUIRED )
+if ( KWSYS_FOUND )
+   message ( STATUS "Found KWSYS ${_kwsys_version}" )
+   include_directories ( ${KWSYS_INCLUDE_DIRS} )
+   message ( STATUS "KWSYS_LIBRARIES : ${KWSYS_LIBRARIES}" )
+else ()
+   message ( FATAL_ERROR "Cannot find kwsys ${_kwsys_version} library !" )
+endif ()
+
 ### Depends on GSL:
 # set ( _gsl_version 1.14 )
 # find_package ( GSL ${_gsl_version} REQUIRED )
@@ -124,24 +136,6 @@ endif ()
 # ----------------------------------------------------------------------
 # Options :
 #
-
-#option ( DATATOOLS_WITH_EMBEDDED_KWSYS
-#         "Use an embedded kwsys library" 
-#     	 OFF )
-set ( DATATOOLS_WITH_EMBEDDED_KWSYS OFF )
-
-### Depends on kwsys:
-if ( NOT DATATOOLS_WITH_EMBEDDED_KWSYS )
-  set ( _kwsys_version 0.1.0 )
-  find_package ( KWSYS ${_kwsys_version} REQUIRED )
-  if ( KWSYS_FOUND )
-     message ( STATUS "Found KWSYS ${_kwsys_version}" )
-     include_directories ( ${KWSYS_INCLUDE_DIRS} )
-     message ( STATUS "KWSYS_LIBRARIES : ${KWSYS_LIBRARIES}" )
-  else ()
-     message ( FATAL_ERROR "Cannot find kwsys ${_kwsys_version} library !" )
-  endif ()
-endif ()
 
 option ( DATATOOLS_WITH_DEBUG
          "Build the datatools project using debugging code"
@@ -207,59 +201,8 @@ if (UNIX OR APPLE)
 endif (UNIX OR APPLE)
 message ( STATUS "DATATOOLS_WITH_DOC             : " "${DATATOOLS_WITH_DOC}" )
 message ( STATUS "DATATOOLS_WITH_TEST            : " "${DATATOOLS_WITH_TEST}" )
-message ( STATUS "DATATOOLS_WITH_EMBEDDED_KWSYS  : " "${DATATOOLS_WITH_EMBEDDED_KWSYS}" )
 message ( STATUS "CMAKE_INSTALL_PREFIX           : " "${CMAKE_INSTALL_PREFIX}" )
 message ( STATUS "CMAKE_INSTALL_PYTHONDIR        : " "${CMAKE_INSTALL_PYTHONDIR}" )
-
-# ----------------------------------------------------------------------
-# Embedded kwsys API
-#
-
-if ( DATATOOLS_WITH_EMBEDDED_KWSYS )
-
-  #----------------------------------------------------------------------------
-  # kwsys project
-  # Downloaded from github.com
-  set( _kwsys_version 0.1.0 )
-
-  message( STATUS "Building the kwsys project version ${_kwsys_version}..." )
-
-  list ( APPEND DATATOOLS_COMPONENTS "kwsys" )
-
-  set (KWSYS_NAMESPACE kwsys)
-  set (KWSYS_HEADER_ROOT ${PROJECT_BINARY_DIR})
-  set (KWSYS_BUILD_SHARED ON)
-  set (KWSYS_STANDALONE OFF)
-  set (KWSYS_INSTALL_BIN_DIR bin)
-  set (KWSYS_INSTALL_LIB_DIR lib)
-  set (KWSYS_INSTALL_INCLUDE_DIR include)
-  set (KWSYS_INSTALL_DOC_DIR share/kwsys/doc)
-  set (KWSYS_INSTALL_COMPONENT_NAME_RUNTIME Runtime)
-  set (KWSYS_INSTALL_COMPONENT_NAME_DEVELOPMENT Development)
-
-  set (KWSYS_USE_Base64 1)
-  set (KWSYS_USE_Directory 1)
-  set (KWSYS_USE_DynamicLoader 1)
-  set (KWSYS_USE_Glob 1)
-  set (KWSYS_USE_MD5 1)
-  set (KWSYS_USE_Process 1)
-  set (KWSYS_USE_RegularExpression 1)
-  set (KWSYS_USE_Registry 1)
-  set (KWSYS_USE_System 1)
-  set (KWSYS_USE_SystemTools 1)
-  set (KWSYS_USE_CommandLineArguments 1)
-  set (KWSYS_USE_FundamentalType 1)
-  set (KWSYS_USE_Terminal 1)
-  set (KWSYS_USE_IOStream 1)
-  set (KWSYS_USE_DateStamp 1)
-  set (KWSYS_USE_String 1)
-  set (KWSYS_USE_SystemInformation 1)
-  set (KWSYS_USE_CPU 1)
-
-  add_subdirectory ( kwsys )
-
- 
-endif (DATATOOLS_WITH_EMBEDDED_KWSYS)
 
 # ----------------------------------------------------------------------
 # datatools API
@@ -315,8 +258,8 @@ set ( _datatools_pkgconfig_Libs
     ${_datatools_pkgconfig_Libs} 
     ${CLHEP_LIBRARIES} 
     ${Boost_LIBRARIES}  
-    -lm 
-    -lkwsys -lkwsys_c -ldl )
+    ${KWSYS_LIBRARIES}  
+    -lm -ldl )
 
 if ( DATATOOLS_WITH_BIO )
   set ( _datatools_pkgconfig_Libs -ldatatools_bio ${_datatools_pkgconfig_Libs} )
