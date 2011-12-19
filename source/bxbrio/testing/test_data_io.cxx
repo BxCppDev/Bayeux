@@ -22,7 +22,7 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for serialization of the 'brio::test::data' sample class !" << endl; 
+      clog << "Test program for serialization of the 'brio::test::data_t' sample class !" << endl; 
   
       bool devel = false;
       bool debug = false;
@@ -85,7 +85,7 @@ int main (int argc_, char ** argv_)
 	// Store `data' objects within the *automatic* store;
 	for (int i = 0; i < data_count; i++) 
 	  {
-	    brio::test::data a_data;
+	    brio::test::data_t a_data;
 	    my_writer.store (a_data);
 	  }
 	my_writer.close ();
@@ -100,7 +100,7 @@ int main (int argc_, char ** argv_)
 	// Load `data' objects from the *automatic* store;
 	while (my_reader.has_next ()) 
 	  {
-	    brio::test::data a_data;
+	    brio::test::data_t a_data;
 	    my_reader.load_next (a_data);
 	  }
 	my_reader.close ();

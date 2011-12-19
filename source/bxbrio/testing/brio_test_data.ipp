@@ -26,7 +26,7 @@ namespace brio {
   namespace test {
 
     template<class Archive>
-    void data::serialize (Archive & ar,                // an archive type (ASCII, XML or binary)
+    void data_t::serialize (Archive & ar,                // an archive type (ASCII, XML or binary)
 			  const unsigned int version)  // the version number (here not used)
     {
       ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;

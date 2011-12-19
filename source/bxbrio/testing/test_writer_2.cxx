@@ -7,11 +7,11 @@
 #include <exception>
 
 #include <datatools/utils/properties.h>
-#include <datatools_test_my_data.cc>
+#include <brio_test_data.cc>
 
 // Serialization code :
 #include <datatools/utils/properties.ipp>
-#include <datatools_test_my_data.ipp>
+#include <brio_test_data.ipp>
 
 #include <brio/writer.h>
 
@@ -94,11 +94,11 @@ int main (int argc_, char ** argv_)
       // Store `data' randomized objects within an *automatic* store;
       for (int i = 0; i < data_count; i++) 
 	{
-	  datatools::test::data_t data;
-	  datatools::test::randomize_data (data);
+	  brio::test::data_t data;
+	  data.randomize ();
 	  if (dump) 
 	    {
-	      data.tree_dump (clog, "Data to be stored in the *automatic* store: ");
+	      data.dump (clog, "Data to be stored in the *automatic* store: ");
 	    }
 	  my_writer.store (data);
 	}

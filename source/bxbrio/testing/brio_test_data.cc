@@ -9,10 +9,10 @@ namespace brio {
 
   namespace test {
 
-    DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (data,"brio::test::data")
+    DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (data_t,"brio::test::data_t")
 
     // ctor:
-    data::data ()
+    data_t::data_t ()
     {
       // Initialize members with arbitrary values:
       __bval = false;
@@ -27,12 +27,12 @@ namespace brio {
     }
   
     // dtor:
-    data::~data ()
+    data_t::~data_t ()
     {
       return;
     }
 
-    void data::randomize ()
+    void data_t::randomize ()
     {
       __bval = drand48 () < 0.5 ? false : true;
       __cval = 'A' + (char) (drand48 () * 26);
@@ -50,11 +50,11 @@ namespace brio {
       return;
     }
   
-    void data::dump (ostream & a_out, const string & a_title) const
+    void data_t::dump (ostream & a_out, const string & a_title) const
     {
       if (a_title.empty ())
 	{
-	  a_out << "brio::test::data::dump: " << endl;
+	  a_out << "brio::test::data_t::dump: " << endl;
 	}
       else
 	{

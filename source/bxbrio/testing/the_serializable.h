@@ -11,8 +11,8 @@
  * brio::test::data_t *
  ****************************/
 
-BOOST_CLASS_EXPORT_KEY2(brio::test::data, "brio::test::data")
-BOOST_CLASS_EXPORT_IMPLEMENT(brio::test::data) 
+BOOST_CLASS_EXPORT_KEY2(brio::test::data_t, "brio::test::data_t")
+BOOST_CLASS_EXPORT_IMPLEMENT(brio::test::data_t) 
 
 #endif // __brio__test__the_serializable_h__
 

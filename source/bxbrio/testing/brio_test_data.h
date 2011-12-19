@@ -28,16 +28,16 @@ namespace brio {
     /** A sample serializable class using datatools and/or brio serialization  
      *  concept.
      */
-    class data : DATATOOLS_SERIALIZABLE_CLASS     
+    class data_t : DATATOOLS_SERIALIZABLE_CLASS     
       {
 
       public:
 
 	// Here we provide a default constructor:
-	data ();
+	data_t ();
 
 	// Desctructor:
-	virtual ~data ();
+	virtual ~data_t ();
 
 	void randomize ();
 

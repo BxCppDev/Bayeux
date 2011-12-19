@@ -1,0 +1,157 @@
+
+brio installation instructions:
+------------------------------------
+
+1 - Third-party software setup :
+--------------------------------
+
+cadfael  components  (CLHEP, Boost,  KWSYS,  ROOT)  libraries must  be
+installed and setup. Then datatools must be setup too.
+
+{{{
+bash$ do_cadfael_all_setup
+...
+bash$ do_datatools_setup
+...
+}}}
+
+
+2 - First try :
+---------------
+
+Change to the brio base directory :
+
+{{{
+bash$ cd <brio base dir>
+}}}
+
+Create a 'build' directory :
+
+{{{
+bash$ mkdir build
+bash$ cd build
+}}}
+
+For a first try, you can build it in a special local subdirectory (here in 
+the '<brio base dir>.install_Linux-i686/' directory) :
+
+{{{
+bash$ cmake \
+   -Wno-dev \
+   -DBRIO_WITH_INSTALL_HERE=ON \
+   -DCMAKE_BUILD_TYPE:STRING=Release \
+   ..
+}}}
+
+This prints :
+{{{
+-- The C compiler identification is GNU
+-- The CXX compiler identification is GNU
+
+...
+
+-- Configuring done
+-- Generating done
+-- Build files have been written to: <brio base dir>/build
+}}}
+
+
+Build :
+{{{
+bash$ make
+}}}
+
+Generate the documentation :
+{{{
+bash$ make doc
+}}}
+
+Perform tests :
+{{{
+bash$ make test
+}}}
+
+Clean test material :
+{{{
+bash$ make clean_test
+}}}
+
+Installation (here in the '<brio base dir>.install_Linux-i686/' directory) :
+{{{
+bash$ make install
+}}}
+
+Setup :
+  Back to the base source directory :
+{{{
+bash$ cd ..
+}}}
+  Load the definition of the brio setup function :
+{{{
+bash$ source .install_Linux-i686/etc/brio_setup.sh 
+NOTICE: do_brio_setup: Please setup 'brio' with 'do_brio_setup'.
+}}}
+  Invoke the brio setup function :
+{{{
+bash$ do_brio_setup
+NOTICE: do_brio_setup: Setup brio...
+NOTICE: do_brio_setup: Setup brio done.
+bash$ which brio-config 
+<brio base dir>/.install_Linux-i686/bin/brio-config
+bash$ brio-config --prefix
+<brio base dir>/.install_Linux-i686
+bash$ brio-config --cflags
+...
+bash$ brio-config --ldflags
+...
+}}}
+
+Uninstall :
+{{{
+bash$ make uninstall
+}}}
+
+Remove the temporary build directory :
+{{{
+bash$ cd build
+bash$ rm -fr build
+}}}
+
+3 - A production installation :
+-------------------------------
+
+Change to the brio base directory :
+{{{
+bash$ cd <brio base dir>
+}}}
+
+Create a 'build' directory :
+{{{
+bash$ mkdir build
+bash$ cd build
+}}}
+
+Configure the installation to the '/opt/sw' directory.
+Under Ubuntu, you can make this directory writable with:
+{{{
+bash$ sudo chmod 1777 /opt/sw
+}}}
+Otherwise ask your sysadmin or choose a directory where
+you have write access.
+
+{{{
+bash$ cmake \
+   -DCMAKE_INSTALL_PREFIX:PATH=/opt/sw \
+   -DCMAKE_BUILD_TYPE:STRING=Release \
+   ..
+bash$ make
+bash$ make doc
+bash$ make test
+bash$ make install
+}}}
+
+--
+
+ 
+
+

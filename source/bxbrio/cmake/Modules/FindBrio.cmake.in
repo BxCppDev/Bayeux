@@ -1,0 +1,74 @@
+# Locate brio library
+# This module defines
+#  BRIO_FOUND, if false, do not try to link to BRIO
+#  BRIO_LIBRARIES
+#  BRIO_INCLUDE_DIRS, where to find brio/brio_config.h
+#  BRIO_LIBRARIES_DEPEND
+#  BRIO_INCLUDE_DIRS_DEPEND
+
+FIND_PATH(BRIO_INCLUDE_DIR brio/brio_config.h
+  HINTS
+  $ENV{BRIO_ROOT_DIR}
+  PATH_SUFFIXES include
+  PATHS
+  [HKEY_LOCAL_MACHINE\\SOFTWARE\\brio]
+  ~/Library/Frameworks
+  /Library/Frameworks
+  /usr/local
+  /usr
+  /sw # Fink
+  /opt/local # DarwinPorts
+  /opt/csw # Blastwave
+  /opt
+)
+
+FIND_LIBRARY(BRIO_LIBRARY 
+  NAMES brio
+  HINTS
+  $ENV{BRIO_ROOT_DIR}
+  PATH_SUFFIXES lib64 lib
+  PATHS
+  [HKEY_LOCAL_MACHINE\\SOFTWARE\\brio]
+  ~/Library/Frameworks
+  /Library/Frameworks
+  /usr/local
+  /usr
+  /sw
+  /opt/local
+  /opt/csw
+  /opt
+)
+
+SET(BRIO_VERSION   "${BRIO_VERSION_STR}" CACHE STRING "BRIO Version")
+SET(BRIO_LIBRARIES "${BRIO_LIBRARY}"     CACHE STRING "BRIO Libraries")
+SET(BRIO_INCLUDE_DIRS "${BRIO_INCLUDE_DIR}"  CACHE STRING "BRIO include dirs")
+
+set ( BRIO_LIBRARIES_DEPEND 
+      ${BRIO_LIBRARIES}
+      @DATATOOLS_LIBRARIES_DEPEND@
+      @ROOT_LIBRARIES@ 
+    )
+
+if (DATATOOLS_WITH_PYTHON_WRAPPER)
+  list ( APPEND DATATOOLS_LIBRARIES_DEPEND 
+         python )
+endif ()
+
+set ( BRIO_INCLUDE_DIRS_DEPEND
+      ${BRIO_INCLUDE_DIRS}
+      @DATATOOLS_INCLUDE_DIRS@
+      @ROOT_INCLUDE_DIR@
+    )
+
+INCLUDE(FindPackageHandleStandardArgs)
+# handle the QUIETLY and REQUIRED arguments and set BRIO_FOUND to TRUE if 
+# all listed variables are TRUE
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(BRIO DEFAULT_MSG BRIO_LIBRARIES BRIO_INCLUDE_DIRS)
+
+MARK_AS_ADVANCED(BRIO_VERSION
+                 BRIO_INCLUDE_DIRS
+                 BRIO_LIBRARIES 
+                 BRIO_INCLUDE_DIRS_DEPEND
+                 BRIO_LIBRARIES_DEPEND 
+                 )
+

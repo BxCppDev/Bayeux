@@ -16,7 +16,7 @@ int main (void)
 
   while (my_reader.has_next ())  
     {
-       brio::test::data a_data;
+       brio::test::data_t a_data;
        my_reader.load_next (a_data);
        // or : my_reader.load (a_data); 
        /* default 'load' behaviour 
@@ -25,7 +25,7 @@ int main (void)
     }
   my_reader.tree_dump (clog, "Reader : ");
   my_reader.rewind_store ();
-  brio::test::data a_data;
+  brio::test::data_t a_data;
   my_reader.load (a_data, 4);
   {
     ostringstream title;

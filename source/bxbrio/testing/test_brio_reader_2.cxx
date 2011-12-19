@@ -39,7 +39,7 @@ int main (void)
   clog << "Data store has " << my_reader.get_number_of_entries () << " record(s)." << endl;
   while (my_reader.has_next ())
     {
-       brio::test::data a_data;
+       brio::test::data_t a_data;
        my_reader.load_next (a_data); // load another 'data' object from the active store
        // or : my_reader.load (a_data);
        /* default 'load' behaviour
@@ -47,7 +47,7 @@ int main (void)
 	*/
     }
   my_reader.rewind_store (); // rewind the store at beginning
-  brio::test::data a_data;
+  brio::test::data_t a_data;
   my_reader.load (a_data, 4); // load only entry #4 from the active store
   a_data.dump (clog);
 

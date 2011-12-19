@@ -6,11 +6,11 @@
 #include <string>
 #include <exception>
 
-#include <datatools_test_my_data.cc>
+#include <brio_test_data.cc>
 #include <datatools/utils/properties.h>
 
 // Serialization code :
-#include <datatools_test_my_data.ipp>
+#include <brio_test_data.ipp>
 #include <datatools/utils/properties.ipp>
 
 #include <brio/reader.h>
@@ -88,11 +88,11 @@ int main (int argc_, char ** argv_)
       // Loop on serialized records in this store:
       while (my_reader.has_next ())
 	{
-	  datatools::test::data_t data;
+	  brio::test::data_t data;
 	  my_reader.load_next (data);
 	  if (dump) 
 	    {
-	      data.tree_dump (clog, "Data loaded from the *automatic* store: ");
+	      data.dump (clog, "Data loaded from the *automatic* store: ");
 	    }
 	}
 

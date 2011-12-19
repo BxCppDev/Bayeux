@@ -7,11 +7,11 @@
 #include <exception>
 
 #include <datatools/utils/properties.h>
-#include <datatools_test_my_data.cc>
+#include <brio_test_data.cc>
 
 // Serialization code :
 #include <datatools/utils/properties.ipp>
-#include <datatools_test_my_data.ipp>
+#include <brio_test_data.ipp>
 
 #include <brio/reader.h>
 
@@ -86,23 +86,23 @@ int main (int argc_, char ** argv_)
       brio::reader my_reader (filename, verbose, debug);
 
       // Loop on serialized records in this store:
-      datatools::test::data_t data;
+      brio::test::data_t data;
       my_reader.load (data, 2);
       if (dump) 
 	{
-	  data.tree_dump (clog, "Data #2 loaded from the *automatic* store: ");
+	  data.dump (clog, "Data #2 loaded from the *automatic* store: ");
 	}
 
       my_reader.load (data, 7);
       if (dump) 
 	{
-	  data.tree_dump (clog, "Data #7 loaded from the *automatic* store: ");
+	  data.dump (clog, "Data #7 loaded from the *automatic* store: ");
 	}
 
       my_reader.load (data);
       if (dump) 
 	{
-	  data.tree_dump (clog, "Next data loaded from the *automatic* store: ");
+	  data.dump (clog, "Next data loaded from the *automatic* store: ");
 	}
 
       my_reader.rewind_store ();
@@ -110,7 +110,7 @@ int main (int argc_, char ** argv_)
       my_reader.load (data);
       if (dump) 
 	{
-	  data.tree_dump (clog, "First data loaded from the *automatic* store: ");
+	  data.dump (clog, "First data loaded from the *automatic* store: ");
 	}
 
       my_reader.unwind_store ();
@@ -118,7 +118,7 @@ int main (int argc_, char ** argv_)
       my_reader.load_previous (data);
       if (dump) 
 	{
-	  data.tree_dump (clog, "Last data loaded from the *automatic* store: ");
+	  data.dump (clog, "Last data loaded from the *automatic* store: ");
 	}
   
       // Print reader's status:

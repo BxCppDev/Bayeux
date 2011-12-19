@@ -19,7 +19,7 @@ int main (void)
   
   for (int i = 0; i < 10; i++) 
     {
-      brio::test::data a_data;
+      brio::test::data_t a_data;
       a_data.randomize ();
       {
 	ostringstream title;

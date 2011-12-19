@@ -7,12 +7,10 @@
 #include <exception>
 
 #include <datatools/utils/properties.h>
-#include <datatools_test_my_data.cc>
 #include <brio_test_data.cc>
 
 // Serialization implementation code :
 #include <datatools/utils/properties.ipp>
-#include <datatools_test_my_data.ipp>
 #include <brio_test_data.ipp>
 
 #include <brio/writer.h>
@@ -131,7 +129,7 @@ int main (int argc_, char ** argv_)
 	  my_writer.add_store ("header", datatools::utils::properties::SERIAL_TAG, 32000);
 
 	  // Idem for a store labelled 'data': 
-	  my_writer.add_store ("data", datatools::test::data_t::SERIAL_TAG, 256000);
+	  my_writer.add_store ("data", brio::test::data_t::SERIAL_TAG, 256000);
 
 	  /* Setup a store labelled 'mixed_data' with
 	   * dedicated buffer size but possibly mixing
@@ -143,16 +141,16 @@ int main (int argc_, char ** argv_)
 	    }
 	  
 	  // Idem for a store labelled 'data': 
-	  my_writer.add_store ("data2", brio::test::data::SERIAL_TAG, 256000);
+	  my_writer.add_store ("data2", brio::test::data_t::SERIAL_TAG, 256000);
 
 	  // Lock the writer to prevent to add more stores:
 	  my_writer.lock ();
 	}
 
-      if (my_writer.has_store_with_serial_tag ("data2", brio::test::data::SERIAL_TAG))
+      if (my_writer.has_store_with_serial_tag ("data2", brio::test::data_t::SERIAL_TAG))
 	{
 	  clog << "notice: found a store labelled '" << "data2"
-	       << "' with serial tag '" << brio::test::data::SERIAL_TAG << "'..." << endl;
+	       << "' with serial tag '" << brio::test::data_t::SERIAL_TAG << "'..." << endl;
 	}
 
       if (my_writer.has_mixed_store ("mixed_data"))
@@ -227,11 +225,11 @@ int main (int argc_, char ** argv_)
       // Store `data' randomized objects within another store;
       for (int i = 0; i < data_count; i++) 
 	{
-	  datatools::test::data_t data;
-	  datatools::test::randomize_data (data);
+	  brio::test::data_t data;
+	  data.randomize ();
 	  if (dump) 
 	    {
-	      data.tree_dump (clog, "Data to be stored in the 'data' store: ");
+	      data.dump (clog, "Data to be stored in the 'data' store: ");
 	    }
 	  // 
 	  my_writer.store (data);
@@ -242,11 +240,11 @@ int main (int argc_, char ** argv_)
 	{
 	  my_writer.select_store ("mixed_data");
 	  
-	  datatools::test::data_t data;
-	  datatools::test::randomize_data (data);
+	  brio::test::data_t data;
+	  data.randomize ();
 	  if (dump) 
 	    {
-	      data.tree_dump (clog, "Data to be stored in the 'mixed_data' store in ROOT file: ");
+	      data.dump (clog, "Data to be stored in the 'mixed_data' store in ROOT file: ");
 	    }
 	  my_writer.store (data);
 
@@ -267,7 +265,7 @@ int main (int argc_, char ** argv_)
       if (my_writer.has_store ("data2"))
 	{
 	  my_writer.select_store ("data2");
-	  brio::test::data data;
+	  brio::test::data_t data;
 	  data.randomize ();
 	  if (dump) 
 	    {

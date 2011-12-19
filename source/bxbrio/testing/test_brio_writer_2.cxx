@@ -34,7 +34,7 @@ int main (void)
   my_writer.select_store ("data"); // make the store named 'data' active
   for (int i = 0; i < 10; i++) 
     {
-      brio::test::data a_data;
+      brio::test::data_t a_data;
       a_data.randomize ();
       a_data.dump (clog);
       my_writer.store (a_data); // store a 'data' object in the active store
