@@ -43,7 +43,7 @@ if ( NOT DATATOOLS_WITH_EMBEDDED_KWSYS )
 endif ()
 
 # linker search paths
-link_directories( ${CMAKE_INSTALL_PREFIX}/lib )
+link_directories( ${PROJECT_BINARY_DIR}/src )
 
 #message ( STATUS "CLHEP libraries : ${CLHEP_LIBRARIES}" )
 #message ( STATUS "KWSYS libraries : ${KWSYS_LIBRARIES}" )
@@ -106,6 +106,27 @@ add_custom_target ( clean_test
                      --tmp-dir ${_test_tmp_dir}
                      clean
                   )
+
+set ( _test_install_dir ${INSTALL_MISC_DIR}/testing )
+
+file ( GLOB datatools_tests_config config/*.conf )
+
+install ( FILES ${datatools_tests_config} 
+	        config/test_smart_filename_2.lis
+	  DESTINATION ${_test_install_dir}/config
+          PERMISSIONS OWNER_READ GROUP_READ WORLD_READ 
+        )
+
+install ( FILES ${datatools_tests_programs} 
+                datatools_test_data.h
+                datatools_test_my_data.h 
+                datatools_test_my_data.cc 
+                datatools_test_my_data.ipp 
+                dummy_service.h 
+                dummy_service.cc 
+	  DESTINATION ${_test_install_dir}
+          PERMISSIONS OWNER_READ GROUP_READ WORLD_READ 
+        )
 
 endif ()
 
