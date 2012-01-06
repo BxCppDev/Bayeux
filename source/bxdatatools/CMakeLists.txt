@@ -180,7 +180,7 @@ if ( UNIX OR APPLE )
   if ( DATATOOLS_WITH_INSTALL_HERE )
     message ( STATUS "DEBUG: DATATOOLS_WITH_INSTALL_HERE" )
     set ( _datatools_here_install_prefix 
-          "${PROJECT_SOURCE_DIR}/.install_${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}"
+          "${PROJECT_SOURCE_DIR}/__install_${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}"
          )
     set ( CMAKE_INSTALL_PREFIX 
           "${_datatools_here_install_prefix}" 
@@ -216,7 +216,7 @@ add_subdirectory ( src )
 #
 
 set ( _find_module_install_dir ${INSTALL_MISC_DIR}/cmake/Modules ) 
-message ( STATUS "************ ${DATATOOLS_CMAKE_MODULE_INSTALL_DIR}" )
+## message ( STATUS "************ ${DATATOOLS_CMAKE_MODULE_INSTALL_DIR}" )
 
 configure_file ( "${PROJECT_SOURCE_DIR}/cmake/templates/datatools_config.h.in.cmake"
                  "${PROJECT_BINARY_DIR}/include/datatools/datatools_config.h" @ONLY )

@@ -8,4 +8,6 @@ There are several other contributors to this library :
  - Arnaud Chapon (LPC Caen  (CNRS/IN2P3), Université de Caen Basse-Normandie)
  - Ben Morgan (University of Warwick)
 
+Please read the INSTALL.txt file for installation instructions.
+Please read the COPYING.txt file for licensing terms.
 

@@ -101,7 +101,7 @@ foreach ( test_program ${datatools_tests_programs_list} )
 endforeach ()
   
 add_custom_target ( clean_test
-             COMMAND ${PROJECT_SOURCE_DIR}/tests/testDriver.bash 
+             COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
                      --prefix ${PROJECT_SOURCE_DIR} 
                      --tmp-dir ${_test_tmp_dir}
                      clean
