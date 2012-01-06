@@ -146,7 +146,7 @@ if ( UNIX OR APPLE )
          )
     set ( CMAKE_INSTALL_PREFIX 
           "${brio_here_install_prefix}" 
-  	  CACHE PATH "datatools installation prefix" FORCE
+  	  CACHE PATH "brio installation prefix" FORCE
         )
 
     message ( STATUS "Please run 'cmake uninstall' to uninstall this build" )
