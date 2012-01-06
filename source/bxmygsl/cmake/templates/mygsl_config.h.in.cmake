@@ -1,28 +1,28 @@
 // -*- mode: c++; -*- 
-/* brio_config.h header file 
+/* mygsl_config.h header file 
  */
 
-#ifndef __brio__brio_config_h
-#define __brio__brio_config_h 1
+#ifndef __mygsl__mygsl_config_h
+#define __mygsl__mygsl_config_h 1
 
-/*** brio versioning information ***/
+/*** mygsl versioning information ***/
 
-//  BRIO_VERSION % 100        is the patch level
-//  BRIO_VERSION / 100 % 1000 is the minor version
-//  BRIO_VERSION / 100000     is the major version
+//  MYGSL_VERSION % 100        is the patch level
+//  MYGSL_VERSION / 100 % 1000 is the minor version
+//  MYGSL_VERSION / 100000     is the major version
 
-#define BRIO_VERSION_MAJOR @brio_VERSION_MAJOR@
-#define BRIO_VERSION_MINOR @brio_VERSION_MINOR@
-#define BRIO_PATCH_VERSION @brio_PATCH_VERSION@
+#define MYGSL_VERSION_MAJOR @mygsl_VERSION_MAJOR@
+#define MYGSL_VERSION_MINOR @mygsl_VERSION_MINOR@
+#define MYGSL_PATCH_VERSION @mygsl_PATCH_VERSION@
 
-#define BRIO_VERSION @brio_VERSION_NUMERIC@
+#define MYGSL_VERSION @mygsl_VERSION_NUMERIC@
 
-//  BRIO_LIB_VERSION must be defined to be the same as BRIO_VERSION
+//  MYGSL_LIB_VERSION must be defined to be the same as MYGSL_VERSION
 //  but as a *string* in the form "x.y[.z]" where x is the major version
 //  number, y is the minor version number, and z is the patch level if not 0.
 
-#define BRIO_LIB_VERSION "@brio_VERSION_STR@"
+#define MYGSL_LIB_VERSION "@mygsl_VERSION_STR@"
 
-#endif // __brio__brio_config_h
+#endif // __mygsl__mygsl_config_h
 
-// end of brio_config.h
+// end of mygsl_config.h
