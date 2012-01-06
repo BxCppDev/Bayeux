@@ -8,15 +8,15 @@
  * </div-->
  * \endhtmlonly
  *
- * \section overview Overview
+ * \section overview_section Overview
  *
  * datatools is a C++ library which provides...
  *
  * \li General purpose containers
- * \li Serialization support
+ * \li Serialization support based on the Boost/Serialization library
  * \li General purpose utilities
  *
- * \section example Quick example
+ * \section quick_example_section Quick example
  * 
  * Here is a simple example of how to use datatool:
  *
@@ -63,7 +63,7 @@
  * }
  * \endcode
  *
- * \section license License
+ * \section license_section License
  *
  * datatools is distributed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  *
