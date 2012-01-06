@@ -41,7 +41,7 @@ include_directories ( ${PROJECT_SOURCE_DIR}/include
 #----------------------------------------------------------------------------
 # Add the library
 #
-message ( STATUS "DEVEL ************** mygsl_SOURCES='${mygsl_SOURCES}'" )
+###message ( STATUS "DEVEL ************** mygsl_SOURCES='${mygsl_SOURCES}'" )
 
 add_library (mygsl SHARED  
 		      ${mygsl_PUBLIC_HEADERS} 

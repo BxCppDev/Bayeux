@@ -417,7 +417,7 @@ function do_unconfigure ()
     __pkgtools__at_function_enter do_unconfigure
 
     if [ ! -d ${the_build_dir} ]; then
-	pkgtools__msg_error "Cannot find the build directory ! Please configure first !"
+	pkgtools__msg_error "Cannot find the build directory ! Abort !"
 	__pkgtools__at_function_exit
 	return 1
     fi
@@ -550,7 +550,7 @@ function do_untest ()
     __pkgtools__at_function_enter do_untest
 
     if [ ! -d ${the_build_dir} ]; then
-	pkgtools__msg_error "Cannot find the build directory ! Please configure and build first !"
+	pkgtools__msg_error "Cannot find the build directory ! Abort !"
 	__pkgtools__at_function_exit
 	return 1	
     fi
@@ -699,7 +699,7 @@ function do_clean ()
     __pkgtools__at_function_enter do_clean
 
     if [ ! -d ${the_build_dir} ]; then
-	pkgtools__msg_error "Cannot find the build directory ! Please configure and build first !"
+	pkgtools__msg_error "Cannot find the build directory ! Abort !"
 	__pkgtools__at_function_exit
 	return 1	
     fi
