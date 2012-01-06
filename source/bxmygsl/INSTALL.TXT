@@ -1,0 +1,210 @@
+
+mygsl installation instructions:
+------------------------------------
+
+1 - Third-party software setup :
+--------------------------------
+
+Cadfael  components  (GSL)  libraries must  be
+installed and setup. Then datatools must be setup too.
+
+{{{
+bash$ do_cadfael_all_setup
+...
+bash$ do_datatools_setup
+...
+}}}
+
+
+2 - Plain CMake local installation :
+------------------------------------
+
+Change to the mygsl base directory :
+
+{{{
+bash$ cd <mygsl base dir>
+}}}
+
+Create a 'build' directory :
+
+{{{
+bash$ mkdir build
+bash$ cd build
+}}}
+
+For a first try, you can build it in a special local subdirectory (here in 
+the '<mygsl base dir>.install_Linux-i686/' directory) :
+
+{{{
+bash$ cmake \
+   -Wno-dev \
+   -DMYGSL_WITH_INSTALL_HERE=ON \
+   -DCMAKE_BUILD_TYPE:STRING=Release \
+   ..
+}}}
+
+This prints :
+{{{
+-- The C compiler identification is GNU
+-- The CXX compiler identification is GNU
+
+...
+
+-- Configuring done
+-- Generating done
+-- Build files have been written to: <mygsl base dir>/build
+}}}
+
+
+Build :
+{{{
+bash$ make
+}}}
+
+Generate the documentation :
+{{{
+bash$ make doc
+}}}
+
+Perform tests :
+{{{
+bash$ make test
+}}}
+
+Clean test material :
+{{{
+bash$ make clean_test
+}}}
+
+Installation (here in the '<mygsl base dir>.install_Linux-i686/' directory) :
+{{{
+bash$ make install
+}}}
+
+Setup :
+  Back to the base source directory :
+{{{
+bash$ cd ..
+}}}
+  Load the definition of the mygsl setup function :
+{{{
+bash$ source .install_Linux-i686/etc/mygsl_setup.sh 
+NOTICE: do_mygsl_setup: Please setup 'mygsl' with 'do_mygsl_setup'.
+}}}
+  Invoke the mygsl setup function :
+{{{
+bash$ do_mygsl_setup
+NOTICE: do_mygsl_setup: Setup mygsl...
+NOTICE: do_mygsl_setup: Setup mygsl done.
+bash$ which mygsl-config 
+<mygsl base dir>/.install_Linux-i686/bin/mygsl-config
+bash$ mygsl-config --prefix
+<mygsl base dir>/.install_Linux-i686
+bash$ mygsl-config --cflags
+...
+bash$ mygsl-config --ldflags
+...
+}}}
+
+Uninstall :
+{{{
+bash$ make uninstall
+}}}
+
+Remove the temporary build directory :
+{{{
+bash$ cd build
+bash$ rm -fr build
+}}}
+
+
+
+3 - Production CMake installation :
+-----------------------------------
+
+Change to the mygsl base directory :
+{{{
+bash$ cd <mygsl base dir>
+}}}
+
+Create a 'build' directory :
+{{{
+bash$ mkdir build
+bash$ cd build
+}}}
+
+Configure the installation to the '/opt/sw' directory.
+Under Ubuntu, you can make this directory writable with:
+{{{
+bash$ sudo chmod 1777 /opt/sw
+}}}
+Otherwise ask your sysadmin or choose a directory where
+you have write access.
+
+{{{
+bash$ cmake \
+   -DCMAKE_INSTALL_PREFIX:PATH=/opt/sw \
+   -DCMAKE_BUILD_TYPE:STRING=Release \
+   ..
+bash$ make
+bash$ make doc
+bash$ make test
+bash$ make install
+}}}
+
+Setup :
+{{{
+bash$ source ${HOME}/software/etc/mygsl_setup.sh
+NOTICE: do_datatools_setup: Please setup 'mygsl' with 'do_mygsl_setup'.
+bash$ do_mygsl_setup
+NOTICE: do_mygsl_setup: Setup mygsl...
+NOTICE: do_mygsl_setup: Setup mygsl done.
+bash$ which mygsl-config 
+/home/mauger/software/bin/mygsl-config
+bash$ mygsl-config --version
+3.0.0
+}}}
+
+
+4 - Production CMake installation using the 'pkgtool' wrapper :
+---------------------------------------------------------------
+
+Change to the mygsl base directory :
+{{{
+bash$ cd <mygsl base dir>
+}}}
+
+Run the following configure/build/install sequence :
+{{{
+bash$ ./pkgtools.d/pkgtool check
+bash$ ./pkgtools.d/pkgtool configure --install-prefix ${HOME}/software
+bash$ ./pkgtools.d/pkgtool build --number-of-tasks auto
+bash$ ./pkgtools.d/pkgtool doc
+bash$ ./pkgtools.d/pkgtool test
+bash$ ./pkgtools.d/pkgtool install
+}}}
+
+De-installation :
+{{{
+bash$ ./pkgtools.d/pkgtool uninstall
+}}}
+
+Full reset of the package :
+{{{
+bash$ ./pkgtools.d/pkgtool reset
+}}}
+
+Getting help :
+{{{
+bash$ ./pkgtools.d/pkgtool --help
+}}}
+
+Setup : see previous section.
+
+--
+F.Mauger
+Updated: 2012-01-06
+ 
+ 
+
+

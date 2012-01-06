@@ -22,7 +22,7 @@ main(int argc_ , char ** argv_)
 
   // read sampled signal from a file:
   double adc_shift = 56.; // (mV)
-  std::ifstream f_data("demo_signal.samples");
+  std::ifstream f_data ("demo_signal.samples");
   double peak = +1.e10; // trick
   while(f_data) 
     {
