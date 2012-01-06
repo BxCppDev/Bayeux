@@ -154,6 +154,17 @@ if ( UNIX OR APPLE )
   endif ( BRIO_WITH_INSTALL_HERE )
 endif ()
 
+set ( _find_module_install_dir ${INSTALL_MISC_DIR}/cmake/Modules ) 
+message ( STATUS "_find_module_install_dir = '${_find_module_install_dir}'" )
+
+set ( _find_module_install_dir ${INSTALL_MISC_DIR}/cmake/Modules ) 
+if ( BRIO_WITH_CMAKE_FIND_MODULE )
+  if ( DEFINED BRIO_FIND_MODULE_INSTALL_DIR )
+    set ( _find_module_install_dir ${BRIO_FIND_MODULE_INSTALL_DIR} ) 
+    message ( STATUS "BRIO_FIND_MODULE_INSTALL_DIR : " "${BRIO_FIND_MODULE_INSTALL_DIR}" )
+  endif ()
+endif ( BRIO_WITH_CMAKE_FIND_MODULE )
+
 message ( STATUS "BRIO_WITH_DEBUG           : " "${BRIO_WITH_DEBUG}" )
 if (UNIX OR APPLE)
   message ( STATUS "BRIO_WITH_CONFIG_SCRIPT   : " "${BRIO_WITH_CONFIG_SCRIPT}" )
@@ -176,7 +187,6 @@ add_subdirectory ( src )
 # Configuration files :
 #
 
-set ( _find_module_install_dir ${INSTALL_MISC_DIR}/cmake/Modules ) 
 
 configure_file ( "${PROJECT_SOURCE_DIR}/cmake/templates/brio_config.h.in.cmake"
                  "${PROJECT_BINARY_DIR}/include/brio/brio_config.h" @ONLY )

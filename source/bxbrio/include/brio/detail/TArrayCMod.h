@@ -15,6 +15,7 @@
 #include "TArray.h"
 #endif
 
+/// The internal ROOT I/O buffer of bytes class
 class TArrayCMod : public TArray 
 {
 public:

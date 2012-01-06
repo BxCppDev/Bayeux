@@ -29,13 +29,15 @@
 // http://www.codeproject.com/KB/architecture/ratkfactory.aspx
 //
 
+/// The internal ROOT I/O record class
 class brio_record : public TObject
 {
 public:
     
-  TString  fSerialTag; 
-  UInt_t   fVersionTag;
-  TArrayCMod fDataBuffer; // Char_t *fArray and fN (from TArray)
+  TString    fSerialTag;  /// The serialization tag of the data class
+  UInt_t     fVersionTag; /// The serialization version number of the data class
+  TArrayCMod fDataBuffer; /// The buffer of bytes that contains the Boost archive associated to the serialized data
+  // Char_t *fArray and fN (from TArray)
 
 public: 
 

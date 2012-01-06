@@ -33,27 +33,28 @@ namespace brio {
 
   using namespace std;
 
+  /// The internal I/O base class
   class base_io : public datatools::utils::i_tree_dumpable
   { 
   public: 
 
     static bool g_devel;
 
-    static const string PBA_LABEL; // not implemented yet
-    static const string TEXT_LABEL;
+    static const string PBA_LABEL;  /// Label for Boost portable binary archive
+    static const string TEXT_LABEL; /// Label for Boost portable text archive
 
     enum format_t
       {
 	FORMAT_UNDEFINED = 0,
-	FORMAT_PBA       = 1, // not implemented yet
-	FORMAT_TEXT      = 2,
+	FORMAT_PBA       = 1, /// Boost portable binary archive (file extension: .brio)
+	FORMAT_TEXT      = 2, /// Boost portable text archive (file extension: .trio)
       };
 
     enum rw_t
       {
 	RW_UNDEFINED = 0,
-	RW_READ      = 1,
-	RW_WRITE     = 2
+	RW_READ      = 1, /// Reader mode
+	RW_WRITE     = 2  /// Writer mode
       };
 
   public: 
@@ -72,7 +73,7 @@ namespace brio {
 
     bool is_writing () const;
 
-    bool is_format_pba () const; // not implemented yet
+    bool is_format_pba () const;
 
     bool is_format_text () const;
 
@@ -144,19 +145,19 @@ namespace brio {
 
   private:
    
-    bool _debug_;
-    bool _verbose_;
-    int  _format_;
+    bool _debug_;   /// Debug flag
+    bool _verbose_; /// Verbosity flag
+    int  _format_;  /// Format tag (can be Boost portable binary or text archives)
 
   protected:
     
-    string            _filename;
-    TFile *           _file;
-    store_info_dict_t _store_infos;
-    store_info *      _current_store;
-    int               _rw;
-    std::locale    *  _default_locale;
-    std::locale    *  _locale;
+    string            _filename;       /// Name of the current I/O file (extensions are \t .brio or \t .trio)
+    TFile *           _file;           /// Handle to the current embedded ROOT file
+    store_info_dict_t _store_infos;    /// Dictionnary of \e stores
+    store_info *      _current_store;  /// Handle to the current active \e store (if any)
+    int               _rw;             /// Read/write mode tag
+    std::locale    *  _default_locale; /// Default I/O locale (for portable streams)
+    std::locale    *  _locale;         /// I/O locale (for portable streams)
 
   };
 
