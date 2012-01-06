@@ -411,13 +411,13 @@ function do_configure ()
 
     cd ${the_build_dir}
     cmake \
-      -DCMAKE_INSTALL_PREFIX:PATH=${install_prefix} \
-      -DCMAKE_BUILD_TYPE:STRING=Release \
-      -DDATOOLS_WITH_DOC=${with_doc} \
-      -DDATOOLS_WITH_TEST=${with_test} \
-      -DDATATOOLS_WITH_PYTHON_WRAPPER=${with_python_wrapper} \
-      -DDATATOOLS_WITH_BIO=${with_bio} \
-    ..
+	-DCMAKE_INSTALL_PREFIX:PATH=${install_prefix} \
+	-DCMAKE_BUILD_TYPE:STRING=Release \
+	-DDATATOOLS_WITH_DOC=${with_doc} \
+	-DDATATOOLS_WITH_TEST=${with_test} \
+	-DDATATOOLS_WITH_PYTHON_WRAPPER=${with_python_wrapper} \
+	-DDATATOOLS_WITH_BIO=${with_bio} \
+	..
     if [ $? -ne 0 ]; then
 	pkgtools__msg_error "Cannot configure the '${package_name}' package !"
 	__pkgtools__at_function_exit
