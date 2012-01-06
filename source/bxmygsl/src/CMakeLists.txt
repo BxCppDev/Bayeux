@@ -48,9 +48,6 @@ add_library (mygsl SHARED
 		      ${mygsl_detail_PUBLIC_HEADERS} 
 		      ${mygsl_SOURCES}
             )
-if ( _generate_root_dict )
-  add_dependencies ( mygsl generate_mygsl_dict )
-endif ()
 
 # Link dynamic library :
 
