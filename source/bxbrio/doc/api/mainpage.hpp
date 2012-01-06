@@ -93,12 +93,12 @@
  * \endcode
  *
  *
- * \section license License
+ * \section license_section License
  *
- * brio is distributed under the terms of the GNU General Public License as published by the Free Software Foundation, either version of the License, or (at your option) any later version.
+ * brio is distributed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  *
  * \verbatim
- * Copyright (C) 2011 François Mauger, LPC Caen CNRS/IN2P3 and Université de Caen Basse-Normandie
+ * Copyright (C) 2012 François Mauger, LPC Caen CNRS/IN2P3 and Université de Caen Basse-Normandie
  * Contact: mauger@lpccaen.in2p3.fr
  * 
  * This file is part of the brio library.
