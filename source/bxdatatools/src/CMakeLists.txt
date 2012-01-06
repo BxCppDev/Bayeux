@@ -49,7 +49,7 @@ list ( REMOVE_ITEM datatools_SOURCES "${PROJECT_SOURCE_DIR}/src/dummy_datatools.
 list ( REMOVE_ITEM datatools_SOURCES "${PROJECT_SOURCE_DIR}/include/datatools/service/dummy_service.h" )
 list ( REMOVE_ITEM datatools_SOURCES "${PROJECT_SOURCE_DIR}/src/dummy_service.cc" )
 
-# remove this because it gors in the BIO DLL :
+# remove this because it go in the BIO DLL :
 list ( REMOVE_ITEM datatools_SOURCES "${PROJECT_SOURCE_DIR}/src/the_serializable.cc" )
 
 # Last source file built in the DLL :
