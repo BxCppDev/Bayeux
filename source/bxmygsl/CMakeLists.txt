@@ -139,7 +139,7 @@ if ( UNIX OR APPLE )
          )
     set ( CMAKE_INSTALL_PREFIX 
           "${mygsl_here_install_prefix}" 
-  	  CACHE PATH "datatools installation prefix" FORCE
+  	  CACHE PATH "mygsl installation prefix" FORCE
         )
 
     message ( STATUS "Please run 'cmake uninstall' to uninstall this build" )
