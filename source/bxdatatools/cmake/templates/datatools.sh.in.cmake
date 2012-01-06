@@ -72,6 +72,14 @@ function do_datatools_setup ()
  	# update python_path...
     fi
 
+    if [ "x@DATATOOLS_WITH_CMAKE_FIND_MODULE@" = "xON" ]; then
+	if [ -n "${CMAKE_MODULE_PATH}" ]; then 
+            export CMAKE_MODULE_PATH="@_find_module_install_dir@:${CMAKE_MODULE_PATH}"
+	else
+            export CMAKE_MODULE_PATH="@_find_module_install_dir@"
+	fi
+    fi
+
     echo "NOTICE: do_datatools_setup: Setup datatools done." 1>&2
     return 0
 }

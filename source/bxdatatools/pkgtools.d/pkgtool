@@ -443,6 +443,16 @@ function do_unconfigure ()
     test -f CMakeCache.txt && rm -f CMakeCache.txt 
     test -d CMakeFiles && rm -fr CMakeFiles 
     cd ${the_base_dir}
+
+    if [ -d ${the_build_dir} ]; then
+	pkgtools__msg_notice "Remove the '${the_build_dir}' build directory !"
+	rm -fr ${the_build_dir}
+    fi
+
+    if [ -f ${pkgtools_conf} ]; then
+	pkgtools__msg_notice "Remove the ${pkgtools_conf} configuration file !"
+	rm -f ${pkgtools_conf}
+    fi
  
     __pkgtools__at_function_exit
     return 0
@@ -754,16 +764,6 @@ function do_reset ()
 	pkgtools__msg_warning "Could not unconfigure the '${package_name}' package !"
 	# __pkgtools__at_function_exit
 	# return 1	
-    fi
-
-    if [ -d ${the_build_dir} ]; then
-	pkgtools__msg_notice "Remove the '${the_build_dir}' build directory !"
-	rm -fr ${the_build_dir}
-    fi
-
-    if [ -f ${pkgtools_conf} ]; then
-	pkgtools__msg_notice "Remove the ${pkgtools_conf} configuration file !"
-	rm -f ${pkgtools_conf}
     fi
 
     __pkgtools__at_function_exit
