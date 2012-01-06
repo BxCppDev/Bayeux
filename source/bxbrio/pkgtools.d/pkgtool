@@ -309,7 +309,7 @@ function do_configure ()
 
     local install_prefix=""
     local reset_build_dir=0
-    local with_bio=1
+    #local with_bio=1
     local with_doc=1
     local with_test=1
     #local with_python_wrapper=0
@@ -326,10 +326,10 @@ function do_configure ()
 	elif [ "${option}" = "--install-prefix" ]; then
 	    shift 1
 	    install_prefix="$1"
-	elif [ "${option}" = "--with-bio" ]; then
-	    with_bio=1
-	elif [ "${option}" = "--without-bio" ]; then
-	    with_bio=0
+	# elif [ "${option}" = "--with-bio" ]; then
+	#     with_bio=1
+	# elif [ "${option}" = "--without-bio" ]; then
+	#     with_bio=0
 	elif [ "${option}" = "--with-documentation" ]; then
 	    with_doc=1
 	elif [ "${option}" = "--without-documentation" ]; then
@@ -380,7 +380,7 @@ function do_configure ()
     pkgtools__msg_notice "With documentation    : '${with_doc}'"
     pkgtools__msg_notice "With test material    : '${with_test}'"
     #pkgtools__msg_notice "With Python wrapper   : '${with_python_wrapper}'"
-    pkgtools__msg_notice "With Boost I/O DLL    : '${with_bio}'"
+    #pkgtools__msg_notice "With Boost I/O DLL    : '${with_bio}'"
     pkgtools__msg_notice "With dependency check : '${with_dependency_check}'"
 
     if [ ${with_dependency_check} -eq 1 ]; then
