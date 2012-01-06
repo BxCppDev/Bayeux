@@ -23,9 +23,6 @@
 
 #define BRIO_LIB_VERSION "@brio_VERSION_STR@"
 
-/***  brio embedded Boost/Serialization based I/O ***/
-#define BRIO_WITH_BIO @BRIO_WITH_BIO@
-
 #endif // __brio__brio_config_h
 
 // end of brio_config.h
