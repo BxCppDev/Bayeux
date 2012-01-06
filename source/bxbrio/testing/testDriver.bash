@@ -102,51 +102,7 @@ if [ ${debug} -ne 0 ]; then
 fi
 
 ##########################################################
-test_exe="test_basic_event \
-test_binary_serialization \
-test_bio_1 \
-test_cloneable \
-test_cloneable_2 \
-test_command \
-test_data_serialization \
-test_dummy_brio \
-test_event_id \
-test_handle_1 \
-test_handle_2 \
-test_ioutils \
-test_multi_properties \
-test_multi_properties_0 \
-test_named \
-test_nans_ar \
-test_predicate_1 \
-test_properties \
-test_properties_0 \
-test_properties_2 \
-test_properties_2b \
-test_properties_3 \
-test_properties_4 \
-test_propinit \
-test_ser_bitset \
-test_serializable_1 \
-test_serialization \
-test_serialization_2 \
-test_serialization_3 \
-test_serialization_4 \
-test_service_manager \
-test_shared_ptr_0 \
-test_shared_ptr_1 \
-test_smart_ref \
-test_temp_file \
-test_things \
-test_things_1 \
-test_things_2 \
-test_things_3 \
-test_time_tools \
-test_tmp \
-test_tree_dump \
-test_units \
-test_utils \
-"
+test_exe=""
 
 function do_clean ()
 {
@@ -175,7 +131,7 @@ function do_run ()
     cat >> ${tmp_test_dir}/tests.log<<EOF
 
 ****************************************************
-datatool test log file :
+brio test log file :
 '${exe_test}' 
 ****************************************************
 EOF
@@ -185,23 +141,8 @@ EOF
 	return 1
     fi
     exe=$(basename ${exe_test})
-    if [ "${exe}" = "test_command" ]; then
-	echo "exec name arg1 arg2" | ${bin} >> ${tmp_test_dir}/tests.log 2>&1
-	if [ $? -ne 0 ]; then
-	    return 1
-	fi 
-    elif [ "${exe}" = "test_event_id" ]; then
-	echo "9_666" | ${bin} >> ${tmp_test_dir}/tests.log 2>&1
-	if [ $? -ne 0 ]; then
-	    return 1
-	fi 
-    elif [ "${exe}" = "test_ioutils" ]; then
-	echo "3.14" | ${bin} >> ${tmp_test_dir}/tests.log 2>&1
-	if [ $? -ne 0 ]; then
-	    return 1
-	fi 
-    elif [ "${exe}" = "test_properties" ]; then
-	echo \"my\" \"favorite\" \"color\" \"is\" \"blue\" | ${bin} >> ${tmp_test_dir}/tests.log 2>&1
+    if [ "${exe}" = "test_XXX" ]; then
+	echo "XXX" | ${bin} >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then
 	    return 1
 	fi 
