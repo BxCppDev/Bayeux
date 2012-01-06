@@ -191,6 +191,17 @@ if ( UNIX OR APPLE )
   endif ( DATATOOLS_WITH_INSTALL_HERE )
 endif ()
 
+set ( _find_module_install_dir ${INSTALL_MISC_DIR}/cmake/Modules ) 
+message ( STATUS "_find_module_install_dir = '${_find_module_install_dir}'" )
+
+set ( _find_module_install_dir ${INSTALL_MISC_DIR}/cmake/Modules ) 
+if ( DATATOOLS_WITH_CMAKE_FIND_MODULE )
+  if ( DEFINED DATATOOLS_FIND_MODULE_INSTALL_DIR )
+    set ( _find_module_install_dir ${DATATOOLS_FIND_MODULE_INSTALL_DIR} ) 
+    message ( STATUS "DATATOOLS_FIND_MODULE_INSTALL_DIR : " "${DATATOOLS_FIND_MODULE_INSTALL_DIR}" )
+  endif ()
+endif ( DATATOOLS_WITH_CMAKE_FIND_MODULE )
+
 message ( STATUS "DATATOOLS_WITH_DEBUG           : " "${DATATOOLS_WITH_DEBUG}" )
 message ( STATUS "DATATOOLS_WITH_BIO             : " "${DATATOOLS_WITH_BIO}" )
 message ( STATUS "DATATOOLS_WITH_PYTHON_WRAPPER  : " "${DATATOOLS_WITH_PYTHON_WRAPPER}" )
@@ -214,9 +225,6 @@ add_subdirectory ( src )
 # ----------------------------------------------------------------------
 # Configuration files :
 #
-
-set ( _find_module_install_dir ${INSTALL_MISC_DIR}/cmake/Modules ) 
-message ( STATUS "_find_module_install_dir = '${_find_module_install_dir}'" )
 
 configure_file ( "${PROJECT_SOURCE_DIR}/cmake/templates/datatools_config.h.in.cmake"
                  "${PROJECT_BINARY_DIR}/include/datatools/datatools_config.h" @ONLY )
