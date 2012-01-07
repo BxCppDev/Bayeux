@@ -31,17 +31,12 @@
 #ifndef __geomtools__serialization__bio_guard_h
 #define __geomtools__serialization__bio_guard_h 1
 
-#if GEOMTOOLS_XBIO == 1	                                
-#warning This executable must be linked with the geomtools auxiliary Boost/Serialization DLL. 
-#else
-#if GEOMTOOLS_EBIO == 1					
-#warning This executable must be linked with the geomtools DLL built with Boost/Serialization embedded code. 
-#else
+#include <geomtools/geomtools_config.h>
+
+#if GEOMTOOLS_WITH_BIO != 1					
 #warning This executable must be built with its own geomtools Boost/Serialization code. 
-#include <geomtools/the_serializable.h>				
-//Future: #include <geomtools/serialization/the_serializable.h>				
-#endif // GEOMTOOLS_EBIO == 1
-#endif // GEOMTOOLS_XBIO == 1	  							
+#include <geomtools/the_serializable.h>	
+#endif // GEOMTOOLS_WITH_BIO != 1		  				
 
 #endif // __geomtools__serialization__bio_guard_h
 

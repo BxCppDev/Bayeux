@@ -1,0 +1,125 @@
+# FindGeomtools.cmake
+# 
+# A rather brute force version.
+# 
+# Locate geomtools library
+# This module defines
+#  GEOMTOOLS_FOUND
+#  GEOMTOOLS_VERSION
+#  GEOMTOOLS_LIBRARIES
+#  GEOMTOOLS_INCLUDE_DIRS, where to find geomtools/geomtools_config.h
+#  GEOMTOOLS_WITH_BIO
+#  GEOMTOOLS_WITH_PYTHON_WRAPPER
+#  GEOMTOOLS_LIBRARIES_DEPEND
+#  GEOMTOOLS_INCLUDE_DIRS_DEPEND
+
+set ( GEOMTOOLS_VERSION  @geomtools_VERSION_STR@ CACHE STRING "geomtools version")
+set ( GEOMTOOLS_WITH_PYTHON_WRAPPER  @GEOMTOOLS_WITH_PYTHON_WRAPPER@ CACHE STRING "Python wrapper flag")
+set ( GEOMTOOLS_WITH_BIO             @GEOMTOOLS_WITH_BIO@  "Boost I/O DLL flag")
+
+message ( STATUS "FindGeomtools: GEOMTOOLS_VERSION='${GEOMTOOLS_VERSION}'")
+message ( STATUS "FindGeomtools: GEOMTOOLS_WITH_BIO='${GEOMTOOLS_WITH_BIO}'")
+message ( STATUS "FindGeomtools: GEOMTOOLS_WITH_PYTHON_WRAPPER='${GEOMTOOLS_WITH_PYTHON_WRAPPER}'")
+
+find_path (GEOMTOOLS_INCLUDE_DIRS geomtools/geomtools_config.h
+  HINTS
+  $ENV{GEOMTOOLS_ROOT_DIR}
+  PATH_SUFFIXES include
+  PATHS
+  [HKEY_LOCAL_MACHINE\\SOFTWARE\\geomtools]
+  ~/Library/Frameworks
+  /Library/Frameworks
+  /usr/local
+  /usr
+  /sw # Fink
+  /opt/local # DarwinPorts
+  /opt/csw # Blastwave
+  /opt
+)
+
+message ( STATUS "FindGeomtools: GEOMTOOLS_INCLUDE_DIRS='${GEOMTOOLS_INCLUDE_DIRS}'")
+
+find_library (_geomtools_library 
+  NAMES geomtools
+  HINTS $ENV{GEOMTOOLS_ROOT_DIR}
+  PATHS
+  [HKEY_LOCAL_MACHINE\\SOFTWARE\\geomtools]
+  ~/Library/Frameworks
+  /Library/Frameworks
+  /usr/local
+  /usr
+  /sw
+  /opt/local
+  /opt/csw
+  /opt
+  PATH_SUFFIXES lib64 lib
+)
+message ( STATUS "FindGeomtools: GEOMTOOLS_LIBRARY='${GEOMTOOLS_LIBRARY}'")
+set (_geomtools_libraries "${_geomtools_library}" )
+
+if ( ${GEOMTOOLS_WITH_BIO} )
+  find_library (_geomtools_bio_library 
+    NAMES geomtools_bio
+    HINTS $ENV{GEOMTOOLS_ROOT_DIR}
+    PATHS
+    [HKEY_LOCAL_MACHINE\\SOFTWARE\\geomtools]
+    ~/Library/Frameworks
+    /Library/Frameworks
+    /usr/local
+    /usr
+    /sw
+    /opt/local
+    /opt/csw
+    /opt
+    PATH_SUFFIXES lib64 lib
+    )
+  message ( STATUS "FindGeomtools: _geomtools_bio_library='${_geomtools_bio_library}'")
+  if ( NOT "${_geomtools_bio_library}" STREQUAL "" )
+     set (_geomtools_libraries "${_geomtools_bio_library}" "${_geomtools_library}" )
+     message ( STATUS "FindGeomtools: _geomtools_libraries='${_geomtools_libraries}'")
+  endif ()
+endif ()
+
+set ( GEOMTOOLS_LIBRARIES ${_geomtools_libraries} )
+message ( STATUS "FindGeomtools: GEOMTOOLS_LIBRARIES='${GEOMTOOLS_LIBRARIES}'")
+
+include (FindPackageHandleStandardArgs)
+# handle the QUIETLY and REQUIRED arguments and set GEOMTOOLS_FOUND to TRUE if 
+# all listed variables are TRUE
+find_package_handle_standard_args (geomtools DEFAULT_MSG GEOMTOOLS_LIBRARIES GEOMTOOLS_INCLUDE_DIRS)
+
+set ( GEOMTOOLS_LIBRARIES_DEPEND 
+      ${GEOMTOOLS_LIBRARIES}
+      @MYGSL_LIBRARIES_DEPEND@ 
+      @DATATOOLS_LIBRARIES_DEPEND@
+    )
+
+message ( STATUS "FindGeomtools: GEOMTOOLS_LIBRARIES_DEPEND='${GEOMTOOLS_LIBRARIES_DEPEND}'")
+
+if (GEOMTOOLS_WITH_PYTHON_WRAPPER)
+  list ( APPEND GEOMTOOLS_LIBRARIES_DEPEND 
+         python )
+endif ()
+
+set ( GEOMTOOLS_INCLUDE_DIRS_DEPEND
+      ${GEOMTOOLS_INCLUDE_DIRS}
+      @GMYSL_INCLUDE_DIR@
+      @DATATOOLS_INCLUDE_DIRS@
+    )
+
+message ( STATUS "FindGeomtools: GEOMTOOLS_INCLUDE_DIRS_DEPEND='${GEOMTOOLS_INCLUDE_DIRS_DEPEND}'")
+
+mark_as_advanced (GEOMTOOLS_VERSION  
+                  GEOMTOOLS_LIBRARY
+                  GEOMTOOLS_WITH_PYTHON_WRAPPER
+                  GEOMTOOLS_WITH_BIO
+		  GEOMTOOLS_INCLUDE_DIRS 
+                  GEOMTOOLS_LIBRARIES 
+		  GEOMTOOLS_INCLUDE_DIRS_DEPEND 
+                  GEOMTOOLS_LIBRARIES_DEPEND 
+		  )
+
+message ( STATUS "FindGeomtools: GEOMTOOLS_FOUND=${GEOMTOOLS_FOUND}")
+
+# end of FindGeomtools.cmake
+
