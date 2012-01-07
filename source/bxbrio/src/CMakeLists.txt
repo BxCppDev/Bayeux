@@ -19,7 +19,7 @@ set (_ld_library_path_env "LD_LIBRARY_PATH" )
 if (CMAKE_SYSTEM_NAME MATCHES Darwin)
   set (_ld_library_path_env "DYLD_LIBRARY_PATH" )
 endif (CMAKE_SYSTEM_NAME MATCHES Darwin)
-message ( STATUS "DEVEL ***** ${_ld_library_path_env}" )
+# message ( STATUS "DEVEL ***** ${_ld_library_path_env}" )
 
 set ( _generate_root_dict OFF )
 if (CMAKE_SYSTEM_NAME MATCHES Linux OR CMAKE_SYSTEM_NAME MATCHES Darwin)
@@ -27,7 +27,6 @@ if (CMAKE_SYSTEM_NAME MATCHES Linux OR CMAKE_SYSTEM_NAME MATCHES Darwin)
 endif ()
 
 if ( _generate_root_dict )
-    message ( STATUS "ADD_CUSTOM_COMMAND ****" )
     ADD_CUSTOM_COMMAND(OUTPUT ${_brio_dict_sources}
        COMMAND ${_ld_library_path_env}=${ROOT_LIBRARY_DIR} 
                ROOTSYS=${ROOTSYS} 
@@ -40,9 +39,11 @@ if ( _generate_root_dict )
        )
     ADD_CUSTOM_TARGET (generate_brio_dict ALL
     		       SOURCES ${_brio_dict_sources} )
+else ()
+     message (FATAL "Cannot generate the embedded ROOT dictionnary")
 endif ()
 
-message ( STATUS "Embedded ROOT dictionnary **** DONE" )
+message ( STATUS "Embedded ROOT dictionnary : OK" )
 
 #----------------------------------------------------------------------------
 # Explicitly list the sources for the library, separating into sources and
@@ -80,7 +81,7 @@ include_directories ( ${PROJECT_SOURCE_DIR}/include
 #----------------------------------------------------------------------------
 # Add the library
 #
-message ( STATUS "DEVEL ************** brio_SOURCES='${brio_SOURCES}'" )
+message ( STATUS "brio_SOURCES='${brio_SOURCES}'" )
 
 add_library (brio SHARED  
 		      ${brio_PUBLIC_HEADERS} 

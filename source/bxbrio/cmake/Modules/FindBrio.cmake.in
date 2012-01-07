@@ -1,12 +1,19 @@
+# FindBrio.cmake
+# 
+# A rather brute force version.
+# 
 # Locate brio library
 # This module defines
-#  BRIO_FOUND, if false, do not try to link to BRIO
+#  BRIO_FOUND
 #  BRIO_LIBRARIES
 #  BRIO_INCLUDE_DIRS, where to find brio/brio_config.h
 #  BRIO_LIBRARIES_DEPEND
 #  BRIO_INCLUDE_DIRS_DEPEND
 
-FIND_PATH(BRIO_INCLUDE_DIR brio/brio_config.h
+set (BRIO_VERSION  "@brio_VERSION_STR@"  CACHE STRING "brio version")
+message ( STATUS "FindBrio: BRIO_VERSION='${BRIO_VERSION}'")
+
+find_path (BRIO_INCLUDE_DIR brio/brio_config.h
   HINTS
   $ENV{BRIO_ROOT_DIR}
   PATH_SUFFIXES include
@@ -22,7 +29,7 @@ FIND_PATH(BRIO_INCLUDE_DIR brio/brio_config.h
   /opt
 )
 
-FIND_LIBRARY(BRIO_LIBRARY 
+find_library (BRIO_LIBRARY 
   NAMES brio
   HINTS
   $ENV{BRIO_ROOT_DIR}
@@ -39,9 +46,12 @@ FIND_LIBRARY(BRIO_LIBRARY
   /opt
 )
 
-SET(BRIO_VERSION   "${BRIO_VERSION_STR}" CACHE STRING "BRIO Version")
-SET(BRIO_LIBRARIES "${BRIO_LIBRARY}"     CACHE STRING "BRIO Libraries")
-SET(BRIO_INCLUDE_DIRS "${BRIO_INCLUDE_DIR}"  CACHE STRING "BRIO include dirs")
+set (BRIO_LIBRARIES    "${BRIO_LIBRARY}"     CACHE STRING "brio libraries")
+set (BRIO_INCLUDE_DIRS "${BRIO_INCLUDE_DIR}" CACHE STRING "brio include dirs")
+
+message ( STATUS "FindBrio: BRIO_INCLUDE_DIRS='${BRIO_INCLUDE_DIRS}'")
+message ( STATUS "FindBrio: BRIO_LIBRARIES='${BRIO_LIBRARIES}'")
+
 
 set ( BRIO_LIBRARIES_DEPEND 
       ${BRIO_LIBRARIES}
@@ -49,26 +59,27 @@ set ( BRIO_LIBRARIES_DEPEND
       @ROOT_LIBRARIES@ 
     )
 
-if (DATATOOLS_WITH_PYTHON_WRAPPER)
-  list ( APPEND DATATOOLS_LIBRARIES_DEPEND 
-         python )
-endif ()
-
 set ( BRIO_INCLUDE_DIRS_DEPEND
       ${BRIO_INCLUDE_DIRS}
       @DATATOOLS_INCLUDE_DIRS@
       @ROOT_INCLUDE_DIR@
     )
 
-INCLUDE(FindPackageHandleStandardArgs)
+message ( STATUS "FindBrio: BRIO_INCLUDE_DIRS_DEPEND='${BRIO_INCLUDE_DIRS_DEPEND}'")
+message ( STATUS "FindBrio: BRIO_LIBRARIES_DEPEND='${BRIO_LIBRARIES_DEPEND}'")
+
+include (FindPackageHandleStandardArgs)
 # handle the QUIETLY and REQUIRED arguments and set BRIO_FOUND to TRUE if 
 # all listed variables are TRUE
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(BRIO DEFAULT_MSG BRIO_LIBRARIES BRIO_INCLUDE_DIRS)
+find_package_handle_standard_args (brio DEFAULT_MSG BRIO_LIBRARIES BRIO_INCLUDE_DIRS)
 
-MARK_AS_ADVANCED(BRIO_VERSION
-                 BRIO_INCLUDE_DIRS
-                 BRIO_LIBRARIES 
-                 BRIO_INCLUDE_DIRS_DEPEND
-                 BRIO_LIBRARIES_DEPEND 
-                 )
+mark_as_advanced (BRIO_VERSION
+                  BRIO_INCLUDE_DIRS
+                  BRIO_LIBRARIES 
+                  BRIO_INCLUDE_DIRS_DEPEND
+                  BRIO_LIBRARIES_DEPEND 
+                  )
 
+message ( STATUS "FindBrio: BRIO_FOUND='${BRIO_FOUND}'")
+
+# end of FindBrio.cmake
