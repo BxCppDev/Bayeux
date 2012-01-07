@@ -1,12 +1,20 @@
+# FindMygsl.cmake
+# 
+# A rather brute force version.
+# 
 # Locate mygsl library
 # This module defines
-#  MYGSL_FOUND, if false, do not try to link to MYGSL
+#  MYGSL_FOUND
+#  MYGSL_VERSION
 #  MYGSL_LIBRARIES
 #  MYGSL_INCLUDE_DIRS, where to find mygsl/mygsl_config.h
 #  MYGSL_LIBRARIES_DEPEND
 #  MYGSL_INCLUDE_DIRS_DEPEND
 
-FIND_PATH(MYGSL_INCLUDE_DIR mygsl/mygsl_config.h
+set (MYGSL_VERSION  "@mygsl_VERSION_STR@" CACHE STRING "mygsl version")
+message ( STATUS "FindMygsl: MYGSL_VERSION='${MYGSL_VERSION}'")
+
+find_path (MYGSL_INCLUDE_DIR mygsl/mygsl_config.h
   HINTS
   $ENV{MYGSL_ROOT_DIR}
   PATH_SUFFIXES include
@@ -22,7 +30,7 @@ FIND_PATH(MYGSL_INCLUDE_DIR mygsl/mygsl_config.h
   /opt
 )
 
-FIND_LIBRARY(MYGSL_LIBRARY 
+find_library (MYGSL_LIBRARY 
   NAMES mygsl
   HINTS
   $ENV{MYGSL_ROOT_DIR}
@@ -39,9 +47,13 @@ FIND_LIBRARY(MYGSL_LIBRARY
   /opt
 )
 
-SET(MYGSL_VERSION   "${MYGSL_VERSION_STR}" CACHE STRING "MYGSL Version")
-SET(MYGSL_LIBRARIES "${MYGSL_LIBRARY}"     CACHE STRING "MYGSL Libraries")
-SET(MYGSL_INCLUDE_DIRS "${MYGSL_INCLUDE_DIR}"  CACHE STRING "MYGSL include dirs")
+
+set (MYGSL_LIBRARIES    "${MYGSL_LIBRARY}"     CACHE STRING "mygsl libraries")
+set (MYGSL_INCLUDE_DIRS "${MYGSL_INCLUDE_DIR}" CACHE STRING "mygsl include dirs")
+
+message ( STATUS "FindMygsl: MYGSL_INCLUDE_DIRS='${MYGSL_INCLUDE_DIRS}'")
+message ( STATUS "FindMygsl: MYGSL_LIBRARIES='${MYGSL_LIBRARIES}'")
+
 
 set ( MYGSL_LIBRARIES_DEPEND 
       ${MYGSL_LIBRARIES}
@@ -49,26 +61,27 @@ set ( MYGSL_LIBRARIES_DEPEND
       @GSL_LIBRARIES@ 
     )
 
-if (DATATOOLS_WITH_PYTHON_WRAPPER)
-  list ( APPEND DATATOOLS_LIBRARIES_DEPEND 
-         python )
-endif ()
-
 set ( MYGSL_INCLUDE_DIRS_DEPEND
       ${MYGSL_INCLUDE_DIRS}
       @DATATOOLS_INCLUDE_DIRS@
       @GSL_INCLUDE_DIR@
     )
 
-INCLUDE(FindPackageHandleStandardArgs)
+message ( STATUS "FindMygsl: MYGSL_INCLUDE_DIRS_DEPEND='${MYGSL_INCLUDE_DIRS_DEPEND}'")
+message ( STATUS "FindMygsl: MYGSL_LIBRARIES_DEPEND='${MYGSL_LIBRARIES_DEPEND}'")
+
+include (FindPackageHandleStandardArgs)
 # handle the QUIETLY and REQUIRED arguments and set MYGSL_FOUND to TRUE if 
 # all listed variables are TRUE
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(MYGSL DEFAULT_MSG MYGSL_LIBRARIES MYGSL_INCLUDE_DIRS)
+find_package_handle_standard_args (mygsl DEFAULT_MSG MYGSL_LIBRARIES MYGSL_INCLUDE_DIRS)
 
-MARK_AS_ADVANCED(MYGSL_VERSION
-                 MYGSL_INCLUDE_DIRS
-                 MYGSL_LIBRARIES 
-                 MYGSL_INCLUDE_DIRS_DEPEND
-                 MYGSL_LIBRARIES_DEPEND 
-                 )
+mark_as_advanced (MYGSL_VERSION
+                  MYGSL_INCLUDE_DIRS
+                  MYGSL_LIBRARIES 
+                  MYGSL_INCLUDE_DIRS_DEPEND
+                  MYGSL_LIBRARIES_DEPEND 
+                  )
 
+message ( STATUS "FindMygsl: MYGSL_FOUND='${MYGSL_FOUND}'")
+
+# end of FindMygsl.cmake
