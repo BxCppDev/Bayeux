@@ -4,7 +4,7 @@
 # 
 ## Locate datatools library
 # This module defines
-#  DATATOOLS_FOUND, if false, do not try to link to datatools
+#  DATATOOLS_FOUND
 #  DATATOOLS_VERSION
 #  DATATOOLS_LIBRARIES
 #  DATATOOLS_INCLUDE_DIRS, where to find datatools/datatools_config.h
@@ -21,7 +21,7 @@ message ( STATUS "FindDatatools: DATATOOLS_VERSION='${DATATOOLS_VERSION}'")
 message ( STATUS "FindDatatools: DATATOOLS_WITH_BIO='${DATATOOLS_WITH_BIO}'")
 message ( STATUS "FindDatatools: DATATOOLS_WITH_PYTHON_WRAPPER='${DATATOOLS_WITH_PYTHON_WRAPPER}'")
 
-FIND_PATH(DATATOOLS_INCLUDE_DIRS datatools/datatools_config.h
+find_path (DATATOOLS_INCLUDE_DIRS datatools/datatools_config.h
   HINTS $ENV{DATATOOLS_ROOT_DIR}
   PATHS
   [HKEY_LOCAL_MACHINE\\SOFTWARE\\datatools]
@@ -38,7 +38,7 @@ FIND_PATH(DATATOOLS_INCLUDE_DIRS datatools/datatools_config.h
 
 message ( STATUS "FindDatatools: DATATOOLS_INCLUDE_DIRS='${DATATOOLS_INCLUDE_DIRS}'")
 
-FIND_LIBRARY (_datatools_library 
+find_library (_datatools_library 
   NAMES datatools
   HINTS $ENV{DATATOOLS_ROOT_DIR}
   PATHS
@@ -83,10 +83,10 @@ endif ()
 set ( DATATOOLS_LIBRARIES ${_datatools_libraries} )
 message ( STATUS "FindDatatools: DATATOOLS_LIBRARIES='${DATATOOLS_LIBRARIES}'")
 
-INCLUDE (FindPackageHandleStandardArgs)
+include (FindPackageHandleStandardArgs)
 # handle the QUIETLY and REQUIRED arguments and set DATATOOLS_FOUND to TRUE if 
 # all listed variables are TRUE
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(datatools DEFAULT_MSG DATATOOLS_LIBRARIES DATATOOLS_INCLUDE_DIRS)
+find_package_handle_standard_args (datatools DEFAULT_MSG DATATOOLS_LIBRARIES DATATOOLS_INCLUDE_DIRS)
 
 set ( DATATOOLS_LIBRARIES_DEPEND 
       ${DATATOOLS_LIBRARIES}
@@ -110,7 +110,9 @@ set ( DATATOOLS_INCLUDE_DIRS_DEPEND
       @KWSYS_INCLUDE_DIRS@ 
     )
 
-MARK_AS_ADVANCED (DATATOOLS_VERSION  
+message ( STATUS "FindDatatools: DATATOOLS_INCLUDE_DIRS_DEPEND='${DATATOOLS_INCLUDE_DIRS_DEPEND}'")
+
+mark_as_advanced (DATATOOLS_VERSION  
                   DATATOOLS_LIBRARY
                   DATATOOLS_WITH_PYTHON_WRAPPER
                   DATATOOLS_WITH_BIO
@@ -122,4 +124,4 @@ MARK_AS_ADVANCED (DATATOOLS_VERSION
 
 message ( STATUS "FindDatatools: DATATOOLS_FOUND=${DATATOOLS_FOUND}")
 
-# end 
+# end of FindDatatools.cmake
