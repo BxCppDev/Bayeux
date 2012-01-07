@@ -1,4 +1,8 @@
-# Locate datatools library
+# FindDatatools.cmake
+# 
+# A rather brute force version.
+# 
+## Locate datatools library
 # This module defines
 #  DATATOOLS_FOUND, if false, do not try to link to datatools
 #  DATATOOLS_VERSION
@@ -49,6 +53,7 @@ FIND_LIBRARY (_datatools_library
   /opt
   PATH_SUFFIXES lib64 lib
 )
+
 message ( STATUS "FindDatatools: _datatools_library='${_datatools_library}'")
 set (_datatools_libraries "${_datatools_library}" )
 
@@ -74,7 +79,6 @@ if ( ${DATATOOLS_WITH_BIO} )
      message ( STATUS "FindDatatools: _datatools_libraries='${_datatools_libraries}'")
   endif ()
 endif ()
-
 
 set ( DATATOOLS_LIBRARIES ${_datatools_libraries} )
 message ( STATUS "FindDatatools: DATATOOLS_LIBRARIES='${DATATOOLS_LIBRARIES}'")
@@ -115,6 +119,7 @@ MARK_AS_ADVANCED (DATATOOLS_VERSION
 		  DATATOOLS_INCLUDE_DIRS_DEPEND 
                   DATATOOLS_LIBRARIES_DEPEND 
 		  )
+
 message ( STATUS "FindDatatools: DATATOOLS_FOUND=${DATATOOLS_FOUND}")
 
 # end 
