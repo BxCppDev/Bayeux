@@ -33,12 +33,12 @@
 
 #include <datatools/datatools_config.h>
 
-#if DATATOOLS_WITH_BIO != ON					
+#if DATATOOLS_WITH_BIO != 1					
 #warning This executable must be built with its own datatools Boost/Serialization code. 
 #include <datatools/the_serializable.h>				
 //#else
 //#warning This executable must be linked with the datatools DLL built with Boost/Serialization embedded code. 
-#endif // DATATOOLS_WITH_BIO != ON	
+#endif // DATATOOLS_WITH_BIO != 1	
 
 #endif // __datatools__serialization__bio_guard_h
 

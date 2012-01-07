@@ -1,18 +1,21 @@
 # Locate datatools library
 # This module defines
-#  DATATOOLS_FOUND, if false, do not try to link to DATATOOLS
+#  DATATOOLS_FOUND, if false, do not try to link to datatools
 #  DATATOOLS_VERSION
 #  DATATOOLS_LIBRARIES
 #  DATATOOLS_INCLUDE_DIRS, where to find datatools/datatools_config.h
+#  DATATOOLS_WITH_BIO
 #  DATATOOLS_WITH_PYTHON_WRAPPER
 #  DATATOOLS_LIBRARIES_DEPEND
 #  DATATOOLS_INCLUDE_DIRS_DEPEND
 
-#set ( DATATOOLS_FOUND ON )
-message ( STATUS "FindDatatools: DATATOOLS_FOUND=${DATATOOLS_FOUND}")
-set ( DATATOOLS_VERSION @datatools_VERSION_STR@ )
-message ( STATUS "FindDatatools: DATATOOLS_VERSION='${DATATOOLS_VERSION}'")
+set ( DATATOOLS_VERSION             @datatools_VERSION_STR@ )
 set ( DATATOOLS_WITH_PYTHON_WRAPPER @DATATOOLS_WITH_PYTHON_WRAPPER@ )
+set ( DATATOOLS_WITH_BIO            @DATATOOLS_WITH_BIO@ )
+
+message ( STATUS "FindDatatools: DATATOOLS_VERSION='${DATATOOLS_VERSION}'")
+message ( STATUS "FindDatatools: DATATOOLS_WITH_BIO='${DATATOOLS_WITH_BIO}'")
+message ( STATUS "FindDatatools: DATATOOLS_WITH_PYTHON_WRAPPER='${DATATOOLS_WITH_PYTHON_WRAPPER}'")
 
 FIND_PATH(DATATOOLS_INCLUDE_DIRS datatools/datatools_config.h
   HINTS $ENV{DATATOOLS_ROOT_DIR}
@@ -31,8 +34,8 @@ FIND_PATH(DATATOOLS_INCLUDE_DIRS datatools/datatools_config.h
 
 message ( STATUS "FindDatatools: DATATOOLS_INCLUDE_DIRS='${DATATOOLS_INCLUDE_DIRS}'")
 
-FIND_LIBRARY(DATATOOLS_LIBRARY 
-  NAMES datatools datatools_bio
+FIND_LIBRARY (_datatools_library 
+  NAMES datatools
   HINTS $ENV{DATATOOLS_ROOT_DIR}
   PATHS
   [HKEY_LOCAL_MACHINE\\SOFTWARE\\datatools]
@@ -46,15 +49,40 @@ FIND_LIBRARY(DATATOOLS_LIBRARY
   /opt
   PATH_SUFFIXES lib64 lib
 )
-message ( STATUS "FindDatatools: DATATOOLS_LIBRARY='${DATATOOLS_LIBRARY}'")
+message ( STATUS "FindDatatools: _datatools_library='${_datatools_library}'")
+set (_datatools_libraries "${_datatools_library}" )
 
-SET (DATATOOLS_LIBRARIES "${DATATOOLS_LIBRARY}" )
-# CACHE STRING "DATATOOLS Libraries")
+if ( ${DATATOOLS_WITH_BIO} )
+  find_library (_datatools_bio_library 
+    NAMES datatools_bio
+    HINTS $ENV{DATATOOLS_ROOT_DIR}
+    PATHS
+    [HKEY_LOCAL_MACHINE\\SOFTWARE\\datatools]
+    ~/Library/Frameworks
+    /Library/Frameworks
+    /usr/local
+    /usr
+    /sw
+    /opt/local
+    /opt/csw
+    /opt
+    PATH_SUFFIXES lib64 lib
+    )
+  message ( STATUS "FindDatatools: _datatools_bio_library='${_datatools_bio_library}'")
+  if ( NOT "${_datatools_bio_library}" STREQUAL "" )
+     set (_datatools_libraries "${_datatools_bio_library}" "${_datatools_library}" )
+     message ( STATUS "FindDatatools: _datatools_libraries='${_datatools_libraries}'")
+  endif ()
+endif ()
+
+
+set ( DATATOOLS_LIBRARIES ${_datatools_libraries} )
+message ( STATUS "FindDatatools: DATATOOLS_LIBRARIES='${DATATOOLS_LIBRARIES}'")
 
 INCLUDE (FindPackageHandleStandardArgs)
 # handle the QUIETLY and REQUIRED arguments and set DATATOOLS_FOUND to TRUE if 
 # all listed variables are TRUE
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(DATATOOLS DEFAULT_MSG DATATOOLS_LIBRARIES DATATOOLS_INCLUDE_DIRS)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(datatools DEFAULT_MSG DATATOOLS_LIBRARIES DATATOOLS_INCLUDE_DIRS)
 
 set ( DATATOOLS_LIBRARIES_DEPEND 
       ${DATATOOLS_LIBRARIES}
@@ -63,6 +91,8 @@ set ( DATATOOLS_LIBRARIES_DEPEND
       @KWSYS_LIBRARIES@ 
       "m"
     )
+
+message ( STATUS "FindDatatools: DATATOOLS_LIBRARIES_DEPEND='${DATATOOLS_LIBRARIES_DEPEND}'")
 
 if (DATATOOLS_WITH_PYTHON_WRAPPER)
   list ( APPEND DATATOOLS_LIBRARIES_DEPEND 
@@ -79,9 +109,12 @@ set ( DATATOOLS_INCLUDE_DIRS_DEPEND
 MARK_AS_ADVANCED (DATATOOLS_VERSION  
                   DATATOOLS_LIBRARY
                   DATATOOLS_WITH_PYTHON_WRAPPER
+                  DATATOOLS_WITH_BIO
 		  DATATOOLS_INCLUDE_DIRS 
                   DATATOOLS_LIBRARIES 
 		  DATATOOLS_INCLUDE_DIRS_DEPEND 
                   DATATOOLS_LIBRARIES_DEPEND 
 		  )
+message ( STATUS "FindDatatools: DATATOOLS_FOUND=${DATATOOLS_FOUND}")
 
+# end 
