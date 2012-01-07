@@ -152,7 +152,7 @@ if [ "x${option}" = "x--libs" ]; then
 	bio_ldflags=
     fi
     if [ "x${option2}" = "x--with-bio" -a ${with_bio} -eq 1 ]; then
-	bio_ldflags=-ldatatools_bio
+	bio_ldflags=-lgeomtools_bio
     fi
     echo -n "-L${geomtools_lib_dir} ${bio_ldflags} -lgeomtools "
     echo
@@ -164,7 +164,7 @@ if [ "x${option}" = "x--ldflags" ]; then
 	bio_ldflags=
     fi
     if [ "x${option2}" = "x--with-bio" -a ${with_bio} -eq 1 ]; then
-	bio_ldflags=-ldatatools_bio
+	bio_ldflags=-lgeomtools_bio
     fi
     (
 	echo -n "-L${geomtools_lib_dir} ${bio_ldflags} -lgeomtools "
