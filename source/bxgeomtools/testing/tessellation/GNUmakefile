@@ -1,8 +1,8 @@
 #
 
 CXXOPT=
-CPPFLAGS=-I.
-LDFLAGS=-lm
+CPPFLAGS=-I. $(shell geomtools-config --cflags)
+LDFLAGS=$(shell geomtools-config --ldflags)
 
 .PHONY : all
 all : tts
