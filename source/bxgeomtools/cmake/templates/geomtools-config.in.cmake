@@ -124,8 +124,8 @@ if [ "x${option}" = "x--cflags" ]; then
     (
 	echo -n "-fPIC " 
 	echo -n "-I${geomtools_include_dir} "  
-	echo -n "`datatools-config --cflags` "
         echo -n "`mygsl-config --cflags` "
+	echo -n "`datatools-config --cflags` "
 	echo ""
     ) | python @CMAKE_INSTALL_PREFIX@/@INSTALL_MISC_DIR@/pkgtools/mkuniqueflags.py 
     my_exit 0
