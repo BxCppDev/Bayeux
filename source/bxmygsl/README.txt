@@ -1,7 +1,8 @@
 
-mygsl is a  C++  library developped  by  François Mauger  at LPC  Caen
+mygsl  is a  C++ library  developped by  François Mauger  at  LPC Caen
 (CNRS/IN2P3)     and     Université     de    Caen     Basse-Normandie
-(http://lpccaen.in2p3.fr). It provides some C++ wrapper classes for the GSL library.
+(http://lpccaen.in2p3.fr).  It provides some  C++ wrapper  classes for
+the GSL library.
 
 mygsl depends on the datatools and GSL libraries.
 
