@@ -4,11 +4,11 @@ brio  is a  C++  library developped  by  François Mauger  at LPC  Caen
 (http://lpccaen.in2p3.fr). It provides some writer/reader classes that
 enable  to store/load  arbitrary serializable  objects  using portable
 binary (or text) archives from the Boost/Serialization system and ROOT
-files and  trees as  storage media.  At  loading, serialized  data can
-then  be  accessed non-sequentially  thanks  to  the  ROOT I/O  system
-(TTree/TFile).  Files may contains  several 'stores' of archived data.
-Each store can  contains a set of  data of the same type  or data from
-mixed types.
+files  (TFile)  and  trees  (TTree)  as storage  media.   At  loading,
+serialized data  can then be  accessed non-sequentially thanks  to the
+ROOT  I/O system.   Files may  contains several  'stores'  of archived
+data.  Each store can contains a set  of data of the same type or data
+from mixed types.
 
 brio depends on the datatools and ROOT libraries.
 

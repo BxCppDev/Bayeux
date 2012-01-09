@@ -2,7 +2,7 @@
 # -*- mode: cmake; -*-
 #
 #----------------------------------------------------------------------------
-# Copyright (c) 2011, François Mauger <mauger@lpccaen.in2p3.fr>
+# Copyright (c) 2012, François Mauger <mauger@lpccaen.in2p3.fr>
 #                     Ben Morgan <Ben.Morgan@warwick.ac.uk>
 #----------------------------------------------------------------------------
 
@@ -21,20 +21,23 @@ if ( ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR} )
   message ( FATAL_ERROR "in-source build detected" )
 endif ()
 
-#----------------------------------------------------------------------------
-# Setup CMake requirements and project's name
+# ----------------------------------------------------------------------------
+# - Setup CMake requirements and project's name
 #
+
 cmake_minimum_required ( VERSION 2.8 FATAL_ERROR )
 project ( brio )
 
-set ( brio_PACKAGE_NAME ${CMAKE_PROJECT_NAME} CACHE STRING "The name of the package" FORCE )
+set ( brio_PACKAGE_NAME ${CMAKE_PROJECT_NAME} 
+      CACHE STRING "The name of the package" FORCE 
+    )
 message ( STATUS "Package name         : '${brio_PACKAGE_NAME}'" )
 
-# include project configuration
+# - include project configuration
 include ( ${CMAKE_SOURCE_DIR}/cmake/Config.cmake )
 include ( ${CMAKE_SOURCE_DIR}/cmake/PackageFilename.cmake )
 
-#----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # - Prepend our own CMake Modules to the search path
 # This allows us to customize, add, and factor out functionality
 # NB: if our custom modules include others that we don't supply, those in the
@@ -55,11 +58,11 @@ set ( CMAKE_MODULE_PATH
 message ( STATUS "CMAKE_ROOT        : '${CMAKE_ROOT}'" )
 message ( STATUS "CMAKE_MODULE_PATH : '${CMAKE_MODULE_PATH}'" )
 
-#
-# Dependencies :
+# ----------------------------------------------------------------------------
+# - Dependencies :
 #
 
-### Depends on Root:
+# - Depends on Root:
 set ( _root_min_version 5.26.00 ) 
 set ( ROOT_MIN_VERSION ${_root_min_version} )
 if ( NOT "$ENV{ROOT_ROOT_DIR}" STREQUAL "")  
@@ -88,7 +91,7 @@ else ()
      message ( FATAL_ERROR "Cannot find ROOT >= ${ROOT_MIN_VERSION} library !" )
 endif ()
 
-### Depends on datatools:
+# - Depends on datatools:
 set ( _datatools_min_version 4.0 )
 find_package ( Datatools ${_datatools_min_version} )
 if ( DATATOOLS_FOUND )
@@ -104,7 +107,7 @@ else ()
 endif ()
 
 # ----------------------------------------------------------------------
-# Options :
+# - Options :
 #
 
 option ( BRIO_WITH_DEBUG
@@ -132,31 +135,6 @@ option ( BRIO_WITH_CMAKE_FIND_MODULE
          "Build the brio' CMake find module"
  	 ON )
 
-if ( UNIX OR APPLE )
-  option ( BRIO_WITH_INSTALL_HERE
-           "Installation path is stored in the brio source tree" 
-     	   OFF )
-
-  message ( STATUS "Default install prefix : " "${CMAKE_INSTALL_PREFIX}" )
-
-  if ( BRIO_WITH_INSTALL_HERE )
-    message ( STATUS "DEBUG: BRIO_WITH_INSTALL_HERE" )
-    set ( brio_here_install_prefix 
-          "${PROJECT_SOURCE_DIR}/.install_${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}" 
-         )
-    set ( CMAKE_INSTALL_PREFIX 
-          "${brio_here_install_prefix}" 
-  	  CACHE PATH "brio installation prefix" FORCE
-        )
-
-    message ( STATUS "Please run 'cmake uninstall' to uninstall this build" )
-    add_custom_target (uninstall cmake -E remove_directory ${brio_here_install_prefix} )
-  endif ( BRIO_WITH_INSTALL_HERE )
-endif ()
-
-set ( _find_module_install_dir ${INSTALL_MISC_DIR}/cmake/Modules ) 
-message ( STATUS "_find_module_install_dir = '${_find_module_install_dir}'" )
-
 set ( _find_module_install_dir ${INSTALL_MISC_DIR}/cmake/Modules ) 
 if ( BRIO_WITH_CMAKE_FIND_MODULE )
   if ( DEFINED BRIO_FIND_MODULE_INSTALL_DIR )
@@ -164,29 +142,27 @@ if ( BRIO_WITH_CMAKE_FIND_MODULE )
     message ( STATUS "BRIO_FIND_MODULE_INSTALL_DIR : " "${BRIO_FIND_MODULE_INSTALL_DIR}" )
   endif ()
 endif ( BRIO_WITH_CMAKE_FIND_MODULE )
+message ( STATUS "_find_module_install_dir = '${_find_module_install_dir}'" )
 
 message ( STATUS "BRIO_WITH_DEBUG           : " "${BRIO_WITH_DEBUG}" )
 if (UNIX OR APPLE)
   message ( STATUS "BRIO_WITH_CONFIG_SCRIPT   : " "${BRIO_WITH_CONFIG_SCRIPT}" )
   message ( STATUS "BRIO_WITH_PKGCONFIG       : " "${BRIO_WITH_PKGCONFIG}" )
-  message ( STATUS "BRIO_WITH_INSTALL_HERE    : " "${BRIO_WITH_INSTALL_HERE}" )
 endif (UNIX OR APPLE)
 message ( STATUS "BRIO_WITH_DOC             : " "${BRIO_WITH_DOC}" )
 message ( STATUS "BRIO_WITH_TEST            : " "${BRIO_WITH_TEST}" )
 message ( STATUS "CMAKE_INSTALL_PREFIX      : " "${CMAKE_INSTALL_PREFIX}" )
 
-
 # ----------------------------------------------------------------------
-# brio API
+# - brio API :
 #
 
 message ( STATUS "Add subdirectory : " "'src'" )
 add_subdirectory ( src )   
 
 # ----------------------------------------------------------------------
-# Configuration files :
+# - Configuration files :
 #
-
 
 configure_file ( "${PROJECT_SOURCE_DIR}/cmake/templates/brio_config.h.in.cmake"
                  "${PROJECT_BINARY_DIR}/include/brio/brio_config.h" @ONLY )
@@ -260,14 +236,14 @@ install ( FILES README.txt COPYING.txt LICENSE.GPL3.txt
          )
 
 #----------------------------------------------------------------------------
-# Add documentation.
+# - Add documentation.
 #
 if ( BRIO_WITH_DOC )
   add_subdirectory ( doc )
 endif ()
 
 #----------------------------------------------------------------------------
-# Add testing - always for now.
+# - Add testing - always for now.
 #
 if ( BRIO_WITH_TEST )
   enable_testing () 
@@ -275,7 +251,7 @@ if ( BRIO_WITH_TEST )
 endif ()
 
 ###############################
-# packaging
+# - packaging
 ###############################
 
 include ( ${BRIO_SOURCE_DIR}/cmake/Packaging.cmake OPTIONAL )

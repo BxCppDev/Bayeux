@@ -14,7 +14,6 @@
  * 
  */
 
-
 #ifndef __brio__base_io_h
 #define __brio__base_io_h 1
 
@@ -22,7 +21,9 @@
 #include <list>
 #include <locale>
 
-#include <boost/math/nonfinite_num_facets.hpp>
+// 2012-01-09 FM : now use the Boost 1.47 header :
+//#include <boost/math/nonfinite_num_facets.hpp>
+#include <boost/math/special_functions/nonfinite_num_facets.hpp>
 
 #include <datatools/utils/i_tree_dump.h>
 #include <brio/utils.h>
