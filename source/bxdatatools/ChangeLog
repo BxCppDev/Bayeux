@@ -60,6 +60,11 @@ This is the datatools package ChangeLog
 	* explicit linking with dependency shared libs
 	* pre-tag 3.1.3
 2011-07-03 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
-	* embedded kwsys library
+	* kwsys: embedded kwsys library
 	* add library_loader class (kwsys-based)
-
+2012-01-06 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* kwsys: do not use embedded  kwsys library anymore
+	* CMake: new build system (preliminary)
+2012-01-09 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* use 'boost/math/special_functions/nonfinite_num_facets.hpp' from
+	Boost 1.47.0
