@@ -48,29 +48,26 @@ bash$ kwsys-config --version
 }}}
 
 
-2 - Plain CMake local installation :
-------------------------------------
+2- Plain CMake installation :
+-----------------------------
 
 Change to the datatools base directory :
-
 {{{
 bash$ cd <datatools base dir>
 }}}
 
 Create a 'build' directory :
-
 {{{
 bash$ mkdir build
 bash$ cd build
 }}}
 
-For a first try, you can build it in a special local subdirectory (here in 
-the '<datatools base dir>__install_Linux-i686/' directory) :
+Configure the installation to the '${HOME}/software' directory.
+Note: you must choose a directory where ou have write access.
 
 {{{
 bash$ cmake \
-   -Wno-dev \
-   -DDATATOOLS_WITH_INSTALL_HERE=ON \
+   -DCMAKE_INSTALL_PREFIX:PATH=${HOME}/software \
    -DCMAKE_BUILD_TYPE:STRING=Release \
    ..
 }}}
@@ -87,60 +84,34 @@ This prints :
 -- Build files have been written to: <datatools base dir>/build
 }}}
 
-
 Build :
 {{{
 bash$ make
+...
 }}}
 
 Generate the documentation :
 {{{
 bash$ make doc
+...
 }}}
 
 Perform tests :
 {{{
 bash$ make test
+...
 }}}
 
 Clean test material :
 {{{
 bash$ make clean_test
+...
 }}}
 
-Installation (here in the '<datatools base dir>__install_Linux-i686/' directory) :
+Installation (here in the '${HOME}/software' directory) :
 {{{
 bash$ make install
-}}}
-
-Setup :
-  Back to the base source directory :
-{{{
-bash$ cd ..
-}}}
-  Load the definition of the datatools setup function :
-{{{
-bash$ source __install_Linux-i686/etc/datatools_setup.sh 
-NOTICE: do_datatools_setup: Please setup 'datatools' with 'do_datatools_setup'.
-}}}
-  Invoke the datatools setup function :
-{{{
-bash$ do_datatools_setup
-NOTICE: do_datatools_setup: Setup datatools...
-NOTICE: do_datatools_setup: Setup datatools done.
-bash$ which datatools-config 
-<datatools base dir>/__install_Linux-i686/bin/datatools-config
-bash$ datatools-config --prefix
-<datatools base dir>/__install_Linux-i686
-bash$ datatools-config --cflags
 ...
-bash$ datatools-config --ldflags
-...
-}}}
-
-Uninstall :
-{{{
-bash$ make uninstall
 }}}
 
 Remove the temporary build directory :
@@ -150,59 +121,17 @@ bash$ rm -fr build
 }}}
 
 
-3 - Production CMake installation :
------------------------------------
-
-Change to the datatools base directory :
-{{{
-bash$ cd <datatools base dir>
-}}}
-
-Create a 'build' directory :
-{{{
-bash$ mkdir build
-bash$ cd build
-}}}
-
-Configure the installation to the '/opt/sw' directory.
-Under Ubuntu, you can make this directory writable with:
-{{{
-bash$ sudo chmod 1777 /opt/sw
-}}}
-Otherwise ask your sysadmin or choose a directory where
-you have write access.
-
-{{{
-bash$ cmake \
-   -DCMAKE_INSTALL_PREFIX:PATH=${HOME}/software \
-   -DCMAKE_BUILD_TYPE:STRING=Release \
-   ..
-bash$ make
-bash$ make doc
-bash$ make test
-bash$ make install
-}}}
-
-Setup :
-{{{
-bash$ source ${HOME}/software/etc/datatools_setup.sh
-NOTICE: do_datatools_setup: Please setup 'datatools' with 'do_datatools_setup'.
-bash$ do_datatools_setup
-NOTICE: do_datatools_setup: Setup datatools...
-NOTICE: do_datatools_setup: Setup datatools done.
-bash$ which datatools-config 
-/home/mauger/software/bin/datatools-config
-bash$ datatools-config --version
-4.0.0
-}}}
-
-
-4 - Production CMake installation using the 'pkgtool' wrapper :
+3 - Production CMake installation using the 'pkgtool' wrapper :
 ---------------------------------------------------------------
 
 Change to the datatools base directory :
 {{{
 bash$ cd <datatools base dir>
+}}}
+
+Getting help :
+{{{
+bash$ ./pkgtools.d/pkgtool --help
 }}}
 
 Run the following configure/build/install sequence :
@@ -225,16 +154,39 @@ Full reset of the package :
 bash$ ./pkgtools.d/pkgtool reset
 }}}
 
-Getting help :
+
+4 - Setup : 
+-----------
+
+Load the definition of the datatools setup function :
 {{{
-bash$ ./pkgtools.d/pkgtool --help
+bash$ source ${HOME}/software/etc/datatools_setup.sh
+NOTICE: do_datatools_setup: Please setup 'datatools' with 'do_datatools_setup'.
 }}}
 
-Setup : see previous section.
+Invoke the setup function :
+{{{
+bash$ do_datatools_setup
+NOTICE: do_datatools_setup: Setup datatools...
+NOTICE: do_datatools_setup: Setup datatools done.
+}}}
+
+Use datatools :
+{{{
+bash$ which datatools-config 
+/home/<login>/software/bin/datatools-config
+bash$ datatools-config --version
+4.0.0
+bash$ datatools-config --cflags
+...
+bash$ datatools-config --ldflags
+...
+}}}
 
 --
-F.Mauger
-Updated: 2012-01-06
+F.Mauger <mauger@lpccaen.in2p3.fr>
+Updated: 2012-01-09
+ 
  
 
 
