@@ -62,11 +62,13 @@ elseif ( UNIX)
 endif ()
 
 set (INSTALL_RESOURCES_DIR ${INSTALL_MISC_DIR}/resources )
+set (INSTALL_DATA_DIR ${INSTALL_RESOURCES_DIR}/data )
 
 # setup MacOSX build environment if necessary
 include ( ${CMAKE_SOURCE_DIR}/cmake/MacOSX.cmake )
 
 message ( STATUS "INSTALL_MISC_DIR      : ${INSTALL_MISC_DIR}" )
 message ( STATUS "INSTALL_RESOURCES_DIR : ${INSTALL_RESOURCES_DIR}" )
+message ( STATUS "INSTALL_DATA_DIR :      ${INSTALL_DATA_DIR}" )
 
 # end of Config.cmake

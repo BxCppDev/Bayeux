@@ -84,11 +84,8 @@ Known values for OPTION are:
   --cflags              print include path pre-processor flags with dependencies
   --libs                print library linking information, without dependencies
   --ldflags             print library linking information, with dependencies
+  --geomtools-version   print geomtools version
 EOF
-#     cat<<EOF
-#   --root-version        print ROOT version
-#   --datatools-version   print datatools version
-# EOF
     cat<<EOF
 
 EOF
@@ -129,8 +126,7 @@ if [ "x${option}" = "x--cflags" ]; then
     (
 	echo -n "-fPIC " 
 	echo -n "-I${materials_include_dir} "  
-        ###echo -n "`mygsl-config --cflags` "
-	###echo -n "`datatools-config --cflags` "
+	echo -n "`geomtools-config --cflags` "
 	echo ""
     ) | python @CMAKE_INSTALL_PREFIX@/@INSTALL_MISC_DIR@/pkgtools/mkuniqueflags.py 
     my_exit 0
@@ -182,8 +178,7 @@ if [ "x${option}" = "x--ldflags" ]; then
     fi
     (
 	echo -n "-L${materials_lib_dir} ${more_ldflags} -lmaterials "
-	###echo -n "`mygsl-config --ldflags` "
-	###echo -n "`datatools-config --ldflags` "
+	echo -n "`geomtools-config --ldflags` "
 	echo ""
     ) | python @CMAKE_INSTALL_PREFIX@/@INSTALL_MISC_DIR@/pkgtools/mkuniqueflags.py -r
     my_exit 0
@@ -203,15 +198,10 @@ if [ ${python_wrapper_support} -eq 1 ]; then
     fi
 fi
 
-# if [ "x${option}" = "x--datatools-version" ]; then
-#     echo @DATATOOLS_VERSION@
-#     my_exit 0
-# fi
-
-# if [ "x${option}" = "x--mygsl-version" ]; then
-#     echo @MYGSL_VERSION@
-#     my_exit 0
-# fi
+if [ "x${option}" = "x--geomtools-version" ]; then
+    echo @GEOMTOOLS_VERSION@
+    my_exit 0
+fi
 
 echo "ERROR: ${script_name}: Unknown option !" 1>&2
 $0 --help

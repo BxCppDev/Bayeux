@@ -10,17 +10,12 @@ function do_materials_setup ()
 	return 2
     fi 
  
-    # which root-config >/dev/null 2>&1
-    # if [ $? -ne 0 ]; then
-    # 	echo "ERROR: do_materials_setup: Cannot find ROOT setup ! Abort !" 1>&2
-    # 	return 1
-    # fi
-
-    # which datatools-config >/dev/null 2>&1
-    # if [ $? -ne 0 ]; then
-    # 	echo "ERROR: do_materials_setup: Cannot find datatools setup ! Abort !" 1>&2
-    # 	return 1
-    # fi
+    # Check some dependencies :
+    which geomtools-config >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+    	echo "ERROR: do_materials_setup: Cannot find datatools setup ! Abort !" 1>&2
+    	return 1
+    fi
     
     export MATERIALS_ROOT="@CMAKE_INSTALL_PREFIX@"
     export MATERIALS_ROOT_DIR="@CMAKE_INSTALL_PREFIX@"
@@ -31,6 +26,7 @@ function do_materials_setup ()
     export MATERIALS_LIB_DIR="@CMAKE_INSTALL_PREFIX@/lib"
     export MATERIALS_INCLUDE_DIR="@CMAKE_INSTALL_PREFIX@/include"
     export MATERIALS_RESOURCES_DIR="@CMAKE_INSTALL_PREFIX@/share/@CMAKE_PROJECT_NAME@/resources"
+    export MATERIALS_DATA_DIR="@CMAKE_INSTALL_PREFIX@/share/@CMAKE_PROJECT_NAME@/resources/data"
 
     if [ -n "${PATH}" ]; then
 	export PATH="${MATERIALS_BIN_DIR}:${PATH}"
