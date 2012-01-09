@@ -1,0 +1,93 @@
+
+materials installation instructions:
+
+
+1 - Native CMake installation :
+-------------------------------
+
+{{{
+bash$ cd <materials base dir>
+}}}
+
+Create a 'build' directory :
+{{{
+bash$ mkdir build
+bash$ cd build
+}}}
+
+Configure the installation to the '/opt/sw' directory.
+Under Ubuntu, you can make this directory writable with:
+{{{
+bash$ sudo chmod 1777 /opt/sw
+}}}
+Otherwise ask your sysadmin or choose a directory where
+you have write access.
+
+{{{
+bash$ cmake \
+   -DCMAKE_INSTALL_PREFIX:PATH=/opt/sw/materials \
+   -DCMAKE_BUILD_TYPE:STRING=Release \
+   ..
+bash$ make
+bash$ make doc
+bash$ make test
+bash$ make install
+}}}
+
+Setup :
+{{{
+bash$ source /opt/sw/materials/etc/materials_setup.sh
+...
+bash$ do_materials_setup
+...
+}}}
+
+Test :
+{{{
+bash$ materials-config --prefix
+...
+bash$ materials-config --version
+...
+}}}
+
+
+2 - Pkgtools-ized installation :
+--------------------------------
+
+This method wraps the previous native CMake installation procedure
+thanks to a dedicated shell script.
+
+Get help :
+{{{
+bash$ ./pkgtools.d/pkgtool --help
+}}}}
+
+{{{
+bash$ cd <materials base dir>
+}}}
+
+Perform a rudimentary dependency check :
+{{{
+bash$ ./pkgtools.d/pkgtool check
+}}}}
+
+Configure, build, installation :
+{{{
+bash$ ./pkgtools.d/pkgtool configure --install-prefix /opt/sw/materials
+bash$ ./pkgtools.d/pkgtool build
+bash$ ./pkgtools.d/pkgtool doc
+bash$ ./pkgtools.d/pkgtool test
+bash$ ./pkgtools.d/pkgtool install
+}}}
+
+Clean and uninstall all :
+{{{
+bash$ ./pkgtools.d/pkgtool reset
+}}}
+
+--
+
+
+ 
+
+
