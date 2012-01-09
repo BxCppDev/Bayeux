@@ -104,6 +104,11 @@ option ( MATERIALS_WITH_CMAKE_FIND_MODULE
          "Build the materials' CMake find module"
  	 ON )
 
+option ( MATERIALS_INSTALL_JEFF_DATA
+         "Installation of JEFF 3.11 data"
+         OFF
+       )
+
 if ( UNIX OR APPLE )
   option ( MATERIALS_WITH_INSTALL_HERE
            "Installation path is stored in the materials source tree" 
@@ -228,7 +233,7 @@ if ( UNIX OR APPLE )
 endif ()  
 
 install ( DIRECTORY ${PROJECT_SOURCE_DIR}/resources/data
-          DESTINATION ${INSTALL_MISC_DIR}/resources
+          DESTINATION ${INSTALL_RESOURCES_DIR}
           FILE_PERMISSIONS OWNER_READ 
                            GROUP_READ 
                            WORLD_READ 
@@ -237,6 +242,29 @@ install ( DIRECTORY ${PROJECT_SOURCE_DIR}/resources/data
                                 WORLD_READ WORLD_EXECUTE 
           PATTERN "*~" EXCLUDE 
          )
+
+install ( FILES ${PROJECT_SOURCE_DIR}/resources/isotopic_compositions_nist.dat
+          DESTINATION ${INSTALL_RESOURCES_DIR}
+          PERMISSIONS OWNER_READ 
+                          GROUP_READ
+                          WORLD_READ
+         )
+
+install ( FILES ${PROJECT_SOURCE_DIR}/resources/mass.mas03
+          DESTINATION ${INSTALL_RESOURCES_DIR}
+          PERMISSIONS OWNER_READ 
+                          GROUP_READ
+                          WORLD_READ
+         )
+
+if ( MATERIALS_INSTALL_JEFF_DATA )
+  install ( FILES ${PROJECT_SOURCE_DIR}/resources/JEFF311RDD_ALL.OUT
+            DESTINATION ${INSTALL_RESOURCES_DIR}
+            PERMISSIONS OWNER_READ 
+                            GROUP_READ
+                            WORLD_READ
+           )
+endif () 
 
 install ( FILES README.txt COPYING.txt LICENSE.GPL3.txt
           DESTINATION ${INSTALL_MISC_DIR}

@@ -125,16 +125,16 @@ namespace mat {
 
     string tape_name;
 
-    if (getenv("MATERIALS_ROOT")==NULL)
+    if (getenv("MATERIALS_RESOURCES_DIR")==NULL)
       {
         ostringstream message;
-        message << "isotope::_check_za_ : env. variable '$MATERIALS_ROOT'  not found !";
+        message << "isotope::_check_za_ : env. variable 'MATERIALS_RESOURCES_DIR'  not found !";
         throw runtime_error (message.str ());
       }
     else
       {
-        tape_name.assign(getenv("MATERIALS_ROOT"));
-        tape_name +="/resources/mass.mas03";
+        tape_name.assign(getenv("MATERIALS_RESOURCES_DIR"));
+        tape_name += "/mass.mas03";
       }
 
     ifstream ifstr_tape;
@@ -227,16 +227,16 @@ namespace mat {
 
     string tape_name;
 
-    if (getenv ("MATERIALS_ROOT") == NULL)
+    if (getenv ("MATERIALS_RESOURCES_DIR") == NULL)
       {
         ostringstream message;
-        message << "isotope::find_mass : env. variable '$MATERIALS_ROOT'  not found !";
+        message << "isotope::find_mass : env. variable 'MATERIALS_RESOURCES_DIR'  not found !";
         throw runtime_error (message.str ());
       }
     else
       {
-        tape_name.assign(getenv ("MATERIALS_ROOT"));
-        tape_name += "/resources/";
+        tape_name.assign(getenv ("MATERIALS_RESOURCES_DIR"));
+        tape_name += "/";
         tape_name += input_file_name_;
       }
 
@@ -478,16 +478,16 @@ namespace mat {
 
     string tape_name;
 
-    if (getenv("MATERIALS_ROOT")==NULL)
+    if (getenv("MATERIALS_RESOURCES_DIR")==NULL)
       {
         ostringstream message;
-        message << "isotope::find_decay : env. variable '$MATERIALS_ROOT'  not found !";
+        message << "isotope::find_decay : env. variable 'MATERIALS_RESOURCES_DIR'  not found !";
         throw runtime_error (message.str ());
       }
     else
       {
-        tape_name.assign(getenv("MATERIALS_ROOT"));
-        tape_name +="/resources/";
+        tape_name.assign(getenv("MATERIALS_RESOURCES_DIR"));
+        tape_name +="/";
         tape_name +=input_file_name_;
       }
     ifstream ifstr_tape;

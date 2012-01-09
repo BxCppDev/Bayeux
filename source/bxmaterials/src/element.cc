@@ -342,16 +342,16 @@ namespace mat {
 
     string tape_name;
 
-    if (getenv("MATERIALS_ROOT")==NULL)
+    if (getenv("MATERIALS_RESOURCES_DIR")==NULL)
       {
         ostringstream message;
-        message << "element::build_from_nist : env. variable '$MATERIALS_ROOT'  not found !";
+        message << "element::build_from_nist : env. variable 'MATERIALS_RESOURCES_DIR'  not found !";
         throw runtime_error (message.str ());
       }
     else
       {
-        tape_name.assign (getenv ("MATERIALS_ROOT"));
-        tape_name +="/resources/isotopic_compositions_nist.dat";
+        tape_name.assign (getenv ("MATERIALS_RESOURCES_DIR"));
+        tape_name += "/isotopic_compositions_nist.dat";
       }
 
     ifstream ifstr_tape;
