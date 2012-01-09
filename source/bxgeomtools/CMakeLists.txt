@@ -1,12 +1,12 @@
 # - Top level CMakeLists.txt for geomtools project
 # -*- mode: cmake; -*-
 #
-#----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Copyright (c) 2012, François Mauger <mauger@lpccaen.in2p3.fr>
 #                     Ben Morgan <Ben.Morgan@warwick.ac.uk>
-#----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-#----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Enforce an out-of-source build.
 # Should be the first action in the CMakeLists.txt
 #
@@ -21,8 +21,8 @@ if ( ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR} )
   message ( FATAL_ERROR "in-source build detected" )
 endif ()
 
-#----------------------------------------------------------------------------
-# Setup CMake requirements and project's name
+# ----------------------------------------------------------------------------
+# - Setup CMake requirements and project's name
 #
 cmake_minimum_required ( VERSION 2.8 FATAL_ERROR )
 project ( geomtools )
@@ -34,7 +34,7 @@ message ( STATUS "Package name         : '${geomtools_PACKAGE_NAME}'" )
 include ( ${CMAKE_SOURCE_DIR}/cmake/Config.cmake )
 include ( ${CMAKE_SOURCE_DIR}/cmake/PackageFilename.cmake )
 
-#----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # - Prepend our own CMake Modules to the search path
 # This allows us to customize, add, and factor out functionality
 # NB: if our custom modules include others that we don't supply, those in the
@@ -55,11 +55,11 @@ set ( CMAKE_MODULE_PATH
 message ( STATUS "CMAKE_ROOT        : '${CMAKE_ROOT}'" )
 message ( STATUS "CMAKE_MODULE_PATH : '${CMAKE_MODULE_PATH}'" )
 
-#
-# Dependencies :
+# ----------------------------------------------------------------------------
+# - Dependencies :
 #
 
-### Depends on datatools:
+# - Depends on datatools:
 set ( _datatools_min_version 4.0 )
 find_package ( Datatools ${_datatools_min_version} )
 if ( DATATOOLS_FOUND )
@@ -74,7 +74,7 @@ else ()
      message ( FATAL_ERROR "Cannot find datatools >= ${_datatools_min_version} library !" )
 endif ()
 
-### Depends on mygsl:
+# - Depends on mygsl:
 set ( _mygsl_min_version 3.0 )
 find_package ( Mygsl ${_mygsl_min_version} )
 if ( MYGSL_FOUND )
@@ -90,7 +90,7 @@ else ()
 endif ()
 
 # ----------------------------------------------------------------------
-# Options :
+# - Options :
 #
 
 option ( GEOMTOOLS_WITH_DEBUG
@@ -126,29 +126,6 @@ option ( GEOMTOOLS_WITH_CMAKE_FIND_MODULE
          "Build the geomtools' CMake find module"
  	 ON )
 
-if ( UNIX OR APPLE )
-  option ( GEOMTOOLS_WITH_INSTALL_HERE
-           "Installation path is stored in the geomtools source tree" 
-     	   OFF )
-
-  message ( STATUS "Default install prefix : " "${CMAKE_INSTALL_PREFIX}" )
-
-  if ( GEOMTOOLS_WITH_INSTALL_HERE )
-    message ( STATUS "DEBUG: GEOMTOOLS_WITH_INSTALL_HERE" )
-    set ( geomtools_here_install_prefix 
-          "${PROJECT_SOURCE_DIR}/.install_${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}" 
-         )
-    set ( CMAKE_INSTALL_PREFIX 
-          "${geomtools_here_install_prefix}" 
-  	  CACHE PATH "geomtools installation prefix" FORCE
-        )
-
-    message ( STATUS "Please run 'cmake uninstall' to uninstall this build" )
-    add_custom_target (uninstall cmake -E remove_directory ${geomtools_here_install_prefix} )
-  endif ( GEOMTOOLS_WITH_INSTALL_HERE )
-endif ()
-
-set ( _find_module_install_dir ${INSTALL_MISC_DIR}/cmake/Modules ) 
 message ( STATUS "_find_module_install_dir = '${_find_module_install_dir}'" )
 
 set ( _find_module_install_dir ${INSTALL_MISC_DIR}/cmake/Modules ) 
@@ -158,6 +135,7 @@ if ( GEOMTOOLS_WITH_CMAKE_FIND_MODULE )
     message ( STATUS "GEOMTOOLS_FIND_MODULE_INSTALL_DIR : " "${GEOMTOOLS_FIND_MODULE_INSTALL_DIR}" )
   endif ()
 endif ( GEOMTOOLS_WITH_CMAKE_FIND_MODULE )
+message ( STATUS "_find_module_install_dir = '${_find_module_install_dir}'" )
 
 message ( STATUS "GEOMTOOLS_WITH_DEBUG           : " "${GEOMTOOLS_WITH_DEBUG}" )
 message ( STATUS "GEOMTOOLS_WITH_BIO             : " "${GEOMTOOLS_WITH_BIO}" )
@@ -165,7 +143,6 @@ message ( STATUS "GEOMTOOLS_WITH_PYTHON_WRAPPER  : " "${GEOMTOOLS_WITH_PYTHON_WR
 if (UNIX OR APPLE)
   message ( STATUS "GEOMTOOLS_WITH_CONFIG_SCRIPT   : " "${GEOMTOOLS_WITH_CONFIG_SCRIPT}" )
   message ( STATUS "GEOMTOOLS_WITH_PKGCONFIG       : " "${GEOMTOOLS_WITH_PKGCONFIG}" )
-  message ( STATUS "GEOMTOOLS_WITH_INSTALL_HERE    : " "${GEOMTOOLS_WITH_INSTALL_HERE}" )
 endif (UNIX OR APPLE)
 message ( STATUS "GEOMTOOLS_WITH_DOC             : " "${GEOMTOOLS_WITH_DOC}" )
 message ( STATUS "GEOMTOOLS_WITH_TEST            : " "${GEOMTOOLS_WITH_TEST}" )
@@ -173,16 +150,15 @@ message ( STATUS "CMAKE_INSTALL_PREFIX      : " "${CMAKE_INSTALL_PREFIX}" )
 
 
 # ----------------------------------------------------------------------
-# geomtools API
+# - geomtools API :
 #
 
 message ( STATUS "Add subdirectory : " "'src'" )
 add_subdirectory ( src )   
 
 # ----------------------------------------------------------------------
-# Configuration files :
+# - Configuration files :
 #
-
 
 configure_file ( "${PROJECT_SOURCE_DIR}/cmake/templates/geomtools_config.h.in.cmake"
                  "${PROJECT_BINARY_DIR}/include/geomtools/geomtools_config.h" @ONLY )
@@ -255,24 +231,24 @@ install ( FILES README.txt COPYING.txt LICENSE.GPL3.txt
           DESTINATION ${INSTALL_MISC_DIR}
          )
 
-#----------------------------------------------------------------------------
-# Add documentation.
+# ----------------------------------------------------------------------------
+# - Add documentation :
 #
 if ( GEOMTOOLS_WITH_DOC )
   add_subdirectory ( doc )
 endif ()
 
-#----------------------------------------------------------------------------
-# Add testing - always for now.
+# ----------------------------------------------------------------------------
+# - Add testing - always for now :
 #
 if ( GEOMTOOLS_WITH_TEST )
   enable_testing () 
   add_subdirectory ( testing )
 endif ()
 
-###############################
-# packaging
-###############################
+# ----------------------------------------------------------------------------
+# - packaging
+#
 
 include ( ${GEOMTOOLS_SOURCE_DIR}/cmake/Packaging.cmake OPTIONAL )
 
