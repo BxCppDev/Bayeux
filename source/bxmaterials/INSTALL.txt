@@ -1,10 +1,29 @@
 
 materials installation instructions:
+------------------------------------
+
+1 - Third-party software setup :
+--------------------------------
+
+datatools, mygsl and geomtools libraries must be installed and setup. 
+
+Example :
+{{{
+bash$ do_cadfael_all_setup
+...
+bash$ do_datatools_setup
+...
+bash$ do_mygsl_setup
+...
+bash$ do_geomtools_setup
+...
+}}}
 
 
-1 - Native CMake installation :
--------------------------------
+2- Plain CMake installation :
+-----------------------------
 
+Change to the materials base directory :
 {{{
 bash$ cd <materials base dir>
 }}}
@@ -15,79 +34,123 @@ bash$ mkdir build
 bash$ cd build
 }}}
 
-Configure the installation to the '/opt/sw' directory.
-Under Ubuntu, you can make this directory writable with:
-{{{
-bash$ sudo chmod 1777 /opt/sw
-}}}
-Otherwise ask your sysadmin or choose a directory where
-you have write access.
+Configure the installation to the '${HOME}/software' directory.
+Note: you must choose a directory where ou have write access.
 
 {{{
 bash$ cmake \
-   -DCMAKE_INSTALL_PREFIX:PATH=/opt/sw/materials \
+   -DCMAKE_INSTALL_PREFIX:PATH=${HOME}/software \
    -DCMAKE_BUILD_TYPE:STRING=Release \
    ..
+}}}
+
+This prints :
+{{{
+-- The C compiler identification is GNU
+-- The CXX compiler identification is GNU
+
+...
+
+-- Configuring done
+-- Generating done
+-- Build files have been written to: <materials base dir>/build
+}}}
+
+Build :
+{{{
 bash$ make
+}}}
+
+Generate the documentation :
+{{{
 bash$ make doc
+}}}
+
+Perform tests :
+{{{
 bash$ make test
+}}}
+
+Clean test material :
+{{{
+bash$ make clean_test
+}}}
+
+Installation (here in the '${HOME}/software' directory) :
+{{{
 bash$ make install
 }}}
 
-Setup :
+Remove the temporary build directory :
 {{{
-bash$ source /opt/sw/materials/etc/materials_setup.sh
-...
-bash$ do_materials_setup
-...
-}}}
-
-Test :
-{{{
-bash$ materials-config --prefix
-...
-bash$ materials-config --version
-...
+bash$ cd build
+bash$ rm -fr build
 }}}
 
 
-2 - Pkgtools-ized installation :
---------------------------------
+3 - Production CMake installation using the 'pkgtool' wrapper :
+---------------------------------------------------------------
 
-This method wraps the previous native CMake installation procedure
-thanks to a dedicated shell script.
-
-Get help :
-{{{
-bash$ ./pkgtools.d/pkgtool --help
-}}}}
-
+Change to the materials base directory :
 {{{
 bash$ cd <materials base dir>
 }}}
 
-Perform a rudimentary dependency check :
+Getting help :
+{{{
+bash$ ./pkgtools.d/pkgtool --help
+}}}
+
+Run the following configure/build/install sequence :
 {{{
 bash$ ./pkgtools.d/pkgtool check
-}}}}
-
-Configure, build, installation :
-{{{
-bash$ ./pkgtools.d/pkgtool configure --install-prefix /opt/sw/materials
-bash$ ./pkgtools.d/pkgtool build
+bash$ ./pkgtools.d/pkgtool configure --install-prefix ${HOME}/software
+bash$ ./pkgtools.d/pkgtool build --number-of-tasks auto
 bash$ ./pkgtools.d/pkgtool doc
 bash$ ./pkgtools.d/pkgtool test
 bash$ ./pkgtools.d/pkgtool install
 }}}
 
-Clean and uninstall all :
+De-installation :
+{{{
+bash$ ./pkgtools.d/pkgtool uninstall
+}}}
+
+Full reset of the package :
 {{{
 bash$ ./pkgtools.d/pkgtool reset
 }}}
 
+
+4 - Setup : 
+-----------
+
+Load the definition of the materials setup function :
+{{{
+bash$ source ${HOME}/software/etc/materials_setup.sh
+NOTICE: do_datatools_setup: Please setup 'materials' with 'do_materials_setup'.
+}}}
+
+Invoke the setup function :
+{{{
+bash$ do_materials_setup
+NOTICE: do_materials_setup: Setup materials...
+NOTICE: do_materials_setup: Setup materials done.
+}}}
+
+Use materials :
+{{{
+bash$ which materials-config 
+/home/<login>/software/bin/materials-config
+bash$ materials-config --version
+3.0.0
+bash$ materials-config --cflags
+...
+bash$ materials-config --ldflags
+...
+}}}
+
 --
-
-
- 
-
+F.Mauger <mauger@lpccaen.in2p3.fr>
+Updated: 2012-01-09
 

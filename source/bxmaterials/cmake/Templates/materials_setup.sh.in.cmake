@@ -60,9 +60,9 @@ function do_materials_setup ()
 
     if [ "x@MATERIALS_WITH_CMAKE_FIND_MODULE@" = "xON" ]; then
 	if [ -n "${CMAKE_MODULE_PATH}" ]; then 
-            export CMAKE_MODULE_PATH="@CMAKE_INSTALL_PREFIX@/@MATERIALS_CMAKE_MODULE_INSTALL_DIR@:${CMAKE_MODULE_PATH}"
+            export CMAKE_MODULE_PATH="@CMAKE_INSTALL_PREFIX@/@_find_module_install_dir@:${CMAKE_MODULE_PATH}"
 	else
-            export CMAKE_MODULE_PATH="@CMAKE_INSTALL_PREFIX@/@MATERIALS_CMAKE_MODULE_INSTALL_DIR@"
+            export CMAKE_MODULE_PATH="@CMAKE_INSTALL_PREFIX@/@_find_module_install_dir@"
 	fi
     fi
    

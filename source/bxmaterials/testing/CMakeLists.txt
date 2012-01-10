@@ -1,7 +1,7 @@
 ###############################################################################
 ##
-## Copyright (C) 2012 , 
-## Contact: 
+## Copyright (C) 2012, François Mauger 
+## Contact: <mauger@lpccaen.in2p3.fr>
 ##
 ## This file is part of the materials library.
 ##
