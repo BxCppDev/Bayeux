@@ -126,8 +126,6 @@ option ( GEOMTOOLS_WITH_CMAKE_FIND_MODULE
          "Build the geomtools' CMake find module"
  	 ON )
 
-message ( STATUS "_find_module_install_dir = '${_find_module_install_dir}'" )
-
 set ( _find_module_install_dir ${INSTALL_MISC_DIR}/cmake/Modules ) 
 if ( GEOMTOOLS_WITH_CMAKE_FIND_MODULE )
   if ( DEFINED GEOMTOOLS_FIND_MODULE_INSTALL_DIR )
