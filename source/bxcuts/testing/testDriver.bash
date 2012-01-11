@@ -143,11 +143,37 @@ EOF
 	return 1
     fi
     exe=$(basename ${exe_test})
-    if [ "${exe}" = "test_XXX" ]; then
-	${bin} >> ${tmp_test_dir}/tests.log 2>&1
+    if [ "${exe}" = "test_manager" ]; then
+	${bin} ${CUTS_ROOT}/testing/config/test_cut_manager.conf >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then
 	    return 1
 	fi 
+	cat>tmp.gp<<EOF
+
+set grid
+set xlabel "x"
+set ylabel "y"
+set zlabel "z"
+set xrange [-1:+1]
+set yrange [-1:+1]
+set zrange [-1:+1]
+set title "original data points"
+splot \
+  "test_manager.orig.data" index 0 title "" with dots lt -1, \
+  "test_manager.orig.data" index 1 title "" with dots lt 3, \
+  "test_manager.orig.data" index 2 title "" with dots lt 2, \
+  "test_manager.orig.data" index 3 title "" with dots lt 1
+pause -1 'Hit [Return]...'
+
+set title "selected data points"
+splot \
+  "test_manager.selected.data" index 0 title "" with dots lt -1, \
+  "test_manager.selected.data" index 1 title "" with dots lt 3, \
+  "test_manager.selected.data" index 2 title "" with dots lt 2, \
+  "test_manager.selected.data" index 3 title "" with dots lt 1
+pause -1 'Hit [Return]...'
+EOF
+	(echo "set terminal postscript color; load 'tmp.gp' ") | gnuplot > test_manager.ps
     else
 	${bin} >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then

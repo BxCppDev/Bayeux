@@ -48,7 +48,7 @@ cuts_lib_dir="${cuts_root}/lib"
 
 cuts_bin_dir="${cuts_root}/bin"
 
-cuts_resources_dir="@CMAKE_INSTALL_PREFIX@/@INSTALL_RESOURCES_DIR@"
+###cuts_resources_dir="@CMAKE_INSTALL_PREFIX@/@INSTALL_RESOURCES_DIR@"
 
 cuts_version=@cuts_VERSION_STR@
 
@@ -79,13 +79,14 @@ Known values for OPTION are:
   --incdir              print include directory
   --libdir              print library directory
   --bindir              print binary directory
-  --resources-dir       print resources directory
   --include             print include path pre-processor flags without dependencies
   --cflags              print include path pre-processor flags with dependencies
   --libs                print library linking information, without dependencies
   --ldflags             print library linking information, with dependencies
+  --datatools-version   print datatools version
 EOF
 #     cat<<EOF
+#   --resources-dir       print resources directory
 #   --root-version        print ROOT version
 #   --datatools-version   print datatools version
 # EOF
@@ -115,10 +116,10 @@ if [ "x${option}" = "x--include-dir" -o "x${option}" = "x--incdir" ]; then
     my_exit 0
 fi
 
-if [ "x${option}" = "x--resources-dir" ]; then
-    echo "${cuts_resources_dir}"
-    my_exit 0
-fi
+# if [ "x${option}" = "x--resources-dir" ]; then
+#     echo "${cuts_resources_dir}"
+#     my_exit 0
+# fi
 
 if [ "x${option}" = "x--include" ]; then
     echo "-I${cuts_include_dir} "
@@ -129,8 +130,7 @@ if [ "x${option}" = "x--cflags" ]; then
     (
 	echo -n "-fPIC " 
 	echo -n "-I${cuts_include_dir} "  
-        ###echo -n "`mygsl-config --cflags` "
-	###echo -n "`datatools-config --cflags` "
+	echo -n "`datatools-config --cflags` "
 	echo ""
     ) | python @CMAKE_INSTALL_PREFIX@/@INSTALL_MISC_DIR@/pkgtools/mkuniqueflags.py 
     my_exit 0
@@ -182,8 +182,7 @@ if [ "x${option}" = "x--ldflags" ]; then
     fi
     (
 	echo -n "-L${cuts_lib_dir} ${more_ldflags} -lcuts "
-	###echo -n "`mygsl-config --ldflags` "
-	###echo -n "`datatools-config --ldflags` "
+	echo -n "`datatools-config --ldflags` "
 	echo ""
     ) | python @CMAKE_INSTALL_PREFIX@/@INSTALL_MISC_DIR@/pkgtools/mkuniqueflags.py -r
     my_exit 0
@@ -203,15 +202,10 @@ if [ ${python_wrapper_support} -eq 1 ]; then
     fi
 fi
 
-# if [ "x${option}" = "x--datatools-version" ]; then
-#     echo @DATATOOLS_VERSION@
-#     my_exit 0
-# fi
-
-# if [ "x${option}" = "x--mygsl-version" ]; then
-#     echo @MYGSL_VERSION@
-#     my_exit 0
-# fi
+if [ "x${option}" = "x--datatools-version" ]; then
+    echo @DATATOOLS_VERSION@
+    my_exit 0
+fi
 
 echo "ERROR: ${script_name}: Unknown option !" 1>&2
 $0 --help
