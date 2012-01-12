@@ -182,8 +182,9 @@ set ( _geomtools_pkgconfig_Libs "-lgeomtools" )
 
 set ( _geomtools_pkgconfig_Libs 
       ${_geomtools_pkgconfig_Libs} 
+      ${DATATOOLS_LIBRARIES_DEPEND}      
       ${GSL_LIBRARIES} 
-      ${DATATOOLS_LIBRARIES} ) 
+    ) 
 
 if ( GEOMTOOLS_WITH_CMAKE_FIND_MODULE )
 

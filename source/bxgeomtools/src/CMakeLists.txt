@@ -1,11 +1,9 @@
 # - CMakeLists.txt for geomtools/src subdir
 
-
 set (_ld_library_path_env "LD_LIBRARY_PATH" )
 if (CMAKE_SYSTEM_NAME MATCHES Darwin)
   set (_ld_library_path_env "DYLD_LIBRARY_PATH" )
 endif (CMAKE_SYSTEM_NAME MATCHES Darwin)
-###message ( STATUS "DEVEL ***** ${_ld_library_path_env}" )
 
 #----------------------------------------------------------------------------
 # Explicitly list the sources for the library, separating into sources and
@@ -20,6 +18,14 @@ file(GLOB geomtools_PUBLIC_HEADERS
   ${PROJECT_SOURCE_DIR}/include/geomtools/*.h
   ${PROJECT_SOURCE_DIR}/include/geomtools/geomtools.h
   ${PROJECT_BINARY_DIR}/include/geomtools/geomtools_config.h
+ )
+ 
+file(GLOB geomtools_ipp_PUBLIC_HEADERS
+  ${PROJECT_SOURCE_DIR}/include/geomtools/*.ipp
+ )
+ 
+file(GLOB geomtools_serialization_PUBLIC_HEADERS
+  ${PROJECT_SOURCE_DIR}/include/geomtools/serialization/*.h
  )
 
 file (GLOB geomtools_SOURCES
@@ -60,7 +66,6 @@ include_directories ( ${PROJECT_SOURCE_DIR}/include
 #----------------------------------------------------------------------------
 # Add the library
 #
-###message ( STATUS "DEVEL ************** geomtools_SOURCES='${geomtools_SOURCES}'" )
 
 add_library (geomtools SHARED  
 		      ${geomtools_PUBLIC_HEADERS} 
@@ -88,8 +93,16 @@ install (FILES ${geomtools_PUBLIC_HEADERS}
          DESTINATION ${CMAKE_INSTALL_PREFIX}/include/geomtools
         )
 
+install (FILES ${geomtools_ipp_PUBLIC_HEADERS}
+         DESTINATION ${CMAKE_INSTALL_PREFIX}/include/geomtools
+        )
+
 install (FILES ${geomtools_detail_PUBLIC_HEADERS}
          DESTINATION ${CMAKE_INSTALL_PREFIX}/include/geomtools/detail
+        )
+
+install (FILES ${geomtools_serialization_PUBLIC_HEADERS}
+         DESTINATION ${CMAKE_INSTALL_PREFIX}/include/geomtools/serialization
         )
 
 if ( GEOMTOOLS_WITH_BIO )
