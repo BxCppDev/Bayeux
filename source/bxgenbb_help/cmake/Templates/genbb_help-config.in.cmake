@@ -132,7 +132,7 @@ if [ "x${option}" = "x--cflags" ]; then
 	echo -n "-fPIC " 
 	echo -n "-I${genbb_help_include_dir} "  
 	if [ ${only_fortran} -eq 1 ]; then
- 	    echo -n "`geomtools-config --include` "  
+ 	    echo -n "`geomtools-config --cflags` "  
 	fi 
  	echo -n "`mygsl-config --cflags` "  
 	echo ""
@@ -198,7 +198,7 @@ if [ "x${option}" = "x--ldflags" ]; then
 	echo -n "-L${genbb_help_lib_dir} "
 	if [ ${only_fortran} -eq 0 ]; then
 	    echo -n "${more_ldflags} -lgenbb_help "
-	    echo -n "`geomtools-config --libs` "
+	    echo -n "`geomtools-config --ldflags` "
 	fi
 	echo -n "-lgenbb_help_f77 "
 	echo -n "`mygsl-config --ldflags` "
