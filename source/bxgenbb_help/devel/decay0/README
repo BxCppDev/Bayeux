@@ -1,0 +1,67 @@
+
+README:
+-------
+
+This directory is the place from which the Decay0 source code is extracted
+from the original version and integrated in the 'genbb_help' source tree.
+
+Cd in the 'decay0' directory:
+
+   bash$ cd decay0 
+
+The 'decay0.for' file is the original file from Vladimir
+>>>
+Last updated: 23.01.2011.
+<<<
+
+
+Test the Decay0 program with CERNLIB:
+
+Only Ubuntu with CERNLIB/32bits/gfortran :
+
+   Use the 'decay0_fixed.for' file because the original 'decay0.for' 
+   does not support gfortran.
+
+      bash$ gfortran decay0_fixed.for $(cernlib packlib mathlib) -o decay0_fixed
+
+      Run the executable to check if it runs:
+
+      bash$ ./decay0_fixed
+
+Generate some sample plots:
+
+      bash$ ./make_reference_samples
+
+Generate some plots using the genbb_help tools and compare with the reference plots:
+
+      bash$ ./make_validation_samples
+
+  Display the plots (PS files) to be compared:
+ 
+      bash$ $ ls -1 *.ps
+      decay0_reference_plot.ps
+      genbb_help_validation_plot.ps
+
+
+===========================================================================
+
+Package's maintener only:
+
+  Generate genbb source files from the original 'decay0.for' program
+  and add check stuff in 'decay0/src/' :
+
+    bash$ ./prepare_decay0.sh -c ./decay0.for
+
+  Check that it builds:
+
+    bash$ cd src
+    bash$ make 	      
+
+Generate genbb source files from the original 'decay0.for' program
+and install it in the official 'genbb_help' source tree:
+
+    bash$ ./prepare_decay0.sh ./decay0.for
+
+--
+F.Mauger <mauger@lpccaen.in2p3.fr>
+Last update: 2011-02-25

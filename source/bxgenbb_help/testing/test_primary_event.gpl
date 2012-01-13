@@ -1,0 +1,19 @@
+#
+
+! $(genbb_help-config --prefix)/$(genbb_help-config --system)/bin/test_primary_event > test_primary_event.data
+
+set xlabel "x"
+set ylabel "y"
+set zlabel "z"
+
+set xrange [-5:+5]
+set yrange [-5:+5]
+set zrange [-5:+5]
+
+splot \
+      "test_primary_event.data" index 0 title "Primary" with lines lw 3, \
+      "test_primary_event.data" index 1 title "Rotated" with lines lw 3
+pause -1 "Hit return..."
+! rm -f test_primary_event.data
+
+# end

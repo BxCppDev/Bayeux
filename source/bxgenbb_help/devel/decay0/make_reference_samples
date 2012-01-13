@@ -1,0 +1,294 @@
+#!/usr/bin/env bash 
+# -*- mode: shell-script; -*- 
+# make_reference_samples
+
+APPNAME="make_reference_samples"
+
+opwd=$(pwd)
+
+function my_exit ()
+{
+    cd ${opwd}
+    exit $1
+}
+
+appname=${APPNAME} 
+appversion=0.1 
+
+the_base_dir=$(pwd)
+
+# uncomment for usage related to a pkgtools managed package:
+if [ "x${GENBB_HELP_ROOT}" = "x" ]; then
+    echo " ERROR: ${appname}: GENBB_HELP_ROOT is not defined ! Abort !" >&2  
+    my_exit 1
+else
+    if [ ! -d ${GENBB_HELP_ROOT} ]; then
+	echo " ERROR: ${appname}: GENBB_HELP_ROOT directory does not exist ! Abort !" >&2  
+	my_exit 1
+    fi
+    the_base_dir=${GENBB_HELP_ROOT}
+fi
+
+libpkgtools_sourced=0
+
+pkgtools_root=${PKGTOOLS_ROOT}
+if [ ${libpkgtools_sourced} -eq 0 ]; then
+    if [ "x${pkgtools_root}" != "x" ]; then
+	if [ -f ${pkgtools_root}/lib/libpkgtools.sh ]; then
+	    source ${pkgtools_root}/lib/libpkgtools.sh
+	    libpkgtools_sourced=1
+	fi
+    fi
+fi
+
+if [ ${libpkgtools_sourced} -eq 0 ]; then
+    libpkgtools_sh=${the_base_dir}/pkgtools.d/libpkgtools.sh 
+    if [ -f ${libpkgtools_sh} ]; then
+	source ${libpkgtools_sh}    
+	libpkgtools_sourced=1
+    fi
+fi
+
+if [ ${libpkgtools_sourced} -eq 0 ]; then
+    echo " ERROR: ${appname}: Cannot find any 'libpkgtools.sh' setup file ! Abort !" >&2  
+    my_exit 1
+fi
+
+pkgtools__msg_not_using_quiet
+pkgtools__msg_not_using_verbose
+pkgtools__msg_not_using_debug
+pkgtools__msg_not_using_devel
+pkgtools__msg_not_using_date
+pkgtools__msg_using_color
+pkgtools__ui_interactive
+pkgtools__ui_not_using_gui
+
+function print_usage ()
+{
+    cat <<EOF
+
+  ${appname} -- Description
+
+  Usage:
+
+    ${appname} [Options...] [Args...]
+
+  Options:
+
+    -h 
+    --help    : print this help then exit
+
+    --version  : print version then exit
+
+    -d 
+    --debug   : print debug mode informations
+
+    -D 
+    --devel   : print devel mode informations
+
+    -v 
+    --verbose : verbose print
+
+    -i      
+    --interactive  : run in interactive mode (this is the default)
+
+    -b      
+    --batch        : run in batch mode (no user interaction, disable GUI features)
+
+    --no-color     : use un-colored message output
+
+    -p        : do not re-use former generated Decay0 data files
+
+  Examples:
+
+    shell> ${appname} --help
+ 
+EOF
+    return 0
+}
+
+#######################################################
+
+the_first_arg=
+#the_second_arg=
+the_remaining_options=
+
+preserve_data=1
+display=1
+NEVENTS=100000
+
+parse_switch=1
+while [ -n "$1" ]; do
+    token="$1"
+    if [ "${token:0:1}" = "-" ]; then
+	opt=${token}
+	if [ ${parse_switch} -eq 0 ]; then
+	    break
+	fi
+	if [ "${opt}" = "-h" -o "${opt}" = "--help" ]; then
+	    print_usage
+	    my_exit 0
+	elif [ "${opt}" = "--version" ]; then
+	    echo ${appversion}
+	    my_exit 0
+	elif [ "${opt}" = "-d" -o "${opt}" = "--debug" ]; then
+	    pkgtools__msg_using_debug
+	elif [ "${opt}" = "-D" -o "${opt}" = "--devel" ]; then
+	    pkgtools__msg_using_devel
+	elif [ "${opt}" = "-v" -o "${opt}" = "--verbose" ]; then
+	    pkgtools__msg_using_verbose
+	elif [ "${opt}" = "-i" -o "${opt}" = "--interactive" ]; then
+	    pkgtools__ui_interactive
+	elif [ "${opt}" = "-b" -o "${opt}" = "--batch" ]; then
+	    pkgtools__ui_batch
+	elif [ "${opt}" = "--no-color" ]; then
+	    pkgtools__msg_not_using_color
+	elif [ "${opt}" = "-p" ]; then
+	    preserve_data=0
+	else
+	    pkgtools__msg_error "Invalid option '${opt}' !" 
+	    my_exit 1
+	    # pkgtools__msg_warning "Ignoring option '${opt}' !" 
+	fi
+    else
+	arg=${token}
+	parse_switch=0
+	if [ "x${the_first_arg}" = "x" ]; then
+	    the_first_arg="${arg}"	
+	# elif [ "x${the_second_arg}" = "x" ]; then
+	#     the_second_arg="${arg}"	
+	else
+	    pkgtools__msg_error "Invalid argument '${arg}' !"
+	    my_exit 1
+	    # pkgtools__msg_warning "Ignoring argument '${arg}' !" 
+	    # break
+	fi
+    fi
+    shift 1
+done
+
+the_remaining_options="$@"
+pkgtools__msg_devel "the_first_arg=${the_first_arg}"
+#pkgtools__msg_devel "the_second_arg=${the_second_arg}"
+pkgtools__msg_devel "remaining_options=${the_remaining_options}"
+
+# Batch mode:
+pkgtools__ui_is_interactive
+if [ $? -ne 0 ]; then
+    pkgtools__ui_not_using_gui
+fi
+
+##########################################################
+
+function test_spectra ()
+{
+    __pkgtools__at_function_enter test_spectra
+    
+    if [ ! -x decay0_fixed ]; then
+	make 
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Cannot make the Decay0 executable !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
+
+    ### Se82 2b0n ###
+    basename=Se82_2b0n
+    pkgtools__msg_notice "Generating reference Se82 2b0n Decay0 output data file..."
+    cat>${basename}.conf<<EOF
+1
+Se82
+0
+1
+${NEVENTS}
+2
+123456
+y
+${basename}.genbb
+EOF
+    if [ -f ${basename}.genbb ]; then
+	if [ ${preserve_data} -eq 0 ]; then
+	    rm -f ${basename}.genbb
+	fi
+    fi
+    if [ ! -f ${basename}.genbb ]; then
+	cat ${basename}.conf | ./decay0_fixed
+	if [ ! -f ${basename}.genbb ]; then
+	    pkgtools__msg_error "No output file !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
+
+    python proc_bb.py ${basename}.genbb > ${basename}.data
+    cat ${basename}.data | cut -d' ' -f 1 | gsl-histogram 0 4.0 80 > ${basename}_e1.his
+    cat ${basename}.data | cut -d' ' -f 2 | gsl-histogram 0 4.0 80 > ${basename}_e2.his
+    cat ${basename}.data | cut -d' ' -f 3 | gsl-histogram 0 4.0 80 > ${basename}_esum.his
+    cat ${basename}.data | cut -d' ' -f 4 | gsl-histogram -1.25 +1.25 50 > ${basename}_cost.his
+
+    ### Se82 2b2n ###
+    basename=Se82_2b2n
+    pkgtools__msg_notice "Generating reference Se82 2b2n Decay0 output data file..."
+    cat>${basename}.conf<<EOF
+1
+Se82
+0
+4
+n
+${NEVENTS}
+2
+123456
+y
+${basename}.genbb
+EOF
+    if [ -f ${basename}.genbb ]; then
+	if [ ${preserve_data} -eq 0 ]; then
+	    rm -f ${basename}.genbb
+	fi
+    fi
+    if [ ! -f ${basename}.genbb ]; then
+	cat ${basename}.conf | ./decay0_fixed
+	if [ ! -f ${basename}.genbb ]; then
+	    pkgtools__msg_error "No output file !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
+
+    python proc_bb.py ${basename}.genbb > ${basename}.data
+    cat ${basename}.data | cut -d' ' -f 1 | gsl-histogram 0 4.0 80 > ${basename}_e1.his
+    cat ${basename}.data | cut -d' ' -f 2 | gsl-histogram 0 4.0 80 > ${basename}_e2.his
+    cat ${basename}.data | cut -d' ' -f 3 | gsl-histogram 0 4.0 80 > ${basename}_esum.his
+    cat ${basename}.data | cut -d' ' -f 4 | gsl-histogram -1.25 +1.25 50 > ${basename}_cost.his
+
+    (echo "set terminal postscript color solid" ; cat proc_bb.gp) | gnuplot > decay0_reference_plot.ps
+
+    if [ ${display} -eq 1 ]; then
+	gv decay0_reference_plot.ps &
+    fi
+
+    __pkgtools__at_function_exit
+    return 0
+}
+
+function main ()
+{
+    __pkgtools__at_function_enter main
+
+    test_spectra
+    
+    __pkgtools__at_function_exit
+    return 0
+}
+
+##########################################################
+
+main 
+if [ $? -ne 0 ]; then
+    pkgtools__msg_error "Failure !"
+    my_exit 1
+fi
+my_exit 0
+
+# end of make_reference_samples

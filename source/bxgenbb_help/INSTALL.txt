@@ -1,0 +1,148 @@
+
+genbb_help installation instructions:
+------------------------------------
+
+1 - Third-party software setup :
+--------------------------------
+
+Instruction to setup dependencies...
+
+
+2- Plain CMake installation :
+-----------------------------
+
+Change to the genbb_help base directory :
+{{{
+bash$ cd <genbb_help base dir>
+}}}
+
+Create a 'build' directory :
+{{{
+bash$ mkdir build
+bash$ cd build
+}}}
+
+Configure the installation to the '${HOME}/software' directory.
+Note: you must choose a directory where ou have write access.
+
+{{{
+bash$ cmake \
+   -DCMAKE_INSTALL_PREFIX:PATH=${HOME}/software \
+   -DCMAKE_BUILD_TYPE:STRING=Release \
+   ..
+}}}
+
+This prints :
+{{{
+-- The C compiler identification is GNU
+-- The CXX compiler identification is GNU
+
+...
+
+-- Configuring done
+-- Generating done
+-- Build files have been written to: <genbb_help base dir>/build
+}}}
+
+Build :
+{{{
+bash$ make
+}}}
+
+Generate the documentation :
+{{{
+bash$ make doc
+}}}
+
+Perform tests :
+{{{
+bash$ make test
+}}}
+
+Clean test material :
+{{{
+bash$ make clean_test
+}}}
+
+Installation (here in the '${HOME}/software' directory) :
+{{{
+bash$ make install
+}}}
+
+Remove the temporary build directory :
+{{{
+bash$ cd build
+bash$ rm -fr build
+}}}
+
+
+3 - Production CMake installation using the 'pkgtool' wrapper :
+---------------------------------------------------------------
+
+Change to the genbb_help base directory :
+{{{
+bash$ cd <genbb_help base dir>
+}}}
+
+Getting help :
+{{{
+bash$ ./pkgtools.d/pkgtool --help
+}}}
+
+Run the following configure/build/install sequence :
+{{{
+bash$ ./pkgtools.d/pkgtool check
+bash$ ./pkgtools.d/pkgtool configure --install-prefix ${HOME}/software
+bash$ ./pkgtools.d/pkgtool build --number-of-tasks auto
+bash$ ./pkgtools.d/pkgtool doc
+bash$ ./pkgtools.d/pkgtool test
+bash$ ./pkgtools.d/pkgtool install
+}}}
+
+De-installation :
+{{{
+bash$ ./pkgtools.d/pkgtool uninstall
+}}}
+
+Full reset of the package :
+{{{
+bash$ ./pkgtools.d/pkgtool reset
+}}}
+
+
+4 - Setup : 
+-----------
+
+Load the definition of the genbb_help setup function :
+{{{
+bash$ source ${HOME}/software/etc/genbb_help_setup.sh
+NOTICE: do_datatools_setup: Please setup 'genbb_help' with 'do_genbb_help_setup'.
+}}}
+
+Invoke the setup function :
+{{{
+bash$ do_genbb_help_setup
+NOTICE: do_genbb_help_setup: Setup genbb_help...
+NOTICE: do_genbb_help_setup: Setup genbb_help done.
+}}}
+
+Use genbb_help :
+{{{
+bash$ which genbb_help-config 
+/home/<login>/software/bin/genbb_help-config
+bash$ genbb_help-config --version
+3.0.0
+bash$ genbb_help-config --cflags
+...
+bash$ genbb_help-config --ldflags
+...
+}}}
+
+--
+ <>
+Updated: 2012-01-11
+
+
+ 
+
+

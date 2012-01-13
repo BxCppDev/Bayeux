@@ -1,0 +1,25 @@
+# -*- mode: gnuplot; -*-
+set terminal x11
+
+#! genbb ${GENBB_HELP_ROOT}/resources/se82_0nubb_mn.conf 314159 100000 /tmp/se82_0nubb_mn.genbb
+
+#! bb0nu_cos_theta /tmp/se82_0nubb_mn.genbb | gsl-histogram -1 +1 40 > bb0nu_se82_cos.data
+
+set xlabel "cos(theta)"
+set ylabel "dN"
+
+
+plot 'bb0nu_se82_cos.data' u 1:3 title "82Se Neutrinoless DBD angular distribution" with histeps
+pause -1 "Hit return..."
+
+
+set terminal postscript eps color solid
+set output "bb0nu_82se_cos.eps"
+set title "82Se Neutrinoless DBD angular distribution"
+plot 'bb0nu_se82_cos.data' u 1:3 notitle  with histeps
+set output
+set terminal x11
+
+! ps2pdf bb0nu_82se_cos.eps bb0nu_82se_cos.pdf
+
+# end
