@@ -37,17 +37,17 @@ datatools_resources_dir="@CMAKE_INSTALL_PREFIX@/@INSTALL_RESOURCES_DIR@"
 datatools_version=@datatools_VERSION_STR@
 
 with_python_wrapper=0
-if [ "x@DATATOOLS_WITH_PYTHON_WRAPPER@" == "xON" ]; then
+if [ "x@DATATOOLS_WITH_PYTHON_WRAPPER@" == "x1" ]; then
     with_python_wrapper=1
 fi
 
 with_bio=0
-if [ "x@DATATOOLS_WITH_BIO@" == "xON" ]; then
+if [ "x@DATATOOLS_WITH_BIO@" == "x1" ]; then
     with_bio=1
 fi
 
 with_embedded_kwsys=0
-if [ "x@DATATOOLS_WITH_EMBEDDED_KWSYS@" == "xON" ]; then
+if [ "x@DATATOOLS_WITH_EMBEDDED_KWSYS@" == "x1" ]; then
     with_embedded_kwsys=1
 fi
 
@@ -88,6 +88,7 @@ Known values for OPTION are:
   --with-python-wrapper print if Python wrapper module is used
   --with-bio            print if Boost/Serialization binary code is pre-built 
                         in an auxiliary I/O shared library
+  --with-embedded-kwsys print if Kwsys is embedded in datatools
   --boost-version       print Boost version
   --clhep-version       print CLHEP version
 
@@ -166,6 +167,9 @@ if [ "x${option}" = "x--libs" ]; then
 	bio_ldflags=-ldatatools_bio
     fi
     echo -n "-L${datatools_lib_dir} ${bio_ldflags} -ldatatools "
+    if [ ${with_embedded_kwsys} -eq 1 ]; then
+	echo -n "-lkwsys -lkwsys_c -ldl "
+    fi
     echo
     my_exit 0
 fi
@@ -194,6 +198,11 @@ fi
 
 if [ "x${option}" = "x--with-bio" ]; then
     echo "${with_bio}"
+    my_exit 0
+fi
+
+if [ "x${option}" = "x--with-embedded-kwsys" ]; then
+    echo "${with_embedded_kwsys}"
     my_exit 0
 fi
 
