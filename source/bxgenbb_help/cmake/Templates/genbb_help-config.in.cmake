@@ -12,14 +12,14 @@ python_wrapper_support=0
 
 if [ ${python_wrapper_support} -eq 1 ]; then
     with_python_wrapper=0
-    if [ "x@GENBB_HELP_WITH_PYTHON_WRAPPER@" == "xON" ]; then
+    if [ "x@GENBB_HELP_WITH_PYTHON_WRAPPER@" == "x1" ]; then
 	with_python_wrapper=1
     fi
 fi
 
 if [ ${bio_support} -eq 1 ]; then
     with_bio=0
-    if [ "x@GENBB_HELP_WITH_BIO@" == "xON" ]; then
+    if [ "x@GENBB_HELP_WITH_BIO@" == "x1" ]; then
 	with_bio=1
     fi
 fi
@@ -81,8 +81,13 @@ Known values for OPTION are:
   --resources-dir       print resources directory
   --include             print include path pre-processor flags without dependencies
   --cflags              print include path pre-processor flags with dependencies
-  --libs                print library linking information, without dependencies
-  --ldflags             print library linking information, with dependencies
+  --libs    [option]    print library linking information, without dependencies
+  --ldflags [option]    print library linking information, with dependencies
+     Options: --with-bio     with linkage against the 'libgenbb_help_bio.so' DLL (default)
+              --without-bio  without linkage against the 'libgenbb_help_bio.so' DLL
+              --only-fortran only with the Fortran DLL (Decay0) 
+  --with-python-wrapper print if Python wrapper module is used
+  --with-bio            print if Boost/Serialization binary code is pre-built 
   --geomtools-version   print geomtools version
 EOF
     my_exit 1
@@ -119,10 +124,17 @@ if [ "x${option}" = "x--include" ]; then
 fi
 
 if [ "x${option}" = "x--cflags" ]; then
+    only_fortran=0
+    if [ "x${option2}" = "x--only-fortran" ]; then
+    	only_fortran=1
+    fi
     (
 	echo -n "-fPIC " 
 	echo -n "-I${genbb_help_include_dir} "  
- 	echo -n "`geomtools-config --cflags` "
+	if [ ${only_fortran} -eq 1 ]; then
+ 	    echo -n "`geomtools-config --include` "  
+	fi 
+ 	echo -n "`mygsl-config --cflags` "  
 	echo ""
     ) | python @CMAKE_INSTALL_PREFIX@/@INSTALL_MISC_DIR@/pkgtools/mkuniqueflags.py 
     my_exit 0
@@ -148,33 +160,48 @@ if [ ${bio_support} -eq 1 ]; then
 fi
  
 if [ "x${option}" = "x--libs" ]; then
-    if [ ${bio_support} -eq 1 ]; then
-      if [ "x${option2}" = "x--without-bio" ]; then
-     	bio_ldflags=
-      fi
-      if [ "x${option2}" = "x--with-bio" -a ${with_bio} -eq 1 ]; then
-     	bio_ldflags=-lgenbb_help_bio
-      fi
-      more_ldflags="${more_ldflags} ${bio_ldflags} "
-    fi
-    echo -n "-L${genbb_help_lib_dir} ${more_ldflags} -lgenbb_help "
-    echo
-    my_exit 0
-fi
-
-if [ "x${option}" = "x--ldflags" ]; then
+    only_fortran=0
     if [ ${bio_support} -eq 1 ]; then
 	if [ "x${option2}" = "x--without-bio" ]; then
     	    bio_ldflags=
-	fi
-	if [ "x${option2}" = "x--with-bio" -a ${with_bio} -eq 1 ]; then
-    	bio_ldflags=-lgeomtools_bio
+	elif [ "x${option2}" = "x--with-bio" -a ${with_bio} -eq 1 ]; then
+    	    bio_ldflags=-lgenbb_help_bio
+	elif [ "x${option2}" = "x--only-fortran" ]; then
+    	    only_fortran=1
 	fi
 	more_ldflags="${more_ldflags} ${bio_ldflags} "
     fi
     (
-	echo -n "-L${genbb_help_lib_dir} ${more_ldflags} -lgenbb_help "
-	echo -n "`geomtools-config --ldflags` "
+	echo -n "-L${genbb_help_lib_dir} "
+	if [ ${only_fortran} -eq 0 ]; then
+	    echo -n "${more_ldflags} -lgenbb_help "
+	fi
+	echo -n "-lgenbb_help_f77 "
+	echo ""
+    )
+    my_exit 0
+fi
+
+if [ "x${option}" = "x--ldflags" ]; then
+    only_fortran=0
+    if [ ${bio_support} -eq 1 ]; then
+	if [ "x${option2}"   = "x--without-bio" ]; then
+    	    bio_ldflags=
+	elif [ "x${option2}" = "x--with-bio" -a ${with_bio} -eq 1 ]; then
+    	    bio_ldflags=-lgenbb_help_bio
+	elif [ "x${option2}" = "x--only-fortran" ]; then
+    	    only_fortran=1
+	fi
+	more_ldflags="${more_ldflags} ${bio_ldflags} "
+    fi
+    (
+	echo -n "-L${genbb_help_lib_dir} "
+	if [ ${only_fortran} -eq 0 ]; then
+	    echo -n "${more_ldflags} -lgenbb_help "
+	    echo -n "`geomtools-config --libs` "
+	fi
+	echo -n "-lgenbb_help_f77 "
+	echo -n "`mygsl-config --ldflags` "
 	echo ""
     ) | python @CMAKE_INSTALL_PREFIX@/@INSTALL_MISC_DIR@/pkgtools/mkuniqueflags.py -r
     my_exit 0
