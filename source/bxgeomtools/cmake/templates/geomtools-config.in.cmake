@@ -37,12 +37,12 @@ geomtools_resources_dir="@CMAKE_INSTALL_PREFIX@/@INSTALL_RESOURCES_DIR@"
 geomtools_version=@geomtools_VERSION_STR@
 
 with_python_wrapper=0
-if [ "x@GEOMTOOLS_WITH_PYTHON_WRAPPER@" == "xON" ]; then
+if [ "x@GEOMTOOLS_WITH_PYTHON_WRAPPER@" == "x1" ]; then
     with_python_wrapper=1
 fi
 
 with_bio=0
-if [ "x@GEOMTOOLS_WITH_BIO@" == "xON" ]; then
+if [ "x@GEOMTOOLS_WITH_BIO@" == "x1" ]; then
     with_bio=1
 fi
 
