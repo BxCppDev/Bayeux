@@ -21,7 +21,8 @@ pkgtools_dir="pkgtools.d"
 the_base_dir=$(pwd)
 
 if [ ! -d ./${pkgtools_dir} ]; then
-    echo " ERROR: ${appname}: Please run this script from the package base directory ! Abort !" >&2  
+    echo "ERROR: current direcotry is : $(pwd)" >&2
+    echo "ERROR: ${appname}: Please run this script from the package base directory ! Abort !" >&2  
     my_exit 1
 fi
 
@@ -46,7 +47,7 @@ if [ ${libpkgtools_sourced} -eq 0 ]; then
 fi
 
 if [ ${libpkgtools_sourced} -eq 0 ]; then
-    echo " ERROR: ${appname}: Cannot find any 'libpkgtools.sh' setup file ! Abort !" >&2  
+    echo "ERROR: ${appname}: Cannot find any 'libpkgtools.sh' setup file ! Abort !" >&2  
     my_exit 1
 fi
 
