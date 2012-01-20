@@ -6,7 +6,6 @@ The datatools C++ library package uses the CMake build system.
 It depends on the following third-party software : 
 - Boost
 - CLHEP
-- kwsys
 - Python
 - doxygen
 
@@ -39,12 +38,6 @@ bash$ boost-config --prefix
 /scratch/sw/Cadfael/install/Cadfael-0.1.0
 bash$ boost-config --version
 1.47.0
-bash$ do_cadfael_kwsys_setup 
-NOTICE: do_cadfael_kwsys_setup: Setup Cadfael/kwsys...
-NOTICE: do_cadfael_kwsys_setup: Cadfael/kwsys 0.1.0 is setup.
-NOTICE: do_cadfael_kwsys_setup: Setup Cadfael/kwsys done.
-bash$ kwsys-config --version
-0.1.0
 }}}
 
 
@@ -62,12 +55,12 @@ bash$ mkdir build
 bash$ cd build
 }}}
 
-Configure the installation to the '${HOME}/software' directory.
+Configure the installation to the '${HOME}/software/Base' directory.
 Note: you must choose a directory where ou have write access.
 
 {{{
 bash$ cmake \
-   -DCMAKE_INSTALL_PREFIX:PATH=${HOME}/software \
+   -DCMAKE_INSTALL_PREFIX:PATH=${HOME}/software/Base \
    -DCMAKE_BUILD_TYPE:STRING=Release \
    ..
 }}}

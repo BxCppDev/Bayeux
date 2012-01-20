@@ -23,8 +23,17 @@
 
 #define DATATOOLS_LIB_VERSION "@datatools_VERSION_STR@"
 
+/***  datatools debug flag ***/
+#cmakedefine01 DATATOOLS_WITH_DEBUG
+
 /***  datatools embedded Boost/Serialization based I/O ***/
-#define DATATOOLS_WITH_BIO @DATATOOLS_WITH_BIO@
+#cmakedefine01 DATATOOLS_WITH_BIO
+
+/***  datatools embedded Boost/Serialization based I/O ***/
+#cmakedefine01 DATATOOLS_WITH_PYTHON_WRAPPER
+
+// /***  datatools embedded Kwsys library use a special namespace  ***/
+#define DATATOOLS_SYS_NAMESPACE @KWSYS_NAMESPACE@
 
 #endif // __datatools__datatools_config_h
 

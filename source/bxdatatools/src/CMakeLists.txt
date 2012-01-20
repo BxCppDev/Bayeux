@@ -70,65 +70,68 @@ endif ( DATATOOLS_WITH_BIO )
 # Add the library 
 #
 
-include_directories ( ${CLHEP_INCLUDE_DIRS}
-		      ${Boost_INCLUDE_DIRS}
-		      ${KWSYS_INCLUDE_DIRS}
+include_directories ( ${PROJECT_BINARY_DIR}/include
 		      ${PROJECT_SOURCE_DIR}/include	
-                    )
+                      ${CLHEP_INCLUDE_DIRS}
+                      ${Boost_INCLUDE_DIRS}
+                  )
 
-add_library (datatools SHARED  
-		      ${datatools_PUBLIC_HEADERS} 
-		      ${datatools_event_PUBLIC_HEADERS} 
-		      ${datatools_utils_PUBLIC_HEADERS} 
-		      ${datatools_serialization_PUBLIC_HEADERS}
-		      ${boost_math_PUBLIC_HEADERS}
-		      ${boost_archive_PUBLIC_HEADERS}
-		      ${datatools_SOURCES}
+add_library ( datatools SHARED  
+		        ${datatools_PUBLIC_HEADERS} 
+		        ${datatools_event_PUBLIC_HEADERS} 
+		        ${datatools_utils_PUBLIC_HEADERS} 
+		        ${datatools_serialization_PUBLIC_HEADERS}
+		        ${boost_math_PUBLIC_HEADERS}
+		        ${boost_archive_PUBLIC_HEADERS}
+		        ${datatools_SOURCES}
             )
 
 # Link dynamic library :
 
 target_link_libraries ( datatools
-                        ${KWSYS_LIBRARIES}
+                        datatools_sys 
+                        # datatools_sys_c
                         ${CLHEP_LIBRARIES}
                         ${Boost_SERIALIZATION_LIBRARY}
                         ${Boost_IOSTREAMS_LIBRARY}
                         ${Boost_FILESYSTEM_LIBRARY}
                         ${Boost_SYSTEM_LIBRARY}
-                        )
+                      )
 
+# Install library and associate it with an export
 install ( TARGETS datatools
-          RUNTIME DESTINATION bin COMPONENT bin
-          LIBRARY DESTINATION lib COMPONENT bin 
-          ARCHIVE DESTINATION lib COMPONENT devel
+          EXPORT datatools-libraries
+          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT bin
+          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT bin 
+          ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT devel
         )      
 
 install ( FILES ${boost_math_PUBLIC_HEADERS}
-          DESTINATION ${CMAKE_INSTALL_PREFIX}/include/boost/math
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/boost/math
         )
 
 install ( FILES ${boost_archive_PUBLIC_HEADERS}
-          DESTINATION ${CMAKE_INSTALL_PREFIX}/include/boost/archive
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/boost/archive
         )
 
 install ( FILES ${datatools_utils_PUBLIC_HEADERS}
-          DESTINATION ${CMAKE_INSTALL_PREFIX}/include/datatools/utils
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/datatools/utils
         )
 
 install ( FILES ${datatools_event_PUBLIC_HEADERS}
-          DESTINATION ${CMAKE_INSTALL_PREFIX}/include/datatools/event
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/datatools/event
         )
 
 install ( FILES ${datatools_serialization_PUBLIC_HEADERS}
-          DESTINATION ${CMAKE_INSTALL_PREFIX}/include/datatools/serialization
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/datatools/serialization
         )
 
 install ( FILES ${datatools_services_PUBLIC_HEADERS}
-          DESTINATION ${CMAKE_INSTALL_PREFIX}/include/datatools/services
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/datatools/services
         )
 
 install ( FILES ${datatools_PUBLIC_HEADERS}
-          DESTINATION ${CMAKE_INSTALL_PREFIX}/include/datatools
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/datatools
         )
  
 file ( GLOB datatools_ipp_PUBLIC_HEADERS
@@ -148,19 +151,19 @@ file ( GLOB datatools_event_ipp_PUBLIC_HEADERS
      )
 
 install ( FILES ${datatools_ipp_PUBLIC_HEADERS}
-          DESTINATION ${CMAKE_INSTALL_PREFIX}/include/datatools
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/datatools
         )
 
 install ( FILES ${datatools_event_ipp_PUBLIC_HEADERS}
-          DESTINATION ${CMAKE_INSTALL_PREFIX}/include/datatools/event
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/datatools/event
         )
 
 install ( FILES ${datatools_serialization_ipp_PUBLIC_HEADERS}
-          DESTINATION ${CMAKE_INSTALL_PREFIX}/include/datatools/serialization
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/datatools/serialization
         )
 
 install ( FILES ${datatools_utils_ipp_PUBLIC_HEADERS}
-          DESTINATION ${CMAKE_INSTALL_PREFIX}/include/datatools/utils
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/datatools/utils
         )
 
 if ( DATATOOLS_WITH_BIO )
@@ -174,21 +177,23 @@ if ( DATATOOLS_WITH_BIO )
               )
 
    # Link dynamic library :
-   target_link_libraries ( datatools_bio
-                           ${KWSYS_LIBRARIES}
-                           ${CLHEP_LIBRARIES}
-                           ${Boost_SERIALIZATION_LIBRARY}
-                           ${Boost_IOSTREAMS_LIBRARY}
-                           ${Boost_FILESYSTEM_LIBRARY}
-                           ${Boost_SYSTEM_LIBRARY}
+   target_link_libraries ( datatools_bio 
+                           datatools
+                           # ${CLHEP_LIBRARIES}
+                           # ${Boost_SERIALIZATION_LIBRARY}
+                           # ${Boost_IOSTREAMS_LIBRARY}
+                           # ${Boost_FILESYSTEM_LIBRARY}
+                           # ${Boost_SYSTEM_LIBRARY}
                          )
-
+ 
    target_link_libraries ( datatools_bio LINK_INTERFACE_LIBRARIES "" )
 
+   # Install library and associate it with an export
    install ( TARGETS datatools_bio
-             RUNTIME DESTINATION bin COMPONENT bin
-             LIBRARY DESTINATION lib COMPONENT bin 
-             ARCHIVE DESTINATION lib COMPONENT devel
+             EXPORT  datatools-libraries
+             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT bin
+             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT bin 
+             ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT devel
            )
 
 endif ( DATATOOLS_WITH_BIO )

@@ -10,7 +10,15 @@
 
 #include <boost/algorithm/string.hpp>
 
-#include <kwsys/DynamicLoader.hxx>
+#include <datatools/datatools_config.h>
+
+// #if DATATOOLS_WITH_EMBEDDED_KWSYS == 0
+// #include <kwsys/DynamicLoader.hxx>
+// #define KWSYS_NAMESPACE kwsys
+// #else
+#include <datatools_sys/DynamicLoader.hxx>
+//#define KWSYS_NAMESPACE datatools_sys
+// #endif
 
 using namespace std;
 
@@ -37,26 +45,26 @@ int main (int argc_ , char ** argv_)
 	  iarg++;
         }
       
-      vector<kwsys::DynamicLoader::LibraryHandle> h;
+      vector<DATATOOLS_SYS_NAMESPACE::DynamicLoader::LibraryHandle> h;
 
       clog << "************* Loading 'ssl'..." << endl;
-      h.push_back (kwsys::DynamicLoader::OpenLibrary ("libssl.so"));
+      h.push_back (DATATOOLS_SYS_NAMESPACE::DynamicLoader::OpenLibrary ("libssl.so"));
  
       clog << "************* Loading 'mygsl'..." << endl;
-      h.push_back (kwsys::DynamicLoader::OpenLibrary ("libmygsl.so"));
+      h.push_back (DATATOOLS_SYS_NAMESPACE::DynamicLoader::OpenLibrary ("libmygsl.so"));
  
       clog << "************* Loading 'geomtools'..." << endl;
-      h.push_back (kwsys::DynamicLoader::OpenLibrary ("libgeomtools.so"));
+      h.push_back (DATATOOLS_SYS_NAMESPACE::DynamicLoader::OpenLibrary ("libgeomtools.so"));
 
       clog << "************* Loading 'crypto'..." << endl;
-      h.push_back (kwsys::DynamicLoader::OpenLibrary ("libcrypto.so"));
+      h.push_back (DATATOOLS_SYS_NAMESPACE::DynamicLoader::OpenLibrary ("libcrypto.so"));
 
       clog << "************* Load is done." << endl;
 
       for (int i = (h.size () - 1) ; i >= 0 ; --i)
 	{
 	  clog << "************* Closing library i=" << i << endl;
-	  kwsys::DynamicLoader::CloseLibrary (h[i]);
+	  DATATOOLS_SYS_NAMESPACE::DynamicLoader::CloseLibrary (h[i]);
 	}
 
     }

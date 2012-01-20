@@ -28,25 +28,17 @@ list ( SORT datatools_tests_programs_list )
 #message ( STATUS "************ PROJECT_BINARY_DIR   : ${PROJECT_BINARY_DIR}" )
 
 # include files search paths
-include_directories (
-    ${PROJECT_BINARY_DIR}/include
-    ${PROJECT_SOURCE_DIR}/include
-    ${CLHEP_INCLUDE_DIRS}
-    ${Boost_INCLUDE_DIRS}
-    ${PROJECT_SOURCE_DIR}/testing
-)
-
-if ( NOT DATATOOLS_WITH_EMBEDDED_KWSYS )
-  include_directories (
-      ${KWSYS_INCLUDE_DIRS}
-  )
-endif ()
+include_directories ( ${PROJECT_BINARY_DIR}/include
+                      ${PROJECT_SOURCE_DIR}/include
+                      ${CLHEP_INCLUDE_DIRS}
+                      ${Boost_INCLUDE_DIRS}
+                      ${PROJECT_SOURCE_DIR}/testing
+                    )
 
 # linker search paths
 link_directories( ${PROJECT_BINARY_DIR}/src )
 
-#message ( STATUS "CLHEP libraries : ${CLHEP_LIBRARIES}" )
-#message ( STATUS "KWSYS libraries : ${KWSYS_LIBRARIES}" )
+##message ( STATUS "KWSYS libraries : ${KWSYS_LIBRARIES}" )
 
 option (DATATOOLS_ALL_TESTS "Perform all possible tests" ON)
 message ( STATUS "Performing all available tests : ${DATATOOLS_ALL_TESTS}" )
@@ -72,15 +64,10 @@ foreach ( test_program ${datatools_tests_programs_list} )
   if ( Boost_PYTHON_FOUND )
      list (APPEND test_libraries ${PYTHON_LIBRARIES} )
   endif () 
-  #${PYTHON_LIBRARIES}
 
-  if ( NOT DATATOOLS_WITH_EMBEDDED_KWSYS )
-    list (APPEND test_libraries ${KWSYS_LIBRARIES} )
-  else ()
-    list (INSERT test_libraries 0 "kwsys_c" )
-    list (INSERT test_libraries 0 "kwsys" )
-    list (APPEND test_libraries "dl" )
-  endif ()
+  list (INSERT test_libraries 0 "datatools_sys" )
+  #list (INSERT test_libraries 0 "datatools_sys_c" )
+  list (APPEND test_libraries "dl" )
 	 
   if ( DATATOOLS_WITH_BIO )
     list (INSERT test_libraries 0 "datatools_bio" )
@@ -107,7 +94,7 @@ add_custom_target ( clean_test
                      clean
                   )
 
-set ( _test_install_dir ${INSTALL_MISC_DIR}/testing )
+set ( _test_install_dir ${CMAKE_INSTALL_DATADIR}/testing )
 
 file ( GLOB datatools_tests_config config/*.conf )
 

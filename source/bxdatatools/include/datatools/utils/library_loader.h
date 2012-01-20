@@ -39,10 +39,17 @@
 #include <boost/cstdint.hpp>
 #include <boost/utility.hpp>
 
+#include <datatools/datatools_config.h>
 #include <datatools/utils/handle.h>
 #include <datatools/utils/bit_mask.h>
 
-#include <kwsys/DynamicLoader.hxx>
+// #if DATATOOLS_WITH_EMBEDDED_KWSYS == 0
+// #include <kwsys/DynamicLoader.hxx>
+// #define KWSYS_NAMESPACE kwsys
+// #else
+#include <datatools_sys/DynamicLoader.hxx>
+//#define KWSYS_NAMESPACE datatools_sys
+// #endif
 
 namespace datatools {
   
@@ -56,7 +63,7 @@ namespace datatools {
     typedef map<string, handle_library_entry_type>       handle_library_entry_dict_type;
     typedef list<handle_library_entry_type>              handle_library_entry_stack_type;
 
-    typedef kwsys::DynamicLoader::SymbolPointer symbol_ptr;
+    typedef DATATOOLS_SYS_NAMESPACE::DynamicLoader::SymbolPointer symbol_ptr;
 
     struct library_entry_type
     {
@@ -67,7 +74,7 @@ namespace datatools {
       string version;
       bool   autoload;
       int    status;
-      kwsys::DynamicLoader::LibraryHandle handle;
+      DATATOOLS_SYS_NAMESPACE::DynamicLoader::LibraryHandle handle;
 
       library_entry_type (const string & a_name = "",
                           const string & a_directory = "",

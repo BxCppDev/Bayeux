@@ -15,7 +15,14 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/foreach.hpp>
 
-#include <kwsys/DynamicLoader.hxx>
+// #if DATATOOLS_WITH_EMBEDDED_KWSYS == 0
+// #include <kwsys/DynamicLoader.hxx>
+// #define KWSYS_NAMESPACE kwsys
+// #else
+#include <datatools_sys/DynamicLoader.hxx>
+#//define KWSYS_NAMESPACE datatools_sys
+// #endif
+
 #include <datatools/utils/utils.h>
 #include <datatools/utils/handle.h>
 #include <datatools/utils/multi_properties.h>
@@ -55,13 +62,13 @@ namespace datatools {
     {
       if (handle != 0)
 	{
-          int status = kwsys::DynamicLoader::CloseLibrary (handle);
+          int status = DATATOOLS_SYS_NAMESPACE::DynamicLoader::CloseLibrary (handle);
 	  if (status != 1)
 	    {
 	      ostringstream message;
 	      message << "library_entry_type::dtor: The '"
-		      << name << "' library was not closed ! kwsys says: '"
-		      << kwsys::DynamicLoader::LastError () << "' !";
+		      << name << "' library was not closed ! DATATOOLS_SYS_NAMESPACE says: '"
+		      << DATATOOLS_SYS_NAMESPACE::DynamicLoader::LastError () << "' !";
 	      cerr << "ERROR: " << message.str () << endl;
 	    }
 	}
@@ -179,7 +186,7 @@ namespace datatools {
 		  << a_lib_name << "' is not loaded !";
 	  throw logic_error (message.str ());
 	}
-      symbol_ptr the_symptr = kwsys::DynamicLoader::GetSymbolAddress (found->second.get ().handle, a_symbol.c_str());
+      symbol_ptr the_symptr = DATATOOLS_SYS_NAMESPACE::DynamicLoader::GetSymbolAddress (found->second.get ().handle, a_symbol.c_str());
       return the_symptr;
     }
 
@@ -233,20 +240,20 @@ namespace datatools {
 		      clog << "DEBUG: " << "datatools::utils::library_loader::close_all: "
 			   << "Closing library '" << le.name << "'..." << endl;
 		    }
-		  int status = kwsys::DynamicLoader::CloseLibrary (le.handle);
+		  int status = DATATOOLS_SYS_NAMESPACE::DynamicLoader::CloseLibrary (le.handle);
 		  if (status != 1)
 		    {
 		      ostringstream message;
 		      message << "datatools::utils::library_loader::close_all: The '"
-			      << le.name << "' library was not closed ! kwsys says: '"
-			      << kwsys::DynamicLoader::LastError () << "' !";
+			      << le.name << "' library was not closed ! DATATOOLS_SYS_NAMESPACE says: '"
+			      << DATATOOLS_SYS_NAMESPACE::DynamicLoader::LastError () << "' !";
 		      cerr << "ERROR: " << message.str () << endl;
 		      //return;
 		    }
 
                   // 2011/09/19: F.M & X.G: Even if the return status
-		  // from kwsys::DynamicLoader::CloseLibrary is not 0,
-		  // the library is closed by kwsys, so we removed the
+		  // from DATATOOLS_SYS_NAMESPACE::DynamicLoader::CloseLibrary is not 0,
+		  // the library is closed by DATATOOLS_SYS_NAMESPACE, so we removed the
 		  // library entry from the library stack. Actually
 		  // the return status is really not explicit and can
 		  // not be used.
@@ -327,9 +334,9 @@ namespace datatools {
       if (le.filename.empty ())
 	{
 	  ostringstream filename_ss;
-	  filename_ss << kwsys::DynamicLoader::LibPrefix();
+	  filename_ss << DATATOOLS_SYS_NAMESPACE::DynamicLoader::LibPrefix();
 	  filename_ss << le.name;
-	  filename_ss << kwsys::DynamicLoader::LibExtension();
+	  filename_ss << DATATOOLS_SYS_NAMESPACE::DynamicLoader::LibExtension();
           if (! le.version.empty ())
 	    {
 	      filename_ss << le.version;
@@ -419,7 +426,7 @@ namespace datatools {
       library_entry_type & le = found->second.get ();
       string check = le.full_path;
       fetch_path_with_env (check);
-      le.handle = kwsys::DynamicLoader::OpenLibrary (check.c_str ());
+      le.handle = DATATOOLS_SYS_NAMESPACE::DynamicLoader::OpenLibrary (check.c_str ());
       if (le.handle != 0)
 	{
 	  _stacked_libraries_.push_front (found->second);
@@ -427,8 +434,8 @@ namespace datatools {
       else
 	{
 	  ostringstream message;
-	  message << a_lib_name << " library was not loaded ! kwsys says: '"
-		  << kwsys::DynamicLoader::LastError () << "' !";
+	  message << a_lib_name << " library was not loaded ! DATATOOLS_SYS_NAMESPACE says: '"
+		  << DATATOOLS_SYS_NAMESPACE::DynamicLoader::LastError () << "' !";
 	  cerr << "ERROR: " << message.str () << endl;
 	}
       return EXIT_SUCCESS;
@@ -456,12 +463,12 @@ namespace datatools {
       handle_library_entry_type & hle = found->second;
       library_entry_type & le = hle.get ();
 
-      int status = kwsys::DynamicLoader::CloseLibrary (le.handle);
+      int status = DATATOOLS_SYS_NAMESPACE::DynamicLoader::CloseLibrary (le.handle);
       if (status != 1)
 	{
 	  ostringstream message;
-	  message << "The '" << le.name << "' library was not closed ! kwsys says: '"
-		  << kwsys::DynamicLoader::LastError () << "' !";
+	  message << "The '" << le.name << "' library was not closed ! DATATOOLS_SYS_NAMESPACE says: '"
+		  << DATATOOLS_SYS_NAMESPACE::DynamicLoader::LastError () << "' !";
 	  clog << "ERROR: " << message.str () << endl;
 	  return EXIT_FAILURE;
 	}

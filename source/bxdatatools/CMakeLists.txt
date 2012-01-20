@@ -1,9 +1,9 @@
-# - Top level CMakeLists.txt for datatools project
+# - Top level CMakeLists.txt for datatoolsproject
 # -*- mode: cmake; -*-
 #
 # ----------------------------------------------------------------------------
-# Copyright (c) 2011, François Mauger <mauger@lpccaen.in2p3.fr>
-#                     Ben Morgan <Ben.Morgan@warwick.ac.uk>
+# Copyright (c) 2011-2012, François Mauger <mauger@lpccaen.in2p3.fr>
+#                          Ben Morgan <Ben.Morgan@warwick.ac.uk>
 # ----------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------
@@ -32,6 +32,7 @@ message ( STATUS "Package name         : '${datatools_PACKAGE_NAME}'" )
 
 # - include project configuration
 include ( ${CMAKE_SOURCE_DIR}/cmake/Config.cmake )
+include ( ${CMAKE_SOURCE_DIR}/cmake/InstallDirs.cmake )
 include ( ${CMAKE_SOURCE_DIR}/cmake/PackageFilename.cmake )
 
 # ----------------------------------------------------------------------------
@@ -58,6 +59,29 @@ message ( STATUS "CMAKE_MODULE_PATH : '${CMAKE_MODULE_PATH}'" )
 # ----------------------------------------------------------------------------
 # - Dependencies :
 #
+
+### EXPERIMENTAL...
+# set ( _cadfael_dir "" )
+# if ( DEFINED CADFAEL_CMAKE_CONFIG_DIR )
+#    set ( _cadfael_dir "${CADFAEL_CMAKE_CONFIG_DIR}" )
+# else
+#   if ( DEFINED cadfael_DIR )
+#    set ( _cadfael_dir "${cadfael_DIR}" )
+#   endif ()
+# endif ()
+#
+# if ( EXISTS ${_cadfael_dir} )
+#    message ( STATUS "About to use Cadfael CMake configuration directory : '${_cadfael_dir}' ")
+#    set ( _cadfael_required 0 )
+#    if ( DEFINED CADFAEL_REQUIRED AND CADFAEL_REQUIRED )
+#      set ( _cadfael_required 1 )
+#    endif ()
+#    set ( _cadfael_required_label "QUIET" )
+#    if ( _cadfael_required )
+#      set ( _cadfael_required_label "REQUIRED" )
+#    endif ()
+#    find_package ( cadfael ${_cadfael_required_label} COMPONENTS Boost CLHEP)
+# endif ()
 
 # - Depends on Boost:
 set ( _boost_version 1.47.0 )
@@ -102,17 +126,6 @@ else ()
      message ( FATAL_ERROR "Cannot find CLHEP ${_clhep_version} library !" )
 endif ()
 
-# - Depends on kwsys:
-set ( _kwsys_version 0.1.0 )
-find_package ( KWSYS ${_kwsys_version} REQUIRED )
-if ( KWSYS_FOUND )
-   message ( STATUS "Found KWSYS ${_kwsys_version}" )
-   include_directories ( ${KWSYS_INCLUDE_DIRS} )
-   message ( STATUS "KWSYS_LIBRARIES : ${KWSYS_LIBRARIES}" )
-else ()
-   message ( FATAL_ERROR "Cannot find kwsys ${_kwsys_version} library !" )
-endif ()
-
 # ----------------------------------------------------------------------
 # - Options :
 
@@ -136,27 +149,56 @@ option ( DATATOOLS_WITH_TEST
          "Build the datatools test material" 
  	 ON )
 
+if (DATATOOLS_WITH_DEBUG)
+  set (DATATOOLS_WITH_DEBUG 1)
+endif ()
+
+if (DATATOOLS_WITH_BIO)
+  set (DATATOOLS_WITH_BIO 1)
+endif ()
+
+if (DATATOOLS_WITH_PYTHON_WRAPPER)
+  set (DATATOOLS_WITH_PYTHON_WRAPPER 1)
+endif ()
+
+if (DATATOOLS_WITH_DOC)
+  set (DATATOOLS_WITH_DOC 1)
+endif ()
+
+if (DATATOOLS_WITH_TEST)
+  set (DATATOOLS_WITH_TEST 1)
+endif ()
+
 if ( UNIX OR APPLE )
   option ( DATATOOLS_WITH_CONFIG_SCRIPT 
            "Build the datatools-config script" 
      	   ON )
   option ( DATATOOLS_WITH_PKGCONFIG 
-           "Build the pkg-config script" 
-     	   ON )
+           "Build the pkg-config configuration script (broken)" 
+     	   OFF )
+endif ()
+
+set ( _datatools_cmake_config_install_dir ${CMAKE_INSTALL_LIBDIR}/cmake ) # or cmake/${PROJECT_NAME}
+
+if ( DATATOOLS_WITH_PKGCONFIG )
+  set ( _datatools_pkgconfig_install_dir ${CMAKE_INSTALL_LIBDIR}/pkgconfig )
+  if ( DEFINED DATATOOLS_PKGCONFIG_INSTALL_DIR)
+    set ( _datatools_pkgconfig_install_dir ${DATATOOLS_PKGCONFIG_INSTALL_DIR} )
+  endif ()
 endif ()
 
 option ( DATATOOLS_WITH_CMAKE_FIND_MODULE 
          "Build the datatools' CMake find module"
- 	 ON )
+ 	 OFF )
 
-set ( _find_module_install_dir ${INSTALL_MISC_DIR}/cmake/Modules ) 
+set ( _find_module_install_dir ${CMAKE_INSTALL_DATADIR}/cmake/Modules ) 
 if ( DATATOOLS_WITH_CMAKE_FIND_MODULE )
   if ( DEFINED DATATOOLS_FIND_MODULE_INSTALL_DIR )
     set ( _find_module_install_dir ${DATATOOLS_FIND_MODULE_INSTALL_DIR} ) 
     message ( STATUS "DATATOOLS_FIND_MODULE_INSTALL_DIR : " "${DATATOOLS_FIND_MODULE_INSTALL_DIR}" )
   endif ()
+  message ( STATUS "datatools CMake find module install dir = '${_find_module_install_dir}'" )
 endif ( DATATOOLS_WITH_CMAKE_FIND_MODULE )
-message ( STATUS "_find_module_install_dir = '${_find_module_install_dir}'" )
 
 message ( STATUS "DATATOOLS_WITH_DEBUG           : " "${DATATOOLS_WITH_DEBUG}" )
 message ( STATUS "DATATOOLS_WITH_BIO             : " "${DATATOOLS_WITH_BIO}" )
@@ -164,7 +206,9 @@ message ( STATUS "DATATOOLS_WITH_PYTHON_WRAPPER  : " "${DATATOOLS_WITH_PYTHON_WR
 if (UNIX OR APPLE)
   message ( STATUS "DATATOOLS_WITH_CONFIG_SCRIPT   : " "${DATATOOLS_WITH_CONFIG_SCRIPT}" )
   message ( STATUS "DATATOOLS_WITH_PKGCONFIG       : " "${DATATOOLS_WITH_PKGCONFIG}" )
+  message ( STATUS "datatools pkgconfig install dir:  ${_datatools_pkgconfig_install_dir}" )
 endif (UNIX OR APPLE)
+message ( STATUS "datatools CMake config install dir:  ${_datatools_cmake_config_install_dir}" )
 message ( STATUS "DATATOOLS_WITH_DOC             : " "${DATATOOLS_WITH_DOC}" )
 message ( STATUS "DATATOOLS_WITH_TEST            : " "${DATATOOLS_WITH_TEST}" )
 message ( STATUS "CMAKE_INSTALL_PREFIX           : " "${CMAKE_INSTALL_PREFIX}" )
@@ -174,6 +218,21 @@ message ( STATUS "CMAKE_INSTALL_PYTHONDIR        : " "${CMAKE_INSTALL_PYTHONDIR}
 # - datatools API :
 #
 
+message ( STATUS "Using embedded KWSYS" )
+set (KWSYS_NAMESPACE datatools_sys)
+set (KWSYS_BUILD_SHARED ON)
+set (KWSYS_INSTALL_EXPORT_NAME datatools-libraries)
+set (KWSYS_HEADER_ROOT ${PROJECT_BINARY_DIR}/include )
+set (KWSYS_INSTALL_INCLUDE_DIR ${CMAKE_INSTALL_INCLUDEDIR} )
+set (KWSYS_INSTALL_BIN_DIR ${CMAKE_INSTALL_BINDIR} )
+set (KWSYS_INSTALL_LIB_DIR ${CMAKE_INSTALL_LIBDIR} )
+set (KWSYS_INSTALL_DOC_DIR ${CMAKE_INSTALL_DATAROOTDIR}/doc )
+set (KWSYS_INSTALL_COMPONENT_NAME_RUNTIME Runtime)
+set (KWSYS_INSTALL_COMPONENT_NAME_DEVELOPMENT Development)
+set (KWSYS_USE_DynamicLoader 1) # Enable DynamicLoader class.
+message ( STATUS "Add subdirectory : " "'kwsys" )
+add_subdirectory (kwsys) 
+
 message ( STATUS "Add subdirectory : " "'src'" )
 add_subdirectory ( src )   
 
@@ -181,52 +240,79 @@ add_subdirectory ( src )
 # - Configuration files :
 #
 
-configure_file ( "${PROJECT_SOURCE_DIR}/cmake/templates/datatools_config.h.in.cmake"
+configure_file ( "${PROJECT_SOURCE_DIR}/cmake/templates/datatools_config.h.in"
                  "${PROJECT_BINARY_DIR}/include/datatools/datatools_config.h" @ONLY )
 
 install (FILES ${PROJECT_BINARY_DIR}/include/datatools/datatools_config.h
-         DESTINATION ${CMAKE_INSTALL_PREFIX}/include/datatools/
+         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/datatools/
          PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
         )
 
-configure_file ( "${PROJECT_SOURCE_DIR}/cmake/templates/datatools_setup.sh.in.cmake"
+configure_file ( "${PROJECT_SOURCE_DIR}/cmake/templates/datatools_setup.sh.in"
                  "${PROJECT_BINARY_DIR}/cmake/datatools_setup.sh" @ONLY )
 
 install ( FILES ${PROJECT_BINARY_DIR}/cmake/datatools_setup.sh
-          DESTINATION ${CMAKE_INSTALL_PREFIX}/etc/
+          DESTINATION ${CMAKE_INSTALL_ETCDIR}
           PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
         )
 
-set ( _boost_libs "date_time filesystem iostreams program_options serialization system thread" )
-set ( _datatools_pkgconfig_Requires 
-      "Requires: CLHEP >= ${_clhep_version},Boost/date_time >= ${_boost_version},Boost/iostreams,Boost/filesystem,Boost/program_options,Boost/serialization,Boost/system Boost/thread" 
+# -------------------------------------------------------------------------------------------
+# - pkgconfig file :
+#
+
+if ( DATATOOLS_WITH_PKGCONFIG )
+
+  set ( _boost_libs "date_time filesystem iostreams program_options serialization system thread" )
+  set ( _datatools_pkgconfig_Requires 
+        "Requires: CLHEP >= ${_clhep_version},Boost/date_time >= ${_boost_version},Boost/iostreams,Boost/filesystem,Boost/program_options,Boost/serialization,Boost/system Boost/thread" 
     )
-if ( DATATOOLS_WITH_PYTHON_WRAPPER )
-   set ( _datatools_pkgconfig_Requires "${_datatools_pkgconfig_Requires},Boost/python" )
-   set ( _boost_libs "${_boost_libs} python" )
-endif ( DATATOOLS_WITH_PYTHON_WRAPPER )
+  if ( DATATOOLS_WITH_PYTHON_WRAPPER )
+     set ( _datatools_pkgconfig_Requires "${_datatools_pkgconfig_Requires},Boost/python" )
+     set ( _boost_libs "${_boost_libs} python" )
+  endif ( )
 
-configure_file ( "${PROJECT_SOURCE_DIR}/cmake/templates/datatools.pc.in.cmake"
-                 "${PROJECT_BINARY_DIR}/cmake/datatools.pc" @ONLY 
-               )
+  set ( _datatools_pkgconfig_Libs 
+        "-ldatatools_sys" 
+        #"-ldatatools_sys_c" 
+      )
 
-install ( FILES ${PROJECT_BINARY_DIR}/cmake/datatools.pc
-          DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig/
-          PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
-        )
+  set ( _datatools_pkgconfig_Cflags ${CLHEP_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} )
+  set ( _datatools_pkgconfig_Libs "-ldatatools" ${_datatools_pkgconfig_Libs} )
 
-set ( _datatools_pkgconfig_Libs "-ldatatools" )
+  set ( _datatools_pkgconfig_Libs 
+        ${_datatools_pkgconfig_Libs} 
+        ${CLHEP_LIBRARIES} 
+        ${Boost_LIBRARIES}  
+      )
+  set ( _datatools_pkgconfig_Libs 
+        ${_datatools_pkgconfig_Libs} 
+        -lm -ldl 
+      )
 
-set ( _datatools_pkgconfig_Libs 
-    ${_datatools_pkgconfig_Libs} 
-    ${CLHEP_LIBRARIES} 
-    ${Boost_LIBRARIES}  
-    ${KWSYS_LIBRARIES}  
-    -lm -ldl )
+  if ( DATATOOLS_WITH_PYTHON_WRAPPER )
+     set ( _datatools_pkgconfig_Cflags
+           ${_datatools_pkgconfig_Cflags} 
+           ${PYTHON_INCLUDE_DIRS} 
+         )
+     set ( _datatools_pkgconfig_Libs 
+           ${_datatools_pkgconfig_Libs} 
+           ${PYTHON_LIBRARIES}
+         )
+  endif ()
 
-if ( DATATOOLS_WITH_BIO )
-  set ( _datatools_pkgconfig_Libs -ldatatools_bio ${_datatools_pkgconfig_Libs} )
-endif ()
+  if ( DATATOOLS_WITH_BIO )
+    set ( _datatools_pkgconfig_Libs -ldatatools_bio ${_datatools_pkgconfig_Libs} )
+  endif ()
+
+  configure_file ( "${PROJECT_SOURCE_DIR}/cmake/templates/datatools.pc.in"
+                   "${PROJECT_BINARY_DIR}/cmake/datatools.pc" @ONLY 
+                 )
+
+  install ( FILES ${PROJECT_BINARY_DIR}/cmake/datatools.pc
+            DESTINATION ${_datatools_pkgconfig_install_dir}
+            PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+          )
+endif ()  
 
 if ( DATATOOLS_WITH_CMAKE_FIND_MODULE )
 
@@ -247,18 +333,18 @@ endif ()
 if ( UNIX OR APPLE )
   if ( DATATOOLS_WITH_CONFIG_SCRIPT )
 
-    configure_file ( "${PROJECT_SOURCE_DIR}/cmake/templates/datatools-config.in.cmake"
+    configure_file ( "${PROJECT_SOURCE_DIR}/cmake/templates/datatools-config.in"
                      "${PROJECT_BINARY_DIR}/cmake/datatools-config" @ONLY )
 
     install ( FILES ${PROJECT_BINARY_DIR}/cmake/datatools-config
-              DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/
+              DESTINATION ${CMAKE_INSTALL_BINDIR}
               PERMISSIONS OWNER_READ OWNER_EXECUTE 
                           GROUP_READ GROUP_EXECUTE 
                           WORLD_READ WORLD_EXECUTE
              )
 
     install ( FILES ${PROJECT_SOURCE_DIR}/pkgtools.d/mkuniqueflags.py
-              DESTINATION ${INSTALL_MISC_DIR}/pkgtools
+              DESTINATION ${CMAKE_INSTALL_DATADIR}/pkgtools
               PERMISSIONS OWNER_READ OWNER_EXECUTE 
 	                  GROUP_READ GROUP_EXECUTE 
                           WORLD_READ WORLD_EXECUTE
@@ -268,7 +354,7 @@ if ( UNIX OR APPLE )
 endif ()  
 
 install ( FILES README.txt COPYING.txt LICENSE.GPL3.txt
-          DESTINATION ${INSTALL_MISC_DIR}
+          DESTINATION ${CMAKE_INSTALL_DATADIR}
          )
 
 # ----------------------------------------------------------------------------
@@ -322,5 +408,105 @@ endif ()
 # - Packaging
 #
 include ( ${DATATOOLS_SOURCE_DIR}/cmake/Packaging.cmake OPTIONAL )
+
+
+# ----------------------------------------------------------------------------
+# - Generate Build Tree configuration files
+# - CMake
+# Export targets from the build tree
+# Done by hand for now because we know the targets exactly
+
+set ( _datatools_export_append "" )
+message ( STATUS "Exporting datatools_sys... " )
+export ( TARGETS 
+         datatools_sys
+         #datatools_sys_c
+         FILE ${PROJECT_BINARY_DIR}/datatools-libraries.cmake
+       )
+set ( _datatools_export_append "APPEND" )
+
+message ( STATUS "Exporting datatools... " )
+export(TARGETS datatools 
+  ${_datatools_export_append} FILE ${PROJECT_BINARY_DIR}/datatools-libraries.cmake
+  )
+
+if(TARGET datatools_bio)
+  message ( STATUS "Exporting datatools_bio... " )
+  export(TARGETS datatools_bio 
+    APPEND FILE ${PROJECT_BINARY_DIR}/datatools-libraries.cmake
+    )
+endif()
+
+# Configure the build tree CMake Config mode file
+# Set needed variables
+set(datatools_INCLUDE_DIR 
+  ${PROJECT_SOURCE_DIR}/include
+  ${PROJECT_BINARY_DIR}/include
+  )
+# Configure file
+configure_file(
+  ${PROJECT_SOURCE_DIR}/cmake/templates/datatools-config.cmake.in
+  ${PROJECT_BINARY_DIR}/datatools-config.cmake
+  @ONLY
+  )
+
+# Configure the build tree versioning file
+configure_file(
+  ${PROJECT_SOURCE_DIR}/cmake/templates/datatools-config-version.cmake.in
+  ${PROJECT_BINARY_DIR}/datatools-config-version.cmake
+  @ONLY
+  )
+
+
+#----------------------------------------------------------------------------
+# - Generate Install Tree configuration files
+# - CMake
+# Export targets from the install tree
+# Just need to install the named export to a suitable location
+if(WIN32)
+  set(DATATOOLS_CMAKE_CONFIG_DIR datatools-${datatools_VERSION_STR} )
+else()
+  if(DATATOOLS_IS_FRAMEWORK)
+    # Mac Framework location - may not be needed.
+  else()
+    # Standard Unix Tool
+    set(DATATOOLS_CMAKE_CONFIG_DIR ${_datatools_cmake_config_install_dir} )
+  endif()
+endif()
+
+install(EXPORT datatools-libraries
+  DESTINATION ${DATATOOLS_CMAKE_CONFIG_DIR}
+  COMPONENT devel
+  )
+
+# Configure the install tree CMake Config mode file
+# Set variables
+set(datatools_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include)
+# Configure file
+# This is different from the build tree file, so store in dedicated directory
+configure_file(
+  ${PROJECT_SOURCE_DIR}/cmake/templates/datatools-config.cmake.in
+  ${PROJECT_BINARY_DIR}/InstallTreeFiles/datatools-config.cmake
+  @ONLY
+  )
+
+
+# Configure the install tree versioning file
+# N.B. it *probably* does not differ from the build tree file, but configuring
+# separately allows easy changes should we need this.
+configure_file(
+  ${PROJECT_SOURCE_DIR}/cmake/templates/datatools-config-version.cmake.in
+  ${PROJECT_BINARY_DIR}/InstallTreeFiles/datatools-config-version.cmake
+  @ONLY
+  )
+
+# Install the CMake Config mode files into the install tree
+install(FILES
+  ${PROJECT_BINARY_DIR}/InstallTreeFiles/datatools-config.cmake
+  ${PROJECT_BINARY_DIR}/InstallTreeFiles/datatools-config-version.cmake
+  DESTINATION ${DATATOOLS_CMAKE_CONFIG_DIR}
+  COMPONENT devel
+  )
+
 
 # - end of top level CMakeLists.txt for datatools project.

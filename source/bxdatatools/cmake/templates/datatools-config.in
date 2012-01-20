@@ -12,43 +12,47 @@ debug=0
 function my_exit ()
 {
     cd ${opwd}
-    exit $?
+    exit $1
 }
 
 datatools_system="@CMAKE_SYSTEM_NAME@-@CMAKE_SYSTEM_PROCESSOR@"
 
 datatools_root=@CMAKE_INSTALL_PREFIX@
 
-if [ -n "${DATATOOLS_ROOT}" ]; then
-    datatools_root="${DATATOOLS_ROOT}"
-else
-    echo "ERROR: ${script_name}: 'DATATOOLS_ROOT' environment variable is not defined ! Abort !" 1>&2
-    my_exit 1
-fi
+# if [ -n "${DATATOOLS_ROOT}" ]; then
+#     datatools_root="${DATATOOLS_ROOT}"
+# else
+#     echo "ERROR: ${script_name}: 'DATATOOLS_ROOT' environment variable is not defined ! Abort !" 1>&2
+#     my_exit 1
+# fi
 
-datatools_include_dir="${datatools_root}/include"
+datatools_bin_dir="${datatools_root}/@CMAKE_INSTALL_BINDIR@"
 
-datatools_lib_dir="${datatools_root}/lib"
+datatools_lib_dir="${datatools_root}/@CMAKE_INSTALL_LIBDIR@"
 
-datatools_bin_dir="${datatools_root}/bin"
+datatools_etc_dir="${datatools_root}/@CMAKE_INSTALL_ETCDIR@"
 
-datatools_resources_dir="@CMAKE_INSTALL_PREFIX@/@INSTALL_RESOURCES_DIR@"
+datatools_doc_dir="${datatools_root}/@CMAKE_INSTALL_DOCDIR@"
+
+datatools_include_dir="${datatools_root}/@CMAKE_INSTALL_INCLUDEDIR@"
+
+datatools_data_dir="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
 
 datatools_version=@datatools_VERSION_STR@
 
 with_python_wrapper=0
-if [ "x@DATATOOLS_WITH_PYTHON_WRAPPER@" == "x1" ]; then
+if [ "x@DATATOOLS_WITH_PYTHON_WRAPPER@" == "x1" -o "x@DATATOOLS_WITH_PYTHON_WRAPPER@" == "xON" ]; then
     with_python_wrapper=1
 fi
 
-with_bio=0
-if [ "x@DATATOOLS_WITH_BIO@" == "x1" ]; then
-    with_bio=1
+with_debug=0
+if [ "x@DATATOOLS_WITH_DEBUG@" == "x1" -o "x@DATATOOLS_WITH_DEBUG@" == "xON" ]; then
+    with_debug=1
 fi
 
-with_embedded_kwsys=0
-if [ "x@DATATOOLS_WITH_EMBEDDED_KWSYS@" == "x1" ]; then
-    with_embedded_kwsys=1
+with_bio=0
+if [ "x@DATATOOLS_WITH_BIO@" == "x1" -o "x@DATATOOLS_WITH_BIO@" == "xON" ]; then
+    with_bio=1
 fi
 
 option="$1"
@@ -75,10 +79,12 @@ Known values for OPTION are:
   --version             print version information
   --system              print system
   --prefix              print datatools installation prefix
-  --incdir              print include directory
-  --libdir              print library directory
   --bindir              print binary directory
-  --resources-dir       print resources directory
+  --libdir              print library directory
+  --incdir              print include directory
+  --datadir             print data directory
+  --docdir              print documentation directory
+  --etcdir              print data directory
   --include             print include path pre-processor flags without dependencies
   --cflags              print include path pre-processor flags with dependencies
   --libs    [option]    print library linking information, without dependencies
@@ -88,7 +94,7 @@ Known values for OPTION are:
   --with-python-wrapper print if Python wrapper module is used
   --with-bio            print if Boost/Serialization binary code is pre-built 
                         in an auxiliary I/O shared library
-  --with-embedded-kwsys print if Kwsys is embedded in datatools
+  --with-debug          print if datatools has been compiled in 'debug' mode
   --boost-version       print Boost version
   --clhep-version       print CLHEP version
 
@@ -111,13 +117,23 @@ if [ "x${option}" = "x--version" ]; then
     my_exit 0
 fi
 
-if [ "x${option}" = "x--include-dir" -o "x${option}" = "x--incdir" ]; then
+if [ "x${option}" = "x--incdir" ]; then
     echo "${datatools_include_dir}"
     my_exit 0
 fi
 
-if [ "x${option}" = "x--resources-dir" ]; then
-    echo "${datatools_resources_dir}"
+if [ "x${option}" = "x--datadir" ]; then
+    echo "${datatools_data_dir}"
+    my_exit 0
+fi
+
+if [ "x${option}" = "x--etcdir" ]; then
+    echo "${datatools_etc_dir}"
+    my_exit 0
+fi
+
+if [ "x${option}" = "x--docdir" ]; then
+    echo "${datatools_doc_dir}"
     my_exit 0
 fi
 
@@ -133,11 +149,8 @@ if [ "x${option}" = "x--cflags" ]; then
 	#echo -n "`boost-config --cflags date_time serialization iostreams filesystem system` "
 	echo -n "`boost-config --cflags` "
         echo -n "`clhep-config --include` "
-	if [ ${with_embedded_kwsys} -eq 0 ]; then
-	    echo -n "`kwsys-config --cflags` "
-	fi
 	echo ""
-    ) | python @CMAKE_INSTALL_PREFIX@/@INSTALL_MISC_DIR@/pkgtools/mkuniqueflags.py 
+    ) | python @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/pkgtools/mkuniqueflags.py 
 
     ###) | sed -e "s/-Wstrict-prototypes//g" -e "s/-Wall//g" | python ${datatools_root}/pkgtools.d/mkuniqueflags.py
     my_exit 0
@@ -166,10 +179,7 @@ if [ "x${option}" = "x--libs" ]; then
     if [ "x${option2}" = "x--with-bio" -a ${with_bio} -eq 1 ]; then
 	bio_ldflags=-ldatatools_bio
     fi
-    echo -n "-L${datatools_lib_dir} ${bio_ldflags} -ldatatools "
-    if [ ${with_embedded_kwsys} -eq 1 ]; then
-	echo -n "-lkwsys -lkwsys_c -ldl "
-    fi
+    echo -n "-L${datatools_lib_dir} ${bio_ldflags} -ldatatools -ldatatools_sys -ldl "
     echo
     my_exit 0
 fi
@@ -186,29 +196,37 @@ if [ "x${option}" = "x--ldflags" ]; then
 	#echo -n "`boost-config --ldflags serialization iostreams filesystem system` "
 	echo -n "`boost-config --ldflags` "
 	echo -n "`clhep-config --libs` -lm "
-	if [ ${with_embedded_kwsys} -eq 0 ]; then
-	    echo -n "`kwsys-config --ldflags` -ldl "
-	else
-	    echo -n "-lkwsys -lkwsys_c -ldl "
-	fi
+	echo -n "-ldatatools_sys -ldl "
 	echo ""
-    ) | python @CMAKE_INSTALL_PREFIX@/@INSTALL_MISC_DIR@/pkgtools/mkuniqueflags.py -r
+    ) | python @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/pkgtools/mkuniqueflags.py -r
     my_exit 0
+fi
+
+if [ "x${option}" = "x--with-debug" ]; then
+    echo "${with_debug}"
+    if [ "${with_debug}" = "1" ]; then
+	my_exit 0
+    else
+	my_exit 1	
+    fi
 fi
 
 if [ "x${option}" = "x--with-bio" ]; then
     echo "${with_bio}"
-    my_exit 0
-fi
-
-if [ "x${option}" = "x--with-embedded-kwsys" ]; then
-    echo "${with_embedded_kwsys}"
-    my_exit 0
+    if [ "${with_bio}" = "1" ]; then
+	my_exit 0
+    else
+	my_exit 1	
+    fi
 fi
 
 if [ "x${option}" = "x--with-python-wrapper" ]; then
     echo "${with_python_wrapper}"
-    my_exit 0
+    if [ "${with_python_wrapper}" = "1" ]; then
+	my_exit 0
+    else
+	my_exit 1	
+    fi
 fi
 
 if [ "x${option}" = "x--boost-version" ]; then

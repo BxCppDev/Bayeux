@@ -15,13 +15,13 @@ function my_exit ()
 appname=${APPNAME} 
 appversion=0.1 
 package_name="datatools"
-list_of_actions="check configure unconfigure build doc test untest clean install uninstall reset list_of_actions"
+list_of_actions="check configure unconfigure build doc test untest clean install uninstall reset quickstart list_of_actions"
 pkgtools_dir="pkgtools.d"
 
 the_base_dir=$(pwd)
 
 if [ ! -d ./${pkgtools_dir} ]; then
-    echo "ERROR: current direcotry is : $(pwd)" >&2
+    echo "ERROR: current directory is : $(pwd)" >&2
     echo "ERROR: ${appname}: Please run this script from the package base directory ! Abort !" >&2  
     my_exit 1
 fi
@@ -217,6 +217,8 @@ while [ -n "$1" ]; do
 	        the_action_mode="${arg}"	
             elif [ "$arg" = "reset" ]; then
 	        the_action_mode="${arg}"	
+            elif [ "$arg" = "quickstart" ]; then
+	        the_action_mode="${arg}"	
             elif [ "$arg" = "list_of_actions" ]; then
 	        the_action_mode="${arg}"	
 	    else
@@ -327,11 +329,14 @@ function do_configure ()
 
     local install_prefix=""
     local reset_build_dir=0
+    local with_debug=0
     local with_bio=1
     local with_doc=1
     local with_test=1
     local with_python_wrapper=0
     local with_dependency_check=0
+    local build_type=
+    local cadfael_cmake_config_dir=
     while [ -n "$1" ]; do
 	local option="$1"
 	#pkgtools__msg_warning "Option: '${option}'"
@@ -344,6 +349,19 @@ function do_configure ()
 	elif [ "${option}" = "--install-prefix" ]; then
 	    shift 1
 	    install_prefix="$1"
+	elif [ "${option}" = "--cadfael-cmake-config-dir" ]; then
+	    shift 1
+	    cadfael_cmake_config_dir="$1"
+	elif [ "${option}" = "--release-build" ]; then
+	    build_type="Release"
+	    with_debug=0
+	elif [ "${option}" = "--debug-build" ]; then
+	    build_type="Debug"
+	    with_debug=1
+	elif [ "${option}" = "--with-debug" ]; then
+	    with_debug=1
+	elif [ "${option}" = "--without-bio" ]; then
+	    with_debug=0
 	elif [ "${option}" = "--with-bio" ]; then
 	    with_bio=1
 	elif [ "${option}" = "--without-bio" ]; then
@@ -367,6 +385,11 @@ function do_configure ()
 	fi
 	shift 1
     done
+
+    if [ "x${build_type}" = "x" ]; then
+	build_type="Release"
+	pkgtools__msg_notice "Using default built type: '${build_type}'."
+    fi
 
     if [ -d ${the_build_dir} ]; then
 	pkgtools__msg_warning "The '${the_build_dir}' build directory already exists !"
@@ -393,6 +416,14 @@ function do_configure ()
     pkgtools__msg_notice "Build directory       : '${the_build_dir}'"
     test -f ${pkgtools_conf} && rm -f ${pkgtools_conf} 
     echo "build_dir=${the_build_dir}" >> ${pkgtools_conf}
+
+    if [ "x${cadfael_cmake_config_dir}" != "x" ]; then
+      if [ ! -f "x${cadfael_cmake_config_dir}" ]; then
+	  pkgtools__msg_error "Cannot find Cadfael CMake configuration file '${cadfael_cmake_config_dir}' !"
+	  __pkgtools__at_function_exit
+	  return 1
+      fi
+    fi
  
     pkgtools__msg_notice "Installation prefix   : '${install_prefix}'"
     pkgtools__msg_notice "With documentation    : '${with_doc}'"
@@ -400,7 +431,10 @@ function do_configure ()
     pkgtools__msg_notice "With Python wrapper   : '${with_python_wrapper}'"
     pkgtools__msg_notice "With Boost I/O DLL    : '${with_bio}'"
     pkgtools__msg_notice "With dependency check : '${with_dependency_check}'"
-
+    pkgtools__msg_notice "Build type            : '${build_type}'"
+    if [ "x${cadfael_cmake_config_dir}" != "x" ]; then
+	pkgtools__msg_notice "Cadfael CMake config  : '${cadfael_cmake_config_dir}'"
+    fi
     if [ ${with_dependency_check} -eq 1 ]; then
 	do_check
 	if [ $? -ne 0 ]; then
@@ -411,13 +445,20 @@ function do_configure ()
     fi
 
     cd ${the_build_dir}
+    local additional_options=
+    if [ "x${cadfael_cmake_config_dir}" != "x" ]; then
+        pkgtools__msg_warning "!!! EXPERIMENTAL FEATURE !!! Passing Cadfael CMake configuration file"
+	additional_options="${additional_options}-DCADFAEL_CMAKE_CONFIG_DIR:PATH=${cadfael_cmake_config_dir} "
+    fi
     cmake \
 	-DCMAKE_INSTALL_PREFIX:PATH=${install_prefix} \
-	-DCMAKE_BUILD_TYPE:STRING=Release \
+	-DCMAKE_BUILD_TYPE:STRING=${build_type} \
+	-DDATATOOLS_WITH_DEBUG=${with_debug} \
+	-DDATATOOLS_WITH_BIO=${with_bio} \
+	-DDATATOOLS_WITH_PYTHON_WRAPPER=${with_python_wrapper} \
 	-DDATATOOLS_WITH_DOC=${with_doc} \
 	-DDATATOOLS_WITH_TEST=${with_test} \
-	-DDATATOOLS_WITH_PYTHON_WRAPPER=${with_python_wrapper} \
-	-DDATATOOLS_WITH_BIO=${with_bio} \
+	${additional_options} \
 	..
     if [ $? -ne 0 ]; then
 	pkgtools__msg_error "Cannot configure the '${package_name}' package !"
@@ -881,6 +922,15 @@ function main ()
 	do_reset $@
 	if [ $? -ne 0 ]; then
 	    pkgtools__msg_error "Reset failed !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
+    
+    if [ "${action_mode}" = "quickstart" ]; then
+	do_configure $@ && do_build $@ && do_doc $@ && do_test && do_install 
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Quickstart failed !"
 	    __pkgtools__at_function_exit
 	    return 1
 	fi
