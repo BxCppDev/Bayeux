@@ -178,7 +178,7 @@ if ( UNIX OR APPLE )
      	   OFF )
 endif ()
 
-set ( _datatools_cmake_config_install_dir ${CMAKE_INSTALL_LIBDIR}/cmake ) # or cmake/${PROJECT_NAME}
+set ( _datatools_cmake_config_install_dir ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME} ) 
 
 if ( DATATOOLS_WITH_PKGCONFIG )
   set ( _datatools_pkgconfig_install_dir ${CMAKE_INSTALL_LIBDIR}/pkgconfig )

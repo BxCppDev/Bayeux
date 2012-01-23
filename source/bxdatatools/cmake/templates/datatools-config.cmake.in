@@ -50,10 +50,12 @@ include("${_thisdir}/datatools-libraries.cmake")
 # - Boost
 set(datatools_BOOST_ROOT @BOOST_ROOT@)
 set(datatools_BOOST_INCLUDE_DIRS @Boost_INCLUDE_DIRS@)
+set(datatools_BOOST_LIBRARIES @Boost_LIBRARIES@)
 
 # - CLHEP
 set(datatools_CLHEP_ROOT @CLHEP_ROOT@)
 set(datatools_CLHEP_INCLUDE_DIRS @CLHEP_INCLUDE_DIRS@)
+set(datatools_CLHEP_LIBRARIES @CLHEP_LIBRARIES@)
 
 
 #----------------------------------------------------------------------------
@@ -94,6 +96,11 @@ else()
   set(datatools_WITH_PYTHON_WRAPPER 0)
 endif()
 
-set(datatools_LIBRARIES ${datatools_BIO_LIBRARY} ${datatools_LIBRARY} ${datatools_SYS_LIBRARY} )
+set(datatools_LIBRARIES ${datatools_BIO_LIBRARY} 
+                        ${datatools_LIBRARY} 
+                        ${datatools_SYS_LIBRARY} 
+                        ${datatools_BOOST_LIBRARIES} 
+                        ${datatools_CLHEP_LIBRARIES} 
+   )
 
 # end
