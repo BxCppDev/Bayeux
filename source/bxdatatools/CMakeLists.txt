@@ -218,8 +218,8 @@ message ( STATUS "CMAKE_INSTALL_PYTHONDIR        : " "${CMAKE_INSTALL_PYTHONDIR}
 # - datatools API :
 #
 
-message ( STATUS "Using embedded KWSYS" )
 set (KWSYS_NAMESPACE datatools_sys)
+message ( STATUS "Using embedded kwsys with namespace '${KWSYS_NAMESPACE}'" )
 set (KWSYS_BUILD_SHARED ON)
 set (KWSYS_INSTALL_EXPORT_NAME datatools-libraries)
 set (KWSYS_HEADER_ROOT ${PROJECT_BINARY_DIR}/include )
@@ -229,6 +229,7 @@ set (KWSYS_INSTALL_LIB_DIR ${CMAKE_INSTALL_LIBDIR} )
 set (KWSYS_INSTALL_DOC_DIR ${CMAKE_INSTALL_DATAROOTDIR}/doc )
 set (KWSYS_INSTALL_COMPONENT_NAME_RUNTIME Runtime)
 set (KWSYS_INSTALL_COMPONENT_NAME_DEVELOPMENT Development)
+message ( STATUS "Trigger the '${KWSYS_NAMESPACE}::DynamicLoader' class" )
 set (KWSYS_USE_DynamicLoader 1) # Enable DynamicLoader class.
 message ( STATUS "Add subdirectory : " "'kwsys'" )
 add_subdirectory (kwsys) 
@@ -239,6 +240,11 @@ add_subdirectory ( src )
 # ----------------------------------------------------------------------
 # - Configuration files :
 #
+
+set ( _ld_library_path_env "LD_LIBRARY_PATH" )
+if ( CMAKE_SYSTEM_NAME MATCHES Darwin )
+  set ( _ld_library_path_env "DYLD_LIBRARY_PATH" )
+endif ( CMAKE_SYSTEM_NAME MATCHES Darwin )
 
 configure_file ( "${PROJECT_SOURCE_DIR}/cmake/templates/datatools_config.h.in"
                  "${PROJECT_BINARY_DIR}/include/datatools/datatools_config.h" @ONLY )

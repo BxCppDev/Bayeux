@@ -60,11 +60,6 @@ include_directories ( ${CLHEP_INCLUDE_DIRS} )
 include_directories ( ${Boost_INCLUDE_DIRS} )
 include_directories ( ${PROJECT_BINARY_DIR}/include )
 include_directories ( ${PROJECT_SOURCE_DIR}/include )
-if ( NOT DATATOOLS_WITH_EMBEDDED_KWSYS )
-  include_directories (
-      ${KWSYS_INCLUDE_DIRS}
-  )
-endif ()
 
 # We also need Python includes...
 include_directories ( ${PYTHON_INCLUDE_DIRS} )

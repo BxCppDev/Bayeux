@@ -92,21 +92,11 @@ function do_datatools_setup ()
 	export PATH="${DATATOOLS_BIN_DIR}"
     fi 
    
-    if [ "@CMAKE_SYSTEM_NAME@" = "Linux" ]; then 
-	if [ -n "${LD_LIBRARY_PATH}" ]; then
-	    export LD_LIBRARY_PATH="${DATATOOLS_LIB_DIR}:${LD_LIBRARY_PATH}"
-	else
-	    export LD_LIBRARY_PATH="${DATATOOLS_LIB_DIR}"
-	fi 
-    fi
-
-    if [ "@CMAKE_SYSTEM_NAME@" = "Darwin" ]; then 
-	if [ -n "${DYLD_LIBRARY_PATH}" ]; then
-	    export DYLD_LIBRARY_PATH="${DATATOOLS_LIB_DIR}:${DYLD_LIBRARY_PATH}"
-	else
-	    export DYLD_LIBRARY_PATH="${DATATOOLS_LIB_DIR}"
-	fi 
-    fi
+    if [ -n "${@_ld_library_path_env@}" ]; then
+	export @_ld_library_path_env@="${DATATOOLS_LIB_DIR}:${@_ld_library_path_env@}"
+    else
+	export @_ld_library_path_env@="${DATATOOLS_LIB_DIR}"
+    fi 
 
     if [ "x@DATATOOLS_WITH_PKGCONFIG@" = "xON" ]; then
 	if [ -n "${PKG_CONFIG_PATH}" ]; then 
@@ -119,9 +109,9 @@ function do_datatools_setup ()
     if [ "x@DATATOOLS_WITH_PYTHON_WRAPPER@" = "xON" ]; then
      	# update python_path...
 	if [ -n "${PYTHONPATH}" ]; then 
-            export PYTHONPATH="${DATATOOLS_LIB_DIR}/python/datatools:${PYTHONPATH}"
+            export PYTHONPATH="${CMAKE_INSTALL_FULL_PYTHONDIR}:${PYTHONPATH}"
 	else
-            export PYTHONPATH="${DATATOOLS_LIB_DIR}/python/datatools"
+            export PYTHONPATH="${CMAKE_INSTALL_FULL_PYTHONDIR}"
 	fi
     fi
 
