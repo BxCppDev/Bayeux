@@ -101,7 +101,7 @@ bash$ make clean_test
 ...
 }}}
 
-Installation (here in the '${HOME}/software' directory) :
+Installation (here in the '${HOME}/software/Base' directory) :
 {{{
 bash$ make install
 ...
@@ -130,7 +130,7 @@ bash$ ./pkgtools.d/pkgtool --help
 Run the following configure/build/install sequence :
 {{{
 bash$ ./pkgtools.d/pkgtool check
-bash$ ./pkgtools.d/pkgtool configure --install-prefix ${HOME}/software
+bash$ ./pkgtools.d/pkgtool configure --install-prefix ${HOME}/software/Base
 bash$ ./pkgtools.d/pkgtool build --number-of-tasks auto
 bash$ ./pkgtools.d/pkgtool doc
 bash$ ./pkgtools.d/pkgtool test
@@ -153,7 +153,7 @@ bash$ ./pkgtools.d/pkgtool reset
 
 Load the definition of the datatools setup function :
 {{{
-bash$ source ${HOME}/software/etc/datatools_setup.sh
+bash$ source ${HOME}/software/Base/etc/datatools_setup.sh
 NOTICE: do_datatools_setup: Please setup 'datatools' with 'do_datatools_setup'.
 }}}
 
@@ -167,7 +167,7 @@ NOTICE: do_datatools_setup: Setup datatools done.
 Use datatools :
 {{{
 bash$ which datatools-config 
-/home/<login>/software/bin/datatools-config
+/home/<login>/software/Base/bin/datatools-config
 bash$ datatools-config --version
 4.0.0
 bash$ datatools-config --cflags

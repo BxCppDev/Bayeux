@@ -230,7 +230,7 @@ set (KWSYS_INSTALL_DOC_DIR ${CMAKE_INSTALL_DATAROOTDIR}/doc )
 set (KWSYS_INSTALL_COMPONENT_NAME_RUNTIME Runtime)
 set (KWSYS_INSTALL_COMPONENT_NAME_DEVELOPMENT Development)
 set (KWSYS_USE_DynamicLoader 1) # Enable DynamicLoader class.
-message ( STATUS "Add subdirectory : " "'kwsys" )
+message ( STATUS "Add subdirectory : " "'kwsys'" )
 add_subdirectory (kwsys) 
 
 message ( STATUS "Add subdirectory : " "'src'" )
@@ -393,6 +393,7 @@ endif ()
 # - Add documentation.
 #
 if ( DATATOOLS_WITH_DOC )
+  message ( STATUS "Add subdirectory 'doc' " )
   add_subdirectory ( doc )
 endif ()
 
@@ -400,6 +401,7 @@ endif ()
 # - Add testing - always for now.
 #
 if ( DATATOOLS_WITH_TEST )
+  message ( STATUS "Add subdirectory 'testing' " )
   enable_testing () 
   add_subdirectory ( testing )
 endif ()

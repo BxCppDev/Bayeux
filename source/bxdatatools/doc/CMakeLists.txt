@@ -76,9 +76,8 @@ if(DOXYGEN_FOUND)
         WORKING_DIRECTORY ${DOXYGEN_INPUT_DIR}
     )
 
-    # install###${INSTALL_MISC_DIR}/doc
     install(DIRECTORY ${DOXYGEN_OUTPUT_DIR}
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/share/doc/${PROJECT_NAME} 
+        DESTINATION ${CMAKE_INSTALL_DOCDIR} 
         COMPONENT apidoc
     )
 
@@ -87,7 +86,7 @@ endif ()
 if ( EXISTS ${CMAKE_SOURCE_DIR}/doc/Memos/DatatoolsContainerTutorial.pdf )
    
     install(FILES ${CMAKE_SOURCE_DIR}/doc/Memos/DatatoolsContainerTutorial.pdf
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/share/doc/${PROJECT_NAME}/Memos/pdf
+        DESTINATION ${CMAKE_INSTALL_DOCDIR}/Memos/pdf
         COMPONENT memo
     )
 
@@ -96,7 +95,7 @@ endif ()
 if ( EXISTS ${CMAKE_SOURCE_DIR}/doc/Memos/DatatoolsSerializationTutorial.pdf )
    
     install(FILES ${CMAKE_SOURCE_DIR}/doc/Memos/DatatoolsSerializationTutorial.pdf
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/share/doc/${PROJECT_NAME}/Memos/pdf
+        DESTINATION ${CMAKE_INSTALL_DOCDIR}/Memos/pdf
         COMPONENT memo
     )
 
