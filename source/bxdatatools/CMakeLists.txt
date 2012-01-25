@@ -30,31 +30,30 @@ project ( datatools )
 set ( datatools_PACKAGE_NAME ${CMAKE_PROJECT_NAME} CACHE STRING "The name of the package" FORCE )
 message ( STATUS "Package name         : '${datatools_PACKAGE_NAME}'" )
 
-# - include project configuration
-include ( ${CMAKE_SOURCE_DIR}/cmake/Config.cmake )
-include ( ${CMAKE_SOURCE_DIR}/cmake/InstallDirs.cmake )
-include ( ${CMAKE_SOURCE_DIR}/cmake/PackageFilename.cmake )
-
-# ----------------------------------------------------------------------------
-# - Prepend our own CMake Modules to the search path
+#----------------------------------------------------------------------------
+# Prepend this project's custom module path(s) to CMAKE_MODULE_PATH
+# Append any path from the environment
 # This allows us to customize, add, and factor out functionality
 # NB: if our custom modules include others that we don't supply, those in the
 # base path will be used, so watch for incompatibilities!!
 #
-message ( STATUS "Module path: ${CMAKE_MODULE_PATH} ${CMAKE_ROOT}" )
+file(TO_CMAKE_PATH "$ENV{CMAKE_MODULE_PATH}" __env_cmake_module_path)
 
-if ( NOT "$ENV{CMAKE_MODULE_PATH}" STREQUAL "" )
-  message ( STATUS "Environment CMAKE_MODULE_PATH exists : '$ENV{CMAKE_MODULE_PATH}' " )
-  set (__env_cmake_module_path "$ENV{CMAKE_MODULE_PATH}" )
-  message ( STATUS "Environment CMAKE_MODULE_PATH : '$ENV{CMAKE_MODULE_PATH}'" )
-  string ( REGEX REPLACE ":" ";" __env_cmake_module_path "${__env_cmake_module_path}" )
-  set ( CMAKE_MODULE_PATH "${__env_cmake_module_path}" ${CMAKE_MODULE_PATH} )
-endif ()
-set ( CMAKE_MODULE_PATH
-    ${PROJECT_SOURCE_DIR}/cmake/Modules
-    ${CMAKE_MODULE_PATH} )
-message ( STATUS "CMAKE_ROOT        : '${CMAKE_ROOT}'" )
-message ( STATUS "CMAKE_MODULE_PATH : '${CMAKE_MODULE_PATH}'" )
+set(CMAKE_MODULE_PATH
+  ${PROJECT_SOURCE_DIR}/cmake
+  ${PROJECT_SOURCE_DIR}/cmake/Modules
+  ${__env_cmake_module_path}
+  ${CMAKE_MODULE_PATH}
+  )
+
+
+#----------------------------------------------------------------------------
+# Load any required modules
+#
+include(Config)
+include(InstallDirs)
+include(PackageFilename)
+
 
 # ----------------------------------------------------------------------------
 # - Dependencies :
