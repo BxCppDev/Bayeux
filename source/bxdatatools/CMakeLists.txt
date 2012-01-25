@@ -55,10 +55,52 @@ include(InstallDirs)
 include(PackageFilename)
 
 
-# ----------------------------------------------------------------------------
-# - Dependencies :
+#----------------------------------------------------------------------------
+# Build options
 #
+# - All systems
+option(DATATOOLS_WITH_DEBUG "Build datatools with debugging code" OFF)
+option(DATATOOLS_WITH_BIO   "Build auxiliary Boost I/O library"   ON) 
+option(DATATOOLS_WITH_PYTHON_WRAPPER 
+  "Build the datatools Python wrapper module" 
+  OFF
+  )
+option(DATATOOLS_WITH_DOC   "Build the datatools documentation"   ON)
+option(DATATOOLS_WITH_TEST  "Build the datatools testsuite"       ON) 
+option(DATATOOLS_WITH_DEBUG "Build datatools with debugging code" OFF)
 
+# - Platform specific
+if(UNIX)
+  option(DATATOOLS_WITH_CONFIG_SCRIPT "Build the datatools-config script" ON)
+  option(DATATOOLS_WITH_PKGCONFIG "Build the pkg-config script (broken)"  OFF)
+endif()
+
+
+# - Script compatibility
+if(DATATOOLS_WITH_DEBUG)
+  set(DATATOOLS_WITH_DEBUG 1)
+endif()
+
+if(DATATOOLS_WITH_BIO)
+  set(DATATOOLS_WITH_BIO 1)
+endif()
+
+if(DATATOOLS_WITH_PYTHON_WRAPPER)
+  set(DATATOOLS_WITH_PYTHON_WRAPPER 1)
+endif()
+
+if(DATATOOLS_WITH_DOC)
+  set(DATATOOLS_WITH_DOC 1)
+endif()
+
+if(DATATOOLS_WITH_TEST)
+  set(DATATOOLS_WITH_TEST 1)
+endif()
+
+
+#----------------------------------------------------------------------------
+# Find external packages needed to build
+#
 ### EXPERIMENTAL...
 # set ( _cadfael_dir "" )
 # if ( DEFINED CADFAEL_CMAKE_CONFIG_DIR )
@@ -125,58 +167,10 @@ else ()
      message ( FATAL_ERROR "Cannot find CLHEP ${_clhep_version} library !" )
 endif ()
 
-# ----------------------------------------------------------------------
-# - Options :
 
-option ( DATATOOLS_WITH_DEBUG
-         "Build the datatools project using debugging code"
-         OFF )
-
-option ( DATATOOLS_WITH_BIO 
-         "Generate an auxiliary DLL with Boost I/O code" 
- 	 ON )
-
-option ( DATATOOLS_WITH_PYTHON_WRAPPER 
-         "Build the datatools Python wrapper module" 
- 	 OFF )
-
-option ( DATATOOLS_WITH_DOC 
-         "Build the datatools documentation" 
- 	 ON )
-
-option ( DATATOOLS_WITH_TEST 
-         "Build the datatools test material" 
- 	 ON )
-
-if (DATATOOLS_WITH_DEBUG)
-  set (DATATOOLS_WITH_DEBUG 1)
-endif ()
-
-if (DATATOOLS_WITH_BIO)
-  set (DATATOOLS_WITH_BIO 1)
-endif ()
-
-if (DATATOOLS_WITH_PYTHON_WRAPPER)
-  set (DATATOOLS_WITH_PYTHON_WRAPPER 1)
-endif ()
-
-if (DATATOOLS_WITH_DOC)
-  set (DATATOOLS_WITH_DOC 1)
-endif ()
-
-if (DATATOOLS_WITH_TEST)
-  set (DATATOOLS_WITH_TEST 1)
-endif ()
-
-if ( UNIX OR APPLE )
-  option ( DATATOOLS_WITH_CONFIG_SCRIPT 
-           "Build the datatools-config script" 
-     	   ON )
-  option ( DATATOOLS_WITH_PKGCONFIG 
-           "Build the pkg-config configuration script (broken)" 
-     	   OFF )
-endif ()
-
+#----------------------------------------------------------------------------
+# Configure optional development components
+#
 set ( _datatools_cmake_config_install_dir ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME} ) 
 
 if ( DATATOOLS_WITH_PKGCONFIG )
