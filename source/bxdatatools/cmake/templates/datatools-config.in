@@ -158,8 +158,6 @@ if [ "x${option}" = "x--cflags" ]; then
         echo -n "`clhep-config --include` "
 	echo ""
     ) | python @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/pkgtools/mkuniqueflags.py 
-
-    ###) | sed -e "s/-Wstrict-prototypes//g" -e "s/-Wall//g" | python ${datatools_root}/pkgtools.d/mkuniqueflags.py
     my_exit 0
 fi
 
