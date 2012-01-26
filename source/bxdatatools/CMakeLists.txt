@@ -483,7 +483,9 @@ install(EXPORT datatools-libraries
 
 # Configure the install tree CMake Config mode file
 # Set variables
-set(datatools_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include)
+set(datatools_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR})
+set(datatools_LIB_DIR ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
+
 # Configure file
 # This is different from the build tree file, so store in dedicated directory
 configure_file(
@@ -509,6 +511,5 @@ install(FILES
   DESTINATION ${DATATOOLS_CMAKE_CONFIG_DIR}
   COMPONENT devel
   )
-
 
 # - end of top level CMakeLists.txt for datatools project.

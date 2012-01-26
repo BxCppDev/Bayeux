@@ -87,7 +87,6 @@ add_library ( datatools SHARED
             )
 
 # Link dynamic library :
-
 target_link_libraries ( datatools
                         datatools_sys 
                         # datatools_sys_c
@@ -98,11 +97,11 @@ target_link_libraries ( datatools
                         ${Boost_SYSTEM_LIBRARY}
                       )
 
-# Install library and associate it with an export
+# Install library and associate it with an export :
 install ( TARGETS datatools
           EXPORT datatools-libraries
           RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT bin
-          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT bin 
+          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT shlib  # bin?
           ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT devel
         )      
 
@@ -192,7 +191,7 @@ if ( DATATOOLS_WITH_BIO )
    install ( TARGETS datatools_bio
              EXPORT  datatools-libraries
              RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT bin
-             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT bin 
+             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT shlib # bin?
              ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT devel
            )
 

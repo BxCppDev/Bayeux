@@ -32,6 +32,7 @@ get_filename_component(_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
 # Include the file listing all the imported targets to make them available
 # This is installed in the same location as us...
 #
+message ( STATUS "DEVEL: datatools-config.cmake: Including 'datatools-libraries.cmake'..." )
 include("${_thisdir}/datatools-libraries.cmake")
 
 
@@ -53,7 +54,7 @@ set(datatools_BOOST_INCLUDE_DIRS @Boost_INCLUDE_DIRS@)
 set(datatools_BOOST_LIBRARIES @Boost_LIBRARIES@)
 
 # - CLHEP
-set(datatools_CLHEP_ROOT @CLHEP_ROOT@)
+#set(datatools_CLHEP_ROOT @CLHEP_ROOT@)
 set(datatools_CLHEP_INCLUDE_DIRS @CLHEP_INCLUDE_DIRS@)
 set(datatools_CLHEP_LIBRARIES @CLHEP_LIBRARIES@)
 
@@ -70,8 +71,9 @@ set(datatools_INCLUDE_DIRS
 
 #----------------------------------------------------------------------------
 # Set datatools_LIBRARIES variable
+set(datatools_LIB_DIR @datatools_LIB_DIR@)
 # Basic : Assume that if datatools_bio was built, it should be in Library list
-set(datatools_SYS_LIBRARY datatools_sys)
+set(datatools_SYS_LIBRARY datatools_sys )
 set(datatools_LIBRARY datatools)
 
 set(datatools_WITH_DEBUG @DATATOOLS_WITH_DEBUG@)
@@ -103,4 +105,8 @@ set(datatools_LIBRARIES ${datatools_BIO_LIBRARY}
                         ${datatools_CLHEP_LIBRARIES} 
    )
 
-# end
+###message ( STATUS "DEVEL: datatools-config.cmake: datatools_VERSION=${datatools_VERSION}" )
+message ( STATUS "DEVEL: datatools-config.cmake: datatools_WITH_BIO=${datatools_WITH_BIO}" )
+message ( STATUS "DEVEL: datatools-config.cmake: datatools_WITH_PYTHON_WRAPPER=${datatools_WITH_PYTHON_WRAPPER}" )
+message ( STATUS "DEVEL: datatools-config.cmake: datatools_INCLUDE_DIRS=${datatools_INCLUDE_DIRS}" )
+message ( STATUS "DEVEL: datatools-config.cmake: datatools_LIBRARIES=${datatools_LIBRARIES}" )
