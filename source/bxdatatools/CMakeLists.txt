@@ -475,6 +475,7 @@ else()
   endif()
 endif()
 
+message ( STATUS "DATATOOLS_CMAKE_CONFIG_DIR='${DATATOOLS_CMAKE_CONFIG_DIR}'" )
 install(EXPORT datatools-libraries
   DESTINATION ${DATATOOLS_CMAKE_CONFIG_DIR}
   COMPONENT devel
