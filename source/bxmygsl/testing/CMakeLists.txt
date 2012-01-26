@@ -1,6 +1,6 @@
 ###############################################################################
 ##
-## Copyright (C) 2012 François Mauger, Université de Caen Basse-Normandie
+## Copyright (C) 2012 François Mauger, Université de Caen Basse-Normandie, LPC Caen (CNRS/IN2P3)
 ## Contact: mauger@lpccaen.in2p3.fr
 ##
 ## This file is part of the mygsl library.
@@ -20,8 +20,8 @@
 ##
 ###############################################################################
 
-
 set ( mygsl_tests_programs_list
+      test_mygsl.cxx 
 test_best_value.cxx
 test_constants.cxx
 test_datapoint.cxx
@@ -55,54 +55,84 @@ test_von_neumann.cxx
     )
 
 # include files search paths
-include_directories ( ${PROJECT_SOURCE_DIR}/include	
-                      ${PROJECT_BINARY_DIR}/include	
-                      ${DATATOOLS_INCLUDE_DIRS_DEPEND}
-  		      ${GSL_INCLUDE_DIR}
+include_directories ( ${PROJECT_BINARY_DIR}/include
+                      ${PROJECT_SOURCE_DIR}/include	
                       ${PROJECT_SOURCE_DIR}/testing
-                 )
+                    )
 
-# linker search paths
-link_directories( ${PROJECT_BINARY_DIR}/src )
+if ( _depends_on_datatools ) 
+  include_directories ( ${datatools_INCLUDE_DIRS} )
+endif ()
+include_directories ( ${GSL_INCLUDE_DIR} )
 
-option (MYGSL_ALL_TESTS "Perform all possible tests" ON)
-message ( STATUS "Performing all available tests : ${MYGSL_ALL_TESTS}" )
+# linker search paths :
+link_directories ( ${PROJECT_BINARY_DIR}/src )
 
-if (MYGSL_ALL_TESTS)
-set ( _test_tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/tmp" )
-#message ( STATUS "_test_tmp_dir : ${_test_tmp_dir}" )
-foreach ( test_program ${mygsl_tests_programs_list} )
-  unset ( test_libraries )
-  get_filename_component ( test_executable ${test_program} NAME_WE )
-  message ( STATUS "Building test target '${test_executable}'" )
-  add_executable ( ${test_executable} ${test_program} )
-  # define d suffix on windows
-  if(WIN32)
-    set_target_properties ( ${test_executable} PROPERTIES DEBUG_POSTFIX d )
-  endif()
+option ( MYGSL_ALL_TESTS "Perform all possible tests" 1 )
+message ( STATUS "testing: Performing all available tests : ${MYGSL_ALL_TESTS}" )
 
-  # last thing we have to do is to tell CMake what libraries 
-  # our executable needs,
-  list (APPEND test_libraries "mygsl" ${DATATOOLS_LIBRARIES_DEPEND} ${GSL_LIBRARIES} )
+if ( MYGSL_ALL_TESTS )
+  set ( _test_tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/tmp" )
+  #message ( STATUS "testing:  _test_tmp_dir : ${_test_tmp_dir}" )
+  foreach ( test_program ${mygsl_tests_programs_list} )
+    unset ( test_libraries )
+    get_filename_component ( test_executable ${test_program} NAME_WE )
+    message ( STATUS "testing:  Building test target '${test_executable}'" )
+    add_executable ( ${test_executable} ${test_program} )
+    # define d suffix on windows
+    if (WIN32)
+      set_target_properties ( ${test_executable} PROPERTIES DEBUG_POSTFIX d )
+    endif ()
+
+    # last thing we have to do is to tell CMake what libraries 
+    # our executable needs,
+    list ( APPEND test_libraries "mygsl" )
+    if ( _depends_on_datatools ) 
+      list ( APPEND test_libraries "${datatools_LIBRARIES}" )
+    endif ()
+    list ( APPEND test_libraries "${GSL_LIBRARIES}" )
 	 
-  target_link_libraries ( ${test_executable} ${test_libraries} )
+    target_link_libraries ( ${test_executable} ${test_libraries} )
 
-  add_test ( NAME ${test_executable}.run
-             COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
-                     --tmp-dir ${_test_tmp_dir}
-                     --prefix ${PROJECT_SOURCE_DIR} 
-                     --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
-		     run
-           )	 	
+    add_test ( NAME ${test_executable}.run
+               COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
+                       --tmp-dir ${_test_tmp_dir}
+                       --prefix ${PROJECT_SOURCE_DIR} 
+                       --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
+	               run
+             )	 	
 
-endforeach ()
+  endforeach ()
   
-add_custom_target ( clean_test	
-             COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
-                     --prefix ${PROJECT_SOURCE_DIR} 
-                     --tmp-dir ${_test_tmp_dir}
-                     clean
-                  )
+  add_custom_target ( clean_test
+                      COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
+                      --prefix ${PROJECT_SOURCE_DIR} 
+                      --tmp-dir ${_test_tmp_dir}
+                      clean
+                    )
+
+endif ()
+
+option ( MYGSL_INSTALL_TEST_PROGRAMS "Install test programs" 1 )
+message ( STATUS "testing: Performing all available tests : ${MYGSL_INSTALL_TEST_PROGRAMS}" )
+
+# - Installation :
+if (MYGSL_INSTALL_TEST_PROGRAMS) 
+  set ( _test_install_dir ${CMAKE_INSTALL_DATADIR}/testing )
+
+  #file ( GLOB mygsl_tests_config config/* )
+  #install ( FILES ${mygsl_tests_config} 
+  #   	      DESTINATION ${_test_install_dir}/config  
+  #           PERMISSIONS OWNER_READ GROUP_READ WORLD_READ 
+  #         )
+
+  install ( FILES ${mygsl_tests_programs} 
+            #  mygsl_test_data.h 
+            #  mygsl_test_data.cc 
+            #  mygsl_test_data.ipp 
+	    DESTINATION ${_test_install_dir}
+            PERMISSIONS OWNER_READ GROUP_READ WORLD_READ 
+          )
 
 endif ()
 

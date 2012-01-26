@@ -1,6 +1,6 @@
 ###############################################################################
 ##
-## Copyright (C) 2012 François Mauger, Université de Caen Basse-Normandie
+## Copyright (C) 2012 François Mauger, Université de Caen Basse-Normandie, LPC Caen (CNRS/IN2P3)
 ## Contact: mauger@lpccaen.in2p3.fr
 ##
 ## This file is part of the mygsl library.
@@ -54,18 +54,7 @@ if ( NOT BUILD_TEST )
     )
 endif()
 
-# define install directory for miscelleneous files
-if ( WIN32 AND NOT UNIX )
-    set ( INSTALL_MISC_DIR . )
-elseif ( UNIX)
-    set ( INSTALL_MISC_DIR share/mygsl )
-endif ()
-
-set (INSTALL_RESOURCES_DIR ${INSTALL_MISC_DIR}/resources )
-
 # setup MacOSX build environment if necessary
 include ( ${CMAKE_SOURCE_DIR}/cmake/MacOSX.cmake )
 
-
-message ( STATUS "INSTALL_MISC_DIR      : ${INSTALL_MISC_DIR}" )
-message ( STATUS "INSTALL_RESOURCES_DIR : ${INSTALL_RESOURCES_DIR}" )
+# end of Config.cmake

@@ -1,6 +1,6 @@
 ###############################################################################
 ##
-## Copyright (C) 2012 François Mauger, Université de Caen Basse-Normandie
+## Copyright (C) 2012 François Mauger, Université de Caen Basse-Normandie, LPC Caen (CNRS/IN2P3)
 ## Contact: mauger@lpccaen.in2p3.fr
 ##
 ## This file is part of the mygsl library.
@@ -19,7 +19,6 @@
 ## along with mygsl.  If not, see <http://www.gnu.org/licenses/>.
 ##
 ###############################################################################
-
 
 ###############################
 # packaging
@@ -56,12 +55,12 @@ set(CPACK_COMPONENT_GROUP_DEVELOPMENT_EXPANDED TRUE)
 
 # Package setup
 set(CPACK_PACKAGE_NAME mygsl)
-set(CPACK_PACKAGE_VENDOR "François Mauger, LPC Caen - University of Caen Basse-Normandie")
+set(CPACK_PACKAGE_VENDOR "__AuthroName__, Université de Caen Basse-Normandie, LPC Caen (CNRS/IN2P3)")
 set(CPACK_PACKAGE_VERSION_MAJOR ${VERSION_MAJOR})
 set(CPACK_PACKAGE_VERSION_MINOR ${VERSION_MINOR})
 set(CPACK_PACKAGE_VERSION_PATCH ${VERSION_PATCH})
 set(CPACK_PACKAGE_DESCRIPTION_FILE ${MYGSL_SOURCE_DIR}/README.txt)
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "mygsl is a multi-purpose C++ library")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "mygsl is a C++ library for...")
 set(CPACK_PACKAGE_INSTALL_DIRECTORY ${CPACK_PACKAGE_VENDOR}\\\\mygsl)
 set(CPACK_RESOURCE_FILE_LICENSE ${MYGSL_SOURCE_DIR}/COPYING.txt)
 set(CPACK_RESOURCE_FILE_README ${MYGSL_SOURCE_DIR}/README.txt)

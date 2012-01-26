@@ -1,20 +1,16 @@
 
-mygsl installation instructions :
----------------------------------
+mygsl installation instructions:
+------------------------------------
 
 1 - Third-party software setup :
 --------------------------------
 
-Cadfael  components  (GSL)  libraries must  be
-installed and setup. Then datatools must be setup too.
+Instructions to setup dependencies...
 
-{{{
-bash$ do_cadfael_all_setup
-...
-bash$ do_datatools_setup
-...
-}}}
-
+mygsl depends on the following libraries and/or programs :
+ - GSL the GNU scientific library
+ - datatools
+ 
 
 2- Plain CMake installation :
 -----------------------------
@@ -31,7 +27,7 @@ bash$ cd build
 }}}
 
 Configure the installation to the '${HOME}/software' directory.
-Note: you must choose a directory where ou have write access.
+Note: you must choose a directory where you have write access.
 
 {{{
 bash$ cmake \
@@ -121,6 +117,8 @@ bash$ ./pkgtools.d/pkgtool reset
 4 - Setup : 
 -----------
 
+The following instructions applies to the bash shell.
+
 Load the definition of the mygsl setup function :
 {{{
 bash$ source ${HOME}/software/etc/mygsl_setup.sh
@@ -139,7 +137,7 @@ Use mygsl :
 bash$ which mygsl-config 
 /home/<login>/software/bin/mygsl-config
 bash$ mygsl-config --version
-3.0.0
+0.1.0
 bash$ mygsl-config --cflags
 ...
 bash$ mygsl-config --ldflags
@@ -147,6 +145,10 @@ bash$ mygsl-config --ldflags
 }}}
 
 --
-F.Mauger <mauger@lpccaen.in2p3.fr>
-Updated: 2012-01-09
+François Mauger <mauger@lpccaen.in2p3.fr>
+Updated: 2012-01-26
+
+
  
+
+

@@ -598,7 +598,7 @@ RECURSIVE              = YES
 # excluded from the INPUT source files. This way you can easily exclude a
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
-EXCLUDE                = detail .svn
+EXCLUDE                = detail .svn 
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or
 # directories that are symbolic links (a Unix filesystem feature) are excluded
@@ -898,7 +898,7 @@ QCH_FILE               =
 # Qt Help Project output. For more information please see
 # http://doc.trolltech.com/qthelpproject.html#namespace
 
-QHP_NAMESPACE          = mygsl
+QHP_NAMESPACE          = __PackNameSpace__
 
 # The QHP_VIRTUAL_FOLDER tag specifies the namespace to use when generating
 # Qt Help Project output. For more information please see

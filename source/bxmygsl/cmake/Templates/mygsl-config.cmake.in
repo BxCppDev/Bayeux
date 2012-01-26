@@ -1,0 +1,106 @@
+# - Config file for the mygsl package
+# It defines the following variables
+#  mygsl_INCLUDE_DIRS - include directories for mygsl
+#  mygsl_LIBRARIES    - libraries to link against
+#  mygsl_WITH_DEBUG   - flag for debug mode
+# If Boost/Serialization I/O system is supported :
+#  mygsl_WITH_BIO     - flag for Boost/Serialization I/O DLL (a.k.a. 'bio')
+# If Boost/Python wrapper module is supported :
+#  mygsl_WITH_PYTHON_WRAPPER - flag for 'Boost/Python' module 
+
+#----------------------------------------------------------------------------
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#----------------------------------------------------------------------------
+
+#----------------------------------------------------------------------------
+# Locate ourselves, since all our config files should have been installed
+# alongside us...
+#
+get_filename_component(_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+
+#----------------------------------------------------------------------------
+# Include the file listing all the imported targets to make them available
+# This is installed in the same location as us...
+#
+include("${_thisdir}/mygsl-libraries.cmake")
+
+
+#----------------------------------------------------------------------------
+# Set variables pointing to used third party headers and locations.
+# We have to set the headers because mygsl exports the headers in
+# its public interface.
+
+#----------------------------------------------------------------------------
+# Set path to mygsl includes
+#
+set(mygsl_INCLUDE_DIR @mygsl_INCLUDE_DIR@)
+set(mygsl_INCLUDE_DIRS
+  ${mygsl_INCLUDE_DIR}
+  )
+
+if (_depends_on_datatools)
+  set(mygsl_datatools_INCLUDE_DIRS @datatools_INCLUDE_DIRS@)
+  set(mygsl_gsl_INCLUDE_DIRS @GSL_INCLUDE_DIRS@)
+  set (mygsl_INCLUDE_DIRS 
+       ${mygsl_INCLUDE_DIRS}
+       ${mygsl_gsl_INCLUDE_DIRS}
+       ${mygsl_datatools_INCLUDE_DIRS}
+      )
+endif ()
+
+#----------------------------------------------------------------------------
+# Set mygsl_LIBRARIES variable
+# Basic : Assume that if mygsl_bio was built, it should be in Library list
+set(mygsl_LIBRARY mygsl)
+
+set(mygsl_WITH_DEBUG @MYGSL_WITH_DEBUG@)
+if(mygsl_WITH_DEBUG)
+  set(mygsl_WITH_DEBUG 1)
+else()
+  set(mygsl_WITH_DEBUG 0)
+endif()
+
+if ( MYGSL_WITH_BIO_SUPPORT )
+ set(mygsl_WITH_BIO @MYGSL_WITH_BIO@)
+ if(mygsl_WITH_BIO)
+   set(mygsl_WITH_BIO 1)
+   set(mygsl_BIO_LIBRARY mygsl_bio)
+ else()
+   set(mygsl_WITH_BIO 0)
+ endif()
+endif()
+
+if ( MYGSL_WITH_PYTHON_WRAPPER_SUPPORT )
+  set(mygsl_WITH_PYTHON_WRAPPER @MYGSL_WITH_PYTHON_WRAPPER@)
+  if(mygsl_WITH_PYTHON_WRAPPER)
+    set(mygsl_WITH_PYTHON_WRAPPER 1)
+  else()
+    set(mygsl_WITH_PYTHON_WRAPPER 0)
+  endif()
+endif ()
+
+set(mygsl_LIBRARIES ${mygsl_BIO_LIBRARY} ${mygsl_LIBRARY} ${mygsl_SYS_LIBRARY} )
+
+if (_depends_on_datatools)
+  set(mygsl_datatools_LIBRARIES @datatools_LIBRARIES@)
+  set(mygsl_gsl_LIBRARIES @GSL_LIBRARIES@)
+  set(mygsl_LIBRARIES 
+       ${mygsl_LIBRARIES}
+       ${mygsl_datatools_LIBRARIES}
+       ${mygsl_gsl_LIBRARIES}
+     )
+endif ()
+
+# end

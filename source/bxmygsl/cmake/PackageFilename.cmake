@@ -1,6 +1,6 @@
 ###############################################################################
 ##
-## Copyright (C) 2012 François Mauger, Université de Caen Basse-Normandie
+## Copyright (C) 2012 François Mauger, Université de Caen Basse-Normandie, LPC Caen (CNRS/IN2P3)
 ## Contact: mauger@lpccaen.in2p3.fr
 ##
 ## This file is part of the mygsl library.

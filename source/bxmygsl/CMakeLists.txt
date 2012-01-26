@@ -7,7 +7,7 @@
 # ----------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------
-# - Enforce an out-of-source build.
+# Enforce an out-of-source build.
 # Should be the first action in the CMakeLists.txt
 #
 if ( ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR} )
@@ -22,42 +22,65 @@ if ( ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR} )
 endif ()
 
 # ----------------------------------------------------------------------------
-# - Setup CMake requirements and project's name
+# Setup CMake requirements and project's name
 #
 cmake_minimum_required ( VERSION 2.8 FATAL_ERROR )
 project ( mygsl )
 
 set ( mygsl_PACKAGE_NAME ${CMAKE_PROJECT_NAME} CACHE STRING "The name of the package" FORCE )
 message ( STATUS "Package name         : '${mygsl_PACKAGE_NAME}'" )
-
-# include project configuration
-include ( ${CMAKE_SOURCE_DIR}/cmake/Config.cmake )
-include ( ${CMAKE_SOURCE_DIR}/cmake/PackageFilename.cmake )
-
-# ----------------------------------------------------------------------------
-# - Prepend our own CMake Modules to the search path
+	
+#----------------------------------------------------------------------------
+# Prepend this project's custom module path(s) to CMAKE_MODULE_PATH
+# Append any path from the environment
 # This allows us to customize, add, and factor out functionality
 # NB: if our custom modules include others that we don't supply, those in the
 # base path will be used, so watch for incompatibilities!!
 #
-message ( STATUS "Module path: ${CMAKE_MODULE_PATH} ${CMAKE_ROOT}" )
-
-if ( NOT "$ENV{CMAKE_MODULE_PATH}" STREQUAL "" )
-  message ( STATUS "Environment CMAKE_MODULE_PATH exists : '$ENV{CMAKE_MODULE_PATH}' " )
-  set (__env_cmake_module_path "$ENV{CMAKE_MODULE_PATH}" )
-  message ( STATUS "Environment CMAKE_MODULE_PATH : '$ENV{CMAKE_MODULE_PATH}'" )
-  string ( REGEX REPLACE ":" ";" __env_cmake_module_path "${__env_cmake_module_path}" )
-  set ( CMAKE_MODULE_PATH "${__env_cmake_module_path}" ${CMAKE_MODULE_PATH} )
-endif ()
-set ( CMAKE_MODULE_PATH
-    ${PROJECT_SOURCE_DIR}/cmake/Modules
-    ${CMAKE_MODULE_PATH} )
-message ( STATUS "CMAKE_ROOT        : '${CMAKE_ROOT}'" )
-message ( STATUS "CMAKE_MODULE_PATH : '${CMAKE_MODULE_PATH}'" )
-
-# ----------------------------------------------------------------------------
-# - Dependencies :
+file(TO_CMAKE_PATH "$ENV{CMAKE_MODULE_PATH}" __env_cmake_module_path)
+	
+set(CMAKE_MODULE_PATH
+  ${PROJECT_SOURCE_DIR}/cmake
+  ${PROJECT_SOURCE_DIR}/cmake/Modules
+  ${__env_cmake_module_path}
+  ${CMAKE_MODULE_PATH}
+)
+	
+#----------------------------------------------------------------------------
+# Load any required modules
 #
+include ( Config )
+include ( InstallDirs )
+include ( PackageFilename )
+
+# ----------------------------------------------------------------------
+# Dependencies :
+#
+
+# ----------------------------------------------------------------------
+# Options :
+#
+
+option ( MYGSL_WITH_DEBUG
+         "Build the mygsl project using debugging code"
+         0 )
+
+option ( MYGSL_WITH_DOC 
+         "Build the mygsl documentation" 
+ 	 1 )
+
+option ( MYGSL_WITH_TEST 
+         "Build the mygsl test material" 
+ 	 1 )
+
+set ( MYGSL_WITH_BIO_SUPPORT 0 )
+
+set ( MYGSL_WITH_PYTHON_WRAPPER_SUPPORT 0 )
+
+option ( MYGSL_WITH_CMAKE_FIND_MODULE 
+         "Build the mygsl' CMake find module"
+ 	 0 )
+
 
 # - Depends on GSL:
 set ( _gsl_min_version 1.14 ) 
@@ -81,107 +104,213 @@ else ()
      message ( FATAL_ERROR "Cannot find GSL >= ${GSL_MIN_VERSION} library !" )
 endif ()
 
-# - Depends on datatools:
-set ( _datatools_min_version 4.0 )
-find_package ( Datatools ${_datatools_min_version} )
-if ( DATATOOLS_FOUND )
-     message ( STATUS "Found datatools >= ${_datatools_min_version}" )
-     message ( STATUS "  DATATOOLS_VERSION      : ${DATATOOLS_VERSION}" )
-     message ( STATUS "  DATATOOLS_LIBRARIES    : ${DATATOOLS_LIBRARIES}" )
-     message ( STATUS "  DATATOOLS_INCLUDE_DIRS : ${DATATOOLS_INCLUDE_DIRS}" )
-     message ( STATUS "  DATATOOLS_INCLUDE_DIRS_DEPEND : ${DATATOOLS_INCLUDE_DIRS_DEPEND}" )
-     message ( STATUS "  DATATOOLS_LIBRARIES_DEPEND   : ${DATATOOLS_LIBRARIES_DEPEND}" )
-     include_directories ( ${DATATOOLS_INCLUDE_DIRS} )
-else ()
-     message ( FATAL_ERROR "Cannot find datatools >= ${_datatools_min_version} library !" )
+set ( _depends_on_datatools 1 )
+
+if ( MYGSL_WITH_BIO_SUPPORT )
+  set ( _depends_on_datatools 1 )
 endif ()
 
-# ----------------------------------------------------------------------
-# - Options :
-#
+if ( MYGSL_WITH_PYTHON_WRAPPER_SUPPORT )
+  set ( _depends_on_datatools 1 )
+endif ()
 
-option ( MYGSL_WITH_DEBUG
-         "Build the mygsl project using debugging code"
-         OFF )
 
-option ( MYGSL_WITH_DOC 
-         "Build the mygsl documentation" 
- 	 ON )
+set ( _default_bio_activation 0 )
+set ( _default_python_wrapper_activation 0 )
+if ( _depends_on_datatools )
+  # - Depends on datatools:
 
-option ( MYGSL_WITH_TEST 
-         "Build the mygsl test material" 
- 	 ON )
+  if ( DEFINED datatools_DIR )
+    message ( STATUS "datatools_DIR is : '${datatools_DIR}' " )
+  else ()
+    if ( NOT "$ENV{DATATOOLS_CMAKE_CONFIG_DIR}" STREQUAL "" )
+      message ( STATUS "Environment DATATOOLS_CMAKE_CONFIG_DIR exists : '$ENV{DATATOOLS_CMAKE_CONFIG_DIR}' " )
+      set ( datatools_DIR "$ENV{DATATOOLS_CMAKE_CONFIG_DIR}" )
+    endif ()
+  endif ()
+  set ( _datatools_min_version 4.0 )
+  find_package ( datatools ${_datatools_min_version} REQUIRED NO_MODULE )
+  if ( datatools_VERSION )
+       message ( STATUS "Found datatools >= ${_datatools_min_version}" )
+       message ( STATUS "  datatools_VERSION             : ${datatools_VERSION}" )
+       message ( STATUS "  datatools_LIBRARIES           : ${datatools_LIBRARIES}" )
+       message ( STATUS "  datatools_INCLUDE_DIRS        : ${datatools_INCLUDE_DIRS}" )
+       message ( STATUS "  datatools_WITH_DEBUG          : ${datatools_WITH_DEBUG}" )
+       message ( STATUS "  datatools_WITH_BIO            : ${datatools_WITH_BIO}" )
+       message ( STATUS "  datatools_WITH_PYTHON_WRAPPER : ${datatools_WITH_PYTHON_WRAPPER}" )
+  else ()
+       message ( FATAL_ERROR "Cannot find datatools >= ${_datatools_min_version} library !" )
+       if ( datatools_WITH_BIO )
+         set ( _default_bio_activation 1 )
+       endif ()
+       if ( datatools_WITH_PYTHON_WRAPPER )
+         set ( _default_python_wrapper_activation 1 )
+       endif ()
+  endif ()
+endif ()
+
+if ( MYGSL_WITH_BIO_SUPPORT )
+  option ( MYGSL_WITH_BIO 
+           "Build the mygsl with Boost I/O serialization" 
+      	   ${_default_bio_activation} )
+endif ()
+
+
+if ( MYGSL_WITH_PYTHON_WRAPPER_SUPPORT )
+  option ( MYGSL_WITH_PYTHON_WRAPPER
+           "Build the mygsl Boost/Python wrapper module" 
+           ${_default_python_wrapper_activation} )
+endif ()
+
+# ---------------------------------------------------
+
+if (MYGSL_WITH_DEBUG)
+  set (MYGSL_WITH_DEBUG 1)
+endif ()
+
+if ( MYGSL_WITH_PYTHON_WRAPPER_SUPPORT AND MYGSL_WITH_BIO )
+  set (MYGSL_WITH_BIO 1)
+endif ()
+
+if ( MYGSL_WITH_PYTHON_WRAPPER_SUPPORT AND MYGSL_WITH_PYTHON_WRAPPER )
+  set (MYGSL_WITH_PYTHON_WRAPPER 1)
+endif ()
+
+if (MYGSL_WITH_DOC)
+  set (MYGSL_WITH_DOC 1)
+endif ()
+
+if (MYGSL_WITH_TEST)
+  set (MYGSL_WITH_TEST 1)
+endif ()
+# ---------------------------------------------------
+
 
 if ( UNIX OR APPLE )
   option ( MYGSL_WITH_CONFIG_SCRIPT 
            "Build the mygsl-config script" 
-     	   ON )
+     	   1 )
   option ( MYGSL_WITH_PKGCONFIG 
            "Build the pkg-config script" 
-     	   ON )
+     	   0 )
 endif ()
+# ---------------------------------------------------
 
 option ( MYGSL_WITH_CMAKE_FIND_MODULE 
-         "Build the mygsl' CMake find module"
- 	 ON )
-
-set ( _find_module_install_dir ${INSTALL_MISC_DIR}/cmake/Modules ) 
-if ( MYGSL_WITH_CMAKE_FIND_MODULE )
-  if ( DEFINED MYGSL_FIND_MODULE_INSTALL_DIR )
-    set ( _find_module_install_dir ${MYGSL_FIND_MODULE_INSTALL_DIR} ) 
-    message ( STATUS "MYGSL_FIND_MODULE_INSTALL_DIR : " "${MYGSL_FIND_MODULE_INSTALL_DIR}" )
-  endif ()
-endif ( MYGSL_WITH_CMAKE_FIND_MODULE )
-message ( STATUS "_find_module_install_dir = '${_find_module_install_dir}'" )
-
-message ( STATUS "MYGSL_WITH_DEBUG           : " "${MYGSL_WITH_DEBUG}" )
-if (UNIX OR APPLE)
-  message ( STATUS "MYGSL_WITH_CONFIG_SCRIPT   : " "${MYGSL_WITH_CONFIG_SCRIPT}" )
-  message ( STATUS "MYGSL_WITH_PKGCONFIG       : " "${MYGSL_WITH_PKGCONFIG}" )
-endif (UNIX OR APPLE)
-message ( STATUS "MYGSL_WITH_DOC             : " "${MYGSL_WITH_DOC}" )
-message ( STATUS "MYGSL_WITH_TEST            : " "${MYGSL_WITH_TEST}" )
-message ( STATUS "CMAKE_INSTALL_PREFIX      : " "${CMAKE_INSTALL_PREFIX}" )
-
+         "Build the datatools' CMake find module"
+ 	 OFF )
 
 # ----------------------------------------------------------------------
-# - mygsl API
+
+message ( STATUS "MYGSL_WITH_DEBUG           : " "${MYGSL_WITH_DEBUG}" )
+if ( MYGSL_WITH_BIO_SUPPORT )
+  message ( STATUS "MYGSL_WITH_BIO             : " "${MYGSL_WITH_BIO}" )
+endif ()
+if ( MYGSL_WITH_PYTHON_WRAPPER_SUPPORT )
+  message ( STATUS "MYGSL_WITH_PYTHON_WRAPPER  : " "${MYGSL_WITH_PYTHON_WRAPPER}" )
+endif ()
+if ( UNIX OR APPLE )
+  message ( STATUS "MYGSL_WITH_CONFIG_SCRIPT   : " "${MYGSL_WITH_CONFIG_SCRIPT}" )
+  message ( STATUS "MYGSL_WITH_PKGCONFIG       : " "${MYGSL_WITH_PKGCONFIG}" )
+endif ()
+message ( STATUS "MYGSL_WITH_DOC             : " "${MYGSL_WITH_DOC}" )
+message ( STATUS "MYGSL_WITH_TEST            : " "${MYGSL_WITH_TEST}" )
+message ( STATUS "CMAKE_INSTALL_PREFIX    : " "${CMAKE_INSTALL_PREFIX}" )
+
+# ----------------------------------------------------------------------
+
+set ( _ld_library_path_env "LD_LIBRARY_PATH" )
+if ( CMAKE_SYSTEM_NAME MATCHES Darwin )
+  set ( _ld_library_path_env "DYLD_LIBRARY_PATH" )
+endif ( CMAKE_SYSTEM_NAME MATCHES Darwin )
+
+# ----------------------------------------------------------------------
+# mygsl API
 #
 
 message ( STATUS "Add subdirectory : " "'src'" )
 add_subdirectory ( src )   
 
 # ----------------------------------------------------------------------
-# - Configuration files :
+# Configuration files :
 #
 
+# - CMake Config file:
+set ( mygsl_cmake_config_install_dir ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME} )
 
-configure_file ( "${PROJECT_SOURCE_DIR}/cmake/templates/mygsl_config.h.in.cmake"
+# - Pkgconfig file:
+if ( MYGSL_WITH_PKGCONFIG )
+  set ( _pkgconfig_install_dir ${CMAKE_INSTALL_LIBDIR}/pkgconfig )
+  if ( DEFINED MYGSL_PKGCONFIG_INSTALL_DIR)
+    set ( _pkgconfig_install_dir ${MYGSL_PKGCONFIG_INSTALL_DIR} )
+  endif ()
+endif ()
+
+# - CMake Module file (Find) :
+if ( MYGSL_WITH_CMAKE_FIND_MODULE )
+  set ( mygsl_cmake_find_module_install_dir ${CMAKE_INSTALL_DATADIR}/cmake/Modules ) 
+  if ( DEFINED MYGSL_CMAKE_FIND_MODULE_INSTALL_DIR )
+    set ( mygsl_cmake_find_module_install_dir ${MYGSL_CMAKE_FIND_MODULE_INSTALL_DIR} ) 
+    message ( STATUS "MYGSL_CMAKE_FIND_MODULE_INSTALL_DIR : " "${MYGSL_CMAKE_FIND_MODULE_INSTALL_DIR}" )
+  endif ()
+  message ( STATUS "datatools CMake find module install dir = '${mygsl_cmake_find_module_install_dir}'" )
+endif ()
+
+# - C++ configuration header file :
+configure_file ( "${PROJECT_SOURCE_DIR}/cmake/Templates/mygsl_config.h.in"
                  "${PROJECT_BINARY_DIR}/include/mygsl/mygsl_config.h" @ONLY )
 
-install (FILES ${PROJECT_BINARY_DIR}/include/mygsl/mygsl_config.h
-         DESTINATION ${CMAKE_INSTALL_PREFIX}/include/mygsl/
-         PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
-        )
-
-configure_file ( "${PROJECT_SOURCE_DIR}/cmake/templates/mygsl_setup.sh.in.cmake"
-                 "${PROJECT_BINARY_DIR}/cmake/mygsl_setup.sh" @ONLY )
-
-install ( FILES ${PROJECT_BINARY_DIR}/cmake/mygsl_setup.sh
-          DESTINATION ${CMAKE_INSTALL_PREFIX}/etc/
+install ( FILES ${PROJECT_BINARY_DIR}/include/mygsl/mygsl_config.h
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/mygsl
           PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
         )
 
-set ( _mygsl_pkgconfig_Requires 
-     "Requires: datatools >= ${_datatools_min_version},GSL >= ${_gsl_min_version}" 
-    )
+# - Bash setup script :
+configure_file ( "${PROJECT_SOURCE_DIR}/cmake/Templates/mygsl_setup.sh.in"
+                 "${PROJECT_BINARY_DIR}/etc/mygsl_setup.sh" @ONLY )
 
-set ( _mygsl_pkgconfig_Libs "-lmygsl" )
+install ( FILES ${PROJECT_BINARY_DIR}/etc/mygsl_setup.sh
+          DESTINATION ${CMAKE_INSTALL_ETCDIR}
+          PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+        )
 
-set ( _mygsl_pkgconfig_Libs 
-      ${_mygsl_pkgconfig_Libs} 
-      ${GSL_LIBRARIES} 
-      ${DATATOOLS_LIBRARIES} ) 
+# - Pkgconfig configuration file :
+if ( MYGSL_WITH_PKGCONFIG )
+
+  set ( _mygsl_pkgconfig_Requires "Requires: " )
+
+  if ( _depends_on_datatools )
+    set ( _mygsl_pkgconfig_Requires "${_mygsl_pkgconfig_Requires}datatools >= ${_datatools_min_version}" )
+  endif ()
+
+  # if ( _depends_on_YYY )
+  #   set ( _mygsl_pkgconfig_Requires "${_mygsl_pkgconfig_Requires}YYY >= ${_YYY_min_version}" )
+  # endif ()
+
+  set ( _mygsl_pkgconfig_Libs "-lmygsl" )
+
+  if ( _depends_on_datatools )
+
+    set ( _mygsl_pkgconfig_Cflags 
+	  ${DATATOOLS_INCLUDE_DIRS} 
+        )
+ 
+    set ( _mygsl_pkgconfig_Libs 
+          ${_mygsl_pkgconfig_Libs} 
+          ${DATATOOLS_LIBRARIES} 
+        ) 
+
+  endif ()
+
+  configure_file ( "${PROJECT_SOURCE_DIR}/cmake/Templates/mygsl.pc.in"
+                   "${PROJECT_BINARY_DIR}/cmake/mygsl.pc" @ONLY 
+                 )
+
+  install ( FILES ${PROJECT_BINARY_DIR}/cmake/mygsl.pc
+            DESTINATION ${_pkgconfig_install_dir}
+            PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+          )
+endif ()
 
 if ( MYGSL_WITH_CMAKE_FIND_MODULE )
 
@@ -189,53 +318,88 @@ if ( MYGSL_WITH_CMAKE_FIND_MODULE )
                    "${PROJECT_BINARY_DIR}/cmake/Modules/FindMygsl.cmake" @ONLY )
 
   install ( FILES ${PROJECT_BINARY_DIR}/cmake/Modules/FindMygsl.cmake
-            DESTINATION ${_find_module_install_dir}
+            DESTINATION ${_cmake_find_module_install_dir}
             COMPONENT utils
            )
-
-  set ( MYGSL_CMAKE_MODULE_INSTALL_DIR ${_find_module_install_dir} 
-        CACHE PATH "The CMake Module subdirectory" FORCE )
-
-  message ( STATUS "MYGSL_CMAKE_MODULE_INSTALL_DIR = '${MYGSL_CMAKE_MODULE_INSTALL_DIR}' " )
 
 endif ()
 
 if ( UNIX OR APPLE )
   if ( MYGSL_WITH_CONFIG_SCRIPT )
 
-    configure_file ( "${PROJECT_SOURCE_DIR}/cmake/templates/mygsl-config.in.cmake"
+    configure_file ( "${PROJECT_SOURCE_DIR}/cmake/Templates/mygsl-config.in"
                      "${PROJECT_BINARY_DIR}/cmake/mygsl-config" @ONLY )
 
     install ( FILES ${PROJECT_BINARY_DIR}/cmake/mygsl-config
-              DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/
+              DESTINATION ${CMAKE_INSTALL_BINDIR}
               PERMISSIONS OWNER_READ OWNER_EXECUTE 
                           GROUP_READ GROUP_EXECUTE 
                           WORLD_READ WORLD_EXECUTE
              )
 
-    install ( FILES ${PROJECT_SOURCE_DIR}/pkgtools.d/mkuniqueflags.py
-              DESTINATION ${INSTALL_MISC_DIR}/pkgtools
+    install ( FILES ${PROJECT_SOURCE_DIR}/cmake/Tools/mkuniqueflags.py
+              DESTINATION ${CMAKE_INSTALL_DATADIR}/pkgtools
               PERMISSIONS OWNER_READ OWNER_EXECUTE 
 	                  GROUP_READ GROUP_EXECUTE 
                           WORLD_READ WORLD_EXECUTE
             )
 
+    install ( FILES ${PROJECT_SOURCE_DIR}/cmake/Tools/libpkgtools.sh
+              DESTINATION ${CMAKE_INSTALL_DATADIR}/pkgtools/
+              PERMISSIONS OWNER_READ OWNER_WRITE 
+                          GROUP_READ
+                          WORLD_READ
+             )
+
   endif ()
 endif ()  
 
 install ( FILES README.txt COPYING.txt LICENSE.GPL3.txt
-          DESTINATION ${INSTALL_MISC_DIR}
+          DESTINATION ${CMAKE_INSTALL_DATADIR}
          )
 
 # ----------------------------------------------------------------------------
-# - Add documentation.
+# - Add Python wrapping.
+#
+
+if ( MYGSL_WITH_PYTHON_WRAPPER )
+  set ( CMAKE_USE_PYTHON_VERSION "2.7" "2.6" )
+  find_package ( PythonInterp REQUIRED )
+  set ( CMAKE_USE_PYTHON_VERSION "2.7" "2.6" )
+  find_package ( PythonLibs REQUIRED )
+
+  # We need to force the cache to disable Python if we didn't find any
+  # of the needed components
+  message ( STATUS "Boost_PYTHON_LIBRARY = ${Boost_PYTHON_LIBRARY}" )
+  message ( STATUS "PYTHON_INCLUDE_DIRS  = ${PYTHON_INCLUDE_DIRS}" )
+  message ( STATUS "PYTHON_EXECUTABLE    = ${PYTHON_EXECUTABLE}" )
+  message ( STATUS "PYTHON_LIBRARIES     = ${PYTHON_LIBRARIES}" )
+  message ( STATUS "PYTHON_DEBUG_LIBRARIES = ${PYTHON_DEBUG_LIBRARIES}" )
+
+  if (NOT Boost_PYTHON_LIBRARY OR NOT PYTHON_INCLUDE_DIRS OR NOT PYTHON_EXECUTABLE)
+     message ( STATUS "Missing Python stuff " )
+     set ( MYGSL_WITH_PYTHON_WRAPPER OFF CACHE BOOL "Enable Python wrapping of datatools, requires Boost.Python" FORCE)
+  endif ()
+endif () 
+  
+#set ( CMAKE_INSTALL_PYTHONDIR "" )
+#message ( STATUS "CMAKE_INSTALL_PYTHONDIR = '${CMAKE_INSTALL_PYTHONDIR}' " )
+
+if ( MYGSL_WITH_PYTHON_WRAPPER )
+    message ( STATUS "Add subdirectory 'wrapping/python' " )
+    add_subdirectory ( wrapping/python )
+endif () 
+
+# 
+# ----------------------------------------------------------------------------
+# Add documentation.
 #
 if ( MYGSL_WITH_DOC )
   add_subdirectory ( doc )
 endif ()
 
 # ----------------------------------------------------------------------------
-# - Add testing - always for now.
+# Add testing - always for now.
 #
 if ( MYGSL_WITH_TEST )
   enable_testing () 
@@ -243,9 +407,95 @@ if ( MYGSL_WITH_TEST )
 endif ()
 
 # ----------------------------------------------------------------------------
-# - Packaging
+# packaging
 #
 
 include ( ${MYGSL_SOURCE_DIR}/cmake/Packaging.cmake OPTIONAL )
+
+# ----------------------------------------------------------------------------
+# - Generate Build Tree configuration files
+# - CMake
+# Export targets from the build tree
+# Done by hand for now because we know the targets exactly
+export(TARGETS mygsl 
+  FILE ${PROJECT_BINARY_DIR}/mygsl-libraries.cmake
+  )
+if ( MYGSL_WITH_BIO_SUPPORT AND MYGSL_WITH_BIO )
+  export(TARGETS mygsl_bio 
+    APPEND FILE ${PROJECT_BINARY_DIR}/mygsl-libraries.cmake
+    )
+endif()
+
+# Configure the build tree CMake Config mode file
+configure_file(
+  ${PROJECT_SOURCE_DIR}/cmake/Templates/mygsl-config.cmake.in
+  ${PROJECT_BINARY_DIR}/mygsl-config.cmake
+  @ONLY
+  )
+
+# Configure the build tree versioning file
+configure_file(
+  ${PROJECT_SOURCE_DIR}/cmake/Templates/mygsl-config-version.cmake.in
+  ${PROJECT_BINARY_DIR}/mygsl-config-version.cmake
+  @ONLY
+  )
+
+
+
+#----------------------------------------------------------------------------
+# - Generate Install Tree configuration files
+# - CMake
+# Export targets from the install tree
+# Just need to install the named export to a suitable location
+if(WIN32)
+  set(MYGSL_CMAKE_CONFIG_DIR mygsl-${mygsl_VERSION_STR} )
+else()
+  if(MYGSL_IS_FRAMEWORK)
+    # Mac Framework location - may not be needed.
+  else()
+    # Standard Unix Tool
+    set(MYGSL_CMAKE_CONFIG_DIR ${mygsl_cmake_config_install_dir} )
+  endif()
+endif()
+message (STATUS "CMAKE_INSTALL_PREFIX='${CMAKE_INSTALL_PREFIX}'" )
+message (STATUS "MYGSL_CMAKE_CONFIG_DIR='${MYGSL_CMAKE_CONFIG_DIR}'" )
+message (STATUS "mygsl_cmake_config_install_dir='${mygsl_cmake_config_install_dir}'" )
+
+# set(TOTO ${mygsl_cmake_config_install_dir} )
+# message (STATUS "TOTO='${TOTO}'" )
+
+install(EXPORT mygsl-libraries
+  DESTINATION ${MYGSL_CMAKE_CONFIG_DIR}
+  COMPONENT devel
+  )
+
+# Configure the install tree CMake Config mode file
+# Set variables
+set(mygsl_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include)
+# Configure file
+# This is different from the build tree file, so store in dedicated directory
+configure_file(
+  ${PROJECT_SOURCE_DIR}/cmake/Templates/mygsl-config.cmake.in
+  ${PROJECT_BINARY_DIR}/InstallTreeFiles/mygsl-config.cmake
+  @ONLY
+  )
+
+
+# Configure the install tree versioning file
+# N.B. it *probably* does not differ from the build tree file, but configuring
+# separately allows easy changes should we need this.
+configure_file(
+  ${PROJECT_SOURCE_DIR}/cmake/Templates/mygsl-config-version.cmake.in
+  ${PROJECT_BINARY_DIR}/InstallTreeFiles/mygsl-config-version.cmake
+  @ONLY
+  )
+
+# Install the CMake Config mode files into the install tree
+install ( FILES
+          ${PROJECT_BINARY_DIR}/InstallTreeFiles/mygsl-config.cmake
+          ${PROJECT_BINARY_DIR}/InstallTreeFiles/mygsl-config-version.cmake
+          DESTINATION ${MYGSL_CMAKE_CONFIG_DIR}
+          COMPONENT devel
+        )
 
 # - end of top level CMakeLists.txt for mygsl project.

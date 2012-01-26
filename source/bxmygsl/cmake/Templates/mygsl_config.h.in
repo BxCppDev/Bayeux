@@ -2,10 +2,10 @@
 /* mygsl_config.h header file 
  */
 
-#ifndef __mygsl__mygsl_config_h
-#define __mygsl__mygsl_config_h 1
+#ifndef __mygsl_mygsl_config_h
+#define __mygsl_mygsl_config_h 1
 
-/*** mygsl versioning information ***/
+/*** brio versioning information ***/
 
 //  MYGSL_VERSION % 100        is the patch level
 //  MYGSL_VERSION / 100 % 1000 is the minor version
@@ -23,6 +23,19 @@
 
 #define MYGSL_LIB_VERSION "@mygsl_VERSION_STR@"
 
-#endif // __mygsl__mygsl_config_h
+/*** mygsl debug flag ***/
+#cmakedefine01 MYGSL_WITH_DEBUG
+
+/*** mygsl embedded Boost/Serialization based I/O ***/
+#if x0 == x1
+#cmakedefine01 MYGSL_WITH_BIO 
+#endif
+
+/*** mygsl Boost/Python module ***/
+#if x0 == x1
+#cmakedefine01 MYGSL_WITH_PYTHON_WRAPPER
+#endif
+
+#endif // __mygsl_mygsl_config_h
 
 // end of mygsl_config.h
