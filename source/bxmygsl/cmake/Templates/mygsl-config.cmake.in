@@ -7,6 +7,8 @@
 #  mygsl_WITH_BIO     - flag for Boost/Serialization I/O DLL (a.k.a. 'bio')
 # If Boost/Python wrapper module is supported :
 #  mygsl_WITH_PYTHON_WRAPPER - flag for 'Boost/Python' module 
+#
+# see: http://www.vtk.org/Wiki/CMake/Tutorials/How_to_create_a_ProjectConfig.cmake_file
 
 #----------------------------------------------------------------------------
 # This program is free software: you can redistribute it and/or modify
@@ -29,13 +31,11 @@
 #
 get_filename_component(_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
-
 #----------------------------------------------------------------------------
 # Include the file listing all the imported targets to make them available
 # This is installed in the same location as us...
 #
 include("${_thisdir}/mygsl-libraries.cmake")
-
 
 #----------------------------------------------------------------------------
 # Set variables pointing to used third party headers and locations.
@@ -47,22 +47,28 @@ include("${_thisdir}/mygsl-libraries.cmake")
 #
 set(mygsl_INCLUDE_DIR @mygsl_INCLUDE_DIR@)
 set(mygsl_INCLUDE_DIRS
-  ${mygsl_INCLUDE_DIR}
-  )
+    ${mygsl_INCLUDE_DIR}
+   )
 
-if (_depends_on_datatools)
-  set(mygsl_datatools_INCLUDE_DIRS @datatools_INCLUDE_DIRS@)
-  set(mygsl_gsl_INCLUDE_DIRS @GSL_INCLUDE_DIRS@)
-  set (mygsl_INCLUDE_DIRS 
-       ${mygsl_INCLUDE_DIRS}
-       ${mygsl_gsl_INCLUDE_DIRS}
-       ${mygsl_datatools_INCLUDE_DIRS}
-      )
-endif ()
+# Trick to explicitely import the datatools exports (is it the right way to cascade import ?) :
+message ( STATUS "DEVEL: mygsl-config.cmake: Including datatools_CONFIG='@datatools_CONFIG@'" )
+include ( @datatools_CONFIG@ )
+#message ( STATUS "DEVEL: mygsl-config.cmake: datatools_VERSION='@datatools_VERSION@'" )
+#message ( STATUS "DEVEL: mygsl-config.cmake: datatools_INCLUDE_DIRS='@datatools_INCLUDE_DIRS@'" )
+
+set(_mygsl_datatools_INCLUDE_DIRS @datatools_INCLUDE_DIRS@)
+set(_mygsl_gsl_INCLUDE_DIRS       @GSL_INCLUDE_DIRS@)
+set(mygsl_INCLUDE_DIRS 
+    ${mygsl_INCLUDE_DIRS}
+    ${_mygsl_gsl_INCLUDE_DIRS}
+    ${_mygsl_datatools_INCLUDE_DIRS}
+   )
+unset(_mygsl_datatools_INCLUDE_DIRS)
+unset(_mygsl_gsl_INCLUDE_DIRS)
 
 #----------------------------------------------------------------------------
 # Set mygsl_LIBRARIES variable
-# Basic : Assume that if mygsl_bio was built, it should be in Library list
+set(mygsl_LIB_DIR @mygsl_LIB_DIR@)
 set(mygsl_LIBRARY mygsl)
 
 set(mygsl_WITH_DEBUG @MYGSL_WITH_DEBUG@)
@@ -72,7 +78,7 @@ else()
   set(mygsl_WITH_DEBUG 0)
 endif()
 
-if ( MYGSL_WITH_BIO_SUPPORT )
+if ( @MYGSL_WITH_BIO_SUPPORT@ )
  set(mygsl_WITH_BIO @MYGSL_WITH_BIO@)
  if(mygsl_WITH_BIO)
    set(mygsl_WITH_BIO 1)
@@ -82,7 +88,7 @@ if ( MYGSL_WITH_BIO_SUPPORT )
  endif()
 endif()
 
-if ( MYGSL_WITH_PYTHON_WRAPPER_SUPPORT )
+if ( @MYGSL_WITH_PYTHON_WRAPPER_SUPPORT@ )
   set(mygsl_WITH_PYTHON_WRAPPER @MYGSL_WITH_PYTHON_WRAPPER@)
   if(mygsl_WITH_PYTHON_WRAPPER)
     set(mygsl_WITH_PYTHON_WRAPPER 1)
@@ -93,14 +99,24 @@ endif ()
 
 set(mygsl_LIBRARIES ${mygsl_BIO_LIBRARY} ${mygsl_LIBRARY} ${mygsl_SYS_LIBRARY} )
 
-if (_depends_on_datatools)
-  set(mygsl_datatools_LIBRARIES @datatools_LIBRARIES@)
-  set(mygsl_gsl_LIBRARIES @GSL_LIBRARIES@)
-  set(mygsl_LIBRARIES 
-       ${mygsl_LIBRARIES}
-       ${mygsl_datatools_LIBRARIES}
-       ${mygsl_gsl_LIBRARIES}
-     )
-endif ()
+set(_mygsl_datatools_LIBRARIES @datatools_LIBRARIES@)
+set(_mygsl_gsl_LIBRARIES @GSL_LIBRARIES@)
+set(mygsl_LIBRARIES 
+     ${mygsl_LIBRARIES}
+     ${_mygsl_datatools_LIBRARIES}
+     ${_mygsl_gsl_LIBRARIES}
+   )
+
+if ( @MYGSL_WITH_BIO_SUPPORT@ )
+  message ( STATUS "DEVEL: mygsl-config.cmake: mygsl_WITH_BIO=${mygsl_WITH_BIO}" )
+endif()
+if ( @MYGSL_WITH_PYTHON_WRAPPER_SUPPORT@ )
+  message ( STATUS "DEVEL: mygsl-config.cmake: mygsl_WITH_PYTHON_WRAPPER=${mygsl_WITH_PYTHON_WRAPPER}" )
+endif()
+message ( STATUS "DEVEL: mygsl-config.cmake: mygsl_INCLUDE_DIRS=${mygsl_INCLUDE_DIRS}" )
+message ( STATUS "DEVEL: mygsl-config.cmake: mygsl_LIBRARIES=${mygsl_LIBRARIES}" )
+
+unset(_mygsl_datatools_LIBRARIES)
+unset(_mygsl_gsl_LIBRARIES)
 
 # end

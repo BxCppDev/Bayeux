@@ -119,7 +119,7 @@ set ( _default_bio_activation 0 )
 set ( _default_python_wrapper_activation 0 )
 if ( _depends_on_datatools )
   # - Depends on datatools:
-
+  ### set(datatools_DIR "$ENV{datatools_ROOT}" CACHE LOCATION "where was datatools built?")
   if ( DEFINED datatools_DIR )
     message ( STATUS "datatools_DIR is : '${datatools_DIR}' " )
   else ()
@@ -140,12 +140,16 @@ if ( _depends_on_datatools )
        message ( STATUS "  datatools_WITH_PYTHON_WRAPPER : ${datatools_WITH_PYTHON_WRAPPER}" )
   else ()
        message ( FATAL_ERROR "Cannot find datatools >= ${_datatools_min_version} library !" )
-       if ( datatools_WITH_BIO )
-         set ( _default_bio_activation 1 )
-       endif ()
-       if ( datatools_WITH_PYTHON_WRAPPER )
-         set ( _default_python_wrapper_activation 1 )
-       endif ()
+  endif ()
+  if ( MYGSL_WITH_BIO_SUPPORT )
+    if ( datatools_WITH_BIO )
+      set ( _default_bio_activation 1 )
+    endif ()
+  endif ()
+  if ( MYGSL_WITH_PYTHON_WRAPPER_SUPPORT )
+    if ( datatools_WITH_PYTHON_WRAPPER )
+      set ( _default_python_wrapper_activation 1 )
+    endif ()
   endif ()
 endif ()
 
@@ -471,7 +475,8 @@ install(EXPORT mygsl-libraries
 
 # Configure the install tree CMake Config mode file
 # Set variables
-set(mygsl_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include)
+set(mygsl_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR} )
+set(mygsl_LIB_DIR     ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}     )
 # Configure file
 # This is different from the build tree file, so store in dedicated directory
 configure_file(
