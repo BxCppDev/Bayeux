@@ -49,15 +49,14 @@ include("${_thisdir}/datatools-libraries.cmake")
 #  find_package(Boost NO_DEFAULT_PATH)
 #
 # - Boost
-set(datatools_BOOST_ROOT @BOOST_ROOT@)
-set(datatools_BOOST_INCLUDE_DIRS @Boost_INCLUDE_DIRS@)
-set(datatools_BOOST_LIBRARIES @Boost_LIBRARIES@)
+#set(_datatools_BOOST_ROOT @BOOST_ROOT@)
+set(_datatools_BOOST_INCLUDE_DIRS @Boost_INCLUDE_DIRS@)
+set(_datatools_BOOST_LIBRARIES @Boost_LIBRARIES@)
 
 # - CLHEP
-#set(datatools_CLHEP_ROOT @CLHEP_ROOT@)
-set(datatools_CLHEP_INCLUDE_DIRS @CLHEP_INCLUDE_DIRS@)
-set(datatools_CLHEP_LIBRARIES @CLHEP_LIBRARIES@)
-
+#set(_datatools_CLHEP_ROOT @CLHEP_ROOT_DIR@)
+set(_datatools_CLHEP_INCLUDE_DIRS @CLHEP_INCLUDE_DIRS@)
+set(_datatools_CLHEP_LIBRARIES @CLHEP_LIBRARIES@)
 
 #----------------------------------------------------------------------------
 # Set path to datatools includes
@@ -65,9 +64,10 @@ set(datatools_CLHEP_LIBRARIES @CLHEP_LIBRARIES@)
 set(datatools_INCLUDE_DIR @datatools_INCLUDE_DIR@)
 set(datatools_INCLUDE_DIRS
   ${datatools_INCLUDE_DIR}
-  ${datatools_BOOST_INCLUDE_DIRS}
-  ${datatools_CLHEP_INCLUDE_DIRS}
+  ${_datatools_BOOST_INCLUDE_DIRS}
+  ${_datatools_CLHEP_INCLUDE_DIRS}
   )
+
 
 #----------------------------------------------------------------------------
 # Set datatools_LIBRARIES variable
@@ -101,8 +101,8 @@ endif()
 set(datatools_LIBRARIES ${datatools_BIO_LIBRARY} 
                         ${datatools_LIBRARY} 
                         ${datatools_SYS_LIBRARY} 
-                        ${datatools_BOOST_LIBRARIES} 
-                        ${datatools_CLHEP_LIBRARIES} 
+                        ${_datatools_BOOST_LIBRARIES} 
+                        ${_datatools_CLHEP_LIBRARIES} 
    )
 
 ###message ( STATUS "DEVEL: datatools-config.cmake: datatools_VERSION=${datatools_VERSION}" )
@@ -110,3 +110,13 @@ message ( STATUS "DEVEL: datatools-config.cmake: datatools_WITH_BIO=${datatools_
 message ( STATUS "DEVEL: datatools-config.cmake: datatools_WITH_PYTHON_WRAPPER=${datatools_WITH_PYTHON_WRAPPER}" )
 message ( STATUS "DEVEL: datatools-config.cmake: datatools_INCLUDE_DIRS=${datatools_INCLUDE_DIRS}" )
 message ( STATUS "DEVEL: datatools-config.cmake: datatools_LIBRARIES=${datatools_LIBRARIES}" )
+
+
+#unset(_datatools_CLHEP_ROOT)
+unset(_datatools_CLHEP_INCLUDE_DIRS)
+unset(_datatools_CLHEP_LIBRARIES)
+#unset(_datatools_BOOST_ROOT)
+unset(_datatools_BOOST_INCLUDE_DIRS)
+unset(_datatools_BOOST_LIBRARIES)
+
+# end
