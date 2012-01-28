@@ -1,0 +1,149 @@
+# FindBrio.cmake
+# 
+# A rather brute force version.
+# 
+# Locate brio library
+# This module defines
+#  BRIO_FOUND
+#  BRIO_VERSION
+#  BRIO_LIBRARIES
+#  BRIO_INCLUDE_DIRS, where to find brio/brio_config.h
+#  BRIO_LIBRARIES_DEPEND
+#  BRIO_INCLUDE_DIRS_DEPEND
+# and 
+#  BRIO_WITH_BIO if Boost I/O support is activated
+#  BRIO_WITH_PYTHON_WRAPPER if Boost Python wrapper support is activated
+
+set ( __bio_support 0 )
+set ( __python_wrapper_support 0 )
+
+set ( BRIO_VERSION  @brio_VERSION_STR@ CACHE STRING "brio version" )
+
+if ( __python_wrapper_support )
+   set ( BRIO_WITH_PYTHON_WRAPPER  @BRIO_WITH_PYTHON_WRAPPER@ CACHE STRING "Python wrapper flag" )
+endif ()
+
+if ( __bio_support )
+  set ( BRIO_WITH_BIO             @BRIO_WITH_BIO@  "Boost I/O DLL flag" )
+endif ()
+
+message ( STATUS "FindBrio: BRIO_VERSION='${BRIO_VERSION}'" )
+
+if ( __bio_support )
+  message ( STATUS "FindBrio: BRIO_WITH_BIO='${BRIO_WITH_BIO}'" )
+endif ()
+
+if ( __python_wrapper_support )
+  message ( STATUS "FindBrio: BRIO_WITH_PYTHON_WRAPPER='${BRIO_WITH_PYTHON_WRAPPER}'" )
+endif ()
+
+find_path ( BRIO_INCLUDE_DIRS brio/brio_config.h
+  HINTS
+  $ENV{BRIO_ROOT_DIR}
+  PATH_SUFFIXES include
+  PATHS
+  [HKEY_LOCAL_MACHINE\\SOFTWARE\\brio]
+  ~/Library/Frameworks
+  /Library/Frameworks
+  /usr/local
+  /usr
+  /sw # Fink
+  /opt/local # DarwinPorts
+  /opt/csw # Blastwave
+  /opt
+)
+
+message ( STATUS "FindBrio: BRIO_INCLUDE_DIRS='${BRIO_INCLUDE_DIRS}'" )
+
+find_library ( _brio_library 
+  NAMES brio
+  HINTS $ENV{BRIO_ROOT_DIR}
+  PATHS
+  [HKEY_LOCAL_MACHINE\\SOFTWARE\\brio]
+  ~/Library/Frameworks
+  /Library/Frameworks
+  /usr/local
+  /usr
+  /sw
+  /opt/local
+  /opt/csw
+  /opt
+  PATH_SUFFIXES lib64 lib
+)
+message ( STATUS "FindBrio: BRIO_LIBRARY='${BRIO_LIBRARY}'" )
+set ( _brio_libraries "${_brio_library}" )
+
+if ( __bio_support )
+  if ( ${BRIO_WITH_BIO} )
+    find_library ( _brio_bio_library 
+      NAMES brio_bio
+      HINTS $ENV{BRIO_ROOT_DIR}
+      PATHS
+      [HKEY_LOCAL_MACHINE\\SOFTWARE\\brio]
+      ~/Library/Frameworks
+      /Library/Frameworks
+      /usr/local
+      /usr
+      /sw
+      /opt/local
+      /opt/csw
+      /opt
+      PATH_SUFFIXES lib64 lib
+      )
+     message ( STATUS "FindBrio: _brio_bio_library='${_brio_bio_library}'" )
+     if ( NOT "${_brio_bio_library}" STREQUAL "" )
+       set ( _brio_libraries "${_brio_bio_library}" "${_brio_library}" )
+       message ( STATUS "FindBrio: _brio_libraries='${_brio_libraries}'" )
+    endif ()
+  endif ()
+endif ()
+
+set ( BRIO_LIBRARIES ${_brio_libraries} )
+message ( STATUS "FindBrio: BRIO_LIBRARIES='${BRIO_LIBRARIES}'" )
+
+include ( FindPackageHandleStandardArgs )
+# handle the QUIETLY and REQUIRED arguments and set BRIO_FOUND to TRUE if 
+# all listed variables are TRUE
+find_package_handle_standard_args ( brio DEFAULT_MSG BRIO_LIBRARIES BRIO_INCLUDE_DIRS )
+
+set ( BRIO_LIBRARIES_DEPEND 
+      ${BRIO_LIBRARIES}
+      ###@MYGSL_LIBRARIES_DEPEND@ 
+      ###@DATATOOLS_LIBRARIES_DEPEND@
+    )
+
+message ( STATUS "FindBrio: BRIO_LIBRARIES_DEPEND='${BRIO_LIBRARIES_DEPEND}'" )
+
+# if (BRIO_WITH_PYTHON_WRAPPER)
+#   list ( APPEND BRIO_LIBRARIES_DEPEND 
+#          python )
+# endif ()
+
+set ( BRIO_INCLUDE_DIRS_DEPEND
+      ${BRIO_INCLUDE_DIRS}
+      ###@MYGSL_INCLUDE_DIR_DEPEND@
+      ###@DATATOOLS_INCLUDE_DIRS_DEPEND@
+    )
+
+message ( STATUS "FindBrio: BRIO_INCLUDE_DIRS_DEPEND='${BRIO_INCLUDE_DIRS_DEPEND}'" )
+
+mark_as_advanced (BRIO_VERSION  
+                  BRIO_LIBRARY
+		  BRIO_INCLUDE_DIRS 
+                  BRIO_LIBRARIES 
+		  BRIO_INCLUDE_DIRS_DEPEND 
+                  BRIO_LIBRARIES_DEPEND 
+		  )
+
+if ( __bio_support )
+  mark_as_advanced ( BRIO_WITH_BIO )  
+endif ()
+
+if ( __python_wrapper_support )
+  mark_as_advanced ( BRIO_WITH_PYTHON_WRAPPER )  
+endif ()
+
+message ( STATUS "FindBrio: BRIO_FOUND=${BRIO_FOUND}")
+
+# end of FindBrio.cmake
+
