@@ -71,8 +71,8 @@ test_utils.cxx
     )
 
 # include files search paths
-include_directories ( ${PROJECT_SOURCE_DIR}/include	
-                      ${PROJECT_BINARY_DIR}/include	
+include_directories ( ${PROJECT_BINARY_DIR}/include
+                      ${PROJECT_SOURCE_DIR}/include     
                       ${DATATOOLS_INCLUDE_DIRS_DEPEND}
                       ${MYGSL_INCLUDE_DIRS_DEPEND}
                       ${PROJECT_SOURCE_DIR}/testing
@@ -103,11 +103,11 @@ foreach ( test_program ${geomtools_tests_programs_list} )
   # last thing we have to do is to tell CMake what libraries 
   # our executable needs,
   list (APPEND test_libraries "geomtools" ${DATATOOLS_LIBRARIES_DEPEND} ${MYGSL_LIBRARIES_DEPEND} )
-	 
+         
   if ( GEOMTOOLS_WITH_BIO )
     list (INSERT test_libraries 0 "geomtools_bio" )
   endif ()
-	 
+         
   target_link_libraries ( ${test_executable} ${test_libraries} )
 
   add_test ( NAME ${test_executable}.run
@@ -115,12 +115,12 @@ foreach ( test_program ${geomtools_tests_programs_list} )
                      --tmp-dir ${_test_tmp_dir}
                      --prefix ${PROJECT_SOURCE_DIR} 
                      --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
-		     run
-           )	 	
+                     run
+           )            
 
 endforeach ()
   
-add_custom_target ( clean_test	
+add_custom_target ( clean_test  
              COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
                      --prefix ${PROJECT_SOURCE_DIR} 
                      --tmp-dir ${_test_tmp_dir}

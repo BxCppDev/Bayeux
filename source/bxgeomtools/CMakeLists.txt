@@ -99,32 +99,45 @@ option ( GEOMTOOLS_WITH_DEBUG
 
 option ( GEOMTOOLS_WITH_BIO 
          "Generate an auxiliary DLL with Boost I/O code" 
- 	 ON )
+         ON )
 
 option ( GEOMTOOLS_WITH_PYTHON_WRAPPER 
          "Build the geomtools Python wrapper module" 
- 	 OFF )
+         OFF )
 
 option ( GEOMTOOLS_WITH_DOC 
          "Build the geomtools documentation" 
- 	 ON )
+         ON )
 
 option ( GEOMTOOLS_WITH_TEST 
          "Build the geomtools test material" 
- 	 ON )
+         ON )
 
 if ( UNIX OR APPLE )
   option ( GEOMTOOLS_WITH_CONFIG_SCRIPT 
            "Build the geomtools-config script" 
-     	   ON )
+           ON )
   option ( GEOMTOOLS_WITH_PKGCONFIG 
            "Build the pkg-config script" 
-     	   ON )
+           ON )
+endif ()
+
+set ( _geomtools_cmake_config_install_dir ${CMAKE_INSTALL_PREFIX}/lib/geomtools-${geomtools_VERSION_STR}/cmake )
+
+if ( DEFINED GEOMTOOLS_CMAKE_CONFIG_INSTALL_DIR)
+  set ( _geomtools_cmake_config_install_dir ${GEOMTOOLS_CMAKE_CONFIG_INSTALL_DIR} )  
+endif ()
+
+if ( GEOMTOOLS_WITH_PKGCONFIG )
+  set ( _geomtools_pkgconfig_install_dir ${CMAKE_INSTALL_PREFIX}/lib/geomtools-${geomtools_VERSION_STR}/pkgconfig )
+  if ( DEFINED GEOMTOOLS_PKGCONFIG_INSTALL_DIR)
+    set ( _geomtools_pkgconfig_install_dir ${GEOMTOOLS_PKGCONFIG_INSTALL_DIR} )  
+  endif ()
 endif ()
 
 option ( GEOMTOOLS_WITH_CMAKE_FIND_MODULE 
          "Build the geomtools' CMake find module"
- 	 ON )
+         ON )
 
 set ( _find_module_install_dir ${INSTALL_MISC_DIR}/cmake/Modules ) 
 if ( GEOMTOOLS_WITH_CMAKE_FIND_MODULE )
@@ -158,7 +171,7 @@ add_subdirectory ( src )
 # - Configuration files :
 #
 
-configure_file ( "${PROJECT_SOURCE_DIR}/cmake/templates/geomtools_config.h.in.cmake"
+configure_file ( "${PROJECT_SOURCE_DIR}/cmake/templates/geomtools_config.h.in"
                  "${PROJECT_BINARY_DIR}/include/geomtools/geomtools_config.h" @ONLY )
 
 install (FILES ${PROJECT_BINARY_DIR}/include/geomtools/geomtools_config.h
@@ -166,7 +179,7 @@ install (FILES ${PROJECT_BINARY_DIR}/include/geomtools/geomtools_config.h
          PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
         )
 
-configure_file ( "${PROJECT_SOURCE_DIR}/cmake/templates/geomtools_setup.sh.in.cmake"
+configure_file ( "${PROJECT_SOURCE_DIR}/cmake/templates/geomtools_setup.sh.in"
                  "${PROJECT_BINARY_DIR}/cmake/geomtools_setup.sh" @ONLY )
 
 install ( FILES ${PROJECT_BINARY_DIR}/cmake/geomtools_setup.sh
@@ -175,7 +188,7 @@ install ( FILES ${PROJECT_BINARY_DIR}/cmake/geomtools_setup.sh
         )
 
 set ( _geomtools_pkgconfig_Requires 
-     "Requires: datatools >= ${_datatools_min_version},GSL >= ${_gsl_min_version}" 
+     "Requires: datatools >= ${_datatools_min_version},mygsl >= ${_mygsl_min_version}" 
     )
 
 set ( _geomtools_pkgconfig_Libs "-lgeomtools" )
@@ -185,6 +198,15 @@ set ( _geomtools_pkgconfig_Libs
       ${DATATOOLS_LIBRARIES_DEPEND}      
       ${GSL_LIBRARIES} 
     ) 
+
+configure_file ( "${PROJECT_SOURCE_DIR}/cmake/templates/geomtools.pc.in"
+                 "${PROJECT_BINARY_DIR}/cmake/geomtools.pc" @ONLY 
+               )
+
+install ( FILES ${PROJECT_BINARY_DIR}/cmake/geomtools.pc
+          DESTINATION ${_geomtools_pkgconfig_install_dir}
+          PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+        )
 
 if ( GEOMTOOLS_WITH_CMAKE_FIND_MODULE )
 
@@ -206,7 +228,7 @@ endif ()
 if ( UNIX OR APPLE )
   if ( GEOMTOOLS_WITH_CONFIG_SCRIPT )
 
-    configure_file ( "${PROJECT_SOURCE_DIR}/cmake/templates/geomtools-config.in.cmake"
+    configure_file ( "${PROJECT_SOURCE_DIR}/cmake/templates/geomtools-config.in"
                      "${PROJECT_BINARY_DIR}/cmake/geomtools-config" @ONLY )
 
     install ( FILES ${PROJECT_BINARY_DIR}/cmake/geomtools-config
@@ -219,7 +241,7 @@ if ( UNIX OR APPLE )
     install ( FILES ${PROJECT_SOURCE_DIR}/pkgtools.d/mkuniqueflags.py
               DESTINATION ${INSTALL_MISC_DIR}/pkgtools
               PERMISSIONS OWNER_READ OWNER_EXECUTE 
-	                  GROUP_READ GROUP_EXECUTE 
+                          GROUP_READ GROUP_EXECUTE 
                           WORLD_READ WORLD_EXECUTE
             )
 

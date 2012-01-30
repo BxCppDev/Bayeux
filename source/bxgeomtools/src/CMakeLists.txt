@@ -57,8 +57,8 @@ endif ( GEOMTOOLS_WITH_BIO )
 # Dependencies
 #
 
-include_directories ( ${PROJECT_SOURCE_DIR}/include	
-                      ${PROJECT_BINARY_DIR}/include	
+include_directories ( ${PROJECT_BINARY_DIR}/include     
+                      ${PROJECT_SOURCE_DIR}/include     
                       ${MYGSL_INCLUDE_DIRS_DEPEND}
                       ${DATATOOLS_INCLUDE_DIRS_DEPEND}
                   )
@@ -67,10 +67,10 @@ include_directories ( ${PROJECT_SOURCE_DIR}/include
 # Add the library
 #
 
-add_library (geomtools SHARED  
-		      ${geomtools_PUBLIC_HEADERS} 
-		      ${geomtools_detail_PUBLIC_HEADERS} 
-		      ${geomtools_SOURCES}
+add_library ( geomtools SHARED  
+                        ${geomtools_PUBLIC_HEADERS} 
+                        ${geomtools_detail_PUBLIC_HEADERS} 
+                        ${geomtools_SOURCES}
             )
 
 # Link dynamic library :
