@@ -1,0 +1,121 @@
+# - Config file for the genvtx package
+# It defines the following variables
+#  genvtx_INCLUDE_DIRS - include directories for genvtx
+#  genvtx_LIBRARIES    - libraries to link against
+#  genvtx_WITH_DEBUG   - flag for debug mode
+# If Boost/Serialization I/O system is supported :
+#  genvtx_WITH_BIO     - flag for Boost/Serialization I/O DLL (a.k.a. 'bio')
+# If Boost/Python wrapper module is supported :
+#  genvtx_WITH_PYTHON_WRAPPER - flag for 'Boost/Python' module 
+
+#----------------------------------------------------------------------------
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#----------------------------------------------------------------------------
+
+#----------------------------------------------------------------------------
+# Locate ourselves, since all our config files should have been installed
+# alongside us...
+#
+get_filename_component(_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+
+#----------------------------------------------------------------------------
+# Include the file listing all the imported targets to make them available
+# This is installed in the same location as us...
+#
+include("${_thisdir}/genvtx-libraries.cmake")
+
+
+#----------------------------------------------------------------------------
+# Set variables pointing to used third party headers and locations.
+# We have to set the headers because genvtx exports the headers in
+# its public interface.
+
+if ( NOT DEFINED genvtx_CONFIG_COUNTER )
+set ( genvtx_CONFIG_COUNTER 1 )
+
+#----------------------------------------------------------------------------
+# Set path to genvtx includes
+#
+set ( genvtx_INCLUDE_DIR @genvtx_INCLUDE_DIR@ )
+set ( genvtx_INCLUDE_DIRS
+      ${genvtx_INCLUDE_DIR}
+    )
+
+# ----------------------------------------------------------------------------
+# geomtools dependency :
+#
+set ( geomtools_DIR "${geomtools_DIR}" )
+find_package ( geomtools "3.0" NO_MODULE )
+if ( NOT DEFINED geomtools_CONFIG)
+   message ( FATAL_ERROR "Cannot find the 'geomtools' library !" )
+else ()
+   message ( STATUS "Found the 'geomtools' library version ${geomtools_VERSION} !" )
+endif ()
+
+# ----------------------------------------------------------------------------
+set ( _genvtx_geomtools_INCLUDE_DIRS @geomtools_INCLUDE_DIRS@ )
+set ( genvtx_INCLUDE_DIRS 
+      ${genvtx_INCLUDE_DIRS}
+      ${_genvtx_geomtools_INCLUDE_DIRS}
+     )
+unset ( _genvtx_geomtools_INCLUDE_DIRS )
+
+#----------------------------------------------------------------------------
+# Set genvtx_LIBRARIES variable
+set ( genvtx_LIB_DIR @genvtx_LIB_DIR@ )
+# Basic : Assume that if genvtx_bio was built, it should be in Library list
+set ( genvtx_LIBRARY genvtx )
+
+set( genvtx_WITH_DEBUG @GENVTX_WITH_DEBUG@ )
+if(genvtx_WITH_DEBUG)
+  set(genvtx_WITH_DEBUG 1)
+else()
+  set(genvtx_WITH_DEBUG 0)
+endif()
+
+if ( @GENVTX_WITH_BIO_SUPPORT@ )
+ set(genvtx_WITH_BIO @GENVTX_WITH_BIO@)
+ if(genvtx_WITH_BIO)
+   set(genvtx_WITH_BIO 1)
+   set(genvtx_BIO_LIBRARY genvtx_bio )
+ else()
+   set(genvtx_WITH_BIO 0)
+ endif()
+endif()
+
+if ( @GENVTX_WITH_PYTHON_WRAPPER_SUPPORT@ )
+  set(genvtx_WITH_PYTHON_WRAPPER @GENVTX_WITH_PYTHON_WRAPPER@)
+  if(genvtx_WITH_PYTHON_WRAPPER)
+    set(genvtx_WITH_PYTHON_WRAPPER 1)
+  else()
+    set(genvtx_WITH_PYTHON_WRAPPER 0)
+  endif()
+endif ()
+
+set(genvtx_LIBRARIES ${genvtx_BIO_LIBRARY} ${genvtx_LIBRARY} ${genvtx_SYS_LIBRARY} )
+
+set ( _genvtx_geomtools_LIBRARIES @geomtools_LIBRARIES@ )
+set ( genvtx_LIBRARIES 
+      ${genvtx_LIBRARIES}
+      ${_genvtx_geomtools_LIBRARIES}
+     )
+unset ( _genvtx_geomtools_LIBRARIES )
+
+else ( NOT DEFINED genvtx_CONFIG_COUNTER )
+  message ( WARNING "Multiple inclusion of the 'genvtx-config.cmake' file !" )
+  math (EXPR genvtx_CONFIG_COUNTER '${genvtx_CONFIG_COUNTER}+1' )
+endif ( NOT DEFINED genvtx_CONFIG_COUNTER )
+
+# end

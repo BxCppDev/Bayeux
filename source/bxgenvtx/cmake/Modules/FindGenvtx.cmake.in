@@ -1,0 +1,149 @@
+# FindGenvtx.cmake
+# 
+# A rather brute force version.
+# 
+# Locate genvtx library
+# This module defines
+#  GENVTX_FOUND
+#  GENVTX_VERSION
+#  GENVTX_LIBRARIES
+#  GENVTX_INCLUDE_DIRS, where to find genvtx/genvtx_config.h
+#  GENVTX_LIBRARIES_DEPEND
+#  GENVTX_INCLUDE_DIRS_DEPEND
+# and 
+#  GENVTX_WITH_BIO if Boost I/O support is activated
+#  GENVTX_WITH_PYTHON_WRAPPER if Boost Python wrapper support is activated
+
+set ( __bio_support 0 )
+set ( __python_wrapper_support 0 )
+
+set ( GENVTX_VERSION  @genvtx_VERSION_STR@ CACHE STRING "genvtx version" )
+
+if ( __python_wrapper_support )
+   set ( GENVTX_WITH_PYTHON_WRAPPER  @GENVTX_WITH_PYTHON_WRAPPER@ CACHE STRING "Python wrapper flag" )
+endif ()
+
+if ( __bio_support )
+  set ( GENVTX_WITH_BIO             @GENVTX_WITH_BIO@  "Boost I/O DLL flag" )
+endif ()
+
+message ( STATUS "FindGenvtx: GENVTX_VERSION='${GENVTX_VERSION}'" )
+
+if ( __bio_support )
+  message ( STATUS "FindGenvtx: GENVTX_WITH_BIO='${GENVTX_WITH_BIO}'" )
+endif ()
+
+if ( __python_wrapper_support )
+  message ( STATUS "FindGenvtx: GENVTX_WITH_PYTHON_WRAPPER='${GENVTX_WITH_PYTHON_WRAPPER}'" )
+endif ()
+
+find_path ( GENVTX_INCLUDE_DIRS genvtx/genvtx_config.h
+  HINTS
+  $ENV{GENVTX_ROOT_DIR}
+  PATH_SUFFIXES include
+  PATHS
+  [HKEY_LOCAL_MACHINE\\SOFTWARE\\genvtx]
+  ~/Library/Frameworks
+  /Library/Frameworks
+  /usr/local
+  /usr
+  /sw # Fink
+  /opt/local # DarwinPorts
+  /opt/csw # Blastwave
+  /opt
+)
+
+message ( STATUS "FindGenvtx: GENVTX_INCLUDE_DIRS='${GENVTX_INCLUDE_DIRS}'" )
+
+find_library ( _genvtx_library 
+  NAMES genvtx
+  HINTS $ENV{GENVTX_ROOT_DIR}
+  PATHS
+  [HKEY_LOCAL_MACHINE\\SOFTWARE\\genvtx]
+  ~/Library/Frameworks
+  /Library/Frameworks
+  /usr/local
+  /usr
+  /sw
+  /opt/local
+  /opt/csw
+  /opt
+  PATH_SUFFIXES lib64 lib
+)
+message ( STATUS "FindGenvtx: GENVTX_LIBRARY='${GENVTX_LIBRARY}'" )
+set ( _genvtx_libraries "${_genvtx_library}" )
+
+if ( __bio_support )
+  if ( ${GENVTX_WITH_BIO} )
+    find_library ( _genvtx_bio_library 
+      NAMES genvtx_bio
+      HINTS $ENV{GENVTX_ROOT_DIR}
+      PATHS
+      [HKEY_LOCAL_MACHINE\\SOFTWARE\\genvtx]
+      ~/Library/Frameworks
+      /Library/Frameworks
+      /usr/local
+      /usr
+      /sw
+      /opt/local
+      /opt/csw
+      /opt
+      PATH_SUFFIXES lib64 lib
+      )
+     message ( STATUS "FindGenvtx: _genvtx_bio_library='${_genvtx_bio_library}'" )
+     if ( NOT "${_genvtx_bio_library}" STREQUAL "" )
+       set ( _genvtx_libraries "${_genvtx_bio_library}" "${_genvtx_library}" )
+       message ( STATUS "FindGenvtx: _genvtx_libraries='${_genvtx_libraries}'" )
+    endif ()
+  endif ()
+endif ()
+
+set ( GENVTX_LIBRARIES ${_genvtx_libraries} )
+message ( STATUS "FindGenvtx: GENVTX_LIBRARIES='${GENVTX_LIBRARIES}'" )
+
+include ( FindPackageHandleStandardArgs )
+# handle the QUIETLY and REQUIRED arguments and set GENVTX_FOUND to TRUE if 
+# all listed variables are TRUE
+find_package_handle_standard_args ( genvtx DEFAULT_MSG GENVTX_LIBRARIES GENVTX_INCLUDE_DIRS )
+
+set ( GENVTX_LIBRARIES_DEPEND 
+      ${GENVTX_LIBRARIES}
+      ###@MYGSL_LIBRARIES_DEPEND@ 
+      ###@DATATOOLS_LIBRARIES_DEPEND@
+    )
+
+message ( STATUS "FindGenvtx: GENVTX_LIBRARIES_DEPEND='${GENVTX_LIBRARIES_DEPEND}'" )
+
+# if (GENVTX_WITH_PYTHON_WRAPPER)
+#   list ( APPEND GENVTX_LIBRARIES_DEPEND 
+#          python )
+# endif ()
+
+set ( GENVTX_INCLUDE_DIRS_DEPEND
+      ${GENVTX_INCLUDE_DIRS}
+      ###@MYGSL_INCLUDE_DIR_DEPEND@
+      ###@DATATOOLS_INCLUDE_DIRS_DEPEND@
+    )
+
+message ( STATUS "FindGenvtx: GENVTX_INCLUDE_DIRS_DEPEND='${GENVTX_INCLUDE_DIRS_DEPEND}'" )
+
+mark_as_advanced (GENVTX_VERSION  
+                  GENVTX_LIBRARY
+		  GENVTX_INCLUDE_DIRS 
+                  GENVTX_LIBRARIES 
+		  GENVTX_INCLUDE_DIRS_DEPEND 
+                  GENVTX_LIBRARIES_DEPEND 
+		  )
+
+if ( __bio_support )
+  mark_as_advanced ( GENVTX_WITH_BIO )  
+endif ()
+
+if ( __python_wrapper_support )
+  mark_as_advanced ( GENVTX_WITH_PYTHON_WRAPPER )  
+endif ()
+
+message ( STATUS "FindGenvtx: GENVTX_FOUND=${GENVTX_FOUND}")
+
+# end of FindGenvtx.cmake
+
