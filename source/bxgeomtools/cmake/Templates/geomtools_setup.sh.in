@@ -55,29 +55,27 @@ function do_geomtools_setup ()
 	echo "WARNING: do_geomtools_setup: geomtools is already setup !" 1>&2
 	return 2
     fi 
- 
-    # which clhep-config >/dev/null 2>&1
-    # if [ $? -ne 0 ]; then
-    # 	echo "ERROR: do_geomtools_setup: Cannot find CLHEP setup ! Abort !" 1>&2
-    # 	return 1
-    # else
-    # 	if [ ${verbose} -ne 0 ]; then
-    # 	    echo "VERBOSE: do_geomtools_setup: Found CLHEP." 1>&2
-    # 	fi
-    # fi
 
-    if [ "x1" = "x1" ]; then	
-	which datatools-config >/dev/null 2>&1
-	if [ $? -ne 0 ]; then
-	    echo "ERROR: do_geomtools_setup: Cannot find datatools setup ! Abort !" 1>&2
-	    return 1
-	else
-	    if [ ${verbose} -ne 0 ]; then
-		echo "VERBOSE: do_geomtools_setup: Found datatools." 1>&2
-	    fi
+    which mygsl-config >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+	echo "ERROR: do_geomtools_setup: Cannot find mygsl setup ! Abort !" 1>&2
+	return 1
+    else
+	if [ ${verbose} -ne 0 ]; then
+	    echo "VERBOSE: do_geomtools_setup: Found mygsl." 1>&2
 	fi
     fi
-    
+
+    which gnuplot >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+	echo "ERROR: do_geomtools_setup: Cannot find gnuplot setup ! Abort !" 1>&2
+	return 1
+    else
+	if [ ${verbose} -ne 0 ]; then
+	    echo "VERBOSE: do_geomtools_setup: Found gnuplot." 1>&2
+	fi
+    fi
+     
     export GEOMTOOLS_ROOT="@CMAKE_INSTALL_PREFIX@"
     export GEOMTOOLS_ROOT_DIR="@CMAKE_INSTALL_PREFIX@"
     export GEOMTOOLS_NAME="@geomtools_PACKAGE_NAME@"

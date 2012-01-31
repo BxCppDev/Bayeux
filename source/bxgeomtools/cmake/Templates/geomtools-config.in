@@ -118,7 +118,7 @@ EOF
     # Dependencies:
     if [ "x${depends_on_datatools}" = "x1" ]; then
 	cat<<EOF
-   --datatools-version   print datatools version
+   --mygsl-version      print mygsl version
 EOF
     fi
 #     cat<<EOF
@@ -187,9 +187,8 @@ if [ "x${option}" = "x--cflags" ]; then
 	echo -n "-fPIC " 
 	echo -n "-I${geomtools_include_dir} "  
 	if [ "x${depends_on_datatools}" = "x1" ]; then
-	    echo -n "`datatools-config --cflags` "
+	    echo -n "`mygsl-config --cflags` "
 	fi
-	### echo -n "`xxx-config --cflags` "
 	echo ""
     ) | python @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/pkgtools/mkuniqueflags.py     
     my_exit 0
@@ -242,9 +241,8 @@ if [ "x${option}" = "x--ldflags" ]; then
     (
 	echo -n "-L${geomtools_lib_dir} ${more_ldflags} -lgeomtools "
 	if [ "x${depends_on_datatools}" = "x1" ]; then
-	    echo -n "`datatools-config --ldflags` "
+	    echo -n "`mygsl-config --ldflags` "
 	fi
-	### echo -n "`xxx-config --ldflags/libs` "
 	echo ""
     ) | python @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/pkgtools/mkuniqueflags.py -r   
     my_exit 0
@@ -281,17 +279,10 @@ if [ ${python_wrapper_support} -eq 1 ]; then
     fi
 fi
 
-if [ "x${depends_on_datatools}" = "x1" ]; then
-    if [ "x${option}" = "x--datatools-version" ]; then
-	echo @DATATOOLS_VERSION@
-	my_exit 0
-    fi
+if [ "x${option}" = "x--mygsl-version" ]; then
+    echo @mygsl_VERSION@
+    my_exit 0
 fi
-
-# if [ "x${option}" = "x--xxx-version" ]; then
-#     echo @xxx_VERSION@
-#     my_exit 0
-# fi
 
 echo "ERROR: ${script_name}: Unknown option !" 1>&2
 print_help
