@@ -129,12 +129,13 @@ message ( STATUS "testing: Performing all available tests : ${GEOMTOOLS_INSTALL_
 if (GEOMTOOLS_INSTALL_TEST_PROGRAMS) 
   set ( _test_install_dir ${CMAKE_INSTALL_DATADIR}/testing )
 
-  file ( GLOB geomtools_tests_config config/* )
+  file ( GLOB geomtools_tests_config config/test_* )
   install ( FILES ${geomtools_tests_config} 
     	    DESTINATION ${_test_install_dir}/config  
             PERMISSIONS OWNER_READ GROUP_READ WORLD_READ 
          )
-  file ( GLOB geomtools_tests_data data/* )
+
+  file ( GLOB geomtools_tests_data data/test_*.data )
   install ( FILES ${geomtools_tests_data} 
     	    DESTINATION ${_test_install_dir}/data  
             PERMISSIONS OWNER_READ GROUP_READ WORLD_READ 
