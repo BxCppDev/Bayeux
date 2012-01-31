@@ -60,7 +60,7 @@ set(mygsl_INCLUDE_DIRS
 #message ( STATUS "DEVEL: mygsl-config.cmake: datatools_INCLUDE_DIRS='@datatools_INCLUDE_DIRS@'" )
 
 set ( datatools_DIR "${datatools_DIR}" )
-find_package ( datatols )
+find_package ( datatools )
 
 set(_mygsl_datatools_INCLUDE_DIRS @datatools_INCLUDE_DIRS@)
 set(_mygsl_gsl_INCLUDE_DIRS       @GSL_INCLUDE_DIRS@)
