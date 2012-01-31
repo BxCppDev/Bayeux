@@ -1,3 +1,0 @@
-Reference GID = [3:666.0.1] in category 'room'
-Mother GID    = [2:666.0] in category 'floor'
-Daughter GID  = [6:666.0.1.6] in category 'chair'
