@@ -23,19 +23,20 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #----------------------------------------------------------------------------
 
+if ( NOT DEFINED brio_CONFIG_COUNTER )
+set ( brio_CONFIG_COUNTER 1 )
+
 #----------------------------------------------------------------------------
 # Locate ourselves, since all our config files should have been installed
 # alongside us...
 #
 get_filename_component(_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
-
 #----------------------------------------------------------------------------
 # Include the file listing all the imported targets to make them available
 # This is installed in the same location as us...
 #
 include("${_thisdir}/brio-libraries.cmake")
-
 
 #----------------------------------------------------------------------------
 # Set variables pointing to used third party headers and locations.
@@ -51,15 +52,23 @@ set(brio_INCLUDE_DIRS
   )
 
 # Trick to explicitely import the datatools exports (is it the right way to cascade imports ?) :
-message ( STATUS "DEVEL: brio-config.cmake: Including datatools_CONFIG='@datatools_CONFIG@'" )
-include ( @datatools_CONFIG@ )
-set(brio_root_INCLUDE_DIRS @ROOT_INCLUDE_DIR@)
-set(brio_datatools_INCLUDE_DIRS @datatools_INCLUDE_DIRS@)
+#message ( STATUS "DEVEL: brio-config.cmake: Including datatools_CONFIG='@datatools_CONFIG@'" )
+#include ( @datatools_CONFIG@ )
+
+set ( datatools_DIR "${datatools_DIR}" )
+find_package ( datatols )
+
+set(_brio_root_INCLUDE_DIRS @ROOT_INCLUDE_DIR@)
+set(_brio_datatools_INCLUDE_DIRS @datatools_INCLUDE_DIRS@)
+
 set (brio_INCLUDE_DIRS 
      ${brio_INCLUDE_DIRS}
-     ${brio_datatools_INCLUDE_DIRS}
-     ${brio_root_INCLUDE_DIRS}
+     ${_brio_datatools_INCLUDE_DIRS}
+     ${_brio_root_INCLUDE_DIRS}
     )
+
+unset(_brio_root_INCLUDE_DIRS)
+unset(_brio_datatools_INCLUDE_DIRS)
 
 #----------------------------------------------------------------------------
 # Set brio_LIBRARIES variable
@@ -93,14 +102,22 @@ endif()
 #   endif()
 # endif ()
 
-set(brio_LIBRARIES ${brio_BIO_LIBRARY} ${brio_LIBRARY} ${brio_SYS_LIBRARY} )
+set(brio_LIBRARIES ${brio_BIO_LIBRARY} ${brio_LIBRARY} )
 
-set(brio_datatools_LIBRARIES @datatools_LIBRARIES@)
-set(brio_root_LIBRARIES @ROOT_LIBRARIES@)
+set(_brio_datatools_LIBRARIES @datatools_LIBRARIES@)
+set(_brio_root_LIBRARIES @ROOT_LIBRARIES@)
 set(brio_LIBRARIES 
      ${brio_LIBRARIES}
-     ${brio_datatools_LIBRARIES}
-     ${brio_root_LIBRARIES}
+     ${_brio_datatools_LIBRARIES}
+     ${_brio_root_LIBRARIES}
    )
+
+unset(_brio_root_LIBRARIES)
+unset(_brio_datatools_LIBRARIES)
+
+else ( NOT DEFINED brio_CONFIG_COUNTER )
+  message ( WARNING "Multiple inclusion of the 'brio-config.cmake' file !" )
+  math (EXPR brio_CONFIG_COUNTER '${brio_CONFIG_COUNTER}+1' )
+endif ( NOT DEFINED brio_CONFIG_COUNTER )
 
 # end
