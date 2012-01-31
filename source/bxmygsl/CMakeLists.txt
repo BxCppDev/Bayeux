@@ -81,7 +81,6 @@ option ( MYGSL_WITH_CMAKE_FIND_MODULE
          "Build the mygsl' CMake find module"
  	 0 )
 
-
 # - Depends on GSL:
 set ( _gsl_min_version 1.14 ) 
 set ( GSL_MIN_VERSION ${_gsl_min_version} )
@@ -114,9 +113,9 @@ if ( MYGSL_WITH_PYTHON_WRAPPER_SUPPORT )
   set ( _depends_on_datatools 1 )
 endif ()
 
-
 set ( _default_bio_activation 0 )
 set ( _default_python_wrapper_activation 0 )
+
 if ( _depends_on_datatools )
   # - Depends on datatools:
   ### set(datatools_DIR "$ENV{datatools_ROOT}" CACHE LOCATION "where was datatools built?")
@@ -130,8 +129,9 @@ if ( _depends_on_datatools )
   endif ()
   set ( _datatools_min_version 4.0 )
   find_package ( datatools ${_datatools_min_version} REQUIRED NO_MODULE )
-  if ( datatools_VERSION )
+  if ( DEFINED datatools_CONFIG )
        message ( STATUS "Found datatools >= ${_datatools_min_version}" )
+       message ( STATUS "  datatools_CONFIG              : ${datatools_CONFIG}" )
        message ( STATUS "  datatools_VERSION             : ${datatools_VERSION}" )
        message ( STATUS "  datatools_LIBRARIES           : ${datatools_LIBRARIES}" )
        message ( STATUS "  datatools_INCLUDE_DIRS        : ${datatools_INCLUDE_DIRS}" )
@@ -188,7 +188,6 @@ if (MYGSL_WITH_TEST)
   set (MYGSL_WITH_TEST 1)
 endif ()
 # ---------------------------------------------------
-
 
 if ( UNIX OR APPLE )
   option ( MYGSL_WITH_CONFIG_SCRIPT 
@@ -444,8 +443,6 @@ configure_file(
   @ONLY
   )
 
-
-
 #----------------------------------------------------------------------------
 # - Generate Install Tree configuration files
 # - CMake
@@ -484,7 +481,6 @@ configure_file(
   ${PROJECT_BINARY_DIR}/InstallTreeFiles/mygsl-config.cmake
   @ONLY
   )
-
 
 # Configure the install tree versioning file
 # N.B. it *probably* does not differ from the build tree file, but configuring

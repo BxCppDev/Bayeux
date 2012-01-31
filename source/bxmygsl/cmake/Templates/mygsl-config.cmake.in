@@ -25,6 +25,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #----------------------------------------------------------------------------
 
+if ( NOT DEFINED mygsl_CONFIG_COUNTER )
+set ( mygsl_CONFIG_COUNTER 1 )
+
 #----------------------------------------------------------------------------
 # Locate ourselves, since all our config files should have been installed
 # alongside us...
@@ -51,10 +54,13 @@ set(mygsl_INCLUDE_DIRS
    )
 
 # Trick to explicitely import the datatools exports (is it the right way to cascade import ?) :
-message ( STATUS "DEVEL: mygsl-config.cmake: Including datatools_CONFIG='@datatools_CONFIG@'" )
-include ( @datatools_CONFIG@ )
+#message ( STATUS "DEVEL: mygsl-config.cmake: Including datatools_CONFIG='@datatools_CONFIG@'" )
+#include ( @datatools_CONFIG@ )
 #message ( STATUS "DEVEL: mygsl-config.cmake: datatools_VERSION='@datatools_VERSION@'" )
 #message ( STATUS "DEVEL: mygsl-config.cmake: datatools_INCLUDE_DIRS='@datatools_INCLUDE_DIRS@'" )
+
+set ( datatools_DIR "${datatools_DIR}" )
+find_package ( datatols )
 
 set(_mygsl_datatools_INCLUDE_DIRS @datatools_INCLUDE_DIRS@)
 set(_mygsl_gsl_INCLUDE_DIRS       @GSL_INCLUDE_DIRS@)
@@ -118,5 +124,10 @@ message ( STATUS "DEVEL: mygsl-config.cmake: mygsl_LIBRARIES=${mygsl_LIBRARIES}"
 
 unset(_mygsl_datatools_LIBRARIES)
 unset(_mygsl_gsl_LIBRARIES)
+
+else ( NOT DEFINED mygsl_CONFIG_COUNTER )
+  message ( WARNING "Multiple inclusion of the 'mygsl-config.cmake' file !" )
+  math (EXPR mygsl_CONFIG_COUNTER '${mygsl_CONFIG_COUNTER}+1' )
+endif ( NOT DEFINED mygsl_CONFIG_COUNTER )
 
 # end
