@@ -55,7 +55,7 @@ namespace genvtx {
         ostringstream message;
         message << "genvtx::i_vertex_generator::vertex_generator_db::get: "
                 << "No vertex_generator creator with ID='" << vertex_generator_id_ << "'!";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     return (found->second);
   }
@@ -79,7 +79,7 @@ namespace genvtx {
         message << "genvtx::i_vertex_generator::vertex_generator_db::register_vertex_generator: " 
                 << "Vertex_Generator ID '" << vertex_generator_id_ << "' is already used "
                 << "within the vertex_generator factory dictionnary!";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     if (devel)
       {
@@ -93,7 +93,7 @@ namespace genvtx {
         ostringstream message;
         message << "genvtx::i_vertex_generator::vertex_generator_db::register_vertex_generator: " 
                 << "Empty vertex_generator ID!";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     if (devel)
       {
@@ -163,6 +163,11 @@ namespace genvtx {
   i_vertex_generator::~i_vertex_generator ()
   {
     return;
+  }
+
+  bool i_vertex_generator::has_next_vertex () const
+  {
+    return true;
   }
 
   void i_vertex_generator::shoot_vertex (mygsl::rng & random_, 

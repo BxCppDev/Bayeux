@@ -49,6 +49,8 @@ namespace genvtx {
 
   public: 
 
+    virtual bool has_next_vertex () const;
+
     bool is_open () const;
 
     const string & get_filename () const;

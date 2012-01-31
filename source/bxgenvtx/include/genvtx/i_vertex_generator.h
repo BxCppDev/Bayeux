@@ -40,6 +40,8 @@ namespace genvtx {
 
     virtual ~i_vertex_generator ();
 
+    virtual bool has_next_vertex () const;
+
     void shoot_vertex (mygsl::rng & random_, geomtools::vector_3d & vertex_);
 
     geomtools::vector_3d shoot_vertex (mygsl::rng & random_);

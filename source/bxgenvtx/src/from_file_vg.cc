@@ -36,7 +36,7 @@ namespace genvtx {
   {
     if (_open_)
       {
-        throw runtime_error ("genvtx::from_file_vg::set_filename: Cannot change source file name as source file is already opened !");
+        throw logic_error ("genvtx::from_file_vg::set_filename: Cannot change source file name as source file is already opened !");
       }
     _filename_ = filename_;
     return;
@@ -46,11 +46,11 @@ namespace genvtx {
   {
     if (_open_)
       {
-        throw runtime_error ("genvtx::from_file_vg::_open_source: Source file is already opened !");
+        throw logic_error ("genvtx::from_file_vg::_open_source: Source file is already opened !");
       }
     if (_filename_.empty ())
       {
-        throw runtime_error ("genvtx::from_file_vg::_open_source: Missing source file name !");
+        throw logic_error ("genvtx::from_file_vg::_open_source: Missing source file name !");
       } 
 
     datatools::utils::fetch_path_with_env (_filename_);
@@ -58,15 +58,17 @@ namespace genvtx {
     if (! boost::filesystem::exists (_filename_)) 
       {
         ostringstream message;
-        message << "genvtx::from_file_vg::_open_source: Source file '" << _filename_ << "' does not exist !";
-        throw runtime_error (message.str ());
+        message << "genvtx::from_file_vg::_open_source: " 
+		<< "Source file '" << _filename_ << "' does not exist !";
+        throw logic_error (message.str ());
       }
     _source_.open (_filename_.c_str ());
     if (! _source_)
       {
         ostringstream message;
-        message << "genvtx::from_file_vg::_open_source: Cannot open source file '" << _filename_ << "' !";
-        throw runtime_error (message.str ());
+        message << "genvtx::from_file_vg::_open_source: " 
+		<< "Cannot open source file '" << _filename_ << "' !";
+        throw logic_error (message.str ());
       }
     _open_ = true;
     _read_next ();
@@ -77,7 +79,7 @@ namespace genvtx {
   {
     if (! _open_)
       {
-        throw runtime_error ("genvtx::from_file_vg::_close_source: Source file is not opened !");
+        throw logic_error ("genvtx::from_file_vg::_close_source: Source file is not opened !");
       }
     _source_.close ();
     _filename_ = "";
@@ -90,7 +92,7 @@ namespace genvtx {
   {
     if (_length_unit_ <= 0.0)
       {
-        throw runtime_error ("genvtx::from_file_vg::set_length_unit: Invalid length unit !");   
+        throw logic_error ("genvtx::from_file_vg::set_length_unit: Invalid length unit !");   
       }
     _length_unit_ = lu_;
     return;
@@ -136,7 +138,7 @@ namespace genvtx {
   {
     if (! _open_)
       {
-        throw runtime_error ("genvtx::from_file_vg::_read_next: Source file is not opened !");
+        throw logic_error ("genvtx::from_file_vg::_read_next: Source file is not opened !");
         //_open_source ();
       }
     double x, y, z;
@@ -153,12 +155,12 @@ namespace genvtx {
           istringstream iss (line);
           string word;
           iss >> word;
-          //skip blank lines:
+          // Skip blank lines:
           if (word.empty ())
             {
               goon = true;
             }
-          //skip commented line:
+          // Skip commented line:
           else if (word[0] == '#')
             {
               goon = true;
@@ -172,8 +174,9 @@ namespace genvtx {
             if (! iss)
               {
                 ostringstream message;
-                message << "genvtx::from_file_vg::_read_next: 'x y z' format error at invalid line '" << line << "' !";
-                throw runtime_error (message.str ());
+                message << "genvtx::from_file_vg::_read_next: " 
+			<< "'x y z' format error at invalid line '" << line << "' !";
+                throw logic_error (message.str ());
               }
             _next_.set (x, y, z);
             break;
@@ -184,6 +187,11 @@ namespace genvtx {
           }
       }
     return;
+  }
+
+  bool from_file_vg::has_next_vertex () const
+  {
+    return const_cast<from_file_vg*>(this)->_has_next ();
   }
 
   bool from_file_vg::_has_next ()
@@ -206,8 +214,8 @@ namespace genvtx {
   i_vertex_generator * 
   from_file_vg::create (const properties & configuration_, void * user_)
   {
-    cerr << "DEVEL: genvtx::from_file_vg::create: Entering..." << endl;
-    configuration_.tree_dump (cerr, "from_file_vg::create: configuration:", "DEVEL: ");
+    //cerr << "DEVEL: genvtx::from_file_vg::create: Entering..." << endl;
+    //configuration_.tree_dump (cerr, "from_file_vg::create: configuration:", "DEVEL: ");
     using namespace std;
     bool devel = false;
     double lunit = LENGTH_UNIT;

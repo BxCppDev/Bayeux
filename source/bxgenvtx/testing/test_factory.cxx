@@ -74,13 +74,18 @@ int main (int argc_, char ** argv_)
 	if (vg == 0)
 	  {
 	    ostringstream message;
-	    message << "Unkwon vertex generator '" << vg_id << "'";
-	    throw runtime_error (message.str ());
+	    message << "Unknown vertex generator '" << vg_id << "'";
+	    throw logic_error (message.str ());
 	  }
 	clog << "NOTICE: vertex_generator is '" << vg->vg_id () << "'." << endl; 
       
 	for (int i = 0; i < nshoots; i++)
 	  {
+	    if (! vg->has_next_vertex ())
+	      {
+		clog << "No more vertex." << endl;
+		break;
+	      }
 	    vg->shoot_vertex (random, vertex);
 	    cout << vertex << endl;
 	  }
@@ -96,12 +101,12 @@ int main (int argc_, char ** argv_)
 	if (vg == 0)
 	  {
 	    ostringstream message;
-	    message << "Unkwon vertex generator '" << vg_id << "'";
-	    throw runtime_error (message.str ());
+	    message << "Unknown vertex generator '" << vg_id << "'";
+	    throw logic_error (message.str ());
 	  }
 	clog << "NOTICE: vertex_generator is '" << vg->vg_id () << "'." << endl; 
       
-	while (true)
+	while (vg->has_next_vertex ())
 	  {
 	    vg->shoot_vertex (random, vertex);
 	    if (! geomtools::is_valid (vertex))
