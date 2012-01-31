@@ -1,0 +1,42 @@
+cmake_minimum_required ( VERSION 2.8 FATAL_ERROR )
+project ( test_geomtools )
+
+if ( ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR} )
+  message ( STATUS "${PROJECT_NAME} requires an out-of-source build." )
+  message ( STATUS "Please remove these files from ${CMAKE_BINARY_DIR} first:" )
+  message ( STATUS "  CMakeCache.txt" )
+  message ( STATUS "  CMakeFiles" )
+  message ( STATUS "Once these files are removed, create a separate directory" )
+  message ( STATUS "and run CMake from there, pointing it to:" )
+  message ( STATUS "  ${CMAKE_SOURCE_DIR}" )
+  message ( FATAL_ERROR "in-source build detected" )
+endif ()
+
+set ( _geomtools_min_version 3.0 )
+find_package ( geomtools ${_geomtools_min_version} REQUIRED NO_MODULE )
+if ( geomtools_VERSION )
+     message ( STATUS "Found geomtools >= ${_geomtools_min_version}" )
+     message ( STATUS "  geomtools_CONFIG              : ${geomtools_CONFIG}" )
+     message ( STATUS "  geomtools_VERSION             : ${geomtools_VERSION}" )
+     message ( STATUS "  geomtools_INCLUDE_DIRS        : ${geomtools_INCLUDE_DIRS}" )
+     message ( STATUS "  geomtools_LIBRARIES           : ${geomtools_LIBRARIES}" )
+     message ( STATUS "  geomtools_WITH_DEBUG          : ${geomtools_WITH_DEBUG}" )
+     message ( STATUS "  geomtools_WITH_BIO            : ${geomtools_WITH_BIO}" )
+     #message ( STATUS "  geomtools_WITH_PYTHON_WRAPPER : ${geomtools_WITH_PYTHON_WRAPPER}" )
+else ()
+     message ( FATAL_ERROR "Cannot find geomtools >= ${_geomtools_min_version} library !" )
+endif ()
+
+set ( test_geomtools_src_files ${CMAKE_SOURCE_DIR}/../test_geomtools.cxx )
+
+include_directories ( ${geomtools_INCLUDE_DIRS} )
+
+add_executable ( test_geomtools
+	         ${test_geomtools_src_files}
+               )
+
+target_link_libraries ( test_geomtools ${geomtools_LIBRARIES} )
+
+install ( TARGETS test_geomtools DESTINATION bin )
+
+# - end of top level CMakeLists.txt for test_geomtools project.

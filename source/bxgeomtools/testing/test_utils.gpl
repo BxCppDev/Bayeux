@@ -1,0 +1,24 @@
+# -*- mode: gnuplot; -*-
+# C++ source: ./programs/test_utils.cxx
+#
+
+! ${GEOMTOOLS_ROOT}/$(geomtools-config --system)/bin/test_utils > test_utils.data
+
+max=2.
+set grid
+set xrange [-max:max]
+set yrange [-max:max]
+set zrange [-max/2:max]
+set xlabel "x"
+set ylabel "y"
+set zlabel "z"
+set title "test_utils.cxx"
+splot \
+  "test_utils.data" index 0 title "Direction" with lines , \
+  "test_utils.data" index 1 title "Random perpendicular directions" with lines 
+pause -1 "Hit return..."
+
+
+! #rm -f test_box.data
+
+# end 

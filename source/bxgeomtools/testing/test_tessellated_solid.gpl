@@ -1,0 +1,24 @@
+# -*- mode: gnuplot; -*-
+# C++ source: ./programs/test_tessellated_solid.cxx
+#
+
+
+! ${GEOMTOOLS_ROOT}/$(geomtools-config --system)/bin/test_tessellated_solid > test_tessellated_solid.data
+
+sz=3.
+set xrange [-sz:sz]
+set yrange [-sz:sz]
+set zrange [-sz:sz]
+set xlabel "x"
+set ylabel "y"
+set zlabel "z"
+set title "test_tessellated_solid.cxx - test 1"
+splot \
+  "test_tessellated_solid.data" index 0 title "Tessellated #1" with lines, \
+  "test_tessellated_solid.data" index 1 title "Tessellated #2" with lines
+pause -1
+
+
+! #rm -f test_tessellated_solid.data
+
+# end 

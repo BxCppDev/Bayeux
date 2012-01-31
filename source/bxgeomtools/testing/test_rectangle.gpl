@@ -1,0 +1,23 @@
+# -*- mode: gnuplot; -*-
+# C++ source: ./programs/test_rectangle.cxx
+#
+
+
+! ${GEOMTOOLS_ROOT}/$(geomtools-config --system)/bin/test_rectangle > test_rectangle.data
+
+set xrange [-2:2]
+set yrange [-2:2]
+set zrange [-2:2]
+set xlabel "x"
+set ylabel "y"
+set zlabel "z"
+set title "test_rectangle.cxx - test "
+splot \
+  "test_rectangle.data" index 0 title "Rectangle" with lines , \
+  "test_rectangle.data" index 1 title "Impact" with dots  , \
+  "test_rectangle.data" index 2 title "Impact 2" with dots  
+pause -1 "Hit [Enter]..."
+
+! rm -f test_rectangle.data
+
+# end 
