@@ -21,12 +21,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #----------------------------------------------------------------------------
 
+if ( NOT DEFINED datatools_CONFIG_COUNTER )
+set ( datatools_CONFIG_COUNTER 1 )
+
 #----------------------------------------------------------------------------
 # Locate ourselves, since all our config files should have been installed
 # alongside us...
 #
 get_filename_component(_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
-
 
 #----------------------------------------------------------------------------
 # Include the file listing all the imported targets to make them available
@@ -34,7 +36,6 @@ get_filename_component(_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
 #
 message ( STATUS "DEVEL: datatools-config.cmake: Including 'datatools-libraries.cmake'..." )
 include("${_thisdir}/datatools-libraries.cmake")
-
 
 #----------------------------------------------------------------------------
 # Set variables pointing to used third party headers and locations.
@@ -105,18 +106,20 @@ set(datatools_LIBRARIES ${datatools_BIO_LIBRARY}
                         ${_datatools_CLHEP_LIBRARIES} 
    )
 
-###message ( STATUS "DEVEL: datatools-config.cmake: datatools_VERSION=${datatools_VERSION}" )
+message ( STATUS "DEVEL: datatools-config.cmake: datatools_VERSION=${datatools_VERSION}" )
 message ( STATUS "DEVEL: datatools-config.cmake: datatools_WITH_BIO=${datatools_WITH_BIO}" )
 message ( STATUS "DEVEL: datatools-config.cmake: datatools_WITH_PYTHON_WRAPPER=${datatools_WITH_PYTHON_WRAPPER}" )
 message ( STATUS "DEVEL: datatools-config.cmake: datatools_INCLUDE_DIRS=${datatools_INCLUDE_DIRS}" )
 message ( STATUS "DEVEL: datatools-config.cmake: datatools_LIBRARIES=${datatools_LIBRARIES}" )
 
-
-#unset(_datatools_CLHEP_ROOT)
 unset(_datatools_CLHEP_INCLUDE_DIRS)
 unset(_datatools_CLHEP_LIBRARIES)
-#unset(_datatools_BOOST_ROOT)
 unset(_datatools_BOOST_INCLUDE_DIRS)
 unset(_datatools_BOOST_LIBRARIES)
+
+else ( NOT DEFINED datatools_CONFIG_COUNTER )
+  message ( WARNING "Multiple inclusion of the 'datatools-config.cmake' file !" )
+  math (EXPR datatools_CONFIG_COUNTER '${datatools_CONFIG_COUNTER}+1' )
+endif ( NOT DEFINED datatools_CONFIG_COUNTER )
 
 # end
