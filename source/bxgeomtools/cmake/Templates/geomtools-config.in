@@ -10,7 +10,6 @@ help=0
 debug=0
 bio_support=1
 python_wrapper_support=1
-depends_on_datatools=1
 
 if [ ${python_wrapper_support} -eq 1 ]; then
     with_python_wrapper=0
@@ -116,14 +115,9 @@ EOF
   --cmake-config-dir    print the installation directory for the 'geomtools-config.cmake' file
 EOF
     # Dependencies:
-    if [ "x${depends_on_datatools}" = "x1" ]; then
-	cat<<EOF
+    cat<<EOF
    --mygsl-version      print mygsl version
 EOF
-    fi
-#     cat<<EOF
-#     --xxx-version        print xxx version
-# EOF
     return 0
 }
 
@@ -186,9 +180,7 @@ if [ "x${option}" = "x--cflags" ]; then
     (
 	echo -n "-fPIC " 
 	echo -n "-I${geomtools_include_dir} "  
-	if [ "x${depends_on_datatools}" = "x1" ]; then
-	    echo -n "`mygsl-config --cflags` "
-	fi
+	echo -n "`mygsl-config --cflags` "
 	echo ""
     ) | python @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/pkgtools/mkuniqueflags.py     
     my_exit 0
@@ -240,9 +232,7 @@ if [ "x${option}" = "x--ldflags" ]; then
     fi
     (
 	echo -n "-L${geomtools_lib_dir} ${more_ldflags} -lgeomtools "
-	if [ "x${depends_on_datatools}" = "x1" ]; then
-	    echo -n "`mygsl-config --ldflags` "
-	fi
+	echo -n "`mygsl-config --ldflags` "
 	echo ""
     ) | python @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/pkgtools/mkuniqueflags.py -r   
     my_exit 0
