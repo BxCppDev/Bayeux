@@ -1,0 +1,114 @@
+# - Config file for the materials package
+# It defines the following variables
+#  materials_INCLUDE_DIRS - include directories for materials
+#  materials_LIBRARIES    - libraries to link against
+#  materials_WITH_DEBUG   - flag for debug mode
+# If Boost/Serialization I/O system is supported :
+#  materials_WITH_BIO     - flag for Boost/Serialization I/O DLL (a.k.a. 'bio')
+# If Boost/Python wrapper module is supported :
+#  materials_WITH_PYTHON_WRAPPER - flag for 'Boost/Python' module 
+
+#----------------------------------------------------------------------------
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#----------------------------------------------------------------------------
+
+if ( NOT DEFINED materials_CONFIG_COUNTER )
+set ( materials_CONFIG_COUNTER 1 )
+
+#----------------------------------------------------------------------------
+# Locate ourselves, since all our config files should have been installed
+# alongside us...
+#
+get_filename_component(_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+#----------------------------------------------------------------------------
+# Include the file listing all the imported targets to make them available
+# This is installed in the same location as us...
+#
+include("${_thisdir}/materials-libraries.cmake")
+
+#----------------------------------------------------------------------------
+# Set variables pointing to used third party headers and locations.
+# We have to set the headers because materials exports the headers in
+# its public interface.
+
+#----------------------------------------------------------------------------
+# Set path to materials includes
+#
+set(materials_INCLUDE_DIR @materials_INCLUDE_DIR@)
+set(materials_INCLUDE_DIRS
+  ${materials_INCLUDE_DIR}
+  )
+
+set ( geomtools_DIR "@geomtools_DIR@" )
+find_package ( geomtools REQUIRED NO_MODULE )
+if (NOT DEFINED geomtools_VERSION)
+  message ( FATAL_ERROR "Cannot find 'geomtools' dependency !")
+else ()
+  message ( STATUS "Found 'geomtools' dependency version ${geomtools_VERSION} !")
+endif ()
+set(_materials_geomtools_INCLUDE_DIRS @geomtools_INCLUDE_DIRS@)
+set (materials_INCLUDE_DIRS 
+     ${materials_INCLUDE_DIRS}
+     ${_materials_geomtools_INCLUDE_DIRS}
+    )
+unset(_materials_geomtools_INCLUDE_DIRS)
+
+#----------------------------------------------------------------------------
+# Set materials_LIBRARIES variable
+set(materials_LIB_DIR @materials_LIB_DIR@)
+# Basic : Assume that if materials_bio was built, it should be in Library list
+set(materials_LIBRARY materials )
+
+set(materials_WITH_DEBUG @MATERIALS_WITH_DEBUG@)
+if(materials_WITH_DEBUG)
+  set(materials_WITH_DEBUG 1)
+else()
+  set(materials_WITH_DEBUG 0)
+endif()
+
+if ( @MATERIALS_WITH_BIO_SUPPORT@ )
+ set(materials_WITH_BIO @MATERIALS_WITH_BIO@)
+ if(materials_WITH_BIO)
+   set(materials_WITH_BIO 1)
+   set(materials_BIO_LIBRARY materials_bio )
+ else()
+   set(materials_WITH_BIO 0)
+ endif()
+endif()
+
+if ( @MATERIALS_WITH_PYTHON_WRAPPER_SUPPORT@ )
+  set(materials_WITH_PYTHON_WRAPPER @MATERIALS_WITH_PYTHON_WRAPPER@)
+  if(materials_WITH_PYTHON_WRAPPER)
+    set(materials_WITH_PYTHON_WRAPPER 1)
+  else()
+    set(materials_WITH_PYTHON_WRAPPER 0)
+  endif()
+endif ()
+
+set(materials_LIBRARIES ${materials_BIO_LIBRARY} ${materials_LIBRARY} )
+
+set(_materials_geomtools_LIBRARIES @geomtools_LIBRARIES@)
+set(materials_LIBRARIES 
+     ${materials_LIBRARIES}
+     ${_materials_geomtools_LIBRARIES}
+   )
+unset(_materials_geomtools_LIBRARIES)
+
+else ( NOT DEFINED materials_CONFIG_COUNTER )
+  message ( WARNING "Multiple inclusion of the 'materials-config.cmake' file !" )
+  math (EXPR materials_CONFIG_COUNTER '${materials_CONFIG_COUNTER}+1' )
+endif ( NOT DEFINED materials_CONFIG_COUNTER )
+
+# end

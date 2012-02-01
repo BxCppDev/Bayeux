@@ -1,0 +1,149 @@
+# FindMaterials.cmake
+# 
+# A rather brute force version.
+# 
+# Locate materials library
+# This module defines
+#  MATERIALS_FOUND
+#  MATERIALS_VERSION
+#  MATERIALS_LIBRARIES
+#  MATERIALS_INCLUDE_DIRS, where to find materials/materials_config.h
+#  MATERIALS_LIBRARIES_DEPEND
+#  MATERIALS_INCLUDE_DIRS_DEPEND
+# and 
+#  MATERIALS_WITH_BIO if Boost I/O support is activated
+#  MATERIALS_WITH_PYTHON_WRAPPER if Boost Python wrapper support is activated
+
+set ( __bio_support 0 )
+set ( __python_wrapper_support 0 )
+
+set ( MATERIALS_VERSION  @materials_VERSION_STR@ CACHE STRING "materials version" )
+
+if ( __python_wrapper_support )
+   set ( MATERIALS_WITH_PYTHON_WRAPPER  @MATERIALS_WITH_PYTHON_WRAPPER@ CACHE STRING "Python wrapper flag" )
+endif ()
+
+if ( __bio_support )
+  set ( MATERIALS_WITH_BIO             @MATERIALS_WITH_BIO@  "Boost I/O DLL flag" )
+endif ()
+
+message ( STATUS "FindMaterials: MATERIALS_VERSION='${MATERIALS_VERSION}'" )
+
+if ( __bio_support )
+  message ( STATUS "FindMaterials: MATERIALS_WITH_BIO='${MATERIALS_WITH_BIO}'" )
+endif ()
+
+if ( __python_wrapper_support )
+  message ( STATUS "FindMaterials: MATERIALS_WITH_PYTHON_WRAPPER='${MATERIALS_WITH_PYTHON_WRAPPER}'" )
+endif ()
+
+find_path ( MATERIALS_INCLUDE_DIRS materials/materials_config.h
+  HINTS
+  $ENV{MATERIALS_ROOT_DIR}
+  PATH_SUFFIXES include
+  PATHS
+  [HKEY_LOCAL_MACHINE\\SOFTWARE\\materials]
+  ~/Library/Frameworks
+  /Library/Frameworks
+  /usr/local
+  /usr
+  /sw # Fink
+  /opt/local # DarwinPorts
+  /opt/csw # Blastwave
+  /opt
+)
+
+message ( STATUS "FindMaterials: MATERIALS_INCLUDE_DIRS='${MATERIALS_INCLUDE_DIRS}'" )
+
+find_library ( _materials_library 
+  NAMES materials
+  HINTS $ENV{MATERIALS_ROOT_DIR}
+  PATHS
+  [HKEY_LOCAL_MACHINE\\SOFTWARE\\materials]
+  ~/Library/Frameworks
+  /Library/Frameworks
+  /usr/local
+  /usr
+  /sw
+  /opt/local
+  /opt/csw
+  /opt
+  PATH_SUFFIXES lib64 lib
+)
+message ( STATUS "FindMaterials: MATERIALS_LIBRARY='${MATERIALS_LIBRARY}'" )
+set ( _materials_libraries "${_materials_library}" )
+
+if ( __bio_support )
+  if ( ${MATERIALS_WITH_BIO} )
+    find_library ( _materials_bio_library 
+      NAMES materials_bio
+      HINTS $ENV{MATERIALS_ROOT_DIR}
+      PATHS
+      [HKEY_LOCAL_MACHINE\\SOFTWARE\\materials]
+      ~/Library/Frameworks
+      /Library/Frameworks
+      /usr/local
+      /usr
+      /sw
+      /opt/local
+      /opt/csw
+      /opt
+      PATH_SUFFIXES lib64 lib
+      )
+     message ( STATUS "FindMaterials: _materials_bio_library='${_materials_bio_library}'" )
+     if ( NOT "${_materials_bio_library}" STREQUAL "" )
+       set ( _materials_libraries "${_materials_bio_library}" "${_materials_library}" )
+       message ( STATUS "FindMaterials: _materials_libraries='${_materials_libraries}'" )
+    endif ()
+  endif ()
+endif ()
+
+set ( MATERIALS_LIBRARIES ${_materials_libraries} )
+message ( STATUS "FindMaterials: MATERIALS_LIBRARIES='${MATERIALS_LIBRARIES}'" )
+
+include ( FindPackageHandleStandardArgs )
+# handle the QUIETLY and REQUIRED arguments and set MATERIALS_FOUND to TRUE if 
+# all listed variables are TRUE
+find_package_handle_standard_args ( materials DEFAULT_MSG MATERIALS_LIBRARIES MATERIALS_INCLUDE_DIRS )
+
+set ( MATERIALS_LIBRARIES_DEPEND 
+      ${MATERIALS_LIBRARIES}
+      ###@MYGSL_LIBRARIES_DEPEND@ 
+      ###@DATATOOLS_LIBRARIES_DEPEND@
+    )
+
+message ( STATUS "FindMaterials: MATERIALS_LIBRARIES_DEPEND='${MATERIALS_LIBRARIES_DEPEND}'" )
+
+# if (MATERIALS_WITH_PYTHON_WRAPPER)
+#   list ( APPEND MATERIALS_LIBRARIES_DEPEND 
+#          python )
+# endif ()
+
+set ( MATERIALS_INCLUDE_DIRS_DEPEND
+      ${MATERIALS_INCLUDE_DIRS}
+      ###@MYGSL_INCLUDE_DIR_DEPEND@
+      ###@DATATOOLS_INCLUDE_DIRS_DEPEND@
+    )
+
+message ( STATUS "FindMaterials: MATERIALS_INCLUDE_DIRS_DEPEND='${MATERIALS_INCLUDE_DIRS_DEPEND}'" )
+
+mark_as_advanced (MATERIALS_VERSION  
+                  MATERIALS_LIBRARY
+		  MATERIALS_INCLUDE_DIRS 
+                  MATERIALS_LIBRARIES 
+		  MATERIALS_INCLUDE_DIRS_DEPEND 
+                  MATERIALS_LIBRARIES_DEPEND 
+		  )
+
+if ( __bio_support )
+  mark_as_advanced ( MATERIALS_WITH_BIO )  
+endif ()
+
+if ( __python_wrapper_support )
+  mark_as_advanced ( MATERIALS_WITH_PYTHON_WRAPPER )  
+endif ()
+
+message ( STATUS "FindMaterials: MATERIALS_FOUND=${MATERIALS_FOUND}")
+
+# end of FindMaterials.cmake
+
