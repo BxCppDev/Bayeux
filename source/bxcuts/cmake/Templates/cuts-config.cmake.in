@@ -1,0 +1,123 @@
+# - Config file for the cuts package
+# It defines the following variables
+#  cuts_INCLUDE_DIRS - include directories for cuts
+#  cuts_LIBRARIES    - libraries to link against
+#  cuts_WITH_DEBUG   - flag for debug mode
+# If Boost/Serialization I/O system is supported :
+#  cuts_WITH_BIO     - flag for Boost/Serialization I/O DLL (a.k.a. 'bio')
+# If Boost/Python wrapper module is supported :
+#  cuts_WITH_PYTHON_WRAPPER - flag for 'Boost/Python' module 
+
+#----------------------------------------------------------------------------
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#----------------------------------------------------------------------------
+
+if ( NOT DEFINED cuts_CONFIG_COUNTER )
+set ( cuts_CONFIG_COUNTER 1 )
+
+#----------------------------------------------------------------------------
+# Locate ourselves, since all our config files should have been installed
+# alongside us...
+#
+get_filename_component(_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+
+#----------------------------------------------------------------------------
+# Include the file listing all the imported targets to make them available
+# This is installed in the same location as us...
+#
+include("${_thisdir}/cuts-libraries.cmake")
+
+
+#----------------------------------------------------------------------------
+# Set variables pointing to used third party headers and locations.
+# We have to set the headers because cuts exports the headers in
+# its public interface.
+
+#----------------------------------------------------------------------------
+# Set path to cuts includes
+#
+set ( cuts_INCLUDE_DIR @cuts_INCLUDE_DIR@ )
+set ( cuts_INCLUDE_DIRS
+      ${cuts_INCLUDE_DIR}
+    )
+
+set ( datatools_DIR "@datatools_DIR@" )
+find_package ( datatools )
+if (NOT DEFINED datatools_VERSION)
+  message ( FATAL_ERROR "Cannot find 'datatools' dependency !")
+else ()
+  message ( STATUS "Found 'datatools' dependency version ${datatools_VERSION} !")
+endif ()
+set ( _cuts_datatools_INCLUDE_DIRS @datatools_INCLUDE_DIRS@ )
+set ( cuts_INCLUDE_DIRS 
+      ${cuts_INCLUDE_DIRS}
+      ${_cuts_datatools_INCLUDE_DIRS}
+    )
+unset ( _cuts_datatools_INCLUDE_DIRS )
+
+#----------------------------------------------------------------------------
+# Set cuts_LIBRARIES variable
+set(cuts_LIB_DIR @cuts_LIB_DIR@)
+# Basic : Assume that if cuts_bio was built, it should be in Library list
+set(cuts_LIBRARY cuts )
+
+set(cuts_WITH_DEBUG @CUTS_WITH_DEBUG@)
+if(cuts_WITH_DEBUG)
+  set(cuts_WITH_DEBUG 1)
+else()
+  set(cuts_WITH_DEBUG 0)
+endif()
+
+# if ( @CUTS_WITH_BIO_SUPPORT@ )
+#  set(cuts_WITH_BIO @CUTS_WITH_BIO@)
+#  if(cuts_WITH_BIO)
+#    set(cuts_WITH_BIO 1)
+#    set(cuts_BIO_LIBRARY cuts_bio )
+#  else()
+#    set(cuts_WITH_BIO 0)
+#  endif()
+# endif()
+
+# if ( @CUTS_WITH_PYTHON_WRAPPER_SUPPORT@ )
+#   set(cuts_WITH_PYTHON_WRAPPER @CUTS_WITH_PYTHON_WRAPPER@)
+#   if(cuts_WITH_PYTHON_WRAPPER)
+#     set(cuts_WITH_PYTHON_WRAPPER 1)
+#   else()
+#     set(cuts_WITH_PYTHON_WRAPPER 0)
+#   endif()
+# endif ()
+
+set(cuts_LIBRARIES ${cuts_BIO_LIBRARY} ${cuts_LIBRARY} )
+
+set(_cuts_datatools_LIBRARIES @datatools_LIBRARIES@)
+set(cuts_LIBRARIES 
+     ${cuts_LIBRARIES}
+     ${_cuts_datatools_LIBRARIES}
+   )
+unset(_cuts_datatools_LIBRARIES)
+
+# set(_cuts_yyy_LIBRARIES @yyy_LIBRARIES@)
+# set(cuts_LIBRARIES 
+#      ${cuts_LIBRARIES}
+#      ${_cuts_yyy_LIBRARIES}
+#    )
+# unset(_cuts_yyy_LIBRARIES)
+
+else ( NOT DEFINED cuts_CONFIG_COUNTER )
+  message ( WARNING "Multiple inclusion of the 'cuts-config.cmake' file !" )
+  math (EXPR cuts_CONFIG_COUNTER '${cuts_CONFIG_COUNTER}+1' )
+endif ( NOT DEFINED cuts_CONFIG_COUNTER )
+
+# end

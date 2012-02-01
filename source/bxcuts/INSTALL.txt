@@ -1,0 +1,154 @@
+
+cuts installation instructions:
+------------------------------------
+
+1 - Third-party software setup :
+--------------------------------
+
+Instructions to setup dependencies...
+
+cuts depends on the following libraries and/or programs :
+ - ...
+ - ...
+ 
+
+2- Plain CMake installation :
+-----------------------------
+
+Change to the cuts base directory :
+{{{
+bash$ cd <cuts base dir>
+}}}
+
+Create a 'build' directory :
+{{{
+bash$ mkdir build
+bash$ cd build
+}}}
+
+Configure the installation to the '${HOME}/software' directory.
+Note: you must choose a directory where you have write access.
+
+{{{
+bash$ cmake \
+   -DCMAKE_INSTALL_PREFIX:PATH=${HOME}/software \
+   -DCMAKE_BUILD_TYPE:STRING=Release \
+   ..
+}}}
+
+This prints :
+{{{
+-- The C compiler identification is GNU
+-- The CXX compiler identification is GNU
+
+...
+
+-- Configuring done
+-- Generating done
+-- Build files have been written to: <cuts base dir>/build
+}}}
+
+Build :
+{{{
+bash$ make
+}}}
+
+Generate the documentation :
+{{{
+bash$ make doc
+}}}
+
+Perform tests :
+{{{
+bash$ make test
+}}}
+
+Clean test material :
+{{{
+bash$ make clean_test
+}}}
+
+Installation (here in the '${HOME}/software' directory) :
+{{{
+bash$ make install
+}}}
+
+Remove the temporary build directory :
+{{{
+bash$ cd build
+bash$ rm -fr build
+}}}
+
+
+3 - Production CMake installation using the 'pkgtool' wrapper :
+---------------------------------------------------------------
+
+Change to the cuts base directory :
+{{{
+bash$ cd <cuts base dir>
+}}}
+
+Getting help :
+{{{
+bash$ ./pkgtools.d/pkgtool --help
+}}}
+
+Run the following configure/build/install sequence :
+{{{
+bash$ ./pkgtools.d/pkgtool check
+bash$ ./pkgtools.d/pkgtool configure --install-prefix ${HOME}/software
+bash$ ./pkgtools.d/pkgtool build --number-of-tasks auto
+bash$ ./pkgtools.d/pkgtool doc
+bash$ ./pkgtools.d/pkgtool test
+bash$ ./pkgtools.d/pkgtool install
+}}}
+
+De-installation :
+{{{
+bash$ ./pkgtools.d/pkgtool uninstall
+}}}
+
+Full reset of the package :
+{{{
+bash$ ./pkgtools.d/pkgtool reset
+}}}
+
+
+4 - Setup : 
+-----------
+
+The following instructions applies to the bash shell.
+
+Load the definition of the cuts setup function :
+{{{
+bash$ source ${HOME}/software/etc/cuts_setup.sh
+NOTICE: do_datatools_setup: Please setup 'cuts' with 'do_cuts_setup'.
+}}}
+
+Invoke the setup function :
+{{{
+bash$ do_cuts_setup
+NOTICE: do_cuts_setup: Setup cuts...
+NOTICE: do_cuts_setup: Setup cuts done.
+}}}
+
+Use cuts :
+{{{
+bash$ which cuts-config 
+/home/<login>/software/bin/cuts-config
+bash$ cuts-config --version
+0.1.0
+bash$ cuts-config --cflags
+...
+bash$ cuts-config --ldflags
+...
+}}}
+
+--
+François Mauger <mauger@lpccaen.in2p3.fr>
+Updated: 2012-01-31
+
+
+ 
+
+
