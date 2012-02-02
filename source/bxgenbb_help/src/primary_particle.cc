@@ -20,7 +20,8 @@
  */
 
 #include <genbb_help/primary_particle.h>
-#include <genbb_help/genbb_help.h>
+
+#include <genbb_help/genbb_help_config.h>
 
 namespace genbb {
 

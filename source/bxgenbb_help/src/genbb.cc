@@ -623,6 +623,9 @@ namespace genbb {
 	  {
 	    const char * c =  getenv ("GENBB_HELP_GENBB_SCRIPT");
 	    genbb_script = c;
+	    std::cerr << "DEVEL: genbb_help::genbb::_init_: "
+		      << "genbb_script='" << genbb_script << "'"
+		      << std::endl;
 	  }
 	datatools::utils::fetch_path_with_env (genbb_script);
 	
@@ -631,7 +634,7 @@ namespace genbb {
 	ostringstream genbb_log_file_ss;
 	genbb_log_file_ss << _tmp_dir_ << '/' << "genbb_" << _buffer_count_ << ".log";
 	_genbb_log_ = genbb_log_file_ss.str ();
-	genbb_cmd << genbb_script << " "
+	genbb_cmd << "bash " << genbb_script << " "
 		  << "--temp-directory" << " "
 		  << _tmp_dir_ << " "
 		  << _genbb_conf_ << " " 
@@ -639,6 +642,9 @@ namespace genbb {
 		  << _buffer_size_ << " "
 		  << _genbb_data_ << " "
 		  << " > " << _genbb_log_ << " 2>&1 ";
+	std::cerr << "DEVEL: genbb_help::genbb::_init_: "
+		  << "genbb_cmd='" << genbb_cmd.str () << "'"
+		  << std::endl;
 	int ret = system (genbb_cmd.str ().c_str ());
 	if (ret != 0)
 	  {

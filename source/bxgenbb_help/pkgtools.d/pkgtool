@@ -18,7 +18,7 @@ python_wrapper_support=0
 appname=${APPNAME} 
 appversion=0.1 
 package_name="genbb_help"
-list_of_actions="check configure unconfigure build doc test untest clean install uninstall reset list_of_actions"
+list_of_actions="check configure unconfigure build doc test untest clean install uninstall reset quickstart list_of_actions"
 pkgtools_dir="pkgtools.d"
 
 the_base_dir=$(pwd)
@@ -229,6 +229,8 @@ while [ -n "$1" ]; do
             elif [ "$arg" = "clean" ]; then
 	        the_action_mode="${arg}"	
             elif [ "$arg" = "reset" ]; then
+	        the_action_mode="${arg}"	
+            elif [ "$arg" = "quickstart" ]; then
 	        the_action_mode="${arg}"	
             elif [ "$arg" = "list_of_actions" ]; then
 	        the_action_mode="${arg}"	
@@ -888,6 +890,15 @@ function main ()
 	do_clean $@
 	if [ $? -ne 0 ]; then
 	    pkgtools__msg_error "Cleaning failed !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
+    
+    if [ "${action_mode}" = "quickstart" ]; then
+	do_configure $@ && do_build $@ && do_doc $@ && do_test && do_install 
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Quickstart failed !"
 	    __pkgtools__at_function_exit
 	    return 1
 	fi

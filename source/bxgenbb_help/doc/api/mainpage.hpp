@@ -10,7 +10,14 @@
  *
  * \section overview_section Overview
  *
- * \t genbb_help is a C++ library ...
+ *    The genbb_help package is built from the original Decay0 program
+ *    by Vladimir Tretyak. 
+ *    A 'genbb' script is provided to run the generator.
+ * 
+ *    Some reader C++ class (the genbb_mgr class) enables the use 
+ *    of the output data file from 'genbb' or run (the genbb and 
+ *    wgenbb classes) the core fortran generator on the fly from 
+ *    a C++ application.
  *
  * \section contents_section Contents 
  *
@@ -25,8 +32,8 @@
  * genbb_help is distributed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  *
  * \verbatim
- * Copyright (C) 2012 , 
- * Contact: 
+ * Copyright (C) 2012 François Mauger, Université de Caen Basse-Normandie, LPC Caen (CNRS/IN2P3)
+ * Contact: mauger@lpccaen.in2p3.fr
  * 
  * This file is part of the genbb_help library.
  * 

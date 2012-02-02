@@ -114,7 +114,7 @@ int main (int argc_, char ** argv_)
       config.store ("mode", "spectrum");
 
       /* Possible values are: "keV", "MeV"... */
-      config.store ("spectrum.data_file", "${GENBB_HELP_RESOURCES_DIR}/testing/data/test_spg_spectrum_0.data");
+      config.store ("spectrum.data_file", "${GENBB_HELP_DATA_DIR}/testing/data/test_spg_spectrum_0.data");
 
       if (debug) config.tree_dump (clog, "Configuration: ", "debug: ");
  

@@ -41,7 +41,7 @@ set ( genbb_help_programs_list_CXX
 # include files search paths
 include_directories ( ${PROJECT_SOURCE_DIR}/include	
                       ${PROJECT_BINARY_DIR}/include	
-                      ${GEOMTOOLS_INCLUDE_DIRS_DEPEND}
+                      ${geomtools_INCLUDE_DIRS}
                       ${PROJECT_SOURCE_DIR}/testing
                     )
 
@@ -63,7 +63,7 @@ foreach ( pro_program ${genbb_help_programs_list_Fortran} )
   # our executable needs,
   target_link_libraries ( ${pro_executable} 
                           genbb_help_f77
-                          ${MYGSL_LIBRARIES_DEPEND}
+                          ${mygsl_LIBRARIES}
                         )
 
 endforeach ()
@@ -82,9 +82,8 @@ foreach ( pro_program ${genbb_help_programs_list_CXX} )
   # last thing we have to do is to tell CMake what libraries 
   # our executable needs,
   set ( pro_libraries genbb_help
-                      ${GEOMTOOLS_LIBRARIES} 
 		      genbb_help_f77
-                      ${MYGSL_LIBRARIES_DEPEND}
+                      ${geomtools_LIBRARIES}
       )
 
   if ( GENBB_HELP_WITH_BIO )
@@ -95,4 +94,14 @@ foreach ( pro_program ${genbb_help_programs_list_CXX} )
 
 endforeach ()
 
+
+install ( FILES ${PROJECT_BINARY_DIR}/programs/decay0 
+                ${PROJECT_BINARY_DIR}/programs/genbb1 
+                ${PROJECT_BINARY_DIR}/programs/genbbmgr 
+                ${PROJECT_BINARY_DIR}/programs/g2b
+  	    DESTINATION ${CMAKE_INSTALL_BINDIR}
+            PERMISSIONS OWNER_READ OWNER_EXECUTE 
+                        GROUP_READ GROUP_EXECUTE 
+                        WORLD_READ WORLD_EXECUTE
+           )
 # end of CMakeLists.txt

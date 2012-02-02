@@ -1,8 +1,8 @@
 # genbb_help/doc/CMakeLists.txt
 ###############################################################################
 ##
-## Copyright (C) 2012 , 
-## Contact: 
+## Copyright (C) 2012 François Mauger, Université de Caen Basse-Normandie, LPC Caen (CNRS/IN2P3)
+## Contact: mauger@lpccaen.in2p3.fr
 ##
 ## This file is part of the genbb_help library.
 ##
@@ -57,7 +57,7 @@ if(DOXYGEN_FOUND)
     endif()
 
     # configure the source Doxyfile by copying it and replacing all @variables@
-    configure_file ( ${DOXYGEN_INPUT_DIR}/doc/api/doxygen.in.cmake 
+    configure_file ( ${DOXYGEN_INPUT_DIR}/doc/api/doxygen.in 
                      ${DOXYGEN_CONFIGURED_INPUT} @ONLY )
 
     # copy necessary doc files
@@ -79,7 +79,7 @@ if(DOXYGEN_FOUND)
 
     # install
     install(DIRECTORY ${DOXYGEN_OUTPUT_DIR}
-        DESTINATION ${INSTALL_MISC_DIR}/doc
+        DESTINATION ${CMAKE_INSTALL_DOCDIR}
         COMPONENT apidoc
     )
 

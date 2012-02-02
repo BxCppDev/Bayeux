@@ -40,7 +40,7 @@ int main (int argc_, char ** argv_)
       
       if (config_file.empty ())
 	{
-	  config_file = "${GENBB_HELP_RESOURCES_DIR}/testing/config/genbb_mgr_0.conf";
+	  config_file = "${GENBB_HELP_DATA_DIR}/testing/config/genbb_mgr_0.conf";
 	}
       datatools::utils::fetch_path_with_env (config_file);
       datatools::utils::properties config;

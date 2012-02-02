@@ -39,9 +39,14 @@ EOF
 }
 
 tmp_test_dir=/tmp/${USER}/genbb_help/test
-base_testing_dir=
+prefix_test_dir=
+data_test_dir=
 source_dir=
 binary_dir=
+bin_test_dir=
+lib_test_dir=
+etc_test_dir=
+inc_test_dir=
 exe_test=
 
 #######################################################
@@ -64,15 +69,27 @@ while [ -n "$1" ]; do
 	elif [ "${opt}" = "--version" ]; then
 	    echo ${appversion}
 	    my_exit 0
-	elif [ "${opt}" = "--base-testing-dir" ]; then
+	elif [ "${opt}" = "--data-dir" ]; then
 	    shift 1
-	    base_testing_dir="$1"
+	    data_test_dir="$1"
 	elif [ "${opt}" = "--source-dir" ]; then
 	    shift 1
 	    source_dir="$1"
 	elif [ "${opt}" = "--binary-dir" ]; then
 	    shift 1
 	    binary_dir="$1"
+	elif [ "${opt}" = "--bin-dir" ]; then
+	    shift 1
+	    bin_test_dir="$1"
+	elif [ "${opt}" = "--lib-dir" ]; then
+	    shift 1
+	    lib_test_dir="$1"
+	elif [ "${opt}" = "--etc-dir" ]; then
+	    shift 1
+	    etc_test_dir="$1"
+	elif [ "${opt}" = "--include-dir" ]; then
+	    shift 1
+	    inc_test_dir="$1"
 	elif [ "${opt}" = "--tmp-dir" ]; then
 	    shift 1
 	    tmp_test_dir="$1"
@@ -107,8 +124,9 @@ if [ ${debug} -ne 0 ]; then
 	echo "DEBUG: ${appname}: the_action_mode=${the_action_mode}"
 	echo "DEBUG: ${appname}: tmp_test_dir=${tmp_test_dir}" 
 	echo "DEBUG: ${appname}: exe_test=${exe_test}" 
+	echo "DEBUG: ${appname}: prefix_test_dir=${prefix_test_dir}" >&2
 	#echo "DEBUG: ${appname}: bin_test_dir=${bin_test_dir}" 
-	echo "DEBUG: ${appname}: base_testing_dir=${base_testing_dir}"
+	echo "DEBUG: ${appname}: data_test_dir=${data_test_dir}"
     ) >> ${tmp_test_dir}/tests.log 2>&1
 fi
 
@@ -126,12 +144,40 @@ function do_run ()
 {
     opwd=$(pwd)
 
-    if [ "x${base_testing_dir}" = "x" ]; then
-	echo "ERROR: ${appname}: Missing base_testing_dir !"
+    if [ "x${inc_test_dir}" != "x" ]; then
+	export GENBB_HELP_INCLUDE_DIR=${inc_test_dir}
+    fi
+
+    if [ "x${etc_test_dir}" != "x" ]; then
+	export GENBB_HELP_ETC_DIR=${etc_test_dir}
+    fi
+
+    if [ "x${bin_test_dir}" != "x" ]; then
+	export GENBB_HELP_BIN_DIR=${bin_test_dir}
+    fi
+
+    if [ "x${lib_test_dir}" != "x" ]; then
+	export GENBB_HELP_LIB_DIR=${lib_test_dir}
+    fi
+
+    # if [ "x${data_test_dir}" = "x" ]; then
+    # 	echo "ERROR: ${appname}: Missing data_test_dir !"
+    # 	return 1
+    # fi
+
+    if [ "x${data_test_dir}" != "x" ]; then
+	export GENBB_HELP_DATA_DIR=${data_test_dir}
+    fi
+
+    if [ "x${GENBB_HELP_DATA_DIR}" = "x" ]; then
+	echo "ERROR: ${appname}: Missing GENBB_HELP_DATA_DIR environment variable !"
 	return 1
     fi
-    
-    export GENBB_HELP_RESOURCES_DIR=${base_testing_dir}
+    if [ ! -d ${GENBB_HELP_DATA_DIR} ]; then
+	echo "ERROR: ${appname}: Directory '${GENBB_HELP_DATA_DIR}' does not exists !"
+	return 1
+    fi
+   
     echo "NOTICE: ${appname}: First clean the test temporary directory..." >&2
     if [ ! -d ${tmp_test_dir} ]; then
 	mkdir -p ${tmp_test_dir}
@@ -141,7 +187,7 @@ function do_run ()
     cat >> ${tmp_test_dir}/tests.log<<EOF
 
 ****************************************************
-datatool test log file :
+genbb_help test log file :
 '${exe_test}' 
 ****************************************************
 EOF
@@ -158,7 +204,13 @@ EOF
 	if [ "x${binary_dir}" != "x" ]; then
 	    export PATH=${binary_dir}/programs:${PATH} 
 	fi
-	###echo "PATH=${PATH}" >> ${tmp_test_dir}/tests.log 2>&1
+	if [ ! -d /tmp/${USER}/genbb_work.d ]; then
+	    mkdir -p /tmp/${USER}/genbb_work.d
+	    if [ $? -ne 0 ]; then
+		echo "ERROR: ${appname}: Cannot create temporary directory '/tmp/${USER}/genbb_work.d' ! " 
+		return 1
+	    fi
+	fi
 	${bin} >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then
 	    return 1

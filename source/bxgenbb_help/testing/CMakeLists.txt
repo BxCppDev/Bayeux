@@ -59,7 +59,7 @@ set ( genbb_help_tests_programs_list_Fortran
 # include files search paths
 include_directories ( ${PROJECT_SOURCE_DIR}/include	
                       ${PROJECT_BINARY_DIR}/include	
-                      ${GEOMTOOLS_INCLUDE_DIRS_DEPEND}
+                      ${geomtools_INCLUDE_DIRS}
                       ${PROJECT_SOURCE_DIR}/testing
                     )
 
@@ -87,9 +87,8 @@ if ( GENBB_HELP_ALL_TESTS )
     # last thing we have to do is to tell CMake what libraries 
     # our executable needs,
     set ( test_libraries genbb_help
-                         ${GEOMTOOLS_LIBRARIES} 
                          genbb_help_f77
-                         ${MYGSL_LIBRARIES_DEPEND}
+                         ${geomtools_LIBRARIES} 
         )
 
     if ( GENBB_HELP_WITH_BIO )
@@ -103,7 +102,7 @@ if ( GENBB_HELP_ALL_TESTS )
                        --tmp-dir ${_test_tmp_dir}
                        --source-dir ${PROJECT_SOURCE_DIR} 
                        --binary-dir ${PROJECT_BINARY_DIR} 
-                       --base-testing-dir ${PROJECT_SOURCE_DIR} 
+                       --data-dir ${PROJECT_SOURCE_DIR} 
                        --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
 	               run
              )	 	
@@ -124,15 +123,16 @@ if ( GENBB_HELP_ALL_TESTS )
     # our executable needs,
     target_link_libraries ( ${test_executable} 
                             genbb_help_f77
-                            ${MYGSL_LIBRARIES_DEPEND}
+                            ${mygsl_LIBRARIES}
                           )
+    message ( STATUS "testing: mygsl_LIBRARIES='${mygsl_LIBRARIES}'" )
 
     add_test ( NAME ${test_executable}.run
                COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
                        --tmp-dir ${_test_tmp_dir}
                        --source-dir ${PROJECT_SOURCE_DIR} 
                        --binary-dir ${PROJECT_BINARY_DIR} 
-                       --base-testing-dir ${PROJECT_SOURCE_DIR} 
+                       --data-dir ${PROJECT_SOURCE_DIR} 
                        --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
 	               run
              )	 	
@@ -144,12 +144,39 @@ if ( GENBB_HELP_ALL_TESTS )
                       --tmp-dir ${_test_tmp_dir}
                       --source-dir ${PROJECT_SOURCE_DIR} 
                       --binary-dir ${PROJECT_BINARY_DIR} 
-                      --base-testing-dir ${PROJECT_SOURCE_DIR} 
+                      --data-dir ${PROJECT_SOURCE_DIR} 
                       clean
                     )
 
 endif ()
 
 ##set_target_properties(foo PROPERTIES LINKER_LANGUAGE CXX)
+
+option ( GENBB_HELP_INSTALL_TEST_PROGRAMS "Install test programs" 1 )
+message ( STATUS "testing: Installing all test programs' source files : ${GENBB_HELP_INSTALL_TEST_PROGRAMS}" )
+
+# - Installation :
+if (GENBB_HELP_INSTALL_TEST_PROGRAMS) 
+  set ( _test_install_dir ${CMAKE_INSTALL_DATADIR}/testing )
+
+  file ( GLOB genbb_help_tests_config config/*.conf )
+  install ( FILES ${genbb_help_tests_config} 
+     	    DESTINATION ${_test_install_dir}/config  
+            PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ 
+          )
+
+  file ( GLOB genbb_help_tests_data data/*.genbb data/*.txt.gz data/*.data  )
+  install ( FILES ${genbb_help_tests_data} 
+     	    DESTINATION ${_test_install_dir}/data  
+            PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ 
+          )
+
+  file ( GLOB genbb_help_tests_programs test_*.cxx )
+  install ( FILES ${genbb_help_tests_programs} testDriver.bash
+	    DESTINATION ${_test_install_dir}
+            PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ 
+          )
+
+endif ()
 
 # end of CMakeLists.txt

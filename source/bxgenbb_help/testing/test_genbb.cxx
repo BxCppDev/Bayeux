@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <string>
-#include <exception>
+#include <stdexcept>
 
 #include <boost/filesystem.hpp>
 
@@ -59,15 +59,17 @@ int main (int argc_, char ** argv_)
       //GBB.set_delete_log_files (false);
       //GBB.set_delete_data_files (false);
       //GBB.set_tmp_base_dir ("/tmp/${USER}");
-      string tmp_dir = "${HOME}/genbb_work.d";
+      string tmp_dir = "/tmp/${USER}/genbb_work.d";
       datatools::utils::fetch_path_with_env (tmp_dir);
       if (! boost::filesystem::is_directory (tmp_dir))
 	{
 	  if (! boost::filesystem::create_directory (tmp_dir))
 	    {
 	      ostringstream message;
-	      message << "Cannout create temperary directory '" << tmp_dir << "' !"; 
+	      message << "Cannot create temporary directory '" << tmp_dir << "' !"; 
+	      throw logic_error (message.str ());
 	    }
+	  
 	}
       GBB.set_tmp_dir (tmp_dir);
       GBB.initialize (config);

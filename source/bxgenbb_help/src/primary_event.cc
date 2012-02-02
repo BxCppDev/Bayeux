@@ -22,7 +22,7 @@
 
 #include <genbb_help/primary_event.h>
 
-#include <genbb_help/genbb_help.h>
+#include <genbb_help/genbb_help_config.h>
 
 #include <cstdlib>
 #include <stdexcept>
