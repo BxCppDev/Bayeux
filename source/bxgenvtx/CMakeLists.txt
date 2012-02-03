@@ -53,12 +53,6 @@ include ( InstallDirs )
 include ( PackageFilename )
 
 # ----------------------------------------------------------------------
-# Dependencies :
-#
-
-###message ( STATUS "genvtx depends on " ) 
-
-# ----------------------------------------------------------------------
 # Options :
 #
 
@@ -98,12 +92,14 @@ else ()
 endif ()
 set ( _geomtools_min_version 3.0 )
 find_package ( geomtools ${_geomtools_min_version} REQUIRED NO_MODULE )
-if ( geomtools_VERSION )
+if ( geomtools_CONFIG )
        message ( STATUS "Found geomtools >= ${_geomtools_min_version}" )
+       message ( STATUS "  geomtools_CONFIG              : ${geomtools_CONFIG}" )
        message ( STATUS "  geomtools_VERSION             : ${geomtools_VERSION}" )
        message ( STATUS "  geomtools_LIBRARIES           : ${geomtools_LIBRARIES}" )
        message ( STATUS "  geomtools_INCLUDE_DIRS        : ${geomtools_INCLUDE_DIRS}" )
        message ( STATUS "  geomtools_WITH_DEBUG          : ${geomtools_WITH_DEBUG}" )
+       ### message ( STATUS "  geomtools_WITH_BIO            : ${geomtools_WITH_BIO}" )
        message ( STATUS "  geomtools_WITH_PYTHON_WRAPPER : ${geomtools_WITH_PYTHON_WRAPPER}" )
 else ()
        message ( FATAL_ERROR "Cannot find geomtools >= ${_geomtools_min_version} library !" )
@@ -156,17 +152,17 @@ option ( GENVTX_WITH_CMAKE_FIND_MODULE
 
 # ----------------------------------------------------------------------
 
-message ( STATUS "GENVTX_WITH_DEBUG           : " "${GENVTX_WITH_DEBUG}" )
+message ( STATUS "GENVTX_WITH_DEBUG            : " "${GENVTX_WITH_DEBUG}" )
 if ( GENVTX_WITH_PYTHON_WRAPPER_SUPPORT )
-  message ( STATUS "GENVTX_WITH_PYTHON_WRAPPER  : " "${GENVTX_WITH_PYTHON_WRAPPER}" )
+  message ( STATUS "GENVTX_WITH_PYTHON_WRAPPER : " "${GENVTX_WITH_PYTHON_WRAPPER}" )
 endif ()
 if ( UNIX OR APPLE )
-  message ( STATUS "GENVTX_WITH_CONFIG_SCRIPT   : " "${GENVTX_WITH_CONFIG_SCRIPT}" )
-  message ( STATUS "GENVTX_WITH_PKGCONFIG       : " "${GENVTX_WITH_PKGCONFIG}" )
+  message ( STATUS "GENVTX_WITH_CONFIG_SCRIPT  : "  "${GENVTX_WITH_CONFIG_SCRIPT}" )
+  message ( STATUS "GENVTX_WITH_PKGCONFIG      : " "${GENVTX_WITH_PKGCONFIG}" )
 endif ()
-message ( STATUS "GENVTX_WITH_DOC             : " "${GENVTX_WITH_DOC}" )
-message ( STATUS "GENVTX_WITH_TEST            : " "${GENVTX_WITH_TEST}" )
-message ( STATUS "CMAKE_INSTALL_PREFIX    : " "${CMAKE_INSTALL_PREFIX}" )
+message ( STATUS "GENVTX_WITH_DOC              : " "${GENVTX_WITH_DOC}" )
+message ( STATUS "GENVTX_WITH_TEST             : " "${GENVTX_WITH_TEST}" )
+message ( STATUS "CMAKE_INSTALL_PREFIX         : " "${CMAKE_INSTALL_PREFIX}" )
 
 # ----------------------------------------------------------------------
 
@@ -175,12 +171,14 @@ if ( CMAKE_SYSTEM_NAME MATCHES Darwin )
   set ( _ld_library_path_env "DYLD_LIBRARY_PATH" )
 endif ( CMAKE_SYSTEM_NAME MATCHES Darwin )
 
+
 # ----------------------------------------------------------------------
 # genvtx API
 #
 
 message ( STATUS "Add subdirectory : " "'src'" )
 add_subdirectory ( src )   
+
 
 # ----------------------------------------------------------------------
 # Configuration files :
@@ -375,8 +373,6 @@ configure_file(
   ${PROJECT_BINARY_DIR}/genvtx-config-version.cmake
   @ONLY
   )
-
-
 
 #----------------------------------------------------------------------------
 # - Generate Install Tree configuration files
