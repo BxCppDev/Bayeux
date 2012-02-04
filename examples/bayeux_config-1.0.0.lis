@@ -1,0 +1,11 @@
+# Bayeux user configuration example file 
+
+datatools@branches/frc_cmake_0.1  4.0.0
+brio@branches/frc_cmake_0.1       3.0.0
+mygsl@branches/frc_cmake_0.1      3.0.0
+geomtools@branches/frc_cmake_0.1  3.0.0
+cuts@branches/frc_cmake_0.1       3.0.0
+materials@branches/frc_cmake_0.1  3.0.0
+genvtx@branches/frc_cmake_0.1     3.0.0
+genbb_help@branches/frc_cmake_0.1 4.0.0
+
