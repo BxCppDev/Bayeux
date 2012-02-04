@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_genbb.cxx
 
 #include <cstdlib>
@@ -12,13 +12,13 @@
 
 #include <genbb_help/genbb.h>
 
-using namespace std; 
+using namespace std;
 
 int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
   try
-    {  
+    {
       bool debug = false;
       bool test = false;
       bool dump = false;
@@ -52,21 +52,21 @@ int main (int argc_, char ** argv_)
       config.store ("decay_dbd_level", 0);
       config.store ("decay_dbd_mode", 1);
       if (debug) config.tree_dump (clog, "Configuration: ", "debug: ");
- 
+
       genbb::genbb GBB;
       GBB.set_debug (debug);
       //GBB.set_delete_conf_file (false);
       //GBB.set_delete_log_files (false);
       //GBB.set_delete_data_files (false);
       //GBB.set_tmp_base_dir ("/tmp/${USER}");
-      string tmp_dir = "${HOME}/genbb_work.d";
+      string tmp_dir = "/tmp/genbb_work.d";
       datatools::utils::fetch_path_with_env (tmp_dir);
       if (! boost::filesystem::is_directory (tmp_dir))
 	{
 	  if (! boost::filesystem::create_directory (tmp_dir))
 	    {
 	      ostringstream message;
-	      message << "Cannout create temperary directory '" << tmp_dir << "' !"; 
+	      message << "Cannout create temperary directory '" << tmp_dir << "' !";
 	    }
 	}
       GBB.set_tmp_dir (tmp_dir);
@@ -83,7 +83,7 @@ int main (int argc_, char ** argv_)
 	  if (dump) pe.dump ();
 	}
 
-      if (! tmp_dir.empty ()) 
+      if (! tmp_dir.empty ())
 	{
 	  clog << "Directory '" << tmp_dir << "' contains the intermediate generated data and log files." << endl;
 	}
@@ -92,12 +92,12 @@ int main (int argc_, char ** argv_)
     }
   catch (exception & x)
     {
-      cerr << "error: " << x.what () << endl; 
+      cerr << "error: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return error_code;
