@@ -1,0 +1,57 @@
+
+
+Example :
+
+Prepare:
+
+
+
+{{{
+bash $ do_cadfael_all_sw_setup
+}}}
+
+Configure :
+
+{{{
+bash$ ./pkgtools.d/pkgtool configure \
+        --workspace-dir /scratch/sw/Bayeux
+}}}
+
+{{{
+bash$ ./pkgtools.d/pkgtool configure \
+        --config "1.0.0" \
+        --workspace-dir /scratch/sw/Bayeux \
+        --with-all \ 
+        --without-genbb_help 
+}}}
+
+{{{
+bash$ ./pkgtools.d/pkgtool --devel  \
+        configure \
+        --user-config-file "examples/bayeux_config_1.lis" \
+        --workspace-dir /scratch/sw/Bayeux \
+        --with-none 
+}}}
+
+{{{
+bash$ ./pkgtools.d/pkgtool configure \
+        --install-prefix     /scratch/sw/Bayeux/Bayeux-1.0.0/install \
+        --ep-build-directory /scratch/sw/Bayeux/Bayeux-1.0.0/build \
+        --with-none
+}}}
+
+
+Build :
+
+{{{
+bash$ ./pkgtools.d/pkgtool --devel build --number-of-tasks auto
+}}}
+
+
+Install :
+
+{{{
+bash$ ./pkgtools.d/pkgtool --devel install
+}}}
+
+

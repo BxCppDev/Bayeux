@@ -1,0 +1,153 @@
+# -*- mode: shell-script; -*-
+# bayeux_setup.sh
+#
+# Author: François Mauger <mauger@lpccaen.in2p3.fr>
+#
+# Last revised: 2012-02-04
+#
+# Copyright (c) 2012 François Mauger
+#
+# This script is provided for Unix-like environments to setup
+# Bayeux and its components from a single startup file for
+# the bash shell.
+#
+# It is rather experimental, use it at your own risk.
+#
+# License: GPL 3.0.
+#
+
+echo "NOTICE: bayeux_setup.sh: Entering..." 1>&2
+
+### Bayeux general setup ###
+function do_bayeux_setup ()
+{
+ 
+    echo "NOTICE: do_bayeux_setup: Setup Bayeux version @Bayeux_VERSION@..." 1>&2
+    local is_apple=@_is_apple@
+
+    if [ -n "${BAYEUX_PREFIX}" ]; then
+	echo "WARNING: do_bayeux_setup: Bayeux @Bayeux_VERSION@ is already setup !" 1>&2
+	return 2
+    fi
+
+    if [ -n "${BAYEUX_PRE_SETUP_SCRIPT}" ]; then
+	if [ -f ${BAYEUX_PRE_SETUP_SCRIPT} ]; then
+	    echo "ERROR: do_bayeux_setup: Bayeux pre-setup script '${BAYEUX_PRE_SETUP_SCRIPT}' does not exist !" 1>&2
+	    return 1
+	else
+	    echo "NOTICE: do_bayeux_setup: Sourcing Bayeux pre-setup script '${BAYEUX_PRE_SETUP_SCRIPT}'..." 1>&2
+	    source ${BAYEUX_PRE_SETUP_SCRIPT}
+	fi
+    elif [ -n "${BAYEUX_PRE_SETUP_FUNCTION}" ]; then
+	local test_type=$(LANG=C type ${BAYEUX_PRE_SETUP_FUNCTION} | head -1 | grep "function" )
+	if [ $? -ne 0 ]; then
+	    echo "ERROR: do_bayeux_setup: Bayeux pre-setup function '${BAYEUX_PRE_SETUP_FUNCTION}' does not exist !" 1>&2
+	    return 1
+	else
+	    echo "NOTICE: do_bayeux_setup: Calling Bayeux pre-setup function '${BAYEUX_PRE_SETUP_FUNCTION}'..." 1>&2
+	    ${BAYEUX_PRE_SETUP_FUNCTION}	
+	fi
+    fi
+
+    export BAYEUX_PREFIX=@CMAKE_INSTALL_PREFIX@
+    export BAYEUX_VERSION=@Bayeux_VERSION_STR@
+    export BAYEUX_INCLUDE_DIR=${BAYEUX_PREFIX}/@CMAKE_INSTALL_INCLUDEDIR@
+    export BAYEUX_LIB_DIR=${BAYEUX_PREFIX}/@CMAKE_INSTALL_LIBDIR@
+    export BAYEUX_BIN_DIR=${BAYEUX_PREFIX}/@CMAKE_INSTALL_BINDIR@
+    export BAYEUX_SHARE_DIR=${BAYEUX_PREFIX}/@CMAKE_INSTALL_DATAROOTDIR@
+    export BAYEUX_ETC_DIR=${BAYEUX_PREFIX}/@CMAKE_INSTALL_ETCDIR@
+    export BAYEUX_COMPONENTS=$(echo "@BAYEUX_COMPONENTS@" | tr ';' ':')
+ 
+    if [ -n "${PATH}" ]; then
+        export PATH="${BAYEUX_BIN_DIR}:${PATH}"   
+    else
+        export PATH="${BAYEUX_BIN_DIR}"
+    fi
+    
+    if [ ${is_apple} -eq 0 ]; then
+        if [ -n "${LD_LIBRARY_PATH}" ]; then
+            export LD_LIBRARY_PATH="${BAYEUX_LIB_DIR}:${LD_LIBRARY_PATH}"   
+        else
+            export LD_LIBRARY_PATH="${BAYEUX_LIB_DIR}"
+        fi
+    else
+        if [ -n "${DYLD_LIBRARY_PATH}" ]; then
+            export DYLD_LIBRARY_PATH="${BAYEUX_LIB_DIR}:${DYLD_LIBRARY_PATH}"
+        else
+            export DYLD_LIBRARY_PATH="${BAYEUX_LIB_DIR}"
+        fi      
+    fi
+
+    # if [ -n "${MANPATH}" ]; then
+    #     export MANPATH="${BAYEUX_SHARE_DIR}/man:${MANPATH}"   
+    # else
+    #     export MANPATH="${BAYEUX_SHARE_DIR}/man"
+    # fi
+
+    for component in ${bayeux_components}; do
+	echo "NOTICE: do_bayeux_setup: Setup Bayeux's component '${component}'..." 1>&2
+	if [ ! -f ${BAYEUX_ETC_DIR}/${component}_setup.sh ]; then
+	    echo "ERROR: do_bayeux_setup: Cannot find the '${component}' setup file !" 1>&2
+	    return 1
+	fi
+	echo "NOTICE: do_bayeux_setup: Sourcing the '${component}' setup file..." 1>&2
+	eval "source ${BAYEUX_ETC_DIR}/${component}_setup.sh" 
+	if [ $? -ne 0 ]; then
+	    echo "ERROR: do_bayeux_setup: Cannot source setup '${component}' setup file !" 1>&2
+	    return 1
+	fi
+    done
+
+    echo "NOTICE: do_bayeux_setup: Setup Bayeux version @Bayeux_VERSION@ done." 1>&2
+    return 0
+}
+typeset -fx do_bayeux_setup
+alias bayeux_setup='do_bayeux_setup'
+
+# ### All specific setup ###
+function do_bayeux_all_setup ()
+{
+    echo "NOTICE: do_bayeux_all_setup: Setup Bayeux/All..." 1>&2
+
+    if [ -z "${BAYEUX_PREFIX}" ]; then
+	do_bayeux_setup
+	if [ $? -eq 1 ]; then
+	    echo "ERROR: do_bayeux_all_setup: Cannot setup Bayeux @Bayeux_VERSION@ !" 1>&2
+	    return 1
+	fi
+    fi
+    bayeux_components=$(echo "${BAYEUX_COMPONENTS}" | tr ':' ' ')
+    for component in ${bayeux_components}; do
+	echo "NOTICE: do_bayeux_all_setup: Setup Bayeux's component '${component}'..." 1>&2
+	eval "do_${component}_setup" 
+	if [ $? -ne 0 ]; then
+	    echo "ERROR: do_bayeux_all_setup: Cannot setup '${component}'..." 1>&2
+	    return 1
+	fi
+    done
+
+    echo "NOTICE: do_bayeux_all_setup: Setup Bayeux/All done." 1>&2
+    return 0
+}
+typeset -fx do_bayeux_all_setup
+alias all_setup='do_bayeux_all_setup'
+
+function do_bayeux_help ()
+{
+    echo "NOTICE: bayeux_setup.sh: Please setup Bayeux's core with 'do_bayeux_setup'." 1>&2
+    local bayeux_components=$(echo "@BAYEUX_COMPONENTS@" | tr ';' ' ')
+    for component in ${bayeux_components}; do
+	echo "NOTICE: bayeux_setup.sh: Please setup '${component}' with 'do_${component}_setup'." 1>&2
+    done
+    echo "NOTICE: bayeux_setup.sh: Please setup all software components with 'do_bayeux_all_setup'." 1>&2
+    echo "NOTICE: bayeux_setup.sh: Please print this help with 'do_bayeux_help'." 1>&2
+    return 0
+}
+typeset -fx do_bayeux_help
+alias bayeux_help='do_bayeux_help'
+
+do_bayeux_help 
+
+echo "NOTICE: bayeux_setup.sh: Exiting." 1>&2
+
+# end of bayeux_setup.sh

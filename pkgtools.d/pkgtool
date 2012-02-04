@@ -1,0 +1,1205 @@
+#!/usr/bin/env bash 
+# -*- mode: shell-script; -*- 
+# pkgtool
+
+APPNAME="pkgtool"
+
+opwd=$(pwd)
+	
+function my_exit ()
+{
+    cd ${opwd}
+    exit $1
+}
+
+appname=${APPNAME} 
+appversion=0.1 
+package_name="Bayeux"
+list_of_actions="check configure unconfigure build doc test untest clean install uninstall reset list_of_actions"
+pkgtools_dir="pkgtools.d"
+
+the_base_dir=$(pwd)
+
+if [ ! -d ./${pkgtools_dir} ]; then
+    echo " ERROR: ${appname}: Please run this script from the package base directory ! Abort !" >&2  
+    my_exit 1
+fi
+
+libpkgtools_sourced=0
+
+if [ ${libpkgtools_sourced} -eq 0 ]; then
+    libpkgtools_sh=${the_base_dir}/${pkgtools_dir}/libpkgtools.sh 
+    if [ -f ${libpkgtools_sh} ]; then
+	source ${libpkgtools_sh}    
+	libpkgtools_sourced=1
+    fi
+fi
+
+pkgtools_root=${PKGTOOLS_ROOT}
+if [ ${libpkgtools_sourced} -eq 0 ]; then
+    if [ "x${pkgtools_root}" != "x" ]; then
+	if [ -f ${pkgtools_root}/lib/libpkgtools.sh ]; then
+	    source ${pkgtools_root}/lib/libpkgtools.sh
+	    libpkgtools_sourced=1
+	fi
+    fi
+fi
+
+if [ ${libpkgtools_sourced} -eq 0 ]; then
+    echo " ERROR: ${appname}: Cannot find any 'libpkgtools.sh' setup file ! Abort !" >&2  
+    my_exit 1
+fi
+
+pkgtools_conf=${the_base_dir}/${pkgtools_dir}/__pkgtools.conf
+the_default_work_dir=/tmp/${USER}
+the_default_build_dir=${the_base_dir}/__build-$(pkgtools__get_sys)
+the_default_download_dir=${HOME}/Download
+the_default_install_prefix=${the_base_dir}/__install-$(pkgtools__get_sys)
+the_build_dir=
+the_download_dir=
+known_bayeux_configs="default 1.0.0 last_tags trunk user"
+
+pkgtools__msg_not_using_quiet
+pkgtools__msg_not_using_verbose
+pkgtools__msg_not_using_debug
+pkgtools__msg_not_using_devel
+pkgtools__msg_not_using_date
+pkgtools__msg_using_color
+pkgtools__ui_interactive
+pkgtools__ui_not_using_gui
+
+function print_usage ()
+{
+    cat <<EOF
+
+  ${appname} -- Description
+
+  Usage:
+
+    ${appname} [Options...] ACTION [Options...]
+
+  Options:
+
+    -h 
+    --help         : print this help then exit
+
+    --version      : print version then exit
+
+    -d 
+    --debug        : print debug mode informations
+
+    -D 
+    --devel        : print devel mode informations
+
+    -v 
+    --verbose      : verbose print
+
+    -i      
+    --interactive  : run in interactive mode (this is the default)
+
+    -b      
+    --batch        : run in batch mode (no user interaction, disable GUI features)
+
+    --no-color     : use un-colored message output
+
+    --gui          : use GUI user interface (interactive mode only)
+
+  Actions:
+
+    check               : check dependencies
+    configure [OPTIONS] : configure the package
+      Options :
+
+      Directory/path management :
+      --workspace-dir [LARGE CAPACITY DOWNLOAD/BUILD/INSTALL DIRECTORY] :
+                                   set the base directory for build and/or download 
+                                   and/or install Bayeux; this directory must have a typical 
+                                   500 MB available to process the full Bayeux's installation.
+      --install-prefix [INSTALLATION BASE DIRECTORY] : 
+                                   set the Bayeux's installation base directory 
+                                   (may need special privilege : /opt, /usr/local)
+      --download-directory [DOWNLOAD DIRECTORY] : 
+                                   set the directory for downloading source files 
+                                   (otherwise a default build directory is used)
+      --ep-build-directory [EP BUILD DIRECTORY] : 
+                                   set the base directory for building  
+                                   Bayeux's components (CMake's External Packages)
+                                   (otherwise a default build directory is used)
+      --build-directory [BUILD DIRECTORY] : 
+                                   set the CMake build directory 
+                                   (otherwise a default build directory is used)
+      --reset-build-directory    : always use a brand new CMake build directory
+       
+      Components :
+      --config [CONFIG]          : set the Bayeux configuration
+                                   "trunk"
+                                   "user"
+      --user-config-file [CONFIG_FILE] :      
+      --with-none                : do not install any library/package 
+                                   this must be the first '--with-XXX' of switches
+                                   (conflicts with --with-all)
+      --with-all                 : install all libraries/package s
+                                   this must be the first '--with-XXX' of switches
+                                   (conflicts with --with-none)
+      --with-brio                : install brio (default)
+      --without-brio             : do not install brio
+      --with-mygsl               : install mygsl (default)
+      --without-mygsl            : do not install mygsl 
+      --with-geomtools           : install geomtools (default)
+      --without-geomtools        : do not install geomtools
+      --with-cuts                : install cuts (default)
+      --without-cuts             : do not install cuts
+      --with-materials           : install materials (default)
+      --without-materials        : do not install materials
+      --with-genvtx              : install materials (default)
+      --without-genvtx           : do not install materials
+      --with-genbb_help          : install genbb_help (default)
+      --without-genbb_help       : do not install genbb_help
+
+      Miscelaneous :
+      --with-dependency-check    : perform a rudimentary dependency check before processing
+      --without-dependency-check : perform a rudimentary dependency check before processing (default)
+      --with-documentation       : generate documentation material (default)
+      --without-documentation    : do not generate documentation material
+      --with-test                : generate test material (default)
+      --without-test             : do not generate test material
+      --single-processor         : use only one processor at build
+      --two-processors           : use only two processors (if available) at build
+      --half-processors          : use only half of the available processors at build
+      --number-of-processors  NP : use NP processors
+
+    unconfigure         : unconfigure the package
+    build [OPTIONS]     : build the package
+      Options:
+      --number-of-tasks [NUMBER OF TASKS|auto] : 
+                                   use several parallel tasks
+                                   'auto' computes the number of available 
+                                   processors if possible.      
+      
+    doc                 : build documentation
+    test                : run test material
+    untest              : remove test material
+    clean               : clean build material
+    install             : install the package
+    uninstall           : uninstall the package (not fully implemented yet !)
+    reset               : reset the package's source tree  
+    list_of_actions     : print the list of available actions
+
+  Examples:
+ 
+    Some checks:
+      shell> ${appname} check
+
+    Configure:
+      shell> ${appname} configure \\
+        --download-directory /scratch/\${USER}/software/Download \\
+        --ep-build-directory /scratch/\${USER}/software/Bayeux-build \\
+        --install-prefix     /scratch/\${USER}/software/Bayeux-install \\
+        --single-processor \\
+        --config "default" \\
+        --with-none \\
+        --with-mygsl  
+    or :
+      shell> ${appname} configure --workspace-dir /scratch/\${USER}/software 
+
+    Build:
+      shell> ${appname} build --number-of-tasks auto
+      shell> ${appname} doc
+      shell> ${appname} test
+
+    Installation:
+      shell> ${appname} install
+
+EOF
+    return 0
+}
+
+###    shell> ${appname} configure --install-prefix \${HOME}/software
+
+ 
+#######################################################
+
+the_action_mode=
+the_action_options=
+parse_switch=1
+while [ -n "$1" ]; do
+    token="$1"
+    if [ "${token:0:1}" = "-" ]; then
+	opt=${token}
+	if [ ${parse_switch} -eq 0 ]; then
+	    pkgtools__msg_devel "Remaining option '${opt}' !" 
+	    break
+	fi
+	if [ "${opt}" = "-h" -o "${opt}" = "--help" ]; then
+	    print_usage
+	    my_exit 0
+	elif [ "${opt}" = "--version" ]; then
+	    echo ${appversion}
+	    my_exit 0
+	elif [ "${opt}" = "-d" -o "${opt}" = "--debug" ]; then
+	    pkgtools__msg_using_debug
+	elif [ "${opt}" = "-D" -o "${opt}" = "--devel" ]; then
+	    pkgtools__msg_using_devel
+	elif [ "${opt}" = "-v" -o "${opt}" = "--verbose" ]; then
+	    pkgtools__msg_using_verbose
+	elif [ "${opt}" = "-i" -o "${opt}" = "--interactive" ]; then
+	    pkgtools__ui_interactive
+	elif [ "${opt}" = "-b" -o "${opt}" = "--batch" ]; then
+	    pkgtools__ui_batch
+	elif [ "${opt}" = "--no-color" ]; then
+	    pkgtools__msg_not_using_color
+	elif [ "${opt}" = "-G" -o "${opt}" = "--gui" ]; then
+	    pkgtools__ui_using_gui
+	    pkgtools__msg_devel "Using GUI" 	
+	else
+	    pkgtools__msg_error "Invalid option '${opt}' !" 
+	    my_exit 1
+	fi
+    else
+	arg=${token}
+	parse_switch=0
+	if [ "x${the_action_mode}" = "x" ]; then
+	    if [ "$arg" = "check" ]; then
+		the_action_mode="${arg}"	
+	    elif [ "$arg" = "configure" ]; then
+		the_action_mode="${arg}"	
+	    elif [ "$arg" = "unconfigure" ]; then
+		the_action_mode="${arg}"	
+            elif [ "$arg" = "build" ]; then
+	        the_action_mode="${arg}"	
+            elif [ "$arg" = "doc" ]; then
+	        the_action_mode="${arg}"	
+            elif [ "$arg" = "test" ]; then
+	        the_action_mode="${arg}"	
+            elif [ "$arg" = "untest" ]; then
+	        the_action_mode="${arg}"	
+            elif [ "$arg" = "install" ]; then
+	        the_action_mode="${arg}"	
+            elif [ "$arg" = "uninstall" ]; then
+	        the_action_mode="${arg}"	
+            elif [ "$arg" = "clean" ]; then
+	        the_action_mode="${arg}"	
+            elif [ "$arg" = "reset" ]; then
+	        the_action_mode="${arg}"	
+            elif [ "$arg" = "list_of_actions" ]; then
+	        the_action_mode="${arg}"	
+	    else
+		pkgtools__msg_error "Invalid argument !"
+		my_exit 1
+	    fi
+	else
+	    # remaining arguments from command line are kept in "$@"
+	    #pkgtools__msg_devel "BREAK !"
+	    break
+	fi
+    fi
+    shift 1
+done
+
+the_action_options=$@
+pkgtools__msg_devel "the_action_mode=${the_action_mode}"
+pkgtools__msg_devel "the_action_options=${the_action_options}"
+
+# Batch mode:
+pkgtools__ui_is_interactive
+if [ $? -ne 0 ]; then
+    pkgtools__ui_not_using_gui
+fi
+
+if [ "x${the_build_dir}" = "x" ]; then
+    if [ "x${BAYEUX_BUILD_DIR}" != "x" ]; then
+	the_build_dir=${BAYEUX_BUILD_DIR}
+	pkgtools__msg_notice "Using build directory : ${the_build_dir} (from the 'BAYEUX_BUILD_DIR' environment variable)"
+    elif [ -f ${pkgtools_conf} ]; then
+	the_build_dir=$(cat ${pkgtools_conf} | grep "build_dir=" | cut -d= -f2)
+	pkgtools__msg_devel "Using build directory    : ${the_build_dir}"
+    fi
+fi
+
+if [ "x${the_download_dir}" = "x" ]; then
+    if [ "x${BAYEUX_DOWNLOAD_DIR}" != "x" ]; then
+	the_download_dir=${BAYEUX_DOWNLOAD_DIR}
+	pkgtools__msg_notice "Using download directory : ${the_download_dir} (from the 'BAYEUX_DOWNLOAD_DIR' environment variable)"
+    elif [ -f ${pkgtools_conf} ]; then
+	the_download_dir=$(cat ${pkgtools_conf} | grep "download_dir=" | cut -d= -f2)
+	pkgtools__msg_devel "Using download directory : ${the_download_dir}"
+    fi
+fi
+
+if [ "x${the_build_dir}" = "x" ]; then
+    the_build_dir=${the_default_build_dir}
+    pkgtools__msg_devel "Using default build directory : ${the_build_dir}"
+fi
+if [ "x${the_download_dir}" = "x" ]; then
+    the_download_dir=${the_default_download_dir}
+    pkgtools__msg_devel "Using default download directory : ${the_download_dir}"
+fi
+
+
+##########################################################
+
+function do_check ()
+{
+    __pkgtools__at_function_enter do_check
+ 
+    missing_material=""
+    missing_material_alt=""
+    warning_material=""
+
+    which cmake > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+	missing_material="${missing_material}CMake "
+	pkgtools__msg_warning "Cannot find CMake !"
+    else
+	pkgtools__msg_notice "Found CMake $(cmake --version | tr -s [[:space:]] | cut -d' ' -f3) !"
+    fi
+
+    which doxygen > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+	missing_material_alt="${missing_material_alt}doxygen "
+	pkgtools__msg_warning "Cannot find doxygen !"
+    else
+	pkgtools__msg_notice "Found doxygen $(doxygen --version) !"
+    fi
+
+    if [ "x${CADFAEL_INSTALL_ROOT}" = "x" ]; then
+	missing_material_alt="${missing_material_alt}Cadfael "
+ 	pkgtools__msg_warning "Cadfael seems not to be uinstalled and setup !"
+    else
+	#pkgtools__msg_notice "Cadfael seems to be setup !"
+	if [ ! -d ${CADFAEL_INSTALL_ROOT} ]; then
+	    missing_material_alt="${missing_material_alt}Cadfael "
+ 	    pkgtools__msg_warning "Cannot find the Cadfael installation base directory (${CADFAEL_INSTALL_ROOT}) !"
+	else
+	    pkgtools__msg_notice "Found Cadfael at ${CADFAEL_INSTALL_ROOT} !"
+	fi
+    fi
+
+    if [ "x${missing_material}" != "x" ]; then
+	pkgtools__msg_error "There are missing dependencies : ${missing_material}"
+	__pkgtools__at_function_exit
+	return 1
+    fi
+
+    if [ "x${missing_material_alt}" != "x" ]; then
+	pkgtools__msg_warning "There are missing secondary dependencies : ${missing_material_alt}"
+    fi
+
+    if [ "x${warning_material}" != "x" ]; then
+	pkgtools__msg_notice "There are some already existing software :"
+	pkgtools__msg_notice " \"${warning_material}\""
+     fi
+
+    __pkgtools__at_function_exit
+    return 0
+}
+
+function do_configure ()
+{
+    __pkgtools__at_function_enter do_configure
+    local bayeux_version=$(grep "set.*Bayeux_VERSION" CMakeLists.txt | cut -d'"' -f2 )
+    local workspace_dir=""
+    local install_prefix=""
+    local ep_build_dir=""
+    local download_dir=""
+    local reset_build_dir=0
+    local requested_bayeux_config="" #"${bayeux_version}"
+    local user_config_file=""
+    local with_brio=1
+    local with_mygsl=1
+    local with_geomtools=1
+    local with_cuts=1
+    local with_materials=1
+    local with_genvtx=1
+    local with_genbb_help=1
+    local with_bio=1
+    local with_python_wrapper=0
+    local with_doc=0
+    local with_test=0
+    local with_dependency_check=0
+    local alternative_build_dir=1
+    local build_processors_mode=""
+    local build_type=""
+    local do_it=1
+    while [ -n "$1" ]; do
+	local option="$1"
+	pkgtools__msg_devel "Option: '${option}'"	
+	if [ "${option}" = "--build-directory" ]; then
+	    shift 1
+	    the_build_dir="$1"
+	elif [ "${option}" = "--workspace-dir" ]; then
+	    shift 1
+	    workspace_dir="$1"
+	elif [ "${option}" = "--reset-build-directory" ]; then
+	    reset_build_dir=1
+	elif [ "${option}" = "--ep-build-directory" ]; then
+	    shift 1
+	    ep_build_dir="$1"
+	elif [ "${option}" = "--install-prefix" ]; then
+	    shift 1
+	    install_prefix="$1"
+	elif [ "${option}" = "--release" ]; then
+	    shift 1
+	    build_type="Release"
+	elif [ "${option}" = "--download-directory" ]; then
+	    shift 1
+	    download_dir="$1"
+	elif [ "${option}" = "--config" ]; then
+	    shift 1
+	    requested_bayeux_config="$1"
+	elif [ "${option}" = "--user-config-file" ]; then
+	    shift 1
+	    requested_bayeux_config="user"
+	    user_config_file="$1"
+	elif [ "${option}" = "--with-bio" ]; then
+	    with_bio=1
+	elif [ "${option}" = "--without-bio" ]; then
+	    with_bio=0
+	elif [ "${option}" = "--with-python-wrapper" ]; then
+	    with_python_wrapper=1
+	elif [ "${option}" = "--without-python-wrapper" ]; then
+	    with_python_wrapper=0
+	elif [ "${option}" = "--with-none" ]; then
+	    with_brio=0
+	    with_mygsl=0
+	    with_geomtools=0
+	    with_cuts=0
+	    with_materials=0
+	    with_genvtx=0
+	    with_genbb_help=0
+	elif [ "${option}" = "--with-all" ]; then
+	    with_brio=1
+	    with_mygsl=1
+	    with_geomtools=1
+	    with_cuts=1
+	    with_materials=1
+	    with_genvtx=1
+	    with_genbb_help=1
+	elif [ "${option}" = "--with-brio" ]; then
+	    with_brio=1
+	elif [ "${option}" = "--without-brio" ]; then
+	    with_brio=0
+	elif [ "${option}" = "--with-mygsl" ]; then
+	    with_mygsl=1
+	elif [ "${option}" = "--without-mygsl" ]; then
+	    with_mygsl=0
+	elif [ "${option}" = "--with-geomtools" ]; then
+	    with_geomtools=1
+	elif [ "${option}" = "--without-geomtools" ]; then
+	    with_geomtools=0
+	elif [ "${option}" = "--with-cuts" ]; then
+	    with_cuts=1
+	elif [ "${option}" = "--without-cuts" ]; then
+	    with_cuts=0
+	elif [ "${option}" = "--with-materials" ]; then
+	    with_materials=1
+	elif [ "${option}" = "--without-materials" ]; then
+	    with_materials=0
+	elif [ "${option}" = "--with-genvtx" ]; then
+	    with_genvtx=1
+	elif [ "${option}" = "--without-genvtx" ]; then
+	    with_genvtx=0
+	elif [ "${option}" = "--with-genbb_help" ]; then
+	    with_genbb_help=1
+	elif [ "${option}" = "--without-genbb_help" ]; then
+	    with_genbb_help=0
+	elif [ "${option}" = "--with-documentation" ]; then
+	    with_doc=1
+	elif [ "${option}" = "--without-documentation" ]; then
+	    with_doc=0
+	elif [ "${option}" = "--with-test" ]; then
+	    with_test=1
+	elif [ "${option}" = "--without-test" ]; then
+	    with_test=0
+	# elif [ "${option}" = "--with-python-wrapper" ]; then
+	#     with_python_wrapper=1
+	# elif [ "${option}" = "--without-python-wrapper" ]; then
+	#     with_python_wrapper=0
+	elif [ "${option}" = "--with-dependency-check" ]; then
+	    with_dependency_check=1
+	elif [ "${option}" = "--without-dependency-check" ]; then
+	    with_dependency_check=0
+	elif [ "${option}" = "--single-processor" ]; then
+	    build_processors_mode="single"
+	elif [ "${option}" = "--two-processors" ]; then
+	    build_processors_mode="two"
+	elif [ "${option}" = "--half-processors" ]; then
+	    build_processors_mode="half"
+	elif [ "${option}" = "--number-of-processors" ]; then
+	    shift 1
+	    test_processors_mode=$(echo "$1" | tr -d [[:digit:]] )
+	    if [ "x${test_processors_mode}" != "x" ]; then
+		pkgtools__msg_error "Invalid number of processors '${1}' !"
+		__pkgtools__at_function_exit
+		return 1		
+	    fi
+	    build_processors_mode="$1"
+	    
+	elif [ "${option}" = "--test" ]; then
+	    do_it=0
+	fi
+	shift 1
+    done
+
+    if [ "x${build_type}" = "x" ]; then
+	build_type="Release"
+	pkgtools__msg_notice "Using default Bayeux build type '${build_type}'..."
+    fi
+
+    if [ "x${requested_bayeux_config}" = "x" ]; then
+	requested_bayeux_config="default" #"${bayeux_version}"
+	pkgtools__msg_notice "Using default Bayeux configuration '${requested_bayeux_config}'..."
+    fi
+
+
+    local validated_bayeux_config=""
+    for bayeux_config in ${known_bayeux_configs}; do
+	if [ "x${bayeux_config}" = "x${requested_bayeux_config}" ]; then
+	    validated_bayeux_config="${requested_bayeux_config}"
+	    break
+	fi
+    done
+
+    if [ "x${validated_bayeux_config}" = "x" ]; then 
+	pkgtools__msg_error "Bayeux configuration '${requested_bayeux_config}' is not supported !"
+	__pkgtools__at_function_exit
+	return 1
+    elif [ "x${validated_bayeux_config}" = "xuser" ]; then 
+	if [ "x${user_config_file}" != "x" -a ! -f ${user_config_file} ]; then
+	    pkgtools__msg_error "Bayeux user configuration file '${user_config_file}' does not exist !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
+
+    local using_workspace=0
+    if [ "x${ep_build_dir}" = "x" ]; then
+	if [ "x${workspace_dir}" != "x" ]; then
+	    ep_build_dir=${workspace_dir}/Bayeux-${bayeux_version}/Build-$(pkgtools__get_sys)
+	    using_workspace=1
+	fi	
+    fi
+
+    if [ "x${download_dir}" = "x" ]; then
+	if [ "x${workspace_dir}" != "x" ]; then
+	    download_dir=${workspace_dir}/Download
+	    using_workspace=1
+	fi	
+    fi
+
+    if [ "x${install_prefix}" = "x" ]; then
+	if [ "x${workspace_dir}" != "x" ]; then
+	    install_prefix=${workspace_dir}/Bayeux-${bayeux_version}/Install-$(pkgtools__get_sys)
+	    using_workspace=1
+	fi	
+    fi
+    
+    local available_storage=0
+    if [ ${using_workspace} -eq 1 ]; then
+	expanded_lwd=$(echo "${workspace_dir}")
+	local check_lwd=$(echo "${expanded_lwd}/" | cut -d'/' -f2) 
+	available_storage=$(df /${check_lwd} | tr -s [[:space:]] | tail -1 | cut -d ' ' -f4)
+	pkgtools__msg_notice "The available storage from '${check_lwd}' is ${available_storage} kB"
+	if [ ${available_storage} -lt 500000 ]; then
+	    pkgtools__msg_warning "The available storage from '${check_lwd}' is probably not enough to install all Bayeux's components."
+	fi
+    fi
+
+    pkgtools__msg_notice "Bayeux version        : '${bayeux_version}'"
+
+    if [ -d ${the_build_dir} ]; then
+	pkgtools__msg_warning "The '${the_build_dir}' build directory already exists !"
+	if [ ${reset_build_dir} -eq 1 ]; then
+	    pkgtools__msg_notice "Remove the former '${the_build_dir}' build directory !"
+	    rm -fr ${the_build_dir}
+	else
+	    pkgtools__msg_warning "Reusing the former '${the_build_dir}' build directory..."
+	fi
+    fi
+
+    if [ ! -d ${the_build_dir} ]; then
+	mkdir -p ${the_build_dir}
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Cannot create the build directory !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
+
+    if [ "x${install_prefix}" = "x" ]; then
+	install_prefix=${the_default_install_prefix}
+	pkgtools__msg_notice "Using default installation prefix: '${the_default_install_prefix}'"
+    fi
+
+    if [ ${using_workspace} -eq 1 ]; then
+	pkgtools__msg_notice "Workspace directory   : '${workspace_dir}'"
+	pkgtools__msg_notice "Available storage     : ${available_storage} kB"
+    fi
+    pkgtools__msg_notice "Build directory       : '${the_build_dir}'"
+    test -f ${pkgtools_conf} && rm -f ${pkgtools_conf} 
+    echo "build_dir=${the_build_dir}" >> ${pkgtools_conf}
+    echo "download_dir=${download_dir}" >> ${pkgtools_conf}
+ 
+    pkgtools__msg_notice "Download directory    : '${download_dir}'"
+    pkgtools__msg_notice "EP build directory    : '${ep_build_dir}'"
+    pkgtools__msg_notice "Installation prefix   : '${install_prefix}'"
+    pkgtools__msg_notice "Bayeux configuration  : '${validated_bayeux_config}'"
+    pkgtools__msg_notice "Bayeux build type     : '${build_type}'"
+    if [ "x${user_config_file}" != "x" ]; then
+	pkgtools__msg_notice "Bayeux user configuration file : '${user_config_file}'"
+    fi  
+    pkgtools__msg_notice "Install brio          : '${with_brio}'"
+    pkgtools__msg_notice "Install mygsl         : '${with_mygsl}'"
+    pkgtools__msg_notice "Install geomtools     : '${with_geomtools}'"
+    pkgtools__msg_notice "Install cuts          : '${with_cuts}'"
+    pkgtools__msg_notice "Install materials     : '${with_materials}'"
+    pkgtools__msg_notice "Install genvtx        : '${with_genvtx}'"
+    pkgtools__msg_notice "Install genbb_help    : '${with_genbb_help}'"
+
+    pkgtools__msg_notice "With documentation    : '${with_doc}'"
+    pkgtools__msg_notice "With test material    : '${with_test}'"
+    pkgtools__msg_notice "With dependency check : '${with_dependency_check}'"
+
+    if [ ${with_dependency_check} -eq 1 ]; then
+	do_check
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Dependecy check failed !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
+    if [ ${do_it} -eq 1 ]; then
+	cd ${the_build_dir}
+	cmake_more_options=""
+	if [ "x${build_processors_mode}" != "x" ]; then
+	    if [ "${build_processors_mode}" = "single" ]; then
+		cmake_more_options="${cmake_more_options} -DBAYEUX_SINGLE_PROCESSOR=ON "
+	    elif [ "${build_processors_mode}" = "two" ]; then
+		cmake_more_options="${cmake_more_options} -DBAYEUX_TWO_PROCESSORS=ON "
+	    elif [ "${build_processors_mode}" = "half" ]; then
+		cmake_more_options="${cmake_more_options} -DBAYEUX_HALF_PROCESSORS=ON "
+	    else
+		cmake_more_options="${cmake_more_options} -DBAYEUX_PARALLEL_JOBS:INTEGER=${build_processors_mode} "
+	    fi
+	fi
+	if [ "x${user_config_file}" != "x" ]; then
+	    local user_config_file_full_path=$(echo "${user_config_file}")
+	    if [ "x${user_config_file_full_path:0:1}" != "x/" ]; then
+		user_config_file_full_path=${opwd}/${user_config_file_full_path}
+	    fi
+	    pkgtools__msg_notice "Bayeux user configuration path : '${user_config_file_full_path}'"
+	    cmake_more_options="${cmake_more_options} -DBAYEUX_USER_CONFIG_FILE:PATH=${user_config_file_full_path} "
+	fi
+
+	local svn_user_login="nemo"
+	local svn_user_passwd="Ettore1936"
+
+	cmake \
+	    -DCMAKE_INSTALL_PREFIX:PATH=${install_prefix} \
+	    -DCMAKE_BUILD_TYPE:STRING=${build_type} \
+	    -DBAYEUX_DOWNLOAD_DIR:PATH=${download_dir} \
+	    -DBAYEUX_BUILD_DIR:PATH=${ep_build_dir} \
+	    -DBAYEUX_ALT_EP_BASE=${alternative_build_dir} \
+            -DBAYEUX_CONFIG:STRING=${validated_bayeux_config} \
+            -DBAYEUX_WITH_BRIO=${with_brio} \
+            -DBAYEUX_WITH_MYGSL=${with_mygsl} \
+            -DBAYEUX_WITH_GEOMTOOLS=${with_geomtools} \
+            -DBAYEUX_WITH_BRIO=${with_brio} \
+            -DBAYEUX_WITH_CUTS=${with_cuts} \
+            -DBAYEUX_WITH_MATERIALS=${with_materials} \
+            -DBAYEUX_WITH_GENVTX=${with_genvtx} \
+            -DBAYEUX_WITH_GENBB_HELP=${with_genbb_help} \
+	    -DBAYEUX_WITH_DOCS=${with_doc} \
+	    -DBAYEUX_WITH_TESTS=${with_test} \
+	    -DBAYEUX_WITH_BIO=${with_bio} \
+	    -DBAYEUX_WITH_PYTHON_WRAPPER=${with_python_wrapper} \
+	    -DSVN_NEMO_LOGIN:STRING=${svn_user_login} \
+	    -DSVN_NEMO_PASSWORD:STRING=${svn_user_passwd} \
+	    ${cmake_more_options} \
+	    ..
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Cannot configure the '${package_name}' package !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+	cd ${the_base_dir}
+    fi
+
+    __pkgtools__at_function_exit
+    return 0
+}
+
+function do_unconfigure ()
+{
+    __pkgtools__at_function_enter do_unconfigure
+
+    if [ ! -d ${the_build_dir} ]; then
+	pkgtools__msg_error "Cannot find the build directory ! Abort !"
+	__pkgtools__at_function_exit
+	return 1
+    fi
+
+    cd ${the_build_dir}
+    test -f CMakeCache.txt && rm -f CMakeCache.txt 
+    test -d CMakeFiles     && rm -fr CMakeFiles 
+    cd ${the_base_dir}
+
+    if [ -d ${the_build_dir} ]; then
+	pkgtools__msg_notice "Remove the '${the_build_dir}' build directory !"
+	rm -fr ${the_build_dir}
+    fi
+
+    if [ -f ${pkgtools_conf} ]; then
+	pkgtools__msg_notice "Remove the ${pkgtools_conf} configuration file !"
+	rm -f ${pkgtools_conf}
+    fi
+ 
+    __pkgtools__at_function_exit
+    return 0
+}
+
+function do_build ()
+{
+    __pkgtools__at_function_enter do_build
+
+    pkgtools__msg_devel "Options are : '$@'"
+	
+    if [ ! -d ${the_build_dir} ]; then
+	pkgtools__msg_error "Cannot find the build directory ! Please configure first !"
+	__pkgtools__at_function_exit
+	return 1
+    fi
+
+    local number_of_tasks=0
+    local number_of_processors=1
+    pkgtools__knows_number_of_processors
+    if [ $? -eq 0 ]; then
+	number_of_processors=$(pkgtools__get_number_of_processors)
+    fi
+    while [ -n "$1" ]; do
+	local option="$1"
+	pkgtools__msg_devel "Option: '${option}'"
+	if [ "${option}" = "--number-of-tasks" ]; then
+	    shift 1
+	    local number_of_tasks_str="$1"
+	    if [ "x${number_of_tasks_str}" = "xauto" ]; then
+		number_of_tasks=${number_of_processors}
+	    else 
+		local number_of_tasks_test=$(echo ${number_of_tasks_str} | tr -d "[0-9]")
+		if [ "x${number_of_tasks_test}" != "x" ]; then 
+		    pkgtools__msg_error "Invalid number of tasks : ${number_of_tasks_str} !"
+		    __pkgtools__at_function_exit
+		    return 1
+		fi
+		number_of_tasks=${number_of_tasks_str}
+	    fi
+	fi
+	shift 1
+    done
+
+    if [ ${number_of_tasks} -eq 0 ]; then
+	number_of_tasks=${number_of_processors}
+    fi
+
+    pkgtools__msg_notice "Number of tasks : '${number_of_tasks}'"
+
+    cd ${the_build_dir}
+    time make --jobs=${number_of_tasks} 
+    if [ $? -ne 0 ]; then
+	pkgtools__msg_error "Cannot build the '${package_name}' package !"
+	__pkgtools__at_function_exit
+	return 1
+    fi
+    cd ${the_base_dir}
+ 
+    __pkgtools__at_function_exit
+    return 0
+}
+
+function do_doc ()
+{
+    __pkgtools__at_function_enter do_doc
+
+    if [ ! -d ${the_build_dir} ]; then
+	pkgtools__msg_error "Cannot find the build directory ! Please configure and build first !"
+	__pkgtools__at_function_exit
+	return 1
+    fi
+
+    cd ${the_build_dir}
+    make doc
+    if [ $? -ne 0 ]; then
+	pkgtools__msg_error "Cannot build the documentation in '${package_name}' package !"
+	__pkgtools__at_function_exit
+	return 1
+    fi
+    cd ${the_base_dir}
+
+    __pkgtools__at_function_exit
+    return 0
+}
+
+function do_test ()
+{
+    __pkgtools__at_function_enter do_test
+
+    if [ ! -d ${the_build_dir} ]; then
+	pkgtools__msg_error "Cannot find the build directory ! Please configure and build first !"
+	__pkgtools__at_function_exit
+	return 1	
+    fi
+
+    cd ${the_build_dir}
+    make test
+    if [ $? -ne 0 ]; then
+	pkgtools__msg_error "Cannot run the test material in '${package_name}' package !"
+	__pkgtools__at_function_exit
+	return 1
+    fi
+    cd ${the_base_dir}
+
+    __pkgtools__at_function_exit
+    return 0
+}
+
+function do_untest ()
+{
+    __pkgtools__at_function_enter do_untest
+
+    if [ ! -d ${the_build_dir} ]; then
+	pkgtools__msg_error "Cannot find the build directory ! Abort !"
+	__pkgtools__at_function_exit
+	return 1	
+    fi
+
+    cd ${the_build_dir}
+    # make clean_test
+    # if [ $? -ne 0 ]; then
+    # 	pkgtools__msg_error "Cannot clean the test material in '${package_name}' package !"
+    # 	__pkgtools__at_function_exit
+    # 	return 1
+    # fi
+    cd ${the_base_dir}
+
+    __pkgtools__at_function_exit
+    return 0
+}
+
+function get_install_prefix_from_cmake ()
+{
+    __pkgtools__at_function_enter get_install_prefix_from_cmake
+
+    local the_install_prefix=
+    if [ -f ${the_build_dir}/CMakeCache.txt ]; then
+	the_install_prefix=$(cat ${the_build_dir}/CMakeCache.txt | grep ^CMAKE_INSTALL_PREFIX:PATH= | cut -d= -f2)
+    fi
+    if [ "x${the_install_prefix}" = "x" ]; then
+	__pkgtools__at_function_exit
+	return 1
+    fi
+    echo ${the_install_prefix}
+
+    __pkgtools__at_function_exit
+    return 0
+}
+
+function do_install ()
+{
+    __pkgtools__at_function_enter do_install
+
+    if [ ! -d ${the_build_dir} ]; then
+	pkgtools__msg_error "Cannot find the build directory ! Please configure and build first !"
+	__pkgtools__at_function_exit
+	return 1	
+    fi
+
+    cd ${the_build_dir}
+    make install
+    if [ $? -ne 0 ]; then
+	pkgtools__msg_error "Cannot install the '${package_name}' package !"
+	__pkgtools__at_function_exit
+	return 1
+    fi
+    cd ${the_base_dir}
+
+    __pkgtools__at_function_exit
+    return 0
+}
+
+function do_uninstall ()
+{
+    __pkgtools__at_function_enter do_uninstall
+
+    pkgtools__ui_ask_user_yesno "Do you really want to uninstall ${package_name}" "n"
+    if [ $? -ne 0 ]; then
+	pkgtools__msg_error "UI error!"
+	__pkgtools__at_function_exit
+	return 1
+    else
+	pkgtools__ui_user_yesno_is_yes
+	if [ $? -ne 0 ]; then
+	    __pkgtools__at_function_exit
+	    return 0
+	fi
+    fi
+        
+    local try_uninstall=1
+    if [ ${try_uninstall} -eq 1 ]; then
+	local the_install_prefix=$(get_install_prefix_from_cmake)
+	if [ "x${the_install_prefix}" != "x" ]; then
+	    pkgtools__msg_notice "Installation prefix is : '${the_install_prefix}'"	    
+	else
+	    pkgtools__msg_error "No installation prefix could be extracted from CMake build directory !"
+	    __pkgtools__at_function_exit
+	    return 1
+ 	fi
+
+	if [ -d ${the_install_prefix} ]; then
+	    test -w ${the_install_prefix}
+	    if [ $? -ne 0 ]; then
+		pkgtools__msg_error "You don't have proper permission for the installation base directory '${the_install_prefix}' !"	
+		__pkgtools__at_function_exit
+		return 1
+	    else
+		pkgtools__msg_devel "You have proper permission for the installation base directory '${the_install_prefix}' !"	
+	    fi
+	else
+	    pkgtools__msg_error "There is no installation base directory to be uninstalled !"	
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+
+	if [ -f ${the_build_dir}/install_manifest.txt ]; then
+	    pkgtools__msg_notice "Removing all installed files..."	    
+	    local list_of_entries=$(cat ${the_build_dir}/install_manifest.txt)
+	    for entry in ${list_of_entries}; do
+		if [ -f ${entry} ]; then
+		    pkgtools__msg_devel "Removing installed file '${entry}'..."	
+		    rm -f ${entry}
+		fi
+	    done
+	    pkgtools__msg_notice "All installed files have been removed !"	
+	else
+	    pkgtools__msg_warning "It seems there is no file to be uninstalled !"		    
+ 	fi 
+
+	if [ "x${the_install_prefix}" != "x" ]; then
+	    if [ -d ${the_install_prefix} ]; then
+		local the_list_of_dirs=$(find ${the_install_prefix} -mindepth 1 -type d | sort -r)
+		pkgtools__msg_devel "The list of subdirectories : '${the_list_of_dirs}'"	
+		for dir in ${the_list_of_dirs}; do
+		    local dir_count=$(ls -a -1 ${dir}/ | wc -l)
+		    let dir_count=dir_count-2
+		    pkgtools__msg_devel "Installation subdirectory '${dir}' has ${dir_count} entries"	
+		    if [ ${dir_count} -eq 0 ]; then 
+			pkgtools__msg_devel "Removing empty installation subdirectory '${dir}'..."	
+			rmdir ${dir}
+		    fi
+		done
+		local base_dir_count=$(ls -a -1 ${the_install_prefix}/ | wc -l)
+		let base_dir_count=base_dir_count-2
+		if [ ${base_dir_count} -eq 0 ]; then 
+		    pkgtools__msg_devel "Removing empty installation base directory '${the_install_prefix}'..."	
+		    rmdir ${the_install_prefix}
+		    pkgtools__msg_notice "The empty installation base directory '${the_install_prefix}' has been removed !"	
+		fi
+	    fi
+	fi
+    fi
+
+    __pkgtools__at_function_exit
+    return 0
+}
+
+function do_clean ()
+{
+    __pkgtools__at_function_enter do_clean
+
+    if [ ! -d ${the_build_dir} ]; then
+	pkgtools__msg_error "Cannot find the build directory ! Abort !"
+	__pkgtools__at_function_exit
+	return 1	
+    fi
+
+    cd ${the_build_dir}
+    make clean
+    if [ $? -ne 0 ]; then
+	pkgtools__msg_error "Could not properly clean the '${package_name}' package !"
+	__pkgtools__at_function_exit
+	return 1
+    fi
+    cd ${the_base_dir}
+
+    __pkgtools__at_function_exit
+    return 0    
+}
+
+function do_reset ()
+{
+    __pkgtools__at_function_enter do_reset
+
+    do_uninstall
+    if [ $? -ne 0 ]; then
+	pkgtools__msg_warning "Could not uninstall the '${package_name}' package !"
+	# __pkgtools__at_function_exit
+	# return 1	
+    fi
+
+    do_untest
+    if [ $? -ne 0 ]; then
+	pkgtools__msg_warning "Could not clean test material in the '${package_name}' package !"
+	# __pkgtools__at_function_exit
+	# return 1	
+    fi
+
+    do_clean
+    if [ $? -ne 0 ]; then
+	pkgtools__msg_warning "Could not clean the '${package_name}' package !"
+	# __pkgtools__at_function_exit
+	# return 1	
+    fi
+
+    do_unconfigure
+    if [ $? -ne 0 ]; then
+	pkgtools__msg_warning "Could not unconfigure the '${package_name}' package !"
+	# __pkgtools__at_function_exit
+	# return 1	
+    fi
+
+    __pkgtools__at_function_exit
+    return 0    
+}
+
+function main ()
+{
+    __pkgtools__at_function_enter main
+
+    local action_mode=${the_action_mode}
+    local action_options=${the_action_options}
+
+    # Some checks :
+    if [ -z "${action_mode}" ]; then
+	pkgtools__msg_error "Missing action !"
+	print_usage
+	__pkgtools__at_function_exit
+	return 1
+    fi
+
+    # Perform actions :    
+    if [ "${action_mode}" = "check" ]; then
+	do_check $@
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Check failed !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
+    
+    if [ "${action_mode}" = "configure" ]; then
+	do_configure $@
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Configuration failed !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
+    
+    if [ "${action_mode}" = "unconfigure" ]; then
+	do_unconfigure $@
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Deconfiguration failed !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
+    
+    if [ "${action_mode}" = "build" ]; then
+	do_build $@
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Build failed !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
+    
+    if [ "${action_mode}" = "doc" ]; then
+	do_doc $@
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Documentation failed !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
+    
+    if [ "${action_mode}" = "test" ]; then
+	do_test $@
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Testing failed !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
+    
+    if [ "${action_mode}" = "untest" ]; then
+	do_untest $@
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Test cleaning failed !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
+    
+    if [ "${action_mode}" = "install" ]; then
+	do_install $@
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Installation failed !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
+    
+    if [ "${action_mode}" = "uninstall" ]; then
+	do_uninstall $@
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "De-installation failed !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
+    
+    if [ "${action_mode}" = "clean" ]; then
+	do_clean $@
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Cleaning failed !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
+   
+    if [ "${action_mode}" = "reset" ]; then
+	do_reset $@
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Reset failed !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
+   
+    if [ "${action_mode}" = "list_of_actions" ]; then
+	echo ${list_of_actions} 
+    fi
+  
+    __pkgtools__at_function_exit
+    return 0
+}
+
+##########################################################
+
+main $@
+if [ $? -ne 0 ]; then
+    pkgtools__msg_error "Failure !"
+    my_exit 1
+fi
+my_exit 0
+
+# end of pkgtool

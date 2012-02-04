@@ -1,0 +1,38 @@
+
+
+Example :
+
+
+Configure :
+{{{
+./pkgtools.d/pkgtool configure \
+  --workspace-dir /scratch/sw/Bayeux \
+  --test
+}}}
+
+{{{
+./pkgtools.d/pkgtool configure --config "1.0.0" --workspace-dir /scratch/${USER}/software --without-genbb_help --test
+}}}
+
+{{{
+./pkgtools.d/pkgtool --devel  \
+  configure \
+  --user-config-file "examples/bayeux_config_1.lis" \
+  --workspace-dir /scratch/sw/Bayeux \
+  --with-none 
+}}}
+
+{{{
+bash$ ./pkgtools.d/pkgtool configure \
+  --install-prefix     /scratch/sw/Cadfael/install/Cadfael-0.1.0 \
+  --ep-build-directory /scratch/sw/Cadfael/install/Cadfael-build \
+  --download-directory /scratch/sw/Download \
+  --with-none \
+  --with-root \ 
+  --root-version 5.26.00
+}}}
+
+./pkgtools.d/pkgtool --devel  \
+  build \
+  --number-of-tasks auto
+
