@@ -19,6 +19,12 @@ bash$ ./pkgtools.d/pkgtool configure \
 
 {{{
 bash$ ./pkgtools.d/pkgtool configure \
+        --workspace-dir /scratch/sw/Bayeux \
+        --config [last_tags|trunk|default]
+}}}
+
+{{{
+bash$ ./pkgtools.d/pkgtool configure \
         --config "1.0.0" \
         --workspace-dir /scratch/sw/Bayeux \
         --with-all \ 
@@ -28,9 +34,8 @@ bash$ ./pkgtools.d/pkgtool configure \
 {{{
 bash$ ./pkgtools.d/pkgtool --devel  \
         configure \
-        --user-config-file "examples/bayeux_config_1.lis" \
-        --workspace-dir /scratch/sw/Bayeux \
-        --with-none 
+        --config user --user-config-file "examples/bayeux_config_1.lis" \
+        --workspace-dir /scratch/sw/Bayeux  
 }}}
 
 {{{

@@ -41,13 +41,14 @@ set ( CMAKE_MODULE_PATH
       ${CMAKE_MODULE_PATH}
     )
 
+include ( Config )
 include ( InstallDirs )
 
 #----------------------------------------------------------------------------
 # Load needed custom and builtin modules
 #
 # - Versioning
-set ( Bayeux_VERSION "1.0.0" )
+set ( Bayeux_VERSION ${Bayeux_VERSION_STR} )
 message ( STATUS "Bayeux version : ${Bayeux_VERSION}" )
 
 # - Processor count, and configure parallel jobs
@@ -123,7 +124,7 @@ set ( BAYEUX_KNOWN_COMPONENTS
 
 set ( BAYEUX_KNOWN_CONFIGS 
        "trunk"
-       "1.0.0"
+       "${Bayeux_VERSION}"
        "last_tags"
        "user"
        "default"
@@ -131,7 +132,7 @@ set ( BAYEUX_KNOWN_CONFIGS
 
 set ( DEFAULT_BAYEUX_CONFIG "default" )
 
-if ( NOT DEFINED BAYEUX_CONFIG )
+if ( NOT DEFINED BAYEUX_CONFIG OR "x${BAYEUX_CONFIG}" STREQUAL "x" )
    set ( BAYEUX_CONFIG "${DEFAULT_BAYEUX_CONFIG}" )
 endif () 
 
@@ -158,15 +159,6 @@ option ( BAYEUX_WITH_DOCS       ON )
 option ( BAYEUX_WITH_TESTS      ON )
 option ( BAYEUX_WITH_VALIDATION OFF )
 
-# set ( _bayeux_with_datatools  1 )
-# set ( _bayeux_with_brio       ${BAYEUX_WITH_BRIO} )
-# set ( _bayeux_with_mygsl      ${BAYEUX_WITH_MYGSL} )
-# set ( _bayeux_with_geomtools  ${BAYEUX_WITH_GEOMTOOLS} )
-# set ( _bayeux_with_cuts       ${BAYEUX_WITH_CUTS} )
-# set ( _bayeux_with_materials  ${BAYEUX_WITH_MATERIALS} )
-# set ( _bayeux_with_genvtx     ${BAYEUX_WITH_GENVTX} )
-# set ( _bayeux_with_genbb_help ${BAYEUX_WITH_GENBB_HELP} )
-
 #----------------------------------------------------------------------------
 # Configure external projects to build under a single root directory in our
 # build directory or some alternative directory ( optional )
@@ -182,30 +174,83 @@ message ( STATUS "Bayeux download dir : '${BAYEUX_DOWNLOAD_DIR}'" )
 message ( STATUS "Bayeux build dir    : '${BAYEUX_BUILD_DIR}'" )
 message ( STATUS "Bayeux EP base dir  : '${BAYEUX_EP_BASE}'" )
 
-###set ( BAYEUX_SETUP_LABEL "Bayeux" )
 
+# ---------------------------------------------------------
+# Bayeux can only handle its components from some
+# minimal version :
+#
+set ( BAYEUX_DATATOOLS_MINIMAL_TAG_VERSION  "4.0.0"  )
+set ( BAYEUX_BRIO_MINIMAL_TAG_VERSION       "3.0.0"  )
+set ( BAYEUX_MYGSL_MINIMAL_TAG_VERSION      "3.0.0"  )
+set ( BAYEUX_GEOMTOOLS_MINIMAL_TAG_VERSION  "3.0.0"  )
+set ( BAYEUX_CUTS_MINIMAL_TAG_VERSION       "3.0.0"  )
+set ( BAYEUX_MATERIALS_MINIMAL_TAG_VERSION  "3.0.0"  )
+set ( BAYEUX_GENVTX_MINIMAL_TAG_VERSION     "3.0.0"  )
+set ( BAYEUX_GENBB_HELP_MINIMAL_TAG_VERSION "4.0.0"  )
+
+
+# Default configuration (1.0.0) :
 if ( BAYEUX_CONFIG STREQUAL "default" OR BAYEUX_CONFIG STREQUAL ${Bayeux_VERSION} )
   message ( STATUS "Bayeux 'default/${Bayeux_VERSION}' configuration...") 
 
   set ( BAYEUX_DATATOOLS_VERSION  "4.0.0"  )
   set ( BAYEUX_DATATOOLS_PATH     "branches/frc_cmake_0.1"  )
-  set ( BAYEUX_BRIO_VERSION       "3.0.0"       )
+  set ( BAYEUX_BRIO_VERSION       "3.0.0"  )
   set ( BAYEUX_BRIO_PATH          "branches/frc_cmake_0.1"  )
-  set ( BAYEUX_MYGSL_VERSION      "3.0.0"      )
+  set ( BAYEUX_MYGSL_VERSION      "3.0.0"  )
   set ( BAYEUX_MYGSL_PATH         "branches/frc_cmake_0.1"  )
   set ( BAYEUX_GEOMTOOLS_VERSION  "3.0.0"  )
   set ( BAYEUX_GEOMTOOLS_PATH     "branches/frc_cmake_0.1"  )
-  set ( BAYEUX_CUTS_VERSION       "3.0.0"       )
+  set ( BAYEUX_CUTS_VERSION       "3.0.0"  )
   set ( BAYEUX_CUTS_PATH          "branches/frc_cmake_0.1"  )
   set ( BAYEUX_MATERIALS_VERSION  "3.0.0"  )
   set ( BAYEUX_MATERIALS_PATH     "branches/frc_cmake_0.1"  )
-  set ( BAYEUX_GENVTX_VERSION     "3.0.0"     )
+  set ( BAYEUX_GENVTX_VERSION     "3.0.0"  )
   set ( BAYEUX_GENVTX_PATH        "branches/frc_cmake_0.1"  )
-  set ( BAYEUX_GENBB_HELP_VERSION "4.0.0" )
+  set ( BAYEUX_GENBB_HELP_VERSION "4.0.0"  )
   set ( BAYEUX_GENBB_HELP_PATH    "branches/frc_cmake_0.1"  )
+
+elseif ( BAYEUX_CONFIG STREQUAL "last_tags" )
+  ###message ( STATUS "Bayeux '${BAYEUX_CONFIG}' configuration is not supported yet !") 
+
+  foreach ( component ${BAYEUX_KNOWN_COMPONENTS} )
+     string ( TOUPPER "${component}" component_upper )
+     execute_process(COMMAND svn ls ${BAYEUX_COMPONENTS_SVN_BASE_URL}/${component}/${BAYEUX_COMPONENTS_SVN_TAGS_SUBDIR}/
+                     TIMEOUT 15
+                     RESULT_VARIABLE _${component}_list_of_tags_error_code
+                     OUTPUT_VARIABLE _${component}_list_of_tags_out
+                     ERROR_VARIABLE  _${component}_list_of_tags_err
+                     ) 
+     if ( NOT ${_${component}_list_of_tags_error_code} EQUAL 0 )
+       message ( FATAL_ERROR "Cannot find the list of available tags for the Bayeux component : '${component}' !") 
+     endif ()
+     ###message ( STATUS "List of available tags for '${component}' : \n${_${component}_list_of_tags_out}" ) 
+     execute_process(COMMAND echo ${_${component}_list_of_tags_out} 
+                     COMMAND sort 
+                     COMMAND tail -1 
+                     COMMAND tr -d '/' 
+                     COMMAND tr -d '[[:space:]]' 
+                     RESULT_VARIABLE _${component}_last_tag_out_error_code
+                     OUTPUT_VARIABLE _${component}_last_tag_out
+                    )
+     if ( NOT ${_${component}_last_tag_out_error_code} EQUAL 0 )
+       message ( FATAL_ERROR "Cannot find the last available tag for the Bayeux component : '${component}' !") 
+     endif ()
+     if ( "x${_${component}_last_tag_out}" STREQUAL "x" )
+       message ( FATAL_ERROR "Cannot determine the last available tag for the Bayeux component : '${component}' !") 
+     endif ()
+     message ( STATUS "  Last available ${component} tag is : '${_${component}_last_tag_out}' " ) 
+     message ( STATUS "  Minimal supported ${component} tag version is : '${component}-${BAYEUX_${component_upper}_MINIMAL_TAG_VERSION}' " ) 
+     if ( "${_${component}_last_tag_out}" STRLESS "${component}-${BAYEUX_${component_upper}_MINIMAL_TAG_VERSION}" )
+       message ( FATAL_ERROR "Unsupported tag '${_${component}_last_tag_out}' for the Bayeux component : '${component}' !")       
+     endif ()  
+     set ( BAYEUX_${component_upper}_PATH    "tags/${_${component}_last_tag_out}"  )
+     message ( STATUS "Using last tag '${_${component}_last_tag_out}' for the Bayeux component : '${component}'")       
+  endforeach  ()
 
 elseif ( BAYEUX_CONFIG STREQUAL "trunk" )
   message ( STATUS "Bayeux 'trunk' configuration...") 
+  message ( FATAL_ERROR "Bayeux '${BAYEUX_CONFIG}' configuration is not supported yet !") 
 
   set ( BAYEUX_DATATOOLS_PATH  "trunk" )
   set ( BAYEUX_BRIO_PATH       "trunk" )
@@ -219,7 +264,7 @@ elseif ( BAYEUX_CONFIG STREQUAL "trunk" )
 elseif ( BAYEUX_CONFIG STREQUAL "user" )
   message ( STATUS "Bayeux 'user' configuration...") 
 
-  if (DEFINED BAYEUX_USER_CONFIG_FILE )
+  if (DEFINED BAYEUX_USER_CONFIG_FILE AND NOT "x${BAYEUX_USER_CONFIG_FILE}" STREQUAL "x" )
     message ( STATUS "User configuration file...") 
     if ( NOT EXISTS ${BAYEUX_USER_CONFIG_FILE} )
       message ( FATAL_ERROR "User configuration file '${BAYEUX_USER_CONFIG_FILE}' does not exist !") 
@@ -250,15 +295,12 @@ elseif ( BAYEUX_CONFIG STREQUAL "user" )
       endif ()
       message ( STATUS "Bayeux user configuration mode : BAYEUX_WITH_${component_upper}") 
     endforeach ()
-  ### else ()
-  ###   if ( NOT DEFINED BAYEUX_DATATOOLS_PATH)
-  ###     set ( BAYEUX_DATATOOLS_PATH  "trunk" )
-  ###     message ( STATUS "Using default SVN path directive for datatools : ${BAYEUX_DATATOOLS_PATH}" )
-  ###   endif ()  
+  else ()
+    message ( FATAL_ERROR "Missing user configuration file ! Please use : '-DBAYEUX_USER_CONFIG_FILE:PATH=<somefile>' !") 
   endif ()
-  if ( NOT DEFINED BAYEUX_DATATOOLS_PATH )
-    message ( FATAL_ERROR "Missing SVN path directive for datatools" ) 
-  endif () 
+  ###if ( NOT DEFINED BAYEUX_DATATOOLS_PATH )
+  ###  message ( FATAL_ERROR "Missing SVN path directive for datatools" ) 
+  ###endif () 
 endif ()
 
 foreach ( component ${BAYEUX_KNOWN_COMPONENTS} )
@@ -382,13 +424,13 @@ foreach ( component ${BAYEUX_KNOWN_COMPONENTS} )
 endforeach ()
 message ( STATUS " BAYEUX_COMPONENTS : '${BAYEUX_COMPONENTS}'" )
 
-include ( BayeuxDatatools )
-include ( BayeuxBrio )
-include ( BayeuxMygsl )
-include ( BayeuxCuts )
-include ( BayeuxGeomtools )
-include ( BayeuxMaterials )
-include ( BayeuxGenvtx )
+include ( BayeuxDatatools  )
+include ( BayeuxBrio       )
+include ( BayeuxMygsl      )
+include ( BayeuxCuts       )
+include ( BayeuxGeomtools  )
+include ( BayeuxMaterials  )
+include ( BayeuxGenvtx     )
 include ( BayeuxGenbb_help )
 
 # -------------------------------------------------------------------------

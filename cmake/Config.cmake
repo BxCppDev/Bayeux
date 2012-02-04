@@ -21,9 +21,10 @@
 ###############################################################################
 
 # setup version numbers
-set ( Bayeux_VERSION_MAJOR 1 )
-set ( Bayeux_VERSION_MINOR 0 )
-set ( Bayeux_PATCH_VERSION 0 )
+set ( Bayeux_VERSION_MAJOR 1 ) # do not remove the spaces 
+set ( Bayeux_VERSION_MINOR 0 ) # they are used by external scripts
+set ( Bayeux_PATCH_VERSION 0 ) # to extract the version number
+
 set ( Bayeux_VERSION_STR "${Bayeux_VERSION_MAJOR}.${Bayeux_VERSION_MINOR}.${Bayeux_PATCH_VERSION}" )
 math ( EXPR Bayeux_VERSION_NUMERIC "${Bayeux_VERSION_MAJOR}*100000+${Bayeux_VERSION_MINOR}*100+${Bayeux_PATCH_VERSION}" )
 

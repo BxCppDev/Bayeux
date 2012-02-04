@@ -397,7 +397,13 @@ function do_check ()
 function do_configure ()
 {
     __pkgtools__at_function_enter do_configure
-    local bayeux_version=$(grep "set.*Bayeux_VERSION" CMakeLists.txt | cut -d'"' -f2 )
+    local bayeux_version_major=$(grep "set ( Bayeux_VERSION_MAJOR" cmake/Config.cmake | cut -d' ' -f4 )
+    local bayeux_version_minor=$(grep "set ( Bayeux_VERSION_MINOR" cmake/Config.cmake | cut -d' ' -f4 )
+    local bayeux_version_patch=$(grep "set ( Bayeux_PATCH_VERSION" cmake/Config.cmake | cut -d' ' -f4 )
+    local bayeux_version="${bayeux_version_major}.${bayeux_version_minor}.${bayeux_version_patch}"
+    
+    ###pkgtools__msg_warning "bayeux_version=${bayeux_version}"
+
     local workspace_dir=""
     local install_prefix=""
     local ep_build_dir=""

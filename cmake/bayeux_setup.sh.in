@@ -21,9 +21,8 @@ echo "NOTICE: bayeux_setup.sh: Entering..." 1>&2
 ### Bayeux general setup ###
 function do_bayeux_setup ()
 {
- 
     echo "NOTICE: do_bayeux_setup: Setup Bayeux version @Bayeux_VERSION@..." 1>&2
-    local is_apple=@_is_apple@
+    local is_apple=@APPLE@
 
     if [ -n "${BAYEUX_PREFIX}" ]; then
 	echo "WARNING: do_bayeux_setup: Bayeux @Bayeux_VERSION@ is already setup !" 1>&2
@@ -49,13 +48,15 @@ function do_bayeux_setup ()
 	fi
     fi
 
-    export BAYEUX_PREFIX=@CMAKE_INSTALL_PREFIX@
-    export BAYEUX_VERSION=@Bayeux_VERSION_STR@
-    export BAYEUX_INCLUDE_DIR=${BAYEUX_PREFIX}/@CMAKE_INSTALL_INCLUDEDIR@
-    export BAYEUX_LIB_DIR=${BAYEUX_PREFIX}/@CMAKE_INSTALL_LIBDIR@
-    export BAYEUX_BIN_DIR=${BAYEUX_PREFIX}/@CMAKE_INSTALL_BINDIR@
-    export BAYEUX_SHARE_DIR=${BAYEUX_PREFIX}/@CMAKE_INSTALL_DATAROOTDIR@
-    export BAYEUX_ETC_DIR=${BAYEUX_PREFIX}/@CMAKE_INSTALL_ETCDIR@
+    export BAYEUX_PREFIX="@CMAKE_INSTALL_PREFIX@"
+    export BAYEUX_INSTALL_PREFIX="${BAYEUX_PREFIX}"
+    export BAYEUX_ROOT_DIR="${BAYEUX_PREFIX}"
+    export BAYEUX_VERSION="@Bayeux_VERSION_STR@"
+    export BAYEUX_INCLUDE_DIR="${BAYEUX_PREFIX}/@CMAKE_INSTALL_INCLUDEDIR@"
+    export BAYEUX_LIB_DIR="${BAYEUX_PREFIX}/@CMAKE_INSTALL_LIBDIR@"
+    export BAYEUX_BIN_DIR="${BAYEUX_PREFIX}/@CMAKE_INSTALL_BINDIR@"
+    export BAYEUX_SHARE_DIR="${BAYEUX_PREFIX}/@CMAKE_INSTALL_DATAROOTDIR@"
+    export BAYEUX_ETC_DIR="${BAYEUX_PREFIX}/@CMAKE_INSTALL_ETCDIR@"
     export BAYEUX_COMPONENTS=$(echo "@BAYEUX_COMPONENTS@" | tr ';' ':')
  
     if [ -n "${PATH}" ]; then
@@ -91,7 +92,7 @@ function do_bayeux_setup ()
 	    return 1
 	fi
 	echo "NOTICE: do_bayeux_setup: Sourcing the '${component}' setup file..." 1>&2
-	eval "source ${BAYEUX_ETC_DIR}/${component}_setup.sh" 
+	source ${BAYEUX_ETC_DIR}/${component}_setup.sh
 	if [ $? -ne 0 ]; then
 	    echo "ERROR: do_bayeux_setup: Cannot source setup '${component}' setup file !" 1>&2
 	    return 1
