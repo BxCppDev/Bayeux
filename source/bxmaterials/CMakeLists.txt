@@ -338,7 +338,7 @@ install ( DIRECTORY ${PROJECT_SOURCE_DIR}/resources/data
           DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE 
                                 GROUP_READ GROUP_EXECUTE 
                                 WORLD_READ WORLD_EXECUTE 
-          PATTERN "*~" EXCLUDE 
+          PATTERN ".svn" EXCLUDE 
          )
 
 # ----------------------------------------------------------------------------
