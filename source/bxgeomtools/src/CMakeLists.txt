@@ -8,7 +8,6 @@
 file ( GLOB geomtools_detail_PUBLIC_HEADERS
        ${PROJECT_SOURCE_DIR}/include/geomtools/detail/*.h
      )
-message ( STATUS "=============== DEVEL: ${geomtools_detail_PUBLIC_HEADERS}" ) 
 
 file ( GLOB geomtools_PUBLIC_HEADERS
        ${PROJECT_SOURCE_DIR}/include/geomtools/*.h
