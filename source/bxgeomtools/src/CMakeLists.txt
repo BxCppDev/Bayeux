@@ -8,16 +8,16 @@
 file ( GLOB geomtools_detail_PUBLIC_HEADERS
        ${PROJECT_SOURCE_DIR}/include/geomtools/detail/*.h
      )
- 
+message ( STATUS "=============== DEVEL: ${geomtools_detail_PUBLIC_HEADERS}" ) 
+
 file ( GLOB geomtools_PUBLIC_HEADERS
        ${PROJECT_SOURCE_DIR}/include/geomtools/*.h
-       ${PROJECT_SOURCE_DIR}/include/geomtools/geomtools.h
        ${PROJECT_BINARY_DIR}/include/geomtools/geomtools_config.h
      )
 
 file ( GLOB geomtools_SOURCES
-       ${PROJECT_SOURCE_DIR}/include/geomtools/*.h
-       ${PROJECT_BINARY_DIR}/include/geomtools/geomtools_config.h
+       ${geomtools_PUBLIC_HEADERS}
+       ${geomtools_detail_PUBLIC_HEADERS}
        ${PROJECT_SOURCE_DIR}/src/*.cc
      )
 
@@ -36,17 +36,9 @@ file ( GLOB geomtools_serialization_PUBLIC_HEADERS
        ${PROJECT_SOURCE_DIR}/include/geomtools/serialization/*.ipp
      )
 
-install ( FILES ${geomtools_serialization_PUBLIC_HEADERS}
-          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/geomtools/serialization
-        )
-
 file ( GLOB geomtools_ipp_PUBLIC_HEADERS
        ${PROJECT_SOURCE_DIR}/include/geomtools/*.ipp
      )
-
-install ( FILES ${geomtools_ipp_PUBLIC_HEADERS}
-          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/geomtools
-        )
 
 #----------------------------------------------------------------------------
 
@@ -88,6 +80,18 @@ install ( TARGETS geomtools
 
 install ( FILES ${geomtools_PUBLIC_HEADERS}
           DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/geomtools
+        )
+
+install ( FILES ${geomtools_serialization_PUBLIC_HEADERS}
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/geomtools/serialization
+        )
+
+install ( FILES ${geomtools_ipp_PUBLIC_HEADERS}
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/geomtools
+        )
+
+install ( FILES ${geomtools_detail_PUBLIC_HEADERS}
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/geomtools/detail
         )
 
 # - Bio stuff :

@@ -81,63 +81,6 @@ option ( GEOMTOOLS_WITH_CMAKE_FIND_MODULE
  	 0 )
 
 # ---------------------------------------------------
-# datatools dependency :
-#
-
-set ( _depends_on_datatools 1 )
-
-set ( _default_bio_activation 0 )
-set ( _default_python_wrapper_activation 0 )
-
-if ( _depends_on_datatools )
-  # - Depends on datatools:
-
-  if ( DEFINED datatools_DIR )
-    message ( STATUS "datatools_DIR is : '${datatools_DIR}' " )
-  else ()
-    if ( NOT "$ENV{DATATOOLS_CMAKE_CONFIG_DIR}" STREQUAL "" )
-      message ( STATUS "Environment DATATOOLS_CMAKE_CONFIG_DIR exists : '$ENV{DATATOOLS_CMAKE_CONFIG_DIR}' " )
-      set ( datatools_DIR "$ENV{DATATOOLS_CMAKE_CONFIG_DIR}" )
-    endif ()
-  endif ()
-  set ( _datatools_min_version 4.0 )
-  find_package ( datatools ${_datatools_min_version} REQUIRED NO_MODULE )
-  if ( DEFINED datatools_CONFIG )
-       message ( STATUS "Found datatools >= ${_datatools_min_version}" )
-       message ( STATUS "  datatools_CONFIG              : ${datatools_CONFIG}" )
-       message ( STATUS "  datatools_VERSION             : ${datatools_VERSION}" )
-       message ( STATUS "  datatools_LIBRARIES           : ${datatools_LIBRARIES}" )
-       message ( STATUS "  datatools_INCLUDE_DIRS        : ${datatools_INCLUDE_DIRS}" )
-       message ( STATUS "  datatools_WITH_DEBUG          : ${datatools_WITH_DEBUG}" )
-       message ( STATUS "  datatools_WITH_BIO            : ${datatools_WITH_BIO}" )
-       message ( STATUS "  datatools_WITH_PYTHON_WRAPPER : ${datatools_WITH_PYTHON_WRAPPER}" )
-  else ()
-       message ( FATAL_ERROR "Cannot find datatools >= ${_datatools_min_version} library !" )
-  endif ()
-  if ( GEOMTOOLS_WITH_BIO_SUPPORT )
-    if ( datatools_WITH_BIO )
-      set ( _default_bio_activation 1 )
-    endif ()
-  endif ()
-  if ( GEOMTOOLS_WITH_PYTHON_WRAPPER_SUPPORT )
-    if ( datatools_WITH_PYTHON_WRAPPER )
-      # XXXX
-      message ( FATAL_ERROR "No support for Python wrapper for now !" )
-      set ( _default_python_wrapper_activation 1 )
-    endif ()
-  endif ()
-endif ()
-
-option ( GEOMTOOLS_WITH_BIO 
-         "Build the geomtools with Boost I/O serialization" 
-	  ${_default_bio_activation} )
-
-set ( GEOMTOOLS_WITH_PYTHON_WRAPPER 0)
-  # option ( GEOMTOOLS_WITH_PYTHON_WRAPPER
-  #          "Build the geomtools Boost/Python wrapper module" 
-  #         ${_default_python_wrapper_activation} )
-
-# ---------------------------------------------------
 # mygsl dependency :
 #
 
@@ -174,6 +117,63 @@ if ( NOT GNUPLOT_FOUND )
 else ()
    message ( STATUS "Found the 'gnuplot' program : '${GNUPLOT_EXECUTABLE}'" )     
 endif () 
+
+# ---------------------------------------------------
+# datatools dependency :
+#
+
+set ( _depends_on_datatools 1 )
+
+set ( _default_bio_activation 0 )
+set ( _default_python_wrapper_activation 0 )
+
+if ( _depends_on_datatools )
+  # - Depends on datatools:
+
+  ### if ( DEFINED datatools_DIR )
+  ###   message ( STATUS "datatools_DIR is : '${datatools_DIR}' " )
+  ### else ()
+  ###   if ( NOT "$ENV{DATATOOLS_CMAKE_CONFIG_DIR}" STREQUAL "" )
+  ###     message ( STATUS "Environment DATATOOLS_CMAKE_CONFIG_DIR exists : '$ENV{DATATOOLS_CMAKE_CONFIG_DIR}' " )
+  ###     set ( datatools_DIR "$ENV{DATATOOLS_CMAKE_CONFIG_DIR}" )
+  ###   endif ()
+  ### endif ()
+  ### set ( _datatools_min_version 4.0 )
+  ### find_package ( datatools ${_datatools_min_version} REQUIRED NO_MODULE )
+  if ( DEFINED datatools_CONFIG )
+       message ( STATUS "Found datatools >= ${_datatools_min_version}" )
+       message ( STATUS "  datatools_CONFIG              : ${datatools_CONFIG}" )
+       message ( STATUS "  datatools_VERSION             : ${datatools_VERSION}" )
+       message ( STATUS "  datatools_LIBRARIES           : ${datatools_LIBRARIES}" )
+       message ( STATUS "  datatools_INCLUDE_DIRS        : ${datatools_INCLUDE_DIRS}" )
+       message ( STATUS "  datatools_WITH_DEBUG          : ${datatools_WITH_DEBUG}" )
+       message ( STATUS "  datatools_WITH_BIO            : ${datatools_WITH_BIO}" )
+       message ( STATUS "  datatools_WITH_PYTHON_WRAPPER : ${datatools_WITH_PYTHON_WRAPPER}" )
+  else ()
+       message ( FATAL_ERROR "Cannot find datatools >= ${_datatools_min_version} library !" )
+  endif ()
+  if ( GEOMTOOLS_WITH_BIO_SUPPORT )
+    if ( datatools_WITH_BIO )
+      set ( _default_bio_activation 1 )
+    endif ()
+  endif ()
+  if ( GEOMTOOLS_WITH_PYTHON_WRAPPER_SUPPORT )
+    if ( datatools_WITH_PYTHON_WRAPPER )
+      # XXXX
+      message ( FATAL_ERROR "No support for Python wrapper for now !" )
+      set ( _default_python_wrapper_activation 1 )
+    endif ()
+  endif ()
+endif ()
+
+option ( GEOMTOOLS_WITH_BIO 
+         "Build the geomtools with Boost I/O serialization" 
+	  ${_default_bio_activation} )
+
+set ( GEOMTOOLS_WITH_PYTHON_WRAPPER 0)
+  # option ( GEOMTOOLS_WITH_PYTHON_WRAPPER
+  #          "Build the geomtools Boost/Python wrapper module" 
+  #         ${_default_python_wrapper_activation} )
 
 # ---------------------------------------------------
 
@@ -282,6 +282,7 @@ configure_file ( "${PROJECT_SOURCE_DIR}/cmake/Templates/geomtools_config.h.in"
 install ( FILES ${PROJECT_BINARY_DIR}/include/geomtools/geomtools_config.h
           DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/geomtools
           PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+	  
         )
 
 # - Bash setup script :
@@ -411,6 +412,7 @@ install ( DIRECTORY ${PROJECT_SOURCE_DIR}/resources/gdml_schema
           DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE 
                                 GROUP_READ GROUP_EXECUTE 
                                 WORLD_READ WORLD_EXECUTE
+          PATTERN .svn EXCLUDE
          )
 
 # 
