@@ -46,6 +46,12 @@ set(CMAKE_MODULE_PATH
   ${CMAKE_MODULE_PATH}
   )
 
+if (DEFINED ADDITIONAL_CMAKE_MODULE_PATH AND NOT "x${ADDITIONAL_CMAKE_MODULE_PATH}" STREQUAL "x" ))
+  set(CMAKE_MODULE_PATH
+      ${ADDITIONAL_CMAKE_MODULE_PATH}
+      ${CMAKE_MODULE_PATH}
+  )
+
 message ( STATUS "datatools: CMAKE_MODULE_PATH         : '${CMAKE_MODULE_PATH}'" )
 
 #----------------------------------------------------------------------------
