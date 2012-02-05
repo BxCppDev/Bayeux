@@ -1,4 +1,4 @@
-# - Define standard installation directories for the brio package library
+# - Define standard installation directories for the Bayeux package library
 # Provides install directory variables as defined for GNU software:
 #  http://www.gnu.org/prep/standards/html_node/Directory-Variables.html
 # Inclusion of this module defines the following variables:
@@ -194,3 +194,5 @@ message ( STATUS "CMake install data dir          = '${CMAKE_INSTALL_DATADIR}'" 
 message ( STATUS "CMake install manpages dir      = '${CMAKE_INSTALL_MANDIR}'" )
 message ( STATUS "CMake install documentation dir = '${CMAKE_INSTALL_DOCDIR}'" )
 message ( STATUS "CMake install etc dir           = '${CMAKE_INSTALL_ETCDIR}'" )
+
+# end of InstallDirs.cmake

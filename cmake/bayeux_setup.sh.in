@@ -22,11 +22,22 @@ echo "NOTICE: bayeux_setup.sh: Entering..." 1>&2
 function do_bayeux_setup ()
 {
     echo "NOTICE: do_bayeux_setup: Setup Bayeux version @Bayeux_VERSION@..." 1>&2
-    local is_apple=@APPLE@
+    local is_apple=@_is_apple@
 
     if [ -n "${BAYEUX_PREFIX}" ]; then
 	echo "WARNING: do_bayeux_setup: Bayeux @Bayeux_VERSION@ is already setup !" 1>&2
 	return 2
+    fi
+
+    local _bayeux_bash_setup_script=@CADFAEL_BASH_SETUP_SCRIPT@
+    local _bayeux_bash_setup_function=@CADFAEL_BASH_SETUP_FUNCTION@
+
+    if [ -n ${_bayeux_bash_setup_script} ]; then
+	export BAYEUX_PRE_SETUP_SCRIPT=${_bayeux_bash_setup_script}
+    fi
+
+    if [ -n ${_bayeux_bash_setup_function} ]; then
+	export BAYEUX_PRE_SETUP_FUNCTION=${_bayeux_bash_setup_function}
     fi
 
     if [ -n "${BAYEUX_PRE_SETUP_SCRIPT}" ]; then
@@ -85,6 +96,7 @@ function do_bayeux_setup ()
     #     export MANPATH="${BAYEUX_SHARE_DIR}/man"
     # fi
 
+    bayeux_components=$(echo "${BAYEUX_COMPONENTS}" | tr ':' ' ')
     for component in ${bayeux_components}; do
 	echo "NOTICE: do_bayeux_setup: Setup Bayeux's component '${component}'..." 1>&2
 	if [ ! -f ${BAYEUX_ETC_DIR}/${component}_setup.sh ]; then

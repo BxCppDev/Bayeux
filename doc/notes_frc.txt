@@ -2,19 +2,16 @@
 
 Example :
 
-Prepare:
-
-
+Prepare dependencies :
 
 {{{
-bash $ do_cadfael_all_sw_setup
+bash$ do_cadfael_all_setup
 }}}
 
 Configure :
 
 {{{
-bash$ ./pkgtools.d/pkgtool configure \
-        --workspace-dir /scratch/sw/Bayeux
+bash$ ./pkgtools.d/pkgtool configure --workspace-dir /scratch/sw/Bayeux
 }}}
 
 {{{
@@ -49,14 +46,23 @@ bash$ ./pkgtools.d/pkgtool configure \
 Build :
 
 {{{
-bash$ ./pkgtools.d/pkgtool --devel build --number-of-tasks auto
+bash$ ./pkgtools.d/pkgtool build --number-of-tasks auto
 }}}
 
 
 Install :
 
 {{{
-bash$ ./pkgtools.d/pkgtool --devel install
+bash$ ./pkgtools.d/pkgtool install
 }}}
 
+
+Setup :
+
+{{{
+bash$ export BAYEUX_PRE_SETUP_SCRIPT="${CADFAEL_ETC_DIR}/cadfael_setup.sh"
+bash$ export BAYEUX_PRE_SETUP_FUNCTION="do_cadfael_all_setup"
+bash$ source /scratch/sw/Bayeux/Bayeux-1.0.0/Install-Linux-i686/etc/bayeux_setup.sh 
+bash$ do_bayeux_all_setup
+}}}
 

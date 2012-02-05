@@ -37,12 +37,18 @@ project ( Bayeux )
 file(TO_CMAKE_PATH "$ENV{CMAKE_MODULE_PATH}" __env_cmake_module_path)
 set ( CMAKE_MODULE_PATH
       ${PROJECT_SOURCE_DIR}/cmake
+      ${PROJECT_SOURCE_DIR}/cmake/Components
       ${__env_cmake_module_path}
       ${CMAKE_MODULE_PATH}
     )
 
 include ( Config )
 include ( InstallDirs )
+
+set ( _is_apple 0 )
+if ( APPLE )
+   set ( _is_apple 1 )
+endif ()
 
 #----------------------------------------------------------------------------
 # Load needed custom and builtin modules
@@ -52,35 +58,7 @@ set ( Bayeux_VERSION ${Bayeux_VERSION_STR} )
 message ( STATUS "Bayeux version : ${Bayeux_VERSION}" )
 
 # - Processor count, and configure parallel jobs
-include ( FindNumberOfProcessors )
-get_number_of_cores ( PROCESSOR_COUNT )
-message ( STATUS "Number of processors = ${PROCESSOR_COUNT}" )
-
-option ( BAYEUX_SINGLE_PROCESSOR "Bayeux will use only one processor" OFF )
-option ( BAYEUX_TWO_PROCESSORS   "Bayeux will use only two processors" OFF )
-option ( BAYEUX_HALF_PROCESSORS  "Bayeux will use only half of the available processors" OFF )
-
-if ( BAYEUX_SINGLE_PROCESSOR )
-  set ( PROCESSOR_COUNT 1 )
-elseif ( BAYEUX_TWO_PROCESSORS )
-  if ( PROCESSOR_COUNT GREATER 1 )
-    set ( PROCESSOR_COUNT 2 )
-  endif ( )
-elseif ( BAYEUX_HALF_PROCESSORS )
-  if ( PROCESSOR_COUNT GREATER 1 )
-    math ( EXPR PROCESSOR_COUNT "${PROCESSOR_COUNT} / 2" )
-    message ( STATUS "Using half the available processors : ${PROCESSOR_COUNT}" )
-  else ( )
-    set ( PROCESSOR_COUNT 1 )
-  endif ( )
-endif ( )
-
-set( BAYEUX_PARALLEL_JOBS
-  ${PROCESSOR_COUNT}
-  CACHE STRING
-  "Number of parallel jobs for external project builds"
-  )
-message( STATUS "External projects will build with ${BAYEUX_PARALLEL_JOBS} parallel jobs" )
+include ( SetParallelJobs )
 
 option ( BAYEUX_ALT_WORK_DIR "Alternative working/build directory" OFF )
 
@@ -110,6 +88,29 @@ endif ()
 if ( NOT DEFINED BAYEUX_EP_BASE )
   set ( BAYEUX_EP_BASE ${BAYEUX_BUILD_DIR} )
 endif ()
+
+# -----------------------------------------------
+
+if (DEFINED CADFAEL_DIR AND NOT "x${CADFAEL_DIR}" STREQUAL "x" )
+  if (NOT EXISTS ${CADFAEL_DIR} )
+    message ( FATAL_ERROR "Cadfael directory '${CADFAEL_DIR}' does not exist !" )
+  endif ()   
+  set ( Cadfael_DIR ${CADFAEL_DIR} )
+  find (Cadfael REQUIRED)
+  if (Cadfael_FOUND)
+    message ( STATUS "Cadfael was found at '${CADFAEL_DIR}'" )
+    message ( STATUS " o Cadfael install prefix      : '${Cadfael_ROOT_DIR}'" )
+    message ( STATUS " o Cadfael version             : '${CADFAEL_VERSION}'" )
+    message ( STATUS " o Cadfael components          : '${CADFAEL_COMPONENTS}'" )
+    message ( STATUS " o Cadfael bash setup script   : '${CADFAEL_BASH_SETUP_SCRIPT}'" )
+    message ( STATUS " o Cadfael bash setup function : '${CADFAEL_BASH_SETUP_FUNCTION}'" )
+    message ( STATUS " o Cadfael CMake module paths  : '${Cadfael_CMAKE_MODULE_PATH}'" )
+  endif ()
+else ()
+   message (STATUS "Do not use explicit Cadfael installation." )
+endif ()
+
+# -----------------------------------------------
 
 set ( BAYEUX_KNOWN_COMPONENTS 
       	"datatools" 
@@ -177,7 +178,7 @@ message ( STATUS "Bayeux EP base dir  : '${BAYEUX_EP_BASE}'" )
 
 # ---------------------------------------------------------
 # Bayeux can only handle its components from some
-# minimal version :
+# tag minimal version :
 #
 set ( BAYEUX_DATATOOLS_MINIMAL_TAG_VERSION  "4.0.0"  )
 set ( BAYEUX_BRIO_MINIMAL_TAG_VERSION       "3.0.0"  )
@@ -404,14 +405,14 @@ endif ( BAYEUX_WITH_GEOMTOOLS )
 # -------------------------------------------------------------------------
 
 message ( STATUS "Bayeux Components :" )
-message ( STATUS " * BAYEUX_WITH_DATATOOLS  = ${BAYEUX_WITH_DATATOOLS}"  )
-message ( STATUS " * BAYEUX_WITH_MYGSL      = ${BAYEUX_WITH_MYGSL}"      )
-message ( STATUS " * BAYEUX_WITH_BRIO       = ${BAYEUX_WITH_BRIO}"       )
-message ( STATUS " * BAYEUX_WITH_CUTS       = ${BAYEUX_WITH_CUTS}"       )
-message ( STATUS " * BAYEUX_WITH_GEOMTOOLS  = ${BAYEUX_WITH_GEOMTOOLS}"  )
-message ( STATUS " * BAYEUX_WITH_MATERIALS  = ${BAYEUX_WITH_MATERIALS}"  )
-message ( STATUS " * BAYEUX_WITH_GENVTX     = ${BAYEUX_WITH_GENVTX}"     )
-message ( STATUS " * BAYEUX_WITH_GENBB_HELP = ${BAYEUX_WITH_GENBB_HELP}" )
+message ( STATUS " o BAYEUX_WITH_DATATOOLS  = ${BAYEUX_WITH_DATATOOLS}"  )
+message ( STATUS " o BAYEUX_WITH_MYGSL      = ${BAYEUX_WITH_MYGSL}"      )
+message ( STATUS " o BAYEUX_WITH_BRIO       = ${BAYEUX_WITH_BRIO}"       )
+message ( STATUS " o BAYEUX_WITH_CUTS       = ${BAYEUX_WITH_CUTS}"       )
+message ( STATUS " o BAYEUX_WITH_GEOMTOOLS  = ${BAYEUX_WITH_GEOMTOOLS}"  )
+message ( STATUS " o BAYEUX_WITH_MATERIALS  = ${BAYEUX_WITH_MATERIALS}"  )
+message ( STATUS " o BAYEUX_WITH_GENVTX     = ${BAYEUX_WITH_GENVTX}"     )
+message ( STATUS " o BAYEUX_WITH_GENBB_HELP = ${BAYEUX_WITH_GENBB_HELP}" )
 
 set ( BAYEUX_COMPONENTS "" )
 
@@ -443,7 +444,7 @@ configure_file ( "${PROJECT_SOURCE_DIR}/cmake/bayeux_setup.sh.in"
 
 install ( FILES ${PROJECT_BINARY_DIR}/cmake/bayeux_setup.sh
           DESTINATION ${CMAKE_INSTALL_ETCDIR}
-          PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+          PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
         )
 
 # -------------------------------------------------------------------------
@@ -453,5 +454,6 @@ install ( FILES ${PROJECT_BINARY_DIR}/cmake/bayeux_setup.sh
 unset ( _svn_username )
 unset ( _svn_password )
 unset ( _install_prefix )
+unset ( _is_apple )
 
 # - end of Top level CmakeLists.txt for Bayeux Project
