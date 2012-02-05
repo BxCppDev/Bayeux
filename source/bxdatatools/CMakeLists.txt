@@ -113,7 +113,7 @@ else ()
 endif ()
 
 string ( REGEX REPLACE ".[0-9]+$" "" _boost_short_version "${_boost_version}" )
-message ( STATUS "Boost short version is : '${_boost_short_version}'" )
+message ( STATUS "datatools: Boost short version is : '${_boost_short_version}'" )
 set ( Boost_ADDITIONAL_VERSIONS "${_boost_short_version}" "${_boost_version}" )
 set ( Boost_NO_SYSTEM_PATHS ON )
 set ( _boost_requested_components filesystem serialization iostreams system 
