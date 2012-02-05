@@ -45,6 +45,16 @@ set(CMAKE_MODULE_PATH
   ${__env_cmake_module_path}
   ${CMAKE_MODULE_PATH}
 )
+
+if (DEFINED ADDITIONAL_CMAKE_MODULE_PATH AND NOT "x${ADDITIONAL_CMAKE_MODULE_PATH}" STREQUAL "x" ))
+  message ( STATUS "mygsl: Using additional CMAKE_MODULE_PATH : '${ADDITIONAL_CMAKE_MODULE_PATH}'" )
+  set(CMAKE_MODULE_PATH
+      ${ADDITIONAL_CMAKE_MODULE_PATH}
+      ${CMAKE_MODULE_PATH}
+  )
+endif ()
+
+message ( STATUS "mygsl: CMAKE_MODULE_PATH         : '${CMAKE_MODULE_PATH}'" )
 	
 #----------------------------------------------------------------------------
 # Load any required modules
