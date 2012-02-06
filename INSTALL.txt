@@ -11,11 +11,13 @@ bash$ ./pkgtools.d/pkgtool configure \
   --workspace-dir /scratch/sw/Bayeux \
 }}}
 
+All libraries but genbb_help :
 {{{
 bash$ ./pkgtools.d/pkgtool configure --config "0.9.0" --workspace-dir /scratch/sw/Bayeux --with-all --without-genbb_help 
 }}}
 
 
+Only datatools :
 {{{
 bash$ ./pkgtools.d/pkgtool configure \
   --user-config-file "examples/bayeux_config_1.lis" \
@@ -23,14 +25,14 @@ bash$ ./pkgtools.d/pkgtool configure \
   --with-none 
 }}}
 
+Only datatools and mygsl :
 {{{
 bash$ ./pkgtools.d/pkgtool configure \
   --install-prefix     /scratch/sw/Bayeux/Bayeux-0.9.0/install \
   --ep-build-directory /scratch/sw/Bayeux/Bayeux-0.9.0/build \
   --download-directory /scratch/sw/Download \
   --with-none \
-  --with-root \ 
-  --root-version 5.26.00
+  --with-mygsl 
 }}}
 
 Build:
