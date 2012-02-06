@@ -410,6 +410,7 @@ function do_configure ()
     local download_dir=""
     local reset_build_dir=0
     local requested_bayeux_config="" #"${bayeux_version}"
+    local cadfael_dir=
     local user_config_file=""
     local with_brio=1
     local with_mygsl=1
@@ -453,6 +454,9 @@ function do_configure ()
 	elif [ "${option}" = "--config" ]; then
 	    shift 1
 	    requested_bayeux_config="$1"
+	elif [ "${option}" = "--cadfael-dir" ]; then
+	    shift 1
+	    cadfael_dir="$1"
 	elif [ "${option}" = "--user-config-file" ]; then
 	    shift 1
 	    requested_bayeux_config="user"
@@ -557,7 +561,6 @@ function do_configure ()
 	pkgtools__msg_notice "Using default Bayeux configuration '${requested_bayeux_config}'..."
     fi
 
-
     local validated_bayeux_config=""
     for bayeux_config in ${known_bayeux_configs}; do
 	if [ "x${bayeux_config}" = "x${requested_bayeux_config}" ]; then
@@ -599,7 +602,16 @@ function do_configure ()
 	    using_workspace=1
 	fi	
     fi
-    
+
+    if [ "x${cadfael_dir}" != "x" ]; then
+	pkgtools__msg_notice "Explicit paths to Cadfael CMake modules : '${cadfael_dir}'"
+	if [ ! -d ${cadfael_dir} ]; then
+	    pkgtools__msg_error "Directory '${cadfael_dir}' to Cadfael CMake modules does not exist !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+    fi
+
     local available_storage=0
     if [ ${using_workspace} -eq 1 ]; then
 	expanded_lwd=$(echo "${workspace_dir}")
@@ -664,6 +676,9 @@ function do_configure ()
 
     pkgtools__msg_notice "With documentation    : '${with_doc}'"
     pkgtools__msg_notice "With test material    : '${with_test}'"
+    if [ "x${cadfael_dir}" != "x" ]; then
+	pkgtools__msg_notice "With path to Cadfael CMake module : '${cadfael_dir}'"
+    fi
     pkgtools__msg_notice "With dependency check : '${with_dependency_check}'"
 
     if [ ${with_dependency_check} -eq 1 ]; then
@@ -696,9 +711,13 @@ function do_configure ()
 	    pkgtools__msg_notice "Bayeux user configuration path : '${user_config_file_full_path}'"
 	    cmake_more_options="${cmake_more_options} -DBAYEUX_USER_CONFIG_FILE:PATH=${user_config_file_full_path} "
 	fi
-
+	if [ "x${cadfael_dir}" != "x" ]; then
+	    cmake_more_options="${cmake_more_options} -DCADFAEL_DIR:PATH=${cadfael_dir} "
+	fi
 	local svn_user_login="nemo"
 	local svn_user_passwd="Ettore1936"
+
+	pkgtools__msg_notice "XXXXXXXXXXXXX cmake_more_options = '${cmake_more_options}'"
 
 	cmake \
 	    -DCMAKE_INSTALL_PREFIX:PATH=${install_prefix} \

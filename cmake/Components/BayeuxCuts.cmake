@@ -16,6 +16,7 @@ if ( BAYEUX_WITH_CUTS )
 	 -DCUTS_WITH_DOC=${BAYEUX_WITH_DOCS} 
 	 -DCUTS_WITH_TEST=${BAYEUX_WITH_TESTS} 
          -Ddatatools_DIR:PATH=${_datatools_DIR}
+         ${_additional_cmake_module_path_option}
     CMAKE_GENERATOR "Unix Makefiles"
     BUILD_COMMAND make -j${BAYEUX_PARALLEL_JOBS}
     INSTALL_COMMAND make install

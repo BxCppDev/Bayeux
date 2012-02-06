@@ -18,8 +18,7 @@ if ( BAYEUX_WITH_GENBB_HELP )
 	 -DGENBB_HELP_WITH_BIO=${BAYEUX_WITH_BIO} 
 	 -DGENBB_HELP_WITH_PYTHON_WRAPPER=${BAYEUX_WITH_PYTHON_WRAPPER}  
          -Dgeomtools_DIR:PATH=${_geomtools_DIR}
-         #-Dmygsl_DIR:PATH=${_mygsl_cmake_DIR}
-         #-Ddatatools_DIR:PATH=${_datatools_DIR}
+         ${_additional_cmake_module_path_option}
     CMAKE_GENERATOR "Unix Makefiles"
     BUILD_COMMAND make -j${BAYEUX_PARALLEL_JOBS}
     INSTALL_COMMAND make install

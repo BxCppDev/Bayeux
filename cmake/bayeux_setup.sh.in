@@ -29,17 +29,20 @@ function do_bayeux_setup ()
 	return 2
     fi
 
-    local _bayeux_bash_setup_script=@CADFAEL_BASH_SETUP_SCRIPT@
-    local _bayeux_bash_setup_function=@CADFAEL_BASH_SETUP_FUNCTION@
+    if [ @_bayeux_with_explicit_cadfael@ -eq 1 ]; then
 
-    if [ -n ${_bayeux_bash_setup_script} ]; then
-	export BAYEUX_PRE_SETUP_SCRIPT=${_bayeux_bash_setup_script}
+	local _bayeux_bash_setup_script="@Cadfael_BASH_SETUP_SCRIPT@"
+	local _bayeux_bash_setup_function="@Cadfael_BASH_SETUP_FUNCTION@"
+	
+	if [ -n ${_bayeux_bash_setup_script} -a "x${BAYEUX_PRE_SETUP_SCRIPT}" = "x" ]; then
+	    export BAYEUX_PRE_SETUP_SCRIPT=${_bayeux_bash_setup_script}
+	fi
+	
+	if [ -n ${_bayeux_bash_setup_function} -a "x${BAYEUX_PRE_SETUP_FUNCTION}" = "x" ]; then
+	    export BAYEUX_PRE_SETUP_FUNCTION=${_bayeux_bash_setup_function}
+	fi
     fi
-
-    if [ -n ${_bayeux_bash_setup_function} ]; then
-	export BAYEUX_PRE_SETUP_FUNCTION=${_bayeux_bash_setup_function}
-    fi
-
+    
     if [ -n "${BAYEUX_PRE_SETUP_SCRIPT}" ]; then
 	if [ -f ${BAYEUX_PRE_SETUP_SCRIPT} ]; then
 	    echo "ERROR: do_bayeux_setup: Bayeux pre-setup script '${BAYEUX_PRE_SETUP_SCRIPT}' does not exist !" 1>&2
@@ -48,7 +51,9 @@ function do_bayeux_setup ()
 	    echo "NOTICE: do_bayeux_setup: Sourcing Bayeux pre-setup script '${BAYEUX_PRE_SETUP_SCRIPT}'..." 1>&2
 	    source ${BAYEUX_PRE_SETUP_SCRIPT}
 	fi
-    elif [ -n "${BAYEUX_PRE_SETUP_FUNCTION}" ]; then
+    fi
+
+    if [ -n "${BAYEUX_PRE_SETUP_FUNCTION}" ]; then
 	local test_type=$(LANG=C type ${BAYEUX_PRE_SETUP_FUNCTION} | head -1 | grep "function" )
 	if [ $? -ne 0 ]; then
 	    echo "ERROR: do_bayeux_setup: Bayeux pre-setup function '${BAYEUX_PRE_SETUP_FUNCTION}' does not exist !" 1>&2

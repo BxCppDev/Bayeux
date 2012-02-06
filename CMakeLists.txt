@@ -91,24 +91,43 @@ endif ()
 
 # -----------------------------------------------
 
+set ( _bayeux_with_explicit_cadfael 0 )
 if (DEFINED CADFAEL_DIR AND NOT "x${CADFAEL_DIR}" STREQUAL "x" )
+  message ( STATUS "Attempt to find explicitly Cadfael from '${CADFAEL_DIR}'" )
   if (NOT EXISTS ${CADFAEL_DIR} )
     message ( FATAL_ERROR "Cadfael directory '${CADFAEL_DIR}' does not exist !" )
   endif ()   
   set ( Cadfael_DIR ${CADFAEL_DIR} )
-  find (Cadfael REQUIRED)
-  if (Cadfael_FOUND)
+  set ( CMAKE_MODULE_PATH
+        ${Cadfael_DIR}
+        ${CMAKE_MODULE_PATH}
+  )
+  find_package (Cadfael)
+  if (NOT CADFAEL_FOUND)
+    message ( FATAL_ERROR "Cadfael was not found !" )
+  else ()
     message ( STATUS "Cadfael was found at '${CADFAEL_DIR}'" )
     message ( STATUS " o Cadfael install prefix      : '${Cadfael_ROOT_DIR}'" )
-    message ( STATUS " o Cadfael version             : '${CADFAEL_VERSION}'" )
-    message ( STATUS " o Cadfael components          : '${CADFAEL_COMPONENTS}'" )
-    message ( STATUS " o Cadfael bash setup script   : '${CADFAEL_BASH_SETUP_SCRIPT}'" )
-    message ( STATUS " o Cadfael bash setup function : '${CADFAEL_BASH_SETUP_FUNCTION}'" )
+    message ( STATUS " o Cadfael version             : '${Cadfael_VERSION}'" )
+    message ( STATUS " o Cadfael components          : '${Cadfael_COMPONENTS}'" )
+    message ( STATUS " o Cadfael bash setup script   : '${Cadfael_BASH_SETUP_SCRIPT}'" )
+    message ( STATUS " o Cadfael bash setup function : '${Cadfael_BASH_SETUP_FUNCTION}'" )
     message ( STATUS " o Cadfael CMake module paths  : '${Cadfael_CMAKE_MODULE_PATH}'" )
+    message (STATUS "Bayeux does explicitly use Cadfael installation." )
+    set ( _bayeux_with_explicit_cadfael 1 )
+    set ( CMAKE_MODULE_PATH
+          ${Cadfael_CMAKE_MODULE_PATH}
+          ${CMAKE_MODULE_PATH}
+        )
+    message (STATUS "CMAKE_MODULE_PATH : '${CMAKE_MODULE_PATH}'" )
+    message (STATUS "Bayeux set the CMAKE_MODULE_PATH environment variable from Cadfael." )
+    set ( _additional_cmake_module_path_option "-DADDITIONAL_CMAKE_MODULE_PATH:PATH=${Cadfael_CMAKE_MODULE_PATH}" )
+    message (STATUS "_additional_cmake_module_path_option : '${_additional_cmake_module_path_option}'" )
   endif ()
 else ()
-   message (STATUS "Do not use explicit Cadfael installation." )
+   message (STATUS "Bayeux does not use explicit Cadfael installation." )
 endif ()
+
 
 # -----------------------------------------------
 
@@ -164,8 +183,6 @@ option ( BAYEUX_WITH_VALIDATION OFF )
 # Configure external projects to build under a single root directory in our
 # build directory or some alternative directory ( optional )
 include ( ExternalProject )
-
-message ( STATUS "Bayeux use an alternative base directory to build external projects: ${BAYEUX_ALT_EP_BASE}" )
 
 set_directory_properties ( PROPERTIES EP_BASE ${BAYEUX_EP_BASE} )
 

@@ -16,7 +16,7 @@ if ( BAYEUX_WITH_MATERIALS )
 	 -DMATERIALS_WITH_DOC=${BAYEUX_WITH_DOCS} 
 	 -DMATERIALS_WITH_TEST=${BAYEUX_WITH_TESTS} 
          -Dgeomtools_DIR:PATH=${_geomtools_DIR}
-         #-Ddatatools_DIR:PATH=${_datatools_DIR}
+         ${_additional_cmake_module_path_option}
     CMAKE_GENERATOR "Unix Makefiles"
     BUILD_COMMAND make -j${BAYEUX_PARALLEL_JOBS}
     INSTALL_COMMAND make install

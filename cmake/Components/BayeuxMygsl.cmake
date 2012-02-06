@@ -5,6 +5,9 @@
 #
 
 if ( BAYEUX_WITH_MYGSL )
+  if (_bayeux_with_explicit_cadfael)
+    set (_find_gsl_dir_option "-DGSL_ROOT_DIR:PATH=${Cadfael_ROOT_DIR}" )
+  endif ()
   set ( _mygsl_DIR ${_install_prefix}/${CMAKE_INSTALL_LIBDIR}/cmake/mygsl )
   ExternalProject_Add( mygsl 
     DEPENDS datatools
@@ -18,6 +21,8 @@ if ( BAYEUX_WITH_MYGSL )
 	 -DMYGSL_WITH_DOC=${BAYEUX_WITH_DOCS} 
 	 -DMYGSL_WITH_TEST=${BAYEUX_WITH_TESTS} 
          -Ddatatools_DIR:PATH=${_datatools_DIR}
+         ${_additional_cmake_module_path_option}
+         ${_find_gsl_dir_option}
     CMAKE_GENERATOR "Unix Makefiles"
     BUILD_COMMAND make -j${BAYEUX_PARALLEL_JOBS}
     INSTALL_COMMAND make install

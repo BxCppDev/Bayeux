@@ -2,9 +2,10 @@
 
 Example :
 
-Prepare dependencies :
+Explicit preparation of Cadfael dependencies :
 
 {{{
+bash$ source <Cadfael install path>/etc/cadfael_setup.sh
 bash$ do_cadfael_all_setup
 }}}
 
@@ -12,6 +13,13 @@ Configure :
 
 {{{
 bash$ ./pkgtools.d/pkgtool configure --workspace-dir /scratch/sw/Bayeux
+}}}
+
+With explicit path to Cadfael FindModule:
+{{{
+bash$ ./pkgtools.d/pkgtool configure \
+  --workspace-dir /scratch/sw/Bayeux \
+  --cadfael-dir /scratch/sw/Cadfael/install/Cadfael-0.1.0/share/cmake/Modules
 }}}
 
 {{{
