@@ -1,22 +1,23 @@
 
+TO BE DONE.
 
-Example :
+
+== Examples == 
 
 
 Configure :
 {{{
-./pkgtools.d/pkgtool configure \
+bash$ ./pkgtools.d/pkgtool configure \
   --workspace-dir /scratch/sw/Bayeux \
-  --test
 }}}
 
 {{{
-./pkgtools.d/pkgtool configure --config "1.0.0" --workspace-dir /scratch/${USER}/software --without-genbb_help --test
+bash$ ./pkgtools.d/pkgtool configure --config "0.9.0" --workspace-dir /scratch/sw/Bayeux --with-all --without-genbb_help 
 }}}
 
+
 {{{
-./pkgtools.d/pkgtool --devel  \
-  configure \
+bash$ ./pkgtools.d/pkgtool configure \
   --user-config-file "examples/bayeux_config_1.lis" \
   --workspace-dir /scratch/sw/Bayeux \
   --with-none 
@@ -24,15 +25,20 @@ Configure :
 
 {{{
 bash$ ./pkgtools.d/pkgtool configure \
-  --install-prefix     /scratch/sw/Cadfael/install/Cadfael-0.1.0 \
-  --ep-build-directory /scratch/sw/Cadfael/install/Cadfael-build \
+  --install-prefix     /scratch/sw/Bayeux/Bayeux-0.9.0/install \
+  --ep-build-directory /scratch/sw/Bayeux/Bayeux-0.9.0/build \
   --download-directory /scratch/sw/Download \
   --with-none \
   --with-root \ 
   --root-version 5.26.00
 }}}
 
-./pkgtools.d/pkgtool --devel  \
-  build \
-  --number-of-tasks auto
+Build:
+{{{
+bash$ ./pkgtools.d/pkgtool build --number-of-tasks 2
+}}}
 
+Installation :
+{{{
+bash$ ./pkgtools.d/pkgtool install
+}}}
