@@ -1,4 +1,4 @@
-# - Top level CMakeLists.txt for datatoolsproject
+# - Top level CMakeLists.txt for datatools project
 # -*- mode: cmake; -*-
 #
 # ----------------------------------------------------------------------------
@@ -113,11 +113,16 @@ endif()
 
 # - Depends on Boost:
 set ( _boost_version 1.47.0 )
-if ( NOT "$ENV{BOOST_ROOT}" STREQUAL "")  
+
+if ( NOT "$ENV{BOOST_ROOT}" STREQUAL "" )  
   message ( STATUS "datatools: Environment BOOST_ROOT exists : '$ENV{BOOST_ROOT}' ")
   set ( BOOST_ROOT $ENV{BOOST_ROOT} )
 else ()
-  message ( STATUS  "datatools: Environment BOOST_ROOT is not set !" )
+  message ( STATUS  "datatools: Environment BOOST_ROOT is not set" )
+endif ()
+
+if ( DEFINED BOOST_ROOT )  
+  message ( STATUS  "datatools: BOOST_ROOT='${BOOST_ROOT}'" )
 endif ()
 
 string ( REGEX REPLACE ".[0-9]+$" "" _boost_short_version "${_boost_version}" )
