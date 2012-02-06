@@ -714,10 +714,18 @@ function do_configure ()
 	if [ "x${cadfael_dir}" != "x" ]; then
 	    cmake_more_options="${cmake_more_options} -DCADFAEL_DIR:PATH=${cadfael_dir} "
 	fi
-	local svn_user_login="nemo"
-	local svn_user_passwd="Ettore1936"
+	local svn_user_login=""
+	local svn_user_passwd=""
 
-	pkgtools__msg_notice "XXXXXXXXXXXXX cmake_more_options = '${cmake_more_options}'"
+	if [ "x${svn_user_login}" = "x" ]; then 
+	    svn_user_login="nemo"
+	fi
+
+	if [ "x${svn_user_passwd}" = "x" ]; then 
+	    svn_user_passwd="Ettore1936"
+	fi
+
+	pkgtools__msg_debug "cmake_more_options = '${cmake_more_options}'"
 
 	cmake \
 	    -DCMAKE_INSTALL_PREFIX:PATH=${install_prefix} \
