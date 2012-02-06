@@ -15,6 +15,7 @@
 #include <datatools/serialization/io_factory.h>
 
 // Some pre-processor guard about Boost I/O usage and linkage :
+#include <datatools/serialization/bio_guard.h>
 #include <geomtools/serialization/bio_guard.h>
 #include <genbb_help/serialization/bio_guard.h>
 
@@ -67,12 +68,12 @@ int main (int a_argc, char ** a_argv)
     
       if (input_files.size () < 1)
 	{
-	  throw runtime_error ("Missing input GENBB files!");
+	  throw logic_error ("Missing input GENBB files!");
 	}
 
       if (output_file.empty ())
 	{
-	  throw runtime_error ("Missing output Boost files!");
+	  throw logic_error ("Missing output Boost files!");
 	}
 
       genbb::genbb_mgr mgr;
