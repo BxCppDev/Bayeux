@@ -148,7 +148,6 @@ function do_bayeux_all_setup ()
     return 0
 }
 typeset -fx do_bayeux_all_setup
-alias all_setup='do_bayeux_all_setup'
 
 function do_bayeux_help ()
 {
@@ -162,7 +161,6 @@ function do_bayeux_help ()
     return 0
 }
 typeset -fx do_bayeux_help
-alias bayeux_help='do_bayeux_help'
 
 do_bayeux_help 
 

@@ -46,8 +46,7 @@ bash$ ./pkgtools.d/pkgtool --devel  \
 {{{
 bash$ ./pkgtools.d/pkgtool configure \
         --install-prefix     /scratch/sw/Bayeux/Bayeux-0.9.0/install \
-        --ep-build-directory /scratch/sw/Bayeux/Bayeux-0.9.0/build \
-        --with-none
+        --ep-build-directory /scratch/sw/Bayeux/Bayeux-0.9.0/build 
 }}}
 
 
