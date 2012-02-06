@@ -16,7 +16,7 @@ test -f brio_dict.cc && rm -f brio_dict.cc
 
 rootcint_exe=""
 
-while [ -z "$1" }; do
+while [ -n "$1" ]; do
     token="$1"
     if [ "x${token}" = "x--rootcint" ]; then
 	shift 1
