@@ -27,7 +27,7 @@ if ( _generate_root_dict )
                ROOTSYS=${ROOTSYS} 
                SOURCE_PATH=${PROJECT_SOURCE_DIR} 
                BINARY_PATH=${PROJECT_BINARY_DIR} 
-               ${PROJECT_SOURCE_DIR}/cmake/Tools/make_dict.sh
+               ${PROJECT_SOURCE_DIR}/cmake/Tools/make_dict.sh --rootcint ${ROOT_CINT_EXECUTABLE}
        DEPENDS ${_brio_dict_headers}
        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
        COMMENT "Generate brio ROOT dictionary"
