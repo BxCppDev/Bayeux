@@ -136,10 +136,10 @@ function print_usage ()
                                    "user"
       --user-config-file [CONFIG_FILE] :      
       --with-none                : do not install any library/package 
-                                   this must be the first '--with-XXX' of switches
+                                   this must be the first of '--with-XXX' switches
                                    (conflicts with --with-all)
       --with-all                 : install all libraries/package s
-                                   this must be the first '--with-XXX' of switches
+                                   this must be the first of '--with-XXX' switches
                                    (conflicts with --with-none)
       --with-brio                : install brio (default)
       --without-brio             : do not install brio
