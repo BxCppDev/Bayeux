@@ -57,7 +57,7 @@ the_default_download_dir=${HOME}/Download
 the_default_install_prefix=${the_base_dir}/__install-$(pkgtools__get_sys)
 the_build_dir=
 the_download_dir=
-known_bayeux_configs="default 1.0.0 last_tags trunk user"
+known_bayeux_configs="default 0.9.0 last_tags trunk user"
 
 pkgtools__msg_not_using_quiet
 pkgtools__msg_not_using_verbose

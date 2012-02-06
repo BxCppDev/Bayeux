@@ -30,7 +30,7 @@ bash$ ./pkgtools.d/pkgtool configure \
 
 {{{
 bash$ ./pkgtools.d/pkgtool configure \
-        --config "1.0.0" \
+        --config "0.9.0" \
         --workspace-dir /scratch/sw/Bayeux \
         --with-all \ 
         --without-genbb_help 
@@ -45,8 +45,8 @@ bash$ ./pkgtools.d/pkgtool --devel  \
 
 {{{
 bash$ ./pkgtools.d/pkgtool configure \
-        --install-prefix     /scratch/sw/Bayeux/Bayeux-1.0.0/install \
-        --ep-build-directory /scratch/sw/Bayeux/Bayeux-1.0.0/build \
+        --install-prefix     /scratch/sw/Bayeux/Bayeux-0.9.0/install \
+        --ep-build-directory /scratch/sw/Bayeux/Bayeux-0.9.0/build \
         --with-none
 }}}
 
@@ -70,7 +70,7 @@ Setup :
 {{{
 bash$ export BAYEUX_PRE_SETUP_SCRIPT="${CADFAEL_ETC_DIR}/cadfael_setup.sh"
 bash$ export BAYEUX_PRE_SETUP_FUNCTION="do_cadfael_all_setup"
-bash$ source /scratch/sw/Bayeux/Bayeux-1.0.0/Install-Linux-i686/etc/bayeux_setup.sh 
+bash$ source /scratch/sw/Bayeux/Bayeux-0.9.0/Install-Linux-i686/etc/bayeux_setup.sh 
 bash$ do_bayeux_all_setup
 }}}
 

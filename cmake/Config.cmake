@@ -1,6 +1,6 @@
 ###############################################################################
 ##
-## Copyright (C) 2011 François Mauger, Université de Caen Basse-Normandie
+## Copyright (C) 2011-2012 François Mauger, Université de Caen Basse-Normandie
 ## Contact: mauger@lpccaen.in2p3.fr
 ##
 ## This file is part of the Bayeux library.
@@ -21,8 +21,8 @@
 ###############################################################################
 
 # setup version numbers
-set ( Bayeux_VERSION_MAJOR 1 ) # do not remove the spaces 
-set ( Bayeux_VERSION_MINOR 0 ) # they are used by external scripts
+set ( Bayeux_VERSION_MAJOR 0 ) # do not remove the spaces 
+set ( Bayeux_VERSION_MINOR 9 ) # they are used by external scripts
 set ( Bayeux_PATCH_VERSION 0 ) # to extract the version number
 
 set ( Bayeux_VERSION_STR "${Bayeux_VERSION_MAJOR}.${Bayeux_VERSION_MINOR}.${Bayeux_PATCH_VERSION}" )

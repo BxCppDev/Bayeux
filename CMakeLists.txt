@@ -207,7 +207,7 @@ set ( BAYEUX_GENVTX_MINIMAL_TAG_VERSION     "3.0.0"  )
 set ( BAYEUX_GENBB_HELP_MINIMAL_TAG_VERSION "4.0.0"  )
 
 
-# Default configuration (1.0.0) :
+# Default configuration (0.9.0) :
 if ( BAYEUX_CONFIG STREQUAL "default" OR BAYEUX_CONFIG STREQUAL ${Bayeux_VERSION} )
   message ( STATUS "Bayeux 'default/${Bayeux_VERSION}' configuration...") 
 
