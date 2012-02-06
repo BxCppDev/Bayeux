@@ -131,10 +131,14 @@ function print_usage ()
       --reset-build-directory    : always use a brand new CMake build directory
        
       Components :
-      --config [CONFIG]          : set the Bayeux configuration
-                                   "trunk"
-                                   "user"
-      --user-config-file [CONFIG_FILE] :      
+      --config [CONFIG]          : set the Channel configuration
+                                   "X.Y.Z"     use a specific configuration
+                                   "default"   use the default combination
+                                   "trunk"     use current trunk version
+                                   "last_tags" use last tagged version
+                                   "user"      use a specific user configuration 
+                                               file (see below) 
+      --user-config-file [CONFIG_FILE] : configuration file for "user" config   
       --with-none                : do not install any library/package 
                                    this must be the first of '--with-XXX' switches
                                    (conflicts with --with-all)
