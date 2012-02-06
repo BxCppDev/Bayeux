@@ -350,8 +350,8 @@ foreach ( component ${BAYEUX_KNOWN_COMPONENTS} )
   set ( BAYEUX_WITH_${component_upper} ${_bayeux_install_component} )
 endforeach ()
 
+### devel section
 set ( _bayeux_special_1 OFF )
-
 if ( _bayeux_special_1 )
   foreach ( component ${BAYEUX_KNOWN_COMPONENTS} )
     string ( TOUPPER "${component}" component_upper )
