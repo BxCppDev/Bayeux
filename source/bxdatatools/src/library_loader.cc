@@ -430,6 +430,7 @@ namespace datatools {
 	  message << a_lib_name << " library was not loaded ! kwsys says: '"
 		  << kwsys::DynamicLoader::LastError () << "' !";
 	  cerr << "ERROR: " << message.str () << endl;
+          return EXIT_FAILURE;
 	}
       return EXIT_SUCCESS;
     }
