@@ -186,11 +186,11 @@ include ( ExternalProject )
 
 set_directory_properties ( PROPERTIES EP_BASE ${BAYEUX_EP_BASE} )
 
-message ( STATUS "Bayeux installation prefix : ${CMAKE_INSTALL_PREFIX}" )
-message ( STATUS "Bayeux work dir     : '${BAYEUX_WORK_DIR}'" )
-message ( STATUS "Bayeux download dir : '${BAYEUX_DOWNLOAD_DIR}'" )
-message ( STATUS "Bayeux build dir    : '${BAYEUX_BUILD_DIR}'" )
-message ( STATUS "Bayeux EP base dir  : '${BAYEUX_EP_BASE}'" )
+message ( STATUS "Bayeux installation prefix : '${CMAKE_INSTALL_PREFIX}'" )
+message ( STATUS "Bayeux work dir            : '${BAYEUX_WORK_DIR}'" )
+message ( STATUS "Bayeux download dir        : '${BAYEUX_DOWNLOAD_DIR}'" )
+message ( STATUS "Bayeux build dir           : '${BAYEUX_BUILD_DIR}'" )
+message ( STATUS "Bayeux EP base dir         : '${BAYEUX_EP_BASE}'" )
 
 
 # ---------------------------------------------------------
