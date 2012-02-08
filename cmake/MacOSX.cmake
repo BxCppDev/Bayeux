@@ -33,7 +33,7 @@ if(APPLE AND NOT NON_NATIVE_TARGET)
         if(${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 4 
             AND ${CMAKE_PATCH_VERSION} LESS 7)
             message(STATUS
-                        "Warning: A critical CMake bug exists in 2.4.6 and below.  "
+                        "${PROJECT_NAME}: Warning: A critical CMake bug exists in 2.4.6 and below.  "
                         "Trying to build Universal Binaries will result in a compile "
                         "error that seems unrelated.  Either avoid building Universal "
                         "Binaries by changing the CMAKE_OSX_ARCHITECTURES field to list "
@@ -66,6 +66,6 @@ if(OSX_ARCHITECTURES_OVERRIDE)
 endif()
 
 if(APPLE)
-    message(STATUS "Compiling for Mac OS X architecture(s): " ${CMAKE_OSX_ARCHITECTURES})
+    message(STATUS "${PROJECT_NAME}: Compiling for Mac OS X architecture(s): " ${CMAKE_OSX_ARCHITECTURES})
 endif()
 

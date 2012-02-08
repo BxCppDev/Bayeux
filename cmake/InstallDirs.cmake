@@ -109,7 +109,7 @@ if(NOT DEFINED CMAKE_INSTALL_LIBDIR)
       AND NOT EXISTS "/etc/debian_version")
     if(NOT DEFINED CMAKE_SIZEOF_VOID_P)
       message(AUTHOR_WARNING
-        "Unable to determine default CMAKE_INSTALL_LIBDIR directory because no target architecture is known. "
+        "${PROJECT_NAME}: Unable to determine default CMAKE_INSTALL_LIBDIR directory because no target architecture is known. "
         "Please enable at least one language before including GNUInstallDirs.")
     else()
       if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
@@ -186,13 +186,13 @@ foreach(dir
   endif()
 endforeach()
 
-message ( STATUS "CMake install binary dir        = '${CMAKE_INSTALL_BINDIR}'" )
-message ( STATUS "CMake install library dir       = '${CMAKE_INSTALL_LIBDIR}'" )
-message ( STATUS "CMake install include dir       = '${CMAKE_INSTALL_INCLUDEDIR}'" )
-message ( STATUS "CMake install data root dir     = '${CMAKE_INSTALL_DATAROOTDIR}'" )
-message ( STATUS "CMake install data dir          = '${CMAKE_INSTALL_DATADIR}'" )
-message ( STATUS "CMake install manpages dir      = '${CMAKE_INSTALL_MANDIR}'" )
-message ( STATUS "CMake install documentation dir = '${CMAKE_INSTALL_DOCDIR}'" )
-message ( STATUS "CMake install etc dir           = '${CMAKE_INSTALL_ETCDIR}'" )
+message ( STATUS "${PROJECT_NAME}: CMake install binary dir        = '${CMAKE_INSTALL_BINDIR}'" )
+message ( STATUS "${PROJECT_NAME}: CMake install library dir       = '${CMAKE_INSTALL_LIBDIR}'" )
+message ( STATUS "${PROJECT_NAME}: CMake install include dir       = '${CMAKE_INSTALL_INCLUDEDIR}'" )
+message ( STATUS "${PROJECT_NAME}: CMake install data root dir     = '${CMAKE_INSTALL_DATAROOTDIR}'" )
+message ( STATUS "${PROJECT_NAME}: CMake install data dir          = '${CMAKE_INSTALL_DATADIR}'" )
+message ( STATUS "${PROJECT_NAME}: CMake install manpages dir      = '${CMAKE_INSTALL_MANDIR}'" )
+message ( STATUS "${PROJECT_NAME}: CMake install documentation dir = '${CMAKE_INSTALL_DOCDIR}'" )
+message ( STATUS "${PROJECT_NAME}: CMake install etc dir           = '${CMAKE_INSTALL_ETCDIR}'" )
 
 # end of InstallDirs.cmake

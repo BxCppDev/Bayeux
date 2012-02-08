@@ -28,11 +28,11 @@ set ( Bayeux_PATCH_VERSION 0 ) # to extract the version number
 set ( Bayeux_VERSION_STR "${Bayeux_VERSION_MAJOR}.${Bayeux_VERSION_MINOR}.${Bayeux_PATCH_VERSION}" )
 math ( EXPR Bayeux_VERSION_NUMERIC "${Bayeux_VERSION_MAJOR}*100000+${Bayeux_VERSION_MINOR}*100+${Bayeux_PATCH_VERSION}" )
 
-message(STATUS "Version major number : ${Bayeux_VERSION_MAJOR}")
-message(STATUS "Version minor number : ${Bayeux_VERSION_MINOR}")
-message(STATUS "Version patch number : ${Bayeux_PATCH_VERSION}")
-message(STATUS "Version              : \"${Bayeux_VERSION_STR}\"")
-message(STATUS "Version (numeric)    : ${Bayeux_VERSION_NUMERIC}")
+message(STATUS "${PROJECT_NAME}: Version major number : ${Bayeux_VERSION_MAJOR}")
+message(STATUS "${PROJECT_NAME}: Version minor number : ${Bayeux_VERSION_MINOR}")
+message(STATUS "${PROJECT_NAME}: Version patch number : ${Bayeux_PATCH_VERSION}")
+message(STATUS "${PROJECT_NAME}: Version              : \"${Bayeux_VERSION_STR}\"")
+message(STATUS "${PROJECT_NAME}: Version (numeric)    : ${Bayeux_VERSION_NUMERIC}")
 
 # Set the default build type to release
 if ( NOT CMAKE_BUILD_TYPE )
