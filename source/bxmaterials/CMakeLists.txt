@@ -337,10 +337,10 @@ install ( FILES README.txt COPYING.txt LICENSE.GPL3.txt
          )
 
 # ----------------------------------------------------------------------------
-# - Add resources data.
+# - Add resources.
 #
 
-install ( DIRECTORY ${PROJECT_SOURCE_DIR}/resources/data
+install ( DIRECTORY ${PROJECT_SOURCE_DIR}/resources
           DESTINATION ${CMAKE_INSTALL_DATADIR}
           FILE_PERMISSIONS OWNER_READ 
                            GROUP_READ 

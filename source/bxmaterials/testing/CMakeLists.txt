@@ -67,7 +67,7 @@ if ( MATERIALS_ALL_TESTS )
     add_test ( NAME ${test_executable}.run
                COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
                        --tmp-dir ${_test_tmp_dir}
-                       --data-dir ${PROJECT_SOURCE_DIR}/resources 
+                       --data-dir ${PROJECT_SOURCE_DIR} 
                        --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
 	               run
              )	 	

@@ -134,7 +134,7 @@ namespace mat {
     else
       {
         tape_name.assign(getenv("MATERIALS_DATA_DIR"));
-        tape_name += "/data/mass.mas03";
+        tape_name += "/resources/data/mass.mas03";
       }
 
     ifstream ifstr_tape;
@@ -236,7 +236,7 @@ namespace mat {
     else
       {
         tape_name.assign(getenv ("MATERIALS_DATA_DIR"));
-        tape_name += "/data/";
+        tape_name += "/resources/data/";
         tape_name += input_file_name_;
       }
 
@@ -487,7 +487,7 @@ namespace mat {
     else
       {
         tape_name.assign(getenv("MATERIALS_DATA_DIR"));
-        tape_name +="/data/";
+        tape_name +="/resources/data/";
         tape_name +=input_file_name_;
       }
     ifstream ifstr_tape;

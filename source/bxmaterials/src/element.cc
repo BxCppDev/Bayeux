@@ -351,7 +351,7 @@ namespace mat {
     else
       {
         tape_name.assign (getenv ("MATERIALS_DATA_DIR"));
-        tape_name += "/data/isotopic_compositions_nist.dat";
+        tape_name += "/resources/data/isotopic_compositions_nist.dat";
       }
 
     ifstream ifstr_tape;
