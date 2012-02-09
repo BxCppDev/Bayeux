@@ -864,12 +864,13 @@ function do_doc ()
     fi
 
     cd ${the_build_dir}
-    make doc
-    if [ $? -ne 0 ]; then
-	pkgtools__msg_error "Cannot build the documentation in '${package_name}' package !"
-	__pkgtools__at_function_exit
-	return 1
-    fi
+    pkgtools__msg_warning "Not implemented yet !"
+    # make doc
+    # if [ $? -ne 0 ]; then
+    # 	pkgtools__msg_error "Cannot build the documentation in '${package_name}' package !"
+    # 	__pkgtools__at_function_exit
+    # 	return 1
+    # fi
     cd ${the_base_dir}
 
     __pkgtools__at_function_exit
@@ -887,12 +888,13 @@ function do_test ()
     fi
 
     cd ${the_build_dir}
-    make test
-    if [ $? -ne 0 ]; then
-	pkgtools__msg_error "Cannot run the test material in '${package_name}' package !"
-	__pkgtools__at_function_exit
-	return 1
-    fi
+    pkgtools__msg_warning "Not implemented yet !"
+    # make test
+    # if [ $? -ne 0 ]; then
+    # 	pkgtools__msg_error "Cannot run the test material in '${package_name}' package !"
+    # 	__pkgtools__at_function_exit
+    # 	return 1
+    # fi
     cd ${the_base_dir}
 
     __pkgtools__at_function_exit
