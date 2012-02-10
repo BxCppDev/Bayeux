@@ -56,7 +56,7 @@ set(brio_INCLUDE_DIRS
 #include ( @datatools_CONFIG@ )
 
 set ( datatools_DIR "${datatools_DIR}" )
-find_package ( datatols )
+find_package ( datatools )
 
 set(_brio_root_INCLUDE_DIRS @ROOT_INCLUDE_DIR@)
 set(_brio_datatools_INCLUDE_DIRS @datatools_INCLUDE_DIRS@)
