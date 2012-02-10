@@ -354,22 +354,22 @@ if ( UNIX OR APPLE )
 
     install ( FILES ${PROJECT_BINARY_DIR}/cmake/geomtools-config
               DESTINATION ${CMAKE_INSTALL_BINDIR}
-              PERMISSIONS OWNER_READ OWNER_EXECUTE 
-                          GROUP_READ GROUP_EXECUTE 
+              PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE 
+                          GROUP_READ GROUP_WRITE GROUP_EXECUTE 
                           WORLD_READ WORLD_EXECUTE
              )
 
     install ( FILES ${PROJECT_SOURCE_DIR}/cmake/Tools/mkuniqueflags.py
               DESTINATION ${CMAKE_INSTALL_DATADIR}/pkgtools
-              PERMISSIONS OWNER_READ OWNER_EXECUTE 
-	                  GROUP_READ GROUP_EXECUTE 
+              PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE 
+	                  GROUP_READ GROUP_WRITE GROUP_EXECUTE 
                           WORLD_READ WORLD_EXECUTE
             )
 
     install ( FILES ${PROJECT_SOURCE_DIR}/cmake/Tools/libpkgtools.sh
               DESTINATION ${CMAKE_INSTALL_DATADIR}/pkgtools/
               PERMISSIONS OWNER_READ OWNER_WRITE 
-                          GROUP_READ
+                          GROUP_READ GROUP_WRITE
                           WORLD_READ
              )
 
@@ -419,12 +419,13 @@ endif ()
 install ( DIRECTORY ${PROJECT_SOURCE_DIR}/resources/gdml_schema
           DESTINATION ${CMAKE_INSTALL_DATADIR}/resources
           FILE_PERMISSIONS OWNER_READ OWNER_WRITE
-                           GROUP_READ
+                           GROUP_READ GROUP_WRITE
                            WORLD_READ
           DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE 
-                                GROUP_READ GROUP_EXECUTE 
+                                GROUP_READ GROUP_WRITE  GROUP_EXECUTE 
                                 WORLD_READ WORLD_EXECUTE
-          PATTERN .svn EXCLUDE
+          PATTERN ".svn" EXCLUDE
+          PATTERN "*~" EXCLUDE
          )
 
 # 
