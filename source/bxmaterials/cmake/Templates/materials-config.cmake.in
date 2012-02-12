@@ -1,7 +1,9 @@
 # - Config file for the materials package
 # It defines the following variables
-#  materials_INCLUDE_DIRS - include directories for materials
-#  materials_LIBRARIES    - libraries to link against
+#  materials_INCLUDE_DIRS - include directories for materials (with dependencies)
+#  materials_ONLY_INCLUDE_DIRS - include directories for materials (without dependencies)
+#  materials_LIBRARIES    - libraries to link against (with dependencies)
+#  materials_ONLY_LIBRARIES    - libraries to link against (without dependencies)
 #  materials_WITH_DEBUG   - flag for debug mode
 # If Boost/Serialization I/O system is supported :
 #  materials_WITH_BIO     - flag for Boost/Serialization I/O DLL (a.k.a. 'bio')
@@ -43,24 +45,22 @@ include("${_thisdir}/materials-libraries.cmake")
 # We have to set the headers because materials exports the headers in
 # its public interface.
 
-#----------------------------------------------------------------------------
-# Set path to materials includes
-#
-set(materials_INCLUDE_DIR @materials_INCLUDE_DIR@)
-set(materials_INCLUDE_DIRS
-  ${materials_INCLUDE_DIR}
-  )
-
-set ( geomtools_DIR "@geomtools_DIR@" )
+###set ( geomtools_DIR @geomtools_DIR@ )
 find_package ( geomtools REQUIRED NO_MODULE )
 if (NOT DEFINED geomtools_VERSION)
   message ( FATAL_ERROR "Cannot find 'geomtools' dependency !")
 else ()
   message ( STATUS "Found 'geomtools' dependency version ${geomtools_VERSION} !")
 endif ()
-set(_materials_geomtools_INCLUDE_DIRS @geomtools_INCLUDE_DIRS@)
+
+#----------------------------------------------------------------------------
+# Set path to materials includes
+#
+
+set(materials_ONLY_INCLUDE_DIRS @materials_INCLUDE_DIR@)
+set(_materials_geomtools_INCLUDE_DIRS ${geomtools_INCLUDE_DIRS})
 set (materials_INCLUDE_DIRS 
-     ${materials_INCLUDE_DIRS}
+     ${materials_ONLY_INCLUDE_DIRS}
      ${_materials_geomtools_INCLUDE_DIRS}
     )
 unset(_materials_geomtools_INCLUDE_DIRS)
@@ -97,11 +97,11 @@ if ( @MATERIALS_WITH_PYTHON_WRAPPER_SUPPORT@ )
   endif()
 endif ()
 
-set(materials_LIBRARIES ${materials_BIO_LIBRARY} ${materials_LIBRARY} )
+set(materials_ONLY_LIBRARIES ${materials_BIO_LIBRARY} ${materials_LIBRARY} )
 
-set(_materials_geomtools_LIBRARIES @geomtools_LIBRARIES@)
+set(_materials_geomtools_LIBRARIES ${geomtools_LIBRARIES})
 set(materials_LIBRARIES 
-     ${materials_LIBRARIES}
+     ${materials_ONLY_LIBRARIES}
      ${_materials_geomtools_LIBRARIES}
    )
 unset(_materials_geomtools_LIBRARIES)
