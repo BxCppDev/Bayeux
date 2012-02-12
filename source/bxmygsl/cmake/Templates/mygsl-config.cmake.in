@@ -1,8 +1,8 @@
 # - Config file for the mygsl package
 # It defines the following variables
-#  mygsl_INCLUDE_DIRS - include directories for mygsl
+#  mygsl_INCLUDE_DIRS - include directories for mygsl (with dependencies)
 #  mygsl_ONLY_INCLUDE_DIRS - include directories for mygsl (without dependencies)
-#  mygsl_LIBRARIES    - libraries to link against
+#  mygsl_LIBRARIES    - libraries to link against (with dependencies)
 #  mygsl_ONLY_LIBRARIES    - libraries to link against (without dependencies)
 #  mygsl_WITH_DEBUG   - flag for debug mode
 # If Boost/Serialization I/O system is supported :
@@ -46,23 +46,33 @@ if ( NOT DEFINED mygsl_CONFIG_COUNTER )
   # Set variables pointing to used third party headers and locations.
   # We have to set the headers because mygsl exports the headers in
   # its public interface.
+ 
+  # - GSL :
+  find_package ( GSL @GSL_MIN_VERSION@ REQUIRED )
+  if ( NOT GSL_FOUND )
+    message ( FATAL_ERROR "mygsl-config.cmake: Cannot find GSL >= @GSL_MIN_VERSION@ library !" )
+  endif ()
+  message ( STATUS "mygsl-config.cmake: Found GSL >= @GSL_MIN_VERSION@" )
+  message ( STATUS "mygsl-config.cmake: GSL_INCLUDE_DIRS      : '${GSL_INCLUDE_DIRS}'" )
+  message ( STATUS "mygsl-config.cmake: GSL_LIBRARIES         : '${GSL_LIBRARIES}'" )
+  message ( STATUS "mygsl-config.cmake: GSL_CONFIG_EXECUTABLE : '${GSL_CONFIG_EXECUTABLE}'" )
+
+  # Explicitely find the datatools package that was used to build mygsl :
+  set ( datatools_DIR @datatools_DIR@ )
+  find_package ( datatools @_datatools_min_version@ REQUIRED NO_MODULE )
+  if (NOT DEFINED datatools_VERSION)
+    message ( FATAL_ERROR "Cannot find datatools >= @_datatools_min_version@ !")
+  else ()
+    message ( STATUS "Found datatools dependency version ${datatools_VERSION} !")
+  endif ()
 
   #----------------------------------------------------------------------------
   # Set path to mygsl includes
   #
   set(mygsl_ONLY_INCLUDE_DIRS @mygsl_INCLUDE_DIR@)
 
-  # Trick to explicitely import the datatools exports (is it the right way to cascade import ?) :
-  #message ( STATUS "DEVEL: mygsl-config.cmake: Including datatools_CONFIG='@datatools_CONFIG@'" )
-  #include ( @datatools_CONFIG@ )
-  #message ( STATUS "DEVEL: mygsl-config.cmake: datatools_VERSION='@datatools_VERSION@'" )
-  #message ( STATUS "DEVEL: mygsl-config.cmake: datatools_INCLUDE_DIRS='@datatools_INCLUDE_DIRS@'" )
-
-  set ( datatools_DIR "${datatools_DIR}" )
-  find_package ( datatools )
-
-  set(_mygsl_datatools_INCLUDE_DIRS @datatools_INCLUDE_DIRS@)
-  set(_mygsl_gsl_INCLUDE_DIRS       @GSL_INCLUDE_DIRS@)
+  set(_mygsl_datatools_INCLUDE_DIRS ${datatools_INCLUDE_DIRS} )
+  set(_mygsl_gsl_INCLUDE_DIRS       ${GSL_INCLUDE_DIRS} )
   set(mygsl_INCLUDE_DIRS 
     ${mygsl_ONLY_INCLUDE_DIRS}
     ${_mygsl_datatools_INCLUDE_DIRS}
@@ -106,8 +116,8 @@ if ( NOT DEFINED mygsl_CONFIG_COUNTER )
     ${mygsl_LIBRARY} 
     )
 
-  set(_mygsl_datatools_LIBRARIES @datatools_LIBRARIES@)
-  set(_mygsl_gsl_LIBRARIES @GSL_LIBRARIES@)
+  set(_mygsl_datatools_LIBRARIES ${datatools_LIBRARIES} )
+  set(_mygsl_gsl_LIBRARIES       ${GSL_LIBRARIES}       )
   set(mygsl_LIBRARIES 
     ${mygsl_ONLY_LIBRARIES}
     ${_mygsl_datatools_LIBRARIES}
@@ -122,8 +132,10 @@ if ( NOT DEFINED mygsl_CONFIG_COUNTER )
   # if ( @MYGSL_WITH_PYTHON_WRAPPER_SUPPORT@ )
   #   message ( STATUS "DEVEL: mygsl-config.cmake: mygsl_WITH_PYTHON_WRAPPER=${mygsl_WITH_PYTHON_WRAPPER}" )
   # endif()
-  message ( STATUS "DEVEL: mygsl-config.cmake: mygsl_INCLUDE_DIRS=${mygsl_INCLUDE_DIRS}" )
-  message ( STATUS "DEVEL: mygsl-config.cmake: mygsl_LIBRARIES=${mygsl_LIBRARIES}" )
+  message ( STATUS "DEVEL: mygsl-config.cmake: mygsl_INCLUDE_DIRS='${mygsl_INCLUDE_DIRS}'" )
+  message ( STATUS "DEVEL: mygsl-config.cmake: mygsl_ONLY_INCLUDE_DIRS='${mygsl_ONLY_INCLUDE_DIRS}'" )
+  message ( STATUS "DEVEL: mygsl-config.cmake: mygsl_LIBRARIES='${mygsl_LIBRARIES}'" )
+  message ( STATUS "DEVEL: mygsl-config.cmake: mygsl_ONLY_LIBRARIES='${mygsl_ONLY_LIBRARIES}'" )
 
 
 else ( NOT DEFINED mygsl_CONFIG_COUNTER )
