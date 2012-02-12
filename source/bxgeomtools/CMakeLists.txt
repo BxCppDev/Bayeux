@@ -10,14 +10,14 @@
 # Should be the first action in the CMakeLists.txt
 #
 if ( ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR} )
-  message ( STATUS "geomtools requires an out-of-source build." )
-  message ( STATUS "Please remove these files from ${CMAKE_BINARY_DIR} first:" )
-  message ( STATUS "  CMakeCache.txt" )
-  message ( STATUS "  CMakeFiles" )
-  message ( STATUS "Once these files are removed, create a separate directory" )
-  message ( STATUS "and run CMake from there, pointing it to:" )
-  message ( STATUS "  ${CMAKE_SOURCE_DIR}" )
-  message ( FATAL_ERROR "in-source build detected" )
+  message ( STATUS "${PROJECT_NAME} : geomtools requires an out-of-source build." )
+  message ( STATUS "${PROJECT_NAME} : Please remove these files from ${CMAKE_BINARY_DIR} first:" )
+  message ( STATUS "${PROJECT_NAME} :   CMakeCache.txt" )
+  message ( STATUS "${PROJECT_NAME} :   CMakeFiles" )
+  message ( STATUS "${PROJECT_NAME} : Once these files are removed, create a separate directory" )
+  message ( STATUS "${PROJECT_NAME} : and run CMake from there, pointing it to:" )
+  message ( STATUS "${PROJECT_NAME} :   ${CMAKE_SOURCE_DIR}" )
+  message ( FATAL_ERROR "${PROJECT_NAME} : in-source build detected" )
 endif ()
 
 # ----------------------------------------------------------------------------
@@ -27,7 +27,7 @@ cmake_minimum_required ( VERSION 2.8 FATAL_ERROR )
 project ( geomtools )
 
 set ( geomtools_PACKAGE_NAME ${CMAKE_PROJECT_NAME} CACHE STRING "The name of the package" FORCE )
-message ( STATUS "Package name         : '${geomtools_PACKAGE_NAME}'" )
+message ( STATUS "${PROJECT_NAME} : Package name         : '${geomtools_PACKAGE_NAME}'" )
 
 #----------------------------------------------------------------------------
 # Prepend this project's custom module path(s) to CMAKE_MODULE_PATH
@@ -46,14 +46,14 @@ set(CMAKE_MODULE_PATH
 )
 
 if (DEFINED ADDITIONAL_CMAKE_MODULE_PATH AND NOT "x${ADDITIONAL_CMAKE_MODULE_PATH}" STREQUAL "x" )
-  message ( STATUS "geomtools: Using additional CMAKE_MODULE_PATH : '${ADDITIONAL_CMAKE_MODULE_PATH}'" )
+  message ( STATUS "${PROJECT_NAME} : geomtools: Using additional CMAKE_MODULE_PATH : '${ADDITIONAL_CMAKE_MODULE_PATH}'" )
   set(CMAKE_MODULE_PATH
       ${ADDITIONAL_CMAKE_MODULE_PATH}
       ${CMAKE_MODULE_PATH}
   )
 endif ()
 
-message ( STATUS "geomtools: CMAKE_MODULE_PATH         : '${CMAKE_MODULE_PATH}'" )
+message ( STATUS "${PROJECT_NAME} : geomtools: CMAKE_MODULE_PATH         : '${CMAKE_MODULE_PATH}'" )
 
 
 	
@@ -97,26 +97,26 @@ option ( GEOMTOOLS_WITH_CMAKE_FIND_MODULE
 #
 
 if ( DEFINED mygsl_DIR )
-  message ( STATUS "mygsl_DIR is : '${mygsl_DIR}' " )
+  message ( STATUS "${PROJECT_NAME} : mygsl_DIR is : '${mygsl_DIR}' " )
 else ()
   if ( NOT "$ENV{MYGSL_CMAKE_CONFIG_DIR}" STREQUAL "" )
-    message ( STATUS "Environment MYGSL_CMAKE_CONFIG_DIR exists : '$ENV{MYGSL_CMAKE_CONFIG_DIR}' " )
+    message ( STATUS "${PROJECT_NAME} : Environment MYGSL_CMAKE_CONFIG_DIR exists : '$ENV{MYGSL_CMAKE_CONFIG_DIR}' " )
     set ( mygsl_DIR "$ENV{MYGSL_CMAKE_CONFIG_DIR}" )
   endif ()
 endif ()
 set ( _mygsl_min_version 3.0 )
 find_package ( mygsl ${_mygsl_min_version} REQUIRED NO_MODULE )
 if ( DEFINED mygsl_CONFIG )
-     message ( STATUS "Found mygsl >= ${_mygsl_min_version}" )
-     message ( STATUS "  mygsl_CONFIG              : ${mygsl_CONFIG}" )
-     message ( STATUS "  mygsl_VERSION             : ${mygsl_VERSION}" )
-     message ( STATUS "  mygsl_LIBRARIES           : ${mygsl_LIBRARIES}" )
-     message ( STATUS "  mygsl_INCLUDE_DIRS        : ${mygsl_INCLUDE_DIRS}" )
-     message ( STATUS "  mygsl_WITH_DEBUG          : ${mygsl_WITH_DEBUG}" )
-     #message ( STATUS "  mygsl_WITH_BIO            : ${mygsl_WITH_BIO}" )
-     #message ( STATUS "  mygsl_WITH_PYTHON_WRAPPER : ${mygsl_WITH_PYTHON_WRAPPER}" )
+     message ( STATUS "${PROJECT_NAME} : Found mygsl >= ${_mygsl_min_version}" )
+     message ( STATUS "${PROJECT_NAME} :   mygsl_CONFIG              : ${mygsl_CONFIG}" )
+     message ( STATUS "${PROJECT_NAME} :   mygsl_VERSION             : ${mygsl_VERSION}" )
+     message ( STATUS "${PROJECT_NAME} :   mygsl_LIBRARIES           : ${mygsl_LIBRARIES}" )
+     message ( STATUS "${PROJECT_NAME} :   mygsl_INCLUDE_DIRS        : ${mygsl_INCLUDE_DIRS}" )
+     message ( STATUS "${PROJECT_NAME} :   mygsl_WITH_DEBUG          : ${mygsl_WITH_DEBUG}" )
+     #message ( STATUS "${PROJECT_NAME} :   mygsl_WITH_BIO            : ${mygsl_WITH_BIO}" )
+     #message ( STATUS "${PROJECT_NAME} :   mygsl_WITH_PYTHON_WRAPPER : ${mygsl_WITH_PYTHON_WRAPPER}" )
 else ()
-     message ( FATAL_ERROR "Cannot find mygsl >= ${_mygsl_min_version} library !" )
+     message ( FATAL_ERROR "${PROJECT_NAME} : Cannot find mygsl >= ${_mygsl_min_version} library !" )
 endif ()
 
 # ---------------------------------------------------
@@ -125,9 +125,9 @@ endif ()
 
 find_package ( Gnuplot "4" REQUIRED)
 if ( NOT GNUPLOT_FOUND )
-   message ( FATAL_ERROR "Cannot find 'gnuplot' program !" )
+   message ( FATAL_ERROR "${PROJECT_NAME} : Cannot find 'gnuplot' program !" )
 else ()
-   message ( STATUS "Found the 'gnuplot' program : '${GNUPLOT_EXECUTABLE}'" )     
+   message ( STATUS "${PROJECT_NAME} : Found the 'gnuplot' program : '${GNUPLOT_EXECUTABLE}'" )     
 endif () 
 
 # ---------------------------------------------------
@@ -141,28 +141,17 @@ set ( _default_python_wrapper_activation 0 )
 
 if ( _depends_on_datatools )
   # - Depends on datatools:
-
-  ### if ( DEFINED datatools_DIR )
-  ###   message ( STATUS "datatools_DIR is : '${datatools_DIR}' " )
-  ### else ()
-  ###   if ( NOT "$ENV{DATATOOLS_CMAKE_CONFIG_DIR}" STREQUAL "" )
-  ###     message ( STATUS "Environment DATATOOLS_CMAKE_CONFIG_DIR exists : '$ENV{DATATOOLS_CMAKE_CONFIG_DIR}' " )
-  ###     set ( datatools_DIR "$ENV{DATATOOLS_CMAKE_CONFIG_DIR}" )
-  ###   endif ()
-  ### endif ()
-  ### set ( _datatools_min_version 4.0 )
-  ### find_package ( datatools ${_datatools_min_version} REQUIRED NO_MODULE )
   if ( DEFINED datatools_CONFIG )
-       message ( STATUS "Found datatools ") ### >= ${_datatools_min_version}" )
-       message ( STATUS "  datatools_CONFIG              : ${datatools_CONFIG}" )
-       message ( STATUS "  datatools_VERSION             : ${datatools_VERSION}" )
-       message ( STATUS "  datatools_LIBRARIES           : ${datatools_LIBRARIES}" )
-       message ( STATUS "  datatools_INCLUDE_DIRS        : ${datatools_INCLUDE_DIRS}" )
-       message ( STATUS "  datatools_WITH_DEBUG          : ${datatools_WITH_DEBUG}" )
-       message ( STATUS "  datatools_WITH_BIO            : ${datatools_WITH_BIO}" )
-       message ( STATUS "  datatools_WITH_PYTHON_WRAPPER : ${datatools_WITH_PYTHON_WRAPPER}" )
+       message ( STATUS "${PROJECT_NAME} : Found datatools ") ### >= ${_datatools_min_version}" )
+       message ( STATUS "${PROJECT_NAME} :   datatools_CONFIG              : ${datatools_CONFIG}" )
+       message ( STATUS "${PROJECT_NAME} :   datatools_VERSION             : ${datatools_VERSION}" )
+       message ( STATUS "${PROJECT_NAME} :   datatools_LIBRARIES           : ${datatools_LIBRARIES}" )
+       message ( STATUS "${PROJECT_NAME} :   datatools_INCLUDE_DIRS        : ${datatools_INCLUDE_DIRS}" )
+       message ( STATUS "${PROJECT_NAME} :   datatools_WITH_DEBUG          : ${datatools_WITH_DEBUG}" )
+       message ( STATUS "${PROJECT_NAME} :   datatools_WITH_BIO            : ${datatools_WITH_BIO}" )
+       message ( STATUS "${PROJECT_NAME} :   datatools_WITH_PYTHON_WRAPPER : ${datatools_WITH_PYTHON_WRAPPER}" )
   else ()
-       message ( FATAL_ERROR "Cannot find datatools >= ${_datatools_min_version} library !" )
+       message ( FATAL_ERROR "${PROJECT_NAME} : the mygsl library could not find datatools >= ${_datatools_min_version} !" )
   endif ()
   if ( GEOMTOOLS_WITH_BIO_SUPPORT )
     if ( datatools_WITH_BIO )
@@ -172,7 +161,7 @@ if ( _depends_on_datatools )
   if ( GEOMTOOLS_WITH_PYTHON_WRAPPER_SUPPORT )
     if ( datatools_WITH_PYTHON_WRAPPER )
       # XXXX
-      message ( FATAL_ERROR "No support for Python wrapper for now !" )
+      message ( FATAL_ERROR "${PROJECT_NAME} : No support for Python wrapper for now !" )
       set ( _default_python_wrapper_activation 1 )
     endif ()
   endif ()
@@ -228,16 +217,16 @@ option ( GEOMTOOLS_WITH_CMAKE_FIND_MODULE
 
 # ----------------------------------------------------------------------
 
-message ( STATUS "GEOMTOOLS_WITH_DEBUG           : " "${GEOMTOOLS_WITH_DEBUG}" )
-message ( STATUS "GEOMTOOLS_WITH_BIO             : " "${GEOMTOOLS_WITH_BIO}" )
-message ( STATUS "GEOMTOOLS_WITH_PYTHON_WRAPPER  : " "${GEOMTOOLS_WITH_PYTHON_WRAPPER}" )
+message ( STATUS "${PROJECT_NAME} : GEOMTOOLS_WITH_DEBUG           : " "${GEOMTOOLS_WITH_DEBUG}" )
+message ( STATUS "${PROJECT_NAME} : GEOMTOOLS_WITH_BIO             : " "${GEOMTOOLS_WITH_BIO}" )
+message ( STATUS "${PROJECT_NAME} : GEOMTOOLS_WITH_PYTHON_WRAPPER  : " "${GEOMTOOLS_WITH_PYTHON_WRAPPER}" )
 if ( UNIX OR APPLE )
-  message ( STATUS "GEOMTOOLS_WITH_CONFIG_SCRIPT   : " "${GEOMTOOLS_WITH_CONFIG_SCRIPT}" )
-  message ( STATUS "GEOMTOOLS_WITH_PKGCONFIG       : " "${GEOMTOOLS_WITH_PKGCONFIG}" )
+  message ( STATUS "${PROJECT_NAME} : GEOMTOOLS_WITH_CONFIG_SCRIPT   : " "${GEOMTOOLS_WITH_CONFIG_SCRIPT}" )
+  message ( STATUS "${PROJECT_NAME} : GEOMTOOLS_WITH_PKGCONFIG       : " "${GEOMTOOLS_WITH_PKGCONFIG}" )
 endif ()
-message ( STATUS "GEOMTOOLS_WITH_DOC             : " "${GEOMTOOLS_WITH_DOC}" )
-message ( STATUS "GEOMTOOLS_WITH_TEST            : " "${GEOMTOOLS_WITH_TEST}" )
-message ( STATUS "CMAKE_INSTALL_PREFIX : " "${CMAKE_INSTALL_PREFIX}" )
+message ( STATUS "${PROJECT_NAME} : GEOMTOOLS_WITH_DOC             : " "${GEOMTOOLS_WITH_DOC}" )
+message ( STATUS "${PROJECT_NAME} : GEOMTOOLS_WITH_TEST            : " "${GEOMTOOLS_WITH_TEST}" )
+message ( STATUS "${PROJECT_NAME} : CMAKE_INSTALL_PREFIX : " "${CMAKE_INSTALL_PREFIX}" )
 
 # ----------------------------------------------------------------------
 
@@ -250,7 +239,7 @@ endif ( CMAKE_SYSTEM_NAME MATCHES Darwin )
 # geomtools API
 #
 
-message ( STATUS "Add subdirectory : " "'src'" )
+message ( STATUS "${PROJECT_NAME} : Add subdirectory : " "'src'" )
 add_subdirectory ( src )   
 
 # ----------------------------------------------------------------------
@@ -273,9 +262,9 @@ if ( GEOMTOOLS_WITH_CMAKE_FIND_MODULE )
   set ( geomtools_cmake_find_module_install_dir ${CMAKE_INSTALL_DATADIR}/cmake/Modules ) 
   if ( DEFINED GEOMTOOLS_CMAKE_FIND_MODULE_INSTALL_DIR )
     set ( geomtools_cmake_find_module_install_dir ${GEOMTOOLS_CMAKE_FIND_MODULE_INSTALL_DIR} ) 
-    message ( STATUS "GEOMTOOLS_CMAKE_FIND_MODULE_INSTALL_DIR : " "${GEOMTOOLS_CMAKE_FIND_MODULE_INSTALL_DIR}" )
+    message ( STATUS "${PROJECT_NAME} : GEOMTOOLS_CMAKE_FIND_MODULE_INSTALL_DIR : " "${GEOMTOOLS_CMAKE_FIND_MODULE_INSTALL_DIR}" )
   endif ()
-  message ( STATUS "geomtools CMake find module install dir = '${geomtools_cmake_find_module_install_dir}'" )
+  message ( STATUS "${PROJECT_NAME} : geomtools CMake find module install dir = '${geomtools_cmake_find_module_install_dir}'" )
 endif ()
 
 # ----------------------------------------------------------------------------------
@@ -285,7 +274,7 @@ endif ()
 set ( _geomtools_GDML_SCHEMA_FULL_LOCAL_PATH 
       "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/resources/gdml_schema" 
     ) 
-message ( STATUS "GDML schema full local path = '${_geomtools_GDML_SCHEMA_FULL_LOCAL_PATH}' " )
+message ( STATUS "${PROJECT_NAME} : GDML schema full local path = '${_geomtools_GDML_SCHEMA_FULL_LOCAL_PATH}' " )
 
 # - C++ configuration header file :
 configure_file ( "${PROJECT_SOURCE_DIR}/cmake/Templates/geomtools_config.h.in"
@@ -392,23 +381,23 @@ if ( GEOMTOOLS_WITH_PYTHON_WRAPPER_SUPPORT AND GEOMTOOLS_WITH_PYTHON_WRAPPER )
 
   # We need to force the cache to disable Python if we didn't find any
   # of the needed components
-  message ( STATUS "Boost_PYTHON_LIBRARY = ${Boost_PYTHON_LIBRARY}" )
-  message ( STATUS "PYTHON_INCLUDE_DIRS  = ${PYTHON_INCLUDE_DIRS}" )
-  message ( STATUS "PYTHON_EXECUTABLE    = ${PYTHON_EXECUTABLE}" )
-  message ( STATUS "PYTHON_LIBRARIES     = ${PYTHON_LIBRARIES}" )
-  message ( STATUS "PYTHON_DEBUG_LIBRARIES = ${PYTHON_DEBUG_LIBRARIES}" )
+  message ( STATUS "${PROJECT_NAME} : Boost_PYTHON_LIBRARY = ${Boost_PYTHON_LIBRARY}" )
+  message ( STATUS "${PROJECT_NAME} : PYTHON_INCLUDE_DIRS  = ${PYTHON_INCLUDE_DIRS}" )
+  message ( STATUS "${PROJECT_NAME} : PYTHON_EXECUTABLE    = ${PYTHON_EXECUTABLE}" )
+  message ( STATUS "${PROJECT_NAME} : PYTHON_LIBRARIES     = ${PYTHON_LIBRARIES}" )
+  message ( STATUS "${PROJECT_NAME} : PYTHON_DEBUG_LIBRARIES = ${PYTHON_DEBUG_LIBRARIES}" )
 
   if (NOT Boost_PYTHON_LIBRARY OR NOT PYTHON_INCLUDE_DIRS OR NOT PYTHON_EXECUTABLE)
-     message ( STATUS "Missing Python stuff " )
+     message ( STATUS "${PROJECT_NAME} : Missing Python stuff " )
      set ( GEOMTOOLS_WITH_PYTHON_WRAPPER OFF CACHE BOOL "Enable Python wrapping of geomtools, requires Boost.Python" FORCE)
   endif ()
 endif () 
   
 #set ( CMAKE_INSTALL_PYTHONDIR "" )
-#message ( STATUS "CMAKE_INSTALL_PYTHONDIR = '${CMAKE_INSTALL_PYTHONDIR}' " )
+#message ( STATUS "${PROJECT_NAME} : CMAKE_INSTALL_PYTHONDIR = '${CMAKE_INSTALL_PYTHONDIR}' " )
 
 if ( GEOMTOOLS_WITH_PYTHON_WRAPPER )
-    message ( STATUS "Add subdirectory 'wrapping/python' " )
+    message ( STATUS "${PROJECT_NAME} : Add subdirectory 'wrapping/python' " )
     add_subdirectory ( wrapping/python )
 endif () 
 

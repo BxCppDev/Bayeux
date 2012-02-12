@@ -1,7 +1,9 @@
 # - Config file for the geomtools package
 # It defines the following variables
 #  geomtools_INCLUDE_DIRS - include directories for geomtools
+#  geomtools_ONLY_INCLUDE_DIRS - include directories for geomtools (without dependencies)
 #  geomtools_LIBRARIES    - libraries to link against
+#  geomtoolsONLY__LIBRARIES    - libraries to link against (without dependencies)
 #  geomtools_WITH_DEBUG   - flag for debug mode
 # If Boost/Serialization I/O system is supported :
 #  geomtools_WITH_BIO     - flag for Boost/Serialization I/O DLL (a.k.a. 'bio')
@@ -45,23 +47,15 @@ include("${_thisdir}/geomtools-libraries.cmake")
 # We have to set the headers because geomtools exports the headers in
 # its public interface.
 
-#----------------------------------------------------------------------------
-# Set path to geomtools includes
-#
-set(geomtools_INCLUDE_DIR @geomtools_INCLUDE_DIR@)
-set(geomtools_INCLUDE_DIRS
-  ${geomtools_INCLUDE_DIR}
-  )
-
 # ----------------------------------------------------------------------------
 # mygsl dependency :
 #
 set ( mygsl_DIR "${mygsl_DIR}" )
 find_package ( mygsl "3.0" NO_MODULE )
 if ( NOT DEFINED mygsl_CONFIG)
-   message ( FATAL_ERROR "Cannot find the 'mygsl' library !" )
+   message ( FATAL_ERROR "geomtools-config.cmake : Cannot find the 'mygsl' library !" )
 else ()
-   message ( STATUS "Found the 'mygsl' library version ${mygsl_VERSION} !" )
+   message ( STATUS "geomtools-config.cmake : Found the 'mygsl' library version ${mygsl_VERSION} !" )
 endif ()
 
 # ----------------------------------------------------------------------------
@@ -69,15 +63,18 @@ endif ()
 #
 find_package ( Gnuplot "4" REQUIRED)
 if ( NOT GNUPLOT_FOUND )
-   message ( FATAL_ERROR "Cannot find 'gnuplot' program !" )
+   message ( FATAL_ERROR "geomtools-config.cmake : Cannot find 'gnuplot' program !" )
 else ()
-   message ( STATUS "Found the 'gnuplot' program : '${GNUPLOT_EXECUTABLE}'" )   
+   message ( STATUS "geomtools-config.cmake : Found the 'gnuplot' program : '${GNUPLOT_EXECUTABLE}'" )   
 endif () 
 
-# ----------------------------------------------------------------------------
-set ( _geomtools_mygsl_INCLUDE_DIRS @mygsl_INCLUDE_DIRS@ )
+#----------------------------------------------------------------------------
+# Set path to geomtools includes
+#
+set(geomtools_ONLY_INCLUDE_DIRS @geomtools_INCLUDE_DIR@)
+set ( _geomtools_mygsl_INCLUDE_DIRS ${mygsl_INCLUDE_DIRS} )
 set ( geomtools_INCLUDE_DIRS 
-      ${geomtools_INCLUDE_DIRS}
+      ${geomtools_ONLY_INCLUDE_DIRS}
       ${_geomtools_mygsl_INCLUDE_DIRS}
      )
 unset ( _geomtools_mygsl_INCLUDE_DIRS )
@@ -114,11 +111,11 @@ if ( @GEOMTOOLS_WITH_PYTHON_WRAPPER_SUPPORT@ )
   endif()
 endif ()
 
-set ( geomtools_LIBRARIES ${geomtools_BIO_LIBRARY} ${geomtools_LIBRARY} )
+set ( geomtools_ONLY_LIBRARIES ${geomtools_BIO_LIBRARY} ${geomtools_LIBRARY} )
 
 set (_geomtools_mygsl_LIBRARIES @mygsl_LIBRARIES@ )
 set ( geomtools_LIBRARIES 
-      ${geomtools_LIBRARIES}
+      ${geomtools_ONLY_LIBRARIES}
       ${_geomtools_mygsl_LIBRARIES}
     )
 unset ( _geomtools_mygsl_LIBRARIES )
