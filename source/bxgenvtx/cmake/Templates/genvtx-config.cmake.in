@@ -50,7 +50,8 @@ set ( genvtx_CONFIG_COUNTER 1 )
 # ----------------------------------------------------------------------------
 # geomtools dependency :
 #
-set ( geomtools_DIR "${geomtools_DIR}" )
+
+###set ( geomtools_DIR @geomtools_DIR@ )
 find_package ( geomtools "3.0" NO_MODULE )
 if ( NOT DEFINED geomtools_CONFIG)
    message ( FATAL_ERROR "Cannot find the 'geomtools' library !" )
