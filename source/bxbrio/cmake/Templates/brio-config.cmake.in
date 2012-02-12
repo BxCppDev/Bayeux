@@ -2,6 +2,7 @@
 # It defines the following variables
 #  brio_INCLUDE_DIRS - include directories for brio
 #  brio_LIBRARIES    - libraries to link against
+#  brio_ONLY_LIBRARIES - package only libraries to link against
 #  brio_WITH_DEBUG   - flag for debug mode
 # If Boost/Serialization I/O system is supported :
 #  brio_WITH_BIO     - flag for Boost/Serialization I/O DLL (a.k.a. 'bio')
@@ -46,10 +47,7 @@ include("${_thisdir}/brio-libraries.cmake")
 #----------------------------------------------------------------------------
 # Set path to brio includes
 #
-set(brio_INCLUDE_DIR @brio_INCLUDE_DIR@)
-set(brio_INCLUDE_DIRS
-  ${brio_INCLUDE_DIR}
-  )
+set(brio_ONLY_INCLUDE_DIRS @brio_INCLUDE_DIR@)
 
 # Trick to explicitely import the datatools exports (is it the right way to cascade imports ?) :
 #message ( STATUS "DEVEL: brio-config.cmake: Including datatools_CONFIG='@datatools_CONFIG@'" )
@@ -58,11 +56,11 @@ set(brio_INCLUDE_DIRS
 set ( datatools_DIR "${datatools_DIR}" )
 find_package ( datatools )
 
-set(_brio_root_INCLUDE_DIRS @ROOT_INCLUDE_DIR@)
+set(_brio_root_INCLUDE_DIRS      @ROOT_INCLUDE_DIR@)
 set(_brio_datatools_INCLUDE_DIRS @datatools_INCLUDE_DIRS@)
 
 set (brio_INCLUDE_DIRS 
-     ${brio_INCLUDE_DIRS}
+     ${brio_ONLY_INCLUDE_DIRS}
      ${_brio_datatools_INCLUDE_DIRS}
      ${_brio_root_INCLUDE_DIRS}
     )
@@ -102,18 +100,24 @@ endif()
 #   endif()
 # endif ()
 
-set(brio_LIBRARIES ${brio_BIO_LIBRARY} ${brio_LIBRARY} )
+set(brio_ONLY_LIBRARIES ${brio_LIBRARY} )
 
 set(_brio_datatools_LIBRARIES @datatools_LIBRARIES@)
-set(_brio_root_LIBRARIES @ROOT_LIBRARIES@)
+set(_brio_root_LIBRARIES      @ROOT_LIBRARIES@)
 set(brio_LIBRARIES 
-     ${brio_LIBRARIES}
+     ${brio_ONLY_LIBRARIES}
      ${_brio_datatools_LIBRARIES}
      ${_brio_root_LIBRARIES}
    )
 
 unset(_brio_root_LIBRARIES)
 unset(_brio_datatools_LIBRARIES)
+
+message ( STATUS "DEVEL: brio-config.cmake: brio_VERSION=${brio_VERSION}" )
+message ( STATUS "DEVEL: brio-config.cmake: brio_INCLUDE_DIRS=${brio_INCLUDE_DIRS}" )
+message ( STATUS "DEVEL: brio-config.cmake: brio_ONLY_INCLUDE_DIRS=${brio_ONLY_INCLUDE_DIRS}" )
+message ( STATUS "DEVEL: brio-config.cmake: brio_LIBRARIES=${brio_LIBRARIES}" )
+message ( STATUS "DEVEL: brio-config.cmake: brio_ONLY_LIBRARIES=${brio_ONLY_LIBRARIES}" )
 
 else ( NOT DEFINED brio_CONFIG_COUNTER )
   message ( WARNING "Multiple inclusion of the 'brio-config.cmake' file !" )
