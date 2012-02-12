@@ -54,14 +54,27 @@ include("${_thisdir}/datatools-libraries.cmake")
 
 set (CMAKE_MODULE_PATH $ENV{CMAKE_MODULE_PATH} ${CMAKE_MODULE_PATH} )
 
+# - Python
+find_package ( PythonLibs @PYTHON_VERSION_STRING@ REQUIRED )
+if ( NOT PYTHONLIBS_FOUND )
+  message ( FATAL_ERROR "datatools-config.cmake: Cannot find Python library >= @_python_version@ library !" )
+endif ()
+message ( STATUS "datatools-config.cmake: Found PythonLibs >= @_python_version@" )
+message ( STATUS "datatools-config.cmake:  o PYTHON_INCLUDE_DIRS : '${PYTHON_INCLUDE_DIRS}'" )
+message ( STATUS "datatools-config.cmake:  o PYTHON_LIBRARIES    : '${PYTHON_LIBRARIES}'" )
+
+
+set(_datatools_PYTHON_INCLUDE_DIRS ${PYTHON_INCLUDE_DIRS} )
+set(_datatools_PYTHON_LIBRARIES    ${PYTHON_LIBRARIES}    )
+
 # - Boost
 find_package ( Boost @_boost_version@ REQUIRED COMPONENTS @_boost_requested_components@ )
 if ( NOT Boost_FOUND )
   message ( FATAL_ERROR "datatools-config.cmake: Cannot find Boost >= @_boost_version@ library !" )
 endif ()
 message ( STATUS "datatools-config.cmake: Found Boost >= @_boost_version@" )
-message ( STATUS "datatools-config.cmake: Boost_INCLUDE_DIRS : '${Boost_INCLUDE_DIRS}'" )
-message ( STATUS "datatools-config.cmake: Boost_LIBRARIES    : '${Boost_LIBRARIES}'" )
+message ( STATUS "datatools-config.cmake:  o Boost_INCLUDE_DIRS : '${Boost_INCLUDE_DIRS}'" )
+message ( STATUS "datatools-config.cmake:  o Boost_LIBRARIES    : '${Boost_LIBRARIES}'" )
 
 #set(_datatools_BOOST_INCLUDE_DIRS @Boost_INCLUDE_DIRS@)
 #set(_datatools_BOOST_LIBRARIES @Boost_LIBRARIES@)
@@ -76,9 +89,9 @@ if ( NOT CLHEP_FOUND )
   message ( FATAL_ERROR "datatools-config.cmake: Cannot find CLHEP >= @_clhep_version@ library !" )
 endif ()
 message ( STATUS "datatools-config.cmake: Found CLHEP >= @_clhep_version@" )
-message ( STATUS "datatools-config.cmake: CLHEP_INCLUDE_DIRS : '${CLHEP_INCLUDE_DIRS}'" )
-message ( STATUS "datatools-config.cmake: CLHEP_LIBRARIES    : '${CLHEP_LIBRARIES}'" )
-message ( STATUS "datatools-config.cmake: CLHEP_DEFINITIONS  : '${CLHEP_DEFINITIONS}'" )
+message ( STATUS "datatools-config.cmake:  o CLHEP_INCLUDE_DIRS : '${CLHEP_INCLUDE_DIRS}'" )
+message ( STATUS "datatools-config.cmake:  o CLHEP_LIBRARIES    : '${CLHEP_LIBRARIES}'" )
+###message ( STATUS "datatools-config.cmake:  o CLHEP_DEFINITIONS  : '${CLHEP_DEFINITIONS}'" )
 # set(_datatools_CLHEP_INCLUDE_DIRS @CLHEP_INCLUDE_DIRS@)
 # set(_datatools_CLHEP_LIBRARIES @CLHEP_LIBRARIES@)
 set(_datatools_CLHEP_INCLUDE_DIRS ${CLHEP_INCLUDE_DIRS})
@@ -94,6 +107,7 @@ set(datatools_INCLUDE_DIRS
   ${datatools_ONLY_INCLUDE_DIRS}
   ${_datatools_BOOST_INCLUDE_DIRS}
   ${_datatools_CLHEP_INCLUDE_DIRS}
+  ${_datatools_PYTHON_INCLUDE_DIRS}
   )
 
 #----------------------------------------------------------------------------
@@ -135,6 +149,7 @@ set(datatools_LIBRARIES
   ${datatools_ONLY_LIBRARIES} 
   ${_datatools_BOOST_LIBRARIES} 
   ${_datatools_CLHEP_LIBRARIES} 
+  ${_datatools_PYTHON_LIBRARIES} 
   )
 
 message ( STATUS "DEVEL: datatools-config.cmake: datatools_VERSION=${datatools_VERSION}" )
@@ -149,6 +164,8 @@ unset(_datatools_CLHEP_INCLUDE_DIRS)
 unset(_datatools_CLHEP_LIBRARIES)
 unset(_datatools_BOOST_INCLUDE_DIRS)
 unset(_datatools_BOOST_LIBRARIES)
+unset(_datatools_PYTHON_INCLUDE_DIRS)
+unset(_datatools_PYTHON_LIBRARIES)
 
 else ( NOT DEFINED datatools_CONFIG_COUNTER )
   message ( WARNING "Multiple inclusion of the 'datatools-config.cmake' file !" )

@@ -111,7 +111,31 @@ endif()
 # Find external packages needed to build
 #
 
-# - Depends on Boost:
+#--------------------------
+# - Depends on Python 2.7 :
+set ( _python_version 2.7 )
+
+find_package ( PythonInterp REQUIRED )
+set ( CMAKE_USE_PYTHON_VERSION "2.7" "2.6" )
+if ( PYTHONINTERP_FOUND )
+     message ( STATUS "datatools: Found Python interpreter >= ${_python_version}")
+     ###message ( STATUS "datatools:  o PYTHON_VERSION_MAJOR = ${PYTHON_VERSION_MAJOR}" )
+     message ( STATUS "datatools:  o PYTHON_EXECUTABLE     = ${PYTHON_EXECUTABLE}" )
+else ()
+     message ( FATAL_ERROR "datatools: Cannot find Python >= ${_python_version} interpreter !" )
+endif ()
+
+find_package ( PythonLibs ${_python_version} REQUIRED )
+if ( PYTHONLIBS_FOUND )
+     message ( STATUS "datatools: Found Python library >= ${_python_version}")
+     message ( STATUS "datatools:  o PYTHON_INCLUDE_DIRS = ${PYTHON_INCLUDE_DIRS}" )
+     message ( STATUS "datatools:  o PYTHON_LIBRARIES    = ${PYTHON_LIBRARIES}" )
+else ()
+     message ( FATAL_ERROR "datatools: Cannot find Python ${_python_version} library !" )
+endif ()
+
+#---------------------
+# - Depends on Boost :
 set ( _boost_version 1.47.0 )
 
 if ( NOT "$ENV{BOOST_ROOT}" STREQUAL "" )  
@@ -129,33 +153,32 @@ string ( REGEX REPLACE ".[0-9]+$" "" _boost_short_version "${_boost_version}" )
 message ( STATUS "datatools: Boost short version is : '${_boost_short_version}'" )
 set ( Boost_ADDITIONAL_VERSIONS "${_boost_short_version}" "${_boost_version}" )
 set ( Boost_NO_SYSTEM_PATHS ON )
-set ( _boost_requested_components filesystem serialization iostreams system program_options 
-      CACHE STRING "List of requested Boost components" FORCE )
+set ( _boost_requested_components filesystem serialization iostreams system program_options python )
 
-if ( DATATOOLS_WITH_PYTHON_WRAPPER )
-  set ( _boost_requested_components ${_boost_requested_components} python CACHE STRING "List of requested Boost components" FORCE )
-endif ()
+# if ( DATATOOLS_WITH_PYTHON_WRAPPER )
+#   set ( _boost_requested_components ${_boost_requested_components} python )
+# endif ()
 
 find_package ( Boost ${_boost_version} REQUIRED COMPONENTS ${_boost_requested_components} )
 if ( Boost_FOUND )
      message ( STATUS "datatools: Found Boost ${_boost_version}")
-     message ( STATUS "datatools:   Boost_VERSION          = ${Boost_VERSION}" )
-     message ( STATUS "datatools:   Boost_LIB_VERSION      = ${Boost_LIB_VERSION}" )
-     message ( STATUS "datatools:   Boost_INCLUDE_DIRS     = ${Boost_INCLUDE_DIRS}" )
-     message ( STATUS "datatools:   Boost_LIBRARIES        = ${Boost_LIBRARIES}" )
-     ###include_directories ( ${Boost_INCLUDE_DIRS} )
+     message ( STATUS "datatools:  o Boost_VERSION          = ${Boost_VERSION}" )
+     message ( STATUS "datatools:  o Boost_LIB_VERSION      = ${Boost_LIB_VERSION}" )
+     message ( STATUS "datatools:  o Boost_INCLUDE_DIRS     = ${Boost_INCLUDE_DIRS}" )
+     message ( STATUS "datatools:  o Boost_LIBRARIES        = ${Boost_LIBRARIES}" )
 else ()
      message ( FATAL_ERROR "datatools: Cannot find Boost ${_boost_version} library !" )
 endif ()
 
-# - Depends on CLHEP:
+#---------------------
+# - Depends on CLHEP :
 set ( _clhep_version 2.1.0.1 )
 find_package ( CLHEP ${_clhep_version} REQUIRED )
 if ( CLHEP_FOUND )
      message ( STATUS "datatools: Found CLHEP ${_clhep_version}" )
-     message ( STATUS "datatools: CLHEP_INCLUDE_DIRS : '${CLHEP_INCLUDE_DIRS}'" )
-     message ( STATUS "datatools: CLHEP_LIBRARIES    : '${CLHEP_LIBRARIES}'" )
-     message ( STATUS "datatools: CLHEP_DEFINITIONS  : '${CLHEP_DEFINITIONS}'" )
+     message ( STATUS "datatools:  o CLHEP_INCLUDE_DIRS : '${CLHEP_INCLUDE_DIRS}'" )
+     message ( STATUS "datatools:  o CLHEP_LIBRARIES    : '${CLHEP_LIBRARIES}'" )
+     message ( STATUS "datatools:  o CLHEP_DEFINITIONS  : '${CLHEP_DEFINITIONS}'" )
 else ()
      message ( FATAL_ERROR "datatools: Cannot find CLHEP ${_clhep_version} library !" )
 endif ()

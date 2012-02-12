@@ -18,22 +18,24 @@ set ( _datatools_min_version 4.0 )
 find_package ( datatools ${_datatools_min_version} REQUIRED NO_MODULE )
 if ( datatools_VERSION )
      message ( STATUS "Found datatools >= ${_datatools_min_version}" )
-     message ( STATUS "  datatools_CONFIG       : ${datatools_CONFIG}" )
-     message ( STATUS "  datatools_VERSION      : ${datatools_VERSION}" )
-     message ( STATUS "  datatools_INCLUDE_DIRS : ${datatools_INCLUDE_DIRS}" )
-     message ( STATUS "  datatools_LIBRARIES    : ${datatools_LIBRARIES}" )
+     message ( STATUS " o datatools_CONFIG       : ${datatools_CONFIG}" )
+     message ( STATUS " o datatools_VERSION      : ${datatools_VERSION}" )
+     message ( STATUS " o datatools_INCLUDE_DIRS : ${datatools_INCLUDE_DIRS}" )
+     message ( STATUS " o datatools_LIBRARIES    : ${datatools_LIBRARIES}" )
 else ()
      message ( FATAL_ERROR "Cannot find datatools >= ${_datatools_min_version} library !" )
 endif ()
 
-set ( test_datatools_src_files ${CMAKE_SOURCE_DIR}/../../test_datatools.cxx )
-
+include_directories ( ../.. )
 include_directories ( ${datatools_INCLUDE_DIRS} )
 
-add_executable ( test_datatools ${test_datatools_src_files} )
+add_executable ( test_datatools      ${CMAKE_SOURCE_DIR}/../../test_datatools.cxx )
+add_executable ( test_serializable_1 ${CMAKE_SOURCE_DIR}/../../test_serializable_1.cxx )
 
 target_link_libraries ( test_datatools ${datatools_LIBRARIES} )
+target_link_libraries ( test_serializable_1 ${datatools_LIBRARIES} )
 
 install ( TARGETS test_datatools DESTINATION bin )
+install ( TARGETS test_serializable_1 DESTINATION bin )
 
 # - end of top level CMakeLists.txt for test_datatools project.

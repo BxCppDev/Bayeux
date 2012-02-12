@@ -37,6 +37,13 @@ if [ $? -ne 0 ]; then
     my_exit 1
 fi
 
+echo "Execute the 'test_serializable_1' executable..." 1>&2
+${opwd}/__install/bin/test_serializable_1
+if [ $? -ne 0 ]; then
+    echo "Execute failed ! Abort !" 1>&2
+    my_exit 1
+fi
+
 my_exit 0
 
 # end

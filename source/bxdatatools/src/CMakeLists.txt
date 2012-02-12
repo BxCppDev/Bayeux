@@ -74,6 +74,7 @@ include_directories ( ${PROJECT_BINARY_DIR}/include
 		      ${PROJECT_SOURCE_DIR}/include	
                       ${CLHEP_INCLUDE_DIRS}
                       ${Boost_INCLUDE_DIRS}
+                      ${PYTHON_INCLUDE_DIRS}
                   )
 
 add_library ( datatools SHARED  
@@ -89,17 +90,19 @@ add_library ( datatools SHARED
 # Link dynamic library :
 target_link_libraries ( datatools
                         datatools_sys 
-                        # datatools_sys_c
                         ${CLHEP_LIBRARIES}
                         ${Boost_SERIALIZATION_LIBRARY}
                         ${Boost_IOSTREAMS_LIBRARY}
                         ${Boost_FILESYSTEM_LIBRARY}
                         ${Boost_SYSTEM_LIBRARY}
+                        ${Boost_PYTHON_LIBRARY}
+                        ${PYTHON_LIBRARIES}
                       )
+                      ### datatools_sys_c
 
 # Install library and associate it with an export :
 install ( TARGETS datatools
-          EXPORT datatools-libraries
+          EXPORT  datatools-libraries
           RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT bin
           LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT shlib  # bin?
           ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT devel
@@ -183,6 +186,8 @@ if ( DATATOOLS_WITH_BIO )
                            # ${Boost_IOSTREAMS_LIBRARY}
                            # ${Boost_FILESYSTEM_LIBRARY}
                            # ${Boost_SYSTEM_LIBRARY}
+                           # ${Boost_PYTHON_LIBRARY}
+                           # ${PYTHON_LIBRARIES}
                          )
  
    target_link_libraries ( datatools_bio LINK_INTERFACE_LIBRARIES "" )

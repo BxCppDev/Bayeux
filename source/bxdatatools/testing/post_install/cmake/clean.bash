@@ -14,6 +14,7 @@ if [ -d __build ]; then
 fi
 
 rm -f *~
+rm -f test_serializable_1.txt
 
 my_exit 0
 

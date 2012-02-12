@@ -61,6 +61,16 @@ function do_datatools_setup ()
 	fi
     fi
 
+    which python-config >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+	echo "ERROR: do_datatools_setup: Cannot find Python setup ! Abort !" 1>&2
+	return 1
+    else
+	if [ ${verbose} -ne 0 ]; then
+	    echo "VERBOSE: do_datatools_setup: Found Python." 1>&2
+	fi
+    fi
+
     which boost-config >/dev/null 2>&1
     if [ $? -ne 0 ]; then
 	echo "ERROR: do_datatools_setup: Cannot find Boost setup ! Abort !" 1>&2
