@@ -1,7 +1,9 @@
 # - Config file for the genvtx package
 # It defines the following variables
-#  genvtx_INCLUDE_DIRS - include directories for genvtx
-#  genvtx_LIBRARIES    - libraries to link against
+#  genvtx_INCLUDE_DIRS - include directories for genvtx (with dependencies)
+#  genvtx_ONLY_INCLUDE_DIRS - include directories for genvtx (without dependencies)
+#  genvtx_LIBRARIES    - libraries to link against (with dependencies)
+#  genvtx_ONLY_LIBRARIES    - libraries to link against (without dependencies)
 #  genvtx_WITH_DEBUG   - flag for debug mode
 # If Boost/Serialization I/O system is supported :
 #  genvtx_WITH_BIO     - flag for Boost/Serialization I/O DLL (a.k.a. 'bio')
@@ -45,14 +47,6 @@ include("${_thisdir}/genvtx-libraries.cmake")
 if ( NOT DEFINED genvtx_CONFIG_COUNTER )
 set ( genvtx_CONFIG_COUNTER 1 )
 
-#----------------------------------------------------------------------------
-# Set path to genvtx includes
-#
-set ( genvtx_INCLUDE_DIR @genvtx_INCLUDE_DIR@ )
-set ( genvtx_INCLUDE_DIRS
-      ${genvtx_INCLUDE_DIR}
-    )
-
 # ----------------------------------------------------------------------------
 # geomtools dependency :
 #
@@ -64,10 +58,14 @@ else ()
    message ( STATUS "Found the 'geomtools' library version ${geomtools_VERSION} !" )
 endif ()
 
-# ----------------------------------------------------------------------------
-set ( _genvtx_geomtools_INCLUDE_DIRS @geomtools_INCLUDE_DIRS@ )
+
+#----------------------------------------------------------------------------
+# Set path to genvtx includes
+#
+set ( genvtx_ONLY_INCLUDE_DIRS @genvtx_INCLUDE_DIR@ )
+set ( _genvtx_geomtools_INCLUDE_DIRS ${geomtools_INCLUDE_DIRS} )
 set ( genvtx_INCLUDE_DIRS 
-      ${genvtx_INCLUDE_DIRS}
+      ${genvtx_ONLY_INCLUDE_DIRS}
       ${_genvtx_geomtools_INCLUDE_DIRS}
      )
 unset ( _genvtx_geomtools_INCLUDE_DIRS )
@@ -85,30 +83,30 @@ else()
   set(genvtx_WITH_DEBUG 0)
 endif()
 
-if ( @GENVTX_WITH_BIO_SUPPORT@ )
- set(genvtx_WITH_BIO @GENVTX_WITH_BIO@)
- if(genvtx_WITH_BIO)
-   set(genvtx_WITH_BIO 1)
-   set(genvtx_BIO_LIBRARY genvtx_bio )
- else()
-   set(genvtx_WITH_BIO 0)
- endif()
-endif()
+# if ( @GENVTX_WITH_BIO_SUPPORT@ )
+#  set(genvtx_WITH_BIO @GENVTX_WITH_BIO@)
+#  if(genvtx_WITH_BIO)
+#    set(genvtx_WITH_BIO 1)
+#    set(genvtx_BIO_LIBRARY genvtx_bio )
+#  else()
+#    set(genvtx_WITH_BIO 0)
+#  endif()
+# endif()
 
-if ( @GENVTX_WITH_PYTHON_WRAPPER_SUPPORT@ )
-  set(genvtx_WITH_PYTHON_WRAPPER @GENVTX_WITH_PYTHON_WRAPPER@)
-  if(genvtx_WITH_PYTHON_WRAPPER)
-    set(genvtx_WITH_PYTHON_WRAPPER 1)
-  else()
-    set(genvtx_WITH_PYTHON_WRAPPER 0)
-  endif()
-endif ()
+# if ( @GENVTX_WITH_PYTHON_WRAPPER_SUPPORT@ )
+#   set(genvtx_WITH_PYTHON_WRAPPER @GENVTX_WITH_PYTHON_WRAPPER@)
+#   if(genvtx_WITH_PYTHON_WRAPPER)
+#     set(genvtx_WITH_PYTHON_WRAPPER 1)
+#   else()
+#     set(genvtx_WITH_PYTHON_WRAPPER 0)
+#   endif()
+# endif ()
 
-set(genvtx_LIBRARIES ${genvtx_BIO_LIBRARY} ${genvtx_LIBRARY} ${genvtx_SYS_LIBRARY} )
+set(genvtx_ONLY_LIBRARIES ${genvtx_LIBRARY} )
 
-set ( _genvtx_geomtools_LIBRARIES @geomtools_LIBRARIES@ )
+set ( _genvtx_geomtools_LIBRARIES ${geomtools_LIBRARIES} )
 set ( genvtx_LIBRARIES 
-      ${genvtx_LIBRARIES}
+      ${genvtx_ONLY_LIBRARIES}
       ${_genvtx_geomtools_LIBRARIES}
      )
 unset ( _genvtx_geomtools_LIBRARIES )
