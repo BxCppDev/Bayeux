@@ -42,51 +42,51 @@ int main (int a_argc, char ** a_argv)
 
       int iarg = 1;
       while (iarg < a_argc)
-	{
-	  string arg = a_argv[iarg];
-	  if (arg[0] == '-')
-	    {
-	      if (arg == "-d" || arg == "--debug") debug = true;
-	      if (arg == "-h" || arg == "--help") 
-		{
-		  usage (cout);
-		}
-	    }
-	  else 
-	    {
-	      if (iarg < (a_argc - 1))
-		{
-		  input_files.push_back (arg);
-		}
-	      else
-		{
-		  output_file = arg;
-		}
-	    }
-	  iarg++;
-	}
+        {
+          string arg = a_argv[iarg];
+          if (arg[0] == '-')
+            {
+              if (arg == "-d" || arg == "--debug") debug = true;
+              if (arg == "-h" || arg == "--help") 
+                {
+                  usage (cout);
+                }
+            }
+          else 
+            {
+              if (iarg < (a_argc - 1))
+                {
+                  input_files.push_back (arg);
+                }
+              else
+                {
+                  output_file = arg;
+                }
+            }
+          iarg++;
+        }
     
       if (input_files.size () < 1)
-	{
-	  throw logic_error ("Missing input GENBB files!");
-	}
+        {
+          throw logic_error ("Missing input GENBB files!");
+        }
 
       if (output_file.empty ())
-	{
-	  throw logic_error ("Missing output Boost files!");
-	}
+        {
+          throw logic_error ("Missing output Boost files!");
+        }
 
       genbb::genbb_mgr mgr;
       // genbb input data files:
       for (list<string>::const_iterator i = input_files.begin ();
-	   i != input_files.end ();
-	   i++)
-	{
-	  string infile = *i;
-	  datatools::utils::expand_path (infile);
-	  clog << datatools::utils::io::notice << "Input GENBB file = '" << infile << "'" << endl;
-	  mgr.set (infile);
-	}
+           i != input_files.end ();
+           i++)
+        {
+          string infile = *i;
+          datatools::utils::expand_path (infile);
+          clog << datatools::utils::io::notice << "Input GENBB file = '" << infile << "'" << endl;
+          mgr.set (infile);
+        }
       if (debug) mgr.dump ();
 
       datatools::utils::expand_path (output_file);
@@ -96,21 +96,21 @@ int main (int a_argc, char ** a_argv)
       mgr.init ();
       if (debug) mgr.dump ();
 
+      size_t count = 0;
       datatools::serialization::data_writer writer;
 
       writer.init (output_file, 
-		   datatools::serialization::using_multi_archives);
+                   datatools::serialization::using_multi_archives);
 
-      size_t count = 0;
-      // main loop on primary events source:
+       // main loop on primary events source:
       while (mgr.has_next ())
-	{
-	  // working primary event:
-	  genbb::primary_event pe;
-	  mgr.load_next (pe);
-	  writer.store (pe);
-	  count++;
-	}
+        {
+          // working primary event:
+          genbb::primary_event pe;
+          mgr.load_next (pe);
+          writer.store (pe);
+          count++;
+        }
       mgr.reset ();
 
       clog << datatools::utils::io::notice << "Number of loaded events: " << count << endl; 

@@ -115,6 +115,7 @@ add_library ( genbb_help SHARED
 target_link_libraries ( genbb_help
                         ${geomtools_LIBRARIES} 
 			genbb_help_f77
+			${mygsl_LIBRARIES}
                       )
 # ----------------------------------------------------------------------
 # Installation :
@@ -165,9 +166,8 @@ if ( GENBB_HELP_WITH_BIO )
    # Link dynamic library :
    target_link_libraries ( genbb_help_bio
                            genbb_help
-                           ${geomtools_LIBRARIES} 
 			   genbb_help_f77
-                           ${mygsl_LIBRARIES}
+                           ${geomtools_LIBRARIES} 
                          )
 
    target_link_libraries ( genbb_help_bio LINK_INTERFACE_LIBRARIES "" )
