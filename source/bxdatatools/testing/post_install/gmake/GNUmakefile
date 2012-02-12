@@ -19,7 +19,7 @@ clean :
 run : test_properties
 	echo "my" "favorite" "color" "is" "blue" | ./$< 
 
-test_properties : ../test_properties.cxx
+test_properties : ../../test_properties.cxx
 	$(CXX) $(CPPFLAGS) $< -o $@ $(LDFLAGS)
 
 # end

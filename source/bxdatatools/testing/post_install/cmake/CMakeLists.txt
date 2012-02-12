@@ -12,6 +12,8 @@ if ( ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR} )
   message ( FATAL_ERROR "in-source build detected" )
 endif ()
 
+set (CMAKE_MODULE_PATH $ENV{CMAKE_MODULE_PATH} ${CMAKE_MODULE_PATH} )
+
 set ( _datatools_min_version 4.0 )
 find_package ( datatools ${_datatools_min_version} REQUIRED NO_MODULE )
 if ( datatools_VERSION )
@@ -24,7 +26,7 @@ else ()
      message ( FATAL_ERROR "Cannot find datatools >= ${_datatools_min_version} library !" )
 endif ()
 
-set ( test_datatools_src_files ${CMAKE_SOURCE_DIR}/../test_datatools.cxx )
+set ( test_datatools_src_files ${CMAKE_SOURCE_DIR}/../../test_datatools.cxx )
 
 include_directories ( ${datatools_INCLUDE_DIRS} )
 

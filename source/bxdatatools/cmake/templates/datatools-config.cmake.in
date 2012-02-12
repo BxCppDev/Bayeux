@@ -52,6 +52,8 @@ include("${_thisdir}/datatools-libraries.cmake")
 #  find_package(Boost NO_DEFAULT_PATH)
 #
 
+set (CMAKE_MODULE_PATH $ENV{CMAKE_MODULE_PATH} ${CMAKE_MODULE_PATH} )
+
 # - Boost
 find_package ( Boost @_boost_version@ REQUIRED COMPONENTS @_boost_requested_components@ )
 if ( NOT Boost_FOUND )
