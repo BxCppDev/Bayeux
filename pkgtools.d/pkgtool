@@ -129,6 +129,7 @@ function print_usage ()
                                    set the CMake build directory 
                                    (otherwise a default build directory is used)
       --reset-build-directory    : always use a brand new CMake build directory
+      --force-install-lib-dir    : force the use of the 'lib' installation directory
        
       Components :
       --config [CONFIG]          : set the Channel configuration
@@ -413,6 +414,7 @@ function do_configure ()
     local ep_build_dir=""
     local download_dir=""
     local reset_build_dir=0
+    local force_install_lib_dir=0
     local requested_bayeux_config="" #"${bayeux_version}"
     local cadfael_dir=
     local user_config_file=""
@@ -449,6 +451,8 @@ function do_configure ()
 	elif [ "${option}" = "--install-prefix" ]; then
 	    shift 1
 	    install_prefix="$1"
+	elif [ "${option}" = "--force-install-lib-dir" ]; then
+	    force_install_lib_dir=1
 	elif [ "${option}" = "--release" ]; then
 	    shift 1
 	    build_type="Release"
@@ -718,6 +722,9 @@ function do_configure ()
 	if [ "x${cadfael_dir}" != "x" ]; then
 	    cmake_more_options="${cmake_more_options} -DCADFAEL_DIR:PATH=${cadfael_dir} "
 	fi
+	if [ ${force_install_lib_dir} -eq 1 ]; then
+	    cmake_more_options="${cmake_more_options} -DCMAKE_INSTALL_LIBDIR:PATH=lib "
+	fi
 	local svn_user_login=""
 	local svn_user_passwd=""
 
@@ -728,6 +735,7 @@ function do_configure ()
 	if [ "x${svn_user_passwd}" = "x" ]; then 
 	    svn_user_passwd="Ettore1936"
 	fi
+
 
 	pkgtools__msg_debug "cmake_more_options = '${cmake_more_options}'"
 
