@@ -25,99 +25,112 @@
 #----------------------------------------------------------------------------
 
 if ( NOT DEFINED brio_CONFIG_COUNTER )
-set ( brio_CONFIG_COUNTER 1 )
+  set ( brio_CONFIG_COUNTER 1 )
 
-#----------------------------------------------------------------------------
-# Locate ourselves, since all our config files should have been installed
-# alongside us...
-#
-get_filename_component(_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
+  #----------------------------------------------------------------------------
+  # Locate ourselves, since all our config files should have been installed
+  # alongside us...
+  #
+  get_filename_component(_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
-#----------------------------------------------------------------------------
-# Include the file listing all the imported targets to make them available
-# This is installed in the same location as us...
-#
-include("${_thisdir}/brio-libraries.cmake")
+  #----------------------------------------------------------------------------
+  # Include the file listing all the imported targets to make them available
+  # This is installed in the same location as us...
+  #
+  include("${_thisdir}/brio-libraries.cmake")
 
-#----------------------------------------------------------------------------
-# Set variables pointing to used third party headers and locations.
-# We have to set the headers because brio exports the headers in
-# its public interface.
+  #----------------------------------------------------------------------------
+  # Set variables pointing to used third party headers and locations.
+  # We have to set the headers because brio exports the headers in
+  # its public interface.
 
-#----------------------------------------------------------------------------
-# Set path to brio includes
-#
-set(brio_ONLY_INCLUDE_DIRS @brio_INCLUDE_DIR@)
+  # - ROOT
+  find_package ( ROOT @ROOT_MIN_VERSION@ REQUIRED )
+  if ( NOT ROOT_FOUND )
+    message ( FATAL_ERROR "brio-config.cmake: Cannot find ROOT >= @ROOT_MIN_VERSION@ library !" )
+  endif ()
+  message ( STATUS "brio-config.cmake: Found ROOT >= @ROOT_MIN_VERSION@" )
+  message ( STATUS "brio-config.cmake: ROOT_INCLUDE_DIRS : '${ROOT_INCLUDE_DIRS}'" )
+  message ( STATUS "brio-config.cmake: ROOT_LIBRARIES    : '${ROOT_LIBRARIES}'" )
+  ###message ( STATUS "brio-config.cmake: ROOT_DEFINITIONS  : '${ROOT_DEFINITIONS}'" )
 
-# Trick to explicitely import the datatools exports (is it the right way to cascade imports ?) :
-#message ( STATUS "DEVEL: brio-config.cmake: Including datatools_CONFIG='@datatools_CONFIG@'" )
-#include ( @datatools_CONFIG@ )
+  #----------------------------------------------------------------------------
+  # Set path to brio includes
+  #
+  set(brio_ONLY_INCLUDE_DIRS @brio_INCLUDE_DIR@)
 
-set ( datatools_DIR "${datatools_DIR}" )
-find_package ( datatools )
+  # Trick to explicitely import the datatools exports (is it the right way to cascade imports ?) :
+  #message ( STATUS "DEVEL: brio-config.cmake: Including datatools_CONFIG='@datatools_CONFIG@'" )
+  #include ( @datatools_CONFIG@ )
 
-set(_brio_root_INCLUDE_DIRS      @ROOT_INCLUDE_DIR@)
-set(_brio_datatools_INCLUDE_DIRS @datatools_INCLUDE_DIRS@)
+  # Explicitely find the datatools package that was used to build brio :
+  set ( datatools_DIR @datatools_DIR@ )
+  find_package ( datatools @_datatools_min_version@ REQUIRED NO_MODULE )
+  if (NOT DEFINED datatools_VERSION)
+    message ( FATAL_ERROR "Cannot find 'datatools' dependency !")
+  else ()
+    message ( STATUS "Found 'datatools' dependency version ${datatools_VERSION} !")
+  endif ()
 
-set (brio_INCLUDE_DIRS 
-     ${brio_ONLY_INCLUDE_DIRS}
-     ${_brio_datatools_INCLUDE_DIRS}
-     ${_brio_root_INCLUDE_DIRS}
+  set(_brio_root_INCLUDE_DIRS      ${ROOT_INCLUDE_DIR})
+  set(_brio_datatools_INCLUDE_DIRS ${datatools_INCLUDE_DIRS})
+  set (brio_INCLUDE_DIRS 
+    ${brio_ONLY_INCLUDE_DIRS}
+    ${_brio_datatools_INCLUDE_DIRS}
+    ${_brio_root_INCLUDE_DIRS}
     )
+  unset(_brio_root_INCLUDE_DIRS)
+  unset(_brio_datatools_INCLUDE_DIRS)
 
-unset(_brio_root_INCLUDE_DIRS)
-unset(_brio_datatools_INCLUDE_DIRS)
+  #----------------------------------------------------------------------------
+  # Set brio_LIBRARIES variable
+  set(brio_LIB_DIR @brio_LIB_DIR@)
+  set(brio_LIBRARY brio )
 
-#----------------------------------------------------------------------------
-# Set brio_LIBRARIES variable
-set(brio_LIB_DIR @brio_LIB_DIR@)
-# Basic : Assume that if brio_bio was built, it should be in Library list
-set(brio_LIBRARY brio )
+  set(brio_WITH_DEBUG @BRIO_WITH_DEBUG@)
+  if(brio_WITH_DEBUG)
+    set(brio_WITH_DEBUG 1)
+  else()
+    set(brio_WITH_DEBUG 0)
+  endif()
 
-set(brio_WITH_DEBUG @BRIO_WITH_DEBUG@)
-if(brio_WITH_DEBUG)
-  set(brio_WITH_DEBUG 1)
-else()
-  set(brio_WITH_DEBUG 0)
-endif()
+  # if ( @BRIO_WITH_BIO_SUPPORT@ )
+  #  set(brio_WITH_BIO @BRIO_WITH_BIO@)
+  #  if(brio_WITH_BIO)
+  #    set(brio_WITH_BIO 1)
+  #    set(brio_BIO_LIBRARY brio_bio )
+  #  else()
+  #    set(brio_WITH_BIO 0)
+  #  endif()
+  # endif()
 
-# if ( @BRIO_WITH_BIO_SUPPORT@ )
-#  set(brio_WITH_BIO @BRIO_WITH_BIO@)
-#  if(brio_WITH_BIO)
-#    set(brio_WITH_BIO 1)
-#    set(brio_BIO_LIBRARY brio_bio )
-#  else()
-#    set(brio_WITH_BIO 0)
-#  endif()
-# endif()
+  # if ( @BRIO_WITH_PYTHON_WRAPPER_SUPPORT@ )
+  #   set(brio_WITH_PYTHON_WRAPPER @BRIO_WITH_PYTHON_WRAPPER@)
+  #   if(brio_WITH_PYTHON_WRAPPER)
+  #     set(brio_WITH_PYTHON_WRAPPER 1)
+  #   else()
+  #     set(brio_WITH_PYTHON_WRAPPER 0)
+  #   endif()
+  # endif ()
 
-# if ( @BRIO_WITH_PYTHON_WRAPPER_SUPPORT@ )
-#   set(brio_WITH_PYTHON_WRAPPER @BRIO_WITH_PYTHON_WRAPPER@)
-#   if(brio_WITH_PYTHON_WRAPPER)
-#     set(brio_WITH_PYTHON_WRAPPER 1)
-#   else()
-#     set(brio_WITH_PYTHON_WRAPPER 0)
-#   endif()
-# endif ()
+  # Basic : Assume that if brio_bio was built, it should be in Library list
+  set(brio_ONLY_LIBRARIES ${brio_LIBRARY} )
 
-set(brio_ONLY_LIBRARIES ${brio_LIBRARY} )
+  set(_brio_datatools_LIBRARIES ${datatools_LIBRARIES})
+  set(_brio_root_LIBRARIES      ${ROOT_LIBRARIES})
+  set(brio_LIBRARIES 
+    ${brio_ONLY_LIBRARIES}
+    ${_brio_datatools_LIBRARIES}
+    ${_brio_root_LIBRARIES}
+    )
+  unset(_brio_root_LIBRARIES)
+  unset(_brio_datatools_LIBRARIES)
 
-set(_brio_datatools_LIBRARIES @datatools_LIBRARIES@)
-set(_brio_root_LIBRARIES      @ROOT_LIBRARIES@)
-set(brio_LIBRARIES 
-     ${brio_ONLY_LIBRARIES}
-     ${_brio_datatools_LIBRARIES}
-     ${_brio_root_LIBRARIES}
-   )
-
-unset(_brio_root_LIBRARIES)
-unset(_brio_datatools_LIBRARIES)
-
-message ( STATUS "DEVEL: brio-config.cmake: brio_VERSION=${brio_VERSION}" )
-message ( STATUS "DEVEL: brio-config.cmake: brio_INCLUDE_DIRS=${brio_INCLUDE_DIRS}" )
-message ( STATUS "DEVEL: brio-config.cmake: brio_ONLY_INCLUDE_DIRS=${brio_ONLY_INCLUDE_DIRS}" )
-message ( STATUS "DEVEL: brio-config.cmake: brio_LIBRARIES=${brio_LIBRARIES}" )
-message ( STATUS "DEVEL: brio-config.cmake: brio_ONLY_LIBRARIES=${brio_ONLY_LIBRARIES}" )
+  message ( STATUS "DEVEL: brio-config.cmake: brio_VERSION=${brio_VERSION}" )
+  message ( STATUS "DEVEL: brio-config.cmake: brio_INCLUDE_DIRS=${brio_INCLUDE_DIRS}" )
+  message ( STATUS "DEVEL: brio-config.cmake: brio_ONLY_INCLUDE_DIRS=${brio_ONLY_INCLUDE_DIRS}" )
+  message ( STATUS "DEVEL: brio-config.cmake: brio_LIBRARIES=${brio_LIBRARIES}" )
+  message ( STATUS "DEVEL: brio-config.cmake: brio_ONLY_LIBRARIES=${brio_ONLY_LIBRARIES}" )
 
 else ( NOT DEFINED brio_CONFIG_COUNTER )
   message ( WARNING "Multiple inclusion of the 'brio-config.cmake' file !" )

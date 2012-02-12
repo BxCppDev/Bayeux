@@ -37,24 +37,24 @@ message ( STATUS "Package name         : '${brio_PACKAGE_NAME}'" )
 # base path will be used, so watch for incompatibilities!!
 #
 file(TO_CMAKE_PATH "$ENV{CMAKE_MODULE_PATH}" __env_cmake_module_path)
-	
+
 set(CMAKE_MODULE_PATH
   ${PROJECT_SOURCE_DIR}/cmake
   ${PROJECT_SOURCE_DIR}/cmake/Modules
   ${__env_cmake_module_path}
   ${CMAKE_MODULE_PATH}
-)
+  )
 
 if (DEFINED ADDITIONAL_CMAKE_MODULE_PATH AND NOT "x${ADDITIONAL_CMAKE_MODULE_PATH}" STREQUAL "x" )
   message ( STATUS "brio: Using additional CMAKE_MODULE_PATH : '${ADDITIONAL_CMAKE_MODULE_PATH}'" )
   set(CMAKE_MODULE_PATH
-      ${ADDITIONAL_CMAKE_MODULE_PATH}
-      ${CMAKE_MODULE_PATH}
-  )
+    ${ADDITIONAL_CMAKE_MODULE_PATH}
+    ${CMAKE_MODULE_PATH}
+    )
 endif ()
 
 message ( STATUS "brio: CMAKE_MODULE_PATH         : '${CMAKE_MODULE_PATH}'" )
-	
+
 #----------------------------------------------------------------------------
 # Load any required modules
 #
@@ -73,24 +73,24 @@ include ( PackageFilename )
 #
 
 option ( BRIO_WITH_DEBUG
-         "Build the brio project using debugging code"
-         0 )
+  "Build the brio project using debugging code"
+  0 )
 
 option ( BRIO_WITH_DOC 
-         "Build the brio documentation" 
- 	 1 )
+  "Build the brio documentation" 
+  1 )
 
 option ( BRIO_WITH_TEST 
-         "Build the brio test material" 
- 	 1 )
+  "Build the brio test material" 
+  1 )
 
 set ( BRIO_WITH_BIO_SUPPORT 0 )
 
 set ( BRIO_WITH_PYTHON_WRAPPER_SUPPORT 0 )
 
 option ( BRIO_WITH_CMAKE_FIND_MODULE 
-         "Build the brio' CMake find module"
- 	 0 )
+  "Build the brio' CMake find module"
+  0 )
 # - Depends on Root:
 set ( _root_min_version 5.26.00 ) 
 set ( ROOT_MIN_VERSION ${_root_min_version} )
@@ -109,15 +109,15 @@ endif ()
 
 find_package ( ROOT ${ROOT_MIN_VERSION} )
 if ( ROOT_FOUND )
-     message ( STATUS "Found ROOT")
-     message ( STATUS "  ROOT_VERSION           = ${ROOTVERSION}" )
-     message ( STATUS "  ROOT_CONFIG_EXECUTABLE = ${ROOT_CONFIG_EXECUTABLE}" )
-     message ( STATUS "  ROOT_CINT_EXECUTABLE   = ${ROOT_CINT_EXECUTABLE}" )
-     message ( STATUS "  ROOT_INCLUDE_DIR       = ${ROOT_INCLUDE_DIR}" )
-     message ( STATUS "  ROOT_LIBRARIES         = ${ROOT_LIBRARIES}" )
-     include_directories ( ${ROOT_INCLUDE_DIR} )
+  message ( STATUS "Found ROOT")
+  message ( STATUS "  ROOT_VERSION           = ${ROOTVERSION}" )
+  message ( STATUS "  ROOT_CONFIG_EXECUTABLE = ${ROOT_CONFIG_EXECUTABLE}" )
+  message ( STATUS "  ROOT_CINT_EXECUTABLE   = ${ROOT_CINT_EXECUTABLE}" )
+  message ( STATUS "  ROOT_INCLUDE_DIR       = ${ROOT_INCLUDE_DIR}" )
+  message ( STATUS "  ROOT_LIBRARIES         = ${ROOT_LIBRARIES}" )
+  include_directories ( ${ROOT_INCLUDE_DIR} )
 else ()
-     message ( FATAL_ERROR "Cannot find ROOT >= ${ROOT_MIN_VERSION} library !" )
+  message ( FATAL_ERROR "Cannot find ROOT >= ${ROOT_MIN_VERSION} library !" )
 endif ()
 
 set ( _default_bio_activation 0 )
@@ -125,49 +125,49 @@ set ( _default_python_wrapper_activation 0 )
 
 # - Depends on datatools:
 if ( DEFINED datatools_DIR )
-    message ( STATUS "datatools_DIR is : '${datatools_DIR}' " )
+  message ( STATUS "datatools_DIR is : '${datatools_DIR}' " )
 else ()
-    if ( NOT "$ENV{DATATOOLS_CMAKE_CONFIG_DIR}" STREQUAL "" )
-      message ( STATUS "Environment DATATOOLS_CMAKE_CONFIG_DIR exists : '$ENV{DATATOOLS_CMAKE_CONFIG_DIR}' " )
-      set ( datatools_DIR "$ENV{DATATOOLS_CMAKE_CONFIG_DIR}" )
-    endif ()
+  if ( NOT "$ENV{DATATOOLS_CMAKE_CONFIG_DIR}" STREQUAL "" )
+    message ( STATUS "Environment DATATOOLS_CMAKE_CONFIG_DIR exists : '$ENV{DATATOOLS_CMAKE_CONFIG_DIR}' " )
+    set ( datatools_DIR "$ENV{DATATOOLS_CMAKE_CONFIG_DIR}" )
+  endif ()
 endif ()
 set ( _datatools_min_version 4.0 )
 find_package ( datatools ${_datatools_min_version} REQUIRED NO_MODULE )
 if ( datatools_VERSION )
-       message ( STATUS "Found datatools >= ${_datatools_min_version}" )
-       message ( STATUS "  datatools_CONFIG              : ${datatools_CONFIG}" )
-       message ( STATUS "  datatools_VERSION             : ${datatools_VERSION}" )
-       message ( STATUS "  datatools_LIBRARIES           : ${datatools_LIBRARIES}" )
-       message ( STATUS "  datatools_INCLUDE_DIRS        : ${datatools_INCLUDE_DIRS}" )
-       message ( STATUS "  datatools_WITH_DEBUG          : ${datatools_WITH_DEBUG}" )
-       message ( STATUS "  datatools_WITH_BIO            : ${datatools_WITH_BIO}" )
-       message ( STATUS "  datatools_WITH_PYTHON_WRAPPER : ${datatools_WITH_PYTHON_WRAPPER}" )
+  message ( STATUS "Found datatools >= ${_datatools_min_version}" )
+  message ( STATUS "  datatools_CONFIG              : ${datatools_CONFIG}" )
+  message ( STATUS "  datatools_VERSION             : ${datatools_VERSION}" )
+  message ( STATUS "  datatools_LIBRARIES           : ${datatools_LIBRARIES}" )
+  message ( STATUS "  datatools_INCLUDE_DIRS        : ${datatools_INCLUDE_DIRS}" )
+  message ( STATUS "  datatools_WITH_DEBUG          : ${datatools_WITH_DEBUG}" )
+  message ( STATUS "  datatools_WITH_BIO            : ${datatools_WITH_BIO}" )
+  message ( STATUS "  datatools_WITH_PYTHON_WRAPPER : ${datatools_WITH_PYTHON_WRAPPER}" )
 else ()
-       message ( FATAL_ERROR "Cannot find datatools >= ${_datatools_min_version} library !" )
+  message ( FATAL_ERROR "Cannot find datatools >= ${_datatools_min_version} library !" )
 endif ()
 if ( BRIO_WITH_BIO_SUPPORT )
-    if ( datatools_WITH_BIO )
-      set ( _default_bio_activation 1 )
-    endif ()
+  if ( datatools_WITH_BIO )
+    set ( _default_bio_activation 1 )
+  endif ()
 endif ()
 if ( BRIO_WITH_PYTHON_WRAPPER_SUPPORT )
-    if ( datatools_WITH_PYTHON_WRAPPER )
-      set ( _default_python_wrapper_activation 1 )
-    endif ()
+  if ( datatools_WITH_PYTHON_WRAPPER )
+    set ( _default_python_wrapper_activation 1 )
+  endif ()
 endif ()
 
 if ( BRIO_WITH_BIO_SUPPORT )
   option ( BRIO_WITH_BIO 
-           "Build the brio with Boost I/O serialization" 
-      	   ${_default_bio_activation} )
+    "Build the brio with Boost I/O serialization" 
+    ${_default_bio_activation} )
 endif ()
 
 
 if ( BRIO_WITH_PYTHON_WRAPPER_SUPPORT )
   option ( BRIO_WITH_PYTHON_WRAPPER
-           "Build the brio Boost/Python wrapper module" 
-           ${_default_python_wrapper_activation} )
+    "Build the brio Boost/Python wrapper module" 
+    ${_default_python_wrapper_activation} )
 endif ()
 
 # ---------------------------------------------------
@@ -196,17 +196,17 @@ endif ()
 
 if ( UNIX OR APPLE )
   option ( BRIO_WITH_CONFIG_SCRIPT 
-           "Build the brio-config script" 
-     	   1 )
+    "Build the brio-config script" 
+    1 )
   option ( BRIO_WITH_PKGCONFIG 
-           "Build the pkg-config script" 
-     	   0 )
+    "Build the pkg-config script" 
+    0 )
 endif ()
 # ---------------------------------------------------
 
 option ( BRIO_WITH_CMAKE_FIND_MODULE 
-         "Build the datatools' CMake find module"
- 	 OFF )
+  "Build the datatools' CMake find module"
+  OFF )
 
 # ----------------------------------------------------------------------
 
@@ -266,21 +266,21 @@ endif ()
 
 # - C++ configuration header file :
 configure_file ( "${PROJECT_SOURCE_DIR}/cmake/Templates/brio_config.h.in"
-                 "${PROJECT_BINARY_DIR}/include/brio/brio_config.h" @ONLY )
+  "${PROJECT_BINARY_DIR}/include/brio/brio_config.h" @ONLY )
 
 install ( FILES ${PROJECT_BINARY_DIR}/include/brio/brio_config.h
-          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/brio
-          PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
-        )
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/brio
+  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+  )
 
 # - Bash setup script :
 configure_file ( "${PROJECT_SOURCE_DIR}/cmake/Templates/brio_setup.sh.in"
-                 "${PROJECT_BINARY_DIR}/cmake/brio_setup.sh" @ONLY )
+  "${PROJECT_BINARY_DIR}/cmake/brio_setup.sh" @ONLY )
 
 install ( FILES ${PROJECT_BINARY_DIR}/cmake/brio_setup.sh
-          DESTINATION ${CMAKE_INSTALL_ETCDIR}
-          PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
-        )
+  DESTINATION ${CMAKE_INSTALL_ETCDIR}
+  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+  )
 
 # - Pkgconfig configuration file :
 if ( BRIO_WITH_PKGCONFIG )
@@ -294,33 +294,33 @@ if ( BRIO_WITH_PKGCONFIG )
   set ( _brio_pkgconfig_Libs "-lbrio" )
 
   set ( _brio_pkgconfig_Cflags 
-        ${DATATOOLS_INCLUDE_DIRS} 
-        ${ROOT_INCLUDE_DIRS} 
-      )
+    ${DATATOOLS_INCLUDE_DIRS} 
+    ${ROOT_INCLUDE_DIRS} 
+    )
   set ( _brio_pkgconfig_Libs 
-        ${_brio_pkgconfig_Libs} 
-        ${ROOT_LIBRARIES} 
-      ) 
+    ${_brio_pkgconfig_Libs} 
+    ${ROOT_LIBRARIES} 
+    ) 
 
   configure_file ( "${PROJECT_SOURCE_DIR}/cmake/Templates/brio.pc.in"
-                   "${PROJECT_BINARY_DIR}/cmake/brio.pc" @ONLY 
-                 )
+    "${PROJECT_BINARY_DIR}/cmake/brio.pc" @ONLY 
+    )
 
   install ( FILES ${PROJECT_BINARY_DIR}/cmake/brio.pc
-            DESTINATION ${_pkgconfig_install_dir}
-            PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
-          )
+    DESTINATION ${_pkgconfig_install_dir}
+    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+    )
 endif ()
 
 if ( BRIO_WITH_CMAKE_FIND_MODULE )
 
   configure_file ( "${PROJECT_SOURCE_DIR}/cmake/Modules/FindBrio.cmake.in"
-                   "${PROJECT_BINARY_DIR}/cmake/Modules/FindBrio.cmake" @ONLY )
+    "${PROJECT_BINARY_DIR}/cmake/Modules/FindBrio.cmake" @ONLY )
 
   install ( FILES ${PROJECT_BINARY_DIR}/cmake/Modules/FindBrio.cmake
-            DESTINATION ${_cmake_find_module_install_dir}
-            COMPONENT utils
-           )
+    DESTINATION ${_cmake_find_module_install_dir}
+    COMPONENT utils
+    )
 
 endif ()
 
@@ -328,35 +328,35 @@ if ( UNIX OR APPLE )
   if ( BRIO_WITH_CONFIG_SCRIPT )
 
     configure_file ( "${PROJECT_SOURCE_DIR}/cmake/Templates/brio-config.in"
-                     "${PROJECT_BINARY_DIR}/cmake/brio-config" @ONLY )
+      "${PROJECT_BINARY_DIR}/cmake/brio-config" @ONLY )
 
     install ( FILES ${PROJECT_BINARY_DIR}/cmake/brio-config
-              DESTINATION ${CMAKE_INSTALL_BINDIR}
-              PERMISSIONS OWNER_READ OWNER_EXECUTE 
-                          GROUP_READ GROUP_EXECUTE 
-                          WORLD_READ WORLD_EXECUTE
-             )
+      DESTINATION ${CMAKE_INSTALL_BINDIR}
+      PERMISSIONS OWNER_READ OWNER_EXECUTE 
+      GROUP_READ GROUP_EXECUTE 
+      WORLD_READ WORLD_EXECUTE
+      )
 
     install ( FILES ${PROJECT_SOURCE_DIR}/cmake/Tools/mkuniqueflags.py
-              DESTINATION ${CMAKE_INSTALL_DATADIR}/pkgtools
-              PERMISSIONS OWNER_READ OWNER_EXECUTE 
-	                  GROUP_READ GROUP_EXECUTE 
-                          WORLD_READ WORLD_EXECUTE
-            )
+      DESTINATION ${CMAKE_INSTALL_DATADIR}/pkgtools
+      PERMISSIONS OWNER_READ OWNER_EXECUTE 
+      GROUP_READ GROUP_EXECUTE 
+      WORLD_READ WORLD_EXECUTE
+      )
 
     install ( FILES ${PROJECT_SOURCE_DIR}/cmake/Tools/libpkgtools.sh
-              DESTINATION ${CMAKE_INSTALL_DATADIR}/pkgtools/
-              PERMISSIONS OWNER_READ OWNER_WRITE 
-                          GROUP_READ
-                          WORLD_READ
-             )
+      DESTINATION ${CMAKE_INSTALL_DATADIR}/pkgtools/
+      PERMISSIONS OWNER_READ OWNER_WRITE 
+      GROUP_READ
+      WORLD_READ
+      )
 
   endif ()
 endif ()  
 
 install ( FILES README.txt COPYING.txt LICENSE.GPL3.txt
-          DESTINATION ${CMAKE_INSTALL_DATADIR}
-         )
+  DESTINATION ${CMAKE_INSTALL_DATADIR}
+  )
 
 # ----------------------------------------------------------------------------
 # - Add Python wrapping.
@@ -377,17 +377,17 @@ if ( BRIO_WITH_PYTHON_WRAPPER )
   message ( STATUS "PYTHON_DEBUG_LIBRARIES = ${PYTHON_DEBUG_LIBRARIES}" )
 
   if (NOT Boost_PYTHON_LIBRARY OR NOT PYTHON_INCLUDE_DIRS OR NOT PYTHON_EXECUTABLE)
-     message ( STATUS "Missing Python stuff " )
-     set ( BRIO_WITH_PYTHON_WRAPPER OFF CACHE BOOL "Enable Python wrapping of datatools, requires Boost.Python" FORCE)
+    message ( STATUS "Missing Python stuff " )
+    set ( BRIO_WITH_PYTHON_WRAPPER OFF CACHE BOOL "Enable Python wrapping of datatools, requires Boost.Python" FORCE)
   endif ()
 endif () 
-  
+
 #set ( CMAKE_INSTALL_PYTHONDIR "" )
 #message ( STATUS "CMAKE_INSTALL_PYTHONDIR = '${CMAKE_INSTALL_PYTHONDIR}' " )
 
 if ( BRIO_WITH_PYTHON_WRAPPER )
-    message ( STATUS "Add subdirectory 'wrapping/python' " )
-    add_subdirectory ( wrapping/python )
+  message ( STATUS "Add subdirectory 'wrapping/python' " )
+  add_subdirectory ( wrapping/python )
 endif () 
 
 # 
@@ -485,10 +485,10 @@ configure_file(
 
 # Install the CMake Config mode files into the install tree
 install ( FILES
-          ${PROJECT_BINARY_DIR}/InstallTreeFiles/brio-config.cmake
-          ${PROJECT_BINARY_DIR}/InstallTreeFiles/brio-config-version.cmake
-          DESTINATION ${BRIO_CMAKE_CONFIG_DIR}
-          COMPONENT devel
-        )
+  ${PROJECT_BINARY_DIR}/InstallTreeFiles/brio-config.cmake
+  ${PROJECT_BINARY_DIR}/InstallTreeFiles/brio-config-version.cmake
+  DESTINATION ${BRIO_CMAKE_CONFIG_DIR}
+  COMPONENT devel
+  )
 
 # - end of top level CMakeLists.txt for brio project.
