@@ -36,7 +36,7 @@ get_filename_component(_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
 # Include the file listing all the imported targets to make them available
 # This is installed in the same location as us...
 #
-message ( STATUS "DEVEL: datatools-config.cmake: Including 'datatools-libraries.cmake'..." )
+message ( STATUS "datatools-config.cmake: Including 'datatools-libraries.cmake'..." )
 include("${_thisdir}/datatools-libraries.cmake")
 
 #----------------------------------------------------------------------------
@@ -51,15 +51,38 @@ include("${_thisdir}/datatools-libraries.cmake")
 #  set(BOOST_ROOT ${datatools_BOOST_ROOT})
 #  find_package(Boost NO_DEFAULT_PATH)
 #
+
 # - Boost
+find_package ( Boost @_boost_version@ REQUIRED COMPONENTS @_boost_requested_components@ )
+if ( NOT Boost_FOUND )
+  message ( FATAL_ERROR "datatools-config.cmake: Cannot find Boost >= @_boost_version@ library !" )
+endif ()
+message ( STATUS "datatools-config.cmake: Found Boost >= @_boost_version@" )
+message ( STATUS "datatools-config.cmake: Boost_INCLUDE_DIRS : '${Boost_INCLUDE_DIRS}'" )
+message ( STATUS "datatools-config.cmake: Boost_LIBRARIES    : '${Boost_LIBRARIES}'" )
+
+#set(_datatools_BOOST_INCLUDE_DIRS @Boost_INCLUDE_DIRS@)
+#set(_datatools_BOOST_LIBRARIES @Boost_LIBRARIES@)
+set(_datatools_BOOST_INCLUDE_DIRS ${Boost_INCLUDE_DIRS})
+set(_datatools_BOOST_LIBRARIES    ${Boost_LIBRARIES})
 #set(_datatools_BOOST_ROOT @BOOST_ROOT@)
-set(_datatools_BOOST_INCLUDE_DIRS @Boost_INCLUDE_DIRS@)
-set(_datatools_BOOST_LIBRARIES @Boost_LIBRARIES@)
+###set (datatools_BOOST_ROOT @BOOST_ROOT@ )
 
 # - CLHEP
+find_package ( CLHEP @_clhep_version@ REQUIRED )
+if ( NOT CLHEP )
+  message ( FATAL_ERROR "datatools-config.cmake: Cannot find CLHEP >= @__clhep_version@ library !" )
+endif ()
+message ( STATUS "datatools-config.cmake: Found CLHEP >= @_clhep_version@" )
+message ( STATUS "datatools-config.cmake: CLHEP_INCLUDE_DIRS : '${CLHEP_INCLUDE_DIRS}'" )
+message ( STATUS "datatools-config.cmake: CLHEP_LIBRARIES    : '${CLHEP_LIBRARIES}'" )
+message ( STATUS "datatools-config.cmake: CLHEP_DEFINITIONS  : '${CLHEP_DEFINITIONS}'" )
+# set(_datatools_CLHEP_INCLUDE_DIRS @CLHEP_INCLUDE_DIRS@)
+# set(_datatools_CLHEP_LIBRARIES @CLHEP_LIBRARIES@)
+set(_datatools_CLHEP_INCLUDE_DIRS ${CLHEP_INCLUDE_DIRS})
+set(_datatools_CLHEP_LIBRARIES    ${CLHEP_LIBRARIES})
 #set(_datatools_CLHEP_ROOT @CLHEP_ROOT_DIR@)
-set(_datatools_CLHEP_INCLUDE_DIRS @CLHEP_INCLUDE_DIRS@)
-set(_datatools_CLHEP_LIBRARIES @CLHEP_LIBRARIES@)
+###set (datatools_CLHEP_ROOT @CLHEP_ROOT@ )
 
 #----------------------------------------------------------------------------
 # Set path to datatools includes
@@ -70,7 +93,6 @@ set(datatools_INCLUDE_DIRS
   ${_datatools_BOOST_INCLUDE_DIRS}
   ${_datatools_CLHEP_INCLUDE_DIRS}
   )
-
 
 #----------------------------------------------------------------------------
 # Set datatools_LIBRARIES variable
