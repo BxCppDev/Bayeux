@@ -53,7 +53,7 @@ if ( NOT DEFINED cuts_CONFIG_COUNTER )
   set ( cuts_ONLY_INCLUDE_DIRS @cuts_INCLUDE_DIR@ )
 
   # Explicitely find the datatools package that was used to build brio :
-  set ( datatools_DIR @datatools_DIR@ )
+  ###set ( datatools_DIR @datatools_DIR@ )
   find_package ( datatools @_datatools_min_version@ REQUIRED NO_MODULE )
   if (NOT DEFINED datatools_VERSION)
     message ( FATAL_ERROR "Cannot find 'datatools' >= @_datatools_min_version@ !")
