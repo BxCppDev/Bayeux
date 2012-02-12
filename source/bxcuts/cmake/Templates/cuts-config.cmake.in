@@ -1,7 +1,9 @@
 # - Config file for the cuts package
 # It defines the following variables
-#  cuts_INCLUDE_DIRS - include directories for cuts
-#  cuts_LIBRARIES    - libraries to link against
+#  cuts_INCLUDE_DIRS - include directories for cuts (with dependencies)
+#  cuts_ONLY_INCLUDE_DIRS - include directories for cuts  (without dependencies)
+#  cuts_LIBRARIES    - libraries to link against (with dependencies)
+#  cuts_ONLY_LIBRARIES    - libraries to link against (without dependencies)
 #  cuts_WITH_DEBUG   - flag for debug mode
 # If Boost/Serialization I/O system is supported :
 #  cuts_WITH_BIO     - flag for Boost/Serialization I/O DLL (a.k.a. 'bio')
@@ -24,96 +26,95 @@
 #----------------------------------------------------------------------------
 
 if ( NOT DEFINED cuts_CONFIG_COUNTER )
-set ( cuts_CONFIG_COUNTER 1 )
+  set ( cuts_CONFIG_COUNTER 1 )
 
-#----------------------------------------------------------------------------
-# Locate ourselves, since all our config files should have been installed
-# alongside us...
-#
-get_filename_component(_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
-
-
-#----------------------------------------------------------------------------
-# Include the file listing all the imported targets to make them available
-# This is installed in the same location as us...
-#
-include("${_thisdir}/cuts-libraries.cmake")
+  #----------------------------------------------------------------------------
+  # Locate ourselves, since all our config files should have been installed
+  # alongside us...
+  #
+  get_filename_component(_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
 
-#----------------------------------------------------------------------------
-# Set variables pointing to used third party headers and locations.
-# We have to set the headers because cuts exports the headers in
-# its public interface.
+  #----------------------------------------------------------------------------
+  # Include the file listing all the imported targets to make them available
+  # This is installed in the same location as us...
+  #
+  include("${_thisdir}/cuts-libraries.cmake")
 
-#----------------------------------------------------------------------------
-# Set path to cuts includes
-#
-set ( cuts_INCLUDE_DIR @cuts_INCLUDE_DIR@ )
-set ( cuts_INCLUDE_DIRS
-      ${cuts_INCLUDE_DIR}
+
+  #----------------------------------------------------------------------------
+  # Set variables pointing to used third party headers and locations.
+  # We have to set the headers because cuts exports the headers in
+  # its public interface.
+
+  #----------------------------------------------------------------------------
+  # Set path to cuts includes
+  #
+  set ( cuts_ONLY_INCLUDE_DIRS @cuts_INCLUDE_DIR@ )
+
+  # Explicitely find the datatools package that was used to build brio :
+  set ( datatools_DIR @datatools_DIR@ )
+  find_package ( datatools @_datatools_min_version@ REQUIRED NO_MODULE )
+  if (NOT DEFINED datatools_VERSION)
+    message ( FATAL_ERROR "Cannot find 'datatools' >= @_datatools_min_version@ !")
+  else ()
+    message ( STATUS "Found 'datatools' dependency version ${datatools_VERSION} !")
+  endif ()
+
+  set ( _cuts_datatools_INCLUDE_DIRS ${datatools_INCLUDE_DIRS} )
+  set ( cuts_INCLUDE_DIRS 
+    ${cuts_ONLY_INCLUDE_DIRS}
+    ${_cuts_datatools_INCLUDE_DIRS}
     )
+  unset ( _cuts_datatools_INCLUDE_DIRS )
 
-set ( datatools_DIR "@datatools_DIR@" )
-find_package ( datatools )
-if (NOT DEFINED datatools_VERSION)
-  message ( FATAL_ERROR "Cannot find 'datatools' dependency !")
-else ()
-  message ( STATUS "Found 'datatools' dependency version ${datatools_VERSION} !")
-endif ()
-set ( _cuts_datatools_INCLUDE_DIRS @datatools_INCLUDE_DIRS@ )
-set ( cuts_INCLUDE_DIRS 
-      ${cuts_INCLUDE_DIRS}
-      ${_cuts_datatools_INCLUDE_DIRS}
+  #----------------------------------------------------------------------------
+  # Set cuts_LIBRARIES variable
+  set(cuts_LIB_DIR @cuts_LIB_DIR@)
+  # Basic : Assume that if cuts_bio was built, it should be in Library list
+  set(cuts_LIBRARY cuts )
+
+  set(cuts_WITH_DEBUG @CUTS_WITH_DEBUG@)
+  if(cuts_WITH_DEBUG)
+    set(cuts_WITH_DEBUG 1)
+  else()
+    set(cuts_WITH_DEBUG 0)
+  endif()
+
+  # if ( @CUTS_WITH_BIO_SUPPORT@ )
+  #  set(cuts_WITH_BIO @CUTS_WITH_BIO@)
+  #  if(cuts_WITH_BIO)
+  #    set(cuts_WITH_BIO 1)
+  #    set(cuts_BIO_LIBRARY cuts_bio )
+  #  else()
+  #    set(cuts_WITH_BIO 0)
+  #  endif()
+  # endif()
+
+  # if ( @CUTS_WITH_PYTHON_WRAPPER_SUPPORT@ )
+  #   set(cuts_WITH_PYTHON_WRAPPER @CUTS_WITH_PYTHON_WRAPPER@)
+  #   if(cuts_WITH_PYTHON_WRAPPER)
+  #     set(cuts_WITH_PYTHON_WRAPPER 1)
+  #   else()
+  #     set(cuts_WITH_PYTHON_WRAPPER 0)
+  #   endif()
+  # endif ()
+
+  set(cuts_ONLY_LIBRARIES ${cuts_BIO_LIBRARY} ${cuts_LIBRARY} )
+
+  set(_cuts_datatools_LIBRARIES ${datatools_LIBRARIES} )
+  set(cuts_LIBRARIES 
+    ${cuts_ONLY_LIBRARIES}
+    ${_cuts_datatools_LIBRARIES}
     )
-unset ( _cuts_datatools_INCLUDE_DIRS )
+  unset(_cuts_datatools_LIBRARIES)
 
-#----------------------------------------------------------------------------
-# Set cuts_LIBRARIES variable
-set(cuts_LIB_DIR @cuts_LIB_DIR@)
-# Basic : Assume that if cuts_bio was built, it should be in Library list
-set(cuts_LIBRARY cuts )
-
-set(cuts_WITH_DEBUG @CUTS_WITH_DEBUG@)
-if(cuts_WITH_DEBUG)
-  set(cuts_WITH_DEBUG 1)
-else()
-  set(cuts_WITH_DEBUG 0)
-endif()
-
-# if ( @CUTS_WITH_BIO_SUPPORT@ )
-#  set(cuts_WITH_BIO @CUTS_WITH_BIO@)
-#  if(cuts_WITH_BIO)
-#    set(cuts_WITH_BIO 1)
-#    set(cuts_BIO_LIBRARY cuts_bio )
-#  else()
-#    set(cuts_WITH_BIO 0)
-#  endif()
-# endif()
-
-# if ( @CUTS_WITH_PYTHON_WRAPPER_SUPPORT@ )
-#   set(cuts_WITH_PYTHON_WRAPPER @CUTS_WITH_PYTHON_WRAPPER@)
-#   if(cuts_WITH_PYTHON_WRAPPER)
-#     set(cuts_WITH_PYTHON_WRAPPER 1)
-#   else()
-#     set(cuts_WITH_PYTHON_WRAPPER 0)
-#   endif()
-# endif ()
-
-set(cuts_LIBRARIES ${cuts_BIO_LIBRARY} ${cuts_LIBRARY} )
-
-set(_cuts_datatools_LIBRARIES @datatools_LIBRARIES@)
-set(cuts_LIBRARIES 
-     ${cuts_LIBRARIES}
-     ${_cuts_datatools_LIBRARIES}
-   )
-unset(_cuts_datatools_LIBRARIES)
-
-# set(_cuts_yyy_LIBRARIES @yyy_LIBRARIES@)
-# set(cuts_LIBRARIES 
-#      ${cuts_LIBRARIES}
-#      ${_cuts_yyy_LIBRARIES}
-#    )
-# unset(_cuts_yyy_LIBRARIES)
+  # set(_cuts_yyy_LIBRARIES @yyy_LIBRARIES@)
+  # set(cuts_LIBRARIES 
+  #      ${cuts_LIBRARIES}
+  #      ${_cuts_yyy_LIBRARIES}
+  #    )
+  # unset(_cuts_yyy_LIBRARIES)
 
 else ( NOT DEFINED cuts_CONFIG_COUNTER )
   message ( WARNING "Multiple inclusion of the 'cuts-config.cmake' file !" )
