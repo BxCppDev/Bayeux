@@ -6,16 +6,19 @@
 #
 
 file ( GLOB genvtx_PUBLIC_HEADERS
-       ${PROJECT_SOURCE_DIR}/include/genvtx/*.h
-       ${PROJECT_SOURCE_DIR}/include/genvtx/genvtx.h
-       ${PROJECT_BINARY_DIR}/include/genvtx/genvtx_config.h
-     )
+  ${PROJECT_SOURCE_DIR}/include/genvtx/*.h
+  ${PROJECT_BINARY_DIR}/include/genvtx/genvtx_config.h
+  )
+
+file ( GLOB genvtx_detail_PUBLIC_HEADERS
+  ${PROJECT_SOURCE_DIR}/include/genvtx/detail/*.h
+  )
 
 file ( GLOB genvtx_SOURCES
-       ${PROJECT_SOURCE_DIR}/include/genvtx/*.h
-       ${PROJECT_BINARY_DIR}/include/genvtx/genvtx_config.h
-       ${PROJECT_SOURCE_DIR}/src/*.cc
-     )
+  ${genvtx_PUBLIC_HEADERS}
+  ${genvtx_detail_PUBLIC_HEADERS}
+  ${PROJECT_SOURCE_DIR}/src/*.cc
+  )
 
 # Last source files built in the DLL for proper static stuff initialization:
 list ( REMOVE_ITEM genvtx_SOURCES "${PROJECT_SOURCE_DIR}/src/i_vertex_generator.cc" )
@@ -39,8 +42,8 @@ list ( APPEND genvtx_SOURCES "${PROJECT_SOURCE_DIR}/src/i_vertex_generator.cc" )
 #----------------------------------------------------------------------------
 
 include_directories ( ${PROJECT_BINARY_DIR}/include
-		      ${PROJECT_SOURCE_DIR}/include	
-                     )
+  ${PROJECT_SOURCE_DIR}/include	
+  )
 
 #----------------------------------------------------------------------------
 # Dependencies
@@ -52,31 +55,35 @@ include_directories ( ${geomtools_INCLUDE_DIRS} )
 # Add the library
 #
 add_library ( genvtx SHARED  
-              ${genvtx_PUBLIC_HEADERS} 
-	      ${genvtx_SOURCES}
-            )
+  ${genvtx_PUBLIC_HEADERS} 
+  ${genvtx_SOURCES}
+  )
 
 set ( _link_libraries "" )
 set ( _link_libraries "${_link_libraries}" "${geomtools_LIBRARIES}" )
 
 # Link dynamic library :
 target_link_libraries ( genvtx
-                        ${_link_libraries}
-                      )
+  ${_link_libraries}
+  )
 # ----------------------------------------------------------------------
 # Installation
 #
 
 install ( TARGETS genvtx
-          EXPORT genvtx-libraries
-          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT bin
-          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT bin 
-          ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT devel
-        )
+  EXPORT genvtx-libraries
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT bin
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT bin 
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT devel
+  )
 
 install ( FILES ${genvtx_PUBLIC_HEADERS}
-          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genvtx
-        )
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genvtx
+  )
+
+install ( FILES ${genvtx_detail_PUBLIC_HEADERS}
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genvtx/detail
+  )
 
 # - Bio stuff :
 # if ( GENVTX_WITH_BIO_SUPPORT AND GENVTX_WITH_BIO ) 
