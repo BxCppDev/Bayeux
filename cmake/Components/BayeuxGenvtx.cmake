@@ -6,7 +6,15 @@
 
 if ( BAYEUX_WITH_GENVTX )
   set ( _genvtx_DIR ${_install_prefix}/${CMAKE_INSTALL_LIBDIR}/cmake/genvtx )
-  ExternalProject_Add( genvtx 
+  set (_genvtx_run_post_build_tests OFF)
+  if (BAYEUX_WITH_TESTS)
+    set (_genvtx_run_post_build_tests ON)
+  endif ()
+  
+  if (_genvtx_run_post_build_tests)
+    set (_genvtx_ep_test_options TEST_BEFORE_INSTALL 1 TEST_COMMAND make test )
+  endif ()
+   ExternalProject_Add( genvtx 
     DEPENDS geomtools mygsl
     SVN_REPOSITORY ${BAYEUX_COMPONENTS_SVN_BASE_URL}/genvtx/${BAYEUX_GENVTX_PATH}
     SVN_USERNAME ${_svn_username} 
@@ -21,6 +29,7 @@ if ( BAYEUX_WITH_GENVTX )
      CMAKE_GENERATOR "Unix Makefiles"
     BUILD_COMMAND make -j${BAYEUX_PARALLEL_JOBS}
     INSTALL_COMMAND make install
+    ${_genvtx_ep_test_options}
   )
 endif ( BAYEUX_WITH_GENVTX ) 
 

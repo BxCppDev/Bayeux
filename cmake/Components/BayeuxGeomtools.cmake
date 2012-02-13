@@ -6,7 +6,15 @@
 
 if ( BAYEUX_WITH_GEOMTOOLS )
   set ( _geomtools_DIR ${_install_prefix}/${CMAKE_INSTALL_LIBDIR}/cmake/geomtools )
-  ExternalProject_Add( geomtools 
+  set (_geomtools_run_post_build_tests OFF)
+  if (BAYEUX_WITH_TESTS)
+    set (_geomtools_run_post_build_tests ON)
+  endif ()
+  
+  if (_geomtools_run_post_build_tests)
+    set (_geomtools_ep_test_options TEST_BEFORE_INSTALL 1 TEST_COMMAND make test )
+  endif ()
+   ExternalProject_Add( geomtools 
     DEPENDS mygsl
     SVN_REPOSITORY ${BAYEUX_COMPONENTS_SVN_BASE_URL}/geomtools/${BAYEUX_GEOMTOOLS_PATH}
     SVN_USERNAME ${_svn_username} 
@@ -21,6 +29,7 @@ if ( BAYEUX_WITH_GEOMTOOLS )
     CMAKE_GENERATOR "Unix Makefiles"
     BUILD_COMMAND make -j${BAYEUX_PARALLEL_JOBS}
     INSTALL_COMMAND make install
+    ${_geomtools_ep_test_options}
   )
 endif ( BAYEUX_WITH_GEOMTOOLS ) 
 

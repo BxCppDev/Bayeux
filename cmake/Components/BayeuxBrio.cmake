@@ -8,6 +8,16 @@ if ( BAYEUX_WITH_BRIO )
     set (_find_root_dir_option "-DROOT_ROOT_DIR:PATH=${Cadfael_ROOT_DIR}" )
   endif ()
   set ( _brio_DIR ${_install_prefix}/${CMAKE_INSTALL_LIBDIR}/cmake/brio )
+
+  set (_brio_run_post_build_tests OFF)
+  if (BAYEUX_WITH_TESTS)
+    set (_brio_run_post_build_tests ON)
+  endif ()
+  
+  if (_brio_run_post_build_tests)
+    set (_brio_ep_test_options TEST_BEFORE_INSTALL 1 TEST_COMMAND make test )
+  endif ()
+  
   ExternalProject_Add( brio 
     DEPENDS datatools
     SVN_REPOSITORY ${BAYEUX_COMPONENTS_SVN_BASE_URL}/brio/${BAYEUX_BRIO_PATH}
@@ -25,6 +35,7 @@ if ( BAYEUX_WITH_BRIO )
     CMAKE_GENERATOR "Unix Makefiles"
     BUILD_COMMAND make -j${BAYEUX_PARALLEL_JOBS}
     INSTALL_COMMAND make install
+    ${_brio_ep_test_options}
   )
 endif ( BAYEUX_WITH_BRIO )
  

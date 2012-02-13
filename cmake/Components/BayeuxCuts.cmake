@@ -5,6 +5,14 @@
 
 if ( BAYEUX_WITH_CUTS )
   set ( _cuts_DIR ${_install_prefix}/${CMAKE_INSTALL_LIBDIR}/cmake/cuts )
+  set (_cuts_run_post_build_tests OFF)
+  if (BAYEUX_WITH_TESTS)
+    set (_cuts_run_post_build_tests ON)
+  endif ()
+  
+  if (_cuts_run_post_build_tests)
+    set (_cuts_ep_test_options TEST_BEFORE_INSTALL 1 TEST_COMMAND make test )
+  endif ()
   ExternalProject_Add( cuts 
     DEPENDS datatools
     SVN_REPOSITORY ${BAYEUX_COMPONENTS_SVN_BASE_URL}/cuts/${BAYEUX_CUTS_PATH}
@@ -20,5 +28,6 @@ if ( BAYEUX_WITH_CUTS )
     CMAKE_GENERATOR "Unix Makefiles"
     BUILD_COMMAND make -j${BAYEUX_PARALLEL_JOBS}
     INSTALL_COMMAND make install
+    ${_cuts_ep_test_options}
   )
 endif ( BAYEUX_WITH_CUTS ) 

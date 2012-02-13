@@ -5,6 +5,14 @@
 
 if ( BAYEUX_WITH_MATERIALS )
   set ( _materials_DIR ${_install_prefix}/${CMAKE_INSTALL_LIBDIR}/cmake/materials )
+  set (_materials_run_post_build_tests OFF)
+  if (BAYEUX_WITH_TESTS)
+    set (_materials_run_post_build_tests ON)
+  endif ()
+  
+  if (_materials_run_post_build_tests)
+    set (_materials_ep_test_options TEST_BEFORE_INSTALL 1 TEST_COMMAND make test )
+  endif ()
   ExternalProject_Add( materials 
     DEPENDS geomtools datatools
     SVN_REPOSITORY ${BAYEUX_COMPONENTS_SVN_BASE_URL}/materials/${BAYEUX_MATERIALS_PATH}
@@ -20,5 +28,6 @@ if ( BAYEUX_WITH_MATERIALS )
     CMAKE_GENERATOR "Unix Makefiles"
     BUILD_COMMAND make -j${BAYEUX_PARALLEL_JOBS}
     INSTALL_COMMAND make install
+    ${_materials_ep_test_options}
   )
 endif ( BAYEUX_WITH_MATERIALS ) 

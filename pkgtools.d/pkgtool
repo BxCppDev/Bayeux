@@ -175,12 +175,6 @@ function print_usage ()
 
     unconfigure         : unconfigure the package
     build [OPTIONS]     : build the package
-      Options:
-      --number-of-tasks [NUMBER OF TASKS|auto] : 
-                                   use several parallel tasks
-                                   'auto' computes the number of available 
-                                   processors if possible.      
-      
     doc                 : build documentation
     test                : run test material
     untest              : remove test material
@@ -220,6 +214,12 @@ EOF
 }
 
 ###    shell> ${appname} configure --install-prefix \${HOME}/software
+      # Options:
+      # --number-of-tasks [NUMBER OF TASKS|auto] : 
+      #                              use several parallel tasks
+      #                              'auto' computes the number of available 
+      #                              processors if possible.      
+      
 
  
 #######################################################
@@ -427,8 +427,8 @@ function do_configure ()
     local with_genbb_help=1
     local with_bio=1
     local with_python_wrapper=0
-    local with_doc=0
-    local with_test=0
+    local with_doc=1
+    local with_test=1
     local with_dependency_check=0
     local alternative_build_dir=1
     local build_processors_mode=""
@@ -815,41 +815,41 @@ function do_build ()
 	return 1
     fi
 
-    local number_of_tasks=0
-    local number_of_processors=1
-    pkgtools__knows_number_of_processors
-    if [ $? -eq 0 ]; then
-	number_of_processors=$(pkgtools__get_number_of_processors)
-    fi
-    while [ -n "$1" ]; do
-	local option="$1"
-	pkgtools__msg_devel "Option: '${option}'"
-	if [ "${option}" = "--number-of-tasks" ]; then
-	    shift 1
-	    local number_of_tasks_str="$1"
-	    if [ "x${number_of_tasks_str}" = "xauto" ]; then
-		number_of_tasks=${number_of_processors}
-	    else 
-		local number_of_tasks_test=$(echo ${number_of_tasks_str} | tr -d "[0-9]")
-		if [ "x${number_of_tasks_test}" != "x" ]; then 
-		    pkgtools__msg_error "Invalid number of tasks : ${number_of_tasks_str} !"
-		    __pkgtools__at_function_exit
-		    return 1
-		fi
-		number_of_tasks=${number_of_tasks_str}
-	    fi
-	fi
-	shift 1
-    done
-
-    if [ ${number_of_tasks} -eq 0 ]; then
-	number_of_tasks=${number_of_processors}
-    fi
-
-    pkgtools__msg_notice "Number of tasks : '${number_of_tasks}'"
+    # local number_of_tasks=0
+    # local number_of_processors=1
+    # pkgtools__knows_number_of_processors
+    # if [ $? -eq 0 ]; then
+    # 	number_of_processors=$(pkgtools__get_number_of_processors)
+    # fi
+    # while [ -n "$1" ]; do
+    # 	local option="$1"
+    # 	pkgtools__msg_devel "Option: '${option}'"
+    # 	if [ "${option}" = "--number-of-tasks" ]; then
+    # 	    shift 1
+    # 	    local number_of_tasks_str="$1"
+    # 	    if [ "x${number_of_tasks_str}" = "xauto" ]; then
+    # 		number_of_tasks=${number_of_processors}
+    # 	    else 
+    # 		local number_of_tasks_test=$(echo ${number_of_tasks_str} | tr -d "[0-9]")
+    # 		if [ "x${number_of_tasks_test}" != "x" ]; then 
+    # 		    pkgtools__msg_error "Invalid number of tasks : ${number_of_tasks_str} !"
+    # 		    __pkgtools__at_function_exit
+    # 		    return 1
+    # 		fi
+    # 		number_of_tasks=${number_of_tasks_str}
+    # 	    fi
+    # 	fi
+    # 	shift 1
+    # done
+    #
+    # if [ ${number_of_tasks} -eq 0 ]; then
+    # 	number_of_tasks=${number_of_processors}
+    # fi
+    #
+    # pkgtools__msg_notice "Number of tasks : '${number_of_tasks}'"
 
     cd ${the_build_dir}
-    time make --jobs=${number_of_tasks} 
+    time make #--jobs=${number_of_tasks} 
     if [ $? -ne 0 ]; then
 	pkgtools__msg_error "Cannot build the '${package_name}' package !"
 	__pkgtools__at_function_exit
@@ -920,6 +920,7 @@ function do_untest ()
     fi
 
     cd ${the_build_dir}
+    pkgtools__msg_warning "Not implemented yet !"
     # make clean_test
     # if [ $? -ne 0 ]; then
     # 	pkgtools__msg_error "Cannot clean the test material in '${package_name}' package !"

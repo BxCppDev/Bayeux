@@ -9,6 +9,14 @@ if ( BAYEUX_WITH_MYGSL )
     set (_find_gsl_dir_option "-DGSL_ROOT_DIR:PATH=${Cadfael_ROOT_DIR}" )
   endif ()
   set ( _mygsl_DIR ${_install_prefix}/${CMAKE_INSTALL_LIBDIR}/cmake/mygsl )
+  set (_mygsl_run_post_build_tests OFF)
+  if (BAYEUX_WITH_TESTS)
+    set (_mygsl_run_post_build_tests ON)
+  endif ()
+  
+  if (_mygsl_run_post_build_tests)
+    set (_mygsl_ep_test_options TEST_BEFORE_INSTALL 1 TEST_COMMAND make test )
+  endif ()
   ExternalProject_Add( mygsl 
     DEPENDS datatools
     SVN_REPOSITORY ${BAYEUX_COMPONENTS_SVN_BASE_URL}/mygsl/${BAYEUX_MYGSL_PATH}
@@ -26,6 +34,7 @@ if ( BAYEUX_WITH_MYGSL )
     CMAKE_GENERATOR "Unix Makefiles"
     BUILD_COMMAND make -j${BAYEUX_PARALLEL_JOBS}
     INSTALL_COMMAND make install
+    ${_mygsl_ep_test_options}
   )
 endif ( BAYEUX_WITH_MYGSL ) 
 

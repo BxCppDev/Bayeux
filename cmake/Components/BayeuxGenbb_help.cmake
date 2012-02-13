@@ -5,7 +5,18 @@
 
 if ( BAYEUX_WITH_GENBB_HELP )
   set ( _genbb_help_DIR ${_install_prefix}/${CMAKE_INSTALL_LIBDIR}/cmake/genbb_help )
-  ExternalProject_Add( genbb_help 
+  set (_genbb_help_run_post_build_tests OFF)
+  if (BAYEUX_WITH_TESTS)
+    set (_genbb_help_run_post_build_tests ON)
+  endif ()
+
+  ### Force no test for genbb_help
+  set (_genbb_help_run_post_build_tests OFF)
+  
+  if (_genbb_help_run_post_build_tests)
+    set (_genbb_help_ep_test_options TEST_BEFORE_INSTALL 1 TEST_COMMAND make test )
+  endif ()
+   ExternalProject_Add( genbb_help 
     DEPENDS geomtools mygsl datatools
     SVN_REPOSITORY ${BAYEUX_COMPONENTS_SVN_BASE_URL}/genbb_help/${BAYEUX_GENBB_HELP_PATH}
     SVN_USERNAME ${_svn_username} 
@@ -22,5 +33,6 @@ if ( BAYEUX_WITH_GENBB_HELP )
     CMAKE_GENERATOR "Unix Makefiles"
     BUILD_COMMAND make -j${BAYEUX_PARALLEL_JOBS}
     INSTALL_COMMAND make install
+    ${_genbb_help_ep_test_options}
   )
 endif ( BAYEUX_WITH_GENBB_HELP ) 
