@@ -44,6 +44,13 @@ if ( NOT DEFINED brio_CONFIG_COUNTER )
   # We have to set the headers because brio exports the headers in
   # its public interface.
 
+  file (TO_CMAKE_PATH "$ENV{CMAKE_MODULE_PATH}" __env_cmake_module_path)	
+  set(CMAKE_MODULE_PATH
+    ${__env_cmake_module_path}
+    ${CMAKE_MODULE_PATH}
+    )
+  unset (__env_cmake_module_path)
+
   # - ROOT
   find_package ( ROOT @ROOT_MIN_VERSION@ REQUIRED )
   if ( NOT ROOT_FOUND )
