@@ -58,24 +58,31 @@ foreach ( test_program ${datatools_tests_programs_list} )
 
   # last thing we have to do is to tell CMake what libraries 
   # our executable needs,
-  list (APPEND test_libraries "datatools" ${CLHEP_LIBRARIES} ${Boost_LIBRARIES} )
-  #message ( STATUS "DEVEL ====== Boost_LIBRARIES=${Boost_LIBRARIES}" )
-  #message ( STATUS "DEVEL ====== Boost_PYTHON_LIBRARY=${Boost_PYTHON_LIBRARY}" )
-  if ( Boost_PYTHON_FOUND )
-     list (APPEND test_libraries ${PYTHON_LIBRARIES} )
-  endif () 
 
-  list (INSERT test_libraries 0 "datatools_sys" )
-  #list (INSERT test_libraries 0 "datatools_sys_c" )
-  list (APPEND test_libraries "dl" )
-	 
+  ## Discard this...
+  # list (APPEND test_libraries "datatools" ${CLHEP_LIBRARIES} ${Boost_LIBRARIES} )
+  # #message ( STATUS "DEVEL ====== Boost_LIBRARIES=${Boost_LIBRARIES}" )
+  # #message ( STATUS "DEVEL ====== Boost_PYTHON_LIBRARY=${Boost_PYTHON_LIBRARY}" )
+  # if ( Boost_PYTHON_FOUND )
+  #    list (APPEND test_libraries ${PYTHON_LIBRARIES} )
+  # endif () 
+  # list (INSERT test_libraries 0 "datatools_sys" )
+  # #list (INSERT test_libraries 0 "datatools_sys_c" )
+  # list (APPEND test_libraries "dl" )
+  # if ( DATATOOLS_WITH_BIO )
+  #   list (INSERT test_libraries 0 "datatools_bio" )
+  # endif ()
+
+  ## And try...
   if ( DATATOOLS_WITH_BIO )
-    list (INSERT test_libraries 0 "datatools_bio" )
+    set ( _test_libraries datatools_bio )
+  else ()
+    set ( _test_libraries datatools )
   endif ()
 
   #message ( STATUS "DEVEL ===== Test libraries : ${test_libraries}" )
 
-  target_link_libraries ( ${test_executable} ${test_libraries} )
+  target_link_libraries ( ${test_executable} ${_test_libraries} )
 
   add_test ( NAME ${test_executable}.run
              COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
