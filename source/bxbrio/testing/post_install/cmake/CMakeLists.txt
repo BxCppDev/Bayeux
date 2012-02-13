@@ -14,6 +14,17 @@ endif ()
 
 set (CMAKE_MODULE_PATH $ENV{CMAKE_MODULE_PATH} ${CMAKE_MODULE_PATH} )
 
+# - Depends on brio:
+if ( DEFINED brio_DIR )
+    message ( STATUS "${PROJECT_NAME}: brio_DIR is : '${brio_DIR}' " )
+else ()
+    if ( NOT "x$ENV{BRIO_CMAKE_CONFIG_DIR}" STREQUAL "x" )
+      message ( STATUS "${PROJECT_NAME}: Environment BRIO_CMAKE_CONFIG_DIR exists : '$ENV{BRIO_CMAKE_CONFIG_DIR}' " )
+      set ( brio_DIR "$ENV{BRIO_CMAKE_CONFIG_DIR}" )
+      message ( STATUS "${PROJECT_NAME}: brio_DIR is : '${brio_DIR}' " )
+    endif ()
+endif ()
+
 set ( _brio_min_version 3.0 )
 find_package ( brio ${_brio_min_version} REQUIRED NO_MODULE )
 if ( brio_VERSION )
