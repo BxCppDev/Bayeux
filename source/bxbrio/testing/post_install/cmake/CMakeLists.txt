@@ -12,31 +12,35 @@ if ( ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR} )
   message ( FATAL_ERROR "in-source build detected" )
 endif ()
 
+set (CMAKE_MODULE_PATH $ENV{CMAKE_MODULE_PATH} ${CMAKE_MODULE_PATH} )
+
 set ( _brio_min_version 3.0 )
 find_package ( brio ${_brio_min_version} REQUIRED NO_MODULE )
 if ( brio_VERSION )
      message ( STATUS "Found brio >= ${_brio_min_version}" )
-     message ( STATUS "  brio_CONFIG              : ${brio_CONFIG}" )
-     message ( STATUS "  brio_VERSION             : ${brio_VERSION}" )
-     message ( STATUS "  brio_INCLUDE_DIRS        : ${brio_INCLUDE_DIRS}" )
-     message ( STATUS "  brio_LIBRARIES           : ${brio_LIBRARIES}" )
-     message ( STATUS "  brio_WITH_DEBUG          : ${brio_WITH_DEBUG}" )
-     #message ( STATUS "  brio_WITH_BIO            : ${brio_WITH_BIO}" )
-     #message ( STATUS "  brio_WITH_PYTHON_WRAPPER : ${brio_WITH_PYTHON_WRAPPER}" )
+     message ( STATUS " o brio_CONFIG              : ${brio_CONFIG}" )
+     message ( STATUS " o brio_VERSION             : ${brio_VERSION}" )
+     message ( STATUS " o brio_INCLUDE_DIRS        : ${brio_INCLUDE_DIRS}" )
+     message ( STATUS " o brio_LIBRARIES           : ${brio_LIBRARIES}" )
+     message ( STATUS " o brio_WITH_DEBUG          : ${brio_WITH_DEBUG}" )
 else ()
      message ( FATAL_ERROR "Cannot find brio >= ${_brio_min_version} library !" )
 endif ()
 
-set ( test_brio_src_files ${CMAKE_SOURCE_DIR}/../test_brio.cxx )
-
+include_directories ( ../.. )
 include_directories ( ${brio_INCLUDE_DIRS} )
 
 add_executable ( test_brio
-	         ${test_brio_src_files}
+	         ${CMAKE_SOURCE_DIR}/../../test_brio.cxx
+               )
+add_executable ( test_data_io
+	         ${CMAKE_SOURCE_DIR}/../../test_data_io.cxx
                )
 
 target_link_libraries ( test_brio ${brio_LIBRARIES} )
+target_link_libraries ( test_data_io ${brio_LIBRARIES} )
 
-install ( TARGETS test_brio DESTINATION bin )
+install ( TARGETS test_brio    DESTINATION bin )
+install ( TARGETS test_data_io DESTINATION bin )
 
 # - end of top level CMakeLists.txt for test_brio project.

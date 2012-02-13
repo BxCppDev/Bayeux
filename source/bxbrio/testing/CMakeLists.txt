@@ -39,7 +39,7 @@ include_directories ( ${PROJECT_BINARY_DIR}/include
                       ${PROJECT_SOURCE_DIR}/include	
                       ${PROJECT_SOURCE_DIR}/testing
                       ${datatools_INCLUDE_DIRS}
-                      ${ROOT_INCLUDE_DIR}
+                      ${ROOT_INCLUDE_DIRS}
                     )
 
 # linker search paths :

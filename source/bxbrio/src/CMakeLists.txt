@@ -24,7 +24,7 @@ file ( GLOB brio_SOURCES
      )
 
 set (brio_SOURCES ${brio_SOURCES} ${_brio_dict_sources} )
-message ( STATUS "DEVEL brio_SOURCES='${brio_SOURCES}'" )
+### message ( STATUS "DEVEL brio_SOURCES='${brio_SOURCES}'" )
 
 #----------------------------------------------------------------------------
 # Dependencies
@@ -33,7 +33,7 @@ message ( STATUS "DEVEL brio_SOURCES='${brio_SOURCES}'" )
 include_directories ( ${PROJECT_BINARY_DIR}/include
 		      ${PROJECT_SOURCE_DIR}/include	
                       ${datatools_INCLUDE_DIRS}
-  		      ${ROOT_INCLUDE_DIR}
+  		      ${ROOT_INCLUDE_DIRS}
                     )
 
 #----------------------------------------------------------------------------

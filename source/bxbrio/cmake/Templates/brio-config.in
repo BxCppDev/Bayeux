@@ -10,7 +10,6 @@ help=0
 debug=0
 bio_support=0
 python_wrapper_support=0
-depends_on_datatools=0
 
 if [ ${python_wrapper_support} -eq 1 ]; then
     with_python_wrapper=0
@@ -116,15 +115,11 @@ EOF
   --cmake-config-dir    print the installation directory for the 'brio-config.cmake' file
 EOF
     # Dependencies:
-    if [ "x${depends_on_datatools}" = "x1" ]; then
-	cat<<EOF
+    cat<<EOF
    --datatools-version   print datatools version
+   --root-version        print ROOT version
 EOF
-    fi
-#     cat<<EOF
-#     --xxx-version        print xxx version
-# EOF
-    return 0
+    return 0 
 }
 
 if [ ${help} -eq 1 ]; then
@@ -186,10 +181,8 @@ if [ "x${option}" = "x--cflags" ]; then
     (
 	echo -n "-fPIC " 
 	echo -n "-I${brio_include_dir} "  
-	if [ "x${depends_on_datatools}" = "x1" ]; then
-	    echo -n "`datatools-config --cflags` "
-	fi
-	### echo -n "`xxx-config --cflags` "
+	echo -n "`datatools-config --cflags` "
+	echo -n "`root-config --cflags` "
 	echo ""
     ) | python @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/pkgtools/mkuniqueflags.py     
     my_exit 0
@@ -241,10 +234,8 @@ if [ "x${option}" = "x--ldflags" ]; then
     fi
     (
 	echo -n "-L${brio_lib_dir} ${more_ldflags} -lbrio "
-	if [ "x${depends_on_datatools}" = "x1" ]; then
-	    echo -n "`datatools-config --ldflags` "
-	fi
-	### echo -n "`xxx-config --ldflags/libs` "
+	echo -n "`datatools-config --ldflags` "
+	echo -n "`root-config --libs` "
 	echo ""
     ) | python @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/pkgtools/mkuniqueflags.py -r   
     my_exit 0
@@ -281,17 +272,15 @@ if [ ${python_wrapper_support} -eq 1 ]; then
     fi
 fi
 
-if [ "x${depends_on_datatools}" = "x1" ]; then
-    if [ "x${option}" = "x--datatools-version" ]; then
-	echo @DATATOOLS_VERSION@
-	my_exit 0
-    fi
+if [ "x${option}" = "x--datatools-version" ]; then
+    echo @DATATOOLS_VERSION@
+    my_exit 0
 fi
 
-# if [ "x${option}" = "x--xxx-version" ]; then
-#     echo @xxx_VERSION@
-#     my_exit 0
-# fi
+if [ "x${option}" = "x--root-version" ]; then
+    $(root-config --version)
+    my_exit 0
+fi
 
 echo "ERROR: ${script_name}: Unknown option !" 1>&2
 print_help

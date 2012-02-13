@@ -1,6 +1,6 @@
 #
 
-CPPFLAGS=-I.. $(shell brio-config --cflags)
+CPPFLAGS=-I../.. $(shell brio-config --cflags)
 LDFLAGS=$(shell brio-config --ldflags)
 
 .PHONY : all
@@ -19,7 +19,7 @@ clean :
 run : test_data_io
 	./$< 
 
-test_data_io : ../test_data_io.cxx
+test_data_io : ../../test_data_io.cxx
 	$(CXX) $(CPPFLAGS) $< -o $@ $(LDFLAGS)
 
 # end

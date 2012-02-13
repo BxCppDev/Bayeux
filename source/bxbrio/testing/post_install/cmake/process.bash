@@ -36,6 +36,12 @@ if [ $? -ne 0 ]; then
     echo "Execute failed ! Abort !" 1>&2
     my_exit 1
 fi
+echo "Execute the 'test_data_io' executable..." 1>&2
+${opwd}/__install/bin/test_data_io
+if [ $? -ne 0 ]; then
+    echo "Execute failed ! Abort !" 1>&2
+    my_exit 1
+fi
 
 my_exit 0
 
