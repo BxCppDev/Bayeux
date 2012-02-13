@@ -26,10 +26,10 @@ run1 : test_genbb_help
 run2 : test_genbb_mgr
 	./$< 
 
-test_genbb_help : ../test_genbb_help.cxx
+test_genbb_help : ../../test_genbb_help.cxx
 	$(CXX) $(CPPFLAGS) $< -o $@ $(LDFLAGS)
 
-test_genbb_mgr : ../test_genbb_mgr.cxx
+test_genbb_mgr : ../../test_genbb_mgr.cxx
 	$(CXX) $(CPPFLAGS) $< -o $@ $(LDFLAGS)
 
 # end

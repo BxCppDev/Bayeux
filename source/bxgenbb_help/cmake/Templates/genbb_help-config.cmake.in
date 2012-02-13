@@ -52,14 +52,14 @@ set ( genbb_help_INCLUDE_DIRS
       ${genbb_help_INCLUDE_DIR}
     )
 
-set ( geomtools_DIR "@geomtools_DIR@" )
+###set ( geomtools_DIR "@geomtools_DIR@" )
 find_package ( geomtools REQUIRED NO_MODULE )
 if (NOT DEFINED geomtools_VERSION)
   message ( FATAL_ERROR "Cannot find 'geomtools' dependency !")
 else ()
   message ( STATUS "Found 'geomtools' dependency version ${geomtools_VERSION} !")
 endif ()
-set(_genbb_help_geomtools_INCLUDE_DIRS @geomtools_INCLUDE_DIRS@)
+set(_genbb_help_geomtools_INCLUDE_DIRS ${geomtools_INCLUDE_DIRS})
 set (genbb_help_INCLUDE_DIRS 
      ${genbb_help_INCLUDE_DIRS}
      ${_genbb_help_geomtools_INCLUDE_DIRS}
@@ -100,7 +100,7 @@ endif ()
 
 set(genbb_help_LIBRARIES ${genbb_help_BIO_LIBRARY} ${genbb_help_LIBRARY} )
 
-set(_genbb_help_geomtools_LIBRARIES @geomtools_LIBRARIES@)
+set(_genbb_help_geomtools_LIBRARIES ${geomtools_LIBRARIES})
 set(genbb_help_LIBRARIES 
      ${genbb_help_LIBRARIES}
      ${_genbb_help_geomtools_LIBRARIES}

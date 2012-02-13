@@ -72,10 +72,10 @@ message ( STATUS "testing: Performing all available tests : ${GENBB_HELP_ALL_TES
 if ( GENBB_HELP_ALL_TESTS )
 
   set ( _test_tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/tmp" )
-  message ( STATUS "testing:  _test_tmp_dir : ${_test_tmp_dir}" )
+  ###message ( STATUS "testing:  _test_tmp_dir : ${_test_tmp_dir}" )
 
   foreach ( test_program ${genbb_help_tests_programs_list_CXX} )
-    unset ( test_libraries )
+    unset ( _test_libraries )
     get_filename_component ( test_executable ${test_program} NAME_WE )
     message ( STATUS "testing:  Building test target '${test_executable}'" )
     add_executable ( ${test_executable} ${test_program} )
@@ -86,18 +86,18 @@ if ( GENBB_HELP_ALL_TESTS )
 
     # last thing we have to do is to tell CMake what libraries 
     # our executable needs,
-    set ( test_libraries genbb_help
-      ${geomtools_LIBRARIES} 
+    set ( _test_libraries 
+      genbb_help
       genbb_help_f77
-      ${mygsl_LIBRARIES} 
+      ###${geomtools_LIBRARIES} 
       )
 
     if ( GENBB_HELP_WITH_BIO )
-      ###set ( test_libraries genbb_help_bio )
-      list ( INSERT test_libraries 0 "genbb_help_bio" ) 
+      ###set ( _test_libraries genbb_help_bio )
+      list ( INSERT _test_libraries 0 genbb_help_bio ) 
     endif ()
 	 
-    target_link_libraries ( ${test_executable} ${test_libraries} )
+    target_link_libraries ( ${test_executable} ${_test_libraries} )
 
     add_test ( NAME ${test_executable}.run
                COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
@@ -112,7 +112,7 @@ if ( GENBB_HELP_ALL_TESTS )
   endforeach ()
 
   foreach ( test_program ${genbb_help_tests_programs_list_Fortran} )
-    unset ( test_libraries )
+    unset ( _test_libraries )
     get_filename_component ( test_executable ${test_program} NAME_WE )
     message ( STATUS "testing:  Building test target '${test_executable}'" )
     add_executable ( ${test_executable} ${test_program} )
@@ -124,10 +124,9 @@ if ( GENBB_HELP_ALL_TESTS )
     # last thing we have to do is to tell CMake what libraries 
     # our executable needs,
     target_link_libraries ( ${test_executable} 
-                            genbb_help_f77
-                            ###${mygsl_LIBRARIES}
-                          )
-    message ( STATUS "testing: mygsl_LIBRARIES='${mygsl_LIBRARIES}'" )
+      genbb_help_f77
+      ###${geomtools_LIBRARIES} 
+      )
 
     add_test ( NAME ${test_executable}.run
                COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
