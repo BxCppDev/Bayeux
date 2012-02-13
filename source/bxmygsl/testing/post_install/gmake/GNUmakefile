@@ -1,6 +1,6 @@
 #
 
-CPPFLAGS=-I.. $(shell mygsl-config --cflags)
+CPPFLAGS=-I../.. $(shell mygsl-config --cflags)
 LDFLAGS=$(shell mygsl-config --ldflags)
 
 .PHONY : all
@@ -22,7 +22,7 @@ run : test_histogram
 	./$< 
 	gnuplot test_histogram.gp
 
-test_histogram : ../test_histogram.cxx
+test_histogram : ../../test_histogram.cxx
 	$(CXX) $(CPPFLAGS) $< -o $@ $(LDFLAGS)
 
 # end
