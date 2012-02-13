@@ -88,11 +88,6 @@ option ( GENVTX_WITH_CMAKE_FIND_MODULE
 # Dependencies :
 #
 
-if ( GENVTX_WITH_PYTHON_WRAPPER_SUPPORT )
-  set ( _depends_on_datatools 1 )
-endif ()
-
-
 set ( _default_python_wrapper_activation 0 )
 
 # - Depends on geomtools:
@@ -137,9 +132,9 @@ if (GENVTX_WITH_DEBUG)
   set (GENVTX_WITH_DEBUG 1)
 endif ()
 
-if ( GENVTX_WITH_PYTHON_WRAPPER_SUPPORT AND GENVTX_WITH_PYTHON_WRAPPER )
-  set (GENVTX_WITH_PYTHON_WRAPPER 1)
-endif ()
+# if ( GENVTX_WITH_PYTHON_WRAPPER_SUPPORT AND GENVTX_WITH_PYTHON_WRAPPER )
+#   set (GENVTX_WITH_PYTHON_WRAPPER 1)
+# endif ()
 
 if (GENVTX_WITH_DOC)
   set (GENVTX_WITH_DOC 1)
@@ -173,7 +168,7 @@ message ( STATUS "${PROJECT_NAME}: GENVTX_WITH_DEBUG            : " "${GENVTX_WI
 # endif ()
 if ( UNIX OR APPLE )
   message ( STATUS "${PROJECT_NAME}: GENVTX_WITH_CONFIG_SCRIPT  : "  "${GENVTX_WITH_CONFIG_SCRIPT}" )
-  message ( STATUS "${PROJECT_NAME}: GENVTX_WITH_PKGCONFIG      : " "${GENVTX_WITH_PKGCONFIG}" )
+  # message ( STATUS "${PROJECT_NAME}: GENVTX_WITH_PKGCONFIG      : " "${GENVTX_WITH_PKGCONFIG}" )
 endif ()
 message ( STATUS "${PROJECT_NAME}: GENVTX_WITH_DOC              : " "${GENVTX_WITH_DOC}" )
 message ( STATUS "${PROJECT_NAME}: GENVTX_WITH_TEST             : " "${GENVTX_WITH_TEST}" )
