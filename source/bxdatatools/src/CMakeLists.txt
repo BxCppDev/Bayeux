@@ -190,9 +190,7 @@ if ( DATATOOLS_WITH_BIO )
                            ${Boost_PYTHON_LIBRARY}
                            ${PYTHON_LIBRARIES}
                          )
- 
-   ###target_link_libraries ( datatools_bio LINK_INTERFACE_LIBRARIES "" )
-
+		       
    # Install library and associate it with an export
    install ( TARGETS datatools_bio
              EXPORT  datatools-libraries
