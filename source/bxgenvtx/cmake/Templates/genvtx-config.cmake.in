@@ -25,6 +25,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #----------------------------------------------------------------------------
 
+if ( NOT DEFINED genvtx_CONFIG_COUNTER )
+set ( genvtx_CONFIG_COUNTER 1 )
+
 #----------------------------------------------------------------------------
 # Locate ourselves, since all our config files should have been installed
 # alongside us...
@@ -44,14 +47,11 @@ include("${_thisdir}/genvtx-libraries.cmake")
 # We have to set the headers because genvtx exports the headers in
 # its public interface.
 
-if ( NOT DEFINED genvtx_CONFIG_COUNTER )
-set ( genvtx_CONFIG_COUNTER 1 )
-
 # ----------------------------------------------------------------------------
 # geomtools dependency :
 #
 
-find_package ( geomtools @mygsl_VERSION@ REQUIRED NO_MODULE )
+find_package ( geomtools @geomtools_VERSION@ REQUIRED NO_MODULE )
 if ( NOT DEFINED geomtools_CONFIG)
    message ( FATAL_ERROR "genvtx-config.cmake: Cannot find the geomtools library  >= @geomtools_VERSION@ !" )
 else ()
@@ -107,8 +107,8 @@ set ( genvtx_LIBRARIES
       ${_genvtx_geomtools_LIBRARIES}
      )
 
-set( _genvtx_geomtools_INCLUDE_DIRS )
-set( _genvtx_geomtools_LIBRARIES    )
+unset( _genvtx_geomtools_INCLUDE_DIRS )
+unset( _genvtx_geomtools_LIBRARIES    )
 
 else ( NOT DEFINED genvtx_CONFIG_COUNTER )
   message ( WARNING "Multiple inclusion of the 'genvtx-config.cmake' file !" )
