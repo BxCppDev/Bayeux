@@ -440,7 +440,7 @@ function do_configure ()
 	if [ "${option}" = "--build-directory" ]; then
 	    shift 1
 	    the_build_dir="$1"
-	elif [ "${option}" = "--workspace-dir" ]; then
+	elif [ "${option}" = "--workspace-dir" -o "${option}" = "--workspace-directory" ]; then
 	    shift 1
 	    workspace_dir="$1"
 	elif [ "${option}" = "--reset-build-directory" ]; then
