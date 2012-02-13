@@ -38,16 +38,13 @@ if ( MYGSL_WITH_BIO_SUPPORT )
 endif ()
 
 #----------------------------------------------------------------------------
+# Dependencies
+#
 
 include_directories ( ${PROJECT_BINARY_DIR}/include
 		      ${PROJECT_SOURCE_DIR}/include
-                      ${datatools_INCLUDE_DIRS}
-  		      ${GSL_INCLUDE_DIR}	
+  		      ${GSL_INCLUDE_DIRS}	
                      )
-
-#----------------------------------------------------------------------------
-# Dependencies
-#
 
 if ( _depends_on_datatools ) 
   include_directories ( ${datatools_INCLUDE_DIRS} )
@@ -66,9 +63,9 @@ add_library ( mygsl SHARED
 set ( _link_libraries "" )
 
 if ( _depends_on_datatools ) 
-  set ( _link_libraries "${_link_libraries}" "${datatools_LIBRARIES}" )
+  set ( _link_libraries ${_link_libraries} ${datatools_LIBRARIES} )
 endif ()
-  set ( _link_libraries "${_link_libraries}" "${GSL_LIBRARIES}" )
+set ( _link_libraries ${_link_libraries} ${GSL_LIBRARIES} )
 
 # Link dynamic library :
 target_link_libraries ( mygsl
@@ -79,7 +76,7 @@ target_link_libraries ( mygsl
 #
 
 install ( TARGETS mygsl
-          EXPORT mygsl-libraries
+          EXPORT  mygsl-libraries
           RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT bin
           LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT bin 
           ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT devel
@@ -89,36 +86,36 @@ install ( FILES ${mygsl_PUBLIC_HEADERS}
           DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/mygsl
         )
 
-# - Bio stuff :
-if ( MYGSL_WITH_BIO_SUPPORT AND MYGSL_WITH_BIO ) 
-
-   set ( mygsl_bio_SOURCES 
-         ${PROJECT_SOURCE_DIR}/include/mygsl/serialization/the_serializable.ipp
-         ${PROJECT_SOURCE_DIR}/include/mygsl/serialization/the_serializable.h
-         ${PROJECT_SOURCE_DIR}/src/the_serializable.cc 
-       )
-
-   add_library ( mygsl_bio SHARED 
-                 ${mygsl_PUBLIC_HEADERS} 
-                 ${mygsl_ipp_PUBLIC_HEADERS} 
-                 ${mygsl_bio_SOURCES}
-               )
-
-   # Link dynamic library :
-   target_link_libraries ( mygsl_bio 
-                           mygsl
-                         )
- 
-   target_link_libraries ( mygsl_bio LINK_INTERFACE_LIBRARIES "" )
-
-   # Install library and associate it with an export
-   install ( TARGETS mygsl_bio
-             EXPORT  mygsl-libraries
-             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT bin
-             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT bin 
-             ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT devel
-           )
-
-endif ()
+# # - Bio stuff :
+# if ( MYGSL_WITH_BIO_SUPPORT AND MYGSL_WITH_BIO ) 
+#
+#    set ( mygsl_bio_SOURCES 
+#          ${PROJECT_SOURCE_DIR}/include/mygsl/serialization/the_serializable.ipp
+#          ${PROJECT_SOURCE_DIR}/include/mygsl/serialization/the_serializable.h
+#          ${PROJECT_SOURCE_DIR}/src/the_serializable.cc 
+#        )
+#
+#    add_library ( mygsl_bio SHARED 
+#                  ${mygsl_PUBLIC_HEADERS} 
+#                  ${mygsl_ipp_PUBLIC_HEADERS} 
+#                  ${mygsl_bio_SOURCES}
+#                )
+#
+#    # Link dynamic library :
+#    target_link_libraries ( mygsl_bio 
+#                            mygsl
+#                          )
+#
+#    target_link_libraries ( mygsl_bio LINK_INTERFACE_LIBRARIES "" )
+#
+#    # Install library and associate it with an export
+#    install ( TARGETS mygsl_bio
+#              EXPORT  mygsl-libraries
+#              RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT bin
+#              LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT bin 
+#              ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT devel
+#            )
+#
+# endif ()
 
 # - end of CMakeLists.txt for mygsl/src subdir

@@ -64,10 +64,6 @@ include ( InstallDirs )
 include ( PackageFilename )
 
 # ----------------------------------------------------------------------
-# Dependencies :
-#
-
-# ----------------------------------------------------------------------
 # Options :
 #
 
@@ -91,6 +87,10 @@ option ( MYGSL_WITH_CMAKE_FIND_MODULE
          "Build the mygsl' CMake find module"
  	 0 )
 
+# ----------------------------------------------------------------------
+# Dependencies :
+#
+
 # - Depends on GSL:
 set ( _gsl_min_version 1.14 ) 
 set ( GSL_MIN_VERSION ${_gsl_min_version} )
@@ -104,10 +104,10 @@ endif ()
 find_package ( GSL ${GSL_MIN_VERSION} )
 if ( GSL_FOUND )
      message ( STATUS "Found GSL")
-     message ( STATUS "  GSL_VERSION           : ${GSL_VERSION}" )
-     #message ( STATUS "  GSL_CONFIG_EXECUTABLE : ${GSL_CONFIG_EXECUTABLE}" )
-     message ( STATUS "  GSL_INCLUDE_DIR       : ${GSL_INCLUDE_DIR}" )
-     message ( STATUS "  GSL_LIBRARIES         : ${GSL_LIBRARIES}" )
+     message ( STATUS " o GSL_VERSION           : ${GSL_VERSION}" )
+     message ( STATUS " o GSL_CONFIG_EXECUTABLE : ${GSL_CONFIG_EXECUTABLE}" )
+     message ( STATUS " o GSL_INCLUDE_DIRS      : ${GSL_INCLUDE_DIRS}" )
+     message ( STATUS " o GSL_LIBRARIES         : ${GSL_LIBRARIES}" )
      include_directories ( ${GSL_INCLUDE_DIRS} )
 else ()
      message ( FATAL_ERROR "Cannot find GSL >= ${GSL_MIN_VERSION} library !" )
@@ -128,8 +128,31 @@ set ( _default_python_wrapper_activation 0 )
 
 if ( _depends_on_datatools )
   # - Depends on datatools:
-  ### set(datatools_DIR "$ENV{datatools_ROOT}" CACHE LOCATION "where was datatools built?")
   if ( DEFINED datatools_DIR )
+    message ( STATUS "datatools_DIR is : '${datatools_DIR}' " )
+  else ()
+    if ( NOT "$ENV{DATATOOLS_CMAKE_CONFIG_DIR}" STREQUAL "" )
+      message ( STATUS "Environment DATATOOLS_CMAKE_CONFIG_DIR exists : '$ENV{DATATOOLS_CMAKE_CONFIG_DIR}' " )
+      set ( datatools_DIR "$ENV{DATATOOLS_CMAKE_CONFIG_DIR}" )
+    endif ()
+  endif ()
+  set ( _datatools_min_version 4.0 )
+  find_package ( datatools ${_datatools_min_version} REQUIRED NO_MODULE )
+  if ( datatools_CONFIG )
+    message ( STATUS "Found datatools >= ${_datatools_min_version}" )
+    message ( STATUS " o datatools_CONFIG              : ${datatools_CONFIG}" )
+    message ( STATUS " o datatools_VERSION             : ${datatools_VERSION}" )
+    message ( STATUS " o datatools_LIBRARIES           : ${datatools_LIBRARIES}" )
+    message ( STATUS " o datatools_INCLUDE_DIRS        : ${datatools_INCLUDE_DIRS}" )
+    message ( STATUS " o datatools_WITH_DEBUG          : ${datatools_WITH_DEBUG}" )
+    message ( STATUS " o datatools_WITH_BIO            : ${datatools_WITH_BIO}" )
+    message ( STATUS " o datatools_WITH_PYTHON_WRAPPER : ${datatools_WITH_PYTHON_WRAPPER}" )
+  else ()
+    message ( FATAL_ERROR "Cannot find datatools >= ${_datatools_min_version} library !" )
+  endif ()
+  
+  # - Depends on datatools:
+    if ( DEFINED datatools_DIR )
     message ( STATUS "datatools_DIR is : '${datatools_DIR}' " )
   else ()
     if ( NOT "$ENV{DATATOOLS_CMAKE_CONFIG_DIR}" STREQUAL "" )
@@ -151,30 +174,30 @@ if ( _depends_on_datatools )
   else ()
        message ( FATAL_ERROR "Cannot find datatools >= ${_datatools_min_version} library !" )
   endif ()
-  if ( MYGSL_WITH_BIO_SUPPORT )
-    if ( datatools_WITH_BIO )
-      set ( _default_bio_activation 1 )
-    endif ()
-  endif ()
-  if ( MYGSL_WITH_PYTHON_WRAPPER_SUPPORT )
-    if ( datatools_WITH_PYTHON_WRAPPER )
-      set ( _default_python_wrapper_activation 1 )
-    endif ()
-  endif ()
+  # if ( MYGSL_WITH_BIO_SUPPORT )
+  #   if ( datatools_WITH_BIO )
+  #     set ( _default_bio_activation 1 )
+  #   endif ()
+  # endif ()
+  # if ( MYGSL_WITH_PYTHON_WRAPPER_SUPPORT )
+  #   if ( datatools_WITH_PYTHON_WRAPPER )
+  #     set ( _default_python_wrapper_activation 1 )
+  #   endif ()
+  # endif ()
 endif ()
 
-if ( MYGSL_WITH_BIO_SUPPORT )
-  option ( MYGSL_WITH_BIO 
-           "Build the mygsl with Boost I/O serialization" 
-      	   ${_default_bio_activation} )
-endif ()
+# if ( MYGSL_WITH_BIO_SUPPORT )
+#   option ( MYGSL_WITH_BIO 
+#            "Build the mygsl with Boost I/O serialization" 
+#       	   ${_default_bio_activation} )
+# endif ()
 
 
-if ( MYGSL_WITH_PYTHON_WRAPPER_SUPPORT )
-  option ( MYGSL_WITH_PYTHON_WRAPPER
-           "Build the mygsl Boost/Python wrapper module" 
-           ${_default_python_wrapper_activation} )
-endif ()
+# if ( MYGSL_WITH_PYTHON_WRAPPER_SUPPORT )
+#   option ( MYGSL_WITH_PYTHON_WRAPPER
+#            "Build the mygsl Boost/Python wrapper module" 
+#            ${_default_python_wrapper_activation} )
+# endif ()
 
 # ---------------------------------------------------
 
