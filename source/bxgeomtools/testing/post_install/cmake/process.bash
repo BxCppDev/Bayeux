@@ -30,8 +30,15 @@ if [ $? -ne 0 ]; then
     my_exit 1
 fi
 
-echo "Execute the 'test_mygsl' executable..." 1>&2
+echo "Execute the 'test_geomtools' executable..." 1>&2
 ${opwd}/__install/bin/test_geomtools
+if [ $? -ne 0 ]; then
+    echo "Execute failed ! Abort !" 1>&2
+    my_exit 1
+fi
+
+echo "Execute the 'test_serializable' executable..." 1>&2
+${opwd}/__install/bin/test_serializable
 if [ $? -ne 0 ]; then
     echo "Execute failed ! Abort !" 1>&2
     my_exit 1

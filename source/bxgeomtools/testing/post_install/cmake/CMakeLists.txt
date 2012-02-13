@@ -27,28 +27,27 @@ set ( _geomtools_min_version 3.0 )
 find_package ( geomtools ${_geomtools_min_version} REQUIRED NO_MODULE )
 if ( geomtools_VERSION )
      message ( STATUS "Found geomtools >= ${_geomtools_min_version}" )
-     message ( STATUS "  geomtools_CONFIG              : ${geomtools_CONFIG}" )
-     message ( STATUS "  geomtools_VERSION             : ${geomtools_VERSION}" )
-     message ( STATUS "  geomtools_INCLUDE_DIRS        : ${geomtools_INCLUDE_DIRS}" )
-     message ( STATUS "  geomtools_LIBRARIES           : ${geomtools_LIBRARIES}" )
-     message ( STATUS "  geomtools_WITH_DEBUG          : ${geomtools_WITH_DEBUG}" )
-     message ( STATUS "  geomtools_WITH_BIO            : ${geomtools_WITH_BIO}" )
-     #message ( STATUS "  geomtools_WITH_PYTHON_WRAPPER : ${geomtools_WITH_PYTHON_WRAPPER}" )
+     message ( STATUS " o geomtools_CONFIG              : ${geomtools_CONFIG}" )
+     message ( STATUS " o geomtools_VERSION             : ${geomtools_VERSION}" )
+     message ( STATUS " o geomtools_INCLUDE_DIRS        : ${geomtools_INCLUDE_DIRS}" )
+     message ( STATUS " o geomtools_LIBRARIES           : ${geomtools_LIBRARIES}" )
+     message ( STATUS " o geomtools_WITH_DEBUG          : ${geomtools_WITH_DEBUG}" )
+     message ( STATUS " o geomtools_WITH_BIO            : ${geomtools_WITH_BIO}" )
+     #message ( STATUS " o geomtools_WITH_PYTHON_WRAPPER : ${geomtools_WITH_PYTHON_WRAPPER}" )
 else ()
      message ( FATAL_ERROR "Cannot find geomtools >= ${_geomtools_min_version} library !" )
 endif ()
 
-set ( test_geomtools_src_files ${CMAKE_SOURCE_DIR}/../../test_geomtools.cxx )
-
 include_directories ( ../.. )
 include_directories ( ${geomtools_INCLUDE_DIRS} )
 
-add_executable ( test_geomtools
-	         ${test_geomtools_src_files}
-               )
+add_executable ( test_geomtools    ${CMAKE_SOURCE_DIR}/../../test_geomtools.cxx    )
+add_executable ( test_serializable ${CMAKE_SOURCE_DIR}/../../test_serializable.cxx )
 
-target_link_libraries ( test_geomtools ${geomtools_LIBRARIES} )
+target_link_libraries ( test_geomtools    ${geomtools_LIBRARIES} )
+target_link_libraries ( test_serializable ${geomtools_LIBRARIES} )
 
-install ( TARGETS test_geomtools DESTINATION bin )
+install ( TARGETS test_geomtools    DESTINATION bin )
+install ( TARGETS test_serializable DESTINATION bin )
 
 # - end of top level CMakeLists.txt for test_geomtools project.

@@ -1,6 +1,6 @@
 #
 
-CPPFLAGS=-I.. $(shell geomtools-config --cflags)
+CPPFLAGS=-I../.. $(shell geomtools-config --cflags)
 LDFLAGS=$(shell geomtools-config --ldflags)
 
 .PHONY : all
@@ -19,7 +19,7 @@ clean :
 run : test_placement
 	./$< 
 
-test_placement : ../test_placement.cxx
+test_placement : ../../test_placement.cxx
 	$(CXX) $(CPPFLAGS) $< -o $@ $(LDFLAGS)
 
 # end
