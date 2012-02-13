@@ -79,13 +79,12 @@ if ( NOT DEFINED brio_CONFIG_COUNTER )
 
   find_package ( datatools @datatools_VERSION@ REQUIRED NO_MODULE )
   if (NOT DEFINED datatools_CONFIG)
-    message ( FATAL_ERROR "Cannot find 'datatools' dependency !")
+    message ( FATAL_ERROR "brio-config.cmake: Cannot find datatools dependency !")
   else ()
-    message ( STATUS "Found 'datatools' dependency version ${datatools_VERSION} !")
+    message ( STATUS "brio-config.cmake: Found datatools dependency version ${datatools_VERSION} !")
   endif ()
-  message ( STATUS "brio-config.cmake: Using datatools @datatools_VERSION@" )
-  set( _brio_datatools_INCLUDE_DIRS @datatools_INCLUDE_DIRS@ )
-  set( _brio_datatools_LIBRARIES    @datatools_LIBRARIES@    )
+  set( _brio_datatools_INCLUDE_DIRS ${datatools_INCLUDE_DIRS} )
+  set( _brio_datatools_LIBRARIES    ${datatools_LIBRARIES}    )
   
   message ( STATUS "brio-config.cmake: Dependencies : " )
   message ( STATUS "brio-config.cmake:  o ROOT_INCLUDE_DIRS      = '${_brio_ROOT_INCLUDE_DIRS}' " )
@@ -97,8 +96,6 @@ if ( NOT DEFINED brio_CONFIG_COUNTER )
   # Set path to brio includes
   #
   set(brio_ONLY_INCLUDE_DIRS @brio_INCLUDE_DIR@)
-  # set(_brio_ROOT_INCLUDE_DIRS      ${ROOT_INCLUDE_DIR})
-  # set(_brio_datatools_INCLUDE_DIRS ${datatools_INCLUDE_DIRS})
   set (brio_INCLUDE_DIRS 
     ${brio_ONLY_INCLUDE_DIRS}
     ${_brio_datatools_INCLUDE_DIRS}
@@ -138,8 +135,6 @@ if ( NOT DEFINED brio_CONFIG_COUNTER )
 
   # Basic : Assume that if brio_bio was built, it should be in Library list
   set(brio_ONLY_LIBRARIES ${brio_LIBRARY} )
-  # set(_brio_datatools_LIBRARIES ${datatools_LIBRARIES})
-  # set(_brio_ROOT_LIBRARIES      ${ROOT_LIBRARIES})
   set(brio_LIBRARIES 
     ${brio_ONLY_LIBRARIES}
     ${_brio_ROOT_LIBRARIES}
