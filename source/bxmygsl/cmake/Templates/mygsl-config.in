@@ -52,8 +52,6 @@ mygsl_etc_dir="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_ETCDIR@"
 
 mygsl_doc_dir="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DOCDIR@"
 
-#mygsl_cmake_config_dir="@CMAKE_INSTALL_PREFIX@/@MYGSL_CMAKE_CONFIG_DIR@"
-#mygsl_cmake_config_dir="@CMAKE_INSTALL_PREFIX@/@TOTO@"
 mygsl_cmake_config_dir="@CMAKE_INSTALL_PREFIX@/@mygsl_cmake_config_install_dir@"
 
 mygsl_version=@mygsl_VERSION_STR@
@@ -118,8 +116,6 @@ EOF
 EOF
     cat<<EOF
   --datatools-version   print datatools version
-EOF
-    cat<<EOF
   --gsl-version         print GSL version
 EOF
     return 0

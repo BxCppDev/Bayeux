@@ -53,9 +53,9 @@ if ( NOT DEFINED mygsl_CONFIG_COUNTER )
     message ( FATAL_ERROR "mygsl-config.cmake: Cannot find GSL >= @GSL_MIN_VERSION@ library !" )
   endif ()
   message ( STATUS "mygsl-config.cmake: Found GSL >= @GSL_MIN_VERSION@" )
-  message ( STATUS "mygsl-config.cmake: GSL_INCLUDE_DIRS      : '${GSL_INCLUDE_DIRS}'" )
-  message ( STATUS "mygsl-config.cmake: GSL_LIBRARIES         : '${GSL_LIBRARIES}'" )
-  message ( STATUS "mygsl-config.cmake: GSL_CONFIG_EXECUTABLE : '${GSL_CONFIG_EXECUTABLE}'" )
+  message ( STATUS "mygsl-config.cmake:  o GSL_INCLUDE_DIRS      : '${GSL_INCLUDE_DIRS}'" )
+  message ( STATUS "mygsl-config.cmake:  o GSL_LIBRARIES         : '${GSL_LIBRARIES}'" )
+  message ( STATUS "mygsl-config.cmake:  o GSL_CONFIG_EXECUTABLE : '${GSL_CONFIG_EXECUTABLE}'" )
 
   # Explicitely find the datatools package that was used to build mygsl :
   ###set ( datatools_DIR @datatools_DIR@ )
