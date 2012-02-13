@@ -47,6 +47,13 @@ if ( NOT DEFINED mygsl_CONFIG_COUNTER )
   # We have to set the headers because mygsl exports the headers in
   # its public interface.
  
+  file (TO_CMAKE_PATH "$ENV{CMAKE_MODULE_PATH}" __env_cmake_module_path)	
+  set(CMAKE_MODULE_PATH
+    ${__env_cmake_module_path}
+    ${CMAKE_MODULE_PATH}
+    )
+  unset (__env_cmake_module_path)
+
   # - GSL :
   find_package ( GSL @GSL_MIN_VERSION@ REQUIRED )
   if ( NOT GSL_FOUND )
