@@ -84,7 +84,6 @@ if ( GEOMTOOLS_ALL_TESTS )
   set ( _test_tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/tmp" )
   #message ( STATUS "testing:  _test_tmp_dir : ${_test_tmp_dir}" )
   foreach ( test_program ${geomtools_tests_programs_list} )
-    unset ( test_libraries )
     get_filename_component ( test_executable ${test_program} NAME_WE )
     message ( STATUS "testing:  Building test target '${test_executable}'" )
     add_executable ( ${test_executable} ${test_program} )
@@ -95,11 +94,16 @@ if ( GEOMTOOLS_ALL_TESTS )
 
     # last thing we have to do is to tell CMake what libraries 
     # our executable needs,
-    list ( APPEND test_libraries "geomtools" )
+    # list ( APPEND test_libraries "geomtools" )
+    # if ( GEOMTOOLS_WITH_BIO )
+    #   list (INSERT test_libraries 0 "geomtools_bio" )
+    # endif ()
+    # list ( APPEND test_libraries "${mygsl_LIBRARIES}" )
     if ( GEOMTOOLS_WITH_BIO )
-      list (INSERT test_libraries 0 "geomtools_bio" )
+      set ( test_libraries geomtools_bio )
+    else ()
+      set ( test_libraries geomtools )
     endif ()
-    list ( APPEND test_libraries "${mygsl_LIBRARIES}" )
 	 
     target_link_libraries ( ${test_executable} ${test_libraries} )
 
