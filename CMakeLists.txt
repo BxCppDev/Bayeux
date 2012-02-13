@@ -139,8 +139,8 @@ set ( BAYEUX_KNOWN_COMPONENTS
 	"mygsl" 
 	"cuts" 
 	"geomtools" 
-	"materials" 
 	"genvtx" 
+	"materials" 
 	"genbb_help" 
 	)
 
