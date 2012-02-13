@@ -144,6 +144,7 @@ if ( datatools_CONFIG )
 else ()
   message ( FATAL_ERROR "Cannot find datatools >= ${_datatools_min_version} library !" )
 endif ()
+
 # if ( BRIO_WITH_BIO_SUPPORT )
 #   if ( datatools_WITH_BIO )
 #     set ( _default_bio_activation 1 )
