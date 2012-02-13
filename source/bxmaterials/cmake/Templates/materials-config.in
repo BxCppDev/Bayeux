@@ -10,7 +10,6 @@ help=0
 debug=0
 bio_support=0
 python_wrapper_support=0
-depends_on_datatools=0
 
 if [ ${python_wrapper_support} -eq 1 ]; then
     with_python_wrapper=0
@@ -116,11 +115,9 @@ EOF
   --cmake-config-dir    print the installation directory for the 'materials-config.cmake' file
 EOF
     # Dependencies:
-    if [ "x${depends_on_datatools}" = "x1" ]; then
-	cat<<EOF
-   --datatools-version   print datatools version
+    cat<<EOF
+   --geomtools-version   print geomtools version
 EOF
-    fi
 #     cat<<EOF
 #     --yyy-version        print yyy version
 # EOF
@@ -186,9 +183,7 @@ if [ "x${option}" = "x--cflags" ]; then
     (
 	echo -n "-fPIC " 
 	echo -n "-I${materials_include_dir} "  
-	if [ "x${depends_on_datatools}" = "x1" ]; then
-	    echo -n "`datatools-config --cflags` "
-	fi
+	echo -n "`geomtools-config --cflags` "
 	### echo -n "`yyy-config --cflags` "
 	echo ""
     ) | python @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/pkgtools/mkuniqueflags.py     
@@ -241,9 +236,7 @@ if [ "x${option}" = "x--ldflags" ]; then
     fi
     (
 	echo -n "-L${materials_lib_dir} ${more_ldflags} -lmaterials "
-	if [ "x${depends_on_datatools}" = "x1" ]; then
-	    echo -n "`datatools-config --ldflags` "
-	fi
+	echo -n "`geomtools-config --ldflags` "
 	### echo -n "`yyy-config --ldflags/libs` "
 	echo ""
     ) | python @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/pkgtools/mkuniqueflags.py -r   
@@ -281,11 +274,9 @@ if [ ${python_wrapper_support} -eq 1 ]; then
     fi
 fi
 
-if [ "x${depends_on_datatools}" = "x1" ]; then
-    if [ "x${option}" = "x--datatools-version" ]; then
-	echo @DATATOOLS_VERSION@
-	my_exit 0
-    fi
+if [ "x${option}" = "x--geomtools-version" ]; then
+    echo @geomtools_VERSION@
+    my_exit 0
 fi
 
 # if [ "x${option}" = "x--yyy-version" ]; then
