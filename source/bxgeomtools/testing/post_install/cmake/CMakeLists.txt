@@ -12,6 +12,17 @@ if ( ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR} )
   message ( FATAL_ERROR "in-source build detected" )
 endif ()
 
+# - Depends on geomtools:
+if ( DEFINED geomtools_DIR )
+    message ( STATUS "${PROJECT_NAME}: geomtools_DIR is : '${geomtools_DIR}' " )
+else ()
+    if ( NOT "x$ENV{GEOMTOOLS_CMAKE_CONFIG_DIR}" STREQUAL "x" )
+      message ( STATUS "${PROJECT_NAME}: Environment GEOMTOOLS_CMAKE_CONFIG_DIR exists : '$ENV{GEOMTOOLS_CMAKE_CONFIG_DIR}' " )
+      set ( geomtools_DIR "$ENV{GEOMTOOLS_CMAKE_CONFIG_DIR}" )
+      message ( STATUS "${PROJECT_NAME}: geomtools_DIR is : '${geomtools_DIR}' " )
+    endif ()
+endif ()
+
 set ( _geomtools_min_version 3.0 )
 find_package ( geomtools ${_geomtools_min_version} REQUIRED NO_MODULE )
 if ( geomtools_VERSION )
@@ -27,8 +38,9 @@ else ()
      message ( FATAL_ERROR "Cannot find geomtools >= ${_geomtools_min_version} library !" )
 endif ()
 
-set ( test_geomtools_src_files ${CMAKE_SOURCE_DIR}/../test_geomtools.cxx )
+set ( test_geomtools_src_files ${CMAKE_SOURCE_DIR}/../../test_geomtools.cxx )
 
+include_directories ( ../.. )
 include_directories ( ${geomtools_INCLUDE_DIRS} )
 
 add_executable ( test_geomtools
