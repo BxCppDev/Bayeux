@@ -14,6 +14,17 @@ endif ()
 
 set (CMAKE_MODULE_PATH $ENV{CMAKE_MODULE_PATH} ${CMAKE_MODULE_PATH} )
 
+# - Depends on datatools:
+if ( DEFINED datatools_DIR )
+    message ( STATUS "${PROJECT_NAME}: datatools_DIR is : '${datatools_DIR}' " )
+else ()
+    if ( NOT "x$ENV{DATATOOLS_CMAKE_CONFIG_DIR}" STREQUAL "x" )
+      message ( STATUS "${PROJECT_NAME}: Environment DATATOOLS_CMAKE_CONFIG_DIR exists : '$ENV{DATATOOLS_CMAKE_CONFIG_DIR}' " )
+      set ( datatools_DIR "$ENV{DATATOOLS_CMAKE_CONFIG_DIR}" )
+      message ( STATUS "${PROJECT_NAME}: datatools_DIR is : '${datatools_DIR}' " )
+    endif ()
+endif ()
+
 set ( _datatools_min_version 4.0 )
 find_package ( datatools ${_datatools_min_version} REQUIRED NO_MODULE )
 if ( datatools_VERSION )
