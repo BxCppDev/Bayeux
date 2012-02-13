@@ -47,11 +47,6 @@ if ( NOT DEFINED cuts_CONFIG_COUNTER )
   # We have to set the headers because cuts exports the headers in
   # its public interface.
 
-  #----------------------------------------------------------------------------
-  # Set path to cuts includes
-  #
-  set ( cuts_ONLY_INCLUDE_DIRS @cuts_INCLUDE_DIR@ )
-
   # Explicitely find the datatools package that was used to build brio :
   ###set ( datatools_DIR @datatools_DIR@ )
   find_package ( datatools @_datatools_min_version@ REQUIRED NO_MODULE )
@@ -61,6 +56,11 @@ if ( NOT DEFINED cuts_CONFIG_COUNTER )
     message ( STATUS "Found 'datatools' dependency version ${datatools_VERSION} !")
   endif ()
 
+
+  #----------------------------------------------------------------------------
+  # Set path to cuts includes
+  #
+  set ( cuts_ONLY_INCLUDE_DIRS @cuts_INCLUDE_DIR@ )
   set ( _cuts_datatools_INCLUDE_DIRS ${datatools_INCLUDE_DIRS} )
   set ( cuts_INCLUDE_DIRS 
     ${cuts_ONLY_INCLUDE_DIRS}

@@ -10,7 +10,7 @@ help=0
 debug=0
 bio_support=0
 python_wrapper_support=0
-depends_on_datatools=0
+depends_on_datatools=1
 
 if [ ${python_wrapper_support} -eq 1 ]; then
     with_python_wrapper=0
