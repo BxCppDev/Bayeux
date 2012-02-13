@@ -23,10 +23,10 @@ file ( GLOB geomtools_SOURCES
 # Last source files built in the DLL for proper static stuff initialization:
 list ( REMOVE_ITEM geomtools_SOURCES "${PROJECT_SOURCE_DIR}/src/i_model.cc" )
 list ( REMOVE_ITEM geomtools_SOURCES "${PROJECT_SOURCE_DIR}/src/i_object_3d.cc" )
-list ( APPEND geomtools_SOURCES "${PROJECT_SOURCE_DIR}/src/i_model.cc" )
-list ( APPEND geomtools_SOURCES "${PROJECT_SOURCE_DIR}/src/i_object_3d.cc" )
+list ( APPEND geomtools_SOURCES      "${PROJECT_SOURCE_DIR}/src/i_model.cc" )
+list ( APPEND geomtools_SOURCES      "${PROJECT_SOURCE_DIR}/src/i_object_3d.cc" )
 
-# remove this because it goes in the BIO DLL :
+# remove this because it goes in the BIO DLL if any :
 list ( REMOVE_ITEM geomtools_SOURCES "${PROJECT_SOURCE_DIR}/src/the_serializable.cc" )
   
 # specific to the BIO serialization stuff :
@@ -60,7 +60,7 @@ add_library ( geomtools SHARED
 	      ${geomtools_SOURCES}
             )
 
-set ( _link_libraries ${_link_libraries} ${mygsl_LIBRARIES} )
+set ( _link_libraries ${mygsl_LIBRARIES} )
 
 # Link dynamic library :
 target_link_libraries ( geomtools
@@ -71,7 +71,7 @@ target_link_libraries ( geomtools
 #
 
 install ( TARGETS geomtools
-          EXPORT geomtools-libraries
+          EXPORT  geomtools-libraries
           RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT bin
           LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT bin 
           ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT devel
@@ -111,6 +111,7 @@ if ( GEOMTOOLS_WITH_BIO )
    # Link dynamic library :
    target_link_libraries ( geomtools_bio 
                            geomtools
+                           ${_link_libraries}
                          )
  
    target_link_libraries ( geomtools_bio LINK_INTERFACE_LIBRARIES "" )

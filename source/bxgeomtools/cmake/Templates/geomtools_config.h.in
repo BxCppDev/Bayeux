@@ -38,6 +38,8 @@
 
 #define GEOMTOOLS_GDML_SCHEMA_LOCAL_PATH "@_geomtools_GDML_SCHEMA_FULL_LOCAL_PATH@"
 
+#define GEOMTOOLS_GNUPLOT_EXECUTABLE "@GNUPLOT_EXECUTABLE@"
+
 #endif // __geomtools_geomtools_config_h
 
 // end of geomtools_config.h

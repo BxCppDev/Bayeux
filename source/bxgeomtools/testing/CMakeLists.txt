@@ -21,58 +21,58 @@
 ###############################################################################
 
 set ( geomtools_tests_programs_list
-      test_geomtools.cxx 
-test_address_set.cxx
-test_any_shape_3d.cxx
-test_box.cxx
-test_circle.cxx
-test_color.cxx
-test_cylinder.cxx
-test_disk.cxx
-test_gdml_writer.cxx
-test_geom_id.cxx
-test_gnuplot_draw.cxx
-#test_gnuplot_i.cxx
-test_helix.cxx
-test_hexagon_box.cxx
-test_id_mgr.cxx
-test_id_selector.cxx
-test_i_model.cxx
-test_intersection_3d.cxx
-#test_intersection.cxx
-test_logical_volume.cxx
-test_model_factory.cxx
-test_multiple_placement.cxx
-test_physical_volume.cxx
-test_placement_2.cxx
-test_placement_3.cxx
-test_placement.cxx
-test_polycone_2.cxx
-test_polycone.cxx
-test_polyhedra.cxx
-test_polyline_3d.cxx
-test_rectangle.cxx
-test_regular_grid_placement.cxx
-test_regular_linear_placement.cxx
-test_regular_polygon.cxx
-test_rotation_3d.cxx
-test_s0.cxx
-test_serializable_2.cxx
-test_serializable.cxx
-test_sphere.cxx
-test_subtraction_3d.cxx
-test_tessellated_solid.cxx
-test_tube.cxx
-test_union_3d.cxx
-test_utils_2.cxx
-test_utils.cxx
-    )
+  test_geomtools.cxx 
+  test_address_set.cxx
+  test_any_shape_3d.cxx
+  test_box.cxx
+  test_circle.cxx
+  test_color.cxx
+  test_cylinder.cxx
+  test_disk.cxx
+  test_gdml_writer.cxx
+  test_geom_id.cxx
+  test_gnuplot_draw.cxx
+  #test_gnuplot_i.cxx
+  test_helix.cxx
+  test_hexagon_box.cxx
+  test_id_mgr.cxx
+  test_id_selector.cxx
+  test_i_model.cxx
+  test_intersection_3d.cxx
+  #test_intersection.cxx
+  test_logical_volume.cxx
+  test_model_factory.cxx
+  test_multiple_placement.cxx
+  test_physical_volume.cxx
+  test_placement_2.cxx
+  test_placement_3.cxx
+  test_placement.cxx
+  test_polycone_2.cxx
+  test_polycone.cxx
+  test_polyhedra.cxx
+  test_polyline_3d.cxx
+  test_rectangle.cxx
+  test_regular_grid_placement.cxx
+  test_regular_linear_placement.cxx
+  test_regular_polygon.cxx
+  test_rotation_3d.cxx
+  test_s0.cxx
+  test_serializable_2.cxx
+  test_serializable.cxx
+  test_sphere.cxx
+  test_subtraction_3d.cxx
+  test_tessellated_solid.cxx
+  test_tube.cxx
+  test_union_3d.cxx
+  test_utils_2.cxx
+  test_utils.cxx
+  )
 
 include_directories ( ${PROJECT_BINARY_DIR}/include
-                      ${PROJECT_SOURCE_DIR}/include     
-                      ${mygsl_INCLUDE_DIRS}
-                      ${PROJECT_SOURCE_DIR}/testing
-                    )
+  ${PROJECT_SOURCE_DIR}/include     
+  ${mygsl_INCLUDE_DIRS}
+  ${PROJECT_SOURCE_DIR}/testing
+  )
 
 # linker search paths :
 link_directories ( ${PROJECT_BINARY_DIR}/src )
@@ -94,35 +94,30 @@ if ( GEOMTOOLS_ALL_TESTS )
 
     # last thing we have to do is to tell CMake what libraries 
     # our executable needs,
-    # list ( APPEND test_libraries "geomtools" )
-    # if ( GEOMTOOLS_WITH_BIO )
-    #   list (INSERT test_libraries 0 "geomtools_bio" )
-    # endif ()
-    # list ( APPEND test_libraries "${mygsl_LIBRARIES}" )
+    set ( _test_libraries geomtools )
+    list ( APPEND _test_libraries ${mygsl_LIBRARIES} )
     if ( GEOMTOOLS_WITH_BIO )
-      set ( test_libraries geomtools_bio )
-    else ()
-      set ( test_libraries geomtools )
+      list (INSERT _test_libraries 0 geomtools_bio )
     endif ()
-	 
-    target_link_libraries ( ${test_executable} ${test_libraries} )
+    
+    target_link_libraries ( ${test_executable} ${_test_libraries} )
 
     add_test ( NAME ${test_executable}.run
-               COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
-                       --tmp-dir ${_test_tmp_dir}
-                       --prefix ${PROJECT_SOURCE_DIR} 
-                       --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
-	               run
-             )	 	
+      COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
+      --tmp-dir ${_test_tmp_dir}
+      --prefix ${PROJECT_SOURCE_DIR} 
+      --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
+      run
+      )	 	
 
   endforeach ()
   
   add_custom_target ( clean_test
-                      COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
-                      --prefix ${PROJECT_SOURCE_DIR} 
-                      --tmp-dir ${_test_tmp_dir}
-                      clean
-                    )
+    COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
+    --prefix ${PROJECT_SOURCE_DIR} 
+    --tmp-dir ${_test_tmp_dir}
+    clean
+    )
 
 endif ()
 
@@ -135,27 +130,27 @@ if (GEOMTOOLS_INSTALL_TEST_PROGRAMS)
 
   file ( GLOB geomtools_tests_config config/test_* )
   install ( FILES ${geomtools_tests_config} 
-    	    DESTINATION ${_test_install_dir}/config  
-            PERMISSIONS OWNER_READ GROUP_READ WORLD_READ 
-         )
+    DESTINATION ${_test_install_dir}/config  
+    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ 
+    )
 
   file ( GLOB geomtools_tests_data data/test_*.data )
   install ( FILES ${geomtools_tests_data} 
-    	    DESTINATION ${_test_install_dir}/data  
-            PERMISSIONS OWNER_READ GROUP_READ WORLD_READ 
-         )
+    DESTINATION ${_test_install_dir}/data  
+    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ 
+    )
 
   file ( GLOB geomtools_test_programs test_*.cxx test_*.gpl)
   install ( FILES ${geomtools_test_programs} 
-            geomtools_test_model_1.cc
-            geomtools_test_model_1.h
-            geomtools_test_model_2.cc
-            geomtools_test_model_2.h
-            geomtools_test_world_model.cc
-            geomtools_test_world_model.h
-	    DESTINATION ${_test_install_dir}
-            PERMISSIONS OWNER_READ GROUP_READ WORLD_READ 
-          )
+    geomtools_test_model_1.cc
+    geomtools_test_model_1.h
+    geomtools_test_model_2.cc
+    geomtools_test_model_2.h
+    geomtools_test_world_model.cc
+    geomtools_test_world_model.h
+    DESTINATION ${_test_install_dir}
+    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ 
+    )
 
 endif ()
 

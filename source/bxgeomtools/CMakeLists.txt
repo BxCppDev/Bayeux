@@ -65,10 +65,6 @@ include ( InstallDirs )
 include ( PackageFilename )
 
 # ----------------------------------------------------------------------
-# Dependencies :
-#
-
-# ----------------------------------------------------------------------
 # Options :
 #
 
@@ -92,6 +88,28 @@ option ( GEOMTOOLS_WITH_CMAKE_FIND_MODULE
          "Build the geomtools' CMake find module"
  	 0 )
 
+# ----------------------------------------------------------------------
+# Dependencies :
+#
+
+# ---------------------------------------------------
+# Gnuplot dependency :
+#
+
+set ( _gnuplot_min_version 4.4 ) 
+if ( NOT "$ENV{GNUPLOT_ROOT_DIR}" STREQUAL "")  
+  message ( STATUS "Environment GNUPLOT_ROOT_DIR exists : '$ENV{GNUPLOT_ROOT_DIR}' ")
+  set ( GNUPLOT_ROOT_DIR $ENV{GNUPLOT_ROOT_DIR} )
+###else ()
+###  message ( STATUS  "Environment GNUPLOT_ROOT_DIR is not set !" )
+endif ()
+find_package ( Gnuplot ${_gnuplot_min_version} REQUIRED)
+if ( NOT GNUPLOT_FOUND )
+   message ( FATAL_ERROR "${PROJECT_NAME} : Cannot find 'gnuplot' program !" )
+else ()
+   message ( STATUS "${PROJECT_NAME} : Found the 'gnuplot' program : '${GNUPLOT_EXECUTABLE}'" )     
+endif () 
+
 # ---------------------------------------------------
 # mygsl dependency :
 #
@@ -108,73 +126,56 @@ set ( _mygsl_min_version 3.0 )
 find_package ( mygsl ${_mygsl_min_version} REQUIRED NO_MODULE )
 if ( DEFINED mygsl_CONFIG )
      message ( STATUS "${PROJECT_NAME} : Found mygsl >= ${_mygsl_min_version}" )
-     message ( STATUS "${PROJECT_NAME} :   mygsl_CONFIG              : ${mygsl_CONFIG}" )
-     message ( STATUS "${PROJECT_NAME} :   mygsl_VERSION             : ${mygsl_VERSION}" )
-     message ( STATUS "${PROJECT_NAME} :   mygsl_LIBRARIES           : ${mygsl_LIBRARIES}" )
-     message ( STATUS "${PROJECT_NAME} :   mygsl_INCLUDE_DIRS        : ${mygsl_INCLUDE_DIRS}" )
-     message ( STATUS "${PROJECT_NAME} :   mygsl_WITH_DEBUG          : ${mygsl_WITH_DEBUG}" )
-     #message ( STATUS "${PROJECT_NAME} :   mygsl_WITH_BIO            : ${mygsl_WITH_BIO}" )
-     #message ( STATUS "${PROJECT_NAME} :   mygsl_WITH_PYTHON_WRAPPER : ${mygsl_WITH_PYTHON_WRAPPER}" )
+     message ( STATUS "${PROJECT_NAME} :  o mygsl_CONFIG              : ${mygsl_CONFIG}" )
+     message ( STATUS "${PROJECT_NAME} :  o mygsl_VERSION             : ${mygsl_VERSION}" )
+     message ( STATUS "${PROJECT_NAME} :  o mygsl_LIBRARIES           : ${mygsl_LIBRARIES}" )
+     message ( STATUS "${PROJECT_NAME} :  o mygsl_INCLUDE_DIRS        : ${mygsl_INCLUDE_DIRS}" )
+     message ( STATUS "${PROJECT_NAME} :  o mygsl_WITH_DEBUG          : ${mygsl_WITH_DEBUG}" )
+     #message ( STATUS "${PROJECT_NAME} :  o mygsl_WITH_BIO            : ${mygsl_WITH_BIO}" )
+     #message ( STATUS "${PROJECT_NAME} :  o mygsl_WITH_PYTHON_WRAPPER : ${mygsl_WITH_PYTHON_WRAPPER}" )
 else ()
      message ( FATAL_ERROR "${PROJECT_NAME} : Cannot find mygsl >= ${_mygsl_min_version} library !" )
 endif ()
 
 # ---------------------------------------------------
-# Gnuplot dependency :
-#
-
-find_package ( Gnuplot "4" REQUIRED)
-if ( NOT GNUPLOT_FOUND )
-   message ( FATAL_ERROR "${PROJECT_NAME} : Cannot find 'gnuplot' program !" )
-else ()
-   message ( STATUS "${PROJECT_NAME} : Found the 'gnuplot' program : '${GNUPLOT_EXECUTABLE}'" )     
-endif () 
-
-# ---------------------------------------------------
 # datatools dependency :
 #
-
-set ( _depends_on_datatools 1 )
-
 set ( _default_bio_activation 0 )
 set ( _default_python_wrapper_activation 0 )
 
-if ( _depends_on_datatools )
-  # - Depends on datatools:
-  if ( DEFINED datatools_CONFIG )
-       message ( STATUS "${PROJECT_NAME} : Found datatools ") ### >= ${_datatools_min_version}" )
-       message ( STATUS "${PROJECT_NAME} :   datatools_CONFIG              : ${datatools_CONFIG}" )
-       message ( STATUS "${PROJECT_NAME} :   datatools_VERSION             : ${datatools_VERSION}" )
-       message ( STATUS "${PROJECT_NAME} :   datatools_LIBRARIES           : ${datatools_LIBRARIES}" )
-       message ( STATUS "${PROJECT_NAME} :   datatools_INCLUDE_DIRS        : ${datatools_INCLUDE_DIRS}" )
-       message ( STATUS "${PROJECT_NAME} :   datatools_WITH_DEBUG          : ${datatools_WITH_DEBUG}" )
-       message ( STATUS "${PROJECT_NAME} :   datatools_WITH_BIO            : ${datatools_WITH_BIO}" )
-       message ( STATUS "${PROJECT_NAME} :   datatools_WITH_PYTHON_WRAPPER : ${datatools_WITH_PYTHON_WRAPPER}" )
-  else ()
-       message ( FATAL_ERROR "${PROJECT_NAME} : the mygsl library could not find datatools >= ${_datatools_min_version} !" )
+# - Depends on datatools:
+if ( DEFINED datatools_CONFIG )
+  message ( STATUS "${PROJECT_NAME} : Found datatools ") ### >= ${_datatools_min_version}" )
+  message ( STATUS "${PROJECT_NAME} :   datatools_CONFIG              : ${datatools_CONFIG}" )
+  message ( STATUS "${PROJECT_NAME} :   datatools_VERSION             : ${datatools_VERSION}" )
+  message ( STATUS "${PROJECT_NAME} :   datatools_LIBRARIES           : ${datatools_LIBRARIES}" )
+  message ( STATUS "${PROJECT_NAME} :   datatools_INCLUDE_DIRS        : ${datatools_INCLUDE_DIRS}" )
+  message ( STATUS "${PROJECT_NAME} :   datatools_WITH_DEBUG          : ${datatools_WITH_DEBUG}" )
+  message ( STATUS "${PROJECT_NAME} :   datatools_WITH_BIO            : ${datatools_WITH_BIO}" )
+  message ( STATUS "${PROJECT_NAME} :   datatools_WITH_PYTHON_WRAPPER : ${datatools_WITH_PYTHON_WRAPPER}" )
+else ()
+  message ( FATAL_ERROR "${PROJECT_NAME} : the mygsl library could not find datatools >= ${_datatools_min_version} !" )
+endif ()
+if ( GEOMTOOLS_WITH_BIO_SUPPORT )
+  if ( datatools_WITH_BIO )
+    set ( _default_bio_activation 1 )
   endif ()
-  if ( GEOMTOOLS_WITH_BIO_SUPPORT )
-    if ( datatools_WITH_BIO )
-      set ( _default_bio_activation 1 )
-    endif ()
-  endif ()
-  if ( GEOMTOOLS_WITH_PYTHON_WRAPPER_SUPPORT )
-    if ( datatools_WITH_PYTHON_WRAPPER )
-      # XXXX
-      message ( FATAL_ERROR "${PROJECT_NAME} : No support for Python wrapper for now !" )
-      set ( _default_python_wrapper_activation 1 )
-    endif ()
+endif ()
+if ( GEOMTOOLS_WITH_PYTHON_WRAPPER_SUPPORT )
+  if ( datatools_WITH_PYTHON_WRAPPER )
+    message ( FATAL_ERROR "${PROJECT_NAME} : No support for Python wrapper for now !" )
+    set ( _default_python_wrapper_activation 1 )
   endif ()
 endif ()
 
 option ( GEOMTOOLS_WITH_BIO 
-         "Build the geomtools with Boost I/O serialization" 
-	  ${_default_bio_activation} )
+  "Build the geomtools with Boost I/O serialization" 
+  ${_default_bio_activation} )
 
 set ( GEOMTOOLS_WITH_PYTHON_WRAPPER 0)
-  # option ( GEOMTOOLS_WITH_PYTHON_WRAPPER
-  #          "Build the geomtools Boost/Python wrapper module" 
-  #         ${_default_python_wrapper_activation} )
+# option ( GEOMTOOLS_WITH_PYTHON_WRAPPER
+#          "Build the geomtools Boost/Python wrapper module" 
+#         ${_default_python_wrapper_activation} )
 
 # ---------------------------------------------------
 
@@ -239,7 +240,7 @@ endif ( CMAKE_SYSTEM_NAME MATCHES Darwin )
 # geomtools API
 #
 
-message ( STATUS "${PROJECT_NAME} : Add subdirectory : " "'src'" )
+message ( STATUS "${PROJECT_NAME} : Add subdirectory : 'src'" )
 add_subdirectory ( src )   
 
 # ----------------------------------------------------------------------
@@ -422,6 +423,7 @@ install ( DIRECTORY ${PROJECT_SOURCE_DIR}/resources/gdml_schema
 # Add documentation.
 #
 if ( GEOMTOOLS_WITH_DOC )
+  message ( STATUS "${PROJECT_NAME} : Add subdirectory 'doc' " )
   add_subdirectory ( doc )
 endif ()
 
@@ -429,6 +431,7 @@ endif ()
 # Add testing - always for now.
 #
 if ( GEOMTOOLS_WITH_TEST )
+  message ( STATUS "${PROJECT_NAME} : Add subdirectory 'testing' " )
   enable_testing () 
   add_subdirectory ( testing )
 endif ()
