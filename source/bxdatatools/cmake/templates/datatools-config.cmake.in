@@ -54,6 +54,8 @@ if ( NOT DEFINED datatools_CONFIG_COUNTER )
 
   # Default use hardcoded third-party dependencies :
   set (_datatools_hardcoded_dependencies ON)
+
+  # Experimental (not used anymore for now)
   if (DEFINED datatools_FIND_DEPENDENCIES AND datatools_FIND_DEPENDENCIES)
     set (_datatools_hardcoded_dependencies OFF)
   endif ()
@@ -178,13 +180,14 @@ if ( NOT DEFINED datatools_CONFIG_COUNTER )
     ${_datatools_PYTHON_LIBRARIES} 
     )
 
-  message ( STATUS "datatools-config.cmake: datatools_VERSION        = '${datatools_VERSION}'" )
-  message ( STATUS "datatools-config.cmake: datatools_WITH_BIO       = '${datatools_WITH_BIO}'" )
-  message ( STATUS "datatools-config.cmake: datatools_WITH_PYTHON_WRAPPER = '${datatools_WITH_PYTHON_WRAPPER}'" )
-  message ( STATUS "datatools-config.cmake: datatools_INCLUDE_DIRS   = '${datatools_INCLUDE_DIRS}'" )
+  message ( STATUS "datatools-config.cmake: datatools_VERSION             = '${datatools_VERSION}'" )
+  message ( STATUS "datatools-config.cmake: datatools_WITH_BIO            = '${datatools_WITH_BIO}'" )
   message ( STATUS "datatools-config.cmake: datatools_ONLY_INCLUDE_DIRS   = '${datatools_ONLY_INCLUDE_DIRS}'" )
-  message ( STATUS "datatools-config.cmake: datatools_LIBRARIES      = '${datatools_LIBRARIES}'" )
-  message ( STATUS "datatools-config.cmake: datatools_ONLY_LIBRARIES = '${datatools_ONLY_LIBRARIES}'" )
+  message ( STATUS "datatools-config.cmake: datatools_ONLY_LIBRARIES      = '${datatools_ONLY_LIBRARIES}'" )
+  message ( STATUS "datatools-config.cmake: datatools_INCLUDE_DIRS        = '${datatools_INCLUDE_DIRS}'" )
+  message ( STATUS "datatools-config.cmake: datatools_LIB_DIR             = '${datatools_LIB_DIR}'" )
+  message ( STATUS "datatools-config.cmake: datatools_LIBRARIES           = '${datatools_LIBRARIES}'" )
+  message ( STATUS "datatools-config.cmake: datatools_WITH_PYTHON_WRAPPER = '${datatools_WITH_PYTHON_WRAPPER}'" )
 
   unset(_datatools_CLHEP_INCLUDE_DIRS)
   unset(_datatools_CLHEP_LIBRARIES)
