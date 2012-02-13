@@ -50,7 +50,8 @@ include("${_thisdir}/geomtools-libraries.cmake")
 # ----------------------------------------------------------------------------
 # mygsl dependency :
 #
-set ( mygsl_DIR "${mygsl_DIR}" )
+# Explicitely find the mygsl_DIR package that was used to build geomtools :
+###set ( mygsl_DIR "@mygsl_DIR@" )
 find_package ( mygsl "3.0" NO_MODULE )
 if ( NOT DEFINED mygsl_CONFIG)
    message ( FATAL_ERROR "geomtools-config.cmake : Cannot find the 'mygsl' library !" )
