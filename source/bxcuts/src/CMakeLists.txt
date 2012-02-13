@@ -57,9 +57,7 @@ add_library ( cuts SHARED
 	      ${cuts_SOURCES}
             )
 
-set ( _link_libraries "" )
-
-set ( _link_libraries "${_link_libraries}" "${datatools_LIBRARIES}" )
+set ( _link_libraries ${_link_libraries} ${datatools_LIBRARIES} )
 
 # Link dynamic library :
 target_link_libraries ( cuts
@@ -70,7 +68,7 @@ target_link_libraries ( cuts
 #
 
 install ( TARGETS cuts
-          EXPORT cuts-libraries
+          EXPORT  cuts-libraries
           RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT bin
           LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT bin 
           ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT devel

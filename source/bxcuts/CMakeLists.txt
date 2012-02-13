@@ -63,10 +63,6 @@ include ( InstallDirs )
 include ( PackageFilename )
 
 # ----------------------------------------------------------------------
-# Dependencies :
-#
-
-# ----------------------------------------------------------------------
 # Options :
 #
 
@@ -90,44 +86,46 @@ option ( CUTS_WITH_CMAKE_FIND_MODULE
          "Build the cuts' CMake find module"
  	 0 )
 
+# ----------------------------------------------------------------------
+# Dependencies :
+#
+
 # set ( _default_bio_activation 0 )
 # set ( _default_python_wrapper_activation 0 )
   
-
 # - Depends on datatools:
-
-  if ( DEFINED datatools_DIR )
-    message ( STATUS "datatools_DIR is : '${datatools_DIR}' " )
-  else ()
-    if ( NOT "$ENV{DATATOOLS_CMAKE_CONFIG_DIR}" STREQUAL "" )
-      message ( STATUS "Environment DATATOOLS_CMAKE_CONFIG_DIR exists : '$ENV{DATATOOLS_CMAKE_CONFIG_DIR}' " )
-      set ( datatools_DIR "$ENV{DATATOOLS_CMAKE_CONFIG_DIR}" )
-    endif ()
+if ( DEFINED datatools_DIR )
+  message ( STATUS "datatools_DIR is : '${datatools_DIR}' " )
+else ()
+  if ( NOT "$ENV{DATATOOLS_CMAKE_CONFIG_DIR}" STREQUAL "" )
+    message ( STATUS "Environment DATATOOLS_CMAKE_CONFIG_DIR exists : '$ENV{DATATOOLS_CMAKE_CONFIG_DIR}' " )
+    set ( datatools_DIR "$ENV{DATATOOLS_CMAKE_CONFIG_DIR}" )
   endif ()
-  set ( _datatools_min_version 4.0 )
-  find_package ( datatools ${_datatools_min_version} REQUIRED NO_MODULE )
-  if ( DEFINED datatools_CONFIG )
-       message ( STATUS "Found datatools >= ${_datatools_min_version}" )
-       message ( STATUS "  datatools_CONFIG              : ${datatools_CONFIG}" )
-       message ( STATUS "  datatools_VERSION             : ${datatools_VERSION}" )
-       message ( STATUS "  datatools_LIBRARIES           : ${datatools_LIBRARIES}" )
-       message ( STATUS "  datatools_INCLUDE_DIRS        : ${datatools_INCLUDE_DIRS}" )
-       message ( STATUS "  datatools_WITH_DEBUG          : ${datatools_WITH_DEBUG}" )
-       # message ( STATUS "  datatools_WITH_BIO            : ${datatools_WITH_BIO}" )
-       # message ( STATUS "  datatools_WITH_PYTHON_WRAPPER : ${datatools_WITH_PYTHON_WRAPPER}" )
-  else ()
-       message ( FATAL_ERROR "Cannot find datatools >= ${_datatools_min_version} library !" )
-  endif ()
-  # if ( CUTS_WITH_BIO_SUPPORT )
-  #   if ( datatools_WITH_BIO )
-  #     set ( _default_bio_activation 1 )
-  #   endif ()
-  # endif ()
-  # if ( CUTS_WITH_PYTHON_WRAPPER_SUPPORT )
-  #   if ( datatools_WITH_PYTHON_WRAPPER )
-  #     set ( _default_python_wrapper_activation 1 )
-  #   endif ()
-  # endif ()
+endif ()
+set ( _datatools_min_version 4.0 )
+find_package ( datatools ${_datatools_min_version} REQUIRED NO_MODULE )
+if ( DEFINED datatools_CONFIG )
+  message ( STATUS "Found datatools >= ${_datatools_min_version}" )
+  message ( STATUS " o datatools_CONFIG              : ${datatools_CONFIG}" )
+  message ( STATUS " o datatools_VERSION             : ${datatools_VERSION}" )
+  message ( STATUS " o datatools_LIBRARIES           : ${datatools_LIBRARIES}" )
+  message ( STATUS " o datatools_INCLUDE_DIRS        : ${datatools_INCLUDE_DIRS}" )
+  message ( STATUS " o datatools_WITH_DEBUG          : ${datatools_WITH_DEBUG}" )
+  # message ( STATUS " o datatools_WITH_BIO            : ${datatools_WITH_BIO}" )
+  # message ( STATUS " o datatools_WITH_PYTHON_WRAPPER : ${datatools_WITH_PYTHON_WRAPPER}" )
+else ()
+  message ( FATAL_ERROR "Cannot find datatools >= ${_datatools_min_version} library !" )
+endif ()
+# if ( CUTS_WITH_BIO_SUPPORT )
+#   if ( datatools_WITH_BIO )
+#     set ( _default_bio_activation 1 )
+#   endif ()
+# endif ()
+# if ( CUTS_WITH_PYTHON_WRAPPER_SUPPORT )
+#   if ( datatools_WITH_PYTHON_WRAPPER )
+#     set ( _default_python_wrapper_activation 1 )
+#   endif ()
+# endif ()
 
 # if ( CUTS_WITH_BIO_SUPPORT )
 #   option ( CUTS_WITH_BIO 

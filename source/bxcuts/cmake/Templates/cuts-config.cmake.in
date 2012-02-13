@@ -34,39 +34,39 @@ if ( NOT DEFINED cuts_CONFIG_COUNTER )
   #
   get_filename_component(_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
-
   #----------------------------------------------------------------------------
   # Include the file listing all the imported targets to make them available
   # This is installed in the same location as us...
   #
   include("${_thisdir}/cuts-libraries.cmake")
 
-
   #----------------------------------------------------------------------------
   # Set variables pointing to used third party headers and locations.
   # We have to set the headers because cuts exports the headers in
   # its public interface.
 
-  # Explicitely find the datatools package that was used to build brio :
-  ###set ( datatools_DIR @datatools_DIR@ )
-  find_package ( datatools @_datatools_min_version@ REQUIRED NO_MODULE )
-  if (NOT DEFINED datatools_VERSION)
-    message ( FATAL_ERROR "Cannot find 'datatools' >= @_datatools_min_version@ !")
+  find_package ( datatools @datatools_VERSION@ REQUIRED NO_MODULE )
+  if (NOT DEFINED datatools_CONFIG)
+    message ( FATAL_ERROR "cuts-config.cmake: Cannot find 'datatools' >= @datatools_VERSION@ !")
   else ()
-    message ( STATUS "Found 'datatools' dependency version ${datatools_VERSION} !")
+    message ( STATUS "cuts-config.cmake: Found 'datatools' dependency version ${datatools_VERSION} !")
   endif ()
+  set( _cuts_datatools_INCLUDE_DIRS ${datatools_INCLUDE_DIRS} )
+  set( _cuts_datatools_LIBRARIES    ${datatools_LIBRARIES}    )
+ 
+  message ( STATUS "cuts-config.cmake: Dependencies : " )
+  message ( STATUS "cuts-config.cmake:  o datatools_INCLUDE_DIRS = '${_cuts_datatools_INCLUDE_DIRS}' " )
+  message ( STATUS "cuts-config.cmake:  o datatools_LIBRARIES    = '${_cuts_datatools_LIBRARIES}' " )
 
 
   #----------------------------------------------------------------------------
   # Set path to cuts includes
   #
   set ( cuts_ONLY_INCLUDE_DIRS @cuts_INCLUDE_DIR@ )
-  set ( _cuts_datatools_INCLUDE_DIRS ${datatools_INCLUDE_DIRS} )
   set ( cuts_INCLUDE_DIRS 
     ${cuts_ONLY_INCLUDE_DIRS}
     ${_cuts_datatools_INCLUDE_DIRS}
     )
-  unset ( _cuts_datatools_INCLUDE_DIRS )
 
   #----------------------------------------------------------------------------
   # Set cuts_LIBRARIES variable
@@ -100,21 +100,20 @@ if ( NOT DEFINED cuts_CONFIG_COUNTER )
   #   endif()
   # endif ()
 
-  set(cuts_ONLY_LIBRARIES ${cuts_BIO_LIBRARY} ${cuts_LIBRARY} )
-
-  set(_cuts_datatools_LIBRARIES ${datatools_LIBRARIES} )
+  set(cuts_ONLY_LIBRARIES ${cuts_LIBRARY} )
   set(cuts_LIBRARIES 
     ${cuts_ONLY_LIBRARIES}
     ${_cuts_datatools_LIBRARIES}
     )
-  unset(_cuts_datatools_LIBRARIES)
 
-  # set(_cuts_yyy_LIBRARIES @yyy_LIBRARIES@)
-  # set(cuts_LIBRARIES 
-  #      ${cuts_LIBRARIES}
-  #      ${_cuts_yyy_LIBRARIES}
-  #    )
-  # unset(_cuts_yyy_LIBRARIES)
+
+  message ( STATUS "cuts-config.cmake: cuts_INCLUDE_DIRS      = '${cuts_INCLUDE_DIRS}'"      )
+  message ( STATUS "cuts-config.cmake: cuts_ONLY_INCLUDE_DIRS = '${cuts_ONLY_INCLUDE_DIRS}'" )
+  message ( STATUS "cuts-config.cmake: cuts_LIBRARIES         = '${cuts_LIBRARIES}'"         )
+  message ( STATUS "cuts-config.cmake: cuts_ONLY_LIBRARIES    = '${cuts_ONLY_LIBRARIES}'"    )
+
+  unset ( _cuts_datatools_LIBRARIES    )
+  unset ( _cuts_datatools_INCLUDE_DIRS )
 
 else ( NOT DEFINED cuts_CONFIG_COUNTER )
   message ( WARNING "Multiple inclusion of the 'cuts-config.cmake' file !" )

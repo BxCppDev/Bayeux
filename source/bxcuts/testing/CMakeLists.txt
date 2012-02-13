@@ -44,7 +44,6 @@ message ( STATUS "testing: Performing all available tests : ${CUTS_ALL_TESTS}" )
 if ( CUTS_ALL_TESTS )
   set ( _test_tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/tmp" )
   foreach ( test_program ${cuts_tests_programs_list} )
-    unset ( test_libraries )
     get_filename_component ( test_executable ${test_program} NAME_WE )
     message ( STATUS "testing:  Building test target '${test_executable}'" )
     add_executable ( ${test_executable} ${test_program} )
@@ -55,11 +54,9 @@ if ( CUTS_ALL_TESTS )
 
     # last thing we have to do is to tell CMake what libraries 
     # our executable needs,
-    list ( APPEND test_libraries "cuts" )
-
-    list ( APPEND test_libraries "${datatools_LIBRARIES}" )
+    set ( _test_libraries cuts ${datatools_LIBRARIES} )
  	 
-    target_link_libraries ( ${test_executable} ${test_libraries} )
+    target_link_libraries ( ${test_executable} ${_test_libraries} )
 
     add_test ( NAME ${test_executable}.run
                COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
