@@ -84,6 +84,10 @@ option ( GENVTX_WITH_CMAKE_FIND_MODULE
          "Build the genvtx' CMake find module"
  	 0 )
 
+# ----------------------------------------------------------------------
+# Dependencies :
+#
+
 if ( GENVTX_WITH_PYTHON_WRAPPER_SUPPORT )
   set ( _depends_on_datatools 1 )
 endif ()
@@ -109,22 +113,23 @@ if ( geomtools_CONFIG )
        message ( STATUS "${PROJECT_NAME}:  o geomtools_LIBRARIES           : ${geomtools_LIBRARIES}" )
        message ( STATUS "${PROJECT_NAME}:  o geomtools_INCLUDE_DIRS        : ${geomtools_INCLUDE_DIRS}" )
        message ( STATUS "${PROJECT_NAME}:  o geomtools_WITH_DEBUG          : ${geomtools_WITH_DEBUG}" )
-       ### message ( STATUS "${PROJECT_NAME}:   geomtools_WITH_BIO            : ${geomtools_WITH_BIO}" )
+       message ( STATUS "${PROJECT_NAME}:  o geomtools_WITH_BIO            : ${geomtools_WITH_BIO}" )
        message ( STATUS "${PROJECT_NAME}:  o geomtools_WITH_PYTHON_WRAPPER : ${geomtools_WITH_PYTHON_WRAPPER}" )
 else ()
        message ( FATAL_ERROR "${PROJECT_NAME}: Cannot find geomtools >= ${_geomtools_min_version} library !" )
 endif ()
-if ( GENVTX_WITH_PYTHON_WRAPPER_SUPPORT )
-    if ( geomtools_WITH_PYTHON_WRAPPER )
-      set ( _default_python_wrapper_activation 1 )
-    endif ()
-endif ()
 
-if ( GENVTX_WITH_PYTHON_WRAPPER_SUPPORT )
-  option ( GENVTX_WITH_PYTHON_WRAPPER
-           "Build the genvtx Boost/Python wrapper module" 
-           ${_default_python_wrapper_activation} )
-endif ()
+# if ( GENVTX_WITH_PYTHON_WRAPPER_SUPPORT )
+#     if ( geomtools_WITH_PYTHON_WRAPPER )
+#       set ( _default_python_wrapper_activation 1 )
+#     endif ()
+# endif ()
+
+# if ( GENVTX_WITH_PYTHON_WRAPPER_SUPPORT )
+#   option ( GENVTX_WITH_PYTHON_WRAPPER
+#            "Build the genvtx Boost/Python wrapper module" 
+#            ${_default_python_wrapper_activation} )
+# endif ()
 
 # ---------------------------------------------------
 
@@ -163,9 +168,9 @@ option ( GENVTX_WITH_CMAKE_FIND_MODULE
 # ----------------------------------------------------------------------
 
 message ( STATUS "${PROJECT_NAME}: GENVTX_WITH_DEBUG            : " "${GENVTX_WITH_DEBUG}" )
-if ( GENVTX_WITH_PYTHON_WRAPPER_SUPPORT )
-  message ( STATUS "${PROJECT_NAME}: GENVTX_WITH_PYTHON_WRAPPER : " "${GENVTX_WITH_PYTHON_WRAPPER}" )
-endif ()
+# if ( GENVTX_WITH_PYTHON_WRAPPER_SUPPORT )
+#   message ( STATUS "${PROJECT_NAME}: GENVTX_WITH_PYTHON_WRAPPER : " "${GENVTX_WITH_PYTHON_WRAPPER}" )
+# endif ()
 if ( UNIX OR APPLE )
   message ( STATUS "${PROJECT_NAME}: GENVTX_WITH_CONFIG_SCRIPT  : "  "${GENVTX_WITH_CONFIG_SCRIPT}" )
   message ( STATUS "${PROJECT_NAME}: GENVTX_WITH_PKGCONFIG      : " "${GENVTX_WITH_PKGCONFIG}" )
@@ -185,10 +190,8 @@ endif ( CMAKE_SYSTEM_NAME MATCHES Darwin )
 # ----------------------------------------------------------------------
 # genvtx API
 #
-
-message ( STATUS "${PROJECT_NAME}: Add subdirectory : " "'src'" )
+message ( STATUS "${PROJECT_NAME}: Add subdirectory : 'src'" )
 add_subdirectory ( src )   
-
 
 # ----------------------------------------------------------------------
 # Configuration files :

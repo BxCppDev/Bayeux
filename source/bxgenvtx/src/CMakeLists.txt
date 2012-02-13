@@ -41,7 +41,8 @@ list ( APPEND genvtx_SOURCES "${PROJECT_SOURCE_DIR}/src/i_vertex_generator.cc" )
 
 #----------------------------------------------------------------------------
 
-include_directories ( ${PROJECT_BINARY_DIR}/include
+include_directories ( 
+  ${PROJECT_BINARY_DIR}/include
   ${PROJECT_SOURCE_DIR}/include	
   )
 
@@ -59,19 +60,19 @@ add_library ( genvtx SHARED
   ${genvtx_SOURCES}
   )
 
-set ( _link_libraries "" )
-set ( _link_libraries "${_link_libraries}" "${geomtools_LIBRARIES}" )
+set ( _link_libraries ${geomtools_LIBRARIES} )
 
 # Link dynamic library :
 target_link_libraries ( genvtx
   ${_link_libraries}
   )
+
 # ----------------------------------------------------------------------
 # Installation
 #
 
 install ( TARGETS genvtx
-  EXPORT genvtx-libraries
+  EXPORT  genvtx-libraries
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT bin
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT bin 
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT devel
