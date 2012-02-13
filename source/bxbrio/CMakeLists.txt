@@ -63,12 +63,6 @@ include ( InstallDirs )
 include ( PackageFilename )
 
 # ----------------------------------------------------------------------
-# Dependencies :
-#
-
-###message ( STATUS "brio depends on " ) 
-
-# ----------------------------------------------------------------------
 # Options :
 #
 
@@ -91,6 +85,11 @@ set ( BRIO_WITH_PYTHON_WRAPPER_SUPPORT 0 )
 option ( BRIO_WITH_CMAKE_FIND_MODULE 
   "Build the brio' CMake find module"
   0 )
+
+# ----------------------------------------------------------------------
+# Dependencies :
+#
+
 # - Depends on Root:
 set ( _root_min_version 5.26.00 ) 
 set ( ROOT_MIN_VERSION ${_root_min_version} )
@@ -107,15 +106,14 @@ else ()
   endif ()
 endif ()
 
-find_package ( ROOT ${ROOT_MIN_VERSION} )
+find_package ( ROOT ${ROOT_MIN_VERSION} REQUIRED )
 if ( ROOT_FOUND )
   message ( STATUS "Found ROOT")
-  message ( STATUS "  ROOT_VERSION           = ${ROOTVERSION}" )
-  message ( STATUS "  ROOT_CONFIG_EXECUTABLE = ${ROOT_CONFIG_EXECUTABLE}" )
-  message ( STATUS "  ROOT_CINT_EXECUTABLE   = ${ROOT_CINT_EXECUTABLE}" )
-  message ( STATUS "  ROOT_INCLUDE_DIRS      = ${ROOT_INCLUDE_DIRS}" )
-  message ( STATUS "  ROOT_LIBRARIES         = ${ROOT_LIBRARIES}" )
-  ###include_directories ( ${ROOT_INCLUDE_DIRS} )
+  message ( STATUS " o ROOT_VERSION           = ${ROOTVERSION}" )
+  message ( STATUS " o ROOT_CONFIG_EXECUTABLE = ${ROOT_CONFIG_EXECUTABLE}" )
+  message ( STATUS " o ROOT_CINT_EXECUTABLE   = ${ROOT_CINT_EXECUTABLE}" )
+  message ( STATUS " o ROOT_INCLUDE_DIRS      = ${ROOT_INCLUDE_DIRS}" )
+  message ( STATUS " o ROOT_LIBRARIES         = ${ROOT_LIBRARIES}" )
 else ()
   message ( FATAL_ERROR "Cannot find ROOT >= ${ROOT_MIN_VERSION} library !" )
 endif ()
@@ -134,41 +132,41 @@ else ()
 endif ()
 set ( _datatools_min_version 4.0 )
 find_package ( datatools ${_datatools_min_version} REQUIRED NO_MODULE )
-if ( datatools_VERSION )
+if ( datatools_CONFIG )
   message ( STATUS "Found datatools >= ${_datatools_min_version}" )
-  message ( STATUS "  datatools_CONFIG              : ${datatools_CONFIG}" )
-  message ( STATUS "  datatools_VERSION             : ${datatools_VERSION}" )
-  message ( STATUS "  datatools_LIBRARIES           : ${datatools_LIBRARIES}" )
-  message ( STATUS "  datatools_INCLUDE_DIRS        : ${datatools_INCLUDE_DIRS}" )
-  message ( STATUS "  datatools_WITH_DEBUG          : ${datatools_WITH_DEBUG}" )
-  message ( STATUS "  datatools_WITH_BIO            : ${datatools_WITH_BIO}" )
-  message ( STATUS "  datatools_WITH_PYTHON_WRAPPER : ${datatools_WITH_PYTHON_WRAPPER}" )
+  message ( STATUS " o datatools_CONFIG              : ${datatools_CONFIG}" )
+  message ( STATUS " o datatools_VERSION             : ${datatools_VERSION}" )
+  message ( STATUS " o datatools_LIBRARIES           : ${datatools_LIBRARIES}" )
+  message ( STATUS " o datatools_INCLUDE_DIRS        : ${datatools_INCLUDE_DIRS}" )
+  message ( STATUS " o datatools_WITH_DEBUG          : ${datatools_WITH_DEBUG}" )
+  message ( STATUS " o datatools_WITH_BIO            : ${datatools_WITH_BIO}" )
+  message ( STATUS " o datatools_WITH_PYTHON_WRAPPER : ${datatools_WITH_PYTHON_WRAPPER}" )
 else ()
   message ( FATAL_ERROR "Cannot find datatools >= ${_datatools_min_version} library !" )
 endif ()
-if ( BRIO_WITH_BIO_SUPPORT )
-  if ( datatools_WITH_BIO )
-    set ( _default_bio_activation 1 )
-  endif ()
-endif ()
-if ( BRIO_WITH_PYTHON_WRAPPER_SUPPORT )
-  if ( datatools_WITH_PYTHON_WRAPPER )
-    set ( _default_python_wrapper_activation 1 )
-  endif ()
-endif ()
+# if ( BRIO_WITH_BIO_SUPPORT )
+#   if ( datatools_WITH_BIO )
+#     set ( _default_bio_activation 1 )
+#   endif ()
+# endif ()
+# if ( BRIO_WITH_PYTHON_WRAPPER_SUPPORT )
+#   if ( datatools_WITH_PYTHON_WRAPPER )
+#     set ( _default_python_wrapper_activation 1 )
+#   endif ()
+# endif ()
 
-if ( BRIO_WITH_BIO_SUPPORT )
-  option ( BRIO_WITH_BIO 
-    "Build the brio with Boost I/O serialization" 
-    ${_default_bio_activation} )
-endif ()
+# if ( BRIO_WITH_BIO_SUPPORT )
+#   option ( BRIO_WITH_BIO 
+#     "Build the brio with Boost I/O serialization" 
+#     ${_default_bio_activation} )
+# endif ()
 
 
-if ( BRIO_WITH_PYTHON_WRAPPER_SUPPORT )
-  option ( BRIO_WITH_PYTHON_WRAPPER
-    "Build the brio Boost/Python wrapper module" 
-    ${_default_python_wrapper_activation} )
-endif ()
+# if ( BRIO_WITH_PYTHON_WRAPPER_SUPPORT )
+#   option ( BRIO_WITH_PYTHON_WRAPPER
+#     "Build the brio Boost/Python wrapper module" 
+#     ${_default_python_wrapper_activation} )
+# endif ()
 
 # ---------------------------------------------------
 
@@ -176,13 +174,13 @@ if (BRIO_WITH_DEBUG)
   set (BRIO_WITH_DEBUG 1)
 endif ()
 
-if ( BRIO_WITH_PYTHON_WRAPPER_SUPPORT AND BRIO_WITH_BIO )
-  set (BRIO_WITH_BIO 1)
-endif ()
+# if ( BRIO_WITH_PYTHON_WRAPPER_SUPPORT AND BRIO_WITH_BIO )
+#   set (BRIO_WITH_BIO 1)
+# endif ()
 
-if ( BRIO_WITH_PYTHON_WRAPPER_SUPPORT AND BRIO_WITH_PYTHON_WRAPPER )
-  set (BRIO_WITH_PYTHON_WRAPPER 1)
-endif ()
+# if ( BRIO_WITH_PYTHON_WRAPPER_SUPPORT AND BRIO_WITH_PYTHON_WRAPPER )
+#   set (BRIO_WITH_PYTHON_WRAPPER 1)
+# endif ()
 
 if (BRIO_WITH_DOC)
   set (BRIO_WITH_DOC 1)
@@ -211,15 +209,15 @@ option ( BRIO_WITH_CMAKE_FIND_MODULE
 # ----------------------------------------------------------------------
 
 message ( STATUS "BRIO_WITH_DEBUG           : " "${BRIO_WITH_DEBUG}" )
-if ( BRIO_WITH_BIO_SUPPORT )
-  message ( STATUS "BRIO_WITH_BIO             : " "${BRIO_WITH_BIO}" )
-endif ()
-if ( BRIO_WITH_PYTHON_WRAPPER_SUPPORT )
-  message ( STATUS "BRIO_WITH_PYTHON_WRAPPER  : " "${BRIO_WITH_PYTHON_WRAPPER}" )
-endif ()
+# if ( BRIO_WITH_BIO_SUPPORT )
+#   message ( STATUS "BRIO_WITH_BIO             : " "${BRIO_WITH_BIO}" )
+# endif ()
+# if ( BRIO_WITH_PYTHON_WRAPPER_SUPPORT )
+#   message ( STATUS "BRIO_WITH_PYTHON_WRAPPER  : " "${BRIO_WITH_PYTHON_WRAPPER}" )
+# endif ()
 if ( UNIX OR APPLE )
   message ( STATUS "BRIO_WITH_CONFIG_SCRIPT   : " "${BRIO_WITH_CONFIG_SCRIPT}" )
-  message ( STATUS "BRIO_WITH_PKGCONFIG       : " "${BRIO_WITH_PKGCONFIG}" )
+  # message ( STATUS "BRIO_WITH_PKGCONFIG       : " "${BRIO_WITH_PKGCONFIG}" )
 endif ()
 message ( STATUS "BRIO_WITH_DOC             : " "${BRIO_WITH_DOC}" )
 message ( STATUS "BRIO_WITH_TEST            : " "${BRIO_WITH_TEST}" )

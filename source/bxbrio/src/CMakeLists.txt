@@ -32,8 +32,8 @@ set (brio_SOURCES ${brio_SOURCES} ${_brio_dict_sources} )
 
 include_directories ( ${PROJECT_BINARY_DIR}/include
 		      ${PROJECT_SOURCE_DIR}/include	
-                      ${datatools_INCLUDE_DIRS}
   		      ${ROOT_INCLUDE_DIRS}
+                      ${datatools_INCLUDE_DIRS}
                     )
 
 #----------------------------------------------------------------------------
@@ -52,8 +52,8 @@ endif ()
 
 # Link dynamic library :
 target_link_libraries ( brio
-                        ${datatools_LIBRARIES} 
                         ${ROOT_LIBRARIES}
+                        ${datatools_LIBRARIES} 
                       )
 # ----------------------------------------------------------------------
 # Installation
