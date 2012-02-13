@@ -54,9 +54,9 @@ set ( genvtx_CONFIG_COUNTER 1 )
 ###set ( geomtools_DIR @geomtools_DIR@ )
 find_package ( geomtools "3.0" NO_MODULE )
 if ( NOT DEFINED geomtools_CONFIG)
-   message ( FATAL_ERROR "Cannot find the 'geomtools' library !" )
+   message ( FATAL_ERROR "genvtx-config.cmake: Cannot find the 'geomtools' library !" )
 else ()
-   message ( STATUS "Found the 'geomtools' library version ${geomtools_VERSION} !" )
+   message ( STATUS "genvtx-config.cmake: Found the 'geomtools' library version ${geomtools_VERSION} !" )
 endif ()
 
 
