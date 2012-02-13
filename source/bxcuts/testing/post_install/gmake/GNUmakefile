@@ -1,6 +1,6 @@
 #
 
-CPPFLAGS=-I.. $(shell cuts-config --cflags)
+CPPFLAGS=-I../.. $(shell cuts-config --cflags)
 LDFLAGS=$(shell cuts-config --ldflags)
 
 .PHONY : all
@@ -19,7 +19,7 @@ clean :
 run : test_cuts
 	./$< 
 
-test_cuts : ../test_cuts.cxx
+test_cuts : ../../test_cuts.cxx
 	$(CXX) $(CPPFLAGS) $< -o $@ $(LDFLAGS)
 
 # end
