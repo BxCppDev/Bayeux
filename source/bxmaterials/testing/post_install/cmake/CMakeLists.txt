@@ -12,6 +12,17 @@ if ( ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR} )
   message ( FATAL_ERROR "in-source build detected" )
 endif ()
 
+# - Depends on materials:
+if ( DEFINED materials_DIR )
+    message ( STATUS "${PROJECT_NAME}: materials_DIR is : '${materials_DIR}' " )
+else ()
+    if ( NOT "x$ENV{MATERIALS_CMAKE_CONFIG_DIR}" STREQUAL "x" )
+      message ( STATUS "${PROJECT_NAME}: Environment MATERIALS_CMAKE_CONFIG_DIR exists : '$ENV{MATERIALS_CMAKE_CONFIG_DIR}' " )
+      set ( materials_DIR "$ENV{MATERIALS_CMAKE_CONFIG_DIR}" )
+      message ( STATUS "${PROJECT_NAME}: materials_DIR is : '${materials_DIR}' " )
+    endif ()
+endif ()
+
 set ( _materials_min_version 3.0 )
 find_package ( materials ${_materials_min_version} REQUIRED NO_MODULE )
 if ( materials_VERSION )
@@ -26,8 +37,9 @@ else ()
      message ( FATAL_ERROR "Cannot find materials >= ${_materials_min_version} library !" )
 endif ()
 
-set ( test_material_src_files ${CMAKE_SOURCE_DIR}/../test_material.cxx )
+set ( test_material_src_files ${CMAKE_SOURCE_DIR}/../../test_material.cxx )
 
+include_directories ( ../.. )
 include_directories ( ${materials_INCLUDE_DIRS} )
 
 add_executable ( test_material

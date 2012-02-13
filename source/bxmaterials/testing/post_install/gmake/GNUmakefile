@@ -1,6 +1,6 @@
 #
 
-CPPFLAGS=-I.. $(shell materials-config --cflags)
+CPPFLAGS=-I../.. $(shell materials-config --cflags)
 LDFLAGS=$(shell materials-config --ldflags)
 
 .PHONY : all
@@ -19,7 +19,7 @@ clean :
 run : test_materials
 	./$< 
 
-test_materials : ../test_materials.cxx
+test_materials : ../../test_materials.cxx
 	$(CXX) $(CPPFLAGS) $< -o $@ $(LDFLAGS)
 
 # end
