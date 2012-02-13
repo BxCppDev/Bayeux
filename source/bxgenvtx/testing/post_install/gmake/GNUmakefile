@@ -1,6 +1,6 @@
 #
 
-CPPFLAGS=-I.. $(shell genvtx-config --cflags)
+CPPFLAGS=-I../.. $(shell genvtx-config --cflags)
 LDFLAGS=$(shell genvtx-config --ldflags)
 
 .PHONY : all
@@ -19,7 +19,7 @@ clean :
 run : test_genvtx
 	./$< 
 
-test_genvtx : ../test_genvtx.cxx
+test_genvtx : ../../test_genvtx.cxx
 	$(CXX) $(CPPFLAGS) $< -o $@ $(LDFLAGS)
 
 # end
