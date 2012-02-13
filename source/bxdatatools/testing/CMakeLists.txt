@@ -25,7 +25,6 @@ file ( GLOB datatools_tests_programs *.cxx )
 
 set ( datatools_tests_programs_list "${datatools_tests_programs}" ) 
 list ( SORT datatools_tests_programs_list )
-#message ( STATUS "************ PROJECT_BINARY_DIR   : ${PROJECT_BINARY_DIR}" )
 
 # include files search paths
 include_directories ( ${PROJECT_BINARY_DIR}/include
@@ -38,16 +37,12 @@ include_directories ( ${PROJECT_BINARY_DIR}/include
 # linker search paths
 link_directories( ${PROJECT_BINARY_DIR}/src )
 
-##message ( STATUS "KWSYS libraries : ${KWSYS_LIBRARIES}" )
-
 option (DATATOOLS_ALL_TESTS "Perform all possible tests" ON)
 message ( STATUS "Performing all available tests : ${DATATOOLS_ALL_TESTS}" )
 
 if (DATATOOLS_ALL_TESTS)
   set ( _test_tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/tmp" )
-  #message ( STATUS "_test_tmp_dir : ${_test_tmp_dir}" )
   foreach ( test_program ${datatools_tests_programs_list} )
-    unset ( test_libraries )
     get_filename_component ( test_executable ${test_program} NAME_WE )
     message ( STATUS "Building test target '${test_executable}'" )
     add_executable ( ${test_executable} ${test_program} )
