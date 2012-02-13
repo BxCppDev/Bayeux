@@ -360,15 +360,15 @@ function do_configure ()
 	    with_debug=1
 	elif [ "${option}" = "--with-debug" ]; then
 	    with_debug=1
-	elif [ "${option}" = "--without-bio" ]; then
+	elif [ "${option}" = "--without-debug" ]; then
 	    with_debug=0
 	elif [ "${option}" = "--with-bio" ]; then
 	    with_bio=1
 	elif [ "${option}" = "--without-bio" ]; then
 	    with_bio=0
-	elif [ "${option}" = "--with-documentation" ]; then
+	elif [ "${option}" = "--with-doc" -o "${option}" = "--with-documentation" ]; then
 	    with_doc=1
-	elif [ "${option}" = "--without-documentation" ]; then
+	elif [ "${option}" = "--without-doc" -o "${option}" = "--without-documentation" ]; then
 	    with_doc=0
 	elif [ "${option}" = "--with-test" ]; then
 	    with_test=1
