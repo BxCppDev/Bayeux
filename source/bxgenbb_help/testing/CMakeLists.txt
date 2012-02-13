@@ -86,15 +86,18 @@ if ( GENBB_HELP_ALL_TESTS )
 
     # last thing we have to do is to tell CMake what libraries 
     # our executable needs,
-    set ( _test_libraries 
-      genbb_help
-      genbb_help_f77
-      ###${geomtools_LIBRARIES} 
-      )
+    # set ( _test_libraries 
+    #   genbb_help
+    #   genbb_help_f77
+    #   ###${geomtools_LIBRARIES} 
+    #   )
 
     if ( GENBB_HELP_WITH_BIO )
       ###set ( _test_libraries genbb_help_bio )
-      list ( INSERT _test_libraries 0 genbb_help_bio ) 
+      ###list ( INSERT _test_libraries 0 genbb_help_bio ) 
+      set ( _test_libraries genbb_help_bio )
+    else ()
+      set ( _test_libraries genbb_help )
     endif ()
 	 
     target_link_libraries ( ${test_executable} ${_test_libraries} )
