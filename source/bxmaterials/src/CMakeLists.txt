@@ -63,18 +63,16 @@ include_directories ( ${geomtools_INCLUDE_DIRS} )
 ###message ( STATUS "DEVEL: materials_SOURCES='${materials_SOURCES}'" )
 
 add_library ( materials SHARED  
-              ${materials_PUBLIC_HEADERS} 
-	      ${materials_SOURCES}
-            )
+  ${materials_PUBLIC_HEADERS} 
+  ${materials_SOURCES}
+  )
 
-set ( _link_libraries "" )
-
-set ( _link_libraries "${_link_libraries}" "${geomtools_LIBRARIES}" )
+set ( _link_libraries ${geomtools_LIBRARIES} )
 
 # Link dynamic library :
 target_link_libraries ( materials
-                        ${_link_libraries}
-                      )
+  ${_link_libraries}
+  )
 # ----------------------------------------------------------------------
 # Installation
 #

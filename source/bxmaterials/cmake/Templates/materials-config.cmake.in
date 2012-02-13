@@ -45,30 +45,32 @@ include("${_thisdir}/materials-libraries.cmake")
 # We have to set the headers because materials exports the headers in
 # its public interface.
 
-###set ( geomtools_DIR @geomtools_DIR@ )
-find_package ( geomtools REQUIRED NO_MODULE )
-if (NOT DEFINED geomtools_VERSION)
-  message ( FATAL_ERROR "Cannot find 'geomtools' dependency !")
+# ----------------------------------------------------------------------------
+# geomtools dependency :
+#
+
+find_package ( geomtools @geomtools_VERSION@ REQUIRED NO_MODULE )
+if ( NOT DEFINED geomtools_CONFIG)
+   message ( FATAL_ERROR "materials-config.cmake: Cannot find the geomtools library  >= @geomtools_VERSION@ !" )
 else ()
-  message ( STATUS "Found 'geomtools' dependency version ${geomtools_VERSION} !")
+   message ( STATUS "materials-config.cmake: Found the geomtools library version ${geomtools_VERSION} !" )
 endif ()
+set( _materials_geomtools_INCLUDE_DIRS ${geomtools_INCLUDE_DIRS} )
+set( _materials_geomtools_LIBRARIES    ${geomtools_LIBRARIES}    )
 
 #----------------------------------------------------------------------------
 # Set path to materials includes
 #
 
-set(materials_ONLY_INCLUDE_DIRS @materials_INCLUDE_DIR@)
-set(_materials_geomtools_INCLUDE_DIRS ${geomtools_INCLUDE_DIRS})
-set (materials_INCLUDE_DIRS 
+set ( materials_ONLY_INCLUDE_DIRS @materials_INCLUDE_DIR@ )
+set ( materials_INCLUDE_DIRS 
      ${materials_ONLY_INCLUDE_DIRS}
      ${_materials_geomtools_INCLUDE_DIRS}
     )
-unset(_materials_geomtools_INCLUDE_DIRS)
 
 #----------------------------------------------------------------------------
 # Set materials_LIBRARIES variable
 set(materials_LIB_DIR @materials_LIB_DIR@)
-# Basic : Assume that if materials_bio was built, it should be in Library list
 set(materials_LIBRARY materials )
 
 set(materials_WITH_DEBUG @MATERIALS_WITH_DEBUG@)
@@ -78,33 +80,35 @@ else()
   set(materials_WITH_DEBUG 0)
 endif()
 
-if ( @MATERIALS_WITH_BIO_SUPPORT@ )
- set(materials_WITH_BIO @MATERIALS_WITH_BIO@)
- if(materials_WITH_BIO)
-   set(materials_WITH_BIO 1)
-   set(materials_BIO_LIBRARY materials_bio )
- else()
-   set(materials_WITH_BIO 0)
- endif()
-endif()
+# if ( @MATERIALS_WITH_BIO_SUPPORT@ )
+#  # Basic : Assume that if materials_bio was built, it should be in Library list
+#  set(materials_WITH_BIO @MATERIALS_WITH_BIO@)
+#  if(materials_WITH_BIO)
+#    set(materials_WITH_BIO 1)
+#    set(materials_BIO_LIBRARY materials_bio )
+#  else()
+#    set(materials_WITH_BIO 0)
+#  endif()
+# endif()
 
-if ( @MATERIALS_WITH_PYTHON_WRAPPER_SUPPORT@ )
-  set(materials_WITH_PYTHON_WRAPPER @MATERIALS_WITH_PYTHON_WRAPPER@)
-  if(materials_WITH_PYTHON_WRAPPER)
-    set(materials_WITH_PYTHON_WRAPPER 1)
-  else()
-    set(materials_WITH_PYTHON_WRAPPER 0)
-  endif()
-endif ()
+# if ( @MATERIALS_WITH_PYTHON_WRAPPER_SUPPORT@ )
+#   set(materials_WITH_PYTHON_WRAPPER @MATERIALS_WITH_PYTHON_WRAPPER@)
+#   if(materials_WITH_PYTHON_WRAPPER)
+#     set(materials_WITH_PYTHON_WRAPPER 1)
+#   else()
+#     set(materials_WITH_PYTHON_WRAPPER 0)
+#   endif()
+# endif ()
 
-set(materials_ONLY_LIBRARIES ${materials_BIO_LIBRARY} ${materials_LIBRARY} )
+set(materials_ONLY_LIBRARIES ${materials_LIBRARY} )
 
-set(_materials_geomtools_LIBRARIES ${geomtools_LIBRARIES})
 set(materials_LIBRARIES 
      ${materials_ONLY_LIBRARIES}
      ${_materials_geomtools_LIBRARIES}
    )
+
 unset(_materials_geomtools_LIBRARIES)
+unset(_materials_geomtools_INCLUDE_DIRS)
 
 else ( NOT DEFINED materials_CONFIG_COUNTER )
   message ( WARNING "Multiple inclusion of the 'materials-config.cmake' file !" )

@@ -102,8 +102,9 @@ set ( _default_python_wrapper_activation 0 )
 # Dependencies :
 #
 
-# - Depends on geomtools:
+set ( _default_python_wrapper_activation 0 )
 
+# - Depends on geomtools:
 if ( DEFINED geomtools_DIR )
   message ( STATUS "${PROJECT_NAME}: geomtools_DIR is : '${geomtools_DIR}' " )
 else ()
@@ -199,7 +200,7 @@ message ( STATUS "${PROJECT_NAME}: MATERIALS_WITH_DEBUG           : " "${MATERIA
 # endif ()
 if ( UNIX OR APPLE )
   message ( STATUS "${PROJECT_NAME}: MATERIALS_WITH_CONFIG_SCRIPT   : " "${MATERIALS_WITH_CONFIG_SCRIPT}" )
-  message ( STATUS "${PROJECT_NAME}: MATERIALS_WITH_PKGCONFIG       : " "${MATERIALS_WITH_PKGCONFIG}" )
+  # message ( STATUS "${PROJECT_NAME}: MATERIALS_WITH_PKGCONFIG       : " "${MATERIALS_WITH_PKGCONFIG}" )
 endif ()
 message ( STATUS "${PROJECT_NAME}: MATERIALS_WITH_DOC             : " "${MATERIALS_WITH_DOC}" )
 message ( STATUS "${PROJECT_NAME}: MATERIALS_WITH_TEST            : " "${MATERIALS_WITH_TEST}" )
@@ -216,7 +217,7 @@ endif ( CMAKE_SYSTEM_NAME MATCHES Darwin )
 # materials API
 #
 
-message ( STATUS "${PROJECT_NAME}: Add subdirectory : " "'src'" )
+message ( STATUS "${PROJECT_NAME}: Add subdirectory : 'src'" )
 add_subdirectory ( src )   
 
 # ----------------------------------------------------------------------

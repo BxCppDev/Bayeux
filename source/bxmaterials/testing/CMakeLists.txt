@@ -46,9 +46,7 @@ message ( STATUS "testing: Performing all available tests : ${MATERIALS_ALL_TEST
 
 if ( MATERIALS_ALL_TESTS )
   set ( _test_tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/tmp" )
-  #message ( STATUS "testing:  _test_tmp_dir : ${_test_tmp_dir}" )
   foreach ( test_program ${materials_tests_programs_list} )
-    unset ( test_libraries )
     get_filename_component ( test_executable ${test_program} NAME_WE )
     message ( STATUS "testing:  Building test target '${test_executable}'" )
     add_executable ( ${test_executable} ${test_program} )
@@ -59,10 +57,10 @@ if ( MATERIALS_ALL_TESTS )
 
     # last thing we have to do is to tell CMake what libraries 
     # our executable needs,
-    list ( APPEND test_libraries "materials" )
-    list ( APPEND test_libraries "${geomtools_LIBRARIES}" )
+    set ( _test_libraries materials )
+    list ( APPEND _test_libraries ${geomtools_LIBRARIES} )
 	 
-    target_link_libraries ( ${test_executable} ${test_libraries} )
+    target_link_libraries ( ${test_executable} ${_test_libraries} )
 
     add_test ( NAME ${test_executable}.run
                COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
