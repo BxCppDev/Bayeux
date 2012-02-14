@@ -26,6 +26,7 @@ endif ()
 cmake_minimum_required ( VERSION 2.8 FATAL_ERROR )
 project ( genbb_help C CXX Fortran )
 
+# ----------------------------------------------------------------------------
 set ( genbb_help_PACKAGE_NAME ${CMAKE_PROJECT_NAME} CACHE STRING "The name of the package" FORCE )
 message ( STATUS "${PROJECT_NAME}: Package name         : '${genbb_help_PACKAGE_NAME}'" )
 
@@ -62,13 +63,51 @@ include ( Config )
 include ( InstallDirs )
 include ( PackageFilename )
 
+# ----------------------------------------------------------------------------
+# Fortran/C/C++ stuff
+# See : http://www.cmake.org/cmake/help/cmake-2-8-docs.html#module:FortranCInterface
+include(FortranCInterface)
+# FortranCInterface_VERIFY( QUIET )
+# if (NOT FortranCInterface_VERIFIED_C )
+#   message ( FATAL_ERROR "${PROJECT_NAME}: No Fortran/C compatible interface was found !" )
+# else ()
+#   message ( STATUS "${PROJECT_NAME}: Fortran/C compatible interface was found !" )
+# endif ()
+FortranCInterface_VERIFY( CXX QUIET )
+if (NOT FortranCInterface_VERIFIED_CXX )
+  message ( FATAL_ERROR "${PROJECT_NAME}: No Fortran/C++ compatible interface was found !" )
+else ()
+  message ( STATUS "${PROJECT_NAME}: Fortran/C++ compatible interface was found !" )
+endif ()
+message ( STATUS "${PROJECT_NAME}: FortranCInterface_GLOBAL_FOUND=${FortranCInterface_GLOBAL_FOUND}" )
+message ( STATUS "${PROJECT_NAME}: FortranCInterface_MODULE_FOUND=${FortranCInterface_MODULE_FOUND}" )
+
+message ( STATUS "${PROJECT_NAME}: Preparing special mangling name for the Fortran/C interface..." )
+FortranCInterface_HEADER (${PROJECT_BINARY_DIR}/include/genbb_help/detail/__genbb_help_FC.h
+  MACRO_NAMESPACE GENBB_HELP_FortranCInterface_
+  SYMBOLS fermi_wrap rng_shoot_reset rng_shoot_flat)
+
+install ( FILES ${PROJECT_BINARY_DIR}/include/genbb_help/detail/__genbb_help_FC.h
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genbb_help/detail
+          PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+        )
+
+FortranCInterface_HEADER (${PROJECT_BINARY_DIR}/include/genbb_help/detail/__genbb_help_FC2.h
+  MACRO_NAMESPACE GENBB_HELP_FortranCInterface_
+  SYMBOLS set_genbb_random_seed enrange genevent genbbsub )
+
+install ( FILES ${PROJECT_BINARY_DIR}/include/genbb_help/detail/__genbb_help_FC2.h
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genbb_help/detail
+          PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+        )
+
 # ----------------------------------------------------------------------
 # Options :
 #
 
 option ( GENBB_HELP_WITH_DEBUG
          "Build the genbb_help project using debugging code"
-         0 )
+         1 )
 
 option ( GENBB_HELP_WITH_DOC 
          "Build the genbb_help documentation" 
@@ -208,9 +247,18 @@ endif ( CMAKE_SYSTEM_NAME MATCHES Darwin )
 # genbb_help API
 #
 
-set ( _genbb_help_fortran_definitions " -Dfermi_wrap=fermi_wrap_ -Drng_shoot_reset=rng_shoot_reset_ -Drng_shoot_flat=rng_shoot_flat_ " )
+### Former DEFINES for Fortran/C++ interface
+# set ( _genbb_help_fortran_definitions 
+#   "-Dfermi_wrap=fermi_wrap_ -Drng_shoot_reset=rng_shoot_reset_ -Drng_shoot_flat=rng_shoot_flat_ "
+#   )
+set ( _genbb_help_fortran_definitions  "" )
 
-set ( _genbb_help_definitions " -Df2cFortran -Dgenbbsub=genbbsub_ -Dset_genbb_random_seed=set_genbb_random_seed_ -Dgrndm=grndm_ -Dgenevent=genevent_ -Dgenbb_init_enrange=genbb_init_enrange_ -Denrange=enrange_ " )
+### Former DEFINES for Fortran/C++ interface
+# set ( _genbb_help_definitions 
+#   "-Df2cFortran -Dgenbbsub=genbbsub_ -Dset_genbb_random_seed=set_genbb_random_seed_ -Dgrndm=grndm_ -Dgenevent=genevent_ -Dgenbb_init_enrange=genbb_init_enrange_ -Denrange=enrange_ "
+#   )
+
+set ( _genbb_help_definitions "" )
 
 # ----------------------------------------------------------------------
 # Configuration files :

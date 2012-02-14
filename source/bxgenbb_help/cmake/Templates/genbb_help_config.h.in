@@ -36,6 +36,9 @@
 #cmakedefine01 GENBB_HELP_WITH_PYTHON_WRAPPER
 #endif
 
+//#include <genbb_help/detail/__genbb_help_FC.h>
+//#include <genbb_help/detail/__genbb_help_FC2.h>
+
 namespace genbb
 {
   struct library_config

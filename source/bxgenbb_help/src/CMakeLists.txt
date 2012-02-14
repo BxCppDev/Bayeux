@@ -14,6 +14,7 @@ file ( GLOB genbb_help_f77_PUBLIC_HEADERS
   ${PROJECT_SOURCE_DIR}/include/genbb_help/*.inc
   ${PROJECT_SOURCE_DIR}/include/genbb_help/fermi.h
   ${PROJECT_SOURCE_DIR}/include/genbb_help/rng.h
+  ${PROJECT_BINARY_DIR}/include/genbb_help/__genbb_help_FC.h
   )
 file ( GLOB genbb_help_f77_SOURCES
   ${genbb_help_f77_PUBLIC_HEADERS}
@@ -21,9 +22,11 @@ file ( GLOB genbb_help_f77_SOURCES
   ${PROJECT_SOURCE_DIR}/src/rng.cc
   ${PROJECT_SOURCE_DIR}/src/*.f
   )
+
 file ( GLOB genbb_help_PUBLIC_HEADERS
   ${PROJECT_SOURCE_DIR}/include/genbb_help/*.h
   ${PROJECT_BINARY_DIR}/include/genbb_help/genbb_help_config.h
+  ${PROJECT_BINARY_DIR}/include/genbb_help/__genbb_help_FC.h
   )
 list ( REMOVE_ITEM genbb_help_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/include/genbb_help/fermi.h" )
 list ( REMOVE_ITEM genbb_help_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/include/genbb_help/rng.h"   )
@@ -42,8 +45,8 @@ file ( GLOB genbb_help_SOURCES
   ${PROJECT_BINARY_DIR}/include/genbb_help/genbb_help_config.h
   ${PROJECT_SOURCE_DIR}/src/*.cc
   )
-list ( REMOVE_ITEM genbb_help_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/src/fermi.cc" )
-list ( REMOVE_ITEM genbb_help_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/src/rng.cc" )
+list ( REMOVE_ITEM genbb_help_SOURCES "${PROJECT_SOURCE_DIR}/src/fermi.cc" )
+list ( REMOVE_ITEM genbb_help_SOURCES "${PROJECT_SOURCE_DIR}/src/rng.cc" )
 
 # remove this because it go in the BIO DLL :
 list ( REMOVE_ITEM genbb_help_SOURCES "${PROJECT_SOURCE_DIR}/src/the_serializable.cc" )
@@ -67,6 +70,10 @@ include_directories ( ${PROJECT_SOURCE_DIR}/include
 #
 include_directories ( ${geomtools_INCLUDE_DIRS} )
 
+if ( GENBB_HELP_WITH_DEBUG )
+  add_definitions ( "-g" )
+endif ()
+
 # ----------------------------------------------------------------------------
 # Add the libraries
 #
@@ -75,10 +82,10 @@ include_directories ( ${geomtools_INCLUDE_DIRS} )
 ### -DGEN_OUTFILES)
 ### 
 
-set ( CMAKE_Fortran_FLAGS "${_genbb_help_fortran_definitions} " )
+# set ( CMAKE_Fortran_FLAGS "${_genbb_help_fortran_definitions}"  )
 
 
-set ( CMAKE_CXX_FLAGS "${_genbb_help_fortran_definitions} ${_genbb_help_definitions} " )
+# set ( CMAKE_CXX_FLAGS "${_genbb_help_fortran_definitions} ${_genbb_help_definitions} "  )
 
 # -Dgenbbsub=genbbsub_ 
 # -Dset_genbb_random_seed=set_genbb_random_seed_ 

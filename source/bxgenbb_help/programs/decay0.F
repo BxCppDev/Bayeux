@@ -19,13 +19,17 @@ c along with this program; if not, write to the Free Software
 c Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 c 
 c
+c
+ccc #include <genbb_help/detail/__genbb_help_FC.h>
+c
 	program DECAY0
 
 c Last updated: 23.01.2011.
 
 c Brief instruction on how to use DECAY0 as a standalone program:
 c 1. Compile with Fortran compiler;
-c 2. Link with CERNLIB library (for the use of random numbers and gauss
+c 2. OBSOLETE: 
+c    Link with CERNLIB library (for the use of random numbers and gauss
 c    function);
 c 3. Run DECAY0 and answer the questions; in particular, select an option to
 c    write generated events in file. After, you can read these events

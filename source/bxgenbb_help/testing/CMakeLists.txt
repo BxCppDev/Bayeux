@@ -20,13 +20,13 @@
 ##
 ###############################################################################
 
-set ( CMAKE_Fortran_FLAGS 
-    "-Dfermi_wrap=fermi_wrap_ -Drng_shoot_reset=rng_shoot_reset_ -Drng_shoot_flat=rng_shoot_flat_ "	 
-    ) 
+# set ( CMAKE_Fortran_FLAGS 
+#   "${_genbb_help_fortran_definitions} "
+#   )
 
-set ( CMAKE_CXX_FLAGS 
-    "-Dfermi_wrap=fermi_wrap_ -Drng_shoot_reset=rng_shoot_reset_ -Drng_shoot_flat=rng_shoot_flat_ -Dgenbbsub=genbbsub_ -Dset_genbb_random_seed=set_genbb_random_seed_ -Dgrndm=grndm_ -Dgenbb_init_enrange=genbb_init_enrange_ -Dgenevent=genevent_ -Denrange=enrange_"	 
-    ) 
+# set ( CMAKE_CXX_FLAGS  
+#   "${_genbb_help_fortran_definitions} ${_genbb_help_definitions} "
+#   )
 
 set ( genbb_help_tests_programs_list_CXX
       test_genbb_help.cxx 
@@ -75,11 +75,16 @@ if ( GENBB_HELP_ALL_TESTS )
 
   foreach ( test_program ${genbb_help_tests_programs_list_CXX} )
     get_filename_component ( test_executable ${test_program} NAME_WE )
-    message ( STATUS "testing:  Building test target '${test_executable}'" )
+    message ( STATUS "testing: Building C++ test target '${test_executable}'" )
     add_executable ( ${test_executable} ${test_program} )
     # define d suffix on windows
     if (WIN32)
       set_target_properties ( ${test_executable} PROPERTIES DEBUG_POSTFIX d )
+    endif ()
+
+ 
+    if ( GENBB_HELP_WITH_DEBUG )
+      add_definitions ( "-g" )
     endif ()
 
     # last thing we have to do is to tell CMake what libraries 
@@ -106,7 +111,7 @@ if ( GENBB_HELP_ALL_TESTS )
 
   foreach ( test_program ${genbb_help_tests_programs_list_Fortran} )
     get_filename_component ( test_executable ${test_program} NAME_WE )
-    message ( STATUS "testing:  Building test target '${test_executable}'" )
+    message ( STATUS "testing: Building Fortran test target '${test_executable}'" )
     add_executable ( ${test_executable} ${test_program} )
     # define d suffix on windows
     if (WIN32)
