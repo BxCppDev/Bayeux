@@ -1,10 +1,5 @@
 # - CMakeLists.txt for materials/src subdir
 
-# set ( _ld_library_path_env "LD_LIBRARY_PATH" )
-# if ( CMAKE_SYSTEM_NAME MATCHES Darwin )
-#   set ( _ld_library_path_env "DYLD_LIBRARY_PATH" )
-# endif ( CMAKE_SYSTEM_NAME MATCHES Darwin )
-
 #----------------------------------------------------------------------------
 # Explicitly list the sources for the library, separating into sources and
 # public headers
@@ -60,7 +55,6 @@ include_directories ( ${geomtools_INCLUDE_DIRS} )
 #----------------------------------------------------------------------------
 # Add the library
 #
-###message ( STATUS "DEVEL: materials_SOURCES='${materials_SOURCES}'" )
 
 add_library ( materials SHARED  
   ${materials_PUBLIC_HEADERS} 
@@ -112,7 +106,7 @@ install ( FILES ${materials_detail_PUBLIC_HEADERS}
 #                            materials
 #                          )
 # 
-#    target_link_libraries ( materials_bio LINK_INTERFACE_LIBRARIES "" )
+#    ### target_link_libraries ( materials_bio LINK_INTERFACE_LIBRARIES "" )
 #
 #    # Install library and associate it with an export
 #    install ( TARGETS materials_bio

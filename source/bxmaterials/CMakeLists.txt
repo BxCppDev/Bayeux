@@ -214,13 +214,6 @@ if ( CMAKE_SYSTEM_NAME MATCHES Darwin )
 endif ( CMAKE_SYSTEM_NAME MATCHES Darwin )
 
 # ----------------------------------------------------------------------
-# materials API
-#
-
-message ( STATUS "${PROJECT_NAME}: Add subdirectory : 'src'" )
-add_subdirectory ( src )   
-
-# ----------------------------------------------------------------------
 # Configuration files :
 #
 
@@ -336,6 +329,13 @@ endif ()
 install ( FILES README.txt COPYING.txt LICENSE.GPL3.txt
           DESTINATION ${CMAKE_INSTALL_DATADIR}
          )
+
+# ----------------------------------------------------------------------
+# materials API
+#
+
+message ( STATUS "${PROJECT_NAME}: Add subdirectory : 'src'" )
+add_subdirectory ( src )   
 
 # ----------------------------------------------------------------------------
 # - Add resources.
