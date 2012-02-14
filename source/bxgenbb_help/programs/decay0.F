@@ -20,8 +20,6 @@ c Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 c 
 c
 c
-ccc #include <genbb_help/detail/__genbb_help_FC.h>
-c
 	program DECAY0
 
 c Last updated: 23.01.2011.
