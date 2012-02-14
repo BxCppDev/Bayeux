@@ -9,9 +9,6 @@ if ( BAYEUX_WITH_GENBB_HELP )
   if (BAYEUX_WITH_TESTS)
     set (_genbb_help_run_post_build_tests ON)
   endif ()
-
-  ### Force no test for genbb_help
-  set (_genbb_help_run_post_build_tests OFF)
   
   if (_genbb_help_run_post_build_tests)
     set (_genbb_help_ep_test_options TEST_BEFORE_INSTALL 1 TEST_COMMAND make test )
