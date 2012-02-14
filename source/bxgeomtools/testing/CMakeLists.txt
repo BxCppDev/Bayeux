@@ -82,7 +82,7 @@ message ( STATUS "testing: Performing all available tests : ${GEOMTOOLS_ALL_TEST
 
 if ( GEOMTOOLS_ALL_TESTS )
   set ( _test_tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/tmp" )
-  #message ( STATUS "testing:  _test_tmp_dir : ${_test_tmp_dir}" )
+
   foreach ( test_program ${geomtools_tests_programs_list} )
     get_filename_component ( test_executable ${test_program} NAME_WE )
     message ( STATUS "testing:  Building test target '${test_executable}'" )
