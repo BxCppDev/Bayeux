@@ -46,9 +46,8 @@ file ( GLOB genbb_help_SOURCES
   ${PROJECT_SOURCE_DIR}/src/*.cc
   )
 
-#### FORCE BUG
-#list ( REMOVE_ITEM genbb_help_SOURCES "${PROJECT_SOURCE_DIR}/src/fermi.cc" )
-#list ( REMOVE_ITEM genbb_help_SOURCES "${PROJECT_SOURCE_DIR}/src/rng.cc" )
+list ( REMOVE_ITEM genbb_help_SOURCES "${PROJECT_SOURCE_DIR}/src/fermi.cc" )
+list ( REMOVE_ITEM genbb_help_SOURCES "${PROJECT_SOURCE_DIR}/src/rng.cc" )
 
 # remove this because it go in the BIO DLL :
 list ( REMOVE_ITEM genbb_help_SOURCES "${PROJECT_SOURCE_DIR}/src/the_serializable.cc" )
