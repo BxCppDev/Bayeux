@@ -55,7 +55,7 @@ include("${_thisdir}/geomtools-libraries.cmake")
 if ( NOT EXISTS @GNUPLOT_EXECUTABLE@ )
    message ( FATAL_ERROR "geomtools-config.cmake : Cannot find 'gnuplot' program !" )
 else ()
-   message ( STATUS "geomtools-config.cmake : Found the 'gnuplot' program : '${GNUPLOT_EXECUTABLE}'" )   
+   message ( STATUS "geomtools-config.cmake : Found the 'gnuplot' program : '@GNUPLOT_EXECUTABLE@'" )   
 endif () 
 
 # ----------------------------------------------------------------------------
