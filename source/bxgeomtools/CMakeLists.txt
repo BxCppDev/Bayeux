@@ -415,7 +415,7 @@ install ( DIRECTORY ${PROJECT_SOURCE_DIR}/resources/gdml_schema
                                 GROUP_READ GROUP_WRITE  GROUP_EXECUTE 
                                 WORLD_READ WORLD_EXECUTE
           PATTERN ".svn" EXCLUDE
-          PATTERN "*~" EXCLUDE
+          ### PATTERN "*~" EXCLUDE
          )
 
 # 
