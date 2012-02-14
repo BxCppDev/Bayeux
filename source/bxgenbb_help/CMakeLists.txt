@@ -10,13 +10,13 @@
 # Should be the first action in the CMakeLists.txt
 #
 if ( ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR} )
-  message ( STATUS "genbb_help requires an out-of-source build." )
-  message ( STATUS "Please remove these files from ${CMAKE_BINARY_DIR} first:" )
-  message ( STATUS "  CMakeCache.txt" )
-  message ( STATUS "  CMakeFiles" )
-  message ( STATUS "Once these files are removed, create a separate directory" )
-  message ( STATUS "and run CMake from there, pointing it to:" )
-  message ( STATUS "  ${CMAKE_SOURCE_DIR}" )
+  message ( STATUS "${PROJECT_NAME}: genbb_help requires an out-of-source build." )
+  message ( STATUS "${PROJECT_NAME}: Please remove these files from ${CMAKE_BINARY_DIR} first:" )
+  message ( STATUS "${PROJECT_NAME}:   CMakeCache.txt" )
+  message ( STATUS "${PROJECT_NAME}:   CMakeFiles" )
+  message ( STATUS "${PROJECT_NAME}: Once these files are removed, create a separate directory" )
+  message ( STATUS "${PROJECT_NAME}: and run CMake from there, pointing it to:" )
+  message ( STATUS "${PROJECT_NAME}:   ${CMAKE_SOURCE_DIR}" )
   message ( FATAL_ERROR "in-source build detected" )
 endif ()
 
@@ -27,7 +27,7 @@ cmake_minimum_required ( VERSION 2.8 FATAL_ERROR )
 project ( genbb_help C CXX Fortran )
 
 set ( genbb_help_PACKAGE_NAME ${CMAKE_PROJECT_NAME} CACHE STRING "The name of the package" FORCE )
-message ( STATUS "Package name         : '${genbb_help_PACKAGE_NAME}'" )
+message ( STATUS "${PROJECT_NAME}: Package name         : '${genbb_help_PACKAGE_NAME}'" )
 
 #----------------------------------------------------------------------------
 # Prepend this project's custom module path(s) to CMAKE_MODULE_PATH
@@ -46,14 +46,14 @@ set(CMAKE_MODULE_PATH
 )
 
 if (DEFINED ADDITIONAL_CMAKE_MODULE_PATH AND NOT "x${ADDITIONAL_CMAKE_MODULE_PATH}" STREQUAL "x" )
-  message ( STATUS "genbb_help: Using additional CMAKE_MODULE_PATH : '${ADDITIONAL_CMAKE_MODULE_PATH}'" )
+  message ( STATUS "${PROJECT_NAME}: genbb_help: Using additional CMAKE_MODULE_PATH : '${ADDITIONAL_CMAKE_MODULE_PATH}'" )
   set(CMAKE_MODULE_PATH
       ${ADDITIONAL_CMAKE_MODULE_PATH}
       ${CMAKE_MODULE_PATH}
   )
 endif ()
 
-message ( STATUS "genbb_help: CMAKE_MODULE_PATH         : '${CMAKE_MODULE_PATH}'" )
+message ( STATUS "${PROJECT_NAME}: genbb_help: CMAKE_MODULE_PATH         : '${CMAKE_MODULE_PATH}'" )
 	
 #----------------------------------------------------------------------------
 # Load any required modules
@@ -95,10 +95,10 @@ set ( _default_python_wrapper_activation 0 )
 
 # - Depends on geomtools:
 if ( DEFINED geomtools_DIR )
-    message ( STATUS "geomtools_DIR is : '${geomtools_DIR}' " )
+    message ( STATUS "${PROJECT_NAME}: geomtools_DIR is : '${geomtools_DIR}' " )
 else ()
     if ( NOT "$ENV{GEOMTOOLS_CMAKE_CONFIG_DIR}" STREQUAL "" )
-      message ( STATUS "Environment GEOMTOOLS_CMAKE_CONFIG_DIR exists : '$ENV{GEOMTOOLS_CMAKE_CONFIG_DIR}' " )
+      message ( STATUS "${PROJECT_NAME}: Environment GEOMTOOLS_CMAKE_CONFIG_DIR exists : '$ENV{GEOMTOOLS_CMAKE_CONFIG_DIR}' " )
       set ( geomtools_DIR "$ENV{GEOMTOOLS_CMAKE_CONFIG_DIR}" )
     endif ()
 endif ()
@@ -106,16 +106,16 @@ endif ()
 set ( _geomtools_min_version 3.0 )
 find_package ( geomtools ${_geomtools_min_version} REQUIRED NO_MODULE )
 if ( DEFINED geomtools_CONFIG )
-       message ( STATUS "Found geomtools >= ${_geomtools_min_version}" )
-       message ( STATUS " o geomtools_CONFIG              : ${geomtools_CONFIG}" )
-       message ( STATUS " o geomtools_VERSION             : ${geomtools_VERSION}" )
-       message ( STATUS " o geomtools_LIBRARIES           : ${geomtools_LIBRARIES}" )
-       message ( STATUS " o geomtools_ONLY_LIBRARIES      : ${geomtools_ONLY_LIBRARIES}" )
-       message ( STATUS " o geomtools_INCLUDE_DIRS        : ${geomtools_INCLUDE_DIRS}" )
-       message ( STATUS " o geomtools_ONLY_INCLUDE_DIRS   : ${geomtools_ONLY_INCLUDE_DIRS}" )
-       message ( STATUS " o geomtools_WITH_DEBUG          : ${geomtools_WITH_DEBUG}" )
-       message ( STATUS " o geomtools_WITH_BIO            : ${geomtools_WITH_BIO}" )
-       message ( STATUS " o geomtools_WITH_PYTHON_WRAPPER : ${geomtools_WITH_PYTHON_WRAPPER}" )
+       message ( STATUS "${PROJECT_NAME}: Found geomtools >= ${_geomtools_min_version}" )
+       message ( STATUS "${PROJECT_NAME}:  o geomtools_CONFIG              : ${geomtools_CONFIG}" )
+       message ( STATUS "${PROJECT_NAME}:  o geomtools_VERSION             : ${geomtools_VERSION}" )
+       message ( STATUS "${PROJECT_NAME}:  o geomtools_LIBRARIES           : ${geomtools_LIBRARIES}" )
+       message ( STATUS "${PROJECT_NAME}:  o geomtools_ONLY_LIBRARIES      : ${geomtools_ONLY_LIBRARIES}" )
+       message ( STATUS "${PROJECT_NAME}:  o geomtools_INCLUDE_DIRS        : ${geomtools_INCLUDE_DIRS}" )
+       message ( STATUS "${PROJECT_NAME}:  o geomtools_ONLY_INCLUDE_DIRS   : ${geomtools_ONLY_INCLUDE_DIRS}" )
+       message ( STATUS "${PROJECT_NAME}:  o geomtools_WITH_DEBUG          : ${geomtools_WITH_DEBUG}" )
+       message ( STATUS "${PROJECT_NAME}:  o geomtools_WITH_BIO            : ${geomtools_WITH_BIO}" )
+       message ( STATUS "${PROJECT_NAME}:  o geomtools_WITH_PYTHON_WRAPPER : ${geomtools_WITH_PYTHON_WRAPPER}" )
 else ()
        message ( FATAL_ERROR "Cannot find geomtools >= ${_geomtools_min_version} library !" )
 endif ()
@@ -182,20 +182,20 @@ option ( GENBB_HELP_WITH_CMAKE_FIND_MODULE
 
 # ----------------------------------------------------------------------
 
-message ( STATUS "GENBB_HELP_WITH_DEBUG           : " "${GENBB_HELP_WITH_DEBUG}" )
+message ( STATUS "${PROJECT_NAME}: GENBB_HELP_WITH_DEBUG           : " "${GENBB_HELP_WITH_DEBUG}" )
 if ( GENBB_HELP_WITH_BIO_SUPPORT )
-  message ( STATUS "GENBB_HELP_WITH_BIO             : " "${GENBB_HELP_WITH_BIO}" )
+  message ( STATUS "${PROJECT_NAME}: GENBB_HELP_WITH_BIO             : " "${GENBB_HELP_WITH_BIO}" )
 endif ()
 if ( GENBB_HELP_WITH_PYTHON_WRAPPER_SUPPORT )
-  message ( STATUS "GENBB_HELP_WITH_PYTHON_WRAPPER  : " "${GENBB_HELP_WITH_PYTHON_WRAPPER}" )
+  message ( STATUS "${PROJECT_NAME}: GENBB_HELP_WITH_PYTHON_WRAPPER  : " "${GENBB_HELP_WITH_PYTHON_WRAPPER}" )
 endif ()
 if ( UNIX OR APPLE )
-  message ( STATUS "GENBB_HELP_WITH_CONFIG_SCRIPT   : " "${GENBB_HELP_WITH_CONFIG_SCRIPT}" )
-  message ( STATUS "GENBB_HELP_WITH_PKGCONFIG       : " "${GENBB_HELP_WITH_PKGCONFIG}" )
+  message ( STATUS "${PROJECT_NAME}: GENBB_HELP_WITH_CONFIG_SCRIPT   : " "${GENBB_HELP_WITH_CONFIG_SCRIPT}" )
+  # message ( STATUS "${PROJECT_NAME}: GENBB_HELP_WITH_PKGCONFIG       : " "${GENBB_HELP_WITH_PKGCONFIG}" )
 endif ()
-message ( STATUS "GENBB_HELP_WITH_DOC             : " "${GENBB_HELP_WITH_DOC}" )
-message ( STATUS "GENBB_HELP_WITH_TEST            : " "${GENBB_HELP_WITH_TEST}" )
-message ( STATUS "CMAKE_INSTALL_PREFIX    : " "${CMAKE_INSTALL_PREFIX}" )
+message ( STATUS "${PROJECT_NAME}: GENBB_HELP_WITH_DOC             : " "${GENBB_HELP_WITH_DOC}" )
+message ( STATUS "${PROJECT_NAME}: GENBB_HELP_WITH_TEST            : " "${GENBB_HELP_WITH_TEST}" )
+message ( STATUS "${PROJECT_NAME}: CMAKE_INSTALL_PREFIX    : " "${CMAKE_INSTALL_PREFIX}" )
 
 # ----------------------------------------------------------------------
 
@@ -212,12 +212,6 @@ set ( _genbb_help_fortran_definitions " -Dfermi_wrap=fermi_wrap_ -Drng_shoot_res
 
 set ( _genbb_help_definitions " -Df2cFortran -Dgenbbsub=genbbsub_ -Dset_genbb_random_seed=set_genbb_random_seed_ -Dgrndm=grndm_ -Dgenevent=genevent_ -Dgenbb_init_enrange=genbb_init_enrange_ -Denrange=enrange_ " )
 
-message ( STATUS "Add subdirectory : " "'src'" )
-add_subdirectory ( src )   
-
-message ( STATUS "Add subdirectory : " "'programs'" )
-add_subdirectory ( programs )   
-
 # ----------------------------------------------------------------------
 # Configuration files :
 #
@@ -226,21 +220,21 @@ add_subdirectory ( programs )
 set ( genbb_help_cmake_config_install_dir ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME} )
 
 # - Pkgconfig file:
-if ( GENBB_HELP_WITH_PKGCONFIG )
-  set ( _pkgconfig_install_dir ${CMAKE_INSTALL_LIBDIR}/pkgconfig )
-  if ( DEFINED GENBB_HELP_PKGCONFIG_INSTALL_DIR)
-    set ( _pkgconfig_install_dir ${GENBB_HELP_PKGCONFIG_INSTALL_DIR} )
-  endif ()
-endif ()
+# if ( GENBB_HELP_WITH_PKGCONFIG )
+#   set ( _pkgconfig_install_dir ${CMAKE_INSTALL_LIBDIR}/pkgconfig )
+#   if ( DEFINED GENBB_HELP_PKGCONFIG_INSTALL_DIR)
+#     set ( _pkgconfig_install_dir ${GENBB_HELP_PKGCONFIG_INSTALL_DIR} )
+#   endif ()
+# endif ()
 
 # - CMake Module file (Find) :
 if ( GENBB_HELP_WITH_CMAKE_FIND_MODULE )
   set ( genbb_help_cmake_find_module_install_dir ${CMAKE_INSTALL_DATADIR}/cmake/Modules ) 
   if ( DEFINED GENBB_HELP_CMAKE_FIND_MODULE_INSTALL_DIR )
     set ( genbb_help_cmake_find_module_install_dir ${GENBB_HELP_CMAKE_FIND_MODULE_INSTALL_DIR} ) 
-    message ( STATUS "GENBB_HELP_CMAKE_FIND_MODULE_INSTALL_DIR : " "${GENBB_HELP_CMAKE_FIND_MODULE_INSTALL_DIR}" )
+    message ( STATUS "${PROJECT_NAME}: GENBB_HELP_CMAKE_FIND_MODULE_INSTALL_DIR : " "${GENBB_HELP_CMAKE_FIND_MODULE_INSTALL_DIR}" )
   endif ()
-  message ( STATUS "genbb_help CMake find module install dir = '${genbb_help_cmake_find_module_install_dir}'" )
+  message ( STATUS "${PROJECT_NAME}: genbb_help CMake find module install dir = '${genbb_help_cmake_find_module_install_dir}'" )
 endif ()
 
 # - C++ configuration header file :
@@ -334,6 +328,12 @@ install ( FILES README.txt COPYING.txt LICENSE.GPL3.txt
           DESTINATION ${CMAKE_INSTALL_DATADIR}
          )
 
+message ( STATUS "${PROJECT_NAME}: Add subdirectory : 'src'" )
+add_subdirectory ( src )   
+
+message ( STATUS "${PROJECT_NAME}: Add subdirectory : 'programs'" )
+add_subdirectory ( programs )   
+
 # ----------------------------------------------------------------------------
 # - Add Python wrapping.
 #
@@ -346,23 +346,23 @@ if ( GENBB_HELP_WITH_PYTHON_WRAPPER_SUPPORT AND GENBB_HELP_WITH_PYTHON_WRAPPER )
 
   # We need to force the cache to disable Python if we didn't find any
   # of the needed components
-  message ( STATUS "Boost_PYTHON_LIBRARY = ${Boost_PYTHON_LIBRARY}" )
-  message ( STATUS "PYTHON_INCLUDE_DIRS  = ${PYTHON_INCLUDE_DIRS}" )
-  message ( STATUS "PYTHON_EXECUTABLE    = ${PYTHON_EXECUTABLE}" )
-  message ( STATUS "PYTHON_LIBRARIES     = ${PYTHON_LIBRARIES}" )
-  message ( STATUS "PYTHON_DEBUG_LIBRARIES = ${PYTHON_DEBUG_LIBRARIES}" )
+  message ( STATUS "${PROJECT_NAME}: Boost_PYTHON_LIBRARY = ${Boost_PYTHON_LIBRARY}" )
+  message ( STATUS "${PROJECT_NAME}: PYTHON_INCLUDE_DIRS  = ${PYTHON_INCLUDE_DIRS}" )
+  message ( STATUS "${PROJECT_NAME}: PYTHON_EXECUTABLE    = ${PYTHON_EXECUTABLE}" )
+  message ( STATUS "${PROJECT_NAME}: PYTHON_LIBRARIES     = ${PYTHON_LIBRARIES}" )
+  message ( STATUS "${PROJECT_NAME}: PYTHON_DEBUG_LIBRARIES = ${PYTHON_DEBUG_LIBRARIES}" )
 
   if (NOT Boost_PYTHON_LIBRARY OR NOT PYTHON_INCLUDE_DIRS OR NOT PYTHON_EXECUTABLE)
-     message ( STATUS "Missing Python stuff " )
+     message ( STATUS "${PROJECT_NAME}: Missing Python stuff " )
      set ( GENBB_HELP_WITH_PYTHON_WRAPPER OFF CACHE BOOL "Enable Python wrapping of genbb_help, requires Boost.Python" FORCE)
   endif ()
 endif () 
   
 #set ( CMAKE_INSTALL_PYTHONDIR "" )
-#message ( STATUS "CMAKE_INSTALL_PYTHONDIR = '${CMAKE_INSTALL_PYTHONDIR}' " )
+#message ( STATUS "${PROJECT_NAME}: CMAKE_INSTALL_PYTHONDIR = '${CMAKE_INSTALL_PYTHONDIR}' " )
 
 if ( GENBB_HELP_WITH_PYTHON_WRAPPER )
-    message ( STATUS "Add subdirectory 'wrapping/python' " )
+    message ( STATUS "${PROJECT_NAME}: Add subdirectory 'wrapping/python' " )
     add_subdirectory ( wrapping/python )
 endif () 
 
@@ -370,6 +370,7 @@ endif ()
 # Add documentation.
 #
 if ( GENBB_HELP_WITH_DOC )
+  message ( STATUS "${PROJECT_NAME}: Add subdirectory : 'doc'" )
   add_subdirectory ( doc )
 endif ()
 
@@ -378,6 +379,7 @@ endif ()
 #
 if ( GENBB_HELP_WITH_TEST )
   enable_testing () 
+  message ( STATUS "${PROJECT_NAME}: Add subdirectory : 'testing'" )
   add_subdirectory ( testing )
 endif ()
 

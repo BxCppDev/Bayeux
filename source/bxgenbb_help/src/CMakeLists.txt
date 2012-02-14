@@ -11,37 +11,37 @@ endif ( CMAKE_SYSTEM_NAME MATCHES Darwin )
 #
 
 file ( GLOB genbb_help_f77_PUBLIC_HEADERS
-       ${PROJECT_SOURCE_DIR}/include/genbb_help/*.inc
-       ${PROJECT_SOURCE_DIR}/include/genbb_help/fermi.h
-       ${PROJECT_SOURCE_DIR}/include/genbb_help/rng.h
-     )
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/*.inc
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/fermi.h
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/rng.h
+  )
 file ( GLOB genbb_help_f77_SOURCES
-       ${genbb_help_f77_PUBLIC_HEADERS}
-       ${PROJECT_SOURCE_DIR}/src/fermi.cc
-       ${PROJECT_SOURCE_DIR}/src/rng.cc
-       ${PROJECT_SOURCE_DIR}/src/*.f
-     )
+  ${genbb_help_f77_PUBLIC_HEADERS}
+  ${PROJECT_SOURCE_DIR}/src/fermi.cc
+  ${PROJECT_SOURCE_DIR}/src/rng.cc
+  ${PROJECT_SOURCE_DIR}/src/*.f
+  )
 file ( GLOB genbb_help_PUBLIC_HEADERS
-       ${PROJECT_SOURCE_DIR}/include/genbb_help/*.h
-       ${PROJECT_BINARY_DIR}/include/genbb_help/genbb_help_config.h
-     )
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/*.h
+  ${PROJECT_BINARY_DIR}/include/genbb_help/genbb_help_config.h
+  )
 list ( REMOVE_ITEM genbb_help_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/include/genbb_help/fermi.h" )
 list ( REMOVE_ITEM genbb_help_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/include/genbb_help/rng.h"   )
 
 file ( GLOB genbb_help_ipp_PUBLIC_HEADERS
-       ${PROJECT_SOURCE_DIR}/include/genbb_help/*.ipp
-     )
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/*.ipp
+  )
 
 file ( GLOB genbb_help_serialization_PUBLIC_HEADERS
-       ${PROJECT_SOURCE_DIR}/include/genbb_help/serialization/*.h
-       ${PROJECT_SOURCE_DIR}/include/genbb_help/serialization/*.ipp
-     )
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/serialization/*.h
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/serialization/*.ipp
+  )
 
 file ( GLOB genbb_help_SOURCES
-       ${PROJECT_SOURCE_DIR}/include/genbb_help/*.h
-       ${PROJECT_BINARY_DIR}/include/genbb_help/genbb_help_config.h
-       ${PROJECT_SOURCE_DIR}/src/*.cc
-     )
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/*.h
+  ${PROJECT_BINARY_DIR}/include/genbb_help/genbb_help_config.h
+  ${PROJECT_SOURCE_DIR}/src/*.cc
+  )
 list ( REMOVE_ITEM genbb_help_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/src/fermi.cc" )
 list ( REMOVE_ITEM genbb_help_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/src/rng.cc" )
 
@@ -52,15 +52,15 @@ message ( STATUS "genbb_help_SOURCES=${genbb_help_SOURCES}" )
 
 if ( GENBB_HELP_WITH_BIO )
   set ( genbb_help_bio_SOURCES 
-        ${PROJECT_SOURCE_DIR}/include/genbb_help/serialization/the_serializable.ipp
-        ${PROJECT_SOURCE_DIR}/include/genbb_help/serialization/the_serializable.h
-        ${PROJECT_SOURCE_DIR}/src/the_serializable.cc )
+    ${PROJECT_SOURCE_DIR}/include/genbb_help/serialization/the_serializable.ipp
+    ${PROJECT_SOURCE_DIR}/include/genbb_help/serialization/the_serializable.h
+    ${PROJECT_SOURCE_DIR}/src/the_serializable.cc )
   message ( STATUS "genbb_help_bio_SOURCES=${genbb_help_bio_SOURCES}" )
 endif ( GENBB_HELP_WITH_BIO )
 
 include_directories ( ${PROJECT_SOURCE_DIR}/include	
-                      ${PROJECT_BINARY_DIR}/include	
-                     )
+  ${PROJECT_BINARY_DIR}/include	
+  )
 
 # ---------------------------------------------------------------------------- 
 # Dependencies
@@ -92,94 +92,94 @@ set ( CMAKE_CXX_FLAGS "${_genbb_help_fortran_definitions} ${_genbb_help_definiti
 #
 
 add_library ( genbb_help_f77 SHARED  
-              ${genbb_help_f77_PUBLIC_HEADERS} 
-	      ${genbb_help_f77_SOURCES}
-            )
+  ${genbb_help_f77_PUBLIC_HEADERS} 
+  ${genbb_help_f77_SOURCES}
+  )
 
 # ----------------------------------------------------------------------------
 # Link dynamic library :
 #
+set ( _link_libraries ${geomtools_LIBRARIES} )
 
-###target_link_libraries ( genbb_help_f77 ${mygsl_LIBRARIES})
-target_link_libraries ( genbb_help_f77 ${geomtools_LIBRARIES})
+target_link_libraries ( genbb_help_f77 
+  ${_link_libraries}
+  )
 
 # ----------------------------------------------------------------------------
 # C++ :
 #
 
 add_library ( genbb_help SHARED  
-              ${genbb_help_PUBLIC_HEADERS} 
-	      ${genbb_help_SOURCES}
-            )
+  ${genbb_help_PUBLIC_HEADERS} 
+  ${genbb_help_SOURCES}
+  )
 
 # Link dynamic library :
-# target_link_libraries ( genbb_help
-#                         ${geomtools_ONLY_LIBRARIES} 
-# 			genbb_help_f77
-# 			${mygsl_LIBRARIES}
-#                       )
 target_link_libraries ( genbb_help
-			genbb_help_f77
-                      )
+  genbb_help_f77
+  ${_link_libraries}
+  )
 # ----------------------------------------------------------------------
 # Installation :
 #
 
 install ( FILES ${PROJECT_SOURCE_DIR}/scripts/genbb
-	  DESTINATION ${CMAKE_INSTALL_BINDIR}
-          PERMISSIONS OWNER_READ OWNER_EXECUTE 
-                      GROUP_READ GROUP_EXECUTE 
-                      WORLD_READ WORLD_EXECUTE
-       )
+  DESTINATION ${CMAKE_INSTALL_BINDIR}
+  PERMISSIONS OWNER_READ OWNER_EXECUTE 
+  GROUP_READ GROUP_EXECUTE 
+  WORLD_READ WORLD_EXECUTE
+  )
 
 install ( TARGETS genbb_help_f77
-          EXPORT  genbb_help-libraries
-          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT bin
-          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT bin 
-          ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT devel
-        )
+  EXPORT  genbb_help-libraries
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT bin
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT bin 
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT devel
+  )
 
 install ( TARGETS genbb_help
-          EXPORT  genbb_help-libraries
-          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT bin
-          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT bin 
-          ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT devel
-        )
+  EXPORT  genbb_help-libraries
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT bin
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT bin 
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT devel
+  )
 
 install ( FILES ${genbb_help_PUBLIC_HEADERS}
-          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genbb_help
-        )
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genbb_help
+  )
 
 install ( FILES ${genbb_help_ipp_PUBLIC_HEADERS}
-          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genbb_help
-        )
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genbb_help
+  )
 
 install ( FILES ${genbb_help_serialization_PUBLIC_HEADERS}
-          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genbb_help/serialization
-        )
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genbb_help/serialization
+  )
 
 # - Bio stuff :
 if ( GENBB_HELP_WITH_BIO )
 
-   add_library( genbb_help_bio SHARED 
-                ${genbb_help_PUBLIC_HEADERS} 
-                ${genbb_help_detail_PUBLIC_HEADERS} 
-                ${genbb_help_bio_SOURCES}
-              )
+  add_library( genbb_help_bio SHARED 
+    ${genbb_help_PUBLIC_HEADERS} 
+    ${genbb_help_detail_PUBLIC_HEADERS} 
+    ${genbb_help_bio_SOURCES}
+    )
 
-   # Link dynamic library :
-   target_link_libraries ( genbb_help_bio
-                           genbb_help
-                         )
+  # Link dynamic library :
+  target_link_libraries ( genbb_help_bio
+    genbb_help
+    genbb_help_f77
+    ${_link_libraries}
+    )
 
-   target_link_libraries ( genbb_help_bio LINK_INTERFACE_LIBRARIES "" )
+  ###target_link_libraries ( genbb_help_bio LINK_INTERFACE_LIBRARIES "" )
 
-   install ( TARGETS genbb_help_bio
-             EXPORT  genbb_help-libraries
-             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT bin
-             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT bin 
-             ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT devel
-           )
+  install ( TARGETS genbb_help_bio
+    EXPORT  genbb_help-libraries
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT bin
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT bin 
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT devel
+    )
 
 endif ( GENBB_HELP_WITH_BIO )
 

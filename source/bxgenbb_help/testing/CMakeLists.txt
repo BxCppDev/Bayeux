@@ -72,10 +72,8 @@ message ( STATUS "testing: Performing all available tests : ${GENBB_HELP_ALL_TES
 if ( GENBB_HELP_ALL_TESTS )
 
   set ( _test_tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/tmp" )
-  ###message ( STATUS "testing:  _test_tmp_dir : ${_test_tmp_dir}" )
 
   foreach ( test_program ${genbb_help_tests_programs_list_CXX} )
-    unset ( _test_libraries )
     get_filename_component ( test_executable ${test_program} NAME_WE )
     message ( STATUS "testing:  Building test target '${test_executable}'" )
     add_executable ( ${test_executable} ${test_program} )
@@ -86,18 +84,10 @@ if ( GENBB_HELP_ALL_TESTS )
 
     # last thing we have to do is to tell CMake what libraries 
     # our executable needs,
-    # set ( _test_libraries 
-    #   genbb_help
-    #   genbb_help_f77
-    #   ###${geomtools_LIBRARIES} 
-    #   )
-
+    set ( _test_libraries genbb_help genbb_help_f77 )
+    list ( APPEND _test_libraries ${geomtools_LIBRARIES} )
     if ( GENBB_HELP_WITH_BIO )
-      ###set ( _test_libraries genbb_help_bio )
-      ###list ( INSERT _test_libraries 0 genbb_help_bio ) 
-      set ( _test_libraries genbb_help_bio )
-    else ()
-      set ( _test_libraries genbb_help )
+      list ( INSERT _test_libraries 0 genbb_help_bio ) 
     endif ()
 	 
     target_link_libraries ( ${test_executable} ${_test_libraries} )
@@ -115,7 +105,6 @@ if ( GENBB_HELP_ALL_TESTS )
   endforeach ()
 
   foreach ( test_program ${genbb_help_tests_programs_list_Fortran} )
-    unset ( _test_libraries )
     get_filename_component ( test_executable ${test_program} NAME_WE )
     message ( STATUS "testing:  Building test target '${test_executable}'" )
     add_executable ( ${test_executable} ${test_program} )
@@ -128,7 +117,7 @@ if ( GENBB_HELP_ALL_TESTS )
     # our executable needs,
     target_link_libraries ( ${test_executable} 
       genbb_help_f77
-      ###${geomtools_LIBRARIES} 
+      ${geomtools_LIBRARIES} 
       )
 
     add_test ( NAME ${test_executable}.run

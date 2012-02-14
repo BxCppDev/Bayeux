@@ -44,32 +44,33 @@ include("${_thisdir}/genbb_help-libraries.cmake")
 # We have to set the headers because genbb_help exports the headers in
 # its public interface.
 
+# ----------------------------------------------------------------------------
+# geomtools dependency :
+#
+find_package ( geomtools @geomtools_VERSION@ REQUIRED NO_MODULE )
+if (NOT DEFINED geomtools_CONFIG)
+   message ( FATAL_ERROR "genbb_help-config.cmake : Cannot find geomtools >= @geomtools_VERSION@ !" )
+else ()
+   message ( STATUS "genbb_help-config.cmake : Found the geomtools library version ${geomtools_VERSION} !" )
+endif ()
+
+set( _genbb_help_geomtools_INCLUDE_DIRS ${geomtools_INCLUDE_DIRS} )
+set( _genbb_help_geomtools_LIBRARIES    ${geomtools_LIBRARIES}    )
+
 #----------------------------------------------------------------------------
 # Set path to genbb_help includes
 #
-set ( genbb_help_INCLUDE_DIR @genbb_help_INCLUDE_DIR@)
+set ( genbb_help_ONLY_INCLUDE_DIRS @genbb_help_INCLUDE_DIR@)
 set ( genbb_help_INCLUDE_DIRS
-      ${genbb_help_INCLUDE_DIR}
+      ${genbb_help_ONLY_INCLUDE_DIRS}
+      ${_genbb_help_geomtools_INCLUDE_DIRS}
     )
-
-###set ( geomtools_DIR "@geomtools_DIR@" )
-find_package ( geomtools REQUIRED NO_MODULE )
-if (NOT DEFINED geomtools_VERSION)
-  message ( FATAL_ERROR "Cannot find 'geomtools' dependency !")
-else ()
-  message ( STATUS "Found 'geomtools' dependency version ${geomtools_VERSION} !")
-endif ()
-set(_genbb_help_geomtools_INCLUDE_DIRS ${geomtools_INCLUDE_DIRS})
-set (genbb_help_INCLUDE_DIRS 
-     ${genbb_help_INCLUDE_DIRS}
-     ${_genbb_help_geomtools_INCLUDE_DIRS}
-    )
-unset(_genbb_help_geomtools_INCLUDE_DIRS)
 
 #----------------------------------------------------------------------------
 # Set genbb_help_LIBRARIES variable
 set(genbb_help_LIB_DIR @genbb_help_LIB_DIR@)
 # Basic : Assume that if genbb_help_bio was built, it should be in Library list
+set(genbb_help_F77_LIBRARY genbb_help_f77 )
 set(genbb_help_LIBRARY genbb_help )
 
 set(genbb_help_WITH_DEBUG @GENBB_HELP_WITH_DEBUG@)
@@ -98,16 +99,20 @@ if ( @GENBB_HELP_WITH_PYTHON_WRAPPER_SUPPORT@ )
   endif()
 endif ()
 
-set(genbb_help_LIBRARIES ${genbb_help_BIO_LIBRARY} ${genbb_help_LIBRARY} )
-
-set(_genbb_help_geomtools_LIBRARIES ${geomtools_LIBRARIES})
-set(genbb_help_LIBRARIES 
-     ${genbb_help_LIBRARIES}
-     ${_genbb_help_geomtools_LIBRARIES}
-   )
-unset(_genbb_help_geomtools_LIBRARIES)
+set ( genbb_help_ONLY_LIBRARIES
+  ${genbb_help_BIO_LIBRARY} 
+  ${genbb_help_LIBRARY} 
+  ${genbb_help_F77_LIBRARY}
+  )
+set ( genbb_help_LIBRARIES 
+  ${genbb_help_ONLY_LIBRARIES}
+  ${_genbb_help_geomtools_LIBRARIES}
+  )
 
 set (genbb_help_DEFINITIONS @_genbb_help_definitions@ )
+
+unset(_genbb_help_geomtools_LIBRARIES)
+unset(_genbb_help_geomtools_INCLUDE_DIRS)
 
 else ( NOT DEFINED genbb_help_CONFIG_COUNTER )
   message ( WARNING "Multiple inclusion of the 'genbb_help-config.cmake' file !" )
