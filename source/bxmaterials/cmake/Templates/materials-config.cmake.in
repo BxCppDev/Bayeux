@@ -111,7 +111,7 @@ unset(_materials_geomtools_LIBRARIES)
 unset(_materials_geomtools_INCLUDE_DIRS)
 
 else ( NOT DEFINED materials_CONFIG_COUNTER )
-  message ( WARNING "Multiple inclusion of the 'materials-config.cmake' file !" )
+  message ( STATUS "WARNING: Multiple inclusion of the 'materials-config.cmake' file !" )
   math (EXPR materials_CONFIG_COUNTER '${materials_CONFIG_COUNTER}+1' )
 endif ( NOT DEFINED materials_CONFIG_COUNTER )
 
