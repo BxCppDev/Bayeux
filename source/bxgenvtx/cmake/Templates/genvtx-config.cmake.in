@@ -111,7 +111,7 @@ unset( _genvtx_geomtools_INCLUDE_DIRS )
 unset( _genvtx_geomtools_LIBRARIES    )
 
 else ( NOT DEFINED genvtx_CONFIG_COUNTER )
-  message ( WARNING "Multiple inclusion of the 'genvtx-config.cmake' file !" )
+  message ( STATUS "WARNING: Multiple inclusion of the 'genvtx-config.cmake' file !" )
   math (EXPR genvtx_CONFIG_COUNTER '${genvtx_CONFIG_COUNTER}+1' )
 endif ( NOT DEFINED genvtx_CONFIG_COUNTER )
 

@@ -196,12 +196,12 @@ add_subdirectory ( src )
 set ( genvtx_cmake_config_install_dir ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME} )
 
 # - Pkgconfig file:
-if ( GENVTX_WITH_PKGCONFIG )
-  set ( _pkgconfig_install_dir ${CMAKE_INSTALL_LIBDIR}/pkgconfig )
-  if ( DEFINED GENVTX_PKGCONFIG_INSTALL_DIR)
-    set ( _pkgconfig_install_dir ${GENVTX_PKGCONFIG_INSTALL_DIR} )
-  endif ()
-endif ()
+# if ( GENVTX_WITH_PKGCONFIG )
+#   set ( _pkgconfig_install_dir ${CMAKE_INSTALL_LIBDIR}/pkgconfig )
+#   if ( DEFINED GENVTX_PKGCONFIG_INSTALL_DIR)
+#     set ( _pkgconfig_install_dir ${GENVTX_PKGCONFIG_INSTALL_DIR} )
+#   endif ()
+# endif ()
 
 # - CMake Module file (Find) :
 if ( GENVTX_WITH_CMAKE_FIND_MODULE )
