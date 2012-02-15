@@ -115,7 +115,7 @@ unset(_genbb_help_geomtools_LIBRARIES)
 unset(_genbb_help_geomtools_INCLUDE_DIRS)
 
 else ( NOT DEFINED genbb_help_CONFIG_COUNTER )
-  message ( WARNING "Multiple inclusion of the 'genbb_help-config.cmake' file !" )
+  message ( STATUS "WARNING: Multiple inclusion of the 'genbb_help-config.cmake' file !" )
   math (EXPR genbb_help_CONFIG_COUNTER '${genbb_help_CONFIG_COUNTER}+1' )
 endif ( NOT DEFINED genbb_help_CONFIG_COUNTER )
 
