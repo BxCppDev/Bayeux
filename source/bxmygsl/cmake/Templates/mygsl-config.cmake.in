@@ -168,7 +168,7 @@ if ( NOT DEFINED mygsl_CONFIG_COUNTER )
   unset(_mygsl_GSL_INCLUDE_DIRS)
 
 else ( NOT DEFINED mygsl_CONFIG_COUNTER )
-  message ( WARNING "Multiple inclusion of the 'mygsl-config.cmake' file !" )
+  message ( STATUS "WARNING: Multiple inclusion of the 'mygsl-config.cmake' file !" )
   math (EXPR mygsl_CONFIG_COUNTER '${mygsl_CONFIG_COUNTER}+1' )
 endif ( NOT DEFINED mygsl_CONFIG_COUNTER )
 

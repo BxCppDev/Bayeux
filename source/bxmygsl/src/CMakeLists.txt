@@ -17,25 +17,25 @@ file ( GLOB mygsl_SOURCES
        ${PROJECT_SOURCE_DIR}/src/*.cc
      )
 
-if ( MYGSL_WITH_BIO_SUPPORT )
+# if ( MYGSL_WITH_BIO_SUPPORT )
  
-  file ( GLOB mygsl_serialization_PUBLIC_HEADERS
-         ${PROJECT_SOURCE_DIR}/include/mygsl/serialization/*.h
-       )
+#   file ( GLOB mygsl_serialization_PUBLIC_HEADERS
+#          ${PROJECT_SOURCE_DIR}/include/mygsl/serialization/*.h
+#        )
 
-  install ( FILES ${mygsl_serialization_PUBLIC_HEADERS}
-            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/mygsl/serialization
-          )
+#   install ( FILES ${mygsl_serialization_PUBLIC_HEADERS}
+#             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/mygsl/serialization
+#           )
  
-  file ( GLOB mygsl_ipp_PUBLIC_HEADERS
-         ${PROJECT_SOURCE_DIR}/include/mygsl/serialization/*.ipp
-       )
+#   file ( GLOB mygsl_ipp_PUBLIC_HEADERS
+#          ${PROJECT_SOURCE_DIR}/include/mygsl/serialization/*.ipp
+#        )
 
-  install ( FILES ${mygsl_ipp_PUBLIC_HEADERS}
-            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/mygsl/serialization
-          )
+#   install ( FILES ${mygsl_ipp_PUBLIC_HEADERS}
+#             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/mygsl/serialization
+#           )
 
-endif ()
+# endif ()
 
 #----------------------------------------------------------------------------
 # Dependencies
