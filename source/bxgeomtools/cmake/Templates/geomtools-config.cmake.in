@@ -122,7 +122,7 @@ unset ( _geomtools_mygsl_LIBRARIES )
 unset ( _geomtools_mygsl_INCLUDE_DIRS )
 
 else ( NOT DEFINED geomtools_CONFIG_COUNTER )
-  message ( WARNING "Multiple inclusion of the 'geomtools-config.cmake' file !" )
+  message ( STATUS "WARNING: Multiple inclusion of the 'geomtools-config.cmake' file !" )
   math (EXPR geomtools_CONFIG_COUNTER '${geomtools_CONFIG_COUNTER}+1' )
 endif ( NOT DEFINED geomtools_CONFIG_COUNTER )
 
