@@ -116,7 +116,7 @@ if ( NOT DEFINED cuts_CONFIG_COUNTER )
   unset ( _cuts_datatools_INCLUDE_DIRS )
 
 else ( NOT DEFINED cuts_CONFIG_COUNTER )
-  message ( WARNING "Multiple inclusion of the 'cuts-config.cmake' file !" )
+  message ( STATUS "WARNING: Multiple inclusion of the 'cuts-config.cmake' file !" )
   math (EXPR cuts_CONFIG_COUNTER '${cuts_CONFIG_COUNTER}+1' )
 endif ( NOT DEFINED cuts_CONFIG_COUNTER )
 
