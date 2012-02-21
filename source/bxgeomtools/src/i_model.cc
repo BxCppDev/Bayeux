@@ -378,7 +378,7 @@ namespace geomtools {
   {
     if (g_devel) clog << "DEVEL: i_model::_at_construct: Entering..." << endl;
 
-    throw runtime_error ("i_model::_at_construct: This method MUST be overridden !");
+    throw runtime_error ("i_model::_at_construct: This method MUST be overloaded !");
 
     if (g_devel) clog << "DEVEL: i_model::_at_construct: Exiting." << endl;
     return;      
@@ -388,7 +388,7 @@ namespace geomtools {
   {
     if (setup_.has_flag (i_model::PHANTOM_SOLID_FLAG))
       {
-	_set_phantom_solid (true);
+        _set_phantom_solid (true);
       }
     return;
   }

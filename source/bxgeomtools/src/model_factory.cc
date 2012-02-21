@@ -75,13 +75,13 @@ namespace geomtools {
     bool devel = g_devel || _debug_;
     if (_locked_)
       {
-        throw runtime_error ("model_factory::init: Factory is locked !");
+        throw logic_error ("geomtools::model_factory::init: Factory is locked !");
       }
 
-    //cerr << "********** DEVEL: model_factory::load: Go !" << endl;
+    //cerr << "********** DEVEL: geomtools::model_factory::load: Go !" << endl;
     //_mp_.set_debug (devel);
     _mp_.read (mprop_file_);
-    //cerr << "********** DEVEL: model_factory::load: Done !" << endl;
+    //cerr << "********** DEVEL: geomtools::model_factory::load: Done !" << endl;
     //usleep (200);
 
     if (devel)
@@ -96,7 +96,7 @@ namespace geomtools {
   {
     if (_locked_)
       {
-        throw runtime_error ("model_factory::init: Already locked !");
+        throw logic_error ("geomtools::model_factory::init: Already locked !");
       }
     _construct_ ();
     _mp_.reset ();
@@ -120,7 +120,7 @@ namespace geomtools {
   {
     if (_locked_)
       {
-        throw runtime_error ("model_factory::init: Already locked !");
+        throw logic_error ("geomtools::model_factory::init: Already locked !");
       }
     _lock_ ();
     _locked_ = true;
@@ -133,7 +133,26 @@ namespace geomtools {
       {
         unlock ();
       }
+    // The container of logicals does not have ownership of the pointers :
     _logicals_.clear ();
+    // Memory leak to be fixed:
+    for (models_col_t::iterator i = _models_.begin ();
+         i != _models_.end();
+         i++)
+      {
+        const string & model_name = i->first;
+        i_model * model_ptr = i->second;
+        if (model_ptr != 0)
+          {
+            if (_debug_)
+              {
+                clog << "DEBUG: " << "geomtools::model_factory::reset: " 
+                     << "Deleting registered model '" << model_name << "'"
+                     << endl;
+              }
+            delete model_ptr;
+          }
+      }
     _models_.clear ();
     _mp_.reset ();
     return;

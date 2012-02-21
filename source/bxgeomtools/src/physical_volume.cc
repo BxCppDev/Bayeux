@@ -75,14 +75,9 @@ namespace geomtools {
   
   const i_placement & physical_volume::get_placement () const
   {
-    /*
-      clog << "**** DEVEL: physical_volume::get_placement: " 
-      << _placement_
-      << endl; 
-    */
     if (! _placement_)
       {
-        throw runtime_error ("physical_volume::get_placement: Missing placement !");
+        throw logic_error ("physical_volume::get_placement: Missing placement !");
       }
     return *_placement_;
   }
@@ -143,7 +138,7 @@ namespace geomtools {
   {
     if (! _logical_)
       {
-        throw runtime_error ("physical_volume::get_logical: Missing logical !");
+        throw logic_error ("physical_volume::get_logical: Missing logical !");
       }
     return *_logical_;
   }
