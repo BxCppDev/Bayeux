@@ -11,7 +11,11 @@ if ( BAYEUX_WITH_GENBB_HELP )
   endif ()
   
   if (_genbb_help_run_post_build_tests)
-    set (_genbb_help_ep_test_options TEST_BEFORE_INSTALL 1 TEST_COMMAND make test )
+    set (_genbb_help_ep_test_options 
+      TEST_BEFORE_INSTALL ${_test_before_install} 
+      TEST_AFTER_INSTALL ${_test_after_install} 
+      TEST_COMMAND make test 
+      )
   endif ()
    ExternalProject_Add( genbb_help 
     DEPENDS geomtools mygsl datatools
@@ -32,4 +36,15 @@ if ( BAYEUX_WITH_GENBB_HELP )
     INSTALL_COMMAND make install
     ${_genbb_help_ep_test_options}
   )
+
+  if (BAYEUX_WITH_DOCS)
+    ExternalProject_Add_Step ( genbb_help build_doc
+      COMMAND make doc
+      COMMENT "Build the genbb_help documentation material"
+      DEPENDEES build
+      DEPENDERS install
+      WORKING_DIRECTORY <BINARY_DIR>
+      )
+  endif (BAYEUX_WITH_DOCS)
+
 endif ( BAYEUX_WITH_GENBB_HELP ) 

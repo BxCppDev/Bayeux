@@ -11,7 +11,11 @@ if ( BAYEUX_WITH_MATERIALS )
   endif ()
   
   if (_materials_run_post_build_tests)
-    set (_materials_ep_test_options TEST_BEFORE_INSTALL 1 TEST_COMMAND make test )
+   set (_materials_ep_test_options 
+      TEST_BEFORE_INSTALL ${_test_before_install} 
+      TEST_AFTER_INSTALL ${_test_after_install} 
+      TEST_COMMAND make test 
+      )
   endif ()
   ExternalProject_Add( materials 
     DEPENDS geomtools datatools
@@ -30,4 +34,14 @@ if ( BAYEUX_WITH_MATERIALS )
     INSTALL_COMMAND make install
     ${_materials_ep_test_options}
   )
+
+  if (BAYEUX_WITH_DOCS)
+    ExternalProject_Add_Step ( materials build_doc
+      COMMAND make doc
+      COMMENT "Build the materials documentation material"
+      DEPENDEES build
+      DEPENDERS install
+      WORKING_DIRECTORY <BINARY_DIR>
+      )
+  endif (BAYEUX_WITH_DOCS)
 endif ( BAYEUX_WITH_MATERIALS ) 

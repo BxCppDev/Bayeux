@@ -684,6 +684,7 @@ function do_configure ()
 
     pkgtools__msg_notice "With documentation    : '${with_doc}'"
     pkgtools__msg_notice "With test material    : '${with_test}'"
+    pkgtools__msg_notice "With BIO DLLs         : '${with_bio}'"
     if [ "x${cadfael_dir}" != "x" ]; then
 	pkgtools__msg_notice "With path to Cadfael CMake module : '${cadfael_dir}'"
     fi

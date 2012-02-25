@@ -194,6 +194,10 @@ message ( STATUS "${PROJECT_NAME}: Bayeux download dir        : '${BAYEUX_DOWNLO
 message ( STATUS "${PROJECT_NAME}: Bayeux build dir           : '${BAYEUX_BUILD_DIR}'" )
 message ( STATUS "${PROJECT_NAME}: Bayeux EP base dir         : '${BAYEUX_EP_BASE}'" )
 
+message ( STATUS "${PROJECT_NAME}: Bayeux with BIO            : '${BAYEUX_WITH_BIO}'" )
+message ( STATUS "${PROJECT_NAME}: Bayeux with test           : '${BAYEUX_WITH_TESTS}'" )
+message ( STATUS "${PROJECT_NAME}: Bayeux with documentation  : '${BAYEUX_WITH_DOCS}'" )
+message ( STATUS "${PROJECT_NAME}: Bayeux with validation     : '${BAYEUX_WITH_VALIDATION}'" )
 
 # ---------------------------------------------------------
 # Bayeux can only handle its components from some
@@ -466,6 +470,12 @@ install ( FILES ${PROJECT_BINARY_DIR}/cmake/bayeux_setup.sh
           PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
         )
 
+
+if ( BAYEUX_WITH_TESTS )
+  set ( _test_before_install 0 )
+  set ( _test_after_install  1 )
+  ###option ( BAYEUX_WITH_TESTS      ON )
+endif ()
 # -------------------------------------------------------------------------
 # - Cleaning :
 #
