@@ -2,9 +2,9 @@
 /* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-30
  * Last modified : 2011-06-30
- * 
+ *
  * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -17,10 +17,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- * 
- * Description: 
+ *
+ * Description:
  *
  *  A shared library loader facility (base on kwsys).
  *
@@ -32,7 +32,6 @@
 #include <iostream>
 #include <string>
 #include <map>
-#include <stack>
 #include <list>
 
 #include <boost/scoped_ptr.hpp>
@@ -52,51 +51,49 @@
 // #endif
 
 namespace datatools {
-  
+
   namespace utils {
 
-    using namespace std;
-    
     struct library_entry_type;
-    
-    typedef datatools::utils::handle<library_entry_type> handle_library_entry_type;
-    typedef map<string, handle_library_entry_type>       handle_library_entry_dict_type;
-    typedef list<handle_library_entry_type>              handle_library_entry_stack_type;
+
+    typedef datatools::utils::handle<library_entry_type>      handle_library_entry_type;
+    typedef std::map<std::string, handle_library_entry_type>  handle_library_entry_dict_type;
+    typedef std::list<handle_library_entry_type>              handle_library_entry_stack_type;
 
     typedef DATATOOLS_SYS_NAMESPACE::DynamicLoader::SymbolPointer symbol_ptr;
 
     struct library_entry_type
     {
-      string name;
-      string directory;
-      string filename;
-      string full_path;
-      string version;
+      std::string name;
+      std::string directory;
+      std::string filename;
+      std::string full_path;
+      std::string version;
       bool   autoload;
       int    status;
       DATATOOLS_SYS_NAMESPACE::DynamicLoader::LibraryHandle handle;
 
-      library_entry_type (const string & a_name = "",
-                          const string & a_directory = "",
-                          const string & a_filename = "",
-                          const string & a_full_path = "",
-                          const string & a_version = "",
-                          bool a_autoload = true);
+      library_entry_type (const std::string & name_      = "",
+                          const std::string & directory_ = "",
+                          const std::string & filename_  = "",
+                          const std::string & full_path_ = "",
+                          const std::string & version_   = "",
+                          bool autoload_                 = true);
 
       virtual ~library_entry_type ();
 
-      void print (ostream & a_out = clog, const string & a_indent = "") const;
+      void print (std::ostream & out_ = std::clog, const std::string & indent_ = "") const;
 
     };
 
-    class library_loader : boost::noncopyable 
+    class library_loader : boost::noncopyable
     {
 
     public:
 
       static bool g_devel;
       static bool g_test;
- 
+
       enum flag_type
         {
           debug              = bit_mask::bit00,
@@ -108,8 +105,8 @@ namespace datatools {
 
     private:
 
-      uint32_t  _flags_; //!< Not used yet
-      string    _config_filename_;
+      uint32_t    _flags_; //!< Not used yet
+      std::string _config_filename_;
       handle_library_entry_stack_type _stacked_libraries_;
       handle_library_entry_dict_type  _libraries_;
 
@@ -125,36 +122,36 @@ namespace datatools {
 
       bool is_test () const;
 
-      library_loader (uint32_t the_flags = 0, 
-                      const string & dll_config_file = "");
+      library_loader (uint32_t flags_ = 0,
+                      const std::string & dll_config_file_ = "");
 
       virtual ~library_loader ();
 
-      bool has (const string & a_lib_name) const;
+      bool has (const std::string & lib_name_) const;
 
-      bool is_loaded (const string & a_lib_name) const;
+      bool is_loaded (const std::string & lib_name_) const;
 
-      int registration (const string & a_lib_name,
-                        const string & a_lib_directory = "",
-                        const string & a_lib_filename = "",
-                        const string & a_lib_full_path = "",
-                        const string & a_lib_version = "",
-                        bool           a_autoload = false);
+      int registration (const std::string & lib_name_,
+                        const std::string & lib_directory_ = "",
+                        const std::string & lib_filename_  = "",
+                        const std::string & lib_full_path_ = "",
+                        const std::string & lib_version_   = "",
+                        bool                autoload_      = false);
 
-      int load (const string & a_lib_name, 
-                const string & a_lib_directory= "", 
-                const string & a_lib_filename = "",
-                const string & a_lib_full_path = "",
-                const string & a_lib_version = "");
+      int load (const std::string & lib_name_,
+                const std::string & lib_directory_ = "",
+                const std::string & lib_filename_  = "",
+                const std::string & lib_full_path_ = "",
+                const std::string & lib_version_   = "");
 
-      int close (const string & a_lib_name);
+      int close (const std::string & lib_name_);
 
       int close_all ();
 
-      void print (ostream & a_out = clog) const;
+      void print (std::ostream & out_ = std::clog) const;
 
-      symbol_ptr get_symbol_address (const string & a_lib_name,
-                                     const string & a_symbol);
+      symbol_ptr get_symbol_address (const std::string & lib_name_,
+                                     const std::string & symbol_);
 
     protected:
 
