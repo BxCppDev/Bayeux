@@ -13,11 +13,6 @@
 #include <geomtools/gdml_export.h>
 #include <geomtools/placement.h>
 
-// Additional registered test geometry models :
-#include <geomtools_test_model_1.cc>
-#include <geomtools_test_model_2.cc>
-#include <geomtools_test_world_model.cc>
-
 using namespace std;
 
 int main (int argc_, char ** argv_)
