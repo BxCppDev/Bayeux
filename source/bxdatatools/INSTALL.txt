@@ -4,9 +4,10 @@ datatools installation instructions:
 
 The datatools C++ library package uses the CMake build system.
 It depends on the following third-party software : 
-- Boost
-- CLHEP
-- Python
+- CMake >= 2.8
+- Boost >= 1.47
+- CLHEP >= 2.1
+- Python >= 2.6, <3
 - doxygen
 
 
@@ -17,8 +18,7 @@ CLHEP and Boost libraries must be installed and setup.
 
 First check that third party libraries are installed and setup :
 
-With Cadfael:
-
+Example with a Cadfael installation :
 {{{
 bash$ do_cadfael_clhep_setup
 NOTICE: do_cadfael_clhep_setup: Setup Cadfael/CLHEP...
@@ -49,10 +49,10 @@ Change to the datatools base directory :
 bash$ cd <datatools base dir>
 }}}
 
-Create a 'build' directory :
+Create a '__build' directory :
 {{{
-bash$ mkdir build
-bash$ cd build
+bash$ mkdir __build
+bash$ cd __build
 }}}
 
 Configure the installation to the '${HOME}/software/Base' directory.
@@ -109,8 +109,8 @@ bash$ make install
 
 Remove the temporary build directory :
 {{{
-bash$ cd build
-bash$ rm -fr build
+bash$ cd ..
+bash$ rm -fr __build
 }}}
 
 
@@ -131,7 +131,7 @@ Run the following configure/build/install sequence :
 {{{
 bash$ ./pkgtools.d/pkgtool check
 bash$ ./pkgtools.d/pkgtool configure --install-prefix ${HOME}/software/Base
-bash$ ./pkgtools.d/pkgtool build --number-of-tasks auto
+bash$ ./pkgtools.d/pkgtool build [--number-of-tasks auto]
 bash$ ./pkgtools.d/pkgtool doc
 bash$ ./pkgtools.d/pkgtool test
 bash$ ./pkgtools.d/pkgtool install
@@ -178,7 +178,7 @@ bash$ datatools-config --ldflags
 
 --
 F.Mauger <mauger@lpccaen.in2p3.fr>
-Updated: 2012-01-09
+Updated: 2012-03-01
  
  
 
