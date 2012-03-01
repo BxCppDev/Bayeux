@@ -1,5 +1,6 @@
-
 2010-02-13  Francois Mauger <mauger@lpccaen.in2p3.fr>
-
-        * creation of the genvtx package 
+        * creation of the genvtx package
+2012-01-11  Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* CMake : new build system
+	
 
