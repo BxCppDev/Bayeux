@@ -1,12 +1,12 @@
 // -*- mode: c++ ; -*- 
-// test_dummy_materials.cxx
-
+// test_materials.cxx
+ 
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
-#include <materials/dummy_materials.h>
+#include <materials/materials_config.h>
 
 using namespace std;
 
@@ -15,29 +15,28 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'dummy_materials'!" << endl; 
+      clog << "Test program for the 'materials' program library." << endl; 
   
       bool debug = false;
+      bool verbose = false;
 
       int iarg = 1;
       while (iarg < argc_)
         {
           string token = argv_[iarg];
 
-          if (token[0] == '-')
+          if (token[0] == '-') 
             {
                string option = token; 
                if ((option == "-d") || (option == "--debug")) 
                  {
                    debug = true;
                  }
-               /* Here you may add more switches...
-                * else if (...) 
-                *  { 
-                *    ... 
-                *  }
-                */
-               else 
+               else if ((option == "-v") || (option == "--verbose")) 
+                 {
+                   verbose = true;
+                 }
+	       else 
                  { 
                     clog << "warning: ignoring option '" << option << "'!" << endl; 
                  }
@@ -45,30 +44,28 @@ int main (int argc_, char ** argv_)
           else
             {
               string argument = token; 
-              /* Here you may add more argument handlers... */
               { 
                 clog << "warning: ignoring argument '" << argument << "'!" << endl; 
               }
-            }
-          iarg++;
+            } 
+          iarg++; 
       }
-    
-      mat::dummy_materials my_dummy_materials;
-    
-      // Here you may put stuff for testing the class...
 
+      clog << "materials version : " << MATERIALS_LIB_VERSION << endl;
+  
+      clog << "The end." << endl;
     }
   catch (exception & x)
-    {
+    { 
       cerr << "error: " << x.what () << endl; 
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error !" << endl; 
       error_code = EXIT_FAILURE;
     }
   return (error_code);
 }
 
-// end of test_dummy_materials.cxx
+// end of test_materials.cxx

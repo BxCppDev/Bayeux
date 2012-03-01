@@ -54,7 +54,7 @@ namespace mat {
             message << where_ << ": ";
           }
         message << "Operation not allowed ! Object is locked !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     return;
   }
@@ -193,7 +193,7 @@ namespace mat {
         ostringstream message;
         message << endl << "element::set_symbol() ; symbol '"
                 << symbol_<< "' not found !" << endl;
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     _symbol_ = symbol_;
     _z_ = i_Z;
@@ -327,7 +327,7 @@ namespace mat {
       }
     else
       {
-        throw runtime_error ("element::build: Missing isotope(s) in the current element ! Not implemented yet !");
+        throw logic_error ("element::build: Missing isotope(s) in the current element ! Not implemented yet !");
         //build_from_nist ();
       }
     _lock_ ();
@@ -342,16 +342,16 @@ namespace mat {
 
     string tape_name;
 
-    if (getenv("MATERIALS_ROOT")==NULL)
+    if (getenv("MATERIALS_DATA_DIR")==NULL)
       {
         ostringstream message;
-        message << "element::build_from_nist : env. variable '$MATERIALS_ROOT'  not found !";
-        throw runtime_error (message.str ());
+        message << "element::build_from_nist : env. variable 'MATERIALS_DATA_DIR'  not found !";
+        throw logic_error (message.str ());
       }
     else
       {
-        tape_name.assign (getenv ("MATERIALS_ROOT"));
-        tape_name +="/resources/isotopic_compositions_nist.dat";
+        tape_name.assign (getenv ("MATERIALS_DATA_DIR"));
+        tape_name += "/resources/data/isotopic_compositions_nist.dat";
       }
 
     ifstream ifstr_tape;
@@ -361,7 +361,7 @@ namespace mat {
         ostringstream message;
         message << "element::build_from_nist : ifstream  '"
                 << tape_name << "'  not open !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
 
     //----------------------------  Read the ifstream  ----------------------------
@@ -404,7 +404,7 @@ namespace mat {
                 << _z_
                 << "' not found in file isotopic_compositions_nist.dat !"
                 << endl;
-        // throw runtime_error (message.str ());
+        // throw logic_error (message.str ());
         clog << message << endl;
       }
     return;

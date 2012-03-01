@@ -125,16 +125,16 @@ namespace mat {
 
     string tape_name;
 
-    if (getenv("MATERIALS_ROOT")==NULL)
+    if (getenv("MATERIALS_DATA_DIR")==NULL)
       {
         ostringstream message;
-        message << "isotope::_check_za_ : env. variable '$MATERIALS_ROOT'  not found !";
-        throw runtime_error (message.str ());
+        message << "isotope::_check_za_ : env. variable 'MATERIALS_DATA_DIR'  not found !";
+        throw logic_error (message.str ());
       }
     else
       {
-        tape_name.assign(getenv("MATERIALS_ROOT"));
-        tape_name +="/resources/mass.mas03";
+        tape_name.assign(getenv("MATERIALS_DATA_DIR"));
+        tape_name += "/resources/data/mass.mas03";
       }
 
     ifstream ifstr_tape;
@@ -143,7 +143,7 @@ namespace mat {
       {
         ostringstream message;
         message << "isotope::_check_za_ : ifstream  '" << tape_name<< "'  not found !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
 
 
@@ -168,7 +168,7 @@ namespace mat {
         ostringstream message;
         message<< "isotope::_check_za_: " << get_name ()<<endl;
         message << "  -> (Z, A) values : (" << _z_<< ", "<< _a_<< ") not found in database ['" << tape_name<<"'] !"<<endl;
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     return;
   }
@@ -227,16 +227,16 @@ namespace mat {
 
     string tape_name;
 
-    if (getenv ("MATERIALS_ROOT") == NULL)
+    if (getenv ("MATERIALS_DATA_DIR") == NULL)
       {
         ostringstream message;
-        message << "isotope::find_mass : env. variable '$MATERIALS_ROOT'  not found !";
-        throw runtime_error (message.str ());
+        message << "isotope::find_mass : env. variable 'MATERIALS_DATA_DIR'  not found !";
+        throw logic_error (message.str ());
       }
     else
       {
-        tape_name.assign(getenv ("MATERIALS_ROOT"));
-        tape_name += "/resources/";
+        tape_name.assign(getenv ("MATERIALS_DATA_DIR"));
+        tape_name += "/resources/data/";
         tape_name += input_file_name_;
       }
 
@@ -246,7 +246,7 @@ namespace mat {
       {
         ostringstream message;
         message << "isotope::find_mass () : ifstream  '" << tape_name << "'  not found !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
 
 
@@ -291,7 +291,7 @@ namespace mat {
         ostringstream message;
         message << "isotope::find_mass: Z A values : '" << _z_ << " " << _a_ << "' not found in '"
                 << tape_name << "' !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
         /*
           cerr<<endl<< endl<< "!!! WARNING !!! isotope::find_mass (): Z A values : '" << _z_<< " "<< _a_<< "' not found in file mass.mas03 !"<< endl<< endl;
         */
@@ -478,16 +478,16 @@ namespace mat {
 
     string tape_name;
 
-    if (getenv("MATERIALS_ROOT")==NULL)
+    if (getenv("MATERIALS_DATA_DIR")==NULL)
       {
         ostringstream message;
-        message << "isotope::find_decay : env. variable '$MATERIALS_ROOT'  not found !";
-        throw runtime_error (message.str ());
+        message << "isotope::find_decay : env. variable 'MATERIALS_DATA_DIR'  not found !";
+        throw logic_error (message.str ());
       }
     else
       {
-        tape_name.assign(getenv("MATERIALS_ROOT"));
-        tape_name +="/resources/";
+        tape_name.assign(getenv("MATERIALS_DATA_DIR"));
+        tape_name +="/resources/data/";
         tape_name +=input_file_name_;
       }
     ifstream ifstr_tape;
@@ -496,7 +496,7 @@ namespace mat {
       {
         ostringstream message;
         message << "isotope::find_decay () : ifstream  '" << tape_name<< "'  not founded !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
 
 
@@ -526,7 +526,7 @@ namespace mat {
         ostringstream message;
         message<< "isotope::find_decay: " << get_name ()<<endl;
         message << "       -> Z A I values : '" << _z_<< " "<< _a_<< " "<<  _i_<< "' not found in '" << tape_name<<"' !"<<endl;
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     else
       {
@@ -538,7 +538,7 @@ namespace mat {
                   {
                     ostringstream message;
                     message << "isotope::find_decay : zai not consistent !";
-                    throw runtime_error (message.str ());
+                    throw logic_error (message.str ());
                   }
                 else
                   {
@@ -555,7 +555,7 @@ namespace mat {
           {
             /*  ostringstream message;
                 message << "isotope::find_decay () : 457 data not found in jeff-3.1 for Z A I values : '" << _z_<< " "<< _a_<< " "<<  _i_<< "' !"<< endl;
-                throw runtime_error (message.str ()); */
+                throw logic_error (message.str ()); */
             cerr << "isotope::find_decay () : 457 data not found in jeff-3.1 for Z A I values : '" << _z_<< " "<< _a_<< " "<<  _i_<< "' !"<< endl;
           }
         else
@@ -755,7 +755,7 @@ double endfline_to_double (const string & endf_line)
       ostringstream message;
       message << "endfline_to_double: Invalid format for real: '"
               << s_number << "' !";
-      throw runtime_error (message.str ());
+      throw logic_error (message.str ());
       //return 0;
     }
   return number;
@@ -778,7 +778,7 @@ double ame3line_to_double(const string & ame3_line)
       ostringstream message;
       message << "ame3line_to_double: Invalid format for real: '"
               << s_number << "' !";
-      throw runtime_error (message.str ());
+      throw logic_error (message.str ());
       //return 0;
     }
   //if (!(i >> number))   return 0;
