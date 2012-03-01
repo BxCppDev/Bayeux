@@ -46,11 +46,6 @@ BOOST_CLASS_EXPORT_IMPLEMENT(datatools::utils::things)
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::event::event_id)
 
 
-// /*********************************
-//  * datatools::event::basic_event *
-//  *********************************/
-DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::event::basic_event)
-
 #endif // __datatools__the_serializable_h__
 
 /* end of datatools::the_serializable.h */

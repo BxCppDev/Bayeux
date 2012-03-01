@@ -32,8 +32,16 @@ all : pdf
 
 LATEX_MAIN_SRC_FILE=DatatoolsContainerTutorial
 
+.PHONY : uninstall
+uninstall : 
+	rm -f ../${LATEX_MAIN_SRC_FILE}.pdf 
+
+.PHONY : install
+install : pdf
+	cp -f ${LATEX_MAIN_SRC_FILE}.pdf ../
+
 .PHONY : clean
-clean : #clean_pdftex clean_pdftex_t
+clean : #clean_pdftex clean_pdftex_t 
 	$(RM) *~
 	$(RM) ${XFIG_DIR}/*.fig.bak
 	$(RM) $(LATEX_MAIN_SRC_FILE).pdf

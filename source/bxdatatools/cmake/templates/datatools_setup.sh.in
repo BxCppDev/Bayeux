@@ -1,0 +1,150 @@
+# -*- mode : shell-script; -*-
+# datatools_setup.sh
+
+function do_datatools_print_info ()
+{
+    local indent=""
+    if [ "x$1" != "x" ]; then
+	indent="${1}: "
+	shift 1
+    fi
+    if [ "x${DATATOOLS_ROOT}" != "x" ]; then
+	echo "${indent}Current datatools setup is :" 1>&2
+	echo "${indent}DATATOOLS_ROOT                = '${DATATOOLS_ROOT}'" 1>&2
+	echo "${indent}DATATOOLS_NAME                = '${DATATOOLS_NAME}'" 1>&2
+	echo "${indent}DATATOOLS_VERSION             = '${DATATOOLS_VERSION}'" 1>&2
+	echo "${indent}DATATOOLS_WITH_DEBUG          = ${DATATOOLS_WITH_DEBUG}" 1>&2
+	echo "${indent}DATATOOLS_WITH_BIO            = ${DATATOOLS_WITH_BIO}" 1>&2
+	echo "${indent}DATATOOLS_WITH_PYTHON_WRAPPER = ${DATATOOLS_WITH_PYTHON_WRAPPER}" 1>&2
+	echo "${indent}DATATOOLS_BIN_DIR             = '${DATATOOLS_BIN_DIR}'"
+	echo "${indent}DATATOOLS_ETC_DIR             = '${DATATOOLS_ETC_DIR}'"
+	echo "${indent}DATATOOLS_LIB_DIR             = '${DATATOOLS_LIB_DIR}'"
+	echo "${indent}DATATOOLS_DOC_DIR             = '${DATATOOLS_DOC_DIR}'"
+	echo "${indent}DATATOOLS_INCLUDE_DIR         = '${DATATOOLS_INCLUDE_DIR}'"
+	echo "${indent}DATATOOLS_CMAKE_CONFIG_DIR    = '${DATATOOLS_CMAKE_CONFIG_DIR}'" 1>&2
+	echo "${indent}DATATOOLS_DATA_DIR            = '${DATATOOLS_DATA_DIR}'" 1>&2
+    else
+	echo "${indent}datatools is not setup." 1>&2
+    fi
+    return 0
+}
+typeset -fx do_datatools_print_info
+alias datatools_print_info='do_datatools_print_info'
+
+function do_datatools_setup ()
+{
+    local verbose=0
+    
+    while [ -n "$1" ]; do
+	if [ "$1" = "--verbose" -o "$1" = "-v" ]; then
+	  let verbose=verbose+1
+	fi
+	shift 1
+    done
+
+    if [ ${verbose} -ne 0 ]; then
+	echo "NOTICE: do_datatools_setup: Setup datatools..." 1>&2
+    fi
+
+    if [ "x${DATATOOLS_ROOT}" != "x" ]; then
+	echo "WARNING: do_datatools_setup: datatools is already setup !" 1>&2
+	return 2
+    fi 
+ 
+    which clhep-config >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+	echo "ERROR: do_datatools_setup: Cannot find CLHEP setup ! Abort !" 1>&2
+	return 1
+    else
+	if [ ${verbose} -ne 0 ]; then
+	    echo "VERBOSE: do_datatools_setup: Found CLHEP." 1>&2
+	fi
+    fi
+
+    which python-config >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+	echo "ERROR: do_datatools_setup: Cannot find Python setup ! Abort !" 1>&2
+	return 1
+    else
+	if [ ${verbose} -ne 0 ]; then
+	    echo "VERBOSE: do_datatools_setup: Found Python." 1>&2
+	fi
+    fi
+
+    which boost-config >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+	echo "ERROR: do_datatools_setup: Cannot find Boost setup ! Abort !" 1>&2
+	return 1
+    else
+	if [ ${verbose} -ne 0 ]; then
+	    echo "VERBOSE: do_datatools_setup: Found Boost." 1>&2
+	fi
+    fi
+    
+    export DATATOOLS_ROOT="@CMAKE_INSTALL_PREFIX@"
+    export DATATOOLS_ROOT_DIR="@CMAKE_INSTALL_PREFIX@"
+    export DATATOOLS_NAME="@datatools_PACKAGE_NAME@"
+    export DATATOOLS_VERSION="@datatools_VERSION_STR@"
+    export DATATOOLS_BIN_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@"
+    export DATATOOLS_ETC_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_ETCDIR@"
+    export DATATOOLS_LIB_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@"
+    export DATATOOLS_DOC_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DOCDIR@"
+    export DATATOOLS_INCLUDE_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_INCLUDEDIR@"
+    export DATATOOLS_DATA_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
+    export DATATOOLS_WITH_DEBUG=@DATATOOLS_WITH_DEBUG@
+    export DATATOOLS_WITH_BIO=@DATATOOLS_WITH_BIO@
+    export DATATOOLS_WITH_PYTHON_WRAPPER=@DATATOOLS_WITH_PYTHON_WRAPPER@
+    export DATATOOLS_CMAKE_CONFIG_DIR="@CMAKE_INSTALL_PREFIX@/@_datatools_cmake_config_install_dir@"
+
+    if [ -n "${PATH}" ]; then
+	export PATH="${DATATOOLS_BIN_DIR}:${PATH}"
+    else
+	export PATH="${DATATOOLS_BIN_DIR}"
+    fi 
+   
+    if [ -n "${@_ld_library_path_env@}" ]; then
+	export @_ld_library_path_env@="${DATATOOLS_LIB_DIR}:${@_ld_library_path_env@}"
+    else
+	export @_ld_library_path_env@="${DATATOOLS_LIB_DIR}"
+    fi 
+
+    if [ "x@DATATOOLS_WITH_PKGCONFIG@" = "xON" ]; then
+	if [ -n "${PKG_CONFIG_PATH}" ]; then 
+            export PKG_CONFIG_PATH="@_datatools_pkgconfig_install_dir@:${PKG_CONFIG_PATH}"
+	else
+            export PKG_CONFIG_PATH="@_datatools_pkgconfig_install_dir@"
+	fi
+    fi
+
+    if [ "x@DATATOOLS_WITH_PYTHON_WRAPPER@" = "xON" ]; then
+     	# update python_path...
+	if [ -n "${PYTHONPATH}" ]; then 
+            export PYTHONPATH="${CMAKE_INSTALL_FULL_PYTHONDIR}:${PYTHONPATH}"
+	else
+            export PYTHONPATH="${CMAKE_INSTALL_FULL_PYTHONDIR}"
+	fi
+    fi
+
+    if [ "x@DATATOOLS_WITH_CMAKE_FIND_MODULE@" = "xON" ]; then
+	if [ -n "${CMAKE_MODULE_PATH}" ]; then 
+            export CMAKE_MODULE_PATH="@CMAKE_INSTALL_PREFIX@/@_find_module_install_dir@:${CMAKE_MODULE_PATH}"
+	else
+            export CMAKE_MODULE_PATH="@CMAKE_INSTALL_PREFIX@/@_find_module_install_dir@"
+	fi
+    fi
+
+    if [ ${verbose} -gt 1 ]; then
+	do_datatools_print_info "VERBOSE: do_datatools_setup"
+    fi
+ 
+    if [ ${verbose} -ne 0 ]; then
+	echo "NOTICE: do_datatools_setup: Setup datatools done." 1>&2
+    fi
+    return 0
+}
+typeset -fx do_datatools_setup
+alias datatools_setup='do_datatools_setup'
+
+echo "NOTICE: do_datatools_setup: Please setup 'datatools' with 'do_datatools_setup'." 1>&2
+
+# end of datatools_setup.sh

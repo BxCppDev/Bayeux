@@ -1,0 +1,205 @@
+# - Config file for the datatools package
+# It defines the following variables
+#  datatools_INCLUDE_DIRS - include directories for datatools
+#  datatools_ONLY_INCLUDE_DIRS - package only include directories for datatools
+#  datatools_LIBRARIES    - libraries to link against
+#  datatools_ONLY_LIBRARIES - package only libraries to link against
+#  datatools_WITH_DEBUG   - flag for debug mode
+#  datatools_WITH_BIO     - flag for Boost/Serialization I/O DLL (a.k.a. 'bio')
+#  datatools_WITH_PYTHON_WRAPPER - flag for 'Boost/Python' module 
+
+#----------------------------------------------------------------------------
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#----------------------------------------------------------------------------
+
+if ( NOT DEFINED datatools_CONFIG_COUNTER )
+  set ( datatools_CONFIG_COUNTER 1 )
+
+  #----------------------------------------------------------------------------
+  # Locate ourselves, since all our config files should have been installed
+  # alongside us...
+  #
+  get_filename_component(_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+  #----------------------------------------------------------------------------
+  # Include the file listing all the imported targets to make them available
+  # This is installed in the same location as us...
+  #
+  message ( STATUS "datatools-config.cmake: Including 'datatools-libraries.cmake'..." )
+  include("${_thisdir}/datatools-libraries.cmake")
+
+  #----------------------------------------------------------------------------
+  # Set variables pointing to used third party headers and locations.
+  # We have to set the headers because datatools exports the headers in
+  # its public interface.
+  # The locations are set so that clients using those packages (i.e. Boost and
+  # ROOT), can re-find them if needed using exact locations (EXPERIMENTAL)
+  # e.g:
+  #
+  #  find_package(datatools)
+  #  set(BOOST_ROOT ${datatools_BOOST_ROOT})
+  #  find_package(Boost NO_DEFAULT_PATH)
+  #
+
+  # Default use hardcoded third-party dependencies :
+  set (_datatools_hardcoded_dependencies ON)
+
+  # Experimental (not used anymore for now)
+  if (DEFINED datatools_FIND_DEPENDENCIES AND datatools_FIND_DEPENDENCIES)
+    set (_datatools_hardcoded_dependencies OFF)
+  endif ()
+
+  if (NOT _datatools_hardcoded_dependencies)
+    set (CMAKE_MODULE_PATH $ENV{CMAKE_MODULE_PATH} ${CMAKE_MODULE_PATH} )
+ 
+    # file(TO_CMAKE_PATH "$ENV{CMAKE_MODULE_PATH}" __env_cmake_module_path)
+    # set(CMAKE_MODULE_PATH
+    #   ${__env_cmake_module_path}
+    #   ${CMAKE_MODULE_PATH}
+    #   )
+   
+    # - Python
+    find_package ( PythonLibs @PYTHON_VERSION_STRING@ REQUIRED )
+    if ( NOT PYTHONLIBS_FOUND )
+      message ( FATAL_ERROR "datatools-config.cmake: Cannot find Python library >= @_python_version@ library !" )
+    endif ()
+    message ( STATUS "datatools-config.cmake: Found PythonLibs >= @_python_version@" )
+    message ( STATUS "datatools-config.cmake:  o PYTHON_INCLUDE_DIRS : '${PYTHON_INCLUDE_DIRS}'" )
+    message ( STATUS "datatools-config.cmake:  o PYTHON_LIBRARIES    : '${PYTHON_LIBRARIES}'" )
+    
+    set(_datatools_PYTHON_INCLUDE_DIRS ${PYTHON_INCLUDE_DIRS} )
+    set(_datatools_PYTHON_LIBRARIES    ${PYTHON_LIBRARIES}    )
+    
+    # - Boost
+    find_package ( Boost @_boost_version@ REQUIRED COMPONENTS @_boost_requested_components@ )
+    if ( NOT Boost_FOUND )
+      message ( FATAL_ERROR "datatools-config.cmake: Cannot find Boost >= @_boost_version@ library !" )
+    endif ()
+    message ( STATUS "datatools-config.cmake: Found Boost >= @_boost_version@" )
+    message ( STATUS "datatools-config.cmake:  o Boost_INCLUDE_DIRS : '${Boost_INCLUDE_DIRS}'" )
+    message ( STATUS "datatools-config.cmake:  o Boost_LIBRARIES    : '${Boost_LIBRARIES}'" )
+
+    set(_datatools_BOOST_INCLUDE_DIRS ${Boost_INCLUDE_DIRS})
+    set(_datatools_BOOST_LIBRARIES    ${Boost_LIBRARIES})
+
+    # - CLHEP
+    find_package ( CLHEP @_clhep_version@ REQUIRED )
+    if ( NOT CLHEP_FOUND )
+      message ( FATAL_ERROR "datatools-config.cmake: Cannot find CLHEP >= @_clhep_version@ library !" )
+    endif ()
+    message ( STATUS "datatools-config.cmake: Found CLHEP >= @_clhep_version@" )
+    message ( STATUS "datatools-config.cmake:  o CLHEP_INCLUDE_DIRS : '${CLHEP_INCLUDE_DIRS}'" )
+    message ( STATUS "datatools-config.cmake:  o CLHEP_LIBRARIES    : '${CLHEP_LIBRARIES}'" )
+    set(_datatools_CLHEP_INCLUDE_DIRS ${CLHEP_INCLUDE_DIRS})
+    set(_datatools_CLHEP_LIBRARIES    ${CLHEP_LIBRARIES})
+
+  else ()
+
+    message ( STATUS "datatools-config.cmake: Using CLHEP @CLHEP_VERSION@" )
+    set( _datatools_CLHEP_INCLUDE_DIRS  @CLHEP_INCLUDE_DIRS@  )
+    set( _datatools_CLHEP_LIBRARIES     @CLHEP_LIBRARIES@ m )
+    message ( STATUS "datatools-config.cmake: Using Python >= @_python_version@" )
+    set( _datatools_PYTHON_INCLUDE_DIRS @PYTHON_INCLUDE_DIRS@ )
+    set( _datatools_PYTHON_LIBRARIES    @PYTHON_LIBRARIES@    )
+    message ( STATUS "datatools-config.cmake: Using Boost @Boost_VERSION@" )
+    set( _datatools_BOOST_INCLUDE_DIRS  @Boost_INCLUDE_DIRS@  )
+    set( _datatools_BOOST_LIBRARIES     @Boost_LIBRARIES@     )
+    
+  endif ()
+
+  message ( STATUS "datatools-config.cmake: Dependencies : " )
+  message ( STATUS "datatools-config.cmake:  o CLHEP_INCLUDE_DIRS  = '${_datatools_CLHEP_INCLUDE_DIRS}' " )
+  message ( STATUS "datatools-config.cmake:  o CLHEP_LIBRARIES     = '${_datatools_CLHEP_LIBRARIES}' " )
+  message ( STATUS "datatools-config.cmake:  o PYTHON_INCLUDE_DIRS = '${_datatools_PYTHON_INCLUDE_DIRS}' " )
+  message ( STATUS "datatools-config.cmake:  o PYTHON_LIBRARIES    = '${_datatools_PYTHON_LIBRARIES}' " )
+  message ( STATUS "datatools-config.cmake:  o BOOST_INCLUDE_DIRS  = '${_datatools_BOOST_INCLUDE_DIRS}' " )
+  message ( STATUS "datatools-config.cmake:  o BOOST_LIBRARIES     = '${_datatools_BOOST_LIBRARIES}' " )
+
+  #----------------------------------------------------------------------------
+  # Set path to datatools includes
+  #
+  set(datatools_ONLY_INCLUDE_DIRS @datatools_INCLUDE_DIR@)
+  set(datatools_INCLUDE_DIRS
+    ${datatools_ONLY_INCLUDE_DIRS}
+    ${_datatools_BOOST_INCLUDE_DIRS}
+    ${_datatools_CLHEP_INCLUDE_DIRS}
+    ${_datatools_PYTHON_INCLUDE_DIRS}
+    )
+
+  #----------------------------------------------------------------------------
+  # Set datatools_LIBRARIES variable
+  set(datatools_LIB_DIR @datatools_LIB_DIR@)
+  # Basic : Assume that if datatools_bio was built, it should be in Library list
+  set(datatools_SYS_LIBRARY datatools_sys )
+  set(datatools_LIBRARY datatools)
+  set(datatools_BIO_LIBRARY)
+
+  set(datatools_WITH_DEBUG @DATATOOLS_WITH_DEBUG@)
+  if(datatools_WITH_DEBUG)
+    set(datatools_WITH_DEBUG 1)
+  else()
+    set(datatools_WITH_DEBUG 0)
+  endif()
+
+  set(datatools_WITH_BIO @DATATOOLS_WITH_BIO@)
+  if(datatools_WITH_BIO)
+    set(datatools_WITH_BIO 1)
+    set(datatools_BIO_LIBRARY datatools_bio)
+  else()
+    set(datatools_WITH_BIO 0)
+  endif()
+
+  set(datatools_WITH_PYTHON_WRAPPER @DATATOOLS_WITH_PYTHON_WRAPPER@)
+  if(datatools_WITH_PYTHON_WRAPPER)
+    set(datatools_WITH_PYTHON_WRAPPER 1)
+  else()
+    set(datatools_WITH_PYTHON_WRAPPER 0)
+  endif()
+
+  set(datatools_ONLY_LIBRARIES 
+    ${datatools_BIO_LIBRARY} 
+    ${datatools_LIBRARY} 
+    ${datatools_SYS_LIBRARY} 
+    )
+  
+  set(datatools_LIBRARIES 
+    ${datatools_ONLY_LIBRARIES} 
+    ${_datatools_BOOST_LIBRARIES} 
+    ${_datatools_CLHEP_LIBRARIES} 
+    ${_datatools_PYTHON_LIBRARIES} 
+    )
+
+  message ( STATUS "datatools-config.cmake: datatools_VERSION             = '${datatools_VERSION}'" )
+  message ( STATUS "datatools-config.cmake: datatools_WITH_BIO            = '${datatools_WITH_BIO}'" )
+  message ( STATUS "datatools-config.cmake: datatools_ONLY_INCLUDE_DIRS   = '${datatools_ONLY_INCLUDE_DIRS}'" )
+  message ( STATUS "datatools-config.cmake: datatools_ONLY_LIBRARIES      = '${datatools_ONLY_LIBRARIES}'" )
+  message ( STATUS "datatools-config.cmake: datatools_INCLUDE_DIRS        = '${datatools_INCLUDE_DIRS}'" )
+  message ( STATUS "datatools-config.cmake: datatools_LIB_DIR             = '${datatools_LIB_DIR}'" )
+  message ( STATUS "datatools-config.cmake: datatools_LIBRARIES           = '${datatools_LIBRARIES}'" )
+  message ( STATUS "datatools-config.cmake: datatools_WITH_PYTHON_WRAPPER = '${datatools_WITH_PYTHON_WRAPPER}'" )
+
+  unset(_datatools_CLHEP_INCLUDE_DIRS)
+  unset(_datatools_CLHEP_LIBRARIES)
+  unset(_datatools_BOOST_INCLUDE_DIRS)
+  unset(_datatools_BOOST_LIBRARIES)
+  unset(_datatools_PYTHON_INCLUDE_DIRS)
+  unset(_datatools_PYTHON_LIBRARIES)
+  unset(_datatools_hardcoded_dependencies)
+
+else ( NOT DEFINED datatools_CONFIG_COUNTER )
+  message ( STATUS "WARNING: Multiple inclusion of the 'datatools-config.cmake' file !" )
+  math (EXPR datatools_CONFIG_COUNTER '${datatools_CONFIG_COUNTER}+1' )
+endif ( NOT DEFINED datatools_CONFIG_COUNTER )
+
+# end

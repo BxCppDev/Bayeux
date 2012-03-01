@@ -60,10 +60,14 @@ This is the datatools package ChangeLog
 	* explicit linking with dependency shared libs
 	* pre-tag 3.1.3
 2011-07-03 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
-	* embedded kwsys library
+	* kwsys: embedded kwsys library
 	* add library_loader class (kwsys-based)
-2011-12-14 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
-	* ./pkgtools.d/pkgtool make '--with-auxiliary-boost-io' configure option the default
-	* cleaning
-	* doc add pre-built PDF memos
-
+2012-01-06 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* kwsys: do not use embedded  kwsys library anymore
+	* CMake: new build system (preliminary)
+2012-01-09 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* use 'boost/math/special_functions/nonfinite_num_facets.hpp' from
+	Boost 1.47.0
+2012-01-20 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* kwsys: use a minimal embedded  kwsys library as a new datatools_sys core DLL
+	* CMake: many improvements and bug fix

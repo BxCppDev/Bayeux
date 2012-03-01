@@ -305,11 +305,6 @@ namespace datatools {
       return get_size ();
     }
 
-    bool properties::data::empty () const
-    {
-      return (size () == 0);
-    }
-
     /******/
 
     properties::data::data (char a_type, int a_size)
@@ -800,11 +795,6 @@ namespace datatools {
     int32_t properties::size () const
     {
       return _props_.size ();
-    }
-
-    bool properties::empty () const
-    {
-      return _props_.empty ();
     }
 
     void properties::set_key_validator (const basic_key_validator & a_key_validator)

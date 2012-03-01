@@ -35,7 +35,9 @@
 #include <locale>
 #include <typeinfo>
 
-#include <boost/math/nonfinite_num_facets.hpp>
+// 2012-01-09 FM : now use the Boost 1.47 header :
+//#include <boost/math/nonfinite_num_facets.hpp>
+#include <boost/math/special_functions/nonfinite_num_facets.hpp>
 
 #include <boost/tokenizer.hpp>
 

@@ -31,16 +31,14 @@
 #ifndef __datatools__serialization__bio_guard_h
 #define __datatools__serialization__bio_guard_h 1
 
-#if DATATOOLS_XBIO == 1	                                
-#warning This executable must be linked with the datatools auxiliary Boost/Serialization DLL. 
-#else
-#if DATATOOLS_EBIO == 1					
-#warning This executable must be linked with the datatools DLL built with Boost/Serialization embedded code. 
-#else
-#warning This executable must be built with its own datatools Boost/Serialization code. 
+#include <datatools/datatools_config.h>
+
+#if DATATOOLS_WITH_BIO != 1					
+#warning This executable is built with its own datatools Boost/Serialization code. 
 #include <datatools/the_serializable.h>				
-#endif // DATATOOLS_EBIO == 1
-#endif // DATATOOLS_XBIO == 1	  							
+//#else
+//#warning This executable must be linked with the datatools DLL built with Boost/Serialization embedded code. 
+#endif // DATATOOLS_WITH_BIO != 1	
 
 #endif // __datatools__serialization__bio_guard_h
 

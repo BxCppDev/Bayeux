@@ -33,11 +33,6 @@
  *********************************/
 #include <datatools/event/event_id.ipp>
 
-/*********************************
- * datatools::event::basic_event *
- *********************************/
-#include <datatools/event/basic_event.ipp>
-
 #endif // __datatools__the_serializable_ipp__
 
 /* end of datatools::the_serializable.ipp */

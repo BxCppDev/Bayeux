@@ -1,0 +1,187 @@
+
+datatools installation instructions:
+------------------------------------
+
+The datatools C++ library package uses the CMake build system.
+It depends on the following third-party software : 
+- Boost
+- CLHEP
+- Python
+- doxygen
+
+
+1 - Third-party software setup :
+--------------------------------
+
+CLHEP and Boost libraries must be installed and setup.
+
+First check that third party libraries are installed and setup :
+
+With Cadfael:
+
+{{{
+bash$ do_cadfael_clhep_setup
+NOTICE: do_cadfael_clhep_setup: Setup Cadfael/CLHEP...
+NOTICE: do_cadfael_setup: Setup Cadfael version 0.1.0...
+NOTICE: do_cadfael_setup: Setup Cadfael version 0.1.0 done.
+NOTICE: do_cadfael_clhep_setup: Cadfael/CLHEP 2.1.0.1 is setup.
+NOTICE: do_cadfael_clhep_setup: Setup Cadfael/CLHEP done.
+bash$ clhep-config --prefix
+/scratch/sw/Cadfael/install/Cadfael-0.1.0
+bash$ clhep-config --version
+CLHEP 2.1.0.1
+bash$ do_cadfael_boost_setup
+NOTICE: do_cadfael_boost_setup: Setup Cadfael/Boost...
+NOTICE: do_cadfael_boost_setup: Cadfael/Boost 1.47.0 is setup.
+NOTICE: do_cadfael_boost_setup: Setup Cadfael/Boost done.
+bash$ boost-config --prefix
+/scratch/sw/Cadfael/install/Cadfael-0.1.0
+bash$ boost-config --version
+1.47.0
+}}}
+
+
+2- Plain CMake installation :
+-----------------------------
+
+Change to the datatools base directory :
+{{{
+bash$ cd <datatools base dir>
+}}}
+
+Create a 'build' directory :
+{{{
+bash$ mkdir build
+bash$ cd build
+}}}
+
+Configure the installation to the '${HOME}/software/Base' directory.
+Note: you must choose a directory where ou have write access.
+
+{{{
+bash$ cmake \
+   -DCMAKE_INSTALL_PREFIX:PATH=${HOME}/software/Base \
+   -DCMAKE_BUILD_TYPE:STRING=Release \
+   ..
+}}}
+
+This prints :
+{{{
+-- The C compiler identification is GNU
+-- The CXX compiler identification is GNU
+
+...
+
+-- Configuring done
+-- Generating done
+-- Build files have been written to: <datatools base dir>/build
+}}}
+
+Build :
+{{{
+bash$ make
+...
+}}}
+
+Generate the documentation :
+{{{
+bash$ make doc
+...
+}}}
+
+Perform tests :
+{{{
+bash$ make test
+...
+}}}
+
+Clean test material :
+{{{
+bash$ make clean_test
+...
+}}}
+
+Installation (here in the '${HOME}/software/Base' directory) :
+{{{
+bash$ make install
+...
+}}}
+
+Remove the temporary build directory :
+{{{
+bash$ cd build
+bash$ rm -fr build
+}}}
+
+
+3 - Production CMake installation using the 'pkgtool' wrapper :
+---------------------------------------------------------------
+
+Change to the datatools base directory :
+{{{
+bash$ cd <datatools base dir>
+}}}
+
+Getting help :
+{{{
+bash$ ./pkgtools.d/pkgtool --help
+}}}
+
+Run the following configure/build/install sequence :
+{{{
+bash$ ./pkgtools.d/pkgtool check
+bash$ ./pkgtools.d/pkgtool configure --install-prefix ${HOME}/software/Base
+bash$ ./pkgtools.d/pkgtool build --number-of-tasks auto
+bash$ ./pkgtools.d/pkgtool doc
+bash$ ./pkgtools.d/pkgtool test
+bash$ ./pkgtools.d/pkgtool install
+}}}
+
+De-installation :
+{{{
+bash$ ./pkgtools.d/pkgtool uninstall
+}}}
+
+Full reset of the package :
+{{{
+bash$ ./pkgtools.d/pkgtool reset
+}}}
+
+
+4 - Setup : 
+-----------
+
+Load the definition of the datatools setup function :
+{{{
+bash$ source ${HOME}/software/Base/etc/datatools_setup.sh
+NOTICE: do_datatools_setup: Please setup 'datatools' with 'do_datatools_setup'.
+}}}
+
+Invoke the setup function :
+{{{
+bash$ do_datatools_setup
+NOTICE: do_datatools_setup: Setup datatools...
+NOTICE: do_datatools_setup: Setup datatools done.
+}}}
+
+Use datatools :
+{{{
+bash$ which datatools-config 
+/home/<login>/software/Base/bin/datatools-config
+bash$ datatools-config --version
+4.0.0
+bash$ datatools-config --cflags
+...
+bash$ datatools-config --ldflags
+...
+}}}
+
+--
+F.Mauger <mauger@lpccaen.in2p3.fr>
+Updated: 2012-01-09
+ 
+ 
+
+
+
+
