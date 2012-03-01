@@ -26,8 +26,8 @@ public:
     /* here we deliberately forgot to compute the 'forgotten-auto'
      * parameter; this will trigger exception at 'init'.
      */
-    //get_param_by_name ("forgotten-auto").set_value (0.0);
-    //get_param_by_name ("forgotten-auto").set_auto_computed (true);
+    get_param_by_name ("forgotten-auto").set_value (0.0);
+    get_param_by_name ("forgotten-auto").set_auto_computed (true);
   }
 };
 
@@ -39,9 +39,9 @@ int main(int argc_ , char ** argv_)
       my_system MS;
 
       // add some free parameters (ranged or not):
-      MS.add_param (mygsl::param_entry::make_free_min ("A", 1.0, 0.0, 0.001));
-      MS.add_param (mygsl::param_entry::make_free_range ("lambda", 0.5, 0.01, 3.5, 0.001));
-      MS.add_param (mygsl::param_entry::make_free_max ("b", 0.5, 10.0, 0.001));
+      MS.add_param (mygsl::param_entry::make_free_min ("A", 1.0, 1.1, 0.001));
+      MS.add_param (mygsl::param_entry::make_free_range ("lambda", 0.01, 3.5, 0.5, 0.001));
+      MS.add_param (mygsl::param_entry::make_free_max ("b", 10.0, 0.5, 0.001));
       MS.add_param (mygsl::param_entry::make_free ("K", 0.5, 0.001));
 
       // add a constant parameter:
@@ -76,14 +76,15 @@ int main(int argc_ , char ** argv_)
 
       MS.print (clog, "Multi-parameter system after setting A best value", "");
 
-      // the system's init ensure the locking and check if all
-      // automatic parameters have been computed:
+      cerr << "Init..." << endl;
+      // the system's initialization ensures the locking and check if all
+      // automatic parameters have been computed :
       MS.init ();
 
     }
-  catch(exception & x) 
+  catch (exception & x) 
     {
-      cerr << "ERROR: " << x.what() << endl;
+      cerr << "ERROR: " << x.what () << endl;
       return (EXIT_FAILURE);
     }
   return (EXIT_SUCCESS);

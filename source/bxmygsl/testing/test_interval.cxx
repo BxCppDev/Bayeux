@@ -52,13 +52,23 @@ int main (int argc_ , char ** argv_)
 	  }
       }
 
-      {
-	mygsl::interval ibad = mygsl::interval::make_min_max_included (+M_PI / 2., -M_E * 1.25);
-      }
-
-      {
-	mygsl::interval ibad = mygsl::interval::make_min_max_included (-M_PI / 2., +M_E * 1.25, 1000.);
-      }
+      try
+	{
+	  mygsl::interval ibad = mygsl::interval::make_min_max_included (+M_PI / 2., -M_E * 1.25);
+	}
+      catch (exception & x1) 
+	{ 
+	  clog << "WARNING: " << x1.what () << " ! As expected !" << endl;
+	}
+      
+      try
+	{
+	  mygsl::interval ibad = mygsl::interval::make_min_max_included (-M_PI / 2., +M_E * 1.25, 1000.);
+	}
+      catch (exception & x2) 
+	{
+	  clog << "WARNING: " << x2.what () << " ! As expected !" << endl;
+	}
 
     }
   catch (exception & x) 

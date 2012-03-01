@@ -1,0 +1,175 @@
+# - Config file for the mygsl package
+# It defines the following variables
+#  mygsl_INCLUDE_DIRS - include directories for mygsl (with dependencies)
+#  mygsl_ONLY_INCLUDE_DIRS - include directories for mygsl (without dependencies)
+#  mygsl_LIBRARIES    - libraries to link against (with dependencies)
+#  mygsl_ONLY_LIBRARIES    - libraries to link against (without dependencies)
+#  mygsl_WITH_DEBUG   - flag for debug mode
+# If Boost/Serialization I/O system is supported :
+#  mygsl_WITH_BIO     - flag for Boost/Serialization I/O DLL (a.k.a. 'bio')
+# If Boost/Python wrapper module is supported :
+#  mygsl_WITH_PYTHON_WRAPPER - flag for 'Boost/Python' module 
+#
+# see: http://www.vtk.org/Wiki/CMake/Tutorials/How_to_create_a_ProjectConfig.cmake_file
+
+#----------------------------------------------------------------------------
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#----------------------------------------------------------------------------
+
+if ( NOT DEFINED mygsl_CONFIG_COUNTER )
+  set ( mygsl_CONFIG_COUNTER 1 )
+
+  #----------------------------------------------------------------------------
+  # Locate ourselves, since all our config files should have been installed
+  # alongside us...
+  #
+  get_filename_component(_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+  #----------------------------------------------------------------------------
+  # Include the file listing all the imported targets to make them available
+  # This is installed in the same location as us...
+  #
+  include("${_thisdir}/mygsl-libraries.cmake")
+
+  #----------------------------------------------------------------------------
+  # Set variables pointing to used third party headers and locations.
+  # We have to set the headers because mygsl exports the headers in
+  # its public interface.
+ 
+  
+  # Default use hardcoded third-party dependencies :
+  set (_mygsl_hardcoded_dependencies ON)
+
+  # Experimental (not used anymore for now)
+  if (DEFINED mygsl_FIND_DEPENDENCIES AND mygsl_FIND_DEPENDENCIES)
+    set (_mygsl_hardcoded_dependencies OFF)
+  endif ()
+
+  if (NOT _mygsl_hardcoded_dependencies)
+    file (TO_CMAKE_PATH "$ENV{CMAKE_MODULE_PATH}" __env_cmake_module_path)	
+    set(CMAKE_MODULE_PATH
+      ${__env_cmake_module_path}
+      ${CMAKE_MODULE_PATH}
+      )
+    unset (__env_cmake_module_path)
+
+    # - GSL :
+    find_package ( GSL @GSL_MIN_VERSION@ REQUIRED )
+    if ( NOT GSL_FOUND )
+      message ( FATAL_ERROR "mygsl-config.cmake: Cannot find GSL >= @GSL_MIN_VERSION@ library !" )
+    endif ()
+    message ( STATUS "mygsl-config.cmake: Found GSL >= @GSL_MIN_VERSION@" )
+    message ( STATUS "mygsl-config.cmake:  o GSL_INCLUDE_DIRS      : '${GSL_INCLUDE_DIRS}'" )
+    message ( STATUS "mygsl-config.cmake:  o GSL_LIBRARIES         : '${GSL_LIBRARIES}'" )
+    message ( STATUS "mygsl-config.cmake:  o GSL_CONFIG_EXECUTABLE : '${GSL_CONFIG_EXECUTABLE}'" )
+   
+    set( _mygsl_GSL_INCLUDE_DIRS ${GSL_INCLUDE_DIRS}  )
+    set( _mygsl_GSL_LIBRARIES    ${GSL_LIBRARIES} )
+  else ()
+   message ( STATUS "mygsl-config.cmake: Using GSL @GSL_VERSION@" )
+    set( _mygsl_GSL_INCLUDE_DIRS @GSL_INCLUDE_DIRS@  )
+    set( _mygsl_GSL_LIBRARIES    @GSL_LIBRARIES@     )
+  endif ()
+   
+  find_package ( datatools @datatools_VERSION@ REQUIRED NO_MODULE )
+  if (NOT DEFINED datatools_CONFIG)
+    message ( FATAL_ERROR "mygsl-config.cmake: Cannot find datatools >= @datatools_VERSION@ !")
+  else ()
+    message ( STATUS "mygsl-config.cmake: Found datatools dependency version ${datatools_VERSION} !")
+  endif ()
+  set( _mygsl_datatools_INCLUDE_DIRS ${datatools_INCLUDE_DIRS} )
+  set( _mygsl_datatools_LIBRARIES    ${datatools_LIBRARIES}    )
+  
+  message ( STATUS "mygsl-config.cmake: Dependencies : " )
+  message ( STATUS "mygsl-config.cmake:  o GSL_INCLUDE_DIRS       = '${_mygsl_GSL_INCLUDE_DIRS}' " )
+  message ( STATUS "mygsl-config.cmake:  o GSL_LIBRARIES          = '${_mygsl_GSL_LIBRARIES}' " )
+  message ( STATUS "mygsl-config.cmake:  o datatools_INCLUDE_DIRS = '${_mygsl_datatools_INCLUDE_DIRS}' " )
+  message ( STATUS "mygsl-config.cmake:  o datatools_LIBRARIES    = '${_mygsl_datatools_LIBRARIES}' " )
+
+  #----------------------------------------------------------------------------
+  # Set path to mygsl includes
+  #
+  set(mygsl_ONLY_INCLUDE_DIRS @mygsl_INCLUDE_DIR@)
+
+  set(mygsl_INCLUDE_DIRS 
+    ${mygsl_ONLY_INCLUDE_DIRS}
+    ${_mygsl_datatools_INCLUDE_DIRS}
+    ${_mygsl_GSL_INCLUDE_DIRS}
+    )
+
+  #----------------------------------------------------------------------------
+  # Set mygsl_LIBRARIES variable
+  set(mygsl_LIB_DIR @mygsl_LIB_DIR@)
+  set(mygsl_LIBRARY mygsl)
+
+  set(mygsl_WITH_DEBUG @MYGSL_WITH_DEBUG@)
+  if(mygsl_WITH_DEBUG)
+    set(mygsl_WITH_DEBUG 1)
+  else()
+    set(mygsl_WITH_DEBUG 0)
+  endif()
+
+  # if ( @MYGSL_WITH_BIO_SUPPORT@ )
+  #   set(mygsl_WITH_BIO @MYGSL_WITH_BIO@)
+  #   if(mygsl_WITH_BIO)
+  #     set(mygsl_WITH_BIO 1)
+  #     set(mygsl_BIO_LIBRARY mygsl_bio)
+  #   else()
+  #     set(mygsl_WITH_BIO 0)
+  #   endif()
+  # endif()
+
+  # if ( @MYGSL_WITH_PYTHON_WRAPPER_SUPPORT@ )
+  #   set(mygsl_WITH_PYTHON_WRAPPER @MYGSL_WITH_PYTHON_WRAPPER@)
+  #   if(mygsl_WITH_PYTHON_WRAPPER)
+  #     set(mygsl_WITH_PYTHON_WRAPPER 1)
+  #   else()
+  #     set(mygsl_WITH_PYTHON_WRAPPER 0)
+  #   endif()
+  # endif ()
+
+  set(mygsl_ONLY_LIBRARIES 
+    ${mygsl_LIBRARY} 
+    )
+
+  set(_mygsl_datatools_LIBRARIES ${datatools_LIBRARIES} )
+  set(mygsl_LIBRARIES 
+    ${mygsl_ONLY_LIBRARIES}
+    ${_mygsl_datatools_LIBRARIES}
+    ${_mygsl_GSL_LIBRARIES}
+    )
+
+  # if ( @MYGSL_WITH_BIO_SUPPORT@ )
+  #   message ( STATUS "DEVEL: mygsl-config.cmake: mygsl_WITH_BIO=${mygsl_WITH_BIO}" )
+  # endif()
+  # if ( @MYGSL_WITH_PYTHON_WRAPPER_SUPPORT@ )
+  #   message ( STATUS "DEVEL: mygsl-config.cmake: mygsl_WITH_PYTHON_WRAPPER=${mygsl_WITH_PYTHON_WRAPPER}" )
+  # endif()
+
+  message ( STATUS "mygsl-config.cmake: mygsl_INCLUDE_DIRS='${mygsl_INCLUDE_DIRS}'" )
+  message ( STATUS "mygsl-config.cmake: mygsl_ONLY_INCLUDE_DIRS='${mygsl_ONLY_INCLUDE_DIRS}'" )
+  message ( STATUS "mygsl-config.cmake: mygsl_LIBRARIES='${mygsl_LIBRARIES}'" )
+  message ( STATUS "mygsl-config.cmake: mygsl_ONLY_LIBRARIES='${mygsl_ONLY_LIBRARIES}'" )
+
+  unset(_mygsl_datatools_LIBRARIES)
+  unset(_mygsl_datatools_INCLUDE_DIRS)
+  unset(_mygsl_GSL_LIBRARIES)
+  unset(_mygsl_GSL_INCLUDE_DIRS)
+
+else ( NOT DEFINED mygsl_CONFIG_COUNTER )
+  message ( STATUS "WARNING: Multiple inclusion of the 'mygsl-config.cmake' file !" )
+  math (EXPR mygsl_CONFIG_COUNTER '${mygsl_CONFIG_COUNTER}+1' )
+endif ( NOT DEFINED mygsl_CONFIG_COUNTER )
+
+# end

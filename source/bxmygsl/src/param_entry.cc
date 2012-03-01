@@ -422,7 +422,7 @@ namespace mygsl {
         _value_ = old_val;
         std::ostringstream message;
         message << "mygsl::param_entry::set_value: ";
-        message << "value " << value_ << " outside of allowed range for parameter '" << get_name () << "'!";
+        message << "value " << value_ << " outside of allowed range '" << _min_ << ':' << _max_ << "' for parameter '" << get_name () << "'!";
         throw std::logic_error (message.str ());
       }
     return;

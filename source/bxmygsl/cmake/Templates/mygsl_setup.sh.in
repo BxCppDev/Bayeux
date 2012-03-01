@@ -1,0 +1,153 @@
+# -*- mode : shell-script; -*-
+# mygsl_setup.sh
+
+function do_mygsl_print_info ()
+{
+    local indent=""
+    if [ "x$1" != "x" ]; then
+	indent="${1}: "
+	shift 1
+    fi
+    if [ "x${MYGSL_ROOT}" != "x" ]; then
+	echo "${indent}Current mygsl setup is :" 1>&2
+	echo "${indent}MYGSL_ROOT                = '${MYGSL_ROOT}'" 1>&2
+	echo "${indent}MYGSL_NAME                = '${MYGSL_NAME}'" 1>&2
+	echo "${indent}MYGSL_VERSION             = '${MYGSL_VERSION}'" 1>&2
+	echo "${indent}MYGSL_WITH_DEBUG          = ${MYGSL_WITH_DEBUG}" 1>&2
+	if [ "x0" = "x1" ]; then	
+	    echo "${indent}MYGSL_WITH_BIO            = ${MYGSL_WITH_BIO}" 1>&2
+	fi
+	if [ "x0" = "x1" ]; then	
+	    echo "${indent}MYGSL_WITH_PYTHON_WRAPPER = ${MYGSL_WITH_PYTHON_WRAPPER}" 1>&2
+	    echo "${indent}Python module path = @CMAKE_INSTALL_FULL_PYTHONDIR@" 1>&2
+	fi
+	echo "${indent}MYGSL_BIN_DIR             = '${MYGSL_BIN_DIR}'"
+	echo "${indent}MYGSL_ETC_DIR             = '${MYGSL_ETC_DIR}'"
+	echo "${indent}MYGSL_LIB_DIR             = '${MYGSL_LIB_DIR}'"
+	echo "${indent}MYGSL_DOC_DIR             = '${MYGSL_DOC_DIR}'"
+	echo "${indent}MYGSL_INCLUDE_DIR         = '${MYGSL_INCLUDE_DIR}'"
+	echo "${indent}MYGSL_CMAKE_CONFIG_DIR    = '${MYGSL_CMAKE_CONFIG_DIR}'" 1>&2
+	echo "${indent}MYGSL_DATA_DIR            = '${MYGSL_DATA_DIR}'" 1>&2
+    else
+	echo "${indent}mygsl is not setup." 1>&2
+    fi
+    return 0
+}
+typeset -fx do_mygsl_print_info
+alias mygsl_print_info='do_mygsl_print_info'
+
+function do_mygsl_setup ()
+{
+    local verbose=0
+    
+    while [ -n "$1" ]; do
+	if [ "$1" = "--verbose" -o "$1" = "-v" ]; then
+	  let verbose=verbose+1
+	fi
+	shift 1
+    done
+
+    if [ ${verbose} -ne 0 ]; then
+	echo "NOTICE: do_mygsl_setup: Setup mygsl..." 1>&2
+    fi
+
+    if [ "x${MYGSL_ROOT}" != "x" ]; then
+	echo "WARNING: do_mygsl_setup: mygsl is already setup !" 1>&2
+	return 2
+    fi 
+ 
+    which gsl-config >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+    	echo "ERROR: do_mygsl_setup: Cannot find GSL setup ! Abort !" 1>&2
+    	return 1
+    else
+    	if [ ${verbose} -ne 0 ]; then
+    	    echo "VERBOSE: do_mygsl_setup: Found GSL." 1>&2
+    	fi
+    fi
+    
+    which datatools-config >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+	echo "ERROR: do_mygsl_setup: Cannot find datatools setup ! Abort !" 1>&2
+	return 1
+    else
+	if [ ${verbose} -ne 0 ]; then
+	    echo "VERBOSE: do_mygsl_setup: Found datatools." 1>&2
+	fi
+    fi
+    
+    export MYGSL_ROOT="@CMAKE_INSTALL_PREFIX@"
+    export MYGSL_ROOT_DIR="@CMAKE_INSTALL_PREFIX@"
+    export MYGSL_NAME="@mygsl_PACKAGE_NAME@"
+    export MYGSL_VERSION="@mygsl_VERSION_STR@"
+    export MYGSL_BIN_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@"
+    export MYGSL_ETC_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_ETCDIR@"
+    export MYGSL_LIB_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@"
+    export MYGSL_DOC_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DOCDIR@"
+    export MYGSL_INCLUDE_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_INCLUDEDIR@"
+    export MYGSL_DATA_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
+    export MYGSL_WITH_DEBUG=@MYGSL_WITH_DEBUG@
+    if [ "x0" = "x1" ]; then	
+	export MYGSL_WITH_BIO=@MYGSL_WITH_BIO@
+    fi
+    if [ "x0" = "x1" ]; then	
+	export MYGSL_WITH_PYTHON_WRAPPER=@MYGSL_WITH_PYTHON_WRAPPER@
+    fi
+    #export MYGSL_CMAKE_CONFIG_DIR="@CMAKE_INSTALL_PREFIX@/@MYGSL_CMAKE_CONFIG_DIR@"
+    #export MYGSL_CMAKE_CONFIG_DIR="@CMAKE_INSTALL_PREFIX@/@TOTO@"
+    export MYGSL_CMAKE_CONFIG_DIR="@CMAKE_INSTALL_PREFIX@/@mygsl_cmake_config_install_dir@"
+
+    if [ -n "${PATH}" ]; then
+	export PATH="${MYGSL_BIN_DIR}:${PATH}"
+    else
+	export PATH="${MYGSL_BIN_DIR}"
+    fi 
+   
+    if [ -n "${@_ld_library_path_env@}" ]; then
+	export @_ld_library_path_env@="${MYGSL_LIB_DIR}:${@_ld_library_path_env@}"
+    else
+	export @_ld_library_path_env@="${MYGSL_LIB_DIR}"
+    fi 
+
+    if [ "x@MYGSL_WITH_PKGCONFIG@" = "xON" -o "x@MYGSL_WITH_PKGCONFIG@" = "x1" ]; then
+	if [ -n "${PKG_CONFIG_PATH}" ]; then 
+            export PKG_CONFIG_PATH="@_mygsl_pkgconfig_install_dir@:${PKG_CONFIG_PATH}"
+	else
+            export PKG_CONFIG_PATH="@_mygsl_pkgconfig_install_dir@"
+	fi
+    fi
+
+    if [ "x0" = "x1" ]; then	
+	if [ "x@MYGSL_WITH_PYTHON_WRAPPER@" = "xON" ]; then
+     	    # update Python path...
+	    if [ -n "${PYTHONPATH}" ]; then 
+		export PYTHONPATH="@CMAKE_INSTALL_FULL_PYTHONDIR@:${PYTHONPATH}"
+	    else
+		export PYTHONPATH="@CMAKE_INSTALL_FULL_PYTHONDIR@"
+	    fi
+	fi
+    fi
+
+    if [ "x@MYGSL_WITH_CMAKE_FIND_MODULE@" = "xON" -o "x@MYGSL_WITH_CMAKE_FIND_MODULE@" = "x1" ]; then
+	if [ -n "${CMAKE_MODULE_PATH}" ]; then 
+            export CMAKE_MODULE_PATH="@CMAKE_INSTALL_PREFIX@/@mygsl_find_module_install_dir@:${CMAKE_MODULE_PATH}"
+	else
+            export CMAKE_MODULE_PATH="@CMAKE_INSTALL_PREFIX@/@mygsl_find_module_install_dir@"
+	fi
+    fi
+
+    if [ ${verbose} -gt 1 ]; then
+	do_mygsl_print_info "VERBOSE: do_mygsl_setup"
+    fi
+ 
+    if [ ${verbose} -ne 0 ]; then
+	echo "NOTICE: do_mygsl_setup: Setup mygsl done." 1>&2
+    fi
+    return 0
+}
+typeset -fx do_mygsl_setup
+alias mygsl_setup='do_mygsl_setup'
+
+echo "NOTICE: do_mygsl_setup: Please setup mygsl with 'do_mygsl_setup'." 1>&2
+
+# end of mygsl_setup.sh
