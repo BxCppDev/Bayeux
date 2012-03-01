@@ -36,14 +36,9 @@ namespace brio {
 
   using namespace std;
 
+  /// The brio generic reader class
   class reader : public base_io
   {    
-  private: 
-
-    bool _allow_mixed_types_in_stores_;
-    bool _allow_automatic_store_;
-    bool _check_serial_tag_;
-    store_info * _automatic_store_;
 
   public:
 
@@ -304,6 +299,13 @@ namespace brio {
 	}
       return 0;
     }
+
+  private: 
+
+    bool _allow_mixed_types_in_stores_; /// Flag to allow stores with mixed types
+    bool _allow_automatic_store_;       /// Flag to allow an default automatic store
+    bool _check_serial_tag_;            /// Flag to automatically check coherence between the store's serialization tag and the stored objects serialization tag
+    store_info * _automatic_store_;     /// A handle to the automatic store (if any)
     
   };
 

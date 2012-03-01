@@ -82,7 +82,7 @@ namespace brio {
             message << where_ << ": ";
           }
         message << "Operation prohibited; file is opened !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     return;
   }
@@ -98,7 +98,7 @@ namespace brio {
             message << where_ << ": ";
           }
         message << "Operation prohibited; file is not opened !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     return;
   }
@@ -159,7 +159,7 @@ namespace brio {
       }
     if (! is_opened ())
       {
-        throw runtime_error ("brio::base_io::close: Not opened !");
+        throw logic_error ("brio::base_io::close: Not opened !");
       }
     if (_file != 0)
       {
@@ -185,7 +185,7 @@ namespace brio {
       }
     if (is_opened ())
       {
-        throw runtime_error ("brio::base_io::open: Already opened !");
+        throw logic_error ("brio::base_io::open: Already opened !");
       }
     // cerr << "DEVEL: " << "brio::base_io::open: "
     //      << "format = '" << _format_ << "'" << endl;
@@ -229,7 +229,7 @@ namespace brio {
         message << "brio::base_io::get_serialization_tag: "
                 << "No automatic store (with label '"
                 << store_info::AUTOMATIC_STORE_LABEL << "') is available !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     select_store (store_info::AUTOMATIC_STORE_LABEL);
     return;
@@ -281,7 +281,7 @@ namespace brio {
         message << "brio::base_io::get_serialization_tag: "
                 << "No store with label '"
                 << label_ << "' !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     return si->serialization_tag;
   }
@@ -296,7 +296,7 @@ namespace brio {
         message << "brio::base_io::get_number_of_entries: "
                 << "No store with label '"
                 << label_ << "' !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     return si->number_of_entries;
   }
@@ -311,7 +311,7 @@ namespace brio {
         message << "brio::base_io::get_current_entry: "
                 << "No store with label '"
                 << label_ << "' !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     return si->current_entry;
   }
@@ -335,7 +335,7 @@ namespace brio {
         message << "brio::base_io::select_store: "
                 << "No store with label '"
                 << label_ << "' nor default store available !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     return;
   }

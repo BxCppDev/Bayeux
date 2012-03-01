@@ -29,6 +29,7 @@ namespace brio {
 
   using namespace std;
 
+  /// A class that contains internal dynamic informations for a given \e store
   class store_info
   {
   public:
@@ -42,18 +43,6 @@ namespace brio {
     static const size_t DEFAULT_STREAM_BUFFER_SIZE;
     static const string POSTPONED_DEDICATED_SERIAL_TAG_LABEL;
     static const string NO_DEDICATED_SERIAL_TAG_LABEL;
-
-  public:
-    // make all attributes public:
-    string       label;
-    string       serialization_tag;
-    size_t       bufsize; // used only by the writer
-    TTree *      tree;
-    brio_record  record;
-    brio_record * p_record;
-    vector<char> buffer; // used only by the writer
-    int64_t      number_of_entries;
-    int64_t      current_entry;
 
   public:
     const string & get_label () const;
@@ -80,6 +69,19 @@ namespace brio {
     static const int ERROR;
 
     static int guess_mode_from_filename (const std::string & a_filename, int & a_mode);
+
+  public:
+    // make all attributes public:
+    string       label; /// the label (name) of the \e store
+    string       serialization_tag; /// the serialization tag associated to the object stored in the \e store
+    size_t       bufsize; /// the size of the output buffer (used only by the writer)
+    TTree *      tree; /// the embedded ROOT tree
+    brio_record  record; /// the current brio record ro be (de)serialized
+    brio_record * p_record;
+    vector<char> buffer; /// the input buffer (used only by the writer)
+    int64_t      number_of_entries; /// the number of entries in the \e store
+    int64_t      current_entry; /// the current entry number in the \e store
+
   };
 
   typedef map<string, store_info> store_info_dict_t;
