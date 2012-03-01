@@ -241,6 +241,11 @@ if ( BAYEUX_CONFIG STREQUAL "default" OR BAYEUX_CONFIG STREQUAL ${Bayeux_VERSION
   set ( BAYEUX_GENBB_HELP_VERSION "4.0.0"  )
   set ( BAYEUX_GENBB_HELP_PATH    "tags/genbb_help-4.0.0"  )
 
+#elif ( BAYEUX_CONFIG STREQUAL "default" OR BAYEUX_CONFIG STREQUAL 0.9.0 )
+#
+#  set ( BAYEUX_DATATOOLS_VERSION  "4.0.1"  )
+#  set ( BAYEUX_DATATOOLS_PATH     "tags/datatools-4.0.1"  )
+#  
 elseif ( BAYEUX_CONFIG STREQUAL "last_tags" )
   ###message ( STATUS "${PROJECT_NAME}: Bayeux '${BAYEUX_CONFIG}' configuration is not supported yet !") 
 
