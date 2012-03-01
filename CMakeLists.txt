@@ -218,21 +218,28 @@ if ( BAYEUX_CONFIG STREQUAL "default" OR BAYEUX_CONFIG STREQUAL ${Bayeux_VERSION
   message ( STATUS "${PROJECT_NAME}: Bayeux 'default/${Bayeux_VERSION}' configuration...") 
 
   set ( BAYEUX_DATATOOLS_VERSION  "4.0.0"  )
-  set ( BAYEUX_DATATOOLS_PATH     "branches/frc_cmake_0.1"  )
+  set ( BAYEUX_DATATOOLS_PATH     "tags/datatools-4.0.0"  )
+
   set ( BAYEUX_BRIO_VERSION       "3.0.0"  )
-  set ( BAYEUX_BRIO_PATH          "branches/frc_cmake_0.1"  )
+  set ( BAYEUX_BRIO_PATH          "tags/brio-3.0.0"  )
+
   set ( BAYEUX_MYGSL_VERSION      "3.0.0"  )
-  set ( BAYEUX_MYGSL_PATH         "branches/frc_cmake_0.1"  )
-  set ( BAYEUX_GEOMTOOLS_VERSION  "3.0.0"  )
-  set ( BAYEUX_GEOMTOOLS_PATH     "branches/frc_cmake_0.1"  )
+  set ( BAYEUX_MYGSL_PATH         "tags/mygsl-3.0.0"  )
+
   set ( BAYEUX_CUTS_VERSION       "3.0.0"  )
-  set ( BAYEUX_CUTS_PATH          "branches/frc_cmake_0.1"  )
+  set ( BAYEUX_CUTS_PATH          "tags/cuts-3.0.0"  )
+
+  set ( BAYEUX_GEOMTOOLS_VERSION  "3.0.0"  )
+  set ( BAYEUX_GEOMTOOLS_PATH     "tags/geomtools-3.0.0"  )
+
   set ( BAYEUX_MATERIALS_VERSION  "3.0.0"  )
-  set ( BAYEUX_MATERIALS_PATH     "branches/frc_cmake_0.1"  )
+  set ( BAYEUX_MATERIALS_PATH     "tags/materials-3.0.0"  )
+
   set ( BAYEUX_GENVTX_VERSION     "3.0.0"  )
-  set ( BAYEUX_GENVTX_PATH        "branches/frc_cmake_0.1"  )
+  set ( BAYEUX_GENVTX_PATH        "tags/genvtx-3.0.0"  )
+
   set ( BAYEUX_GENBB_HELP_VERSION "4.0.0"  )
-  set ( BAYEUX_GENBB_HELP_PATH    "branches/frc_cmake_0.1"  )
+  set ( BAYEUX_GENBB_HELP_PATH    "tags/genbb_help-4.0.0"  )
 
 elseif ( BAYEUX_CONFIG STREQUAL "last_tags" )
   ###message ( STATUS "${PROJECT_NAME}: Bayeux '${BAYEUX_CONFIG}' configuration is not supported yet !") 
@@ -322,9 +329,6 @@ elseif ( BAYEUX_CONFIG STREQUAL "user" )
   else ()
     message ( FATAL_ERROR "${PROJECT_NAME}: Missing user configuration file ! Please use : '-DBAYEUX_USER_CONFIG_FILE:PATH=<somefile>' !") 
   endif ()
-  ###if ( NOT DEFINED BAYEUX_DATATOOLS_PATH )
-  ###  message ( FATAL_ERROR "${PROJECT_NAME}: Missing SVN path directive for datatools" ) 
-  ###endif () 
 endif ()
 
 foreach ( component ${BAYEUX_KNOWN_COMPONENTS} )
@@ -474,7 +478,6 @@ install ( FILES ${PROJECT_BINARY_DIR}/cmake/bayeux_setup.sh
 if ( BAYEUX_WITH_TESTS )
   set ( _test_before_install 0 )
   set ( _test_after_install  1 )
-  ###option ( BAYEUX_WITH_TESTS      ON )
 endif ()
 # -------------------------------------------------------------------------
 # - Cleaning :
