@@ -5,7 +5,7 @@
  * Last modified: 
  * 
  * License: 
- * Copyright 2007-2011 F. Mauger
+ * Copyright 2007-2012 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

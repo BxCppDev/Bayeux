@@ -1,13 +1,9 @@
 #!/usr/bin/env bash
 # -*- mode: shell-script; -*-
+# genbb
+# Author: F. Mauger <mauger@lpccaen.in2p3.fr>
 
 appname="genbb"
-if [ "x${GENBB_HELP_ROOT}" = "x" ]; then
-    echo "${appname}: ERROR: Missing 'GENBB_HELP_ROOT' environment variable ! Abort !" 1>&2
-    exit 1
-fi
-
-system=$(genbb_help-config --system)
 
 debug=0
 config_file=
@@ -30,7 +26,7 @@ function usage ()
 {
     cat<<EOF
 
-genbb - generate primary particles using the GENBB library
+genbb - generate primary particles using the 'genbb_help' library
 
 Usage:
 
@@ -55,16 +51,14 @@ Usage:
 
 Example:
 
-  genbb \${GENBB_HELP_ROOT}/resources/bipo212.conf 314159 100 /tmp/bipo212_out.genbb
+  genbb bipo212.conf 314159 100 /tmp/bipo212_out.genbb
 
 EOF
 
 }
 
 while [ -n "$1" ]; do
-
     arg="$1"
-
     if [ "x${arg:0:1}" = "x-" ]; then
 
 	if [ "${arg}" = "-d" -o "${arg}" = "--debug" ]; then
@@ -86,7 +80,6 @@ while [ -n "$1" ]; do
 	elif [ "x${output_file}" = "x" ]; then
 	    output_file=${arg}
 	fi
-
     fi
     shift 1
 done
@@ -100,8 +93,7 @@ else
     fi
 fi
 
-BIN=${GENBB_HELP_ROOT}/${system}/bin/prog_genbb_1.f77.exe
-
+BIN=$(which genbb1)
 if [ ! -x ${BIN} ]; then
     echo "${appname}: ERROR: Missing '${BIN}' executable ! Abort !" 1>&2
     my_exit 1
@@ -128,21 +120,9 @@ if [ ${interactive} -eq 0 ]; then
     echo "${appname}: NOTICE: nevents=${nevents}" 1>&2
     if [ "x${nevents}" != "x" ]; then
 	echo "${appname}: NOTICE: Set 'number-of-events'..." 1>&2
-	#echo "${appname}: NOTICE: >>> ${tmp_conf}.1" 1>&2
-	#cat ${tmp_conf}.1 
-	#echo "${appname}: NOTICE: <<<" 1>&2
 	cat ${tmp_conf}.1 | sed -e "s@^number-of-events=.*@number-of-events=${nevents}@g" > ${tmp_conf}.2
-	#echo "${appname}: NOTICE: >>> ${tmp_conf}.2" 1>&2
-	#cat ${tmp_conf}.2
-	#echo "${appname}: NOTICE: <<<" 1>&2
 	mv -f ${tmp_conf}.2 ${tmp_conf}.1
-	#echo "${appname}: NOTICE: number-of-events=${nevents}" 1>&2
     fi
-    #echo "${appname}: NOTICE: >>> ${tmp_conf}.1" 1>&2
-    #cat ${tmp_conf}.1
-    #echo "${appname}: NOTICE: <<<" 1>&2
-
-    #echo "${appname}: NOTICE: =====================" 1>&2
 
     if [ "x${output_file}" = "x" ]; then
 	output_file="out.genbb"
@@ -155,9 +135,6 @@ if [ ${interactive} -eq 0 ]; then
 	    echo "${appname}: WARNING: Output file has not extension '.genbb'!" 1>&2
 	fi
 	echo "${appname}: NOTICE: Set 'output-file' to '${output_file}'..." 1>&2
-	#echo "${appname}: NOTICE: ======>>>" 1>&2
-	#cat ${tmp_conf}.1
-	#echo "${appname}: NOTICE: ======<<<" 1>&2
 	cat ${tmp_conf}.1 | sed \
 	    -e "s@^output-file=.*@output-file=${output_file}@g" \
 	    > ${tmp_conf}.2
@@ -173,4 +150,4 @@ fi
 
 my_exit 0
 
-# end
+# end of genbb

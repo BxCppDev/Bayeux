@@ -51,6 +51,8 @@ namespace genbb {
 
 } // end of namespace genbb
 
+#include <genbb_help/detail/__genbb_help_FC.h>
+
 extern "C"
 {
   int32_t rng_shoot_reset (int32_t * seed_);

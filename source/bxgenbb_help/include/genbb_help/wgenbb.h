@@ -42,6 +42,8 @@
 
 #include <datatools/utils/properties.h>
 
+#include <genbb_help/detail/__genbb_help_FC2.h>
+
 extern "C" 
 { 
   void set_genbb_random_seed (int *); 
@@ -49,11 +51,11 @@ extern "C"
   void genbbparprint (void); 
 
   void genbbsub (int *, 
-		 const char *,
-		 int *,
-		 int *,
-		 int *,
-		 int *); 
+                 const char *,
+                 int *,
+                 int *,
+                 int *,
+                 int *); 
 
   void grndm (float *, int *); 
 
@@ -114,7 +116,7 @@ namespace genbb {
   protected:
 
     virtual void _load_next (primary_event & event_, 
-			     bool compute_classification_ = true);
+                             bool compute_classification_ = true);
 
   public:
 

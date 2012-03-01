@@ -5,7 +5,7 @@
  *  Some useful guard macro related to Boost/Serialisation executable 
  *  building and linkage.
  *
- * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2012 Francois Mauger <mauger@lpccaen.in2p3.fr>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,17 +31,12 @@
 #ifndef __genbb_help__serialization__bio_guard_h
 #define __genbb_help__serialization__bio_guard_h 1
 
-#if GENBB_HELP_XBIO == 1	                                
-#warning This executable must be linked with the genbb_help auxiliary Boost/Serialization DLL. 
-#else
-#if GENBB_HELP_EBIO == 1					
-#warning This executable must be linked with the genbb_help DLL built with Boost/Serialization embedded code. 
-#else
+#include <genbb_help/genbb_help_config.h>
+
+#if GENBB_HELP_WITH_BIO != 1					
 #warning This executable must be built with its own genbb_help Boost/Serialization code. 
-#include <genbb_help/the_serializable.h>				
-//Future: #include <genbb_help/serialization/the_serializable.h>				
-#endif // GENBB_HELP_EBIO == 1
-#endif // GENBB_HELP_XBIO == 1	  							
+#include <genbb_help/serialization/the_serializable.h>	
+#endif // GENBB_HELP_WITH_BIO != 1		  				
 
 #endif // __genbb_help__serialization__bio_guard_h
 

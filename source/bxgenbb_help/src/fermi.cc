@@ -45,7 +45,7 @@ float fermi_func_nr_approx (float z_, float e_)
   double beta  = p / w;
   /*
   std::clog << "genbb_help::fermi_func_nr_approx: DEVEL: p/beta==" 
-	    << p << ' ' << beta << std::endl;
+            << p << ' ' << beta << std::endl;
   */
   double t     = 2. * M_PI * alpha * z / beta;
   return (t / (1. - std::exp (-t)));
@@ -75,14 +75,14 @@ float fermi_func_decay0 (float z_, float e_, bool devel_)
   if (status != GSL_SUCCESS) 
     {
       cerr << "genbb_help::fermi_func_decay0: GSL error: " 
-	   << gsl_strerror (status) << endl;
-      throw runtime_error ("genbb_help::fermi_func_decay0: GSL error at 'gsl_sf_lngamma_complex_e' invocation!");
+           << gsl_strerror (status) << endl;
+      throw logic_error ("genbb_help::fermi_func_decay0: GSL error at 'gsl_sf_lngamma_complex_e' invocation!");
     }
   double lnr = res_lnr.val;
   //double res = exp((2. * g - 2.)*log (p)) * exp (M_PI * y + 2. * lnr);
   double res = pow (p, 2. * g - 2.) * exp (M_PI * y + 2. * lnr);
   if (test) clog << "DEVEL: genbb_help::fermi_func_decay0: ----> res = " << res << endl;
-  return (res);
+  return (float) res;
 }
 
 
@@ -102,7 +102,7 @@ float fermi_func (float z_, float e_, bool use_l0_)
   //double beta  = pe / we;
   /*
   clog << "genbb_help::fermi_func_2: DEVEL: p/beta==" 
-	    << pe << ' ' << beta << endl;
+            << pe << ' ' << beta << endl;
   */
   double aZ     = alpha * z;
   double gamma1 = sqrt (1. - aZ * aZ);
@@ -117,8 +117,8 @@ float fermi_func (float z_, float e_, bool use_l0_)
   if (status != GSL_SUCCESS) 
     {
       cerr << "genbb_help::fermi_func_2: GSL error: " 
-	   << gsl_strerror (status) << endl;
-      throw runtime_error ("genbb_help::fermi_func_2: GSL error at 'gsl_sf_lngamma_complex_e' invocation !");
+           << gsl_strerror (status) << endl;
+      throw logic_error ("genbb_help::fermi_func_2: GSL error at 'gsl_sf_lngamma_complex_e' invocation !");
     }
   double lnr = res_lnr.val;
   //clog << "genbb_help::fermi_func_2: lnr=" << lnr << endl;
@@ -130,7 +130,7 @@ float fermi_func (float z_, float e_, bool use_l0_)
   if(use_l0_) 
     {
       double term = 1. - aZ * (we * R - 7. * aZ / 15.) 
-	- 0.5 * gamma1* aZ * R / we;
+        - 0.5 * gamma1* aZ * R / we;
       L0 = 0.5 * (1. + gamma1) * term;
     }
   //clog << "genbb_help::fermi_func_2: L0=" << L0 << endl;
@@ -156,13 +156,13 @@ float fermi_func_shape_only (float z_, float e_)
   double beta  = pe / we;
   /*
   clog << "genbb_help::fermi_func: DEVEL: p/beta==" 
-	    << pe << ' ' << beta << endl;
+            << pe << ' ' << beta << endl;
   */
   double y = aZ * we / pe;
   double gamma1 = sqrt (1. - aZ * aZ); 
   /*
   cout << "genbb_help::fermi_func: DEVEL: gamma1/y==" 
-	    << gamma1 << ' ' << y << endl;
+            << gamma1 << ' ' << y << endl;
   */
   gsl_sf_result res, arg;
   int err = gsl_sf_lngamma_complex_e (gamma1, y, &res, &arg);
@@ -175,12 +175,19 @@ float fermi_func_shape_only (float z_, float e_)
     * exp (M_PI * y + 2. * lnr);
 }
 
-float fermi_wrap (float * z_, float * e_)
+/* The following function is invoked from Fortran
+ * using special mangling name.
+ */
+
+//#include <genbb_help/__genbb_help_FC.h>
+
+extern "C"
 {
-  using namespace std;
-  //float res = fermi_func (*z_, *e_, false);
-  float res = fermi_func_decay0 (*z_, *e_);
-  return res;
+  float fermi_wrap (float * z_, float * e_)
+  {
+    float res = fermi_func_decay0 (*z_, *e_);
+    return res;
+  }
 }
 
 // end

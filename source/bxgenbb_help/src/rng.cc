@@ -44,36 +44,44 @@ namespace genbb {
   
 } // end of namespace genbb
 
-int32_t rng_shoot_reset (int32_t * seed_)
-{
-  if (genbb::rng::g_ran_ptr != 0)
-    {
-      std::clog << "WARNING: " 
-		<< "genbb::rng_shoot_reset: " 
-		<< "External PRNG does not use this local seed :" << std::endl;
-      return -1;
-    }
-  std::clog << "NOTICE: " 
-	    << "genbb::rng_shoot_reset: " 
-	    << "Initialize the PRNG with seed '" << *seed_ << "'" <<  std::endl;
-  genbb::rng::g_ran.init ("taus2", *seed_);
-  return *seed_;
-}
 
-float rng_shoot_flat ()
+/* The following function is invoked from Fortran
+ * using special mangling name.
+ */
+
+extern "C"
 {
-  if (genbb::rng::g_ran_ptr != 0)
-    {
-      if (! genbb::rng::g_ran_ptr->is_initialized ())
-	{
-	  std::ostringstream message;
-	  message << "genbb::rng_shoot_flat: "
-		  << "External PRNG is not initialized !";
-	  throw std::runtime_error (message.str ());
-	}
-      return (float) genbb::rng::g_ran_ptr->uniform ();
-    }
-  return (float) genbb::rng::g_ran.uniform ();
+  int32_t rng_shoot_reset (int32_t * seed_)
+  {
+    if (genbb::rng::g_ran_ptr != 0)
+      {
+        std::clog << "WARNING: " 
+                  << "genbb::rng_shoot_reset: " 
+                  << "External PRNG does not use this local seed :" << std::endl;
+        return -1;
+      }
+    std::clog << "NOTICE: " 
+              << "genbb::rng_shoot_reset: " 
+              << "Initialize the PRNG with seed '" << *seed_ << "'" <<  std::endl;
+    genbb::rng::g_ran.init ("taus2", *seed_);
+    return *seed_;
+  }
+  
+  float rng_shoot_flat ()
+  {
+    if (genbb::rng::g_ran_ptr != 0)
+      {
+        if (! genbb::rng::g_ran_ptr->is_initialized ())
+          {
+            std::ostringstream message;
+            message << "genbb::rng_shoot_flat: "
+                    << "External PRNG is not initialized !";
+            throw std::runtime_error (message.str ());
+          }
+        return (float) genbb::rng::g_ran_ptr->uniform ();
+      }
+    return (float) genbb::rng::g_ran.uniform ();
+  }
 }
 
 // end of rng.cc

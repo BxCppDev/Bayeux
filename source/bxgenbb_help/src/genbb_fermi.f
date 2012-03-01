@@ -4,7 +4,7 @@ c This file provides a replacement of the 'fermi' function
 c of the 'decay0' program by V.I. Tretyak. This 'fermi' function 
 c uses the C 'fermi_wrap' function code from the 'fermi.cc' file. 
 c
-c Copyright 2007-2011 F. Mauger
+c Copyright 2007-2012 F. Mauger
 c
 c This program is free software; you can redistribute it and/or modify
 c it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ c You should have received a copy of the GNU General Public License
 c along with this program; if not, write to the Free Software
 c Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 c 
+c
 c
  	real*4 function fermi (Z_, E_)
 	implicit none

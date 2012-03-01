@@ -23,22 +23,23 @@
 
 #ifndef __genbb_help__fermi_h
 #define __genbb_help__fermi_h 1
+  
+double a_from_z (double z_);
+
+// Non-relativistic approximation of the Fermi function:
+float fermi_func_nr_approx (float z_, float e_);
+
+float fermi_func_shape_only (float z_, float e_);
+
+float fermi_func (float z_, float e_, bool use_l0_ = false);
+
+float fermi_func_decay0 (float z_, float e_, bool devel_ = false);
+
+#include <genbb_help/detail/__genbb_help_FC.h>
 
 extern "C"
 {
-  double a_from_z (double z_);
-
-  // Non-relativistic approximation of the Fermi function:
-  float fermi_func_nr_approx (float z_, float e_);
-
-  float fermi_func_shape_only (float z_, float e_);
-  
-  float fermi_func (float z_, float e_, bool use_l0_ = false);
-  
-  float fermi_func_decay0 (float z_, float e_, bool devel_ = false);
-
   float fermi_wrap (float * z_, float * e_);
-
 }
 
 #endif // __genbb_help__fermi_h
