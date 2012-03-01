@@ -13,100 +13,11 @@
  * 
  */
 
-/*! \mainpage The geomtools package documentation
- *
- * \section intro_section Introduction
- *
- * \subsection pres_subsection Presentation
- *  The \b geomtools package provides some general purpose utility classes
- *  for geometry. It is based on the CLHEP 2D and 3D vectors and rotation 
- *  matrices. It provides some serialization facilities for vector and rotation classes
- *  based on Boost/Serialization (through the \b datatools package).
- *  Some basic 1D, 2D and 3D shapes are implemented with useful features. 
- *
- *  Most parts of the library are compatible with CLHEP and GEANT4.
- *
- *  More, it is possible to build a geometry model in the way the GEANT4
- *  library does with GDLM exporting capability. Some tools are available to:
- *  - dynamically build a tree of geometry models that describes a full 3D-setup from
- *    pure ASCII files
- *  - automate the placement of solid with respect to others thanks to useful automated
- *    placement algorithms
- *  - identify some or all 3D-objects in a geometry, assigning to some of them a
- *    unique autocomputed \e geometry \e ID
- *  - enable the automated \e mapping between any 3D-object (placement, shape)
- *    and the associated geometry ID
- *  - associate some arbitrary properties (visibility, material, mapping...) to any virtual solid
- *  - display part of the geometry setup using a simple graphics renderer based on gnuplot
- *  - export a geometry setup to GEANT4 using the GDML language
- *  - extends the library by providing new geometry model classes with auto-registration 
- *    in a \e models \e factory
- *
- *  This package depends on:
- *  - the \b datatools library (https://nemo.lpc-caen.in2p3.fr/wiki/datatools/). This implies
- *  the following dependencies (see the \b datatools requirements):
- *    - the \b Boost C++ library 
- *    - the \b CLHEP C++ library (version 2.0 and above)
- *  - the \b mygsl library. This implies the following dependency (see the \b mygsl requirements)::
- *    - the \b GSL (GNU Scientific Library):
- *  - the \b gnuplot program (for online graphics display)
- *
- * \section contents_section Contents
- *  
- * Many \t \b test_XXXXX.cxx sample programs are available in the \b \t programs directory.
- *
- * The main \b \t include/geomtools/geomtools.h header file contains a few informations about
- * the package's components.
- *
- * \section build_section Installation instructions
- *
- *  1- Configure:
- *
- *     shell> ./pkgtools.d/pkgtool configure
- *
- *  2- Build:
- * 
- *     shell> ./pkgtools.d/pkgtool build
- *
- *  3- Build binaries:
- *
- *     shell> ./pkgtools.d/pkgtool build bin
- *
- *  4- Build test material:
- *
- *     shell> ./pkgtools.d/pkgtool test
- *
- *  5- Build documentation:
- *
- *     shell> ./pkgtools.d/pkgtool doc
- *
- *  6- Installation:
- *
- *     shell> ./pkgtools.d/pkgtool install
- *
- * \section geninfo_section General informations
- *
- *  Wiki repository:
- *   - https://nemo.lpc-caen.in2p3.fr/wiki/geomtools/
- *
- *  SVN repository:
- *   - Base repository: https://nemo.lpc-caen.in2p3.fr/svn/geomtools/
- *   - Development version: https://nemo.lpc-caen.in2p3.fr/svn/geomtools/trunk
- *   - Releases: https://nemo.lpc-caen.in2p3.fr/svn/geomtools/tags/geomtools-X.Y
- *
- *  Author:
- *   - Francois Mauger <mauger@lpccaen.in2p3.fr>
- *
- *  Mainteners:
- *   - Francois Mauger <mauger@lpccaen.in2p3.fr>
- *
- */
-
 #ifndef __geomtools__geomtools_h
 #define __geomtools__geomtools_h 1
 
 // Library's version:
-#include <geomtools/geomtools_version.h>
+#include <geomtools/geomtools_config.h>
 
 // Basic utilities:
 #include <geomtools/clhep.h> /** Interface to CLHEP class material:

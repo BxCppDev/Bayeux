@@ -1,9 +1,15 @@
 README
 ------
 
-Test the geometry models factory:
+Usage :
 
-bash$ ${GEOMTOOLS_BIN_DIR}/test_model_factory \
-  --debug \
-  -3d \
-  ${GEOMTOOLS_ROOT}/resources/test/test_geometry_models.setup
+{{{
+bash$ check_geomtools_setup \
+       [--debug] \
+       [--devel] \
+       [-D|--no-draw] \
+       [-G|--no-gdml] \
+       [-xy|-xz|yz|-3d] \
+       [-m|module MODULE_NAME] \
+       setup0.geom [ setup1.geom [...] ]
+}}}

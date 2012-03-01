@@ -1,0 +1,21 @@
+# -*- mode: gnuplot; -*-
+# C++ source: ./programs/test_regular_polygon.cxx
+#
+
+
+! ${GEOMTOOLS_ROOT}/$(geomtools-config --system)/bin/test_regular_polygon > test_regular_polygon.data
+
+set xrange [-2:2]
+set yrange [-2:2]
+set zrange [-2:2]
+set xlabel "x"
+set ylabel "y"
+set zlabel "z"
+set title "test_regular_polygon.cxx - test "
+splot \
+  "test_regular_polygon.data" index 0 title "Regular_Polygon" with lines
+pause -1 "Hit [Enter]..."
+
+! rm -f test_regular_polygon.data
+
+# end 

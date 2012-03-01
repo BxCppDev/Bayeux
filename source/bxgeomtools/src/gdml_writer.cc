@@ -3,6 +3,7 @@
  */
 
 #include <geomtools/gdml_writer.h>
+#include <geomtools/geomtools_config.h>
 
 #include <boost/algorithm/string.hpp>
 
@@ -13,11 +14,11 @@ namespace geomtools {
 
   using namespace std;
 
-  const string gdml_writer::DEFAULT_XML_VERSION = "1.0";
+  const string gdml_writer::DEFAULT_XML_VERSION  = "1.0";
   const string gdml_writer::DEFAULT_XML_ENCODING = "UTF-8";
-  const string gdml_writer::DEFAULT_XSI = "http://www.w3.org/2001/XMLSchema-instance";
-  const string gdml_writer::DEFAULT_GDML_SCHEMA   = "gdml.xsd";
-  const string gdml_writer::DEFAULT_REMOTE_GDML_SCHEMA  = "http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd";
+  const string gdml_writer::DEFAULT_XSI          = "http://www.w3.org/2001/XMLSchema-instance";
+  const string gdml_writer::DEFAULT_GDML_SCHEMA  = "gdml.xsd";
+  const string gdml_writer::DEFAULT_REMOTE_GDML_SCHEMA = "http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd";
 
   const string gdml_writer::DEFINE_SECTION    = "define";
   const string gdml_writer::MATERIALS_SECTION = "materials";

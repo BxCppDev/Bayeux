@@ -5,7 +5,7 @@
  *  Some useful guard macro related to Boost/Serialisation executable 
  *  building and linkage.
  *
- * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2012 Francois Mauger <mauger@lpccaen.in2p3.fr>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,17 +31,12 @@
 #ifndef __geomtools__serialization__bio_guard_h
 #define __geomtools__serialization__bio_guard_h 1
 
-#if GEOMTOOLS_XBIO == 1	                                
-#warning This executable must be linked with the geomtools auxiliary Boost/Serialization DLL. 
-#else
-#if GEOMTOOLS_EBIO == 1					
-#warning This executable must be linked with the geomtools DLL built with Boost/Serialization embedded code. 
-#else
+#include <geomtools/geomtools_config.h>
+
+#if GEOMTOOLS_WITH_BIO != 1					
 #warning This executable must be built with its own geomtools Boost/Serialization code. 
-#include <geomtools/the_serializable.h>				
-//Future: #include <geomtools/serialization/the_serializable.h>				
-#endif // GEOMTOOLS_EBIO == 1
-#endif // GEOMTOOLS_XBIO == 1	  							
+#include <geomtools/serialization/the_serializable.h>	
+#endif // GEOMTOOLS_WITH_BIO != 1		  				
 
 #endif // __geomtools__serialization__bio_guard_h
 

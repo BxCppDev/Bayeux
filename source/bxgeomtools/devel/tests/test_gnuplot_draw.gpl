@@ -1,0 +1,27 @@
+# -*- mode: gnuplot; -*-
+# C++ source: ./programs/test_gnuplot_draw.cxx
+#
+
+
+! ${GEOMTOOLS_ROOT}/$(geomtools-config --system)/bin/test_gnuplot_draw > test_gnuplot_draw.data
+
+sz=6
+set xrange [-sz:sz]
+set yrange [-sz:sz]
+set zrange [0:2*sz]
+set xlabel "x"
+set ylabel "y"
+set zlabel "z"
+set title "test_gnuplot_draw.cxx - test "
+splot \
+  "test_gnuplot_draw.data" index 0 title "" with lines , \
+  "test_gnuplot_draw.data" index 1 title "" with lines , \
+  "test_gnuplot_draw.data" index 2 title "" with lines , \
+  "test_gnuplot_draw.data" index 3 title "" with lines , \
+  "test_gnuplot_draw.data" index 4 title "" with lines , \
+  "test_gnuplot_draw.data" index 5 title "" with lines lt 7
+pause -1 "Hit [Enter]..."
+
+! rm -f test_gnuplot_draw.data
+
+# end 

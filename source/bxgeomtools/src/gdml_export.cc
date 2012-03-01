@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <algorithm>
 
+#include <geomtools/geomtools_config.h>
 #include <geomtools/gdml_export.h>
 #include <geomtools/union_3d.h>
 #include <geomtools/subtraction_3d.h>
@@ -173,6 +174,8 @@ namespace geomtools {
     string xsi          = gdml_writer::DEFAULT_XSI;
     string gdml_schema  = gdml_writer::DEFAULT_REMOTE_GDML_SCHEMA;
 
+    bool local_gdml_resources = false;
+
     if (_parameters_.has_key ("xml_version"))
       {
 	xml_version = _parameters_.fetch_string ("xml_version");
@@ -183,14 +186,36 @@ namespace geomtools {
 	xml_encoding = _parameters_.fetch_string ("xml_encoding");
       }
 
-    if (_parameters_.has_key ("xsi"))
+    if (_parameters_.has_flag ("local_xsi"))
       {
-	xsi = _parameters_.fetch_string ("xsi");
+	ostringstream out;
+	out << "file://"
+	    << GEOMTOOLS_GDML_SCHEMA_LOCAL_PATH
+	    << '/' << "XMLSchema-instance";
+	xsi = out.str ();
+      }
+    else
+      {
+	if (_parameters_.has_key ("xsi"))
+	  {
+	    xsi = _parameters_.fetch_string ("xsi");
+	  }
       }
 
-    if (_parameters_.has_key ("gdml_schema"))
+    if (_parameters_.has_flag ("local_gdml_schema"))
       {
-	gdml_schema = _parameters_.fetch_string ("gdml_schema");
+	ostringstream out;
+	out << "file://"
+	    << GEOMTOOLS_GDML_SCHEMA_LOCAL_PATH
+	    << '/' << gdml_writer::DEFAULT_GDML_SCHEMA;
+	gdml_schema = out.str ();
+      }
+    else 
+      {
+	if (_parameters_.has_key ("gdml_schema"))
+	  {
+	    gdml_schema = _parameters_.fetch_string ("gdml_schema");
+	  }
       }
 
     if (_parameters_.has_key ("length_unit"))

@@ -11,3 +11,8 @@ This is the geomtools package ChangeLog
 2011-07-01 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
 	* explicit linking with dependency shared libs
 	* pre-tag 2.1
+2012-01-06 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* pre-version: 3.0.0
+	* cmake: new build system
+	* FSH: new directory structure (as in datatools 4 and mygsl 3)
+	* pkgtools.d: wrapper for cmake
