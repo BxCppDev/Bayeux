@@ -241,13 +241,16 @@ if ( BAYEUX_CONFIG STREQUAL "default" OR BAYEUX_CONFIG STREQUAL ${Bayeux_VERSION
   set ( BAYEUX_GENBB_HELP_VERSION "4.0.0"  )
   set ( BAYEUX_GENBB_HELP_PATH    "tags/genbb_help-4.0.0"  )
 
-#elif ( BAYEUX_CONFIG STREQUAL "default" OR BAYEUX_CONFIG STREQUAL 0.9.0 )
-#
-#  set ( BAYEUX_DATATOOLS_VERSION  "4.0.1"  )
-#  set ( BAYEUX_DATATOOLS_PATH     "tags/datatools-4.0.1"  )
+# Example of book-keeping of previous releases:
+#elif ( BAYEUX_CONFIG STREQUAL "default" OR BAYEUX_CONFIG STREQUAL 0.8.9 )
+#  set ( BAYEUX_DATATOOLS_PATH     "tags/datatools-3.9.9"  )
+#  ...
+#elif ( BAYEUX_CONFIG STREQUAL "default" OR BAYEUX_CONFIG STREQUAL 0.8.8 )
+#  set ( BAYEUX_DATATOOLS_PATH     "tags/datatools-3.9.8"  )
+#  ...
 #  
+
 elseif ( BAYEUX_CONFIG STREQUAL "last_tags" )
-  ###message ( STATUS "${PROJECT_NAME}: Bayeux '${BAYEUX_CONFIG}' configuration is not supported yet !") 
 
   foreach ( component ${BAYEUX_KNOWN_COMPONENTS} )
      string ( TOUPPER "${component}" component_upper )
@@ -359,7 +362,6 @@ foreach ( component ${BAYEUX_KNOWN_COMPONENTS} )
      else ()
        set ( _bayeux_component_version ${_bayeux_component_path_key} )
      endif ()  
-     ###message ( STATUS "${PROJECT_NAME}: This configuration will install '${component}' version '${${_bayeux_component_version}}'" )
      message ( STATUS "${PROJECT_NAME}: This configuration will install '${component}' from '${${_bayeux_component_path_key}}'" )
   endif ()
   set ( BAYEUX_WITH_${component_upper} ${_bayeux_install_component} )
