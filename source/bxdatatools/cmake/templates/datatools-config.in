@@ -88,10 +88,10 @@ Known values for OPTION are:
       Options: --with-bio     with linkage against the 'libdatatools_bio.so' DLL (default)
                --without-bio  without linkage against the 'libdatatools_bio.so' DLL
   --with-python-wrapper print if Python wrapper module is used
-  --with-bio            print if Boost/Serialization binary code is pre-built 
+  --with-bio            print if Boost/Serialization binary code is pre-built
                         in an auxiliary I/O shared library
   --with-debug          print if datatools has been compiled in 'debug' mode
-  --cmake-config-dir    print the installation directory for the '__packname__-config.cmake' file
+  --cmake-config-dir    print the installation directory for the 'datatools-config.cmake' file
   --python-version      print Python version
   --boost-version       print Boost version
   --clhep-version       print CLHEP version
@@ -152,13 +152,13 @@ fi
 
 if [ "x${option}" = "x--cflags" ]; then
     (
-	echo -n "-fPIC " 
-	echo -n "-I${datatools_include_dir} "  
+	echo -n "-fPIC "
+	echo -n "-I${datatools_include_dir} "
 	echo -n "`boost-config --cflags serialization iostreams filesystem system python program_options` "
 	###echo -n "`boost-config --cflags` "
         echo -n "`clhep-config --include` "
 	echo ""
-    ) | python @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/pkgtools/mkuniqueflags.py 
+    ) | python @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/pkgtools/mkuniqueflags.py
     my_exit 0
 fi
 
@@ -213,7 +213,7 @@ if [ "x${option}" = "x--with-debug" ]; then
     if [ "${with_debug}" = "1" ]; then
 	my_exit 0
     else
-	my_exit 1	
+	my_exit 1
     fi
 fi
 
@@ -222,7 +222,7 @@ if [ "x${option}" = "x--with-bio" ]; then
     if [ "${with_bio}" = "1" ]; then
 	my_exit 0
     else
-	my_exit 1	
+	my_exit 1
     fi
 fi
 
@@ -231,7 +231,7 @@ if [ "x${option}" = "x--with-python-wrapper" ]; then
     if [ "${with_python_wrapper}" = "1" ]; then
 	my_exit 0
     else
-	my_exit 1	
+	my_exit 1
     fi
 fi
 
