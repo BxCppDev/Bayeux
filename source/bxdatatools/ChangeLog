@@ -71,3 +71,11 @@ This is the datatools package ChangeLog
 2012-01-20 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
 	* kwsys: use a minimal embedded  kwsys library as a new datatools_sys core DLL
 	* CMake: many improvements and bug fix
+2012-03-19 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* factory: add template factory and associated utilities (macros)
+	to support object factories using Boost/Function and automated class
+	registration. 
+	- header: "include/datatools/factory/factory.h"
+	- namespce: 'datatools::factory'
+	- testing: "testing/test_factory.cxx'
+	* version: prepare tag 4.1.0 in trunk
