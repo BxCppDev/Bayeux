@@ -29,6 +29,10 @@ file ( GLOB datatools_event_PUBLIC_HEADERS
        ${PROJECT_SOURCE_DIR}/include/datatools/event/*.h
      )
  
+file ( GLOB datatools_factory_PUBLIC_HEADERS
+       ${PROJECT_SOURCE_DIR}/include/datatools/factory/*.h
+     )
+ 
 file ( GLOB datatools_PUBLIC_HEADERS
        ${PROJECT_SOURCE_DIR}/include/datatools/*.h
        ${PROJECT_SOURCE_DIR}/include/datatools/datatools.h
@@ -39,6 +43,7 @@ file ( GLOB datatools_SOURCES
        ${PROJECT_SOURCE_DIR}/include/datatools/event/*.h
        ${PROJECT_SOURCE_DIR}/include/datatools/utils/*.h
        ${PROJECT_SOURCE_DIR}/include/datatools/services/*.h
+       ${PROJECT_SOURCE_DIR}/include/datatools/factory/*.h
        ${PROJECT_SOURCE_DIR}/include/datatools/serialization/*.h
        ${PROJECT_SOURCE_DIR}/src/*.cc
      )
@@ -71,34 +76,35 @@ endif ( DATATOOLS_WITH_BIO )
 #
 
 include_directories ( ${PROJECT_BINARY_DIR}/include
-		      ${PROJECT_SOURCE_DIR}/include	
-                      ${CLHEP_INCLUDE_DIRS}
-                      ${Boost_INCLUDE_DIRS}
-                      ${PYTHON_INCLUDE_DIRS}
-                  )
+  ${PROJECT_SOURCE_DIR}/include	
+  ${CLHEP_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIRS}
+  ${PYTHON_INCLUDE_DIRS}
+  )
 
 add_library ( datatools SHARED  
-		        ${datatools_PUBLIC_HEADERS} 
-		        ${datatools_event_PUBLIC_HEADERS} 
-		        ${datatools_utils_PUBLIC_HEADERS} 
-		        ${datatools_serialization_PUBLIC_HEADERS}
-		        ${boost_math_PUBLIC_HEADERS}
-		        ${boost_archive_PUBLIC_HEADERS}
-		        ${datatools_SOURCES}
-            )
+  ${datatools_PUBLIC_HEADERS} 
+  ${datatools_event_PUBLIC_HEADERS} 
+  ${datatools_utils_PUBLIC_HEADERS} 
+  ${datatools_serialization_PUBLIC_HEADERS}
+  ${datatools_function_PUBLIC_HEADERS}
+  ${boost_math_PUBLIC_HEADERS}
+  ${boost_archive_PUBLIC_HEADERS}
+  ${datatools_SOURCES}
+  )
 
 # Link dynamic library :
 target_link_libraries ( datatools
-                        datatools_sys 
-                        ${CLHEP_LIBRARIES}
-                        ${Boost_SERIALIZATION_LIBRARY}
-                        ${Boost_IOSTREAMS_LIBRARY}
-                        ${Boost_FILESYSTEM_LIBRARY}
-                        ${Boost_SYSTEM_LIBRARY}
-                        ${Boost_PYTHON_LIBRARY}
-                        ${PYTHON_LIBRARIES}
-                      )
-                      ### datatools_sys_c
+  datatools_sys 
+  ${CLHEP_LIBRARIES}
+  ${Boost_SERIALIZATION_LIBRARY}
+  ${Boost_IOSTREAMS_LIBRARY}
+  ${Boost_FILESYSTEM_LIBRARY}
+  ${Boost_SYSTEM_LIBRARY}
+  ${Boost_PYTHON_LIBRARY}
+  ${PYTHON_LIBRARIES}
+  )
+### datatools_sys_c
 
 # Install library and associate it with an export :
 install ( TARGETS datatools
