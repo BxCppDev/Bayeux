@@ -15,6 +15,13 @@ Configure :
 bash$ ./pkgtools.d/pkgtool configure --workspace-dir /scratch/sw/Bayeux
 }}}
 
+or for the trunk version :
+{{{
+bash$ ./pkgtools.d/pkgtool configure \
+  --workspace-dir /scratch/sw/Bayeux-trunk \
+  --config trunk
+}}}
+
 With explicit path to Cadfael FindModule:
 {{{
 bash$ ./pkgtools.d/pkgtool configure \
