@@ -6,6 +6,8 @@
 
 namespace geomtools {
 
+  using namespace std;  
+
   int i_shape_1d::get_dimensional () const
   {
     return DIMENSIONAL_1;

@@ -15,6 +15,8 @@
 namespace geomtools {
   
 
+  using namespace std;  
+
   bool id_selector::is_initialized () const
   {
     return (_cat_info_ != 0);

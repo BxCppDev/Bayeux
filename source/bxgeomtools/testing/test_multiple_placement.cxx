@@ -25,7 +25,7 @@ int main (int argc_, char ** argv_)
     {
       bool debug = false;
       bool rotate = false;
-      bool draw = true;
+      bool draw = false;
 
       int iarg = 1;
       while (iarg < argc_)
@@ -47,7 +47,11 @@ int main (int argc_, char ** argv_)
                  {
                    draw = false;
                  }
-	       else 
+               else if (option == "--draw") 
+                 {
+                   draw = true;
+                 }
+               else 
                  { 
                     clog << "warning: ignoring option '" << option << "'!" << endl; 
                  }
@@ -66,48 +70,48 @@ int main (int argc_, char ** argv_)
 
       size_t sz = 20;
       for (int i = 0; i < sz; i++)
-	{
-	  double x = 3.0 + 0.5 * i;
-	  double y = 1.5 * sin (x - 2);
-	  double z = 1.0 + i * 0.2;
-	  geomtools::vector_3d  position (x, y, z);
-	  double phi   = 0.0 * CLHEP::degree;
-	  double theta = 0.0 * CLHEP::degree;
-	  double delta = 0.0 * CLHEP::degree;
-	  if (rotate)
-	    {
-	      phi   = i * 5.0 * CLHEP::degree;
-	      theta = i * 3.0 * CLHEP::degree;
-	      delta = i * 10.0 * CLHEP::degree;
-	    }
-	  geomtools::placement p (position, phi, theta, delta);
-	  mp.add (p);
-	}
+        {
+          double x = 3.0 + 0.5 * i;
+          double y = 1.5 * sin (x - 2);
+          double z = 1.0 + i * 0.2;
+          geomtools::vector_3d  position (x, y, z);
+          double phi   = 0.0 * CLHEP::degree;
+          double theta = 0.0 * CLHEP::degree;
+          double delta = 0.0 * CLHEP::degree;
+          if (rotate)
+            {
+              phi   = i * 5.0 * CLHEP::degree;
+              theta = i * 3.0 * CLHEP::degree;
+              delta = i * 10.0 * CLHEP::degree;
+            }
+          geomtools::placement p (position, phi, theta, delta);
+          mp.add (p);
+        }
 
       if (draw)
-	{
-	  datatools::utils::temp_file tmp_file;
-	  tmp_file.set_remove_at_destroy (true);
-	  tmp_file.create ("./", "tmp_drawer_");	
-	  geomtools::box b (0.3, 0.2, 0.1);
-	  for (int i = 0; i < mp.get_number_of_items (); i++)
-	    {
-	      geomtools::gnuplot_draw::draw (tmp_file.out (),
-					     mp.i_placement::get_placement (i),
-					     b);
-	    }
-	  tmp_file.out ().close ();
-	  Gnuplot g1 ("lines");
-	  //g1.set_xrange (-5,+10);
-	  //g1.set_yrange (-2,+8);
-	  //g1.set_zrange (0,+2);
-	  g1.set_title ("test_multiple_placement");
-	  g1.set_xlabel ("x").set_ylabel ("y").set_zlabel ("z");
-	  g1.plotfile_xyz (tmp_file.get_filename () , 1, 2, 3, "3D view");
-	  g1.showonscreen (); 
-	  geomtools::gnuplot_drawer::wait_for_key ();
-	  usleep (200);
-	}
+        {
+          datatools::utils::temp_file tmp_file;
+          tmp_file.set_remove_at_destroy (true);
+          tmp_file.create ("./", "tmp_drawer_");        
+          geomtools::box b (0.3, 0.2, 0.1);
+          for (int i = 0; i < mp.get_number_of_items (); i++)
+            {
+              geomtools::gnuplot_draw::draw (tmp_file.out (),
+                                             mp.i_placement::get_placement (i),
+                                             b);
+            }
+          tmp_file.out ().close ();
+          Gnuplot g1 ("lines");
+          //g1.set_xrange (-5,+10);
+          //g1.set_yrange (-2,+8);
+          //g1.set_zrange (0,+2);
+          g1.set_title ("test_multiple_placement");
+          g1.set_xlabel ("x").set_ylabel ("y").set_zlabel ("z");
+          g1.plotfile_xyz (tmp_file.get_filename () , 1, 2, 3, "3D view");
+          g1.showonscreen (); 
+          geomtools::gnuplot_drawer::wait_for_key ();
+          usleep (200);
+        }
 
      }
   catch (exception & x)

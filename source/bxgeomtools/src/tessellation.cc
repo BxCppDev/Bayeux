@@ -14,6 +14,8 @@
 
 namespace geomtools {
 
+  using namespace std;  
+
   /*** facet_vertex ***/
 
   facet_vertex::facet_vertex (double x_, 

@@ -24,7 +24,7 @@
 
 namespace geomtools {
 
-  using namespace std;
+  //using  namespace std;
 
   class any_shape_3d : public i_shape_3d 
   {
@@ -33,8 +33,8 @@ namespace geomtools {
     static const std::string ANY_SHAPE_3D_LABEL;
     enum faces_mask_type
       {
-	FACE_NONE = FACE_NONE_BIT,
-	FACE_ALL  = 0xFFFFFFFF
+        FACE_NONE = FACE_NONE_BIT,
+        FACE_ALL  = 0xFFFFFFFF
       };
 
   public: 
@@ -65,20 +65,20 @@ namespace geomtools {
 
     virtual bool 
     is_inside (const vector_3d &, 
-	       double skin_ = USING_PROPER_SKIN) const;
+               double skin_ = USING_PROPER_SKIN) const;
 
     // if 'skin' < 0 no skin is taken into account:
     virtual bool 
     is_on_surface (const vector_3d & , 
-		   int mask_    = FACE_ALL , 
-		   double skin_ = USING_PROPER_SKIN) const;
+                   int mask_    = FACE_ALL , 
+                   double skin_ = USING_PROPER_SKIN) const;
 
     virtual vector_3d get_normal_on_surface (const vector_3d & position_) const;
       
     virtual bool find_intercept (const vector_3d & from_, 
-				 const vector_3d & direction_,
-				 intercept_t & intercept_,
-				 double skin_ = USING_PROPER_SKIN) const;
+                                 const vector_3d & direction_,
+                                 intercept_t & intercept_,
+                                 double skin_ = USING_PROPER_SKIN) const;
 
   private: 
 

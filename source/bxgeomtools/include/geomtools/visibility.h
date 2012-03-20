@@ -28,26 +28,26 @@ namespace geomtools {
   class visibility
   {
   public:
-    static const string VISIBILITY_PREFIX;
-    static const string VISIBILITY_HIDDEN_FLAG;
-    static const string VISIBILITY_HIDDEN_ENVELOP_FLAG;
-    static const string VISIBILITY_HIDDEN_ENVELOPE_FLAG;
-    static const string VISIBILITY_DAUGHTERS_HIDDEN_FLAG;
-    static const string VISIBILITY_COLOR_PROPERTY;
-    static const string VISIBILITY_WIRED_CYLINDER_FLAG;
+    static const std::string VISIBILITY_PREFIX;
+    static const std::string VISIBILITY_HIDDEN_FLAG;
+    static const std::string VISIBILITY_HIDDEN_ENVELOP_FLAG;
+    static const std::string VISIBILITY_HIDDEN_ENVELOPE_FLAG;
+    static const std::string VISIBILITY_DAUGHTERS_HIDDEN_FLAG;
+    static const std::string VISIBILITY_COLOR_PROPERTY;
+    static const std::string VISIBILITY_WIRED_CYLINDER_FLAG;
 
   public:
 
-    static string make_key (const string & flag_);
+    static std::string make_key (const std::string & flag_);
 
     static void extract (const datatools::utils::properties & source_,
-			 datatools::utils::properties & target_);
+                         datatools::utils::properties & target_);
 
     static bool has_flag (const datatools::utils::properties & config_,
-			  const string & flag_);
+                          const std::string & flag_);
 
     static bool has_key (const datatools::utils::properties & config_,
-			 const string & key_);
+                         const std::string & key_);
 
     static bool is_shown (const datatools::utils::properties & config_);
 
@@ -63,10 +63,10 @@ namespace geomtools {
 
     static bool has_color (const datatools::utils::properties & config_);
  
-    static string get_color (const datatools::utils::properties & config_);
+    static std::string get_color (const datatools::utils::properties & config_);
     
     static void set_color (datatools::utils::properties & config_, 
-			   const string & color_);
+                           const std::string & color_);
 
     static bool is_wired_cylinder (const datatools::utils::properties & config_);
 

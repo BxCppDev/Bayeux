@@ -6,6 +6,8 @@
 
 namespace geomtools {
 
+  using namespace std;  
+
   const std::string hexagon_box::HEXAGON_BOX_LABEL = "hexagon_box";
 
   double 

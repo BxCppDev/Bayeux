@@ -27,29 +27,29 @@ namespace geomtools {
   {
   public:
 
-    static const string SENSITIVE_PREFIX;
-    static const string SENSITIVE_CATEGORY_PROPERTY;
-    static const string SENSITIVE_RECORD_ALPHA_QUENCHING_FLAG;
-    static const string SENSITIVE_RECORD_TRACK_ID_FLAG;
-    static const string SENSITIVE_RECORD_PRIMARY_PARTICLE_FLAG;
+    static const std::string SENSITIVE_PREFIX;
+    static const std::string SENSITIVE_CATEGORY_PROPERTY;
+    static const std::string SENSITIVE_RECORD_ALPHA_QUENCHING_FLAG;
+    static const std::string SENSITIVE_RECORD_TRACK_ID_FLAG;
+    static const std::string SENSITIVE_RECORD_PRIMARY_PARTICLE_FLAG;
 
-    static string make_key (const string & flag_);
+    static std::string make_key (const std::string & flag_);
 
     static void extract (const datatools::utils::properties & source_,
-			 datatools::utils::properties & target_);
+                         datatools::utils::properties & target_);
 
     static bool has_flag (const datatools::utils::properties & config_,
-			  const string & flag_);
+                          const std::string & flag_);
 
     static bool has_key (const datatools::utils::properties & config_,
-			 const string & key_);
+                         const std::string & key_);
 
     static bool is_sensitive (const datatools::utils::properties & config_);
 
-    static string get_sensitive_category (const datatools::utils::properties & config_);
+    static std::string get_sensitive_category (const datatools::utils::properties & config_);
 
     static void set_sensitive_category (datatools::utils::properties & config_,
-					const string & cat_name_);
+                                        const std::string & cat_name_);
 
     static bool recording_alpha_quenching (const datatools::utils::properties & config_);
 

@@ -6,6 +6,8 @@
 
 namespace geomtools {
 
+  using namespace std;  
+
   const std::string box::BOX_LABEL = "box";
     
   double box::get_xmin () const
@@ -49,9 +51,9 @@ namespace geomtools {
   {
     if (a_x < 0.0 )
       {
-	std::ostringstream message;
-	message << "geomtools::box::set_x: Invalid '" << a_x << "' X value!";
-	throw std::logic_error (message.str ());
+        std::ostringstream message;
+        message << "geomtools::box::set_x: Invalid '" << a_x << "' X value!";
+        throw std::logic_error (message.str ());
       }
     _x_ = a_x;
     return;
@@ -94,9 +96,9 @@ namespace geomtools {
   {
     if (a_y < 0.0) 
       {
-	std::ostringstream message;
-	message << "geomtools::box::set_y: Invalid '" << a_y << "' Y value!";
-	throw std::logic_error (message.str ());
+        std::ostringstream message;
+        message << "geomtools::box::set_y: Invalid '" << a_y << "' Y value!";
+        throw std::logic_error (message.str ());
       }
     _y_ = a_y;
     return;
@@ -113,9 +115,9 @@ namespace geomtools {
   {
     if (a_z < 0.0) 
       {
-	std::ostringstream message;
-	message << "geomtools::box::set_z: Invalid '" << a_z << "' Z value!";
-	throw std::logic_error (message.str ());
+        std::ostringstream message;
+        message << "geomtools::box::set_z: Invalid '" << a_z << "' Z value!";
+        throw std::logic_error (message.str ());
       }
     _z_ = a_z;
     return;
@@ -190,27 +192,27 @@ namespace geomtools {
 
     if (mask & FACE_BACK) 
       {
-	s += _y_ * _z_;
+        s += _y_ * _z_;
       }
     if (mask & FACE_FRONT) 
       {
-	s += _y_ * _z_;
+        s += _y_ * _z_;
       }
     if (mask & FACE_LEFT) 
       {
-	s += _x_ * _z_;
+        s += _x_ * _z_;
       }
     if (mask & FACE_RIGHT)
       {
-	s += _x_ * _z_;
+        s += _x_ * _z_;
       }
     if (mask & FACE_BOTTOM) 
       {
-	s += _x_ * _y_;
+        s += _x_ * _y_;
       }
     if (mask & FACE_TOP) 
       {
-	s += _x_ * _y_;
+        s += _x_ * _y_;
       }
     return s;
   }
@@ -287,8 +289,8 @@ namespace geomtools {
 
   bool 
   box::is_on_surface (const vector_3d & a_position , 
-		      int    a_mask ,
-		      double a_skin) const
+                      int    a_mask ,
+                      double a_skin) const
   {
     bool debug = false;
     double skin = get_skin ();
@@ -300,57 +302,57 @@ namespace geomtools {
     double hskin = 0.5 * skin;
     if (mask & FACE_BACK) 
       {
-	if ((std::abs (a_position.x () + 0.5 * _x_) < hskin) 
-	    && (std::abs (a_position.y ()) < 0.5 * _y_)
-	    && (std::abs (a_position.z ()) < 0.5 * _z_)) return true;
+        if ((std::abs (a_position.x () + 0.5 * _x_) < hskin) 
+            && (std::abs (a_position.y ()) < 0.5 * _y_)
+            && (std::abs (a_position.z ()) < 0.5 * _z_)) return true;
       }
     if (mask & FACE_FRONT) 
       {
-	if ((std::abs (a_position.x () - 0.5 * _x_) < hskin)
-	    && (std::abs (a_position.y ()) < 0.5 * _y_)
-	    && (std::abs (a_position.z ()) < 0.5 * _z_)) return true;
+        if ((std::abs (a_position.x () - 0.5 * _x_) < hskin)
+            && (std::abs (a_position.y ()) < 0.5 * _y_)
+            && (std::abs (a_position.z ()) < 0.5 * _z_)) return true;
       }
     if (mask & FACE_LEFT) 
       {
-	if ((std::abs (a_position.y () + 0.5 * _y_) < hskin) 
-	    && (std::abs (a_position.x ()) < 0.5 * _x_)
-	    && (std::abs (a_position.z ()) < 0.5 * _z_)) return true;
+        if ((std::abs (a_position.y () + 0.5 * _y_) < hskin) 
+            && (std::abs (a_position.x ()) < 0.5 * _x_)
+            && (std::abs (a_position.z ()) < 0.5 * _z_)) return true;
       }
     if (mask & FACE_RIGHT) 
       {
-	if (debug)
-	  {
-	    std::clog << "DEVEL: box::is_on_surface: FACE_RIGHT" << std::endl;
-	    std::clog << "DEVEL: box::is_on_surface: hskin=" << hskin << std::endl;
-	    std::clog << "DEVEL: box::is_on_surface: point=" << a_position << std::endl;
-	    std::clog << "DEVEL: box::is_on_surface: dim x=" << 0.5 * _x_ << std::endl;
-	    std::clog << "DEVEL: box::is_on_surface: dim y=" << 0.5 * _y_ << std::endl;
-	    std::clog << "DEVEL: box::is_on_surface: dim z=" << 0.5 * _z_ << std::endl;
-	  }
-	if ((std::abs (a_position.y () - 0.5 * _y_) < hskin) 
-	    && (std::abs (a_position.x ()) < 0.5 * _x_)
-	    && (std::abs (a_position.z ()) < 0.5 * _z_)) return true;
+        if (debug)
+          {
+            std::clog << "DEVEL: box::is_on_surface: FACE_RIGHT" << std::endl;
+            std::clog << "DEVEL: box::is_on_surface: hskin=" << hskin << std::endl;
+            std::clog << "DEVEL: box::is_on_surface: point=" << a_position << std::endl;
+            std::clog << "DEVEL: box::is_on_surface: dim x=" << 0.5 * _x_ << std::endl;
+            std::clog << "DEVEL: box::is_on_surface: dim y=" << 0.5 * _y_ << std::endl;
+            std::clog << "DEVEL: box::is_on_surface: dim z=" << 0.5 * _z_ << std::endl;
+          }
+        if ((std::abs (a_position.y () - 0.5 * _y_) < hskin) 
+            && (std::abs (a_position.x ()) < 0.5 * _x_)
+            && (std::abs (a_position.z ()) < 0.5 * _z_)) return true;
       }
     if (mask & FACE_BOTTOM) 
       {
-	if ((std::abs (a_position.z () + 0.5 * _z_) < hskin) 
-	    && (std::abs (a_position.x ()) < 0.5 * _x_)
-	    && (std::abs (a_position.y ()) < 0.5 * _y_)) return true;
+        if ((std::abs (a_position.z () + 0.5 * _z_) < hskin) 
+            && (std::abs (a_position.x ()) < 0.5 * _x_)
+            && (std::abs (a_position.y ()) < 0.5 * _y_)) return true;
       }
     if (mask & FACE_TOP) 
       {
-	if ((std::abs (a_position.z () - 0.5 * _z_) < hskin) 
-	    && (std::abs (a_position.x ()) < 0.5 * _x_)
-	    && (std::abs (a_position.y ()) < 0.5 * _y_)) return true;
+        if ((std::abs (a_position.z () - 0.5 * _z_) < hskin) 
+            && (std::abs (a_position.x ()) < 0.5 * _x_)
+            && (std::abs (a_position.y ()) < 0.5 * _y_)) return true;
       }
     return false;
   }
 
   bool 
   box::find_intercept (const vector_3d & a_from, 
-		       const vector_3d & a_direction,
-		       intercept_t & a_intercept,
-		       double a_skin) const
+                       const vector_3d & a_direction,
+                       intercept_t & a_intercept,
+                       double a_skin) const
   {
     bool debug = false;
     const unsigned int NFACES = 6;
@@ -372,32 +374,32 @@ namespace geomtools {
     int face_min = 0;
     for (int i = 0; i < (int) NFACES; i++)
       {
-	double ti = t[i];
-	if (debug)
-	  {
-	    std::clog << "DEVEL: box::find_intercept: t[" << i << "]= "
-		      << ti << " t_min=" << t_min 
-		      << " face_min=" << face_min 
-		      << std::endl;
-	  }
-	if (std::isnormal (ti) && (ti > 0.0))
-	  {
-	    int face_bit = (0x1 << i); // face mask
-	    vector_3d intercept = a_from + a_direction * ti;
-	    if (is_on_surface (intercept, face_bit, a_skin))
-	      {
-		if ((t_min < 0.0) || (ti < t_min))
-		  {
-		    t_min = ti;
-		    face_min = face_bit;
-		  }
-	      }
-	  }
+        double ti = t[i];
+        if (debug)
+          {
+            std::clog << "DEVEL: box::find_intercept: t[" << i << "]= "
+                      << ti << " t_min=" << t_min 
+                      << " face_min=" << face_min 
+                      << std::endl;
+          }
+        if (std::isnormal (ti) && (ti > 0.0))
+          {
+            int face_bit = (0x1 << i); // face mask
+            vector_3d intercept = a_from + a_direction * ti;
+            if (is_on_surface (intercept, face_bit, a_skin))
+              {
+                if ((t_min < 0.0) || (ti < t_min))
+                  {
+                    t_min = ti;
+                    face_min = face_bit;
+                  }
+              }
+          }
       }
     a_intercept.reset ();
     if (face_min > 0) 
       {
-	a_intercept.set (0, face_min, a_from + a_direction * t_min);
+        a_intercept.set (0, face_min, a_from + a_direction * t_min);
       }
     return a_intercept.is_ok ();
   }
@@ -406,9 +408,9 @@ namespace geomtools {
   operator<< (std::ostream & a_out, const box & a_box)
   {
     a_out << '{' << box::BOX_LABEL << ' ' 
-	  << a_box._x_ << ' ' 
-	  << a_box._y_ << ' ' 
-	  << a_box._z_ << '}';
+          << a_box._x_ << ' ' 
+          << a_box._y_ << ' ' 
+          << a_box._z_ << '}';
     return a_out;
   }
 
@@ -420,47 +422,47 @@ namespace geomtools {
     a_in.get (c);
     if (c != '{') 
       {
-	a_in.clear (std::ios_base::failbit);
-	return a_in;
+        a_in.clear (std::ios_base::failbit);
+        return a_in;
       } 
     std::string name;
     a_in >> name;
     if (name != box::BOX_LABEL) 
       {
-	a_in.clear (std::ios_base::failbit);
-	return a_in;
+        a_in.clear (std::ios_base::failbit);
+        return a_in;
       } 
     double x, y, z;
     a_in >> x >> y >> z;
     if (! a_in) 
       {
-	a_in.clear (std::ios_base::failbit);
-	return a_in;
+        a_in.clear (std::ios_base::failbit);
+        return a_in;
       } 
     c = 0;
     a_in.get (c);
     if (c != '}') 
       {
-	a_in.clear (std::ios_base::failbit);
-	return a_in;
+        a_in.clear (std::ios_base::failbit);
+        return a_in;
       } 
     try 
       {
-	a_box.set (x,y,z);
+        a_box.set (x,y,z);
       }
     catch (...)
       {
-	a_box.reset ();
-	a_in.clear (std::ios_base::failbit);
+        a_box.reset ();
+        a_in.clear (std::ios_base::failbit);
       }
     return a_in;
   }
 
 
   void box::tree_dump (ostream & a_out, 
-		       const string & a_title, 
-		       const string & a_indent, 
-		       bool a_inherit) const
+                       const string & a_title, 
+                       const string & a_indent, 
+                       bool a_inherit) const
   {
     namespace du = datatools::utils;
     string indent;
@@ -468,11 +470,11 @@ namespace geomtools {
     i_object_3d::tree_dump (a_out, a_title, a_indent, true);
 
     a_out << indent << du::i_tree_dumpable::tag 
-	  << "X : " << get_x () / CLHEP::mm << " mm" << endl;
+          << "X : " << get_x () / CLHEP::mm << " mm" << endl;
     a_out << indent << du::i_tree_dumpable::tag 
-	  << "Y : " << get_y () / CLHEP::mm << " mm" << endl;
+          << "Y : " << get_y () / CLHEP::mm << " mm" << endl;
     a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)  
-	  << "Z : " << get_z () / CLHEP::mm << " mm" << endl;
+          << "Z : " << get_z () / CLHEP::mm << " mm" << endl;
     return;
   }
 

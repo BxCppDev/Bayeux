@@ -3,6 +3,8 @@
  */
  
 #include <geomtools/i_stackable.h>
+#include <sstream>
+#include <stdexcept>
 
 #include <datatools/utils/clhep_units.h>
 #include <datatools/utils/units.h>
@@ -235,7 +237,7 @@ namespace geomtools {
             ostringstream message;
             message << "stackable_data::initialize: "
                     << "Stacking limits vector should provide 6 dimensions !";
-            throw runtime_error (message.str ());
+            throw logic_error (message.str ());
           }
         xmin = limits[0] *= lunit;
         ymin = limits[2] *= lunit;

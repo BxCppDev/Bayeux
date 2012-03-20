@@ -7,6 +7,8 @@
 
 namespace geomtools {
 
+  using namespace std;  
+
   // ctor:
   i_placement::i_placement ()
   {

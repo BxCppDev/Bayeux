@@ -9,6 +9,8 @@
 
 namespace geomtools {
 
+
+  using namespace std;  
  
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (geom_id,"geomtools::geom_id")
   //const std::string geom_id::SERIAL_TAG = "__GEOM_ID__";

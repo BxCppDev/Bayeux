@@ -11,6 +11,7 @@
 #include <sstream>
 #include <vector>
 #include <fstream>
+#include <limits>
 
 #include <datatools/utils/utils.h>
 #include <datatools/utils/units.h>

@@ -9,6 +9,8 @@
 
 namespace geomtools {
 
+  using namespace std;  
+
   const std::string intersection_3d::INTERSECTION_3D_LABEL = "intersection_3d";
 
   bool intersection_3d::g_devel = false;

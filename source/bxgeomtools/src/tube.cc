@@ -12,6 +12,8 @@
 
 namespace geomtools {
 
+  using namespace std;  
+
   const std::string tube::TUBE_LABEL = "tube";
   
   double tube::get_z () const

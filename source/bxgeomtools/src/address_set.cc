@@ -10,7 +10,9 @@
 #include <algorithm>
 
 namespace geomtools {
-  
+
+  using namespace std;  
+
   bool address_set::is_valid () const
   {
     return _mode_ != MODE_INVALID;
@@ -95,12 +97,12 @@ namespace geomtools {
   {
     if (! is_mode_range ())
       {
-	set_mode_range ();
-	//throw runtime_error ("address_set::set_range: Range mode is not active !");
+        set_mode_range ();
+        //throw runtime_error ("address_set::set_range: Range mode is not active !");
       }
     if (a_min >  a_max)
       {
-	_reset_range_ ();
+        _reset_range_ ();
       }
     else
      {
@@ -129,7 +131,7 @@ namespace geomtools {
   {
     if (! is_mode_list ())
       {
-	set_mode_list ();
+        set_mode_list ();
       }
     _addresses_.insert (a_value);
     return;
@@ -141,25 +143,25 @@ namespace geomtools {
 
     if (is_mode_all ())
       {
-	matched_value = true;
+        matched_value = true;
       }
     else if (is_mode_range ())
       {
-	if (a_value < _range_min_) matched_value = false;
-	else if (a_value > _range_max_) matched_value = false;
-	else matched_value = true;
+        if (a_value < _range_min_) matched_value = false;
+        else if (a_value > _range_max_) matched_value = false;
+        else matched_value = true;
       }
     else if (is_mode_list ())
       {
-	matched_value = _addresses_.find (a_value) != _addresses_.end ();
+        matched_value = _addresses_.find (a_value) != _addresses_.end ();
       }
     else
       {
-	matched_value = false;
+        matched_value = false;
       }
     if (is_reverse ())
       {
-	matched_value = ! matched_value;
+        matched_value = ! matched_value;
       }
     return matched_value;
   }
@@ -184,45 +186,45 @@ namespace geomtools {
   {
     if (! a_addset.is_valid ())
       {
-	a_out << "?";
-	return a_out;
+        a_out << "?";
+        return a_out;
       }
     if (a_addset.is_reverse ())
       {
-	a_out << '!';
+        a_out << '!';
       }
     if (a_addset.is_mode_none ())
       {
-	a_out << "{!}";
+        a_out << "{!}";
       }
     else if (a_addset.is_mode_all ())
       {
-	a_out << "{*}";
+        a_out << "{*}";
       }
     else if (a_addset.is_mode_range ())
       {
-	a_out << '[';
-	a_out << a_addset._range_min_;
-	a_out << ';';
-	a_out << a_addset._range_max_;
-	a_out << ']';
+        a_out << '[';
+        a_out << a_addset._range_min_;
+        a_out << ';';
+        a_out << a_addset._range_max_;
+        a_out << ']';
       }
     else
       {
-	a_out << '{';
-	for (set<uint32_t>::const_iterator i = a_addset._addresses_.begin ();
-	      i != a_addset._addresses_.end ();
-	     i++)
-	  {
-	    set<uint32_t>::const_iterator j = i;
-	    j++;
-	    a_out << *i;
-	    if (j != a_addset._addresses_.end ())
-	      {
-		a_out << ';';
-	      }
-	  }
-	a_out << '}';
+        a_out << '{';
+        for (set<uint32_t>::const_iterator i = a_addset._addresses_.begin ();
+              i != a_addset._addresses_.end ();
+             i++)
+          {
+            set<uint32_t>::const_iterator j = i;
+            j++;
+            a_out << *i;
+            if (j != a_addset._addresses_.end ())
+              {
+                a_out << ';';
+              }
+          }
+        a_out << '}';
       }
 
     return a_out;
@@ -240,113 +242,113 @@ namespace geomtools {
     char c = a_in.peek ();
     if (c == '!')
       {
-	a_in.get ();
-	reverse = true;
-	c = a_in.peek ();
+        a_in.get ();
+        reverse = true;
+        c = a_in.peek ();
       }
     if (c == '{')
       {
-	a_in.get ();
-	c = a_in.peek ();
-	if (c == '!')
-	  {
-	    a_in.get ();
-	    c = a_in.peek ();
-	    if (c != '}')
-	      {
-		a_addset.invalidate ();
-		a_in.setstate (ios::failbit);
-		return a_in;
-	      }
-	    a_in.get ();
-	    a_addset.set_mode_none ();
-	  }
-	else if (c == '*')
-	  {
-	    a_in.get ();
-	    c = a_in.peek ();
-	    if (c != '}')
-	      {
-		a_addset.invalidate ();
-		a_in.setstate (ios::failbit);
-		return a_in;
-	      }
-	    a_in.get ();
-	    a_addset.set_mode_all ();
-	  }
-	else
-	  {
-	    //if (devel) cerr << "mode==LIST" << endl;
-	    // mode list:
-	    while (true)
-	      {
-		uint32_t v;
-		a_in >> v >> ws;
-		if (! a_in)
-		  {
-		    return a_in;
-		  }
-		//if (devel) cerr << "mode==LIST v=" << v << endl;
-		a_addset.add_to_list (v);
-		c = a_in.peek ();
-		if (c == '}') 
-		  {
-		    a_in.get ();	
-		    break;
-		  }
-		if (c != ';') 
-		  {
-		    a_addset.invalidate ();
-		    a_in.setstate (ios::failbit);
-		    return a_in;
-		  }
-		a_in.get ();	
-		//if (devel) cerr << "mode==LIST loop a new value" << endl;
-	      }
-	  }
+        a_in.get ();
+        c = a_in.peek ();
+        if (c == '!')
+          {
+            a_in.get ();
+            c = a_in.peek ();
+            if (c != '}')
+              {
+                a_addset.invalidate ();
+                a_in.setstate (ios::failbit);
+                return a_in;
+              }
+            a_in.get ();
+            a_addset.set_mode_none ();
+          }
+        else if (c == '*')
+          {
+            a_in.get ();
+            c = a_in.peek ();
+            if (c != '}')
+              {
+                a_addset.invalidate ();
+                a_in.setstate (ios::failbit);
+                return a_in;
+              }
+            a_in.get ();
+            a_addset.set_mode_all ();
+          }
+        else
+          {
+            //if (devel) cerr << "mode==LIST" << endl;
+            // mode list:
+            while (true)
+              {
+                uint32_t v;
+                a_in >> v >> ws;
+                if (! a_in)
+                  {
+                    return a_in;
+                  }
+                //if (devel) cerr << "mode==LIST v=" << v << endl;
+                a_addset.add_to_list (v);
+                c = a_in.peek ();
+                if (c == '}') 
+                  {
+                    a_in.get ();        
+                    break;
+                  }
+                if (c != ';') 
+                  {
+                    a_addset.invalidate ();
+                    a_in.setstate (ios::failbit);
+                    return a_in;
+                  }
+                a_in.get ();    
+                //if (devel) cerr << "mode==LIST loop a new value" << endl;
+              }
+          }
       }
     else if (c == '[')
       {
-	// mode range:
-	a_in.get ();
-	uint32_t min, max;
-	a_in >> min;
-	if (! a_in)
-	  {
-	    a_addset.invalidate ();
-	    a_in.setstate (ios::failbit);
-	    return a_in;
-	  }
-	c = a_in.peek ();
-	if (c != ';')
-	  {
-	    a_addset.invalidate ();
-	    a_in.setstate (ios::failbit);
-	    return a_in;
-	  }
-	a_in.get ();
-	a_in >> max;
-	if (! a_in)
-	  {
-	    a_addset.invalidate ();
-	    a_in.setstate (ios::failbit);
-	    return a_in;
-	  }
-	c = a_in.peek ();
-	if (c != ']')
-	  {
-	    a_addset.invalidate ();
-	    a_in.setstate (ios::failbit);
-	    return a_in;
-	  }
-	a_in.get ();
-	a_addset.set_range (min, max);
+        // mode range:
+        a_in.get ();
+        uint32_t min, max;
+        a_in >> min;
+        if (! a_in)
+          {
+            a_addset.invalidate ();
+            a_in.setstate (ios::failbit);
+            return a_in;
+          }
+        c = a_in.peek ();
+        if (c != ';')
+          {
+            a_addset.invalidate ();
+            a_in.setstate (ios::failbit);
+            return a_in;
+          }
+        a_in.get ();
+        a_in >> max;
+        if (! a_in)
+          {
+            a_addset.invalidate ();
+            a_in.setstate (ios::failbit);
+            return a_in;
+          }
+        c = a_in.peek ();
+        if (c != ']')
+          {
+            a_addset.invalidate ();
+            a_in.setstate (ios::failbit);
+            return a_in;
+          }
+        a_in.get ();
+        a_addset.set_range (min, max);
       }
     else
       {
-	a_addset.invalidate ();
-	a_in.setstate (ios::failbit);
-	return a_in;
+        a_addset.invalidate ();
+        a_in.setstate (ios::failbit);
+        return a_in;
       }
     a_addset.set_reverse (reverse);
     return a_in;

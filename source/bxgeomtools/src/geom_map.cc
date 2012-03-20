@@ -8,6 +8,8 @@
 
 namespace geomtools {
 
+  using namespace std;  
+
   const geom_info_dict_t & geom_map::_get_geom_infos () const
   {
     return _geom_infos_;

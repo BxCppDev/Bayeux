@@ -26,7 +26,7 @@ int main (int argc_, char ** argv_)
       bool debug = false;
       bool centered = geomtools::regular_grid_placement::UNCENTERED;
       bool rotate = false;
-      bool draw = true;
+      bool draw = false;
       int iarg = 1;
       while (iarg < argc_)
         {
@@ -50,6 +50,10 @@ int main (int argc_, char ** argv_)
               else if (option == "--no-draw") 
                 {
                   draw = false;
+                }
+              else if (option == "--draw") 
+                {
+                  draw = true;
                 }
               else 
                 { 

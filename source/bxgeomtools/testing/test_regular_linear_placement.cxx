@@ -24,7 +24,7 @@ int main (int argc_, char ** argv_)
   try 
     {
       bool debug = false;
-      bool draw = true;
+      bool draw = false;
       int iarg = 1;
       while (iarg < argc_)
         {
@@ -40,6 +40,10 @@ int main (int argc_, char ** argv_)
              else if (option == "--no-draw") 
                 {
                   draw = false;
+                }
+             else if (option == "--draw") 
+                {
+                  draw = true;
                 }
               else 
                 { 
@@ -72,33 +76,33 @@ int main (int argc_, char ** argv_)
       rlp.tree_dump (clog, "regular_linear_placement", ">>> ");
 
       for (int i = 0; i < rlp.get_number_of_items (); i++)
-	{
-	  ostringstream title;
-	  title << "Item #" << i << " placement:";
-	  geomtools::placement pi = rlp.i_placement::get_placement (i);
-	  pi.tree_dump (clog, title.str (), ">>> ");
-	}
+        {
+          ostringstream title;
+          title << "Item #" << i << " placement:";
+          geomtools::placement pi = rlp.i_placement::get_placement (i);
+          pi.tree_dump (clog, title.str (), ">>> ");
+        }
 
-      {
-	datatools::utils::temp_file tmp_file;
-	tmp_file.set_remove_at_destroy (true);
-	tmp_file.create ("/tmp", ".tmp_drawer_");
-	
-	geomtools::box b (3.0, 1.0, 0.3);
-	for (int i = 0; i < rlp.get_number_of_items (); i++)
-	  {
-	    geomtools::gnuplot_draw::draw (tmp_file.out (),
-					   rlp.i_placement::get_placement (i),
-					   b);
-	  }
-	tmp_file.close ();
-	Gnuplot g1 ("lines");
-	g1.set_title ("test_regular_linear_placement");
-	g1.set_xlabel ("x").set_ylabel ("y").set_zlabel ("z");
-	g1.plotfile_xyz (tmp_file.get_filename (), 1, 2, 3, "3D view");
-	g1.showonscreen (); 
-	geomtools::gnuplot_drawer::wait_for_key ();
-	usleep (200);
+      if (draw) {
+        datatools::utils::temp_file tmp_file;
+        tmp_file.set_remove_at_destroy (true);
+        tmp_file.create ("/tmp", ".tmp_drawer_");
+        
+        geomtools::box b (3.0, 1.0, 0.3);
+        for (int i = 0; i < rlp.get_number_of_items (); i++)
+          {
+            geomtools::gnuplot_draw::draw (tmp_file.out (),
+                                           rlp.i_placement::get_placement (i),
+                                           b);
+          }
+        tmp_file.close ();
+        Gnuplot g1 ("lines");
+        g1.set_title ("test_regular_linear_placement");
+        g1.set_xlabel ("x").set_ylabel ("y").set_zlabel ("z");
+        g1.plotfile_xyz (tmp_file.get_filename (), 1, 2, 3, "3D view");
+        g1.showonscreen (); 
+        geomtools::gnuplot_drawer::wait_for_key ();
+        usleep (200);
       }
 
     }

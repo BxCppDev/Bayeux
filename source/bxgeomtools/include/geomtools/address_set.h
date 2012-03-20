@@ -21,7 +21,7 @@
 
 namespace geomtools {
 
-  using namespace std;
+  //using  namespace std;
 
   class address_set
   {
@@ -65,9 +65,9 @@ namespace geomtools {
     // ctor:
     address_set ();
 
-    friend ostream & operator<< (ostream & a_out, const address_set & a_addset);
+    friend std::ostream & operator<< (std::ostream & a_out, const address_set & a_addset);
 
-    friend istream & operator>> (istream & a_in, address_set & a_addset);
+    friend std::istream & operator>> (std::istream & a_in, address_set & a_addset);
 
   private:
 
@@ -75,7 +75,8 @@ namespace geomtools {
     int           _mode_;
     uint32_t      _range_min_;
     uint32_t      _range_max_;
-    set<uint32_t> _addresses_;
+    std::set<uint32_t> _addresses_;
+
   };
 
 } // end of namespace geomtools

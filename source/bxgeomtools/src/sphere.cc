@@ -10,6 +10,8 @@
 
 namespace geomtools {
 
+  using namespace std;  
+
   const std::string sphere::SPHERE_LABEL = "sphere";
   
   double 

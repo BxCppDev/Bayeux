@@ -5,6 +5,8 @@
 #include <geomtools/gnuplot_i.h>
 #include <geomtools/geomtools_config.h>
 
+
+using namespace std;  
   
 GnuplotException::GnuplotException(const std::string &msg) 
   : std::runtime_error  (msg)

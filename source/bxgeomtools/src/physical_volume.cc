@@ -11,6 +11,8 @@
 
 namespace geomtools {
 
+  using namespace std;  
+
   bool physical_volume::is_locked () const
   {
     return _locked_;

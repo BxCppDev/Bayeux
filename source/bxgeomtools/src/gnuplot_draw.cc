@@ -32,6 +32,8 @@
 
 namespace geomtools {
 
+  using namespace std;  
+
   bool   gnuplot_draw::g_using_color   = false;
   double gnuplot_draw::g_current_color = 1.0;
 

@@ -6,6 +6,8 @@
 
 namespace geomtools {
 
+  using namespace std;  
+
   void 
   i_composite_shape_3d::shape_t::copy (shape_t & sh_)
   {
