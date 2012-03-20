@@ -44,13 +44,13 @@ namespace datatools {
 
   namespace utils {
 
-    using namespace std;
+    //using   namespace std;
 
     class smart_filename
     {
     public: 
 
-      typedef vector<string> list_type;
+      typedef std::vector<std::string> list_type;
       typedef list_type::const_iterator const_iterator;
  
       bool is_debug () const;
@@ -75,13 +75,13 @@ namespace datatools {
 
       const_iterator end () const;
 
-      const string & operator[] (int a_index) const;
+      const std::string & operator[] (int a_index) const;
 
       // single mode :
-      void set (const string & a_filename);
+      void set (const std::string & a_filename);
 
       // list mode :
-      void add (const string & a_filename);
+      void add (const std::string & a_filename);
 
       void reset ();    
 
@@ -90,7 +90,7 @@ namespace datatools {
       void _set_mode (int);
       
       // list:
-      void _add_list (const string & a_filename);
+      void _add_list (const std::string & a_filename);
 
       void _set_list_allow_duplication (bool);
 
@@ -99,9 +99,9 @@ namespace datatools {
 
     public: 
 
-      static const string MODE_SINGLE_LABEL;
-      static const string MODE_LIST_LABEL;
-      static const string MODE_INCREMENTAL_LABEL;
+      static const std::string MODE_SINGLE_LABEL;
+      static const std::string MODE_LIST_LABEL;
+      static const std::string MODE_INCREMENTAL_LABEL;
 
       enum mode_t
         {
@@ -118,32 +118,32 @@ namespace datatools {
       virtual ~smart_filename ();
     
       static void make_single (smart_filename & a_smart_filename,
-                               const string & a_filename);
+                               const std::string & a_filename);
       
       static void make_list (smart_filename & a_smart_filename,
                              bool a_allow_duplication = false);
 
       static void make_list (smart_filename & a_smart_filename,
-                             const string & a_list_file, 
+                             const std::string & a_list_file, 
                              bool a_allow_duplication = false);
 
    
       static void make_incremental (smart_filename & a_smart_filename,
-                                    const string & a_path, 
-                                    const string & a_prefix,
-                                    const string & a_extension,
+                                    const std::string & a_path, 
+                                    const std::string & a_prefix,
+                                    const std::string & a_extension,
                                     int a_stopping_index,
                                     int a_starting_index = 0,
                                     int a_increment_index = 1);
 
       void initialize (const properties & a_config);
 
-      void print_list_of_filenames (ostream & a_out) const;
+      void print_list_of_filenames (std::ostream & a_out) const;
 
-      void store_list_of_filenames (const string & a_list_filename, 
+      void store_list_of_filenames (const std::string & a_list_filename, 
                                     bool a_append = true) const;
 
-      void dump (ostream & a_out = clog) const;
+      void dump (std::ostream & a_out = std::clog) const;
 
     private: 
 

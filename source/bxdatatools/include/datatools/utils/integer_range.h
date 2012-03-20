@@ -39,7 +39,7 @@
 
 #include <datatools/utils/range_tools.h>
 
-using namespace std;
+//using   namespace std;
 
 namespace datatools {
 
@@ -62,24 +62,24 @@ namespace datatools {
       void reset ();
  
       void set_lower (value_type a_lower_value, 
-		      int a_lower_flag = range::included);
+                      int a_lower_flag = range::included);
 
       void set_upper (value_type a_upper_value, 
-		      int a_upper_flag = range::included);
+                      int a_upper_flag = range::included);
 
       void set (value_type a_lower_value, 
-		value_type a_upper_value, 
-		int a_lower_flag = range::included, 
-		int a_upper_flag = range::included);
+                value_type a_upper_value, 
+                int a_lower_flag = range::included, 
+                int a_upper_flag = range::included);
 
       // Ctor:
       integer_range ();
 
       // Ctor:
       integer_range (value_type a_lower_value, 
-		     value_type a_upper_value, 
-		     int a_lower_flag = range::included, 
-		     int a_upper_flag = range::included);
+                     value_type a_upper_value, 
+                     int a_lower_flag = range::included, 
+                     int a_upper_flag = range::included);
 
       bool is_lower_bounded () const;
 
@@ -115,28 +115,28 @@ namespace datatools {
 
       // "[lower;[" or "]lower;[
       void make_upper_unbounded (value_type a_lower_value, 
-				 bool a_lower_included = true);
+                                 bool a_lower_included = true);
 
       // "];upper]" or "];upper["
       void make_lower_unbounded (value_type a_upper_value, 
-				 bool a_upper_included = true);
+                                 bool a_upper_included = true);
 
       // "]lower;upper]" or "]lower;upper["
       // "[lower;upper]" or "[lower;upper["
       void make_bounded (value_type a_lower_value, 
-			 value_type a_upper_value,
-			 bool a_lower_included = true, 
-			 bool a_upper_included = true);
+                         value_type a_upper_value,
+                         bool a_lower_included = true, 
+                         bool a_upper_included = true);
 
       bool has (value_type a_value) const;
 
-      void dump (ostream & a_out = clog) const;
+      void dump (std::ostream & a_out = std::clog) const;
 
-      friend ostream & operator<< (ostream & a_out, 
-				   const integer_range & a_range); 
+      friend std::ostream & operator<< (std::ostream & a_out, 
+                                   const integer_range & a_range); 
 
-      //friend istream & operator>> (istream & a_in, 
-      //				   integer_range & a_range); 
+      //friend std::istream & operator>> (std::istream & a_in, 
+      //           integer_range & a_range); 
 
       value_type begin () const;
 

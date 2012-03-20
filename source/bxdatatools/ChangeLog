@@ -76,6 +76,11 @@ This is the datatools package ChangeLog
 	to support object factories using Boost/Function and automated class
 	registration. 
 	- header: "include/datatools/factory/factory.h"
-	- namespce: 'datatools::factory'
+	- namespace: 'datatools::factory'
 	- testing: "testing/test_factory.cxx'
 	* version: prepare tag 4.1.0 in trunk
+2012-03-20 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* Handle: add useful macros
+	- header : "include/datatools/utils/handle_macros.h"
+	- testing: "testing/test_handle_macros.h"
+	* remove all "using namespace std;" from header files

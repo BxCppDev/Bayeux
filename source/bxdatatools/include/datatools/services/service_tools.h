@@ -44,83 +44,83 @@
 
 namespace datatools {
 
-	namespace service {
-		
-		using namespace std;
+  namespace service {
+    
+    //using   namespace std;
 
-		class base_service;
-		
-		typedef datatools::utils::handle<base_service> service_handle_type;
-		
-		/** Constants to measure the level of dependance between services :
-		 */
-		enum dependency_level_type
+    class base_service;
+    
+    typedef datatools::utils::handle<base_service> service_handle_type;
+    
+    /** Constants to measure the level of dependance between services :
+     */
+    enum dependency_level_type
       {
-				NO_DEPENDENCY       =  0, //!< The service does not depend on the external service
-				OPTIONAL_DEPENDENCY =  1, //!< The service can work without the external service
-				WEAK_DEPENDENCY     =  2, //!< Not so strong dependency on the external service (however part of the service may be invalidated)
-				STRICT_DEPENDENCY   =  3, //!< Strictly depends on the external service
-				UNKNWON_DEPENDENCY  = -1
+        NO_DEPENDENCY       =  0, //!< The service does not depend on the external service
+        OPTIONAL_DEPENDENCY =  1, //!< The service can work without the external service
+        WEAK_DEPENDENCY     =  2, //!< Not so strong dependency on the external service (however part of the service may be invalidated)
+        STRICT_DEPENDENCY   =  3, //!< Strictly depends on the external service
+        UNKNWON_DEPENDENCY  = -1
       };
-		
-		/** Record that store informations about the dependency  between services :
-		 */
-		struct dependency_info_type
-		{
-			string id;      //!< ID of the external service
-			string version; //!< Version of the external service
-			string meta;    //!< Auxiliary information 
-			int    level;   //!< Level of the dependency (see dependency_level_type enum)
-			dependency_info_type ();
-		};
+    
+    /** Record that store informations about the dependency  between services :
+     */
+    struct dependency_info_type
+    {
+      std::string id;      //!< ID of the external service
+      std::string version; //!< Version of the external service
+      std::string meta;    //!< Auxiliary information 
+      int    level;        //!< Level of the dependency (see dependency_level_type enum)
+      dependency_info_type ();
+    };
 
-		typedef map<string, int> dependency_level_dict_type;
-		typedef map<string, dependency_info_type> service_dependency_dict_type;
+    typedef std::map<std::string, int> dependency_level_dict_type;
+    typedef std::map<std::string, dependency_info_type> service_dependency_dict_type;
 
-		/** Record that handle an dynamically allocated service and additional informations :
-		 */
-		class service_entry : public datatools::utils::i_tree_dumpable 
-		{
-		public:
+    /** Record that handle an dynamically allocated service and additional informations :
+     */
+    class service_entry : public datatools::utils::i_tree_dumpable 
+    {
+    public:
 
-			enum status_type
-				{
-					STATUS_BLANK             = 0x0,
-					STATUS_CREATED           = 0x1,
-					STATUS_INITIALIZED       = 0x2,
-					STATUS_BROKEN_DEPENDENCY = 0x4
-				};
-			
-			string                       service_name;    //!< The name of the service
-			string                       service_id;      //!< The ID (type) of the service
-			datatools::utils::properties service_config;  //!< The configuration of the service 
-			uint32_t                     service_status;  //!< The status of the service
-			service_handle_type          service_handle;  //!< The handle for the allocated service
-			service_dependency_dict_type service_masters; //!< The list of services the service depends on (by names)
-			dependency_level_dict_type   service_slaves;  //!< The list of depending services (by names)
-			
-			service_entry ();
+      enum status_type
+        {
+          STATUS_BLANK             = 0x0,
+          STATUS_CREATED           = 0x1,
+          STATUS_INITIALIZED       = 0x2,
+          STATUS_BROKEN_DEPENDENCY = 0x4
+        };
+      
+      std::string                  service_name;    //!< The name of the service
+      std::string                  service_id;      //!< The ID (type) of the service
+      datatools::utils::properties service_config;  //!< The configuration of the service 
+      uint32_t                     service_status;  //!< The status of the service
+      service_handle_type          service_handle;  //!< The handle for the allocated service
+      service_dependency_dict_type service_masters; //!< The list of services the service depends on (by names)
+      dependency_level_dict_type   service_slaves;  //!< The list of depending services (by names)
+      
+      service_entry ();
 
-			bool can_be_dropped () const;
-			bool has_slave (const string & a_service_name) const;
-			void remove_slave (const string & a_service_name);
-			virtual void tree_dump (ostream & a_out         = clog, 
-															const string & a_title  = "",
-															const string & a_indent = "",
-															bool a_inherit          = false) const;
+      bool can_be_dropped () const;
+      bool has_slave (const std::string & a_service_name) const;
+      void remove_slave (const std::string & a_service_name);
+      virtual void tree_dump (std::ostream & a_out         = std::clog, 
+                              const std::string & a_title  = "",
+                              const std::string & a_indent = "",
+                              bool a_inherit          = false) const;
 
-		};
+    };
 
-		typedef map<string, service_entry> service_dict_type;
+    typedef std::map<std::string, service_entry> service_dict_type;
 
-		typedef datatools::service::base_service * 
-		(*service_creator_type) (const datatools::utils::properties & a_configuration, 
-														 datatools::service::service_dict_type & a_service_dict,
-														 base_service * a_ptr);
-		
-		typedef map<string, service_creator_type> service_creator_dict_type;
+    typedef datatools::service::base_service * 
+    (*service_creator_type) (const datatools::utils::properties & a_configuration, 
+                             datatools::service::service_dict_type & a_service_dict,
+                             base_service * a_ptr);
+    
+    typedef std::map<std::string, service_creator_type> service_creator_dict_type;
 
-	}  // end of namespace service
+  }  // end of namespace service
 
 }  // end of namespace datatools
 

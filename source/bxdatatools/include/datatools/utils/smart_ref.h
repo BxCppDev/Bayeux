@@ -55,17 +55,17 @@ namespace datatools {
 
       const datatools::utils::properties & get_properties () const
       {
-	return _properties_;
+        return _properties_;
       }
     
       datatools::utils::properties & get_properties ()
       {
-	return _properties_;
+        return _properties_;
       }
 
       void set_properties (const datatools::utils::properties & a_props)
       {
-	_properties_ = a_props;
+        _properties_ = a_props;
       }
   
     public: 
@@ -73,42 +73,42 @@ namespace datatools {
       // ctor:
       smart_ref ()
       {
-	_ref_ = 0;
+        _ref_ = 0;
       }
 
       // ctor:
       smart_ref (const_reference_t a_obj)
       {
-	set (a_obj);
- 	return;
+        set (a_obj);
+        return;
       }
 
       // dtor:
       virtual ~smart_ref ()
       {
-	return;
+        return;
        }
   
       void set (const_reference_t a_obj)
       {
-	_ref_ = const_cast<pointer_t>(&a_obj);
-	return;
+        _ref_ = const_cast<pointer_t>(&a_obj);
+        return;
       }
 
       const_reference_t get () const
       {
-	return *_ref_;
+        return *_ref_;
       }
 
       void reset ()
       {
-	_ref_ = 0;
-	return;
+        _ref_ = 0;
+        return;
        }
 
       bool is_valid () const
       {
-	return _ref_ != 0;
+        return _ref_ != 0;
       }
 
     private:
@@ -117,11 +117,11 @@ namespace datatools {
       
       template<class Archive>
       void serialize (Archive            & a_ar, 
-		      const unsigned int a_version) 
+                      const unsigned int a_version) 
       {
-	a_ar & boost::serialization::make_nvp ("properties", _properties_);
-	a_ar & boost::serialization::make_nvp ("ref",        _ref_);
-	return;
+        a_ar & boost::serialization::make_nvp ("properties", _properties_);
+        a_ar & boost::serialization::make_nvp ("ref",        _ref_);
+        return;
       }
 
     public:
@@ -129,19 +129,19 @@ namespace datatools {
       // predicate:
       class has_flag : public std::unary_function<smart_ref_t, bool>
       {
-	string _flag_;
+        std::string _flag_;
       public:
-	explicit has_flag (const string & a_flag)
-	{
-	  _flag_ = a_flag;
-	  return;
-	}
+        explicit has_flag (const std::string & a_flag)
+        {
+          _flag_ = a_flag;
+          return;
+        }
     
-	bool operator () (const smart_ref_t & a_smart_ref) const
-	{
-	  if (! a_smart_ref.is_valid ()) return false;
-	  return (a_smart_ref.get_properties ().has_flag (_flag_));
-	}
+        bool operator () (const smart_ref_t & a_smart_ref) const
+        {
+          if (! a_smart_ref.is_valid ()) return false;
+          return (a_smart_ref.get_properties ().has_flag (_flag_));
+        }
       };
     
     };

@@ -12,26 +12,26 @@ namespace datatools {
   
   namespace utils {
 
-    using namespace std;
+    // using   namespace std;
 
     class temp_file
     {
     public:
 
       static bool g_devel;
-      static const string DEFAULT_PATTERN;
+      static const std::string DEFAULT_PATTERN;
 
     private:
       bool   _remove_at_destroy_;
-      string _path_dir_;
-      string _pattern_;
-      string _full_pattern_;
-      string _filename_;
+      std::string _path_dir_;
+      std::string _pattern_;
+      std::string _full_pattern_;
+      std::string _filename_;
       bool   _read_open_;
       bool   _write_open_;
       char * _template_;
-      ofstream _out_;
-      ifstream _in_;
+      std::ofstream _out_;
+      std::ifstream _in_;
 
     protected:
 
@@ -39,7 +39,7 @@ namespace datatools {
 
     public:
 
-      const string & get_filename () const;
+      const std::string & get_filename () const;
 
       bool is_valid () const;
 
@@ -49,25 +49,25 @@ namespace datatools {
 
       void set_remove_at_destroy (bool);
 
-      ofstream & out ();
+      std::ofstream & out ();
 
-      ifstream & in ();
+      std::ifstream & in ();
 
       temp_file ();
 
       temp_file (const char * a_pattern, bool a_remove_at_destroy = true);
 
-      temp_file (string a_pattern, bool a_remove_at_destroy = true);
+      temp_file (std::string a_pattern, bool a_remove_at_destroy = true);
 
       temp_file (const char * a_path_dir, const char * a_pattern, bool a_remove_at_destroy = true);
 
-      temp_file (string a_path_dir, const char * a_pattern, bool a_remove_at_destroy = true);
+      temp_file (std::string a_path_dir, const char * a_pattern, bool a_remove_at_destroy = true);
 
-      temp_file (string a_path_dir, string a_pattern, bool a_remove_at_destroy = true);
+      temp_file (std::string a_path_dir, std::string a_pattern, bool a_remove_at_destroy = true);
 
       ~temp_file ();
 
-      void create (string a_path_dir, string a_pattern);
+      void create (std::string a_path_dir, std::string a_pattern);
       
       void close ();
       

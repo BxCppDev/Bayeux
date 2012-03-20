@@ -32,6 +32,8 @@ namespace datatools {
 
   namespace service {
 
+    using namespace std;
+
     void service_manager::set_name (const string & a_name)
     {
       _name_ = a_name;

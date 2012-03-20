@@ -8,11 +8,11 @@
 
 #include <boost/cstdint.hpp>
 
-#ifdef USING_NCURSES
-#include <curses.h>
-#endif // USING_NCURSES
+// #ifdef USING_NCURSES
+// #include <curses.h>
+// #endif // USING_NCURSES
 
-using namespace std;
+//using   namespace std;
 
 namespace datatools {
 
@@ -22,20 +22,20 @@ namespace datatools {
     class ostream_manipulator
     {
     private:
-      ostream & (*_function_) (ostream &, const Type &);
+      std::ostream & (*_function_) (std::ostream &, const Type &);
       Type        _value_;
 
     public:
-      ostream_manipulator (ostream & (*function_) (ostream & , const Type &),
-			   const Type & value_)
-	: _function_ (function_), _value_ (value_)
+      ostream_manipulator (std::ostream & (*function_) (std::ostream & , const Type &),
+                           const Type & value_)
+        : _function_ (function_), _value_ (value_)
       {
       }
 
-      friend ostream & operator<<(ostream & os_,
-				  const ostream_manipulator & os_manip_)
+      friend std::ostream & operator<<(std::ostream & os_,
+                                       const ostream_manipulator & os_manip_)
       {
-	return os_manip_._function_ (os_, os_manip_._value_);
+        return os_manip_._function_ (os_, os_manip_._value_);
       }
 
     };
@@ -44,20 +44,20 @@ namespace datatools {
     class ostream_manipulator_ref
     {
     private:
-      ostream & (*_function_) (ostream & , Type &);
+      std::ostream & (*_function_) (std::ostream & , Type &);
       Type    &   _value_;
 
     public:
-      ostream_manipulator_ref (ostream & (*function_) (ostream &, Type &) ,
-			       Type & value_)
-	: _function_ (function_) , _value_ (value_)
+      ostream_manipulator_ref (std::ostream & (*function_) (std::ostream &, Type &) ,
+                               Type & value_)
+        : _function_ (function_) , _value_ (value_)
       {
       }
 
-      friend ostream & operator<< (ostream & os_,
-				   const ostream_manipulator_ref & os_manip_)
+      friend std::ostream & operator<< (std::ostream & os_,
+                                        const ostream_manipulator_ref & os_manip_)
       {
-	return os_manip_._function_ (os_, os_manip_._value_);
+        return os_manip_._function_ (os_, os_manip_._value_);
       }
     };
 
@@ -65,32 +65,32 @@ namespace datatools {
     {
     private:
       static bool g_colored_stream_;
-#ifdef USING_NCURSES
-      static SCREEN * g_screen_;
-#endif // USING_NCURSES
+// #ifdef USING_NCURSES
+//       static SCREEN * g_screen_;
+// #endif // USING_NCURSES
       static io g_io_;
 
     public:
 
       class indenter
       {
-	size_t _width_;
-	size_t _level_;
+        size_t _width_;
+        size_t _level_;
 
       public:
 
-	size_t get_width () const;
-	size_t get_level () const;
-	// ctor:
-	indenter ();
+        size_t get_width () const;
+        size_t get_level () const;
+        // ctor:
+        indenter ();
 
-	indenter & operator++ (int);
-	indenter & operator-- (int);
-	ostream & operator() (ostream &) const;
-	indenter & operator () (size_t);
+        indenter & operator++ (int);
+        indenter & operator-- (int);
+        std::ostream & operator() (std::ostream &) const;
+        indenter & operator () (size_t);
 
-	friend ostream & operator<< (ostream &,
-				     const indenter &);
+        friend std::ostream & operator<< (std::ostream &,
+                                          const indenter &);
       };
 
       static indenter indent;
@@ -99,9 +99,9 @@ namespace datatools {
 
       static void set_colored (bool);
 
-#ifdef USING_NCURSES
-      static void focus ();
-#endif // USING_NCURSES
+// #ifdef USING_NCURSES
+//       static void focus ();
+// #endif // USING_NCURSES
 
     private:
       // ctor:
@@ -112,64 +112,64 @@ namespace datatools {
       // dtor:
       ~io ()
       {
-	set_colored (false);
+        set_colored (false);
       }
 
     public:
 
-      static ostream & normal (ostream &);
+      static std::ostream & normal (std::ostream &);
 
-      static ostream & reverse (ostream &);
+      static std::ostream & reverse (std::ostream &);
 
-      static ostream & bold (ostream &);
+      static std::ostream & bold (std::ostream &);
 
-      static ostream & underline (ostream &);
+      static std::ostream & underline (std::ostream &);
 
-      static ostream & red (ostream &);
+      static std::ostream & red (std::ostream &);
 
-      static ostream & green (ostream &);
+      static std::ostream & green (std::ostream &);
 
-      static ostream & debug (ostream &);
+      static std::ostream & debug (std::ostream &);
 
-      static ostream & devel (ostream &);
+      static std::ostream & devel (std::ostream &);
 
-      static ostream & notice (ostream &);
+      static std::ostream & notice (std::ostream &);
 
-      static ostream & warning (ostream &);
+      static std::ostream & warning (std::ostream &);
 
-      static ostream & error (ostream &);
+      static std::ostream & error (std::ostream &);
 
-      static ostream & verbose (ostream &);
+      static std::ostream & verbose (std::ostream &);
 
-      static ostream & tab (ostream &);
+      static std::ostream & tab (std::ostream &);
 
-      static ostream & vtab (ostream &);
+      static std::ostream & vtab (std::ostream &);
 
-      static ostream & page_break (ostream &);
+      static std::ostream & page_break (std::ostream &);
 
-      static ostream & left (ostream &);
+      static std::ostream & left (std::ostream &);
 
-      static ostream & right (ostream &);
+      static std::ostream & right (std::ostream &);
 
-      static ostream & internal (ostream &);
+      static std::ostream & internal (std::ostream &);
 
-      static ostream & showbase (ostream &);
+      static std::ostream & showbase (std::ostream &);
 
-      static ostream & ostream_width (ostream & os_, const int & n_);
+      static std::ostream & ostream_width (std::ostream & os_, const int & n_);
 
       static ostream_manipulator<int> width ( const int & n_);
 
-      static ostream & ostream_precision (ostream & os_, const int & n_);
+      static std::ostream & ostream_precision (std::ostream & os_, const int & n_);
 
       static ostream_manipulator<int> precision (const int & n_);
 
-      static string to_binary (const uint32_t & val_);
+      static std::string to_binary (const uint32_t & val_);
 
     };
 
     /*
-      string create_temporary (const string & template_,
-      const string & path_ = "")
+      std::string create_temporary (const std::string & template_,
+      const std::string & path_ = "")
       {
       char * sdn = ".";
       ostringstream oss;

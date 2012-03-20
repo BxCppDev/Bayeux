@@ -4,7 +4,15 @@
 
 #include <datatools/utils/units.h>
 #include <datatools/utils/clhep_units.h>
+
+#include <cstdlib>
+#include <cmath>
+#include <stdexcept>
+#include <iostream>
+#include <iomanip>
+#include <sstream>
 #include <vector>
+#include <list>
 #include <limits>
 
 namespace datatools {
@@ -199,72 +207,72 @@ namespace datatools {
     }
 
     double units::get_unit_from (const string & a_unit_type, 
-				 const string & a_unit_str)
+                                 const string & a_unit_str)
     {
       if (a_unit_type == "length")
-	{
-	  return get_length_unit_from (a_unit_str);
-	}
+        {
+          return get_length_unit_from (a_unit_str);
+        }
       else if (a_unit_type == "surface")
-	{
-	  return get_surface_unit_from (a_unit_str);
-	}
+        {
+          return get_surface_unit_from (a_unit_str);
+        }
       else if (a_unit_type == "volume")
-	{
-	  return get_volume_unit_from (a_unit_str);
-	}
+        {
+          return get_volume_unit_from (a_unit_str);
+        }
       else if (a_unit_type == "time")
-	{
-	  return get_time_unit_from (a_unit_str);
-	}
+        {
+          return get_time_unit_from (a_unit_str);
+        }
       else if (a_unit_type == "angle")
-	{
-	  return get_angle_unit_from (a_unit_str);
-	}
+        {
+          return get_angle_unit_from (a_unit_str);
+        }
       else if (a_unit_type == "solid_angle")
-	{
-	  return get_solid_angle_unit_from (a_unit_str);
-	}
+        {
+          return get_solid_angle_unit_from (a_unit_str);
+        }
       else if (a_unit_type == "energy")
-	{
-	  return get_energy_unit_from (a_unit_str);
-	}
+        {
+          return get_energy_unit_from (a_unit_str);
+        }
       else if (a_unit_type == "mass")
-	{
-	  return get_mass_unit_from (a_unit_str);
-	}
+        {
+          return get_mass_unit_from (a_unit_str);
+        }
       else if (a_unit_type == "pressure")
-	{
-	  return get_pressure_unit_from (a_unit_str);
-	}
+        {
+          return get_pressure_unit_from (a_unit_str);
+        }
       else if (a_unit_type == "magnetic_field")
-	{
-	  return get_magnetic_field_unit_from (a_unit_str);
-	}
+        {
+          return get_magnetic_field_unit_from (a_unit_str);
+        }
       else if (a_unit_type == "temperature")
-	{
-	  return get_temperature_unit_from (a_unit_str);
-	}
+        {
+          return get_temperature_unit_from (a_unit_str);
+        }
       else if (a_unit_type == "density")
-	{
-	  return get_density_unit_from (a_unit_str);
-	}
+        {
+          return get_density_unit_from (a_unit_str);
+        }
       else if (a_unit_type == "activity")
-	{
-	  return get_activity_unit_from (a_unit_str);
-	}
+        {
+          return get_activity_unit_from (a_unit_str);
+        }
       else if (a_unit_type == "surface_activity")
-	{
-	  return get_surface_activity_unit_from (a_unit_str);
-	}
+        {
+          return get_surface_activity_unit_from (a_unit_str);
+        }
       else if (a_unit_type == "volume_activity")
-	{
-	  return get_volume_activity_unit_from (a_unit_str);
-	}
+        {
+          return get_volume_activity_unit_from (a_unit_str);
+        }
       else if (a_unit_type == "mass_activity")
-	{
-	  return get_mass_activity_unit_from (a_unit_str);
-	}
+        {
+          return get_mass_activity_unit_from (a_unit_str);
+        }
       ostringstream message;
       message << "Invalid " << a_unit_type << " of unit :'" << a_unit_type << "' !";
       throw runtime_error (message.str ());
@@ -272,8 +280,8 @@ namespace datatools {
     }
  
     bool units::find_unit (const string & a_unit_str, 
-			   double & a_unit_value, 
-			   string & a_unit_label)
+                           double & a_unit_value, 
+                           string & a_unit_label)
     {
       //clog << endl << "DEVEL: units::find_unit: Entering for '" << a_unit_str << "'" <<  endl;
       a_unit_label = "";
@@ -300,29 +308,29 @@ namespace datatools {
       double val = numeric_limits<double>::quiet_NaN ();
       int count = -1;
       for (vector<string>::const_iterator i = ulabels.begin ();
-	   i != ulabels.end ();
-	   i++)
-	{
-	  //clog << "DEVEL: units::find_unit: Checking " << *i << " for '" << a_unit_str << "'" <<  endl;
-	  try
-	    {
-	      count++;
-	      a_unit_label = *i;
-	      val = get_unit_from (*i, a_unit_str);
-	      //clog << "DEVEL: units::find_unit: Found " << *i << endl;
-	      break;
-	    }
-	  catch (exception & x)
-	    {
-	      val = numeric_limits<double>::quiet_NaN ();
-	    }
-	}
+           i != ulabels.end ();
+           i++)
+        {
+          //clog << "DEVEL: units::find_unit: Checking " << *i << " for '" << a_unit_str << "'" <<  endl;
+          try
+            {
+              count++;
+              a_unit_label = *i;
+              val = get_unit_from (*i, a_unit_str);
+              //clog << "DEVEL: units::find_unit: Found " << *i << endl;
+              break;
+            }
+          catch (exception & x)
+            {
+              val = numeric_limits<double>::quiet_NaN ();
+            }
+        }
       if (! isnormal (val))
-	{
-	  a_unit_label = "";
-	  a_unit_value = val;
-	  return false;
-	}
+        {
+          a_unit_label = "";
+          a_unit_value = val;
+          return false;
+        }
       a_unit_label = ulabels[count];
       a_unit_value = val;
       return true;
@@ -334,9 +342,9 @@ namespace datatools {
       string unit_label;
       bool res = find_unit (a_unit_str, unit_val, unit_label);
       if (! res)
-	{
-	  return numeric_limits<double>::quiet_NaN ();
-	}
+        {
+          return numeric_limits<double>::quiet_NaN ();
+        }
       /*
       static list<string> ulabels;
       ulabels.push_back ("length");
@@ -358,22 +366,22 @@ namespace datatools {
 
       double l = numeric_limits<double>::quiet_NaN ();
       for (list<string>::const_iterator i = ulabels.begin ();
-	   i != ulabels.end ();
-	   i++)
-	{
-	  try
-	    {
-	      l = get_unit_from (*i, a_unit_str);
-	      break;
-	    }
-	  catch (exception & x)
-	    {
-	    }
-	}
+           i != ulabels.end ();
+           i++)
+        {
+          try
+            {
+              l = get_unit_from (*i, a_unit_str);
+              break;
+            }
+          catch (exception & x)
+            {
+            }
+        }
       if (! isnormal (l))
-	{
-	  _throw_bad_unit ("type of", a_unit_str);
-	}
+        {
+          _throw_bad_unit ("type of", a_unit_str);
+        }
       
       return l;
       */
@@ -381,8 +389,8 @@ namespace datatools {
     }
 
     bool units::find_value_with_unit (const string & a_word, 
-				      double & a_value, 
-				      string & a_unit_label)
+                                      double & a_value, 
+                                      string & a_unit_label)
     {
       a_value = numeric_limits<double>::quiet_NaN ();
       a_unit_label = "";
@@ -391,30 +399,30 @@ namespace datatools {
       istringstream iss (a_word);
       iss >> val;
       if (! iss)
-	{
-	  ostringstream message;
-	  message << "get_value_with_unit: Format error while reading a double value !";
-	  return false;
-	}
+        {
+          ostringstream message;
+          message << "get_value_with_unit: Format error while reading a double value !";
+          return false;
+        }
       iss >> ws;
       if (! iss.eof ())
-	{
-	  string ustr;
-	  iss >> ustr;
-	  if (ustr.empty ())
-	    {
-	      return false;
-	    }
-	  double any_unit_value;
-	  string any_unit_label;
-	  bool res = find_unit (ustr, any_unit_value, any_unit_label);
-	  if (! res)
-	    {
-	      return false;
-	    }
-	  val *= any_unit_value;
-	  a_unit_label = any_unit_label;
-	}
+        {
+          string ustr;
+          iss >> ustr;
+          if (ustr.empty ())
+            {
+              return false;
+            }
+          double any_unit_value;
+          string any_unit_label;
+          bool res = find_unit (ustr, any_unit_value, any_unit_label);
+          if (! res)
+            {
+              return false;
+            }
+          val *= any_unit_value;
+          a_unit_label = any_unit_label;
+        }
       a_value = val;
       return true;
     }
@@ -424,11 +432,11 @@ namespace datatools {
       double unit_value = numeric_limits<double>::quiet_NaN ();
       string unit_label;
       if (! find_value_with_unit (a_word, unit_value, unit_label))
-	{
-	  ostringstream message;
-	  message << "get_value_with_unit: Cannot parse a value with its units !";
-	  throw logic_error (message.str ());
-	}
+        {
+          ostringstream message;
+          message << "get_value_with_unit: Cannot parse a value with its units !";
+          throw logic_error (message.str ());
+        }
       return unit_value;
       /*
      double val = numeric_limits<double>::quiet_NaN ();
@@ -436,28 +444,28 @@ namespace datatools {
       istringstream iss (a_word);
       iss >> val;
       if (! iss)
-	{
-	  ostringstream message;
-	  message << "get_value_with_unit: Format error while reading a double value !";
-	  throw runtime_error (message.str ());
-	}
+        {
+          ostringstream message;
+          message << "get_value_with_unit: Format error while reading a double value !";
+          throw runtime_error (message.str ());
+        }
       iss >> ws;
       if (! iss.eof ())
-	{
-	  string ustr;
-	  iss >> ustr;
-	  try
-	    {
-	      double any_unit = get_unit (ustr);
-	      val *= any_unit;
-	    }
-	  catch (exception & x)
-	    {
-	      ostringstream message;
-	      message << "get_value_with_unit: Unknown unit: " << x.what ();
-	      throw runtime_error (message.str ());
-	    } 
-	}
+        {
+          string ustr;
+          iss >> ustr;
+          try
+            {
+              double any_unit = get_unit (ustr);
+              val *= any_unit;
+            }
+          catch (exception & x)
+            {
+              ostringstream message;
+              message << "get_value_with_unit: Unknown unit: " << x.what ();
+              throw runtime_error (message.str ());
+            } 
+        }
       
       return val;
       */
