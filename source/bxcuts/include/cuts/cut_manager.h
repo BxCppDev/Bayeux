@@ -76,13 +76,13 @@ namespace cuts {
  
     bool is_no_preload () const;
 
-    bool has (const string & a_cut_name) const;
+    bool has (const std::string & a_cut_name) const;
   
-    void remove (const string & a_cut_name);
+    void remove (const std::string & a_cut_name);
 
-    i_cut & get (const string & a_cut_name);
+    i_cut & get (const std::string & a_cut_name);
 
-    const i_cut & get (const string & a_cut_name) const;
+    const i_cut & get (const std::string & a_cut_name) const;
 
     cut_handle_dict_type & get_cuts ();
 
@@ -110,9 +110,9 @@ namespace cuts {
 
     void install_service_manager (const datatools::utils::properties & a_service_manager_configuration);
 
-    virtual void tree_dump (ostream & a_out         = clog, 
-                            const string & a_title  = "",
-                            const string & a_indent = "",
+    virtual void tree_dump (std::ostream & a_out         = std::clog, 
+                            const std::string & a_title  = "",
+                            const std::string & a_indent = "",
                             bool a_inherit          = false) const;
 
   protected:

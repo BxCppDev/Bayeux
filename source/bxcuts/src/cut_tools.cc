@@ -27,6 +27,8 @@
 
 namespace cuts {
 
+  using namespace std;
+
   cut_tools::scoped_cut_creator_db_type 
   cut_tools::g_cut_creator_db_ (new cut_creator_db (true));
 

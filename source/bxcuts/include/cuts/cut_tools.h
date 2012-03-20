@@ -53,22 +53,20 @@ namespace datatools {
 
 namespace cuts {
 
-  using namespace std;
-
   class i_cut;
  
-  typedef map<string, i_cut *> cut_dict_type;
+  typedef std::map<std::string, i_cut *> cut_dict_type;
 
   typedef datatools::utils::handle<i_cut> cut_handle_type;
 
-  typedef map<string, cut_handle_type> cut_handle_dict_type;
+  typedef std::map<std::string, cut_handle_type> cut_handle_dict_type;
       
   typedef i_cut * (*cut_creator_type) (const datatools::utils::properties & a_configuration,
                                        datatools::service::service_manager & a_service_manager, 
                                        cut_handle_dict_type & a_cut_dict);
       
 
-  typedef map<string, cut_creator_type> cut_creator_dict_type;
+  typedef std::map<std::string, cut_creator_type> cut_creator_dict_type;
 
   /****************************************************/
 
@@ -88,14 +86,14 @@ namespace cuts {
         
     cut_creator_dict_type & get_dict ();
         
-    bool has_cut_creator (const string & a_cut_id) const;
+    bool has_cut_creator (const std::string & a_cut_id) const;
         
-    cut_creator_type & get_cut_creator (const string & a_cut_id);
+    cut_creator_type & get_cut_creator (const std::string & a_cut_id);
         
     void register_cut_creator (cut_creator_type a_cut_creator, 
-                               const string & a_cut_id);
+                               const std::string & a_cut_id);
         
-    void dump_cut_creators (ostream & a_out = clog);
+    void dump_cut_creators (std::ostream & a_out = std::clog);
         
   }; // cut_creator_db
 

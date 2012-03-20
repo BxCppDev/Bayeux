@@ -30,6 +30,8 @@
 
 namespace cuts {
 
+  using namespace std;
+
   bool 
   i_cut::is_debug () const
   {
@@ -135,7 +137,7 @@ namespace cuts {
   i_cut::~i_cut ()
   {
     _user_data_ = 0;
-		if (_initialized_)
+    if (_initialized_)
       {
         ostringstream message;
         message << "cuts::i_cut::~i_cut: "

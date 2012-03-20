@@ -34,6 +34,8 @@
 
 namespace cuts {
 
+  using namespace std;
+
   bool cut_manager::is_debug () const
   {
     return _flags_ & DEBUG;

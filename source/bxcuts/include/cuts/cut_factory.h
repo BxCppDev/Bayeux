@@ -39,8 +39,6 @@ namespace cuts {
 
   class i_cut;
 
-  using namespace std;
-
   class cut_factory : public datatools::utils::i_tree_dumpable
   {
   public: 
@@ -72,10 +70,10 @@ namespace cuts {
     virtual ~cut_factory ();
  
     void do_register (const cut_creator_type & a_cut_creator, 
-                      const string & a_cut_id = "");
+                      const std::string & a_cut_id = "");
     
     // Main cut factory function :
-    virtual cut_handle_type create_cut (const string & a_cut_id,
+    virtual cut_handle_type create_cut (const std::string & a_cut_id,
                                         const datatools::utils::properties & a_cut_configuration,
                                         datatools::service::service_manager & a_service_manager, 
                                         cut_handle_dict_type & a_cut_dict);
@@ -84,9 +82,9 @@ namespace cuts {
 
     cut_creator_dict_type & get_creators ();   
 
-    virtual void tree_dump (ostream & a_out         = clog, 
-                            const string & a_title  = "",
-                            const string & a_indent = "",
+    virtual void tree_dump (std::ostream & a_out         = std::clog, 
+                            const std::string & a_title  = "",
+                            const std::string & a_indent = "",
                             bool a_inherit          = false) const;
 
   public: 

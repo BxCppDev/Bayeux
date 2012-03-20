@@ -28,27 +28,29 @@
 #include <datatools/utils/utils.h>
 
 namespace cuts {
+
+  using namespace std;
   
   /** Auto-registration of this service class in a central service Db */
   DATATOOLS_SERVICE_REGISTRATION_IMPLEMENT(cut_service, "cuts::cut_service")
              
-	bool cut_service::is_debug () const
-	{
-		return _debug_;
-	}
-	
-	void cut_service::set_debug (bool a_debug)
-	{
-		_debug_ = a_debug;
-		return;
-	}
-	
+  bool cut_service::is_debug () const
+  {
+    return _debug_;
+  }
+  
+  void cut_service::set_debug (bool a_debug)
+  {
+    _debug_ = a_debug;
+    return;
+  }
+  
   bool cut_service::owns_cut_manager () const
   {
     return _cut_manager_ != 0 && _owns_manager_;
   }
 
-	cut_manager & cut_service::grab_cut_manager ()
+  cut_manager & cut_service::grab_cut_manager ()
   {
     if (_cut_manager_ == 0)
       {
@@ -102,18 +104,18 @@ namespace cuts {
   int cut_service::initialize (const datatools::utils::properties & a_config,
                                datatools::service::service_dict_type & a_service_dict)
   {
-		if (is_initialized ())
-			{
-				ostringstream message;
-				message << "cuts::cut_service::initialize: "
-								<< "Service '" << get_name () << "' is already initialized ! ";
-				throw logic_error (message.str ());
-			}
-		
-		if (a_config.has_flag ("debug"))
-			{
-				set_debug (true);
-			}
+    if (is_initialized ())
+      {
+        ostringstream message;
+        message << "cuts::cut_service::initialize: "
+                << "Service '" << get_name () << "' is already initialized ! ";
+        throw logic_error (message.str ());
+      }
+    
+    if (a_config.has_flag ("debug"))
+      {
+        set_debug (true);
+      }
 
     if (_cut_manager_ == 0)
       {
@@ -132,7 +134,7 @@ namespace cuts {
           }
       }
  
-		return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
   }
 
   int cut_service::reset ()
@@ -159,7 +161,7 @@ namespace cuts {
     : base_service ("cuts::cut_service",
                     "A cut service")
   {
-		_debug_ = false;
+    _debug_ = false;
     _owns_manager_ = false;
     _cut_manager_ = 0; 
     return;

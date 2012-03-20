@@ -26,6 +26,8 @@
 #include <cuts/i_cut.h>
 
 namespace cuts {
+
+  using namespace std;
       
   bool cut_factory::g_devel = false;
  

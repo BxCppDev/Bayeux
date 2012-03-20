@@ -16,8 +16,10 @@
 #ifndef __cuts__i_binary_cut_h
 #define __cuts__i_binary_cut_h 1
 
+#include <string>
 #include <cuts/i_cut.h>
 #include <cuts/cut_macros.h>
+#include <datatools/utils/properties.h>
 
 namespace cuts {
   
@@ -37,10 +39,10 @@ namespace cuts {
   public: 
 
     // ctor:
-    i_binary_cut (const string & a_cut_name, 
-		  const string & a_cut_description = "", 
-		  const string & a_cut_version = "", 
-		  int a_debug_level = 0);
+    i_binary_cut (const std::string & a_cut_name, 
+                  const std::string & a_cut_description = "", 
+                  const std::string & a_cut_version = "", 
+                  int a_debug_level = 0);
    
     // dtor:
     CUT_DESTRUCTOR_DECLARE (i_binary_cut);
@@ -50,7 +52,7 @@ namespace cuts {
   protected:
 
     void _install_cuts (const datatools::utils::properties & a_configuration,
-			cuts::cut_handle_dict_type & a_cut_dict);
+                        cuts::cut_handle_dict_type & a_cut_dict);
   
   protected: 
     

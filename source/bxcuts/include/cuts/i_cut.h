@@ -52,8 +52,6 @@ namespace datatools {
 
 namespace cuts {
 
-  using namespace std;
-
   class i_cut : public datatools::utils::i_tree_dumpable
   {
   public:
@@ -75,15 +73,15 @@ namespace cuts {
     
     void set_debug_level (int);
     
-    const string & get_name () const;
+    const std::string & get_name () const;
     
-    const string & get_description () const;
+    const std::string & get_description () const;
     
-    void set_description (const string & a_description);
+    void set_description (const std::string & a_description);
 
-    const string & get_version () const;
+    const std::string & get_version () const;
    
-    void set_version (const string & a_version);
+    void set_version (const std::string & a_version);
  
     bool is_initialized () const;
   
@@ -97,7 +95,7 @@ namespace cuts {
    
   protected:
 
-    void _set_name (const string & a_name);
+    void _set_name (const std::string & a_name);
 
     void _set_initialized (bool a_initialized);
 
@@ -107,7 +105,7 @@ namespace cuts {
 
     virtual void _finish_cut ();
 
-		// Pure virtual selection method  (invoked by process)
+    // Pure virtual selection method  (invoked by process)
     virtual int _accept () = 0; 
 
   public:
@@ -140,20 +138,20 @@ namespace cuts {
   public: 
 
     // ctor:
-    i_cut (const string & a_cut_name, 
-           const string & a_cut_description = "", 
-           const string & a_cut_version = "", 
+    i_cut (const std::string & a_cut_name, 
+           const std::string & a_cut_description = "", 
+           const std::string & a_cut_version = "", 
            int           a_debug_level = 0);
     
     // dtor:
     virtual ~i_cut ();
 
-    virtual void tree_dump (ostream & a_out         = clog, 
-                            const string & a_title  = "",
-                            const string & a_indent = "",
+    virtual void tree_dump (std::ostream & a_out         = std::clog, 
+                            const std::string & a_title  = "",
+                            const std::string & a_indent = "",
                             bool a_inherit          = false) const;
 
-    void print (ostream & a_out = clog) const;
+    void print (std::ostream & a_out = std::clog) const;
         
 
   public:
@@ -162,13 +160,13 @@ namespace cuts {
 
   private: 
 
-    string _name;           //!< The name of the cut
+    std::string _name;           //!< The name of the cut
     
-    string _description;    //!< The description of the cut
+    std::string _description;    //!< The description of the cut
     
-    string _version;        //!< The version of the cut
+    std::string _version;        //!< The version of the cut
 
-		//private:
+    //private:
 
     bool   _initialized_;    //!< The initialization flag
 
@@ -200,7 +198,7 @@ namespace cuts {
     }
         
     // ctor :
-    default_creator_registration (const string & a_cut_id) 
+    default_creator_registration (const std::string & a_cut_id) 
     {
       cut_tools::get_cut_creator_db ().register_cut_creator (default_creator_registration<Cut>::g_default_cut_creator,
                                                              a_cut_id);

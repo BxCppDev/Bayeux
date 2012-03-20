@@ -23,14 +23,12 @@
 #include <cuts/cut_macros.h>
 
 namespace cuts {
-  
-  using namespace std;
 
   CUT_CLASS_DECLARE(multi_and_cut)
   {
   public:
 
-    typedef list<cut_handle_type> cuts_col_t;
+    typedef std::list<cut_handle_type> cuts_col_t;
     
   public: 
     
