@@ -1,5 +1,9 @@
-2010-03-06  Benoit Guillon <guillon@lpccaen.in2p3.fr>
+2010-03-06 Benoit Guillon <guillon@lpccaen.in2p3.fr>
         * creation of the materials package 
-2012-01-09  François Mauger <mauger@lpccaen.in2p3.fr>
+2012-01-09 François Mauger <mauger@lpccaen.in2p3.fr>
         * CMake: new built system
+2012-03-20 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+        * remove all "using namespace std;" from header files
+        * version: prepare tag 3.1.0 in trunk
+        * depends on geomtools 3.1
 
