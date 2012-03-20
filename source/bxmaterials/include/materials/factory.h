@@ -16,19 +16,25 @@
 #ifndef __materials__factory_h
 #define __materials__factory_h 1
 
-#include <stdexcept>
-#include <iostream>
-#include <sstream>
 #include <string>
 
-#include <datatools/utils/properties.h>
-
+// #include <datatools/utils/properties.h>
 #include <materials/detail/tools.h>
-#include <materials/isotope.h>
-#include <materials/element.h>
-#include <materials/material.h>
+//#include <materials/isotope.h>
+//#include <materials/element.h>
+// #include <materials/material.h>
+
+namespace datatools {
+  namespace utils {
+    class properties;
+  }
+}
 
 namespace mat {
+
+  class isotope;
+  class element;
+  class material;
 
   class factory
   {
@@ -47,14 +53,14 @@ namespace mat {
     // dtor:
     virtual ~factory ();
   
-    isotope * create_isotope (const string & name_, 
+    isotope * create_isotope (const std::string & name_, 
                               const datatools::utils::properties & config_) const;
   
-    element * create_element (const string & name_,
+    element * create_element (const std::string & name_,
                               const datatools::utils::properties & config_, 
                               const isotope_dict_t & isotopes_) const;
   
-    material * create_material (const string & name_, 
+    material * create_material (const std::string & name_, 
                                 const datatools::utils::properties & config_, 
                                 const element_dict_t & elements_, 
                                 const material_dict_t & materials_) const;

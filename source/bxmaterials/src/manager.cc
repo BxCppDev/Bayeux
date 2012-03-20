@@ -3,11 +3,19 @@
  */
 
 #include <materials/manager.h>
+#include <datatools/utils/multi_properties.h>
+
+#include <materials/isotope.h>
+#include <materials/element.h>
+#include <materials/material.h>
 
 #include <stdexcept>
 #include <sstream>
 
 namespace mat {
+
+  using namespace std;
+  using namespace datatools::utils;
 
   bool manager::is_debug () const
   {

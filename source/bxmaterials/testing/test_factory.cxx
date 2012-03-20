@@ -8,6 +8,10 @@
 #include <vector>
 
 #include <materials/factory.h>
+#include <datatools/utils/properties.h>
+#include <materials/isotope.h>
+#include <materials/element.h>
+#include <materials/material.h>
 
 using namespace std;
 
@@ -66,22 +70,22 @@ int main (int argc_, char ** argv_)
 
       mat::isotope_dict_t isotopes;
       {
-	mat::isotope * iso = my_factory.create_isotope ("iso_0", iso_0_conf);
-	iso->tree_dump (clog, "Isotope 0 from the factory: ");
-	isotopes[iso->get_name ()] = mat::smart_ref<mat::isotope> ();
-	isotopes[iso->get_name ()].set_ref (iso);
+        mat::isotope * iso = my_factory.create_isotope ("iso_0", iso_0_conf);
+        iso->tree_dump (clog, "Isotope 0 from the factory: ");
+        isotopes[iso->get_name ()] = mat::smart_ref<mat::isotope> ();
+        isotopes[iso->get_name ()].set_ref (iso);
       }
       {
-	mat::isotope * iso = my_factory.create_isotope ("iso_1", iso_1_conf);
-	iso->tree_dump (clog, "Isotope 1 from the factory: ");
-	isotopes[iso->get_name ()] = mat::smart_ref<mat::isotope> ();
-	isotopes[iso->get_name ()].set_ref (iso);
+        mat::isotope * iso = my_factory.create_isotope ("iso_1", iso_1_conf);
+        iso->tree_dump (clog, "Isotope 1 from the factory: ");
+        isotopes[iso->get_name ()] = mat::smart_ref<mat::isotope> ();
+        isotopes[iso->get_name ()].set_ref (iso);
       }
       {
-	mat::isotope * iso = my_factory.create_isotope ("iso_2", iso_2_conf);
-	iso->tree_dump (clog, "Isotope 2 from the factory: ");
-	isotopes[iso->get_name ()] = mat::smart_ref<mat::isotope> ();
-	isotopes[iso->get_name ()].set_ref (iso);
+        mat::isotope * iso = my_factory.create_isotope ("iso_2", iso_2_conf);
+        iso->tree_dump (clog, "Isotope 2 from the factory: ");
+        isotopes[iso->get_name ()] = mat::smart_ref<mat::isotope> ();
+        isotopes[iso->get_name ()].set_ref (iso);
       }
 
       mat::element_dict_t elements;
@@ -97,12 +101,12 @@ int main (int argc_, char ** argv_)
       elmt_1_conf.store ("isotope.names", iso_names);
       elmt_1_conf.store ("isotope.weights", iso_weights);
       {
-	mat::element * elmt = my_factory.create_element ("elmt_1", 
-							 elmt_1_conf,
-							 isotopes);
-	elmt->tree_dump (clog, "Element 1 from the factory: ");
-	elements[elmt->get_name ()] = mat::smart_ref<mat::element> ();
-	elements[elmt->get_name ()].set_ref (elmt);
+        mat::element * elmt = my_factory.create_element ("elmt_1", 
+                                                         elmt_1_conf,
+                                                         isotopes);
+        elmt->tree_dump (clog, "Element 1 from the factory: ");
+        elements[elmt->get_name ()] = mat::smart_ref<mat::element> ();
+        elements[elmt->get_name ()].set_ref (elmt);
       }
 
       mat::material_dict_t materials;
@@ -118,13 +122,13 @@ int main (int argc_, char ** argv_)
       matl_1_conf.store ("composition.names", compounds_names);
       matl_1_conf.store ("composition.fraction_mass", compounds_masses);
       {
-	mat::material * matl = my_factory.create_material ("matl_1", 
-							   matl_1_conf,
-							   elements,
-							   materials);
-	matl->tree_dump (clog, "Material 1 from the factory: ");
-	materials[matl->get_name ()] = mat::smart_ref<mat::material> ();
-	materials[matl->get_name ()].set_ref (matl);
+        mat::material * matl = my_factory.create_material ("matl_1", 
+                                                           matl_1_conf,
+                                                           elements,
+                                                           materials);
+        matl->tree_dump (clog, "Material 1 from the factory: ");
+        materials[matl->get_name ()] = mat::smart_ref<mat::material> ();
+        materials[matl->get_name ()].set_ref (matl);
       }
       
     } 

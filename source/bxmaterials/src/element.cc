@@ -13,6 +13,8 @@
 
 namespace mat {
 
+  using namespace std;
+
   //________________________________________________________________________// iso_entry ctor
   iso_entry::iso_entry ()
   {

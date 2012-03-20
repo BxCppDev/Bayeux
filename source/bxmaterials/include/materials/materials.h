@@ -83,9 +83,12 @@
 #ifndef __materials__materials_h
 #define __materials__materials_h 1
 
+#include <materials/ch_symbol.h>
 #include <materials/isotope.h>
 #include <materials/element.h>
 #include <materials/material.h>
+#include <materials/factory.h>
+#include <materials/manager.h>
 
 //! \namespace materials
 /* The basic materials namespace.

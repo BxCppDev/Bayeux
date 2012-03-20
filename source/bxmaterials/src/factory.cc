@@ -5,8 +5,18 @@
 #include <materials/factory.h>
 #include <datatools/utils/clhep_units.h>
 #include <datatools/utils/units.h>
+#include <datatools/utils/properties.h>
+#include <materials/detail/tools.h>
+#include <materials/isotope.h>
+#include <materials/element.h>
+#include <materials/material.h>
+#include <iostream>
+#include <stdexcept>
+#include <sstream>
 
 namespace mat {
+
+  using namespace std;
 
   bool factory::is_debug () const
   {

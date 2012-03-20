@@ -21,6 +21,9 @@
 #include <list>
 
 #include <materials/factory.h>
+#include <materials/isotope.h>
+#include <materials/element.h>
+#include <materials/material.h>
 #include <datatools/utils/multi_properties.h>
 #include <geomtools/gdml_writer.h>
 
@@ -35,7 +38,7 @@ namespace mat {
     isotope_dict_t  _isotopes_;
     element_dict_t  _elements_;
     material_dict_t _materials_;
-    list<string>    _ordered_materials_;
+    std::list<string>    _ordered_materials_;
     bool            _locked_;
 
   public:
@@ -62,14 +65,14 @@ namespace mat {
     void unlock ();
 
     //! Print info
-    virtual void tree_dump (ostream & out_         = clog,
-			    const string & title_  = "",
-			    const string & indent_ = "",
-			    bool inherit_          = false) const;
+    virtual void tree_dump (std::ostream & out_    = std::clog,
+                            const string & title_  = "",
+                            const string & indent_ = "",
+                            bool inherit_          = false) const;
 
     void export_gdml (geomtools::gdml_writer & gw_) const;
 
-    void export_gdml (ostream & out_) const;
+    void export_gdml (std::ostream & out_) const;
 
   };
 

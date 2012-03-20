@@ -9,10 +9,12 @@
 #include <sstream>
 #include <materials/ch_symbol.h>
 
-double endfline_to_double (const string & endfline_);
-double ame3line_to_double (const string & ame3_line_);
+double endfline_to_double (const std::string & endfline_);
+double ame3line_to_double (const std::string & ame3_line_);
 
 namespace mat {
+
+  using namespace std;
 
   //________________________________________________________________________// ctor
   isotope::isotope ()
@@ -730,10 +732,11 @@ namespace mat {
 
 
 //________________________________________________________________________
-double endfline_to_double (const string & endf_line)
+double endfline_to_double (const std::string & endf_line)
 {
   //  Convert a string (of size 11) written in endf6 format to a double
   //  3 differents formats
+  using namespace std;
 
   string s_number;
   if(endf_line.find("E")==string::npos)
@@ -762,8 +765,9 @@ double endfline_to_double (const string & endf_line)
 }
 
 //________________________________________________________________________
-double ame3line_to_double(const string & ame3_line)
+double ame3line_to_double(const std::string & ame3_line)
 {
+  using namespace std;
   string s_number;
 
   if( (ame3_line.find("*")) !=string::npos)  s_number="0";

@@ -20,7 +20,7 @@
 #define __materials__element_h 1
 
 #include <string>
-#include <vector>
+//#include <vector>
 #include <map>
 
 #include <datatools/utils/properties.h>
@@ -28,8 +28,7 @@
 
 namespace mat {
 
-  using namespace std;
-  using namespace datatools::utils;
+  namespace du = datatools::utils;
   
   class isotope;
 
@@ -44,7 +43,7 @@ namespace mat {
     bool is_valid () const;
   }; 
 
-  typedef std::map<string, iso_entry> isotope_weight_map_t; 
+  typedef std::map<std::string, iso_entry> isotope_weight_map_t; 
 
   class element : public datatools::utils::i_tree_dumpable
   {
@@ -54,7 +53,7 @@ namespace mat {
 
   protected:
 
-    void _lock_check (const string & where_) const;
+    void _lock_check (const std::string & where_) const;
 
   public:  
 
@@ -67,7 +66,7 @@ namespace mat {
       \param z_ : Z of the element 
       \param build_ : On the fly building 
     */ 
-    element (const string & name_, int z_, bool build_ = false);   
+    element (const std::string & name_, int z_, bool build_ = false);   
     
     //! Normal Constructor. 
     /*!
@@ -76,7 +75,7 @@ namespace mat {
       \param molar_mass_ : Molar mass of the element 
       \param build_ : On the fly building 
     */ 
-    element (const string & name_, int z_, double molar_mass_, bool build_ = false);   
+    element (const std::string & name_, int z_, double molar_mass_, bool build_ = false);   
 
     //! Normal Constructor. 
     /*!
@@ -84,41 +83,41 @@ namespace mat {
       \param symbol_ : Chemical symbol of the element 
       \param build_ : On the fly building 
     */ 
-    element (const  string & name_, const string & symbol_ = "", bool build_ = false); 
+    element (const  std::string & name_, const std::string & symbol_ = "", bool build_ = false); 
 
     virtual ~element ();          //!<  Destructor
    
     /* private attribute */    
   private :   
     
-    string     _name_;            //!<  Name
-    string     _symbol_;          //!<  Chemical symbol of the element 
+    std::string     _name_;            //!<  Name
+    std::string     _symbol_;          //!<  Chemical symbol of the element 
     int        _z_;               //!<  Number of protons of the element   
     isotope_weight_map_t   _composition_;  //!<  Isotopic composition of the element [std::map<string,  iso_entry>]
     double     _molar_mass_;      //!<  Molar mass in [g/mol]     
-    properties _properties_;      //!<  datatools properties
+    du::properties _properties_;      //!<  datatools properties
     bool       _locked_;          //!<  boolean flag : true when composition is validated & derived properties are computed
         
     /* private set & find methods */    
   private :       
      
     //    void   _init_ ();               //!<  Initialize or reinitialize  Z, symbol, composition, molar mass and lock attribute   
-    void   _norm_weights_ ();       //!<  Normalize sum of weights to unity 	                     
+    void   _norm_weights_ ();       //!<  Normalize sum of weights to unity                          
     void   _compute_molar_mass_ (); //!<  Compute molar mass in[g/mol]   
 
     void   _set_molar_mass_ (double molar_mass_);  //!< Set the molar mass in [g/mol]                 
                  
     void   _lock_ ();   //!<  Lock the element : boolean flag '_locked_' is set to true when composition is valid & derived properties are computed.              
-    void   _unlock_ (); //!<  Unlock the element - boolean flag '_locked_' is set to false.       	 
-				     					  	 
+    void   _unlock_ (); //!<  Unlock the element - boolean flag '_locked_' is set to false.              
+                                                                                 
     /* public methods */ 
   public :
     bool   is_built_by_isotopic_composition () const;
 
-    void   set_name (const string  & name_); //!<  Set the name of the element           
+    void   set_name (const std::string  & name_); //!<  Set the name of the element           
     void   set_z (int z_);            //!<  Set the Z (number of protons) & the chemical symbol of the element.   
    
-    void   set_z (const string  & symbol_);  //!<  Set the Z (number of protons) & the chemical symbol of the element.  
+    void   set_z (const std::string  & symbol_);  //!<  Set the Z (number of protons) & the chemical symbol of the element.  
 
     void   set_molar_mass(double molar_mass_); //!<  Set the molar mass of the element.  
 
@@ -134,9 +133,9 @@ namespace mat {
     /* public retrieval methods */
   public : 
       
-    const string & get_name () const {return _name_;}              //!<  Return the name.       
+    const std::string & get_name () const {return _name_;}              //!<  Return the name.       
 
-    const string & get_symbol () const {return _symbol_;}          //!<  Return the chemical symbol. 
+    const std::string & get_symbol () const {return _symbol_;}          //!<  Return the chemical symbol. 
 
     int get_z () const {return _z_;}                    //!<  Return the number of protons (Z).             
 
@@ -149,14 +148,14 @@ namespace mat {
       return _composition_;
     }
 
-    const properties & grab_properties () const {return _properties_;} //!< Get reference of datatools::properties private attribute
+    const du::properties & grab_properties () const {return _properties_;} //!< Get reference of datatools::properties private attribute
 
-    properties & grab_properties () {return _properties_;} //!< Get reference of datatools::properties private attribute
+    du::properties & grab_properties () {return _properties_;} //!< Get reference of datatools::properties private attribute
    
-    virtual void tree_dump (ostream & out_  = clog,  
-			    const string & title_  = "",  
-			    const string & indent_ = "", 
-			    bool inherit_ = false) const;  //!<  print info virtual method
+    virtual void tree_dump (std::ostream & out_  = std::clog,  
+                            const std::string & title_  = "",  
+                            const std::string & indent_ = "", 
+                            bool inherit_ = false) const;  //!<  print info virtual method
 
 
   }; // end of class element

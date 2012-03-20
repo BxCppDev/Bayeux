@@ -29,8 +29,9 @@
 
 namespace mat {
 
-  using namespace std;
-  using namespace datatools::utils;
+  // using namespace std;
+  // using namespace datatools::utils;
+  namespace du = datatools::utils;
 
   class material;
   class element;
@@ -48,7 +49,7 @@ namespace mat {
     bool is_valid () const;
   };
 
-  typedef std::map<string, compound_entry>   composition_map_t;
+  typedef std::map<std::string, compound_entry>   composition_map_t;
 
   class material : public datatools::utils::i_tree_dumpable
   {
@@ -61,13 +62,13 @@ namespace mat {
 
     enum proportion_unit_type
       {
-	KP_UNDEFINED = -1,
-	KP_ATOM = 0,
-	NUMBER_OF_ATOMS = 0,
-	KP_MASS = 1,
-	FRACTION_MASS = 1,
-	KP_ZA = 2,
-	MEAN_ZA = 2
+        KP_UNDEFINED = -1,
+        KP_ATOM = 0,
+        NUMBER_OF_ATOMS = 0,
+        KP_MASS = 1,
+        FRACTION_MASS = 1,
+        KP_ZA = 2,
+        MEAN_ZA = 2
       };
 
       static const double g_per_cm3;
@@ -81,13 +82,13 @@ namespace mat {
     /*!
       \param name_ : Name of the material
     */
-    material (const string & name_);
+    material (const std::string & name_);
 
     virtual ~material ();          //!<  Destructor
 
   private :
 
-    void _lock_check_ (const string & where_) const;
+    void _lock_check_ (const std::string & where_) const;
 
     void _compute_molar_mass_ ();         //!<  Compute molar mass in[g/mol]
     void _lock_ ();                       //!<  Lock the element : boolean flag '_locked_' is set to true
@@ -103,9 +104,9 @@ namespace mat {
 
     const composition_map_t &  get_composition () const;   //!<  access to the composition map
 
-    const string & get_name () const;
+    const std::string & get_name () const;
 
-    void set_name (const string &);
+    void set_name (const std::string &);
 
     double get_mean_z () const;
 
@@ -156,18 +157,18 @@ namespace mat {
 
      bool is_locked () const {return _locked_;} //!<  Return true if composition is valid, weights are normalized and molar mass is computed.
 
-    const properties & grab_properties () const {return _properties_;} //!< Get reference of datatools::properties private attribute
+    const du::properties & grab_properties () const {return _properties_;} //!< Get reference of datatools::properties private attribute
 
-    properties & grab_properties () {return _properties_;} //!< Get reference of datatools::properties private attribute
+    du::properties & grab_properties () {return _properties_;} //!< Get reference of datatools::properties private attribute
 
-    virtual void tree_dump (ostream & out_  = clog,
-			    const string & title_  = "",
-			    const string & indent_ = "",
-			    bool inherit_ = false) const;  //!<  print info virtual method
+    virtual void tree_dump (std::ostream & out_  = std::clog,
+                            const std::string & title_  = "",
+                            const std::string & indent_ = "",
+                            bool inherit_ = false) const;  //!<  print info virtual method
 
    private:
 
-    string     _name_;    //!< Name
+    std::string     _name_;    //!< Name
     double     _density_; //!< Density
     double     _mean_z_;  //!< Mean atomic number
     double     _mean_a_;  //!< Mean mass number
@@ -177,7 +178,7 @@ namespace mat {
     proportion_unit_type _proportion_unit_; //!< KP_ATOM (number of atoms by molecule) or KP_MASS (% mass)
     composition_map_t   _composition_;      //!<  composition of the material [std::map<string, compound_entry>]
 
-    properties _properties_;                //!< datatools properties
+    du::properties _properties_;                //!< datatools properties
     bool       _locked_;                    //!< boolean flags : true when composition is validated & derived properties are computed
 
   };

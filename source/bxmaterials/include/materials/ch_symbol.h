@@ -28,8 +28,6 @@
 
 #include <string>
 
-using namespace std;
-
 namespace mat {
 
   class chemical_symbol 
@@ -38,11 +36,11 @@ namespace mat {
     
     static const unsigned int NB_CHEMICAL_SYMBOLS = 119;
   
-    static const string table[NB_CHEMICAL_SYMBOLS];
+    static const std::string table[NB_CHEMICAL_SYMBOLS];
 
-    static int z_from_symbol (const string & symbol_);
+    static int z_from_symbol (const std::string & symbol_);
     
-    static const string & symbol_from_z (int z_);
+    static const std::string & symbol_from_z (int z_);
 
   };
 
