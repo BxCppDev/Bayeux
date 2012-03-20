@@ -27,26 +27,24 @@ class TTree;
 
 namespace brio {
 
-  using namespace std;
-
   /// A class that contains internal dynamic informations for a given \e store
   class store_info
   {
   public:
 
-    static const string BRIO_FILE_EXTENSION;
-    static const string TRIO_FILE_EXTENSION;
-    static const string DEFAULT_FILE_EXTENSION;
-    static const string DEFAULT_STORE_TITLE;
-    static const string AUTOMATIC_STORE_LABEL;
+    static const std::string BRIO_FILE_EXTENSION;
+    static const std::string TRIO_FILE_EXTENSION;
+    static const std::string DEFAULT_FILE_EXTENSION;
+    static const std::string DEFAULT_STORE_TITLE;
+    static const std::string AUTOMATIC_STORE_LABEL;
     static const size_t DEFAULT_STORE_BUFFER_SIZE;
     static const size_t DEFAULT_STREAM_BUFFER_SIZE;
-    static const string POSTPONED_DEDICATED_SERIAL_TAG_LABEL;
-    static const string NO_DEDICATED_SERIAL_TAG_LABEL;
+    static const std::string POSTPONED_DEDICATED_SERIAL_TAG_LABEL;
+    static const std::string NO_DEDICATED_SERIAL_TAG_LABEL;
 
   public:
-    const string & get_label () const;
-    const string & get_serialization_tag () const;
+    const std::string & get_label () const;
+    const std::string & get_serialization_tag () const;
     bool has_dedicated_serialization_tag () const;
     bool has_entries () const;
     store_info ();
@@ -72,19 +70,19 @@ namespace brio {
 
   public:
     // make all attributes public:
-    string       label; /// the label (name) of the \e store
-    string       serialization_tag; /// the serialization tag associated to the object stored in the \e store
+    std::string       label; /// the label (name) of the \e store
+    std::string       serialization_tag; /// the serialization tag associated to the object stored in the \e store
     size_t       bufsize; /// the size of the output buffer (used only by the writer)
     TTree *      tree; /// the embedded ROOT tree
     brio_record  record; /// the current brio record ro be (de)serialized
     brio_record * p_record;
-    vector<char> buffer; /// the input buffer (used only by the writer)
+    std::vector<char> buffer; /// the input buffer (used only by the writer)
     int64_t      number_of_entries; /// the number of entries in the \e store
     int64_t      current_entry; /// the current entry number in the \e store
 
   };
 
-  typedef map<string, store_info> store_info_dict_t;
+  typedef std::map<std::string, store_info> store_info_dict_t;
 
 } // end of namespace brio
 

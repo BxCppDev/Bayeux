@@ -16,3 +16,7 @@
 2012-01-09 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
 	* use 'boost/math/special_functions/nonfinite_num_facets.hpp' from
 	Boost 1.47.0
+2012-03-20 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* version: prepare tag 3.1.0 in trunk
+	* depends: datatools >=4.1
+	* remove all "using namespace std;" from header files

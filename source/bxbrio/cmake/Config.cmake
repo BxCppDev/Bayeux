@@ -22,7 +22,7 @@
 
 # setup version numbers
 set ( brio_VERSION_MAJOR 3 )
-set ( brio_VERSION_MINOR 0 )
+set ( brio_VERSION_MINOR 1 )
 set ( brio_PATCH_VERSION 0 )
 set ( brio_VERSION_STR "${brio_VERSION_MAJOR}.${brio_VERSION_MINOR}.${brio_PATCH_VERSION}" )
 math ( EXPR brio_VERSION_NUMERIC "${brio_VERSION_MAJOR}*100000+${brio_VERSION_MINOR}*100+${brio_PATCH_VERSION}" )

@@ -34,8 +34,6 @@
 
 namespace brio {
 
-  using namespace std;
-
   /// The brio generic writer class
   class writer : public base_io
   {    
@@ -72,15 +70,15 @@ namespace brio {
     void set_existing_file_protected (bool a_new_value = true);
   
     // File open/close operations:
-    //void open (const string & filename_);
+    //void open (const std::string & filename_);
 
     //void close ();
   
   private:
 
-    void __only_if_unlocked (const string & a_where) const;
+    void __only_if_unlocked (const std::string & a_where) const;
 
-    void __only_if_locked (const string & a_where) const;
+    void __only_if_locked (const std::string & a_where) const;
 
   protected:
 
@@ -92,16 +90,16 @@ namespace brio {
     writer ();
 
     // ctor:
-    writer (const string & a_filename, 
-	    bool a_verbose = false, 
-	    bool a_debug = false);
+    writer (const std::string & a_filename, 
+            bool a_verbose = false, 
+            bool a_debug = false);
 
 
     // ctor:
-    writer (const string & a_filename, 
-	    const string & a_format_str,
-	    bool a_verbose = false, 
-	    bool a_debug = false);
+    writer (const std::string & a_filename, 
+            const std::string & a_format_str,
+            bool a_verbose = false, 
+            bool a_debug = false);
 
     // dtor:
     virtual ~writer ();
@@ -110,85 +108,85 @@ namespace brio {
 
     // Utilities:
     virtual void tree_dump (std::ostream & a_out = std::clog, 
-			    const std::string & a_title = "", 
-			    const std::string & a_indent = "", 
-			    bool a_inherit = false) const;
+                            const std::string & a_title = "", 
+                            const std::string & a_indent = "", 
+                            bool a_inherit = false) const;
 
-    void print_info (ostream & a_out = clog) const;
+    void print_info (std::ostream & a_out = std::clog) const;
 
     /** Add a new store with label 'label_'
      *  to store objects with a dedicated serialization tag 'serial_tag_':
      */
-    int add_store (const string & a_label, 
-		   const string & a_serial_tag,
-		   size_t a_buffer_size = 256000);
+    int add_store (const std::string & a_label, 
+                   const std::string & a_serial_tag,
+                   size_t a_buffer_size = 256000);
 
-    int add_store (const string & a_label, 
-		   size_t a_buffer_size = 256000);
+    int add_store (const std::string & a_label, 
+                   size_t a_buffer_size = 256000);
 
-    int add_mixed_store (const string & a_label, 
-			 size_t a_buffer_size = store_info::DEFAULT_STORE_BUFFER_SIZE);
+    int add_mixed_store (const std::string & a_label, 
+                         size_t a_buffer_size = store_info::DEFAULT_STORE_BUFFER_SIZE);
 
   protected:
 
-    store_info * _add_store (const string & a_label, 
-			     const string & a_serial_tag,
-			     size_t a_buffer_size);
+    store_info * _add_store (const std::string & a_label, 
+                             const std::string & a_serial_tag,
+                             size_t a_buffer_size);
 
-    virtual void _at_open (const string & a_filename);
+    virtual void _at_open (const std::string & a_filename);
 
   public:
 
     // Main store template method:
     template<class T>
-    int store (const T & a_data, const string & a_label = "")
+    int store (const T & a_data, const std::string & a_label = "")
     {
       _only_if_opened ("brio::writer::store");
       store_info * ptr_si = _get_store_info (a_label);
       if (ptr_si == 0)
-	{
-	  if (a_label.empty ())
-	    {
-	      // if we do not allow automatic store, this is a critical error:
-	      if (! _allow_automatic_store_)
-		{
-		  ostringstream message;
-		  message << "brio::writer::store: "
-			  << "No target store is selected nor target !";
-		  throw logic_error (message.str ());
-		}
-	      else
-		{
-		  ptr_si = _add_store (store_info::AUTOMATIC_STORE_LABEL, 
-				       a_data.get_serial_tag (),
-				       store_info::DEFAULT_STORE_BUFFER_SIZE);
-		}
-	    }
-	  else
-	    {
-	      ptr_si =_add_store (a_label, 
-				  a_data.get_serial_tag (),
-				  store_info::DEFAULT_STORE_BUFFER_SIZE);
-	    }
-	}
+        {
+          if (a_label.empty ())
+            {
+              // if we do not allow automatic store, this is a critical error:
+              if (! _allow_automatic_store_)
+                {
+                  std::ostringstream message;
+                  message << "brio::writer::store: "
+                          << "No target store is selected nor target !";
+                  throw std::logic_error (message.str ());
+                }
+              else
+                {
+                  ptr_si = _add_store (store_info::AUTOMATIC_STORE_LABEL, 
+                                       a_data.get_serial_tag (),
+                                       store_info::DEFAULT_STORE_BUFFER_SIZE);
+                }
+            }
+          else
+            {
+              ptr_si =_add_store (a_label, 
+                                  a_data.get_serial_tag (),
+                                  store_info::DEFAULT_STORE_BUFFER_SIZE);
+            }
+        }
 
       // Final check:
       if (ptr_si == 0)
-	{
-	  ostringstream message;
-	  message << "brio::writer::store: "
-		  << "Could not determine any store to save data !";
-	  throw logic_error (message.str ());
-	}
+        {
+          std::ostringstream message;
+          message << "brio::writer::store: "
+                  << "Could not determine any store to save data !";
+          throw std::logic_error (message.str ());
+        }
 
       if (is_debug())
-	{
-	  cerr << "DEBUG: " << "brio::writer::_at_store: "
-	       << "ptr_si = " << hex << ptr_si << dec << endl;
-	  cerr << "DEBUG: " << "brio::writer::_at_store: "
-	       << "Using store with label '" << ptr_si->label << "'..." << endl;
-	  ptr_si->tree->Print ();
-	}
+        {
+          std::cerr << "DEBUG: " << "brio::writer::_at_store: "
+               << "ptr_si = " << std::hex << ptr_si << std::dec << std::endl;
+          std::cerr << "DEBUG: " << "brio::writer::_at_store: "
+               << "Using store with label '" << ptr_si->label << "'..." << std::endl;
+          ptr_si->tree->Print ();
+        }
  
       return _at_store<T> (a_data, ptr_si);
     }
@@ -199,35 +197,35 @@ namespace brio {
     int _at_store (const T & a_data, store_info * a_store_info)
     {
       if (is_debug ())
-	{
-	  cerr << "DEBUG: " << "brio::writer::_at_store: "
-	       << "Entering..." << endl;
-	}
+        {
+          std::cerr << "DEBUG: " << "brio::writer::_at_store: "
+               << "Entering..." << std::endl;
+        }
       store_info * ptr_si = a_store_info;
 
       // The first serialized object sets the serialization tag for this store:
       if (ptr_si->serialization_tag == store_info::POSTPONED_DEDICATED_SERIAL_TAG_LABEL)
-	{
-	  ptr_si->serialization_tag = a_data.get_serial_tag ();
-	}
+        {
+          ptr_si->serialization_tag = a_data.get_serial_tag ();
+        }
       // Else if the store has a dedicated serialization tag:
       else if (ptr_si->has_dedicated_serialization_tag ())
-	{
-	  // Check if the data serialization tag matches the one requested by the store:
-	  if (a_data.get_serial_tag () != ptr_si->get_serialization_tag ())
-	    {
-	      ostringstream message;
-	      message << "brio::writer::_at_store: "
-		      << "Serialization tag mismatch ! "
-		      << "Attempt to store an object with `" << a_data.get_serial_tag () 
-		      << "' serialization tag "
-		      << "in the store labelled '" << ptr_si->label << "' with dedicated `"
-		      << ptr_si->get_serialization_tag () << "' serialization tag !";
-	      throw logic_error (message.str ());
-	    }     
-	}
+        {
+          // Check if the data serialization tag matches the one requested by the store:
+          if (a_data.get_serial_tag () != ptr_si->get_serialization_tag ())
+            {
+              std::ostringstream message;
+              message << "brio::writer::_at_store: "
+                      << "Serialization tag mismatch ! "
+                      << "Attempt to store an object with `" << a_data.get_serial_tag () 
+                      << "' serialization tag "
+                      << "in the store labelled '" << ptr_si->label << "' with dedicated `"
+                      << ptr_si->get_serialization_tag () << "' serialization tag !";
+              throw std::logic_error (message.str ());
+            }     
+        }
 
-      // Prepare the (vector<char>) buffer to host the binary archive as a sequence of bytes: 
+      // Prepare the (std::vector<char>) buffer to host the binary archive as a sequence of bytes: 
       typedef std::vector<char> buffer_type;
 
       /* Clear the buffer of characters for streaming but 
@@ -235,43 +233,43 @@ namespace brio {
        * class from the STL library):
        */
       if (! ptr_si->buffer.empty ())
-	{
-	  ptr_si->buffer.clear ();
-	}
+        {
+          ptr_si->buffer.clear ();
+        }
       else if (ptr_si->buffer.capacity () == 0)
-	{
-	  // Ensure minimum starting capacity of the buffer of characters for streaming
-	  // in order to optimize possible memory reallocation:
-	  ptr_si->buffer.reserve (store_info::DEFAULT_STREAM_BUFFER_SIZE);
-	}
+        {
+          // Ensure minimum starting capacity of the buffer of characters for streaming
+          // in order to optimize possible memory reallocation:
+          ptr_si->buffer.reserve (store_info::DEFAULT_STREAM_BUFFER_SIZE);
+        }
 
       // Archiving is redirected to the buffer:
       namespace io = boost::iostreams;
       io::stream<io::back_insert_device<buffer_type> > output_stream (ptr_si->buffer);
       // 2011-06-16 FM: restored 
       if (is_format_pba ())
-	{
-	  boost::archive::portable_binary_oarchive oa (output_stream);   
-	  oa << a_data;
-	}
+        {
+          boost::archive::portable_binary_oarchive oa (output_stream);   
+          oa << a_data;
+        }
       if (is_format_text ())
-	{
-	  output_stream.imbue (*_locale);
-	  boost::archive::text_oarchive oa (output_stream);
-	  oa << a_data;
-	}
+        {
+          output_stream.imbue (*_locale);
+          boost::archive::text_oarchive oa (output_stream);
+          oa << a_data;
+        }
      output_stream.flush ();
 
       // Now the buffer contains the final sequence of bytes corresponding to 
       // the serialized output binary archive:
       if (is_debug ())
-	{
-	  cerr << "DEBUG: " <<  "brio::writer::_at_store: "
-	       << "buffer size = " 
-	       << ptr_si->buffer.size ()
-	       << "   buffer capacity = " 
-	       << ptr_si->buffer.capacity () << endl;
-	}
+        {
+          std::cerr << "DEBUG: " <<  "brio::writer::_at_store: "
+               << "buffer size = " 
+               << ptr_si->buffer.size ()
+               << "   buffer capacity = " 
+               << ptr_si->buffer.capacity () << std::endl;
+        }
 
       // Prepare the container interface to be streamed using the ROOT I/O system:
       ptr_si->record.fSerialTag  = a_data.get_serial_tag ().c_str ();
@@ -294,10 +292,10 @@ namespace brio {
       _current_store = ptr_si;
 
       if (is_debug ())
-	{
-	  cerr << "DEBUG: " << "brio::writer::_at_store: "
-	       << "Exiting." << endl;
-	}
+        {
+          std::cerr << "DEBUG: " << "brio::writer::_at_store: "
+               << "Exiting." << std::endl;
+        }
       return 0;
     }
 
