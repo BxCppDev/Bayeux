@@ -142,7 +142,7 @@ else ()
     endif ()
 endif ()
 
-set ( _geomtools_min_version 3.0 )
+set ( _geomtools_min_version 3.1 )
 find_package ( geomtools ${_geomtools_min_version} REQUIRED NO_MODULE )
 if ( DEFINED geomtools_CONFIG )
        message ( STATUS "${PROJECT_NAME}: Found geomtools >= ${_geomtools_min_version}" )

@@ -52,8 +52,6 @@
 
 namespace genbb {
 
-  using namespace std;
-
   struct primary_particle 
     : DATATOOLS_SERIALIZABLE_CLASS 
   {
@@ -92,10 +90,10 @@ namespace genbb {
 
     double get_time () const;
 
-    const string & get_particle_label () const;
+    const std::string & get_particle_label () const;
 
     // Only if particle type == UNDEF:
-    void set_particle_label (const string &);
+    void set_particle_label (const std::string &);
 
     void set_time (double time_);
 
@@ -144,25 +142,25 @@ namespace genbb {
 
     // ctor:
     primary_particle (int32_t a_type, 
-		      double a_time, 
-		      const geomtools::vector_3d &);
+                      double a_time, 
+                      const geomtools::vector_3d &);
 
     // dtor:
     virtual ~primary_particle ();
 
-    void dump (ostream & out_ = clog, 
-	       const string & a_indent = "") const;
+    void dump (std::ostream & out_ = std::clog, 
+               const std::string & a_indent = "") const;
  
-    static string get_label (int a_type);
+    static std::string get_label (int a_type);
 
-    static string get_particle_label_from_type (int a_type);
+    static std::string get_particle_label_from_type (int a_type);
    
-    static int get_particle_type_from_label (const string & a_label);
+    static int get_particle_type_from_label (const std::string & a_label);
 
   public:
     
     int32_t              type;
-    string               particle_label;
+    std::string          particle_label;
     double               mass;     // CLHEP energy unit
     double               time;     // CLHEP time unit
     geomtools::vector_3d momentum; // CLHEP momentum unit

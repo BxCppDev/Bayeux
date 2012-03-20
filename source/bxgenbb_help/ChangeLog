@@ -20,6 +20,10 @@
 	* version 2.2
 2012-02-14  François Mauger <mauger@lpccaen.in2p3.fr>
         * CMake new build system
-	* Use CMake Fortran/C++ interface
+	- use CMake Fortran/C++ interface
+2012-03-20 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+        * remove all "using namespace std;" from header files
+        * version: prepare tag 4.1.0 in trunk
+	* depends on geomtools 3.1
 
 

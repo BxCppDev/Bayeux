@@ -44,8 +44,6 @@
 
 namespace genbb {
 
-  using namespace std;
-
   class genbb : public i_genbb
   {
   public:
@@ -76,17 +74,17 @@ namespace genbb {
 
     void set_delete_tmp_dir (bool);
 
-    void set_tmp_dir (const string &);
+    void set_tmp_dir (const std::string &);
 
-    void set_tmp_base_dir (const string &);
+    void set_tmp_base_dir (const std::string &);
 
     const mygsl::rng & get_random () const;
 
     mygsl::rng & get_random ();
 
-    const string & get_tmp_base_dir () const;
+    const std::string & get_tmp_base_dir () const;
 
-    string get_tmp_dir () const;
+    std::string get_tmp_dir () const;
 
     size_t get_buffer_size () const;
 
@@ -105,7 +103,7 @@ namespace genbb {
   protected:
 
     virtual void _load_next (primary_event & event_, 
-			    bool compute_classification_ = true);
+                            bool compute_classification_ = true);
 
   private:
 
@@ -126,19 +124,19 @@ namespace genbb {
     bool   _delete_tmp_dir_;
 
     int    _decay_type_;
-    string _decay_isotope_;  
+    std::string _decay_isotope_;  
     int    _decay_dbd_level_;  
     int    _decay_dbd_mode_;  
 
-    ifstream * _genbb_in_;
+    std::ifstream * _genbb_in_;
     bool       _test_;
-    string     _tmp_base_dir_;
-    string     _forced_tmp_dir_;
+    std::string     _tmp_base_dir_;
+    std::string     _forced_tmp_dir_;
     char       _tmp_dir_[TMP_DIR_BUFSZ];
-    string     _genbb_conf_;
-    string     _genbb_data_;
-    string     _genbb_log_;
-    ofstream   _genbb_conf_file_;
+    std::string     _genbb_conf_;
+    std::string     _genbb_data_;
+    std::string     _genbb_log_;
+    std::ofstream   _genbb_conf_file_;
     unsigned long _seed_;
     mygsl::rng    _random_;
 

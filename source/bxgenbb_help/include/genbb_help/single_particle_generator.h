@@ -46,30 +46,28 @@
 
 namespace genbb {
 
-  using namespace std;
-
   class single_particle_generator : public i_genbb
   {
   public:
 
     enum mode_type
       {
-	MODE_INVALID         = -1,
-	MODE_MONOKINETIC     =  0,
-	MODE_GAUSSIAN_ENERGY =  1,
-	MODE_ENERGY_RANGE    =  2,
-	MODE_SPECTRUM        =  3,
-	MODE_DEFAULT         =  MODE_MONOKINETIC
+        MODE_INVALID         = -1,
+        MODE_MONOKINETIC     =  0,
+        MODE_GAUSSIAN_ENERGY =  1,
+        MODE_ENERGY_RANGE    =  2,
+        MODE_SPECTRUM        =  3,
+        MODE_DEFAULT         =  MODE_MONOKINETIC
       };
 
     enum spectrum_mode_type
       {
-	SPECTRUM_MODE_TABFUNC = 0,
-	SPECTRUM_MODE_HISTPDF = 1
+        SPECTRUM_MODE_TABFUNC = 0,
+        SPECTRUM_MODE_HISTPDF = 1
       };
 
   protected:
-    void _check_locked (const string & where_) const;
+    void _check_locked (const std::string & where_) const;
 
   public:
     bool is_debug () const;
@@ -77,8 +75,8 @@ namespace genbb {
     bool is_initialized () const;
     bool is_randomized_direction () const;
     void set_randomized_direction (bool);
-    const string & get_particle_name () const;
-    void set_particle_name (const string &);
+    const std::string & get_particle_name () const;
+    void set_particle_name (const std::string &);
     double get_particle_mass () const;
     void set_particle_mass (double);
     const mygsl::rng & get_random () const;
@@ -95,7 +93,7 @@ namespace genbb {
     double get_max_energy () const;
     void set_energy_range (double min_, double max_);
 
-    void set_energy_spectrum_filename (const string & filename_);
+    void set_energy_spectrum_filename (const std::string & filename_);
 
   protected:
 
@@ -119,7 +117,7 @@ namespace genbb {
   protected:
 
     virtual void _load_next (primary_event & event_,
-			     bool compute_classification_ = true) ;
+                             bool compute_classification_ = true) ;
   private:
 
     void _at_init_ ();
@@ -128,16 +126,16 @@ namespace genbb {
 
   public:
 
-    static double get_particle_mass_from_label (const string & particle_name_);
+    static double get_particle_mass_from_label (const std::string & particle_name_);
 
-    static bool particle_name_is_valid (const string & particle_name_);
+    static bool particle_name_is_valid (const std::string & particle_name_);
 
   private:
 
     bool   _debug_;
     bool   _initialized_;
     int    _particle_type_;
-    string _particle_name_;
+    std::string _particle_name_;
     double _particle_mass_;
     int    _mode_;
     double _mean_energy_;
@@ -146,8 +144,8 @@ namespace genbb {
     double _max_energy_;
 
     int    _spectrum_mode_;
-    string _spectrum_interpolation_name_;
-    string _energy_spectrum_filename_;
+    std::string _spectrum_interpolation_name_;
+    std::string _energy_spectrum_filename_;
     mygsl::tabulated_function _energy_spectrum_;
     mygsl::von_neumann_method _vnm_;
     mygsl::histogram          _energy_histo_;

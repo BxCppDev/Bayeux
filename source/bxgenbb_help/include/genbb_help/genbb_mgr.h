@@ -48,20 +48,18 @@
 
 namespace genbb {
 
-  using namespace std;
-
   class genbb_mgr : public i_genbb
   {
   public:
 
     enum format_type
       {
-	FORMAT_GENBB = 0,
-	FORMAT_BOOST = 1
+        FORMAT_GENBB = 0,
+        FORMAT_BOOST = 1
       };
 
-    static const string FORMAT_GENBB_LABEL;
-    static const string FORMAT_BOOST_LABEL;
+    static const std::string FORMAT_GENBB_LABEL;
+    static const std::string FORMAT_BOOST_LABEL;
 
   public: 
 
@@ -75,7 +73,7 @@ namespace genbb {
 
     void set_format (int format_ = FORMAT_GENBB);
 
-    void set_format (const string & format_ = FORMAT_GENBB_LABEL);
+    void set_format (const std::string & format_ = FORMAT_GENBB_LABEL);
 
     bool is_format_genbb () const;
 
@@ -87,7 +85,7 @@ namespace genbb {
     // dtor:
     virtual ~genbb_mgr ();
   
-    void set (const string & filename_);
+    void set (const std::string & filename_);
 
     void init ();
 
@@ -103,7 +101,7 @@ namespace genbb {
 
     // from 'i_genbb' interface:
     virtual void _load_next (primary_event & event_, 
-			     bool compute_classification_ = true);
+                             bool compute_classification_ = true);
 
   public:
 
@@ -125,11 +123,11 @@ namespace genbb {
 
     bool _debug_;
     bool _initialized_;
-    list<string> _filenames_;
-    string      _current_filename_;
+    std::list<std::string> _filenames_;
+    std::string      _current_filename_;
     int         _format_;
-    istream * _in_;
-    ifstream  _fin_;
+    std::istream * _in_;
+    std::ifstream  _fin_;
     datatools::serialization::data_reader _reader_;
     primary_event  _current_;
 

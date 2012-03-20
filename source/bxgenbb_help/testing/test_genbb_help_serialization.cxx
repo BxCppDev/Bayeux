@@ -24,52 +24,54 @@
 
 #include <datatools/serialization/io_factory.h>
 
+using namespace std;
+
 int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
   try 
     {
-	
+        
       {
-	// declare the 'bag1' instance as a 'things' container:
-	datatools::utils::things bag1 ("bag1", "A bag with things in it");	
-	bag1.add<geomtools::geom_id> ("g0");
-	
-	geomtools::geom_id & gg1 = bag1.add<geomtools::geom_id> ("g1");
-	gg1.set_type (666);
-	gg1.set_address (0, 1, 2);
-	
-	geomtools::geom_id & gg2 = bag1.add<geomtools::geom_id> ("g2");
-	gg2.set_type (999);
-	gg2.set_address (4, 3, 2, 1, 0);
-	
-	datatools::utils::properties & p1 = bag1.add<datatools::utils::properties> ("p1", "A property store");
-	p1.set_description ("A list of properties");
-	p1.store_flag ("fake");
-	genbb::primary_event & e1 = bag1.add<genbb::primary_event> ("e1", "An event");
-	e1.set_time (1.23456 * CLHEP::ns);
+        // declare the 'bag1' instance as a 'things' container:
+        datatools::utils::things bag1 ("bag1", "A bag with things in it");      
+        bag1.add<geomtools::geom_id> ("g0");
+        
+        geomtools::geom_id & gg1 = bag1.add<geomtools::geom_id> ("g1");
+        gg1.set_type (666);
+        gg1.set_address (0, 1, 2);
+        
+        geomtools::geom_id & gg2 = bag1.add<geomtools::geom_id> ("g2");
+        gg2.set_type (999);
+        gg2.set_address (4, 3, 2, 1, 0);
+        
+        datatools::utils::properties & p1 = bag1.add<datatools::utils::properties> ("p1", "A property store");
+        p1.set_description ("A list of properties");
+        p1.store_flag ("fake");
+        genbb::primary_event & e1 = bag1.add<genbb::primary_event> ("e1", "An event");
+        e1.set_time (1.23456 * CLHEP::ns);
 
-	string filename = "test_things.txt";
-	namespace ds = datatools::serialization;
-	ds::data_writer writer;
-	writer.init (filename, ds::using_multi_archives);
-	writer.store (bag1);							
+        string filename = "test_things.txt";
+        namespace ds = datatools::serialization;
+        ds::data_writer writer;
+        writer.init (filename, ds::using_multi_archives);
+        writer.store (bag1);                                                    
       }
-	
+        
       {
-	// declare the 'bag1' instance as a 'things' container:
-	datatools::utils::things bag1;
+        // declare the 'bag1' instance as a 'things' container:
+        datatools::utils::things bag1;
 
-	string filename = "test_things.txt";
-	namespace ds = datatools::serialization;
-	ds::data_reader reader;
-	reader.init (filename, ds::using_multi_archives);
-	reader.load (bag1);							
+        string filename = "test_things.txt";
+        namespace ds = datatools::serialization;
+        ds::data_reader reader;
+        reader.init (filename, ds::using_multi_archives);
+        reader.load (bag1);                                                     
 
-	bag1.tree_dump (clog, "Bag (reload) : ");
+        bag1.tree_dump (clog, "Bag (reload) : ");
 
-	const genbb::primary_event & e1 = bag1.get<genbb::primary_event> ("e1");
-	e1.dump (clog, "Primary event : ");
+        const genbb::primary_event & e1 = bag1.get<genbb::primary_event> ("e1");
+        e1.dump (clog, "Primary event : ");
 
       }
     }

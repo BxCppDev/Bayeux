@@ -68,8 +68,6 @@ typedef ENRANGE_t ENRANGE_DEF;
 
 namespace genbb {
 
-  using namespace std;
-
   class wgenbb : public i_genbb
   {
   public:
@@ -83,7 +81,7 @@ namespace genbb {
 
   private:
 
-    void _set_decay_isotope_ (const string & di_);
+    void _set_decay_isotope_ (const std::string & di_);
 
   public:
 
@@ -120,7 +118,7 @@ namespace genbb {
 
   public:
 
-    void dump (ostream & = clog) const;
+    void dump (std::ostream & = std::clog) const;
 
   private:
 
@@ -138,7 +136,7 @@ namespace genbb {
     bool   _initialized_;
 
     int    _decay_type_;
-    string _decay_isotope_;  
+    std::string _decay_isotope_;  
     char   _c_decay_isotope_[32];
     int    _decay_dbd_level_;  
     int    _decay_dbd_mode_;  
