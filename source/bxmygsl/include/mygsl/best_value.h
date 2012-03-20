@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-using namespace std;
+//using   namespace std;
 
 namespace mygsl {
  
@@ -48,19 +48,19 @@ namespace mygsl {
       best_value (double value_);
 
       best_value (double value_, 
-		  double error_);
+                  double error_);
 
       best_value (double value_, 
-		  double error_, 
-		  double CL_);
+                  double error_, 
+                  double CL_);
 
       best_value (double value_, 
-		  double error_low_, 
-		  double error_high_,
-		  double CL_);
+                  double error_low_, 
+                  double error_high_,
+                  double CL_);
     };
 
-  ostream & operator<< (ostream & out_, const best_value & bv_);
+  std::ostream & operator<< (std::ostream & out_, const best_value & bv_);
 
 } // namespace mygsl
 

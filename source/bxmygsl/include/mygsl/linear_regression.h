@@ -57,35 +57,35 @@ namespace mygsl {
 
     linear_regression ();
 
-    linear_regression (const vector<datapoint> & p_);
+    linear_regression (const std::vector<datapoint> & p_);
 
     linear_regression (size_t npoints_, 
                        const double * x_, 
                        const double * y_, 
                        const double * w_ = 0);
 
-    linear_regression (const vector<double> & x_, 
-                       const vector<double> & y_, 
-                       const vector<double> & w_);
+    linear_regression (const std::vector<double> & x_, 
+                       const std::vector<double> & y_, 
+                       const std::vector<double> & w_);
 
-    linear_regression (const vector<double> & x_, 
-                       const vector<double> & y_);
+    linear_regression (const std::vector<double> & x_, 
+                       const std::vector<double> & y_);
       
     virtual ~linear_regression ();
 
-    void init (const vector<datapoint> & p_);
+    void init (const std::vector<datapoint> & p_);
 
     void init (size_t npoints_, 
                const double * x_, 
                const double * y_, 
                const double * w_ = 0);
 
-    void init (const vector<double> & x_, 
-               const vector<double> & y_, 
-               const vector<double> & w_);
+    void init (const std::vector<double> & x_, 
+               const std::vector<double> & y_, 
+               const std::vector<double> & w_);
 
-    void init (const vector<double> & x_, 
-               const vector<double> & y_);
+    void init (const std::vector<double> & x_, 
+               const std::vector<double> & y_);
 
     void reset ();
 

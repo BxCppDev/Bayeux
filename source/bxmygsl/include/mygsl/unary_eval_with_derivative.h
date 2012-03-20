@@ -21,7 +21,7 @@
 #include <mygsl/unary_eval.h>
 #include <mygsl/interval.h>
 
-using namespace std;
+//using namespace   std;
 
 namespace mygsl {
 

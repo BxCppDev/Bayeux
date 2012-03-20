@@ -9,6 +9,7 @@
 
 int main (int argc_ , char ** argv_)
 {
+  using namespace std;
   try  
     {
       mygsl::polynomial p0 (7.5);
@@ -21,44 +22,44 @@ int main (int argc_ , char ** argv_)
 
       bool test = true;
       if (test) 
-	{
-	  double dx = 0.1;
+        {
+          double dx = 0.1;
 
-	  for (double x = 0.0; x < 10.0; x += dx)
-	    {
-	      cout << x << ' ' << p0 (x) << endl;
-	    }
-	  cout << endl;
-	  cout << endl;
+          for (double x = 0.0; x < 10.0; x += dx)
+            {
+              cout << x << ' ' << p0 (x) << endl;
+            }
+          cout << endl;
+          cout << endl;
 
-	  for (double x = 0.0; x < 10.0; x += dx)
-	    {
-	      cout << x << ' ' << p1 (x) << endl;
-	    }
-	  cout << endl;
-	  cout << endl;
+          for (double x = 0.0; x < 10.0; x += dx)
+            {
+              cout << x << ' ' << p1 (x) << endl;
+            }
+          cout << endl;
+          cout << endl;
 
-	  for (double x = 0.0; x < 10.0; x += dx)
-	    {
-	      cout << x << ' ' << p2 (x) << endl;
-	    }
-	  cout << endl;
-	  cout << endl;
+          for (double x = 0.0; x < 10.0; x += dx)
+            {
+              cout << x << ' ' << p2 (x) << endl;
+            }
+          cout << endl;
+          cout << endl;
 
-	  p2.print (clog);
-	  clog << endl;
+          p2.print (clog);
+          clog << endl;
 
-	  vector<double> coeffs;
-	  coeffs.push_back (7.5);
-	  coeffs.push_back (-1.5);
-	  coeffs.push_back (1.5);
-	  coeffs.push_back (-2.5);
-	  coeffs.push_back (1.65);
-	  mygsl::polynomial p4 (coeffs);
+          vector<double> coeffs;
+          coeffs.push_back (7.5);
+          coeffs.push_back (-1.5);
+          coeffs.push_back (1.5);
+          coeffs.push_back (-2.5);
+          coeffs.push_back (1.65);
+          mygsl::polynomial p4 (coeffs);
 
-	  p4.print (clog, 1, true);
-	  clog << endl;
-	}
+          p4.print (clog, 1, true);
+          clog << endl;
+        }
 
     }
   catch (std::exception & x)

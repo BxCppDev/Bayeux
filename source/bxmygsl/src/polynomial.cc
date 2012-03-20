@@ -8,6 +8,8 @@
 
 namespace mygsl {
 
+  using namespace std;
+
   size_t polynomial::get_ncoeffs () const
   {
     return _c_.size ();

@@ -6,10 +6,9 @@
 
 #include <mygsl/permutation.h>
 
-using namespace std;
-
 int main(int argc_ , char ** argv_)
 {
+  using namespace std;
   try 
     {
       mygsl::permutation p1 (5);
@@ -24,36 +23,36 @@ int main(int argc_ , char ** argv_)
       cout << "p2 (next)    = "  << p2 << endl; 
       
       {
-	mygsl::permutation p3 (3);
-	int count = 0;
-	do
-	  {
-	    cout << "p3 (#" << ++count << ")      = "  << p3 << endl; 
-	  } while (p3.next ());
+        mygsl::permutation p3 (3);
+        int count = 0;
+        do
+          {
+            cout << "p3 (#" << ++count << ")      = "  << p3 << endl; 
+          } while (p3.next ());
       }
 
       {
-	mygsl::permutation p4 (3);
-	cout << "p4          = "  << p4 << endl; 
-	mygsl::permutation p5;
-	p4.linear_to_canonical (p5);
-	cout << "p5          = "  << p5 << endl; 
-	mygsl::permutation p6;
-	p5.canonical_to_linear (p6);
-	cout << "p6          = "  << p6 << endl; 
-	
+        mygsl::permutation p4 (3);
+        cout << "p4          = "  << p4 << endl; 
+        mygsl::permutation p5;
+        p4.linear_to_canonical (p5);
+        cout << "p5          = "  << p5 << endl; 
+        mygsl::permutation p6;
+        p5.canonical_to_linear (p6);
+        cout << "p6          = "  << p6 << endl; 
+        
       }
 
       clog << "Enter a permutation: ";
       cin >> p1;
       if (! cin)
-	{
-	  clog << "Format error!" << endl;
-	}
+        {
+          clog << "Format error!" << endl;
+        }
       else
-	{
-	  cout << "p1 (input)   = "  << p1 << endl; 
-	}
+        {
+          cout << "p1 (input)   = "  << p1 << endl; 
+        }
     }
   catch (exception & x)
     {

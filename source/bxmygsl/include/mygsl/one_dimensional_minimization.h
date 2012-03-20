@@ -1,4 +1,4 @@
-// -*- mode : c++; -*- 
+// -*- mode: c++; -*- 
 // mygsl::one_dimensional_minimization.h
 
 #ifndef __mygsl__one_dimensional_minimization_h
@@ -17,15 +17,15 @@
 #include <mygsl/unary_eval.h>
 #include <mygsl/best_value.h>
 
-using namespace std;
+// using  namespace std;
 
 namespace mygsl {
 
   class one_dimensional_minimization
   {
   public: 
-    static const string GOLDENSECTION_METHOD_LABEL;
-    static const string BRENT_METHOD_LABEL;
+    static const std::string GOLDENSECTION_METHOD_LABEL;
+    static const std::string BRENT_METHOD_LABEL;
     static const size_t DEFAULT_MAX_ITER;
     static const double DEFAULT_EPSABS;
 
@@ -65,7 +65,7 @@ namespace mygsl {
 
     const best_value & get_minimum_value () const;
 
-    string get_name () const;
+    std::string get_name () const;
 
     void set_debug (bool debug_ = true);
       
@@ -83,7 +83,7 @@ namespace mygsl {
 
     virtual ~one_dimensional_minimization ();
 
-    void init (unary_eval & eval_, const string & method_ = BRENT_METHOD_LABEL);
+    void init (unary_eval & eval_, const std::string & method_ = BRENT_METHOD_LABEL);
 
     void reset ();
 
@@ -109,7 +109,7 @@ namespace mygsl {
                                 double b_, 
                                 double m_, 
                                 double epsabs_, 
-                                const string & method_ = BRENT_METHOD_LABEL);
+                                const std::string & method_ = BRENT_METHOD_LABEL);
       
   private:
       

@@ -16,7 +16,7 @@
 #ifndef __mygsl__min_max_h
 #define __mygsl__min_max_h 1
 
-using namespace std;
+// using   namespace std;
 
 namespace mygsl {
 

@@ -9,7 +9,7 @@
 
 #include <mygsl/ioutils.h>
 
-using namespace std;
+//using namespace   std;
 
 namespace mygsl {
 
@@ -21,8 +21,8 @@ namespace mygsl {
     datapoint ();
 
     datapoint (double x_, 
-	       double y_, 
-	       double sigma_ = numeric_limits<double>::quiet_NaN ());
+               double y_, 
+               double sigma_ = std::numeric_limits<double>::quiet_NaN ());
 
     const double & x () const;
 
@@ -34,12 +34,12 @@ namespace mygsl {
 
     bool is_weighted () const;
 
-    friend ostream & operator<< (ostream &, const datapoint &);
+    friend std::ostream & operator<< (std::ostream &, const datapoint &);
 
-    friend istream & operator>> (istream &, datapoint &);
+    friend std::istream & operator>> (std::istream &, datapoint &);
 
     static bool comp_by_x (const datapoint & p1_, 
-			   const datapoint & p2_);
+                           const datapoint & p2_);
 
   private:
 

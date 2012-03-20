@@ -7,6 +7,8 @@
 #include <functional>
 
 namespace mygsl {
+
+  using namespace std;
   
   size_t multi_eval::get_dimension () const
   {
@@ -34,7 +36,7 @@ namespace mygsl {
   {
     for (int i = 0; i < _domains_.size (); i++)
       {
-	if (! is_valid (i, x_[i])) return false;
+        if (! is_valid (i, x_[i])) return false;
       }
     return true;
   }
@@ -58,7 +60,7 @@ namespace mygsl {
   {
     if (dim_ != get_dimension ())
       {
-	throw runtime_error ("multi_eval::_check_dimension_: Invalid dimension!");
+        throw runtime_error ("multi_eval::_check_dimension_: Invalid dimension!");
       }
     return;
   }
@@ -95,7 +97,7 @@ namespace mygsl {
     const double * first_arg = 0;
     if (v_.size ())
       {
-	first_arg = &(v_[0]);
+        first_arg = &(v_[0]);
       }
     return evaluate (first_arg);
     //    return evaluate (v_.data ());
@@ -105,10 +107,10 @@ namespace mygsl {
   {
     if (! is_valid (x_))
       {
-	ostringstream message;
-	message << "multi_eval::evaluate: "
-		<< "value '" << x_ << "' is out of the evaluation domain!";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "multi_eval::evaluate: "
+                << "value '" << x_ << "' is out of the evaluation domain!";
+        throw runtime_error (message.str ());
       }
     return eval (x_);
   }
@@ -131,9 +133,9 @@ namespace mygsl {
   {
     if ((i_ < 0) || (i_ >= _params_.size ()))
       {
-	ostringstream message;
-	message << "unary_eval_from_multi::param: Invalid parameter index!";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "unary_eval_from_multi::param: Invalid parameter index!";
+        throw runtime_error (message.str ());
       }
     return _params_[i_];
   }
@@ -142,9 +144,9 @@ namespace mygsl {
   {
     if ((i_ < 0) || (i_ >= _params_.size ()))
       {
-	ostringstream message;
-	message << "unary_eval_from_multi::param: Invalid parameter index!";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "unary_eval_from_multi::param: Invalid parameter index!";
+        throw runtime_error (message.str ());
       }
     return _params_[i_];
   }
@@ -153,9 +155,9 @@ namespace mygsl {
   {
     if ((i_ < 0) || (i_ >= _multi_eval_->get_dimension ()))
       {
-	ostringstream message;
-	message << "unary_eval_from_multi::set_index: Invalid parameter index!";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "unary_eval_from_multi::set_index: Invalid parameter index!";
+        throw runtime_error (message.str ());
       }
     _index_ = i_;
     return;
@@ -167,9 +169,9 @@ namespace mygsl {
     set_index (i_);
     if (params_.size () != _multi_eval_->get_dimension ())
       {
-	ostringstream message;
-	message << "unary_eval_from_multi::init: Invalid const parameters dimension ";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "unary_eval_from_multi::init: Invalid const parameters dimension ";
+        throw runtime_error (message.str ());
       }
     _index_ = i_;
     _params_ = params_;
@@ -177,22 +179,22 @@ namespace mygsl {
   }
   
   unary_eval_from_multi::unary_eval_from_multi (const multi_eval & multi_eval_, 
-						int i_, 
-						const vector<double> & params_)
+                                                int i_, 
+                                                const vector<double> & params_)
   {
     init (multi_eval_, i_, params_);
     return;
   }
 
   unary_eval_from_multi::unary_eval_from_multi (const multi_eval & multi_eval_, 
-						int i_, 
-						const double * params_)
+                                                int i_, 
+                                                const double * params_)
   {
     vector<double> v;
     v.assign (multi_eval_.get_dimension (), 0.0);
     for (int i = 0; i < v.size (); i++)
       {
-	v[i] = params_[i];
+        v[i] = params_[i];
       }
     init (multi_eval_, i_, v);
     return;

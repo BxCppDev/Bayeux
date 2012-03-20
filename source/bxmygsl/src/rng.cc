@@ -31,6 +31,8 @@
 
 namespace mygsl {
 
+  using namespace std;
+
   bool rng::g_debug = false;
 
   const std::string rng::DEFAULT_RNG_TYPE = "taus2";

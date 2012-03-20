@@ -12,6 +12,8 @@
 
 namespace mygsl {
 
+  using namespace std;
+
   double min_max::get_min () const
   {
     return _min_;
@@ -49,19 +51,19 @@ namespace mygsl {
   {
     if (_min_ > _max_)
       {
-	_min_ = value_;
-	_max_ = value_;
+        _min_ = value_;
+        _max_ = value_;
       }
     else
       {
-	if (value_ < _min_)
-	  {
-	    _min_ = value_;
-	  }
-	if (value_ > _max_)
-	  {
-	    _max_ = value_;
-	  }
+        if (value_ < _min_)
+          {
+            _min_ = value_;
+          }
+        if (value_ > _max_)
+          {
+            _max_ = value_;
+          }
       }    
     return;
   }

@@ -9,6 +9,8 @@
 
 namespace mygsl {
 
+  using namespace std;
+
   const size_t multidimensional_minimization::DEFAULT_MAX_ITER    = 1000;
   const size_t multidimensional_minimization::DEFAULT_MODULO_ITER = 100;
   const bool   multidimensional_minimization::DEFAULT_VERBOSE  = true;

@@ -14,6 +14,8 @@
 #include <gsl/gsl_math.h>
 
 namespace mygsl {
+
+  using namespace std;
   
   const string one_dimensional_root_solver::BISECTION_METHOD_LABEL  = "bisection";
   const string one_dimensional_root_solver::FALSEPOS_METHOD_LABEL   = "falsepos";

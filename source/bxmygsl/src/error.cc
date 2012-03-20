@@ -8,6 +8,8 @@
 
 namespace mygsl {
   
+  using namespace std;
+  
   void error::to_string (const int gsl_errno_, 
                          std::string & err_string_)
   {

@@ -10,6 +10,8 @@
 #include <mygsl/numerical_differentiation.h>
 
 namespace mygsl {
+
+  using namespace std;
   
   unary_eval_with_derivative::unary_eval_with_derivative ()
     : unary_eval ()

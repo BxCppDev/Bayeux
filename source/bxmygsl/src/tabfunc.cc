@@ -10,6 +10,8 @@
 
 namespace mygsl {
 
+  using namespace std;
+
   const std::string tabulated_function::LINEAR_INTERP_NAME = "linear";
   const std::string tabulated_function::POLYNOMIAL_INTERP_NAME = "polynomial";
   const std::string tabulated_function::CSPLINE_INTERP_NAME = "cspline";

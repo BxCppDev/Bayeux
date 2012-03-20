@@ -24,7 +24,7 @@
 #include <mygsl/rng.h>
 #include <mygsl/unary_eval.h>
 
-using namespace std;
+//using namespace   std;
 
 namespace mygsl {
 

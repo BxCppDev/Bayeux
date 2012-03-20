@@ -11,20 +11,20 @@
 #include <mygsl/unary_eval_with_derivative.h>
 #include <mygsl/best_value.h>
 
-using namespace std;
+//using  namespace std;
 
 namespace mygsl {
 
   class one_dimensional_root_solver
   {
   public: 
-    static const string BISECTION_METHOD_LABEL;
-    static const string FALSEPOS_METHOD_LABEL;
-    static const string BRENT_METHOD_LABEL;
+    static const std::string BISECTION_METHOD_LABEL;
+    static const std::string FALSEPOS_METHOD_LABEL;
+    static const std::string BRENT_METHOD_LABEL;
 
-    static const string NEWTON_METHOD_LABEL;
-    static const string SECANT_METHOD_LABEL;
-    static const string STEFFENSON_METHOD_LABEL;
+    static const std::string NEWTON_METHOD_LABEL;
+    static const std::string SECANT_METHOD_LABEL;
+    static const std::string STEFFENSON_METHOD_LABEL;
     static const size_t DEFAULT_MAX_ITER;
     static const double DEFAULT_EPSABS;
 
@@ -105,7 +105,7 @@ namespace mygsl {
 
     const best_value & get_root () const;
 
-    string get_name () const;
+    std::string get_name () const;
 
     void set_debug (bool debug_ = true);
       
@@ -123,9 +123,9 @@ namespace mygsl {
 
     virtual ~one_dimensional_root_solver ();
 
-    void init (unary_eval & sys_, const string & method_ = BRENT_METHOD_LABEL);
+    void init (unary_eval & sys_, const std::string & method_ = BRENT_METHOD_LABEL);
 
-    void init (unary_eval_with_derivative & sys_, const string & method_ = STEFFENSON_METHOD_LABEL);
+    void init (unary_eval_with_derivative & sys_, const std::string & method_ = STEFFENSON_METHOD_LABEL);
 
     void reset ();
 
@@ -151,13 +151,13 @@ namespace mygsl {
                              double epsabs_, 
                              double a_, 
                              double b_, 
-                             const string & method_ = BRENT_METHOD_LABEL);
+                             const std::string & method_ = BRENT_METHOD_LABEL);
       
     static best_value solve (unary_eval_with_derivative & sys_, 
                              double epsabs_, 
                              double a_, 
                              double b_,
-                             const string & method_ = STEFFENSON_METHOD_LABEL);
+                             const std::string & method_ = STEFFENSON_METHOD_LABEL);
 
   };
   

@@ -21,7 +21,7 @@
 #include <mygsl/unary_eval.h>
 #include <mygsl/interval.h>
 
-using namespace std;
+//using  namespace std;
 
 namespace mygsl {
 
@@ -29,7 +29,7 @@ namespace mygsl {
   {
   public:
 
-    typedef vector<interval> multi_domain;
+    typedef std::vector<interval> multi_domain;
 
   public:
 
@@ -63,7 +63,7 @@ namespace mygsl {
 
     double evaluate (double x_, double y_, double z_) const;
 
-    double evaluate (const vector<double> & v_) const;
+    double evaluate (const std::vector<double> & v_) const;
 
     double evaluate (const double * x_) const;
 
@@ -90,18 +90,18 @@ namespace mygsl {
     double & param (int i_);
 
     void init (const multi_eval & multi_eval_, 
-	       int i_, 
-	       const vector<double> & params_);
+               int i_, 
+               const std::vector<double> & params_);
 
     void set_index (int i_);
 
     unary_eval_from_multi (const multi_eval & multi_eval_, 
-			   int i_, 
-			   const vector<double> & params_);
+                           int i_, 
+                           const std::vector<double> & params_);
 
     unary_eval_from_multi (const multi_eval & multi_eval_, 
-			   int i_, 
-			   const double * params_);
+                           int i_, 
+                           const double * params_);
 
     virtual ~unary_eval_from_multi ();
 
@@ -113,7 +113,7 @@ namespace mygsl {
 
     int                _index_;
     const multi_eval * _multi_eval_;
-    vector<double>     _params_;
+    std::vector<double>     _params_;
 
   };
 

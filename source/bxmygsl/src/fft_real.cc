@@ -16,6 +16,8 @@
 //#include <gsl/gsl_fft_halfcomplex.h>
  
 namespace mygsl {
+  
+  using namespace std;
 
   fft_real::fft_real ()
   {
@@ -73,10 +75,10 @@ namespace mygsl {
   }
 
   void fft_real::init (const std::vector<double> & sample_,  
-		       double start_,  
-		       double step_, 
-		       double min_freq_cutoff_, 
-		       double max_freq_cutoff_)
+                       double start_,  
+                       double step_, 
+                       double min_freq_cutoff_, 
+                       double max_freq_cutoff_)
   {
     if (_initialized_) 
       throw std::runtime_error ("fft_real::init: Already initialized!");
@@ -90,10 +92,10 @@ namespace mygsl {
     _data_rec_ = new double[_n_];
     for (size_t i = 0; i < _n_; i++) 
       {
-	_data_[i]=0.0;
-	_data_rec_[i]=0.0;
-	_freq_[i]=0.0;
-	_tmp_[i]=0.0; 
+        _data_[i]=0.0;
+        _data_rec_[i]=0.0;
+        _freq_[i]=0.0;
+        _tmp_[i]=0.0; 
       }
     _F0_=1.0/_step_;
     std::copy (sample_.begin (), sample_.end (), _data_);
@@ -102,7 +104,7 @@ namespace mygsl {
     _max_freq_cutoff_=_Nyquist_freq_;
     if (_max_freq_cutoff_ > 0.0) 
       {
-	_max_freq_cutoff_=max_freq_cutoff_;
+        _max_freq_cutoff_=max_freq_cutoff_;
       }
     _work_ = gsl_fft_real_workspace_alloc (_n_);
     _the_real_ = gsl_fft_real_wavetable_alloc (_n_);
@@ -112,9 +114,9 @@ namespace mygsl {
   }
 
   void fft_real::init (const std::vector<double> & sample_,  
-		       double start_,  
-		       double step_, 
-		       double max_freq_cutoff_)
+                       double start_,  
+                       double step_, 
+                       double max_freq_cutoff_)
   {
     init (sample_,  start_,  step_,  0.0,  max_freq_cutoff_);
   }
@@ -140,8 +142,8 @@ namespace mygsl {
     double t=_start_;
     for (size_t i = 0; i < _n_; i++) 
       {
-	out_ << t << ' ' << _data_[i] << std::endl;
-	t+=_step_;
+        out_ << t << ' ' << _data_[i] << std::endl;
+        t+=_step_;
       }
     out_ << std::endl;
     out_ << std::endl;
@@ -149,8 +151,8 @@ namespace mygsl {
     double freq=0.0;   
     for (size_t i = 0; i < _n_; i++) 
       {
-	out_ << freq << ' ' << _freq_[i] << std::endl;
-	freq+=_F0_/_n_;
+        out_ << freq << ' ' << _freq_[i] << std::endl;
+        freq+=_F0_/_n_;
       }
     out_ << std::endl;
     out_ << std::endl;    
@@ -158,8 +160,8 @@ namespace mygsl {
     t=_start_;
     for (size_t i = 0; i < _n_; i++) 
       {
-	out_ << t << ' ' << _data_rec_[i] << std::endl;
-	t+=_step_;
+        out_ << t << ' ' << _data_rec_[i] << std::endl;
+        t+=_step_;
       }
     out_ << std::endl;
     out_ << std::endl;
@@ -182,7 +184,7 @@ namespace mygsl {
     freq_spectrum_.assign (_n_, 0.0);
     for (size_t i = 0; i < _n_; i++) 
       {
-	freq_spectrum_[i] = _freq_[i];
+        freq_spectrum_[i] = _freq_[i];
       }
   }
 
@@ -192,7 +194,7 @@ namespace mygsl {
     filtered_data_.assign (_n_, 0.0);
     for (size_t i = 0; i < _n_; i++) 
       {
-	filtered_data_[i]=_data_rec_[i];
+        filtered_data_[i]=_data_rec_[i];
       }
   }
 
@@ -202,9 +204,9 @@ namespace mygsl {
     for (size_t i = 0; i < _n_; i++) 
       {
 
-	if (freq <  _min_freq_cutoff_) _freq_[i] = 0.0;
-	if (freq >= _max_freq_cutoff_) _freq_[i] = 0.0;
-	freq += (1. / _step_ / _n_);
+        if (freq <  _min_freq_cutoff_) _freq_[i] = 0.0;
+        if (freq >= _max_freq_cutoff_) _freq_[i] = 0.0;
+        freq += (1. / _step_ / _n_);
       }
   }
 
@@ -235,15 +237,15 @@ namespace mygsl {
     int iarg=1;
     while (iarg < argc_) 
       {
-	std::string arg=argv_[iarg];
-	if (arg == "-d") 
-	  {
-	    debug=true;
-	  }
-	if (arg == "-step=0.5") t_step=0.5;
-	if (arg == "-step=0.25") t_step=0.25;
-	if (arg == "-step=0.1") t_step=0.1;
-	if (arg == "-step=0.01") t_step=0.01;
+        std::string arg=argv_[iarg];
+        if (arg == "-d") 
+          {
+            debug=true;
+          }
+        if (arg == "-step=0.5") t_step=0.5;
+        if (arg == "-step=0.25") t_step=0.25;
+        if (arg == "-step=0.1") t_step=0.1;
+        if (arg == "-step=0.01") t_step=0.01;
       }
 
     std::vector<double> data;
@@ -253,20 +255,20 @@ namespace mygsl {
     size_t n_steps= (size_t) ( (t_max-t_min+0.1*t_step)/t_step);
     if (debug) 
       {
-	std::cerr << "DEBUG: " << "t_min   = " << t_min << std::endl;
-	std::cerr << "DEBUG: " << "t_max   = " << t_max << std::endl;
-	std::cerr << "DEBUG: " << "t_step  = " << t_step << std::endl;
-	std::cerr << "DEBUG: " << "n_steps = " << n_steps << std::endl;
+        std::cerr << "DEBUG: " << "t_min   = " << t_min << std::endl;
+        std::cerr << "DEBUG: " << "t_max   = " << t_max << std::endl;
+        std::cerr << "DEBUG: " << "t_step  = " << t_step << std::endl;
+        std::cerr << "DEBUG: " << "n_steps = " << n_steps << std::endl;
       }
     double Nyquist_frequency = 0.5/t_step;
     if (debug) std::cerr << "DEBUG: " 
-			 << "Nyquist_frequency = " 
-			 << Nyquist_frequency << std::endl;
+                         << "Nyquist_frequency = " 
+                         << Nyquist_frequency << std::endl;
     double min_freq_cut=0.0;
     double max_freq_cut=Nyquist_frequency;
     if (debug) std::cerr << "DEBUG: " 
-			 << "fft_real::main: argc=" 
-			 << argc_ << std::endl;
+                         << "fft_real::main: argc=" 
+                         << argc_ << std::endl;
 
     /*
       if (argc_ >= 2) {
@@ -287,12 +289,12 @@ namespace mygsl {
     */
 
     if (debug) std::cerr << "DEBUG: " 
-			 << "Maximum frequency cut= " 
-			 << max_freq_cut << std::endl;
+                         << "Maximum frequency cut= " 
+                         << max_freq_cut << std::endl;
     data.assign (n_steps, 0.0);
     for (size_t i = data.size ()/5; i < 2 *data.size () / 4; i++) 
       {
-	data[i] = 1.0;
+        data[i] = 1.0;
       }
 
     fft_real fft;

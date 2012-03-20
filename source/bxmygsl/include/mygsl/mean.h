@@ -18,7 +18,7 @@
 
 #include <cstdlib>
 
-using namespace std;
+//using   namespace std;
 
 namespace mygsl {
 

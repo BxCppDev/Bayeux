@@ -8,6 +8,7 @@
 
 int main (int argc_ , char ** argv_)
 {
+  using namespace std;
   try  
     {
       double x       = 3.14159;
@@ -22,19 +23,19 @@ int main (int argc_ , char ** argv_)
 
       double y;
       clog << "Enter a double precision number (examples: 3.14/" 
-	   << mygsl::ioutils::NAN_STRING  << '/'
-	   << mygsl::ioutils::INF_POS_STRING  << '/'
-	   << mygsl::ioutils::INF_NEG_STRING  << ") : ";
+           << mygsl::ioutils::NAN_STRING  << '/'
+           << mygsl::ioutils::INF_POS_STRING  << '/'
+           << mygsl::ioutils::INF_NEG_STRING  << ") : ";
       cin >> mygsl::idouble (y);
       if (! cin)
-	{
-	  cerr << "Format error!" << endl;
-	}
+        {
+          cerr << "Format error!" << endl;
+        }
       else
-	{
-	  cout.precision (12);
-	  cout << "y       == " << mygsl::odouble (y) << endl;
-	}
+        {
+          cout.precision (12);
+          cout << "y       == " << mygsl::odouble (y) << endl;
+        }
     }
   catch (std::exception & x)
     {

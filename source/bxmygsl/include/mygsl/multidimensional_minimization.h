@@ -93,7 +93,7 @@ namespace mygsl {
 
       static double func_eval_f_MR  (double x_, void * params_);
 
-      void plot_f (const string & prefix_, int mode_ = 0) const;
+      void plot_f (const std::string & prefix_, int mode_ = 0) const;
 
     };
 

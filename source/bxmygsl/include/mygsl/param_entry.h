@@ -1,4 +1,4 @@
-// -*- mode : c++; -*- 
+// -*- mode: c++; -*- 
 // mygsl::param_entry.h
 
 #ifndef __mygsl__param_entry_h
@@ -9,7 +9,7 @@
 
 #include <mygsl/best_value.h>
 
-using namespace std;
+//using   namespace std;
 
 namespace mygsl {
 
@@ -22,9 +22,9 @@ namespace mygsl {
     static const double NO_VALUE;
     static const double DEFAULT_STEP;
     static const double AUTO_STEP;
-    static const string AUTO_LABEL;
-    static const string FREE_LABEL;
-    static const string CONST_LABEL;
+    static const std::string AUTO_LABEL;
+    static const std::string FREE_LABEL;
+    static const std::string CONST_LABEL;
 
     enum limit_t
       {
@@ -45,7 +45,7 @@ namespace mygsl {
 
   private:
 
-    param_entry (const string & name_ = "parameter");
+    param_entry (const std::string & name_ = "parameter");
 
   public:
 
@@ -53,13 +53,13 @@ namespace mygsl {
 
     bool has_value () const;
 
-    const string & get_name () const;
+    const std::string & get_name () const;
 
-    const string & get_comment () const;
+    const std::string & get_comment () const;
 
-    void set_name (const string & name_);
+    void set_name (const std::string & name_);
 
-    void set_comment (const string & comment_);
+    void set_comment (const std::string & comment_);
 
     void set_best_value (const best_value & best_value_);
 
@@ -143,71 +143,71 @@ namespace mygsl {
   
     bool check_value () const;
     
-    static param_entry make_auto (const string & name_,
+    static param_entry make_auto (const std::string & name_,
                                   double step_ = AUTO_STEP);
       
-    static param_entry make_auto_range (const string & name_,
+    static param_entry make_auto_range (const std::string & name_,
                                         double min_,
                                         double max_,
                                         double step_ = AUTO_STEP); 
       
-    static param_entry make_auto_min (const string & name_,
+    static param_entry make_auto_min (const std::string & name_,
                                       double min_,
                                       double step_ = AUTO_STEP); 
       
-    static param_entry make_auto_max (const string & name_,
+    static param_entry make_auto_max (const std::string & name_,
                                       double max_,
                                       double step_ = AUTO_STEP); 
       
-    static param_entry make_free (const string & name_,
+    static param_entry make_free (const std::string & name_,
                                   double value_,
                                   double step_ = AUTO_STEP);
       
-    static param_entry make_free_range (const string & name_,
+    static param_entry make_free_range (const std::string & name_,
                                         double min_,
                                         double max_,
                                         double value_,
                                         double step_ = AUTO_STEP);      
       
-    static param_entry make_free_min (const string & name_,
+    static param_entry make_free_min (const std::string & name_,
                                       double min_,
                                       double value_,
                                       double step_ = AUTO_STEP);        
       
-    static param_entry make_free_max (const string & name_,
+    static param_entry make_free_max (const std::string & name_,
                                       double max_,
                                       double value_,
                                       double step_ = AUTO_STEP);        
       
-    static param_entry make_const (const string & name_,
+    static param_entry make_const (const std::string & name_,
                                    double value_);
       
-    void print (ostream & out_ = clog, 
-                const string & title_ = "Parameter", 
-                const string & indent_ = "") const;
+    void print (std::ostream & out_ = std::clog, 
+                const std::string & title_ = "Parameter", 
+                const std::string & indent_ = "") const;
 
-    void print_status (ostream & out_ = clog) const;
+    void print_status (std::ostream & out_ = std::clog) const;
 
   private:
 
-    string _name_;
+    std::string _name_;
     int    _type_;
     int    _limit_;
     double _min_;
     double _max_;
     double _value_;
     double _step_;
-    string _comment_;
+    std::string _comment_;
     best_value _best_value_;
 
   };
 
   // predicate:
-  struct param_has_name : unary_function<bool,param_entry>
+  struct param_has_name : std::unary_function<bool,param_entry>
   {
-    string _name_;
+    std::string _name_;
 
-    param_has_name (const string & name_) : _name_ (name_) 
+    param_has_name (const std::string & name_) : _name_ (name_) 
     {
     }
 
@@ -218,11 +218,11 @@ namespace mygsl {
   };
 
   // predicate:
-  struct param_ptr_has_name : unary_function<bool,param_entry *>
+  struct param_ptr_has_name : std::unary_function<bool,param_entry *>
   {
-    string _name_;
+    std::string _name_;
 
-    param_ptr_has_name (const string & name_) : _name_ (name_) 
+    param_ptr_has_name (const std::string & name_) : _name_ (name_) 
     {
     }
 
@@ -233,7 +233,7 @@ namespace mygsl {
   };
 
   // predicate:
-  struct param_is_free : unary_function<bool,param_entry>
+  struct param_is_free : std::unary_function<bool,param_entry>
   {
     param_is_free ()  
     {
@@ -247,7 +247,7 @@ namespace mygsl {
   };
 
   // predicate:
-  struct param_is_const : unary_function<bool,param_entry>
+  struct param_is_const : std::unary_function<bool,param_entry>
   {
     param_is_const ()  
     {
@@ -261,7 +261,7 @@ namespace mygsl {
   };
 
   // predicate:
-  struct param_is_auto : unary_function<bool,param_entry>
+  struct param_is_auto : std::unary_function<bool,param_entry>
   {
     param_is_auto ()  
     {

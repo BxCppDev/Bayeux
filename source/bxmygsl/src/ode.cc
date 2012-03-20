@@ -6,6 +6,8 @@
 
 namespace mygsl {
 
+  using namespace std;
+
   bool ode_system::g_debug = false;
  
   int ode_system::gsl_ode_function (double         t_,

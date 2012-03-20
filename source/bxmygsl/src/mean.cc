@@ -10,7 +10,9 @@
 #include <cmath>
 
 namespace mygsl {
-  
+ 
+  using namespace std;
+ 
   size_t arithmetic_mean::get_n () const
   {
     return _n_;
@@ -35,7 +37,7 @@ namespace mygsl {
   {
     if (_n_ == 0)
       {
-	throw runtime_error ("arithmetic_mean::get_mean: Not enough value !");
+        throw runtime_error ("arithmetic_mean::get_mean: Not enough value !");
       }
     return _sum_ / _n_;
   }
@@ -44,7 +46,7 @@ namespace mygsl {
   {
     if (_n_ == 0)
       {
-	throw runtime_error ("arithmetic_mean::get_mean_of_squared: Not enough value !");
+        throw runtime_error ("arithmetic_mean::get_mean_of_squared: Not enough value !");
       }
     return _sum_of_squared_ / _n_;
   }
@@ -55,12 +57,12 @@ namespace mygsl {
     size_t nlim = 1;
     if (bessel_correction_)
       {
-	nlim = 2;
-	v *= (_n_ / (_n_ - 1));
+        nlim = 2;
+        v *= (_n_ / (_n_ - 1));
       }
     if (_n_ < nlim)
       {
-	throw runtime_error ("arithmetic_mean::get_variance: Not enough value !");
+        throw runtime_error ("arithmetic_mean::get_variance: Not enough value !");
       }
     double m = get_mean ();
     v *= (get_mean_of_squared () - m * m);
@@ -93,7 +95,7 @@ namespace mygsl {
   {
     if (_n_ == 0)
       {
-	throw runtime_error ("arithmetic_mean::remove: Cannot remove any values !");
+        throw runtime_error ("arithmetic_mean::remove: Cannot remove any values !");
       }
     _n_--;
     _sum_ -= value_;

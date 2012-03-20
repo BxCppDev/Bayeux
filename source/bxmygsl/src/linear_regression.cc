@@ -12,6 +12,8 @@
 
 namespace mygsl {
 
+  using namespace std;
+
   linear_regression::fit_data::fit_data ()
   {
     reset ();

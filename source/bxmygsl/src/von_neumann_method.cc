@@ -9,6 +9,8 @@
  
 namespace mygsl {
 
+  using namespace std;
+
   bool von_neumann_method::g_debug = false;
 
   const double  von_neumann_method::AUTO_FMAX = 0.0;

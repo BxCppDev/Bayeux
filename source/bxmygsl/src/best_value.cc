@@ -7,6 +7,8 @@
 #include <cmath>
 
 namespace mygsl {
+  
+  using namespace std;
 
   best_value::operator double ()
   {
@@ -23,7 +25,7 @@ namespace mygsl {
   {
     if (error_low_ < 0.0)
       {
-	throw runtime_error ("best_value::set_error_low: Invalid value for error low!");
+        throw runtime_error ("best_value::set_error_low: Invalid value for error low!");
       }
     __error_low = error_low_;
     return;
@@ -33,7 +35,7 @@ namespace mygsl {
   {
     if (error_high_ < 0.0)
       {
-	throw runtime_error ("best_value::set_error_high: Invalid value for error high!");
+        throw runtime_error ("best_value::set_error_high: Invalid value for error high!");
       }
     __error_high = error_high_;
     return;
@@ -75,9 +77,9 @@ namespace mygsl {
   void best_value::set_confidence_level (double confidence_level_)
   {
     if ((confidence_level_ <= 0.0)
-	|| (confidence_level_ > 1.0))
+        || (confidence_level_ > 1.0))
       {
-	throw runtime_error ("best_value::set_confidence_level: Invalid value for confidence level!");
+        throw runtime_error ("best_value::set_confidence_level: Invalid value for confidence level!");
       }
     __confidence_level = confidence_level_;
     return;
@@ -145,7 +147,7 @@ namespace mygsl {
   }
   
   best_value::best_value (double value_, 
-			  double error_)
+                          double error_)
   {
     reset ();
     set_value (value_);
@@ -156,8 +158,8 @@ namespace mygsl {
   }
   
   best_value::best_value (double value_, 
-			  double error_, 
-			  double CL_)
+                          double error_, 
+                          double CL_)
   {
     reset ();
     set_value (value_);
@@ -168,9 +170,9 @@ namespace mygsl {
   }
   
   best_value::best_value (double value_, 
-			  double error_low_, 
-			  double error_high_,
-			  double CL_)
+                          double error_low_, 
+                          double error_high_,
+                          double CL_)
   {
     reset ();
     set_value (value_);
@@ -185,26 +187,26 @@ namespace mygsl {
     out_ << bv_.get_value ();
     if (bv_.has_errors ())
       {
-	if (bv_.is_symmetric_error ()) 
-	  {
-	    out_ << " +/- " << bv_.get_error_low ();
-	  }
-	else
-	  {
-	    out_ << " [" << bv_.get_min_value ()
-		 << ':' << bv_.get_max_value ()
-		 << ']';
-	  }
-	if (bv_.has_confidence_level ())
-	  {
-	    double cl = 100 * bv_.get_confidence_level ();
-	    out_ << " (";
-	    int nprec = out_.precision ();
-	    out_.precision (4);
-	    out_ << cl;
-	    out_.precision (nprec);
-	    out_ << "% C.L.) ";
-	  }
+        if (bv_.is_symmetric_error ()) 
+          {
+            out_ << " +/- " << bv_.get_error_low ();
+          }
+        else
+          {
+            out_ << " [" << bv_.get_min_value ()
+                 << ':' << bv_.get_max_value ()
+                 << ']';
+          }
+        if (bv_.has_confidence_level ())
+          {
+            double cl = 100 * bv_.get_confidence_level ();
+            out_ << " (";
+            int nprec = out_.precision ();
+            out_.precision (4);
+            out_ << cl;
+            out_.precision (nprec);
+            out_ << "% C.L.) ";
+          }
       }
     return out_;
   }

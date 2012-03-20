@@ -10,6 +10,8 @@
 
 namespace mygsl {
 
+  using namespace std;
+
   const double param_entry::NO_MIN_VALUE = -numeric_limits<double>::infinity ();
   const double param_entry::NO_MAX_VALUE = numeric_limits<double>::infinity ();
   const double param_entry::NO_VALUE     = numeric_limits<double>::quiet_NaN ();

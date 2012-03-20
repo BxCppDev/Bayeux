@@ -31,7 +31,7 @@
 
 namespace mygsl {
 
-  using namespace std;
+  //using   namespace std;
 
   class rng
   {
@@ -48,7 +48,7 @@ namespace mygsl {
       ~initializer ();
     };
       
-    typedef vector<unsigned char> state_buffer_type;
+    typedef std::vector<unsigned char> state_buffer_type;
 
   private:
 
@@ -84,7 +84,7 @@ namespace mygsl {
 
     rng (const rng &); // not implemented
 
-    void dump (ostream & = clog) const;
+    void dump (std::ostream & = std::clog) const;
 
     rng & operator= (const rng &); // not implemented
       

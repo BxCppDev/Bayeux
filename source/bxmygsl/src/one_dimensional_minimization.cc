@@ -7,6 +7,8 @@
 
 namespace mygsl {
   
+  using namespace std;
+
   const string one_dimensional_minimization::GOLDENSECTION_METHOD_LABEL = "goldensection";
   const string one_dimensional_minimization::BRENT_METHOD_LABEL = "brent";
 

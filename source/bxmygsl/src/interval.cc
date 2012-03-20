@@ -9,6 +9,8 @@
 #include <cmath>
  
 namespace mygsl {
+  
+  using namespace std;
 
   const double interval::NO_MIN_VALUE = -numeric_limits<double>::infinity (); 
   const double interval::NO_MAX_VALUE = numeric_limits<double>::infinity (); 
@@ -44,8 +46,8 @@ namespace mygsl {
 
   // ctor:
   interval::interval (double min_, bool min_include_, 
-		      double max_, bool max_include_, 
-		      double eps_)
+                      double max_, bool max_include_, 
+                      double eps_)
   {
     reset ();
     set (min_, max_, eps_);
@@ -79,11 +81,11 @@ namespace mygsl {
   {
     if (has_min ())
       {
-	set_min_included (true);
+        set_min_included (true);
       }
     if (has_max ())
       {
-	set_max_included (true);
+        set_max_included (true);
       }
     return;
   }
@@ -92,11 +94,11 @@ namespace mygsl {
   {
     if (has_min ())
       {
-	set_min_included (false);
+        set_min_included (false);
       }
     if (has_max ())
       {
-	set_max_included (false);
+        set_max_included (false);
       }
     return;
   }
@@ -131,11 +133,11 @@ namespace mygsl {
   {
     if (has_min ())
       {
-	_min_included_ = inc_;
+        _min_included_ = inc_;
       }
     else
       {
-	_min_included_ = false;
+        _min_included_ = false;
       }
     return;
   }
@@ -144,11 +146,11 @@ namespace mygsl {
   {
     if (has_max ())
       {
-	_max_included_ = inc_;
+        _max_included_ = inc_;
       }
     else
       {
-	_max_included_ = false;
+        _max_included_ = false;
       }
     return;
   }
@@ -193,13 +195,13 @@ namespace mygsl {
     if (x_ != x_) return false;
     if (has_min ())
       { 
-	if (x_ < _min_) return false;
-	if (! _min_included_ && x_ == _min_) return false;
+        if (x_ < _min_) return false;
+        if (! _min_included_ && x_ == _min_) return false;
       }
     if (has_max ())
       {
-	if (x_ > _max_) return false;
-	if (! _max_included_ && x_ == _max_) return false;
+        if (x_ > _max_) return false;
+        if (! _max_included_ && x_ == _max_) return false;
       }
     return true;
   }
@@ -231,15 +233,15 @@ namespace mygsl {
     double eps = eps_;
     if (eps <= 0.0)
       {
-	eps = get_eps ();
+        eps = get_eps ();
       }
     if (has_min ())
       {
-	min = get_min () + eps;
+        min = get_min () + eps;
       }
     if (has_max ())
       {
-	max = get_max () - eps;
+        max = get_max () - eps;
       }
     i.set (min, max, eps);
     return i;
@@ -249,12 +251,12 @@ namespace mygsl {
   {
     if ((min_ == min_) && (max_ == max_))
       {
-	if (min_ >= max_)
-	  {
-	    ostringstream message;
-	    message << "interval::set: invalid bounds (min == '" << min_ << "') >= (max == '" << max_ << "')!";
-	    throw runtime_error (message.str ());
-	  }
+        if (min_ >= max_)
+          {
+            ostringstream message;
+            message << "interval::set: invalid bounds (min == '" << min_ << "') >= (max == '" << max_ << "')!";
+            throw runtime_error (message.str ());
+          }
       }
     _min_ = min_;
     _max_ = max_;
@@ -266,28 +268,28 @@ namespace mygsl {
   {
     if (eps_ <= 0.0)
       {
-	if (has_min () && has_max ())
-	  {
-	    _eps_ = (_max_ - _min_) / 100.0;
-	  }
-	else 
-	  {
-	    _eps_ = DEFAULT_EPS;
-	  }
+        if (has_min () && has_max ())
+          {
+            _eps_ = (_max_ - _min_) / 100.0;
+          }
+        else 
+          {
+            _eps_ = DEFAULT_EPS;
+          }
       }
     else
       { 
-	if (has_min () && has_max ())
-	  {
-	    if (eps_ > (_max_ - _min_)) 
-	      {
-		std::ostringstream message;
-		message << "interval::set_eps: ";
-		message << "epsilon value '" << eps_ << "' is too large for interval bounds (min == '" << _min_ << "') and (max == '" << _max_ << "')!";
-		throw std::runtime_error (message.str ());
-	      }
-	  }
-	_eps_ = eps_;
+        if (has_min () && has_max ())
+          {
+            if (eps_ > (_max_ - _min_)) 
+              {
+                std::ostringstream message;
+                message << "interval::set_eps: ";
+                message << "epsilon value '" << eps_ << "' is too large for interval bounds (min == '" << _min_ << "') and (max == '" << _max_ << "')!";
+                throw std::runtime_error (message.str ());
+              }
+          }
+        _eps_ = eps_;
       }
     return;
   }
@@ -332,8 +334,8 @@ namespace mygsl {
   }
 
   interval interval::make_min_max_included (double min_, 
-					   double max_, 
-					   double eps_)
+                                           double max_, 
+                                           double eps_)
   {
     interval i;
     i.set (min_, max_, eps_);
@@ -343,8 +345,8 @@ namespace mygsl {
   }
 
   interval interval::make_min_max_excluded (double min_, 
-					   double max_, 
-					   double eps_)
+                                           double max_, 
+                                           double eps_)
   {
     interval i;
     i.set (min_, max_, eps_);
@@ -355,8 +357,8 @@ namespace mygsl {
 
 
   interval interval::make_min_max (double min_, bool min_include_, 
-				   double max_, bool max_include_, 
-				   double eps_)
+                                   double max_, bool max_include_, 
+                                   double eps_)
   {
     interval i;
     i.set (min_, max_, eps_);
@@ -370,47 +372,47 @@ namespace mygsl {
     int prec = out_.precision ();
     if (! i_.is_valid ())
       {
-	out_ << interval::IO_OPEN_INCL 
-	     << interval::IO_EMPTY 
-	     << interval::IO_CLOSE_INCL;
-	return out_;
+        out_ << interval::IO_OPEN_INCL 
+             << interval::IO_EMPTY 
+             << interval::IO_CLOSE_INCL;
+        return out_;
       }
     if (i_.has_min ())
       {
-	if (i_.is_min_included ())
-	  {
-	    out_ << interval::IO_OPEN_INCL;
-	  }
-	else
-	  {
-	    out_ << interval::IO_OPEN_EXCL;
-	  }
-	out_.precision (prec);
-	out_ << i_.get_min ();
+        if (i_.is_min_included ())
+          {
+            out_ << interval::IO_OPEN_INCL;
+          }
+        else
+          {
+            out_ << interval::IO_OPEN_EXCL;
+          }
+        out_.precision (prec);
+        out_ << i_.get_min ();
       }    
     else
       {
-	out_ << interval::IO_OPEN_EXCL;
+        out_ << interval::IO_OPEN_EXCL;
       }
    
     out_ << interval::IO_SEP;
       
     if (i_.has_max ())
       {
-	out_.precision (prec);
-	out_ << i_.get_max ();
-	if (i_.is_max_included ())
-	  {
-	    out_ << interval::IO_CLOSE_INCL;
-	  }
-	else
-	  {
-	    out_ << interval::IO_CLOSE_EXCL;
-	  }
+        out_.precision (prec);
+        out_ << i_.get_max ();
+        if (i_.is_max_included ())
+          {
+            out_ << interval::IO_CLOSE_INCL;
+          }
+        else
+          {
+            out_ << interval::IO_CLOSE_EXCL;
+          }
       }
     else
       {
-	out_ << interval::IO_CLOSE_EXCL;
+        out_ << interval::IO_CLOSE_EXCL;
       }
     out_.precision (prec);
     return out_;
@@ -430,55 +432,55 @@ namespace mygsl {
     // open char + min:
     if (c == interval::IO_OPEN_INCL)
       {
-	c = 0;
-	in_.get (c);
-	if (! in_) return in_;
-	if (c != interval::IO_EMPTY)
-	  { 
-	    in_.putback (c);
-	    // included min:
-	    in_ >> min;
-	    if (! in_) return in_;
-	    min_included = true;
-	  }
-	else 
-	  {
-	    c = 0;
-	    in_.get (c);
-	    if (! in_) return in_;
-	    if (c == interval::IO_CLOSE_INCL)
-	      { 
-		i_ = interval::make_empty ();
-	      }
-	    else
-	      {
-		in_.putback (c);
-		in_.setstate (ios::failbit);
-	      }
-	    return in_;
-	  }
+        c = 0;
+        in_.get (c);
+        if (! in_) return in_;
+        if (c != interval::IO_EMPTY)
+          { 
+            in_.putback (c);
+            // included min:
+            in_ >> min;
+            if (! in_) return in_;
+            min_included = true;
+          }
+        else 
+          {
+            c = 0;
+            in_.get (c);
+            if (! in_) return in_;
+            if (c == interval::IO_CLOSE_INCL)
+              { 
+                i_ = interval::make_empty ();
+              }
+            else
+              {
+                in_.putback (c);
+                in_.setstate (ios::failbit);
+              }
+            return in_;
+          }
       }
     else if (c == interval::IO_OPEN_EXCL)
       {
-	c = 0;
-	in_.get (c);
-	if (! in_) return in_;
-	if (c != interval::IO_SEP)
-	  {
-	    in_.putback (c);
-	    in_ >> min;
-	    if (! in_) return in_;
-	  }
-	else
-	  {
-	    in_.putback (c);
-	  }
+        c = 0;
+        in_.get (c);
+        if (! in_) return in_;
+        if (c != interval::IO_SEP)
+          {
+            in_.putback (c);
+            in_ >> min;
+            if (! in_) return in_;
+          }
+        else
+          {
+            in_.putback (c);
+          }
       }
     else 
       {
-	in_.putback (c);
-	in_.setstate (ios::failbit);
-	return in_;
+        in_.putback (c);
+        in_.setstate (ios::failbit);
+        return in_;
       }
     
     // separator char:
@@ -488,8 +490,8 @@ namespace mygsl {
     if (! in_) return in_;
     if (c != interval::IO_SEP)
       {
-	in_.setstate (ios::failbit);
-	return in_;
+        in_.setstate (ios::failbit);
+        return in_;
       }
     
     // max + close char:
@@ -499,22 +501,22 @@ namespace mygsl {
     if (! in_) return in_;
     if (c != interval::IO_CLOSE_EXCL)
       {
-	in_.putback (c);
-	// max:
-	in_ >> max;
-	if (! in_) return in_;
-	c = 0;
-	in_.get (c);
-	if (! in_) return in_;
-	if (c == interval::IO_CLOSE_INCL)
-	  {
-	    max_included = true;
+        in_.putback (c);
+        // max:
+        in_ >> max;
+        if (! in_) return in_;
+        c = 0;
+        in_.get (c);
+        if (! in_) return in_;
+        if (c == interval::IO_CLOSE_INCL)
+          {
+            max_included = true;
 
-	  }
- 	else if (c != interval::IO_CLOSE_EXCL)
-	  {
-	    return in_;
-	  }
+          }
+        else if (c != interval::IO_CLOSE_EXCL)
+          {
+            return in_;
+          }
       }
     i_.set (min, max);
     i_.set_min_included (min_included);

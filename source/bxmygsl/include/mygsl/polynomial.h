@@ -12,7 +12,7 @@
 
 #include <mygsl/unary_eval.h>
 
-using namespace std;
+// using namespace   std;
 
 namespace mygsl {
 
@@ -21,7 +21,7 @@ namespace mygsl {
   private:
 
     size_t         _size_;
-    vector<double> _c_;
+    std::vector<double> _c_;
 
   public:
 
@@ -41,7 +41,7 @@ namespace mygsl {
 
     polynomial (double c0_, double c1_, double c2_);
 
-    polynomial (const vector<double> & c_);
+    polynomial (const std::vector<double> & c_);
 
     polynomial (const polynomial & p_);
 
@@ -49,7 +49,7 @@ namespace mygsl {
 
     double eval (double x_) const;
 
-    void print (ostream & out_= clog, 
+    void print (std::ostream & out_ = std::clog, 
                 int format_ = 0, 
                 bool eol_ = false) const;
 

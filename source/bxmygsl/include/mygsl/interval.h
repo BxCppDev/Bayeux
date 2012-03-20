@@ -31,7 +31,7 @@
 
 #include <iostream>
 
-using namespace std;
+//using   namespace std;
 
 namespace mygsl {
 
@@ -73,8 +73,8 @@ namespace mygsl {
 
       // ctor:
       interval (double min_, bool min_include_, 
-		double max_, bool max_include_, 
-		double eps_ = AUTO_EPS);
+                double max_, bool max_include_, 
+                double eps_ = AUTO_EPS);
 
       // dtor:
       virtual ~interval ();
@@ -138,26 +138,26 @@ namespace mygsl {
       static interval make_neighbourhood (double value_, double delta_, bool included_ = excluded);
 
       static interval make_min (double min_, bool min_include_ = excluded, 
-				double eps_ = AUTO_EPS);
+                                double eps_ = AUTO_EPS);
 
       static interval make_max (double max_, bool max_include_ = excluded, 
-				double eps_ = AUTO_EPS);
+                                double eps_ = AUTO_EPS);
 
       static interval make_min_max_included (double min_,
-					     double max_,
-					     double eps_ = AUTO_EPS);
+                                             double max_,
+                                             double eps_ = AUTO_EPS);
 
       static interval make_min_max_excluded (double min_,
-					     double max_,
-					     double eps_ = AUTO_EPS);
+                                             double max_,
+                                             double eps_ = AUTO_EPS);
 
       static interval make_min_max (double min_, bool min_include_,
-				    double max_, bool max_include_,
-				    double eps_ = AUTO_EPS);
+                                    double max_, bool max_include_,
+                                    double eps_ = AUTO_EPS);
 
-      friend ostream & operator<< (ostream & out_, const interval & i_);
+      friend std::ostream & operator<< (std::ostream & out_, const interval & i_);
 
-      friend istream & operator>> (istream & in_, interval & i_);
+      friend std::istream & operator>> (std::istream & in_, interval & i_);
 
     };
 

@@ -8,6 +8,8 @@
 
 int main (int argc_ , char ** argv_)
 {
+  using namespace std;
+
   try  
     {
       mygsl::datapoint p1 (2.5, 3.4);
@@ -20,14 +22,14 @@ int main (int argc_ , char ** argv_)
       clog << "Enter a datapoint (example: `1 0 0' ) : ";
       cin >> p3;
       if (! cin)
-	{
-	  cerr << "Format error!" << endl;
-	}
+        {
+          cerr << "Format error!" << endl;
+        }
       else
-	{
-	  cout.precision (12);
-	  cout << "p3       == " << p3 << endl;
-	}
+        {
+          cout.precision (12);
+          cout << "p3       == " << p3 << endl;
+        }
     }
   catch (std::exception & x)
     {

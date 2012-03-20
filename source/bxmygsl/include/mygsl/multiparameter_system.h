@@ -8,7 +8,7 @@
 
 #include <mygsl/param_entry.h>
 
-using namespace std;
+//using   namespace std;
 
 namespace mygsl {
 
@@ -16,7 +16,7 @@ namespace mygsl {
     {
     public:
 
-      typedef vector<param_entry *> params_col;
+      typedef std::vector<param_entry *> params_col;
 
     private:
 
@@ -46,11 +46,11 @@ namespace mygsl {
 
       void unlock_params ();
 
-      bool has_param_with_name (const string & name_) const;
+      bool has_param_with_name (const std::string & name_) const;
 
-      const param_entry & get_param_by_name (const string & name_) const;
+      const param_entry & get_param_by_name (const std::string & name_) const;
 
-      param_entry & get_param_by_name (const string & name_);
+      param_entry & get_param_by_name (const std::string & name_);
 
       const param_entry & get_param (int i_) const;
 
@@ -64,19 +64,19 @@ namespace mygsl {
 
       param_entry & get_auto_param (int i_);
 
-      void add_param (const param_entry & pe_, const string & comment_ = "");
+      void add_param (const param_entry & pe_, const std::string & comment_ = "");
       
       multiparameter_system ();
 
       virtual ~multiparameter_system ();
       
-      void print (std::ostream & out_ = clog, 
-		  const string & title_ = "Multi-parameter system", 
-		  const string & indent_ = "") const;
+      void print (std::ostream & out_ = std::clog, 
+		  const std::string & title_ = "Multi-parameter system", 
+		  const std::string & indent_ = "") const;
 
-      void print_line (std::ostream & out_ = clog) const;
+      void print_line (std::ostream & out_ = std::clog) const;
 
-      void print_status (std::ostream & out_ = clog) const;
+      void print_status (std::ostream & out_ = std::clog) const;
 
       void load_parameters (const std::string & filename_);
 

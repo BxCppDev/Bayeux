@@ -8,6 +8,8 @@
 
 namespace mygsl {
 
+  using namespace std;
+
   bool permutation::_check_ () const
   {
     if (_perm_  == 0) return false;

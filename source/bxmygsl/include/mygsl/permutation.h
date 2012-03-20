@@ -23,7 +23,7 @@
 
 #include <gsl/gsl_permutation.h>
 
-using namespace std;
+//using namespace   std;
 
 namespace mygsl {
 
@@ -79,17 +79,17 @@ namespace mygsl {
 
     bool previous ();
 
-    void print (ostream & out_, bool eol_ = false) const;
+    void print (std::ostream & out_, bool eol_ = false) const;
 
-    friend ostream & operator<< (ostream & out_, const permutation & p_);
+    friend std::ostream & operator<< (std::ostream & out_, const permutation & p_);
 
-    friend istream & operator>> (istream & in_, permutation & p_);
+    friend std::istream & operator>> (std::istream & in_, permutation & p_);
 
   private:
 
     bool _check_ () const;
 
-    void _check_throw_ (size_t i_, const string & where_) const;
+    void _check_throw_ (size_t i_, const std::string & where_) const;
 
   private:
 

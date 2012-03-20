@@ -9,6 +9,8 @@
 #include <gsl/gsl_math.h>
 
 namespace mygsl {
+
+  using namespace std;
   
   unary_eval::unary_eval ()
   {
