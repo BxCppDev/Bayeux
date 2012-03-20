@@ -28,8 +28,6 @@
 
 namespace genvtx {
 
-  using namespace std;
-
   class factory
   {
   public: 
@@ -51,17 +49,18 @@ namespace genvtx {
     virtual ~factory ();
  
     void do_register (const vg_creator_type & creator_, 
-                      const string & vg_id_ = "");
+                      const std::string & vg_id_ = "");
     
     // from the i_vertex_generator:
     virtual i_vertex_generator * 
-    create_vertex_generator (const string & vg_id_,
+    create_vertex_generator (const std::string & vg_id_,
                              const datatools::utils::properties & vg_configuration_, 
                              void * user_ = 0);
     
-    void dump_vertex_generators (ostream & out_ = clog) const;
+    void dump_vertex_generators (std::ostream & out_ = std::clog) const;
 
   private: 
+
     bool                               _debug_;
     vertex_generator_creator_dict_type _creators_;
     

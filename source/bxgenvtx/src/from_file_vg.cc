@@ -59,7 +59,7 @@ namespace genvtx {
       {
         ostringstream message;
         message << "genvtx::from_file_vg::_open_source: " 
-		<< "Source file '" << _filename_ << "' does not exist !";
+                << "Source file '" << _filename_ << "' does not exist !";
         throw logic_error (message.str ());
       }
     _source_.open (_filename_.c_str ());
@@ -67,7 +67,7 @@ namespace genvtx {
       {
         ostringstream message;
         message << "genvtx::from_file_vg::_open_source: " 
-		<< "Cannot open source file '" << _filename_ << "' !";
+                << "Cannot open source file '" << _filename_ << "' !";
         throw logic_error (message.str ());
       }
     _open_ = true;
@@ -175,7 +175,7 @@ namespace genvtx {
               {
                 ostringstream message;
                 message << "genvtx::from_file_vg::_read_next: " 
-			<< "'x y z' format error at invalid line '" << line << "' !";
+                        << "'x y z' format error at invalid line '" << line << "' !";
                 throw logic_error (message.str ());
               }
             _next_.set (x, y, z);
@@ -212,7 +212,7 @@ namespace genvtx {
 
   // static method used within a vertex generator factory:
   i_vertex_generator * 
-  from_file_vg::create (const properties & configuration_, void * user_)
+  from_file_vg::create (const datatools::utils::properties & configuration_, void * user_)
   {
     //cerr << "DEVEL: genvtx::from_file_vg::create: Entering..." << endl;
     //configuration_.tree_dump (cerr, "from_file_vg::create: configuration:", "DEVEL: ");

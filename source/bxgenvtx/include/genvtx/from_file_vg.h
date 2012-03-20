@@ -23,17 +23,15 @@
 
 namespace genvtx {
 
-  using namespace std;
-
   class from_file_vg : public i_vertex_generator
   {
   public:
     static const double LENGTH_UNIT;
 
   private: 
-    string   _filename_;
+    std::string   _filename_;
     bool     _open_;
-    ifstream _source_;
+    std::ifstream _source_;
     geomtools::vector_3d _next_;
     double   _length_unit_; // length unit (default == 1); 
 
@@ -53,9 +51,9 @@ namespace genvtx {
 
     bool is_open () const;
 
-    const string & get_filename () const;
+    const std::string & get_filename () const;
 
-    void set_filename (const string &);
+    void set_filename (const std::string &);
 
     void set_length_unit (double lu_);
 
@@ -67,17 +65,17 @@ namespace genvtx {
     from_file_vg ();
 
     // ctor:
-    from_file_vg (const string & filename_);
+    from_file_vg (const std::string & filename_);
 
     // dtor:
     virtual ~from_file_vg ();
  
     // pure virtual methods for vertex generator factory stuff:
-    virtual string vg_id () const;
+    virtual std::string vg_id () const;
 
     virtual vg_creator_type vg_creator () const;
 
-    static i_vertex_generator * create (const properties & configuration_, void * user_ = 0);
+    static i_vertex_generator * create (const datatools::utils::properties & configuration_, void * user_ = 0);
  
   protected:
   

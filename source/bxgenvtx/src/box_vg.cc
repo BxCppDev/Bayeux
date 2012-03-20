@@ -11,6 +11,8 @@
 
 namespace genvtx {
 
+  using namespace std;
+
   bool box_vg::g_debug = false;
 
   void box_vg::_assert_lock_ (const string & where_)
@@ -308,7 +310,7 @@ namespace genvtx {
 
   // static method used within a vertex generator factory:
   i_vertex_generator * 
-  box_vg::create (const properties & configuration_, void * user_)
+  box_vg::create (const datatools::utils::properties & configuration_, void * user_)
   {
     //cerr << "DEVEL: genvtx::box_vg::create: Entering..." << endl;
     //configuration_.tree_dump (cerr, "genvtx::box_vg::create: configuration:", "DEVEL: ");

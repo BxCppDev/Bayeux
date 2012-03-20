@@ -15,6 +15,9 @@
 #ifndef __genvtx__i_vertex_generator_h
 #define __genvtx__i_vertex_generator_h 1
 
+#include <string>
+#include <iostream>
+
 #include <boost/scoped_ptr.hpp>
 
 #include <geomtools/utils.h>
@@ -25,8 +28,6 @@
 #include <genvtx/detail/vg_tools.h>
 
 namespace genvtx {
-
-  using namespace std;
 
   class i_vertex_generator
   {
@@ -53,7 +54,7 @@ namespace genvtx {
   public:
 
     // pure virtual methods for vertex generator factory stuff:
-    virtual string vg_id () const = 0;
+    virtual std::string vg_id () const = 0;
 
     virtual vg_creator_type vg_creator () const = 0;
 
@@ -72,13 +73,13 @@ namespace genvtx {
       
       vertex_generator_creator_dict_type & get_dict ();
       
-      bool has_vertex_generator (const string & vertex_generator_id_) const;
+      bool has_vertex_generator (const std::string & vertex_generator_id_) const;
  
-      vg_creator_type & get_vertex_generator (const string & vertex_generator_id_);
+      vg_creator_type & get_vertex_generator (const std::string & vertex_generator_id_);
 
-      void register_vertex_generator (vg_creator_type, const string & vertex_generator_id_);
+      void register_vertex_generator (vg_creator_type, const std::string & vertex_generator_id_);
 
-      void dump_vertex_generators (ostream & out_ = clog);
+      void dump_vertex_generators (std::ostream & out_ = std::clog);
 
     };
  
@@ -117,18 +118,18 @@ namespace genvtx {
         bool devel = g_debug;
         //devel = true;
         using namespace std;
-        if (devel) clog << "DEVEL: i_vertex_generator::creator_registration::ctor: "
+        if (devel) std::clog << "DEVEL: i_vertex_generator::creator_registration::ctor: "
                         << "Entering..."
-                        << endl;
-        string vg_id = _vg_.vg_id ();
-        if (devel) clog << "DEVEL: i_vertex_generator::creator_registration::ctor: "
+                        << std::endl;
+        std::string vg_id = _vg_.vg_id ();
+        if (devel) std::clog << "DEVEL: i_vertex_generator::creator_registration::ctor: "
                         << "vg_id='" << vg_id << "'"
-                        << endl;
+                        << std::endl;
         
         vg_creator_type vg_creator = _vg_.vg_creator ();
-        if (devel) clog << "DEVEL: i_vertex_generator::creator_registration::ctor: "
-                        << "vg_creator='" << hex << (void *) vg_creator << dec << "'"
-                        << endl;
+        if (devel) std::clog << "DEVEL: i_vertex_generator::creator_registration::ctor: "
+                        << "vg_creator='" << std::hex << (void *) vg_creator << std::dec << "'"
+                        << std::endl;
     
         try
           { 
@@ -138,10 +139,10 @@ namespace genvtx {
               {
                 if (devel) 
                   {
-                    clog << "DEVEL: i_vertex_generator::creator_registration::ctor: "
+                    std::clog << "DEVEL: i_vertex_generator::creator_registration::ctor: "
                          << "register_vg='" << vg_id << " @ " 
-                         << hex << (void *) vg_creator << dec << "'"
-                         << endl;
+                         << std::hex << (void *) vg_creator << std::dec << "'"
+                         << std::endl;
                   }
                 i_vertex_generator::get_vertex_generator_db ().register_vertex_generator (vg_creator,
                                                                                           vg_id);
@@ -149,17 +150,17 @@ namespace genvtx {
           }
         catch (exception & x)
           {
-            cerr << "i_vertex_generator::creator_registration::ctor: ERROR: " 
-                 << x.what () << endl;
+            std::cerr << "i_vertex_generator::creator_registration::ctor: ERROR: " 
+                 << x.what () << std::endl;
           }
         catch (...)
           {
-            cerr << "i_vertex_generator::creator_registration::ctor: ERROR: " 
-                 << "unexpected!" << endl;
+            std::cerr << "i_vertex_generator::creator_registration::ctor: ERROR: " 
+                 << "unexpected!" << std::endl;
           }
-        if (devel) clog << "i_vertex_generator::creator_registration::ctor: "
+        if (devel) std::clog << "i_vertex_generator::creator_registration::ctor: "
                         << "Exiting."
-                        << endl;
+                        << std::endl;
       }
 
     };

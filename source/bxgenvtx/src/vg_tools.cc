@@ -3,6 +3,7 @@
  */
 
 #include <genvtx/detail/vg_tools.h>
+#include <datatools/utils/properties.h>
 
 namespace genvtx { 
 

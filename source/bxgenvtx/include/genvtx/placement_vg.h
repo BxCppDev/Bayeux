@@ -59,11 +59,11 @@ namespace genvtx {
   
   public:
 
-    virtual string vg_id () const;
+    virtual std::string vg_id () const;
 
     virtual vg_creator_type vg_creator () const;
 
-    static i_vertex_generator * create (const properties & configuration_, void * user_ = 0);
+    static i_vertex_generator * create (const datatools::utils::properties & configuration_, void * user_ = 0);
   
   protected:
   

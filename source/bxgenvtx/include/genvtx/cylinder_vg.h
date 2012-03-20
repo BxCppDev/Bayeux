@@ -22,6 +22,12 @@
 #include <genvtx/i_vertex_generator.h>
 #include <geomtools/cylinder.h>
 
+namespace datatools {
+namespace utils {
+  class properties;
+}
+}
+
 namespace genvtx {
   
   class cylinder_vg : public i_vertex_generator
@@ -47,7 +53,7 @@ namespace genvtx {
 
   private:    
 
-    void _assert_lock_ (const string & where_);
+    void _assert_lock_ (const std::string & where_);
 
   public: 
 
@@ -71,7 +77,7 @@ namespace genvtx {
 
     const geomtools::cylinder & get_cylinder () const;
 
-    void dump (ostream & out_ = clog) const;
+    void dump (std::ostream & out_ = std::clog) const;
 
     // ctor:
     cylinder_vg ();
@@ -91,11 +97,11 @@ namespace genvtx {
 
   public:
 
-    virtual string vg_id () const;
+    virtual std::string vg_id () const;
 
     virtual vg_creator_type vg_creator () const;
 
-    static i_vertex_generator * create (const properties & configuration_, void * user_ = 0);
+    static i_vertex_generator * create (const datatools::utils::properties & configuration_, void * user_ = 0);
   
   protected:
   

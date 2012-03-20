@@ -12,6 +12,8 @@
 #include <string>
 
 namespace genvtx {
+ 
+  using namespace std;
   
   const geomtools::placement & placement_vg::get_placement () const
   {
@@ -120,7 +122,7 @@ namespace genvtx {
 
   // static method used within a vertex generator factory:
   i_vertex_generator * 
-  placement_vg::create (const properties & configuration_, void * user_)
+  placement_vg::create (const datatools::utils::properties & configuration_, void * user_)
   {
     cerr << "DEVEL: genvtx::placement_vg::create: Entering..." << endl;
     configuration_.tree_dump (cerr, "genvtx::placement_vg::create: configuration:", "DEVEL: ");

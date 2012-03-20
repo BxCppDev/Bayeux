@@ -18,25 +18,29 @@
 #include <string>
 #include <map>
 
-#include <datatools/utils/properties.h>
+//#include <datatools/utils/properties.h>
+namespace datatools {
+namespace utils {
+  class properties;
+}
+}
 
 namespace genvtx {
 
-  using namespace std;
-  using namespace datatools::utils;
+  namespace du = datatools::utils;
 
   class i_vertex_generator;
 
-  typedef i_vertex_generator * (*vg_creator_type) (const properties & configuration_, void * user_);
+  typedef i_vertex_generator * (*vg_creator_type) (const du::properties & configuration_, void * user_);
 
-  typedef map<string, vg_creator_type> vertex_generator_creator_dict_type;
+  typedef std::map<std::string, vg_creator_type> vertex_generator_creator_dict_type;
 
   class vg_tools
   {
   public:
-    static const string SHAPE_REF_NONE;
-    static const string SHAPE_REF_PLAIN;
-    static const string SHAPE_REF_GETTER;
+    static const std::string SHAPE_REF_NONE;
+    static const std::string SHAPE_REF_PLAIN;
+    static const std::string SHAPE_REF_GETTER;
   };
 
 

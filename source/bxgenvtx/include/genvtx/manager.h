@@ -25,8 +25,6 @@
 
 namespace genvtx {
 
-  using namespace std;
-
   class manager
   {
   public: 
@@ -37,7 +35,7 @@ namespace genvtx {
 
     bool is_initialized () const;
 
-    const string & get_rng_id () const;
+    const std::string & get_rng_id () const;
 
     // ctor:
     manager ();
@@ -56,7 +54,7 @@ namespace genvtx {
     bool              _debug_;
     bool              _initialized_;
     unsigned long int _rng_seed_;
-    string            _rng_id_; 
+    std::string       _rng_id_; 
     mygsl::rng        _random_;
 
   };

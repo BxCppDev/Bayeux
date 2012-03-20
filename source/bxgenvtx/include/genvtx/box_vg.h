@@ -49,7 +49,7 @@ namespace genvtx {
 
   private:    
 
-    void _assert_lock_ (const string & where_);
+    void _assert_lock_ (const std::string & where_);
 
   public: 
 
@@ -81,7 +81,7 @@ namespace genvtx {
 
     const geomtools::box & get_box_ref () const;
 
-    void dump (ostream & out_ = clog) const;
+    void dump (std::ostream & out_ = std::clog) const;
 
     // ctor:
     box_vg ();
@@ -101,11 +101,11 @@ namespace genvtx {
 
   public:
 
-    virtual string vg_id () const;
+    virtual std::string vg_id () const;
 
     virtual vg_creator_type vg_creator () const;
 
-    static i_vertex_generator * create (const properties & configuration_, 
+    static i_vertex_generator * create (const datatools::utils::properties & configuration_, 
                                         void * user_ = 0);
   
   protected:

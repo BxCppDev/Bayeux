@@ -11,6 +11,8 @@
 #include <datatools/utils/units.h>
 
 namespace genvtx {
+ 
+  using namespace std;
 
   const geomtools::vector_3d &  spot_vertex_generator::get_spot () const
   {
@@ -64,7 +66,7 @@ namespace genvtx {
 
   // static method used within a vertex generator factory:
   i_vertex_generator * 
-  spot_vertex_generator::create (const properties & configuration_, void * user_)
+  spot_vertex_generator::create (const datatools::utils::properties & configuration_, void * user_)
   {
     cerr << "DEVEL: genvtx::spot_vertex_generator::create: Entering..." << endl;
     configuration_.tree_dump (cerr, "genvtx::spot_vertex_generator::create: configuration:", "DEVEL: ");

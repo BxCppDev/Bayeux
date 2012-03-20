@@ -16,6 +16,8 @@
 #include <geomtools/utils.h>
 
 namespace genvtx {
+ 
+  using namespace std;
 
   bool manager::is_debug () const
   {
