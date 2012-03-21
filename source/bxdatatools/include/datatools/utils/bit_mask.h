@@ -18,6 +18,8 @@
 #ifndef __datatools__utils__bit_mask_h
 #define __datatools__utils__bit_mask_h 1
 
+#include <boost/cstdint.hpp>
+
 namespace datatools {
 
   namespace utils {

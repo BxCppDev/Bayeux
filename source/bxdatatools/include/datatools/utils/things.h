@@ -130,7 +130,7 @@ namespace datatools {
 
       public:
 
-        std::string                                     description;
+        std::string                                description;
         uint8_t                                    flags;
         datatools::serialization::i_serializable * handle;
 
