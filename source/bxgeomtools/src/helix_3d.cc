@@ -409,7 +409,7 @@ namespace geomtools {
          << _t2_ << " (" << get_angle2 () / CLHEP::radian << " radian)"
          << endl;
     out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
-         << "Lenght : "
+         << "Length : "
          << get_length() / CLHEP::mm << " mm"
          << endl;
     return;
