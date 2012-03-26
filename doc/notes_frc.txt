@@ -60,7 +60,7 @@ bash$ ./pkgtools.d/pkgtool configure \
 Build :
 
 {{{
-bash$ ./pkgtools.d/pkgtool build --number-of-tasks auto
+bash$ ./pkgtools.d/pkgtool build 
 }}}
 
 
@@ -80,3 +80,23 @@ bash$ source /scratch/sw/Bayeux/Bayeux-0.9.0/Install-Linux-i686/etc/bayeux_setup
 bash$ do_bayeux_all_setup
 }}}
 
+
+in '~/.bashrc' :
+
+>>>
+export BAYEUX_PRO_INSTALL_DIR=/scratch/sw/Bayeux/Bayeux-0.9.0/Install-Linux-i686
+function do_bayeux_pro_setup ()
+{
+  source ${BAYEUX_PRO_INSTALL_DIR}
+  do_bayeux_all_setup
+  return 0
+}
+
+export BAYEUX_TRUNK_INSTALL_DIR=/scratch/sw/Bayeux-trunk/Bayeux-0.9.1/Install-Linux-i686
+function do_bayeux_trunk_setup ()
+{
+  source ${BAYEUX_TRUNK_INSTALL_DIR}
+  do_bayeux_all_setup
+  return 0
+}
+<<<
