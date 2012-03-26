@@ -213,7 +213,7 @@ set ( BAYEUX_GENVTX_MINIMAL_TAG_VERSION     "3.0.0"  )
 set ( BAYEUX_GENBB_HELP_MINIMAL_TAG_VERSION "4.0.0"  )
 
 
-# Default configuration (0.9.0) :
+# Default configuration (0.9.1) :
 if ( BAYEUX_CONFIG STREQUAL "default" OR BAYEUX_CONFIG STREQUAL ${Bayeux_VERSION} )
   message ( STATUS "${PROJECT_NAME}: Bayeux 'default/${Bayeux_VERSION}' configuration...") 
 
@@ -241,14 +241,32 @@ if ( BAYEUX_CONFIG STREQUAL "default" OR BAYEUX_CONFIG STREQUAL ${Bayeux_VERSION
   set ( BAYEUX_GENBB_HELP_VERSION "4.0.0"  )
   set ( BAYEUX_GENBB_HELP_PATH    "tags/genbb_help-4.0.0"  )
 
-# Example of book-keeping of previous releases:
-#elif ( BAYEUX_CONFIG STREQUAL "default" OR BAYEUX_CONFIG STREQUAL 0.8.9 )
-#  set ( BAYEUX_DATATOOLS_PATH     "tags/datatools-3.9.9"  )
-#  ...
-#elif ( BAYEUX_CONFIG STREQUAL "default" OR BAYEUX_CONFIG STREQUAL 0.8.8 )
-#  set ( BAYEUX_DATATOOLS_PATH     "tags/datatools-3.9.8"  )
-#  ...
-#  
+elseif ( BAYEUX_CONFIG STREQUAL 0.9.0 )
+  message ( STATUS "${PROJECT_NAME}: Bayeux '0.9.0' configuration...") 
+
+  set ( BAYEUX_DATATOOLS_VERSION  "4.0.0"  )
+  set ( BAYEUX_DATATOOLS_PATH     "tags/datatools-4.0.0"  )
+
+  set ( BAYEUX_BRIO_VERSION       "3.0.0"  )
+  set ( BAYEUX_BRIO_PATH          "tags/brio-3.0.0"  )
+
+  set ( BAYEUX_MYGSL_VERSION      "3.0.0"  )
+  set ( BAYEUX_MYGSL_PATH         "tags/mygsl-3.0.0"  )
+
+  set ( BAYEUX_CUTS_VERSION       "3.0.0"  )
+  set ( BAYEUX_CUTS_PATH          "tags/cuts-3.0.0"  )
+
+  set ( BAYEUX_GEOMTOOLS_VERSION  "3.0.0"  )
+  set ( BAYEUX_GEOMTOOLS_PATH     "tags/geomtools-3.0.0"  )
+
+  set ( BAYEUX_MATERIALS_VERSION  "3.0.0"  )
+  set ( BAYEUX_MATERIALS_PATH     "tags/materials-3.0.0"  )
+
+  set ( BAYEUX_GENVTX_VERSION     "3.0.0"  )
+  set ( BAYEUX_GENVTX_PATH        "tags/genvtx-3.0.0"  )
+
+  set ( BAYEUX_GENBB_HELP_VERSION "4.0.0"  )
+  set ( BAYEUX_GENBB_HELP_PATH    "tags/genbb_help-4.0.0"  )
 
 elseif ( BAYEUX_CONFIG STREQUAL "last_tags" )
 
@@ -486,10 +504,10 @@ include ( BayeuxGenbb_help )
 #
 message ( STATUS "${PROJECT_NAME}: BAYEUX_COMPONENTS : '${BAYEUX_COMPONENTS}'" )
 
-configure_file ( "${PROJECT_SOURCE_DIR}/cmake/Template/bayeux_setup.sh.in"
-                 "${PROJECT_BINARY_DIR}/cmake/Template/bayeux_setup.sh" @ONLY )
+configure_file ( "${PROJECT_SOURCE_DIR}/cmake/Templates/bayeux_setup.sh.in"
+                 "${PROJECT_BINARY_DIR}/cmake/Templates/bayeux_setup.sh" @ONLY )
 
-install ( FILES ${PROJECT_BINARY_DIR}/cmake/Template/bayeux_setup.sh
+install ( FILES ${PROJECT_BINARY_DIR}/cmake/Templates/bayeux_setup.sh
           DESTINATION ${CMAKE_INSTALL_ETCDIR}
           PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
         )
