@@ -418,13 +418,16 @@ function do_configure ()
     local requested_bayeux_config="" #"${bayeux_version}"
     local cadfael_dir=
     local user_config_file=""
+
+    # Components :
     local with_brio=1
     local with_mygsl=1
-    local with_geomtools=1
     local with_cuts=1
+    local with_geomtools=1
     local with_materials=1
     local with_genvtx=1
     local with_genbb_help=1
+
     local with_bio=1
     local with_python_wrapper=0
     local with_doc=1
@@ -433,9 +436,11 @@ function do_configure ()
     local alternative_build_dir=1
     local build_processors_mode=""
     local build_type=""
+
     local svn_user_login=""
     local svn_user_passwd=""
     local svn_timeout=""
+
     local do_it=1
     while [ -n "$1" ]; do
 	local option="$1"
