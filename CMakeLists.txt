@@ -486,10 +486,10 @@ include ( BayeuxGenbb_help )
 #
 message ( STATUS "${PROJECT_NAME}: BAYEUX_COMPONENTS : '${BAYEUX_COMPONENTS}'" )
 
-configure_file ( "${PROJECT_SOURCE_DIR}/cmake/bayeux_setup.sh.in"
-                 "${PROJECT_BINARY_DIR}/cmake/bayeux_setup.sh" @ONLY )
+configure_file ( "${PROJECT_SOURCE_DIR}/cmake/Template/bayeux_setup.sh.in"
+                 "${PROJECT_BINARY_DIR}/cmake/Template/bayeux_setup.sh" @ONLY )
 
-install ( FILES ${PROJECT_BINARY_DIR}/cmake/bayeux_setup.sh
+install ( FILES ${PROJECT_BINARY_DIR}/cmake/Template/bayeux_setup.sh
           DESTINATION ${CMAKE_INSTALL_ETCDIR}
           PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
         )

@@ -136,8 +136,9 @@ function do_bayeux_all_setup ()
     fi
     bayeux_components=$(echo "${BAYEUX_COMPONENTS}" | tr ':' ' ')
     for component in ${bayeux_components}; do
+	local lower_component=$(echo "${component}" | tr "A-Z" "a-z")
 	echo "NOTICE: do_bayeux_all_setup: Setup Bayeux's component '${component}'..." 1>&2
-	eval "do_${component}_setup" 
+	eval "do_${lower_component}_setup" 
 	if [ $? -ne 0 ]; then
 	    echo "ERROR: do_bayeux_all_setup: Cannot setup '${component}'..." 1>&2
 	    return 1
@@ -154,10 +155,11 @@ function do_bayeux_help ()
     echo "NOTICE: bayeux_setup.sh: Please setup Bayeux's core with 'do_bayeux_setup'." 1>&2
     local bayeux_components=$(echo "@BAYEUX_COMPONENTS@" | tr ';' ' ')
     for component in ${bayeux_components}; do
-	echo "NOTICE: bayeux_setup.sh: Please setup '${component}' with 'do_${component}_setup'." 1>&2
+	local lower_component=$(echo "${component}" | tr "A-Z" "a-z")
+	echo "NOTICE: bayeux_setup.sh:   then setup '${component}' with 'do_${lower_component}_setup'." 1>&2
     done
-    echo "NOTICE: bayeux_setup.sh: Please setup all software components with 'do_bayeux_all_setup'." 1>&2
-    echo "NOTICE: bayeux_setup.sh: Please print this help with 'do_bayeux_help'." 1>&2
+    echo "NOTICE: bayeux_setup.sh: Or setup all software components with 'do_bayeux_all_setup'." 1>&2
+    echo "NOTICE: bayeux_setup.sh: Print this help with 'do_bayeux_help'." 1>&2
     return 0
 }
 typeset -fx do_bayeux_help
