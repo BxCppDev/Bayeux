@@ -433,6 +433,9 @@ function do_configure ()
     local alternative_build_dir=1
     local build_processors_mode=""
     local build_type=""
+    local svn_user_login=""
+    local svn_user_passwd=""
+    local svn_timeout=""
     local do_it=1
     while [ -n "$1" ]; do
 	local option="$1"
@@ -726,15 +729,17 @@ function do_configure ()
 	if [ ${force_install_lib_dir} -eq 1 ]; then
 	    cmake_more_options="${cmake_more_options} -DCMAKE_INSTALL_LIBDIR:PATH=lib "
 	fi
-	local svn_user_login=""
-	local svn_user_passwd=""
 
 	if [ "x${svn_user_login}" = "x" ]; then 
-	    svn_user_login="nemo"
+	    svn_user_login="visitor"
 	fi
 
 	if [ "x${svn_user_passwd}" = "x" ]; then 
-	    svn_user_passwd="Ettore1936"
+	    svn_user_passwd="anonymous"
+	fi
+
+	if [ "x${svn_timeout}" = "x" ]; then 
+	    svn_timeout="10"
 	fi
 
 
@@ -759,8 +764,9 @@ function do_configure ()
 	    -DBAYEUX_WITH_TESTS=${with_test} \
 	    -DBAYEUX_WITH_BIO=${with_bio} \
 	    -DBAYEUX_WITH_PYTHON_WRAPPER=${with_python_wrapper} \
-	    -DSVN_NEMO_LOGIN:STRING=${svn_user_login} \
-	    -DSVN_NEMO_PASSWORD:STRING=${svn_user_passwd} \
+	    -DNEMO_SVN_USERNAME:STRING=${svn_user_login} \
+	    -DNEMO_SVN_PASSWORD:STRING=${svn_user_passwd} \
+	    -DSVN_TIMEOUT:STRING=${svn_timeout} \
 	    ${cmake_more_options} \
 	    ..
 	if [ $? -ne 0 ]; then
