@@ -38,6 +38,24 @@
 
 #include <geomtools/polyline_3d.ipp>
 
+/**************************
+ * geomtools::i_placement *
+ **************************/
+
+#include <geomtools/i_placement.ipp>
+
+/************************
+ * geomtools::placement *
+ ************************/
+
+#include <geomtools/placement.ipp>
+
+/************************
+ * geomtools::blur_spot *
+ ************************/
+
+#include <geomtools/blur_spot.ipp>
+
 #endif // __geomtools__the_serializable_ipp__
 
 /* end of geomtools::the_serializable.ipp */

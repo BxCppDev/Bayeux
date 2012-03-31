@@ -26,27 +26,25 @@
 
 namespace geomtools {
 
-  using namespace std;
-
   class color
   {
   public:
 
-    static const string white;
-    static const string black;
-    static const string red;
-    static const string green;
-    static const string blue;
-    static const string magenta;
-    static const string cyan;
-    static const string yellow;
-    static const string orange;
-    static const string grey;
-    static const string default_color;
+    static const std::string white;
+    static const std::string black;
+    static const std::string red;
+    static const std::string green;
+    static const std::string blue;
+    static const std::string magenta;
+    static const std::string cyan;
+    static const std::string yellow;
+    static const std::string orange;
+    static const std::string grey;
+    static const std::string default_color;
 
   public:
     int    code;
-    string name;
+    std::string name;
     int    red_amount, green_amount, blue_amount;
 
   public:
@@ -54,10 +52,10 @@ namespace geomtools {
     color ();
 
     // ctor:
-    color (int, const string &, int, int, int);
+    color (int, const std::string &, int, int, int);
 
     /*** general color map ***/
-    typedef map<string, int> color_map_type;
+    typedef std::map<std::string, int> color_map_type;
 
     class color_db
     {
@@ -69,7 +67,7 @@ namespace geomtools {
 
       //bool has_color (const string & id_) const;
       
-      int get_color (const string & a_color_id) const;
+      int get_color (const std::string & a_color_id) const;
       
       //void register_color (color, const string & id_);
       
@@ -91,7 +89,7 @@ namespace geomtools {
     
     static const color_db & get_color_db ();
 
-    static int get_color (const string & a_name);
+    static int get_color (const std::string & a_name);
 
   };
 

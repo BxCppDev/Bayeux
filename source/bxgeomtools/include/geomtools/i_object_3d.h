@@ -85,9 +85,9 @@ namespace geomtools {
 
     virtual void reset ();
 
-    virtual void tree_dump (ostream & out_         = clog, 
-                            const string & title_  = "", 
-                            const string & indent_ = "", 
+    virtual void tree_dump (std::ostream & out_         = std::clog, 
+                            const std::string & title_  = "", 
+                            const std::string & indent_ = "", 
                             bool inherit_          = false) const;
       
 
@@ -104,10 +104,10 @@ namespace geomtools {
     {
     public:
         
-      virtual const i_object_3d * get (const string & name_, 
+      virtual const i_object_3d * get (const std::string & name_, 
                                        const datatools::utils::properties & params_) = 0;
         
-      const i_object_3d * get (const string & name_);
+      const i_object_3d * get (const std::string & name_);
         
     };
       

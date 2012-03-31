@@ -111,9 +111,9 @@ namespace geomtools {
                                  intercept_t & a_intercept,
                                  double a_skin = USING_PROPER_TOLERANCE) const;
 
-    virtual void tree_dump (ostream & a_out         = clog, 
-                            const string & a_title  = "", 
-                            const string & a_indent = "", 
+    virtual void tree_dump (std::ostream & a_out         = std::clog, 
+                            const std::string & a_title  = "", 
+                            const std::string & a_indent = "", 
                             bool a_inherit          = false) const;
 
   private:

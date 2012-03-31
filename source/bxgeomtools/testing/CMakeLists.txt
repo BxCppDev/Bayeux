@@ -22,6 +22,7 @@
 
 set ( geomtools_tests_programs_list
   test_geomtools.cxx 
+  test_blur_spot.cxx 
   test_address_set.cxx
   test_any_shape_3d.cxx
   test_box.cxx

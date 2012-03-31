@@ -37,8 +37,6 @@
 
 namespace geomtools {
 
-  using namespace std;
-
   class id_mgr;
   class model_factory;
 
@@ -89,16 +87,16 @@ namespace geomtools {
                       double tolerance_ = i_object_3d::USING_PROPER_TOLERANCE) const;
 
     void get_geom_id (const vector_3d & world_position_,
-                      const string & category_,
+                      const std::string & category_,
                       geom_id & gid_,
                       double tolerance_ = i_object_3d::USING_PROPER_TOLERANCE) const;
 
     virtual const geom_id & get_geom_id (const vector_3d & world_position_,
-                                         const string & category_,
+                                         const std::string & category_,
                                          double tolerance_ = i_object_3d::USING_PROPER_TOLERANCE) const;
 
     virtual void build_from (const model_factory & factory_,
-                             const string & mother_ = "world");
+                             const std::string & mother_ = "world");
 
     static bool check_inside (const geom_info & ginfo_,
                               const vector_3d & world_position_,

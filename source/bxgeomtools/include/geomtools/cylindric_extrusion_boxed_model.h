@@ -40,14 +40,14 @@ namespace geomtools {
   {
   public:
 
-    static const string LABEL_PROPERTY_PREFIX;
-    static const string EXTRUSION_LABEL;
+    static const std::string LABEL_PROPERTY_PREFIX;
+    static const std::string EXTRUSION_LABEL;
 
   public:
 
-    void set_material_name (const string &);
+    void set_material_name (const std::string &);
 
-    const string & get_material_name () const;
+    const std::string & get_material_name () const;
   
     void set_mother_x (double);
 
@@ -80,26 +80,26 @@ namespace geomtools {
 
   protected:
   
-    virtual void _at_construct (const string & name_,
-				const datatools::utils::properties & config_,
-				models_col_t * models_ = 0);
+    virtual void _at_construct (const std::string & name_,
+                                const datatools::utils::properties & config_,
+                                models_col_t * models_ = 0);
      
   public: 
 
-    virtual void tree_dump (ostream & out_         = clog, 
-			    const string & title_  = "", 
-			    const string & indent_ = "", 
-			    bool inherit_          = false) const;
+    virtual void tree_dump (std::ostream & out_         = std::clog, 
+                            const std::string & title_  = "", 
+                            const std::string & indent_ = "", 
+                            bool inherit_          = false) const;
 
     static void gnuplot_draw_user_function (std::ostream &, 
-					    const geomtools::vector_3d &, 
-					    const geomtools::rotation_3d &,
-					    const geomtools::i_object_3d &, 
-					    void * = 0);
+                                            const geomtools::vector_3d &, 
+                                            const geomtools::rotation_3d &,
+                                            const geomtools::i_object_3d &, 
+                                            void * = 0);
 
   private:
 
-    string           _material_name_;
+    std::string      _material_name_;
     double           _mother_x_, _mother_y_, _mother_z_;
     double           _extrusion_radius_;
 

@@ -24,8 +24,6 @@
 
 namespace geomtools {
 
-  //using  namespace std;
-
   class any_shape_3d : public i_shape_3d 
   {
 
@@ -39,7 +37,7 @@ namespace geomtools {
 
   public: 
 
-    void set_shape_name (const string & shape_name_);
+    void set_shape_name (const std::string & shape_name_);
 
     virtual void compute_bounding_box (box & bb_);
 
@@ -51,7 +49,7 @@ namespace geomtools {
   public: 
     any_shape_3d ();
 
-    any_shape_3d (const string & name_);
+    any_shape_3d (const std::string & name_);
 
     virtual ~any_shape_3d ();
     
@@ -82,7 +80,7 @@ namespace geomtools {
 
   private: 
 
-    string _shape_name_;
+    std::string _shape_name_;
     box    _bounding_box_;
        
   };

@@ -20,3 +20,5 @@ This is the geomtools package ChangeLog
 	* version: prepare tag 3.1.0 in trunk
 	* depends: mygsl >=3.1
 	* remove all "using namespace std;" from header files
+2012-03-31 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* blut_spot: new class + associated serialization stuff

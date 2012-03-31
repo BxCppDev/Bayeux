@@ -2,8 +2,6 @@
 /* i_object_3d.cc
  */
 
-#include <geomtools/i_object_3d.h>
-
 #include <geomtools/box.h>
 
 namespace geomtools {

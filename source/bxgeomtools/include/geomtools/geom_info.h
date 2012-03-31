@@ -26,8 +26,6 @@
 
 namespace geomtools {
 
-  using namespace std;
-
   class logical_volume;
 
   class geom_info
@@ -59,7 +57,7 @@ namespace geomtools {
 
     datatools::utils::properties & get_properties ();
 
-    friend ostream & operator<< (ostream &, const geom_info &);
+    friend std::ostream & operator<< (std::ostream &, const geom_info &);
 
   private:
 
@@ -70,7 +68,7 @@ namespace geomtools {
 
   };
 
-  typedef map<geom_id, geom_info> geom_info_dict_t;
+  typedef std::map<geom_id, geom_info> geom_info_dict_t;
 
 } // end of namespace geomtools
 

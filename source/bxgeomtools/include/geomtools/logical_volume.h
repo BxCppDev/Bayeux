@@ -28,7 +28,6 @@
 
 namespace geomtools {
 
-  using namespace std;
   using namespace datatools::utils;
 
   class physical_volume;
@@ -37,9 +36,9 @@ namespace geomtools {
     : public datatools::utils::i_tree_dumpable
   {
   public:
-    typedef map<string, const physical_volume *> physicals_col_t;
+    typedef std::map<std::string, const physical_volume *> physicals_col_t;
 
-    static const string HAS_REPLICA_FLAG;
+    static const std::string HAS_REPLICA_FLAG;
 
   private:
     
@@ -53,9 +52,9 @@ namespace geomtools {
 
     void unlock ();
 
-    const string & get_name () const;
+    const std::string & get_name () const;
 
-    void set_name (const string &);
+    void set_name (const std::string &);
 
     const properties & parameters () const;
 
@@ -73,37 +72,37 @@ namespace geomtools {
 
     logical_volume ();
 
-    logical_volume (const string &);
+    logical_volume (const std::string &);
 
-    logical_volume (const string &, const i_shape_3d &);
+    logical_volume (const std::string &, const i_shape_3d &);
 
-    logical_volume (const string &, const i_shape_3d *);
+    logical_volume (const std::string &, const i_shape_3d *);
 
     virtual ~logical_volume ();
 
-    virtual void tree_dump (ostream & out_         = clog, 
-                            const string & title_  = "", 
-                            const string & indent_ = "", 
+    virtual void tree_dump (std::ostream & out_         = std::clog, 
+                            const std::string & title_  = "", 
+                            const std::string & indent_ = "", 
                             bool inherit_          = false) const;
 
-    bool has_physical (const string & name_) const;
+    bool has_physical (const std::string & name_) const;
 
     bool has_material_ref () const;
 
-    string get_material_ref () const;
+    std::string get_material_ref () const;
 
-    void set_material_ref (const string & = "");
+    void set_material_ref (const std::string & = "");
 
-    const physical_volume & get_physical (const string & name_) const;
+    const physical_volume & get_physical (const std::string & name_) const;
       
-    void add_physical (const physical_volume & phys_, const string & name_ = "");
+    void add_physical (const physical_volume & phys_, const std::string & name_ = "");
 
     bool is_replica () const;
 
 
   private:
 
-    string     _name_;
+    std::string     _name_;
     bool       _locked_;
     properties _parameters_;
     bool       _own_shape_;
@@ -112,7 +111,7 @@ namespace geomtools {
 
   public:
 
-    typedef map<string, const logical_volume *> dict_t;
+    typedef std::map<std::string, const logical_volume *> dict_t;
 
   };
 

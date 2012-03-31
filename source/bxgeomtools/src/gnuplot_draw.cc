@@ -130,11 +130,11 @@ namespace geomtools {
   {
     basic_draw_point_with_color (out_, p1_, color_, true);
     basic_draw_point_with_color (out_, p2_, color_, true);
-    out_ << endl;
+    out_ << std::endl;
     basic_draw_point_with_color (out_, p3_, color_, true);
     basic_draw_point_with_color (out_, p3_, color_, true);
-    out_ << endl;
-    out_ << endl;
+    out_ << std::endl;
+    out_ << std::endl;
     return;
   }
 
@@ -148,11 +148,11 @@ namespace geomtools {
   {
     basic_draw_point_with_color (out_, p1_, color_);
     basic_draw_point_with_color (out_, p2_, color_);
-    out_ << endl;
+    out_ << std::endl;
     basic_draw_point_with_color (out_, p4_, color_);
     basic_draw_point_with_color (out_, p3_, color_);
-    out_ << endl;
-    out_ << endl;
+    out_ << std::endl;
+    out_ << std::endl;
     return;
   }
 
@@ -977,8 +977,8 @@ namespace geomtools {
     if (p_.is_extruded ())
       {
         /*
-          cerr << "DEVEL: gnuplot_draw::draw_polyhedra: "
-          << " EXTRUDED !!!" << endl;
+          std::clog << "DEVEL: gnuplot_draw::draw_polyhedra: "
+          << " EXTRUDED !!!" << std::endl;
         */
         for (size_t i = 0; i <= nsides ; ++i) 
           {
@@ -1225,11 +1225,11 @@ namespace geomtools {
     const rotation_3d & rot = rotation_;
     string shape_name = o_.get_shape_name ();
 
-    //cerr << "DEVEL: gnuplot_draw::basic_draw: Entering..." << endl;
+    //std::clog << "DEVEL: gnuplot_draw::basic_draw: Entering..." << std::endl;
 
     if (o_.has_user_draw ())
       { 
-        //cerr << "DEVEL: gnuplot_draw::basic_draw: has_user_draw..." << endl;
+        //std::clog << "DEVEL: gnuplot_draw::basic_draw: has_user_draw..." << std::endl;
         void * user_draw = o_.get_user_draw ();
         gnuplot_draw::draw_user_function_t user_draw_f 
           = reinterpret_cast<gnuplot_draw::draw_user_function_t> (user_draw);
@@ -1238,7 +1238,7 @@ namespace geomtools {
         return;
       }
 
-    //cerr << "DEVEL: gnuplot_draw::basic_draw: Step 1" << endl;
+    //std::clog << "DEVEL: gnuplot_draw::basic_draw: Step 1" << std::endl;
 
     if (shape_name == "line_3d")
       {
@@ -1316,7 +1316,7 @@ namespace geomtools {
 
     if (shape_name == "polycone")
       {
-        //cerr << "DEVEL: gnuplot_draw::basic_draw: shape is polycone..." << endl;
+        //std::clog << "DEVEL: gnuplot_draw::basic_draw: shape is polycone..." << std::endl;
         const polycone & p = dynamic_cast<const polycone &> (o_);
         draw_polycone (out_, pos, rot, p);
         return;
@@ -1343,9 +1343,9 @@ namespace geomtools {
         return;
       }
 
-    clog << "gnuplot_draw::basic_draw: "
-         << " No method to draw an 3D object of type '" 
-         << shape_name << "' !" << endl;
+    std::clog << "gnuplot_draw::basic_draw: "
+              << " No method to draw an 3D object of type '" 
+              << shape_name << "' !" << std::endl;
     return;
   }
 

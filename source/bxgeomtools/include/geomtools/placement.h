@@ -202,6 +202,8 @@ namespace geomtools {
     double       _phi_, _theta_, _delta_; // ZYZ Euler angles
     rotation_3d  _rotation_;         // mother->child frame coord. transformation
     rotation_3d  _inverse_rotation_; // child->mother frame coord. transformation
+    
+    DATATOOLS_SERIALIZATION_DECLARATION();
 
   };
 

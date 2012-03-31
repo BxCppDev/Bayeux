@@ -27,20 +27,18 @@
 
 namespace geomtools {
 
-  using namespace std;
-
   class line_3d : 
     public i_shape_1d,
     DATATOOLS_SERIALIZABLE_CLASS
   {
   public: 
-    static const string LINE_3D_LABEL;
+    static const std::string LINE_3D_LABEL;
 
   public: 
 
     bool is_normal();
 
-    virtual string get_shape_name () const;
+    virtual std::string get_shape_name () const;
 
     bool is_valid () const;
 
@@ -69,9 +67,9 @@ namespace geomtools {
     virtual ~line_3d ();
 
     /* interface i_tree_dumpable */
-    virtual void tree_dump (ostream & out_         = clog, 
-                            const string & title_  = "",
-                            const string & indent_ = "",
+    virtual void tree_dump (std::ostream & out_         = std::clog, 
+                            const std::string & title_  = "",
+                            const std::string & indent_ = "",
                             bool inherit_          = false) const;
 
     void dump () const;

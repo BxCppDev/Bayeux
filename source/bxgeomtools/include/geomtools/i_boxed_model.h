@@ -32,7 +32,7 @@ namespace geomtools {
 
     virtual const geomtools::box & get_box () const = 0;
 
-    i_boxed_model (const string & a_name = "");
+    i_boxed_model (const std::string & a_name = "");
 
     virtual ~i_boxed_model ();
 
@@ -40,8 +40,8 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#define GEOMTOOLS_BOXED_MODEL_INHERIT 					\
-  public geomtools::i_boxed_model					\
+#define GEOMTOOLS_BOXED_MODEL_INHERIT                                   \
+  public geomtools::i_boxed_model                                       \
   /**/
 
 #endif // __geomtools__i_boxed_model_h

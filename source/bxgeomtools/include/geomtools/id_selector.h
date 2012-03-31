@@ -21,9 +21,7 @@
 #include <geomtools/address_set.h>
 
 namespace geomtools {
-
-  using namespace std;
-
+  
   class geom_id;
 
   class id_selector
@@ -43,19 +41,19 @@ namespace geomtools {
 
     ~id_selector ();
 
-    void initialize (const string & rules_);
+    void initialize (const std::string & rules_);
 
     void reset ();
 
     bool match (const geom_id & gid_) const;
 
-    void dump (ostream & out_ = clog, const string & title_ = "") const;
+    void dump (std::ostream & out_ =std:: clog, const std::string & title_ = "") const;
 
   private:
 
     const id_mgr                * _id_mgr_; //!< Handle to a geometry ID manager
     const id_mgr::category_info * _cat_info_; //!< Handle to some 'category info' object
-    map<int, address_set> _addr_sets_; //!< Collection of address sets
+    std::map<int, address_set> _addr_sets_; //!< Collection of address sets
 
   };
 

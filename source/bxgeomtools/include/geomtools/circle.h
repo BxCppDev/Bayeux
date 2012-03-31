@@ -23,13 +23,11 @@
 
 namespace geomtools {
 
-  //using  namespace std;
-
   class circle : public i_shape_1d
   {
     
   public:
-    static const string CIRCLE_LABEL;
+    static const std::string CIRCLE_LABEL;
 
   public: 
 
@@ -61,9 +59,9 @@ namespace geomtools {
     // methods:
     virtual string get_shape_name () const;
 
-    virtual void tree_dump (ostream & a_out = clog, 
-                            const string & a_title = "", 
-                            const string & a_indent = "", 
+    virtual void tree_dump (std::ostream & a_out = std::clog, 
+                            const std::string & a_title = "", 
+                            const std::string & a_indent = "", 
                             bool a_inherit= false) const;
 
     virtual bool is_on_curve (const vector_3d &, 

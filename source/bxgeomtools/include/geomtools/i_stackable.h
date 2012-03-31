@@ -25,8 +25,6 @@
 
 namespace geomtools {
 
-  using namespace std;
-
   class i_stackable
   {
 
@@ -44,18 +42,18 @@ namespace geomtools {
   class stackable
   {
   public:
-    static const string STACKABLE_PREFIX;
-    static const string STACKABLE_LENGTH_UNIT_PROPERTY;
-    static const string STACKABLE_XMIN_PROPERTY;
-    static const string STACKABLE_XMAX_PROPERTY;
-    static const string STACKABLE_YMIN_PROPERTY;
-    static const string STACKABLE_YMAX_PROPERTY;
-    static const string STACKABLE_ZMIN_PROPERTY;
-    static const string STACKABLE_ZMAX_PROPERTY;
-    static const string STACKABLE_PLAY_PROPERTY;
-    static const string STACKABLE_LIMITS_PROPERTY;
+    static const std::string STACKABLE_PREFIX;
+    static const std::string STACKABLE_LENGTH_UNIT_PROPERTY;
+    static const std::string STACKABLE_XMIN_PROPERTY;
+    static const std::string STACKABLE_XMAX_PROPERTY;
+    static const std::string STACKABLE_YMIN_PROPERTY;
+    static const std::string STACKABLE_YMAX_PROPERTY;
+    static const std::string STACKABLE_ZMIN_PROPERTY;
+    static const std::string STACKABLE_ZMAX_PROPERTY;
+    static const std::string STACKABLE_PLAY_PROPERTY;
+    static const std::string STACKABLE_LIMITS_PROPERTY;
 
-    static string make_key (const string & flag_);
+    static std::string make_key (const std::string & flag_);
 
     static void extract (const datatools::utils::properties & source_,
                          datatools::utils::properties & target_);
@@ -148,12 +146,12 @@ namespace geomtools {
     virtual double get_zmin () const {return zmin;}
     virtual double get_zmax () const {return zmax;}
 
-    virtual void tree_dump (ostream & out_         = clog, 
-                            const string & title_  = "", 
-                            const string & indent_ = "", 
+    virtual void tree_dump (std::ostream & out_         = std::clog, 
+                            const std::string & title_  = "", 
+                            const std::string & indent_ = "", 
                             bool inherit_          = false) const;
     
-    void dump (ostream & out_ = clog) const;
+    void dump (std::ostream & out_ = std::clog) const;
 
     bool initialize (const datatools::utils::properties & config_);
                        

@@ -30,18 +30,18 @@ namespace geomtools {
     {
 
     public:
-      static const string CYLINDER_LABEL;
+      static const std::string CYLINDER_LABEL;
 
       enum faces_mask_type
-	{
-	  FACE_NONE   = FACE_NONE_BIT,
-	  FACE_SIDE   = 0x1,
-	  FACE_BOTTOM = 0x2,
-	  FACE_TOP    = 0x4,
-	  FACE_ALL    = (FACE_SIDE
-			 | FACE_BOTTOM 
-			 | FACE_TOP)
-	};  
+        {
+          FACE_NONE   = FACE_NONE_BIT,
+          FACE_SIDE   = 0x1,
+          FACE_BOTTOM = 0x2,
+          FACE_TOP    = 0x4,
+          FACE_ALL    = (FACE_SIDE
+                         | FACE_BOTTOM 
+                         | FACE_TOP)
+        };  
   
     public: 
     
@@ -91,9 +91,9 @@ namespace geomtools {
       virtual ~cylinder ();
   
       // methods:
-      virtual string get_shape_name () const;
+      virtual std::string get_shape_name () const;
 
-      virtual double get_parameter (const string &) const;
+      virtual double get_parameter (const std::string &) const;
 
       bool is_valid () const;
 
@@ -106,27 +106,27 @@ namespace geomtools {
       double get_volume () const;
 
       virtual bool is_inside (const vector_3d &, 
-			     double a_skin = USING_PROPER_SKIN) const;
+                             double a_skin = USING_PROPER_SKIN) const;
 
       virtual bool is_on_surface (const vector_3d &, 
-				 int a_mask    = FACE_ALL, 
-				 double a_skin = USING_PROPER_SKIN) const;
+                                 int a_mask    = FACE_ALL, 
+                                 double a_skin = USING_PROPER_SKIN) const;
 
       virtual vector_3d get_normal_on_surface (const vector_3d & a_position) const;
 
       virtual bool find_intercept (const vector_3d & a_from, 
-				   const vector_3d & a_direction,
-				   intercept_t & a_intercept,
-				   double a_skin = USING_PROPER_SKIN) const;
+                                   const vector_3d & a_direction,
+                                   intercept_t & a_intercept,
+                                   double a_skin = USING_PROPER_SKIN) const;
 
-      friend ostream & operator<< (ostream &, const cylinder &);
+      friend std::ostream & operator<< (std::ostream &, const cylinder &);
 
-      friend istream & operator>> (istream &, cylinder &);
+      friend std::istream & operator>> (std::istream &, cylinder &);
 
-      virtual void tree_dump (ostream & a_out         = clog, 
-			      const string & a_title  = "", 
-			      const string & a_indent = "", 
-			      bool a_inherit          = false) const;
+      virtual void tree_dump (std::ostream & a_out         = std::clog, 
+                              const std::string & a_title  = "", 
+                              const std::string & a_indent = "", 
+                              bool a_inherit          = false) const;
        
 
     private: 

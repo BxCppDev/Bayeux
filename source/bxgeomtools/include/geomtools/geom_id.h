@@ -32,18 +32,12 @@
 
 namespace geomtools {
 
-  using namespace std;
+  // using namespace std;
 
   class geom_id : 
     DATATOOLS_SERIALIZABLE_CLASS
   {
   public:
-    /*
-      static const string GEOM_ID_PREFIX;
-      static const string GEOM_ID_CATEGORY_PROPERTY;
-      static const int    GEOM_ID_WORLD_TYPE;
-      static const string GEOM_ID_WORLD_CATEGORY;
-    */
 
     static const uint32_t INVALID_TYPE;
     static const uint32_t INVALID_ADDRESS;
@@ -130,9 +124,9 @@ namespace geomtools {
 
     bool operator> (const geom_id & id_) const;
 
-    friend ostream & operator<< (ostream & out_, const geom_id & id_);
+    friend std::ostream & operator<< (std::ostream & out_, const geom_id & id_);
 
-    friend istream & operator>> (istream & in_, geom_id & id_);
+    friend std::istream & operator>> (std::istream & in_, geom_id & id_);
 
     void make (int type_, int depth_);
     
@@ -144,10 +138,9 @@ namespace geomtools {
 
   private: 
  
-    uint32_t         _type_;
-    vector<uint32_t> _addresses_;
+    uint32_t              _type_;
+    std::vector<uint32_t> _addresses_;
 
-    /* interface i_serializable */
     DATATOOLS_SERIALIZATION_DECLARATION();
 
   };

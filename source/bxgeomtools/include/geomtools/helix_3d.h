@@ -33,20 +33,18 @@
 
 namespace geomtools {
 
-  using namespace std;
-
   class helix_3d : 
     public i_shape_1d,
     DATATOOLS_SERIALIZABLE_CLASS
   {
   public: 
-    static const string HELIX_3D_LABEL;
+    static const std::string HELIX_3D_LABEL;
 
   public: 
 
     bool is_normal();
 
-    virtual string get_shape_name () const;
+    virtual std::string get_shape_name () const;
 
     bool is_valid () const;
 
@@ -120,9 +118,9 @@ namespace geomtools {
     virtual ~helix_3d ();
 
     /* interface i_tree_dumpable */
-    virtual void tree_dump (ostream & out_         = cerr, 
-                            const string & title_  = "",
-                            const string & indent_ = "",
+    virtual void tree_dump (std::ostream & out_         = std::clog, 
+                            const std::string & title_  = "",
+                            const std::string & indent_ = "",
                             bool inherit_               = false) const;
 
     void dump () const;
@@ -139,7 +137,7 @@ namespace geomtools {
     // convert angle in radian to parametric:
     static double angle_to_t (double angle_);
     
-    static void print_xyz (ostream & out_, 
+    static void print_xyz (std::ostream & out_, 
                            const helix_3d & helix_, 
                            double step_angle_ = 0.0,
                            int expand_ = 0);

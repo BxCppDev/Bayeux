@@ -16,6 +16,7 @@ file ( GLOB geomtools_PUBLIC_HEADERS
 
 # orderer set of source files :
 set (_geomtools_source_files
+  ${PROJECT_SOURCE_DIR}/src/blur_spot.cc 
   ${PROJECT_SOURCE_DIR}/src/address_set.cc
   ${PROJECT_SOURCE_DIR}/src/any_shape_3d.cc
   ${PROJECT_SOURCE_DIR}/src/gdml_export.cc 

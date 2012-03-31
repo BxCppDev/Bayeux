@@ -21,8 +21,6 @@
 
 namespace geomtools {
 
-  //using  namespace std;
-
   class address_set
   {
  

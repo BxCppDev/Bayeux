@@ -9,6 +9,8 @@ namespace geomtools {
 
   using namespace std;  
 
+  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(i_placement, "geomtools::i_placement")
+
   // ctor:
   i_placement::i_placement ()
   {

@@ -75,12 +75,12 @@ namespace geomtools {
                               shape_t &);
 
 
-      virtual void tree_dump (ostream & out_         = clog, 
-                              const string & title_  = "", 
-                              const string & indent_ = "", 
+      virtual void tree_dump (std::ostream & out_         = std::clog, 
+                              const std::string & title_  = "", 
+                              const std::string & indent_ = "", 
                               bool inherit_          = false) const;
 
-      void dump (std::ostream & out_ = clog) const;
+      void dump (std::ostream & out_ = std::clog) const;
 
     };
 
@@ -109,11 +109,11 @@ namespace geomtools {
 
     const shape_t & get_shape (int i_) const;
 
-    void dump (ostream & out_ = clog) const;
+    void dump (std::ostream & out_ = std::clog) const;
 
-    virtual void tree_dump (ostream & out_         = clog, 
-                            const string & title_  = "", 
-                            const string & indent_ = "", 
+    virtual void tree_dump (std::ostream & out_         = std::clog, 
+                            const std::string & title_  = "", 
+                            const std::string & indent_ = "", 
                             bool inherit_          = false) const;
        
   private:

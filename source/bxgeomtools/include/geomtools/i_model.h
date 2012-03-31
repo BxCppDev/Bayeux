@@ -6,7 +6,7 @@
  * 
  * License: 
  * 
- * Description: 
+  Description: 
  *   Interface of a geometry model
  * 
  * History: 
@@ -35,22 +35,22 @@ namespace geomtools {
   {
   public:
     static bool g_devel;
-    static const string SOLID_SUFFIX;
-    static const string LOGICAL_SUFFIX;
-    static const string PHYSICAL_SUFFIX;
-    static const string PHANTOM_SOLID_FLAG;
+    static const std::string SOLID_SUFFIX;
+    static const std::string LOGICAL_SUFFIX;
+    static const std::string PHYSICAL_SUFFIX;
+    static const std::string PHANTOM_SOLID_FLAG;
 
-    //static const string DEFAULT_WORLD_NAME;
+    //static const std::string DEFAULT_WORLD_NAME;
     
     typedef geomtools::models_col_t models_col_t;
      
   public: 
 
-    void assert_constructed (const string & where_, 
-                             const string & what_ = "") const;
+    void assert_constructed (const std::string & where_, 
+                             const std::string & what_ = "") const;
 
-    void assert_unconstructed (const string & where_, 
-                               const string & what_ = "") const;
+    void assert_unconstructed (const std::string & where_, 
+                               const std::string & what_ = "") const;
 
     bool is_constructed () const;
     
@@ -58,11 +58,11 @@ namespace geomtools {
 
     bool is_phantom_solid () const;
     
-    void set_name (const string & name_); 
+    void set_name (const std::string & name_); 
     
     void set_debug (bool); 
     
-    const string & get_name () const;
+    const std::string & get_name () const;
     
     const datatools::utils::properties & parameters () const;
     
@@ -75,21 +75,21 @@ namespace geomtools {
   public: 
 
     // ctor:
-    i_model (const string & name_ = "");
+    i_model (const std::string & name_ = "");
     
     // dtor:
     virtual ~i_model ();
     
-    virtual void tree_dump (ostream & out_         = clog, 
-                            const string & title_  = "", 
-                            const string & indent_ = "", 
+    virtual void tree_dump (std::ostream & out_         = std::clog, 
+                            const std::string & title_  = "", 
+                            const std::string & indent_ = "", 
                             bool inherit_          = false) const;
     
     const geomtools::logical_volume & get_logical () const;
 
     geomtools::logical_volume & get_logical ();
     
-    virtual void construct (const string & name_,
+    virtual void construct (const std::string & name_,
                             const datatools::utils::properties & setup_,
                             models_col_t * models_ = 0);
  
@@ -101,7 +101,7 @@ namespace geomtools {
 
     virtual void _post_construct (datatools::utils::properties & setup_);
  
-    virtual void _at_construct (const string & name_,
+    virtual void _at_construct (const std::string & name_,
                                 const datatools::utils::properties & setup_,
                                 models_col_t * models_ = 0);
     
@@ -110,7 +110,7 @@ namespace geomtools {
     bool _debug_;
     bool _constructed_;
     datatools::utils::properties _parameters_;
-    string _name_;
+    std::string _name_;
     
   protected:
     bool                      _phantom_solid;
@@ -120,7 +120,7 @@ namespace geomtools {
       
   public:
     
-    virtual string get_model_id () const = 0;
+    virtual std::string get_model_id () const = 0;
    
     class model_db
     {
@@ -142,13 +142,13 @@ namespace geomtools {
         return __dict;
       }
       
-      bool has_model (const string & model_id_) const;
+      bool has_model (const std::string & model_id_) const;
       
-      model_creator_t & get_model (const string & model_id_);
+      model_creator_t & get_model (const std::string & model_id_);
       
-      void register_model (model_creator_t, const string & model_id_);
+      void register_model (model_creator_t, const std::string & model_id_);
       
-      void dump_models (ostream & out_ = clog);
+      void dump_models (std::ostream & out_ = std::clog);
       
     };
     
@@ -171,7 +171,7 @@ namespace geomtools {
      *
      * The templatized class 'model_type' must inherits from 'i_model'
      * and thus implements the following methods:
-     *  - string          get_model_id () const
+     *  - std::string          get_model_id () const
      *  - model_creator_t get_model_creator () const
      *
      */
@@ -184,8 +184,8 @@ namespace geomtools {
       
     public:
 
-      static i_model * creator (const string & name_,
-                                const properties & configuration_,
+      static i_model * creator (const std::string & name_,
+                                const datatools::utils::properties & configuration_,
                                 models_col_t * models_ = 0)
       {
         i_model * model = new model_type;
@@ -200,7 +200,7 @@ namespace geomtools {
         if (devel) clog << "DEVEL: i_model::creator_registration::ctor: "
                         << "Entering..."
                         << endl;
-        string model_id = __model.get_model_id ();
+        std::string model_id = __model.get_model_id ();
         if (devel) clog << "DEVEL: i_model::creator_registration::ctor: "
                         << "model_id='" << model_id << "'"
                         << endl;
@@ -227,7 +227,7 @@ namespace geomtools {
                 i_model::get_model_db ().register_model (model_creator, model_id);
               }
           }
-        catch (exception & x)
+        catch (std::exception & x)
           {
             cerr << "i_model::creator_registration::ctor: ERROR: " 
                  << x.what () << endl;
@@ -246,26 +246,26 @@ namespace geomtools {
     
   public:
 
-    static string make_solid_name (const string & basename_);
+    static std::string make_solid_name (const std::string & basename_);
 
-    static string make_logical_volume_name (const string & basename_);
+    static std::string make_logical_volume_name (const std::string & basename_);
 
-    static string make_physical_volume_name (const string & basename_);
+    static std::string make_physical_volume_name (const std::string & basename_);
 
-    static string make_physical_volume_name_per_item (const string & basename_, 
-                                                      int i_);
+    static std::string make_physical_volume_name_per_item (const std::string & basename_, 
+                                                           int i_);
 
-    static string make_physical_volume_name_per_item (const string & basename_, 
-                                                      int i_, int j_);
+    static std::string make_physical_volume_name_per_item (const std::string & basename_, 
+                                                           int i_, int j_);
 
-    static string make_physical_volume_name (const string & basename_,
-                                             int nitems_);
+    static std::string make_physical_volume_name (const std::string & basename_,
+                                                  int nitems_);
 
-    static string make_physical_volume_name (const string & basename_,
-                                             int ncols_,
-                                             int nrows_);
+    static std::string make_physical_volume_name (const std::string & basename_,
+                                                  int ncols_,
+                                                  int nrows_);
 
-    static string extract_label_from_physical_volume_name (const string & physical_volume_name_);
+    static std::string extract_label_from_physical_volume_name (const std::string & physical_volume_name_);
 
   }; // class i_model
   

@@ -20,13 +20,11 @@
 
 namespace geomtools {
 
-  using namespace std;
-
   class disk : public i_shape_2d
   {
     
   public:
-    static const string DISK_LABEL;
+    static const std::string DISK_LABEL;
 
   public: 
 
@@ -56,23 +54,23 @@ namespace geomtools {
     virtual ~disk ();
   
     // methods:
-    virtual string get_shape_name () const;
+    virtual std::string get_shape_name () const;
       
     virtual bool is_on_surface (const vector_3d &,
-				double tolerance_ = USING_PROPER_TOLERANCE) const; 
+                                double tolerance_ = USING_PROPER_TOLERANCE) const; 
     
     virtual vector_3d get_normal_on_surface (const vector_3d & position_,
-					     bool up_ = true) const;
+                                             bool up_ = true) const;
     
     virtual bool find_intercept (const vector_3d & from_, 
-				 const vector_3d & direction_,
-				 intercept_t & intercept_,
-				 double tolerance_ = USING_PROPER_TOLERANCE) const;
+                                 const vector_3d & direction_,
+                                 intercept_t & intercept_,
+                                 double tolerance_ = USING_PROPER_TOLERANCE) const;
 
-    virtual void tree_dump (ostream & out_ = clog, 
-			    const string & title_ = "", 
-			    const string & indent_ = "", 
-			    bool inherit_= false) const;
+    virtual void tree_dump (std::ostream & out_ = std::clog, 
+                            const std::string & title_ = "", 
+                            const std::string & indent_ = "", 
+                            bool inherit_= false) const;
     
   private: 
 

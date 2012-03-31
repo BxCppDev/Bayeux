@@ -16,6 +16,9 @@ namespace geomtools {
 
   using namespace std;
 
+  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(placement, "geomtools::placement")
+
+
   bool placement::is_replica () const
   {
     return false;
