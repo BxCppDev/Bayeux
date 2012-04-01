@@ -436,6 +436,14 @@ if ( GEOMTOOLS_WITH_TEST )
   add_subdirectory ( testing )
 endif ()
 
+
+# ----------------------------------------------------------------------------
+# Add programs.
+#
+message ( STATUS "${PROJECT_NAME} : Add subdirectory 'programs' " )
+add_subdirectory ( programs )
+
+
 # ----------------------------------------------------------------------------
 # packaging
 #
