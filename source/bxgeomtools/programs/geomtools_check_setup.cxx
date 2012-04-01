@@ -159,14 +159,29 @@ int main (int argc_, char ** argv_)
                    i != factory.get_models ().end ();
                    i++)
                 {
-                  std::clog << std::setw (25) << std::setiosflags(ios::left) << std::resetiosflags(ios::right) 
-                       << i->second->get_name () << " ";
+                  bool long_name = false;
+                  size_t max_width = 34;
+                  if (i->second->get_name ().size () > max_width)
+                    {
+                      long_name = true;
+                    }
+                  if ((count % 2) == 0)  
+                    {
+                      std::clog << std::endl;
+                    }
+                  std::clog  << "  " << std::setw (max_width) << std::setiosflags(ios::left) << std::resetiosflags(ios::right) 
+                       << i->second->get_name () << "  ";
+                  if (long_name)
+                    {
+                      std::clog << std::endl;
+                      count = 0;
+                    }
                   count++;
-                  if ((count % 3) == 0)  std::clog << std::endl;
+                  //if ((count % 2) == 0)  std::clog << std::endl;
                 }
               std::clog << std::endl;
 
-              std::clog << "Enter the name of the geometry model to be displayed " << "\n"
+              std::clog << std::endl << "Enter the name of the geometry model to be displayed " << "\n"
                         << " or type '.q'";
               if (! model_name.empty ())
                 {
