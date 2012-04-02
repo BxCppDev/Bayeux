@@ -9,6 +9,7 @@
 #include <sstream>
 #include <limits> 
 
+#include <datatools/utils/utils.h>
 #include <datatools/utils/units.h>
 
 #include <geomtools/box.h>
@@ -124,9 +125,7 @@ namespace geomtools {
     _outer_shape_ = 0;
     _daughter_owner_logical_ = 0;
     _visibility_logical_ = 0;
-    //cerr << "DEVEL: 1 *****" << "  "  << "*****" << endl;
     _shape_name_ = ""; // no defined shape
-    //cerr << "DEVEL: 2 *****" << material::MATERIAL_REF_UNKNOWN << "*****" << endl;
     _material_name_ = ""; //material::MATERIAL_REF_UNKNOWN;
     _filled_material_name_ = ""; //material::MATERIAL_REF_UNKNOWN;
     _filled_mode_   = filled_utils::FILLED_NONE;
@@ -247,7 +246,7 @@ namespace geomtools {
      // 2011-11-21 FM : try this to forbid a second plug attempt...
     if (_daughter_owner_logical_ != 0 && _internals_.get_number_of_items () == 0)
       {
-	//clog << "DEVEL: simple_shaped_model::_at_construct: _daughter_owner_logical_ && plug_internal_models..." << endl;
+        //clog << "DEVEL: simple_shaped_model::_at_construct: _daughter_owner_logical_ && plug_internal_models..." << endl;
         _internals_.plug_internal_models (config_,
                                           *_daughter_owner_logical_,
                                           models_);
@@ -282,7 +281,7 @@ namespace geomtools {
         ostringstream message;
         message << "simple_boxed_model::_construct_box: "
                 << "Missing box 'x' property !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
 
     if (config_.has_key ("y"))
@@ -295,7 +294,7 @@ namespace geomtools {
         ostringstream message;
         message << "simple_boxed_model::_construct_box: "
                 << "Missing box 'y' property !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
 
     if (config_.has_key ("z"))
@@ -308,14 +307,14 @@ namespace geomtools {
         ostringstream message;
         message << "simple_boxed_model::_construct_box: "
                 << "Missing box 'z' property !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
 
     // build the box:
     _box_ = new box (x, y, z);
     if (! _box_->is_valid ())
       {
-        throw runtime_error ("simple_shaped_model::_construct_box: Invalid box dimensions !");
+        throw logic_error ("simple_shaped_model::_construct_box: Invalid box dimensions !");
       }
     _solid_ = _box_;
     get_logical ().set_material_ref (_material_name_);
@@ -336,6 +335,8 @@ namespace geomtools {
     double lunit = CLHEP::mm;
     double aunit = CLHEP::degree;
     double r, z;
+    datatools::utils::invalidate (r);
+    datatools::utils::invalidate (z);
 
     if (config_.has_key ("length_unit"))
       {
@@ -349,17 +350,30 @@ namespace geomtools {
         aunit = datatools::utils::units::get_angle_unit_from (aunit_str);
       }
 
-    if (config_.has_key ("r"))
+    if (! datatools::utils::is_valid (r))
       {
-        r = config_.fetch_real ("r");
-        r *= lunit;
+        if (config_.has_key ("r"))
+          {
+            r = config_.fetch_real ("r");
+            r *= lunit;
+          }
+        else if (config_.has_key ("radius"))
+          {
+            r = config_.fetch_real ("radius");
+            r *= lunit;
+          }
+        else if (config_.has_key ("diameter"))
+          {
+            r = 0.5 * config_.fetch_real ("diameter");
+            r *= lunit;
+          }
       }
-    else
+    if (! datatools::utils::is_valid (r))
       {
         ostringstream message;
         message << "simple_boxed_model::_construct_cylinder: "
-                << "Missing cylinder 'r' property !";
-        throw runtime_error (message.str ());
+                << "Missing cylinder 'r' or 'diameter' property !";
+        throw std::logic_error (message.str ());
       }
 
     if (config_.has_key ("z"))
@@ -372,14 +386,14 @@ namespace geomtools {
         ostringstream message;
         message << "simple_boxed_model::_construct_cylinder: "
                 << "Missing cylinder 'z' property !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
 
     // build the cylinder:
     _cylinder_ = new cylinder (r, z);
     if (! _cylinder_->is_valid ())
       {
-        throw runtime_error ("simple_shaped_model::_construct_cylinder: Invalid cylinder dimensions !");
+        throw logic_error ("simple_shaped_model::_construct_cylinder: Invalid cylinder dimensions !");
       }
     _solid_ = _cylinder_;
     get_logical ().set_material_ref (_material_name_);
@@ -423,14 +437,14 @@ namespace geomtools {
         ostringstream message;
         message << "simple_boxed_model::_construct_sphere: "
                 << "Missing sphere 'r' property !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
 
     // build the sphere:
     _sphere_ = new sphere (r);
     if (! _sphere_->is_valid ())
       {
-        throw runtime_error ("simple_shaped_model::_construct_sphere: Invalid sphere dimension !");
+        throw logic_error ("simple_shaped_model::_construct_sphere: Invalid sphere dimension !");
       }
     _solid_ = _sphere_;
     get_logical ().set_material_ref (_material_name_);
@@ -451,6 +465,10 @@ namespace geomtools {
     double lunit = CLHEP::mm;
     double aunit = CLHEP::degree;
     double inner_r, outer_r, z;
+    datatools::utils::invalidate (inner_r);
+    datatools::utils::invalidate (outer_r);
+    datatools::utils::invalidate (z);
+
     string filled_mode_label = filled_utils::FILLED_NONE_LABEL;
 
     if (config_.has_key ("length_unit"))
@@ -465,32 +483,58 @@ namespace geomtools {
         aunit = datatools::utils::units::get_angle_unit_from (aunit_str);
       }
 
-    if (config_.has_key ("inner_r"))
+    if (! datatools::utils::is_valid (inner_r))
       {
-        inner_r = config_.fetch_real ("inner_r");
-        inner_r *= lunit;
+        if (config_.has_key ("inner_r"))
+          {
+            inner_r = config_.fetch_real ("inner_r");
+            inner_r *= lunit;
+          }
+        else if (config_.has_key ("inner_radius"))
+          {
+            inner_r = config_.fetch_real ("inner_radius");
+            inner_r *= lunit;
+          }
+        else if (config_.has_key ("inner_diameter"))
+          {
+            inner_r = 0.5 * config_.fetch_real ("inner_diameter");
+            inner_r *= lunit;
+          }
       }
-    else
+    if (! datatools::utils::is_valid (inner_r))
       {
         ostringstream message;
         message << "simple_boxed_model::_construct_tube: "
                 << "Missing tube 'inner_r' property !";
-        //throw runtime_error (message.str ());
         cerr << "WARNING: " << message.str () << " Using 0-default inner radius !" << endl;
         inner_r = 0.0;
       }
 
-    if (config_.has_key ("outer_r"))
+
+    if (! datatools::utils::is_valid (outer_r))
       {
-        outer_r = config_.fetch_real ("outer_r");
-        outer_r *= lunit;
+        if (config_.has_key ("outer_r"))
+          {
+            outer_r = config_.fetch_real ("outer_r");
+            outer_r *= lunit;
+          }
+        else if (config_.has_key ("outer_radius"))
+          {
+            outer_r = config_.fetch_real ("outer_radius");
+            outer_r *= lunit;
+          }
+        else if (config_.has_key ("outer_diameter"))
+          {
+            outer_r = 0.5 * config_.fetch_real ("outer_diameter");
+            outer_r *= lunit;
+          }
       }
-    else
+     if (! datatools::utils::is_valid (outer_r))
       {
         ostringstream message;
         message << "simple_boxed_model::_construct_tube: "
                 << "Missing tube 'outer_r' property !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
 
     if (config_.has_key ("z"))
@@ -503,7 +547,7 @@ namespace geomtools {
         ostringstream message;
         message << "simple_boxed_model::_construct_tube: "
                 << "Missing tube 'z' property !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
 
     // filled mode:
@@ -527,7 +571,7 @@ namespace geomtools {
             ostringstream message;
             message << "simple_boxed_model::_construct_tube: "
                     << "Invalid mode '" << filled_mode_label << "' property !";
-            throw runtime_error (message.str ());
+            throw logic_error (message.str ());
           }
       }
     else
@@ -548,7 +592,7 @@ namespace geomtools {
             ostringstream message;
             message << "simple_shaped_model::_construct_tube: "
                     << "Missing 'material.filled.ref' property !";
-            throw runtime_error (message.str ());
+            throw logic_error (message.str ());
           }
       }
 
@@ -556,7 +600,7 @@ namespace geomtools {
     _tube_ = new tube (inner_r, outer_r, z);
     if (! _tube_->is_valid ())
       {
-        throw runtime_error ("simple_shaped_model::_construct_tube: Invalid  tube dimensions !");
+        throw logic_error ("simple_shaped_model::_construct_tube: Invalid  tube dimensions !");
       }
 
     // use the plain tube as solid envelope of the model:
@@ -581,7 +625,7 @@ namespace geomtools {
         _tube_->compute_outer_cylinder (*_cylinder_);
         if (! _cylinder_->is_valid ())
           {
-            throw runtime_error ("simple_shaped_model::_construct_tube: Invalid 'outer' cylinder dimensions !");
+            throw logic_error ("simple_shaped_model::_construct_tube: Invalid 'outer' cylinder dimensions !");
           }
         _solid_ = _cylinder_;
         get_logical ().set_material_ref (_material_name_);
@@ -594,7 +638,7 @@ namespace geomtools {
             if (! inner_cyl->is_valid ())
               {
                 delete inner_cyl;
-                throw runtime_error ("simple_shaped_model::_at_construct: Invalid 'inner' cylinder dimensions !");
+                throw logic_error ("simple_shaped_model::_at_construct: Invalid 'inner' cylinder dimensions !");
               }
             _inner_shape_ = inner_cyl;
             // inner placement for the extrusion:
@@ -622,7 +666,7 @@ namespace geomtools {
         _tube_->compute_outer_cylinder (*_cylinder_);
         if (! _cylinder_->is_valid ())
           {
-            throw runtime_error ("simple_shaped_model::_construct_tube: Invalid 'outer' cylinder dimensions !");
+            throw logic_error ("simple_shaped_model::_construct_tube: Invalid 'outer' cylinder dimensions !");
           }
         _solid_ = _cylinder_;
         get_logical ().set_material_ref (_filled_material_name_);
@@ -723,7 +767,7 @@ namespace geomtools {
             ostringstream message;
             message << "simple_boxed_model::_at_construct: "
                     << "Invalid mode '" << filled_mode_label << "' property !";
-            throw runtime_error (message.str ());
+            throw logic_error (message.str ());
           }
       }
     else
@@ -744,7 +788,7 @@ namespace geomtools {
             ostringstream message;
             message << "simple_shaped_model::_construct_polycone: "
                     << "Missing 'material.filled.ref' property !";
-            throw runtime_error (message.str ());
+            throw logic_error (message.str ());
           }
       }
 
@@ -753,7 +797,7 @@ namespace geomtools {
     if (! _polycone_->is_valid ())
       {
         _polycone_->tree_dump (cerr, "Invalid polycone: ", "ERROR:" );
-        throw runtime_error ("simple_shaped_model::_construct_polycone: Invalid polycone build parameters !");
+        throw logic_error ("simple_shaped_model::_construct_polycone: Invalid polycone build parameters !");
       }
     if (devel)
       {
@@ -774,7 +818,7 @@ namespace geomtools {
         _polycone_->compute_outer_polycone (*envelope_polycone);
         if (! envelope_polycone->is_valid ())
           {
-            throw runtime_error ("simple_shaped_model::_construct_polycone: Invalid envelope polycone !");
+            throw logic_error ("simple_shaped_model::_construct_polycone: Invalid envelope polycone !");
           }
         _outer_shape_ = envelope_polycone;
         _solid_ = _outer_shape_;
@@ -788,7 +832,7 @@ namespace geomtools {
             if (! inner_pol->is_valid ())
               {
                 delete inner_pol;
-                throw runtime_error ("simple_shaped_model::_construct_polycone: Invalid 'inner' polycone dimensions !");
+                throw logic_error ("simple_shaped_model::_construct_polycone: Invalid 'inner' polycone dimensions !");
               }
             _inner_shape_ = inner_pol;
             // inner placement for the extrusion:
@@ -816,7 +860,7 @@ namespace geomtools {
         _polycone_->compute_outer_polycone (*outer_polycone);
         if (! outer_polycone->is_valid ())
           {
-            throw runtime_error ("simple_shaped_model::_construct_tube: Invalid 'outer' cylinder dimensions !");
+            throw logic_error ("simple_shaped_model::_construct_tube: Invalid 'outer' cylinder dimensions !");
           }
         _outer_shape_ = outer_polycone;
         _solid_ = _outer_shape_;
@@ -908,7 +952,7 @@ namespace geomtools {
             ostringstream message;
             message << "simple_boxed_model::_at_construct: "
                     << "Invalid mode '" << filled_mode_label << "' property !";
-            throw runtime_error (message.str ());
+            throw logic_error (message.str ());
           }
       }
     else
@@ -929,7 +973,7 @@ namespace geomtools {
             ostringstream message;
             message << "simple_shaped_model::_construct_polyhedra: "
                     << "Missing 'material.filled.ref' property !";
-            throw runtime_error (message.str ());
+            throw logic_error (message.str ());
           }
       }
 
@@ -938,7 +982,7 @@ namespace geomtools {
     if (! _polyhedra_->is_valid ())
       {
         _polyhedra_->tree_dump (cerr, "Invalid polyhedra: ", "ERROR:" );
-        throw runtime_error ("simple_shaped_model::_construct_polyhedra: Invalid polyhedra build parameters !");
+        throw logic_error ("simple_shaped_model::_construct_polyhedra: Invalid polyhedra build parameters !");
       }
     if (devel)
       {
@@ -958,7 +1002,7 @@ namespace geomtools {
         _polyhedra_->compute_outer_polyhedra (*envelope_polyhedra);
         if (! envelope_polyhedra->is_valid ())
           {
-            throw runtime_error ("simple_shaped_model::_construct_polyhedra: Invalid envelope polyhedra !");
+            throw logic_error ("simple_shaped_model::_construct_polyhedra: Invalid envelope polyhedra !");
           }
         _outer_shape_ = envelope_polyhedra;
         _solid_ = _outer_shape_;
@@ -972,7 +1016,7 @@ namespace geomtools {
             if (! inner_pol->is_valid ())
               {
                 delete inner_pol;
-                throw runtime_error ("simple_shaped_model::_construct_polyhedra: Invalid 'inner' polyhedra dimensions !");
+                throw logic_error ("simple_shaped_model::_construct_polyhedra: Invalid 'inner' polyhedra dimensions !");
               }
             _inner_shape_ = inner_pol;
             // inner placement for the extrusion:
@@ -1000,7 +1044,7 @@ namespace geomtools {
         _polyhedra_->compute_outer_polyhedra (*outer_polyhedra);
         if (! outer_polyhedra->is_valid ())
           {
-            throw runtime_error ("simple_shaped_model::_construct_tube: Invalid 'outer' cylinder dimensions !");
+            throw logic_error ("simple_shaped_model::_construct_tube: Invalid 'outer' cylinder dimensions !");
           }
         _outer_shape_ = outer_polyhedra;
         _solid_ = _outer_shape_;
