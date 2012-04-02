@@ -5,8 +5,13 @@
 #include <iostream>
 #include <string>
 #include <exception>
+#include <vector>
+#include <map>
+
+#include <boost/foreach.hpp>
 
 #include <datatools/utils/utils.h>
+#include <datatools/utils/library_loader.h>
 
 #include <geomtools/model_factory.h>
 #include <geomtools/gnuplot_drawer.h>
@@ -34,7 +39,9 @@ int main (int argc_, char ** argv_)
       bool dump = false;
       std::vector<std::string> setup_filenames;
       std::string model_name; 
-
+      std::vector<std::string> LL_dlls;
+      std::string LL_config;
+ 
       int iarg = 1;
       while (iarg < argc_)
         {
@@ -88,9 +95,13 @@ int main (int argc_, char ** argv_)
                 {
                   model_name = argv_[++iarg];
                 }
-              else 
+              else if (option == "-l" || option == "--load-dll") 
+                {
+                  LL_dlls.push_back (argv_[++iarg]);
+                }
+               else 
                 { 
-                  clog << "WARNING: ignoring option '" << option << "'!" << endl; 
+                  std::clog << "WARNING: ignoring option '" << option << "'!" << std::endl; 
                   print_help ();
                 }
             }
@@ -104,6 +115,19 @@ int main (int argc_, char ** argv_)
     
       geomtools::i_model::g_devel = devel;
  
+      uint32_t LL_flags = datatools::utils::library_loader::allow_unregistered;
+      datatools::utils::library_loader LL (LL_flags, LL_config);
+      BOOST_FOREACH (const std::string & dll_name, LL_dlls)
+        {
+          std::clog << "NOTICE: " << "Loading DLL '" << dll_name << "'." << std::endl;
+          if (LL.load (dll_name) != EXIT_SUCCESS)
+            {
+              std::ostringstream message;
+              message << "Loading DLL '" << dll_name << "' fails !";
+              throw std::logic_error (message.str ());
+            }
+        }
+
       geomtools::model_factory factory;
       factory.set_debug (debug);
 
