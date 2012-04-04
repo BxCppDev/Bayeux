@@ -23,7 +23,7 @@ namespace genvtx {
         ostringstream message;
         message << "genvtx::cylinder_vg::_assert_lock_: " << where_ << ": "
                 << "Object is locked !";
-        throw runtime_error (message.str());
+        throw logic_error (message.str());
       }
     return;
   }
@@ -42,7 +42,7 @@ namespace genvtx {
   {
     if ((mode_ !=  MODE_BULK) && (mode_ !=  MODE_SURFACE))
       {
-        throw runtime_error ("genvtx::cylinder_vg::set_mode: Invalid mode !");
+        throw logic_error ("genvtx::cylinder_vg::set_mode: Invalid mode !");
       }
     _mode_ = mode_;
     return;
@@ -114,7 +114,7 @@ namespace genvtx {
   {
     if (_initialized_)
       {
-        throw runtime_error ("genvtx::cylinder_vg::init: Already initialized !");
+        throw logic_error ("genvtx::cylinder_vg::init: Already initialized !");
       }
     _init_ ();
     _initialized_ = true;
@@ -125,7 +125,7 @@ namespace genvtx {
   {
     if (! _initialized_)
       {
-        throw runtime_error ("genvtx::cylinder_vg::reset: Not initialized !");
+        throw logic_error ("genvtx::cylinder_vg::reset: Not initialized !");
       }
     _reset_ ();
     _initialized_ = false;
@@ -139,7 +139,7 @@ namespace genvtx {
       {
         if (_surface_mask_ == 0)
           {
-            throw runtime_error ("genvtx::cylinder_vg::_init_: Surface mask is null !");
+            throw logic_error ("genvtx::cylinder_vg::_init_: Surface mask is null !");
           }
         double s = _cylinder_.get_surface (_surface_mask_);
         if (devel) clog << "DEVEL: genvtx::cylinder_vg::_init_: Total surface = " << s << endl;
@@ -290,7 +290,7 @@ namespace genvtx {
             ostringstream message;
             message << "genvtx::cylinder_vg::create: Invalid mode '"
                     << mode_str << "' !";
-            throw runtime_error (message.str ());
+            throw logic_error (message.str ());
           }
       }
 
