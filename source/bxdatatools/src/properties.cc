@@ -18,7 +18,7 @@ namespace datatools {
 
   namespace utils {
 
-    using namespace std;
+    //using namespace std;
 
     bool properties::g_debug                       = false;
 
@@ -971,7 +971,7 @@ namespace datatools {
     {
       if (this == &a_props)
         {
-          throw logic_error ("datatools::utils::properties::export_and_rename_starting_with: Self export is not allowed !");
+          throw std::logic_error ("datatools::utils::properties::export_and_rename_starting_with: Self export is not allowed !");
         }
       keys_col_t ks;
       this->keys_starting_with (ks, a_key_prefix);
@@ -984,7 +984,7 @@ namespace datatools {
             clog << "DEVEL: properties::export_starting_with: property '"
             << *i << "'..." << endl;
           */
-          string new_key = *i;
+          std::string new_key = *i;
           boost::replace_first (new_key, a_key_prefix, a_new_prefix);
           a_props._props_[new_key] = ptmp._props_[*i];
         }
@@ -996,7 +996,7 @@ namespace datatools {
     {
       if (this == &a_props)
         {
-          throw logic_error ("datatools::utils::properties::export_starting_with: Self export is not allowed !");
+          throw std::logic_error ("datatools::utils::properties::export_starting_with: Self export is not allowed !");
         }
       keys_col_t ks;
       this->keys_starting_with (ks, a_key_prefix);
@@ -1019,7 +1019,7 @@ namespace datatools {
     {
       if (this == &a_props)
         {
-          throw logic_error ("datatools::utils::properties::export_starting_with: Self export is not allowed !");
+          throw std::logic_error ("datatools::utils::properties::export_starting_with: Self export is not allowed !");
         }
       keys_col_t ks;
       keys_not_starting_with (ks, a_key_prefix);
@@ -1064,7 +1064,7 @@ namespace datatools {
     {
       if (this == &a_props)
         {
-          throw logic_error ("datatools::utils::properties::export_ending_with: Self export is not allowed !");
+          throw std::logic_error ("datatools::utils::properties::export_ending_with: Self export is not allowed !");
         }
       keys_col_t ks;
       this->keys_ending_with (ks, a_key_suffix);
@@ -1087,7 +1087,7 @@ namespace datatools {
     {
       if (this == &a_props)
         {
-          throw logic_error ("datatools::utils::properties::export_ending_with: Self export is not allowed !");
+          throw std::logic_error ("datatools::utils::properties::export_ending_with: Self export is not allowed !");
         }
       keys_col_t ks;
       keys_not_ending_with (ks, a_key_suffix);
@@ -1137,7 +1137,7 @@ namespace datatools {
     {
       if (a_key_prefix.empty ())
         {
-          throw logic_error("datatools::utils::properties::keys_not_starting_with: Empty key prefix argument !");
+          throw std::logic_error("datatools::utils::properties::keys_not_starting_with: Empty key prefix argument !");
         }
       size_t n = a_key_prefix.size ();
       for (pmap::const_iterator iter = _props_.begin ();
@@ -1169,7 +1169,7 @@ namespace datatools {
     {
       if (a_key_prefix.empty ())
         {
-          throw logic_error("datatools::utils::properties::keys_starting_with: Empty key prefix argument !");
+          throw std::logic_error("datatools::utils::properties::keys_starting_with: Empty key prefix argument !");
         }
       size_t n = a_key_prefix.size ();
       for (pmap::const_iterator iter = _props_.begin ();
@@ -1197,7 +1197,7 @@ namespace datatools {
     {
       if (a_key_suffix.empty ())
         {
-          throw logic_error("datatools::utils::properties::keys_not_ending_with: Empty key suffix argument !");
+          throw std::logic_error("datatools::utils::properties::keys_not_ending_with: Empty key suffix argument !");
         }
       size_t n = a_key_suffix.size ();
       for (pmap::const_iterator iter = _props_.begin ();
@@ -1231,7 +1231,7 @@ namespace datatools {
     {
       if (a_key_suffix.empty ())
         {
-          throw logic_error("datatools::utils::properties::keys_ending_with: Empty key suffix argument !");
+          throw std::logic_error("datatools::utils::properties::keys_ending_with: Empty key suffix argument !");
         }
       size_t n = a_key_suffix.size ();
       for (pmap::const_iterator iter = _props_.begin ();
@@ -2812,8 +2812,8 @@ namespace datatools {
                           std::string config_desc;
                           if (! prop_config.empty ())
                             {
-                              cerr << "WARNING: " << "datatools::utils::properties::config::read_: "
-                                   << "Duplicated '@config' directive !" << endl;
+                              std::cerr << "WARNING: " << "datatools::utils::properties::config::read_: "
+                                   << "Duplicated '@config' directive !" << std::endl;
                             }
                           std::getline (iss, config_desc);
                           if (! config_desc.empty ())
@@ -3294,14 +3294,14 @@ namespace datatools {
       return s;
     }
 
-    void properties::export_to_string_based_dictionary (map<string, string> & a_dict, bool a_quoted_strings) const
+    void properties::export_to_string_based_dictionary (std::map<std::string, std::string> & a_dict, bool a_quoted_strings) const
     {
       for (pmap::const_iterator i = _props_.begin ();
            i != _props_.end ();
            i++)
         {
-          const string & key = i->first;
-          ostringstream valoss;
+          const std::string & key = i->first;
+          std::ostringstream valoss;
           const data & data = i->second;
           if (data.is_vector ())
             {

@@ -36,8 +36,6 @@
 #define __datatools__utils__multi_properties_h 1
 
 #include <string>
-
-#include <fstream>
 #include <map>
 #include <list>
 

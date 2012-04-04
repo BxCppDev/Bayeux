@@ -50,10 +50,6 @@
 #include <datatools/utils/i_clear.h>
 #include <datatools/utils/i_cloneable.h>
 
-//! \file datatools/utils/properties.h
-
-//using   namespace std;
-
 namespace datatools {
 
   namespace utils {
