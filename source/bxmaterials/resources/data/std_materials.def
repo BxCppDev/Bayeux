@@ -299,4 +299,13 @@ composition.mode          : string      = "fraction_mass"
 composition.names         : string [6]  = "Silicium" "Oxygen" "Calcium" "Aluminium" "Iron" "Hydrogen"
 composition.fraction_mass : real   [6]  =  0.227915   0.60541  0.04986  0.014245    0.00285 0.09972
 
+[name="std::pfte" type="material"]
+#@description Polytetrafluoroethylene (C2F4, PFTE)
+density          : real   = 2.2
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [2]  = "Fluorine"  "Carbon"
+composition.number_of_atoms : integer [2]  =      4        2
+
 # end

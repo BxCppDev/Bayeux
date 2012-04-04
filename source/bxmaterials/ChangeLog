@@ -6,4 +6,8 @@
         * remove all "using namespace std;" from header files
         * version: prepare tag 3.1.0 in trunk
         * depends on geomtools 3.1
+2012-04-04 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* resources/data/std_materials.def: add "std::pfte"
+	Polytetrafluoroethylene (C2F4, PFTE) 
 
+	
