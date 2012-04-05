@@ -168,6 +168,7 @@ int main (int argc_, char ** argv_)
       
       if (draw)
         {   
+          std::clog << "Current drawer view : '" << drawer_view << "'" << std::endl;
           bool go_on = true;
           do 
             {
@@ -184,7 +185,7 @@ int main (int argc_, char ** argv_)
                    i++)
                 {
                   bool long_name = false;
-                  size_t max_width = 34;
+                  size_t max_width = 32;
                   if (i->second->get_name ().size () > max_width)
                     {
                       long_name = true;
@@ -201,7 +202,6 @@ int main (int argc_, char ** argv_)
                       count = 0;
                     }
                   count++;
-                  //if ((count % 2) == 0)  std::clog << std::endl;
                 }
               std::clog << std::endl;
 
@@ -218,7 +218,7 @@ int main (int argc_, char ** argv_)
               {
                 std::string token;
                 std::istringstream token_iss (user);
-                token_iss >> token;
+                token_iss >> token >> ws;
                 if (token == ".q" || token == ".quit")
                   {
                     go_on = false;
@@ -227,7 +227,8 @@ int main (int argc_, char ** argv_)
                 if (! token.empty () && token[0] != '-')
                   {
                     model_name = token;
-                    token_iss >> token;
+                    token.clear ();
+                    token_iss >> token >> ws;
                   }
                 if (! token.empty ())
                   {
@@ -238,7 +239,8 @@ int main (int argc_, char ** argv_)
                 {
                   model_name = "world";
                 }
-              std::clog << "Name of the model : " << model_name << std::endl;
+              std::clog << "Name of the model : '" << model_name  << "'" << std::endl;
+              std::clog << "View              : '" << drawer_view << "'" << std::endl;
 
               geomtools::gnuplot_drawer::g_devel = devel;
               geomtools::gnuplot_drawer GPD;

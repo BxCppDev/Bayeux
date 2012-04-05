@@ -8,10 +8,10 @@
  * 
  * Description: 
  *
- *   Geometry model for a box with a central cylindric extrusion.
+ *   Geometry model for a box with a central cylindrical extrusion.
  * 
  * History: 
- * 
+ *   
  */
 
 #ifndef __geomtools__cylindric_extrusion_boxed_model_h

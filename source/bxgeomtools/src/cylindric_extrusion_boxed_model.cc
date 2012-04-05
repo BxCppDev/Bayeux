@@ -26,14 +26,14 @@ namespace geomtools {
 
   void cylindric_extrusion_boxed_model::set_extrusion_radius (double r_)
   {
-    assert_unconstructed("cylindric_extrusion_boxed_model::set_extrusion_radius");
+    assert_unconstructed("geomtools::cylindric_extrusion_boxed_model::set_extrusion_radius");
 
     if (r_ <= 0.0 * CLHEP::mm)
       {
-	ostringstream message;
-	message << "cylindric_extrusion_boxed_model::set_extrusion_radius: "
-		<< "Invalid R " << r_ / CLHEP::mm << " mm !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "geomtools::cylindric_extrusion_boxed_model::set_extrusion_radius: "
+                << "Invalid R " << r_ / CLHEP::mm << " mm !";
+        throw runtime_error (message.str ());
       }
     _extrusion_radius_ = r_;
     return;
@@ -41,14 +41,14 @@ namespace geomtools {
 
   void cylindric_extrusion_boxed_model::set_mother_x (double x_)
   {
-    assert_unconstructed("cylindric_extrusion_boxed_model::set_mother_x");
+    assert_unconstructed("geomtools::cylindric_extrusion_boxed_model::set_mother_x");
 
     if (x_ <= 0.0 * CLHEP::mm)
       {
-	ostringstream message;
-	message << "cylindric_extrusion_boxed_model::set_mother_x: "
-		<< "Invalid X " << x_ / CLHEP::mm << " mm !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "geomtools::cylindric_extrusion_boxed_model::set_mother_x: "
+                << "Invalid X " << x_ / CLHEP::mm << " mm !";
+        throw runtime_error (message.str ());
       }
     _mother_x_ = x_;
     return;
@@ -56,14 +56,14 @@ namespace geomtools {
 
   void cylindric_extrusion_boxed_model::set_mother_y (double y_)
   {
-    assert_unconstructed("cylindric_extrusion_boxed_model::set_mother_y");
+    assert_unconstructed("geomtools::cylindric_extrusion_boxed_model::set_mother_y");
 
     if (y_ <= 0.0 * CLHEP::mm)
       {
-	ostringstream message;
-	message << "cylindric_extrusion_boxed_model::set_mother_y: "
-		<< "Invalid Y " << y_ / CLHEP::mm << " mm !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "geomtools::cylindric_extrusion_boxed_model::set_mother_y: "
+                << "Invalid Y " << y_ / CLHEP::mm << " mm !";
+        throw runtime_error (message.str ());
       }
     _mother_y_ = y_;
     return;
@@ -71,14 +71,14 @@ namespace geomtools {
 
   void cylindric_extrusion_boxed_model::set_mother_z (double z_)
   {
-    assert_unconstructed("cylindric_extrusion_boxed_model::set_mother_z");
+    assert_unconstructed("geomtools::cylindric_extrusion_boxed_model::set_mother_z");
 
     if (z_ <= 0.0 * CLHEP::mm)
       {
-	ostringstream message;
-	message << "cylindric_extrusion_boxed_model::set_mother_z: "
-		<< "Invalid Z " << z_ / CLHEP::mm << " mm !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "geomtools::cylindric_extrusion_boxed_model::set_mother_z: "
+                << "Invalid Z " << z_ / CLHEP::mm << " mm !";
+        throw runtime_error (message.str ());
       }
     _mother_z_ = z_;
     return;
@@ -106,7 +106,7 @@ namespace geomtools {
 
   void cylindric_extrusion_boxed_model::set_material_name (const string & mn_)
   {
-    assert_unconstructed("cylindric_extrusion_boxed_model::set_material_name");
+    assert_unconstructed("geomtools::cylindric_extrusion_boxed_model::set_material_name");
 
     _material_name_ = mn_;
   }
@@ -122,7 +122,7 @@ namespace geomtools {
   }
 
   cylindric_extrusion_boxed_model::cylindric_extrusion_boxed_model ()
-    : i_model ("cylindric_extrusion_boxed_model")
+    : i_model ("geomtools::cylindric_extrusion_boxed_model")
   {
     _material_name_ = "";
     _mother_x_ = numeric_limits<double>::quiet_NaN ();
@@ -138,8 +138,8 @@ namespace geomtools {
   }
 
   void cylindric_extrusion_boxed_model::_at_construct (const string & name_,
-						       const datatools::utils::properties & config_,
-						       models_col_t * models_)
+                                                       const datatools::utils::properties & config_,
+                                                       models_col_t * models_)
   {
     bool devel = i_model::g_devel;
     if (devel) clog << "DEVEL: cylindric_extrusion_boxed_model::_at_construct: Entering..." << endl;
@@ -153,67 +153,67 @@ namespace geomtools {
 
     if (config_.has_key ("length_unit"))
       {
-	lunit_str = config_.fetch_string ("length_unit");
+        lunit_str = config_.fetch_string ("length_unit");
       }
 
     if (config_.has_key ("x"))
       {
-	mother_x = config_.fetch_real ("x");
+        mother_x = config_.fetch_real ("x");
       }
     else
       {
- 	ostringstream message;
-	message << "cylindric_extrusion_boxed_model::_at_construct: "
-		<< "Missing 'x' property !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "geomtools::cylindric_extrusion_boxed_model::_at_construct: "
+                << "Missing 'x' property !";
+        throw runtime_error (message.str ());
       }
 
     if (config_.has_key ("y"))
       {
-	mother_y = config_.fetch_real ("y");
+        mother_y = config_.fetch_real ("y");
       }
     else
       {
- 	ostringstream message;
-	message << "cylindric_extrusion_boxed_model::_at_construct: "
-		<< "Missing 'y' property !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "geomtools::cylindric_extrusion_boxed_model::_at_construct: "
+                << "Missing 'y' property !";
+        throw runtime_error (message.str ());
       }
 
     if (config_.has_key ("z"))
       {
-	mother_z = config_.fetch_real ("z");
+        mother_z = config_.fetch_real ("z");
       }
     else
       {
- 	ostringstream message;
-	message << "cylindric_extrusion_boxed_model::_at_construct: "
-		<< "Missing 'z' property !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "geomtools::cylindric_extrusion_boxed_model::_at_construct: "
+                << "Missing 'z' property !";
+        throw runtime_error (message.str ());
       }
 
     if (config_.has_key ("extrusion_radius"))
       {
-	extrusion_radius = config_.fetch_real ("extrusion_radius");
+        extrusion_radius = config_.fetch_real ("extrusion_radius");
       }
     else
       {
- 	ostringstream message;
-	message << "cylindric_extrusion_boxed_model::_at_construct: "
-		<< "Missing 'radius' property !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "geomtools::cylindric_extrusion_boxed_model::_at_construct: "
+                << "Missing 'extrusion_radius' property !";
+        throw runtime_error (message.str ());
       }
 
     if (config_.has_key ("material.ref"))
       {
-	material_name = config_.fetch_string ("material.ref");
+        material_name = config_.fetch_string ("material.ref");
       }
     else
       {
-	ostringstream message;
-	message << "cylindric_extrusion_boxed_model::_at_construct: "
-		<< "Missing 'material.ref' property !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "geomtools::cylindric_extrusion_boxed_model::_at_construct: "
+                << "Missing 'material.ref' property !";
+        throw runtime_error (message.str ());
       }
 
     double lunit = CLHEP::mm;
@@ -226,19 +226,19 @@ namespace geomtools {
 
     if (extrusion_radius >= 0.5 * mother_x)
       {
-	ostringstream message;
-	message << "cylindric_extrusion_boxed_model::_at_construct: "
-		<< "extrusion radius ("
-		<< extrusion_radius / CLHEP::mm << " mm) is too large (X-axis)!";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "geomtools::cylindric_extrusion_boxed_model::_at_construct: "
+                << "extrusion radius ("
+                << extrusion_radius / CLHEP::mm << " mm) is too large (X-axis)!";
+        throw runtime_error (message.str ());
       }
     if (extrusion_radius >= 0.5 * mother_y)
       {
-	ostringstream message;
-	message << "cylindric_extrusion_boxed_model::_at_construct: "
-		<< "extrusion radius ("
-		<< extrusion_radius / CLHEP::mm << " mm) is too large (Y-axis) !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "geomtools::cylindric_extrusion_boxed_model::_at_construct: "
+                << "extrusion radius ("
+                << extrusion_radius / CLHEP::mm << " mm) is too large (Y-axis) !";
+        throw runtime_error (message.str ());
       }
 
     set_material_name (material_name);
@@ -253,7 +253,7 @@ namespace geomtools {
     _mother_box_.set_z (get_mother_z ());
     if (! _mother_box_.is_valid ())
       {
-	throw runtime_error ("cylindric_extrusion_boxed_model::_at_construct: Invalid box dimensions !");
+        throw runtime_error ("geomtools::cylindric_extrusion_boxed_model::_at_construct: Invalid box dimensions !");
       }
 
     _extrusion_cylinder_.set_diameter (2 * get_extrusion_radius ());
@@ -289,12 +289,12 @@ namespace geomtools {
       sd_ptr->zmax = +0.5 * _mother_z_;
       _extruded_solid_.set_stackable_data (sd_ptr);
       if (devel)
-	{
-	  clog << "DEVEL: cylindric_extrusion_boxed_model::_at_construct: Entering..." << endl;
-	  sd_ptr->tree_dump (cerr,
-			     "cylindric_extrusion_boxed_model::_at_construct: Stackable data: ",
-			     "DEVEL: ");
-	}
+        {
+          clog << "DEVEL: cylindric_extrusion_boxed_model::_at_construct: Entering..." << endl;
+          sd_ptr->tree_dump (cerr,
+                             "geomtools::cylindric_extrusion_boxed_model::_at_construct: Stackable data: ",
+                             "DEVEL: ");
+        }
     }
     _extruded_solid_.set_user_draw ((void *) &cylindric_extrusion_boxed_model::gnuplot_draw_user_function);
     _solid_ = &_extruded_solid_;
@@ -308,9 +308,9 @@ namespace geomtools {
   }
 
   void cylindric_extrusion_boxed_model::tree_dump (ostream & out_,
-						   const string & title_ ,
-						   const string & indent_,
-						   bool inherit_) const
+                                                   const string & title_ ,
+                                                   const string & indent_,
+                                                   bool inherit_) const
   {
     bool devel = false;
     namespace du = datatools::utils;
@@ -319,29 +319,29 @@ namespace geomtools {
     i_model::tree_dump (out_, title_, indent, true);
 
     out_ << indent << i_tree_dumpable::tag
-	 << "Material name : '" << get_material_name () << "'" << endl;
+         << "Material name : '" << get_material_name () << "'" << endl;
 
     out_ << indent << i_tree_dumpable::tag
-	 << "Mother X : " << get_mother_x () / CLHEP::mm << " mm" << endl;
+         << "Mother X : " << get_mother_x () / CLHEP::mm << " mm" << endl;
 
     out_ << indent << i_tree_dumpable::tag
-	 << "Mother Y : " << get_mother_y () / CLHEP::mm << " mm" << endl;
+         << "Mother Y : " << get_mother_y () / CLHEP::mm << " mm" << endl;
 
     out_ << indent << i_tree_dumpable::tag
-	 << "Mother Z : " << get_mother_z () / CLHEP::mm << " mm" << endl;
+         << "Mother Z : " << get_mother_z () / CLHEP::mm << " mm" << endl;
 
     out_ << indent << i_tree_dumpable::tag
-	 << "Extrusion radius : " << get_extrusion_radius () / CLHEP::mm << " mm" << endl;
+         << "Extrusion radius : " << get_extrusion_radius () / CLHEP::mm << " mm" << endl;
 
 
     {
       out_ << indent << i_tree_dumpable::inherit_tag (inherit_)
-	   << "Solid : " << endl;
+           << "Solid : " << endl;
       {
-	ostringstream indent_oss;
-	indent_oss << indent;
-	indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
-	_extruded_solid_.tree_dump (out_, "", indent_oss.str ());
+        ostringstream indent_oss;
+        indent_oss << indent;
+        indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+        _extruded_solid_.tree_dump (out_, "", indent_oss.str ());
       }
     }
 
@@ -349,18 +349,18 @@ namespace geomtools {
   }
 
   void cylindric_extrusion_boxed_model::gnuplot_draw_user_function (std::ostream & out_,
-								    const geomtools::vector_3d & position_,
-								    const geomtools::rotation_3d & rotation_,
-								    const geomtools::i_object_3d & obj_,
-								    void *)
+                                                                    const geomtools::vector_3d & position_,
+                                                                    const geomtools::rotation_3d & rotation_,
+                                                                    const geomtools::i_object_3d & obj_,
+                                                                    void *)
   {
     const subtraction_3d * solid = dynamic_cast<const subtraction_3d *>(&obj_);
     if (solid == 0)
       {
-	ostringstream message;
-	message << "cylindric_extrusion_boxed_model::gnuplot_draw_user_function: "
-		<< "3D-object of '" << obj_.get_shape_name () << "' shape type has not the right type !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "geomtools::cylindric_extrusion_boxed_model::gnuplot_draw_user_function: "
+                << "3D-object of '" << obj_.get_shape_name () << "' shape type has not the right type !";
+        throw runtime_error (message.str ());
       }
     const i_composite_shape_3d::shape_t & s1 = solid->get_shape1 ();
     const i_composite_shape_3d::shape_t & s2 = solid->get_shape2 ();
@@ -379,13 +379,13 @@ namespace geomtools {
 
       placement world_item_placement;
       mother_world_placement.child_to_mother (s1.get_placement (),
-					      world_item_placement);
+                                              world_item_placement);
       const vector_3d   & sh1_pos = world_item_placement.get_translation ();
       const rotation_3d & sh1_rot = world_item_placement.get_rotation ();
       gnuplot_draw::draw_box (out_,
-			      sh1_pos,
-			      sh1_rot,
-			      mother_box);
+                              sh1_pos,
+                              sh1_rot,
+                              mother_box);
     }
 
     // draw second:
@@ -397,13 +397,13 @@ namespace geomtools {
 
       placement world_item_placement;
       mother_world_placement.child_to_mother (s1.get_placement (),
-					      world_item_placement);
+                                              world_item_placement);
       const vector_3d   & sh1_pos = world_item_placement.get_translation ();
       const rotation_3d & sh1_rot = world_item_placement.get_rotation ();
       gnuplot_draw::draw_cylinder (out_,
-				   sh1_pos,
-				   sh1_rot,
-				   cyl);
+                                   sh1_pos,
+                                   sh1_rot,
+                                   cyl);
     }
     return;
   }

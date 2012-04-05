@@ -54,6 +54,9 @@ set (_geomtools_source_files
   ${PROJECT_SOURCE_DIR}/src/circle.cc 
   ${PROJECT_SOURCE_DIR}/src/rectangle.cc 
   ${PROJECT_SOURCE_DIR}/src/disk.cc 
+  ${PROJECT_SOURCE_DIR}/src/plate_with_hole_model.cc 
+  ${PROJECT_SOURCE_DIR}/src/spherical_extrusion_cylinder_model.cc 
+  ${PROJECT_SOURCE_DIR}/src/spherical_extrusion_box_model.cc 
   ${PROJECT_SOURCE_DIR}/src/cylindric_extrusion_boxed_model.cc 
   ${PROJECT_SOURCE_DIR}/src/replicated_boxed_model.cc 
   ${PROJECT_SOURCE_DIR}/src/rotated_boxed_model.cc 

@@ -205,13 +205,15 @@ namespace geomtools {
               const rotation_3d &,
               double, 
               double, 
-              double);
+              double,
+              int tube_axis_ = AXIS_INVALID, size_t n_tube_sampling_ = 10);
 
     static void 
     draw_box (std::ostream &, 
               const vector_3d &, 
               const rotation_3d &,
-              const box &);
+              const box &,
+              int tube_axis_ = AXIS_INVALID, size_t n_tube_sampling_ = 10);
 
     static void 
     draw_cylinder (std::ostream &, 

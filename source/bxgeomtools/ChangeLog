@@ -22,3 +22,10 @@ This is the geomtools package ChangeLog
 	* remove all "using namespace std;" from header files
 2012-03-31 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
 	* blut_spot: new class + associated serialization stuff
+2012-04-05 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* spherical_extrusion_box_model: new class
+	* spherical_extrusion_cylinder_model: new class
+	* plate_with_hole_model: new class
+	* gnuplot_draw : enrich box display with additional option
+	* geomtools_check_setup.cxx : improve/fix
+

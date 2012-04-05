@@ -117,11 +117,12 @@ namespace geomtools {
   {
     if  (flag_ == "r") return get_r ();
     if  (flag_ == "radius") return get_r ();
+    if  (flag_ == "diameter") return 2 * get_r ();
     if  (flag_ == "volume") return get_volume ();
     if  (flag_ == "surface.side") return get_surface (FACE_SIDE);
     if  (flag_ == "surface") return get_surface (FACE_ALL);
 
-    throw std::runtime_error ("sphere::get_parameter: Unknown flag!");
+    throw std::logic_error ("geomtools::sphere::get_parameter: Unknown flag!");
   }
 
   vector_3d 

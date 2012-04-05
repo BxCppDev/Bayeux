@@ -346,12 +346,16 @@ namespace geomtools {
   gnuplot_draw::draw_box (std::ostream & out_, 
                           const vector_3d & pos_, 
                           const rotation_3d & rot_,
-                          const box & b_)
+                          const box & b_,
+                          int tube_axis_, 
+                          size_t n_tube_sampling_)
   {
     draw_box (out_, pos_, rot_, 
               b_.get_x (),
               b_.get_y (),
-              b_.get_z ());
+              b_.get_z (),
+              tube_axis_,
+              n_tube_sampling_);
     return;
   }
   
@@ -361,8 +365,23 @@ namespace geomtools {
                           const rotation_3d & rotation_,
                           double length_, 
                           double width_, 
-                          double height_)
+                          double height_,
+                          int tube_axis_, 
+                          size_t n_tube_sampling_)
   {
+    /*             ^ y 
+     *             |
+     *       D-----------A
+     *       |     |     |
+     *       |     + - - |- - - - >x
+     *       |           |
+     *       C-----------B
+     *
+     *
+     *
+     *
+     */
+
     vector_3d A ( 0.5 * length_,  0.5 * width_,  0.5 * height_);
     vector_3d B ( 0.5 * length_, -0.5 * width_,  0.5 * height_);
     vector_3d C (-0.5 * length_, -0.5 * width_,  0.5 * height_);
@@ -443,6 +462,119 @@ namespace geomtools {
     polyline.push_back (S2);
     basic_draw_polyline (out_, polyline);
 
+    if (tube_axis_ >= AXIS_X && tube_axis_ <= AXIS_Z && n_tube_sampling_ > 1)
+      {
+        const vector_3d * P1 = 0;
+        const vector_3d * P2 = 0;
+        const vector_3d * Q1 = 0;
+        const vector_3d * Q2 = 0;
+        const vector_3d * R1 = 0;
+        const vector_3d * R2 = 0;
+        const vector_3d * S1 = 0;
+        const vector_3d * S2 = 0;
+        if (tube_axis_ == AXIS_Z)
+          {
+            P1 = &A;
+            P2 = &P;
+            Q1 = &B;
+            Q2 = &Q;
+            R1 = &C;
+            R2 = &R;
+            S1 = &D;
+            S2 = &S;
+          }
+        if (tube_axis_ == AXIS_X)
+          {
+            P1 = &A;
+            P2 = &D;
+            Q1 = &P;
+            Q2 = &S;
+            R1 = &Q;
+            R2 = &R;
+            S1 = &B;
+            S2 = &C;
+          }
+        if (tube_axis_ == AXIS_Y)
+          {
+            P1 = &A;
+            P2 = &B;
+            Q1 = &P;
+            Q2 = &Q;
+            R1 = &S;
+            R2 = &R;
+            S1 = &D;
+            S2 = &C;
+          }
+
+        for (int i = 1; i < n_tube_sampling_; i++)
+          {
+            vector_3d D1 = (*Q1-*P1)/n_tube_sampling_;
+            vector_3d D2 = (*Q2-*P2)/n_tube_sampling_;
+            vector_3d U = *P1 + i * D1;
+            vector_3d V = *P2 + i * D2;
+            vector_3d UT (U);
+            UT.transform (inverse_rotation);
+            UT += position_;
+            vector_3d VT (V);
+            VT.transform (inverse_rotation);
+            VT += position_;
+            polyline.clear ();
+            polyline.push_back (UT);
+            polyline.push_back (VT);
+            basic_draw_polyline (out_, polyline);
+          }
+        for (int i = 1; i < n_tube_sampling_; i++)
+          {
+            vector_3d D1 = (*S1-*R1)/n_tube_sampling_;
+            vector_3d D2 = (*S2-*R2)/n_tube_sampling_;
+            vector_3d U = *R1 + i * D1;
+            vector_3d V = *R2 + i * D2;
+            vector_3d UT (U);
+            UT.transform (inverse_rotation);
+            UT += position_;
+            vector_3d VT (V);
+            VT.transform (inverse_rotation);
+            VT += position_;
+            polyline.clear ();
+            polyline.push_back (UT);
+            polyline.push_back (VT);
+            basic_draw_polyline (out_, polyline);
+          }
+        for (int i = 1; i < n_tube_sampling_; i++)
+          {
+            vector_3d D1 = (*R1-*Q1)/n_tube_sampling_;
+            vector_3d D2 = (*R2-*Q2)/n_tube_sampling_;
+            vector_3d U = *Q1 + i * D1;
+            vector_3d V = *Q2 + i * D2;
+            vector_3d UT (U);
+            UT.transform (inverse_rotation);
+            UT += position_;
+            vector_3d VT (V);
+            VT.transform (inverse_rotation);
+            VT += position_;
+            polyline.clear ();
+            polyline.push_back (UT);
+            polyline.push_back (VT);
+            basic_draw_polyline (out_, polyline);
+          }
+        for (int i = 1; i < n_tube_sampling_; i++)
+          {
+            vector_3d D1 = (*P1-*S1)/n_tube_sampling_;
+            vector_3d D2 = (*P2-*S2)/n_tube_sampling_;
+            vector_3d U = *S1 + i * D1;
+            vector_3d V = *S2 + i * D2;
+            vector_3d UT (U);
+            UT.transform (inverse_rotation);
+            UT += position_;
+            vector_3d VT (V);
+            VT.transform (inverse_rotation);
+            VT += position_;
+            polyline.clear ();
+            polyline.push_back (UT);
+            polyline.push_back (VT);
+            basic_draw_polyline (out_, polyline);
+          }
+      }
     return;
   }
 
