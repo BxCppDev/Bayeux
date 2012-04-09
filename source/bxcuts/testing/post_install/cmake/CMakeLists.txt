@@ -37,17 +37,17 @@ else ()
      message ( FATAL_ERROR "Cannot find cuts >= ${_cuts_min_version} library !" )
 endif ()
 
-set ( test_cuts_src_files ${CMAKE_SOURCE_DIR}/../../test_cuts.cxx )
+set ( test_cuts_src_files ${CMAKE_SOURCE_DIR}/../../test_manager.cxx )
 
 include_directories ( ../.. )
 include_directories ( ${cuts_INCLUDE_DIRS} )
 
-add_executable ( test_cuts
+add_executable ( test_manager
 	         ${test_cuts_src_files}
                )
 
-target_link_libraries ( test_cuts ${cuts_LIBRARIES} )
+target_link_libraries ( test_manager ${cuts_LIBRARIES} )
 
-install ( TARGETS test_cuts DESTINATION bin )
+install ( TARGETS test_manager DESTINATION bin )
 
 # - end of top level CMakeLists.txt for test_cuts project.

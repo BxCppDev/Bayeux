@@ -59,26 +59,26 @@
   void T::reset ()                              \
   /**/
 
-#define CUT_ACCEPT_DECLARE()																	 \
+#define CUT_ACCEPT_DECLARE()                                   \
   protected :                                                  \
-  virtual int _accept ();																			 \
+  virtual int _accept ();                                      \
   /**/
 
-#define CUT_ACCEPT_IMPLEMENT_HEAD(T)						\
-  int T::_accept ()															\
+#define CUT_ACCEPT_IMPLEMENT_HEAD(T)            \
+  int T::_accept ()                             \
   /**/
 
 #define CUT_CONSTRUCTOR_DECLARE(T)                      \
   public:                                               \
-  T (int a_debug_level = 0);														\
+  T (int a_debug_level = 0);                            \
   /**/
 
 #define CUT_CONSTRUCTOR_IMPLEMENT_HEAD(T,DebugLevel,Name,Description,Version) \
   T::T (int DebugLevel)                                                 \
-    : cuts::i_cut (Name,																								\
-									 Description,																					\
-									 Version,																							\
-									 DebugLevel)																					\
+    : cuts::i_cut (Name,                                                \
+                   Description,                                         \
+                   Version,                                             \
+                   DebugLevel)                                          \
   /**/
 
 #define CUT_DESTRUCTOR_DECLARE(T)               \
@@ -90,14 +90,14 @@
   T::~T ()                                      \
   /**/
 
-#define CUT_RESET_IMPLEMENT_HEAD(T)							\
+#define CUT_RESET_IMPLEMENT_HEAD(T)             \
   void T::reset ()                              \
   /**/
 
 #define CUT_DEFAULT_DESTRUCTOR_IMPLEMENT(T)     \
   CUT_DESTRUCTOR_IMPLEMENT_HEAD (T)             \
   {                                             \
-    if (is_initialized ()) this->T::reset ();		\
+    if (is_initialized ()) this->T::reset ();   \
     return;                                     \
   }                                             \
   /**/
@@ -109,7 +109,7 @@
                                                 \
   CUT_RESET_DECLARE();                          \
                                                 \
-  CUT_ACCEPT_DECLARE();													\
+  CUT_ACCEPT_DECLARE();                         \
                                                 \
   /**/  
 
@@ -133,7 +133,7 @@
                                                 \
   CUT_INITIALIZE_DECLARE();                     \
                                                 \
-  CUT_ACCEPT_DECLARE();													\
+  CUT_ACCEPT_DECLARE();                         \
                                                 \
   /**/  
 
@@ -147,10 +147,14 @@
   _g_default_registration_;                                 \
   /**/
 
+//DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE (i_cut, CUT_CLASS_NAME); \
+
 #define CUT_REGISTRATION_IMPLEMENT(CUT_CLASS_NAME,CUT_ID) \
   cuts::default_creator_registration<CUT_CLASS_NAME>      \
   CUT_CLASS_NAME::_g_default_registration_ (CUT_ID);      \
   /**/
+
+//DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (i_cut, CUT_CLASS_NAME,CUT_ID); \
 
 #endif // __cuts__cut_macros_h
 

@@ -32,6 +32,8 @@ namespace cuts {
 
   using namespace std;
 
+  //DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION (i_cut, "cuts::i_cut/__system__");
+
   bool 
   i_cut::is_debug () const
   {

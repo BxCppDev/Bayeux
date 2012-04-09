@@ -72,12 +72,13 @@ namespace cuts {
 
   class cut_creator_db
   {
-    cut_creator_dict_type dict_;
+    bool _verbose_;
+    cut_creator_dict_type _dict_;
         
   public:
         
     // ctor :
-    cut_creator_db (bool = false);
+    cut_creator_db (bool verbose_ = false);
         
     // dtor :
     virtual ~cut_creator_db ();
@@ -105,7 +106,7 @@ namespace cuts {
         
   private:
 
-    static scoped_cut_creator_db_type g_cut_creator_db_;
+    //static scoped_cut_creator_db_type g_cut_creator_db_;
 
   public:
         

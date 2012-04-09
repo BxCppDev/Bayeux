@@ -8,18 +8,18 @@ all : bin
 
 .PHONY : bin
 bin : \
-  test_cuts
+  test_manager
 
 .PHONY : clean
 clean :
 	$(RM) *~
-	$(RM) test_cuts
+	$(RM) test_manager
 
 .PHONY : run
-run : test_cuts
+run : test_manager
 	./$< 
 
-test_cuts : ../../test_cuts.cxx
+test_manager : ../../test_manager.cxx
 	$(CXX) $(CPPFLAGS) $< -o $@ $(LDFLAGS)
 
 # end

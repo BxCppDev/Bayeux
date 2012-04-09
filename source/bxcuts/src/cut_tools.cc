@@ -29,21 +29,28 @@ namespace cuts {
 
   using namespace std;
 
+  /*
+  // 2012-04-07, FM :  
   cut_tools::scoped_cut_creator_db_type 
+  cut_tools::g_cut_creator_db_ (0);
+  */
+
+  /*
+  // 2012-04-07, FM :  
   cut_tools::g_cut_creator_db_ (new cut_creator_db (true));
+  */
 
   bool cut_tools::g_devel = false;
 
   // ctor :
-  cut_creator_db::cut_creator_db (bool test_)
+  cut_creator_db::cut_creator_db (bool verbose_)
   {
     bool debug = cut_tools::g_devel;
-    //debug = true;
-    if (debug)
+    _verbose_ = verbose_;
+    if (_verbose_)
       {
-        clog << "DEVEL: cut_creator_db::cut_creator_db: "
-             << "Entering: " 
-             << (test_? "TEST": "-") << endl;
+        clog << "VERBOSE: cuts::cut_creator_db::cut_creator_db: "
+             << "Entering..." << endl;
       }
     return;    
   }
@@ -51,9 +58,9 @@ namespace cuts {
   // dtor :
   cut_creator_db::~cut_creator_db ()
   {
-    if (cut_tools::g_devel)
+    if (_verbose_)
       {
-        clog << "DEVEL: cut_creator_db::~cut_creator_db: Entering... " 
+        clog << "VERBOSE: cuts::cut_creator_db::~cut_creator_db: Entering... " 
              << endl;
       }
     return;
@@ -61,27 +68,27 @@ namespace cuts {
         
   const cut_creator_dict_type & cut_creator_db::get_dict () const
   {
-    return dict_;
+    return _dict_;
   }
       
   cut_creator_dict_type & cut_creator_db::get_dict ()
   {
-    return dict_;
+    return _dict_;
   }
       
   bool cut_creator_db::has_cut_creator (const string & a_cut_id) const
   {
-    return dict_.find (a_cut_id) != dict_.end ();
+    return _dict_.find (a_cut_id) != _dict_.end ();
   }
 
   cut_creator_type & 
   cut_creator_db::get_cut_creator (const string & a_cut_id)
   {
-    cut_creator_dict_type::iterator found = dict_.find (a_cut_id);
-    if (found == dict_.end ())
+    cut_creator_dict_type::iterator found = _dict_.find (a_cut_id);
+    if (found == _dict_.end ())
       {
         ostringstream message;
-        message << "cut_creator_db::get_cut_creator: "
+        message << "cuts::cut_creator_db::get_cut_creator: "
                 << "No cut creator with ID='" << a_cut_id << "'!";
         throw logic_error (message.str ());
       }
@@ -94,9 +101,9 @@ namespace cuts {
     bool devel = cut_tools::g_devel;
     //devel = true;
     using namespace std;
-    if (devel)
+    if (_verbose_)
       {
-        clog << "DEVEL: cut_creator_db::register_cut_creator: "
+        clog << "VERBOSE: cuts::cut_creator_db::register_cut_creator: "
              << "a_cut_id='" << a_cut_id << "'"
              << endl;
       }
@@ -104,7 +111,7 @@ namespace cuts {
     if (a_cut_id.empty ())
       {
         ostringstream message;
-        message << "cut_creator_db::register_cut_creator: " 
+        message << "cuts::cut_creator_db::register_cut_creator: " 
                 << "Empty cut creator ID !";
         throw logic_error (message.str ());
       }
@@ -112,23 +119,20 @@ namespace cuts {
     if (has_cut_creator (a_cut_id))
       {
         ostringstream message;
-        message << "cut_creator_db::register_cut_creator: " 
+        message << "cuts::cut_creator_db::register_cut_creator: " 
                 << "Cut creator ID '" << a_cut_id << "' is already used "
                 << "within the cut factory dictionnary !";
         throw logic_error (message.str ());
       }
-    if (devel)
+    if (_verbose_)
       {
-        clog << "DEVEL: cut_creator_db::register_cut_creator: "
+        clog << "VERBOSE: cuts::cut_creator_db::register_cut_creator: "
              << "new '" << a_cut_id << "' cut creator  ID !"
              << endl;
-      }
-    if (devel)
-      {
-        clog << "DEVEL: cut_creator_db::register_cut_creator:  "
+        clog << "VERBOSE: cuts::cut_creator_db::register_cut_creator:  "
              << "insert cut creator ID='" << a_cut_id << "'!"
              << endl;
-        clog << "DEVEL: cut_creator_db::register_cut_creator: "
+        clog << "VERBOSE: cuts::cut_creator_db::register_cut_creator: "
              << "with creator address='" << hex 
              << (void *) a_cut_creator << dec << "'"
              << endl;
@@ -136,13 +140,13 @@ namespace cuts {
     pair<string, cut_creator_type> a_pair;
     a_pair.first = a_cut_id;
     a_pair.second = a_cut_creator;
-    dict_.insert (a_pair);
+    _dict_.insert (a_pair);
     size_t sz = get_dict ().size ();
-    if (devel)
+    if (_verbose_)
       {
-        clog << "DEVEL: cut_creator_db::register_cut_creator: size="
+        clog << "VERBOSE: cuts::cut_creator_db::register_cut_creator: size="
              << sz << " element" << (sz > 1? "s": "") << endl;
-        clog << "DEVEL: cut_creator_db::register_cut_creator: "
+        clog << "VERBOSE: cuts::cut_creator_db::register_cut_creator: "
              << "done."
              << endl;
       }
@@ -170,15 +174,36 @@ namespace cuts {
     return;
   }
      
+     
+  // 2012-04-09 FM : 
+  // g++ 4.5.2-8ubuntu4 -> g++ 4.6.169 :
   cut_creator_db & cut_tools::get_cut_creator_db ()
   {
-    if (! g_cut_creator_db_) 
+    static scoped_cut_creator_db_type g_cut_creator_db (0);
+    if (g_cut_creator_db.get () == 0) 
       {
-        throw runtime_error ("get_cut_creator_db: Library has a critical bug !");
+        clog << "NOTICE: cuts::cut_creator_db::get_cut_creator_db: "
+             << "First use of the 'system' cut creator DB." << endl;
+        g_cut_creator_db.reset (new cut_creator_db (true));
+      }
+    return *(g_cut_creator_db.get ());
+  }
+
+  // 2012-04-09 FM : 
+  /*
+  cut_creator_db & cut_tools::get_cut_creator_db ()
+  {
+    if (g_cut_creator_db_ == 0) 
+      {
+        // g++ 4.5.2-8ubuntu4 -> g++ 4.6.169 :
+        //throw runtime_error ("get_cut_creator_db: Library has a critical bug !");
+
+        cut_tools::g_cut_creator_db_.reset (new cut_creator_db (true));
       }
     return *(g_cut_creator_db_.get ());
   }
-  
+  */
+
 }  // end of namespace cuts
 
 // end of cut_tools.cc

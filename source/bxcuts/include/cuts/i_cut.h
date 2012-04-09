@@ -39,6 +39,7 @@
 #include <boost/cstdlib.hpp>
 
 #include <datatools/utils/i_tree_dump.h>
+//#include <datatools/factory/factory_macros.h>
 
 namespace datatools {
   namespace utils {
@@ -173,6 +174,9 @@ namespace cuts {
     int    _debug_level_;    //!< The debug level of the cut
 
     void * _user_data_;
+
+    // Factory stuff :
+    //DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_cut);
     
   };
       
