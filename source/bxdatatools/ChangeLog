@@ -84,3 +84,6 @@ This is the datatools package ChangeLog
 	- header : "include/datatools/utils/handle_macros.h"
 	- testing: "testing/test_handle_macros.h"
 	* remove all "using namespace std;" from header files
+2012-04-09 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* modify the 'factory' system and macros to use the 'Construct On First Use Idiom'
+	

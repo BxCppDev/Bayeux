@@ -129,13 +129,13 @@ int main (int argc_ , char ** argv_)
   int error_code = EXIT_SUCCESS;
   try 
     {
-      clog << "Test of the 'factory' template class." << endl; 
+      std::clog << "Test of the 'factory' template class." << std::endl; 
       bool verbose = false;
 
       int iarg =  1;
       while (iarg < argc_) 
         {
-          string arg = argv_[iarg];
+          std::string arg = argv_[iarg];
 
           if ((arg == "-v") || (arg == "--verbose")) verbose = true;
 
@@ -208,14 +208,14 @@ int main (int argc_ , char ** argv_)
   
       std::clog << "End." << std::endl;
     }
-  catch (exception & x)
+  catch (std::exception & x)
     { 
-      clog << "error: " << x.what () << endl; 
+      std::clog << "error: " << x.what () << std::endl; 
       error_code =  EXIT_FAILURE;
     }
   catch (...) 
     { 
-      clog << "error: " << "unexpected error!" << endl;  
+      std::clog << "error: " << "unexpected error !" << std::endl;  
       error_code = EXIT_FAILURE; 
     } 
   std::clog << "End." << std::endl;
