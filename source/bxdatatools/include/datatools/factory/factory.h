@@ -38,16 +38,6 @@ namespace datatools {
 
     };
 
-    base_factory_register::base_factory_register ()
-    {
-      return;
-    }
-
-    base_factory_register::~base_factory_register ()
-    {
-      return;
-    }
-
     /*********************************************/
 
     template <class BaseType>
