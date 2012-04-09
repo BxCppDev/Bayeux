@@ -68,7 +68,7 @@ namespace datatools {
       void list_of_factories (std::vector<std::string> & ids_) const
       {
         for (typename factory_map_type::iterator i = _registered_.begin ();
-             i !=  _registered_.end ();
+             i != _registered_.end ();
              i++)
           {
             ids_.push_back (i->first);
