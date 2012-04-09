@@ -130,6 +130,10 @@ install ( FILES ${datatools_event_PUBLIC_HEADERS}
           DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/datatools/event
         )
 
+install ( FILES ${datatools_factory_PUBLIC_HEADERS}
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/datatools/factory
+        )
+
 install ( FILES ${datatools_serialization_PUBLIC_HEADERS}
           DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/datatools/serialization
         )
@@ -157,7 +161,7 @@ file ( GLOB datatools_serialization_ipp_PUBLIC_HEADERS
 file ( GLOB datatools_event_ipp_PUBLIC_HEADERS
        ${PROJECT_SOURCE_DIR}/include/datatools/event/*.ipp
      )
-
+ 
 install ( FILES ${datatools_ipp_PUBLIC_HEADERS}
           DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/datatools
         )

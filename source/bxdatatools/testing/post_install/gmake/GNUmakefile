@@ -14,9 +14,10 @@ clean :
 	$(RM) *~
 	$(RM) test_properties test_properties.conf test_properties.xml
 	$(RM) test_serializable_1 test_serializable_1.txt
+	$(RM) test_factory
 
 .PHONY : run
-run : run1 run2
+run : run1 run2 run3
 
 .PHONY : run1
 run1 : test_properties
@@ -26,10 +27,17 @@ run1 : test_properties
 run2 : test_serializable_1
 	echo "my" "favorite" "color" "is" "blue" | ./$< 
 
+.PHONY : run3
+run3 : test_factory
+	./$< 
+
 test_properties : ../../test_properties.cxx
 	$(CXX) $(CPPFLAGS) $< -o $@ $(LDFLAGS)
 
 test_serializable_1 : ../../test_serializable_1.cxx
+	$(CXX) $(CPPFLAGS) $< -o $@ $(LDFLAGS)
+
+test_factory : ../../test_factory.cxx
 	$(CXX) $(CPPFLAGS) $< -o $@ $(LDFLAGS)
 
 # end

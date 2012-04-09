@@ -70,23 +70,26 @@
     static const factory_register_type & get_system_factory_register (); \
    \
   private : \
-    static scoped_factory_register_type _g_datatools_factory_system_factory_register_; \
+  //static scoped_factory_register_type _g_datatools_factory_system_factory_register_; \
   /**/
 
 /// Instantiate the system (allocator/functor) factory register and its associated accessors  
 #define DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(BaseType, RegisterLabel) \
- \
-  BaseType::scoped_factory_register_type BaseType::_g_datatools_factory_system_factory_register_ ( \
-   new BaseType::factory_register_type (RegisterLabel, 1)); \
- \
+  \
   BaseType::factory_register_type & BaseType::grab_system_factory_register () \
   { \
-    return *(BaseType::_g_datatools_factory_system_factory_register_.get ()); \
+    static scoped_factory_register_type g_system_factory_register (0); \
+    if (g_system_factory_register.get() == 0) \
+      { \
+        g_system_factory_register.reset ( new BaseType::factory_register_type (RegisterLabel, 1)); \
+      } \
+    return *(g_system_factory_register.get ()); \
   } \
- \
+  \
   const BaseType::factory_register_type & BaseType::get_system_factory_register () \
   { \
-    return *(BaseType::_g_datatools_factory_system_factory_register_.get ()); \
+    BaseType::factory_register_type & fr = BaseType::grab_system_factory_register (); \
+    return const_cast<BaseType::factory_register_type &> (fr); \
   } \
   /**/
 
@@ -100,26 +103,25 @@
   /**/ 
 
 // Automated registration for derived classes:
-
 #define DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(BaseType, DerivedType) \
   private:                                                  \
   static datatools::factory::_system_factory_registrator<BaseType,DerivedType> _g_system_factory_registration_; \
-  static string get_system_factory_auto_registration_id ();
+  static std::string get_system_factory_auto_registration_id ();
   /**/
 
 #define DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(BaseType, DerivedType, TypeId) \
   datatools::factory::_system_factory_registrator<BaseType,DerivedType> DerivedType::_g_system_factory_registration_ (TypeId); \
-  string DerivedType::get_system_factory_auto_registration_id () \
+  std::string DerivedType::get_system_factory_auto_registration_id ()   \
   { \
-    return string (TypeId); \
+    return std::string (TypeId);                \
   } \
   /**/
 
 // #define DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(BaseType, DerivedType) \
 //   datatools::factory::_system_factory_registrator<BaseType,DerivedType> DerivedType::_g_system_factory_registration_ (BOOST_PP_STRINGIZE(DerivedType)); \
-//   string DerivedType::get_system_factory_auto_registration_id () \
+//   std::string DerivedType::get_system_factory_auto_registration_id () \
 //   { \
-//     return string (BOOST_PP_STRINGIZE(DerivedType)); \
+//     return std::string (BOOST_PP_STRINGIZE(DerivedType)); \
 //   } \
 //   /**/
 

@@ -1,5 +1,5 @@
 /* datatools/factory/factory.h */
-/* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2012-03-19
  * Last modified : 2012-03-19
  * 
@@ -102,16 +102,17 @@ namespace datatools {
                 if (is_verbose ())
                   {
                     std::clog << "INFO: " 
-                              << "datatools::factory::factory_register::clear: Destroying registered allocator/functor '"
+                              << "datatools::factory::factory_register::clear: " 
+                              << "Destroying registered allocator/functor '"
                               << i->first << "'" << std::endl;
                   }
               }
           }
-	_registered_.clear ();
-	return;
+        _registered_.clear ();
+        return;
       }
 
-      factory_type & get (const std::string & id_) //const
+      factory_type & get (const std::string & id_)
       {
         typename factory_map_type::iterator found = _registered_.find (id_);
         if (found == _registered_.end ())
@@ -124,13 +125,6 @@ namespace datatools {
         return found->second;
       }
  
-      // factory_type & get (const std::string & id_)
-      // {
-      //   factory_register<base_type> * const_this = 
-      //     const_cast<factory_register<base_type> *> (this);
-      //   return (const_cast<factory_type *> (const_this->get (id_)));
-      // }
-
       void registration (const std::string & id_, const factory_type & factory_)
       {
         if (is_verbose ())
@@ -206,20 +200,20 @@ namespace datatools {
 
       void import (const factory_register & factory_register_)
       {
-       if (is_verbose ())
+        if (is_verbose ())
           {
             std::clog << "INFO: " << "datatools::factory::factory_register<" 
                       << _label_ << ">::import: Importing registered factories from register '"
                       << factory_register_.label () << "'..." << std::endl;
           }
-       for (typename factory_map_type::const_iterator i = factory_register_._registered_.begin ();
-            i !=  factory_register_._registered_.end ();
-            i++)
-         {
-           const factory_type & the_out_factory = i->second;
-           registration (i->first, the_out_factory);
-         }
-       if (is_verbose ())
+        for (typename factory_map_type::const_iterator i = factory_register_._registered_.begin ();
+             i !=  factory_register_._registered_.end ();
+             i++)
+          {
+            const factory_type & the_out_factory = i->second;
+            registration (i->first, the_out_factory);
+          }
+        if (is_verbose ())
           {
             std::clog << "INFO: " << "datatools::factory::factory_register<" 
                       << _label_ << ">::import: Done." << std::endl;
@@ -287,16 +281,18 @@ namespace datatools {
             throw std::logic_error (message.str ());
           }
         BaseType::grab_system_factory_register ().registration (type_id_,
-								boost::factory<DerivedType*>());
+                                                                boost::factory<DerivedType*>());
         return;
       }
 
     public:
+
       _system_factory_registrator (const std::string & type_id_)
       {
         _trigger_factory_registration_ (type_id_);
         return;
       }
+
     };
 
   } // end of namespace factory
