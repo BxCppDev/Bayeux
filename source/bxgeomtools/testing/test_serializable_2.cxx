@@ -161,12 +161,10 @@ void B::dump (ostream & out) const
  ***********************************************************/
 
 /*** use some macros to implement serialization stuff for class A ***/
-//DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(A)
 BOOST_CLASS_EXPORT_KEY2 (A, "test_things::A")
 BOOST_CLASS_EXPORT_IMPLEMENT (A)
 
 /*** use some macros to implement serialization stuff for class B ***/
-//DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(B)
 BOOST_CLASS_EXPORT_KEY2 (B, "test_things::B")
 BOOST_CLASS_EXPORT_IMPLEMENT (B)
 
@@ -176,7 +174,7 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'geomtools' serialization !" << endl; 
+      clog << "Test program for class 'datatools::utils::things' !" << endl; 
   
       bool debug = false;
       bool out   = true;
