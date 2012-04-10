@@ -42,13 +42,7 @@
 #include <datatools/utils/handle.h>
 #include <datatools/utils/bit_mask.h>
 
-// #if DATATOOLS_WITH_EMBEDDED_KWSYS == 0
-// #include <kwsys/DynamicLoader.hxx>
-// #define KWSYS_NAMESPACE kwsys
-// #else
 #include <datatools_sys/DynamicLoader.hxx>
-//#define KWSYS_NAMESPACE datatools_sys
-// #endif
 
 namespace datatools {
 

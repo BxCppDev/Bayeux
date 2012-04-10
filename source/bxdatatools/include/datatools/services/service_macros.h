@@ -29,6 +29,8 @@
  *
  */
 
+#include <datatools/services/base_service.h>
+
 #define DATATOOLS_SERVICE_CLASS_DECLARE(T)                            \
    class T : public datatools::service::base_service                  \
      /**/
@@ -41,8 +43,8 @@
 #define DATATOOLS_SERVICE_CONSTRUCTOR_IMPLEMENT_HEAD(T,Name,Desc,Ver) \
   T::T ()                                                             \
     : datatools::service::base_service (Name,                         \
-					                              Desc,                         \
-					                              Ver)                          \
+                                        Desc,                         \
+                                        Ver)                          \
     /**/
 
 #define DATATOOLS_SERVICE_DESTRUCTOR_DECLARE(T)                       \
@@ -70,12 +72,12 @@
 #define DATATOOLS_SERVICE_INITIALIZE_DECLARE()                        \
   public:                                                             \
   int initialize (const datatools::utils::properties &,               \
-									service_dict_type &);                               \
+                  service_dict_type &);                               \
   /**/
 
 #define DATATOOLS_SERVICE_INITIALIZE_IMPLEMENT_HEAD(T,CONF,DICT)      \
   int T::initialize (const datatools::utils::properties & CONF,       \
-		                 service_dict_type & DICT)                        \
+                     service_dict_type & DICT)                        \
 
 #define DATATOOLS_SERVICE_RESET_DECLARE()                             \
   public:                                                             \
@@ -105,15 +107,13 @@
 /** Registration */
 
 #define DATATOOLS_SERVICE_REGISTRATION_INTERFACE(SERVICE_CLASS_NAME)            \
-	private:                                                                      \
-	static datatools::service::default_creator_registration<SERVICE_CLASS_NAME>   \
-	_g_default_registration_;                                                     \
-	/**/
+  private:                                                                      \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE (base_service, SERVICE_CLASS_NAME); \
+  /**/
 
 #define DATATOOLS_SERVICE_REGISTRATION_IMPLEMENT(SERVICE_CLASS_NAME,SERVICE_ID) \
-	datatools::service::default_creator_registration<SERVICE_CLASS_NAME>          \
-	SERVICE_CLASS_NAME::_g_default_registration_ (SERVICE_ID);                    \
-	/**/
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (base_service,SERVICE_CLASS_NAME,SERVICE_ID); \
+  /**/
 
 
 // end of service_macros.h

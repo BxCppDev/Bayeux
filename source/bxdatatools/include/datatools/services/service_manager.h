@@ -1,7 +1,7 @@
 /* service_manager.h
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
- * Last modified : 2011-10-29
+ * Last modified : 2012-04-10
  * 
  * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
  * 
@@ -41,6 +41,7 @@
 #include <boost/cstdint.hpp>
 
 #include <datatools/services/service_tools.h>
+#include <datatools/services/base_service.h>
 #include <datatools/utils/i_tree_dump.h>
 #include <datatools/utils/properties.h>
 
@@ -65,14 +66,15 @@ namespace datatools {
           NO_PRELOAD         = 0x1,
           FORCE_INITIALIZATION_AT_LOAD = 0x2,
           DEBUG              = 0x4,
+          VERBOSE            = 0x8,
         };
 
-      // ctor :
+      /// Constructor
       service_manager (const std::string & a_name = "", 
                        const std::string & a_description = "", 
                        uint32_t a_flag = BLANK);
         
-      // dtor :
+      /// Destructor 
       ~service_manager ();
 
       void set_name (const std::string & a_name);
@@ -211,27 +213,28 @@ namespace datatools {
 
     public:
 
-      bool has_creator (const std::string & a_service_id) const;
- 
-      void register_creator (const service_creator_type & a_service_creator, 
-                             const std::string & a_service_id);
+      bool has_service_type (const std::string & a_service_id) const;
 
-      void unregister_creator (const std::string & a_service_id);
-        
-      const service_creator_dict_type & get_creators () const;   
-        
-      service_creator_dict_type & get_creators ();   
+      template <class ServiceClass>
+      void register_service_type (const std::string & a_service_id)
+      {
+        _factory_register_.registration (a_service_id, boost::factory<ServiceClass*>());   
+        return;
+      }
+
+      void unregister_service_type (const std::string & a_service_id);
 
     private:
 
+      bool        _initialized_;
       std::string _name_;
       std::string _description_;
       bool   _debug_;
       bool   _preload_;
       bool   _force_initialization_at_load_;
-      service_creator_dict_type _creators_;
+      // 2012-04-09 FM : support for datatools::factory system :
+      base_service::factory_register_type _factory_register_;
       service_dict_type         _services_;
-      bool                      _initialized_;
 
     };
 

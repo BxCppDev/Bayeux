@@ -113,13 +113,6 @@ namespace datatools {
 
     typedef std::map<std::string, service_entry> service_dict_type;
 
-    typedef datatools::service::base_service * 
-    (*service_creator_type) (const datatools::utils::properties & a_configuration, 
-                             datatools::service::service_dict_type & a_service_dict,
-                             base_service * a_ptr);
-    
-    typedef std::map<std::string, service_creator_type> service_creator_dict_type;
-
   }  // end of namespace service
 
 }  // end of namespace datatools

@@ -211,7 +211,7 @@ namespace datatools {
         return;
       }
 
-      void print (std::ostream & out_, const std::string & indent_) const
+      void print (std::ostream & out_, const std::string & indent_ = "") const
       {
         out_ << indent_ << "List of registered allocators/functors for label \"" 
              << _label_ << "\" : " << std::endl;

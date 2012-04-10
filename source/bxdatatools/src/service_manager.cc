@@ -94,21 +94,24 @@ namespace datatools {
                    << "'..."
                    << endl;
             }
-          service_creator_dict_type::iterator found_creator
-            = _creators_.find (a_service_entry.service_id);
-          if (found_creator == _creators_.end ())
+          
+          // search for the cut's label in the factory dictionary:
+          if (! _factory_register_.has (a_service_entry.service_id))
             {
               ostringstream message;
               message << "datatools::service::service_manager::_create_service: "
-                      << "Cannot find service creator with ID '"
+                      << "Cannot find service factory with ID '"
                       << a_service_entry.service_id << "' for service named '"
                       << a_service_entry.service_name << "' !";
               throw logic_error (message.str ());
-            }
-          service_creator_type & the_service_creator = found_creator->second;
-          base_service * ptr = the_service_creator (a_service_entry.service_config,
-                                                    _services_,
-                                                    0);
+            } 
+          datatools::service::base_service::factory_register_type::factory_type & the_factory 
+          = _factory_register_.get (a_service_entry.service_id);
+
+          base_service * ptr = the_factory ();
+          ptr->initialize (a_service_entry.service_config,
+                           _services_);
+
           a_service_entry.service_handle.reset (ptr);
           a_service_entry.service_status |= service_entry::STATUS_CREATED;
           if (is_debug ())
@@ -188,29 +191,29 @@ namespace datatools {
                    << endl;
             }
           base_service & the_service = a_service_entry.service_handle.get ();
-          service_creator_dict_type::iterator found_creator
-            = _creators_.find (a_service_entry.service_id);
-          if (found_creator == _creators_.end ())
+          if (! _factory_register_.has (a_service_entry.service_id))
             {
               ostringstream message;
               message << "datatools::service::service_manager::_initialize_service: "
-                      << "Cannot find service creator with id '"
+                      << "Cannot find service factory with ID '"
                       << a_service_entry.service_id << "' for service named '"
                       << a_service_entry.service_name << "' !";
               throw logic_error (message.str ());
-            }
-          service_creator_type & the_service_creator = found_creator->second;
-          base_service * ptr = the_service_creator (a_service_entry.service_config,
-                                                    _services_,
-                                                    &the_service);
+            } 
+          datatools::service::base_service::factory_register_type::factory_type & the_factory 
+          = _factory_register_.get (a_service_entry.service_id);
+
+          base_service * ptr = the_factory ();
           if (ptr == 0)
             {
               ostringstream message;
-              message << "datatools::service::service_manager::get: "
+              message << "datatools::service::service_manager::_initialize_service: "
                       << "Cannot initialize service named '"
                       << a_service_entry.service_name << "' !";
               throw logic_error (message.str ());
             }
+          ptr->initialize (a_service_entry.service_config,
+                           _services_);
           a_service_entry.service_status |= service_entry::STATUS_INITIALIZED;
         }
       return;
@@ -298,15 +301,6 @@ namespace datatools {
             }
         }
 
-      // // creators :
-      // {
-      //  vector<string> list_of_creators;
-      //  if (a_config.has_key ("creators"))
-      //    {
-      //      a_config.fetch ("creators", list_of_creators);
-      //    }
-      // }
-
       // services :
       {
         vector<string> services_configuration_files;
@@ -390,7 +384,7 @@ namespace datatools {
                << endl;
         }
       _services_.clear ();
-      _creators_.clear ();
+      _factory_register_.clear ();
       _force_initialization_at_load_ = false;
       _preload_ = true;
 
@@ -405,10 +399,12 @@ namespace datatools {
     }
 
 
-    // ctor :
+    // Constructor :
     service_manager::service_manager (const string & a_name,
                                       const string & a_description,
                                       uint32_t a_flag)
+      : _factory_register_ ("datatools::service::base_service/service_factory", 
+                          a_flag & VERBOSE ? base_service::factory_register_type::verbose : 0)
     {
       _initialized_ = false;
       set_name (a_name);
@@ -429,7 +425,7 @@ namespace datatools {
       return;
     }
 
-
+    // Destructor :
     service_manager::~service_manager ()
     {
       if (_initialized_)
@@ -646,24 +642,6 @@ namespace datatools {
           a_out << a_title << ":" << endl;
         }
 
-      // Creators:
-      {
-        size_t sz = _creators_.size ();
-        a_out << indent << "Creators : " << endl;
-        size_t count = 0;
-        for (service_creator_dict_type::const_iterator it = _creators_.begin ();
-             it != _creators_.end ();
-             it++)
-          {
-            count++;
-            a_out << indent;
-            if (count == sz) a_out << "`-- ";
-            else a_out << "|-- ";
-            a_out << it->first << ": " << hex << (void *) it->second
-                  << dec << endl;
-          }
-      }
-
       // Services:
       {
         size_t sz = _services_.size ();
@@ -722,10 +700,6 @@ namespace datatools {
       }
     */
 
-    /****************
-     *   CREATORS   *
-     ****************/
-
     void service_manager::_preload_global_dict ()
     {
       bool devel = false;
@@ -736,105 +710,19 @@ namespace datatools {
                << "Entering..."
                << endl;
         }
-      if (_creators_.size () > 0)
-        {
-          ostringstream message;
-          message << "datatools::service::service_manager::_preload_global_dict: "
-                  << "Ignore preload request !";
-          clog << "WARNING: " << message.str () << endl;
-        }
-      const service_creator_dict_type & global_dict
-        = base_service::get_service_creator_db ().get_dict ();
-      if (devel)
-        {
-          cerr << "DEVEL: "
-               << "datatools::service::service_manager::_preload_global_dict: "
-               << "Global dictionary size = " << global_dict.size ()
-               << endl;
-        }
+      _factory_register_.import (DATATOOLS_FACTORY_GET_SYSTEM_REGISTER (datatools::service::base_service));
 
-      for (service_creator_dict_type::const_iterator i = global_dict.begin ();
-           i != global_dict.end ();
-           ++i)
-        {
-          const string & a_service_id = i->first;
-          service_creator_type a_service_creator = i->second;
-          if (devel)
-            {
-              cerr << "DEVEL: "
-                   << "datatools::service::service_manager::_preload_global_dict: "
-                   << "Preloading '" << a_service_id << "' @ " << a_service_creator
-                   << endl;
-            }
-          register_creator (a_service_creator, a_service_id);
-        }
-      return;
+     return;
     }
 
-    const service_creator_dict_type & service_manager::get_creators () const
+    bool service_manager::has_service_type (const string & a_service_id) const
     {
-      return _creators_;
+      return  _factory_register_.has (a_service_id);
     }
 
-    service_creator_dict_type & service_manager::get_creators ()
+    void service_manager::unregister_service_type (const string & a_service_id)
     {
-      return _creators_;
-    }
-
-    bool service_manager::has_creator (const string & a_service_id) const
-    {
-      return _creators_.find (a_service_id) != _creators_.end ();
-    }
-
-    void service_manager::unregister_creator (const string & a_service_id)
-    {
-      service_creator_dict_type::iterator found = _creators_.find (a_service_id);
-      if (found != _creators_.end ())
-        {
-          _creators_.erase (found);
-        }
-      return;
-    }
-
-    void service_manager::register_creator (const service_creator_type & a_service_creator,
-                                            const string & a_service_id)
-    {
-      bool devel = false;
-      if (devel)
-        {
-          cerr << "DEVEL: "
-               << "datatools::service::service_manager::register_creator: "
-               << "Entering..."
-               << endl;
-          cerr << "DEVEL: "
-               << "datatools::service::service_manager::register_creator: "
-               << "Service ID is '" << a_service_id << "'..."
-               << endl;
-        }
-      if (a_service_id.empty ())
-        {
-          ostringstream message;
-          message << "service_manager::register_creator: "
-                  << "Missing service ID !";
-          throw logic_error (message.str ());
-        }
-      service_creator_dict_type::const_iterator found = _creators_.find (a_service_id);
-      if (found != _creators_.end ())
-        {
-          ostringstream message;
-          message << "datatools::service::service_manager::register_creator: "
-                  << "Service ID '" << a_service_id << "' is already used "
-                  << "within the factory dictionary !";
-          throw logic_error (message.str ());
-        }
-      if (devel)
-        {
-          cerr << "DEVEL: "
-               << "datatools::service::service_manager::register_creator: "
-               << "Store it with ID '" << a_service_id << "'..."
-               << endl;
-        }
-      _creators_ [a_service_id] = a_service_creator;
+      _factory_register_.unregistration (a_service_id);   
       return;
     }
 
@@ -864,27 +752,12 @@ namespace datatools {
       a_out << indent << du::i_tree_dumpable::tag
             << "Force initialization : " << _force_initialization_at_load_ << endl;
 
+      a_out << indent << du::i_tree_dumpable::tag 
+            << "List of registered services : " << endl;
       {
-        a_out << indent << du::i_tree_dumpable::tag
-              << "Creators       : ";
-        size_t count = 0;
-        size_t sz = _creators_.size ();
-        if (sz == 0)
-          {
-            a_out << "<none>";
-          }
-        a_out << endl;
-        for (service_creator_dict_type::const_iterator it = _creators_.begin ();
-             it != _creators_.end ();
-             it++)
-          {
-            count++;
-            a_out << indent << du::i_tree_dumpable::skip_tag;
-            if (count == sz) a_out <<  du::i_tree_dumpable::last_tag;
-            else a_out << du::i_tree_dumpable::tag ;
-            a_out << "Service ID : '" << it->first << "' @ " << hex << (void *) it->second
-                  << dec << endl;
-          }
+        std::ostringstream indent_oss;
+        indent_oss << indent << du::i_tree_dumpable::skip_tag; 
+        _factory_register_.print (a_out, indent_oss.str ());
       }
 
       {
