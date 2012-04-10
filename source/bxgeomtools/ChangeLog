@@ -28,4 +28,9 @@ This is the geomtools package ChangeLog
 	* plate_with_hole_model: new class
 	* gnuplot_draw : enrich box display with additional option
 	* geomtools_check_setup.cxx : improve/fix
+2012-04-09 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* bug fix: do not use the global static model creator db from i_model
+	  because it does not work on gcc 4.6.X.
+	  construct-on-first-use idiom : use a static scoped_ptr from within a static member function.
+	  to be checked.
 

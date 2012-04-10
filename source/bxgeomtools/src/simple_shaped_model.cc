@@ -126,8 +126,8 @@ namespace geomtools {
     _daughter_owner_logical_ = 0;
     _visibility_logical_ = 0;
     _shape_name_ = ""; // no defined shape
-    _material_name_ = ""; //material::MATERIAL_REF_UNKNOWN;
-    _filled_material_name_ = ""; //material::MATERIAL_REF_UNKNOWN;
+    _material_name_ = ""; //material::constants::instance ().MATERIAL_REF_UNKNOWN;
+    _filled_material_name_ = ""; //material::constants::instance ().MATERIAL_REF_UNKNOWN;
     _filled_mode_   = filled_utils::FILLED_NONE;
     return;
   }
@@ -160,8 +160,8 @@ namespace geomtools {
     string shape_type = "";
 
     // Initialization:
-    _material_name_ = material::MATERIAL_REF_UNKNOWN;
-    _filled_material_name_ = material::MATERIAL_REF_UNKNOWN;
+    _material_name_ = material::constants::instance ().MATERIAL_REF_UNKNOWN;
+    _filled_material_name_ = material::constants::instance ().MATERIAL_REF_UNKNOWN;
 
     // parsing shape:
     if (config_.has_key ("shape_type"))
@@ -410,7 +410,7 @@ namespace geomtools {
                                                const datatools::utils::properties & config_,
                                                models_col_t * models_)
   {
-    string material_name = material::MATERIAL_REF_UNKNOWN;
+    string material_name = material::constants::instance ().MATERIAL_REF_UNKNOWN;
     double lunit = CLHEP::mm;
     double aunit = CLHEP::degree;
     double r;
@@ -461,7 +461,7 @@ namespace geomtools {
                                              const datatools::utils::properties & config_,
                                              models_col_t * models_)
   {
-    string filled_material_name = material::MATERIAL_REF_UNKNOWN;
+    string filled_material_name = material::constants::instance ().MATERIAL_REF_UNKNOWN;
     double lunit = CLHEP::mm;
     double aunit = CLHEP::degree;
     double inner_r, outer_r, z;
@@ -717,7 +717,7 @@ namespace geomtools {
              << "Name = '" << name_ << "'"
              << endl;
       }
-    string filled_material_name = material::MATERIAL_REF_UNKNOWN;
+    string filled_material_name = material::constants::instance ().MATERIAL_REF_UNKNOWN;
     double lunit = CLHEP::mm;
     double aunit = CLHEP::degree;
     string filled_mode_label = filled_utils::FILLED_NONE_LABEL;
@@ -914,7 +914,7 @@ namespace geomtools {
              << "Name = '" << name_ << "'"
              << endl;
       }
-    string filled_material_name = material::MATERIAL_REF_UNKNOWN;
+    string filled_material_name = material::constants::instance ().MATERIAL_REF_UNKNOWN;
     double lunit = CLHEP::mm;
     double aunit = CLHEP::degree;
     string filled_mode_label = filled_utils::FILLED_NONE_LABEL;
@@ -1192,7 +1192,7 @@ namespace geomtools {
   }
 
   // registration :   
-  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(simple_shaped_model);
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(simple_shaped_model,"geomtools::simple_shaped_model");
 
 } // end of namespace geomtools
 

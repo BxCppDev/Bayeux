@@ -116,9 +116,9 @@ namespace geomtools {
     if (label.empty ())
       {
         ostringstream label_oss;
-	// 2011-12-05 FM : change the default
-	//label_oss << SURROUNDING_LABEL << "__" << i_ << "__";
-	label_oss << SURROUNDING_LABEL << "_" << _position_labels_[i_];
+        // 2011-12-05 FM : change the default
+        //label_oss << SURROUNDING_LABEL << "__" << i_ << "__";
+        label_oss << SURROUNDING_LABEL << "_" << _position_labels_[i_];
         label = label_oss.str ();
       }
     else
@@ -765,14 +765,14 @@ namespace geomtools {
     // 2011-12-05 FM : add support for additional internal objects :
     if (_internals_.get_number_of_items () == 0)
       {
-	if (devel) cerr << endl << endl 
-	     << "DEVEL ****************************"
-	     << "DEVEL: surrounded_boxed_model::_at_construct: process MWIM"
-	     << endl
-	     << endl;
+        if (devel) cerr << endl << endl 
+             << "DEVEL ****************************"
+             << "DEVEL: surrounded_boxed_model::_at_construct: process MWIM"
+             << endl
+             << endl;
        _internals_.plug_internal_models (config_,
-					 get_logical (),
-					 models_);
+                                         get_logical (),
+                                         models_);
       }
     
     if (devel) clog << datatools::utils::io::devel 
@@ -834,7 +834,7 @@ namespace geomtools {
   }
   
   // registration :   
-  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(surrounded_boxed_model);
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(surrounded_boxed_model,"geomtools::surrounded_boxed_model");
 
 } // end of namespace geomtools
 

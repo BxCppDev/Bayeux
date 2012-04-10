@@ -104,7 +104,7 @@ namespace geomtools {
     double x;
     double y;
     double z;
-    string material_name = material::MATERIAL_REF_DEFAULT;
+    string material_name = material::constants::instance ().MATERIAL_REF_DEFAULT;
     string boxed_model_name;
     size_t number_of_items = 0;
     string replicant_axis_label = "";
@@ -318,7 +318,7 @@ namespace geomtools {
   }
 
   // registration :   
-  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(replicated_boxed_model);
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(replicated_boxed_model,"geomtools::replicated_boxed_model");
       
 } // end of namespace geomtools
 

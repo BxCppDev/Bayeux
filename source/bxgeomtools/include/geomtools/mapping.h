@@ -28,7 +28,7 @@
 
 namespace geomtools {
   
-  using namespace std;
+  //using namespace std;
 
   class model_factory;
   class placement;
@@ -41,7 +41,7 @@ namespace geomtools {
 
     static bool g_devel;
     static const size_t NO_MAX_DEPTH = 0;
-    static const string MAPPING_PREFIX;
+    static const std::string MAPPING_PREFIX;
 
     enum mode_t
       {
@@ -53,23 +53,23 @@ namespace geomtools {
   public:
 
     // tools to manipulate 'mapping' properties:
-    static string make_key (const string & flag_);
+    static std::string make_key (const std::string & flag_);
 
     static void extract (const datatools::utils::properties & source_,
                          datatools::utils::properties & target_);
 
     static bool has_flag (const datatools::utils::properties & config_,
-                          const string & flag_);
+                          const std::string & flag_);
 
     static bool has_key (const datatools::utils::properties & config_,
-                         const string & key_);
+                         const std::string & key_);
  
     bool is_initialized () const;
     bool is_mode_none () const;
     bool is_mode_only () const;
     bool is_mode_excluded () const;
-    void add_only (const string &);
-    void add_excluded (const string &);
+    void add_only (const std::string &);
+    void add_excluded (const std::string &);
 
     void set_max_depth (size_t max_depth_);
 
@@ -82,7 +82,7 @@ namespace geomtools {
     void initialize (const datatools::utils::properties & config_);
     
     virtual void build_from (const model_factory & factory_,
-                             const string & mother_ = "world");
+                             const std::string & mother_ = "world");
 
   private:
 
@@ -94,7 +94,7 @@ namespace geomtools {
 
   public:
 
-    void dump_dictionnary (ostream & out_) const;
+    void dump_dictionnary (std::ostream & out_) const;
 
     void test ();
 
@@ -107,7 +107,7 @@ namespace geomtools {
 
     size_t                         _max_depth_;
     int                            _mode_;
-    list<string>                   _only_excluded_list_;
+    std::list<std::string>                   _only_excluded_list_;
     
     // debug display utility:
     datatools::utils::io::indenter _indenter_;

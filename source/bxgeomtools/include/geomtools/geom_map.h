@@ -75,25 +75,23 @@ namespace geomtools {
 
     virtual const geom_id & get_geom_id (const vector_3d & world_position_,
                                          int type_,
-                                         double tolerance_ = i_object_3d::USING_PROPER_TOLERANCE) const;
-
-    /*****************************/
+                                         double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     virtual bool has_geom_info (const geom_id &) const;
 
     void get_geom_id (const vector_3d & world_position_,
                       int type_,
                       geom_id & gid_,
-                      double tolerance_ = i_object_3d::USING_PROPER_TOLERANCE) const;
+                      double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     void get_geom_id (const vector_3d & world_position_,
                       const std::string & category_,
                       geom_id & gid_,
-                      double tolerance_ = i_object_3d::USING_PROPER_TOLERANCE) const;
+                      double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     virtual const geom_id & get_geom_id (const vector_3d & world_position_,
                                          const std::string & category_,
-                                         double tolerance_ = i_object_3d::USING_PROPER_TOLERANCE) const;
+                                         double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     virtual void build_from (const model_factory & factory_,
                              const std::string & mother_ = "world");

@@ -14,7 +14,23 @@ namespace geomtools {
 
   using namespace std;
 
-  const double constants::DEFAULT_TOLERANCE = 1.e-7 * CLHEP::mm;
+  //const double constants::DEFAULT_TOLERANCE = 1.e-7 * CLHEP::mm;
+  //const double constants::USING_PROPER_TOLERANCE = 1.e-7 * CLHEP::mm;
+  const double constants::DEFAULT_TOLERANCE = constants::get_default_tolerance ();
+  const double constants::USING_PROPER_TOLERANCE = constants::get_proper_tolerance ();
+
+  // static 
+  double constants::get_default_tolerance ()
+  {
+    return GEOMTOOLS_DEFAULT_TOLERANCE;
+  }
+
+  // static 
+  double constants::get_proper_tolerance ()
+  {
+    return GEOMTOOLS_PROPER_TOLERANCE;
+  }
+  
 
   const string io::VECTOR_2D_SERIAL_TAG   = "__geomtools::vector_2d__";
   const string io::VECTOR_3D_SERIAL_TAG   = "__geomtools::vector_3d__";

@@ -36,7 +36,29 @@ namespace geomtools {
   // define a geometry model with a single box: 
   class test_model_2 : public geomtools::i_model 
     {
-    private:
+
+    public: 
+
+      const geomtools::box & get_solid () const;
+  
+      test_model_2 ();
+  
+      virtual ~test_model_2 ();
+
+      virtual string get_model_id () const;
+ 
+      virtual void tree_dump (ostream & out_         = clog, 
+                              const string & title_  = "", 
+                              const string & indent_ = "", 
+                              bool inherit_          = false) const;
+
+    protected:
+  
+      virtual void _at_construct (const string & name_,
+                                  const datatools::utils::properties & config_,
+                                  models_col_t * models_ = 0);
+     private:
+
       double                      __distance;
       double                      __phi;
       double                      __theta;
@@ -48,36 +70,9 @@ namespace geomtools {
       geomtools::physical_volume  __sub2_phys;
       geomtools::box              __solid;
 
-    public: 
-
-      const geomtools::box & get_solid () const;
-
-    public:
-  
-      test_model_2 ();
-  
-      virtual ~test_model_2 ();
-
-    public:
-
-      virtual string get_model_id () const;
-
-    protected:
-  
-      virtual void _at_construct (const string & name_,
-				  const datatools::utils::properties & config_,
-				  models_col_t * models_ = 0);
-
-    private:
-
-      static creator_registration<test_model_2> __CR;
-      
-    public: 
-      virtual void tree_dump (ostream & out_         = clog, 
-                              const string & title_  = "", 
-                              const string & indent_ = "", 
-                              bool inherit_          = false) const;
-  
+      // registration interface :
+      GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(test_model_2);
+   
     };
 
 } // end of namespace geomtools

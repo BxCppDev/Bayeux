@@ -2,7 +2,7 @@
 /* i_object_3d.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
- * Last modified: 2008-05-23
+ * Last modified: 2012-04-10
  * 
  * License: 
  * 
@@ -45,10 +45,15 @@ namespace geomtools {
       };
 
   public:
+
     static const uint32_t ALL_SURFACES;
     static const uint32_t NO_SURFACES;
     static const double DEFAULT_TOLERANCE;
     static const double USING_PROPER_TOLERANCE;
+
+    static double get_default_tolerance ();
+
+    static double get_proper_tolerance ();
 
   public:
 
@@ -89,7 +94,6 @@ namespace geomtools {
                             const std::string & title_  = "", 
                             const std::string & indent_ = "", 
                             bool inherit_          = false) const;
-      
 
   private:
 

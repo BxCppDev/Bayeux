@@ -39,7 +39,7 @@ namespace geomtools {
   class logical_volume;
 
   // define a geometry model made of a unique simple 3D shape: 
-  class simple_shaped_model : GEOMTOOLS_MODEL_INHERIT
+  GEOMTOOLS_MODEL_CLASS_DECLARE(simple_shaped_model)
   {
 
   public: 

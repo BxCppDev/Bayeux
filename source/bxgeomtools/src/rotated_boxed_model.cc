@@ -416,7 +416,7 @@ namespace geomtools {
 
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (_solid_);
-    string material_name = material::MATERIAL_REF_DEFAULT;
+    string material_name = material::constants::instance ().MATERIAL_REF_DEFAULT;
     if (_boxed_model_->get_logical ().has_material_ref ())
       {
         material_name = _boxed_model_->get_logical ().get_material_ref ();
@@ -467,7 +467,7 @@ namespace geomtools {
   }
 
   // registration :   
-  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(rotated_boxed_model);
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(rotated_boxed_model,"geomtools::rotated_boxed_model");
        
 } // end of namespace geomtools
 

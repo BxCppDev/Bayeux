@@ -21,6 +21,7 @@
 #include <list>
 
 #include <geomtools/clhep.h>
+#include <geomtools/geomtools_config.h>
 
 namespace geomtools {
 
@@ -116,8 +117,12 @@ namespace geomtools {
   //! Some constants
   struct constants
   {
-    static const int NO_INTERCEPT = -1;
+    static const int    NO_INTERCEPT = -1;
     static const double DEFAULT_TOLERANCE;
+    static const double USING_PROPER_TOLERANCE;
+
+    static double get_default_tolerance ();
+    static double get_proper_tolerance ();
   };
 
   class filled_utils

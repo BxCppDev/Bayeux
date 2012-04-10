@@ -42,6 +42,8 @@ namespace geomtools {
     static const uint32_t INVALID_TYPE;
     static const uint32_t INVALID_ADDRESS;
     static const size_t   DEFAULT_ADDRESS_DEPTH;
+    static const uint32_t UNIVERSE_TYPE;
+    static const uint32_t WORLD_TYPE;
 
     static const char IO_ID_OPEN;
     static const char IO_ID_SEPARATOR;

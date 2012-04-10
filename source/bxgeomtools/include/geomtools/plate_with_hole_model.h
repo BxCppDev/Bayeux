@@ -37,7 +37,7 @@
 
 namespace geomtools {
  
-  class plate_with_hole_model : public i_model
+  GEOMTOOLS_MODEL_CLASS_DECLARE(plate_with_hole_model)
   {
   private: 
 

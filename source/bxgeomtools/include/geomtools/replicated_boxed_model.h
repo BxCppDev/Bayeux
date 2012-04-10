@@ -32,7 +32,7 @@ namespace geomtools {
   class box;
 
   // define a geometry model with a single box: 
-  class replicated_boxed_model : GEOMTOOLS_BOXED_MODEL_INHERIT
+  GEOMTOOLS_BOXED_MODEL_CLASS_DECLARE(replicated_boxed_model)
   {
 
   public: 

@@ -49,18 +49,26 @@ namespace geomtools {
     return _logicals_;
   }
 
-  // ctor:
-  model_factory::model_factory (bool debug_)
+  // Constructor:
+  model_factory::model_factory (bool debug_, bool verbose_) 
+    : _factory_register_ ("geomtools::i_model/model_factory", 
+                          verbose_ ? i_model::factory_register_type::verbose : 0)
+  
   {
     _debug_ = debug_;
     _locked_ = false;
     _mp_.set_key_label ("name");
     _mp_.set_meta_label ("type");
     _mp_.set_description ("Geometry models setup");
+    bool preload = true;
+    if (preload)
+      {
+        _factory_register_.import (DATATOOLS_FACTORY_GET_SYSTEM_REGISTER (::geomtools::i_model));
+     }
     return;
   }
 
-  // dtor:
+  // Destructor:
   model_factory::~model_factory ()
   {
     if (_locked_)
@@ -173,36 +181,57 @@ namespace geomtools {
       {
         const datatools::utils::multi_properties::entry * ptr_entry = *i;
         const datatools::utils::multi_properties::entry & e = *ptr_entry;
-        string name = e.get_key ();
-        string type = e.get_meta ();
+        string model_name = e.get_key ();
+        string model_type = e.get_meta ();
 
-        model_creator_t & creator = i_model::get_model_db ().get_model (type);
+        if (! _factory_register_.has (model_type))
+          {
+            std::ostringstream message;
+            message << "No registered class with ID '" 
+                    << model_type << "' for model named '" << model_name << " !";
+            std::cerr << "geomtools::model_factory::_construct: "
+                      << message.str ()
+                      << std::endl;      
+            continue;
+          }
+        i_model::factory_register_type::factory_type & the_factory 
+          = _factory_register_.get (model_type);
+ 
+        //model_creator_t & creator = i_model::get_model_db ().get_model (model_type);
         if (devel)
           {
             clog << "DEVEL: model_factory::_construct_: "
-                 << "About to create a new model of type \"" << type
-                 << "\" with name \"" << name << "\"..." << endl;
+                 << "About to create a new model of type \"" << model_type
+                 << "\" with name \"" << model_name << "\"..." << endl;
           }
-        i_model * model = 0;
-        model = creator (name,
-                         e.get_properties (),
-                         &_models_);
-        if (model != 0)
-          {
-            e.get_properties ().export_starting_with (model->get_logical ().parameters (),
-                                                      visibility::VISIBILITY_PREFIX);
+        i_model * model = the_factory ();
+        model->construct (model_name, e.get_properties (), &_models_);
+        e.get_properties ().export_starting_with (model->get_logical ().parameters (),
+                                                  visibility::constants::instance().VISIBILITY_PREFIX);
+        _models_[model_name] = model;
+        std::cerr << "model_factory::_construct_: " << "ADD MODEL '" << model_name << "'" << std::endl;
+        string log_name = model->get_logical ().get_name ();
+        _logicals_[log_name] = &(model->get_logical ());
+        if (devel) model->tree_dump (clog, "New model is:", "DEVEL: model_factory::_construct_: ");
 
-            _models_[name] = model;
-            string log_name = model->get_logical ().get_name ();
-            _logicals_[log_name] = &(model->get_logical ());
-            if (devel) model->tree_dump (clog, "New model is:", "DEVEL: model_factory::_construct_: ");
-          }
-        else
-          {
-            cerr << "ERROR: model_factory::_construct_: "
-                 << "Cannot create model of type \"" << type
-                 << "\" with name \"" << name << "\"..." << endl;
-          }
+        // model = creator (model_name,
+        //                  e.get_properties (),
+        //                  &_models_);
+        // if (model != 0)
+        //   {
+        //     e.get_properties ().export_starting_with (model->get_logical ().parameters (),
+        //                                               visibility::constants::instance().VISIBILITY_PREFIX);
+        //     _models_[model_name] = model;
+        //     string log_name = model->get_logical ().get_name ();
+        //     _logicals_[log_name] = &(model->get_logical ());
+        //     if (devel) model->tree_dump (clog, "New model is:", "DEVEL: model_factory::_construct_: ");
+        //   }
+        // else
+        //   {
+        //     cerr << "ERROR: model_factory::_construct_: "
+        //          << "Cannot create model of type \"" << model_type
+        //          << "\" with name \"" << model_name << "\"..." << endl;
+        //   }
       }
     if (devel)
       {

@@ -120,10 +120,10 @@ namespace geomtools {
         setup_phi *= angle_unit;
       }
 
-    if (material::has_key (config_, material::make_key (material::MATERIAL_REF_PROPERTY)))
+    if (material::has_key (config_, material::make_key (material::constants::instance ().MATERIAL_REF_PROPERTY)))
       {
         if (devel) clog << "DEVEL: simple_world_model::_at_construct: key= 'material'..." << endl;
-        material = config_.fetch_string (material::make_key (material::MATERIAL_REF_PROPERTY));
+        material = config_.fetch_string (material::make_key (material::constants::instance ().MATERIAL_REF_PROPERTY));
       }
 
     if (config_.has_key ("setup.model"))
@@ -295,7 +295,7 @@ namespace geomtools {
   }
 
   // registration :   
-  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(simple_world_model);
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(simple_world_model,"geomtools::simple_world_model");
        
 } // end of namespace geomtools
 

@@ -3,13 +3,26 @@
  */
 
 #include <geomtools/i_shape_3d.h>
+#include <geomtools/utils.h>
 
 namespace geomtools {
 
   using namespace std;
 
-  const double i_shape_3d::DEFAULT_SKIN      = i_object_3d::DEFAULT_TOLERANCE;
-  const double i_shape_3d::USING_PROPER_SKIN = i_object_3d::USING_PROPER_TOLERANCE;
+  const double i_shape_3d::DEFAULT_SKIN      = i_object_3d::get_default_tolerance ();
+  const double i_shape_3d::USING_PROPER_SKIN = i_object_3d::get_proper_tolerance ();
+
+  // static 
+  double i_shape_3d::get_default_skin ()
+  {
+    return i_object_3d::get_default_tolerance ();;
+  }
+
+  // static 
+  double i_shape_3d::get_proper_skin ()
+  {
+    return i_object_3d::get_proper_tolerance ();
+  }
 
   bool i_shape_3d::is_composite () const
   {

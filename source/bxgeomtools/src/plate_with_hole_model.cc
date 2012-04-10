@@ -16,7 +16,7 @@ namespace geomtools {
   using namespace std;
 
   // registration :   
-  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(plate_with_hole_model);
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(plate_with_hole_model,"geomtools::plate_with_hole_model");
 
   string plate_with_hole_model::get_model_id () const
   {

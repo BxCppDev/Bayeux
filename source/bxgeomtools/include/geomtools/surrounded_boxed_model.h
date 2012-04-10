@@ -34,7 +34,7 @@ namespace geomtools {
 
   // define a geometry model with some surrounded boxed models along
   // a specific axis (X, Y or Z)
-  class surrounded_boxed_model : GEOMTOOLS_BOXED_MODEL_INHERIT
+  GEOMTOOLS_BOXED_MODEL_CLASS_DECLARE(surrounded_boxed_model) 
   {
   public:
 

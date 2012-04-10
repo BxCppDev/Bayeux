@@ -107,7 +107,7 @@ namespace geomtools {
     virtual string get_shape_name () const;
       
     virtual bool is_on_surface (const vector_3d &,
-                                double tolerance_ = USING_PROPER_TOLERANCE) const; 
+                                double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const; 
     
     virtual vector_3d get_normal_on_surface (const vector_3d & position_,
                                              bool up_ = true) const;
@@ -115,7 +115,7 @@ namespace geomtools {
     virtual bool find_intercept (const vector_3d & from_, 
                                  const vector_3d & direction_,
                                  intercept_t & intercept_,
-                                 double tolerance_ = USING_PROPER_TOLERANCE) const;
+                                 double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     virtual void tree_dump (ostream & out_ = clog, 
                             const string & title_ = "", 

@@ -33,27 +33,34 @@ namespace geomtools {
   {
   public:
 
-    static const string MATERIAL_PREFIX;
-    static const string MATERIAL_REF_PROPERTY;
-    static const string MATERIAL_REF_DEFAULT;
-    static const string MATERIAL_REF_UNKNOWN;
-    static const string MATERIAL_REF_VACUUM;
-    static const string MATERIAL_SOLID_FLAG;
-    static const string MATERIAL_LIQUID_FLAG;
-    static const string MATERIAL_GAS_FLAG;
-    static const string MATERIAL_GAS_PRESSURE_PROPERTY;
-    static const string MATERIAL_GAS_TEMPERATURE_PROPERTY;
+    struct constants
+    {
+      std::string MATERIAL_PREFIX;
+      std::string MATERIAL_REF_PROPERTY;
+      std::string MATERIAL_REF_DEFAULT;
+      std::string MATERIAL_REF_UNKNOWN;
+      std::string MATERIAL_REF_VACUUM;
+      std::string MATERIAL_SOLID_FLAG;
+      std::string MATERIAL_LIQUID_FLAG;
+      std::string MATERIAL_GAS_FLAG;
+      std::string MATERIAL_GAS_PRESSURE_PROPERTY;
+      std::string MATERIAL_GAS_TEMPERATURE_PROPERTY;
 
-    static string make_key (const string & flag_);
+      constants ();
+
+      static const constants & instance ();
+    };
+
+    static std::string make_key (const std::string & flag_);
 
     static void extract (const datatools::utils::properties & source_,
-			 datatools::utils::properties & target_);
+                         datatools::utils::properties & target_);
 
     static bool has_flag (const datatools::utils::properties & config_,
-			  const string & flag_);
+                          const std::string & flag_);
 
     static bool has_key (const datatools::utils::properties & config_,
-			 const string & key_);
+                         const std::string & key_);
 
     static bool is_gas (const datatools::utils::properties & config_);
 

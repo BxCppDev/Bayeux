@@ -87,7 +87,7 @@ namespace geomtools {
 
     bool is_composite () const;
 
-    i_composite_shape_3d (double skin_ = DEFAULT_SKIN);
+    i_composite_shape_3d (double skin_ = GEOMTOOLS_DEFAULT_TOLERANCE);
 
     virtual ~i_composite_shape_3d ();
 

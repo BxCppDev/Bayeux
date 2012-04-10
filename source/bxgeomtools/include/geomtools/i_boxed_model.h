@@ -26,7 +26,7 @@ namespace geomtools {
   class box;
 
   // define a geometry model with a box solid: 
-  class i_boxed_model : GEOMTOOLS_MODEL_INHERIT 
+  GEOMTOOLS_MODEL_CLASS_DECLARE (i_boxed_model)
   {
   public:
 
@@ -40,9 +40,13 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#define GEOMTOOLS_BOXED_MODEL_INHERIT                                   \
-  public geomtools::i_boxed_model                                       \
+#define GEOMTOOLS_BOXED_MODEL_INHERIT \
+  public ::geomtools::i_boxed_model   \
   /**/
+
+#define GEOMTOOLS_BOXED_MODEL_CLASS_DECLARE(BoxedModelClassName) \
+  class BoxedModelClassName : GEOMTOOLS_BOXED_MODEL_INHERIT      \
+   /**/
 
 #endif // __geomtools__i_boxed_model_h
 

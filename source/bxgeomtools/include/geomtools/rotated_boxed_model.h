@@ -31,7 +31,7 @@ namespace geomtools {
 
   // define a geometry model with a boxed model rotated 
   // by some simple rotation:
-  class rotated_boxed_model : GEOMTOOLS_BOXED_MODEL_INHERIT
+  GEOMTOOLS_BOXED_MODEL_CLASS_DECLARE(rotated_boxed_model)
   {
 
   public: 

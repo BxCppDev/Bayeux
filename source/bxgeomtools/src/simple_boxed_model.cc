@@ -126,7 +126,7 @@ namespace geomtools {
     double x;
     double y;
     double z;
-    string material_name = material::MATERIAL_REF_UNKNOWN;
+    string material_name = material::constants::instance ().MATERIAL_REF_UNKNOWN;
     string lunit_str = "mm"; // default unit
  
     if (config_.has_key ("x"))
@@ -247,7 +247,7 @@ namespace geomtools {
   }
 
   // registration :   
-  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(simple_boxed_model);
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(simple_boxed_model,"geomtools::simple_boxed_model");
     
 } // end of namespace geomtools
 

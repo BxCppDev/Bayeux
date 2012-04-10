@@ -36,7 +36,7 @@ namespace geomtools {
   using namespace std;
 
   // define a geometry model:
-  class cylindric_extrusion_boxed_model : GEOMTOOLS_MODEL_INHERIT
+  GEOMTOOLS_MODEL_CLASS_DECLARE (cylindric_extrusion_boxed_model)
   {
   public:
 

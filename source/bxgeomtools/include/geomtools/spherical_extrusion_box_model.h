@@ -37,7 +37,7 @@
 
 namespace geomtools {
  
-  class spherical_extrusion_box_model : public i_model
+  GEOMTOOLS_MODEL_CLASS_DECLARE(spherical_extrusion_box_model) 
   {
   private: 
 

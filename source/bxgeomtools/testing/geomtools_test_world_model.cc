@@ -7,9 +7,9 @@
 namespace geomtools {
 
   using namespace std;
-  
-  // register this creator:   
-  geomtools::i_model::creator_registration<test_world_model> test_world_model::__CR;
+ 
+  // registration :   
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(test_world_model,"geomtools::test::test_world_model");
   
   const geomtools::box & test_world_model::get_solid () const
   {
@@ -32,8 +32,8 @@ namespace geomtools {
   }
   
   void test_world_model::_at_construct (const string & name_,
-					const datatools::utils::properties & config_,
-					models_col_t * models_)
+                                        const datatools::utils::properties & config_,
+                                        models_col_t * models_)
   {
     bool devel = i_model::g_devel;
     if (devel) clog << "DEVEL: test_world_model::_at_construct: Entering..." << endl;
@@ -45,60 +45,60 @@ namespace geomtools {
 
     if (config_.has_key ("theta"))
       {
-	 if (devel) clog << "DEVEL: test_world_model::_at_construct: key= 'theta'..." << endl;
-	theta = config_.fetch_real ("theta");
-	theta *= CLHEP::degree;
+         if (devel) clog << "DEVEL: test_world_model::_at_construct: key= 'theta'..." << endl;
+        theta = config_.fetch_real ("theta");
+        theta *= CLHEP::degree;
       }
 
     if (config_.has_key ("phi"))
       {
-	 if (devel) clog << "DEVEL: test_world_model::_at_construct: key= 'phi'..." << endl;
-	phi = config_.fetch_real ("phi");
-	phi *= CLHEP::degree; 
+         if (devel) clog << "DEVEL: test_world_model::_at_construct: key= 'phi'..." << endl;
+        phi = config_.fetch_real ("phi");
+        phi *= CLHEP::degree; 
       }
 
-    if (material::has_key (config_, material::make_key (material::MATERIAL_REF_PROPERTY)))
+    if (material::has_key (config_, material::make_key (material::constants::instance ().MATERIAL_REF_PROPERTY)))
       {
-	if (devel) clog << "DEVEL: test_world_model::_at_construct: key= 'material'..." << endl;
-	material = config_.fetch_string (material::make_key (material::MATERIAL_REF_PROPERTY));
+        if (devel) clog << "DEVEL: test_world_model::_at_construct: key= 'material'..." << endl;
+        material = config_.fetch_string (material::make_key (material::constants::instance ().MATERIAL_REF_PROPERTY));
       }
 
     if (config_.has_key ("setup_model"))
       {
-	setup_model_name = config_.fetch_string ("setup_model");
+        setup_model_name = config_.fetch_string ("setup_model");
       }
     else
       {
-	ostringstream message;
-	message << "test_world_model::_at_construct: "
-		<< "Missing 'setup_model' property !"; 
-	throw runtime_error (message.str ());	
+        ostringstream message;
+        message << "test_world_model::_at_construct: "
+                << "Missing 'setup_model' property !"; 
+        throw runtime_error (message.str ());   
       }
      
     if (! models_)
       {
-	ostringstream message;
-	message << "test_world_model::_at_construct: "
-		<< "Missing logicals dictionary !"; 
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "test_world_model::_at_construct: "
+                << "Missing logicals dictionary !"; 
+        throw runtime_error (message.str ());
       }
 
     // Setup model:
     {
       models_col_t::const_iterator found = models_->find (setup_model_name);
       if (found != models_->end ())
-	{
-	  //__setup_model = (dynamic_cast<const test_model_2 *> (found->second));
-	  __setup_model = found->second;
-	}
+        {
+          //__setup_model = (dynamic_cast<const test_model_2 *> (found->second));
+          __setup_model = found->second;
+        }
       else
-	{
-	  ostringstream message;
-	  message << "test_world_model::_at_construct: "
-		  << "Cannot find model with name '" 
-		  << setup_model_name << "' !";
-	  throw runtime_error (message.str ());
-	}
+        {
+          ostringstream message;
+          message << "test_world_model::_at_construct: "
+                  << "Cannot find model with name '" 
+                  << setup_model_name << "' !";
+          throw runtime_error (message.str ());
+        }
     }
 
     vector_3d setup_pos;
@@ -113,11 +113,11 @@ namespace geomtools {
     double setup_z = 1000.;
     if (__setup_model->get_logical ().get_shape ().get_shape_name () == "box")
       {
-	const geomtools::box * b = 0;
-	b = dynamic_cast<const geomtools::box *> (&(__setup_model->get_logical ()).get_shape ());
-	setup_x = b->get_x ();
-	setup_y = b->get_y ();
-	setup_z = b->get_z ();
+        const geomtools::box * b = 0;
+        b = dynamic_cast<const geomtools::box *> (&(__setup_model->get_logical ()).get_shape ());
+        setup_x = b->get_x ();
+        setup_y = b->get_y ();
+        setup_z = b->get_z ();
       }
     
     double size = setup_x;
@@ -129,7 +129,7 @@ namespace geomtools {
     __solid.set_z (size);
     if (!__solid.is_valid ())
       {
-	throw runtime_error ("test_world_model::_at_construct: Invalid solid !");
+        throw runtime_error ("test_world_model::_at_construct: Invalid solid !");
       }
     
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
@@ -148,9 +148,9 @@ namespace geomtools {
   }
 
   void test_world_model::tree_dump (ostream & out_, 
-				const string & title_ , 
-				const string & indent_, 
-				bool inherit_) const
+                                const string & title_ , 
+                                const string & indent_, 
+                                bool inherit_) const
   {
      namespace du = datatools::utils;
      string indent;
@@ -179,36 +179,36 @@ namespace geomtools {
       }
 
       {
-	out_ << indent << i_tree_dumpable::tag 
-	     << "Setup placement: " << endl;
-	{
-	  ostringstream indent_oss;
-	  indent_oss << indent;
-	  indent_oss << du::i_tree_dumpable::skip_tag;
-	  __setup_placement.tree_dump (out_, "", indent_oss.str ());
-	}   
+        out_ << indent << i_tree_dumpable::tag 
+             << "Setup placement: " << endl;
+        {
+          ostringstream indent_oss;
+          indent_oss << indent;
+          indent_oss << du::i_tree_dumpable::skip_tag;
+          __setup_placement.tree_dump (out_, "", indent_oss.str ());
+        }   
       }
 
       {
-	out_ << indent << i_tree_dumpable::tag 
-	     << "Setup physical : " << endl;
-	{
-	  ostringstream indent_oss;
-	  indent_oss << indent;
-	  indent_oss << du::i_tree_dumpable::skip_tag;
-	  __setup_phys.tree_dump (out_, "", indent_oss.str ());
-	}   
+        out_ << indent << i_tree_dumpable::tag 
+             << "Setup physical : " << endl;
+        {
+          ostringstream indent_oss;
+          indent_oss << indent;
+          indent_oss << du::i_tree_dumpable::skip_tag;
+          __setup_phys.tree_dump (out_, "", indent_oss.str ());
+        }   
       }
 
       {
-	out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
-	     << "Solid : " << endl;
-	{
-	  ostringstream indent_oss;
-	  indent_oss << indent;
-	  indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
-	  __solid.tree_dump (out_, "", indent_oss.str ());
-	}   
+        out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
+             << "Solid : " << endl;
+        {
+          ostringstream indent_oss;
+          indent_oss << indent;
+          indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+          __solid.tree_dump (out_, "", indent_oss.str ());
+        }   
       }
 
      return;

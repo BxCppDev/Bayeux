@@ -8,8 +8,8 @@ namespace geomtools {
 
   using namespace std;
   
-  // register this creator:   
-  geomtools::i_model::creator_registration<test_model_2> test_model_2::__CR;
+  // registration :   
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(test_model_2,"geomtools::test::test_model_2");
   
   const geomtools::box & test_model_2::get_solid () const
   {
@@ -26,15 +26,17 @@ namespace geomtools {
   {
     __sub1_model = 0;
     __sub2_model = 0;
+    return;
   }
   
   test_model_2::~test_model_2 ()
   {
+    return;
   }
   
   void test_model_2::_at_construct (const string & name_,
-				    const datatools::utils::properties & config_,
-				    models_col_t * models_)
+                                    const datatools::utils::properties & config_,
+                                    models_col_t * models_)
   {
     bool devel = i_model::g_devel;
     if (devel) clog << "DEVEL: test_model_2::_at_construct: Entering..." << endl;
@@ -50,109 +52,109 @@ namespace geomtools {
 
     if (config_.has_key ("gas_pressure"))
       {
-	if (devel) clog << "DEVEL: test_model_2::_at_construct: key= 'gas_pressure'..." << endl;
-	gas_pressure = config_.fetch_real ("gas_pressure");
-	gas_pressure *= CLHEP::atmosphere;
+        if (devel) clog << "DEVEL: test_model_2::_at_construct: key= 'gas_pressure'..." << endl;
+        gas_pressure = config_.fetch_real ("gas_pressure");
+        gas_pressure *= CLHEP::atmosphere;
       }  
 
     if (config_.has_key ("gas_temperature"))
       {
-	if (devel) clog << "DEVEL: test_model_2::_at_construct: key= 'gas_temperature'..." << endl;
-	gas_temperature = config_.fetch_real ("gas_temperature");
-	gas_temperature *= CLHEP::kelvin;
+        if (devel) clog << "DEVEL: test_model_2::_at_construct: key= 'gas_temperature'..." << endl;
+        gas_temperature = config_.fetch_real ("gas_temperature");
+        gas_temperature *= CLHEP::kelvin;
       }  
 
     if (config_.has_key ("distance"))
       {
-	if (devel) clog << "DEVEL: test_model_2::_at_construct: key= 'distance'..." << endl;
-	distance = config_.fetch_real ("distance");
-	distance *= CLHEP::mm;
+        if (devel) clog << "DEVEL: test_model_2::_at_construct: key= 'distance'..." << endl;
+        distance = config_.fetch_real ("distance");
+        distance *= CLHEP::mm;
       }  
 
     if (config_.has_key ("theta"))
       {
-	if (devel) clog << "DEVEL: test_model_2::_at_construct: key= 'theta'..." << endl;
-	theta = config_.fetch_real ("theta");
-	theta *= CLHEP::degree;
+        if (devel) clog << "DEVEL: test_model_2::_at_construct: key= 'theta'..." << endl;
+        theta = config_.fetch_real ("theta");
+        theta *= CLHEP::degree;
       }
 
     if (config_.has_key ("phi"))
       {
-	if (devel) clog << "DEVEL: test_model_2::_at_construct: key= 'phi'..." << endl;
-	phi = config_.fetch_real ("phi");
-	phi *= CLHEP::degree;
+        if (devel) clog << "DEVEL: test_model_2::_at_construct: key= 'phi'..." << endl;
+        phi = config_.fetch_real ("phi");
+        phi *= CLHEP::degree;
       }
 
     if (config_.has_key ("material.ref"))
       {
-	if (devel) clog << "DEVEL: test_model_2::_at_construct: key= 'material'..." << endl;
-	material = config_.fetch_string ("material.ref");
+        if (devel) clog << "DEVEL: test_model_2::_at_construct: key= 'material'..." << endl;
+        material = config_.fetch_string ("material.ref");
       }
 
     if (config_.has_key ("sub1_model"))
       {
-	sub1_model_name = config_.fetch_string ("sub1_model");
+        sub1_model_name = config_.fetch_string ("sub1_model");
       }
     else
       {
-	ostringstream message;
-	message << "test_model_2::_at_construct: "
-		<< "Missing 'sub1_model' property !"; 
-	throw runtime_error (message.str ());	
+        ostringstream message;
+        message << "test_model_2::_at_construct: "
+                << "Missing 'sub1_model' property !"; 
+        throw runtime_error (message.str ());   
       }
 
     if (config_.has_key ("sub2_model"))
       {
-	sub2_model_name = config_.fetch_string ("sub2_model");
+        sub2_model_name = config_.fetch_string ("sub2_model");
       }
     else
       {
-	ostringstream message;
-	message << "test_model_2::_at_construct: "
-		<< "Missing 'sub2_model' property !"; 
-	throw runtime_error (message.str ());	
+        ostringstream message;
+        message << "test_model_2::_at_construct: "
+                << "Missing 'sub2_model' property !"; 
+        throw runtime_error (message.str ());   
       }
       
     if (! models_)
       {
-	ostringstream message;
-	message << "test_model_2::_at_construct: "
-		<< "Missing logicals dictionary !"; 
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "test_model_2::_at_construct: "
+                << "Missing logicals dictionary !"; 
+        throw runtime_error (message.str ());
       }
 
     // Sub1:
     {
       models_col_t::const_iterator found = models_->find (sub1_model_name);
       if (found != models_->end ())
-	{
-	  __sub1_model = (dynamic_cast<const test_model_1 *> (found->second));
-	}
+        {
+          __sub1_model = (dynamic_cast<const test_model_1 *> (found->second));
+        }
       else
-	{
-	  ostringstream message;
-	  message << "test_model_2::_at_construct: "
-		  << "Cannot find model with name '" 
-		  << sub1_model_name << "' !";
-	  throw runtime_error (message.str ());
-	}
+        {
+          ostringstream message;
+          message << "test_model_2::_at_construct: "
+                  << "Cannot find model with name '" 
+                  << sub1_model_name << "' !";
+          throw runtime_error (message.str ());
+        }
     }
 
     // Sub2:
     {
       models_col_t::const_iterator found = models_->find (sub2_model_name);
       if (found != models_->end ())
-	{
-	  __sub2_model = (dynamic_cast<const test_model_1 *> (found->second));
-	}
+        {
+          __sub2_model = (dynamic_cast<const test_model_1 *> (found->second));
+        }
       else
-	{
-	  ostringstream message;
-	  message << "test_model_2::_at_construct: "
-		  << "Cannot find model with name '" 
-		  << sub2_model_name << "' !";
-	  throw runtime_error (message.str ());
-	}
+        {
+          ostringstream message;
+          message << "test_model_2::_at_construct: "
+                  << "Cannot find model with name '" 
+                  << sub2_model_name << "' !";
+          throw runtime_error (message.str ());
+        }
     }
 
     __distance = distance;
@@ -181,7 +183,7 @@ namespace geomtools {
     __solid.set_z (size);
     if (!__solid.is_valid ())
       {
-	throw runtime_error ("test_model_2::_at_construct: Invalid solid !");
+        throw runtime_error ("test_model_2::_at_construct: Invalid solid !");
       }
     
     // initialize the 'logical_volume' of this model:
@@ -206,9 +208,9 @@ namespace geomtools {
   }
 
   void test_model_2::tree_dump (ostream & out_, 
-				const string & title_ , 
-				const string & indent_, 
-				bool inherit_) const
+                                const string & title_ , 
+                                const string & indent_, 
+                                bool inherit_) const
   {
      namespace du = datatools::utils;
      string indent;
@@ -257,58 +259,58 @@ namespace geomtools {
       }
 
       {
-	out_ << indent << i_tree_dumpable::tag 
-	     << "Placement 1 : " << endl;
-	{
-	  ostringstream indent_oss;
-	  indent_oss << indent;
-	  indent_oss << du::i_tree_dumpable::skip_tag;
-	  __sub1_placement.tree_dump (out_, "", indent_oss.str ());
-	}   
+        out_ << indent << i_tree_dumpable::tag 
+             << "Placement 1 : " << endl;
+        {
+          ostringstream indent_oss;
+          indent_oss << indent;
+          indent_oss << du::i_tree_dumpable::skip_tag;
+          __sub1_placement.tree_dump (out_, "", indent_oss.str ());
+        }   
       }
 
       {
-	out_ << indent << i_tree_dumpable::tag 
-	     << "Placement 2 : " << endl;
-	{
-	  ostringstream indent_oss;
-	  indent_oss << indent;
-	  indent_oss << du::i_tree_dumpable::skip_tag;
-	  __sub2_placement.tree_dump (out_, "", indent_oss.str ());
-	}   
+        out_ << indent << i_tree_dumpable::tag 
+             << "Placement 2 : " << endl;
+        {
+          ostringstream indent_oss;
+          indent_oss << indent;
+          indent_oss << du::i_tree_dumpable::skip_tag;
+          __sub2_placement.tree_dump (out_, "", indent_oss.str ());
+        }   
       }
 
       {
-	out_ << indent << i_tree_dumpable::tag 
-	     << "Sub physical 1 : " << endl;
-	{
-	  ostringstream indent_oss;
-	  indent_oss << indent;
-	  indent_oss << du::i_tree_dumpable::skip_tag;
-	  __sub1_phys.tree_dump (out_, "", indent_oss.str ());
-	}   
+        out_ << indent << i_tree_dumpable::tag 
+             << "Sub physical 1 : " << endl;
+        {
+          ostringstream indent_oss;
+          indent_oss << indent;
+          indent_oss << du::i_tree_dumpable::skip_tag;
+          __sub1_phys.tree_dump (out_, "", indent_oss.str ());
+        }   
       }
 
       {
-	out_ << indent << i_tree_dumpable::tag 
-	     << "Sub physical 2 : " << endl;
-	{
-	  ostringstream indent_oss;
-	  indent_oss << indent;
-	  indent_oss << du::i_tree_dumpable::skip_tag;
-	  __sub2_phys.tree_dump (out_, "", indent_oss.str ());
-	}   
+        out_ << indent << i_tree_dumpable::tag 
+             << "Sub physical 2 : " << endl;
+        {
+          ostringstream indent_oss;
+          indent_oss << indent;
+          indent_oss << du::i_tree_dumpable::skip_tag;
+          __sub2_phys.tree_dump (out_, "", indent_oss.str ());
+        }   
       }
 
       {
-	out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
-	     << "Solid : " << endl;
-	{
-	  ostringstream indent_oss;
-	  indent_oss << indent;
-	  indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
-	  __solid.tree_dump (out_, "", indent_oss.str ());
-	}   
+        out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
+             << "Solid : " << endl;
+        {
+          ostringstream indent_oss;
+          indent_oss << indent;
+          indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+          __solid.tree_dump (out_, "", indent_oss.str ());
+        }   
       }
 
 

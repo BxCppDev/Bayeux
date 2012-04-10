@@ -73,7 +73,7 @@ namespace geomtools {
   public:
 
     virtual bool is_on_curve (const vector_3d & position_, 
-                              double tolerance_ = USING_PROPER_TOLERANCE) const;
+                              double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
       
     virtual vector_3d get_direction_on_curve (const vector_3d & position_) const;
 

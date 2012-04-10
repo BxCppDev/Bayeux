@@ -107,9 +107,9 @@ namespace geomtools {
  
   bool logical_volume::has_material_ref () const
   {
-    if (material::has_key (_parameters_, material::MATERIAL_REF_PROPERTY))
+    if (material::has_key (_parameters_, material::constants::instance ().MATERIAL_REF_PROPERTY))
       {
-        return (_parameters_.is_string  (material::make_key (material::MATERIAL_REF_PROPERTY)));
+        return (_parameters_.is_string  (material::make_key (material::constants::instance ().MATERIAL_REF_PROPERTY)));
       }
     return false;
   }
@@ -118,9 +118,9 @@ namespace geomtools {
   {
     if (has_material_ref ())
       {
-        return (_parameters_.fetch_string  (material::make_key (material::MATERIAL_REF_PROPERTY)));
+        return (_parameters_.fetch_string  (material::make_key (material::constants::instance ().MATERIAL_REF_PROPERTY)));
       }
-    return material::MATERIAL_REF_UNKNOWN;
+    return material::constants::instance ().MATERIAL_REF_UNKNOWN;
   }
 
   void logical_volume::set_material_ref (const string & material_ref_)
@@ -128,9 +128,9 @@ namespace geomtools {
     string mr = material_ref_;
     if (mr.empty ())
       {
-        mr = material::MATERIAL_REF_DEFAULT;
+        mr = material::constants::instance ().MATERIAL_REF_DEFAULT;
       }
-    _parameters_.update (material::make_key (material::MATERIAL_REF_PROPERTY), material_ref_);
+    _parameters_.update (material::make_key (material::constants::instance ().MATERIAL_REF_PROPERTY), material_ref_);
     return;
   }
 

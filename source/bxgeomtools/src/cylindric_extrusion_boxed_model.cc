@@ -33,7 +33,7 @@ namespace geomtools {
         ostringstream message;
         message << "geomtools::cylindric_extrusion_boxed_model::set_extrusion_radius: "
                 << "Invalid R " << r_ / CLHEP::mm << " mm !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     _extrusion_radius_ = r_;
     return;
@@ -48,7 +48,7 @@ namespace geomtools {
         ostringstream message;
         message << "geomtools::cylindric_extrusion_boxed_model::set_mother_x: "
                 << "Invalid X " << x_ / CLHEP::mm << " mm !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     _mother_x_ = x_;
     return;
@@ -63,7 +63,7 @@ namespace geomtools {
         ostringstream message;
         message << "geomtools::cylindric_extrusion_boxed_model::set_mother_y: "
                 << "Invalid Y " << y_ / CLHEP::mm << " mm !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     _mother_y_ = y_;
     return;
@@ -78,7 +78,7 @@ namespace geomtools {
         ostringstream message;
         message << "geomtools::cylindric_extrusion_boxed_model::set_mother_z: "
                 << "Invalid Z " << z_ / CLHEP::mm << " mm !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     _mother_z_ = z_;
     return;
@@ -148,7 +148,7 @@ namespace geomtools {
     double mother_y;
     double mother_z;
     double extrusion_radius;
-    string material_name = material::MATERIAL_REF_UNKNOWN;
+    string material_name = material::constants::instance ().MATERIAL_REF_UNKNOWN;
     string lunit_str = "mm"; // default unit
 
     if (config_.has_key ("length_unit"))
@@ -165,7 +165,7 @@ namespace geomtools {
         ostringstream message;
         message << "geomtools::cylindric_extrusion_boxed_model::_at_construct: "
                 << "Missing 'x' property !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
 
     if (config_.has_key ("y"))
@@ -177,7 +177,7 @@ namespace geomtools {
         ostringstream message;
         message << "geomtools::cylindric_extrusion_boxed_model::_at_construct: "
                 << "Missing 'y' property !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
 
     if (config_.has_key ("z"))
@@ -189,7 +189,7 @@ namespace geomtools {
         ostringstream message;
         message << "geomtools::cylindric_extrusion_boxed_model::_at_construct: "
                 << "Missing 'z' property !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
 
     if (config_.has_key ("extrusion_radius"))
@@ -201,7 +201,7 @@ namespace geomtools {
         ostringstream message;
         message << "geomtools::cylindric_extrusion_boxed_model::_at_construct: "
                 << "Missing 'extrusion_radius' property !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
 
     if (config_.has_key ("material.ref"))
@@ -213,7 +213,7 @@ namespace geomtools {
         ostringstream message;
         message << "geomtools::cylindric_extrusion_boxed_model::_at_construct: "
                 << "Missing 'material.ref' property !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
 
     double lunit = CLHEP::mm;
@@ -230,7 +230,7 @@ namespace geomtools {
         message << "geomtools::cylindric_extrusion_boxed_model::_at_construct: "
                 << "extrusion radius ("
                 << extrusion_radius / CLHEP::mm << " mm) is too large (X-axis)!";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     if (extrusion_radius >= 0.5 * mother_y)
       {
@@ -238,7 +238,7 @@ namespace geomtools {
         message << "geomtools::cylindric_extrusion_boxed_model::_at_construct: "
                 << "extrusion radius ("
                 << extrusion_radius / CLHEP::mm << " mm) is too large (Y-axis) !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
 
     set_material_name (material_name);
@@ -253,7 +253,7 @@ namespace geomtools {
     _mother_box_.set_z (get_mother_z ());
     if (! _mother_box_.is_valid ())
       {
-        throw runtime_error ("geomtools::cylindric_extrusion_boxed_model::_at_construct: Invalid box dimensions !");
+        throw logic_error ("geomtools::cylindric_extrusion_boxed_model::_at_construct: Invalid box dimensions !");
       }
 
     _extrusion_cylinder_.set_diameter (2 * get_extrusion_radius ());
@@ -360,7 +360,7 @@ namespace geomtools {
         ostringstream message;
         message << "geomtools::cylindric_extrusion_boxed_model::gnuplot_draw_user_function: "
                 << "3D-object of '" << obj_.get_shape_name () << "' shape type has not the right type !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     const i_composite_shape_3d::shape_t & s1 = solid->get_shape1 ();
     const i_composite_shape_3d::shape_t & s2 = solid->get_shape2 ();
@@ -409,7 +409,7 @@ namespace geomtools {
   }
 
   // registration :   
-  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(cylindric_extrusion_boxed_model);
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(cylindric_extrusion_boxed_model,"geomtools::cylindric_extrusion_boxed_model");
 
 } // end of namespace geomtools
 

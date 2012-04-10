@@ -65,7 +65,7 @@ namespace geomtools {
                             bool a_inherit= false) const;
 
     virtual bool is_on_curve (const vector_3d &, 
-                              double a_tolerance = i_object_3d::USING_PROPER_TOLERANCE) const;
+                              double a_tolerance = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     virtual vector_3d get_direction_on_curve (const vector_3d & a_tposition) const;
     

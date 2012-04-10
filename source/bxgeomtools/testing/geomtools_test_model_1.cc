@@ -8,8 +8,8 @@ namespace geomtools {
 
   using namespace std;
   
-  // register this creator:   
-  geomtools::i_model::creator_registration<test_model_1> test_model_1::__CR;
+  // registration :   
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(test_model_1,"geomtools::test::test_model_1");
   
   const geomtools::box & test_model_1::get_solid () const
   {
@@ -30,8 +30,8 @@ namespace geomtools {
   }
   
   void test_model_1::_at_construct (const string & name_,
-				    const datatools::utils::properties & config_,
-				    models_col_t * models_)
+                                    const datatools::utils::properties & config_,
+                                    models_col_t * models_)
   {
     bool devel = i_model::g_devel;
     if (devel) clog << "DEVEL: test_model_1::_at_construct: Entering..." << endl;
@@ -42,27 +42,27 @@ namespace geomtools {
     
     if (config_.has_key ("width"))
       {
-	if (devel) clog << "DEVEL: test_model_1::_at_construct: key= 'width'..." << endl;
-	width = config_.fetch_real ("width");
-	width *= CLHEP::mm;
+        if (devel) clog << "DEVEL: test_model_1::_at_construct: key= 'width'..." << endl;
+        width = config_.fetch_real ("width");
+        width *= CLHEP::mm;
       }  
     if (config_.has_key ("height"))
       {
-	if (devel) clog << "DEVEL: test_model_1::_at_construct: key= 'height'..." << endl;
-	height = config_.fetch_real ("height");
-	height *= CLHEP::mm;
+        if (devel) clog << "DEVEL: test_model_1::_at_construct: key= 'height'..." << endl;
+        height = config_.fetch_real ("height");
+        height *= CLHEP::mm;
       }
     if (config_.has_key ("material.ref"))
       {
-	if (devel) clog << "DEVEL: test_model_1::_at_construct: key= 'material'..." << endl;
-	material = config_.fetch_string ("material.ref");
+        if (devel) clog << "DEVEL: test_model_1::_at_construct: key= 'material'..." << endl;
+        material = config_.fetch_string ("material.ref");
       }
     else
       {
-	ostringstream message;
-	message << "test_model_1::_at_construct: "
-		<< "Missing 'material.ref' property !";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "test_model_1::_at_construct: "
+                << "Missing 'material.ref' property !";
+        throw runtime_error (message.str ());
       }
     
     __solid.reset ();
@@ -71,7 +71,7 @@ namespace geomtools {
     __solid.set_z (height);
     if (! __solid.is_valid ())
       {
-	throw runtime_error ("test_model_1::_at_construct: Invalid solid !");
+        throw runtime_error ("test_model_1::_at_construct: Invalid solid !");
       }
     
     // initialize the 'logical_volume' of this model:
@@ -84,9 +84,9 @@ namespace geomtools {
   }
 
   void test_model_1::tree_dump (ostream & out_, 
-				const string & title_ , 
-				const string & indent_, 
-				bool inherit_) const
+                                const string & title_ , 
+                                const string & indent_, 
+                                bool inherit_) const
   {
      namespace du = datatools::utils;
      string indent;
@@ -94,14 +94,14 @@ namespace geomtools {
      i_model::tree_dump (out_, title_, indent, true);
 
       {
-	out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
-	     << "Solid : " << endl;
-	{
-	  ostringstream indent_oss;
-	  indent_oss << indent;
-	  indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
-	  __solid.tree_dump (out_, "", indent_oss.str ());
-	}   
+        out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
+             << "Solid : " << endl;
+        {
+          ostringstream indent_oss;
+          indent_oss << indent;
+          indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+          __solid.tree_dump (out_, "", indent_oss.str ());
+        }   
       }
 
      return;

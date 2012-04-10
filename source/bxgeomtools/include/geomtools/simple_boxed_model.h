@@ -26,7 +26,7 @@ namespace geomtools {
   using namespace std;
 
   // define a geometry model with a single box: 
-  class simple_boxed_model : GEOMTOOLS_BOXED_MODEL_INHERIT
+  GEOMTOOLS_BOXED_MODEL_CLASS_DECLARE(simple_boxed_model)
   {
 
   public: 

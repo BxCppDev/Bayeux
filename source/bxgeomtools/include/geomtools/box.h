@@ -117,12 +117,12 @@ namespace geomtools {
     double get_volume () const;
 
     virtual bool is_inside (const vector_3d &, 
-                            double a_skin = USING_PROPER_SKIN) const;
+                            double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     // if 'skin' < 0 no skin is taken into account:
     virtual bool is_on_surface (const vector_3d & , 
                                 int a_mask    = FACE_ALL , 
-                                double a_skin = USING_PROPER_SKIN) const;
+                                double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     virtual vector_3d get_normal_on_surface (const vector_3d & a_position) const;
 
@@ -133,7 +133,7 @@ namespace geomtools {
     virtual bool find_intercept (const vector_3d & a_from, 
                                  const vector_3d & a_direction,
                                  intercept_t & a_intercept,
-                                 double a_skin = USING_PROPER_SKIN) const;
+                                 double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     virtual void tree_dump (std::ostream & a_out         = std::clog, 
                             const std::string & a_title  = "", 

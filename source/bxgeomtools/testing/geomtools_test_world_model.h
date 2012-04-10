@@ -34,7 +34,7 @@ namespace geomtools {
   using namespace std;
 
   // define a geometry model with a single box: 
-  class test_world_model : public geomtools::i_model 
+  GEOMTOOLS_MODEL_CLASS_DECLARE(test_world_model)
     {
     private:
       const i_model      *        __setup_model;
@@ -54,24 +54,24 @@ namespace geomtools {
 
     public:
 
-      virtual string get_model_id () const;
+      virtual std::string get_model_id () const;
 
     protected:
   
-      virtual void _at_construct (const string & name_,
-				  const datatools::utils::properties & setup_,
-				  models_col_t * models_ = 0);
-
-    private:
-
-      static creator_registration<test_world_model> __CR;
-      
-    public: 
-      virtual void tree_dump (ostream & out_         = clog, 
-                              const string & title_  = "", 
-                              const string & indent_ = "", 
+      virtual void _at_construct (const std::string & name_,
+                                  const datatools::utils::properties & setup_,
+                                  models_col_t * models_ = 0);
+     
+    public:
+ 
+      virtual void tree_dump (std::ostream & out_         = std::clog, 
+                              const std::string & title_  = "", 
+                              const std::string & indent_ = "", 
                               bool inherit_          = false) const;
-  
+
+      // registration interface :
+      GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(test_world_model);
+    
     };
 
 } // end of namespace geomtools

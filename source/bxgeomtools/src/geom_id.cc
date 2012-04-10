@@ -13,18 +13,19 @@ namespace geomtools {
   using namespace std;  
  
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (geom_id,"geomtools::geom_id")
-  //const std::string geom_id::SERIAL_TAG = "__GEOM_ID__";
 
   /*
     const string geom_id::GEOM_ID_PREFIX            = "geom_id.";
     const string geom_id::GEOM_ID_CATEGORY_PROPERTY = "category";
-    const int    geom_id::GEOM_ID_WORLD_TYPE        = 0;
+    //const int    geom_id::GEOM_ID_WORLD_TYPE        = 0;
     const string geom_id::GEOM_ID_WORLD_CATEGORY    = "world";
   */
 
   const uint32_t geom_id::INVALID_TYPE          = 0xFFFFFFFF;
   const uint32_t geom_id::INVALID_ADDRESS       = 0xFFFFFFFF;
   const size_t   geom_id::DEFAULT_ADDRESS_DEPTH = 10;
+  const uint32_t geom_id::UNIVERSE_TYPE         = 0;
+  const uint32_t geom_id::WORLD_TYPE            = geom_id::UNIVERSE_TYPE;
   
   const char geom_id::IO_ID_OPEN           = '[';
   const char geom_id::IO_ID_SEPARATOR      = ':';

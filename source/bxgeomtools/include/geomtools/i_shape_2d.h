@@ -2,7 +2,7 @@
 /* i_shape_2d.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
- * Last modified: 2008-05-23
+ * Last modified: 2012-04-10
  * 
  * License: 
  * 
@@ -37,12 +37,13 @@ namespace geomtools {
 
     virtual int get_dimensional () const;
 
-    i_shape_2d (double tolerance_ = i_object_3d::DEFAULT_TOLERANCE);
+    i_shape_2d (double tolerance_ = GEOMTOOLS_DEFAULT_TOLERANCE);
 
     virtual ~i_shape_2d ();
       
     virtual bool is_on_surface (const vector_3d & position_,
-                                double skin_ = USING_PROPER_TOLERANCE) const = 0; 
+                                double skin_ = GEOMTOOLS_PROPER_TOLERANCE
+                                ) const = 0; 
       
     virtual vector_3d get_normal_on_surface (const vector_3d & position_,
                                              bool up_ = true) const = 0;
@@ -50,7 +51,7 @@ namespace geomtools {
     virtual bool find_intercept (const vector_3d & from_, 
                                  const vector_3d & direction_,
                                  intercept_t & intercept_,
-                                 double skin_ = USING_PROPER_TOLERANCE) const = 0;
+                                 double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const = 0;
  
   };
     

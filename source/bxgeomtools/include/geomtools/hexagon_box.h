@@ -114,12 +114,12 @@ namespace geomtools {
     double get_volume () const;
 
     virtual bool is_inside (const vector_3d &, 
-                            double skin_ = USING_PROPER_SKIN) const;
+                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     // if 'skin' < 0 no skin is taken into account:
     virtual bool is_on_surface (const vector_3d & , 
                                 int mask_    = FACE_ALL , 
-                                double skin_ = USING_PROPER_SKIN) const;
+                                double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     virtual vector_3d get_normal_on_surface (const vector_3d & position_) const;
 
@@ -130,7 +130,7 @@ namespace geomtools {
     virtual bool find_intercept (const vector_3d & from_, 
                                  const vector_3d & direction_,
                                  intercept_t & intercept_,
-                                 double skin_ = USING_PROPER_SKIN) const;
+                                 double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
        
     static bool xy_is_in_hexagon (double r_, double x_, double y_, double skin_);
 

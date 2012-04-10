@@ -275,7 +275,7 @@ namespace geomtools {
           {
             if (is_wired ())
               {
-                string color_label = color::default_color;
+                string color_label = color::constants::instance ().default_color;
                 if (visibility::has_color (log_visu_config))
                   {
                     color_label = visibility::get_color (log_visu_config);
@@ -473,7 +473,7 @@ namespace geomtools {
       }
 
     int color = 1;
-    int former_color = color::get_color (color::default_color);
+    int former_color = color::get_color (color::constants::instance().default_color);
     if (visibility::has_color (visu_config))
       {
         color = color::get_color (visibility::get_color (visu_config));

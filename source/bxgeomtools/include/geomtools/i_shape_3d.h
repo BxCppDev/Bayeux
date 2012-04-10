@@ -2,7 +2,7 @@
 /* i_shape_3d.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
- * Last modified: 2010-02-14
+ * Last modified: 2012-04-10
  * 
  * License: 
  * 
@@ -31,6 +31,9 @@ namespace geomtools {
     static const double USING_PROPER_SKIN;
 
   public:
+
+    static double get_default_skin ();
+    static double get_proper_skin ();
 
     /** Check if a 3D-shape can be stacked using some
      *  stacking algorithms. There are 2 checks:
@@ -94,27 +97,27 @@ namespace geomtools {
     //  get_parameter(const std::string &) const = 0;
 
     virtual bool is_inside (const vector_3d &, 
-                            double a_skin = USING_PROPER_TOLERANCE) const = 0;
+                            double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const = 0;
       
     virtual bool is_on_surface (const vector_3d &,
                                 int a_surface_mask = ALL_SURFACES, 
-                                double a_skin = USING_PROPER_TOLERANCE) const = 0; 
+                                double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const = 0; 
       
     virtual vector_3d get_normal_on_surface (const vector_3d & a_position) const = 0;
       
     virtual bool is_outside (const vector_3d &,
-                             double a_skin = USING_PROPER_TOLERANCE) const; 
+                             double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const; 
       
 
     virtual bool find_intercept (const vector_3d & a_from, 
                                  const vector_3d & a_direction,
                                  intercept_t & a_intercept,
-                                 double a_skin = USING_PROPER_TOLERANCE) const;
+                                 double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     virtual void tree_dump (std::ostream & a_out         = std::clog, 
                             const std::string & a_title  = "", 
                             const std::string & a_indent = "", 
-                            bool a_inherit          = false) const;
+                            bool a_inherit               = false) const;
 
   private:
 

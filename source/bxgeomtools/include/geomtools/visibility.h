@@ -28,13 +28,22 @@ namespace geomtools {
   class visibility
   {
   public:
-    static const std::string VISIBILITY_PREFIX;
-    static const std::string VISIBILITY_HIDDEN_FLAG;
-    static const std::string VISIBILITY_HIDDEN_ENVELOP_FLAG;
-    static const std::string VISIBILITY_HIDDEN_ENVELOPE_FLAG;
-    static const std::string VISIBILITY_DAUGHTERS_HIDDEN_FLAG;
-    static const std::string VISIBILITY_COLOR_PROPERTY;
-    static const std::string VISIBILITY_WIRED_CYLINDER_FLAG;
+ 
+    struct constants
+    {
+      std::string VISIBILITY_PREFIX;
+      std::string VISIBILITY_HIDDEN_FLAG;
+      std::string VISIBILITY_HIDDEN_ENVELOP_FLAG;
+      std::string VISIBILITY_HIDDEN_ENVELOPE_FLAG;
+      std::string VISIBILITY_DAUGHTERS_HIDDEN_FLAG;
+      std::string VISIBILITY_COLOR_PROPERTY;
+      std::string VISIBILITY_WIRED_CYLINDER_FLAG;
+      
+      constants ();
+      
+      static const constants & instance ();
+
+     };
 
   public:
 

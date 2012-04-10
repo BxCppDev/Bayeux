@@ -30,7 +30,7 @@ namespace geomtools {
   using namespace std;
 
   // define a geometry model with a single box: 
-  class simple_world_model : GEOMTOOLS_MODEL_INHERIT 
+  GEOMTOOLS_MODEL_CLASS_DECLARE(simple_world_model) 
   {
   public:
 

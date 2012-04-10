@@ -402,7 +402,7 @@ namespace geomtools {
         string stacked_model_name;
         string label_name;
         ostringstream stacked_item_prop;
-        stacked_item_prop << "stacked.model_" << i;
+        stacked_item_prop << STACKED_MODEL_PROPERTY_PREFIX << i;
         if (config_.has_key (stacked_item_prop.str ()))
           {
             stacked_model_name = config_.fetch_string (stacked_item_prop.str ());
@@ -472,8 +472,8 @@ namespace geomtools {
           {
             ostringstream message;
             message << "geomtools::stacked_model::_at_construct: "
-                    << "Cannot stack '" 
-                    << the_shape.get_shape_name () << "' shape !";
+                    << "Cannot stack model '" << name_ << "' ('" 
+                    << the_shape.get_shape_name () << "' solid shape) !";
             throw logic_error (message.str ());
           }
 
@@ -785,14 +785,14 @@ namespace geomtools {
     // 2011-12-05 FM : add support for additional internal objects :
     if (_internals_.get_number_of_items () == 0)
       {
-	if (devel) cerr << endl << endl 
-	     << "DEVEL ****************************"
-	     << "DEVEL: stacked_model::_at_construct: process MWIM"
-	     << endl
-	     << endl;
+        if (devel) cerr << endl << endl 
+             << "DEVEL ****************************"
+             << "DEVEL: stacked_model::_at_construct: process MWIM"
+             << endl
+             << endl;
        _internals_.plug_internal_models (config_,
-					 get_logical (),
-					 models_);
+                                         get_logical (),
+                                         models_);
       }
 
     if (devel) clog << "DEVEL: stacked_model::_at_construct: Exiting." << endl;
@@ -844,7 +844,7 @@ namespace geomtools {
   }
 
   // registration :   
-  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(stacked_model);
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(stacked_model, "geomtools::stacked_model");
       
 } // end of namespace geomtools
 

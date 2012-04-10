@@ -8,11 +8,23 @@ namespace geomtools {
 
   using namespace std;
 
-  const double i_object_3d::DEFAULT_TOLERANCE      = constants::DEFAULT_TOLERANCE;
-  const double i_object_3d::USING_PROPER_TOLERANCE = 0.0;
+  const double i_object_3d::DEFAULT_TOLERANCE      = constants::get_default_tolerance (); //constants::DEFAULT_TOLERANCE;
+  const double i_object_3d::USING_PROPER_TOLERANCE = constants::get_proper_tolerance (); // 0.0;
   
   const uint32_t i_object_3d::ALL_SURFACES = 0xFFFFFFFF;
   const uint32_t i_object_3d::NO_SURFACES  = 0;
+
+  // static 
+  double i_object_3d::get_default_tolerance ()
+  {
+    return constants::get_default_tolerance ();
+  }
+
+  // static 
+  double i_object_3d::get_proper_tolerance ()
+  {
+    return constants::get_proper_tolerance ();
+  }
 
   void i_object_3d::compute_bounding_box (box & bb_)
   {

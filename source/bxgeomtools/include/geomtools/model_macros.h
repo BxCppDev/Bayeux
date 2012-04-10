@@ -16,17 +16,23 @@
 #ifndef __geomtools__model_macros_h
 #define __geomtools__model_macros_h 1
 
-#define GEOMTOOLS_MODEL_INHERIT 					\
-  public geomtools::i_model						\
+#include <geomtools/i_model.h>
+
+#define GEOMTOOLS_MODEL_INHERIT \
+  public ::geomtools::i_model   \
   /**/
 
-#define GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(ModelClassName)		\
-  private:								\
-  static geomtools::i_model::creator_registration<ModelClassName> _g_cr_; \
+#define GEOMTOOLS_MODEL_CLASS_DECLARE(ModelClassName)             \
+  class ModelClassName : GEOMTOOLS_MODEL_INHERIT                  \
+   /**/
+
+#define GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(ModelClassName)          \
+  private:                                                              \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::geomtools::i_model,ModelClassName); \
   /**/
 
-#define GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(ModelClassName)		\
-  geomtools::i_model::creator_registration<ModelClassName> ModelClassName::_g_cr_; \
+#define GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(ModelClassName,ModelClassId)          \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::geomtools::i_model,ModelClassName,ModelClassId); \
   /**/
 
 #endif // __geomtools__model_macros_h

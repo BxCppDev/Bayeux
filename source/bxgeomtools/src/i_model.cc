@@ -15,18 +15,31 @@
 namespace geomtools {
   
   using namespace std;  
+
+  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION (i_model, "geomtools::i_model/__system__");
   
   bool i_model::g_devel = false;
-  
-  const string i_model::SOLID_SUFFIX = ".solid";
-  
-  const string i_model::LOGICAL_SUFFIX = ".log";
-  
-  const string i_model::PHYSICAL_SUFFIX = ".phys";
-  
-  const string i_model::PHANTOM_SOLID_FLAG = "phantom_solid";
-  
-  //const string i_model::DEFAULT_WORLD_NAME = "world";
+
+  // static 
+  const i_model::constants & 
+  i_model::constants::instance ()
+  {
+    static boost::scoped_ptr<i_model::constants> g_global_constants (0);
+    if ( g_global_constants.get () == 0)
+      {
+        g_global_constants.reset (new i_model::constants);
+      }
+    return *g_global_constants.get ();
+  }
+
+  i_model::constants::constants ()
+  {
+    SOLID_SUFFIX = ".solid";
+    LOGICAL_SUFFIX = ".log";
+    PHYSICAL_SUFFIX = ".phys";
+    PHANTOM_SOLID_FLAG = "phantom_solid";
+    return;
+  }
 
   void i_model::assert_constructed (const string & where_, 
                                     const string & what_) const
@@ -46,7 +59,7 @@ namespace geomtools {
         message << "Operation not allowed ! Model has not been constructed yet";
       }
     message << " !";
-    throw runtime_error (message.str ());
+    throw logic_error (message.str ());
   }
 
   void i_model::assert_unconstructed (const string & where_, 
@@ -67,26 +80,26 @@ namespace geomtools {
         message << "Operation not allowed ! Model has already been constructed";
       }
     message << " !";
-    throw runtime_error (message.str ());
+    throw logic_error (message.str ());
   }
 
   string i_model::make_solid_name (const string & basename_)
   {
     ostringstream oss;
-    oss << basename_ << i_model::SOLID_SUFFIX;
+    oss << basename_ << i_model::constants::instance().SOLID_SUFFIX;
   }
 
   string i_model::make_logical_volume_name (const string & basename_)
   {
     ostringstream oss;
-    oss << basename_ << i_model::LOGICAL_SUFFIX;
+    oss << basename_ << i_model::constants::instance().LOGICAL_SUFFIX;
     return oss.str ();
   }
   
   string i_model::make_physical_volume_name (const string & basename_)
   {
     ostringstream oss;
-    oss << basename_ << i_model::PHYSICAL_SUFFIX;
+    oss << basename_ << i_model::constants::instance().PHYSICAL_SUFFIX;
     return oss.str ();
   }
 
@@ -94,7 +107,7 @@ namespace geomtools {
                                              int nitems_)
   {
     ostringstream oss;
-    oss << basename_ << i_model::PHYSICAL_SUFFIX
+    oss << basename_ << i_model::constants::instance().PHYSICAL_SUFFIX
         << "." << "__" << 0 << ".." << (nitems_ - 1) << "__";
     return oss.str ();
   }
@@ -103,7 +116,7 @@ namespace geomtools {
                                                       int item_)
   {
     ostringstream oss;
-    oss << basename_ << i_model::PHYSICAL_SUFFIX
+    oss << basename_ << i_model::constants::instance().PHYSICAL_SUFFIX
         << "." << "__" << item_ << "__";
     return oss.str ();
   }
@@ -112,7 +125,7 @@ namespace geomtools {
                                                       int i_, int j_)
   {
     ostringstream oss;
-    oss << basename_ << i_model::PHYSICAL_SUFFIX
+    oss << basename_ << i_model::constants::instance().PHYSICAL_SUFFIX
         << "." << "__" << i_ << "__"
         << "__" << j_ << "__";
     return oss.str ();
@@ -123,7 +136,7 @@ namespace geomtools {
                                              int nrows_)
   {
     ostringstream oss;
-    oss << basename_ << i_model::PHYSICAL_SUFFIX
+    oss << basename_ << i_model::constants::instance().PHYSICAL_SUFFIX
         << "." << "__" << 0 << ".." << (ncols_ - 1) << "__"
         << "__" << 0 << ".." << (nrows_ - 1) << "__";
     return oss.str ();
@@ -131,167 +144,16 @@ namespace geomtools {
 
   string i_model::extract_label_from_physical_volume_name (const string & physical_volume_name_)
   {
-    size_t pos = physical_volume_name_.rfind (i_model::PHYSICAL_SUFFIX);
+    size_t pos = physical_volume_name_.rfind (i_model::constants::instance().PHYSICAL_SUFFIX);
     if (pos == physical_volume_name_.npos)
       {
         ostringstream message;
-        message << "i_model::extract_label_from_physical_volume_name: "
+        message << "geomtools::i_model::extract_label_from_physical_volume_name: "
                 << "Do not recognize a physical volume name !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     return physical_volume_name_.substr (0, pos);
   }
-   
-  /***************************************************/
-  
-  // static:
-  i_model::scoped_model_db_t i_model::g__model_db (new model_db (true));
-     
-  // static:
-  i_model::model_db & i_model::get_model_db ()
-  {
-    if (! g__model_db) 
-      {
-        throw runtime_error ("i_model::get_model_db: Library build critical bug !");
-      }
-    return *(g__model_db.get ());
-  }
-
-  i_model::model_db::model_db (bool test_)
-  {
-    bool devel = false;
-    //devel = true;
-    if (g_devel || devel)
-      {
-        clog << "DEVEL: i_model::model_db::model_db: Entering..." << endl; 
-      }
-    if (g_devel|| devel)
-      {
-        clog << "DEVEL: i_model::model_db::model_db: Exiting. " << endl;
-      }
-    return;
-  }
-
-  i_model::model_db::~model_db ()
-  {
-    if (g_devel)
-      {
-        clog << "DEVEL: i_model::model_db::~model_db: Entering..." 
-             << endl;
-        clog << "DEVEL: i_model::model_db::~model_db: Clearing the dictionary of model creators..." 
-             << endl;
-      }
-    __dict.clear ();
-    if (g_devel)
-      {
-        clog << "DEVEL: i_model::model_db::~model_db: Exiting." 
-             << endl;
-      }
-    return;
-  }
- 
-  bool i_model::model_db::has_model (const string & model_id_) const
-  {
-    return __dict.find (model_id_) != __dict.end ();
-  }
-
-  model_creator_t & 
-  i_model::model_db::get_model (const string & model_id_)
-  {
-    model_creator_dict_t::iterator found = __dict.find (model_id_);
-    if (found == __dict.end ())
-      {
-        ostringstream message;
-        message << "i_model::model_db::get: "
-                << "No model creator with ID='" << model_id_ << "'!";
-        throw runtime_error (message.str ());
-      }
-    return (found->second);
-  }
-  
-  void i_model::model_db::register_model (model_creator_t creator_, 
-                                          const string & model_id_)
-  {
-    bool devel = g_devel;
-    //devel = true;
-    using namespace std;
-    string model_id = model_id_;
-    if (devel)
-      {
-        clog << "DEVEL: i_model::model_db::register_model: "
-             << "model_id='" << model_id << "'"
-             << endl;
-      }
-    if (has_model (model_id))
-      {
-        ostringstream message;
-        message << "i_model::model_db::register_model: " 
-                << "Model ID '" << model_id_ << "' is already used "
-                << "within the model factory dictionnary!";
-        throw runtime_error (message.str ());
-      }
-    if (devel)
-      {
-        clog << "DEVEL: i_model::model_db::register_model: "
-             << "new '" << model_id << "' model ID!"
-             << endl;
-      }
-    
-    if (model_id.empty ())
-      {
-        ostringstream message;
-        message << "i_model::model_db::register_model: " 
-                << "Empty model ID!";
-        throw runtime_error (message.str ());
-      }
-    if (devel)
-      {
-        clog << "DEVEL: i_model::model_db::register_model: "
-             << "insert model ID='" << model_id << "'!"
-             << endl;
-        clog << "DEVEL: i_model::model_db::register_model: "
-             << "with creator address='" << hex 
-             << (void *) creator_ << dec << "'"
-             << endl;
-      }
-    pair<string, model_creator_t> a_pair;
-    a_pair.first = model_id;
-    a_pair.second = creator_;
-    __dict.insert (a_pair);
-    size_t sz = get_dict ().size ();
-    if (devel)
-      {
-        clog << "DEVEL: i_model::model_db::register_model: size="
-             << sz << " element" << (sz > 1? "s": "") << endl;
-        clog << "DEVEL: i_model::model_db::register_model: "
-             << "done."
-             << endl;
-      }
-    return;
-  }
-  
-  void i_model::model_db::dump_models (ostream & out_)
-  {
-    out_ << "List of model creators in 'model_db::__dict': ";
-    size_t sz = get_dict ().size ();
-    out_ << sz << " element(s)" << endl;
-    size_t count = 0; 
-    for (model_creator_dict_t::const_iterator it = get_dict ().begin ();
-         it != get_dict ().end ();
-         it++) 
-      {
-        count++;
-        if (count == sz) out_ << "`-- "; 
-        else out_ << "|-- ";
-        out_ << it->first << ": " 
-             << hex << (void *) it->second 
-             << dec << endl;
-      }
-    out_ << "end." << endl;
-    return;
-  }
-  
-  /************************************************/
 
   bool i_model::is_constructed () const
   {
@@ -367,9 +229,14 @@ namespace geomtools {
     return _logical;
   }
  
-  geomtools::logical_volume & i_model::get_logical ()
+  geomtools::logical_volume & i_model::grab_logical ()
   {
     return _logical;
+  }
+ 
+  geomtools::logical_volume & i_model::get_logical ()
+  {
+    return this->i_model::grab_logical ();
   }
  
   void i_model::_at_construct (const string & name_,
@@ -378,7 +245,7 @@ namespace geomtools {
   {
     if (g_devel) clog << "DEVEL: i_model::_at_construct: Entering..." << endl;
 
-    throw runtime_error ("i_model::_at_construct: This method MUST be overloaded !");
+    throw logic_error ("geomtools::i_model::_at_construct: This method MUST be overloaded !");
 
     if (g_devel) clog << "DEVEL: i_model::_at_construct: Exiting." << endl;
     return;      
@@ -386,7 +253,7 @@ namespace geomtools {
 
   void i_model::_pre_construct (datatools::utils::properties & setup_)
   {
-    if (setup_.has_flag (i_model::PHANTOM_SOLID_FLAG))
+    if (setup_.has_flag (i_model::constants::instance().PHANTOM_SOLID_FLAG))
       {
         _set_phantom_solid (true);
       }
@@ -416,15 +283,15 @@ namespace geomtools {
     if (devel_track_name) clog << "DEVEL: i_model::construct: Constructing name='" << name_ << "'..." << endl;
     if (_constructed_)
       {
-        throw runtime_error ("i_model::construct: Already constructed !");
+        throw logic_error ("geomtools::i_model::construct: Already constructed !");
       }
     datatools::utils::properties & setup = const_cast<datatools::utils::properties &> (setup_);
     _pre_construct (setup);
     _at_construct (name_, setup_, models_);
     _post_construct (setup);
     _constructed_ = true;
-    if (g_devel) clog << "DEVEL: i_model::construct: Exiting." << endl;
-    if (devel_track_name) clog << "DEVEL: i_model::construct: Constructed name='" << name_ << "'." << endl;
+    if (g_devel) clog << "DEVEL: geomtools::i_model::construct: Exiting." << endl;
+    if (devel_track_name) clog << "DEVEL: geomtools::i_model::construct: Constructed name='" << name_ << "'." << endl;
     return;      
   }
 

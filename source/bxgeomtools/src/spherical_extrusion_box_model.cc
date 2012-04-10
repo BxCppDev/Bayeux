@@ -16,7 +16,7 @@ namespace geomtools {
   using namespace std;
 
   // registration :   
-  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(spherical_extrusion_box_model);
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(spherical_extrusion_box_model,"geomtools::spherical_extrusion_box_model");
 
   string spherical_extrusion_box_model::get_model_id () const
   {

@@ -28,7 +28,7 @@ namespace geomtools {
     
   using namespace std;  
  
-  class multiple_items_model : GEOMTOOLS_BOXED_MODEL_INHERIT
+  GEOMTOOLS_BOXED_MODEL_CLASS_DECLARE(multiple_items_model)
   {
 
   private:

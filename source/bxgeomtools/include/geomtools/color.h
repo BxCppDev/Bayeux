@@ -29,18 +29,25 @@ namespace geomtools {
   class color
   {
   public:
+   
+    struct constants
+    {
+      std::string white;
+      std::string black;
+      std::string red;
+      std::string green;
+      std::string blue;
+      std::string magenta;
+      std::string cyan;
+      std::string yellow;
+      std::string orange;
+      std::string grey;
+      std::string default_color;
 
-    static const std::string white;
-    static const std::string black;
-    static const std::string red;
-    static const std::string green;
-    static const std::string blue;
-    static const std::string magenta;
-    static const std::string cyan;
-    static const std::string yellow;
-    static const std::string orange;
-    static const std::string grey;
-    static const std::string default_color;
+      constants ();
+
+      static const constants & instance ();
+    };
 
   public:
     int    code;
@@ -80,10 +87,6 @@ namespace geomtools {
     };
     
     typedef boost::scoped_ptr<color_db> scoped_color_db_type;
- 
-  private:
-
-    static scoped_color_db_type _g_color_db_;
     
   public:
     
