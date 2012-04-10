@@ -83,7 +83,7 @@ message ( STATUS "testing: Performing all available tests : ${GEOMTOOLS_ALL_TEST
 
 if ( GEOMTOOLS_ALL_TESTS )
   set ( _test_tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/tmp" )
-  execute_process (COMMAND cmake -E remove_directory -f ${_test_tmp_dir} )
+  execute_process (COMMAND cmake -E remove_directory ${_test_tmp_dir} )
 
   foreach ( test_program ${geomtools_tests_programs_list} )
     get_filename_component ( test_executable ${test_program} NAME_WE )
