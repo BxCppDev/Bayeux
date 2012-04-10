@@ -30,6 +30,8 @@
 // Some pre-processor guards about Boost I/O usage and linkage :
 #include <datatools/the_serializable.h>
 #include <datatools/serialization/bio_guard.h>
+
+#include <geomtools/serialization/the_serializable.h>
 #include <geomtools/serialization/bio_guard.h>
  
 using namespace std;
