@@ -19,11 +19,10 @@
  *
  */
 
+#include <cuts/cut_factory.h>
+
 #include <stdexcept>
 #include <sstream>
-
-#include <cuts/cut_factory.h>
-#include <cuts/i_cut.h>
 
 namespace cuts {
 
@@ -64,58 +63,10 @@ namespace cuts {
     return;
   }
 
-  void cut_factory::do_register (const cut_creator_type & a_cut_creator,
-                                 const string & a_cut_id)
-  {
-    if (is_locked ())
-      {
-        ostringstream message;
-        message << "cuts::cut_factory::do_register: " 
-                << "Cut factory is locked !";
-        throw logic_error (message.str ());
-      }
-    bool abort_on_error = true;
-    string cut_id = a_cut_id;
-    if (a_cut_id.empty ())
-      {
-        ostringstream message;
-        message << "cuts::cut_factory::do_register: " 
-                << "Missing cut ID !";
-        if (abort_on_error)
-          {
-            throw logic_error (message.str ());
-          }
-        else 
-          {
-            message << ' ' << "Missing cut ID, nothing to do...";
-            clog << "WARNING: cuts::cut_factory::do_register: " 
-                 << message.str () << endl;
-          }
-      }
-    cut_creator_dict_type::const_iterator found = _creators.find (a_cut_id);
-    if (found != _creators.end ())
-      {
-        ostringstream message;
-        message << "cuts::cut_factory::do_register: " 
-                << "Cut ID '" << a_cut_id << "' is already used "
-                << "within the cut_factory dictionary!";
-        if (abort_on_error)
-          {
-            throw logic_error (message.str ());
-          }
-        else 
-          {
-            message << ' ' << "Overwriting current value...";
-            clog << "WARNING: cuts::cut_factory::do_register: " 
-                 << message.str () << endl;
-          }
-      }
-    _creators[cut_id] = a_cut_creator;
-    return;
-  }
-
   // ctor:
   cut_factory::cut_factory (unsigned int a_flag)
+    : _factory_register_ ("cuts::i_cut/cut_factory", 
+                          a_flag & verbose ? i_cut::factory_register_type::verbose : 0)
   {
     _debug_ = a_flag & debug;
     _verbose_ = a_flag & verbose;
@@ -132,11 +83,12 @@ namespace cuts {
       }
     if (preload)
       {
-        clog << "NOTICE: cuts::cut_factory::ctor: " 
-             << "Preloading the global cuts dictionary..." << endl;
-        // preload local cut creator dictionary with the 
-        // global cut creator dictionary :
-        _creators = cut_tools::get_cut_creator_db ().get_dict ();
+        if (_verbose_) 
+          {
+            clog << "NOTICE: cuts::cut_factory::ctor: " 
+                 << "Preloading the global cuts factory dictionary..." << endl;
+          }
+        _factory_register_.import (DATATOOLS_FACTORY_GET_SYSTEM_REGISTER (cuts::i_cut));
         tree_dump (clog, "Factory after preload:", "NOTICE: ");
       }
     return;
@@ -156,34 +108,32 @@ namespace cuts {
              << "Cut ID == '" << a_cut_id << "' " << endl;
       }
 
-    // search for the cut's label in the creators dictionary:
-    cut_creator_dict_type::iterator found = _creators.find (a_cut_id);
-    if (found != _creators.end ())
+    cut_handle_type new_cut_handle (0);
+    // search for the cut's label in the factory dictionary:
+    if (! _factory_register_.has (a_cut_id))
       {
-        cut_creator_type a_creator = found->second;
-        i_cut * new_cut_ptr = a_creator (a_cut_configuration,
-                                         a_service_manager,
-                                         a_cut_dict);
-        cut_handle_type new_cut_handle (new_cut_ptr);
-        return new_cut_handle;
+        std::cerr << "No registered class with ID '" 
+                  << a_cut_id << "' !" << std::endl;
+        
       }
     else
       {
-        if (devel) 
-          {
-            cerr << "DEVEL: cut_factory::create_cut: "
-                 << "Null cut !" << endl;
-          }
+        cuts::i_cut::factory_register_type::factory_type & the_factory 
+          = _factory_register_.get (a_cut_id);
+        i_cut * new_cut_ptr = the_factory ();
+        new_cut_ptr->initialize (a_cut_configuration,
+                                 a_service_manager, 
+                                 a_cut_dict);
+        new_cut_handle.reset (new_cut_ptr);
       }
 
-    cut_handle_type empty_cut_handle;
-    return (empty_cut_handle);
+    return (new_cut_handle);
   }
   
   // dtor:
   cut_factory::~cut_factory ()
   {
-    _creators.clear ();
+    //_creators.clear ();
     return;
   }
 
@@ -211,45 +161,17 @@ namespace cuts {
           << "Verbose       : " << is_verbose () << endl;
 
     a_out << indent << du::i_tree_dumpable::tag 
-          << "Creators      : ";
-    size_t sz = _creators.size ();
-    a_out << sz << " element" << (sz < 2? "": "s") << endl;
-    ostringstream indent_ss;
-    int count = 0;
-    for (cut_creator_dict_type::const_iterator it = _creators.begin ();
-         it != _creators.end ();
-         it++) 
-      {
-        count++;
-        a_out << indent;
-        a_out << du::i_tree_dumpable::skip_tag;
-        if (count == sz) 
-          {
-            a_out << du::i_tree_dumpable::last_tag; 
-          }
-        else 
-          {
-            a_out << du::i_tree_dumpable::tag;
-          }
-        a_out << "Cut ID='" << it->first 
-              << "' : address=" << hex << (void *) it->second 
-              << dec << endl;
-      }
-        
+          << "List of registered cuts : " << endl;
+    {
+      std::ostringstream indent_oss;
+      indent_oss << indent << du::i_tree_dumpable::skip_tag; 
+      _factory_register_.print (a_out, indent_oss.str ());
+    }
+
     a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit) 
           << "Locked        : " << is_locked () << endl;
 
     return;
-  }
-
-  const cut_creator_dict_type & cut_factory::get_creators () const
-  {
-    return _creators;
-  }
-
-  cut_creator_dict_type & cut_factory::get_creators ()
-  {
-    return _creators;
   }
 
 }  // end of namespace cuts

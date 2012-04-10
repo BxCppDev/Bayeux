@@ -7,7 +7,6 @@
 
 file ( GLOB cuts_PUBLIC_HEADERS
        ${PROJECT_SOURCE_DIR}/include/cuts/*.h
-       ${PROJECT_SOURCE_DIR}/include/cuts/cuts.h
        ${PROJECT_BINARY_DIR}/include/cuts/cuts_config.h
      )
 
@@ -17,9 +16,6 @@ file ( GLOB cuts_SOURCES
        ${PROJECT_SOURCE_DIR}/src/*.cc
      )
 
-# Last source files built in the DLL for proper static stuff initialization:
-list ( REMOVE_ITEM cuts_SOURCES "${PROJECT_SOURCE_DIR}/src/cut_tools.cc" )
-list ( APPEND cuts_SOURCES "${PROJECT_SOURCE_DIR}/src/cut_tools.cc" )
 
 # if ( CUTS_WITH_BIO_SUPPORT )
 #   file ( GLOB cuts_serialization_PUBLIC_HEADERS

@@ -39,7 +39,7 @@
 #include <boost/cstdlib.hpp>
 
 #include <datatools/utils/i_tree_dump.h>
-//#include <datatools/factory/factory_macros.h>
+#include <datatools/factory/factory_macros.h>
 
 namespace datatools {
   namespace utils {
@@ -162,55 +162,20 @@ namespace cuts {
   private: 
 
     std::string _name;           //!< The name of the cut
-    
-    std::string _description;    //!< The description of the cut
-    
+    std::string _description;    //!< The description of the cut   
     std::string _version;        //!< The version of the cut
 
     //private:
 
     bool   _initialized_;    //!< The initialization flag
-
     int    _debug_level_;    //!< The debug level of the cut
-
     void * _user_data_;
 
     // Factory stuff :
-    //DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_cut);
+    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_cut);
     
   };
-      
-  /* Utility to enable auto-registering of a Cut class
-   * in the global dictionary:
-   *
-   * The templatized class 'Cut' must inherits from 'i_cut':
-   */
-  template <class Cut>
-  struct default_creator_registration
-  {
-  public:
-    static i_cut * 
-    g_default_cut_creator (const datatools::utils::properties & a_cut_config, 
-                           datatools::service::service_manager & a_service_manager,
-                           cut_handle_dict_type & a_cut_dictionary)
-    {
-      Cut * new_cut = new Cut; 
-      new_cut->initialize (a_cut_config,
-                           a_service_manager, 
-                           a_cut_dictionary);
-      return new_cut;
-    }
-        
-    // ctor :
-    default_creator_registration (const std::string & a_cut_id) 
-    {
-      cut_tools::get_cut_creator_db ().register_cut_creator (default_creator_registration<Cut>::g_default_cut_creator,
-                                                             a_cut_id);
-      return;
-    }
-        
-  };
-  
+ 
 }  // end of namespace cuts
 
 #endif // __cuts__i_cut_h

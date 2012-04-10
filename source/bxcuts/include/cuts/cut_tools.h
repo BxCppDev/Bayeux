@@ -60,61 +60,6 @@ namespace cuts {
   typedef datatools::utils::handle<i_cut> cut_handle_type;
 
   typedef std::map<std::string, cut_handle_type> cut_handle_dict_type;
-      
-  typedef i_cut * (*cut_creator_type) (const datatools::utils::properties & a_configuration,
-                                       datatools::service::service_manager & a_service_manager, 
-                                       cut_handle_dict_type & a_cut_dict);
-      
-
-  typedef std::map<std::string, cut_creator_type> cut_creator_dict_type;
-
-  /****************************************************/
-
-  class cut_creator_db
-  {
-    bool _verbose_;
-    cut_creator_dict_type _dict_;
-        
-  public:
-        
-    // ctor :
-    cut_creator_db (bool verbose_ = false);
-        
-    // dtor :
-    virtual ~cut_creator_db ();
-        
-    const cut_creator_dict_type & get_dict () const;
-        
-    cut_creator_dict_type & get_dict ();
-        
-    bool has_cut_creator (const std::string & a_cut_id) const;
-        
-    cut_creator_type & get_cut_creator (const std::string & a_cut_id);
-        
-    void register_cut_creator (cut_creator_type a_cut_creator, 
-                               const std::string & a_cut_id);
-        
-    void dump_cut_creators (std::ostream & a_out = std::clog);
-        
-  }; // cut_creator_db
-
-  /****************************************************/
-
-  class cut_tools {
-
-    typedef boost::scoped_ptr<cut_creator_db> scoped_cut_creator_db_type;
-        
-  private:
-
-    //static scoped_cut_creator_db_type g_cut_creator_db_;
-
-  public:
-        
-    static bool g_devel;
-
-    static cut_creator_db & get_cut_creator_db ();
-
-  }; // cut_tools
 
 }  // end of cuts
 

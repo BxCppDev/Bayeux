@@ -51,6 +51,16 @@ namespace cuts {
     return _flags_ & FACTORY_NOPRELOAD;
   }
 
+  bool cut_manager::is_instantiation_on_load () const
+  {
+    return _flags_ & INSTANTIATION_ON_LOAD;
+  }
+
+  bool cut_manager::is_instantiation_on_first_use () const
+  {
+    return ! is_instantiation_on_load ();
+  }
+
   void cut_manager::set_debug (bool a_debug)
   {
     if (a_debug)
@@ -81,6 +91,7 @@ namespace cuts {
   cut_manager::cut_manager (uint32_t the_flags)
   {
     _initialized_ = false;
+    _instantiate_on_first_use_ = true;
     _flags_ = the_flags;
     _factory_ = 0;
     _service_manager_owner_ = false;
@@ -287,18 +298,28 @@ namespace cuts {
         datatools::utils::fetch_path_with_env (filename);
         datatools::utils::multi_properties configs;
         clog << datatools::utils::io::warning
-             << "cuts::cut_manager::load_cuts_: "
+             << "cuts::cut_manager::_load_cuts: "
              << "Loading cuts from file '"
              << filename << "'..." << endl;
         configs.read (filename);
-        load_cuts_ (configs);
+        _load_cuts (configs);
       }
 
     _initialized_ = true;
     return;
   }
 
-  void cut_manager::load_cuts_ (const datatools::utils::multi_properties & a_config)
+  cut_manager::cut_entry_type::cut_entry_type ()
+  {
+    return;
+  }
+
+  bool cut_manager::cut_entry_type::is_instantiated () const
+  {
+    return cut_handle.has_data ();
+  }
+
+  void cut_manager::_load_cuts (const datatools::utils::multi_properties & a_config)
   {
     using namespace datatools::utils;
     const multi_properties::entries_ordered_col_t & oe = a_config.ordered_entries ();
@@ -312,36 +333,48 @@ namespace cuts {
         if (has (cut_name))
           {
             ostringstream message;
-            message << "cuts::cut_manager::load_cuts_: "
+            message << "cuts::cut_manager::_load_cuts: "
                     << "Cut manager already has a cut named '"
                     << cut_name << "' !";
             throw logic_error (message.str ());
           }
         const string & cut_id   = the_entry.get_meta ();
         const properties & cut_config = the_entry.get_properties ();
-        cut_handle_type handle = _factory_->create_cut (cut_id,
-                                                        cut_config,
-                                                        *_service_manager_,
-                                                        _cuts_);
-        if (! handle.has_data ())
+        
+        cut_entry_type ce;
+        ce.cut_name = cut_name;
+        ce.cut_id = the_entry.get_meta ();
+        ce.cut_config = the_entry.get_properties ();
+        ce.cut_handle.reset(0);
+        //if (is_instantiation_on_load ())
+        // Can only support the mode with immediate instantiation :
+        if (true)
           {
-            ostringstream message;
-            message << "cuts::cut_manager::load_cuts_: "
-                    << "Cut manager's embedded factory could not create cut named '"
-                    << cut_name << "' of type '" << cut_id << "' !";
-            throw logic_error (message.str ());
+            ce.cut_handle = _factory_->create_cut (ce.cut_id,
+                                                   ce.cut_config,
+                                                   *_service_manager_,
+                                                   _cuts_);
+            if (! ce.cut_handle.has_data ())
+              {
+                ostringstream message;
+                message << "cuts::cut_manager::_load_cuts: "
+                        << "Cut manager's embedded factory could not create cut named '"
+                        << cut_name << "' of type '" << cut_id << "' !";
+                throw logic_error (message.str ());
+              }
+            else
+              {
+                ostringstream message;
+                message << "cuts::cut_manager::_load_cuts: "
+                        << "Cut manager's embedded factory has created the cut named '"
+                        << ce.cut_name << "' of type '" << ce.cut_id << "' !";
+                clog << datatools::utils::io::notice
+                     << message.str ()
+                     << endl;
+              }
           }
-        else
-          {
-            ostringstream message;
-            message << "cuts::cut_manager::load_cuts_: "
-                    << "Cut manager's embedded factory has created the cut named '"
-                    << cut_name << "' of type '" << cut_id << "' !";
-            clog << datatools::utils::io::notice
-                 << message.str ()
-                 << endl;
-          }
-        _cuts_[cut_name] = handle;
+        _cut_entries_[cut_name] = ce;
+        _cuts_[cut_name] = ce.cut_handle;
       }
     return;
   }
@@ -357,6 +390,7 @@ namespace cuts {
       }
 
     _cuts_.clear ();
+    _cut_entries_.clear ();
 
     if (_factory_ != 0)
       {
@@ -406,6 +440,10 @@ namespace cuts {
   const i_cut &
   cut_manager::get (const string & a_cut_name) const
   {
+    cut_manager * mutable_this = const_cast<cut_manager *> (this);
+    i_cut & mutable_cut_ref = mutable_this->get (a_cut_name);
+    return const_cast<i_cut &> (mutable_cut_ref);
+    /*
     cut_handle_dict_type::const_iterator found
       = _cuts_.find (a_cut_name);
     if (found == _cuts_.end ())
@@ -416,6 +454,7 @@ namespace cuts {
         throw logic_error (message.str ());
       }
     return found->second.get ();
+    */
   }
 
   cut_handle_dict_type & cut_manager::get_cuts ()

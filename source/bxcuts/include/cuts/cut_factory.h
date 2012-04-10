@@ -31,13 +31,12 @@
 #ifndef __cuts_cut_factory_h
 #define __cuts_cut_factory_h 1
 
-#include <cuts/cut_tools.h>
+#include <cuts/i_cut.h>
 
 #include <datatools/utils/i_tree_dump.h>
+#include <datatools/factory/factory.h>
 
 namespace cuts {
-
-  class i_cut;
 
   class cut_factory : public datatools::utils::i_tree_dumpable
   {
@@ -69,19 +68,19 @@ namespace cuts {
     // dtor:
     virtual ~cut_factory ();
  
-    void do_register (const cut_creator_type & a_cut_creator, 
-                      const std::string & a_cut_id = "");
-    
+    template <class CutClass>
+    void do_register (const std::string & a_cut_id)
+    {
+      _factory_register_.registration (a_cut_id, boost::factory<CutClass*>());   
+      return;
+    }
+
     // Main cut factory function :
     virtual cut_handle_type create_cut (const std::string & a_cut_id,
                                         const datatools::utils::properties & a_cut_configuration,
                                         datatools::service::service_manager & a_service_manager, 
                                         cut_handle_dict_type & a_cut_dict);
-        
-    const cut_creator_dict_type & get_creators () const;   
-
-    cut_creator_dict_type & get_creators ();   
-
+ 
     virtual void tree_dump (std::ostream & a_out         = std::clog, 
                             const std::string & a_title  = "",
                             const std::string & a_indent = "",
@@ -99,7 +98,8 @@ namespace cuts {
 
   protected:
 
-    cut_creator_dict_type _creators;
+    // 2012-04-09 FM : support for datatools::factory system :
+    i_cut::factory_register_type _factory_register_;
 
   };
 

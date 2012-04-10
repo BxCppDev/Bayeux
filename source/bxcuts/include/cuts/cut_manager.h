@@ -36,6 +36,7 @@
 #include <boost/cstdint.hpp>
 
 #include <datatools/utils/i_tree_dump.h>
+#include <datatools/utils/properties.h>
 
 #include <cuts/cut_tools.h>
 #include <cuts/cut_factory.h>
@@ -43,7 +44,6 @@
 // Forward declaration :
 namespace datatools {
   namespace utils {
-    class properties;
     class multi_properties;
   }
   namespace service {
@@ -63,7 +63,8 @@ namespace cuts {
         DEBUG             = 0x1,
         FACTORY_DEBUG     = 0x2,
         FACTORY_NOPRELOAD = 0x4,
-        VERBOSE           = 0x8
+        VERBOSE           = 0x8,
+        INSTANTIATION_ON_LOAD = 0x10
       };
   
     bool is_debug () const;
@@ -75,6 +76,10 @@ namespace cuts {
     void set_verbose (bool a_verbose);
  
     bool is_no_preload () const;
+
+    bool is_instantiation_on_load () const;
+
+    bool is_instantiation_on_first_use () const;
 
     bool has (const std::string & a_cut_name) const;
   
@@ -116,15 +121,30 @@ namespace cuts {
                             bool a_inherit          = false) const;
 
   protected:
-        
-    void load_cuts_ (const datatools::utils::multi_properties & a_cuts_config);
+       
+    void _load_cuts (const datatools::utils::multi_properties & a_cuts_config);
+
+  public :
+
+    struct cut_entry_type
+    {
+      std::string cut_name;
+      std::string cut_id;
+      datatools::utils::properties cut_config;
+      cut_handle_type cut_handle;
+
+      cut_entry_type ();
+      bool is_instantiated () const;
+    };
 
   private:
 
     bool                 _initialized_; //!< Initialization status
+    bool                 _instantiate_on_first_use_; //!< Special cut instantiation mode
     uint32_t             _flags_;       //!< Some flags
     cut_factory        * _factory_;     //!< Handle to the embedded cut factory
-    cut_handle_dict_type _cuts_;        //!< Dictionnary of cuts
+    std::map<std::string, cut_entry_type> _cut_entries_; //!< Dictionary of cuts factory directives
+    cut_handle_dict_type _cuts_;        //!< Dictionary of cuts
     bool                                  _service_manager_owner_; //!< Owner flag for the embedded service manager
     datatools::service::service_manager * _service_manager_;       //!< Handle to the embedded service manager
 

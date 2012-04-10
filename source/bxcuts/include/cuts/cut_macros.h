@@ -19,8 +19,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  * Boston, MA 02110-1301, USA.
- *
- * 
  * 
  * Description: 
  *
@@ -32,6 +30,8 @@
 
 #ifndef __cuts__cut_macros_h
 #define __cuts__cut_macros_h 1
+
+#include <cuts/i_cut.h>
 
 #define CUT_CLASS_DECLARE(T)                    \
   class T : public cuts::i_cut                  \
@@ -113,7 +113,7 @@
                                                 \
   /**/  
 
-/*** Macro for the declaration of the full cut interface ***/
+/*** Macro for the declaration of the full cut interface, including ctor/dtor ***/
 #define CUT_INTERFACE_CTOR_DTOR(CUT_CLASS_NAME) \
                                                 \
   CUT_CONSTRUCTOR_DECLARE(CUT_CLASS_NAME);      \
@@ -124,7 +124,7 @@
                                                 \
   /**/  
 
-/*** Macro for the declaration of the full cut interface ***/
+/*** Macro for the declaration of the full cut interface, including ctor/dtor, excluding reset ***/
 #define CUT_INTERFACE_NORESET_CTOR_DTOR(CUT_CLASS_NAME) \
                                                 \
   CUT_CONSTRUCTOR_DECLARE(CUT_CLASS_NAME);      \
@@ -141,20 +141,14 @@
 
 /** Registration */
 
-#define CUT_REGISTRATION_INTERFACE(CUT_CLASS_NAME)          \
-  private:                                                  \
-  static cuts::default_creator_registration<CUT_CLASS_NAME> \
-  _g_default_registration_;                                 \
+#define CUT_REGISTRATION_INTERFACE(CUT_CLASS_NAME)                              \
+  private:                                                                      \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE (i_cut, CUT_CLASS_NAME); \
   /**/
 
-//DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE (i_cut, CUT_CLASS_NAME); \
-
-#define CUT_REGISTRATION_IMPLEMENT(CUT_CLASS_NAME,CUT_ID) \
-  cuts::default_creator_registration<CUT_CLASS_NAME>      \
-  CUT_CLASS_NAME::_g_default_registration_ (CUT_ID);      \
+#define CUT_REGISTRATION_IMPLEMENT(CUT_CLASS_NAME,CUT_ID)                                   \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (i_cut,CUT_CLASS_NAME,CUT_ID); \
   /**/
-
-//DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (i_cut, CUT_CLASS_NAME,CUT_ID); \
 
 #endif // __cuts__cut_macros_h
 
