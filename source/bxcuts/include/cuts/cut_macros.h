@@ -143,11 +143,11 @@
 
 #define CUT_REGISTRATION_INTERFACE(CUT_CLASS_NAME)                              \
   private:                                                                      \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE (i_cut, CUT_CLASS_NAME); \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE (::cuts::i_cut,CUT_CLASS_NAME); \
   /**/
 
 #define CUT_REGISTRATION_IMPLEMENT(CUT_CLASS_NAME,CUT_ID)                                   \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (i_cut,CUT_CLASS_NAME,CUT_ID); \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (::cuts::i_cut,CUT_CLASS_NAME,CUT_ID); \
   /**/
 
 #endif // __cuts__cut_macros_h
