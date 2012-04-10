@@ -16,15 +16,6 @@ file ( GLOB geomtools_PUBLIC_HEADERS
 
 # orderer set of source files :
 set (_geomtools_source_files
-  ${PROJECT_SOURCE_DIR}/src/i_model.cc
-  ${PROJECT_SOURCE_DIR}/src/i_shape_1d.cc 
-  ${PROJECT_SOURCE_DIR}/src/i_shape_2d.cc 
-  ${PROJECT_SOURCE_DIR}/src/i_shape_3d.cc 
-  ${PROJECT_SOURCE_DIR}/src/i_object_3d.cc 
-  ${PROJECT_SOURCE_DIR}/src/visibility.cc 
-  ${PROJECT_SOURCE_DIR}/src/color.cc 
-  ${PROJECT_SOURCE_DIR}/src/utils.cc
-  ${PROJECT_SOURCE_DIR}/src/material.cc 
   ${PROJECT_SOURCE_DIR}/src/blur_spot.cc 
   ${PROJECT_SOURCE_DIR}/src/address_set.cc
   ${PROJECT_SOURCE_DIR}/src/any_shape_3d.cc
@@ -87,6 +78,15 @@ set (_geomtools_source_files
   ${PROJECT_SOURCE_DIR}/src/intersection_3d.cc 
   ${PROJECT_SOURCE_DIR}/src/i_composite_shape_3d.cc
   ${PROJECT_SOURCE_DIR}/src/geomtools_config.cc 
+  ${PROJECT_SOURCE_DIR}/src/i_model.cc
+  ${PROJECT_SOURCE_DIR}/src/i_shape_1d.cc 
+  ${PROJECT_SOURCE_DIR}/src/i_shape_2d.cc 
+  ${PROJECT_SOURCE_DIR}/src/i_shape_3d.cc 
+  ${PROJECT_SOURCE_DIR}/src/i_object_3d.cc 
+  ${PROJECT_SOURCE_DIR}/src/visibility.cc 
+  ${PROJECT_SOURCE_DIR}/src/color.cc 
+  ${PROJECT_SOURCE_DIR}/src/material.cc 
+  ${PROJECT_SOURCE_DIR}/src/utils.cc
 )
 
 file ( GLOB geomtools_SOURCES
