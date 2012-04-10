@@ -47,7 +47,7 @@ message ( STATUS "testing: Performing all available tests : ${GENVTX_ALL_TESTS}"
 
 if ( GENVTX_ALL_TESTS )
   set ( _test_tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/tmp" )
-  execute_process (COMMAND cmake -E remove_directory -f ${_test_tmp_dir} )
+  execute_process (COMMAND cmake -E remove_directory ${_test_tmp_dir} )
   foreach ( test_program ${genvtx_tests_programs_list} )
     get_filename_component ( test_executable ${test_program} NAME_WE )
     message ( STATUS "testing:  Building test target '${test_executable}'" )
