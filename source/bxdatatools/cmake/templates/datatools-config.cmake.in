@@ -181,11 +181,12 @@ if ( NOT DEFINED datatools_CONFIG_COUNTER )
     )
   
   set(datatools_LIBRARIES 
-    ${datatools_ONLY_LIBRARIES} 
-    ${_datatools_BOOST_LIBRARIES} 
-    ${_datatools_CLHEP_LIBRARIES} 
-    ${_datatools_PYTHON_LIBRARIES} 
-    )
+    ${datatools_LIBRARY} )
+#
+#    ${_datatools_BOOST_LIBRARIES} 
+#    ${_datatools_CLHEP_LIBRARIES} 
+#    ${_datatools_PYTHON_LIBRARIES} 
+#    )
 
   message ( STATUS "datatools-config.cmake: datatools_VERSION             = '${datatools_VERSION}'" )
   message ( STATUS "datatools-config.cmake: datatools_WITH_BIO            = '${datatools_WITH_BIO}'" )
