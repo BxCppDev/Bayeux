@@ -25,6 +25,8 @@
 // Some pre-processor guards about Boost I/O usage and linkage :
 #include <datatools/serialization/bio_guard.h>
 #include <geomtools/serialization/bio_guard.h>
+
+#include <datatools/utils/library_loader.h>
  
 using namespace std;
 
@@ -188,7 +190,10 @@ int main (int argc_, char ** argv_)
       bool with_ab = true;
       bool with_gbio = true;
       bool with_dbio = true;
-
+  
+      string LL_config = "";
+      uint32_t LL_flags = datatools::utils::library_loader::allow_unregistered;
+      datatools::utils::library_loader LL (LL_flags, LL_config);
       int iarg = 1;
       while (iarg < argc_)
         {
@@ -228,6 +233,11 @@ int main (int argc_, char ** argv_)
               else if ((option == "--no-gbio")) 
                 {
                   with_gbio = false;
+                }
+              else if ((option == "--load-geomtools-bio")) 
+                {
+                  clog << "warning: Loading '" << "geomtools_bio" << "'..." << endl; 
+                  LL.load ("geomtools_bio");    
                 }
               else 
                 { 
