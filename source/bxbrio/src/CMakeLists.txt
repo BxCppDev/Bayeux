@@ -51,9 +51,13 @@ if ( _generate_root_dict )
 endif ()
 
 # Link dynamic library :
+# target_link_libraries ( brio
+#                         ${ROOT_LIBRARIES}
+#                         ${datatools_LIBRARIES} 
+#                       )
 target_link_libraries ( brio
                         ${ROOT_LIBRARIES}
-                        ${datatools_LIBRARIES} 
+                        ${datatools_LIBRARY} 
                       )
 # ----------------------------------------------------------------------
 # Installation

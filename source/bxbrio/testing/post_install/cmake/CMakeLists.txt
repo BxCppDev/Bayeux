@@ -48,8 +48,10 @@ add_executable ( test_data_io
 	         ${CMAKE_SOURCE_DIR}/../../test_data_io.cxx
                )
 
-target_link_libraries ( test_brio ${brio_LIBRARIES} )
-target_link_libraries ( test_data_io ${brio_LIBRARIES} )
+#target_link_libraries ( test_brio ${brio_LIBRARIES} )
+#target_link_libraries ( test_data_io ${brio_LIBRARIES} )
+target_link_libraries ( test_brio    ${brio_LIBRARY} )
+target_link_libraries ( test_data_io ${brio_LIBRARY} )
 
 install ( TARGETS test_brio    DESTINATION bin )
 install ( TARGETS test_data_io DESTINATION bin )

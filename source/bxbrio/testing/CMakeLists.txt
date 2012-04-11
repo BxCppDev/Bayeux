@@ -62,7 +62,8 @@ if ( BRIO_ALL_TESTS )
 
     # last thing we have to do is to tell CMake what libraries 
     # our executable needs,
-    set ( _test_libraries brio ${ROOT_LIBRARIES} ${datatools_LIBRARIES})
+    ###set ( _test_libraries brio ${ROOT_LIBRARIES} ${datatools_LIBRARIES})
+    set ( _test_libraries brio ) #${ROOT_LIBRARIES} ${datatools_LIBRARIES})
 	 
     target_link_libraries ( ${test_executable} ${_test_libraries} )
 
