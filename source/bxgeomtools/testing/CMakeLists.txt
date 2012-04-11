@@ -98,11 +98,14 @@ if ( GEOMTOOLS_ALL_TESTS )
     # last thing we have to do is to tell CMake what libraries 
     # our executable needs,
     set ( _test_libraries geomtools )
-    list ( APPEND _test_libraries ${mygsl_LIBRARIES} )
-    #message ( STATUS "testing:  GEOMTOOLS_WITH_BIO=${GEOMTOOLS_WITH_BIO}" )
+    # list ( APPEND _test_libraries ${mygsl_LIBRARIES} )
+    # #message ( STATUS "testing:  GEOMTOOLS_WITH_BIO=${GEOMTOOLS_WITH_BIO}" )
+    # if ( GEOMTOOLS_WITH_BIO )
+    #   #message ( STATUS "testing:  INSERT geomtools_bio" )
+    #   list (INSERT _test_libraries 0 geomtools_bio )
+    # endif ()
     if ( GEOMTOOLS_WITH_BIO )
-      #message ( STATUS "testing:  INSERT geomtools_bio" )
-      list (INSERT _test_libraries 0 geomtools_bio )
+      set ( _test_libraries geomtools_bio )
     endif ()
     
     target_link_libraries ( ${test_executable} ${_test_libraries} )

@@ -137,7 +137,8 @@ add_library ( geomtools SHARED
   ${geomtools_SOURCES}
   )
 
-set ( _link_libraries ${mygsl_LIBRARIES} )
+###set ( _link_libraries ${mygsl_LIBRARIES} )
+set ( _link_libraries ${mygsl_LIBRARY} )
 
 # Link dynamic library :
 target_link_libraries ( geomtools
