@@ -123,6 +123,10 @@ int main (int argc_, char ** argv_)
       bool out   = true;
       bool in    = true;
       bool xml   = true;
+ 
+      bool with_ab = true;
+      bool with_gbio = true;
+      bool with_dbio = true;
 
       int iarg = 1;
       while (iarg < argc_)
@@ -152,6 +156,18 @@ int main (int argc_, char ** argv_)
                 {
                   xml = false;
                 }
+              else if ((option == "--no-ab")) 
+                {
+                  with_ab = false;
+                }
+              else if ((option == "--no-dbio")) 
+                {
+                  with_dbio = false;
+                }
+              else if ((option == "--no-gbio")) 
+                {
+                  with_gbio = false;
+                }
               else 
                 { 
                   clog << "warning: ignoring option '" << option << "'!" << endl; 
@@ -166,10 +182,6 @@ int main (int argc_, char ** argv_)
             }
           iarg++;
         }
- 
-      bool with_ab = true;
-      //with_ab = false;
-   
       if (out)
         {
           // declare the 'bag' instance as a 'things' container:
@@ -188,22 +200,25 @@ int main (int argc_, char ** argv_)
               bag.add<A> ("a3", "The a3 object").set_value (42.0);
             }
 
-          {
-            bag.add<geomtools::geom_id> ("g0");
-
-            geomtools::geom_id & gg1 = bag.add<geomtools::geom_id> ("g1");
-            gg1.set_type (666);
-            gg1.set_address (0, 1, 2);
+          if (with_gbio)
+            {
+              bag.add<geomtools::geom_id> ("g0");
+              
+              geomtools::geom_id & gg1 = bag.add<geomtools::geom_id> ("g1");
+              gg1.set_type (666);
+              gg1.set_address (0, 1, 2);
+              
+              geomtools::geom_id & gg2 = bag.add<geomtools::geom_id> ("g2");
+              gg2.set_type (999);
+              gg2.set_address (4, 3, 2, 1, 0);
+            }
           
-            geomtools::geom_id & gg2 = bag.add<geomtools::geom_id> ("g2");
-            gg2.set_type (999);
-            gg2.set_address (4, 3, 2, 1, 0);
-          }
+          if (with_dbio)
+            {
+              bag.add<datatools::utils::properties> ("p1", "A property store").set_description ("A list of properties");
+            }
 
-          {
-            bag.add<datatools::utils::properties> ("p1", "A property store").set_description ("A list of properties");
-          }
-
+          if (with_gbio)
           {
             geomtools::line_3d & l1 = bag.add<geomtools::line_3d> ("l1", "A 3D line");
             l1.set_first (geomtools::vector_3d (0.,0.,0.));
@@ -286,6 +301,7 @@ int main (int argc_, char ** argv_)
               bag.add<B> ("b4", "a default B instance");
             }
 
+          if (with_dbio)
           {
             // add some properties in the 'p1' object :
             datatools::utils::properties & p1 = bag.grab<datatools::utils::properties> ("p1");
@@ -296,6 +312,7 @@ int main (int argc_, char ** argv_)
             p1.store ("pi", 3.14159);
           }
 
+          if (with_gbio)
           {
             const geomtools::geom_id & g0 = bag.get<geomtools::geom_id> ("g0");
             clog << "g0 = " << g0 << endl;
@@ -413,23 +430,30 @@ int main (int argc_, char ** argv_)
             }
 
           /*
-            if (bag.has ("p1") && bag.is_a<datatools::utils::properties> ("p1"))
-            {
-            clog << "Fetching 'p1'..." << endl;
-            datatools::utils::properties & p1 = bag.grab<datatools::utils::properties> ("p1");
-            p1.tree_dump(clog, "p1");
-            }
+          if (with_dbio)
+          {
+          if (bag.has ("p1") && bag.is_a<datatools::utils::properties> ("p1"))
+          {
+          clog << "Fetching 'p1'..." << endl;
+          datatools::utils::properties & p1 = bag.grab<datatools::utils::properties> ("p1");
+          p1.tree_dump(clog, "p1");
+          }
+}
           */
-          if (bag.has ("l1"))
-            {
-              const geomtools::line_3d & l1 = bag.get<geomtools::line_3d> ("l1");
-              l1.tree_dump (clog, "3D-line 'l1':");
-            }
 
-          if (bag.has ("pl1"))
+          if (with_gbio)
             {
-              const geomtools::polyline_3d & pl1 = bag.get<geomtools::polyline_3d> ("pl1");
-              pl1.tree_dump (clog, "3D-polyline 'pl1':");
+              if (bag.has ("l1"))
+                {
+                  const geomtools::line_3d & l1 = bag.get<geomtools::line_3d> ("l1");
+                  l1.tree_dump (clog, "3D-line 'l1':");
+                }
+              
+              if (bag.has ("pl1"))
+                {
+                  const geomtools::polyline_3d & pl1 = bag.get<geomtools::polyline_3d> ("pl1");
+                  pl1.tree_dump (clog, "3D-polyline 'pl1':");
+                }
             }
 
           if (with_ab)
@@ -443,6 +467,7 @@ int main (int argc_, char ** argv_)
                   pa1->dump (clog);
                 } // a1 is delete here
             }
+
         } // bag is destroyed here with all objects therein
 
     }

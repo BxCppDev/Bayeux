@@ -195,6 +195,11 @@ EOF
 	if [ $? -ne 0 ]; then
 	    return 1
 	fi 
+    elif [ "${exe}" = "test_serializable_3" ]; then
+	${bin} --no-ab >> ${tmp_test_dir}/tests.log 2>&1
+	if [ $? -ne 0 ]; then
+	    return 1
+	fi 
      else
 	${bin} >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then
