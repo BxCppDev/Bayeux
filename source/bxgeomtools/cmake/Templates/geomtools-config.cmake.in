@@ -68,8 +68,7 @@ else ()
    message ( STATUS "geomtools-config.cmake : Found the mygsl library version ${mygsl_VERSION} !" )
 endif ()
 set( _geomtools_mygsl_INCLUDE_DIRS ${mygsl_INCLUDE_DIRS} )
-set( _geomtools_mygsl_LIBRARIES    ${mygsl_LIBRARIES}    )
- 
+set( _geomtools_mygsl_LIBRARIES    ${mygsl_LIBRARY}      )
 
 #----------------------------------------------------------------------------
 # Set path to geomtools includes

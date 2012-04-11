@@ -187,10 +187,17 @@ if ( GEOMTOOLS_WITH_BIO )
     ${geomtools_bio_SOURCES}
     )
 
+  set ( _link_libraries  )
+
+  if ( ${datatools_WITH_BIO} )
+    list (APPEND _link_libraries ${datatools_BIO_LIBRARY} ) 
+  endif ()
+
+
   # Link dynamic library :
   target_link_libraries ( geomtools_bio 
     geomtools
-    #${_link_libraries}
+    ${_link_libraries}
     )
   
   ###target_link_libraries ( geomtools_bio LINK_INTERFACE_LIBRARIES "" )

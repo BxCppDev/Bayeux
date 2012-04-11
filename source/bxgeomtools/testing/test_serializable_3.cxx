@@ -190,6 +190,7 @@ int main (int argc_, char ** argv_)
       bool with_ab = true;
       bool with_gbio = true;
       bool with_dbio = true;
+      bool load_gbio = false;
   
       string LL_config = "";
       uint32_t LL_flags = datatools::utils::library_loader::allow_unregistered;
@@ -237,7 +238,7 @@ int main (int argc_, char ** argv_)
               else if ((option == "--load-geomtools-bio")) 
                 {
                   clog << "warning: Loading '" << "geomtools_bio" << "'..." << endl; 
-                  LL.load ("geomtools_bio");    
+                  load_gbio = true;
                 }
               else 
                 { 
@@ -255,6 +256,10 @@ int main (int argc_, char ** argv_)
         }
 
       if (with_gbio)
+        {
+          load_gbio = true;
+        }
+      if (load_gbio)
         {
           LL.load ("geomtools_bio");   
         }
