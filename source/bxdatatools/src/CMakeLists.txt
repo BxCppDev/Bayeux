@@ -103,8 +103,13 @@ target_link_libraries ( datatools
   ${Boost_SYSTEM_LIBRARY}
   ${Boost_PYTHON_LIBRARY}
   ${PYTHON_LIBRARIES}
+  pthread
+  dl
+  util
+  stdc++
+  m
+  c
   )
-### datatools_sys_c
 
 # Install library and associate it with an export :
 install ( TARGETS datatools
@@ -191,14 +196,14 @@ if ( DATATOOLS_WITH_BIO )
    # Link dynamic library :
    target_link_libraries ( datatools_bio 
                            datatools
-                           datatools_sys
-                           ${CLHEP_LIBRARIES}
-                           ${Boost_SERIALIZATION_LIBRARY}
-                           ${Boost_IOSTREAMS_LIBRARY}
-                           ${Boost_FILESYSTEM_LIBRARY}
-                           ${Boost_SYSTEM_LIBRARY}
-                           ${Boost_PYTHON_LIBRARY}
-                           ${PYTHON_LIBRARIES}
+                           # datatools_sys
+                           # ${CLHEP_LIBRARIES}
+                           # ${Boost_SERIALIZATION_LIBRARY}
+                           # ${Boost_IOSTREAMS_LIBRARY}
+                           # ${Boost_FILESYSTEM_LIBRARY}
+                           # ${Boost_SYSTEM_LIBRARY}
+                           # ${Boost_PYTHON_LIBRARY}
+                           # ${PYTHON_LIBRARIES}
                          )
 		       
    # Install library and associate it with an export
