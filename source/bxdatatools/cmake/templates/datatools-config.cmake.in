@@ -2,6 +2,10 @@
 # It defines the following variables
 #  datatools_INCLUDE_DIRS - include directories for datatools
 #  datatools_ONLY_INCLUDE_DIRS - package only include directories for datatools
+#  datatools_LIBRARY     - libraries to link against
+#  datatools_SYS_LIBRARY     - library targets to link against (kwsys part)
+#  datatools_CORE_LIBRARY    - library targets to link against (core library)
+#  datatools_BIO_LIBRARY     - library targets to link against (Boost I/O library)
 #  datatools_LIBRARIES    - libraries to link against
 #  datatools_ONLY_LIBRARIES - package only libraries to link against
 #  datatools_WITH_DEBUG   - flag for debug mode
@@ -141,8 +145,9 @@ if ( NOT DEFINED datatools_CONFIG_COUNTER )
   # Set datatools_LIBRARIES variable
   set(datatools_LIB_DIR @datatools_LIB_DIR@)
   # Basic : Assume that if datatools_bio was built, it should be in Library list
-  set(datatools_SYS_LIBRARY datatools_sys )
-  set(datatools_LIBRARY datatools)
+  set(datatools_SYS_LIBRARY  datatools_sys )
+  set(datatools_CORE_LIBRARY datatools)
+  set(datatools_LIBRARY ${datatools_CORE_LIBRARY} )
   set(datatools_BIO_LIBRARY)
 
   set(datatools_WITH_DEBUG @DATATOOLS_WITH_DEBUG@)
@@ -153,9 +158,11 @@ if ( NOT DEFINED datatools_CONFIG_COUNTER )
   endif()
 
   set(datatools_WITH_BIO @DATATOOLS_WITH_BIO@)
+  set(datatools_LIBRARY ${datatools_CORE_LIBRARY} )
   if(datatools_WITH_BIO)
     set(datatools_WITH_BIO 1)
     set(datatools_BIO_LIBRARY datatools_bio)
+    set(datatools_LIBRARY ${datatools_BIO_LIBRARY} )
   else()
     set(datatools_WITH_BIO 0)
   endif()
@@ -169,7 +176,7 @@ if ( NOT DEFINED datatools_CONFIG_COUNTER )
 
   set(datatools_ONLY_LIBRARIES 
     ${datatools_BIO_LIBRARY} 
-    ${datatools_LIBRARY} 
+    ${datatools_CORE_LIBRARY} 
     ${datatools_SYS_LIBRARY} 
     )
   
