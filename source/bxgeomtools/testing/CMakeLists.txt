@@ -58,8 +58,8 @@ set ( geomtools_tests_programs_list
   test_regular_polygon.cxx
   test_rotation_3d.cxx
   test_s0.cxx
-  test_serializable_3.cxx
-  test_serializable_2.cxx
+  #test_serializable_3.cxx
+  #test_serializable_2.cxx
   test_serializable.cxx
   test_sphere.cxx
   test_subtraction_3d.cxx
@@ -108,7 +108,8 @@ if ( GEOMTOOLS_ALL_TESTS )
       set ( _test_libraries geomtools_bio )
     endif ()
     
-    target_link_libraries ( ${test_executable} ${_test_libraries} ${_test_libraries} )
+    #target_link_libraries ( ${test_executable} -lgeomtools_bio )
+    target_link_libraries ( ${test_executable} ${_test_libraries} )
 
     add_test ( NAME ${test_executable}.run
       COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
