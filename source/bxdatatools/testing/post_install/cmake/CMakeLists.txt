@@ -43,8 +43,10 @@ include_directories ( ${datatools_INCLUDE_DIRS} )
 add_executable ( test_datatools      ${CMAKE_SOURCE_DIR}/../../test_datatools.cxx )
 add_executable ( test_serializable_1 ${CMAKE_SOURCE_DIR}/../../test_serializable_1.cxx )
 
-target_link_libraries ( test_datatools      ${datatools_LIBRARIES} )
-target_link_libraries ( test_serializable_1 ${datatools_LIBRARIES} )
+#target_link_libraries ( test_datatools      ${datatools_LIBRARIES} )
+#target_link_libraries ( test_serializable_1 ${datatools_LIBRARIES} )
+target_link_libraries ( test_datatools      ${datatools_LIBRARY} )
+target_link_libraries ( test_serializable_1 ${datatools_BIO_LIBRARY} )
 
 install ( TARGETS test_datatools      DESTINATION bin )
 install ( TARGETS test_serializable_1 DESTINATION bin )

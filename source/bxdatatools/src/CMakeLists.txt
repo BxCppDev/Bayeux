@@ -115,7 +115,7 @@ target_link_libraries ( datatools
 install ( TARGETS datatools
           EXPORT  datatools-libraries
           RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT bin
-          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT shlib  # bin?
+          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT shlib  
           ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT devel
         )      
 
@@ -210,7 +210,7 @@ if ( DATATOOLS_WITH_BIO )
    install ( TARGETS datatools_bio
              EXPORT  datatools-libraries
              RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT bin
-             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT shlib # bin?
+             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT shlib 
              ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT devel
            )
 
