@@ -108,7 +108,7 @@ add_library ( genbb_help_f77 SHARED
 # Link dynamic library :
 #
 #set ( _link_libraries ${geomtools_LIBRARIES} )
-set ( _link_libraries ${geomtools_LIBRARY} )
+set ( _link_libraries ${geomtools_CORE_LIBRARY} )
 
 target_link_libraries ( genbb_help_f77 
   ${_link_libraries}
@@ -126,7 +126,6 @@ add_library ( genbb_help SHARED
 # Link dynamic library :
 target_link_libraries ( genbb_help
   genbb_help_f77
-  ${_link_libraries}
   )
 # ----------------------------------------------------------------------
 # Installation :
