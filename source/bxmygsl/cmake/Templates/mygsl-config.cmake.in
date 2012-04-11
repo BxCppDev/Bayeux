@@ -111,7 +111,8 @@ if ( NOT DEFINED mygsl_CONFIG_COUNTER )
   #----------------------------------------------------------------------------
   # Set mygsl_LIBRARIES variable
   set(mygsl_LIB_DIR @mygsl_LIB_DIR@)
-  set(mygsl_LIBRARY mygsl)
+  set(mygsl_CORE_LIBRARY mygsl)
+  set(mygsl_LIBRARY ${mygsl_CORE_LIBRARY} )
 
   set(mygsl_WITH_DEBUG @MYGSL_WITH_DEBUG@)
   if(mygsl_WITH_DEBUG)
@@ -140,10 +141,11 @@ if ( NOT DEFINED mygsl_CONFIG_COUNTER )
   # endif ()
 
   set(mygsl_ONLY_LIBRARIES 
-    ${mygsl_LIBRARY} 
+    ${mygsl_CORE_LIBRARY} 
     )
 
-  set(_mygsl_datatools_LIBRARIES ${datatools_LIBRARIES} )
+  #set(_mygsl_datatools_LIBRARIES ${datatools_LIBRARIES} )
+  set(_mygsl_datatools_LIBRARIES ${datatools_LIBRARY} )
   set(mygsl_LIBRARIES 
     ${mygsl_ONLY_LIBRARIES}
     ${_mygsl_datatools_LIBRARIES}

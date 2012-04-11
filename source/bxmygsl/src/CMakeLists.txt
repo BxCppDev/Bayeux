@@ -63,7 +63,8 @@ add_library ( mygsl SHARED
 set ( _link_libraries "" )
 
 if ( _depends_on_datatools ) 
-  set ( _link_libraries ${_link_libraries} ${datatools_LIBRARIES} )
+  #set ( _link_libraries ${_link_libraries} ${datatools_LIBRARIES} )
+  set ( _link_libraries ${_link_libraries} ${datatools_LIBRARY} )
 endif ()
 set ( _link_libraries ${_link_libraries} ${GSL_LIBRARIES} )
 
