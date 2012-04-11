@@ -253,6 +253,12 @@ int main (int argc_, char ** argv_)
             }
           iarg++;
         }
+
+      if (with_gbio)
+        {
+          LL.load ("geomtools_bio");   
+        }
+
       if (out)
         {
           // declare the 'bag' instance as a 'things' container:
