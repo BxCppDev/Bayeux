@@ -26,11 +26,10 @@
 #include <geomtools/helix_3d.h>
 #include <geomtools/polyline_3d.h>
 
-// Some pre-processor guards about Boost I/O usage and linkage :
-//#include <datatools/the_serializable.h>
-#include <datatools/serialization/bio_guard.h>
+#include <datatools/serialization/io_factory.h>
 
-//#include <geomtools/serialization/the_serializable.h>
+// Some pre-processor guards about Boost I/O usage and linkage :
+#include <datatools/serialization/bio_guard.h>
 #include <geomtools/serialization/bio_guard.h>
  
 using namespace std;
@@ -69,6 +68,47 @@ private :
   DATATOOLS_SERIALIZATION_DECLARATION()
 
 };
+  
+DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(A, "test_things::A")
+
+/*** use some macros to implement serialization stuff for class A ***/
+BOOST_CLASS_EXPORT_KEY2 (A, "test_things::A")
+
+/***********************************************************
+ * Boost/Serialization export/implement/instantiation code *
+ * for the A                                               *
+ ***********************************************************/
+  
+template<class Archive>
+void A::serialize (Archive & ar, const unsigned int file_version)
+{
+  ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
+  ar & boost::serialization::make_nvp ("value", value_);
+  return;
+}
+
+/*** use some macros to implement serialization stuff for class A ***/
+BOOST_CLASS_EXPORT_IMPLEMENT (A)
+
+void A::dump (ostream & out) const
+{
+  out << "A::dump : value = " << value_ << endl;
+  return;
+}
+
+A::A () : value_ (0.0) 
+{
+  return;
+}
+ 
+A::A (double v) : value_ (v) 
+{
+  return;
+}
+
+A::~A ()
+{
+}
 
 /*** serializable B  sample class ***/
 
@@ -111,6 +151,28 @@ private:
 
 };
 
+DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(B, "test_things::B")
+
+/*** use some macros to implement serialization stuff for class B ***/
+BOOST_CLASS_EXPORT_KEY2 (B, "test_things::B")
+
+template<class Archive>
+void B::serialize (Archive & ar, const unsigned int file_version)
+{
+  ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
+  ar & boost::serialization::make_nvp ("index", index_);
+  return;
+}
+
+void B::dump (ostream & out) const
+{
+  out << "B::dump : index = " << index_ << endl;
+  return;
+}
+
+/*** use some macros to implement serialization stuff for class B ***/
+BOOST_CLASS_EXPORT_IMPLEMENT (B)
+ 
 /*** main ***/
 int main (int argc_, char ** argv_)
 {
@@ -483,66 +545,7 @@ int main (int argc_, char ** argv_)
     }
   return (error_code);
 }
-  
-DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(A, "test_things::A")
-  
-template<class Archive>
-void A::serialize (Archive & ar, const unsigned int file_version)
-{
-  ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-  ar & boost::serialization::make_nvp ("value", value_);
-  return;
-}
 
-void A::dump (ostream & out) const
-{
-  out << "A::dump : value = " << value_ << endl;
-  return;
-}
-
-A::A () : value_ (0.0) 
-{
-  return;
-}
- 
-A::A (double v) : value_ (v) 
-{
-  return;
-}
-
-A::~A ()
-{
-}
-
-DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(B, "test_things::B")
-
-template<class Archive>
-void B::serialize (Archive & ar, const unsigned int file_version)
-{
-  ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-  ar & boost::serialization::make_nvp ("index", index_);
-  return;
-}
-
-void B::dump (ostream & out) const
-{
-  out << "B::dump : index = " << index_ << endl;
-  return;
-}
-
-/***********************************************************
- * Boost/Serialization export/implement/instantiation code *
- * for the A and B classes                                 *
- ***********************************************************/
-
-/*** use some macros to implement serialization stuff for class A ***/
-BOOST_CLASS_EXPORT_KEY2 (A, "test_things::A")
-BOOST_CLASS_EXPORT_IMPLEMENT (A)
-
-/*** use some macros to implement serialization stuff for class B ***/
-BOOST_CLASS_EXPORT_KEY2 (B, "test_things::B")
-BOOST_CLASS_EXPORT_IMPLEMENT (B)
- 
 // end of test_serializable_3.cxx
 /*
 ** Local Variables: --
