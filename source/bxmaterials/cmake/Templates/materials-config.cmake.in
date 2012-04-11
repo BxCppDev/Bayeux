@@ -56,7 +56,7 @@ else ()
    message ( STATUS "materials-config.cmake: Found the geomtools library version ${geomtools_VERSION} !" )
 endif ()
 set( _materials_geomtools_INCLUDE_DIRS ${geomtools_INCLUDE_DIRS} )
-set( _materials_geomtools_LIBRARIES    ${geomtools_LIBRARIES}    )
+set( _materials_geomtools_LIBRARIES    ${geomtools_CORE_LIBRARY} )
 
 #----------------------------------------------------------------------------
 # Set path to materials includes
@@ -71,7 +71,8 @@ set ( materials_INCLUDE_DIRS
 #----------------------------------------------------------------------------
 # Set materials_LIBRARIES variable
 set(materials_LIB_DIR @materials_LIB_DIR@)
-set(materials_LIBRARY materials )
+set(materials_CORE_LIBRARY materials )
+set(materials_LIBRARY ${materials_CORE_LIBRARY} )
 
 set(materials_WITH_DEBUG @MATERIALS_WITH_DEBUG@)
 if(materials_WITH_DEBUG)
@@ -100,12 +101,14 @@ endif()
 #   endif()
 # endif ()
 
-set(materials_ONLY_LIBRARIES ${materials_LIBRARY} )
+set(materials_ONLY_LIBRARIES ${materials_CORE_LIBRARY} )
 
-set(materials_LIBRARIES 
-     ${materials_ONLY_LIBRARIES}
-     ${_materials_geomtools_LIBRARIES}
-   )
+set(materials_LIBRARIES ${materials_LIBRARY} )
+ 
+# set(materials_LIBRARIES 
+#      ${materials_ONLY_LIBRARIES}
+#      ${_materials_geomtools_LIBRARIES}
+#    )
 
 unset(_materials_geomtools_LIBRARIES)
 unset(_materials_geomtools_INCLUDE_DIRS)

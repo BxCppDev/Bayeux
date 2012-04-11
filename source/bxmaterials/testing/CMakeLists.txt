@@ -59,7 +59,6 @@ if ( MATERIALS_ALL_TESTS )
     # last thing we have to do is to tell CMake what libraries 
     # our executable needs,
     set ( _test_libraries materials )
-    #list ( APPEND _test_libraries ${geomtools_LIBRARIES} )
 	 
     target_link_libraries ( ${test_executable} ${_test_libraries} )
 
