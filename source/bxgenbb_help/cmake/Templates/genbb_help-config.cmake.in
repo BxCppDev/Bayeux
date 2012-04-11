@@ -71,7 +71,8 @@ set ( genbb_help_INCLUDE_DIRS
 set(genbb_help_LIB_DIR @genbb_help_LIB_DIR@)
 # Basic : Assume that if genbb_help_bio was built, it should be in Library list
 set(genbb_help_F77_LIBRARY genbb_help_f77 )
-set(genbb_help_LIBRARY genbb_help )
+set(genbb_help_CORE_LIBRARY genbb_help )
+set(genbb_help_LIBRARY ${genbb_help_CORE_LIBRARY} )
 
 set(genbb_help_WITH_DEBUG @GENBB_HELP_WITH_DEBUG@)
 if(genbb_help_WITH_DEBUG)
@@ -85,6 +86,7 @@ if ( @GENBB_HELP_WITH_BIO_SUPPORT@ )
  if(genbb_help_WITH_BIO)
    set(genbb_help_WITH_BIO 1)
    set(genbb_help_BIO_LIBRARY genbb_help_bio )
+   set(genbb_help_LIBRARY ${genbb_help_BIO_LIBRARY} )
  else()
    set(genbb_help_WITH_BIO 0)
  endif()
@@ -101,13 +103,10 @@ endif ()
 
 set ( genbb_help_ONLY_LIBRARIES
   ${genbb_help_BIO_LIBRARY} 
-  ${genbb_help_LIBRARY} 
+  ${genbb_help_CORE_LIBRARY} 
   ${genbb_help_F77_LIBRARY}
   )
-set ( genbb_help_LIBRARIES 
-  ${genbb_help_ONLY_LIBRARIES}
-  ${_genbb_help_geomtools_LIBRARIES}
-  )
+set ( genbb_help_LIBRARIES ${genbb_help_LIBRARY} )
  
 set (genbb_help_DEFINITIONS @_genbb_help_definitions@ )
 

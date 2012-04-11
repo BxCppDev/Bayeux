@@ -107,7 +107,8 @@ add_library ( genbb_help_f77 SHARED
 # ----------------------------------------------------------------------------
 # Link dynamic library :
 #
-set ( _link_libraries ${geomtools_LIBRARIES} )
+#set ( _link_libraries ${geomtools_LIBRARIES} )
+set ( _link_libraries ${geomtools_LIBRARY} )
 
 target_link_libraries ( genbb_help_f77 
   ${_link_libraries}
@@ -172,11 +173,15 @@ if ( GENBB_HELP_WITH_BIO )
     ${genbb_help_detail_PUBLIC_HEADERS} 
     ${genbb_help_bio_SOURCES}
     )
+  set ( _link_libraries  )
+
+  if ( ${geomtools_WITH_BIO} )
+    list (APPEND _link_libraries ${geomtools_BIO_LIBRARY} ) 
+  endif ()
 
   # Link dynamic library :
   target_link_libraries ( genbb_help_bio
     genbb_help
-    genbb_help_f77
     ${_link_libraries}
     )
 
