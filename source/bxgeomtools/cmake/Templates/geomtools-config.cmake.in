@@ -83,7 +83,8 @@ set ( geomtools_INCLUDE_DIRS
 # Set geomtools_LIBRARIES variable
 set(geomtools_LIB_DIR @geomtools_LIB_DIR@)
 # Basic : Assume that if geomtools_bio was built, it should be in Library list
-set(geomtools_LIBRARY geomtools )
+set(geomtools_CORE_LIBRARY geomtools )
+set(geomtools_LIBRARY ${geomtools_CORE_LIBRARY} )
 
 set(geomtools_WITH_DEBUG @GEOMTOOLS_WITH_DEBUG@)
 if(geomtools_WITH_DEBUG)
@@ -97,6 +98,7 @@ if ( @GEOMTOOLS_WITH_BIO_SUPPORT@ )
  if(geomtools_WITH_BIO)
    set(geomtools_WITH_BIO 1)
    set(geomtools_BIO_LIBRARY geomtools_bio )
+   set(geomtools_LIBRARY ${geomtools_BIO_LIBRARY} )
  else()
    set(geomtools_WITH_BIO 0)
  endif()
@@ -111,11 +113,12 @@ if ( @GEOMTOOLS_WITH_PYTHON_WRAPPER_SUPPORT@ )
   endif()
 endif ()
 
-set ( geomtools_ONLY_LIBRARIES ${geomtools_BIO_LIBRARY} ${geomtools_LIBRARY} )
-set ( geomtools_LIBRARIES 
-      ${geomtools_ONLY_LIBRARIES}
-      ${_geomtools_mygsl_LIBRARIES}
-    )
+set ( geomtools_ONLY_LIBRARIES ${geomtools_BIO_LIBRARY} ${geomtools_CORE_LIBRARY} )
+set ( geomtools_LIBRARIES ${geomtools_LIBRARY} )
+# set ( geomtools_LIBRARIES 
+#      ${geomtools_ONLY_LIBRARIES}
+#      ${_geomtools_mygsl_LIBRARIES}
+#    )
 
 unset ( _geomtools_mygsl_LIBRARIES )
 unset ( _geomtools_mygsl_INCLUDE_DIRS )
