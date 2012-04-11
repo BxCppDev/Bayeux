@@ -61,7 +61,8 @@ add_library ( materials SHARED
   ${materials_SOURCES}
   )
 
-set ( _link_libraries ${geomtools_LIBRARIES} )
+#set ( _link_libraries ${geomtools_LIBRARIES} )
+set ( _link_libraries ${geomtools_LIBRARY} )
 
 # Link dynamic library :
 target_link_libraries ( materials
