@@ -44,7 +44,8 @@ add_executable ( test_mygsl
 	         ${test_mygsl_src_files}
                )
 
-target_link_libraries ( test_mygsl ${mygsl_LIBRARIES} )
+#target_link_libraries ( test_mygsl ${mygsl_LIBRARIES} )
+target_link_libraries ( test_mygsl ${mygsl_LIBRARY} )
 
 install ( TARGETS test_mygsl DESTINATION bin )
 

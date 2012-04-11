@@ -86,10 +86,10 @@ if ( MYGSL_ALL_TESTS )
     # last thing we have to do is to tell CMake what libraries 
     # our executable needs,
     set ( _test_libraries mygsl )
-    if ( _depends_on_datatools ) 
-      list ( APPEND _test_libraries ${datatools_LIBRARIES} )
-    endif ()
-    list ( APPEND _test_libraries ${GSL_LIBRARIES} )
+    # if ( _depends_on_datatools ) 
+    #   list ( APPEND _test_libraries ${datatools_LIBRARIES} )
+    # endif ()
+    # list ( APPEND _test_libraries ${GSL_LIBRARIES} )
     
     target_link_libraries ( ${test_executable} ${_test_libraries} )
 
