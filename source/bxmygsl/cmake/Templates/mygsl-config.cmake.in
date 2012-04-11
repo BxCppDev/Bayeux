@@ -89,7 +89,7 @@ if ( NOT DEFINED mygsl_CONFIG_COUNTER )
     message ( STATUS "mygsl-config.cmake: Found datatools dependency version ${datatools_VERSION} !")
   endif ()
   set( _mygsl_datatools_INCLUDE_DIRS ${datatools_INCLUDE_DIRS} )
-  set( _mygsl_datatools_LIBRARIES    ${datatools_LIBRARIES}    )
+  set( _mygsl_datatools_LIBRARIES    ${datatools_CORE_LIBRARY}    )
   
   message ( STATUS "mygsl-config.cmake: Dependencies : " )
   message ( STATUS "mygsl-config.cmake:  o GSL_INCLUDE_DIRS       = '${_mygsl_GSL_INCLUDE_DIRS}' " )

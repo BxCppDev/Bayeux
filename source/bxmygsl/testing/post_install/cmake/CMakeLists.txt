@@ -23,7 +23,7 @@ else ()
     endif ()
 endif ()
 
-set ( _mygsl_min_version 3.0 )
+set ( _mygsl_min_version 3.1 )
 find_package ( mygsl ${_mygsl_min_version} REQUIRED NO_MODULE )
 if ( mygsl_VERSION )
      message ( STATUS "Found mygsl >= ${_mygsl_min_version}" )
