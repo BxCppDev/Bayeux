@@ -55,7 +55,7 @@ if ( CUTS_ALL_TESTS )
 
     # last thing we have to do is to tell CMake what libraries 
     # our executable needs,
-    set ( _test_libraries cuts ${datatools_LIBRARIES} )
+    set ( _test_libraries cuts ) #${datatools_LIBRARIES} )
  	 
     target_link_libraries ( ${test_executable} ${_test_libraries} )
 

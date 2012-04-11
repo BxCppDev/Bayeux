@@ -53,7 +53,9 @@ add_library ( cuts SHARED
 	      ${cuts_SOURCES}
             )
 
-set ( _link_libraries ${_link_libraries} ${datatools_LIBRARIES} )
+message ( STATUS "${PROJECT_NAME}: DEVEL: datatools_LIBRARIES='${datatools_LIBRARIES}'" )
+###set ( _link_libraries ${_link_libraries} ${datatools_LIBRARIES} )
+set ( _link_libraries ${_link_libraries} ${datatools_LIBRARY} )
 
 # Link dynamic library :
 target_link_libraries ( cuts
