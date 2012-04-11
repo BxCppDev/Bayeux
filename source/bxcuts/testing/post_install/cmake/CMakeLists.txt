@@ -46,7 +46,8 @@ add_executable ( test_manager
 	         ${test_cuts_src_files}
                )
 
-target_link_libraries ( test_manager ${cuts_LIBRARIES} )
+#target_link_libraries ( test_manager ${cuts_LIBRARIES} )
+target_link_libraries ( test_manager ${cuts_LIBRARY} )
 
 install ( TARGETS test_manager DESTINATION bin )
 
