@@ -85,7 +85,7 @@ if ( NOT DEFINED brio_CONFIG_COUNTER )
   endif ()
   set( _brio_datatools_INCLUDE_DIRS ${datatools_INCLUDE_DIRS} )
   #set( _brio_datatools_LIBRARIES    ${datatools_LIBRARIES}    )
-  set( _brio_datatools_LIBRARIES    ${datatools_LIBRARY}      )
+  set( _brio_datatools_LIBRARIES    ${datatools_CORE_LIBRARY}      )
   
   message ( STATUS "brio-config.cmake: Dependencies : " )
   message ( STATUS "brio-config.cmake:  o ROOT_INCLUDE_DIRS      = '${_brio_ROOT_INCLUDE_DIRS}' " )

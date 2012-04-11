@@ -57,7 +57,7 @@ endif ()
 #                       )
 target_link_libraries ( brio
                         ${ROOT_LIBRARIES}
-                        ${datatools_LIBRARY} 
+                        ${datatools_CORE_LIBRARY} 
                       )
 # ----------------------------------------------------------------------
 # Installation
