@@ -189,7 +189,7 @@ if ( GEOMTOOLS_WITH_BIO )
   # Link dynamic library :
   target_link_libraries ( geomtools_bio 
     geomtools
-    ${_link_libraries}
+    #${_link_libraries}
     )
   
   ###target_link_libraries ( geomtools_bio LINK_INTERFACE_LIBRARIES "" )
