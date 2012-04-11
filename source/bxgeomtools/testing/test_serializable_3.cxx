@@ -12,10 +12,6 @@
 #include <datatools/serialization/i_serializable.h>
 #include <datatools/serialization/archives_instantiation.h>
 
-#include <boost/serialization/nvp.hpp>
-#include <boost/serialization/export.hpp>
-#include <datatools/serialization/i_serializable.ipp>
-
 // The serializable 'things' container :
 #include <datatools/utils/things.h>
 
@@ -25,8 +21,6 @@
 #include <geomtools/line_3d.h>
 #include <geomtools/helix_3d.h>
 #include <geomtools/polyline_3d.h>
-
-#include <datatools/serialization/io_factory.h>
 
 // Some pre-processor guards about Boost I/O usage and linkage :
 #include <datatools/serialization/bio_guard.h>
@@ -71,6 +65,8 @@ private :
   
 DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(A, "test_things::A")
 
+#include <boost/serialization/export.hpp>
+
 /*** use some macros to implement serialization stuff for class A ***/
 BOOST_CLASS_EXPORT_KEY2 (A, "test_things::A")
 
@@ -78,6 +74,9 @@ BOOST_CLASS_EXPORT_KEY2 (A, "test_things::A")
  * Boost/Serialization export/implement/instantiation code *
  * for the A                                               *
  ***********************************************************/
+
+#include <boost/serialization/nvp.hpp>
+#include <datatools/serialization/i_serializable.ipp>
   
 template<class Archive>
 void A::serialize (Archive & ar, const unsigned int file_version)
