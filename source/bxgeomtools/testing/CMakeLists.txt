@@ -58,6 +58,7 @@ set ( geomtools_tests_programs_list
   test_regular_polygon.cxx
   test_rotation_3d.cxx
   test_s0.cxx
+  test_serializable_3.cxx
   test_serializable_2.cxx
   test_serializable.cxx
   test_sphere.cxx
