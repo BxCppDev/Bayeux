@@ -146,11 +146,12 @@ if ( NOT DEFINED mygsl_CONFIG_COUNTER )
 
   #set(_mygsl_datatools_LIBRARIES ${datatools_LIBRARIES} )
   set(_mygsl_datatools_LIBRARIES ${datatools_LIBRARY} )
-  set(mygsl_LIBRARIES 
-    ${mygsl_ONLY_LIBRARIES}
-    ${_mygsl_datatools_LIBRARIES}
-    ${_mygsl_GSL_LIBRARIES}
-    )
+  set(mygsl_LIBRARIES ${mygsl_LIBRARY} )
+
+    # ${mygsl_ONLY_LIBRARIES}
+    # ${_mygsl_datatools_LIBRARIES}
+    # ${_mygsl_GSL_LIBRARIES}
+    # )
 
   # if ( @MYGSL_WITH_BIO_SUPPORT@ )
   #   message ( STATUS "DEVEL: mygsl-config.cmake: mygsl_WITH_BIO=${mygsl_WITH_BIO}" )
