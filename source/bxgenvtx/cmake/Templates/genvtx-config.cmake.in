@@ -72,7 +72,8 @@ set ( genvtx_INCLUDE_DIRS
 #----------------------------------------------------------------------------
 # Set genvtx_LIBRARIES variable
 set ( genvtx_LIB_DIR @genvtx_LIB_DIR@ )
-set ( genvtx_LIBRARY genvtx )
+set ( genvtx_CORE_LIBRARY genvtx )
+set ( genvtx_LIBRARY ${genvtx_CORE_LIBRARY} )
 
 set( genvtx_WITH_DEBUG @GENVTX_WITH_DEBUG@ )
 if(genvtx_WITH_DEBUG)
@@ -87,6 +88,7 @@ endif()
 #  if(genvtx_WITH_BIO)
 #    set(genvtx_WITH_BIO 1)
 #    set(genvtx_BIO_LIBRARY genvtx_bio )
+#    set ( genvtx_LIBRARY ${genvtx_BIO_LIBRARY} )
 #  else()
 #    set(genvtx_WITH_BIO 0)
 #  endif()
@@ -101,11 +103,8 @@ endif()
 #   endif()
 # endif ()
 
-set(genvtx_ONLY_LIBRARIES ${genvtx_LIBRARY} )
-set ( genvtx_LIBRARIES 
-      ${genvtx_ONLY_LIBRARIES}
-      ${_genvtx_geomtools_LIBRARIES}
-     )
+set(genvtx_ONLY_LIBRARIES ${genvtx_CORE_LIBRARY} )
+set ( genvtx_LIBRARIES ${genvtx_LIBRARY} )
 
 unset( _genvtx_geomtools_INCLUDE_DIRS )
 unset( _genvtx_geomtools_LIBRARIES    )
