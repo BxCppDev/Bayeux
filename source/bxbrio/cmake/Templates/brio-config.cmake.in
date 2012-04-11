@@ -137,11 +137,13 @@ if ( NOT DEFINED brio_CONFIG_COUNTER )
 
   # Basic : Assume that if brio_bio was built, it should be in Library list
   set(brio_ONLY_LIBRARIES ${brio_CORE_LIBRARY} )
-  set(brio_LIBRARIES 
-    ${brio_ONLY_LIBRARIES}
-    ${_brio_ROOT_LIBRARIES}
-    ${_brio_datatools_LIBRARIES}
-    )
+  set(brio_LIBRARIES ${brio_LIBRARY} )
+
+
+    # ${brio_ONLY_LIBRARIES}
+    # ${_brio_ROOT_LIBRARIES}
+    # ${_brio_datatools_LIBRARIES}
+    # )
 
   message ( STATUS "brio-config.cmake: brio_VERSION           = '${brio_VERSION}'" )
   message ( STATUS "brio-config.cmake: brio_INCLUDE_DIRS      = '${brio_INCLUDE_DIRS}'" )
