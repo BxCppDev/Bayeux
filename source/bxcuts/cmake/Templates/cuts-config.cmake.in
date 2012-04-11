@@ -52,7 +52,8 @@ if ( NOT DEFINED cuts_CONFIG_COUNTER )
     message ( STATUS "cuts-config.cmake: Found 'datatools' dependency version ${datatools_VERSION} !")
   endif ()
   set( _cuts_datatools_INCLUDE_DIRS ${datatools_INCLUDE_DIRS} )
-  set( _cuts_datatools_LIBRARIES    ${datatools_LIBRARIES}    )
+  #set( _cuts_datatools_LIBRARIES    ${datatools_LIBRARIES}    )
+  set( _cuts_datatools_LIBRARIES    ${datatools_CORE_LIBRARY}      )
  
   message ( STATUS "cuts-config.cmake: Dependencies : " )
   message ( STATUS "cuts-config.cmake:  o datatools_INCLUDE_DIRS = '${_cuts_datatools_INCLUDE_DIRS}' " )
@@ -72,7 +73,8 @@ if ( NOT DEFINED cuts_CONFIG_COUNTER )
   # Set cuts_LIBRARIES variable
   set(cuts_LIB_DIR @cuts_LIB_DIR@)
   # Basic : Assume that if cuts_bio was built, it should be in Library list
-  set(cuts_LIBRARY cuts )
+  set(cuts_CORE_LIBRARY cuts )
+  set(cuts_LIBRARY ${cuts_CORE_LIBRARY} )
 
   set(cuts_WITH_DEBUG @CUTS_WITH_DEBUG@)
   if(cuts_WITH_DEBUG)
@@ -100,7 +102,7 @@ if ( NOT DEFINED cuts_CONFIG_COUNTER )
   #   endif()
   # endif ()
 
-  set(cuts_ONLY_LIBRARIES ${cuts_LIBRARY} )
+  set(cuts_ONLY_LIBRARIES ${cuts_CORE_LIBRARY} )
   set(cuts_LIBRARIES 
     ${cuts_ONLY_LIBRARIES}
     ${_cuts_datatools_LIBRARIES}

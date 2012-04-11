@@ -55,7 +55,9 @@ add_library ( cuts SHARED
 
 message ( STATUS "${PROJECT_NAME}: DEVEL: datatools_LIBRARIES='${datatools_LIBRARIES}'" )
 ###set ( _link_libraries ${_link_libraries} ${datatools_LIBRARIES} )
-set ( _link_libraries ${_link_libraries} ${datatools_LIBRARY} )
+
+# Only needs the core part of datatools
+set ( _link_libraries ${datatools_CORE_LIBRARY} )
 
 # Link dynamic library :
 target_link_libraries ( cuts

@@ -23,7 +23,7 @@ else ()
     endif ()
 endif ()
 
-set ( _cuts_min_version 3.0 )
+set ( _cuts_min_version 3.1 )
 find_package ( cuts ${_cuts_min_version} REQUIRED NO_MODULE )
 if ( cuts_VERSION )
      message ( STATUS "Found cuts >= ${_cuts_min_version}" )
