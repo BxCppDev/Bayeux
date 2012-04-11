@@ -60,7 +60,8 @@ add_library ( genvtx SHARED
   ${genvtx_SOURCES}
   )
 
-set ( _link_libraries ${geomtools_LIBRARIES} )
+#set ( _link_libraries ${geomtools_LIBRARIES} )
+set ( _link_libraries ${geomtools_LIBRARY} )
 
 # Link dynamic library :
 target_link_libraries ( genvtx
