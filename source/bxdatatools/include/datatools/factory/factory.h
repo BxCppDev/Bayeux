@@ -2,7 +2,7 @@
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2012-03-19
  * Last modified : 2012-03-19
- * 
+ *
  */
 
 #ifndef __datatools__factory__factory_h
@@ -91,8 +91,8 @@ namespace datatools {
               {
                 if (is_verbose ())
                   {
-                    std::clog << "INFO: " 
-                              << "datatools::factory::factory_register::clear: " 
+                    std::clog << "INFO: "
+                              << "datatools::factory::factory_register::clear: "
                               << "Destroying registered allocator/functor '"
                               << i->first << "'" << std::endl;
                   }
@@ -114,13 +114,13 @@ namespace datatools {
           }
         return found->second;
       }
- 
+
       void registration (const std::string & id_, const factory_type & factory_)
       {
         if (is_verbose ())
           {
-            std::clog << "INFO: " << "datatools::factory::factory_register<" 
-                      << _label_ << ">::registration: " 
+            std::clog << "INFO: " << "datatools::factory::factory_register<"
+                      << _label_ << ">::registration: "
                       << "registration of class with ID '" << id_ << "'" << std::endl;
           }
         typename factory_map_type::const_iterator found = _registered_.find (id_);
@@ -139,8 +139,8 @@ namespace datatools {
       {
         if (is_verbose ())
           {
-            std::clog << "INFO: " << "datatools::factory::factory_register<" 
-                      << _label_ << ">::unregistration:  " 
+            std::clog << "INFO: " << "datatools::factory::factory_register<"
+                      << _label_ << ">::unregistration:  "
                       << "registration of class with ID '" << id_ << "'" << std::endl;
           }
         typename factory_map_type::const_iterator found = _registered_.find (id_);
@@ -153,20 +153,20 @@ namespace datatools {
           }
         return;
       };
- 
+
       factory_register (const std::string & label_, unsigned int flags = 0x0)
       {
         _verbose_ = false;
         if (flags & verbose)
           {
             _verbose_ = true;
-            std::clog << "INFO: " << "datatools::factory::factory_register<" 
+            std::clog << "INFO: " << "datatools::factory::factory_register<"
                       << label_ << ">: Construction..." << std::endl;
           }
         _label_ = label_;
         if (is_verbose ())
           {
-            std::clog << "INFO: " << "datatools::factory::factory_register<" 
+            std::clog << "INFO: " << "datatools::factory::factory_register<"
                       << _label_ << ">: Construction done." << std::endl;
           }
         return;
@@ -176,13 +176,13 @@ namespace datatools {
       {
         if (is_verbose ())
           {
-            std::clog << "INFO: " << "datatools::factory::factory_register<" 
+            std::clog << "INFO: " << "datatools::factory::factory_register<"
                       << _label_ << ">: Destruction..." << std::endl;
           }
         clear ();
         if (is_verbose ())
           {
-            std::clog << "INFO: " << "datatools::factory::factory_register<" 
+            std::clog << "INFO: " << "datatools::factory::factory_register<"
                       << _label_ << ">: Destruction done." << std::endl;
           }
         return;
@@ -192,7 +192,7 @@ namespace datatools {
       {
         if (is_verbose ())
           {
-            std::clog << "INFO: " << "datatools::factory::factory_register<" 
+            std::clog << "INFO: " << "datatools::factory::factory_register<"
                       << _label_ << ">::import: Importing registered factories from register '"
                       << factory_register_.label () << "'..." << std::endl;
           }
@@ -205,7 +205,7 @@ namespace datatools {
           }
         if (is_verbose ())
           {
-            std::clog << "INFO: " << "datatools::factory::factory_register<" 
+            std::clog << "INFO: " << "datatools::factory::factory_register<"
                       << _label_ << ">::import: Done." << std::endl;
           }
         return;
@@ -213,7 +213,7 @@ namespace datatools {
 
       void print (std::ostream & out_, const std::string & indent_ = "") const
       {
-        out_ << indent_ << "List of registered allocators/functors for label \"" 
+        out_ << indent_ << "List of registered allocators/functors for label \""
              << _label_ << "\" : " << std::endl;
         for (typename factory_map_type::const_iterator i = _registered_.begin ();
              i != _registered_.end ();
@@ -230,10 +230,10 @@ namespace datatools {
               {
                 out_ << "|-- ";
               }
-            out_ << "ID: \"" <<  i->first << "\"" << std::endl;
+            out_ << "ID: \"" <<  i->first << "\" @ " << &i->second << std::endl;
           }
         return;
-      }  
+      }
 
     private:
 
@@ -266,7 +266,7 @@ namespace datatools {
           {
             std::ostringstream message;
             message << "datatools::factory::_system_factory_registrator::_trigger_factory_registration_: "
-                    << "Class ID '" << type_id_ << "' cannot be registered in register '" 
+                    << "Class ID '" << type_id_ << "' cannot be registered in register '"
                     << BaseType::grab_system_factory_register ().label () << "' !";
             throw std::logic_error (message.str ());
           }
@@ -289,7 +289,7 @@ namespace datatools {
 
 } // end of namespace datatools
 
-#endif // __datatools__utils__factory_h 
+#endif // __datatools__utils__factory_h
 
 /* end of datatools/utils/factory.h */
 /*

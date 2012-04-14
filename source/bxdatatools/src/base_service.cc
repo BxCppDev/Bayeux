@@ -35,7 +35,8 @@ namespace datatools {
 
     bool base_service::g_debug = false;
 
-    DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION (base_service, "datatools::service::base_service/__system__");
+    DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION (base_service,
+                                                      "datatools::service::base_service/__system__");
 
     /*
     base_service::scoped_service_creator_db_t base_service::_g_service_creator_db_ (new service_creator_db (true));

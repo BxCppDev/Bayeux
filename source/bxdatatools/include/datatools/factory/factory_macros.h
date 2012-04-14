@@ -2,7 +2,7 @@
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2012-03-19
  * Last modified : 2012-03-19
- * 
+ *
  */
 
 #ifndef __datatools__factory__factory_macros_h
@@ -14,12 +14,12 @@
 
 /**
  * These macros provide some automated mechanisms to :
- *  - setup a global factory register associated to a given base class 
- *  - automate the registration of the factory associated to any daughter class 
- *    in the global factory register associated to the mother base class 
+ *  - setup a global factory register associated to a given base class
+ *  - automate the registration of the factory associated to any daughter class
+ *    in the global factory register associated to the mother base class
  *
  * \code
- * 
+ *
  * class Base
  * {
  *   DATATOOLS_FACTORY_INTERFACE (Base)
@@ -73,15 +73,15 @@
   //static scoped_factory_register_type _g_datatools_factory_system_factory_register_; \
   /**/
 
-/// Instantiate the system (allocator/functor) factory register and its associated accessors  
+/// Instantiate the system (allocator/functor) factory register and its associated accessors
 #define DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(BaseType, RegisterLabel) \
   \
   BaseType::factory_register_type & BaseType::grab_system_factory_register () \
   { \
     static scoped_factory_register_type g_system_factory_register (0); \
-    if (g_system_factory_register.get() == 0) \
+    if (g_system_factory_register.get () == 0) \
       { \
-        g_system_factory_register.reset ( new BaseType::factory_register_type (RegisterLabel, 1)); \
+        g_system_factory_register.reset (new BaseType::factory_register_type (RegisterLabel, 0)); \
       } \
     return *(g_system_factory_register.get ()); \
   } \
@@ -96,11 +96,11 @@
 /// Useful macros
 #define DATATOOLS_FACTORY_GRAB_SYSTEM_REGISTER(BaseType) \
   BaseType::grab_system_factory_register ()\
-  /**/ 
+  /**/
 
 #define DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(BaseType) \
   BaseType::get_system_factory_register ()\
-  /**/ 
+  /**/
 
 // Automated registration for derived classes:
 #define DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(BaseType, DerivedType) \
@@ -125,7 +125,7 @@
 //   } \
 //   /**/
 
-#endif // __datatools__utils__factory_macros_h 
+#endif // __datatools__utils__factory_macros_h
 
 /* end of datatools/utils/factory_macros.h */
 /*
