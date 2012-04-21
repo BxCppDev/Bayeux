@@ -6,7 +6,7 @@ Prepare class dictionnary and streamer stuff for classes:
  - TArrayCMod
  - brio_record
 
-Working directory is: 
+Working directory is:
 $(pwd)
 --------------------------------------------------------------
 EOF
@@ -29,19 +29,25 @@ if [ "x${rootcint_exe}" = "x" ]; then
     rootcint_exe=rootcint
 fi
 
-which ${rootcint_exe} 
+which ${rootcint_exe}
 if [ $? -ne 0 ]; then
     echo "ERROR: make_dict.sh: Cannot find '${rootcint_exe}' ! Abort !"
-    exit 1 
+    exit 1
 fi
+
+tmp_test_dir=/tmp/${USER}/brio
+if [ ! -d ${tmp_test_dir} ]; then
+    mkdir -p ${tmp_test_dir}
+fi
+tmp_log_file=${tmp_test_dir}/root_dictionnary.log
 
 ${rootcint_exe} brio_dict.cc \
  -c -I${SOURCE_PATH}/include -I${BINARY_PATH}/include \
  ${SOURCE_PATH}/include/brio/detail/TArrayCMod.h \
- ${SOURCE_PATH}/include/brio/detail/brio_record.h > /dev/null 2>&1
+ ${SOURCE_PATH}/include/brio/detail/brio_record.h > ${tmp_log_file} 2>&1
 if [ $? -ne 0 ]; then
     echo "ERROR: make_dict.sh: ROOT dictionary generation failed ! Abort !"
-    exit 1 
+    exit 1
 fi
 
 # cat brio_dict.cc | sed \
