@@ -6,11 +6,11 @@
 
 message ( STATUS "Embedded ROOT dictionnary" )
 
-set ( _brio_dict_headers 
+set ( _brio_dict_headers
       ${PROJECT_SOURCE_DIR}/include/brio/detail/TArrayCMod.h
       ${PROJECT_SOURCE_DIR}/include/brio/detail/brio_record.h
     )
-set ( _brio_dict_sources 
+set ( _brio_dict_sources
       ${PROJECT_BINARY_DIR}/src/brio_dict.cc
       ${PROJECT_BINARY_DIR}/src/brio_dict.h
     )
@@ -23,10 +23,8 @@ endif ()
 
 if ( _generate_root_dict )
     ADD_CUSTOM_COMMAND(OUTPUT ${_brio_dict_sources}
-       COMMAND ${_ld_library_path_env}=${ROOT_LIBRARY_DIR} 
-               ROOTSYS=${ROOTSYS} 
-               SOURCE_PATH=${PROJECT_SOURCE_DIR} 
-               BINARY_PATH=${PROJECT_BINARY_DIR} 
+       COMMAND SOURCE_PATH=${PROJECT_SOURCE_DIR}
+               BINARY_PATH=${PROJECT_BINARY_DIR}
                ${PROJECT_SOURCE_DIR}/cmake/Tools/make_dict.sh --rootcint ${ROOT_CINT_EXECUTABLE}
        DEPENDS ${_brio_dict_headers}
        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}

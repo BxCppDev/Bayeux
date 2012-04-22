@@ -42,7 +42,7 @@ fi
 tmp_log_file=${tmp_test_dir}/root_dictionnary.log
 
 ${rootcint_exe} brio_dict.cc \
- -c -I${SOURCE_PATH}/include -I${BINARY_PATH}/include \
+ -c -I${SOURCE_PATH}/include \
  ${SOURCE_PATH}/include/brio/detail/TArrayCMod.h \
  ${SOURCE_PATH}/include/brio/detail/brio_record.h > ${tmp_log_file} 2>&1
 if [ $? -ne 0 ]; then
