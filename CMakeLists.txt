@@ -98,7 +98,7 @@ if (DEFINED CADFAEL_DIR AND NOT "x${CADFAEL_DIR}" STREQUAL "x" )
   message ( STATUS "${PROJECT_NAME}: Attempt to find explicitly Cadfael from '${CADFAEL_DIR}'" )
   if (NOT EXISTS ${CADFAEL_DIR} )
     message ( FATAL_ERROR "${PROJECT_NAME}: Cadfael directory '${CADFAEL_DIR}' does not exist !" )
-  endif ()   
+  endif ()
   set ( Cadfael_DIR ${CADFAEL_DIR} )
   set ( CMAKE_MODULE_PATH
         ${Cadfael_DIR}
@@ -133,30 +133,30 @@ endif ()
 
 # -----------------------------------------------
 
-set ( BAYEUX_KNOWN_COMPONENTS 
-      	"datatools" 
-	"brio" 
-	"mygsl" 
-	"cuts" 
-	"geomtools" 
-	"genvtx" 
-	"materials" 
-	"genbb_help" 
+set ( BAYEUX_KNOWN_COMPONENTS
+      	"datatools"
+	"brio"
+	"mygsl"
+	"cuts"
+	"geomtools"
+	"genvtx"
+	"materials"
+	"genbb_help"
 	)
 
-set ( BAYEUX_KNOWN_CONFIGS 
+set ( BAYEUX_KNOWN_CONFIGS
        "trunk"
        "${Bayeux_VERSION}"
        "last_tags"
        "user"
        "default"
-    )  
+    )
 
 set ( DEFAULT_BAYEUX_CONFIG "default" )
 
 if ( NOT DEFINED BAYEUX_CONFIG OR "x${BAYEUX_CONFIG}" STREQUAL "x" )
    set ( BAYEUX_CONFIG "${DEFAULT_BAYEUX_CONFIG}" )
-endif () 
+endif ()
 
 # -----------------------------------------------
 # Optional components :
@@ -167,19 +167,19 @@ set ( BAYEUX_COMPONENTS_SVN_TRUNK_SUBDIR    "trunk"    )
 set ( BAYEUX_COMPONENTS_SVN_TAGS_SUBDIR     "tags"     )
 set ( BAYEUX_COMPONENTS_SVN_BRANCHES_SUBDIR "branches" )
 
-set    ( BAYEUX_WITH_DATATOOLS  1 )
-option ( BAYEUX_WITH_BRIO       1 )
-option ( BAYEUX_WITH_MYGSL      1 )
-option ( BAYEUX_WITH_GEOMTOOLS  1 )
-option ( BAYEUX_WITH_CUTS       1 )
-option ( BAYEUX_WITH_MATERIALS  1 )
-option ( BAYEUX_WITH_GENVTX     1 )
-option ( BAYEUX_WITH_GENBB_HELP 1 )
+set ( BAYEUX_WITH_DATATOOLS  ON )
+set ( BAYEUX_WITH_BRIO	     ON )
+set ( BAYEUX_WITH_MYGSL	     ON )
+set ( BAYEUX_WITH_GEOMTOOLS  ON )
+set ( BAYEUX_WITH_CUTS	     ON )
+set ( BAYEUX_WITH_MATERIALS  ON )
+set ( BAYEUX_WITH_GENVTX     ON )
+set ( BAYEUX_WITH_GENBB_HELP ON )
 
-option ( BAYEUX_WITH_BIO        ON )
-option ( BAYEUX_WITH_DOCS       ON )
-option ( BAYEUX_WITH_TESTS      ON )
-option ( BAYEUX_WITH_VALIDATION OFF )
+set ( BAYEUX_WITH_BIO	     ON )
+set ( BAYEUX_WITH_DOCS	     ON )
+set ( BAYEUX_WITH_TESTS	     ON )
+set ( BAYEUX_WITH_VALIDATION OFF )
 
 #----------------------------------------------------------------------------
 # Configure external projects to build under a single root directory in our
@@ -215,7 +215,7 @@ set ( BAYEUX_GENBB_HELP_MINIMAL_TAG_VERSION "4.0.0"  )
 
 # Default configuration (0.9.1) :
 if ( BAYEUX_CONFIG STREQUAL "default" OR BAYEUX_CONFIG STREQUAL ${Bayeux_VERSION} )
-  message ( STATUS "${PROJECT_NAME}: Bayeux 'default/${Bayeux_VERSION}' configuration...") 
+  message ( STATUS "${PROJECT_NAME}: Bayeux 'default/${Bayeux_VERSION}' configuration...")
 
   set ( BAYEUX_DATATOOLS_VERSION  "4.0.0"  )
   set ( BAYEUX_DATATOOLS_PATH     "tags/datatools-4.0.0"  )
@@ -242,7 +242,7 @@ if ( BAYEUX_CONFIG STREQUAL "default" OR BAYEUX_CONFIG STREQUAL ${Bayeux_VERSION
   set ( BAYEUX_GENBB_HELP_PATH    "tags/genbb_help-4.0.0"  )
 
 elseif ( BAYEUX_CONFIG STREQUAL 0.9.0 )
-  message ( STATUS "${PROJECT_NAME}: Bayeux '0.9.0' configuration...") 
+  message ( STATUS "${PROJECT_NAME}: Bayeux '0.9.0' configuration...")
 
   set ( BAYEUX_DATATOOLS_VERSION  "4.0.0"  )
   set ( BAYEUX_DATATOOLS_PATH     "tags/datatools-4.0.0"  )
@@ -277,37 +277,37 @@ elseif ( BAYEUX_CONFIG STREQUAL "last_tags" )
                      RESULT_VARIABLE _${component}_list_of_tags_error_code
                      OUTPUT_VARIABLE _${component}_list_of_tags_out
                      ERROR_VARIABLE  _${component}_list_of_tags_err
-                     ) 
+                     )
      if ( NOT ${_${component}_list_of_tags_error_code} EQUAL 0 )
-       message ( FATAL_ERROR "${PROJECT_NAME}: Cannot find the list of available tags for the Bayeux component : '${component}' !") 
+       message ( FATAL_ERROR "${PROJECT_NAME}: Cannot find the list of available tags for the Bayeux component : '${component}' !")
      endif ()
-     ###message ( STATUS "${PROJECT_NAME}: List of available tags for '${component}' : \n${_${component}_list_of_tags_out}" ) 
-     execute_process(COMMAND echo ${_${component}_list_of_tags_out} 
-                     COMMAND sort 
-                     COMMAND tail -1 
-                     COMMAND tr -d '/' 
-                     COMMAND tr -d '[[:space:]]' 
+     ###message ( STATUS "${PROJECT_NAME}: List of available tags for '${component}' : \n${_${component}_list_of_tags_out}" )
+     execute_process(COMMAND echo ${_${component}_list_of_tags_out}
+                     COMMAND sort
+                     COMMAND tail -1
+                     COMMAND tr -d '/'
+                     COMMAND tr -d '[[:space:]]'
                      RESULT_VARIABLE _${component}_last_tag_out_error_code
                      OUTPUT_VARIABLE _${component}_last_tag_out
                     )
      if ( NOT ${_${component}_last_tag_out_error_code} EQUAL 0 )
-       message ( FATAL_ERROR "${PROJECT_NAME}: Cannot find the last available tag for the Bayeux component : '${component}' !") 
+       message ( FATAL_ERROR "${PROJECT_NAME}: Cannot find the last available tag for the Bayeux component : '${component}' !")
      endif ()
      if ( "x${_${component}_last_tag_out}" STREQUAL "x" )
-       message ( FATAL_ERROR "${PROJECT_NAME}: Cannot determine the last available tag for the Bayeux component : '${component}' !") 
+       message ( FATAL_ERROR "${PROJECT_NAME}: Cannot determine the last available tag for the Bayeux component : '${component}' !")
      endif ()
-     message ( STATUS "${PROJECT_NAME}:   Last available ${component} tag is : '${_${component}_last_tag_out}' " ) 
-     message ( STATUS "${PROJECT_NAME}:   Minimal supported ${component} tag version is : '${component}-${BAYEUX_${component_upper}_MINIMAL_TAG_VERSION}' " ) 
+     message ( STATUS "${PROJECT_NAME}:   Last available ${component} tag is : '${_${component}_last_tag_out}' " )
+     message ( STATUS "${PROJECT_NAME}:   Minimal supported ${component} tag version is : '${component}-${BAYEUX_${component_upper}_MINIMAL_TAG_VERSION}' " )
      if ( "${_${component}_last_tag_out}" STRLESS "${component}-${BAYEUX_${component_upper}_MINIMAL_TAG_VERSION}" )
-       message ( FATAL_ERROR "${PROJECT_NAME}: Unsupported tag '${_${component}_last_tag_out}' for the Bayeux component : '${component}' !")       
-     endif ()  
+       message ( FATAL_ERROR "${PROJECT_NAME}: Unsupported tag '${_${component}_last_tag_out}' for the Bayeux component : '${component}' !")
+     endif ()
      set ( BAYEUX_${component_upper}_PATH    "tags/${_${component}_last_tag_out}"  )
-     message ( STATUS "${PROJECT_NAME}: Using last tag '${_${component}_last_tag_out}' for the Bayeux component : '${component}'")       
+     message ( STATUS "${PROJECT_NAME}: Using last tag '${_${component}_last_tag_out}' for the Bayeux component : '${component}'")
   endforeach  ()
 
 elseif ( BAYEUX_CONFIG STREQUAL "trunk" )
-  message ( STATUS "${PROJECT_NAME}: Bayeux 'trunk' configuration...") 
-  #message ( FATAL_ERROR "${PROJECT_NAME}: Bayeux '${BAYEUX_CONFIG}' configuration is not supported yet !") 
+  message ( STATUS "${PROJECT_NAME}: Bayeux 'trunk' configuration...")
+  #message ( FATAL_ERROR "${PROJECT_NAME}: Bayeux '${BAYEUX_CONFIG}' configuration is not supported yet !")
 
   set ( BAYEUX_DATATOOLS_PATH  "trunk" )
   set ( BAYEUX_BRIO_PATH       "trunk" )
@@ -319,41 +319,41 @@ elseif ( BAYEUX_CONFIG STREQUAL "trunk" )
   set ( BAYEUX_GENBB_HELP_PATH "trunk" )
 
 elseif ( BAYEUX_CONFIG STREQUAL "user" )
-  message ( STATUS "${PROJECT_NAME}: Bayeux 'user' configuration...") 
+  message ( STATUS "${PROJECT_NAME}: Bayeux 'user' configuration...")
 
   if (DEFINED BAYEUX_USER_CONFIG_FILE AND NOT "x${BAYEUX_USER_CONFIG_FILE}" STREQUAL "x" )
-    message ( STATUS "${PROJECT_NAME}: User configuration file...") 
+    message ( STATUS "${PROJECT_NAME}: User configuration file...")
     if ( NOT EXISTS ${BAYEUX_USER_CONFIG_FILE} )
-      message ( FATAL_ERROR "${PROJECT_NAME}: User configuration file '${BAYEUX_USER_CONFIG_FILE}' does not exist !") 
+      message ( FATAL_ERROR "${PROJECT_NAME}: User configuration file '${BAYEUX_USER_CONFIG_FILE}' does not exist !")
     endif  ()
-    message ( STATUS "${PROJECT_NAME}: Parsing user configuration file...") 
+    message ( STATUS "${PROJECT_NAME}: Parsing user configuration file...")
     foreach ( component ${BAYEUX_KNOWN_COMPONENTS} )
       string ( TOUPPER "${component}" component_upper )
       file ( STRINGS ${BAYEUX_USER_CONFIG_FILE} _component_directive
              REGEX "^${component}@"
            )
-      message ( STATUS "${PROJECT_NAME}: User directive for component '${component}' : '${_component_directive}' ") 
+      message ( STATUS "${PROJECT_NAME}: User directive for component '${component}' : '${_component_directive}' ")
       if ( _component_directive STREQUAL "" )
         set ( BAYEUX_WITH_${component_upper} 0 )
-      else () 
+      else ()
         if ( NOT DEFINED BAYEUX_WITH_${component_upper} OR BAYEUX_WITH_${component_upper} )
           set ( BAYEUX_WITH_${component_upper} 1 )
 	  string ( REPLACE "${component}@" ""
-                   _component_path 
-	           ${_component_directive} 
+                   _component_path
+	           ${_component_directive}
 	         )
-          message ( STATUS "${PROJECT_NAME}: Parsed ${component} path : ${_component_path}") 
-	       
+          message ( STATUS "${PROJECT_NAME}: Parsed ${component} path : ${_component_path}")
+
           if ( "${_component_directive}" STREQUAL "${_component_path}" )
-             message ( FATAL_ERROR "${PROJECT_NAME}: Invalid directive for component '${component}'" ) 
-          endif ()  
+             message ( FATAL_ERROR "${PROJECT_NAME}: Invalid directive for component '${component}'" )
+          endif ()
           set ( BAYEUX_${component_upper}_PATH ${_component_path} )
         endif ()
       endif ()
-      message ( STATUS "${PROJECT_NAME}: Bayeux user configuration mode : BAYEUX_WITH_${component_upper}") 
+      message ( STATUS "${PROJECT_NAME}: Bayeux user configuration mode : BAYEUX_WITH_${component_upper}")
     endforeach ()
   else ()
-    message ( FATAL_ERROR "${PROJECT_NAME}: Missing user configuration file ! Please use : '-DBAYEUX_USER_CONFIG_FILE:PATH=<somefile>' !") 
+    message ( FATAL_ERROR "${PROJECT_NAME}: Missing user configuration file ! Please use : '-DBAYEUX_USER_CONFIG_FILE:PATH=<somefile>' !")
   endif ()
 endif ()
 
@@ -379,7 +379,7 @@ foreach ( component ${BAYEUX_KNOWN_COMPONENTS} )
        set ( _bayeux_component_version ${_bayeux_component_version_key} )
      else ()
        set ( _bayeux_component_version ${_bayeux_component_path_key} )
-     endif ()  
+     endif ()
      message ( STATUS "${PROJECT_NAME}: This configuration will install '${component}' from '${${_bayeux_component_path_key}}'" )
   endif ()
   set ( BAYEUX_WITH_${component_upper} ${_bayeux_install_component} )
@@ -444,7 +444,7 @@ endif ()
 # set ( _svn_password "${SVN_NEMO_PASSWORD}" )
 
 set ( _install_prefix ${CMAKE_INSTALL_PREFIX} )
- 
+
 # -------------------------------------------------------------------------
 # - Ensure proper dependencies between Bayeux components :
 #
@@ -464,7 +464,7 @@ endif ( BAYEUX_WITH_GENBB_HELP )
 if    ( BAYEUX_WITH_GEOMTOOLS )
   set ( BAYEUX_WITH_MYGSL 1 )
 endif ( BAYEUX_WITH_GEOMTOOLS )
- 
+
 # -------------------------------------------------------------------------
 # -- NOW ADD EXTERNAL PACKAGES --
 # -------------------------------------------------------------------------
@@ -483,7 +483,7 @@ set ( BAYEUX_COMPONENTS "" )
 
 foreach ( component ${BAYEUX_KNOWN_COMPONENTS} )
     string ( TOUPPER "${component}" component_upper )
-  
+
     if ( BAYEUX_WITH_${component_upper} )
         list (APPEND BAYEUX_COMPONENTS ${component} )
     endif ()
