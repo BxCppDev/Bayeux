@@ -209,7 +209,10 @@ namespace geomtools {
         e.get_properties ().export_starting_with (model->get_logical ().parameters (),
                                                   visibility::constants::instance().VISIBILITY_PREFIX);
         _models_[model_name] = model;
-        std::cerr << "model_factory::_construct_: " << "ADD MODEL '" << model_name << "'" << std::endl;
+        if (devel)
+          {
+            std::cerr << "DEVEL: model_factory::_construct_: " << "ADD MODEL '" << model_name << "'" << std::endl;
+          }
         string log_name = model->get_logical ().get_name ();
         _logicals_[log_name] = &(model->get_logical ());
         if (devel) model->tree_dump (clog, "New model is:", "DEVEL: model_factory::_construct_: ");
