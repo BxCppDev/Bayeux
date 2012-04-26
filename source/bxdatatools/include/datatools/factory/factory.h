@@ -151,6 +151,7 @@ namespace datatools {
                     << "Class ID '" << id_ << "' is not registered !";
             throw std::logic_error (message.str ());
           }
+        _registered_.erase (id_);
         return;
       };
 
@@ -253,14 +254,15 @@ namespace datatools {
 
   namespace factory {
 
-    /* Utility to enable auto-registration of the Type class in the
+    /* Utility to enable auto-(un)registration of the Type class in the
      * the system factory register:
      */
     template <class BaseType, class DerivedType>
     class _system_factory_registrator
     {
     private:
-      void _trigger_factory_registration_ (const std::string & type_id_)
+
+      void _trigger_factory_registration_ ()
       {
         if (! boost::is_base_of<BaseType, DerivedType>::value)
           {
@@ -270,18 +272,35 @@ namespace datatools {
                     << BaseType::grab_system_factory_register ().label () << "' !";
             throw std::logic_error (message.str ());
           }
-        BaseType::grab_system_factory_register ().registration (type_id_,
+        BaseType::grab_system_factory_register ().registration (_type_id_,
                                                                 boost::factory<DerivedType*>());
         return;
       }
-
+ 
+      void _trigger_factory_unregistration_ ()
+      {
+        BaseType::grab_system_factory_register ().unregistration (_type_id_);
+        return;
+      }
+ 
     public:
 
       _system_factory_registrator (const std::string & type_id_)
       {
-        _trigger_factory_registration_ (type_id_);
+        _type_id_ = type_id_;
+        _trigger_factory_registration_ ();
         return;
       }
+
+      ~_system_factory_registrator ()
+      {
+        _trigger_factory_unregistration_ ();
+        return;
+      }
+
+    private :
+
+      std::string _type_id_;
 
     };
 
