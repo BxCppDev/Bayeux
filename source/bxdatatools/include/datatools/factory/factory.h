@@ -279,7 +279,10 @@ namespace datatools {
  
       void _trigger_factory_unregistration_ ()
       {
-        BaseType::grab_system_factory_register ().unregistration (_type_id_);
+        if (BaseType::grab_system_factory_register ().has (_type_id_))
+          {
+            BaseType::grab_system_factory_register ().unregistration (_type_id_);
+          }
         return;
       }
  
