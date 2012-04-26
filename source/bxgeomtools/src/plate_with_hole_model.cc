@@ -439,6 +439,7 @@ namespace geomtools {
 
     double hole_x_pos = 0.0;
     double hole_y_pos = 0.0;
+    double hole_z_pos = 0.0; // Always ZERO
     if (solid->properties ().has_key ("xy_pos_hole"))
       {
         std::vector<double> xy_pos_hole;
@@ -457,7 +458,7 @@ namespace geomtools {
 
         {
           placement c1_plcmt;
-          c1_plcmt.set (hole_x_pos, hole_y_pos, 0., 0. , 0.);
+          c1_plcmt.set (hole_x_pos, hole_y_pos, hole_z_pos, 0., 0. , 0.);
           placement world_item_placement;
           mother_world_placement.child_to_mother (c1_plcmt,
                                                   world_item_placement);

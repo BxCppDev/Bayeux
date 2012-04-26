@@ -696,7 +696,7 @@ namespace geomtools {
 
     // placement of the surrounded solid: 
     _surrounded_placmt_.set (surrounded_x, surrounded_y, surrounded_z, 
-                             0.0, 0.0);
+                             0.0, 0.0, 0.0);
     _surrounded_phys_.set_name (i_model::make_physical_volume_name (_surrounded_label_));
     _surrounded_phys_.set_placement (_surrounded_placmt_);
     _surrounded_phys_.set_logical (_surrounded_model_->get_logical ());
@@ -755,7 +755,7 @@ namespace geomtools {
             zi += the_SD.get_zmax ();
             zi -= g2zmin;
           }
-        si.placmt.set (xi, yi, zi, 0.0, 0.0);
+        si.placmt.set (xi, yi, zi, 0.0, 0.0, 0.0);
         si.phys.set_name (i_model::make_physical_volume_name (si.label));
         si.phys.set_placement (si.placmt);
         si.phys.set_logical (si.model->get_logical ());

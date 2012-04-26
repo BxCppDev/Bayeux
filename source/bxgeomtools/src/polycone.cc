@@ -448,7 +448,7 @@ namespace geomtools {
           }
         else if (setup_.has_key ("rmin"))
           {
-            rmin = setup_.fetch_real ("rmin", rmin);
+            rmin = setup_.fetch_real ("rmin");
             rmin *= lunit;
           }
         else

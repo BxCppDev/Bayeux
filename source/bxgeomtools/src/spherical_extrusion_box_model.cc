@@ -419,7 +419,7 @@ namespace geomtools {
           double z = 0.5 * zcyl;
           if (bottom) z *= -1.0;
           placement c1_plcmt;
-          c1_plcmt.set (0., 0., z, 0. , 0.);
+          c1_plcmt.set (0., 0., z, 0., 0., 0.);
           placement world_item_placement;
           mother_world_placement.child_to_mother (c1_plcmt,
                                                   world_item_placement);
@@ -476,7 +476,7 @@ namespace geomtools {
             double r2 = sqrt (rs *rs - a2 * a2);
             
             placement c1_plcmt;
-            c1_plcmt.set (0., 0., z, 0. , 0.);
+            c1_plcmt.set (0., 0., z, 0., 0. , 0.);
             placement world_item_placement;
             mother_world_placement.child_to_mother (c1_plcmt,
                                                     world_item_placement);
