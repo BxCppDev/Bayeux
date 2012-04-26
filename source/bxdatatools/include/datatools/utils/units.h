@@ -73,6 +73,9 @@ namespace datatools {
       //! Get the CLHEP magnetic field unit from a string.
       static double get_magnetic_field_unit_from (const std::string &);
 
+      //! Get the CLHEP electric field unit from a string.
+      static double get_electric_field_unit_from (const std::string &);
+
       //! Get the CLHEP temperature unit from a string.
       static double get_temperature_unit_from (const std::string &);
 

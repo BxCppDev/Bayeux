@@ -1,5 +1,8 @@
 // -*- mode: c++ ; -*- 
 /* units.cc
+ *
+ * All units from "include/CLHEP/Units/SystemOfUnits.h"
+ *
  */
 
 #include <datatools/utils/units.h>
@@ -139,6 +142,16 @@ namespace datatools {
       return numeric_limits<double>::quiet_NaN ();
     }
 
+    double units::get_electric_field_unit_from (const string & a_word)
+    {
+      if ((a_word == "V/cm")) return CLHEP::volt / CLHEP::centimeter;
+      if ((a_word == "V/m")) return CLHEP::volt / CLHEP::meter;
+      if ((a_word == "kV/cm")) return CLHEP::kilovolt / CLHEP::centimeter;
+      if ((a_word == "kV/m")) return CLHEP::kilovolt / CLHEP::meter;
+      _throw_bad_unit ("electric field", a_word);
+      return numeric_limits<double>::quiet_NaN ();
+    }
+
     double units::get_temperature_unit_from (const string & a_word)
     {
       if ((a_word == "kelvin")) return CLHEP::kelvin;
@@ -248,6 +261,10 @@ namespace datatools {
       else if (a_unit_type == "magnetic_field")
         {
           return get_magnetic_field_unit_from (a_unit_str);
+        }
+      else if (a_unit_type == "electric_field")
+        {
+          return get_electric_field_unit_from (a_unit_str);
         }
       else if (a_unit_type == "temperature")
         {
