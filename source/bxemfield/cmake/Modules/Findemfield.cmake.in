@@ -1,0 +1,167 @@
+# Findemfield.cmake
+# 
+# A rather brute force version.
+# 
+# Locate emfield library
+# This module defines
+#  emfield_FOUND
+#  emfield_VERSION
+#  emfield_LIBRARIES
+#  emfield_INCLUDE_DIRS, where to find emfield/emfield_config.h
+#  emfield_LIBRARIES_DEPEND
+#  emfield_INCLUDE_DIRS_DEPEND
+# and 
+#  emfield_WITH_BIO if Boost I/O support is activated
+#  emfield_WITH_PYTHON_WRAPPER if Boost Python wrapper support is activated
+
+set ( __bio_support 0 )
+set ( __python_wrapper_support 0 )
+
+set ( emfield_VERSION  @emfield_VERSION_STR@ CACHE STRING "emfield version" )
+
+if ( __python_wrapper_support )
+   set ( emfield_WITH_PYTHON_WRAPPER  @emfield_WITH_PYTHON_WRAPPER@ CACHE STRING "Python wrapper flag" )
+endif ()
+
+if ( __bio_support )
+  set ( emfield_WITH_BIO             @emfield_WITH_BIO@  "Boost I/O DLL flag" )
+endif ()
+
+message ( STATUS "FindEmfield: emfield_VERSION='${emfield_VERSION}'" )
+
+if ( __bio_support )
+  message ( STATUS "FindEmfield: emfield_WITH_BIO='${emfield_WITH_BIO}'" )
+endif ()
+
+if ( __python_wrapper_support )
+  message ( STATUS "FindEmfield: emfield_WITH_PYTHON_WRAPPER='${emfield_WITH_PYTHON_WRAPPER}'" )
+endif ()
+
+find_path ( emfield_INCLUDE_DIRS emfield/emfield_config.h
+  HINTS
+  $ENV{emfield_ROOT_DIR}
+  PATH_SUFFIXES include
+  PATHS
+  [HKEY_LOCAL_MACHINE\\SOFTWARE\\emfield]
+  ~/Library/Frameworks
+  /Library/Frameworks
+  /usr/local
+  /usr
+  /sw # Fink
+  /opt/local # DarwinPorts
+  /opt/csw # Blastwave
+  /opt
+)
+
+message ( STATUS "FindEmfield: emfield_INCLUDE_DIRS='${emfield_INCLUDE_DIRS}'" )
+
+find_library ( _emfield_library 
+  NAMES emfield
+  HINTS $ENV{emfield_ROOT_DIR}
+  PATHS
+  [HKEY_LOCAL_MACHINE\\SOFTWARE\\emfield]
+  ~/Library/Frameworks
+  /Library/Frameworks
+  /usr/local
+  /usr
+  /sw
+  /opt/local
+  /opt/csw
+  /opt
+  PATH_SUFFIXES lib64 lib
+)
+message ( STATUS "FindEmfield: emfield_LIBRARY='${emfield_LIBRARY}'" )
+set ( _emfield_libraries "${_emfield_library}" )
+
+if ( __bio_support )
+  if ( ${emfield_WITH_BIO} )
+    find_library ( _emfield_bio_library 
+      NAMES emfield_bio
+      HINTS $ENV{emfield_ROOT_DIR}
+      PATHS
+      [HKEY_LOCAL_MACHINE\\SOFTWARE\\emfield]
+      ~/Library/Frameworks
+      /Library/Frameworks
+      /usr/local
+      /usr
+      /sw
+      /opt/local
+      /opt/csw
+      /opt
+      PATH_SUFFIXES lib64 lib
+      )
+     message ( STATUS "FindEmfield: _emfield_bio_library='${_emfield_bio_library}'" )
+     if ( NOT "${_emfield_bio_library}" STREQUAL "" )
+       set ( _emfield_libraries "${_emfield_bio_library}" "${_emfield_library}" )
+       message ( STATUS "FindEmfield: _emfield_libraries='${_emfield_libraries}'" )
+    endif ()
+  endif ()
+endif ()
+
+set ( emfield_LIBRARIES ${_emfield_libraries} )
+message ( STATUS "FindEmfield: emfield_LIBRARIES='${emfield_LIBRARIES}'" )
+
+include ( FindPackageHandleStandardArgs )
+# handle the QUIETLY and REQUIRED arguments and set emfield_FOUND to TRUE if 
+# all listed variables are TRUE
+find_package_handle_standard_args ( emfield DEFAULT_MSG emfield_LIBRARIES emfield_INCLUDE_DIRS )
+
+set ( _emfield_libraries_depend "" )
+
+### if ( _depends_on_Yyy)
+###   set ( _emfield_libraries_depend "${_emfield_libraries_depend}" @Yyy_LIBRARIES@ )
+### endif ()
+
+if ( _depends_on_datatools)
+  set ( _emfield_libraries_depend "${_emfield_libraries_depend}" @datatools_LIBRARIES@ )
+endif ()
+
+set ( emfield_LIBRARIES 
+      ${emfield_LIBRARIES}
+      ${_emfield_libraries_depend}
+    )
+
+message ( STATUS "FindEmfield: emfield_LIBRARIES_DEPEND='${emfield_LIBRARIES_DEPEND}'" )
+
+if (emfield_WITH_PYTHON_WRAPPER)
+   list ( APPEND emfield_LIBRARIES 
+          python )
+ endif ()
+
+set ( _emfield_include_dirs_depend "" )
+
+### if ( _depends_on_Yyy)
+###   set ( _emfield_include_dirs_depend "${_emfield_include_dirs_depend}" @Yyy_INCLUDE_DIRS@ )
+### endif ()
+
+if ( _depends_on_datatools)
+  set ( _emfield_include_dirs_depend "${_emfield_include_dirs_depend}" @datatools_INCLUDE_DIRS@ )
+endif ()
+
+set ( emfield_INCLUDE_DIRS
+      ${emfield_INCLUDE_DIRS}
+      ${_emfield_include_dirs_depend}
+    )
+
+message ( STATUS "FindEmfield: emfield_INCLUDE_DIRS_DEPEND='${emfield_INCLUDE_DIRS_DEPEND}'" )
+
+set ( emfield_DEFINITIONS "")
+
+mark_as_advanced ( emfield_VERSION  
+		   emfield_INCLUDE_DIRS 
+                   emfield_LIBRARIES
+		   emfield_DEFINITIONS
+                 )
+
+if ( __bio_support )
+  mark_as_advanced ( emfield_WITH_BIO )  
+endif ()
+
+if ( __python_wrapper_support )
+  mark_as_advanced ( emfield_WITH_PYTHON_WRAPPER )  
+endif ()
+
+message ( STATUS "Findemfield: emfield_FOUND=${emfield_FOUND}")
+
+# end of Findemfield.cmake
+

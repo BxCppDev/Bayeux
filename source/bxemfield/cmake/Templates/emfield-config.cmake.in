@@ -1,0 +1,221 @@
+# -*- mode: cmake; -*-
+# - Config file for the emfield package
+# It defines the following variables
+#  emfield_INCLUDE_DIRS - include directories for emfield
+#  emfield_LIBRARIES    - libraries to link against
+#  emfield_DEFINITIONS  - some build definitions
+#  emfield_WITH_DEBUG   - flag for debug mode
+# If Boost/Serialization I/O system is supported :
+#  emfield_WITH_BIO     - flag for Boost/Serialization I/O DLL (a.k.a. 'bio')
+# If Boost/Python wrapper module is supported :
+#  emfield_WITH_PYTHON_WRAPPER - flag for 'Boost/Python' module 
+
+#----------------------------------------------------------------------------
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#----------------------------------------------------------------------------
+
+if ( NOT DEFINED emfield_CONFIG_GUARD_COUNTER )
+  set ( emfield_CONFIG_GUARD_COUNTER 1 )
+  message ( STATUS "NOTICE: First inclusion of the 'emfield-config.cmake' file from project '${PROJECT_NAME}'" )
+
+  #----------------------------------------------------------------------------
+  # Locate ourselves, since all our config files should have been installed
+  # alongside us...
+  #
+  get_filename_component(___PackName_config_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
+ 
+  message ( STATUS "DEVEL: 'emfield-config.cmake' file is in '${___PackName_config_thisdir}'" )
+
+  #----------------------------------------------------------------------------
+  # Include the file listing all the imported targets to make them available
+  # This is installed in the same location as us...
+  #
+  include("${___PackName_config_thisdir}/emfield-libraries.cmake")
+
+  # ----------------------------------------------------------------------------
+  # - Dependencies :
+  # Set variables pointing to used third party headers and locations.
+  # We have to set the headers because emfield exports the headers in
+  # its public interface.
+  set (__emfield_more_definitions)
+  set (__emfield_more_include_dirs)
+  set (__emfield_more_libs)
+
+  # Activate automatic cmake dependencies for home made library packages :
+  set (__emfield_automatic_cmake_dependencies @AUTOMATIC_CMAKE_DEPENDENCIES@ )
+
+  if ( __emfield_automatic_cmake_dependencies )
+    message ( STATUS "${PROJECT_NAME}: *********************************************************************" )
+    message ( STATUS "${PROJECT_NAME}: * Processing automatic dependencies for 'emfield' -- start" )
+    message ( STATUS "${PROJECT_NAME}: *********************************************************************" )
+    set (__emfield_list_of_dependencies_infos @_emfield_list_of_dependencies_infos@ )  
+    list( LENGTH __emfield_list_of_dependencies_infos 
+      __emfield_number_of_dependencies )
+    if ( __emfield_number_of_dependencies GREATER 0 )   
+      message ( STATUS "${PROJECT_NAME}: NOTICE: emfield-config.cmake: including 'emfield_HomeMadePackageDependencies.cmake'" )      
+      include("@EMFIELD_CMAKE_CONFIG_FULL_DIR@/emfield_HomeMadePackageDependencies.cmake")
+      ###include("${___PackName_config_thisdir}/emfield_HomeMadePackageDependencies.cmake")
+      message ( STATUS "${PROJECT_NAME}: NOTICE: emfield-config.cmake: 'emfield_HomeMadePackageDependencies.cmake' has been included" )      
+      string (REPLACE ":" ":=" 
+	__tmp_emfield_list_of_dependencies_rules
+	"${__emfield_list_of_dependencies_infos}" 
+	)
+      message (STATUS "${PROJECT_NAME}: NOTICE: emfield-config.cmake: About to process '${__tmp_emfield_list_of_dependencies_rules}' ")
+      emfield_home_made_package_dependencies_check_list (
+	"${__tmp_emfield_list_of_dependencies_rules}"
+	__tmp_emfield_list_of_dependencies_infos
+	)
+      emfield_home_made_package_dependencies_populate_build_lists (
+	"${__tmp_emfield_list_of_dependencies_infos}"
+	__emfield_more_definitions
+	__emfield_more_include_dirs
+	__emfield_more_libs
+	)
+      unset (__tmp_emfield_list_of_dependencies_rules)
+      unset (__tmp_emfield_list_of_dependencies_infos)
+    else ()
+      message ( STATUS "${PROJECT_NAME}: NOTICE: emfield has no home made package dependency." )      
+    endif ()
+    unset (__emfield_list_of_dependencies_infos)
+    
+    set (__emfield_list_of_third_party_dependencies_infos @_emfield_list_of_third_party_dependencies_infos@ )  
+    list( LENGTH __emfield_list_of_third_party_dependencies_infos 
+      __emfield_number_of_third_party_dependencies )
+    if ( __emfield_number_of_third_party_dependencies GREATER 0 )   
+      message ( STATUS "${PROJECT_NAME}: NOTICE: emfield-config.cmake: including 'emfield_ThirdPartyDependencies.cmake'" )      
+      include("@EMFIELD_CMAKE_CONFIG_FULL_DIR@/emfield_ThirdPartyDependencies.cmake")
+      ### include("${___PackName_config_thisdir}/emfield_ThirdPartyDependencies.cmake")
+      message ( STATUS "${PROJECT_NAME}: NOTICE: emfield-config.cmake: 'emfield_ThirdPartyDependencies.cmake' has been included" )      
+      string (REPLACE ":" ":=" 
+	__tmp_emfield_list_of_third_party_dependencies_rules
+	"${__emfield_list_of_third_party_dependencies_infos}" 
+	)
+      emfield_third_party_dependencies_check_list (
+	"${__tmp_emfield_list_of_third_party_dependencies_rules}"
+	__tmp_emfield_list_of_third_party_dependencies_infos
+	)
+      emfield_third_party_dependencies_populate_build_lists (
+	"${__tmp_emfield_list_of_third_party_dependencies_infos}"
+	__emfield_more_definitions
+	__emfield_more_include_dirs
+	__emfield_more_libs
+	)
+      unset (__tmp_emfield_list_of_third_party_dependencies_rules)
+      unset (__tmp_emfield_list_of_third_party_dependencies_infos)
+    else ()
+      message ( STATUS "${PROJECT_NAME}: NOTICE: emfield has no third-party package dependency." )      
+    endif ()
+    unset (__emfield_list_of_third_party_dependencies_infos)
+ 
+    #
+    # Here one can add more stuff to check and populate dependencies 
+    #
+   
+    message ( STATUS "${PROJECT_NAME}: *********************************************************************" )
+    message ( STATUS "${PROJECT_NAME}: * Processing automatic dependencies for 'emfield' -- stop" )
+    message ( STATUS "${PROJECT_NAME}: *********************************************************************" )
+  endif ( __emfield_automatic_cmake_dependencies )
+    
+  # ----------------------------------------------------------------------------
+  # - Set path to emfield definitions
+  #
+  set ( emfield_ONLY_DEFINITIONS )
+  set ( emfield_DEFINITIONS 
+    ${emfield_ONLY_DEFINITIONS}
+    ${__emfield_more_definitions}
+    )
+
+  #
+  # Here one can append more definitions to emfield_DEFINITIONS :
+  # 
+
+  # ----------------------------------------------------------------------------
+  # - Set path to emfield includes
+  #
+  set ( emfield_ONLY_INCLUDE_DIRS @emfield_INCLUDE_DIR@)
+  set ( emfield_INCLUDE_DIRS 
+    ${emfield_ONLY_INCLUDE_DIRS}
+    ${__emfield_more_include_dirs}
+    )
+
+  #
+  # Here one can append more include paths to emfield_INCLUDE_DIRS :
+  # 
+
+  # ----------------------------------------------------------------------------
+  # - Set emfield_LIBRARIES variable
+  set(emfield_LIB_DIR @emfield_LIB_DIR@)
+  set(emfield_CORE_LIBRARY emfield )
+  set(emfield_LIBRARY      ${emfield_CORE_LIBRARY} )
+
+  set(emfield_WITH_DEBUG @EMFIELD_WITH_DEBUG@)
+  if(emfield_WITH_DEBUG)
+    set(emfield_WITH_DEBUG 1)
+  else()
+    set(emfield_WITH_DEBUG 0)
+  endif()
+
+  if ( @EMFIELD_WITH_BIO_SUPPORT@ )
+    set(emfield_WITH_BIO @EMFIELD_WITH_BIO@)
+    if(emfield_WITH_BIO)
+      # Basic : Assume that if emfield_bio was built, it should be in Library list
+      set(emfield_WITH_BIO 1)
+      set(emfield_BIO_LIBRARY emfield_bio )
+      set(emfield_LIBRARY     ${emfield_BIO_LIBRARY} )
+    else()
+      set(emfield_WITH_BIO 0)
+    endif()
+  endif()
+
+  if ( @EMFIELD_WITH_PYTHON_WRAPPER_SUPPORT@ )
+    set(emfield_WITH_PYTHON_WRAPPER @EMFIELD_WITH_PYTHON_WRAPPER@)
+    if(emfield_WITH_PYTHON_WRAPPER)
+      set(emfield_WITH_PYTHON_WRAPPER 1)
+    else()
+      set(emfield_WITH_PYTHON_WRAPPER 0)
+    endif()
+  endif ()
+
+  set(emfield_ONLY_LIBRARIES ${emfield_BIO_LIBRARY} ${emfield_CORE_LIBRARY} )
+  set(emfield_LIBRARIES ${emfield_LIBRARY}
+    ###${__emfield_more_libs}
+    )
+
+  #
+  # Here one can append more links to emfield_LIBRARIES :
+  # 
+
+  # -------------------------------------------------------------------------
+  # - clean temporary variables :
+  foreach ( __emfield_dependency_info ${__emfield_list_of_dependencies_infos} )
+    unset ( __emfield_${__emfield_dependency_name}_INCLUDE_DIRS )
+    unset ( __emfield_${__emfield_dependency_name}_LIBRARIES    )
+    unset ( __emfield_${__emfield_dependency_name}_DEFINITIONS  )
+  endforeach ()
+  unset (__emfield_more_include_dirs)
+  unset (__emfield_more_libs)
+  unset (__emfield_more_definitions)
+  unset (__emfield_list_of_dependencies_names )
+  unset (__emfield_list_of_dependencies_with_version )
+
+  #
+  # Here one can clean more stuff :
+  # 
+
+else ( NOT DEFINED emfield_CONFIG_GUARD_COUNTER )
+  message ( STATUS "WARNING: Multiple inclusion of the 'emfield-config.cmake' file from ${PROJECT_NAME} !" )
+  math (EXPR emfield_CONFIG_GUARD_COUNTER '${emfield_CONFIG_GUARD_COUNTER}+1' )
+endif ( NOT DEFINED emfield_CONFIG_GUARD_COUNTER )
+
+# end
