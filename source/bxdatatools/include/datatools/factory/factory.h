@@ -268,7 +268,7 @@ namespace datatools {
           {
             std::ostringstream message;
             message << "datatools::factory::_system_factory_registrator::_trigger_factory_registration_: "
-                    << "Class ID '" << type_id_ << "' cannot be registered in register '"
+                    << "Class ID '" << _type_id_ << "' cannot be registered in register '"
                     << BaseType::grab_system_factory_register ().label () << "' !";
             throw std::logic_error (message.str ());
           }
