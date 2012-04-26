@@ -66,7 +66,7 @@ namespace datatools {
      *  {
      *    using namespace datatools::util;
      *    handle<int> h0;  // a default int is allocated
-     *    h0.get () = 999; // access the int and modify its value
+     *    h0.grab () = 999; // access the int and modify its value
      *    cout << "h0 = " << h0.get () << endl; // print it
      *    h0.reset (new int (0)); // discard the former int 
      *                            // and allocate a new one
@@ -74,7 +74,7 @@ namespace datatools {
      *    {
      *      handle<int> h2 (h1); // another handle that shares the same int
      *                           // than the previous handle
-     *      h2.get () = 666;     //change the int value through this handle
+     *      h2.grab () = 666;     //change the int value through this handle
      *    }
      *    cout << "h1 = " << h1.get () << endl; // print it through the
      *                                          // first handle
@@ -208,6 +208,16 @@ namespace datatools {
         if (_sp_.get () == 0)
           {
             throw std::logic_error ("datatools::utils::handle::get: Handle has no data !");
+          }
+        return *_sp_.get ();
+      }
+
+      //! Get a non-const reference to the hosted dynamically allocated instance.
+      T & grab ()
+      {
+        if (_sp_.get () == 0)
+          {
+            throw std::logic_error ("datatools::utils::handle::grab: Handle has no data !");
           }
         return *_sp_.get ();
       }

@@ -96,7 +96,7 @@ bool hit::g_debug = false;
 
 template<class Archive>
 void hit::serialize (Archive & ar_, 
-		     const unsigned int version_)
+                     const unsigned int version_)
 {
   ar_ & boost::serialization::make_nvp ("id",  id_);
   ar_ & boost::serialization::make_nvp ("tdc", tdc_);
@@ -113,11 +113,11 @@ int main (int argc_ , char ** argv_)
 
       int iarg =  1;
       while (iarg < argc_) 
-	{
+        {
           string arg = argv_[iarg];
-	  if ((arg == "-d") || (arg == "--debug")) debug = true;
-	  iarg++;
-	}
+          if ((arg == "-d") || (arg == "--debug")) debug = true;
+          iarg++;
+        }
 
       using namespace datatools::utils;
 
@@ -126,103 +126,103 @@ int main (int argc_ , char ** argv_)
       typedef vector<hit> hits_col_t;
  
       {
-       	clog << endl << "Test 1: " << endl;
-	{
-	  hit_handles_col_t hits;
-	  size_t nevents = 100;
-	  size_t nhits = 100;
-	  computing_time CT;
-	  computing_time CT2;
-	  ofstream foa ("test_handle_2a.txt");
-	  hits.reserve (nhits);
-	  for (int i = 0; i < (int) nevents; i++)
-	    {
-	      if ((i % 100) == 0) clog << "#i=" << i << endl;
-	      CT2.start ();
-	      for (int j = 0; j < (int) nhits; j++)
-		{
-		  hit_handle_t hh (new hit (j, j * 10. ));
-		  hits.push_back (hh);
-		}
-	      CT2.stop ();
-	      {
-		CT.start ();
-		boost::archive::text_oarchive oa (foa);
-		oa << hits;
-		CT.stop ();
-	      }
-	      hits.clear ();
-	    }
-	  CT.tree_dump (clog, "CT hit_handles_col_t"); // 33 sec
-	  CT2.tree_dump (clog, "CT2 hit_handles_col_t"); //  1.36152
-	}
+        clog << endl << "Test 1: " << endl;
+        {
+          hit_handles_col_t hits;
+          size_t nevents = 100;
+          size_t nhits = 100;
+          computing_time CT;
+          computing_time CT2;
+          ofstream foa ("test_handle_2a.txt");
+          hits.reserve (nhits);
+          for (int i = 0; i < (int) nevents; i++)
+            {
+              if ((i % 100) == 0) clog << "#i=" << i << endl;
+              CT2.start ();
+              for (int j = 0; j < (int) nhits; j++)
+                {
+                  hit_handle_t hh (new hit (j, j * 10. ));
+                  hits.push_back (hh);
+                }
+              CT2.stop ();
+              {
+                CT.start ();
+                boost::archive::text_oarchive oa (foa);
+                oa << hits;
+                CT.stop ();
+              }
+              hits.clear ();
+            }
+          CT.tree_dump (clog, "CT hit_handles_col_t"); // 33 sec
+          CT2.tree_dump (clog, "CT2 hit_handles_col_t"); //  1.36152
+        }
       }
      
       {
-       	clog << endl << "Test 2: " << endl;
-	{
-	  hits_col_t hits;
-	  size_t nevents = 100;
-	  size_t nhits = 100;
-	  computing_time CT;
-	  computing_time CT2;
-	  ofstream foa ("test_handle_2b.txt");
-	  hits.reserve (nhits);
-	  for (int i = 0; i < (int) nevents; i++)
-	    {
-	      if ((i % 100) == 0) clog << "#i=" << i << endl;
-	      CT2.start ();
-	      for (int j = 0; j < (int) nhits; j++)
-		{
-		  hits.push_back (hit (j, j * 10. ));
-		}
-	      CT2.stop ();
-	      {
-		CT.start ();
-		boost::archive::text_oarchive oa (foa);
-		oa << hits;
-		CT.stop ();
-	      }
-	      hits.clear ();
-	    }
-	  CT.tree_dump (clog, "CT hit_col_t"); // 23 sec
-	  CT2.tree_dump (clog, "CT2 hit_col_t"); // 0.174498
-	}
+        clog << endl << "Test 2: " << endl;
+        {
+          hits_col_t hits;
+          size_t nevents = 100;
+          size_t nhits = 100;
+          computing_time CT;
+          computing_time CT2;
+          ofstream foa ("test_handle_2b.txt");
+          hits.reserve (nhits);
+          for (int i = 0; i < (int) nevents; i++)
+            {
+              if ((i % 100) == 0) clog << "#i=" << i << endl;
+              CT2.start ();
+              for (int j = 0; j < (int) nhits; j++)
+                {
+                  hits.push_back (hit (j, j * 10. ));
+                }
+              CT2.stop ();
+              {
+                CT.start ();
+                boost::archive::text_oarchive oa (foa);
+                oa << hits;
+                CT.stop ();
+              }
+              hits.clear ();
+            }
+          CT.tree_dump (clog, "CT hit_col_t"); // 23 sec
+          CT2.tree_dump (clog, "CT2 hit_col_t"); // 0.174498
+        }
       }
 
       {
-       	clog << endl << "Test 3: " << endl;
-	{
-	  hit_handles_col_t hits;
-	  size_t nevents = 100;
-	  size_t nhits = 100;
-	  handle_pool<hit> pool (nhits);
-	  computing_time CT;
-	  computing_time CT2;
-	  ofstream foa ("test_handle_2c.txt");
-	  hits.reserve (nhits);
-	  for (int i = 0; i < (int) nevents; i++)
-	    {
-	      if ((i % 100) == 0) clog << "#i=" << i << endl;
-	      CT2.start ();
-	      for (int j = 0; j < (int) nhits; j++)
-		{
-		  hits.push_back (pool.create ());
-		  hits.back ().get ().set_id (j).set_tdc (j * 10.);
-		}
-	      CT2.stop ();
-	      {
-		CT.start ();
-		boost::archive::text_oarchive oa (foa);
-		oa << hits;
-		CT.stop ();
-	      }
-	      hits.clear ();
-	      pool.reset ();
-	    }
-	  CT.tree_dump (clog, "CT hit_handles_col_t (using pool)"); // 32 sec
-	  CT2.tree_dump (clog, "CT2 hit_handles_col_t (using pool)"); // 0.393747
-	}
+        clog << endl << "Test 3: " << endl;
+        {
+          hit_handles_col_t hits;
+          size_t nevents = 100;
+          size_t nhits = 100;
+          handle_pool<hit> pool (nhits);
+          computing_time CT;
+          computing_time CT2;
+          ofstream foa ("test_handle_2c.txt");
+          hits.reserve (nhits);
+          for (int i = 0; i < (int) nevents; i++)
+            {
+              if ((i % 100) == 0) clog << "#i=" << i << endl;
+              CT2.start ();
+              for (int j = 0; j < (int) nhits; j++)
+                {
+                  hits.push_back (pool.create ());
+                  hits.back ().grab ().set_id (j).set_tdc (j * 10.);
+                }
+              CT2.stop ();
+              {
+                CT.start ();
+                boost::archive::text_oarchive oa (foa);
+                oa << hits;
+                CT.stop ();
+              }
+              hits.clear ();
+              pool.reset ();
+            }
+          CT.tree_dump (clog, "CT hit_handles_col_t (using pool)"); // 32 sec
+          CT2.tree_dump (clog, "CT2 hit_handles_col_t (using pool)"); // 0.393747
+        }
       }
      
     }
