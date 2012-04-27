@@ -50,10 +50,10 @@ namespace geomtools {
   }
 
   // Constructor:
-  model_factory::model_factory (bool debug_, bool verbose_) 
-    : _factory_register_ ("geomtools::i_model/model_factory", 
+  model_factory::model_factory (bool debug_, bool verbose_)
+    : _factory_register_ ("geomtools::i_model/model_factory",
                           verbose_ ? i_model::factory_register_type::verbose : 0)
-  
+
   {
     _debug_ = debug_;
     _locked_ = false;
@@ -64,7 +64,7 @@ namespace geomtools {
     if (preload)
       {
         _factory_register_.import (DATATOOLS_FACTORY_GET_SYSTEM_REGISTER (::geomtools::i_model));
-     }
+      }
     return;
   }
 
@@ -154,7 +154,7 @@ namespace geomtools {
           {
             if (_debug_)
               {
-                clog << "DEBUG: " << "geomtools::model_factory::reset: " 
+                clog << "DEBUG: " << "geomtools::model_factory::reset: "
                      << "Deleting registered model '" << model_name << "'"
                      << endl;
               }
@@ -171,7 +171,7 @@ namespace geomtools {
     bool devel = g_devel;
     if (devel)
       {
-        clog << "DEVEL: model_factory::_construct_: "
+        clog << "DEVEL: geomtools::model_factory::_construct_: "
              << "Entering..." << endl;
       }
     for (datatools::utils::multi_properties::entries_ordered_col_t::const_iterator i
@@ -186,21 +186,21 @@ namespace geomtools {
 
         if (! _factory_register_.has (model_type))
           {
-            std::ostringstream message;
-            message << "No registered class with ID '" 
+            ostringstream message;
+            message << "No registered class with ID '"
                     << model_type << "' for model named '" << model_name << " !";
-            std::cerr << "geomtools::model_factory::_construct: "
-                      << message.str ()
-                      << std::endl;      
+            cerr << "geomtools::model_factory::_construct: "
+                 << message.str ()
+                 << endl;
             continue;
           }
-        i_model::factory_register_type::factory_type & the_factory 
+        i_model::factory_register_type::factory_type & the_factory
           = _factory_register_.get (model_type);
- 
+
         //model_creator_t & creator = i_model::get_model_db ().get_model (model_type);
         if (devel)
           {
-            clog << "DEVEL: model_factory::_construct_: "
+            clog << "DEVEL: geomtools::model_factory::_construct_: "
                  << "About to create a new model of type \"" << model_type
                  << "\" with name \"" << model_name << "\"..." << endl;
           }
@@ -211,11 +211,12 @@ namespace geomtools {
         _models_[model_name] = model;
         if (devel)
           {
-            std::cerr << "DEVEL: model_factory::_construct_: " << "ADD MODEL '" << model_name << "'" << std::endl;
+            clog << "DEVEL: geomtools::model_factory::_construct_: "
+                 << "ADD MODEL '" << model_name << "'" << endl;
           }
         string log_name = model->get_logical ().get_name ();
         _logicals_[log_name] = &(model->get_logical ());
-        if (devel) model->tree_dump (clog, "New model is:", "DEVEL: model_factory::_construct_: ");
+        if (devel) model->tree_dump (clog, "New model is:", "DEVEL: geomtools::model_factory::_construct_: ");
 
         // model = creator (model_name,
         //                  e.get_properties (),
@@ -227,18 +228,18 @@ namespace geomtools {
         //     _models_[model_name] = model;
         //     string log_name = model->get_logical ().get_name ();
         //     _logicals_[log_name] = &(model->get_logical ());
-        //     if (devel) model->tree_dump (clog, "New model is:", "DEVEL: model_factory::_construct_: ");
+        //     if (devel) model->tree_dump (clog, "New model is:", "DEVEL: geomtools::model_factory::_construct_: ");
         //   }
         // else
         //   {
-        //     cerr << "ERROR: model_factory::_construct_: "
+        //     cerr << "ERROR: geomtools::model_factory::_construct_: "
         //          << "Cannot create model of type \"" << model_type
         //          << "\" with name \"" << model_name << "\"..." << endl;
         //   }
       }
     if (devel)
       {
-        clog << "DEVEL: model_factory::_construct_: "
+        clog << "DEVEL: geomtools::model_factory::_construct_: "
              << "Exiting." << endl;
       }
     return;

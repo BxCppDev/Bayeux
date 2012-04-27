@@ -6,14 +6,12 @@
 
 #include <geomtools/sensitive.h>
 
-#include <sstream>
-
 namespace geomtools {
 
   using namespace std;
 
-  // static 
-  const sensitive::constants & 
+  // static
+  const sensitive::constants &
   sensitive::constants::instance ()
   {
     static boost::scoped_ptr<sensitive::constants> g_global_constants (0);
@@ -26,8 +24,8 @@ namespace geomtools {
 
   sensitive::constants::constants ()
   {
-    SENSITIVE_PREFIX            = "sensitive.";
-    SENSITIVE_CATEGORY_PROPERTY = "category";
+    SENSITIVE_PREFIX                       = "sensitive.";
+    SENSITIVE_CATEGORY_PROPERTY            = "category";
     SENSITIVE_RECORD_ALPHA_QUENCHING_FLAG  = "record_alpha_quenching";
     SENSITIVE_RECORD_TRACK_ID_FLAG         = "record_track_id";
     SENSITIVE_RECORD_PRIMARY_PARTICLE_FLAG = "record_primary_particle";
