@@ -194,10 +194,8 @@ namespace geomtools {
                  << endl;
             continue;
           }
-        i_model::factory_register_type::factory_type & the_factory
+        const i_model::factory_register_type::factory_type & the_factory 
           = _factory_register_.get (model_type);
-
-        //model_creator_t & creator = i_model::get_model_db ().get_model (model_type);
         if (devel)
           {
             clog << "DEVEL: geomtools::model_factory::_construct_: "
