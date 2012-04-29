@@ -13,6 +13,7 @@ namespace datatools {
     class i_tree_dumpable
     {
     public:
+
       static const std::string TAG;
       static const std::string LAST_TAG;
       static const std::string SKIP_TAG;
@@ -29,6 +30,7 @@ namespace datatools {
       class inherit_tag 
       {
 	bool inherit_;
+
       public:
     
 	inherit_tag (bool a_inherit); 
@@ -40,6 +42,7 @@ namespace datatools {
       class inherit_skip_tag 
       {
 	bool inherit_;
+
       public:
     
 	inherit_skip_tag (bool a_inherit); 
@@ -48,6 +51,7 @@ namespace datatools {
 					  const inherit_skip_tag & a_last_tag);
       };
 
+      /// Main interface method for smart dump
       virtual void tree_dump (std::ostream & a_out         = std::clog, 
 			      const std::string & a_title  = "",
 			      const std::string & a_indent = "",

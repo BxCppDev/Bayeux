@@ -107,7 +107,7 @@ namespace datatools {
                       << service_entry_.service_name << "' !";
               throw logic_error (message.str ());
             }
-          datatools::service::base_service::factory_register_type::factory_type & the_factory
+          const datatools::service::base_service::factory_register_type::factory_type & the_factory
             = _factory_register_.get (service_entry_.service_id);
 
           base_service * ptr = the_factory ();

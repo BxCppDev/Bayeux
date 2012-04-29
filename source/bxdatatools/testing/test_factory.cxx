@@ -187,7 +187,7 @@ int main (int argc_ , char ** argv_)
             }
           else
             {
-              my::base_type::factory_register_type::factory_type & the_factory 
+              const my::base_type::factory_register_type::factory_type & the_factory 
                 = the_factory_register.get (obj_type_id);
               object_smart_ptr_type tmp_ptr (the_factory ());
               objects[obj_name] = tmp_ptr;

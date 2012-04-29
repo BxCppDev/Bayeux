@@ -14,9 +14,9 @@ namespace datatools {
 
     enum return_code_type
       {
-	SUCCESS = EXIT_SUCCESS,
-	ERROR   = EXIT_FAILURE,
-	FAILURE   = EXIT_FAILURE
+        SUCCESS = EXIT_SUCCESS,
+        ERROR   = EXIT_FAILURE,
+        FAILURE   = EXIT_FAILURE
       };
 
     // Invalidate a float (using NaN):
@@ -77,8 +77,8 @@ namespace datatools {
      *
      */
     void split_string (const std::string & a_word ,
-		       const std::string & a_separators ,
-		       std::list<std::string> & a_words);
+                       const std::string & a_separators ,
+                       std::list<std::string> & a_words);
 
   } // namespace utils
 

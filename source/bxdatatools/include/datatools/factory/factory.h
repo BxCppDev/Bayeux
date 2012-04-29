@@ -1,7 +1,7 @@
 /* datatools/factory/factory.h */
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2012-03-19
- * Last modified : 2012-03-19
+ * Last modified : 2012-04-30
  *
  */
 
@@ -18,6 +18,7 @@
 #include <boost/function.hpp>
 #include <boost/functional/factory.hpp>
 #include <boost/scoped_ptr.hpp>
+#include <datatools/utils/i_tree_dump.h>
 
 namespace datatools {
 
@@ -26,22 +27,24 @@ namespace datatools {
     class base_factory_register
     {
     public:
-
+      
       enum flag_type
         {
           verbose = 0x1,
         };
-
+      
       base_factory_register ();
-
+      
       virtual ~base_factory_register ();
-
+      
     };
-
+    
     /*********************************************/
 
     template <class BaseType>
-    class factory_register : public base_factory_register
+    class factory_register : 
+      public base_factory_register,
+      public datatools::utils::i_tree_dumpable
     {
     public:
 
@@ -60,9 +63,20 @@ namespace datatools {
         return;
       }
 
+      const std::string & get_label () const
+      {
+        return _label_;
+      }
+
       const std::string & label () const
       {
         return _label_;
+      }
+
+      void set_label (const std::string & label_)
+      {
+        _label_ = label_;
+        return;
       }
 
       void list_of_factories (std::vector<std::string> & ids_) const
@@ -76,11 +90,13 @@ namespace datatools {
         return;
       }
 
+      /// Check if some factory with some given ID is registered
       bool has (const std::string & id_) const
       {
         return _registered_.find (id_) != _registered_.end ();
       }
 
+      /// Clear all registered factories
       void clear ()
       {
         for (typename factory_map_type::iterator i = _registered_.begin ();
@@ -102,9 +118,24 @@ namespace datatools {
         return;
       }
 
-      factory_type & get (const std::string & id_)
+      /// Get a mutable reference to a factory given by registration ID
+      factory_type & grab (const std::string & id_)
       {
         typename factory_map_type::iterator found = _registered_.find (id_);
+        if (found == _registered_.end ())
+          {
+            std::ostringstream message;
+            message << "datatools::factory::factory_register::grab: "
+                    << "Class ID '" << id_ << "' is not registered !";
+            throw std::logic_error (message.str ());
+          }
+        return found->second;
+      }
+
+      /// Get a const reference to a factory given by registration ID
+      const factory_type & get (const std::string & id_) const
+      {
+        typename factory_map_type::const_iterator found = _registered_.find (id_);
         if (found == _registered_.end ())
           {
             std::ostringstream message;
@@ -115,6 +146,7 @@ namespace datatools {
         return found->second;
       }
 
+      /// Registration of a given factory with a given ID
       void registration (const std::string & id_, const factory_type & factory_)
       {
         if (is_verbose ())
@@ -135,13 +167,14 @@ namespace datatools {
         return;
       }
 
+      /// Unregistration of the factory with a given ID
       void unregistration (const std::string & id_)
       {
         if (is_verbose ())
           {
             std::clog << "INFO: " << "datatools::factory::factory_register<"
                       << _label_ << ">::unregistration:  "
-                      << "registration of class with ID '" << id_ << "'" << std::endl;
+                      << "unregistration of class with ID '" << id_ << "'" << std::endl;
           }
         typename factory_map_type::const_iterator found = _registered_.find (id_);
         if (found == _registered_.end ())
@@ -155,6 +188,7 @@ namespace datatools {
         return;
       };
 
+      /// Constructor
       factory_register (const std::string & label_, unsigned int flags = 0x0)
       {
         _verbose_ = false;
@@ -173,6 +207,7 @@ namespace datatools {
         return;
       }
 
+      /// Destructor
       virtual ~factory_register ()
       {
         if (is_verbose ())
@@ -189,6 +224,7 @@ namespace datatools {
         return;
       }
 
+      /// Import registered factories from another factory register
       void import (const factory_register & factory_register_)
       {
         if (is_verbose ())
@@ -212,24 +248,50 @@ namespace datatools {
         return;
       }
 
+      /// Simple print
       void print (std::ostream & out_, const std::string & indent_ = "") const
       {
-        out_ << indent_ << "List of registered allocators/functors for label \""
-             << _label_ << "\" : " << std::endl;
+        std::ostringstream title_oss;
+        title_oss << "List of registered allocators/functors for label \""
+                  << _label_ << "\" : ";
+        tree_dump (out_, title_oss.str (), indent_);
+        return;
+      }
+
+      /// Smart print
+      virtual void tree_dump (std::ostream & out_ = std::clog, 
+                              const std::string & title_ = "", 
+                              const std::string & indent_ = "",
+                              bool inherit_              = false) const
+      {
+        namespace du = datatools::utils;
+        std::string indent;
+        if (! indent_.empty ()) indent = indent_;
+        if (! title_.empty ())
+          {
+            out_ << indent << title_ << std::endl;
+          }
+        out_ << indent << du::i_tree_dumpable::tag
+             << "Label   : '" << _label_ << "'" << std::endl;
+        out_ << indent << du::i_tree_dumpable::tag 
+             << "Verbose : " << _verbose_ << std::endl;
+        out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_) 
+             << "Registered factories : " << std::endl;
         for (typename factory_map_type::const_iterator i = _registered_.begin ();
              i != _registered_.end ();
              i++)
           {
             out_ << indent_;
+            out_ << du::i_tree_dumpable::inherit_skip_tag (inherit_);
             typename factory_map_type::const_iterator j = i;
             j++;
             if (j == _registered_.end ())
               {
-                out_ << "`-- ";
+                out_ << du::i_tree_dumpable::last_tag;
               }
             else
               {
-                out_ << "|-- ";
+                out_ << du::i_tree_dumpable::tag;
               }
             out_ << "ID: \"" <<  i->first << "\" @ " << &i->second << std::endl;
           }
@@ -238,9 +300,9 @@ namespace datatools {
 
     private:
 
-      bool             _verbose_;
-      std::string      _label_;
-      factory_map_type _registered_;
+      std::string      _label_;      /// Label of the factory
+      bool             _verbose_;    /// Verbosity flag
+      factory_map_type _registered_; /// Dictionnary of registered factories
 
     };
 
