@@ -14,24 +14,8 @@
 namespace genvtx {
 
   using namespace std;
-  bool tube_vg::g_debug = false;
 
-  void tube_vg::_assert_lock_ (const string & where_)
-  {
-    if (_initialized_)
-      {
-        ostringstream message;
-        message << "genvtx::tube_vg::_assert_lock_: " << where_ << ": "
-                << "Object is locked !";
-        throw logic_error (message.str());
-      }
-    return;
-  }
-
-  bool tube_vg::is_initialized () const
-  {
-    return _initialized_;
-  }
+  GENVTX_VG_REGISTRATION_IMPLEMENT(tube_vg,"genvtx::tube_vg");
 
   int tube_vg::get_mode () const
   {
@@ -40,6 +24,7 @@ namespace genvtx {
 
   void tube_vg::set_mode (int mode_)
   {
+    _assert_lock ("genvtx::tube_vg::set_mode");
     if ((mode_ !=  MODE_BULK) && (mode_ !=  MODE_SURFACE))
       {
         throw logic_error ("genvtx::tube_vg::set_mode: Invalid mode !");
@@ -50,35 +35,35 @@ namespace genvtx {
 
   void tube_vg::set_surface_mask (int surface_mask_)
   {
-    _assert_lock_ ("genvtx::tube_vg::set_surface_mask");
+    _assert_lock ("genvtx::tube_vg::set_surface_mask");
     _surface_mask_ = surface_mask_;
     return;
   }
 
   void tube_vg::set_skin_skip (double skin_skip_)
   {
-    _assert_lock_ ("genvtx::tube_vg::set_surface_mask");
+    _assert_lock ("genvtx::tube_vg::set_surface_mask");
     _skin_skip_ = skin_skip_;
     return;
   }
 
   void tube_vg::set_skin_thickness (double skin_thickness_)
   {
-    _assert_lock_ ("genvtx::tube_vg::set_skin_thickness");
+    _assert_lock ("genvtx::tube_vg::set_skin_thickness");
     _skin_thickness_ = skin_thickness_;
     return;
   }
 
   void tube_vg::set_bulk (double skin_thickness_)
   {
-    _assert_lock_ ("genvtx::tube_vg::set_bulk");
+    _assert_lock ("genvtx::tube_vg::set_bulk");
     _mode_ = MODE_BULK;
     return;
   }
 
   void tube_vg::set_surface (int surface_mask_)
   {
-    _assert_lock_ ("genvtx::tube_vg::set_surface");
+    _assert_lock ("genvtx::tube_vg::set_surface");
     _mode_ = MODE_SURFACE;
     set_surface_mask (surface_mask_);
     return;
@@ -86,7 +71,7 @@ namespace genvtx {
 
   void tube_vg::set_tube (const geomtools::tube & tube_)
   {
-    _assert_lock_ ("genvtx::tube_vg::set_tube");
+    _assert_lock ("genvtx::tube_vg::set_tube");
     _tube_ = tube_;
     return;
   }
@@ -96,34 +81,181 @@ namespace genvtx {
     return _tube_;
   }
   
-  // ctor:
-  tube_vg::tube_vg ()
+  GENVTX_VG_IS_INITIALIZED_IMPLEMENT_HEAD(tube_vg)
+  {
+    return _initialized_;
+  }
+  
+  // Constructor :
+  GENVTX_VG_CONSTRUCTOR_IMPLEMENT_HEAD(tube_vg)
   {
     _initialized_ = false;
-    _reset_ ();
+    _tube_.reset ();
+    _set_defaults_ ();
     return;
   }
   
-  // dtor:
-  tube_vg::~tube_vg ()
-  {
-    return;
-  }
+  // Destructor :
+  GENVTX_VG_DEFAULT_DESTRUCTOR_IMPLEMENT(tube_vg)
+ 
 
-  void tube_vg::init ()
+  GENVTX_VG_INITIALIZE_IMPLEMENT_HEAD(tube_vg,setup_,service_manager_,vgens_)
   {
-    if (_initialized_)
+    if (is_debug ()) std::cerr << "DEBUG: genvtx::tube_vg::initialize: Entering..." << std::endl;
+    using namespace std;
+    bool devel = false;
+    if (is_initialized ())
       {
-        throw logic_error ("genvtx::tube_vg::init: Already initialized !");
+        throw logic_error ("genvtx::tube_vg::initialize: Already initialized !");
       }
+
+    // parameters of the tube vertex generator:
+    int    mode = MODE_INVALID;
+    double skin_skip = 0.0;
+    double skin_thickness = 0.0;
+    int    surface_mask = geomtools::tube::FACE_NONE;
+    double lunit = CLHEP::mm;
+    string lunit_str;
+    bool treat_mode           = false;
+    bool treat_surface_mask   = false;
+    bool treat_skin_skip      = false;
+    bool treat_skin_thickness = false;
+
+    if (_mode_ == MODE_INVALID)
+      {
+        if (setup_.has_key ("mode"))
+          {
+            string mode_str = setup_.fetch_string ("mode");
+            if (mode_str == "surface")
+              {
+                mode = MODE_SURFACE;
+              }
+            else if (mode_str == "bulk")
+              {
+                mode = MODE_BULK;
+              }
+            else
+              {
+                ostringstream message;
+                message << "genvtx::tube_vg::initialize: Invalid mode '"
+                        << mode_str << "' !";
+                throw logic_error (message.str ());
+              }
+            treat_mode = true;
+          }
+      }
+
+    if (setup_.has_key ("length_unit"))
+      {
+        lunit_str = setup_.fetch_string ("length_unit");
+        lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+      }
+    
+    if (setup_.has_key ("skin_skip"))
+      {
+        skin_skip = setup_.fetch_real ("skin_skip");
+        skin_skip *= lunit;
+        treat_skin_skip = true;
+      }
+
+    if (setup_.has_key ("skin_thickness"))
+      {
+        skin_thickness = setup_.fetch_real ("skin_thickness");
+        skin_thickness *= lunit;
+        treat_skin_thickness = true;
+      }
+
+    if (mode == MODE_SURFACE)
+      {
+        std::vector<std::string> surfaces;
+        if (setup_.has_key ("surfaces"))
+          {
+            setup_.fetch ("surfaces", surfaces);
+            treat_surface_mask = true;
+          }
+
+        for (int i = 0; i < surfaces.size (); i++)
+          {
+            if (surfaces[i] == "all")
+              {
+                surface_mask = geomtools::tube::FACE_ALL;
+                break;
+              }
+            else if (surfaces[i] == "outer_side")
+              {
+                surface_mask |= geomtools::tube::FACE_OUTER_SIDE;
+              }
+            else if (surfaces[i] == "inner_side")
+              {
+                surface_mask |= geomtools::tube::FACE_INNER_SIDE;
+              }
+            else if (surfaces[i] == "bottom")
+              {
+                surface_mask |= geomtools::tube::FACE_BOTTOM;
+              }
+            else if (surfaces[i] == "top")
+              {
+                surface_mask |= geomtools::tube::FACE_TOP;
+              }
+          }
+      }
+ 
+    if (treat_mode) set_mode (mode);
+    if (treat_skin_skip) set_skin_skip (skin_skip);
+    if (treat_skin_thickness) set_skin_thickness (skin_thickness);
+    if (mode == MODE_SURFACE && treat_surface_mask) 
+      {
+        set_surface_mask (surface_mask);
+      }
+
+    if (! _tube_.is_valid ())
+      {
+        double tube_inner_r, tube_outer_r, tube_z;
+        datatools::utils::invalidate (tube_inner_r);
+        datatools::utils::invalidate (tube_outer_r);
+        datatools::utils::invalidate (tube_z);
+        double length_unit = CLHEP::millimeter;
+        
+        if (setup_.has_key ("length_unit"))
+          {
+            std::string length_unit_str = setup_.fetch_string ("length_unit");
+            length_unit = datatools::utils::units::get_length_unit_from (length_unit_str);
+          }
+
+        if (setup_.has_key ("tube.inner_r"))
+          {
+            tube_inner_r = setup_.fetch_real ("tube.inner_r");
+          }
+
+        if (setup_.has_key ("tube.outer_r"))
+          {
+            tube_outer_r = setup_.fetch_real ("tube.outer_r");
+          }
+
+        if (setup_.has_key ("tube.z"))
+          {
+            tube_z = setup_.fetch_real ("tube.z");
+          }
+
+        {
+          tube_inner_r *= lunit;
+          tube_outer_r *= lunit;
+          tube_z *= lunit;
+        }
+        geomtools::tube cyl (tube_inner_r,
+                             tube_outer_r,  
+                             tube_z);
+        set_tube (cyl);
+      }
+
     _init_ ();
     _initialized_ = true;
     return;
   }
 
-  void tube_vg::reset ()
+  GENVTX_VG_RESET_IMPLEMENT_HEAD(tube_vg)
   {
-    if (! _initialized_)
+    if (! is_initialized ())
       {
         throw logic_error ("genvtx::tube_vg::reset: Not initialized !");
       }
@@ -134,7 +266,7 @@ namespace genvtx {
 
   void tube_vg::_init_ ()
   {
-    bool devel = g_debug;
+    bool devel = false;
     if (_mode_ == MODE_SURFACE) 
       {
         if (_surface_mask_ == 0)
@@ -170,6 +302,12 @@ namespace genvtx {
 
   void tube_vg::_reset_ ()
   {
+    _set_defaults_ ();
+    return;
+  }
+
+  void tube_vg::_set_defaults_ ()
+  {
     _mode_ = MODE_DEFAULT;
     _surface_mask_ = geomtools::tube::FACE_ALL;
     _skin_skip_ = 0.0;
@@ -183,24 +321,31 @@ namespace genvtx {
     return;
   }
 
-  void tube_vg::dump (ostream & out_) const
+  void tube_vg::tree_dump (std::ostream & out_, 
+                               const std::string & title_, 
+                               const std::string & indent_, 
+                               bool inherit_) const
   {
-    out_ << "genvtx::tube_vg::dump: " << endl;
-    out_ << "|-- " << "Tube: " << _tube_ << endl;
-    out_ << "|-- " << "Mode: " << _mode_ << endl;
-    out_ << "|-- " << "Surface mask: " << _surface_mask_ << endl;
-    out_ << "|-- " << "Skin skip: " << _skin_skip_ << endl;
-    out_ << "`-- " << "Skin thickness: " << _skin_thickness_ << endl;
+    namespace du = datatools::utils;
+    string indent;
+    if (! indent_.empty ()) indent = indent_;
+    i_vertex_generator::tree_dump (out_, title_, indent_, true);
+    out_ << indent << du::i_tree_dumpable::tag;
+    out_ << "Tube : " << _tube_ << endl;
+    out_ << indent << du::i_tree_dumpable::tag << "Mode :        " << _mode_ << endl;
+    out_ << indent << du::i_tree_dumpable::tag << "Surface mask: " << _surface_mask_ << endl;
+    out_ << indent << du::i_tree_dumpable::tag << "Skin skip:    " << _skin_skip_ << endl;
+    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_) 
+         << "Skin thickness: " << _skin_thickness_ << endl;
     return;
   }
   
-  void tube_vg::_shoot_vertex (mygsl::rng & random_, 
-                               geomtools::vector_3d & vertex_)
+  GENVTX_VG_SHOOT_VERTEX_IMPLEMENT_HEAD(tube_vg,random_,vertex_)
   {
-    bool devel = g_debug;
-    if (! _initialized_)
+    bool devel = false;
+    if (! is_initialized ())
       {
-        init ();
+        throw logic_error ("genvtx::tube_vg::_shoot_vertex: Not initialized !"); 
       }
     geomtools::invalidate (vertex_);
     double r, t;
@@ -289,75 +434,6 @@ namespace genvtx {
     return;
   }
 
-  /**********************************************************************/
-
-  // static method used within a vertex generator factory:
-  i_vertex_generator * 
-  tube_vg::create (const datatools::utils::properties & configuration_, void * user_)
-  {
-    cerr << "DEVEL: genvtx::tube_vg::create: Entering..." << endl;
-    configuration_.tree_dump (cerr, "genvtx::tube_vg::create: configuration:", "DEVEL: ");
-    using namespace std;
-    bool devel = false;
-    //devel = true;
-
-    // parameters of the tube vertex generator:
-    double x, y, z;
-    x = y = z = 1.0;
-    int mode =  tube_vg::MODE_DEFAULT;
-    double skin_skip = 0.0;
-    double skin_thickness = 0.0;
-    int surface_mask = 0;
-
-    if (configuration_.has_key ("mode"))
-      {
-        string mode_str = configuration_.fetch_string ("mode");
-        if (mode_str == "surface")
-          {
-            mode = MODE_SURFACE;
-          }
-        else if (mode_str == "bulk")
-          {
-            mode = MODE_BULK;
-          }
-        else
-          {
-            ostringstream message;
-            message << "genvtx::tube_vg::create: Invalid mode '"
-                    << mode_str << "' !";
-            throw logic_error (message.str ());
-          }
-      }
-
-    if (configuration_.has_key ("skin_skip"))
-      {
-        skin_skip = configuration_.fetch_real ("skin_skip");
-      }
-
-    if (configuration_.has_key ("skin_thickness"))
-      {
-        skin_thickness = configuration_.fetch_real ("skin_thickness");
-      }
-
-    // create a new parameterized 'tube_vg' instance:
-    tube_vg * ptr = new tube_vg;
-    //ptr->set_spot (x, y, z);
-    return ptr; 
-  }
-
-  string tube_vg::vg_id () const
-  {
-    return "genvtx::tube_vg";
-  }
-
-  vg_creator_type tube_vg::vg_creator () const
-  {
-    return tube_vg::create;
-  }
-
-  // register this creator:   
-  i_vertex_generator::creator_registration<tube_vg> tube_vg::g_cr_;
-  
 } // end of namespace genvtx
 
 // end of tube_vg.cc

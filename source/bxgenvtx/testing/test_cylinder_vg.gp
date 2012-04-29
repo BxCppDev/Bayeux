@@ -19,6 +19,6 @@ splot \
       'test_cylinder_vg.data' index 2 using 1:2:3 title "Cylinder" with lines
 pause -1 "Hit [Enter]..."
 
-! rm -f test_cylinder_vg.data
+#! rm -f test_cylinder_vg.data
 
 # end 

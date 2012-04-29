@@ -22,14 +22,14 @@
 
 set ( genvtx_tests_programs_list
       test_genvtx.cxx 
+      test_spot_vertex_generator.cxx
       test_box_vg.cxx
       test_cylinder_vg.cxx
       test_tube_vg.cxx
       test_placement_vg.cxx
-      test_spot_vertex_generator.cxx
       test_from_file_vg.cxx
-      test_factory.cxx
-      test_manager.cxx
+      #test_factory.cxx
+      #test_manager.cxx
     )
 
 # include files search paths

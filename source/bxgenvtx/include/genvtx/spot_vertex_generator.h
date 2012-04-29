@@ -2,7 +2,7 @@
 /* spot_vertex_generator.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-12
- * Last modified: 2010-02-12
+ * Last modified: 2012-04-27
  * 
  * License: 
  * 
@@ -26,10 +26,11 @@ namespace utils {
 
 namespace genvtx {
 
-  class spot_vertex_generator : public i_vertex_generator
+  GENVTX_VG_CLASS_DECLARE(spot_vertex_generator)
   {
 
   public: 
+
     const geomtools::vector_3d & get_spot () const;
 
     void set_spot (double x_, double y_, double z_);
@@ -38,8 +39,9 @@ namespace genvtx {
   
   public: 
 
-    // ctor:
-    spot_vertex_generator ();
+    GENVTX_VG_INTERFACE_CTOR_DTOR(spot_vertex_generator);
+ 
+  public: 
 
     // ctor:
     spot_vertex_generator (double x_, double y_, double z_);
@@ -47,29 +49,13 @@ namespace genvtx {
     // ctor:
     spot_vertex_generator (const geomtools::vector_3d & spot_);
 
-    // dtor:
-    virtual ~spot_vertex_generator ();
-  
-  protected:
-  
-    virtual void _shoot_vertex (mygsl::rng & random_, 
-                                geomtools::vector_3d & vertex_);
-
-  public:
-
-    virtual std::string vg_id () const;
-
-    virtual vg_creator_type vg_creator () const;
-
-    static i_vertex_generator * create (const datatools::utils::properties & configuration_, void * user_ = 0);
-
   private: 
 
     geomtools::vector_3d _spot_;
  
   private:
 
-    static creator_registration<spot_vertex_generator> g_cr_;
+    GENVTX_VG_REGISTRATION_INTERFACE(spot_vertex_generator);
 
   };
 

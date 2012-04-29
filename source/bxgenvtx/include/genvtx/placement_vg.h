@@ -21,65 +21,55 @@
 #include <geomtools/placement.h>
 
 namespace genvtx {
-
-  class placement_vg : public i_vertex_generator
+  
+  GENVTX_VG_CLASS_DECLARE(placement_vg)
   {
   public: 
-
+    
     const geomtools::placement & get_placement () const;
-
+    
     geomtools::placement & get_placement ();
-
+    
     void set_placement (const geomtools::placement &);
-
+    
     bool has_vg () const;
-
+    
     bool is_owned () const;
-
+    
     const i_vertex_generator & get_vg () const;
-
+   
+    i_vertex_generator & grab_vg ();
+    
     void set_vg (i_vertex_generator &);
-
+    
     void set_vg (i_vertex_generator *);
-  
-  private:
-
+    
+    void set_vg (vg_handle_type &);
+    
     void _clear_vg_ ();
-
+    
   public: 
-
-    // ctor:
-    placement_vg ();
-
-    // dtor:
-    placement_vg (const i_vertex_generator &, 
-                  const geomtools::placement &);
-
-    virtual ~placement_vg ();
-  
+    
+    GENVTX_VG_INTERFACE_CTOR_DTOR(placement_vg);
+    
+    GENVTX_VG_HAS_NEXT_VERTEX_DECLARE();
+    
   public:
 
-    virtual std::string vg_id () const;
-
-    virtual vg_creator_type vg_creator () const;
-
-    static i_vertex_generator * create (const datatools::utils::properties & configuration_, void * user_ = 0);
-  
-  protected:
-  
-    virtual void _shoot_vertex (mygsl::rng & random_, 
-                                geomtools::vector_3d & vertex_);
-
+    placement_vg (const i_vertex_generator &, 
+                  const geomtools::placement &);
+    
   private: 
-
+    
     geomtools::placement _placement_;
     bool                 _owned_;
     i_vertex_generator * _vg_;
-
+    vg_handle_type       _hvg_;
+    
   private:
+    
+    GENVTX_VG_REGISTRATION_INTERFACE(placement_vg);
 
-    static creator_registration<placement_vg> g_cr_;
-  
   };
 
 } // end of namespace genvtx

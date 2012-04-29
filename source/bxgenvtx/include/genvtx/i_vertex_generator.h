@@ -22,152 +22,108 @@
 
 #include <geomtools/utils.h>
 #include <geomtools/detail/model_tools.h>
+#include <datatools/factory/factory_macros.h>
+#include <datatools/utils/handle.h>
+#include <datatools/utils/i_tree_dump.h>
 
 #include <mygsl/rng.h>
 
 #include <genvtx/detail/vg_tools.h>
 
+namespace datatools {
+  namespace utils {
+    class properties;
+  }}
+
+namespace datatools {
+  namespace service {
+    class service_manager;
+  }}
+
 namespace genvtx {
 
-  class i_vertex_generator
+  class i_vertex_generator :
+    public datatools::utils::i_tree_dumpable
   {
   
-    // ctor/dtor:
   public: 
 
-    static bool g_debug;
+    /// Check the debug flag
+    bool is_debug () const;
 
-    i_vertex_generator ();
+    /// Set the debug flag
+    void set_debug (bool debug_);
 
-    virtual ~i_vertex_generator ();
-
+    /// Check if another vertex is available
     virtual bool has_next_vertex () const;
 
+    /// Wrapper method for vertex randomization
     void shoot_vertex (mygsl::rng & random_, geomtools::vector_3d & vertex_);
 
+    /// Wrapper method for vertex randomization
     geomtools::vector_3d shoot_vertex (mygsl::rng & random_);
+     
+    /// Simple initialization (no external resource)
+    virtual void initialize_simple ();
 
+    /// Initialization from a container of properties
+    virtual void initialize_standalone (const datatools::utils::properties & setup_);
+
+    /// Initialization from a container of properties and a service manager
+    virtual void initialize_with_service_only (const datatools::utils::properties & setup_,
+                                               datatools::service::service_manager & service_manager_);
+
+    /// Initialization from a container of properties, a service manager and a dictionnary of vertex generators
+    virtual void initialize_with_dictionary_only (const datatools::utils::properties & setup_,
+                                                  vg_dict_type & dictionary_);
+ 
+    /// Constructor
+    i_vertex_generator ();
+
+    /// Destructor
+    virtual ~i_vertex_generator ();
+
+   public: 
+
+    /*** Main interface ***/
+
+    /// Check initialization status
+    virtual bool is_initialized () const = 0;
+
+    /// Main initialization interface method
+    virtual void initialize (const datatools::utils::properties & setup_,
+                             datatools::service::service_manager & service_manager_,
+                             vg_dict_type & dictionary_) = 0;
+
+    /// Reset method
+    virtual void reset () = 0;
+
+    /// Smart print
+    virtual void tree_dump (std::ostream & out_         = std::clog, 
+                            const std::string & title_  = "", 
+                            const std::string & indent_ = "", 
+                            bool inherit_               = false) const;
+ 
   protected:
-  
+
+    /// Main vertex randomization interface method
     virtual void _shoot_vertex (mygsl::rng & random_, geomtools::vector_3d & vertex_) = 0;
 
-  public:
-
-    // pure virtual methods for vertex generator factory stuff:
-    virtual std::string vg_id () const = 0;
-
-    virtual vg_creator_type vg_creator () const = 0;
-
-    /**************************************************/
-    class vertex_generator_db
-    {
-      vertex_generator_creator_dict_type  _dict_;
-
-    public:
-
-      vertex_generator_db (bool = false);
-
-      virtual ~vertex_generator_db ();
-
-      const vertex_generator_creator_dict_type & get_dict () const;
-      
-      vertex_generator_creator_dict_type & get_dict ();
-      
-      bool has_vertex_generator (const std::string & vertex_generator_id_) const;
- 
-      vg_creator_type & get_vertex_generator (const std::string & vertex_generator_id_);
-
-      void register_vertex_generator (vg_creator_type, const std::string & vertex_generator_id_);
-
-      void dump_vertex_generators (std::ostream & out_ = std::clog);
-
-    };
- 
-    typedef boost::scoped_ptr<vertex_generator_db> scoped_vertex_generator_db_type;
+    /// Guard method
+    void _assert_lock (const std::string & where_, const std::string & what_ = "") const;
 
   private:
 
-    static scoped_vertex_generator_db_type g_vertex_generator_db_;
+    bool _debug_; /// Debug flag
 
-  public:
-      
-    static vertex_generator_db & get_vertex_generator_db ();
-
-    /**************************************************/
-
-  protected:
-
-    /* utility to enable auto-registering of some vertex generator 
-     * in the global dictionary:
-     *
-     * The templatized class 'vg_t' must inherits from 'i_vertex_generator'
-     * and implements the following methods:
-     *  - string       vg_id () const
-     *  - vg_creator_t vg_creator () const
-     *
-     */
-    template <class vg_t>
-    class creator_registration
-    {
-      vg_t _vg_;
-
-    public:
-
-      creator_registration ()
-      {
-        bool devel = g_debug;
-        //devel = true;
-        using namespace std;
-        if (devel) std::clog << "DEVEL: i_vertex_generator::creator_registration::ctor: "
-                        << "Entering..."
-                        << std::endl;
-        std::string vg_id = _vg_.vg_id ();
-        if (devel) std::clog << "DEVEL: i_vertex_generator::creator_registration::ctor: "
-                        << "vg_id='" << vg_id << "'"
-                        << std::endl;
-        
-        vg_creator_type vg_creator = _vg_.vg_creator ();
-        if (devel) std::clog << "DEVEL: i_vertex_generator::creator_registration::ctor: "
-                        << "vg_creator='" << std::hex << (void *) vg_creator << std::dec << "'"
-                        << std::endl;
-    
-        try
-          { 
-            bool test = false;
-            //test = true;
-            if (! test)
-              {
-                if (devel) 
-                  {
-                    std::clog << "DEVEL: i_vertex_generator::creator_registration::ctor: "
-                         << "register_vg='" << vg_id << " @ " 
-                         << std::hex << (void *) vg_creator << std::dec << "'"
-                         << std::endl;
-                  }
-                i_vertex_generator::get_vertex_generator_db ().register_vertex_generator (vg_creator,
-                                                                                          vg_id);
-              }
-          }
-        catch (exception & x)
-          {
-            std::cerr << "i_vertex_generator::creator_registration::ctor: ERROR: " 
-                 << x.what () << std::endl;
-          }
-        catch (...)
-          {
-            std::cerr << "i_vertex_generator::creator_registration::ctor: ERROR: " 
-                 << "unexpected!" << std::endl;
-          }
-        if (devel) std::clog << "i_vertex_generator::creator_registration::ctor: "
-                        << "Exiting."
-                        << std::endl;
-      }
-
-    };
+    // Factory stuff :
+    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_vertex_generator);
 
   };
 
 } // end of namespace genvtx
+
+#include <genvtx/vg_macros.h>
 
 #endif // __genvtx__i_vertex_generator_h
 

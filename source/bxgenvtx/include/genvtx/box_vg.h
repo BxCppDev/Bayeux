@@ -25,35 +25,16 @@
 
 namespace genvtx {
   
-  class box_vg : public i_vertex_generator
+  GENVTX_VG_CLASS_DECLARE(box_vg)
   {
   public: 
-    static bool g_debug;
 
-    enum mode_type
-      {
-        MODE_BULK = 0,
-        MODE_SURFACE = 1,
-        MODE_DEFAULT = MODE_BULK
-      };
+    static const int MODE_INVALID = -1;
+    static const int MODE_BULK    =  0;
+    static const int MODE_SURFACE =  1;
+    static const int MODE_DEFAULT = MODE_BULK;
     
-  private:
-    bool           _initialized_;
-    geomtools::box _box_;
-    const geomtools::box * _box_ref_;
-    int            _mode_;
-    int            _surface_mask_;
-    double         _skin_skip_;
-    double         _skin_thickness_;
-    double         _sum_weight_[6];
-
-  private:    
-
-    void _assert_lock_ (const std::string & where_);
-
   public: 
-
-    bool is_initialized () const;
 
     int get_mode () const;
 
@@ -75,23 +56,20 @@ namespace genvtx {
 
     void set_box_ref (const geomtools::box & box_);
 
-    const geomtools::box & get_box_safe () const;
-
     const geomtools::box & get_box () const;
 
     const geomtools::box & get_box_ref () const;
 
-    void dump (std::ostream & out_ = std::clog) const;
+    bool has_box_safe () const;
 
-    // ctor:
-    box_vg ();
+    const geomtools::box & get_box_safe () const;
 
-    // dtor:
-    virtual ~box_vg ();
-
-    void init ();
-
-    void reset ();
+    void tree_dump (std::ostream & out_ = std::clog, 
+                    const std::string & title_ = "", 
+                    const std::string & indent_ = "", 
+                    bool inherit_ = false) const;
+      
+    GENVTX_VG_INTERFACE_CTOR_DTOR (box_vg);
 
   private:
 
@@ -99,23 +77,23 @@ namespace genvtx {
 
     void _reset_ ();
 
-  public:
+    void _set_defaults_ ();
+    
+  private:
 
-    virtual std::string vg_id () const;
+    bool                   _initialized_; /// Initialization flag
+    geomtools::box         _box_;         /// Embedded box object
+    const geomtools::box * _box_ref_;     /// External box object handle
 
-    virtual vg_creator_type vg_creator () const;
-
-    static i_vertex_generator * create (const datatools::utils::properties & configuration_, 
-                                        void * user_ = 0);
-  
-  protected:
-  
-    virtual void _shoot_vertex (mygsl::rng & random_, 
-                                geomtools::vector_3d & vertex_);
+    int            _mode_;         /// Vertex randomization mode (bulk/surface)
+    int            _surface_mask_; /// Surface flag
+    double         _skin_skip_;    /// Skip (normal to the surface) to an effective position of the skin relative to the surface of the box    
+    double         _skin_thickness_;   /// Intrinsic thickness of the 
+    double         _sum_weight_[6];    /// Probability weights for surface randomization
  
   private:
 
-    static creator_registration<box_vg> g_cr_;
+    GENVTX_VG_REGISTRATION_INTERFACE(box_vg);
   
   };
 

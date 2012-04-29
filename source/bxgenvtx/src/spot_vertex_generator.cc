@@ -9,76 +9,50 @@
 #include <cstdlib>
 
 #include <datatools/utils/units.h>
+#include <geomtools/utils.h>
 
 namespace genvtx {
  
   using namespace std;
 
-  const geomtools::vector_3d &  spot_vertex_generator::get_spot () const
+  GENVTX_VG_REGISTRATION_IMPLEMENT(spot_vertex_generator,"genvtx::spot_vertex_generator");
+
+  const geomtools::vector_3d & spot_vertex_generator::get_spot () const
   {
     return _spot_;
   }
   
   void spot_vertex_generator::set_spot (const geomtools::vector_3d & new_value_)
   {
+    _assert_lock ("genvtx::spot_vertex_generator::set_spot");
     _spot_ = new_value_;
     return;
   }
   
   void spot_vertex_generator::set_spot (double x_, double y_, double z_)
   {
+    _assert_lock ("genvtx::spot_vertex_generator::set_spot");
     _spot_.set (x_, y_, z_);
     return;
   }
-  
-  // ctor:
-  spot_vertex_generator::spot_vertex_generator ()
+
+  GENVTX_VG_IS_INITIALIZED_IMPLEMENT_HEAD(spot_vertex_generator)
   {
-    return;
+    return geomtools::is_valid (_spot_);
   }
 
-  spot_vertex_generator::spot_vertex_generator (double x_, double y_, double z_)
+  GENVTX_VG_INITIALIZE_IMPLEMENT_HEAD(spot_vertex_generator,
+                                      configuration_,
+                                      service_manager_,
+                                      vgens_)
   {
-    set_spot (x_, y_, z_);
-    return;
-  }
+    _assert_lock ("genvtx::spot_vertex_generator::initialize");
 
-  spot_vertex_generator::spot_vertex_generator (const geomtools::vector_3d & spot_)
-  {
-    _spot_ = spot_;
-    return;
-  }
-  
-  // dtor:
-  spot_vertex_generator::~spot_vertex_generator ()
-  {
-    return;
-  }
-  
-  void spot_vertex_generator::_shoot_vertex (mygsl::rng & random_, 
-                                             geomtools::vector_3d & vertex_)
-  {
-    vertex_ = _spot_;
-    return;
-  }
-
-  /**********************************************************************/
-
-  // static method used within a vertex generator factory:
-  i_vertex_generator * 
-  spot_vertex_generator::create (const datatools::utils::properties & configuration_, void * user_)
-  {
-    cerr << "DEVEL: genvtx::spot_vertex_generator::create: Entering..." << endl;
-    configuration_.tree_dump (cerr, "genvtx::spot_vertex_generator::create: configuration:", "DEVEL: ");
-    using namespace std;
-    bool devel = false;
-    //devel = true;
-
-    // parameters of the spot vertex generator:
+   // parameters of the spot vertex generator:
     double x, y, z;
     x = y = z = 0.0;
-    double lunit = 1.0;
-    string lunit_str;;
+    double lunit = CLHEP::millimeter;
+    string lunit_str;
 
     if (configuration_.has_key ("spot.x"))
       {
@@ -98,7 +72,14 @@ namespace genvtx {
     if (configuration_.has_key ("spot.length_unit"))
       {
         lunit_str = configuration_.fetch_string ("spot.length_unit");
-        lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+        if (lunit_str == "none")
+          {
+            lunit = 1.0;
+          }
+        else
+          {
+            lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+          }
       }
 
     if (! lunit_str.empty ())
@@ -108,24 +89,50 @@ namespace genvtx {
         z *= lunit;
       }
 
-    // create a new parameterized 'spot_vertex_generator' instance:
-    spot_vertex_generator * ptr = new spot_vertex_generator;
-    ptr->set_spot (x, y, z);
-    return ptr; 
-  }
+    set_spot (x, y, z);
 
-  string spot_vertex_generator::vg_id () const
+    return;
+  }
+ 
+  GENVTX_VG_RESET_IMPLEMENT_HEAD(spot_vertex_generator)
   {
-    return "genvtx::spot_vertex_generator";
+    geomtools::invalidate (_spot_);
+    return;
   }
-
-  vg_creator_type spot_vertex_generator::vg_creator () const
+  
+  // Constructor:
+  GENVTX_VG_CONSTRUCTOR_IMPLEMENT_HEAD(spot_vertex_generator)
   {
-    return spot_vertex_generator::create;
+    geomtools::invalidate (_spot_);
+    return;
   }
 
-  // register this creator:   
-  i_vertex_generator::creator_registration<spot_vertex_generator> spot_vertex_generator::g_cr_;
+  // Destructor :
+  GENVTX_VG_DEFAULT_DESTRUCTOR_IMPLEMENT(spot_vertex_generator)
+ 
+  GENVTX_VG_SHOOT_VERTEX_IMPLEMENT_HEAD(spot_vertex_generator,random_,vertex_)
+  {
+    if (! is_initialized ())
+      {
+        throw logic_error ("genvtx::spot_vertex_generator::_shoot_vertex: Not initialized !"); 
+      }
+    vertex_ = _spot_;
+    return;
+  }
+ 
+  // Useful constructors :
+
+  spot_vertex_generator::spot_vertex_generator (double x_, double y_, double z_)
+  {
+    _spot_.set (x_, y_, z_);
+    return;
+  }
+
+  spot_vertex_generator::spot_vertex_generator (const geomtools::vector_3d & spot_)
+  {
+    _spot_ = spot_;
+    return;
+  }
 
 } // end of namespace genvtx
 

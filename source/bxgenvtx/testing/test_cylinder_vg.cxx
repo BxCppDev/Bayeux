@@ -54,50 +54,54 @@ int main (int argc_, char ** argv_)
          
       geomtools::cylinder c (2., 4.);
 
-      genvtx::cylinder_vg::g_debug = debug;
       genvtx::cylinder_vg vg;
-      vg.set_cylinder (c);
+      vg.set_debug (debug);
 
       {
-	vg.set_mode (genvtx::cylinder_vg::MODE_SURFACE);
-	int surface_mask = 0;
-	surface_mask |= geomtools::cylinder::FACE_SIDE;
-	surface_mask |= geomtools::cylinder::FACE_BOTTOM;
-	//surface_mask |= geomtools::cylinder::FACE_TOP;
-	vg.set_surface_mask (surface_mask);
-	vg.set_skin_skip (0.10);
-	vg.set_skin_thickness (0.20);
-	vg.dump ();
-	size_t nshoots = 2000;
-	geomtools::vector_3d vertex;     
-	for (int i = 0; i < nshoots; i++)
-	  {
-	    vg.shoot_vertex (random, vertex);
-	    geomtools::gnuplot_draw::basic_draw_point (cout, vertex, true);
-	  }
-	cout << endl << endl;
+        vg.set_cylinder (c);
+        vg.set_mode (genvtx::cylinder_vg::MODE_SURFACE);
+        int surface_mask = 0;
+        surface_mask |= geomtools::cylinder::FACE_SIDE;
+        surface_mask |= geomtools::cylinder::FACE_BOTTOM;
+        //surface_mask |= geomtools::cylinder::FACE_TOP;
+        vg.set_surface_mask (surface_mask);
+        vg.set_skin_skip (0.30);
+        vg.set_skin_thickness (0.20);
+        vg.initialize_simple ();
+        vg.tree_dump (clog, "Cylinder vertex generator (side/bottom surface)");
+        size_t nshoots = 2000;
+        geomtools::vector_3d vertex;      
+        for (int i = 0; i < nshoots; i++)
+          {
+            vg.shoot_vertex (random, vertex);
+            geomtools::gnuplot_draw::basic_draw_point (cout, vertex, true);
+          }
+        cout << endl << endl;
+      }
+
+      vg.reset ();
+
+      {
+        vg.set_cylinder (c);
+        vg.set_mode (genvtx::cylinder_vg::MODE_BULK);
+        vg.set_skin_thickness (0.20);
+        vg.initialize_simple ();
+        vg.tree_dump (clog, "Cylinder vertex generator (bulk)");
+        size_t nshoots = 5000;
+        geomtools::vector_3d vertex;     
+        for (int i = 0; i < nshoots; i++)
+          {
+            vg.shoot_vertex (random, vertex);
+            geomtools::gnuplot_draw::basic_draw_point (cout, vertex, true);
+          }
+        cout << endl << endl;
       }
 
       {
-	vg.reset ();
-	vg.set_mode (genvtx::cylinder_vg::MODE_BULK);
-	vg.set_skin_thickness (0.30);
-	vg.dump ();
-	size_t nshoots = 5000;
-	geomtools::vector_3d vertex;     
-	for (int i = 0; i < nshoots; i++)
-	  {
-	    vg.shoot_vertex (random, vertex);
-	    geomtools::gnuplot_draw::basic_draw_point (cout, vertex, true);
-	  }
-	cout << endl << endl;
-      }
-
-      {
-	geomtools::vector_3d pos; 
-	geomtools::rotation_3d rot;
-	geomtools::gnuplot_draw::draw_cylinder (cout, pos, rot, vg.get_cylinder ());
-	cout << endl << endl;
+        geomtools::vector_3d pos; 
+        geomtools::rotation_3d rot;
+        geomtools::gnuplot_draw::draw_cylinder (cout, pos, rot, vg.get_cylinder ());
+        cout << endl << endl;
       }
 
     }

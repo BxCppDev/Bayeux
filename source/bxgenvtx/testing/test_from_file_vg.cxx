@@ -51,21 +51,24 @@ int main (int argc_, char ** argv_)
       unsigned long int rng_seed = 12345;
       mygsl::rng        random (rng_id, rng_seed);
      
-      genvtx::from_file_vg vg ("${GENVTX_DATA_DIR}/testing/data/test_vertices.data");
+      genvtx::from_file_vg vg;
+      vg.set_filename ("${GENVTX_DATA_DIR}/testing/data/test_vertices.data");
       vg.set_length_unit (CLHEP::cm);
+      vg.initialize_simple ();
+      vg.tree_dump (clog, "From file vertex generator");
 
       geomtools::vector_3d vertex;
            
       while (true)
-	{
-	  vg.shoot_vertex (random, vertex);
-	  if (! geomtools::is_valid (vertex))
-	    {
-	      clog << "End of vertex source file." << endl;
-	      break;
-	    }
-	  cout << vertex << endl;
-	}
+        {
+          vg.shoot_vertex (random, vertex);
+          if (! geomtools::is_valid (vertex))
+            {
+              clog << "End of vertex source file." << endl;
+              break;
+            }
+          cout << vertex << endl;
+        }
 
     }
   catch (exception & x)

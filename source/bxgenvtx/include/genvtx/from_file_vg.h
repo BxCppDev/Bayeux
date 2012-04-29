@@ -2,7 +2,7 @@
 /* from_file_vg.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-13
- * Last modified: 2010-02-13
+ * Last modified: 2012-04-27
  * 
  * License: 
  * 
@@ -23,17 +23,11 @@
 
 namespace genvtx {
 
-  class from_file_vg : public i_vertex_generator
+  GENVTX_VG_CLASS_DECLARE(from_file_vg)
   {
   public:
-    static const double LENGTH_UNIT;
 
-  private: 
-    std::string   _filename_;
-    bool     _open_;
-    std::ifstream _source_;
-    geomtools::vector_3d _next_;
-    double   _length_unit_; // length unit (default == 1); 
+    static const double LENGTH_UNIT;
 
   protected:
 
@@ -47,8 +41,6 @@ namespace genvtx {
 
   public: 
 
-    virtual bool has_next_vertex () const;
-
     bool is_open () const;
 
     const std::string & get_filename () const;
@@ -61,30 +53,24 @@ namespace genvtx {
   
   public: 
 
-    // ctor:
-    from_file_vg ();
+    GENVTX_VG_INTERFACE_CTOR_DTOR (from_file_vg)
 
-    // ctor:
-    from_file_vg (const std::string & filename_);
+    GENVTX_VG_HAS_NEXT_VERTEX_DECLARE();
 
-    // dtor:
-    virtual ~from_file_vg ();
- 
-    // pure virtual methods for vertex generator factory stuff:
-    virtual std::string vg_id () const;
+    // Constructor :
+    //from_file_vg (const std::string & filename_);
 
-    virtual vg_creator_type vg_creator () const;
+  private: 
 
-    static i_vertex_generator * create (const datatools::utils::properties & configuration_, void * user_ = 0);
- 
-  protected:
-  
-    virtual void _shoot_vertex (mygsl::rng & random_, 
-                                geomtools::vector_3d & vertex_);
+    std::string          _filename_;
+    bool                 _open_;
+    std::ifstream        _source_;
+    geomtools::vector_3d _next_;
+    double               _length_unit_; // length unit (default == 1); 
  
   private:
 
-    static creator_registration<from_file_vg> g_cr_;
+    GENVTX_VG_REGISTRATION_INTERFACE(from_file_vg);
 
   };
 

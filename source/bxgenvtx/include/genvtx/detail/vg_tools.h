@@ -2,7 +2,7 @@
 /* vg_tools.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-12
- * Last modified: 2010-02-12
+ * Last modified: 2012-04-27
  * 
  * License: 
  * 
@@ -17,24 +17,15 @@
 
 #include <string>
 #include <map>
-
-//#include <datatools/utils/properties.h>
-namespace datatools {
-namespace utils {
-  class properties;
-}
-}
+#include <datatools/utils/handle.h>
 
 namespace genvtx {
 
-  namespace du = datatools::utils;
-
   class i_vertex_generator;
 
-  typedef i_vertex_generator * (*vg_creator_type) (const du::properties & configuration_, void * user_);
-
-  typedef std::map<std::string, vg_creator_type> vertex_generator_creator_dict_type;
-
+  typedef datatools::utils::handle<i_vertex_generator> vg_handle_type;
+  typedef std::map<std::string, vg_handle_type>        vg_dict_type;
+ 
   class vg_tools
   {
   public:
@@ -42,7 +33,6 @@ namespace genvtx {
     static const std::string SHAPE_REF_PLAIN;
     static const std::string SHAPE_REF_GETTER;
   };
-
 
 } // end of namespace genvtx
 

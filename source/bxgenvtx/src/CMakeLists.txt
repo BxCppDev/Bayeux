@@ -17,7 +17,15 @@ file ( GLOB genvtx_detail_PUBLIC_HEADERS
 file ( GLOB genvtx_SOURCES
   ${genvtx_PUBLIC_HEADERS}
   ${genvtx_detail_PUBLIC_HEADERS}
-  ${PROJECT_SOURCE_DIR}/src/*.cc
+  ${PROJECT_SOURCE_DIR}/src/i_vertex_generator.cc
+  ${PROJECT_SOURCE_DIR}/src/spot_vertex_generator.cc
+  ${PROJECT_SOURCE_DIR}/src/from_file_vg.cc
+  ${PROJECT_SOURCE_DIR}/src/placement_vg.cc
+  ${PROJECT_SOURCE_DIR}/src/box_vg.cc
+  ${PROJECT_SOURCE_DIR}/src/cylinder_vg.cc
+  ${PROJECT_SOURCE_DIR}/src/tube_vg.cc
+  ${PROJECT_SOURCE_DIR}/src/vg_tools.cc
+  #${PROJECT_SOURCE_DIR}/src/*.cc
   )
 
 # Last source files built in the DLL for proper static stuff initialization:

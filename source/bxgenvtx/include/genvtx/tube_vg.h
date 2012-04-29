@@ -31,25 +31,16 @@ namespace utils {
 
 namespace genvtx {
   
-  class tube_vg : public i_vertex_generator
+  GENVTX_VG_CLASS_DECLARE(tube_vg)
   {
   public: 
-    static bool g_debug;
 
-    enum mode_t
-      {
-        MODE_BULK = 0,
-        MODE_SURFACE = 1,
-        MODE_DEFAULT = MODE_BULK
-      };
-
-  private:    
-
-    void _assert_lock_ (const std::string & where_);
+    static const int MODE_INVALID = -1;
+    static const int MODE_BULK    =  0;
+    static const int MODE_SURFACE =  1;
+    static const int MODE_DEFAULT = MODE_BULK;
 
   public: 
-
-    bool is_initialized () const;
 
     int get_mode () const;
 
@@ -69,17 +60,12 @@ namespace genvtx {
 
     const geomtools::tube & get_tube () const;
 
-    void dump (std::ostream & out_ = std::clog) const;
-
-    // ctor:
-    tube_vg ();
-
-    // dtor:
-    virtual ~tube_vg ();
-
-    void init ();
-
-    void reset ();
+    void tree_dump (std::ostream & out_ = std::clog, 
+                    const std::string & title_ = "", 
+                    const std::string & indent_ = "", 
+                    bool inherit_ = false) const;
+      
+    GENVTX_VG_INTERFACE_CTOR_DTOR (tube_vg);
 
   private:
 
@@ -87,34 +73,19 @@ namespace genvtx {
 
     void _reset_ ();
 
-  public:
-
-    virtual std::string vg_id () const;
-
-    virtual vg_creator_type vg_creator () const;
-
-    static i_vertex_generator * create (const datatools::utils::properties & configuration_, void * user_ = 0);
-  
-  protected:
-  
-    virtual void _shoot_vertex (mygsl::rng & random_, 
-                                geomtools::vector_3d & vertex_);
+    void _set_defaults_ ();
     
   private:
-    bool           _initialized_;
+
+    bool            _initialized_;
     geomtools::tube _tube_;
-    int            _mode_;
-    int            _surface_mask_;
-    double         _skin_skip_;
-    double         _skin_thickness_;
-    double         _sum_weight_[4];
-    // double         _r1_sqr_;
-    // double         _r2_sqr_;
-
+    int             _mode_;
+    int             _surface_mask_;
+    double          _skin_skip_;
+    double          _skin_thickness_;
+    double          _sum_weight_[4];
  
-  private:
-
-    static creator_registration<tube_vg> g_cr_;
+    GENVTX_VG_REGISTRATION_INTERFACE(tube_vg);
   
   };
 

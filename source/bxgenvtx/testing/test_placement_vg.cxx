@@ -10,6 +10,7 @@
 #include <genvtx/box_vg.h>
 #include <mygsl/rng.h>
 #include <genvtx/placement_vg.h>
+#include <datatools/utils/properties.h>
 
 using namespace std;
 
@@ -34,7 +35,7 @@ int main (int argc_, char ** argv_)
                  {
                    debug = true;
                  }
-	       else 
+               else 
                  { 
                     clog << "warning: ignoring option '" << option << "'!" << endl; 
                  }
@@ -56,20 +57,21 @@ int main (int argc_, char ** argv_)
       // define a box and its placement:
       geomtools::box b (4., 2., 3.);
       geomtools::placement pl (2., 3., 4., 
-			       30. * CLHEP::degree, 
-			       20. * CLHEP::degree, 
-			       -45. * CLHEP::degree); 
+                               30. * CLHEP::degree, 
+                               20. * CLHEP::degree, 
+                               -45. * CLHEP::degree); 
       {
-	// draw it:      
-	geomtools::gnuplot_draw::draw_box (cout, 
-					   pl.get_translation (), 
-					   pl.get_rotation (), 
-					   b);
-	cout << endl << endl;
+        // draw it:      
+        geomtools::gnuplot_draw::draw_box (cout, 
+                                           pl.get_translation (), 
+                                           pl.get_rotation (), 
+                                           b);
+        cout << endl << endl;
       }
 
-      // define a box vertex generator (surface mode):
+      // define a box vertex generator (surface mode) :
       genvtx::box_vg vg;
+      vg.set_debug (true);
       vg.set_box (b);
       vg.set_mode (genvtx::box_vg::MODE_SURFACE);
       int surface_mask = 0;
@@ -78,10 +80,11 @@ int main (int argc_, char ** argv_)
       surface_mask |= geomtools::box::FACE_TOP;
       vg.set_surface_mask (surface_mask);
       vg.set_skin_skip (0.10);
-      vg.set_skin_thickness (0.20);
-      vg.dump ();
+      vg.set_skin_thickness (0.20);  
+      vg.initialize_simple ();
+      vg.tree_dump (clog, "Box vertex generator");
 
-      // define a placement_vg (using the box_vg above):
+      // define a placement_vg (using the box_vg above) :
       genvtx::placement_vg pvg;
       pvg.set_vg (vg);
       pvg.set_placement (pl);
@@ -90,10 +93,10 @@ int main (int argc_, char ** argv_)
       size_t nshoots = 2000;
       geomtools::vector_3d vertex;     
       for (int i = 0; i < nshoots; i++)
-	{
-	  pvg.shoot_vertex (random, vertex);
-	  geomtools::gnuplot_draw::basic_draw_point (cout, vertex, true);
-	}
+        {
+          pvg.shoot_vertex (random, vertex);
+          geomtools::gnuplot_draw::basic_draw_point (cout, vertex, true);
+        }
       cout << endl << endl;
 
     }

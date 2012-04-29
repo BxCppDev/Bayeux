@@ -54,89 +54,102 @@ int main (int argc_, char ** argv_)
          
       geomtools::box b (4., 2., 3.);
 
-      genvtx::box_vg::g_debug = debug;
+      {
+        geomtools::vector_3d pos; 
+        geomtools::rotation_3d rot;
+        geomtools::gnuplot_draw::draw_box (cout, pos, rot, b);
+        cout << endl << endl;
+      }
+
       genvtx::box_vg vg;
-      vg.set_box (b);
+      vg.set_debug (debug);
 
+      bool surface = true;
+      if (surface)
       {
-	vg.set_mode (genvtx::box_vg::MODE_SURFACE);
-	int surface_mask = 0;
-	//surface_mask |= geomtools::box::FACE_BACK ;
-	surface_mask |= geomtools::box::FACE_FRONT;
-	//surface_mask |= geomtools::box::FACE_LEFT;
-	//surface_mask |= geomtools::box::FACE_RIGHT;
-	//surface_mask |= geomtools::box::FACE_BOTTOM;
-	//surface_mask |= geomtools::box::FACE_TOP;
-	vg.set_surface_mask (surface_mask);
-	vg.set_skin_skip (0.10);
-	vg.set_skin_thickness (0.20);
-	vg.dump ();
-	size_t nshoots = 2000;
-	geomtools::vector_3d vertex;     
-	for (int i = 0; i < nshoots; i++)
-	  {
-	    vg.shoot_vertex (random, vertex);
-	    geomtools::gnuplot_draw::basic_draw_point (cout, vertex, true);
-	  }
-	cout << endl << endl;
+        vg.set_box (b);
+        vg.set_mode (genvtx::box_vg::MODE_SURFACE);
+        clog << "warning: mode = " <<  vg.get_mode() << "\n";
+        int surface_mask = 0;
+        //surface_mask |= geomtools::box::FACE_BACK ;
+        //surface_mask |= geomtools::box::FACE_FRONT;
+        //surface_mask |= geomtools::box::FACE_LEFT;
+        surface_mask |= geomtools::box::FACE_RIGHT;
+        surface_mask |= geomtools::box::FACE_BOTTOM;
+        //surface_mask |= geomtools::box::FACE_TOP;
+        vg.set_surface_mask (surface_mask);
+        vg.set_skin_skip (0.40);
+        vg.set_skin_thickness (0.20);
+        vg.initialize_simple ();
+        vg.tree_dump (clog, "Box vertex generator (bottom+right surface, skipped)");
+        size_t nshoots = 2000;
+        geomtools::vector_3d vertex;     
+        for (int i = 0; i < nshoots; i++)
+          {
+            vg.shoot_vertex (random, vertex);
+            geomtools::gnuplot_draw::basic_draw_point (cout, vertex, true);
+          }
+        cout << endl << endl;
       }
 
+      vg.reset ();
+
+      bool bulk = true;
+      //bulk = false;
+      if (bulk)
       {
-	vg.reset ();
-	vg.set_mode (genvtx::box_vg::MODE_BULK);
-	vg.set_skin_thickness (0.30);
-	vg.dump ();
-	size_t nshoots = 5000;
-	geomtools::vector_3d vertex;     
-	for (int i = 0; i < nshoots; i++)
-	  {
-	    vg.shoot_vertex (random, vertex);
-	    geomtools::gnuplot_draw::basic_draw_point (cout, vertex, true);
-	  }
-	cout << endl << endl;
+        vg.set_box (b);
+        vg.set_mode (genvtx::box_vg::MODE_BULK);
+        clog << "warning: mode = " <<  vg.get_mode()<< "\n";
+        vg.set_skin_skip (0.0);
+        vg.set_skin_thickness (0.30);
+        vg.initialize_simple ();
+        vg.tree_dump (clog, "Box vertex generator (bulk)");
+        size_t nshoots = 5000;
+        geomtools::vector_3d vertex;     
+        for (int i = 0; i < nshoots; i++)
+          {
+            vg.shoot_vertex (random, vertex);
+            geomtools::gnuplot_draw::basic_draw_point (cout, vertex, true);
+          }
+        cout << endl << endl;
       }
 
+      bool other = true;
+      //other = false;
+      if (other)
       {
-	geomtools::vector_3d pos; 
-	geomtools::rotation_3d rot;
-	geomtools::gnuplot_draw::draw_box (cout, pos, rot, vg.get_box ());
-	cout << endl << endl;
-      }
+        genvtx::i_vertex_generator * ivg = 0;
+        datatools::utils::properties config;
+        config.store ("mode", "surface");
+        config.store ("skin_skip",      0.05);
+        config.store ("skin_thickness", 0.1);
+        vector<string> surfaces;
+        surfaces.push_back ("left");
+        surfaces.push_back ("back");
+        surfaces.push_back ("top");
+        config.store ("surfaces", surfaces);
+        {
+          config.store ("box.x", b.get_x ());
+          config.store ("box.y", b.get_y ());
+          config.store ("box.z", b.get_z ());
+          config.store ("length_unit", "mm");
+        }
+        config.tree_dump (clog, "Configuration for dynamic VG:");
+        const genvtx::i_vertex_generator::factory_register_type & the_vg_factory 
+          = DATATOOLS_FACTORY_GET_SYSTEM_REGISTER (genvtx::i_vertex_generator);
 
-      {
-	genvtx::i_vertex_generator * ivg = 0;
-	datatools::utils::properties config;
-	config.store ("mode", "surface");
-	config.store ("skin_skip",      0.05);
-	config.store ("skin_thickness", 0.1);
-	vector<string> surfaces;
-	surfaces.push_back ("left");
-	surfaces.push_back ("back");
-	surfaces.push_back ("bottom");
-	config.store ("surfaces", surfaces);
-
-	//config.store ("box_ref" , genvtx::vg_tools::SHAPE_REF_NONE);
-	config.store ("box_ref" , genvtx::vg_tools::SHAPE_REF_PLAIN);
-	//config.store ("box_ref" , genvtx::vg_tools::SHAPE_REF_MODEL);
-	//config.store ("box_ref" , "mybox");
-
-	{
-	  config.store ("box.x", 4.0);
-	  config.store ("box.y", 2.0);
-	  config.store ("box.z", 1.0);
-	  config.store ("length_unit", "mm");
-	}
-	config.tree_dump (clog, "Configuration for dynamic VG:");
-	ivg = genvtx::box_vg::create (config, (void*) &b);
-	size_t nshoots = 1000;
-	geomtools::vector_3d vertex;     
-	for (int i = 0; i < nshoots; i++)
-	  {
-	    ivg->shoot_vertex (random, vertex);
-	    geomtools::gnuplot_draw::basic_draw_point (cout, vertex, true);
-	  }
-	cout << endl << endl; 
-	if (ivg != 0) delete ivg;
+        ivg = the_vg_factory.get ("genvtx::box_vg")(); // new genvtx::box_vg;
+        ivg->initialize_standalone (config);
+        size_t nshoots = 1000;
+        geomtools::vector_3d vertex;     
+        for (int i = 0; i < nshoots; i++)
+          {
+            ivg->shoot_vertex (random, vertex);
+            geomtools::gnuplot_draw::basic_draw_point (cout, vertex, true);
+          }
+        cout << endl << endl; 
+        if (ivg != 0) delete ivg;
       }
 
     }

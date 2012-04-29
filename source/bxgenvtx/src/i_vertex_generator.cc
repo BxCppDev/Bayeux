@@ -7,156 +7,58 @@
 #include <stdexcept>
 #include <sstream>
 
+#include <datatools/utils/properties.h>
+#include <datatools/services/service_manager.h>
+
 namespace genvtx {
 
   using namespace std;
-  
-  bool i_vertex_generator::g_debug = false;
 
-  i_vertex_generator::scoped_vertex_generator_db_type i_vertex_generator::g_vertex_generator_db_ (new vertex_generator_db (true));
+  // Factory stuff :
+  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(i_vertex_generator,"genvtx::i_vertex_generator/__system__");
 
-  /***************************************************/
 
-  i_vertex_generator::vertex_generator_db::vertex_generator_db (bool test_)
+  bool i_vertex_generator::is_debug () const
   {
-    bool debug = g_debug;
-    //debug = true;
-    if (debug)
-      {
-        clog << "******* DEVEL: genvtx::i_vertex_generator::vertex_generator_db::vertex_generator_db: entering: " 
-             << (test_? "TEST": "-") << endl;
-      }
+    return _debug_;
+  }
+
+  void i_vertex_generator::set_debug (bool debug_)
+  {
+    _debug_ = debug_;
     return;
   }
 
-  i_vertex_generator::vertex_generator_db::~vertex_generator_db ()
+  void i_vertex_generator::_assert_lock (const std::string & where_, 
+                                         const std::string & what_) const
   {
-    bool debug = g_debug;
-    //debug = true;
-    if (debug)
+    if (is_initialized ())
       {
-        clog << "******* DEVEL: genvtx::i_vertex_generator::vertex_generator_db::~vertex_generator_db: entering..." 
-             << endl;
-      }
-    return;
-  }
- 
-  bool i_vertex_generator::vertex_generator_db::has_vertex_generator (const string & vertex_generator_id_) const
-  {
-    return _dict_.find (vertex_generator_id_) != _dict_.end ();
-  }
-
-  vg_creator_type & 
-  i_vertex_generator::vertex_generator_db::get_vertex_generator (const string & vertex_generator_id_)
-  {
-    vertex_generator_creator_dict_type::iterator found = _dict_.find (vertex_generator_id_);
-    if (found == _dict_.end ())
-      {
-        ostringstream message;
-        message << "genvtx::i_vertex_generator::vertex_generator_db::get: "
-                << "No vertex_generator creator with ID='" << vertex_generator_id_ << "'!";
-        throw logic_error (message.str ());
-      }
-    return (found->second);
-  }
-
-  void i_vertex_generator::vertex_generator_db::register_vertex_generator (vg_creator_type creator_, 
-                                                                           const string & vertex_generator_id_)
-  {
-    bool devel = g_debug;
-    //devel = true;
-    using namespace std;
-    string vertex_generator_id = vertex_generator_id_;
-    if (devel)
-      {
-        clog << "DEVEL: genvtx::i_vertex_generator::vertex_generator_db::register_vertex_generator: "
-             << "vertex_generator_id='" << vertex_generator_id << "'"
-             << endl;
-      }
-    if (has_vertex_generator (vertex_generator_id))
-      {
-        ostringstream message;
-        message << "genvtx::i_vertex_generator::vertex_generator_db::register_vertex_generator: " 
-                << "Vertex_Generator ID '" << vertex_generator_id_ << "' is already used "
-                << "within the vertex_generator factory dictionnary!";
-        throw logic_error (message.str ());
-      }
-    if (devel)
-      {
-        clog << "DEVEL: genvtx::i_vertex_generator::vertex_generator_db::register_vertex_generator: "
-             << "new '" << vertex_generator_id << "' vertex_generator ID!"
-             << endl;
-      }
-    
-    if (vertex_generator_id.empty ())
-      {
-        ostringstream message;
-        message << "genvtx::i_vertex_generator::vertex_generator_db::register_vertex_generator: " 
-                << "Empty vertex_generator ID!";
-        throw logic_error (message.str ());
-      }
-    if (devel)
-      {
-        clog << "DEVEL: genvtx::i_vertex_generator::vertex_generator_db::register_vertex_generator: "
-             << "insert vertex_generator ID='" << vertex_generator_id << "'!"
-             << endl;
-        clog << "DEVEL: genvtx::i_vertex_generator::vertex_generator_db::register_vertex_generator: "
-             << "with creator address='" << hex 
-             << (void *) creator_ << dec << "'"
-             << endl;
-      }
-    pair<string, vg_creator_type> a_pair;
-    a_pair.first = vertex_generator_id;
-    a_pair.second = creator_;
-    _dict_.insert (a_pair);
-    //_dict_[vertex_generator_id] = creator_;
-    size_t sz = get_dict ().size ();
-    if (devel)
-      {
-        clog << "DEVEL: genvtx::i_vertex_generator::vertex_generator_db::register_vertex_generator: size="
-             << sz << " element" << (sz > 1? "s": "") << endl;
-        clog << "DEVEL: genvtx::i_vertex_generator::vertex_generator_db::register_vertex_generator: "
-             << "done."
-             << endl;
-      }
-    return;
-  }
-
-  const vertex_generator_creator_dict_type &
-  i_vertex_generator::vertex_generator_db::get_dict () const
-  {
-    return _dict_;
-  }
-  
-  vertex_generator_creator_dict_type & 
-  i_vertex_generator::vertex_generator_db::get_dict ()
-  {
-    return _dict_;
-  }
-
-  void i_vertex_generator::vertex_generator_db::dump_vertex_generators (ostream & out_)
-  {
-    out_ << "List of vertex_generator creators in 'genvtx::vertex_generator_db::_dict_': ";
-    size_t sz = get_dict ().size ();
-    out_ << sz << " element(s)" << endl;
-    size_t count = 0; 
-    for (vertex_generator_creator_dict_type::const_iterator it = get_dict ().begin ();
-         it != get_dict ().end ();
-         it++) 
-      {
-        count++;
-        if (count == sz) out_ << "`-- "; 
-        else out_ << "|-- ";
-        out_ << it->first << ": " 
-             << hex << (void *) it->second 
-             << dec << endl;
-      }
-    out_ << "end." << endl;
+        std::ostringstream message;
+        if (where_.empty ())
+          {
+            message << "genvtx::box_vg::_assert_lock: ";
+          }
+        else
+          {
+            message << where_ << ": ";
+          }
+        if (what_.empty ())
+          {
+            message << "Object is initialized/locked !";
+          }
+        else 
+          {
+            message << what_;
+          }
+        throw logic_error (message.str());
+     }
     return;
   }
 
   i_vertex_generator::i_vertex_generator ()
   {
+    _debug_ = false;
     return;
   }
 
@@ -183,17 +85,69 @@ namespace genvtx {
     shoot_vertex (random_, vertex);
     return vertex;
   }
-     
-  i_vertex_generator::vertex_generator_db & 
-  i_vertex_generator::get_vertex_generator_db ()
+
+  void i_vertex_generator::initialize_simple ()
   {
-    if (! g_vertex_generator_db_) 
-      {
-        throw runtime_error ("genvtx::i_vertex_generator::get_vertex_generator_db: Library build critical bug !");
-      }
-    return *(g_vertex_generator_db_.get ());
+    if (is_debug ()) std::cerr << "DEBUG: genvtx::i_vertex_generator::initialize_simple: Entering..." << std::endl;
+    datatools::utils::properties dummy_setup;
+    initialize_standalone (dummy_setup);
+    return;
   }
 
+  void i_vertex_generator::initialize_standalone (const datatools::utils::properties & setup_)
+  {
+    if (is_debug ()) std::cerr << "DEBUG: genvtx::i_vertex_generator::initialize_standalone: Entering..." << std::endl;
+    datatools::service::service_manager dummy_srvcmgr;
+    vg_dict_type dummy_dict;
+    initialize (setup_, dummy_srvcmgr, dummy_dict);
+    return;
+  }
+   
+  void i_vertex_generator::initialize_with_dictionary_only (const datatools::utils::properties & setup_,
+                                                            vg_dict_type & dictionary_)
+  {
+    if (is_debug ()) std::cerr << "DEBUG: genvtx::i_vertex_generator::initialize_with_dictionary_only: Entering..." << std::endl;
+    datatools::service::service_manager dummy_srvcmgr;
+    initialize (setup_, dummy_srvcmgr, dictionary_);
+    return;
+  }
+
+  void i_vertex_generator::initialize_with_service_only (const datatools::utils::properties & setup_,
+                                                         datatools::service::service_manager & service_manager_)
+  {
+    if (is_debug ()) std::cerr << "DEBUG: genvtx::i_vertex_generator::initialize_with_service_only: Entering..." << std::endl;
+    vg_dict_type dummy_dict;
+    initialize (setup_, service_manager_, dummy_dict);
+    return;
+  }
+
+  void i_vertex_generator::tree_dump (std::ostream & out_, 
+                                      const std::string & title_, 
+                                      const std::string & indent_, 
+                                      bool inherit_) const
+  {
+    namespace du = datatools::utils;
+    string indent;
+    if (! indent_.empty ()) indent = indent_;
+    if (! title_.empty ()) 
+      {
+        out_ << indent << title_ << endl;
+      }
+
+    {
+      out_ << indent << du::i_tree_dumpable::tag  
+           << "Initialized : " << (is_initialized() ? "Yes": "No") << endl;
+    }
+
+    {
+      out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)  
+           << "Debug : " << (is_debug() ? "Yes": "No") << endl;
+      
+    }
+
+    return;
+  }
+ 
 } // end of namespace genvtx
 
 // end of i_vertex_generator.cc

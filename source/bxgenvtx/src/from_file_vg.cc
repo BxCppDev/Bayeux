@@ -20,6 +20,8 @@ namespace genvtx {
 
   using namespace std;
 
+  GENVTX_VG_REGISTRATION_IMPLEMENT(from_file_vg,"genvtx::from_file_vg");
+
   const double from_file_vg::LENGTH_UNIT = 1.0;
 
   bool from_file_vg::is_open  () const
@@ -34,7 +36,9 @@ namespace genvtx {
   
   void from_file_vg::set_filename (const string & filename_)
   {
-    if (_open_)
+    _assert_lock ("genvtx::from_file_vg::set_filename",
+                  "Cannot change the vertex source file name for a source file is already opened !");
+   if (_open_)
       {
         throw logic_error ("genvtx::from_file_vg::set_filename: Cannot change source file name as source file is already opened !");
       }
@@ -90,6 +94,7 @@ namespace genvtx {
 
   void from_file_vg::set_length_unit (double lu_)
   {
+    _assert_lock ("genvtx::from_file_vg::set_length_unit"); 
     if (_length_unit_ <= 0.0)
       {
         throw logic_error ("genvtx::from_file_vg::set_length_unit: Invalid length unit !");   
@@ -102,9 +107,57 @@ namespace genvtx {
   {
     return _length_unit_;
   }
-  
-  // ctor:
-  from_file_vg::from_file_vg ()
+
+  GENVTX_VG_IS_INITIALIZED_IMPLEMENT_HEAD(from_file_vg)
+  {
+    return is_open ();
+  }
+
+  GENVTX_VG_INITIALIZE_IMPLEMENT_HEAD(from_file_vg,
+                                      configuration_,
+                                      service_manager_,
+                                      vgens_)
+  {
+    _assert_lock ("genvtx::from_file_vg::initialize");
+    using namespace std;
+    bool devel = false;
+    double lunit = LENGTH_UNIT;
+    string lunit_str;
+
+    // parameters of the cut:
+    string filename;
+
+    if (_filename_.empty ())
+      {
+        if (configuration_.has_key ("filename"))
+          {
+            filename = configuration_.fetch_string ("filename");
+          }
+        
+        if (configuration_.has_key ("length_unit"))
+          {
+            lunit_str = configuration_.fetch_string ("length_unit");
+            lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+          }
+        
+        set_length_unit (lunit);
+      }
+
+    _open_source ();
+    return;
+  }
+
+  GENVTX_VG_RESET_IMPLEMENT_HEAD(from_file_vg)
+  {
+    if (_open_)
+      {
+        _close_source ();
+      }    
+    return;
+  }
+
+  // Constructor :
+  GENVTX_VG_CONSTRUCTOR_IMPLEMENT_HEAD(from_file_vg)
   {
     _filename_ = "";
     _open_ = false;
@@ -113,7 +166,11 @@ namespace genvtx {
     return;
   }
   
-  from_file_vg::from_file_vg (const string & filename_)
+  // Destructor :
+  GENVTX_VG_DEFAULT_DESTRUCTOR_IMPLEMENT(from_file_vg)
+
+  /*
+  from_file_vg::from_file_vg (const std::string & filename_)
   {
     _filename_ = "";
     _open_ = false;
@@ -123,16 +180,7 @@ namespace genvtx {
     _open_source ();
     return;
   }
-  
-  // dtor:
-  from_file_vg::~from_file_vg ()
-  {
-    if (_open_)
-      {
-        _close_source ();
-      }
-    return;
-  }
+  */
 
   void from_file_vg::_read_next ()
   {
@@ -189,71 +237,28 @@ namespace genvtx {
     return;
   }
 
-  bool from_file_vg::has_next_vertex () const
-  {
-    return const_cast<from_file_vg*>(this)->_has_next ();
-  }
-
   bool from_file_vg::_has_next ()
   {
     return geomtools::is_valid (_next_);
   }
- 
-  void from_file_vg::_shoot_vertex (mygsl::rng & random_, 
-                                    geomtools::vector_3d & vertex_)
+
+  GENVTX_VG_HAS_NEXT_VERTEX_IMPLEMENT_HEAD(from_file_vg)
   {
+    return const_cast<from_file_vg*>(this)->_has_next ();
+  }
+ 
+  GENVTX_VG_SHOOT_VERTEX_IMPLEMENT_HEAD(from_file_vg,random_,vertex_)
+  {
+    if (! is_initialized ())
+      {
+        throw logic_error ("genvtx::from_file_vg::_shoot_vertex: Not initialized !"); 
+      }
     // here apply the length unit:
     vertex_ = _next_ * _length_unit_;
     _read_next ();
     return;
   }
 
-  /**********************************************************************/
-
-  // static method used within a vertex generator factory:
-  i_vertex_generator * 
-  from_file_vg::create (const datatools::utils::properties & configuration_, void * user_)
-  {
-    //cerr << "DEVEL: genvtx::from_file_vg::create: Entering..." << endl;
-    //configuration_.tree_dump (cerr, "from_file_vg::create: configuration:", "DEVEL: ");
-    using namespace std;
-    bool devel = false;
-    double lunit = LENGTH_UNIT;
-    string lunit_str;
-
-    // parameters of the cut:
-    string filename;
-
-    if (configuration_.has_key ("filename"))
-      {
-        filename = configuration_.fetch_string ("filename");
-      }
-
-    if (configuration_.has_key ("length_unit"))
-      {
-        lunit_str = configuration_.fetch_string ("length_unit");
-        lunit = datatools::utils::units::get_length_unit_from (lunit_str);
-      }
-
-    // create a new parameterized 'from_file_vg' instance:
-    from_file_vg * ptr = new from_file_vg (filename);
-    ptr->set_length_unit (lunit);
-    return ptr; 
-  }
-
-  string from_file_vg::vg_id () const
-  {
-    return "genvtx::from_file_vg";
-  }
-
-  vg_creator_type from_file_vg::vg_creator () const
-  {
-    return from_file_vg::create;
-  }
-
-  // register this creator:   
-  i_vertex_generator::creator_registration<from_file_vg> from_file_vg::g_cr_;
-  
 } // end of namespace genvtx
 
 // end of from_file_vg.cc

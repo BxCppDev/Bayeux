@@ -52,13 +52,20 @@ int main (int argc_, char ** argv_)
       unsigned long int rng_seed = 12345;
       mygsl::rng random (rng_id, rng_seed);
          
-      geomtools::tube c (2.0, 3.0, 4.0);
+      geomtools::tube t (2.0, 3.0, 4.0);
 
-      genvtx::tube_vg::g_debug = debug;
       genvtx::tube_vg vg;
-      vg.set_tube (c);
+      vg.set_debug (debug);
 
       {
+        geomtools::vector_3d pos; 
+        geomtools::rotation_3d rot;
+        geomtools::gnuplot_draw::draw_tube (cout, pos, rot, t);
+        cout << endl << endl;
+      }
+ 
+      {
+        vg.set_tube (t);
         vg.set_mode (genvtx::tube_vg::MODE_SURFACE);
         int surface_mask = 0;
         //surface_mask |= geomtools::tube::FACE_OUTER_SIDE;
@@ -66,9 +73,10 @@ int main (int argc_, char ** argv_)
         //surface_mask |= geomtools::tube::FACE_TOP;
         surface_mask |= geomtools::tube::FACE_INNER_SIDE;
         vg.set_surface_mask (surface_mask);
-        vg.set_skin_skip (0.10);
+        vg.set_skin_skip (0.30);
         vg.set_skin_thickness (0.20);
-        vg.dump ();
+        vg.initialize_simple ();
+        vg.tree_dump (clog, "Tube vertex generator (inner side/bottom surface)");
         size_t nshoots = 5000;
         geomtools::vector_3d vertex;     
         for (int i = 0; i < nshoots; i++)
@@ -78,12 +86,14 @@ int main (int argc_, char ** argv_)
           }
         cout << endl << endl;
       }
+      vg.reset ();
 
       {
-        vg.reset ();
+        vg.set_tube (t);
         vg.set_mode (genvtx::tube_vg::MODE_BULK);
         vg.set_skin_thickness (0.10);
-        vg.dump ();
+        vg.initialize_simple ();
+        vg.tree_dump (clog, "Tube vertex generator (bulk)");
         size_t nshoots = 5000;
         geomtools::vector_3d vertex;     
         for (int i = 0; i < nshoots; i++)
@@ -91,13 +101,6 @@ int main (int argc_, char ** argv_)
             vg.shoot_vertex (random, vertex);
             geomtools::gnuplot_draw::basic_draw_point (cout, vertex, true);
           }
-        cout << endl << endl;
-      }
-
-      {
-        geomtools::vector_3d pos; 
-        geomtools::rotation_3d rot;
-        geomtools::gnuplot_draw::draw_tube (cout, pos, rot, vg.get_tube ());
         cout << endl << endl;
       }
 

@@ -30,34 +30,16 @@ namespace utils {
 
 namespace genvtx {
   
-  class cylinder_vg : public i_vertex_generator
+  GENVTX_VG_CLASS_DECLARE(cylinder_vg)
   {
   public: 
-    static bool g_debug;
 
-    enum mode_t
-      {
-        MODE_BULK = 0,
-        MODE_SURFACE = 1,
-        MODE_DEFAULT = MODE_BULK
-      };
-    
-  private:
-    bool           _initialized_;
-    geomtools::cylinder _cylinder_;
-    int            _mode_;
-    int            _surface_mask_;
-    double         _skin_skip_;
-    double         _skin_thickness_;
-    double         _sum_weight_[3];
-
-  private:    
-
-    void _assert_lock_ (const std::string & where_);
+    static const int MODE_INVALID = -1;
+    static const int MODE_BULK    =  0;
+    static const int MODE_SURFACE =  1;
+    static const int MODE_DEFAULT = MODE_BULK;
 
   public: 
-
-    bool is_initialized () const;
 
     int get_mode () const;
 
@@ -77,17 +59,12 @@ namespace genvtx {
 
     const geomtools::cylinder & get_cylinder () const;
 
-    void dump (std::ostream & out_ = std::clog) const;
-
-    // ctor:
-    cylinder_vg ();
-
-    // dtor:
-    virtual ~cylinder_vg ();
-
-    void init ();
-
-    void reset ();
+    void tree_dump (std::ostream & out_ = std::clog, 
+                    const std::string & title_ = "", 
+                    const std::string & indent_ = "", 
+                    bool inherit_ = false) const;
+      
+    GENVTX_VG_INTERFACE_CTOR_DTOR (cylinder_vg);
 
   private:
 
@@ -95,22 +72,19 @@ namespace genvtx {
 
     void _reset_ ();
 
-  public:
+    void _set_defaults_ ();
 
-    virtual std::string vg_id () const;
-
-    virtual vg_creator_type vg_creator () const;
-
-    static i_vertex_generator * create (const datatools::utils::properties & configuration_, void * user_ = 0);
-  
-  protected:
-  
-    virtual void _shoot_vertex (mygsl::rng & random_, 
-                                geomtools::vector_3d & vertex_);
- 
   private:
 
-    static creator_registration<cylinder_vg> g_cr_;
+    bool           _initialized_;
+    geomtools::cylinder _cylinder_;
+    int            _mode_;
+    int            _surface_mask_;
+    double         _skin_skip_;
+    double         _skin_thickness_;
+    double         _sum_weight_[3];
+
+    GENVTX_VG_REGISTRATION_INTERFACE(cylinder_vg);
   
   };
 
