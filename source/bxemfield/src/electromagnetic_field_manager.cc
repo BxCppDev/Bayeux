@@ -114,7 +114,7 @@ namespace emfield {
                     << field_type << "' for field named '" << field_name << " !";
             throw std::logic_error (message.str ());
           }
-        base_electromagnetic_field::factory_register_type::factory_type & the_factory 
+        const base_electromagnetic_field::factory_register_type::factory_type & the_factory 
           = _factory_register_.get (field_type);
         if (devel)
           {
