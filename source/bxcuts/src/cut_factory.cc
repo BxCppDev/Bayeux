@@ -118,7 +118,7 @@ namespace cuts {
       }
     else
       {
-        cuts::i_cut::factory_register_type::factory_type & the_factory 
+        const cuts::i_cut::factory_register_type::factory_type & the_factory 
           = _factory_register_.get (a_cut_id);
         i_cut * new_cut_ptr = the_factory ();
         new_cut_ptr->initialize (a_cut_configuration,
