@@ -43,17 +43,19 @@
  * \endcode
  */
 
-// #define DATATOOLS_FACTORY_CLASS_TYPEID (T, K)      \
-// namespace datatools {                              \
-// namespace factory {                                \
-// template<>                                         \
-// struct typeid_defined< T > : boost::mpl::true_ {}; \
-// template<>                                         \
-// inline const char * id< T >(){                     \
-//     return K;                                      \
-// }                                                  \
-// } /* factory */                                    \
-// } /* datatools */                                  \
+//
+// #define DATATOOLS_FACTORY_CLASS_TYPEID (T, K)          
+// namespace datatools {                              
+// namespace factory {                      
+// template<>                                     
+// struct typeid_defined< T > : boost::mpl::true_ {}; 
+// template<>                                     
+// inline const char * id< T >(){               
+//     return K;                                  
+// }                                              
+// } /* factory */                          
+// } /* datatools */                                  
+//
 
 /// Alias for a factory register associated to a base class
 #define DATATOOLS_FACTORY_INTERFACE(BaseType)                                     \
@@ -62,20 +64,16 @@
   /**/
 
 /// Declaration of a system (allocator/functor) factory register as a static member of a base class and static accessor methods
-#define DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(BaseType)                          \
-    DATATOOLS_FACTORY_INTERFACE (BaseType)                                             \
-  public:                                                                              \
-    typedef boost::scoped_ptr<factory_register_type> scoped_factory_register_type;     \
-    static factory_register_type & grab_system_factory_register ();                    \
-    static const factory_register_type & get_system_factory_register ();               \
-                                                                                       \
-  private :                                                                            \
-  //static scoped_factory_register_type _g_datatools_factory_system_factory_register_; \
-  /**/
+#define DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(BaseType)                      \
+    DATATOOLS_FACTORY_INTERFACE (BaseType)                                         \
+  public:                                                                          \
+    typedef boost::scoped_ptr<factory_register_type> scoped_factory_register_type; \
+    static factory_register_type & grab_system_factory_register ();                \
+    static const factory_register_type & get_system_factory_register ();           \
+    /**/
 
 /// Instantiate the system (allocator/functor) factory register and its associated accessors
 #define DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(BaseType, RegisterLabel)                 \
-                                                                                                  \
   BaseType::factory_register_type & BaseType::grab_system_factory_register ()                     \
   {                                                                                               \
     static scoped_factory_register_type g_system_factory_register (0);                            \
@@ -85,7 +83,6 @@
       }                                                                                           \
     return *(g_system_factory_register.get ());                                                   \
   }                                                                                               \
-                                                                                                  \
   const BaseType::factory_register_type & BaseType::get_system_factory_register ()                \
   {                                                                                               \
     BaseType::factory_register_type & fr = BaseType::grab_system_factory_register ();             \
@@ -102,11 +99,11 @@
   BaseType::get_system_factory_register ()              \
   /**/
 
-// Automated registration for derived classes:
+/// Automated registration for derived classes:
 #define DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(BaseType, DerivedType)                             \
   private:                                                                                                      \
   static datatools::factory::_system_factory_registrator<BaseType,DerivedType> _g_system_factory_registration_; \
-  static std::string get_system_factory_auto_registration_id ();
+  static std::string get_system_factory_auto_registration_id ();                                                \
   /**/
 
 #define DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(BaseType, DerivedType, TypeId)                               \
@@ -116,14 +113,6 @@
     return std::string (TypeId);                                                                                               \
   }                                                                                                                            \
   /**/
-
-// #define DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(BaseType, DerivedType) \
-//   datatools::factory::_system_factory_registrator<BaseType,DerivedType> DerivedType::_g_system_factory_registration_ (BOOST_PP_STRINGIZE(DerivedType)); \
-//   std::string DerivedType::get_system_factory_auto_registration_id () \
-//   { \
-//     return std::string (BOOST_PP_STRINGIZE(DerivedType)); \
-//   } \
-//   /**/
 
 #endif // __datatools__utils__factory_macros_h
 
