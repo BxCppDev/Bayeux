@@ -222,6 +222,10 @@ if [ "x${option}" = "x--cflags" ]; then
 		dependency_version=$(echo ${dependency_info} | cut -d':' -f2)
 		dependency_name_lower=$(echo ${dependency_name} | tr "A-Z" "a-z" )
 		dependency_name_upper=$(echo ${dependency_name} | tr "a-z" "A-Z" )
+		dependency_no_config_script_ENVNAME="${dependency_name_upper}_NO_CONFIG_SCRIPT"
+		if [ "x${!dependency_no_config_script_ENVNAME}" = "x1" ]; then
+		    continue
+		fi
 		dependency_config_script="${dependency_name_lower}-config"
 		dependency_config_script_ENVNAME="${dependency_name_upper}_CONFIG_SCRIPT"
 		if [ "x${!dependency_config_script_ENVNAME}" != "x" ]; then
@@ -230,7 +234,7 @@ if [ "x${option}" = "x--cflags" ]; then
 		which ${dependency_config_script} >/dev/null 2>&1
 		if [ $? -eq 0 ]; then
 		    cflags_switch="--cflags"
-		    dependency_config_script_cflags_switch_ENVNAME="{dependency_name_upper}_CONFIG_SCRIPT_DEFAULT_CFLAGS_SWITCH"
+		    dependency_config_script_cflags_switch_ENVNAME="${dependency_name_upper}_CONFIG_SCRIPT_DEFAULT_CFLAGS_SWITCH"
 		    if [ "x${!dependency_config_script_cflags_switch_ENVNAME}" != "x" ]; then
 			###echo "DEVEL: ${script_name}: dependency_config_script_cflags_switch == '${!dependency_config_script_cflags_switch_ENVNAME}' !" 1>&2
 			cflags_switch="${!dependency_config_script_cflags_switch}"
@@ -317,6 +321,10 @@ if [ "x${option}" = "x--ldflags" ]; then
 		dependency_version=$(echo ${dependency_info} | cut -d':' -f2)
 		dependency_name_lower=$(echo ${dependency_name} | tr "A-Z" "a-z" )
 		dependency_name_upper=$(echo ${dependency_name} | tr "a-z" "A-Z" )
+		dependency_no_config_script_ENVNAME="${dependency_name_upper}_NO_CONFIG_SCRIPT"
+		if [ "x${!dependency_no_config_script_ENVNAME}" = "x1" ]; then
+		    continue
+		fi
 		dependency_config_script="${dependency_name_lower}-config"
 		dependency_config_script_ENVNAME="${dependency_name_upper}_CONFIG_SCRIPT"
 		if [ "x${!dependency_config_script_ENVNAME}" != "x" ]; then
