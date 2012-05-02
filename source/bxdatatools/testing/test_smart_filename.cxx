@@ -57,31 +57,41 @@ int main (int argc_, char ** argv_)
         sf1.dump ();
         cout << "  Filename = '" << sf1[0] << "'" << endl;
         sf1.store_list_of_filenames ("test_smart_filename.lis", false);
-        sf1.set ("test.log");
+        sf1.set_single ("test.log");
         sf1.dump ();
+
+        if (sf1.has_filename ("test.log"))
+          {
+            clog << "Has filename '" << "test.log" << "'." << endl;
+          }
       }
 
       {
         cout << endl << "*** List of filenames : " << endl;
         smart_filename sf2;
         smart_filename::make_list (sf2);
-        sf2.add ("test_a.data");
-        sf2.add ("test_b.data");
-        sf2.add ("test_c.data");
-        sf2.add ("${HOME}/test_d.data");
-        sf2.add ("${HOME}/test_e.data");
-        sf2.add ("/tmp/test_f.data");
-        sf2.add ("~/test_g.data");
+        sf2.add_to_list ("test_a.data");
+        sf2.add_to_list ("test_b.data");
+        sf2.add_to_list ("test_c.data");
+        sf2.add_to_list ("${HOME}/test_d.data");
+        sf2.add_to_list ("${HOME}/test_e.data");
+        sf2.add_to_list ("/tmp/test_f.data");
+        sf2.add_to_list ("~/test_g.data");
         sf2.dump ();
-        sf2.add ("~/test_h.data");
-        sf2.add ("~/test_i.data");
-        sf2.add ("~/test_j.data");
+        sf2.add_to_list ("~/test_h.data");
+        sf2.add_to_list ("~/test_i.data");
+        sf2.add_to_list ("~/test_j.data");
         for (int i = 0; i < sf2.size (); ++i)
           {
             cout << "  Filename = '" << sf2[i] << "'" << endl;
           }
         sf2.store_list_of_filenames ("test_smart_filename.lis", true);
-      }
+
+        if (sf2.has_filename ("${HOME}/test_d.data"))
+          {
+            clog << "Has filename '" << "${HOME}/test_d.data" << "'." << endl;
+          }
+        }
 
       {
         cout << endl << "*** Incremental filename : " << endl;
@@ -101,6 +111,10 @@ int main (int argc_, char ** argv_)
             cout << "  Filename = '" << sf3[i] << "'" << endl;
           }
         sf3.store_list_of_filenames ("test_smart_filename.lis", true);
+        if (sf3.has_filename ("/tmp/${USER}/file_3.data"))
+          {
+            clog << "Has filename '" << "/tmp/${USER}/file_3.data" << "'." << endl;
+          }
       }
 
       {
@@ -112,7 +126,11 @@ int main (int argc_, char ** argv_)
           {
             cout << "  Filename = '" << sf4[i] << "'" << endl;
           }
-      }
+        if (sf4.has_filename ("/tmp/${USER}/file_6.data"))
+          {
+            clog << "Has filename '" << "/tmp/${USER}/file_6.data" << "'." << endl;
+          }
+       }
 
       {
         cout << endl << "*** Incremental filename (2) : " << endl;
@@ -131,7 +149,11 @@ int main (int argc_, char ** argv_)
           {
             cout << "  Filename = '" << sf5[i] << "'" << endl;
           }
-      }
+        if (! sf5.has_filename ("/tmp/${USER}/file2_1.data"))
+          {
+            clog << "Has no filename '" << "/tmp/${USER}/file2_1.data" << "'." << endl;
+          }
+     }
 
       {
         cout << endl << "*** Smart filename (from config file) : " << endl;
@@ -142,6 +164,10 @@ int main (int argc_, char ** argv_)
         properties::read_config (file6, config6);
         sf6.initialize (config6);
         sf6.dump ();
+        if (sf6.has_filename ("${DATATOOLS_ROOT}/ChangeLog"))
+          {
+            clog << "Has filename '" << "${DATATOOLS_ROOT}/ChangeLog" << "'." << endl;
+          }
       }
 
       {
@@ -153,7 +179,15 @@ int main (int argc_, char ** argv_)
         properties::read_config (file7, config7);
         sf7.initialize (config7);
         sf7.dump ();
-      }
+        if (sf7.has_filename ("/tmp/mauger/file_3.data"))
+          {
+            clog << "Has filename '" << "/tmp/mauger/file_3.data" << "'." << endl;
+          }
+        if (! sf7.has_filename ("/tmp/mauger/file_11.data"))
+          {
+            clog << "Has no filename '" << "/tmp/mauger/file_11.data" << "'." << endl;
+          }
+       }
 
       {
         cout << endl << "*** Smart filename (from config file) : " << endl;
@@ -164,6 +198,10 @@ int main (int argc_, char ** argv_)
         properties::read_config (file8, config8);
         sf8.initialize (config8);
         sf8.dump ();
+        if (sf8.has_filename ("test_a.data"))
+          {
+            clog << "Has filename '" << "test_a.data" << "'." << endl;
+          }
       }
 
       {
@@ -175,7 +213,27 @@ int main (int argc_, char ** argv_)
         properties::read_config (file9, config9);
         sf9.initialize (config9);
         sf9.dump ();
-      }
+        if (! sf9.has_filename ("/tmp/${USER}/run_1.data"))
+          {
+            clog << "Has no filename '" << "/tmp/${USER}/run_1.data" << "'." << endl;
+          }
+        if (! sf9.has_filename ("/tmp/${USER}/run_2.data"))
+          {
+            clog << "Has no filename '" << "/tmp/${USER}/run_2.data" << "'." << endl;
+          }
+        if (sf9.has_filename ("/tmp/${USER}/run_3.data"))
+          {
+            clog << "Has filename '" << "/tmp/${USER}/run_3.data" << "'." << endl;
+          }
+        if (sf9.has_filename ("/tmp/${USER}/run_7.data"))
+          {
+            clog << "Has filename '" << "/tmp/${USER}/run_7.data" << "'." << endl;
+          }
+         if (! sf9.has_filename ("/tmp/${USER}/run_8.data"))
+          {
+            clog << "Has no filename '" << "/tmp/${USER}/run_8.data" << "'." << endl;
+          }
+     }
 
       {
         cout << endl << "*** Smart filename (from config file) : " << endl;
@@ -186,6 +244,48 @@ int main (int argc_, char ** argv_)
         properties::read_config (file10, config10);
         sf10.initialize (config10);
         sf10.dump ();
+        if (! sf10.has_filename ("/tmp/${USER}/run_11.data"))
+          {
+            clog << "Has no filename '" << "/tmp/${USER}/run_11.data" << "'." << endl;
+          }
+        if (sf10.has_filename ("/tmp/${USER}/run_10.data"))
+          {
+            clog << "Has filename '" << "/tmp/${USER}/run_10.data" << "'." << endl;
+          }
+        if (sf10.has_filename ("/tmp/${USER}/run_0.data"))
+          {
+            clog << "Has filename '" << "/tmp/${USER}/run_0.data" << "'." << endl;
+          }
+       }
+
+      {
+        cout << endl << "*** Unranged incremental filename : " << endl;
+        smart_filename sf11;
+        
+        smart_filename::make_unranged_incremental (sf11, 
+                                                   "/tmp/${USER}",
+                                                   "head_",
+                                                   ".data",
+                                                   0,
+                                                   +1, 
+                                                   "_tail",
+                                                   4, 
+                                                   true);
+        
+        sf11.dump ();
+        for (int i = 0; i < 25; ++i)
+          {
+            cout << "  Filename = '" << sf11[i] << "'" << endl;
+          }
+        sf11.store_list_of_filenames ("test_smart_filename.lis", true);
+        if (! sf11.has_filename ("/tmp/${USER}/head_0_tail.data"))
+          {
+            clog << "Has no filename '" << "/tmp/${USER}/head_0_tail.data" << "'." << endl;
+          }
+        if (sf11.has_filename ("/tmp/${USER}/head_0000_tail.data"))
+          {
+            clog << "Has filename '" << "/tmp/${USER}/head_0000_tail.data" << "'." << endl;
+          }
       }
 
     }

@@ -23,6 +23,7 @@
  * 
  * 
  * Description: 
+ *
  *   Automated incremental filename
  * 
  * History: 
@@ -44,13 +45,11 @@ namespace datatools {
 
   namespace utils {
 
-    //using   namespace std;
-
     class smart_filename
     {
     public: 
 
-      typedef std::vector<std::string> list_type;
+      typedef std::vector<std::string>  list_type;
       typedef list_type::const_iterator const_iterator;
  
       bool is_debug () const;
@@ -69,7 +68,13 @@ namespace datatools {
       
       bool is_valid () const;
 
+      bool is_ranged () const;
+
+      bool is_expand_path () const;
+
       size_t size () const;
+
+      size_t current_size () const;
 
       const_iterator begin () const;
 
@@ -77,13 +82,26 @@ namespace datatools {
 
       const std::string & operator[] (int a_index) const;
 
+      const std::string & get_filename (int a_index) const;
+
+      bool has_filename (const std::string & filename_, 
+                         bool expand_path_ = true) const;
+
       // single mode :
       void set (const std::string & a_filename);
+
+      // single mode :
+      void set_single (const std::string & a_filename);
 
       // list mode :
       void add (const std::string & a_filename);
 
-      void reset ();    
+      // list mode :
+      void add_to_list (const std::string & a_filename);
+
+      void reset ();  
+
+      void build_incremental_filename (int increment_index_, std::string & filename_) const;
 
     protected:  
      
@@ -99,6 +117,9 @@ namespace datatools {
 
     public: 
 
+      static const int         MODE_INCREMENTAL_UNRANGED          = -1;
+      static const int         MODE_INCREMENTAL_DEFAULT_START     =  0;
+      static const int         MODE_INCREMENTAL_DEFAULT_INCREMENT =  1;
       static const std::string MODE_SINGLE_LABEL;
       static const std::string MODE_LIST_LABEL;
       static const std::string MODE_INCREMENTAL_LABEL;
@@ -106,9 +127,9 @@ namespace datatools {
       enum mode_t
         {
           MODE_INVALID     =  0,
-          MODE_SINGLE      =  1,
-          MODE_LIST        =  2,
-          MODE_INCREMENTAL =  4
+          MODE_SINGLE      =  0x1,
+          MODE_LIST        =  0x2,
+          MODE_INCREMENTAL =  0x4
         };
 
       // ctor:
@@ -118,14 +139,17 @@ namespace datatools {
       virtual ~smart_filename ();
     
       static void make_single (smart_filename & a_smart_filename,
-                               const std::string & a_filename);
+                               const std::string & a_filename,
+                               bool a_expand_path = true);
       
       static void make_list (smart_filename & a_smart_filename,
-                             bool a_allow_duplication = false);
+                             bool a_allow_duplication = false,
+                             bool a_expand_path = true);
 
       static void make_list (smart_filename & a_smart_filename,
                              const std::string & a_list_file, 
-                             bool a_allow_duplication = false);
+                             bool a_allow_duplication = false,
+                             bool a_expand_path = true);
 
    
       static void make_incremental (smart_filename & a_smart_filename,
@@ -134,11 +158,24 @@ namespace datatools {
                                     const std::string & a_extension,
                                     int a_stopping_index,
                                     int a_starting_index = 0,
-                                    int a_increment_index = 1);
-
+                                    int a_increment_index = 1,
+                                    const std::string & a_suffix = "",
+                                    int a_incremental_index_ndigit = 0,
+                                    bool a_expand_path = true);
+    
+      static void make_unranged_incremental (smart_filename & a_smart_filename,
+                                             const std::string & a_path, 
+                                             const std::string & a_prefix,
+                                             const std::string & a_extension,
+                                             int a_starting_index = 0,
+                                             int a_increment_index = 1,
+                                             const std::string & a_suffix = "",
+                                             int a_incremental_index_ndigit = 0,
+                                             bool a_expand_path = true);
+ 
       void initialize (const properties & a_config);
 
-      void print_list_of_filenames (std::ostream & a_out) const;
+      void print_list_of_filenames (std::ostream & a_out = std::clog) const;
 
       void store_list_of_filenames (const std::string & a_list_filename, 
                                     bool a_append = true) const;
@@ -147,11 +184,21 @@ namespace datatools {
 
     private: 
 
-      bool      _debug_;
-      uint32_t  _mode_;
-      list_type _list_;
-      bool      _list_allow_duplication_;
-     
+      bool        _debug_;
+      uint32_t    _mode_;
+      bool        _expand_path_;
+      list_type   _list_;
+      bool        _list_allow_duplication_;
+      bool        _ranged_;
+      std::string _incremental_path_;
+      std::string _incremental_prefix_;
+      std::string _incremental_suffix_;
+      std::string _incremental_extension_;
+      int32_t     _incremental_starting_index_;
+      int32_t     _incremental_stopping_index_;
+      int32_t     _incremental_increment_;
+      uint32_t    _incremental_index_ndigit_;
+
     };
 
   }  // end of namespace utils
