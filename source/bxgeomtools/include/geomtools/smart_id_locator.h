@@ -28,8 +28,6 @@
 
 namespace geomtools {
 
-  using namespace std;
-
   class geom_map;
 
   class smart_id_locator : public i_locator
@@ -62,18 +60,18 @@ namespace geomtools {
                       int mode_ = MODE_DEFAULT);
     
     smart_id_locator (const geom_map & gmap_, 
-                      const string & rules_,
+                      const std::string & rules_,
                       int mode_ = MODE_DEFAULT);
 
     virtual ~smart_id_locator ();
 
     void initialize (uint32_t type_, int mode_ = MODE_DEFAULT);
 
-    void initialize (const string & selection_rules_, int mode_ = MODE_DEFAULT);
+    void initialize (const std::string & selection_rules_, int mode_ = MODE_DEFAULT);
 
     void reset ();
 
-    const list<const geom_info *> & get_ginfos () const;
+    const std::list<const geom_info *> & get_ginfos () const;
 
   protected:
 
@@ -90,20 +88,20 @@ namespace geomtools {
                                          double tolerance_ = i_object_3d::USING_PROPER_TOLERANCE) const;
 
 
-    void dump (ostream & out_ = clog) const;
+    void dump (std::ostream & out_ = std::clog) const;
 
   private:
 
-    bool              _debug_;
-    bool              _initialized_;
-    int               _mode_;
-    uint32_t          _type_;
-    id_selector       _idsel_;
-    const geom_map *  _gmap_;
+    bool              _debug_; /// Debug flag
+    bool              _initialized_; /// Initialization flag
+    int               _mode_; /// Running mode
+    uint32_t          _type_; /// Geometry type associated to a given category
+    id_selector       _idsel_; /// Geometry ID selector 
+    const geom_map *  _gmap_; /// Geometry map handle
 
-    //! Optimization data
-    list<const geom_info *> _ginfos_;
-    const geom_info * _last_found_;
+    // Optimization data
+    std::list<const geom_info *> _ginfos_; /// List of precomputed geometry informations
+    const geom_info * _last_found_; /// Handle to the last found object
 
   };
 
