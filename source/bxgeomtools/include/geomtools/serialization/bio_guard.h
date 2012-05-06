@@ -56,7 +56,6 @@ namespace geomtools {
     bio_guard bio_guard::_g_trigger_link_guard_;
   } // end namespace serialization
 } // end namespace geomtools
-
 #endif // GEOMTOOLS_WITH_BIO != 1		  				
 
 #endif // __geomtools__serialization__bio_guard_h
