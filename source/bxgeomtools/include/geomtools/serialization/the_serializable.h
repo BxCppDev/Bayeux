@@ -8,7 +8,6 @@
 #include <boost/serialization/export.hpp>
 #include <geomtools/serialization/the_serializable.ipp>
 
-
 DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE_ALL(geomtools::vector_2d)
 
 DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE_ALL(geomtools::vector_3d)
@@ -35,17 +34,6 @@ BOOST_CLASS_EXPORT_IMPLEMENT(geomtools::placement)
 
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(geomtools::blur_spot)
 BOOST_CLASS_EXPORT_IMPLEMENT(geomtools::blur_spot) 
-
-namespace geomtools {
-  namespace serialization {
-    struct _link_guard_
-    {
-      _link_guard_ ();
-      ~_link_guard_ ();
-      static _link_guard_ & instance ();
-    };
-  } // end namespace serialization
-} // end namespace geomtools
 
 #endif // __geomtools__the_serializable_h__
 

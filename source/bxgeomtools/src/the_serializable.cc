@@ -2,34 +2,55 @@
 /* the_serializable.cc  
  */ 
 
+// Load the Boost/Serialization instantiation and registration code :
 #include <geomtools/serialization/the_serializable.h>
 
+// Load the link guard definition :
+#include <geomtools/serialization/link_guard.h>
+
+#include <cstdlib>
 #include <iostream>
 #include <boost/scoped_ptr.hpp>
 
+// Load the link guard implementation :
 namespace geomtools {
   namespace serialization {
-    
-    _link_guard_::_link_guard_ ()
+
+    bool dynamic_link_guard::_g_devel_ = false;
+
+    dynamic_link_guard::dynamic_link_guard ()
     {
-      clog << "geomtools::serialization::_link_guard_::CTOR: Ok." << std::endl;
+      if (getenv ("GEOMTOOLS_SERIALIZATION_DEVEL") != NULL)
+        {
+          dynamic_link_guard::_g_devel_ = true;
+        }
+      if (dynamic_link_guard::_g_devel_)
+        {
+          std::clog << "geomtools::serialization::dynamic_link_guard::CTOR: Ok." << std::endl;
+        }
       return;
     }
 
-    _link_guard_::~_link_guard_ ()
+    dynamic_link_guard::~dynamic_link_guard ()
     {
-      clog << "geomtools::serialization::_link_guard_::DTOR: Ok." << std::endl;
+      if (dynamic_link_guard::_g_devel_)
+        {
+          std::clog << "geomtools::serialization::dynamic_link_guard::DTOR: Ok." << std::endl;
+        }
       return;
     }
 
-    _link_guard_ & _link_guard_::instance ()
+    dynamic_link_guard & dynamic_link_guard::instance ()
     {
-      static boost::scoped_ptr<_link_guard_> g_global_guard (0);
+      static boost::scoped_ptr<dynamic_link_guard> g_global_guard (0);
       if ( g_global_guard.get () == 0)
         {
-          g_global_guard.reset (new _link_guard_);
+          g_global_guard.reset (new dynamic_link_guard);
         }
-      clog << "geomtools::serialization::_link_guard_::instance: Ok." << std::endl;
+      if (dynamic_link_guard::_g_devel_)
+        {
+          std::clog << "geomtools::serialization::dynamic_link_guard::instance: Ok." << std::endl;
+        }
       return *g_global_guard.get ();
     }
 

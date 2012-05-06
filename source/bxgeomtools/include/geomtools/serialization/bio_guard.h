@@ -1,3 +1,4 @@
+// -*- mode: c++; -*-
 /* geomtools::serialization::bio_guard.h */
 /* 
  * Description :
@@ -31,11 +32,31 @@
 #ifndef __geomtools__serialization__bio_guard_h
 #define __geomtools__serialization__bio_guard_h 1
 
+// This header must only be included from the source code of a program, not a library. 
+
 #include <geomtools/geomtools_config.h>
+#include <geomtools/serialization/link_guard.h>	
 
 #if GEOMTOOLS_WITH_BIO != 1					
 #warning This executable must be built with its own geomtools Boost/Serialization code. 
 #include <geomtools/serialization/the_serializable.h>	
+#else
+#warning This executable must ensure the geomtools Boost/Serialization library is loaded. 
+namespace geomtools {
+  namespace serialization {
+    struct bio_guard
+    {
+      bio_guard ()
+      {
+	dynamic_link_guard & dlg = geomtools::serialization::dynamic_link_guard::instance ();
+	return;
+      }
+      static bio_guard _g_trigger_link_guard_;
+    };
+    bio_guard bio_guard::_g_trigger_link_guard_;
+  } // end namespace serialization
+} // end namespace geomtools
+
 #endif // GEOMTOOLS_WITH_BIO != 1		  				
 
 #endif // __geomtools__serialization__bio_guard_h
