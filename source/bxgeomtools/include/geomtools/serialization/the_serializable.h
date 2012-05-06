@@ -36,6 +36,17 @@ BOOST_CLASS_EXPORT_IMPLEMENT(geomtools::placement)
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(geomtools::blur_spot)
 BOOST_CLASS_EXPORT_IMPLEMENT(geomtools::blur_spot) 
 
+namespace geomtools {
+  namespace serialization {
+    struct _link_guard_
+    {
+      _link_guard_ ();
+      ~_link_guard_ ();
+      static _link_guard_ & instance ();
+    };
+  } // end namespace serialization
+} // end namespace geomtools
+
 #endif // __geomtools__the_serializable_h__
 
 /* end of geomtools::the_serializable.h */
