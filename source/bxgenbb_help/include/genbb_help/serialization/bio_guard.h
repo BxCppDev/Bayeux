@@ -32,10 +32,27 @@
 #define __genbb_help__serialization__bio_guard_h 1
 
 #include <genbb_help/genbb_help_config.h>
+#include <genbb_help/serialization/link_guard.h>	
 
 #if GENBB_HELP_WITH_BIO != 1					
 #warning This executable must be built with its own genbb_help Boost/Serialization code. 
 #include <genbb_help/serialization/the_serializable.h>	
+#else
+#warning This executable must ensure the genbb Boost/Serialization library is loaded. 
+namespace genbb {
+  namespace serialization {
+    struct bio_guard
+    {
+      bio_guard ()
+      {
+	dynamic_link_guard & dlg = genbb::serialization::dynamic_link_guard::instance ();
+	return;
+      }
+      static bio_guard _g_trigger_link_guard_;
+    };
+    bio_guard bio_guard::_g_trigger_link_guard_;
+  } // end namespace serialization
+} // end namespace genbb
 #endif // GENBB_HELP_WITH_BIO != 1		  				
 
 #endif // __genbb_help__serialization__bio_guard_h
