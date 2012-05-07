@@ -45,7 +45,7 @@ namespace genbb {
     {
       bio_guard ()
       {
-	dynamic_link_guard & dlg = genbb::serialization::dynamic_link_guard::instance ();
+	dynamic_link_guard & dlg = ::genbb::serialization::dynamic_link_guard::instance ();
 	return;
       }
       static bio_guard _g_trigger_link_guard_;
