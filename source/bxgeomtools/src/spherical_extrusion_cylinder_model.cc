@@ -377,6 +377,7 @@ namespace geomtools {
     double rs = extrusion_sphere.get_r ();
     double a = rs - c;
     double re = sqrt (rs * rs - a * a);
+    /*
     cerr << "DEVEL : geomtools::spherical_extrusion_cylinder_model::gnuplot_draw_user_function: "
          << " zcyl = " << zcyl << endl;
     cerr << "DEVEL : geomtools::spherical_extrusion_cylinder_model::gnuplot_draw_user_function: "
@@ -387,7 +388,7 @@ namespace geomtools {
          << " a = " << a << endl;
     cerr << "DEVEL : geomtools::spherical_extrusion_cylinder_model::gnuplot_draw_user_function: "
          << " h = " << h << endl;
-
+    */
     bool draw_extrusion = true;
     if (draw_extrusion)
       {
