@@ -5,6 +5,7 @@
 #include <geomtools/gnuplot_draw.h>
 #include <cmath>
 #include <stdexcept>
+#include <boost/scoped_ptr.hpp>
 
 #include <geomtools/i_placement.h>
 #include <geomtools/i_object_3d.h>
@@ -37,6 +38,31 @@ namespace geomtools {
   bool   gnuplot_draw::g_using_color   = false;
   double gnuplot_draw::g_current_color = 1.0;
 
+  void gnuplot_draw::xyz_range::reset ()
+  {
+    x_range.reset ();
+    y_range.reset ();
+    z_range.reset ();
+    return;
+  }
+
+  gnuplot_draw::xyz_range * gnuplot_draw::xyz_range::instance (char mode_)
+  {
+    static boost::scoped_ptr<gnuplot_draw::xyz_range> _g_instance (0);
+    if (mode_ == 'i')
+      {
+        if (_g_instance.get () == NULL)
+          {
+            _g_instance.reset (new gnuplot_draw::xyz_range);
+          }
+      }
+    else if (mode_ == 'c') 
+      {
+        _g_instance.reset (0);
+      }
+    return _g_instance.get ();
+  }
+
   void 
   gnuplot_draw::basic_draw_point (std::ostream & out_, 
                                   double x_, double y_, double z_)
@@ -63,6 +89,12 @@ namespace geomtools {
   {
     double color = color_;
     out_.precision (15);
+    if (xyz_range::instance ('t') != NULL)
+      {
+        xyz_range::instance ('i')->x_range.add (x_);
+        xyz_range::instance ('i')->y_range.add (y_);
+        xyz_range::instance ('i')->z_range.add (z_);
+      }
     out_ << x_ << ' ' 
          << y_ << ' ' 
          << z_ << ' ' 
@@ -100,6 +132,12 @@ namespace geomtools {
     else
       {
         out_.precision (15);
+        if (xyz_range::instance ('t') != NULL)
+          {
+            xyz_range::instance ('i')->x_range.add (x_);
+            xyz_range::instance ('i')->y_range.add (y_);
+            xyz_range::instance ('i')->z_range.add (z_);
+          }
         out_ << x_ << ' ' 
              << y_ << ' ' 
              << z_;

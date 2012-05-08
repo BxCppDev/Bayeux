@@ -26,6 +26,7 @@ namespace geomtools {
   const string gnuplot_drawer::VIEW_2D_XZ = "xz";
   const string gnuplot_drawer::VIEW_2D_YZ = "yz";
   const string gnuplot_drawer::VIEW_3D    = "xyz";
+  const string gnuplot_drawer::VIEW_3D_FREE_SCALE = "xyz_free";
   const string gnuplot_drawer::DEFAULT_VIEW = gnuplot_drawer::VIEW_3D;
 
   const int    gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT = 1000;
@@ -45,6 +46,35 @@ namespace geomtools {
     oss = 0;
     return;
   }
+
+  gnuplot_drawer::range::range (char axis_)
+  {
+    axis = 0;
+    set_axis (axis_);
+    min = std::numeric_limits<double>::quiet_NaN ();
+    max = std::numeric_limits<double>::quiet_NaN ();
+    return;
+  }
+
+  void gnuplot_drawer::range::set_axis (char axis_)
+  {
+    axis = axis_;
+    return;
+  }
+
+  void gnuplot_drawer::range::reset ()
+  {
+    min = std::numeric_limits<double>::quiet_NaN ();
+    max = std::numeric_limits<double>::quiet_NaN ();
+    return;
+  }
+ 
+  void gnuplot_drawer::range::print (std::ostream & out_) const
+  {
+    out_ << "set " << axis << "range [" << min << ':' << max << "]";
+    return;
+  }
+
 
   void gnuplot_drawer::wait_for_key ()
   {
@@ -101,7 +131,7 @@ namespace geomtools {
 
   bool gnuplot_drawer::is_view_3d () const
   {
-    return _mode_ == VIEW_3D;
+    return _view_ == VIEW_3D;
   }
 
   bool gnuplot_drawer::is_solid () const
@@ -153,12 +183,27 @@ namespace geomtools {
     return *(cs.oss);
   }
 
+  void gnuplot_drawer::set_labels (bool labels_)
+  {
+    _labels_ = labels_;
+    return;
+  }
+  
+  bool gnuplot_drawer::use_labels () const
+  {
+    return _labels_;
+  }
+
   // ctor:
   gnuplot_drawer::gnuplot_drawer ()
   {
     _initialized_ = false;
     _view_ = gnuplot_drawer::DEFAULT_VIEW;
     _mode_ = gnuplot_drawer::DEFAULT_MODE;
+    _labels_ = true;
+    _xrange_.set_axis ('x');
+    _yrange_.set_axis ('y');
+    _zrange_.set_axis ('z');
     return;
   }
   
@@ -199,6 +244,7 @@ namespace geomtools {
     reset_cstreams ();
     _view_ = gnuplot_drawer::DEFAULT_VIEW;
     _mode_ = gnuplot_drawer::DEFAULT_MODE;
+    _labels_ = true;
     _initialized_ = false;
     return;
   }
@@ -319,13 +365,12 @@ namespace geomtools {
                   {
                     mode |= gnuplot_draw::MODE_WIRED_CYLINDER;
                   }
-
                 gnuplot_draw::draw (colored_oss, 
                                     p_,
                                     log.get_shape (),
                                     mode);
-                
-              }
+
+               }
             else
               {
                 if (devel)
@@ -487,11 +532,46 @@ namespace geomtools {
 
     gnuplot_draw::g_current_color = color;
     gnuplot_draw::g_current_color = former_color;
-
+               
+    // Instantiate a XYZ range computer :
+    gnuplot_draw::xyz_range * xyzr = gnuplot_draw::xyz_range::instance ('i');
+    
+    
     if (shown)
       {
         gnuplot_drawer::_draw_ (log_, p_, max_display_level);
       }
+    
+    _xrange_.min = xyzr->x_range.get_min ();
+    _xrange_.max = xyzr->x_range.get_max ();
+    _yrange_.min = xyzr->y_range.get_min ();
+    _yrange_.max = xyzr->y_range.get_max ();
+    _zrange_.min = xyzr->z_range.get_min ();
+    _zrange_.max = xyzr->z_range.get_max ();
+
+    double dx = _xrange_.max - _xrange_.min;
+    double dy = _yrange_.max - _yrange_.min;
+    double dz = _zrange_.max - _zrange_.min;
+    double amax = std::max (dx, dy);
+    amax = std::max (amax, dz);
+    amax += 1.1;
+    _xrange_.min = xyzr->x_range.get_median () - 0.5 * amax;
+    _xrange_.max = xyzr->x_range.get_median () + 0.5 * amax;
+    _yrange_.min = xyzr->y_range.get_median () - 0.5 * amax;
+    _yrange_.max = xyzr->y_range.get_median () + 0.5 * amax;
+    _zrange_.min = xyzr->z_range.get_median () - 0.5 * amax;
+    _zrange_.max = xyzr->z_range.get_median () + 0.5 * amax;
+
+    std::clog << "X-range = ";
+    _xrange_.print (std::clog);
+    std::clog << "\nY-range = ";
+    _yrange_.print (std::clog);
+    std::clog << "\nZ-range = ";
+    _zrange_.print (std::clog);
+    std::clog << "\nMax width = " << amax << std::endl;
+
+    // Clear the XYZ range computer :
+    gnuplot_draw::xyz_range::instance ('c');
 
     for (cstreams_col_type::iterator i = _cstreams_.begin ();
          i != _cstreams_.end ();
@@ -518,6 +598,8 @@ namespace geomtools {
     string view = _view_;
 
     Gnuplot g1 ("lines");       
+    g1.cmd ("set terminal x11 size 500,500");
+    g1.cmd ("set size ratio -1");
     ostringstream title_oss;
     title_oss << "Logical '" << name_ << "'";
     g1.set_title (title_oss.str ());
@@ -528,24 +610,46 @@ namespace geomtools {
     int col2 = 2;
     int col3 = 3;
     size_t plot_dim = 2;
-
+    bool labels = _labels_;
+    if (! labels)
+      {
+        g1.cmd ("unset border"); 
+        g1.cmd ("unset xtics"); 
+        g1.cmd ("unset ytics"); 
+        g1.cmd ("unset ztics");
+      }
     if (view == gnuplot_drawer::VIEW_2D_XY)
       {
-        g1.set_xlabel ("x").set_ylabel ("y");
+        if (labels)
+          {
+            g1.set_xlabel ("x").set_ylabel ("y");
+            g1.cmd ("set xtics"); 
+            g1.cmd ("set ytics"); 
+          }
         col1 = 1;
         col2 = 2;
       }
 
     if (view == gnuplot_drawer::VIEW_2D_XZ)
       {
-        g1.set_xlabel ("x").set_ylabel ("z");
+        if (labels)
+          {
+            g1.set_xlabel ("x").set_ylabel ("z");
+            g1.cmd ("set xtics"); 
+            g1.cmd ("set ztics"); 
+          }
         col1 = 1;
         col2 = 3;
       }
 
     if (view == gnuplot_drawer::VIEW_2D_YZ)
       {
-        g1.set_xlabel ("y").set_ylabel ("z");
+        if (labels)
+          {
+            g1.set_xlabel ("y").set_ylabel ("z");
+            g1.cmd ("set ytics"); 
+            g1.cmd ("set ztics"); 
+          }
         col1 = 2;
         col2 = 3;
       }
@@ -553,7 +657,49 @@ namespace geomtools {
     if (view == gnuplot_drawer::VIEW_3D)
       {
         plot_dim = 3;
-        g1.set_xlabel ("x").set_ylabel ("y").set_zlabel ("z");
+        g1.cmd ("set view equal xyz");
+        {
+          std::ostringstream xr_oss;
+          _xrange_.print (xr_oss);
+          g1.cmd (xr_oss.str ()); 
+        }
+        {
+          std::ostringstream yr_oss;
+          _yrange_.print (yr_oss);
+          g1.cmd (yr_oss.str ()); 
+        }
+        {
+          std::ostringstream zr_oss;
+          _zrange_.print (zr_oss);
+          g1.cmd (zr_oss.str ()); 
+        }
+        //g1.cmd ("set iso 100, 100"); 
+        //g1.cmd ("set view 30,60,1."); 
+        std::ostringstream cmd_oss;
+        cmd_oss << "set xyplane at " << _zrange_.min;
+        g1.cmd (cmd_oss.str ());
+        if (labels)
+          {
+            g1.set_xlabel ("x").set_ylabel ("y").set_zlabel ("z");
+            g1.cmd ("set xtics"); 
+            g1.cmd ("set ytics"); 
+            g1.cmd ("set ztics"); 
+          }
+        col1 = 1;
+        col2 = 2;
+        col3 = 3;
+      }
+
+    if (view == gnuplot_drawer::VIEW_3D_FREE_SCALE)
+      {
+        plot_dim = 3;
+        if (labels)
+          {
+            g1.set_xlabel ("x").set_ylabel ("y").set_zlabel ("z");
+            g1.cmd ("set xtics"); 
+            g1.cmd ("set ytics"); 
+            g1.cmd ("set ztics"); 
+          }
         col1 = 1;
         col2 = 2;
         col3 = 3;

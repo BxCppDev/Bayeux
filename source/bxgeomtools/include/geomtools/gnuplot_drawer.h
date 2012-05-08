@@ -37,6 +37,7 @@ namespace geomtools {
     static const std::string VIEW_2D_XZ;
     static const std::string VIEW_2D_YZ;
     static const std::string VIEW_3D;
+    static const std::string VIEW_3D_FREE_SCALE;
     static const std::string DEFAULT_VIEW;
 
     static const int    DISPLAY_LEVEL_NO_LIMIT;
@@ -76,6 +77,10 @@ namespace geomtools {
     void set_mode (const std::string & mode_);
 
     const std::string & get_mode () const;
+
+    void set_labels (bool labels_);
+
+    bool use_labels () const;
 
     bool is_view_2d () const;
 
@@ -130,13 +135,30 @@ namespace geomtools {
                        const placement & p_,
                        int max_display_level_);
 
+  public:
+
+    struct range
+    {
+      char axis;
+      double min;
+      double max;
+      range (char axis_ = 0);
+      void reset ();
+      void set_axis (char axis_);
+      void print (std::ostream & out_) const;
+    };
+
   private:
 
     bool             _initialized_;
     cstreams_col_type   _cstreams_;
     datatools::utils::properties _props_;
     std::string _view_;
+    bool        _labels_;
     std::string _mode_;
+    range _xrange_;
+    range _yrange_;
+    range _zrange_;
 
   }; // class gnuplot_drawer
   

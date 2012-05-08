@@ -34,6 +34,7 @@ int main (int argc_, char ** argv_)
       bool debug = false;
       bool devel = false;
       std::string drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
+      bool drawer_labels = true;
       bool draw = true;
       bool gdml = false;
       bool dump = false;
@@ -75,21 +76,33 @@ int main (int argc_, char ** argv_)
                 {
                   dump = false;
                 }
-              else if (option == "-xy") 
+              else if (option == "-xy" || option == "--view-xy") 
                 {
                   drawer_view = get_drawer_view (option);
                 }
-              else if (option == "-xz") 
+              else if (option == "-xz" || option == "--view-xz") 
                 {
                   drawer_view = get_drawer_view (option);
                 }
-              else if (option == "-yz") 
+              else if (option == "-yz" || option == "--view-yz") 
                 { 
                   drawer_view = get_drawer_view (option);
                 }
-              else if (option == "-3d") 
+              else if (option == "-3d" || option == "--view-3d") 
                 {
                   drawer_view = get_drawer_view (option);
+                }
+              else if (option == "-3d-free" || option == "--view-3d-free") 
+                {
+                  drawer_view = get_drawer_view (option);
+                }
+              else if (option == "--labels") 
+                {
+                  drawer_labels = true;
+                }
+              else if (option == "--no-labels") 
+                {
+                  drawer_labels = false;
                 }
               else if (option == "-m" || option == "--model") 
                 {
@@ -218,6 +231,40 @@ int main (int argc_, char ** argv_)
               {
                 std::string token;
                 std::istringstream token_iss (user);
+                while (token_iss)
+                  {
+                    token.clear ();
+                    token_iss >> token >> ws;
+                    if (token == ".q" || token == ".quit")
+                      {
+                        go_on = false;
+                        break;
+                      }
+                    if (! token.empty ())
+                      {
+                        if (token[0] != '-')
+                          {
+                            model_name = token;
+                          }
+                        else
+                          {
+                            if (token == "--labels")
+                              {
+                                drawer_labels = true;   
+                              }
+                            else if (token == "--no-labels")
+                              {
+                                drawer_labels = false;  
+                              }
+                            else
+                              {
+                                drawer_view = get_drawer_view (token);
+                              }
+                          }
+                      }             
+                  }
+                if (! go_on) break;
+                /*
                 token_iss >> token >> ws;
                 if (token == ".q" || token == ".quit")
                   {
@@ -234,18 +281,21 @@ int main (int argc_, char ** argv_)
                   {
                     drawer_view = get_drawer_view (token);
                   }
+                */
               }
               if (model_name.empty () && has_world)
                 {
                   model_name = "world";
                 }
               std::clog << "Name of the model : '" << model_name  << "'" << std::endl;
-              std::clog << "View              : '" << drawer_view << "'" << std::endl;
+              std::clog << "|-- View          : '" << drawer_view << "'" << std::endl;
+              std::clog << "`-- Labels        : " << drawer_labels << std::endl;
 
               geomtools::gnuplot_drawer::g_devel = devel;
               geomtools::gnuplot_drawer GPD;
-              GPD.set_view (drawer_view);
               GPD.set_mode (geomtools::gnuplot_drawer::MODE_WIRED);
+              GPD.set_view (drawer_view);
+              GPD.set_labels (drawer_labels);
               GPD.draw (factory, 
                         model_name, 
                         p,  
@@ -322,21 +372,25 @@ int main (int argc_, char ** argv_)
 std::string get_drawer_view (const std::string & option_)
 {
   std::string drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
-  if (option_ == "-xy") 
+  if (option_ == "-xy" || option_ == "--view-xy") 
     {
       drawer_view = geomtools::gnuplot_drawer::VIEW_2D_XY;
     }
-  else if (option_ == "-xz") 
+  else if (option_ == "-xz" || option_ == "--view-xz") 
     {
       drawer_view = geomtools::gnuplot_drawer::VIEW_2D_XZ;
     }
-  else if (option_ == "-yz") 
+  else if (option_ == "-yz" || option_ == "--view-yz") 
     { 
       drawer_view = geomtools::gnuplot_drawer::VIEW_2D_YZ;
     }
-  else if (option_ == "-3d") 
+  else if (option_ == "-3d" || option_ == "--view-3d") 
     {
       drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
+    }
+  else if (option_ == "-3d-free" || option_ == "--view-3d-free") 
+    {
+      drawer_view = geomtools::gnuplot_drawer::VIEW_3D_FREE_SCALE;
     }
   else 
     {

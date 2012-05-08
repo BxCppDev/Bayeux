@@ -19,6 +19,7 @@
 #include <iostream>
 
 #include <geomtools/utils.h>
+#include <mygsl/min_max.h>
 
 namespace geomtools {
 
@@ -54,6 +55,15 @@ namespace geomtools {
       };
 
   public: 
+
+    struct xyz_range
+    {
+      mygsl::min_max x_range;
+      mygsl::min_max y_range;
+      mygsl::min_max z_range;
+      void reset ();
+      static xyz_range * instance (char mode_ = 'i');
+    };
 
     static bool   g_using_color;
     static double g_current_color;
