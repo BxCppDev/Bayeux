@@ -233,15 +233,6 @@ composition.names           : string  [4]  = "Hydrogen" "Carbon" "Nitrogen" "Oxy
 composition.number_of_atoms : integer [4]  =     10        22        2         5
 
 
-[name="std::teflon" type="material"]
-#@description Teflon material (C2F4)
-density          : real   = 0.55 #2.2
-density.unit     : string = "g/cm3"
-state            : string = "solid"
-composition.mode            : string       = "number_of_atoms"
-composition.names           : string  [2]  = "Carbon" "Fluorine"
-composition.number_of_atoms : integer [2]  =     1        2
-
 
 [name="std::nylon" type="material"]
 #@description Nylon type 66 material (C6 H11 O N)
@@ -301,11 +292,20 @@ composition.fraction_mass : real   [6]  =  0.227915   0.60541  0.04986  0.014245
 
 [name="std::pfte" type="material"]
 #@description Polytetrafluoroethylene (C2F4, PFTE)
-density          : real   = 2.2
+density          : real   = 2.20
 density.unit     : string = "g/cm3"
 state            : string = "solid"
 composition.mode            : string       = "number_of_atoms"
 composition.names           : string  [2]  = "Fluorine"  "Carbon"
 composition.number_of_atoms : integer [2]  =      4        2
+
+[name="std::teflon" type="material"]
+#@description Teflon material (C2F4, PFTE)
+density          : real   = 2.2 #0.55 #2.2
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [2]  = "Carbon" "Fluorine"
+composition.number_of_atoms : integer [2]  =     1        2
 
 # end
