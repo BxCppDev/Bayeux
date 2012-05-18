@@ -1,5 +1,5 @@
 // -*- mode: c++ ; -*- 
-// check_geomtools_setup.cxx  
+// geomtools_check_setup.cxx  
    
 #include <cstdlib> 
 #include <iostream>
@@ -14,6 +14,8 @@
 #include <datatools/utils/library_loader.h>
 
 #include <geomtools/model_factory.h>
+#include <geomtools/id_mgr.h>
+#include <geomtools/mapping.h>
 #include <geomtools/gnuplot_drawer.h>
 #include <geomtools/gdml_export.h>
 #include <geomtools/placement.h>
@@ -37,12 +39,15 @@ int main (int argc_, char ** argv_)
       bool drawer_labels = true;
       bool draw = true;
       bool gdml = false;
-      bool dump = false;
+      bool dump_factory = false;
       std::vector<std::string> setup_filenames;
       std::string model_name; 
       std::vector<std::string> LL_dlls;
       std::string LL_config;
- 
+      bool mapping_requested = false;
+      std::string categories_filename;
+      std::string top_mapping_model_name;
+
       int iarg = 1;
       while (iarg < argc_)
         {
@@ -72,9 +77,9 @@ int main (int argc_, char ** argv_)
                 {
                   gdml = true;
                 }
-              else if (option == "-S") 
+              else if (option == "-F") 
                 {
-                  dump = false;
+                  dump_factory = true;
                 }
               else if (option == "-xy" || option == "--view-xy") 
                 {
@@ -112,7 +117,19 @@ int main (int argc_, char ** argv_)
                 {
                   LL_dlls.push_back (argv_[++iarg]);
                 }
-               else 
+              else if (option == "-c" || option == "--categories") 
+                {
+                  categories_filename = argv_[++iarg];
+                }
+              else if (option == "-M" || option == "--mapping") 
+                {
+                  mapping_requested = true;
+                }
+              else if (option == "-T" || option == "--top-model") 
+                {
+                  top_mapping_model_name = argv_[++iarg];
+                }
+              else 
                 { 
                   std::clog << "WARNING: ignoring option '" << option << "'!" << std::endl; 
                   print_help ();
@@ -141,8 +158,8 @@ int main (int argc_, char ** argv_)
             }
         }
 
-      geomtools::model_factory factory;
-      factory.set_debug (debug);
+      geomtools::model_factory geometry_factory;
+      geometry_factory.set_debug (debug);
 
       if (setup_filenames.size () == 0)
         {
@@ -152,33 +169,64 @@ int main (int argc_, char ** argv_)
         {
           std::string geom_filename = setup_filenames[i];
           datatools::utils::fetch_path_with_env (geom_filename);
-          factory.load (geom_filename);
+          geometry_factory.load (geom_filename);
         }
-      factory.lock ();
+      geometry_factory.lock ();
 
-      if (dump) 
+      if (dump_factory) 
         {
-          factory.tree_dump (clog, "Geometry model factory:");
+          geometry_factory.tree_dump (clog, "Geometry model factory:");
         }
       
       // Default model :
       bool has_world = false;
       for (geomtools::models_col_t::const_iterator i 
-             = factory.get_models ().begin ();
-           i != factory.get_models ().end ();
+             = geometry_factory.get_models ().begin ();
+           i != geometry_factory.get_models ().end ();
            i++)
         {
-          if (i->second->get_name () == "world")
+          if (i->second->get_name () == geomtools::model_factory::DEFAULT_WORLD_LABEL)
             {
               has_world = true;
               if (model_name.empty ())
                 {
-                  model_name = "world";
+                  model_name = geomtools::model_factory::DEFAULT_WORLD_LABEL;
                 }
               break;
             }
         }
-      
+  
+      // The manager for GID :
+      geomtools::id_mgr  gid_manager;
+      if (! categories_filename.empty ())
+        {
+          std::string categories_lis = categories_filename;
+          datatools::utils::fetch_path_with_env (categories_lis);
+          gid_manager.load (categories_lis);
+        }
+
+      if (mapping_requested)
+        {
+          // The mapping manager :
+          geomtools::mapping mapping_manager; 
+          mapping_manager.set_id_manager (gid_manager);
+          datatools::utils::properties mapping_config;
+          mapping_config.store ("mapping.max_depth", 0);
+          mapping_manager.initialize (mapping_config);
+          if (top_mapping_model_name.empty ())
+            {
+              top_mapping_model_name = geomtools::model_factory::DEFAULT_WORLD_LABEL;
+            }
+          if (geometry_factory.get_models ().find (top_mapping_model_name) != geometry_factory.get_models ().end ())
+            {
+              mapping_manager.build_from (geometry_factory, top_mapping_model_name);
+            }
+          else
+            {
+              std::clog << "WARNING: Cannot find model named '" << top_mapping_model_name << "'" << std::endl;
+            }
+        }
+     
       if (draw)
         {   
           std::clog << "Current drawer view : '" << drawer_view << "'" << std::endl;
@@ -188,13 +236,12 @@ int main (int argc_, char ** argv_)
 
               geomtools::placement p;
               p.set (0, 0, 0, 0 * CLHEP::degree, 0 * CLHEP::degree, 0);
-              //if (dump) p.tree_dump (clog, "Placement");
           
               std::clog << "List of available geometry models : " << std::endl;
               int count = 0;
               for (geomtools::models_col_t::const_iterator i 
-                     = factory.get_models ().begin ();
-                   i != factory.get_models ().end ();
+                     = geometry_factory.get_models ().begin ();
+                   i != geometry_factory.get_models ().end ();
                    i++)
                 {
                   bool long_name = false;
@@ -296,7 +343,7 @@ int main (int argc_, char ** argv_)
               GPD.set_mode (geomtools::gnuplot_drawer::MODE_WIRED);
               GPD.set_view (drawer_view);
               GPD.set_labels (drawer_labels);
-              GPD.draw (factory, 
+              GPD.draw (geometry_factory, 
                         model_name, 
                         p,  
                         geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT);
@@ -350,8 +397,11 @@ int main (int argc_, char ** argv_)
           GDML.parameters ().store ("angle_unit",   
                                     geomtools::gdml_export::DEFAULT_ANGLE_UNIT);
           std::string fgdml = "geomtools_check_setup.gdml";
-          model_name = "world";
-          GDML.export_gdml (fgdml, factory, model_name);
+          if (top_mapping_model_name.empty ())
+            {
+              top_mapping_model_name = geomtools::model_factory::DEFAULT_WORLD_LABEL;
+            }
+          GDML.export_gdml (fgdml, geometry_factory, top_mapping_model_name);
           clog << "NOTICE: GDML file '" << fgdml << "' has been generated !" << endl;
         }
 
@@ -406,9 +456,27 @@ void print_help ()
   std::clog << "\n";
   std::clog << "Usage: \n\n";
   std::clog << "  geomtools_check_setup [OPTIONS] GEOMFILE [GEOMFILE [...]] \n\n";
-  std::clog << "Example: \n\n";
+  std::clog << "Options: \n\n";
+  std::clog << "   -d|--debug     : Activate debug mode\n";
+  std::clog << "   -D|--no-draw   : Do not visualize the geometry setup\n";
+  std::clog << "   -G|--with-gdml : Generate GDML output\n";
+  std::clog << "   -F             : Detailed print of the factory contents\n";
+  std::clog << "   -xy|--view-xy  : Visualization defaults to XY view\n";
+  std::clog << "   -yz|-view-yz  : Visualization defaults to YZ view\n";
+  std::clog << "   -xz|--view-xz  : Visualization defaults to XZ view\n";
+  std::clog << "   -3d|--view-3d  : Visualization defaults to 3D view\n";
+  std::clog << "   --labels       : Visualization shows axis and labels\n";
+  std::clog << "   --no-labels    : Visualization does not show axis and labels\n";
+  std::clog << "   -m|--model MODEL_NAME :\n";
+  std::clog << "                    Visualization shows a specific geometry model\n";
+  std::clog << "   -l|--load-dll DLL_NAME :\n";
+  std::clog << "                    Load a specific DLL\n";
+  std::clog << "   -c|--categories CATEGORIES_FILE:\n";
+  std::clog << "                    Load a specific geometry category file\n";
+  std::clog << "   -M|--mapping   : Build geometry mapping informations\n";
+  std::clog << "   -T|--top-model MODEL_NAME : Identify the top-level model for mapping\n";
   std::clog << "  geomtools_check_setup setup.geom \n\n";
   return;
 }
 
-// end of check_geomtools_setup.cxx
+// end of geomtools_check_setup.cxx

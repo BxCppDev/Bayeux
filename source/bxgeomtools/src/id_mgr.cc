@@ -689,7 +689,7 @@ namespace geomtools {
   }
 
   bool id_mgr::inherits (const geom_id & id_,
-			 const string & category_) const
+                         const string & category_) const
   {
     int id_type = id_.get_type ();
     const category_info & ci = get_category_info (id_type);
@@ -1046,7 +1046,8 @@ namespace geomtools {
               {
                 ostringstream message;
                 message << "geomtools::id_mgr::compute_id_from_info: "
-                        << "Invalid address label `" << addr_label << "' !";
+                        << "Invalid address label `" << addr_label << "' for category '"
+                        << ci.get_category () << "' !";
                 throw logic_error (message.str ());
               }
             string addr_val_str = split_add_info[1];
