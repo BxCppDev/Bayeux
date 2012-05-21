@@ -213,9 +213,35 @@ set ( BAYEUX_GENVTX_MINIMAL_TAG_VERSION     "3.0.0"  )
 set ( BAYEUX_GENBB_HELP_MINIMAL_TAG_VERSION "4.0.0"  )
 
 
-# Default configuration (0.9.1) :
+# Default configuration (0.9.2) :
 if ( BAYEUX_CONFIG STREQUAL "default" OR BAYEUX_CONFIG STREQUAL ${Bayeux_VERSION} )
   message ( STATUS "${PROJECT_NAME}: Bayeux 'default/${Bayeux_VERSION}' configuration...") 
+
+  set ( BAYEUX_DATATOOLS_VERSION  "4.1.1"  )
+  set ( BAYEUX_DATATOOLS_PATH     "tags/datatools-4.1.1"  )
+
+  set ( BAYEUX_BRIO_VERSION       "3.1.1"  )
+  set ( BAYEUX_BRIO_PATH          "tags/brio-3.1.1"  )
+
+  set ( BAYEUX_MYGSL_VERSION      "3.1.1"  )
+  set ( BAYEUX_MYGSL_PATH         "tags/mygsl-3.1.1"  )
+
+  set ( BAYEUX_CUTS_VERSION       "3.1.1"  )
+  set ( BAYEUX_CUTS_PATH          "tags/cuts-3.1.1"  )
+
+  set ( BAYEUX_GEOMTOOLS_VERSION  "3.1.1"  )
+  set ( BAYEUX_GEOMTOOLS_PATH     "tags/geomtools-3.1.1"  )
+
+  set ( BAYEUX_MATERIALS_VERSION  "3.1.1"  )
+  set ( BAYEUX_MATERIALS_PATH     "tags/materials-3.1.1"  )
+
+  set ( BAYEUX_GENVTX_VERSION     "3.1.1"  )
+  set ( BAYEUX_GENVTX_PATH        "tags/genvtx-3.1.1"  )
+
+  set ( BAYEUX_GENBB_HELP_VERSION "4.1.1"  )
+  set ( BAYEUX_GENBB_HELP_PATH    "tags/genbb_help-4.1.1"  )
+
+elseif ( BAYEUX_CONFIG STREQUAL 0.9.1 )
 
   set ( BAYEUX_DATATOOLS_VERSION  "4.1.0"  )
   set ( BAYEUX_DATATOOLS_PATH     "tags/datatools-4.1.0"  )
