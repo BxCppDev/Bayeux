@@ -23,7 +23,7 @@
 # setup version numbers
 set ( geomtools_VERSION_MAJOR 3 )
 set ( geomtools_VERSION_MINOR 1 )
-set ( geomtools_PATCH_VERSION 0 )
+set ( geomtools_PATCH_VERSION 1 )
 set ( geomtools_VERSION_STR "${geomtools_VERSION_MAJOR}.${geomtools_VERSION_MINOR}.${geomtools_PATCH_VERSION}" )
 math ( EXPR geomtools_VERSION_NUMERIC "${geomtools_VERSION_MAJOR}*100000+${geomtools_VERSION_MINOR}*100+${geomtools_PATCH_VERSION}" )
 
