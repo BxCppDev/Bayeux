@@ -23,7 +23,7 @@
 # setup version numbers
 set ( materials_VERSION_MAJOR 3 )
 set ( materials_VERSION_MINOR 1 )
-set ( materials_PATCH_VERSION 0 )
+set ( materials_PATCH_VERSION 1 )
 set ( materials_VERSION_STR "${materials_VERSION_MAJOR}.${materials_VERSION_MINOR}.${materials_PATCH_VERSION}" )
 math ( EXPR materials_VERSION_NUMERIC "${materials_VERSION_MAJOR}*100000+${materials_VERSION_MINOR}*100+${materials_PATCH_VERSION}" )
 
