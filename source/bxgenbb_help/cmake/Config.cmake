@@ -23,7 +23,7 @@
 # setup version numbers
 set ( genbb_help_VERSION_MAJOR 4 )
 set ( genbb_help_VERSION_MINOR 1 )
-set ( genbb_help_PATCH_VERSION 0 )
+set ( genbb_help_PATCH_VERSION 1 )
 set ( genbb_help_VERSION_STR "${genbb_help_VERSION_MAJOR}.${genbb_help_VERSION_MINOR}.${genbb_help_PATCH_VERSION}" )
 math ( EXPR genbb_help_VERSION_NUMERIC "${genbb_help_VERSION_MAJOR}*100000+${genbb_help_VERSION_MINOR}*100+${genbb_help_PATCH_VERSION}" )
 
