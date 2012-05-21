@@ -23,7 +23,7 @@
 # setup version numbers
 set ( genvtx_VERSION_MAJOR 3 )
 set ( genvtx_VERSION_MINOR 1 )
-set ( genvtx_PATCH_VERSION 0 )
+set ( genvtx_PATCH_VERSION 1 )
 set ( genvtx_VERSION_STR "${genvtx_VERSION_MAJOR}.${genvtx_VERSION_MINOR}.${genvtx_PATCH_VERSION}" )
 math ( EXPR genvtx_VERSION_NUMERIC "${genvtx_VERSION_MAJOR}*100000+${genvtx_VERSION_MINOR}*100+${genvtx_PATCH_VERSION}" )
 
