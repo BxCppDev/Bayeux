@@ -97,7 +97,7 @@ set (AUTOMATIC_CMAKE_DEPENDENCIES_DEVEL OFF)
 
 set (AUTOMATIC_CMAKE_DEPENDENCIES 1)
 if ( EMFIELD_WITH_BIO_SUPPORT )
-  list (APPEND emfield_list_of_dependencies "datatools:4.0")
+  list (APPEND emfield_list_of_dependencies "datatools:4.1")
 endif ()
 
 if (AUTOMATIC_CMAKE_DEPENDENCIES)

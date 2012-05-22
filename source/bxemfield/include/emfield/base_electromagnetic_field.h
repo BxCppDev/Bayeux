@@ -1,8 +1,8 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++; -*- 
 /* base_electromagnetic_field.h
- * Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-04-24
- * Last modified: 2012-04-24
+ * Last modified: 2012-05-22
  * 
  * License: 
  * 
@@ -54,8 +54,10 @@ namespace emfield {
         ELECTRIC_FIELD = datatools::utils::bit_mask::bit02,
         MAGNETIC_FIELD = datatools::utils::bit_mask::bit03,
         ELECTRIC_FIELD_CAN_BE_COMBINED = datatools::utils::bit_mask::bit04,
-        MAGNETIC_FIELD_CAN_BE_COMBINED = datatools::utils::bit_mask::bit05
-      };
+        MAGNETIC_FIELD_CAN_BE_COMBINED = datatools::utils::bit_mask::bit05,
+        ELECTRIC_FIELD_IS_TIME_DEPENDENT = datatools::utils::bit_mask::bit06,
+        MAGNETIC_FIELD_IS_TIME_DEPENDENT = datatools::utils::bit_mask::bit07
+     };
     
     enum status_type
       {
@@ -85,6 +87,10 @@ namespace emfield {
     bool electric_field_can_be_combined () const;
 
     bool magnetic_field_can_be_combined () const;
+
+    bool electric_field_is_time_dependent () const;
+
+    bool magnetic_field_is_time_dependent () const;
 
     base_electromagnetic_field (uint32_t flags_ = 0);
 
@@ -147,11 +153,17 @@ namespace emfield {
 
     void _set_magnetic_field_can_be_combined (bool = true);
 
+    void _set_electric_field_is_time_dependent (bool = true);
+
+    void _set_magnetic_field_is_time_dependent (bool = true);
+
     void _parse_basic_parameters (const datatools::utils::properties & setup_,
                                   datatools::service::service_manager & service_manager_,
                                   field_dict_type & dictionary_);
 
   private:
+
+    void _set_defaults_ ();
 
     void _terminate_ ();
 
@@ -165,6 +177,8 @@ namespace emfield {
 
     bool     _electric_field_can_be_combined_;
     bool     _magnetic_field_can_be_combined_;
+    bool     _electric_field_is_time_dependent_;
+    bool     _magnetic_field_is_time_dependent_;
 
     // Factory stuff :
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_electromagnetic_field);

@@ -39,18 +39,31 @@ namespace emfield {
     {
       out_ << indent << du::i_tree_dumpable::tag
            << "Electric field : " <<  (_electric_field_? "Yes": "No") << endl;
-      
-      out_ << indent << du::i_tree_dumpable::skip_tag << du::i_tree_dumpable::last_tag
-           << "Can be combined : " <<  (_electric_field_can_be_combined_? "Yes": "No") << endl;
+      if (_electric_field_)
+        {
+          out_ << indent << du::i_tree_dumpable::skip_tag 
+               << du::i_tree_dumpable::tag
+               << "Can be combined : " <<  (_electric_field_can_be_combined_? "Yes": "No") << endl;
+          
+          out_ << indent << du::i_tree_dumpable::skip_tag 
+               << du::i_tree_dumpable::last_tag
+               << "Is time-dependent : " <<  (_electric_field_is_time_dependent_? "Yes": "No") << endl;
+        }
     }
 
     {
       out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
            << "Magnetic field : " <<  (_magnetic_field_? "Yes": "No") << endl;
-      
-      out_ << indent << du::i_tree_dumpable::inherit_skip_tag (inherit_)
-           << du::i_tree_dumpable::last_tag
-           << "Can be combined : " <<  (_magnetic_field_can_be_combined_? "Yes": "No") << endl;
+      if (_magnetic_field_)
+        {
+          out_ << indent << du::i_tree_dumpable::inherit_skip_tag (inherit_)
+               << du::i_tree_dumpable::tag
+               << "Can be combined : " <<  (_magnetic_field_can_be_combined_? "Yes": "No") << endl;
+          
+          out_ << indent << du::i_tree_dumpable::inherit_skip_tag (inherit_) 
+               << du::i_tree_dumpable::last_tag
+               << "Is time-dependent : " <<  (_magnetic_field_is_time_dependent_? "Yes": "No") << endl;
+        }
     }
 
     return;
@@ -104,6 +117,42 @@ namespace emfield {
   bool base_electromagnetic_field::magnetic_field_can_be_combined () const
   {
     return _magnetic_field_can_be_combined_;
+  }
+
+  bool base_electromagnetic_field::electric_field_is_time_dependent () const
+  {
+    return _electric_field_is_time_dependent_;
+  }
+
+  bool base_electromagnetic_field::magnetic_field_is_time_dependent () const
+  {
+    return _magnetic_field_is_time_dependent_;
+  }
+
+  void base_electromagnetic_field::_set_electric_field_is_time_dependent (bool td_)
+  {
+    if (is_initialized ())
+      {
+        std::ostringstream message;
+        message << "emfield::base_electromagnetic_field::_set_electric_field_is_time_dependent: "
+                << "Cannot change the electric field traits !";
+        throw std::logic_error (message.str ());
+      }
+    _electric_field_is_time_dependent_ = td_;
+    return;
+   }
+
+  void base_electromagnetic_field::_set_magnetic_field_is_time_dependent (bool td_)
+  {
+    if (is_initialized ())
+      {
+        std::ostringstream message;
+        message << "emfield::base_electromagnetic_field::_set_magnetic_field_is_time_dependent: "
+                << "Cannot change the magnetic field traits !";
+        throw std::logic_error (message.str ());
+      }
+    _magnetic_field_is_time_dependent_ = true;
+    return;
   }
 
   void base_electromagnetic_field::_set_electric_field_can_be_combined (bool efcbc_)
@@ -201,16 +250,24 @@ namespace emfield {
     return;
   }
 
-  // Reset :
-  void base_electromagnetic_field::_terminate_ ()
+  void base_electromagnetic_field::_set_defaults_ ()
   {
-    _initialized_ = false;
-    _debug_ = false;
     _error_ = false;
     _electric_field_ = false;
     _magnetic_field_ = false;
     _electric_field_can_be_combined_ = false;
     _magnetic_field_can_be_combined_ = false;
+    _electric_field_is_time_dependent_ = false;
+    _magnetic_field_is_time_dependent_ = false;
+    return;
+  }
+
+  // Reset :
+  void base_electromagnetic_field::_terminate_ ()
+  {
+    _initialized_ = false;
+    _debug_ = false;
+    _set_defaults_ ();
     return;
   }
 
@@ -220,17 +277,16 @@ namespace emfield {
   {
     _initialized_ = false;
     _debug_ = false;
-    _error_ = false;
-    _electric_field_ = false;
-    _magnetic_field_ = false;
-    _electric_field_can_be_combined_ = false;
-    _magnetic_field_can_be_combined_ = false;
+    _set_defaults_ ();
+
     // Special values :
     _debug_ = flags_ & DEBUG;
     _electric_field_ = flags_ & ELECTRIC_FIELD;
     _magnetic_field_ = flags_ & MAGNETIC_FIELD;
     _electric_field_can_be_combined_ = flags_ & ELECTRIC_FIELD_CAN_BE_COMBINED;
     _magnetic_field_can_be_combined_ = flags_ & MAGNETIC_FIELD_CAN_BE_COMBINED;
+    _electric_field_is_time_dependent_ = flags_ & ELECTRIC_FIELD_IS_TIME_DEPENDENT;
+    _magnetic_field_is_time_dependent_ = flags_ & MAGNETIC_FIELD_IS_TIME_DEPENDENT;
     return;
   }
 

@@ -164,7 +164,7 @@ namespace emfield {
 
     if (setup_.has_key ("field.name"))
       {
-        field_name = setup_.fetch_string ("field_name");
+        field_name = setup_.fetch_string ("field.name");
       }
  
     if (setup_.has_key ("placement.x"))
