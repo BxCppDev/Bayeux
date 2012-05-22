@@ -57,7 +57,7 @@ the_default_download_dir=${HOME}/Download
 the_default_install_prefix=${the_base_dir}/__install-$(pkgtools__get_sys)
 the_build_dir=
 the_download_dir=
-known_bayeux_configs="default 0.9.1 0.9.0 last_tags trunk user"
+known_bayeux_configs="default 0.9.2 0.9.1 0.9.0 last_tags trunk user"
 
 pkgtools__msg_not_using_quiet
 pkgtools__msg_not_using_verbose
@@ -160,6 +160,8 @@ function print_usage ()
       --without-genvtx           : do not install materials
       --with-genbb_help          : install genbb_help (default)
       --without-genbb_help       : do not install genbb_help
+      --with-emfield             : install emfield (default)
+      --without-emfield          : do not install emfield
 
       Miscelaneous :
       --with-dependency-check    : perform a rudimentary dependency check before processing
@@ -190,8 +192,8 @@ function print_usage ()
       shell> ${appname} check
 
     Configure:
+
       shell> ${appname} configure \\
-        --download-directory /scratch/\${USER}/software/Download \\
         --ep-build-directory /scratch/\${USER}/software/Bayeux-build \\
         --install-prefix     /scratch/\${USER}/software/Bayeux-install \\
         --single-processor \\
@@ -199,7 +201,14 @@ function print_usage ()
         --with-none \\
         --with-mygsl  
     or :
+
       shell> ${appname} configure --workspace-dir /scratch/\${USER}/software 
+
+    or :
+
+      shell> ${appname} configure \\
+        --workspace-dir /scratch/\${USER}/software/Bayeux-trunk \\
+        --config trunk
 
     Build:
       shell> ${appname} build --number-of-tasks auto
@@ -427,6 +436,7 @@ function do_configure ()
     local with_materials=1
     local with_genvtx=1
     local with_genbb_help=1
+    local with_emfield=1
 
     local with_bio=1
     local with_python_wrapper=0
@@ -493,6 +503,7 @@ function do_configure ()
 	    with_materials=0
 	    with_genvtx=0
 	    with_genbb_help=0
+	    with_emfield=0
 	elif [ "${option}" = "--with-all" ]; then
 	    with_brio=1
 	    with_mygsl=1
@@ -501,6 +512,7 @@ function do_configure ()
 	    with_materials=1
 	    with_genvtx=1
 	    with_genbb_help=1
+	    with_emfield=1
 	elif [ "${option}" = "--with-brio" ]; then
 	    with_brio=1
 	elif [ "${option}" = "--without-brio" ]; then
@@ -529,6 +541,10 @@ function do_configure ()
 	    with_genbb_help=1
 	elif [ "${option}" = "--without-genbb_help" ]; then
 	    with_genbb_help=0
+	elif [ "${option}" = "--with-emfield" ]; then
+	    with_emfield=1
+	elif [ "${option}" = "--without-emfield" ]; then
+	    with_emfield=0
 	elif [ "${option}" = "--with-documentation" ]; then
 	    with_doc=1
 	elif [ "${option}" = "--without-documentation" ]; then
@@ -689,6 +705,7 @@ function do_configure ()
     pkgtools__msg_notice "Install materials     : '${with_materials}'"
     pkgtools__msg_notice "Install genvtx        : '${with_genvtx}'"
     pkgtools__msg_notice "Install genbb_help    : '${with_genbb_help}'"
+    pkgtools__msg_notice "Install emfield       : '${with_emfield}'"
 
     pkgtools__msg_notice "With documentation    : '${with_doc}'"
     pkgtools__msg_notice "With test material    : '${with_test}'"
@@ -765,6 +782,7 @@ function do_configure ()
             -DBAYEUX_WITH_MATERIALS=${with_materials} \
             -DBAYEUX_WITH_GENVTX=${with_genvtx} \
             -DBAYEUX_WITH_GENBB_HELP=${with_genbb_help} \
+            -DBAYEUX_WITH_EMFIELD=${with_emfield} \
 	    -DBAYEUX_WITH_DOCS=${with_doc} \
 	    -DBAYEUX_WITH_TESTS=${with_test} \
 	    -DBAYEUX_WITH_BIO=${with_bio} \

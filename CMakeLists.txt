@@ -142,11 +142,14 @@ set ( BAYEUX_KNOWN_COMPONENTS
 	"genvtx" 
 	"materials" 
 	"genbb_help" 
+	"emfield" 
 	)
 
 set ( BAYEUX_KNOWN_CONFIGS 
        "trunk"
        "${Bayeux_VERSION}"
+       "0.9.1"
+       "0.9.0"
        "last_tags"
        "user"
        "default"
@@ -175,6 +178,7 @@ option ( BAYEUX_WITH_CUTS       1 )
 option ( BAYEUX_WITH_MATERIALS  1 )
 option ( BAYEUX_WITH_GENVTX     1 )
 option ( BAYEUX_WITH_GENBB_HELP 1 )
+option ( BAYEUX_WITH_EMFIELD    1 )
 
 option ( BAYEUX_WITH_BIO        ON )
 option ( BAYEUX_WITH_DOCS       ON )
@@ -211,6 +215,7 @@ set ( BAYEUX_CUTS_MINIMAL_TAG_VERSION       "3.0.0"  )
 set ( BAYEUX_MATERIALS_MINIMAL_TAG_VERSION  "3.0.0"  )
 set ( BAYEUX_GENVTX_MINIMAL_TAG_VERSION     "3.0.0"  )
 set ( BAYEUX_GENBB_HELP_MINIMAL_TAG_VERSION "4.0.0"  )
+set ( BAYEUX_EMFIELD_MINIMAL_TAG_VERSION    "0.1.0"  )
 
 
 # Default configuration (0.9.2) :
@@ -240,6 +245,9 @@ if ( BAYEUX_CONFIG STREQUAL "default" OR BAYEUX_CONFIG STREQUAL ${Bayeux_VERSION
 
   set ( BAYEUX_GENBB_HELP_VERSION "4.1.1"  )
   set ( BAYEUX_GENBB_HELP_PATH    "tags/genbb_help-4.1.1"  )
+
+  set ( BAYEUX_EMFIELD_VERSION    "0.1.0"  )
+  set ( BAYEUX_EMFIELD_PATH       "trunk"  )
 
 elseif ( BAYEUX_CONFIG STREQUAL 0.9.1 )
 
@@ -344,6 +352,7 @@ elseif ( BAYEUX_CONFIG STREQUAL "trunk" )
   set ( BAYEUX_MATERIALS_PATH  "trunk" )
   set ( BAYEUX_GENVTX_PATH     "trunk" )
   set ( BAYEUX_GENBB_HELP_PATH "trunk" )
+  set ( BAYEUX_EMFIELD_PATH    "trunk" )
 
 elseif ( BAYEUX_CONFIG STREQUAL "user" )
   message ( STATUS "${PROJECT_NAME}: Bayeux 'user' configuration...") 
@@ -476,6 +485,17 @@ set ( _install_prefix ${CMAKE_INSTALL_PREFIX} )
 # - Ensure proper dependencies between Bayeux components :
 #
 
+if ( BAYEUX_WITH_EMFIELD )
+  if ( BAYEUX_CONFIG MATCHES "^([0-9]+[.])?([0-9]+[.])?([0-9]+)$" AND BAYEUX_CONFIG VERSION_LESS 0.9.2 )
+    message ( STATUS "${PROJECT_NAME}: WARNINIG: Component 'emfield' cannot be installed for Bayeux '${BAYEUX_CONFIG}'" )
+    set ( BAYEUX_WITH_EMFIELD 0 )
+  endif ()
+endif ()
+
+if    ( BAYEUX_WITH_EMFIELD )
+  set ( BAYEUX_WITH_GEOMTOOLS 1 )
+endif ( BAYEUX_WITH_EMFIELD )
+
 if    ( BAYEUX_WITH_MATERIALS )
   set ( BAYEUX_WITH_GEOMTOOLS 1 )
 endif ( BAYEUX_WITH_MATERIALS )
@@ -505,12 +525,12 @@ message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_GEOMTOOLS  = ${BAYEUX_WITH_GEO
 message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_GENVTX     = ${BAYEUX_WITH_GENVTX}"     )
 message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_MATERIALS  = ${BAYEUX_WITH_MATERIALS}"  )
 message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_GENBB_HELP = ${BAYEUX_WITH_GENBB_HELP}" )
+message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_EMFIELD    = ${BAYEUX_WITH_EMFIELD}" )
 
 set ( BAYEUX_COMPONENTS "" )
 
 foreach ( component ${BAYEUX_KNOWN_COMPONENTS} )
     string ( TOUPPER "${component}" component_upper )
-  
     if ( BAYEUX_WITH_${component_upper} )
         list (APPEND BAYEUX_COMPONENTS ${component} )
     endif ()
@@ -525,6 +545,7 @@ include ( BayeuxGeomtools  )
 include ( BayeuxMaterials  )
 include ( BayeuxGenvtx     )
 include ( BayeuxGenbb_help )
+include ( BayeuxEmfield    )
 
 # -------------------------------------------------------------------------
 # - Bash setup script :
