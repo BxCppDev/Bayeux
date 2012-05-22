@@ -139,6 +139,16 @@ int main (int argc_, char ** argv_)
         
       }
 
+      
+      {
+        double frequency_value;
+        string unit_label;
+        if (datatools::utils::units::find_value_with_unit ("10.3 kHz", frequency_value, unit_label))
+          {
+            clog << "Frequency value = " << frequency_value << "\n";
+            clog << "Unit label = '" << unit_label << "'\n";
+          }
+      }
 
       clog << "The end." << endl; 
      

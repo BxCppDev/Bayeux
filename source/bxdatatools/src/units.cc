@@ -168,6 +168,17 @@ namespace datatools {
       return numeric_limits<double>::quiet_NaN ();
     }
 
+    double units::get_frequency_unit_from (const string & a_word)
+    {
+      if ((a_word == "Hz")) return CLHEP::hertz;
+      if ((a_word == "mHz")) return 1.e-3 * CLHEP::hertz;
+      if ((a_word == "kHz")) return CLHEP::kilohertz;
+      if ((a_word == "MHz")) return CLHEP::megahertz;
+      if ((a_word == "GHz")) return 1.e3 * CLHEP::megahertz;
+      _throw_bad_unit ("frequency", a_word);
+      return numeric_limits<double>::quiet_NaN ();
+    }
+
     double units::get_activity_unit_from (const string & a_word)
     {
       if ((a_word == "Bq")) return 1. / CLHEP::second;
@@ -274,6 +285,10 @@ namespace datatools {
         {
           return get_density_unit_from (a_unit_str);
         }
+      else if (a_unit_type == "frequency")
+        {
+          return get_frequency_unit_from (a_unit_str);
+        }
       else if (a_unit_type == "activity")
         {
           return get_activity_unit_from (a_unit_str);
@@ -290,9 +305,11 @@ namespace datatools {
         {
           return get_mass_activity_unit_from (a_unit_str);
         }
-      ostringstream message;
-      message << "Invalid " << a_unit_type << " of unit :'" << a_unit_type << "' !";
-      throw runtime_error (message.str ());
+      {
+        ostringstream message;
+        message << "Invalid " << a_unit_type << " of unit :'" << a_unit_type << "' !";
+        throw logic_error (message.str ());
+      }
       return numeric_limits<double>::quiet_NaN ();
     }
  
@@ -305,23 +322,27 @@ namespace datatools {
       a_unit_value = numeric_limits<double>::quiet_NaN ();
      
       static vector<string> ulabels;
-      ulabels.reserve (20);
-      ulabels.push_back ("length");
-      ulabels.push_back ("surface");
-      ulabels.push_back ("volume");
-      ulabels.push_back ("time");
-      ulabels.push_back ("angle");
-      ulabels.push_back ("solid_angle");
-      ulabels.push_back ("energy");
-      ulabels.push_back ("mass");
-      ulabels.push_back ("pressure");
-      ulabels.push_back ("magnetic_field");
-      ulabels.push_back ("temperature");
-      ulabels.push_back ("density");
-      ulabels.push_back ("activity");
-      ulabels.push_back ("volume_activity");
-      ulabels.push_back ("surface_activity");
-      ulabels.push_back ("mass_activity");
+      if (ulabels.empty ())
+        {
+          ulabels.reserve (20);
+          ulabels.push_back ("length");
+          ulabels.push_back ("surface");
+          ulabels.push_back ("volume");
+          ulabels.push_back ("time");
+          ulabels.push_back ("angle");
+          ulabels.push_back ("solid_angle");
+          ulabels.push_back ("energy");
+          ulabels.push_back ("mass");
+          ulabels.push_back ("pressure");
+          ulabels.push_back ("magnetic_field");
+          ulabels.push_back ("temperature");
+          ulabels.push_back ("density");
+          ulabels.push_back ("activity");
+          ulabels.push_back ("volume_activity");
+          ulabels.push_back ("surface_activity");
+          ulabels.push_back ("mass_activity");
+          ulabels.push_back ("frequency");
+        }
       double val = numeric_limits<double>::quiet_NaN ();
       int count = -1;
       for (vector<string>::const_iterator i = ulabels.begin ();
@@ -362,46 +383,6 @@ namespace datatools {
         {
           return numeric_limits<double>::quiet_NaN ();
         }
-      /*
-      static list<string> ulabels;
-      ulabels.push_back ("length");
-      ulabels.push_back ("surface");
-      ulabels.push_back ("volume");
-      ulabels.push_back ("time");
-      ulabels.push_back ("angle");
-      ulabels.push_back ("solid_angle");
-      ulabels.push_back ("energy");
-      ulabels.push_back ("mass");
-      ulabels.push_back ("pressure");
-      ulabels.push_back ("magnetic_field");
-      ulabels.push_back ("temperature");
-      ulabels.push_back ("density");
-      ulabels.push_back ("activity");
-      ulabels.push_back ("volume_activity");
-      ulabels.push_back ("surface_activity");
-      ulabels.push_back ("mass_activity");
-
-      double l = numeric_limits<double>::quiet_NaN ();
-      for (list<string>::const_iterator i = ulabels.begin ();
-           i != ulabels.end ();
-           i++)
-        {
-          try
-            {
-              l = get_unit_from (*i, a_unit_str);
-              break;
-            }
-          catch (exception & x)
-            {
-            }
-        }
-      if (! isnormal (l))
-        {
-          _throw_bad_unit ("type of", a_unit_str);
-        }
-      
-      return l;
-      */
       return unit_val;
     }
 
@@ -455,37 +436,6 @@ namespace datatools {
           throw logic_error (message.str ());
         }
       return unit_value;
-      /*
-     double val = numeric_limits<double>::quiet_NaN ();
-
-      istringstream iss (a_word);
-      iss >> val;
-      if (! iss)
-        {
-          ostringstream message;
-          message << "get_value_with_unit: Format error while reading a double value !";
-          throw runtime_error (message.str ());
-        }
-      iss >> ws;
-      if (! iss.eof ())
-        {
-          string ustr;
-          iss >> ustr;
-          try
-            {
-              double any_unit = get_unit (ustr);
-              val *= any_unit;
-            }
-          catch (exception & x)
-            {
-              ostringstream message;
-              message << "get_value_with_unit: Unknown unit: " << x.what ();
-              throw runtime_error (message.str ());
-            } 
-        }
-      
-      return val;
-      */
     }
 
   } // end of namespace utils

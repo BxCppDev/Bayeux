@@ -94,6 +94,9 @@ namespace datatools {
       //! Get the CLHEP mass activity unit from a string.
       static double get_mass_activity_unit_from (const std::string &);
 
+      //! Get the frequency unit from a string.
+      static double get_frequency_unit_from (const std::string &);
+
       //! Get the CLHEP unit from a string specifiying the unit type.
      /**
        * \b Example:
