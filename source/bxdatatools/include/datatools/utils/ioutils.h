@@ -163,38 +163,9 @@ namespace datatools {
 
       static ostream_manipulator<int> precision (const int & n_);
 
-      static std::string to_binary (const uint32_t & val_);
+      static std::string to_binary (const uint32_t & val_, bool show_all_ = false);
 
     };
-
-    /*
-      std::string create_temporary (const std::string & template_,
-      const std::string & path_ = "")
-      {
-      char * sdn = ".";
-      ostringstream oss;
-      if (! path_.empty ())
-      {
-      oss << path_;
-      }
-      char sfn[] = "/home/usr1/temp-XXXXXX";
-      FILE * sfp;
-
-      if (! secure_dir(sdn)) {
-      // Handle error
-      }
-
-      int fd = mkstemp(sfn);
-      if (fd == -1) {
-      // Handle error
-      }
-
-      if (unlink(sfn) == -1) {
-      // Handle error
-      }
-
-      }
-    */
 
   } // namespace utils
 

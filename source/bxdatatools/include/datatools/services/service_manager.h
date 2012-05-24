@@ -34,7 +34,6 @@
 
 #include <string>
 #include <sstream>
-//#include <map>
 #include <typeinfo>
 #include <stdexcept>
 
@@ -44,6 +43,7 @@
 #include <datatools/services/base_service.h>
 #include <datatools/utils/i_tree_dump.h>
 #include <datatools/utils/properties.h>
+#include <datatools/utils/bit_mask.h>
 
 namespace datatools {
 
@@ -54,19 +54,17 @@ namespace datatools {
 
   namespace service {
 
-    //using   namespace std;
-
     class service_manager : public datatools::utils::i_tree_dumpable
     {
     public:
 
       enum flag_type
         {
-          BLANK              = 0x0,
-          NO_PRELOAD         = 0x1,
-          FORCE_INITIALIZATION_AT_LOAD = 0x2,
-          DEBUG              = 0x4,
-          VERBOSE            = 0x8,
+          BLANK              = 0,
+          NO_PRELOAD         = datatools::utils::bit_mask::bit00,
+          FORCE_INITIALIZATION_AT_LOAD = datatools::utils::bit_mask::bit01,
+          DEBUG              = datatools::utils::bit_mask::bit02,
+          VERBOSE            = datatools::utils::bit_mask::bit03,
         };
 
       /// Constructor
@@ -77,32 +75,44 @@ namespace datatools {
       /// Destructor
       ~service_manager ();
 
+      /// Set the name of the service
       void set_name (const std::string & name_);
 
+      /// Set the description of the service
       void set_description (const std::string & description_);
 
+      /// Get the name of the service
       const std::string & get_name () const;
 
+      /// Get the description of the service
       const std::string & get_description () const;
 
+      /// Check the debug flag
       bool is_debug () const;
 
+      /// Set the debug flag
       void set_debug (bool debug_ = true);
 
     private:
 
+      /// Set the factory preload flag
       void _set_preload (bool preload_);
 
     public:
 
+      /// Check the initialization flag
       bool is_initialized () const;
 
+      /// Initialize the manager
       void initialize ();
 
+      /// Initialize the manager from a container of properties 
       void initialize (const datatools::utils::properties & config_);
 
+      /// Reset the manager
       void reset ();
 
+      /// Smart print
       virtual void tree_dump (std::ostream & out_         = std::clog,
                               const std::string & title_  = "",
                               const std::string & indent_ = "",

@@ -198,6 +198,7 @@ namespace datatools {
                    << "'..."
                    << endl;
             }
+          /*
           if (! _factory_register_.has (service_entry_.service_id))
             {
               ostringstream message;
@@ -207,6 +208,7 @@ namespace datatools {
                       << service_entry_.service_name << "' !";
               throw logic_error (message.str ());
             }
+          */
           // 2012/04/14: XG since the service handle has been set by
           // the create_service method, one has to use it. THe
           // following commented lines create another pointer ! so
@@ -399,7 +401,7 @@ namespace datatools {
                << endl;
         }
       _services_.clear ();
-      _factory_register_.clear ();
+      _factory_register_.reset ();
       _force_initialization_at_load_ = false;
       _preload_ = true;
 
@@ -782,7 +784,6 @@ namespace datatools {
       }
 
       {
-        //size_t count = 0;
         out_ << indent << du::i_tree_dumpable::tag
              << "Services       : ";
         size_t sz = _services_.size ();

@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <string>
 #include <list>
+#include <stdexcept>
 
 namespace datatools {
 
@@ -79,6 +80,50 @@ namespace datatools {
     void split_string (const std::string & a_word ,
                        const std::string & a_separators ,
                        std::list<std::string> & a_words);
+
+    template<typename Integral>
+    void set_bit (Integral & number_, int pos_)
+    {
+      if (pos_ < 0 || pos_ >= sizeof (Integral) * 8)
+        {
+          throw std::range_error ("datatools::utils::set_bit: Invalid bit position !");
+        }
+      number_ |= 1 << pos_;
+      return;
+    }
+
+    template<typename Integral>
+    void unset_bit (Integral & number_, int pos_)
+    {
+      if (pos_ < 0 || pos_ >= sizeof (Integral) * 8)
+        {
+          throw std::range_error ("datatools::utils::unset_bit: Invalid bit position !");
+        }
+      number_ &= ~(1 << pos_);
+      return;
+    }
+
+    template<typename Integral>
+    void toggle_bit (Integral & number_, int pos_)
+    {
+      if (pos_ < 0 || pos_ >= sizeof (Integral) * 8)
+        {
+          throw std::range_error ("datatools::utils::toggle_bit: Invalid bit position !");
+        }
+      number_ ^= 1 << pos_;
+      return;
+    }
+
+    template<typename Integral>
+    bool check_bit (Integral & number_, int pos_)
+    {
+     if (pos_ < 0 || pos_ >= sizeof (Integral) * 8)
+        {
+          throw std::range_error ("datatools::utils::toggle_bit: Invalid bit position !");
+        }
+      if (number_ & (1 << pos_)) return false;
+      return true;
+    }
 
   } // namespace utils
 

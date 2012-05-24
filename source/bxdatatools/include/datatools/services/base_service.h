@@ -57,6 +57,8 @@ namespace datatools {
 
       const std::string & get_name () const;
 
+      bool has_description () const;
+
       const std::string & get_description () const;
 
       void set_description (const std::string & a_description);
@@ -86,12 +88,12 @@ namespace datatools {
 
     public:
 
-      // ctor:
+      /// Constructor
       base_service (const std::string & a_process_name,
                     const std::string & a_process_description = "",
                     const std::string & a_process_version     = "");
 
-      // dtor:
+      /// Destructor
       virtual ~base_service ();
 
       virtual void tree_dump (std::ostream & a_out         = std::clog,

@@ -38,10 +38,6 @@ namespace datatools {
     DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION (base_service,
                                                       "datatools::service::base_service/__system__");
 
-    /*
-    base_service::scoped_service_creator_db_t base_service::_g_service_creator_db_ (new service_creator_db (true));
-    */
-
     const string &
     base_service::get_name () const
     {
@@ -54,6 +50,11 @@ namespace datatools {
       _name = a_new_value;
       return;
     }
+
+      bool base_service::has_description () const
+      {
+        return ! _description.empty ();
+      }
 
     const string & base_service::get_description () const
     {
@@ -96,11 +97,10 @@ namespace datatools {
         _description (a_service_description),
         _version (a_service_version)
     {
-      //service_manager_ = 0;
       return;
     }
 
-    // dtor:
+    // Destructor :
     base_service::~base_service ()
     {
       return;

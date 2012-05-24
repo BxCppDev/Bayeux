@@ -64,9 +64,9 @@ namespace datatools {
     ostream & operator<< (ostream & out_, const io::indenter & indent_)
     {
       for (int i = 0; i < (int) (indent_._width_ * indent_._level_); i++)
-	{
-	  out_ << ' ';
-	}
+  {
+    out_ << ' ';
+  }
       return out_;
     }
 
@@ -109,113 +109,113 @@ namespace datatools {
       if (io::g_colored_stream_ && c_) return;
       if (! io::g_colored_stream_ && ! c_) return;
       if (c_)
-	{
+  {
 #ifdef USING_NCURSES
-	  clog << "io::set_colored: Open curses stuff." << endl;
-	  savetty ();
-	  string term  = "vt100;";
-	  char * term_env = getenv ("TERM");
-	  if (term_env != 0)
-	    {
-	      term = term_env;
-	    }
-	  g_screen_ = newterm (term.c_str (), stdout, stdin);
-	  set_term (g_screen_);
-	  initscr ();
-	  nocbreak ();
-	  echo ();
-	  nonl ();
-	  intrflush (stdscr, FALSE);
+    clog << "io::set_colored: Open curses stuff." << endl;
+    savetty ();
+    string term  = "vt100;";
+    char * term_env = getenv ("TERM");
+    if (term_env != 0)
+      {
+        term = term_env;
+      }
+    g_screen_ = newterm (term.c_str (), stdout, stdin);
+    set_term (g_screen_);
+    initscr ();
+    nocbreak ();
+    echo ();
+    nonl ();
+    intrflush (stdscr, FALSE);
 #endif // USING_NCURSES
-	  io::g_colored_stream_ = true;
-	}
+    io::g_colored_stream_ = true;
+  }
       else
-	{
+  {
 #ifdef USING_NCURSES
-	  if (g_screen_)
-	    {
-	      set_term (g_screen_);
-	      endwin ();
-	      delscreen (g_screen_);
-	      g_screen_ = 0;
-	      resetty ();
-	      clog << "io::set_colored: Close curses stuff." << endl;
-	    }
+    if (g_screen_)
+      {
+        set_term (g_screen_);
+        endwin ();
+        delscreen (g_screen_);
+        g_screen_ = 0;
+        resetty ();
+        clog << "io::set_colored: Close curses stuff." << endl;
+      }
 #endif // USING_NCURSES
-	  io::g_colored_stream_ = false;
-	}
+    io::g_colored_stream_ = false;
+  }
       return;
     }
 
     ostream & io::normal (ostream & out_)
     {
       if (io::is_colored ())
-	{
+  {
 #ifdef USING_NCURSES
-	  io::focus ();
-	  attrset (A_NORMAL);
+    io::focus ();
+    attrset (A_NORMAL);
 #else
 #endif // USING_NCURSES
-	}
+  }
       return out_;
     }
 
     ostream & io::reverse (ostream & out_)
     {
       if (io::is_colored ())
-	{
+  {
 #ifdef USING_NCURSES
-	  io::focus ();
-	  attrset (A_REVERSE);
+    io::focus ();
+    attrset (A_REVERSE);
 #else
 #endif // USING_NCURSES
-	}
+  }
       return out_;
     }
 
     ostream & io::bold (ostream & out_)
     {
       if (io::is_colored ())
-	{
+  {
 #ifdef USING_NCURSES
-	  io::focus ();
-	  attrset (A_BOLD);
+    io::focus ();
+    attrset (A_BOLD);
 #endif // USING_NCURSES
-	}
+  }
       return out_;
     }
 
     ostream & io::underline (ostream & out_)
     {
       if (io::is_colored ())
-	{
+  {
 #ifdef USING_NCURSES
-	  io::focus ();
-	  attrset (A_UNDERLINE);
+    io::focus ();
+    attrset (A_UNDERLINE);
 #endif // USING_NCURSES
-	}
+  }
       return out_;
     }
 
     ostream & io::red (ostream & out_)
     {
       if (io::is_colored ())
-	{
+  {
 #ifdef USING_NCURSES
-	  io::focus ();
+    io::focus ();
 #endif // USING_NCURSES
-	}
+  }
       return out_;
     }
 
     ostream & io::green (ostream & out_)
     {
       if (io::is_colored ())
-	{
+  {
 #ifdef USING_NCURSES
-	  io::focus ();
+    io::focus ();
 #endif // USING_NCURSES
-	}
+  }
       return out_;
     }
 
@@ -297,7 +297,7 @@ namespace datatools {
       return out_;
     }
 
-    string io::to_binary (const uint32_t & val_)
+    string io::to_binary (const uint32_t & val_, bool show_all_)
     {
       ostringstream oss;
       size_t nbits = sizeof (val_) * 8;
@@ -306,14 +306,14 @@ namespace datatools {
       oss << '(';
       bool start = false;
       for (int i = (nbits - 1); i >= 0; i--)
-	{
-	  bool abit;
-	  abit = (val_ >> i) & 0x1;
-	  //clog << "DEVEL: io::to_binary: bit[" << i << "]=" << abit << endl;
-	  if (! start & abit) start = true;
-	  if (! abit && ! start) continue;
-	  oss << abit;
-	}
+        {
+          bool abit;
+          abit = (val_ >> i) & 0x1;
+          //clog << "DEVEL: io::to_binary: bit[" << i << "]=" << abit << endl;
+          if (! start & abit) start = true;
+          if (! show_all_ && ! abit && ! start) continue;
+          oss << abit;
+        }
       oss << ')';
       return oss.str ();
     }

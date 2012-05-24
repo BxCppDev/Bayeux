@@ -118,6 +118,15 @@ namespace datatools {
         return;
       }
 
+      /// Reset
+      void reset ()
+      {
+        clear ();
+        _label_.clear ();
+        _verbose_ = false;
+        return;
+      }
+ 
       /// Get a mutable reference to a factory given by registration ID
       factory_type & grab (const std::string & id_)
       {
@@ -187,6 +196,13 @@ namespace datatools {
         _registered_.erase (id_);
         return;
       };
+
+      /// Constructor
+      factory_register ()
+      {
+        _verbose_ = false;
+        return;
+      }
 
       /// Constructor
       factory_register (const std::string & label_, unsigned int flags = 0x0)
