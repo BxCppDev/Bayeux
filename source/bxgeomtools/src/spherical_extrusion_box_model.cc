@@ -338,6 +338,7 @@ namespace geomtools {
                                                                        const geomtools::i_object_3d & obj_,
                                                                        void *)
   {
+    bool devel = false;
     using namespace geomtools;
     const subtraction_3d * solid = dynamic_cast<const geomtools::subtraction_3d *>(&obj_);
     if (solid == 0)
@@ -395,16 +396,19 @@ namespace geomtools {
     double rs = extrusion_sphere.get_r ();
     double a = rs - c;
     double re = sqrt (rs * rs - a * a);
-    cerr << "DEVEL : geomtools::spherical_extrusion_box_model::gnuplot_draw_user_function: "
-         << " zcyl = " << zcyl << endl;
-    cerr << "DEVEL : geomtools::spherical_extrusion_box_model::gnuplot_draw_user_function: "
-         << " rs = " << rs << endl;
-    cerr << "DEVEL : geomtools::spherical_extrusion_box_model::gnuplot_draw_user_function: "
-         << " c = " << c << endl;
-    cerr << "DEVEL : geomtools::spherical_extrusion_box_model::gnuplot_draw_user_function: "
-         << " a = " << a << endl;
-    cerr << "DEVEL : geomtools::spherical_extrusion_box_model::gnuplot_draw_user_function: "
-         << " h = " << h << endl;
+    if (devel)
+      {
+        cerr << "DEVEL : geomtools::spherical_extrusion_box_model::gnuplot_draw_user_function: "
+             << " zcyl = " << zcyl << endl;
+        cerr << "DEVEL : geomtools::spherical_extrusion_box_model::gnuplot_draw_user_function: "
+             << " rs = " << rs << endl;
+        cerr << "DEVEL : geomtools::spherical_extrusion_box_model::gnuplot_draw_user_function: "
+             << " c = " << c << endl;
+        cerr << "DEVEL : geomtools::spherical_extrusion_box_model::gnuplot_draw_user_function: "
+             << " a = " << a << endl;
+        cerr << "DEVEL : geomtools::spherical_extrusion_box_model::gnuplot_draw_user_function: "
+             << " h = " << h << endl;
+      }
 
     bool draw_extrusion = true;
     if (draw_extrusion)

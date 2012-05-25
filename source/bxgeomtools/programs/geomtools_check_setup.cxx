@@ -47,6 +47,9 @@ int main (int argc_, char ** argv_)
       bool mapping_requested = false;
       std::string categories_filename;
       std::string top_mapping_model_name;
+      std::vector<std::string> mapping_only_categories;
+      std::vector<std::string> mapping_excluded_categories;
+      int32_t mapping_max_depth = geomtools::mapping::NO_MAX_DEPTH;
 
       int iarg = 1;
       while (iarg < argc_)
@@ -125,6 +128,31 @@ int main (int argc_, char ** argv_)
                 {
                   mapping_requested = true;
                 }
+              else if (option == "-MD" || option == "--mapping-max-depth") 
+                {
+                  std::istringstream mmd_iss (argv_[++iarg]);
+                  mmd_iss >> mapping_max_depth;
+                  if (! mmd_iss)
+                    {
+                      std::clog << "WARNING: invalid mapping max depth value '" << argv_[iarg] << "' !" << std::endl;                 
+                      mapping_max_depth = geomtools::mapping::NO_MAX_DEPTH;
+                    }
+                  if (mapping_max_depth < 1)
+                    {
+                      mapping_max_depth = geomtools::mapping::NO_MAX_DEPTH;
+                    }
+                  mapping_requested = true;
+                }
+              else if (option == "-MO" || option == "--mapping-only") 
+                {
+                  mapping_only_categories.push_back (argv_[++iarg]);
+                  mapping_requested = true;
+                }
+              else if (option == "-MX" || option == "--mapping-exclude") 
+                {
+                  mapping_excluded_categories.push_back (argv_[++iarg]);
+                  mapping_requested = true;
+                }
               else if (option == "-T" || option == "--top-model") 
                 {
                   top_mapping_model_name = argv_[++iarg];
@@ -195,38 +223,7 @@ int main (int argc_, char ** argv_)
               break;
             }
         }
-  
-      // The manager for GID :
-      geomtools::id_mgr  gid_manager;
-      if (! categories_filename.empty ())
-        {
-          std::string categories_lis = categories_filename;
-          datatools::utils::fetch_path_with_env (categories_lis);
-          gid_manager.load (categories_lis);
-        }
-
-      if (mapping_requested)
-        {
-          // The mapping manager :
-          geomtools::mapping mapping_manager; 
-          mapping_manager.set_id_manager (gid_manager);
-          datatools::utils::properties mapping_config;
-          mapping_config.store ("mapping.max_depth", 0);
-          mapping_manager.initialize (mapping_config);
-          if (top_mapping_model_name.empty ())
-            {
-              top_mapping_model_name = geomtools::model_factory::DEFAULT_WORLD_LABEL;
-            }
-          if (geometry_factory.get_models ().find (top_mapping_model_name) != geometry_factory.get_models ().end ())
-            {
-              mapping_manager.build_from (geometry_factory, top_mapping_model_name);
-            }
-          else
-            {
-              std::clog << "WARNING: Cannot find model named '" << top_mapping_model_name << "'" << std::endl;
-            }
-        }
-     
+       
       if (draw)
         {   
           std::clog << "Current drawer view : '" << drawer_view << "'" << std::endl;
@@ -350,8 +347,53 @@ int main (int argc_, char ** argv_)
             } while (go_on);
         }
 
+      // The manager for GID :
+      geomtools::id_mgr  gid_manager;
+      if (! categories_filename.empty ())
+        {
+          std::string categories_lis = categories_filename;
+          datatools::utils::fetch_path_with_env (categories_lis);
+          gid_manager.load (categories_lis);
+        }
+
+      if (mapping_requested)
+        {
+          std::clog << "NOTICE: " << "Mapping..." << std::endl;
+          
+          // The mapping manager :
+          geomtools::mapping mapping_manager; 
+          mapping_manager.set_id_manager (gid_manager);
+          datatools::utils::properties mapping_config;
+          mapping_config.store ("mapping.max_depth", mapping_max_depth);
+          bool can_exclude_categories = true;
+          if (mapping_only_categories.size ())
+            {
+              mapping_config.store ("mapping.only_categories", mapping_only_categories);
+              can_exclude_categories = false;
+            }
+          if (can_exclude_categories && mapping_excluded_categories.size ())
+            {
+              mapping_config.store ("mapping.excluded_categories", mapping_excluded_categories);
+            }
+          mapping_manager.initialize (mapping_config);
+          if (top_mapping_model_name.empty ())
+            {
+              top_mapping_model_name = geomtools::model_factory::DEFAULT_WORLD_LABEL;
+            }
+          if (geometry_factory.get_models ().find (top_mapping_model_name) != geometry_factory.get_models ().end ())
+            {
+              mapping_manager.build_from (geometry_factory, top_mapping_model_name);
+            }
+          else
+            {
+              std::clog << "WARNING: Cannot find model named '" << top_mapping_model_name << "'" << std::endl;
+            }
+          mapping_manager.smart_print (std::cout, "", 0);
+        }
+
       if (gdml)
         {
+          std::clog << "NOTICE: " << "GDML..." << std::endl;
           ostringstream ext_mat_oss;
           geomtools::gdml_writer writer;
           {
@@ -469,13 +511,20 @@ void print_help ()
   std::clog << "   --no-labels    : Visualization does not show axis and labels\n";
   std::clog << "   -m|--model MODEL_NAME :\n";
   std::clog << "                    Visualization shows a specific geometry model\n";
-  std::clog << "   -l|--load-dll DLL_NAME :\n";
-  std::clog << "                    Load a specific DLL\n";
   std::clog << "   -c|--categories CATEGORIES_FILE:\n";
   std::clog << "                    Load a specific geometry category file\n";
   std::clog << "   -M|--mapping   : Build geometry mapping informations\n";
+  std::clog << "   -MD|--mapping-max-depth DEPTH  : \n";
+  std::clog << "                    Maximum depth of the geometry mapping\n";
+  std::clog << "   -MO|--mapping-only CATEGORY   : \n";
+  std::clog << "                    Specify a category to be build in the geometry mapping\n";
+  std::clog << "   -MX|--mapping-exclude CATEGORY   : \n";
+  std::clog << "                    Specify a category to be excluded from the geometry mapping\n";
   std::clog << "   -T|--top-model MODEL_NAME : Identify the top-level model for mapping\n";
-  std::clog << "  geomtools_check_setup setup.geom \n\n";
+  std::clog << "   -l|--load-dll DLL_NAME :\n";
+  std::clog << "                    Load a specific DLL\n";
+  std::clog << "Examples:\n\n";
+  std::clog << "  geomtools_check_setup --categories setup_categories.lis --mapping-max-depth 3 setup.geom \n\n";
   return;
 }
 

@@ -239,6 +239,59 @@ namespace geomtools {
     return;
   }
 
+  void mapping::smart_print (std::ostream & out_, 
+                             const std::string & indent_,
+                             uint32_t flags_) const
+  {
+    bool print_title = flags_ & PRINT_TITLE;
+    bool print_pager = flags_ & PRINT_PAGER;
+    if (print_title)
+      {
+        out_ << indent_ << "Geometry mapping dictionary : " << std::endl;
+      }
+
+    out_ << indent_ << "Maximum depth     : "
+         << _max_depth_ << std::endl;
+
+    out_ << indent_ << "Number of entries : "
+         << _get_geom_infos ().size () << std::endl;
+    
+    for (geom_info_dict_t::const_iterator i
+           = _get_geom_infos ().begin ();
+         i != _get_geom_infos ().end ();
+         i++)
+      {
+        out_ << indent_ << "GID = " << i->first;
+        const geom_info & ginfo = i->second;
+        // To be done :
+        //out_ << " within category '" << "?" << "'"; 
+        if (! ginfo.has_logical ())
+          {
+            out_ << " (no logical!!!)";
+          }
+        out_ << std::endl;
+        if (! ginfo.has_logical ())
+          {
+            continue;
+          }
+        out_ << indent_ << "  " << "Logical   : '"
+             << ginfo.get_logical ().get_name () << "'"
+             << std::endl;
+        out_ << indent_ << "  " << "Material  : '"
+             << ginfo.get_logical ().get_material_ref ()<< "'" << std::endl;
+        out_ << indent_ << "  " << "Shape     : '"
+             << ginfo.get_logical ().get_shape ().get_shape_name () 
+             << "'" << std::endl;
+        out_ << indent_ << "  " << "World placement : ["
+             << ginfo.get_world_placement () << "]" << std::endl;
+        out_ << indent_ << "  " << "Physicals : "
+             << ginfo.get_logical ().get_physicals ().size () << std::endl;
+        
+      }
+
+    return;
+  }
+
   void mapping::_build_ ()
   {
     bool devel = g_devel;

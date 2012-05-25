@@ -22,6 +22,7 @@
 #include <list>
 
 #include <datatools/utils/ioutils.h>
+#include <datatools/utils/bit_mask.h>
 
 #include <geomtools/utils.h>
 #include <geomtools/geom_map.h>
@@ -94,7 +95,17 @@ namespace geomtools {
 
   public:
 
-    void dump_dictionnary (std::ostream & out_) const;
+    void dump_dictionnary (std::ostream & out_ = std::clog) const;
+
+    enum smart_print_flags_type
+      {
+        PRINT_TITLE = datatools::utils::bit_mask::bit00,
+        PRINT_PAGER = datatools::utils::bit_mask::bit01,
+      };
+
+    void smart_print (std::ostream & out_ = std::clog, 
+                      const std::string & indent_ = "", 
+                      uint32_t flags_ = 0) const;
 
     void test ();
 
