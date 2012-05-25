@@ -132,10 +132,6 @@ int main (int argc_, char ** argv_)
                 {
                   LL_dlls.push_back (argv_[++iarg]);
                 }
-              else if (option == "-c" || option == "--categories") 
-                {
-                  categories_filename = argv_[++iarg];
-                }
               else if (option == "+M" || option == "--with-mapping") 
                 {
                   mapping_requested = true;
@@ -144,7 +140,12 @@ int main (int argc_, char ** argv_)
                 {
                   mapping_requested = false;
                 }
-              else if (option == "-MD" || option == "--mapping-max-depth") 
+               else if (option == "-MC" || option == "--mapping-categories") 
+                {
+                  categories_filename = argv_[++iarg];
+                  mapping_requested = true;
+                }
+               else if (option == "-MD" || option == "--mapping-max-depth") 
                 {
                   std::istringstream mmd_iss (argv_[++iarg]);
                   mmd_iss >> mapping_max_depth;
@@ -324,24 +325,6 @@ int main (int argc_, char ** argv_)
                       }             
                   }
                 if (! go_on) break;
-                /*
-                token_iss >> token >> ws;
-                if (token == ".q" || token == ".quit")
-                  {
-                    go_on = false;
-                    break;
-                  }
-                if (! token.empty () && token[0] != '-')
-                  {
-                    model_name = token;
-                    token.clear ();
-                    token_iss >> token >> ws;
-                  }
-                if (! token.empty ())
-                  {
-                    drawer_view = get_drawer_view (token);
-                  }
-                */
               }
               if (model_name.empty () && has_world)
                 {
@@ -533,11 +516,11 @@ void print_help ()
   std::clog << "   --no-labels       : Visualization does not show axis and labels\n";
   std::clog << "   -m|--model MODEL_NAME :\n";
   std::clog << "                       Visualization shows a specific geometry model\n";
-  std::clog << "   -c|--categories CATEGORIES_FILE:\n";
-  std::clog << "                       Load a specific geometry category file\n";
   std::clog << "   +M|--with-mapping : Build geometry mapping informations\n";
   std::clog << "   -M|--without-mapping : \n"
             << "                       Do not build geometry mapping informations\n";
+  std::clog << "   -MC|--mapping-categories CATEGORIES_FILE:\n";
+  std::clog << "                       Load a specific geometry category file\n";
   std::clog << "   -MD|--mapping-max-depth DEPTH  : \n";
   std::clog << "                       Maximum depth of the geometry mapping\n";
   std::clog << "   -MO|--mapping-only CATEGORY   : \n";
