@@ -14,6 +14,7 @@
 #include <geomtools/i_model.h>
 #include <geomtools/logical_volume.h>
 #include <geomtools/visibility.h>
+#include <datatools/utils/utils.h>
 
 namespace geomtools {
 
@@ -76,6 +77,56 @@ namespace geomtools {
         reset ();
       }
     return;
+  }
+  
+  // 2012-05-25 FM : add support for loading a file that contains a list of geometry filenames :
+  void model_factory::load_geom_list (const std::string & geom_list_file_)
+  {
+    string geom_lis_filename = geom_list_file_;
+    datatools::utils::fetch_path_with_env (geom_lis_filename);
+
+    ifstream finlist (geom_lis_filename.c_str ());
+    if (! finlist)
+      {
+        ostringstream message;
+        message << "geomtools::model_factory::load_geom_list: "
+                << "Cannot open file '" << geom_lis_filename << "' !";
+        throw logic_error (message.str ());
+      }
+    while (finlist)
+      {
+        string line;
+        std::getline (finlist, line);
+        if (! finlist)
+          {
+            ostringstream message;
+            message << "geomtools::model_factory::load_geom_list: "
+                    << "I/O error while reading file '" << geom_lis_filename << "' !";
+            throw logic_error (message.str ());
+          }
+        string word;
+        istringstream line_iss (line);
+        line_iss >> word;
+        if (word.length () < 1)
+          {
+            // skip blank line
+            continue;
+          }
+        if (word[0] == '#')
+          {
+            continue;
+          }
+        string geom_filename = word;
+        datatools::utils::fetch_path_with_env (geom_filename);
+        load (geom_filename);
+
+        finlist >> ws;
+        if (finlist.eof ())
+          {
+            break;
+          }
+      }
+   
   }
 
   void model_factory::load (const string & mprop_file_)

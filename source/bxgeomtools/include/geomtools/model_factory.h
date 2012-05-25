@@ -66,6 +66,9 @@ namespace geomtools {
   
     void load (const std::string & mprop_file_);
   
+    // 2012-05-25 FM : add support for loading a file that contains a list of geometry filenames :
+    void load_geom_list (const std::string & geom_list_file_);
+  
     /// Lock the geometry model factory
     void lock ();
   
