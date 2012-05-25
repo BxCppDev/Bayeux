@@ -536,7 +536,8 @@ void print_help ()
   std::clog << "   -c|--categories CATEGORIES_FILE:\n";
   std::clog << "                       Load a specific geometry category file\n";
   std::clog << "   +M|--with-mapping : Build geometry mapping informations\n";
-  std::clog << "   -M|--without-mapping : Do not build geometry mapping informations\n";
+  std::clog << "   -M|--without-mapping : \n"
+            << "                       Do not build geometry mapping informations\n";
   std::clog << "   -MD|--mapping-max-depth DEPTH  : \n";
   std::clog << "                       Maximum depth of the geometry mapping\n";
   std::clog << "   -MO|--mapping-only CATEGORY   : \n";
