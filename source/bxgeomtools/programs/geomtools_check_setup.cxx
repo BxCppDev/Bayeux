@@ -35,16 +35,21 @@ int main (int argc_, char ** argv_)
   
       bool debug = false;
       bool devel = false;
-      std::string drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
-      bool drawer_labels = true;
-      bool draw = true;
-      bool gdml = false;
-      bool dump_factory = false;
-      std::vector<std::string> setup_filenames;
-      std::string model_name; 
+
       std::vector<std::string> LL_dlls;
       std::string LL_config;
-      bool mapping_requested = false;
+ 
+      std::vector<std::string> setup_filenames;
+      bool dump_factory = false;
+
+      bool visu = true;
+      std::string visu_drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
+      bool visu_drawer_labels = true;
+      std::string visu_model_name; 
+
+      bool gdml = false;
+
+       bool mapping_requested = false;
       std::string categories_filename;
       std::string top_mapping_model_name;
       std::vector<std::string> mapping_only_categories;
@@ -72,13 +77,13 @@ int main (int argc_, char ** argv_)
                 {
                   devel = true;
                 }
-              else if (option == "+D" || option == "--with-draw") 
+              else if (option == "+V" || option == "--with-visu") 
                 {
-                  draw = false;
+                  visu = true;
                 }
-              else if (option == "-D" || option == "--without-draw") 
+              else if (option == "-V" || option == "--without-visu") 
                 {
-                  draw = false;
+                  visu = false;
                 }
               else if (option == "+G" || option == "--with-gdml") 
                 {
@@ -96,37 +101,44 @@ int main (int argc_, char ** argv_)
                 {
                   dump_factory = false;
                 }
-              else if (option == "-xy" || option == "--view-xy") 
+              else if (option == "-xy" || option == "--visu-view-xy") 
                 {
-                  drawer_view = get_drawer_view (option);
+                  visu_drawer_view = get_drawer_view (option);
+                  visu = true;
                 }
-              else if (option == "-xz" || option == "--view-xz") 
+              else if (option == "-xz" || option == "--visu-view-xz") 
                 {
-                  drawer_view = get_drawer_view (option);
-                }
-              else if (option == "-yz" || option == "--view-yz") 
+                  visu_drawer_view = get_drawer_view (option);
+                  visu = true;
+               }
+              else if (option == "-yz" || option == "--visu-view-yz") 
                 { 
-                  drawer_view = get_drawer_view (option);
+                  visu_drawer_view = get_drawer_view (option);
+                  visu = true;
                 }
-              else if (option == "-3d" || option == "--view-3d") 
+              else if (option == "-3d" || option == "--visu-view-3d") 
                 {
-                  drawer_view = get_drawer_view (option);
+                  visu_drawer_view = get_drawer_view (option);
+                  visu = true;
                 }
-              else if (option == "-3d-free" || option == "--view-3d-free") 
+              else if (option == "-3d-free" || option == "--visu-view-3d-free") 
                 {
-                  drawer_view = get_drawer_view (option);
+                  visu_drawer_view = get_drawer_view (option);
+                  visu = true;
                 }
-              else if (option == "--labels") 
+              else if (option == "+VL" || option == "--visu-labels") 
                 {
-                  drawer_labels = true;
+                  visu_drawer_labels = true;
+                  visu = true;
                 }
-              else if (option == "--no-labels") 
+              else if (option == "-VL" || option == "--visu-no-labels") 
                 {
-                  drawer_labels = false;
-                }
-              else if (option == "-m" || option == "--model") 
+                  visu_drawer_labels = false;
+                  visu = true;
+               }
+              else if (option == "-VM" || option == "--visu-model") 
                 {
-                  model_name = argv_[++iarg];
+                  visu_model_name = argv_[++iarg];
                 }
               else if (option == "-l" || option == "--load-dll") 
                 {
@@ -170,7 +182,7 @@ int main (int argc_, char ** argv_)
                   mapping_excluded_categories.push_back (argv_[++iarg]);
                   mapping_requested = true;
                 }
-              else if (option == "-T" || option == "--top-model") 
+              else if (option == "-MT" || option == "--mapping-top-model") 
                 {
                   top_mapping_model_name = argv_[++iarg];
                 }
@@ -233,17 +245,17 @@ int main (int argc_, char ** argv_)
           if (i->second->get_name () == geomtools::model_factory::DEFAULT_WORLD_LABEL)
             {
               has_world = true;
-              if (model_name.empty ())
+              if (visu_model_name.empty ())
                 {
-                  model_name = geomtools::model_factory::DEFAULT_WORLD_LABEL;
+                  visu_model_name = geomtools::model_factory::DEFAULT_WORLD_LABEL;
                 }
               break;
             }
         }
        
-      if (draw)
+      if (visu)
         {   
-          std::clog << "Current drawer view : '" << drawer_view << "'" << std::endl;
+          std::clog << "Current drawer view : '" << visu_drawer_view << "'" << std::endl;
           bool go_on = true;
           do 
             {
@@ -281,9 +293,9 @@ int main (int argc_, char ** argv_)
 
               std::clog << std::endl << "Enter the name of the geometry model to be displayed " << "\n"
                         << " or type '.q'";
-              if (! model_name.empty ())
+              if (! visu_model_name.empty ())
                 {
-                  std::clog << " [" << model_name << "] : ";
+                  std::clog << " [" << visu_model_name << "] : ";
                 }
               std::clog << std::endl;
 
@@ -305,42 +317,42 @@ int main (int argc_, char ** argv_)
                       {
                         if (token[0] != '-')
                           {
-                            model_name = token;
+                            visu_model_name = token;
                           }
                         else
                           {
                             if (token == "--labels")
                               {
-                                drawer_labels = true;   
+                                visu_drawer_labels = true;   
                               }
                             else if (token == "--no-labels")
                               {
-                                drawer_labels = false;  
+                                visu_drawer_labels = false;  
                               }
                             else
                               {
-                                drawer_view = get_drawer_view (token);
+                                visu_drawer_view = get_drawer_view (token);
                               }
                           }
                       }             
                   }
                 if (! go_on) break;
               }
-              if (model_name.empty () && has_world)
+              if (visu_model_name.empty () && has_world)
                 {
-                  model_name = "world";
+                  visu_model_name = "world";
                 }
-              std::clog << "Name of the model : '" << model_name  << "'" << std::endl;
-              std::clog << "|-- View          : '" << drawer_view << "'" << std::endl;
-              std::clog << "`-- Labels        : " << drawer_labels << std::endl;
+              std::clog << "Name of the model : '" << visu_model_name  << "'" << std::endl;
+              std::clog << "|-- View          : '" << visu_drawer_view << "'" << std::endl;
+              std::clog << "`-- Labels        : " << visu_drawer_labels << std::endl;
 
               geomtools::gnuplot_drawer::g_devel = devel;
               geomtools::gnuplot_drawer GPD;
               GPD.set_mode (geomtools::gnuplot_drawer::MODE_WIRED);
-              GPD.set_view (drawer_view);
-              GPD.set_labels (drawer_labels);
+              GPD.set_view (visu_drawer_view);
+              GPD.set_labels (visu_drawer_labels);
               GPD.draw (geometry_factory, 
-                        model_name, 
+                        visu_model_name, 
                         p,  
                         geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT);
             } while (go_on);
@@ -466,23 +478,23 @@ int main (int argc_, char ** argv_)
 std::string get_drawer_view (const std::string & option_)
 {
   std::string drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
-  if (option_ == "-xy" || option_ == "--view-xy") 
+  if (option_ == "-xy" || option_ == "--visu-view-xy") 
     {
       drawer_view = geomtools::gnuplot_drawer::VIEW_2D_XY;
     }
-  else if (option_ == "-xz" || option_ == "--view-xz") 
+  else if (option_ == "-xz" || option_ == "--visu-view-xz") 
     {
       drawer_view = geomtools::gnuplot_drawer::VIEW_2D_XZ;
     }
-  else if (option_ == "-yz" || option_ == "--view-yz") 
+  else if (option_ == "-yz" || option_ == "--visu-view-yz") 
     { 
       drawer_view = geomtools::gnuplot_drawer::VIEW_2D_YZ;
     }
-  else if (option_ == "-3d" || option_ == "--view-3d") 
+  else if (option_ == "-3d" || option_ == "--visu-view-3d") 
     {
       drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
     }
-  else if (option_ == "-3d-free" || option_ == "--view-3d-free") 
+  else if (option_ == "-3d-free" || option_ == "--visu-view-3d-free") 
     {
       drawer_view = geomtools::gnuplot_drawer::VIEW_3D_FREE_SCALE;
     }
@@ -502,19 +514,25 @@ void print_help ()
   std::clog << "  geomtools_check_setup [OPTIONS] GEOMFILE [GEOMFILE [...]] \n\n";
   std::clog << "Options: \n\n";
   std::clog << "   -d|--debug        : Activate debug mode\n";
-  std::clog << "   +D|--with-draw    : Visualize the geometry setup\n";
-  std::clog << "   -D|--without-draw : Do not visualize the geometry setup\n";
-  std::clog << "   +G|--with-gdml    : Generate GDML output\n";
-  std::clog << "   -G|--without-gdml : Do not generate GDML output\n";
+  std::clog << "   -l|--load-dll DLL_NAME :\n";
+  std::clog << "                       Load a specific DLL\n";
   std::clog << "   +F                : Detailed print of the factory contents\n";
   std::clog << "   -F                : No detailed print of the factory contents\n";
-  std::clog << "   -xy|--view-xy     : Visualization defaults to XY view\n";
-  std::clog << "   -yz|-view-yz      : Visualization defaults to YZ view\n";
-  std::clog << "   -xz|--view-xz     : Visualization defaults to XZ view\n";
-  std::clog << "   -3d|--view-3d     : Visualization defaults to 3D view\n";
-  std::clog << "   --labels          : Visualization shows axis and labels\n";
-  std::clog << "   --no-labels       : Visualization does not show axis and labels\n";
-  std::clog << "   -m|--model MODEL_NAME :\n";
+  std::clog << "   +V|--with-visu    : Visualize the geometry setup\n";
+  std::clog << "   -V|--without-visu : Do not visualize the geometry setup\n";
+  std::clog << "   -xy|--visu-view-xy : \n"
+            << "                       Visualization defaults to XY view\n";
+  std::clog << "   -yz|--visu-view-yz :  \n"
+            << "                       Visualization defaults to YZ view\n";
+  std::clog << "   -xz|--visu-view-xz :  \n"
+            << "                       Visualization defaults to XZ view\n";
+  std::clog << "   -3d|--visu--view-3d :  \n"
+            << "                       Visualization defaults to 3D view\n";
+  std::clog << "   +VL|--visu-labels :  \n"
+            << "                       Visualization shows axis and labels\n";
+  std::clog << "   -VL|--visu-no-labels :  \n"
+            << "                       Visualization does not show axis and labels\n";
+  std::clog << "   -VM|--visu-model MODEL_NAME :\n";
   std::clog << "                       Visualization shows a specific geometry model\n";
   std::clog << "   +M|--with-mapping : Build geometry mapping informations\n";
   std::clog << "   -M|--without-mapping : \n"
@@ -527,12 +545,12 @@ void print_help ()
   std::clog << "                       Specify a category to be build in the geometry mapping\n";
   std::clog << "   -MX|--mapping-exclude CATEGORY   : \n";
   std::clog << "                       Specify a category to be excluded from the geometry mapping\n";
-  std::clog << "   -T|--top-model MODEL_NAME : \n"
+  std::clog << "   -MT|--mapping-top-model MODEL_NAME : \n"
             << "                       Identify the top-level model for mapping\n";
-  std::clog << "   -l|--load-dll DLL_NAME :\n";
-  std::clog << "                       Load a specific DLL\n";
+  std::clog << "   +G|--with-gdml    : Generate GDML output\n";
+  std::clog << "   -G|--without-gdml : Do not generate GDML output\n";
   std::clog << "Examples:\n\n";
-  std::clog << "  geomtools_check_setup --categories setup_categories.lis --mapping-max-depth 3 setup.geom \n\n";
+  std::clog << "  geomtools_check_setup --mapping-categories setup_categories.lis --mapping-max-depth 3 setup.geom \n\n";
   return;
 }
 

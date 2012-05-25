@@ -72,7 +72,7 @@ namespace geomtools {
   {
     if (is_initialized ())
       {
-        throw runtime_error ("mapping::add_only: Already initialized !");
+        throw logic_error ("mapping::add_only: Already initialized !");
       }
     if (! is_mode_only ())
       {
@@ -87,7 +87,7 @@ namespace geomtools {
   {
     if (is_initialized ())
       {
-        throw runtime_error ("mapping::add_excluded: Already initialized !");
+        throw logic_error ("mapping::add_excluded: Already initialized !");
       }
     if (! is_mode_excluded ())
       {
@@ -102,7 +102,7 @@ namespace geomtools {
   {
     if (is_initialized ())
       {
-        throw runtime_error ("mapping::initialize: Already initialized !");
+        throw logic_error ("mapping::initialize: Already initialized !");
       }
 
     if (config_.has_key ("mapping.max_depth"))
@@ -130,7 +130,7 @@ namespace geomtools {
       {
         if (has_only)
           {
-            throw runtime_error ("mapping::initialize: The 'mapping.excluded_categories' property is not compatible with 'mapping.only_categories' property !");
+            throw logic_error ("mapping::initialize: The 'mapping.excluded_categories' property is not compatible with 'mapping.only_categories' property !");
           }
         vector<string> excluded;
         config_.fetch ("mapping.excluded_categories", excluded);
@@ -164,7 +164,7 @@ namespace geomtools {
   {
     if (is_initialized ())
       {
-        throw runtime_error ("mapping::set_max_depth: Already initialized !");
+        throw logic_error ("mapping::set_max_depth: Already initialized !");
       }
     _max_depth_ = max_depth_;
     return;
@@ -186,12 +186,12 @@ namespace geomtools {
     if (! is_initialized ())
       {
         _initialized_ = true;
-        //throw runtime_error ("mapping::build_from: Not initialized !");
+        //throw logic_error ("mapping::build_from: Not initialized !");
       }
 
     if (! factory_.is_locked ())
       {
-        throw runtime_error ("mapping::build_from: Factory is not locked !");
+        throw logic_error ("mapping::build_from: Factory is not locked !");
       }
     _factory_ = &factory_;
     models_col_t::const_iterator found
@@ -201,7 +201,7 @@ namespace geomtools {
         ostringstream message;
         message << "mapping::build_from: Cannot find model '"
                 << mother_ << "' !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     const i_model & top_model = *(found->second);
     _top_logical_ = &(top_model.get_logical ());
@@ -295,8 +295,7 @@ namespace geomtools {
             if (print_pager)
               {
                 std::clog << std::endl 
-                          << "Hit ENTER to display the next page \n"
-                          << "or type '.q' to quit : ";
+                          << "Hit ENTER to display the next page or type '.q' to quit : ";
                  std::string user;
                  std::getline (std::cin, user);
                  {
@@ -330,7 +329,7 @@ namespace geomtools {
         ostringstream message;
         message << "mapping::_build_: Unknown category '"
                 << world_cat_name << "' !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     {
       const id_mgr::category_info & world_cat_info

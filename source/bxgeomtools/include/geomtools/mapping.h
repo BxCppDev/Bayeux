@@ -41,13 +41,13 @@ namespace geomtools {
   public:
 
     static bool g_devel;
-    static const size_t NO_MAX_DEPTH = 0;
+    static const size_t      NO_MAX_DEPTH = 0;
     static const std::string MAPPING_PREFIX;
 
     enum mode_t
       {
-        MODE_NONE = 0,
-        MODE_ONLY = 1,
+        MODE_NONE     = 0,
+        MODE_ONLY     = 1,
         MODE_EXCLUDED = 2
       };
 
