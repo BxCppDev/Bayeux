@@ -56,7 +56,7 @@ int main (int argc_, char ** argv_)
         {
           std::string token = argv_[iarg];
 
-          if (token[0] == '-')
+          if (token[0] == '-' || token[0] == '+')
             {
               std::string option = token; 
               if ((option == "-d") || (option == "--debug")) 
@@ -72,17 +72,29 @@ int main (int argc_, char ** argv_)
                 {
                   devel = true;
                 }
-              else if (option == "-D" || option == "--no-draw") 
+              else if (option == "+D" || option == "--with-draw") 
                 {
                   draw = false;
                 }
-              else if (option == "-G" || option == "--with-gdml") 
+              else if (option == "-D" || option == "--without-draw") 
+                {
+                  draw = false;
+                }
+              else if (option == "+G" || option == "--with-gdml") 
                 {
                   gdml = true;
                 }
-              else if (option == "-F") 
+              else if (option == "-G" || option == "--without-gdml") 
+                {
+                  gdml = false;
+                }
+              else if (option == "+F") 
                 {
                   dump_factory = true;
+                }
+              else if (option == "-F") 
+                {
+                  dump_factory = false;
                 }
               else if (option == "-xy" || option == "--view-xy") 
                 {
@@ -124,9 +136,13 @@ int main (int argc_, char ** argv_)
                 {
                   categories_filename = argv_[++iarg];
                 }
-              else if (option == "-M" || option == "--mapping") 
+              else if (option == "+M" || option == "--with-mapping") 
                 {
                   mapping_requested = true;
+                }
+              else if (option == "-M" || option == "--without-mapping") 
+                {
+                  mapping_requested = false;
                 }
               else if (option == "-MD" || option == "--mapping-max-depth") 
                 {
@@ -502,30 +518,35 @@ void print_help ()
   std::clog << "Usage: \n\n";
   std::clog << "  geomtools_check_setup [OPTIONS] GEOMFILE [GEOMFILE [...]] \n\n";
   std::clog << "Options: \n\n";
-  std::clog << "   -d|--debug     : Activate debug mode\n";
-  std::clog << "   -D|--no-draw   : Do not visualize the geometry setup\n";
-  std::clog << "   -G|--with-gdml : Generate GDML output\n";
-  std::clog << "   -F             : Detailed print of the factory contents\n";
-  std::clog << "   -xy|--view-xy  : Visualization defaults to XY view\n";
-  std::clog << "   -yz|-view-yz  : Visualization defaults to YZ view\n";
-  std::clog << "   -xz|--view-xz  : Visualization defaults to XZ view\n";
-  std::clog << "   -3d|--view-3d  : Visualization defaults to 3D view\n";
-  std::clog << "   --labels       : Visualization shows axis and labels\n";
-  std::clog << "   --no-labels    : Visualization does not show axis and labels\n";
+  std::clog << "   -d|--debug        : Activate debug mode\n";
+  std::clog << "   +D|--with-draw    : Visualize the geometry setup\n";
+  std::clog << "   -D|--without-draw : Do not visualize the geometry setup\n";
+  std::clog << "   +G|--with-gdml    : Generate GDML output\n";
+  std::clog << "   -G|--without-gdml : Do not generate GDML output\n";
+  std::clog << "   +F                : Detailed print of the factory contents\n";
+  std::clog << "   -F                : No detailed print of the factory contents\n";
+  std::clog << "   -xy|--view-xy     : Visualization defaults to XY view\n";
+  std::clog << "   -yz|-view-yz      : Visualization defaults to YZ view\n";
+  std::clog << "   -xz|--view-xz     : Visualization defaults to XZ view\n";
+  std::clog << "   -3d|--view-3d     : Visualization defaults to 3D view\n";
+  std::clog << "   --labels          : Visualization shows axis and labels\n";
+  std::clog << "   --no-labels       : Visualization does not show axis and labels\n";
   std::clog << "   -m|--model MODEL_NAME :\n";
-  std::clog << "                    Visualization shows a specific geometry model\n";
+  std::clog << "                       Visualization shows a specific geometry model\n";
   std::clog << "   -c|--categories CATEGORIES_FILE:\n";
-  std::clog << "                    Load a specific geometry category file\n";
-  std::clog << "   -M|--mapping   : Build geometry mapping informations\n";
+  std::clog << "                       Load a specific geometry category file\n";
+  std::clog << "   +M|--with-mapping : Build geometry mapping informations\n";
+  std::clog << "   -M|--without-mapping : Do not build geometry mapping informations\n";
   std::clog << "   -MD|--mapping-max-depth DEPTH  : \n";
-  std::clog << "                    Maximum depth of the geometry mapping\n";
+  std::clog << "                       Maximum depth of the geometry mapping\n";
   std::clog << "   -MO|--mapping-only CATEGORY   : \n";
-  std::clog << "                    Specify a category to be build in the geometry mapping\n";
+  std::clog << "                       Specify a category to be build in the geometry mapping\n";
   std::clog << "   -MX|--mapping-exclude CATEGORY   : \n";
-  std::clog << "                    Specify a category to be excluded from the geometry mapping\n";
-  std::clog << "   -T|--top-model MODEL_NAME : Identify the top-level model for mapping\n";
+  std::clog << "                       Specify a category to be excluded from the geometry mapping\n";
+  std::clog << "   -T|--top-model MODEL_NAME : \n"
+            << "                       Identify the top-level model for mapping\n";
   std::clog << "   -l|--load-dll DLL_NAME :\n";
-  std::clog << "                    Load a specific DLL\n";
+  std::clog << "                       Load a specific DLL\n";
   std::clog << "Examples:\n\n";
   std::clog << "  geomtools_check_setup --categories setup_categories.lis --mapping-max-depth 3 setup.geom \n\n";
   return;
