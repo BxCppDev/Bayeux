@@ -256,6 +256,8 @@ namespace geomtools {
     out_ << indent_ << "Number of entries : "
          << _get_geom_infos ().size () << std::endl;
     
+    int counter = 0;
+
     for (geom_info_dict_t::const_iterator i
            = _get_geom_infos ().begin ();
          i != _get_geom_infos ().end ();
@@ -286,7 +288,28 @@ namespace geomtools {
              << ginfo.get_world_placement () << "]" << std::endl;
         out_ << indent_ << "  " << "Physicals : "
              << ginfo.get_logical ().get_physicals ().size () << std::endl;
-        
+
+        counter++;       
+        if (counter % 5 == 0)
+          {
+            if (print_pager)
+              {
+                std::clog << std::endl 
+                          << "Hit ENTER to display the next page \n"
+                          << "or type '.q' to quit : ";
+                 std::string user;
+                 std::getline (std::cin, user);
+                 {
+                   std::string token;
+                   std::istringstream token_iss (user);
+                   token_iss >> token >> ws;
+                   if (token == ".q" || token == ".quit")
+                     {
+                       break;
+                     }
+                 }
+              }
+          }
       }
 
     return;

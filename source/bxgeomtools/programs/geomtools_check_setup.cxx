@@ -388,7 +388,10 @@ int main (int argc_, char ** argv_)
             {
               std::clog << "WARNING: Cannot find model named '" << top_mapping_model_name << "'" << std::endl;
             }
-          mapping_manager.smart_print (std::cout, "", 0);
+          mapping_manager.smart_print (std::cout, 
+                                       "*** ", 
+                                       geomtools::mapping::PRINT_TITLE |
+                                       geomtools::mapping::PRINT_PAGER);
         }
 
       if (gdml)
