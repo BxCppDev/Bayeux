@@ -1,5 +1,5 @@
-// -*- mode: c++; -*- 
-/* id_selector.cc 
+// -*- mode: c++; -*-
+/* id_selector.cc
  */
 
 #include <geomtools/id_selector.h>
@@ -13,9 +13,9 @@
 #include <boost/algorithm/string.hpp>
 
 namespace geomtools {
-  
 
-  using namespace std;  
+
+  using namespace std;
 
   bool id_selector::is_initialized () const
   {
@@ -27,9 +27,9 @@ namespace geomtools {
     if (_cat_info_ == 0)
       {
         ostringstream message;
-        message << "id_selector::set_id_mgr: "
+        message << "geomtools::id_selector::set_id_mgr: "
                 << "Missing category info ! ID selector is not initalized !";
-        throw logic_error (message.str ());   
+        throw logic_error (message.str ());
       }
     return *_cat_info_;
   }
@@ -39,9 +39,9 @@ namespace geomtools {
     if (is_initialized ())
       {
         ostringstream message;
-        message << "id_selector::set_id_mgr: "
+        message << "geomtools::id_selector::set_id_mgr: "
                 << "Selector is already initialized !";
-        throw logic_error (message.str ());   
+        throw logic_error (message.str ());
       }
     _id_mgr_ = &id_mgr_;
     return;
@@ -68,52 +68,52 @@ namespace geomtools {
 
   void id_selector::initialize (const string & rules_)
   {
-    if (is_initialized ()) 
+    if (is_initialized ())
       {
         _cat_info_ = 0;
       }
     if (_id_mgr_ == 0)
       {
         ostringstream message;
-        message << "id_selector::initialize: Missing ID manager !";
+        message << "geomtools::id_selector::initialize: Missing ID manager !";
         throw logic_error (message.str ());
       }
     istringstream rules_iss (rules_);
-    
+
     string cat_token;
     rules_iss >> cat_token >> ws;
     if (! rules_iss)
       {
         ostringstream message;
-        message << "id_selector::initialize: Missing category rule !";
+        message << "geomtools::id_selector::initialize: Missing category rule !";
         throw logic_error (message.str ());
       }
     typedef vector<string> split_vector_type;
-    split_vector_type cat_token_vec; 
+    split_vector_type cat_token_vec;
     boost::split (cat_token_vec, cat_token, boost::algorithm::is_any_of ("="));
     if (cat_token_vec.size() != 2)
       {
         ostringstream message;
-        message << "id_selector::initialize: Invalid category rule format !";
+        message << "geomtools::id_selector::initialize: Invalid category rule format !";
         throw logic_error (message.str ());
       }
     if (cat_token_vec[0] != "category")
       {
         ostringstream message;
-        message << "id_selector::initialize: Cannot find category label !";
+        message << "geomtools::id_selector::initialize: Cannot find category label !";
         throw logic_error (message.str ());
       }
     string category = cat_token_vec[1];
     if (category.empty ())
       {
         ostringstream message;
-        message << "id_selector::initialize: Missing category name label !";
+        message << "geomtools::id_selector::initialize: Missing category name label !";
         throw logic_error (message.str ());
       }
     if (! _id_mgr_->has_category_info (category))
       {
         ostringstream message;
-        message << "id_selector::initialize: Unknown category name '" 
+        message << "geomtools::id_selector::initialize: Unknown category name '"
                 << category << "' !";
         throw logic_error (message.str ());
       }
@@ -127,15 +127,15 @@ namespace geomtools {
         if (! rules_iss)
           {
             ostringstream message;
-            message << "id_selector::initialize: Invalid address token !";
+            message << "geomtools::id_selector::initialize: Invalid address token !";
             throw logic_error (message.str ());
           }
-        split_vector_type addr_token_vec; 
+        split_vector_type addr_token_vec;
         boost::split (addr_token_vec, addr_token, boost::algorithm::is_any_of ("="));
         if (addr_token_vec.size () != 2)
           {
             ostringstream message;
-            message << "id_selector::initialize: Invalid address rule format !";
+            message << "geomtools::id_selector::initialize: Invalid address rule format !";
             throw logic_error (message.str ());
           }
 
@@ -143,14 +143,14 @@ namespace geomtools {
         if (addr_name.empty ())
           {
             ostringstream message;
-            message << "id_selector::initialize: Cannot find address label !";
+            message << "geomtools::id_selector::initialize: Cannot find address label !";
             throw logic_error (message.str ());
           }
         string addr_rule = addr_token_vec[1];
         if (addr_rule.empty ())
           {
             ostringstream message;
-            message << "id_selector::initialize: Address rule is empty !";
+            message << "geomtools::id_selector::initialize: Address rule is empty !";
             throw logic_error (message.str ());
           }
 
@@ -167,18 +167,18 @@ namespace geomtools {
         if (addr_index < 0)
           {
             ostringstream message;
-            message << "id_selector::initialize: Cannot find address label '"
-                    << addr_name << "' in category '" 
+            message << "geomtools::id_selector::initialize: Cannot find address label '"
+                    << addr_name << "' in category '"
                     << category << "' !";
             throw logic_error (message.str ());
           }
         if (_addr_sets_.find (addr_index) != _addr_sets_.end ())
           {
             ostringstream message;
-            message << "id_selector::initialize: Rule for address index " 
-                    << addr_index << " in category '" 
+            message << "geomtools::id_selector::initialize: Rule for address index "
+                    << addr_index << " in category '"
                     << category << "'is already set !";
-            throw logic_error (message.str ());           
+            throw logic_error (message.str ());
           }
         address_set as;
         istringstream addr_rule_iss (addr_rule);
@@ -186,9 +186,9 @@ namespace geomtools {
         if (! addr_rule_iss)
           {
             ostringstream message;
-            message << "id_selector::initialize: Cannot parse address rule '"
+            message << "geomtools::id_selector::initialize: Cannot parse address rule '"
                     << addr_rule << "' for address '"
-                    << addr_name << "' in category '" 
+                    << addr_name << "' in category '"
                     << category << "' !";
             throw logic_error (message.str ());
           }
@@ -197,7 +197,7 @@ namespace geomtools {
       }
 
     return;
-  } 
+  }
 
   void id_selector::dump (ostream & out_, const string & title_) const
   {
@@ -214,14 +214,14 @@ namespace geomtools {
       {
         out_ << "|-- Initialized:   '" << "Yes" << "'" << endl;
       }
-    out_ << "|-- Category:   '" << _cat_info_->get_category () << "' (type=" 
-         << _cat_info_->get_type () 
+    out_ << "|-- Category:   '" << _cat_info_->get_category () << "' (type="
+         << _cat_info_->get_type ()
          << ", depth=" <<  _cat_info_->get_depth () << ")" << endl;
     for (map<int, address_set>::const_iterator i = _addr_sets_.begin ();
          i != _addr_sets_.end ();
          i++)
       {
-        map<int, address_set>::const_iterator j = i; 
+        map<int, address_set>::const_iterator j = i;
         j++;
         if (j == _addr_sets_.end ())
           {
@@ -233,11 +233,11 @@ namespace geomtools {
           }
         out_ << "Address index=" << i->first
              << " (" << _cat_info_->addresses[i->first] << ")"
-             << " : address set=" << i->second 
+             << " : address set=" << i->second
              << endl;
       }
     return;
-  } 
+  }
 
   void id_selector::reset ()
   {
@@ -250,9 +250,9 @@ namespace geomtools {
     if (! is_initialized ())
       {
         ostringstream message;
-        message << "id_selector::match: " 
+        message << "geomtools::id_selector::match: "
                 << "ID selector is not initialized by any rule !";
-        throw logic_error (message.str ());   
+        throw logic_error (message.str ());
       }
     if (gid_.get_type () != _cat_info_->get_type ())
       {
@@ -265,7 +265,7 @@ namespace geomtools {
       {
         int addr_index = i->first;
         uint32_t addr = gid_.get (addr_index);
-        if (! i->second.match (addr)) 
+        if (! i->second.match (addr))
           {
             matched = false;
             break;
@@ -273,7 +273,7 @@ namespace geomtools {
       }
     return matched;
   }
- 
+
 } // end of namespace geomtools
 
 // end of id_selector.cc
