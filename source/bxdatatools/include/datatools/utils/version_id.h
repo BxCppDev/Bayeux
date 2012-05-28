@@ -9,9 +9,7 @@
 #include <boost/cstdlib.hpp>
 
 namespace datatools {
-
   namespace utils {
-
     /** A class representing a version ID :
      * Supported formats are:
      *  - "tag" a alpha numeric character string not starting with
@@ -57,110 +55,116 @@ namespace datatools {
      *  Version ID can be invalidated : format is then "?" 
      *
      */
-    class version_id
-    {
-    public:
+    class version_id {
+      // Typedefs and Constants
+      public:
+        // TODO: could probably all be private or in an PImpl...
+        static const int32_t INVALID_NUMBER = -1;
+        static const char INVALID_SYMBOL = '?';
+        static const char NUMERIC_SEPARATOR = '.';
+        static const char TAG_SEPARATOR = '-';
 
-      static const int32_t INVALID_NUMBER = -1;
-      static const char INVALID_SYMBOL = '?';
-      static const char NUMERIC_SEPARATOR = '.';
-      static const char TAG_SEPARATOR = '-';
+        // not used yet :
+        static const std::string ALPHA_TAG;
+        static const std::string BETA_TAG;
+        static const std::string RELEASE_CANDIDATE_PREFIX_TAG;
+        static const int32_t MAX_RC_NUM   = 9999;
+        static const int32_t ALPHA_NUM    = -10003;
+        static const int32_t BETA_NUM     = -10002;
+        static const int32_t RC_BASE_NUM  = -10001;
 
-      // not used yet :
-      static const std::string ALPHA_TAG;
-      static const std::string BETA_TAG;
-      static const std::string RELEASE_CANDIDATE_PREFIX_TAG;
-      static const int32_t MAX_RC_NUM   = 9999;
-      static const int32_t ALPHA_NUM    = -10003;
-      static const int32_t BETA_NUM     = -10002;
-      static const int32_t RC_BASE_NUM  = -10001;
+      // Public Interface
+      public:
+        // Constructors/Destructors
+        version_id();
 
-      bool is_valid () const;
+        version_id(const std::string& tag);
 
-      bool has_numbers_only () const;
+        version_id(int major, int minor = -1, int revision = -1, 
+                   const std::string& tag = "");
 
-      bool has_major () const;
+        // Global operations
+        bool is_valid() const;
 
-      int get_major () const;
+        bool has_numbers_only() const;
 
-      void set_major (int);
+        void reset();
 
-      bool has_minor () const;
+        // Major number operations
+        bool has_major() const;
 
-      int get_minor () const;
+        int get_major() const;
+        
+        void set_major(int);
 
-      void set_minor (int);
+        // Minor number operations
+        bool has_minor() const;
 
-      bool has_revision () const;
+        int get_minor() const;
 
-      int get_revision () const;
+        void set_minor(int);
 
-      void set_revision (int);
+        // Revision number operations
+        bool has_revision() const;
 
-      bool has_tag_only () const;
+        int get_revision() const;
 
-      bool has_tag () const;
+        void set_revision(int);
 
-      bool has_numeric_tag () const;
- 
-      bool has_special_tag () const;
+        // Tag number operations
+        bool has_tag() const;
+        
+        bool has_tag_number() const;
 
-      const std::string & get_tag () const;
+        bool has_tag_only() const;
 
-      void set_tag (const std::string &);
- 
-      bool has_tag_number () const;
- 
-      int get_tag_number () const;
+        bool has_numeric_tag() const;
 
-      version_id ();
+        bool has_special_tag() const;
 
-      version_id (const std::string & tag_);
+        const std::string& get_tag() const;
+        
+        int get_tag_number() const;
+        
+        void set_tag(const std::string&);
 
-      version_id (int major_, int minor_= -1, int revision_ = -1, 
-                  const std::string & tag_ = "");
+        // Comparisons
+        bool equals(const version_id&, bool ignore_tag = false) const;
 
-      void reset ();
+        bool operator==(const version_id&) const;
 
-      bool equals (const version_id &, bool ignore_tag_ = false) const;
+        int compare(const version_id&) const;
 
-      bool operator== (const version_id &) const;
+        // These could/should be free functions
+        static int compare(const version_id& vid0, const version_id& vid1);
 
-      int compare (const version_id &) const;
+        static bool are_orderable(const version_id& vid0, 
+                                  const version_id& vid1);
 
-      static int compare (const version_id & vid0_, const version_id & vid1_);
- 
-      static bool are_orderable (const version_id & vid0_, const version_id & vid1_);
+        bool matches(const std::string& version_rules) const;
 
-      bool matches (const std::string & version_rules_) const;
+        // I/O and Conversions
+        friend std::ostream& operator<<(std::ostream&, const version_id&);
 
-      friend std::ostream & operator<< (std::ostream &, 
-                                        const version_id &);
+        friend std::istream& operator>>(std::istream&, version_id&);
 
-      void to_string (std::string & format_) const;
- 
-      bool from_string (const std::string &);
+        void to_string(std::string& format) const;
 
-      friend std::istream & operator>> (std::istream &, 
-                                        version_id &);
+        bool from_string(const std::string&);
 
-      void dump (std::ostream & out_ = std::clog, 
-                 const std::string & title_ = "", 
-                 const std::string & indent_ = "") const;
+        void dump(std::ostream& out = std::clog, 
+                  const std::string& title = "", 
+                  const std::string& indent = "") const;
 
-    private :
-      
-      int32_t _major_;
-      int32_t _minor_;
-      int32_t _revision_;
-      std::string _tag_;
-      int32_t _tag_number_;
-
+      // Private Data
+      private:
+        int32_t _major_;
+        int32_t _minor_;
+        int32_t _revision_;
+        std::string _tag_;
+        int32_t _tag_number_;
     };
-
-
   } // namespace utils
-
 } // namespace datatools
 
 #endif // __datatools__utils__version_id_h
