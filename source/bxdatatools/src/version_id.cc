@@ -5,7 +5,6 @@
 
 #include <sstream>
 #include <stdexcept>
-#include <boost/tokenizer.hpp>
 #include <cctype>
 
 namespace datatools {
@@ -80,6 +79,11 @@ namespace datatools {
     bool version_id::has_major() const
     {
       return _major_ != INVALID_NUMBER;
+    }
+
+    bool version_id::has_major_only() const
+    {
+      return has_major() && !has_minor() && !has_revision() && !has_tag(); 
     }
 
     int version_id::get_major() const
@@ -351,18 +355,34 @@ namespace datatools {
       return this->equals(vid_, false);
     }
 
-    int version_id::compare(const version_id& vid_) const
+    int version_id::compare(const version_id& vid_,
+                            bool major_only_) const
     {
-      return compare(*this, vid_);
+      return compare(*this, vid_, major_only_);
     }
 
     // static 
-    bool version_id::are_orderable(const version_id& vid0_, const version_id& vid1_)
+    bool version_id::are_orderable(const version_id& vid0_, 
+                                   const version_id& vid1_,
+                                   bool major_only_)
     {
       const version_id& v1 = vid0_;
       const version_id& v2 = vid1_;
       if (!v1.is_valid()) return false;
       if (!v2.is_valid()) return false;
+      //<<<
+      // 2012-05-29 FM: not tested yet
+      if ((v1.has_major_only () && v2.has_major ())
+          ||(v1.has_major () && v2.has_major_only ()))
+        {
+          // if one of both version IDs has only a major number 
+          if (major_only_) 
+            {
+              // we can always compare using the major number only :
+              return true;
+            }
+        }
+      //>>>
       if (v1.has_tag_only()) return false;
       if (v2.has_tag_only()) return false;
       if (v1.equals(v2, true))
@@ -374,7 +394,9 @@ namespace datatools {
     }
 
     // static 
-    int version_id::compare(const version_id& vid0_, const version_id& vid1_)
+    int version_id::compare(const version_id& vid0_, 
+                            const version_id& vid1_,
+                            bool major_only_)
     {
       bool devel = false;
       if (vid0_ == vid1_) return 0;
@@ -430,10 +452,18 @@ namespace datatools {
           // maj_num_1 == maj_num_2
           if ((min_num_1 == INVALID_NUMBER) && (min_num_2 != INVALID_NUMBER))
             {
+              if (major_only_)
+                {
+                  return 0;
+                }
               return -1; 
             }
           else if ((min_num_1 != INVALID_NUMBER) && (min_num_2 == INVALID_NUMBER))
             {
+              if (major_only_)
+                {
+                  return 0;
+                }
               return +1; 
             }
           else if ((min_num_1 != INVALID_NUMBER) && (min_num_2 != INVALID_NUMBER))
@@ -733,7 +763,7 @@ namespace datatools {
       return in_;
     }
 
-    bool version_id::matches(const std::string& version_rule_) const
+    bool version_id::matches(const std::string& version_rule_, bool major_only_) const
     {
       std::istringstream vr_iss(version_rule_);
       std::string word;
@@ -754,47 +784,52 @@ namespace datatools {
       const int GREATER_OR_EQUAL =  2; 
       int match_mode = INVALID;
       std::string vid_word;
-      if (word.length() >= 2)
+      /*
+      std::clog << "datatools::utils::version_id::matches: "
+                << "word = '" << word << "'"
+                << std::endl;
+      */
+      if (match_mode == INVALID && word.length() >= 2)
         {
           std::string op = word.substr(0,2);
           if (op == "==")
             {
               match_mode = EQUAL;
             }
-          if (op == "!=")
+          else if (op == "!=")
             {
               match_mode = NOT_EQUAL;
             }
-          if (op == "<=")
+          else if (op == "<=")
             {
               match_mode = LESS_OR_EQUAL;
             }
-          if (op == ">=")
+          else if (op == ">=")
             {
               match_mode = GREATER_OR_EQUAL;
             }
-          vid_word = word.substr (2); 
+          if (match_mode != INVALID) vid_word = word.substr (2); 
         }
-      else if (word.length() >= 1)
+      if (match_mode == INVALID && word.length() >= 1)
         {
           std::string op = word.substr(0,1);
           if (op == "=")
             {
               match_mode = EQUAL;
             }
-          if (op == "!")
+          else if (op == "!")
             {
               match_mode = NOT_EQUAL;
             }
-          if (op == "<")
+          else if (op == "<")
             {
               match_mode = LESS;
             }
-          if (op == ">")
+          else if (op == ">")
             {
               match_mode = GREATER;
             }
-          vid_word = word.substr(1); 
+          if (match_mode != INVALID) vid_word = word.substr(1); 
         }
       if (vid_word.empty())
         {
@@ -814,29 +849,45 @@ namespace datatools {
         {
           std::ostringstream message;
           message << "datatools::utils::version_id::matches: "
-                  << "Invalid version ID format !";
+                  << "Invalid version ID format ('" << vid_word << "') !";
           throw std::logic_error(message.str());
         }
       if (match_mode == EQUAL)
         {
+          try
+            {
+              int res = compare(*this, matcher_vid, major_only_);
+              return (res == 0);
+            }
+          catch(std::exception& x)
+            {
+            }
           if (*this == matcher_vid) return true;
           else return false;
         }
       else if (match_mode == NOT_EQUAL)
         {
+          try
+            {
+              int res = compare(*this, matcher_vid, major_only_);
+              return !(res == 0);
+            }
+          catch(std::exception& x)
+            {
+            }
           if (*this == matcher_vid) return false;
           else return true;
         }
       else 
         {
-          if (!are_orderable(*this, matcher_vid))
+          if (!are_orderable(*this, matcher_vid, major_only_))
             {
               std::ostringstream message;
               message << "datatools::utils::version_id::matches: "
                       << "Version IDs " << *this << " and " << matcher_vid << " are not orderable !";
               throw std::logic_error(message.str());
             }
-          int res = compare(*this, matcher_vid);
+          int res = compare(*this, matcher_vid, major_only_);
           if (match_mode == LESS)
             {
               if (res == -1) return true;

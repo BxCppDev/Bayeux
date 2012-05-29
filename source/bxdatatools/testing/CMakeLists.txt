@@ -22,6 +22,7 @@
 
 
 file ( GLOB datatools_tests_programs *.cxx )
+###file ( GLOB datatools_tests_programs test_version_check.cxx  test_version_id.cxx )
 
 set ( datatools_tests_programs_list "${datatools_tests_programs}" ) 
 list ( SORT datatools_tests_programs_list )

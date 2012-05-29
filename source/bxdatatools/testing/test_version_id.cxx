@@ -13,23 +13,26 @@
 using namespace std;
 
 void check_compare (const datatools::utils::version_id & v0_,
-                    const datatools::utils::version_id & v1_)
+                    const datatools::utils::version_id & v1_,
+                    bool major_only_ = false)
 {
-  if (datatools::utils::version_id::are_orderable (v0_, v1_))
+  if (datatools::utils::version_id::are_orderable (v0_, v1_, major_only_))
     {
-      int comp = v0_.compare (v1_);
+      int comp = v0_.compare (v1_, major_only_);
       if (comp == 0)
         {
-          clog << "  " << v0_ << " == " << v1_ << endl;
+          clog << "  " << v0_ << " == " << v1_;
         }
       else if (comp < 0)
         {
-          clog << "  " << v0_ << " < " << v1_ << endl;
+          clog << "  " << v0_ << " < " << v1_;
         }
       else if (comp > 0)
         {
-          clog << "  " << v0_ << " > " << v1_ << endl;
+          clog << "  " << v0_ << " > " << v1_;
         }
+      if (major_only_) clog << " (major only)";
+      clog << endl;
     }
   else
     {
@@ -39,24 +42,27 @@ void check_compare (const datatools::utils::version_id & v0_,
 }
 
 void check_match (const datatools::utils::version_id & v0_,
-                  const string & rule_)
+                  const string & rule_,
+                  bool major_only_ = false)
 {
   try
     {
-      if (v0_.matches (rule_))
+      if (v0_.matches (rule_, major_only_))
         {
-          clog << "  " << v0_ << " matches rule '" << rule_ << "'" << endl; 
+          clog << "  " << v0_ << " matches rule '" << rule_ << "'"; 
         }
       else
         {
-          clog << "  " << v0_ << " does NOT match rule '" << rule_ << "'" << endl; 
+          clog << "  " << v0_ << " does NOT match rule '" << rule_ << "'"; 
         
         }
+      if (major_only_) clog << " (major only)";
+      clog << endl;
     }
   catch (exception & x)
     {
-      clog << "  " << "error: Cannot check matching for " 
-           << v0_ << " with rule '" << rule_ << "' : " << x.what () << endl;
+      clog << "  " << "error: Cannot check matching for '" 
+           << v0_ << "' with rule '" << rule_ << "' : " << x.what () << endl;
     } 
   return;
 }
@@ -151,6 +157,9 @@ int main (int argc_ , char ** argv_)
      
         datatools::utils::version_id v8 (3, 1, 5, "rc1");
         clog << "  v8 = " << v8 << endl;
+    
+        datatools::utils::version_id v9 (3);
+        clog << "  v9 = " << v9 << endl;
 
         clog << "Equality : " << endl;
         if (v0 == v1)
@@ -195,16 +204,14 @@ int main (int argc_ , char ** argv_)
         check_compare (v0, v3);
         check_compare (v3, v0);
         check_compare (v3, v3);
-
         try
           {
             int comp = v0.compare (v4);
           }
         catch (exception & x)
           { 
-            clog << "As expected : " << x.what () << endl; 
-          }
- 
+            clog << "  As expected : " << x.what () << endl; 
+          } 
         check_compare (v0, v4);
         check_compare (v0, v5);
         check_compare (v5, v6);
@@ -212,6 +219,8 @@ int main (int argc_ , char ** argv_)
         check_compare (v7, v8);
         check_compare (v5, v7);
         check_compare (v2, v5);
+        check_compare (v3, v9);
+        check_compare (v3, v9, true);
      
       }
 
@@ -278,6 +287,16 @@ int main (int argc_ , char ** argv_)
 
          datatools::utils::version_id v0 (3, 1, 4);
          check_match (v0, "> 1");
+         check_match (v0, ">3");
+         check_match (v0, ">3",true);
+         check_match (v0, ">=3");
+         check_match (v0, ">=3",true);
+         check_match (v0, ">4");
+         check_match (v0, ">4",true);
+         check_match (v0, "<3");
+         check_match (v0, "<3",true);
+         check_match (v0, "<=3");
+         check_match (v0, "<=3",true);
          check_match (v0, "<3.2");
          check_match (v0, "!= 3.1");
          check_match (v0, "<= 3.0.3-alpha");
@@ -285,6 +304,9 @@ int main (int argc_ , char ** argv_)
          check_match (v0, "<= 3.1.4-test");
          check_match (v0, "> 3.1.4-rc3");
          check_match (v0, "!=3.1.4");
+         check_match (v0, "=3.1.4");
+         check_match (v0, "== 3.1.4");
+         check_match (v0, "!3.1.4");
 
          datatools::utils::version_id v1 (3, 1);
       }

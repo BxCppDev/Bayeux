@@ -37,7 +37,7 @@ namespace datatools {
      *   - they are composed by a single tag 
      *     Example: "Natty"
      *   - they have "major.minor.revision" and a "tag" that cannot be
-     *     compared (not "alpha", "beta", "rcX" or pure number)
+     *     compared (not "alpha", "beta", "rcX" or pure number "X")
      * 
      *  Version ID objects can also be convert to and parsed from
      *  character strings.
@@ -63,8 +63,6 @@ namespace datatools {
         static const char INVALID_SYMBOL = '?';
         static const char NUMERIC_SEPARATOR = '.';
         static const char TAG_SEPARATOR = '-';
-
-        // not used yet :
         static const std::string ALPHA_TAG;
         static const std::string BETA_TAG;
         static const std::string RELEASE_CANDIDATE_PREFIX_TAG;
@@ -92,6 +90,8 @@ namespace datatools {
 
         // Major number operations
         bool has_major() const;
+
+        bool has_major_only() const;
 
         int get_major() const;
         
@@ -133,15 +133,16 @@ namespace datatools {
 
         bool operator==(const version_id&) const;
 
-        int compare(const version_id&) const;
+        int compare(const version_id&, bool major_only_ = false) const;
 
         // These could/should be free functions
-        static int compare(const version_id& vid0, const version_id& vid1);
+        static int compare(const version_id& vid0, const version_id& vid1, bool major_only_ = false);
 
         static bool are_orderable(const version_id& vid0, 
-                                  const version_id& vid1);
+                                  const version_id& vid1, 
+                                  bool major_only_ = false);
 
-        bool matches(const std::string& version_rules) const;
+        bool matches(const std::string& version_rules, bool major_only_ = false) const;
 
         // I/O and Conversions
         friend std::ostream& operator<<(std::ostream&, const version_id&);
