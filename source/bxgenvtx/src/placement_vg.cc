@@ -155,7 +155,7 @@ namespace genvtx {
                         <<  vg_name << "' !";
                 throw logic_error (message.str ());
               }
-            set_vg (vg_found->second);
+            set_vg (vg_found->second.grab_initialized_vg_handle ());
           }
       }
 
