@@ -42,6 +42,10 @@ namespace geomtools {
 
   class geom_map : public i_locator
   {
+  public:
+
+    typedef std::vector<const geom_info*> ginfo_ptr_collection_type;
+    typedef std::map<uint32_t, ginfo_ptr_collection_type> ginfo_collections_with_type_dict_type;
 
   protected:
 
@@ -100,11 +104,27 @@ namespace geomtools {
                               const vector_3d & world_position_,
                               double tolerance_);
 
+    bool has_ginfo_collection_with_type (uint32_t type_) const;
+
+    const ginfo_ptr_collection_type & get_ginfo_collection_with_type (uint32_t type_) const;
+
+  private:
+
+    /// Used by the 'get_typed_ginfo_collection' public interface
+    // Note: instantiate at first use technique
+    const ginfo_ptr_collection_type & _compute_ginfo_collection_with_type_ (uint32_t type_);
+                                                                                       
+  protected:
+
+    const ginfo_collections_with_type_dict_type & get_geom_infos_with_type_map () const;
+
   private:
 
     geom_id          _invalid_geom_id_; //!< value of a invalid geometry ID
     const id_mgr *   _id_manager_;      //!< the ID manager that knows about geometry categories and their relationship
-    geom_info_dict_t _geom_infos_;      //!< the dictionary of geometry informations addressed through IDs
+    geom_info_dict_t _geom_infos_;      //!< the main dictionary of geometry informations addressed through IDs
+
+    ginfo_collections_with_type_dict_type _geom_infos_with_type_map_;
 
   };
 

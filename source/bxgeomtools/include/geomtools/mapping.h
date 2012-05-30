@@ -118,7 +118,7 @@ namespace geomtools {
 
     size_t                         _max_depth_;
     int                            _mode_;
-    std::list<std::string>                   _only_excluded_list_;
+    std::list<std::string>         _only_excluded_list_;
     
     // debug display utility:
     datatools::utils::io::indenter _indenter_;

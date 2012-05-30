@@ -1021,7 +1021,8 @@ namespace geomtools {
               {
                 message << " " << *ii;
               }
-            message << "] !";
+            message << "] for ID info `"
+                << id_info_ << "' !";
             throw logic_error (message.str ());
           }
         // parse each address rule:
@@ -1038,7 +1039,8 @@ namespace geomtools {
               {
                 ostringstream message;
                 message << "geomtools::id_mgr::compute_id_from_info: "
-                        << "Invalid address information `" << add_info << "' !";
+                        << "Invalid address information `" << add_info << "' for ID info `"
+                << id_info_ << "'!";
                 throw logic_error (message.str ());
               }
             string addr_label = split_add_info[0];
@@ -1047,7 +1049,8 @@ namespace geomtools {
                 ostringstream message;
                 message << "geomtools::id_mgr::compute_id_from_info: "
                         << "Invalid address label `" << addr_label << "' for category '"
-                        << ci.get_category () << "' !";
+                        << ci.get_category () << "' for ID info `"
+                        << id_info_ << "'!";
                 throw logic_error (message.str ());
               }
             string addr_val_str = split_add_info[1];
@@ -1060,7 +1063,8 @@ namespace geomtools {
                 {
                   ostringstream message;
                   message << "geomtools::id_mgr::compute_id_from_info: "
-                          << "Invalid address value `" << addr_val_str << "' !";
+                          << "Invalid address value `" << addr_val_str << "' for ID info `"
+                          << id_info_ << "' !";
                   throw logic_error (message.str ());
                 }
             }
@@ -1075,7 +1079,8 @@ namespace geomtools {
                   {
                     ostringstream message;
                     message << "geomtools::id_mgr::compute_id_from_info: "
-                            << "Missing address at index `" << i << "' !";
+                            << "Missing address at index `" << i << "' for ID info `"
+                            << id_info_ << "' !";
                     throw logic_error (message.str ());
                   }
               }

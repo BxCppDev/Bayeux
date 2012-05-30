@@ -83,7 +83,7 @@ namespace geomtools {
   {
     if (i_ < 0) 
       {
-        throw runtime_error ("geom_id::set: Invalid sub-address index !");
+        throw logic_error ("geom_id::set: Invalid sub-address index !");
       }
     else 
       {
@@ -258,7 +258,7 @@ namespace geomtools {
   {
     if (this->_addresses_.size () < source_._addresses_.size ())
       {
-        throw runtime_error ("geom_id::inherits_from: Incompatible address depth !");
+        throw logic_error ("geom_id::inherits_from: Incompatible address depth !");
       }
     for (int i = 0; i < source_._addresses_.size (); i++) 
       {
@@ -271,7 +271,7 @@ namespace geomtools {
   {
     if (this->_addresses_.size () < target_._addresses_.size ())
       {
-        throw runtime_error ("geom_id::extract: Incompatible address depth !");
+        throw logic_error ("geom_id::extract: Incompatible address depth !");
       }
     for (int i = 0; i < target_._addresses_.size (); i++) 
       {

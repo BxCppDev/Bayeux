@@ -258,12 +258,23 @@ namespace geomtools {
     
     int counter = 0;
 
+    out_ << indent_ << "Dictionary of geometry informations : " << std::endl;
     for (geom_info_dict_t::const_iterator i
            = _get_geom_infos ().begin ();
          i != _get_geom_infos ().end ();
          i++)
       {
-        out_ << indent_ << "GID = " << i->first;
+        geom_info_dict_t::const_iterator j = i;
+        out_ << indent_;
+        string tag1 ="|-- "; 
+        string tag2 ="|   "; 
+        if (++j == _get_geom_infos().end ())
+          {
+            tag1 ="`-- "; 
+            tag2 ="|   "; 
+          }
+        out_ << tag1;
+        out_ << "GID = " << i->first;
         const geom_info & ginfo = i->second;
         // To be done :
         //out_ << " within category '" << "?" << "'"; 
@@ -276,17 +287,17 @@ namespace geomtools {
           {
             continue;
           }
-        out_ << indent_ << "  " << "Logical   : '"
+        out_ << indent_ << tag2 << "|-- " << "Logical   : '"
              << ginfo.get_logical ().get_name () << "'"
              << std::endl;
-        out_ << indent_ << "  " << "Material  : '"
+        out_ << indent_ << tag2 << "|-- " << "Material  : '"
              << ginfo.get_logical ().get_material_ref ()<< "'" << std::endl;
-        out_ << indent_ << "  " << "Shape     : '"
+        out_ << indent_ << tag2 << "|-- "<< "Shape     : '"
              << ginfo.get_logical ().get_shape ().get_shape_name () 
              << "'" << std::endl;
-        out_ << indent_ << "  " << "World placement : ["
+        out_ << indent_ << tag2 << "|-- " << "World placement : ["
              << ginfo.get_world_placement () << "]" << std::endl;
-        out_ << indent_ << "  " << "Physicals : "
+        out_ << indent_ << tag2 << "`-- " << "Physicals : "
              << ginfo.get_logical ().get_physicals ().size () << std::endl;
 
         counter++;       
@@ -309,6 +320,27 @@ namespace geomtools {
                  }
               }
           }
+      }
+    
+    out_ << indent_ << "Collections of geometry informations by type : " << std::endl;
+    for (ginfo_collections_with_type_dict_type::const_iterator i
+           = get_geom_infos_with_type_map().begin ();
+         i != get_geom_infos_with_type_map().end ();
+         i++)
+      {
+        uint32_t type =  i->first;
+        const ginfo_ptr_collection_type & col = i->second;
+        ginfo_collections_with_type_dict_type::const_iterator j = i;
+        out_ << indent_;
+        if (++j == get_geom_infos_with_type_map().end ())
+          {
+            out_ << "`-- ";
+          }
+        else
+          {
+            out_ << "|-- ";
+          }
+        out_ << "Type = " << type << " : " << col.size () << " items" << std::endl;  
       }
 
     return;

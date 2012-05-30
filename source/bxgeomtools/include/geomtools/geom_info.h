@@ -20,6 +20,7 @@
 #include <iostream>
 
 #include <datatools/utils/properties.h>
+#include <datatools/utils/i_predicate.h>
 #include <geomtools/geom_id.h>
 #include <geomtools/placement.h>
 #include <geomtools/logical_volume.h>
@@ -66,6 +67,19 @@ namespace geomtools {
     placement                    _world_placement_;
     const logical_volume *       _logical_;
 
+  };
+
+  struct has_geom_type_predicate : public datatools::utils::i_predicate<geom_info>
+  {
+    uint32_t _geom_type_;
+    has_geom_type_predicate (uint32_t geom_type_) : _geom_type_ (geom_type_)
+    {
+      return;
+    }
+    bool operator () (const geom_info & ginfo_) const
+    {
+      return (ginfo_.get_geom_id ().get_type () == _geom_type_);
+    }
   };
 
   typedef std::map<geom_id, geom_info> geom_info_dict_t;

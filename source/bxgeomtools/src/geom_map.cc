@@ -195,6 +195,56 @@ namespace geomtools {
     throw logic_error ("geomtools::geom_map::build_from: Not implemented !");
   }
 
+  const geom_map::ginfo_ptr_collection_type & 
+  geom_map::get_ginfo_collection_with_type (uint32_t type_) const
+  {
+    geom_map * mutable_this = const_cast<geom_map *>(this);
+    return mutable_this->_compute_ginfo_collection_with_type_ (type_);
+  }
+ 
+
+  bool geom_map::has_ginfo_collection_with_type (uint32_t type_) const
+  {
+    const ginfo_ptr_collection_type & col = get_ginfo_collection_with_type (type_);
+    return col.size () > 0;
+  }
+
+  const geom_map::ginfo_ptr_collection_type & 
+  geom_map::_compute_ginfo_collection_with_type_ (uint32_t type_)
+  {
+    ginfo_collections_with_type_dict_type::iterator found = _geom_infos_with_type_map_.find (type_);
+    if (found != _geom_infos_with_type_map_.end ())
+      {
+        return (found->second);
+      }
+    {
+      // add a new collection for the requested type :
+      ginfo_ptr_collection_type empty_collection;
+      _geom_infos_with_type_map_[type_] = empty_collection;
+    }
+    // then fill it with the addresses of matching geom_infos objects
+    // from the main dictionary of 'ginfos' :
+    ginfo_ptr_collection_type & the_collection = _geom_infos_with_type_map_[type_];
+    for (geom_info_dict_t::const_iterator i = _geom_infos_.begin ();
+         i != _geom_infos_.end ();
+         i++)
+      {
+        const geom_info & ginfo = i->second;
+        has_geom_type_predicate pred (type_);
+        if (pred (ginfo))
+          {
+            the_collection.push_back (&ginfo);
+          }     
+      }
+    return the_collection;
+  }
+
+  const geom_map::ginfo_collections_with_type_dict_type & 
+  geom_map::get_geom_infos_with_type_map () const
+  {
+    return _geom_infos_with_type_map_;
+  }
+
 } // end of namespace geomtools
 
 // end of geom_map.cc
