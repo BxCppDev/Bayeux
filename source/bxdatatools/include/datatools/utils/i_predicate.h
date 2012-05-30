@@ -3,10 +3,11 @@
 #ifndef __datatools__utils__i_predicate_h
 #define __datatools__utils__i_predicate_h 1
 
+#include<functional>
+
 namespace datatools {
 
   namespace utils {
-
     //! \file datatools/utils/i_predicate.h
 
     template <class T>
@@ -25,14 +26,14 @@ namespace datatools {
     public:
 
       mother_to_daughter_predicate (i_predicate<Mother> & a_mother_predicate)
-	{
-	  _mother_predicate_ = &a_mother_predicate;
-	  return;
-	}
+  {
+    _mother_predicate_ = &a_mother_predicate;
+    return;
+  }
 
       virtual bool operator () (const Daughter & a_obj) const
       {
-	return (*_mother_predicate_) (a_obj);
+  return (*_mother_predicate_) (a_obj);
       }
     };
 
