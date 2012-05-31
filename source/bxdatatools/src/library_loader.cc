@@ -417,7 +417,7 @@ namespace datatools {
               if (status != EXIT_SUCCESS)
                 {
                   ostringstream message;
-                  message << "library_entry_type::load: "
+                  message << "datatools::utils::library_loader::load: "
                           << "Cannot register library '" << lib_name_ << "' !";
                   cerr << "ERROR: " << message.str () << endl;
                   return EXIT_FAILURE;
@@ -436,9 +436,12 @@ namespace datatools {
       else
         {
           ostringstream message;
-          message << lib_name_ << " library was not loaded ! " << "DATATOOLS_SYS_NAMESPACE" << " says: '"
+          message << "datatools::utils::library_loader::load: "
+                  << "The '" <<lib_name_ << "' library was not loaded ! " 
+                  << "DATATOOLS_SYS_NAMESPACE" << " says: '"
                   << DATATOOLS_SYS_NAMESPACE::DynamicLoader::LastError () << "' !";
           cerr << "ERROR: " << message.str () << endl;
+          return EXIT_FAILURE;
         }
       return EXIT_SUCCESS;
     }
