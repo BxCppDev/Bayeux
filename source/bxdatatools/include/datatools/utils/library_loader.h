@@ -97,15 +97,6 @@ namespace datatools {
           test               = bit_mask::bit10
         };
 
-    private:
-
-      uint32_t    _flags_; //!< Not used yet
-      std::string _config_filename_;
-      handle_library_entry_stack_type _stacked_libraries_;
-      handle_library_entry_dict_type  _libraries_;
-
-    public:
-
       bool is_debug () const;
 
       void set_debug (bool);
@@ -150,6 +141,13 @@ namespace datatools {
     protected:
 
       void _init ();
+
+    private:
+
+      uint32_t    _flags_; //!< Flags
+      std::string _config_filename_;
+      handle_library_entry_stack_type _stacked_libraries_;
+      handle_library_entry_dict_type  _libraries_;
 
     };
 
