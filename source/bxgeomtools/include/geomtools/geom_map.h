@@ -83,6 +83,8 @@ namespace geomtools {
 
     virtual bool has_geom_info (const geom_id &) const;
 
+    const geom_info * get_geom_info_ptr (const geom_id &) const;
+
     void get_geom_id (const vector_3d & world_position_,
                       int type_,
                       geom_id & gid_,

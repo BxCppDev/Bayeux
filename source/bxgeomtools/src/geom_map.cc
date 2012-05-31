@@ -96,6 +96,13 @@ namespace geomtools {
     return found->second;
   }
 
+  const geom_info * geom_map::get_geom_info_ptr (const geom_id & id_) const
+  {
+    geom_info_dict_t::const_iterator found = _geom_infos_.find (id_);
+    if (found == _geom_infos_.end ()) return 0;
+    return &found->second;
+  }
+
   const geom_id & geom_map::get_invalid_geom_id () const
   {
     return _invalid_geom_id_;
