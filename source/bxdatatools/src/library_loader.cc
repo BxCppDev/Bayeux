@@ -13,6 +13,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/foreach.hpp>
+#include <boost/preprocessor/stringize.hpp>
 
 // #if DATATOOLS_WITH_EMBEDDED_KWSYS == 0
 // #include <kwsys/DynamicLoader.hxx>
@@ -69,7 +70,7 @@ namespace datatools {
               ostringstream message;
               message << "library_entry_type::dtor: The '"
                       << name << "' library was not closed ! "
-                      << "DATATOOLS_SYS_NAMESPACE" << " says: '"
+                      << BOOST_PP_STRINGIZE(DATATOOLS_SYS_NAMESPACE) << " says: '"
                       << DATATOOLS_SYS_NAMESPACE::DynamicLoader::LastError () << "' !";
               cerr << "ERROR: " << message.str () << endl;
             }
@@ -247,7 +248,7 @@ namespace datatools {
                     {
                       ostringstream message;
                       message << "datatools::utils::library_loader::close_all: The '"
-                              << le.name << "' library was not closed ! " << "DATATOOLS_SYS_NAMESPACE" << " says: '"
+                              << le.name << "' library was not closed ! " << BOOST_PP_STRINGIZE(DATATOOLS_SYS_NAMESPACE) << " says: '"
                               << DATATOOLS_SYS_NAMESPACE::DynamicLoader::LastError () << "' !";
                       cerr << "ERROR: " << message.str () << endl;
                       //return;
@@ -438,7 +439,7 @@ namespace datatools {
           ostringstream message;
           message << "datatools::utils::library_loader::load: "
                   << "The '" <<lib_name_ << "' library was not loaded ! " 
-                  << "DATATOOLS_SYS_NAMESPACE" << " says: '"
+                  << BOOST_PP_STRINGIZE(DATATOOLS_SYS_NAMESPACE) << " says: '"
                   << DATATOOLS_SYS_NAMESPACE::DynamicLoader::LastError () << "' !";
           cerr << "ERROR: " << message.str () << endl;
           return EXIT_FAILURE;
@@ -472,7 +473,7 @@ namespace datatools {
       if (status != 1)
         {
           ostringstream message;
-          message << "The '" << le.name << "' library was not closed ! " << "DATATOOLS_SYS_NAMESPACE" << " says: '"
+          message << "The '" << le.name << "' library was not closed ! " << BOOST_PP_STRINGIZE(DATATOOLS_SYS_NAMESPACE) << " says: '"
                   << DATATOOLS_SYS_NAMESPACE::DynamicLoader::LastError () << "' !";
           clog << "ERROR: " << message.str () << endl;
           return EXIT_FAILURE;
