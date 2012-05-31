@@ -141,6 +141,7 @@ namespace geomtools {
       }
 
     _initialized_ = true;
+    return;
   }
 
   // ctor:
@@ -158,6 +159,7 @@ namespace geomtools {
   // dtor:
   mapping::~mapping ()
   {
+    return;
   }
 
   void mapping::set_max_depth (size_t max_depth_)

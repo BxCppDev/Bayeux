@@ -903,7 +903,7 @@ namespace geomtools {
         ostringstream message;
         message << "geomtools::id_mgr::compute_id_from_info: "
                 << "Invalid syntax for ID info `"
-                << id_info_ << "'; missing opening character !";
+                << id_info_ << "'; missing opening '[' character !";
         throw logic_error (message.str ());
       }
     if (id_info[id_info.size () - 1 ] != ']')
@@ -911,9 +911,13 @@ namespace geomtools {
         ostringstream message;
         message << "geomtools::id_mgr::compute_id_from_info: "
                 << "Invalid syntax for ID info `"
-                << id_info_ << "'; missing closing character !";
+                << id_info_ << "'; missing closing ']' character !";
         throw logic_error (message.str ());
       }
+    /* Format :
+     *
+     *     id_info == "[core_info]"
+     */
     string core_info = id_info.substr (1, id_info.size () - 2);
     if (devel) clog << "DEVEL: geomtools::id_mgr::compute_id_from_info: "
                     << "Core info is `" << core_info << "'" << endl;
@@ -929,6 +933,13 @@ namespace geomtools {
                 << id_info_ << "'; Invalid number of `:' separator !";
         throw logic_error (message.str ());
       }
+
+    /* Format :
+     *
+     *     core_info == "[category]"
+     * or
+     *     core_info == "[category:address rules...]"
+     */
 
     // Parse the category:
     string category = split_vec[0];
@@ -1000,6 +1011,12 @@ namespace geomtools {
       }
     if (parse_address)
       {
+        /* Format :
+         *
+         *     address rules == "address rule 0"
+         * or
+         *     address rules == "address rule 1, address rule 2..."
+         */
         string addresses_token = split_vec[1];
         if (devel) clog << "DEVEL: geomtools::id_mgr::compute_id_from_info: "
                         << "Addresses info is `" << addresses_token << "'" << endl;
@@ -1028,19 +1045,47 @@ namespace geomtools {
         // parse each address rule:
         for (int i = 0; i < split_addr.size (); i++)
           {
+            /* Format :
+             *
+             *   address rule == "address=N"
+             * or
+             *   address rule == "address+N"
+             * or
+             *   address rule == "address-N"
+             */
             string add_info = split_addr[i];
             boost::trim (add_info);
             split_vector_type split_add_info;
-            boost::split (split_add_info, add_info, boost::algorithm::is_any_of ("=+"));
-            bool skip = false;
-            if (add_info.find ('+') != add_info.npos) skip = true;
+            boost::split (split_add_info, add_info, boost::algorithm::is_any_of ("=+-"));
+            const int no_skip = 0;
+            const int skip_plus = 1;
+            const int skip_minus = -1;
+            int skip = no_skip;
+            if (add_info.find ('+') != add_info.npos) 
+              {
+                skip = skip_plus;
+              }
+            else if (add_info.find ('-') != add_info.npos) 
+              {
+                skip = skip_minus;
+              }
+
+            /*
+            for (int iii = 0; iii < split_add_info.size (); iii++)
+              {
+                std::cerr << "DEVEL: " 
+                          << "geomtools::id_mgr::compute_id_from_info: "
+                          << "Splitted address info is `" << split_add_info[iii] << "' for ID info `"
+                          << id_info_ << "'" << std::endl;
+              }
+            */
 
             if (split_add_info.size () != 2)
               {
                 ostringstream message;
                 message << "geomtools::id_mgr::compute_id_from_info: "
                         << "Invalid address information `" << add_info << "' for ID info `"
-                << id_info_ << "'!";
+                        << id_info_ << "'!";
                 throw logic_error (message.str ());
               }
             string addr_label = split_add_info[0];
@@ -1069,11 +1114,26 @@ namespace geomtools {
                 }
             }
             uint32_t address_value = addr_val;
-            if (skip)
+            if (skip != no_skip)
               {
-                if (items_index_.size () > i && items_index_[i] >= 0)
+                if ((items_index_[i] >= 0) && (i < items_index_.size ()))
                   {
-                    address_value += items_index_[i];
+                    if (skip == skip_plus) 
+                      {
+                        address_value += items_index_[i];
+                      }
+                    else if (skip == skip_minus) 
+                      {
+                        if (items_index_[i] > address_value)
+                          {
+                            ostringstream message;
+                            message << "geomtools::id_mgr::compute_id_from_info: "
+                                    << "Invalid address rule at index `" << i << "' for ID info `"
+                                    << id_info_ << "' ! Address index is negative !";
+                            throw logic_error (message.str ());                             
+                          }
+                        address_value -= items_index_[i];
+                      }
                   }
                 else
                   {
@@ -1087,11 +1147,11 @@ namespace geomtools {
             id_.set (i + current_address_index, address_value);
           }
       }
-
+    
     if (devel) clog << "geomtools::id_mgr::compute_id_from_info: Exiting." << endl << endl;
     return EXIT_SUCCESS;
   }
-
+  
 } // end of namespace geomtools
 
 // end of id_mgr.cc

@@ -33,13 +33,13 @@ namespace geomtools {
   class smart_id_locator : public i_locator
   {
   public:
+
     enum mode_t
       {
         MODE_INVALID = 0,
         MODE_LAST    = 1, 
         MODE_DEFAULT = MODE_LAST
       };
-
 
   public:
 
