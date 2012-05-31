@@ -49,6 +49,7 @@
 #include <datatools/utils/i_tree_dump.h>
 #include <datatools/utils/i_clear.h>
 #include <datatools/utils/i_cloneable.h>
+#include <datatools/utils/bit_mask.h>
 
 namespace datatools {
 
@@ -107,8 +108,8 @@ namespace datatools {
 
         static const char STRING_FORBIDDEN_CHAR = '"';
 
-        static const int  SCALAR_DEF    = -1;
-        static const int  SCALAR_SIZE   =  1;
+        static const int  SCALAR_DEF  = -1;
+        static const int  SCALAR_SIZE =  1;
 
         static const bool        DEFAULT_VALUE_BOOLEAN;
         static const int         DEFAULT_VALUE_INTEGER;
@@ -320,10 +321,6 @@ namespace datatools {
       const basic_key_validator * _key_validator_;
       bool                        _key_validator_deletion_;
 
-      // getters/setters declarations:
-
-    private:
-
       void
       _validate_key_ (const std::string & a_key_arg) const;
 
@@ -331,6 +328,7 @@ namespace datatools {
       _clear_key_validator_ ();
 
     public:
+
       static const std::string PRIVATE_PROPERTY_PREFIX;
 
       bool
@@ -351,8 +349,6 @@ namespace datatools {
 
       const std::string &
       get_description () const;
-
-    public:
 
       void
       unset_key_validator ();
@@ -835,9 +831,9 @@ namespace datatools {
                               const std::string & a_indent = "",
                               bool a_inherit               = false) const;
 
-      std::string  key_to_string (const std::string & a_key) const;
+      std::string key_to_string (const std::string & a_key) const;
 
-      std::string  key_to_property_string (const std::string & a_key) const;
+      std::string key_to_property_string (const std::string & a_key) const;
 
 
       //! From the datatools::utils::i_cloneable interface :
