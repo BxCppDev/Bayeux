@@ -7,6 +7,7 @@
  * License:
  *
  * Description:
+ *
  *   Geometry ID manager
  *
  * History:
@@ -28,69 +29,91 @@ namespace geomtools {
 
   using namespace std;
 
+  /** A manager class for geometry identifiers (GID, class : 'geom_id')
+   *  and their relationship described through objects of 'category_info'
+   * class 
+   */
   class id_mgr : public datatools::utils::i_tree_dumpable
   {
 
   public:
 
-    static const string CATEGORY_KEY_LABEL;
+    static const string CATEGORY_KEY_LABEL; 
     static const string TYPE_META_LABEL;
 
-    static bool g_devel;
+    static bool g_devel; /// Global debug flag (for experts only)
 
-    /***************************************/
-
+    /** A class that documents the hierarchical relationship
+     *  of a geometry category :
+     *  - category (unique string identifier)
+     *  - type (unique numerical identifier)
+     *  - inheritance (parent category), ancestor (+grand-parents)
+     *  - addressing fields with labels
+     *  
+     */ 
     class category_info : public datatools::utils::i_tree_dumpable
     {
     public:
-      std::string category;  // human readable category label
-      int    type;      // unique integral ID
-      std::string inherits;  // the mother category from which the category is inherited
-      std::string extends;   // the mother category from which the category is extented
-      std::vector<std::string> ancestors;  // the list of ancestor categories
-      std::vector<std::string> extends_by; // the addresses added by the extension
-      std::vector<std::string> addresses;  // the full list of addresses
-      std::vector<int>    nbits;      // the number of bits used to encode addresses
+      std::string category;  /// human readable category label
+      int         type;      /// unique integral ID
+      std::string inherits;  /// the mother category from which the category is inherited
+      std::string extends;   /// the mother category from which the category is extented
+      std::vector<std::string> ancestors;  /// the list of ancestor categories
+      std::vector<std::string> extends_by; /// the addresses added by the extension
+      std::vector<std::string> addresses;  /// the full list of addresses
+      std::vector<int>    nbits;           /// the number of bits used to encode addresses
 
     public:
 
+      /// Check if a subaddress with a given label exists at given occurence
       bool has_subaddress (const std::string & a_label, int a_count = 1) const;
 
+      /// Fetch the subaddress associated to a given label at given occurence
       int get_subaddress_index (const std::string & a_label, int a_count = 1) const;
 
+      /// Check if the category data are valid
       bool is_valid () const;
 
+      /// Get the name of the category
       const std::string & get_category () const;
 
+      /// Check if ancestor with a given category name exists
       bool has_ancestor (const std::string & cat_) const;
 
+      /// Add an ancestor with a given category name dexists
       void add_ancestor (const std::string & cat_);
 
+      /// Get the type
       int get_type () const;
 
+      /// Get the name of the parent category (if any)
       const std::string & get_inherits () const;
 
+      /// Check if a parent category exists
       bool is_inherited () const;
 
+      /// Check if the category extends another one
       bool is_extension () const;
 
+      /// Get the name of the extended category (if any)
       const std::string & get_extends () const;
  
-      // ctor:
+      /// Constructor
       category_info ();
 
-      //! returns the size of the list of addresses
+      /// Returns the size of the list of addresses
       size_t get_depth () const;
 
-      //! returns the size of the list of extending addresses
+      /// Returns the size of the list of extending addresses
       size_t get_by_depth () const;
 
-      //! create a geom ID with the proper type and depth
-      //
+      /// Create a geom ID with the proper type and depth followinf the description of the category
       void create (geom_id & id_) const;
 
+      /// Default print
       void dump (std::ostream & = std::clog) const;
 
+      /// Smart print
       virtual void tree_dump (std::ostream & out_        = std::clog,
                               const std::string & title_  = "",
                               const std::string & indent_ = "",
@@ -100,83 +123,99 @@ namespace geomtools {
 
     /***************************************/
 
-    typedef std::map<std::string, category_info>      categories_by_name_col_t;
+    typedef std::map<std::string, category_info> categories_by_name_col_t;
     typedef std::map<int, const category_info *> categories_by_type_col_t;
 
   public:
+
     bool is_debug () const;
+
     void set_debug (bool);
+
     const categories_by_type_col_t & categories_by_type () const;
+
     const categories_by_name_col_t & categories_by_name () const;
 
-  public:
-
-    // ctor:
+    /// Constructor
     id_mgr ();
 
-    // dtor:
+    /// Destructor
     virtual ~id_mgr ();
 
+    /// Initialize the manager from a properties multi container
     void init_from (const datatools::utils::multi_properties & mp_);
 
+    /// Initialize the manager from a properties multi container
     void initialize (const datatools::utils::multi_properties & mp_);
 
+    /// Load manager configuration from a file
     void load (const std::string & filename_);
 
+    /// Reset/invalidate the manager
     void reset ();
 
+    /// Smart print
     virtual void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
                             bool inherit_          = false) const;
 
-    bool has_category_info (int) const;
+    /// Check if some category's description exists for a given type
+    bool has_category_info (int type_) const;
 
+    /// Check if some category's description exists for a given category name
     bool has_category_info (const std::string &) const;
 
-    const category_info & get_category_info (int) const;
+    /// Get the category descriptor assocated to a category associated to a given type 
+    const category_info & get_category_info (int type_) const;
 
+    /// Get the category descriptor assocated to a category associated to a given name 
     const category_info & get_category_info (const std::string &) const;
 
-    //! check the category of an ID:
+    /// Check the category of an ID
     bool is_category (const geom_id & id_, const std::string & category_) const;
 
-    //! check if an ID inherits a category:
+    /// Check if an ID inherits a category
     bool inherits (const geom_id & id_, const std::string & category_) const;
 
-    //! check is an ID has an address 'what':
+    /// Check is an ID has an subaddress labelled 'what':
     bool has (const geom_id &, const std::string & what_) const;
 
-    //! returns the category associated to an ID:
+    /// Returns the category associated to an ID
     const std::string & get_category (const geom_id &) const;
 
-    //! return the type associated to a category:
+    /// Return the type associated to a category
     uint32_t get_category_type (const std::string & a_category) const;
 
-    //! returns the value of the address 'what' from an ID:
+    /// Returns the value of the address labelled 'what' from an ID
     int get (const geom_id &, const std::string & what_) const;
 
-    //! set the value of the address 'what' from an ID:
+    /// Set the value of the address labelled 'what' from an ID
     void set (geom_id &, const std::string & what_, uint32_t value_) const;
 
-    //! check if an ID inherits or extends a candidate mother ID:
+    /// Check if an ID inherits or extends a candidate mother ID
     bool check_inheritance (const geom_id & mother_id_,
                             const geom_id & id_) const;
 
-    //! extract the part of the address of some child ID that
-    //  is inherited from a mother ID.
-    //
+    /** Extract the part of the address of some child ID that
+     *  is inherited from a mother ID.
+     */
     void extract (const geom_id & child_id_, geom_id & mother_id_) const;
 
+    /// Check if a given ID is valid and managed
     bool validate_id (const geom_id & id_) const;
 
+    /// String formatting
     void id_to_human_readable_format_string (const geom_id & id_, std::string &) const;
 
+    /// String formatting
     std::string id_to_human_readable_format_string (const geom_id & id_) const;
 
+    /// Factory method that ... (I don't know what for !!!)
     void make_id (geom_id & id_,
                   uint32_t address_) const;
 
+    /// Factory method that initialize a GID of a given category by name
     void make_id (const std::string & category_, geom_id & id_) const;
 
     /*
@@ -211,9 +250,10 @@ namespace geomtools {
 
   private:
 
-    bool _debug_;
-    categories_by_name_col_t _categories_by_name_;
-    categories_by_type_col_t _categories_by_type_;
+    bool _debug_; /// Debug flag
+    categories_by_name_col_t _categories_by_name_; /// Dictionnary of categories keyed by name
+    categories_by_type_col_t _categories_by_type_; /// Dictionnary of categories keyed by type
+ 
   };
 
 } // end of namespace geomtools

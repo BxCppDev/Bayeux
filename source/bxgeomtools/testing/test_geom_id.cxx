@@ -44,9 +44,9 @@ int main (int argc_, char ** argv_)
       cout << "ID3 : " << id3 << ' ' << (id3.is_valid () ? "[Valid]": "[Invalid]") << endl;
 
       if (id1 < id0)
-	{
-	  cout << "ID1 < ID0" << endl;	  
-	}
+        {
+          cout << "ID1 < ID0" << endl;    
+        }
 
       id0.set_type (TYPE_GG_CELL);   
       id0.set (4, 666);
@@ -77,21 +77,56 @@ int main (int argc_, char ** argv_)
       cout << "ID5 : " << id5 << ' ' << (id5.is_valid () ? "[Valid]": "[Invalid]") << endl;
       cin >> id5;
       if (! cin) 
-	{
-	  cerr << "Invalid format !" << endl;
-	}
+        {
+          cerr << "Invalid format !" << endl;
+        }
       else
-	{
-	  cout << "ID5 : " << id5 << ' ' 
-	       << (id5.is_valid () ? "[Valid]": "[Invalid]") << endl;
-	}
+        {
+          cout << "ID5 : " << id5 << ' ' 
+               << (id5.is_valid () ? "[Valid]": "[Invalid]") << endl;
+        }
 
      geomtools::geom_id id6;
      geomtools::geom_id::make (id6, 234, 4);
      cout << "ID6 : " << id6 << ' ' 
-	  << (id6.is_valid () ? "[Valid]": "[Invalid]") << endl;
-    
-       
+          << (id6.is_valid () ? "[Valid]": "[Invalid]") << endl;
+     
+     geomtools::geom_id id7 (TYPE_SCIN_BLOCK, 14, 7, 6, geomtools::geom_id::ANY_ADDRESS);
+     cout << "ID7 : " << id7 << ' ' << (id7.is_valid () ? "[Valid]": "[Invalid]") << endl;
+     cout << "ID7 : " << id7 << ' ' << (id7.is_complete () ? "[complete]": "[incomplete]") << endl;
+     id7.set_any (1);
+     cout << "ID7 : " << id7 << ' ' << (id7.is_complete () ? "[complete]": "[incomplete]") << endl;
+     id7.set_invalid (2);
+     cout << "ID7 : " << id7 << ' ' << (id7.is_complete () ? "[complete]": "[incomplete]") << endl;
+
+     geomtools::geom_id id8 (TYPE_SCIN_BLOCK, 14, 7, 6, 2);
+     geomtools::geom_id id9 (TYPE_SCIN_BLOCK, 14, 7, 6, geomtools::geom_id::ANY_ADDRESS);
+     geomtools::geom_id id10 (TYPE_SCIN_BLOCK, 14, 7, 6, 3);
+     if (geomtools::geom_id::match (id8, id9))
+       {
+         cout << id8 << " and " << id9 << " match !" << endl;
+       }
+     else
+       {
+         cout << id8 << " and " << id9 << " do not match !" << endl;
+       }
+     if (geomtools::geom_id::match (id8, id9, true))
+       {
+         cout << id8 << " and " << id9 << " match !" << endl;
+       }
+     else
+       {
+         cout << id8 << " and " << id9 << " do not match exactly !" << endl;
+       }
+     if (geomtools::geom_id::match (id8, id10))
+       {
+         cout << id8 << " and " << id10 << " match !" << endl;
+       }
+     else
+       {
+         cout << id8 << " and " << id10 << " do not match !" << endl;
+       }
+
     }
   catch (exception & x)
     {
