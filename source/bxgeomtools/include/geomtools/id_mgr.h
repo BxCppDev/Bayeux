@@ -27,19 +27,17 @@
 
 namespace geomtools {
 
-  using namespace std;
-
   /** A manager class for geometry identifiers (GID, class : 'geom_id')
    *  and their relationship described through objects of 'category_info'
-   * class 
+   * class
    */
   class id_mgr : public datatools::utils::i_tree_dumpable
   {
 
   public:
 
-    static const string CATEGORY_KEY_LABEL; 
-    static const string TYPE_META_LABEL;
+    static const std::string CATEGORY_KEY_LABEL;
+    static const std::string TYPE_META_LABEL;
 
     static bool g_devel; /// Global debug flag (for experts only)
 
@@ -49,19 +47,19 @@ namespace geomtools {
      *  - type (unique numerical identifier)
      *  - inheritance (parent category), ancestor (+grand-parents)
      *  - addressing fields with labels
-     *  
-     */ 
+     *
+     */
     class category_info : public datatools::utils::i_tree_dumpable
     {
     public:
-      std::string category;  /// human readable category label
-      int         type;      /// unique integral ID
-      std::string inherits;  /// the mother category from which the category is inherited
-      std::string extends;   /// the mother category from which the category is extented
+      std::string category;                /// human readable category label
+      int         type;                    /// unique integral ID
+      std::string inherits;                /// the mother category from which the category is inherited
+      std::string extends;                 /// the mother category from which the category is extented
       std::vector<std::string> ancestors;  /// the list of ancestor categories
       std::vector<std::string> extends_by; /// the addresses added by the extension
       std::vector<std::string> addresses;  /// the full list of addresses
-      std::vector<int>    nbits;           /// the number of bits used to encode addresses
+      std::vector<int>         nbits;      /// the number of bits used to encode addresses
 
     public:
 
@@ -97,7 +95,7 @@ namespace geomtools {
 
       /// Get the name of the extended category (if any)
       const std::string & get_extends () const;
- 
+
       /// Constructor
       category_info ();
 
@@ -166,10 +164,10 @@ namespace geomtools {
     /// Check if some category's description exists for a given category name
     bool has_category_info (const std::string &) const;
 
-    /// Get the category descriptor assocated to a category associated to a given type 
+    /// Get the category descriptor assocated to a category associated to a given type
     const category_info & get_category_info (int type_) const;
 
-    /// Get the category descriptor assocated to a category associated to a given name 
+    /// Get the category descriptor assocated to a category associated to a given name
     const category_info & get_category_info (const std::string &) const;
 
     /// Check the category of an ID
@@ -236,13 +234,13 @@ namespace geomtools {
      *  The resulting child ID is: `[110:3.4]' where 110 is the type
      *  of the `submodule' category.
      */
-    int compute_id_from_info (geom_id & id_,
-                              const geom_id & mother_id_,
-                              const std::string & id_info_,
-                              const vector<uint32_t> & items_index_) const;
+    int compute_id_from_info (geom_id                     & id_,
+                              const geom_id               & mother_id_,
+                              const std::string           & id_info_,
+                              const std::vector<uint32_t> & items_index_) const;
 
-    int compute_id_from_info (geom_id & id_,
-                              const geom_id & mother_id_,
+    int compute_id_from_info (geom_id           & id_,
+                              const geom_id     & mother_id_,
                               const std::string & id_info_,
                               uint32_t nitem0_ = geom_id::INVALID_ADDRESS,
                               uint32_t nitem1_ = geom_id::INVALID_ADDRESS,
@@ -253,7 +251,7 @@ namespace geomtools {
     bool _debug_; /// Debug flag
     categories_by_name_col_t _categories_by_name_; /// Dictionnary of categories keyed by name
     categories_by_type_col_t _categories_by_type_; /// Dictionnary of categories keyed by type
- 
+
   };
 
 } // end of namespace geomtools
