@@ -46,6 +46,7 @@
 
 namespace genbb {
 
+  /// Generator for single particles with some special kinematics
   class single_particle_generator : public i_genbb
   {
   public:

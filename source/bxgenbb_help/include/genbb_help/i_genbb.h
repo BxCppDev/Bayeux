@@ -36,25 +36,29 @@
 
 namespace genbb {
 
+  /// GENBB generator abstract class 
   class i_genbb
   {
   public:
 
+    /// Constructor
     i_genbb ();
 
+    /// Destructor
     virtual ~i_genbb ();
 
-    // this method must be overloaded:
+    /// Returns true if the generator can provide one more generated event 
     virtual bool has_next () = 0;
 
+    /// Load a new 'primary_event' object
     virtual void load_next (primary_event & event_, 
-			    bool compute_classification_ = true);
+                            bool compute_classification_ = true);
  
   protected:
 
-    // this method must be overloaded:
+    /// Protected abstract interface to be invoked by the public 'load_next' method
     virtual void _load_next (primary_event & event_, 
-			     bool compute_classification_) = 0;
+                             bool compute_classification_) = 0;
 
   };
 
