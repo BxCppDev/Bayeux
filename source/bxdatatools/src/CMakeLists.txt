@@ -9,8 +9,12 @@ file ( GLOB boost_math_PUBLIC_HEADERS
        ${PROJECT_SOURCE_DIR}/include/boost/math/*.hpp
      )
 
-file ( GLOB boost_archive_PUBLIC_HEADERS
-       ${PROJECT_SOURCE_DIR}/include/boost/archive/*.hpp
+# file ( GLOB boost_archive_PUBLIC_HEADERS
+#        ${PROJECT_SOURCE_DIR}/include/boost/archive/*.hpp
+#      )
+
+file ( GLOB eos_PUBLIC_HEADERS
+       ${PROJECT_SOURCE_DIR}/include/eos/*.hpp
      )
  
 file ( GLOB datatools_utils_PUBLIC_HEADERS
@@ -89,7 +93,8 @@ add_library ( datatools SHARED
   ${datatools_serialization_PUBLIC_HEADERS}
   ${datatools_function_PUBLIC_HEADERS}
   ${boost_math_PUBLIC_HEADERS}
-  ${boost_archive_PUBLIC_HEADERS}
+  ####${boost_archive_PUBLIC_HEADERS}
+  ${eos_PUBLIC_HEADERS}
   ${datatools_SOURCES}
   )
 
@@ -123,8 +128,12 @@ install ( FILES ${boost_math_PUBLIC_HEADERS}
           DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/boost/math
         )
 
-install ( FILES ${boost_archive_PUBLIC_HEADERS}
-          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/boost/archive
+# install ( FILES ${boost_archive_PUBLIC_HEADERS}
+#           DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/boost/archive
+#         )
+
+install ( FILES ${eos_PUBLIC_HEADERS}
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/eos
         )
 
 install ( FILES ${datatools_utils_PUBLIC_HEADERS}

@@ -32,8 +32,12 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/portable_binary_iarchive.hpp>
-#include <boost/archive/portable_binary_oarchive.hpp>
+
+// 2012-06-07 FM : switch to Portable Archive v5.0
+//#include <boost/archive/portable_binary_iarchive.hpp>
+//#include <boost/archive/portable_binary_oarchive.hpp>
+#include <eos/portable_iarchive.hpp>
+#include <eos/portable_oarchive.hpp>
 
 #endif // __datatools__serialization__archives_list_h
 
