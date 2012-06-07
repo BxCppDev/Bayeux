@@ -25,8 +25,11 @@
 #include <boost/iostreams/stream.hpp>
 #include <boost/iostreams/device/array.hpp>
 #include <boost/archive/text_iarchive.hpp>
-// future:
-#include <boost/archive/portable_binary_iarchive.hpp>
+// 2012-06-07 FM: PBA version 5.0
+// do not use the old hacked version anymore :
+//#include <boost/archive/portable_binary_iarchive.hpp>
+// use the new version 5.0:
+#include <eos/portable_iarchive.hpp>
 
 #include <brio/detail/base_io.h>
 
@@ -279,7 +282,8 @@ namespace brio {
       // 2011-06-16 FM: restored 
       if (is_format_pba ())
         {
-          boost::archive::portable_binary_iarchive ia (input_stream);   
+          //boost::archive::portable_binary_iarchive ia (input_stream);   
+          eos::portable_iarchive ia (input_stream);   
           ia >> data_;
         }
       if (is_format_text ())

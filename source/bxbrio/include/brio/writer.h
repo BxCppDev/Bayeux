@@ -26,7 +26,11 @@
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/portable_binary_oarchive.hpp>
+// 2012-06-07 FM: PBA version 5.0
+// do not use the old hacked version anymore :
+//#include <boost/archive/portable_binary_oarchive.hpp>
+// use the new version 5.0:
+#include <eos/portable_oarchive.hpp>
 
 #include <brio/detail/base_io.h>
 
@@ -249,7 +253,8 @@ namespace brio {
       // 2011-06-16 FM: restored 
       if (is_format_pba ())
         {
-          boost::archive::portable_binary_oarchive oa (output_stream);   
+          //boost::archive::portable_binary_oarchive oa (output_stream);   
+          eos::portable_oarchive oa (output_stream);   
           oa << a_data;
         }
       if (is_format_text ())
