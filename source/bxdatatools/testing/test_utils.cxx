@@ -24,6 +24,33 @@ int main (void)
       }
 
       {
+        string path = "file://${HOME}/.ssh/config.${USER}";
+        clog << "Original path: '" << path << "'" << endl;
+        string expanded = datatools::utils::expand_path (path);
+        datatools::utils::fetch_path_with_env (path);
+        clog << "Derived expanded path : '" << expanded << "'" << endl;
+        clog << "Expanded path         : '" << path << "'" << endl;
+      }
+
+      {
+        string path = "file://~/.ssh/config.${USER}";
+        clog << "Original path: '" << path << "'" << endl;
+        string expanded = datatools::utils::expand_path (path);
+        datatools::utils::fetch_path_with_env (path);
+        clog << "Derived expanded path : '" << expanded << "'" << endl;
+        clog << "Expanded path         : '" << path << "'" << endl;
+      }
+
+      {
+        string path = "https://nemo.lpc-caen.in2p3.fr/wiki/datatools/trunk/README.txt";
+        clog << "Original path: '" << path << "'" << endl;
+        string expanded = datatools::utils::expand_path (path);
+        datatools::utils::fetch_path_with_env (path);
+        clog << "Derived expanded path : '" << expanded << "'" << endl;
+        clog << "Expanded path         : '" << path << "'" << endl;
+      }
+
+      {
         uint16_t s = 1;
         clog << "s = " << datatools::utils::io::to_binary (s) << std::endl;
         datatools::utils::set_bit (s, 3);
