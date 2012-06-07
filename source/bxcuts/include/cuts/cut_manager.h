@@ -154,7 +154,7 @@ namespace cuts {
 
 #endif // __cuts__cut_manager_h
 
-// end of cut_fmanager.h
+// end of cut_manager.h
 /*
 ** Local Variables: --
 ** mode: c++ --

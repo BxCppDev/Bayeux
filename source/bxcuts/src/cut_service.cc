@@ -139,16 +139,16 @@ namespace cuts {
 
   int cut_service::reset ()
   {
-       if (! is_initialized ())
-          {
-            ostringstream message;
-            message << "cuts::cut_service::reset: "
-                    << "Service '" << get_name () << "' is not initialized ! ";
-            throw logic_error (message.str ());
-          }
+    if (! is_initialized ())
+      {
+        ostringstream message;
+        message << "cuts::cut_service::reset: "
+                << "Service '" << get_name () << "' is not initialized ! ";
+        throw logic_error (message.str ());
+      }
     if (_owns_manager_ && _cut_manager_ != 0)
       {
-        _cut_manager_->reset ();
+        if (_cut_manager_->is_initialized ()) _cut_manager_->reset ();
         delete _cut_manager_;
         _cut_manager_ = 0;
       }
