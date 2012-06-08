@@ -38,8 +38,9 @@
 #include <datatools/utils/i_tree_dump.h>
 #include <datatools/utils/properties.h>
 
+#include <cuts/i_cut.h>
 #include <cuts/cut_tools.h>
-#include <cuts/cut_factory.h>
+//#include <cuts/cut_factory.h>
 
 // Forward declaration :
 namespace datatools {
@@ -59,12 +60,12 @@ namespace cuts {
   public:
     enum ctor_flag_type
       {
-        BLANK             = 0x0,
-        DEBUG             = 0x1,
-        FACTORY_DEBUG     = 0x2,
-        FACTORY_NOPRELOAD = 0x4,
-        VERBOSE           = 0x8,
-        INSTANTIATION_ON_LOAD = 0x10
+        BLANK             = 0,
+        DEBUG             = datatools::utils::bit_mask::bit00,
+        FACTORY_DEBUG     = datatools::utils::bit_mask::bit01,
+        FACTORY_NOPRELOAD = datatools::utils::bit_mask::bit02,
+        FACTORY_INITIALIZATION_AT_LOAD = datatools::utils::bit_mask::bit03,
+        VERBOSE           = datatools::utils::bit_mask::bit04
       };
   
     bool is_debug () const;
@@ -77,15 +78,13 @@ namespace cuts {
  
     bool is_no_preload () const;
 
-    bool is_instantiation_on_load () const;
-
-    bool is_instantiation_on_first_use () const;
+    bool is_initialization_at_load () const;
 
     bool has (const std::string & a_cut_name) const;
   
     void remove (const std::string & a_cut_name);
 
-    i_cut & get (const std::string & a_cut_name);
+    i_cut & grab (const std::string & a_cut_name);
 
     const i_cut & get (const std::string & a_cut_name) const;
 
@@ -103,13 +102,13 @@ namespace cuts {
 
     virtual ~cut_manager ();
 
-    const cut_factory & get_factory () const;
+    // const cut_factory & get_factory () const;
 
     bool has_service_manager () const;
 
     const datatools::service::service_manager & get_service_manager () const;
 
-    datatools::service::service_manager & get_service_manager ();
+    datatools::service::service_manager & grab_service_manager ();
 
     void set_service_manager (datatools::service::service_manager & a_service_manager);
 
@@ -119,11 +118,49 @@ namespace cuts {
                             const std::string & a_title  = "",
                             const std::string & a_indent = "",
                             bool a_inherit          = false) const;
+    
+    void load_cut (const std::string & cut_name_,
+                   const std::string & cut_id_,
+                   const datatools::utils::properties & cut_config_);
+    
+    void create_cut (cut_entry_type & cut_entry_);
+    
+    void initialize_cut (cut_entry_type & cut_entry_);
+    
+    void load_cuts (const datatools::utils::multi_properties & cuts_config_);
 
   protected:
-       
-    void _load_cuts (const datatools::utils::multi_properties & a_cuts_config);
 
+        void _load_cut (const std::string & cut_name_,
+                           const std::string & cut_id_,
+                           const datatools::utils::properties & cut_config_);
+
+        void _load_cuts (const datatools::utils::multi_properties & cuts_config_);
+
+        void _create_cut (cut_entry_type & cut_entry_);
+        
+        void _initialize_cut (cut_entry_type & cut_entry_);
+        
+        void _reset_cut (cut_entry_type & cut_entry_);
+
+        bool has_cut_type (const std::string & cut_id_) const;
+        
+        template <class CutClass>
+        void register_cut_type (const std::string & cut_id_)
+        {
+          _factory_register_.registration (cut_id_, boost::factory<CutClass*>());
+          return;
+        }
+        
+        void unregister_cut_type (const std::string & cut_id_);
+
+      protected:
+
+        void _preload_global_dict ();
+       
+    //void _load_cuts (const datatools::utils::multi_properties & a_cuts_config);
+
+    /*
   public :
 
     struct cut_entry_type
@@ -136,18 +173,17 @@ namespace cuts {
       cut_entry_type ();
       bool is_instantiated () const;
     };
+    */
 
   private:
 
-    bool                 _initialized_; //!< Initialization status
-    bool                 _instantiate_on_first_use_; //!< Special cut instantiation mode
-    uint32_t             _flags_;       //!< Some flags
-    cut_factory        * _factory_;     //!< Handle to the embedded cut factory
-    std::map<std::string, cut_entry_type> _cut_entries_; //!< Dictionary of cuts factory directives
-    cut_handle_dict_type _cuts_;        //!< Dictionary of cuts
+    bool                                  _initialized_;      //!< Initialization status
+    uint32_t                              _flags_;            //!< Some flags
+    i_cut::factory_register_type          _factory_register_; //!< Factory register
+    cut_handle_dict_type                  _cuts_;             //!< Dictionnary of cuts
     bool                                  _service_manager_owner_; //!< Owner flag for the embedded service manager
-    datatools::service::service_manager * _service_manager_;       //!< Handle to the embedded service manager
-
+    datatools::service::service_manager * _service_manager_;  //!< Handle to the embedded service manager
+    
   };
 
 }  // end of namespace cuts

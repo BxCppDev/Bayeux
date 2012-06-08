@@ -102,7 +102,7 @@ int main (int argc_, char ** argv_)
           message << "No cut with name '" << cut_name << "' !";
           throw logic_error (message.str ());    
         }
-      the_cut = &my_cut_manager.get (cut_name);
+      the_cut = &my_cut_manager.grab (cut_name);
 
       // build a collection of points:
       list<cuts::test::data> points;

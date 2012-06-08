@@ -25,10 +25,7 @@ namespace cuts {
   
   public: 
 
-    // ctor:
     CUT_INTERFACE_NORESET_CTOR_DTOR (xnor_cut);
-
-  private:
 
     // Macro to automate the registration of the cut :
     CUT_REGISTRATION_INTERFACE(xnor_cut);

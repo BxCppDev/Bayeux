@@ -157,7 +157,7 @@ namespace cuts {
                         << "' from the external dictionnary ! ";
                 throw logic_error (message.str ());
               }
-            this->add_cut (found->second);
+            this->add_cut (found->second.grab_initialized_cut_handle ());
           }
 
       }

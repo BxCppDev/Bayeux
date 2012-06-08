@@ -69,11 +69,12 @@ namespace cuts {
 
       // dtor:
       // CUT_DESTRUCTOR_DECLARE (range_cut)
+
     public:
+
       virtual ~range_cut ();
 
       // CUT_INITIALIZE_DECLARE()
-    public:
       virtual void initialize (const datatools::utils::properties &,  
                                datatools::service::service_manager &, 
                                cuts::cut_handle_dict_type &); 
@@ -87,14 +88,13 @@ namespace cuts {
       virtual void reset ();
 
     private:
-      // Macro to automate the registration of the cut :
-      CUT_REGISTRATION_INTERFACE(range_cut);
-
-    private:
 
       int    _mode_;
       double _min_, _max_;
       bool   _reversed_;
+
+      // Macro to automate the registration of the cut :
+      CUT_REGISTRATION_INTERFACE(range_cut);
  
     };
 

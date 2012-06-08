@@ -45,8 +45,6 @@ namespace cuts {
 
       int _color_;
 
-    private:
-
       // Macro to automate the registration of the cut :
       CUT_REGISTRATION_INTERFACE(color_cut);
  

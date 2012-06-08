@@ -24,6 +24,7 @@
 
 namespace cuts {
 
+  /// A multi XOR cut
   CUT_CLASS_DECLARE(multi_xor_cut)
   {
   public:
@@ -35,20 +36,17 @@ namespace cuts {
     void add_cut (cut_handle_type &);
     
     virtual void set_user_data (void *);
-    
+   
   public: 
 
-    // ctor:
     CUT_INTERFACE_CTOR_DTOR (multi_xor_cut);
-
-  private:
-
-    // Macro to automate the registration of the cut :
-    CUT_REGISTRATION_INTERFACE(multi_xor_cut);
  
   protected: 
     
     cuts_col_t _cuts_;
+ 
+    // Macro to automate the registration of the cut :
+    CUT_REGISTRATION_INTERFACE(multi_xor_cut);
 
   };
 

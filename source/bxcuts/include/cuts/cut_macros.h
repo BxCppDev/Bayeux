@@ -34,20 +34,20 @@
 #include <cuts/i_cut.h>
 
 #define CUT_CLASS_DECLARE(T)                    \
-  class T : public cuts::i_cut                  \
+  class T : public ::cuts::i_cut                \
   /**/
 
 #define CUT_INITIALIZE_DECLARE()                                  \
   public:                                                         \
   virtual void initialize (const datatools::utils::properties &,  \
                            datatools::service::service_manager &, \
-                           cuts::cut_handle_dict_type &);         \
+                           cuts::cut_handle_dict_type &);                \
   /**/
 
-#define CUT_INITIALIZE_IMPLEMENT_HEAD(T,CONF,SERVICE_MANAGER,DICT)      \
-  void T::initialize (const datatools::utils::properties & CONF,        \
+#define CUT_INITIALIZE_IMPLEMENT_HEAD(T,CONF,SERVICE_MANAGER,DICT)           \
+  void T::initialize (const datatools::utils::properties & CONF,             \
                       datatools::service::service_manager & SERVICE_MANAGER, \
-                      cuts::cut_handle_dict_type & DICT)                \
+                      cuts::cut_handle_dict_type & DICT)                            \
   /**/
 
 #define CUT_RESET_DECLARE()                     \
@@ -74,7 +74,7 @@
   /**/
 
 #define CUT_CONSTRUCTOR_IMPLEMENT_HEAD(T,DebugLevel,Name,Description,Version) \
-  T::T (int DebugLevel)                                                 \
+  T::T (int DebugLevel)                                               \
     : cuts::i_cut (Name,                                                \
                    Description,                                         \
                    Version,                                             \

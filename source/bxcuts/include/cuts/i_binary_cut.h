@@ -38,15 +38,16 @@ namespace cuts {
     
   public: 
 
-    // ctor:
+    /// Constructor
     i_binary_cut (const std::string & a_cut_name, 
                   const std::string & a_cut_description = "", 
                   const std::string & a_cut_version = "", 
                   int a_debug_level = 0);
    
-    // dtor:
+    /// Destructor
     CUT_DESTRUCTOR_DECLARE (i_binary_cut);
 
+    /// Reset
     CUT_RESET_DECLARE ();
 
   protected:

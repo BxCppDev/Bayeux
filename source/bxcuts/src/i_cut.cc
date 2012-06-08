@@ -65,6 +65,31 @@ namespace cuts {
     return;
   }
 
+  void i_cut::_lock_guard (const std::string & where_, const std::string & what_) const
+  {
+    if (! is_initialized ()) return;
+    std::ostringstream message;
+    if (! where_.empty ())
+      {
+        message << where_ << " : ";
+      }
+    else
+      {
+        message << "cuts::i_cut::_lock_guard" << " : ";
+      }
+    if (! what_.empty ())
+      {
+        message << what_;
+      }
+    else
+      {
+        message << "Operation prohibited ! Cut '" << get_name () 
+                << "' is already initialized !";
+      }
+    throw std::logic_error (message.str ());
+    return;
+  }
+  
   int
   i_cut::get_debug_level () const
   {
@@ -92,10 +117,31 @@ namespace cuts {
   }
   
   void
+  i_cut::set_name (const string & a_new_value)
+  {
+    if (is_initialized ())
+      {
+        std::ostringstream message;
+        message << "cuts::i_cut::set_name: "
+                << "Cut '" << _name << "' " 
+                << "is already initialized ! "
+                << "Cannot change the name !";
+        throw logic_error (message.str ());
+      }
+    _set_name (a_new_value);
+    return;
+  }
+  
+  void
   i_cut::_set_name (const string & a_new_value)
   {
     _name = a_new_value;
     return;
+  }
+
+  bool i_cut::has_description () const
+  {
+    return ! _description.empty ();
   }
     
   const string & i_cut::get_description () const
@@ -184,7 +230,16 @@ namespace cuts {
           << "Cut initialized : " << is_initialized () << endl;      
     return;
   }
-   
+
+  void i_cut::initialize_simple ()
+  {
+    datatools::utils::properties dummy_config;
+    datatools::service::service_manager dummy_service_manager;
+    cut_handle_dict_type dummy_cut_dict;
+    initialize (dummy_config, dummy_service_manager, dummy_cut_dict);
+    return;
+      }
+    
   void i_cut::initialize_standalone (const datatools::utils::properties & a_config)
   {
     datatools::service::service_manager dummy;
@@ -193,11 +248,19 @@ namespace cuts {
     return;
   }
    
-  void i_cut::initialize_with_service (const datatools::utils::properties & a_config,
-                                       datatools::service::service_manager & a_service_manager)
+  void i_cut::initialize_with_service_only (const datatools::utils::properties & a_config,
+                                            datatools::service::service_manager & a_service_manager)
   {
     cut_handle_dict_type dummy;
     initialize (a_config, a_service_manager, dummy);
+    return;
+  }
+   
+  void i_cut::initialize_without_service (const datatools::utils::properties & a_config,
+                                          cut_handle_dict_type & a_cut_dictionnary)
+  {
+    datatools::service::service_manager dummy_service_manager;
+    initialize (a_config, dummy_service_manager, a_cut_dictionnary);
     return;
   }
   

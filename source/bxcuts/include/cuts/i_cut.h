@@ -1,7 +1,7 @@
 /* i_cut.h
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
- * Last modified : 2011-06-07
+ * Last modified : 2012-06-08
  * 
  * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
  * 
@@ -35,6 +35,7 @@
 #include <string>
 
 #include <cuts/cut_tools.h>
+#include <datatools/utils/bit_mask.h>
 
 #include <boost/cstdlib.hpp>
 
@@ -59,7 +60,7 @@ namespace cuts {
         
     enum result_type
       {
-        INAPPLICABLE = -1, //!< Returned by the 'process' method when applying some cut makes no sense in the current context
+        INAPPLICABLE = -1, //!< Returned by the 'process' method when applying some cut that makes no sense in the current context
         REJECTED     = 0, //!< Returned by the 'process' method when some cut is not passed 
         ACCEPTED     = 1 //!< Returned by the 'process' method when some cut is passed 
       };
@@ -75,7 +76,9 @@ namespace cuts {
     void set_debug_level (int);
     
     const std::string & get_name () const;
-    
+ 
+    bool has_description () const;
+   
     const std::string & get_description () const;
     
     void set_description (const std::string & a_description);
@@ -93,8 +96,12 @@ namespace cuts {
     virtual void unset_user_data ();
  
     int operator() ();
-   
+ 
+    void set_name (const std::string & a_name);
+  
   protected:
+
+    void _lock_guard (const std::string & where_, const std::string & what_ = "") const;
 
     void _set_name (const std::string & a_name);
 
@@ -111,10 +118,16 @@ namespace cuts {
 
   public:
    
+    virtual void initialize_simple ();
+   
     virtual void initialize_standalone (const datatools::utils::properties & a_config);
 
-    virtual void initialize_with_service (const datatools::utils::properties & a_config,
-                                          datatools::service::service_manager & a_service_manager);
+    virtual void initialize_with_service_only (const datatools::utils::properties & a_config,
+                                               datatools::service::service_manager & a_service_manager);
+
+    virtual void initialize_without_service (const datatools::utils::properties & a_config,
+                                             cut_handle_dict_type & a_cut_dictionnary);
+
 
     /** The main initialization method (post-construction):
      * @param a_config the container of configuration parameters
@@ -139,7 +152,7 @@ namespace cuts {
   public: 
 
     // ctor:
-    i_cut (const std::string & a_cut_name, 
+    i_cut (const std::string & a_cut_name = "", 
            const std::string & a_cut_description = "", 
            const std::string & a_cut_version = "", 
            int           a_debug_level = 0);
@@ -177,6 +190,8 @@ namespace cuts {
   };
  
 }  // end of namespace cuts
+
+#include <cuts/cut_macros.h>
 
 #endif // __cuts__i_cut_h
 

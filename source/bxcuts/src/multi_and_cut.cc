@@ -23,24 +23,24 @@ namespace cuts {
   {
     if (&a_cut_handle.get () == this)
       {
-	ostringstream message;
-	message << "cuts::multi_and_cut::add_cut: "
-		<< "Self-referenced multi_and_cut is not allowed !";
-	throw logic_error (message.str ( ));
+        ostringstream message;
+        message << "cuts::multi_and_cut::add_cut: "
+                << "Self-referenced multi_and_cut is not allowed !";
+        throw logic_error (message.str ( ));
       }
     for (cuts_col_t::iterator i = _cuts_.begin ();
-	 i != _cuts_.end ();
-	 i++)
+         i != _cuts_.end ();
+         i++)
       {
-	cut_handle_type & ch = *i;
-	if (&ch.get () == &a_cut_handle.get ())
-	  {
-	    ostringstream message;
-	    message << "cuts::multi_and_cut::add_cut: "
-		    << "Cut is already registered !";
-	    cerr << "WARNING: " << message.str () << endl;
-	    return;
-	  }
+        cut_handle_type & ch = *i;
+        if (&ch.get () == &a_cut_handle.get ())
+          {
+            ostringstream message;
+            message << "cuts::multi_and_cut::add_cut: "
+                    << "Cut is already registered !";
+            cerr << "WARNING: " << message.str () << endl;
+            return;
+          }
       }
     _cuts_.push_back (a_cut_handle);
     return;
@@ -50,24 +50,24 @@ namespace cuts {
   {
     if (_cuts_.size () == 0) 
       {
-	throw logic_error ("cuts::multi_and_cut::set_user_data: Missing cuts !");
+        throw logic_error ("cuts::multi_and_cut::set_user_data: Missing cuts !");
       }
     for (cuts_col_t::iterator i = _cuts_.begin ();
-	 i !=  _cuts_.end ();
-	 i++)
+         i !=  _cuts_.end ();
+         i++)
       {
-	cut_handle_type & ch = *i;
-	ch.get ().set_user_data (user_data_);
+        cut_handle_type & ch = *i;
+        ch.get ().set_user_data (user_data_);
       }
     return;
   }
   
   // ctor:
   CUT_CONSTRUCTOR_IMPLEMENT_HEAD (multi_and_cut,
-				  a_debug_devel,
-				  "cuts::multi_and_cut",
-				  "Multiple cut",
-				  "1.0")
+                                  a_debug_devel,
+                                  "cuts::multi_and_cut",
+                                  "Multiple cut",
+                                  "1.0")
   {
     return;
   }
@@ -88,68 +88,68 @@ namespace cuts {
   {
     if (_cuts_.size () == 0) 
       {
-	throw logic_error ("cuts::multi_and_cut::_accept: Missing cuts !");
+        throw logic_error ("cuts::multi_and_cut::_accept: Missing cuts !");
       }
     
     for (cuts_col_t::iterator i = _cuts_.begin ();
-	 i !=  _cuts_.end ();
-	 i++)
+         i !=  _cuts_.end ();
+         i++)
       {
-	cut_handle_type & ch = *i;
-	int status = ch.get ().process ();
-	if (status != ACCEPTED)
-	  {
-	    return status;
-	  }
+        cut_handle_type & ch = *i;
+        int status = ch.get ().process ();
+        if (status != ACCEPTED)
+          {
+            return status;
+          }
       }
     return (ACCEPTED);
   }
 
   CUT_INITIALIZE_IMPLEMENT_HEAD(multi_and_cut,
-				a_configuration,
-				a_service_manager,
-				a_cut_dict)
+                                a_configuration,
+                                a_service_manager,
+                                a_cut_dict)
   {
     using namespace std;
     if (is_initialized ())
       {
-	ostringstream message;
-	message << "cuts::multi_and_cut::initialize: "
-		<< "Cut '" << get_name () << "' is already initialized ! ";
-	throw logic_error (message.str ());
+        ostringstream message;
+        message << "cuts::multi_and_cut::initialize: "
+                << "Cut '" << get_name () << "' is already initialized ! ";
+        throw logic_error (message.str ());
       }
 
     if (_cuts_.size () == 0) 
-      {	
-	vector<string> cut_names;
-	if (a_configuration.has_key ("cuts"))
-	  {
-	    a_configuration.fetch ("cuts", cut_names);
-	  }
-	else
-	  {
-	    throw logic_error ("cuts::multi_and_cut::initialize: Missing 'cuts' name property !");
-	  }
-	
-	for (int i = 0; i < cut_names.size (); i++)
-	  {
-	    const string & cut_name = cut_names[i];
-	    cut_handle_dict_type::iterator found = a_cut_dict.find (cut_name);
-	    if (found == a_cut_dict.end ())
-	      {
-		ostringstream message;
-		message << "cuts::multi_and_cut::initialize: "
-			<< "Can't find any cut named '" << cut_name 
-			<< "' from the external dictionnary ! ";
-		throw logic_error (message.str ());
-	      }
-	    this->add_cut (found->second);
-	  }
+      { 
+        vector<string> cut_names;
+        if (a_configuration.has_key ("cuts"))
+          {
+            a_configuration.fetch ("cuts", cut_names);
+          }
+        else
+          {
+            throw logic_error ("cuts::multi_and_cut::initialize: Missing 'cuts' name property !");
+          }
+        
+        for (int i = 0; i < cut_names.size (); i++)
+          {
+            const string & cut_name = cut_names[i];
+            cut_handle_dict_type::iterator found = a_cut_dict.find (cut_name);
+            if (found == a_cut_dict.end ())
+              {
+                ostringstream message;
+                message << "cuts::multi_and_cut::initialize: "
+                        << "Can't find any cut named '" << cut_name 
+                        << "' from the external dictionnary ! ";
+                throw logic_error (message.str ());
+              }
+            this->add_cut (found->second.grab_initialized_cut_handle ());
+          }
 
       }
 
     _set_initialized (true);
-    return;	 
+    return;      
   }
 
 } // end of namespace cuts

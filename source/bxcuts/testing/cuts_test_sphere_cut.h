@@ -54,7 +54,6 @@ namespace cuts {
       double _radius_;
       bool   _reversed_;
 
-    private:
       // Macro to automate the registration of the cut :
       CUT_REGISTRATION_INTERFACE(sphere_cut);
  

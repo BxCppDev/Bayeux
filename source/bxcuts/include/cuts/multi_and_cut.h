@@ -24,6 +24,7 @@
 
 namespace cuts {
 
+  /// A multi AND cut
   CUT_CLASS_DECLARE(multi_and_cut)
   {
   public:
@@ -38,17 +39,14 @@ namespace cuts {
     
   public: 
 
-    // ctor:
     CUT_INTERFACE_CTOR_DTOR (multi_and_cut);
-
-  private:
-
-    // Macro to automate the registration of the cut :
-    CUT_REGISTRATION_INTERFACE(multi_and_cut);
  
   protected: 
     
     cuts_col_t _cuts_;
+
+    // Macro to automate the registration of the cut :
+    CUT_REGISTRATION_INTERFACE(multi_and_cut);
 
   };
 
