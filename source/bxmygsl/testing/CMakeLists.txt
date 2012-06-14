@@ -52,6 +52,8 @@ set ( mygsl_tests_programs_list
   test_tabfunc.cxx
   test_unary_eval.cxx
   test_von_neumann.cxx
+  test_prng_state_manager.cxx
+  test_seed_manager.cxx
   )
 
 # include files search paths
