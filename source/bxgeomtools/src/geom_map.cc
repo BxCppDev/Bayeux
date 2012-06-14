@@ -96,6 +96,44 @@ namespace geomtools {
     return found->second;
   }
 
+  void geom_map::compute_matching_geom_id (const geom_id & gid_pattern_, 
+                                           std::vector<geom_id> & gids_,
+                                           bool append_) const
+  {
+    // If not using 'append' mode, we clear the vector :
+    if (! append_)
+      {
+        gids_.clear ();
+      }
+    // Return if no valid pattern :
+    if (! gid_pattern_.is_valid ()) 
+      {
+        return;
+      }
+    // Short cut if the GID pattern is complete (no 'ANY' addresses) :
+    if (gid_pattern_.is_complete ()) 
+      { 
+        geom_info_dict_t::const_iterator found = _geom_infos_.find (gid_pattern_);
+        if (found != _geom_infos_.end ())
+          {
+            gids_.push_back (found->first);
+          }
+        return;
+      }
+    // Else traverse the full map of ginfos :
+    for (geom_info_dict_t::const_iterator it = _geom_infos_.begin ();
+         it != _geom_infos_.end ();
+         it++)
+      {
+        const geom_id & gid = it->first;
+        if (geom_id::match (gid_pattern_, gid, false))
+          {
+            gids_.push_back (gid);
+          }
+      }
+    return;
+  }
+
   const geom_info * geom_map::get_geom_info_ptr (const geom_id & id_) const
   {
     geom_info_dict_t::const_iterator found = _geom_infos_.find (id_);

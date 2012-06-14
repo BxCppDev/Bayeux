@@ -83,6 +83,11 @@ namespace geomtools {
 
     virtual bool has_geom_info (const geom_id &) const;
 
+    /// Compute the list of GIDs matching a given GID pattern (including 'ANY' addresses)
+    void compute_matching_geom_id (const geom_id & gid_pattern_, 
+                                   std::vector<geom_id> & gids_,
+                                   bool append_ = false) const;
+
     const geom_info * get_geom_info_ptr (const geom_id &) const;
 
     void get_geom_id (const vector_3d & world_position_,
