@@ -5,8 +5,8 @@
  * for Boost/Serialization layer.
  *
  */
-#ifndef __datatools__the_serializable_ipp__
-#define __datatools__the_serializable_ipp__ 1
+#ifndef DATATOOLS_THE_SERIALIZABLE_IPP_
+#define DATATOOLS_THE_SERIALIZABLE_IPP_
 
 /********************************************
  * datatools::serialization::i_serializable *
@@ -33,6 +33,5 @@
  *********************************/
 #include <datatools/event/event_id.ipp>
 
-#endif // __datatools__the_serializable_ipp__
-
+#endif // DATATOOLS_THE_SERIALIZABLE_IPP_
 /* end of datatools::the_serializable.ipp */
