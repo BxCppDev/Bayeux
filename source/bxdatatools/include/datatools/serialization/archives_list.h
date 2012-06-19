@@ -2,7 +2,7 @@
 /* 
  * Description :
  *
- *  The list of supported archives.
+ *  Convenience header for listing headers for supported archives.
  *
  * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
  * 
@@ -23,8 +23,8 @@
  *
  */ 
 
-#ifndef __datatools__serialization__archives_list_h
-#define __datatools__serialization__archives_list_h 1
+#ifndef DATATOOLS_SERIALIZATION_ARCHIVES_LIST_H_
+#define DATATOOLS_SERIALIZATION_ARCHIVES_LIST_H_
 
 #include <boost/archive/polymorphic_iarchive.hpp>
 #include <boost/archive/polymorphic_oarchive.hpp>
@@ -34,11 +34,8 @@
 #include <boost/archive/xml_oarchive.hpp>
 
 // 2012-06-07 FM : switch to Portable Archive v5.0
-//#include <boost/archive/portable_binary_iarchive.hpp>
-//#include <boost/archive/portable_binary_oarchive.hpp>
 #include <eos/portable_iarchive.hpp>
 #include <eos/portable_oarchive.hpp>
 
-#endif // __datatools__serialization__archives_list_h
-
+#endif // DATATOOLS_SERIALIZATION_ARCHIVES_LIST_H_
 /* end of archives_list.h */

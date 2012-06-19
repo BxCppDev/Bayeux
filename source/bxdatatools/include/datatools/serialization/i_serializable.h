@@ -19,48 +19,47 @@
  *
  */ 
 
-#ifndef __datatools__serialization__i_serializable_h
-#define __datatools__serialization__i_serializable_h 1
+#ifndef DATATOOLS_SERIALIZATION_I_SERIALIZABLE_H_
+#define DATATOOLS_SERIALIZATION_I_SERIALIZABLE_H_
 
+
+// Standard Library
 #include <string>
 
+// Third Party
+// - Boost
 #include <boost/serialization/access.hpp>
 
+// Datatools
 #include <datatools/serialization/utils.h>
 
 namespace datatools {
-  
-  namespace serialization {
+namespace serialization {
     
-    class i_serializable
-    {
-    public:
+class i_serializable {
+ public:
+  i_serializable() {};
+  virtual ~i_serializable() {}
 
-      virtual const std::string & get_serial_tag () const = 0;
-  
-      virtual ~i_serializable () {}
+  virtual const std::string& get_serial_tag() const = 0;
 
-    private:
-      
-      friend class boost::serialization::access;
-      BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
-
-    };
+ private:
+  friend class boost::serialization::access;
+  BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
+};
     
-  } // end of namespace serialization 
-
+} // end of namespace serialization 
 } // end of namespace datatools 
 
 #define DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()		\
-  public:								\
+ public:								\
   static const std::string SERIAL_TAG;					\
-  virtual const std::string & get_serial_tag () const;			\
+  virtual const std::string& get_serial_tag() const;			\
   /**/
 
 #define DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(ClassName,ClassSerialTag) \
   const std::string ClassName::SERIAL_TAG = ClassSerialTag;		\
-  const std::string & ClassName::get_serial_tag () const		\
-  {									\
+  const std::string& ClassName::get_serial_tag () const {		\
     return ClassName::SERIAL_TAG;					\
   }									\
   /**/
@@ -76,13 +75,12 @@ namespace datatools {
   /**/
 
 #define DATATOOLS_SERIALIZATION_DECLARATION()	   \
-  public:					   \
+ public:					   \
   DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION() \
-  private:					   \
+ private:					   \
   friend class boost::serialization::access;	   \
   BOOST_SERIALIZATION_SERIALIZE_DECLARATION()	   \
   /**/
 
-#endif // __datatools__serialization__i_serializable_h
+#endif // DATATOOLS_SERIALIZATION_I_SERIALIZABLE_H_
 
-/* end of i_serializable.h */

@@ -28,8 +28,8 @@
  *
  */ 
 
-#ifndef __datatools__serialization__bio_guard_h
-#define __datatools__serialization__bio_guard_h 1
+#ifndef DATATOOLS_SERIALIZATION_BIO_GUARD_H_
+#define DATATOOLS_SERIALIZATION_BIO_GUARD_H_
 
 #include <datatools/datatools_config.h>
 #include <datatools/serialization/link_guard.h>	
@@ -40,21 +40,18 @@
 #else
 #warning This executable must ensure the datatools Boost/Serialization library is loaded. 
 namespace datatools {
-  namespace serialization {
-    struct bio_guard
-    {
-      bio_guard ()
-      {
-	dynamic_link_guard & dlg = datatools::serialization::dynamic_link_guard::instance ();
-	return;
-      }
-      static bio_guard _g_trigger_link_guard_;
-    };
-    bio_guard bio_guard::_g_trigger_link_guard_;
-  } // end namespace serialization
+namespace serialization {
+struct bio_guard {
+  bio_guard() {
+    dynamic_link_guard& dlg = datatools::serialization::dynamic_link_guard::instance();
+  }
+      
+  static bio_guard _g_trigger_link_guard_;
+};
+
+bio_guard bio_guard::_g_trigger_link_guard_;
+} // end namespace serialization
 } // end namespace datatools
 #endif // DATATOOLS_WITH_BIO != 1	
 
-#endif // __datatools__serialization__bio_guard_h
-
-/* end of datatools::serialization::bio_guard.h */
+#endif // DATATOOLS_SERIALIZATION_BIO_GUARD_H_

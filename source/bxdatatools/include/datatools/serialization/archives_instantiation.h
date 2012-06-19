@@ -24,15 +24,14 @@
  * Boston, MA 02110-1301, USA.
  *
  */
-
-#ifndef __datatools__serialization__archives_instantiation_h
-#define __datatools__serialization__archives_instantiation_h 1
+#ifndef DATATOOLS_SERIALIZATION_ARCHIVES_INSTANTIATION_H_
+#define DATATOOLS_SERIALIZATION_ARCHIVES_INSTANTIATION_H_
 
 #include <datatools/serialization/archives_list.h>
 
 // Intrusive version :
 #define DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE(T,A) \
-template void T::serialize (A & ar, const unsigned int version);  \
+template void T::serialize(A& ar, const unsigned int version);  \
 /**/
 
 #define DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL_IN(T)   \
@@ -62,7 +61,7 @@ template void T::serialize (A & ar, const unsigned int version);  \
 
 // Non-intrusive version :
 #define DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE(T,A) \
-template void boost::serialization::serialize (A & ar, T & object, const unsigned int version); \
+template void boost::serialization::serialize(A& ar, T& object, const unsigned int version); \
 /**/
 
 #define DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE_ALL_IN(T) \
@@ -90,6 +89,5 @@ template void boost::serialization::serialize (A & ar, T & object, const unsigne
   DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE_ALL_OUT(T) \
   /**/
 
-#endif // __datatools__serialization__archives_instantiation_h
+#endif // DATATOOLS_SERIALIZATION_ARCHIVES_INSTANTIATION_H_
 
-/* end of datatools::serialization::archives_instantiation.h */

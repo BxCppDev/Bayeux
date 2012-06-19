@@ -1,35 +1,19 @@
 // -*- mode: c++; -*- 
 /* i_serializable.ipp */
-
-#ifndef __datatools__serialization__i_serializable_ipp__
-#define __datatools__serialization__i_serializable_ipp__ 1
+#ifndef DATATOOLS_SERIALIZATION_I_SERIALIZABLE_IPP_
+#define DATATOOLS_SERIALIZATION_I_SERIALIZABLE_IPP_
 
 #include <datatools/serialization/i_serializable.h>
-
-//#include <boost/serialization/base_object.hpp>
-//#include <boost/serialization/assume_abstract.hpp>
 
 #include <boost/serialization/export.hpp>
 
 namespace datatools {
-  
-  namespace serialization {
+namespace serialization {
     
-    template<class Archive>
-    void i_serializable::serialize (Archive & a_ar, 
-                                    const unsigned int a_file_version)
-    {
-      return;
-    }
-    
-  } // end of namespace serialization 
-  
+template<class Archive>
+void i_serializable::serialize(Archive& a_ar, const unsigned int a_file_version) {}
+} // end of namespace serialization 
 } // end of namespace datatools 
 
-// Debug :
-// #include <boost/serialization/version.hpp>
-//BOOST_CLASS_VERSION(datatools::serialization::i_serializable, 8)
+#endif // DATATOOLS_SERIALIZATION_I_SERIALIZABLE_IPP_
 
-#endif // __datatools__serialization__i_serializable_ipp__
-
-/* end of i_serializable.ipp */
