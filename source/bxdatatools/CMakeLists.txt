@@ -1,41 +1,36 @@
 # - Top level CMakeLists.txt for datatools project
-# -*- mode: cmake; -*-
-#
-# ----------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 # Copyright (c) 2011-2012, François Mauger <mauger@lpccaen.in2p3.fr>
 #                          Ben Morgan <Ben.Morgan@warwick.ac.uk>
-# ----------------------------------------------------------------------------
 
-# ----------------------------------------------------------------------------
-# - Enforce an out-of-source build.
-# - Should be the first action in the CMakeLists.txt
+#-----------------------------------------------------------------------
+# Enforce an out-of-source build.
+# Should be the first action in the CMakeLists.txt
 #
-if ( ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR} )
-  message ( STATUS "datatools requires an out-of-source build." )
-  message ( STATUS "Please remove these files from ${CMAKE_BINARY_DIR} first:" )
-  message ( STATUS "  CMakeCache.txt" )
-  message ( STATUS "  CMakeFiles" )
-  message ( STATUS "Once these files are removed, create a separate directory" )
-  message ( STATUS "and run CMake from there, pointing it to:" )
-  message ( STATUS "  ${CMAKE_SOURCE_DIR}" )
-  message ( FATAL_ERROR "in-source build detected" )
-endif ()
+if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+  message(STATUS "datatools requires an out-of-source build.")
+  message(STATUS "Please remove these files from ${CMAKE_BINARY_DIR} first:")
+  message(STATUS "    CMakeCache.txt")
+  message(STATUS "    CMakeFiles")
+  message(STATUS "Once these files are removed, create a separate directory")
+  message(STATUS "and run CMake from there, pointing it to:")
+  message(STATUS "    ${CMAKE_SOURCE_DIR}")
+  message(FATAL_ERROR "in-source build detected")
+endif()
 
-# ----------------------------------------------------------------------------
-# - Setup CMake requirements and project's name
-#
-cmake_minimum_required ( VERSION 2.8 FATAL_ERROR )
-project ( datatools )
+#-----------------------------------------------------------------------
+# Project configuration
+cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+project(datatools)
 
-set ( datatools_PACKAGE_NAME ${CMAKE_PROJECT_NAME} CACHE STRING "The name of the package" FORCE )
-message ( STATUS "datatools: Package name         : '${datatools_PACKAGE_NAME}'" )
+# ...sigh... This is just PROJECT_NAME/CMAKE_PROJECT_NAME
+set(datatools_PACKAGE_NAME ${CMAKE_PROJECT_NAME} CACHE STRING "The name of the package" FORCE)
+message(STATUS "Package name         : '${datatools_PACKAGE_NAME}'")
 
-#----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------
 # Prepend this project's custom module path(s) to CMAKE_MODULE_PATH
 # Append any path from the environment
-# This allows us to customize, add, and factor out functionality
-# NB: if our custom modules include others that we don't supply, those in the
-# base path will be used, so watch for incompatibilities!!
 #
 file(TO_CMAKE_PATH "$ENV{CMAKE_MODULE_PATH}" __env_cmake_module_path)
 
@@ -46,29 +41,18 @@ set(CMAKE_MODULE_PATH
   ${CMAKE_MODULE_PATH}
   )
 
-if (DEFINED ADDITIONAL_CMAKE_MODULE_PATH AND NOT "x${ADDITIONAL_CMAKE_MODULE_PATH}" STREQUAL "x" )
-  message ( STATUS "datatools: Using additional CMAKE_MODULE_PATH : '${ADDITIONAL_CMAKE_MODULE_PATH}'" )
-  set(CMAKE_MODULE_PATH
-      ${ADDITIONAL_CMAKE_MODULE_PATH}
-      ${CMAKE_MODULE_PATH}
-  )
-endif ()
-
-message ( STATUS "datatools: CMAKE_MODULE_PATH         : '${CMAKE_MODULE_PATH}'" )
-
-#----------------------------------------------------------------------------
-# Load any required modules
+#-----------------------------------------------------------------------
+# Load required modules
 #
 include(Config)
 include(InstallDirs)
 include(PackageFilename)
 
 
-#----------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 # Build options
 #
 # - All systems
-option(DATATOOLS_WITH_DEBUG "Build datatools with debugging code" OFF)
 option(DATATOOLS_WITH_BIO   "Build auxiliary Boost I/O library"   ON) 
 option(DATATOOLS_WITH_PYTHON_WRAPPER 
   "Build the datatools Python wrapper module" 
@@ -107,348 +91,334 @@ if(DATATOOLS_WITH_TEST)
 endif()
 
 
-#----------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 # Find external packages needed to build
 #
 
 #--------------------------
 # - Depends on Python 2.7 :
-set ( _python_version 2.7 )
+set(_python_version 2.7)
 
-find_package ( PythonInterp REQUIRED )
-set ( CMAKE_USE_PYTHON_VERSION "2.7" "2.6" )
-if ( PYTHONINTERP_FOUND )
-     message ( STATUS "datatools: Found Python interpreter >= ${_python_version}")
-     ###message ( STATUS "datatools:  o PYTHON_VERSION_MAJOR = ${PYTHON_VERSION_MAJOR}" )
-     message ( STATUS "datatools:  o PYTHON_EXECUTABLE     = ${PYTHON_EXECUTABLE}" )
-else ()
-     message ( FATAL_ERROR "datatools: Cannot find Python >= ${_python_version} interpreter !" )
-endif ()
+find_package(PythonInterp REQUIRED)
+set(CMAKE_USE_PYTHON_VERSION "2.7" "2.6")
+if(PYTHONINTERP_FOUND)
+  message(STATUS "Found Python interpreter >= ${_python_version}")
+  message(STATUS "PYTHON_EXECUTABLE     = ${PYTHON_EXECUTABLE}")
+else()
+  message(FATAL_ERROR "Cannot find Python >= ${_python_version} interpreter")
+endif()
 
-find_package ( PythonLibs ${_python_version} REQUIRED )
-if ( PYTHONLIBS_FOUND )
-     message ( STATUS "datatools: Found Python library >= ${_python_version}")
-     message ( STATUS "datatools:  o PYTHON_INCLUDE_DIRS = ${PYTHON_INCLUDE_DIRS}" )
-     message ( STATUS "datatools:  o PYTHON_LIBRARIES    = ${PYTHON_LIBRARIES}" )
-else ()
-     message ( FATAL_ERROR "datatools: Cannot find Python ${_python_version} library !" )
-endif ()
+find_package(PythonLibs ${_python_version} REQUIRED)
+if(PYTHONLIBS_FOUND)
+  message(STATUS "Found Python library >= ${_python_version}")
+  message(STATUS "PYTHON_INCLUDE_DIRS = ${PYTHON_INCLUDE_DIRS}")
+  message(STATUS "PYTHON_LIBRARIES    = ${PYTHON_LIBRARIES}")
+else()
+  message(FATAL_ERROR "Cannot find Python ${_python_version} library")
+endif()
 
 #---------------------
 # - Depends on Boost :
-set ( _boost_version 1.47.0 )
+set(_boost_version 1.47.0)
 
-if ( NOT "$ENV{BOOST_ROOT}" STREQUAL "" )  
-  message ( STATUS "datatools: Environment BOOST_ROOT exists : '$ENV{BOOST_ROOT}' ")
-  set ( BOOST_ROOT $ENV{BOOST_ROOT} )
-else ()
-  message ( STATUS  "datatools: Environment BOOST_ROOT is not set" )
-endif ()
+if(DEFINED ENV{BOOST_ROOT})  
+  message(STATUS "Environment BOOST_ROOT exists : '$ENV{BOOST_ROOT}'")
+  set(BOOST_ROOT $ENV{BOOST_ROOT})
+else()
+  message(STATUS  "Environment BOOST_ROOT is not set")
+endif()
 
-if ( DEFINED BOOST_ROOT )  
-  message ( STATUS  "datatools: BOOST_ROOT='${BOOST_ROOT}'" )
-endif ()
+if(BOOST_ROOT)  
+  message(STATUS "BOOST_ROOT='${BOOST_ROOT}'")
+endif()
 
-string ( REGEX REPLACE ".[0-9]+$" "" _boost_short_version "${_boost_version}" )
-message ( STATUS "datatools: Boost short version is : '${_boost_short_version}'" )
-set ( Boost_ADDITIONAL_VERSIONS "${_boost_short_version}" "${_boost_version}" )
-set ( Boost_NO_SYSTEM_PATHS ON )
-set ( _boost_requested_components filesystem serialization iostreams system program_options python )
+string(REGEX REPLACE ".[0-9]+$" "" _boost_short_version "${_boost_version}")
+message(STATUS "Boost short version is : '${_boost_short_version}'")
 
-# if ( DATATOOLS_WITH_PYTHON_WRAPPER )
-#   set ( _boost_requested_components ${_boost_requested_components} python )
-# endif ()
+set(Boost_ADDITIONAL_VERSIONS "${_boost_short_version}" "${_boost_version}")
+set(Boost_NO_SYSTEM_PATHS ON)
+set(_boost_requested_components 
+  filesystem 
+  serialization 
+  iostreams 
+  system 
+  program_options 
+  python)
 
-find_package ( Boost ${_boost_version} REQUIRED COMPONENTS ${_boost_requested_components} )
-if ( Boost_FOUND )
-     message ( STATUS "datatools: Found Boost ${_boost_version}")
-     message ( STATUS "datatools:  o Boost_VERSION          = ${Boost_VERSION}" )
-     message ( STATUS "datatools:  o Boost_LIB_VERSION      = ${Boost_LIB_VERSION}" )
-     message ( STATUS "datatools:  o Boost_INCLUDE_DIRS     = ${Boost_INCLUDE_DIRS}" )
-     message ( STATUS "datatools:  o Boost_LIBRARIES        = ${Boost_LIBRARIES}" )
-else ()
-     message ( FATAL_ERROR "datatools: Cannot find Boost ${_boost_version} library !" )
-endif ()
+find_package(Boost ${_boost_version} REQUIRED COMPONENTS ${_boost_requested_components})
+if(Boost_FOUND)
+  message(STATUS "Found Boost ${_boost_version}")
+  message(STATUS "Boost_VERSION          = ${Boost_VERSION}")
+  message(STATUS "Boost_LIB_VERSION      = ${Boost_LIB_VERSION}")
+  message(STATUS "Boost_INCLUDE_DIRS     = ${Boost_INCLUDE_DIRS}")
+  message(STATUS "Boost_LIBRARIES        = ${Boost_LIBRARIES}")
+else()
+  message(FATAL_ERROR "Cannot find Boost ${_boost_version} library!")
+endif()
 
 #---------------------
 # - Depends on CLHEP :
-set ( _clhep_version 2.1.0.1 )
-find_package ( CLHEP ${_clhep_version} REQUIRED )
-if ( CLHEP_FOUND )
-     message ( STATUS "datatools: Found CLHEP ${_clhep_version}" )
-     message ( STATUS "datatools:  o CLHEP_INCLUDE_DIRS : '${CLHEP_INCLUDE_DIRS}'" )
-     message ( STATUS "datatools:  o CLHEP_LIBRARIES    : '${CLHEP_LIBRARIES}'" )
-     message ( STATUS "datatools:  o CLHEP_DEFINITIONS  : '${CLHEP_DEFINITIONS}'" )
-else ()
-     message ( FATAL_ERROR "datatools: Cannot find CLHEP ${_clhep_version} library !" )
-endif ()
+set(_clhep_version 2.1.0.1)
+find_package(CLHEP ${_clhep_version} REQUIRED)
+if(CLHEP_FOUND)
+  message(STATUS "Found CLHEP ${_clhep_version}")
+  message(STATUS "CLHEP_INCLUDE_DIRS : '${CLHEP_INCLUDE_DIRS}'")
+  message(STATUS "CLHEP_LIBRARIES    : '${CLHEP_LIBRARIES}'")
+  message(STATUS "CLHEP_DEFINITIONS  : '${CLHEP_DEFINITIONS}'")
+else()
+  message(FATAL_ERROR "Cannot find CLHEP ${_clhep_version} library!")
+endif()
 
-
-#----------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 # Configure optional development components
 #
-set ( _datatools_cmake_config_install_dir ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME} ) 
+set(_datatools_cmake_config_install_dir ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}) 
 
-if ( DATATOOLS_WITH_PKGCONFIG )
-  set ( _datatools_pkgconfig_install_dir ${CMAKE_INSTALL_LIBDIR}/pkgconfig )
-  if ( DEFINED DATATOOLS_PKGCONFIG_INSTALL_DIR)
-    set ( _datatools_pkgconfig_install_dir ${DATATOOLS_PKGCONFIG_INSTALL_DIR} )
-  endif ()
-endif ()
+if(DATATOOLS_WITH_PKGCONFIG)
+  set(_datatools_pkgconfig_install_dir ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+  if(DEFINED DATATOOLS_PKGCONFIG_INSTALL_DIR)
+    set(_datatools_pkgconfig_install_dir ${DATATOOLS_PKGCONFIG_INSTALL_DIR})
+  endif()
+endif()
 
-option ( DATATOOLS_WITH_CMAKE_FIND_MODULE 
-         "Build the datatools' CMake find module"
- 	 OFF )
+option(DATATOOLS_WITH_CMAKE_FIND_MODULE  "Build the datatools CMake find module" OFF)
 
-set ( _find_module_install_dir ${CMAKE_INSTALL_DATADIR}/cmake/Modules ) 
-if ( DATATOOLS_WITH_CMAKE_FIND_MODULE )
-  if ( DEFINED DATATOOLS_FIND_MODULE_INSTALL_DIR )
-    set ( _find_module_install_dir ${DATATOOLS_FIND_MODULE_INSTALL_DIR} ) 
-    message ( STATUS "datatools: DATATOOLS_FIND_MODULE_INSTALL_DIR : " "${DATATOOLS_FIND_MODULE_INSTALL_DIR}" )
-  endif ()
-  message ( STATUS "datatools: CMake find module install dir = '${_find_module_install_dir}'" )
-endif ( DATATOOLS_WITH_CMAKE_FIND_MODULE )
+set(_find_module_install_dir ${CMAKE_INSTALL_DATADIR}/cmake/Modules) 
+if(DATATOOLS_WITH_CMAKE_FIND_MODULE)
+  if(DEFINED DATATOOLS_FIND_MODULE_INSTALL_DIR)
+    set(_find_module_install_dir ${DATATOOLS_FIND_MODULE_INSTALL_DIR}) 
+    message(STATUS "DATATOOLS_FIND_MODULE_INSTALL_DIR : " "${DATATOOLS_FIND_MODULE_INSTALL_DIR}")
+  endif()
 
-message ( STATUS "datatools: DATATOOLS_WITH_DEBUG           : " "${DATATOOLS_WITH_DEBUG}" )
-message ( STATUS "datatools: DATATOOLS_WITH_BIO             : " "${DATATOOLS_WITH_BIO}" )
-message ( STATUS "datatools: DATATOOLS_WITH_PYTHON_WRAPPER  : " "${DATATOOLS_WITH_PYTHON_WRAPPER}" )
-if (UNIX OR APPLE)
-  message ( STATUS "datatools: DATATOOLS_WITH_CONFIG_SCRIPT   : " "${DATATOOLS_WITH_CONFIG_SCRIPT}" )
-  message ( STATUS "datatools: DATATOOLS_WITH_PKGCONFIG       : " "${DATATOOLS_WITH_PKGCONFIG}" )
-  message ( STATUS "datatools: pkgconfig install dir:  ${_datatools_pkgconfig_install_dir}" )
-endif (UNIX OR APPLE)
-message ( STATUS "datatools: CMake config install dir:  ${_datatools_cmake_config_install_dir}" )
-message ( STATUS "datatools: DATATOOLS_WITH_DOC             : " "${DATATOOLS_WITH_DOC}" )
-message ( STATUS "datatools: DATATOOLS_WITH_TEST            : " "${DATATOOLS_WITH_TEST}" )
-message ( STATUS "datatools: CMAKE_INSTALL_PREFIX           : " "${CMAKE_INSTALL_PREFIX}" )
-message ( STATUS "datatools: CMAKE_INSTALL_PYTHONDIR        : " "${CMAKE_INSTALL_PYTHONDIR}" )
+  message(STATUS "CMake find module install dir = '${_find_module_install_dir}'")
+endif()
 
-# ----------------------------------------------------------------------
+message(STATUS "DATATOOLS_WITH_DEBUG           : " "${DATATOOLS_WITH_DEBUG}")
+message(STATUS "DATATOOLS_WITH_BIO             : " "${DATATOOLS_WITH_BIO}")
+message(STATUS "DATATOOLS_WITH_PYTHON_WRAPPER  : " "${DATATOOLS_WITH_PYTHON_WRAPPER}")
+
+if(UNIX)
+  message(STATUS "DATATOOLS_WITH_CONFIG_SCRIPT   : " "${DATATOOLS_WITH_CONFIG_SCRIPT}")
+  message(STATUS "DATATOOLS_WITH_PKGCONFIG       : " "${DATATOOLS_WITH_PKGCONFIG}")
+  message(STATUS "pkgconfig install dir:  ${_datatools_pkgconfig_install_dir}")
+endif()
+
+message(STATUS "CMake config install dir:  ${_datatools_cmake_config_install_dir}")
+message(STATUS "DATATOOLS_WITH_DOC             : " "${DATATOOLS_WITH_DOC}")
+message(STATUS "DATATOOLS_WITH_TEST            : " "${DATATOOLS_WITH_TEST}" )
+message(STATUS "CMAKE_INSTALL_PREFIX           : " "${CMAKE_INSTALL_PREFIX}")
+message(STATUS "CMAKE_INSTALL_PYTHONDIR        : " "${CMAKE_INSTALL_PYTHONDIR}")
+
+#-----------------------------------------------------------------------
 # - datatools API :
 #
+set(KWSYS_NAMESPACE datatools_sys)
+set(KWSYS_BUILD_SHARED ON)
+set(KWSYS_INSTALL_EXPORT_NAME datatools-libraries)
+set(KWSYS_HEADER_ROOT ${PROJECT_BINARY_DIR}/include)
+set(KWSYS_INSTALL_INCLUDE_DIR ${CMAKE_INSTALL_INCLUDEDIR})
+set(KWSYS_INSTALL_BIN_DIR ${CMAKE_INSTALL_BINDIR})
+set(KWSYS_INSTALL_LIB_DIR ${CMAKE_INSTALL_LIBDIR})
+set(KWSYS_INSTALL_DOC_DIR ${CMAKE_INSTALL_DATAROOTDIR}/doc)
+set(KWSYS_INSTALL_COMPONENT_NAME_RUNTIME Runtime)
+set(KWSYS_INSTALL_COMPONENT_NAME_DEVELOPMENT Development)
+set(KWSYS_USE_DynamicLoader 1) 
+add_subdirectory(kwsys) 
+add_subdirectory(src)   
 
-set (KWSYS_NAMESPACE datatools_sys)
-message ( STATUS "datatools: Using embedded kwsys with namespace '${KWSYS_NAMESPACE}'" )
-set (KWSYS_BUILD_SHARED ON)
-set (KWSYS_INSTALL_EXPORT_NAME datatools-libraries)
-set (KWSYS_HEADER_ROOT ${PROJECT_BINARY_DIR}/include )
-set (KWSYS_INSTALL_INCLUDE_DIR ${CMAKE_INSTALL_INCLUDEDIR} )
-set (KWSYS_INSTALL_BIN_DIR ${CMAKE_INSTALL_BINDIR} )
-set (KWSYS_INSTALL_LIB_DIR ${CMAKE_INSTALL_LIBDIR} )
-set (KWSYS_INSTALL_DOC_DIR ${CMAKE_INSTALL_DATAROOTDIR}/doc )
-set (KWSYS_INSTALL_COMPONENT_NAME_RUNTIME Runtime)
-set (KWSYS_INSTALL_COMPONENT_NAME_DEVELOPMENT Development)
-message ( STATUS "datatools: Trigger the '${KWSYS_NAMESPACE}::DynamicLoader' class" )
-set (KWSYS_USE_DynamicLoader 1) # Enable DynamicLoader class.
-message ( STATUS "datatools: Add subdirectory : " "'kwsys'" )
-add_subdirectory (kwsys) 
-
-message ( STATUS "datatools: Add subdirectory : " "'src'" )
-add_subdirectory ( src )   
-
-# ----------------------------------------------------------------------
+#-----------------------------------------------------------------------
 # - Configuration files :
 #
+set( _ld_library_path_env "LD_LIBRARY_PATH")
+if(APPLE)
+  set(_ld_library_path_env "DYLD_LIBRARY_PATH")
+endif()
 
-set ( _ld_library_path_env "LD_LIBRARY_PATH" )
-if ( CMAKE_SYSTEM_NAME MATCHES Darwin )
-  set ( _ld_library_path_env "DYLD_LIBRARY_PATH" )
-endif ( CMAKE_SYSTEM_NAME MATCHES Darwin )
+configure_file( 
+  "${PROJECT_SOURCE_DIR}/cmake/templates/datatools_config.h.in"
+  "${PROJECT_BINARY_DIR}/include/datatools/datatools_config.h" 
+  @ONLY 
+  )
 
-configure_file ( "${PROJECT_SOURCE_DIR}/cmake/templates/datatools_config.h.in"
-                 "${PROJECT_BINARY_DIR}/include/datatools/datatools_config.h" @ONLY )
+install(FILES ${PROJECT_BINARY_DIR}/include/datatools/datatools_config.h
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/datatools/
+  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+  )
 
-install (FILES ${PROJECT_BINARY_DIR}/include/datatools/datatools_config.h
-         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/datatools/
-         PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
-        )
+configure_file(
+  "${PROJECT_SOURCE_DIR}/cmake/templates/datatools_setup.sh.in"
+  "${PROJECT_BINARY_DIR}/cmake/datatools_setup.sh"
+  @ONLY
+  )
 
-configure_file ( "${PROJECT_SOURCE_DIR}/cmake/templates/datatools_setup.sh.in"
-                 "${PROJECT_BINARY_DIR}/cmake/datatools_setup.sh" @ONLY )
+install(FILES ${PROJECT_BINARY_DIR}/cmake/datatools_setup.sh
+  DESTINATION ${CMAKE_INSTALL_ETCDIR}
+  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+  )
 
-install ( FILES ${PROJECT_BINARY_DIR}/cmake/datatools_setup.sh
-          DESTINATION ${CMAKE_INSTALL_ETCDIR}
-          PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
-        )
-
-# -------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 # - pkgconfig file :
 #
+if(DATATOOLS_WITH_PKGCONFIG)
+  set(_boost_libs "date_time filesystem iostreams program_options serialization system thread")
+  set(_datatools_pkgconfig_Requires "Requires: CLHEP >= ${_clhep_version},Boost/date_time >= ${_boost_version},Boost/iostreams,Boost/filesystem,Boost/program_options,Boost/serialization,Boost/system Boost/thread")
 
-if ( DATATOOLS_WITH_PKGCONFIG )
+  if(DATATOOLS_WITH_PYTHON_WRAPPER)
+    set(_datatools_pkgconfig_Requires "${_datatools_pkgconfig_Requires},Boost/python")
+    set(_boost_libs "${_boost_libs} python")
+  endif()
 
-  set ( _boost_libs "date_time filesystem iostreams program_options serialization system thread" )
-  set ( _datatools_pkgconfig_Requires 
-        "Requires: CLHEP >= ${_clhep_version},Boost/date_time >= ${_boost_version},Boost/iostreams,Boost/filesystem,Boost/program_options,Boost/serialization,Boost/system Boost/thread" 
+  set(_datatools_pkgconfig_Libs "-ldatatools_sys")
+
+  set(_datatools_pkgconfig_Cflags ${CLHEP_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+  set(_datatools_pkgconfig_Libs "-ldatatools" ${_datatools_pkgconfig_Libs})
+
+  set(_datatools_pkgconfig_Libs 
+    ${_datatools_pkgconfig_Libs} 
+    ${CLHEP_LIBRARIES} 
+    ${Boost_LIBRARIES}  
     )
-  if ( DATATOOLS_WITH_PYTHON_WRAPPER )
-     set ( _datatools_pkgconfig_Requires "${_datatools_pkgconfig_Requires},Boost/python" )
-     set ( _boost_libs "${_boost_libs} python" )
-  endif ( )
+  set(_datatools_pkgconfig_Libs ${_datatools_pkgconfig_Libs} -lm -ldl)
 
-  set ( _datatools_pkgconfig_Libs 
-        "-ldatatools_sys" 
-        #"-ldatatools_sys_c" 
+  if(DATATOOLS_WITH_PYTHON_WRAPPER)
+    set(_datatools_pkgconfig_Cflags
+      ${_datatools_pkgconfig_Cflags} 
+      ${PYTHON_INCLUDE_DIRS} 
       )
-
-  set ( _datatools_pkgconfig_Cflags ${CLHEP_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} )
-  set ( _datatools_pkgconfig_Libs "-ldatatools" ${_datatools_pkgconfig_Libs} )
-
-  set ( _datatools_pkgconfig_Libs 
-        ${_datatools_pkgconfig_Libs} 
-        ${CLHEP_LIBRARIES} 
-        ${Boost_LIBRARIES}  
+    set(_datatools_pkgconfig_Libs 
+      ${_datatools_pkgconfig_Libs} 
+      ${PYTHON_LIBRARIES}
       )
-  set ( _datatools_pkgconfig_Libs 
-        ${_datatools_pkgconfig_Libs} 
-        -lm -ldl 
-      )
+  endif()
 
-  if ( DATATOOLS_WITH_PYTHON_WRAPPER )
-     set ( _datatools_pkgconfig_Cflags
-           ${_datatools_pkgconfig_Cflags} 
-           ${PYTHON_INCLUDE_DIRS} 
-         )
-     set ( _datatools_pkgconfig_Libs 
-           ${_datatools_pkgconfig_Libs} 
-           ${PYTHON_LIBRARIES}
-         )
-  endif ()
+  if(DATATOOLS_WITH_BIO)
+    set(_datatools_pkgconfig_Libs -ldatatools_bio ${_datatools_pkgconfig_Libs})
+  endif()
 
-  if ( DATATOOLS_WITH_BIO )
-    set ( _datatools_pkgconfig_Libs -ldatatools_bio ${_datatools_pkgconfig_Libs} )
-  endif ()
+  configure_file(
+    "${PROJECT_SOURCE_DIR}/cmake/templates/datatools.pc.in"
+    "${PROJECT_BINARY_DIR}/cmake/datatools.pc" 
+    @ONLY 
+    )
 
-  configure_file ( "${PROJECT_SOURCE_DIR}/cmake/templates/datatools.pc.in"
-                   "${PROJECT_BINARY_DIR}/cmake/datatools.pc" @ONLY 
-                 )
+  install(FILES ${PROJECT_BINARY_DIR}/cmake/datatools.pc
+    DESTINATION ${_datatools_pkgconfig_install_dir}
+    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+    )
+endif()  
 
-  install ( FILES ${PROJECT_BINARY_DIR}/cmake/datatools.pc
-            DESTINATION ${_datatools_pkgconfig_install_dir}
-            PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
-          )
-endif ()  
+if(DATATOOLS_WITH_CMAKE_FIND_MODULE)
+  configure_file(
+    "${PROJECT_SOURCE_DIR}/cmake/Modules/FindDatatools.cmake.in"
+    "${PROJECT_BINARY_DIR}/cmake/Modules/FindDatatools.cmake" 
+    @ONLY
+    )
 
-if ( DATATOOLS_WITH_CMAKE_FIND_MODULE )
+  install(FILES ${PROJECT_BINARY_DIR}/cmake/Modules/FindDatatools.cmake
+    DESTINATION ${_find_module_install_dir}
+    COMPONENT utils
+    )
 
-  configure_file ( "${PROJECT_SOURCE_DIR}/cmake/Modules/FindDatatools.cmake.in"
-                   "${PROJECT_BINARY_DIR}/cmake/Modules/FindDatatools.cmake" @ONLY )
+  set(DATATOOLS_CMAKE_MODULE_INSTALL_DIR ${_find_module_install_dir} 
+    CACHE PATH "The CMake Module subdirectory" FORCE)
 
-  install ( FILES ${PROJECT_BINARY_DIR}/cmake/Modules/FindDatatools.cmake
-            DESTINATION ${_find_module_install_dir}
-            COMPONENT utils
-           )
+  message(STATUS "DATATOOLS_CMAKE_MODULE_INSTALL_DIR = '${DATATOOLS_CMAKE_MODULE_INSTALL_DIR}'")
+endif()
 
-  set ( DATATOOLS_CMAKE_MODULE_INSTALL_DIR ${_find_module_install_dir} 
-        CACHE PATH "The CMake Module subdirectory" FORCE )
+if(UNIX AND DATATOOLS_WITH_CONFIG_SCRIPT)
+  configure_file( 
+    "${PROJECT_SOURCE_DIR}/cmake/templates/datatools-config.in"
+    "${PROJECT_BINARY_DIR}/cmake/datatools-config" 
+    @ONLY
+    )
 
-  message ( STATUS "datatools: DATATOOLS_CMAKE_MODULE_INSTALL_DIR = '${DATATOOLS_CMAKE_MODULE_INSTALL_DIR}' " )
-endif ()
+  install(FILES ${PROJECT_BINARY_DIR}/cmake/datatools-config
+    DESTINATION ${CMAKE_INSTALL_BINDIR}
+    PERMISSIONS OWNER_READ OWNER_EXECUTE 
+                GROUP_READ GROUP_EXECUTE 
+                WORLD_READ WORLD_EXECUTE)
 
-if ( UNIX OR APPLE )
-  if ( DATATOOLS_WITH_CONFIG_SCRIPT )
+  install(FILES ${PROJECT_SOURCE_DIR}/pkgtools.d/mkuniqueflags.py
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/pkgtools
+    PERMISSIONS OWNER_READ OWNER_EXECUTE 
+	              GROUP_READ GROUP_EXECUTE 
+                WORLD_READ WORLD_EXECUTE)
+endif()  
 
-    configure_file ( "${PROJECT_SOURCE_DIR}/cmake/templates/datatools-config.in"
-                     "${PROJECT_BINARY_DIR}/cmake/datatools-config" @ONLY )
+install(FILES README.txt COPYING.txt LICENSE.GPL3.txt
+  DESTINATION ${CMAKE_INSTALL_DATADIR}
+  )
 
-    install ( FILES ${PROJECT_BINARY_DIR}/cmake/datatools-config
-              DESTINATION ${CMAKE_INSTALL_BINDIR}
-              PERMISSIONS OWNER_READ OWNER_EXECUTE 
-                          GROUP_READ GROUP_EXECUTE 
-                          WORLD_READ WORLD_EXECUTE
-             )
-
-    install ( FILES ${PROJECT_SOURCE_DIR}/pkgtools.d/mkuniqueflags.py
-              DESTINATION ${CMAKE_INSTALL_DATADIR}/pkgtools
-              PERMISSIONS OWNER_READ OWNER_EXECUTE 
-	                  GROUP_READ GROUP_EXECUTE 
-                          WORLD_READ WORLD_EXECUTE
-            )
-
-  endif ()
-endif ()  
-
-install ( FILES README.txt COPYING.txt LICENSE.GPL3.txt
-          DESTINATION ${CMAKE_INSTALL_DATADIR}
-         )
-
-# ----------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 # - Add Python wrapping.
 #
-
-if ( DATATOOLS_WITH_PYTHON_WRAPPER )
-  set ( CMAKE_USE_PYTHON_VERSION "2.7" "2.6" )
-  find_package ( PythonInterp REQUIRED )
-  set ( CMAKE_USE_PYTHON_VERSION "2.7" "2.6" )
-  find_package ( PythonLibs REQUIRED )
+if(DATATOOLS_WITH_PYTHON_WRAPPER)
+  set(CMAKE_USE_PYTHON_VERSION "2.7" "2.6")
+  find_package(PythonInterp REQUIRED)
+  set(CMAKE_USE_PYTHON_VERSION "2.7" "2.6")
+  find_package(PythonLibs REQUIRED)
 
   # We need to force the cache to disable Python if we didn't find any
   # of the needed components
-  message ( STATUS "datatools: Boost_PYTHON_LIBRARY = ${Boost_PYTHON_LIBRARY}" )
-  message ( STATUS "datatools: PYTHON_INCLUDE_DIRS  = ${PYTHON_INCLUDE_DIRS}" )
-  message ( STATUS "datatools: PYTHON_EXECUTABLE    = ${PYTHON_EXECUTABLE}" )
-  message ( STATUS "datatools: PYTHON_LIBRARIES     = ${PYTHON_LIBRARIES}" )
-  message ( STATUS "datatools: PYTHON_DEBUG_LIBRARIES = ${PYTHON_DEBUG_LIBRARIES}" )
+  message(STATUS "Boost_PYTHON_LIBRARY = ${Boost_PYTHON_LIBRARY}")
+  message(STATUS "PYTHON_INCLUDE_DIRS  = ${PYTHON_INCLUDE_DIRS}" )
+  message(STATUS "PYTHON_EXECUTABLE    = ${PYTHON_EXECUTABLE}" )
+  message(STATUS "PYTHON_LIBRARIES     = ${PYTHON_LIBRARIES}" )
+  message(STATUS "PYTHON_DEBUG_LIBRARIES = ${PYTHON_DEBUG_LIBRARIES}" )
 
-  if (NOT Boost_PYTHON_LIBRARY OR NOT PYTHON_INCLUDE_DIRS OR NOT PYTHON_EXECUTABLE)
-     message ( STATUS "datatools: Missing Python stuff " )
-     set ( DATATOOLS_WITH_PYTHON_WRAPPER OFF CACHE BOOL "Enable Python wrapping of datatools, requires Boost.Python" FORCE)
-  endif ()
-endif () 
+  if(NOT Boost_PYTHON_LIBRARY OR NOT PYTHON_INCLUDE_DIRS OR NOT PYTHON_EXECUTABLE)
+    message ( STATUS "datatools: Missing Python stuff")
+    set(DATATOOLS_WITH_PYTHON_WRAPPER OFF CACHE BOOL "Enable Python wrapping of datatools, requires Boost.Python" FORCE)
+  endif()
+endif() 
   
-set ( CMAKE_INSTALL_PYTHONDIR "" )
-message ( STATUS "datatools: CMAKE_INSTALL_PYTHONDIR = '${CMAKE_INSTALL_PYTHONDIR}' " )
+set(CMAKE_INSTALL_PYTHONDIR "")
+message(STATUS "CMAKE_INSTALL_PYTHONDIR = '${CMAKE_INSTALL_PYTHONDIR}' " )
 
-if ( DATATOOLS_WITH_PYTHON_WRAPPER )
-    message ( STATUS "datatools: Add subdirectory 'wrapping/python' " )
-    add_subdirectory ( wrapping/python )
-endif () 
+if(DATATOOLS_WITH_PYTHON_WRAPPER)
+  add_subdirectory(wrapping/python)
+endif() 
 
-# ----------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 # - Add documentation.
 #
-if ( DATATOOLS_WITH_DOC )
-  message ( STATUS "datatools: Add subdirectory 'doc' " )
-  add_subdirectory ( doc )
-endif ()
+if(DATATOOLS_WITH_DOC)
+  add_subdirectory(doc)
+endif()
 
-# ----------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 # - Add testing - always for now.
 #
-if ( DATATOOLS_WITH_TEST )
-  message ( STATUS "datatools: Add subdirectory 'testing' " )
-  enable_testing () 
-  add_subdirectory ( testing )
-endif ()
+if(DATATOOLS_WITH_TEST)
+  enable_testing() 
+  add_subdirectory(testing)
+endif()
 
-# ----------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 # - Packaging
 #
-include ( ${DATATOOLS_SOURCE_DIR}/cmake/Packaging.cmake OPTIONAL )
+include(${DATATOOLS_SOURCE_DIR}/cmake/Packaging.cmake OPTIONAL)
 
 
-# ----------------------------------------------------------------------------
-# - Generate Build Tree configuration files
+#-----------------------------------------------------------------------
+ # - Generate Build Tree configuration files
 # - CMake
 # Export targets from the build tree
 # Done by hand for now because we know the targets exactly
 
-set ( _datatools_export_append "" )
-message ( STATUS "datatools: Exporting datatools_sys... " )
-export ( TARGETS 
-         datatools_sys
-         #datatools_sys_c
-         FILE ${PROJECT_BINARY_DIR}/datatools-libraries.cmake
-       )
-set ( _datatools_export_append "APPEND" )
-
-message ( STATUS "datatools: Exporting datatools... " )
-export(TARGETS datatools 
-  ${_datatools_export_append} FILE ${PROJECT_BINARY_DIR}/datatools-libraries.cmake
+set(_datatools_export_append "")
+message(STATUS "datatools: Exporting datatools_sys... ")
+export(TARGETS 
+  datatools_sys
+  FILE ${PROJECT_BINARY_DIR}/datatools-libraries.cmake
   )
+set(_datatools_export_append "APPEND")
+
+export(TARGETS datatools
+  ${_datatools_export_append} FILE ${PROJECT_BINARY_DIR}/datatools-libraries.cmake)
 
 if(TARGET datatools_bio)
-  message ( STATUS "datatools: Exporting datatools_bio... " )
+  message(STATUS "datatools: Exporting datatools_bio... ")
   export(TARGETS datatools_bio 
     APPEND FILE ${PROJECT_BINARY_DIR}/datatools-libraries.cmake
     )
@@ -475,7 +445,7 @@ configure_file(
   )
 
 
-#----------------------------------------------------------------------------
+#-----------------------------------------------------------------------
 # - Generate Install Tree configuration files
 # - CMake
 # Export targets from the install tree
@@ -491,7 +461,6 @@ else()
   endif()
 endif()
 
-message ( STATUS "datatools: DATATOOLS_CMAKE_CONFIG_DIR='${DATATOOLS_CMAKE_CONFIG_DIR}'" )
 install(EXPORT datatools-libraries
   DESTINATION ${DATATOOLS_CMAKE_CONFIG_DIR}
   COMPONENT devel
