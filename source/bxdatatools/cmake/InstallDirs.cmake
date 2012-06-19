@@ -185,12 +185,3 @@ foreach(dir
     set(CMAKE_INSTALL_IS_NONRELOCATABLE 1)
   endif()
 endforeach()
-
-message ( STATUS "CMake install binary dir        = '${CMAKE_INSTALL_BINDIR}'" )
-message ( STATUS "CMake install library dir       = '${CMAKE_INSTALL_LIBDIR}'" )
-message ( STATUS "CMake install include dir       = '${CMAKE_INSTALL_INCLUDEDIR}'" )
-message ( STATUS "CMake install data root dir     = '${CMAKE_INSTALL_DATAROOTDIR}'" )
-message ( STATUS "CMake install data dir          = '${CMAKE_INSTALL_DATADIR}'" )
-message ( STATUS "CMake install manpages dir      = '${CMAKE_INSTALL_MANDIR}'" )
-message ( STATUS "CMake install documentation dir = '${CMAKE_INSTALL_DOCDIR}'" )
-message ( STATUS "CMake install etc dir           = '${CMAKE_INSTALL_ETCDIR}'" )
