@@ -26,86 +26,73 @@
  *  Some templatized caster utilities and associated macros.
  *
  */
+#ifndef DATATOOLS_UTILS_CASTER_UTILS_H_
+#define DATATOOLS_UTILS_CASTER_UTILS_H_
 
-#ifndef __datatools__utils__caster_utils_h
-#define __datatools__utils__caster_utils_h 1
-
+// Standard Library
 #include <iostream>
 #include <typeinfo>
 
+// Third Party
+// - A
 #include <boost/scoped_ptr.hpp>
 
+// This Project
+
 namespace datatools {
-  
-  namespace utils {
+namespace utils {
 
-    /*!<  \struct i_caster
-      \brief  Templatized abstract interface class with a cast method using covariant return types . 
-    */
-    template<class From, class ToBase >
-    struct i_caster
-    {
-      virtual ToBase * cast (From *) = 0;
-    };
+/*!<  \struct i_caster
+  \brief  Templatized abstract interface class with a cast method using covariant return types . 
+  */
+template<typename From, typename ToBase>
+struct i_caster {
+  virtual ToBase* cast(From*) = 0;
+};
 
-    /*!<  \struct caster
-      \brief  Templatized concrete caster class for casting pointers from a covariant class hierarchy to some other type. 
-    */
-    template <class From, class ToBase, class ToDaughter>
-    struct caster : public i_caster<From,ToBase>
-    {
-      virtual ToDaughter * cast (From * a_ptr) 
-      {
-        return reinterpret_cast<ToDaughter *> (a_ptr);
-      }      
-      virtual ~caster () 
-      {
-        /*
-        std::clog << "caster::dtor: "  
-                  << "Destroy the caster for type '" 
-                  << typeid (ToDaughter).name () << "' with base '" 
-                  << typeid (ToBase).name () << "' from type '" 
-                  << typeid (From).name () << "' !" << std::endl;   
-        */
-        return;
-      };
-    };
+/*!<  \struct caster
+  \brief  Templatized concrete caster class for casting pointers from a covariant class hierarchy to some other type. 
+  */
+template <typename From, typename ToBase, typename ToDaughter>
+struct caster : public i_caster<From, ToBase> {
+  virtual ToDaughter* cast(From* ptr) {
+    return reinterpret_cast<ToDaughter*>(ptr);
+  }
 
-    template<class Base, class Derived>
-    bool is_covariant (const Base & b_)
-    {
-      const Base * pb = &b_; //reinterpret_cast<const Base *> (&b_);
-      const Derived * dummy = dynamic_cast<const Derived *> (pb);
-      if (! dummy)
-        {
-          return false;
-        }
-      return true;
-    }
+  virtual ~caster() {}
+};
 
-  } // end of namespace utils 
 
+template<class Base, class Derived>
+bool is_covariant(const Base& b) {
+  const Base* pb = &b;
+  const Derived* dummy = dynamic_cast<const Derived*>(pb);
+  if (!dummy) {
+    return false;
+  }
+  return true;
+}
+
+} // end of namespace utils 
 } // end of namespace datatools 
 
 #define DATATOOLS_CASTER_DECLARATION(From,ToBase,ToDaughter,CasterId,CasterGetter) \
-  private:                                                              \
+ private:                                                              \
   static boost::scoped_ptr<datatools::utils::caster<From,ToBase,ToDaughter> > CasterId; \
-public:                                                                 \
- virtual datatools::utils::i_caster<From,ToBase> * CasterGetter () const; \
- /**/
+ public:                                                                 \
+  virtual datatools::utils::i_caster<From,ToBase>* CasterGetter() const; \
+/**/
 
 #define DATATOOLS_CASTER_IMPLEMENTATION(From,ToBase,ToDaughter,CasterId,CasterGetter) \
-  boost::scoped_ptr<datatools::utils::caster<From,ToBase,ToDaughter> > ToDaughter::CasterId; \
-  datatools::utils::i_caster<From,ToBase> * ToDaughter::CasterGetter () const \
-  {                                                                     \
-    if (ToDaughter::CasterId.get () == 0)                               \
-      {                                                                 \
-        ToDaughter::CasterId.reset (                                    \
-                                    new datatools::utils::caster<From,ToBase,ToDaughter>); \
-      }                                                                 \
-    return ToDaughter::CasterId.get ();                                 \
-  }                                                                     \
-  /**/
+    boost::scoped_ptr<datatools::utils::caster<From,ToBase,ToDaughter> > ToDaughter::CasterId; \
+datatools::utils::i_caster<From,ToBase>* ToDaughter::CasterGetter() const { \
+  if (ToDaughter::CasterId.get() == 0) {                            \
+    ToDaughter::CasterId.reset(                                    \
+        new datatools::utils::caster<From,ToBase,ToDaughter>); \
+  }                                                                 \
+  return ToDaughter::CasterId.get();                                 \
+}                                                                     \
+/**/
 
 /*
 //std::clog << "ToDaughter::CasterGetter: "                             \
@@ -115,13 +102,5 @@ public:                                                                 \
 //          << typeid (From).name () << "' !" << std::endl;             \
 */
 
-#endif // __datatools__utils__caster_utils_h
+#endif // DATATOOLS_UTILS_CASTER_UTILS_H_
 
-/* end of caster_utils.h */
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/

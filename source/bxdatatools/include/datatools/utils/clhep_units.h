@@ -13,13 +13,16 @@
  * History: 
  * 
  */
+#ifndef DATATOOLS_UTILS_CLHEP_UNITS_H_
+#define DATATOOLS_UTILS_CLHEP_UNITS_H_
+// Standard Library
 
-#ifndef __datatools__utils__clhep_units_h
-#define __datatools__utils__clhep_units_h 1
-
+// Third Party
+// - CLHEP
 #include <CLHEP/Units/SystemOfUnits.h>
 #include <CLHEP/Units/PhysicalConstants.h>
 
-#endif // __datatools__utils__clhep_units_h
+// This Project
 
-// end of clhep_units.h
+#endif // DATATOOLS_UTILS_CLHEP_UNITS_H_
+

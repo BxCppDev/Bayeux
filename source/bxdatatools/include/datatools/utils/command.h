@@ -1,213 +1,182 @@
 // command.h
-
-#ifndef __datatools__utils__command_h
-#define __datatools__utils__command_h 1
-
+#ifndef DATATOOLS_UTILS_COMMAND_H_
+#define DATATOOLS_UTILS_COMMAND_H_
+// Standard Library
+#include <cstdlib> 
 #include <iostream>
+#include <list>
 #include <stdexcept>
 #include <string>
-#include <list>
-#include <cstdlib> 
+
+// Third Party
+// - A
+
+// This Project
 
 namespace datatools {
 
-  namespace utils {
+namespace utils {
 
-    class command;
+class command;
 
-    class i_run_command 
-    {
-    public:
-      virtual void run_command (const command &) = 0;
-      virtual void print_help (std::ostream & out_) const = 0;
-    };
+class i_run_command {
+ public:
+  virtual void run_command(const command& cmd) = 0;
+  virtual void print_help(std::ostream& out) const = 0;
+};
 
-    class command_error : public std::runtime_error
-    {
-    public:
-      command_error (const std::string & message_ = "");
-    };
+//----------------------------------------------------------------------
+// Command exception classes
 
-    class command_not_found : public command_error
-    {
-    public:
-      command_not_found (const std::string & message_ = "");
-    };
+class command_error : public std::runtime_error {
+ public:
+  command_error(const std::string& message = "");
+};
 
-    class missing_argument : public command_error
-    {
-    public:
-      missing_argument (const std::string & message_ = "");
-    };
+class command_not_found : public command_error {
+ public:
+  command_not_found(const std::string& message = "");
+};
 
-    class invalid_argument : public command_error
-    {
-    public:
-      invalid_argument (const std::string & message_ = "");
-    };
 
-    class invalid_number_of_arguments : public command_error
-    {
-    public:
-      invalid_number_of_arguments (const std::string & message_ = "");
-    };
+class missing_argument : public command_error {
+ public:
+  missing_argument(const std::string& message = "");
+};
 
-    class command_failed : public command_error
-    {
-    public:
-      command_failed (const std::string & message_ = "");
-    };
 
-    class command_not_implemented : public command_error
-    {
-    public:
-      command_not_implemented (const std::string & message_ = "");
-    };
+class invalid_argument : public command_error {
+ public:
+  invalid_argument(const std::string& message = "");
+};
 
-    class command
-    {
 
-    public:
-      enum
-        {
-          PASS    = -1,
-          SUCCESS = EXIT_SUCCESS,
-          ERROR   = EXIT_FAILURE,
-          FAILURE = EXIT_FAILURE
-        };
-        
-      static const char        OPTION_PREFIX;
-      static const std::string LONG_OPTION_PREFIX;
+class invalid_number_of_arguments : public command_error {
+ public:
+  invalid_number_of_arguments(const std::string& message = "");
+};
 
-    public:
-      bool                   _with_options_;
-      std::string            _name_;
-      std::list<std::string> _arguments_;
-      std::list<std::string> _options_;
-      int                    _error_code_;
-      std::string            _error_message_;
-      std::string            _returns_;
-  
-    public:
 
-      static bool token_is_option (const std::string & str_);
+class command_failed : public command_error {
+ public:
+  command_failed(const std::string & message = "");
+};
 
-      static bool token_is_short_option (const std::string & str_);
 
-      static bool token_is_long_option (const std::string & str_);
+class command_not_implemented : public command_error {
+ public:
+  command_not_implemented(const std::string& message = "");
+};
 
-      static bool code_is_pass (int);
 
-      static bool code_is_error (int);
+//----------------------------------------------------------------------
+// command class
 
-      static bool code_is_failure (int);
+class command {
+ public:
+  enum {
+    PASS    = -1,
+    SUCCESS = EXIT_SUCCESS,
+    ERROR   = EXIT_FAILURE,
+    FAILURE = EXIT_FAILURE
+  };
 
-      static bool code_is_success (int);
+  static const char        OPTION_PREFIX;
+  static const std::string LONG_OPTION_PREFIX;
 
-      bool is_with_options () const;
+ public:
+  static bool token_is_option(const std::string& token);
+  static bool token_is_short_option(const std::string& token);
+  static bool token_is_long_option (const std::string& token);
 
-      bool has_option (const std::string &) const;
+  static bool code_is_pass(int /*code*/);
+  static bool code_is_error(int /*code*/);
+  static bool code_is_failure(int /*code*/);
+  static bool code_is_success(int /*code*/);
 
-      int get_error_code () const;
+ public:
+  command();
+  explicit command(const std::string& command_line);
+  command(const std::string& command_line, bool with_options_);
 
-      void set_returns (const std::string & ret_ = "");
+  ~command();
 
-      std::string get_returns () const;
+  bool is_with_options() const;
 
-      std::string get_error_message () const;
+  bool has_option(const std::string& /*option*/) const;
 
-      std::string get_name () const;
+  void set_returns(const std::string& ret = "");
 
-      std::string get_argument (int = 0) const;
+  int get_error_code() const;
+  std::string get_returns() const;
+  std::string get_error_message() const;
+  std::string get_name() const;
+  std::string get_argument(size_t /*arg*/ = 0) const;
+  std::string get_option(size_t /*arg*/ = 0) const;
 
-      std::string get_option (int = 0) const;
+  bool is_pass() const;
+  bool is_error() const;
+  bool is_failure() const;
+  bool is_success() const;
 
-      bool is_pass () const;
+  void set_pass();
+  void set_error();
+  void set_success();
 
-      bool is_error () const;
+  void set_error_code(int /*code*/ = SUCCESS);
+  void set_error_message(const std::string& /*msg*/);
+  void set_name(const std::string& name);
 
-      bool is_failure () const;
+  size_t get_number_of_arguments() const;
+  void add_argument(const std::string& argument);
+  std::string pop_argument();
 
-      bool is_success () const;
+  size_t get_number_of_options() const;
+  void add_option(const std::string& option);
+  std::string pop_option();
 
-      void set_pass ();
+  void force_with_options();
+  void reset_output ();
 
-      void set_error ();
+  void reset();
 
-      void set_success ();
+  void init(const std::string& command_line);
 
-      void set_error_code (int = SUCCESS);
+  void init(const std::string& command_line, bool with_options);
 
-      void set_error_message (const std::string &);
+  void shift();
 
-      void set_name (const std::string &);
+  void shift(int);
 
-      size_t get_number_of_arguments () const;
+  void shift_one();
 
-      void add_argument (const std::string &);
+  void dump(std::ostream& out = std::clog) const;
 
-      std::string pop_argument ();
+  void dump_def () const {
+    this->dump(std::cout);
+  }
 
-      size_t get_number_of_options () const;
+  void dump_stderr() const {
+    this->dump(std::cerr);
+  }
 
-      void add_option (const std::string &);
+  void dump_stdout() const {
+    this->dump(std::cout);
+  }
 
-      std::string pop_option ();
 
-      void force_with_options ();
+ private:
+  bool                   with_options_;
+  std::string            name_;
+  std::list<std::string> arguments_;
+  std::list<std::string> options_;
+  int                    error_code_;
+  std::string            error_message_;
+  std::string            returns_;
+};
 
-      command ();
-
-      command (const std::string & command_line_);
-
-      command (const std::string & command_line_, 
-               bool with_options_);
-
-      ~command ();
-
-      void reset_output ();
-  
-      void reset ();
-  
-      void init (const std::string & command_line_);
-  
-      void init (const std::string & command_line_, bool with_options_);
-
-      void shift ();
-
-      void shift (int);
-
-      void shift_one ();
-
-      void dump (std::ostream & out_ = std::clog) const;
-
-      void dump_def () const
-      {
-        dump (std::cout);
-      }
-
-      void dump_stderr () const
-      {
-        dump (std::cerr);
-      }
-
-      void dump_stdout () const
-      {
-        dump (std::cout);
-      }
-    };
-
-  } // end of namespace utils 
-
+} // end of namespace utils 
 } // end of namespace datatools
 
-#endif // __datatools__utils__command_h
+#endif // DATATOOLS_UTILS_COMMAND_H_
 
-// end of command.h
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
