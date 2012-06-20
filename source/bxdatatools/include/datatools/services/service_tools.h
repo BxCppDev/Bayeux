@@ -106,10 +106,10 @@ class service_entry : public datatools::utils::i_tree_dumpable  {
 
   void remove_slave(const std::string& name);
 
-  virtual void tree_dump(std::ostream& a_out = std::clog, 
-                         const std::string & a_title  = "",
-                         const std::string & a_indent = "",
-                         bool a_inherit = false) const;
+  virtual void tree_dump(std::ostream& out = std::clog, 
+                         const std::string & title  = "",
+                         const std::string & indent = "",
+                         bool inherit = false) const;
 
 };
 

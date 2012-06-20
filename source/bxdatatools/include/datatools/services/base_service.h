@@ -56,9 +56,8 @@ class base_service : public datatools::utils::i_tree_dumpable {
 
  public:
   /// Constructor
-  base_service(const std::string& a_process_name,
-               const std::string& a_process_description = "",
-               const std::string& a_process_version = "");
+  base_service(const std::string& name, const std::string& description = "",
+               const std::string& version = "");
 
   /// Destructor
   virtual ~base_service();
@@ -69,32 +68,34 @@ class base_service : public datatools::utils::i_tree_dumpable {
 
   const std::string& get_description() const;
 
-  void set_description(const std::string& a_description);
+  void set_description(const std::string& description);
 
   bool has_version() const;
 
   const std::string& get_version() const;
 
-  void set_version(const std::string& a_version);
+  void set_version(const std::string& version);
 
-  virtual void fetch_dependencies(service_dependency_dict_type&) const;
+  virtual void fetch_dependencies(
+      service_dependency_dict_type& /*dependencies*/) const;
 
   virtual bool is_initialized() const = 0;
 
-  virtual int initialize_standalone(const datatools::utils::properties& a_config);
+  virtual int initialize_standalone(
+      const datatools::utils::properties& config);
 
-  virtual int initialize(const datatools::utils::properties& a_config,
-                         service_dict_type& a_service_dict) = 0;
+  virtual int initialize(const datatools::utils::properties& config,
+                         service_dict_type& service_dict) = 0;
 
   virtual int reset() = 0;
 
  protected:
-  void set_name(const std::string& a_name);
+  void set_name(const std::string& name);
 
-  virtual void tree_dump(std::ostream& a_out = std::clog,
-                         const std::string & a_title = "",
-                         const std::string & a_indent = "",
-                         bool a_inherit = false) const;
+  virtual void tree_dump(std::ostream& out = std::clog,
+                         const std::string & title = "",
+                         const std::string & indent = "",
+                         bool inherit = false) const;
 
  protected:
   std::string name_;         //!< The name of the service

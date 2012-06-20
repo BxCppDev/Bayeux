@@ -44,12 +44,12 @@ DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(
 
 
 // ctor:
-base_service::base_service(const std::string& a_service_name,
-                           const std::string& a_service_description,
-                           const std::string& a_service_version)
-    : name_(a_service_name),
-      description_(a_service_description),
-      version_(a_service_version) {}
+base_service::base_service(const std::string& name,
+                           const std::string& description,
+                           const std::string& version)
+    : name_(name),
+      description_(description),
+      version_(version) {}
 
 // Destructor :
 base_service::~base_service() {}
@@ -60,8 +60,8 @@ const std::string& base_service::get_name() const {
 }
 
 
-void base_service::set_name(const std::string& a_new_value) {
-  name_ = a_new_value;
+void base_service::set_name(const std::string& name) {
+  name_ = name;
 }
 
 
@@ -75,8 +75,8 @@ const std::string& base_service::get_description() const {
 }
 
 
-void base_service::set_description(const std::string& a_description) {
-  description_ = a_description;
+void base_service::set_description(const std::string& description) {
+  description_ = description;
 }
 
 
@@ -90,59 +90,51 @@ const std::string& base_service::get_version() const {
 }
 
 
-void base_service::set_version(const std::string& a_version) {
-  version_ = a_version;
+void base_service::set_version(const std::string& version) {
+  version_ = version;
 }
 
 
 void base_service::fetch_dependencies(
-    service_dependency_dict_type& a_dependency_list) const {
-  a_dependency_list.clear();
+    service_dependency_dict_type& dependencies) const {
+  dependencies.clear();
 }
 
 
 int base_service::initialize_standalone(
-    const datatools::utils::properties& a_config) {
+    const datatools::utils::properties& config) {
   service_dict_type dummy;
-  return this->initialize(a_config, dummy);
+  return this->initialize(config, dummy);
 }
 
 
-void base_service::tree_dump(std::ostream& a_out,
-                             const std::string& a_title,
+void base_service::tree_dump(std::ostream& out,
+                             const std::string& title,
                              const std::string& a_indent,
                              bool a_inherit) const {
   namespace du = datatools::utils;
   std::string indent;
   if (!a_indent.empty()) indent = a_indent;
 
-  if (!a_title.empty()) a_out << indent << a_title << std::endl;
+  if (!title.empty()) out << indent << title << std::endl;
 
-  a_out << indent << du::i_tree_dumpable::tag
-        << "Service name        : '" 
-        << name_ << "'" << std::endl;
+  out << indent << du::i_tree_dumpable::tag
+      << "Service name        : '" 
+      << name_ << "'" << std::endl;
 
-  a_out << indent << du::i_tree_dumpable::tag
-        << "Service description : '" 
-        << description_ << "'" << std::endl;
+  out << indent << du::i_tree_dumpable::tag
+      << "Service description : '" 
+      << description_ << "'" << std::endl;
 
-  a_out << indent << du::i_tree_dumpable::tag
-        << "Service version     : '" 
-        << version_ << "'" << std::endl;
+  out << indent << du::i_tree_dumpable::tag
+      << "Service version     : '" 
+      << version_ << "'" << std::endl;
 
-  a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)
-        << "Service initialized : " 
-        << this->is_initialized() << std::endl;
+  out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)
+      << "Service initialized : " 
+      << this->is_initialized() << std::endl;
 }
 
 }  // end of namespace service
 }  // end of namespace datatools
 
-// end of base_service.cc
-/*
- ** Local Variables: --
- ** mode: c++ --
- ** c-file-style: "gnu" --
- ** tab-width: 2 --
- ** End: --
- */

@@ -70,102 +70,102 @@ bool service_entry::can_be_dropped() const {
 }
 
 
-void service_entry::tree_dump(std::ostream& a_out, 
-                              const std::string& a_title,
+void service_entry::tree_dump(std::ostream& out, 
+                              const std::string& title,
                               const std::string& a_indent,
                               bool a_inherit) const {
   namespace du = datatools::utils;
   std::string indent;
   if (!a_indent.empty()) indent = a_indent;
 
-  if (!a_title.empty()) a_out << indent << a_title << std::endl;
+  if (!title.empty()) out << indent << title << std::endl;
 
-  a_out << indent << du::i_tree_dumpable::tag 
-        << "Service name     : '" 
-        << service_name 
-        << "'" << std::endl;
+  out << indent << du::i_tree_dumpable::tag 
+      << "Service name     : '" 
+      << service_name 
+      << "'" << std::endl;
 
-  a_out << indent << du::i_tree_dumpable::tag 
-        << "Service ID       : '" 
-        << service_id 
-        << "'" << std::endl;
+  out << indent << du::i_tree_dumpable::tag 
+      << "Service ID       : '" 
+      << service_id 
+      << "'" << std::endl;
 
   {
-    a_out << indent << du::i_tree_dumpable::tag 
-          << "Master services  : ";
+    out << indent << du::i_tree_dumpable::tag 
+        << "Master services  : ";
     if (service_masters.size() == 0) {
-      a_out << "<none>";
+      out << "<none>";
     }
-    a_out << std::endl;
+    out << std::endl;
     for (service_dependency_dict_type::const_iterator i = 
          service_masters.begin();
          i != service_masters.end();
          ++i) {
       const std::string& master_service_name = i->first;
       const dependency_info_type& di = i->second;
-      a_out << indent << du::i_tree_dumpable::skip_tag;
+      out << indent << du::i_tree_dumpable::skip_tag;
 
       std::ostringstream indent_oss;
       indent_oss << indent << du::i_tree_dumpable::skip_tag;
       service_dependency_dict_type::const_iterator j = i; 
       j++;
       if (j == service_masters.end()) {
-        a_out << du::i_tree_dumpable::last_tag;
+        out << du::i_tree_dumpable::last_tag;
         indent_oss << du::i_tree_dumpable::last_skip_tag;
       } else {
-        a_out << du::i_tree_dumpable::tag;
+        out << du::i_tree_dumpable::tag;
         indent_oss << du::i_tree_dumpable::skip_tag;
       }
-      a_out << "Master '" << master_service_name << "' ";
-      a_out << ": " 
-            << ""
-            << "id='"      << di.id << "' " 
-            << "version='" << di.version << "' "
-            << "meta='"    << di.meta << "' "
-            << "level="    << di.level << ""
-            << std::endl;
+      out << "Master '" << master_service_name << "' ";
+      out << ": " 
+          << ""
+          << "id='"      << di.id << "' " 
+          << "version='" << di.version << "' "
+          << "meta='"    << di.meta << "' "
+          << "level="    << di.level << ""
+          << std::endl;
     }
   } 
   {
-    a_out << indent << du::i_tree_dumpable::tag 
-          << "Slave services   : ";
+    out << indent << du::i_tree_dumpable::tag 
+        << "Slave services   : ";
     if (service_slaves.size() == 0) {
-      a_out << "<none>";
+      out << "<none>";
     }
-    a_out << std::endl; 
+    out << std::endl; 
     for (dependency_level_dict_type::const_iterator i = 
          service_slaves.begin();
          i != service_slaves.end();
          ++i) {
       const std::string& slave_service_name = i->first;
       int slave_level = i->second;
-      a_out << indent << du::i_tree_dumpable::skip_tag;
+      out << indent << du::i_tree_dumpable::skip_tag;
 
       std::ostringstream indent_oss;
       indent_oss << indent << du::i_tree_dumpable::skip_tag;
       dependency_level_dict_type::const_iterator j = i; 
       j++;
       if (j == service_slaves.end()) {
-        a_out << du::i_tree_dumpable::last_tag;
+        out << du::i_tree_dumpable::last_tag;
         indent_oss << du::i_tree_dumpable::last_skip_tag;
       } else  {
-        a_out << du::i_tree_dumpable::tag;
+        out << du::i_tree_dumpable::tag;
         indent_oss << du::i_tree_dumpable::skip_tag;
       }
-      a_out << "Slave '" << slave_service_name << "' ";
-      a_out << ": " 
-            << ""
-            << "level="    << slave_level << ""
-            << std::endl;
+      out << "Slave '" << slave_service_name << "' ";
+      out << ": " 
+          << ""
+          << "level="    << slave_level << ""
+          << std::endl;
     }       
   }
-  a_out << indent << du::i_tree_dumpable::tag 
-        << "Can be dropped   : " 
-        << this->can_be_dropped() << std::endl;
+  out << indent << du::i_tree_dumpable::tag 
+      << "Can be dropped   : " 
+      << this->can_be_dropped() << std::endl;
 
-  a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit) 
-        << "Service status   : " 
-        << service_status;
+  out << indent << du::i_tree_dumpable::inherit_tag (a_inherit) 
+      << "Service status   : " 
+      << service_status;
   {
     size_t count = 0;
     std::ostringstream status_info;
@@ -180,12 +180,12 @@ void service_entry::tree_dump(std::ostream& a_out,
       count++;
     }
     if (count) {
-      a_out << ' ' << '(' 
-            << status_info.str() 
-            << ')';
+      out << ' ' << '(' 
+          << status_info.str() 
+          << ')';
     }
   }
-  a_out << std::endl;
+  out << std::endl;
 }
 
 }  // end of namespace service
