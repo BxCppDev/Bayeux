@@ -28,109 +28,85 @@
  * History:
  *
  */
+#ifndef DATATOOLS_SERVICE_BASE_SERVICE_H_
+#define DATATOOLS_SERVICE_BASE_SERVICE_H_
 
-#ifndef __datatools__service__base_service_h
-#define __datatools__service__base_service_h 1
-
+// Standard Library
 #include <string>
 #include <iostream>
 
+// Third Party
+// - Boost
 #include <boost/scoped_ptr.hpp>
 
+// Datatools
 #include <datatools/utils/i_tree_dump.h>
 #include <datatools/services/service_tools.h>
 #include <datatools/factory/factory_macros.h>
 
 namespace datatools {
+namespace utils {
+class properties;
+}
 
-  namespace utils {
-    class properties;
-  }
+namespace service {
+class base_service : public datatools::utils::i_tree_dumpable {
+ public:
+  static bool g_debug;
 
-  namespace service {
+ public:
+  /// Constructor
+  base_service(const std::string& a_process_name,
+               const std::string& a_process_description = "",
+               const std::string& a_process_version = "");
 
-    //using   namespace std;
+  /// Destructor
+  virtual ~base_service();
 
-    class base_service : public datatools::utils::i_tree_dumpable
-    {
-    public:
+  const std::string& get_name() const;
 
-      const std::string & get_name () const;
+  bool has_description() const;
 
-      bool has_description () const;
+  const std::string& get_description() const;
 
-      const std::string & get_description () const;
+  void set_description(const std::string& a_description);
 
-      void set_description (const std::string & a_description);
+  bool has_version() const;
 
-      bool has_version () const;
+  const std::string& get_version() const;
 
-      const std::string & get_version () const;
+  void set_version(const std::string& a_version);
 
-      void set_version (const std::string & a_version);
+  virtual void fetch_dependencies(service_dependency_dict_type&) const;
 
-      virtual void fetch_dependencies (service_dependency_dict_type &) const;
+  virtual bool is_initialized() const = 0;
 
-    public:
+  virtual int initialize_standalone(const datatools::utils::properties& a_config);
 
-      virtual bool is_initialized () const = 0;
+  virtual int initialize(const datatools::utils::properties& a_config,
+                         service_dict_type& a_service_dict) = 0;
 
-      virtual int initialize_standalone (const datatools::utils::properties & a_config);
+  virtual int reset() = 0;
 
-      virtual int initialize (const datatools::utils::properties & a_config,
-                              service_dict_type & a_service_dict) = 0;
+ protected:
+  void _set_name(const std::string& a_name);
 
-      virtual int reset () = 0;
+  virtual void tree_dump(std::ostream& a_out = std::clog,
+                         const std::string & a_title = "",
+                         const std::string & a_indent = "",
+                         bool a_inherit = false) const;
 
-    protected:
+ protected:
+  std::string _name;         //!< The name of the service
+  std::string _description;  //!< The description of the service
+  std::string _version;      //!< The version of the service
 
-      void _set_name (const std::string & a_name);
-
-    public:
-
-      /// Constructor
-      base_service (const std::string & a_process_name,
-                    const std::string & a_process_description = "",
-                    const std::string & a_process_version     = "");
-
-      /// Destructor
-      virtual ~base_service ();
-
-      virtual void tree_dump (std::ostream & a_out         = std::clog,
-                              const std::string & a_title  = "",
-                              const std::string & a_indent = "",
-                              bool a_inherit          = false) const;
-
-    public:
-
-      static bool g_debug;
-
-    protected:
-
-      std::string _name;           //!< The name of the service
-
-      std::string _description;    //!< The description of the service
-
-      std::string _version;        //!< The version of the service
-
-      /**************************************************/
-
-      // Factory stuff :
-      DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_service);
-        
-    };
+  // Factory stuff :
+  DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_service);
+};
       
-  }  // end of namespace service
-  
+}  // end of namespace service
 }  // end of namespace datatools
 
-#endif // __datatools__service__base_service_h
+#endif // DATATOOLS_SERVICE_BASE_SERVICE_H_
 
-// end of base_service.h
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/

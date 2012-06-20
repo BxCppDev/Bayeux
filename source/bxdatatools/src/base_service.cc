@@ -18,136 +18,130 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+// Ourselves
+#include <datatools/services/base_service.h>
 
+// Standard Library
 #include <stdexcept>
 #include <sstream>
 
+// Third Party
+
+// Datatools
 #include <datatools/services/service_tools.h>
-#include <datatools/services/base_service.h>
 #include <datatools/utils/properties.h>
 #include <datatools/utils/ioutils.h>
 
 namespace datatools {
+namespace service {
 
-  namespace service {
 
-    using namespace std;
+bool base_service::g_debug = false;
 
-    bool base_service::g_debug = false;
+DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(
+    base_service,
+    "datatools::service::base_service/__system__");
 
-    DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION (base_service,
-                                                      "datatools::service::base_service/__system__");
 
-    const string &
-    base_service::get_name () const
-    {
-      return _name;
-    }
+const std::string& base_service::get_name() const {
+  return _name;
+}
 
-    void
-    base_service::_set_name (const string & a_new_value)
-    {
-      _name = a_new_value;
-      return;
-    }
 
-      bool base_service::has_description () const
-      {
-        return ! _description.empty ();
-      }
+void base_service::_set_name(const std::string& a_new_value) {
+  _name = a_new_value;
+}
 
-    const string & base_service::get_description () const
-    {
-      return _description;
-    }
 
-    void base_service::set_description (const string & a_description)
-    {
-      _description = a_description;
-      return;
-    }
+bool base_service::has_description() const {
+  return !_description.empty();
+}
 
-    bool base_service::has_version () const
-    {
-      return ! _version.empty ();
-    }
 
-    const string & base_service::get_version () const
-    {
-      return _version;
-    }
+const std::string& base_service::get_description() const {
+  return _description;
+}
 
-    void base_service::set_version (const string & a_version)
-    {
-      _version = a_version;
-      return;
-    }
 
-    void base_service::fetch_dependencies (service_dependency_dict_type & a_dependency_list) const
-    {
-      a_dependency_list.clear ();
-      return;
-    }
+void base_service::set_description(const std::string& a_description) {
+  _description = a_description;
+}
 
-    // ctor:
-    base_service::base_service (const string & a_service_name,
-                                const string & a_service_description,
-                                const string & a_service_version)
-      : _name (a_service_name),
-        _description (a_service_description),
-        _version (a_service_version)
-    {
-      return;
-    }
 
-    // Destructor :
-    base_service::~base_service ()
-    {
-      return;
-    }
+bool base_service::has_version () const {
+  return !_version.empty();
+}
 
-    int base_service::initialize_standalone (const datatools::utils::properties & a_config)
-    {
-      service_dict_type dummy;
-      return initialize (a_config, dummy);
-    }
 
-    void base_service::tree_dump (ostream & a_out ,
-                                  const string & a_title,
-                                  const string & a_indent,
-                                  bool a_inherit) const
-    {
-      namespace du = datatools::utils;
-      string indent;
-      if (! a_indent.empty ())
-        {
-          indent = a_indent;
-        }
-      if ( ! a_title.empty () )
-        {
-          a_out << indent << a_title << endl;
-        }
-      a_out << indent << du::i_tree_dumpable::tag
-            << "Service name        : '" << _name << "'" << endl;
-      a_out << indent << du::i_tree_dumpable::tag
-            << "Service description : '" << _description << "'" << endl;
-      a_out << indent << du::i_tree_dumpable::tag
-            << "Service version     : '" << _version << "'" << endl;
-      a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)
-            << "Service initialized : " << is_initialized () << endl;
+const std::string& base_service::get_version() const {
+  return _version;
+}
 
-      return;
-    }
 
-  }  // end of namespace service
+void base_service::set_version(const std::string& a_version) {
+  _version = a_version;
+}
 
+
+void base_service::fetch_dependencies(
+    service_dependency_dict_type& a_dependency_list) const {
+  a_dependency_list.clear();
+}
+
+// ctor:
+base_service::base_service(const std::string& a_service_name,
+                           const std::string& a_service_description,
+                           const std::string& a_service_version)
+    : _name(a_service_name),
+      _description(a_service_description),
+      _version(a_service_version) {}
+
+// Destructor :
+base_service::~base_service() {}
+
+
+int base_service::initialize_standalone(
+    const datatools::utils::properties & a_config) {
+  service_dict_type dummy;
+  return this->initialize(a_config, dummy);
+}
+
+
+void base_service::tree_dump(std::ostream& a_out,
+                             const std::string & a_title,
+                             const std::string & a_indent,
+                             bool a_inherit) const {
+  namespace du = datatools::utils;
+  std::string indent;
+  if (!a_indent.empty()) indent = a_indent;
+
+  if (!a_title.empty()) a_out << indent << a_title << std::endl;
+
+  a_out << indent << du::i_tree_dumpable::tag
+        << "Service name        : '" 
+        << _name << "'" << std::endl;
+
+  a_out << indent << du::i_tree_dumpable::tag
+        << "Service description : '" 
+        << _description << "'" << std::endl;
+
+  a_out << indent << du::i_tree_dumpable::tag
+        << "Service version     : '" 
+        << _version << "'" << std::endl;
+
+  a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)
+        << "Service initialized : " 
+        << this->is_initialized() << std::endl;
+}
+
+}  // end of namespace service
 }  // end of namespace datatools
 
 // end of base_service.cc
 /*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+ ** Local Variables: --
+ ** mode: c++ --
+ ** c-file-style: "gnu" --
+ ** tab-width: 2 --
+ ** End: --
+ */

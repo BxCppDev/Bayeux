@@ -28,65 +28,77 @@
  * History:
  *
  */
+#ifndef DATATOOLS_SERVICES_SERVICE_MACROS_H_
+#define DATATOOLS_SERVICES_SERVICE_MACROS_H_
 
+// Standard Library
+
+// Third Party
+
+// Datatools
 #include <datatools/services/base_service.h>
 
 #define DATATOOLS_SERVICE_CLASS_DECLARE(T)                            \
    class T : public datatools::service::base_service                  \
      /**/
 
+
 #define DATATOOLS_SERVICE_CONSTRUCTOR_DECLARE(T)                      \
    public:                                                            \
-     T ();                                                            \
+     T();                                                             \
    /**/
 
+
 #define DATATOOLS_SERVICE_CONSTRUCTOR_IMPLEMENT_HEAD(T,Name,Desc,Ver) \
-  T::T ()                                                             \
-    : datatools::service::base_service (Name,                         \
-                                        Desc,                         \
-                                        Ver)                          \
+  T::T() : datatools::service::base_service(Name,Desc,Ver)            \
     /**/
 
+
 #define DATATOOLS_SERVICE_DESTRUCTOR_DECLARE(T)                       \
-  virtual ~T ();                                                      \
+  virtual ~T();                                                      \
   /**/
 
+
 #define DATATOOLS_SERVICE_DESTRUCTOR_IMPLEMENT(T)                     \
-  T::~T ()                                                            \
-  {                                                                   \
-    if (is_initialized ()) reset ();                                  \
-    return;                                                           \
+  T::~T() {                                                           \
+    if (this->is_initialized()) this->reset();                        \
   }                                                                   \
   /**/
 
+
 #define DATATOOLS_SERVICE_IS_INITIALIZED_DECLARE()                    \
   public:                                                             \
-  bool is_initialized () const;                                       \
+   bool is_initialized() const;                                       \
   /**/
 
 
 #define DATATOOLS_SERVICE_IS_INITIALIZED_IMPLEMENT_HEAD(T)            \
-  bool T::is_initialized () const                                     \
+  bool T::is_initialized() const                                      \
   /**/
+
 
 #define DATATOOLS_SERVICE_INITIALIZE_DECLARE()                        \
   public:                                                             \
-  int initialize (const datatools::utils::properties &,               \
+   int initialize(const datatools::utils::properties&,                \
                   service_dict_type &);                               \
   /**/
 
+
 #define DATATOOLS_SERVICE_INITIALIZE_IMPLEMENT_HEAD(T,CONF,DICT)      \
-  int T::initialize (const datatools::utils::properties & CONF,       \
-                     service_dict_type & DICT)                        \
+  int T::initialize(const datatools::utils::properties& CONF,         \
+                    service_dict_type& DICT)                          \
+
 
 #define DATATOOLS_SERVICE_RESET_DECLARE()                             \
   public:                                                             \
-  int reset ();                                                       \
+   int reset();                                                       \
   /**/
 
+
 #define DATATOOLS_SERVICE_RESET_IMPLEMENT_HEAD(T)                     \
-  int T::reset ()                                                     \
+  int T::reset()                                                      \
   /**/
+
 
 #define DATATOOLS_SERVICE_INTERFACE(SERVICE_CLASS_NAME)               \
                                                                       \
@@ -108,7 +120,7 @@
 
 #define DATATOOLS_SERVICE_REGISTRATION_INTERFACE(SERVICE_CLASS_NAME)            \
   private:                                                                      \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE (::datatools::service::base_service, SERVICE_CLASS_NAME); \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::datatools::service::base_service, SERVICE_CLASS_NAME); \
   /**/
 
 #define DATATOOLS_SERVICE_REGISTRATION_IMPLEMENT(SERVICE_CLASS_NAME,SERVICE_ID) \
@@ -116,11 +128,5 @@
   /**/
 
 
-// end of service_macros.h
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+#endif // DATATOOLS_SERVICES_SERVICE_MACROS_H_
+

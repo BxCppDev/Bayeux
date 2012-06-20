@@ -38,4 +38,4 @@
 #include <eos/portable_oarchive.hpp>
 
 #endif // DATATOOLS_SERIALIZATION_ARCHIVES_LIST_H_
-/* end of archives_list.h */
+

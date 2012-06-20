@@ -22,34 +22,33 @@
  * Boston, MA 02110-1301, USA.
  *
  */ 
+#ifndef DATATOOLS_SERIALIZATION_UTILS_H_
+#define DATATOOLS_SERIALIZATION_UTILS_H_
 
-#ifndef __datatools__serialization__utils_h
-#define __datatools__serialization__utils_h 1
+// Standard Library
 
+// Third Party
+// - Boost
 #include <boost/serialization/split_member.hpp>
+
+// Datatools
 
 // declare the template load member function from the header file :
 #define BOOST_SERIALIZATION_SPLIT_MEMBER_LOAD_DECLARATION()      \
 template<class Archive>                                          \
-void load(                                                       \
-    Archive &ar,                                                 \
-    const unsigned int file_version);				 \
+void load(Archive& ar, const unsigned int file_version);				 \
 /**/
 
 // declare the template save member function from the header file :
 #define BOOST_SERIALIZATION_SPLIT_MEMBER_SAVE_DECLARATION()      \
 template<class Archive>                                          \
-void save(                                                       \
-    Archive &ar,                                                 \
-    const unsigned int file_version) const;			 \
+void save(Archive& ar, const unsigned int file_version) const;	 \
 /**/
 
 // declare the template serialize member function from the header file :
 #define BOOST_SERIALIZATION_SERIALIZE_DECLARATION()              \
 template<class Archive>                                          \
-void serialize(                                                  \
-    Archive &ar,                                                 \
-    const unsigned int file_version);				 \
+void serialize(Archive& ar, const unsigned int file_version);    \
 /**/
 
 // split member serialize functions save/load/serialize
@@ -63,16 +62,11 @@ BOOST_SERIALIZATION_SERIALIZE_DECLARATION()                       \
 // split member function serialize function into save/load
 // from the implementation file :
 #define BOOST_SERIALIZATION_SPLIT_MEMBER_SERIALIZE_IMPLEMENTATION(T) \
-template<class Archive>                                          \
-void T::serialize(						 \
-    Archive &ar,                                                 \
-    const unsigned int file_version                              \
-){                                                               \
-    boost::serialization::split_member(ar, *this, file_version); \
-    return;                                                      \
-}                                                                \
+template<class Archive>                                              \
+void T::serialize(Archive& ar, const unsigned int file_version) {    \
+  boost::serialization::split_member(ar, *this, file_version);       \
+}                                                                    \
 /**/
 
-#endif // __datatools__serialization__utils_h
+#endif // DATATOOLS_SERIALIZATION_UTILS_H_
 
-/* end of datatools::serialization::utils.h */

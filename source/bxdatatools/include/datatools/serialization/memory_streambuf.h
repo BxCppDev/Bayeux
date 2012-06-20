@@ -1,341 +1,252 @@
 // -*- mode: c++;-*-
 // memory_streambuf.h
+// TODO : IS THIS FILE USED ANYMORE?
+#ifndef DATATOOLS_SERIALIZATION_MEMORY_STREAMBUF_H_
+#define DATATOOLS_SERIALIZATION_MEMORY_STREAMBUF_H_
 
+// Standard Library
 #include <streambuf>
 #include <iostream>
 #include <vector>
 #include <stdexcept>
 
+// Third Party
+
+// Datatools
+
+
 namespace datatools {
+namespace serialization {
+//----------------------------------------------------------------------
+// input from a plain array of characters/bytes:
+class array_input_buffer : public std::streambuf {
+ public:
+  typedef char byte_t;
 
-  namespace serialization {
-  
-    // input from a plain array of characters/bytes:
-    class array_input_buffer : public std::streambuf
-    {
-    public:
+ public:
+  array_input_buffer(const byte_t* array, size_t array_size) {
+    if (array == 0) {
+      throw std::runtime_error("array_input_buffer: Null array pointer !");
+    }
+    byte_t* base = const_cast<byte_t*>(array);
+    byte_t* endp = base + array_size;
+    this->setg(base, base, endp);
+  }
+};
 
-      typedef char byte_t;
 
-    public:
+class iarraystream 
+    : private virtual array_input_buffer, 
+      public std::istream {
+ public:
+  iarraystream(const byte_t* array, size_t array_size) 
+      : array_input_buffer(array, array_size),
+        std::istream(this) {}
+};
 
-      array_input_buffer (const byte_t * array_, size_t array_size_) 
-      {
-        if (array_ == 0)
-          {
-            throw std::runtime_error ("array_input_buffer: Null array pointer !");
-          }
-        byte_t * base = const_cast<byte_t *> (array_);
-        byte_t * endp = base + array_size_;
-        this->setg (base, base, endp);
-        return;
+
+//----------------------------------------------------------------------
+// input from vector of characters:
+class vector_input_buffer : public std::streambuf {
+ public:
+  vector_input_buffer(std::vector<char>& vec) {
+    char* base = const_cast<char*>(&vec[0]);
+    char* endp = base + vec.size();
+    this->setg(base, base, endp);
+  }
+};
+
+
+class ivectorstream 
+    : private virtual vector_input_buffer, 
+      public std::istream {
+ public:
+  ivectorstream(std::vector<char>& vec) 
+      : vector_input_buffer(vec),
+        std::istream (this) {}
+};
+
+
+//----------------------------------------------------------------------
+// output to vector of characters:
+//  [                                    ]
+//  pbase    pptr   epptr
+//
+class vector_output_buffer : public std::streambuf {
+ public:
+  static const size_t MIN_CAPACITY = 128;
+  static const size_t MIN_INCREMENT = 128;
+  static const size_t DEFAULT_CAPACITY = 1024;
+  static const size_t DEFAULT_INCREMENT = 0;
+
+ public:
+  typedef std::vector<char>::const_iterator iterator;
+
+ public:
+  // ctor:
+  vector_output_buffer(size_t capacity = 1000,
+                       size_t increment = 1000,
+                       size_t max_capacity = 0) {
+    max_capacity_ = buffer_.max_size();
+    this->_init(capacity);
+    this->_set_increment(increment);
+    this->set_max_capacity(max_capacity);
+  }
+
+  // dtor:
+  virtual ~vector_output_buffer() {}
+
+  const std::vector<char>& buffer() const {
+    return buffer_;
+  }
+
+
+  void set_max_capacity(size_t max_capacity) {
+    if (max_capacity > 0) {
+      size_t new_max_capacity = max_capacity;
+      max_capacity_ = std::max(buffer_.capacity(), new_max_capacity);
+    } else {
+      max_capacity_ = buffer_.max_size();
+    }
+  }
+
+
+  void reset(size_t capacity = 1000, 
+             size_t increment = 1000,
+             size_t max_capacity = 0) {
+    max_capacity_ = _buffer_.max_size();
+    buffer_.clear();
+    this->_init(capacity);
+    this->_set_increment(increment);
+    this->set_max_capacity(max_capacity);
+  }
+
+
+  size_t get_size() const {
+    return buffer_.size();
+  }
+
+
+  const char* get_address() const {
+    if (buffer_.size() > 0) {
+      return const_cast<char*>(&buffer_[0]);
+    }
+    return 0;
+  }
+
+
+ protected:
+  void _init(size_t capacity) {
+    size_t min_capacity = MIN_CAPACITY;
+    size_t capacity = std::max(min_capacity, capacity);
+    buffer_.reserve(capacity);
+    char* base = const_cast<char*>(&buffer_[0]);
+    char* endp = base + buffer_.size();
+    *base = '\0';
+    setp(base, endp); 
+  }
+
+  void _set_increment(size_t increment) {
+    if (increment > 0) {
+      size_t min_increment = MIN_INCREMENT;
+      increment_ = std::max(min_increment, increment);
+    } else {
+      increment_ = 0;
+    }
+  }
+
+
+ public:
+  void dump() {
+    std::cerr << "DUMP: " << std::endl;
+    std::cerr << "|-- Increment:       " << increment_ << std::endl;
+    std::cerr << "|-- Max capacity:    " << max_capacity_ << std::endl;
+    std::cerr << "|-- Buffer size:     " << buffer_.size() << std::endl;
+    std::cerr << "|-- Buffer capacity: " << buffer_.capacity() << std::endl;
+    std::cerr << "|-- Buffer contains: `";
+    for (int i = 0; i < (int)buffer_.size(); i++) {
+      std::cerr << buffer_[i];
+    }
+    std::cerr << "'" << std::endl;
+    std::cerr << "|-- pptr ():         " 
+              << hex 
+              << reinterpret_cast<void*>(this->pptr()) 
+              << dec 
+              << std::endl;
+
+    std::cerr << "|-- epptr ():        " 
+              << hex 
+              << reinterpret_cast<void*>(this->epptr()) 
+              << dec 
+              << std::endl;
+
+    std::cerr << "`-- " << "end" << std::endl;
+  }
+
+
+  int overflow(int c) {
+    using namespace std;
+    const char conv = std::char_traits<char>::to_char_type(c);
+    const bool __testeof = std::char_traits<char>::eq_int_type(c, std::char_traits<char>::eof());
+
+    if (__builtin_expect(__testeof, false)) {
+      return std::char_traits<char>::not_eof(c);
+    }
+
+    const size_t capacity = buffer_.capacity();
+    const bool testput = this->pptr() < this->epptr();
+    if (!testput) { 
+      if (buffer_.size() == buffer_.capacity()) {
+        if (capacity == max_capacity_) {
+          return std::char_traits<char>::eof();
+        }
+
+        size_t opt_len = buffer_.capacity();
+        if (increment_ > 0) {
+          opt_len += increment_;
+        } else {
+          opt_len *= 3;
+        }
+
+        const size_t len = std::min(opt_len, max_capacity_);
+        buffer_.reserve(len);
       }
 
-    };
-  
-    class iarraystream : private virtual array_input_buffer, public std::istream
-    {
-    public:
+      buffer_.push_back(conv);
+      char* base = const_cast<char*>(&buffer_[0]);
+      char* endp = base + buffer_.size();
+      setp(base + buffer_.size(), endp); 
+    } else {
+      buffer_.push_back(conv);
+      this->pbump(1);
+    }
 
-      iarraystream (const byte_t * array_, size_t array_size_) : 
-        array_input_buffer (array_, array_size_),
-        std::istream (this)
-      {
-        return;
-      }
+    return std::char_traits<char>::not_eof(c);
+  }
 
-    };
-  
-    // input from vector of characters:
-    class vector_input_buffer : public std::streambuf
-    {
-    public:
-      vector_input_buffer (std::vector<char> & vec_) 
-      {
-        char * base = const_cast<char*> (&vec_[0]);
-        char * endp = base + vec_.size ();
-        this->setg (base, base, endp);
-        //&vec_[0], &vec_[0], &vec_[0] + vec_.size ());
-        return;
-      }
 
-    };
-  
-    class ivectorstream : private virtual vector_input_buffer, public std::istream
-    {
-    public:
+ private:
+  size_t              capacity_;
+  size_t              max_capacity_;
+  size_t              increment_;
+  std::vector<char>   buffer_;
+};
 
-      ivectorstream (std::vector<char> & vec_) : 
-        vector_input_buffer (vec_),
-        std::istream (this)
-      {
-        return;
-      }
 
-    };
-  
-    // output to vector of characters:
-    /*
-     * 
-     *
-     *  [                                    ]
-     *  pbase    pptr   epptr
-     *
-     */
-    class vector_output_buffer : public std::streambuf
-    {
-    public:
-      static const size_t MIN_CAPACITY = 128;
-      static const size_t MIN_INCREMENT = 128;
-      static const size_t DEFAULT_CAPACITY = 1024;
-      static const size_t DEFAULT_INCREMENT = 0;
 
-    private:
+class ovectorstream 
+    : public vector_output_buffer,
+      public std::ostream {
+ public:
+  ovectorstream(size_t capacity = DEFAULT_CAPACITY,
+                size_t increment = DEFAULT_INCREMENT,
+                size_t max_capacity = 0) 
+      : vector_output_buffer(capacity, increment, max_capacity),
+        std::ostream(this) {}
+};
 
-      size_t              _capacity_;
-      size_t              _max_capacity_;
-      size_t              _increment_;
-      std::vector<char>   _buffer_;
-
-    public:
-
-      typedef std::vector<char>::const_iterator iterator;
-
-    public:
-
-      const std::vector<char> & buffer () const
-      {
-        return _buffer_;
-      }
-
-      void set_max_capacity (size_t max_capacity_)
-      {
-        if (max_capacity_ > 0)
-          {
-            size_t new_max_capacity = max_capacity_;
-            _max_capacity_ = std::max (_buffer_.capacity (), new_max_capacity);
-          }
-        else
-          {
-            _max_capacity_ = _buffer_.max_size ();
-          }
-        return;
-      }
-
-      void reset (size_t capacity_ = 1000,
-                  size_t increment_ = 1000,
-                  size_t max_capacity_ = 0)
-      {
-        _max_capacity_ = _buffer_.max_size ();
-        _buffer_.clear ();
-        _init (capacity_);
-        _set_increment (increment_);
-        set_max_capacity (max_capacity_);
-        return;
-      }
-
-      size_t get_size () const
-      {
-        return _buffer_.size ();
-      }
-
-      const char * get_address () const
-      {
-        if (_buffer_.size () > 0)
-          {
-            return const_cast<char*> (&_buffer_[0]);
-          }
-        return 0;
-      }
-
-    protected:
-
-      void _init (size_t capacity_)
-      {
-        size_t min_capacity = MIN_CAPACITY;
-        size_t capacity = std::max (min_capacity, capacity_);
-        _buffer_.reserve (capacity);
-        char * base =  const_cast<char*>(&_buffer_[0]);
-        char * endp = base + _buffer_.size ();
-        *base = '\0';
-        setp (base, endp); 
-        return;
-      }
-
-      void _set_increment (size_t increment_)
-      {
-        if (increment_ > 0)
-          {
-            size_t min_increment = MIN_INCREMENT;
-            _increment_ = std::max (min_increment, increment_);
-          }
-        else
-          {
-            _increment_ = 0;
-          }
-        return;
-      }
-
-    public:
-
-      void dump ()
-      {
-        //using namespace std;
-        std::cerr << "DUMP: " << std::endl;
-        std::cerr << "|-- Increment:       " << _increment_ << std::endl;
-        std::cerr << "|-- Max capacity:    " << _max_capacity_ << std::endl;
-        std::cerr << "|-- Buffer size:     " << _buffer_.size () << std::endl;
-        std::cerr << "|-- Buffer capacity: " << _buffer_.capacity () << std::endl;
-        std::cerr << "|-- Buffer contains: `";
-        for (int i = 0; i < (int) _buffer_.size (); i++)
-          {
-            std::cerr << _buffer_[i];
-          }
-        std::cerr << "'" << std::endl;
-        std::cerr << "|-- pptr ():         " << hex << reinterpret_cast<void *> (this->pptr ()) << dec << std::endl;
-        std::cerr << "|-- epptr ():        " << hex << reinterpret_cast<void *> (this->epptr ()) << dec << std::endl;
-        std::cerr << "`-- " << "end" << std::endl;
-      }
-
-      // ctor:
-      vector_output_buffer (size_t capacity_ = 1000,
-                            size_t increment_ = 1000,
-                            size_t max_capacity_ = 0) 
-      {
-        _max_capacity_ = _buffer_.max_size ();
-        _init (capacity_);
-        _set_increment (increment_);
-        set_max_capacity (max_capacity_);
-        using namespace std;
-        /*
-          std::cerr << "DEVEL: " << "vector_output_buffer::ctor: "
-          << " capacity = " << capacity_
-          << " increment = " << increment_
-          << " max capacity  = " << max_capacity_
-          << std::endl;
-          dump ();
-        */
-        return;
-      }
-    
-      // dtor:
-      virtual ~vector_output_buffer ()
-      {
-        return;
-      }
-
-      int overflow (int c_)
-      {
-        using namespace std;
-        /*
-          std::cerr << std::endl 
-          << "vector_output_buffer::overflow: Entering..." << std::endl;
-        */
-        const char conv = std::char_traits<char>::to_char_type (c_);
-        /*
-          std::cerr << "vector_output_buffer::overflow: conv = `" << conv << "'" << std::endl;
-          dump ();
-        */
-        const bool __testeof = std::char_traits<char>::eq_int_type(c_, std::char_traits<char>::eof());
-        if (__builtin_expect(__testeof, false))
-          {
-            //std::cerr << "vector_output_buffer::overflow: testeof..." << std::endl;
-            //std::cerr << "vector_output_buffer::overflow: Exiting." << std::endl;
-            return std::char_traits<char>::not_eof (c_);
-          }
-
-        const size_t capacity = _buffer_.capacity ();
-        //const size_t max_size = _buffer_.max_size ();
-        //const size_t size     = _buffer_.size ();
-        /*
-          std::cerr << "vector_output_buffer::overflow: capacity=" << capacity << std::endl;
-          std::cerr << "vector_output_buffer::overflow: capacity=" << _max_capacity_ << std::endl;
-          std::cerr << "vector_output_buffer::overflow: max_size=" << max_size << std::endl;
-          std::cerr << "vector_output_buffer::overflow: size=" << size << std::endl;
-        */
-        const bool testput = this->pptr () < this->epptr ();
-        /*
-          std::cerr << "vector_output_buffer::overflow: pptr=" << std::hex << reinterpret_cast<void *> (this->pptr ()) << std::dec << std::endl;
-          std::cerr << "vector_output_buffer::overflow: epptr=" << std::hex <<  reinterpret_cast<void *> (this->epptr ()) << std::dec << std::endl;
-          std::cerr << "vector_output_buffer::overflow: testput=" << testput << std::endl;
-        */
-        if (! testput)
-          { 
-            //std::cerr << "vector_output_buffer::overflow: case ! testput..." << std::endl;
-
-            if (_buffer_.size () == _buffer_.capacity ())
-              {
-                //std::cerr << "vector_output_buffer::overflow: We need to extend the vector !" << std::endl;
-                if (capacity == _max_capacity_)
-                  {
-                    //std::cerr << "vector_output_buffer::overflow: Cannot extend the vector !" << std::endl;
-                    return std::char_traits<char>::eof ();
-                  }
-                /*
-                  const size_t opt_len = std::max (_buffer_.capacity (), 
-                  _buffer_.size () + _increment_);
-                */
-                size_t opt_len = _buffer_.capacity ();
-                if (_increment_ > 0)
-                  {
-                    opt_len += _increment_;
-                  }
-                else
-                  {
-                    opt_len *= 3;
-                  }
-                const size_t len = std::min (opt_len, _max_capacity_);
-                //std::cerr << "vector_output_buffer::overflow: new capacity =  '" << len << "'" << std::endl;
-                _buffer_.reserve (len);
-                //dump ();
-              }
-            _buffer_.push_back (conv);
-            char * base = const_cast<char*>(&_buffer_[0]);
-            char * endp = base + _buffer_.size ();
-            setp (base + _buffer_.size (), endp); 
-            //dump ();
-          }
-        else
-          {
-            //std::cerr << "vector_output_buffer::overflow: case testput..." << std::endl;
-            //*this->pptr () = conv;
-            _buffer_.push_back (conv);
-            this->pbump (1);
-          }
-        //dump ();
-        //std::cerr << "vector_output_buffer::overflow: Exiting." << std::endl;
-        return std::char_traits<char>::not_eof (c_);
-      }
-
-    };
-
-    class ovectorstream :
-      public vector_output_buffer,
-      public std::ostream
-    {
-    public:
-
-      ovectorstream (size_t capacity_ = DEFAULT_CAPACITY,
-                     size_t increment_ = DEFAULT_INCREMENT,
-                     size_t max_capacity_ = 0) :
-        vector_output_buffer (capacity_, increment_, max_capacity_),
-        std::ostream (this)
-      {
-        using namespace std;
-        /*
-          cerr << "DEVEL: " << "ovectorstream::ctor: "
-          << " capacity = " << capacity_
-          << " increment = " << increment_
-          << " max capacity  = " << max_capacity_
-          << endl;
-        */
-        return;
-      }
-
-    };
-
-  } // end of namespace serialization
-
+} // end of namespace serialization
 } // end of namespace datatools
 
-// end of memory_streambuf.h
+#endif // DATATOOLS_SERIALIZATION_MEMORY_STREAMBUF_H_
+

@@ -52,6 +52,7 @@
 #include <datatools/serialization/i_serializable.h>
 #include <datatools/utils/i_tree_dump.h>
 
+
 namespace datatools {
 namespace serialization {
 
@@ -112,12 +113,9 @@ class io_factory : public datatools::utils::i_tree_dumpable {
   static const std::string GZ_EXT;
   static const std::string BZIP2_EXT;
 
-
-
-
-
  public:
   static int guess_mode_from_filename (const std::string & a_filename, int & a_mode);
+
 
  public: 
   // ctor
@@ -211,14 +209,12 @@ class io_factory : public datatools::utils::i_tree_dumpable {
     a_ar << b;
   }
 
-
   template <typename Data>
   void _load_text_(boost::archive::text_iarchive& a_ar,
                    Data& a_data) {
     Data& b = a_data;
     a_ar >> b;
   }
-
 
   template <typename Data>
   void _load_xml_(boost::archive::xml_iarchive& a_ar,
@@ -453,8 +449,8 @@ class data_reader {
 
   // dtor
   virtual ~data_reader();
- public:
 
+ public:
   bool is_error() const;
 
   const std::string& get_record_tag() const;
@@ -499,6 +495,7 @@ class data_reader {
   }
 
   void init(const std::string& a_filename, int a_mode);
+
   void dump(std::ostream& a_out = std::clog) const;
 
  public:
@@ -523,6 +520,7 @@ class data_reader {
     _read_next_tag_();
   }
 
+
   template <typename Data>
   void load(Data& a_data) {
     // Huh? If it's a reference then just try get_serial_tag method??
@@ -530,6 +528,7 @@ class data_reader {
 
     this->load(i_ser.get_serial_tag(), a_data);
   }
+
 
  protected:
   template <typename Data>
@@ -587,20 +586,26 @@ class data_reader {
   std::string _next_tag_;
 };
 
+
 //----------------------------------------------------------------------
 // data_writer class
 //
 class data_writer {
-
- private:
-  void _init_writer_ (const std::string & a_filename, int a_mode);
-
-  void _reset_writer_ ();
-
- private:
-  io_writer* _writer_;
-
  public:
+  // ctor
+  data_writer();
+
+  data_writer(const std::string & a_filename,
+              bool a_multiple_archives = using_single_archive,
+              bool a_append_mode = no_append_mode);
+
+  data_writer(const std::string & a_filename,
+              int a_mode);
+
+  // dtor
+  virtual ~data_writer();
+
+
   bool is_initialized() const;
 
   bool is_multi_archives() const;
@@ -635,29 +640,6 @@ class data_writer {
 
   void init(const std::string& a_filename, int a_mode);
 
-  // ctor
-  data_writer();
-
-  data_writer(const std::string & a_filename,
-              bool a_multiple_archives = using_single_archive,
-              bool a_append_mode = no_append_mode);
-
-  data_writer(const std::string & a_filename,
-              int a_mode);
-
-  // dtor
-  virtual ~data_writer();
-
- protected:
-  template <typename Data>
-  void _basic_store(const Data& a_data) {
-    if (_writer_ == 0) {
-      throw std::logic_error("data_writer::_basic_store(...): not initialized!");
-    }
-  
-    _writer_->store<Data>(a_data);
-  }
-
  public:
   template <typename Data>
   void store(const std::string& a_tag, const Data& a_data) {
@@ -679,6 +661,24 @@ class data_writer {
       static_cast<const datatools::serialization::i_serializable&>(a_data);
     this->store<Data>(i_ser.get_serial_tag(), a_data);
   }
+
+ protected:
+  template <typename Data>
+  void _basic_store(const Data& a_data) {
+    if (_writer_ == 0) {
+      throw std::logic_error("data_writer::_basic_store(...): not initialized!");
+    }
+  
+    _writer_->store<Data>(a_data);
+  }
+
+ private:
+  void _init_writer_ (const std::string & a_filename, int a_mode);
+
+  void _reset_writer_ ();
+
+ private:
+  io_writer* _writer_;
 };
 
 } // end of namespace serialization

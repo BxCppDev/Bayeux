@@ -22,7 +22,6 @@
 #ifndef DATATOOLS_SERIALIZATION_I_SERIALIZABLE_H_
 #define DATATOOLS_SERIALIZATION_I_SERIALIZABLE_H_
 
-
 // Standard Library
 #include <string>
 
@@ -32,6 +31,7 @@
 
 // Datatools
 #include <datatools/serialization/utils.h>
+
 
 namespace datatools {
 namespace serialization {
@@ -59,19 +59,19 @@ class i_serializable {
 
 #define DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(ClassName,ClassSerialTag) \
   const std::string ClassName::SERIAL_TAG = ClassSerialTag;		\
-  const std::string& ClassName::get_serial_tag () const {		\
+  const std::string& ClassName::get_serial_tag() const {		\
     return ClassName::SERIAL_TAG;					\
   }									\
   /**/
 
 #define DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP		\
   boost::serialization::make_nvp("datatools__serialization__i_serializable", \
-				 boost::serialization::base_object<datatools::serialization::i_serializable >(*this)) \
+				 boost::serialization::base_object<datatools::serialization::i_serializable>(*this)) \
   									\
   /**/
 
 #define DATATOOLS_SERIALIZABLE_CLASS		  \
-  public datatools::serialization::i_serializable \
+ public datatools::serialization::i_serializable \
   /**/
 
 #define DATATOOLS_SERIALIZATION_DECLARATION()	   \
