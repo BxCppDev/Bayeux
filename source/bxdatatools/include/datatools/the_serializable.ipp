@@ -34,4 +34,4 @@
 #include <datatools/event/event_id.ipp>
 
 #endif // DATATOOLS_THE_SERIALIZABLE_IPP_
-/* end of datatools::the_serializable.ipp */
+

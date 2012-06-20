@@ -3,10 +3,15 @@
 #ifndef DATATOOLS_THE_SERIALIZABLE_H_
 #define DATATOOLS_THE_SERIALIZABLE_H_
 
-#include <datatools/serialization/archives_instantiation.h>
+// Standard Library
+
+// Third Party
+// - Boost
 #include <boost/serialization/assume_abstract.hpp>
 #include <boost/serialization/export.hpp>
 
+// Datatools
+#include <datatools/serialization/archives_instantiation.h>
 #include <datatools/the_serializable.ipp>
 
 /********************************************
@@ -38,4 +43,4 @@ BOOST_CLASS_EXPORT_IMPLEMENT(datatools::utils::things)
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::event::event_id)
 
 #endif // DATATOOLS_THE_SERIALIZABLE_H_
-/* end of datatools::the_serializable.h */
+
