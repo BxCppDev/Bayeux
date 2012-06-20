@@ -47,9 +47,8 @@
 
 namespace datatools {
 namespace service {
-// Hmm, where does this come from...
-class base_service;
 
+class base_service;
 typedef datatools::utils::handle<base_service> service_handle_type;
 
 // Constants to measure the level of dependance between services
@@ -66,7 +65,7 @@ struct dependency_info_type {
   std::string id;      //!< ID of the external service
   std::string version; //!< Version of the external service
   std::string meta;    //!< Auxiliary information 
-  int    level;        //!< Level of the dependency (see dependency_level_type enum)
+  int level;           //!< Level of the dependency (see dependency_level_type enum)
   dependency_info_type();
 };
 
@@ -86,7 +85,10 @@ class service_entry : public datatools::utils::i_tree_dumpable  {
     STATUS_BROKEN_DEPENDENCY = 0x4
   };
 
-  // WHY ARE THESE PUBLIC??
+  // WHY ARE THESE PUBLIC?? service_entry has functionality, it's
+  // not just a bag of data...
+  // Either that, or it should be a pImpl of service_manager
+  //
   std::string  service_name;    //!< The name of the service
   std::string  service_id;      //!< The ID (type) of the service
   datatools::utils::properties service_config;  //!< The configuration of the service 
@@ -95,13 +97,14 @@ class service_entry : public datatools::utils::i_tree_dumpable  {
   service_dependency_dict_type service_masters; //!< The list of services the service depends on (by names)
   dependency_level_dict_type   service_slaves;  //!< The list of depending services (by names)
 
+ public:
   service_entry();
 
   bool can_be_dropped() const;
 
-  bool has_slave(const std::string& a_service_name) const;
+  bool has_slave(const std::string& name) const;
 
-  void remove_slave(const std::string& a_service_name);
+  void remove_slave(const std::string& name);
 
   virtual void tree_dump(std::ostream& a_out = std::clog, 
                          const std::string & a_title  = "",
@@ -113,7 +116,6 @@ class service_entry : public datatools::utils::i_tree_dumpable  {
 typedef std::map<std::string, service_entry> service_dict_type;
 
 }  // end of namespace service
-
 }  // end of namespace datatools
 
 #endif // DATATOOLS_SERVICES_SERVICE_TOOLS_H_

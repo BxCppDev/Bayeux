@@ -44,14 +44,14 @@ service_entry::service_entry() {
 }
 
 
-bool service_entry::has_slave(const std::string& a_service_name) const {
-  dependency_level_dict_type::const_iterator found = service_slaves.find(a_service_name);
+bool service_entry::has_slave(const std::string& name) const {
+  dependency_level_dict_type::const_iterator found = service_slaves.find(name);
   return (found != service_slaves.end()) && (found->second == STRICT_DEPENDENCY);
 }
 
 
-void service_entry::remove_slave (const std::string& a_service_name) {
-  dependency_level_dict_type::iterator found = service_slaves.find(a_service_name);
+void service_entry::remove_slave(const std::string& name) {
+  dependency_level_dict_type::iterator found = service_slaves.find(name);
   if (found != service_slaves.end()) {
     service_slaves.erase(found);
   }

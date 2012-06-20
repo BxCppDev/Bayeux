@@ -4,6 +4,7 @@
  * Last modified : 2012-04-10
  *
  * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2012 Ben Morgan <Ben.Morgan@warwick.ac.uk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,18 +70,18 @@ class service_manager : public datatools::utils::i_tree_dumpable {
 
  public:
   /// Constructor
-  service_manager(const std::string& name_ = "",
-                  const std::string & description_ = "",
-                  uint32_t flag_ = BLANK);
+  service_manager(const std::string& name = "",
+                  const std::string & description = "",
+                  uint32_t flag = BLANK);
 
   /// Destructor
   ~service_manager();
 
   /// Set the name of the service
-  void set_name(const std::string& name_);
+  void set_name(const std::string& name);
 
   /// Set the description of the service
-  void set_description(const std::string& description_);
+  void set_description(const std::string& description);
 
   /// Get the name of the service
   const std::string& get_name() const;
@@ -92,9 +93,8 @@ class service_manager : public datatools::utils::i_tree_dumpable {
   bool is_debug() const;
 
   /// Set the debug flag
-  void set_debug(bool debug_ = true);
+  void set_debug(bool debug = true);
 
- public:
   /// Check the initialization flag
   bool is_initialized() const;
 
@@ -102,137 +102,160 @@ class service_manager : public datatools::utils::i_tree_dumpable {
   void initialize();
 
   /// Initialize the manager from a container of properties 
-  void initialize(const datatools::utils::properties& config_);
+  void initialize(const datatools::utils::properties& config);
 
   /// Reset the manager
   void reset();
 
-  /// Smart print
-  virtual void tree_dump(std::ostream& out_         = std::clog,
-                         const std::string& title_  = "",
-                         const std::string& indent_ = "",
-                         bool inherit_              = false) const;
+  bool has_service_type(const std::string& id) const;
 
-  /**  @param service_name_ The name of the service to be checked
+  template <class ServiceClass>
+  void register_service_type(const std::string& id);
+
+  void unregister_service_type(const std::string& id);
+
+  /**  @param name The name of the service to be checked
    *   @return true if the manager hosts the service requested by name
    */
-  bool has(const std::string& service_name_) const;
+  bool has(const std::string& name) const;
 
-  /**  @param service_name_ The name of the service to be checked
-   *   @return true if the service is of requested type
+  /**  @param name The name of the service to be checked
+   *   @return true if the service is of the requested type
    */
   template <class T>
-  bool is_a(const std::string& service_name_) const {
-    service_dict_type::const_iterator found = _services_.find(service_name_);
-    if (found == _services_.end()) {
-      std::ostringstream message;
-      message << "datatools::services::service_manager::is_a: No service named '" << service_name_ << "' !";
-      throw std::logic_error(message.str());
-    }
-    
-    const std::type_info& ti = typeid(T);
-    const std::type_info& tf = typeid(found->second.service_handle.get());
-    return (ti == tf);
-  }
+  bool is_a(const std::string& name) const;
 
   /** Deprecated, please use the 'grab' method.
-   *  @param service_name_ The name of the service to be checked
+   *  @param name The name of the service to be checked
    *  @return a mutable reference to the service instance requested by name and type
    */
   template<class T>
-  T& get(const std::string& service_name_) {
-    service_dict_type::iterator found = _services_.find (service_name_);
-    if (found == _services_.end()) {
-      std::ostringstream message;
-      message << "datatools::services::service_manager::get: "
-              << "No service named '" << service_name_ << "' !";
-      throw std::logic_error(message.str());
-    }
-    service_entry& the_service_entry = found->second;
-    if (!(the_service_entry.service_status & service_entry::STATUS_INITIALIZED)) {
-      _initialize_service (the_service_entry);
-    }
-    return dynamic_cast<T&>(the_service_entry.service_handle.get());
-  }
+  T& get(const std::string& name);
 
   /**  Same as the mutable 'get' method
-   *   @param service_name_ The name of the service to be checked
+   *   @param name The name of the service to be checked
    *   @return a mutable reference to the service instance requested by name and type
    */
   template<class T>
-  T& grab(const std::string & service_name_) {
-    return get<T>(service_name_);
-  }
+  T& grab(const std::string& name);
 
-  /**  @param service_name_ The name of the service to be checked
+  /**  @param name The name of the service to be checked
    *   @return a const reference to the service instance requested by name and type
    */
   template<class T>
-  const T& get(const std::string& service_name_) const {
-    service_manager* sm = const_cast<service_manager*>(this);
-    return const_cast<T &>(sm->get<T>(service_name_));
-  }
+  const T& get(const std::string& name) const;
 
-  bool can_drop(const std::string& service_name_);
+  bool can_drop(const std::string& name);
 
-  void drop(const std::string& service_name_);
+  void drop(const std::string& name);
 
-  void load(const std::string& service_name_,
-            const std::string& service_id_,
-            const datatools::utils::properties& config_);
+  void load(const std::string& name,
+            const std::string& id,
+            const datatools::utils::properties& config);
 
-  void load(const datatools::utils::multi_properties& config_);
+  void load(const datatools::utils::multi_properties& config);
 
   const service_dict_type& get_services() const;
 
   service_dict_type& get_services();
 
-  void dump_services(std::ostream& out_ = std::clog,
-                     const std::string & title_  = "",
-                     const std::string & indent_ = "") const;
+  void dump_services(std::ostream& out = std::clog,
+                     const std::string& title  = "",
+                     const std::string& indent = "") const;
 
-
-  bool has_service_type(const std::string& service_id_) const;
-
-  template <class ServiceClass>
-  void register_service_type(const std::string& service_id_) {
-  _factory_register_.registration(service_id_, 
-                                  boost::factory<ServiceClass*>());
-  }
-
-  void unregister_service_type(const std::string & service_id_);
-
-
+  /// Smart print
+  virtual void tree_dump(std::ostream& out         = std::clog,
+                         const std::string& title  = "",
+                         const std::string& indent = "",
+                         bool inherit              = false) const;
  protected:
-  void _load_service(const std::string& service_name_,
-                     const std::string& service_id_,
-                     const datatools::utils::properties& service_config_);
+  void load_service(const std::string& name,
+                    const std::string& id,
+                    const datatools::utils::properties& config);
 
-  void _preload_global_dict();
+  void preload_global_dict();
 
-  void _create_service(service_entry& service_entry_);
+  void create_service(service_entry& entry);
 
-  void _initialize_service(service_entry& service_entry_);
+  void initialize_service(service_entry& entry);
 
-  void _reset_service(service_entry& service_entry_);
+  void reset_service(service_entry& entry);
 
 
  private:
   /// Set the factory preload flag
-  void _set_preload(bool preload_);
+  void set_preload(bool preload);
 
  private:
-  bool         _initialized_;
-  std::string  _name_;
-  std::string  _description_;
-  bool         _debug_;
-  bool         _preload_;
-  bool         _force_initialization_at_load_;
+  bool         initialized_;
+  std::string  name_;
+  std::string  description_;
+  bool         debug_;
+  bool         preload_;
+  bool         force_initialization_at_load_;
 
 // 2012-04-09 FM : support for datatools::factory system :
-  base_service::factory_register_type  _factory_register_;
-  service_dict_type                    _services_;
+  base_service::factory_register_type  factory_register_;
+  service_dict_type                    services_;
 };
+
+
+//----------------------------------------------------------------------
+// class service_manager template method implementations.
+// TODO : Refactor into -inl.h file
+
+template <class T>
+bool service_manager::is_a(const std::string& name) const {
+  service_dict_type::const_iterator found = services_.find(name);
+  if (found == services_.end()) {
+    std::ostringstream message;
+    message << "datatools::services::service_manager::is_a: No service named '" << name << "' !";
+    throw std::logic_error(message.str());
+  }
+
+  const std::type_info& ti = typeid(T);
+  const std::type_info& tf = typeid(found->second.service_handle.get());
+  return (ti == tf);
+}
+
+
+template<class T>
+T& service_manager::get(const std::string& name) {
+  service_dict_type::iterator found = services_.find(name);
+  if (found == services_.end()) {
+    std::ostringstream message;
+    message << "datatools::services::service_manager::get: "
+        << "No service named '" 
+        << name 
+        << "' !";
+    throw std::logic_error(message.str());
+  }
+  service_entry& entry = found->second;
+  if (!(entry.service_status & service_entry::STATUS_INITIALIZED)) {
+    this->initialize_service(entry);
+  }
+  return dynamic_cast<T&>(entry.service_handle.get());
+}
+
+
+template<class T>
+T& service_manager::grab(const std::string& name) {
+  return this->get<T>(name);
+}
+
+
+template<class T>
+const T& service_manager::get(const std::string& name) const {
+  service_manager* sm = const_cast<service_manager*>(this);
+  return const_cast<T&>(sm->get<T>(name));
+}
+
+
+template <class ServiceClass>
+void service_manager::register_service_type(const std::string& id) {
+  factory_register_.registration(id, boost::factory<ServiceClass*>());
+}
+
 
 }  // end of namespace service
 }  // end of namespace datatools
