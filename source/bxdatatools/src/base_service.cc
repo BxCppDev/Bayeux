@@ -43,43 +43,55 @@ DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(
     "datatools::service::base_service/__system__");
 
 
+// ctor:
+base_service::base_service(const std::string& a_service_name,
+                           const std::string& a_service_description,
+                           const std::string& a_service_version)
+    : name_(a_service_name),
+      description_(a_service_description),
+      version_(a_service_version) {}
+
+// Destructor :
+base_service::~base_service() {}
+
+
 const std::string& base_service::get_name() const {
-  return _name;
+  return name_;
 }
 
 
-void base_service::_set_name(const std::string& a_new_value) {
-  _name = a_new_value;
+void base_service::set_name(const std::string& a_new_value) {
+  name_ = a_new_value;
 }
 
 
 bool base_service::has_description() const {
-  return !_description.empty();
+  return !description_.empty();
 }
 
 
 const std::string& base_service::get_description() const {
-  return _description;
+  return description_;
 }
 
 
 void base_service::set_description(const std::string& a_description) {
-  _description = a_description;
+  description_ = a_description;
 }
 
 
-bool base_service::has_version () const {
-  return !_version.empty();
+bool base_service::has_version() const {
+  return !version_.empty();
 }
 
 
 const std::string& base_service::get_version() const {
-  return _version;
+  return version_;
 }
 
 
 void base_service::set_version(const std::string& a_version) {
-  _version = a_version;
+  version_ = a_version;
 }
 
 
@@ -88,28 +100,17 @@ void base_service::fetch_dependencies(
   a_dependency_list.clear();
 }
 
-// ctor:
-base_service::base_service(const std::string& a_service_name,
-                           const std::string& a_service_description,
-                           const std::string& a_service_version)
-    : _name(a_service_name),
-      _description(a_service_description),
-      _version(a_service_version) {}
-
-// Destructor :
-base_service::~base_service() {}
-
 
 int base_service::initialize_standalone(
-    const datatools::utils::properties & a_config) {
+    const datatools::utils::properties& a_config) {
   service_dict_type dummy;
   return this->initialize(a_config, dummy);
 }
 
 
 void base_service::tree_dump(std::ostream& a_out,
-                             const std::string & a_title,
-                             const std::string & a_indent,
+                             const std::string& a_title,
+                             const std::string& a_indent,
                              bool a_inherit) const {
   namespace du = datatools::utils;
   std::string indent;
@@ -119,15 +120,15 @@ void base_service::tree_dump(std::ostream& a_out,
 
   a_out << indent << du::i_tree_dumpable::tag
         << "Service name        : '" 
-        << _name << "'" << std::endl;
+        << name_ << "'" << std::endl;
 
   a_out << indent << du::i_tree_dumpable::tag
         << "Service description : '" 
-        << _description << "'" << std::endl;
+        << description_ << "'" << std::endl;
 
   a_out << indent << du::i_tree_dumpable::tag
         << "Service version     : '" 
-        << _version << "'" << std::endl;
+        << version_ << "'" << std::endl;
 
   a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)
         << "Service initialized : " 

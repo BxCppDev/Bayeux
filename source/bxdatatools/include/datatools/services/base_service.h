@@ -89,7 +89,7 @@ class base_service : public datatools::utils::i_tree_dumpable {
   virtual int reset() = 0;
 
  protected:
-  void _set_name(const std::string& a_name);
+  void set_name(const std::string& a_name);
 
   virtual void tree_dump(std::ostream& a_out = std::clog,
                          const std::string & a_title = "",
@@ -97,9 +97,9 @@ class base_service : public datatools::utils::i_tree_dumpable {
                          bool a_inherit = false) const;
 
  protected:
-  std::string _name;         //!< The name of the service
-  std::string _description;  //!< The description of the service
-  std::string _version;      //!< The version of the service
+  std::string name_;         //!< The name of the service
+  std::string description_;  //!< The description of the service
+  std::string version_;      //!< The version of the service
 
   // Factory stuff :
   DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_service);
