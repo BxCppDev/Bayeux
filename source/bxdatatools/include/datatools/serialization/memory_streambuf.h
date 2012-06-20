@@ -89,7 +89,7 @@ class vector_output_buffer : public std::streambuf {
                        size_t max_capacity = 0) {
     max_capacity_ = buffer_.max_size();
     this->_init(capacity);
-    this->_set_increment(increment);
+    this->set_increment(increment);
     this->set_max_capacity(max_capacity);
   }
 
@@ -114,10 +114,10 @@ class vector_output_buffer : public std::streambuf {
   void reset(size_t capacity = 1000, 
              size_t increment = 1000,
              size_t max_capacity = 0) {
-    max_capacity_ = _buffer_.max_size();
+    max_capacity_ = buffer_.max_size();
     buffer_.clear();
     this->_init(capacity);
-    this->_set_increment(increment);
+    this->set_increment(increment);
     this->set_max_capacity(max_capacity);
   }
 
@@ -136,7 +136,7 @@ class vector_output_buffer : public std::streambuf {
 
 
  protected:
-  void _init(size_t capacity) {
+  void init(size_t capacity) {
     size_t min_capacity = MIN_CAPACITY;
     size_t capacity = std::max(min_capacity, capacity);
     buffer_.reserve(capacity);
@@ -185,7 +185,6 @@ class vector_output_buffer : public std::streambuf {
 
 
   int overflow(int c) {
-    using namespace std;
     const char conv = std::char_traits<char>::to_char_type(c);
     const bool __testeof = std::char_traits<char>::eq_int_type(c, std::char_traits<char>::eof());
 

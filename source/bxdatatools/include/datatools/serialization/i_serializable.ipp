@@ -16,7 +16,8 @@ namespace datatools {
 namespace serialization {
     
 template<class Archive>
-void i_serializable::serialize(Archive& a_ar, const unsigned int a_file_version) {}
+void i_serializable::serialize(Archive& a_ar, 
+                               const unsigned int a_file_version) {}
 
 } // end of namespace serialization 
 } // end of namespace datatools 
