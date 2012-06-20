@@ -1,6 +1,7 @@
 // -*- mode: c++; -*- 
 /* factory.cc
  */
+// Ourselves
 #include <datatools/factory/factory.h>
 
 // Standard Library
