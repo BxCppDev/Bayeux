@@ -17,13 +17,17 @@
 #ifndef DATATOOLS_EVENT_EVENT_ID_H_
 #define DATATOOLS_EVENT_EVENT_ID_H_
 
+// Standard Library
 #include <string>
 #include <sstream>
 #include <iostream>
 #include <stdexcept>
 
+// Third Party
+// - Boost
 #include <boost/cstdint.hpp>
 
+// Datatools
 #include <datatools/serialization/i_serializable.h>
 #include <datatools/utils/i_tree_dump.h>
 #include <datatools/utils/i_clear.h>
@@ -178,7 +182,6 @@ class event_id : public datatools::serialization::i_serializable,
 */
 class event_id_equal_predicate : public std::unary_function<event_id, bool> {
  public:
-
   //! Constructor 
   /** @param id_ the reference event ID.
   */

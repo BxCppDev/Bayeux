@@ -1,8 +1,14 @@
 // -*- mode: c++; -*- 
 /* event_id.cc
  */
-
+// Ourselves
 #include <datatools/event/event_id.h>
+
+// Standard Library
+
+// Third Party
+
+// Datatools
 
 namespace datatools {
 namespace event {
@@ -170,7 +176,6 @@ void event_id::tree_dump(std::ostream& a_out,
 
 void event_id::dump() const {
   this->tree_dump(std::clog);
-  return;
 }
 
 

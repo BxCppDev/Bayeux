@@ -3,9 +3,16 @@
 #ifndef DATATOOLS_EVENT_EVENT_ID_IPP_
 #define DATATOOLS_EVENT_EVENT_ID_IPP_
 
+// Ourselves
 #include <datatools/event/event_id.h>
+
+// Standard Library
+
+// Third Party
+// - Boost
 #include <boost/serialization/nvp.hpp>
 
+// Datatools
 #include <datatools/serialization/utils.h>
 	 
 namespace datatools {
