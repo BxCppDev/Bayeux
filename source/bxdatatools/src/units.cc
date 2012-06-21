@@ -399,7 +399,7 @@ namespace datatools {
       if (! iss)
         {
           ostringstream message;
-          message << "get_value_with_unit: Format error while reading a double value !";
+          message << "datatools::utils::units::find_value_with_unit: Format error while reading a double value !";
           return false;
         }
       iss >> ws;
@@ -432,7 +432,7 @@ namespace datatools {
       if (! find_value_with_unit (a_word, unit_value, unit_label))
         {
           ostringstream message;
-          message << "get_value_with_unit: Cannot parse a value with its units !";
+          message << "datatools::utils::units::get_value_with_unit: Cannot parse a value with its units !";
           throw logic_error (message.str ());
         }
       return unit_value;
