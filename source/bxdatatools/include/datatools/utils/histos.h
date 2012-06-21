@@ -16,93 +16,90 @@
  * History: 
  * 
  */
-
-
-#ifndef __datatools__utils__histos_h
-#define __datatools__utils__histos_h 1
-
+#ifndef DATATOOLS_UTILS_HISTOS_H_
+#define DATATOOLS_UTILS_HISTOS_H_
+// Standard Library
 #include <iostream>
 #include <vector>
 
+// Third Party
+// - A
+
+// This Project
 
 namespace datatools {
-  namespace utils {
+namespace utils {
 
-    class histos
-    {
+class histos {
+ public:
+  // ctor
+  histos();
+  explicit histos(bool );
 
-    public:
-      
-      // ctor
-      histos();
-      histos ( bool );
+  // dtor
+  virtual ~histos();
 
-      // dtor
-      virtual ~histos();
+  // get
+  bool   get_debug() const;
+  double get_x_min() const;
+  double get_x_max() const;
+  int    get_x_step() const;
+  double get_y_min() const;
+  double get_y_max() const;
+  int    get_y_step() const;
 
-      // get
-      bool   get_debug ();
-      double get_x_min ();
-      double get_x_max ();
-      int    get_x_step();
-      double get_y_min ();
-      double get_y_max ();
-      int    get_y_step();
+  // set
+  void set_debug(bool status);
+  void set_x_min(double x);
+  void set_x_max(double x);
+  void set_x_step(int steps);
+  void set_y_min(double y);
+  void set_y_max(double y);
+  void set_y_step(int steps);
 
-      // set
-      void set_debug  ( bool );
-      void set_x_min  ( double );
-      void set_x_max  ( double );
-      void set_x_step ( int );
-      void set_y_min  ( double );
-      void set_y_max  ( double );
-      void set_y_step ( int );
+  void set_x_range(double from, double to);
+  void set_y_range(double from, double to);
+  void set_x_range(double from, double to, int steps);
+  void set_y_range(double from, double to, int steps);
 
-      void set_x_range ( double, double );
-      void set_y_range ( double, double );
-      void set_x_range ( double, double, int );
-      void set_y_range ( double, double, int );
+  void init();
+  void build(double x, double y, double weight = 1.);
 
-      void init();
-      void build ( double, double, double weight = 1. );
+  void x_normalize();
+  void y_normalize();
 
-      void x_normalize();
-      void y_normalize();
+  void do_ratio(histos& other, double n = 1., double m = 1.);
+  void do_ratio_sqrt(histos& other, double n = 1., double m = 1.);
+  void compute_significance(histos& other, double n = 1., double m = 1.);
 
-      void do_ratio( histos & histo_3d_2_,
-		     double n_ = 1., double m_ = 1. );
-      void do_ratio_sqrt ( histos & histo_3d_2_,
-			   double n_ = 1., double m_ = 1. );
-      void compute_significance ( histos & histo_3d_2_,
-				  double n_ = 1., double m_ = 1. );
-      
-      void print  ( std::ostream & );
-      void help   ( std::ostream &, std::string file_ = "" );
-      void print2 ( std::ostream & );
-      void help2  ( std::ostream &, std::string file_ = "" );
+  void print(std::ostream& out);
+  void help(std::ostream& out, std::string file = "");
+  void print2(std::ostream& out);
+  void help2(std::ostream& out, std::string file = "" );
 
-      void get_x_values ( std::vector<double> & );
-      void get_y_values ( std::vector<double> & );
-      void get_z_values ( std::vector<double> & );
+  void get_x_values(std::vector<double>& output);
+  void get_y_values(std::vector<double>& output);
+  void get_z_values(std::vector<double>& output);
 
-      double get_z ( int i_, int j_ );
-      void   set_z ( int i_, int j_, double val_ );
+  double get_z(int i, int j);
+  void set_z(int i, int j, double val);
 
 
-    private:
+ private:
+  bool debug_;
+  double x_min_; 
+  double x_max_;
+  int x_step_;
+  double y_min_; 
+  double y_max_;
+  int y_step_;
 
-      bool                               _debug_;
-      double                             _x_min_, _x_max_;
-      int                                _x_step_;
-      double                             _y_min_, _y_max_;
-      int                                _y_step_;
-      std::vector< std::vector<double> > _histo_3d_;
+  // Need a typedef!!!
+  std::vector<std::vector<double> > histo_3d_;
+};
 
-    };
-
-  } // end of namespace utils
+} // end of namespace utils
 } // end of namespace datatools
 
-#endif // __datatools__utils__histos_h
+#endif // DATATOOLS_UTILS_HISTOS_H_
 
-// end of histos.h
