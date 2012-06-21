@@ -48,6 +48,15 @@ int main (int argc_, char ** argv_)
           iarg++;
       }
     
+      clog << "Known units : " << endl;
+      const std::vector<std::string> & ulreg 
+        = datatools::utils::units::get_unit_labels_registry ();
+      for (int i = 0; i < ulreg.size (); i++)
+        {
+          clog << "Unit label = '" << ulreg[i] << "'" << endl;
+        }
+      clog << endl;
+
       string word = "0.1 mm";
       clog << "Parsing expression : '" << word << "'" << endl;
 

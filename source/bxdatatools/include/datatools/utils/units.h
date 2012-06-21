@@ -19,6 +19,7 @@
 #define __datatools__utils__units_h 1
 
 #include <string>
+#include <vector>
 
 namespace datatools {
 
@@ -117,6 +118,8 @@ namespace datatools {
        *   \endcode
        */
       static double get_unit (const std::string & a_unit_str);
+
+      static const std::vector<std::string> & get_unit_labels_registry ();
 
       //! Find the CLHEP unspecified unit and the associated unit label from a string.
       /**

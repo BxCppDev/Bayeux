@@ -7,6 +7,7 @@
 
 #include <datatools/utils/units.h>
 #include <datatools/utils/clhep_units.h>
+#include <boost/scoped_ptr.hpp>
 
 #include <cstdlib>
 #include <cmath>
@@ -14,7 +15,6 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-#include <vector>
 #include <list>
 #include <limits>
 
@@ -28,7 +28,7 @@ namespace datatools {
     {
       ostringstream message;
       message << "Invalid " << a_type << " unit :'" << a_unit_str << "' !";
-      throw runtime_error (message.str ());
+      throw logic_error (message.str ());
     }
   
     double units::get_length_unit_from (const string & a_word)
@@ -312,18 +312,14 @@ namespace datatools {
       }
       return numeric_limits<double>::quiet_NaN ();
     }
- 
-    bool units::find_unit (const string & a_unit_str, 
-                           double & a_unit_value, 
-                           string & a_unit_label)
+
+    const std::vector<std::string> & units::get_unit_labels_registry ()
     {
-      //clog << endl << "DEVEL: units::find_unit: Entering for '" << a_unit_str << "'" <<  endl;
-      a_unit_label = "";
-      a_unit_value = numeric_limits<double>::quiet_NaN ();
-     
-      static vector<string> ulabels;
-      if (ulabels.empty ())
+      static boost::scoped_ptr<std::vector<std::string> > ulabels_ptr (0);
+      if (ulabels_ptr.get () == 0)
         {
+          ulabels_ptr.reset (new std::vector<std::string>);
+          std::vector<std::string> & ulabels = *ulabels_ptr.get ();
           ulabels.reserve (20);
           ulabels.push_back ("length");
           ulabels.push_back ("surface");
@@ -341,8 +337,20 @@ namespace datatools {
           ulabels.push_back ("volume_activity");
           ulabels.push_back ("surface_activity");
           ulabels.push_back ("mass_activity");
-          ulabels.push_back ("frequency");
+          ulabels.push_back ("frequency");          
         }
+      return *ulabels_ptr.get ();
+    }
+ 
+    bool units::find_unit (const string & a_unit_str, 
+                           double & a_unit_value, 
+                           string & a_unit_label)
+    {
+      //clog << endl << "DEVEL: units::find_unit: Entering for '" << a_unit_str << "'" <<  endl;
+      a_unit_label = "";
+      a_unit_value = numeric_limits<double>::quiet_NaN ();
+     
+      const vector<string> & ulabels = get_unit_labels_registry ();
       double val = numeric_limits<double>::quiet_NaN ();
       int count = -1;
       for (vector<string>::const_iterator i = ulabels.begin ();
