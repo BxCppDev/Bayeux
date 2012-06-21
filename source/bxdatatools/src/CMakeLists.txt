@@ -89,7 +89,7 @@ add_library(datatools SHARED
 # Link dynamic library :
 target_link_libraries(datatools
   datatools_sys 
-  #${CLHEP_LIBRARIES}
+  ${CLHEP_LIBRARIES}
   ${Boost_SERIALIZATION_LIBRARY}
   ${Boost_IOSTREAMS_LIBRARY}
   ${Boost_FILESYSTEM_LIBRARY}
