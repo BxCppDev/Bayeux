@@ -37,8 +37,13 @@ get_filename_component(_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
 #-----------------------------------------------------------------------
 # Include the file listing all the imported targets to make them available
 # This is installed in the same location as us...
-#
-include("${_thisdir}/datatools-libraries.cmake")
+# Protect it with an in-memory variable so that we don't include
+# it twice should multiple calls to find_package be made
+if(NOT datatools_LIBDEPS_LOADED)
+  include("${_thisdir}/datatools-libraries.cmake")
+  set(datatools_LIBDEPS_LOADED 1)
+endif()
+
 
 #-----------------------------------------------------------------------
 # Set variables pointing to used third party headers and locations.
