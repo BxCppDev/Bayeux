@@ -1,40 +1,27 @@
 /* datatools/utils/i_clear.h */
 
 //! \file datatools/utils/i_clear.h
+#ifndef DATATOOLS_UTILS_I_CLEAR_H_
+#define DATATOOLS_UTILS_I_CLEAR_H_
 
-#ifndef __datatools__utils__i_clear_h
-#define __datatools__utils__i_clear_h 1
 
 namespace datatools {
+namespace utils {
 
-  namespace utils {
+//! \brief A pure abstract class (interface) for inherited clearable classes.
+class i_clear {
+ public:
+  //virtual ~i_clear() {}
 
-    //! \brief A pure abstract class (interface) for inherited clearable classes.
-    class i_clear
-    {
-    public:
-  
-      //virtual ~i_clear () {}
+  /**
+   * A pure virtual member.
+   * Clear (reset) the object's internals (typically empty a container).
+   */
+  virtual void clear() = 0;
+};
 
-     /**
-      * A pure virtual member.
-      * Clear (reset) the object's internals (typically empty a container).
-      */
-      virtual void clear () = 0;
-
-    };
-
-  } // end of namespace utils 
-
+} // end of namespace utils 
 } // end of namespace datatools 
 
-#endif // __datatools__utils__i_clear_h
+#endif // DATATOOLS_UTILS_I_CLEAR_H_
 
-/* end of datatools/utils/i_clear.h */
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/

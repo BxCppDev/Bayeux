@@ -1,53 +1,43 @@
 /* i_predicate.h */
-
-#ifndef __datatools__utils__i_predicate_h
-#define __datatools__utils__i_predicate_h 1
-
+#ifndef DATATOOLS_UTILS_I_PREDICATE_H_
+#define DATATOOLS_UTILS_I_PREDICATE_H_
+// Standard Library
 #include<functional>
 
+// Third Party
+// - A
+
+// This Project
+
+
 namespace datatools {
+namespace utils {
+//! \file datatools/utils/i_predicate.h
 
-  namespace utils {
-    //! \file datatools/utils/i_predicate.h
+template <class T>
+class i_predicate : public std::unary_function<const T&, bool> {
+ public:
+  virtual bool operator()(const T& obj) const = 0;
+};
 
-    template <class T>
-    class i_predicate : public std::unary_function<const T &, bool>
-    {
-    public:
- 
-      virtual bool operator () (const T & a_obj) const = 0;
-    };
 
-    template<class Mother, class Daughter>
-    class mother_to_daughter_predicate : public i_predicate<Daughter>
-    {
-      i_predicate<Mother> * _mother_predicate_;
-
-    public:
-
-      mother_to_daughter_predicate (i_predicate<Mother> & a_mother_predicate)
-  {
-    _mother_predicate_ = &a_mother_predicate;
-    return;
+template<class Mother, class Daughter>
+class mother_to_daughter_predicate : public i_predicate<Daughter> {
+ public:
+  mother_to_daughter_predicate(i_predicate<Mother>& a_mother_predicate) {
+    mother_predicate_ = &a_mother_predicate;
   }
 
-      virtual bool operator () (const Daughter & a_obj) const
-      {
-  return (*_mother_predicate_) (a_obj);
-      }
-    };
+  virtual bool operator()(const Daughter& obj) const {
+    return (*mother_predicate_)(obj);
+  }
 
-  } // end of namespace utils 
+ private:
+  i_predicate<Mother> *mother_predicate_;
+};
 
+} // end of namespace utils 
 } // end of namespace datatools 
 
-#endif // __datatools__utils__i_predicate_h
+#endif // DATATOOLS_UTILS_I_PREDICATE_H_
 
-/* end of i_predicate.h */
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/

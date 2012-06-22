@@ -1,67 +1,69 @@
 /* i_tree_dump.h */
-
-#ifndef __datatools__utils__i_tree_dump_h
-#define __datatools__utils__i_tree_dump_h 1
-
+#ifndef DATATOOLS_UTILS_I_TREE_DUMP_H_
+#define DATATOOLS_UTILS_I_TREE_DUMP_H_
+// Standard Library
 #include <iostream>
 #include <string>
 
+// Third Party
+// - A
+
+// This Project
+
 namespace datatools {
+namespace utils {
 
-  namespace utils {
+class i_tree_dumpable {
+ public:
+  static const std::string TAG;
+  static const std::string LAST_TAG;
+  static const std::string SKIP_TAG;
+  static const std::string LAST_SKIP_TAG;
 
-    class i_tree_dumpable
-    {
-    public:
+ public:
+  static std::ostream& last_skip_tag(std::ostream& out);
 
-      static const std::string TAG;
-      static const std::string LAST_TAG;
-      static const std::string SKIP_TAG;
-      static const std::string LAST_SKIP_TAG;
-  
-      static std::ostream & last_skip_tag (std::ostream & a_out);
-  
-      static std::ostream & skip_tag (std::ostream & a_out);
+  static std::ostream& skip_tag(std::ostream& out);
 
-      static std::ostream & last_tag (std::ostream & a_out);
+  static std::ostream& last_tag(std::ostream& out);
 
-      static std::ostream & tag (std::ostream & a_out);
+  static std::ostream& tag(std::ostream& out);
 
-      class inherit_tag 
-      {
-	bool inherit_;
 
-      public:
-    
-	inherit_tag (bool a_inherit); 
+  /// Main interface method for smart dump
+  virtual void tree_dump (std::ostream& out = std::clog, 
+                          const std::string& title  = "",
+                          const std::string& indent = "",
+                          bool inherit = false) const = 0;
 
-	friend std::ostream & operator<< (std::ostream & a_out, 
-					  const inherit_tag & a_last_tag);
-      };
+  /// Inner class for ?
+  class inherit_tag {
+   public:
+    inherit_tag(bool inherit); 
 
-      class inherit_skip_tag 
-      {
-	bool inherit_;
+    friend std::ostream & operator<<(std::ostream& out, 
+                                     const inherit_tag& last_tag);
 
-      public:
-    
-	inherit_skip_tag (bool a_inherit); 
+   private:
+     bool inherit_;
+ };
 
-	friend std::ostream & operator<< (std::ostream & a_out, 
-					  const inherit_skip_tag & a_last_tag);
-      };
 
-      /// Main interface method for smart dump
-      virtual void tree_dump (std::ostream & a_out         = std::clog, 
-			      const std::string & a_title  = "",
-			      const std::string & a_indent = "",
-			      bool a_inherit               = false) const = 0;
-    };
+  /// Inner class for ?
+  class inherit_skip_tag {
+   public:
+    inherit_skip_tag(bool inherit); 
 
-  } // end of namespace utils 
+    friend std::ostream& operator<<(std::ostream& out, 
+                                    const inherit_skip_tag& last_tag);
+   private:
+    bool inherit_;
+  };
 
+};
+
+} // end of namespace utils 
 } // end of namespace datatools 
 
-#endif // __datatools__utils__i_tree_dump_h
+#endif // DATATOOLS_UTILS_I_TREE_DUMP_H_
 
-/* end of i_tree_dump.h */

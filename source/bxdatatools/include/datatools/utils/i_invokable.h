@@ -1,37 +1,27 @@
 /* datatools/utils/i_invokable.h */
-
-#ifndef __datatools__utils__i_invokable_h
-#define __datatools__utils__i_invokable_h 1
-
-//#include <datatools/utils/command.h>
-
 //! \file datatools/utils/i_invokable.h
+#ifndef DATATOOLS_UTILS_I_INVOKABLE_H_
+#define DATATOOLS_UTILS_I_INVOKABLE_H_
 
 namespace datatools {
+namespace utils {
 
-  namespace utils {
+class command;
 
-    class command;
+//! \brief An abstract class for inherited invokable classes.
+class i_invokable {
+ public:
+  virtual ~i_invokable() {}
 
-    //! \brief An abstract class for inherited invokable classes.
-    class i_invokable
-    {
-    public:
- 
-      virtual ~i_invokable () {}
+  static int invoke(i_invokable&, datatools::utils::command&);
 
-      static int invoke (i_invokable &, datatools::utils::command &);
+  virtual void do_invoke(datatools::utils::command&);
 
-      virtual void do_invoke (datatools::utils::command &);
+  int invoke(datatools::utils::command&);
+};
 
-      int invoke (datatools::utils::command &);
-
-    };
-
-  } // end of namespace utils 
-
+} // end of namespace utils 
 } // end of namespace datatools 
 
-#endif // __datatools__utils__i_invokable_h
+#endif // DATATOOLS_UTILS_I_INVOKABLE_H_
 
-/* end of i_invokable.h */
