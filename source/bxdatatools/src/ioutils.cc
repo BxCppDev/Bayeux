@@ -1,332 +1,244 @@
 // -*- mode: c++; -*-
 // ioutils.cc
-
+// Ourselves
 #include <datatools/utils/ioutils.h>
 
+// Standard Library
 #include <sstream>
 
-using namespace std;
+// Third Party
+// - A
+
+// This Project
 
 namespace datatools {
+namespace utils {
 
-  namespace utils {
+bool io::g_colored_stream_ = false;
+io   io::g_io_;
 
-    bool io::g_colored_stream_ = false;
-    io   io::g_io_;
+io::indenter io::indent;
 
-#ifdef USING_NCURSES
-    SCREEN * io::g_screen_ = 0;
-#endif // USING_NCURSES
 
-    io::indenter io::indent;
- 
-    size_t io::indenter::get_width () const
-    {
-      return _width_;
-    }
+size_t io::indenter::get_width() const {
+  return width_;
+}
 
-    size_t io::indenter::get_level () const
-    {
-      return _level_;
-    }
 
-    // ctor:
-    io::indenter::indenter ()
-    {
-      _width_ = 4;
-      _level_ = 0;
-    }
+size_t io::indenter::get_level() const {
+  return level_;
+}
 
-    io::indenter & io::indenter::operator () (size_t l_)
-    {
-      this->_level_ = l_;
-      return *this;
-    }
+// ctor:
+io::indenter::indenter() {
+  width_ = 4;
+  level_ = 0;
+}
 
-    ostream & io::indenter::operator () (ostream & out_) const
-    {
-      out_ << *this;
-      return out_;
-    }
 
-    io::indenter & io::indenter::operator++ (int)
-    {
-      _level_++;
-      return *this;
-    }
+io::indenter& io::indenter::operator()(size_t l) {
+  this->level_ = l;
+  return *this;
+}
 
-    io::indenter & io::indenter::operator-- (int)
-    {
-      if (_level_ > 0) _level_--;
-      return *this;
-    }
 
-    ostream & operator<< (ostream & out_, const io::indenter & indent_)
-    {
-      for (int i = 0; i < (int) (indent_._width_ * indent_._level_); i++)
-  {
-    out_ << ' ';
+std::ostream& io::indenter::operator()(std::ostream& out) const {
+  out << *this;
+  return out;
+}
+
+
+io::indenter& io::indenter::operator++(int) {
+  level_++;
+  return *this;
+}
+
+
+io::indenter & io::indenter::operator--(int) {
+  if (level_ > 0) level_--;
+  return *this;
+}
+
+
+std::ostream& operator<<(std::ostream& out, const io::indenter& indent) {
+  for (size_t i = 0; i < (indent.width_ * indent.level_); ++i) {
+    out << ' ';
   }
-      return out_;
-    }
+  return out;
+}
 
-    ostream & io::ostream_width (ostream & os_, const int & n_)
-    {
-      os_.width ((int) n_);
-      return os_;
-    }
 
-    ostream_manipulator<int> io::width (const int & n_)
-    {
-      return ostream_manipulator<int> (&io::ostream_width, n_);
-    }
+std::ostream& io::ostream_width(std::ostream& os, const int& n) {
+  os.width((int)n);
+  return os;
+}
 
-    ostream & io::ostream_precision (ostream & os_, const int & n_)
-    {
-      os_.precision ((int) n_);
-      return os_;
-    }
 
-    ostream_manipulator<int> io::precision( const int & n_ )
-    {
-      return ostream_manipulator<int> (&io::ostream_precision, n_);
-    }
+ostream_manipulator<int> io::width(const int& n) {
+  return ostream_manipulator<int>(&io::ostream_width, n);
+}
 
-    bool io::is_colored ()
-    {
-      return g_colored_stream_;
-    }
 
-#ifdef USING_NCURSES
-    void io::focus ()
-    {
-      if (g_screen_) set_term (g_screen_);
-    }
-#endif // USING_NCURSES
+std::ostream& io::ostream_precision(std::ostream& os, const int& n) {
+  os.precision((int)n);
+  return os;
+}
 
-    void io::set_colored (bool c_)
-    {
-      if (io::g_colored_stream_ && c_) return;
-      if (! io::g_colored_stream_ && ! c_) return;
-      if (c_)
-  {
-#ifdef USING_NCURSES
-    clog << "io::set_colored: Open curses stuff." << endl;
-    savetty ();
-    string term  = "vt100;";
-    char * term_env = getenv ("TERM");
-    if (term_env != 0)
-      {
-        term = term_env;
-      }
-    g_screen_ = newterm (term.c_str (), stdout, stdin);
-    set_term (g_screen_);
-    initscr ();
-    nocbreak ();
-    echo ();
-    nonl ();
-    intrflush (stdscr, FALSE);
-#endif // USING_NCURSES
+
+ostream_manipulator<int> io::precision(const int& n) {
+  return ostream_manipulator<int>(&io::ostream_precision, n);
+}
+
+
+bool io::is_colored() {
+  return g_colored_stream_;
+}
+
+
+void io::set_colored(bool c) {
+  if (io::g_colored_stream_ && c) return;
+  if (!io::g_colored_stream_ && !c) return;
+  if (c) {
     io::g_colored_stream_ = true;
-  }
-      else
-  {
-#ifdef USING_NCURSES
-    if (g_screen_)
-      {
-        set_term (g_screen_);
-        endwin ();
-        delscreen (g_screen_);
-        g_screen_ = 0;
-        resetty ();
-        clog << "io::set_colored: Close curses stuff." << endl;
-      }
-#endif // USING_NCURSES
+  } else {
     io::g_colored_stream_ = false;
   }
-      return;
-    }
+}
 
-    ostream & io::normal (ostream & out_)
-    {
-      if (io::is_colored ())
-  {
-#ifdef USING_NCURSES
-    io::focus ();
-    attrset (A_NORMAL);
-#else
-#endif // USING_NCURSES
+std::ostream& io::normal(std::ostream& out) {
+  if (io::is_colored()) {
   }
-      return out_;
-    }
+  return out;
+}
 
-    ostream & io::reverse (ostream & out_)
-    {
-      if (io::is_colored ())
-  {
-#ifdef USING_NCURSES
-    io::focus ();
-    attrset (A_REVERSE);
-#else
-#endif // USING_NCURSES
+
+std::ostream& io::reverse(std::ostream& out) {
+  if (io::is_colored()) {
   }
-      return out_;
-    }
+  return out;
+}
 
-    ostream & io::bold (ostream & out_)
-    {
-      if (io::is_colored ())
-  {
-#ifdef USING_NCURSES
-    io::focus ();
-    attrset (A_BOLD);
-#endif // USING_NCURSES
+
+std::ostream& io::bold(std::ostream& out) {
+  if (io::is_colored()) {
   }
-      return out_;
-    }
+  return out;
+}
 
-    ostream & io::underline (ostream & out_)
-    {
-      if (io::is_colored ())
-  {
-#ifdef USING_NCURSES
-    io::focus ();
-    attrset (A_UNDERLINE);
-#endif // USING_NCURSES
+
+std::ostream& io::underline(std::ostream& out) {
+  if (io::is_colored()) {
   }
-      return out_;
-    }
+  return out;
+}
 
-    ostream & io::red (ostream & out_)
-    {
-      if (io::is_colored ())
-  {
-#ifdef USING_NCURSES
-    io::focus ();
-#endif // USING_NCURSES
+std::ostream& io::red(std::ostream& out) {
+  if (io::is_colored()) {
   }
-      return out_;
-    }
+  return out;
+}
 
-    ostream & io::green (ostream & out_)
-    {
-      if (io::is_colored ())
-  {
-#ifdef USING_NCURSES
-    io::focus ();
-#endif // USING_NCURSES
+
+std::ostream& io::green(std::ostream& out) {
+  if (io::is_colored()) {
   }
-      return out_;
-    }
+  return out;
+}
 
-    ostream & io::debug (ostream & out_)
-    {
-      out_ << "DEBUG: ";
-      return out_;
-    }
 
-    ostream & io::devel (ostream & out_)
-    {
-      out_ << "DEVEL: ";
-      return out_;
-    }
+std::ostream& io::debug(std::ostream& out) {
+  out << "DEBUG: ";
+  return out;
+}
 
-    ostream & io::notice (ostream & out_)
-    {
-      out_ << "NOTICE: ";
-      return out_;
-    }
 
-    ostream & io::warning (ostream & out_)
-    {
-      out_ << "WARNING: ";
-      return out_;
-    }
+std::ostream& io::devel(std::ostream& out) {
+  out << "DEVEL: ";
+  return out;
+}
 
-    ostream & io::error (ostream & out_)
-    {
-      out_ << "ERROR: ";
-      return out_;
-    }
 
-    ostream & io::verbose (ostream & out_)
-    {
-      out_ << "VERBOSE: ";
-      return out_;
-    }
+std::ostream& io::notice(std::ostream& out) {
+  out << "NOTICE: ";
+  return out;
+}
 
-    ostream & io::tab (ostream & out_)
-    {
-      out_ << '\t';
-      return out_;
-    }
 
-    ostream & io::vtab (ostream & out_)
-    {
-      out_ << '\v';
-      return out_;
-    }
+std::ostream& io::warning(std::ostream& out) {
+  out << "WARNING: ";
+  return out;
+}
 
-    ostream & io::page_break (ostream & out_)
-    {
-      out_ << '\f';
-      return out_;
-    }
+std::ostream& io::error(std::ostream& out) {
+  out << "ERROR: ";
+  return out;
+}
 
-    ostream & io::left (ostream & out_)
-    {
-      out_.setf (ios::left, ios::adjustfield);
-      return out_;
-    }
 
-    ostream & io::right (ostream & out_)
-    {
-      out_.setf (ios::right, ios::adjustfield);
-      return out_;
-    }
+std::ostream& io::verbose(std::ostream& out) {
+  out << "VERBOSE: ";
+  return out;
+}
 
-    ostream & io::internal (ostream & out_)
-    {
-      out_.setf (ios::internal, ios::adjustfield);
-      return out_;
-    }
 
-    ostream & io::showbase (ostream & out_)
-    {
-      out_.setf (ios::showbase);
-      return out_;
-    }
+std::ostream& io::tab(std::ostream& out) {
+  out << '\t';
+  return out;
+}
 
-    string io::to_binary (const uint32_t & val_, bool show_all_)
-    {
-      ostringstream oss;
-      size_t nbits = sizeof (val_) * 8;
-      //clog << "DEVEL: io::to_binary: value=" << val_ << endl;
-      //clog << "DEVEL: io::to_binary: nbits=" << nbits << endl;
-      oss << '(';
-      bool start = false;
-      for (int i = (nbits - 1); i >= 0; i--)
-        {
-          bool abit;
-          abit = (val_ >> i) & 0x1;
-          //clog << "DEVEL: io::to_binary: bit[" << i << "]=" << abit << endl;
-          if (! start & abit) start = true;
-          if (! show_all_ && ! abit && ! start) continue;
-          oss << abit;
-        }
-      oss << ')';
-      return oss.str ();
-    }
 
-  } // namespace utils
+std::ostream& io::vtab(std::ostream& out) {
+  out << '\v';
+  return out;
+}
 
+
+std::ostream& io::page_break(std::ostream& out) {
+  out << '\f';
+  return out;
+}
+
+
+std::ostream& io::left(std::ostream& out) {
+  out.setf(std::ios::left, std::ios::adjustfield);
+  return out;
+}
+
+
+std::ostream& io::right(std::ostream& out) {
+  out.setf(std::ios::right, std::ios::adjustfield);
+  return out;
+}
+
+
+std::ostream& io::internal(std::ostream& out) {
+  out.setf(std::ios::internal, std::ios::adjustfield);
+  return out;
+}
+
+
+std::ostream& io::showbase(std::ostream& out) {
+  out.setf(std::ios::showbase);
+  return out;
+}
+
+
+std::string io::to_binary(const uint32_t& val, bool show_all) {
+  std::ostringstream oss;
+  size_t nbits = sizeof(val) * 8;
+  oss << '(';
+  bool start = false;
+  for (int i = (nbits - 1); i >= 0; i--) {
+    bool abit;
+    abit = (val >> i) & 0x1;
+    if (!start & abit) start = true;
+    if (!show_all && !abit && !start) continue;
+    oss << abit;
+  }
+  oss << ')';
+  return oss.str();
+}
+
+} // namespace utils
 } // namespace datatools
 
-// end of ioutils.cc
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
