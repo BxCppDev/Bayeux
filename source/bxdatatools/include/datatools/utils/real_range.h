@@ -30,134 +30,115 @@
  * History: 
  *  
  */
-
+#ifndef DATATOOLS_UTILS_REAL_RANGE_H_
+#define DATATOOLS_UTILS_REAL_RANGE_H_
+// Standard Library
 #include <iostream>
 #include <string>
 #include <set>
 
-#include <boost/cstdint.hpp>
+// Third Party
+// - A
 
+// This Project
 #include <datatools/utils/range_tools.h>
 
-// using namespace   std;
 
 namespace datatools {
+namespace utils {
 
-  namespace utils {
+class real_range {
+ public:
+  typedef double value_type;
+  static const double DEFAULT_EPSILON;
 
-    class real_range
-    {
-    public:
+ public:
+  // Ctor:
+  real_range();
 
-      static const double DEFAULT_EPSILON;
+  // Ctor:
+  real_range(value_type from, value_type to, 
+             int from_policy = range::included, 
+             int to_policy = range::included);
 
-      typedef double value_type;
+  bool is_valid() const;
 
-      bool is_valid () const;
- 
-      void invalidate ();
+  void invalidate();
 
-      void reset_lower ();
- 
-      void reset_upper ();
- 
-      void reset ();
- 
-      void set_lower (value_type a_lower_value, 
-                      int a_lower_flag = range::included);
+  void reset_lower();
 
-      void set_upper (value_type a_upper_value, 
-                      int a_upper_flag = range::included);
+  void reset_upper();
 
-      void set (value_type a_lower_value, 
-                value_type a_upper_value, 
-                int a_lower_flag = range::included, 
-                int a_upper_flag = range::included);
+  void reset();
 
-      // Ctor:
-      real_range ();
+  void set_lower(value_type from, int policy = range::included);
 
-      // Ctor:
-      real_range (value_type a_lower_value, 
-                  value_type a_upper_value, 
-                  int a_lower_flag = range::included, 
-                  int a_upper_flag = range::included);
+  void set_upper(value_type to, int policy = range::included);
 
-      bool is_lower_bounded () const;
+  void set(value_type from, value_type to, 
+           int from_policy = range::included, 
+           int to_policy = range::included);
 
-      bool is_upper_bounded () const;
+  bool is_lower_bounded() const;
 
-      bool is_bounded () const;
+  bool is_upper_bounded() const;
 
-      bool is_lower_included () const;
+  bool is_bounded() const;
 
-      bool is_upper_included () const;
+  bool is_lower_included() const;
 
-      value_type get_lower_bound () const;
+  bool is_upper_included() const;
 
-      value_type get_upper_bound () const;
+  value_type get_lower_bound() const;
 
-      //bool is_empty () const;
+  value_type get_upper_bound() const;
 
-      // Collections of 'make-methods' :
+  // Collections of 'make-methods' :
 
-      // "];["
-      void make_empty ();
+  // "];["
+  void make_empty();
 
-      // "[min_int;max_int]"
-      void make_full ();
+  // "[min_int;max_int]"
+  void make_full();
 
-      // "[0;max_int]"
-      void make_full_positive ();
+  // "[0;max_int]"
+  void make_full_positive();
 
-      // "[min_int;0]"
-      void make_full_negative ();
+  // "[min_int;0]"
+  void make_full_negative();
 
-      // "[lower;[" or "]lower;[
-      void make_upper_unbounded (value_type a_lower_value, 
-                                 bool a_lower_included = true);
+  // "[lower;[" or "]lower;[
+  void make_upper_unbounded(value_type from, bool inclusive = true);
 
-      // "];upper]" or "];upper["
-      void make_lower_unbounded (value_type a_upper_value, 
-                                 bool a_upper_included = true);
+  // "];upper]" or "];upper["
+  void make_lower_unbounded(value_type to, bool inclusive = true);
 
-      // "]lower;upper]" or "]lower;upper["
-      // "[lower;upper]" or "[lower;upper["
-      void make_bounded (value_type a_lower_value, 
-                         value_type a_upper_value,
-                         bool a_lower_included = true, 
-                         bool a_upper_included = true);
+  // "]lower;upper]" or "]lower;upper["
+  // "[lower;upper]" or "[lower;upper["
+  void make_bounded(value_type from, value_type to,
+                    bool lower_included = true, 
+                    bool upper_included = true);
 
-      bool has (value_type a_value) const;
+  bool has(value_type value) const;
 
-      void dump (std::ostream & a_out = std::clog) const;
-      
-      static double compute_epsilon (double a_lower,
-                                     double a_upper);
+  void dump(std::ostream& out = std::clog) const;
 
-      friend std::ostream & operator<< (std::ostream & a_out, 
-                                        const real_range & a_range); 
+  static double compute_epsilon(double a_lower, double a_upper);
 
-    private:
+  friend std::ostream& operator<<(std::ostream& a_out, 
+                                  const real_range& a_range); 
 
-      value_type _abs_epsilon_;
-      char       _lower_flag_;
-      value_type _lower_;
-      char       _upper_flag_;
-      value_type _upper_;
- 
-    };
+ private:
+  value_type abs_epsilon_;
+  char       lower_flag_;
+  value_type lower_;
+  char       upper_flag_;
+  value_type upper_;
+};
 
- 
-  } // end of namespace utils 
 
+} // end of namespace utils 
 } // end of namespace datatools 
 
-// end of datatools/utils/real_range.h
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+#endif // DATATOOLS_UTILS_REAL_RANGE_H_
+

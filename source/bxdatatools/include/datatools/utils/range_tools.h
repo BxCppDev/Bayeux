@@ -29,39 +29,25 @@
  * History: 
  *  
  */
-
-// #include <iostream>
-// #include <string>
-// #include <boost/cstdint.hpp>
-// using namespace   std;
+#ifndef DATATOOLS_UTILS_RANGE_TOOLS_H_
+#define DATATOOLS_UTILS_RANGE_TOOLS_H_
 
 namespace datatools {
-  
-  namespace utils {
-    
-    namespace range
-    {
-      
-      static const char undefined  = -1;
-      static const char unbound    = 0;
-      static const char included   = 1;
-      static const char excluded   = 2;
-      
-      static const char token_open      = '[';
-      static const char token_close     = ']';
-      static const char token_separator = ';';
-      
-    } // end of namespace range 
-    
-  } // end of namespace utils 
-  
+namespace utils {
+namespace range {
+// Enum?
+static const char undefined  = -1;
+static const char unbound    = 0;
+static const char included   = 1;
+static const char excluded   = 2;
+
+static const char token_open      = '[';
+static const char token_close     = ']';
+static const char token_separator = ';';
+
+} // end of namespace range 
+} // end of namespace utils 
 } // end of namespace datatools 
 
-// end of datatools/utils/range_tools.h
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+#endif // DATATOOLS_UTILS_RANGE_TOOLS_H_
+

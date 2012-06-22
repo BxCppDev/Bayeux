@@ -1,405 +1,322 @@
 // -*- mode: c++; -*-
 // real_range.cc
- 
+// Ourselves 
 #include <datatools/utils/real_range.h>
 
+// Standard Library
+#include <cmath>
+#include <limits>
 #include <sstream>
 #include <stdexcept>
-#include <limits>
-#include <cmath>
 
-using namespace std;
+// Third Party
+// - A
+
+// This Project
+
 
 namespace datatools {
-  
-  namespace utils {
+namespace utils {
 
-    using namespace std;
+const double real_range::DEFAULT_EPSILON = 5.e-15;
 
-    const double real_range::DEFAULT_EPSILON = 5.e-15;
+// Ctor:
+real_range::real_range() {
+  abs_epsilon_ = std::numeric_limits<value_type>::quiet_NaN();
+  this->reset();
+}
 
-    bool real_range::is_valid () const
-    {
-      return (_lower_flag_ != range::undefined)
-        && (_upper_flag_ != range::undefined);
-    }
+// Ctor:
+real_range::real_range(value_type from, value_type to, 
+                       int from_policy, int to_policy) {
+  abs_epsilon_ = std::numeric_limits<value_type>::quiet_NaN();
+  this->set(from, to, from_policy, to_policy);
+}
 
-    void real_range::invalidate ()
-    {
-      reset ();
-      return;
-    }
-      
-    void real_range::reset_lower ()
-    {
-      _lower_      = -numeric_limits<value_type>::max ();
-      _lower_flag_ = range::undefined;
-      return;
-    }
 
-    void real_range::reset_upper ()
-    {
-      _upper_      = numeric_limits<value_type>::max ();
-      _upper_flag_ = range::undefined;
-      return;
-    }
-    
-    void real_range::reset ()
-    {
-      _abs_epsilon_ = numeric_limits<double>::quiet_NaN ();
-      reset_lower ();
-      reset_upper ();
-      return;
-    }
+bool real_range::is_valid() const {
+  return (lower_flag_ != range::undefined)
+      && (upper_flag_ != range::undefined);
+}
 
-    void real_range::set_lower (value_type a_lower_value, 
-                                   int a_lower_flag)
-    {
-      if (a_lower_flag == range::unbound)
-        {
-          // "];...."
-          _lower_      = -numeric_limits<value_type>::infinity ();
-          _lower_flag_ = a_lower_flag;
-        }
-      else if (a_lower_flag == range::included)
-        {
-          // "[value;...."
-          _lower_      = a_lower_value;
-          _lower_flag_ = a_lower_flag;
-        }
-      else if (a_lower_flag == range::excluded)
-        {
-          // "]value;...."
-          _lower_      = a_lower_value;
-          _lower_flag_ = a_lower_flag;
-        }
-      else
-        {
-          throw logic_error ("datatools::utils::real_range::set_lower: Invalid lower bound flag !");
-        }
-      return;
-    }
 
-    void real_range::set_upper (value_type a_upper_value, 
-                                int a_upper_flag)
-    {
-     if (a_upper_flag == range::unbound)
-        {
-          // "...;...["
-          _upper_      = +numeric_limits<value_type>::infinity ();
-          _upper_flag_ = a_upper_flag;
-        }
-      else if (a_upper_flag == range::included)
-        {
-          // "...;value]"
-          _upper_      = a_upper_value;
-          _upper_flag_ = a_upper_flag;
-        }
-      else if (a_upper_flag == range::excluded)
-        {
-          // "...;value["
-          _upper_      = a_upper_value;
-          _upper_flag_ = a_upper_flag;
-        }
-      else
-        {
-          throw logic_error ("datatools::utils::real_range::set_upper: Invalid upper bound flag !");
-        }
-      return;
-    }
+void real_range::invalidate() {
+  this->reset();
+}
 
-    void real_range::set (value_type a_lower_value, 
-                             value_type a_upper_value, 
-                             int a_lower_flag, 
-                             int a_upper_flag)
-    {
-      set_lower (a_lower_value, a_lower_flag);
-      set_upper (a_upper_value, a_upper_flag);
-      return;
-    }
-     
-    // Ctor:
-    real_range::real_range ()
-    {
-      _abs_epsilon_ = numeric_limits<double>::quiet_NaN ();
-      reset ();
-      return;
-    }
-     
-    // Ctor:
-    real_range::real_range (value_type a_lower_value, 
-                                  value_type a_upper_value, 
-                                  int a_lower_flag, 
-                                  int a_upper_flag)
-    {
-      _abs_epsilon_ = numeric_limits<double>::quiet_NaN ();
-      set (a_lower_value, a_upper_value, a_lower_flag, a_upper_flag);
-      return;
-    }
 
-    bool real_range::is_lower_bounded () const
-    {
-      return _lower_flag_ > 0 ;
-    }
+void real_range::reset_lower() {
+  lower_      = -std::numeric_limits<value_type>::max();
+  lower_flag_ = range::undefined;
+}
 
-    bool real_range::is_upper_bounded () const
-    {
-      return _upper_flag_ > 0 ;
-    }
 
-    bool real_range::is_bounded () const
-    {
-      return is_lower_bounded () && is_upper_bounded ();
-    }
+void real_range::reset_upper() {
+  upper_      = std::numeric_limits<value_type>::max();
+  upper_flag_ = range::undefined;
+}
 
-    real_range::value_type real_range::get_lower_bound () const
-    {
-      if (! is_lower_bounded ())
-        {
-          throw logic_error ("datatools::utils::real_range::get_lower_bound: No lower bound !");
-        }
-      return _lower_;
-    }
 
-    real_range::value_type real_range::get_upper_bound () const
-    {
-      if (! is_upper_bounded ())
-        {
-          throw logic_error ("datatools::utils::real_range::get_upper_bound: No upper bound !");
-        }
-      return _upper_;
-    }
+void real_range::reset() {
+  abs_epsilon_ = std::numeric_limits<double>::quiet_NaN();
+  this->reset_lower();
+  this->reset_upper();
+}
 
-    bool real_range::is_lower_included () const
-    {
-      if (! is_lower_bounded ())
-        {
-          throw logic_error ("datatools::utils::real_range::is_lower_included: No lower bound !");
-        }
-      return (_lower_flag_ == range::included);
-    }
 
-    bool real_range::is_upper_included () const
-    {
-      if (! is_upper_bounded ())
-        {
-          throw logic_error ("datatools::utils::real_range::is_upper_included: No upper bound !");
-        }
-      return (_upper_flag_ == range::included);
-    }
-    
-    /*
-    bool real_range::is_empty () const
-    {
-      return false;//count () == 0;
-    }
-    */
+void real_range::set_lower(value_type from, int policy) {
+  if (policy == range::unbound) {
+    // "];...."
+    lower_      = -std::numeric_limits<value_type>::infinity();
+    lower_flag_ = policy;
+  } else if (policy == range::included || policy == range::excluded) {
+    // "[value;...." || "]value;...."
+    lower_      = from;
+    lower_flag_ = policy;
+  } else {
+    throw std::logic_error("datatools::utils::real_range::set_lower: Invalid lower bound policy !");
+  }
+}
 
-    void real_range::make_empty ()
-    {
-      set (0, 0, range::excluded, range::excluded);
-      return;
-    }
 
-    void real_range::make_full ()
-    {
-     set (-numeric_limits<value_type>::max (), 
-          numeric_limits<value_type>::max (), 
-          range::included, 
-          range::included);
-    }
- 
-    void real_range::make_full_positive ()
-    {
-      set (0, 
-           numeric_limits<value_type>::max (), 
-           range::included, 
-           range::included);
-      return;
-    }
+void real_range::set_upper(value_type value, int policy) {
+  if (policy == range::unbound) {
+    // "...;...["
+    upper_      = +std::numeric_limits<value_type>::infinity();
+    upper_flag_ = policy;
+  } else if (policy == range::included || policy == range::excluded) {
+    // "...;value]" || "...;value["
+    upper_      = value;
+    upper_flag_ = policy;
+  } else {
+    throw std::logic_error("datatools::utils::real_range::set_upper: Invalid upper bound policy !");
+  }
+}
 
-    void real_range::make_full_negative ()
-    {
-      set (-numeric_limits<value_type>::max (), 
-           0, 
-           range::included, 
-           range::included);
-     return;
-    }
 
-    void real_range::make_upper_unbounded (value_type a_lower_value, 
-                                              bool a_lower_included)
-    {
-      set (a_lower_value, 
-           +numeric_limits<value_type>::infinity (), 
-           a_lower_included ? range::included : range::excluded , 
-           range::unbound);
-     return;
-    }
+void real_range::set(value_type from, value_type to, int from_policy, 
+                     int to_policy) {
+  this->set_lower(from, from_policy);
+  this->set_upper(to, to_policy);
+}
 
-    void real_range::make_lower_unbounded (value_type a_upper_value, 
-                                              bool a_upper_included)
-    {
-      set (-numeric_limits<value_type>::infinity (),
-           a_upper_value,
-           range::unbound,
-           a_upper_included ? range::included : range::excluded);
-      return;
-    }
 
-    void real_range::make_bounded (value_type a_lower_value, 
-                                      value_type a_upper_value,
-                                      bool a_lower_included, 
-                                      bool a_upper_included)
-    {
-      set (a_lower_value,
-           a_upper_value,
-           a_lower_included ? range::included : range::excluded,
-           a_upper_included ? range::included : range::excluded);
-      return;
-    }
+bool real_range::is_lower_bounded() const {
+  return lower_flag_ > 0 ;
+}
 
-    double real_range::compute_epsilon (double a_lower, double a_upper)
-    {
-      double eps;
-      double l_eps = numeric_limits<double>::quiet_NaN ();
-      double u_eps = numeric_limits<double>::quiet_NaN ();
-      if (a_lower == a_lower)
-        {
-          double scale = std::abs (a_lower);
-          l_eps = DEFAULT_EPSILON * scale;
-        }
-      if (a_upper == a_upper)
-        {
-          double scale = std::abs (a_upper);
-          u_eps = DEFAULT_EPSILON * scale;
-        } 
-      if ((l_eps == l_eps) && (u_eps == u_eps))
-        {
-          eps = max (l_eps, u_eps);
-        }
-      else if (l_eps == l_eps)
-        {
-          eps = l_eps;
-        }
-      else 
-        {
-          eps = u_eps;
-        }      
-      return eps;
-    }
 
-    bool real_range::has (value_type a_value) const
-    {
-      static bool ok = true;
-      double eps = _abs_epsilon_;
-      if (eps != eps)
-        {
-          eps = compute_epsilon ((_lower_ == _lower_) ? _lower_ : numeric_limits<double>::quiet_NaN (),
-                                 (_upper_ == _upper_) ? _upper_ : numeric_limits<double>::quiet_NaN ());
-          {
-            real_range & rr = const_cast<real_range &> (*this);
-            rr._abs_epsilon_ = eps;
-          }
-          if (ok) 
-            {
-              clog << "real_range::has: _abs_epsilon_ = " << _abs_epsilon_ << endl;
-              ok = false;
-            }
-        }
-      if (is_lower_bounded ())
-        {
-          if (is_lower_included ())
-            {
-              if (a_value < (_lower_ - eps)) return false;
-            }
-          else
-            {
-              if (a_value < (_lower_ + eps)) return false;
-            }
-        }
-      if (is_upper_bounded ())
-        {
-          if (is_upper_included ())
-            {
-              if (a_value > (_upper_ + eps)) return false;
-            }
-          else
-            {
-              if (a_value > (_upper_ - eps)) return false;
-            }
-        }
-      return true;
-    }
+bool real_range::is_upper_bounded() const {
+  return upper_flag_ > 0 ;
+}
 
-    void real_range::dump (ostream & a_out) const
+bool real_range::is_bounded() const {
+  return this->is_lower_bounded() && this->is_upper_bounded();
+}
+
+
+real_range::value_type real_range::get_lower_bound() const {
+  if (!this->is_lower_bounded()) {
+    throw std::logic_error("datatools::utils::real_range::get_lower_bound: No lower bound !");
+  }
+  return lower_;
+}
+
+
+real_range::value_type real_range::get_upper_bound() const {
+  if (!this->is_upper_bounded()) {
+    throw std::logic_error("datatools::utils::real_range::get_upper_bound: No upper bound !");
+  }
+  return upper_;
+}
+
+
+bool real_range::is_lower_included() const {
+  if (!this->is_lower_bounded()) {
+    throw std::logic_error("datatools::utils::real_range::is_lower_included: No lower bound !");
+  }
+  return (lower_flag_ == range::included);
+}
+
+
+bool real_range::is_upper_included() const {
+  if (!this->is_upper_bounded()) {
+    throw std::logic_error("datatools::utils::real_range::is_upper_included: No upper bound !");
+  }
+  return (upper_flag_ == range::included);
+}
+
+
+void real_range::make_empty() {
+  this->set(0, 0, range::excluded, range::excluded);
+}
+
+
+void real_range::make_full() {
+  this->set(-std::numeric_limits<value_type>::max(), 
+            std::numeric_limits<value_type>::max(), 
+            range::included, 
+            range::included);
+}
+
+
+void real_range::make_full_positive() {
+  this->set(0, 
+            std::numeric_limits<value_type>::max(), 
+            range::included, 
+            range::included);
+}
+
+
+void real_range::make_full_negative() {
+  this->set(-std::numeric_limits<value_type>::max(), 
+            0, 
+            range::included, 
+            range::included);
+}
+
+
+void real_range::make_upper_unbounded(value_type from, bool inclusive) {
+  this->set(from, 
+            +std::numeric_limits<value_type>::infinity(), 
+            inclusive ? range::included : range::excluded , 
+            range::unbound);
+}
+
+
+void real_range::make_lower_unbounded(value_type to, bool inclusive) {
+  this->set(-std::numeric_limits<value_type>::infinity(),
+            to,
+            range::unbound,
+            inclusive ? range::included : range::excluded);
+}
+
+
+void real_range::make_bounded(value_type from, value_type to,
+                              bool lower_included, bool upper_included) {
+  this->set(from,
+            to,
+            lower_included ? range::included : range::excluded,
+            upper_included ? range::included : range::excluded);
+}
+
+
+double real_range::compute_epsilon(double a_lower, double a_upper) {
+  double eps;
+  double l_eps = std::numeric_limits<double>::quiet_NaN();
+  double u_eps = std::numeric_limits<double>::quiet_NaN();
+  if (a_lower == a_lower) {
+    double scale = std::abs(a_lower);
+    l_eps = DEFAULT_EPSILON * scale;
+  } 
+
+  if (a_upper == a_upper) {
+    double scale = std::abs(a_upper);
+    u_eps = DEFAULT_EPSILON * scale;
+  } 
+
+  if ((l_eps == l_eps) && (u_eps == u_eps)) {
+    eps = std::max(l_eps, u_eps);
+  } else if (l_eps == l_eps) {
+    eps = l_eps;
+  } else {
+    eps = u_eps;
+  }      
+
+  return eps;
+}
+
+
+bool real_range::has(value_type value) const {
+  static bool ok = true;
+  double eps = abs_epsilon_;
+  if (eps != eps) {
+    eps = this->compute_epsilon((lower_ == lower_) ? 
+                                lower_ : 
+                                std::numeric_limits<double>::quiet_NaN(),
+                                (upper_ == upper_) ? 
+                                upper_ : 
+                                std::numeric_limits<double>::quiet_NaN());
     {
-      a_out << "real_range: " << endl;
-      if (is_valid ())
-        {
-          a_out << "|-- " << "Lower bounded  = " << is_lower_bounded () << endl;
-          if (is_lower_bounded ())
-            {
-              a_out << "|-- " << "Lower bound    = " << _lower_ << endl;
-              a_out << "|-- " << "Lower included = " << is_lower_included () << endl;
-            }
-          a_out << "|-- " << "Upper bounded  = " << is_upper_bounded () << endl;
-          if (is_upper_bounded ())
-            {
-              a_out << "|-- " << "Upper bound    = " << _upper_ << endl;
-              a_out << "|-- " << "Upper included = " << is_upper_included () << endl;
-            }
-          a_out << "|-- " << "Bounded        = " << is_bounded () << endl;
-          /*
-          if (is_bounded ())
-            {
-              a_out << "|-- " << "Empty          = " << is_empty () << endl;
-            }
-          */
-        }
-      else
-        {
-          a_out << "|-- " << "[invalid]" << endl;
-        }
-      a_out << "`-- " << "Rendering      = '" << *this << "'" << endl; 
-      return;
+      real_range& rr = const_cast<real_range&>(*this);
+      rr.abs_epsilon_ = eps;
     }
-  
-    ostream & operator<< (ostream & a_out, const real_range & a_range)
-    {
-      if (! a_range.is_valid ())
-        {
-          a_out << "]?[";
-        }
-      else
-        {
-          if (a_range.is_lower_bounded ())
-            {
-              if (a_range.is_lower_included ()) a_out << range::token_open;
-              else a_out << range::token_close;
-              a_out << a_range.get_lower_bound ();
-            }
-          else
-            {
-              a_out << range::token_close;
-            }
-          a_out << ';';
-          if (a_range.is_upper_bounded ())
-            {
-              a_out << a_range.get_upper_bound ();
-              if (a_range.is_upper_included ()) a_out << range::token_close;
-              else a_out << range::token_open;
-            }
-          else 
-            {
-              a_out << range::token_open;
-            }
-        }
-      return a_out;
+    if (ok) {
+      std::clog << "real_range::has: abs_epsilon_ = " 
+                << abs_epsilon_ << std::endl;
+      ok = false;
     }
-   
-  } // namespace utils
-  
+  }
+
+  if (this->is_lower_bounded()) {
+    if (this->is_lower_included()) {
+      if (value < (lower_ - eps)) return false;
+    } else {
+      if (value < (lower_ + eps)) return false;
+    }
+  }
+
+  if (this->is_upper_bounded()) {
+    if (this->is_upper_included()) {
+      if (value > (upper_ + eps)) return false;
+    } else {
+      if (value > (upper_ - eps)) return false;
+    }
+  }
+  return true;
+}
+
+
+void real_range::dump(std::ostream& a_out) const {
+  a_out << "real_range: " << std::endl;
+  if (this->is_valid()) {
+    a_out << "|-- " << "Lower bounded  = " << this->is_lower_bounded() << std::endl;
+    if (this->is_lower_bounded()) {
+      a_out << "|-- " << "Lower bound    = " << lower_ << std::endl;
+      a_out << "|-- " << "Lower included = " << this->is_lower_included() << std::endl;
+    }
+    a_out << "|-- " << "Upper bounded  = " << this->is_upper_bounded() << std::endl;
+    if (this->is_upper_bounded()) {
+      a_out << "|-- " << "Upper bound    = " << upper_ << std::endl;
+      a_out << "|-- " << "Upper included = " << this->is_upper_included() << std::endl;
+    }
+    a_out << "|-- " << "Bounded        = " << this->is_bounded() << std::endl;
+  } else {
+    a_out << "|-- " << "[invalid]" << std::endl;
+  }
+  a_out << "`-- " << "Rendering      = '" << *this << "'" << std::endl; 
+}
+
+
+std::ostream& operator<<(std::ostream& a_out, const real_range& a_range) {
+  if (!a_range.is_valid()) {
+    a_out << "]?[";
+  } else {
+    if (a_range.is_lower_bounded()) {
+      if (a_range.is_lower_included()) {
+        a_out << range::token_open;
+      } else {
+        a_out << range::token_close;
+      }
+      a_out << a_range.get_lower_bound();
+    } else {
+      a_out << range::token_close;
+    }
+    a_out << ';';
+    if (a_range.is_upper_bounded()) {
+      a_out << a_range.get_upper_bound();
+      if (a_range.is_upper_included()) {
+        a_out << range::token_close;
+      } else {
+        a_out << range::token_open;
+      }
+    } else {
+      a_out << range::token_open;
+    }
+  }
+  return a_out;
+}
+
+} // namespace utils
 } // namespace datatools
 
-// end of real_range.cc
