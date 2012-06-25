@@ -6,16 +6,18 @@
 #include <string>
 #include <stdexcept>
 
+#include <geomtools/geomtools_config.h>
 #include <geomtools/helix_3d.h>
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
 #include <geomtools/gnuplot_i.h>
-
+#endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 
 void
 wait_for_key ()
 {
   std::cout << std::endl
-	    << "Press ENTER to continue..."
-	    << std::endl;
+            << "Press ENTER to continue..."
+            << std::endl;
   std::cin.clear();
   std::cin.ignore(std::cin.rdbuf()->in_avail());
   std::cin.get();
@@ -34,16 +36,16 @@ main (int argc_, char ** argv_)
 
       int iarg = 1;
       while (iarg < argc_) 
-	{
-	  std::string arg = argv_[iarg];
+        {
+          std::string arg = argv_[iarg];
 
-	  if (arg == "-d" || arg == "--debug")
-	    debug = true;
-	  if (arg == "-g" || arg == "--gnuplot")
-	    gnuplot = true;
+          if (arg == "-d" || arg == "--debug")
+            debug = true;
+          if (arg == "-g" || arg == "--gnuplot")
+            gnuplot = true;
 
-	  iarg++;
-	}
+          iarg++;
+        }
     
       geomtools::helix_3d my_helix_1;
       geomtools::helix_3d my_helix_2;
@@ -71,66 +73,68 @@ main (int argc_, char ** argv_)
       std::cerr << std::endl;
 
       if ( gnuplot )
-	{
-	  std::vector<double> x1, y1, z1;
-	  for ( double t = my_helix_1.get_t1();
-		t <= my_helix_1.get_t2(); 
-		t += ( ( my_helix_1.get_t2() - my_helix_1.get_t1() ) / 1000. ) )
-	    {
-	      x1.push_back ( my_helix_1.get_point ( t ).x() );
-	      y1.push_back ( my_helix_1.get_point ( t ).y() );
-	      z1.push_back ( my_helix_1.get_point ( t ).z() );
-	    }
-	  
-	  std::vector<double> x2, y2, z2;
-	  for ( double t = my_helix_2.get_t1();
-		t <= my_helix_2.get_t2(); 
-		t += ( ( my_helix_2.get_t2() - my_helix_2.get_t1() ) / 1000. ) )
-	    {
-	      x2.push_back ( my_helix_2.get_point ( t ).x() );
-	      y2.push_back ( my_helix_2.get_point ( t ).y() );
-	      z2.push_back ( my_helix_2.get_point ( t ).z() );
-	    }
-	  
-	  Gnuplot g1("lines");
-	  g1.set_xlabel("x").set_ylabel("y").set_zlabel("z");
-	  g1.set_grid();
-	  g1.plot_xyz ( x1, y1, z1, "Helix1" );
-	  g1.plot_xyz ( x2, y2, z2, "Helix2" );
-	  wait_for_key();
-	}
+        {
+          std::vector<double> x1, y1, z1;
+          for ( double t = my_helix_1.get_t1();
+                t <= my_helix_1.get_t2(); 
+                t += ( ( my_helix_1.get_t2() - my_helix_1.get_t1() ) / 1000. ) )
+            {
+              x1.push_back ( my_helix_1.get_point ( t ).x() );
+              y1.push_back ( my_helix_1.get_point ( t ).y() );
+              z1.push_back ( my_helix_1.get_point ( t ).z() );
+            }
+          
+          std::vector<double> x2, y2, z2;
+          for ( double t = my_helix_2.get_t1();
+                t <= my_helix_2.get_t2(); 
+                t += ( ( my_helix_2.get_t2() - my_helix_2.get_t1() ) / 1000. ) )
+            {
+              x2.push_back ( my_helix_2.get_point ( t ).x() );
+              y2.push_back ( my_helix_2.get_point ( t ).y() );
+              z2.push_back ( my_helix_2.get_point ( t ).z() );
+            }
+          
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
+          Gnuplot g1("lines");
+          g1.set_xlabel("x").set_ylabel("y").set_zlabel("z");
+          g1.set_grid();
+          g1.plot_xyz ( x1, y1, z1, "Helix1" );
+          g1.plot_xyz ( x2, y2, z2, "Helix2" );
+          wait_for_key();
+#endif
+        }
       else
-	{
-	  my_helix_1.print_xyz  ( std::cout, my_helix_1, 0.1, 0 );
-	  
-	  std::cout << std::endl;
-	  std::cout << std::endl;
-	  
-	  for ( double t = my_helix_1.get_t1();
-		t <= my_helix_1.get_t2(); 
-		t += ( ( my_helix_1.get_t2() - my_helix_1.get_t1() ) / 2. ) )
-	    {
-	      geomtools::vector_3d position ( my_helix_1.get_point ( t ).x(),
-					      my_helix_1.get_point ( t ).y(),
-					      my_helix_1.get_point ( t ).z() );
-	      geomtools::vector_3d dir_vec = my_helix_1.get_direction_on_curve (position);
+        {
+          my_helix_1.print_xyz  ( std::cout, my_helix_1, 0.1, 0 );
+          
+          std::cout << std::endl;
+          std::cout << std::endl;
+          
+          for ( double t = my_helix_1.get_t1();
+                t <= my_helix_1.get_t2(); 
+                t += ( ( my_helix_1.get_t2() - my_helix_1.get_t1() ) / 2. ) )
+            {
+              geomtools::vector_3d position ( my_helix_1.get_point ( t ).x(),
+                                              my_helix_1.get_point ( t ).y(),
+                                              my_helix_1.get_point ( t ).z() );
+              geomtools::vector_3d dir_vec = my_helix_1.get_direction_on_curve (position);
 
-	      std::cout << position.x() << " "
-			<< position.y() << " "
-			<< position.z() << std::endl;
-	      
-	      geomtools::vector_3d end_point = position + dir_vec;
-	      
-	      std::cout << end_point.x() << " "
-			<< end_point.y() << " "
-			<< end_point.z() << std::endl;
+              std::cout << position.x() << " "
+                        << position.y() << " "
+                        << position.z() << std::endl;
+              
+              geomtools::vector_3d end_point = position + dir_vec;
+              
+              std::cout << end_point.x() << " "
+                        << end_point.y() << " "
+                        << end_point.z() << std::endl;
 
-	      std::cout << std::endl;
-	      std::cout << std::endl;	  
-	    }
+              std::cout << std::endl;
+              std::cout << std::endl;     
+            }
 
-	  my_helix_2.print_xyz  ( std::cout, my_helix_2, 0.1, 0 );
-	}
+          my_helix_2.print_xyz  ( std::cout, my_helix_2, 0.1, 0 );
+        }
 
     }
   catch (std::exception & x)

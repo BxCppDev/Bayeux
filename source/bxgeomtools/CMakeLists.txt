@@ -88,27 +88,45 @@ option ( GEOMTOOLS_WITH_CMAKE_FIND_MODULE
          "Build the geomtools' CMake find module"
  	 0 )
 
+option ( GEOMTOOLS_WITH_GNUPLOT_DISPLAY 
+         "Build the Gnuplot-based display tools"
+ 	 1 )
+
 # ----------------------------------------------------------------------
 # Dependencies :
 #
 
-# ---------------------------------------------------
-# Gnuplot dependency :
-#
+if (GEOMTOOLS_WITH_GNUPLOT_DISPLAY)
+  # ---------------------------------------------------
+  # Gnuplot dependency :
+  #
 
-set ( _gnuplot_min_version 4.4 ) 
-if ( NOT "$ENV{GNUPLOT_ROOT_DIR}" STREQUAL "")  
-  message ( STATUS "Environment GNUPLOT_ROOT_DIR exists : '$ENV{GNUPLOT_ROOT_DIR}' ")
-  set ( GNUPLOT_ROOT_DIR $ENV{GNUPLOT_ROOT_DIR} )
-###else ()
-###  message ( STATUS  "Environment GNUPLOT_ROOT_DIR is not set !" )
-endif ()
-find_package ( Gnuplot ${_gnuplot_min_version} REQUIRED)
-if ( NOT GNUPLOT_FOUND )
-   message ( FATAL_ERROR "${PROJECT_NAME} : Cannot find 'gnuplot' program !" )
-else ()
-   message ( STATUS "${PROJECT_NAME} : Found the 'gnuplot' program : '${GNUPLOT_EXECUTABLE}'" )     
+  set ( _gnuplot_min_version 4.4 ) 
+  if ( NOT "$ENV{GNUPLOT_ROOT_DIR}" STREQUAL "")  
+    message ( STATUS "Environment GNUPLOT_ROOT_DIR exists : '$ENV{GNUPLOT_ROOT_DIR}' ")
+    set ( GNUPLOT_ROOT_DIR $ENV{GNUPLOT_ROOT_DIR} )
+  endif ()
+  find_package ( Gnuplot ${_gnuplot_min_version} REQUIRED)
+  if ( NOT GNUPLOT_FOUND )
+    message ( FATAL_ERROR "${PROJECT_NAME} : Cannot find 'gnuplot' program !" )
+  else ()
+    message ( STATUS "${PROJECT_NAME} : Found the 'gnuplot' program : '${GNUPLOT_EXECUTABLE}'" )     
+  endif () 
 endif () 
+
+#---------------------
+# - Depends on CLHEP :
+set(_clhep_version 2.1.0.1)
+find_package(CLHEP ${_clhep_version} REQUIRED)
+if(CLHEP_FOUND)
+  message(STATUS "${PROJECT_NAME} : Found CLHEP ${_clhep_version}")
+  message(STATUS "${PROJECT_NAME} : CLHEP_INCLUDE_DIRS : '${CLHEP_INCLUDE_DIRS}'")
+  message(STATUS "${PROJECT_NAME} : CLHEP_LIBRARIES    : '${CLHEP_LIBRARIES}'")
+  message(STATUS "${PROJECT_NAME} : CLHEP_DEFINITIONS  : '${CLHEP_DEFINITIONS}'")
+else()
+  message(FATAL_ERROR "${PROJECT_NAME} : Cannot find CLHEP ${_clhep_version} library!")
+endif()
+
 
 # ---------------------------------------------------
 # mygsl dependency :

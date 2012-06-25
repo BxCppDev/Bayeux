@@ -7,7 +7,6 @@
 #include <exception>
 
 #include <geomtools/any_shape_3d.h>
-#include <geomtools/gnuplot_draw.h>
 
 using namespace std;
 

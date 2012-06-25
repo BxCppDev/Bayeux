@@ -13,14 +13,19 @@
 #include <datatools/utils/utils.h>
 #include <datatools/utils/library_loader.h>
 
+#include <geomtools/geomtools_config.h>
 #include <geomtools/model_factory.h>
 #include <geomtools/id_mgr.h>
 #include <geomtools/mapping.h>
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
 #include <geomtools/gnuplot_drawer.h>
+#endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 #include <geomtools/gdml_export.h>
 #include <geomtools/placement.h>
 
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
 std::string get_drawer_view (const std::string & option_);
+#endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 
 void print_help ();
 
@@ -42,14 +47,16 @@ int main (int argc_, char ** argv_)
       std::vector<std::string> setup_filenames;
       bool dump_factory = false;
 
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
       bool visu = true;
       std::string visu_drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
       bool visu_drawer_labels = true;
       std::string visu_model_name; 
+#endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 
       bool gdml = false;
 
-       bool mapping_requested = false;
+      bool mapping_requested = false;
       std::string categories_filename;
       std::string top_mapping_model_name;
       std::vector<std::string> mapping_only_categories;
@@ -77,14 +84,6 @@ int main (int argc_, char ** argv_)
                 {
                   devel = true;
                 }
-              else if (option == "+V" || option == "--with-visu") 
-                {
-                  visu = true;
-                }
-              else if (option == "-V" || option == "--without-visu") 
-                {
-                  visu = false;
-                }
               else if (option == "+G" || option == "--with-gdml") 
                 {
                   gdml = true;
@@ -100,6 +99,15 @@ int main (int argc_, char ** argv_)
               else if (option == "-F") 
                 {
                   dump_factory = false;
+                }
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
+              else if (option == "+V" || option == "--with-visu") 
+                {
+                  visu = true;
+                }
+              else if (option == "-V" || option == "--without-visu") 
+                {
+                  visu = false;
                 }
               else if (option == "-xy" || option == "--visu-view-xy") 
                 {
@@ -140,6 +148,7 @@ int main (int argc_, char ** argv_)
                 {
                   visu_model_name = argv_[++iarg];
                 }
+#endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
               else if (option == "-l" || option == "--load-dll") 
                 {
                   LL_dlls.push_back (argv_[++iarg]);
@@ -245,14 +254,18 @@ int main (int argc_, char ** argv_)
           if (i->second->get_name () == geomtools::model_factory::DEFAULT_WORLD_LABEL)
             {
               has_world = true;
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
+
               if (visu_model_name.empty ())
                 {
                   visu_model_name = geomtools::model_factory::DEFAULT_WORLD_LABEL;
                 }
+#endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
               break;
             }
         }
        
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
       if (visu)
         {   
           std::clog << "Current drawer view : '" << visu_drawer_view << "'" << std::endl;
@@ -357,6 +370,7 @@ int main (int argc_, char ** argv_)
                         geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT);
             } while (go_on);
         }
+#endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 
       // The manager for GID :
       geomtools::id_mgr  gid_manager;
@@ -475,6 +489,7 @@ int main (int argc_, char ** argv_)
   return (error_code);
 }
 
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
 std::string get_drawer_view (const std::string & option_)
 {
   std::string drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
@@ -505,6 +520,7 @@ std::string get_drawer_view (const std::string & option_)
     }
   return drawer_view;
 }
+#endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 
 void print_help ()
 {
@@ -518,6 +534,7 @@ void print_help ()
   std::clog << "                       Load a specific DLL\n";
   std::clog << "   +F                : Detailed print of the factory contents\n";
   std::clog << "   -F                : No detailed print of the factory contents\n";
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
   std::clog << "   +V|--with-visu    : Visualize the geometry setup\n";
   std::clog << "   -V|--without-visu : Do not visualize the geometry setup\n";
   std::clog << "   -xy|--visu-view-xy : \n"
@@ -534,6 +551,7 @@ void print_help ()
             << "                       Visualization does not show axis and labels\n";
   std::clog << "   -VM|--visu-model MODEL_NAME :\n";
   std::clog << "                       Visualization shows a specific geometry model\n";
+#endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
   std::clog << "   +M|--with-mapping : Build geometry mapping informations\n";
   std::clog << "   -M|--without-mapping : \n"
             << "                       Do not build geometry mapping informations\n";

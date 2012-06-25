@@ -6,9 +6,11 @@
 #include <string>
 #include <exception>
 
+#include <geomtools/geomtools_config.h>
 #include <geomtools/circle.h>
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
 #include <geomtools/gnuplot_draw.h>
-
+#endif
 using namespace std;
 
 int main (int argc_, char ** argv_)
@@ -52,16 +54,18 @@ int main (int argc_, char ** argv_)
       my_circle.set_r (radius);
       my_circle.tree_dump (clog, "my_circle");
 
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
       {
-	geomtools::vector_3d circle_pos;
-	geomtools::rotation_3d circle_rot;
-	geomtools::create_rotation (circle_rot, 0.0, 0.0, 0.0);
-	geomtools::gnuplot_draw::draw_circle (cout, 
-					      circle_pos,
-					      circle_rot, 
-					      my_circle);
+        geomtools::vector_3d circle_pos;
+        geomtools::rotation_3d circle_rot;
+        geomtools::create_rotation (circle_rot, 0.0, 0.0, 0.0);
+        geomtools::gnuplot_draw::draw_circle (cout, 
+                                              circle_pos,
+                                              circle_rot, 
+                                              my_circle);
   
       }
+#endif
 
     }
   catch (exception & x)

@@ -24,9 +24,6 @@ set (_geomtools_source_files
   ${PROJECT_SOURCE_DIR}/src/geom_id.cc
   ${PROJECT_SOURCE_DIR}/src/geom_info.cc 
   ${PROJECT_SOURCE_DIR}/src/geom_map.cc 
-  ${PROJECT_SOURCE_DIR}/src/gnuplot_draw.cc 
-  ${PROJECT_SOURCE_DIR}/src/gnuplot_drawer.cc 
-  ${PROJECT_SOURCE_DIR}/src/gnuplot_i.cc 
   ${PROJECT_SOURCE_DIR}/src/hexagon_box.cc 
   ${PROJECT_SOURCE_DIR}/src/id_mgr.cc 
   ${PROJECT_SOURCE_DIR}/src/id_selector.cc 
@@ -87,7 +84,15 @@ set (_geomtools_source_files
   ${PROJECT_SOURCE_DIR}/src/color.cc 
   ${PROJECT_SOURCE_DIR}/src/material.cc 
   ${PROJECT_SOURCE_DIR}/src/utils.cc
+  ${PROJECT_SOURCE_DIR}/src/gnuplot_draw.cc 
 )
+
+if (GEOMTOOLS_WITH_GNUPLOT_DISPLAY)
+  list (APPEND _geomtools_source_files
+    ${PROJECT_SOURCE_DIR}/src/gnuplot_i.cc 
+    ${PROJECT_SOURCE_DIR}/src/gnuplot_drawer.cc 
+    )
+endif ()
 
 file ( GLOB geomtools_SOURCES
   ${geomtools_PUBLIC_HEADERS}

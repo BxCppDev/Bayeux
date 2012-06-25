@@ -50,13 +50,13 @@ include("${_thisdir}/geomtools-libraries.cmake")
 # ----------------------------------------------------------------------------
 # Gnuplot dependency :
 #
-###find_package ( Gnuplot "4" REQUIRED)
-###if ( NOT GNUPLOT_FOUND )
-if ( NOT EXISTS @GNUPLOT_EXECUTABLE@ )
-   message ( FATAL_ERROR "geomtools-config.cmake : Cannot find 'gnuplot' program !" )
-else ()
-   message ( STATUS "geomtools-config.cmake : Found the 'gnuplot' program : '@GNUPLOT_EXECUTABLE@'" )   
-endif () 
+if (GEOMTOOLS_WITH_GNUPLOT_DISPLAY)
+  if ( NOT EXISTS @GNUPLOT_EXECUTABLE@ )
+    message ( FATAL_ERROR "geomtools-config.cmake : Cannot find 'gnuplot' program !" )
+  else ()
+    message ( STATUS "geomtools-config.cmake : Found the 'gnuplot' program : '@GNUPLOT_EXECUTABLE@'" )   
+  endif () 
+endif ()
 
 # ----------------------------------------------------------------------------
 # mygsl dependency :
@@ -70,6 +70,16 @@ endif ()
 set( _geomtools_mygsl_INCLUDE_DIRS ${mygsl_INCLUDE_DIRS} )
 set( _geomtools_mygsl_LIBRARIES    ${mygsl_LIBRARY}      )
 
+# ----------------------------------------------------------------------------
+# CLHEP dependency :
+#
+find_package(CLHEP @_clhep_version@ REQUIRED)
+if(NOT CLHEP_FOUND)
+  message ( FATAL_ERROR "Cannot find CLHEP >= @_clhep_version@ library!")
+endif()
+set(_geomtools_CLHEP_INCLUDE_DIRS ${CLHEP_INCLUDE_DIRS})
+set(_geomtools_CLHEP_LIBRARIES    ${CLHEP_LIBRARIES})
+
 #----------------------------------------------------------------------------
 # Set path to geomtools includes
 #
@@ -77,6 +87,7 @@ set(geomtools_ONLY_INCLUDE_DIRS @geomtools_INCLUDE_DIR@)
 set ( geomtools_INCLUDE_DIRS 
       ${geomtools_ONLY_INCLUDE_DIRS}
       ${_geomtools_mygsl_INCLUDE_DIRS}
+      ${_geomtools_CLHEP_INCLUDE_DIRS}
      )
 
 # ----------------------------------------------------------------------------
@@ -118,10 +129,13 @@ set ( geomtools_LIBRARIES ${geomtools_LIBRARY} )
 # set ( geomtools_LIBRARIES 
 #      ${geomtools_ONLY_LIBRARIES}
 #      ${_geomtools_mygsl_LIBRARIES}
+#      ${_geomtools_CLHEP_LIBRARIES}
 #    )
 
 unset ( _geomtools_mygsl_LIBRARIES )
 unset ( _geomtools_mygsl_INCLUDE_DIRS )
+unset ( _geomtools_CLHEP_LIBRARIES )
+unset ( _geomtools_CLHEP_INCLUDE_DIRS )
 
 else ( NOT DEFINED geomtools_CONFIG_COUNTER )
   message ( STATUS "WARNING: Multiple inclusion of the 'geomtools-config.cmake' file !" )

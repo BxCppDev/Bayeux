@@ -11,8 +11,10 @@
 #include <geomtools/regular_grid_placement.h>
 #include <geomtools/box.h>
 #include <geomtools/gnuplot_draw.h>
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
 #include <geomtools/gnuplot_drawer.h>
 #include <geomtools/gnuplot_i.h>
+#endif
 
 #include <datatools/utils/temporary_files.h>
 
@@ -47,6 +49,7 @@ int main (int argc_, char ** argv_)
                 {
                   rotate = true;
                 }
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
               else if (option == "--no-draw") 
                 {
                   draw = false;
@@ -55,6 +58,7 @@ int main (int argc_, char ** argv_)
                 {
                   draw = true;
                 }
+#endif
               else 
                 { 
                   clog << "warning: ignoring option '" << option << "'!" << endl; 
@@ -100,6 +104,7 @@ int main (int argc_, char ** argv_)
           pi.tree_dump (clog, title.str (), ">>> ");
         }
 
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
       if (draw)
         {
           datatools::utils::temp_file tmp_file;
@@ -127,7 +132,9 @@ int main (int argc_, char ** argv_)
           geomtools::gnuplot_drawer::wait_for_key ();
           usleep (200);
         }
+#endif
 
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
       if (draw)
         {
           datatools::utils::temp_file tmp_file;
@@ -168,6 +175,7 @@ int main (int argc_, char ** argv_)
           geomtools::gnuplot_drawer::wait_for_key ();
           usleep (200);
         }
+#endif
       
     }
   catch (exception & x)

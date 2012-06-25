@@ -32,8 +32,6 @@ set ( geomtools_tests_programs_list
   test_disk.cxx
   test_gdml_writer.cxx
   test_geom_id.cxx
-  test_gnuplot_draw.cxx
-  #test_gnuplot_i.cxx
   test_helix.cxx
   test_hexagon_box.cxx
   test_id_mgr.cxx
@@ -68,7 +66,14 @@ set ( geomtools_tests_programs_list
   test_union_3d.cxx
   test_utils_2.cxx
   test_utils.cxx
+  test_gnuplot_draw.cxx
   )
+
+# if (GEOMTOOLS_WITH_GNUPLOT_DISPLAY)
+#   list (APPEND geomtools_tests_programs_list
+#     test_gnuplot_i.cxx
+#   )
+# endif ()
 
 include_directories ( ${PROJECT_BINARY_DIR}/include
   ${PROJECT_SOURCE_DIR}/include     

@@ -6,10 +6,13 @@
 #include <string>
 #include <stdexcept>
 
+#include <geomtools/geomtools_config.h>
 #include <geomtools/utils.h>
 #include <geomtools/gnuplot_draw.h>
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
 #include <geomtools/gnuplot_i.h>
 #include <geomtools/gnuplot_drawer.h>
+#endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 #include <geomtools/box.h>
 
 #include <datatools/utils/temporary_files.h>
@@ -21,7 +24,9 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try 
     {
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
       bool draw = false;
+#endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
       long seed = 314159;
       srand48 (seed);
 
@@ -31,34 +36,34 @@ int main (int argc_, char ** argv_)
       clog << "Enter rotation axis (x, y, z): ";
       string word;
       {
-	string s;
-	getline (cin, s);
-	istringstream iss (s);
-	iss >> word;
-	if (! iss)
-	  {
-	    throw runtime_error ("Invalid format for rotation axis!");
-	  }
+        string s;
+        getline (cin, s);
+        istringstream iss (s);
+        iss >> word;
+        if (! iss)
+          {
+            throw runtime_error ("Invalid format for rotation axis!");
+          }
       }
       if (word == "x") rotation_axis = ROTATION_AXIS_X;
       else if (word == "y") rotation_axis = ROTATION_AXIS_Y;
       else if (word == "z") rotation_axis = ROTATION_AXIS_Z;
       else
-	{
-	  throw runtime_error ("Invalid rotation axis !");
-	}
+        {
+          throw runtime_error ("Invalid rotation axis !");
+        }
 
       double rotation_angle = 0.0;
       clog << "Enter rotation angle (degree): ";
       {
-	string s;
-	getline (cin, s);
-	istringstream iss (s);
-	iss >> rotation_angle;
-	if (! iss)
-	  {
-	    throw runtime_error ("Invalid format for rotation angle !");
-	  }
+        string s;
+        getline (cin, s);
+        istringstream iss (s);
+        iss >> rotation_angle;
+        if (! iss)
+          {
+            throw runtime_error ("Invalid format for rotation angle !");
+          }
       }
       rotation_angle *= CLHEP::degree;
 
@@ -80,16 +85,18 @@ int main (int argc_, char ** argv_)
       tmp_file.close ();
       usleep (200);
  
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
       if (draw)
-	{
-	  Gnuplot g1 ("lines");	
-	  g1.set_xrange (-10, +10).set_yrange (-10, +10).set_zrange (-10, +10);
-	  g1.set_xlabel ("x").set_ylabel ("y").set_zlabel ("z");
-	  g1.plotfile_xyz (tmp_file.get_filename (), 1, 2, 3, "3D view");
-	  g1.showonscreen (); // window output
-	  gnuplot_drawer::wait_for_key ();
-	  usleep (200);
-	}
+        {
+          Gnuplot g1 ("lines"); 
+          g1.set_xrange (-10, +10).set_yrange (-10, +10).set_zrange (-10, +10);
+          g1.set_xlabel ("x").set_ylabel ("y").set_zlabel ("z");
+          g1.plotfile_xyz (tmp_file.get_filename (), 1, 2, 3, "3D view");
+          g1.showonscreen (); // window output
+          gnuplot_drawer::wait_for_key ();
+          usleep (200);
+        }
+#endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
     }
   catch (exception & x)
     {

@@ -7,15 +7,19 @@
 #include <string>
 #include <stdexcept>
 
+#include <geomtools/geomtools_config.h>
 #include <geomtools/blur_spot.h>
 #include <geomtools/placement.h>
 #include <geomtools/units.h>
-#include <geomtools/gnuplot_i.h>
 #include <boost/random/uniform_real.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <boost/generator_iterator.hpp>
 #include <mygsl/rng.h>
+
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
+#include <geomtools/gnuplot_i.h>
+#endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 
 #include <datatools/serialization/io_factory.h>
 
@@ -79,7 +83,7 @@ int main (int argc_, char ** argv_)
           {
             geomtools::vector_3d vtx;
             v2.randomize_boost (my_prng_boost, vtx, geomtools::blur_spot::mode_gaussian);
-           geomtools::print_xyz(fout, vtx);           
+            geomtools::print_xyz(fout, vtx);           
           }
         fout << endl << endl;
        
@@ -134,27 +138,29 @@ int main (int argc_, char ** argv_)
                 {
                   geomtools::print_xyz(fout, vtx);           
                 }
-          }
+            }
           fout << endl << endl;
         }
 
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
         if (draw)
           {
             Gnuplot g0;
-          ostringstream cmd;
-          cmd << "set grid; ";
-          cmd << "set xlabel 'x'; ";
-          cmd << "set ylabel 'y'; ";
-          cmd << "set zlabel 'z'; ";
-          cmd << "splot ";
-          cmd << "  '" << "test_blur_spot.data" << "' index 0 title '0D-vertex' with points";
-          cmd << ", '" << "test_blur_spot.data" << "' index 1 title 'random 1D-vertex (gauss) ' with dots";
-          cmd << ", '" << "test_blur_spot.data" << "' index 2 title 'random 2D-vertex (gauss)' with dots";
-          cmd << ", '" << "test_blur_spot.data" << "' index 3 title 'random 3D-vertex (interval)' with dots";
-          cmd << ", '" << "test_blur_spot.data" << "' index 4 title 'matching vertex' with points lt 7 pt 6 ps 0.75";
-          g0.cmd (cmd.str());
-          wait_for_key ();
-        }
+            ostringstream cmd;
+            cmd << "set grid; ";
+            cmd << "set xlabel 'x'; ";
+            cmd << "set ylabel 'y'; ";
+            cmd << "set zlabel 'z'; ";
+            cmd << "splot ";
+            cmd << "  '" << "test_blur_spot.data" << "' index 0 title '0D-vertex' with points";
+            cmd << ", '" << "test_blur_spot.data" << "' index 1 title 'random 1D-vertex (gauss) ' with dots";
+            cmd << ", '" << "test_blur_spot.data" << "' index 2 title 'random 2D-vertex (gauss)' with dots";
+            cmd << ", '" << "test_blur_spot.data" << "' index 3 title 'random 3D-vertex (interval)' with dots";
+            cmd << ", '" << "test_blur_spot.data" << "' index 4 title 'matching vertex' with points lt 7 pt 6 ps 0.75";
+            g0.cmd (cmd.str());
+            wait_for_key ();
+          }
+#endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 
         {
           namespace ds = datatools::serialization;
@@ -173,7 +179,7 @@ int main (int argc_, char ** argv_)
           while (reader.has_record_tag ())
             {
               clog << "notice: " << "Next..."  << endl; 
-             if (reader.record_tag_is (geomtools::blur_spot::SERIAL_TAG))
+              if (reader.record_tag_is (geomtools::blur_spot::SERIAL_TAG))
                 {    
                   geomtools::blur_spot bs;
                   reader.load (bs);
@@ -209,13 +215,13 @@ int main (int argc_, char ** argv_)
 void wait_for_key ()
 {
 #if defined(unix) || defined(__unix) || defined(__unix__) || defined(__APPLE__)
-    cout << endl << "Press ENTER to continue..." << endl;
+  cout << endl << "Press ENTER to continue..." << endl;
 
-    std::cin.clear();
-    std::cin.ignore(std::cin.rdbuf()->in_avail());
-    std::cin.get();
+  std::cin.clear();
+  std::cin.ignore(std::cin.rdbuf()->in_avail());
+  std::cin.get();
 #endif
-    return;
+  return;
 }
 
 // end of test_blur_spot.cxx

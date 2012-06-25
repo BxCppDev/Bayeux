@@ -4,6 +4,7 @@
 // * gnuplot has to be installed (http://www.gnuplot.info/download.html)
 
 #include <iostream>
+#include <geomtools/geomtools_config.h>
 #include <geomtools/gnuplot_i.h>
 
 #define SLEEP_LGTH 2  // sleep time in seconds

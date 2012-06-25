@@ -8,11 +8,14 @@
 #include <stdexcept>
 #include <unistd.h>
 
+#include <geomtools/geomtools_config.h>
 #include <geomtools/regular_linear_placement.h>
 #include <geomtools/box.h>
 #include <geomtools/gnuplot_draw.h>
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
 #include <geomtools/gnuplot_drawer.h>
 #include <geomtools/gnuplot_i.h>
+#endif
 
 #include <datatools/utils/temporary_files.h>
 
@@ -37,6 +40,7 @@ int main (int argc_, char ** argv_)
                 {
                   debug = true;
                 }
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
              else if (option == "--no-draw") 
                 {
                   draw = false;
@@ -45,6 +49,7 @@ int main (int argc_, char ** argv_)
                 {
                   draw = true;
                 }
+#endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
               else 
                 { 
                   clog << "warning: ignoring option '" << option << "'!" << endl; 
@@ -83,6 +88,7 @@ int main (int argc_, char ** argv_)
           pi.tree_dump (clog, title.str (), ">>> ");
         }
 
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
       if (draw) {
         datatools::utils::temp_file tmp_file;
         tmp_file.set_remove_at_destroy (true);
@@ -104,6 +110,7 @@ int main (int argc_, char ** argv_)
         geomtools::gnuplot_drawer::wait_for_key ();
         usleep (200);
       }
+#endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 
     }
   catch (exception & x)

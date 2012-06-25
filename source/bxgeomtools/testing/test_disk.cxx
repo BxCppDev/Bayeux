@@ -6,6 +6,7 @@
 #include <string>
 #include <exception>
 
+#include <geomtools/geomtools_config.h>
 #include <geomtools/disk.h>
 #include <geomtools/gnuplot_draw.h>
 
@@ -53,53 +54,52 @@ int main (int argc_, char ** argv_)
       my_disk.tree_dump (clog, "my_disk");
 
       {
-	geomtools::vector_3d disk_pos;
-	geomtools::rotation_3d disk_rot;
-	geomtools::create_rotation (disk_rot, 0.0, 0.0, 0.0);
-	geomtools::gnuplot_draw::draw_disk (cout, 
-					    disk_pos,
-					    disk_rot, 
-					    my_disk);
-	cout << endl << endl;
-	size_t nshoots = 10000;
-	for (int i = 0; i < (int) nshoots; i++)
-	  {
-	    geomtools::vector_3d pos (2.* drand48 () * CLHEP::mm, 
-				      2.* drand48 () * CLHEP::mm, 
-				      -2 + 4.* drand48 () * CLHEP::mm);
-	    geomtools::vector_3d dir;
-	    geomtools::randomize_direction (drand48, dir);
-	    geomtools::intercept_t intercept;
-	    int intercept_face;
-	    if (my_disk.find_intercept (pos, dir, 
-					intercept))
-	      {
-		geomtools::gnuplot_draw::basic_draw_point (cout, 
-							   intercept.get_impact ());
-	      }
-	  }
- 	cout << endl << endl;
- 
-	// not working yet:
-	nshoots = 1000;
- 	for (int i = 0; i < (int) nshoots; i++)
-	  {
-	    geomtools::vector_3d pos (2.* drand48 () * CLHEP::mm, 
-				      2.* drand48 () * CLHEP::mm, 
-				      0.0);
-	    geomtools::vector_3d dir;
-	    geomtools::randomize_direction (drand48, dir);
-	    dir.setZ (0.0);
-	    geomtools::intercept_t intercept;
- 	    int intercept_face;
-	    if (my_disk.find_intercept (pos, dir, 
-					intercept))
-	      {
-		geomtools::gnuplot_draw::basic_draw_point (cout, 
-							   intercept.get_impact ());
-	      }
-	  }
- 	cout << endl << endl;
+        geomtools::vector_3d disk_pos;
+        geomtools::rotation_3d disk_rot;
+        geomtools::create_rotation (disk_rot, 0.0, 0.0, 0.0);
+        geomtools::gnuplot_draw::draw_disk (cout, 
+                                            disk_pos,
+                                            disk_rot, 
+                                            my_disk);
+        cout << endl << endl;
+        size_t nshoots = 10000;
+        for (int i = 0; i < (int) nshoots; i++)
+          {
+            geomtools::vector_3d pos (2.* drand48 () * CLHEP::mm, 
+                                      2.* drand48 () * CLHEP::mm, 
+                                      -2 + 4.* drand48 () * CLHEP::mm);
+            geomtools::vector_3d dir;
+            geomtools::randomize_direction (drand48, dir);
+            geomtools::intercept_t intercept;
+            int intercept_face;
+            if (my_disk.find_intercept (pos, dir, 
+                                        intercept))
+              {
+                geomtools::gnuplot_draw::basic_draw_point (cout, 
+                                                           intercept.get_impact ());
+              }
+          }
+        cout << endl << endl;
+        // not working yet:
+        nshoots = 1000;
+        for (int i = 0; i < (int) nshoots; i++)
+          {
+            geomtools::vector_3d pos (2.* drand48 () * CLHEP::mm, 
+                                      2.* drand48 () * CLHEP::mm, 
+                                      0.0);
+            geomtools::vector_3d dir;
+            geomtools::randomize_direction (drand48, dir);
+            dir.setZ (0.0);
+            geomtools::intercept_t intercept;
+            int intercept_face;
+            if (my_disk.find_intercept (pos, dir, 
+                                        intercept))
+              {
+                geomtools::gnuplot_draw::basic_draw_point (cout, 
+                                                           intercept.get_impact ());
+              }
+          }
+        cout << endl << endl;
   
       }
 
