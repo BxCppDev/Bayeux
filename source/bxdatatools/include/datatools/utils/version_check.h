@@ -1,25 +1,27 @@
 // -*- mode: c++; -*-
 // version_check.h
-
-#ifndef __datatools__utils__version_check_h
-#define __datatools__utils__version_check_h 1
-
+#ifndef DATATOOLS_UTILS_VERSION_CHECK_H_
+#define DATATOOLS_UTILS_VERSION_CHECK_H_
+// Standard Library
 #include <iostream>
 #include <string>
+
+// Third Party
+// - Boost
 #include <boost/cstdlib.hpp>
 
+// This Project
+
 namespace datatools {
-  namespace utils {
+namespace utils {
 
-    class version_id;
+class version_id;
 
-    bool validate_version(const std::string& label_, 
-			  const version_id& vid_,
-			  const std::string& version_rules_);
+bool validate_version(const std::string& label, const version_id& vid,
+                      const std::string& version_rules);
 
-  } // namespace utils
+} // namespace utils
 } // namespace datatools
 
-#endif // __datatools__utils__version_check_h
+#endif // DATATOOLS_UTILS_VERSION_CHECK_H_
 
-// end of version_check.h

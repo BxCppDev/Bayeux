@@ -1,85 +1,83 @@
 // -*- mode: c++; -*- 
 // temporary_files.h
-
-#ifndef __datatools__utils__temporary_files_h
-#define __datatools__utils__temporary_files_h 1
-
+#ifndef DATATOOLS_UTILS_TEMPORARY_FILES_H_
+#define DATATOOLS_UTILS_TEMPORARY_FILES_H_
+// Standard Library
 #include <iostream>
 #include <fstream>
 #include <string>
 
+// Third Party
+// - A
+
+// This Project
+
 namespace datatools {
-  
-  namespace utils {
+namespace utils {
 
-    // using   namespace std;
+class temp_file {
+ public:
+  static bool g_devel;
+  static const std::string DEFAULT_PATTERN;
 
-    class temp_file
-    {
-    public:
+ public:
+  temp_file();
 
-      static bool g_devel;
-      static const std::string DEFAULT_PATTERN;
+  temp_file(const char* a_pattern, bool a_remove_at_destroy = true);
 
-    private:
-      bool   _remove_at_destroy_;
-      std::string _path_dir_;
-      std::string _pattern_;
-      std::string _full_pattern_;
-      std::string _filename_;
-      bool   _read_open_;
-      bool   _write_open_;
-      char * _template_;
-      std::ofstream _out_;
-      std::ifstream _in_;
+  temp_file(std::string a_pattern, bool a_remove_at_destroy = true);
 
-    protected:
+  temp_file(const char* a_path_dir, const char* a_pattern, 
+            bool a_remove_at_destroy = true);
 
-      void _set_defaults ();
+  temp_file(std::string a_path_dir, const char* a_pattern, 
+            bool a_remove_at_destroy = true);
 
-    public:
+  temp_file(std::string a_path_dir, std::string a_pattern, 
+            bool a_remove_at_destroy = true);
 
-      const std::string & get_filename () const;
+  ~temp_file();
 
-      bool is_valid () const;
+  const std::string& get_filename() const;
 
-      bool is_read_open () const;
+  bool is_valid() const;
 
-      bool is_write_open () const;
+  bool is_read_open() const;
 
-      void set_remove_at_destroy (bool);
+  bool is_write_open() const;
 
-      std::ofstream & out ();
+  void set_remove_at_destroy(bool);
 
-      std::ifstream & in ();
+  std::ofstream& out();
 
-      temp_file ();
+  std::ifstream& in();
 
-      temp_file (const char * a_pattern, bool a_remove_at_destroy = true);
+  void create(std::string a_path_dir, std::string a_pattern);
 
-      temp_file (std::string a_pattern, bool a_remove_at_destroy = true);
+  void close();
 
-      temp_file (const char * a_path_dir, const char * a_pattern, bool a_remove_at_destroy = true);
+  void remove();
 
-      temp_file (std::string a_path_dir, const char * a_pattern, bool a_remove_at_destroy = true);
 
-      temp_file (std::string a_path_dir, std::string a_pattern, bool a_remove_at_destroy = true);
+ protected:
+  void set_defaults();
 
-      ~temp_file ();
 
-      void create (std::string a_path_dir, std::string a_pattern);
-      
-      void close ();
-      
-      void remove ();
+ private:
+  bool   remove_at_destroy_;
+  std::string path_dir_;
+  std::string pattern_;
+  std::string full_pattern_;
+  std::string filename_;
+  bool   read_open_;
+  bool   write_open_;
+  char  *template_;
+  std::ofstream out_;
+  std::ifstream in_;
+};
 
-    };
-
-    
-  } // namespace utils
-
+} // namespace utils
 } // namespace datatools 
 
-#endif // __datatools__utils__temporary_files_h
+#endif // DATATOOLS_UTILS_TEMPORARY_FILES_H_
 
-// end of utils.h

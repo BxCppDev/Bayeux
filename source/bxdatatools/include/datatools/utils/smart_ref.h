@@ -13,143 +13,113 @@
  * History: 
  * 
  */
-
-#ifndef __datatools__utils__smart_ref_h
-#define __datatools__utils__smart_ref_h 1
-
+#ifndef DATATOOLS_UTILS_SMART_REF_H_
+#define DATATOOLS_UTILS_SMART_REF_H_
+// Standard Library
 #include <cstdlib>
-#include <stdexcept>
 #include <iostream>
-#include <sstream>
-#include <string>
 #include <list>
+#include <string>
+#include <stdexcept>
+#include <sstream>
 
+// Third Party
+// - A
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 
+// This Project
 #include <datatools/utils/properties.h>
 
 namespace datatools {
+namespace utils {
 
-  namespace utils {
+template <class T>
+class smart_ref {
+ public:
+  typedef T            instance_t;
+  typedef T&           reference_t;
+  typedef const T&     const_reference_t;
+  typedef T*           pointer_t;
+  typedef const T*     const_pointer_t;
+  typedef std::list<T> col_t;
+  typedef smart_ref<T> smart_ref_t;
 
-    template <class T>
-    class smart_ref
-    {
-    public:
+ public: 
+  // ctor:
+  smart_ref() : ref_(0), properties_() {}
 
-      typedef T            instance_t;
-      typedef T &          reference_t;
-      typedef const T &    const_reference_t;
-      typedef T *          pointer_t;
-      typedef const T *    const_pointer_t;
-      typedef std::list<T> col_t;
-      typedef smart_ref<T> smart_ref_t;
+  // ctor:
+  smart_ref(const_reference_t obj) {
+    this->set(obj);
+  }
 
-    private: 
+  // dtor:
+  virtual ~smart_ref() {}
 
-      pointer_t                    _ref_;
-      datatools::utils::properties _properties_;
 
-    public: 
+  void set(const_reference_t obj) {
+    ref_ = const_cast<pointer_t>(&obj);
+  }
 
-      const datatools::utils::properties & get_properties () const
-      {
-        return _properties_;
-      }
-    
-      datatools::utils::properties & get_properties ()
-      {
-        return _properties_;
-      }
+  const_reference_t get() const {
+    return *ref_;
+  }
 
-      void set_properties (const datatools::utils::properties & a_props)
-      {
-        _properties_ = a_props;
-      }
-  
-    public: 
 
-      // ctor:
-      smart_ref ()
-      {
-        _ref_ = 0;
-      }
+  const datatools::utils::properties& get_properties() const {
+    return properties_;
+  }
 
-      // ctor:
-      smart_ref (const_reference_t a_obj)
-      {
-        set (a_obj);
-        return;
-      }
+  datatools::utils::properties& get_properties() {
+    return properties_;
+  }
 
-      // dtor:
-      virtual ~smart_ref ()
-      {
-        return;
-       }
-  
-      void set (const_reference_t a_obj)
-      {
-        _ref_ = const_cast<pointer_t>(&a_obj);
-        return;
-      }
+  void set_properties(const datatools::utils::properties& props) {
+    properties_ = props;
+  }
 
-      const_reference_t get () const
-      {
-        return *_ref_;
-      }
+  void reset() {
+    ref_ = 0;
+  }
 
-      void reset ()
-      {
-        _ref_ = 0;
-        return;
-       }
+  bool is_valid() const {
+    return ref_ != 0;
+  }
 
-      bool is_valid () const
-      {
-        return _ref_ != 0;
-      }
 
-    private:
-    
-      friend class boost::serialization::access; 
-      
-      template<class Archive>
-      void serialize (Archive            & a_ar, 
-                      const unsigned int a_version) 
-      {
-        a_ar & boost::serialization::make_nvp ("properties", _properties_);
-        a_ar & boost::serialization::make_nvp ("ref",        _ref_);
-        return;
-      }
+ private:
+  friend class boost::serialization::access; 
 
-    public:
+  template<class Archive>
+  void serialize(Archive& ar, const unsigned int version) {
+    ar & boost::serialization::make_nvp("properties", properties_);
+    ar & boost::serialization::make_nvp("ref", ref_);
+  }
 
-      // predicate:
-      class has_flag : public std::unary_function<smart_ref_t, bool>
-      {
-        std::string _flag_;
-      public:
-        explicit has_flag (const std::string & a_flag)
-        {
-          _flag_ = a_flag;
-          return;
-        }
-    
-        bool operator () (const smart_ref_t & a_smart_ref) const
-        {
-          if (! a_smart_ref.is_valid ()) return false;
-          return (a_smart_ref.get_properties ().has_flag (_flag_));
-        }
-      };
-    
-    };
+ private: 
+  pointer_t                    ref_;
+  datatools::utils::properties properties_;
 
-  } // end of namespace utils 
 
+//----------------------------------------------------------------------
+// has_flag predicate (inner class)
+ public:
+  class has_flag : public std::unary_function<smart_ref_t, bool> {
+   public:
+    explicit has_flag(const std::string& flag) : flag_(flag) {}
+
+    bool operator()(const smart_ref_t& s) const {
+      if (!s.is_valid()) return false;
+      return (s.get_properties().has_flag(flag_));
+    }
+   private:
+    std::string flag_;
+  };
+};
+
+} // end of namespace utils 
 } // end of namespace datatools
 
-#endif // __datatools__utils__smart_ref_h
+#endif // DATATOOLS_UTILS_SMART_REF_H_
 
-// end of smart_ref.h

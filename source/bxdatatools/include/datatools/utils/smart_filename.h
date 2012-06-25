@@ -29,189 +29,176 @@
  * History: 
  * 
  */
-
-#ifndef __datatools__datatools__utils__smart_filename_h
-#define __datatools__datatools__utils__smart_filename_h 1
-
+#ifndef DATATOOLS_UTILS_SMART_FILENAME_H_
+#define DATATOOLS_UTILS_SMART_FILENAME_H_
+// Standard Library
 #include <iostream>
 #include <string>
 #include <vector>
 
+// Third Party
+// - Boost
 #include <boost/cstdint.hpp>
 
+// This Project
 #include <datatools/utils/properties.h>
 
 namespace datatools {
+namespace utils {
 
-  namespace utils {
+class smart_filename {
+ public: 
+  static const int         MODE_INCREMENTAL_UNRANGED          = -1;
+  static const int         MODE_INCREMENTAL_DEFAULT_START     =  0;
+  static const int         MODE_INCREMENTAL_DEFAULT_INCREMENT =  1;
+  static const std::string MODE_SINGLE_LABEL;
+  static const std::string MODE_LIST_LABEL;
+  static const std::string MODE_INCREMENTAL_LABEL;
 
-    class smart_filename
-    {
-    public: 
+  enum mode_t {
+    MODE_INVALID     =  0,
+    MODE_SINGLE      =  0x1,
+    MODE_LIST        =  0x2,
+    MODE_INCREMENTAL =  0x4
+  };
 
-      typedef std::vector<std::string>  list_type;
-      typedef list_type::const_iterator const_iterator;
- 
-      bool is_debug () const;
-      
-      void set_debug (bool);
+ public: 
+  typedef std::vector<std::string>  list_type;
+  typedef list_type::const_iterator const_iterator;
 
-      int get_mode () const;
+ public:
+  // ctor:
+  smart_filename();
 
-      bool is_initialized () const;
+  // dtor:
+  virtual ~smart_filename();
 
-      bool is_single () const;
+  bool is_debug() const;
 
-      bool is_list () const;
- 
-      bool is_incremental () const;
-      
-      bool is_valid () const;
+  void set_debug(bool);
 
-      bool is_ranged () const;
+  int get_mode() const;
 
-      bool is_expand_path () const;
+  bool is_initialized() const;
 
-      size_t size () const;
+  bool is_single() const;
 
-      size_t current_size () const;
+  bool is_list() const;
 
-      const_iterator begin () const;
+  bool is_incremental() const;
 
-      const_iterator end () const;
+  bool is_valid() const;
 
-      const std::string & operator[] (int a_index) const;
+  bool is_ranged() const;
 
-      const std::string & get_filename (int a_index) const;
+  bool is_expand_path() const;
 
-      bool has_filename (const std::string & filename_, 
-                         bool expand_path_ = true) const;
+  size_t size() const;
 
-      // single mode :
-      void set (const std::string & a_filename);
+  size_t current_size() const;
 
-      // single mode :
-      void set_single (const std::string & a_filename);
+  const_iterator begin() const;
 
-      // list mode :
-      void add (const std::string & a_filename);
+  const_iterator end() const;
 
-      // list mode :
-      void add_to_list (const std::string & a_filename);
+  const std::string& operator[](int index) const;
 
-      void reset ();  
+  const std::string& get_filename(int index) const;
 
-      void build_incremental_filename (int increment_index_, std::string & filename_) const;
+  bool has_filename(const std::string& name, bool expand = true) const;
 
-    protected:  
-     
-      void _set_mode (int);
-      
-      // list:
-      void _add_list (const std::string & a_filename);
+  // single mode :
+  void set(const std::string& filename);
 
-      void _set_list_allow_duplication (bool);
+  // single mode :
+  void set_single(const std::string& filename);
 
-      // incremental/list:
-      void _set_current_index (int);
+  // list mode :
+  void add(const std::string& filename);
 
-    public: 
+  // list mode :
+  void add_to_list(const std::string& filename);
 
-      static const int         MODE_INCREMENTAL_UNRANGED          = -1;
-      static const int         MODE_INCREMENTAL_DEFAULT_START     =  0;
-      static const int         MODE_INCREMENTAL_DEFAULT_INCREMENT =  1;
-      static const std::string MODE_SINGLE_LABEL;
-      static const std::string MODE_LIST_LABEL;
-      static const std::string MODE_INCREMENTAL_LABEL;
+  void reset();  
 
-      enum mode_t
-        {
-          MODE_INVALID     =  0,
-          MODE_SINGLE      =  0x1,
-          MODE_LIST        =  0x2,
-          MODE_INCREMENTAL =  0x4
-        };
+  void build_incremental_filename(int increment_index, 
+                                  std::string& filename) const;
 
-      // ctor:
-      smart_filename ();
-      
-      // dtor:
-      virtual ~smart_filename ();
-    
-      static void make_single (smart_filename & a_smart_filename,
-                               const std::string & a_filename,
-                               bool a_expand_path = true);
-      
-      static void make_list (smart_filename & a_smart_filename,
-                             bool a_allow_duplication = false,
-                             bool a_expand_path = true);
+  void dump(std::ostream& out = std::clog) const;
 
-      static void make_list (smart_filename & a_smart_filename,
-                             const std::string & a_list_file, 
-                             bool a_allow_duplication = false,
-                             bool a_expand_path = true);
+  void initialize(const properties& config);
 
-   
-      static void make_incremental (smart_filename & a_smart_filename,
-                                    const std::string & a_path, 
-                                    const std::string & a_prefix,
-                                    const std::string & a_extension,
-                                    int a_stopping_index,
-                                    int a_starting_index = 0,
-                                    int a_increment_index = 1,
-                                    const std::string & a_suffix = "",
-                                    int a_incremental_index_ndigit = 0,
-                                    bool a_expand_path = true);
-    
-      static void make_unranged_incremental (smart_filename & a_smart_filename,
-                                             const std::string & a_path, 
-                                             const std::string & a_prefix,
-                                             const std::string & a_extension,
-                                             int a_starting_index = 0,
-                                             int a_increment_index = 1,
-                                             const std::string & a_suffix = "",
-                                             int a_incremental_index_ndigit = 0,
-                                             bool a_expand_path = true);
- 
-      void initialize (const properties & a_config);
+  void print_list_of_filenames(std::ostream& out = std::clog) const;
 
-      void print_list_of_filenames (std::ostream & a_out = std::clog) const;
+  void store_list_of_filenames(const std::string& a_list_filename, 
+                               bool append = true) const;
 
-      void store_list_of_filenames (const std::string & a_list_filename, 
-                                    bool a_append = true) const;
+  static void make_single(smart_filename& a_smart_filename,
+                          const std::string& filename,
+                          bool expand_path = true);
 
-      void dump (std::ostream & a_out = std::clog) const;
+  static void make_list(smart_filename& a_smart_filename,
+                        bool allow_duplication = false,
+                        bool expand_path = true);
 
-    private: 
+  static void make_list(smart_filename& a_smart_filename,
+                         const std::string& a_list_file, 
+                         bool allow_duplication = false,
+                         bool expand_path = true);
 
-      bool        _debug_;
-      uint32_t    _mode_;
-      bool        _expand_path_;
-      list_type   _list_;
-      bool        _list_allow_duplication_;
-      bool        _ranged_;
-      std::string _incremental_path_;
-      std::string _incremental_prefix_;
-      std::string _incremental_suffix_;
-      std::string _incremental_extension_;
-      int32_t     _incremental_starting_index_;
-      int32_t     _incremental_stopping_index_;
-      int32_t     _incremental_increment_;
-      uint32_t    _incremental_index_ndigit_;
+  static void make_incremental(smart_filename& a_smart_filename,
+                               const std::string& path, 
+                               const std::string& prefix,
+                               const std::string& extension,
+                               int stopping_index,
+                               int starting_index = 0,
+                               int increment_index = 1,
+                               const std::string& suffix = "",
+                               int incremental_index_ndigit = 0,
+                               bool expand_path = true);
 
-    };
+  static void make_unranged_incremental(smart_filename& smart_filename,
+                                        const std::string& path, 
+                                        const std::string& prefix,
+                                        const std::string & a_extension,
+                                        int starting_index = 0,
+                                        int increment_index = 1,
+                                        const std::string& suffix = "",
+                                        int incremental_index_ndigit = 0,
+                                        bool expand_path = true);
 
-  }  // end of namespace utils
 
+ protected:  
+  void set_mode(int);
+
+  // list:
+  void add_list(const std::string& filename);
+
+  void set_list_allow_duplication(bool);
+
+  // incremental/list:
+  void set_current_index(int);
+
+
+ private: 
+  bool        debug_;
+  uint32_t    mode_;
+  bool        expand_path_;
+  list_type   list_;
+  bool        list_allow_duplication_;
+  bool        ranged_;
+  std::string incremental_path_;
+  std::string incremental_prefix_;
+  std::string incremental_suffix_;
+  std::string incremental_extension_;
+  int32_t     incremental_starting_index_;
+  int32_t     incremental_stopping_index_;
+  int32_t     incremental_increment_;
+  uint32_t    incremental_index_ndigit_;
+};
+
+}  // end of namespace utils
 }  // end of namespace datatools
 
-#endif // __datatools__datatools__utils__smart_filename_h
+#endif // DATATOOLS_UTILS_SMART_FILENAME_H_
 
-// end of smart_filename.h
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/

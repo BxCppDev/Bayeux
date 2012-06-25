@@ -31,228 +31,204 @@
  * History: 
  * 
  */
-
-#ifndef __datatools__utils__multi_properties_h
-#define __datatools__utils__multi_properties_h 1
-
-#include <string>
+#ifndef DATATOOLS_UTILS_MULTI_PROPERTIES_H_
+#define DATATOOLS_UTILS_MULTI_PROPERTIES_H_
+// Standard Library
 #include <map>
 #include <list>
+#include <string>
 
+// Third Party
+// - Boost
 #include <boost/cstdint.hpp>
 #include <boost/serialization/access.hpp>
 
-#include <datatools/utils/properties.h>
-
+// This Project
 #include <datatools/serialization/i_serializable.h>
 #include <datatools/utils/i_clear.h>
 #include <datatools/utils/i_tree_dump.h>
 #include <datatools/utils/i_cloneable.h>
-
-//using   namespace std;
+#include <datatools/utils/properties.h>
 
 namespace datatools {
+namespace utils {
 
-  namespace utils {
+class multi_properties :    
+    public datatools::serialization::i_serializable,
+    public datatools::utils::i_clear,
+    public datatools::utils::i_tree_dumpable,
+    public datatools::utils::i_cloneable {
+ public:
+  static const char OPEN;
+  static const char CLOSE;
+  static const char COMMENT;
+  static const std::string DEFAULT_KEY_LABEL;
+  static const std::string DEFAULT_META_LABEL;
+  static const bool with_header_footer;
+  static const bool without_header_footer;
+  static const bool write_public_only;
+  static const bool write_private_also;
+  static const bool read_public_only;
+  static const bool read_private_also;
+  //static const std::string SERIAL_TAG;
 
-    class multi_properties :    
+  static bool g_debug;
+
+ public:
+  // entry class (inner class)
+  class entry :    
       public datatools::serialization::i_serializable,
-      public datatools::utils::i_clear,
-      public datatools::utils::i_tree_dumpable,
-      public datatools::utils::i_cloneable 
-    {
-    public:
-      static const char OPEN;
-      static const char CLOSE;
-      static const char COMMENT;
-      static const std::string DEFAULT_KEY_LABEL;
-      static const std::string DEFAULT_META_LABEL;
-      static const bool with_header_footer;
-      static const bool without_header_footer;
-      static const bool write_public_only;
-      static const bool write_private_also;
-      static const bool read_public_only;
-      static const bool read_private_also;
-      //static const std::string SERIAL_TAG;
+      public datatools::utils::i_tree_dumpable {
+   public:
+    entry(const std::string& a_key = "", 
+          const std::string& a_meta = "");
 
-      static bool g_debug;
+    virtual ~entry();
 
-    public:
+    const properties& get_properties() const;
 
-      class entry :    
-        public datatools::serialization::i_serializable,
-        public datatools::utils::i_tree_dumpable  
-      {
-      public:
-        //static const std::string SERIAL_TAG;
+    properties& get_properties ();
 
-      private:
+    const std::string& get_key() const;
 
-        std::string     _key_;
-        std::string     _meta_;
-        properties _properties_;
+    void set_key(const std::string&);
 
-      public:
+    const std::string& get_meta() const;
 
-        const properties & get_properties () const;
+    void set_meta(const std::string&);
 
-        properties & get_properties ();
+    bool has_meta() const;
 
-        const std::string & get_key () const;
+    virtual void tree_dump(std::ostream& a_out = std::clog, 
+                           const std::string& a_title = "",
+                           const std::string& a_oindent = "",
+                           bool a_inherit = false) const;
 
-        void set_key (const std::string &);
 
-        const std::string & get_meta () const;
+   private:
+    DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
 
-        void set_meta (const std::string &);
+    friend class boost::serialization::access; 
+    BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
 
-        bool has_meta () const;
+   private:
+    std::string key_;
+    std::string meta_;
+    properties properties_;
+  }; // multi_properties::entry
 
-        entry (const std::string & a_key = "", 
-               const std::string & a_meta = "");
 
-        virtual ~entry ();
+ public:
+  typedef std::map<std::string, entry> entries_col_t;
+  typedef std::list<entry*> entries_ordered_col_t;
 
-      private:
+ public:
+  multi_properties(const std::string& a_key_label = "", 
+                   const std::string& a_meta_label = "", 
+                   const std::string& a_description = "", 
+                   bool a_debug = false);
 
-        DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
-          
-        friend class boost::serialization::access; 
-        BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
+  virtual ~multi_properties();
 
-      public:
-        virtual void tree_dump (std::ostream & a_out          = std::clog, 
-                                const std::string & a_title   = "",
-                                const std::string & a_oindent = "",
-                                bool a_inherit          = false) const;
+  bool is_debug() const;
 
-      };
+  void set_debug(bool = true);
 
-    public:
+  void set_description(const std::string& a_description);
 
-      typedef std::map<std::string, entry> entries_col_t;
-      typedef std::list<entry *>      entries_ordered_col_t;
+  const std::string& get_description() const;
 
-    private:
-        
-      bool                  _debug_;
-      std::string           _description_;
-      std::string           _key_label_;
-      std::string           _meta_label_;
-      entries_col_t         _entries_;
-      entries_ordered_col_t _ordered_entries_;
+  void set_key_label(const std::string& a_key_label);
 
-    public:
+  const std::string& get_key_label() const;
 
-      bool is_debug () const;
+  void set_meta_label(const std::string& a_meta_label);
 
-      void set_debug (bool = true);
+  const std::string& get_meta_label() const;
 
-      void set_description (const std::string & a_description);
+  size_t size() const;
 
-      const std::string & get_description () const;
+  void reset();
 
-      void set_key_label (const std::string & a_key_label);
+  virtual void clear();
 
-      const std::string & get_key_label () const;
+  const entries_col_t& entries() const;
 
-      void set_meta_label (const std::string & a_meta_label);
+  const entries_ordered_col_t& ordered_entries() const;
 
-      const std::string & get_meta_label () const;
-        
-      size_t size () const;
+  const entry& get(const std::string& a_key) const;
 
-      void reset ();
+  entry& get(const std::string& a_key);
 
-      virtual void clear ();
+  bool has_key(const std::string& a_key) const;
 
-      const entries_col_t & entries () const;
+  bool has_section(const std::string& a_key) const;
 
-      const entries_ordered_col_t & ordered_entries () const;
+  const properties& get_section(const std::string& a_key) const;
 
-      multi_properties (const std::string & a_key_label = "", 
-                        const std::string & a_meta_label = "", 
-                        const std::string & a_description = "", 
-                        bool a_debug = false);
+  properties& get_section(const std::string& a_key);
 
-      virtual ~multi_properties ();
+  void add(const std::string& a_key, 
+           const std::string& a_meta,
+           const properties& a_props);
 
-      void dump (std::ostream & a_out = std::clog) const;
+  void add(const std::string& a_key, 
+           const properties& a_props);
 
-    private:
+  void add(const std::string& a_key, 
+           const std::string& a_meta = "");
 
-      void remove_ (const std::string & a_key);
+  void remove(const std::string& a_key);
 
-      void add_ (const std::string & a_key, 
-                  const std::string & a_meta = "");
+  void write(const std::string& a_filename,
+             bool a_header_footer = true,
+             bool a_write_private = false) const;
 
-    public:
+  void read(const std::string& a_filename,
+            bool a_skip_private = false);
 
-      //! From the datatools::utils::i_cloneable interface :
-      DATATOOLS_CLONEABLE_DECLARATION (multi_properties)
+  void dump(std::ostream& a_out = std::clog) const;
 
-      DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
+  virtual void tree_dump(std::ostream& a_out         = std::clog, 
+                         const std::string& a_title  = "",
+                         const std::string& a_indent = "",
+                         bool a_inherit          = false) const;
 
-    private:
-        
-      friend class boost::serialization::access; 
-      BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
-      //BOOST_SERIALIZATION_SPLIT_MEMBER_SERIALIZE_DECLARATIONS()
+ public:
+  //! From the datatools::utils::i_cloneable interface :
+  DATATOOLS_CLONEABLE_DECLARATION(multi_properties)
 
-    public:
+  DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
 
-      const entry & get (const std::string & a_key) const;
 
-      entry & get (const std::string & a_key);
+ private:
+  friend class boost::serialization::access; 
+  BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
+  //BOOST_SERIALIZATION_SPLIT_MEMBER_SERIALIZE_DECLARATIONS()
 
-      bool has_key (const std::string & a_key) const;
+ private:
+  void remove_impl(const std::string& a_key);
 
-      bool has_section (const std::string & a_key) const;
+  void add_impl(const std::string& a_key, 
+                const std::string& a_meta = "");
 
-      const properties & get_section (const std::string & a_key) const;
+  void read_impl(std::istream& a_in, bool a_skip_private);
 
-      properties & get_section (const std::string & a_key);
+ private:
+  bool                  debug_;
+  std::string           description_;
+  std::string           key_label_;
+  std::string           meta_label_;
+  entries_col_t         entries_;
+  entries_ordered_col_t ordered_entries_;
+};
 
-      void add (const std::string & a_key, 
-                const std::string & a_meta,
-                const properties & a_props);
-
-      void add (const std::string & a_key, 
-                const properties & a_props);
-
-      void add (const std::string & a_key, 
-                const std::string & a_meta = "");
-
-      void remove (const std::string & a_key);
-
-      void write (const std::string & a_filename,
-                  bool a_header_footer = true,
-                  bool a_write_private = false) const;
-        
-      void read (const std::string & a_filename,
-                 bool a_skip_private = false);
-
-    private:
-        
-      void _read_ (std::istream & a_in, bool a_skip_private);
-
-    public:
-
-      virtual void tree_dump (std::ostream & a_out         = std::clog, 
-                              const std::string & a_title  = "",
-                              const std::string & a_indent = "",
-                              bool a_inherit          = false) const;
-        
-    };
-
-  } // end of namespace utils 
-
+} // end of namespace utils 
 } // end of namespace datatools 
 
 
 #include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT_KEY2(datatools::utils::multi_properties, "datatools::utils::multi_properties")
 
-#endif // __datatools__utils__multi_properties_h
+#endif // DATATOOLS_UTILS_MULTI_PROPERTIES_H_
 
-/* end of multi_properties.h */
