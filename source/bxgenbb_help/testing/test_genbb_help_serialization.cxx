@@ -64,6 +64,7 @@ int main (int argc_, char ** argv_)
         if (with_gbbbio)
           {
             genbb::primary_event & e1 = bag1.add<genbb::primary_event> ("e1", "An event");
+            e1.set_label ("Se-82 0nbb decay");
             e1.set_time (1.23456 * CLHEP::ns);
           }
 

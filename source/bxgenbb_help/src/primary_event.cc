@@ -59,9 +59,11 @@ namespace genbb {
 
   void primary_event::reset ()
   {
+    reset_label ();
     time = -1.;
+    genbb_weight = 1.0;
     particles.clear ();
-    classification = "";
+    reset_classification ();
     return;
   }
 
@@ -82,6 +84,7 @@ namespace genbb {
   primary_event::primary_event ()
   {
     time = -1.;
+    genbb_weight = 1.0;
     return;
   }
   
@@ -102,6 +105,28 @@ namespace genbb {
     return time;
   }
 
+  void primary_event::set_genbb_weight (double genbb_weight_)
+  {
+    if (genbb_weight_ < 0.0)
+      {
+        std::ostringstream message;
+        message << "genbb::primary_event::set_genbb_weight: Invalid 'genbb_weight' value  (" << genbb_weight_ << " <0) !";
+        throw std::logic_error (message.str());
+      }
+    genbb_weight = genbb_weight_;
+    return;
+  }
+
+  double primary_event::get_genbb_weight () const
+  {
+    return genbb_weight;
+  }
+
+  bool primary_event::is_genbb_weighted () const
+  {
+    return genbb_weight == 1.0;
+  }
+
   const primary_event::particles_col_t & primary_event::get_particles () const
   {
     return particles;
@@ -115,6 +140,23 @@ namespace genbb {
   void primary_event::add_particle (const primary_particle & p_)
   {
     particles.push_back (p_);
+    return;
+  }
+
+  const std::string & primary_event::get_label () const
+  {
+    return label;
+  }
+
+  void primary_event::set_label (const std::string & l_)
+  {
+    label = l_;
+    return;
+  }
+
+  void primary_event::reset_label ()
+  {
+    label = "";
     return;
   }
 
@@ -164,33 +206,68 @@ namespace genbb {
     return;
   }
 
-  void primary_event::dump (std::ostream & out_,
-                            const std::string & title_,
-                            const std::string & indent_) const
+  void primary_event::tree_dump (std::ostream & out_,
+                                 const std::string & title_,
+                                 const std::string & indent_,
+                                 bool inherit_) const
   {
-    std::string indent = indent_;
+    namespace du = datatools::utils;
+    std::string indent;
+    if (! indent_.empty ()) indent = indent_;
     if (! title_.empty ())
       {
         out_ << indent << title_ << std::endl;
       }
+    out_ << indent << du::i_tree_dumpable::tag << "Valid: " << is_valid () << std::endl;
     if (is_valid ())
       {
-        out_ << indent << "|-- time: " << time / CLHEP::second << " s" << std::endl;
-        out_ << indent << "|-- #particles: " << particles.size () << std::endl;
+        out_ << indent << du::i_tree_dumpable::tag << "Label : '" << label << "'" << std::endl;
+        out_ << indent << du::i_tree_dumpable::tag << "Time  : " << time / CLHEP::second << " s" << std::endl;
+        out_ << indent << du::i_tree_dumpable::tag << "Particles: [" << particles.size () << "]" << std::endl;
+        int particle_counter = 0;
         for (particles_col_t::const_iterator it = particles.begin ();
              it != particles.end ();
              it++)
           {
-            it->dump (out_, (indent + "|   ")); 
+            std::ostringstream indent_oss;
+            indent_oss << indent << du::i_tree_dumpable::skip_tag;
+            particles_col_t::const_iterator jt = it;
+            jt++;
+            out_ << indent_ << du::i_tree_dumpable::skip_tag; 
+            if (jt == particles.end ())
+              {
+                out_ << du::i_tree_dumpable::last_tag; 
+                indent_oss << du::i_tree_dumpable::last_skip_tag;
+              }
+            else
+              {
+                out_ << du::i_tree_dumpable::tag; 
+                indent_oss << du::i_tree_dumpable::skip_tag;
+              }
+            out_ << "Particle #" << particle_counter << " : " << std::endl;
+            it->tree_dump (out_, "", indent_oss.str());
+            particle_counter++;
           }
-        out_ << indent << "`-- classification: '" << get_classification () 
+        out_ << indent << du::i_tree_dumpable::tag
+             << "GENBB weight : " << get_genbb_weight () 
+             << std::endl;
+        out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_) 
+             << "Classification : '" << get_classification () 
              << "'" << std::endl;
       }
     else 
       {
-        out_ << indent << "`-- status: " << "<invalid>" << std::endl;
+        out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_) 
+             << "Status: " << "<invalid>" << std::endl;
       }
     return;
+  }
+
+  void primary_event::dump (std::ostream & out_,
+                            const std::string & title_,
+                            const std::string & indent_) const
+  {
+    tree_dump (out_, title_, indent_);
   }
   
   void primary_event::dump (std::ostream & out_,

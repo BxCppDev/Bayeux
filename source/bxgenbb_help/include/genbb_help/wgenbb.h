@@ -2,10 +2,10 @@
 /* wgenbb.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-28
- * Last modified: 
+ * Last modified: 2012-06-26
  * 
  * License: 
- * Copyright 2007-2011 F. Mauger
+ * Copyright 2007-2012 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,8 @@
  * 
  * Description: 
  *
- *   C++ wrapper GENBB/Decay0 generator
+ *   C++ wrapper GENBB/Decay0 generator. It behaves like a singleton class
+ *   because GENBB/Decay0 Fortran library uses static resources.
  * 
  * History: 
  * 
@@ -64,7 +65,8 @@ extern "C"
 } 
 
 typedef GENEVENT_t GENEVENT_DEF;
-typedef ENRANGE_t ENRANGE_DEF;
+typedef ENRANGE_t  ENRANGE_DEF;
+typedef GENBBPAR_t GENBBPAR_DEF;
 
 namespace genbb {
 
@@ -79,9 +81,7 @@ namespace genbb {
       DECAY_TYPE_BACKGROUND = 2
     };
 
-  private:
-
-    void _set_decay_isotope_ (const std::string & di_);
+    static const unsigned int ISOTOPE_NAME_MAXSIZE = 32;
 
   public:
 
@@ -90,10 +90,14 @@ namespace genbb {
     void set_debug (bool d_);
 
     bool use_local_prng () const;
+
+    virtual bool can_external_random () const;
  
     void set_use_local_prng (bool u_);
 
     const mygsl::rng & get_random () const;
+
+    mygsl::rng & grab_random ();
 
     mygsl::rng & get_random ();
 
@@ -111,11 +115,6 @@ namespace genbb {
 
     virtual bool has_next ();
 
-  protected:
-
-    virtual void _load_next (primary_event & event_, 
-                             bool compute_classification_ = true);
-
   public:
 
     void dump (std::ostream & = std::clog) const;
@@ -126,18 +125,25 @@ namespace genbb {
 
     void _clean_ ();
 
+  protected:
+
+    virtual void _load_next (primary_event & event_, 
+                             bool compute_classification_ = true);
+
+  private:
+
+    void _set_decay_isotope_ (const std::string & di_);
+
   private:
 
     static size_t _g_counter_;
-
-  private:
 
     bool   _debug_;
     bool   _initialized_;
 
     int    _decay_type_;
     std::string _decay_isotope_;  
-    char   _c_decay_isotope_[32];
+    char   _c_decay_isotope_[ISOTOPE_NAME_MAXSIZE];
     int    _decay_dbd_level_;  
     int    _decay_dbd_mode_;  
     size_t _event_count_;

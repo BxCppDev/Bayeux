@@ -93,11 +93,13 @@ else
     fi
 fi
 
-BIN=$(which genbb1)
-if [ ! -x ${BIN} ]; then
-    echo "${appname}: ERROR: Missing '${BIN}' executable ! Abort !" 1>&2
+which genbb1 1> /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "${appname}: ERROR: Missing 'genbb1' executable ! Abort !" 1>&2
     my_exit 1
 fi
+BIN=$(which genbb1)
+echo "${appname}: NOTICE: Found '${BIN}' executable." 1>&2
 
 if [ "x${tmp_dir}" = "x" ]; then
     tmp_dir=/tmp/${USER}
@@ -145,6 +147,7 @@ if [ ${interactive} -eq 0 ]; then
     cat ${tmp_conf} | cut -d'=' -f2 | ${BIN}
 else
     echo "${appname}: NOTICE: Interactive mode..." 1>&2
+    echo "${appname}: NOTICE: BIN=${BIN}" 1>&2
     ${BIN}
 fi
 

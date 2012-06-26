@@ -2,10 +2,10 @@
 /* genbb_mgr.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2009-01-19
- * Last modified: 2010-04-11
+ * Last modified: 2012-06-22
  * 
  * License: 
- * Copyright 2007-2011 F. Mauger
+ * Copyright 2007-2012 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,8 @@
  * Boston, MA 02110-1301, USA.
  * 
  * Description: 
- *   Manager for GENBB input data
+ *
+ *   A GENBB input data file manager class using the i_genbb interface
  * 
  * History: 
  * 
@@ -42,8 +43,8 @@
 #include <datatools/serialization/io_factory.h>
 #include <datatools/utils/properties.h>
 
-// Implementation of serialization method for the 'primary_event' class, 
-// implies also <genbb_help/primary_particle.ipp> :
+// Implementation of serialization method for the 'primary_event' 
+// class, implies also <genbb_help/primary_particle.ipp> :
 #include <genbb_help/primary_event.ipp>
 
 namespace genbb {
@@ -79,10 +80,10 @@ namespace genbb {
 
     bool is_format_boost () const;
 
-    // ctor:
+    /// Constructor
     genbb_mgr (int format_ = FORMAT_GENBB);
     
-    // dtor:
+    /// Destructor
     virtual ~genbb_mgr ();
   
     void set (const std::string & filename_);
@@ -95,6 +96,8 @@ namespace genbb {
 
     void reset ();
 
+    void dump (std::ostream & out_ = std::clog) const;
+
     virtual bool has_next ();
 
   protected:
@@ -102,10 +105,6 @@ namespace genbb {
     // from 'i_genbb' interface:
     virtual void _load_next (primary_event & event_, 
                              bool compute_classification_ = true);
-
-  public:
-
-    void dump (ostream & out_ = clog) const;
 
   private:
 
@@ -121,15 +120,16 @@ namespace genbb {
 
   private:
 
-    bool _debug_;
-    bool _initialized_;
-    std::list<std::string> _filenames_;
-    std::string      _current_filename_;
-    int         _format_;
-    std::istream * _in_;
-    std::ifstream  _fin_;
-    datatools::serialization::data_reader _reader_;
-    primary_event  _current_;
+    bool _debug_;            /// Debug flag
+    bool _initialized_;      /// Initialization flag
+    std::list<std::string> _filenames_; /// List of input files' name
+    std::string    _current_filename_;  /// Current file's name
+    int            _format_; /// Format of the input file
+    std::istream * _in_;     /// Handle to the current input stream
+    std::ifstream  _fin_;    /// Current input file stream 
+    datatools::serialization::data_reader _reader_;  /// GENBB event reader
+    primary_event  _current_;      /// Current primary event 
+    double         _genbb_weight_; /// GENBB event weight (for DBD energy range)
 
   };
 

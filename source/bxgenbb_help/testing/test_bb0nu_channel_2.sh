@@ -1,12 +1,19 @@
 #!/usr/bin/env bash
 
 export tmp_dir=/tmp/${USER}
+genbb_root=${GENBB_HELP_SRC_ROOT}
+if [ "x${genbb_root}" = "x" ]; then
+    genbb_root=$(pwd)
+fi 
+
+sys=$(uname -s)-$(uname -m)
+export PATH=${genbb_root}/__build-${sys}/programs:${PATH}
 
 NEVENTS=200000
 test -d ${tmp_dir} || mkdir -p ${tmp_dir} 
 
 if [ ! -f ${tmp_dir}/se82_0nubb_mn.genbb ]; then
-    genbb ${GENBB_HELP_ROOT}/resources/se82_0nubb_mn.conf ${RANDOM} ${NEVENTS} ${tmp_dir}/se82_0nubb_mn.genbb
+    ${genbb_root}/scripts/genbb ${genbb_root}/testing/config/se82_0nubb_mn.conf ${RANDOM} ${NEVENTS} ${tmp_dir}/se82_0nubb_mn.genbb
 fi
 
 # E_RESOL=0.08
@@ -17,14 +24,14 @@ PI="`echo print pi | gnuplot 2>&1 `"
 TWOPI="`echo print '2*pi' | gnuplot 2>&1 `"
 E_RESOL=0.0
 E_MIN=0.
-E_SUM_MIN=0
+E_SUM_MIN=2000
 E_SUM_MAX=10000
 echo "DEVEL: PI=${PI}" >&2
 echo "DEVEL: TWOPI=${TWOPI}" >&2
 #exit 1
 
 echo "DEVEL: Processing 'se82_0nubb_mn.genbb'..." >&2
-test_bb0nu_channel_2 \
+${genbb_root}/__build-${sys}/testing/test_bb0nu_channel_2 \
   -s ${RANDOM} \
   -r ${E_RESOL} \
   -m ${E_MIN} \
@@ -43,19 +50,19 @@ cat ${tmp_dir}/se82_bb0nu.data \
     | gsl-histogram -1 +1 50 \
     > ${tmp_dir}/se82_bb0nu_cost.his
 
-${GENBB_HELP_ROOT}/tests/test_bb0nu_channel_2.py p1cost \
+${genbb_root}/testing/test_bb0nu_channel_2.py p1cost \
   | gsl-histogram -1 +1 50 \
     > ${tmp_dir}/se82_bb0nu_p1cost.his
 
-${GENBB_HELP_ROOT}/tests/test_bb0nu_channel_2.py p1phy \
+${genbb_root}/testing/test_bb0nu_channel_2.py p1phy \
   | gsl-histogram -${PI} ${PI} 50 \
     > ${tmp_dir}/se82_bb0nu_p1phy.his
 
-${GENBB_HELP_ROOT}/tests/test_bb0nu_channel_2.py p2cost \
+${genbb_root}/testing/test_bb0nu_channel_2.py p2cost \
   | gsl-histogram -1 +1 50 \
     > ${tmp_dir}/se82_bb0nu_p2cost.his
 
-${GENBB_HELP_ROOT}/tests/test_bb0nu_channel_2.py p2phy \
+${genbb_root}/testing/test_bb0nu_channel_2.py p2phy \
   | gsl-histogram -${PI}0 ${PI} 50 \
     > ${tmp_dir}/se82_bb0nu_p2phy.his
 

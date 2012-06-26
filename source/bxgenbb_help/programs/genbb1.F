@@ -1,6 +1,6 @@
-c prog_genbb_1.F
+c genbb_1.F
 c     
-c Copyright 2007-2011 F. Mauger
+c Copyright 2007-2012 F. Mauger
 c
 c This program is free software; you can redistribute it and/or modify
 c it under the terms of the GNU General Public License as published by
@@ -115,7 +115,8 @@ c
          if (idebug .eq. 1) then
             print * , 'prog_genbb_1: info: genbbsub ok  !'
          endif
-      endif
+      endif 
+      call genbbwprop ()
 c     
 c     step 4: generate events
 c     
@@ -159,7 +160,7 @@ c
       stop
       end
 c          
-c end of prog_genbb_1.F
+c end of genbb_1.F
 c
 c Local Variables: --
 c mode: fortran --

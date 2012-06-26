@@ -23,10 +23,17 @@
  * Boston, MA 02110-1301, USA.
  * 
  * Description: 
- *   Primary event from the GENBB generator
+ *
+ *   Primary event from the GENBB generator.
+ *
  * 
  * History: 
- * 
+ *
+ * 2012-06-21 FM : 
+ *  - support 'weighted' MC event in case 
+ *    of user energy range for DBD events
+ *  - serialization version 2 supports new 'weight' attributes
+ *
  */
 
 #ifndef __genbb_help__primary_event_h
@@ -39,13 +46,15 @@
 #include <datatools/serialization/i_serializable.h>
 
 #include <datatools/utils/units.h>
+#include <datatools/utils/i_tree_dump.h>
 
 #include <genbb_help/primary_particle.h>
 
 namespace genbb {
 
   struct primary_event
-    : DATATOOLS_SERIALIZABLE_CLASS 
+    : DATATOOLS_SERIALIZABLE_CLASS,
+      public datatools::utils::i_tree_dumpable
   {
     
   public:
@@ -62,11 +71,23 @@ namespace genbb {
 
     double get_time () const;
 
+    void set_genbb_weight (double genbb_weight_);
+
+    double get_genbb_weight () const;
+
+    bool is_genbb_weighted () const;
+
     const particles_col_t & get_particles () const;
 
     particles_col_t & get_particles ();
 
     void add_particle (const primary_particle &);
+
+    const std::string & get_label () const;
+
+    void set_label (const std::string & l_);
+
+    void reset_label ();
 
     const std::string & get_classification () const;
 
@@ -80,12 +101,18 @@ namespace genbb {
 
     double get_total_kinetic_energy () const;
 
-    // ctor:
+    /// Constructor 
     primary_event ();
     
-    // dtor:
+    /// Destructor
     virtual ~primary_event ();
 
+    virtual void
+    tree_dump (std::ostream      & out_    = std::clog,
+               const std::string & title_  = "",
+               const std::string & indent_ = "",
+               bool inherit_               = false) const;
+    
     void dump (std::ostream & a_out = std::clog,
                const std::string & a_indent = "") const;
 
@@ -95,9 +122,11 @@ namespace genbb {
     
   public:
 
+    std::string     label;
     double          time;
     particles_col_t particles;
     std::string     classification;
+    double          genbb_weight;
 
     /* interface i_serializable */
     DATATOOLS_SERIALIZATION_DECLARATION();

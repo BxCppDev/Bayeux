@@ -19,9 +19,10 @@ c Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 c
 c FORTRAN include file       
 c       
-	character chfile*256
+	character chfile*256,chdspin*4
 	common/genevent/tevst,npfull,npgeant(100),pmoment(3,100),
      +    ptime(100)
 	common/genbbpar/nevents,ievstart,irndmst,iwrfile,chfile
+	common/enrange/ebb1,ebb2,toallevents,levelE,chdspin
 c	
 c end of genbb_commons.inc

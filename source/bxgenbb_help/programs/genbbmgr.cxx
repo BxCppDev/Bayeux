@@ -1,5 +1,5 @@
 // -*- mode: c++; -*- 
-// prg_genbb_mgr.cxx
+// genbbmgr.cxx
 
 #include <cstdlib>
 #include <iostream>
@@ -24,26 +24,26 @@ int main (int argc_, char ** argv_)
 
       int iarg = 1;
       while (iarg < argc_)
-	{
-	  string arg = argv_[iarg];
-	  if (arg[0] == '-')
-	    {
-	      if (arg == "-d" || arg == "--debug") debug = true;
-	    }
-	  else
-	    {
-	      if (genbb_file.empty ())
-		{
-		  genbb_file = arg;
-		}
-	    }
-	  iarg++;
-	}
+        {
+          string arg = argv_[iarg];
+          if (arg[0] == '-')
+            {
+              if (arg == "-d" || arg == "--debug") debug = true;
+            }
+          else
+            {
+              if (genbb_file.empty ())
+                {
+                  genbb_file = arg;
+                }
+            }
+          iarg++;
+        }
     
       if (genbb_file.empty ())
-	{
-	  throw runtime_error ("Missing GENBB generated events file!");
-	}
+        {
+          throw logic_error ("Missing GENBB generated events file!");
+        }
 
       genbb::genbb_mgr mgr;
 
@@ -61,12 +61,12 @@ int main (int argc_, char ** argv_)
       size_t count = 0;
       // main loop on primary events source:
       while (mgr.has_next ())
-	{
-	  mgr.load_next (pe);
-	  pe.dump (cout);
-	  cout << endl;
-	  count++;
-	}
+        {
+          mgr.load_next (pe);
+          pe.dump (cout);
+          cout << endl;
+          count++;
+        }
       mgr.reset ();
 
       clog << "Number of loaded events: " << count << endl; 
@@ -86,4 +86,4 @@ int main (int argc_, char ** argv_)
   return error_code;
 }
 
-// end of prg_genbb_mgr.cxx
+// end of genbbmgr.cxx

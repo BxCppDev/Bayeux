@@ -40,6 +40,106 @@
 
 namespace genbb {
 
+  void genbb_writer::set_seed ( int seed_ )
+  {
+    _seed_ = seed_; 
+  }
+  
+  int genbb_writer::get_seed() const 
+  { 
+    return _seed_; 
+  }
+
+  void genbb_writer::set_npart ( int npart_ )
+  { 
+    _npart_ = npart_; 
+  }
+  
+  int genbb_writer::get_npart() const 
+  { 
+    return _npart_; 
+  }
+
+  void genbb_writer::set_part_per_evt ( int part_per_evt_ )
+  { 
+    _part_per_evt_ = part_per_evt_; 
+  }
+  
+  int genbb_writer::get_part_per_evt() const 
+  { 
+    return _part_per_evt_; 
+  }
+
+  void genbb_writer::set_type ( int type_ )
+  { 
+    _type_ = type_; 
+  }
+  
+  int genbb_writer::get_type() const 
+  { 
+    return _type_; 
+  }
+
+  void genbb_writer::set_Emin ( double Emin_ )
+  { 
+    _emin_ = Emin_; 
+  }
+
+  double genbb_writer::get_Emin() const 
+  { 
+    return _emin_;
+  }
+  
+  void genbb_writer::set_Emax ( double Emax_ )
+  { 
+    _emax_ = Emax_; 
+  }
+
+  double genbb_writer::get_Emax() const 
+  {
+    return _emax_; 
+  }
+
+  void genbb_writer::set_phi_min ( double phi_min_ )
+  { 
+    _phi_min_ = phi_min_; 
+  }
+  
+  double genbb_writer::get_phi_min() const
+  { 
+    return _phi_min_; 
+  }
+
+  void genbb_writer::set_phi_max ( double phi_max_ )
+  { 
+    _phi_max_ = phi_max_; 
+  }
+  
+  double genbb_writer::get_phi_max() const 
+  {
+    return _phi_max_; 
+  }
+
+  void genbb_writer::set_outfile ( std::string fout_ ) 
+  {
+    _fout_ = fout_; 
+  }
+  
+  std::string genbb_writer::get_outfile() const 
+  {
+    return _fout_; 
+  }
+
+  void genbb_writer::set_debug ( bool d_ )
+  {
+    _debug_ = d_; 
+  }
+  
+  bool genbb_writer::is_debug () const 
+  {
+    return _debug_; 
+  }
+
   void genbb_writer::run ()
   {
     init ();

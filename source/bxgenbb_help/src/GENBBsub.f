@@ -1543,10 +1543,15 @@ c     +                       modebb.eq.11.or.modebb.eq.12) then
 	   write(77,*) ' initial random number : ',
      +                 irndmst
 	   write(77,*) '   '
+c	   write(77,*) '#@seed=',irndmst
+c	   write(77,*) '#@nevents=',nevents
+c	   write(77,*) '#@type=',i2bbs
+c	   write(77,*) '#@nuclide=',chnuclide
 	   if(i2bbs.eq.1) then
 	      write(77,10) chnuclide
 10	      format('  event type: ',a)
 	      write(77,*) '             ',chmodebb
+c	      write(77,*) '#@modebb=',modebb
 	      if(modebb.eq.18) then
 	         write(77,*) '             NMEs: ',
      +                     'GTw,Fw,''GT,''F,''T,''P,''R ='
@@ -1559,6 +1564,9 @@ c     +                       modebb.eq.11.or.modebb.eq.12) then
 	         write(77,*) '   '
 	         write(77,*) 'range for sum of energies of emitted ',
      +                       'e-/e+ (MeV)   : ',ebb1,ebb2
+		 write(77,*) '#@energy_min=',ebb1
+		 write(77,*) '#@energy_max=',ebb2
+		 write(77,*) '#@toallevents=',toallevents
 	         allevents=anint(nevents*toallevents)
 	         write(77,*) 'corresponding number of events in full ',
      +                       'energy range: ',allevents

@@ -41,13 +41,13 @@ namespace genbb {
   {
     if (_initialized_)
       {
-	ostringstream message;
-	if (! where_.empty ())
-	  {
-	    message << where_ << ": ";
-	  }
-	message << "Operation prohibited ! Object is locked/initialized !";
-	throw logic_error (message.str ());
+        ostringstream message;
+        if (! where_.empty ())
+          {
+            message << where_ << ": ";
+          }
+        message << "Operation prohibited ! Object is locked/initialized !";
+        throw logic_error (message.str ());
       }
     return;
   }
@@ -61,6 +61,11 @@ namespace genbb {
   {
     _debug_ = new_value_;
     return;
+  }
+   
+  bool single_particle_generator::can_external_random () const
+  {
+    return true;
   }
 
   void single_particle_generator::set_randomized_direction (bool rd_)
@@ -122,33 +127,33 @@ namespace genbb {
         particle_name_ == "e+"       ||
         particle_name_ == "e-")
       {
-	mass = CLHEP::electron_mass_c2;
+        mass = CLHEP::electron_mass_c2;
       }
 
     if (particle_name_ == "gamma")
       {
-	mass = 0.0 * CLHEP::eV;
+        mass = 0.0 * CLHEP::eV;
       }
 
     if (particle_name_ == "alpha")
       {
-	mass = 3.727417 * CLHEP::GeV;
+        mass = 3.727417 * CLHEP::GeV;
       }
 
     if (particle_name_ == "neutron")
       {
-	mass = 939.565560 * CLHEP::MeV;
+        mass = 939.565560 * CLHEP::MeV;
       }
 
     if (particle_name_ == "proton")
       {
-	mass = 938.272013 * CLHEP::MeV;
+        mass = 938.272013 * CLHEP::MeV;
       }
 
     if (particle_name_ == "mu-" ||
         particle_name_ == "mu+")
       {
-	mass = 105.658369 * CLHEP::MeV;
+        mass = 105.658369 * CLHEP::MeV;
       }
 
     return mass;
@@ -176,12 +181,12 @@ namespace genbb {
     _check_locked ("genbb::single_particle_generator::set_mean_energy");
     if (mean_ <= 0.0)
       {
-	throw logic_error ("genbb::single_particle_generator::set_mean_energy: Invalid mean energy value !");
+        throw logic_error ("genbb::single_particle_generator::set_mean_energy: Invalid mean energy value !");
       }
     _mean_energy_ = mean_;
     if (sigma_ < 0.0)
       {
-	throw logic_error ("genbb::single_particle_generator::set_mean_energy: Invalid sigma energy value !");
+        throw logic_error ("genbb::single_particle_generator::set_mean_energy: Invalid sigma energy value !");
       }
     _sigma_energy_ = sigma_;
     return;
@@ -203,11 +208,11 @@ namespace genbb {
     _check_locked ("genbb::single_particle_generator::set_min_energy");
     if (min_ < 0.0)
       {
-	throw logic_error ("genbb::single_particle_generator::set_energy_range: Invalid min energy value (0 <= min energy) !");
+        throw logic_error ("genbb::single_particle_generator::set_energy_range: Invalid min energy value (0 <= min energy) !");
       }
     if (max_ < min_)
       {
-	throw logic_error ("genbb::single_particle_generator::set_energy_range: Invalid max energy value (0 <= min energy < max energy) !");
+        throw logic_error ("genbb::single_particle_generator::set_energy_range: Invalid max energy value (0 <= min energy < max energy) !");
       }
     _min_energy_ = min_;
     _max_energy_ = max_;
@@ -258,19 +263,32 @@ namespace genbb {
   {
     if (_initialized_)
       {
-	reset ();
+        reset ();
       }
     return;
   }
 
   const mygsl::rng & single_particle_generator::get_random () const
   {
+    if (has_external_random ())
+      {
+        return get_external_random ();
+      }
     return _random_;
   }
 
+  mygsl::rng & single_particle_generator::grab_random ()
+  {
+    if (has_external_random ())
+      {
+        return grab_external_random ();
+      }
+    return _random_;
+  }
+ 
   mygsl::rng & single_particle_generator::get_random ()
   {
-    return _random_;
+    return grab_random ();
   }
 
   void single_particle_generator::_at_reset_ ()
@@ -294,7 +312,10 @@ namespace genbb {
 
     _randomized_direction_ = true;
 
-    _random_.reset ();
+    if (_random_.is_initialized ())
+      {
+        _random_.reset ();
+      }
     _seed_ = 0;
 
     return;
@@ -312,160 +333,163 @@ namespace genbb {
   {
     if (config_.has_flag ("debug"))
       {
-	set_debug (true);
+        set_debug (true);
       }
 
-    if (config_.has_key ("seed"))
+    if (! has_external_random ())
       {
-	long seed = config_.fetch_integer ("seed");
-	if (seed < 0)
-	  {
-	    throw logic_error ("genbb::single_particle_generator::initialize: Invalid seed value (>=0) !");
-	  }
-	_seed_ = seed;
-      }
-    else
-      {
-	throw logic_error ("genbb::single_particle_generator::initialize: Missing 'seed' property !");
+        if (config_.has_key ("seed"))
+          {
+            long seed = config_.fetch_integer ("seed");
+            if (seed < 0)
+              {
+                throw logic_error ("genbb::single_particle_generator::initialize: Invalid seed value (>=0) !");
+              }
+            _seed_ = seed;
+          }
+        else
+          {
+            throw logic_error ("genbb::single_particle_generator::initialize: Missing 'seed' property !");
+          }
       }
 
     if (config_.has_key ("particle_name"))
       {
-	string particle_name = config_.fetch_string ("particle_name");
-	if (! single_particle_generator::particle_name_is_valid (particle_name))
-	  {
-	    ostringstream message;
-	    message << "genbb::single_particle_generator::initialize: "
-		    << "Invalid particle name '"
-		    << particle_name << "' !";
-	    throw logic_error (message.str ());
-	  }
-	  set_particle_name (particle_name);
+        string particle_name = config_.fetch_string ("particle_name");
+        if (! single_particle_generator::particle_name_is_valid (particle_name))
+          {
+            ostringstream message;
+            message << "genbb::single_particle_generator::initialize: "
+                    << "Invalid particle name '"
+                    << particle_name << "' !";
+            throw logic_error (message.str ());
+          }
+          set_particle_name (particle_name);
       }
     else
       {
-	throw logic_error ("genbb::single_particle_generator::initialize: Missing 'seed' property !");
+        throw logic_error ("genbb::single_particle_generator::initialize: Missing 'seed' property !");
       }
 
     if (config_.has_key ("randomized_direction"))
       {
-	bool rd = config_.fetch_boolean ("randomized_direction");
-	set_randomized_direction (rd);
+        bool rd = config_.fetch_boolean ("randomized_direction");
+        set_randomized_direction (rd);
       }
 
     if (config_.has_key ("mode"))
       {
-	string mode_str = config_.fetch_string ("mode");
-	if (mode_str == "gaussian_energy")
-	  {
-	    set_mode (MODE_GAUSSIAN_ENERGY);
-	  }
-	else if (mode_str == "energy_range")
-	  {
-	    set_mode (MODE_ENERGY_RANGE);
-	  }
-	else if (mode_str == "monokinetic")
-	  {
-	    set_mode (MODE_MONOKINETIC);
-	  }
-	else if (mode_str == "spectrum")
-	  {
-	    set_mode (MODE_SPECTRUM);
-	    _spectrum_mode_ = SPECTRUM_MODE_TABFUNC;
-	    if (config_.has_key ("spectrum.mode"))
-	      {
-		string spectrum_mode_str = config_.fetch_string ("spectrum.mode");
-		if (spectrum_mode_str == "tabulated_function")
-		  {
-		    _spectrum_mode_ = SPECTRUM_MODE_TABFUNC;
-		  }
-		else if (spectrum_mode_str == "histogram_pdf")
-		  {
-		    _spectrum_mode_ = SPECTRUM_MODE_HISTPDF;
-		  }
-	      }
-	  }
-	else
-	  {
-	    ostringstream message;
-	    message << "genbb::single_particle_generator::initialize: "
-		    << "Invalid mode '" << mode_str << "' !";
-	    throw logic_error (message.str ());
-	  }
+        string mode_str = config_.fetch_string ("mode");
+        if (mode_str == "gaussian_energy")
+          {
+            set_mode (MODE_GAUSSIAN_ENERGY);
+          }
+        else if (mode_str == "energy_range")
+          {
+            set_mode (MODE_ENERGY_RANGE);
+          }
+        else if (mode_str == "monokinetic")
+          {
+            set_mode (MODE_MONOKINETIC);
+          }
+        else if (mode_str == "spectrum")
+          {
+            set_mode (MODE_SPECTRUM);
+            _spectrum_mode_ = SPECTRUM_MODE_TABFUNC;
+            if (config_.has_key ("spectrum.mode"))
+              {
+                string spectrum_mode_str = config_.fetch_string ("spectrum.mode");
+                if (spectrum_mode_str == "tabulated_function")
+                  {
+                    _spectrum_mode_ = SPECTRUM_MODE_TABFUNC;
+                  }
+                else if (spectrum_mode_str == "histogram_pdf")
+                  {
+                    _spectrum_mode_ = SPECTRUM_MODE_HISTPDF;
+                  }
+              }
+          }
+        else
+          {
+            ostringstream message;
+            message << "genbb::single_particle_generator::initialize: "
+                    << "Invalid mode '" << mode_str << "' !";
+            throw logic_error (message.str ());
+          }
       }
     else
       {
-	throw logic_error ("genbb::single_particle_generator::initialize: Missing 'mode' property !");
+        throw logic_error ("genbb::single_particle_generator::initialize: Missing 'mode' property !");
       }
 
     double energy_unit = CLHEP::keV;
 
     if (config_.has_key ("energy_unit"))
       {
-	string unit_str = config_.fetch_string ("energy_unit");
-	energy_unit = datatools::utils::units::get_energy_unit_from (unit_str);
+        string unit_str = config_.fetch_string ("energy_unit");
+        energy_unit = datatools::utils::units::get_energy_unit_from (unit_str);
       }
 
     if (_mode_ == MODE_MONOKINETIC)
       {
-	double energy = 0.0;
-	if (! config_.has_key ("energy"))
-	  {
-	    throw logic_error ("genbb::single_particle_generator::initialize: Missing 'energy' property !");
-	  }
-	energy = config_.fetch_real ("energy");
-	energy *= energy_unit;
-	set_mean_energy (energy, 0.0);
+        double energy = 0.0;
+        if (! config_.has_key ("energy"))
+          {
+            throw logic_error ("genbb::single_particle_generator::initialize: Missing 'energy' property !");
+          }
+        energy = config_.fetch_real ("energy");
+        energy *= energy_unit;
+        set_mean_energy (energy, 0.0);
       }
 
     if (_mode_ == MODE_GAUSSIAN_ENERGY)
       {
-	double mean_energy = 0.0;
-	double sigma_energy = 0.0;
-	if (! config_.has_key ("mean_energy"))
-	  {
-	    throw logic_error ("genbb::single_particle_generator::initialize: Missing 'mean_energy' property !");
-	  }
-	mean_energy = config_.fetch_real ("mean_energy");
-	mean_energy *= energy_unit;
+        double mean_energy = 0.0;
+        double sigma_energy = 0.0;
+        if (! config_.has_key ("mean_energy"))
+          {
+            throw logic_error ("genbb::single_particle_generator::initialize: Missing 'mean_energy' property !");
+          }
+        mean_energy = config_.fetch_real ("mean_energy");
+        mean_energy *= energy_unit;
 
-	if (config_.has_key ("sigma_energy"))
-	  {
-	    sigma_energy = config_.fetch_real ("sigma_energy");
-	    sigma_energy *= energy_unit;
-	  }
+        if (config_.has_key ("sigma_energy"))
+          {
+            sigma_energy = config_.fetch_real ("sigma_energy");
+            sigma_energy *= energy_unit;
+          }
 
-	set_mean_energy (mean_energy, sigma_energy);
+        set_mean_energy (mean_energy, sigma_energy);
       }
 
     if (_mode_ == MODE_ENERGY_RANGE)
       {
-	double min_energy = 0.0;
-	double max_energy = 0.0;
-	if (! config_.has_key ("max_energy"))
-	  {
-	    throw logic_error ("genbb::single_particle_generator::initialize: Missing 'max_energy' property !");
-	  }
-	max_energy = config_.fetch_real ("max_energy");
-	max_energy *= energy_unit;
+        double min_energy = 0.0;
+        double max_energy = 0.0;
+        if (! config_.has_key ("max_energy"))
+          {
+            throw logic_error ("genbb::single_particle_generator::initialize: Missing 'max_energy' property !");
+          }
+        max_energy = config_.fetch_real ("max_energy");
+        max_energy *= energy_unit;
 
-	if (! config_.has_key ("min_energy"))
-	  {
-	    throw logic_error ("genbb::single_particle_generator::initialize: Missing 'min_energy' property !");
-	  }
-	min_energy = config_.fetch_real ("min_energy");
-	min_energy *= energy_unit;
+        if (! config_.has_key ("min_energy"))
+          {
+            throw logic_error ("genbb::single_particle_generator::initialize: Missing 'min_energy' property !");
+          }
+        min_energy = config_.fetch_real ("min_energy");
+        min_energy *= energy_unit;
 
-	set_energy_range (min_energy, max_energy);
+        set_energy_range (min_energy, max_energy);
       }
 
     if (_mode_ == MODE_SPECTRUM)
       {
-	if (config_.has_key ("spectrum.data_file"))
-	  {
-	    string spectrum_filename = config_.fetch_string ("spectrum.data_file");
-	    set_energy_spectrum_filename (spectrum_filename);
-	  }
+        if (config_.has_key ("spectrum.data_file"))
+          {
+            string spectrum_filename = config_.fetch_string ("spectrum.data_file");
+            set_energy_spectrum_filename (spectrum_filename);
+          }
         double min_energy = _min_energy_;
         double max_energy = _max_energy_;
 
@@ -496,17 +520,17 @@ namespace genbb {
   }
 
   void single_particle_generator::_load_next (primary_event & event_,
-					      bool compute_classification_)
+                                              bool compute_classification_)
   {
     if (_debug_)
       {
-	clog << "debug: " << "genbb::single_particle_generator::_load_next: "
-	     << "Entering..."
-	     << endl;
+        clog << "debug: " << "genbb::single_particle_generator::_load_next: "
+             << "Entering..."
+             << endl;
       }
     if (! _initialized_)
       {
-	throw logic_error ("genbb::single_particle_generator::_load_next: Generator is notlocked/initialized !");
+        throw logic_error ("genbb::single_particle_generator::_load_next: Generator is notlocked/initialized !");
       }
     event_.reset ();
 
@@ -515,32 +539,32 @@ namespace genbb {
 
     if (_mode_ == MODE_MONOKINETIC)
       {
-	kinetic_energy = _mean_energy_;
+        kinetic_energy = _mean_energy_;
       }
 
     if (_mode_ == MODE_GAUSSIAN_ENERGY)
       {
-	while (kinetic_energy <= 0.0)
-	  {
-	    kinetic_energy = _random_.gaussian (_mean_energy_, _sigma_energy_);
-	  }
+        while (kinetic_energy <= 0.0)
+          {
+            kinetic_energy = grab_random ().gaussian (_mean_energy_, _sigma_energy_);
+          }
       }
 
     if (_mode_ == MODE_ENERGY_RANGE)
       {
-	kinetic_energy = _random_.flat (_min_energy_, _max_energy_);
+        kinetic_energy = grab_random ().flat (_min_energy_, _max_energy_);
       }
 
     if (_mode_ == MODE_SPECTRUM)
       {
-	if (_spectrum_mode_ == SPECTRUM_MODE_TABFUNC)
-	  {
-	    kinetic_energy = _vnm_.shoot (_random_);
-	  }
-	else if (_spectrum_mode_ == SPECTRUM_MODE_HISTPDF)
-	  {
-	    kinetic_energy = _energy_histo_pdf_.sample (_random_);
-	  }
+        if (_spectrum_mode_ == SPECTRUM_MODE_TABFUNC)
+          {
+            kinetic_energy = _vnm_.shoot (grab_random ());
+          }
+        else if (_spectrum_mode_ == SPECTRUM_MODE_HISTPDF)
+          {
+            kinetic_energy = _energy_histo_pdf_.sample (grab_random ());
+          }
       }
 
     double momentum = sqrt (kinetic_energy * (kinetic_energy + 2 * mass));
@@ -559,23 +583,23 @@ namespace genbb {
 
     if (_randomized_direction_)
       {
-	double phi = _random_.flat (0.0, 360.0 * CLHEP::degree);
-	double cos_theta = _random_.flat (-1.0, +1.0);
-	double theta = acos (cos_theta);
-	double psi = _random_.flat (0.0, 360.0 * CLHEP::degree);
-	event_.rotate (phi, theta, psi);
+        double phi = grab_random ().flat (0.0, 360.0 * CLHEP::degree);
+        double cos_theta = grab_random ().flat (-1.0, +1.0);
+        double theta = acos (cos_theta);
+        double psi = grab_random ().flat (0.0, 360.0 * CLHEP::degree);
+        event_.rotate (phi, theta, psi);
       }
 
     if (compute_classification_)
       {
-	event_.compute_classification ();
+        event_.compute_classification ();
       }
 
     if (_debug_)
       {
-	clog << "debug: " << "genbb::single_particle_generator::_load_next: "
-	     << "Exiting."
-	     << endl;
+        clog << "debug: " << "genbb::single_particle_generator::_load_next: "
+             << "Exiting."
+             << endl;
       }
     return;
   }
@@ -588,11 +612,11 @@ namespace genbb {
     ifstream ifile (filename.c_str());
     if (! ifile)
       {
-	ostringstream message;
-	message << "genbb::single_particle_generator::_init_energy_histo_pdf: "
-		<< "Cannot open data file '"
-		<< _energy_spectrum_filename_ << "' !";
-	throw logic_error (message.str ());
+        ostringstream message;
+        message << "genbb::single_particle_generator::_init_energy_histo_pdf: "
+                << "Cannot open data file '"
+                << _energy_spectrum_filename_ << "' !";
+        throw logic_error (message.str ());
       }
 
     double energy_unit = CLHEP::MeV;
@@ -601,12 +625,12 @@ namespace genbb {
     // load histo
     while (! ifile.eof ())
       {
-	string line;
-	getline (ifile, line);
-	if (line.empty ())
-	  {
-	    continue;
-	  }
+        string line;
+        getline (ifile, line);
+        if (line.empty ())
+          {
+            continue;
+          }
         {
           istringstream lineiss (line);
           string word;
@@ -686,10 +710,10 @@ namespace genbb {
   {
     if (_energy_spectrum_.is_table_locked ())
       {
-	ostringstream message;
-	message << "genbb::single_particle_generator::_init_energy_spectrum: "
-		<< "Tabulated energy spectrum is already locked !";
-	throw logic_error (message.str ());
+        ostringstream message;
+        message << "genbb::single_particle_generator::_init_energy_spectrum: "
+                << "Tabulated energy spectrum is already locked !";
+        throw logic_error (message.str ());
       }
 
     using namespace std;
@@ -699,84 +723,84 @@ namespace genbb {
     ifile.open (filename.c_str ());
     if (! ifile)
       {
-	ostringstream message;
-	message << "genbb::single_particle_generator::_init_energy_spectrum: "
-		<< "Cannot open interpolation data file '"
-		<< _energy_spectrum_filename_ << "' !";
-	throw logic_error (message.str ());
+        ostringstream message;
+        message << "genbb::single_particle_generator::_init_energy_spectrum: "
+                << "Cannot open interpolation data file '"
+                << _energy_spectrum_filename_ << "' !";
+        throw logic_error (message.str ());
       }
     string interpolator_name;
     double energy_unit = CLHEP::MeV;
     double ymax = -1.0;
     while (! ifile.eof ())
       {
-	string line;
-	getline (ifile, line);
-	if (line.empty ())
-	  {
-	    continue;
-	  }
-	{
-	  istringstream lineiss (line);
-	  string word;
-	  lineiss >> word;
-	  if ((word.length () > 0) && (word[0] == '#'))
-	    {
-	      if (word == "#@interpolation_name")
-		{
-		  lineiss >> interpolator_name;
-		}
-	      else if (word == "#@energy_unit")
-		{
-		  string energy_unit_str;
-		  lineiss >> energy_unit_str;
-		  energy_unit = datatools::utils::units::get_energy_unit_from (energy_unit_str);
-		}
+        string line;
+        getline (ifile, line);
+        if (line.empty ())
+          {
+            continue;
+          }
+        {
+          istringstream lineiss (line);
+          string word;
+          lineiss >> word;
+          if ((word.length () > 0) && (word[0] == '#'))
+            {
+              if (word == "#@interpolation_name")
+                {
+                  lineiss >> interpolator_name;
+                }
+              else if (word == "#@energy_unit")
+                {
+                  string energy_unit_str;
+                  lineiss >> energy_unit_str;
+                  energy_unit = datatools::utils::units::get_energy_unit_from (energy_unit_str);
+                }
               continue;
-	    }
-	}
-	istringstream lineiss (line);
-	double x, y;
-	lineiss >> x >> y;
-	if (! lineiss)
-	  {
-	    ostringstream message;
-	    message << "genbb::single_particle_generator::_init_energy_spectrum: "
-		    << "Format error in interpolation data file '"
-		    << _energy_spectrum_filename_ << "' !";
-	    throw logic_error (message.str ());
-	  }
-	x *= energy_unit;
-	if (x < 0.0)
-	  {
-	    ostringstream message;
-	    message << "genbb::single_particle_generator::_init_energy_spectrum: "
-		    << "Invalid energy value (" << x << " < 0)!";
-	    throw out_of_range (message.str ());
-	  }
-	if (y < 0.0)
-	  {
-	    ostringstream message;
-	    message << "genbb::single_particle_generator::_init_energy_spectrum: "
-		    << "Invalid spectrum value (" << y << " < 0)!";
-	    throw out_of_range (message.str ());
-	  }
+            }
+        }
+        istringstream lineiss (line);
+        double x, y;
+        lineiss >> x >> y;
+        if (! lineiss)
+          {
+            ostringstream message;
+            message << "genbb::single_particle_generator::_init_energy_spectrum: "
+                    << "Format error in interpolation data file '"
+                    << _energy_spectrum_filename_ << "' !";
+            throw logic_error (message.str ());
+          }
+        x *= energy_unit;
+        if (x < 0.0)
+          {
+            ostringstream message;
+            message << "genbb::single_particle_generator::_init_energy_spectrum: "
+                    << "Invalid energy value (" << x << " < 0)!";
+            throw out_of_range (message.str ());
+          }
+        if (y < 0.0)
+          {
+            ostringstream message;
+            message << "genbb::single_particle_generator::_init_energy_spectrum: "
+                    << "Invalid spectrum value (" << y << " < 0)!";
+            throw out_of_range (message.str ());
+          }
 
         if (x < _min_energy_ || x > _max_energy_)
           continue;
 
-	_energy_spectrum_.add_point (x, y, false);
-	if (y > ymax) ymax = y;
+        _energy_spectrum_.add_point (x, y, false);
+        if (y > ymax) ymax = y;
       }
     if (interpolator_name.empty ())
       {
-	interpolator_name = _spectrum_interpolation_name_;
+        interpolator_name = _spectrum_interpolation_name_;
       }
     _energy_spectrum_.lock_table (interpolator_name);
     _vnm_.init (_energy_spectrum_.x_min (),
-		_energy_spectrum_.x_max (),
-		_energy_spectrum_,
-		ymax * 1.01);
+                _energy_spectrum_.x_max (),
+                _energy_spectrum_,
+                ymax * 1.01);
     return;
   }
 
@@ -786,22 +810,25 @@ namespace genbb {
     _particle_mass_ = get_particle_mass_from_label (_particle_name_);
     if (! datatools::utils::is_valid (_particle_mass_))
       {
-	throw logic_error ("genbb::single_particle_generator::_at_init_: Particle mass is not defined !");
+        throw logic_error ("genbb::single_particle_generator::_at_init_: Particle mass is not defined !");
       }
 
     if (_mode_ == MODE_SPECTRUM)
       {
-	if (_spectrum_mode_ == SPECTRUM_MODE_TABFUNC)
-	  {
-	    _init_energy_spectrum ();
-	  }
-	else if (_spectrum_mode_ == SPECTRUM_MODE_HISTPDF)
-	  {
-	    _init_energy_histo_pdf ();
-	  }
+        if (_spectrum_mode_ == SPECTRUM_MODE_TABFUNC)
+          {
+            _init_energy_spectrum ();
+          }
+        else if (_spectrum_mode_ == SPECTRUM_MODE_HISTPDF)
+          {
+            _init_energy_histo_pdf ();
+          }
        }
 
-    _random_.init ("taus2", _seed_);
+    if (! has_external_random ())
+      {
+        _random_.init ("taus2", _seed_);
+      }
     return;
   }
 

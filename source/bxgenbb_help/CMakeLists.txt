@@ -94,7 +94,7 @@ install ( FILES ${PROJECT_BINARY_DIR}/include/genbb_help/detail/__genbb_help_FC.
 
 FortranCInterface_HEADER (${PROJECT_BINARY_DIR}/include/genbb_help/detail/__genbb_help_FC2.h
   MACRO_NAMESPACE GENBB_HELP_FortranCInterface_
-  SYMBOLS set_genbb_random_seed enrange genevent genbbsub )
+  SYMBOLS set_genbb_random_seed enrange genevent genbbsub genbbpar)
 
 install ( FILES ${PROJECT_BINARY_DIR}/include/genbb_help/detail/__genbb_help_FC2.h
           DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genbb_help/detail
@@ -247,16 +247,7 @@ endif ( CMAKE_SYSTEM_NAME MATCHES Darwin )
 # genbb_help API
 #
 
-### Former DEFINES for Fortran/C++ interface
-# set ( _genbb_help_fortran_definitions 
-#   "-Dfermi_wrap=fermi_wrap_ -Drng_shoot_reset=rng_shoot_reset_ -Drng_shoot_flat=rng_shoot_flat_ "
-#   )
 set ( _genbb_help_fortran_definitions  "" )
-
-### Former DEFINES for Fortran/C++ interface
-# set ( _genbb_help_definitions 
-#   "-Df2cFortran -Dgenbbsub=genbbsub_ -Dset_genbb_random_seed=set_genbb_random_seed_ -Dgrndm=grndm_ -Dgenevent=genevent_ -Dgenbb_init_enrange=genbb_init_enrange_ -Denrange=enrange_ "
-#   )
 
 set ( _genbb_help_definitions "" )
 

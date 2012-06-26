@@ -27,13 +27,78 @@
 #include <sstream>
 #include <fstream>
 
+#include <mygsl/rng.h>
+
 namespace genbb {
   
   // static :
   const std::string rng::DEFAULT_PRNG_ID = "taus2";
 
-  mygsl::rng   rng::g_ran (rng::DEFAULT_PRNG_ID, 0);
   mygsl::rng * rng::g_ran_ptr = 0;
+
+  mygsl::rng & rng::grab_genbb_external_prng ()
+  {
+    static boost::scoped_ptr<mygsl::rng> _g_prng_ (0);
+    if (_g_prng_.get () == 0)
+      {
+        mygsl::rng * dummy_prng = new mygsl::rng; 
+        {
+          const char * c = getenv ("GENBB_PRNG_SEED");
+          if (c != 0)
+            {
+              std::string s = c;
+              std::istringstream iss (s);
+              int seed = -1;
+              iss >> seed;
+              if (! iss)
+                {
+                  std::ostringstream message;
+                  message << "genbb::rng::grab_genbb_external_prng: "
+                          << "Invalid seed format from 'GENBB_PRNG_SEED' environment variable !";
+                  throw std::logic_error (message.str ());
+                }
+              if (seed < 0)
+                {
+                  std::ostringstream message;
+                  message << "genbb::rng::grab_genbb_external_prng: "
+                          << "Invalid seed value (" << seed << ") from 'GENBB_PRNG_SEED' environment variable !";
+                  throw std::logic_error (message.str ());
+                }
+              dummy_prng->initialize (rng::DEFAULT_PRNG_ID, seed);
+            }
+        }
+        _g_prng_.reset (dummy_prng);
+      }
+    mygsl::rng & prng_ref = *_g_prng_.get ();
+    return prng_ref;
+  }
+
+  const mygsl::rng & rng::get_genbb_external_prng ()
+  {
+    mygsl::rng& mutable_prng = rng::grab_genbb_external_prng ();
+    return const_cast<mygsl::rng& > (mutable_prng);
+  }
+
+  void rng::init_genbb_external_prng (int seed_)
+  {
+    mygsl::rng & the_prng = grab_genbb_external_prng ();
+    if (the_prng.is_initialized ())
+      {
+        the_prng.reset ();
+      }
+    the_prng.init (rng::DEFAULT_PRNG_ID, seed_);
+    return;
+  }
+
+  void rng::reset_genbb_external_prng (int seed_)
+  {
+    mygsl::rng & the_prng = grab_genbb_external_prng ();
+    if (the_prng.is_initialized ())
+      {
+        the_prng.reset ();
+      }
+    return;
+  }
 
   // static :
   void rng::set_genbb_external_prng (mygsl::rng & prng_)
@@ -62,8 +127,8 @@ extern "C"
       }
     std::clog << "NOTICE: " 
               << "genbb::rng_shoot_reset: " 
-              << "Initialize the PRNG with seed '" << *seed_ << "'" <<  std::endl;
-    genbb::rng::g_ran.init ("taus2", *seed_);
+              << "Initialize the static PRNG with seed '" << *seed_ << "'" <<  std::endl;
+    genbb::rng::init_genbb_external_prng (*seed_);
     return *seed_;
   }
   
@@ -76,11 +141,11 @@ extern "C"
             std::ostringstream message;
             message << "genbb::rng_shoot_flat: "
                     << "External PRNG is not initialized !";
-            throw std::runtime_error (message.str ());
+            throw std::logic_error (message.str ());
           }
         return (float) genbb::rng::g_ran_ptr->uniform ();
       }
-    return (float) genbb::rng::g_ran.uniform ();
+    return (float) genbb::rng::grab_genbb_external_prng ().uniform ();
   }
 }
 

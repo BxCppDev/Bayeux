@@ -193,7 +193,7 @@ genbb_help test log file :
 EOF
     bin=${exe_test}
     if [ ! -x ${bin} ]; then
-	echo "ERROR: ${appname}: No '${bin}' exectuable available ! " 
+	echo "ERROR: ${appname}: No '${bin}' executable available ! " 
 	return 1
     fi
     exe=$(basename ${exe_test})
@@ -204,6 +204,10 @@ EOF
 	if [ "x${binary_dir}" != "x" ]; then
 	    export PATH=${binary_dir}/programs:${PATH} 
 	fi
+	if [ "x${binary_dir}" != "x" ]; then
+	    export PATH=${binary_dir}/programs:${PATH} 
+	fi
+	which genbb 2>&1  # /dev/null 2>&1 
 	if [ ! -d /tmp/${USER}/genbb_work.d ]; then
 	    mkdir -p /tmp/${USER}/genbb_work.d
 	    if [ $? -ne 0 ]; then

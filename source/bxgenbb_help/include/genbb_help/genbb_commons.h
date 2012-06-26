@@ -2,10 +2,10 @@
 /* genbb_commons.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-28
- * Last modified: 
+ * Last modified: 2012-06-21
  * 
  * License: 
- * Copyright 2007-2011 F. Mauger
+ * Copyright 2007-2012 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * Description: 
- *   GENBB generator
+ *
+ *   Interface classes with Fortran GENBB generator
+ *
  */
 
 #ifndef __genbb_help__genbb_commons_h
@@ -35,22 +37,17 @@
 
 struct ENRANGE_t
 {
-  //	common/enrange/ebb1,ebb2,toallevents,levelE,chdspin
+  //    common/enrange/ebb1,ebb2,toallevents,levelE,chdspin
 public:
 
-  float   ebb1;
-  float   ebb2;
+  float   ebb1; // MeV
+  float   ebb2; // MeV
   float   toallevents;
   int32_t levelE;
 
-  void reset ()
-  {
-    ebb1 = 0;
-    ebb2 = 4.3; // MeV
-    toallevents = 1.0;
-    levelE = 0;
-    return;
-  }
+  ENRANGE_t ();
+
+  void reset ();
 
 };
 
@@ -83,29 +80,25 @@ public:
    */
   float     ptime[GENBB_MAX_NB_PARTICLES];
 
-  GENEVENT_t ()
-  {
-    reset ();
-    return;
-  }
+  GENEVENT_t ();
 
-  void reset ()
-  {
-    // reset Fortran common block:
-    this->npfull = 0;
-    this->tevst = 0.0F;
-    for (int i = 0; i < (int) GENBB_MAX_NB_PARTICLES; i++)
-      {
-	this->npgeant[i] = 0;
-	for (int j = 0; j < 3; j++)
-	  {
-	    this->pmoment[i][j] = 0.0F;
-	  }
-	this->ptime[i] = 0.0F;
-      }
-    return;
-  }
+  void reset ();
 
+};
+
+
+struct GENBBPAR_t 
+{ 
+public:
+  int32_t nevents;
+  int32_t ievstart;
+  int32_t irndmst;
+  int32_t iwrfile;
+  char    chfile[256];
+
+  GENBBPAR_t ();
+
+  void reset ();
 };
 
 #endif // __genbb_help__genbb_commons_h

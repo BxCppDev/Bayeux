@@ -31,6 +31,27 @@ c 8       format('# genbb generated file: ')
 c         write (77,9) isl(1), isl(2), isl(3), isl(4), isl(5), isl(6)
 c 9       format ('# date and hour         : ',
 c     +        2x, i4, '.', i1, '.', i2, 4x, i2, ':', i2, ':', i2)
+       endif
+      return
+      end
+c
+c
+c
+      subroutine genbbwprop () 
+      include 'genbb_help/genbb_commons.inc'
+      print * , 'DEVEL: genbb_io: genbbwprop: toallevents = ' , 
+     +     toallevents
+      if (iwrfile .ne. 0) then
+         write (77, 9) nevents 
+ 9       format('#@nevents=',1i10)
+         if (toallevents.gt.1.) then
+            write (77, 10) toallevents
+ 10         format('#@toallevents=',1g16.7)
+            write (77, 11) ebb1
+ 11         format('#@energy_min=',1g16.7)
+            write (77, 12) ebb2
+ 12         format('#@energy_max=',1g16.7)
+         endif
       endif
       return
       end

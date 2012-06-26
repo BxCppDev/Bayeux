@@ -34,6 +34,10 @@
 
 #include <genbb_help/primary_event.h>
 
+namespace mygsl {
+  class rng;
+}
+
 namespace genbb {
 
   /// GENBB generator abstract class 
@@ -53,12 +57,29 @@ namespace genbb {
     /// Load a new 'primary_event' object
     virtual void load_next (primary_event & event_, 
                             bool compute_classification_ = true);
+
+    virtual bool can_external_random () const;
+
+    virtual bool has_external_random () const;
+
+    virtual void set_external_random (mygsl::rng &);
+
+    virtual void reset_external_random ();
+
+    mygsl::rng & grab_external_random ();
+ 
+    const mygsl::rng & get_external_random () const;
  
   protected:
 
     /// Protected abstract interface to be invoked by the public 'load_next' method
     virtual void _load_next (primary_event & event_, 
                              bool compute_classification_) = 0;
+
+ 
+  private:
+
+    mygsl::rng * _external_random_; /// Handle to an external PRNG
 
   };
 

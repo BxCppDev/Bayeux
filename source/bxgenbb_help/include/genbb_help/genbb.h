@@ -39,6 +39,7 @@
 
 #include <genbb_help/i_genbb.h>
 #include <mygsl/rng.h>
+#include <genbb_help/genbb_utils.h>
 
 #include <datatools/utils/properties.h>
 
@@ -49,14 +50,7 @@ namespace genbb {
   public:
     static const size_t MAX_BUFFER_SIZE     = 100000;
     static const size_t DEFAULT_BUFFER_SIZE = 10000;
-
-    enum decay_type_t
-    {
-      DECAY_TYPE_DBD = 1,
-      DECAY_TYPE_BACKGROUND = 2
-    };
-
-    static const size_t TMP_DIR_BUFSZ = 1024;
+    static const size_t TMP_DIR_BUFSZ       = 1024;
 
   public:
 
@@ -78,8 +72,13 @@ namespace genbb {
 
     void set_tmp_base_dir (const std::string &);
 
+    virtual bool can_external_random () const;
+
     const mygsl::rng & get_random () const;
 
+    mygsl::rng & grab_random ();
+
+    /// Obsoleted by grab_random
     mygsl::rng & get_random ();
 
     const std::string & get_tmp_base_dir () const;
@@ -128,17 +127,24 @@ namespace genbb {
     int    _decay_dbd_level_;  
     int    _decay_dbd_mode_;  
 
+    // Only for BB decay mode :
+    bool   _use_energy_range_;
+    double _energy_min_;
+    double _energy_max_;
+
     std::ifstream * _genbb_in_;
-    bool       _test_;
+    bool            _test_;
     std::string     _tmp_base_dir_;
     std::string     _forced_tmp_dir_;
-    char       _tmp_dir_[TMP_DIR_BUFSZ];
+    char            _tmp_dir_[TMP_DIR_BUFSZ];
     std::string     _genbb_conf_;
     std::string     _genbb_data_;
     std::string     _genbb_log_;
     std::ofstream   _genbb_conf_file_;
-    unsigned long _seed_;
-    mygsl::rng    _random_;
+    unsigned long   _seed_;
+    //mygsl::rng    * _external_random_;
+    mygsl::rng      _random_;
+    double          _genbb_weight_; /// GENBB event weight (for DBD energy range)
 
   };
 

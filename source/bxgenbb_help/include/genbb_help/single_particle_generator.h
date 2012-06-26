@@ -80,9 +80,12 @@ namespace genbb {
     void set_particle_name (const std::string &);
     double get_particle_mass () const;
     void set_particle_mass (double);
-    const mygsl::rng & get_random () const;
-    mygsl::rng & get_random ();
 
+    virtual bool can_external_random () const;
+    const mygsl::rng & get_random () const;
+    mygsl::rng & grab_random ();
+    mygsl::rng & get_random (); /// obsolete
+ 
     int get_mode () const;
     void set_mode (int);
 
@@ -155,7 +158,7 @@ namespace genbb {
     bool          _randomized_direction_;
     unsigned long _seed_; //!< Local PRNG's seed
     mygsl::rng    _random_; //!< Local PRNG
-
+ 
   };
 
 } // end of namespace genbb

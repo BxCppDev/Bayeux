@@ -2,10 +2,10 @@
 /* rng.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2009-01-19
- * Last modified: 2009-01-19
+ * Last modified: 2012-06-26
  * 
  * License: 
- * Copyright 2007-2011 F. Mauger
+ * Copyright 2007-2012 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +34,12 @@
 #include <string>
 
 #include <boost/cstdint.hpp>
+#include <boost/scoped_ptr.hpp>
 
-#include <mygsl/rng.h>
+
+namespace mygsl {
+  class rng;
+}
 
 namespace genbb {
 
@@ -43,10 +47,14 @@ namespace genbb {
   {
     static const std::string DEFAULT_PRNG_ID;
 
-    static mygsl::rng   g_ran;
+    static void set_genbb_external_prng (mygsl::rng & prng_);
+    static mygsl::rng & grab_genbb_external_prng ();
+    static const mygsl::rng & get_genbb_external_prng ();
+    static void init_genbb_external_prng (int seed_);
+    static void reset_genbb_external_prng (int seed_);
+
     static mygsl::rng * g_ran_ptr;
 
-    static void set_genbb_external_prng (mygsl::rng & prng_);
   };
 
 } // end of namespace genbb

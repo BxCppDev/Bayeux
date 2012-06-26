@@ -21,22 +21,54 @@ namespace genbb {
 
     template<class Archive>
     void primary_event::serialize (Archive            & a_ar, 
-                   		   const unsigned int   a_version)
+                                   const unsigned int   a_version)
     {
       if (a_version > 0)
-	{
-	  a_ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;    
-	}
-      a_ar & boost::serialization::make_nvp ("time", time);
+        {
+          a_ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;    
+        }
+      // 2012-06-26 FM : support GENBB 'labelled' MC event :
+      if (a_version < 3)
+        {
+          if (Archive::is_saving::value) 
+            {
+              a_ar & boost::serialization::make_nvp ("label", label);
+            }
+          else
+            {
+              label.clear ();
+            }
+        }
+      else
+        {
+          a_ar & boost::serialization::make_nvp ("label", label);
+        }
+       a_ar & boost::serialization::make_nvp ("time", time);
       a_ar & boost::serialization::make_nvp ("particles", particles);
       a_ar & boost::serialization::make_nvp ("classification", classification);
-      return;
+      // 2012-06-21 FM : support GENBB 'weighted' MC event :
+      if (a_version < 2)
+        {
+          if (Archive::is_saving::value) 
+            {
+              a_ar & boost::serialization::make_nvp ("genbb_weight", genbb_weight);
+            }
+          else
+            {
+              genbb_weight = 1.0;
+            }
+        }
+      else
+        {
+          a_ar & boost::serialization::make_nvp ("genbb_weight", genbb_weight);
+        }
+     return;
     }
 
 } // end of namespace genbb
 
 #include <boost/serialization/version.hpp>
-BOOST_CLASS_VERSION(genbb::primary_event, 1)
+BOOST_CLASS_VERSION(genbb::primary_event, 3)
 
 #endif // __genbb_help__primary_event_ipp
 

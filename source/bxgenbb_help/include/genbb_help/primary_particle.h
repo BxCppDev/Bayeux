@@ -44,6 +44,8 @@
 #include <boost/cstdint.hpp>
 
 #include <datatools/utils/utils.h>
+#include <datatools/utils/units.h>
+#include <datatools/utils/i_tree_dump.h>
 
 // Interface base class from datatools to support serialization tools:
 #include <datatools/serialization/i_serializable.h>
@@ -53,7 +55,8 @@
 namespace genbb {
 
   struct primary_particle 
-    : DATATOOLS_SERIALIZABLE_CLASS 
+    : DATATOOLS_SERIALIZABLE_CLASS,
+      public datatools::utils::i_tree_dumpable 
   {
   public:
     
@@ -137,17 +140,23 @@ namespace genbb {
 
     double get_beta () const;
 
-    // ctor:
+    /// Constructor
     primary_particle ();
 
-    // ctor:
+    /// Constructor
     primary_particle (int32_t a_type, 
                       double a_time, 
                       const geomtools::vector_3d &);
 
-    // dtor:
+    /// Destructor
     virtual ~primary_particle ();
 
+    virtual void
+    tree_dump (std::ostream      & out_    = std::clog,
+               const std::string & title_  = "",
+               const std::string & indent_ = "",
+               bool inherit_               = false) const;
+ 
     void dump (std::ostream & out_ = std::clog, 
                const std::string & a_indent = "") const;
  

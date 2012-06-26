@@ -34,7 +34,8 @@
 #include <CLHEP/Vector/ThreeVector.h>
 
 #include <datatools/utils/utils.h>
- 
+#include <boost/algorithm/string/split.hpp> 
+#include <boost/algorithm/string/classification.hpp> 
 #include <geomtools/utils.h>
 
 namespace genbb {
@@ -49,30 +50,30 @@ namespace genbb {
     return _initialized_;
   }
 
-   bool genbb_mgr::is_debug () const
-    {
-      return _debug_;
-    }
+  bool genbb_mgr::is_debug () const
+  {
+    return _debug_;
+  }
 
-    void genbb_mgr::set_debug (bool d_)
-    {
-      _debug_ = d_;
-    }
+  void genbb_mgr::set_debug (bool d_)
+  {
+    _debug_ = d_;
+  }
 
-    int genbb_mgr::get_format () const
-    {
-      return _format_;
-    }
+  int genbb_mgr::get_format () const
+  {
+    return _format_;
+  }
 
-    bool genbb_mgr::is_format_genbb () const
-    {
-      return _format_ == FORMAT_GENBB;
-    }
+  bool genbb_mgr::is_format_genbb () const
+  {
+    return _format_ == FORMAT_GENBB;
+  }
 
-    bool genbb_mgr::is_format_boost () const
-    {
-      return _format_ == FORMAT_BOOST;
-    }
+  bool genbb_mgr::is_format_boost () const
+  {
+    return _format_ == FORMAT_BOOST;
+  }
 
   // ctor:
   genbb_mgr::genbb_mgr (int format_)
@@ -81,6 +82,7 @@ namespace genbb {
     _initialized_ = false;
     _in_ = 0;
     _format_ = FORMAT_GENBB;
+    _genbb_weight_ = 1.0;
     set_format (format_);
     return;
   }
@@ -96,24 +98,24 @@ namespace genbb {
   {
     if (_initialized_)
       {
-	throw logic_error ("genbb_help::genbb_mgr::set: Operation not allowed ! Manager is locked !");
+        throw logic_error ("genbb::genbb_mgr::set: Operation not allowed ! Manager is locked !");
       }
     int fmt = FORMAT_GENBB;
     if ((format_label_ != FORMAT_GENBB_LABEL) 
-	&& (format_label_ != FORMAT_BOOST_LABEL))
+        && (format_label_ != FORMAT_BOOST_LABEL))
       {
-	ostringstream message;
-	message << "genbb_help::genbb_mgr::set: Invalid format label '" 
-		<< format_label_ << "' !";
-	throw logic_error (message.str ());
+        ostringstream message;
+        message << "genbb::genbb_mgr::set: Invalid format label '" 
+                << format_label_ << "' !";
+        throw logic_error (message.str ());
       }
     if (format_label_ == FORMAT_GENBB_LABEL) 
       {
-	fmt = FORMAT_GENBB;
+        fmt = FORMAT_GENBB;
       }
     if (format_label_ == FORMAT_BOOST_LABEL) 
       {
-	fmt = FORMAT_BOOST;
+        fmt = FORMAT_BOOST;
       }
     this->set_format (fmt);
     return;
@@ -123,11 +125,11 @@ namespace genbb {
   {
     if (_initialized_)
       {
-	throw logic_error ("genbb_help::genbb_mgr::set: Operation not allowed ! Manager is locked !");
+        throw logic_error ("genbb::genbb_mgr::set: Operation not allowed ! Manager is locked !");
       }
     if ((format_ != FORMAT_GENBB) && (format_ != FORMAT_BOOST))
       {
-	throw logic_error ("genbb_help::genbb_mgr::set: Invalid format !");
+        throw logic_error ("genbb::genbb_mgr::set: Invalid format !");
       }
     _format_ = format_;
     return;
@@ -137,7 +139,7 @@ namespace genbb {
   {
     if (_initialized_)
       {
-	throw logic_error ("genbb_help::genbb_mgr::set: Operation not allowed! Manager is locked!");
+        throw logic_error ("genbb::genbb_mgr::set: Operation not allowed! Manager is locked!");
       }
     _filenames_.push_back (filename_);
     return;
@@ -149,13 +151,13 @@ namespace genbb {
   }
   
   void genbb_mgr::_load_next (primary_event & event_, 
-			     bool compute_classification_)
+                              bool compute_classification_)
   {
     //provide the preloadedcurrent event:
     event_ = _current_;
     if (compute_classification_) 
       {
-	event_.compute_classification ();
+        event_.compute_classification ();
       }
     // try to load the next event:
     _load_next_ ();
@@ -166,44 +168,44 @@ namespace genbb {
   {
     if (! _reader_.is_initialized ())
       {
-	string filename;
+        string filename;
 
-	if (_filenames_.size () == 0)
-	  { 
-	    if (is_debug ()) clog << "genbb_help::genbb_mgr::_load_next_boost_: no more filenames!" << endl;
-	    return;
-	  }
+        if (_filenames_.size () == 0)
+          { 
+            if (is_debug ()) clog << "genbb::genbb_mgr::_load_next_boost_: no more filenames!" << endl;
+            return;
+          }
 
-	filename = _filenames_.front ();
-	_filenames_.pop_front ();
-	if (filename.empty ()) 
-	  {
-	    if (is_debug ()) clog << "DEVEL: genbb_mgr::_load_next_boost_: filename = '" << filename << "'" << endl;
-	    return;
-	  }
-	datatools::utils::fetch_path_with_env (filename);
-	_reader_.init (filename, 
-		       datatools::serialization::using_multi_archives);
-	_current_filename_ = filename;
-	return;
+        filename = _filenames_.front ();
+        _filenames_.pop_front ();
+        if (filename.empty ()) 
+          {
+            if (is_debug ()) clog << "DEVEL: genbb_mgr::_load_next_boost_: filename = '" << filename << "'" << endl;
+            return;
+          }
+        datatools::utils::fetch_path_with_env (filename);
+        _reader_.init (filename, 
+                       datatools::serialization::using_multi_archives);
+        _current_filename_ = filename;
+        return;
       }
 
     if (! _reader_.is_initialized ())
       {
-	 throw logic_error ("genbb_help::genbb_mgr::_load_next_boost_: Reader is not initialized !");  
+        throw logic_error ("genbb::genbb_mgr::_load_next_boost_: Reader is not initialized !");  
       }
 
     if (! _reader_.has_record_tag ())
       {
-	 throw logic_error ("genbb_help::genbb_mgr::_load_next_boost_: Reader has no data !");  
+        throw logic_error ("genbb::genbb_mgr::_load_next_boost_: Reader has no data !");  
       }
     if (_reader_.record_tag_is (primary_event::SERIAL_TAG)) 
       {
-	_reader_.load (_current_);
+        _reader_.load (_current_);
       }
     if (! _reader_.has_record_tag ())
       {
-	_reader_.reset ();
+        _reader_.reset ();
       }
 
     return;
@@ -214,11 +216,11 @@ namespace genbb {
     _current_.reset ();
     if (_format_ == FORMAT_GENBB)
       {
-	_load_next_genbb_ ();
+        _load_next_genbb_ ();
       }
     if (_format_ == FORMAT_BOOST)
       {
-	_load_next_boost_ ();
+        _load_next_boost_ ();
       }
     return;
   }
@@ -227,125 +229,199 @@ namespace genbb {
   {
     if (_in_ == 0)
       {
-	if (is_debug ()) clog << "genbb_help::genbb_mgr::_load_next_genbb_: no input stream!" << endl;
-	string filename;
+        if (is_debug ()) clog << "genbb::genbb_mgr::_load_next_genbb_: No input stream!" << endl;
+        _genbb_weight_ = 1.0;
+        string filename;
 
-	if (_filenames_.size () == 0)
-	  { 
-	    if (is_debug ()) clog << "genbb_help::genbb_mgr::_load_next_genbb_: no more filenames!" << endl;
-	    return;
-	  }
+        if (_filenames_.size () == 0)
+          { 
+            if (is_debug ()) clog << "genbb::genbb_mgr::_load_next_genbb_: No more filenames!" << endl;
+            return;
+          }
 
-	filename = _filenames_.front ();
-	_filenames_.pop_front ();
-	if (filename.empty ()) 
-	  {
-	    if (is_debug ()) clog << "DEVEL: genbb_mgr::_load_next_genbb_: filename = '" << filename << "'" << endl;
-	    return;
-	  }
-	datatools::utils::fetch_path_with_env (filename);
-	if (is_debug ()) clog << "DEVEL: genbb_mgr::_load_next_genbb_: filename = '" << filename << "'" << endl;
-	_fin_.close ();
-	_fin_.open (filename.c_str ());
-	if (! _fin_)
-	  {
-	    ostringstream message;
-	    message << "genbb_help::genbb_mgr::_load_next_genbb_: cannot open file '"
-		    << filename << "'!";
-	    throw runtime_error (message.str ());
-	  }
-	_in_ = &_fin_;
-	_current_filename_ = filename;
+        filename = _filenames_.front ();
+        _filenames_.pop_front ();
+        if (filename.empty ()) 
+          {
+            if (is_debug ()) clog << "DEVEL: genbb_mgr::_load_next_genbb_: Input filename = '" << filename << "'" << endl;
+            return;
+          }
+        datatools::utils::fetch_path_with_env (filename);
+        if (is_debug ()) clog << "DEVEL: genbb_mgr::_load_next_genbb_: Input filename = '" << filename << "'" << endl;
+        _fin_.close ();
+        _fin_.open (filename.c_str ());
+        if (! _fin_)
+          {
+            ostringstream message;
+            message << "genbb::genbb_mgr::_load_next_genbb_: Cannot open file '"
+                    << filename << "'!";
+            throw runtime_error (message.str ());
+          }
+        _in_ = &_fin_;
+        _current_filename_ = filename;
       }
-  
+     
+    std::string line;
+    while (true)
+      {
+        std::string token;
+        std::getline (*_in_, line);
+        {
+          std::istringstream line_iss (line);
+          line_iss >> token;
+        }
+        if (token.empty ())
+          {
+            // skip white lines :
+            continue;
+          }
+        if (token[0] != '#')
+          {
+            break;
+          }
+        if (token.length () == 1)
+          {
+            // skip empty comment lines :
+            continue;
+          }
+        // parse special comment :
+        if (token[1] != '@')
+          {
+            // skip pure comment lines :
+            continue;
+          }
+        typedef vector<string> split_vector_type;
+        split_vector_type svec;
+        boost::algorithm::split(svec, line, 
+                                boost::algorithm::is_any_of("="), 
+                                boost::algorithm::token_compress_on );
+        if (svec.size () != 2)
+          {
+            ostringstream message;
+            message << "genbb::genbb_mgr::_load_next_genbb_: Invalid syntax ("
+                    << line << ") !";
+            throw logic_error (message.str ());
+          } 
+        if (svec[0] == "#@toallevents")
+          {
+            std::istringstream iss (svec[1]);
+            double toallevents = 1.0;
+            iss >> toallevents;
+            if (! iss || toallevents < 0.0)
+              {
+                std::ostringstream message;
+                message << "genbb::genbb_mgr::_load_next_genbb_: " 
+                        << "Invalid value for 'toallevents' weight ("
+                        << line << ") !";
+                throw logic_error (message.str ());
+              }
+            _genbb_weight_ = 1.0  / toallevents;
+            std::clog << "NOTICE: genbb::genbb_mgr::_load_next_genbb_: "
+                      << "Load GENBB event weight = " << _genbb_weight_ << std::endl;
+          }
+      }
+     
     if (is_debug ()) clog << "DEVEL: genbb_mgr::_load_next_genbb_: _in_ = " << _in_ << endl;
-
+    
     if (! *_in_)
       {
-	ostringstream message;
-	message << "genbb_help::genbb_mgr::_load_next_genbb_: cannot load event!";
-	throw runtime_error (message.str ());
+        ostringstream message;
+        message << "genbb::genbb_mgr::_load_next_genbb_: cannot load event!";
+        throw logic_error (message.str ());
       }
     int evnum;
     double time;
     int npart;
-    *_in_ >> ws >> evnum >> time >> npart;
-    if (! *_in_)
-      {
-	ostringstream message;
-	message << "genbb_help::genbb_mgr::_load_next_genbb_: format error!";
-	throw logic_error (message.str ());
-      }
+    {
+      std::istringstream line_iss (line);
+      line_iss >> ws >> evnum >> time >> npart >> ws;
+      if (! line_iss)
+        {
+          ostringstream message;
+          message << "genbb::genbb_mgr::_load_next_genbb_: Format error !";
+          throw logic_error (message.str ());
+        }
+    }
+  
+    /*
+     *_in_ >> ws >> evnum >> time >> npart;
+     if (! *_in_)
+     {
+     ostringstream message;
+     message << "genbb::genbb_mgr::_load_next_genbb_: format error!";
+     throw logic_error (message.str ());
+     }
+    */
     _current_.time = time * CLHEP::second;
+    _current_.set_genbb_weight (_genbb_weight_);
     double part_time = 0.0;
     for (int i = 0; i < npart; i++)
       {
-	primary_particle pp;
-	int part_type;
-	double x, y ,z, time_shift;
-	// 2009-07-14 FM: Vladimir Tretyak email about particles' time shifts: 
-	//*_in_ >> ws >> pp.type >> x >> y >> z >> pp.time; 
-	*_in_ >> ws >> part_type >> x >> y >> z >> time_shift;
-	part_time += time_shift; 
-	pp.set_type (part_type);
-	pp.set_time (part_time * CLHEP::second); // GENBB unit is s
-	
-	if (! *_in_)
-	  {
-	    ostringstream message;
-	    message << "genbb_help::genbb_mgr::_load_next_genbb_: format error!";
-	    _fin_.close ();
-	    _in_ = 0;
-	    throw logic_error (message.str ());
-	  }
-	geomtools::vector_3d p (x, y, z);
-	p *= CLHEP::MeV; // GENBB unit is MeV/c
-	pp.set_momentum (p);
-	_current_.add_particle (pp);
+        primary_particle pp;
+        int part_type;
+        double x, y ,z, time_shift;
+        // 2009-07-14 FM: Vladimir Tretyak email about particles' time shifts: 
+        *_in_ >> ws >> part_type >> x >> y >> z >> time_shift;
+        part_time += time_shift; 
+        pp.set_type (part_type);
+        pp.set_time (part_time * CLHEP::second); // GENBB unit is s
+        
+        if (! *_in_)
+          {
+            ostringstream message;
+            message << "genbb::genbb_mgr::_load_next_genbb_: format error!";
+            _fin_.close ();
+            _in_ = 0;
+            throw logic_error (message.str ());
+          }
+        geomtools::vector_3d p (x, y, z);
+        p *= CLHEP::MeV; // GENBB unit is MeV/c
+        pp.set_momentum (p);
+        _current_.add_particle (pp);
       }
     *_in_ >> ws;
     if (_fin_.eof ())
       {
-	_fin_.close ();
-	_in_ = 0;
+        _fin_.close ();
+        _in_ = 0;
       }
     return;
   }
 
   void genbb_mgr::dump (ostream & out_) const
   {
-    out_ << "genbb_help::genbb_mgr::dump: " << endl;
+    out_ << "genbb::genbb_mgr::dump: " << endl;
     out_ << "|-- Debug : " << _debug_ << endl;
     out_ << "|-- Initialized : " << _initialized_ << endl;
     out_ << "|-- Format : " << (_format_ == FORMAT_GENBB? "GENBB": "Boost")<< endl;
     out_ << "|-- Current input file: '" << _current_filename_ << "'" << endl;
     out_ << "|-- List of remaining input files : " << endl;
     for (list<string>::const_iterator it = _filenames_.begin ();
-	 it != _filenames_.end ();
-	 it++)
+         it != _filenames_.end ();
+         it++)
       {
-	list<string>::const_iterator jt = it;
-	jt++;
-	out_ << "|   ";
-	if (jt == _filenames_.end ())
-	  {
-	    out_ << "`-- ";
-	  }
-	else
-	  {
-	    out_ << "|-- ";
-	  }
-	out_ << "Filename : '" << *it << "'" << endl; 
+        list<string>::const_iterator jt = it;
+        jt++;
+        out_ << "|   ";
+        if (jt == _filenames_.end ())
+          {
+            out_ << "`-- ";
+          }
+        else
+          {
+            out_ << "|-- ";
+          }
+        out_ << "Filename : '" << *it << "'" << endl; 
       } 
     if (_format_ == FORMAT_GENBB)
       {
-	out_ << "|-- GENBB current file address : " << hex << _in_ 
-	     << dec << endl;
+        out_ << "|-- GENBB current file address : " << hex << _in_ 
+             << dec << endl;
       }
     if (_format_ == FORMAT_BOOST)
       {
-	out_ << "|-- Current Boost reader : " 
-	     << (_reader_.is_initialized ()? "Yes": "No") << endl;
+        out_ << "|-- Current Boost reader : " 
+             << (_reader_.is_initialized ()? "Yes": "No") << endl;
       }
     out_ << "`-- Current event: " << endl;
     _current_.dump (out_, "    "); 
@@ -376,121 +452,121 @@ namespace genbb {
   {
     if (_initialized_) 
       {
-	throw logic_error ("genbb_help::genbb_mgr::initialize: Already initialized !");
+        throw logic_error ("genbb::genbb_mgr::initialize: Already initialized !");
       }
     
     if (config_.has_flag ("debug"))
       {
-	set_debug (true);
+        set_debug (true);
       }
     
     if (config_.has_key ("format"))
       {
-	string format = config_.fetch_string ("format");
-	set_format (format);
+        string format = config_.fetch_string ("format");
+        set_format (format);
       }
     else
       {
-	throw logic_error ("genbb_help::genbb_mgr::initialize: Missing 'format' of input files !");	
+        throw logic_error ("genbb::genbb_mgr::initialize: Missing 'format' of input files !");     
       }
 
     // try to build a list of input filenames from a pattern:
     {
-    string input_files_dir = ".";
-    string input_files_pattern = "*.genbb";
-    if (config_.has_key ("input_files.pattern"))
-      {
-	input_files_pattern = config_.fetch_string ("input_files.pattern");
-	if (input_files_pattern.empty ())
-	  {
-	    throw logic_error ("genbb_help::genbb_mgr::initialize: Input files pattern is empty !");	
-	  }
-	if (config_.has_key ("input_files.directory"))
-	  {
-	    input_files_dir = config_.fetch_string ("input_files.directory");
-	  }
-	
-	char tmp_buffer[256];
-	for (int i = 0; i < 256; i++)
-	  {
-	    tmp_buffer[i] = '\0';
-	  }
-	string tmp_dir = ".";
-	sprintf (tmp_buffer,"%s/%s", tmp_dir.c_str (), "genbb_mgr_pattern.XXXXXX");
-	int file_desc= mkstemp (tmp_buffer);
-	if (file_desc == -1)
-	  {
-	    //cerr << "DEVEL: " << tmp_buffer << endl;
-	    throw runtime_error ("genbb_help::genbb_mgr::initialize: Cannot create temporary file !");		    
-	  }
-	if (is_debug ()) clog << "DEBUG: genbb_mgr::initialize: Temporary file is: '" << tmp_buffer << "'" << endl;
-	close (file_desc);
-	string tmp_file = tmp_buffer;
-	ostringstream sys_command;
-	ostringstream genbb_mgr_log_file_ss;
-	genbb_mgr_log_file_ss << tmp_dir << '/' << "genbb_mgr.log";
-	string genbb_mgr_log_file = genbb_mgr_log_file_ss.str ();
-	sys_command << "find " << input_files_dir 
-		    << " -maxdepth 1" 
-		    << " -name " << input_files_pattern
-		    << " | sort > " << tmp_file
-		    << " 2> " << genbb_mgr_log_file_ss.str ();
-	if (is_debug ()) clog << "DEBUG: genbb_mgr::initialize: System command: '" << sys_command.str () << "'" << endl;
-	int ret = system (sys_command.str ().c_str ());
-	if (ret != 0)
-	  {
-	    ostringstream message;
-	    message << "genbb_help::genbb_mgr::initialize: System command failed ! Check log file '"
-		    << genbb_mgr_log_file << "' !";
-	    throw runtime_error (message.str());
-	  }
-	
-	ifstream fin (tmp_file.c_str ());
-	if (! fin)
-	  {
-	    ostringstream message;
-	    message << "genbb_help::genbb_mgr::initialize: Cannot open list of input files '"
-		    << tmp_file << "' !";
-	    throw logic_error (message.str());
-	  }
-	while (fin)
-	  {
-	    string line;
-	    getline (fin, line);
-	    istringstream line_iss (line);
-	    string filename;
-	    line_iss >> filename;
-	    if (! filename.empty ())
-	      {
-		this->set (filename);
-	      }
-	    fin >> ws;
-	    if (fin.eof ()) break;
-	  }
-	unlink (tmp_file.c_str ());
-	unlink (genbb_mgr_log_file.c_str ());
-      }
+      string input_files_dir = ".";
+      string input_files_pattern = "*.genbb";
+      if (config_.has_key ("input_files.pattern"))
+        {
+          input_files_pattern = config_.fetch_string ("input_files.pattern");
+          if (input_files_pattern.empty ())
+            {
+              throw logic_error ("genbb::genbb_mgr::initialize: Input files pattern is empty !");    
+            }
+          if (config_.has_key ("input_files.directory"))
+            {
+              input_files_dir = config_.fetch_string ("input_files.directory");
+            }
+        
+          char tmp_buffer[256];
+          for (int i = 0; i < 256; i++)
+            {
+              tmp_buffer[i] = '\0';
+            }
+          string tmp_dir = ".";
+          sprintf (tmp_buffer,"%s/%s", tmp_dir.c_str (), "genbb_mgr_pattern.XXXXXX");
+          int file_desc= mkstemp (tmp_buffer);
+          if (file_desc == -1)
+            {
+              //cerr << "DEVEL: " << tmp_buffer << endl;
+              throw runtime_error ("genbb::genbb_mgr::initialize: Cannot create temporary file !");              
+            }
+          if (is_debug ()) clog << "DEBUG: genbb_mgr::initialize: Temporary file is: '" << tmp_buffer << "'" << endl;
+          close (file_desc);
+          string tmp_file = tmp_buffer;
+          ostringstream sys_command;
+          ostringstream genbb_mgr_log_file_ss;
+          genbb_mgr_log_file_ss << tmp_dir << '/' << "genbb_mgr.log";
+          string genbb_mgr_log_file = genbb_mgr_log_file_ss.str ();
+          sys_command << "find " << input_files_dir 
+                      << " -maxdepth 1" 
+                      << " -name " << input_files_pattern
+                      << " | sort > " << tmp_file
+                      << " 2> " << genbb_mgr_log_file_ss.str ();
+          if (is_debug ()) clog << "DEBUG: genbb_mgr::initialize: System command: '" << sys_command.str () << "'" << endl;
+          int ret = system (sys_command.str ().c_str ());
+          if (ret != 0)
+            {
+              ostringstream message;
+              message << "genbb::genbb_mgr::initialize: System command failed ! Check log file '"
+                      << genbb_mgr_log_file << "' !";
+              throw runtime_error (message.str());
+            }
+        
+          ifstream fin (tmp_file.c_str ());
+          if (! fin)
+            {
+              ostringstream message;
+              message << "genbb::genbb_mgr::initialize: Cannot open list of input files '"
+                      << tmp_file << "' !";
+              throw logic_error (message.str());
+            }
+          while (fin)
+            {
+              string line;
+              getline (fin, line);
+              istringstream line_iss (line);
+              string filename;
+              line_iss >> filename;
+              if (! filename.empty ())
+                {
+                  this->set (filename);
+                }
+              fin >> ws;
+              if (fin.eof ()) break;
+            }
+          unlink (tmp_file.c_str ());
+          unlink (genbb_mgr_log_file.c_str ());
+        }
     }
 
     // try to get a list of input filenames:
     {
       vector<string> input_files;
       if (config_.has_key ("input_files"))
-	{
-	  config_.fetch ("input_files", input_files);
-	  for (int i = 0; i < input_files.size (); i++)
-	    {
-	      datatools::utils::fetch_path_with_env (input_files[i]);
-	      set (input_files[i]);
-	    }
-	}
+        {
+          config_.fetch ("input_files", input_files);
+          for (int i = 0; i < input_files.size (); i++)
+            {
+              datatools::utils::fetch_path_with_env (input_files[i]);
+              set (input_files[i]);
+            }
+        }
       else
-	{
-	  if (_filenames_.empty ()) 
-	  {
-	    throw logic_error ("genbb_help::genbb_mgr::initialize: Missing list of input files !");	
-	  }
-	}
+        {
+          if (_filenames_.empty ()) 
+            {
+              throw logic_error ("genbb::genbb_mgr::initialize: Missing list of input files !");     
+            }
+        }
     }
 
     _at_init_ ();
@@ -508,26 +584,27 @@ namespace genbb {
 
   void genbb_mgr::_at_reset_ ()
   {
+    _genbb_weight_ = 1.0;
     _current_filename_ = "";
     _filenames_.clear ();
 
     // "genbb"
     if (_format_ == FORMAT_GENBB)
       {
-	if (_in_ != 0)
-	  {
-	    _in_ = 0; 
-	    _fin_.close ();
-	  }
+        if (_in_ != 0)
+          {
+            _in_ = 0; 
+            _fin_.close ();
+          }
       }
 
     // "boost":
     if (_format_ == FORMAT_BOOST)
       {
-	if (_reader_.is_initialized ())
-	  {
-	    _reader_.reset ();
-	  }
+        if (_reader_.is_initialized ())
+          {
+            _reader_.reset ();
+          }
       }
     _format_ = FORMAT_GENBB;
 
