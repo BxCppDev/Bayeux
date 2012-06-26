@@ -152,6 +152,8 @@ function print_usage ()
       --without-mygsl            : do not install mygsl 
       --with-geomtools           : install geomtools (default)
       --without-geomtools        : do not install geomtools
+        --geomtools-with-gnuplot-display    : install geomtools Gnuplot based display (default)
+        --geomtools-without-gnuplot-display : do not install geomtools Gnuplot based display
       --with-cuts                : install cuts (default)
       --without-cuts             : do not install cuts
       --with-materials           : install materials (default)
@@ -433,6 +435,7 @@ function do_configure ()
     local with_mygsl=1
     local with_cuts=1
     local with_geomtools=1
+    local bayeux_geomtools_with_gnuplot_display=1
     local with_materials=1
     local with_genvtx=1
     local with_genbb_help=1
@@ -525,6 +528,10 @@ function do_configure ()
 	    with_geomtools=1
 	elif [ "${option}" = "--without-geomtools" ]; then
 	    with_geomtools=0
+	elif [ "${option}" = "--geomtools-with-gnuplot-display" ]; then
+	    bayeux_geomtools_with_gnuplot_display=1
+	elif [ "${option}" = "--geomtools-without-gnuplot-display" ]; then
+	    bayeux_geomtools_with_gnuplot_display=0
 	elif [ "${option}" = "--with-cuts" ]; then
 	    with_cuts=1
 	elif [ "${option}" = "--without-cuts" ]; then
@@ -701,6 +708,7 @@ function do_configure ()
     pkgtools__msg_notice "Install brio          : '${with_brio}'"
     pkgtools__msg_notice "Install mygsl         : '${with_mygsl}'"
     pkgtools__msg_notice "Install geomtools     : '${with_geomtools}'"
+    pkgtools__msg_notice " Build Gnuplot based display : ${bayeux_geomtools_with_gnuplot_display}"
     pkgtools__msg_notice "Install cuts          : '${with_cuts}'"
     pkgtools__msg_notice "Install materials     : '${with_materials}'"
     pkgtools__msg_notice "Install genvtx        : '${with_genvtx}'"
@@ -777,6 +785,7 @@ function do_configure ()
             -DBAYEUX_WITH_BRIO=${with_brio} \
             -DBAYEUX_WITH_MYGSL=${with_mygsl} \
             -DBAYEUX_WITH_GEOMTOOLS=${with_geomtools} \
+	    -DBAYEUX_GEOMTOOLS_WITH_GNUPLOT_DISPLAY=${bayeux_geomtools_with_gnuplot_display} \
             -DBAYEUX_WITH_BRIO=${with_brio} \
             -DBAYEUX_WITH_CUTS=${with_cuts} \
             -DBAYEUX_WITH_MATERIALS=${with_materials} \

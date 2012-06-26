@@ -10,6 +10,10 @@ if ( BAYEUX_WITH_GEOMTOOLS )
   if (BAYEUX_WITH_TESTS)
     set (_geomtools_run_post_build_tests ON)
   endif ()
+
+  option ( BAYEUX_GEOMTOOLS_WITH_GNUPLOT_DISPLAY 
+    "Build the Gnuplot-based display tools"
+    1 )
   
   if (_geomtools_run_post_build_tests)
     set (_geomtools_ep_test_options 
@@ -29,6 +33,7 @@ if ( BAYEUX_WITH_GEOMTOOLS )
 	 -DGEOMTOOLS_WITH_DOC=${BAYEUX_WITH_DOCS} 
 	 -DGEOMTOOLS_WITH_TEST=${BAYEUX_WITH_TESTS} 
 	 -DGEOMTOOLS_WITH_BIO=${BAYEUX_WITH_BIO} 
+	 -DGEOMTOOLS_WITH_GNUPLOT_DISPLAY=${BAYEUX_GEOMTOOLS_WITH_GNUPLOT_DISPLAY} 
          -Dmygsl_DIR:PATH=${_mygsl_DIR}
          ${_additional_cmake_module_path_option}
     CMAKE_GENERATOR "Unix Makefiles"
