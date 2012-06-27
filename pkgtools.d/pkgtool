@@ -708,7 +708,7 @@ function do_configure ()
     pkgtools__msg_notice "Install brio          : '${with_brio}'"
     pkgtools__msg_notice "Install mygsl         : '${with_mygsl}'"
     pkgtools__msg_notice "Install geomtools     : '${with_geomtools}'"
-    pkgtools__msg_notice " Build Gnuplot based display : ${bayeux_geomtools_with_gnuplot_display}"
+    pkgtools__msg_notice "\`-- Build Gnuplot based display : ${bayeux_geomtools_with_gnuplot_display}"
     pkgtools__msg_notice "Install cuts          : '${with_cuts}'"
     pkgtools__msg_notice "Install materials     : '${with_materials}'"
     pkgtools__msg_notice "Install genvtx        : '${with_genvtx}'"
@@ -783,11 +783,10 @@ function do_configure ()
 	    -DBAYEUX_ALT_EP_BASE=${alternative_build_dir} \
             -DBAYEUX_CONFIG:STRING=${validated_bayeux_config} \
             -DBAYEUX_WITH_BRIO=${with_brio} \
+            -DBAYEUX_WITH_CUTS=${with_cuts} \
             -DBAYEUX_WITH_MYGSL=${with_mygsl} \
             -DBAYEUX_WITH_GEOMTOOLS=${with_geomtools} \
 	    -DBAYEUX_GEOMTOOLS_WITH_GNUPLOT_DISPLAY=${bayeux_geomtools_with_gnuplot_display} \
-            -DBAYEUX_WITH_BRIO=${with_brio} \
-            -DBAYEUX_WITH_CUTS=${with_cuts} \
             -DBAYEUX_WITH_MATERIALS=${with_materials} \
             -DBAYEUX_WITH_GENVTX=${with_genvtx} \
             -DBAYEUX_WITH_GENBB_HELP=${with_genbb_help} \
