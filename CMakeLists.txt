@@ -247,7 +247,7 @@ if ( BAYEUX_CONFIG STREQUAL "default" OR BAYEUX_CONFIG STREQUAL ${Bayeux_VERSION
   set ( BAYEUX_GENBB_HELP_PATH    "tags/genbb_help-4.1.1"  )
 
   set ( BAYEUX_EMFIELD_VERSION    "0.1.0"  )
-  set ( BAYEUX_EMFIELD_PATH       "trunk"  )
+  set ( BAYEUX_EMFIELD_PATH       "tags/emfield-0.1.0"  )
 
 elseif ( BAYEUX_CONFIG STREQUAL 0.9.1 )
 
