@@ -149,6 +149,16 @@ double units::get_electric_field_unit_from(const std::string& word) {
   return std::numeric_limits<double>::quiet_NaN();
 }
 
+double units::get_electric_tension_unit_from(const std::string& word) {
+  if ((word == "uV")) return 1.e-6 * CLHEP::volt;
+  if ((word == "mV")) return 1.e-3 * CLHEP::volt;
+  if ((word == "V")) return CLHEP::volt;
+  if ((word == "kV")) return CLHEP::kilovolt;
+  if ((word == "MV")) return CLHEP::megavolt;
+  throw_bad_unit("electric tension", word);
+  return std::numeric_limits<double>::quiet_NaN();
+}
+
 
 double units::get_temperature_unit_from(const std::string& word) {
   if ((word == "kelvin")) return CLHEP::kelvin;
@@ -210,7 +220,26 @@ double units::get_surface_activity_unit_from(const std::string& word) {
   if ((word == "kBq/m2")) return 1.e+3 * Bq_per_m2;
   if ((word == "MBq/m2")) return 1.e+6 * Bq_per_m2;
   if ((word == "GBq/m2")) return 1.e+9 * Bq_per_m2;
-  throw_bad_unit("surface_activity", word);
+  throw_bad_unit("surface activity", word);
+  return std::numeric_limits<double>::quiet_NaN();
+}
+
+
+double units::get_electric_charge_unit_from(const std::string& word) {
+  if ((word == "C"))  return CLHEP::coulomb;
+  if ((word == "nC"))  return 1.e-9 * CLHEP::coulomb;
+  if ((word == "pC"))  return 1.e-12 * CLHEP::coulomb;
+  throw_bad_unit("electric charge", word);
+  return std::numeric_limits<double>::quiet_NaN();
+}
+
+
+double units::get_electric_current_unit_from(const std::string& word) {
+  if ((word == "A"))  return CLHEP::ampere;
+  if ((word == "mA"))  return CLHEP::milliampere;
+  if ((word == "uA"))  return CLHEP::microampere;
+  if ((word == "nA"))  return CLHEP::nanoampere;
+  throw_bad_unit("electric current", word);
   return std::numeric_limits<double>::quiet_NaN();
 }
 
@@ -223,7 +252,7 @@ double units::get_mass_activity_unit_from(const std::string& word) {
   else if ((word == "kBq/kg")) return 1.e+3 * Bq_per_kg;
   else if ((word == "MBq/kg")) return 1.e+6 * Bq_per_kg;
   else if ((word == "GBq/kg")) return 1.e+9 * Bq_per_kg;
-  else throw_bad_unit("mass_activity", word);
+  else throw_bad_unit("mass activity", word);
   return std::numeric_limits<double>::quiet_NaN();
 }
 
@@ -252,6 +281,8 @@ double units::get_unit_from(const std::string& unit_type,
     return get_magnetic_field_unit_from(unit_str);
   } else if (unit_type == "electric_field") {
     return get_electric_field_unit_from(unit_str);
+  } else if (unit_type == "electric_tension") {
+    return get_electric_tension_unit_from(unit_str);
   } else if (unit_type == "temperature") {
     return get_temperature_unit_from(unit_str);
   } else if (unit_type == "density") {
@@ -266,11 +297,15 @@ double units::get_unit_from(const std::string& unit_type,
     return get_volume_activity_unit_from(unit_str);
   } else if (unit_type == "mass_activity") {
     return get_mass_activity_unit_from(unit_str);
+  } else if (unit_type == "electric_charge") {
+    return get_electric_charge_unit_from(unit_str);
+  } else if (unit_type == "electric_current") {
+    return get_electric_current_unit_from(unit_str);
   }
   {
     std::ostringstream message;
     message << "Invalid " << unit_type 
-            << " of unit :'" << unit_type << "' !";
+            << " of unit :'" << unit_str << "' !";
     throw std::logic_error(message.str());
   }
   return std::numeric_limits<double>::quiet_NaN();
@@ -293,13 +328,17 @@ const std::vector<std::string>& units::get_unit_labels_registry() {
     ulabels.push_back("mass");
     ulabels.push_back("pressure");
     ulabels.push_back("magnetic_field");
+    ulabels.push_back("electric_field");
+    ulabels.push_back("electric_tension");
     ulabels.push_back("temperature");
     ulabels.push_back("density");
     ulabels.push_back("activity");
-    ulabels.push_back("volume_activity");
     ulabels.push_back("surface_activity");
+    ulabels.push_back("volume_activity");
     ulabels.push_back("mass_activity");
     ulabels.push_back("frequency");          
+    ulabels.push_back("electric_charge");
+    ulabels.push_back("electric_current");
   }
   return *ulabels_ptr.get();
 }

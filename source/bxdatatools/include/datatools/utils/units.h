@@ -70,6 +70,9 @@ class units {
   //! Get the CLHEP electric field unit from a string.
   static double get_electric_field_unit_from(const std::string&);
 
+  //! Get the CLHEP electric tension unit from a string.
+  static double get_electric_tension_unit_from(const std::string&);
+
   //! Get the CLHEP temperature unit from a string.
   static double get_temperature_unit_from(const std::string&);
 
@@ -90,6 +93,12 @@ class units {
 
   //! Get the frequency unit from a string.
   static double get_frequency_unit_from(const std::string&);
+
+  //! Get the electric charge unit from a string.
+  static double get_electric_charge_unit_from(const std::string&);
+
+  //! Get the electric current unit from a string.
+  static double get_electric_current_unit_from(const std::string&);
 
   //! Get the CLHEP unit from a string specifiying the unit type.
   /**
