@@ -22,7 +22,7 @@
 
 # setup version numbers
 set ( emfield_VERSION_MAJOR 0 )
-set ( emfield_VERSION_MINOR 1 )
+set ( emfield_VERSION_MINOR 2 )
 set ( emfield_PATCH_VERSION 0 )
 set ( emfield_VERSION_STR "${emfield_VERSION_MAJOR}.${emfield_VERSION_MINOR}.${emfield_PATCH_VERSION}" )
 math ( EXPR emfield_VERSION_NUMERIC "${emfield_VERSION_MAJOR}*100000+${emfield_VERSION_MINOR}*100+${emfield_PATCH_VERSION}" )
