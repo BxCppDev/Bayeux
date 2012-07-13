@@ -74,7 +74,7 @@ namespace genbb {
         _c_decay_isotope_[i] = 0;
       }  
     _decay_dbd_level_ = 0;  
-    _decay_dbd_mode_ = 1;
+    _decay_dbd_mode_ = DBD_MODE_INVALID;
     _use_local_prng_ = false;
     _seed_ = 0;
     datatools::utils::invalidate (_energy_min_);
@@ -146,7 +146,7 @@ namespace genbb {
       }  
     _decay_isotope_ = "";  
     _decay_dbd_level_ = 0;  
-    _decay_dbd_mode_ = 1;
+    _decay_dbd_mode_ = DBD_MODE_INVALID;
 
     datatools::utils::invalidate (_energy_min_);
     datatools::utils::invalidate (_energy_max_);
@@ -507,20 +507,28 @@ namespace genbb {
       {
         throw logic_error ("genbb::wgenbb::_init_: Decay type is not defined !");     
       }
+    if (_decay_type_ == DECAY_TYPE_DBD && _decay_dbd_mode_ == DBD_MODE_INVALID)
+      {
+        throw logic_error ("genbb::wgenbb::_init_: Invalid DBD mode !");     
+      }
 
     enrange.reset ();
     const std::vector<int> & dbdmwer 
       = utils::get_dbd_modes_with_energy_range ();
+    clog << "NOTICE: genbb::wgenbb::_init_: Decay DBD mode : " 
+         << _decay_dbd_mode_ << endl;
     if (std::find (dbdmwer.begin (), dbdmwer.end (),_decay_dbd_mode_) != dbdmwer.end ())
       {
         if (datatools::utils::is_valid (_energy_min_))
           {
-            clog << "NOTICE: wgenbb::_init_: Setting energy min to " << _energy_min_ / CLHEP::MeV << " MeV" << endl;
+            clog << "NOTICE: genbb::wgenbb::_init_: Setting energy min to " 
+                 << _energy_min_ / CLHEP::MeV << " MeV" << endl;
             enrange.ebb1 = (float) (_energy_min_ / CLHEP::MeV);     
           }
         if (datatools::utils::is_valid (_energy_max_))
           {
-            clog << "NOTICE: wgenbb::_init_: Setting energy max to " << _energy_max_ / CLHEP::MeV << " MeV" << endl;
+            clog << "NOTICE: genbb::wgenbb::_init_: Setting energy max to "
+                 << _energy_max_ / CLHEP::MeV << " MeV" << endl;
             enrange.ebb2 = (float) (_energy_max_ / CLHEP::MeV);     
           }
         if (enrange.ebb1 >= enrange.ebb2)
@@ -531,7 +539,12 @@ namespace genbb {
             throw logic_error (message.str ());
           }
       }
-    
+    else
+      {
+        clog << "NOTICE: genbb::wgenbb::_init_: Not a DBD energy range mode." 
+             << endl;
+      }
+
     if (! _use_local_prng_)
       {
         int genbb_seed = _seed_;

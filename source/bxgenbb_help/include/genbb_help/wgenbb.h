@@ -82,6 +82,7 @@ namespace genbb {
     };
 
     static const unsigned int ISOTOPE_NAME_MAXSIZE = 32;
+    static const int DBD_MODE_INVALID = -1;
 
   public:
 
