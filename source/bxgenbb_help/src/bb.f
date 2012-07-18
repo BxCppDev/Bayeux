@@ -79,9 +79,13 @@ c                               (for modes 4,5,6,8,10 and 13).
 c
 c V.I.Tretyak, 26.11.1995; 17.02.2009.
 
-	double precision dens,denf
+	double precision dens,denf,dummy
+c --- 2012-07-18 FM: explicit real*8 dgmlt1
+	double precision dgmlt1
 	character chhelp*4,chfile*256
 	external dshelp1
+c --- 2012-07-18 FM: declare external dgmlt1
+	external dgmlt1
 	external fe12_mod4,  fe12_mod5,  fe12_mod6,  fe12_mod8,
      +           fe12_mod13, fe12_mod14, fe12_mod15, fe12_mod16,
      +           fe2_mod4,   fe2_mod5,   fe2_mod6,   fe2_mod8,
@@ -181,15 +185,22 @@ c	enddo
 	   mode=modebb
 	   dens=0.d0
 	   denf=e0
+	   !dummy=dgmlt1(dshelp1,0.d0,denf,8,8,d_el)
+	   !print *,'DEVEL:dummy(r1)=',dummy
 	   r1=dgmlt1(dshelp1,0.d0,denf,8,8,d_el)
+	   !print *, 'DEVEL: r1=',r1
 	   dens=ebb1
 	   denf=ebb2
+	   !dummy=dgmlt1(dshelp1,0.d0,denf,8,8,d_el)
+	   !print *,'DEVEL:dummy(r2)=',dummy
 	   r2=dgmlt1(dshelp1,0.d0,denf,8,8,d_el)
+	   !print *,'DEVEL: r2=',r2
 	   toallevents=r1/r2
 	elseif(modebb.eq.10) then
 	   toallevents=gauss(fe1_mod10,1.e-4,e0+1.e-4,relerr)
      +                /gauss(fe1_mod10,ebb1+1.e-4,ebb2+1.e-4,relerr)
 	endif
+	!print *, 'DEVEL: toallevents=',toallevents
 	istartbb=1
 	!print *,'starting the generation'
 c sampling the energies: first e-/e+

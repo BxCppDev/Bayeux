@@ -114,7 +114,7 @@ c Revision 1.1.1.1  1996/04/01 15:02:15  mclareni
 c Mathlib gen
 c
 c
-      FUNCTION DGMLT1(FSUB1,A,B,NI,NG,X)
+      DOUBLE PRECISION FUNCTION DGMLT1(FSUB1,A,B,NI,NG,X)
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
       CHARACTER NAME*(*)
       CHARACTER*80 ERRTXT
@@ -139,10 +139,12 @@ c
      D  0.79666 64774 13626 740D0, 0.22238 10344 53374 471D0,
      E  0.96028 98564 97536 232D0, 0.10122 85362 90376 259D0/
 
+      !print *, 'genbb_help::genbb_gauss:DGMLT1(port): Entering...'
       IF(NI .LE. 0) THEN
-       !WRITE(ERRTXT,101) NI
-       !CALL MTLPRT(NAME,'D110.1',ERRTXT)
-       print *, 'genbb_help::DGMLT1(port): invalid NI parameter! Abort!'
+         !WRITE(ERRTXT,101) NI
+         !CALL MTLPRT(NAME,'D110.1',ERRTXT)
+         print *, 'genbb_help::genbb_gauss::DGMLT1(port): ',
+     +        'invalid NI parameter    ! Abort!'
        STOP 
       END IF
       M0=NG
@@ -151,6 +153,7 @@ c
       IF(M0 .EQ. 8) I0=6
       D=(B-A)/NI
       R=HALF*D
+      !print *, 'genbb_help::genbb_gauss:DGMLT1(port): R=',R
       RA=R+A
       MV=MOD(M0*NI-1,64)+1
       S=0
@@ -163,14 +166,17 @@ c
       U(J)=RTA+(K-1)*D
       IF(J .EQ. MV) THEN
        CALL FSUB1(MV,U,F,X)
-       DO 3 J = 1,MV
+       DO 3 J = 1,MV 
+       !print *, 'genbb_help::genbb_gauss:DGMLT1(port): F(',J,')=',F(J)
     3  S=S+V(J)*F(J)
        MV=64
        J=0
       END IF
     2 CONTINUE
     1 CONTINUE
+      !print *, 'genbb_help::genbb_gauss:DGMLT1(port): S=',S
       DGMLT1=R*S
+      !print *, 'genbb_help::genbb_gauss:DGMLT1(port): DGMLT1=',DGMLT1
       RETURN
   101 FORMAT('N1 = ',I4,' <= 0')
       END
@@ -178,7 +184,7 @@ c
 c
 c
 c
-      FUNCTION DGMLT2(FSUB2,A,B,NI,NG,X)
+      DOUBLE PRECISION FUNCTION DGMLT2(FSUB2,A,B,NI,NG,X)
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
       CHARACTER NAME*(*)
       CHARACTER*80 ERRTXT
@@ -203,10 +209,11 @@ c
      D  0.79666 64774 13626 740D0, 0.22238 10344 53374 471D0,
      E  0.96028 98564 97536 232D0, 0.10122 85362 90376 259D0/
 
+      !print *, 'genbb_help::DGMLT2(port): Entering...'
       IF(NI .LE. 0) THEN
        !WRITE(ERRTXT,101) NI
        !CALL MTLPRT(NAME,'D110.1',ERRTXT)
-       print *, 'genbb_help::DGMLT1(port): invalid NI parameter! Abort!'
+       print *, 'genbb_help::DGMLT2(port): invalid NI parameter! Abort!'
       END IF
       M0=NG
       IF(M0 .NE. 8) M0=6
@@ -214,6 +221,7 @@ c
       IF(M0 .EQ. 8) I0=6
       D=(B-A)/NI
       R=HALF*D
+      !print *, 'genbb_help::genbb_gauss:DGMLT2(port): R=',R
       RA=R+A
       MV=MOD(M0*NI-1,64)+1
       S=0
@@ -227,13 +235,18 @@ c
       IF(J .EQ. MV) THEN
        CALL FSUB2(MV,U,F,X)
        DO 3 J = 1,MV
+       !print *, 'genbb_help::genbb_gauss:DGMLT2(port): F(',J,')=',F(J)
+       !print *, 'genbb_help::genbb_gauss:DGMLT2(port): V(',J,')=',V(J)
     3  S=S+V(J)*F(J)
        MV=64
        J=0
       END IF
     2 CONTINUE
     1 CONTINUE
+      !print *, 'genbb_help::genbb_gauss:DGMLT2(port): R=',R
+      !print *, 'genbb_help::genbb_gauss:DGMLT2(port): S=',S
       DGMLT2=R*S
+      !print *, 'genbb_help::genbb_gauss:DGMLT2(port): DGMLT2=',DGMLT2
       RETURN
   101 FORMAT('N2 = ',I4,' <= 0')
       END

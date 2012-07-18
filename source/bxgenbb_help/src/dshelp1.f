@@ -21,12 +21,17 @@ c
 c
 	subroutine dshelp1(m,du1,df1,d_el)
 	double precision d_el(2),df1(2),du1(2),dens,denf,d
+c --- 2012-07-18 FM : explicit real*8 for dgmlt2
+        double precision dgmlt2
 	external dshelp2
+	external dgmlt2
 	common/denrange/dens,denf,mode
+        !print *, 'genbb_help::dshelp1:dshelp1: Entering...'
 	do i=1,m
 	   d_el(1)=du1(i)
 	   d=dmax1(0.d0,dens-d_el(1))
 	   df1(i)=dgmlt2(dshelp2,d,denf-d_el(1),16,8,d_el)
+           !print *, 'genbb_help::dshelp1:dshelp1: df1(',i,')=',df1(i)
 	enddo
 	return
 	end

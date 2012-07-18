@@ -24,10 +24,18 @@ c
 	common/denrange/dens,denf,mode
 	common/helpbb/Zdbb,Adbb,e0,e1
 	common/const/pi,emass,datamass(50)
+	!print *, 'genbb_help::dshelp2::dshelp2: dens=',dens
+	!print *, 'genbb_help::dshelp2::dshelp2: denf=',denf
+	!print *, 'genbb_help::dshelp2::dshelp2: du2(1)=',du2(1)
+	!print *, 'genbb_help::dshelp2::dshelp2: du2(2)=',du2(2)
+	!print *, 'genbb_help::dshelp2::dshelp2: d_el(1)=',d_el(1)
+	!print *, 'genbb_help::dshelp2::dshelp2: d_el(2)=',d_el(2)
 	do i=1,m
 	   d_el(2)=du2(i)
 	   e1=d_el(1)
 	   e2=d_el(2)
+	   !print *, 'genbb_help::dshelp2::dshelp2: e1=',e1
+	   !print *, 'genbb_help::dshelp2::dshelp2: e2=',e2
 	   df2(i)=0.d0
 	   if(e1.gt.0..and.e2.gt.0..and.e1+e2.lt.e0) then
 	      if(mode.eq.4) df2(i)=fe12_mod4(e2)
@@ -40,6 +48,7 @@ c
 	   if(d_el(1)+d_el(2).lt.dens.or.d_el(1)+d_el(2).gt.denf)
      +        df2(i)=0.d0
 	enddo
+	!print *, 'genbb_help::dshelp2::dshelp2: df2(i)=',df2(i)
 	return
 	end
 c

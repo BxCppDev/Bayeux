@@ -1,4 +1,4 @@
-c prog_DECAY0.F 
+c decay0.f 
 c
 c This file was extracted from the 'decay0' program by V.I. Tretyak
 c
@@ -72,7 +72,7 @@ c***********************************************************************
 	enddo
 	end
 c
-c end of prog_DECAY0.F
+c end of decay0.f
 c
 c Local Variables: --
 c mode: fortran --
