@@ -164,6 +164,8 @@ function print_usage ()
       --without-genbb_help       : do not install genbb_help
       --with-emfield             : install emfield (default)
       --without-emfield          : do not install emfield
+      --with-trackfit            : install trackfit (default)
+      --without-trackfit         : do not install trackfit
 
       Miscelaneous :
       --with-dependency-check    : perform a rudimentary dependency check before processing
@@ -440,7 +442,8 @@ function do_configure ()
     local with_genvtx=1
     local with_genbb_help=1
     local with_emfield=1
-
+    local with_trackfit=1
+ 
     local with_bio=1
     local with_python_wrapper=0
     local with_doc=1
@@ -507,6 +510,7 @@ function do_configure ()
 	    with_genvtx=0
 	    with_genbb_help=0
 	    with_emfield=0
+	    with_trackfit=0
 	elif [ "${option}" = "--with-all" ]; then
 	    with_brio=1
 	    with_mygsl=1
@@ -516,6 +520,7 @@ function do_configure ()
 	    with_genvtx=1
 	    with_genbb_help=1
 	    with_emfield=1
+	    with_trackfit=1
 	elif [ "${option}" = "--with-brio" ]; then
 	    with_brio=1
 	elif [ "${option}" = "--without-brio" ]; then
@@ -552,6 +557,10 @@ function do_configure ()
 	    with_emfield=1
 	elif [ "${option}" = "--without-emfield" ]; then
 	    with_emfield=0
+	elif [ "${option}" = "--with-trackfit" ]; then
+	    with_trackfit=1
+	elif [ "${option}" = "--without-trackfit" ]; then
+	    with_trackfit=0
 	elif [ "${option}" = "--with-documentation" ]; then
 	    with_doc=1
 	elif [ "${option}" = "--without-documentation" ]; then
@@ -714,6 +723,7 @@ function do_configure ()
     pkgtools__msg_notice "Install genvtx        : '${with_genvtx}'"
     pkgtools__msg_notice "Install genbb_help    : '${with_genbb_help}'"
     pkgtools__msg_notice "Install emfield       : '${with_emfield}'"
+    pkgtools__msg_notice "Install trackfit      : '${with_trackfit}'"
 
     pkgtools__msg_notice "With documentation    : '${with_doc}'"
     pkgtools__msg_notice "With test material    : '${with_test}'"
@@ -791,6 +801,7 @@ function do_configure ()
             -DBAYEUX_WITH_GENVTX=${with_genvtx} \
             -DBAYEUX_WITH_GENBB_HELP=${with_genbb_help} \
             -DBAYEUX_WITH_EMFIELD=${with_emfield} \
+            -DBAYEUX_WITH_TRACKFIT=${with_trackfit} \
 	    -DBAYEUX_WITH_DOCS=${with_doc} \
 	    -DBAYEUX_WITH_TESTS=${with_test} \
 	    -DBAYEUX_WITH_BIO=${with_bio} \

@@ -143,6 +143,7 @@ set ( BAYEUX_KNOWN_COMPONENTS
 	"materials" 
 	"genbb_help" 
 	"emfield" 
+	"trackfit" 
 	)
 
 set ( BAYEUX_KNOWN_CONFIGS 
@@ -180,6 +181,7 @@ option ( BAYEUX_WITH_MATERIALS  "Build materials"    1 )
 option ( BAYEUX_WITH_GENVTX     "Build genvtx"       1 )
 option ( BAYEUX_WITH_GENBB_HELP "Build genbb_help"   1 )
 option ( BAYEUX_WITH_EMFIELD    "Build emfield"      1 )
+option ( BAYEUX_WITH_TRACKFIT   "Build trackfit"     1 )
 
 option ( BAYEUX_WITH_BIO        "Build BIO support"      ON  )
 option ( BAYEUX_WITH_DOCS       "Build docs"             ON  )
@@ -217,6 +219,7 @@ set ( BAYEUX_MATERIALS_MINIMAL_TAG_VERSION  "3.0.0"  )
 set ( BAYEUX_GENVTX_MINIMAL_TAG_VERSION     "3.0.0"  )
 set ( BAYEUX_GENBB_HELP_MINIMAL_TAG_VERSION "4.0.0"  )
 set ( BAYEUX_EMFIELD_MINIMAL_TAG_VERSION    "0.1.0"  )
+set ( BAYEUX_TRACKFIT_MINIMAL_TAG_VERSION   "2.0.1"  )
 
 
 # Default configuration (0.9.3) :
@@ -276,6 +279,11 @@ if ( BAYEUX_CONFIG STREQUAL "default" OR BAYEUX_CONFIG STREQUAL ${Bayeux_VERSION
   #set ( BAYEUX_EMFIELD_VERSION    "0.2.0"  )
   #set ( BAYEUX_EMFIELD_PATH       "tags/emfield-0.2.0"  )
   #set ( BAYEUX_EMFIELD_PATH       "trunk"  )
+
+  #set ( BAYEUX_TRACKFIT_VERSION    "2.0.1"  )
+  #set ( BAYEUX_TRACKFIT_PATH       "tags/trackfit-2.0.1"  )
+  set ( BAYEUX_TRACKFIT_VERSION    "2.0.1"  )
+  set ( BAYEUX_TRACKFIT_PATH       "trunk"  )
 
 elseif ( BAYEUX_CONFIG STREQUAL 0.9.2 )
   # 2012-06-27 :
@@ -410,6 +418,7 @@ elseif ( BAYEUX_CONFIG STREQUAL "trunk" )
   set ( BAYEUX_GENVTX_PATH     "trunk" )
   set ( BAYEUX_GENBB_HELP_PATH "trunk" )
   set ( BAYEUX_EMFIELD_PATH    "trunk" )
+  set ( BAYEUX_TRACKFIT_PATH   "trunk" )
 
 elseif ( BAYEUX_CONFIG STREQUAL "user" )
   message ( STATUS "${PROJECT_NAME}: Bayeux 'user' configuration...") 
@@ -549,6 +558,10 @@ if ( BAYEUX_WITH_EMFIELD )
   endif ()
 endif ()
 
+if    ( BAYEUX_WITH_TRACKFIT )
+  set ( BAYEUX_WITH_GEOMTOOLS 1 )
+endif ( BAYEUX_WITH_TRACKFIT )
+
 if    ( BAYEUX_WITH_EMFIELD )
   set ( BAYEUX_WITH_GEOMTOOLS 1 )
 endif ( BAYEUX_WITH_EMFIELD )
@@ -583,6 +596,7 @@ message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_GENVTX     = ${BAYEUX_WITH_GEN
 message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_MATERIALS  = ${BAYEUX_WITH_MATERIALS}"  )
 message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_GENBB_HELP = ${BAYEUX_WITH_GENBB_HELP}" )
 message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_EMFIELD    = ${BAYEUX_WITH_EMFIELD}" )
+message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_TRACKFIT   = ${BAYEUX_WITH_TRACKFIT}" )
 
 set ( BAYEUX_COMPONENTS "" )
 
@@ -603,6 +617,7 @@ include ( BayeuxMaterials  )
 include ( BayeuxGenvtx     )
 include ( BayeuxGenbb_help )
 include ( BayeuxEmfield    )
+include ( BayeuxTrackfit   )
 
 # -------------------------------------------------------------------------
 # - Bash setup script :
