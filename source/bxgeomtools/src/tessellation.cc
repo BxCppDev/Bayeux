@@ -824,7 +824,7 @@ namespace geomtools {
         const facet34 & fct0 = facets ().find (the_fsgmt.facet0_key)->second;
         const facet34 & fct1 = facets ().find (the_fsgmt.facet1_key)->second;
 
-        if (fct0.get_normal ().isNear (fct1.get_normal (), 1.0e-5))
+        if (fct0.get_normal ().isNear (fct1.get_normal (), 1.0e-4))
           {
             the_fsgmt.set_shown (false);
           }
