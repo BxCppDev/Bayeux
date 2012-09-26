@@ -200,7 +200,13 @@ EOF
 	if [ $? -ne 0 ]; then
 	    return 1
 	fi 
-     else
+    elif [ "${exe}" = "test_stl_tools" ]; then
+	#${bin} ${GEOMTOOLS_DATA_DIR}/testing/data/test_stl_pave2.stl >> ${tmp_test_dir}/tests.log 2>&1
+	${bin} ${GEOMTOOLS_DATA_DIR}/testing/data/test_stl_import.stl >> ${tmp_test_dir}/tests.log 2>&1
+	if [ $? -ne 0 ]; then
+	    return 1
+	fi 
+   else
 	${bin} >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then
 	    return 1

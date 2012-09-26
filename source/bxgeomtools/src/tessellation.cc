@@ -25,6 +25,11 @@ namespace geomtools {
     position.set (x_, y_, z_);
     return;
   }
+ 
+  const vector_3d & facet_vertex::get_position () const
+  {
+    return position;
+  }
 
   void facet_vertex::add_ref_facet (int facet_index_, int facet_node_)
   {
@@ -32,29 +37,304 @@ namespace geomtools {
     return;
   }
   
-  void facet_vertex::print_xyz (ostream & out_) const
+  void facet_vertex::print_xyz (ostream & out_, int color_) const
   {
-    out_ << position.x () << ' ' << position.y () << ' ' << position.z () << endl;
+    out_ << position.x () << ' ' << position.y () << ' ' << position.z () << ' ' << color_ << endl;
     return;
   }
   
   void facet_vertex::print (ostream & out_) const
   {
     out_ << '(' << position.x () << ' ' << position.y () << ' ' << position.z () << ')' 
-         << " #ref=" << ref_facets.size  () << endl;
+         << " #ref=" << ref_facets.size  ();
+    if ( ref_facets.size  ())
+      {
+        out_ << " facets=";
+        for (std::map<int32_t, int32_t>::const_iterator ifr = ref_facets.begin ();
+             ifr != ref_facets.end ();
+             ifr++)
+          {
+            out_ << " " << ifr->first;
+          }
+      }
+    out_ << endl;
     return;
   }
 
+  std::ostream & operator<< (std::ostream & out_, const facet_vertex & vtx_)
+  {
+    out_ << "position=" << '(' << vtx_.position.x () << ';' << vtx_.position.y () << ';' << vtx_.position.z () << ')'
+         << ";facets={";
+    if ( vtx_.ref_facets.size  ())
+      {
+        for (std::map<int32_t, int32_t>::const_iterator ifr = vtx_.ref_facets.begin ();
+             ifr != vtx_.ref_facets.end ();
+             ifr++)
+          {
+            if (ifr != vtx_.ref_facets.begin ())
+              out_ << ";";
+            out_ << ifr->first;
+          }
+      }
+    out_ << "}";
+    return out_;
+  }
+ 
   /*** i_facet ***/
-
+  /*
   void i_facet::print (ostream & out_) const
   {
-    out_ << "#vertices=" << get_number_of_vertices () << endl;
+    out_ << "#vertices=" << get_number_of_vertices ();
+    out_ << "[" << get_vertex_key (0) << ", "
+         << get_vertex_key(1) << ", "
+         << get_vertex_key(2);
+    if (get_number_of_vertices () == 4)
+      {
+        out_ << ", " <<  get_vertex_key(3);
+      }
+    out_ << "]";
+    out_ << endl;
+    return;
+  }
+  */
+
+  /*** facet34 ***/
+  uint32_t facet34::get_number_of_vertices () const
+  {
+    return _number_of_vertices_;
+  }
+
+  const facet_vertex & facet34::get_vertex (int i_) const
+  {
+    if ((i_ < 0) || (i_ >= _number_of_vertices_))
+      {
+        std::ostringstream message;
+        message << "geomtools::facet34::get_vertex: "
+                << "Invalid vertex index " << i_ << " !";
+        throw std::logic_error (message.str());
+      }
+    return *_vertices_[i_];
+  }
+
+  int32_t facet34::get_vertex_key (int i_) const
+  {
+    if ((i_ < 0) || (i_ >= _number_of_vertices_))
+      {
+        ostringstream message;
+        message << "geomtools::facet34::get_vertex_key: "
+                << "Invalid vertex index " << i_ << " !";
+        throw logic_error (message.str());
+      }
+    return _vertices_keys_[i_];
+  }
+  
+  const geomtools::vector_3d & facet34::get_normal () const
+  {
+    return _normal_;
+  }
+
+  bool facet34::is_valid () const
+  {
+    if (_number_of_vertices_ < 3) return false;
+    if (_number_of_vertices_ < 4) return false;
+    if (! has_normal ()) return false;
+    return true;
+  }
+
+  bool facet34::has_normal () const
+  {
+    return geomtools::is_valid (_normal_);
+  }
+
+  void facet34::compute_normal ()
+  {
+    if (_number_of_vertices_ < 3 || _number_of_vertices_ > 4)
+      {
+        return;
+      }
+    geomtools::vector_3d n;
+    const geomtools::vector_3d & v0 = _vertices_[0]->get_position ();
+    const geomtools::vector_3d & v1 = _vertices_[1]->get_position ();
+    const geomtools::vector_3d & v2 = _vertices_[2]->get_position ();
+    geomtools::vector_3d u01 = v1 - v0; 
+    geomtools::vector_3d u12 = v2 - v1;
+    n = u01.cross (u12);
+    double m = n.mag ();
+    n /= m;
+    if (_number_of_vertices_ == 4)
+      {
+        geomtools::vector_3d n2;
+        const geomtools::vector_3d & v3 = _vertices_[3]->get_position ();
+        geomtools::vector_3d u23 = v3 - v2;
+        n2 = u12.cross (u23);
+        double m2 = n2.mag ();
+        n2 /= m;
+        if (! geomtools::are_near (n, n2, 1.e-5))
+          {
+             invalidate (_normal_);
+             return;
+          }
+      }
+    _normal_ = n;
     return;
   }
 
-  /*** facet3 ***/
+  void facet34::_set_defaults ()
+  {
+    _number_of_vertices_ = 0;
+    _vertices_[0] = 0;
+    _vertices_[1] = 0;
+    _vertices_[2] = 0;
+    _vertices_[3] = 0;
+    _vertices_keys_[0] = -1;
+    _vertices_keys_[1] = -1;
+    _vertices_keys_[2] = -1;
+    _vertices_keys_[3] = -1;
+    geomtools::invalidate (_normal_);
+    _category_ = -1;
+    return;
+  }
 
+  bool facet34::has_category () const
+  {
+    return _category_ >= 0;
+  }
+
+  void facet34::set_category (int c_)
+  {
+    if (c_ >= 0 && c_ <= MAX_CATEGORY)
+      {
+        _category_ = c_;
+      }
+    else
+      {
+        throw std::logic_error ("geomtools::facet34::set_category: Invalid category !");
+      }
+    return;
+  }
+
+  void facet34::unset_category ()
+  {
+    _category_ = -1;
+    return;
+  }
+  
+  facet34::facet34 ()
+  {
+    _set_defaults ();
+    return;
+  }
+  
+  facet34::facet34 (const facet_vertex & v0_, 
+                    const facet_vertex & v1_, 
+                    const facet_vertex & v2_,
+                    int iv0_, 
+                    int iv1_, 
+                    int iv2_)
+  {
+    _set_defaults ();
+    _number_of_vertices_ = 3;
+    _vertices_[0] = &v0_;
+    _vertices_[1] = &v1_;
+    _vertices_[2] = &v2_;
+    _vertices_[3] = 0;
+    _vertices_keys_[0] = iv0_;
+    _vertices_keys_[1] = iv1_;
+    _vertices_keys_[2] = iv2_;
+    _vertices_keys_[3] = -1;
+    compute_internals ();
+    return;
+  }
+ 
+  facet34::facet34 (const facet_vertex & v0_, 
+                    const facet_vertex & v1_, 
+                    const facet_vertex & v2_,
+                    const facet_vertex & v3_,
+                    int iv0_, 
+                    int iv1_, 
+                    int iv2_,
+                    int iv3_)
+  {
+    _set_defaults ();
+    _number_of_vertices_ = 4;
+    _vertices_[0] = &v0_;
+    _vertices_[1] = &v1_;
+    _vertices_[2] = &v2_;
+    _vertices_[3] = &v3_;
+    _vertices_keys_[0] = iv0_;
+    _vertices_keys_[1] = iv1_;
+    _vertices_keys_[2] = iv2_;
+    _vertices_keys_[3] = iv3_;
+    compute_internals ();
+    return;
+  }
+
+  void facet34::compute_internals ()
+  {
+    compute_normal (); 
+    compute_surface ();
+    return;
+  }
+    
+  bool facet34::has_surface() const
+  {
+    return datatools::utils::is_valid (_surface_);
+  }
+
+  double facet34::get_surface () const
+  {
+    return _surface_;
+  }
+
+  void facet34::compute_surface ()
+  {
+    double s;
+    datatools::utils::invalidate (s);
+    if (is_valid ())
+      {
+        if (_number_of_vertices_ == 3)
+          {
+            const geomtools::vector_3d & v0 = _vertices_[0]->get_position ();
+            const geomtools::vector_3d & v1 = _vertices_[1]->get_position ();
+            const geomtools::vector_3d & v2 = _vertices_[2]->get_position ();
+            geomtools::vector_3d u01 = v1 - v0;
+            geomtools::vector_3d u02 = v2 - v0;
+            s = 0.5 * (u01.cross (u02)).mag ();
+          }
+        if (_number_of_vertices_ == 4)
+          {
+            const geomtools::vector_3d & v0 = _vertices_[0]->get_position ();
+            const geomtools::vector_3d & v1 = _vertices_[1]->get_position ();
+            const geomtools::vector_3d & v2 = _vertices_[2]->get_position ();
+            const geomtools::vector_3d & v3 = _vertices_[3]->get_position ();
+            geomtools::vector_3d u01 = v1 - v0;
+            geomtools::vector_3d u03 = v3 - v0;
+            geomtools::vector_3d u21 = v1 - v2;
+            geomtools::vector_3d u23 = v3 - v2;
+            s = 0.5 * (u01.cross (u03)).mag () + 0.5 * (u21.cross (u23)).mag ();
+          }
+      }
+    _surface_ = s;
+    return;
+  }
+
+  void facet34::print (ostream & out_) const
+  {
+    out_ << "#vertices=" << get_number_of_vertices ();
+    out_ << ";vertices=[" << get_vertex_key (0) << ", "
+         << get_vertex_key(1) << ", "
+         << get_vertex_key(2);
+    if (get_number_of_vertices () == 4)
+      {
+        out_ << ", " <<  get_vertex_key(3);
+      }
+    out_ << "];category=" <<_category_;
+    out_ << endl;
+    return;
+  }
+ 
+  /*** facet3 ***/
+  /*
   size_t facet3::get_number_of_vertices () const
   {
     return 3;
@@ -65,11 +345,37 @@ namespace geomtools {
     if ((i_ < 0) || (i_ >= get_number_of_vertices ()))
       {
         ostringstream message;
-        message << "facet3::get_vertex: "
+        message << "geomtools::facet3::get_vertex: "
                 << "Invalid vertex index " << i_ << " !";
-        throw runtime_error (message.str());
+        throw logic_error (message.str());
       }
     return *_vertices_[i_];
+  }
+ 
+  int facet3::get_vertex_key (int i_) const 
+  {
+    if ((i_ < 0) || (i_ >= get_number_of_vertices ()))
+      {
+        ostringstream message;
+        message << "geomtools::facet3::get_vertex_key: "
+                << "Invalid vertex index " << i_ << " !";
+        throw logic_error (message.str());
+      }
+    return _vertices_keys_[i_];
+  }
+  
+  geomtools::vector_3d facet3::get_normal () const
+  {
+    geomtools::vector_3d n;
+    const geomtools::vector_3d & v0 = _vertices_[0]->get_position ();
+    const geomtools::vector_3d & v1 = _vertices_[1]->get_position ();
+    const geomtools::vector_3d & v2 = _vertices_[2]->get_position ();
+    geomtools::vector_3d u01 = v1 - v0; 
+    geomtools::vector_3d u12 = v2 - v1;
+    n = u01.cross (u12);
+    double m = n.mag ();
+    n /= m;
+    return n;
   }
   
   facet3::facet3 ()
@@ -77,21 +383,31 @@ namespace geomtools {
     _vertices_[0] = 0;
     _vertices_[1] = 0;
     _vertices_[2] = 0;
+    _vertices_keys_[0] = -1;
+    _vertices_keys_[1] = -1;
+    _vertices_keys_[2] = -1;
+    return;
   }
   
   facet3::facet3 (const facet_vertex & v0_, 
                   const facet_vertex & v1_, 
-                  const facet_vertex & v2_)
+                  const facet_vertex & v2_,
+                  int iv0_, int iv1_, int iv2_)
   {
     _vertices_[0] = &v0_;
     _vertices_[1] = &v1_;
     _vertices_[2] = &v2_;
+    _vertices_keys_[0] = iv0_;
+    _vertices_keys_[1] = iv1_;
+    _vertices_keys_[2] = iv2_;    
     return;
   }
+  */
 
   /*** facet4 ***/
-  
-  bool facet4::__is_valid () const
+
+  /*  
+  bool facet4::_is_valid_ () const
   {
     // missing checks...
     return true;
@@ -107,11 +423,37 @@ namespace geomtools {
     if ((i_ < 0) || (i_ >= get_number_of_vertices ()))
       {
         ostringstream message;
-        message << "facet4::get_vertex: "
+        message << "geomtools::facet4::get_vertex: "
                 << "Invalid vertex index " << i_ << " !";
-        throw runtime_error (message.str());
+        throw logic_error (message.str());
       }
     return *_vertices_[i_];
+  }
+ 
+  int facet4::get_vertex_key (int i_) const 
+  {
+    if ((i_ < 0) || (i_ >= get_number_of_vertices ()))
+      {
+        ostringstream message;
+        message << "geomtools::facet4::get_vertex_key: "
+                << "Invalid vertex index " << i_ << " !";
+        throw logic_error (message.str());
+      }
+    return _vertices_keys_[i_];
+  }
+  
+  geomtools::vector_3d facet4::get_normal () const
+  {
+    geomtools::vector_3d n;
+    const geomtools::vector_3d & v0 = _vertices_[0]->get_position ();
+    const geomtools::vector_3d & v1 = _vertices_[1]->get_position ();
+    const geomtools::vector_3d & v2 = _vertices_[2]->get_position ();
+    geomtools::vector_3d u01 = v1 - v0; 
+    geomtools::vector_3d u12 = v2 - v1;
+    n = u01.cross (u12);
+    double m = n.mag ();
+    n /= m;
+    return n;
   }
   
   facet4::facet4 ()
@@ -120,25 +462,168 @@ namespace geomtools {
     _vertices_[1] = 0;
     _vertices_[2] = 0;
     _vertices_[3] = 0;
+    _vertices_keys_[0] = -1;
+    _vertices_keys_[1] = -1;
+    _vertices_keys_[2] = -1;
+    _vertices_keys_[3] = -1;
     return;
   }
  
   facet4::facet4 (const facet_vertex & v0_, 
                   const facet_vertex & v1_, 
                   const facet_vertex & v2_, 
-                  const facet_vertex & v3_)
+                  const facet_vertex & v3_,
+                  int iv0_, int iv1_, int iv2_, int iv3_)
   {
     _vertices_[0] = &v0_;
     _vertices_[1] = &v1_;
     _vertices_[2] = &v2_;
     _vertices_[3] = &v3_;
-    if (! __is_valid ())
+    _vertices_keys_[0] = iv0_;
+    _vertices_keys_[1] = iv1_;
+    _vertices_keys_[2] = iv2_;    
+    _vertices_keys_[3] = iv3_;    
+    if (! _is_valid_ ())
       {
-        throw runtime_error ("facet4::facet4: Invalid set of vertices !");
+        throw logic_error ("geomtools::facet4::facet4: Invalid set of vertices !");
       }
     return;
   }
+  */
 
+  /*** facet_segment ***/
+
+  bool facet_segment::is_valid () const
+  {
+    return vertex0_key >= 0 && vertex1_key >= 0 && facet0_key >= 0 && facet1_key;
+  }
+
+  bool facet_segment::is_shown () const
+  {
+    return shown;
+  }
+
+  void facet_segment::set_shown (bool s_)
+  {
+    shown = s_;
+    return;
+  }
+     
+  facet_segment::facet_segment ()
+  {
+    vertex0_key = vertex1_key = facet0_key = facet1_key = -1;
+    shown = false;
+    return;
+  }
+
+  void facet_segment::set_vertex_keys (int vk1_, int vk2_)
+  {
+    if (vk1_ == vk2_)
+      {
+        ostringstream message;
+        message << "geomtools::facet_segment::set_vertex_keys: "
+                << "Invalid vertex indexes " << vk1_ << "/" << vk2_ << " !";
+        throw logic_error (message.str());
+      }
+    if (vk1_ < 0)
+      {
+        ostringstream message;
+        message << "geomtools::facet_segment::set_vertex_keys: "
+                << "Invalid vertex indexes " << vk1_ << " !";
+        throw logic_error (message.str());
+      }
+    if (vk2_ < 0)
+      {
+        ostringstream message;
+        message << "geomtools::facet_segment::set_vertex_keys: "
+                << "Invalid vertex indexes " << vk2_ << " !";
+        throw logic_error (message.str());
+      }
+
+    if (vk1_ < vk2_)
+      {
+        vertex0_key = vk1_;
+        vertex1_key = vk2_;
+      }
+    else
+      {
+        vertex0_key = vk2_;
+        vertex1_key = vk1_;
+      }
+    
+    return;
+  }
+
+  void facet_segment::set_facet_keys (int fk1_, int fk2_)
+  {
+
+    if (fk1_ == fk2_)
+      {
+        ostringstream message;
+        message << "geomtools::facet_segment::set_facet_keys: "
+                << "Invalid facet indexes " << fk1_ << "/" << fk2_ << " !";
+        throw logic_error (message.str());
+      }
+    if (fk1_ < 0)
+      {
+        ostringstream message;
+        message << "geomtools::facet_segment::set_facet_keys: "
+                << "Invalid facet indexes " << fk1_ << " !";
+        throw logic_error (message.str());
+      }
+    if (fk2_ < 0)
+      {
+        ostringstream message;
+        message << "geomtools::facet_segment::set_facet_keys: "
+                << "Invalid facet indexes " << fk2_ << " !";
+        throw logic_error (message.str());
+      }
+
+    if (fk1_ < fk2_)
+      {
+        facet0_key = fk1_;
+        facet1_key = fk2_;
+      }
+    else
+      {
+        facet0_key = fk2_;
+        facet1_key = fk1_;
+      }
+
+    return;
+  }
+
+  void facet_segment::set (int vk1_, int vk2_, int fk1_, int fk2_)
+  {
+    set_vertex_keys (vk1_, vk2_);
+    set_facet_keys (fk1_, fk2_);
+    return;
+  }
+
+  bool operator==(const facet_segment & fs1_, const facet_segment & fs2_)
+  {
+    return (fs1_.vertex0_key == fs2_.vertex0_key) 
+      && (fs1_.vertex1_key == fs2_.vertex1_key);
+  }
+
+  bool operator<(const facet_segment & fs1_, const facet_segment & fs2_)
+  {
+    if (fs1_.vertex0_key < fs1_.vertex1_key) return true;
+    return false;
+  }
+
+  void facet_segment::dump (std::ostream & out_) const
+  {
+    out_ << "geomtools::facet_segment: " << endl;
+    out_ << "|-- Vertex 0 key = " << vertex0_key << endl;
+    out_ << "|-- Vertex 1 key = " << vertex1_key << endl;
+    out_ << "|-- Facet 0 key  = " << facet0_key << endl;
+    out_ << "|-- Facet 1 key  = " << facet1_key << endl;
+    out_ << "`-- The end " << endl;
+    
+    return;
+  }
+ 
   /*** tessellated_solid ***/
   
   bool tessellated_solid::is_locked () const
@@ -151,7 +636,7 @@ namespace geomtools {
     return _consistent_;
   }
   
-  bool tessellated_solid::__check ()
+  bool tessellated_solid::_check_ ()
   {
     _consistent_ = true;
     for (vertices_col_t::const_iterator i = _vertices_.begin ();
@@ -160,14 +645,14 @@ namespace geomtools {
       {
         if (i->second.ref_facets.size () == 0)
           {
-            clog << "WARNING: tessellated_solid::__check: Vertex "
+            clog << "WARNING: geomtools::tessellated_solid::_check_: Vertex "
                  << i->first << " is not used at all !" << endl;
             _consistent_ = false;
           }
         else if (i->second.ref_facets.size () < 3) 
           {
-            clog << "WARNING: tessellated_solid::__check: Vertex "
-                 << i->first << " is not properly referenced !" << endl;
+            clog << "WARNING: geomtools::tessellated_solid::_check_: Vertex "
+                 << i->first << " is not properly referenced (#ref=" << i->second.ref_facets.size () << ") !" << endl;
             _consistent_ = false;
             return _consistent_;
           }
@@ -177,12 +662,191 @@ namespace geomtools {
     return _consistent_;
   }
 
+  void tessellated_solid::compute_facet_segments ()
+  {
+    bool devel = false;
+    //devel = true;
+    if (devel) 
+      {
+        cerr << "DEVEL: geomtools::tessellated_solid::compute_facet_segments: "
+             << "Entering..." << endl;
+        cerr << "DEVEL: geomtools::tessellated_solid::compute_facet_segments: "
+             << "Number of facets = " << _facets_.size () << endl;
+        dump (cerr);
+      }
+    _facet_segments_.clear ();
+    int facet_segment_counter = 0;
+    for (facets_col_t::const_iterator facet_iter = _facets_.begin ();
+         facet_iter != _facets_.end ();
+         facet_iter++)
+      {
+        int current_facet_key = facet_iter->first;
+        const facet34 & the_facet = facet_iter->second;
+        if (devel) {
+          cerr << "DEVEL: geomtools::tessellated_solid::compute_facet_segments: "
+               << "Facet #" << current_facet_key << " with " << the_facet.get_number_of_vertices () << " vertices : ";
+          for (int ivtx = 0; ivtx < the_facet.get_number_of_vertices (); ivtx++)
+            {
+              cerr << the_facet.get_vertex_key (ivtx) << " ";
+            }
+          cerr << endl;
+        }
+        for (int ivtx = 0; ivtx < the_facet.get_number_of_vertices (); ivtx++)
+          {
+            int iref = ivtx;
+            int irefnext = (ivtx + 1 ) % the_facet.get_number_of_vertices ();
+            if (devel) 
+              {
+                cerr << "\nDEVEL: geomtools::tessellated_solid::compute_facet_segments: "
+                     << "  Indexes=[" << iref << '-' << irefnext << ']' << endl;
+              }
+            const facet_vertex & v1 = the_facet.get_vertex (iref);          
+            const facet_vertex & v2 = the_facet.get_vertex (irefnext);
+            int vk1 = the_facet.get_vertex_key (ivtx);
+            int vk2 = the_facet.get_vertex_key ((ivtx + 1) % the_facet.get_number_of_vertices ());
+            if (devel) 
+              {
+                cerr << "DEVEL: geomtools::tessellated_solid::compute_facet_segments: "
+                     << "  Segment from vtx " << vk1 << "=(" << v1 << ") to vtx " << vk2 << "=(" << v2 << ")"  << endl;
+              }
+
+            // Facet segment candidate :
+            facet_segment fseg;
+            fseg.set_vertex_keys (vk1, vk2);
+
+            // Check if it is already registered :
+            bool already_exists = false;
+            for (facet_segments_col_t::const_iterator fsi = _facet_segments_.begin ();
+                 fsi != _facet_segments_.end ();
+                 fsi++)
+              {
+                if (devel) 
+                  {
+                    fsi->second.dump (cerr);
+                  }
+                if (fseg == fsi->second)
+                  {
+                    already_exists = true;
+                    if (devel) cerr << "DEVEL: geomtools::tessellated_solid::compute_facet_segments: "
+                                    << "    Segment already exists as #" << fsi->first << " !" << endl;
+                    break;
+                  }
+              }
+            if (already_exists) {
+              continue;
+            }
+ 
+            int vf1 = current_facet_key;
+            // Search the other facet that shares this [v1,v2] segment :
+            int vf2 = -1;
+            if (devel) cerr << "DEVEL: geomtools::tessellated_solid::compute_facet_segments: "
+                            << "    Search the other facet (!=" << vf1  << ") that shares segment [vk1=" << vk1 << ";vk2=" << vk2 << "]" <<  endl;
+            if (devel) {
+              cerr << "DEVEL: geomtools::tessellated_solid::compute_facet_segments: "
+                   << "    Now loop on " << v1.ref_facets.size () << " facets"
+                   << " at vertex #" << vk1 << ": ";
+              for (std::map<int, int>::const_iterator ifv1 = v1.ref_facets.begin ();
+                 ifv1 != v1.ref_facets.end ();
+                   ifv1++) cerr << ifv1->first << " ";
+              cerr <<  endl;
+            }
+            for (std::map<int, int>::const_iterator ifv1 = v1.ref_facets.begin ();
+                 ifv1 != v1.ref_facets.end ();
+                 ifv1++)
+              {
+                int chck_fk1 = ifv1->first;
+                if (devel) cerr << "DEVEL: geomtools::tessellated_solid::compute_facet_segments: "
+                                << "        Loop on V1's facet #" << chck_fk1 << "" << endl;
+                if (chck_fk1 == vf1) 
+                  {
+                    if (devel) cerr << "DEVEL: geomtools::tessellated_solid::compute_facet_segments: "
+                                << "          Skipping facet #" << chck_fk1 << "" << endl;
+                    continue;
+                  } 
+                if (devel) {
+                  cerr << "DEVEL: geomtools::tessellated_solid::compute_facet_segments: "
+                       << "          Now loop on " << v2.ref_facets.size () << " facets"
+                       << " at vertex #" << vk2 << ": ";
+                  for (std::map<int, int>::const_iterator ifv2 = v2.ref_facets.begin ();
+                       ifv2 != v2.ref_facets.end ();
+                       ifv2++) cerr << ifv2->first << " ";
+                  cerr <<  endl;
+                }
+                for (std::map<int, int>::const_iterator ifv2 = v2.ref_facets.begin ();
+                     ifv2 != v2.ref_facets.end ();
+                     ifv2++)
+                  {
+                    int chck_fk2 = ifv2->first;
+                    if (devel) cerr << "DEVEL: geomtools::tessellated_solid::compute_facet_segments: "
+                                    << "          Loop on V2's facet #" << chck_fk2 << "" << endl;
+                    if (chck_fk2 == vf1) 
+                      {
+                        if (devel) cerr << "DEVEL: geomtools::tessellated_solid::compute_facet_segments: "
+                                        << "            Skipping  facet #" << chck_fk2 << "" << endl;
+                        continue;
+                      }
+                    if (chck_fk1 == chck_fk2) 
+                      {
+                        vf2 = chck_fk2;
+                        break;
+                      }
+                  }
+                if (vf2 >= 0) 
+                  {
+                    if (devel) cerr << "DEVEL: geomtools::tessellated_solid::compute_facet_segments: "
+                                    << "            Break for found  facet #" << vf2 << "" << endl;
+                    break;
+                  }
+              }
+            if (vf2 < 0)
+              {
+                throw logic_error ("geomtools::tessellated_solid::compute_facet_segments : Cannot compute facet segments !");
+              }
+            if (devel) cerr << "DEVEL: geomtools::tessellated_solid::compute_facet_segments: "
+                            << "    Segment belongs to facets #" << vf1 << " and " << vf2 << " !" << endl;
+            
+            fseg.set_facet_keys (vf1,vf2);
+            _facet_segments_[facet_segment_counter] = fseg;
+            if (devel) cerr << "DEVEL: geomtools::tessellated_solid::compute_facet_segments: "
+                            << "    Segment is registered as #" << facet_segment_counter << " !" << endl;
+            facet_segment_counter++;
+          }
+        
+      }
+ 
+    // Compute the 'show' flag :
+    for (facet_segments_col_t::iterator fsi = _facet_segments_.begin ();
+         fsi != _facet_segments_.end ();
+         fsi++)
+      {
+        facet_segment & the_fsgmt = fsi->second;
+        
+        const facet34 & fct0 = facets ().find (the_fsgmt.facet0_key)->second;
+        const facet34 & fct1 = facets ().find (the_fsgmt.facet1_key)->second;
+
+        if (fct0.get_normal ().isNear (fct1.get_normal (), 1.0e-5))
+          {
+            the_fsgmt.set_shown (false);
+          }
+        else
+          {
+            the_fsgmt.set_shown (true);
+          }
+      }
+
+    if (devel) cerr << "DEVEL: geomtools::tessellated_solid::compute_facet_segments: "
+                    << "Compute " << _facet_segments_.size () << " facet segments !" << endl;
+
+    return;
+  }
+
   void tessellated_solid::lock ()
   {
-    if (! __check ())
+    if (! _check_ ())
       {
-        throw runtime_error ("tessellated_solid::lock: Solid is not validated !");
+        throw logic_error ("geomtools::tessellated_solid::lock: Solid is not validated !");
       }
+    compute_facet_segments ();
     _locked_ = true;
     return;
   }
@@ -207,12 +871,13 @@ namespace geomtools {
   
   tessellated_solid::~tessellated_solid ()
   {
-    for (facets_col_t::iterator i = _facets_.begin ();
-         i != _facets_.end ();
-         i++)
-      {
-        delete i->second;
-      }
+    _facet_segments_.clear ();
+    // for (facets_col_t::iterator i = _facets_.begin ();
+    //      i != _facets_.end ();
+    //      i++)
+    //   {
+    //     delete i->second;
+    //   }
     _facets_.clear ();
     _vertices_.clear ();
     return;
@@ -228,14 +893,69 @@ namespace geomtools {
     return _facets_;
   }
   
+  tessellated_solid::vertices_col_t & tessellated_solid::grab_vertices () 
+  {
+    return _vertices_;
+  }
+  
+  tessellated_solid::facets_col_t & tessellated_solid::grab_facets ()
+  {
+    return _facets_;
+  }
+ 
+  const tessellated_solid::facet_segments_col_t & tessellated_solid::facet_segments () const
+  {
+    return _facet_segments_;
+  }
+  
+  tessellated_solid::facet_segments_col_t & tessellated_solid::grab_facet_segments ()
+  {
+    return _facet_segments_;
+  }
+  
   int tessellated_solid::add_vertex (unsigned int vtx_key_, const facet_vertex & vtx_)
   {
     if (_locked_)
       {
-        throw runtime_error ("tessellated_solid::add_vertex: Object is locked !");
+        throw std::logic_error ("geomtools::tessellated_solid::add_vertex: Object is locked !");
       }
     _vertices_[vtx_key_] = vtx_;
+    _xrange_.add (vtx_.position.x ());
+    _yrange_.add (vtx_.position.y ());
+    _zrange_.add (vtx_.position.z ());
     return vtx_key_;
+  }
+    
+  const mygsl::min_max & tessellated_solid::get_bounding_box_x () const
+  {
+    return _xrange_;
+  }
+
+  const mygsl::min_max & tessellated_solid::get_bounding_box_y () const
+  {
+    return _yrange_;
+  }
+
+  const mygsl::min_max & tessellated_solid::get_bounding_box_z () const
+  {
+    return _zrange_;
+  }
+
+  void tessellated_solid::compute_bounding_box ()
+  {
+    _xrange_.reset ();
+    _yrange_.reset ();
+    _zrange_.reset ();
+    for (vertices_col_t::const_iterator i = _vertices_.begin ();
+         i != _vertices_.end ();
+         i++)
+      {
+        const facet_vertex & vtx = i->second;
+        _xrange_.add (vtx.position.x ());
+        _yrange_.add (vtx.position.y ());
+        _zrange_.add (vtx.position.z ());       
+      }
+    return;
   }
 
   int tessellated_solid::add_vertex (unsigned int vtx_key_, 
@@ -270,9 +990,8 @@ namespace geomtools {
   {
     if (_locked_)
       {
-        throw runtime_error ("tessellated_solid::add_vertex: Object is locked !");
+        throw std::logic_error ("geomtools::tessellated_solid::add_vertex: Object is locked !");
       }
-    i_facet * f= 0;
     size_t dim = 3;
     if (validate_index (ivtx3_))
       {
@@ -290,20 +1009,22 @@ namespace geomtools {
         if (vtx_it[i] == _vertices_.end ())
           {
             ostringstream message;
-            message << "tessellated_solid::add_facet: "
+            message << "geomtools::tessellated_solid::add_facet: "
                     << "Invalid vertex index " << ivtx[i] << " !";
-            throw runtime_error (message.str());
+            throw std::logic_error (message.str());
           }
       } 
-    i_facet * fct = 0;
+    //i_facet * fct = 0;
+    facet34 fct;
     if (dim == 3)
       {
         vtx_it[0]->second.add_ref_facet (facet_key_, 0);
         vtx_it[1]->second.add_ref_facet (facet_key_, 1);
         vtx_it[2]->second.add_ref_facet (facet_key_, 2);
-        fct = new facet3 ((vtx_it[0]->second),
-                          (vtx_it[1]->second),
-                          (vtx_it[2]->second));
+        fct = facet34 ((vtx_it[0]->second),
+                       (vtx_it[1]->second),
+                       (vtx_it[2]->second),
+                       ivtx[0],ivtx[1],ivtx[2]);
       }    
     else
       {
@@ -311,12 +1032,79 @@ namespace geomtools {
         vtx_it[1]->second.add_ref_facet (facet_key_, 1);
         vtx_it[2]->second.add_ref_facet (facet_key_, 2);
         vtx_it[3]->second.add_ref_facet (facet_key_, 3);
-        fct = new facet4 ((vtx_it[0]->second),
-                          (vtx_it[1]->second),
-                          (vtx_it[2]->second),
-                          (vtx_it[3]->second));
+        fct = facet34 ((vtx_it[0]->second),
+                       (vtx_it[1]->second),
+                       (vtx_it[2]->second),
+                       (vtx_it[3]->second),
+                       ivtx[0],ivtx[1],ivtx[2],ivtx[3]);
       } 
     _facets_[facet_key_] = fct;
+    return;
+  }
+
+  void tessellated_solid::remove_facet (unsigned int facet_key_)
+  {
+    bool devel = false;
+    if (devel) std::cerr << "DEVEL: geomtools::tessellated_solid::remove_facet: "
+              << "Before: #facets=" << _facets_.size () 
+              << std::endl;
+
+    // Check the existence of the facet :    
+    facets_col_t::iterator facet_found = _facets_.find (facet_key_);
+    if (facet_found ==_facets_.end ())
+      {
+        std::ostringstream message;
+        message << "geomtools::tessellated_solid::remove_facet: "
+                << "Facet #" << facet_key_ << "  does not exist !";
+        throw std::logic_error (message.str ());
+      }
+
+    // Get a pointer to the facet to be removed :
+    //i_facet * the_facet_ptr = facet_found->second;
+    facet34 the_facet = facet_found->second;
+
+    // Traverse the collection of vertices in the facet :
+    for (int i = 0; i < the_facet.get_number_of_vertices (); i++)
+      {
+        //int vtxkey = the_facet_ptr->get_vertex_key (i);
+        int vtxkey = the_facet.get_vertex_key (i);
+
+        // Check if the vertex exists in the dictionary of vertices :
+        vertices_col_t::iterator vtx_found = _vertices_.find (vtxkey);
+        if (vtx_found == _vertices_.end ())
+          {
+            std::ostringstream message;
+            message << "geomtools::tessellated_solid::remove_facet: "
+                    << "Vertex #" << vtxkey << "  does not exist !";
+            throw std::logic_error (message.str ());
+          }
+
+        // Get a reference to the vertex :
+        facet_vertex & the_vertex = vtx_found->second;
+
+        // Search the reference to the facet in the current vertex :
+        std::map<int, int>::iterator found2 = the_vertex.ref_facets.find (facet_key_);
+        if (found2 == the_vertex.ref_facets.end ())
+          {
+            std::ostringstream message;
+            message << "geomtools::tessellated_solid::remove_facet: "
+                    << "Vertex #" << vtxkey << " has is not used by facet #" << facet_key_ << " !";
+            throw std::logic_error (message.str ());
+          }
+        // Remove the facet reference in this vertex:
+        the_vertex.ref_facets.erase (found2);
+      }
+
+    if (devel) std::cerr << "DEVEL: geomtools::tessellated_solid::remove_facet: "
+              << "After: #facets=" << _facets_.size () 
+              << std::endl;
+
+    // Remove the facet from the dictionnary of facets :
+    //facet_found->second = 0;
+    _facets_.erase (facet_found);
+
+    // Delete the facet :
+    //delete the_facet_ptr;
     return;
   }
   
@@ -326,7 +1114,7 @@ namespace geomtools {
     string stag  = "|   ";
     string ltag  = "`-- ";
     string sltag = "    ";
-    out_ << "tessellated_solid" << endl;
+    out_ << "geomtools::tessellated_solid" << endl;
     out_ << tag << "Locked: " << is_locked () << endl;
     out_ << tag << "Vertices: " << _vertices_.size () << endl;
     for (vertices_col_t::const_iterator i = _vertices_.begin ();
@@ -341,6 +1129,13 @@ namespace geomtools {
         out_ << stag << tag2 << "Vertex[" << i->first << "] : ";
         i->second.print (out_);
       }
+    out_ << tag << "Bounding box: " << endl;
+    out_ << stag << tag << "X: ["  << _xrange_.get_min () << ';' << _xrange_.get_max () << ']' << endl;
+    out_ << stag << tag << "Y: ["  << _yrange_.get_min () << ';' << _yrange_.get_max () << ']' << endl;
+    out_ << stag << ltag << "Z: [" << _zrange_.get_min () << ';' << _zrange_.get_max () << ']' << endl;
+    
+    out_ << tag << "Facet segments: " << _facet_segments_.size () << endl;
+
     out_ << ltag << "Facets: " << _facets_.size () << endl;
     for (facets_col_t::const_iterator i = _facets_.begin ();
          i != _facets_.end ();
@@ -352,7 +1147,7 @@ namespace geomtools {
           if (++j == _facets_.end ()) tag2 = ltag;
         }
         out_ << sltag << tag2 << "Facet[" << i->first << "] : ";
-        i->second->print (out_);
+        i->second.print (out_);
       }
     return;
   }
@@ -362,60 +1157,80 @@ namespace geomtools {
     bool devel = false;
     if (devel)
       {
-        clog << "DEVEL: tessellated_solid::print_xyz: # vertices = " 
+        clog << "DEVEL: geomtools::tessellated_solid::print_xyz: # vertices = " 
              << _vertices_.size()
              << endl;
-        clog << "DEVEL: tessellated_solid::print_xyz: # facets = " 
+        clog << "DEVEL: geomtools::tessellated_solid::print_xyz: # facets = " 
              << _facets_.size()
              << endl;
       }
     size_t last = 0;
 
+    int color = 0;
     // facets:
     int count = 0;
     for (facets_col_t::const_iterator i = _facets_.begin ();
          i != _facets_.end ();
          i++)
       {
-        const i_facet * fct = i->second;
+        //const i_facet * fct = i->second;
+        const facet34 & fct = i->second;
         out_ << "# facet " << count 
-             << " with " <<  fct->get_number_of_vertices ()
+             << " with " <<  fct.get_number_of_vertices ()
              << " vertices" << endl;
-        size_t nvtx = fct->get_number_of_vertices ();
+        size_t nvtx = fct.get_number_of_vertices ();
         if (devel)
           {
-            clog << "DEVEL: tessellated_solid::print_xyz: # nvtx = " 
+            clog << "DEVEL: geomtools::tessellated_solid::print_xyz: # nvtx = " 
                  << nvtx
                  << endl;
           }
         // vertices:
-        double dx = fct->get_vertex (1).position.x () - fct->get_vertex (0).position.x ();
-        double dy = fct->get_vertex (1).position.y () - fct->get_vertex (0).position.y ();
-        double dz = fct->get_vertex (1).position.z () - fct->get_vertex (0).position.z ();
+        geomtools::vector_3d u1 = fct.get_vertex (1).position - fct.get_vertex (0).position;
+        geomtools::vector_3d u2 = fct.get_vertex (2).position - fct.get_vertex (1).position;
+        geomtools::vector_3d u3 = u1.cross (u2);
+        color = 5 + (int) (5 * u3.cosTheta ());
+        double dx = fct.get_vertex (1).position.x () - fct.get_vertex (0).position.x ();
+        double dy = fct.get_vertex (1).position.y () - fct.get_vertex (0).position.y ();
+        double dz = fct.get_vertex (1).position.z () - fct.get_vertex (0).position.z ();
         double m2 = dx * dx + dy * dy + dz * dz;
         double m  = sqrt (m2);
-        fct->get_vertex (0).print_xyz (out_);
-        fct->get_vertex (1).print_xyz (out_);
+        fct.get_vertex (0).print_xyz (out_, color);
+        fct.get_vertex (1).print_xyz (out_, color);
         out_ << endl;
         if (nvtx == 3)
           {       
-            facet_vertex last;
-            last.position.setX (fct->get_vertex (2).position.x () - 1e-6 * dx / m);
-            last.position.setY (fct->get_vertex (2).position.y () - 1e-6 * dy / m);
-            last.position.setY (fct->get_vertex (2).position.z () - 1e-6 * dz / m);
-            last.print_xyz (out_);
+            fct.get_vertex (2).print_xyz (out_, color);
+            fct.get_vertex (2).print_xyz (out_, color);
+            out_ << endl;
           }
         else
           {
-            fct->get_vertex (fct->get_number_of_vertices () - 1)
-              .print_xyz (out_);
+            fct.get_vertex (3).print_xyz (out_, color);
+            fct.get_vertex (2).print_xyz (out_, color);
+            out_ << endl;
           }
-        fct->get_vertex (2).print_xyz (out_);
+        /*
+        if (nvtx == 3)
+          {       
+            facet_vertex last;
+            last.position.setX (fct.get_vertex (2).position.x () - 1e-6 * dx / m);
+            last.position.setY (fct.get_vertex (2).position.y () - 1e-6 * dy / m);
+            last.position.setY (fct.get_vertex (2).position.z () - 1e-6 * dz / m);
+            last.print_xyz (out_, color);
+          }
+        else
+          {
+            fct.get_vertex (fct.get_number_of_vertices () - 1)
+              .print_xyz (out_, color);
+          }
+        fct.get_vertex (2).print_xyz (out_, color);
         out_ << endl;
+        */
         out_ << endl;
         if (devel)
           {
-            clog << "DEVEL: tessellated_solid::print_xyz: # last = " 
+            clog << "DEVEL: geomtools::tessellated_solid::print_xyz: # last = " 
                  << last
                  << endl;
           }
@@ -428,8 +1243,8 @@ namespace geomtools {
                                      double skin_) const
   {
     ostringstream message;
-    message << "tessellated_solid::is_inside: Not implemented !";
-    throw runtime_error (message.str ());
+    message << "geomtools::tessellated_solid::is_inside: Not implemented !";
+    throw std::logic_error (message.str ());
     return false;
   }
   
@@ -440,7 +1255,7 @@ namespace geomtools {
   {
     ostringstream message;
     message << "tessellated_solid::surface: Not implemented !";
-    throw runtime_error (message.str ());
+    throw logic_error (message.str ());
     
     return false;
   }
@@ -449,8 +1264,8 @@ namespace geomtools {
   {
     vector_3d v;
     ostringstream message;
-    message << "tessellated_solid::get_normal_on_surface: Not implemented !";
-    throw runtime_error (message.str ());
+    message << "geomtools::tessellated_solid::get_normal_on_surface: Not implemented !";
+    throw logic_error (message.str ());
     return v;
   }
   
@@ -460,8 +1275,8 @@ namespace geomtools {
                                           double skin_) const
   {
     ostringstream message;
-    message << "tessellated_solid::find_intercept: Not implemented !";
-    throw runtime_error (message.str ());
+    message << "geomtools::tessellated_solid::find_intercept: Not implemented !";
+    throw logic_error (message.str ());
      
     return false;
   }
@@ -485,7 +1300,7 @@ namespace geomtools {
     message << "tessellated_solid::initialize: " 
     << "Cannot open data file '"
     << filename << "' !";
-    throw runtime_error (message.str ()); 
+    throw logic_error (message.str ()); 
     }
     size_t count = 0;
     double length_unit = CLHEP::mm;

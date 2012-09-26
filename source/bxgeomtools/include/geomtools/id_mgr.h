@@ -99,6 +99,9 @@ namespace geomtools {
       /// Constructor
       category_info ();
 
+      /// Destructor
+      virtual ~category_info ();
+
       /// Returns the size of the list of addresses
       size_t get_depth () const;
 

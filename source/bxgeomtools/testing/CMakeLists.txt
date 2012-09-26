@@ -62,12 +62,18 @@ set ( geomtools_tests_programs_list
   test_sphere.cxx
   test_subtraction_3d.cxx
   test_tessellated_solid.cxx
+  test_stl_tools.cxx
   test_tube.cxx
   test_union_3d.cxx
   test_utils_2.cxx
   test_utils.cxx
   test_gnuplot_draw.cxx
   )
+
+# set ( geomtools_tests_programs_list
+#   test_tessellated_solid.cxx
+#   test_stl_tools.cxx
+# )
 
 # if (GEOMTOOLS_WITH_GNUPLOT_DISPLAY)
 #   list (APPEND geomtools_tests_programs_list

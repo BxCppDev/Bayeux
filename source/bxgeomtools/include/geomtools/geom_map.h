@@ -107,6 +107,10 @@ namespace geomtools {
     virtual void build_from (const model_factory & factory_,
                              const std::string & mother_ = "world");
 
+
+    /* tolerance is the thickness of the skin at the surface of the shape :
+     *
+     */
     static bool check_inside (const geom_info & ginfo_,
                               const vector_3d & world_position_,
                               double tolerance_);

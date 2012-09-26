@@ -635,6 +635,13 @@ class Gnuplot
                          const unsigned int column_y = 2,
                          const unsigned int column_z = 3,
                          const std::string &title = "");
+  
+  Gnuplot& plotfile_xyzo (const std::string &filename,
+			  const unsigned int column_x = 1,
+			  const unsigned int column_y = 2,
+			  const unsigned int column_z = 3,
+			  const unsigned int column_o = 4,
+			  const std::string &title = "");
 
   Gnuplot& plotfile_xyz_with_colored_wires (const std::string &filename,
                                             const std::string &title = "",

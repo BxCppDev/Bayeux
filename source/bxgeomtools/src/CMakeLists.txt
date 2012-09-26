@@ -68,6 +68,7 @@ set (_geomtools_source_files
   ${PROJECT_SOURCE_DIR}/src/sphere.cc 
   ${PROJECT_SOURCE_DIR}/src/tube.cc 
   ${PROJECT_SOURCE_DIR}/src/tessellation.cc 
+  ${PROJECT_SOURCE_DIR}/src/stl_tools.cc 
   ${PROJECT_SOURCE_DIR}/src/polycone.cc 
   ${PROJECT_SOURCE_DIR}/src/polyhedra.cc 
   ${PROJECT_SOURCE_DIR}/src/subtraction_3d.cc 

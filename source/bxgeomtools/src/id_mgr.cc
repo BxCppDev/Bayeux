@@ -101,6 +101,19 @@ namespace geomtools {
     inherits = "";
     return;
   }
+  
+  id_mgr::category_info::~category_info ()
+  {
+    ancestors.clear();
+    extends_by.clear();
+    addresses.clear();
+    nbits.clear();
+    category = "";
+    type = geom_id::INVALID_TYPE;
+    extends = "";
+    inherits = "";
+    return;
+  }
 
   size_t id_mgr::category_info::get_depth () const
   {

@@ -945,6 +945,48 @@ Gnuplot& Gnuplot::plotfile_xyz(const std::string &filename,
 }
 
 
+//------------------------------------------------------------------------------
+//
+// Plots a 3d graph from a list of doubles (x y z o) saved in a file
+//
+Gnuplot& Gnuplot::plotfile_xyzo(const std::string &filename,
+                                const unsigned int column_x,
+                                const unsigned int column_y,
+                                const unsigned int column_z,
+                                const unsigned int column_o,
+                                const std::string &title)
+{
+  //
+  // check if file exists
+  //
+  file_available(filename);
+
+  std::ostringstream cmdstr;
+  //
+  // command to be sent to gnuplot
+  //
+  if (_nplots_ > 0  &&  _two_dim_ == false)
+    cmdstr << "replot ";
+  else
+    cmdstr << "splot ";
+
+  cmdstr << "\"" << filename << "\" using " << column_x << ":" << column_y 
+         << ":" << column_z << ":" << column_o;
+
+  if (title == "")
+    cmdstr << " notitle ";
+  else
+    cmdstr << " title \"" << title << "\" ";
+  cmdstr << " with pm3d ;";
+  //
+  // Do the actual plot
+  //
+  cmd(cmdstr.str());
+
+  return *this;
+}
+
+
 
 //------------------------------------------------------------------------------
 //

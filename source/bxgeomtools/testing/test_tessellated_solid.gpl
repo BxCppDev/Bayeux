@@ -3,7 +3,7 @@
 #
 
 
-! ${GEOMTOOLS_ROOT}/$(geomtools-config --system)/bin/test_tessellated_solid > test_tessellated_solid.data
+#! ${GEOMTOOLS_ROOT}/$(geomtools-config --system)/bin/test_tessellated_solid > test_tessellated_solid.data
 
 sz=3.
 set xrange [-sz:sz]

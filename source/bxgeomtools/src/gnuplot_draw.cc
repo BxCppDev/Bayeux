@@ -1224,6 +1224,43 @@ namespace geomtools {
     rotation_3d inverse_rotation (rotation_);
     inverse_rotation.invert ();
 
+    int count = 0;
+    for (tessellated_solid::facet_segments_col_t::const_iterator ifs 
+           = t_.facet_segments ().begin ();
+         ifs !=  t_.facet_segments ().end ();
+         ifs++)
+      {
+        const facet_segment & the_facet_segment = ifs->second;
+        if (! the_facet_segment.is_shown ())
+          {
+            continue;
+          }
+
+        count++;
+        polyline_t polyline_facet;
+        const facet_vertex & vt0 = 
+          t_.vertices ().find (the_facet_segment.vertex0_key)->second;
+        const facet_vertex & vt1 = 
+          t_.vertices ().find (the_facet_segment.vertex1_key)->second;
+        vector_3d P0 (vt0.get_position ());
+        vector_3d P1 (vt1.get_position ());
+        P0.transform (inverse_rotation);
+        P0 += position_;
+        polyline_facet.push_back (P0);
+        if (count == 1)
+          {
+            vector_3d Pmid = 0.5 * (P0+P1);
+            Pmid.transform (inverse_rotation);
+            Pmid += position_;
+            polyline_facet.push_back (Pmid);  
+          }
+        P1.transform (inverse_rotation);
+        P1 += position_;
+        polyline_facet.push_back (P1);
+        basic_draw_polyline (out_, polyline_facet);
+      }
+
+    /*
     polyline_t polyline_facet;
     size_t last_nvtx = 0;
     for (tessellated_solid::facets_col_t::const_iterator i 
@@ -1260,6 +1297,7 @@ namespace geomtools {
           }
         basic_draw_polyline (out_, polyline_facet);
       }
+    */
     return;
   }
 
