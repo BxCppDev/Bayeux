@@ -159,6 +159,18 @@ EOF
 	if [ $? -ne 0 ]; then
 	    return 1
 	fi 
+    elif [ "${exe}" = "test_triangle_random_tools" ]; then
+	#${bin} --draw >> ${tmp_test_dir}/tests.log 2>&1
+	${bin} >> ${tmp_test_dir}/tests.log 2>&1
+	if [ $? -ne 0 ]; then
+	    return 1
+	fi 
+    elif [ "${exe}" = "test_quadrangle_random_tools" ]; then
+	#${bin} --draw --bias >> ${tmp_test_dir}/tests.log 2>&1
+	${bin} >> ${tmp_test_dir}/tests.log 2>&1
+	if [ $? -ne 0 ]; then
+	    return 1
+	fi 
     else
 	${bin} >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then

@@ -28,8 +28,8 @@ set ( genvtx_tests_programs_list
       test_tube_vg.cxx
       test_placement_vg.cxx
       test_from_file_vg.cxx
-      #test_factory.cxx
-      #test_manager.cxx
+      test_triangle_random_tools.cxx
+      test_quadrangle_random_tools.cxx
     )
 
 # include files search paths

@@ -25,6 +25,8 @@ file ( GLOB genvtx_SOURCES
   ${PROJECT_SOURCE_DIR}/src/cylinder_vg.cc
   ${PROJECT_SOURCE_DIR}/src/tube_vg.cc
   ${PROJECT_SOURCE_DIR}/src/vg_tools.cc
+  ${PROJECT_SOURCE_DIR}/src/triangle_random_tools.cc
+  ${PROJECT_SOURCE_DIR}/src/quadrangle_random_tools.cc
   #${PROJECT_SOURCE_DIR}/src/*.cc
   )
 
