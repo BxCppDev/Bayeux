@@ -444,6 +444,7 @@ elseif ( BAYEUX_CONFIG STREQUAL "user" )
                    _component_path 
 	           ${_component_directive} 
 	         )
+	  string ( STRIP "${_component_path}" _component_path )
           message ( STATUS "${PROJECT_NAME}: Parsed ${component} path : ${_component_path}") 
 	       
           if ( "${_component_directive}" STREQUAL "${_component_path}" )
