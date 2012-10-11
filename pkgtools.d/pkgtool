@@ -139,7 +139,9 @@ function print_usage ()
                                    "last_tags" use last tagged version
                                    "user"      use a specific user configuration 
                                                file (see below) 
-      --user-config-file [CONFIG_FILE] : configuration file for "user" config   
+      --user-config-file [CONFIG_FILE] : configuration file for "user" config
+                                         Example: the 'install_bayeux_dev0.lis'
+                                         from the Bayeux 'doc/' directory
       --with-none                : do not install any library/package 
                                    this must be the first of '--with-XXX' switches
                                    (conflicts with --with-all)
@@ -195,7 +197,7 @@ function print_usage ()
     Some checks:
       shell> ${appname} check
 
-    Configure:
+    Configure (splitting the build and install target directories) :
 
       shell> ${appname} configure \\
         --ep-build-directory /scratch/\${USER}/software/Bayeux-build \\
@@ -208,11 +210,17 @@ function print_usage ()
 
       shell> ${appname} configure --workspace-dir /scratch/\${USER}/software 
 
-    or :
+    or, for a 'trunk' installation (presumably stable) :
 
       shell> ${appname} configure \\
         --workspace-dir /scratch/\${USER}/software/Bayeux-trunk \\
         --config trunk
+
+    or, for a 'dev0' installation (unstable) :
+
+      shell> ${appname} configure \\
+        --workspace-dir /scratch/\${USER}/software/Bayeux-dev0 \\
+        --config user --user-config-file ./doc/install_bayeux_dev0.lis
 
     Build:
       shell> ${appname} build --number-of-tasks auto
