@@ -43,6 +43,12 @@ void invalidate(double& value);
 // Check if a double is valid (not a NaN):
 bool is_valid(double value);
 
+// Check if a double is infinity (+/-inf):
+bool is_infinity(double value);
+
+// Check if a double is normal (not a NaN and not inf):
+bool is_normal(double value);
+
 // Set a double to +infinity:
 void plus_infinity(double& value);
 

@@ -5,6 +5,7 @@
 
 // Standard Library
 #include <cstdlib>
+#include <cmath>
 #include <unistd.h>
 
 #include <algorithm>
@@ -29,9 +30,16 @@ void invalidate(double& x) {
   x = std::numeric_limits<double>::quiet_NaN();
 }
 
-
 bool is_valid(double x) {
   return x == x;
+}
+
+bool is_infinity(double x) {
+  return isinf (x);
+}
+
+bool is_normal(double x) {
+  return ! is_infinity (x) && is_valid (x);
 }
 
 

@@ -2,9 +2,9 @@
 /* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-04-01
  * Last modified : 2011-04-01
- * 
+ *
  * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
@@ -17,12 +17,12 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- * 
- * Description: 
  *
- *  An serializable handle object referencing an object through 
+ * Description:
+ *
+ *  An serializable handle object referencing an object through
  *  a shared pointer.
  *
  */
@@ -51,10 +51,10 @@ namespace utils {
 //! Forward declaration :
 template <typename T> struct handle_predicate;
 
-/*! \brief Templatized handle class that host a Boost shared pointer 
- *         and behaves like a reference. 
+/*! \brief Templatized handle class that host a Boost shared pointer
+ *         and behaves like a reference.
  *
- *  A \t handle object is given the responsability to 
+ *  A \t handle object is given the responsability to
  *  handle a class instance through its pointer using the shared pointer
  *  mechanism from Boost. The inner hidden pointer can be null.
  *  It must be initialized with the 'new' construction operator.
@@ -70,7 +70,7 @@ template <typename T> struct handle_predicate;
  *    handle<int> h0;  // a default int is allocated
  *    h0.grab () = 999; // access the int and modify its value
  *    cout << "h0 = " << h0.get () << endl; // print it
- *    h0.reset (new int (0)); // discard the former int 
+ *    h0.reset (new int (0)); // discard the former int
  *                            // and allocate a new one
  *    handle<int> h1 (new int (1)); // create a new handle for another int
  *    {
@@ -83,7 +83,7 @@ template <typename T> struct handle_predicate;
  *  };
  *  @endcode
  *
- */     
+ */
 template <typename T>
 class handle {
  public:
@@ -99,7 +99,7 @@ class handle {
 
   //! The default constructor.
   /*!
-   * The default constructor automatically allocate an object 
+   * The default constructor automatically allocate an object
    * handled by the internal shared pointer.
    */
   //handle() : sp_ (new T)
@@ -109,23 +109,23 @@ class handle {
 
   //! A constructor from a pointer to some on-the-fly allocated instance.
   /*!
-   * This constructor is given a pointer to some dynamically 
+   * This constructor is given a pointer to some dynamically
    * allocated instance and pass it to the internal shared pointer.
    *
    * Example:
    * @code
-   * datatools::utils::handle<int> h (new int (3));                             
+   * datatools::utils::handle<int> h (new int (3));
    * @endcode
    * or
    * @code
    * int * pi = new int (3);
-   * datatools::utils::handle<int> h (pi);                              
+   * datatools::utils::handle<int> h (pi);
    * @endcode
    *
    * \warning Never use such kind of mechanism to initialize a handle:
    * @code
    * int i = 3;
-   * datatools::utils::handle<int> h (&i);                              
+   * datatools::utils::handle<int> h (&i);
    * @endcode
    *
    */
@@ -139,7 +139,7 @@ class handle {
    * been shared by both shared pointers.
    */
   handle(const boost::shared_ptr<T>& held) : sp_(held) {}
- 
+
 
   virtual ~handle() {
     sp_.reset();
@@ -212,14 +212,14 @@ class handle {
   }
 
  private:
-  friend class boost::serialization::access; 
+  friend class boost::serialization::access;
   template <class Archive>
   void serialize(Archive& ar, int version) {
     ar & boost::serialization::make_nvp("sp", sp_);
   }
 
  private:
-  boost::shared_ptr<T> sp_; /*!< The embedded shared pointer. */ 
+  boost::shared_ptr<T> sp_; /*!< The embedded shared pointer. */
 };
 
 
@@ -254,7 +254,7 @@ class handle {
  *   values.push_back (handle_type (new double (1.0)));
  *   values.push_back (handle_type (new double (3.1415926)));
  *   values.push_back (handle_type (new double (10.0)));
- *   std::vector<handle_type>::const_iterator it = 
+ *   std::vector<handle_type>::const_iterator it =
  *     std::find_if (values.begin (), values.end (), HP);
  *   if (it != values.end ()) std::cout << 3Found PI !" << std::endl;
  *   return 0;
@@ -266,9 +266,9 @@ template <typename T>
 struct handle_predicate : public i_predicate<handle<T> > {
  public:
   //! The default constructor.
-  handle_predicate(const i_predicate<T>& predicate, 
-                   bool no_data_means_false = true) 
-      : predicate_(predicate), 
+  handle_predicate(const i_predicate<T>& predicate,
+                   bool no_data_means_false = true)
+      : predicate_(predicate),
         no_data_means_false_(no_data_means_false) {}
 
 
@@ -276,20 +276,20 @@ struct handle_predicate : public i_predicate<handle<T> > {
   bool operator()(const handle<T>& handle) const {
     if (handle.is_null()) {
       if (no_data_means_false_) return false;
-        
-      throw std::logic_error ("datatools::utils::handle_predicate::operator (): Handle has no data !");  
+
+      throw std::logic_error ("datatools::utils::handle_predicate::operator (): Handle has no data !");
     }
-    
+
     return predicate_(handle.get());
   }
 
  private:
-  const i_predicate<T>& predicate_; /*!< The embedded predicate. */ 
-  bool no_data_means_false_; /*!< A flag to indicate the behaviour in case of NULL pointer : predicate returns false (default) or throws an exception). */ 
+  const i_predicate<T>& predicate_; /*!< The embedded predicate. */
+  bool no_data_means_false_; /*!< A flag to indicate the behaviour in case of NULL pointer : predicate returns false (default) or throws an exception). */
 };
 
-} // end of namespace utils 
-} // end of namespace datatools 
+} // end of namespace utils
+} // end of namespace datatools
 
 // From "boost/serialization/shared_ptr.hpp" :
 #ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
@@ -297,7 +297,7 @@ namespace boost {
 namespace serialization{
 // don't track shared pointers
 template<class T>
-struct tracking_level< ::datatools::utils::handle<T> > { 
+struct tracking_level< ::datatools::utils::handle<T> > {
   typedef mpl::integral_c_tag tag;
 #if BOOST_WORKAROUND(__MWERKS__, BOOST_TESTED_AT(0x3206))
   typedef BOOST_DEDUCED_TYPENAME mpl::int_< ::boost::serialization::track_never> type;
@@ -314,12 +314,12 @@ struct tracking_level< ::datatools::utils::handle<T> > {
 #define BOOST_SERIALIZATION_DATATOOLS_UTILS_HANDLE(T)
 #else
 // define macro to let users of these compilers do this
-#define BOOST_SERIALIZATION_DATATOOLS_UTILS_HANDLE(T)             \
-    BOOST_SERIALIZATION_SHARED_PTR(T)                                 \
-BOOST_CLASS_TRACKING(                                             \
-                     ::datatools::utils::handle< T >,                              \
-                     ::boost::serialization::track_never                           \
-                    )                                                                 \
+#define BOOST_SERIALIZATION_DATATOOLS_UTILS_HANDLE(T)    \
+    BOOST_SERIALIZATION_SHARED_PTR(T)                    \
+BOOST_CLASS_TRACKING(                                    \
+                     ::datatools::utils::handle< T >,    \
+                     ::boost::serialization::track_never \
+                    )                                    \
 /**/
 #endif
 

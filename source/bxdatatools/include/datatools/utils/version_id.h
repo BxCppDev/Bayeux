@@ -33,7 +33,7 @@ namespace utils {
  *     "tag" can also be a string reprensenting a positive 
  *     integer: "0", "1"...
  *     or any combinaison of alphanumeric character
- *     excluding punctuation symbols but '-' and '_' are stille allowed.
+ *     excluding punctuation symbols but '-' and '_' are still allowed.
  *     Examples:
  *      "3.1.4-15", "3.1.4-test", "3.1.4-007"
  *

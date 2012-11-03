@@ -475,6 +475,8 @@ class properties : public datatools::serialization::i_serializable,
   //! Erase all properties not starting with a_key_prefix
   void erase_all_not_starting_with(const std::string& a_key_prefix);
 
+  void export_all(properties& a_props) const;
+
   void export_starting_with(properties& a_props,
                             const std::string& a_key_prefix) const;
 

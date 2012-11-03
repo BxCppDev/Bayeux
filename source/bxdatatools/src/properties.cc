@@ -801,6 +801,18 @@ void properties::export_and_rename_starting_with(properties& a_props,
   }
 }
 
+void properties::export_all(properties & a_props) const {
+  if (this == &a_props) {
+    throw std::logic_error("datatools::utils::properties::export_all: Self export is not allowed !");
+  }
+
+  keys_col_t ks;
+  this->keys(ks);
+  for (keys_col_t::const_iterator i = ks.begin(); i != ks.end(); ++i) {
+    properties& ptmp = const_cast<properties&>(*this);
+    a_props._props_[*i] = ptmp._props_[*i];
+  }
+}
 
 void properties::export_starting_with(properties & a_props,
                                       const std::string& prefix) const {
@@ -1975,7 +1987,7 @@ void properties::tree_dump(std::ostream& out, const std::string& title,
    
   if (!_description_.empty()) {
     out << indent << du::i_tree_dumpable::tag
-        << "Description  : " << this->get_description() << std::endl;
+        << "Description  : '" << this->get_description() << "'" << std::endl;
   }
 
   if (_props_.size() == 0) {

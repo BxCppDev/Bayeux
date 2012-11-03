@@ -17,6 +17,7 @@
 #include <list>
 #include <sstream>
 #include <stdexcept>
+#include <algorithm>
 
 // Third Party
 // - A
@@ -309,6 +310,13 @@ double units::get_unit_from(const std::string& unit_type,
     throw std::logic_error(message.str());
   }
   return std::numeric_limits<double>::quiet_NaN();
+}
+
+bool units::is_unit_label_valid(const std::string & unit_label)
+{
+  const std::vector<std::string>& vl = get_unit_labels_registry();
+  std::vector<std::string>::const_iterator found =  std::find(vl.begin(), vl.end(), unit_label);
+  return found != vl.end();
 }
 
 

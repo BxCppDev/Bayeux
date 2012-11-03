@@ -121,7 +121,25 @@ class units {
    */
   static double get_unit(const std::string& unit_str);
 
+  //! Return an array containing the labels associated to all type of units supported  by the datatools::utils::units class.
   static const std::vector<std::string>& get_unit_labels_registry();
+
+  //! Check if a unit type with a given label is supported by the datatools::utils::units class.
+  /**
+   * \b Example:
+   *
+   *   \code
+   *   if (datatools::utils::units::is_unit_label_valid ("length"))
+   *     {
+   *       std::cout << "A unit of type 'length' is possible." << std::endl;
+   *     }
+   *   if (! datatools::utils::units::is_unit_label_valid ("megafoo"))
+   *     {
+   *       std::cout << "A unit of type 'megafoo' is not supported." << std::endl;
+   *     }
+   *   \endcode
+   */
+   static bool is_unit_label_valid(const std::string & unit_label);
 
   //! Find the CLHEP unspecified unit and the associated unit label from a string.
   /**
