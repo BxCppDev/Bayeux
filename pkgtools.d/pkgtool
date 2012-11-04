@@ -429,7 +429,7 @@ function do_configure ()
     local bayeux_version="${bayeux_version_major}.${bayeux_version_minor}.${bayeux_version_patch}"
     
     ###pkgtools__msg_warning "bayeux_version=${bayeux_version}"
-
+    local bayeux_label=
     local workspace_dir=""
     local install_prefix=""
     local ep_build_dir=""
@@ -472,6 +472,9 @@ function do_configure ()
 	if [ "${option}" = "--build-directory" ]; then
 	    shift 1
 	    the_build_dir="$1"
+	elif [ "${option}" = "--bayeux-label" ]; then
+	    shift 1
+	    bayeux_label="$1"
 	elif [ "${option}" = "--workspace-dir" -o "${option}" = "--workspace-directory" ]; then
 	    shift 1
 	    workspace_dir="$1"
@@ -638,9 +641,14 @@ function do_configure ()
     fi
 
     local using_workspace=0
+    bayeux_tag=${bayeux_version}
+    if [ "x${bayeux_label}" != "x" ]; then
+	bayeux_tag=${bayeux_label}
+    fi
+    pkgtools__msg_notice "Build/installation directory is tagged with '${bayeux_tag}'"
     if [ "x${ep_build_dir}" = "x" ]; then
 	if [ "x${workspace_dir}" != "x" ]; then
-	    ep_build_dir=${workspace_dir}/Bayeux-${bayeux_version}/Build-$(pkgtools__get_sys)
+	    ep_build_dir=${workspace_dir}/Bayeux-${bayeux_tag}/Build-$(pkgtools__get_sys)
 	    using_workspace=1
 	fi	
     fi
