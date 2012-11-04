@@ -178,7 +178,7 @@ namespace mat {
     proportion_unit_type _proportion_unit_; //!< KP_ATOM (number of atoms by molecule) or KP_MASS (% mass)
     composition_map_t   _composition_;      //!<  composition of the material [std::map<string, compound_entry>]
 
-    du::properties _properties_;                //!< datatools properties
+    du::properties _properties_;            //!< datatools properties
     bool       _locked_;                    //!< boolean flags : true when composition is validated & derived properties are computed
 
   };

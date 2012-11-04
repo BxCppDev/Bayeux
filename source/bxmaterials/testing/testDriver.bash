@@ -187,8 +187,13 @@ EOF
 	return 1
     fi
     exe=$(basename ${exe_test})
-    if [ "${exe}" = "test_XXX" ]; then
-	${bin} >> ${tmp_test_dir}/tests.log 2>&1
+    if [ "${exe}" = "test_manager" ]; then
+	${bin} \
+	    ${MATERIALS_DATA_DIR}/testing/config/test_isotopes.def \
+	    ${MATERIALS_DATA_DIR}/testing/config/test_elements.def \
+	    ${MATERIALS_DATA_DIR}/testing/config/test_materials.def \
+	    ${MATERIALS_DATA_DIR}/testing/config/test_materials_aliases.def \
+	    >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then
 	    return 1
 	fi 

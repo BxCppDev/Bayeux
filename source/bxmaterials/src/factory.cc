@@ -457,6 +457,10 @@ namespace mat {
             matl->grab_properties ().store ("pressure", pressure);
           }
 
+        // 2012-11-03 FM : support for various "Material Properties Tables" 
+        // ala Geant4 :
+        config_.export_starting_with (matl->grab_properties (), "mpt.");
+
         matl->build ();
       }
     catch (exception & x)

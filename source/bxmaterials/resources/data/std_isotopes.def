@@ -726,5 +726,41 @@ a : integer = 235
 z : integer = 92
 a : integer = 238
 
+### Neodymium
+
+[name="Nd-142" type="isotope"]
+#@description The Nd-142 isotope
+z : integer = 60
+a : integer = 142
+
+[name="Nd-143" type="isotope"]
+#@description The Nd-143 isotope
+z : integer = 60
+a : integer = 143
+
+[name="Nd-144" type="isotope"]
+#@description The Nd-144 isotope
+z : integer = 60
+a : integer = 144
+
+[name="Nd-145" type="isotope"]
+#@description The Nd-145 isotope
+z : integer = 60
+a : integer = 145
+
+[name="Nd-146" type="isotope"]
+#@description The Nd-146 isotope
+z : integer = 60
+a : integer = 146
+
+[name="Nd-148" type="isotope"]
+#@description The Nd-148 isotope
+z : integer = 60
+a : integer = 148
+
+[name="Nd-150" type="isotope"]
+#@description The Nd-150 isotope
+z : integer = 60
+a : integer = 150
 
 # end
