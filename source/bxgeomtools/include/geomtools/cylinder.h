@@ -21,12 +21,15 @@
 
 #include <geomtools/i_shape_3d.h>
 #include <geomtools/i_stackable.h>
+#include <geomtools/i_wires_3d_rendering.h>
 
 namespace geomtools {
 
   using namespace std;
 
-  class cylinder : public i_shape_3d , public i_stackable
+  class cylinder : public i_shape_3d , 
+                   public i_stackable,
+                   public i_wires_3d_rendering
     {
 
     public:
@@ -128,7 +131,11 @@ namespace geomtools {
                               const std::string & a_indent = "", 
                               bool a_inherit          = false) const;
        
-
+ 
+      virtual void generate_wires (std::list<polyline_3d> &, 
+                                   const placement & , 
+                                   uint32_t options_ = 0) const;
+      
     private: 
 
       double _z_;      //<! Height

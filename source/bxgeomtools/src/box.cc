@@ -478,6 +478,58 @@ namespace geomtools {
     return;
   }
 
+  void box::generate_wires (std::list<polyline_3d> & lpl_,
+                            const placement & p_, 
+                            uint32_t options_) const
+  {
+    double dim[3];
+    dim[0] = 0.5*get_x ();
+    dim[1] = 0.5*get_y ();
+    dim[2] = 0.5*get_z ();
+    
+    for (int i = 0; i < 3; i++)
+      {
+        for (int j = 0; j < 2; j++)
+          {
+            vector_3d vertex[4];
+            if (i ==0)
+              {
+                vertex[0].set ((1 - 2 *j) * dim[0],   dim[1],  dim[2]);
+                vertex[1].set ((1 - 2 *j) * dim[0],   dim[1], -dim[2]);
+                vertex[2].set ((1 - 2 *j) * dim[0],  -dim[1], -dim[2]);
+                vertex[3].set ((1 - 2 *j) * dim[0],  -dim[1],  dim[2]);
+              }
+            if (i == 1)
+              {
+                vertex[0].set ( dim[0], (1 - 2 *j) * dim[1],   dim[2]);
+                vertex[1].set (-dim[0], (1 - 2 *j) * dim[1],   dim[2]);
+                vertex[2].set (-dim[0], (1 - 2 *j) * dim[1],  -dim[2]);
+                vertex[3].set ( dim[0], (1 - 2 *j) * dim[1],  -dim[2]);
+              }
+            if (i == 2)
+              {
+                vertex[0].set ( dim[0],  dim[1], (1 - 2 *j) * dim[2]);
+                vertex[1].set (-dim[0],  dim[1], (1 - 2 *j) * dim[2]);
+                vertex[2].set (-dim[0], -dim[1], (1 - 2 *j) * dim[2]);
+                vertex[3].set ( dim[0], -dim[1], (1 - 2 *j) * dim[2]);
+              }
+            {
+              polyline_3d dummy;
+              lpl_.push_back (dummy);
+            }
+            polyline_3d & pl = lpl_.back ();
+            pl.set_closed (true);
+            for (int i = 0; i < 4; i++)
+              {
+                vector_3d v;
+                p_.child_to_mother (vertex[i], v);
+                pl.add (v);
+              }
+          }
+      }
+    return;
+  }
+
 } // end of namespace geomtools
 
 // end of box.cc

@@ -120,7 +120,8 @@ namespace geomtools {
     static void 
     draw_line (std::ostream &, 
                const vector_3d &, 
-               const vector_3d &);
+               const vector_3d &, 
+               bool split_ = false);
     
     static void 
     draw_line (std::ostream &, 

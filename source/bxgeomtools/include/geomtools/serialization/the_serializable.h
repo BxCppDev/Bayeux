@@ -35,6 +35,9 @@ BOOST_CLASS_EXPORT_IMPLEMENT(geomtools::placement)
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(geomtools::blur_spot)
 BOOST_CLASS_EXPORT_IMPLEMENT(geomtools::blur_spot) 
 
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(geomtools::display_data)
+BOOST_CLASS_EXPORT_IMPLEMENT(geomtools::display_data) 
+
 #endif // __geomtools__the_serializable_h__
 
 /* end of geomtools::the_serializable.h */

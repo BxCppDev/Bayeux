@@ -8,6 +8,8 @@
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
+#include <geomtools/polyline_3d.h>
+#include <geomtools/placement.h>
 
 namespace geomtools {
 
@@ -186,7 +188,7 @@ namespace geomtools {
   }
  
   bool line_3d::is_on_curve ( const vector_3d & position_, 
-			      double tolerance_ ) const
+                              double tolerance_ ) const
   {
     return get_distance_to_line ( position_ ) <= tolerance_;
   }
@@ -196,6 +198,23 @@ namespace geomtools {
     vector_3d dir;
     throw logic_error ("line_3d::get_direction_on_curve: Not implemented yet !");
     return dir;
+  }
+
+  void line_3d::generate_wires (std::list<polyline_3d> & lpl_, 
+                                const placement & p_) const
+  {
+    {
+      polyline_3d dummy;
+      lpl_.push_back (dummy);
+    }
+    polyline_3d & pl = lpl_.back ();
+    pl.set_closed (false);
+    vector_3d v;
+    p_.child_to_mother (_first_, v);
+    pl.add (v);
+    p_.child_to_mother (_last_, v);
+    pl.add (v);
+    return;
   }
 
   /*

@@ -30,6 +30,7 @@
 
 #include <datatools/utils/i_tree_dump.h>
 #include <datatools/serialization/i_serializable.h>
+#include <datatools/utils/bit_mask.h>
 
 namespace geomtools {
 
@@ -137,10 +138,17 @@ namespace geomtools {
     // convert angle in radian to parametric:
     static double angle_to_t (double angle_);
     
+    enum print_flags_type
+      {
+        PRINT_XYZ_EXPAND1 = datatools::utils::bit_mask::bit00,
+        PRINT_XYZ_EXPAND2 = datatools::utils::bit_mask::bit01,
+        PRINT_XYZ_CENTER = datatools::utils::bit_mask::bit02
+      };
+
     static void print_xyz (std::ostream & out_, 
                            const helix_3d & helix_, 
                            double step_angle_ = 0.0,
-                           int expand_ = 0);
+                           unsigned int flags_ = 0);
 
   public:
 

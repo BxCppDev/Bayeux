@@ -21,6 +21,7 @@
 
 #include <geomtools/i_shape_3d.h>
 #include <geomtools/i_stackable.h>
+#include <geomtools/i_wires_3d_rendering.h>
 
 namespace geomtools {
 
@@ -149,7 +150,11 @@ namespace geomtools {
                             const string & title_  = "", 
                             const string & indent_ = "", 
                             bool inherit_          = false) const;
-  
+
+    virtual void generate_wires (std::list<polyline_3d> &, 
+                                 const placement & , 
+                                 uint32_t options_ = 0) const;
+      
   private: 
 
     double _z_;

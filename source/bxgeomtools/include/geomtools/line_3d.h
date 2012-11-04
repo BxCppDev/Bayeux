@@ -27,6 +27,9 @@
 
 namespace geomtools {
 
+  class polyline_3d;
+  class placement;
+
   class line_3d : 
     public i_shape_1d,
     DATATOOLS_SERIALIZABLE_CLASS
@@ -88,6 +91,8 @@ namespace geomtools {
     void make_vertex_collection (basic_polyline_3d &) const;
     
     basic_polyline_3d make_vertex_collection () const;
+
+    void generate_wires (std::list<polyline_3d> &, const placement & )const;
 
   private: 
 

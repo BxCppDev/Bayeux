@@ -56,6 +56,12 @@
 
 #include <geomtools/blur_spot.ipp>
 
+/***************************
+ * geomtools::display_data *
+ ***************************/
+
+#include <geomtools/display_data.ipp>
+
 #endif // __geomtools__the_serializable_ipp__
 
 /* end of geomtools::the_serializable.ipp */

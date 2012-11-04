@@ -82,6 +82,18 @@ namespace geomtools {
     vec_.set (qnan, qnan); 
     return;
   }
+
+  void set_xy (vector_2d & vec_, double x_, double y_)
+  {
+    vec_.set (x_, y_);
+    return;
+  }
+
+  void set_rphi (vector_2d & vec_, double r_, double phi_)
+  {
+    vec_.setPolar (r_, phi_);    
+    return;
+  }
   
   void invalidate_vector_2d (vector_2d & vec_)
   {
@@ -206,6 +218,25 @@ namespace geomtools {
                 r_ * sin (theta_) * cos (phi_),
                 r_ * sin (theta_) * sin (phi_),
                 r_ * cos (theta_));   
+    return;
+  }
+
+  void set (vector_3d & vec_, double x_, double y_, double z_)
+  {
+    vec_.set (x_, y_, z_);
+    return;
+  }
+
+  void set_r_theta_phi (vector_3d & vec_, 
+                        double r_, double theta_, double phi_)
+  {
+    vec_.setRThetaPhi (r_, theta_, phi_);
+    return;
+  }
+
+  void set_rho_phi_z (vector_3d & vec_, double rho_, double phi_, double z_)
+  {
+    vec_.setRhoPhiZ (rho_, phi_, z_);
     return;
   }
 
@@ -988,6 +1019,74 @@ namespace geomtools {
   const string filled_utils::FILLED_NONE_LABEL         = "none";
   const string filled_utils::FILLED_BY_ENVELOPE_LABEL  = "by_envelope";
   const string filled_utils::FILLED_BY_EXTRUSION_LABEL = "by_extrusion";
+
+  // Function to compute geometric barycenter :
+
+  void compute_barycenter (const std::vector<vector_3d> & points_,
+                           vector_3d & barycenter_)
+  {
+    if (points_.size () == 0)
+      {
+        invalidate (barycenter_);
+        return;
+      }
+    barycenter_.set (0.0, 0.0, 0.0);
+    for (std::vector<vector_3d>::const_iterator i = points_.begin ();
+         i != points_.end ();
+         i++)
+      {
+        barycenter_ += *i;
+      }
+    barycenter_ /= points_.size ();
+    return;
+  }
+
+
+  vector_3d compute_barycenter (const std::vector<vector_3d> & points_)
+  {
+    vector_3d barycenter;
+    compute_barycenter (points_, barycenter);
+    return barycenter;
+  }
+  
+  void compute_weighted_barycenter (const std::vector<vector_3d> & points_,
+                                    const std::vector<double> & weights_,
+                                    vector_3d & weighted_barycenter_)
+  {
+    if (points_.size () != weights_.size ())
+      {
+        invalidate (weighted_barycenter_);
+        throw std::logic_error ("geomtools::compute_barycenter: Unmatching vectors of points vs weights !");
+        return;
+      }
+    if (points_.size () == 0)
+      {
+        invalidate (weighted_barycenter_);
+        return;
+      }
+    double wsum = 0.0;
+    weighted_barycenter_.set (0.0, 0.0, 0.0);
+    for (int i = 0; i < points_.size (); i++)
+      {
+        double wi = weights_[i];
+        wsum += wi;
+        weighted_barycenter_ += (points_[i] * wi);
+      } 
+    if (wsum == 0.0)
+      {
+        throw std::logic_error ("geomtools::compute_barycenter: Invalid (zero) sum of weights !");  
+      }
+    weighted_barycenter_ /= wsum;
+    return;
+  }
+  
+  vector_3d compute_weighted_barycenter (const std::vector<vector_3d> & points_,
+                                         const std::vector<double> & weights_)
+  {
+    vector_3d weighted_barycenter;
+    compute_weighted_barycenter (points_, weights_, weighted_barycenter);
+    return weighted_barycenter;
+  }
  
 } // end of namespace geomtools
 

@@ -19,6 +19,7 @@
 #include <string>
 #include <iostream>
 #include <list>
+#include <vector>
 
 #include <geomtools/clhep.h>
 #include <geomtools/geomtools_config.h>
@@ -312,6 +313,12 @@ namespace geomtools {
                          double phi_,
                          double theta_);
 
+  void set (vector_3d & vec_, double x_, double y_, double z_);
+
+  void set_r_theta_phi (vector_3d & vec_, double r_, double theta_, double phi_);
+
+  void set_rho_phi_z (vector_3d & vec_, double rho_, double phi_, double z_);
+
   void invalidate (vector_3d & vec_);
   
   void invalidate_vector_3d (vector_3d & vec_);
@@ -329,6 +336,10 @@ namespace geomtools {
                            double tolerance_);
 
   /*****/
+
+  void set (vector_2d & vec_, double x_, double y_);
+
+  void set_r_phi (vector_2d & vec_, double r_, double phi_);
 
   void invalidate (vector_2d & vec_);
   
@@ -417,6 +428,20 @@ namespace geomtools {
     return dir;
   }
 
+
+  void compute_barycenter (const std::vector<vector_3d> & points_,
+                           vector_3d & barycenter_);
+
+  vector_3d compute_barycenter (const std::vector<vector_3d> & points_);
+
+  void compute_weighted_barycenter (const std::vector<vector_3d> & points_,
+                                    const std::vector<double> & weights_,
+                                    vector_3d & weighted_barycenter_);
+  
+  vector_3d compute_weighted_barycenter (const std::vector<vector_3d> & points_,
+                                         const std::vector<double> & weights_);
+  
+  
   /** Wrapper for rotation object
    */
   class rotation_wrapper_t : public rotation_3d
@@ -435,15 +460,6 @@ namespace geomtools {
    */
   class intercept_t
   {
-  private:
-
-    int       __shape_index; /** The index of the sub-shape
-                              *  for composite shapes only.
-                              *  Default is 0.
-                              */
-    int       __face;   //! The index of the impact face on the shape
-    vector_3d __impact; //! The impact point on the surface
-
   public:
 
     int get_shape_index () const
@@ -454,6 +470,7 @@ namespace geomtools {
     void set_shape_index (int si_)
     {
       __shape_index = si_;
+      return;
     }
 
     int get_face () const
@@ -464,11 +481,13 @@ namespace geomtools {
     void set_face (int face_)
     {
       __face = face_;
+      return;
     }
 
     void set_impact (const vector_3d & point_)
     {
       __impact = point_;
+      return;
     }
 
     void set (int shape_index_, int face_, const vector_3d & point_)
@@ -476,6 +495,7 @@ namespace geomtools {
       set_shape_index (shape_index_);
       set_face (face_);
       set_impact (point_);
+      return;
     }
 
     const vector_3d & get_impact () const
@@ -488,6 +508,7 @@ namespace geomtools {
       __shape_index = -1;
       __face = FACE_NONE_BIT;
       invalidate (__impact);
+      return;
     }
 
     intercept_t ()
@@ -495,6 +516,7 @@ namespace geomtools {
       __shape_index = -1;
       __face = FACE_NONE_BIT;
       invalidate (__impact);
+      return;
     }
 
     bool is_valid () const
@@ -506,6 +528,15 @@ namespace geomtools {
     {
       return is_valid ();
     }
+
+  private:
+
+    int32_t   __shape_index; /** The index of the sub-shape
+                              *  for composite shapes only.
+                              *  Default is 0.
+                              */
+    int32_t   __face;   //! The index of the impact face on the shape
+    vector_3d __impact; //! The impact point on the surface
 
   };
 

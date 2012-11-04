@@ -47,9 +47,9 @@ namespace geomtools {
   {
     if (a_radius < 0.0 )
       {
-	ostringstream message;
-	message << "circle::set_r: Invalid '" << a_radius << "' R value!";
-	throw logic_error (message.str ());
+        ostringstream message;
+        message << "circle::set_r: Invalid '" << a_radius << "' R value!";
+        throw logic_error (message.str ());
       }
     _radius_ = a_radius;
     return;
@@ -91,9 +91,9 @@ namespace geomtools {
   }
 
   void circle::tree_dump (ostream & a_out, 
-			  const string & a_title, 
-			  const string & a_indent, 
-			  bool a_inherit) const
+                          const string & a_title, 
+                          const string & a_indent, 
+                          bool a_inherit) const
   {
     namespace du = datatools::utils;
     string indent;
@@ -101,12 +101,12 @@ namespace geomtools {
     i_object_3d::tree_dump (a_out, a_title, indent, true);
 
     a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)  
-	 << "Radius : " << get_r () / CLHEP::mm << " mm" << endl;
+         << "Radius : " << get_r () / CLHEP::mm << " mm" << endl;
     return;
   }
 
   bool circle::is_on_curve (const vector_3d &, 
-			    double a_tolerance) const
+                            double a_tolerance) const
   {
     bool on_curve = false;
     throw runtime_error ("circle::is_on_curve: Not implemented yet !");
@@ -119,6 +119,34 @@ namespace geomtools {
     invalidate (dir);
     throw runtime_error ("circle::get_direction_on_curve: Not implemented yet !");
     return dir;
+  }
+
+  void circle::generate_wires (std::list<polyline_3d> & lpl_, 
+                               const placement & p_, 
+                               uint32_t options_) const
+  {
+    const int nsamples = 36;
+    vector_3d vertex[nsamples];
+    for (int i = 0; i < nsamples; i++)
+      {
+        double thetai = i * 2. * M_PI/nsamples;
+        vertex[i].set (get_r () * std::cos (thetai),
+                       get_r () * std::sin (thetai),
+                       0.0);
+      }
+    {
+      polyline_3d dummy;
+      lpl_.push_back (dummy);
+    }
+    polyline_3d & pl = lpl_.back ();
+    pl.set_closed (true);
+    for (int i = 0; i < 36; i++)
+      {
+        vector_3d v;
+        p_.child_to_mother (vertex[i], v);
+        pl.add (v);
+      }
+    return;
   }
   
 } // end of namespace geomtools

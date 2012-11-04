@@ -11,27 +11,126 @@
 
 using namespace std;
 
+void test0()
+{
+  geomtools::vector_3d v0 (0, 0, 0);
+  geomtools::vector_3d v1 (1,0, 0);
+  geomtools::vector_3d v2 (1.0, 1.0, 0); 
+  geomtools::vector_3d v3 (0, 1, 0);
+  bool c = geomtools::facet34::check_quadrangle (v0, v1, v2, v3);
+  if (!c)
+    {
+      std::clog << "Invalid quadrangle !" << std::endl;
+    }
+  else
+    {
+      std::clog << "Valid quadrangle !" << std::endl;
+    }
+  return;
+}
+
+void test1()
+{
+  geomtools::vector_3d v0 (0, 0, 0);
+  geomtools::vector_3d v1 (1,0, 0);
+  geomtools::vector_3d v2 (0.5, 0.5, 0); 
+  geomtools::vector_3d v3 (0, 1, 0);
+  bool c = geomtools::facet34::check_quadrangle (v0, v1, v2, v3);
+  if (!c)
+    {
+      std::clog << "Invalid quadrangle !" << std::endl;
+    }
+  else
+    {
+      std::clog << "Valid quadrangle !" << std::endl;
+    }
+  return;
+}
+
+void test2()
+{
+  geomtools::vector_3d v0 (0, 0, 0);
+  geomtools::vector_3d v1 (1,0, 0);
+  geomtools::vector_3d v2 (0.25, 0.25, 0); 
+  geomtools::vector_3d v3 (0, 1, 0);
+  bool c = geomtools::facet34::check_quadrangle (v0, v1, v2, v3);
+  if (!c)
+    {
+      std::clog << "Invalid quadrangle !" << std::endl;
+    }
+  else
+    {
+      std::clog << "Valid quadrangle !" << std::endl;
+    }
+  return;
+}
+
+void test3()
+{
+  geomtools::vector_3d v0 (0, 0, 0);
+  geomtools::vector_3d v1 (1,0, 0);
+  geomtools::vector_3d v2 (0.25, 0.25, 0); 
+  bool c = geomtools::facet34::check_triangle (v0, v1, v2);
+  if (!c)
+    {
+      std::clog << "Invalid triangle !" << std::endl;
+    }
+  else
+    {
+      std::clog << "Valid triangle !" << std::endl;
+    }
+  return;
+}
+
+void test4()
+{
+  geomtools::vector_3d v0 (0, 0, 0);
+  geomtools::vector_3d v1 (1, 0, 0);
+  geomtools::vector_3d v2 (2, 0, 0); 
+  bool c = geomtools::facet34::check_triangle (v0, v1, v2);
+  if (!c)
+    {
+      std::clog << "Invalid triangle !" << std::endl;
+    }
+  else
+    {
+      std::clog << "Valid triangle !" << std::endl;
+    }
+  return;
+}
+
 int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
   try
     {
       clog << "Hello, this is a sample program " 
-	   << "for class 'tessellated_solid'!" << endl; 
+           << "for class 'tessellated_solid'!" << endl; 
   
       bool debug = false;
 
       int iarg = 1;
       while (iarg < argc_)
-	{
+        {
     
-	  string arg = argv_[iarg];
+          string arg = argv_[iarg];
 
-	  if (arg == "-d" || arg == "--debug") debug = true;
+          if (arg == "-d" || arg == "--debug") debug = true;
 
-	  iarg++;
-	}
+          iarg++;
+        }
     
+
+      test0 ();
+
+      test1 ();
+
+      test2 ();
+
+      test3 ();
+
+      test4 ();
+
       geomtools::tessellated_solid TS1;
 
       int ivtx = 0;
@@ -40,7 +139,6 @@ int main (int argc_, char ** argv_)
       int R = TS1.add_vertex (ivtx++, 1, 1, 0);
       int S = TS1.add_vertex (ivtx++, 0, 1, 0);
       int T = TS1.add_vertex (ivtx++, 0.5, 0.5, 1);
-      //TS1.add_vertex (ivtx++, 0.5, 0.5,-1);
 
       int ifct = 0;
       TS1.add_facet4 (ifct++, P, S, R, Q);

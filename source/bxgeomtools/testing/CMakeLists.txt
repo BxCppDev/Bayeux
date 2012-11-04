@@ -51,6 +51,7 @@ set ( geomtools_tests_programs_list
   test_polyhedra.cxx
   test_polyline_3d.cxx
   test_rectangle.cxx
+  test_plane.cxx
   test_regular_grid_placement.cxx
   test_regular_linear_placement.cxx
   test_regular_polygon.cxx
@@ -68,6 +69,7 @@ set ( geomtools_tests_programs_list
   test_utils_2.cxx
   test_utils.cxx
   test_gnuplot_draw.cxx
+  test_display_data.cxx
   )
 
 # set ( geomtools_tests_programs_list

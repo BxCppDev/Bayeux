@@ -336,7 +336,7 @@ namespace geomtools {
   helix_3d::print_xyz (ostream & out_,
                        const helix_3d & helix_,
                        double step_angle_,
-                       int expand_)
+                       unsigned int flags_)
   {
     double delta_t = 1. / 360.; // default
     if (step_angle_ > 0.0) delta_t = angle_to_t (step_angle_);
@@ -346,8 +346,17 @@ namespace geomtools {
     //t_skip = 1.0;
     double t_min = helix_.get_t1 () - t_skip;
     double t_max = helix_.get_t2 () + t_skip;
-    t_min -= expand_;
-    t_max += expand_;
+    int expand = 0;
+    if (flags_ & PRINT_XYZ_EXPAND1)
+      {
+        expand += 1;
+      }
+    if (flags_ & PRINT_XYZ_EXPAND2)
+      {
+        expand += 2;
+      }
+    t_min -= expand;
+    t_max += expand;
     double t = t_min;
     bool stop = false;
     do
@@ -364,9 +373,12 @@ namespace geomtools {
       } while (true);
     //out_ << endl << endl;
     out_ << endl;
-    geomtools::print_xyz (out_, helix_.get_center ());
-    //out_ << endl << endl;
-    out_ << endl;
+    if (flags_ & PRINT_XYZ_CENTER)
+      {
+        geomtools::print_xyz (out_, helix_.get_center ());
+        //out_ << endl << endl;
+        out_ << endl;
+      }
     return;
   }
 

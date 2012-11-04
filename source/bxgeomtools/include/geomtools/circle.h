@@ -20,10 +20,12 @@
 #include <string>
 
 #include <geomtools/i_shape_1d.h>
+#include <geomtools/i_wires_3d_rendering.h>
 
 namespace geomtools {
 
-  class circle : public i_shape_1d
+  class circle : public i_shape_1d,
+                 public i_wires_3d_rendering
   {
     
   public:
@@ -68,7 +70,11 @@ namespace geomtools {
                               double a_tolerance = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     virtual vector_3d get_direction_on_curve (const vector_3d & a_tposition) const;
-    
+ 
+    virtual void generate_wires (std::list<polyline_3d> &, 
+                                 const placement & , 
+                                 uint32_t options_ = 0) const;
+   
   private: 
 
     double _radius_; //!< The radius of the circle (in arbitrary units).

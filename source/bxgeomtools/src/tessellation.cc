@@ -6,10 +6,11 @@
 
 #include <sstream>
 #include <fstream>
-#include <cstdlib>
+//#include <cstdlib>
 #include <cmath>
 #include <stdexcept>
 
+#include <datatools/utils/utils.h>
 #include <geomtools/utils.h>
 
 namespace geomtools {
@@ -17,6 +18,24 @@ namespace geomtools {
   using namespace std;  
 
   /*** facet_vertex ***/
+
+  bool facet_vertex::is_valid () const
+  {
+    return geomtools::is_valid (position) && ref_facets.size () > 2;
+  }
+
+  void facet_vertex::reset ()
+  {
+    geomtools::invalidate (position);
+    ref_facets.clear ();
+    return;
+  }
+
+  facet_vertex::facet_vertex ()
+  {
+    geomtools::invalidate (position);
+    return;
+  }
 
   facet_vertex::facet_vertex (double x_, 
                               double y_,
@@ -80,25 +99,8 @@ namespace geomtools {
     return out_;
   }
  
-  /*** i_facet ***/
-  /*
-  void i_facet::print (ostream & out_) const
-  {
-    out_ << "#vertices=" << get_number_of_vertices ();
-    out_ << "[" << get_vertex_key (0) << ", "
-         << get_vertex_key(1) << ", "
-         << get_vertex_key(2);
-    if (get_number_of_vertices () == 4)
-      {
-        out_ << ", " <<  get_vertex_key(3);
-      }
-    out_ << "]";
-    out_ << endl;
-    return;
-  }
-  */
-
   /*** facet34 ***/
+
   uint32_t facet34::get_number_of_vertices () const
   {
     return _number_of_vertices_;
@@ -182,27 +184,27 @@ namespace geomtools {
   void facet34::_set_defaults ()
   {
     _number_of_vertices_ = 0;
-    _vertices_[0] = 0;
-    _vertices_[1] = 0;
-    _vertices_[2] = 0;
-    _vertices_[3] = 0;
-    _vertices_keys_[0] = -1;
-    _vertices_keys_[1] = -1;
-    _vertices_keys_[2] = -1;
-    _vertices_keys_[3] = -1;
+    for (int i = 0; i < 4; i++)
+      {
+        _vertices_[i] = 0;
+        _vertices_keys_[i] = -1;
+        datatools::utils::invalidate (_internal_angles_[i]);
+      }
     geomtools::invalidate (_normal_);
-    _category_ = -1;
+    datatools::utils::invalidate (_surface_tri_);
+    _surface_tri_bis_ = 0.0;
+    _category_ = INVALID_CATEGORY;
     return;
   }
 
   bool facet34::has_category () const
   {
-    return _category_ >= 0;
+    return _category_ > INVALID_CATEGORY;
   }
 
-  void facet34::set_category (int c_)
+  void facet34::set_category (unsigned int c_)
   {
-    if (c_ >= 0 && c_ <= MAX_CATEGORY)
+    if (c_ <= MAX_CATEGORY)
       {
         _category_ = c_;
       }
@@ -215,13 +217,44 @@ namespace geomtools {
 
   void facet34::unset_category ()
   {
-    _category_ = -1;
+    _category_ = INVALID_CATEGORY;
     return;
   }
   
   facet34::facet34 ()
   {
     _set_defaults ();
+    return;
+  }
+
+  void facet34::set_triangle (const facet_vertex & v0_, 
+                              const facet_vertex & v1_, 
+                              const facet_vertex & v2_,
+                              int iv0_, 
+                              int iv1_, 
+                              int iv2_)
+  {
+    _number_of_vertices_ = 3;
+    _vertices_[0] = &v0_;
+    _vertices_[1] = &v1_;
+    _vertices_[2] = &v2_;
+    _vertices_[3] = 0;
+ 
+    if (! check_triangle (v0_.get_position (), 
+                          v1_.get_position (),
+                          v2_.get_position ()))
+      {
+        std::ostringstream message;
+        message << "geomtools::facet34::set_triangle: "
+                << "Invalid set of vertices for a triangle !";
+        throw std::logic_error (message.str ());
+      }
+
+    _vertices_keys_[0] = iv0_;
+    _vertices_keys_[1] = iv1_;
+    _vertices_keys_[2] = iv2_;
+    _vertices_keys_[3] = -1;
+    compute_internals ();   
     return;
   }
   
@@ -233,19 +266,315 @@ namespace geomtools {
                     int iv2_)
   {
     _set_defaults ();
-    _number_of_vertices_ = 3;
-    _vertices_[0] = &v0_;
-    _vertices_[1] = &v1_;
-    _vertices_[2] = &v2_;
-    _vertices_[3] = 0;
-    _vertices_keys_[0] = iv0_;
-    _vertices_keys_[1] = iv1_;
-    _vertices_keys_[2] = iv2_;
-    _vertices_keys_[3] = -1;
-    compute_internals ();
+    set_triangle (v0_, 
+                  v1_, 
+                  v2_,
+                  iv0_, 
+                  iv1_, 
+                  iv2_);
+    return;
+  }
+  
+  bool facet34::check_triangle (const geomtools::vector_3d & v0_, 
+                                const geomtools::vector_3d & v1_, 
+                                const geomtools::vector_3d & v2_,
+                                double tolerance_)
+  {
+    // Check that all 3 vertices are different :
+    geomtools::vector_3d u01 = v1_ - v0_;
+    if (u01.mag2 () == 0)
+      {
+        return false;
+      }
+    geomtools::vector_3d u12 = v2_ - v1_;
+    if (u12.mag2 () == 0)
+      {
+        return false;
+      }
+    geomtools::vector_3d u20 = v0_ - v2_;
+    if (u20.mag2 () == 0)
+      {
+        return false;
+      }
+
+    // Check non-alignment of vertices :
+
+    // double tolerance = tolerance_;
+    // if (tolerance_ == 0.0 || ! datatools::utils::is_valid (tolerance_))
+    //   {
+    //     // use default (rather strict) tolerance : 
+    //     tolerance = 1.e-13;
+    //   }
+
+    // Vertices 0, 1, 2 :
+    geomtools::vector_3d n012 = u01.cross (u12);
+    {
+      double m012 = n012.mag ();
+      if (m012 == 0.0)
+        {
+          std::cerr << "WARNING: geomtools::facet34::check_triangle: "
+                    << "Vertices 0, 1, 2 are aligned !"
+                    << std::endl;
+          return false;
+        }
+      //n012 /= m012;
+    }
+    
+    return true;
+  }
+    
+  bool facet34::check_quadrangle (const geomtools::vector_3d & v0_, 
+                                  const geomtools::vector_3d & v1_, 
+                                  const geomtools::vector_3d & v2_,
+                                  const geomtools::vector_3d & v3_,
+                                  double tolerance_)
+  {
+    bool devel = false;
+    //devel = true;
+    // Check that all 4 vertices are different :
+    geomtools::vector_3d u01 = v1_ - v0_;
+    if (u01.mag2 () == 0)
+      {
+        return false;
+      }
+    geomtools::vector_3d u12 = v2_ - v1_;
+    if (u12.mag2 () == 0)
+      {
+        return false;
+      }
+    geomtools::vector_3d u23 = v3_ - v2_;
+    if (u23.mag2 () == 0)
+      {
+        return false;
+      }
+    geomtools::vector_3d u30 = v0_ - v3_;
+    if (u30.mag2 () == 0)
+      {
+        return false;
+      }
+    geomtools::vector_3d u02 = v2_ - v0_;
+    if (u02.mag2 () == 0)
+      {
+        return false;
+      }
+    geomtools::vector_3d u13 = v3_ - v1_;
+    if (u13.mag2 () == 0)
+      {
+        return false;
+      }
+
+    // Check non-alignment of vertices :
+
+    double tolerance = tolerance_;
+    if (tolerance_ == 0.0 || ! datatools::utils::is_valid (tolerance_))
+      {
+        // use default (rather strict) tolerance : 
+        tolerance = 1.e-13;
+      }
+
+    // Vertices 0, 1, 2 :
+    geomtools::vector_3d n012 = u01.cross (u12);
+    {
+      double m012 = n012.mag ();
+      if (m012 == 0.0)
+        {
+          std::cerr << "WARNING: geomtools::facet34::check_quadrangle: "
+                    << "Vertices 0, 1, 2 are aligned !"
+                    << std::endl;
+          return false;
+        }
+      n012 /= m012;
+    }
+
+    // Vertices 1, 2, 3 :
+    geomtools::vector_3d n123 = u12.cross (u23);
+    {
+      double m123 = n123.mag ();
+      if (m123 == 0.0)
+        {
+          std::cerr << "WARNING: geomtools::facet34::check_quadrangle: "
+                    << "Vertices 1, 2, 3 are aligned !"
+                    << std::endl;
+          return false;
+        }
+      n123 /= m123;
+    }
+
+    // Vertices 2, 3, 0 :
+    geomtools::vector_3d n230 = u23.cross (u30);
+    {
+      double m230 = n230.mag ();
+      if (m230 == 0.0)
+        {
+          std::cerr << "WARNING: geomtools::facet34::check_quadrangle: "
+                    << "Vertices 2, 3, 0 are aligned !"
+                    << std::endl;
+          return false;
+        }
+      n230 /= m230;
+    }
+
+    // Vertices 3, 0, 1 :
+    geomtools::vector_3d n301 = u30.cross (u01);
+    {
+      double m301 = n301.mag ();
+      if (m301 == 0.0)
+        {
+          std::cerr << "WARNING: geomtools::facet34::check_quadrangle: "
+                    << "Vertices 3, 0, 1 are aligned !"
+                    << std::endl;
+          return false;
+        }
+      n301 /= m301;
+    }
+
+    // Check planarity of the quadrangle :
+    if (devel)
+      {
+        std::cerr << "DEVEL: geomtools::facet34::check_quadrangle: "
+                  << "n012=" << n012 << " vs n123=" << n123
+                  << std::endl;
+      }
+
+    if (! n012.isNear (n123, 1.e-6))
+      {
+        std::cerr << "WARNING: geomtools::facet34::check_quadrangle: "
+                  << "Quadrangle is not convex !"
+                  << std::endl;
+        return false;
+      }
+
+    return true;
+  }
+  
+  void facet34::compute_internal_angles ()
+  {
+    // Not implemented yet :
+    /*
+    geomtools::vector_3d u01 = _vertices_[1]->get_position () - _vertices_[0]->get_position ();
+    if (u01.mag2 () == 0)
+      {
+        return false;
+      }
+    geomtools::vector_3d u12 = _vertices_[2]->get_position () - _vertices_[1]->get_position ();
+    if (u12.mag2 () == 0)
+      {
+        return false;
+      }
+    if (is_triangle ())
+      {
+      }
+    else if (is_quadrangle ())
+      {
+    geomtools::vector_3d u23 = _vertices_[3]->get_position () - _vertices_[2]->get_position ();
+    if (u23.mag2 () == 0)
+      {
+        return false;
+      }
+        geomtools::vector_3d u20 = _vertices_[2]->get_position () - _vertices_[0]->get_position ();
+        if (u20.mag2 () == 0)
+          {
+            return false;
+          }
+    bool rev = false;
+    double a012 = (-u01).angle (u12);
+    if (a012 > M_PI)
+      {
+        a012 = 2 * M_PI - a012;
+        if (devel)
+          {
+            std::cerr << "DEVEL: geomtools::facet34::compute_internal_angles: "
+                      << "reverse flag !"
+                      << std::endl;
+          }
+        rev = true;
+      }
+    if (devel)
+      {
+        std::cerr << "DEVEL: geomtools::facet34::compute_internal_angles: "
+                  << "a012=" << a012 / CLHEP::degree << " °"
+                  << std::endl;
+      }
+    double a123 = (-u12).angle (u23);
+    if (rev)
+      {
+        a123 = 2 * M_PI - a123; 
+      }
+    if (devel)
+      {
+        std::cerr << "DEVEL: geomtools::facet34::compute_internal_angles: "
+                  << "a123=" << a123 / CLHEP::degree << " °"
+                  << std::endl;
+      }
+    if (a123 > M_PI) return false;
+    double a230 = (-u23).angle (u30);
+    if (rev)
+      {
+        a230 = 2 * M_PI - a230; 
+      }
+    if (devel)
+      {
+        std::cerr << "DEVEL: geomtools::facet34::compute_internal_angles: "
+                  << "a230=" << a230 / CLHEP::degree << " °"
+                  << std::endl;
+      }
+    if (a230 > M_PI) return false;
+    double a301 = (-u30).angle (u01);
+    if (rev)
+      {
+        a301 = 2 * M_PI - a301; 
+      }
+    if (devel)
+      {
+        std::cerr << "DEVEL: geomtools::facet34::compute_internal_angles: "
+                  << "a301=" << a301 / CLHEP::degree << " °"
+                  << std::endl;
+      }
+    if (a301 > M_PI) return false;
+
+    double asum = a012 + a123 + a230 + a301;
+    if (devel)
+      {
+        std::cerr << "DEVEL: geomtools::facet34::compute_internal_angles: "
+                  << "asum=" << asum / CLHEP::degree << " °"
+                  << std::endl;
+      }
+    */  
     return;
   }
  
+  void facet34::set_quadrangle (const facet_vertex & v0_, 
+                                const facet_vertex & v1_, 
+                                const facet_vertex & v2_,
+                                const facet_vertex & v3_,
+                                int iv0_, 
+                                int iv1_, 
+                                int iv2_,
+                                int iv3_)
+  {
+    _number_of_vertices_ = 4;
+    _vertices_[0] = &v0_;
+    _vertices_[1] = &v1_;
+    _vertices_[2] = &v2_;
+    _vertices_[3] = &v3_;
+ 
+    if (! check_quadrangle (v0_.get_position (), v1_.get_position (),
+                            v2_.get_position (), v3_.get_position ()))
+      {
+        std::ostringstream message;
+        message << "geomtools::facet34::set_quadrangle: "
+                << "Invalid set of vertices for a quadrangle !";
+        throw std::logic_error (message.str ());
+      }
+
+    _vertices_keys_[0] = iv0_;
+    _vertices_keys_[1] = iv1_;
+    _vertices_keys_[2] = iv2_;
+    _vertices_keys_[3] = iv3_;
+    compute_internals ();
+   return;
+  }
+
   facet34::facet34 (const facet_vertex & v0_, 
                     const facet_vertex & v1_, 
                     const facet_vertex & v2_,
@@ -256,52 +585,83 @@ namespace geomtools {
                     int iv3_)
   {
     _set_defaults ();
-    _number_of_vertices_ = 4;
-    _vertices_[0] = &v0_;
-    _vertices_[1] = &v1_;
-    _vertices_[2] = &v2_;
-    _vertices_[3] = &v3_;
-    _vertices_keys_[0] = iv0_;
-    _vertices_keys_[1] = iv1_;
-    _vertices_keys_[2] = iv2_;
-    _vertices_keys_[3] = iv3_;
-    compute_internals ();
+    set_quadrangle (v0_, 
+                    v1_, 
+                    v2_,
+                    v3_,
+                    iv0_, 
+                    iv1_, 
+                    iv2_,
+                    iv3_);
     return;
+  }
+
+  bool facet34::is_triangle () const
+  {
+    return _number_of_vertices_ == 3;
+  }
+
+  bool facet34::is_quadrangle () const
+  {
+    return _number_of_vertices_ == 4;
   }
 
   void facet34::compute_internals ()
   {
     compute_normal (); 
     compute_surface ();
+    compute_internal_angles ();
     return;
+  }
+
+  double facet34::get_internal_angle (int i_) const
+  {
+    if ((i_ < 0) || (i_ >= _number_of_vertices_))
+      {
+        std::ostringstream message;
+        message << "geomtools::facet34::get_internal_angle: "
+                << "Invalid vertex index " << i_ << " !";
+        throw std::logic_error (message.str());
+      }
+    return _internal_angles_[i_];
   }
     
   bool facet34::has_surface() const
   {
-    return datatools::utils::is_valid (_surface_);
+    return datatools::utils::is_valid (_surface_tri_);
   }
 
   double facet34::get_surface () const
   {
-    return _surface_;
+    return _surface_tri_ + _surface_tri_bis_;
+  }
+
+  double facet34::get_surface_tri () const
+  {
+    return _surface_tri_;
+  }
+
+  double facet34::get_surface_tri_bis () const
+  {
+    return _surface_tri_bis_;
   }
 
   void facet34::compute_surface ()
   {
-    double s;
-    datatools::utils::invalidate (s);
+    datatools::utils::invalidate (_surface_tri_);
     if (is_valid ())
       {
-        if (_number_of_vertices_ == 3)
+        if (is_triangle ())
           {
             const geomtools::vector_3d & v0 = _vertices_[0]->get_position ();
             const geomtools::vector_3d & v1 = _vertices_[1]->get_position ();
             const geomtools::vector_3d & v2 = _vertices_[2]->get_position ();
             geomtools::vector_3d u01 = v1 - v0;
             geomtools::vector_3d u02 = v2 - v0;
-            s = 0.5 * (u01.cross (u02)).mag ();
-          }
-        if (_number_of_vertices_ == 4)
+            _surface_tri_ = 0.5 * (u01.cross (u02)).mag ();
+            _surface_tri_bis_ = 0.0;
+           }
+        if (is_quadrangle ())
           {
             const geomtools::vector_3d & v0 = _vertices_[0]->get_position ();
             const geomtools::vector_3d & v1 = _vertices_[1]->get_position ();
@@ -311,24 +671,33 @@ namespace geomtools {
             geomtools::vector_3d u03 = v3 - v0;
             geomtools::vector_3d u21 = v1 - v2;
             geomtools::vector_3d u23 = v3 - v2;
-            s = 0.5 * (u01.cross (u03)).mag () + 0.5 * (u21.cross (u23)).mag ();
+            _surface_tri_ = 0.5 * (u01.cross (u03)).mag ();
+            _surface_tri_bis_ = 0.5 * (u21.cross (u23)).mag ();
           }
       }
-    _surface_ = s;
     return;
   }
 
   void facet34::print (ostream & out_) const
   {
     out_ << "#vertices=" << get_number_of_vertices ();
-    out_ << ";vertices=[" << get_vertex_key (0) << ", "
+    out_ << ";vertices={" << get_vertex_key (0) << ", "
          << get_vertex_key(1) << ", "
          << get_vertex_key(2);
     if (get_number_of_vertices () == 4)
       {
         out_ << ", " <<  get_vertex_key(3);
       }
-    out_ << "];category=" <<_category_;
+    out_ << "}";
+    out_ << ",angles={";
+    for (int i=0; i<get_number_of_vertices (); i++)
+      {
+        if (i!=0) out_ << ',';
+        out_ << get_internal_angle (i) / CLHEP::degree << " °";
+      } 
+    out_ << '}';
+    out_ << ";surface=" << get_surface () / CLHEP::mm2 << " mm2";
+    out_ << ";category=" <<_category_;
     out_ << endl;
     return;
   }
@@ -1355,5 +1724,46 @@ namespace geomtools {
   */
 
 } // end of namespace geomtools
+
+/**
+http://www.blackpawn.com/texts/pointinpoly/default.html
+
+function SameSide(p1,p2, a,b)
+    cp1 = CrossProduct(b-a, p1-a)
+    cp2 = CrossProduct(b-a, p2-a)
+    if DotProduct(cp1, cp2) >= 0 then return true
+    else return false
+
+function PointInTriangle(p, a,b,c)
+    if SameSide(p,a, b,c) and SameSide(p,b, a,c)
+        and SameSide(p,c, a,b) then return true
+    else return false
+
+
+    
+/// P projection of the point on the plane ABC
+// Compute vectors        
+v0 = C - A
+v1 = B - A
+v2 = P - A
+
+// Compute dot products
+dot00 = dot(v0, v0)
+dot01 = dot(v0, v1)
+dot02 = dot(v0, v2)
+dot11 = dot(v1, v1)
+dot12 = dot(v1, v2)
+
+// Compute barycentric coordinates
+invDenom = 1 / (dot00 * dot11 - dot01 * dot01)
+u = (dot11 * dot02 - dot01 * dot12) * invDenom
+v = (dot00 * dot12 - dot01 * dot02) * invDenom
+
+// Check if point is in triangle
+return (u >= 0) && (v >= 0) && (u + v < 1)
+
+
+**/
+
 
 // end of tessellation.cc

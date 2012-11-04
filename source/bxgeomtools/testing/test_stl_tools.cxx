@@ -303,17 +303,38 @@ void test_solid (bool draw_, std::string stlfp_)
 
 int main(int argc_, char **argv_)
 {
+  bool debug = false;
   bool draw = false;
-  //draw = true;
-  std::clog << "NOTICE: argc = " << argc_ << '\n';
+  std::string fn;
+
+  int iarg = 1;
+  while (iarg < argc_)
+    {
+      std::string arg = argv_[iarg];
+      
+      if (arg == "-d" || arg == "--debug") 
+        {
+          debug = true;
+        }
+      else if (arg == "-D" || arg == "--draw") 
+        {
+          draw = true;
+        }
+      else if (arg == "-f" || arg == "--filename") 
+        {
+          fn = argv_[++iarg];
+        }
+      
+      iarg++;
+    }
+ 
   try 
     {      
       test_vertex ();
       
       test_facet ();
-
-      std::string fn;
-      if (argc_ > 1) fn = argv_[1];
+ 
+      //if (argc_ > 1) fn = argv_[1];
       std::clog << "NOTICE: fn = '" << fn << "'\n";
       test_solid (draw, fn);
     }

@@ -49,9 +49,9 @@ namespace geomtools {
   {
     if (new_value_ < 0.0 )
       {
-	ostringstream message;
-	message << "disk::set_r: Invalid '" << new_value_ << "' R value!";
-	throw logic_error (message.str ());
+        ostringstream message;
+        message << "disk::set_r: Invalid '" << new_value_ << "' R value!";
+        throw logic_error (message.str ());
       }
     _radius_ = new_value_;
   }
@@ -90,7 +90,7 @@ namespace geomtools {
   }
 
   bool disk::is_on_surface (const vector_3d & position_,
-			    double tolerance_) const
+                            double tolerance_) const
   {
     double tolerance = get_tolerance ();
     if (tolerance_ > USING_PROPER_TOLERANCE) tolerance = tolerance_;
@@ -103,28 +103,28 @@ namespace geomtools {
     double rho2 = x * x + y * y;
     if (rho2 > r2) 
       {
-	return false;
+        return false;
       }
     return true;
   }
 
   vector_3d disk::get_normal_on_surface (const vector_3d & position_,
-					 bool up_) const
+                                         bool up_) const
   {
     vector_3d normal;
     geomtools::invalidate (normal);
     if (is_on_surface (position_))
       {
-	normal.set (0.0, 0.0, 1.0);
-	if (! up_) normal.setZ (-1.0);
+        normal.set (0.0, 0.0, 1.0);
+        if (! up_) normal.setZ (-1.0);
       }
     return normal;
   }
 
   bool disk::find_intercept (const vector_3d & from_, 
-			     const vector_3d & direction_,
-			     intercept_t & intercept_,
-			     double tolerance_) const
+                             const vector_3d & direction_,
+                             intercept_t & intercept_,
+                             double tolerance_) const
   {
      double ux = direction_.x ();
     double uy = direction_.y ();
@@ -134,53 +134,53 @@ namespace geomtools {
     double zf = from_.z ();
     if (uz == 0.0)
       {
-	intercept_.reset ();
-	if (zf != 0.0)
-	  {
-	    return intercept_.is_ok ();	    
-	  }
-	double p0;
-	double p1;
-	double p2;
-	double lambda1;
-	double lambda2;
-	p2 = (ux * ux + uy * uy);
-	p1 = -2 * (ux * xf + uy * yf);
-	double r = pow (_radius_ + 0.5 * tolerance_, 2);
-	p0 = xf * xf + yf * yf - r * r;
-	size_t nsol = 0;
-	nsol = gsl_poly_solve_quadratic (p2, p1, p0, &lambda1, &lambda2);
-	if (nsol == 1)
-	  {
-	    double xi = xf + lambda1 * ux; 
-	    double yi = yf + lambda1 * uy;
-	    double zi = zf;
-	    intercept_.set (0, 0, vector_3d (xi, yi, zi));
-	  }
-	else if (nsol == 2)
-	  {
-	    double lambda = -1.0;
-	    if (lambda1 >= 0.0)
-	      {
-		lambda = lambda1;
-	      }
-	    if ((lambda2 >= 0.0) && (lambda2 < lambda1))
-	      {
-		lambda = lambda2;
-	      }
-	    double xi = xf + lambda * ux; 
-	    double yi = yf + lambda * uy;
-	    double zi = zf;
-	    intercept_.set (0, 0, vector_3d (xi, yi, zi));
-	  }
-	return intercept_.is_ok ();	    	    
+        intercept_.reset ();
+        if (zf != 0.0)
+          {
+            return intercept_.is_ok ();     
+          }
+        double p0;
+        double p1;
+        double p2;
+        double lambda1;
+        double lambda2;
+        p2 = (ux * ux + uy * uy);
+        p1 = -2 * (ux * xf + uy * yf);
+        double r = pow (_radius_ + 0.5 * tolerance_, 2);
+        p0 = xf * xf + yf * yf - r * r;
+        size_t nsol = 0;
+        nsol = gsl_poly_solve_quadratic (p2, p1, p0, &lambda1, &lambda2);
+        if (nsol == 1)
+          {
+            double xi = xf + lambda1 * ux; 
+            double yi = yf + lambda1 * uy;
+            double zi = zf;
+            intercept_.set (0, 0, vector_3d (xi, yi, zi));
+          }
+        else if (nsol == 2)
+          {
+            double lambda = -1.0;
+            if (lambda1 >= 0.0)
+              {
+                lambda = lambda1;
+              }
+            if ((lambda2 >= 0.0) && (lambda2 < lambda1))
+              {
+                lambda = lambda2;
+              }
+            double xi = xf + lambda * ux; 
+            double yi = yf + lambda * uy;
+            double zi = zf;
+            intercept_.set (0, 0, vector_3d (xi, yi, zi));
+          }
+        return intercept_.is_ok ();                 
       }
 
     intercept_.reset ();
     double lambda = - zf / uz;
     if (lambda < 0.0)
       {
-	return intercept_.is_ok ();
+        return intercept_.is_ok ();
       }
     double xi, yi, zi;
     zi = 0.0;
@@ -189,24 +189,24 @@ namespace geomtools {
     vector_3d impact (xi, yi, zi);
     if (! is_on_surface (impact, tolerance_))
       {
-	intercept_.is_ok ();
+        intercept_.is_ok ();
       }
     else
       {
-	int face = FACE_UP;
-	if (from_.z ()  < 0.0)
-	  {
-	    face = FACE_DOWN;
-	  }
-	intercept_.set (0, face, vector_3d (xi, yi, zi));
+        int face = FACE_UP;
+        if (from_.z ()  < 0.0)
+          {
+            face = FACE_DOWN;
+          }
+        intercept_.set (0, face, vector_3d (xi, yi, zi));
       }
     return intercept_.is_ok ();
   }
 
   void disk::tree_dump (ostream & out_, 
-			const string & title_, 
-			const string & indent_, 
-			bool inherit_) const
+                        const string & title_, 
+                        const string & indent_, 
+                        bool inherit_) const
   {
     namespace du = datatools::utils;
     string indent;
@@ -214,10 +214,62 @@ namespace geomtools {
     i_object_3d::tree_dump (out_, title_, indent_, true);
 
     out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)  
-	 << "R : " << get_r () / CLHEP::mm << " mm" << endl;
+         << "R : " << get_r () / CLHEP::mm << " mm" << endl;
     return;
   }
-  
+
+  void disk::generate_wires (std::list<polyline_3d> & lpl_, 
+                             const placement & p_, 
+                             uint32_t options_) const
+  {
+    const int nsamples = 36;
+    for (int j = 0; j < 3; j++)
+      {
+        double r = get_r ();
+        r /= (1 + j);
+        vector_3d vertex[nsamples];
+        for (int i = 0; i < nsamples; i++)
+          {
+            double thetai = i * 2. * M_PI/nsamples;
+            vertex[i].set (r * std::cos (thetai),
+                           r * std::sin (thetai),
+                           0.0);
+          }
+        {
+          polyline_3d dummy;
+          lpl_.push_back (dummy);
+        }
+        polyline_3d & pl = lpl_.back ();
+        pl.set_closed (true);
+        for (int i = 0; i < 36; i++)
+          {
+            vector_3d v;
+            p_.child_to_mother (vertex[i], v);
+            pl.add (v);
+          }
+      }
+    for (int k = 0; k < 2; k++)
+      {
+        vector_3d vertex[2];
+        vertex[0].set (-(k%2)*get_r (), -((k+1)%2)*get_r (), 0);
+        vertex[1].set (+(k%2)*get_r (), +((k+1)%2)*get_r (), 0);
+        {
+          polyline_3d dummy;
+          lpl_.push_back (dummy);
+        }
+        polyline_3d & pl = lpl_.back ();
+        pl.set_closed (false);
+        for (int i = 0; i < 2; i++)
+          {
+            vector_3d v;
+            p_.child_to_mother (vertex[i], v);
+            pl.add (v);
+          }
+      }
+
+    return;
+  }
+   
 } // end of namespace geomtools
 
 // end of disk.cc

@@ -2,7 +2,7 @@
 /* box.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
- * Last modified: 2008-05-23
+ * Last modified: 2012-10-24
  * 
  * License: 
  * 
@@ -21,11 +21,15 @@
 
 #include <geomtools/i_shape_3d.h>
 #include <geomtools/i_stackable.h>
+#include <geomtools/polyline_3d.h>
+#include <geomtools/placement.h>
+#include <geomtools/i_wires_3d_rendering.h>
 
 namespace geomtools {
 
   class box : public i_shape_3d ,
-              public i_stackable
+              public i_stackable,
+                 public i_wires_3d_rendering
   {
 
   public:
@@ -139,6 +143,10 @@ namespace geomtools {
                             const std::string & a_title  = "", 
                             const std::string & a_indent = "", 
                             bool a_inherit          = false) const;
+
+    virtual void generate_wires (std::list<polyline_3d> &, 
+                                 const placement &, 
+                                 uint32_t options_ = 0) const;
 
   private: 
 

@@ -33,4 +33,12 @@ This is the geomtools package ChangeLog
 	  because it does not work on gcc 4.6.X.
 	  construct-on-first-use idiom : use a static scoped_ptr from within a static member function.
 	  to be checked.
+2012-10-08 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* add compute_barycenter and compute_weighted_barycenter functions
+	* add class plane
+	* improve support for tessellated solid
+2012-11-04 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* add serializable display_data class
+	* add i_wires_3d_rendering interface
+	* version: prepare tag 3.2.0 in trunk
 

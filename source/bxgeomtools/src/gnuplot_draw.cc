@@ -219,9 +219,14 @@ namespace geomtools {
   void 
   gnuplot_draw::draw_line (std::ostream & out_, 
                            const vector_3d & start_ , 
-                           const vector_3d & stop_)
+                           const vector_3d & stop_, 
+                           bool split_)
   {
     basic_draw_point (out_, start_);
+    if (split_)
+      {
+        basic_draw_point (out_, 0.5 * (start_ + stop_));        
+      }
     basic_draw_point (out_, stop_);
     out_ << std::endl;
     return;

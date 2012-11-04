@@ -351,7 +351,66 @@ namespace geomtools {
          << "Z : " << get_z () / CLHEP::mm << " mm" << endl;
     return;
   }
-  
+
+  void tube::generate_wires (std::list<polyline_3d> & lpl_, 
+                             const placement & p_, 
+                             uint32_t options_) const
+  {
+    const int nsamples = 36;
+    double r[2];
+    r[0]=get_inner_r ();
+    r[1]=get_outer_r ();
+    for (int k = 0; k < 2; k++)
+      {
+        for (int j = 0; j < 2; j++)
+          {
+            vector_3d vertex[nsamples];
+            for (int i = 0; i < nsamples; i++)
+              {
+                double thetai = i * 2. * M_PI/nsamples;
+                vertex[i].set (r[k] * std::cos (thetai),
+                               r[k] * std::sin (thetai),
+                               -0.5 * get_z () + j * get_z ());
+              }
+            {
+              polyline_3d dummy;
+              lpl_.push_back (dummy);
+            }
+            polyline_3d & pl = lpl_.back ();
+            pl.set_closed (true);
+            for (int i = 0; i < 36; i++)
+              {
+                vector_3d v;
+                p_.child_to_mother (vertex[i], v);
+                pl.add (v);
+              }
+          }
+      
+        for (int i = 0; i < nsamples; i++)
+          {
+            vector_3d vertex[2];
+            double thetai = i * 2. * M_PI/nsamples;
+            double x = r[k] * std::cos (thetai);
+            double y = r[k] * std::sin (thetai);
+            vertex[0].set (x, y, -0.5 * get_z ());
+            vertex[1].set (x, y, +0.5 * get_z ());
+            {
+              polyline_3d dummy;
+              lpl_.push_back (dummy);
+              polyline_3d & pl = lpl_.back ();
+              pl.set_closed (false);
+              for (int i = 0; i < 2; i++)
+                {
+                  vector_3d v;
+                  p_.child_to_mother (vertex[i], v);
+                  pl.add (v);
+                }
+            }
+          }
+      }
+    return;
+  }
+   
 } // end of namespace geomtools
 
 // end of tube.cc

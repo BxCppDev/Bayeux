@@ -2,7 +2,7 @@
 /* tessellation.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-06-04
- * Last modified: 2010-06-04
+ * Last modified: 2012-09-26
  * 
  * License: 
  * 
@@ -28,14 +28,20 @@ namespace geomtools {
 
   class facet34;
 
+  /// A vertex (corner) of a triangle or quadrangle facet in a tessellated solid
   struct facet_vertex
   {
-    vector_3d position;
-    std::map<int32_t, int32_t> ref_facets;
+    vector_3d position; /// Position of the vertex
+    std::map<int32_t, int32_t> ref_facets; /// Collection of facets the vertex belongs 
+    /// this is a map indexed by the unique integer key of the facet and storing the rank of the vertex in the facet (using counterclockwise order)
 
   public:
 
-    facet_vertex (double x_ = 0.0, double y_ = 0.0, double z_ = 0.0);
+    bool is_valid () const;
+
+    facet_vertex ();
+
+    facet_vertex (double x_, double y_, double z_);
 
     void print_xyz (std::ostream & out_, int color_ = 0) const;
 
@@ -45,19 +51,24 @@ namespace geomtools {
 
     const vector_3d & get_position () const;
 
+    void reset ();
+
     friend std::ostream & operator<< (std::ostream &, const facet_vertex &);
     
   };
 
+  /// A Triangle or convex quadrangle facet of a tessellated solid 
   class facet34
   {
  
   public:
 
+    /// The maximum index of the category the facet belongs to
     static const unsigned int MAX_CATEGORY = 30;
+    static const int INVALID_CATEGORY = -1;
 
     bool has_category () const;
-    void set_category (int c_);
+    void set_category (unsigned int c_);
     void unset_category ();
 
     uint32_t get_number_of_vertices () const;
@@ -65,23 +76,60 @@ namespace geomtools {
     int32_t get_vertex_key (int i_) const;
     void compute_normal ();
     void compute_surface ();
+    void compute_internal_angles (); // Not implemented yet
     void compute_internals ();
     bool has_normal () const;
     bool has_surface() const;
     bool is_valid () const;
     const vector_3d & get_normal () const;
     double get_surface () const;
+    double get_surface_tri () const;
+    double get_surface_tri_bis () const;
+    double get_internal_angle (int i_) const;
     void print (std::ostream & out_) const;
 
+    static bool check_triangle (const geomtools::vector_3d & v0_, 
+                                const geomtools::vector_3d & v1_, 
+                                const geomtools::vector_3d & v2_,
+                                double tolerance_ = 0.0);
+
+    static bool check_quadrangle (const geomtools::vector_3d & v0_, 
+                                  const geomtools::vector_3d & v1_, 
+                                  const geomtools::vector_3d & v2_,
+                                  const geomtools::vector_3d & v3_,
+                                  double tolerance_ = 0.0);
+
+    bool is_triangle () const;
+
+    bool is_quadrangle () const;
+
+    void set_triangle (const facet_vertex & v0_, 
+                       const facet_vertex & v1_, 
+                       const facet_vertex & v2_,
+                       int iv0_, 
+                       int iv1_, 
+                       int iv2_);
+
+    void set_quadrangle (const facet_vertex & v0_, 
+                         const facet_vertex & v1_, 
+                         const facet_vertex & v2_,
+                         const facet_vertex & v3_,
+                         int iv0_, 
+                         int iv1_, 
+                         int iv2_,
+                         int iv3_);
+
     facet34 ();
-    facet34 (const facet_vertex & v1_, 
-             const facet_vertex & v2_, 
-             const facet_vertex & v3_,
+
+    facet34 (const facet_vertex & v0_, 
+             const facet_vertex & v1_, 
+             const facet_vertex & v2_,
              int, int, int);
-    facet34 (const facet_vertex & v1_, 
-             const facet_vertex & v2_, 
+
+    facet34 (const facet_vertex & v0_, 
+             const facet_vertex & v1_, 
+             const facet_vertex & v2_,
              const facet_vertex & v3_,
-             const facet_vertex & v4_,
              int, int, int, int);
 
   protected:
@@ -90,12 +138,14 @@ namespace geomtools {
  
   private:
     
-    uint32_t             _number_of_vertices_;
-    const facet_vertex * _vertices_[4];
-    int32_t              _vertices_keys_[4];
-    geomtools::vector_3d _normal_;
-    int32_t              _category_;
-    double               _surface_;
+    uint32_t             _number_of_vertices_; /// 3 (triangle) or 4 (quadrangle)
+    const facet_vertex * _vertices_[4]; /// Addresses to the vertices
+    int32_t              _vertices_keys_[4]; /// Key of the vertices
+    geomtools::vector_3d _normal_; /// Normal vector to the surface (counterclockwise)
+    double               _surface_tri_; /// Surface of the triangle or first triangle of the quadrangle
+    double               _surface_tri_bis_; /// Surface of the second triangle of the quadrangle
+    double               _internal_angles_[4]; /// Internal angles per vertex
+    int32_t              _category_; /// Auxiliary integer property
 
   };
 
@@ -213,4 +263,4 @@ namespace geomtools {
 
 #endif // __geomtools__tessellation_h
 
-// end of dummy_tessellation.h
+// end of tessellation.h

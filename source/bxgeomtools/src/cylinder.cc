@@ -10,35 +10,35 @@ namespace geomtools {
 
   const string cylinder::CYLINDER_LABEL = "cylinder";
     
-      double cylinder::get_xmin () const
-      {
-	return -_radius_;
-      }
+  double cylinder::get_xmin () const
+  {
+    return -_radius_;
+  }
       
-      double cylinder::get_xmax () const
-      {
-	return +_radius_;
-      }
+  double cylinder::get_xmax () const
+  {
+    return +_radius_;
+  }
       
-      double cylinder::get_ymin () const
-      {
-	return -_radius_;
-      }
+  double cylinder::get_ymin () const
+  {
+    return -_radius_;
+  }
       
-      double cylinder::get_ymax () const
-      {
-	return +_radius_;
-      }
+  double cylinder::get_ymax () const
+  {
+    return +_radius_;
+  }
       
-      double cylinder::get_zmin () const
-      {
-	return -0.5*_z_;
-      }
+  double cylinder::get_zmin () const
+  {
+    return -0.5*_z_;
+  }
       
-      double cylinder::get_zmax () const
-      {
-	return +0.5*_z_;
-      }
+  double cylinder::get_zmax () const
+  {
+    return +0.5*_z_;
+  }
 
   double 
   cylinder::get_r () const
@@ -51,9 +51,9 @@ namespace geomtools {
   {
     if (a_radius < 0.0 )
       {
-	ostringstream message;
-	message << "cylinder::set_r: Invalid '" << a_radius << "' R value!";
-	throw logic_error (message.str ());
+        ostringstream message;
+        message << "cylinder::set_r: Invalid '" << a_radius << "' R value!";
+        throw logic_error (message.str ());
       }
     _radius_ = a_radius;
     return;
@@ -89,9 +89,9 @@ namespace geomtools {
   {
     if (a_z < 0.0) 
       {
-	ostringstream message;
-	message << "cylinder::set_z: Invalid '" << a_z << "' Z value!";
-	throw logic_error (message.str ());
+        ostringstream message;
+        message << "cylinder::set_z: Invalid '" << a_z << "' Z value!";
+        throw logic_error (message.str ());
       }
     _z_ = a_z;
     return;
@@ -159,15 +159,15 @@ namespace geomtools {
 
     if (mask & FACE_SIDE) 
       {
-	s += 2 * M_PI * _radius_ * _z_;
+        s += 2 * M_PI * _radius_ * _z_;
       }
     if (mask & FACE_BOTTOM) 
       {
-	s += M_PI * _radius_ * _radius_;
+        s += M_PI * _radius_ * _radius_;
       }
     if (mask & FACE_TOP) 
       {
-	s += M_PI * _radius_ * _radius_;
+        s += M_PI * _radius_ * _radius_;
       }
     return s;
   }
@@ -235,8 +235,8 @@ namespace geomtools {
     invalidate (normal);
     if (is_on_surface (a_position, FACE_SIDE)) 
       {
-	double phi = a_position.phi ();
-	normal.set (cos (phi), sin (phi), 0.0);
+        double phi = a_position.phi ();
+        normal.set (cos (phi), sin (phi), 0.0);
       }
     else if (is_on_surface (a_position, FACE_BOTTOM)) normal.set (0.0, 0.0, -1.0);
     else if (is_on_surface (a_position, FACE_TOP)) normal.set (0.0, 0.0, +1.0); 
@@ -245,8 +245,8 @@ namespace geomtools {
 
   bool 
   cylinder::is_on_surface (const vector_3d & a_position , 
-			   int    a_mask ,
-			   double a_skin) const
+                           int    a_mask ,
+                           double a_skin) const
   {
     double skin = get_skin ();
     if (a_skin > USING_PROPER_SKIN) skin = a_skin;
@@ -258,27 +258,27 @@ namespace geomtools {
     double r = hypot (a_position.x (), a_position.y ());
     if (mask & FACE_BOTTOM) 
       {
-	if ((abs (a_position.z () + 0.5 * _z_) < hskin) 
-	    && (r < (_radius_ + hskin))) return true;
+        if ((abs (a_position.z () + 0.5 * _z_) < hskin) 
+            && (r < (_radius_ + hskin))) return true;
       } 
     if (mask & FACE_TOP) 
       {
-	if ((abs (a_position.z () - 0.5 * _z_) < hskin) 
-	    && (r < (_radius_ + hskin))) return true;
+        if ((abs (a_position.z () - 0.5 * _z_) < hskin) 
+            && (r < (_radius_ + hskin))) return true;
       }
     if (mask & FACE_SIDE) 
       {
-	if ((abs (a_position.z ()) < (0.5 * _z_ + hskin))   
-	    && (abs (r - _radius_) < hskin)) return true;
+        if ((abs (a_position.z ()) < (0.5 * _z_ + hskin))   
+            && (abs (r - _radius_) < hskin)) return true;
       }
     return false;
   }
   
   bool 
   cylinder::find_intercept (const vector_3d & a_from, 
-		       const vector_3d & a_direction,
-		       intercept_t & a_intercept,
-		       double a_skin) const
+                            const vector_3d & a_direction,
+                            intercept_t & a_intercept,
+                            double a_skin) const
   {
     bool debug = false;
     //debug = true;
@@ -302,58 +302,58 @@ namespace geomtools {
     double ts[2];
     if (debug)
       {
-	clog << "DEVEL: cylinder::find_intercept: from= "
-		  << a_from
-		  << endl;
-	clog << "DEVEL: cylinder::find_intercept: direction= "
-		  << a_direction
-		  << endl;
-	clog << "DEVEL: cylinder::find_intercept: a= "
-		  << a
-		  << endl;
-	clog << "DEVEL: cylinder::find_intercept: b= "
-		  << b
-		  << endl;
-	clog << "DEVEL: cylinder::find_intercept: c= "
-		  << c
-		  << endl;
-	clog << "DEVEL: cylinder::find_intercept: delta= "
-		  << delta
-		  << endl;
+        clog << "DEVEL: cylinder::find_intercept: from= "
+             << a_from
+             << endl;
+        clog << "DEVEL: cylinder::find_intercept: direction= "
+             << a_direction
+             << endl;
+        clog << "DEVEL: cylinder::find_intercept: a= "
+             << a
+             << endl;
+        clog << "DEVEL: cylinder::find_intercept: b= "
+             << b
+             << endl;
+        clog << "DEVEL: cylinder::find_intercept: c= "
+             << c
+             << endl;
+        clog << "DEVEL: cylinder::find_intercept: delta= "
+             << delta
+             << endl;
       }
     if (delta >= 0.0)
       {
-	double q = sqrt (delta);
-	double n = a + a;
-	ts[0] = (- b + q) / n;
-	ts[1] = (- b - q) / n;
+        double q = sqrt (delta);
+        double n = a + a;
+        ts[0] = (- b + q) / n;
+        ts[1] = (- b - q) / n;
       }
     if (debug)
       {
-	clog << "DEVEL: cylinder::find_intercept: ts[" << 0 << "]= "
-		  << ts[0]
-		  << endl;
-	clog << "DEVEL: cylinder::find_intercept: ts[" << 1 << "]= "
-		  << ts[1]
-		  << endl;
+        clog << "DEVEL: cylinder::find_intercept: ts[" << 0 << "]= "
+             << ts[0]
+             << endl;
+        clog << "DEVEL: cylinder::find_intercept: ts[" << 1 << "]= "
+             << ts[1]
+             << endl;
       }
     for (int i = 0; i < 2; i++)
       {
-	double tsi = ts[i];
-	if (isnormal (tsi) && (tsi > 0.0))
-	  {
-	    if (t[CYL_SIDE] < 0) 
-	      {
-		t[CYL_SIDE] = tsi;
-	      }
-	    else 
-	      {
-		if (tsi < t[CYL_SIDE]) 
-		  {
-		    t[CYL_SIDE] = tsi;
-		  }
-	      }
-	  }
+        double tsi = ts[i];
+        if (isnormal (tsi) && (tsi > 0.0))
+          {
+            if (t[CYL_SIDE] < 0) 
+              {
+                t[CYL_SIDE] = tsi;
+              }
+            else 
+              {
+                if (tsi < t[CYL_SIDE]) 
+                  {
+                    t[CYL_SIDE] = tsi;
+                  }
+              }
+          }
       }
     
     double z0 = a_from.z ();
@@ -365,32 +365,32 @@ namespace geomtools {
     int face_min = 0;
     for (int i = 0; i < (int) NFACES; i++)
       {
-	double ti = t[i];
-	if (debug)
-	  {
-	    clog << "DEVEL: cylinder::find_intercept: t[" << i << "]= "
-		      << ti << " t_min=" << t_min 
-		      << " face_min=" << face_min 
-		      << endl;
-	  }
-	if (isnormal (ti) && (ti > 0.0))
-	  {
-	    int face_bit = (0x1 << i); // face mask
-	    vector_3d intercept = a_from + a_direction * ti;
-	    if (is_on_surface (intercept, face_bit, a_skin))
-	      {
-		if ((t_min < 0.0) || (ti < t_min))
-		  {
-		    t_min = ti;
-		    face_min = face_bit;
-		  }
-	      }
-	  }
+        double ti = t[i];
+        if (debug)
+          {
+            clog << "DEVEL: cylinder::find_intercept: t[" << i << "]= "
+                 << ti << " t_min=" << t_min 
+                 << " face_min=" << face_min 
+                 << endl;
+          }
+        if (isnormal (ti) && (ti > 0.0))
+          {
+            int face_bit = (0x1 << i); // face mask
+            vector_3d intercept = a_from + a_direction * ti;
+            if (is_on_surface (intercept, face_bit, a_skin))
+              {
+                if ((t_min < 0.0) || (ti < t_min))
+                  {
+                    t_min = ti;
+                    face_min = face_bit;
+                  }
+              }
+          }
       }
     a_intercept.reset ();
     if (face_min > 0) 
       {
-	a_intercept.set (0, face_min, a_from + a_direction * t_min);
+        a_intercept.set (0, face_min, a_from + a_direction * t_min);
       }
     return a_intercept.is_ok ();
   }
@@ -398,8 +398,8 @@ namespace geomtools {
   ostream & operator<< (ostream & a_out, const cylinder & a_cylinder)
   {
     a_out << '{' << cylinder::CYLINDER_LABEL << ' ' 
-	 << a_cylinder._radius_ << ' ' 
-	 << a_cylinder._z_ << '}';
+          << a_cylinder._radius_ << ' ' 
+          << a_cylinder._z_ << '}';
     return a_out;
   }
 
@@ -410,46 +410,46 @@ namespace geomtools {
     a_in.get (c);
     if (c != '{') 
       {
-	a_in.clear (ios_base::failbit);
-	return a_in;
+        a_in.clear (ios_base::failbit);
+        return a_in;
       } 
     string name;
     a_in >> name;
     if (name != cylinder::CYLINDER_LABEL) 
       {
-	a_in.clear (ios_base::failbit);
-	return a_in;
+        a_in.clear (ios_base::failbit);
+        return a_in;
       } 
     double r, z;
     a_in >> r >> z;
     if (! a_in) 
       {
-	a_in.clear (ios_base::failbit);
-	return a_in;
+        a_in.clear (ios_base::failbit);
+        return a_in;
       } 
     c = 0;
     a_in.get (c);
     if (c != '}') 
       {
-	a_in.clear (ios_base::failbit);
-	return a_in;
+        a_in.clear (ios_base::failbit);
+        return a_in;
       } 
     try 
       {
-	a_cylinder.set (r,z);
+        a_cylinder.set (r,z);
       }
     catch (...)
       {
-	a_cylinder.reset ();
-	a_in.clear (ios_base::failbit);
+        a_cylinder.reset ();
+        a_in.clear (ios_base::failbit);
       }
     return a_in;
   }
 
   void cylinder::tree_dump (ostream & a_out, 
-			    const string & a_title, 
-			    const string & a_indent, 
-			    bool a_inherit) const
+                            const string & a_title, 
+                            const string & a_indent, 
+                            bool a_inherit) const
   {
     namespace du = datatools::utils;
     string indent;
@@ -457,12 +457,110 @@ namespace geomtools {
     i_object_3d::tree_dump (a_out, a_title, a_indent, true);
 
     a_out << indent << du::i_tree_dumpable::tag 
-	 << "Radius : " << get_r () / CLHEP::mm << " mm" << endl;
+          << "Radius : " << get_r () / CLHEP::mm << " mm" << endl;
     a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)  
-	 << "Z : " << get_z () / CLHEP::mm << " mm" << endl;
+          << "Z : " << get_z () / CLHEP::mm << " mm" << endl;
     return;
   }
 
+  void cylinder::generate_wires (std::list<polyline_3d> & lpl_, 
+                                 const placement & p_, 
+                                 uint32_t options_) const
+  {
+    const int nsamples = 36;
+    for (int j = 0; j < 2; j++)
+      {
+        double z = -0.5 * get_z () + j * get_z (); 
+        for (int jj = 0; jj < 3; jj++)
+          {
+            double r = get_r ();
+            r /= (1 + jj);
+            vector_3d vertex[nsamples];
+            for (int i = 0; i < nsamples; i++)
+              {
+                double thetai = i * 2. * M_PI/nsamples;
+                vertex[i].set (r * std::cos (thetai),
+                               r * std::sin (thetai),
+                               z);
+              }
+            {
+              polyline_3d dummy;
+              lpl_.push_back (dummy);
+            }
+            polyline_3d & pl = lpl_.back ();
+            pl.set_closed (true);
+            for (int i = 0; i < 36; i++)
+              {
+                vector_3d v;
+                p_.child_to_mother (vertex[i], v);
+                pl.add (v);
+              }
+          }
+        for (int k = 0; k < 2; k++)
+          {
+            vector_3d vertex[2];
+            vertex[0].set (-(k%2)*get_r (), -((k+1)%2)*get_r (), z);
+            vertex[1].set (+(k%2)*get_r (), +((k+1)%2)*get_r (), z);
+            {
+              polyline_3d dummy;
+              lpl_.push_back (dummy);
+            }
+            polyline_3d & pl = lpl_.back ();
+            pl.set_closed (false);
+            for (int i = 0; i < 2; i++)
+              {
+                vector_3d v;
+                p_.child_to_mother (vertex[i], v);
+                pl.add (v);
+              }
+          }
+      /*
+        vector_3d vertex[nsamples];
+        for (int i = 0; i < nsamples; i++)
+          {
+            double thetai = i * 2. * M_PI/nsamples;
+            vertex[i].set (get_r () * std::cos (thetai),
+                           get_r () * std::sin (thetai),
+                           -0.5 * get_z () + j * get_z ());
+          }
+        {
+          polyline_3d dummy;
+          lpl_.push_back (dummy);
+        }
+        polyline_3d & pl = lpl_.back ();
+        pl.set_closed (true);
+        for (int i = 0; i < 36; i++)
+          {
+            vector_3d v;
+            p_.child_to_mother (vertex[i], v);
+            pl.add (v);
+          }
+        */
+      }
+     for (int i = 0; i < nsamples; i++)
+      {
+        vector_3d vertex[2];
+        double thetai = i * 2. * M_PI/nsamples;
+        double x = get_r () * std::cos (thetai);
+        double y = get_r () * std::sin (thetai);
+        vertex[0].set (x, y, -0.5 * get_z ());
+        vertex[1].set (x, y, +0.5 * get_z ());
+        {
+          polyline_3d dummy;
+          lpl_.push_back (dummy);
+          polyline_3d & pl = lpl_.back ();
+          pl.set_closed (false);
+          for (int i = 0; i < 2; i++)
+            {
+              vector_3d v;
+              p_.child_to_mother (vertex[i], v);
+              pl.add (v);
+            }
+        }
+      }
+    return;
+  }
+ 
 } // end of namespace geomtools
 
 // end of cylinder.cc
