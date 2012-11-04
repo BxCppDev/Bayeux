@@ -24,7 +24,7 @@
 # setup version numbers
 set(datatools_VERSION_MAJOR 4)
 set(datatools_VERSION_MINOR 2)
-set(datatools_PATCH_VERSION 0)
+set(datatools_PATCH_VERSION 1)
 set(datatools_VERSION_STR "${datatools_VERSION_MAJOR}.${datatools_VERSION_MINOR}.${datatools_PATCH_VERSION}")
 math(EXPR datatools_VERSION_NUMERIC "${datatools_VERSION_MAJOR}*100000+${datatools_VERSION_MINOR}*100+${datatools_PATCH_VERSION}")
 
