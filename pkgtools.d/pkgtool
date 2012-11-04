@@ -662,7 +662,7 @@ function do_configure ()
 
     if [ "x${install_prefix}" = "x" ]; then
 	if [ "x${workspace_dir}" != "x" ]; then
-	    install_prefix=${workspace_dir}/Bayeux-${bayeux_version}/Install-$(pkgtools__get_sys)
+	    install_prefix=${workspace_dir}/Bayeux-${bayeux_tag}/Install-$(pkgtools__get_sys)
 	    using_workspace=1
 	fi	
     fi
