@@ -17,8 +17,7 @@
 #define __mygsl__mean_h 1
 
 #include <cstdlib>
-
-//using   namespace std;
+#include <boost/cstdint.hpp>
 
 namespace mygsl {
 
@@ -37,9 +36,9 @@ namespace mygsl {
       void add (double value_);
       void remove (double value_);
      private:
-      size_t _n_;
-      double _sum_;
-      double _sum_of_squared_;
+      uint32_t _n_;
+      double  _sum_;
+      double  _sum_of_squared_;
    };
 
   class weighted_mean 

@@ -12,14 +12,29 @@ function my_exit ()
     exit $1
 }
 
-bio_support=0
+bio_support=1
 python_wrapper_support=0
+validation_support=1
+testing_support=1
+doc_support=1
 
 appname=${APPNAME}
 appversion=0.1
 package_name="mygsl"
-list_of_actions="check configure unconfigure build doc test untest clean install uninstall reset quickstart list_of_actions"
+list_of_actions="check configure unconfigure build clean install uninstall reset quickstart list_of_actions"
 pkgtools_dir="pkgtools.d"
+
+if [ ${doc_support} -eq 1 ]; then
+    list_of_actions="${list_of_actions} doc "
+fi
+
+if [ ${testing_support} -eq 1 ]; then
+    list_of_actions="${list_of_actions} test untest "
+fi
+
+if [ ${validation_support} -eq 1 ]; then
+    list_of_actions="${list_of_actions} validate clean_validate "
+fi
 
 the_base_dir=$(pwd)
 
@@ -124,11 +139,19 @@ EOF
       --without-python-wrapper   : do not generate the Boost/Python wrapper module (default)
 EOF
     fi
-    cat <<EOF
+    if [ ${doc_support} -eq 1 ]; then
+	cat <<EOF
       --with-documentation       : generate documentation material (default)
       --without-documentation    : do not generate documentation material
+EOF
+    fi
+    if [ ${testing_support} -eq 1 ]; then
+	cat <<EOF
       --with-test                : generate test material (default)
       --without-test             : do not generate test material
+EOF
+    fi
+    cat <<EOF
       --with-dependency-check    : perform a rudimentary dependency check before processing
       --without-dependency-check : perform a rudimentary dependency check before processing (default)
       --build-directory [BUILD DIRECTORY] :
@@ -142,12 +165,30 @@ EOF
                                    'auto' computes the number of available
                                    processors if possible.
 
+EOF
+    if [ ${doc_support} -eq 1 ]; then
+	cat <<EOF
     doc                 : build documentation
-    test                : run test material
-    untest              : remove test material
+EOF
+    fi
+    cat <<EOF
     clean               : clean build material
     install             : install the package
     uninstall           : uninstall the package (not fully implemented yet !)
+EOF
+    if [ ${testing_support} -eq 1 ]; then
+ 	cat <<EOF
+    test                : run post build test material
+    untest              : remove/clean post build test material
+EOF
+    fi
+    if [ ${validation_support} -eq 1 ]; then
+ 	cat <<EOF
+    validate            : run the validation protocol
+    clean_validate      : clean the material from the validation protocol
+EOF
+    fi
+    cat <<EOF
     reset               : reset the package's source tree
     list_of_actions     : print the list of available actions
 
@@ -157,10 +198,20 @@ EOF
     shell> ${appname} configure --install-prefix \${HOME}/software
     shell> ${appname} build --number-of-tasks auto
     shell> ${appname} doc
-    shell> ${appname} test
-    shell> ${appname} install
-
 EOF
+    if [ ${testing_support} -eq 1 ]; then
+	cat <<EOF
+    shell> ${appname} test
+EOF
+    fi
+    cat <<EOF
+    shell> ${appname} install
+EOF
+    if [ ${validation_support} -eq 1 ]; then
+	cat <<EOF
+    shell> ${appname} validate
+EOF
+    fi
     return 0
 }
 
@@ -208,34 +259,15 @@ while [ -n "$1" ]; do
 	arg=${token}
 	parse_switch=0
 	if [ "x${the_action_mode}" = "x" ]; then
-	    if [ "$arg" = "check" ]; then
-		the_action_mode="${arg}"
-	    elif [ "$arg" = "configure" ]; then
-		the_action_mode="${arg}"
-	    elif [ "$arg" = "unconfigure" ]; then
-		the_action_mode="${arg}"
-            elif [ "$arg" = "build" ]; then
-	        the_action_mode="${arg}"
-            elif [ "$arg" = "doc" ]; then
-	        the_action_mode="${arg}"
-            elif [ "$arg" = "test" ]; then
-	        the_action_mode="${arg}"
-            elif [ "$arg" = "untest" ]; then
-	        the_action_mode="${arg}"
-            elif [ "$arg" = "install" ]; then
-	        the_action_mode="${arg}"
-            elif [ "$arg" = "uninstall" ]; then
-	        the_action_mode="${arg}"
-            elif [ "$arg" = "clean" ]; then
-	        the_action_mode="${arg}"
-            elif [ "$arg" = "reset" ]; then
-	        the_action_mode="${arg}"
-            elif [ "$arg" = "quickstart" ]; then
-	        the_action_mode="${arg}"
-            elif [ "$arg" = "list_of_actions" ]; then
-	        the_action_mode="${arg}"
-	    else
-		pkgtools__msg_error "Invalid argument !"
+	    the_action_candidate="${arg}"
+	    for action_tmp in ${list_of_actions}; do
+		if [ "x${action_tmp}" = "x${the_action_candidate}" ]; then
+		   the_action_mode="${the_action_candidate}"
+		   break
+		fi
+	    done
+	    if [ "x${the_action_mode}" = "x" ]; then
+		pkgtools__msg_error "Invalid action name '${the_action_candidate}' !"
 		my_exit 1
 	    fi
 	else
@@ -282,21 +314,21 @@ function do_check ()
     missing_material=""
     missing_material_alt=""
 
-    which datatools-config > /dev/null 2>&1
-    if [ $? -ne 0 ]; then
-	missing_material="${missing_material}datatools "
-	pkgtools__msg_warning "Cannot find datatools !"
-    else
-	pkgtools__msg_notice "Found datatools $(datatools-config --version) !"
-    fi
+    # which datatools-config > /dev/null 2>&1
+    # if [ $? -ne 0 ]; then
+    # 	missing_material="${missing_material}datatools "
+    # 	pkgtools__msg_warning "Cannot find datatools !"
+    # else
+    # 	pkgtools__msg_notice "Found datatools $(datatools-config --version) !"
+    # fi
 
-    which gsl-config > /dev/null 2>&1
-    if [ $? -ne 0 ]; then
-	missing_material="${missing_material}GSL "
-	pkgtools__msg_warning "Cannot find GSL !"
-    else
-	pkgtools__msg_notice "Found GSL $(gsl-config --version) !"
-    fi
+    # which yyy-config > /dev/null 2>&1
+    # if [ $? -ne 0 ]; then
+    # 	missing_material="${missing_material}Yyy "
+    # 	pkgtools__msg_warning "Cannot find Yyy !"
+    # else
+    # 	pkgtools__msg_notice "Found mygsl $(yyy-config --version) !"
+    # fi
 
     which doxygen > /dev/null 2>&1
     if [ $? -ne 0 ]; then
@@ -342,7 +374,7 @@ function do_configure ()
 
     while [ -n "$1" ]; do
 	local option="$1"
-	#pkgtools__msg_warning "Option: '${option}'"
+	pkgtools__msg_devel "Configure option: '${option}'"
 
 	if [ "${option}" = "--build-directory" ]; then
 	    shift 1
@@ -481,7 +513,7 @@ function do_build ()
 {
     __pkgtools__at_function_enter do_build
 
-    pkgtools__msg_devel "Options are : '$@'"
+    pkgtools__msg_devel "Build options are : '$@'"
 
     if [ ! -d ${the_build_dir} ]; then
 	pkgtools__msg_error "Cannot find the build directory ! Please configure first !"
@@ -497,7 +529,7 @@ function do_build ()
     fi
     while [ -n "$1" ]; do
 	local option="$1"
-	pkgtools__msg_devel "Option: '${option}'"
+	pkgtools__msg_devel "Build option: '${option}'"
 	if [ "${option}" = "--number-of-tasks" ]; then
 	    shift 1
 	    local number_of_tasks_str="$1"
@@ -763,6 +795,61 @@ function do_uninstall ()
     return 0
 }
 
+function do_validate ()
+{
+    __pkgtools__at_function_enter do_validate
+
+    if [ ! -d ${the_build_dir} ]; then
+	pkgtools__msg_error "Cannot find the build directory ! Please configure and build first !"
+	__pkgtools__at_function_exit
+	return 1
+    fi
+
+    cd ${the_build_dir}
+    make validation_run
+    if [ $? -ne 0 ]; then
+	pkgtools__msg_error "Cannot validate the '${package_name}' package !"
+	__pkgtools__at_function_exit
+	return 1
+    fi
+
+    make validation_report
+    if [ $? -ne 0 ]; then
+	pkgtools__msg_error "Cannot report the validation of the '${package_name}' package !"
+	__pkgtools__at_function_exit
+	return 1
+    fi
+
+    cd ${the_base_dir}
+
+    __pkgtools__at_function_exit
+    return 0
+}
+
+function do_clean_validate ()
+{
+    __pkgtools__at_function_enter do_clean_validate
+
+    if [ ! -d ${the_build_dir} ]; then
+	pkgtools__msg_error "Cannot find the build directory ! Please configure and build first !"
+	__pkgtools__at_function_exit
+	return 1
+    fi
+
+    cd ${the_build_dir}
+    make validation_clean
+    if [ $? -ne 0 ]; then
+	pkgtools__msg_error "Cannot clean validation material of the '${package_name}' package !"
+	__pkgtools__at_function_exit
+	return 1
+    fi
+
+    cd ${the_base_dir}
+
+    __pkgtools__at_function_exit
+    return 0
+}
+
 function do_clean ()
 {
     __pkgtools__at_function_enter do_clean
@@ -790,6 +877,13 @@ function do_reset ()
 {
     __pkgtools__at_function_enter do_reset
 
+    if [ ${validation_support} -eq 1 ]; then
+	do_clean_validate
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_warning "Could not clean the validation material from the '${package_name}' package !"
+	fi
+    fi
+
     do_uninstall
     if [ $? -ne 0 ]; then
 	pkgtools__msg_warning "Could not uninstall the '${package_name}' package !"
@@ -797,11 +891,13 @@ function do_reset ()
 	# return 1
     fi
 
-    do_untest
-    if [ $? -ne 0 ]; then
-	pkgtools__msg_warning "Could not clean test material in the '${package_name}' package !"
+    if [ ${testing_support} -eq 1 ]; then
+	do_untest
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_warning "Could not clean test material in the '${package_name}' package !"
 	# __pkgtools__at_function_exit
 	# return 1
+	fi
     fi
 
     do_clean
@@ -919,6 +1015,27 @@ function main ()
 	fi
     fi
 
+    if [ ${validation_support} -eq 1 ]; then
+
+	if [ "${action_mode}" = "validate" ]; then
+	    do_validate $@
+	    if [ $? -ne 0 ]; then
+		pkgtools__msg_error "Validatation failed !"
+		__pkgtools__at_function_exit
+		return 1
+	    fi
+	fi
+
+	if [ "${action_mode}" = "clean_validate" ]; then
+	    do_clean_validate $@
+	    if [ $? -ne 0 ]; then
+		pkgtools__msg_error "Validatation cleaning failed !"
+		__pkgtools__at_function_exit
+		return 1
+	    fi
+	fi
+    fi
+
     if [ "${action_mode}" = "clean" ]; then
 	do_clean $@
 	if [ $? -ne 0 ]; then
@@ -929,12 +1046,62 @@ function main ()
     fi
 
     if [ "${action_mode}" = "quickstart" ]; then
-	do_configure $@ && do_build $@ && do_doc $@ && do_test && do_install
+	do_configure $@
 	if [ $? -ne 0 ]; then
-	    pkgtools__msg_error "Quickstart failed !"
+	    pkgtools__msg_error "Quickstart/configure failed !"
 	    __pkgtools__at_function_exit
 	    return 1
 	fi
+
+	do_build
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Quickstart/build failed !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+
+	if [ ${doc_support} -eq 1 ]; then
+	    do_doc
+	    if [ $? -ne 0 ]; then
+		pkgtools__msg_error "Quickstart/doc failed !"
+		__pkgtools__at_function_exit
+		return 1
+	    fi
+	fi
+
+	if [ ${testing_support} -eq 1 ]; then
+	    do_test
+	    if [ $? -ne 0 ]; then
+		pkgtools__msg_error "Quickstart/testing failed !"
+		__pkgtools__at_function_exit
+		return 1
+	    fi
+	fi
+
+	do_install $@
+	if [ $? -ne 0 ]; then
+	    pkgtools__msg_error "Quickstart/install failed !"
+	    __pkgtools__at_function_exit
+	    return 1
+	fi
+
+	local run_validation=0
+        while [ -n "$1" ]; do
+	  local option="$1"
+	  if [ "${option}" = "--run-validation" ]; then
+	      run_validation=1
+	  fi
+	  shift 1
+	done
+	if [ ${validation_support} -eq 1 -a ${run_validation} -eq 1 ]; then
+	    do_validate $@
+	    if [ $? -ne 0 ]; then
+		pkgtools__msg_error "Validation failed !"
+		__pkgtools__at_function_exit
+		return 1
+	    fi
+	fi
+
     fi
 
     if [ "${action_mode}" = "reset" ]; then

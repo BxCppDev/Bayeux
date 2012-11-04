@@ -29,6 +29,8 @@ set ( mygsl_tests_programs_list
   #test_fft_real2.cxx
   #test_fft_real.cxx
   test_histogram.cxx
+  test_histogram_2d.cxx
+  test_histogram_pool.cxx
   test_interval.cxx
   test_ioutils.cxx
   test_linear_regression.cxx
@@ -62,9 +64,9 @@ include_directories ( ${PROJECT_BINARY_DIR}/include
   ${PROJECT_SOURCE_DIR}/testing
   )
 
-if ( _depends_on_datatools ) 
-  include_directories ( ${datatools_INCLUDE_DIRS} )
-endif ()
+#if ( _depends_on_datatools ) 
+include_directories ( ${datatools_INCLUDE_DIRS} )
+#endif ()
 include_directories ( ${GSL_INCLUDE_DIRS} )
 
 # linker search paths :
@@ -88,16 +90,17 @@ if ( MYGSL_ALL_TESTS )
     # last thing we have to do is to tell CMake what libraries 
     # our executable needs,
     set ( _test_libraries mygsl )
-    # if ( _depends_on_datatools ) 
-    #   list ( APPEND _test_libraries ${datatools_LIBRARIES} )
-    # endif ()
-    # list ( APPEND _test_libraries ${GSL_LIBRARIES} )
+    if ( MYGSL_WITH_BIO_SUPPORT AND MYGSL_WITH_BIO )
+      set ( _test_libraries mygsl_bio )
+    endif ()
+
     
     target_link_libraries ( ${test_executable} ${_test_libraries} )
 
     add_test ( NAME ${test_executable}.run
       COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
       --tmp-dir ${_test_tmp_dir}
+      --data-dir ${PROJECT_SOURCE_DIR} 
       --prefix ${PROJECT_SOURCE_DIR} 
       --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
       run
@@ -121,11 +124,11 @@ message ( STATUS "testing: Performing all available tests : ${MYGSL_INSTALL_TEST
 if (MYGSL_INSTALL_TEST_PROGRAMS) 
   set ( _test_install_dir ${CMAKE_INSTALL_DATADIR}/testing )
 
-  #file ( GLOB mygsl_tests_config config/* )
-  #install ( FILES ${mygsl_tests_config} 
-  #   	      DESTINATION ${_test_install_dir}/config  
-  #           PERMISSIONS OWNER_READ GROUP_READ WORLD_READ 
-  #         )
+  file ( GLOB mygsl_tests_config config/*.conf config/*.data )
+  install ( FILES ${mygsl_tests_config} 
+            DESTINATION ${_test_install_dir}/config  
+            PERMISSIONS OWNER_READ GROUP_READ WORLD_READ 
+          )
 
   install ( FILES ${mygsl_tests_programs} 
     #  mygsl_test_data.h 

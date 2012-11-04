@@ -5,7 +5,7 @@
 #ifndef __mygsl_mygsl_config_h
 #define __mygsl_mygsl_config_h 1
 
-/*** brio versioning information ***/
+/*** mygsl versioning information ***/
 
 //  MYGSL_VERSION % 100        is the patch level
 //  MYGSL_VERSION / 100 % 1000 is the minor version
@@ -27,13 +27,18 @@
 #cmakedefine01 MYGSL_WITH_DEBUG
 
 /*** mygsl embedded Boost/Serialization based I/O ***/
-#if x0 == x1
+#if x1 == x1
 #cmakedefine01 MYGSL_WITH_BIO 
 #endif
 
 /*** mygsl Boost/Python module ***/
 #if x0 == x1
 #cmakedefine01 MYGSL_WITH_PYTHON_WRAPPER
+#endif
+
+/*** mygsl with resources ***/
+#if x1 == x1
+#define MYGSL_DEFAULT_RESOURCES_BASE_DIR "@CMAKE_INSTALL_FULL_DATADIR@"
 #endif
 
 #endif // __mygsl_mygsl_config_h

@@ -40,6 +40,7 @@ EOF
 
 tmp_test_dir=/tmp/${USER}/mygsl/test
 prefix_test_dir=
+data_test_dir=
 exe_test=
 
 #######################################################
@@ -65,7 +66,10 @@ while [ -n "$1" ]; do
 	elif [ "${opt}" = "--prefix" ]; then
 	    shift 1
 	    prefix_test_dir="$1"
-	elif [ "${opt}" = "--tmp-dir" ]; then
+	elif [ "${opt}" = "--data-dir" ]; then
+            shift 1
+            data_test_dir="$1"
+ 	elif [ "${opt}" = "--tmp-dir" ]; then
 	    shift 1
 	    tmp_test_dir="$1"
 	elif [ "${opt}" = "--exe" ]; then
@@ -99,6 +103,7 @@ if [ ${debug} -ne 0 ]; then
     echo "DEBUG: ${appname}: tmp_test_dir=${tmp_test_dir}" >&2
     echo "DEBUG: ${appname}: exe_test=${exe_test}" >&2
     echo "DEBUG: ${appname}: prefix_test_dir=${prefix_test_dir}" >&2
+    echo "DEBUG: ${appname}: data_test_dir=${data_test_dir}" >&2
 fi
 
 ##########################################################
@@ -120,6 +125,20 @@ function do_run ()
 	echo "ERROR: ${appname}: Missing prefix_test_dir !"
 	return 1
     fi
+
+    if [ "x${data_test_dir}" != "x" ]; then
+        export MYGSL_DATA_DIR=${data_test_dir}
+    fi
+
+    if [ "x${MYGSL_DATA_DIR}" = "x" ]; then
+        echo "ERROR: ${appname}: Missing MYGSL_DATA_DIR environment variable !"
+        return 1
+    fi
+    if [ ! -d ${MYGSL_DATA_DIR} ]; then
+        echo "ERROR: ${appname}: Directory '${MYGSL_DATA_DIR}' does not exists !"
+        return 1
+    fi
+
     
     export MYGSL_ROOT=${prefix_test_dir}
     echo "NOTICE: ${appname}: First clean the test temporary directory..." >&2

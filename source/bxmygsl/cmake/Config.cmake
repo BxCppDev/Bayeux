@@ -27,11 +27,11 @@ set ( mygsl_PATCH_VERSION 0 )
 set ( mygsl_VERSION_STR "${mygsl_VERSION_MAJOR}.${mygsl_VERSION_MINOR}.${mygsl_PATCH_VERSION}" )
 math ( EXPR mygsl_VERSION_NUMERIC "${mygsl_VERSION_MAJOR}*100000+${mygsl_VERSION_MINOR}*100+${mygsl_PATCH_VERSION}" )
 
-message(STATUS "Version major number : ${mygsl_VERSION_MAJOR}")
-message(STATUS "Version minor number : ${mygsl_VERSION_MINOR}")
-message(STATUS "Version patch number : ${mygsl_PATCH_VERSION}")
-message(STATUS "Version              : \"${mygsl_VERSION_STR}\"")
-message(STATUS "Version (numeric)    : ${mygsl_VERSION_NUMERIC}")
+message(STATUS "${PROJECT_NAME}: Version major number : ${mygsl_VERSION_MAJOR}")
+message(STATUS "${PROJECT_NAME}: Version minor number : ${mygsl_VERSION_MINOR}")
+message(STATUS "${PROJECT_NAME}: Version patch number : ${mygsl_PATCH_VERSION}")
+message(STATUS "${PROJECT_NAME}: Version              : \"${mygsl_VERSION_STR}\"")
+message(STATUS "${PROJECT_NAME}: Version (numeric)    : ${mygsl_VERSION_NUMERIC}")
 
 # Set the default build type to release
 if ( NOT CMAKE_BUILD_TYPE )

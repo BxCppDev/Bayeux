@@ -45,7 +45,7 @@ set(CPACK_COMPONENT_APIDOC_INSTALL_TYPES Development)
 
 set(CPACK_COMPONENT_UTILS_DISPLAY_NAME "mygsl utilities")
 set(CPACK_COMPONENT_UTILS_DESCRIPTION
-    "Provides a FindMygsl.cmake file to be used with project based on CMake"
+    "Provides a Findmygsl.cmake file to be used with project based on CMake"
 )
 set(CPACK_COMPONENT_UTILS_GROUP "Development")
 set(CPACK_COMPONENT_UTILS_DISABLED TRUE)
