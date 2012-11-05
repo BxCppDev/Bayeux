@@ -149,6 +149,7 @@ set ( BAYEUX_KNOWN_COMPONENTS
 set ( BAYEUX_KNOWN_CONFIGS 
        "trunk"
        "${Bayeux_VERSION}"
+       "0.9.3"
        "0.9.2"
        "0.9.1"
        "0.9.0"
@@ -222,9 +223,41 @@ set ( BAYEUX_EMFIELD_MINIMAL_TAG_VERSION    "0.1.0"  )
 set ( BAYEUX_TRACKFIT_MINIMAL_TAG_VERSION   "2.0.1"  )
 
 
-# Default configuration (0.9.3) :
+# Default configuration (0.9.4) :
 if ( BAYEUX_CONFIG STREQUAL "default" OR BAYEUX_CONFIG STREQUAL ${Bayeux_VERSION} )
   message ( STATUS "${PROJECT_NAME}: Bayeux 'default/${Bayeux_VERSION}' configuration...") 
+
+  set ( BAYEUX_DATATOOLS_VERSION  "4.2.0"  )
+  set ( BAYEUX_DATATOOLS_PATH     "tags/datatools-4.2.0"  )
+
+  set ( BAYEUX_BRIO_VERSION       "3.2.0"  )
+  set ( BAYEUX_BRIO_PATH          "tags/brio-3.2.0"  )
+
+  set ( BAYEUX_MYGSL_VERSION      "3.2.0"  )
+  set ( BAYEUX_MYGSL_PATH         "tags/mygsl-3.2.0"  )
+
+  set ( BAYEUX_CUTS_VERSION       "3.1.1"  )
+  set ( BAYEUX_CUTS_PATH          "tags/cuts-3.1.1"  )
+
+  set ( BAYEUX_GEOMTOOLS_VERSION  "3.2.0"  )
+  set ( BAYEUX_GEOMTOOLS_PATH     "tags/geomtools-3.2.0"  )
+
+  set ( BAYEUX_MATERIALS_VERSION  "3.2.0"  )
+  set ( BAYEUX_MATERIALS_PATH     "tags/materials-3.2.0"  )
+
+  set ( BAYEUX_GENVTX_VERSION     "3.1.1"  )
+  set ( BAYEUX_GENVTX_PATH        "tags/genvtx-3.1.1"  )
+
+  set ( BAYEUX_GENBB_HELP_VERSION "4.1.1"  )
+  set ( BAYEUX_GENBB_HELP_PATH    "tags/genbb_help-4.1.1"  )
+
+  set ( BAYEUX_EMFIELD_VERSION    "0.1.0"  )
+  set ( BAYEUX_EMFIELD_PATH       "tags/emfield-0.1.0"  )
+
+  set ( BAYEUX_TRACKFIT_VERSION   "2.1.0"  )
+  set ( BAYEUX_TRACKFIT_PATH      "tags/trackfit-2.1.0"  )
+
+elseif ( BAYEUX_CONFIG STREQUAL 0.9.3 )
 
   set ( BAYEUX_DATATOOLS_VERSION  "4.2.0"  )
   set ( BAYEUX_DATATOOLS_PATH     "tags/datatools-4.2.0"  )
