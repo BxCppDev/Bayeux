@@ -38,7 +38,7 @@
 #warning This executable must be built with its own mygsl Boost/Serialization code. 
 #include <mygsl/serialization/the_serializable.h>      
 #else
-#warning This executable must ensure the datatools Boost/Serialization library is loaded. 
+#warning This executable must ensure the mygsl Boost/Serialization library is loaded. 
 namespace mygsl {
   namespace serialization {
     struct bio_guard
