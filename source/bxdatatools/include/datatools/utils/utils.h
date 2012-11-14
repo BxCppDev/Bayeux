@@ -1,7 +1,9 @@
 // -*- mode: c++; -*-
 // utils.h
+
 #ifndef DATATOOLS_UTILS_UTILS_H_
 #define DATATOOLS_UTILS_UTILS_H_
+
 // Standard Library
 #include <cstdlib>
 #include <list>

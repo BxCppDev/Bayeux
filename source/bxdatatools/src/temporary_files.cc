@@ -16,6 +16,7 @@
 
 // This Project
 #include <datatools/utils/utils.h>
+#include <datatools/utils/ioutils.h>
 
 namespace datatools {
 namespace utils {
@@ -213,14 +214,30 @@ void temp_file::create(std::string a_path_dir, std::string a_pattern) {
   } else {
     path_dir_ = a_path_dir;
     fetch_path_with_env(path_dir_);
-  }
-  if (!boost::filesystem::is_directory(path_dir_)) {
-    std::ostringstream message;
-    message << "datatools::utils::temp_file::create: "
-            << "Directory with name '"
-            << path_dir_ 
-            << "' does not exist !";
-    throw std::runtime_error(message.str());   
+  } 
+  boost::filesystem::path dir_path(path_dir_.c_str ());
+  if ( boost::filesystem::exists (dir_path) 
+       && ! boost::filesystem::is_directory (dir_path))
+    {
+      std::ostringstream message;
+      message << "datatools::utils::temp_file::create: "
+              << "Path '" << dir_path.string () << "' is not a directory !";
+      throw std::runtime_error (message.str ());
+    }
+  if (!boost::filesystem::exists(dir_path)) {
+    std::clog << datatools::utils::io::notice 
+              << "datatools::utils::temp_file::create: " 
+              << "Creating base directory '"
+              << dir_path.string () << "' for temporary file." << std::endl;
+    if (! boost::filesystem::create_directories(dir_path))
+      {
+        std::ostringstream message;
+        message << "datatools::utils::temp_file::create: "
+                << "Couldn't create directory with name '"
+                << dir_path.string () 
+                << "' !";  
+        throw std::runtime_error(message.str());   
+      }
   }
 
   if (a_pattern.empty()) {

@@ -8,7 +8,6 @@
 #include <string>
 
 // Third Party
-// - A
 
 // This Project
 
