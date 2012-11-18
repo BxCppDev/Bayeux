@@ -280,10 +280,10 @@ fi
 
 if [ "x${option}" = "x--libs" -o "x${option}" = "x--ldflags" ]; then
     while [ -n "$1" ]; do
-	option2="$1"
-	if [ "x${option2}" = "x--without-bio" ]; then
+	lib_option="$1"
+	if [ "x${lib_option}" = "x--without-bio" ]; then
 	    bio_ldflags=
-	elif [ "x${option2}" = "x--with-bio" -a ${with_bio} -eq 1 ]; then
+	elif [ "x${lib_option}" = "x--with-bio" -a ${with_bio} -eq 1 ]; then
 	    bio_ldflags=${mygsl_lib_dir}/libmygsl_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
 	fi
 	shift 1
