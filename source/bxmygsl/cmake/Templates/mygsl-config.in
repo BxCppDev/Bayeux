@@ -78,8 +78,6 @@ mygsl_version=@mygsl_VERSION_STR@
 
 option="$1"
 shift 1
-option2="$1"
-shift 1
 
 if [ "x${option}" = "x" ]; then
     echo "ERROR: ${script_name}: Missing option ! Abort !" 1>&2
@@ -275,42 +273,40 @@ if [ "x${option}" = "x--bindir" ]; then
     my_exit 0
 fi
 
-more_ldflags=
+
 # compute default linkage :
-if [ ${bio_support} -eq 1 ]; then
-    bio_ldflags=
-    if [ ${with_bio} -eq 1 ]; then
-	bio_ldflags=-lmygsl_bio
-    fi
+bio_ldflags=
+bio_ldflags2=
+if [ ${with_bio} -eq 1 ]; then
+    bio_ldflags=-lmygsl_bio
+    bio_ldflags2=${mygsl_lib_dir}/libmygsl_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
+fi
+
+if [ "x${option}" = "x--libs" -o "x${option}" = "x--ldflags" ]; then
+    while [ -n "$1" ]; do
+	option2="$1"
+	if [ "x${option2}" = "x--without-bio" ]; then
+	    bio_ldflags=
+	    bio_ldflags2=
+	elif [ "x${option2}" = "x--with-bio" -a ${with_bio} -eq 1 ]; then
+	    bio_ldflags=-libmygsl_bio
+	    bio_ldflags2=${datatools_lib_dir}/libmygsl_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
+	fi
+	shift 1
+    done
 fi
 
 if [ "x${option}" = "x--libs" ]; then
-    if [ ${bio_support} -eq 1 ]; then
-	if [ "x${option2}" = "x--without-bio" ]; then
-     	    bio_ldflags=
-	fi
-	if [ "x${option2}" = "x--with-bio" -a ${with_bio} -eq 1 ]; then
-     	    bio_ldflags=-lmygsl_bio
-	fi
-	more_ldflags="${more_ldflags} ${bio_ldflags} "
-    fi
-    echo -n "-L${mygsl_lib_dir} ${more_ldflags} -lmygsl "
+    echo -n "${bio_ldflags2} "
+    echo -n "${mygsl_lib_dir}/libmygsl@CMAKE_SHARED_LIBRARY_SUFFIX@ "
     echo
     my_exit 0
 fi
 
 if [ "x${option}" = "x--ldflags" ]; then
-    if [ ${bio_support} -eq 1 ]; then
-	if [ "x${option2}" = "x--without-bio" ]; then
-    	    bio_ldflags=
-	fi
-	if [ "x${option2}" = "x--with-bio" -a ${with_bio} -eq 1 ]; then
-    	    bio_ldflags=-lmygsl_bio
-	fi
-	more_ldflags="${more_ldflags} ${bio_ldflags} "
-    fi
     (
-	echo -n "-L${mygsl_lib_dir} ${more_ldflags} -lmygsl "
+	echo -n "${bio_ldflags2} "
+	echo -n "${mygsl_lib_dir}/libmygsl@CMAKE_SHARED_LIBRARY_SUFFIX@ "
         #
         # Automated dependencies (experimental)
         #
