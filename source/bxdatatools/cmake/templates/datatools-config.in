@@ -172,29 +172,24 @@ fi
 
 # compute default linkage :
 bio_ldflags=
-bio_ldflags2=
 if [ ${with_bio} -eq 1 ]; then
-    bio_ldflags=-ldatatools_bio
-    bio_ldflags2=${datatools_lib_dir}/libdatatools_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
+    bio_ldflags=${datatools_lib_dir}/libdatatools_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
 fi
 
 if [ "x${option}" = "x--libs" -o "x${option}" = "x--ldflags" ]; then
     while [ -n "$1" ]; do
-	option2="$1"
-	if [ "x${option2}" = "x--without-bio" ]; then
+	lib_option="$1"
+	if [ "x${lib_option}" = "x--without-bio" ]; then
 	    bio_ldflags=
-	    bio_ldflags2=
-	elif [ "x${option2}" = "x--with-bio" -a ${with_bio} -eq 1 ]; then
-	    bio_ldflags=-ldatatools_bio
-	    bio_ldflags2=${datatools_lib_dir}/libdatatools_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
+	elif [ "x${lib_option}" = "x--with-bio" -a ${with_bio} -eq 1 ]; then
+	    bio_ldflags=${datatools_lib_dir}/libdatatools_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
 	fi
 	shift 1
     done
 fi
 
 if [ "x${option}" = "x--libs" ]; then
-    #echo -n "-L${datatools_lib_dir} ${bio_ldflags} -ldatatools -ldatatools_sys -ldl "
-    echo -n "${bio_ldflags2} "
+    echo -n "${bio_ldflags} "
     echo -n "${datatools_lib_dir}/libdatatools@CMAKE_SHARED_LIBRARY_SUFFIX@ "
     echo -n "${datatools_lib_dir}/libdatatools_sys@CMAKE_SHARED_LIBRARY_SUFFIX@ "
     echo -n "-ldl "
@@ -204,7 +199,7 @@ fi
 
 if [ "x${option}" = "x--ldflags" ]; then
      (
-	echo -n "${bio_ldflags2} "
+	echo -n "${bio_ldflags} "
 	echo -n "${datatools_lib_dir}/libdatatools@CMAKE_SHARED_LIBRARY_SUFFIX@ "
 	echo -n "`boost-config --ldflags serialization iostreams filesystem system python program_options` "
 	echo -n "`clhep-config --libs` -lm "
