@@ -26,8 +26,8 @@ if [ ${python_wrapper_support} -eq 1 ]; then
     fi
 fi
 
+with_bio=0
 if [ ${bio_support} -eq 1 ]; then
-    with_bio=0
     if [ "x@MYGSL_WITH_BIO@" == "x1" -o "x@MYGSL_WITH_BIO@" == "xON" ]; then
 	with_bio=1
     fi
@@ -108,23 +108,21 @@ Known values for OPTION are:
   --include             print include path pre-processor flags without dependencies
   --cflags              print include path pre-processor flags with dependencies
 EOF
+    cat<<EOF
+  --libs     [option]   print library linking information, without dependencies
+  --ldflags  [option]   print library linking information, with dependencies
+EOF
     if [ ${bio_support} -eq 1 ]; then
 	cat<<EOF
-  --with-bio            print if Boost/Serialization binary code is pre-built 
-                        in an auxiliary I/O shared library
+    Options: 
+        --with-bio      with linkage against the libmygsl_bio.so DLL (default)
+        --without-bio   without linkage against the libmygsl_bio.so DLL
 EOF
     fi
     if [ ${bio_support} -eq 1 ]; then
 	cat<<EOF
-  --libs     [option]   print library linking information, without dependencies
-  --ldflags  [option]   print library linking information, with dependencies
-      Options: --with-bio     with linkage against the libmygsl_bio.so DLL (default)
-               --without-bio  without linkage against the libmygsl_bio.so DLL
-EOF
-    else  
-	cat<<EOF
-  --libs                print library linking information, without dependencies
-  --ldflags             print library linking information, with dependencies
+  --with-bio            print if Boost/Serialization binary code is pre-built 
+                        in an auxiliary I/O shared library
 EOF
     fi
     if [ ${python_wrapper_support} -eq 1 ]; then
@@ -276,10 +274,8 @@ fi
 
 # compute default linkage :
 bio_ldflags=
-bio_ldflags2=
 if [ ${with_bio} -eq 1 ]; then
-    bio_ldflags=-lmygsl_bio
-    bio_ldflags2=${mygsl_lib_dir}/libmygsl_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
+    bio_ldflags=${mygsl_lib_dir}/libmygsl_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
 fi
 
 if [ "x${option}" = "x--libs" -o "x${option}" = "x--ldflags" ]; then
@@ -287,17 +283,15 @@ if [ "x${option}" = "x--libs" -o "x${option}" = "x--ldflags" ]; then
 	option2="$1"
 	if [ "x${option2}" = "x--without-bio" ]; then
 	    bio_ldflags=
-	    bio_ldflags2=
 	elif [ "x${option2}" = "x--with-bio" -a ${with_bio} -eq 1 ]; then
-	    bio_ldflags=-libmygsl_bio
-	    bio_ldflags2=${mygsl_lib_dir}/libmygsl_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
+	    bio_ldflags=${mygsl_lib_dir}/libmygsl_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
 	fi
 	shift 1
     done
 fi
 
 if [ "x${option}" = "x--libs" ]; then
-    echo -n "${bio_ldflags2} "
+    echo -n "${bio_ldflags} "
     echo -n "${mygsl_lib_dir}/libmygsl@CMAKE_SHARED_LIBRARY_SUFFIX@ "
     echo
     my_exit 0
@@ -305,7 +299,7 @@ fi
 
 if [ "x${option}" = "x--ldflags" ]; then
     (
-	echo -n "${bio_ldflags2} "
+	echo -n "${bio_ldflags} "
 	echo -n "${mygsl_lib_dir}/libmygsl@CMAKE_SHARED_LIBRARY_SUFFIX@ "
         #
         # Automated dependencies (experimental)
@@ -318,7 +312,7 @@ if [ "x${option}" = "x--ldflags" ]; then
 		dependency_name=$(echo ${dependency_info} | cut -d':' -f1)
 		dependency_version=$(echo ${dependency_info} | cut -d':' -f2)
 		dependency_name_lower=$(echo ${dependency_name} | tr "A-Z" "a-z" )
-		dependency_name_upper=$(echo ${dependency_name} | tr "a-z" "A-Z" )
+		dependency_name_upper=$(echo ${dependency_name} | tr "a-z" "A-Z" )<
 		dependency_no_config_script_ENVNAME="${dependency_name_upper}_NO_CONFIG_SCRIPT"
 		if [ "x${!dependency_no_config_script_ENVNAME}" = "x1" ]; then
 		    continue
