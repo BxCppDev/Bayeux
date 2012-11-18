@@ -290,7 +290,7 @@ if [ "x${option}" = "x--libs" -o "x${option}" = "x--ldflags" ]; then
 	    bio_ldflags2=
 	elif [ "x${option2}" = "x--with-bio" -a ${with_bio} -eq 1 ]; then
 	    bio_ldflags=-libmygsl_bio
-	    bio_ldflags2=${datatools_lib_dir}/libmygsl_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
+	    bio_ldflags2=${mygsl_lib_dir}/libmygsl_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
 	fi
 	shift 1
     done
