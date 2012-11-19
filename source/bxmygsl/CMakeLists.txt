@@ -90,7 +90,7 @@ set ( mygsl_list_of_third_party_dependencies GSL:>=1.14 )
 
 # -----------------------------------------------------
 # - Initial list of home-made package dependencies (datatools, mygsl...) :
-set ( mygsl_list_of_dependencies datatools:>=4.1 )
+set ( mygsl_list_of_dependencies datatools:>=4.2.1 )
 
 # Activate the automatic treatment of dependencies through the CMake flow :
 set (AUTOMATIC_CMAKE_DEPENDENCIES_DEVEL OFF)

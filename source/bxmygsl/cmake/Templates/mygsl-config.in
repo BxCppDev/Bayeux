@@ -9,8 +9,6 @@ opwd=$(pwd)
 help=0
 debug=0
 devel=0
-#bio_support=1
-#python_wrapper_support=0
 bio_support=@MYGSL_WITH_BIO_SUPPORT@
 python_wrapper_support=@MYGSL_WITH_PYTHON_WRAPPER_SUPPORT@
 
@@ -111,12 +109,13 @@ EOF
     cat<<EOF
   --libs     [option]   print library linking information, without dependencies
   --ldflags  [option]   print library linking information, with dependencies
+    Options: 
+    --absolute-path     use absolute DLL path
 EOF
     if [ ${bio_support} -eq 1 ]; then
 	cat<<EOF
-    Options: 
-        --with-bio      with linkage against the libmygsl_bio.so DLL (default)
-        --without-bio   without linkage against the libmygsl_bio.so DLL
+    --with-bio          with linkage against the libmygsl_bio.so DLL (default)
+    --without-bio       without linkage against the libmygsl_bio.so DLL
 EOF
     fi
     if [ ${bio_support} -eq 1 ]; then
@@ -274,33 +273,60 @@ fi
 
 # compute default linkage :
 bio_ldflags=
+bio_ldflags_abs=
 if [ ${with_bio} -eq 1 ]; then
-    bio_ldflags=${mygsl_lib_dir}/libmygsl_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
+    bio_ldflags=-lmygsl_bio
+    bio_ldflags_abs=${mygsl_lib_dir}/libmygsl_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
 fi
 
+
+ldflags_abs_path=0
+if [ "x${MYGSL_LDFLAGS_ABSOLUTE_PATH}" = "x1" ]; then
+    ldflags_abs_path=1
+fi 
 if [ "x${option}" = "x--libs" -o "x${option}" = "x--ldflags" ]; then
     while [ -n "$1" ]; do
 	lib_option="$1"
-	if [ "x${lib_option}" = "x--without-bio" ]; then
+	if [ "x${lib_option}" = "x--absolute-path" ]; then
+	    ldflags_abs_path=1
+	elif [ "x${lib_option}" = "x--without-bio" ]; then
 	    bio_ldflags=
+	    bio_ldflags_abs=
 	elif [ "x${lib_option}" = "x--with-bio" -a ${with_bio} -eq 1 ]; then
-	    bio_ldflags=${mygsl_lib_dir}/libmygsl_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
+	    bio_ldflags=-lmygsl_bio
+	    bio_ldflags_abs=${mygsl_lib_dir}/libmygsl_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
 	fi
 	shift 1
     done
 fi
+ ldflags_abs_path_option=
+if [ ${ldflags_abs_path} -eq 1 ]; then
+    ldflags_abs_path_option=--absolute-path
+fi
 
 if [ "x${option}" = "x--libs" ]; then
-    echo -n "${bio_ldflags} "
-    echo -n "${mygsl_lib_dir}/libmygsl@CMAKE_SHARED_LIBRARY_SUFFIX@ "
+    if [ ${ldflags_abs_path} -eq 1 ]; then
+	echo -n "${bio_ldflags_abs} "
+	echo -n "${mygsl_lib_dir}/libmygsl@CMAKE_SHARED_LIBRARY_SUFFIX@ "
+    else
+	echo -n "-L${mygsl_lib_dir} "
+	echo -n "${bio_ldflags} "
+	echo -n "-lmygsl "
+    fi
     echo
     my_exit 0
 fi
 
 if [ "x${option}" = "x--ldflags" ]; then
     (
-	echo -n "${bio_ldflags} "
-	echo -n "${mygsl_lib_dir}/libmygsl@CMAKE_SHARED_LIBRARY_SUFFIX@ "
+	if [ ${ldflags_abs_path} -eq 1 ]; then
+	    echo -n "${bio_ldflags_abs} "
+	    echo -n "${mygsl_lib_dir}/libmygsl@CMAKE_SHARED_LIBRARY_SUFFIX@ "
+	else
+	    echo -n "-L${mygsl_lib_dir} "
+	    echo -n "${bio_ldflags} "
+	    echo -n "-lmygsl "
+	fi
         #
         # Automated dependencies (experimental)
         #
@@ -310,6 +336,11 @@ if [ "x${option}" = "x--ldflags" ]; then
 		    echo "DEVEL: ${script_name}: Processing automatic dependency info '${dependency_info}' script !" 1>&2
 		fi
 		dependency_name=$(echo ${dependency_info} | cut -d':' -f1)
+		if [ ${ldflags_abs_path} -eq 1 ]; then
+		    if [  "${dependency_name}" = "datatools" ]; then 
+			export DATATOOLS_LDFLAGS_ABSOLUTE_PATH=1
+		    fi
+		fi
 		dependency_version=$(echo ${dependency_info} | cut -d':' -f2)
 		dependency_name_lower=$(echo ${dependency_name} | tr "A-Z" "a-z" )
 		dependency_name_upper=$(echo ${dependency_name} | tr "a-z" "A-Z" )
@@ -331,7 +362,7 @@ if [ "x${option}" = "x--ldflags" ]; then
 			###echo "DEVEL: ${script_name}: dependency_config_script_ldflags_switch == '${dependency_config_script_ldflags_switch_ENVNAME}' !" 1>&2
 		    fi
 		    if [ "x${ldflags_switch}" != "x" ]; then
-			dependency_ldflags=$(${dependency_config_script} ${ldflags_switch} | tr '\n' ' ')
+			dependency_ldflags=$(${dependency_config_script} ${ldflags_switch}  | tr '\n' ' ')
 			if [ $? -ne 0 ]; then
 			    dependency_ldflags=
 			    echo "ERROR: ${script_name}: No support for the '${ldflags_switch}' switch from the '${dependency_config_script}' script !" 1>&2
