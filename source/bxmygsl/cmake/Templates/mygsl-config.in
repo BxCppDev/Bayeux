@@ -312,7 +312,7 @@ if [ "x${option}" = "x--ldflags" ]; then
 		dependency_name=$(echo ${dependency_info} | cut -d':' -f1)
 		dependency_version=$(echo ${dependency_info} | cut -d':' -f2)
 		dependency_name_lower=$(echo ${dependency_name} | tr "A-Z" "a-z" )
-		dependency_name_upper=$(echo ${dependency_name} | tr "a-z" "A-Z" )<
+		dependency_name_upper=$(echo ${dependency_name} | tr "a-z" "A-Z" )
 		dependency_no_config_script_ENVNAME="${dependency_name_upper}_NO_CONFIG_SCRIPT"
 		if [ "x${!dependency_no_config_script_ENVNAME}" = "x1" ]; then
 		    continue
