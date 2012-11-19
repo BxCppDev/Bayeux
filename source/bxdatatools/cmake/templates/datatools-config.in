@@ -84,6 +84,7 @@ Known values for OPTION are:
   --libs    [option]    print library linking information, without dependencies
   --ldflags [option]
     Options: 
+    --relative-path     use relative DLL path (default)
     --absolute-path     use absolute DLL path
     --with-bio          with linkage against the 'libdatatools_bio.so' DLL (default)
     --without-bio       without linkage against the 'libdatatools_bio.so' DLL
@@ -174,13 +175,15 @@ fi
 # compute default linkage :
 bio_ldflags=
 bio_ldflags_abs=
-abs_path_option=
 if [ ${with_bio} -eq 1 ]; then
     bio_ldflags=-ldatatools_bio
     bio_ldflags_abs=${datatools_lib_dir}/libdatatools_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
 fi
 
 ldflags_abs_path=0
+if [ "x${DATATOOLS_LDFLAGS_ABSOLUTE_PATH}" = "x1" ]; then
+    ldflags_abs_path=1
+fi 
 if [ "x${option}" = "x--libs" -o "x${option}" = "x--ldflags" ]; then
     while [ -n "$1" ]; do
 	lib_option="$1"
@@ -192,10 +195,15 @@ if [ "x${option}" = "x--libs" -o "x${option}" = "x--ldflags" ]; then
 	    bio_ldflags_abs=${datatools_lib_dir}/libdatatools_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
 	elif [ "x${lib_option}" = "x--absolute-path" ]; then
 	    ldflags_abs_path=1
-	    abs_path_option=--absolute-path
+	elif [ "x${lib_option}" = "x--relative-path" ]; then
+	    ldflags_abs_path=0
 	fi
 	shift 1
     done
+fi
+ldflags_abs_path_option=
+if [ ${ldflags_abs_path} -eq 1 ]; then
+    ldflags_abs_path_option=--absolute-path
 fi
 
 if [ "x${option}" = "x--libs" ]; then
