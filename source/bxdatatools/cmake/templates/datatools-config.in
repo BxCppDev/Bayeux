@@ -83,10 +83,10 @@ Known values for OPTION are:
   --cflags              print include path pre-processor flags with dependencies
   --libs    [option]    print library linking information, without dependencies
   --ldflags [option]
-      Options: 
-      --with-bio          with linkage against the 'libdatatools_bio.so' DLL (default)
-      --without-bio       without linkage against the 'libdatatools_bio.so' DLL
-      --absolute-path     use absolute DLL path
+    Options: 
+    --absolute-path     use absolute DLL path
+    --with-bio          with linkage against the 'libdatatools_bio.so' DLL (default)
+    --without-bio       without linkage against the 'libdatatools_bio.so' DLL
   --with-python-wrapper print if Python wrapper module is used
   --with-bio            print if Boost/Serialization binary code is pre-built
                         in an auxiliary I/O shared library
@@ -174,6 +174,7 @@ fi
 # compute default linkage :
 bio_ldflags=
 bio_ldflags_abs=
+abs_path_option=
 if [ ${with_bio} -eq 1 ]; then
     bio_ldflags=-ldatatools_bio
     bio_ldflags_abs=${datatools_lib_dir}/libdatatools_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
@@ -191,6 +192,7 @@ if [ "x${option}" = "x--libs" -o "x${option}" = "x--ldflags" ]; then
 	    bio_ldflags_abs=${datatools_lib_dir}/libdatatools_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
 	elif [ "x${lib_option}" = "x--absolute-path" ]; then
 	    ldflags_abs_path=1
+	    abs_path_option=--absolute-path
 	fi
 	shift 1
     done
