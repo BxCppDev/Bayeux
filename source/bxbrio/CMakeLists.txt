@@ -118,9 +118,6 @@ else ()
   message ( FATAL_ERROR "Cannot find ROOT >= ${ROOT_MIN_VERSION} library !" )
 endif ()
 
-set ( _default_bio_activation 0 )
-set ( _default_python_wrapper_activation 0 )
-
 # - Depends on datatools:
 if ( DEFINED datatools_DIR )
   message ( STATUS "datatools_DIR is : '${datatools_DIR}' " )
@@ -130,7 +127,7 @@ else ()
     set ( datatools_DIR "$ENV{DATATOOLS_CMAKE_CONFIG_DIR}" )
   endif ()
 endif ()
-set ( _datatools_min_version 4.1 )
+set ( _datatools_min_version 4.2.1 )
 find_package ( datatools ${_datatools_min_version} REQUIRED NO_MODULE )
 if ( datatools_CONFIG )
   message ( STATUS "Found datatools >= ${_datatools_min_version}" )
@@ -139,49 +136,15 @@ if ( datatools_CONFIG )
   message ( STATUS " o datatools_LIBRARIES           : ${datatools_LIBRARIES}" )
   message ( STATUS " o datatools_INCLUDE_DIRS        : ${datatools_INCLUDE_DIRS}" )
   message ( STATUS " o datatools_WITH_DEBUG          : ${datatools_WITH_DEBUG}" )
-  message ( STATUS " o datatools_WITH_BIO            : ${datatools_WITH_BIO}" )
-  message ( STATUS " o datatools_WITH_PYTHON_WRAPPER : ${datatools_WITH_PYTHON_WRAPPER}" )
 else ()
   message ( FATAL_ERROR "Cannot find datatools >= ${_datatools_min_version} library !" )
 endif ()
-
-# if ( BRIO_WITH_BIO_SUPPORT )
-#   if ( datatools_WITH_BIO )
-#     set ( _default_bio_activation 1 )
-#   endif ()
-# endif ()
-# if ( BRIO_WITH_PYTHON_WRAPPER_SUPPORT )
-#   if ( datatools_WITH_PYTHON_WRAPPER )
-#     set ( _default_python_wrapper_activation 1 )
-#   endif ()
-# endif ()
-
-# if ( BRIO_WITH_BIO_SUPPORT )
-#   option ( BRIO_WITH_BIO 
-#     "Build the brio with Boost I/O serialization" 
-#     ${_default_bio_activation} )
-# endif ()
-
-
-# if ( BRIO_WITH_PYTHON_WRAPPER_SUPPORT )
-#   option ( BRIO_WITH_PYTHON_WRAPPER
-#     "Build the brio Boost/Python wrapper module" 
-#     ${_default_python_wrapper_activation} )
-# endif ()
 
 # ---------------------------------------------------
 
 if (BRIO_WITH_DEBUG)
   set (BRIO_WITH_DEBUG 1)
 endif ()
-
-# if ( BRIO_WITH_PYTHON_WRAPPER_SUPPORT AND BRIO_WITH_BIO )
-#   set (BRIO_WITH_BIO 1)
-# endif ()
-
-# if ( BRIO_WITH_PYTHON_WRAPPER_SUPPORT AND BRIO_WITH_PYTHON_WRAPPER )
-#   set (BRIO_WITH_PYTHON_WRAPPER 1)
-# endif ()
 
 if (BRIO_WITH_DOC)
   set (BRIO_WITH_DOC 1)
@@ -201,6 +164,7 @@ if ( UNIX OR APPLE )
     "Build the pkg-config script" 
     0 )
 endif ()
+
 # ---------------------------------------------------
 
 option ( BRIO_WITH_CMAKE_FIND_MODULE 
@@ -210,19 +174,12 @@ option ( BRIO_WITH_CMAKE_FIND_MODULE
 # ----------------------------------------------------------------------
 
 message ( STATUS "BRIO_WITH_DEBUG           : " "${BRIO_WITH_DEBUG}" )
-# if ( BRIO_WITH_BIO_SUPPORT )
-#   message ( STATUS "BRIO_WITH_BIO             : " "${BRIO_WITH_BIO}" )
-# endif ()
-# if ( BRIO_WITH_PYTHON_WRAPPER_SUPPORT )
-#   message ( STATUS "BRIO_WITH_PYTHON_WRAPPER  : " "${BRIO_WITH_PYTHON_WRAPPER}" )
-# endif ()
 if ( UNIX OR APPLE )
   message ( STATUS "BRIO_WITH_CONFIG_SCRIPT   : " "${BRIO_WITH_CONFIG_SCRIPT}" )
-  # message ( STATUS "BRIO_WITH_PKGCONFIG       : " "${BRIO_WITH_PKGCONFIG}" )
 endif ()
 message ( STATUS "BRIO_WITH_DOC             : " "${BRIO_WITH_DOC}" )
 message ( STATUS "BRIO_WITH_TEST            : " "${BRIO_WITH_TEST}" )
-message ( STATUS "CMAKE_INSTALL_PREFIX    : " "${CMAKE_INSTALL_PREFIX}" )
+message ( STATUS "CMAKE_INSTALL_PREFIX      : " "${CMAKE_INSTALL_PREFIX}" )
 
 # ----------------------------------------------------------------------
 
@@ -357,38 +314,6 @@ install ( FILES README.txt COPYING.txt LICENSE.GPL3.txt
   DESTINATION ${CMAKE_INSTALL_DATADIR}
   )
 
-# ----------------------------------------------------------------------------
-# - Add Python wrapping.
-#
-
-if ( BRIO_WITH_PYTHON_WRAPPER )
-  set ( CMAKE_USE_PYTHON_VERSION "2.7" "2.6" )
-  find_package ( PythonInterp REQUIRED )
-  set ( CMAKE_USE_PYTHON_VERSION "2.7" "2.6" )
-  find_package ( PythonLibs REQUIRED )
-
-  # We need to force the cache to disable Python if we didn't find any
-  # of the needed components
-  message ( STATUS "Boost_PYTHON_LIBRARY = ${Boost_PYTHON_LIBRARY}" )
-  message ( STATUS "PYTHON_INCLUDE_DIRS  = ${PYTHON_INCLUDE_DIRS}" )
-  message ( STATUS "PYTHON_EXECUTABLE    = ${PYTHON_EXECUTABLE}" )
-  message ( STATUS "PYTHON_LIBRARIES     = ${PYTHON_LIBRARIES}" )
-  message ( STATUS "PYTHON_DEBUG_LIBRARIES = ${PYTHON_DEBUG_LIBRARIES}" )
-
-  if (NOT Boost_PYTHON_LIBRARY OR NOT PYTHON_INCLUDE_DIRS OR NOT PYTHON_EXECUTABLE)
-    message ( STATUS "Missing Python stuff " )
-    set ( BRIO_WITH_PYTHON_WRAPPER OFF CACHE BOOL "Enable Python wrapping of datatools, requires Boost.Python" FORCE)
-  endif ()
-endif () 
-
-#set ( CMAKE_INSTALL_PYTHONDIR "" )
-#message ( STATUS "CMAKE_INSTALL_PYTHONDIR = '${CMAKE_INSTALL_PYTHONDIR}' " )
-
-if ( BRIO_WITH_PYTHON_WRAPPER )
-  message ( STATUS "Add subdirectory 'wrapping/python' " )
-  add_subdirectory ( wrapping/python )
-endif () 
-
 # 
 # ----------------------------------------------------------------------------
 # Add documentation.
@@ -419,11 +344,6 @@ include ( ${BRIO_SOURCE_DIR}/cmake/Packaging.cmake OPTIONAL )
 export(TARGETS brio 
   FILE ${PROJECT_BINARY_DIR}/brio-libraries.cmake
   )
-if ( BRIO_WITH_BIO_SUPPORT AND BRIO_WITH_BIO )
-  export(TARGETS brio_bio 
-    APPEND FILE ${PROJECT_BINARY_DIR}/brio-libraries.cmake
-    )
-endif()
 
 # Configure the build tree CMake Config mode file
 configure_file(

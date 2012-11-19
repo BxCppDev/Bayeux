@@ -91,10 +91,11 @@ EOF
     cat<<EOF
   --libs     [option]   print library linking information, without dependencies
   --ldflags  [option]   print library linking information, with dependencies
+    Options: 
+    --absolute-path     use absolute DLL path
 EOF
     if [ ${bio_support} -eq 1 ]; then
 	cat<<EOF
-    Options: 
         --with-bio      with linkage against the libbrio_bio.so DLL (default)
         --without-bio   without linkage against the libbrio_bio.so DLL
 EOF
@@ -116,8 +117,8 @@ EOF
 EOF
     # Dependencies:
     cat<<EOF
-   --datatools-version   print datatools version
-   --root-version        print ROOT version
+  --datatools-version   print datatools version
+  --root-version        print ROOT version
 EOF
     return 0 
 }
@@ -200,34 +201,55 @@ fi
 
 # compute default linkage :
 bio_ldflags=
+bio_ldflags_abs=
 if [ ${with_bio} -eq 1 ]; then
-    bio_ldflags=${brio_lib_dir}/libbrio_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
+    bio_ldflags=-lbrio_bio
+    bio_ldflags_abs=${brio_lib_dir}/libbrio_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
 fi
 
+ldflags_abs_path=0
+abs_path_option=
 if [ "x${option}" = "x--libs" -o "x${option}" = "x--ldflags" ]; then
     while [ -n "$1" ]; do
 	lib_option="$1"
-	if [ "x${lib_option}" = "x--without-bio" ]; then
-	    bio_ldflags=
-	elif [ "x${lib_option}" = "x--with-bio" -a ${with_bio} -eq 1 ]; then
-	    bio_ldflags=${brio_lib_dir}/libbrio_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
+	if [ "x${lib_option}" = "x--absolute-path" ]; then
+	    ldflags_abs_path=1
+	    abs_path_option=--absolute-path
+	# elif [ "x${lib_option}" = "x--without-bio" ]; then
+	#     bio_ldflags=
+	#     bio_ldflags_abs=
+	# elif [ "x${lib_option}" = "x--with-bio" -a ${with_bio} -eq 1 ]; then
+	#     bio_ldflags=-lbrio_bio
+	#     bio_ldflags_abs=${brio_lib_dir}/libbrio_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
 	fi
 	shift 1
     done
 fi
  
 if [ "x${option}" = "x--libs" ]; then
-    echo -n "${bio_ldflags} "
-    echo -n "${brio_lib_dir}/libbrio@CMAKE_SHARED_LIBRARY_SUFFIX@ "
+    if [ ${ldflags_abs_path} -eq 1 ]; then
+	echo -n "${bio_ldflags_abs} "
+	echo -n "${brio_lib_dir}/libbrio@CMAKE_SHARED_LIBRARY_SUFFIX@ "
+    else
+	echo -n "-L${brio_lib_dir} "
+	echo -n "${bio_ldflags} "
+	echo -n "-lbrio "
+    fi
     echo
     my_exit 0
 fi
 
 if [ "x${option}" = "x--ldflags" ]; then
     (
-	echo -n "${bio_ldflags} "
-	echo -n "${brio_lib_dir}/libbrio@CMAKE_SHARED_LIBRARY_SUFFIX@ "
-	echo -n "`datatools-config --ldflags` "
+	if [ ${ldflags_abs_path} -eq 1 ]; then
+	    echo -n "${bio_ldflags_abs} "
+	    echo -n "${brio_lib_dir}/libbrio@CMAKE_SHARED_LIBRARY_SUFFIX@ "
+	else
+	    echo -n "-L${brio_lib_dir} "
+	    echo -n "${bio_ldflags} "
+	    echo -n "-lbrio "
+	fi
+	echo -n "`datatools-config --ldflags ${abs_path_option}` "
 	echo -n "`root-config --libs` "
 	echo ""
     ) | python @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/pkgtools/mkuniqueflags.py -r   
