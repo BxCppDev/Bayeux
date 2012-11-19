@@ -18,8 +18,8 @@ if [ ${python_wrapper_support} -eq 1 ]; then
     fi
 fi
 
+with_bio=0
 if [ ${bio_support} -eq 1 ]; then
-    with_bio=0
     if [ "x@GENVTX_WITH_BIO@" == "x1" -o "x@GENVTX_WITH_BIO@" == "xON" ]; then
 	with_bio=1
     fi
@@ -58,8 +58,6 @@ genvtx_version=@genvtx_VERSION_STR@
 
 option="$1"
 shift 1
-option2="$1"
-shift 1
 
 if [ "x${option}" = "x" ]; then
     echo "ERROR: ${script_name}: Missing option ! Abort !" 1>&2
@@ -90,19 +88,20 @@ Known values for OPTION are:
   --include             print include path pre-processor flags without dependencies
   --cflags              print include path pre-processor flags with dependencies
 EOF
-    if [ ${bio_support} -eq 1 ]; then
-	cat<<EOF
+    cat<<EOF
   --libs     [option]   print library linking information, without dependencies
   --ldflags  [option]   print library linking information, with dependencies
+EOF
+    if [ ${bio_support} -eq 1 ]; then
+	cat<<EOF
       Options: --with-bio     with linkage against the libgenvtx_bio.so DLL (default)
                --without-bio  without linkage against the libgenvtx_bio.so DLL
+EOF
+    fi
+    if [ ${bio_support} -eq 1 ]; then
+	cat<<EOF
   --with-bio            print if Boost/Serialization binary code is pre-built 
                         in an auxiliary I/O shared library
-EOF
-    else
-	cat<<EOF
-  --libs                print library linking information, without dependencies
-  --ldflags             print library linking information, with dependencies
 EOF
     fi
     if [ ${python_wrapper_support} -eq 1 ]; then
@@ -196,42 +195,35 @@ if [ "x${option}" = "x--bindir" ]; then
     my_exit 0
 fi
 
-more_ldflags=
 # compute default linkage :
-if [ ${bio_support} -eq 1 ]; then
-  bio_ldflags=
-  if [ ${with_bio} -eq 1 ]; then
-      bio_ldflags=-lgenvtx_bio
-  fi
+bio_ldflags=
+if [ ${with_bio} -eq 1 ]; then
+    bio_ldflags=${genvtx_lib_dir}/libgenvtx_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
+fi
+
+if [ "x${option}" = "x--libs" -o "x${option}" = "x--ldflags" ]; then
+    while [ -n "$1" ]; do
+	lib_option="$1"
+	if [ "x${lib_option}" = "x--without-bio" ]; then
+	    bio_ldflags=
+	elif [ "x${lib_option}" = "x--with-bio" -a ${with_bio} -eq 1 ]; then
+	    bio_ldflags=${genvtx_lib_dir}/libgenvtx_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
+	fi
+	shift 1
+    done
 fi
  
 if [ "x${option}" = "x--libs" ]; then
-    if [ ${bio_support} -eq 1 ]; then
-      if [ "x${option2}" = "x--without-bio" ]; then
-     	bio_ldflags=
-      fi
-      if [ "x${option2}" = "x--with-bio" -a ${with_bio} -eq 1 ]; then
-     	bio_ldflags=-lgenvtx_bio
-      fi
-      more_ldflags="${more_ldflags} ${bio_ldflags} "
-    fi
-    echo -n "-L${genvtx_lib_dir} ${more_ldflags} -lgenvtx "
+    echo -n "${bio_ldflags} "
+    echo -n "${genvtx_lib_dir}/libgenvtx@CMAKE_SHARED_LIBRARY_SUFFIX@ "
     echo
     my_exit 0
 fi
 
 if [ "x${option}" = "x--ldflags" ]; then
-    if [ ${bio_support} -eq 1 ]; then
-	if [ "x${option2}" = "x--without-bio" ]; then
-    	    bio_ldflags=
-	fi
-	if [ "x${option2}" = "x--with-bio" -a ${with_bio} -eq 1 ]; then
-    	bio_ldflags=-lgenvtx_bio
-	fi
-	more_ldflags="${more_ldflags} ${bio_ldflags} "
-    fi
     (
-	echo -n "-L${genvtx_lib_dir} ${more_ldflags} -lgenvtx "
+	echo -n "${bio_ldflags} "
+	echo -n "${genvtx_lib_dir}/libgenvtx@CMAKE_SHARED_LIBRARY_SUFFIX@ "
 	echo -n "`geomtools-config --ldflags` "
 	echo ""
     ) | python @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/pkgtools/mkuniqueflags.py -r   
