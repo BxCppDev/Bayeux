@@ -208,13 +208,13 @@ if [ ${with_bio} -eq 1 ]; then
 fi
 
 ldflags_abs_path=0
-abs_path_option=
+ldflags_abs_path_option=
 if [ "x${option}" = "x--libs" -o "x${option}" = "x--ldflags" ]; then
     while [ -n "$1" ]; do
 	lib_option="$1"
 	if [ "x${lib_option}" = "x--absolute-path" ]; then
 	    ldflags_abs_path=1
-	    abs_path_option=--absolute-path
+	    ldflags_abs_path_option=--absolute-path
 	# elif [ "x${lib_option}" = "x--without-bio" ]; then
 	#     bio_ldflags=
 	#     bio_ldflags_abs=
@@ -249,7 +249,7 @@ if [ "x${option}" = "x--ldflags" ]; then
 	    echo -n "${bio_ldflags} "
 	    echo -n "-lbrio "
 	fi
-	echo -n "`datatools-config --ldflags ${abs_path_option}` "
+	echo -n "`datatools-config --ldflags ${ldflags_abs_path_option}` "
 	echo -n "`root-config --libs` "
 	echo ""
     ) | python @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/pkgtools/mkuniqueflags.py -r   
