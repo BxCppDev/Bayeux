@@ -8,8 +8,8 @@
  * License: 
  * 
  * Description: 
- *   Helix 3D model (along Z axis)
  *
+ *   Helix 3D model (along Z axis)
  *
  * History: 
  * 
@@ -18,12 +18,8 @@
 #ifndef __geomtools__helix_3d_h
 #define __geomtools__helix_3d_h 1
 
-#include <cmath>
-#include <stdexcept>
 #include <iostream>
-#include <sstream>
 #include <string>
-#include <limits>
 
 #include <geomtools/i_shape_1d.h>
 #include <geomtools/utils.h>

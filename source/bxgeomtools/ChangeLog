@@ -41,4 +41,6 @@ This is the geomtools package ChangeLog
 	* add serializable display_data class
 	* add i_wires_3d_rendering interface
 	* version: prepare tag 3.2.0 in trunk
-
+2012-11-29 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* fix bug in helix_3d::get_length()
+	* version: prepare tag 3.2.1 in trunk

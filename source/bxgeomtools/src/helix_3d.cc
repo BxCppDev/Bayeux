@@ -4,6 +4,11 @@
 
 #include <geomtools/helix_3d.h>
 
+#include <cmath>
+#include <sstream>
+#include <stdexcept>
+#include <limits>
+
 namespace geomtools {
 
   using namespace std;
@@ -38,8 +43,7 @@ namespace geomtools {
   void
   helix_3d::invalidate ()
   {
-    double qnan = numeric_limits<double>::quiet_NaN();
-    _radius_ = qnan;
+    _radius_ = numeric_limits<double>::quiet_NaN();
     return;
   }
 
@@ -149,8 +153,16 @@ namespace geomtools {
   double
   helix_3d::get_length () const
   {
+    // 2012-11-29, FM: fix wrong formula inconsistent with the computation
+    // of curvilinear values.
+    // (see Manu/Pawel's message on 'snemo-software-l', 2012-11-28):
+    /* Code was :
+     *   double l = fabs (get_angle2 () - get_angle1 () )
+     *   sqrt ( _radius_ * _radius_ + _step_ * _step_ ); // step should be reduced by 2*pi
+     * Now is fixed to :
+     */
     double l = fabs (get_angle2 () - get_angle1 () )
-      * sqrt ( _radius_ * _radius_ + _step_ * _step_ );
+      * hypot ( _radius_,  _step_ / (2.*M_PI) );
     return l;
   }
 

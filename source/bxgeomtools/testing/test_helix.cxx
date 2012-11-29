@@ -25,6 +25,39 @@ wait_for_key ()
 }
 
 
+void test0 ()
+{
+  std::clog << "\n********** test0: Check 'get_length' value \n";
+  geomtools::vector_3d O ( 0., 0., 0. );
+ 
+  geomtools::helix_3d H;
+  H.set_radius ( 1. * CLHEP::m  );
+  H.set_center ( O );
+  H.set_step   ( 1. * CLHEP::m );
+  H.set_t1     ( 0.0 );
+  H.set_t2     ( 0.1 );
+  
+  double l = H.get_length ();
+
+  std::clog << "H length = " << l /CLHEP::mm  << " mm" << std::endl;
+
+  double sum = 0.0;
+  double dt =  1.e-4;
+  for (double t = H.get_t1 (); t <= H.get_t2 (); t += dt)
+    {
+      double tp = t + dt;
+      geomtools::vector_3d p = H.get_point (t);
+      geomtools::vector_3d pp = H.get_point (tp);
+      sum += (pp - p).mag ();
+    }
+  double S = H.get_curvilinear_position (H.get_t2 ()) 
+    - H.get_curvilinear_position (H.get_t1 ());
+  std::clog << "H sum-length = " << sum / CLHEP::mm  << " mm" << std::endl;
+  std::clog << "H S-length = " << S / CLHEP::mm  << " mm" << std::endl;
+
+  return;
+}
+
 int 
 main (int argc_, char ** argv_)
 {
@@ -33,6 +66,7 @@ main (int argc_, char ** argv_)
     {
       bool debug   = false;
       bool gnuplot = false;
+      bool only_test_0 = false;
 
       int iarg = 1;
       while (iarg < argc_) 
@@ -43,10 +77,18 @@ main (int argc_, char ** argv_)
             debug = true;
           if (arg == "-g" || arg == "--gnuplot")
             gnuplot = true;
+          if (arg == "-0" || arg == "--only-test-0")
+            only_test_0 = true;
 
           iarg++;
         }
-    
+
+      test0 ();
+      if (only_test_0)
+        {
+          return error_code;
+        }
+
       geomtools::helix_3d my_helix_1;
       geomtools::helix_3d my_helix_2;
 
