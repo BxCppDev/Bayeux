@@ -1,5 +1,17 @@
 // test_seed_manager.cxx
-
+/*
+ *
+ * shell> MYGSL_SEED_MANAGER_INIT_SEED_FROM="current_time" ./__build-Linux-x86_64/testing/test_seed_manager
+ * shell> MYGSL_SEED_MANAGER_INIT_SEED_FROM="current_pid" ./__build-Linux-x86_64/testing/test_seed_manager 
+ * shell> MYGSL_SEED_MANAGER_INIT_SEED_FROM="urandom" ./__build-Linux-x86_64/testing/test_seed_manager 
+ * shell> MYGSL_SEED_MANAGER_INIT_SEED_FROM="foo" ./__build-Linux-x86_64/testing/test_seed_manager
+ * ...
+ * WARNING: mygsl::seed_manager::_set_init_seed_flags_: Invalid \
+ *   value ('foo') for the 'MYGSL_SEED_MANAGER_INIT_SEED_FROM' environment \
+ *   variable !
+ * ...
+ * 
+ */
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
@@ -11,6 +23,157 @@
 #include <mygsl/random_utils.h>
 
 using namespace std;
+
+void test0()
+{
+  std::clog << "\n********** Test #0:\n";
+  mygsl::seed_manager SM;
+  SM.set_init_seed_flags (mygsl::seed_manager::INIT_SEED_FROM_URANDOM);
+  SM.add_seed ("manager",           123456);
+  SM.add_seed ("primary_generator", 314159);
+  SM.add_seed ("vertex_generator",  2718);
+  SM.add_seed ("dummy_generator",   mygsl::random_utils::SEED_TIME);
+  SM.dump (clog);
+
+  clog << endl << "Updating..." << endl;
+  SM.update_seed ("manager", mygsl::random_utils::SEED_INVALID);
+  SM.add_seed ("smearing_processor", 76543);
+  SM.dump (clog);
+
+  clog << "SM = " << SM << endl;
+  return;
+}
+
+void test1()
+{
+  std::clog << "\n********** Test #1:\n";
+  string line = "{a=4; b=56; c=356; d=-1; e=0; f=4321}";
+  clog << "Parse a streamed expression : " << line<< endl;
+  istringstream iss (line);
+  mygsl::seed_manager SM2;
+  iss >> SM2;
+  if (! iss)
+    {
+      throw runtime_error ("Invalid format !");
+    }
+  clog << "SM2 = " << SM2 << endl;
+  SM2.dump (clog);
+
+  clog << endl << "All time seeds..." << endl;
+  SM2.all_time_seeds ();
+  SM2.dump (clog);
+
+  clog << endl << "Manually set some seeds..." << endl;
+  SM2.update_seed ("a", 314159);
+  SM2.update_seed ("b", 999);
+  SM2.update_seed ("manager", 666);
+  SM2.update_seed ("manager1", 666);
+  SM2.update_seed ("manager2", 666);
+  SM2.update_seed ("r0", 1000);
+  SM2.update_seed ("r1", 1000);
+  SM2.update_seed ("r2", 1000);
+  SM2.dump (clog);
+
+  clog << endl << "Transform time seeds..." << endl;
+  SM2.transform_time_seeds (true);
+  SM2.dump (clog);
+
+  clog << endl << "Make sure they are all different..." << endl;
+  SM2.transform_time_seeds ();
+  SM2.dump (clog);
+
+  clog << endl << "Force some duplicated seed..." << endl;
+  SM2.update_seed ("r1", 1000);
+  SM2.dump (clog);
+
+  clog << endl << "Ensure no duplicated seeds..." << endl;
+  SM2.ensure_different_seeds ();
+  SM2.dump (clog);
+
+  clog << endl << "All time seeds (again)..." << endl;
+  SM2.all_time_seeds ();
+  SM2.dump (clog);
+
+  clog << endl << "Ensure no duplicated seeds (again)..." << endl;
+  SM2.ensure_different_seeds ();
+  SM2.dump (clog);
+
+  vector<string> labels;
+  SM2.get_labels (labels);
+  clog << endl << "Seed for '" << labels.front () << "' is : " << SM2.get_seed (labels.front ()) << endl;
+  SM2.clear ();
+  return;
+}
+
+void test2()
+{
+  std::clog << "\n********** Test #2:\n";
+  mygsl::seed_manager SM1;
+  SM1.set_init_seed_flags (mygsl::seed_manager::INIT_SEED_FROM_CURRENT_TIME);
+  SM1.add_seed ("s1", mygsl::random_utils::SEED_TIME);
+  SM1.add_seed ("s2", mygsl::random_utils::SEED_TIME);
+  SM1.dump (clog);
+
+  mygsl::seed_manager SM2;
+  SM2.set_init_seed_flags (mygsl::seed_manager::INIT_SEED_FROM_CURRENT_TIME);
+  SM2.add_seed ("t1", mygsl::random_utils::SEED_TIME);
+  SM2.add_seed ("t2", mygsl::random_utils::SEED_TIME);
+  SM2.dump (clog);
+
+  SM1.transform_time_seeds (true);
+  SM1.dump (clog);
+
+  SM2.transform_time_seeds (true);
+  SM2.dump (clog);
+  
+  return;
+}
+
+void test3()
+{
+  std::clog << "\n********** Test #3:\n";
+  mygsl::seed_manager SM1;
+  SM1.set_init_seed_flags (mygsl::seed_manager::INIT_SEED_FROM_URANDOM);
+  SM1.add_seed ("u1", mygsl::random_utils::SEED_TIME);
+  SM1.add_seed ("u2", mygsl::random_utils::SEED_TIME);
+  SM1.dump (clog);
+
+  mygsl::seed_manager SM2;
+  SM2.set_init_seed_flags (mygsl::seed_manager::INIT_SEED_FROM_URANDOM);
+  SM2.add_seed ("v1", mygsl::random_utils::SEED_TIME);
+  SM2.add_seed ("v2", mygsl::random_utils::SEED_TIME);
+  SM2.dump (clog);
+
+  SM1.transform_time_seeds (true);
+  SM1.dump (clog);
+
+  SM2.transform_time_seeds (true);
+  SM2.dump (clog);
+  
+  return;
+}
+
+void test4()
+{
+  std::clog << "\n********** Test #4:\n";
+  mygsl::seed_manager SM1;
+  SM1.add_seed ("s1", mygsl::random_utils::SEED_TIME);
+  SM1.add_seed ("s2", mygsl::random_utils::SEED_TIME);
+  SM1.dump (clog);
+
+  mygsl::seed_manager SM2;
+  SM2.add_seed ("t1", mygsl::random_utils::SEED_TIME);
+  SM2.add_seed ("t2", mygsl::random_utils::SEED_TIME);
+  SM2.dump (clog);
+
+  SM1.transform_time_seeds (true);
+  SM1.dump (clog);
+
+  SM2.transform_time_seeds (true);
+  SM2.dump (clog);
+  
+  return;
+}
 
 int main (int argc_, char ** argv_)
 {
@@ -28,15 +191,15 @@ int main (int argc_, char ** argv_)
 
           if (token[0] == '-')
             {
-               string option = token; 
-               if ((option == "-d") || (option == "--debug")) 
-                 {
-                   debug = true;
-                 }
-               else  
-                 { 
-                    clog << "warning: ignoring option '" << option << "'!" << endl; 
-                 }
+              string option = token; 
+              if ((option == "-d") || (option == "--debug")) 
+                {
+                  debug = true;
+                }
+              else  
+                { 
+                  clog << "warning: ignoring option '" << option << "'!" << endl; 
+                }
             }
           else
             {
@@ -46,78 +209,14 @@ int main (int argc_, char ** argv_)
               }
             }
           iarg++;
-      }
-    
-      mygsl::seed_manager SM;
-      SM.add_seed ("manager",           123456);
-      SM.add_seed ("primary_generator", 314159);
-      SM.add_seed ("vertex_generator",  2718);
-      SM.add_seed ("dummy_generator",   mygsl::random_utils::SEED_TIME);
-      SM.dump (clog);
-
-      clog << endl << "Updating..." << endl;
-      SM.update_seed ("manager", mygsl::random_utils::SEED_INVALID);
-      SM.add_seed ("smearing_processor", 76543);
-      SM.dump (clog);
-
-      clog << "SM = " << SM << endl;
-
-      string line = "{a=4; b=56; c=356; d=-1; e=0; f=4321}";
-      clog << "Parse a streamed expression : " << line<< endl;
-      istringstream iss (line);
-      mygsl::seed_manager SM2;
-      iss >> SM2;
-      if (! iss)
-        {
-          throw runtime_error ("Invalid format !");
         }
-      clog << "SM2 = " << SM2 << endl;
-      SM2.dump (clog);
+    
 
-      clog << endl << "All time seeds..." << endl;
-      SM2.all_time_seeds ();
-      SM2.dump (clog);
-
-      clog << endl << "Manually set some seeds..." << endl;
-      SM2.update_seed ("a", 314159);
-      SM2.update_seed ("b", 999);
-      SM2.update_seed ("manager", 666);
-      SM2.update_seed ("manager1", 666);
-      SM2.update_seed ("manager2", 666);
-      SM2.update_seed ("r0", 1000);
-      SM2.update_seed ("r1", 1000);
-      SM2.update_seed ("r2", 1000);
-      SM2.dump (clog);
-
-      clog << endl << "Transform time seeds..." << endl;
-      SM2.transform_time_seeds (true);
-      SM2.dump (clog);
-
-      clog << endl << "Make sure they are all different..." << endl;
-      SM2.transform_time_seeds ();
-      SM2.dump (clog);
-
-      clog << endl << "Force some duplicated seed..." << endl;
-      SM2.update_seed ("r1", 1000);
-      SM2.dump (clog);
-
-      clog << endl << "Ensure no duplicated seeds..." << endl;
-      SM2.ensure_different_seeds ();
-      SM2.dump (clog);
-
-      clog << endl << "All time seeds (again)..." << endl;
-      SM2.all_time_seeds ();
-      SM2.dump (clog);
-
-      clog << endl << "Ensure no duplicated seeds (again)..." << endl;
-      SM2.ensure_different_seeds ();
-      SM2.dump (clog);
-
-      vector<string> labels;
-      SM2.get_labels (labels);
-      clog << endl << "Seed for '" << labels.front () << "' is : " << SM2.get_seed (labels.front ()) << endl;
-      SM2.clear ();
-
+      test0();
+      test1();
+      test2();
+      test3();
+      test4();
     }
   catch (exception & x)
     {

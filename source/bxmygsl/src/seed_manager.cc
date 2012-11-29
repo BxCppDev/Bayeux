@@ -25,8 +25,14 @@
 #include <iomanip>
 #include <map>
 #include <limits>
+#include <cstdlib>
+//#include <random> /// only with new "-std=c++0x" support
 
-#include<boost/tokenizer.hpp>
+#include <sys/types.h>
+#include <unistd.h>
+
+#include <boost/tokenizer.hpp>
+#include <boost/filesystem.hpp>
 
 #include <mygsl/seed_manager.h>
 #include <mygsl/random_utils.h>
@@ -35,6 +41,8 @@
 namespace mygsl {
   
   using namespace std;
+
+  const std::string seed_manager::INIT_SEED_FROM_ENV_NAME = "MYGSL_SEED_MANAGER_INIT_SEED_FROM";
   
   bool seed_manager::is_debug () const
   {
@@ -73,12 +81,102 @@ namespace mygsl {
       }
     return;
   }
+  
+  void seed_manager::_set_init_seed_flags_ ()
+  {
+    if (_init_seed_flags_ == INIT_SEED_FROM_UNDEFINED)
+      {
+        std::string init_seed_from_env;
+        char * dummy = getenv(INIT_SEED_FROM_ENV_NAME.c_str ());
+        if (dummy != 0)
+          {
+            init_seed_from_env = dummy;
+            if (init_seed_from_env == "current_time")
+              {
+                _init_seed_flags_ = INIT_SEED_FROM_CURRENT_TIME;
+              }
+            else if (init_seed_from_env == "current_pid")
+              {
+                _init_seed_flags_ = INIT_SEED_FROM_CURRENT_PID;
+              }
+            else if (init_seed_from_env == "urandom")
+              {
+                _init_seed_flags_ = INIT_SEED_FROM_URANDOM;
+              }
+            else
+              {
+                std::ostringstream message;
+                message << "mygsl::seed_manager::_set_init_seed_flags_: "
+                        << "Invalid value ('" << init_seed_from_env << "') for the '" << INIT_SEED_FROM_ENV_NAME << "' environment variable !";
+                std::cerr << "WARNING: " << message.str () << std::endl;
+              }
+          }
+      }
+    // set default if not explicitely set :
+    if (_init_seed_flags_ == INIT_SEED_FROM_UNDEFINED)
+      {
+        _init_seed_flags_ = INIT_SEED_FROM_DEFAULT;
+      }
+    return;
+  }
+
+  int32_t seed_manager::_set_seed_for_seeds ()
+  {
+    bool devel = false;
+    _set_init_seed_flags_ ();
+    int32_t seed = 0;
+    if (_init_seed_flags_ & INIT_SEED_FROM_CURRENT_TIME )
+      {
+        seed += (int32_t) time (0);
+        if (devel)
+          std::cerr << "DEVEL: mygsl::seed_manager::_set_seed_for_seeds: seed="
+                    << seed << " (from current time)" << std::endl;
+      }
+    if (_init_seed_flags_ & INIT_SEED_FROM_CURRENT_PID )
+      {
+        seed += (int32_t) getpid ();
+        if (devel)
+          std::cerr << "DEVEL: mygsl::seed_manager::_set_seed_for_seeds: seed="
+                    << seed << " (from current PID)" << std::endl;
+      }
+    if (_init_seed_flags_ & INIT_SEED_FROM_URANDOM )
+      {
+        std::string dev_urandom = "/dev/urandom";
+        if (! boost::filesystem::exists (dev_urandom.c_str ()))
+          {
+            std::ostringstream message;
+            message << "mygsl::seed_manager::transform_time_seeds : "
+                    << "No '" << dev_urandom << "' entropy source on this host !";
+            throw std::runtime_error (message.str ());
+          }
+        unsigned int useed;
+        FILE *urandom;
+        urandom = fopen (dev_urandom.c_str (), "r");
+        size_t szr = fread (&useed, sizeof (useed), 1, urandom);
+        seed += (int32_t) useed & 0x7FFFFFFFF;
+        fclose (urandom);
+        if (devel)
+          std::cerr << "mygsl::seed_manager::_set_seed_for_seeds: seed="
+                    << seed << " (from '/dev/urandom')" << std::endl;
+      }
+    // Not supported yet :
+    // if (_init_seed_flags_ | INIT_SEED_RANDOM_DEVICE )
+    //   {
+    //     std::random_device rd;
+    //     seed += (int32_t) rd ();
+    //   }
+    seed &= 0x7FFFFFFF;
+    if (devel)
+      std::cerr << "DEVEL: mygsl::seed_manager::_set_seed_for_seeds: final seed="
+                << seed << std::endl;
+    return seed;
+  }
 
   void seed_manager::transform_time_seeds (bool allow_duplication_)
   {
-    int32_t seed = (int32_t) time (0);
+    int32_t seed = _set_seed_for_seeds ();
     mygsl::rng r;
-    r.initialize (mygsl::rng::DEFAULT_RNG_TYPE ,seed);
+    r.initialize (mygsl::rng::DEFAULT_RNG_TYPE, seed);
     for (dict_type::iterator i = _dict_.begin ();
          i != _dict_.end ();
          i++)
@@ -99,7 +197,7 @@ namespace mygsl {
 
   void seed_manager::ensure_different_seeds ()
   {
-    int32_t seed = (int32_t) time (0);
+    int32_t seed = _set_seed_for_seeds ();
     mygsl::rng r;
     r.initialize (mygsl::rng::DEFAULT_RNG_TYPE ,seed);
     _ensure_different_seeds (&r);
@@ -374,11 +472,24 @@ namespace mygsl {
     _dict_[label_] = seed_;
     return;
   }
+
+  void seed_manager::set_init_seed_flags (uint32_t f_)
+  {
+    _init_seed_flags_ = f_;
+    return;
+  }
+  
+  uint32_t seed_manager::get_init_seed_flags () const
+  {
+    return _init_seed_flags_;
+  }
   
   // ctor:
   seed_manager::seed_manager ()
   {
     _debug_ = false;
+    _init_seed_flags_ = INIT_SEED_FROM_UNDEFINED;
+    //INIT_SEED_DEFAULT;
     return;
   }
     
@@ -402,7 +513,7 @@ namespace mygsl {
         out_ << i->second << " ";
         if (i->second == mygsl::random_utils::SEED_TIME)
           {
-            out_ << "[set by current time]";
+            out_ << "[set randomly]";
           }
         else if (i->second == mygsl::random_utils::SEED_INVALID)
           {
