@@ -233,14 +233,14 @@ if ( BAYEUX_CONFIG STREQUAL "default" OR BAYEUX_CONFIG STREQUAL ${Bayeux_VERSION
   set ( BAYEUX_BRIO_VERSION       "3.2.0"  )
   set ( BAYEUX_BRIO_PATH          "tags/brio-3.2.0"  )
 
-  set ( BAYEUX_MYGSL_VERSION      "3.2.0"  )
-  set ( BAYEUX_MYGSL_PATH         "tags/mygsl-3.2.0"  )
+  set ( BAYEUX_MYGSL_VERSION      "3.2.1"  )
+  set ( BAYEUX_MYGSL_PATH         "tags/mygsl-3.2.1"  )
 
   set ( BAYEUX_CUTS_VERSION       "3.1.1"  )
   set ( BAYEUX_CUTS_PATH          "tags/cuts-3.1.1"  )
 
-  set ( BAYEUX_GEOMTOOLS_VERSION  "3.2.0"  )
-  set ( BAYEUX_GEOMTOOLS_PATH     "tags/geomtools-3.2.0"  )
+  set ( BAYEUX_GEOMTOOLS_VERSION  "3.2.1"  )
+  set ( BAYEUX_GEOMTOOLS_PATH     "tags/geomtools-3.2.1"  )
 
   set ( BAYEUX_MATERIALS_VERSION  "3.2.0"  )
   set ( BAYEUX_MATERIALS_PATH     "tags/materials-3.2.0"  )
