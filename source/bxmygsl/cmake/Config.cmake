@@ -23,7 +23,7 @@
 # setup version numbers
 set ( mygsl_VERSION_MAJOR 3 )
 set ( mygsl_VERSION_MINOR 2 )
-set ( mygsl_PATCH_VERSION 2 )
+set ( mygsl_PATCH_VERSION 1 )
 set ( mygsl_VERSION_STR "${mygsl_VERSION_MAJOR}.${mygsl_VERSION_MINOR}.${mygsl_PATCH_VERSION}" )
 math ( EXPR mygsl_VERSION_NUMERIC "${mygsl_VERSION_MAJOR}*100000+${mygsl_VERSION_MINOR}*100+${mygsl_PATCH_VERSION}" )
 
