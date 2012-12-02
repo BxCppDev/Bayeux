@@ -211,12 +211,12 @@ int main (int argc_, char ** argv_)
           iarg++;
         }
     
-
       test0();
       test1();
       test2();
       test3();
       test4();
+
     }
   catch (exception & x)
     {
