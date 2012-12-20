@@ -464,8 +464,12 @@ namespace brio {
       {
         if (_file->IsOpen ())
           {
+            // 2012-12-19, FM: explicit write
+            _file->Write ();
             _file->Close ();
           }
+        // 2012-12-19, FM: explicit delete the TFile
+        delete _file;
         _file = 0;
       }
     if (! _filename.empty ())
