@@ -9,17 +9,16 @@
 
 #include <boost/algorithm/string.hpp>
 
-#include <datatools/utils/library_loader.h>
-
-using namespace std;
+#include <datatools/library_loader.h>
 
 int main (int argc_ , char ** argv_)
 {
+  using namespace std;
 
   int error_code = EXIT_SUCCESS;
   try 
     { 
-      clog << "Test of the 'datatools::utils::library_loader' class." << endl; 
+      clog << "Test of the 'datatools::library_loader' class." << endl; 
   
       bool   debug = false;
       bool   test = false;
@@ -54,21 +53,19 @@ int main (int argc_ , char ** argv_)
             } 
           iarg++;
         } 
-
-      using namespace datatools::utils;
  
-      library_loader::g_devel = debug;
-      library_loader::g_test  = test;
+      datatools::library_loader::g_devel = debug;
+      datatools::library_loader::g_test  = test;
  
       if (libname.empty ()) 
-	{
-	  libname = "crypto"; // or "curses" ...
-	}
+        {
+          libname = "crypto"; // or "curses" ...
+        }
 
       string LL_config = "${DATATOOLS_ROOT}/testing/config/test_library_loader.conf";
-      uint32_t LL_flags = datatools::utils::library_loader::allow_unregistered;
-      datatools::utils::library_loader LL (LL_flags, LL_config);
-      datatools::utils::library_loader LL2 (LL_flags, LL_config);
+      uint32_t LL_flags = datatools::library_loader::allow_unregistered;
+      datatools::library_loader LL (LL_flags, LL_config);
+      datatools::library_loader LL2 (LL_flags, LL_config);
  
       clog << " Loading 'ssl'..." << endl;
       LL.load ("ssl");

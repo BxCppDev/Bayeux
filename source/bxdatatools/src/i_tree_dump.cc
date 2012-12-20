@@ -1,6 +1,6 @@
 /* i_tree_dump.cc */
 // Ourselves
-#include <datatools/utils/i_tree_dump.h>
+#include <datatools/i_tree_dump.h>
 
 // Standard Library
 #include <iomanip>
@@ -12,8 +12,6 @@
 // This Project
 
 namespace datatools {
-
-namespace utils {
 
 const std::string i_tree_dumpable::TAG           = "|-- ";
 const std::string i_tree_dumpable::LAST_TAG      = "`-- ";
@@ -81,7 +79,6 @@ std::ostream& operator<<(std::ostream& out,
 }
 
 
-} // end of namespace utils 
 } // end of namespace datatools 
 
 /* end of i_tree_dump.cc */

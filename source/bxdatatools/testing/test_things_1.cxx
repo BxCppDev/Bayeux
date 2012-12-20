@@ -9,33 +9,30 @@
 
 #include <boost/foreach.hpp>
 
-#include <datatools/serialization/utils.h>
-#include <datatools/serialization/i_serializable.h>
-#include <datatools/serialization/archives_instantiation.h>
-
-// the datatools writer and reader classes:
-//#include <datatools/serialization/io_factory.h>
+#include <datatools/serialization_macros.h>
+#include <datatools/i_serializable.h>
+#include <datatools/archives_instantiation.h>
 
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/export.hpp>
 
 // The serializable 'things' container :
-#include <datatools/utils/things.h>
+#include <datatools/things.h>
 // The serializable 'properties' container :
-#include <datatools/utils/properties.h>
+#include <datatools/properties.h>
 
 // Some pre-processor guard about Boost I/O usage and linkage :
-#include <datatools/serialization/bio_guard.h>
+#include <datatools/bio_guard.h>
 
 using namespace std;
 
 /*** the serializable A sample class ***/
 
-class A : public datatools::serialization::i_serializable
+class A : public datatools::i_serializable
 {
 public:
 
-	static const string SERIAL_TAG;
+  static const string SERIAL_TAG;
 
 public:
 
@@ -45,10 +42,10 @@ public:
     return;
   }
 
-	double get_value () const
-	{
-		return value_;
-	}
+  double get_value () const
+  {
+    return value_;
+  }
 
   A ();
 
@@ -62,9 +59,9 @@ public:
 
 private:
   friend class boost::serialization::access;
-	BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
+  BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
 
-	private :
+  private :
 
   double value_;
 
@@ -75,9 +72,9 @@ const string A::SERIAL_TAG = "test_things::A";
 template<class Archive>
 void A::serialize (Archive & ar, const unsigned int file_version)
 {
-	ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-	ar & boost::serialization::make_nvp ("value", value_);
-	return;
+  ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
+  ar & boost::serialization::make_nvp ("value", value_);
+  return;
 }
 
 void A::dump (ostream & out) const
@@ -88,12 +85,12 @@ void A::dump (ostream & out) const
 
 A::A () : value_ (0.0)
 {
-	return;
+  return;
 }
 
 A::A (double v) : value_ (v)
 {
-	return;
+  return;
 }
 
 A::~A ()
@@ -107,11 +104,11 @@ const string & A::get_serial_tag () const
 
 /*** serializable B  sample class ***/
 
-class B : public datatools::serialization::i_serializable
+class B : public datatools::i_serializable
 {
 public:
 
-	static const string SERIAL_TAG;
+  static const string SERIAL_TAG;
 
 public:
 
@@ -121,19 +118,19 @@ public:
     return;
   }
 
-	int32_t get_index () const
-	{
-		return index_;
-	}
+  int32_t get_index () const
+  {
+    return index_;
+  }
 
   B () : index_ (0)
   {
-		return;
+    return;
   }
 
   B (int i) : index_ (i)
   {
-		return;
+    return;
   }
 
   virtual ~B ()
@@ -147,9 +144,9 @@ public:
 private:
 
   friend class boost::serialization::access;
-	BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
+  BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
 
-	private:
+  private:
 
   int32_t index_;
 
@@ -158,9 +155,9 @@ private:
 template<class Archive>
 void B::serialize (Archive & ar, const unsigned int file_version)
 {
-	ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-	ar & boost::serialization::make_nvp ("index", index_);
-	return;
+  ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
+  ar & boost::serialization::make_nvp ("index", index_);
+  return;
 }
 
 const string B::SERIAL_TAG = "test_things::B";
@@ -198,13 +195,13 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'datatools::utils::things' !" << endl;
+      clog << "Test program for class 'datatools::things' !" << endl;
 
       bool debug = false;
-			bool out   = true;
-			bool in    = true;
-			string format = "text";
-			string compression = "";
+      bool out   = true;
+      bool in    = true;
+      string format = "text";
+      string compression = "";
 
       int iarg = 1;
       while (iarg < argc_)
@@ -213,39 +210,39 @@ int main (int argc_, char ** argv_)
 
           if (token[0] == '-')
             {
-							string option = token;
-							if ((option == "-d") || (option == "--debug"))
-								{
-									debug = true;
-								}
-							else if ((option == "-O") || (option == "--no-out"))
-								{
-									out = false;
-								}
-							else if ((option == "-I") || (option == "--no-in"))
-								{
-									in = false;
-								}
-							else if ((option == "-x") || (option == "--xml"))
-								{
-									format = "xml";
-								}
-							else if ((option == "-b") || (option == "--bin"))
-								{
-									format = "binary";
-								}
-							else if ((option == "-z") || (option == "--gzip"))
-								{
-									compression = ".gz";
-								}
-							else if ((option == "-B") || (option == "--bz2"))
-								{
-									compression = ".bz2";
-								}
-							else
-								{
-									clog << "warning: ignoring option '" << option << "'!" << endl;
-								}
+              string option = token;
+              if ((option == "-d") || (option == "--debug"))
+                {
+                  debug = true;
+                }
+              else if ((option == "-O") || (option == "--no-out"))
+                {
+                  out = false;
+                }
+              else if ((option == "-I") || (option == "--no-in"))
+                {
+                  in = false;
+                }
+              else if ((option == "-x") || (option == "--xml"))
+                {
+                  format = "xml";
+                }
+              else if ((option == "-b") || (option == "--bin"))
+                {
+                  format = "binary";
+                }
+              else if ((option == "-z") || (option == "--gzip"))
+                {
+                  compression = ".gz";
+                }
+              else if ((option == "-B") || (option == "--bz2"))
+                {
+                  compression = ".bz2";
+                }
+              else
+                {
+                  clog << "warning: ignoring option '" << option << "'!" << endl;
+                }
             }
           else
             {
@@ -255,79 +252,79 @@ int main (int argc_, char ** argv_)
               }
             }
           iarg++;
-				}
+        }
 
-			// declare the 'bag' instance as a 'things' container:
-			datatools::utils::things bag ("bag1", "A bag with things in it");
+      // declare the 'bag' instance as a 'things' container:
+      datatools::things bag ("bag1", "A bag with things in it");
 
-			// add some objects of type 'A' and 'B' in it
-			// perform some on-the-fly setter on some of them :
-			bag.add<A> ("a1").set_value (666.6666);
-			bag.add<A> ("a2").set_value (3.1415);
-			bag.add<B> ("b1").set_index (7654321);
-			bag.add<B> ("b2").set_index (1);
-			bag.add<B> ("b3").set_index (2);
-			bag.add<A> ("a3").set_value (42.0);
-			bag.add<datatools::utils::properties> ("p1").set_description ("A list of properties");
-			bag.add<A> ("a4");
-			bag.grab<B> ("b3").set_index (7777);
-			bag.grab<A> ("a4").set_value (1.6e-19);
-			bag.add<B> ("b4");
-			// here we put a bag in the bag :
-			bag.add<datatools::utils::things> ("g1").set_name ("sub_bag").set_description ("A bag stored in another bag");
+      // add some objects of type 'A' and 'B' in it
+      // perform some on-the-fly setter on some of them :
+      bag.add<A> ("a1").set_value (666.6666);
+      bag.add<A> ("a2").set_value (3.1415);
+      bag.add<B> ("b1").set_index (7654321);
+      bag.add<B> ("b2").set_index (1);
+      bag.add<B> ("b3").set_index (2);
+      bag.add<A> ("a3").set_value (42.0);
+      bag.add<datatools::properties> ("p1").set_description ("A list of properties");
+      bag.add<A> ("a4");
+      bag.grab<B> ("b3").set_index (7777);
+      bag.grab<A> ("a4").set_value (1.6e-19);
+      bag.add<B> ("b4");
+      // here we put a bag in the bag :
+      bag.add<datatools::things> ("g1").set_name ("sub_bag").set_description ("A bag stored in another bag");
 
-			// fetch the 'propeties' container stored with name 'p1' :
-			datatools::utils::properties & p1 = bag.grab<datatools::utils::properties> ("p1");
-			p1.store_flag ("test");
-			p1.store ("version.major", 1);
-			p1.store ("version.minor", 2);
-			p1.store ("version.patch", 10);
-			p1.store ("pi", 3.14159);
+      // fetch the 'propeties' container stored with name 'p1' :
+      datatools::properties & p1 = bag.grab<datatools::properties> ("p1");
+      p1.store_flag ("test");
+      p1.store ("version.major", 1);
+      p1.store ("version.minor", 2);
+      p1.store ("version.patch", 10);
+      p1.store ("pi", 3.14159);
 
-			// fetch the 'things' container stored with name 'g1' :
-			datatools::utils::things & g1 = bag.grab<datatools::utils::things> ("g1");
-			g1.add<A> ("x1").set_value (33.0);
-			g1.add<A> ("x2").set_value (12.0);
-			g1.add<B> ("y1").set_index (7);
+      // fetch the 'things' container stored with name 'g1' :
+      datatools::things & g1 = bag.grab<datatools::things> ("g1");
+      g1.add<A> ("x1").set_value (33.0);
+      g1.add<A> ("x2").set_value (12.0);
+      g1.add<B> ("y1").set_index (7);
 
-			// dump the bag :
-			bag.tree_dump (clog, "The bag:");
+      // dump the bag :
+      bag.tree_dump (clog, "The bag:");
 
-			// DO NOT COMPILE (NO PUBLIC COPY CONSTRUCTOR) :
-			/*
-			datatools::utils::things bag2 = bag;
-			*/
+      // DO NOT COMPILE (NO PUBLIC COPY CONSTRUCTOR) :
+      /*
+      datatools::things bag2 = bag;
+      */
 
-			// DO NOT COMPILE (NO PUBLIC COPY CONSTRUCTOR) :
-			/*
-			vector<datatools::utils::things> bags;
-			datatools::utils::things dummy;
-			bags.push_back (dummy);
-			for (int i = 0; i < bags.size (); i++)
-				{
-					bags[i].tree_dump ();
-				}
-			*/
+      // DO NOT COMPILE (NO PUBLIC COPY CONSTRUCTOR) :
+      /*
+      vector<datatools::things> bags;
+      datatools::things dummy;
+      bags.push_back (dummy);
+      for (int i = 0; i < bags.size (); i++)
+        {
+          bags[i].tree_dump ();
+        }
+      */
 
-			{
-				clog << endl << "A container of pointers to bags..." << endl;
-				typedef vector<datatools::utils::things *> bag_col_t;
-				bag_col_t bags;
-				bags.push_back (new datatools::utils::things ("O1", "a bag"));
-				bags.push_back (new datatools::utils::things ("O2", "another bag"));
-				bags.push_back (new datatools::utils::things ("O3", "yet another bag"));
+      {
+        clog << endl << "A container of pointers to bags..." << endl;
+        typedef vector<datatools::things *> bag_col_t;
+        bag_col_t bags;
+        bags.push_back (new datatools::things ("O1", "a bag"));
+        bags.push_back (new datatools::things ("O2", "another bag"));
+        bags.push_back (new datatools::things ("O3", "yet another bag"));
 
-				BOOST_FOREACH(datatools::utils::things * bag, bags)
-					{
-						if (bag != 0) bag->tree_dump (clog, "Stored bag: ");
-					}
+        BOOST_FOREACH(datatools::things * bag, bags)
+          {
+            if (bag != 0) bag->tree_dump (clog, "Stored bag: ");
+          }
 
-				clog << "Delete stored bags..." << endl;
-				BOOST_FOREACH(datatools::utils::things * bag, bags)
-					{
-						if (bag != 0) delete bag;
-					}
-			}
+        clog << "Delete stored bags..." << endl;
+        BOOST_FOREACH(datatools::things * bag, bags)
+          {
+            if (bag != 0) delete bag;
+          }
+      }
 
     }
   catch (exception & x)

@@ -7,11 +7,11 @@
 #include <string>
 #include <stdexcept>
 
-#include <datatools/utils/i_named.h>
+#include <datatools/i_named.h>
 
 using namespace std;
 
-struct foo : public datatools::utils::i_named
+struct foo : public datatools::i_named
 {
 private:
   string __prefix;
@@ -40,13 +40,13 @@ int main (int argc_ , char ** argv_)
 
       int iarg =  1;
       while (iarg < argc_) 
-	{
+        {
           string arg = argv_[iarg];
 
-	  if ((arg == "-d") || (arg == "--debug")) debug = true;
+          if ((arg == "-d") || (arg == "--debug")) debug = true;
 
-	  iarg++;
-	}
+          iarg++;
+        }
     
       foo t1 ("t",1);
       foo t2 ("t",2);

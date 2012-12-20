@@ -15,13 +15,13 @@
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 
-#include <datatools/serialization/utils.h>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
 #include <boost/archive/xml_iarchive.hpp>
+#include <datatools/serialization_macros.h>
 
-#include <datatools/utils/handle.h>
+#include <datatools/handle.h>
 
 using namespace std;
 
@@ -81,7 +81,7 @@ public:
 };
 
 // define a predicate for the 'hit' class :
-struct hit_is_invalid_predicate : public datatools::utils::i_predicate <hit>
+struct hit_is_invalid_predicate : public datatools::i_predicate <hit>
 {
   bool operator () (const hit & a_hit) const
   {
@@ -121,7 +121,7 @@ int main (int argc_ , char ** argv_)
 
       if (hit::g_debug) clog << "DEBUG: g_count=" << hit::g_count << endl;
 
-      using namespace datatools::utils;
+      using namespace datatools;
       {
         typedef handle<hit> hit_handle_t;
         typedef vector<hit_handle_t> hit_handles_col_t;

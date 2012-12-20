@@ -12,12 +12,13 @@
 #  DATADIR          - read-only architecture-independent data (DATAROOTDIR/PROJECT_NAME)
 #  MANDIR           - man documentation (DATAROOTDIR/man)
 #  DOCDIR           - documentation root (DATAROOTDIR/doc/PROJECT_NAME)
-#  ETCDIR           - miscellaneous configuration files (etx)
+#  ETCDIR           - miscellaneous configuration files (etc)
+#
 # Each CMAKE_INSTALL_<dir> value may be passed to the DESTINATION options of
 # install() commands for the corresponding file type.  If the includer does
 # not define a value the above-shown default will be used and the value will
 # appear in the cache for editing by the user.
-# If any of these values are absolute paths, the install of mlvl is regarded as
+# If any of these values are absolute paths, the install of is regarded as
 # non-relocatable, and the variable:
 #  CMAKE_INSTALL_IS_NONRELOCATABLE
 # will be set.

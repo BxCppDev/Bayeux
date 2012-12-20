@@ -21,20 +21,14 @@
 #include <list>
 #include <stdexcept>
 
-#include <datatools/utils/ioutils.h>
-#include <datatools/utils/properties.h>
-#include <datatools/utils/multi_properties.h>
+#include <datatools/ioutils.h>
+#include <datatools/properties.h>
+#include <datatools/multi_properties.h>
 
-#include <datatools/utils/utils.h>
+#include <datatools/utils.h>
 
-//#include <datatools/services/dummy_service.h>
 #include "dummy_service.h"
 #include "dummy_service.cc"
-
-using namespace datatools::service;
-using namespace datatools::utils;
-
-using namespace std;
 
 int main (int argc_, char ** argv_)
 {
@@ -42,74 +36,74 @@ int main (int argc_, char ** argv_)
 
   try
     {
-      clog << "Test program for class 'datatools::service::dummy_service' !" << endl;
+      std::clog << "Test program for class 'datatools::dummy_service' !" << std::endl;
 
       bool debug = false;
 
       int iarg = 1;
       while (iarg < argc_)
         {
-          string token = argv_[iarg];
+          std::string token = argv_[iarg];
 
           if (token[0] == '-')
             {
-							string option = token;
-							if ((option == "-d") || (option == "--debug"))
-								{
-									debug = true;
-								}
-							else
-								{
-									clog << io::warning << "ignoring option '" << option << "'!" << endl;
-								}
+              std::string option = token;
+              if ((option == "-d") || (option == "--debug"))
+                {
+                  debug = true;
+                }
+              else
+                {
+                  std::clog << datatools::io::warning << "ignoring option '" << option << "'!" << std::endl;
+                }
             }
           else
             {
-              string argument = token;
+              std::string argument = token;
               {
-								clog << io::warning << "ignoring argument '" << argument << "'!" << endl;
+                std::clog << datatools::io::warning << "ignoring argument '" << argument << "'!" << std::endl;
               }
             }
           iarg++;
-				}
+        }
 
-			base_service::g_debug = debug;
-			{
-				// Setup the configuration parameters of the service:
-				properties DS_config;
-				if (debug) DS_config.store_flag ("debug");
-				DS_config.store ("label", "test_service::label");
+      datatools::base_service::g_debug = debug;
+      {
+        // Setup the configuration parameters of the service:
+        datatools::properties DS_config;
+        if (debug) DS_config.store_flag ("debug");
+        DS_config.store ("label", "test_service::label");
 
-				dummy_service DS;
+        datatools::dummy_service DS;
 
-				// Initialize the event record processing service :
-				if (debug) clog << io::debug << "Initializing service '" << DS.get_name () << "'..." << endl;
-				DS.initialize_standalone (DS_config);
-				if (debug) clog << io::debug << "Done." << endl;
+        // Initialize the event record processing service :
+        if (debug) std::clog << datatools::io::debug << "Initializing service '" << DS.get_name () << "'..." << std::endl;
+        DS.initialize_standalone (DS_config);
+        if (debug) std::clog << datatools::io::debug << "Done." << std::endl;
 
-				clog << "Dummy service label is '" << DS.get_label () << "'" << endl;
+        std::clog << "Dummy service label is '" << DS.get_label () << "'" << std::endl;
 
-				// Terminate the test service :
-				if (debug) clog << io::debug << "Terminating service '" << DS.get_name () << "'..." << endl;
-				DS.reset ();
-				if (debug) clog << io::debug << "Done." << endl;
-			}
+        // Terminate the test service :
+        if (debug) std::clog << datatools::io::debug << "Terminating service '" << DS.get_name () << "'..." << std::endl;
+        DS.reset ();
+        if (debug) std::clog << datatools::io::debug << "Done." << std::endl;
+      }
 
 }
-  catch (exception & x)
+  catch (std::exception & x)
     {
-      cerr << "error: " << x.what () << endl;
+      std::cerr << datatools::io::error << x.what () << std::endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl;
+      std::cerr << datatools::io::error << "Unexpected error!" << std::endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);
 }
 
-// end of test_service_manager.cxx
+// end of test_dummy_service.cxx
 /*
 ** Local Variables: --
 ** mode: c++ --

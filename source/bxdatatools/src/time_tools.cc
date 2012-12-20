@@ -1,7 +1,7 @@
 // -*- mode: c++; -*- 
 // time_tools.cc
 // Ourselves
-#include <datatools/utils/time_tools.h>
+#include <datatools/time_tools.h>
 
 // Standard Library
 #include <cstdlib>
@@ -20,20 +20,18 @@
 // - A
 
 // This Project
-#include <datatools/utils/clhep_units.h>
-#include <datatools/utils/units.h>
-#include <datatools/utils/utils.h>
+#include <datatools/clhep_units.h>
+#include <datatools/units.h>
+#include <datatools/utils.h>
 
 namespace datatools {
-namespace utils {
-
 double computing_time::g_system_dead_time = 
     std::numeric_limits<double>::quiet_NaN();
 
 
 // ctor:
 computing_time::computing_time() {
-  if (!datatools::utils::is_valid(g_system_dead_time)) {
+  if (!datatools::is_valid(g_system_dead_time)) {
     g_compute_system_dead_time();
   }
   this->reset();
@@ -121,7 +119,7 @@ void computing_time::stop() {
 void computing_time::pause() {
   if((gettimeofday(&stop_, NULL)) == -1) {
     std::ostringstream message;
-    message << "datatools::utils::computing_time::start: "
+    message << "datatools::computing_time::start: "
             << "gettimeofday failed !";
     throw std::runtime_error(message.str());
   }
@@ -133,13 +131,13 @@ void computing_time::pause() {
   sum_time_ += elapsed_time;
   sum2_time_ += (elapsed_time * elapsed_time);
 
-  if (!datatools::utils::is_valid(min_time_)) {
+  if (!datatools::is_valid(min_time_)) {
     min_time_ = elapsed_time;
   } else if (elapsed_time < min_time_) {
     min_time_ = elapsed_time;
   }
 
-  if (!datatools::utils::is_valid(max_time_)) {
+  if (!datatools::is_valid(max_time_)) {
     max_time_ = elapsed_time;
   } else if (elapsed_time > max_time_) {
     max_time_ = elapsed_time;
@@ -156,7 +154,7 @@ void computing_time::pause() {
 void computing_time::resume() {
   if((gettimeofday(&start_, NULL)) == -1) {
     std::ostringstream message;
-    message << "datatools::utils::computing_time::resume: "
+    message << "datatools::computing_time::resume: "
             << "gettimeofday failed !";
     throw std::runtime_error(message.str());
   }
@@ -171,9 +169,9 @@ void computing_time::reset() {
   counts_ = 0;
   sum_time_ = 0.0;
   sum2_time_ = 0.0;
-  datatools::utils::invalidate(min_time_);
-  datatools::utils::invalidate(max_time_);
-  datatools::utils::invalidate(last_elapsed_time_);
+  datatools::invalidate(min_time_);
+  datatools::invalidate(max_time_);
+  datatools::invalidate(last_elapsed_time_);
 }
 
 
@@ -181,41 +179,40 @@ void computing_time::tree_dump(std::ostream& a_out,
                                const std::string& a_title,
                                const std::string& a_indent,
                                bool a_inherit) const {
-  namespace du = datatools::utils;
   std::string indent;
   if (!a_indent.empty()) indent = a_indent;
   if (!a_title.empty()) a_out << indent << a_title << std::endl;
 
-  a_out << indent << du::i_tree_dumpable::tag
+  a_out << indent << i_tree_dumpable::tag
         << "System dead time   : " 
         << g_system_dead_time / CLHEP::microsecond << " us" << std::endl;   
 
   if (counts_ == 0) {
-    a_out << indent << du::i_tree_dumpable::inherit_tag(a_inherit)  
+    a_out << indent << i_tree_dumpable::inherit_tag(a_inherit)  
           << "No statistics" << std::endl;   
   } else {
-    a_out << indent << du::i_tree_dumpable::tag 
+    a_out << indent << i_tree_dumpable::tag 
           << "Count(s)      : " << counts_ << std::endl;
-    a_out << indent << du::i_tree_dumpable::tag 
+    a_out << indent << i_tree_dumpable::tag 
           << "Sum time      : " 
           << sum_time_ / CLHEP::second << " s" << std::endl;
-    a_out << indent << du::i_tree_dumpable::tag 
+    a_out << indent << i_tree_dumpable::tag 
           << "Min time      : " 
           << min_time_ / CLHEP::second << " s" << std::endl;
-    a_out << indent << du::i_tree_dumpable::tag 
+    a_out << indent << i_tree_dumpable::tag 
           << "Max time      : " 
           << max_time_ / CLHEP::second << " s" << std::endl;
-    a_out << indent << du::i_tree_dumpable::tag 
+    a_out << indent << i_tree_dumpable::tag 
           << "Sum squ. time : " 
           << sum2_time_ / (CLHEP::second * CLHEP::second) 
           << " s²" << std::endl;
-    a_out << indent << du::i_tree_dumpable::tag 
+    a_out << indent << i_tree_dumpable::tag 
           << "Total time    : " 
           << this->get_total_time() / CLHEP::second << " s" << std::endl;
-    a_out << indent << du::i_tree_dumpable::tag 
+    a_out << indent << i_tree_dumpable::tag 
           << "Mean time     : " 
           << this->get_mean_time() / CLHEP::second << " s" << std::endl;
-    a_out << indent <<  du::i_tree_dumpable::tag  
+    a_out << indent <<  i_tree_dumpable::tag  
           << "Sigma time    : ";
     if (std::isnan(this->get_sigma_time())) {
       a_out << '-';
@@ -224,7 +221,7 @@ void computing_time::tree_dump(std::ostream& a_out,
     }
 
     a_out << std::endl;
-    a_out << indent <<  du::i_tree_dumpable::inherit_tag(a_inherit)  
+    a_out << indent <<  i_tree_dumpable::inherit_tag(a_inherit)  
           << "Last elapsed time : " 
           << last_elapsed_time_ / CLHEP::second << " s" << std::endl;
   }
@@ -286,6 +283,5 @@ void computing_time::g_compute_system_dead_time() {
             << std::endl;
 }
 
-} // namespace utils
 } // namespace datatools 
 

@@ -9,7 +9,7 @@
 #include <vector>
 #include <map>
 
-#include <datatools/utils/properties.h>
+#include <datatools/properties.h>
 
 using namespace std;
 
@@ -26,29 +26,27 @@ int main (int argc_, char ** argv_)
 
       int iarg = 1;
       while (iarg < argc_) 
-	{
-	  string arg = argv_[iarg];
-	  if ( arg == "-d" || arg == "--debug" ) debug = true;
-	  if ( arg == "-v" || arg == "--no-validator" ) use_validator = false;
-	  iarg++;
-	}
+        {
+          string arg = argv_[iarg];
+          if ( arg == "-d" || arg == "--debug" ) debug = true;
+          if ( arg == "-v" || arg == "--no-validator" ) use_validator = false;
+          iarg++;
+        }
 
       srand48 (seed);
 
-      namespace du = datatools::utils;
+      datatools::properties::g_debug = debug;
 
-      du::properties::g_debug = debug;
-
-      du::properties my_dict ("a list of user properties");
+      datatools::properties my_dict ("a list of user properties");
       if (! use_validator) 
-	{
-	  my_dict.unset_key_validator ();
-	}
+        {
+          my_dict.unset_key_validator ();
+        }
       my_dict.dump (clog);
       my_dict.store ("name","my name");
       my_dict.store ("firstname","my firstname");
-      my_dict.store (du::properties::make_private_key ("private"),
-		     "a private data", "Confidential stuff");
+      my_dict.store (datatools::properties::make_private_key ("private"),
+                     "a private data", "Confidential stuff");
       my_dict.store ("visibility.shown", true);
       my_dict.store ("visibility.color", "red");
       my_dict.store ("visibility.rendering", "shaded");
@@ -71,60 +69,60 @@ int main (int argc_, char ** argv_)
       my_dict.store ("vs", vs, "a vector of strings");    
       my_dict.dump (clog);
 
-      du::properties::keys_col_t all_keys;
+      datatools::properties::keys_col_type all_keys;
       my_dict.keys (all_keys);
 
-      du::properties::keys_col_t visibility_keys;
+      datatools::properties::keys_col_type visibility_keys;
       my_dict.keys_starting_with (visibility_keys, "visibility.");
-      du::properties::keys_col_t other_keys;
+      datatools::properties::keys_col_type other_keys;
       my_dict.keys_not_starting_with (other_keys, "visibility.");
 
       clog << "All keys: " << endl;
-      for (du::properties::keys_col_t::const_iterator i
-	     = all_keys.begin ();
-	    i != all_keys.end ();
-	   i++)
-	{
-	  clog << " " << '"' << *i << '"' << endl; 
-	}
+      for (datatools::properties::keys_col_type::const_iterator i
+             = all_keys.begin ();
+            i != all_keys.end ();
+           i++)
+        {
+          clog << " " << '"' << *i << '"' << endl; 
+        }
       clog << endl;
  
       clog << "Visibility keys: " << endl;
-      for (du::properties::keys_col_t::const_iterator i 
-	     = visibility_keys.begin ();
-	    i != visibility_keys.end ();
-	   i++)
-	{
-	  clog << " " << '"' << *i << '"' << endl; 
-	}
+      for (datatools::properties::keys_col_type::const_iterator i 
+             = visibility_keys.begin ();
+            i != visibility_keys.end ();
+           i++)
+        {
+          clog << " " << '"' << *i << '"' << endl; 
+        }
       clog << endl;
  
       clog << "Other keys: " << endl;
-      for (du::properties::keys_col_t::const_iterator i 
-	     = other_keys.begin ();
-	    i != other_keys.end ();
-	   i++)
-	{
-	  clog << " " << '"' << *i << '"' << endl; 
-	}
+      for (datatools::properties::keys_col_type::const_iterator i 
+             = other_keys.begin ();
+            i != other_keys.end ();
+           i++)
+        {
+          clog << " " << '"' << *i << '"' << endl; 
+        }
 
-      du::properties my_dict2 = my_dict;
+      datatools::properties my_dict2 = my_dict;
       my_dict2.erase_all_not_starting_with ("visibility.");
       my_dict2.dump (clog);
 
-      du::properties my_dict3 = my_dict;
+      datatools::properties my_dict3 = my_dict;
       my_dict3.erase_all_starting_with ("visibility.");
       my_dict3.dump (clog);
  
-      du::properties my_dict4;
+      datatools::properties my_dict4;
       my_dict.export_starting_with (my_dict4, "visibility.");
       my_dict4.dump (clog);
 
-      du::properties my_dict5;
+      datatools::properties my_dict5;
       my_dict.export_not_starting_with (my_dict5, "visibility.");
       my_dict5.dump (clog);
 
-      //du::properties my_dict;
+      //datatools::properties my_dict;
       //my_dict.export_starting_with (my_dict, "visibility.");
 
       map<string, string> string_based_dict;
@@ -132,11 +130,11 @@ int main (int argc_, char ** argv_)
 
       cout << endl << "Exported string-based dictionary:" << endl;
       for (map<string,string>::const_iterator i = string_based_dict.begin ();
-	   i != string_based_dict.end ();
-	   i++)
-	{
-	  cout << i->first << " = " << i->second << endl;
-	}
+           i != string_based_dict.end ();
+           i++)
+        {
+          cout << i->first << " = " << i->second << endl;
+        }
     }
   catch (exception & x)
     {

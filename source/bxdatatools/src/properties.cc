@@ -2,11 +2,12 @@
 /* properties.cc
  */
 // Ourselves
-#include <datatools/utils/properties.h>
+#include <datatools/properties.h>
 
 // Standard Library
-#include <fstream>
+#include <iostream>
 #include <iomanip>
+#include <fstream>
 #include <sstream>
 #include <stdexcept>
 
@@ -17,12 +18,23 @@
 #include <boost/archive/polymorphic_iarchive.hpp>
 
 // This Project
-#include <datatools/utils/utils.h>
+#include <datatools/utils.h>
+
+// Support for serialization tag :
+DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_IMPLEMENTATION(::datatools::properties,
+                                                      "datatools::properties");
+
+// Support for old serialization tag :
+DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_IMPLEMENTATION(::datatools::properties, 
+                                                               "datatools::utils::properties");
 
 namespace datatools {
-namespace utils {
 
-bool properties::g_debug                       = false;
+DATATOOLS_SERIALIZATION_IMPLEMENTATION_ADVANCED(properties,"datatools::properties")
+
+///DATATOOLS_SERIALIZATION_IMPLEMENTATION(properties::data,"datatools::properties::data")
+
+bool properties::g_debug = false;
 
 properties::default_key_validator properties::g_default_key_validator;
 
@@ -33,10 +45,6 @@ const bool        properties::data::DEFAULT_VALUE_BOOLEAN = false;
 const int         properties::data::DEFAULT_VALUE_INTEGER = 0;
 const double      properties::data::DEFAULT_VALUE_REAL    = 0.0;
 const std::string properties::data::DEFAULT_VALUE_STRING  = "";
-
-DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(properties,"datatools:utils::properties")
-DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(properties::data,"datatools:utils::properties::data")
-
 
 bool properties::data::has_forbidden_char(const std::string& a_str) {
   return a_str.find_first_of(STRING_FORBIDDEN_CHAR) != a_str.npos;
@@ -54,10 +62,6 @@ std::string properties::data::get_error_message(int a_error_code) {
 
 
 void properties::data::clear_values_() {
-  if (properties::g_debug) {
-    std::cerr << "DEBUG: properties::data::clear_values_: entering..."
-              << std::endl;
-  }
   _boolean_values_.clear();
   _integer_values_.clear();
   _real_values_.clear();
@@ -66,24 +70,20 @@ void properties::data::clear_values_() {
 
 
 int properties::data::init_values_(char a_type, int a_size) {
-  if (properties::g_debug) {
-    std::cerr << "DEBUG: properties::data::init_values_: entering..."
-              << std::endl;
-  }
   int memsize = a_size;
   if (a_size < 0) {
     memsize = 1;
     _flags_ &= ~MASK_VECTOR; // force scalar
-    if (properties::g_debug) {
-      std::cerr << "DEBUG: properties::data::init_values_: SCALAR... size="
-                << memsize << std::endl;
-    }
+    // if (properties::g_debug) {
+    //   std::cerr << "DEBUG: properties::data::init_values_: SCALAR... size="
+    //             << memsize << std::endl;
+    // }
   } else {
     _flags_ |= MASK_VECTOR; // force vector
-    if (properties::g_debug) {
-      std::cerr << "DEBUG: properties::data::init_values_: VECTOR... size="
-                << memsize << std::endl;
-    }
+    // if (properties::g_debug) {
+    //   std::cerr << "DEBUG: properties::data::init_values_: VECTOR... size="
+    //             << memsize << std::endl;
+    // }
   }
 
   _flags_ &= ~MASK_TYPE;
@@ -94,45 +94,45 @@ int properties::data::init_values_(char a_type, int a_size) {
   }
 
   if (a_type == TYPE_BOOLEAN_SYMBOL) {
-    if (properties::g_debug) {
-      std::cerr << "DEBUG: properties::data::init_values_: BOOLEAN..."
-                << std::endl;
-    }
+    // if (properties::g_debug) {
+    //   std::cerr << "DEBUG: properties::data::init_values_: BOOLEAN..."
+    //             << std::endl;
+    // }
     _flags_ |= TYPE_BOOLEAN;
     if (memsize > 0) _boolean_values_.assign(memsize, DEFAULT_VALUE_BOOLEAN);
   }
 
   if (a_type == TYPE_INTEGER_SYMBOL) {
-    if (properties::g_debug) {
-      std::cerr << "DEBUG: properties::data::init_values_: INTEGER..."
-                << " TYPE_INTEGER=" << (int) TYPE_INTEGER << std::endl;
-    }
+    // if (properties::g_debug) {
+    //   std::cerr << "DEBUG: properties::data::init_values_: INTEGER..."
+    //             << " TYPE_INTEGER=" << (int) TYPE_INTEGER << std::endl;
+    // }
     _flags_ |= TYPE_INTEGER;
     if (memsize > 0) _integer_values_.assign(memsize, DEFAULT_VALUE_INTEGER);
   }
 
   if (a_type == TYPE_REAL_SYMBOL) {
-    if (properties::g_debug) {
-      std::cerr << "DEBUG: properties::data::init_values_: REAL..."
-                << std::endl;
-    }
+    // if (properties::g_debug) {
+    //   std::cerr << "DEBUG: properties::data::init_values_: REAL..."
+    //             << std::endl;
+    // }
     _flags_ |= TYPE_REAL;
     if (memsize > 0) _real_values_.assign(memsize, DEFAULT_VALUE_REAL);
   }
 
   if (a_type == TYPE_STRING_SYMBOL) {
-    if (properties::g_debug) {
-      std::cerr << "DEBUG: properties::data::init_values_: STRING..."
-                << std::endl;
-    }
+    // if (properties::g_debug) {
+    //   std::cerr << "DEBUG: properties::data::init_values_: STRING..."
+    //             << std::endl;
+    // }
     _flags_ |= TYPE_STRING;
     if (memsize > 0) _string_values_.assign(memsize, DEFAULT_VALUE_STRING);
   }
 
-  if (properties::g_debug) {
-    std::cerr << "DEBUG: properties::data::init_values_: exiting."
-              << std::endl;
-  }
+  // if (properties::g_debug) {
+  //   std::cerr << "DEBUG: properties::data::init_values_: exiting."
+  //             << std::endl;
+  // }
   return ERROR_SUCCESS;
 }
 
@@ -229,7 +229,7 @@ int properties::data::unlock() {
 
 int32_t properties::data::get_size() const {
   if (!this->has_type()) {
-    throw std::logic_error("datatools::utils::properties::data::get_size: No type!");
+    throw std::logic_error("datatools::properties::data::get_size: No type!");
   }
 
   if (this->is_vector()) {
@@ -274,10 +274,10 @@ properties::data::data(bool a_value, int a_size) {
 
 
 properties::data::data(int a_value, int a_size) {
-  if (properties::g_debug) {
-    std::cerr << "DEBUG: properties::data::ctor (...int...): entering..."
-              << std::endl;
-  }
+  // if (properties::g_debug) {
+  //   std::cerr << "DEBUG: properties::data::ctor (...int...): entering..."
+  //             << std::endl;
+  // }
   _flags_  = 0;
   this->init_values_(TYPE_INTEGER_SYMBOL, a_size);
   for (int i = 0; i < (int)this->size(); ++i) {
@@ -287,10 +287,10 @@ properties::data::data(int a_value, int a_size) {
 
 
 properties::data::data(double a_value, int a_size) {
-  if (properties::g_debug) {
-    std::cerr << "DEBUG: properties::data::ctor (...double...): entering..."
-              << std::endl;
-  }
+  // if (properties::g_debug) {
+  //   std::cerr << "DEBUG: properties::data::ctor (...double...): entering..."
+  //             << std::endl;
+  // }
   _flags_  = 0;
   this->init_values_(TYPE_REAL_SYMBOL, a_size);
   for (int i = 0; i < (int)this->size(); ++i) {
@@ -300,37 +300,37 @@ properties::data::data(double a_value, int a_size) {
 
 
 properties::data::data(const std::string& a_value, int a_size) {
-  if (properties::g_debug) {
-    std::cerr << "DEBUG: properties::data::ctor (...std::string...): entering... "
-              << a_value  << std::endl;
-  }
+  // if (properties::g_debug) {
+  //   std::cerr << "DEBUG: properties::data::ctor (...std::string...): entering... "
+  //             << a_value  << std::endl;
+  // }
   _flags_  = 0;
   int code=0;
   this->init_values_(TYPE_STRING_SYMBOL, a_size);
   if (has_forbidden_char (a_value)) {
     std::ostringstream message;
-    message << "datatools::utils::properties::data::data (std::string): Forbidden char in string '" << a_value << "'!";
+    message << "datatools::properties::data::data (std::string): Forbidden char in string '" << a_value << "'!";
     throw std::logic_error(message.str());
   }
   for (int i = 0; i < (int)this->size(); ++i) {
     code = this->set_value(a_value, i);
     if (code != ERROR_SUCCESS) {
-      throw std::logic_error("datatools::utils::properties::data::data (std::string): failure!");
+      throw std::logic_error("datatools::properties::data::data (std::string): failure!");
     }
   }
-  if (properties::g_debug) {
-    this->tree_dump(std::cerr, "datatools::utils::properties::data::data", "DEBUG: ");
-    std::cerr << "DEBUG: properties::data::ctor (...std::string...): entering... "
-              << "code=" << code  << std::endl;
+  // if (properties::g_debug) {
+  //   this->tree_dump(std::cerr, "datatools::properties::data::data", "DEBUG: ");
+  //   std::cerr << "DEBUG: properties::data::ctor (...std::string...): entering... "
+  //             << "code=" << code  << std::endl;
 
-  }
+  // }
 }
 
 
 properties::data::data (const char* a_value, int a_size) {
-  if (properties::g_debug) {
-    std::cerr << "DEBUG: properties::data::ctor (...char *...): entering..." << std::endl;
-  }
+  // if (properties::g_debug) {
+  //   std::cerr << "DEBUG: properties::data::ctor (...char *...): entering..." << std::endl;
+  // }
   _flags_ = 0;
   this->init_values_(TYPE_STRING_SYMBOL, a_size);
   std::string tmp;
@@ -338,7 +338,7 @@ properties::data::data (const char* a_value, int a_size) {
     tmp = a_value;
     if (has_forbidden_char(tmp)) {
       std::ostringstream message;
-      message << "datatools::utils::properties::data::data (std::string): Forbidden char in string '" << tmp << "'!";
+      message << "datatools::properties::data::data (std::string): Forbidden char in string '" << tmp << "'!";
       throw std::logic_error(message.str());
     }
   }
@@ -457,7 +457,7 @@ int properties::data::get_value(std::string& a_value, int a_index) const {
 bool properties::data::get_boolean_value(int a_index) const {
   bool value;
   if (this->get_value(value, a_index) != ERROR_SUCCESS) {
-    throw std::logic_error("datatools::utils::properties::data::get_boolean_value: type is not boolean!");
+    throw std::logic_error("datatools::properties::data::get_boolean_value: type is not boolean!");
   }
   return value;
 }
@@ -466,7 +466,7 @@ bool properties::data::get_boolean_value(int a_index) const {
 int properties::data::get_integer_value(int a_index) const {
   int value;
   if (this->get_value(value, a_index) != ERROR_SUCCESS) {
-    throw std::logic_error("datatools::utils::properties::data::get_integer_value: type is not integer!");
+    throw std::logic_error("datatools::properties::data::get_integer_value: type is not integer!");
   }
   return value;
 }
@@ -475,7 +475,7 @@ int properties::data::get_integer_value(int a_index) const {
 double properties::data::get_real_value(int a_index) const {
   double value;
   if (this->get_value(value, a_index) != ERROR_SUCCESS) {
-    throw std::logic_error("datatools::utils::properties::data::get_real_value: type is not double!");
+    throw std::logic_error("datatools::properties::data::get_real_value: type is not double!");
   }
   return value;
 }
@@ -484,7 +484,7 @@ double properties::data::get_real_value(int a_index) const {
 std::string properties::data::get_string_value(int a_index) const {
   std::string value;
   if (this->get_value(value, a_index) != ERROR_SUCCESS) {
-    throw std::logic_error("datatools::utils::properties::data::get_string_value: type is not string!");
+    throw std::logic_error("datatools::properties::data::get_string_value: type is not string!");
   }
   return value;
 }
@@ -506,7 +506,7 @@ std::string properties::data::get_vector_label() const {
 
 
 void properties::data::dump(std::ostream& a_out) const {
-  this->tree_dump(a_out, "datatools::utils::properties::data");
+  this->tree_dump(a_out, "datatools::properties::data");
 }
 
 
@@ -531,17 +531,16 @@ void properties::data::tree_dump(std::ostream& a_out,
                                  const std::string& a_title,
                                  const std::string& a_indent,
                                  bool a_inherit) const {
-  namespace du = datatools::utils;
   std::string indent;
   if (! a_indent.empty()) indent = a_indent;
   if (! a_title.empty()) a_out << indent << a_title << std::endl;
   
   if (!_description_.empty()) {
-    a_out << indent << du::i_tree_dumpable::tag
+    a_out << indent << i_tree_dumpable::tag
           << "Description  : " << this->get_description() << std::endl;
   }
 
-  a_out << indent << du::i_tree_dumpable::tag
+  a_out << indent << i_tree_dumpable::tag
         << "Type  : " ;
   if (this->is_locked()) a_out << "const ";
   a_out << this->get_type_label();
@@ -556,9 +555,9 @@ void properties::data::tree_dump(std::ostream& a_out,
     for (int i = 0; i < (int)this->get_size(); ++i) {
       a_out << indent;
       if (i == (int)(this->get_size() - 1)) {
-        a_out << du::i_tree_dumpable::inherit_tag (a_inherit);
+        a_out << i_tree_dumpable::inherit_tag (a_inherit);
       } else {
-        a_out << du::i_tree_dumpable::tag;
+        a_out << i_tree_dumpable::tag;
       }
       a_out << "Value";
       if (this->is_vector()) a_out << "[" << i << "]";
@@ -579,7 +578,7 @@ void properties::data::tree_dump(std::ostream& a_out,
     }
   } else {
     a_out << indent;
-    a_out << du::i_tree_dumpable::inherit_tag(a_inherit);
+    a_out << i_tree_dumpable::inherit_tag(a_inherit);
     a_out << "<no value>" << std::endl;
   }
 }
@@ -596,11 +595,11 @@ properties::default_key_validator::default_key_validator() {}
 properties::default_key_validator::~default_key_validator() {}
 
 bool properties::default_key_validator::operator()(
-    const std::string& a_key_arg) const {
-  if (a_key_arg.empty()) return false;
-  if (a_key_arg.find_first_not_of(ALLOWED_CHARS) != a_key_arg.npos) return false;
-  if (a_key_arg.find_first_of("0123456789.") == 0) return false;
-  if (a_key_arg[a_key_arg.size()-1] == '.') return false;
+    const std::string& prop_key) const {
+  if (prop_key.empty()) return false;
+  if (prop_key.find_first_not_of(ALLOWED_CHARS) != prop_key.npos) return false;
+  if (prop_key.find_first_of("0123456789.") == 0) return false;
+  if (prop_key[prop_key.size()-1] == '.') return false;
   return true;
 }
 
@@ -610,12 +609,12 @@ bool properties::default_key_validator::operator()(
 //
 const std::string properties::PRIVATE_PROPERTY_PREFIX = "__";
 
-void properties::_validate_key_(const std::string& a_key_arg) const {
+void properties::_validate_key_(const std::string& prop_key) const {
   if (_key_validator_ != 0) {
-    if (!_key_validator_->operator()(a_key_arg)) {
+    if (!_key_validator_->operator()(prop_key)) {
       std::ostringstream message;
-      message << "datatools::utils::properties::_validate_key_: After key validator, the '"
-              << a_key_arg << "' key is not valid!";
+      message << "datatools::properties::_validate_key_: After key validator, the '"
+              << prop_key << "' key is not valid!";
       throw std::logic_error(message.str());
     }
   }
@@ -653,22 +652,22 @@ bool properties::empty() const {
 
 
 void properties::set_key_validator(
-    const basic_key_validator& a_key_validator) {
+    const basic_key_validator& prop_key_validator) {
   _clear_key_validator_();
-  _key_validator_ = &a_key_validator;
+  _key_validator_ = &prop_key_validator;
   _key_validator_deletion_ = false;
 }
 
 
 void properties::set_key_validator(
-    const basic_key_validator* a_key_validator,
+    const basic_key_validator* prop_key_validator,
     bool a_deletion_on_destroy) {
-  if (_key_validator_ != 0 && _key_validator_== a_key_validator) {
+  if (_key_validator_ != 0 && _key_validator_== prop_key_validator) {
     return;
   }
   _clear_key_validator_();
-  if (a_key_validator != 0) {
-    _key_validator_ = a_key_validator;
+  if (prop_key_validator != 0) {
+    _key_validator_ = prop_key_validator;
     _key_validator_deletion_ = a_deletion_on_destroy;
   }
 }
@@ -703,36 +702,36 @@ properties::properties(const std::string& a_description)
 
 // ctor:
 properties::properties(const std::string& a_description,
-                       const basic_key_validator& a_key_validator)
+                       const basic_key_validator& prop_key_validator)
     : _debug_(false), _key_validator_(0) {
   this->set_description(a_description);
-  this->set_key_validator(a_key_validator);
+  this->set_key_validator(prop_key_validator);
 }
 
 
 // ctor:
-properties::properties(const basic_key_validator& a_key_validator)
+properties::properties(const basic_key_validator& prop_key_validator)
     : _debug_(false), _key_validator_(0) {
   this->set_description("");
-  this->set_key_validator(a_key_validator);
+  this->set_key_validator(prop_key_validator);
 }
 
 
 // ctor:
 properties::properties(const std::string& a_description,
-                       const basic_key_validator* a_key_validator,
+                       const basic_key_validator* prop_key_validator,
                        bool a_deletion_on_destroy)
     : _debug_(false), _key_validator_(0) {
   this->set_description(a_description);
-  this->set_key_validator(a_key_validator, a_deletion_on_destroy);
+  this->set_key_validator(prop_key_validator, a_deletion_on_destroy);
 }
 
 
-properties::properties(const basic_key_validator* a_key_validator,
+properties::properties(const basic_key_validator* prop_key_validator,
                        bool a_deletion_on_destroy)
     : _debug_(false), _key_validator_(0) {
   this->set_description("");
-  this->set_key_validator(a_key_validator, a_deletion_on_destroy);
+  this->set_key_validator(prop_key_validator, a_deletion_on_destroy);
 }
 
 
@@ -755,12 +754,12 @@ void properties::_clear_key_validator_() {
 }
 
 
-void properties::erase(const std::string& a_key) {
-  pmap::iterator found = _props_.find(a_key);
+void properties::erase(const std::string& prop_key) {
+  pmap::iterator found = _props_.find(prop_key);
   if (found == _props_.end()) {
     std::ostringstream message;
-    message << "datatools::utils::properties::erase: key '" 
-            << a_key << "' not known!";
+    message << "datatools::properties::erase: key '" 
+            << prop_key << "' not known!";
     throw std::logic_error(message.str());
   }
   _props_.erase(found);
@@ -768,47 +767,47 @@ void properties::erase(const std::string& a_key) {
 
 
 void properties::erase_all_starting_with(const std::string& prefix) {
-  keys_col_t keys;
+  keys_col_type keys;
   this->keys_starting_with(keys, prefix);
-  for (keys_col_t::const_iterator i = keys.begin(); i != keys.end(); ++i){
+  for (keys_col_type::const_iterator i = keys.begin(); i != keys.end(); ++i){
     this->erase(*i);
   }
 }
 
 
 void properties::erase_all_not_starting_with(const std::string& prefix) {
-  keys_col_t keys;
+  keys_col_type keys;
   keys_not_starting_with (keys, prefix);
-  for (keys_col_t::const_iterator i = keys.begin(); i != keys.end(); ++i){
+  for (keys_col_type::const_iterator i = keys.begin(); i != keys.end(); ++i){
     this->erase(*i);
   }
 }
 
 
 void properties::export_and_rename_starting_with(properties& a_props,
-    const std::string& a_key_prefix,
+    const std::string& prop_key_prefix,
     const std::string& a_new_prefix) const {
   if (this == &a_props) {
-    throw std::logic_error("datatools::utils::properties::export_and_rename_starting_with: Self export is not allowed !");
+    throw std::logic_error("datatools::properties::export_and_rename_starting_with: Self export is not allowed !");
   }
-  keys_col_t ks;
-  this->keys_starting_with(ks, a_key_prefix);
-  for (keys_col_t::const_iterator i = ks.begin(); i !=  ks.end(); ++i) {
+  keys_col_type ks;
+  this->keys_starting_with(ks, prop_key_prefix);
+  for (keys_col_type::const_iterator i = ks.begin(); i !=  ks.end(); ++i) {
     properties& ptmp = const_cast<properties&>(*this);
     std::string new_key = *i;
-    boost::replace_first(new_key, a_key_prefix, a_new_prefix);
+    boost::replace_first(new_key, prop_key_prefix, a_new_prefix);
     a_props._props_[new_key] = ptmp._props_[*i];
   }
 }
 
 void properties::export_all(properties & a_props) const {
   if (this == &a_props) {
-    throw std::logic_error("datatools::utils::properties::export_all: Self export is not allowed !");
+    throw std::logic_error("datatools::properties::export_all: Self export is not allowed !");
   }
 
-  keys_col_t ks;
+  keys_col_type ks;
   this->keys(ks);
-  for (keys_col_t::const_iterator i = ks.begin(); i != ks.end(); ++i) {
+  for (keys_col_type::const_iterator i = ks.begin(); i != ks.end(); ++i) {
     properties& ptmp = const_cast<properties&>(*this);
     a_props._props_[*i] = ptmp._props_[*i];
   }
@@ -817,12 +816,12 @@ void properties::export_all(properties & a_props) const {
 void properties::export_starting_with(properties & a_props,
                                       const std::string& prefix) const {
   if (this == &a_props) {
-    throw std::logic_error("datatools::utils::properties::export_starting_with: Self export is not allowed !");
+    throw std::logic_error("datatools::properties::export_starting_with: Self export is not allowed !");
   }
 
-  keys_col_t ks;
+  keys_col_type ks;
   this->keys_starting_with(ks, prefix);
-  for (keys_col_t::const_iterator i = ks.begin(); i != ks.end(); ++i) {
+  for (keys_col_type::const_iterator i = ks.begin(); i != ks.end(); ++i) {
     properties& ptmp = const_cast<properties&>(*this);
     a_props._props_[*i] = ptmp._props_[*i];
   }
@@ -832,11 +831,11 @@ void properties::export_starting_with(properties & a_props,
 void properties::export_not_starting_with(properties& a_props,
     const std::string& prefix) const {
   if (this == &a_props) {
-    throw std::logic_error("datatools::utils::properties::export_starting_with: Self export is not allowed !");
+    throw std::logic_error("datatools::properties::export_starting_with: Self export is not allowed !");
   }
-  keys_col_t ks;
+  keys_col_type ks;
   this->keys_not_starting_with(ks, prefix);
-  for (keys_col_t::const_iterator i = ks.begin(); i !=  ks.end(); ++i) {
+  for (keys_col_type::const_iterator i = ks.begin(); i !=  ks.end(); ++i) {
     properties& ptmp = const_cast<properties&>(*this);
     a_props._props_[*i] = ptmp._props_[*i];
   }
@@ -844,18 +843,18 @@ void properties::export_not_starting_with(properties& a_props,
 
 
 void properties::erase_all_ending_with(const std::string& suffix) {
-  keys_col_t keys;
+  keys_col_type keys;
   this->keys_ending_with(keys, suffix);
-  for (keys_col_t::const_iterator i = keys.begin(); i != keys.end(); ++i) {
+  for (keys_col_type::const_iterator i = keys.begin(); i != keys.end(); ++i) {
     this->erase(*i);
   }
 }
 
 
 void properties::erase_all_not_ending_with(const std::string& suffix) {
-  keys_col_t keys;
+  keys_col_type keys;
   this->keys_not_ending_with(keys, suffix);
-  for (keys_col_t::const_iterator i = keys.begin(); i != keys.end(); ++i) {
+  for (keys_col_type::const_iterator i = keys.begin(); i != keys.end(); ++i) {
     this->erase (*i);
   }
 }
@@ -864,11 +863,11 @@ void properties::erase_all_not_ending_with(const std::string& suffix) {
 void properties::export_ending_with(properties& a_props,
                                     const std::string& suffix) const {
   if (this == &a_props) {
-    throw std::logic_error("datatools::utils::properties::export_ending_with: Self export is not allowed !");
+    throw std::logic_error("datatools::properties::export_ending_with: Self export is not allowed !");
   }
-  keys_col_t ks;
+  keys_col_type ks;
   this->keys_ending_with(ks, suffix);
-  for (keys_col_t::const_iterator i = ks.begin(); i != ks.end(); ++i) {
+  for (keys_col_type::const_iterator i = ks.begin(); i != ks.end(); ++i) {
     properties& ptmp = const_cast<properties&>(*this);
     a_props._props_[*i] = ptmp._props_[*i];
   }
@@ -878,11 +877,11 @@ void properties::export_ending_with(properties& a_props,
 void properties::export_not_ending_with(properties& a_props,
                                         const std::string& suffix) const {
   if (this == &a_props) {
-    throw std::logic_error("datatools::utils::properties::export_ending_with: Self export is not allowed !");
+    throw std::logic_error("datatools::properties::export_ending_with: Self export is not allowed !");
   }
-  keys_col_t ks;
+  keys_col_type ks;
   this->keys_not_ending_with(ks, suffix);
-  for (keys_col_t::const_iterator i = ks.begin(); i !=  ks.end(); ++i) {
+  for (keys_col_type::const_iterator i = ks.begin(); i !=  ks.end(); ++i) {
     properties& ptmp = const_cast<properties&>(*this);
     a_props._props_[*i] = ptmp._props_[*i];
   }
@@ -918,7 +917,7 @@ void properties::reset() {
 void properties::keys_not_starting_with(properties::vkeys& keys,
                                         const std::string& prefix) const {
   if (prefix.empty()) {
-    throw std::logic_error("datatools::utils::properties::keys_not_starting_with: Empty key prefix argument !");
+    throw std::logic_error("datatools::properties::keys_not_starting_with: Empty key prefix argument !");
   }
 
   size_t n = prefix.size();
@@ -943,7 +942,7 @@ properties::vkeys properties::keys_not_starting_with(
 void properties::keys_starting_with(properties::vkeys& keys,
                                     const std::string& prefix) const {
   if (prefix.empty()) {
-    throw std::logic_error("datatools::utils::properties::keys_starting_with: Empty key prefix argument !");
+    throw std::logic_error("datatools::properties::keys_starting_with: Empty key prefix argument !");
   }
 
   size_t n = prefix.size();
@@ -966,10 +965,10 @@ properties::vkeys properties::keys_starting_with(
 }
 
 
-void properties::keys_not_ending_with(properties::vkeys& a_keys,
+void properties::keys_not_ending_with(properties::vkeys& prop_keys,
                                       const std::string& suffix) const {
   if (suffix.empty()) {
-    throw std::logic_error("datatools::utils::properties::keys_not_ending_with: Empty key suffix argument !");
+    throw std::logic_error("datatools::properties::keys_not_ending_with: Empty key suffix argument !");
   }
 
   size_t n = suffix.size();
@@ -981,7 +980,7 @@ void properties::keys_not_ending_with(properties::vkeys& a_keys,
         == suffix) {
       push = false;
     }
-    if (push) a_keys.push_back(iter->first);
+    if (push) prop_keys.push_back(iter->first);
   }
 }
 
@@ -994,10 +993,10 @@ properties::vkeys properties::keys_not_ending_with(
 }
 
 
-void properties::keys_ending_with(properties::vkeys& a_keys,
+void properties::keys_ending_with(properties::vkeys& prop_keys,
                                   const std::string& suffix) const {
   if (suffix.empty()) {
-    throw std::logic_error("datatools::utils::properties::keys_ending_with: Empty key suffix argument !");
+    throw std::logic_error("datatools::properties::keys_ending_with: Empty key suffix argument !");
   }
 
   size_t n = suffix.size();
@@ -1007,7 +1006,7 @@ void properties::keys_ending_with(properties::vkeys& a_keys,
     if (iter->first.size() < n) continue;
     if (iter->first.substr(iter->first.size()-n, iter->first.size())
         == suffix) {
-      a_keys.push_back(iter->first);
+      prop_keys.push_back(iter->first);
     }
   }
 }
@@ -1036,18 +1035,45 @@ void properties::keys(properties::vkeys& keys) const {
   }
 }
 
+const std::string & properties::key (int key_index_) const
+{
+  int key_count = 0;
+  pmap::const_iterator iter = _props_.begin();
+  for (;
+       iter != _props_.end();
+       ++iter, ++key_count) {
+    if (key_count == key_index_)
+      {
+        break;
+      };
+  }
+  if (iter == _props_.end())
+    {
+    std::ostringstream message;
+    message << "datatools::utils::properties::key: Invalid key index '" 
+            << key_index_ << "' !";
+    throw std::logic_error(message.str());
+    }
+  return iter->first;
+}
 
 void properties::lock(const std::string& key) {
+  key_lock (key);
+  /*
   data *data_ptr = 0;
   this->_check_key_(key, &data_ptr);
   data_ptr->lock();
+  */
 }
 
 
 void properties::unlock(const std::string& key) {
+  key_unlock (key);
+  /*
   data *data_ptr = 0;
   this->_check_key_(key, &data_ptr);
   data_ptr->unlock();
+  */
 }
 
 
@@ -1139,6 +1165,12 @@ int32_t properties::size(const std::string& key) const {
   return data_ptr->size();
 }
 
+int32_t properties::key_size(const std::string& key) const {
+  const data *data_ptr = 0;
+  this->_check_key_(key, &data_ptr);
+  return data_ptr->size();
+}
+
 
 bool properties::has_key(const std::string& key) const {
   if (_props_.size() == 0) return false;
@@ -1147,11 +1179,44 @@ bool properties::has_key(const std::string& key) const {
 }
 
 
-void properties::_check_nokey_(const std::string& key) const {
-  if (this->has_key(key)) {
+void properties::key_lock (const std::string& prop_key)
+{
+  data *data_ptr = 0;
+  this->_check_key_(prop_key, &data_ptr);
+  data_ptr->lock();
+  return;
+}
+  
+void properties::key_unlock (const std::string& prop_key)
+{
+  data *data_ptr = 0;
+  this->_check_key_(prop_key, &data_ptr);
+  data_ptr->unlock();
+  return;
+}
+
+const std::string & 
+properties::get_key_description (const std::string& prop_key) const
+{
+  const data *data_ptr = 0;
+  this->_check_key_(prop_key, &data_ptr);
+  return data_ptr->get_description();
+}
+
+void properties::set_key_description (const std::string& prop_key, 
+                                      const std::string& desc_)
+{
+  data *data_ptr = 0;
+  this->_check_key_(prop_key, &data_ptr);
+  data_ptr->set_description(desc_);
+  return;
+}
+
+void properties::_check_nokey_(const std::string& prop_key) const {
+  if (this->has_key(prop_key)) {
     std::ostringstream message;
-    message << "datatools::utils::properties::_check_nokey_: key '" 
-            << key << "' already used";
+    message << "datatools::properties::_check_nokey_: key '" 
+            << prop_key << "' already used";
     if (!this->get_description().empty()) {
       message << " (" << this->get_description() << ")";
     }
@@ -1161,68 +1226,68 @@ void properties::_check_nokey_(const std::string& key) const {
 }
 
 
-void properties::_check_key_(const std::string& key, data **a_data) {
-  pmap::iterator iter = _props_.find(key);
-  if (_props_.find(key) == _props_.end()) {
+void properties::_check_key_(const std::string& prop_key, data **a_data) {
+  pmap::iterator iter = _props_.find(prop_key);
+  if (_props_.find(prop_key) == _props_.end()) {
     std::ostringstream message;
-    message << "datatools::utils::properties::_check_key_: key '" 
-            << key << "' does not exist!";
+    message << "datatools::properties::_check_key_: key '" 
+            << prop_key << "' does not exist!";
     throw std::logic_error(message.str());
   }
   *a_data = &(iter->second);
 }
 
 
-void properties::_check_key_(const std::string& key, 
+void properties::_check_key_(const std::string& prop_key, 
                              const data **a_data) const {
-  pmap::const_iterator iter = _props_.find(key);
-  if (_props_.find(key) == _props_.end()) {
+  pmap::const_iterator iter = _props_.find(prop_key);
+  if (_props_.find(prop_key) == _props_.end()) {
     std::ostringstream message;
-    message << "datatools::utils::properties::_check_key_: key '" 
-            << key << "' does not exist!";
+    message << "datatools::properties::_check_key_: key '" 
+            << prop_key << "' does not exist!";
     throw std::logic_error(message.str());
   }
   *a_data = &(iter->second);
 }
 
 
-void properties::store_flag(const std::string& key,
-                            const std::string& description,
-                            bool lock) {
-  this->store(key, true, description, lock);
+void properties::store_flag(const std::string& prop_key,
+                            const std::string& a_description,
+                            bool a_lock) {
+  this->store(prop_key, true, a_description, a_lock);
 }
 
 
-void properties::store(const std::string& key, bool value,
-                       const std::string& description, bool lock) {
-  this->_check_nokey_(key);
-  this->_validate_key_(key);
-  data a_data(value, data::SCALAR_DEF);
-  a_data.set_description(description);
-  _props_[key] = a_data;
-  if (lock) _props_[key].lock();
+void properties::store(const std::string& prop_key, bool a_value,
+                       const std::string& a_description, bool a_lock) {
+  this->_check_nokey_(prop_key);
+  this->_validate_key_(prop_key);
+  data a_data(a_value, data::SCALAR_DEF);
+  a_data.set_description(a_description);
+  _props_[prop_key] = a_data;
+  if (a_lock) _props_[prop_key].lock();
 }
 
 
-void properties::store (const std::string& key, int value,
+void properties::store (const std::string& prop_key, int value,
                         const std::string& description, bool lock) {
-  this->_check_nokey_(key);
-  this->_validate_key_(key);
+  this->_check_nokey_(prop_key);
+  this->_validate_key_(prop_key);
   data a_data(value);
   a_data.set_description(description);
-  _props_[key] = a_data;
-  if (lock) _props_[key].lock();
+  _props_[prop_key] = a_data;
+  if (lock) _props_[prop_key].lock();
 }
 
 
-void properties::store(const std::string& key, double value,
+void properties::store(const std::string& prop_key, double value,
                        const std::string& description, bool lock) {
-  this->_check_nokey_(key);
-  this->_validate_key_(key);
+  this->_check_nokey_(prop_key);
+  this->_validate_key_(prop_key);
   data a_data(value);
   a_data.set_description(description);
-  _props_[key] = a_data;
-  if (lock) _props_[key].lock();
+  _props_[prop_key] = a_data;
+  if (lock) _props_[prop_key].lock();
 }
 
 
@@ -1237,206 +1302,245 @@ void properties::store(const std::string& key, const std::string& value,
 }
 
 
-void properties::store(const std::string& key, const char* value,
+void properties::store(const std::string& prop_key, const char* value,
                        const std::string& description, bool lock) {
-  this->store(key, std::string(value), description, lock);
+  this->store(prop_key, std::string(value), description, lock);
 }
 
 
-void properties::store(const std::string& key, const data::vbool& values,
+void properties::store(const std::string& prop_key, const data::vbool& values,
                        const std::string& description, bool lock) {
-  this->_check_nokey_(key);
-  this->_validate_key_(key);
+  this->_check_nokey_(prop_key);
+  this->_validate_key_(prop_key);
   int size = values.size();
   data a_data(data::TYPE_BOOLEAN_SYMBOL, size);
   a_data.set_description(description);
-  _props_[key] = a_data;
+  _props_[prop_key] = a_data;
   for (int i = 0; i < size; i++) {
-    _props_[key].set_value(values[i], i);
+    _props_[prop_key].set_value(values[i], i);
   }
-  if (lock) _props_[key].lock();
+  if (lock) _props_[prop_key].lock();
 }
 
 
-void properties::store(const std::string& key, const data::vint& values,
+void properties::store(const std::string& prop_key, const data::vint& values,
                        const std::string& description, bool lock) {
-  this->_check_nokey_(key);
-  this->_validate_key_(key);
+  this->_check_nokey_(prop_key);
+  this->_validate_key_(prop_key);
   int size = values.size();
   data a_data(data::TYPE_INTEGER_SYMBOL, size);
   a_data.set_description(description);
-  _props_[key] = a_data;
+  _props_[prop_key] = a_data;
   for (int i = 0; i < size; i++) {
-    _props_[key].set_value(values[i], i);
+    _props_[prop_key].set_value(values[i], i);
   }
-  if (lock) _props_[key].lock();
+  if (lock) _props_[prop_key].lock();
 }
 
 
-void properties::store(const std::string& key, const data::vdouble& values,
+void properties::store(const std::string& prop_key, const data::vdouble& values,
                        const std::string& description, bool lock) {
-  this->_check_nokey_(key);
-  this->_validate_key_(key);
+  this->_check_nokey_(prop_key);
+  this->_validate_key_(prop_key);
   int size = values.size();
   data a_data(data::TYPE_REAL_SYMBOL, size);
   a_data.set_description(description);
-  _props_[key] = a_data;
+  _props_[prop_key] = a_data;
   for (int i = 0; i < size; i++) {
-    _props_[key].set_value(values[i], i);
+    _props_[prop_key].set_value(values[i], i);
   }
-  if (lock) _props_[key].lock();
+  if (lock) _props_[prop_key].lock();
 }
 
 
-void properties::store(const std::string& key, const data::vstring& values,
+void properties::store(const std::string& prop_key, const data::vstring& values,
                        const std::string& description, bool lock) {
-  this->_check_nokey_(key);
-  this->_validate_key_(key);
+  this->_check_nokey_(prop_key);
+  this->_validate_key_(prop_key);
   int size = values.size();
   data a_data(data::TYPE_STRING_SYMBOL, size);
   a_data.set_description(description);
-  _props_[key] = a_data;
+  _props_[prop_key] = a_data;
   for (int i = 0; i < size; i++) {
-    _props_[key].set_value(values[i], i);
+    _props_[prop_key].set_value(values[i], i);
   }
-  if (lock) _props_[key].lock();
+  if (lock) _props_[prop_key].lock();
 }
 
 
-void properties::set_flag(const std::string& key) {
-  this->store_flag(key, "", false);
+void properties::set_flag(const std::string& prop_key) {
+  this->store_flag(prop_key, "", false);
 }
 
 
-void properties::unset_flag(const std::string& key) {
-  this->clean(key);
+void properties::unset_flag(const std::string& prop_key) {
+  this->clean(prop_key);
 }
 
 
-void properties::store_boolean(const std::string& key, bool value,
+void properties::store_boolean(const std::string& prop_key, bool value,
                                const std::string& desc, bool lock) {
-  this->store(key, value, desc, lock);
+  this->store(prop_key, value, desc, lock);
 }
 
 
-void properties::store_integer(const std::string& key, int value,
+void properties::store_integer(const std::string& prop_key, int value,
                                const std::string& desc, bool lock) {
-  this->store(key, value, desc, lock);
+  this->store(prop_key, value, desc, lock);
 }
 
 
-void properties::store_real(const std::string& key, double value,
+void properties::store_real(const std::string& prop_key, double value,
                             const std::string& desc, bool lock) {
-  this->store(key, value, desc, lock);
+  this->store(prop_key, value, desc, lock);
 }
 
 
-void properties::store_string(const std::string& key,
+void properties::store_string(const std::string& prop_key,
                               const std::string& value,
                               const std::string& desc,
                               bool lock) {
-  this->store(key, value, desc, lock);
+  this->store(prop_key, value, desc, lock);
 }
 
 
-void properties::change_boolean(const std::string& key, bool value,
+void properties::change_boolean(const std::string& prop_key, bool value,
                                 int index) {
-  this->change(key, value, index);
+  this->change(prop_key, value, index);
+}
+
+void properties::change_boolean_scalar (const std::string& prop_key, bool value) {
+  this->change(prop_key, value, 0);
+}
+
+void properties::change_boolean_vector(const std::string& prop_key, bool value,
+                                       int index) {
+  this->change(prop_key, value, index);
 }
 
 
-void properties::change_integer(const std::string& key, int value,
+void properties::change_integer(const std::string& prop_key, int value,
                                 int index) {
-  this->change(key, value, index);
+  this->change(prop_key, value, index);
+}
+
+void properties::change_integer_scalar(const std::string& prop_key, int value) {
+  this->change(prop_key, value, 0);
+}
+
+void properties::change_integer_vector(const std::string& prop_key, int value,
+                                       int index) {
+  this->change(prop_key, value, index);
 }
 
 
-void properties::change_real(const std::string& key, double value,
+void properties::change_real(const std::string& prop_key, double value,
                              int index) {
-  this->change(key, value, index);
+  this->change(prop_key, value, index);
 }
 
 
-void properties::change_string(const std::string& key,
+void properties::change_real_scalar(const std::string& key, double value)
+{
+  this->change(key, value, 0);
+}
+
+void properties::change_real_vector(const std::string& key, double value,
+                                    int index) {
+  this->change(key, value, index);
+}
+
+void properties::change_string(const std::string& prop_key,
                                const std::string& value,
                                int index) {
-  this->change(key, value, index);
+  this->change(prop_key, value, index);
+}
+
+void properties::change_string_scalar(const std::string& prop_key,
+                               const std::string& value) {
+  this->change(prop_key, value, 0);
 }
 
 
-void properties::change(const std::string& key, bool value, int index) {
+void properties::change_string_vector(const std::string& prop_key,
+                                      const std::string& value,
+                                      int index) {
+  this->change_string(prop_key, value, index);
+}
+
+void properties::change(const std::string& prop_key, bool value, int index) {
   data *data_ptr = 0;
-  this->_check_key_(key, &data_ptr);
+  this->_check_key_(prop_key, &data_ptr);
 
   int error = data_ptr->set_value(value, index);
   if (error != data::ERROR_SUCCESS) {
     std::ostringstream message;
-    message << "datatools::utils::properties::change: Cannot change value for property '" 
-            << key << "': "
+    message << "datatools::properties::change: Cannot change value for property '" 
+            << prop_key << "': "
             << data::get_error_message(error) << "!";
     throw std::logic_error(message.str());
   }
 }
 
 
-void properties::change(const std::string& key, int value, int index) {
+void properties::change(const std::string& prop_key, int value, int index) {
   data *data_ptr = 0;
-  this->_check_key_(key, &data_ptr);
+  this->_check_key_(prop_key, &data_ptr);
   int error = data_ptr->set_value(value, index);
   if (error != data::ERROR_SUCCESS) {
     std::ostringstream message;
-    message << "datatools::utils::properties::change: Cannot change value for property '" 
-            << key << "': "
+    message << "datatools::properties::change: Cannot change value for property '" 
+            << prop_key << "': "
             << data::get_error_message(error) << "!";
     throw std::logic_error(message.str());
   }
 }
 
 
-void properties::change(const std::string& key, double value, int index) {
+void properties::change(const std::string& prop_key, double value, int index) {
   data *data_ptr = 0;
-  this->_check_key_(key, &data_ptr);
+  this->_check_key_(prop_key, &data_ptr);
   int error = data_ptr->set_value(value, index);
   if (error != data::ERROR_SUCCESS) {
     std::ostringstream message;
-    message << "datatools::utils::properties::change: Cannot change value for property '" 
-            << key << "': "
+    message << "datatools::properties::change: Cannot change value for property '" 
+            << prop_key << "': "
             << data::get_error_message (error) << "!";
     throw std::logic_error(message.str());
   }
 }
 
 
-void properties::change(const std::string& key, const std::string& value,
+void properties::change(const std::string& prop_key, const std::string& value,
                         int index) {
   data *data_ptr = 0;
-  this->_check_key_(key, &data_ptr);
+  this->_check_key_(prop_key, &data_ptr);
   int error = data_ptr->set_value(value, index);
   if (error != data::ERROR_SUCCESS) {
     std::ostringstream message;
-    message << "datatools::utils::properties::change: Cannot change value for property '"
-            << key << "': "
+    message << "datatools::properties::change: Cannot change value for property '"
+            << prop_key << "': "
             << data::get_error_message(error) << "!";
     throw std::logic_error(message.str());
   }
 }
 
 
-void properties::change(const std::string& key, const char* value,
+void properties::change(const std::string& prop_key, const char* value,
                         int index) {
   std::string tmp = "";
   if (value != 0) tmp = value;
-  this->change(key, tmp, index);
+  this->change(prop_key, tmp, index);
 }
 
 
-void properties::change(const std::string& key, const data::vbool& values) {
+void properties::change(const std::string& prop_key, const data::vbool& values) {
   data *data_ptr = 0;
-  this->_check_key_(key, &data_ptr);
+  this->_check_key_(prop_key, &data_ptr);
   if (!data_ptr->is_boolean() || !data_ptr->is_vector()) {
     std::ostringstream message;
-    message << "datatools::utils::properties::change: property '"
-            << key 
+    message << "datatools::properties::change: property '"
+            << prop_key 
             << "' is not a vector of booleans!";
     throw std::logic_error(message.str());
   }
@@ -1444,8 +1548,8 @@ void properties::change(const std::string& key, const data::vbool& values) {
     int error = data_ptr->boolean(values.size());
     if (error != data::ERROR_SUCCESS) {
       std::ostringstream message;
-      message << "datatools::utils::properties::change: Cannot change values for vector property '" 
-              << key << "': "
+      message << "datatools::properties::change: Cannot change values for vector property '" 
+              << prop_key << "': "
               << data::get_error_message(error) << "!";
       throw std::logic_error(message.str());
     }
@@ -1454,8 +1558,8 @@ void properties::change(const std::string& key, const data::vbool& values) {
     int error = data_ptr->set_value(values[i], i);
     if (error != data::ERROR_SUCCESS) {
       std::ostringstream message;
-      message << "datatools::utils::properties::change: Cannot change values for vector property '" 
-              << key << "': "
+      message << "datatools::properties::change: Cannot change values for vector property '" 
+              << prop_key << "': "
               << data::get_error_message(error) << "!";
       throw std::logic_error(message.str());
     }
@@ -1463,13 +1567,13 @@ void properties::change(const std::string& key, const data::vbool& values) {
 }
 
 
-void properties::change(const std::string& key, const data::vint& values) {
+void properties::change(const std::string& prop_key, const data::vint& values) {
   data *data_ptr = 0;
-  this->_check_key_(key, &data_ptr);
+  this->_check_key_(prop_key, &data_ptr);
   if (! data_ptr->is_integer() || !data_ptr->is_vector()) {
     std::ostringstream message;
-    message << "datatools::utils::properties::change: property '"
-            << key 
+    message << "datatools::properties::change: property '"
+            << prop_key 
             << "' is not a vector of integers!";
     throw std::logic_error(message.str());
   }
@@ -1477,8 +1581,8 @@ void properties::change(const std::string& key, const data::vint& values) {
     int error = data_ptr->integer(values.size());
     if (error != data::ERROR_SUCCESS) {
       std::ostringstream message;
-      message << "datatools::utils::properties::change: Cannot change values for vector property '" 
-              << key << "': "
+      message << "datatools::properties::change: Cannot change values for vector property '" 
+              << prop_key << "': "
               << data::get_error_message(error) << "!";
       throw std::logic_error(message.str());
     }
@@ -1487,8 +1591,8 @@ void properties::change(const std::string& key, const data::vint& values) {
     int error = data_ptr->set_value(values[i], i);
     if (error != data::ERROR_SUCCESS) {
       std::ostringstream message;
-      message << "datatools::utils::properties::change: Cannot change values for vector property '" 
-              << key << "': "
+      message << "datatools::properties::change: Cannot change values for vector property '" 
+              << prop_key << "': "
               << data::get_error_message(error) << "!";
       throw std::logic_error(message.str());
     }
@@ -1496,22 +1600,22 @@ void properties::change(const std::string& key, const data::vint& values) {
 }
 
 
-void properties::change(const std::string& key,
+void properties::change(const std::string& prop_key,
                         const data::vdouble& values) {
   data *data_ptr = 0;
-  this->_check_key_(key, &data_ptr);
+  this->_check_key_(prop_key, &data_ptr);
   if (!data_ptr->is_real() || ! data_ptr->is_vector()) {
     std::ostringstream message;
-    message << "datatools::utils::properties::change: property '"
-            << key << "' is not a vector of reals!";
+    message << "datatools::properties::change: property '"
+            << prop_key << "' is not a vector of reals!";
     throw std::logic_error(message.str());
   }
   if ((int)values.size() != data_ptr->get_size()) {
     int error = data_ptr->real(values.size());
     if (error != data::ERROR_SUCCESS) {
       std::ostringstream message;
-      message << "datatools::utils::properties::change: Cannot change values for vector property '" 
-              << key << "': "
+      message << "datatools::properties::change: Cannot change values for vector property '" 
+              << prop_key << "': "
               << data::get_error_message(error) << "!";
       throw std::logic_error(message.str());
     }
@@ -1520,8 +1624,8 @@ void properties::change(const std::string& key,
     int error = data_ptr->set_value(values[i], i);
     if (error != data::ERROR_SUCCESS) {
       std::ostringstream message;
-      message << "datatools::utils::properties::change: Cannot change values for vector property '" 
-              << key << "': "
+      message << "datatools::properties::change: Cannot change values for vector property '" 
+              << prop_key << "': "
               << data::get_error_message(error) << "!";
       throw std::logic_error(message.str());
     }
@@ -1529,22 +1633,22 @@ void properties::change(const std::string& key,
 }
 
 
-void properties::change(const std::string& key,
+void properties::change(const std::string& prop_key,
                         const data::vstring& values) {
   data *data_ptr = 0;
-  this->_check_key_(key, &data_ptr);
+  this->_check_key_(prop_key, &data_ptr);
   if (!data_ptr->is_string() || ! data_ptr->is_vector()) {
     std::ostringstream message;
-    message << "datatools::utils::properties::change: property '"
-            << key << "' is not a vector of strings!";
+    message << "datatools::properties::change: property '"
+            << prop_key << "' is not a vector of strings!";
     throw std::logic_error(message.str());
   }
   if ((int)values.size() != data_ptr->get_size()) {
     int error = data_ptr->string(values.size());
     if (error != data::ERROR_SUCCESS) {
       std::ostringstream message;
-      message << "datatools::utils::properties::change: Cannot change values for vector property '" 
-              << key << "': "
+      message << "datatools::properties::change: Cannot change values for vector property '" 
+              << prop_key << "': "
               << data::get_error_message(error) << "!";
       throw std::logic_error(message.str());
     }
@@ -1553,17 +1657,12 @@ void properties::change(const std::string& key,
     int error = data_ptr->set_value(values[i], i);
     if (error != data::ERROR_SUCCESS) {
       std::ostringstream message;
-      message << "datatools::utils::properties::change: Cannot change values for vector property '" 
-              << key << "': "
+      message << "datatools::properties::change: Cannot change values for vector property '" 
+              << prop_key << "': "
               << data::get_error_message(error) << "!";
       throw std::logic_error(message.str());
     }
   }
-}
-
-
-void properties::dump_def() const {
-  this->dump(std::cout);
 }
 
 
@@ -1577,14 +1676,14 @@ void properties::dump_stdout() const {
 }
 
 
-void properties::update_string(const std::string& key,
+void properties::update_string(const std::string& prop_key,
                                const std::string& value) {
-  this->update(key, value);
+  this->update(prop_key, value);
 }
 
 
-void properties::update_boolean(const std::string& key, bool value) {
-  this->update(key, value);
+void properties::update_boolean(const std::string& prop_key, bool value) {
+  this->update(prop_key, value);
 }
 
 
@@ -1621,8 +1720,8 @@ double properties::fetch_real_vector(const std::string& name,
 }
 
 
-void properties::update_flag(const std::string& key) {
-  this->update(key, true);
+void properties::update_flag(const std::string& prop_key) {
+  this->update(prop_key, true);
 }
 
 
@@ -1649,157 +1748,157 @@ std::string properties::fetch_path_vector(const std::string& name,
 }
 
 
-void properties::update(const std::string& key, bool value) {
-  if (this->has_key(key)) {
-    this->change(key, value);
+void properties::update(const std::string& prop_key, bool value) {
+  if (this->has_key(prop_key)) {
+    this->change(prop_key, value);
   } else {
-    this->store(key, value);
+    this->store(prop_key, value);
   }
 }
 
 
-void properties::update(const std::string& key, int value) {
-  if (this->has_key(key)) {
-    this->change(key, value);
+void properties::update(const std::string& prop_key, int value) {
+  if (this->has_key(prop_key)) {
+    this->change(prop_key, value);
   } else {
-    this->store(key, value);
+    this->store(prop_key, value);
   }
 }
 
 
-void properties::update(const std::string& key, double value) {
-  if (this->has_key(key)) {
-    this->change(key, value);
+void properties::update(const std::string& prop_key, double value) {
+  if (this->has_key(prop_key)) {
+    this->change(prop_key, value);
   } else {
-    this->store(key, value);
+    this->store(prop_key, value);
   }
   return;
 }
 
 
-void properties::update(const std::string& key, const std::string& value) {
-  if (this->has_key(key)) {
-    this->change(key, value);
+void properties::update(const std::string& prop_key, const std::string& value) {
+  if (this->has_key(prop_key)) {
+    this->change(prop_key, value);
   } else {
-    this->store(key, value);
+    this->store(prop_key, value);
   }
 }
 
 
-void properties::update(const std::string& key,
+void properties::update(const std::string& prop_key,
                         const data::vbool& values) {
-  if (this->has_key(key)) {
-    this->change(key, values);
+  if (this->has_key(prop_key)) {
+    this->change(prop_key, values);
   } else {
-    this->store(key, values);
+    this->store(prop_key, values);
   }
 }
 
 
-void properties::update(const std::string& key, const data::vint& values) {
-  if (this->has_key(key)) {
-    this->change(key, values);
+void properties::update(const std::string& prop_key, const data::vint& values) {
+  if (this->has_key(prop_key)) {
+    this->change(prop_key, values);
   } else {
-    this->store(key, values);
+    this->store(prop_key, values);
   }
 }
 
 
-void properties::update(const std::string& key,
+void properties::update(const std::string& prop_key,
                         const data::vdouble& values) {
-  if (this->has_key(key)) {
-    this->change(key, values);
+  if (this->has_key(prop_key)) {
+    this->change(prop_key, values);
   } else {
-    this->store(key, values);
+    this->store(prop_key, values);
   }
 }
 
 
-void properties::update(const std::string& key,
+void properties::update(const std::string& prop_key,
                         const data::vstring& values) {
-  if (this->has_key(key)) {
-    this->change(key, values);
+  if (this->has_key(prop_key)) {
+    this->change(prop_key, values);
   } else {
-    this->store(key, values);
+    this->store(prop_key, values);
   }
 }
 
 
-void properties::update_integer(const std::string& key, int value) {
-  this->update(key, value);
+void properties::update_integer(const std::string& prop_key, int value) {
+  this->update(prop_key, value);
 }
 
 
-void properties::update_real(const std::string& key, double value) {
-  this->update(key, value);
+void properties::update_real(const std::string& prop_key, double value) {
+  this->update(prop_key, value);
 }
 
 
 
-void properties::fetch(const std::string& key, bool& value, 
+void properties::fetch(const std::string& prop_key, bool& value, 
                        int index) const {
   const data *data_ptr = 0;
-  this->_check_key_(key, &data_ptr);
+  this->_check_key_(prop_key, &data_ptr);
   int error = data_ptr->get_value(value, index);
   if (error != data::ERROR_SUCCESS) {
     std::ostringstream message;
-    message << "datatools::utils::properties::fetch: Cannot fetch boolean value from property '" 
-            << key << "': "
+    message << "datatools::properties::fetch: Cannot fetch boolean value from property '" 
+            << prop_key << "': "
             << data::get_error_message(error) << "!";
     throw std::logic_error(message.str());
   }
 }
 
 
-void properties::fetch(const std::string& key, int& value, 
+void properties::fetch(const std::string& prop_key, int& value, 
                        int index) const {
   const data *data_ptr = 0;
-  this->_check_key_(key, &data_ptr);
+  this->_check_key_(prop_key, &data_ptr);
   int error = data_ptr->get_value(value, index);
   if (error != data::ERROR_SUCCESS) {
     std::ostringstream message;
-    message << "datatools::utils::properties::fetch: Cannot fetch integer value from property '" 
-            << key << "': "
+    message << "datatools::properties::fetch: Cannot fetch integer value from property '" 
+            << prop_key << "': "
             << data::get_error_message(error) << "!";
     throw std::logic_error(message.str());
   }
 }
 
 
-void properties::fetch(const std::string& key, double& value, 
+void properties::fetch(const std::string& prop_key, double& value, 
                        int index) const {
   const data *data_ptr = 0;
-  this->_check_key_(key, &data_ptr);
+  this->_check_key_(prop_key, &data_ptr);
   int error = data_ptr->get_value(value, index);
   if (error != data::ERROR_SUCCESS) {
     std::ostringstream message;
-    message << "datatools::utils::properties::fetch: Cannot fetch real value from property '" 
-           << key << "': "
+    message << "datatools::properties::fetch: Cannot fetch real value from property '" 
+           << prop_key << "': "
            << data::get_error_message(error) << "!";
     throw std::logic_error(message.str());
   }
 }
 
 
-void properties::fetch(const std::string& key, std::string& value, 
+void properties::fetch(const std::string& prop_key, std::string& value, 
                        int index) const {
   const data *data_ptr = 0;
-  this->_check_key_(key, &data_ptr);
+  this->_check_key_(prop_key, &data_ptr);
   int error = data_ptr->get_value(value, index);
   if (error != data::ERROR_SUCCESS) {
     std::ostringstream message;
-    message << "datatools::utils::properties::fetch: Cannot fetch string value from property '" 
-            << key << "': "
+    message << "datatools::properties::fetch: Cannot fetch string value from property '" 
+            << prop_key << "': "
             << data::get_error_message(error) << "!";
     throw std::logic_error(message.str());
   }
 }
 
 
-bool properties::has_flag(const std::string& key) const {
+bool properties::has_flag(const std::string& prop_key) const {
   bool flag_is_on = false;
   try {
-    flag_is_on = this->fetch_boolean(key, 0);
+    flag_is_on = this->fetch_boolean(prop_key, 0);
   }
   catch (std::logic_error& e) {
   }
@@ -1807,43 +1906,43 @@ bool properties::has_flag(const std::string& key) const {
 }
 
 
-bool properties::fetch_boolean(const std::string& key, int index) const {
+bool properties::fetch_boolean(const std::string& prop_key, int index) const {
   bool value;
-  this->fetch(key, value, index);
+  this->fetch(prop_key, value, index);
   return value;
 }
 
 
-int properties::fetch_integer(const std::string& key, int index) const {
+int properties::fetch_integer(const std::string& prop_key, int index) const {
   int value;
-  this->fetch(key, value, index);
+  this->fetch(prop_key, value, index);
   return value;
 }
 
 
-double properties::fetch_real(const std::string& key, int index) const {
+double properties::fetch_real(const std::string& prop_key, int index) const {
   double value;
-  this->fetch(key, value, index);
+  this->fetch(prop_key, value, index);
   return value;
 }
 
 
-std::string properties::fetch_string(const std::string& key,
+std::string properties::fetch_string(const std::string& prop_key,
                                      int index) const {
   std::string value;
-  this->fetch(key, value, index);
+  this->fetch(prop_key, value, index);
   return value;
 }
 
 
-std::string properties::fetch_path(const std::string& key,
+std::string properties::fetch_path(const std::string& prop_key,
                                    int index) const {
   std::string value;
-  this->fetch(key, value, index);
+  this->fetch(prop_key, value, index);
   if (!fetch_path_with_env(value)) {
     std::ostringstream message;
-    message << "datatools::utils::properties::fetch_path: property '"
-            << key 
+    message << "datatools::properties::fetch_path: property '"
+            << prop_key 
             << "' cannot be interpreted as a valid path string !";
     throw std::logic_error(message.str());
   }
@@ -1851,13 +1950,13 @@ std::string properties::fetch_path(const std::string& key,
 }
 
 
-void properties::fetch(const std::string& key, data::vbool& values) const {
+void properties::fetch(const std::string& prop_key, data::vbool& values) const {
   const data *data_ptr = 0;
-  this->_check_key_(key, &data_ptr);
+  this->_check_key_(prop_key, &data_ptr);
   if (!data_ptr->is_boolean() || !data_ptr->is_vector()) {
     std::ostringstream message;
-    message << "datatools::utils::properties::fetch: property '"
-            << key 
+    message << "datatools::properties::fetch: property '"
+            << prop_key 
             << "' is not a vector of booleans!";
     throw std::logic_error(message.str());
   }
@@ -1868,8 +1967,8 @@ void properties::fetch(const std::string& key, data::vbool& values) const {
     int error = data_ptr->get_value(val, i);
     if (error != data::ERROR_SUCCESS) {
       std::ostringstream message;
-      message << "datatools::utils::properties::fetch: Cannot fetch boolean values for vector property '"
-              << key << "': "
+      message << "datatools::properties::fetch: Cannot fetch boolean values for vector property '"
+              << prop_key << "': "
               << data::get_error_message(error) << "!";
       throw std::logic_error(message.str());
     }
@@ -1878,13 +1977,13 @@ void properties::fetch(const std::string& key, data::vbool& values) const {
 }
 
 
-void properties::fetch(const std::string& key, data::vint& values) const {
+void properties::fetch(const std::string& prop_key, data::vint& values) const {
   const data *data_ptr = 0;
-  this->_check_key_(key, &data_ptr);
+  this->_check_key_(prop_key, &data_ptr);
   if (!data_ptr->is_integer() || ! data_ptr->is_vector()) {
     std::ostringstream message;
-    message << "datatools::utils::properties::fetch: property '"
-            << key 
+    message << "datatools::properties::fetch: property '"
+            << prop_key 
             << "' is not a vector of integers!";
     throw std::logic_error(message.str());
   }
@@ -1894,8 +1993,8 @@ void properties::fetch(const std::string& key, data::vint& values) const {
     int error = data_ptr->get_value(values[i], i);
     if (error != data::ERROR_SUCCESS) {
       std::ostringstream message;
-      message << "datatools::utils::properties::fetch: Cannot fetch integer values for vector property '"
-             << key << "': "
+      message << "datatools::properties::fetch: Cannot fetch integer values for vector property '"
+             << prop_key << "': "
              << data::get_error_message(error) << "!";
       throw std::logic_error(message.str());
     }
@@ -1903,14 +2002,14 @@ void properties::fetch(const std::string& key, data::vint& values) const {
 }
 
 
-void properties::fetch(const std::string& key,
+void properties::fetch(const std::string& prop_key,
                        data::vdouble& values) const {
   const data *data_ptr = 0;
-  this->_check_key_(key, &data_ptr);
+  this->_check_key_(prop_key, &data_ptr);
   if (!data_ptr->is_real() || !data_ptr->is_vector()) {
     std::ostringstream message;
-    message << "datatools::utils::properties::fetch: property '"
-            << key 
+    message << "datatools::properties::fetch: property '"
+            << prop_key 
             << "' is not a vector of reals!";
     throw std::logic_error(message.str());
   }
@@ -1920,8 +2019,8 @@ void properties::fetch(const std::string& key,
     int error = data_ptr->get_value(values[i], i);
     if (error != data::ERROR_SUCCESS) {
       std::ostringstream message;
-      message << "datatools::utils::properties::fetch: Cannot fetch real values for vector property '"
-              << key << "': "
+      message << "datatools::properties::fetch: Cannot fetch real values for vector property '"
+              << prop_key << "': "
               << data::get_error_message(error) << "!";
       throw std::logic_error(message.str());
     }
@@ -1929,14 +2028,14 @@ void properties::fetch(const std::string& key,
 }
 
 
-void properties::fetch(const std::string& key, 
+void properties::fetch(const std::string& prop_key, 
                        data::vstring& values) const {
   const data *data_ptr = 0;
-  this->_check_key_(key, &data_ptr);
+  this->_check_key_(prop_key, &data_ptr);
   if (!data_ptr->is_string() || ! data_ptr->is_vector()) {
     std::ostringstream message;
-    message << "datatools::utils::properties::fetch: property '"
-            << key 
+    message << "datatools::properties::fetch: property '"
+            << prop_key 
             << "' is not a vector of strings!";
     throw std::logic_error(message.str());
   }
@@ -1946,8 +2045,8 @@ void properties::fetch(const std::string& key,
     int error = data_ptr->get_value(values[i], i);
     if (error != data::ERROR_SUCCESS) {
       std::ostringstream message;
-      message << "datatools::utils::properties::fetch: Cannot fetch string values for vector property '"
-              << key << "': "
+      message << "datatools::properties::fetch: Cannot fetch string values for vector property '"
+              << prop_key << "': "
               << data::get_error_message(error) << "!";
       throw std::logic_error(message.str());
     }
@@ -1955,23 +2054,23 @@ void properties::fetch(const std::string& key,
 }
 
 
-std::string properties::key_to_string(const std::string& key) const {
-  if (!this->has_key(key)) return "";
+std::string properties::key_to_string(const std::string& prop_key) const {
+  if (!this->has_key(prop_key)) return "";
   std::ostringstream oss;
   const data *data_ptr = 0;
-  this->_check_key_(key, &data_ptr);
+  this->_check_key_(prop_key, &data_ptr);
   data_ptr->to_string(oss);
   return oss.str();
 }
 
 
 std::string properties::key_to_property_string(
-    const std::string& key) const {
-  if (!this->has_key(key)) return "";
+    const std::string& prop_key) const {
+  if (!this->has_key(prop_key)) return "";
   std::ostringstream oss;
   const data *data_ptr = 0;
-  this->_check_key_(key, &data_ptr);
-  oss << key << '=';
+  this->_check_key_(prop_key, &data_ptr);
+  oss << prop_key << '=';
   data_ptr->to_string(oss);
   return oss.str();
 }
@@ -1980,38 +2079,37 @@ std::string properties::key_to_property_string(
 void properties::tree_dump(std::ostream& out, const std::string& title,
                            const std::string& a_indent, 
                            bool inherit) const {
-  namespace du = datatools::utils;
   std::string indent;
   if (!a_indent.empty()) indent = a_indent;
   if (!title.empty()) out << indent << title << std::endl;
    
   if (!_description_.empty()) {
-    out << indent << du::i_tree_dumpable::tag
+    out << indent << i_tree_dumpable::tag
         << "Description  : '" << this->get_description() << "'" << std::endl;
   }
 
   if (_props_.size() == 0) {
-    out << indent << du::i_tree_dumpable::inherit_tag(inherit)
+    out << indent << i_tree_dumpable::inherit_tag(inherit)
         << "<no property>" << std::endl;
   } else {
     for (pmap::const_iterator i = _props_.begin(); 
          i != _props_.end(); 
          ++i) {
-      const std::string& key = i->first;
-      const du::properties::data& a_data = i->second;
+      const std::string& prop_key = i->first;
+      const properties::data& a_data = i->second;
       out << indent;
       std::ostringstream indent_oss;
       indent_oss << indent;
       pmap::const_iterator j = i;
       j++;
       if (j == _props_.end()) {
-        out << du::i_tree_dumpable::inherit_tag(inherit);
-        indent_oss << du::i_tree_dumpable::inherit_skip_tag(inherit);
+        out << i_tree_dumpable::inherit_tag(inherit);
+        indent_oss << i_tree_dumpable::inherit_skip_tag(inherit);
       } else {
-        out << du::i_tree_dumpable::tag;
-        indent_oss << du::i_tree_dumpable::skip_tag;
+        out << i_tree_dumpable::tag;
+        indent_oss << i_tree_dumpable::skip_tag;
       }
-      out << "Name : " << '"' << key << '"' << std::endl;
+      out << "Name : " << '"' << prop_key << '"' << std::endl;
       a_data.tree_dump(out, "", indent_oss.str());
     }
   }
@@ -2019,9 +2117,25 @@ void properties::tree_dump(std::ostream& out, const std::string& title,
 
 
 void properties::dump(std::ostream& out) const {
-  this->tree_dump(out, "datatools::utils::properties");
+  this->tree_dump(out, "datatools::properties");
 }
 
+void properties::write_configuration (const std::string& filename,
+                                      bool a_use_smart_modulo,
+                                      bool a_write_public_only) const
+{
+  write_config(filename, 
+               *this, 
+               a_use_smart_modulo, 
+               a_write_public_only);
+  return;
+} 
+  
+void properties::read_configuration (const std::string& filename)
+{
+  read_config(filename, *this);
+  return;
+}
 
 void properties::write_config(const std::string& a_filename,
                               const properties& a_props,
@@ -2034,7 +2148,7 @@ void properties::write_config(const std::string& a_filename,
     fout.open(a_filename.c_str());
     if (!fout) {
       std::ostringstream message;
-      message << "datatools::utils::properties::write_config: "
+      message << "datatools::properties::write_config: "
               << "Cannot open file '"
               << a_filename << "!"
               << std::endl;
@@ -2057,7 +2171,7 @@ void properties::read_config(const std::string& filename,
   std::ifstream fin(filename.c_str());
   if (!fin) {
     std::ostringstream message;
-    message << "datatools::utils::properties::read_config: "
+    message << "datatools::properties::read_config: "
             << "Cannot open file '"
         << filename << "!"
         << std::endl;
@@ -2080,7 +2194,7 @@ void properties::config::write(std::ostream& out,
                                const properties& a_props) {
   int mode = _mode_;
   if (mode == MODE_HEADER_FOOTER) {
-    out << "# List of properties (datatools::utils::properties):" 
+    out << "# List of properties (datatools::properties):" 
         << std::endl; 
     out << std::endl;
   }
@@ -2093,11 +2207,11 @@ void properties::config::write(std::ostream& out,
   for (pmap::const_iterator i = a_props._props_.begin();
        i != a_props._props_.end();
        ++i) {
-    const std::string       a_key  = i->first;
+    const std::string       prop_key  = i->first;
     const properties::data& a_data = i->second;
 
     if (_write_public_only_) {
-      if (key_is_private(a_key)) continue;
+      if (key_is_private(prop_key)) continue;
     }
 
     if (!a_data.get_description().empty()) {
@@ -2105,7 +2219,7 @@ void properties::config::write(std::ostream& out,
     }
 
     // name:
-    out << a_key << " : ";
+    out << prop_key << " : ";
 
     if (a_data.is_locked()) out << "const ";
 
@@ -2209,7 +2323,7 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
 
   while (a_in) {
     if (verbose_parsing) {
-      std::cerr << "DEBUG: properties::config::read_: "
+      std::cerr << "DEBUG: datatools::properties::config::read_: "
                 << "loop on input stream..."
                 << std::endl;
     }
@@ -2226,7 +2340,7 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
       line_get = line_get.substr(0, sz - 1);
       
       if (verbose_parsing) {
-        std::cerr << "DEBUG: properties::config::read_: "
+        std::cerr << "DEBUG: datatools::properties::config::read_: "
                   << "line_get='"
                   << line_get
                   << "'" << std::endl;
@@ -2237,7 +2351,7 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
       // append to previous line:
       line_in += line_get;
       if (verbose_parsing) {
-        std::cerr << "DEBUG: properties::config::read_: "
+        std::cerr << "DEBUG: datatools::properties::config::read_: "
                   << "append --> line_in='"
                   << line_in 
                   << "'" << std::endl;
@@ -2246,7 +2360,7 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
       // a new line
       line_in = line_get;
       if (verbose_parsing) {
-        std::cerr << "DEBUG: properties::config::read_: "
+        std::cerr << "DEBUG: datatools::properties::config::read_: "
                   << "new --> line_in='"
                   << line_in 
                   << "'" << std::endl;
@@ -2263,7 +2377,7 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
 
       std::string line = line_in;
       if (verbose_parsing) {
-        std::cerr << "DEBUG: properties::config::read_: line "
+        std::cerr << "DEBUG: datatools::properties::config::read_: line "
                   << _read_line_count_ << " size is "
                   << line.size() 
                   << "" << std::endl;
@@ -2275,7 +2389,7 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
       check_iss >> std::ws >> check_word;
       if (check_word.empty()) {
         if (verbose_parsing) {
-          std::cerr << "DEBUG: properties::config::read_: line "
+          std::cerr << "DEBUG: datatools::properties::config::read_: line "
                     << _read_line_count_ 
                     << " is blank" << std::endl;
         }
@@ -2289,7 +2403,7 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
         iss >> c;
         if (c == _comment_char_) {
           if (verbose_parsing) {
-            std::cerr << "DEBUG: properties::config::read_: line "
+            std::cerr << "DEBUG: datatools::properties::config::read_: line "
                       << _read_line_count_ 
                       << " is a comment" << std::endl;
           }
@@ -2305,7 +2419,7 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
             iss >> std::ws;
             std::string config_desc;
             if (!prop_config.empty()) {
-              std::cerr << "WARNING: " << "datatools::utils::properties::config::read_: "
+              std::cerr << "WARNING: " << "datatools::properties::config::read_: "
                         << "Duplicated '@config' directive !" << std::endl;
             }
             std::getline(iss, config_desc);
@@ -2331,7 +2445,7 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
       // parse line:
       if (!skip_line) {
         if (verbose_parsing) {
-          std::cerr << "DEBUG: properties::config::read_: "
+          std::cerr << "DEBUG: datatools::properties::config::read_: "
                     << "line "
                     << _read_line_count_ 
                     << " is '" 
@@ -2343,7 +2457,7 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
         int flag_pos = line_parsing.find_first_of(_assign_char_);
         if (flag_pos >= (int)line_parsing.size()) {
           std::ostringstream message;
-          message << "datatools::utils::properties::config::read_: "
+          message << "datatools::properties::config::read_: "
                   << "Cannot find assign symbol !" ;
           throw std::logic_error(message.str());
         }
@@ -2351,7 +2465,7 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
         // parse property desc:
         std::string property_desc_str = line_parsing.substr(0, flag_pos);
         if (verbose_parsing) {
-          std::cerr << "DEBUG: properties::config::read_: "
+          std::cerr << "DEBUG: datatools::properties::config::read_: "
                     << "property_desc_str='"
                     << property_desc_str 
                     << "'" << std::endl;
@@ -2360,7 +2474,7 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
         // parse property value:
         std::string property_value_str = line_parsing.substr(flag_pos+1);
         if (verbose_parsing) {
-          std::cerr << "DEBUG: properties::config::read_: "
+          std::cerr << "DEBUG: datatools::properties::config::read_: "
                     << "property_value_str='"
                     << property_value_str << "'" << std::endl;
         }
@@ -2394,7 +2508,7 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
             
             if (!vec_ss) {
               std::ostringstream message;
-              message << "datatools::utils::properties::config::read_: "
+              message << "datatools::properties::config::read_: "
                       << "Cannot find vector size for key '" 
                       << prop_key 
                       << "' at line '" 
@@ -2404,7 +2518,7 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
 
             if (vsize < 0) {
               std::ostringstream message;
-              message << "datatools::utils::properties::config::read_: "
+              message << "datatools::properties::config::read_: "
                       << "Invalid vector size !" ;
               throw std::logic_error(message.str());
             }
@@ -2412,7 +2526,7 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
             char c = 0;
             if (!vec_ss) {
               std::ostringstream message;
-              message << "datatools::utils::properties::config::read_: "
+              message << "datatools::properties::config::read_: "
                       << "Cannot find expected vector size closing symbol for key '" 
                       << prop_key 
                       << "' at line '" 
@@ -2423,7 +2537,7 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
             vec_ss >> c;
             if (c != CLOSE_VECTOR) {
               std::ostringstream message;
-              message << "datatools::utils::properties::config::read_: "
+              message << "datatools::properties::config::read_: "
                       << "Invalid vector size closing symbol for key '" 
                       << prop_key 
                       << "' at line '" 
@@ -2454,7 +2568,7 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
             type = properties::data::TYPE_STRING_SYMBOL;
           } else {
             std::ostringstream message;
-            message << "datatools::utils::properties::config::read_: "
+            message << "datatools::properties::config::read_: "
                     << "Invalid type specifier '" 
                     << token << "' "
                     << "at key '" 
@@ -2468,16 +2582,16 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
           }
 
           if (verbose_parsing) {
-            std::cerr << "DEBUG: properties::config::read_: "
+            std::cerr << "DEBUG: datatools::properties::config::read_: "
                       << "type='"
                       << type << "'" << std::endl;
-            std::cerr << "DEBUG: properties::config::read_: "
+            std::cerr << "DEBUG: datatools::properties::config::read_: "
                       << "locked='"
                       << locked << "'" << std::endl;
-            std::cerr << "DEBUG: properties::config::read_: "
+            std::cerr << "DEBUG: datatools::properties::config::read_: "
                       << "vsize='"
                       << vsize << "'" << std::endl;
-            std::cerr << "DEBUG: properties::config::read_: "
+            std::cerr << "DEBUG: datatools::properties::config::read_: "
                       << "prop_description='"
                       << prop_description << "'" << std::endl;
           }
@@ -2526,7 +2640,7 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
               iss >> a_boolean;
               if (!iss) {
                 std::ostringstream message;
-                message << "datatools::utils::properties::config::read_: "
+                message << "datatools::properties::config::read_: "
                         << "Cannot read boolean value for key '" 
                         << prop_key 
                         << "' at line '" 
@@ -2539,7 +2653,7 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
                 iss >> b;
                 if (!iss) {
                   std::ostringstream message;
-                  message << "datatools::utils::properties::config::read_: "
+                  message << "datatools::properties::config::read_: "
                           << "Cannot read vector boolean value for key '" 
                           << prop_key 
                           << "' at line '" 
@@ -2556,7 +2670,7 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
               iss >> a_integer;
               if (!iss) {
                 std::ostringstream message;
-                message << "datatools::utils::properties::config::read_: "
+                message << "datatools::properties::config::read_: "
                         << "Cannot read integer value for key '" 
                         << prop_key 
                         << "' at line '" 
@@ -2569,7 +2683,7 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
                 iss >> k;
                 if (!iss) {
                   std::ostringstream message;
-                  message << "datatools::utils::properties::config::read_: "
+                  message << "datatools::properties::config::read_: "
                           << "Cannot read vector integer value for key '" 
                           << prop_key 
                           << "' at line '" 
@@ -2586,7 +2700,7 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
               iss >> a_real;
               if (!iss) {
                 std::ostringstream message;
-                message << "datatools::utils::properties::config::read_: "
+                message << "datatools::properties::config::read_: "
                         << "Cannot read real value for key '" 
                         << prop_key 
                         << "' at line '" 
@@ -2600,7 +2714,7 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
                 iss >> x;
                 if (!iss) {
                   std::ostringstream message;
-                  message << "datatools::utils::properties::config::read_: "
+                  message << "datatools::properties::config::read_: "
                           << "Cannot read vector real value for key '" 
                           << prop_key 
                           << "' at line '" 
@@ -2616,7 +2730,7 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
             if (scalar) {
               if (!read_quoted_string(iss, a_string)) {
                 std::ostringstream message;
-                message << "datatools::utils::properties::config::read_: "
+                message << "datatools::properties::config::read_: "
                         << "Cannot read string value for key '" 
                         << prop_key 
                         << "' at line '" 
@@ -2628,7 +2742,7 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
                 std::string str;
                 if (!read_quoted_string(iss, str)) {
                   std::ostringstream message;
-                  message << "datatools::utils::properties::config::read_: "
+                  message << "datatools::properties::config::read_: "
                           << "Cannot read string value for key '" 
                           << prop_key 
                           << "' at line '" 
@@ -2738,7 +2852,7 @@ void properties::export_to_string_based_dictionary(
   for (pmap::const_iterator i = _props_.begin();
        i != _props_.end();
        ++i) {
-    const std::string& key = i->first;
+    const std::string& prop_key = i->first;
     std::ostringstream valoss;
     const data& data = i->second;
     
@@ -2760,10 +2874,9 @@ void properties::export_to_string_based_dictionary(
     }
     if (data.is_vector()) valoss << ')';
     
-    dict[key] = valoss.str();
+    dict[prop_key] = valoss.str();
   }
 }
 
-} // end of namespace utils
 } // end of namespace datatools
 

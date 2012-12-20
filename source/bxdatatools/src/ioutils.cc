@@ -1,7 +1,7 @@
 // -*- mode: c++; -*-
 // ioutils.cc
 // Ourselves
-#include <datatools/utils/ioutils.h>
+#include <datatools/ioutils.h>
 
 // Standard Library
 #include <sstream>
@@ -12,7 +12,6 @@
 // This Project
 
 namespace datatools {
-namespace utils {
 
 bool io::g_colored_stream_ = false;
 io   io::g_io_;
@@ -239,6 +238,5 @@ std::string io::to_binary(const uint32_t& val, bool show_all) {
   return oss.str();
 }
 
-} // namespace utils
 } // namespace datatools
 

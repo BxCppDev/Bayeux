@@ -1,7 +1,7 @@
 // -*- mode: c++; -*-
 // version_id.cc
 // Ourselves 
-#include <datatools/utils/version_id.h>
+#include <datatools/version_id.h>
 
 // Standard Library
 #include <cctype>
@@ -14,7 +14,6 @@
 // This Project
 
 namespace datatools {
-namespace utils {
 
 const std::string version_id::ALPHA_TAG = "alpha";
 const std::string version_id::BETA_TAG  = "beta";
@@ -189,7 +188,7 @@ void version_id::set_tag(const std::string& tag) {
   
   if (!validate) {
     std::ostringstream message;
-    message << "datatools::utils::version_id::set_tag: "
+    message << "datatools::version_id::set_tag: "
             << "Version ID's tag '" 
             << trimed_tag << "' is not allowed !";
     throw std::logic_error(message.str());       
@@ -203,7 +202,7 @@ void version_id::set_tag(const std::string& tag) {
   }
   if (!validate) {
     std::ostringstream message;
-    message << "datatools::utils::version_id::set_tag: "
+    message << "datatools::version_id::set_tag: "
             << "Version ID's tag '" 
             << trimed_tag << "' is not allowed !";
     throw std::logic_error(message.str());       
@@ -234,7 +233,7 @@ void version_id::set_tag(const std::string& tag) {
           if (rc_num >= 0) {
             if (rc_num > MAX_RC_NUM) {
               std::ostringstream message;
-              message << "datatools::utils::version_id::set_tag: "
+              message << "datatools::version_id::set_tag: "
                       << "Version ID's special RC tag '" 
                       << trimed_tag 
                       << "' is not allowed (RC number is too large) !";
@@ -517,7 +516,7 @@ bool version_id::matches(const std::string& version_rule,
   vr_iss >> word;
   if (word.empty()) {
     std::ostringstream message;
-    message << "datatools::utils::version_id::matches: "
+    message << "datatools::version_id::matches: "
             << "Missing valid version rule !";
     throw std::logic_error(message.str());
   }
@@ -531,7 +530,7 @@ bool version_id::matches(const std::string& version_rule,
   int match_mode = INVALID;
   std::string vid_word;
   /*
-     std::clog << "datatools::utils::version_id::matches: "
+     std::clog << "datatools::version_id::matches: "
      << "word = '" << word << "'"
      << std::endl;
      */
@@ -569,7 +568,7 @@ bool version_id::matches(const std::string& version_rule,
   
   if (vid_word.empty()) {
     std::ostringstream message;
-    message << "datatools::utils::version_id::matches: "
+    message << "datatools::version_id::matches: "
             << "Missing version ID !";
     throw std::logic_error(message.str());
   }
@@ -579,7 +578,7 @@ bool version_id::matches(const std::string& version_rule,
   vid_iss >> matcher_vid;
   if (!vid_iss) {
     std::ostringstream message;
-    message << "datatools::utils::version_id::matches: "
+    message << "datatools::version_id::matches: "
             << "Invalid version ID format ('" << vid_word << "') !";
     throw std::logic_error(message.str());
   }
@@ -605,7 +604,7 @@ bool version_id::matches(const std::string& version_rule,
   } else {
     if (!are_orderable(*this, matcher_vid, major_only)) {
       std::ostringstream message;
-      message << "datatools::utils::version_id::matches: "
+      message << "datatools::version_id::matches: "
               << "Version IDs " 
               << *this << " and " << matcher_vid 
               << " are not orderable !";
@@ -627,7 +626,7 @@ bool version_id::matches(const std::string& version_rule,
       else return false;
     } else {
       std::ostringstream message;
-      message << "datatools::utils::version_id::matches: "
+      message << "datatools::version_id::matches: "
               << "Invalid rule !";
       throw std::logic_error(message.str());
     }
@@ -646,14 +645,14 @@ int version_id::compare(const version_id& vid0,
   const version_id& v2 = vid1;
   if (!v1.is_valid()) {
     std::ostringstream message;
-    message << "datatools::utils::version_id::compare: "
+    message << "datatools::version_id::compare: "
             << "Version ID '" << v1 << "' is not valid !";
     throw std::logic_error(message.str());
   }
 
   if (!v2.is_valid()) {
     std::ostringstream message;
-    message << "datatools::utils::version_id::compare: "
+    message << "datatools::version_id::compare: "
             << "Version ID '" << v2 << "' is not valid !";
     throw std::logic_error(message.str());
   }
@@ -669,14 +668,14 @@ int version_id::compare(const version_id& vid0,
 
   if (maj_num_1 == INVALID_NUMBER) {
     std::ostringstream message;
-    message << "datatools::utils::version_id::compare: "
+    message << "datatools::version_id::compare: "
         << "Version ID '" << v1 << "' is not orderable !";
     throw std::logic_error(message.str());
   }
 
   if (maj_num_2 == INVALID_NUMBER) {
     std::ostringstream message;
-    message << "datatools::utils::version_id::compare: "
+    message << "datatools::version_id::compare: "
         << "Version ID '" << v2 << "' is not orderable !";
     throw std::logic_error(message.str());
   }
@@ -718,32 +717,32 @@ int version_id::compare(const version_id& vid0,
             // rev_num_1 == rev_num_2
             if (v1.has_tag() && ! v1.has_tag_number()) {
               std::ostringstream message;
-              message << "datatools::utils::version_id::compare: "
+              message << "datatools::version_id::compare: "
                       << "Version ID '" << v1 << "' tag is not orderable !";
               throw std::logic_error(message.str());
             }
 
             if (v2.has_tag() && ! v2.has_tag_number()) {
               std::ostringstream message;
-              message << "datatools::utils::version_id::compare: "
+              message << "datatools::version_id::compare: "
                       << "Version ID '" << v2 << "' tag is not orderable !";
               throw std::logic_error(message.str());
             }
 
             if ((tag_num_1 == INVALID_NUMBER) 
                 && (tag_num_2 != INVALID_NUMBER)) {
-              if (devel) std::cerr << "DEVEL: version_id::compare: TEST 1\n";
+              if (devel) std::cerr << "DEVEL: datatools::version_id::compare: TEST 1\n";
 
               if (tag_num_2 < INVALID_NUMBER) {
-                if (devel) std::cerr << "DEVEL: version_id::compare: +1\n";
+                if (devel) std::cerr << "DEVEL: datatools::version_id::compare: +1\n";
                 return +1; 
               } else {
-                if (devel) std::cerr << "DEVEL: version_id::compare: -1\n";
+                if (devel) std::cerr << "DEVEL: datatools::version_id::compare: -1\n";
                 return -1;
               }
             } else if ((tag_num_1 != INVALID_NUMBER) 
                        && (tag_num_2 == INVALID_NUMBER)) {
-              if (devel) std::cerr << "DEVEL: version_id::compare: TEST 2\n";
+              if (devel) std::cerr << "DEVEL: datatools::version_id::compare: TEST 2\n";
               if (tag_num_1 < INVALID_NUMBER) {
                 return -1; 
               } else {
@@ -752,14 +751,14 @@ int version_id::compare(const version_id& vid0,
             } else if ((tag_num_1 != INVALID_NUMBER) 
                        && (tag_num_2 != INVALID_NUMBER)) {
               if (devel) {
-                std::cerr << "DEVEL: version_id::compare: TEST 3\n";
+                std::cerr << "DEVEL: datatools::version_id::compare: TEST 3\n";
               }
               if (devel) {
-                std::cerr << "DEVEL: version_id::compare:   tag_num_1 = " 
+                std::cerr << "DEVEL: datatools::version_id::compare:   tag_num_1 = " 
                           << tag_num_1 << std::endl;
               }
               if (devel) {
-                std::cerr << "DEVEL: version_id::compare:   tag_num_2 = " 
+                std::cerr << "DEVEL: datatools::version_id::compare:   tag_num_2 = " 
                           << tag_num_2 << std::endl;
               }
 
@@ -806,7 +805,6 @@ bool version_id::are_orderable(const version_id& vid0,
   return true;
 }
 
-} // namespace utils
 } // namespace datatools
 
 // end of version_id.cc

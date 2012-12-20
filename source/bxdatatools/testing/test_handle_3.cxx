@@ -13,7 +13,7 @@
 #include <boost/cstdint.hpp>
 #include <boost/foreach.hpp>
 
-#include <datatools/utils/handle.h>
+#include <datatools/handle.h>
 
 using namespace std;
 
@@ -52,7 +52,7 @@ int main (int argc_ , char ** argv_)
           iarg++;
         }
 
-      using namespace datatools::utils;
+      using namespace datatools;
 
       typedef handle<int>             int_handle_type;
       typedef vector<int_handle_type> int_handle_collection_type;

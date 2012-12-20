@@ -5,7 +5,7 @@
  *
  */
 // Ourselves
-#include <datatools/utils/units.h>
+#include <datatools/units.h>
 
 // Standard Library
 #include <cmath>
@@ -24,11 +24,10 @@
 #include <boost/scoped_ptr.hpp>
 
 // This Project
-#include <datatools/utils/clhep_units.h>
+#include <datatools/clhep_units.h>
 
 
 namespace datatools {
-namespace utils {
 
 double units::get_length_unit_from(const std::string& word) {
   if ((word == "angstrom")) return CLHEP::angstrom;
@@ -406,7 +405,7 @@ bool units::find_value_with_unit(const std::string& word,
   iss >> val;
   if (!iss) {
     std::ostringstream message;
-    message << "datatools::utils::units::find_value_with_unit: Format error while reading a double value !";
+    message << "datatools::units::find_value_with_unit: Format error while reading a double value !";
     return false;
   }
   iss >> std::ws;
@@ -435,7 +434,7 @@ double units::get_value_with_unit(const std::string& word) {
   std::string unit_label;
   if (!find_value_with_unit(word, unit_value, unit_label)) {
     std::ostringstream message;
-    message << "datatools::utils::units::get_value_with_unit: Cannot parse a value with its units !";
+    message << "datatools::units::get_value_with_unit: Cannot parse a value with its units !";
     throw std::logic_error(message.str());
   }
   return unit_value;
@@ -450,6 +449,5 @@ void units::throw_bad_unit(const std::string& a_type,
 }
 
 
-} // end of namespace utils
 } // end of namespace datatools
 

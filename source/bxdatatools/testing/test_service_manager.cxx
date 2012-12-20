@@ -1,9 +1,9 @@
 /* test_service_manager.cxx
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-09
- * Last modified : 2011-06-22
+ * Last modified : 2012-12-15
  *
- * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2012 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * Description:
  *
@@ -21,22 +21,20 @@
 #include <list>
 #include <stdexcept>
 
-#include <datatools/utils/ioutils.h>
-#include <datatools/utils/properties.h>
-#include <datatools/utils/multi_properties.h>
+#include <datatools/ioutils.h>
+#include <datatools/properties.h>
+#include <datatools/multi_properties.h>
+#include <datatools/utils.h>
 
-#include <datatools/services/base_service.h>
-#include <datatools/services/service_macros.h>
-#include <datatools/services/service_manager.h>
-#include <datatools/utils/utils.h>
+#include <datatools/base_service.h>
+#include <datatools/service_macros.h>
+#include <datatools/service_manager.h>
 
 // explicitly include this dummy service (with registration) :
 #include "dummy_service.h"
 #include "dummy_service.cc"
 
 using namespace std;
-using namespace datatools::service;
-using namespace datatools::utils;
 
 /** An event record test processing service:
  *  it adds a simple text property (namely the 'label')
@@ -128,14 +126,14 @@ DATATOOLS_SERVICE_INITIALIZE_IMPLEMENT_HEAD(test_service,       \
       label_ = DEFAULT_LABEL;
     }
 
-  return datatools::utils::SUCCESS;
+  return datatools::SUCCESS;
 }
 
 // Reset hook :
 DATATOOLS_SERVICE_RESET_IMPLEMENT_HEAD(test_service)
 {
   label_ = "";
-  return datatools::utils::SUCCESS;
+  return datatools::SUCCESS;
 }
 
 // DATATOOLS_SERVICE_FETCH_DEPENDENCIES_IMPLEMENT_HEAD(test_service,a_dependency_list)
@@ -171,7 +169,7 @@ int main (int argc_, char ** argv_)
 
   try
     {
-      clog << "Test program for class 'datatools::service::service_manager' !" << endl;
+      clog << "Test program for class 'datatools::service_manager' !" << endl;
 
       bool debug = false;
 
@@ -189,58 +187,58 @@ int main (int argc_, char ** argv_)
                 }
               else
                 {
-                  clog << io::warning << "ignoring option '" << option << "'!" << endl;
+                  clog << datatools::io::warning << "ignoring option '" << option << "'!" << endl;
                 }
             }
           else
             {
               string argument = token;
               {
-                clog << io::warning << "ignoring argument '" << argument << "'!" << endl;
+                clog << datatools::io::warning << "ignoring argument '" << argument << "'!" << endl;
               }
             }
           iarg++;
         }
 
-      base_service::g_debug = debug;
-      DATATOOLS_FACTORY_GET_SYSTEM_REGISTER (base_service).print (clog);
+      datatools::base_service::g_debug = debug;
+      DATATOOLS_FACTORY_GET_SYSTEM_REGISTER (datatools::base_service).print (clog);
 
       {
         // Setup the configuration parameters of the service:
-        properties TS_config;
+        datatools::properties TS_config;
         if (debug) TS_config.store_flag ("debug");
         TS_config.store ("label", "test_service::label");
 
         test_service TS;
 
         // Initialize the event record processing service :
-        if (debug) clog << io::debug
+        if (debug) clog << datatools::io::debug
                         << "Initializing service '"
                         << TS.get_name () << "'..." << endl;
         TS.initialize_standalone (TS_config);
-        if (debug) clog << io::debug << "Done." << endl;
+        if (debug) clog << datatools::io::debug << "Done." << endl;
 
         clog << "Test service label is '" << TS.get_label () << "'" << endl;
 
         // Terminate the test service :
-        if (debug) clog << io::debug
+        if (debug) clog << datatools::io::debug
                         << "Terminating service '"
                         << TS.get_name () << "'..." << endl;
         TS.reset ();
-        if (debug) clog << io::debug << "Done." << endl;
+        if (debug) clog << datatools::io::debug << "Done." << endl;
       }
 
       {
-        uint32_t SM_flags = service_manager::BLANK;
+        uint32_t SM_flags = datatools::service_manager::BLANK;
         if (debug)
           {
-            SM_flags |= service_manager::DEBUG;
+            SM_flags |= datatools::service_manager::DEBUG;
           }
-        service_manager SM ("SM", "A test service manager", SM_flags);
+        datatools::service_manager SM ("SM", "A test service manager", SM_flags);
         SM.tree_dump (clog, "Service manager : ");
 
         // Create a multi_property container:
-        multi_properties SM_services_config;
+        datatools::multi_properties SM_services_config;
         SM_services_config.add ("test_1", "test_service");
         SM_services_config.get_section ("test_1").store ("label", "test_service_1::label");
 
@@ -250,21 +248,21 @@ int main (int argc_, char ** argv_)
         strict_dependencies.push_back ("test_1");
         SM_services_config.get_section ("test_2").store ("dependencies.strict", strict_dependencies);
 
-        SM_services_config.add ("foo", "datatools::service::dummy_service");
+        SM_services_config.add ("foo", "datatools::dummy_service");
         SM_services_config.get_section ("foo").store ("label", "King Arthur");
 
-        if (debug) clog << io::debug << "Load embedded services' configuration..." << endl;
+        if (debug) clog << datatools::io::debug << "Load embedded services' configuration..." << endl;
         // Load it !
         SM.load (SM_services_config);
 
         // Load another multi_property container stored in a file :
-        datatools::utils::multi_properties SM_services_config_2;
+        datatools::multi_properties SM_services_config_2;
         string services_conf = "${DATATOOLS_ROOT}/testing/config/test_service_manager.conf";
-        datatools::utils::fetch_path_with_env (services_conf);
+        datatools::fetch_path_with_env (services_conf);
         SM_services_config_2.read (services_conf);
         SM.load (SM_services_config_2);
 
-        if (debug) clog << io::debug << "Initializing the service manager..." << endl;
+        if (debug) clog << datatools::io::debug << "Initializing the service manager..." << endl;
         SM.initialize ();
 
         if (SM.has ("test_2") && SM.is_a<test_service> ("test_2"))
@@ -290,7 +288,7 @@ int main (int argc_, char ** argv_)
           }
         SM.tree_dump (clog, "Service manager (dropped test_2) : ", "");
 
-        clog << io::debug << "Terminating service manager..." << endl;
+        clog << datatools::io::debug << "Terminating service manager..." << endl;
         SM.reset ();
         SM.tree_dump (clog, "Service manager (terminated) : ", "");
       }

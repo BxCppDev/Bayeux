@@ -6,14 +6,14 @@
 #include <limits>
 
 // The quasi portable binary archives :
-#include <eos/portable_iarchive.hpp>
-#include <eos/portable_oarchive.hpp>
+#include <datatools/eos/portable_iarchive.hpp>
+#include <datatools/eos/portable_oarchive.hpp>
 
 #include <boost/cstdint.hpp>
 #include <boost/serialization/string.hpp>
 
 // Some pre-processor guard about Boost I/O usage and linkage :
-#include <datatools/serialization/bio_guard.h>
+#include <datatools/bio_guard.h>
 
 using namespace std;
 

@@ -10,8 +10,8 @@
 #include <stdexcept>
 #include <vector>
 
-#include <datatools/utils/i_predicate.h>
-#include <datatools/utils/handle.h>
+#include <datatools/i_predicate.h>
+#include <datatools/handle.h>
 
 using namespace std;
 
@@ -50,7 +50,7 @@ public:
 };
 
 // Define a predicate for the 'smell' class :
-struct smell_stinks_predicate : public datatools::utils::i_predicate<smell>
+struct smell_stinks_predicate : public datatools::i_predicate<smell>
 {
   bool operator () (const smell & a_smell) const
   {
@@ -95,7 +95,7 @@ public:
 };
 
 // Define a predicate for the 'foo' class :
-struct foo_is_blue_predicate : public datatools::utils::i_predicate<foo>
+struct foo_is_blue_predicate : public datatools::i_predicate<foo>
 {
   bool operator () (const foo & a_foo) const
   {
@@ -113,77 +113,77 @@ int main (int argc_ , char ** argv_)
 
       int iarg =  1;
       while (iarg < argc_) 
-	{
+        {
           string arg = argv_[iarg];
-	  if ((arg == "-d") || (arg == "--debug")) debug = true;
-	  iarg++;
-	}
+          if ((arg == "-d") || (arg == "--debug")) debug = true;
+          iarg++;
+        }
 
-      using namespace datatools::utils;
+      using namespace datatools;
       {
-	clog << endl << "Test 1: " << endl;
-	foo f0 ("red");
-	foo f1 ("green");
-	foo f2 ("blue");
+        clog << endl << "Test 1: " << endl;
+        foo f0 ("red");
+        foo f1 ("green");
+        foo f2 ("blue");
 
-	foo_is_blue_predicate is_blue;
-	if (is_blue (f0))
-	  {
-	    clog << "f0 is blue !" << endl;
-	  }
-	if (is_blue (f1))
-	  {
-	    clog << "f1 is blue !" << endl;
-	  }
-	if (is_blue (f2))
-	  {
-	    clog << "f2 is blue !" << endl;
-	  }
-	
-	typedef datatools::utils::handle<foo> handle_type;
-	typedef vector<handle_type> collection_type;
-	collection_type foos;
-	foos.push_back (handle_type (new foo ("tomato", "red")));
-	foos.push_back (handle_type (new foo ("mint", "green")));
-	foos.push_back (handle_type (new foo ("petrol", "blue")));
-	foos.push_back (handle_type (new foo ("cream", "white")));
-	foos.push_back (handle_type (new foo ("rose", "pink")));
-	foos.push_back (handle_type (new foo ("lemon", "yellow")));
+        foo_is_blue_predicate is_blue;
+        if (is_blue (f0))
+          {
+            clog << "f0 is blue !" << endl;
+          }
+        if (is_blue (f1))
+          {
+            clog << "f1 is blue !" << endl;
+          }
+        if (is_blue (f2))
+          {
+            clog << "f2 is blue !" << endl;
+          }
+        
+        typedef datatools::handle<foo> handle_type;
+        typedef vector<handle_type> collection_type;
+        collection_type foos;
+        foos.push_back (handle_type (new foo ("tomato", "red")));
+        foos.push_back (handle_type (new foo ("mint", "green")));
+        foos.push_back (handle_type (new foo ("petrol", "blue")));
+        foos.push_back (handle_type (new foo ("cream", "white")));
+        foos.push_back (handle_type (new foo ("rose", "pink")));
+        foos.push_back (handle_type (new foo ("lemon", "yellow")));
 
-	clog << "Foos : " << endl;
-	for (collection_type::const_iterator i = foos.begin ();
-	     i != foos.end ();
-	     i++)
-	  {
-	    if (i->has_data ()) i->get ().print ();
-	  }
-	  
-	// a predicate to check if a foo is `blue' colored :
-	foo_is_blue_predicate BP;
+        clog << "Foos : " << endl;
+        for (collection_type::const_iterator i = foos.begin ();
+             i != foos.end ();
+             i++)
+          {
+            if (i->has_data ()) i->get ().print ();
+          }
+          
+        // a predicate to check if a foo is `blue' colored :
+        foo_is_blue_predicate BP;
 
-	// the `handle_predicate' is a wrapper for the `BP' predicate 
-	// that enable to apply the BP predicate through the collection iterators :
-	datatools::utils::handle_predicate<foo> HP (BP);
-	collection_type::const_iterator found = find_if (foos.begin (), foos.end (), HP);
-	if (found != foos.end ())
-	  {
-	    clog << "Found handle with a blue foo !" << endl;
-	    found->get().print ();
-	  }
-	  
-	// a predicate to check if a foo stinks :
-	smell_stinks_predicate SP;
-	datatools::utils::mother_to_daughter_predicate<smell, foo> M2DP (SP);
-	// the `handle_predicate' is a wrapper for the `SP' predicate 
-	// that enable to apply the BP predicate through the collection iterators :
-	datatools::utils::handle_predicate<foo> HP2 (M2DP);
-	collection_type::const_iterator found2 = find_if (foos.begin (), foos.end (), HP2);
-	if (found2 != foos.end ())
-	  {
-	    clog << "Found handle with a foo which stinks !" << endl;
-	    found2->get().print ();
-	  }
-	  
+        // the `handle_predicate' is a wrapper for the `BP' predicate 
+        // that enable to apply the BP predicate through the collection iterators :
+        datatools::handle_predicate<foo> HP (BP);
+        collection_type::const_iterator found = find_if (foos.begin (), foos.end (), HP);
+        if (found != foos.end ())
+          {
+            clog << "Found handle with a blue foo !" << endl;
+            found->get().print ();
+          }
+          
+        // a predicate to check if a foo stinks :
+        smell_stinks_predicate SP;
+        datatools::mother_to_daughter_predicate<smell, foo> M2DP (SP);
+        // the `handle_predicate' is a wrapper for the `SP' predicate 
+        // that enable to apply the BP predicate through the collection iterators :
+        datatools::handle_predicate<foo> HP2 (M2DP);
+        collection_type::const_iterator found2 = find_if (foos.begin (), foos.end (), HP2);
+        if (found2 != foos.end ())
+          {
+            clog << "Found handle with a foo which stinks !" << endl;
+            found2->get().print ();
+          }
+          
       }
      
     }

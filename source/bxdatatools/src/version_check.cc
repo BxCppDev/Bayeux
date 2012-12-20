@@ -1,7 +1,7 @@
 // -*- mode: c++; -*-
 // version_check.cc
 // Ourselves
-#include <datatools/utils/version_check.h>
+#include <datatools/version_check.h>
 
 // Standard Library
 #include <sstream>
@@ -13,19 +13,18 @@
 #include <boost/algorithm/string.hpp>
 
 // This Project
-#include <datatools/utils/version_id.h>
+#include <datatools/version_id.h>
 
 
 namespace datatools {
-namespace utils {
 
 bool validate_version(const std::string& label_, const version_id& vid_,
                       const std::string& version_rules_) {
   if (label_.empty()) {
-    throw std::logic_error("datatools::utils::validate_version: Missing a valid label !");
+    throw std::logic_error("datatools::validate_version: Missing a valid label !");
   }
   if (!vid_.is_valid()) {
-    throw std::logic_error("datatools::utils::validate_version: Missing a valid version ID !");
+    throw std::logic_error("datatools::validate_version: Missing a valid version ID !");
   }
 
   typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
@@ -45,7 +44,7 @@ bool validate_version(const std::string& label_, const version_id& vid_,
     
     if (count > 2) {
       std::ostringstream message;
-      message << "datatools::utils::validate_version: "
+      message << "datatools::validate_version: "
               << "Invalid syntax (unexpected token in '"
               << tok << "') !";
       throw std::logic_error(message.str());
@@ -64,7 +63,7 @@ bool validate_version(const std::string& label_, const version_id& vid_,
           label_iss >> more >> std::ws;
           if (! more.empty()) {
             std::ostringstream message;
-            message << "datatools::utils::validate_version: "
+            message << "datatools::validate_version: "
                     << "Invalid syntax (unexpected token '"
                     << more << "') !";
             throw std::logic_error(message.str());
@@ -91,7 +90,7 @@ bool validate_version(const std::string& label_, const version_id& vid_,
       if (count3 > 1) {
         if (vid_rules[0] == '=') {
           std::ostringstream message;
-          message << "datatools::utils::validate_version: "
+          message << "datatools::validate_version: "
                   << "Invalid syntax (unexpected token '"
                   << vid_rules[0] << "' in '" << vid_rules << "') !";
           throw std::logic_error(message.str());                
@@ -113,6 +112,5 @@ bool validate_version(const std::string& label_, const version_id& vid_,
   return (checked_count > 0);
 }
 
-} // namespace utils
 } // namespace datatools
 

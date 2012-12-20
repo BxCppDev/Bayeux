@@ -8,11 +8,11 @@
 
 #include <boost/filesystem.hpp>
 
-#include <datatools/serialization/i_serializable.h>
-#include <datatools/serialization/io_factory.h>
-#include <datatools/serialization/safe_serial.h>
+#include <datatools/i_serializable.h>
+#include <datatools/io_factory.h>
+#include <datatools/safe_serial.h>
 
-#include <datatools/serialization/i_serializable.ipp>
+#include <datatools/i_serializable.ipp>
 
 #if BOOST_VERSION < 103600
 namespace bm=boost::math;
@@ -47,7 +47,7 @@ string get_fp_classify_label (int fpc_)
   return "?";
 }
 
-class data_t : public datatools::serialization::i_serializable 
+class data_t : public datatools::i_serializable 
 {
   double __v1, __v2;
   
@@ -71,11 +71,11 @@ public:
     clog << "DEVEL: v2 is " << get_fp_classify_label (bm::fpclassify (__v2)) << endl;
     if (! isfinite (__v1))
       {
-	clog << "DEVEL: v1 is " << ((__v1 < 0)? " - ": " + ") << endl;
+        clog << "DEVEL: v1 is " << ((__v1 < 0)? " - ": " + ") << endl;
       }
     if (! isfinite (__v2))
       {
-	clog << "DEVEL: v2 is " << ((__v2 < 0)? " - ": " + ") << endl;
+        clog << "DEVEL: v2 is " << ((__v2 < 0)? " - ": " + ") << endl;
       }
   }
 
@@ -151,13 +151,9 @@ void test ()
   uint64_t ux = *((const uint64_t *) (&x));
   clog << "test: x = " << x << endl;
   clog << "test: ux = " << hex << ux << dec << endl;
-		
+                
   return;
 }
-
-// BOOST_CLASS_EXPORT_KEY2(data_t, "test_nans::data_t")
-// BOOST_CLASS_EXPORT_IMPLEMENT(data_t)
-// DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(data_t)
 
 int main (int argc_ , char ** argv_) 
 {
@@ -167,37 +163,35 @@ int main (int argc_ , char ** argv_)
       bool debug = false;
       bool do_test = false;
       enum format_t  
-	{
-	  FORMAT_TXT = 0, 
-	  FORMAT_XML = 1, 
-	  FORMAT_BIN = 2
-	};
+        {
+          FORMAT_TXT = 0, 
+          FORMAT_XML = 1, 
+          FORMAT_BIN = 2
+        };
       int fmt   = FORMAT_XML;
-
-      namespace ds = datatools::serialization;
 
       int iarg = 1;
       while (iarg < argc_) 
-	{
-	  string arg=argv_[iarg];
-	  if (arg[0] == '-') 
-	    {
-	      if (arg == "-xml") fmt = FORMAT_XML;
-	      if (arg == "-txt") fmt = FORMAT_TXT;
-	      if (arg == "-bin") fmt = FORMAT_BIN;
-	    }
-	  else if (arg == "-t") 
-	    {
-	      do_test = true;
-	    }
-	  iarg++;
-	}
+        {
+          string arg=argv_[iarg];
+          if (arg[0] == '-') 
+            {
+              if (arg == "-xml") fmt = FORMAT_XML;
+              if (arg == "-txt") fmt = FORMAT_TXT;
+              if (arg == "-bin") fmt = FORMAT_BIN;
+            }
+          else if (arg == "-t") 
+            {
+              do_test = true;
+            }
+          iarg++;
+        }
 
       if (do_test)
-	{
-	  test ();
-	  return 0;
-	}
+        {
+          test ();
+          return 0;
+        }
 
       string ext = ".txt";
       if (fmt == FORMAT_XML) ext = ".xml";
@@ -207,68 +201,68 @@ int main (int argc_ , char ** argv_)
       //boost::math::detail::fp_traits<double>::type::coverage dc;
       //clog << "Coverage = " << dc << endl;
 
-      ds::io_factory::g_debug = debug;
+      datatools::io_factory::g_debug = debug;
       srand48 (seed);
       clog << "NOTICE: using filename '" << filename << "'" << endl;
    
       if (boost::filesystem::exists (filename)) 
-	{
-	  ostringstream message;
-	  message << "File '" << filename << "' already exists!";
-	  clog << "warning: " << message.str () << endl;
-	}
+        {
+          ostringstream message;
+          message << "File '" << filename << "' already exists!";
+          clog << "warning: " << message.str () << endl;
+        }
     
       {
-	clog << "NOTICE: writing..." << endl;
-	ds::safe_serial<data_t> ss_data;
-	//ds::data_writer writer (filename, ds::using_multi_archives);
-	ds::data_writer writer (filename, ds::using_single_archive);
-	int counts = 10;
-	for (int i = 0; i < counts; i++) 
-	  {
-	    ss_data.make ();
-	    if (drand48 () < 0.15) ss_data.get ().nan ();
-	    else if (drand48 () < 0.30) ss_data.get ().inf ();
-	    else if (drand48 () < 0.45) ss_data.get ().zero ();
-	    clog << ss_data.get () << endl;
-	    if (debug) ss_data.get ().info ();
-	    writer.store (ss_data.get ());
-	  }
-	clog << "NOTICE: writing done." << endl << endl;
+        clog << "NOTICE: writing..." << endl;
+        datatools::safe_serial<data_t> ss_data;
+        //datatools::data_writer writer (filename, datatools::using_multi_archives);
+        datatools::data_writer writer (filename, datatools::using_single_archive);
+        int counts = 10;
+        for (int i = 0; i < counts; i++) 
+          {
+            ss_data.make ();
+            if (drand48 () < 0.15) ss_data.get ().nan ();
+            else if (drand48 () < 0.30) ss_data.get ().inf ();
+            else if (drand48 () < 0.45) ss_data.get ().zero ();
+            clog << ss_data.get () << endl;
+            if (debug) ss_data.get ().info ();
+            writer.store (ss_data.get ());
+          }
+        clog << "NOTICE: writing done." << endl << endl;
       }
     
       {
-	clog << "NOTICE: reading..." << endl;
-	ds::safe_serial<data_t> ss_data;
-	//ds::data_reader reader (filename, ds::using_multi_archives);    
-	ds::data_reader reader (filename, ds::using_single_archive);    
-	int counts = 0;
-	while (reader.has_record_tag ()) 
-	  {
-	    if (reader.record_tag_is (data_t::SERIAL_TAG)) 
-	      {
-		if (debug) clog << "DEBUG: reading..." 
-				<< data_t::SERIAL_TAG << endl;
-		if (debug) clog << "DEBUG: making a new safe record..." 
-				<< endl;
-		ss_data.make ();
-		if (debug) clog << "DEBUG: loading the new safe record..." 
-				<< endl;
-		reader.load (ss_data.get ());
-		clog << ss_data.get () << endl;
-		if (debug) clog << "DEBUG: loading done." << endl;
-	      }
-	    else 
-	      {
-		string bad_tag = reader.get_record_tag ();
-		clog << "ERROR: unknown data tag '" 
-		     << bad_tag << "'!" << endl; 
-		break;
-	      }
-	    counts++;
-	    if (debug) clog << "DEBUG: Counts = " << counts << endl;
-	  }
-	clog << "NOTICE: reading done." << endl << endl;   
+        clog << "NOTICE: reading..." << endl;
+        datatools::safe_serial<data_t> ss_data;
+        //datatools::data_reader reader (filename, datatools::using_multi_archives);    
+        datatools::data_reader reader (filename, datatools::using_single_archive);    
+        int counts = 0;
+        while (reader.has_record_tag ()) 
+          {
+            if (reader.record_tag_is (data_t::SERIAL_TAG)) 
+              {
+                if (debug) clog << "DEBUG: reading..." 
+                                << data_t::SERIAL_TAG << endl;
+                if (debug) clog << "DEBUG: making a new safe record..." 
+                                << endl;
+                ss_data.make ();
+                if (debug) clog << "DEBUG: loading the new safe record..." 
+                                << endl;
+                reader.load (ss_data.get ());
+                clog << ss_data.get () << endl;
+                if (debug) clog << "DEBUG: loading done." << endl;
+              }
+            else 
+              {
+                string bad_tag = reader.get_record_tag ();
+                clog << "ERROR: unknown data tag '" 
+                     << bad_tag << "'!" << endl; 
+                break;
+              }
+            counts++;
+            if (debug) clog << "DEBUG: Counts = " << counts << endl;
+          }
+        clog << "NOTICE: reading done." << endl << endl;   
       } 
 
     }

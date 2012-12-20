@@ -5,7 +5,7 @@
 #include <iostream>
 #include <exception>
 
-#include <datatools/utils/temporary_files.h>
+#include <datatools/temporary_files.h>
 
 using namespace std;
 
@@ -29,10 +29,10 @@ int main (int argc_ , char ** argv_)
           iarg++;
         }
 
-      if (debug) datatools::utils::temp_file::g_devel = true;
+      if (debug) datatools::temp_file::g_devel = true;
     
       {
-        datatools::utils::temp_file ftmp;
+        datatools::temp_file ftmp;
         ftmp.set_remove_at_destroy (temp_file_delete);
 
         clog << "Create a temporary file: " << endl;
@@ -58,16 +58,16 @@ int main (int argc_ , char ** argv_)
       }
 
       {
-        datatools::utils::temp_file ftmp ("__missing", "temp_", false);
+        datatools::temp_file ftmp ("__missing", "temp_", false);
         ftmp.out () << "test: " << ftmp.get_filename() << endl;
       }
       {
-        datatools::utils::temp_file ftmp ("__new/sub", "temp_", false);
+        datatools::temp_file ftmp ("__new/sub", "temp_", false);
         ftmp.out () << "test: " << ftmp.get_filename() << endl;
       }
       try 
         {
-          datatools::utils::temp_file ftmp ("/__forbidden", "temp_", false);
+          datatools::temp_file ftmp ("/__forbidden", "temp_", false);
           ftmp.out () << "test: " << ftmp.get_filename() << endl;
         }
       catch (exception & x)

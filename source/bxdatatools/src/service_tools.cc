@@ -1,6 +1,6 @@
 /* service_tools.cc
  * 
- * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2012 Francois Mauger <mauger@lpccaen.in2p3.fr>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  *
  */
 // Ourselves
-#include <datatools/services/service_tools.h>
+#include <datatools/service_tools.h>
 
 // Standard Library
 #include <stdexcept>
@@ -28,10 +28,9 @@
 // Third Party
 
 // Datatools
-#include <datatools/services/base_service.h>
+#include <datatools/base_service.h>
 
 namespace datatools {
-namespace service {
 
 dependency_info_type::dependency_info_type() {
   level = STRICT_DEPENDENCY;
@@ -74,24 +73,23 @@ void service_entry::tree_dump(std::ostream& out,
                               const std::string& title,
                               const std::string& a_indent,
                               bool a_inherit) const {
-  namespace du = datatools::utils;
   std::string indent;
   if (!a_indent.empty()) indent = a_indent;
 
   if (!title.empty()) out << indent << title << std::endl;
 
-  out << indent << du::i_tree_dumpable::tag 
+  out << indent << i_tree_dumpable::tag 
       << "Service name     : '" 
       << service_name 
       << "'" << std::endl;
 
-  out << indent << du::i_tree_dumpable::tag 
+  out << indent << i_tree_dumpable::tag 
       << "Service ID       : '" 
       << service_id 
       << "'" << std::endl;
 
   {
-    out << indent << du::i_tree_dumpable::tag 
+    out << indent << i_tree_dumpable::tag 
         << "Master services  : ";
     if (service_masters.size() == 0) {
       out << "<none>";
@@ -103,18 +101,18 @@ void service_entry::tree_dump(std::ostream& out,
          ++i) {
       const std::string& master_service_name = i->first;
       const dependency_info_type& di = i->second;
-      out << indent << du::i_tree_dumpable::skip_tag;
+      out << indent << i_tree_dumpable::skip_tag;
 
       std::ostringstream indent_oss;
-      indent_oss << indent << du::i_tree_dumpable::skip_tag;
+      indent_oss << indent << i_tree_dumpable::skip_tag;
       service_dependency_dict_type::const_iterator j = i; 
       j++;
       if (j == service_masters.end()) {
-        out << du::i_tree_dumpable::last_tag;
-        indent_oss << du::i_tree_dumpable::last_skip_tag;
+        out << i_tree_dumpable::last_tag;
+        indent_oss << i_tree_dumpable::last_skip_tag;
       } else {
-        out << du::i_tree_dumpable::tag;
-        indent_oss << du::i_tree_dumpable::skip_tag;
+        out << i_tree_dumpable::tag;
+        indent_oss << i_tree_dumpable::skip_tag;
       }
       out << "Master '" << master_service_name << "' ";
       out << ": " 
@@ -127,7 +125,7 @@ void service_entry::tree_dump(std::ostream& out,
     }
   } 
   {
-    out << indent << du::i_tree_dumpable::tag 
+    out << indent << i_tree_dumpable::tag 
         << "Slave services   : ";
     if (service_slaves.size() == 0) {
       out << "<none>";
@@ -139,18 +137,18 @@ void service_entry::tree_dump(std::ostream& out,
          ++i) {
       const std::string& slave_service_name = i->first;
       int slave_level = i->second;
-      out << indent << du::i_tree_dumpable::skip_tag;
+      out << indent << i_tree_dumpable::skip_tag;
 
       std::ostringstream indent_oss;
-      indent_oss << indent << du::i_tree_dumpable::skip_tag;
+      indent_oss << indent << i_tree_dumpable::skip_tag;
       dependency_level_dict_type::const_iterator j = i; 
       j++;
       if (j == service_slaves.end()) {
-        out << du::i_tree_dumpable::last_tag;
-        indent_oss << du::i_tree_dumpable::last_skip_tag;
+        out << i_tree_dumpable::last_tag;
+        indent_oss << i_tree_dumpable::last_skip_tag;
       } else  {
-        out << du::i_tree_dumpable::tag;
-        indent_oss << du::i_tree_dumpable::skip_tag;
+        out << i_tree_dumpable::tag;
+        indent_oss << i_tree_dumpable::skip_tag;
       }
       out << "Slave '" << slave_service_name << "' ";
       out << ": " 
@@ -159,11 +157,11 @@ void service_entry::tree_dump(std::ostream& out,
           << std::endl;
     }       
   }
-  out << indent << du::i_tree_dumpable::tag 
+  out << indent << i_tree_dumpable::tag 
       << "Can be dropped   : " 
       << this->can_be_dropped() << std::endl;
 
-  out << indent << du::i_tree_dumpable::inherit_tag (a_inherit) 
+  out << indent << i_tree_dumpable::inherit_tag (a_inherit) 
       << "Service status   : " 
       << service_status;
   {
@@ -188,6 +186,5 @@ void service_entry::tree_dump(std::ostream& out,
   out << std::endl;
 }
 
-}  // end of namespace service
 }  // end of namespace datatools
 

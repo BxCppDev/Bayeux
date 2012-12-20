@@ -18,16 +18,16 @@
 #include <boost/cstdint.hpp>
 #include <boost/serialization/access.hpp>
 
-#include <datatools/serialization/i_serializable.h>
-#include <datatools/utils/i_tree_dump.h>
+#include <datatools/i_serializable.h>
+#include <datatools/i_tree_dump.h>
 
 namespace datatools {
 
   namespace test {
 
     class data_t : 
-      public datatools::serialization::i_serializable,     
-      public datatools::utils::i_tree_dumpable
+      public datatools::i_serializable,     
+      public datatools::i_tree_dumpable
     {
     public:
 
@@ -68,9 +68,9 @@ namespace datatools {
     public:
 
       virtual void tree_dump (std::ostream & out_         = std::clog, 
-			      const std::string & title_  = "", 
-			      const std::string & indent_ = "", 
-			      bool inherit_ = false) const;
+                              const std::string & title_  = "", 
+                              const std::string & indent_ = "", 
+                              bool inherit_ = false) const;
 
     };
 
@@ -93,7 +93,7 @@ namespace datatools {
       more_data_t ();
 
       more_data_t (char c_, int i_, double d_, size_t n_, 
-		   const std::string & name_);
+                   const std::string & name_);
 
       virtual ~more_data_t ();
 
@@ -106,9 +106,9 @@ namespace datatools {
     public:
 
       virtual void tree_dump (std::ostream & out_         = std::clog, 
-			      const std::string & title_  = "", 
-			      const std::string & indent_ = "", 
-			      bool inherit_ = false) const;
+                              const std::string & title_  = "", 
+                              const std::string & indent_ = "", 
+                              bool inherit_ = false) const;
 
     };
  

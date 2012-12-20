@@ -17,15 +17,15 @@
 #include <boost/archive/xml_oarchive.hpp>
 #include <boost/archive/xml_iarchive.hpp>
 
-#include <datatools/serialization/i_serializable.h>
-#include <datatools/serialization/utils.h>
+#include <datatools/i_serializable.h>
+#include <datatools/serialization_macros.h>
 
 using namespace std;
 
 /** Some test class representing a hit (serializable)
  *
  */
-class hit : public datatools::serialization::i_serializable
+class hit : public datatools::i_serializable
 {
 public:
   static int g_count;
@@ -85,7 +85,7 @@ DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(hit, "hit");
 
 template<class Archive>
 void hit::serialize (Archive & ar_, 
-		     const unsigned int version_)
+                     const unsigned int version_)
 {
   ar_ & boost::serialization::make_nvp ("id",  id_);
   ar_ & boost::serialization::make_nvp ("tdc", tdc_);
@@ -102,11 +102,11 @@ int main (int argc_ , char ** argv_)
 
       int iarg =  1;
       while (iarg < argc_) 
-	{
+        {
           string arg = argv_[iarg];
-	  if ((arg == "-d") || (arg == "--debug")) debug = true;
-	  iarg++;
-	}
+          if ((arg == "-d") || (arg == "--debug")) debug = true;
+          iarg++;
+        }
 
       hit::g_debug = debug;
 
@@ -117,9 +117,9 @@ int main (int argc_ , char ** argv_)
       clog << "Hit serial tag is '" << h0.get_serial_tag () << "'" << endl;
       clog << endl << "Serialize..." << endl;
       {
-	ofstream foa ("test_serializable_1.txt");
-	boost::archive::text_oarchive oa (foa);
-	oa << h0.get_serial_tag () << h0;
+        ofstream foa ("test_serializable_1.txt");
+        boost::archive::text_oarchive oa (foa);
+        oa << h0.get_serial_tag () << h0;
       }
       clog << "Done." << endl;
 

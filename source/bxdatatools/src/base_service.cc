@@ -1,6 +1,6 @@
 /* base_service.cc
  *
- * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2012 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  *
  */
 // Ourselves
-#include <datatools/services/base_service.h>
+#include <datatools/base_service.h>
 
 // Standard Library
 #include <stdexcept>
@@ -28,19 +28,17 @@
 // Third Party
 
 // Datatools
-#include <datatools/services/service_tools.h>
-#include <datatools/utils/properties.h>
-#include <datatools/utils/ioutils.h>
+#include <datatools/service_tools.h>
+#include <datatools/properties.h>
+#include <datatools/ioutils.h>
 
 namespace datatools {
-namespace service {
-
 
 bool base_service::g_debug = false;
 
 DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(
     base_service,
-    "datatools::service::base_service/__system__");
+    "datatools::base_service/__system__");
 
 
 // ctor:
@@ -102,7 +100,7 @@ void base_service::fetch_dependencies(
 
 
 int base_service::initialize_standalone(
-    const datatools::utils::properties& config) {
+    const datatools::properties& config) {
   service_dict_type dummy;
   return this->initialize(config, dummy);
 }
@@ -112,29 +110,27 @@ void base_service::tree_dump(std::ostream& out,
                              const std::string& title,
                              const std::string& a_indent,
                              bool a_inherit) const {
-  namespace du = datatools::utils;
   std::string indent;
   if (!a_indent.empty()) indent = a_indent;
 
   if (!title.empty()) out << indent << title << std::endl;
 
-  out << indent << du::i_tree_dumpable::tag
+  out << indent << i_tree_dumpable::tag
       << "Service name        : '" 
       << name_ << "'" << std::endl;
 
-  out << indent << du::i_tree_dumpable::tag
+  out << indent << i_tree_dumpable::tag
       << "Service description : '" 
       << description_ << "'" << std::endl;
 
-  out << indent << du::i_tree_dumpable::tag
+  out << indent << i_tree_dumpable::tag
       << "Service version     : '" 
       << version_ << "'" << std::endl;
 
-  out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)
+  out << indent << i_tree_dumpable::inherit_tag (a_inherit)
       << "Service initialized : " 
       << this->is_initialized() << std::endl;
 }
 
-}  // end of namespace service
 }  // end of namespace datatools
 

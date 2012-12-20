@@ -11,19 +11,19 @@
 #include <boost/serialization/vector.hpp> // missing header: fixed 2010-03-16
 #include <boost/serialization/string.hpp>
 
-#include <datatools/serialization/utils.h>
+#include <datatools/utils.h>
 
 #include <datatools_test_my_data.h>
 
-#include <datatools/serialization/i_serializable.ipp>
-	 
+#include <datatools/i_serializable.ipp>
+         
 namespace datatools {
-		 
+                 
   namespace test {
 
     template<class Archive>
     void data_t::serialize (Archive            & a_ar, 
-			    const unsigned int   a_version)
+                            const unsigned int   a_version)
     {
       a_ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
       a_ar & boost::serialization::make_nvp ("flags", __flags);
@@ -35,7 +35,7 @@ namespace datatools {
 
     template<class Archive>
     void more_data_t::serialize (Archive &          a_ar, 
-				 const unsigned int a_version)
+                                 const unsigned int a_version)
     {
       a_ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP (data_t);
       a_ar & boost::serialization::make_nvp ("name", __name);

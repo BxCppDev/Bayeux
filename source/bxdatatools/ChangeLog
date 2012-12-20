@@ -74,7 +74,7 @@ This is the datatools package ChangeLog
 2012-03-19 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
 	* factory: add template factory and associated utilities (macros)
 	to support object factories using Boost/Function and automated class
-	registration. 
+	registration.
 	- header: "include/datatools/factory/factory.h"
 	- namespace: 'datatools::factory'
 	- testing: "testing/test_factory.cxx'
@@ -86,4 +86,14 @@ This is the datatools package ChangeLog
 	* remove all "using namespace std;" from header files
 2012-04-09 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
 	* modify the 'factory' system and macros to use the 'Construct On First Use Idiom'
-	
+2012-12-20 : by Ben Morgan <Ben.Morgan@warwick.ac.uk> and Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* major interface change: version 5.0 pre-release
+	* flatten nested namespaces
+	* separate public/detail interfaces
+	* simplify the build/install procedure
+	* add CAMP-based reflection tools
+	* simplify serialization and reflection resources
+	* change serialization tag scheme and add backward compatibility support
+	* add documentation
+	* remove unused code
+

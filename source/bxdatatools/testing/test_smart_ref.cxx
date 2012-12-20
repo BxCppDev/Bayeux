@@ -6,7 +6,7 @@
 #include <string>
 #include <exception>
  
-#include <datatools/utils/smart_ref.h>
+#include <datatools/smart_ref.h>
 
 using namespace std;
 
@@ -84,43 +84,43 @@ int main (int argc_, char ** argv_)
       const size_t SZ = 10;
       dummy t[SZ];
       for (int i = 0; i < SZ; i++)
-	{
-	  t[i] = dummy (i, 3*i);
-	  clog << t[i] << endl;
-	}
+        {
+          t[i] = dummy (i, 3*i);
+          clog << t[i] << endl;
+        }
       
       const size_t SZ2 = 4; 
-      datatools::utils::smart_ref<dummy> t2[SZ2];
+      datatools::smart_ref<dummy> t2[SZ2];
       for (int i = 0; i < SZ2; i++)
-	{
-	  t2[i].set (t[i + 1]);
-	  datatools::utils::smart_ref<dummy> SR;
-	  SR.set (t[3]);
-	  t2[i].get_properties ().store ("color", "red");
-	  t2[i].get_properties ().store ("flavor", "charm");
-	  t2[i].get_properties ().store ("spin", 1);
-	  t2[i].get_properties ().store ("mass_GeV", 1.342);
-	  t2[i].get_properties ().store_flag ("beautiful");
-	  t2[i].get_properties ().store_flag ("dummy");
-	  cout << "Referenced dummy : " << t2[i].get () << endl;
-	  if ((t2[i].get ().get_a () % 2) == 0) 
-	    {
-	      t2[i].get_properties ().store_flag ("a_is_even");
-	    }
-	  else
-	    {
-	      t2[i].get_properties ().store_flag ("a_is_odd");
-	    }
-	}
+        {
+          t2[i].set (t[i + 1]);
+          datatools::smart_ref<dummy> SR;
+          SR.set (t[3]);
+          t2[i].get_properties ().store ("color", "red");
+          t2[i].get_properties ().store ("flavor", "charm");
+          t2[i].get_properties ().store ("spin", 1);
+          t2[i].get_properties ().store ("mass_GeV", 1.342);
+          t2[i].get_properties ().store_flag ("beautiful");
+          t2[i].get_properties ().store_flag ("dummy");
+          cout << "Referenced dummy : " << t2[i].get () << endl;
+          if ((t2[i].get ().get_a () % 2) == 0) 
+            {
+              t2[i].get_properties ().store_flag ("a_is_even");
+            }
+          else
+            {
+              t2[i].get_properties ().store_flag ("a_is_odd");
+            }
+        }
 
-      datatools::utils::smart_ref<dummy>::has_flag pred ("a_is_odd");
+      datatools::smart_ref<dummy>::has_flag pred ("a_is_odd");
       for (int i = 0; i < SZ2; i++)
-	{
-	  if (pred (t2[i]))
-	    {
-	      cout << "Referenced dummy with odd 'a': " << t2[i].get () << endl;	      
-	    }
-	}      
+        {
+          if (pred (t2[i]))
+            {
+              cout << "Referenced dummy with odd 'a': " << t2[i].get () << endl;              
+            }
+        }      
     }
   catch (exception & x)
     {

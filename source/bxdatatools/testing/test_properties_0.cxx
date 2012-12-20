@@ -1,13 +1,13 @@
 // -*- mode: c++; -*- 
 
-#include <datatools/utils/properties.h>
+#include <datatools/properties.h>
 
 using namespace std;
 
 int main (void)
 {
   // Declare a *properties* object:
-  datatools::utils::properties my_bag ("A list of properties");
+  datatools::properties my_bag ("A list of properties");
 
   // Populate the *bag* of properties:
   my_bag.store_flag ("debug");    // add a boolean value and set it at *true*

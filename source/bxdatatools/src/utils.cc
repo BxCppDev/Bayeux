@@ -1,7 +1,7 @@
 // -*- mode: c++; -*-
 // utils.cc
 // Ourselves 
-#include <datatools/utils/utils.h>
+#include <datatools/utils.h>
 
 // Standard Library
 #include <cstdlib>
@@ -19,12 +19,11 @@
 // Third Party
 // - Boost
 #include <boost/tokenizer.hpp>
+#include <boost/scoped_ptr.hpp>
 
 // This Project
 
-
 namespace datatools {
-namespace utils {
 
 void invalidate(double& x) {
   x = std::numeric_limits<double>::quiet_NaN();
@@ -254,6 +253,5 @@ void split_string(const std::string& text, const std::string& separators,
   }
 }
 
-} // namespace utils
 } // namespace datatools
 

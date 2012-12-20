@@ -1,7 +1,7 @@
 // -*- mode: c++; -*- 
 // temporary_files.cc
 // Ourselves
-#include <datatools/utils/temporary_files.h>
+#include <datatools/temporary_files.h>
 
 // Standard Library
 #include <cstdlib>
@@ -15,11 +15,10 @@
 #include <boost/filesystem.hpp>
 
 // This Project
-#include <datatools/utils/utils.h>
-#include <datatools/utils/ioutils.h>
+#include <datatools/utils.h>
+#include <datatools/ioutils.h>
 
 namespace datatools {
-namespace utils {
 
 const std::string temp_file::DEFAULT_PATTERN = "tmp_";
 bool temp_file::g_devel = false;
@@ -82,7 +81,7 @@ temp_file::temp_file(std::string path_dir, std::string pattern,
 temp_file::~temp_file() {
   if (remove_at_destroy_) {
     if (g_devel) {
-      std::clog << "DEVEL: datatools::utils::temp_file::dtor: "
+      std::clog << "DEVEL: datatools::temp_file::dtor: "
                 << "Deleting the file with name '"
                 << filename_ 
                 << "'" << std::endl;
@@ -123,18 +122,18 @@ void temp_file::set_remove_at_destroy(bool r) {
 
 std::ofstream& temp_file::out() {
   if (g_devel) {
-    std::clog << "DEVEL: datatools::utils::temp_file::out: Entering..." 
+    std::clog << "DEVEL: datatools::temp_file::out: Entering..." 
               << std::endl;
   }
   if (!this->is_valid()) {
     std::ostringstream message;
-    message << "datatools::utils::temp_file::out: "
+    message << "datatools::temp_file::out: "
             << "Temporary file has not been created yet !";
     throw std::logic_error(message.str());     
   }
   if (read_open_) {
     std::ostringstream message;
-    message << "datatools::utils::temp_file::out: "
+    message << "datatools::temp_file::out: "
             << "Temporary file '" 
             << filename_ 
             << "' is already open in read mode !";
@@ -144,7 +143,7 @@ std::ofstream& temp_file::out() {
     out_.open(filename_.c_str());
     if (!out_) {
       std::ostringstream message;
-      message << "datatools::utils::temp_file::out: "
+      message << "datatools::temp_file::out: "
               << "Cannot open temporary file '" 
               << filename_ 
               << "' in write mode !";
@@ -153,7 +152,7 @@ std::ofstream& temp_file::out() {
     write_open_ = true;
   }
   if (g_devel) {
-    std::clog << "DEVEL: datatools::utils::temp_file::out: Exiting." 
+    std::clog << "DEVEL: datatools::temp_file::out: Exiting." 
               << std::endl;
   }
   return out_;
@@ -162,18 +161,18 @@ std::ofstream& temp_file::out() {
 
 std::ifstream& temp_file::in() {
   if (g_devel) {
-    std::clog << "DEVEL: datatools::utils::temp_file::in: Entering..." 
+    std::clog << "DEVEL: datatools::temp_file::in: Entering..." 
               << std::endl;
   }
   if (!this->is_valid()) {
     std::ostringstream message;
-    message << "datatools::utils::temp_file::in: "
+    message << "datatools::temp_file::in: "
             << "Temporary file has not been created yet !";
     throw std::logic_error(message.str());
   }
   if (write_open_) {
     std::ostringstream message;
-    message << "datatools::utils::temp_file::in: "
+    message << "datatools::temp_file::in: "
             << "Temporary file '" 
             << filename_ 
             << "' is already open in write mode !";
@@ -183,7 +182,7 @@ std::ifstream& temp_file::in() {
     in_.open(filename_.c_str());
     if (!out_) {
       std::ostringstream message;
-      message << "datatools::utils::temp_file::in: "
+      message << "datatools::temp_file::in: "
               << "Cannot open temporary file '" 
               << filename_ 
               << "' in read mode !";
@@ -192,7 +191,7 @@ std::ifstream& temp_file::in() {
     read_open_ = true;
   }
   if (g_devel) {
-    std::clog << "DEVEL: datatools::utils::temp_file::in: Exiting." 
+    std::clog << "DEVEL: datatools::temp_file::in: Exiting." 
               << std::endl;
   }
   return in_;
@@ -203,7 +202,7 @@ void temp_file::create(std::string a_path_dir, std::string a_pattern) {
   bool devel = g_devel;
   if (this->is_valid()) {
     std::ostringstream message;
-    message << "datatools::utils::temp_file::create: "
+    message << "datatools::temp_file::create: "
             << "Temporary file with name '"
             << filename_ 
             << "' has already been created !";
@@ -220,19 +219,19 @@ void temp_file::create(std::string a_path_dir, std::string a_pattern) {
        && ! boost::filesystem::is_directory (dir_path))
     {
       std::ostringstream message;
-      message << "datatools::utils::temp_file::create: "
+      message << "datatools::temp_file::create: "
               << "Path '" << dir_path.string () << "' is not a directory !";
       throw std::runtime_error (message.str ());
     }
   if (!boost::filesystem::exists(dir_path)) {
-    std::clog << datatools::utils::io::notice 
-              << "datatools::utils::temp_file::create: " 
+    std::clog << datatools::io::notice 
+              << "datatools::temp_file::create: " 
               << "Creating base directory '"
               << dir_path.string () << "' for temporary file." << std::endl;
     if (! boost::filesystem::create_directories(dir_path))
       {
         std::ostringstream message;
-        message << "datatools::utils::temp_file::create: "
+        message << "datatools::temp_file::create: "
                 << "Couldn't create directory with name '"
                 << dir_path.string () 
                 << "' !";  
@@ -246,7 +245,7 @@ void temp_file::create(std::string a_path_dir, std::string a_pattern) {
     fetch_path_with_env(a_pattern);
     if (a_pattern.find_first_of('/') != a_pattern.npos) {
       std::ostringstream message;
-      message << "datatools::utils::temp_file::create: "
+      message << "datatools::temp_file::create: "
               << "Invalid pattern for filename ! Pattern '"
               << a_pattern 
               << "' contains invalid character(s) !";
@@ -258,25 +257,25 @@ void temp_file::create(std::string a_path_dir, std::string a_pattern) {
   filename_oss << path_dir_ << '/' << pattern_ << "XXXXXX";
   full_pattern_ = filename_oss.str();
   if (devel) {
-    std::clog << "DEVEL: datatools::utils::temp_file::create: full_pattern is '" << full_pattern_ << "' !" << std::endl;
+    std::clog << "DEVEL: datatools::temp_file::create: full_pattern is '" << full_pattern_ << "' !" << std::endl;
   }
   template_ = new char[full_pattern_.size() + 10];
   template_[0] = '\0';
   if (devel) {
-    std::clog << "DEVEL: datatools::utils::temp_file::create: buffer is allocated !" << std::endl;
+    std::clog << "DEVEL: datatools::temp_file::create: buffer is allocated !" << std::endl;
   }
   for (size_t i = 0; i < full_pattern_.size(); ++i) {
     template_[i] = full_pattern_[i];
   }
   template_[full_pattern_.size()] = '\0';
   if (devel) {
-    std::clog << "DEVEL: datatools::utils::temp_file::create: template= '" 
+    std::clog << "DEVEL: datatools::temp_file::create: template= '" 
               << template_ << "'" << std::endl;
   }
   int err = mkstemp(template_);
   if (err == -1) {
     std::ostringstream message;
-    message << "datatools::utils::temp_file::create: "
+    message << "datatools::temp_file::create: "
             << "Cannot create temporary file using pattern '"
             << full_pattern_ << "' !";
     if (template_ != 0) {
@@ -286,11 +285,11 @@ void temp_file::create(std::string a_path_dir, std::string a_pattern) {
     throw std::runtime_error(message.str());
   } 
   if (devel) {
-    std::clog << "DEVEL: datatools::utils::temp_file::create: Template is '" << template_ << "' !" << std::endl;
+    std::clog << "DEVEL: datatools::temp_file::create: Template is '" << template_ << "' !" << std::endl;
   }
   filename_ = template_;
   if (devel) {
-    std::clog << "DEVEL: datatools::utils::temp_file::create: Filename is '"
+    std::clog << "DEVEL: datatools::temp_file::create: Filename is '"
               << filename_ << "' !" << std::endl;
   }
 }
@@ -299,14 +298,14 @@ void temp_file::create(std::string a_path_dir, std::string a_pattern) {
 void temp_file::close() {
   if (this->is_read_open()) {
     if (g_devel) {
-      std::clog << "DEVEL: datatools::utils::temp_file::close: closing read file mode !" << std::endl;
+      std::clog << "DEVEL: datatools::temp_file::close: closing read file mode !" << std::endl;
     }
     in_.close();
     read_open_ = false;
   }      
   if (this->is_write_open()) {
     if (g_devel) {
-      std::clog << "DEVEL: datatools::utils::temp_file::close: closing write file mode !" << std::endl;
+      std::clog << "DEVEL: datatools::temp_file::close: closing write file mode !" << std::endl;
     }
     out_.close();
     write_open_ = false;
@@ -316,7 +315,7 @@ void temp_file::close() {
 
 void temp_file::remove() {
   if (g_devel) {
-    std::clog << "DEVEL: datatools::utils::temp_file::remove: Entering..." 
+    std::clog << "DEVEL: datatools::temp_file::remove: Entering..." 
               << std::endl;
   }
   this->close();
@@ -324,7 +323,7 @@ void temp_file::remove() {
     int err = unlink(filename_.c_str());
     if (err == -1) {
       std::ostringstream message;
-      message << "datatools::utils::temp_file::remove: "
+      message << "datatools::temp_file::remove: "
               << "Cannot delete temporary file '"
               << filename_ << "' !";
       throw std::runtime_error(message.str());
@@ -336,7 +335,7 @@ void temp_file::remove() {
   }     
   this->set_defaults();
   if (g_devel) {
-    std::clog << "DEVEL: datatools::utils::temp_file::remove: Exiting." 
+    std::clog << "DEVEL: datatools::temp_file::remove: Exiting." 
               << std::endl;
   }
 }
@@ -349,7 +348,6 @@ void temp_file::set_defaults() {
   write_open_ = false;
 }
 
-} // namespace utils
 } // namespace datatools 
 
 // end of temporary_files.cc

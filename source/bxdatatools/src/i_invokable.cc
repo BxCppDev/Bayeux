@@ -1,6 +1,6 @@
 /* i_invokable.cc */
 // Ourselves
-#include <datatools/utils/i_invokable.h>
+#include <datatools/i_invokable.h>
 
 // Standard Library
 #include <iostream>
@@ -10,18 +10,17 @@
 // - A
 
 // This Project
-#include <datatools/utils/command.h>
+#include <datatools/command.h>
 
 namespace datatools {
-namespace utils {
 
 // default implementation:
-void i_invokable::do_invoke(datatools::utils::command& command) {
+void i_invokable::do_invoke(datatools::command& command) {
   throw command_not_implemented("'i_invokable::do_invoke' method should be implemented from a concrete daughter class !"); 
 }
 
 
-int i_invokable::invoke(datatools::utils::command& command) {
+int i_invokable::invoke(datatools::command& command) {
   try {
     command.reset_output ();
     this->do_invoke(command); 
@@ -47,11 +46,10 @@ int i_invokable::invoke(datatools::utils::command& command) {
 
 
 int i_invokable::invoke(i_invokable& invokable, 
-                        datatools::utils::command& command) {
+                        datatools::command& command) {
   return invokable.invoke(command);
 }
 
-} // end of namespace utils 
 } // end of namespace datatools 
 
 /* end of i_invokable.cc */

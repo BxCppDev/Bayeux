@@ -11,36 +11,41 @@
 #include <boost/serialization/export.hpp>
 
 // Datatools
-#include <datatools/serialization/archives_instantiation.h>
+#include <datatools/archives_instantiation.h>
 #include <datatools/the_serializable.ipp>
 
+/** Macros to automatically instantiate Boost/Serialization-based
+ * code associated to serializable classes.
+ *
+ */
+
 /********************************************
- * datatools::serialization::i_serializable *
+ * datatools::i_serializable                *
  ********************************************/
-DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::serialization::i_serializable)
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::i_serializable)
 
 /********************************
- * datatools::utils::properties *
+ * datatools::properties        *
  ********************************/
-DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::utils::properties)
-BOOST_CLASS_EXPORT_IMPLEMENT(datatools::utils::properties) 
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::properties)
+BOOST_CLASS_EXPORT_IMPLEMENT(datatools::properties) 
 
 /**************************************
- * datatools::utils::multi_properties *
+ * datatools::multi_properties        *
  **************************************/
-DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::utils::multi_properties)
-BOOST_CLASS_EXPORT_IMPLEMENT(datatools::utils::multi_properties) 
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::multi_properties)
+BOOST_CLASS_EXPORT_IMPLEMENT(datatools::multi_properties) 
 
 /****************************
- * datatools::utils::things *
+ * datatools::things        *
  ****************************/
-DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::utils::things)
-BOOST_CLASS_EXPORT_IMPLEMENT(datatools::utils::things) 
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::things)
+BOOST_CLASS_EXPORT_IMPLEMENT(datatools::things) 
 
 /*********************************
- * datatools::event::event_id *
+ * datatools::event_id           *
  *********************************/
-DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::event::event_id)
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::event_id)
 
 #endif // DATATOOLS_THE_SERIALIZABLE_H_
 

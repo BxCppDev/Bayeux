@@ -9,29 +9,29 @@
 #define DATATOOLS_THE_SERIALIZABLE_IPP_
 
 /********************************************
- * datatools::serialization::i_serializable *
+ * datatools::i_serializable                *
  ********************************************/
-#include <datatools/serialization/i_serializable.ipp>
+#include <datatools/i_serializable.ipp>
 
 /********************************
- * datatools::utils::properties *
+ * datatools::properties        *
  ********************************/
-#include <datatools/utils/properties.ipp>
+#include <datatools/properties.ipp>
 
 /**************************************
- * datatools::utils::multi_properties *
+ * datatools::multi_properties        *
  **************************************/
-#include <datatools/utils/multi_properties.ipp>
+#include <datatools/multi_properties.ipp>
 
 /****************************
- * datatools::utils::things *
+ * datatools::things        *
  ****************************/
-#include <datatools/utils/things.ipp>
+#include <datatools/things.ipp>
 
 /*********************************
- * datatools::event::event_id *
+ * datatools::event_id           *
  *********************************/
-#include <datatools/event/event_id.ipp>
+#include <datatools/event_id.ipp>
 
 #endif // DATATOOLS_THE_SERIALIZABLE_IPP_
 

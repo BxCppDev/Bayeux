@@ -10,12 +10,11 @@
 #include <stdexcept>
 #include <vector>
 
-#include <datatools/utils/handle_macros.h>
-
-using namespace std;
+#include <datatools/handle_macros.h>
 
 int main (int argc_ , char ** argv_)
 {
+  using namespace std;
   int error_code = EXIT_SUCCESS;
   try
     {
@@ -31,36 +30,36 @@ int main (int argc_ , char ** argv_)
         }
 
       {
-        cout << "************ DATATOOLS_UTILS_HANDLE_DECLARE: " << endl;
-        DATATOOLS_UTILS_HANDLE_DECLARE(hi,int);
+        cout << "************ DATATOOLS_HANDLE_DECLARE: " << endl;
+        DATATOOLS_HANDLE_DECLARE(hi,int);
         hi.reset (new int(3));
         cout << "hi -> " << hi.get () << endl;
       }
 
       {
-        cout << "************ DATATOOLS_UTILS_HANDLE_DECLARE_NEW: " << endl;
-        DATATOOLS_UTILS_HANDLE_DECLARE_NEW(hi,int);
+        cout << "************ DATATOOLS_HANDLE_DECLARE_NEW: " << endl;
+        DATATOOLS_HANDLE_DECLARE_NEW(hi,int);
         {
-          cout << "************ DATATOOLS_UTILS_HANDLE_GRAB_REF: " << endl;
-          DATATOOLS_UTILS_HANDLE_GRAB_REF(i,hi,int);
+          cout << "************ DATATOOLS_HANDLE_GRAB_REF: " << endl;
+          DATATOOLS_HANDLE_GRAB_REF(i,hi,int);
           i = 666;
           cout << "hi -> " << hi.get () << endl;
         }
         {
-          cout << "************ DATATOOLS_UTILS_HANDLE_GET_REF: " << endl;
-          DATATOOLS_UTILS_HANDLE_GET_REF(ki, hi, int);
+          cout << "************ DATATOOLS_HANDLE_GET_REF: " << endl;
+          DATATOOLS_HANDLE_GET_REF(ki, hi, int);
           cout << "ki = " << ki << endl;
         }
       }
 
       try
         {
-          cout << "************ DATATOOLS_UTILS_HANDLE_DECLARE: " << endl;
-          DATATOOLS_UTILS_HANDLE_DECLARE(hi,int);
+          cout << "************ DATATOOLS_HANDLE_DECLARE: " << endl;
+          DATATOOLS_HANDLE_DECLARE(hi,int);
           // Here no int has been allocated to the 'hi' handle
-          cout << "************ DATATOOLS_UTILS_HANDLE_GET_REF: " << endl;
+          cout << "************ DATATOOLS_HANDLE_GET_REF: " << endl;
           // The following operation will fail :
-          DATATOOLS_UTILS_HANDLE_GET_REF(ki, hi, int);
+          DATATOOLS_HANDLE_GET_REF(ki, hi, int);
         }
       catch (exception & x)
         {

@@ -1,6 +1,6 @@
 // command.cc 
 // Ourself  
-#include <datatools/utils/command.h>
+#include <datatools/command.h>
 
 // Standard Library
 #include <algorithm>
@@ -12,7 +12,6 @@
 // This Project
 
 namespace datatools {
-namespace utils {
 
 const char        command::OPTION_PREFIX = '-';
 const std::string command::LONG_OPTION_PREFIX = "--";
@@ -336,7 +335,7 @@ void command::shift_one() {
 
 
 void command::dump(std::ostream& out) const {
-  out << "datatools::utils::command: " << std::endl;
+  out << "datatools::command: " << std::endl;
   out << "|--" << "Name : " << name_ << std::endl;
   int i = 0;
   out << "|--" << "With options : " 
@@ -368,7 +367,7 @@ void command::dump(std::ostream& out) const {
 // Define command exceptions
 
 command_error::command_error(const std::string& message) 
-    : std::runtime_error("command: error: " + message) {}
+    : std::logic_error("command: error: " + message) {}
 
     
 command_not_found::command_not_found(const std::string& message)
@@ -396,6 +395,5 @@ command_not_implemented::command_not_implemented(
     const std::string& message) 
     : command_error("command not implemented: " + message) {}
 
-} // end of namespace utils 
 } // end of namespace datatools
 

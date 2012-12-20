@@ -2,7 +2,7 @@
 /* io_factory.cc
  */
 // Ourselves
-#include <datatools/serialization/io_factory.h>
+#include <datatools/io_factory.h>
 
 // Standard Library
 
@@ -13,7 +13,6 @@
 // Datatools
 
 namespace datatools {
-namespace serialization {
 
 //----------------------------------------------------------------------
 // The io_factory class
@@ -611,10 +610,9 @@ void io_factory::tree_dump(std::ostream& out,
                            const std::string& a_title,
                            const std::string& a_indent,
                            bool inherit) const {
-  namespace du = datatools::utils; // tree_trick
   std::ostringstream tag_ss, last_tag_ss; // tree_trick
-  tag_ss << du::i_tree_dumpable::tag; // tree_trick
-  last_tag_ss << du::i_tree_dumpable::inherit_tag(inherit); // tree_trick
+  tag_ss << i_tree_dumpable::tag; // tree_trick
+  last_tag_ss << i_tree_dumpable::inherit_tag(inherit); // tree_trick
   std::string tag = tag_ss.str(); // tree_trick
   std::string last_tag = last_tag_ss.str(); // tree_trick
   std::string indent;
@@ -1338,7 +1336,6 @@ void data_writer::init_single(const std::string& filename) {
 }
 
 
-} // end of namespace serialization
 } // end of namespace datatools
 
 

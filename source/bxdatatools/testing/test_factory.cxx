@@ -7,7 +7,7 @@
 #include <string>
 #include <stdexcept>
 
-#include <datatools/factory/factory_macros.h>
+#include <datatools/factory_macros.h>
 #include <boost/shared_ptr.hpp>
 
 /**

@@ -6,32 +6,32 @@
 #include <string>
 #include <exception>
 
-#include <datatools/utils/i_tree_dump.h>
+#include <datatools/i_tree_dump.h>
 
-struct data_t : public datatools::utils::i_tree_dumpable
+struct data_t : public datatools::i_tree_dumpable
 {
   data_t () : i (0), x (3.145), name ("Hello, world!") {}
 
   virtual ~data_t () {};
 
   virtual void tree_dump (std::ostream & out_         = std::cerr, 
-			  const std::string & title_  = "", 
-			  const std::string & indent_ = "", 
-			  bool inherit_               = false) const
+                          const std::string & title_  = "", 
+                          const std::string & indent_ = "", 
+                          bool inherit_               = false) const
   {
     std::string indent;
     if (! indent_.empty ()) indent = indent_;
     if (! title_.empty ()) 
       {
-	out_ << indent << title_ << std::endl;
+        out_ << indent << title_ << std::endl;
       }
     out_ << indent << i_tree_dumpable::tag 
-	 << "i    = " << i << std::endl;
+         << "i    = " << i << std::endl;
     out_ << indent << i_tree_dumpable::tag 
-	 << "x    = "  << x << std::endl;
+         << "x    = "  << x << std::endl;
     out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
-	 << "name = "  
-	 << name << std::endl; 
+         << "name = "  
+         << name << std::endl; 
     return;
   }
 
@@ -47,15 +47,15 @@ struct more_data_t : public data_t
   more_data_t () : data_t (), log (1) {}
   virtual ~more_data_t () {};
   virtual void tree_dump (std::ostream & out_         = std::cerr, 
-			  const std::string & title_  = "", 
-			  const std::string & indent_ = "", 
-			  bool inherit_               = false) const
+                          const std::string & title_  = "", 
+                          const std::string & indent_ = "", 
+                          bool inherit_               = false) const
   {
     std::string indent;
     if (!indent_.empty ()) indent = indent_;
     data_t::tree_dump (out_, title_, indent_, true);
     out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
-	 << "log  = "  << log << std::endl;
+         << "log  = "  << log << std::endl;
     return;
   }
 
@@ -74,14 +74,14 @@ int main (int argc_, char ** argv_)
 
       int iarg = 1;
       while (iarg < argc_) 
-	{
+        {
     
-	  std::string arg = argv_[iarg];
+          std::string arg = argv_[iarg];
 
-	  if (arg == "-d" || arg == "--debug") debug = true;
+          if (arg == "-d" || arg == "--debug") debug = true;
 
-	  iarg++;
-	}
+          iarg++;
+        }
     
       data_t a_data;
     

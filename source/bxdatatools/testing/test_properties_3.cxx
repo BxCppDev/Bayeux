@@ -1,4 +1,4 @@
-#include <datatools/utils/properties.h>
+#include <datatools/properties.h>
 
 using namespace std;
 
@@ -7,7 +7,7 @@ int main (void)
   try 
     {
       {
-        datatools::utils::properties my_bag ("A list of properties");
+        datatools::properties my_bag ("A list of properties");
         
         // Populate the *bag* of properties:
         my_bag.store_flag ("debug", "The debug status"); // add a boolean value and set it at *true*
@@ -16,13 +16,13 @@ int main (void)
         my_bag.lock ("pi");                              // make it non-mutable
         my_bag.store ("James_Bond", "007", "A famous spy !");
         
-        datatools::utils::properties::write_config ("my_bag.conf", my_bag);
+        datatools::properties::write_config ("my_bag.conf", my_bag);
       }
 
       {
-        datatools::utils::properties my_bag;
+        datatools::properties my_bag;
         
-        datatools::utils::properties::read_config ("my_bag.conf", my_bag);
+        datatools::properties::read_config ("my_bag.conf", my_bag);
         
         my_bag.dump (cout);
         

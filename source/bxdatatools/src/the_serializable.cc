@@ -5,7 +5,7 @@
 #include <datatools/the_serializable.h>
 
 // Load the link guard definition :
-#include <datatools/serialization/link_guard.h>
+#include <datatools/detail/bio_link_guard.h>
 
 #include <cstdlib>
 #include <iostream>
@@ -13,7 +13,8 @@
 
 // Load the link guard implementation :
 namespace datatools {
-  namespace serialization {
+namespace detail {
+namespace serialization {
 
     bool dynamic_link_guard::_g_devel_ = false;
 
@@ -25,7 +26,7 @@ namespace datatools {
         }
       if (dynamic_link_guard::_g_devel_)
         {
-          std::clog << "datatools::serialization::dynamic_link_guard::CTOR: Ok." << std::endl;
+          std::clog << "datatools::dynamic_link_guard::CTOR: Ok." << std::endl;
         }
       return;
     }
@@ -34,7 +35,7 @@ namespace datatools {
     {
       if (dynamic_link_guard::_g_devel_)
         {
-          std::clog << "datatools::serialization::dynamic_link_guard::DTOR: Ok." << std::endl;
+          std::clog << "datatools::dynamic_link_guard::DTOR: Ok." << std::endl;
         }
       return;
     }
@@ -48,12 +49,13 @@ namespace datatools {
         }
       if (dynamic_link_guard::_g_devel_)
         {
-          std::clog << "datatools::serialization::dynamic_link_guard::instance: Ok." << std::endl;
+          std::clog << "datatools::dynamic_link_guard::instance: Ok." << std::endl;
         }
       return *g_global_guard.get ();
     }
 
-  } // end namespace serialization
+} // end namespace serialization
+} // end namespace detail
 } // end namespace datatools
 
 // end of the_serializable.cc

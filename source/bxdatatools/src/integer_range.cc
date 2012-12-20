@@ -1,7 +1,7 @@
 // -*- mode: c++; -*-
 // integer_range.cc
 // Ourselves 
-#include <datatools/utils/integer_range.h>
+#include <datatools/integer_range.h>
 
 // Standard Library
 #include <sstream>
@@ -16,7 +16,6 @@
 using namespace std;
 
 namespace datatools {
-namespace utils {
 
 // Ctor:
 integer_range::integer_range() {
@@ -32,8 +31,8 @@ integer_range::integer_range(value_type from, value_type to,
 
 
 bool integer_range::is_valid() const {
-  return (lower_flag_ != range::undefined) 
-      && (upper_flag_ != range::undefined);
+  return (lower_flag_ != range_bound_undefined) 
+      && (upper_flag_ != range_bound_undefined);
 }
 
 
@@ -44,13 +43,13 @@ void integer_range::invalidate () {
 
 void integer_range::reset_lower() {
   lower_      = std::numeric_limits<value_type>::min();
-  lower_flag_ = range::undefined;
+  lower_flag_ = range_bound_undefined;
 }
 
 
 void integer_range::reset_upper() {
   upper_      = numeric_limits<value_type>::max();
-  upper_flag_ = range::undefined;
+  upper_flag_ = range_bound_undefined;
 }
 
 
@@ -61,31 +60,31 @@ void integer_range::reset() {
 
 
 void integer_range::set_lower(value_type from, int policy) {
-  if (policy == range::unbound) {
+  if (policy == range_bound_unbound) {
     // "];...."
     lower_      = std::numeric_limits<value_type>::min();
     lower_flag_ = policy;
-  } else if (policy == range::included || policy == range::excluded) {
+  } else if (policy == range_bound_included || policy == range_bound_excluded) {
     // "[value;...." || "]value;..."
     lower_      = from;
     lower_flag_ = policy;
   } else {
-    throw std::logic_error("datatools::utils::integer_range::set_lower: Invalid policy!");
+    throw std::logic_error("datatools::integer_range::set_lower: Invalid policy!");
   }
 }
 
 
 void integer_range::set_upper(value_type to, int policy) {
-  if (policy == range::unbound) {
+  if (policy == range_bound_unbound) {
     // "...;...["
     upper_      = std::numeric_limits<value_type>::max();
     upper_flag_ = policy;
-  } else if (policy == range::included || policy == range::excluded) {
+  } else if (policy == range_bound_included || policy == range_bound_excluded) {
     // "...;value]" ||  "...;value["
     upper_      = to;
     upper_flag_ = policy;
   } else {
-    throw std::logic_error("datatools::utils::integer_range::set_upper: Invalid policy!");
+    throw std::logic_error("datatools::integer_range::set_upper: Invalid policy!");
   }
 }
 
@@ -114,7 +113,7 @@ bool integer_range::is_bounded() const {
 
 integer_range::value_type integer_range::get_lower_bound() const {
   if (!this->is_lower_bounded()) {
-    throw std::logic_error("datatools::utils::integer_range::get_lower_bound: No lower bound !");
+    throw std::logic_error("datatools::integer_range::get_lower_bound: No lower bound !");
   }
   return lower_;
 }
@@ -122,7 +121,7 @@ integer_range::value_type integer_range::get_lower_bound() const {
 
 integer_range::value_type integer_range::get_upper_bound() const {
   if (!this->is_upper_bounded()) {
-    throw std::logic_error("datatools::utils::integer_range::get_upper_bound: No upper bound !");
+    throw std::logic_error("datatools::integer_range::get_upper_bound: No upper bound !");
   }
   return upper_;
 }
@@ -130,23 +129,23 @@ integer_range::value_type integer_range::get_upper_bound() const {
 
 bool integer_range::is_lower_included() const {
   if (!this->is_lower_bounded()) {
-    throw std::logic_error("datatools::utils::integer_range::is_lower_included: No lower bound !");
+    throw std::logic_error("datatools::integer_range::is_lower_included: No lower bound !");
   }
-  return (lower_flag_ == range::included);
+  return (lower_flag_ == range_bound_included);
 }
 
 
 bool integer_range::is_upper_included() const {
   if (!this->is_upper_bounded()) {
-    throw std::logic_error("datatools::utils::integer_range::is_upper_included: No upper bound !");
+    throw std::logic_error("datatools::integer_range::is_upper_included: No upper bound !");
   }
-  return (upper_flag_ == range::included);
+  return (upper_flag_ == range_bound_included);
 }
 
 
 uint64_t integer_range::count() const {
   if (!is_bounded()) {
-    throw std::logic_error("datatools::utils::integer_range::count: (semi-)infinite range !");
+    throw std::logic_error("datatools::integer_range::count: (semi-)infinite range !");
   }
 
   int64_t cnt64 = upper_;
@@ -167,47 +166,47 @@ bool integer_range::is_empty() const {
 
 
 void integer_range::make_empty() {
-  this->set(0, 0, range::excluded, range::excluded);
+  this->set(0, 0, range_bound_excluded, range_bound_excluded);
 }
 
 
 void integer_range::make_full() {
   this->set(std::numeric_limits<value_type>::min(), 
             std::numeric_limits<value_type>::max(), 
-            range::included, 
-            range::included);
+            range_bound_included, 
+            range_bound_included);
 }
 
 
 void integer_range::make_full_positive() {
   this->set(0, 
             std::numeric_limits<value_type>::max(), 
-            range::included, 
-            range::included);
+            range_bound_included, 
+            range_bound_included);
 }
 
 
 void integer_range::make_full_negative() {
   this->set(std::numeric_limits<value_type>::min(),
             0, 
-            range::included, 
-            range::included);
+            range_bound_included, 
+            range_bound_included);
 }
 
 
 void integer_range::make_upper_unbounded(value_type from, bool inclusive) {
   this->set(from, 
             0, 
-            inclusive ? range::included : range::excluded , 
-            range::unbound);
+            inclusive ? range_bound_included : range_bound_excluded , 
+            range_bound_unbound);
 }
 
 
 void integer_range::make_lower_unbounded(value_type to, bool inclusive) {
   this->set(0,
             to,
-            range::unbound,
-            inclusive ? range::included : range::excluded);
+            range_bound_unbound,
+            inclusive ? range_bound_included : range_bound_excluded);
 }
 
 
@@ -216,8 +215,8 @@ void integer_range::make_bounded(value_type from, value_type to,
                                  bool to_included) {
   this->set(from,
             to,
-            from_included ? range::included : range::excluded,
-            to_included ? range::included : range::excluded);
+            from_included ? range_bound_included : range_bound_excluded,
+            to_included ? range_bound_included : range_bound_excluded);
 }
 
 
@@ -276,7 +275,7 @@ void integer_range::dump(std::ostream& out) const {
 
 integer_range::value_type integer_range::begin() const {
   if (!this->is_bounded()) {
-    throw std::logic_error("datatools::utils::integer_range::begin: Not bounded !");
+    throw std::logic_error("datatools::integer_range::begin: Not bounded !");
   }
   value_type the_beg = lower_;
   if (!this->is_lower_included()) {
@@ -288,7 +287,7 @@ integer_range::value_type integer_range::begin() const {
 
 integer_range::value_type integer_range::end() const {
   if (!this->is_bounded()) {
-    throw std::logic_error("datatools::utils::integer_range::end: Not bounded !");
+    throw std::logic_error("datatools::integer_range::end: Not bounded !");
   }
   value_type the_end = upper_; 
   // case : the_end != numeric_limits<value_type>::max () ???
@@ -301,7 +300,7 @@ integer_range::value_type integer_range::end() const {
 
 integer_range::value_type integer_range::first() const {
   if (!this->is_lower_bounded()) {
-    throw std::logic_error("datatools::utils::integer_range::first: Not lower bounded !");
+    throw std::logic_error("datatools::integer_range::first: Not lower bounded !");
   }
   value_type the_first = lower_;
   if (!this->is_lower_included()) {
@@ -313,7 +312,7 @@ integer_range::value_type integer_range::first() const {
 
 integer_range::value_type integer_range::last() const {
   if (!this->is_upper_bounded()) {
-    throw std::logic_error("datatools::utils::integer_range::last: Not upper bounded !");
+    throw std::logic_error("datatools::integer_range::last: Not upper bounded !");
   }
   value_type the_last = upper_; 
   if (!this->is_upper_included()) {
@@ -329,13 +328,13 @@ std::ostream& operator<<(std::ostream& out, const integer_range& a_range) {
   } else {
     if (a_range.is_lower_bounded()) {
       if (a_range.is_lower_included()) {
-        out << range::token_open;
+        out << range_tools::token_open;
       } else {
-        out << range::token_close;
+        out << range_tools::token_close;
       }
       out << a_range.get_lower_bound();
     } else {
-      out << range::token_close;
+      out << range_tools::token_close;
     }
 
     out << ';';
@@ -343,18 +342,17 @@ std::ostream& operator<<(std::ostream& out, const integer_range& a_range) {
     if (a_range.is_upper_bounded()) {
       out << a_range.get_upper_bound();
       if (a_range.is_upper_included()) {
-        out << range::token_close;
+        out << range_tools::token_close;
       } else {
-        out << range::token_open;
+        out << range_tools::token_open;
       }
     } else {
-      out << range::token_open;
+      out << range_tools::token_open;
     }
   }
   return out;
 }
 
-} // namespace utils
 } // namespace datatools
 
 // end of integer_range.cc

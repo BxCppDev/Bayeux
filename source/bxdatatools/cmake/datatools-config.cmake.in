@@ -1,0 +1,82 @@
+# - Config file for the datatools package
+# It defines the following variables
+#  datatools_INCLUDE_DIRS - include directories for datatools
+#  datatools_LIBRARY      - libraries to link against
+#  datatools_BIO_LIBRARY  - library targets to link against 
+#                          (Boost I/O library)
+#  datatools_LIBRARIES    - libraries to link against
+#  datatools_WITH_DEBUG   - flag for debug mode
+#  datatools_WITH_BIO     - flag for Boost/Serialization I/O DLL (a.k.a. 'bio')
+
+#-----------------------------------------------------------------------
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#-----------------------------------------------------------------------
+
+
+#-----------------------------------------------------------------------
+# Locate ourselves, since all our config files should have been installed
+# alongside us...
+#
+get_filename_component(_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+#-----------------------------------------------------------------------
+# Include the file listing all the imported targets to make them available
+# This is installed in the same location as us...
+# Protect it with an in-memory variable so that we don't include
+# it twice should multiple calls to find_package be made
+if(NOT datatools_LIBDEPS_LOADED)
+  include("${_thisdir}/datatools-libraries.cmake")
+  set(datatools_LIBDEPS_LOADED 1)
+endif()
+
+#-----------------------------------------------------------------------
+# Set variables pointing to used third party headers and locations.
+# We have to set the headers because datatools exports the headers in
+# its public interface.
+# The locations are set so that clients using those packages (i.e. Boost and
+# ROOT), can re-find them if needed using exact locations (EXPERIMENTAL)
+# e.g:
+#
+#  find_package(datatools)
+#  set(BOOST_ROOT ${datatools_BOOST_ROOT})
+#  find_package(Boost NO_DEFAULT_PATH)
+#
+set(datatools_THIRD_PARTY_INCLUDE_DIRS
+  @CLHEP_INCLUDE_DIRS@
+  @Boost_INCLUDE_DIRS@
+  )
+
+
+#-----------------------------------------------------------------------
+# Set datatools definitions, include paths and library variables
+#
+get_filename_component(_datatools_inc "${_thisdir}/@TO_DATATOOLS_INCLUDEDIR@" ABSOLUTE)
+
+set(datatools_INCLUDE_DIR "${_datatools_inc}" CACHE PATH "Path to datatools headers")
+
+set(datatools_INCLUDE_DIRS
+  ${datatools_INCLUDE_DIR}
+  ${datatools_THIRD_PARTY_INCLUDE_DIRS}
+  )
+
+#-----------------------------------------------------------------------
+# Set datatools_LIBRARIES variable
+set(datatools_LIBRARY datatools CACHE PATH "Path to datatools library")
+#set(datatools_BIO_LIBRARY datatools_bio)
+  
+set(datatools_LIBRARIES ${datatools_LIBRARY})
+
+
+unset(_datatools_inc)
+# end
