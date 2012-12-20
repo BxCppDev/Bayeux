@@ -436,7 +436,6 @@ function do_configure ()
     pkgtools__msg_notice "Installation prefix   : '${install_prefix}'"
     pkgtools__msg_notice "With documentation    : '${with_doc}'"
     pkgtools__msg_notice "With test material    : '${with_test}'"
-    ###pkgtools__msg_notice "With Python wrapper   : '${with_python_wrapper}'"
     pkgtools__msg_notice "With Boost I/O DLL    : '${with_bio}'"
     pkgtools__msg_notice "With CAMP-based reflection DLL : '${with_reflection}'"
     pkgtools__msg_notice "With Bash setup       : '${with_bash_setup}'"

@@ -2,11 +2,11 @@
 # It defines the following variables
 #  datatools_INCLUDE_DIRS - include directories for datatools
 #  datatools_LIBRARY      - libraries to link against
-#  datatools_BIO_LIBRARY  - library targets to link against 
-#                          (Boost I/O library)
+#  datatools_BIO_LIBRARY  - library targets to link against (Boost I/O library)
+#  datatools_REFLECTION_LIBRARY - library targets to link against (reflection library)
 #  datatools_LIBRARIES    - libraries to link against
-#  datatools_WITH_DEBUG   - flag for debug mode
 #  datatools_WITH_BIO     - flag for Boost/Serialization I/O DLL (a.k.a. 'bio')
+#  datatools_WITH_REFLECTION  - flag for reflection DLL
 
 #-----------------------------------------------------------------------
 # This program is free software: you can redistribute it and/or modify
@@ -23,6 +23,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-----------------------------------------------------------------------
 
+set(datatools_WITH_BIO        @DATATOOLS_WITH_BIO@)
+set(datatools_WITH_REFLECTION @DATATOOLS_WITH_REFLECTION@)
 
 #-----------------------------------------------------------------------
 # Locate ourselves, since all our config files should have been installed
@@ -57,6 +59,11 @@ set(datatools_THIRD_PARTY_INCLUDE_DIRS
   @Boost_INCLUDE_DIRS@
   )
 
+if(datatools_WITH_REFLECTION)
+  list(INSERT datatools_THIRD_PARTY_INCLUDE_DIRS 0
+     @CAMP_INCLUDE_DIR@
+  )
+endif()
 
 #-----------------------------------------------------------------------
 # Set datatools definitions, include paths and library variables
@@ -73,10 +80,16 @@ set(datatools_INCLUDE_DIRS
 #-----------------------------------------------------------------------
 # Set datatools_LIBRARIES variable
 set(datatools_LIBRARY datatools CACHE PATH "Path to datatools library")
-#set(datatools_BIO_LIBRARY datatools_bio)
+
+if(datatools_WITH_BIO)
+  set(datatools_BIO_LIBRARY datatools_bio)
+endif()
+
+if(datatools_WITH_REFLECTION)
+  set(datatools_REFLECTION_LIBRARY datatools_reflection)
+endif()
   
 set(datatools_LIBRARIES ${datatools_LIBRARY})
-
 
 unset(_datatools_inc)
 # end

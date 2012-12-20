@@ -19,7 +19,7 @@ endfunction()
 # PUBLIC HEADERS
 # Because we're in the awkward position of separate headers and sources,
 # use a simple listing and then prepend the actual source dir root
-### find include/datatools/ -maxdepth 1 -name  *.h | sort | grep -v "-reflect"
+
 set(datatools_PUBLIC_HEADERS
 include/datatools/archives_instantiation.h
 include/datatools/archives_list.h
@@ -69,6 +69,12 @@ include/datatools/units.h
 include/datatools/utils.h
 include/datatools/version_check.h
 include/datatools/version_id.h
+include/datatools/i_serializable.ipp
+include/datatools/event_id.ipp
+include/datatools/properties.ipp
+include/datatools/multi_properties.ipp
+include/datatools/things.ipp
+include/datatools/the_serializable.ipp
   )
 list_prepend(datatools_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
 
@@ -287,7 +293,6 @@ if(DATATOOLS_WITH_BIO)
   list_prepend(datatools_bio_SOURCES "${PROJECT_SOURCE_DIR}/")
   
   add_library(datatools_bio SHARED ${datatools_bio_SOURCES})
-  ###target_link_libraries(datatool_bio datatools)
 
   if(APPLE)
     set_property(TARGET datatools_bio APPEND
@@ -317,7 +322,6 @@ if(DATATOOLS_WITH_REFLECTION)
   list_prepend(datatools_reflection_SOURCES "${PROJECT_SOURCE_DIR}/")
   
   add_library(datatools_reflection SHARED ${datatools_reflection_SOURCES})
-  ###target_link_libraries(datatool_reflection datatools camp)
 
   if(APPLE)
     set_property(TARGET datatools_reflection APPEND
