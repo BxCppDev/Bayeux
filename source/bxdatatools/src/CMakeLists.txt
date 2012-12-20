@@ -28,7 +28,6 @@ include/datatools/bio_guard.h
 include/datatools/bit_mask.h
 include/datatools/caster_utils.h
 include/datatools/clhep_units.h
-include/datatools/command.h
 include/datatools/datatools.h
 include/datatools/event_id.h
 include/datatools/factory.h
@@ -38,7 +37,6 @@ include/datatools/handle_macros.h
 include/datatools/handle_pool.h
 include/datatools/i_clear.h
 include/datatools/i_cloneable.h
-include/datatools/i_invokable.h
 include/datatools/i_named.h
 include/datatools/integer_range.h
 include/datatools/io_factory.h
@@ -133,10 +131,8 @@ endif()
 # Pretty basic!
 set(datatools_SOURCES
   DynamicLoader.cc
-  command.cc
   event_id.cc
   factory.cc
-  i_invokable.cc
   i_named.cc
   i_tree_dump.cc
   i_serializable.cc

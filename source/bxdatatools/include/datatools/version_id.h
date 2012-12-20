@@ -14,6 +14,7 @@
 
 namespace datatools {
 /*! \brief A class representing a version ID :
+ *
  * Supported formats are:
  *  - "tag" an alpha numeric character string not starting with
  *   a digit or '-' and with no punctuation symbols in it, however
@@ -47,13 +48,14 @@ namespace datatools {
  * 
  *  Version ID can be checked to match version requirements 
  *  (version rules) :
+ *
  *  Examples : 
- *    "> 3.12" or ">3.12"
- *    ">= 3.12" or ">=3.12"
- *    "< 3.12" or "<3.12"
- *    "<= 3.12" or "<=3.12"
- *    "! 3.1.4-159" or  "!3.1.4-159" or "!= 3.1.4-159" or "!=3.1.4-159"
- *    "= 3.1.4-159" or  "=3.1.4-159" or "== 3.1.4-159" or "==3.1.4-159"
+ *   - "> 3.12" or ">3.12"
+ *   - ">= 3.12" or ">=3.12"
+ *   - "< 3.12" or "<3.12"
+ *   - "<= 3.12" or "<=3.12"
+ *   - "! 3.1.4-159" or  "!3.1.4-159" or "!= 3.1.4-159" or "!=3.1.4-159"
+ *   - "= 3.1.4-159" or  "=3.1.4-159" or "== 3.1.4-159" or "==3.1.4-159"
  * 
  *  Version ID can be invalidated : format is then "?" 
  *
@@ -153,12 +155,13 @@ class version_id {
 
 
   // These could/should be free functions
-  static int compare(const version_id& vid0, const version_id& vid1, bool major_only = false);
+  static int compare(const version_id& vid0,
+                     const version_id& vid1, 
+                     bool major_only = false);
 
   static bool are_orderable(const version_id& vid0, 
                             const version_id& vid1, 
                             bool major_only = false);
-
 
  private:
   int32_t major_;

@@ -12,7 +12,6 @@
 
 // Datatools
 
-
 // Special backward compatibility support for serialization :
 DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_IMPLEMENTATION(datatools::event_id,"datatools::event_id")
 DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_IMPLEMENTATION(datatools::event_id,"datatools::event::event_id")

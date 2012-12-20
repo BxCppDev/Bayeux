@@ -35,7 +35,7 @@
 #include <boost/ref.hpp>
 
 namespace datatools{    
-  /// Non-public material of the datatools library
+  /// Non-public material
   namespace detail {                                             
     /// Non-public material dedicated to reflection   
     namespace reflection {                                             

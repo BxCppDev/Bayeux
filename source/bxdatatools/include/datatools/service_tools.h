@@ -52,14 +52,14 @@ typedef datatools::handle<base_service> service_handle_type;
 
 // Constants to measure the level of dependance between services
 enum dependency_level_type {
-  NO_DEPENDENCY       =  0, //!< The service does not depend on the external service
-  OPTIONAL_DEPENDENCY =  1, //!< The service can work without the external service
-  WEAK_DEPENDENCY     =  2, //!< Not so strong dependency on the external service (however part of the service may be invalidated)
-  STRICT_DEPENDENCY   =  3, //!< Strictly depends on the external service
-  UNKNWON_DEPENDENCY  = -1
+  DEPENDENCY_NONE     =  0, //!< The service does not depend on the external service
+  DEPENDENCY_OPTIONAL =  1, //!< The service can work without the external service
+  DEPENDENCY_WEAK     =  2, //!< Not so strong dependency on the external service (however part of the service may be invalidated)
+  DEPENDENCY_STRICT   =  3, //!< Strictly depends on the external service
+  DEPENDENCY_UNKNOWN  = -1
 };
 
-// Record that stores informations about the dependency between services :
+//! \brief Record that stores informations about the dependency between services :
 struct dependency_info_type {
   std::string id;      //!< ID of the external service
   std::string version; //!< Version of the external service
@@ -71,7 +71,6 @@ struct dependency_info_type {
 // HA! The typedef names are JUST AS LONG!!!!
 typedef std::map<std::string, int> dependency_level_dict_type;
 typedef std::map<std::string, dependency_info_type> service_dependency_dict_type;
-
 
 // Record that handles a dynamically allocated service and additional 
 // informations :
@@ -99,6 +98,21 @@ class service_entry : public datatools::i_tree_dumpable  {
   dependency_level_dict_type   service_slaves;  //!< The list of depending services (by names)
 
  public:
+
+  /*
+  const datatools::properties & get_service_config () const;
+
+  void set_service_config (const datatools::properties &);
+
+  const std::string & get_service_id () const;
+
+  void set_service_id (const std::string &);
+
+  const std::string & get_service_name () const;
+
+  void set_service_name (const std::string &);
+  */
+
   service_entry();
 
   bool can_be_dropped() const;

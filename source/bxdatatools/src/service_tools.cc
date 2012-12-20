@@ -33,7 +33,7 @@
 namespace datatools {
 
 dependency_info_type::dependency_info_type() {
-  level = STRICT_DEPENDENCY;
+  level = DEPENDENCY_STRICT;
 }
 
 
@@ -42,10 +42,23 @@ service_entry::service_entry() {
   service_handle.reset();
 }
 
+  /*
+  const datatools::properties & get_service_config () const;
+
+  void set_service_config (const datatools::properties &);
+
+  const std::string & get_service_id () const;
+
+  void set_service_id (const std::string &);
+
+  const std::string & get_service_name () const;
+
+  */
+  void set_service_name (const std::string &);
 
 bool service_entry::has_slave(const std::string& name) const {
   dependency_level_dict_type::const_iterator found = service_slaves.find(name);
-  return (found != service_slaves.end()) && (found->second == STRICT_DEPENDENCY);
+  return (found != service_slaves.end()) && (found->second == DEPENDENCY_STRICT);
 }
 
 
@@ -61,7 +74,7 @@ bool service_entry::can_be_dropped() const {
   for (dependency_level_dict_type::const_iterator i = service_slaves.begin();
        i != service_slaves.end();
        ++i) {
-    if (i->second == STRICT_DEPENDENCY) {
+    if (i->second == DEPENDENCY_STRICT) {
       return false;
     }
   }      
