@@ -5,6 +5,7 @@
 
 namespace datatools {
 namespace detail {
+/// Non-public material dedicated to serialization   
 namespace serialization {
 
 /** \brief Data structure to ensure that a given executable is linked

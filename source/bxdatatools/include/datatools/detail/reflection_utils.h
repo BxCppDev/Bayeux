@@ -34,8 +34,10 @@
 #include <boost/bind.hpp>
 #include <boost/ref.hpp>
 
-namespace datatools{                                                    
+namespace datatools{    
+  /// Non-public material of the datatools library
   namespace detail {                                             
+    /// Non-public material dedicated to reflection   
     namespace reflection {                                             
       template<typename Introspectable> 
       void implement_reflection (unsigned int);

@@ -44,6 +44,7 @@
 #include <datatools/reflection_macros.h>
 #endif
 
+/// Main namespace of the datatools library 
 namespace datatools {
 
   //! \brief Base abstract class of all serializable (and possibly introspectable) classes
@@ -100,7 +101,6 @@ DR_CLASS_INIT(::datatools::i_serializable);
   /**/
 
 
-/// Template support for serializable type 
 namespace datatools {                                                   
   template <class T>
   const std::string & serial_tag ();
