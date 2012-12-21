@@ -34,7 +34,7 @@ datatools_data_dir="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
 
 datatools_cmake_config_dir="@CMAKE_INSTALL_PREFIX@/@_datatools_cmake_config_install_dir@"
 
-datatools_version=@datatools_VERSION_STR@
+datatools_version=@datatools_VERSION@
 
 with_debug=0
 if [ "x@DATATOOLS_WITH_DEBUG@" == "x1" -o "x@DATATOOLS_WITH_DEBUG@" == "xON" ]; then
@@ -92,14 +92,11 @@ Known values for OPTION are:
     --with-reflection    with linkage against the 'libdatatools_reflection@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL (default)
     --without-reflection without linkage against the 'libdatatools_reflection@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL
   --with-bio            print if Boost/Serialization binary code is pre-built
-                        in an auxiliary I/O shared library
+                        in an auxiliary shared library
   --with-reflection     print if CAMP-based reflection binary code is pre-built
-                        in an auxiliary I/O shared library
+                        in an auxiliary shared library
   --with-debug          print if datatools has been compiled in 'debug' mode
   --cmake-config-dir    print the installation directory for the 'datatools-config.cmake' file
-  --boost-version       print linked Boost version
-  --clhep-version       print linked CLHEP version
-  --camp-version        print linked CAMP version (if reflection is activated)
 
 EOF
     return 0
@@ -159,6 +156,9 @@ if [ "x${option}" = "x--cflags" ]; then
     (
 	echo -n "-fPIC "
 	echo -n "-I${datatools_include_dir} "
+	if [ ${with_reflection} -eq 1 ]; then
+ 	    echo -n "`camp-config --cflags` "
+	fi
 	echo -n "`boost-config --cflags serialization iostreams filesystem system program_options` "
         echo -n "`clhep-config --include` "
 	echo ""
@@ -290,20 +290,20 @@ if [ "x${option}" = "x--with-reflection" ]; then
     fi
 fi
 
-if [ "x${option}" = "x--boost-version" ]; then
-    echo @Boost_VERSION@
-    my_exit 0
-fi
+# if [ "x${option}" = "x--boost-version" ]; then
+#     echo @Boost_VERSION@
+#     my_exit 0
+# fi
 
-if [ "x${option}" = "x--clhep-version" ]; then
-    echo @CLHEP_VERSION@
-    my_exit 0
-fi
+# if [ "x${option}" = "x--clhep-version" ]; then
+#     echo @CLHEP_VERSION@
+#     my_exit 0
+# fi
 
-if [ "x${option}" = "x--camp-version" ]; then
-    echo @CAMP_VERSION@
-    my_exit 0
-fi
+# if [ "x${option}" = "x--camp-version" ]; then
+#     echo @CAMP_VERSION@
+#     my_exit 0
+#fi
 
 echo "ERROR: ${script_name}: Unknown option !" 1>&2
 print_help
