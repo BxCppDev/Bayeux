@@ -57,7 +57,7 @@ the_default_download_dir=${HOME}/Download
 the_default_install_prefix=${the_base_dir}/__install-$(pkgtools__get_sys)
 the_build_dir=
 the_download_dir=
-known_bayeux_configs="default 0.9.2 0.9.1 0.9.0 last_tags trunk user"
+known_bayeux_configs="default 0.9.4 0.9.3 0.9.2 0.9.1 0.9.0 last_tags legacy trunk user"
 
 pkgtools__msg_not_using_quiet
 pkgtools__msg_not_using_verbose
@@ -135,7 +135,8 @@ function print_usage ()
       --config [CONFIG]          : set the Channel configuration
                                    "X.Y.Z"     use a specific configuration
                                    "default"   use the default combination
-                                   "trunk"     use current trunk version
+                                   "legacy"    use the current legacy version
+                                   "trunk"     use the current trunk version
                                    "last_tags" use last tagged version
                                    "user"      use a specific user configuration 
                                                file (see below) 
@@ -210,17 +211,23 @@ function print_usage ()
 
       shell> ${appname} configure --workspace-dir /scratch/\${USER}/software 
 
+    or, for a 'legacy' installation (presumably stable) :
+
+      shell> ${appname} configure \\
+        --workspace-dir /scratch/\${USER}/software/Bayeux-legacy \\
+        --config legacy
+
     or, for a 'trunk' installation (presumably stable) :
 
       shell> ${appname} configure \\
         --workspace-dir /scratch/\${USER}/software/Bayeux-trunk \\
         --config trunk
 
-    or, for a 'dev0' installation (unstable) :
+    or, for a 'user' installation (presumably experimental) :
 
       shell> ${appname} configure \\
         --workspace-dir /scratch/\${USER}/software/Bayeux-dev0 \\
-        --config user --user-config-file ./doc/install_bayeux_dev0.lis
+        --config user --user-config-file ./my_bayeux.lis
 
     Build:
       shell> ${appname} build --number-of-tasks auto
@@ -233,15 +240,6 @@ function print_usage ()
 EOF
     return 0
 }
-
-###    shell> ${appname} configure --install-prefix \${HOME}/software
-      # Options:
-      # --number-of-tasks [NUMBER OF TASKS|auto] : 
-      #                              use several parallel tasks
-      #                              'auto' computes the number of available 
-      #                              processors if possible.      
-      
-
  
 #######################################################
 

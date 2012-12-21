@@ -147,6 +147,7 @@ set ( BAYEUX_KNOWN_COMPONENTS
 	)
 
 set ( BAYEUX_KNOWN_CONFIGS 
+       "legacy"
        "trunk"
        "${Bayeux_VERSION}"
        "0.9.4"
@@ -442,9 +443,22 @@ elseif ( BAYEUX_CONFIG STREQUAL "last_tags" )
      message ( STATUS "${PROJECT_NAME}: Using last tag '${_${component}_last_tag_out}' for the Bayeux component : '${component}'")       
   endforeach  ()
 
+elseif ( BAYEUX_CONFIG STREQUAL "legacy" )
+  message ( STATUS "${PROJECT_NAME}: Bayeux 'legacy' configuration...") 
+
+  set ( BAYEUX_DATATOOLS_PATH  "branches/legacy" )
+  set ( BAYEUX_BRIO_PATH       "branches/legacy" )
+  set ( BAYEUX_MYGSL_PATH      "branches/legacy" )
+  set ( BAYEUX_GEOMTOOLS_PATH  "branches/legacy" )
+  set ( BAYEUX_CUTS_PATH       "branches/legacy" )
+  set ( BAYEUX_MATERIALS_PATH  "branches/legacy" )
+  set ( BAYEUX_GENVTX_PATH     "branches/legacy" )
+  set ( BAYEUX_GENBB_HELP_PATH "branches/legacy" )
+  set ( BAYEUX_EMFIELD_PATH    "branches/legacy" )
+  set ( BAYEUX_TRACKFIT_PATH   "branches/legacy" )
+
 elseif ( BAYEUX_CONFIG STREQUAL "trunk" )
   message ( STATUS "${PROJECT_NAME}: Bayeux 'trunk' configuration...") 
-  #message ( FATAL_ERROR "${PROJECT_NAME}: Bayeux '${BAYEUX_CONFIG}' configuration is not supported yet !") 
 
   set ( BAYEUX_DATATOOLS_PATH  "trunk" )
   set ( BAYEUX_BRIO_PATH       "trunk" )

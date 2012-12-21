@@ -15,7 +15,14 @@ Configure :
 bash$ ./pkgtools.d/pkgtool configure --workspace-dir /scratch/sw/Bayeux
 }}}
 
-or for the trunk version :
+or for the legacy version :
+{{{
+bash$ ./pkgtools.d/pkgtool configure \
+  --workspace-dir /scratch/sw/Bayeux-legacy \
+  --config legacy --bayeux-label legacy
+}}}
+
+or for the trunk version (not working):
 {{{
 bash$ ./pkgtools.d/pkgtool configure \
   --workspace-dir /scratch/sw/Bayeux-trunk \
