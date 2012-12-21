@@ -204,7 +204,7 @@ if [ "x${option}" = "x--libs" -o "x${option}" = "x--ldflags" ]; then
 	elif [ "x${lib_option}" = "x--with-bio" -a ${with_bio} -eq 1 ]; then
 	    bio_ldflags=-ldatatools_bio
 	    bio_ldflags_abs=${datatools_lib_dir}/libdatatools_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
-	if [ "x${lib_option}" = "x--without-reflection" ]; then
+	elif [ "x${lib_option}" = "x--without-reflection" ]; then
 	    reflection_ldflags=
 	    reflection_ldflags_abs=
 	elif [ "x${lib_option}" = "x--with-reflection" -a ${with_reflection} -eq 1 ]; then
