@@ -16,7 +16,7 @@
 #include <boost/cstdint.hpp>
 
 // Interface base class from datatools to support serialization tools:
-#include <datatools/serialization/i_serializable.h>
+#include <datatools/i_serializable.h>
 
 
 namespace brio {
@@ -33,34 +33,34 @@ namespace brio {
 
       public:
 
-	// Here we provide a default constructor:
-	data_t ();
+        // Here we provide a default constructor:
+        data_t ();
 
-	// Desctructor:
-	virtual ~data_t ();
+        // Desctructor:
+        virtual ~data_t ();
 
-	void randomize ();
+        void randomize ();
 
-	void dump (ostream & a_out = clog, const string & a_title = "") const;
+        void dump (ostream & a_out = clog, const string & a_title = "") const;
 
       private:
 
-	bool     __bval; // A boolean 
-	int8_t   __cval; /* A signed char (8 bits) 
-			  * imples #include <boost/cstdint.hpp>
-			  */
-	int32_t  __ival; // A 32 bits signed integral  
-	float    __fval; // A 32 bits float  
-	double   __dval; // A 64 bits float
-	string   __sval; /** A STL string
-			  * implies #include <boost/serialization/string.hpp>
-			  */
-	std::vector<double> __dval_vec; /** a STL vector of 64 bits floats
-					 * implies #include <boost/serialization/vector.hpp>
-					 */
+        bool     __bval; // A boolean 
+        int8_t   __cval; /* A signed char (8 bits) 
+                          * imples #include <boost/cstdint.hpp>
+                          */
+        int32_t  __ival; // A 32 bits signed integral  
+        float    __fval; // A 32 bits float  
+        double   __dval; // A 64 bits float
+        string   __sval; /** A STL string
+                          * implies #include <boost/serialization/string.hpp>
+                          */
+        std::vector<double> __dval_vec; /** a STL vector of 64 bits floats
+                                         * implies #include <boost/serialization/vector.hpp>
+                                         */
 
-	/* interface i_serializable */
-	DATATOOLS_SERIALIZATION_DECLARATION();
+        /* interface i_serializable */
+        DATATOOLS_SERIALIZATION_DECLARATION();
 
       };
 

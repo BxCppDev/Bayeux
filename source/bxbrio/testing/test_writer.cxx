@@ -6,11 +6,11 @@
 #include <string>
 #include <exception>
 
-#include <datatools/utils/properties.h>
+#include <datatools/properties.h>
 #include <brio_test_data.cc>
 
 // Serialization implementation code :
-#include <datatools/utils/properties.ipp>
+#include <datatools/properties.ipp>
 #include <brio_test_data.ipp>
 
 #include <brio/writer.h>
@@ -53,7 +53,7 @@ int main (int argc_, char ** argv_)
                  {
                    verbose = true;
                  }
-	       else if ((option == "-m") || (option == "--many")) 
+               else if ((option == "-m") || (option == "--many")) 
                  {
                    data_count = 1000;
                  }
@@ -61,7 +61,7 @@ int main (int argc_, char ** argv_)
                  {
                    data_count = 100000;
                  }
-	       else if ((option == "-x")) 
+               else if ((option == "-x")) 
                  {
                    with_mixed = true;
                  } 
@@ -69,11 +69,11 @@ int main (int argc_, char ** argv_)
                  {
                    pre_set_stores = false;
                  }
-	       else if ((option == "-t")) 
+               else if ((option == "-t")) 
                  {
-		   text = true; 
-		 }
-	       else 
+                   text = true; 
+                 }
+               else 
                  { 
                     clog << "warning: ignoring option '" << option << "'!" << endl; 
                  }
@@ -106,14 +106,14 @@ int main (int argc_, char ** argv_)
       // Attach the brio writer to a ROOT file:
       string filename = "test_io.brio";
       if (text)
-	{
-	  clog << "notice: using '" << brio::writer::TEXT_LABEL << "' archive format !" << endl; 
- 	  filename = "test_io.trio";
-	}
+        {
+          clog << "notice: using '" << brio::writer::TEXT_LABEL << "' archive format !" << endl; 
+          filename = "test_io.trio";
+        }
       else
-	{
-	  clog << "notice: using '" << brio::writer::PBA_LABEL << "' archive format !" << endl; 
-	}
+        {
+          clog << "notice: using '" << brio::writer::PBA_LABEL << "' archive format !" << endl; 
+        }
       my_writer.open (filename); 
 
       // Print writer's status: 
@@ -121,75 +121,75 @@ int main (int argc_, char ** argv_)
 
       // Setup pre-defined stores:
       if (pre_set_stores)
-	{
-	  /* Setup a store labelled 'header' 
-	   * with dedicated serialization tag 
-	   * and dedicated buffer size:
-	   */
-	  my_writer.add_store ("header", datatools::utils::properties::SERIAL_TAG, 32000);
+        {
+          /* Setup a store labelled 'header' 
+           * with dedicated serialization tag 
+           * and dedicated buffer size:
+           */
+          my_writer.add_store ("header", datatools::properties::SERIAL_TAG, 32000);
 
-	  // Idem for a store labelled 'data': 
-	  my_writer.add_store ("data", brio::test::data_t::SERIAL_TAG, 256000);
+          // Idem for a store labelled 'data': 
+          my_writer.add_store ("data", brio::test::data_t::SERIAL_TAG, 256000);
 
-	  /* Setup a store labelled 'mixed_data' with
-	   * dedicated buffer size but possibly mixing
-	   * serialized objects with different serialization tags:
-	   */
-	  if (my_writer.is_allow_mixed_types_in_stores ())
-	    {
-	      my_writer.add_mixed_store ("mixed_data", 256000);
-	    }
-	  
-	  // Idem for a store labelled 'data': 
-	  my_writer.add_store ("data2", brio::test::data_t::SERIAL_TAG, 256000);
+          /* Setup a store labelled 'mixed_data' with
+           * dedicated buffer size but possibly mixing
+           * serialized objects with different serialization tags:
+           */
+          if (my_writer.is_allow_mixed_types_in_stores ())
+            {
+              my_writer.add_mixed_store ("mixed_data", 256000);
+            }
+          
+          // Idem for a store labelled 'data': 
+          my_writer.add_store ("data2", brio::test::data_t::SERIAL_TAG, 256000);
 
-	  // Lock the writer to prevent to add more stores:
-	  my_writer.lock ();
-	}
+          // Lock the writer to prevent to add more stores:
+          my_writer.lock ();
+        }
 
       if (my_writer.has_store_with_serial_tag ("data2", brio::test::data_t::SERIAL_TAG))
-	{
-	  clog << "notice: found a store labelled '" << "data2"
-	       << "' with serial tag '" << brio::test::data_t::SERIAL_TAG << "'..." << endl;
-	}
+        {
+          clog << "notice: found a store labelled '" << "data2"
+               << "' with serial tag '" << brio::test::data_t::SERIAL_TAG << "'..." << endl;
+        }
 
       if (my_writer.has_mixed_store ("mixed_data"))
-	{
-	  clog << "notice: found a mixed store labelled '" << "mixed_data"
-	       << "'..." << endl;
-	}
+        {
+          clog << "notice: found a mixed store labelled '" << "mixed_data"
+               << "'..." << endl;
+        }
       else
-	{
-	  clog << "notice: cannot find a mixed store labelled '" << "mixed_data"
-	       << "'..." << endl;
-	}
+        {
+          clog << "notice: cannot find a mixed store labelled '" << "mixed_data"
+               << "'..." << endl;
+        }
 
       if (! my_writer.has_store_with_serial_tag ("data2", "errors"))
-	{
-	  clog << "notice: cannot find a store labelled '" << "data2"
-	       << "' with serial tag '" << "errors" << "'..." << endl;
-	}
+        {
+          clog << "notice: cannot find a store labelled '" << "data2"
+               << "' with serial tag '" << "errors" << "'..." << endl;
+        }
 
       if (! my_writer.has_store_with_serial_tag ("data3", "dummy"))
-	{
-	  clog << "notice: cannot find a store labelled '" << "data3"
-	       << "' with serial tag '" << "dummy" << "'..." << endl;
-	}
+        {
+          clog << "notice: cannot find a store labelled '" << "data3"
+               << "' with serial tag '" << "dummy" << "'..." << endl;
+        }
 
       // Print writer's status:
       my_writer.print_info (clog);
 
       // Create a `properties' container:
-      datatools::utils::properties infos;
+      datatools::properties infos;
       infos.store_flag ("test");
       infos.store ("library", "brio");
       infos.store ("io_system", "ROOT");
       infos.store ("archive_format", "portable archive");
       infos.store ("author", "King Arthur");
       if (dump) 
-	{
-	  infos.tree_dump (clog, "Properties to be stored in the 'header' store: ");
-	}
+        {
+          infos.tree_dump (clog, "Properties to be stored in the 'header' store: ");
+        }
       
       // Store it in the `header' store:
       my_writer.store (infos, "header");
@@ -202,60 +202,60 @@ int main (int argc_, char ** argv_)
       infos.store ("favorite_animal", "swallow");
       infos.store ("favorite_fruit",  "coconut");
       if (dump) 
-	{
-	  infos.tree_dump (clog, "Another properties to be stored in the 'header' store: ");
-	}
+        {
+          infos.tree_dump (clog, "Another properties to be stored in the 'header' store: ");
+        }
 
       // Store it in the `header' store (i.e. the current store from the last 'store' call):
       my_writer.store (infos);
 
       // Try to select a new store:
       if (my_writer.has_store ("data"))
-	{
-	  // If the `data' store already exists within the writer, select it
-	  // for next objects to be serialized:
-	  my_writer.select_store ("data");
-	}
+        {
+          // If the `data' store already exists within the writer, select it
+          // for next objects to be serialized:
+          my_writer.select_store ("data");
+        }
       else
-	{
-	  // Unselect the current working store ('header') because
-	  // we want the 'data' objects to be saved in some dedicated store:
-	  my_writer.unselect_store ();
-	}
+        {
+          // Unselect the current working store ('header') because
+          // we want the 'data' objects to be saved in some dedicated store:
+          my_writer.unselect_store ();
+        }
       // Store `data' randomized objects within another store;
       for (int i = 0; i < data_count; i++) 
-	{
-	  brio::test::data_t data;
-	  data.randomize ();
-	  if (dump) 
-	    {
-	      data.dump (clog, "Data to be stored in the 'data' store: ");
-	    }
-	  // 
-	  my_writer.store (data);
-	}
+        {
+          brio::test::data_t data;
+          data.randomize ();
+          if (dump) 
+            {
+              data.dump (clog, "Data to be stored in the 'data' store: ");
+            }
+          // 
+          my_writer.store (data);
+        }
 
       // Store a set of mixed data within the 'mixed' store:
       if (my_writer.has_store ("mixed_data"))
-	{
-	  my_writer.select_store ("mixed_data");
-	  
-	  brio::test::data_t data;
-	  data.randomize ();
-	  if (dump) 
-	    {
-	      data.dump (clog, "Data to be stored in the 'mixed_data' store in ROOT file: ");
-	    }
-	  my_writer.store (data);
+        {
+          my_writer.select_store ("mixed_data");
+          
+          brio::test::data_t data;
+          data.randomize ();
+          if (dump) 
+            {
+              data.dump (clog, "Data to be stored in the 'mixed_data' store in ROOT file: ");
+            }
+          my_writer.store (data);
 
-	  datatools::utils::properties infos;
-	  infos.store_flag ("in_mixed_store");
-	  if (dump) 
-	    {
-	      infos.tree_dump (clog, "Properties to be stored in the 'mixed_data' store in ROOT file: ");
-	    }
-	  my_writer.store (infos);
-	}
+          datatools::properties infos;
+          infos.store_flag ("in_mixed_store");
+          if (dump) 
+            {
+              infos.tree_dump (clog, "Properties to be stored in the 'mixed_data' store in ROOT file: ");
+            }
+          my_writer.store (infos);
+        }
 
       // Unselect the current store:
       my_writer.unselect_store ();
@@ -263,25 +263,25 @@ int main (int argc_, char ** argv_)
       /*
       // Store a set of mixed data within the 'mixed' store:
       if (my_writer.has_store ("data2"))
-	{
-	  my_writer.select_store ("data2");
-	  brio::test::data_t data;
-	  data.randomize ();
-	  if (dump) 
-	    {
-	      data.dump (clog);
-	    }
-	  // 
-	  //my_writer.store (data);
-	}
+        {
+          my_writer.select_store ("data2");
+          brio::test::data_t data;
+          data.randomize ();
+          if (dump) 
+            {
+              data.dump (clog);
+            }
+          // 
+          //my_writer.store (data);
+        }
       */
 
       // Store a properties object int the *automatic* store:
       {
-	my_writer.unlock ();
-	datatools::utils::properties infos;
-	infos.store_flag ("in_automatic_store");
-	my_writer.store (infos);
+        my_writer.unlock ();
+        datatools::properties infos;
+        infos.store_flag ("in_automatic_store");
+        my_writer.store (infos);
       }
 
       // Print writer's status:

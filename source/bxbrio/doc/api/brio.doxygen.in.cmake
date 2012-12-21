@@ -25,13 +25,13 @@ DOXYFILE_ENCODING      = UTF-8
 # The PROJECT_NAME tag is a single word (or a sequence of words surrounded
 # by quotes) that should identify the project.
 
-PROJECT_NAME           = @brio_PACKAGE_NAME@
+PROJECT_NAME           = brio
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number.
 # This could be handy for archiving the generated documentation or
 # if some version control system is used.
 
-PROJECT_NUMBER         = @brio_VERSION_STR@
+PROJECT_NUMBER         = @brio_VERSION@
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute)
 # base path where the generated documentation will be put.
@@ -114,7 +114,10 @@ FULL_PATH_NAMES        = YES
 # If left blank the directory from which doxygen is run is used as the
 # path to strip.
 
-STRIP_FROM_PATH        =
+STRIP_FROM_PATH        = "@DOXYGEN_INPUT_DIR@/include" \
+                         "@DOXYGEN_INPUT_DIR@/doc/api" \ 
+                         "@PROJECT_BINARY_DIR@/include" \
+                         "@DOXYGEN_INPUT_DIR@/doc/api/mainpage.hpp"
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of
 # the path mentioned in the documentation of a class, which tells
@@ -123,7 +126,7 @@ STRIP_FROM_PATH        =
 # definition is used. Otherwise one should specify the include paths that
 # are normally passed to the compiler using the -I flag.
 
-STRIP_FROM_INC_PATH    =
+STRIP_FROM_INC_PATH    = "@DOXYGEN_INPUT_DIR@/include"
 
 # If the SHORT_NAMES tag is set to YES, doxygen will generate much shorter
 # (but less readable) file names. This can be useful is your file systems
@@ -297,7 +300,7 @@ SYMBOL_CACHE_SIZE      = 0
 # Private class members and static file members will be hidden unless
 # the EXTRACT_PRIVATE and EXTRACT_STATIC tags are set to YES
 
-EXTRACT_ALL            = NO
+EXTRACT_ALL            = YES
 
 # If the EXTRACT_PRIVATE tag is set to YES all private members of a class
 # will be included in the documentation.
@@ -468,7 +471,7 @@ MAX_INITIALIZER_LINES  = 30
 # at the bottom of the documentation of classes and structs. If set to YES the
 # list will mention the files that were used to generate the documentation.
 
-SHOW_USED_FILES        = YES
+SHOW_USED_FILES        = NO
 
 # If the sources in your project are distributed over multiple directories
 # then setting the SHOW_DIRECTORIES tag to YES will show the directory hierarchy
@@ -569,6 +572,7 @@ WARN_LOGFILE           =
 # with spaces.
 
 INPUT                  = "@DOXYGEN_INPUT_DIR@/include/brio" \
+                         "@PROJECT_BINARY_DIR@/include/brio" \
                          "@DOXYGEN_INPUT_DIR@/doc/api/mainpage.hpp"
 
 # This tag can be used to specify the character encoding of the source files
@@ -586,7 +590,7 @@ INPUT_ENCODING         = UTF-8
 # *.c *.cc *.cxx *.cpp *.c++ *.java *.ii *.ixx *.ipp *.i++ *.inl *.h *.hh *.hxx
 # *.hpp *.h++ *.idl *.odl *.cs *.php *.php3 *.inc *.m *.mm *.py *.f90
 
-FILE_PATTERNS          = *.h *.cc *.ipp *.cxx *.py
+FILE_PATTERNS          = *.h *.cc *.ipp *.cxx *.py *.hpp
 
 # The RECURSIVE tag can be used to turn specify whether or not subdirectories
 # should be searched for input files as well. Possible values are YES and NO.
@@ -598,7 +602,7 @@ RECURSIVE              = YES
 # excluded from the INPUT source files. This way you can easily exclude a
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
-EXCLUDE                = detail .svn 
+EXCLUDE                = detail .svn
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or
 # directories that are symbolic links (a Unix filesystem feature) are excluded
@@ -821,21 +825,21 @@ HTML_DYNAMIC_SECTIONS  = NO
 # it at startup.
 # See http://developer.apple.com/tools/creatingdocsetswithdoxygen.html for more information.
 
-GENERATE_DOCSET        = NO
+GENERATE_DOCSET        = @DOXYGEN_GENERATE_DOCSET@
 
 # When GENERATE_DOCSET tag is set to YES, this tag determines the name of the
 # feed. A documentation feed provides an umbrella under which multiple
 # documentation sets from a single provider (such as a company or product suite)
 # can be grouped.
 
-DOCSET_FEEDNAME        = "Doxygen generated docs"
+DOCSET_FEEDNAME        = org.supernemo
 
 # When GENERATE_DOCSET tag is set to YES, this tag specifies a string that
 # should uniquely identify the documentation set bundle. This should be a
 # reverse domain-name style string, e.g. com.mycompany.MyDocSet. Doxygen
 # will append .docset to the name.
 
-DOCSET_BUNDLE_ID       = org.doxygen.Project
+DOCSET_BUNDLE_ID       = org.supernemo.brio
 
 # If the GENERATE_HTMLHELP tag is set to YES, additional index files
 # will be generated that can be used as input for tools like the
@@ -898,7 +902,7 @@ QCH_FILE               =
 # Qt Help Project output. For more information please see
 # http://doc.trolltech.com/qthelpproject.html#namespace
 
-QHP_NAMESPACE          = __PackNameSpace__
+QHP_NAMESPACE          = brio
 
 # The QHP_VIRTUAL_FOLDER tag specifies the namespace to use when generating
 # Qt Help Project output. For more information please see
@@ -1106,7 +1110,7 @@ RTF_EXTENSIONS_FILE    =
 # If the GENERATE_MAN tag is set to YES (the default) Doxygen will
 # generate man pages
 
-GENERATE_MAN           = NO
+GENERATE_MAN           = YES
 
 # The MAN_OUTPUT tag is used to specify where the man pages will be put.
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be
@@ -1301,7 +1305,7 @@ TAGFILES               =
 # When a file name is specified after GENERATE_TAGFILE, doxygen will create
 # a tag file that is based on the input files it reads.
 
-GENERATE_TAGFILE       =
+GENERATE_TAGFILE       = "@DOXYGEN_TAGFILE@"
 
 # If the ALLEXTERNALS tag is set to YES all external classes will be listed
 # in the class index. If set to NO only the inherited external classes

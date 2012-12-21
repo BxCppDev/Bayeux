@@ -25,11 +25,7 @@
 #include <boost/iostreams/stream.hpp>
 #include <boost/iostreams/device/array.hpp>
 #include <boost/archive/text_iarchive.hpp>
-// 2012-06-07 FM: PBA version 5.0
-// do not use the old hacked version anymore :
-//#include <boost/archive/portable_binary_iarchive.hpp>
-// use the new version 5.0:
-#include <eos/portable_iarchive.hpp>
+#include <datatools/eos/portable_iarchive.hpp>
 
 #include <brio/detail/base_io.h>
 
@@ -37,8 +33,8 @@
 
 namespace brio {
 
-  /// The brio generic reader class
-  class reader : public base_io
+  //! \brief The brio generic reader class
+  class reader : public detail::base_io
   {    
 
   public:
@@ -68,8 +64,12 @@ namespace brio {
      */
     void unwind_store (const std::string & label_ = "");
 
+    /** Check if some previous entry exists relatively to the current entry 
+     */
     bool has_previous (const std::string & label_ = "") const;
 
+    /** Check if some next entry exists relatively to the current entry 
+     */
     bool has_next (const std::string & label_ = "") const;
 
   protected:
@@ -78,32 +78,33 @@ namespace brio {
 
   public: 
 
-    // ctor:
+    //! Default constructor
     reader ();
 
-    // ctor:
+    //! Constructor
     reader (const std::string & filename_, 
             bool verbose_ = false, 
             bool debug_ = false);
 
-    // ctor:
+    //! Constructor
     reader (const std::string & filename_, 
             const std::string & format_str_,
             bool verbose_ = false, 
             bool debug_ = false);
 
-    // dtor:
+    //! Destructor
     virtual ~reader ();
 
-    // Utilities:
+    //! Smart print
     virtual void tree_dump (std::ostream & out_ = std::clog, 
                             const std::string & title_ = "", 
                             const std::string & indent_ = "", 
                             bool inherit_ = false) const;
 
+    //! Print
     void print_info (std::ostream & out_ = std::clog) const;
 
-    // Main load template methods:
+    //! Load template method for next entry
     template<class T>
     int load_next (T & data_, 
                    const std::string & label_ = "")
@@ -112,6 +113,7 @@ namespace brio {
       return load<T> (data_, label_, entry + 1);
     }
 
+    //! Load template method for previous entry
     template<class T>
     int load_previous (T & data_, 
                        const std::string & label_ = "")
@@ -120,12 +122,14 @@ namespace brio {
       return load<T> (data_, label_, entry - 1);
     }
 
+    //! Load template method for arbitrary entry
     template<class T>
     int load (T & data_, int64_t nentry_ = -1)
     {
       return load <T> (data_, "", nentry_);
     }
     
+    //! Load template method for arbitrary store and entry
     template<class T>
     int load (T & data_, const std::string & label_, int64_t nentry_ = -1)
     {

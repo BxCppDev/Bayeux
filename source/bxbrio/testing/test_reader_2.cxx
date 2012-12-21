@@ -7,11 +7,11 @@
 #include <exception>
 
 #include <brio_test_data.cc>
-#include <datatools/utils/properties.h>
+#include <datatools/properties.h>
 
 // Serialization code :
 #include <brio_test_data.ipp>
-#include <datatools/utils/properties.ipp>
+#include <datatools/properties.ipp>
 
 #include <brio/reader.h>
 
@@ -37,20 +37,20 @@ int main (int argc_, char ** argv_)
 
           if (token[0] == '-') 
             {
-	      string option = token; 
-	      if ((option == "-d") || (option == "--debug")) 
-		{
+              string option = token; 
+              if ((option == "-d") || (option == "--debug")) 
+                {
                    debug = true;
                  }
-	       else if ((option == "-D") || (option == "--dump")) 
-		{
-		  dump = true;
-		}
-	       else if ((option == "-v") || (option == "--verbose")) 
+               else if ((option == "-D") || (option == "--dump")) 
+                {
+                  dump = true;
+                }
+               else if ((option == "-v") || (option == "--verbose")) 
                  {
                    verbose = true;
                  }
-	       else if ((option == "-m") || (option == "--many")) 
+               else if ((option == "-m") || (option == "--many")) 
                  {
                    data_count = 1000;
                  }
@@ -58,11 +58,11 @@ int main (int argc_, char ** argv_)
                  {
                    data_count = 100000;
                  }
-	       else if ((option == "-t")) 
-		 {
-		  text = true; 
-		 }
- 	       else 
+               else if ((option == "-t")) 
+                 {
+                  text = true; 
+                 }
+               else 
                  { 
                     clog << "warning: ignoring option '" << option << "'!" << endl; 
                  }
@@ -80,27 +80,27 @@ int main (int argc_, char ** argv_)
       // Setup a brio reader:           
       string filename = "test_io_2.brio";
       if (text)
-	{
-	  filename = "test_io_2.trio";
-	}
+        {
+          filename = "test_io_2.trio";
+        }
       brio::reader my_reader (filename, verbose, debug);
 
       // Loop on serialized records in this store:
       while (my_reader.has_next ())
-	{
-	  brio::test::data_t data;
-	  my_reader.load_next (data);
-	  if (dump) 
-	    {
-	      data.dump (clog, "Data loaded from the *automatic* store: ");
-	    }
-	}
+        {
+          brio::test::data_t data;
+          my_reader.load_next (data);
+          if (dump) 
+            {
+              data.dump (clog, "Data loaded from the *automatic* store: ");
+            }
+        }
 
       {
-	my_reader.select_store ("dummy");
-	datatools::utils::properties infos;
-	my_reader.load (infos);
-	infos.tree_dump (clog, "Loaded infos");
+        my_reader.select_store ("dummy");
+        datatools::properties infos;
+        my_reader.load (infos);
+        infos.tree_dump (clog, "Loaded infos");
       }
 
       // Print reader's status:

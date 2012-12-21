@@ -13,6 +13,7 @@
 #include <TFile.h>
 
 namespace brio {
+namespace detail {
 
   using namespace std;
 
@@ -539,7 +540,7 @@ namespace brio {
                            const std::string & indent_,
                            bool inherit_) const
   {
-    using namespace datatools::utils;
+    using namespace datatools;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     if (! title_.empty ()) {
@@ -637,6 +638,7 @@ namespace brio {
     return;
   }
 
+} // end of namespace detail
 } // end of namespace brio
 
 // end of base_io.cc

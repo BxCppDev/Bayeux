@@ -6,13 +6,11 @@
 #include <string>
 #include <exception>
 
-#include <datatools/utils/properties.h>
-//#include <datatools_test_my_data.cc>
+#include <datatools/properties.h>
 #include <brio_test_data.cc>
 
 // Serialization implementation code :
-#include <datatools/utils/properties.ipp>
-//#include <datatools_test_my_data.ipp>
+#include <datatools/properties.ipp>
 #include <brio_test_data.ipp> 
 
 #include <brio/reader.h>
@@ -48,7 +46,7 @@ int main (int argc_, char ** argv_)
                  {
                    verbose = true;
                  }
-	       else if ((option == "-m") || (option == "--many")) 
+               else if ((option == "-m") || (option == "--many")) 
                  {
                    data_count = 1000;
                  }
@@ -60,7 +58,7 @@ int main (int argc_, char ** argv_)
                  {
                    check_tag = false;
                  }
-	       else 
+               else 
                  { 
                     clog << "warning: ignoring option '" << option << "'!" << endl; 
                  }
@@ -88,9 +86,9 @@ int main (int argc_, char ** argv_)
       // Attach the brio reader to a ROOT file:
       string filename = "test_io.brio";
       if (text)
-	{
-	  filename = "test_io.trio";
-	}
+        {
+          filename = "test_io.trio";
+        }
       my_reader.open (filename); 
 
       // Print reader's status: 
@@ -106,11 +104,11 @@ int main (int argc_, char ** argv_)
 
       // Loop on serialized records in this store:
       while (my_reader.has_next ())
-	{
-	  datatools::utils::properties infos;
-	  my_reader.load_next (infos);
-	  infos.tree_dump (clog, "Properties loaded from the 'header' store: ");
-	}
+        {
+          datatools::properties infos;
+          my_reader.load_next (infos);
+          infos.tree_dump (clog, "Properties loaded from the 'header' store: ");
+        }
   
       // Print reader's status:
       my_reader.print_info (clog);
@@ -120,21 +118,21 @@ int main (int argc_, char ** argv_)
 
       // Loop on serialized records in this store:
       while (my_reader.has_next ())
-	{
-	  brio::test::data_t data;
-	  my_reader.load_next (data);
-	  data.dump (clog, "Data loaded from the 'data' store: ");
-	}
+        {
+          brio::test::data_t data;
+          my_reader.load_next (data);
+          data.dump (clog, "Data loaded from the 'data' store: ");
+        }
 
       // Load from *automatic* store:
       if (my_reader.has_automatic_store ())
-	{
-	  clog << "Reader has found an automatic store to be selected !" << endl;
-	  my_reader.select_automatic_store ();     
-	  datatools::utils::properties infos;
-	  my_reader.load_next (infos);
-	  infos.tree_dump (clog, "Properties loaded from the *automatic* store: ");
-	}
+        {
+          clog << "Reader has found an automatic store to be selected !" << endl;
+          my_reader.select_automatic_store ();     
+          datatools::properties infos;
+          my_reader.load_next (infos);
+          infos.tree_dump (clog, "Properties loaded from the *automatic* store: ");
+        }
 
       // Print reader's status:
       my_reader.print_info (clog);

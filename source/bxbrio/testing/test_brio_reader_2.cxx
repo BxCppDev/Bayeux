@@ -1,10 +1,10 @@
 #include <iostream>
 
-#include <datatools/utils/properties.h>
+#include <datatools/properties.h>
 #include <brio_test_data.cc>
 
 // Serialization code :
-#include <datatools/utils/properties.ipp>
+#include <datatools/properties.ipp>
 #include <brio_test_data.ipp>
 
 #include <brio/reader.h>
@@ -24,7 +24,7 @@ int main (void)
   // make the store named 'header' active for reading data :
   my_reader.select_store ("header");
   clog << "Header store has " << my_reader.get_number_of_entries () << " record(s)." << endl;
-  datatools::utils::properties the_setup;
+  datatools::properties the_setup;
   my_reader.load (the_setup); // load a 'properties' object from the active store
   the_setup.dump ();
 
@@ -43,8 +43,8 @@ int main (void)
        my_reader.load_next (a_data); // load another 'data' object from the active store
        // or : my_reader.load (a_data);
        /* default 'load' behaviour
-	* traverses the store sequentially
-	*/
+        * traverses the store sequentially
+        */
     }
   my_reader.rewind_store (); // rewind the store at beginning
   brio::test::data_t a_data;

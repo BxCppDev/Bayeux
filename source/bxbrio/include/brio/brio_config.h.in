@@ -2,8 +2,8 @@
 /* brio_config.h header file 
  */
 
-#ifndef __brio_brio_config_h
-#define __brio_brio_config_h 1
+#ifndef BRIO_BRIO_CONFIG_H_
+#define BRIO_BRIO_CONFIG_H_ 1
 
 /*** brio versioning information ***/
 
@@ -21,21 +21,11 @@
 //  but as a *string* in the form "x.y[.z]" where x is the major version
 //  number, y is the minor version number, and z is the patch level if not 0.
 
-#define BRIO_LIB_VERSION "@brio_VERSION_STR@"
+#define BRIO_LIB_VERSION "@brio_VERSION@"
 
-/*** brio debug flag ***/
+/***  brio debug flag ***/
 #cmakedefine01 BRIO_WITH_DEBUG
 
-/*** brio embedded Boost/Serialization based I/O ***/
-#if x0 == x1
-#cmakedefine01 BRIO_WITH_BIO 
-#endif
-
-/*** brio Boost/Python module ***/
-#if x0 == x1
-#cmakedefine01 BRIO_WITH_PYTHON_WRAPPER
-#endif
-
-#endif // __brio_brio_config_h
+#endif // BRIO_BRIO_CONFIG_H_
 
 // end of brio_config.h

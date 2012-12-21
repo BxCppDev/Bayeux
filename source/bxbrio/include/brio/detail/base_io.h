@@ -2,7 +2,7 @@
 /* base_io.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-11-03
- * Last modified: 2010-11-03
+ * Last modified: 2012-12-20
  * 
  * License: 
  * 
@@ -14,8 +14,8 @@
  * 
  */
 
-#ifndef __brio__base_io_h
-#define __brio__base_io_h 1
+#ifndef BRIO_DETAIL_BASE_IO_H_
+#define BRIO_DETAIL_BASE_IO_H_ 1
 
 #include <string>
 #include <list>
@@ -25,15 +25,18 @@
 //#include <boost/math/nonfinite_num_facets.hpp>
 #include <boost/math/special_functions/nonfinite_num_facets.hpp>
 
-#include <datatools/utils/i_tree_dump.h>
+#include <datatools/i_tree_dump.h>
 #include <brio/utils.h>
 
 class TFile;
 
+/// The main namespace of the  brio library
 namespace brio {
+/// Private namespace
+namespace detail {
 
-  /// The internal I/O base class
-  class base_io : public datatools::utils::i_tree_dumpable
+  //! \brief The internal I/O base class
+  class base_io : public datatools::i_tree_dumpable
   { 
   public: 
 
@@ -121,9 +124,10 @@ namespace brio {
                             const std::string & indent_ = "", 
                             bool inherit_ = false) const;
    
-    // File open/close operations:
+    //! File open
     virtual void open (const std::string & filename_);
 
+    //! File close
     virtual void close ();
      
   protected:
@@ -150,7 +154,7 @@ namespace brio {
 
   protected:
     
-    std::string            _filename;       /// Name of the current I/O file (extensions are \t .brio or \t .trio)
+    std::string       _filename;       /// Name of the current I/O file (extensions are \b .brio or \b .trio)
     TFile *           _file;           /// Handle to the current embedded ROOT file
     store_info_dict_t _store_infos;    /// Dictionnary of \e stores
     store_info *      _current_store;  /// Handle to the current active \e store (if any)
@@ -160,8 +164,9 @@ namespace brio {
 
   };
 
+} // end of namespace detail
 } // end of namespace brio
 
-#endif // __brio_base_io_h
+#endif // BRIO_DETAIL_BASE_IO_H_
 
 // end of base_io.h

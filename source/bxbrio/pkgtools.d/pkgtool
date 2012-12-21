@@ -12,9 +12,6 @@ function my_exit ()
     exit $1
 }
 
-bio_support=0
-python_wrapper_support=0
-
 appname=${APPNAME}
 appversion=0.1
 package_name="brio"
@@ -112,18 +109,6 @@ function print_usage ()
                                    set the installation base directory
                                    (may need special privilege)
 EOF
-    if [ ${bio_support} -eq 1 ]; then
-	cat <<EOF
-      --with-bio                 : generate the Boost I/O DLL (default)
-      --without-bio              : do not generate the Boost I/O DLL
-EOF
-    fi
-    if [ ${python_wrapper_support} -eq 1 ]; then
-	cat <<EOF
-      --with-python-wrapper      : generate the Boost/Python wrapper module
-      --without-python-wrapper   : do not generate the Boost/Python wrapper module (default)
-EOF
-    fi
     cat <<EOF
       --with-documentation       : generate documentation material (default)
       --without-documentation    : do not generate documentation material
@@ -330,16 +315,6 @@ function do_configure ()
     local with_test=1
     local with_dependency_check=0
 
-    local with_bio=0
-    if [ ${bio_support} -eq 1 ]; then
-	with_bio=1 # default
-    fi
-
-    local with_python_wrapper=0
-    if [ ${python_wrapper_support} -eq 1 ]; then
-	with_python_wrapper=0 # default
-    fi
-
     while [ -n "$1" ]; do
 	local option="$1"
 	#pkgtools__msg_warning "Option: '${option}'"
@@ -364,14 +339,6 @@ function do_configure ()
 	    with_dependency_check=1
 	elif [ "${option}" = "--without-dependency-check" ]; then
 	    with_dependency_check=0
-	elif [ ${bio_support} -eq 1 -a "${option}" = "--with-bio" ]; then
-	    with_bio=1
-	elif [ ${bio_support} -eq 1 -a "${option}" = "--without-bio" ]; then
-	    with_bio=0
-	elif [ ${python_wrapper_support} -eq 1 -a "${option}" = "--with-python-wrapper" ]; then
-	    with_python_wrapper=1
-	elif [ ${python_wrapper_support} -eq 1 -a "${option}" = "--without-python-wrapper" ]; then
-	    with_python_wrapper=0
 	fi
 	shift 1
     done
@@ -405,12 +372,6 @@ function do_configure ()
     pkgtools__msg_notice "Installation prefix   : '${install_prefix}'"
     pkgtools__msg_notice "With documentation    : '${with_doc}'"
     pkgtools__msg_notice "With test material    : '${with_test}'"
-    if [ ${python_wrapper_support} -eq 1 ]; then
-	pkgtools__msg_notice "With Python wrapper   : '${with_python_wrapper}'"
-    fi
-    if [ ${bio_support} -eq 1 ]; then
-	pkgtools__msg_notice "With Boost I/O DLL    : '${with_bio}'"
-    fi
     pkgtools__msg_notice "With dependency check : '${with_dependency_check}'"
 
     if [ ${with_dependency_check} -eq 1 ]; then
@@ -423,16 +384,12 @@ function do_configure ()
     fi
 
     local additional_options=""
-    if [ ${bio_support} -eq 1 ]; then
-	additional_options="${additional_options}-DBRIO_WITH_BIO=${with_bio} "
-    fi
-    if [ ${python_wrapper_support} -eq 1 ]; then
-	additional_options="${additional_options}-DBRIO_WITH_PYTHON_WRAPPER=${with_python_wrapper} "
-    fi
     cd ${the_build_dir}
     cmake \
 	-DCMAKE_INSTALL_PREFIX:PATH=${install_prefix} \
 	-DCMAKE_BUILD_TYPE:STRING=Release \
+	-Ddatatools_DIR=${DATATOOLS_CMAKE_CONFIG_DIR} \
+	-DCMAKE_MODULE_PATH=${CADFAEL_SHARE_DIR}/cmake/Modules \
 	-DBRIO_WITH_DOC=${with_doc} \
 	-DBRIO_WITH_TEST=${with_test} \
 	${additional_options} \

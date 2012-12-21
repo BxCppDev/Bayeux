@@ -26,11 +26,7 @@
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/archive/text_oarchive.hpp>
-// 2012-06-07 FM: PBA version 5.0
-// do not use the old hacked version anymore :
-//#include <boost/archive/portable_binary_oarchive.hpp>
-// use the new version 5.0:
-#include <eos/portable_oarchive.hpp>
+#include <datatools/eos/portable_oarchive.hpp>
 
 #include <brio/detail/base_io.h>
 
@@ -38,20 +34,30 @@
 
 namespace brio {
 
-  /// The brio generic writer class
-  class writer : public base_io
+  //! \brief The brio generic writer class
+  class writer : public detail::base_io
   {    
 
   public: 
 
+    //! Lock the writer
     void lock ();
+
+    //! Unlock the writer
     void unlock ();
 
     // getters:
 
+    //! Check if the writer is locked
     bool is_locked () const;
+
+    //! Check if mixed types are allowed in any given store
     bool is_allow_mixed_types_in_stores () const;
+
+    //! Check if automatic store is allowed
     bool is_allow_automatic_store () const;
+
+    //! Check if protection against file overwriting exists
     bool is_existing_file_protected () const;
     
     // setters:
@@ -71,12 +77,8 @@ namespace brio {
      */
     void set_allow_automatic_store (bool a_new_value = true);
 
+    //! Set the protection against file overwriting
     void set_existing_file_protected (bool a_new_value = true);
-  
-    // File open/close operations:
-    //void open (const std::string & filename_);
-
-    //void close ();
   
   private:
 
@@ -90,44 +92,51 @@ namespace brio {
 
   public: 
 
-    // ctor:
+    //! Default constructor
     writer ();
 
-    // ctor:
+    //! Constructor
     writer (const std::string & a_filename, 
             bool a_verbose = false, 
             bool a_debug = false);
 
 
-    // ctor:
+    //! Constructor
     writer (const std::string & a_filename, 
             const std::string & a_format_str,
             bool a_verbose = false, 
             bool a_debug = false);
 
-    // dtor:
+    //! Destructor
     virtual ~writer ();
 
   public:
 
-    // Utilities:
+    //! Smart print
     virtual void tree_dump (std::ostream & a_out = std::clog, 
                             const std::string & a_title = "", 
                             const std::string & a_indent = "", 
                             bool a_inherit = false) const;
 
+    //! Print
     void print_info (std::ostream & a_out = std::clog) const;
 
     /** Add a new store with label 'label_'
-     *  to store objects with a dedicated serialization tag 'serial_tag_':
+     *  to store objects with a dedicated serialization tag 'serial_tag_' 
      */
     int add_store (const std::string & a_label, 
                    const std::string & a_serial_tag,
                    size_t a_buffer_size = 256000);
 
+    /** Add a new store with label 'label_'
+     *  to store objects with a dedicated serialization tag 'serial_tag_' 
+     */
     int add_store (const std::string & a_label, 
                    size_t a_buffer_size = 256000);
 
+    /** Add a new store with label 'label_'
+     *  to store objects with arbitrary serialization tags 
+     */
     int add_mixed_store (const std::string & a_label, 
                          size_t a_buffer_size = store_info::DEFAULT_STORE_BUFFER_SIZE);
 
@@ -141,7 +150,7 @@ namespace brio {
 
   public:
 
-    // Main store template method:
+    // Store template method
     template<class T>
     int store (const T & a_data, const std::string & a_label = "")
     {

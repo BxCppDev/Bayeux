@@ -10,7 +10,7 @@
 #include <TFile.h>
 #include <TKey.h>
 
-#include <datatools/utils/utils.h>
+#include <datatools/utils.h>
 
 namespace brio {
 
@@ -30,7 +30,7 @@ namespace brio {
 
   void reader::_set_default ()
   {
-    base_io::_set_default ();
+    detail::base_io::_set_default ();
     _allow_mixed_types_in_stores_ = false;
     _allow_automatic_store_ = true;
     _check_serial_tag_ = true;
@@ -39,15 +39,15 @@ namespace brio {
   }
 
   // ctor:
-  reader::reader () : base_io (RW_READ)
+  reader::reader () : detail::base_io (RW_READ)
   {
-    if (base_io::g_devel)
+    if (detail::base_io::g_devel)
       {
         cerr << "DEVEL: " << "brio::reader::reader(1): "
              << "Entering..." << endl;
       }
     reader::_set_default ();
-    if (base_io::g_devel)
+    if (detail::base_io::g_devel)
       {
         cerr << "DEVEL: " << "brio::reader::reader(1): "
              << "Exiting." << endl;
@@ -59,9 +59,9 @@ namespace brio {
   reader::reader (const string & filename_,
                   bool verbose_,
                   bool debug_)
-    : base_io (RW_READ)
+    : detail::base_io (RW_READ)
   {
-    if (base_io::g_devel)
+    if (detail::base_io::g_devel)
       {
         cerr << "DEVEL: " << "brio::reader::reader(2): "
              << "Entering..." << endl;
@@ -72,14 +72,14 @@ namespace brio {
     string ext = boost::filesystem::extension (filename_);
     if (ext == store_info::TRIO_FILE_EXTENSION)
       {
-        set_format (base_io::TEXT_LABEL);
+        set_format (detail::base_io::TEXT_LABEL);
       }
     else
       {
-        set_format (base_io::PBA_LABEL);
+        set_format (detail::base_io::PBA_LABEL);
       }
     open (filename_);
-    if (base_io::g_devel)
+    if (detail::base_io::g_devel)
       {
         cerr << "DEVEL: " << "brio::reader::reader(2): "
              << "Exiting." << endl;
@@ -92,9 +92,9 @@ namespace brio {
                   const string & format_str_,
                   bool verbose_,
                   bool debug_)
-    : base_io (RW_READ)
+    : detail::base_io (RW_READ)
   {
-    if (base_io::g_devel)
+    if (detail::base_io::g_devel)
       {
         cerr << "DEVEL: " << "brio::reader::reader(3): "
              << "Entering..." << endl;
@@ -104,7 +104,7 @@ namespace brio {
     set_verbose (verbose_);
     set_format (format_str_);
     open (filename_);
-    if (base_io::g_devel)
+    if (detail::base_io::g_devel)
       {
         cerr << "DEVEL: " << "brio::reader::reader(3): "
              << "Exiting." << endl;
@@ -115,7 +115,7 @@ namespace brio {
   // dtor:
   reader::~reader ()
   {
-    if (base_io::g_devel)
+    if (detail::base_io::g_devel)
       {
         cerr << "DEVEL: " << "brio::reader::~reader: "
              << "Entering..." << endl;
@@ -124,8 +124,8 @@ namespace brio {
       {
         close ();
       }
-    this->base_io::_reset ();
-    if (base_io::g_devel)
+    this->detail::base_io::_reset ();
+    if (detail::base_io::g_devel)
       {
         cerr << "DEVEL: " << "brio::reader::~reader: "
              << "Exiting." << endl;
@@ -144,10 +144,10 @@ namespace brio {
                           const std::string & indent_,
                           bool inherit_) const
   {
-    using namespace datatools::utils;
+    using namespace datatools;
     std::string indent;
     if (! indent_.empty ()) indent = indent_;
-    base_io::tree_dump (out_, title_, indent_, true);
+    detail::base_io::tree_dump (out_, title_, indent_, true);
 
     out_ <<  indent << i_tree_dumpable::tag
          << "Allow automatic store: " << _allow_automatic_store_ << endl;
@@ -259,7 +259,7 @@ namespace brio {
              << "Entering..." << endl;
       }
     _filename = filename_;
-    datatools::utils::fetch_path_with_env (_filename);
+    datatools::fetch_path_with_env (_filename);
     if (! boost::filesystem::exists (_filename))
       {
         ostringstream message;

@@ -10,7 +10,7 @@
 
 #include <brio/writer.h>
 
-#include <datatools/utils/utils.h>
+#include <datatools/utils.h>
 
 namespace brio {
 
@@ -112,15 +112,15 @@ namespace brio {
   }
  
   // ctor:
-  writer::writer () : base_io (RW_WRITE)
+  writer::writer () : detail::base_io (RW_WRITE)
   {
-    if (base_io::g_devel)
+    if (detail::base_io::g_devel)
       {
         cerr << "DEVEL: " << "brio::writer::writer (1): "
              << "Entering..." << endl;
       }
     writer::_set_default ();
-    if (base_io::g_devel)
+    if (detail::base_io::g_devel)
       {
         cerr << "DEVEL: " << "brio::writer::writer (1): "
              << "Exiting." << endl;
@@ -132,9 +132,9 @@ namespace brio {
   writer::writer (const string & filename_, 
                   bool verbose_, 
                   bool debug_) 
-    : base_io (RW_WRITE)
+    : detail::base_io (RW_WRITE)
   {
-    if (base_io::g_devel)
+    if (detail::base_io::g_devel)
       {
         cerr << "DEVEL: " << "brio::writer::writer (2): "
              << "Entering..." << endl;
@@ -145,14 +145,14 @@ namespace brio {
     string ext = boost::filesystem::extension (filename_);
     if (ext == store_info::TRIO_FILE_EXTENSION)
       {
-        set_format (base_io::TEXT_LABEL);
+        set_format (detail::base_io::TEXT_LABEL);
       }
     else
       {
-        set_format (base_io::PBA_LABEL);
+        set_format (detail::base_io::PBA_LABEL);
       }
     open (filename_);
-    if (base_io::g_devel)
+    if (detail::base_io::g_devel)
       {
         cerr << "DEVEL: " << "brio::writer::writer (2): "
              << "Exiting." << endl;
@@ -165,9 +165,9 @@ namespace brio {
                   const string & format_str_, 
                   bool verbose_, 
                   bool debug_) 
-    : base_io (RW_WRITE)
+    : detail::base_io (RW_WRITE)
   {
-    if (base_io::g_devel)
+    if (detail::base_io::g_devel)
       {
         cerr << "DEVEL: " << "brio::writer::writer (3): "
              << "Entering..." << endl;
@@ -177,7 +177,7 @@ namespace brio {
     set_verbose (verbose_);
     set_format (format_str_);
     open (filename_);
-    if (base_io::g_devel)
+    if (detail::base_io::g_devel)
       {
         cerr << "DEVEL: " << "brio::writer::writer (3): "
              << "Exiting." << endl;
@@ -188,7 +188,7 @@ namespace brio {
   // dtor:
   writer::~writer ()
   {
-    if (base_io::g_devel)
+    if (detail::base_io::g_devel)
       {
         cerr << "DEVEL: " << "brio::writer::~writer: "
              << "Entering..." << endl;
@@ -197,8 +197,8 @@ namespace brio {
       {
         close ();
       }
-    this->base_io::_reset ();
-    if (base_io::g_devel)
+    this->detail::base_io::_reset ();
+    if (detail::base_io::g_devel)
       {
         cerr << "DEVEL: " << "brio::writer::~writer: "
              << "Exiting." << endl;
@@ -217,10 +217,10 @@ namespace brio {
                           const std::string & indent_, 
                           bool inherit_) const
   {
-    using namespace datatools::utils;
+    using namespace datatools;
     std::string indent;
     if (! indent_.empty ()) indent = indent_;
-    base_io::tree_dump (out_, title_, indent_, true);
+    detail::base_io::tree_dump (out_, title_, indent_, true);
     
     out_ <<  indent << i_tree_dumpable::tag 
          << "Allow automatic store: " << _allow_automatic_store_ << endl;
@@ -372,7 +372,7 @@ namespace brio {
              << "Entering..." << endl;
       }
     _filename = filename_;
-    datatools::utils::fetch_path_with_env (_filename);
+    datatools::fetch_path_with_env (_filename);
     
     if (is_existing_file_protected ())
       {

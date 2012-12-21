@@ -1,11 +1,11 @@
 #include <cstdlib>
 #include <iostream>
 
-#include <datatools/utils/properties.h>
+#include <datatools/properties.h>
 #include <brio_test_data.cc>
 
 // Serialization code :
-#include <datatools/utils/properties.ipp>
+#include <datatools/properties.ipp>
 #include <brio_test_data.ipp>
 
 #include <brio/writer.h>
@@ -23,7 +23,7 @@ int main (void)
   my_writer.lock (); // no more stores can be added (even the *automatic* store)
 
   my_writer.select_store ("header"); // make the store named 'header' active
-  datatools::utils::properties the_setup;
+  datatools::properties the_setup;
   the_setup.store_flag ("test");
   the_setup.store ("author", "King Arthur");
   the_setup.store ("year", 543);

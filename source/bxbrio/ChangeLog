@@ -1,4 +1,4 @@
-2012-01-27  François Mauger <mauger@lpccaen.in2p3.fr>
+2011-01-27  François Mauger <mauger@lpccaen.in2p3.fr>
         * creation of the brio package
 2011-02-28  Francois Mauger <mauger@lpccaen.in2p3.fr>
 	* default brio file extension is ".brio"
@@ -20,3 +20,8 @@
 	* version: prepare tag 3.1.0 in trunk
 	* depends: datatools >=4.1
 	* remove all "using namespace std;" from header files
+2012-12-20 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* move trunk 3.X to legacy branch
+2012-12-20 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* version: prepare tag 4.X in trunk
+	* depends: datatools >=5.0

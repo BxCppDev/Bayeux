@@ -14,8 +14,8 @@
  * 
  */
 
-#ifndef __brio__brio_record_h
-#define __brio__brio_record_h 1
+#ifndef BRIO_DETAIL_BRIO_RECORD_H_
+#define BRIO_DETAIL_BRIO_RECORD_H_ 1
 
 #include <vector>
 
@@ -37,21 +37,21 @@ public:
   TString    fSerialTag;  /// The serialization tag of the data class
   UInt_t     fVersionTag; /// The serialization version number of the data class
   TArrayCMod fDataBuffer; /// The buffer of bytes that contains the Boost archive associated to the serialized data
-  // Char_t *fArray and fN (from TArray)
 
 public: 
 
+  //! Reset the internal data
   void reset ();
 
-  // ctor:
+  //! Constructor
   brio_record ();
 
-  // dtor:
+  //! Destructor
   virtual ~brio_record ();
   
   ClassDef(brio_record,1) //Basic BRIO record
 };
 
-#endif // __brio__brio_record_h
+#endif // BRIO_DETAIL_BRIO_RECORD_H_
 
 // end of brio_record.h
