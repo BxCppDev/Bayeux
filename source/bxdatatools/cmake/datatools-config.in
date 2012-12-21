@@ -244,13 +244,11 @@ if [ "x${option}" = "x--ldflags" ]; then
 	    echo -n "${reflection_ldflags_abs} "
 	    echo -n "${bio_ldflags_abs} "
 	    echo -n "${datatools_lib_dir}/libdatatools@CMAKE_SHARED_LIBRARY_SUFFIX@ "
-	    echo -n "${datatools_lib_dir}/libdatatools_sys@CMAKE_SHARED_LIBRARY_SUFFIX@ "
 	else
 	    echo -n "-L${datatools_lib_dir} "
 	    echo -n "${reflection_ldflags} "
 	    echo -n "${bio_ldflags} "
 	    echo -n "-ldatatools "
-	    echo -n "-ldatatools_sys "
 	fi
 	if [ ${with_reflection} -eq 1 ]; then
  	    echo -n "`camp-config --ldflags` "
