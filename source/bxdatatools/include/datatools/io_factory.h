@@ -52,7 +52,6 @@
 #include <datatools/i_serializable.h>
 #include <datatools/i_tree_dump.h>
 
-
 namespace datatools {
 
 /*! \brief A generic base reader/writer class based on Boost/Serialization
@@ -117,11 +116,12 @@ class io_factory : public datatools::i_tree_dumpable {
   static const std::string BZIP2_EXT;
 
  public:
+
   static int guess_mode_from_filename(const std::string& a_filename, 
                                       int& mode);
 
-
  public: 
+
   // ctor
   io_factory(int mode = io_factory::MODE_DEFAULT);
 
@@ -165,8 +165,8 @@ class io_factory : public datatools::i_tree_dumpable {
 
   void stop_archive();
 
-
  private:
+
   int init_read_archive();
 
   int init_read(const std::string& a_stream_nam);
@@ -190,6 +190,7 @@ class io_factory : public datatools::i_tree_dumpable {
   int reset();
 
  public:
+
   template <typename Data>
   void store(const Data& data) {
     if (!this->is_write()) {
@@ -204,7 +205,6 @@ class io_factory : public datatools::i_tree_dumpable {
       this->store_binary<Data>(*obar_ptr_, data);
     }
   }
-
 
   template <typename Data>
   void load(Data& data) {
@@ -301,14 +301,13 @@ class io_factory : public datatools::i_tree_dumpable {
     }
   }
 
-
  public:
+
   template <typename Data>
   friend io_factory& operator<<(io_factory& iof, const Data& data) {
     iof.store(data);
     return iof;
   }
-
 
   template <typename Data>
   friend io_factory& operator>>(io_factory& iof, Data& data) {
@@ -316,14 +315,12 @@ class io_factory : public datatools::i_tree_dumpable {
     return iof;
   }
 
-
   virtual void tree_dump(std::ostream& out = std::cerr,
                          const std::string& title = "",
                          const std::string& indent = "",
                          bool inherit = false) const;
 
   void dump(std::ostream& out) const;
-
 
  private:
   template <typename Data>
@@ -333,14 +330,12 @@ class io_factory : public datatools::i_tree_dumpable {
     archive << b;
   }
 
-
   template <typename Data>
   void store_xml(boost::archive::xml_oarchive& archive,
                  const Data& data) {
     const Data& b = data;
     archive << boost::serialization::make_nvp("record", b);
   }
-
 
   template <typename Data>
   void store_binary(eos::portable_oarchive& archive,
@@ -666,7 +661,6 @@ class data_reader {
   std::string next_tag_;
 };
 
-
 //----------------------------------------------------------------------
 // data_writer class
 //
@@ -703,7 +697,6 @@ class data_writer {
 
   // dtor
   virtual ~data_writer();
-
 
   bool is_initialized() const;
 
