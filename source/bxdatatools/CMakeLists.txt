@@ -68,6 +68,7 @@ find_package(CLHEP 2.1.0.1 REQUIRED)
 
 # - CAMP
 if (DATATOOLS_WITH_REFLECTION)
+  set (DATATOOLS_WITH_REFLECTION 1)
   find_package(CAMP 0.7.1 REQUIRED)
 endif ()
 

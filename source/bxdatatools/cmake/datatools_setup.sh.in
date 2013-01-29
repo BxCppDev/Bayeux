@@ -51,13 +51,15 @@ function do_datatools_setup ()
 	return 2
     fi 
 
-    which camp-config >/dev/null 2>&1
-    if [ $? -ne 0 ]; then
-	echo "ERROR: do_datatools_setup: Cannot find CAMP setup ! Abort !" 1>&2
-	return 1
-    else
-	if [ ${verbose} -ne 0 ]; then
-	    echo "VERBOSE: do_datatools_setup: Found CAMP." 1>&2
+    if [ "x@DATATOOLS_WITH_REFLECTION@" = "x1" ]; then
+	which camp-config >/dev/null 2>&1
+	if [ $? -ne 0 ]; then
+	    echo "ERROR: do_datatools_setup: Cannot find CAMP setup ! Abort !" 1>&2
+	    return 1
+	else
+	    if [ ${verbose} -ne 0 ]; then
+		echo "VERBOSE: do_datatools_setup: Found CAMP." 1>&2
+	    fi
 	fi
     fi
  
