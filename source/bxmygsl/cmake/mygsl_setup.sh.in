@@ -72,7 +72,17 @@ function do_mygsl_setup ()
 	    echo "VERBOSE: do_mygsl_setup: Found GSL." 1>&2
 	fi
     fi
-    
+
+    which datatools-config >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+	echo "ERROR: do_mygsl_setup: Cannot find datatools setup ! Abort !" 1>&2
+	return 1
+    else
+	if [ ${verbose} -ne 0 ]; then
+	    echo "VERBOSE: do_mygsl_setup: Found datatools." 1>&2
+	fi
+    fi
+     
     export MYGSL_ROOT="@CMAKE_INSTALL_PREFIX@"
     export MYGSL_ROOT_DIR="@CMAKE_INSTALL_PREFIX@"
     export MYGSL_NAME="@PROJECT_NAME@"
