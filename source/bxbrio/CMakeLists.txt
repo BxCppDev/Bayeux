@@ -1,6 +1,6 @@
 # - Top level CMakeLists.txt for brio project
 #-----------------------------------------------------------------------
-# Copyright (c) 2011-2012, François Mauger <mauger@lpccaen.in2p3.fr>
+# Copyright (c) 2011-2013, François Mauger <mauger@lpccaen.in2p3.fr>
 #                          Ben Morgan <Ben.Morgan@warwick.ac.uk>
 
 #-----------------------------------------------------------------------

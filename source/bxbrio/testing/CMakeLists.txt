@@ -1,6 +1,6 @@
 ###############################################################################
 ##
-## Copyright (C) 2011-2012 François Mauger, Université de Caen Basse-Normandie
+## Copyright (C) 2011-2013 François Mauger, Université de Caen Basse-Normandie
 ## Contact: mauger@lpccaen.in2p3.fr
 ##
 ## This file is part of the brio library.
@@ -57,10 +57,10 @@ foreach(test_program ${brio_tests_programs_list})
     set_target_properties(${test_executable} PROPERTIES DEBUG_POSTFIX d)
   endif()
 
-  set(_test_libraries brio) 
-  if(datatools_WITH_BIO)
-    list(INSERT _test_libraries 0 ${datatools_BIO_LIBRARY})
-  endif() 
+  # set(_test_libraries brio) 
+  # if(datatools_WITH_BIO)
+  #   list(INSERT _test_libraries 0 ${datatools_BIO_LIBRARY})
+  # endif() 
 
   target_link_libraries(${test_executable} ${_test_libraries})
 
