@@ -71,7 +71,7 @@ function do_brio_setup ()
     
     export BRIO_ROOT="@CMAKE_INSTALL_PREFIX@"
     export BRIO_ROOT_DIR="@CMAKE_INSTALL_PREFIX@"
-    export BRIO_NAME="@brio_PACKAGE_NAME@"
+    export BRIO_NAME="@PROJECT_NAME@"
     export BRIO_VERSION="@brio_VERSION@"
     export BRIO_BIN_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@"
     export BRIO_ETC_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_ETCDIR@"
