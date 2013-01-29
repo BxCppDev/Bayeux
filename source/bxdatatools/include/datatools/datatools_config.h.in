@@ -15,7 +15,7 @@
 #define DATATOOLS_VERSION_MINOR @datatools_VERSION_MINOR@
 #define DATATOOLS_PATCH_VERSION @datatools_PATCH_VERSION@
 
-#define DATATOOLS_VERSION @datatools_VERSION_NUMERIC@
+#define DATATOOLS_VERSION @_datatools_VERSION_NUMERIC@
 
 //  DATATOOLS_LIB_VERSION must be defined to be the same as DATATOOLS_VERSION
 //  but as a *string* in the form "x.y[.z]" where x is the major version
