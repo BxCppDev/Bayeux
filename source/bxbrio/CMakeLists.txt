@@ -53,14 +53,21 @@ option(BRIO_WITH_DOC  "Build the brio documentation" ON)
 option(BRIO_WITH_TEST "Build the brio test suite"    ON) 
 option(BRIO_WITH_BASH_SETUP "Build the brio with Bash setup macro" ON) 
 
+if (BRIO_WITH_DEBUG)
+  set (BRIO_WITH_DEBUG 1)
+else()
+  set (BRIO_WITH_DEBUG 0)
+endif ()
+
 #-----------------------------------------------------------------------
 # Find external packages needed to build
 #
 
 # - datatools
 find_package(datatools 5.0.0 REQUIRED)
-message ( STATUS "datatools_INCLUDE_DIRS=${datatools_INCLUDE_DIRS}")
-message ( STATUS "datatools_LIBRARIES=${datatools_LIBRARIES}")
+#message ( STATUS "datatools_INCLUDE_DIRS=${datatools_INCLUDE_DIRS}")
+#message ( STATUS "datatools_LIBRARIES=${datatools_LIBRARIES}")
+#message ( STATUS "datatools_WITH_BIO=${datatools_WITH_BIO}")
 
 # - ROOT
 find_package(ROOT 5.26.00 REQUIRED)
@@ -84,12 +91,18 @@ endif()
 add_subdirectory(src)   
 
 if(BRIO_WITH_DOC)
+  set (BRIO_WITH_DOC 1)
   add_subdirectory(doc)
-endif()
+else()
+  set (BRIO_WITH_DOC 0)
+endif ()
 
 if(BRIO_WITH_TEST)
+  set (BRIO_WITH_TEST 1)
   enable_testing() 
   add_subdirectory(testing)
+else()
+  set (BRIO_WITH_TEST 0)
 endif()
 
 #-----------------------------------------------------------------------

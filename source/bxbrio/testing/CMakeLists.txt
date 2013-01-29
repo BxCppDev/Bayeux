@@ -57,10 +57,13 @@ foreach(test_program ${brio_tests_programs_list})
     set_target_properties(${test_executable} PROPERTIES DEBUG_POSTFIX d)
   endif()
 
-  # set(_test_libraries brio) 
-  # if(datatools_WITH_BIO)
-  #   list(INSERT _test_libraries 0 ${datatools_BIO_LIBRARY})
-  # endif() 
+  set(_test_libraries brio) 
+  #message (STATUS "testing: datatools_WITH_BIO=${datatools_WITH_BIO}")
+  #message (STATUS "testing: datatools_BIO_LIBRARY=${datatools_BIO_LIBRARY}")
+
+  if(datatools_WITH_BIO)
+    list(INSERT _test_libraries 0 ${datatools_BIO_LIBRARY})
+  endif() 
 
   target_link_libraries(${test_executable} ${_test_libraries})
 
