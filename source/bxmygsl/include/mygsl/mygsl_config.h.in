@@ -2,8 +2,8 @@
 /* mygsl_config.h header file 
  */
 
-#ifndef __mygsl_mygsl_config_h
-#define __mygsl_mygsl_config_h 1
+#ifndef MYGSL_MYGSL_CONFIG_H_
+#define MYGSL_MYGSL_CONFIG_H_ 1
 
 /*** mygsl versioning information ***/
 
@@ -21,26 +21,17 @@
 //  but as a *string* in the form "x.y[.z]" where x is the major version
 //  number, y is the minor version number, and z is the patch level if not 0.
 
-#define MYGSL_LIB_VERSION "@mygsl_VERSION_STR@"
+#define MYGSL_LIB_VERSION "@mygsl_VERSION@"
 
-/*** mygsl debug flag ***/
+/***  mygsl debug flag ***/
 #cmakedefine01 MYGSL_WITH_DEBUG
 
-/*** mygsl embedded Boost/Serialization based I/O ***/
-#if x1 == x1
-#cmakedefine01 MYGSL_WITH_BIO 
-#endif
+/***  mygsl embedded Boost/Serialization based I/O ***/
+#cmakedefine01 MYGSL_WITH_BIO
 
-/*** mygsl Boost/Python module ***/
-#if x0 == x1
-#cmakedefine01 MYGSL_WITH_PYTHON_WRAPPER
-#endif
+/***  mygsl embedded CAMP-based reflection ***/
+#cmakedefine01 MYGSL_WITH_REFLECTION
 
-/*** mygsl with resources ***/
-#if x1 == x1
-#define MYGSL_DEFAULT_RESOURCES_BASE_DIR "@CMAKE_INSTALL_FULL_DATADIR@"
-#endif
-
-#endif // __mygsl_mygsl_config_h
+#endif // MYGSL_MYGSL_CONFIG_H_
 
 // end of mygsl_config.h

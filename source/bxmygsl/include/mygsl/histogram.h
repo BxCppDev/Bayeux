@@ -13,11 +13,11 @@
 
 // Serialization interfaces :
 #include <boost/serialization/access.hpp>
-#include <datatools/serialization/i_serializable.h>
+#include <datatools/i_serializable.h>
 
-#include <datatools/utils/properties.h>
+#include <datatools/properties.h>
 #include <mygsl/histogram_utils.h>
-#include <datatools/utils/i_tree_dump.h>
+#include <datatools/i_tree_dump.h>
 
 namespace mygsl {
 
@@ -25,13 +25,13 @@ namespace mygsl {
 
   class histogram :
     DATATOOLS_SERIALIZABLE_CLASS,
-    public datatools::utils::i_tree_dumpable
+    public datatools::i_tree_dumpable
   {
   public:
 
-    const datatools::utils::properties & get_auxiliaries () const;
+    const datatools::properties & get_auxiliaries () const;
 
-    datatools::utils::properties & grab_auxiliaries ();
+    datatools::properties & grab_auxiliaries ();
 
     double get_binning_info () const;
 
@@ -239,7 +239,7 @@ namespace mygsl {
     double          _underflow_;
     double          _overflow_;
     gsl_histogram * _h_;
-    datatools::utils::properties _auxiliaries_;
+    datatools::properties _auxiliaries_;
 
     DATATOOLS_SERIALIZATION_DECLARATION();
 

@@ -1,4 +1,4 @@
-/* mygsl::serialization::bio_guard.h */
+/* bio_guard.h */
 /* 
  * Description :
  *
@@ -28,33 +28,39 @@
  *
  */ 
 
-#ifndef __mygsl__serialization__bio_guard_h
-#define __mygsl__serialization__bio_guard_h 1
+#ifndef MYGSL_BIO_GUARD_H_
+#define MYGSL_BIO_GUARD_H_
 
+// Standard Library
+
+// Third Party
+
+// Mygsl
 #include <mygsl/mygsl_config.h>
-#include <mygsl/serialization/link_guard.h>    
+#include <mygsl/detail/bio_link_guard.h>	
 
-#if MYGSL_WITH_BIO != 1                                        
-#warning This executable must be built with its own mygsl Boost/Serialization code. 
-#include <mygsl/serialization/the_serializable.h>      
+#if MYGSL_WITH_BIO != 1					
+#warning This executable is built with its own mygsl Boost/Serialization code. 
+#include <mygsl/the_serializable.h>				
 #else
 #warning This executable must ensure the mygsl Boost/Serialization library is loaded. 
 namespace mygsl {
-  namespace serialization {
-    struct bio_guard
-    {
-      bio_guard ()
-      {
-	dynamic_link_guard & dlg = mygsl::serialization::dynamic_link_guard::instance ();
-	return;
-      }
-      static bio_guard _g_trigger_link_guard_;
-    };
-    bio_guard bio_guard::_g_trigger_link_guard_;
-  } // end namespace serialization
+
+/** \brief Data structure that ensures the invocation of some explicit code
+ *         for mygsl_bio DLL liking. 
+ */
+struct bio_guard {
+  bio_guard() {
+    mygsl::detail::serialization::dynamic_link_guard& dlg 
+      = mygsl::detail::serialization::dynamic_link_guard::instance();
+  }
+      
+  static bio_guard _g_trigger_link_guard_;
+};
+
+bio_guard bio_guard::_g_trigger_link_guard_;
+
 } // end namespace mygsl
-#endif // MYGSL_WITH_BIO != 1                                          
+#endif // MYGSL_WITH_BIO != 1	
 
-#endif // __mygsl__serialization__bio_guard_h
-
-/* end of mygsl::serialization::bio_guard.h */
+#endif // MYGSL_BIO_GUARD_H_

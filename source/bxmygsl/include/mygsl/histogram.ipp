@@ -10,10 +10,9 @@
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
 
-#include <datatools/serialization/i_serializable.ipp>
-#include <datatools/serialization/utils.h>
-#include <datatools/utils/properties.ipp>
-
+#include <datatools/i_serializable.ipp>
+#include <datatools/utils.h>
+#include <datatools/properties.ipp>
 
 namespace mygsl {
   

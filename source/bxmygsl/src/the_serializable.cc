@@ -2,10 +2,10 @@
 /* the_serializable.cc  
  */ 
 
-#include <mygsl/serialization/the_serializable.h>
+#include <mygsl/the_serializable.h>
 
 // Load the link guard definition :
-#include <mygsl/serialization/link_guard.h>
+#include <mygsl/detail/bio_link_guard.h>
 
 #include <cstdlib>
 #include <iostream>
@@ -14,6 +14,7 @@
 // Load the link guard implementation :
 
 namespace mygsl {
+namespace detail {
   namespace serialization {
 
     bool dynamic_link_guard::_g_devel_ = false;
@@ -26,7 +27,7 @@ namespace mygsl {
         }
       if (dynamic_link_guard::_g_devel_)
         {
-          std::clog << "mygsl::serialization::dynamic_link_guard::CTOR: Ok." << std::endl;
+          std::clog << "mygsl::dynamic_link_guard::CTOR: Ok." << std::endl;
         }
       return;
     }
@@ -35,7 +36,7 @@ namespace mygsl {
     {
       if (dynamic_link_guard::_g_devel_)
         {
-          std::clog << "mygsl::serialization::dynamic_link_guard::DTOR: Ok." << std::endl;
+          std::clog << "mygsl::dynamic_link_guard::DTOR: Ok." << std::endl;
         }
       return;
     }
@@ -49,12 +50,13 @@ namespace mygsl {
         }
       if (dynamic_link_guard::_g_devel_)
         {
-          std::clog << "mygsl::serialization::dynamic_link_guard::instance: Ok." << std::endl;
+          std::clog << "mygsl::dynamic_link_guard::instance: Ok." << std::endl;
         }
       return *g_global_guard.get ();
     }
 
   } // end namespace serialization
+} // end namespace detail
 } // end namespace mygsl
 
 

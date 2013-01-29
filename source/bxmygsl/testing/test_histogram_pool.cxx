@@ -13,11 +13,11 @@
 #include <vector>
 
 #include <boost/filesystem.hpp>
-#include <datatools/serialization/io_factory.h>
+#include <datatools/io_factory.h>
 
 // Some pre-processor guard about Boost I/O usage and linkage :
-#include <datatools/serialization/bio_guard.h>
-#include <mygsl/serialization/bio_guard.h>
+#include <datatools/bio_guard.h>
+#include <mygsl/bio_guard.h>
 
 #include <mygsl/histogram_pool.h>
 #include <mygsl/rng.h>
@@ -153,7 +153,7 @@ void test_1 ()
       std::clog << "INFO: " 
                 << "Test serialization: writer..." 
                 << std::endl;
-      datatools::serialization::data_writer writer (filename);
+      datatools::data_writer writer (filename);
       writer.store (HP);     
     }
           
@@ -162,7 +162,7 @@ void test_1 ()
                 << "Test serialization: reader..." 
                 << std::endl;
       mygsl::histogram_pool HP2;
-      datatools::serialization::data_reader reader (filename);
+      datatools::data_reader reader (filename);
       if (reader.has_record_tag ())
         { 
           if (reader.record_tag_is (mygsl::histogram_pool::SERIAL_TAG)) 

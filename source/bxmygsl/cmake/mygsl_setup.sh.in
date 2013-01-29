@@ -1,0 +1,116 @@
+# -*- mode : shell-script; -*-
+# mygsl_setup.sh
+
+function do_mygsl_print_info ()
+{
+    local indent=""
+    if [ "x$1" != "x" ]; then
+	indent="${1}: "
+	shift 1
+    fi
+    if [ "x${MYGSL_ROOT}" != "x" ]; then
+	echo "${indent}Current mygsl setup is :" 1>&2
+	echo "${indent}MYGSL_ROOT                = '${MYGSL_ROOT}'" 1>&2
+	echo "${indent}MYGSL_NAME                = '${MYGSL_NAME}'" 1>&2
+	echo "${indent}MYGSL_VERSION             = '${MYGSL_VERSION}'" 1>&2
+	echo "${indent}MYGSL_WITH_DEBUG          = ${MYGSL_WITH_DEBUG}" 1>&2
+	echo "${indent}MYGSL_WITH_BIO            = ${MYGSL_WITH_BIO}" 1>&2
+	echo "${indent}MYGSL_WITH_REFLECTION     = ${MYGSL_WITH_REFLECTION}" 1>&2
+	echo "${indent}MYGSL_BIN_DIR             = '${MYGSL_BIN_DIR}'"
+	echo "${indent}MYGSL_ETC_DIR             = '${MYGSL_ETC_DIR}'"
+	echo "${indent}MYGSL_LIB_DIR             = '${MYGSL_LIB_DIR}'"
+	echo "${indent}MYGSL_DOC_DIR             = '${MYGSL_DOC_DIR}'"
+	echo "${indent}MYGSL_INCLUDE_DIR         = '${MYGSL_INCLUDE_DIR}'"
+	echo "${indent}MYGSL_CMAKE_CONFIG_DIR    = '${MYGSL_CMAKE_CONFIG_DIR}'" 1>&2
+	echo "${indent}MYGSL_DATA_DIR            = '${MYGSL_DATA_DIR}'" 1>&2
+    else
+	echo "${indent}mygsl is not setup." 1>&2
+    fi
+    return 0
+}
+typeset -fx do_mygsl_print_info
+alias mygsl_print_info='do_mygsl_print_info'
+
+function do_mygsl_setup ()
+{
+    local verbose=0
+    
+    while [ -n "$1" ]; do
+	if [ "$1" = "--verbose" -o "$1" = "-v" ]; then
+	  let verbose=verbose+1
+	fi
+	shift 1
+    done
+
+    if [ ${verbose} -ne 0 ]; then
+	echo "NOTICE: do_mygsl_setup: Setup mygsl..." 1>&2
+    fi
+
+    if [ "x${MYGSL_ROOT}" != "x" ]; then
+	echo "WARNING: do_mygsl_setup: mygsl is already setup !" 1>&2
+	return 2
+    fi 
+
+    if [ "x@MYGSL_WITH_REFLECTION@" = "x1" ]; then
+	which camp-config >/dev/null 2>&1
+	if [ $? -ne 0 ]; then
+	    echo "ERROR: do_mygsl_setup: Cannot find CAMP setup ! Abort !" 1>&2
+	    return 1
+	else
+	    if [ ${verbose} -ne 0 ]; then
+		echo "VERBOSE: do_mygsl_setup: Found CAMP." 1>&2
+	    fi
+	fi
+    fi
+
+    which gsl-config >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+	echo "ERROR: do_mygsl_setup: Cannot find GSL setup ! Abort !" 1>&2
+	return 1
+    else
+	if [ ${verbose} -ne 0 ]; then
+	    echo "VERBOSE: do_mygsl_setup: Found GSL." 1>&2
+	fi
+    fi
+    
+    export MYGSL_ROOT="@CMAKE_INSTALL_PREFIX@"
+    export MYGSL_ROOT_DIR="@CMAKE_INSTALL_PREFIX@"
+    export MYGSL_NAME="@PROJECT_NAME@"
+    export MYGSL_VERSION="@mygsl_VERSION@"
+    export MYGSL_BIN_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@"
+    export MYGSL_ETC_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_ETCDIR@"
+    export MYGSL_LIB_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@"
+    export MYGSL_DOC_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DOCDIR@"
+    export MYGSL_INCLUDE_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_INCLUDEDIR@"
+    export MYGSL_DATA_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
+    export MYGSL_WITH_DEBUG=@MYGSL_WITH_DEBUG@
+    export MYGSL_WITH_BIO=@MYGSL_WITH_BIO@
+    export MYGSL_WITH_REFLECTION=@MYGSL_WITH_REFLECTION@
+    export MYGSL_CMAKE_CONFIG_DIR="@CMAKE_INSTALL_PREFIX@/@_mygsl_cmake_config_install_dir@"
+
+    if [ -n "${PATH}" ]; then
+	export PATH="${MYGSL_BIN_DIR}:${PATH}"
+    else
+	export PATH="${MYGSL_BIN_DIR}"
+    fi 
+   
+    if [ -n "${@_ld_library_path_env@}" ]; then
+	export @_ld_library_path_env@="${MYGSL_LIB_DIR}:${@_ld_library_path_env@}"
+    else
+	export @_ld_library_path_env@="${MYGSL_LIB_DIR}"
+    fi 
+
+    if [ ${verbose} -gt 1 ]; then
+	do_mygsl_print_info "VERBOSE: do_mygsl_setup"
+    fi
+ 
+    if [ ${verbose} -ne 0 ]; then
+	echo "NOTICE: do_mygsl_setup: Setup mygsl done." 1>&2
+    fi
+    return 0
+}
+typeset -fx do_mygsl_setup
+
+echo "NOTICE: do_mygsl_setup: Please setup 'mygsl' with 'do_mygsl_setup'." 1>&2
+
+# end of mygsl_setup.sh

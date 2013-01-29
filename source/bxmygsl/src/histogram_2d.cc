@@ -29,12 +29,12 @@ namespace mygsl {
   HISTOGRAM2D_BASIC_NEEDS_INIT(Method,*this)    \
   /**/
 
-  const datatools::utils::properties & histogram_2d::get_auxiliaries () const
+  const datatools::properties & histogram_2d::get_auxiliaries () const
   {
     return _auxiliaries_;
   }
 
-  datatools::utils::properties & histogram_2d::grab_auxiliaries ()
+  datatools::properties & histogram_2d::grab_auxiliaries ()
   {
     return _auxiliaries_;
   }
@@ -1137,84 +1137,83 @@ namespace mygsl {
                                const std::string& indent_,
                                bool inherit_) const
   {
-    namespace du = datatools::utils;
     std::string indent;
     if (!indent_.empty()) indent = indent_;
     if (!title_.empty()) out_ << indent << title_ << std::endl;
 
     if (!is_initialized ())
       {
-        out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
+        out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
              << "<not initialized>" << std::endl;
         return;
       }
 
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "X lower bound : " << xmin () << std::endl;
 
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "X upper bound : " << xmax () << std::endl;
 
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Number of X bins : " << xbins () << std::endl;
 
     if (is_uniform_x_binning ())
       {
-        out_ << indent << du::i_tree_dumpable::tag
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Uniform X binning with length : " << _x_binning_info_ << std::endl;
       }
     else if (is_logarithmic_x_binning ())
       {
-        out_ << indent << du::i_tree_dumpable::tag
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Logarithmic X binning with factor : " << -1.0 *_x_binning_info_ << std::endl;
       }
     else
       {
-        out_ << indent << du::i_tree_dumpable::tag
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Unresolved X binning information." << std::endl;
       }
 
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Y lower bound : " << ymin () << std::endl;
 
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Y upper bound : " << ymax () << std::endl;
 
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Number of Y bins : " << ybins () << std::endl;
 
     if (is_uniform_y_binning ())
       {
-        out_ << indent << du::i_tree_dumpable::tag
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Uniform Y binning with length : " << _y_binning_info_ << std::endl;
       }
     else if (is_logarithmic_y_binning ())
       {
-        out_ << indent << du::i_tree_dumpable::tag
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Logarithmic Y binning with factor : " << -1.0 *_y_binning_info_ << std::endl;
       }
     else
       {
-        out_ << indent << du::i_tree_dumpable::tag
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Unresolved Y binning information." << std::endl;
       }
 
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Counts      : " <<  _counts_ << std::endl;
 
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "X-Underflow : " <<  _x_underflow_ << std::endl;
 
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "X-Overflow  : " <<  _x_overflow_ << std::endl;
 
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Y-Underflow : " <<  _y_underflow_ << std::endl;
 
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Y-Overflow  : " <<  _y_overflow_ << std::endl;
 
-    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
          << "Auxiliaries : ";
     if (_auxiliaries_.empty ())
       {
@@ -1224,7 +1223,7 @@ namespace mygsl {
     {
       ostringstream indent_oss;
       indent_oss << indent;
-      indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_) ;
+      indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_) ;
       _auxiliaries_.tree_dump (out_, "", indent_oss.str ());
     }
 

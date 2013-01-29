@@ -11,11 +11,11 @@
 
 // Serialization interfaces :
 #include <boost/serialization/access.hpp>
-#include <datatools/serialization/i_serializable.h>
+#include <datatools/i_serializable.h>
 
-#include <datatools/utils/properties.h>
-#include <datatools/utils/multi_properties.h>
-#include <datatools/utils/handle.h>
+#include <datatools/properties.h>
+#include <datatools/multi_properties.h>
+#include <datatools/handle.h>
 
 #include <mygsl/histogram.h>
 #include <mygsl/histogram_2d.h>
@@ -26,7 +26,7 @@ namespace mygsl {
 
   class histogram_pool :
     DATATOOLS_SERIALIZABLE_CLASS,
-    public datatools::utils::i_tree_dumpable
+    public datatools::i_tree_dumpable
   {
   public:
 
@@ -37,10 +37,10 @@ namespace mygsl {
         HISTOGRAM_DIM_2D = 2
       };
 
-    typedef datatools::utils::handle<histogram_1d> hh1d_type;
-    typedef datatools::utils::handle<histogram_2d> hh2d_type;
+    typedef datatools::handle<histogram_1d> hh1d_type;
+    typedef datatools::handle<histogram_2d> hh2d_type;
 
-    struct histogram_entry_type : public datatools::utils::i_tree_dumpable
+    struct histogram_entry_type : public datatools::i_tree_dumpable
     {
       std::string name;
       std::string title;
@@ -70,9 +70,9 @@ namespace mygsl {
 
     void set_description (const std::string & desc_);
 
-    const datatools::utils::properties & get_auxiliaries () const;
+    const datatools::properties & get_auxiliaries () const;
 
-    datatools::utils::properties & grab_auxiliaries ();
+    datatools::properties & grab_auxiliaries ();
 
     histogram_pool ();
 
@@ -81,20 +81,20 @@ namespace mygsl {
     virtual ~histogram_pool ();
 
     static void init_histo_1d (histogram_1d & h1_,
-                               const datatools::utils::properties & h1_setups_,
+                               const datatools::properties & h1_setups_,
                                const histogram_pool * histo_pool_ = 0);
 
     static void init_histo_2d (histogram_2d & h2_,
-                               const datatools::utils::properties & h2_setups_,
+                               const datatools::properties & h2_setups_,
                                const histogram_pool * histo_pool_ = 0);
 
     void load (const std::string & histo_setups_filename_);
 
-    void load (const datatools::utils::multi_properties & histo_setups_);
+    void load (const datatools::multi_properties & histo_setups_);
 
     bool is_initialized () const;
 
-    void initialize (const datatools::utils::properties & setup_);
+    void initialize (const datatools::properties & setup_);
 
     void reset ();
 
@@ -151,10 +151,9 @@ namespace mygsl {
 
   private:
 
-    std::string                  _description_;
-    dict_type                    _dict_;
-    datatools::utils::properties _auxiliaries_;
-
+    std::string           _description_;
+    dict_type             _dict_;
+    datatools::properties _auxiliaries_;
 
     DATATOOLS_SERIALIZATION_DECLARATION();
 

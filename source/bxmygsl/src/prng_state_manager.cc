@@ -25,8 +25,8 @@
 
 #include <boost/filesystem.hpp>
 
-#include <datatools/utils/ioutils.h>
-#include <datatools/utils/utils.h>
+#include <datatools/ioutils.h>
+#include <datatools/utils.h>
 
 #include <mygsl/prng_state_manager.h>
 
@@ -233,7 +233,7 @@ namespace mygsl {
         message << "mygsl::prng_state_manager::dtor: "
                 << "Automated storage of the PRNG state records in file '"
                 << _filename_ << "' !";
-        clog << datatools::utils::io::notice << message.str () << endl;
+        clog << datatools::io::notice << message.str () << endl;
         store ();
       }
     return;
@@ -259,7 +259,7 @@ namespace mygsl {
           }
         fn = _filename_;
       }
-    datatools::utils::fetch_path_with_env (fn);
+    datatools::fetch_path_with_env (fn);
     if (! boost::filesystem::exists (fn))
       {
         ostringstream message;
@@ -280,7 +280,7 @@ namespace mygsl {
     ifs >> counter;
     if (devel)
       {
-        clog << datatools::utils::io::devel
+        clog << datatools::io::devel
              << "mygsl::prng_state_manager::load: "
              << "counter= " << counter << endl;
       }
@@ -296,7 +296,7 @@ namespace mygsl {
     ifs >> dict_sz;
     if (devel)
       {
-        clog << datatools::utils::io::devel
+        clog << datatools::io::devel
              << "mygsl::prng_state_manager::load: "
              << "dict_sz= " << dict_sz << endl;
       }
@@ -314,7 +314,7 @@ namespace mygsl {
         getline (ifs, line);
         if (devel)
           {
-            clog << datatools::utils::io::devel
+            clog << datatools::io::devel
                  << "mygsl::prng_state_manager::load: "
                  << "line= '" << line << "'" << endl;
           }
@@ -330,7 +330,7 @@ namespace mygsl {
         iss >> label;
         if (devel)
           {
-            clog << datatools::utils::io::devel
+            clog << datatools::io::devel
                  << "mygsl::prng_state_manager::load: "
                  << "label= " << label << endl;
           }
@@ -345,7 +345,7 @@ namespace mygsl {
         iss >> state_sz;
         if (devel)
           {
-            clog << datatools::utils::io::devel
+            clog << datatools::io::devel
                  << "mygsl::prng_state_manager::load: "
                  << "state_sz= " << state_sz << endl;
           }
@@ -390,7 +390,7 @@ namespace mygsl {
             ostringstream message;
             message << "mygsl::prng_state_manager::store: "
                     << "No file was specified to store the PRNG state records !";
-            clog << datatools::utils::io::warning
+            clog << datatools::io::warning
                  << message.str () << " "
                  << "PRNG state saved in " << fn << endl;
             // throw logic_error (message.str ());
@@ -400,7 +400,7 @@ namespace mygsl {
             fn = _filename_;
           }
       }
-    datatools::utils::fetch_path_with_env (fn);
+    datatools::fetch_path_with_env (fn);
     if (boost::filesystem::exists (fn))
       {
         string backup_fn = fn + ".~backup~";

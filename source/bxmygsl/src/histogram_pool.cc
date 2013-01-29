@@ -7,8 +7,8 @@
 #include <string>
 #include <fstream>
 
-#include <datatools/utils/utils.h>
-#include <datatools/utils/units.h>
+#include <datatools/utils.h>
+#include <datatools/units.h>
 
 namespace mygsl {
 
@@ -34,20 +34,19 @@ namespace mygsl {
                                                         const std::string& indent_,
                                                         bool inherit_) const
   {
-    namespace du = datatools::utils;
     std::string indent;
     if (!indent_.empty()) indent = indent_;
     if (!title_.empty()) out_ << indent << title_ << std::endl;
 
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Name  : '" << name << "'" << std::endl;
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Title  : '" << title << "'" << std::endl;
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Dimension  : " << dimension << std::endl;
     if (dimension == HISTOGRAM_DIM_1D)
       {
-        out_ << indent << du::i_tree_dumpable::tag
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Histogram 1D : " << &(hh1d.get ());
         if (hh1d.get ().is_initialized ())
           {
@@ -62,7 +61,7 @@ namespace mygsl {
       }
     if (dimension == HISTOGRAM_DIM_2D)
       {
-        out_ << indent << du::i_tree_dumpable::tag
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Histogram 2D : " << &(hh2d.get ());
         if (hh2d.get ().is_initialized ())
           {
@@ -76,10 +75,10 @@ namespace mygsl {
           }
       }
 
-    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
          << "Group  : '" << group << "'" << std::endl;
 
-    // out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
+    // out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
     //       << "Auxiliaries : ";
     // if (auxiliaries.empty ())
     //   {
@@ -89,7 +88,7 @@ namespace mygsl {
     // {
     //   ostringstream indent_oss;
     //   indent_oss << indent;
-    //   indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_) ;
+    //   indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_) ;
     //   auxiliaries.tree_dump (out_, "", indent_oss.str ());
     // }
 
@@ -114,12 +113,12 @@ namespace mygsl {
     return;
   }
 
-  const datatools::utils::properties & histogram_pool::get_auxiliaries () const
+  const datatools::properties & histogram_pool::get_auxiliaries () const
   {
     return _auxiliaries_;
   }
 
-  datatools::utils::properties & histogram_pool::grab_auxiliaries ()
+  datatools::properties & histogram_pool::grab_auxiliaries ()
   {
     return _auxiliaries_;
   }
@@ -142,26 +141,25 @@ namespace mygsl {
 
   void histogram_pool::load (const std::string & histo_setups_filename_)
   {
-    datatools::utils::multi_properties histo_setups;
+    datatools::multi_properties histo_setups;
     std::string hsf = histo_setups_filename_;
-    datatools::utils::fetch_path_with_env (hsf);
+    datatools::fetch_path_with_env (hsf);
     histo_setups.read (hsf);
     load (histo_setups);
     return;
   }
 
-  void histogram_pool::load (const datatools::utils::multi_properties & histo_setups_)
+  void histogram_pool::load (const datatools::multi_properties & histo_setups_)
   {
-    namespace du = datatools::utils;
-    const du::multi_properties::entries_ordered_col_t& hentries = histo_setups_.ordered_entries();
-    for (du::multi_properties::entries_ordered_col_t::const_iterator iter = hentries.begin ();
+    const datatools::multi_properties::entries_ordered_col_type& hentries = histo_setups_.ordered_entries();
+    for (datatools::multi_properties::entries_ordered_col_type::const_iterator iter = hentries.begin ();
          iter != hentries.end ();
          iter++)
       {
-        const du::multi_properties::entry & hentry = *(*iter);
+        const datatools::multi_properties::entry & hentry = *(*iter);
         std::string histo_name = hentry.get_key();
         std::string histo_type = hentry.get_meta();
-        const du::properties& histo_params = hentry.get_properties();
+        const datatools::properties& histo_params = hentry.get_properties();
         std::string histo_title;
         std::string histo_group;
         if (histo_params.has_key ("group"))
@@ -206,7 +204,7 @@ namespace mygsl {
 
   // static
   void histogram_pool::init_histo_1d (histogram_1d & h1_,
-                                      const datatools::utils::properties& h1_setup_,
+                                      const datatools::properties& h1_setup_,
                                       const histogram_pool* histo_pool_ )
   {
     if (h1_.is_initialized ())
@@ -242,7 +240,7 @@ namespace mygsl {
     if (h1_setup_.has_key ("unit"))
       {
         xunit_str = h1_setup_.fetch_string ("unit");
-        if (! datatools::utils::units::find_unit(xunit_str, xunit, xunit_type))
+        if (! datatools::units::find_unit(xunit_str, xunit, xunit_type))
           {
             std::ostringstream message;
             message << "mygsl::histogram_pool::init_histo_1d: "
@@ -257,7 +255,7 @@ namespace mygsl {
         if (h1_setup_.has_key ("unit.type"))
           {
             std::string xunit_type2 = h1_setup_.fetch_string ("unit.type");
-            if (! datatools::utils::units::is_unit_label_valid (xunit_type2))
+            if (! datatools::units::is_unit_label_valid (xunit_type2))
               {
                 std::ostringstream message;
                 message << "mygsl::histogram_pool::init_histo_1d: "
@@ -280,7 +278,7 @@ namespace mygsl {
             std::string display_xunit_str = h1_setup_.fetch_string ("display.xaxis.unit");
             std::string display_xunit_type;
             double display_xunit = 1.0;
-            if (datatools::utils::units::find_unit(display_xunit_str, display_xunit, display_xunit_type))
+            if (datatools::units::find_unit(display_xunit_str, display_xunit, display_xunit_type))
               {
                  if (xunit_type.empty ())
                   {
@@ -318,8 +316,8 @@ namespace mygsl {
         double xmin, xmax;
         int nxbins = -1;
         int xbinmode = BIN_MODE_INVALID;
-        datatools::utils::invalidate (xmin);
-        datatools::utils::invalidate (xmax);
+        datatools::invalidate (xmin);
+        datatools::invalidate (xmax);
 
         if (h1_setup_.has_flag ("linear"))
           {
@@ -346,7 +344,7 @@ namespace mygsl {
             xmax = h1_setup_.fetch_real ("max");
           }
 
-        if (! datatools::utils::is_valid (xmin))
+        if (! datatools::is_valid (xmin))
           {
             if (xmax > 0.0)
               {
@@ -361,7 +359,7 @@ namespace mygsl {
               }
           }
 
-        if (! datatools::utils::is_valid (xmax))
+        if (! datatools::is_valid (xmax))
           {
             if (xmin < 0.0)
               {
@@ -411,7 +409,7 @@ namespace mygsl {
             bounds_file = h1_setup_.fetch_string ("bounds.file");
 
             std::string bounds_file2 = bounds_file;
-            datatools::utils::fetch_path_with_env (bounds_file2);
+            datatools::fetch_path_with_env (bounds_file2);
             std::ifstream bounds_ifs (bounds_file2.c_str ());
             if (! bounds_ifs)
               {
@@ -551,7 +549,7 @@ namespace mygsl {
 
   // static
   void histogram_pool::init_histo_2d (histogram_2d & h2_,
-                                      const datatools::utils::properties& h2_setup_,
+                                      const datatools::properties& h2_setup_,
                                       const histogram_pool* histo_pool_ )
   {
     if (h2_.is_initialized ())
@@ -591,7 +589,7 @@ namespace mygsl {
     if (h2_setup_.has_key ("x.unit"))
       {
         xunit_str = h2_setup_.fetch_string ("x.unit");
-        if (! datatools::utils::units::find_unit(xunit_str, xunit, xunit_type))
+        if (! datatools::units::find_unit(xunit_str, xunit, xunit_type))
           {
             std::ostringstream message;
             message << "mygsl::histogram_pool::init_histo_2d: "
@@ -603,7 +601,7 @@ namespace mygsl {
     if (h2_setup_.has_key ("y.unit"))
       {
         yunit_str = h2_setup_.fetch_string ("y.unit");
-        if (! datatools::utils::units::find_unit(yunit_str, yunit, yunit_type))
+        if (! datatools::units::find_unit(yunit_str, yunit, yunit_type))
           {
             std::ostringstream message;
             message << "mygsl::histogram_pool::init_histo_2d: "
@@ -618,7 +616,7 @@ namespace mygsl {
         if (h2_setup_.has_key ("x.unit.type"))
           {
             std::string xunit_type2 = h2_setup_.fetch_string ("x.unit.type");
-            if (! datatools::utils::units::is_unit_label_valid (xunit_type2))
+            if (! datatools::units::is_unit_label_valid (xunit_type2))
               {
                 std::ostringstream message;
                 message << "mygsl::histogram_pool::init_histo_2d: "
@@ -639,7 +637,7 @@ namespace mygsl {
         if (h2_setup_.has_key ("y.unit.type"))
           {
             std::string yunit_type2 = h2_setup_.fetch_string ("y.unit.type");
-            if (! datatools::utils::units::is_unit_label_valid (yunit_type2))
+            if (! datatools::units::is_unit_label_valid (yunit_type2))
               {
                 std::ostringstream message;
                 message << "mygsl::histogram_pool::init_histo_2d: "
@@ -662,7 +660,7 @@ namespace mygsl {
             std::string display_xunit_str = h2_setup_.fetch_string ("display.xaxis.unit");
             std::string display_xunit_type;
             double display_xunit = 1.0;
-            if (datatools::utils::units::find_unit(display_xunit_str, display_xunit, display_xunit_type))
+            if (datatools::units::find_unit(display_xunit_str, display_xunit, display_xunit_type))
               {
                  if (xunit_type.empty ())
                   {
@@ -695,7 +693,7 @@ namespace mygsl {
             std::string display_yunit_str = h2_setup_.fetch_string ("display.yaxis.unit");
             std::string display_yunit_type;
             double display_yunit = 1.0;
-            if (datatools::utils::units::find_unit(display_yunit_str, display_yunit, display_yunit_type))
+            if (datatools::units::find_unit(display_yunit_str, display_yunit, display_yunit_type))
               {
                  if (yunit_type.empty ())
                   {
@@ -738,13 +736,13 @@ namespace mygsl {
         double xmin, xmax;
         int nxbins = -1;
         int xbinmode = BIN_MODE_INVALID;
-        datatools::utils::invalidate (xmin);
-        datatools::utils::invalidate (xmax);
+        datatools::invalidate (xmin);
+        datatools::invalidate (xmax);
         double ymin, ymax;
         int nybins = -1;
         int ybinmode = BIN_MODE_INVALID;
-        datatools::utils::invalidate (ymin);
-        datatools::utils::invalidate (ymax);
+        datatools::invalidate (ymin);
+        datatools::invalidate (ymax);
 
         if (h2_setup_.has_flag ("x.linear"))
           {
@@ -783,7 +781,7 @@ namespace mygsl {
             xmax = h2_setup_.fetch_real ("x.max");
           }
 
-        if (! datatools::utils::is_valid (xmin))
+        if (! datatools::is_valid (xmin))
           {
             if (xmax > 0.0)
               {
@@ -798,7 +796,7 @@ namespace mygsl {
               }
           }
 
-        if (! datatools::utils::is_valid (xmax))
+        if (! datatools::is_valid (xmax))
           {
             if (xmin < 0.0)
               {
@@ -823,7 +821,7 @@ namespace mygsl {
             ymax = h2_setup_.fetch_real ("y.max");
           }
 
-        if (! datatools::utils::is_valid (ymin))
+        if (! datatools::is_valid (ymin))
           {
             if (ymax > 0.0)
               {
@@ -838,7 +836,7 @@ namespace mygsl {
               }
           }
 
-        if (! datatools::utils::is_valid (ymax))
+        if (! datatools::is_valid (ymax))
           {
             if (ymin < 0.0)
               {
@@ -917,7 +915,7 @@ namespace mygsl {
             xbounds_file = h2_setup_.fetch_string ("x.bounds.file");
 
             std::string xbounds_file2 = xbounds_file;
-            datatools::utils::fetch_path_with_env (xbounds_file2);
+            datatools::fetch_path_with_env (xbounds_file2);
             std::ifstream xbounds_ifs (xbounds_file2.c_str ());
             while (xbounds_ifs)
               {
@@ -944,7 +942,7 @@ namespace mygsl {
             ybounds_file = h2_setup_.fetch_string ("y.bounds.file");
 
             std::string ybounds_file2 = ybounds_file;
-            datatools::utils::fetch_path_with_env (ybounds_file2);
+            datatools::fetch_path_with_env (ybounds_file2);
             std::ifstream ybounds_ifs (ybounds_file2.c_str ());
             while (ybounds_ifs)
               {
@@ -1071,7 +1069,7 @@ namespace mygsl {
     return;
   }
 
-  void histogram_pool::initialize (const datatools::utils::properties & setup_)
+  void histogram_pool::initialize (const datatools::properties & setup_)
   {
     if (is_initialized ())
       {
@@ -1468,16 +1466,15 @@ namespace mygsl {
                                  const std::string& indent_,
                                  bool inherit_) const
   {
-    namespace du = datatools::utils;
     std::string indent;
     if (!indent_.empty()) indent = indent_;
     if (!title_.empty()) out_ << indent << title_ << std::endl;
 
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Description : '" <<  this->get_description() << "'" << std::endl;
 
 
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Histograms  : ";
     if (_dict_.empty ())
       {
@@ -1490,24 +1487,24 @@ namespace mygsl {
       {
         const std::string& key = i->first;
         const histogram_entry_type& he = i->second;
-        out_ << indent << du::i_tree_dumpable::skip_tag;
+        out_ << indent << datatools::i_tree_dumpable::skip_tag;
         std::ostringstream indent_oss;
-        indent_oss << indent << du::i_tree_dumpable::skip_tag;
+        indent_oss << indent << datatools::i_tree_dumpable::skip_tag;
         dict_type::const_iterator j = i;
         j++;
         if (j == _dict_.end()) {
-          out_ << du::i_tree_dumpable::inherit_tag(inherit_);
-          indent_oss << du::i_tree_dumpable::inherit_skip_tag(inherit_);
+          out_ << datatools::i_tree_dumpable::inherit_tag(inherit_);
+          indent_oss << datatools::i_tree_dumpable::inherit_skip_tag(inherit_);
         } else {
-          out_ << du::i_tree_dumpable::tag;
-          indent_oss << du::i_tree_dumpable::skip_tag;
+          out_ << datatools::i_tree_dumpable::tag;
+          indent_oss << datatools::i_tree_dumpable::skip_tag;
         }
         out_ << "Name : " << '"' << key << '"' << std::endl;
         he.tree_dump(out_, "", indent_oss.str());
       }
 
 
-    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
          << "Auxiliaries : ";
     if (_auxiliaries_.empty ())
       {
@@ -1517,7 +1514,7 @@ namespace mygsl {
     {
       ostringstream indent_oss;
       indent_oss << indent;
-      indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_) ;
+      indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_) ;
       _auxiliaries_.tree_dump (out_, "", indent_oss.str ());
     }
 

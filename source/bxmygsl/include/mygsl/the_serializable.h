@@ -4,9 +4,9 @@
 #ifndef __mygsl__the_serializable_h__
 #define __mygsl__the_serializable_h__ 1
 
-#include <datatools/serialization/archives_instantiation.h>
+#include <datatools/archives_instantiation.h>
 #include <boost/serialization/export.hpp>
-#include <mygsl/serialization/the_serializable.ipp>
+#include <mygsl/the_serializable.ipp>
 
 
 /********************

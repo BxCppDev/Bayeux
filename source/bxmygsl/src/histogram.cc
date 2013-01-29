@@ -33,12 +33,12 @@ namespace mygsl {
   HISTOGRAM_BASIC_NEEDS_INIT(Method,*this) \
   /**/
 
-  const datatools::utils::properties & histogram::get_auxiliaries () const
+  const datatools::properties & histogram::get_auxiliaries () const
   {
     return _auxiliaries_;
   }
 
-  datatools::utils::properties & histogram::grab_auxiliaries ()
+  datatools::properties & histogram::grab_auxiliaries ()
   {
     return _auxiliaries_;
   }
@@ -108,7 +108,7 @@ namespace mygsl {
     }
     reset_counters ();
     // Steal the internal structure of the source histogram :
-    datatools::utils::properties aux;
+    datatools::properties aux;
 
     if (bin_axis_ == BIN_AXIS_X)
       {
@@ -161,7 +161,7 @@ namespace mygsl {
     reset_counters ();
     // Steal the internal structure of the source histogram :
     _binning_info_ = h_._binning_info_;
-    datatools::utils::properties aux;
+    datatools::properties aux;
     h_._auxiliaries_.export_starting_with(aux, "unit.");
     h_._auxiliaries_.export_starting_with(aux, "display.");
     aux.export_all (_auxiliaries_);
@@ -1172,56 +1172,55 @@ void histogram::tree_dump(std::ostream& out_,
                           const std::string& indent_,
                           bool inherit_) const
 {
-  namespace du = datatools::utils;
   std::string indent;
   if (!indent_.empty()) indent = indent_;
   if (!title_.empty()) out_ << indent << title_ << std::endl;
 
   if (!is_initialized ())
     {
-      out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
+      out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
            << "<not initialized>" << std::endl;
       return;
     }
 
-  out_ << indent << du::i_tree_dumpable::tag
+  out_ << indent << datatools::i_tree_dumpable::tag
        << "Lower bound : " << min () << std::endl;
 
-  out_ << indent << du::i_tree_dumpable::tag
+  out_ << indent << datatools::i_tree_dumpable::tag
        << "Upper bound : " << max () << std::endl;
 
-  out_ << indent << du::i_tree_dumpable::tag
+  out_ << indent << datatools::i_tree_dumpable::tag
        << "Number of bins : " << bins () << std::endl;
 
   if (is_uniform_binning ())
     {
-      out_ << indent << du::i_tree_dumpable::tag
+      out_ << indent << datatools::i_tree_dumpable::tag
            << "Uniform binning with length : " << _binning_info_ << std::endl;
     }
   else if (is_logarithmic_binning ())
     {
-      out_ << indent << du::i_tree_dumpable::tag
+      out_ << indent << datatools::i_tree_dumpable::tag
            << "Logarithmic binning with factor : " << -1.0 * _binning_info_ << std::endl;
     }
   else
     {
-      out_ << indent << du::i_tree_dumpable::tag
+      out_ << indent << datatools::i_tree_dumpable::tag
            << "Unresolved binning information." << std::endl;
     }
 
-  out_ << indent << du::i_tree_dumpable::tag
+  out_ << indent << datatools::i_tree_dumpable::tag
        << "Counts      : " <<  _counts_ << std::endl;
 
-  out_ << indent << du::i_tree_dumpable::tag
+  out_ << indent << datatools::i_tree_dumpable::tag
        << "Sum         : " <<  sum () << std::endl;
 
-  out_ << indent << du::i_tree_dumpable::tag
+  out_ << indent << datatools::i_tree_dumpable::tag
        << "Underflow   : " <<  _underflow_ << std::endl;
 
-  out_ << indent << du::i_tree_dumpable::tag
+  out_ << indent << datatools::i_tree_dumpable::tag
        << "Overflow    : " <<  _overflow_ << std::endl;
 
-  out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
+  out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
        << "Auxiliaries : ";
   if (_auxiliaries_.empty ())
     {
@@ -1231,7 +1230,7 @@ void histogram::tree_dump(std::ostream& out_,
   {
     ostringstream indent_oss;
     indent_oss << indent;
-    indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_) ;
+    indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_) ;
     _auxiliaries_.tree_dump (out_, "", indent_oss.str ());
   }
 

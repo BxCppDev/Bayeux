@@ -38,7 +38,7 @@
 
 #include <boost/cstdint.hpp>
 
-#include <datatools/utils/bit_mask.h>
+#include <datatools/bit_mask.h>
 
 namespace mygsl {
 
@@ -67,11 +67,11 @@ namespace mygsl {
     enum init_seed_from_type
       {
         INIT_SEED_FROM_UNDEFINED    = 0,
-        INIT_SEED_FROM_CURRENT_TIME = datatools::utils::bit_mask::bit00,
-        INIT_SEED_FROM_CURRENT_PID  = datatools::utils::bit_mask::bit01,
+        INIT_SEED_FROM_CURRENT_TIME = datatools::bit_mask::bit00,
+        INIT_SEED_FROM_CURRENT_PID  = datatools::bit_mask::bit01,
         INIT_SEED_FROM_CURRENT_TIME_AND_PID = INIT_SEED_FROM_CURRENT_TIME | INIT_SEED_FROM_CURRENT_PID ,
-        INIT_SEED_FROM_URANDOM = datatools::utils::bit_mask::bit02,
-        //INIT_SEED_FROM_RANDOM_DEVICE = datatools::utils::bit_mask::bit03
+        INIT_SEED_FROM_URANDOM = datatools::bit_mask::bit02,
+        //INIT_SEED_FROM_RANDOM_DEVICE = datatools::bit_mask::bit03
         INIT_SEED_FROM_DEFAULT = INIT_SEED_FROM_URANDOM,
       };
 
