@@ -15,7 +15,7 @@
 #define BRIO_VERSION_MINOR @brio_VERSION_MINOR@
 #define BRIO_PATCH_VERSION @brio_PATCH_VERSION@
 
-#define BRIO_VERSION @brio_VERSION_NUMERIC@
+#define BRIO_VERSION @_brio_VERSION_NUMERIC@
 
 //  BRIO_LIB_VERSION must be defined to be the same as BRIO_VERSION
 //  but as a *string* in the form "x.y[.z]" where x is the major version
