@@ -99,21 +99,4 @@ if(DOXYGEN_FOUND)
     )
 endif()
 
-## -----------------------------------------------------------------------
-# # Build memos?
-# # Better to integrate with doxygen/pandoc
-# set(mygsl_MEMOS
-#   ${PROJECT_SOURCE_DIR}/doc/Memos/MygslContainerTutorial.pdf
-#   ${PROJECT_SOURCE_DIR}/doc/Memos/MygslSerializationTutorial.pdf
-#   )
-
-# foreach(_memo ${mygsl_MEMOS})
-#   if(EXISTS ${_memo})
-#     install(FILES ${_memo} 
-#       DESTINATION ${CMAKE_INSTALL_DOCDIR}/Memos
-#       COMPONENT   Documentation
-#       )
-#   endif()
-# endforeach()
-
 # end of mygsl/doc/CMakeLists.txt

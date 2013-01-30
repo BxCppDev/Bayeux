@@ -15,7 +15,7 @@
 #define MYGSL_VERSION_MINOR @mygsl_VERSION_MINOR@
 #define MYGSL_PATCH_VERSION @mygsl_PATCH_VERSION@
 
-#define MYGSL_VERSION @mygsl_VERSION_NUMERIC@
+#define MYGSL_VERSION @_mygsl_VERSION_NUMERIC@
 
 //  MYGSL_LIB_VERSION must be defined to be the same as MYGSL_VERSION
 //  but as a *string* in the form "x.y[.z]" where x is the major version
