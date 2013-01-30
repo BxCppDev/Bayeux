@@ -653,6 +653,11 @@ function do_uninstall ()
 
     local try_uninstall=1
     if [ ${try_uninstall} -eq 1 ]; then
+	# if [ -d ${the_default_install_prefix} ]; then
+	#     pkgtools__msg_warning "Removing installation base directory '${the_default_install_prefix}'..."
+	#     rm -fr ${the_default_install_prefix}
+	#     return 0
+	# fi
 	local the_install_prefix=$(get_install_prefix_from_cmake)
 	if [ "x${the_install_prefix}" != "x" ]; then
 	    pkgtools__msg_notice "Installation prefix is : ${the_install_prefix}"
@@ -679,11 +684,17 @@ function do_uninstall ()
 
 	if [ -f ${the_build_dir}/install_manifest.txt ]; then
 	    pkgtools__msg_notice "Removing all installed files..."
-	    local list_of_entries=$(cat ${the_build_dir}/install_manifest.txt)
-	    for entry in ${list_of_entries}; do
-		if [ -f ${entry} ]; then
+	    local list_of_entries=$(cat ${the_build_dir}/install_manifest.txt | sed -e "s@ @^^^@g" )
+	    for e in ${list_of_entries}; do
+		entry="$(echo ${e} | sed -e 's@\^\^\^@ @g')"
+		if [ -f "${entry}" ]; then
 		    pkgtools__msg_devel "Removing installed file '${entry}'..."
-		    rm -f ${entry}
+		    rm -f "${entry}"
+		elif [ -L "${entry}" ]; then
+		    pkgtools__msg_devel "Removing installed link '${entry}'..."
+		    rm -f "${entry}"
+		else
+		    pkgtools__msg_error "Cannot find file '${entry}' !"
 		fi
 	    done
 	    pkgtools__msg_notice "All installed files have been removed !"
