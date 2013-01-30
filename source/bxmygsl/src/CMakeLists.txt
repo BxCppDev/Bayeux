@@ -1,4 +1,4 @@
-# - CMakeLists.txt for datatools/src subdir
+# - CMakeLists.txt for mygsl/src subdir
 
 #-----------------------------------------------------------------------
 # function list_prepend(<list> <value>)
