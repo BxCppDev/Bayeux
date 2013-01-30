@@ -157,10 +157,10 @@ if [ "x${option}" = "x--cflags" ]; then
     (
 	echo -n "-fPIC "
 	echo -n "-I${cuts_include_dir} "
+        echo -n "`datatools-config --cflags` "
 	if [ ${with_reflection} -eq 1 ]; then
  	    echo -n "`camp-config --cflags` "
 	fi
-#        echo -n "`clhep-config --include` "
 	echo ""
     ) ###| python @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/pkgtools/mkuniqueflags.py
     my_exit 0
@@ -250,10 +250,10 @@ if [ "x${option}" = "x--ldflags" ]; then
 	    echo -n "${bio_ldflags} "
 	    echo -n "-lcuts "
 	fi
+        echo -n "`datatools-config --ldflags ${ldflags_abs_path_option}` "
 	if [ ${with_reflection} -eq 1 ]; then
  	    echo -n "`camp-config --ldflags` "
 	fi
-#	echo -n "`clhep-config --libs` -lm "
 	echo -n "-ldl "
 	echo ""
     ) ###| python @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/pkgtools/mkuniqueflags.py -r
