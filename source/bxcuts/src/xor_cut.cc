@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include <sstream>
 
-#include <datatools/utils/properties.h>
+#include <datatools/properties.h>
 
 namespace cuts { 
 
@@ -19,9 +19,9 @@ namespace cuts {
   // ctor:
   xor_cut::xor_cut (int a_debug_level) 
     : i_binary_cut ("cuts::xor_cut",
-		    "Xor cut",
-		    "1.0",
-		    a_debug_level)
+                    "Xor cut",
+                    "1.0",
+                    a_debug_level)
   {
     return;
   }
@@ -35,33 +35,33 @@ namespace cuts {
     int status_2 = _handle_2.get ().process ();
     if ((status_1 < 0) || (status_2 < 0))
       {
-	return INAPPLICABLE;
+        return INAPPLICABLE;
       }
     if ((status_1 + status_2) == 1) 
       {
-	return (ACCEPTED);
+        return (ACCEPTED);
       }
     return (REJECTED);
   }
 
   CUT_INITIALIZE_IMPLEMENT_HEAD(xor_cut,
-				a_configuration,
-				a_service_manager,
-				a_cut_dict)
+                                a_configuration,
+                                a_service_manager,
+                                a_cut_dict)
   {
     using namespace std;
     if (is_initialized ())
       {
-	ostringstream message;
-	message << "cuts::xor_cut::initialize: "
-		<< "Cut '" << get_name () << "' is already initialized ! ";
-	throw logic_error (message.str ());
+        ostringstream message;
+        message << "cuts::xor_cut::initialize: "
+                << "Cut '" << get_name () << "' is already initialized ! ";
+        throw logic_error (message.str ());
       }
 
     this->i_binary_cut::_install_cuts (a_configuration,a_cut_dict);
 
     _set_initialized (true);
-    return;	 
+    return;      
   }
   
 } // end of namespace cuts

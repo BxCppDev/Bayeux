@@ -28,8 +28,8 @@
  * 
  */
 
-#ifndef __cuts__cut_macros_h
-#define __cuts__cut_macros_h 1
+#ifndef _CUTS_CUT_MACROS_H
+#define _CUTS_CUT_MACROS_H 1
 
 #include <cuts/i_cut.h>
 
@@ -39,14 +39,14 @@
 
 #define CUT_INITIALIZE_DECLARE()                                  \
   public:                                                         \
-  virtual void initialize (const datatools::utils::properties &,  \
-                           datatools::service::service_manager &, \
+  virtual void initialize (const datatools::properties &,  \
+                           datatools::service_manager &, \
                            cuts::cut_handle_dict_type &);                \
   /**/
 
 #define CUT_INITIALIZE_IMPLEMENT_HEAD(T,CONF,SERVICE_MANAGER,DICT)           \
-  void T::initialize (const datatools::utils::properties & CONF,             \
-                      datatools::service::service_manager & SERVICE_MANAGER, \
+  void T::initialize (const datatools::properties & CONF,             \
+                      datatools::service_manager & SERVICE_MANAGER, \
                       cuts::cut_handle_dict_type & DICT)                            \
   /**/
 
@@ -74,11 +74,11 @@
   /**/
 
 #define CUT_CONSTRUCTOR_IMPLEMENT_HEAD(T,DebugLevel,Name,Description,Version) \
-  T::T (int DebugLevel)                                               \
-    : cuts::i_cut (Name,                                                \
-                   Description,                                         \
-                   Version,                                             \
-                   DebugLevel)                                          \
+  T::T (int DebugLevel)                                                 \
+    : ::cuts::i_cut (Name,                                              \
+                     Description,                                       \
+                     Version,                                           \
+                     DebugLevel)                                        \
   /**/
 
 #define CUT_DESTRUCTOR_DECLARE(T)               \
@@ -150,7 +150,7 @@
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (::cuts::i_cut,CUT_CLASS_NAME,CUT_ID); \
   /**/
 
-#endif // __cuts__cut_macros_h
+#endif // _CUTS_CUT_MACROS_H
 
 // end of cut_macros.h
 /*

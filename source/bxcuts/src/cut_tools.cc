@@ -29,17 +29,17 @@
 
 namespace cuts {
 
-  const datatools::utils::properties & cut_entry_type::get_cut_config () const
+  const datatools::properties & cut_entry_type::get_cut_config () const
   {
     return _cut_config_;
   }
 
-  datatools::utils::properties & cut_entry_type::grab_cut_config ()
+  datatools::properties & cut_entry_type::grab_cut_config ()
   {
     return _cut_config_;
   }
 
-  void cut_entry_type::set_cut_config (const datatools::utils::properties & config_)
+  void cut_entry_type::set_cut_config (const datatools::properties & config_)
   {
     _cut_config_ = config_;
     return;
@@ -186,7 +186,6 @@ namespace cuts {
                                      const std::string & indent_,
                                      bool inherit_) const
   {
-    namespace du = datatools::utils;
     std::string indent;
     if (! indent_.empty ())
       {
@@ -197,13 +196,13 @@ namespace cuts {
         out_ << indent << title_ << std::endl;
       }  
 
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "Cut name     : '" << _cut_name_ << "'" << std::endl;
 
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "Cut ID       : '" << _cut_id_ << "'" << std::endl;
 
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "Cut status   : " << _cut_status_;
     {
       size_t count = 0;
@@ -227,7 +226,7 @@ namespace cuts {
     }
     out_ << std::endl;
 
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "Cut handle   : ";
     if (_cut_handle_.has_data ())
       {
@@ -242,7 +241,7 @@ namespace cuts {
         
     if (_cut_handle_.has_data ())
       {
-        out_ << indent << du::i_tree_dumpable::tag 
+        out_ << indent << datatools::i_tree_dumpable::tag 
              << "Cut description : ";
         const i_cut & bm = _cut_handle_.get ();
         if (bm.has_description ())
@@ -256,7 +255,7 @@ namespace cuts {
         out_ << std::endl;
       }
        
-    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_) 
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_) 
          << "Manager   : " << has_manager () << std::endl;
        
     return;

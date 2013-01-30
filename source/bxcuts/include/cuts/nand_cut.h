@@ -13,13 +13,14 @@
  * 
  */
 
-#ifndef __cuts__nand_cut_h
-#define __cuts__nand_cut_h 1
+#ifndef _CUTS_NAND_CUT_H
+#define _CUTS_NAND_CUT_H 1
 
 #include <cuts/i_binary_cut.h>
 
 namespace cuts {
 
+  /// \brief The NAND binary cut
   class nand_cut : public i_binary_cut
   {
   
@@ -37,6 +38,6 @@ namespace cuts {
 
 } // end of namespace cuts
 
-#endif // __cuts__nand_cut_h
+#endif // _CUTS_NAND_CUT_H
 
 // end of nand_cut.h

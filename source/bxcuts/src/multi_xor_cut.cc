@@ -5,12 +5,11 @@
 #include <cuts/multi_xor_cut.h>
 
 #include <stdexcept>
-//#include <iostream>
 #include <sstream>
 #include <algorithm>
 #include <vector>
 
-#include <datatools/utils/properties.h>
+#include <datatools/properties.h>
 
 namespace cuts {
 

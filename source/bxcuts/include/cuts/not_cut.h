@@ -13,15 +13,18 @@
  * 
  */
 
-#ifndef __cuts__not_cut_h
-#define __cuts__not_cut_h 1
+#ifndef _CUTS_NOT_CUT_H
+#define _CUTS_NOT_CUT_H 1
 
 #include <cuts/i_cut.h>
 #include <cuts/cut_macros.h>
 
 namespace cuts {
-  
-  CUT_CLASS_DECLARE (not_cut)
+
+
+  //CUT_CLASS_DECLARE (not_cut)
+  /// \brief The NOT cut  
+  class not_cut : public i_cut
   {
      
   public: 
@@ -48,6 +51,6 @@ namespace cuts {
 
 } // end of namespace cuts
 
-#endif // __cuts__not_cut_h
+#endif // _CUTS_NOT_CUT_H
 
 // end of not_cut.h

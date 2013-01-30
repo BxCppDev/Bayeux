@@ -13,17 +13,19 @@
  * 
  */
 
-#ifndef __cuts__i_binary_cut_h
-#define __cuts__i_binary_cut_h 1
+#ifndef _CUTS_I_BINARY_CUT_H
+#define _CUTS_I_BINARY_CUT_H 1
 
 #include <string>
 #include <cuts/i_cut.h>
 #include <cuts/cut_macros.h>
-#include <datatools/utils/properties.h>
+#include <datatools/properties.h>
 
 namespace cuts {
-  
-  CUT_CLASS_DECLARE (i_binary_cut)
+
+  //CUT_CLASS_DECLARE (i_binary_cut)
+  /// \brief The abstract base class for binary cuts  
+  class i_binary_cut : public i_cut
   {
     
   public: 
@@ -52,7 +54,7 @@ namespace cuts {
 
   protected:
 
-    void _install_cuts (const datatools::utils::properties & a_configuration,
+    void _install_cuts (const datatools::properties & a_configuration,
                         cuts::cut_handle_dict_type & a_cut_dict);
   
   protected: 
@@ -64,6 +66,6 @@ namespace cuts {
 
 } // end of namespace cuts
 
-#endif // __cuts__i_binary_cut_h
+#endif // _CUTS_I_BINARY_CUT_H
 
 // end of i_binary_cut.h

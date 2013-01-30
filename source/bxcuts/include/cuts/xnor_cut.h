@@ -13,13 +13,14 @@
  * 
  */
 
-#ifndef __cuts__xnor_cut_h
-#define __cuts__xnor_cut_h 1
+#ifndef _CUTS_XNOR_CUT_H
+#define _CUTS_XNOR_CUT_H 1
 
 #include <cuts/i_binary_cut.h>
 
 namespace cuts {
 
+  /// \brief The XNOR binary cut
   class xnor_cut : public i_binary_cut
   {
   
@@ -34,6 +35,6 @@ namespace cuts {
 
 } // end of namespace cuts
 
-#endif // __cuts__xnor_cut_h
+#endif // _CUTS_XNOR_CUT_H
 
 // end of xnor_cut.h

@@ -75,8 +75,8 @@ namespace cuts {
       virtual ~range_cut ();
 
       // CUT_INITIALIZE_DECLARE()
-      virtual void initialize (const datatools::utils::properties &,  
-                               datatools::service::service_manager &, 
+      virtual void initialize (const datatools::properties &,  
+                               datatools::service_manager &, 
                                cuts::cut_handle_dict_type &); 
 
       // CUT_ACCEPT_DECLARE();  

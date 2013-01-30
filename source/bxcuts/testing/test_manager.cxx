@@ -10,8 +10,8 @@
 #include <list>
 #include <map>
 
-#include <datatools/utils/utils.h>
-#include <datatools/utils/properties.h> 
+#include <datatools/utils.h>
+#include <datatools/properties.h> 
  
 #include <cuts/cut_manager.h>
 #include <cuts_test_data.h>
@@ -77,15 +77,15 @@ int main (int argc_, char ** argv_)
 
       cuts::cut_manager my_cut_manager;
 
-      datatools::utils::properties cut_manager_config;
+      datatools::properties cut_manager_config;
 
       if (config_filename.empty ())
         { 
           config_filename = "${CUTS_DATA_DIR}/testing/config/test_cut_manager.conf";
         }
-      datatools::utils::fetch_path_with_env (config_filename);
-      datatools::utils::properties::read_config (config_filename,
-                                                 cut_manager_config);
+      datatools::fetch_path_with_env (config_filename);
+      datatools::properties::read_config (config_filename,
+                                          cut_manager_config);
 
       if (cut_name.empty ())
         { 

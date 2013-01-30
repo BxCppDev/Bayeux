@@ -24,9 +24,9 @@
 
 #include <cuts/i_cut.h>
 
-#include <datatools/utils/properties.h>
-#include <datatools/utils/ioutils.h>
-#include <datatools/services/service_manager.h>
+#include <datatools/properties.h>
+#include <datatools/ioutils.h>
+#include <datatools/service_manager.h>
 
 namespace cuts {
 
@@ -208,7 +208,6 @@ namespace cuts {
                          const string & a_indent,
                          bool a_inherit) const
   {
-    namespace du = datatools::utils;
     string indent;
     if (! a_indent.empty ())
       {
@@ -218,48 +217,48 @@ namespace cuts {
       {
         a_out << indent << a_title << endl;
       }  
-    a_out << indent << du::i_tree_dumpable::tag 
+    a_out << indent << datatools::i_tree_dumpable::tag 
           << "Cut name        : '" << _name << "'" << endl;
-    a_out << indent << du::i_tree_dumpable::tag 
+    a_out << indent << datatools::i_tree_dumpable::tag 
           << "Cut description : '" << _description << "'" << endl;
-    a_out << indent << du::i_tree_dumpable::tag 
+    a_out << indent << datatools::i_tree_dumpable::tag 
           << "Cut version     : '" << _version << "'" << endl;
-    a_out << indent << du::i_tree_dumpable::tag 
+    a_out << indent << datatools::i_tree_dumpable::tag 
           << "Cut debug level : " << _debug_level_ << endl;
-    a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)
+    a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
           << "Cut initialized : " << is_initialized () << endl;      
     return;
   }
 
   void i_cut::initialize_simple ()
   {
-    datatools::utils::properties dummy_config;
-    datatools::service::service_manager dummy_service_manager;
+    datatools::properties dummy_config;
+    datatools::service_manager dummy_service_manager;
     cut_handle_dict_type dummy_cut_dict;
     initialize (dummy_config, dummy_service_manager, dummy_cut_dict);
     return;
       }
     
-  void i_cut::initialize_standalone (const datatools::utils::properties & a_config)
+  void i_cut::initialize_standalone (const datatools::properties & a_config)
   {
-    datatools::service::service_manager dummy;
+    datatools::service_manager dummy;
     cut_handle_dict_type dummy2;
     initialize (a_config, dummy, dummy2);
     return;
   }
    
-  void i_cut::initialize_with_service_only (const datatools::utils::properties & a_config,
-                                            datatools::service::service_manager & a_service_manager)
+  void i_cut::initialize_with_service_only (const datatools::properties & a_config,
+                                            datatools::service_manager & a_service_manager)
   {
     cut_handle_dict_type dummy;
     initialize (a_config, a_service_manager, dummy);
     return;
   }
    
-  void i_cut::initialize_without_service (const datatools::utils::properties & a_config,
+  void i_cut::initialize_without_service (const datatools::properties & a_config,
                                           cut_handle_dict_type & a_cut_dictionnary)
   {
-    datatools::service::service_manager dummy_service_manager;
+    datatools::service_manager dummy_service_manager;
     initialize (a_config, dummy_service_manager, a_cut_dictionnary);
     return;
   }

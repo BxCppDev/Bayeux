@@ -14,13 +14,8 @@ function do_cuts_print_info ()
 	echo "${indent}CUTS_NAME                = '${CUTS_NAME}'" 1>&2
 	echo "${indent}CUTS_VERSION             = '${CUTS_VERSION}'" 1>&2
 	echo "${indent}CUTS_WITH_DEBUG          = ${CUTS_WITH_DEBUG}" 1>&2
-	if [ "x0" = "x1" ]; then	
-	    echo "${indent}CUTS_WITH_BIO            = ${CUTS_WITH_BIO}" 1>&2
-	fi
-	if [ "x0" = "x1" ]; then	
-	    echo "${indent}CUTS_WITH_PYTHON_WRAPPER = ${CUTS_WITH_PYTHON_WRAPPER}" 1>&2
-	    echo "${indent}Python module path = @CMAKE_INSTALL_FULL_PYTHONDIR@" 1>&2
-	fi
+	echo "${indent}CUTS_WITH_BIO            = ${CUTS_WITH_BIO}" 1>&2
+	echo "${indent}CUTS_WITH_REFLECTION     = ${CUTS_WITH_REFLECTION}" 1>&2
 	echo "${indent}CUTS_BIN_DIR             = '${CUTS_BIN_DIR}'"
 	echo "${indent}CUTS_ETC_DIR             = '${CUTS_ETC_DIR}'"
 	echo "${indent}CUTS_LIB_DIR             = '${CUTS_LIB_DIR}'"
@@ -55,43 +50,33 @@ function do_cuts_setup ()
 	echo "WARNING: do_cuts_setup: cuts is already setup !" 1>&2
 	return 2
     fi 
- 
-    # which clhep-config >/dev/null 2>&1
-    # if [ $? -ne 0 ]; then
-    # 	echo "ERROR: do_cuts_setup: Cannot find CLHEP setup ! Abort !" 1>&2
-    # 	return 1
-    # else
-    # 	if [ ${verbose} -ne 0 ]; then
-    # 	    echo "VERBOSE: do_cuts_setup: Found CLHEP." 1>&2
-    # 	fi
-    # fi
 
-    # if [ "x0" = "x1" ]; then	
-    # 	which datatools-config >/dev/null 2>&1
+    # if [ "x@CUTS_WITH_REFLECTION@" = "x1" ]; then
+    # 	which camp-config >/dev/null 2>&1
     # 	if [ $? -ne 0 ]; then
-    # 	    echo "ERROR: do_cuts_setup: Cannot find datatools setup ! Abort !" 1>&2
+    # 	    echo "ERROR: do_cuts_setup: Cannot find CAMP setup ! Abort !" 1>&2
     # 	    return 1
     # 	else
     # 	    if [ ${verbose} -ne 0 ]; then
-    # 		echo "VERBOSE: do_cuts_setup: Found datatools." 1>&2
+    # 		echo "VERBOSE: do_cuts_setup: Found CAMP." 1>&2
     # 	    fi
     # 	fi
     # fi
 
-    # which yyy-config >/dev/null 2>&1
-    # if [ $? -ne 0 ]; then
-    # 	echo "ERROR: do_cuts_setup: Cannot find yyy setup ! Abort !" 1>&2
-    # 	return 1
-    # else		
-    # 	if [ ${verbo	se} -ne 0 ]; then
-    # 	    echo "VERBOSE: do_cuts_setup: Found yyy." 1>&2
-    # 	fi
-    # fi
-    
+    which datatools-config >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+	echo "ERROR: do_cuts_setup: Cannot find datatools setup ! Abort !" 1>&2
+	return 1
+    else
+	if [ ${verbose} -ne 0 ]; then
+	    echo "VERBOSE: do_cuts_setup: Found datatools." 1>&2
+	fi
+    fi
+     
     export CUTS_ROOT="@CMAKE_INSTALL_PREFIX@"
     export CUTS_ROOT_DIR="@CMAKE_INSTALL_PREFIX@"
-    export CUTS_NAME="@cuts_PACKAGE_NAME@"
-    export CUTS_VERSION="@cuts_VERSION_STR@"
+    export CUTS_NAME="@PROJECT_NAME@"
+    export CUTS_VERSION="@cuts_VERSION@"
     export CUTS_BIN_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@"
     export CUTS_ETC_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_ETCDIR@"
     export CUTS_LIB_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@"
@@ -99,13 +84,9 @@ function do_cuts_setup ()
     export CUTS_INCLUDE_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_INCLUDEDIR@"
     export CUTS_DATA_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
     export CUTS_WITH_DEBUG=@CUTS_WITH_DEBUG@
-    if [ "x0" = "x1" ]; then	
-	export CUTS_WITH_BIO=@CUTS_WITH_BIO@
-    fi
-    if [ "x0" = "x1" ]; then	
-	export CUTS_WITH_PYTHON_WRAPPER=@CUTS_WITH_PYTHON_WRAPPER@
-    fi
-    export CUTS_CMAKE_CONFIG_DIR="@CMAKE_INSTALL_PREFIX@/@cuts_cmake_config_install_dir@"
+    export CUTS_WITH_BIO=@CUTS_WITH_BIO@
+    export CUTS_WITH_REFLECTION=@CUTS_WITH_REFLECTION@
+    export CUTS_CMAKE_CONFIG_DIR="@CMAKE_INSTALL_PREFIX@/@_cuts_cmake_config_install_dir@"
 
     if [ -n "${PATH}" ]; then
 	export PATH="${CUTS_BIN_DIR}:${PATH}"
@@ -119,33 +100,6 @@ function do_cuts_setup ()
 	export @_ld_library_path_env@="${CUTS_LIB_DIR}"
     fi 
 
-    if [ "x@CUTS_WITH_PKGCONFIG@" = "xON" -o "x@CUTS_WITH_PKGCONFIG@" = "x1" ]; then
-	if [ -n "${PKG_CONFIG_PATH}" ]; then 
-            export PKG_CONFIG_PATH="@_cuts_pkgconfig_install_dir@:${PKG_CONFIG_PATH}"
-	else
-            export PKG_CONFIG_PATH="@_cuts_pkgconfig_install_dir@"
-	fi
-    fi
-
-    if [ "x0" = "x1" ]; then	
-	if [ "x@CUTS_WITH_PYTHON_WRAPPER@" = "xON" ]; then
-     	    # update Python path...
-	    if [ -n "${PYTHONPATH}" ]; then 
-		export PYTHONPATH="@CMAKE_INSTALL_FULL_PYTHONDIR@:${PYTHONPATH}"
-	    else
-		export PYTHONPATH="@CMAKE_INSTALL_FULL_PYTHONDIR@"
-	    fi
-	fi
-    fi
-
-    if [ "x@CUTS_WITH_CMAKE_FIND_MODULE@" = "xON" -o "x@CUTS_WITH_CMAKE_FIND_MODULE@" = "x1" ]; then
-	if [ -n "${CMAKE_MODULE_PATH}" ]; then 
-            export CMAKE_MODULE_PATH="@CMAKE_INSTALL_PREFIX@/@cuts_find_module_install_dir@:${CMAKE_MODULE_PATH}"
-	else
-            export CMAKE_MODULE_PATH="@CMAKE_INSTALL_PREFIX@/@cuts_find_module_install_dir@"
-	fi
-    fi
-
     if [ ${verbose} -gt 1 ]; then
 	do_cuts_print_info "VERBOSE: do_cuts_setup"
     fi
@@ -156,8 +110,7 @@ function do_cuts_setup ()
     return 0
 }
 typeset -fx do_cuts_setup
-alias cuts_setup='do_cuts_setup'
 
-echo "NOTICE: do_cuts_setup: Please setup cuts with 'do_cuts_setup'." 1>&2
+echo "NOTICE: do_cuts_setup: Please setup 'cuts' with 'do_cuts_setup'." 1>&2
 
 # end of cuts_setup.sh

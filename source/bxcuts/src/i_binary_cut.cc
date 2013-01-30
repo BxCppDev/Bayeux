@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include <sstream>
 
-#include <datatools/utils/properties.h>
+#include <datatools/properties.h>
 
 namespace cuts {
 
@@ -79,7 +79,7 @@ namespace cuts {
     return;
   }
 
-  void i_binary_cut::_install_cuts (const datatools::utils::properties & a_configuration,
+  void i_binary_cut::_install_cuts (const datatools::properties & a_configuration,
                                     cuts::cut_handle_dict_type & a_cut_dict)
   {
     if (! _handle_1.has_data ())

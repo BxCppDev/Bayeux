@@ -13,8 +13,8 @@
  * 
  */
 
-#ifndef __cuts__multi_and_cut_h
-#define __cuts__multi_and_cut_h 1
+#ifndef _CUTS_MULTI_AND_CUT_H
+#define _CUTS_MULTI_AND_CUT_H 1
 
 #include <string>
 #include <list>
@@ -24,8 +24,9 @@
 
 namespace cuts {
 
-  /// A multi AND cut
-  CUT_CLASS_DECLARE(multi_and_cut)
+  //CUT_CLASS_DECLARE(multi_and_cut)
+  /// \brief A multi AND cut
+  class multi_and_cut : public i_cut
   {
   public:
 
@@ -52,6 +53,6 @@ namespace cuts {
 
 } // end of namespace cuts
 
-#endif // __cuts__multi_and_cut_h
+#endif // _CUTS_MULTI_AND_CUT_H
 
 // end of multi_and_cut.h

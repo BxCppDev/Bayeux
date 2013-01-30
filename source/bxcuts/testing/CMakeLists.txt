@@ -1,6 +1,6 @@
 ###############################################################################
 ##
-## Copyright (C) 2012 François Mauger, Université de Caen Basse-Normandie, LPC Caen (CNRS/IN2P3)
+## Copyright (C) 2011-2013 François Mauger, Université de Caen Basse-Normandie
 ## Contact: mauger@lpccaen.in2p3.fr
 ##
 ## This file is part of the cuts library.
@@ -20,90 +20,70 @@
 ##
 ###############################################################################
 
-set ( cuts_tests_programs_list
-      test_cuts.cxx 
-      test_accept_cut.cxx 
-      test_and_cut.cxx
-      test_manager.cxx
-    )
+
+###file(GLOB cuts_tests_programs test_*.cxx)
+set ( cuts_tests_programs
+  test_accept_cut.cxx 
+  test_and_cut.cxx
+  test_manager.cxx
+)
+
+###message (STATUS "cuts_tests_programs=${cuts_tests_programs}" )
+# list(REMOVE_ITEM cuts_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
+# if(CUTS_WITH_REFLECTION)
+#   list(APPEND cuts_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
+# endif() 
+
+set(cuts_tests_programs_list "${cuts_tests_programs}") 
+list(SORT cuts_tests_programs_list)
 
 # include files search paths
-include_directories ( ${PROJECT_BINARY_DIR}/include
-                      ${PROJECT_SOURCE_DIR}/include	
-                      ${PROJECT_SOURCE_DIR}/testing
-                    )
+include_directories(
+  ${PROJECT_BINARY_DIR}/include
+  ${PROJECT_SOURCE_DIR}/include
+  ${datatools_INCLUDE_DIRS}
+  ${PROJECT_SOURCE_DIR}/testing
+  )
 
-include_directories ( ${datatools_INCLUDE_DIRS} )
+set(_test_tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/testing_output")
 
-# linker search paths :
-link_directories ( ${PROJECT_BINARY_DIR}/src )
+execute_process(COMMAND cmake -E remove_directory ${_test_tmp_dir} )
 
-option ( CUTS_ALL_TESTS "Perform all possible tests" 1 )
-message ( STATUS "testing: Performing all available tests : ${CUTS_ALL_TESTS}" )
+foreach(test_program ${cuts_tests_programs_list})
+  get_filename_component(test_executable ${test_program} NAME_WE)
+  add_executable(${test_executable} ${test_program})
+  # define d suffix on windows
+  if(WIN32)
+    set_target_properties(${test_executable} PROPERTIES DEBUG_POSTFIX d)
+  endif()
 
-if ( CUTS_ALL_TESTS )
-  set ( _test_tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/tmp" )
-  execute_process (COMMAND cmake -E remove_directory ${_test_tmp_dir} )
-  foreach ( test_program ${cuts_tests_programs_list} )
-    get_filename_component ( test_executable ${test_program} NAME_WE )
-    message ( STATUS "testing:  Building test target '${test_executable}'" )
-    add_executable ( ${test_executable} ${test_program} )
-    # define d suffix on windows
-    if (WIN32)
-      set_target_properties ( ${test_executable} PROPERTIES DEBUG_POSTFIX d )
-    endif ()
+  set(_test_libraries cuts) 
+  # if(CUTS_WITH_BIO)
+  #   list(INSERT _test_libraries 0 cuts_bio datatools_bio)
+  # endif() 
+  # if(CUTS_WITH_REFLECTION)
+  #   list(INSERT _test_libraries 0 cuts_reflection datatools_reflection)
+  # endif() 
 
-    # last thing we have to do is to tell CMake what libraries 
-    # our executable needs,
-    set ( _test_libraries cuts ) #${datatools_LIBRARIES} )
- 	 
-    target_link_libraries ( ${test_executable} ${_test_libraries} )
+  target_link_libraries(${test_executable} ${_test_libraries})
 
-    add_test ( NAME ${test_executable}.run
-               COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
-                       --tmp-dir ${_test_tmp_dir}
-                       --data-dir ${PROJECT_SOURCE_DIR} 
-                       --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
-	               run
-             )	 	
+  add_test(NAME ${test_executable}.run
+    COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
+    --tmp-dir ${_test_tmp_dir}
+    --data-dir ${PROJECT_SOURCE_DIR} 
+    --prefix ${PROJECT_SOURCE_DIR} 
+    --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
+    run
+    )	 
 
-  endforeach ()
-  
-  add_custom_target ( clean_test
-                      COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
-                      --prefix ${PROJECT_SOURCE_DIR} 
-                      --tmp-dir ${_test_tmp_dir}
-                      clean
-                    )
+  unset(_test_libraries)
+endforeach ()
 
-endif ()
-
-option ( CUTS_INSTALL_TEST_PROGRAMS "Install test programs" 1 )
-message ( STATUS "testing: Performing all available tests : ${CUTS_INSTALL_TEST_PROGRAMS}" )
-
-# - Installation :
-if (CUTS_INSTALL_TEST_PROGRAMS) 
-  set ( _test_install_dir ${CMAKE_INSTALL_DATADIR}/testing )
-
-  file ( GLOB cuts_tests_config config/test_*.conf )
-  install ( FILES ${cuts_tests_config} 
-            DESTINATION ${_test_install_dir}/config  
-            PERMISSIONS OWNER_READ GROUP_READ WORLD_READ 
-          )
-
-  file ( GLOB cuts_tests_config test_*.cxx )
-  install ( FILES ${cuts_tests_programs} 
-	    cuts_test_color_cut.cc
-	    cuts_test_color_cut.h
-	    cuts_test_data.h
-	    cuts_test_range_cut.cc
-	    cuts_test_range_cut.h
-	    cuts_test_sphere_cut.cc
-	    cuts_test_sphere_cut.h
-	    DESTINATION ${_test_install_dir}
-            PERMISSIONS OWNER_READ GROUP_READ WORLD_READ 
-          )
-
-endif ()
+add_custom_target(clean_test
+  COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
+  --prefix ${PROJECT_SOURCE_DIR} 
+  --tmp-dir ${_test_tmp_dir}
+  clean
+  )
 
 # end of CMakeLists.txt

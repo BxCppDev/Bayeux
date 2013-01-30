@@ -13,15 +13,17 @@
  * 
  */
 
-#ifndef __cuts__reject_cut_h
-#define __cuts__reject_cut_h 1
+#ifndef _CUTS_REJECT_CUT_H
+#define _CUTS_REJECT_CUT_H 1
 
 #include <cuts/i_cut.h>
 #include <cuts/cut_macros.h>
 
 namespace cuts {
 
-  CUT_CLASS_DECLARE (reject_cut)
+  //CUT_CLASS_DECLARE (reject_cut)
+  /// \brief A cut that always rejects
+  class reject_cut : public i_cut
   {
     
   public: 
@@ -38,6 +40,6 @@ namespace cuts {
 
 } // end of namespace cuts
 
-#endif // __cuts__reject_cut_h
+#endif // _CUTS_REJECT_CUT_H
 
 // end of reject_cut.h

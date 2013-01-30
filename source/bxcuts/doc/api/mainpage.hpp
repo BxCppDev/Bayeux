@@ -9,7 +9,7 @@
  * \endhtmlonly
  *
  * \section overview_section Overview
- *The \t cuts C++ library provides some classes to create, 
+ *The cuts C++ library provides some classes to create, 
  * compose and apply selection algorithms (cut functors) on arbitrary data.
  *
  * Given an arbitrary data model, the user can derived his/her 
@@ -19,9 +19,9 @@
  * more complex criteria :
  *
  * Example:
- *    "\t(CUT1 \t or \t CUT2) \t and \t (not \t CUT3) \t and \t (CUT6 \t nor \t CUT7)"
- * where each \t CUTX instances implement the 
- * \t protected virtual \c _accept() method
+ *    "(CUT1 or  CUT2)  and  (not   CUT3)  and  (CUT6  nor   CUT7)"
+ * where each   CUTX instance implements the 
+ *  protected virtual \c i_cut::_accept() method
  * that applies a specific selection criterion on the data model.
  *
  * Basic boolean cut-functors are provided by the library :
@@ -33,9 +33,9 @@
  * to auto-register new cut classes in the library and make
  * possible to allocate and setup cut instances through the factory.
  * 
- * A \e cut \e manager is provided. It enables:
- *  \li the description of collection of cuts (and combinaison of them) 
- *    using ASCII files (through the 'datatools::utils::properties' class), 
+ * A \e cut manager \e is provided. It enables:
+ *  \li the description of collections of cuts (and combinaisons of them) 
+ *    using ASCII files (through the 'datatools::properties' class), 
  *  \li the use of any of such cut instances to be applied to user 
  *    data (selection).
  *

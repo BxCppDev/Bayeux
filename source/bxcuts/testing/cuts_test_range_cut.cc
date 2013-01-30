@@ -45,9 +45,9 @@ namespace cuts {
     // ctor:
     range_cut::range_cut () 
       : i_cut ("cuts::test::range_cut",
-	       "A range cut",
-	       "1.0",
-	       0)
+               "A range cut",
+               "1.0",
+               0)
     {
       _mode_ = MODE_X;
       _min_ = 0.0;
@@ -120,8 +120,8 @@ namespace cuts {
      *                          a_service_manager,
      *                          a_cut_dict)
      */
-    void range_cut::initialize (const datatools::utils::properties & a_configuration,
-                                datatools::service::service_manager & a_service_manager, 
+    void range_cut::initialize (const datatools::properties & a_configuration,
+                                datatools::service_manager & a_service_manager, 
                                 cuts::cut_handle_dict_type & a_cut_dict)
     {
       using namespace std;

@@ -28,33 +28,31 @@
  * 
  */
 
-#ifndef __cuts__i_cut_h
-#define __cuts__i_cut_h 1
+#ifndef _CUTS_I_CUT_H
+#define _CUTS_I_CUT_H 1
 
 #include <ostream>
 #include <string>
 
 #include <cuts/cut_tools.h>
-#include <datatools/utils/bit_mask.h>
+#include <datatools/bit_mask.h>
 
 #include <boost/cstdlib.hpp>
 
-#include <datatools/utils/i_tree_dump.h>
-#include <datatools/factory/factory_macros.h>
+#include <datatools/i_tree_dump.h>
+#include <datatools/factory_macros.h>
 
+/// Main datatools namespace (cuts depends on datatools)
 namespace datatools {
-  namespace utils {
     class properties;
-  }}
-
-namespace datatools {
-  namespace service {
     class service_manager;
-  }}
+  }
 
+/// Main cuts namespace
 namespace cuts {
 
-  class i_cut : public datatools::utils::i_tree_dumpable
+  /// \brief The cut abstract base class
+  class i_cut : public datatools::i_tree_dumpable
   {
   public:
         
@@ -120,12 +118,12 @@ namespace cuts {
    
     virtual void initialize_simple ();
    
-    virtual void initialize_standalone (const datatools::utils::properties & a_config);
+    virtual void initialize_standalone (const datatools::properties & a_config);
 
-    virtual void initialize_with_service_only (const datatools::utils::properties & a_config,
-                                               datatools::service::service_manager & a_service_manager);
+    virtual void initialize_with_service_only (const datatools::properties & a_config,
+                                               datatools::service_manager & a_service_manager);
 
-    virtual void initialize_without_service (const datatools::utils::properties & a_config,
+    virtual void initialize_without_service (const datatools::properties & a_config,
                                              cut_handle_dict_type & a_cut_dictionnary);
 
 
@@ -136,8 +134,8 @@ namespace cuts {
      * @param a_service_manager a manager for external services
      */
 
-    virtual void initialize (const datatools::utils::properties & a_config,
-                             datatools::service::service_manager & a_service_manager,
+    virtual void initialize (const datatools::properties & a_config,
+                             datatools::service_manager & a_service_manager,
                              cut_handle_dict_type & a_cut_dictionnary) = 0;
       
     /** The main cut processing method
@@ -148,7 +146,7 @@ namespace cuts {
     /** The main termination method :
      */
     virtual void reset ();
-      
+
   public: 
 
     // ctor:
@@ -193,7 +191,7 @@ namespace cuts {
 
 #include <cuts/cut_macros.h>
 
-#endif // __cuts__i_cut_h
+#endif // _CUTS_I_CUT_H
 
 // end of i_cut.h
 /*

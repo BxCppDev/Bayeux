@@ -25,7 +25,7 @@
 #include <stdexcept>
 
 #include <cuts/cut_manager.h>
-#include <datatools/utils/utils.h>
+#include <datatools/utils.h>
 
 namespace cuts {
 
@@ -101,8 +101,8 @@ namespace cuts {
     return _cut_manager_ != 0;
   }
 
-  int cut_service::initialize (const datatools::utils::properties & a_config,
-                               datatools::service::service_dict_type & a_service_dict)
+  int cut_service::initialize (const datatools::properties & a_config,
+                               datatools::service_dict_type & a_service_dict)
   {
     if (is_initialized ())
       {
@@ -122,11 +122,11 @@ namespace cuts {
         if (a_config.has_key ("cut_manager.config"))
           {
             string config_filename = a_config.fetch_string ("cut_manager.config");
-            datatools::utils::properties cut_manager_config;
-            datatools::utils::fetch_path_with_env (config_filename);
+            datatools::properties cut_manager_config;
+            datatools::fetch_path_with_env (config_filename);
       
-            datatools::utils::properties::read_config (config_filename,
-                                                       cut_manager_config);
+            datatools::properties::read_config (config_filename,
+                                                cut_manager_config);
             _cut_manager_ = new cut_manager;
             _owns_manager_ = true;
             _cut_manager_->set_debug (is_debug ());
@@ -182,11 +182,10 @@ namespace cuts {
                                const string & a_indent,
                                bool a_inherit) const
   {
-    namespace du = datatools::utils;
     this->base_service::tree_dump (a_out, a_title, a_indent, true);
-    a_out << a_indent << du::i_tree_dumpable::tag
+    a_out << a_indent << datatools::i_tree_dumpable::tag
           << "Owns manager : '" << _owns_manager_ << "'" << endl;
-    a_out << a_indent << du::i_tree_dumpable::inherit_tag (a_inherit)
+    a_out << a_indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
           << "Cut manager  :  " << _cut_manager_ << endl;
 
     return;

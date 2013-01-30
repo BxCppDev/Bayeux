@@ -28,20 +28,18 @@
  * 
  */
 
-#ifndef __cuts__cut_service_h
-#define __cuts__cut_service_h 1
+#ifndef _CUTS_CUT_SERVICE_H
+#define _CUTS_CUT_SERVICE_H 1
 
 #include <string>
 
-#include <datatools/services/base_service.h>
-#include <datatools/services/service_tools.h>
-#include <datatools/services/service_macros.h>
+#include <datatools/base_service.h>
+#include <datatools/service_tools.h>
+#include <datatools/service_macros.h>
 
 // Forward declaration :
 namespace datatools {
-  namespace utils {
     class properties;
-  }
 }
 
 namespace cuts {
@@ -49,39 +47,50 @@ namespace cuts {
   // Forward declaration :
   class cut_manager;
   
-  class cut_service : public datatools::service::base_service
+  /// \brief The cut service
+  class cut_service : public datatools::base_service
   {
   public:
-              
+           
+    /// Check the debug status   
     bool is_debug () const;
       
+    /// Set the debug status   
     void set_debug (bool);
      
+    /// Check if the cut manager is owned by the service
     bool owns_cut_manager () const;
              
+    /// Return a const reference to the cut manager
     const cut_manager & get_cut_manager () const;
              
+    /// Return a mutable reference to the cut manager
     cut_manager & grab_cut_manager ();
-                                
+           
+    /// Set the reference to an external cut manager                  
     void set_cut_manager (const cut_manager & a_cut_manager);
         
   public:
 
+    /// Check the initialization status
     virtual bool is_initialized () const;
 
-    virtual int initialize (const datatools::utils::properties & a_config,
-                            datatools::service::service_dict_type & a_service_dict); 
+    /// Initialize the service through a collection of setup properties
+    virtual int initialize (const datatools::properties & a_config,
+                            datatools::service_dict_type & a_service_dict); 
 
+    /// Reset
     virtual int reset ();
                   
   public: 
 
-    // ctor:
+    /// Constructor
     cut_service ();
         
-    // dtor:
+    /// Destructor
     virtual ~cut_service ();
         
+    /// Smart print
     virtual void tree_dump (std::ostream & a_out         = std::clog, 
                             const std::string & a_title  = "",
                             const std::string & a_indent = "",
@@ -100,7 +109,7 @@ namespace cuts {
 
 }  // end of namespace cuts
 
-#endif // __cuts__cut_service_h
+#endif // _CUTS_CUT_SERVICE_H
 
 // end of cut_service.h
 /*

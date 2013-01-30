@@ -13,15 +13,17 @@
  * 
  */
 
-#ifndef __cuts__accept_cut_h
-#define __cuts__accept_cut_h 1
+#ifndef _CUTS_ACCEPT_CUT_H
+#define _CUTS_ACCEPT_CUT_H 1
 
 #include <cuts/i_cut.h>
 #include <cuts/cut_macros.h>
 
 namespace cuts {
 
-  CUT_CLASS_DECLARE (accept_cut)
+  //CUT_CLASS_DECLARE (accept_cut)
+  /// \brief A cut that always accepts
+  class accept_cut : public i_cut
   {
     
   public: 
@@ -38,6 +40,6 @@ namespace cuts {
 
 } // end of namespace cuts
 
-#endif // __cuts__accept_cut_h
+#endif // _CUTS_ACCEPT_CUT_H
 
 // end of accept_cut.h

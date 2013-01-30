@@ -30,8 +30,8 @@
  * 
  */
 
-#ifndef __cuts__cut_tools_h
-#define __cuts__cut_tools_h 1
+#ifndef _CUTS_CUT_TOOLS_H
+#define _CUTS_CUT_TOOLS_H 1
 
 #include <iostream>
 #include <string>
@@ -40,18 +40,14 @@
 
 #include <boost/scoped_ptr.hpp>
 
-#include <datatools/utils/handle.h>
-#include <datatools/utils/i_tree_dump.h>
-#include <datatools/utils/properties.h>
-#include <datatools/utils/bit_mask.h>
+#include <datatools/handle.h>
+#include <datatools/i_tree_dump.h>
+#include <datatools/properties.h>
+#include <datatools/bit_mask.h>
 
 namespace datatools {
-  namespace utils {
     class properties;
-  }
-  namespace service {
     class service_manager;
-  }
 }
 
 namespace cuts {
@@ -60,13 +56,15 @@ namespace cuts {
  
   typedef std::map<std::string, i_cut *> cut_dict_type;
 
-  typedef datatools::utils::handle<i_cut> cut_handle_type;
+  typedef datatools::handle<i_cut> cut_handle_type;
 
   class cut_manager;
 
-  /** Record that handles a dynamically allocated cut and additional setup/status informations 
+  /** \brief Internal record that handles a dynamically allocated cut
+   *
+   *   It also contains additional setup/status informations.
    */
-  class cut_entry_type : public datatools::utils::i_tree_dumpable 
+  class cut_entry_type : public datatools::i_tree_dumpable 
   {
   public:
     
@@ -74,22 +72,22 @@ namespace cuts {
     enum status_type
       {
         STATUS_BLANK       = 0,
-        STATUS_CREATED     = datatools::utils::bit_mask::bit00,
-        STATUS_INITIALIZED = datatools::utils::bit_mask::bit01,
+        STATUS_CREATED     = datatools::bit_mask::bit00,
+        STATUS_INITIALIZED = datatools::bit_mask::bit01,
       };
     
     std::string                  cut_name;    //!< The name of the cut
     std::string                  cut_id;      //!< The ID (type) of the cut
-    datatools::utils::properties cut_config;  //!< The configuration of the cut 
+    datatools::properties cut_config;  //!< The configuration of the cut 
     uint32_t                     cut_status;  //!< The status of the cut
     cut_handle_type              cut_handle;  //!< The handle for the allocated cut
 
 
-    const datatools::utils::properties & get_cut_config () const;
+    const datatools::properties & get_cut_config () const;
 
-    datatools::utils::properties & grab_cut_config ();
+    datatools::properties & grab_cut_config ();
 
-    void set_cut_config (const datatools::utils::properties &);
+    void set_cut_config (const datatools::properties &);
 
     const std::string & get_cut_name () const;
 
@@ -143,7 +141,7 @@ namespace cuts {
 
     std::string                  _cut_name_;   /// Cut name
     std::string                  _cut_id_;     /// Cut class registration ID
-    datatools::utils::properties _cut_config_; /// The configuration of the cut 
+    datatools::properties        _cut_config_; /// The configuration of the cut 
     uint32_t                     _cut_status_; /// The status of the cut
     cut_handle_type              _cut_handle_; /// The handle for the allocated service
     cut_manager *                _manager_;    /// Handle to the module manager
@@ -156,7 +154,7 @@ namespace cuts {
 
 } // end of cuts
 
-#endif // __cuts__cut_tools_h
+#endif // _CUTS_CUT_TOOLS_H
 
 // end of cut_tools.h
 /*

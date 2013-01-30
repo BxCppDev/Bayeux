@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef __cuts__cuts_h
-#define __cuts__cuts_h 1
+#ifndef _CUTS_CUTS_H
+#define _CUTS_CUTS_H 1
 
 #include <cuts/cuts_config.h>
 #include <cuts/i_cut.h>
@@ -26,6 +26,6 @@
 #include <cuts/factory.h>
 #include <cuts/manager.h>
 
-#endif // __cuts__cuts_h
+#endif // _CUTS_CUTS_H
 
 // end of cuts.h

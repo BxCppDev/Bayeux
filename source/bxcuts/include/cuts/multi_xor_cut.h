@@ -13,8 +13,8 @@
  * 
  */
 
-#ifndef __cuts__multi_xor_cut_h
-#define __cuts__multi_xor_cut_h 1
+#ifndef _CUTS_MULTI_XOR_CUT_H
+#define _CUTS_MULTI_XOR_CUT_H 1
 
 #include <string>
 #include <list>
@@ -24,8 +24,9 @@
 
 namespace cuts {
 
-  /// A multi XOR cut
-  CUT_CLASS_DECLARE(multi_xor_cut)
+  //CUT_CLASS_DECLARE(multi_xor_cut)
+  /// \brief A multi XOR cut
+  class multi_xor_cut : public i_cut
   {
   public:
 
@@ -52,6 +53,6 @@ namespace cuts {
 
 } // end of namespace cuts
 
-#endif // __cuts__multi_xor_cut_h
+#endif // _CUTS_MULTI_XOR_CUT_H
 
 // end of multi_xor_cut.h

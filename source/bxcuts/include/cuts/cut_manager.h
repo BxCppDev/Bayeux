@@ -28,15 +28,15 @@
  * 
  */
 
-#ifndef __cuts__cut_manager_h
-#define __cuts__cut_manager_h 1
+#ifndef _CUTS_CUT_MANAGER_H
+#define _CUTS_CUT_MANAGER_H 1
 
 #include <string>
 
 #include <boost/cstdint.hpp>
 
-#include <datatools/utils/i_tree_dump.h>
-#include <datatools/utils/properties.h>
+#include <datatools/i_tree_dump.h>
+#include <datatools/properties.h>
 
 #include <cuts/i_cut.h>
 #include <cuts/cut_tools.h>
@@ -44,28 +44,25 @@
 
 // Forward declaration :
 namespace datatools {
-  namespace utils {
     class multi_properties;
-  }
-  namespace service {
     class service_manager;
-  }
 }
 
 namespace cuts {
   
-  class cut_manager : public datatools::utils::i_tree_dumpable
+  /// \brief The cut manager class
+  class cut_manager : public datatools::i_tree_dumpable
 
   {
   public:
     enum ctor_flag_type
       {
         BLANK             = 0,
-        DEBUG             = datatools::utils::bit_mask::bit00,
-        FACTORY_DEBUG     = datatools::utils::bit_mask::bit01,
-        FACTORY_NOPRELOAD = datatools::utils::bit_mask::bit02,
-        FACTORY_INITIALIZATION_AT_LOAD = datatools::utils::bit_mask::bit03,
-        VERBOSE           = datatools::utils::bit_mask::bit04
+        DEBUG             = datatools::bit_mask::bit00,
+        FACTORY_DEBUG     = datatools::bit_mask::bit01,
+        FACTORY_NOPRELOAD = datatools::bit_mask::bit02,
+        FACTORY_INITIALIZATION_AT_LOAD = datatools::bit_mask::bit03,
+        VERBOSE           = datatools::bit_mask::bit04
       };
   
     bool is_debug () const;
@@ -94,7 +91,7 @@ namespace cuts {
 
     bool is_initialized () const;
 
-    void initialize (const datatools::utils::properties & a_setup);
+    void initialize (const datatools::properties & a_setup);
 
     void reset ();
 
@@ -106,13 +103,13 @@ namespace cuts {
 
     bool has_service_manager () const;
 
-    const datatools::service::service_manager & get_service_manager () const;
+    const datatools::service_manager & get_service_manager () const;
 
-    datatools::service::service_manager & grab_service_manager ();
+    datatools::service_manager & grab_service_manager ();
 
-    void set_service_manager (datatools::service::service_manager & a_service_manager);
+    void set_service_manager (datatools::service_manager & a_service_manager);
 
-    void install_service_manager (const datatools::utils::properties & a_service_manager_configuration);
+    void install_service_manager (const datatools::properties & a_service_manager_configuration);
 
     virtual void tree_dump (std::ostream & a_out         = std::clog, 
                             const std::string & a_title  = "",
@@ -121,21 +118,21 @@ namespace cuts {
     
     void load_cut (const std::string & cut_name_,
                    const std::string & cut_id_,
-                   const datatools::utils::properties & cut_config_);
+                   const datatools::properties & cut_config_);
     
     void create_cut (cut_entry_type & cut_entry_);
     
     void initialize_cut (cut_entry_type & cut_entry_);
     
-    void load_cuts (const datatools::utils::multi_properties & cuts_config_);
+    void load_cuts (const datatools::multi_properties & cuts_config_);
 
   protected:
 
         void _load_cut (const std::string & cut_name_,
                            const std::string & cut_id_,
-                           const datatools::utils::properties & cut_config_);
+                           const datatools::properties & cut_config_);
 
-        void _load_cuts (const datatools::utils::multi_properties & cuts_config_);
+        void _load_cuts (const datatools::multi_properties & cuts_config_);
 
         void _create_cut (cut_entry_type & cut_entry_);
         
@@ -158,7 +155,7 @@ namespace cuts {
 
         void _preload_global_dict ();
        
-    //void _load_cuts (const datatools::utils::multi_properties & a_cuts_config);
+    //void _load_cuts (const datatools::multi_properties & a_cuts_config);
 
     /*
   public :
@@ -167,7 +164,7 @@ namespace cuts {
     {
       std::string cut_name;
       std::string cut_id;
-      datatools::utils::properties cut_config;
+      datatools::properties cut_config;
       cut_handle_type cut_handle;
 
       cut_entry_type ();
@@ -182,13 +179,13 @@ namespace cuts {
     i_cut::factory_register_type          _factory_register_; //!< Factory register
     cut_handle_dict_type                  _cuts_;             //!< Dictionnary of cuts
     bool                                  _service_manager_owner_; //!< Owner flag for the embedded service manager
-    datatools::service::service_manager * _service_manager_;  //!< Handle to the embedded service manager
+    datatools::service_manager * _service_manager_;  //!< Handle to the embedded service manager
     
   };
 
 }  // end of namespace cuts
 
-#endif // __cuts__cut_manager_h
+#endif // _CUTS_CUT_MANAGER_H
 
 // end of cut_manager.h
 /*
