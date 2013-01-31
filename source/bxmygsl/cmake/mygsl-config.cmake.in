@@ -25,12 +25,13 @@
 
 set(mygsl_WITH_BIO        @MYGSL_WITH_BIO@)
 set(mygsl_WITH_REFLECTION @MYGSL_WITH_REFLECTION@)
+set(mygsl_DATATOOLS_DIR   @datatools_DIR@)
 
 #-----------------------------------------------------------------------
 # Locate ourselves, since all our config files should have been installed
 # alongside us...
 #
-get_filename_component(_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
+get_filename_component(_mygsl_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
 #-----------------------------------------------------------------------
 # Include the file listing all the imported targets to make them available
@@ -38,7 +39,8 @@ get_filename_component(_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
 # Protect it with an in-memory variable so that we don't include
 # it twice should multiple calls to find_package be made
 if(NOT mygsl_LIBDEPS_LOADED)
-  include("${_thisdir}/mygsl-libraries.cmake")
+  find_package(datatools REQUIRED CONFIG PATHS ${mygsl_DATATOOLS_DIR} NO_DEFAULT_PATH)
+  include("${_mygsl_thisdir}/mygsl-libraries.cmake")
   set(mygsl_LIBDEPS_LOADED 1)
 endif()
 
@@ -68,7 +70,7 @@ endif()
 #-----------------------------------------------------------------------
 # Set mygsl definitions, include paths and library variables
 #
-get_filename_component(_mygsl_inc "${_thisdir}/@TO_MYGSL_INCLUDEDIR@" ABSOLUTE)
+get_filename_component(_mygsl_inc "${_mygsl_thisdir}/@TO_MYGSL_INCLUDEDIR@" ABSOLUTE)
 
 set(mygsl_INCLUDE_DIR "${_mygsl_inc}" CACHE PATH "Path to mygsl headers")
 
@@ -90,6 +92,9 @@ if(mygsl_WITH_REFLECTION)
 endif()
   
 set(mygsl_LIBRARIES ${mygsl_LIBRARY})
+ 
+#message(STATUS "mygsl-config.cmake: XXXXX mygsl_LIBRARIES=${mygsl_LIBRARIES}")
+#message(STATUS "mygsl-config.cmake: XXXXX datatools_LIBRARIES=@datatools_LIBRARIES@")
 
 unset(_mygsl_inc)
 # end

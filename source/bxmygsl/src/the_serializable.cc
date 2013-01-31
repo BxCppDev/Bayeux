@@ -27,7 +27,7 @@ namespace detail {
         }
       if (dynamic_link_guard::_g_devel_)
         {
-          std::clog << "mygsl::dynamic_link_guard::CTOR: Ok." << std::endl;
+          std::clog << "mygsl::detail::serialization::dynamic_link_guard::CTOR: Ok." << std::endl;
         }
       return;
     }
@@ -36,7 +36,7 @@ namespace detail {
     {
       if (dynamic_link_guard::_g_devel_)
         {
-          std::clog << "mygsl::dynamic_link_guard::DTOR: Ok." << std::endl;
+          std::clog << "mygsl::detail::serialization::dynamic_link_guard::DTOR: Ok." << std::endl;
         }
       return;
     }
@@ -50,7 +50,7 @@ namespace detail {
         }
       if (dynamic_link_guard::_g_devel_)
         {
-          std::clog << "mygsl::dynamic_link_guard::instance: Ok." << std::endl;
+          std::clog << "mygsl::detail::serialization::dynamic_link_guard::instance: Ok." << std::endl;
         }
       return *g_global_guard.get ();
     }
