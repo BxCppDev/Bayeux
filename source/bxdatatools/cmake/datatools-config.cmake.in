@@ -30,7 +30,7 @@ set(datatools_WITH_REFLECTION @DATATOOLS_WITH_REFLECTION@)
 # Locate ourselves, since all our config files should have been installed
 # alongside us...
 #
-get_filename_component(_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
+get_filename_component(_datatools_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
 #-----------------------------------------------------------------------
 # Include the file listing all the imported targets to make them available
@@ -38,7 +38,7 @@ get_filename_component(_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
 # Protect it with an in-memory variable so that we don't include
 # it twice should multiple calls to find_package be made
 if(NOT datatools_LIBDEPS_LOADED)
-  include("${_thisdir}/datatools-libraries.cmake")
+  include("${_datatools_thisdir}/datatools-libraries.cmake")
   set(datatools_LIBDEPS_LOADED 1)
 endif()
 
@@ -68,7 +68,7 @@ endif()
 #-----------------------------------------------------------------------
 # Set datatools definitions, include paths and library variables
 #
-get_filename_component(_datatools_inc "${_thisdir}/@TO_DATATOOLS_INCLUDEDIR@" ABSOLUTE)
+get_filename_component(_datatools_inc "${_datatools_thisdir}/@TO_DATATOOLS_INCLUDEDIR@" ABSOLUTE)
 
 set(datatools_INCLUDE_DIR "${_datatools_inc}" CACHE PATH "Path to datatools headers")
 
