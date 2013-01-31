@@ -66,12 +66,12 @@ namespace geomtools {
     return;
   }
 
-  const datatools::utils::properties & gdml_export::parameters () const
+  const datatools::properties & gdml_export::parameters () const
   {
     return _parameters_;
   }
 
-  datatools::utils::properties & gdml_export::parameters ()
+  datatools::properties & gdml_export::parameters ()
   {
     return _parameters_;
   }
@@ -117,18 +117,18 @@ namespace geomtools {
       {
         throw runtime_error ("gdml_export::export_gdml: Factory is not locked !");
       }
-    ofstream fout;
-    string gdml_filename = filename_;
-    datatools::utils::fetch_path_with_env (gdml_filename);
+    std::ofstream fout;
+    std::string gdml_filename = filename_;
+    datatools::fetch_path_with_env (gdml_filename);
     fout.open (gdml_filename.c_str ());
     if (! fout)
       {
-        ostringstream message;
+        std::ostringstream message;
         message << "gdml_export::export_gdml: "
                 << "Cannot open GDML file '"
                 << filename_
                 << "' !";
-        throw runtime_error (message.str ());
+        throw std::runtime_error (message.str ());
       }
     _export_gdml (fout, factory_, model_name_);
     if (devel)
@@ -149,16 +149,16 @@ namespace geomtools {
         clog << "DEVEL: gdml_export::export_gdml: Entering..." << endl;
       }
     _factory_ = &factory_;
-    const models_col_t & models = _factory_->get_models ();
-    models_col_t::const_iterator found = models.find (model_name_);
+    const models_col_type & models = _factory_->get_models ();
+    models_col_type::const_iterator found = models.find (model_name_);
     if (found == models.end ())
       {
-        ostringstream message;
+        std::ostringstream message;
         message << "gdml_export::_export_gdml: "
                 << "Cannot find model '"
                 << model_name_
                 << "' !";
-        throw runtime_error (message.str ());
+        throw std::runtime_error (message.str ());
       }
     const i_model & top_model = *(found->second);
     if (_external_materials_stream_ != 0)
@@ -566,7 +566,7 @@ namespace geomtools {
             clog << "DEVEL: gdml_export::_export_gdml_logical: Here we should export the daughter physicals..." << endl;
             clog << "DEVEL: gdml_export::_export_gdml_logical: List of daughter physicals:" << endl;
 
-            for (logical_volume::physicals_col_t::const_iterator i
+            for (logical_volume::physicals_col_type::const_iterator i
                    = logical.get_physicals ().begin ();
                  i != logical.get_physicals ().end ();
                  i++)
@@ -579,7 +579,7 @@ namespace geomtools {
           }
 
         list<gdml_writer::physvol> physvols;
-        for (logical_volume::physicals_col_t::const_iterator i
+        for (logical_volume::physicals_col_type::const_iterator i
                = logical.get_physicals ().begin ();
              i != logical.get_physicals ().end ();
              i++)

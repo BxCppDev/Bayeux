@@ -8,8 +8,8 @@
 #include <vector>
 
 // Utilities :
-#include <datatools/utils/units.h>
-#include <datatools/utils/clhep_units.h>
+#include <datatools/units.h>
+#include <datatools/clhep_units.h>
 
 // Display data model :
 #include <geomtools/display_data.h>
@@ -32,8 +32,8 @@
 #include <geomtools/gnuplot_i.h>
 #include <geomtools/gnuplot_drawer.h>
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
-#include <datatools/utils/temporary_files.h>
-#include <datatools/utils/utils.h>
+#include <datatools/temporary_files.h>
+#include <datatools/utils.h>
 
 std::string make_name (const std::string & prefix_, unsigned int i_)
 {
@@ -272,7 +272,7 @@ int main (int argc_, char ** argv_)
 
           for (int frame_index = 0; frame_index < n_algo_steps; frame_index++)
             {
-              datatools::utils::temp_file tmp_file;
+              datatools::temp_file tmp_file;
               tmp_file.set_remove_at_destroy (true);
               tmp_file.create ("/tmp", "test_display_data_static_");
               

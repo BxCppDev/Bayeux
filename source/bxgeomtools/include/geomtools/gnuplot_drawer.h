@@ -13,14 +13,14 @@
  * 
  */
 
-#ifndef __geomtools__gnuplot_drawer_h
-#define __geomtools__gnuplot_drawer_h 1
+#ifndef GEOMTOOLS_GNUPLOT_DRAWER_H_
+#define GEOMTOOLS_GNUPLOT_DRAWER_H_ 1
 
 #include <iostream>
 #include <string>
 #include <sstream>
 
-#include <datatools/utils/properties.h>
+#include <datatools/properties.h>
 
 namespace geomtools {
   
@@ -92,9 +92,9 @@ namespace geomtools {
 
     bool is_initialized () const;
 
-    datatools::utils::properties & get_properties ();
+    datatools::properties & get_properties ();
 
-    const datatools::utils::properties & get_properties () const;
+    const datatools::properties & get_properties () const;
 
   protected:
 
@@ -152,7 +152,7 @@ namespace geomtools {
 
     bool             _initialized_;
     cstreams_col_type   _cstreams_;
-    datatools::utils::properties _props_;
+    datatools::properties _props_;
     std::string _view_;
     bool        _labels_;
     std::string _mode_;
@@ -164,6 +164,6 @@ namespace geomtools {
   
 } // end of namespace snemo
 
-#endif // __geomtools__gnuplot_drawer_h
+#endif // GEOMTOOLS_GNUPLOT_DRAWER_H_
 
 // end of gnuplot_drawer.h

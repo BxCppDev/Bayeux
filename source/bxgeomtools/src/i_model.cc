@@ -193,13 +193,13 @@ namespace geomtools {
     return;
   }
   
-  const datatools::utils::properties & 
+  const datatools::properties & 
   i_model::parameters () const
   {
     return _parameters_;
   }
 
-  datatools::utils::properties & 
+  datatools::properties & 
   i_model::parameters ()
   {
     return _parameters_;
@@ -240,8 +240,8 @@ namespace geomtools {
   }
  
   void i_model::_at_construct (const string & name_,
-                               const datatools::utils::properties & setup_,
-                               models_col_t * models_)
+                               const datatools::properties & setup_,
+                               models_col_type * models_)
   {
     if (g_devel) clog << "DEVEL: i_model::_at_construct: Entering..." << endl;
 
@@ -251,7 +251,7 @@ namespace geomtools {
     return;      
   }
 
-  void i_model::_pre_construct (datatools::utils::properties & setup_)
+  void i_model::_pre_construct (datatools::properties & setup_)
   {
     if (setup_.has_flag (i_model::constants::instance().PHANTOM_SOLID_FLAG))
       {
@@ -260,7 +260,7 @@ namespace geomtools {
     return;
   }
 
-  void i_model::_post_construct (datatools::utils::properties & setup_)
+  void i_model::_post_construct (datatools::properties & setup_)
   {
     visibility::extract (setup_, get_logical ().parameters ());
     material::extract (setup_, get_logical ().parameters ());
@@ -270,8 +270,8 @@ namespace geomtools {
   }
 
   void i_model::construct (const string & name_,
-                           const datatools::utils::properties & setup_,
-                           models_col_t * models_)
+                           const datatools::properties & setup_,
+                           models_col_type * models_)
   {
     if (g_devel) clog << "DEVEL: i_model::construct: Entering..." << endl;
     bool devel_track_name = false;
@@ -285,7 +285,7 @@ namespace geomtools {
       {
         throw logic_error ("geomtools::i_model::construct: Already constructed !");
       }
-    datatools::utils::properties & setup = const_cast<datatools::utils::properties &> (setup_);
+    datatools::properties & setup = const_cast<datatools::properties &> (setup_);
     _pre_construct (setup);
     _at_construct (name_, setup_, models_);
     _post_construct (setup);
@@ -300,7 +300,6 @@ namespace geomtools {
                            const string & indent_, 
                            bool inherit_) const
   {
-    namespace du = datatools::utils;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     if (! title_.empty ()) 
@@ -308,22 +307,22 @@ namespace geomtools {
         out_ << indent << title_ << endl;
       }
 
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "Name        : \"" << _name_ << "\"" << endl;
 
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "Model ID    : \"" << get_model_id () << "\"" << endl;
  
     /*
-      out_ << indent << du::i_tree_dumpable::tag 
+      out_ << indent << datatools::i_tree_dumpable::tag 
       << "Debug       : " << _debug_ << endl;
     */
 
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "Constructed : " << _constructed_ << endl;
       
     {
-      out_ << indent << i_tree_dumpable::tag 
+      out_ << indent << datatools::i_tree_dumpable::tag 
            << "Parameters  : ";
       /*
         if ( _parameters_.size () == 0) 
@@ -335,17 +334,17 @@ namespace geomtools {
       {
         ostringstream indent_oss;
         indent_oss << indent;
-        indent_oss << du::i_tree_dumpable::skip_tag;
+        indent_oss << datatools::i_tree_dumpable::skip_tag;
         _parameters_.tree_dump (out_,"",indent_oss.str ());
       }
     }
       
     {
-      out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
+      out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_) 
            << "Logical  : " << endl;
       ostringstream indent_oss;
       indent_oss << indent;
-      indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+      indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
       _logical.tree_dump (out_, "", indent_oss.str ());
     }
 

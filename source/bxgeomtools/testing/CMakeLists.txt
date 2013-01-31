@@ -1,6 +1,6 @@
 ###############################################################################
 ##
-## Copyright (C) 2012 François Mauger, Université de Caen Basse-Normandie, LPC Caen (CNRS/IN2P3)
+## Copyright (C) 2011-2013 François Mauger, Université de Caen Basse-Normandie
 ## Contact: mauger@lpccaen.in2p3.fr
 ##
 ## This file is part of the geomtools library.
@@ -20,11 +20,12 @@
 ##
 ###############################################################################
 
-set ( geomtools_tests_programs_list
+
+###file(GLOB geomtools_tests_programs test_*.cxx)
+set ( geomtools_tests_programs
   test_geomtools.cxx 
   test_blur_spot.cxx 
   test_address_set.cxx
-  test_any_shape_3d.cxx
   test_box.cxx
   test_circle.cxx
   test_color.cxx
@@ -70,110 +71,78 @@ set ( geomtools_tests_programs_list
   test_utils.cxx
   test_gnuplot_draw.cxx
   test_display_data.cxx
-  )
+)
 
-# set ( geomtools_tests_programs_list
-#   test_tessellated_solid.cxx
-#   test_stl_tools.cxx
-# )
+###message (STATUS "geomtools_tests_programs=${geomtools_tests_programs}" )
+list(REMOVE_ITEM geomtools_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
+if(GEOMTOOLS_WITH_REFLECTION)
+  list(APPEND geomtools_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
+endif() 
 
-# if (GEOMTOOLS_WITH_GNUPLOT_DISPLAY)
-#   list (APPEND geomtools_tests_programs_list
-#     test_gnuplot_i.cxx
-#   )
-# endif ()
+set(geomtools_tests_programs_list "${geomtools_tests_programs}") 
+list(SORT geomtools_tests_programs_list)
 
-include_directories ( ${PROJECT_BINARY_DIR}/include
-  ${PROJECT_SOURCE_DIR}/include     
+# include files search paths
+include_directories(
+  ${PROJECT_BINARY_DIR}/include
+  ${PROJECT_SOURCE_DIR}/include
   ${mygsl_INCLUDE_DIRS}
+  ${CLHEP_INCLUDE_DIR}
   ${PROJECT_SOURCE_DIR}/testing
   )
 
-# linker search paths :
-link_directories ( ${PROJECT_BINARY_DIR}/src )
+set(_test_tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/testing_output")
 
-option ( GEOMTOOLS_ALL_TESTS "Perform all possible tests" 1 )
-message ( STATUS "testing: Performing all available tests : ${GEOMTOOLS_ALL_TESTS}" )
+execute_process(COMMAND cmake -E remove_directory ${_test_tmp_dir} )
 
-if ( GEOMTOOLS_ALL_TESTS )
-  set ( _test_tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/tmp" )
-  execute_process (COMMAND cmake -E remove_directory ${_test_tmp_dir} )
+foreach(test_program ${geomtools_tests_programs_list})
+  get_filename_component(test_executable ${test_program} NAME_WE)
+  add_executable(${test_executable} ${test_program})
+  # define d suffix on windows
+  if(WIN32)
+    set_target_properties(${test_executable} PROPERTIES DEBUG_POSTFIX d)
+  endif()
 
-  foreach ( test_program ${geomtools_tests_programs_list} )
-    get_filename_component ( test_executable ${test_program} NAME_WE )
-    message ( STATUS "testing:  Building test target '${test_executable}'" )
-    add_executable ( ${test_executable} ${test_program} )
-    # define d suffix on windows
-    if (WIN32)
-      set_target_properties ( ${test_executable} PROPERTIES DEBUG_POSTFIX d )
-    endif ()
+  set(_test_libraries geomtools) 
 
-    # last thing we have to do is to tell CMake what libraries 
-    # our executable needs,
-    set ( _test_libraries geomtools )
-    # list ( APPEND _test_libraries ${mygsl_LIBRARIES} )
-    # #message ( STATUS "testing:  GEOMTOOLS_WITH_BIO=${GEOMTOOLS_WITH_BIO}" )
-    # if ( GEOMTOOLS_WITH_BIO )
-    #   #message ( STATUS "testing:  INSERT geomtools_bio" )
-    #   list (INSERT _test_libraries 0 geomtools_bio )
-    # endif ()
-    if ( GEOMTOOLS_WITH_BIO )
-      set ( _test_libraries geomtools_bio )
-    endif ()
-    
-    #target_link_libraries ( ${test_executable} -lgeomtools_bio )
-    target_link_libraries ( ${test_executable} ${_test_libraries} )
+  # Special bio DLL plugins :
+  if(datatools_WITH_BIO)
+    list(INSERT _test_libraries 0 datatools_bio)
+  endif() 
+  if(mygsl_WITH_BIO)
+    list(INSERT _test_libraries 0 mygsl_bio )
+  endif() 
+  if(GEOMTOOLS_WITH_BIO)
+    list(INSERT _test_libraries 0 geomtools_bio )
+  endif() 
 
-    add_test ( NAME ${test_executable}.run
-      COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
-      --tmp-dir ${_test_tmp_dir}
-      --prefix ${PROJECT_SOURCE_DIR} 
-      --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
-      run
-      )	 	
+  # Special reflection DLL plugins :
+  if(datatools_WITH_REFLECTION)
+    list(INSERT _test_libraries 0 datatools_reflection)
+  endif() 
+  if(GEOMTOOLS_WITH_REFLECTION)
+    list(INSERT _test_libraries 0 geomtools_reflection )
+  endif() 
 
-  endforeach ()
-  
-  add_custom_target ( clean_test
+  target_link_libraries(${test_executable} ${_test_libraries})
+
+  add_test(NAME ${test_executable}.run
     COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
-    --prefix ${PROJECT_SOURCE_DIR} 
     --tmp-dir ${_test_tmp_dir}
-    clean
-    )
+    --data-dir ${PROJECT_SOURCE_DIR} 
+    --prefix ${PROJECT_SOURCE_DIR} 
+    --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
+    run
+    )	 
 
-endif ()
+  unset(_test_libraries)
+endforeach ()
 
-option ( GEOMTOOLS_INSTALL_TEST_PROGRAMS "Install test programs" 1 )
-message ( STATUS "testing: Performing all available tests : ${GEOMTOOLS_INSTALL_TEST_PROGRAMS}" )
-
-# - Installation :
-if (GEOMTOOLS_INSTALL_TEST_PROGRAMS) 
-  set ( _test_install_dir ${CMAKE_INSTALL_DATADIR}/testing )
-
-  file ( GLOB geomtools_tests_config config/test_* )
-  install ( FILES ${geomtools_tests_config} 
-    DESTINATION ${_test_install_dir}/config  
-    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ 
-    )
-
-  file ( GLOB geomtools_tests_data data/test_*.data )
-  install ( FILES ${geomtools_tests_data} 
-    DESTINATION ${_test_install_dir}/data  
-    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ 
-    )
-
-  file ( GLOB geomtools_test_programs test_*.cxx test_*.gpl)
-  install ( FILES ${geomtools_test_programs} 
-    geomtools_test_model_1.cc
-    geomtools_test_model_1.h
-    geomtools_test_model_2.cc
-    geomtools_test_model_2.h
-    geomtools_test_world_model.cc
-    geomtools_test_world_model.h
-    DESTINATION ${_test_install_dir}
-    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ 
-    )
-
-endif ()
+add_custom_target(clean_test
+  COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
+  --prefix ${PROJECT_SOURCE_DIR} 
+  --tmp-dir ${_test_tmp_dir}
+  clean
+  )
 
 # end of CMakeLists.txt

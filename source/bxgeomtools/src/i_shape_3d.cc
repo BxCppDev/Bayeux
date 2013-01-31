@@ -261,7 +261,6 @@ namespace geomtools {
                               const string & a_indent, 
                               bool a_inherit) const
   {
-    namespace du = datatools::utils;
     string indent;
     if (! a_indent.empty ()) indent = a_indent;
     i_object_3d::tree_dump (a_out, a_title, a_indent, true);
@@ -269,7 +268,7 @@ namespace geomtools {
       {
         stackable_data SD;
         i_shape_3d::pickup_stackable (*this, SD);
-        a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit) 
+        a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit) 
               << "Stackable data : ";
         if (_stackable_data_ != 0)
           {
@@ -282,11 +281,11 @@ namespace geomtools {
         a_out << endl;
         ostringstream indent_oss;
         indent_oss << indent;
-        indent_oss << du::i_tree_dumpable::inherit_skip_tag (a_inherit);
+        indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (a_inherit);
         SD.tree_dump (a_out, "", indent_oss.str ());
       }
     /*
-      a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)  
+      a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)  
       << "Stackable_data : " << (_stackable_data_ != 0? "Yes": "No") << endl;
     */
     return;

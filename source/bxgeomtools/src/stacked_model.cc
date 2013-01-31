@@ -9,7 +9,7 @@
 
 #include <mygsl/min_max.h>
 
-#include <datatools/utils/units.h>
+#include <datatools/units.h>
 
 #include <geomtools/i_stackable.h>
 //#include <geomtools/regular_linear_placement.h>
@@ -32,8 +32,8 @@ namespace geomtools {
   stacked_model::stacked_item::stacked_item ()
   {
     model = 0;
-    datatools::utils::invalidate (limit_min);
-    datatools::utils::invalidate (limit_max);
+    datatools::invalidate (limit_min);
+    datatools::invalidate (limit_max);
     return;
   }
 
@@ -49,12 +49,12 @@ namespace geomtools {
   
   bool stacked_model::stacked_item::has_limit_min () const
   {
-    return datatools::utils::is_valid (limit_min);
+    return datatools::is_valid (limit_min);
   }
 
   bool stacked_model::stacked_item::has_limit_max () const
   {
-    return datatools::utils::is_valid (limit_max);
+    return datatools::is_valid (limit_max);
   }
 
   /****************************************************************/
@@ -136,7 +136,7 @@ namespace geomtools {
   {
     assert_unconstructed ("geomtools::stacked_model::add_stacked_model");
 
-    stacked_dict_t::const_iterator found = _stacked_models_.find (i_);
+    stacked_dict_type::const_iterator found = _stacked_models_.find (i_);
     if (found != _stacked_models_.end ())
       {
         ostringstream message;
@@ -171,12 +171,12 @@ namespace geomtools {
     return;
   }
 
-  const stacked_model::stacked_dict_t & stacked_model::get_models () const
+  const stacked_model::stacked_dict_type & stacked_model::get_models () const
   {
     return _stacked_models_;
   }
 
-  const stacked_model::labels_dict_t & stacked_model::get_labels () const
+  const stacked_model::labels_dict_type & stacked_model::get_labels () const
   {
     return _labels_;
   }
@@ -188,14 +188,14 @@ namespace geomtools {
 
   bool stacked_model::has_stacked_model (const string & label_) const
   {
-    labels_dict_t::const_iterator found = _labels_.find (label_);
+    labels_dict_type::const_iterator found = _labels_.find (label_);
     return found != _labels_.end ();
   }
 
   const stacked_model::stacked_item & 
   stacked_model::get_stacked_item (const string & label_) const
   {
-    labels_dict_t::const_iterator found = _labels_.find (label_);
+    labels_dict_type::const_iterator found = _labels_.find (label_);
     if (found == _labels_.end ())
       {
         ostringstream message;
@@ -210,7 +210,7 @@ namespace geomtools {
   const stacked_model::stacked_item & 
   stacked_model::get_stacked_item (int i_) const
   {
-    stacked_dict_t::const_iterator found = _stacked_models_.find (i_);
+    stacked_dict_type::const_iterator found = _stacked_models_.find (i_);
     if (found == _stacked_models_.end ())
       {
         ostringstream message;
@@ -224,7 +224,7 @@ namespace geomtools {
 
   const i_model & stacked_model::get_stacked_model (const string & label_) const
   {
-    labels_dict_t::const_iterator found = _labels_.find (label_);
+    labels_dict_type::const_iterator found = _labels_.find (label_);
     if (found == _labels_.end ())
       {
         ostringstream message;
@@ -238,7 +238,7 @@ namespace geomtools {
 
   const i_model & stacked_model::get_stacked_model (int i_) const
   {
-    stacked_dict_t::const_iterator found = _stacked_models_.find (i_);
+    stacked_dict_type::const_iterator found = _stacked_models_.find (i_);
     if (found == _stacked_models_.end ())
       {
         ostringstream message;
@@ -267,8 +267,8 @@ namespace geomtools {
   }
   
   void stacked_model::_at_construct (const string & name_,
-                                     const datatools::utils::properties & config_,
-                                     models_col_t * models_)
+                                     const datatools::properties & config_,
+                                     models_col_type * models_)
   {
     bool devel = i_model::g_devel;
     if (config_.has_flag ("devel"))
@@ -312,7 +312,7 @@ namespace geomtools {
     if (config_.has_key ("length_unit"))
       {
         string length_unit_str = config_.fetch_string ("length_unit");
-        lunit = datatools::utils::units::get_length_unit_from (length_unit_str);
+        lunit = datatools::units::get_length_unit_from (length_unit_str);
       }  
 
     /*** Position play ***/
@@ -422,7 +422,7 @@ namespace geomtools {
             label_name = config_.fetch_string (label_item_prop.str ());
           }  
 
-        models_col_t::const_iterator found = 
+        models_col_type::const_iterator found = 
           models_->find (stacked_model_name);
         if (found != models_->end ())
           {
@@ -456,7 +456,7 @@ namespace geomtools {
     double stacked_x = 0.0;
     double stacked_y = 0.0;
     double stacked_z = 0.0;
-    for (stacked_dict_t::const_iterator i = _stacked_models_.begin ();
+    for (stacked_dict_type::const_iterator i = _stacked_models_.begin ();
          i != _stacked_models_.end ();
          i++)
       {
@@ -494,8 +494,8 @@ namespace geomtools {
 
         // Parse special stacking position directives:
         double gmin, gmax;
-        datatools::utils::invalidate (gmin);
-        datatools::utils::invalidate (gmax);
+        datatools::invalidate (gmin);
+        datatools::invalidate (gmax);
         {
           string stacked_model_name;
           string label_name;
@@ -693,7 +693,7 @@ namespace geomtools {
     if (devel) cerr << "DEVEL: stacked_model::_at_construct: " << "step 6" << endl;
 
     int j = 0;
-    for (stacked_dict_t::iterator i = _stacked_models_.begin ();
+    for (stacked_dict_type::iterator i = _stacked_models_.begin ();
          i != _stacked_models_.end ();
          i++)
       {
@@ -804,7 +804,7 @@ namespace geomtools {
                                  const string & indent_, 
                                  bool inherit_) const
   {
-    namespace du = datatools::utils;
+    using namespace  datatools;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     i_model::tree_dump (out_, title_, indent, true);
@@ -820,7 +820,7 @@ namespace geomtools {
     }
      
     {
-      for (labels_dict_t::const_iterator i = _labels_.begin ();
+      for (labels_dict_type::const_iterator i = _labels_.begin ();
            i != _labels_.end ();
            i++)
         {
@@ -835,7 +835,7 @@ namespace geomtools {
       {
         ostringstream indent_oss;
         indent_oss << indent;
-        indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+        indent_oss << i_tree_dumpable::inherit_skip_tag (inherit_);
         _solid_.tree_dump (out_, "", indent_oss.str ());
       }   
     }

@@ -7,7 +7,7 @@
 #include <exception>
 #include <limits> 
 
-#include <datatools/utils/units.h>
+#include <datatools/units.h>
 
 
 namespace geomtools {
@@ -63,8 +63,8 @@ namespace geomtools {
   }
   
   void rotated_boxed_model::_at_construct (const string & name_,
-                                           const datatools::utils::properties & config_,
-                                           models_col_t * models_)
+                                           const datatools::properties & config_,
+                                           models_col_type * models_)
   {
     bool devel = i_model::g_devel;
     if (devel)
@@ -78,7 +78,7 @@ namespace geomtools {
     string rotated_label = "rotated";
     int    special_rotation_angle = ROTATION_ANGLE_INVALID;
     double rotation_angle;
-    datatools::utils::invalidate (rotation_angle);
+    datatools::invalidate (rotation_angle);
     int rotation_axis = ROTATION_AXIS_INVALID;
     bool use_special_angle = false;
     double lunit = CLHEP::mm;
@@ -86,22 +86,22 @@ namespace geomtools {
 
     // dimension of the mother box:
     double x, y, z;
-    datatools::utils::invalidate (x);
-    datatools::utils::invalidate (y);
-    datatools::utils::invalidate (z);
+    datatools::invalidate (x);
+    datatools::invalidate (y);
+    datatools::invalidate (z);
     
     /*** length unit ***/
     if (config_.has_key ("length_unit"))
       {
         string length_unit_str = config_.fetch_string ("length_unit");
-        lunit = datatools::utils::units::get_length_unit_from (length_unit_str);
+        lunit = datatools::units::get_length_unit_from (length_unit_str);
       }  
 
     /*** angle unit ***/
     if (config_.has_key ("angle_unit"))
       {
         string angle_unit_str = config_.fetch_string ("angle_unit");
-        aunit = datatools::utils::units::get_angle_unit_from (angle_unit_str);
+        aunit = datatools::units::get_angle_unit_from (angle_unit_str);
       }  
 
     // fetch the label of the rotated boxed model:
@@ -244,7 +244,7 @@ namespace geomtools {
     
     // Boxed model:
     {
-      models_col_t::const_iterator found = 
+      models_col_type::const_iterator found = 
         models_->find (boxed_model_name);
       i_model * the_model = 0;
       if (found != models_->end ())
@@ -436,7 +436,7 @@ namespace geomtools {
                                        const string & indent_, 
                                        bool inherit_) const
   {
-    namespace du = datatools::utils;
+    using namespace datatools;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     i_model::tree_dump (out_, title_, indent, true);
@@ -458,7 +458,7 @@ namespace geomtools {
       {
         ostringstream indent_oss;
         indent_oss << indent;
-        indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+        indent_oss << i_tree_dumpable::inherit_skip_tag (inherit_);
         _solid_.tree_dump (out_, "", indent_oss.str ());
       }   
     }

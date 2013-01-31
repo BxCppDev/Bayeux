@@ -178,13 +178,13 @@ namespace geomtools {
     return _entries_;
   }
 
-  const datatools::utils::properties & 
+  const datatools::properties & 
   display_data::get_auxiliaries () const
   {
     return _auxiliaries_;
   }
 
-  datatools::utils::properties & 
+  datatools::properties & 
   display_data::grab_auxiliaries ()
   {
     return _auxiliaries_;
@@ -338,51 +338,50 @@ namespace geomtools {
       {
         a_out << indent << a_title << endl;
       }  
-    namespace du = datatools::utils;
 
     // Display groups:
-    a_out << indent << du::i_tree_dumpable::tag;
+    a_out << indent << datatools::i_tree_dumpable::tag;
     a_out << "Display groups: " << _groups_.size () << std::endl;
     for (int i = 0; i < _groups_.size (); i++)
       {
-        a_out << du::i_tree_dumpable::skip_tag;
+        a_out << datatools::i_tree_dumpable::skip_tag;
         if (i + 1  < _groups_.size ())
-          a_out << du::i_tree_dumpable::tag;
+          a_out << datatools::i_tree_dumpable::tag;
         else
-          a_out << du::i_tree_dumpable::last_tag;
+          a_out << datatools::i_tree_dumpable::last_tag;
         a_out << "Group : '" << _groups_[i] << "'" << std::endl;
       }
 
     // Colors groups:
-    a_out << indent << du::i_tree_dumpable::tag;
+    a_out << indent << datatools::i_tree_dumpable::tag;
     a_out << "Colors : " << _colors_.size () << std::endl;
     for (int i = 0; i < _colors_.size (); i++)
       {
-        a_out << du::i_tree_dumpable::skip_tag;
+        a_out << datatools::i_tree_dumpable::skip_tag;
         if (i + 1  < _colors_.size ())
-          a_out << du::i_tree_dumpable::tag;
+          a_out << datatools::i_tree_dumpable::tag;
         else
-          a_out << du::i_tree_dumpable::last_tag;
+          a_out << datatools::i_tree_dumpable::last_tag;
         a_out << "Color : '" << _colors_[i] << "'" << std::endl;
       }
 
     // Display entries:
-    a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit);
+    a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit);
     a_out << "Display entries: " << _entries_.size () << std::endl;
     for (std::map<std::string, display_entry>::const_iterator i = _entries_.begin (); 
          i != _entries_.end (); 
          i++)
       {
-        a_out << indent << du::i_tree_dumpable::inherit_skip_tag (a_inherit);
+        a_out << indent << datatools::i_tree_dumpable::inherit_skip_tag (a_inherit);
         std::map<std::string, display_entry>::const_iterator j = i;
         j++;
         if (j !=  _entries_.end ())
           {
-            a_out << du::i_tree_dumpable::tag;
+            a_out << datatools::i_tree_dumpable::tag;
           }
         else
           {
-            a_out << du::i_tree_dumpable::last_tag;
+            a_out << datatools::i_tree_dumpable::last_tag;
           }
         const display_entry & de = i->second;
         a_out << "Entry : '" <<  i->first << "' ";
@@ -404,26 +403,26 @@ namespace geomtools {
              di != de.items.end ();
              di++)
           {
-            a_out << indent << du::i_tree_dumpable::inherit_skip_tag (a_inherit);
+            a_out << indent << datatools::i_tree_dumpable::inherit_skip_tag (a_inherit);
             if (j !=  _entries_.end ())
               {
-                a_out << du::i_tree_dumpable::skip_tag;
+                a_out << datatools::i_tree_dumpable::skip_tag;
               }
             else
               {
-                a_out << du::i_tree_dumpable::last_skip_tag;
+                a_out << datatools::i_tree_dumpable::last_skip_tag;
               }
             std::map<int32_t, display_item>::const_iterator dj = di;
             dj++;
             if (dj != de.items.end ())
               {
-                //a_out << du::i_tree_dumpable::last_skip_tag;
-                a_out << du::i_tree_dumpable::tag;
+                //a_out << datatools::i_tree_dumpable::last_skip_tag;
+                a_out << datatools::i_tree_dumpable::tag;
               }
             else
               {
-                //a_out << du::i_tree_dumpable::skip_tag;
-                a_out << du::i_tree_dumpable::last_tag;
+                //a_out << datatools::i_tree_dumpable::skip_tag;
+                a_out << datatools::i_tree_dumpable::last_tag;
               }
             const display_item & ditem = di->second;
             if (de.is_static ())

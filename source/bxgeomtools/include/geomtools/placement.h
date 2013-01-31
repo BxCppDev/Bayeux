@@ -13,8 +13,8 @@
  * 
  */
 
-#ifndef __geomtools__placement_h
-#define __geomtools__placement_h 1
+#ifndef GEOMTOOLS_PLACEMENT_H_
+#define GEOMTOOLS_PLACEMENT_H_ 1
 
 #include <iostream>
 #include <string>
@@ -23,8 +23,6 @@
 #include <geomtools/i_placement.h>
 
 namespace geomtools {
-
-  using namespace std;
 
   class placement : public i_placement
   {
@@ -78,7 +76,7 @@ namespace geomtools {
  
     virtual bool has_only_one_rotation () const;
 
-    virtual size_t compute_index_map (vector<uint32_t> & map_, 
+    virtual size_t compute_index_map (std::vector<uint32_t> & map_, 
                                       int item_) const;
  
   private:
@@ -179,18 +177,18 @@ namespace geomtools {
     void relocate (const placement &, placement &) const;
 
     // i_tree_dump interface:
-    virtual void tree_dump (ostream & out_  = clog, 
-                            const string & title_ = "geomutils::placement", 
-                            const string & indent_ = "", 
+    virtual void tree_dump (std::ostream & out_  = std::clog, 
+                            const std::string & title_ = "geomutils::placement", 
+                            const std::string & indent_ = "", 
                             bool inherit_ = false) const;
 
-    void dump (ostream      & out_    = clog, 
-               const string & title_  = "geomutils::placement", 
-               const string & indent_ = "") const;
+    void dump (std::ostream      & out_    = std::clog, 
+               const std::string & title_  = "geomutils::placement", 
+               const std::string & indent_ = "") const;
     
-    static bool from_string (const string &, placement &);
+    static bool from_string (const std::string &, placement &);
 
-    static void to_string (string &, const placement &);
+    static void to_string (std::string &, const placement &);
  
     void test () const;
 
@@ -198,7 +196,7 @@ namespace geomtools {
 
     vector_3d    _translation_;      // absolute position in mother frame
     int          _rotation_axis_;    // see utils.h: ROTATION_AXIS_X/Y/Z
-    double       _rotation_angle_;
+    double       _rotation_angle_;   // rotation angle (using rotation axis)
     double       _phi_, _theta_, _delta_; // ZYZ Euler angles
     rotation_3d  _rotation_;         // mother->child frame coord. transformation
     rotation_3d  _inverse_rotation_; // child->mother frame coord. transformation
@@ -207,10 +205,10 @@ namespace geomtools {
 
   };
 
-  ostream & operator<< (ostream & out_, const placement &);
+  std::ostream & operator<< (std::ostream & out_, const placement &);
 
 } // end of namespace geomtools
 
-#endif // __geomtools__placement_h
+#endif // GEOMTOOLS_PLACEMENT_H_
 
 // end of placement.h

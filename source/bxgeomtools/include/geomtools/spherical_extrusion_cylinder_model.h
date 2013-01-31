@@ -14,8 +14,8 @@
  * 
  */
 
-#ifndef __geomtools__spherical_extrusion_cylinder_model_h
-#define __geomtools__spherical_extrusion_cylinder_model_h 1
+#ifndef GEOMTOOLS_SPHERICAL_EXTRUSION_CYLINDER_MODEL_H_
+#define GEOMTOOLS_SPHERICAL_EXTRUSION_CYLINDER_MODEL_H_ 1
 
 #include <cstdlib>
 #include <cmath>
@@ -39,6 +39,36 @@ namespace geomtools {
  
   GEOMTOOLS_MODEL_CLASS_DECLARE(spherical_extrusion_cylinder_model) 
   {
+
+  public: 
+
+    const std::string & get_material () const;
+
+    const geomtools::subtraction_3d & get_solid () const;
+
+    virtual std::string get_model_id () const;
+
+    // ctor:
+    spherical_extrusion_cylinder_model ();
+
+    // dtor:
+    virtual ~spherical_extrusion_cylinder_model ();
+      
+    virtual void tree_dump (std::ostream & out_         = std::clog, 
+                            const std::string & title_  = "", 
+                            const std::string & indent_ = "", 
+                            bool inherit_          = false) const;
+      
+    static void gnuplot_draw_user_function (std::ostream &, 
+                                            const geomtools::vector_3d &, 
+                                            const geomtools::rotation_3d &,
+                                            const geomtools::i_object_3d &, 
+                                            void * = 0);
+  protected:
+
+    virtual void _at_construct (const std::string & name_,
+                                const datatools::properties & setup_,
+                                geomtools::models_col_type * models_ = 0);
   private: 
 
     std::string               _material_;
@@ -51,47 +81,12 @@ namespace geomtools {
     double                    _r_sphere_;
     bool                      _bottom_;
 
-  public: 
-
-    const std::string & get_material () const;
-
-    const geomtools::subtraction_3d & get_solid () const;
-
-    virtual std::string get_model_id () const;
-
-  public: 
-    // ctor:
-    spherical_extrusion_cylinder_model ();
-
-    // dtor:
-    virtual ~spherical_extrusion_cylinder_model ();
-      
-  public: 
-    virtual void tree_dump (std::ostream & out_         = std::clog, 
-                            const std::string & title_  = "", 
-                            const std::string & indent_ = "", 
-                            bool inherit_          = false) const;
-  protected:
-
-    virtual void _at_construct (const std::string & name_,
-                                const datatools::utils::properties & setup_,
-                                geomtools::models_col_t * models_ = 0);
-  private:
-
     GEOMTOOLS_MODEL_REGISTRATION_INTERFACE (spherical_extrusion_cylinder_model);
-      
-  public: 
-
-    static void gnuplot_draw_user_function (std::ostream &, 
-                                            const geomtools::vector_3d &, 
-                                            const geomtools::rotation_3d &,
-                                            const geomtools::i_object_3d &, 
-                                            void * = 0);
 
   };
 
 } // end of namespace geomtools
 
-#endif // __geomtools__spherical_extrusion_cylinder_model_h
+#endif // GEOMTOOLS_SPHERICAL_EXTRUSION_CYLINDER_MODEL_H_
 
 // end of spherical_extrusion_cylinder_model.h

@@ -12,31 +12,28 @@
  * 
  */
 
-#ifndef __geomtools__detail__model_tools_h
-#define __geomtools__detail__model_tools_h 1
+#ifndef GEOMTOOLS_DETAIL_MODEL_TOOLS_H_
+#define GEOMTOOLS_DETAIL_MODEL_TOOLS_H_ 1
 
 #include <string>
 #include <map>
 
-#include <datatools/utils/properties.h>
+#include <datatools/properties.h>
 
 namespace geomtools {
 
-  using namespace std;
-  using namespace datatools::utils;
-
   class i_model;
     
-  typedef map <string, i_model *> models_col_t;
+  typedef std::map<std::string, i_model *> models_col_type;
+  
+  typedef i_model * (*model_creator_type) (const std::string & name_,
+                                           const datatools::properties & configuration_,
+                                           models_col_type * models_);
+  
+  typedef std::map<std::string, model_creator_type> model_creator_dict_type;
 
-  typedef i_model * (*model_creator_t) (const string & name_,
-					const properties & configuration_,
-					models_col_t * models_);
+} // end of namespace geomtools
 
-  typedef map<string, model_creator_t> model_creator_dict_t;
-
-} // end of namespace genvtx
-
-#endif // __geomtools__detail__model_tools_h
+#endif // GEOMTOOLS_DETAIL_MODEL_TOOLS_H_
 
 // end of model_tools.h

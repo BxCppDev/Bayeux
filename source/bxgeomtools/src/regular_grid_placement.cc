@@ -319,37 +319,36 @@ namespace geomtools {
                                           const string & indent_, 
                                           bool inherit_) const
   {
-    namespace du = datatools::utils;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     this->i_placement::tree_dump (out_, title_, indent, true);
 
     {
       ostringstream oss_title;
-      oss_title << indent << i_tree_dumpable::tag << "Basic placement :";
+      oss_title << indent << datatools::i_tree_dumpable::tag << "Basic placement :";
       ostringstream oss_indent;
-      oss_indent << indent << i_tree_dumpable::skip_tag;
+      oss_indent << indent << datatools::i_tree_dumpable::skip_tag;
       _basic_placement_.tree_dump (out_, 
                                    oss_title.str (), 
                                    oss_indent.str ());
     }
 
-    out_ << indent << i_tree_dumpable::tag << "Mode : " 
+    out_ << indent << datatools::i_tree_dumpable::tag << "Mode : " 
          << _mode_  << endl;
 
-    out_ << indent << i_tree_dumpable::tag << "Column step : " 
+    out_ << indent << datatools::i_tree_dumpable::tag << "Column step : " 
          << _column_step_  << endl;
 
-    out_ << indent << i_tree_dumpable::tag << "Row step : " 
+    out_ << indent << datatools::i_tree_dumpable::tag << "Row step : " 
          << _row_step_  << endl;
 
-    out_ << indent << i_tree_dumpable::tag << "Number of columns : " 
+    out_ << indent << datatools::i_tree_dumpable::tag << "Number of columns : " 
          << _number_of_columns_  << endl;
 
-    out_ << indent << i_tree_dumpable::tag << "Number of rows : " 
+    out_ << indent << datatools::i_tree_dumpable::tag << "Number of rows : " 
          << _number_of_rows_  << endl;
 
-    out_ << indent << i_tree_dumpable::inherit_tag (inherit_)  
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)  
          << "Centered :" << is_centered () << endl;
 
     return;

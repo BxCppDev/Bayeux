@@ -11,8 +11,8 @@
  * 
  */
 
-#ifndef __geomtools__address_set_h
-#define __geomtools__address_set_h 1
+#ifndef GEOMTOOLS_ADDRESS_SET_H
+#define GEOMTOOLS_ADDRESS_SET_H 1
 
 #include <iostream>
 #include <set>
@@ -79,6 +79,6 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // __geomtools__address_set_h
+#endif // GEOMTOOLS_ADDRESS_SET_H
 
 // end of address_set.h

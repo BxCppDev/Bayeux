@@ -13,8 +13,8 @@
  * 
  */
 
-#ifndef __geomtools__i_shape_1d_h
-#define __geomtools__i_shape_1d_h 1
+#ifndef GEOMTOOLS_I_SHAPE_1D_H_
+#define GEOMTOOLS_I_SHAPE_1D_H_ 1
 
 #include <string>
 
@@ -42,6 +42,6 @@ namespace geomtools {
     
 } // end of namespace geomtools
 
-#endif // __geomtools__i_shape_1d_h
+#endif // GEOMTOOLS_I_SHAPE_1D_H_
 
 // end of i_shape_1d.h

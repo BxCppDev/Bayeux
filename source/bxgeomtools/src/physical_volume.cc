@@ -41,12 +41,12 @@ namespace geomtools {
     return;
   }
   
-  const properties & physical_volume::parameters () const
+  const datatools::properties & physical_volume::parameters () const
   {
     return _parameters_;
   }
   
-  properties & physical_volume::parameters ()
+  datatools::properties & physical_volume::parameters ()
   {
     return _parameters_;
   }
@@ -261,7 +261,6 @@ namespace geomtools {
                                    const string & indent_, 
                                    bool inherit_) const
   {
-    namespace du = datatools::utils;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     if (! title_.empty ()) 
@@ -269,15 +268,15 @@ namespace geomtools {
         out_ << indent << title_ << std::endl;
       }
 
-    out_ << indent << i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "Name      : \"" << _name_ << "\"" << std::endl;
 
-    out_ << indent << i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "Locked    : " << (_locked_? "Yes": "No") << std::endl;
 
     {
       // parameters:
-      out_ << indent << du::i_tree_dumpable::tag
+      out_ << indent << datatools::i_tree_dumpable::tag
            << "Parameters : ";
       if ( _parameters_.size () == 0) 
         {
@@ -287,14 +286,14 @@ namespace geomtools {
       {
         std::ostringstream indent_oss;
         indent_oss << indent;
-        indent_oss << du::i_tree_dumpable::skip_tag;
+        indent_oss << datatools::i_tree_dumpable::skip_tag;
         _parameters_.tree_dump (out_,"",indent_oss.str ());
       }      
     }
 
     {
       // Logical:
-      out_ << indent << i_tree_dumpable::tag 
+      out_ << indent << datatools::i_tree_dumpable::tag 
            << "Logical : ";
       if (has_logical ())
         {
@@ -309,10 +308,10 @@ namespace geomtools {
     }
 
     {
-      out_ << indent << i_tree_dumpable::tag 
+      out_ << indent << datatools::i_tree_dumpable::tag 
            << "Placement : " << endl;
       ostringstream oss_indent;
-      oss_indent << indent << i_tree_dumpable::skip_tag;
+      oss_indent << indent << datatools::i_tree_dumpable::skip_tag;
       _placement_->tree_dump (out_, 
                               "", 
                               oss_indent.str (), 
@@ -321,7 +320,7 @@ namespace geomtools {
 
     {
       // Mother:
-      out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
+      out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_) 
            << "Mother = ";
       if (has_mother ())
         {

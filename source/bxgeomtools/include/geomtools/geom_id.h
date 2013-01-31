@@ -20,16 +20,15 @@
  * 
  */
 
-#ifndef __geomtools__geom_id_h
-#define __geomtools__geom_id_h 1
-
+#ifndef GEOMTOOLS_GEOM_ID_H_
+#define GEOMTOOLS_GEOM_ID_H_ 1
 
 #include <iostream>
 #include <vector>
 
 #include <boost/cstdint.hpp>
 
-#include <datatools/serialization/i_serializable.h>
+#include <datatools/i_serializable.h>
 
 namespace geomtools {
 
@@ -178,6 +177,6 @@ namespace geomtools {
 #include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT_KEY2(geomtools::geom_id, "geomtools::geom_id")
 
-#endif // __geomtools__geom_id_h
+#endif // GEOMTOOLS_GEOM_ID_H_
 
 // end of geom_id.h

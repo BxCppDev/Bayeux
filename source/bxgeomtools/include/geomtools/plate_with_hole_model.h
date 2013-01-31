@@ -14,8 +14,8 @@
  * 
  */
 
-#ifndef __geomtools__plate_with_hole_model_h
-#define __geomtools__plate_with_hole_model_h 1
+#ifndef GEOMTOOLS_PLATE_WITH_HOLE_MODEL_H_
+#define GEOMTOOLS_PLATE_WITH_HOLE_MODEL_H_ 1
 
 #include <cstdlib>
 #include <cmath>
@@ -39,24 +39,6 @@ namespace geomtools {
  
   GEOMTOOLS_MODEL_CLASS_DECLARE(plate_with_hole_model)
   {
-  private: 
-
-    std::string               _material_;
-    geomtools::box            _mother_;
-    geomtools::box            _box_hole_;
-    geomtools::cylinder       _cyl_hole_;
-    geomtools::subtraction_3d _solid_;
-    double                    _x_; /// X box
-    double                    _y_; /// Y box
-    double                    _z_; /// Z box
-    
-    double                    _r_hole_;
-    double                    _x_hole_;
-    double                    _y_hole_;
-    double                    _z_hole_;
-    double                    _x_pos_hole_;
-    double                    _y_pos_hole_;
-
   public: 
 
     const std::string & get_material () const;
@@ -80,11 +62,8 @@ namespace geomtools {
   protected:
 
     virtual void _at_construct (const std::string & name_,
-                                const datatools::utils::properties & setup_,
-                                geomtools::models_col_t * models_ = 0);
-  private:
-
-    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE (plate_with_hole_model);
+                                const datatools::properties & setup_,
+                                geomtools::models_col_type * models_ = 0);
      
   public: 
 
@@ -93,11 +72,33 @@ namespace geomtools {
                                             const geomtools::rotation_3d &,
                                             const geomtools::i_object_3d &, 
                                             void * = 0);
+  private: 
+
+    std::string               _material_;
+    geomtools::box            _mother_;
+    geomtools::box            _box_hole_;
+    geomtools::cylinder       _cyl_hole_;
+    geomtools::subtraction_3d _solid_;
+    double                    _x_; /// X box
+    double                    _y_; /// Y box
+    double                    _z_; /// Z box
+    
+    double                    _r_hole_;
+    double                    _x_hole_;
+    double                    _y_hole_;
+    double                    _z_hole_;
+    double                    _x_pos_hole_;
+    double                    _y_pos_hole_;
+
+  private:
+
+    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE (plate_with_hole_model);
+
 
   };
 
 } // end of namespace geomtools
 
-#endif // __geomtools__plate_with_hole_model_h
+#endif // GEOMTOOLS_PLATE_WITH_HOLE_MODEL_H_
 
 // end of plate_with_hole_model.h

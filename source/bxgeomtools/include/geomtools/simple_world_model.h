@@ -13,8 +13,8 @@
  * 
  */
 
-#ifndef __geomtools__simple_world_model_h
-#define __geomtools__simple_world_model_h 1
+#ifndef GEOMTOOLS_SIMPLE_WORLD_MODEL_H_
+#define GEOMTOOLS_SIMPLE_WORLD_MODEL_H_ 1
 
 #include <iostream>
 #include <string> 
@@ -27,14 +27,12 @@
 
 namespace geomtools {
 
-  using namespace std;
-
   // define a geometry model with a single box: 
   GEOMTOOLS_MODEL_CLASS_DECLARE(simple_world_model) 
   {
   public:
 
-    static const string SETUP_LABEL;
+    static const std::string SETUP_LABEL;
 
   public: 
 
@@ -48,19 +46,19 @@ namespace geomtools {
 
   public:
 
-    virtual string get_model_id () const;
+    virtual std::string get_model_id () const;
 
   protected:
   
-    virtual void _at_construct (const string & name_,
-                                const datatools::utils::properties & setup_,
-                                models_col_t * models_ = 0);
+    virtual void _at_construct (const std::string & name_,
+                                const datatools::properties & setup_,
+                                models_col_type * models_ = 0);
       
   public: 
 
-    virtual void tree_dump (ostream & out_         = clog, 
-                            const string & title_  = "", 
-                            const string & indent_ = "", 
+    virtual void tree_dump (std::ostream & out_         = std::clog, 
+                            const std::string & title_  = "", 
+                            const std::string & indent_ = "", 
                             bool inherit_          = false) const;
 
   private:
@@ -72,7 +70,7 @@ namespace geomtools {
     double                      _world_x_;
     double                      _world_y_;
     double                      _world_z_;
-    string                      _material_;
+    std::string                 _material_;
 
     // registration interface :
     GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(simple_world_model);
@@ -81,6 +79,6 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // __geomtools__simple_world_model_h
+#endif // GEOMTOOLS_SIMPLE_WORLD_MODEL_H_
 
 // end of simple_world_model.h

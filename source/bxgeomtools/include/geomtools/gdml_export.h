@@ -13,8 +13,8 @@
  *
  */
 
-#ifndef __geomtools__gdml_export_h
-#define __geomtools__gdml_export_h 1
+#ifndef GEOMTOOLS_GDML_EXPORT_H_
+#define GEOMTOOLS_GDML_EXPORT_H_ 1
 
 #include <cstdlib>
 #include <iostream>
@@ -22,8 +22,8 @@
 #include <string>
 #include <list>
 
-#include <datatools/utils/utils.h>
-#include <datatools/utils/properties.h>
+#include <datatools/utils.h>
+#include <datatools/properties.h>
 
 #include <geomtools/model_factory.h>
 #include <geomtools/gdml_writer.h>
@@ -52,9 +52,9 @@ namespace geomtools {
 
     void add_replica_support (bool s_ = true);
 
-    const datatools::utils::properties & parameters () const;
+    const datatools::properties & parameters () const;
 
-    datatools::utils::properties & parameters ();
+    datatools::properties & parameters ();
 
   public:
     // ctor:
@@ -88,7 +88,7 @@ namespace geomtools {
   private:
 
     bool _debug_;
-    datatools::utils::properties _parameters_;
+    datatools::properties _parameters_;
     gdml_writer           _writer_;
     const model_factory * _factory_;
     std::string       _length_unit_;
@@ -106,6 +106,6 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // __geomtools__gdml_export_h
+#endif // GEOMTOOLS_GDML_EXPORT_H_
 
 // end of gdml_export.h

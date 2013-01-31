@@ -8,25 +8,28 @@
 
 #include <boost/scoped_ptr.hpp>
 
-#include <datatools/serialization/utils.h>
-#include <datatools/serialization/i_serializable.h>
-#include <datatools/serialization/archives_instantiation.h>
+#include <datatools/i_serializable.h>
+#include <datatools/archives_instantiation.h>
 
 // The serializable 'things' container :
-#include <datatools/utils/things.h>
+#include <datatools/things.h>
 
 // The serializable 'properties' container :
-#include <datatools/utils/properties.h>
+#include <datatools/properties.h>
 #include <geomtools/geom_id.h>
 #include <geomtools/line_3d.h>
 #include <geomtools/helix_3d.h>
 #include <geomtools/polyline_3d.h>
 
 // Some pre-processor guards about Boost I/O usage and linkage :
-#include <datatools/serialization/bio_guard.h>
-#include <geomtools/serialization/bio_guard.h>
+#include <datatools/bio_guard.h>
+#include <geomtools/bio_guard.h>
 
-#include <datatools/utils/library_loader.h>
+#include <datatools/library_loader.h>
+
+#include <boost/serialization/export.hpp>
+#include <boost/serialization/nvp.hpp>
+#include <datatools/i_serializable.ipp>
  
 using namespace std;
 
@@ -67,7 +70,6 @@ private :
   
 DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(A, "test_things::A")
 
-#include <boost/serialization/export.hpp>
 
 /*** use some macros to implement serialization stuff for class A ***/
 BOOST_CLASS_EXPORT_KEY2 (A, "test_things::A")
@@ -77,8 +79,6 @@ BOOST_CLASS_EXPORT_KEY2 (A, "test_things::A")
  * for the A                                               *
  ***********************************************************/
 
-#include <boost/serialization/nvp.hpp>
-#include <datatools/serialization/i_serializable.ipp>
   
 template<class Archive>
 void A::serialize (Archive & ar, const unsigned int file_version)
@@ -180,7 +180,7 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'datatools::utils::things' !" << endl; 
+      clog << "Test program for class 'datatools::things' !" << endl; 
   
       bool debug = false;
       bool out   = true;
@@ -193,8 +193,8 @@ int main (int argc_, char ** argv_)
       bool load_gbio = false;
   
       string LL_config = "";
-      uint32_t LL_flags = datatools::utils::library_loader::allow_unregistered;
-      datatools::utils::library_loader LL (LL_flags, LL_config);
+      uint32_t LL_flags = datatools::library_loader::allow_unregistered;
+      datatools::library_loader LL (LL_flags, LL_config);
       int iarg = 1;
       while (iarg < argc_)
         {
@@ -267,7 +267,7 @@ int main (int argc_, char ** argv_)
       if (out)
         {
           // declare the 'bag' instance as a 'things' container:
-          datatools::utils::things bag ("bag1", "A bag with things in it"); 
+          datatools::things bag ("bag1", "A bag with things in it"); 
 
           if (with_ab)
             {
@@ -276,7 +276,7 @@ int main (int argc_, char ** argv_)
               bag.add<A> ("a1", "The a1 object").set_value (666.6666);
               bag.add<A> ("a2", "The a2 object").set_value (3.1415);
               bag.add<B> ("b1", "The b1 object").set_index (7654321);
-              B & b2 = bag.add<B> ("b2", "A permanent object", datatools::utils::things::constant);
+              B & b2 = bag.add<B> ("b2", "A permanent object", datatools::things::constant);
               b2.set_index (6878);
               bag.add<B> ("b3");
               bag.add<A> ("a3", "The a3 object").set_value (42.0);
@@ -297,7 +297,7 @@ int main (int argc_, char ** argv_)
           
           if (with_dbio)
             {
-              bag.add<datatools::utils::properties> ("p1", "A property store").set_description ("A list of properties");
+              bag.add<datatools::properties> ("p1", "A property store").set_description ("A list of properties");
             }
 
           if (with_gbio)
@@ -366,7 +366,7 @@ int main (int argc_, char ** argv_)
                    */
                   const A & tmp = bag.get<A> ("b3"); 
                 }
-              catch (datatools::utils::bad_things_cast & x)
+              catch (datatools::bad_things_cast & x)
                 {
                   clog << "As expected, the 'b3' object cannot be fetch as an instance of A !" << endl;
                 }
@@ -386,7 +386,7 @@ int main (int argc_, char ** argv_)
           if (with_dbio)
           {
             // add some properties in the 'p1' object :
-            datatools::utils::properties & p1 = bag.grab<datatools::utils::properties> ("p1");
+            datatools::properties & p1 = bag.grab<datatools::properties> ("p1");
             p1.store_flag ("test");
             p1.store ("version.major", 1);
             p1.store ("version.minor", 2);
@@ -438,7 +438,7 @@ int main (int argc_, char ** argv_)
       if (in)
         {
           // declare the 'bag' instance as an empty 'things' container:
-          datatools::utils::things bag;
+          datatools::things bag;
 
           {
             // now we load the 'bag' from a Boost archive :
@@ -514,10 +514,10 @@ int main (int argc_, char ** argv_)
           /*
           if (with_dbio)
           {
-          if (bag.has ("p1") && bag.is_a<datatools::utils::properties> ("p1"))
+          if (bag.has ("p1") && bag.is_a<datatools::properties> ("p1"))
           {
           clog << "Fetching 'p1'..." << endl;
-          datatools::utils::properties & p1 = bag.grab<datatools::utils::properties> ("p1");
+          datatools::properties & p1 = bag.grab<datatools::properties> ("p1");
           p1.tree_dump(clog, "p1");
           }
 }

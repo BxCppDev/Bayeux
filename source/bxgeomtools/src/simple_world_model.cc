@@ -6,7 +6,7 @@
 
 #include <exception>
 #include <geomtools/visibility.h>
-#include <datatools/utils/units.h>
+#include <datatools/units.h>
 
 namespace geomtools {
 
@@ -35,8 +35,8 @@ namespace geomtools {
   }
   
   void simple_world_model::_at_construct (const string & name_,
-                                          const datatools::utils::properties & config_,
-                                          models_col_t * models_)
+                                          const datatools::properties & config_,
+                                          models_col_type * models_)
   {
     bool devel = i_model::g_devel;
     if (devel) clog << "DEVEL: simple_world_model::_at_construct: Entering..." << endl;
@@ -49,9 +49,9 @@ namespace geomtools {
     double setup_y     = 0.;
     double setup_z     = 0.;
     double world_x, world_y, world_z;
-    datatools::utils::invalidate (world_x);
-    datatools::utils::invalidate (world_y);
-    datatools::utils::invalidate (world_z);
+    datatools::invalidate (world_x);
+    datatools::invalidate (world_y);
+    datatools::invalidate (world_z);
     double length_unit = CLHEP::mm;
     double angle_unit = CLHEP::degree;
 
@@ -63,13 +63,13 @@ namespace geomtools {
     if (config_.has_key ("length_unit"))
       {
         string length_unit_str = config_.fetch_string ("length_unit");
-        length_unit = datatools::utils::units::get_length_unit_from (length_unit_str);
+        length_unit = datatools::units::get_length_unit_from (length_unit_str);
       }
 
     if (config_.has_key ("angle_unit"))
       {
         string angle_unit_str = config_.fetch_string ("angle_unit");
-        angle_unit = datatools::utils::units::get_angle_unit_from (angle_unit_str);
+        angle_unit = datatools::units::get_angle_unit_from (angle_unit_str);
       }
 
     if (config_.has_key ("world.x"))
@@ -148,7 +148,7 @@ namespace geomtools {
 
     // Setup model:
     {
-      models_col_t::const_iterator found = models_->find (setup_model_name);
+      models_col_type::const_iterator found = models_->find (setup_model_name);
       if (found != models_->end ())
         {
           //_setup_model_ = (dynamic_cast<const test_model_2 *> (found->second));
@@ -191,15 +191,15 @@ namespace geomtools {
     _world_y_ = size;
     _world_z_ = size;
  
-    if (datatools::utils::is_valid (world_x))
+    if (datatools::is_valid (world_x))
       {
         _world_x_ = world_x;
       }
-    if (datatools::utils::is_valid (world_y))
+    if (datatools::is_valid (world_y))
       {
         _world_y_ = world_y;
       }
-    if (datatools::utils::is_valid (world_z))
+    if (datatools::is_valid (world_z))
       {
         _world_z_ = world_z;
       }
@@ -232,7 +232,7 @@ namespace geomtools {
                                       const string & indent_, 
                                       bool inherit_) const
   {
-    namespace du = datatools::utils;
+    using namespace datatools;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     i_model::tree_dump (out_, title_, indent, true);
@@ -247,7 +247,7 @@ namespace geomtools {
           {
             ostringstream indent_oss;
             indent_oss << indent;
-            indent_oss << du::i_tree_dumpable::skip_tag;
+            indent_oss << i_tree_dumpable::skip_tag;
             _setup_model_->tree_dump (out_, "", indent_oss.str ());
           }   
         }
@@ -264,7 +264,7 @@ namespace geomtools {
       {
         ostringstream indent_oss;
         indent_oss << indent;
-        indent_oss << du::i_tree_dumpable::skip_tag;
+        indent_oss << i_tree_dumpable::skip_tag;
         _setup_placement_.tree_dump (out_, "", indent_oss.str ());
       }   
     }
@@ -275,7 +275,7 @@ namespace geomtools {
       {
         ostringstream indent_oss;
         indent_oss << indent;
-        indent_oss << du::i_tree_dumpable::skip_tag;
+        indent_oss << i_tree_dumpable::skip_tag;
         _setup_phys_.tree_dump (out_, "", indent_oss.str ());
       }   
     }
@@ -286,7 +286,7 @@ namespace geomtools {
       {
         ostringstream indent_oss;
         indent_oss << indent;
-        indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+        indent_oss << i_tree_dumpable::inherit_skip_tag (inherit_);
         _solid_.tree_dump (out_, "", indent_oss.str ());
       }   
     }

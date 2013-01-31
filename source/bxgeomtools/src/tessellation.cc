@@ -6,11 +6,10 @@
 
 #include <sstream>
 #include <fstream>
-//#include <cstdlib>
 #include <cmath>
 #include <stdexcept>
 
-#include <datatools/utils/utils.h>
+#include <datatools/utils.h>
 #include <geomtools/utils.h>
 
 namespace geomtools {
@@ -188,10 +187,10 @@ namespace geomtools {
       {
         _vertices_[i] = 0;
         _vertices_keys_[i] = -1;
-        datatools::utils::invalidate (_internal_angles_[i]);
+        datatools::invalidate (_internal_angles_[i]);
       }
     geomtools::invalidate (_normal_);
-    datatools::utils::invalidate (_surface_tri_);
+    datatools::invalidate (_surface_tri_);
     _surface_tri_bis_ = 0.0;
     _category_ = INVALID_CATEGORY;
     return;
@@ -300,7 +299,7 @@ namespace geomtools {
     // Check non-alignment of vertices :
 
     // double tolerance = tolerance_;
-    // if (tolerance_ == 0.0 || ! datatools::utils::is_valid (tolerance_))
+    // if (tolerance_ == 0.0 || ! datatools::is_valid (tolerance_))
     //   {
     //     // use default (rather strict) tolerance : 
     //     tolerance = 1.e-13;
@@ -366,7 +365,7 @@ namespace geomtools {
     // Check non-alignment of vertices :
 
     double tolerance = tolerance_;
-    if (tolerance_ == 0.0 || ! datatools::utils::is_valid (tolerance_))
+    if (tolerance_ == 0.0 || ! datatools::is_valid (tolerance_))
       {
         // use default (rather strict) tolerance : 
         tolerance = 1.e-13;
@@ -628,7 +627,7 @@ namespace geomtools {
     
   bool facet34::has_surface() const
   {
-    return datatools::utils::is_valid (_surface_tri_);
+    return datatools::is_valid (_surface_tri_);
   }
 
   double facet34::get_surface () const
@@ -648,7 +647,7 @@ namespace geomtools {
 
   void facet34::compute_surface ()
   {
-    datatools::utils::invalidate (_surface_tri_);
+    datatools::invalidate (_surface_tri_);
     if (is_valid ())
       {
         if (is_triangle ())
@@ -1704,7 +1703,7 @@ namespace geomtools {
     << filename << "' at line " << count << " !";
     throw runtime_error (message.str ()); 
     }
-    length_unit = datatools::utils::units::get_length_unit_from (unit_str);
+    length_unit = datatools::units::get_length_unit_from (unit_str);
     }
     }
     continue;

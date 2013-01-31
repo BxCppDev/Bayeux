@@ -13,15 +13,15 @@
  * 
  */
 
-#ifndef __geomtools__model_factory_h
-#define __geomtools__model_factory_h 1
+#ifndef GEOMTOOLS_MODEL_FACTORY_H_
+#define GEOMTOOLS_MODEL_FACTORY_H_ 1
 
 #include <iostream>
 #include <string>
 
-#include <datatools/utils/multi_properties.h>
-#include <datatools/utils/i_tree_dump.h>
-#include <datatools/factory/factory.h>
+#include <datatools/multi_properties.h>
+#include <datatools/i_tree_dump.h>
+#include <datatools/factory.h>
 
 #include <geomtools/logical_volume.h>
 #include <geomtools/i_model.h>
@@ -29,14 +29,11 @@
 
 namespace geomtools {
 
-  using namespace std;
-
-  class model_factory :
-    public datatools::utils::i_tree_dumpable
+  class model_factory : public datatools::i_tree_dumpable
   {
   public:
 
-    static const string DEFAULT_WORLD_LABEL;
+    static const std::string DEFAULT_WORLD_LABEL;
     static bool g_devel;
 
   public: 
@@ -51,10 +48,10 @@ namespace geomtools {
     void set_debug (bool);
 
     /// Get a non-mutable collection of geometry models
-    const models_col_t & get_models () const;
+    const models_col_type & get_models () const;
 
     /// Get a non-mutable collection of geometry logicals associated to models
-    const logical_volume::dict_t & get_logicals () const;
+    const logical_volume::dict_type & get_logicals () const;
      
   public: 
 
@@ -102,15 +99,14 @@ namespace geomtools {
     i_model::factory_register_type _factory_register_;
     bool _locked_;
     bool _debug_;
-    datatools::utils::multi_properties _mp_;
-    models_col_t           _models_;
-    logical_volume::dict_t _logicals_;
- 
+    datatools::multi_properties _mp_;
+    models_col_type           _models_;
+    logical_volume::dict_type _logicals_;
 
   };
 
 } // end of namespace geomtools
 
-#endif // __geomtools__model_factory_h
+#endif // GEOMTOOLS_MODEL_FACTORY_H_
 
 // end of model_factory.h

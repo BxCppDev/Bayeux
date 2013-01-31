@@ -10,10 +10,10 @@
 
 #include <boost/serialization/vector.hpp>
 
-#include <datatools/serialization/utils.h>
+#include <datatools/utils.h>
 #include <geomtools/geom_id.h>
-#include <datatools/serialization/i_serializable.ipp>
-	 
+#include <datatools/i_serializable.ipp>
+         
 namespace geomtools {
     
   template<class Archive>
@@ -21,10 +21,10 @@ namespace geomtools {
   {
     if (a_version > 0)
       {
-	/* from version 1 we inherit explicitely from the
-	 * 'datatools::serialization::i_serializable' abstract class
-	 */
-	a_ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
+        /* from version 1 we inherit explicitely from the
+         * 'datatools::serialization::i_serializable' abstract class
+         */
+        a_ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
       }
     a_ar & boost::serialization::make_nvp ("type",    _type_);
     a_ar & boost::serialization::make_nvp ("address", _addresses_);

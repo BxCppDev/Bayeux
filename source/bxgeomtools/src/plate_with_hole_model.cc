@@ -8,8 +8,8 @@
 #include <sstream>
 #include <stdexcept>
 
-#include <datatools/utils/utils.h>
-#include <datatools/utils/units.h>
+#include <datatools/utils.h>
+#include <datatools/units.h>
 
 namespace geomtools {
 
@@ -39,14 +39,14 @@ namespace geomtools {
     _material_ = "";
     _box_hole_.reset ();
     _cyl_hole_.reset ();
-    datatools::utils::invalidate (_x_);
-    datatools::utils::invalidate (_y_);
-    datatools::utils::invalidate (_z_);
-    datatools::utils::invalidate (_r_hole_);
-    datatools::utils::invalidate (_x_hole_);
-    datatools::utils::invalidate (_y_hole_);
-    datatools::utils::invalidate (_x_pos_hole_);
-    datatools::utils::invalidate (_y_pos_hole_);
+    datatools::invalidate (_x_);
+    datatools::invalidate (_y_);
+    datatools::invalidate (_z_);
+    datatools::invalidate (_r_hole_);
+    datatools::invalidate (_x_hole_);
+    datatools::invalidate (_y_hole_);
+    datatools::invalidate (_x_pos_hole_);
+    datatools::invalidate (_y_pos_hole_);
     return;
   }
 
@@ -57,8 +57,8 @@ namespace geomtools {
   }
 
   void plate_with_hole_model::_at_construct (const std::string & name_,
-                                             const datatools::utils::properties & config_,
-                                             geomtools::models_col_t * models_)
+                                             const datatools::properties & config_,
+                                             geomtools::models_col_type * models_)
   {
     bool devel = g_devel;
     if (config_.has_flag ("devel"))
@@ -77,9 +77,9 @@ namespace geomtools {
     double x_hole;
     double y_hole;
 
-    datatools::utils::invalidate (r_hole);
-    datatools::utils::invalidate (x_hole);
-    datatools::utils::invalidate (y_hole);
+    datatools::invalidate (r_hole);
+    datatools::invalidate (x_hole);
+    datatools::invalidate (y_hole);
 
     double x_pos_hole = 0.0;
     double y_pos_hole = 0.0;
@@ -89,7 +89,7 @@ namespace geomtools {
     if (config_.has_key ("length_unit"))
       {
         std::string lunit_str = config_.fetch_string ("length_unit");
-        lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+        lunit = datatools::units::get_length_unit_from (lunit_str);
       }
 
     if (config_.has_key ("material.ref"))
@@ -157,7 +157,7 @@ namespace geomtools {
     //     throw std::logic_error (message.str ());
     //   }
 
-    if (! datatools::utils::is_valid (r_hole))
+    if (! datatools::is_valid (r_hole))
       {
         if (config_.has_key ("x_hole"))
           {
@@ -223,7 +223,7 @@ namespace geomtools {
     double hole_x_max = x_pos_hole;
     double hole_y_min = y_pos_hole;
     double hole_y_max = y_pos_hole;
-    if (datatools::utils::is_valid (_r_hole_))
+    if (datatools::is_valid (_r_hole_))
       {
         hole_x_min -= _r_hole_;
         hole_x_max += _r_hole_;
@@ -267,7 +267,7 @@ namespace geomtools {
            
     geomtools::placement hole_placement (_x_pos_hole_, _y_pos_hole_, 0.0, 
                                          0, 0, 0);
-    if (datatools::utils::is_valid (_r_hole_))
+    if (datatools::is_valid (_r_hole_))
       {
         _cyl_hole_.set_r (_r_hole_);
         _cyl_hole_.set_z (_z_hole_);
@@ -275,7 +275,7 @@ namespace geomtools {
                             _cyl_hole_, 
                             hole_placement);
       }
-    else if (datatools::utils::is_valid (_x_hole_) && datatools::utils::is_valid (_y_hole_))
+    else if (datatools::is_valid (_x_hole_) && datatools::is_valid (_y_hole_))
       {
         _box_hole_.set_x (_x_hole_);
         _box_hole_.set_y (_y_hole_);
@@ -335,59 +335,58 @@ namespace geomtools {
                                          const std::string & indent_,
                                          bool inherit_) const
   {
-    namespace du = datatools::utils;
     std::string indent;
     if (! indent_.empty ()) indent = indent_;
     i_model::tree_dump (out_, title_, indent, true);
 
-    out_ << indent << i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Material : '" << _material_ << "'" << std::endl;
 
     {
       // Mother scintillator box:
-      out_ << indent << i_tree_dumpable::tag
+      out_ << indent << datatools::i_tree_dumpable::tag
            << "Mother box : " << std::endl;
       {
         std::ostringstream indent_oss;
         indent_oss << indent;
-        indent_oss << du::i_tree_dumpable::skip_tag;
+        indent_oss << datatools::i_tree_dumpable::skip_tag;
         _mother_.tree_dump (out_,"",indent_oss.str ());
       }
     }
     
-    out_ << indent << i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Hole X-position : " << _x_pos_hole_ / CLHEP::mm << " mm" << std::endl;
-    out_ << indent << i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Hole Y-position : " << _y_pos_hole_ / CLHEP::mm << " mm" << std::endl;
 
     {
       // Hole:
-      out_ << indent << i_tree_dumpable::tag
+      out_ << indent << datatools::i_tree_dumpable::tag
            << "Hole : " << std::endl;
       if (_box_hole_.is_valid ()) 
         {
           std::ostringstream indent_oss;
           indent_oss << indent;
-          indent_oss << du::i_tree_dumpable::skip_tag;
+          indent_oss << datatools::i_tree_dumpable::skip_tag;
           _box_hole_.tree_dump (out_,"",indent_oss.str ());
         }
       if (_cyl_hole_.is_valid ()) 
         {
           std::ostringstream indent_oss;
           indent_oss << indent;
-          indent_oss << du::i_tree_dumpable::skip_tag;
+          indent_oss << datatools::i_tree_dumpable::skip_tag;
           _cyl_hole_.tree_dump (out_,"",indent_oss.str ());
         }
     }
 
     {
       // Solid:
-      out_ << indent << i_tree_dumpable::inherit_tag (inherit_)
+      out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
            << "Solid : " << std::endl;
       {
         std::ostringstream indent_oss;
         indent_oss << indent;
-        indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+        indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
         _solid_.tree_dump (out_,"",indent_oss.str ());
       }
     }
@@ -401,7 +400,7 @@ namespace geomtools {
                                                           const geomtools::i_object_3d & obj_,
                                                           void *)
   {
-    using namespace geomtools;
+    //using namespace geomtools;
     const subtraction_3d * solid = dynamic_cast<const geomtools::subtraction_3d *>(&obj_);
     if (solid == 0)
       {
@@ -410,8 +409,8 @@ namespace geomtools {
                 << "3D-object of '" << obj_.get_shape_name () << "' shape type has not the right type !";
         throw std::logic_error (message.str ());
       }
-    const i_composite_shape_3d::shape_t & s1 = solid->get_shape1 ();
-    const i_composite_shape_3d::shape_t & s2 = solid->get_shape2 ();
+    const i_composite_shape_3d::shape_type & s1 = solid->get_shape1 ();
+    const i_composite_shape_3d::shape_type & s2 = solid->get_shape2 ();
     const i_shape_3d & sh1 = s1.get_shape ();
     const i_shape_3d & sh2 = s2.get_shape ();
 

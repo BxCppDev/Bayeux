@@ -1,5 +1,5 @@
 // -*- mode: c++ ; -*- 
-/* test_model_1.h
+/* geomtools_test_model_1.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-24
  * Last modified: 2010-02-24
@@ -13,8 +13,8 @@
  * 
  */
 
-#ifndef __geomtools__test__test_model_1_h
-#define __geomtools__test__test_model_1_h 1
+#ifndef GEOMTOOLS_TEST_TEST_MODEL_1_H_
+#define GEOMTOOLS_TEST_TEST_MODEL_1_H_ 1
 
 #include <iostream>
 #include <string> 
@@ -49,8 +49,8 @@ namespace geomtools {
     protected:
   
       virtual void _at_construct (const string & name_,
-                                  const datatools::utils::properties & config_,
-                                  models_col_t * models_ = 0);
+                                  const datatools::properties & config_,
+                                  models_col_type * models_ = 0);
     private:
 
       geomtools::box __solid;
@@ -63,6 +63,6 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // __geomtools__test__test_model_1_h
+#endif // GEOMTOOLS_TEST_TEST_MODEL_1_H_
 
-// end of test_model_1.h
+// end of geomtools_test_model_1.h

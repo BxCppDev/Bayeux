@@ -21,8 +21,6 @@
 
 namespace geomtools {
 
-  using namespace std;
-
   class box;
 
   // define a geometry model with a box solid: 

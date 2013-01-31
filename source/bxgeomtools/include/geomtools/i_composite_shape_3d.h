@@ -23,14 +23,12 @@
 
 namespace geomtools {
 
-  using namespace std;
-
   class i_composite_shape_3d : public i_shape_3d
   {
       
   public:
 
-    class shape_t : public datatools::utils::i_tree_dumpable
+    class shape_type : public datatools::i_tree_dumpable
     {
       bool         _delete_;
       i_shape_3d * _shape_;
@@ -39,21 +37,21 @@ namespace geomtools {
     private:
 
       // forbid implementation of:
-      shape_t (const shape_t &);
+      shape_type (const shape_type &);
 
-      shape_t & operator=(const shape_t &);
+      shape_type & operator=(const shape_type &);
 
     public:
 
-      void copy (shape_t &);
+      void copy (shape_type &);
 
       void reset ();
 
       bool is_valid () const;
 
-      shape_t ();
+      shape_type ();
 
-      virtual ~shape_t ();
+      virtual ~shape_type ();
 
       bool is_delete () const;
 
@@ -68,11 +66,11 @@ namespace geomtools {
       // factory methods:
       static void make_shape (i_shape_3d &, 
                               const placement &, 
-                              shape_t &);
+                              shape_type &);
 
       static void make_shape (i_shape_3d *, 
                               const placement &, 
-                              shape_t &);
+                              shape_type &);
 
 
       virtual void tree_dump (std::ostream & out_         = std::clog, 
@@ -103,11 +101,11 @@ namespace geomtools {
 
     void set_shapes (i_shape_3d *, i_shape_3d *, const placement &);
 
-    const shape_t & get_shape1 () const;
+    const shape_type & get_shape1 () const;
 
-    const shape_t & get_shape2 () const;
+    const shape_type & get_shape2 () const;
 
-    const shape_t & get_shape (int i_) const;
+    const shape_type & get_shape (int i_) const;
 
     void dump (std::ostream & out_ = std::clog) const;
 
@@ -118,8 +116,8 @@ namespace geomtools {
        
   private:
 
-    shape_t _shape1_;
-    shape_t _shape2_;
+    shape_type _shape1_;
+    shape_type _shape2_;
       
   };
     

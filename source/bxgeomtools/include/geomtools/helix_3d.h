@@ -15,8 +15,8 @@
  * 
  */
 
-#ifndef __geomtools__helix_3d_h
-#define __geomtools__helix_3d_h 1
+#ifndef GEOMTOOLS_HELIX_3D_H_
+#define GEOMTOOLS_HELIX_3D_H_ 1
 
 #include <iostream>
 #include <string>
@@ -24,9 +24,9 @@
 #include <geomtools/i_shape_1d.h>
 #include <geomtools/utils.h>
 
-#include <datatools/utils/i_tree_dump.h>
-#include <datatools/serialization/i_serializable.h>
-#include <datatools/utils/bit_mask.h>
+#include <datatools/i_tree_dump.h>
+#include <datatools/i_serializable.h>
+#include <datatools/bit_mask.h>
 
 namespace geomtools {
 
@@ -136,9 +136,9 @@ namespace geomtools {
     
     enum print_flags_type
       {
-        PRINT_XYZ_EXPAND1 = datatools::utils::bit_mask::bit00,
-        PRINT_XYZ_EXPAND2 = datatools::utils::bit_mask::bit01,
-        PRINT_XYZ_CENTER = datatools::utils::bit_mask::bit02
+        PRINT_XYZ_EXPAND1 = datatools::bit_mask::bit00,
+        PRINT_XYZ_EXPAND2 = datatools::bit_mask::bit01,
+        PRINT_XYZ_CENTER = datatools::bit_mask::bit02
       };
 
     static void print_xyz (std::ostream & out_, 

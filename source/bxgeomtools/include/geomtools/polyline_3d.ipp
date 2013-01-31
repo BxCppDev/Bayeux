@@ -9,9 +9,9 @@
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/list.hpp>
 
-#include <datatools/serialization/utils.h>
+#include <datatools/utils.h>
 #include <geomtools/polyline_3d.h>
-	 
+         
 namespace geomtools {
   
   template<class Archive>
@@ -19,7 +19,7 @@ namespace geomtools {
   {
     if (a_version > 0)
       {
-	a_ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
+        a_ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
       }
     a_ar & boost::serialization::make_nvp ("closed", _closed_);
     a_ar & boost::serialization::make_nvp ("points", _points_);

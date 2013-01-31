@@ -15,8 +15,8 @@
 #include <geomtools/gnuplot_i.h>
 #include <geomtools/gnuplot_drawer.h>
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
-#include <datatools/utils/temporary_files.h>
-#include <datatools/utils/utils.h>
+#include <datatools/temporary_files.h>
+#include <datatools/utils.h>
 
 using namespace std;
 
@@ -59,7 +59,7 @@ void test0 ( bool draw_ )
 
   if (draw_)
     {
-      datatools::utils::temp_file tmp_file;
+      datatools::temp_file tmp_file;
       tmp_file.set_remove_at_destroy (true);
       tmp_file.create ("/tmp", "test_plane_");
       p.print_grid (tmp_file.out(), 1.0, 5, 5);

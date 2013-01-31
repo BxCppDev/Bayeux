@@ -11,7 +11,7 @@
 #include <iomanip>
 #include <sstream>
 
-#include <datatools/utils/units.h>
+#include <datatools/units.h>
 
 #include <geomtools/placement.h>
 #include <geomtools/physical_volume.h>
@@ -22,65 +22,6 @@
 namespace geomtools {
 
   using namespace std;  
-
-  /*
-    multiple_items_model::item::item ()
-    {
-    __model = 0;
-    }
-
-    void multiple_items_model::item::set_label (const string & label_)
-    {
-    __label = label_;
-    }
-
-    const string & multiple_items_model::item::get_label () const
-    {
-    return __label;
-    }
-
-    void multiple_items_model::item::set_model (const i_model & model_)
-    {
-    __model = &model_;
-    }
-
-    const i_model & multiple_items_model::item::get_model () const
-    {
-    if (__model == 0)
-    {
-    ostringstream message;
-    message << "multiple_items_model::item::get_model: "
-    << "Missing model !";
-    throw runtime_error (message.str ());
-    }
-    return *__model;
-    }
-
-    void multiple_items_model::item::set_placement (const placement & pl_)
-    {
-    __placement = pl_;
-    }
-
-    const placement & 
-    multiple_items_model::item::get_placement () const
-    {
-    return __placement;
-    }
-
-    const physical_volume & 
-    multiple_items_model::item::get_physical_volume () const
-    {
-    return __phys;
-    }
-
-    physical_volume & 
-    multiple_items_model::item::get_physical_volume ()
-    {
-    return __phys;
-    }
-  */
-
-  /***************************************/
 
   MWIM & multiple_items_model::get_internals ()
   {
@@ -216,10 +157,10 @@ namespace geomtools {
   }
 
   void multiple_items_model::_at_construct (const string & name_,
-                                            const datatools::utils::properties & config_,
-                                            models_col_t * models_)
+                                            const datatools::properties & config_,
+                                            models_col_type * models_)
   {
-    if (g_devel) clog << "DEVEL: multiple_items_model::_at_construct: Entering..." << endl;
+    if (g_devel) std::clog << "DEVEL: multiple_items_model::_at_construct: Entering..." << std::endl;
 
     set_name (name_);
 
@@ -231,7 +172,7 @@ namespace geomtools {
     if (config_.has_key ("length_unit"))
       {
         string length_unit_str = config_.fetch_string ("length_unit");
-        lunit = datatools::utils::units::get_length_unit_from (length_unit_str);
+        lunit = datatools::units::get_length_unit_from (length_unit_str);
       }
     
     if (config_.has_key ("x"))
@@ -401,31 +342,30 @@ namespace geomtools {
                                         const string & indent_, 
                                         bool inherit_) const
   {
-    namespace du = datatools::utils;
     string indent;
     if (! indent_.empty()) indent = indent_;      
     i_model::tree_dump (out_, title_, indent, true);
       
     {
       // Material:
-      out_ << indent << i_tree_dumpable::tag 
+      out_ << indent << datatools::i_tree_dumpable::tag 
            << "Material : " << _get_material_name_ () << std::endl;
     }
      
     {
       // Items:
-      out_ << indent << i_tree_dumpable::tag 
+      out_ << indent << datatools::i_tree_dumpable::tag 
            << "Internal items : " << get_internals ().get_items ().size () << std::endl;
     }
 
     {
       // Solid:
-      out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
+      out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_) 
            << "Solid : " << std::endl;
       {
         std::ostringstream indent_oss;
         indent_oss << indent;
-        indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+        indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
         _solid_.tree_dump (out_,"",indent_oss.str ());
       }   
     }   

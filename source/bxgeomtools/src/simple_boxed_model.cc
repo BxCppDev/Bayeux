@@ -9,7 +9,7 @@
 #include <exception>
 #include <limits> 
 
-#include <datatools/utils/units.h>
+#include <datatools/units.h>
 
 namespace geomtools {
 
@@ -117,8 +117,8 @@ namespace geomtools {
   }
   
   void simple_boxed_model::_at_construct (const string & name_,
-                                          const datatools::utils::properties & config_,
-                                          models_col_t * models_)
+                                          const datatools::properties & config_,
+                                          models_col_type * models_)
   {
     bool devel = i_model::g_devel;
     if (devel) clog << "DEVEL: simple_boxed_model::_at_construct: Entering..." << endl;
@@ -183,7 +183,7 @@ namespace geomtools {
       }
  
     double lunit = CLHEP::mm;
-    lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+    lunit = datatools::units::get_length_unit_from (lunit_str);
 
     x *= lunit;
     y *= lunit;
@@ -215,7 +215,7 @@ namespace geomtools {
                                       const string & indent_, 
                                       bool inherit_) const
   {
-    namespace du = datatools::utils;
+    using namespace datatools;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     i_model::tree_dump (out_, title_, indent, true);
@@ -238,7 +238,7 @@ namespace geomtools {
       {
         ostringstream indent_oss;
         indent_oss << indent;
-        indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+        indent_oss << i_tree_dumpable::inherit_skip_tag (inherit_);
         _solid_.tree_dump (out_, "", indent_oss.str ());
       }   
     }

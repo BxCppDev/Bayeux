@@ -46,7 +46,7 @@ int main (int argc_, char ** argv_)
           iarg++;
       }
     
-      datatools::utils::properties setup;
+      datatools::properties setup;
       setup.store ("width",      44.0); // mm
       setup.store ("height",     25.0); // mm
       setup.store ("material.ref",   "copper"); 

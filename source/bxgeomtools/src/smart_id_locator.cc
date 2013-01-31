@@ -9,7 +9,7 @@
 #include <sstream>
 #include <stdexcept>
 
-#include <datatools/utils/ioutils.h>
+#include <datatools/ioutils.h>
 
 namespace geomtools {
 
@@ -33,7 +33,7 @@ namespace geomtools {
 
   void smart_id_locator::_construct ()
   {
-    for (geom_info_dict_t::const_iterator i
+    for (geom_info_dict_type::const_iterator i
            = _gmap_->get_geom_infos ().begin ();
          i != _gmap_->get_geom_infos ().end ();
          i++)
@@ -75,7 +75,7 @@ namespace geomtools {
       {
         if (is_debug ())
           {
-            clog << datatools::utils::io::debug
+            clog << datatools::io::debug
                  << "geomtools::smart_id_locator::_construct: "
                  << "Number of entries with type (" << _type_ << ") = "
                  << _ginfos_.size ()
@@ -86,7 +86,7 @@ namespace geomtools {
       {
         if (is_debug ())
           {
-            clog << datatools::utils::io::debug
+            clog << datatools::io::debug
                  << "geomtools::smart_id_locator::_construct: "
                  << "Number of entries selected by the ID selector = "
                  << _ginfos_.size ()
@@ -298,7 +298,7 @@ namespace geomtools {
               {
                 if (is_debug ())
                   {
-                    clog << datatools::utils::io::debug
+                    clog << datatools::io::debug
                          << "geomtools::smart_id_locator::get_geom_id: "
                          << "Last found entry match ("
                          << _last_found_->get_id () << ")"
@@ -336,7 +336,7 @@ namespace geomtools {
               }
             if (is_debug ())
               {
-                clog << datatools::utils::io::debug
+                clog << datatools::io::debug
                      << "geomtools::smart_id_locator::get_geom_id: "
                      << "New entry match ("
                      << ginfo->get_id () << ")"

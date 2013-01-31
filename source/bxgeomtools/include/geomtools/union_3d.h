@@ -13,8 +13,8 @@
  * 
  */
 
-#ifndef __geomtools__union_3d_h
-#define __geomtools__union_3d_h 1
+#ifndef GEOMTOOLS_UNION_3D_H_
+#define GEOMTOOLS_UNION_3D_H_ 1
 
 #include <geomtools/i_composite_shape_3d.h>
 
@@ -52,6 +52,6 @@ namespace geomtools {
   
 } // end of namespace geomtools
 
-#endif // __geomtools__union_3d_h
+#endif // GEOMTOOLS_UNION_3D_H_
 
 // end of union_3d.h

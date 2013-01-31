@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef __geomtools__gdml_writer_h
-#define __geomtools__gdml_writer_h 1
+#ifndef GEOMTOOLS_GDML_WRITER_H_
+#define GEOMTOOLS_GDML_WRITER_H_ 1
 
 #include <iostream>
 #include <sstream>
@@ -103,7 +103,7 @@ namespace geomtools {
                        const std::string & unit_str_, 
                        double value_);
 
-    void add_variable (const string & name_, 
+    void add_variable (const std::string & name_, 
                        double value_);
 
     void add_variable (const std::string & name_, 
@@ -222,14 +222,14 @@ namespace geomtools {
                           const std::string & aunit_str_ = "radian");
             
     void add_gdml_polycone (const std::string & name_, 
-                            std::map<double, pair<double, double> > zplanes_, 
+                            std::map<double, std::pair<double, double> > zplanes_, 
                             double start_phi_, double delta_phi_,
                             const std::string & lunit_str_ = "mm",
                             const std::string & aunit_str_ = "radian");
             
     void add_gdml_polyhedra (const std::string & name_, 
                              size_t num_sides_,
-                             std::map<double, pair<double, double> > zplanes_, 
+                             std::map<double, std::pair<double, double> > zplanes_, 
                              double start_phi_, double delta_phi_,
                              const std::string & lunit_str_ = "mm",
                              const std::string & aunit_str_ = "radian");
@@ -321,12 +321,12 @@ namespace geomtools {
       double offset;
     };
 
-    void add_volume_auxiliaries (const std::map<std::string,string> & aux_);
+    void add_volume_auxiliaries (const std::map<std::string, std::string> & aux_);
 
     void add_volume (const std::string & name_,
                      const std::string & material_ref_,
                      const std::string & solid_ref_,
-                     const std::map<std::string, string> & aux_);
+                     const std::map<std::string, std::string> & aux_);
 
     void add_volume (const std::string & name_,
                      const std::string & material_ref_,
@@ -336,7 +336,7 @@ namespace geomtools {
                      const std::string & material_ref_,
                      const std::string & solid_ref_,
                      const std::list<physvol> & phys_vols_,
-                     const std::map<std::string, string> & aux_);
+                     const std::map<std::string, std::string> & aux_);
 
     void add_volume (const std::string & name_,
                      const std::string & material_ref_,
@@ -416,6 +416,6 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // __geomtools__gdml_writer_h
+#endif // GEOMTOOLS_GDML_WRITER_H_
 
 // end of gdml_writer.h

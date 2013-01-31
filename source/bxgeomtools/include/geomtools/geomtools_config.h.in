@@ -2,10 +2,10 @@
 /* geomtools_config.h header file 
  */
 
-#ifndef __geomtools_geomtools_config_h
-#define __geomtools_geomtools_config_h 1
+#ifndef GEOMTOOLS_GEOMTOOLS_CONFIG_H_
+#define GEOMTOOLS_GEOMTOOLS_CONFIG_H_ 1
 
-/*** brio versioning information ***/
+/*** geomtools versioning information ***/
 
 //  GEOMTOOLS_VERSION % 100        is the patch level
 //  GEOMTOOLS_VERSION / 100 % 1000 is the minor version
@@ -15,26 +15,22 @@
 #define GEOMTOOLS_VERSION_MINOR @geomtools_VERSION_MINOR@
 #define GEOMTOOLS_PATCH_VERSION @geomtools_PATCH_VERSION@
 
-#define GEOMTOOLS_VERSION @geomtools_VERSION_NUMERIC@
+#define GEOMTOOLS_VERSION @_geomtools_VERSION_NUMERIC@
 
 //  GEOMTOOLS_LIB_VERSION must be defined to be the same as GEOMTOOLS_VERSION
 //  but as a *string* in the form "x.y[.z]" where x is the major version
 //  number, y is the minor version number, and z is the patch level if not 0.
 
-#define GEOMTOOLS_LIB_VERSION "@geomtools_VERSION_STR@"
+#define GEOMTOOLS_LIB_VERSION "@geomtools_VERSION@"
 
-/*** geomtools debug flag ***/
+/***  geomtools debug flag ***/
 #cmakedefine01 GEOMTOOLS_WITH_DEBUG
 
-/*** geomtools embedded Boost/Serialization based I/O ***/
-#if x1 == x1
-#cmakedefine01 GEOMTOOLS_WITH_BIO 
-#endif
+/***  geomtools embedded Boost/Serialization based I/O ***/
+#cmakedefine01 GEOMTOOLS_WITH_BIO
 
-/*** geomtools Boost/Python module ***/
-#if x1 == x1
-#cmakedefine01 GEOMTOOLS_WITH_PYTHON_WRAPPER
-#endif
+/***  geomtools embedded CAMP-based reflection ***/
+#cmakedefine01 GEOMTOOLS_WITH_REFLECTION
 
 #cmakedefine01 GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 
@@ -48,6 +44,6 @@
 
 #define GEOMTOOLS_PROPER_TOLERANCE 0.0
 
-#endif // __geomtools_geomtools_config_h
+#endif // GEOMTOOLS_GEOMTOOLS_CONFIG_H_
 
 // end of geomtools_config.h

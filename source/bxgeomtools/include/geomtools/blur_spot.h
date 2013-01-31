@@ -18,18 +18,19 @@
  *
  */
 
-#ifndef __geomtools__blur_spot_h
-#define __geomtools__blur_spot_h 1
+#ifndef GEOMTOOLS_BLUR_SPOT_H_
+#define GEOMTOOLS_BLUR_SPOT_H_ 1
 
 #include <boost/serialization/access.hpp>
-#include <datatools/serialization/i_serializable.h>
-#include <datatools/utils/i_tree_dump.h>
-#include <datatools/utils/properties.h>
+#include <boost/random/normal_distribution.hpp>
+
+#include <datatools/i_serializable.h>
+#include <datatools/i_tree_dump.h>
+#include <datatools/properties.h>
 #include <geomtools/utils.h>
 #include <geomtools/placement.h>
 #include <geomtools/i_object_3d.h>
 #include <mygsl/rng.h>
-#include <boost/random/normal_distribution.hpp>
 
 namespace geomtools {
 
@@ -65,7 +66,7 @@ namespace geomtools {
    */
   class blur_spot
     : DATATOOLS_SERIALIZABLE_CLASS,
-      public datatools::utils::i_tree_dumpable
+      public datatools::i_tree_dumpable
 
   {
   public:
@@ -139,10 +140,10 @@ namespace geomtools {
     const rotation_3d & get_inverse_rotation () const;
 
     /// Return a mutable reference to the  container of auxiliary properties
-    datatools::utils::properties & grab_auxiliaries ();
+    datatools::properties & grab_auxiliaries ();
 
     /// Return a non-mutable reference to the  container of auxiliary properties
-    const datatools::utils::properties & get_auxiliaries () const;
+    const datatools::properties & get_auxiliaries () const;
 
     /// Destructor
     virtual ~blur_spot ();
@@ -226,7 +227,7 @@ namespace geomtools {
     uint8_t   _blur_dimension_; /// Dimension of the object
     double    _tolerance_;      /// Intrinsic tolerance
     placement _placement_;      /// Placement
-    datatools::utils::properties _auxiliaries_; /// Container of auxiliary properties
+    datatools::properties _auxiliaries_; /// Container of auxiliary properties
     double _x_error_; /// Error/spread of the spot along the X-axis
     double _y_error_; /// Error/spread of the spot along the Y-axis
     double _z_error_; /// Error/spread of the spot along the Z-axis
@@ -294,7 +295,7 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // __geomtools__blur_spot_h
+#endif // GEOMTOOLS_BLUR_SPOT_H_
 
 // end of blur_spot.h
 

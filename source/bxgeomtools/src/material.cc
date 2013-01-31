@@ -46,36 +46,36 @@ namespace geomtools {
     return key_oss.str ();
   }
 
-  void material::extract (const datatools::utils::properties & source_,
-                          datatools::utils::properties & target_)
+  void material::extract (const datatools::properties & source_,
+                          datatools::properties & target_)
   {
     source_.export_starting_with (target_, material::constants::instance ().MATERIAL_PREFIX);
     return;
   }
 
-  bool material::has_flag (const datatools::utils::properties & config_,
+  bool material::has_flag (const datatools::properties & config_,
                               const string & flag_)
   {
     return (config_.has_flag (material::make_key (flag_)));
   }
 
-  bool material::has_key (const datatools::utils::properties & config_,
+  bool material::has_key (const datatools::properties & config_,
                              const string & key_)
   {
     return (config_.has_key (make_key (key_)));
   }
 
-  bool material::is_gas (const datatools::utils::properties & config_)
+  bool material::is_gas (const datatools::properties & config_)
   {
     material::has_flag (config_, material::constants::instance ().MATERIAL_GAS_FLAG);
   }
 
-  bool material::is_liquid (const datatools::utils::properties & config_)
+  bool material::is_liquid (const datatools::properties & config_)
   {
     material::has_flag (config_, material::constants::instance ().MATERIAL_LIQUID_FLAG);
   }
 
-  bool material::is_solid (const datatools::utils::properties & config_)
+  bool material::is_solid (const datatools::properties & config_)
   {
     material::has_flag (config_, material::constants::instance ().MATERIAL_SOLID_FLAG);
   }

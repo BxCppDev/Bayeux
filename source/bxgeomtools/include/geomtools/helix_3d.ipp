@@ -8,10 +8,10 @@
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
 
-#include <datatools/serialization/utils.h>
+#include <datatools/utils.h>
 #include <geomtools/helix_3d.h>
-#include <datatools/serialization/i_serializable.ipp>
-	 
+#include <datatools/i_serializable.ipp>
+         
 namespace geomtools {
   
   template<class Archive>
@@ -19,18 +19,18 @@ namespace geomtools {
   {
     if (a_version > 0)
       {
-	/* from version 1 we inherit explicitely from the
-	 * 'datatools::serialization::i_serializable' abstract class
-	 */
-	a_ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
+        /* from version 1 we inherit explicitely from the
+         * 'datatools::serialization::i_serializable' abstract class
+         */
+        a_ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
       }
     a_ar & boost::serialization::make_nvp ("radius", _radius_);
     if (_radius_ == _radius_)
       {
-	a_ar & boost::serialization::make_nvp ("center", _center_);
-	a_ar & boost::serialization::make_nvp ("step", _step_);
-	a_ar & boost::serialization::make_nvp ("t1", _t1_);
-	a_ar & boost::serialization::make_nvp ("t2", _t2_);
+        a_ar & boost::serialization::make_nvp ("center", _center_);
+        a_ar & boost::serialization::make_nvp ("step", _step_);
+        a_ar & boost::serialization::make_nvp ("t1", _t1_);
+        a_ar & boost::serialization::make_nvp ("t2", _t2_);
       }
     return;
   }

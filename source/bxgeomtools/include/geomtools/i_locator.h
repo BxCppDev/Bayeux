@@ -13,19 +13,14 @@
  * 
  */
 
-#ifndef __geomtools__i_locator_h
-#define __geomtools__i_locator_h 1
-
-#include <datatools/utils/properties.h>
+#ifndef GEOMTOOLS_I_LOCATOR_H_
+#define GEOMTOOLS_I_LOCATOR_H_ 1
 
 #include <geomtools/utils.h>
 #include <geomtools/geom_id.h>
 #include <geomtools/geom_info.h>
 
 namespace geomtools {
-
-  using namespace std;
-  using namespace datatools::utils;
 
   /**! An abstract interface for simple locators that build the geometry ID
    *   associated to some position for some geometry type.
@@ -67,6 +62,6 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // __geomtools__i_locator_h
+#endif // GEOMTOOLS_I_LOCATOR_H_
 
 // end of i_locator.h

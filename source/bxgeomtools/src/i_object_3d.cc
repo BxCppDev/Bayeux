@@ -50,12 +50,12 @@ namespace geomtools {
     return;
   }
 
-  datatools::utils::properties & i_object_3d::properties ()
+  datatools::properties & i_object_3d::properties ()
   {
     return _properties_;
   }
   
-  const datatools::utils::properties & i_object_3d::properties () const
+  const datatools::properties & i_object_3d::properties () const
   {
     return _properties_;
   }
@@ -130,21 +130,20 @@ namespace geomtools {
                                const string & indent_, 
                                bool inherit_) const
   {
-    namespace du = datatools::utils;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     if (! title_.empty ()) 
       {
         out_ << indent << title_ << endl;
       }
-    out_ << indent << i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "Shape name : \"" << get_shape_name () << "\"" << endl;
 
-    out_ << indent << i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "Tolerance  = " << _tolerance_ << endl; /* / CLHEP::mm << " mm" << endl; */
 
     {
-      out_ << indent << du::i_tree_dumpable::tag
+      out_ << indent << datatools::i_tree_dumpable::tag
            << "Properties : ";
       if ( _properties_.size () == 0) 
         {
@@ -154,18 +153,18 @@ namespace geomtools {
       {
         ostringstream indent_oss;
         indent_oss << indent;
-        indent_oss << du::i_tree_dumpable::skip_tag;
+        indent_oss << datatools::i_tree_dumpable::skip_tag;
         _properties_.tree_dump (out_,"",indent_oss.str ());
       }
     }
 
     {
-      out_ << indent << i_tree_dumpable::tag 
+      out_ << indent << datatools::i_tree_dumpable::tag 
            << "Dimensionality : " << get_dimensional () <<  endl;
     }
 
     {
-      out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)  
+      out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)  
            << "User draw : " << (has_user_draw () ? "Yes": "No") << endl;
 
     }
@@ -177,7 +176,7 @@ namespace geomtools {
   const i_object_3d * 
   i_object_3d::i_getter::get (const string & name_)
   {
-    datatools::utils::properties params;
+    datatools::properties params;
     return get (name_, params);
   }
 

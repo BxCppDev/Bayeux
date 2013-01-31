@@ -9,7 +9,7 @@ namespace geomtools {
   using namespace std;  
 
   void 
-  i_composite_shape_3d::shape_t::copy (shape_t & sh_)
+  i_composite_shape_3d::shape_type::copy (shape_type & sh_)
   {
     _delete_ = false;
     _shape_ = sh_._shape_;
@@ -22,21 +22,21 @@ namespace geomtools {
     return;
   }
 
-  i_composite_shape_3d::shape_t::shape_t ()
+  i_composite_shape_3d::shape_type::shape_type ()
   {
     _delete_ = false;
     _shape_ = 0;
     return;
   }
 
-  i_composite_shape_3d::shape_t::~shape_t ()
+  i_composite_shape_3d::shape_type::~shape_type ()
   {
     reset ();
     return;
   }
 
   void 
-  i_composite_shape_3d::shape_t::reset ()
+  i_composite_shape_3d::shape_type::reset ()
   {
     if (_delete_)
       {
@@ -47,45 +47,45 @@ namespace geomtools {
   }
 
   bool
-  i_composite_shape_3d::shape_t::is_delete () const
+  i_composite_shape_3d::shape_type::is_delete () const
   {
     return _delete_;
   }
 
   bool
-  i_composite_shape_3d::shape_t::is_valid () const
+  i_composite_shape_3d::shape_type::is_valid () const
   {
     return _shape_ != 0;
   }
 
   const i_shape_3d & 
-  i_composite_shape_3d::shape_t::get_shape () const
+  i_composite_shape_3d::shape_type::get_shape () const
   {
     return *_shape_;
   } 
 
   i_shape_3d & 
-  i_composite_shape_3d::shape_t::get_shape ()
+  i_composite_shape_3d::shape_type::get_shape ()
   {
     return *_shape_;
   } 
 
   const placement & 
-  i_composite_shape_3d::shape_t::get_placement () const 
+  i_composite_shape_3d::shape_type::get_placement () const 
   {
     return _placement_;
   } 
 
   placement & 
-  i_composite_shape_3d::shape_t::get_placement () 
+  i_composite_shape_3d::shape_type::get_placement () 
   {
     return _placement_;
   } 
 
   void 
-  i_composite_shape_3d::shape_t::make_shape (i_shape_3d & sh3d_, 
+  i_composite_shape_3d::shape_type::make_shape (i_shape_3d & sh3d_, 
                                              const placement & p_, 
-                                             i_composite_shape_3d::shape_t & sh_)
+                                             i_composite_shape_3d::shape_type & sh_)
   {
     sh_.reset ();
     sh_._delete_ = false;
@@ -95,9 +95,9 @@ namespace geomtools {
   }
 
   void 
-  i_composite_shape_3d::shape_t::make_shape (i_shape_3d * sh3d_, 
+  i_composite_shape_3d::shape_type::make_shape (i_shape_3d * sh3d_, 
                                              const placement & p_, 
-                                             i_composite_shape_3d::shape_t & sh_)
+                                             i_composite_shape_3d::shape_type & sh_)
   {
     sh_.reset ();
     sh_._delete_ = true;
@@ -106,12 +106,11 @@ namespace geomtools {
     return;
   }
   
-  void i_composite_shape_3d::shape_t::tree_dump (ostream & out_, 
+  void i_composite_shape_3d::shape_type::tree_dump (ostream & out_, 
                                                  const string & title_, 
                                                  const string & indent_, 
                                                  bool inherit_) const
   {
-    namespace du = datatools::utils;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     if (! title_.empty ()) 
@@ -122,12 +121,12 @@ namespace geomtools {
     {
       if (_shape_ != 0)
         {
-          out_ << indent << du::i_tree_dumpable::tag 
+          out_ << indent << datatools::i_tree_dumpable::tag 
                << "Shape = ";
           out_ << "'" << _shape_->get_shape_name () << "' " 
                << (_delete_? "(owned)": "(not owned)") << endl;
           ostringstream oss_indent;
-          oss_indent << indent << du::i_tree_dumpable::skip_tag;
+          oss_indent << indent << datatools::i_tree_dumpable::skip_tag;
           _shape_->tree_dump (out_, 
                               "", 
                               oss_indent.str (), 
@@ -135,16 +134,16 @@ namespace geomtools {
         }
       else
         {
-          out_ << indent << du::i_tree_dumpable::tag 
+          out_ << indent << datatools::i_tree_dumpable::tag 
                << "Shape = " << "<no shape>" << endl;
         }
     }
 
     {
-      out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)  
+      out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)  
            << "Placement : " << endl;
       ostringstream oss_indent;
-      oss_indent << indent << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+      oss_indent << indent << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
       _placement_.tree_dump (out_, 
                              "", 
                              oss_indent.str (), 
@@ -154,9 +153,9 @@ namespace geomtools {
     return;
   }
 
-  void i_composite_shape_3d::shape_t::dump (std::ostream & out_) const
+  void i_composite_shape_3d::shape_type::dump (std::ostream & out_) const
   {
-    out_ << "i_composite_shape_3d::shape_t" << std::endl;
+    out_ << "i_composite_shape_3d::shape_type" << std::endl;
     out_ << "|-- delete: " << _delete_ << std::endl;
     out_ << "|-- shape: " << std::hex << (void *) _shape_ << std::dec << std::endl;
     out_ << "`-- placement: " << std::endl; 
@@ -197,21 +196,21 @@ namespace geomtools {
   void 
   i_composite_shape_3d::set_shape1 (i_shape_3d & sh3d_, const placement & p_)
   {
-    shape_t::make_shape (sh3d_, p_, _shape1_);
+    shape_type::make_shape (sh3d_, p_, _shape1_);
     return;
   }
   
   void 
   i_composite_shape_3d::set_shape2 (i_shape_3d & sh3d_, const placement & p_)
   {
-    shape_t::make_shape (sh3d_, p_, _shape2_);
+    shape_type::make_shape (sh3d_, p_, _shape2_);
     return;
   }
     
   void 
   i_composite_shape_3d::set_shape1 (i_shape_3d * sh3d_, const placement & p_)
   {
-    shape_t::make_shape (sh3d_, p_, _shape1_);
+    shape_type::make_shape (sh3d_, p_, _shape1_);
     return;
   }
     
@@ -220,8 +219,8 @@ namespace geomtools {
                                     i_shape_3d & sh3d2_, const placement & p2_)
   {
     placement p1;
-    shape_t::make_shape (sh3d1_, p1, _shape1_);
-    shape_t::make_shape (sh3d2_, p2_, _shape2_);
+    shape_type::make_shape (sh3d1_, p1, _shape1_);
+    shape_type::make_shape (sh3d2_, p2_, _shape2_);
     return;
   }
     
@@ -230,31 +229,31 @@ namespace geomtools {
                                     i_shape_3d * sh3d2_, const placement & p2_)
   {
     placement p1;
-    shape_t::make_shape (sh3d1_, p1, _shape1_);
-    shape_t::make_shape (sh3d2_, p2_, _shape2_);
+    shape_type::make_shape (sh3d1_, p1, _shape1_);
+    shape_type::make_shape (sh3d2_, p2_, _shape2_);
     return;
   }
     
   void 
   i_composite_shape_3d::set_shape2 (i_shape_3d * sh3d_, const placement & p_)
   {
-    shape_t::make_shape (sh3d_, p_, _shape2_);
+    shape_type::make_shape (sh3d_, p_, _shape2_);
     return;
   }
 
-  const i_composite_shape_3d::shape_t & 
+  const i_composite_shape_3d::shape_type & 
   i_composite_shape_3d::get_shape1 () const
   {
     return _shape1_;
   }
   
-  const i_composite_shape_3d::shape_t & 
+  const i_composite_shape_3d::shape_type & 
   i_composite_shape_3d::get_shape2 () const
   {
     return _shape2_;
   }
 
-  const i_composite_shape_3d::shape_t & 
+  const i_composite_shape_3d::shape_type & 
   i_composite_shape_3d::get_shape (int i_) const
   {
     if (i_ == 0) return _shape1_;
@@ -267,13 +266,12 @@ namespace geomtools {
                                         const string & indent_, 
                                         bool inherit_) const
   {
-    namespace du = datatools::utils;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     i_object_3d::tree_dump (out_, title_, indent_, true);
 
     {
-      out_ << indent << du::i_tree_dumpable::tag 
+      out_ << indent << datatools::i_tree_dumpable::tag 
            << "Shape 1 : " << endl;
       ostringstream oss_indent;
       oss_indent << indent << i_tree_dumpable::skip_tag;
@@ -284,7 +282,7 @@ namespace geomtools {
     }
 
     {
-      out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)   
+      out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)   
            << "Shape 2 : " << endl;
       ostringstream oss_indent;
       oss_indent << indent << i_tree_dumpable::inherit_skip_tag (inherit_);

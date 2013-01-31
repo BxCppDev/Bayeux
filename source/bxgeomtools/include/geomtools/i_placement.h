@@ -22,9 +22,9 @@
 
 #include <boost/cstdint.hpp>
 
-#include <datatools/utils/i_tree_dump.h>
+#include <datatools/i_tree_dump.h>
 #include <boost/serialization/access.hpp>
-#include <datatools/serialization/i_serializable.h>
+#include <datatools/i_serializable.h>
 
 #include <geomtools/utils.h>
 
@@ -34,7 +34,7 @@ namespace geomtools {
   
   class i_placement 
     : DATATOOLS_SERIALIZABLE_CLASS , 
-      public datatools::utils::i_tree_dumpable
+      public datatools::i_tree_dumpable
   {
   public: 
     // ctor:

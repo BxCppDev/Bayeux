@@ -8,7 +8,7 @@
 
 #include <geomtools/polyhedra.h>
 #include <geomtools/gnuplot_draw.h>
-#include <datatools/utils/utils.h>
+#include <datatools/utils.h>
 
 using namespace std;
 
@@ -37,7 +37,7 @@ int main (int argc_, char ** argv_)
                  {
                    draw = false;
                  }
-	       else 
+               else 
                  { 
                     clog << "warning: ignoring option '" << option << "'!" << endl; 
                  }
@@ -54,24 +54,24 @@ int main (int argc_, char ** argv_)
     
       geomtools::polyhedra my_polyhedra;
       string datafile = "${GEOMTOOLS_DATA_DIR}/testing/data/test_light_guide_0.data";
-      datatools::utils::fetch_path_with_env (datafile);
+      datatools::fetch_path_with_env (datafile);
       my_polyhedra.initialize (datafile);
       if (debug)
-	{
-	  my_polyhedra.tree_dump (clog,"Polyhedra: ", "DEBUG: ");
-	}
+        {
+          my_polyhedra.tree_dump (clog,"Polyhedra: ", "DEBUG: ");
+        }
       clog << "Polyhedra: " << my_polyhedra << endl;
 
       if (draw)
       {
-	geomtools::vector_3d polyhedra_pos;
-	geomtools::rotation polyhedra_rot;
-	geomtools::create_rotation (polyhedra_rot, 0.0, 0.0, 0.0);
-	geomtools::gnuplot_draw::draw_polyhedra (cout, 
-						 polyhedra_pos, 
-						 polyhedra_rot, 
-						 my_polyhedra);
-	cout << endl << endl;
+        geomtools::vector_3d polyhedra_pos;
+        geomtools::rotation polyhedra_rot;
+        geomtools::create_rotation (polyhedra_rot, 0.0, 0.0, 0.0);
+        geomtools::gnuplot_draw::draw_polyhedra (cout, 
+                                                 polyhedra_pos, 
+                                                 polyhedra_rot, 
+                                                 my_polyhedra);
+        cout << endl << endl;
       }
 
 

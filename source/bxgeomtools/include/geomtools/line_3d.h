@@ -14,16 +14,17 @@
  * 
  */
 
-#ifndef __geomtools__line_3d_h
-#define __geomtools__line_3d_h 1
+#ifndef GEOMTOOLS_LINE_3D_H_
+#define GEOMTOOLS_LINE_3D_H_ 1
 
+#include <iostream>
 #include <string>
 
 #include <geomtools/i_shape_1d.h>
 #include <geomtools/utils.h>
 
-#include <datatools/utils/i_tree_dump.h>
-#include <datatools/serialization/i_serializable.h>
+#include <datatools/i_tree_dump.h>
+#include <datatools/i_serializable.h>
 
 namespace geomtools {
 
@@ -77,7 +78,7 @@ namespace geomtools {
 
     void dump () const;
 
-    static void print_xyz (ostream & out_, 
+    static void print_xyz (std::ostream & out_, 
                            const line_3d & line_);
 
     double get_distance_to_line ( const vector_3d & position_ ) const;
@@ -109,6 +110,6 @@ namespace geomtools {
 #include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT_KEY2(geomtools::line_3d, "geomtools::line_3d")
 
-#endif // __geomtools__line_3d_h
+#endif // GEOMTOOLS_LINE_3D_H_
 
 // end of line_3d.h

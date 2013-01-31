@@ -27,20 +27,20 @@ namespace geomtools {
     return key_oss.str ();
   }
 
-  void mapping::extract (const datatools::utils::properties & source_,
-                         datatools::utils::properties & target_)
+  void mapping::extract (const datatools::properties & source_,
+                         datatools::properties & target_)
   {
     source_.export_starting_with (target_, mapping::MAPPING_PREFIX);
     return;
   }
 
-  bool mapping::has_flag (const datatools::utils::properties & config_,
+  bool mapping::has_flag (const datatools::properties & config_,
                           const string & flag_)
   {
     return (config_.has_flag (mapping::make_key (flag_)));
   }
 
-  bool mapping::has_key (const datatools::utils::properties & config_,
+  bool mapping::has_key (const datatools::properties & config_,
                          const string & key_)
   {
     return (config_.has_key (mapping::make_key (key_)));
@@ -98,7 +98,7 @@ namespace geomtools {
     return;
   }
 
-  void mapping::initialize (const datatools::utils::properties & config_)
+  void mapping::initialize (const datatools::properties & config_)
   {
     if (is_initialized ())
       {
@@ -182,7 +182,7 @@ namespace geomtools {
     bool devel = g_devel;
     if (devel)
       {
-        clog << datatools::utils::io::devel << "mapping::build_from: Entering..." << endl;
+        clog << datatools::io::devel << "mapping::build_from: Entering..." << endl;
       }
 
     if (! is_initialized ())
@@ -196,7 +196,7 @@ namespace geomtools {
         throw logic_error ("mapping::build_from: Factory is not locked !");
       }
     _factory_ = &factory_;
-    models_col_t::const_iterator found
+    models_col_type::const_iterator found
       = _factory_->get_models ().find (mother_);
     if (found == _factory_->get_models ().end ())
       {
@@ -210,7 +210,7 @@ namespace geomtools {
     _build_ ();
     if (devel)
       {
-        clog << datatools::utils::io::devel
+        clog << datatools::io::devel
              << "mapping::build_from: Exiting." << endl;
       }
     return;
@@ -219,7 +219,7 @@ namespace geomtools {
   void mapping::dump_dictionnary (ostream & out_) const
   {
     out_ << "--- Geometry ID mapping --- " << endl;
-    for (geom_info_dict_t::const_iterator i
+    for (geom_info_dict_type::const_iterator i
            = _get_geom_infos ().begin ();
          i != _get_geom_infos ().end ();
          i++)
@@ -261,12 +261,12 @@ namespace geomtools {
     int counter = 0;
 
     out_ << indent_ << "Dictionary of geometry informations : " << std::endl;
-    for (geom_info_dict_t::const_iterator i
+    for (geom_info_dict_type::const_iterator i
            = _get_geom_infos ().begin ();
          i != _get_geom_infos ().end ();
          i++)
       {
-        geom_info_dict_t::const_iterator j = i;
+        geom_info_dict_type::const_iterator j = i;
         out_ << indent_;
         string tag1 ="|-- "; 
         string tag2 ="|   "; 
@@ -354,7 +354,7 @@ namespace geomtools {
 
     if (devel)
       {
-        clog << datatools::utils::io::devel
+        clog << datatools::io::devel
              << "mapping::_build_: Entering..." << endl;
       }
     string world_cat_name = "world";
@@ -374,7 +374,7 @@ namespace geomtools {
       world_id.set_address (0);
       if (devel)
         {
-          clog << datatools::utils::io::devel
+          clog << datatools::io::devel
                <<  "mapping::_build_:"<< "World ID = " << world_id << ' '
                << (world_id.is_valid () ? "[Valid]": "[Invalid]")<< endl;
         }
@@ -397,7 +397,7 @@ namespace geomtools {
     //dump_dictionnary (clog);
     if (devel)
       {
-        clog << datatools::utils::io::devel
+        clog << datatools::io::devel
              << "mapping::_build_: Exiting." << endl;
       }
     return;
@@ -405,10 +405,9 @@ namespace geomtools {
 
   void mapping::test () 
   {
-    namespace du = datatools::utils;
     ostringstream oss;
     _indenter_++;
-    oss << "test: " << du::io::devel << _indenter_ << endl;
+    oss << "test: " << datatools::io::devel << _indenter_ << endl;
     _indenter_--;
     return;
   }
@@ -418,16 +417,15 @@ namespace geomtools {
                                           const geom_id & mother_id_)
   {
     bool devel = g_devel;
-    namespace du = datatools::utils;
     _indenter_ (++_depth_);
 
-    if (devel) clog << du::io::devel << _indenter_ << "mapping::_build_logical_children_: Entering..." << endl;
+    if (devel) clog << datatools::io::devel << _indenter_ << "mapping::_build_logical_children_: Entering..." << endl;
 
     const logical_volume & log = log_;
-    if (devel) clog << du::io::devel << _indenter_ << "mapping::_build_logical_children_: Log = `" << log.get_name () << "'" << endl;
+    if (devel) clog << datatools::io::devel << _indenter_ << "mapping::_build_logical_children_: Log = `" << log.get_name () << "'" << endl;
     if (log.get_physicals ().size () == 0)
       {
-        if (devel) clog << du::io::devel << _indenter_ << "mapping::_build_logical_children_: Exiting." << endl;
+        if (devel) clog << datatools::io::devel << _indenter_ << "mapping::_build_logical_children_: Exiting." << endl;
         _indenter_ (--_depth_);
         return;
       }
@@ -439,14 +437,14 @@ namespace geomtools {
       }
 
     // Loop on children physical volumes:
-    for (logical_volume::physicals_col_t::const_iterator i
+    for (logical_volume::physicals_col_type::const_iterator i
            = log.get_physicals ().begin ();
          i != log.get_physicals ().end ();
          i++)
       {
         const string & phys_name = i->first;
         const physical_volume & phys_vol = *(i->second);
-        if (devel) clog << du::io::devel << _indenter_ << "Physical '" << phys_name << "' : "
+        if (devel) clog << datatools::io::devel << _indenter_ << "Physical '" << phys_name << "' : "
                         << "'" << phys_vol.get_name () << "' " << endl;
 
         const logical_volume & phys_logical = phys_vol.get_logical ();
@@ -460,7 +458,7 @@ namespace geomtools {
 
         string daughter_label
           = i_model::extract_label_from_physical_volume_name (phys_vol.get_name ());
-        if (devel) clog << du::io::devel << _indenter_
+        if (devel) clog << datatools::io::devel << _indenter_
                         << "Daughter label = '"
                         << daughter_label << "' " << endl;
         string daughter_category_info;
@@ -472,7 +470,7 @@ namespace geomtools {
                                               daughter_category_info);
             if (devel)
               {
-                clog << du::io::devel << _indenter_
+                clog << datatools::io::devel << _indenter_
                      << "Found daughter ID info for physical '"
                      << phys_name << "' " << endl;
               }
@@ -481,20 +479,20 @@ namespace geomtools {
           {
             if (devel)
               {
-                clog << du::io::devel << _indenter_
+                clog << datatools::io::devel << _indenter_
                      << "No daughter ID info for physical '"
                      << phys_name << "' " << endl;
               }
           }
 
         const i_placement & phys_placement = phys_vol.get_placement ();
-        if (devel) clog << du::io::devel << _indenter_ << "-> Number of items: " << phys_placement.get_number_of_items () << endl;
+        if (devel) clog << datatools::io::devel << _indenter_ << "-> Number of items: " << phys_placement.get_number_of_items () << endl;
         // Loop on replicated children physical volumes:
         for (int item = 0;
              item < phys_placement.get_number_of_items ();
              item++)
           {
-            if (devel) clog << du::io::devel << _indenter_ << "-> item #" << item << ": " << endl;
+            if (devel) clog << datatools::io::devel << _indenter_ << "-> item #" << item << ": " << endl;
 
             // get the current item placement
             // in the mother coordinates system:
@@ -503,7 +501,7 @@ namespace geomtools {
             {
               string tmp;
               placement::to_string (tmp, item_placement);
-              if (devel) clog << du::io::devel << _indenter_ << "-> child placement " << tmp << " " << endl;
+              if (devel) clog << datatools::io::devel << _indenter_ << "-> child placement " << tmp << " " << endl;
             }
 
             // compute the current item placement
@@ -514,7 +512,7 @@ namespace geomtools {
             {
               string tmp;
               placement::to_string (tmp, world_item_placement);
-              if (devel) clog << du::io::devel << _indenter_ << "-> world placement " << tmp << " " << endl;
+              if (devel) clog << datatools::io::devel << _indenter_ << "-> world placement " << tmp << " " << endl;
             }
             int address = item;
             geom_id propagated_world_id = mother_id_;
@@ -532,7 +530,7 @@ namespace geomtools {
 
                 if (_get_id_manager ().validate_id (item_id))
                   {
-                    if (devel) clog << du::io::devel << _indenter_ << "-> Item ID " << item_id << " is added to the map: " << endl;
+                    if (devel) clog << datatools::io::devel << _indenter_ << "-> Item ID " << item_id << " is added to the map: " << endl;
                     geom_info item_gi (item_id,
                                        world_item_placement,
                                        phys_logical);
@@ -542,7 +540,7 @@ namespace geomtools {
                         // get the category associated to the item ID:
                         const string & category
                           = _get_id_manager ().get_category_info (item_id.get_type ()).get_category ();
-                        if (devel) clog << du::io::devel << _indenter_ << "mapping::_build_logical_children_: "
+                        if (devel) clog << datatools::io::devel << _indenter_ << "mapping::_build_logical_children_: "
                                         << "Category = '" << category << "' (from ID=" << item_id << ")"
                                         << endl;
                         if (is_mode_only ())
@@ -595,7 +593,7 @@ namespace geomtools {
               {
                 if (devel)
                   {
-                    clog << du::io::devel << _indenter_ << "-> DO NOT TRAVERSE THE GEOMETRY TREE FURTHER."
+                    clog << datatools::io::devel << _indenter_ << "-> DO NOT TRAVERSE THE GEOMETRY TREE FURTHER."
                          << endl;
                   }
               }
@@ -604,7 +602,7 @@ namespace geomtools {
 
     if (devel)
       {
-        clog << du::io::devel
+        clog << datatools::io::devel
              << _indenter_ << "mapping::_build_logical_children_: Exiting."
              << endl;
       }

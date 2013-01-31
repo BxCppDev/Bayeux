@@ -10,17 +10,17 @@ namespace geomtools {
 
   using namespace std;  
 
-  const geom_info_dict_t & geom_map::_get_geom_infos () const
+  const geom_info_dict_type & geom_map::_get_geom_infos () const
   {
     return _geom_infos_;
   }
     
-  const geom_info_dict_t & geom_map::get_geom_infos () const
+  const geom_info_dict_type & geom_map::get_geom_infos () const
   {
     return _geom_infos_;
   }
   
-  geom_info_dict_t & geom_map::_get_geom_infos ()
+  geom_info_dict_type & geom_map::_get_geom_infos ()
   {
     return _geom_infos_;
   }
@@ -85,7 +85,7 @@ namespace geomtools {
   
   const geom_info & geom_map::get_geom_info (const geom_id & id_) const
   {
-    geom_info_dict_t::const_iterator found = _geom_infos_.find (id_);
+    geom_info_dict_type::const_iterator found = _geom_infos_.find (id_);
     if (found == _geom_infos_.end ())
       {
         ostringstream message;
@@ -113,7 +113,7 @@ namespace geomtools {
     // Short cut if the GID pattern is complete (no 'ANY' addresses) :
     if (gid_pattern_.is_complete ()) 
       { 
-        geom_info_dict_t::const_iterator found = _geom_infos_.find (gid_pattern_);
+        geom_info_dict_type::const_iterator found = _geom_infos_.find (gid_pattern_);
         if (found != _geom_infos_.end ())
           {
             gids_.push_back (found->first);
@@ -121,7 +121,7 @@ namespace geomtools {
         return;
       }
     // Else traverse the full map of ginfos :
-    for (geom_info_dict_t::const_iterator it = _geom_infos_.begin ();
+    for (geom_info_dict_type::const_iterator it = _geom_infos_.begin ();
          it != _geom_infos_.end ();
          it++)
       {
@@ -136,7 +136,7 @@ namespace geomtools {
 
   const geom_info * geom_map::get_geom_info_ptr (const geom_id & id_) const
   {
-    geom_info_dict_t::const_iterator found = _geom_infos_.find (id_);
+    geom_info_dict_type::const_iterator found = _geom_infos_.find (id_);
     if (found == _geom_infos_.end ()) return 0;
     return &found->second;
   }
@@ -188,7 +188,7 @@ namespace geomtools {
                                          double tolerance_) const
   {
     int requested_type = type_;
-    for (geom_info_dict_t::const_iterator i = _geom_infos_.begin ();
+    for (geom_info_dict_type::const_iterator i = _geom_infos_.begin ();
          i != _geom_infos_.end ();
          i++)
       {
@@ -220,7 +220,7 @@ namespace geomtools {
                                          const string & category_, 
                                          double tolerance_) const
   {
-    geom_info_dict_t::const_iterator found = _geom_infos_.end ();
+    geom_info_dict_type::const_iterator found = _geom_infos_.end ();
     if (! _id_manager_->has_category_info (category_))
       {
         ostringstream message;
@@ -270,7 +270,7 @@ namespace geomtools {
     // then fill it with the addresses of matching geom_infos objects
     // from the main dictionary of 'ginfos' :
     ginfo_ptr_collection_type & the_collection = _geom_infos_with_type_map_[type_];
-    for (geom_info_dict_t::const_iterator i = _geom_infos_.begin ();
+    for (geom_info_dict_type::const_iterator i = _geom_infos_.begin ();
          i != _geom_infos_.end ();
          i++)
       {

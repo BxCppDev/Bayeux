@@ -7,7 +7,7 @@
 
 #include <stdexcept>
 
-#include <datatools/utils/properties.h>
+//#include <datatools/properties.h>
 
 namespace geomtools {
 

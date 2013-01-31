@@ -10,7 +10,7 @@
 #include <sstream>
 #include <string>
 
-#include <datatools/utils/utils.h>
+#include <datatools/utils.h>
 
 namespace geomtools {
 
@@ -35,8 +35,8 @@ namespace geomtools {
     {
       // initialize output as invalid:
       nsols_ = 0;
-      datatools::utils::invalidate (u1_);
-      datatools::utils::invalidate (u2_);
+      datatools::invalidate (u1_);
+      datatools::invalidate (u2_);
 
       const vector_2d & P1 = line_origin_;
       const vector_2d & P2 = line_origin_ + line_direction_;

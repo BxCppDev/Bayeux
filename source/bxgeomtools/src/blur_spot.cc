@@ -4,7 +4,7 @@
 
 #include <geomtools/blur_spot.h>
 #include <geomtools/i_object_3d.h>
-#include <datatools/utils/utils.h>
+#include <datatools/utils.h>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
@@ -24,18 +24,18 @@ namespace geomtools {
     if ( ! _placement_.is_valid ()) return false;
     if (is_dimension_one ())
       {
-        return datatools::utils::is_valid (_z_error_);
+        return datatools::is_valid (_z_error_);
       }
     else if (is_dimension_two ())
       {
-        return datatools::utils::is_valid (_x_error_) 
-          && datatools::utils::is_valid (_y_error_);
+        return datatools::is_valid (_x_error_) 
+          && datatools::is_valid (_y_error_);
       }
     else //if (is_dimension_three ())
       {
-        return datatools::utils::is_valid (_x_error_) 
-          && datatools::utils::is_valid (_y_error_) 
-          && datatools::utils::is_valid (_z_error_);
+        return datatools::is_valid (_x_error_) 
+          && datatools::is_valid (_y_error_) 
+          && datatools::is_valid (_z_error_);
       }
     // return true;
   }
@@ -44,9 +44,9 @@ namespace geomtools {
   {
     _placement_.reset ();
     _auxiliaries_.clear ();
-    datatools::utils::invalidate (_x_error_);
-    datatools::utils::invalidate (_y_error_);
-    datatools::utils::invalidate (_z_error_);
+    datatools::invalidate (_x_error_);
+    datatools::invalidate (_y_error_);
+    datatools::invalidate (_z_error_);
     return;
   }
 
@@ -127,9 +127,9 @@ namespace geomtools {
   {
     _blur_dimension_ = DIMENSION_INVALID;
     _tolerance_ = i_object_3d::DEFAULT_TOLERANCE;
-    datatools::utils::invalidate (_x_error_);
-    datatools::utils::invalidate (_y_error_);
-    datatools::utils::invalidate (_z_error_);
+    datatools::invalidate (_x_error_);
+    datatools::invalidate (_y_error_);
+    datatools::invalidate (_z_error_);
     return;
   }
 
@@ -144,9 +144,9 @@ namespace geomtools {
       }
     _tolerance_ = i_object_3d::DEFAULT_TOLERANCE;
     set_tolerance (tolerance_);
-    datatools::utils::invalidate (_x_error_);
-    datatools::utils::invalidate (_y_error_);
-    datatools::utils::invalidate (_z_error_);
+    datatools::invalidate (_x_error_);
+    datatools::invalidate (_y_error_);
+    datatools::invalidate (_z_error_);
     return;
   }
     
@@ -186,12 +186,12 @@ namespace geomtools {
     return _placement_.get_inverse_rotation ();
   }
   
-  datatools::utils::properties & blur_spot::grab_auxiliaries ()
+  datatools::properties & blur_spot::grab_auxiliaries ()
   {
     return _auxiliaries_;
   }
   
-  const datatools::utils::properties & blur_spot::get_auxiliaries () const
+  const datatools::properties & blur_spot::get_auxiliaries () const
   {
     return _auxiliaries_;
   }
@@ -456,7 +456,7 @@ namespace geomtools {
       }
     else
       {
-        datatools::utils::invalidate (_x_error_);
+        datatools::invalidate (_x_error_);
       }
     return;
   }
@@ -469,7 +469,7 @@ namespace geomtools {
       }
     else
       {
-        datatools::utils::invalidate (_y_error_);
+        datatools::invalidate (_y_error_);
       }
     return;
   }
@@ -482,7 +482,7 @@ namespace geomtools {
       }
     else
       {
-        datatools::utils::invalidate (_z_error_);
+        datatools::invalidate (_z_error_);
       }
     return;
   }
@@ -545,7 +545,6 @@ namespace geomtools {
                              const string & indent_,
                              bool inherit_) const
   {
-    namespace du = datatools::utils;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     if (! title_.empty ()) 

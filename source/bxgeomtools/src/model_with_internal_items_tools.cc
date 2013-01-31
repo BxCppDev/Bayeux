@@ -11,7 +11,7 @@
 #include <iomanip>
 #include <sstream>
 
-#include <datatools/utils/units.h>
+#include <datatools/units.h>
 
 #include <geomtools/logical_volume.h>
 #include <geomtools/utils.h>
@@ -22,61 +22,61 @@ namespace geomtools {
 
   using namespace std;  
 
-  model_with_internal_items_tools::item::item ()
+  model_with_internal_items_tools::item_type::item_type ()
   {
     _model_ = 0;
     return;
   }
 
-  void model_with_internal_items_tools::item::set_label (const string & label_)
+  void model_with_internal_items_tools::item_type::set_label (const string & label_)
   {
     _label_ = label_;
     return;
   }
 
-  const string & model_with_internal_items_tools::item::get_label () const
+  const string & model_with_internal_items_tools::item_type::get_label () const
   {
     return _label_;
   }
 
-  void model_with_internal_items_tools::item::set_model (const i_model & model_)
+  void model_with_internal_items_tools::item_type::set_model (const i_model & model_)
   {
     _model_ = &model_;
     return;
   }
 
-  const i_model & model_with_internal_items_tools::item::get_model () const
+  const i_model & model_with_internal_items_tools::item_type::get_model () const
   {
     if (_model_ == 0)
       {
         ostringstream message;
-        message << "model_with_internal_items_tools::item::get_model: "
+        message << "model_with_internal_items_tools::item_type::get_model: "
                 << "Missing model !";
         throw runtime_error (message.str ());
       }
     return *_model_;
   }
 
-  void model_with_internal_items_tools::item::set_placement (const placement & pl_)
+  void model_with_internal_items_tools::item_type::set_placement (const placement & pl_)
   {
     _placement_ = pl_;
     return;
   }
 
   const placement & 
-  model_with_internal_items_tools::item::get_placement () const
+  model_with_internal_items_tools::item_type::get_placement () const
   {
     return _placement_;
   }
 
   const physical_volume & 
-  model_with_internal_items_tools::item::get_physical_volume () const
+  model_with_internal_items_tools::item_type::get_physical_volume () const
   {
     return _phys_;
   }
 
   physical_volume & 
-  model_with_internal_items_tools::item::get_physical_volume ()
+  model_with_internal_items_tools::item_type::get_physical_volume ()
   {
     return _phys_;
   }
@@ -96,10 +96,10 @@ namespace geomtools {
     return _items_.find (label_) != _items_.end ();      
   }
     
-  const model_with_internal_items_tools::item & 
+  const model_with_internal_items_tools::item_type & 
   model_with_internal_items_tools::get_item (const string & label_) const
   {
-    item_dict_t::const_iterator found = _items_.find (label_);
+    item_dict_type::const_iterator found = _items_.find (label_);
     if (found == _items_.end ())
       {
         ostringstream message;
@@ -111,10 +111,10 @@ namespace geomtools {
     return found->second;
   }
 
-  model_with_internal_items_tools::item & 
+  model_with_internal_items_tools::item_type & 
   model_with_internal_items_tools::get_item (const string & label_)
   {
-    item_dict_t::iterator found = _items_.find (label_);
+    item_dict_type::iterator found = _items_.find (label_);
     if (found == _items_.end ())
       {
         ostringstream message;
@@ -132,14 +132,14 @@ namespace geomtools {
   {
     /*
     for (item_dict_t::const_iterator i = _items_.begin ();
-	 i != _items_.end ();
-	 i++)
+         i != _items_.end ();
+         i++)
       {
-	clog << "DEVEL: model_with_internal_items_tools::add_item: "
-	     << "Label = '" << i->first << "'"
-	     << endl;
+        clog << "DEVEL: model_with_internal_items_tools::add_item: "
+             << "Label = '" << i->first << "'"
+             << endl;
       }
-    */	 
+    */   
     if (has_item (label_))
       {
         ostringstream message;
@@ -149,8 +149,11 @@ namespace geomtools {
         throw runtime_error (message.str ());
       }
       
-    _items_[label_] = item ();
-    item & the_item = _items_[label_];
+    {
+      item_type dummy;
+      _items_[label_] = dummy;
+    }
+    item_type & the_item = _items_[label_];
     the_item.set_label (label_);
     the_item.set_model (model_);
     the_item.set_placement (placement_);
@@ -162,13 +165,13 @@ namespace geomtools {
     return _items_.size ();
   }
 
-  const model_with_internal_items_tools::item_dict_t & 
+  const model_with_internal_items_tools::item_dict_type & 
   model_with_internal_items_tools::get_items () const
   {
     return _items_;
   }
 
-  model_with_internal_items_tools::item_dict_t & model_with_internal_items_tools::get_items ()
+  model_with_internal_items_tools::item_dict_type & model_with_internal_items_tools::get_items ()
   {
     return _items_;
   }
@@ -186,9 +189,9 @@ namespace geomtools {
     return;
   }
 
-  void model_with_internal_items_tools::plug_internal_models (const datatools::utils::properties & config_,
+  void model_with_internal_items_tools::plug_internal_models (const datatools::properties & config_,
                                                               logical_volume & log_,
-                                                              models_col_t * models_)
+                                                              models_col_type * models_)
   {
     bool devel = false;
     double lunit = CLHEP::mm;
@@ -197,7 +200,7 @@ namespace geomtools {
     if (config_.has_key ("length_unit"))
       {
         string length_unit_str = config_.fetch_string ("length_unit");
-        lunit = datatools::utils::units::get_length_unit_from (length_unit_str);
+        lunit = datatools::units::get_length_unit_from (length_unit_str);
       }
 
     if (config_.has_key ("internal_item.labels"))
@@ -278,7 +281,7 @@ namespace geomtools {
               throw logic_error (message.str ());
             }
           {
-            models_col_t::const_iterator found = 
+            models_col_type::const_iterator found = 
               models_->find (item_model_name);
             if (found != models_->end ())
               {
@@ -295,7 +298,7 @@ namespace geomtools {
           }
         }
 
-	//clog << "DEVEL: adding internal item : " << item_label << endl;
+        //clog << "DEVEL: adding internal item : " << item_label << endl;
         add_item (item_label, *item_model, item_placement);
         physical_volume & item_phys = get_item (item_label).get_physical_volume ();
         const placement & item_plcmt = get_item (item_label).get_placement ();

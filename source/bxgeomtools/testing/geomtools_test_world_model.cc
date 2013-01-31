@@ -32,8 +32,8 @@ namespace geomtools {
   }
   
   void test_world_model::_at_construct (const string & name_,
-                                        const datatools::utils::properties & config_,
-                                        models_col_t * models_)
+                                        const datatools::properties & config_,
+                                        models_col_type * models_)
   {
     bool devel = i_model::g_devel;
     if (devel) clog << "DEVEL: test_world_model::_at_construct: Entering..." << endl;
@@ -85,7 +85,7 @@ namespace geomtools {
 
     // Setup model:
     {
-      models_col_t::const_iterator found = models_->find (setup_model_name);
+      models_col_type::const_iterator found = models_->find (setup_model_name);
       if (found != models_->end ())
         {
           //__setup_model = (dynamic_cast<const test_model_2 *> (found->second));
@@ -152,61 +152,59 @@ namespace geomtools {
                                 const string & indent_, 
                                 bool inherit_) const
   {
-     namespace du = datatools::utils;
      string indent;
      if (! indent_.empty ()) indent = indent_;
      i_model::tree_dump (out_, title_, indent, true);
 
-     
      {
        // Setup model:
         if (__setup_model)
           {
-            out_ << indent << i_tree_dumpable::tag 
+            out_ << indent << datatools::i_tree_dumpable::tag 
                  << "Setup model : " << endl;
             {
               ostringstream indent_oss;
               indent_oss << indent;
-              indent_oss << du::i_tree_dumpable::skip_tag;
+              indent_oss << datatools::i_tree_dumpable::skip_tag;
               __setup_model->tree_dump (out_, "", indent_oss.str ());
             }   
           }
         else
           {
-            out_ << indent << i_tree_dumpable::tag 
+            out_ << indent << datatools::i_tree_dumpable::tag 
                  << "Setup model : " << "<missing>" << endl;
           }
       }
 
       {
-        out_ << indent << i_tree_dumpable::tag 
+        out_ << indent << datatools::i_tree_dumpable::tag 
              << "Setup placement: " << endl;
         {
           ostringstream indent_oss;
           indent_oss << indent;
-          indent_oss << du::i_tree_dumpable::skip_tag;
+          indent_oss << datatools::i_tree_dumpable::skip_tag;
           __setup_placement.tree_dump (out_, "", indent_oss.str ());
         }   
       }
 
       {
-        out_ << indent << i_tree_dumpable::tag 
+        out_ << indent << datatools::i_tree_dumpable::tag 
              << "Setup physical : " << endl;
         {
           ostringstream indent_oss;
           indent_oss << indent;
-          indent_oss << du::i_tree_dumpable::skip_tag;
+          indent_oss << datatools::i_tree_dumpable::skip_tag;
           __setup_phys.tree_dump (out_, "", indent_oss.str ());
         }   
       }
 
       {
-        out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
+        out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_) 
              << "Solid : " << endl;
         {
           ostringstream indent_oss;
           indent_oss << indent;
-          indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+          indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
           __solid.tree_dump (out_, "", indent_oss.str ());
         }   
       }

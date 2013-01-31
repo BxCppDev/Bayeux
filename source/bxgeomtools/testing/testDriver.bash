@@ -40,6 +40,7 @@ EOF
 
 tmp_test_dir=/tmp/${USER}/geomtools/test
 prefix_test_dir=
+data_test_dir=
 exe_test=
 
 #######################################################
@@ -62,6 +63,9 @@ while [ -n "$1" ]; do
 	elif [ "${opt}" = "--version" ]; then
 	    echo ${appversion}
 	    my_exit 0
+	elif [ "${opt}" = "--data-dir" ]; then
+            shift 1
+            data_test_dir="$1"
 	elif [ "${opt}" = "--prefix" ]; then
 	    shift 1
 	    prefix_test_dir="$1"
@@ -99,6 +103,7 @@ if [ ${debug} -ne 0 ]; then
     echo "DEBUG: ${appname}: tmp_test_dir=${tmp_test_dir}" >&2
     echo "DEBUG: ${appname}: exe_test=${exe_test}" >&2
     echo "DEBUG: ${appname}: prefix_test_dir=${prefix_test_dir}" >&2
+    echo "DEBUG: ${appname}: data_test_dir=${data_test_dir}" >&2
 fi
 
 ##########################################################
@@ -120,6 +125,10 @@ function do_run ()
 
     if [ "x${prefix_test_dir}" != "x" ]; then
 	export GEOMTOOLS_DATA_DIR=${prefix_test_dir}
+    fi
+
+    if [ "x${data_test_dir}" != "x" ]; then
+        export GEOMTOOLS_DATA_DIR=${data_test_dir}
     fi
 
     if [ "x${GEOMTOOLS_DATA_DIR}" = "x" ]; then

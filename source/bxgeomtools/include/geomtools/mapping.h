@@ -21,15 +21,13 @@
 #include <string>
 #include <list>
 
-#include <datatools/utils/ioutils.h>
-#include <datatools/utils/bit_mask.h>
+#include <datatools/ioutils.h>
+#include <datatools/bit_mask.h>
 
 #include <geomtools/utils.h>
 #include <geomtools/geom_map.h>
 
 namespace geomtools {
-  
-  //using namespace std;
 
   class model_factory;
   class placement;
@@ -56,13 +54,13 @@ namespace geomtools {
     // tools to manipulate 'mapping' properties:
     static std::string make_key (const std::string & flag_);
 
-    static void extract (const datatools::utils::properties & source_,
-                         datatools::utils::properties & target_);
+    static void extract (const datatools::properties & source_,
+                         datatools::properties & target_);
 
-    static bool has_flag (const datatools::utils::properties & config_,
+    static bool has_flag (const datatools::properties & config_,
                           const std::string & flag_);
 
-    static bool has_key (const datatools::utils::properties & config_,
+    static bool has_key (const datatools::properties & config_,
                          const std::string & key_);
  
     bool is_initialized () const;
@@ -80,7 +78,7 @@ namespace geomtools {
 
     virtual ~mapping ();
 
-    void initialize (const datatools::utils::properties & config_);
+    void initialize (const datatools::properties & config_);
     
     virtual void build_from (const model_factory & factory_,
                              const std::string & mother_ = "world");
@@ -99,8 +97,8 @@ namespace geomtools {
 
     enum smart_print_flags_type
       {
-        PRINT_TITLE = datatools::utils::bit_mask::bit00,
-        PRINT_PAGER = datatools::utils::bit_mask::bit01,
+        PRINT_TITLE = datatools::bit_mask::bit00,
+        PRINT_PAGER = datatools::bit_mask::bit01,
       };
 
     void smart_print (std::ostream & out_ = std::clog, 
@@ -121,7 +119,7 @@ namespace geomtools {
     std::list<std::string>         _only_excluded_list_;
     
     // debug display utility:
-    datatools::utils::io::indenter _indenter_;
+    datatools::io::indenter _indenter_;
 
   };
 

@@ -10,11 +10,12 @@
 #include <string>
 #include <map>
 
+#include <datatools/utils.h>
+
 #include <geomtools/detail/model_tools.h>
 #include <geomtools/i_model.h>
 #include <geomtools/logical_volume.h>
 #include <geomtools/visibility.h>
-#include <datatools/utils/utils.h>
 
 namespace geomtools {
 
@@ -40,12 +41,12 @@ namespace geomtools {
     return;
   }
 
-  const models_col_t & model_factory::get_models () const
+  const models_col_type & model_factory::get_models () const
   {
     return _models_;
   }
 
-  const logical_volume::dict_t & model_factory::get_logicals () const
+  const logical_volume::dict_type & model_factory::get_logicals () const
   {
     return _logicals_;
   }
@@ -83,7 +84,7 @@ namespace geomtools {
   void model_factory::load_geom_list (const std::string & geom_list_file_)
   {
     string geom_lis_filename = geom_list_file_;
-    datatools::utils::fetch_path_with_env (geom_lis_filename);
+    datatools::fetch_path_with_env (geom_lis_filename);
 
     ifstream finlist (geom_lis_filename.c_str ());
     if (! finlist)
@@ -117,7 +118,7 @@ namespace geomtools {
             continue;
           }
         string geom_filename = word;
-        datatools::utils::fetch_path_with_env (geom_filename);
+        datatools::fetch_path_with_env (geom_filename);
         load (geom_filename);
 
         finlist >> ws;
@@ -195,7 +196,7 @@ namespace geomtools {
     // The container of logicals does not have ownership of the pointers :
     _logicals_.clear ();
     // Memory leak to be fixed:
-    for (models_col_t::iterator i = _models_.begin ();
+    for (models_col_type::iterator i = _models_.begin ();
          i != _models_.end();
          i++)
       {
@@ -225,13 +226,13 @@ namespace geomtools {
         clog << "DEVEL: geomtools::model_factory::_construct_: "
              << "Entering..." << endl;
       }
-    for (datatools::utils::multi_properties::entries_ordered_col_t::const_iterator i
+    for (datatools::multi_properties::entries_ordered_col_type::const_iterator i
            = _mp_.ordered_entries ().begin ();
          i != _mp_.ordered_entries ().end ();
          i++)
       {
-        const datatools::utils::multi_properties::entry * ptr_entry = *i;
-        const datatools::utils::multi_properties::entry & e = *ptr_entry;
+        const datatools::multi_properties::entry * ptr_entry = *i;
+        const datatools::multi_properties::entry & e = *ptr_entry;
         string model_name = e.get_key ();
         string model_type = e.get_meta ();
 
@@ -299,7 +300,6 @@ namespace geomtools {
                                  const string & indent_,
                                  bool inherit_) const
   {
-    namespace du = datatools::utils;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     if (! title_.empty ())
@@ -307,15 +307,15 @@ namespace geomtools {
         out_ << indent << title_ << endl;
       }
     /*
-      out_ << indent << du::i_tree_dumpable::tag
+      out_ << indent << datatools::i_tree_dumpable::tag
       << "Debug : " <<  _debug_ << endl;
     */
 
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Locked  : " <<  (_locked_? "Yes": "No") << endl;
 
     {
-      out_ << indent << du::i_tree_dumpable::tag
+      out_ << indent << datatools::i_tree_dumpable::tag
            << "Multi-properties : ";
       if ( _mp_.entries ().size () == 0)
         {
@@ -325,13 +325,13 @@ namespace geomtools {
       {
         ostringstream indent_oss;
         indent_oss << indent;
-        indent_oss << du::i_tree_dumpable::skip_tag;
+        indent_oss << datatools::i_tree_dumpable::skip_tag;
         _mp_.tree_dump (out_, "", indent_oss.str ());
       }
     }
 
     {
-      out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
+      out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
            << "Models : ";
       if ( _models_.size () == 0)
         {
@@ -342,26 +342,26 @@ namespace geomtools {
           out_ << "[" << _models_.size () << "]";
         }
       out_ << endl;
-      for (models_col_t::const_iterator i = _models_.begin ();
+      for (models_col_type::const_iterator i = _models_.begin ();
            i != _models_.end ();
            i++)
         {
           const string & key = i->first;
           const i_model * a_model = i->second;
           ostringstream indent_oss;
-          out_ << indent << du::i_tree_dumpable::inherit_skip_tag (inherit_);
-          indent_oss << indent << du::i_tree_dumpable::inherit_skip_tag (inherit_);
-          models_col_t::const_iterator j = i;
+          out_ << indent << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
+          indent_oss << indent << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
+          models_col_type::const_iterator j = i;
           j++;
           if (j == _models_.end ())
             {
-              out_ << du::i_tree_dumpable::inherit_tag (inherit_);
-              indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+              out_ << datatools::i_tree_dumpable::inherit_tag (inherit_);
+              indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
             }
           else
             {
-              out_ << du::i_tree_dumpable::tag;
-              indent_oss << du::i_tree_dumpable::skip_tag;
+              out_ << datatools::i_tree_dumpable::tag;
+              indent_oss << datatools::i_tree_dumpable::skip_tag;
             }
           out_ << "Model : " << '"' << key << '"' << endl;
           a_model->tree_dump (out_, "", indent_oss.str ());

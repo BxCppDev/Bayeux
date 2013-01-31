@@ -14,15 +14,15 @@
  *
  */
 
-#ifndef __geomtools__id_mgr_h
-#define __geomtools__id_mgr_h 1
+#ifndef GEOMTOOLS_ID_MGR_H_
+#define GEOMTOOLS_ID_MGR_H_ 1
 
 #include <string>
 #include <vector>
 #include <map>
 
-#include <datatools/utils/utils.h>
-#include <datatools/utils/multi_properties.h>
+#include <datatools/utils.h>
+#include <datatools/multi_properties.h>
 #include <geomtools/geom_id.h>
 
 namespace geomtools {
@@ -31,7 +31,7 @@ namespace geomtools {
    *  and their relationship described through objects of 'category_info'
    * class
    */
-  class id_mgr : public datatools::utils::i_tree_dumpable
+  class id_mgr : public datatools::i_tree_dumpable
   {
 
   public:
@@ -49,7 +49,7 @@ namespace geomtools {
      *  - addressing fields with labels
      *
      */
-    class category_info : public datatools::utils::i_tree_dumpable
+    class category_info : public datatools::i_tree_dumpable
     {
     public:
       std::string category;                /// human readable category label
@@ -124,8 +124,8 @@ namespace geomtools {
 
     /***************************************/
 
-    typedef std::map<std::string, category_info> categories_by_name_col_t;
-    typedef std::map<int, const category_info *> categories_by_type_col_t;
+    typedef std::map<std::string, category_info> categories_by_name_col_type;
+    typedef std::map<int, const category_info *> categories_by_type_col_type;
 
   public:
 
@@ -133,9 +133,9 @@ namespace geomtools {
 
     void set_debug (bool);
 
-    const categories_by_type_col_t & categories_by_type () const;
+    const categories_by_type_col_type & categories_by_type () const;
 
-    const categories_by_name_col_t & categories_by_name () const;
+    const categories_by_name_col_type & categories_by_name () const;
 
     /// Constructor
     id_mgr ();
@@ -144,10 +144,10 @@ namespace geomtools {
     virtual ~id_mgr ();
 
     /// Initialize the manager from a properties multi container
-    void init_from (const datatools::utils::multi_properties & mp_);
+    void init_from (const datatools::multi_properties & mp_);
 
     /// Initialize the manager from a properties multi container
-    void initialize (const datatools::utils::multi_properties & mp_);
+    void initialize (const datatools::multi_properties & mp_);
 
     /// Load manager configuration from a file
     void load (const std::string & filename_);
@@ -252,13 +252,13 @@ namespace geomtools {
   private:
 
     bool _debug_; /// Debug flag
-    categories_by_name_col_t _categories_by_name_; /// Dictionnary of categories keyed by name
-    categories_by_type_col_t _categories_by_type_; /// Dictionnary of categories keyed by type
+    categories_by_name_col_type _categories_by_name_; /// Dictionnary of categories keyed by name
+    categories_by_type_col_type _categories_by_type_; /// Dictionnary of categories keyed by type
 
   };
 
 } // end of namespace geomtools
 
-#endif // __geomtools__id_mgr_h
+#endif // GEOMTOOLS_ID_MGR_H_
 
 // end of id_mgr.h

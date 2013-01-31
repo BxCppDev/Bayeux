@@ -16,12 +16,15 @@
  * 
  */
 
-#ifndef __geomtools__visibility_h
-#define __geomtools__visibility_h 1
+#ifndef GEOMTOOLS_VISIBILITY_H_
+#define GEOMTOOLS_VISIBILITY_H_ 1
+
 #include <string>
 #include <iostream>
 
-#include <datatools/utils/properties.h>
+namespace datatools {
+  class properties;
+}
 
 namespace geomtools {
 
@@ -49,41 +52,40 @@ namespace geomtools {
 
     static std::string make_key (const std::string & flag_);
 
-    static void extract (const datatools::utils::properties & source_,
-                         datatools::utils::properties & target_);
+    static void extract (const datatools::properties & source_,
+                         datatools::properties & target_);
 
-    static bool has_flag (const datatools::utils::properties & config_,
+    static bool has_flag (const datatools::properties & config_,
                           const std::string & flag_);
 
-    static bool has_key (const datatools::utils::properties & config_,
+    static bool has_key (const datatools::properties & config_,
                          const std::string & key_);
 
-    static bool is_shown (const datatools::utils::properties & config_);
+    static bool is_shown (const datatools::properties & config_);
 
-    static bool is_hidden (const datatools::utils::properties & config_);
+    static bool is_hidden (const datatools::properties & config_);
 
-    static bool is_hidden_envelop (const datatools::utils::properties & config_);
+    static bool is_hidden_envelop (const datatools::properties & config_);
 
-    static bool is_hidden_envelope (const datatools::utils::properties & config_);
+    static bool is_hidden_envelope (const datatools::properties & config_);
 
-    static bool is_daughters_shown (const datatools::utils::properties & config_);
+    static bool is_daughters_shown (const datatools::properties & config_);
 
-    static bool is_daughters_hidden (const datatools::utils::properties & config_);
+    static bool is_daughters_hidden (const datatools::properties & config_);
 
-    static bool has_color (const datatools::utils::properties & config_);
+    static bool has_color (const datatools::properties & config_);
  
-    static std::string get_color (const datatools::utils::properties & config_);
+    static std::string get_color (const datatools::properties & config_);
     
-    static void set_color (datatools::utils::properties & config_, 
+    static void set_color (datatools::properties & config_, 
                            const std::string & color_);
 
-    static bool is_wired_cylinder (const datatools::utils::properties & config_);
+    static bool is_wired_cylinder (const datatools::properties & config_);
 
   };
 
-
 }  // end of namespace geomtools
 
-#endif // __geomtools__visibility_h
+#endif // GEOMTOOLS_VISIBILITY_H_
 
 // end of visibility.h

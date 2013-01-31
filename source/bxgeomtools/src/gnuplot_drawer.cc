@@ -6,7 +6,7 @@
 
 #include <stdexcept>
 
-#include <datatools/utils/i_tree_dump.h>
+#include <datatools/i_tree_dump.h>
 
 #include <geomtools/model_factory.h>
 #include <geomtools/placement.h>
@@ -114,12 +114,12 @@ namespace geomtools {
     return _mode_;
   }
 
-  datatools::utils::properties & gnuplot_drawer::get_properties ()
+  datatools::properties & gnuplot_drawer::get_properties ()
   {
     return _props_;
   }
 
-  const datatools::utils::properties & gnuplot_drawer::get_properties () const
+  const datatools::properties & gnuplot_drawer::get_properties () const
   {
     return _props_;
   }
@@ -275,7 +275,7 @@ namespace geomtools {
       {
         int display_level = 0;
         
-        datatools::utils::properties log_visu_config;
+        datatools::properties log_visu_config;
         visibility::extract (log.parameters (), log_visu_config);
         
         if (devel)
@@ -419,7 +419,7 @@ namespace geomtools {
                  << endl;
           }
         display_level++;
-        for (geomtools::logical_volume::physicals_col_t::const_iterator i 
+        for (geomtools::logical_volume::physicals_col_type::const_iterator i 
                = log.get_physicals ().begin (); 
              i != log.get_physicals ().end (); i++)
           {
@@ -499,7 +499,7 @@ namespace geomtools {
       } 
     const geomtools::logical_volume & log = log_;
 
-    datatools::utils::properties visu_config;
+    datatools::properties visu_config;
     visibility::extract (log_.parameters (), visu_config);
 
     bool shown = true; 
@@ -784,7 +784,7 @@ namespace geomtools {
                                      const placement & p_,
                                      int max_display_level_)
   {
-    geomtools::logical_volume::dict_t::const_iterator found;
+    geomtools::logical_volume::dict_type::const_iterator found;
     found = mf_.get_logicals ().find (logical_name_);
     if (found ==  mf_.get_logicals ().end ())
       {
@@ -805,7 +805,7 @@ namespace geomtools {
   {
     bool devel = g_devel;
     //devel = true;
-    models_col_t::const_iterator found = mf_.get_models ().find (name_);
+    models_col_type::const_iterator found = mf_.get_models ().find (name_);
     if (found ==  mf_.get_models ().end ())
       {
         ostringstream message;

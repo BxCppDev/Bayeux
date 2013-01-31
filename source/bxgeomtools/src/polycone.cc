@@ -12,8 +12,8 @@
 #include <fstream>
 #include <limits>
 
-#include <datatools/utils/utils.h>
-#include <datatools/utils/units.h>
+#include <datatools/utils.h>
+#include <datatools/units.h>
 
 #include <mygsl/tabfunc.h>
 #include <mygsl/numerical_differentiation.h>
@@ -29,6 +29,41 @@ namespace geomtools {
   {
     return POLYCONE_LABEL;
   }
+    
+    double polycone::get_xmin () const
+    {
+      return -_r_max_;
+    }
+    
+    double polycone::get_xmax () const
+    {
+      return +_r_max_;
+    }
+    
+    double polycone::get_ymin () const
+    {
+      return -_r_max_;
+    }
+    
+    double polycone::get_ymax () const
+    {
+      return +_r_max_;
+    }
+    
+    double polycone::get_zmin () const
+    {
+      return _z_min_;
+    }
+    
+    double polycone::get_zmax () const
+    {
+      return _z_max_;
+    }
+
+    double polycone::get_z () const
+    {
+      return _z_max_ - _z_min_;
+    }
 
   double polycone::get_z_min () const
   {
@@ -45,7 +80,7 @@ namespace geomtools {
     return _r_max_;
   }
 
-  const polycone::rz_col_t & polycone::points () const
+  const polycone::rz_col_type & polycone::points () const
   {
     return _points_;
   }
@@ -64,7 +99,7 @@ namespace geomtools {
   void polycone::compute_inner_polycone (polycone & ip_)
   {
     ip_.reset ();
-    for (polycone::rz_col_t::const_iterator i = _points_.begin ();
+    for (polycone::rz_col_type::const_iterator i = _points_.begin ();
          i != _points_.end ();
          i++)
       {
@@ -83,7 +118,7 @@ namespace geomtools {
   void polycone::compute_outer_polycone (polycone & op_)
   {
     op_.reset ();
-    for (polycone::rz_col_t::const_iterator i = _points_.begin ();
+    for (polycone::rz_col_type::const_iterator i = _points_.begin ();
          i != _points_.end ();
          i++)
       {
@@ -137,7 +172,7 @@ namespace geomtools {
     string interpolation_mode = "linear";
     //interpolation_mode = "akima";
     mygsl::tabulated_function tf (interpolation_mode);
-    for (rz_col_t::const_iterator i = _points_.begin ();
+    for (rz_col_type::const_iterator i = _points_.begin ();
          i != _points_.end ();
          i++)
       {
@@ -242,7 +277,7 @@ namespace geomtools {
                     << "z1=" << z1 << endl;
     if (devel) cerr << "DEVEL: " << "polycone::_build_from_envelope_and_skin_: "
                     << "z2=" << z2 << endl;
-    if (datatools::utils::is_valid (zmin))
+    if (datatools::is_valid (zmin))
       {
         if (devel) cerr << "DEVEL: " << "polycone::_build_from_envelope_and_skin_: "
                         << "Z(min)=" << zmin << endl;
@@ -252,7 +287,7 @@ namespace geomtools {
           }
       }
     double zlim = tf.x_max ();
-    if (datatools::utils::is_valid (zmax))
+    if (datatools::is_valid (zmax))
       {
         if (devel) cerr << "DEVEL: "  << "polycone::_build_from_envelope_and_skin_: "
                         << "Z(max)=" << zmax << endl;
@@ -263,7 +298,7 @@ namespace geomtools {
       }
     double dz = dx;
     double za, ra;
-    datatools::utils::invalidate (za);
+    datatools::invalidate (za);
     double z = z1;
     bool stop = false;
     //while (z < tf.x_max () + 0.1 * dz)
@@ -301,7 +336,7 @@ namespace geomtools {
             r_outer = 0.0;
           }
         double r_inner = tf3bis (z);
-        if (datatools::utils::is_valid (za))
+        if (datatools::is_valid (za))
           {
             double zb = z;
             double rb = r_inner;
@@ -367,13 +402,13 @@ namespace geomtools {
     return;
   }
 
-  void polycone::initialize (const datatools::utils::properties & setup_)
+  void polycone::initialize (const datatools::properties & setup_)
   {
     string build_mode_label;
     string datafile;
     double zmin, zmax;
-    datatools::utils::invalidate (zmin);
-    datatools::utils::invalidate (zmax);
+    datatools::invalidate (zmin);
+    datatools::invalidate (zmax);
     double lunit = CLHEP::mm;
 
     if (setup_.has_key ("build_mode"))
@@ -384,7 +419,7 @@ namespace geomtools {
     if (setup_.has_key ("length_unit"))
       {
         string lunit_str = setup_.fetch_string ("length_unit");
-        lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+        lunit = datatools::units::get_length_unit_from (lunit_str);
       }
 
     if (build_mode_label == "points")
@@ -393,7 +428,7 @@ namespace geomtools {
         vector<double> rmins;
         vector<double> rmaxs;
         double rmin;
-        datatools::utils::invalidate (rmin);
+        datatools::invalidate (rmin);
 
         if (setup_.has_key ("list_of_z"))
           {
@@ -460,7 +495,7 @@ namespace geomtools {
           {
             double a_z = zs[i];
             double a_rmin;
-            if (datatools::utils::is_valid (rmin))
+            if (datatools::is_valid (rmin))
               {
                 a_rmin = rmin;
               }
@@ -477,8 +512,8 @@ namespace geomtools {
       {
         string datafile;
         double zmin, zmax;
-        datatools::utils::invalidate (zmin);
-        datatools::utils::invalidate (zmax);
+        datatools::invalidate (zmin);
+        datatools::invalidate (zmax);
 
         if (setup_.has_key ("datafile"))
           {
@@ -504,7 +539,7 @@ namespace geomtools {
             zmax *= lunit;
           }  
 
-        datatools::utils::fetch_path_with_env (datafile);
+        datatools::fetch_path_with_env (datafile);
         this->initialize (datafile, zmin, zmax);
       }
     else 
@@ -547,9 +582,9 @@ namespace geomtools {
     double z_factor = 1.0;
     double r_factor = 1.0;
     double skin_thickness;
-    datatools::utils::invalidate (skin_thickness);
+    datatools::invalidate (skin_thickness);
     double skin_step;
-    datatools::utils::invalidate (skin_step);
+    datatools::invalidate (skin_step);
     bool ignore_rmin = false;
 
     while (! ifs.eof ())
@@ -579,7 +614,7 @@ namespace geomtools {
                                   << filename << "' at line " << count << " !";
                           throw runtime_error (message.str ()); 
                         }
-                      length_unit = datatools::utils::units::get_length_unit_from (unit_str);
+                      length_unit = datatools::units::get_length_unit_from (unit_str);
                     }
                   else if (word == "#@ignore_rmin")
                     {
@@ -641,9 +676,9 @@ namespace geomtools {
         {
           istringstream iss (line);
           double z, r1, r2;
-          datatools::utils::invalidate (z);
-          datatools::utils::invalidate (r1);
-          datatools::utils::invalidate (r2);
+          datatools::invalidate (z);
+          datatools::invalidate (r1);
+          datatools::invalidate (r2);
           iss >> z;
           if (! iss)
             {
@@ -669,7 +704,7 @@ namespace geomtools {
             {
               // two columns format:
               r2 = r1;
-              datatools::utils::invalidate (r1);
+              datatools::invalidate (r1);
             }
           else
             {
@@ -677,7 +712,7 @@ namespace geomtools {
                 {
                   // if line ends with a comment: this is two columns format !
                   r2 = r1;
-                  datatools::utils::invalidate (r1);
+                  datatools::invalidate (r1);
                 }
               else 
                 {
@@ -694,9 +729,9 @@ namespace geomtools {
                     }       
                   if (ignore_rmin)
                     {
-                      datatools::utils::invalidate (r1);
+                      datatools::invalidate (r1);
                     }
-                  else if (datatools::utils::is_valid (skin_thickness))
+                  else if (datatools::is_valid (skin_thickness))
                     {
                       ostringstream message;
                       message << "polycone::initialize: " 
@@ -707,7 +742,7 @@ namespace geomtools {
                     }
                 }
             }
-          if (datatools::utils::is_valid (r2) && (r2 < 0.0))
+          if (datatools::is_valid (r2) && (r2 < 0.0))
             {
               ostringstream message;
               message << "polycone::initialize: " 
@@ -719,7 +754,7 @@ namespace geomtools {
           tz  = z  * z_factor * length_unit;
           tr1 = r1 * r_factor * length_unit;
           tr2 = r2 * r_factor * length_unit;
-          if (datatools::utils::is_valid (r1))
+          if (datatools::is_valid (r1))
             {
               this->add (tz, tr1, tr2, false);
             }
@@ -731,9 +766,9 @@ namespace geomtools {
       }
     this->_compute_all_ ();         
 
-    if (datatools::utils::is_valid (skin_thickness))
+    if (datatools::is_valid (skin_thickness))
       {
-        if (! datatools::utils::is_valid (skin_step))
+        if (! datatools::is_valid (skin_step))
           {
             skin_step = abs (zmax_ - zmin_) / 20.0;
           }
@@ -831,13 +866,13 @@ namespace geomtools {
   {
     if (! is_valid ()) return;
     _z_min_ = _z_max_ = _r_max_ = numeric_limits<double>::quiet_NaN();    
-    for (rz_col_t::const_iterator i = _points_.begin ();
+    for (rz_col_type::const_iterator i = _points_.begin ();
          i != _points_.end ();
          i++)
       {
         double z = i->first;
         double rmax = i->second.rmax;
-        if (! datatools::utils::is_valid (_z_min_))
+        if (! datatools::is_valid (_z_min_))
           {
             _z_min_ = z;
           }
@@ -845,7 +880,7 @@ namespace geomtools {
           {
             _z_min_ = z;
           }
-        if (! datatools::utils::is_valid (_z_max_))
+        if (! datatools::is_valid (_z_max_))
           {
             _z_max_ = z;
           }
@@ -853,7 +888,7 @@ namespace geomtools {
           {
             _z_max_ = z;
           }
-        if (! datatools::utils::is_valid (_r_max_))
+        if (! datatools::is_valid (_r_max_))
           {
             _r_max_ = rmax;
           }
@@ -872,7 +907,7 @@ namespace geomtools {
     
     // bottom surface:
     {
-      rz_col_t::const_iterator i = _points_.begin ();
+      rz_col_type::const_iterator i = _points_.begin ();
       double z0 = i->first;
       double rmin0 = i->second.rmin;
       double rmax0 = i->second.rmax;
@@ -881,12 +916,12 @@ namespace geomtools {
 
     // outer side surface:
     {
-      rz_col_t::const_iterator i = _points_.begin ();
+      rz_col_type::const_iterator i = _points_.begin ();
       double z0 = i->first;
       double rmin0 = i->second.rmin;
       double rmax0 = i->second.rmax;
       double s = 0.0;
-      rz_col_t::const_iterator j = _points_.begin ();
+      rz_col_type::const_iterator j = _points_.begin ();
       j++;
       while (j != _points_.end ())
         {
@@ -917,12 +952,12 @@ namespace geomtools {
 
     {
       // inner side surface:
-      rz_col_t::const_iterator i = _points_.begin ();
+      rz_col_type::const_iterator i = _points_.begin ();
       double z0 = i->first;
       double rmin0 = i->second.rmin;
       double rmax0 = i->second.rmax;
       double s = 0.0;
-      rz_col_t::const_iterator j = i;
+      rz_col_type::const_iterator j = i;
       j++;
       while (j != _points_.end ())
         {
@@ -961,10 +996,10 @@ namespace geomtools {
     double vint = 0.0;
     // Outer envelope:
     {
-      rz_col_t::const_iterator i = _points_.begin ();
+      rz_col_type::const_iterator i = _points_.begin ();
       double z0 = i->first;
       double rmax0 = i->second.rmax;
-      rz_col_t::const_iterator j = i;
+      rz_col_type::const_iterator j = i;
       j++;
       while (j != _points_.end ())
         {
@@ -986,10 +1021,10 @@ namespace geomtools {
     }
     // Inner envelope:
     {
-      rz_col_t::const_iterator i = _points_.begin ();
+      rz_col_type::const_iterator i = _points_.begin ();
       double z0 = i->first;
       double rmin0 = i->second.rmin;
-      rz_col_t::const_iterator j = i;
+      rz_col_type::const_iterator j = i;
       j++;
       while (j != _points_.end ())
         {
@@ -1071,12 +1106,12 @@ namespace geomtools {
     if (z < get_z_min () - 0.5 * skin) return false;
     double r = hypot (point_.x (), point_.y ());
     if (r > get_r_max () + 0.5 * skin) return false;
-    for (rz_col_t::const_iterator i = _points_.begin ();
+    for (rz_col_type::const_iterator i = _points_.begin ();
          i != _points_.end ();
          i++)
       {
         double z1 = i->first;
-        rz_col_t::const_iterator j = i;
+        rz_col_type::const_iterator j = i;
         j++;
         if (j == _points_.end ())
           {
@@ -1112,12 +1147,12 @@ namespace geomtools {
     else if (is_on_surface (position_, FACE_TOP)) normal.set (0.0, 0.0, +1.0); 
     else if (is_on_surface (position_, FACE_OUTER_SIDE)) 
       {
-        for (rz_col_t::const_iterator i = _points_.begin ();
+        for (rz_col_type::const_iterator i = _points_.begin ();
              i != _points_.end ();
              i++)
           {
             double z1 = i->first;
-            rz_col_t::const_iterator j = i;
+            rz_col_type::const_iterator j = i;
             j++;
             if (j == _points_.end ())
               {
@@ -1180,12 +1215,12 @@ namespace geomtools {
     
     if (mask & FACE_OUTER_SIDE) 
       {
-        for (rz_col_t::const_iterator i = _points_.begin ();
+        for (rz_col_type::const_iterator i = _points_.begin ();
              i != _points_.end ();
              i++)
           {
             double z1 = i->first;
-            rz_col_t::const_iterator j = i;
+            rz_col_type::const_iterator j = i;
             j++;
             if (j == _points_.end ())
               {
@@ -1224,7 +1259,7 @@ namespace geomtools {
   {
     out_ << '{' << polycone::POLYCONE_LABEL;
     out_ << ' ' << p_._points_.size ();
-    for (polycone::rz_col_t::const_iterator i = p_._points_.begin ();
+    for (polycone::rz_col_type::const_iterator i = p_._points_.begin ();
          i != p_._points_.end ();
          i++)
       {
@@ -1291,30 +1326,29 @@ namespace geomtools {
                             const string & indent_, 
                             bool inherit_) const
   {
-    namespace du = datatools::utils;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     i_object_3d::tree_dump (out_, title_, indent_, true);
 
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "Z(min) : " << get_z_min () / CLHEP::mm << " mm" << endl;
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "Z(max) : " << get_z_max () / CLHEP::mm << " mm" << endl;
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "R(max) : " << get_r_max () / CLHEP::mm << " mm" << endl;
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "Number of points : " << _points_.size () << endl;
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "Volume : " << get_volume () / CLHEP::cm3 << " cm3" << endl;
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "Bottom surface : " << get_surface (FACE_BOTTOM) / CLHEP::cm2 << " cm2" << endl;
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "Top surface : " << get_surface (FACE_TOP) / CLHEP::cm2 << " cm2" << endl;
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "Outer side surface : " << get_surface (FACE_OUTER_SIDE) / CLHEP::cm2 << " cm2" << endl;
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "Inner side surface : " << get_surface (FACE_INNER_SIDE) / CLHEP::cm2 << " cm2" << endl;
-    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
          << "Total surface : " << get_surface (FACE_ALL) / CLHEP::cm2 << " cm2" << endl;
     return;
   }

@@ -14,13 +14,8 @@ function do_geomtools_print_info ()
 	echo "${indent}GEOMTOOLS_NAME                = '${GEOMTOOLS_NAME}'" 1>&2
 	echo "${indent}GEOMTOOLS_VERSION             = '${GEOMTOOLS_VERSION}'" 1>&2
 	echo "${indent}GEOMTOOLS_WITH_DEBUG          = ${GEOMTOOLS_WITH_DEBUG}" 1>&2
-	if [ "x1" = "x1" ]; then	
-	    echo "${indent}GEOMTOOLS_WITH_BIO            = ${GEOMTOOLS_WITH_BIO}" 1>&2
-	fi
-	if [ "x1" = "x1" ]; then	
-	    echo "${indent}GEOMTOOLS_WITH_PYTHON_WRAPPER = ${GEOMTOOLS_WITH_PYTHON_WRAPPER}" 1>&2
-	    echo "${indent}Python module path = @CMAKE_INSTALL_FULL_PYTHONDIR@" 1>&2
-	fi
+	echo "${indent}GEOMTOOLS_WITH_BIO            = ${GEOMTOOLS_WITH_BIO}" 1>&2
+	echo "${indent}GEOMTOOLS_WITH_REFLECTION     = ${GEOMTOOLS_WITH_REFLECTION}" 1>&2
 	echo "${indent}GEOMTOOLS_BIN_DIR             = '${GEOMTOOLS_BIN_DIR}'"
 	echo "${indent}GEOMTOOLS_ETC_DIR             = '${GEOMTOOLS_ETC_DIR}'"
 	echo "${indent}GEOMTOOLS_LIB_DIR             = '${GEOMTOOLS_LIB_DIR}'"
@@ -56,6 +51,28 @@ function do_geomtools_setup ()
 	return 2
     fi 
 
+    if [ "x@GEOMTOOLS_WITH_REFLECTION@" = "x1" ]; then
+	which camp-config >/dev/null 2>&1
+	if [ $? -ne 0 ]; then
+	    echo "ERROR: do_geomtools_setup: Cannot find CAMP setup ! Abort !" 1>&2
+	    return 1
+	else
+	    if [ ${verbose} -ne 0 ]; then
+		echo "VERBOSE: do_geomtools_setup: Found CAMP." 1>&2
+	    fi
+	fi
+    fi
+
+    which clhep-config >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+	echo "ERROR: do_geomtools_setup: Cannot find CLHEP setup ! Abort !" 1>&2
+	return 1
+    else
+	if [ ${verbose} -ne 0 ]; then
+	    echo "VERBOSE: do_geomtools_setup: Found CLHEP." 1>&2
+	fi
+    fi
+
     which mygsl-config >/dev/null 2>&1
     if [ $? -ne 0 ]; then
 	echo "ERROR: do_geomtools_setup: Cannot find mygsl setup ! Abort !" 1>&2
@@ -65,21 +82,11 @@ function do_geomtools_setup ()
 	    echo "VERBOSE: do_geomtools_setup: Found mygsl." 1>&2
 	fi
     fi
-
-    which gnuplot >/dev/null 2>&1
-    if [ $? -ne 0 ]; then
-	echo "ERROR: do_geomtools_setup: Cannot find gnuplot setup ! Abort !" 1>&2
-	return 1
-    else
-	if [ ${verbose} -ne 0 ]; then
-	    echo "VERBOSE: do_geomtools_setup: Found gnuplot." 1>&2
-	fi
-    fi
      
     export GEOMTOOLS_ROOT="@CMAKE_INSTALL_PREFIX@"
     export GEOMTOOLS_ROOT_DIR="@CMAKE_INSTALL_PREFIX@"
-    export GEOMTOOLS_NAME="@geomtools_PACKAGE_NAME@"
-    export GEOMTOOLS_VERSION="@geomtools_VERSION_STR@"
+    export GEOMTOOLS_NAME="@PROJECT_NAME@"
+    export GEOMTOOLS_VERSION="@geomtools_VERSION@"
     export GEOMTOOLS_BIN_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@"
     export GEOMTOOLS_ETC_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_ETCDIR@"
     export GEOMTOOLS_LIB_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@"
@@ -87,13 +94,9 @@ function do_geomtools_setup ()
     export GEOMTOOLS_INCLUDE_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_INCLUDEDIR@"
     export GEOMTOOLS_DATA_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
     export GEOMTOOLS_WITH_DEBUG=@GEOMTOOLS_WITH_DEBUG@
-    if [ "x1" = "x1" ]; then	
-	export GEOMTOOLS_WITH_BIO=@GEOMTOOLS_WITH_BIO@
-    fi
-    if [ "x1" = "x1" ]; then	
-	export GEOMTOOLS_WITH_PYTHON_WRAPPER=@GEOMTOOLS_WITH_PYTHON_WRAPPER@
-    fi
-    export GEOMTOOLS_CMAKE_CONFIG_DIR="@CMAKE_INSTALL_PREFIX@/@geomtools_cmake_config_install_dir@"
+    export GEOMTOOLS_WITH_BIO=@GEOMTOOLS_WITH_BIO@
+    export GEOMTOOLS_WITH_REFLECTION=@GEOMTOOLS_WITH_REFLECTION@
+    export GEOMTOOLS_CMAKE_CONFIG_DIR="@CMAKE_INSTALL_PREFIX@/@_geomtools_cmake_config_install_dir@"
 
     if [ -n "${PATH}" ]; then
 	export PATH="${GEOMTOOLS_BIN_DIR}:${PATH}"
@@ -107,33 +110,6 @@ function do_geomtools_setup ()
 	export @_ld_library_path_env@="${GEOMTOOLS_LIB_DIR}"
     fi 
 
-    if [ "x@GEOMTOOLS_WITH_PKGCONFIG@" = "xON" -o "x@GEOMTOOLS_WITH_PKGCONFIG@" = "x1" ]; then
-	if [ -n "${PKG_CONFIG_PATH}" ]; then 
-            export PKG_CONFIG_PATH="@_geomtools_pkgconfig_install_dir@:${PKG_CONFIG_PATH}"
-	else
-            export PKG_CONFIG_PATH="@_geomtools_pkgconfig_install_dir@"
-	fi
-    fi
-
-    if [ "x1" = "x1" ]; then	
-	if [ "x@GEOMTOOLS_WITH_PYTHON_WRAPPER@" = "xON" ]; then
-     	    # update Python path...
-	    if [ -n "${PYTHONPATH}" ]; then 
-		export PYTHONPATH="@CMAKE_INSTALL_FULL_PYTHONDIR@:${PYTHONPATH}"
-	    else
-		export PYTHONPATH="@CMAKE_INSTALL_FULL_PYTHONDIR@"
-	    fi
-	fi
-    fi
-
-    if [ "x@GEOMTOOLS_WITH_CMAKE_FIND_MODULE@" = "xON" -o "x@GEOMTOOLS_WITH_CMAKE_FIND_MODULE@" = "x1" ]; then
-	if [ -n "${CMAKE_MODULE_PATH}" ]; then 
-            export CMAKE_MODULE_PATH="@CMAKE_INSTALL_PREFIX@/@geomtools_find_module_install_dir@:${CMAKE_MODULE_PATH}"
-	else
-            export CMAKE_MODULE_PATH="@CMAKE_INSTALL_PREFIX@/@geomtools_find_module_install_dir@"
-	fi
-    fi
-
     if [ ${verbose} -gt 1 ]; then
 	do_geomtools_print_info "VERBOSE: do_geomtools_setup"
     fi
@@ -144,8 +120,7 @@ function do_geomtools_setup ()
     return 0
 }
 typeset -fx do_geomtools_setup
-alias geomtools_setup='do_geomtools_setup'
 
-echo "NOTICE: do_geomtools_setup: Please setup geomtools with 'do_geomtools_setup'." 1>&2
+echo "NOTICE: do_geomtools_setup: Please setup 'geomtools' with 'do_geomtools_setup'." 1>&2
 
 # end of geomtools_setup.sh

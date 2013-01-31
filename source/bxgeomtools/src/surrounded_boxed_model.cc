@@ -11,8 +11,8 @@
 
 #include <mygsl/min_max.h>
 
-#include <datatools/utils/ioutils.h>
-#include <datatools/utils/units.h>
+#include <datatools/ioutils.h>
+#include <datatools/units.h>
 
 //#include <geomtools/regular_linear_placement.h>
 #include <geomtools/visibility.h>
@@ -89,7 +89,7 @@ namespace geomtools {
 
   bool surrounded_boxed_model::has_surrounding_model (const string & label_) const
   {
-    labels_dict_t::const_iterator found = _surrounding_labels_.find (label_);
+    labels_dict_type::const_iterator found = _surrounding_labels_.find (label_);
     return found != _surrounding_labels_.end ();
   }
 
@@ -99,7 +99,7 @@ namespace geomtools {
   {
     assert_unconstructed("surrounded_boxed_model::add_surrounding_model");
 
-    surrounding_dict_t::const_iterator found = _surrounding_items_.find (i_);
+    surrounding_dict_type::const_iterator found = _surrounding_items_.find (i_);
     if (found != _surrounding_items_.end ())
       {
         ostringstream message;
@@ -136,12 +136,12 @@ namespace geomtools {
     return;
   }
 
-  const surrounded_boxed_model::surrounding_dict_t & surrounded_boxed_model::get_surrounding_items () const
+  const surrounded_boxed_model::surrounding_dict_type & surrounded_boxed_model::get_surrounding_items () const
   {
     return _surrounding_items_;
   }
 
-  const surrounded_boxed_model::labels_dict_t & surrounded_boxed_model::get_surrounding_labels () const
+  const surrounded_boxed_model::labels_dict_type & surrounded_boxed_model::get_surrounding_labels () const
   {
     return _surrounding_labels_;
   }
@@ -149,7 +149,7 @@ namespace geomtools {
   const surrounded_boxed_model::surrounding_item & 
   surrounded_boxed_model::get_surrounding_item (const string & label_) const
   {
-    labels_dict_t::const_iterator found = _surrounding_labels_.find (label_);
+    labels_dict_type::const_iterator found = _surrounding_labels_.find (label_);
     if (found == _surrounding_labels_.end ())
       {
         ostringstream message;
@@ -164,7 +164,7 @@ namespace geomtools {
   const surrounded_boxed_model::surrounding_item & 
   surrounded_boxed_model::get_surrounding_item (int i_) const
   {
-    surrounding_dict_t::const_iterator found = _surrounding_items_.find (i_);
+    surrounding_dict_type::const_iterator found = _surrounding_items_.find (i_);
     if (found == _surrounding_items_.end ())
       {
         ostringstream message;
@@ -178,7 +178,7 @@ namespace geomtools {
 
   const i_model & surrounded_boxed_model::get_surrounding_model (const string & label_) const
   {
-    labels_dict_t::const_iterator found = _surrounding_labels_.find (label_);
+    labels_dict_type::const_iterator found = _surrounding_labels_.find (label_);
     if (found == _surrounding_labels_.end ())
       {
         ostringstream message;
@@ -192,7 +192,7 @@ namespace geomtools {
 
   const i_model & surrounded_boxed_model::get_surrounding_model (int i_) const
   {
-    surrounding_dict_t::const_iterator found = _surrounding_items_.find (i_);
+    surrounding_dict_type::const_iterator found = _surrounding_items_.find (i_);
     if (found == _surrounding_items_.end ())
       {
         ostringstream message;
@@ -250,8 +250,8 @@ namespace geomtools {
   }
   
   void surrounded_boxed_model::_at_construct (const string & name_,
-                                              const datatools::utils::properties & config_,
-                                              models_col_t * models_)
+                                              const datatools::properties & config_,
+                                              models_col_type * models_)
   {
     bool devel = i_model::g_devel;
     if (config_.has_flag ("devel"))
@@ -260,7 +260,7 @@ namespace geomtools {
       }  
     if (devel)
       {
-        clog << datatools::utils::io::devel 
+        clog << datatools::io::devel 
              << "surrounded_boxed_model::_at_construct: Entering..." << endl;
       }
     set_name (name_);
@@ -295,7 +295,7 @@ namespace geomtools {
     if (config_.has_key ("length_unit"))
       {
         string length_unit_str = config_.fetch_string ("length_unit");
-        lunit = datatools::utils::units::get_length_unit_from (length_unit_str);
+        lunit = datatools::units::get_length_unit_from (length_unit_str);
       }  
 
     /*** Surrounded model ***/
@@ -381,7 +381,7 @@ namespace geomtools {
 
     /*** check if surrounded model exists ***/
     {
-      models_col_t::const_iterator found = 
+      models_col_type::const_iterator found = 
         models_->find (surrounded_model_name);
       if (found != models_->end ())
         {
@@ -428,7 +428,7 @@ namespace geomtools {
                   ostringstream message;
                   message << "surrounded_boxed_model::_at_construct: "
                           << "No '" << surrounding_item_prop.str () << "' property !"; 
-                  clog << datatools::utils::io::devel << message.str () << endl;        
+                  clog << datatools::io::devel << message.str () << endl;        
                 }
               continue;
             }
@@ -440,7 +440,7 @@ namespace geomtools {
               label_name = config_.fetch_string (label_item_prop.str ());
             }  
           
-          models_col_t::const_iterator found = 
+          models_col_type::const_iterator found = 
             models_->find (surrounding_model_name);
           if (found != models_->end ())
             {
@@ -507,7 +507,7 @@ namespace geomtools {
     double dy1 = 0.0;
     double dz0 = 0.0;
     double dz1 = 0.0;
-    for (surrounding_dict_t::const_iterator i = _surrounding_items_.begin ();
+    for (surrounding_dict_type::const_iterator i = _surrounding_items_.begin ();
          i != _surrounding_items_.end ();
          i++)
       {
@@ -703,7 +703,7 @@ namespace geomtools {
     _surrounded_phys_.set_mother (get_logical ());
 
     // placement of the surrounding solids: 
-    for (surrounding_dict_t::iterator i = _surrounding_items_.begin ();
+    for (surrounding_dict_type::iterator i = _surrounding_items_.begin ();
          i != _surrounding_items_.end ();
          i++)
       {
@@ -775,7 +775,7 @@ namespace geomtools {
                                          models_);
       }
     
-    if (devel) clog << datatools::utils::io::devel 
+    if (devel) clog << datatools::io::devel 
                     << "surrounded_boxed_model::_at_construct: Exiting." << endl;
     return;
   }
@@ -785,7 +785,7 @@ namespace geomtools {
                                           const string & indent_, 
                                           bool inherit_) const
   {
-    namespace du = datatools::utils;
+    using namespace datatools;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     i_model::tree_dump (out_, title_, indent, true);
@@ -810,7 +810,7 @@ namespace geomtools {
     }
      
     {
-      for (labels_dict_t::const_iterator i = _surrounding_labels_.begin ();
+      for (labels_dict_type::const_iterator i = _surrounding_labels_.begin ();
            i != _surrounding_labels_.end ();
            i++)
         {
@@ -825,7 +825,7 @@ namespace geomtools {
       {
         ostringstream indent_oss;
         indent_oss << indent;
-        indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+        indent_oss << i_tree_dumpable::inherit_skip_tag (inherit_);
         _solid_.tree_dump (out_, "", indent_oss.str ());
       }   
     }

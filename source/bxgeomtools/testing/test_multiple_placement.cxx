@@ -8,7 +8,7 @@
 #include <stdexcept>
 #include <unistd.h>
 
-#include <datatools/utils/temporary_files.h>
+#include <datatools/temporary_files.h>
 
 #include <geomtools/geomtools_config.h>
 #include <geomtools/multiple_placement.h>
@@ -96,7 +96,7 @@ int main (int argc_, char ** argv_)
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
       if (draw)
         {
-          datatools::utils::temp_file tmp_file;
+          datatools::temp_file tmp_file;
           tmp_file.set_remove_at_destroy (true);
           tmp_file.create ("./", "tmp_drawer_");        
           geomtools::box b (0.3, 0.2, 0.1);

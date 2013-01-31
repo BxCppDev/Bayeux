@@ -6,7 +6,7 @@
 #include <string>
 #include <exception>
 
-#include <datatools/utils/utils.h>
+#include <datatools/utils.h>
 
 #include <geomtools/geomtools_config.h>
 #include <geomtools/model_factory.h>
@@ -120,7 +120,7 @@ int main (int argc_, char ** argv_)
         {
           setup_filename = "${GEOMTOOLS_DATA_DIR}/testing/config/test_geometry_models.conf";
         } 
-      datatools::utils::fetch_path_with_env (setup_filename);
+      datatools::fetch_path_with_env (setup_filename);
       factory.load (setup_filename);
       factory.lock ();
       if (dump) factory.tree_dump (clog, "Geometry model factory:");
@@ -131,7 +131,7 @@ int main (int argc_, char ** argv_)
  
       clog << "Models: " << endl;
       int count = 0;
-      for (geomtools::models_col_t::const_iterator i 
+      for (geomtools::models_col_type::const_iterator i 
              = factory.get_models ().begin ();
            i != factory.get_models ().end ();
            i++)

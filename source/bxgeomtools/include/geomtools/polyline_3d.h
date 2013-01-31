@@ -5,28 +5,26 @@
  * Last modified: 2009-03-31
  */
 
-#ifndef __geomtools__polyline_3d_h
-#define __geomtools__polyline_3d_h 1
+#ifndef GEOMTOOLS_POLYLINE_3D_H_
+#define GEOMTOOLS_POLYLINE_3D_H_ 1
 
 #include <iostream>
 #include <stdexcept>
 #include <list>
 
-#include <datatools/serialization/i_serializable.h>
+#include <datatools/i_serializable.h>
 
 #include <geomtools/i_shape_1d.h>
 #include <geomtools/utils.h>
 
 namespace geomtools {
 
-  using namespace std;
-
   class polyline_3d : 
     public i_shape_1d,
     DATATOOLS_SERIALIZABLE_CLASS
   {
   public:
-    static const string POLYLINE_3D_LABEL;
+    static const std::string POLYLINE_3D_LABEL;
 
     static const bool CLOSED = true;
     static const bool closed = CLOSED;
@@ -38,7 +36,7 @@ namespace geomtools {
 
   public:
 
-    virtual string get_shape_name () const;
+    virtual std::string get_shape_name () const;
 
     bool is_closed () const;
 
@@ -92,7 +90,7 @@ namespace geomtools {
 #include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT_KEY2(geomtools::polyline_3d, "geomtools::polyline_3d")
 
-#endif // __geomtools__polyline_3d_h
+#endif // GEOMTOOLS_POLYLINE_3D_H_
 
 // end of box.h
 

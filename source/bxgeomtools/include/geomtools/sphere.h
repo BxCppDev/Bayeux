@@ -13,8 +13,8 @@
  * 
  */
 
-#ifndef __geomtools__sphere_h
-#define __geomtools__sphere_h 1
+#ifndef GEOMTOOLS_SPHERE_H_
+#define GEOMTOOLS_SPHERE_H_ 1
 
 #include <string>
 #include <iostream>
@@ -42,35 +42,17 @@ namespace geomtools {
   
   public: 
     
-    double get_xmin () const
-    {
-      return -_r_;
-    }
+    double get_xmin () const;
+
+    double get_xmax () const;
     
-    double get_xmax () const
-    {
-      return +_r_;
-    }
+    double get_ymin () const;
     
-    double get_ymin () const
-    {
-      return -_r_;
-    }
+    double get_ymax () const;
     
-    double get_ymax () const
-    {
-      return +_r_;
-    }
+    double get_zmin () const;
     
-    double get_zmin () const
-    {
-      return -_r_;
-    }
-    
-    double get_zmax () const
-    {
-      return +_r_;
-    }
+    double get_zmax () const;
 
     double get_r () const;
 
@@ -125,9 +107,9 @@ namespace geomtools {
     friend std::istream & 
     operator>> (std::istream &, sphere &);
 
-    virtual void tree_dump (ostream & out_         = clog, 
-                            const string & title_  = "", 
-                            const string & indent_ = "", 
+    virtual void tree_dump (std::ostream & out_         = std::clog, 
+                            const std::string & title_  = "", 
+                            const std::string & indent_ = "", 
                             bool inherit_          = false) const;
   
   private: 
@@ -138,6 +120,6 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // ___geomtools__sphere_h
+#endif // GEOMTOOLS_SPHERE_H_
 
 // end of sphere.h

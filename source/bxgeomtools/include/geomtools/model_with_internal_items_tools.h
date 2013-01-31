@@ -14,8 +14,8 @@
  * 
  */
 
-#ifndef __geomtools__model_with_internal_items_tools_h
-#define __geomtools__model_with_internal_items_tools_h 1
+#ifndef GEOMTOOLS_MODEL_WITH_INTERNAL_ITEMS_TOOLS_H_
+#define GEOMTOOLS_MODEL_WITH_INTERNAL_ITEMS_TOOLS_H_ 1
 
 #include <string>
 #include <map>
@@ -23,28 +23,26 @@
 #include <geomtools/i_model.h>
 #include <geomtools/placement.h>
 #include <geomtools/physical_volume.h>
-#include <datatools/utils/properties.h>
+#include <datatools/properties.h>
 
 namespace geomtools {
-    
-  using namespace std;  
 
   class model_with_internal_items_tools
   {
   public:
 
-    struct item
+    struct item_type
     {
     public:
-      string             _label_;
+      std::string        _label_;
       const i_model *    _model_;
       placement          _placement_;
       physical_volume    _phys_;
 
     public:
-      item ();
-      void set_label (const string &);
-      const string & get_label () const;
+      item_type ();
+      void set_label (const std::string &);
+      const std::string & get_label () const;
       void set_model (const i_model &);
       const i_model & get_model () const;
       void set_placement (const placement &);
@@ -53,7 +51,7 @@ namespace geomtools {
       physical_volume & get_physical_volume ();
     };
 
-    typedef map<string, item> item_dict_t;
+    typedef std::map<std::string, item_type> item_dict_type;
 
   public:
 
@@ -61,23 +59,23 @@ namespace geomtools {
 
     ~model_with_internal_items_tools ();
 
-    const item & get_item (const string &) const;
-    item & get_item (const string &);
-    void add_item (const string & label_, 
+    const item_type & get_item (const std::string &) const;
+    item_type & get_item (const std::string &);
+    void add_item (const std::string & label_, 
                    const i_model & model_,
                    const placement & placement_);
-    bool has_item (const string &) const;
+    bool has_item (const std::string &) const;
     size_t get_number_of_items () const;
-    const item_dict_t & get_items () const;
-    item_dict_t & get_items ();
+    const item_dict_type & get_items () const;
+    item_dict_type & get_items ();
 
-    void plug_internal_models (const datatools::utils::properties & setup_,
+    void plug_internal_models (const datatools::properties & setup_,
                                logical_volume & log_,
-                               models_col_t * models_);
+                               models_col_type * models_);
 
   private:
 
-    item_dict_t      _items_;
+    item_dict_type      _items_;
 
   };
 
@@ -85,6 +83,6 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // __geomtools__model_with_internal_items_tools_h
+#endif // GEOMTOOLS_MODEL_WITH_INTERNAL_ITEMS_TOOLS_H_
 
 // end of model_with_internal_items_tools.h

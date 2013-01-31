@@ -411,28 +411,27 @@ namespace geomtools {
       }
     i_object_3d::tree_dump (out_, title_, indent_, true);
 
-    namespace du = datatools::utils;
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Center : "
          << _center_  / CLHEP::mm << " mm"
          << endl;
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Radius : "
          << _radius_ / CLHEP::mm << " mm"
          << endl;
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Step   : "
          << _step_ // << " mm/round"
          << endl;
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "T1     : "
          << _t1_ << " (" << get_angle1 () / CLHEP::radian << " radian)"
          << endl;
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "T2     : "
          << _t2_ << " (" << get_angle2 () / CLHEP::radian << " radian)"
          << endl;
-    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
          << "Length : "
          << get_length() / CLHEP::mm << " mm"
          << endl;

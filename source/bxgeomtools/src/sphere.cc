@@ -13,6 +13,36 @@ namespace geomtools {
   using namespace std;  
 
   const std::string sphere::SPHERE_LABEL = "sphere";
+    
+    double sphere::get_xmin () const
+    {
+      return -_r_;
+    }
+    
+    double sphere::get_xmax () const
+    {
+      return +_r_;
+    }
+    
+    double sphere::get_ymin () const
+    {
+      return -_r_;
+    }
+    
+    double sphere::get_ymax () const
+    {
+      return +_r_;
+    }
+    
+    double sphere::get_zmin () const
+    {
+      return -_r_;
+    }
+    
+    double sphere::get_zmax () const
+    {
+      return +_r_;
+    }
   
   double 
   sphere::get_r () const
@@ -349,12 +379,11 @@ namespace geomtools {
                           const string & indent_, 
                           bool inherit_) const
   {
-    namespace du = datatools::utils;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     i_object_3d::tree_dump (out_, title_, indent_, true);
 
-    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)  
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)  
          << "R : " << get_r () / CLHEP::mm << " mm" << endl;
     return;
   }

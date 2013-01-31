@@ -13,8 +13,8 @@
  * 
  */
 
-#ifndef __geomtools__utils_h
-#define __geomtools__utils_h 1
+#ifndef GEOMTOOLS_UTILS_H_
+#define GEOMTOOLS_UTILS_H_ 1
 
 #include <string>
 #include <iostream>
@@ -26,19 +26,17 @@
 
 namespace geomtools {
 
-  using namespace std;
+  typedef std::list<vector_2d> basic_polyline_2d;
 
-  typedef list<vector_2d> basic_polyline_2d;
+  typedef std::list<vector_3d> basic_polyline_3d;
 
-  typedef list<vector_3d> basic_polyline_3d;
-
-  void print_xy (ostream & out_, 
+  void print_xy (std::ostream & out_, 
                  const vector_2d & p_,
                  bool endl_ = true);
 
-  string to_xy (const vector_2d & p_);
+  std::string to_xy (const vector_2d & p_);
 
-  string vector_2d_to_xy (const vector_2d & p_);
+  std::string vector_2d_to_xy (const vector_2d & p_);
 
   void print_xy_stdout (const vector_2d & p_);
 
@@ -46,15 +44,15 @@ namespace geomtools {
 
   /******/
 
-  void print_xyz (ostream & out_, 
+  void print_xyz (std::ostream & out_, 
                   const vector_3d & p_,
                   bool endl_ = true);
 
-  void print (ostream & out_, const vector_3d & p_);
+  void print (std::ostream & out_, const vector_3d & p_);
 
-  string to_xyz (const vector_3d & p_);
+  std::string to_xyz (const vector_3d & p_);
 
-  string vector_3d_to_xyz (const vector_3d & p_);
+  std::string vector_3d_to_xyz (const vector_3d & p_);
 
   void print_xyz_stdout (const vector_3d & p_);
 
@@ -62,13 +60,13 @@ namespace geomtools {
 
   /******/
 
-  void print_xy (ostream & out_, 
+  void print_xy (std::ostream & out_, 
                  const basic_polyline_2d & p_,
                  bool endl_ = true);
 
-  string to_xy (const basic_polyline_2d & p_);
+  std::string to_xy (const basic_polyline_2d & p_);
 
-  string basic_polyline_2d_to_xy (const basic_polyline_2d & p_);
+  std::string basic_polyline_2d_to_xy (const basic_polyline_2d & p_);
 
   void print_xy_stdout (const basic_polyline_2d & p_);
 
@@ -76,13 +74,13 @@ namespace geomtools {
 
   /******/
 
-  void print_xyz (ostream & out_, 
+  void print_xyz (std::ostream & out_, 
                   const basic_polyline_3d & p_,
                   bool endl_ = true);
 
-  string to_xyz (const basic_polyline_3d & p_);
+  std::string to_xyz (const basic_polyline_3d & p_);
 
-  string basic_polyline_3d_to_xyz (const basic_polyline_3d & p_);
+  std::string basic_polyline_3d_to_xyz (const basic_polyline_3d & p_);
 
   void print_xyz_stdout (const basic_polyline_3d & p_);
 
@@ -137,9 +135,9 @@ namespace geomtools {
         FILLED_BY_EXTRUSION = 2
       };
 
-    static const string FILLED_NONE_LABEL;
-    static const string FILLED_BY_ENVELOPE_LABEL;
-    static const string FILLED_BY_EXTRUSION_LABEL;
+    static const std::string FILLED_NONE_LABEL;
+    static const std::string FILLED_BY_ENVELOPE_LABEL;
+    static const std::string FILLED_BY_EXTRUSION_LABEL;
 
   };
   
@@ -229,9 +227,9 @@ namespace geomtools {
 
   double get_special_rotation_angle (int);
 
-  int get_special_rotation_angle_from_label (const string & );
+  int get_special_rotation_angle_from_label (const std::string & );
 
-  string get_special_rotation_angle_label (int);
+  std::string get_special_rotation_angle_label (int);
 
   /********************/
   enum axis_t
@@ -252,9 +250,9 @@ namespace geomtools {
 
   bool check_rotation_axis (int);
 
-  int get_rotation_axis_from_label (const string & );
+  int get_rotation_axis_from_label (const std::string & );
 
-  string get_rotation_label (int);
+  std::string get_rotation_label (int);
 
   /********************/
 
@@ -271,16 +269,16 @@ namespace geomtools {
                         int special_angle_);
   
   void create_rotation_from (rotation_3d & rot_,
-                             const string &);
+                             const std::string &);
   
   void reset (rotation_3d & rot_);
   
   void reset_rotation_3d (rotation_3d & rot_);
   
   void tree_dump (const rotation_3d & rot_,
-                  ostream & out_, 
-                  const string & title_ = "", 
-                  const string & indent_ = "");
+                  std::ostream & out_, 
+                  const std::string & title_ = "", 
+                  const std::string & indent_ = "");
 
   void invalidate (rotation_3d & rot_);
 
@@ -405,16 +403,16 @@ namespace geomtools {
     double dz = 0.0;
     double dir_theta = dir_.theta ();
     double dir_phi = dir_.phi ();
-    clog << "theta (dir) = " 
-         << 180.* dir_theta / M_PI << "°" << endl;
-    clog << "phi (dir) = " 
-         << 180.* dir_phi / M_PI << "°"  << endl;
+    // std::clog << "theta (dir) = " 
+    //      << 180.* dir_theta / M_PI << "°" << std::endl;
+    // std::clog << "phi (dir) = " 
+    //      << 180.* dir_phi / M_PI << "°"  << std::endl;
     rotation_3d dir_rot;
     create_rotation_3d (dir_rot, dir_phi, dir_theta, 0.0);
     rotation_3d dir_inverse_rot;
     dir_inverse_rot = dir_rot.inverse ();
     vector_3d v (dx, dy, dz);
-    ran_dir_ = v.transform (dir_inverse_rot); // XXX
+    ran_dir_ = v.transform (dir_inverse_rot); 
     return;
   }
     
@@ -542,11 +540,11 @@ namespace geomtools {
 
   struct io
   {
-    static const string VECTOR_2D_SERIAL_TAG;
-    static const string VECTOR_3D_SERIAL_TAG;
-    static const string ROTATION_3D_SERIAL_TAG;
-    static const string POSITION_SUFFIX;
-    static const string ROTATION_SUFFIX;
+    static const std::string VECTOR_2D_SERIAL_TAG;
+    static const std::string VECTOR_3D_SERIAL_TAG;
+    static const std::string ROTATION_3D_SERIAL_TAG;
+    static const std::string POSITION_SUFFIX;
+    static const std::string ROTATION_SUFFIX;
   };
 
 } // end namespace geomtools
@@ -625,11 +623,6 @@ namespace boost {
 } // namespace boost
 
 
-// #include <boost/serialization/export.hpp>
-// BOOST_CLASS_EXPORT_KEY2(geomtools::vector_2d,   "geomtools::vector_2d")
-// BOOST_CLASS_EXPORT_KEY2(geomtools::vector_3d,   "geomtools::vector_3d")
-// BOOST_CLASS_EXPORT_KEY2(geomtools::rotation_3d, "geomtools::rotation_3d")
-
-#endif // __geomtools__utils_h
+#endif // GEOMTOOLS_UTILS_H_
 
 // end of utils.h

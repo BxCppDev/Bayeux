@@ -10,8 +10,8 @@
 
 #include <boost/foreach.hpp>
 
-#include <datatools/utils/utils.h>
-#include <datatools/utils/library_loader.h>
+#include <datatools/utils.h>
+#include <datatools/library_loader.h>
 
 #include <geomtools/geomtools_config.h>
 #include <geomtools/model_factory.h>
@@ -118,7 +118,7 @@ int main (int argc_, char ** argv_)
                 {
                   visu_drawer_view = get_drawer_view (option);
                   visu = true;
-               }
+                }
               else if (option == "-yz" || option == "--visu-view-yz") 
                 { 
                   visu_drawer_view = get_drawer_view (option);
@@ -143,7 +143,7 @@ int main (int argc_, char ** argv_)
                 {
                   visu_drawer_labels = false;
                   visu = true;
-               }
+                }
               else if (option == "-VM" || option == "--visu-model") 
                 {
                   visu_model_name = argv_[++iarg];
@@ -161,12 +161,12 @@ int main (int argc_, char ** argv_)
                 {
                   mapping_requested = false;
                 }
-               else if (option == "-MC" || option == "--mapping-categories") 
+              else if (option == "-MC" || option == "--mapping-categories") 
                 {
                   categories_filename = argv_[++iarg];
                   mapping_requested = true;
                 }
-               else if (option == "-MD" || option == "--mapping-max-depth") 
+              else if (option == "-MD" || option == "--mapping-max-depth") 
                 {
                   std::istringstream mmd_iss (argv_[++iarg]);
                   mmd_iss >> mapping_max_depth;
@@ -211,8 +211,8 @@ int main (int argc_, char ** argv_)
     
       geomtools::i_model::g_devel = devel;
  
-      uint32_t LL_flags = datatools::utils::library_loader::allow_unregistered;
-      datatools::utils::library_loader LL (LL_flags, LL_config);
+      uint32_t LL_flags = datatools::library_loader::allow_unregistered;
+      datatools::library_loader LL (LL_flags, LL_config);
       BOOST_FOREACH (const std::string & dll_name, LL_dlls)
         {
           std::clog << "NOTICE: " << "Loading DLL '" << dll_name << "'." << std::endl;
@@ -234,7 +234,7 @@ int main (int argc_, char ** argv_)
       for (int i = 0; i  < setup_filenames.size(); i++)
         {
           std::string geom_filename = setup_filenames[i];
-          datatools::utils::fetch_path_with_env (geom_filename);
+          datatools::fetch_path_with_env (geom_filename);
           geometry_factory.load (geom_filename);
         }
       geometry_factory.lock ();
@@ -246,7 +246,7 @@ int main (int argc_, char ** argv_)
       
       // Default model :
       bool has_world = false;
-      for (geomtools::models_col_t::const_iterator i 
+      for (geomtools::models_col_type::const_iterator i 
              = geometry_factory.get_models ().begin ();
            i != geometry_factory.get_models ().end ();
            i++)
@@ -270,105 +270,103 @@ int main (int argc_, char ** argv_)
         {   
           std::clog << "Current drawer view : '" << visu_drawer_view << "'" << std::endl;
           bool go_on = true;
-          do 
-            {
-
-              geomtools::placement p;
-              p.set (0, 0, 0, 0 * CLHEP::degree, 0 * CLHEP::degree, 0);
+          do {
+            geomtools::placement p;
+            p.set (0, 0, 0, 0 * CLHEP::degree, 0 * CLHEP::degree, 0);
           
-              std::clog << "List of available geometry models : " << std::endl;
-              int count = 0;
-              for (geomtools::models_col_t::const_iterator i 
-                     = geometry_factory.get_models ().begin ();
-                   i != geometry_factory.get_models ().end ();
-                   i++)
-                {
-                  bool long_name = false;
-                  size_t max_width = 32;
-                  if (i->second->get_name ().size () > max_width)
-                    {
-                      long_name = true;
-                    }
-                  if ((count % 2) == 0)  
-                    {
-                      std::clog << std::endl;
-                    }
-                  std::clog  << "  " << std::setw (max_width) << std::setiosflags(ios::left) << std::resetiosflags(ios::right) 
-                       << i->second->get_name () << "  ";
-                  if (long_name)
-                    {
-                      std::clog << std::endl;
-                      count = 0;
-                    }
-                  count++;
-                }
-              std::clog << std::endl;
-
-              std::clog << std::endl << "Enter the name of the geometry model to be displayed " << "\n"
-                        << " or type '.q'";
-              if (! visu_model_name.empty ())
-                {
-                  std::clog << " [" << visu_model_name << "] : ";
-                }
-              std::clog << std::endl;
-
-              std::string user;
-              std::getline (std::cin, user);
+            std::clog << "List of available geometry models : " << std::endl;
+            int count = 0;
+            for (geomtools::models_col_type::const_iterator i 
+                   = geometry_factory.get_models ().begin ();
+                 i != geometry_factory.get_models ().end ();
+                 i++)
               {
-                std::string token;
-                std::istringstream token_iss (user);
-                while (token_iss)
+                bool long_name = false;
+                size_t max_width = 32;
+                if (i->second->get_name ().size () > max_width)
                   {
-                    token.clear ();
-                    token_iss >> token >> ws;
-                    if (token == ".q" || token == ".quit")
-                      {
-                        go_on = false;
-                        break;
-                      }
-                    if (! token.empty ())
-                      {
-                        if (token[0] != '-')
-                          {
-                            visu_model_name = token;
-                          }
-                        else
-                          {
-                            if (token == "--labels")
-                              {
-                                visu_drawer_labels = true;   
-                              }
-                            else if (token == "--no-labels")
-                              {
-                                visu_drawer_labels = false;  
-                              }
-                            else
-                              {
-                                visu_drawer_view = get_drawer_view (token);
-                              }
-                          }
-                      }             
+                    long_name = true;
                   }
-                if (! go_on) break;
+                if ((count % 2) == 0)  
+                  {
+                    std::clog << std::endl;
+                  }
+                std::clog  << "  " << std::setw (max_width) << std::setiosflags(ios::left) << std::resetiosflags(ios::right) 
+                           << i->second->get_name () << "  ";
+                if (long_name)
+                  {
+                    std::clog << std::endl;
+                    count = 0;
+                  }
+                count++;
               }
-              if (visu_model_name.empty () && has_world)
-                {
-                  visu_model_name = "world";
-                }
-              std::clog << "Name of the model : '" << visu_model_name  << "'" << std::endl;
-              std::clog << "|-- View          : '" << visu_drawer_view << "'" << std::endl;
-              std::clog << "`-- Labels        : " << visu_drawer_labels << std::endl;
+            std::clog << std::endl;
 
-              geomtools::gnuplot_drawer::g_devel = devel;
-              geomtools::gnuplot_drawer GPD;
-              GPD.set_mode (geomtools::gnuplot_drawer::MODE_WIRED);
-              GPD.set_view (visu_drawer_view);
-              GPD.set_labels (visu_drawer_labels);
-              GPD.draw (geometry_factory, 
-                        visu_model_name, 
-                        p,  
-                        geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT);
-            } while (go_on);
+            std::clog << std::endl << "Enter the name of the geometry model to be displayed " << "\n"
+                      << " or type '.q'";
+            if (! visu_model_name.empty ())
+              {
+                std::clog << " [" << visu_model_name << "] : ";
+              }
+            std::clog << std::endl;
+
+            std::string user;
+            std::getline (std::cin, user);
+            {
+              std::string token;
+              std::istringstream token_iss (user);
+              while (token_iss)
+                {
+                  token.clear ();
+                  token_iss >> token >> ws;
+                  if (token == ".q" || token == ".quit")
+                    {
+                      go_on = false;
+                      break;
+                    }
+                  if (! token.empty ())
+                    {
+                      if (token[0] != '-')
+                        {
+                          visu_model_name = token;
+                        }
+                      else
+                        {
+                          if (token == "--labels")
+                            {
+                              visu_drawer_labels = true;   
+                            }
+                          else if (token == "--no-labels")
+                            {
+                              visu_drawer_labels = false;  
+                            }
+                          else
+                            {
+                              visu_drawer_view = get_drawer_view (token);
+                            }
+                        }
+                    }             
+                }
+              if (! go_on) break;
+            }
+            if (visu_model_name.empty () && has_world)
+              {
+                visu_model_name = "world";
+              }
+            std::clog << "Name of the model : '" << visu_model_name  << "'" << std::endl;
+            std::clog << "|-- View          : '" << visu_drawer_view << "'" << std::endl;
+            std::clog << "`-- Labels        : " << visu_drawer_labels << std::endl;
+
+            geomtools::gnuplot_drawer::g_devel = devel;
+            geomtools::gnuplot_drawer GPD;
+            GPD.set_mode (geomtools::gnuplot_drawer::MODE_WIRED);
+            GPD.set_view (visu_drawer_view);
+            GPD.set_labels (visu_drawer_labels);
+            GPD.draw (geometry_factory, 
+                      visu_model_name, 
+                      p,  
+                      geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT);
+          } while (go_on);
         }
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 
@@ -377,7 +375,7 @@ int main (int argc_, char ** argv_)
       if (! categories_filename.empty ())
         {
           std::string categories_lis = categories_filename;
-          datatools::utils::fetch_path_with_env (categories_lis);
+          datatools::fetch_path_with_env (categories_lis);
           gid_manager.load (categories_lis);
         }
 
@@ -388,7 +386,7 @@ int main (int argc_, char ** argv_)
           // The mapping manager :
           geomtools::mapping mapping_manager; 
           mapping_manager.set_id_manager (gid_manager);
-          datatools::utils::properties mapping_config;
+          datatools::properties mapping_config;
           mapping_config.store ("mapping.max_depth", mapping_max_depth);
           bool can_exclude_categories = true;
           if (mapping_only_categories.size ())

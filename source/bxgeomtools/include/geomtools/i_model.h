@@ -14,26 +14,24 @@
  * 
  */
 
-#ifndef __geomtools__i_model_h
-#define __geomtools__i_model_h 1
+#ifndef GEOMTOOLS_I_MODEL_H_
+#define GEOMTOOLS_I_MODEL_H_ 1
 
 #include <iostream>
 #include <string>
 
 #include <boost/scoped_ptr.hpp>
 
-#include <datatools/utils/i_tree_dump.h>
-#include <datatools/utils/properties.h>
+#include <datatools/i_tree_dump.h>
+#include <datatools/properties.h>
 
 #include <geomtools/logical_volume.h>
 #include <geomtools/detail/model_tools.h>
-#include <datatools/factory/factory_macros.h>
+#include <datatools/factory_macros.h>
 
 namespace geomtools {
   
-  using namespace std;  
-  
-  class i_model : public datatools::utils::i_tree_dumpable
+  class i_model : public datatools::i_tree_dumpable
   {
   public:
     static bool g_devel;
@@ -52,7 +50,7 @@ namespace geomtools {
 
     };
 
-    typedef geomtools::models_col_t models_col_t;
+    typedef geomtools::models_col_type models_col_type;
      
   public: 
 
@@ -74,9 +72,9 @@ namespace geomtools {
     
     const std::string & get_name () const;
     
-    const datatools::utils::properties & parameters () const;
+    const datatools::properties & parameters () const;
     
-    datatools::utils::properties & parameters ();
+    datatools::properties & parameters ();
 
   protected :
  
@@ -106,24 +104,24 @@ namespace geomtools {
     geomtools::logical_volume & get_logical ();
     
     virtual void construct (const std::string & name_,
-                            const datatools::utils::properties & setup_,
-                            models_col_t * models_ = 0);
+                            const datatools::properties & setup_,
+                            models_col_type * models_ = 0);
      
   protected:
 
-    virtual void _pre_construct (datatools::utils::properties & setup_);
+    virtual void _pre_construct (datatools::properties & setup_);
 
-    virtual void _post_construct (datatools::utils::properties & setup_);
+    virtual void _post_construct (datatools::properties & setup_);
  
     virtual void _at_construct (const std::string & name_,
-                                const datatools::utils::properties & setup_,
-                                models_col_t * models_ = 0);
+                                const datatools::properties & setup_,
+                                models_col_type * models_ = 0);
       
   private: 
 
     bool _debug_;
     bool _constructed_;
-    datatools::utils::properties _parameters_;
+    datatools::properties _parameters_;
     std::string _name_;
     
   protected:
@@ -167,6 +165,6 @@ namespace geomtools {
 
 #include <geomtools/model_macros.h>
 
-#endif // __geomtools__i_model_h
+#endif // GEOMTOOLS_I_MODEL_H_
 
 // end of i_model.h

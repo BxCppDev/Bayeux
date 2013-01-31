@@ -1,11 +1,12 @@
 // -*- mode: c++; -*- 
 // plane.cc
 
-#include <geomtools/plane.h>
-
 #include <sstream>
 #include <stdexcept>
-#include <datatools/utils/utils.h>
+
+#include <datatools/utils.h>
+
+#include <geomtools/plane.h>
 
 namespace geomtools {
 
@@ -18,7 +19,7 @@ namespace geomtools {
 
   bool plane::is_valid () const
   {
-    return datatools::utils::is_valid (_a_);
+    return datatools::is_valid (_a_);
   }
 
   double plane::a () const
@@ -43,10 +44,10 @@ namespace geomtools {
 
   void plane::reset ()
   {
-    datatools::utils::invalidate (_a_);
-    datatools::utils::invalidate (_b_);
-    datatools::utils::invalidate (_c_);
-    datatools::utils::invalidate (_d_);
+    datatools::invalidate (_a_);
+    datatools::invalidate (_b_);
+    datatools::invalidate (_c_);
+    datatools::invalidate (_d_);
     return;
   }
 
@@ -59,10 +60,10 @@ namespace geomtools {
   plane::plane ()
   {
     //http://fr.wikipedia.org/wiki/Plan_%28math%C3%A9matiques%29#D.C3.A9finition_par_deux_vecteurs_et_un_point
-    datatools::utils::invalidate (_a_);
-    datatools::utils::invalidate (_b_);
-    datatools::utils::invalidate (_c_);
-    datatools::utils::invalidate (_d_);
+    datatools::invalidate (_a_);
+    datatools::invalidate (_b_);
+    datatools::invalidate (_c_);
+    datatools::invalidate (_d_);
     return;
   }
 
@@ -74,22 +75,22 @@ namespace geomtools {
 
   void plane::set(double a_, double b_, double c_, double d_)
     {
-    if (!datatools::utils::is_normal (a_))
+    if (!datatools::is_normal (a_))
       {
         throw std::logic_error ("geomtools::plane::set: Invalid 'a' value !");
       }
     _a_ = a_;
-    if (!datatools::utils::is_normal (b_))
+    if (!datatools::is_normal (b_))
       {
         throw std::logic_error ("geomtools::plane::set: Invalid 'b' value !");
       }
     _b_ = b_;
-    if (!datatools::utils::is_normal (c_))
+    if (!datatools::is_normal (c_))
       {
         throw std::logic_error ("geomtools::plane::set: Invalid 'c' value !");
       }
     _c_ = c_;
-    if (! datatools::utils::is_normal (d_))
+    if (! datatools::is_normal (d_))
       {
         throw std::logic_error ("geomtools::plane::set: Invalid 'd' value !");
       }

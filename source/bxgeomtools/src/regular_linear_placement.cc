@@ -235,28 +235,27 @@ namespace geomtools {
                                             const string & indent_, 
                                             bool inherit_) const
   {
-    namespace du = datatools::utils;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     this->i_placement::tree_dump (out_, title_, indent, true);
 
     {
       ostringstream oss_title;
-      oss_title << indent << i_tree_dumpable::tag << "Basic placement :";
+      oss_title << indent << datatools::i_tree_dumpable::tag << "Basic placement :";
       ostringstream oss_indent;
-      oss_indent << indent << i_tree_dumpable::skip_tag;
+      oss_indent << indent << datatools::i_tree_dumpable::skip_tag;
       _basic_placement_.tree_dump (out_, 
                                    oss_title.str (), 
                                    oss_indent.str ());
     }
 
-    out_ << indent << i_tree_dumpable::tag << "Step : " 
+    out_ << indent << datatools::i_tree_dumpable::tag << "Step : " 
          << _step_  << endl;
 
-    out_ << indent << i_tree_dumpable::tag << "Number of items : " 
+    out_ << indent << datatools::i_tree_dumpable::tag << "Number of items : " 
          << _number_of_items_  << endl;
 
-    out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_) 
          << "Replica :" << is_replica ();
     if (is_replicant_x_axis ())
       {

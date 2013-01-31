@@ -13,8 +13,8 @@
  * 
  */
 
-#ifndef __geomtools__gnuplot_draw_h
-#define __geomtools__gnuplot_draw_h 1
+#ifndef GEOMTOOLS_GNUPLOT_DRAW_H_
+#define GEOMTOOLS_GNUPLOT_DRAW_H_ 1
 
 #include <iostream>
 
@@ -46,9 +46,9 @@ namespace geomtools {
   class gnuplot_draw
   {
   public: 
-    typedef basic_polyline_3d polyline_t;
+    typedef basic_polyline_3d polyline_type;
   
-    enum mode_flags_t
+    enum mode_flags_type
       {
         MODE_NULL = 0x0,
         MODE_WIRED_CYLINDER = 0x1
@@ -115,7 +115,7 @@ namespace geomtools {
 
     static void 
     basic_draw_polyline (std::ostream &, 
-                         const polyline_t &);
+                         const polyline_type &);
     
     static void 
     draw_line (std::ostream &, 
@@ -131,7 +131,7 @@ namespace geomtools {
     draw_polyline  (std::ostream &, 
                     const vector_3d &, 
                     const rotation_3d &,  
-                    const polyline_t &, 
+                    const polyline_type &, 
                     bool = false);
     
     static void 
@@ -312,23 +312,23 @@ namespace geomtools {
 
     // draw factory:
      
-    typedef void (*draw_user_function_t) (std::ostream &, 
-                                          const vector_3d &, 
-                                          const rotation_3d &,
-                                          const i_object_3d &, 
-                                          void *);
+    typedef void (*draw_user_function_type) (std::ostream &, 
+                                             const vector_3d &, 
+                                             const rotation_3d &,
+                                             const i_object_3d &, 
+                                             void *);
  
-    static void basic_draw (ostream & out_,
+    static void basic_draw (std::ostream & out_,
                             const vector_3d & position_, 
                             const rotation_3d & rotation_, 
                             const i_object_3d & o_,
                             unsigned long mode_ = gnuplot_draw::MODE_NULL);
   
-    static void draw (ostream & out_, 
+    static void draw (std::ostream & out_, 
                       const i_placement &, 
                       const i_object_3d &);
  
-    static void draw (ostream & out_, 
+    static void draw (std::ostream & out_, 
                       const i_placement &, 
                       const i_object_3d &,
                       unsigned long mode_);
@@ -337,6 +337,6 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // __geomtools__gnuplot_draw_h
+#endif // GEOMTOOLS_GNUPLOT_DRAW_H_
 
 // end of gnuplot_draw.h

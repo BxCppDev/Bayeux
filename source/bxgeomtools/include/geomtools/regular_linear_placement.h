@@ -13,8 +13,8 @@
  * 
  */
 
-#ifndef __geomtools__regular_linear_placement_h
-#define __geomtools__regular_linear_placement_h 1
+#ifndef GEOMTOOLS_REGULAR_LINEAR_PLACEMENT_H_
+#define GEOMTOOLS_REGULAR_LINEAR_PLACEMENT_H_ 1
 
 #include <iostream>
 #include <iomanip>
@@ -24,8 +24,6 @@
 #include <geomtools/placement.h>
 
 namespace geomtools {
-
-  using namespace std;
  
   class regular_linear_placement
     : public i_placement 
@@ -82,7 +80,7 @@ namespace geomtools {
    
     virtual void get_placement (int item_, placement & p_) const;
 
-    virtual size_t compute_index_map (vector<uint32_t> & map_, 
+    virtual size_t compute_index_map (std::vector<uint32_t> & map_, 
                                       int item_) const;
 
   public: 
@@ -115,9 +113,9 @@ namespace geomtools {
     virtual void reset ();
 
     // i_tree_dump interface:
-    virtual void tree_dump (ostream & out_  = clog, 
-                            const string & title_ = "geomutils::regular_linear_placement", 
-                            const string & indent_ = "", 
+    virtual void tree_dump (std::ostream & out_  = std::clog, 
+                            const std::string & title_ = "geomutils::regular_linear_placement", 
+                            const std::string & indent_ = "", 
                             bool inherit_ = false) const;
 
   private:
@@ -131,6 +129,6 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // __geomtools__regular_linear_placement_h
+#endif // GEOMTOOLS_REGULAR_LINEAR_PLACEMENT_H_
 
 // end of regular_linear_placement.h

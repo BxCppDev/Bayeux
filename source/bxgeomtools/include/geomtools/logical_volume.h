@@ -13,30 +13,28 @@
  * 
  */
 
-#ifndef __geomtools__logical_volume_h
-#define __geomtools__logical_volume_h 1
+#ifndef GEOMTOOLS_LOGICAL_VOLUME_H_
+#define GEOMTOOLS_LOGICAL_VOLUME_H_ 1
 
 #include <string>
 #include <map>
 
 
-#include <datatools/utils/properties.h>
-#include <datatools/utils/i_tree_dump.h>
+#include <datatools/properties.h>
+#include <datatools/i_tree_dump.h>
 
 #include <geomtools/i_shape_3d.h>
 #include <geomtools/material.h>
 
 namespace geomtools {
 
-  using namespace datatools::utils;
-
   class physical_volume;
 
   class logical_volume
-    : public datatools::utils::i_tree_dumpable
+    : public datatools::i_tree_dumpable
   {
   public:
-    typedef std::map<std::string, const physical_volume *> physicals_col_t;
+    typedef std::map<std::string, const physical_volume *> physicals_col_type;
 
     static const std::string HAS_REPLICA_FLAG;
 
@@ -56,9 +54,9 @@ namespace geomtools {
 
     void set_name (const std::string &);
 
-    const properties & parameters () const;
+    const datatools::properties & parameters () const;
 
-    properties & parameters ();
+    datatools::properties & parameters ();
 
     bool has_shape () const;
 
@@ -68,7 +66,7 @@ namespace geomtools {
 
     const i_shape_3d & get_shape () const;
 
-    const physicals_col_t & get_physicals () const;
+    const physicals_col_type & get_physicals () const;
 
     logical_volume ();
 
@@ -102,21 +100,21 @@ namespace geomtools {
 
   private:
 
-    std::string     _name_;
-    bool       _locked_;
-    properties _parameters_;
-    bool       _own_shape_;
-    const i_shape_3d * _shape_;
-    physicals_col_t  _physicals_;
+    std::string           _name_;
+    bool                  _locked_;
+    datatools::properties _parameters_;
+    bool                  _own_shape_;
+    const i_shape_3d *    _shape_;
+    physicals_col_type    _physicals_;
 
   public:
 
-    typedef std::map<std::string, const logical_volume *> dict_t;
+    typedef std::map<std::string, const logical_volume *> dict_type;
 
   };
 
 } // end of namespace geomtools
 
-#endif // __geomtools__logical_volume_h
+#endif // GEOMTOOLS_LOGICAL_VOLUME_H_
 
 // end of logical_volume.h

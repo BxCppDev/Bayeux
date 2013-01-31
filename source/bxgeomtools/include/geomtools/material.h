@@ -23,11 +23,9 @@
 #include <cmath>
 #include <list>
 
-#include <datatools/utils/properties.h>
+#include <datatools/properties.h>
 
 namespace geomtools {
-
-  using namespace std;
 
   class material
   {
@@ -53,20 +51,20 @@ namespace geomtools {
 
     static std::string make_key (const std::string & flag_);
 
-    static void extract (const datatools::utils::properties & source_,
-                         datatools::utils::properties & target_);
+    static void extract (const datatools::properties & source_,
+                         datatools::properties & target_);
 
-    static bool has_flag (const datatools::utils::properties & config_,
+    static bool has_flag (const datatools::properties & config_,
                           const std::string & flag_);
 
-    static bool has_key (const datatools::utils::properties & config_,
+    static bool has_key (const datatools::properties & config_,
                          const std::string & key_);
 
-    static bool is_gas (const datatools::utils::properties & config_);
+    static bool is_gas (const datatools::properties & config_);
 
-    static bool is_liquid (const datatools::utils::properties & config_);
+    static bool is_liquid (const datatools::properties & config_);
 
-    static bool is_solid (const datatools::utils::properties & config_);
+    static bool is_solid (const datatools::properties & config_);
 
   };
 

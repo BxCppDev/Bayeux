@@ -35,6 +35,31 @@
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::geomtools::i_model,ModelClassName,ModelClassId); \
   /**/
 
+
+#define GEOMTOOLS_MODEL_PRE_CONSTRUCT_INTERFACE()               \
+  protected:                                                    \
+  virtual void _pre_construct (::datatools::properties &);      \
+  /**/
+
+#define GEOMTOOLS_MODEL_POST_CONSTRUCT_INTERFACE()                      \
+  protected:                                                            \
+  virtual void _post_construct (::datatools::properties &);             \
+  /**/
+
+#define GEOMTOOLS_MODEL_AT_CONSTRUCT_INTERFACE()                        \
+  protected:                                                            \
+  virtual void _at_construct (const std::string &,                      \
+                              const ::datatools::properties &,          \
+                              ::geomtools::models_col_type * = 0);      \
+  /**/
+
+#define GEOMTOOLS_MODEL_AT_CONSTRUCT_IMPL_HEAD(ModelClassName,Name,Setup,Models) \
+  void ModelClassName::_at_construct (const std::string & Name,         \
+                                      const ::datatools::properties & Setup, \
+                                      ::geomtools::models_col_type * Models) \
+  /**/
+
+
 #endif // __geomtools__model_macros_h
 
 // end of model_macros.h

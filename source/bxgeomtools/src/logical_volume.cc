@@ -45,12 +45,12 @@ namespace geomtools {
     return;
   }
   
-  const properties & logical_volume::parameters () const
+  const datatools::properties & logical_volume::parameters () const
   {
     return _parameters_;
   }
   
-  properties & logical_volume::parameters ()
+  datatools::properties & logical_volume::parameters ()
   {
     return _parameters_;
   }
@@ -185,7 +185,7 @@ namespace geomtools {
     return (_physicals_.find (name_) != _physicals_.end ());
   }
 
-  const logical_volume::physicals_col_t & 
+  const logical_volume::physicals_col_type & 
   logical_volume::get_physicals () const
   {
     return _physicals_;
@@ -193,7 +193,7 @@ namespace geomtools {
 
   const physical_volume & logical_volume::get_physical (const string & name_) const
   {
-    physicals_col_t::const_iterator found = _physicals_.find (name_);
+    physicals_col_type::const_iterator found = _physicals_.find (name_);
     if (found == _physicals_.end ())
       {
         ostringstream message;
@@ -265,21 +265,20 @@ namespace geomtools {
                                   const string & indent_, 
                                   bool inherit_) const
   {
-    namespace du = datatools::utils;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     if (! title_.empty ()) 
       {
         out_ << indent << title_ << endl;
       }
-    out_ << indent << i_tree_dumpable::tag 
+    out_ << indent <<  datatools::i_tree_dumpable::tag 
          << "Name       : \"" << _name_ << "\"" << endl;
 
-    out_ << indent << i_tree_dumpable::tag 
+    out_ << indent <<  datatools::i_tree_dumpable::tag 
          << "Locked     : " << (_locked_? "Yes": "No") << endl;
 
     {
-      out_ << indent << du::i_tree_dumpable::tag
+      out_ << indent << datatools::i_tree_dumpable::tag
            << "Parameters : ";
       if ( _parameters_.size () == 0) 
         {
@@ -289,13 +288,13 @@ namespace geomtools {
       {
         ostringstream indent_oss;
         indent_oss << indent;
-        indent_oss << du::i_tree_dumpable::skip_tag;
+        indent_oss << datatools::i_tree_dumpable::skip_tag;
         _parameters_.tree_dump (out_,"",indent_oss.str ());
       }
     }
     
     {
-      out_ << indent << i_tree_dumpable::tag 
+      out_ << indent <<  datatools::i_tree_dumpable::tag 
            << "Shape : ";
       if (has_shape ())
         {
@@ -310,17 +309,17 @@ namespace geomtools {
       {
         ostringstream indent_oss;
         indent_oss << indent;
-        indent_oss << du::i_tree_dumpable::skip_tag;
+        indent_oss << datatools::i_tree_dumpable::skip_tag;
         _shape_->tree_dump (out_,"",indent_oss.str ());
       }
     }
       
     {
-      out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
+      out_ << indent <<  datatools::i_tree_dumpable::inherit_tag (inherit_) 
            << "Physicals : ";
       if (_physicals_.size ())
         {
-          for (physicals_col_t::const_iterator i = _physicals_.begin ();
+          for (physicals_col_type::const_iterator i = _physicals_.begin ();
                i != _physicals_.end ();
                i++)
             {

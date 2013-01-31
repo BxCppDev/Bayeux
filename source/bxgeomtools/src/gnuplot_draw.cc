@@ -196,9 +196,9 @@ namespace geomtools {
 
   void 
   gnuplot_draw::basic_draw_polyline (std::ostream & out_, 
-                                     const polyline_t & pl_)
+                                     const polyline_type & pl_)
   {
-    for (polyline_t::const_iterator i = pl_.begin ();
+    for (polyline_type::const_iterator i = pl_.begin ();
          i != pl_.end ();
          ++i) 
       {
@@ -249,15 +249,15 @@ namespace geomtools {
   gnuplot_draw::draw_polyline (std::ostream & out_, 
                                const vector_3d & position_, 
                                const rotation_3d & rotation_,
-                               const polyline_t & pl_, 
+                               const polyline_type & pl_, 
                                bool  more_)
   {
     rotation_3d inverse_rotation (rotation_);
     inverse_rotation.invert ();
-    polyline_t polyline;
+    polyline_type polyline;
     vector_3d first;
     bool start = true;
-    for (polyline_t::const_iterator i = pl_.begin ();
+    for (polyline_type::const_iterator i = pl_.begin ();
          i != pl_.end ();
          i++) 
       {
@@ -292,7 +292,7 @@ namespace geomtools {
     vector_3d B (stop_);
     B.transform (inverse_rotation);
     B += position_;
-    polyline_t polyline;
+    polyline_type polyline;
     polyline.push_back (A);
     if (even)
       {
@@ -362,7 +362,7 @@ namespace geomtools {
     D2.transform (inverse_rotation);
     D2 += position_;
 
-    polyline_t polyline;
+    polyline_type polyline;
     polyline.push_back (A2);
     polyline.push_back (B2);
     polyline.push_back (C2);
@@ -469,7 +469,7 @@ namespace geomtools {
     S2.transform (inverse_rotation);
     S2 += position_;
 
-    polyline_t polyline;
+    polyline_type polyline;
     polyline.push_back (A2);
     polyline.push_back (B2);
     polyline.push_back (C2);
@@ -649,9 +649,9 @@ namespace geomtools {
 
     size_t sample =  arc_sampling_;
     double dangle =  2 * M_PI * CLHEP::radian / sample;
-    polyline_t polyline_top;
-    polyline_t polyline_bottom;
-    polyline_t polyline_segment;
+    polyline_type polyline_top;
+    polyline_type polyline_bottom;
+    polyline_type polyline_segment;
     for (size_t i = 0; i <= sample ; ++i) 
       {
         vector_3d P,Q;
@@ -708,14 +708,14 @@ namespace geomtools {
 
     size_t sample = arc_sampling_;
     double dangle = 2 * M_PI * CLHEP::radian / sample;
-    polyline_t polyline_top_i;
-    polyline_t polyline_bottom_i;
-    polyline_t polyline_segment_i;
-    polyline_t polyline_top_o;
-    polyline_t polyline_bottom_o;
-    polyline_t polyline_segment_o;
-    polyline_t polyline_endcap_top;
-    polyline_t polyline_endcap_bottom;
+    polyline_type polyline_top_i;
+    polyline_type polyline_bottom_i;
+    polyline_type polyline_segment_i;
+    polyline_type polyline_top_o;
+    polyline_type polyline_bottom_o;
+    polyline_type polyline_segment_o;
+    polyline_type polyline_endcap_top;
+    polyline_type polyline_endcap_bottom;
     for (size_t i = 0; i <= sample ; ++i) 
       {
         vector_3d P_i, Q_i;
@@ -803,7 +803,7 @@ namespace geomtools {
 
     size_t sample =  arc_sampling_;
     double dangle = 2 * M_PI * CLHEP::radian / sample;
-    polyline_t polyline;
+    polyline_type polyline;
     for (size_t i = 0; i <= sample; ++i) 
       {
         vector_3d P;
@@ -843,7 +843,7 @@ namespace geomtools {
 
     size_t sample =  arc_sampling_;
     double dangle = 2 * M_PI * CLHEP::radian / sample;
-    polyline_t polyline;
+    polyline_type polyline;
     for (size_t i = 0; i <= sample; ++i) 
       {
         vector_3d O;
@@ -873,7 +873,7 @@ namespace geomtools {
     rotation_3d inverse_rotation (rotation_);
     inverse_rotation.invert ();
 
-    polyline_t polyline;
+    polyline_type polyline;
     for (size_t i = 0; i <= rp_.get_n_sides(); ++i) 
       {
         vector_3d O;
@@ -926,7 +926,7 @@ namespace geomtools {
     {
       for (size_t i = 0; i <= phy_sample ; ++i) 
         {
-          polyline_t polyline_meridian;
+          polyline_type polyline_meridian;
           double phi = i * dphi;
           double z = -radius_;
           for (int j = 0; j <= (int) z_sample + 2 + (i == 0 ? 1: 0); j++)
@@ -959,7 +959,7 @@ namespace geomtools {
       double z = -radius_ + factor * dz;
       for (int j = 1; j <= (int) z_sample + 1; j++)
         {
-          polyline_t polyline_parallel;
+          polyline_type polyline_parallel;
           for (size_t i = 0; i <= phy_sample ; ++i) 
             {
               vector_3d P;
@@ -1002,9 +1002,9 @@ namespace geomtools {
     // outer surface:
     for (size_t i = 0; i <= phy_sample ; ++i) 
       {
-        polyline_t polyline_meridian;
+        polyline_type polyline_meridian;
         double phi = i * dphi;
-        for (polycone::rz_col_t::const_iterator j = p_.points ().begin ();
+        for (polycone::rz_col_type::const_iterator j = p_.points ().begin ();
              j != p_.points ().end ();
              j++)
           {
@@ -1022,11 +1022,11 @@ namespace geomtools {
         basic_draw_polyline (out_, polyline_meridian);
       }
 
-    for (polycone::rz_col_t::const_iterator j = p_.points ().begin ();
+    for (polycone::rz_col_type::const_iterator j = p_.points ().begin ();
          j != p_.points ().end ();
          j++)
       {
-        polyline_t polyline_parallel;
+        polyline_type polyline_parallel;
         double z = j->first;
         double r = j->second.rmax;
         for (size_t i = 0; i <= phy_sample ; ++i) 
@@ -1049,9 +1049,9 @@ namespace geomtools {
         // inner surface:
         for (size_t i = 0; i <= phy_sample ; ++i) 
           {
-            polyline_t polyline_meridian;
+            polyline_type polyline_meridian;
             double phi = i * dphi;
-            for (polycone::rz_col_t::const_iterator j = p_.points ().begin ();
+            for (polycone::rz_col_type::const_iterator j = p_.points ().begin ();
                  j != p_.points ().end ();
                  j++)
               {
@@ -1069,11 +1069,11 @@ namespace geomtools {
             basic_draw_polyline (out_, polyline_meridian);
           }
 
-        for (polycone::rz_col_t::const_iterator j = p_.points ().begin ();
+        for (polycone::rz_col_type::const_iterator j = p_.points ().begin ();
              j != p_.points ().end ();
              j++)
           {
-            polyline_t polyline_parallel;
+            polyline_type polyline_parallel;
             double z = j->first;
             double r = j->second.rmin;
             for (size_t i = 0; i <= phy_sample ; ++i) 
@@ -1109,9 +1109,9 @@ namespace geomtools {
     double factor = 1. / cos (0.5 * dphi);
     for (size_t i = 0; i <= nsides ; ++i) 
       {
-        polyline_t polyline_meridian;
+        polyline_type polyline_meridian;
         double phi = phi0 + i * dphi;
-        for (polyhedra::rz_col_t::const_iterator j = p_.points ().begin ();
+        for (polyhedra::rz_col_type::const_iterator j = p_.points ().begin ();
              j != p_.points ().end ();
              j++)
           {
@@ -1128,11 +1128,11 @@ namespace geomtools {
           }
         basic_draw_polyline (out_, polyline_meridian);
       }
-    for (polyhedra::rz_col_t::const_iterator j = p_.points ().begin ();
+    for (polyhedra::rz_col_type::const_iterator j = p_.points ().begin ();
          j != p_.points ().end ();
          j++)
       {
-        polyline_t polyline_parallel;
+        polyline_type polyline_parallel;
         double z = j->first;
         double r = factor * j->second.rmax;
         for (size_t i = 0; i <= nsides ; ++i) 
@@ -1157,10 +1157,10 @@ namespace geomtools {
         */
         for (size_t i = 0; i <= nsides ; ++i) 
           {
-            polyline_t polyline_meridian;
+            polyline_type polyline_meridian;
             double phi = phi0 + i * dphi;
             bool last_has_zero_r = false;
-            for (polyhedra::rz_col_t::const_iterator j = p_.points ().begin ();
+            for (polyhedra::rz_col_type::const_iterator j = p_.points ().begin ();
                  j != p_.points ().end ();
                  j++)
               {
@@ -1194,11 +1194,11 @@ namespace geomtools {
                 basic_draw_polyline (out_, polyline_meridian);
               }
           }
-        for (polyhedra::rz_col_t::const_iterator j = p_.points ().begin ();
+        for (polyhedra::rz_col_type::const_iterator j = p_.points ().begin ();
              j != p_.points ().end ();
              j++)
           {
-            polyline_t polyline_parallel;
+            polyline_type polyline_parallel;
             double z = j->first;
             double r = factor * j->second.rmin;
             if (r == 0.0) continue;
@@ -1242,7 +1242,7 @@ namespace geomtools {
           }
 
         count++;
-        polyline_t polyline_facet;
+        polyline_type polyline_facet;
         const facet_vertex & vt0 = 
           t_.vertices ().find (the_facet_segment.vertex0_key)->second;
         const facet_vertex & vt1 = 
@@ -1266,7 +1266,7 @@ namespace geomtools {
       }
 
     /*
-    polyline_t polyline_facet;
+    polyline_type polyline_facet;
     size_t last_nvtx = 0;
     for (tessellated_solid::facets_col_t::const_iterator i 
            = t_.facets ().begin ();
@@ -1314,8 +1314,8 @@ namespace geomtools {
   {
     rotation_3d inverse_rotation (rotation_);
     inverse_rotation.invert ();
-    const i_composite_shape_3d::shape_t & s1 = i_.get_shape1 ();
-    const i_composite_shape_3d::shape_t & s2 = i_.get_shape2 ();    
+    const i_composite_shape_3d::shape_type & s1 = i_.get_shape1 ();
+    const i_composite_shape_3d::shape_type & s2 = i_.get_shape2 ();    
     const i_shape_3d & sh1 = s1.get_shape ();
     const i_shape_3d & sh2 = s2.get_shape ();
     basic_draw (out_, position_, rotation_, sh1);
@@ -1349,8 +1349,8 @@ namespace geomtools {
   {
     rotation_3d inverse_rotation (rotation_);
     inverse_rotation.invert ();
-    const i_composite_shape_3d::shape_t & s1 = u_.get_shape1 ();
-    const i_composite_shape_3d::shape_t & s2 = u_.get_shape2 ();    
+    const i_composite_shape_3d::shape_type & s1 = u_.get_shape1 ();
+    const i_composite_shape_3d::shape_type & s2 = u_.get_shape2 ();    
     const i_shape_3d & sh1 = s1.get_shape ();
     const i_shape_3d & sh2 = s2.get_shape ();
     basic_draw (out_, position_, rotation_, sh1);
@@ -1381,8 +1381,8 @@ namespace geomtools {
   {
     rotation_3d inverse_rotation (rotation_);
     inverse_rotation.invert (); 
-    const i_composite_shape_3d::shape_t & s1 = s_.get_shape1 ();
-    const i_composite_shape_3d::shape_t & s2 = s_.get_shape2 ();    
+    const i_composite_shape_3d::shape_type & s1 = s_.get_shape1 ();
+    const i_composite_shape_3d::shape_type & s2 = s_.get_shape2 ();    
     const i_shape_3d & sh1 = s1.get_shape ();
     const i_shape_3d & sh2 = s2.get_shape ();
     //basic_draw (out_, position_, rotation_, sh1);
@@ -1444,9 +1444,8 @@ namespace geomtools {
       { 
         //std::clog << "DEVEL: gnuplot_draw::basic_draw: has_user_draw..." << std::endl;
         void * user_draw = o_.get_user_draw ();
-        gnuplot_draw::draw_user_function_t user_draw_f 
-          = reinterpret_cast<gnuplot_draw::draw_user_function_t> (user_draw);
-        //  = static_cast<gnuplot_draw::draw_user_function_t> (user_draw);
+        gnuplot_draw::draw_user_function_type user_draw_f 
+          = reinterpret_cast<gnuplot_draw::draw_user_function_type> (user_draw);
         (*user_draw_f) (out_, position_, rotation_, o_, 0);
         return;
       }

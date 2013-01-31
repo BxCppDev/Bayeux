@@ -135,22 +135,21 @@ namespace geomtools {
                            const string & indent_,
                            bool           inherit_) const
   {
-    namespace du = datatools::utils;
     string indent;
     if (! indent_.empty ())
       {
         indent = indent_;
       }
     i_object_3d::tree_dump (out_, title_, indent_, true);
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "First : " 
          << _first_ 
          << endl;
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Last : " 
          << _last_
          << endl;
-    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_) 
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_) 
          << "Length : " 
          << get_length() /* / CLHEP::mm << " mm"*/
          << endl;

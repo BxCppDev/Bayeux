@@ -280,20 +280,19 @@ namespace geomtools {
                                    const string & indent_, 
                                    bool inherit_) const
   {
-    namespace du = datatools::utils;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     i_object_3d::tree_dump (out_, title_, indent_, true);
 
-    out_ << indent << du::i_tree_dumpable::tag  
+    out_ << indent << datatools::i_tree_dumpable::tag  
          << "Number of sides : " << get_n_sides () << endl;
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "R : " << get_r () / CLHEP::mm << " mm" << endl;
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "Side length : " << get_side_length () / CLHEP::mm << " mm" << endl;
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "Angle : " << get_reference_angle () / CLHEP::degree << " degree" << endl;
-    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)  
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)  
          << "Apothem : " << get_apothem () / CLHEP::mm << " mm" << endl;
     return;
   }

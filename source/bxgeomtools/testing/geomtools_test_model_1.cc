@@ -30,8 +30,8 @@ namespace geomtools {
   }
   
   void test_model_1::_at_construct (const string & name_,
-                                    const datatools::utils::properties & config_,
-                                    models_col_t * models_)
+                                    const datatools::properties & config_,
+                                    models_col_type * models_)
   {
     bool devel = i_model::g_devel;
     if (devel) clog << "DEVEL: test_model_1::_at_construct: Entering..." << endl;
@@ -88,18 +88,17 @@ namespace geomtools {
                                 const string & indent_, 
                                 bool inherit_) const
   {
-     namespace du = datatools::utils;
      string indent;
      if (! indent_.empty ()) indent = indent_;
      i_model::tree_dump (out_, title_, indent, true);
 
       {
-        out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
+        out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_) 
              << "Solid : " << endl;
         {
           ostringstream indent_oss;
           indent_oss << indent;
-          indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+          indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
           __solid.tree_dump (out_, "", indent_oss.str ());
         }   
       }

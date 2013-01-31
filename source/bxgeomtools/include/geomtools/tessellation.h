@@ -12,8 +12,8 @@
  * 
  */
 
-#ifndef __geomtools__tessellation_h
-#define __geomtools__tessellation_h 1
+#ifndef GEOMTOOLS_TESSELLATION_H_
+#define GEOMTOOLS_TESSELLATION_H_ 1
 
 #include <iostream>
 #include <string>
@@ -234,7 +234,7 @@ namespace geomtools {
     const mygsl::min_max & get_bounding_box_y () const;
     const mygsl::min_max & get_bounding_box_z () const;
     void print_xyz (std::ostream & out_) const;
-    void dump (std::ostream & out_ = clog) const;
+    void dump (std::ostream & out_ = std::clog) const;
 
     //void initialize (const string & filename_);
       
@@ -261,6 +261,6 @@ namespace geomtools {
   
 } // end of namespace geomtools
 
-#endif // __geomtools__tessellation_h
+#endif // GEOMTOOLS_TESSELLATION_H_
 
 // end of tessellation.h

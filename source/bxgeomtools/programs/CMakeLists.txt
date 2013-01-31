@@ -55,7 +55,6 @@ foreach ( pro_program ${geomtools_programs_list_CXX} )
     ${geomtools_LIBRARIES} 
     )
   
-  
   target_link_libraries ( ${pro_executable} ${_pro_libraries} )
   
 endforeach ()

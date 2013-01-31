@@ -93,16 +93,15 @@ namespace geomtools {
                                       const string & indent_, 
                                       bool inherit_) const
   {
-    namespace du = datatools::utils;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     this->i_placement::tree_dump (out_, title_, indent, true);
 
 
-    out_ << indent << i_tree_dumpable::tag  
+    out_ << indent << datatools::i_tree_dumpable::tag  
          << "Size    :" << get_number_of_items () << endl;
 
-    out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_) 
          << "Replica :" << is_replica () << endl;
 
     return;

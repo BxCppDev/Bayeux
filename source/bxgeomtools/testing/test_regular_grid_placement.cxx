@@ -16,7 +16,7 @@
 #include <geomtools/gnuplot_i.h>
 #endif
 
-#include <datatools/utils/temporary_files.h>
+#include <datatools/temporary_files.h>
 
 using namespace std;
 
@@ -107,7 +107,7 @@ int main (int argc_, char ** argv_)
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
       if (draw)
         {
-          datatools::utils::temp_file tmp_file;
+          datatools::temp_file tmp_file;
           tmp_file.set_remove_at_destroy (true);
           tmp_file.create ("/tmp", ".tmp_drawer_");
         
@@ -137,7 +137,7 @@ int main (int argc_, char ** argv_)
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
       if (draw)
         {
-          datatools::utils::temp_file tmp_file;
+          datatools::temp_file tmp_file;
           tmp_file.set_remove_at_destroy (true);
           tmp_file.create ("/tmp", ".tmp_drawer_");
         

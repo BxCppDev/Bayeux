@@ -9,8 +9,8 @@
 #include <sstream>
 #include <limits> 
 
-#include <datatools/utils/utils.h>
-#include <datatools/utils/units.h>
+#include <datatools/utils.h>
+#include <datatools/units.h>
 
 #include <geomtools/box.h>
 #include <geomtools/cylinder.h>
@@ -147,8 +147,8 @@ namespace geomtools {
   }
 
   void simple_shaped_model::_at_construct (const string & name_,
-                                           const datatools::utils::properties & config_,
-                                           models_col_t * models_)
+                                           const datatools::properties & config_,
+                                           models_col_type * models_)
   {
     bool devel = i_model::g_devel;
     if (config_.has_key ("devel"))
@@ -259,8 +259,8 @@ namespace geomtools {
   /***********************************************************/
 
   void simple_shaped_model::_construct_box (const string & name_,
-                                            const datatools::utils::properties & config_,
-                                            models_col_t * models_)
+                                            const datatools::properties & config_,
+                                            models_col_type * models_)
   {
     double lunit = CLHEP::mm;
     double x, y, z;
@@ -268,7 +268,7 @@ namespace geomtools {
     if (config_.has_key ("length_unit"))
       {
         string lunit_str = config_.fetch_string ("length_unit");
-        lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+        lunit = datatools::units::get_length_unit_from (lunit_str);
       }
 
     if (config_.has_key ("x"))
@@ -329,28 +329,28 @@ namespace geomtools {
   /***********************************************************/
 
   void simple_shaped_model::_construct_cylinder (const string & name_,
-                                                 const datatools::utils::properties & config_,
-                                                 models_col_t * models_)
+                                                 const datatools::properties & config_,
+                                                 models_col_type * models_)
   {
     double lunit = CLHEP::mm;
     double aunit = CLHEP::degree;
     double r, z;
-    datatools::utils::invalidate (r);
-    datatools::utils::invalidate (z);
+    datatools::invalidate (r);
+    datatools::invalidate (z);
 
     if (config_.has_key ("length_unit"))
       {
         string lunit_str = config_.fetch_string ("length_unit");
-        lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+        lunit = datatools::units::get_length_unit_from (lunit_str);
       }
 
     if (config_.has_key ("angle_unit"))
       {
         string aunit_str = config_.fetch_string ("angle_unit");
-        aunit = datatools::utils::units::get_angle_unit_from (aunit_str);
+        aunit = datatools::units::get_angle_unit_from (aunit_str);
       }
 
-    if (! datatools::utils::is_valid (r))
+    if (! datatools::is_valid (r))
       {
         if (config_.has_key ("r"))
           {
@@ -368,7 +368,7 @@ namespace geomtools {
             r *= lunit;
           }
       }
-    if (! datatools::utils::is_valid (r))
+    if (! datatools::is_valid (r))
       {
         ostringstream message;
         message << "simple_boxed_model::_construct_cylinder: "
@@ -407,8 +407,8 @@ namespace geomtools {
   /***********************************************************/
 
   void simple_shaped_model::_construct_sphere (const string & name_,
-                                               const datatools::utils::properties & config_,
-                                               models_col_t * models_)
+                                               const datatools::properties & config_,
+                                               models_col_type* models_)
   {
     string material_name = material::constants::instance ().MATERIAL_REF_UNKNOWN;
     double lunit = CLHEP::mm;
@@ -418,13 +418,13 @@ namespace geomtools {
     if (config_.has_key ("length_unit"))
       {
         string lunit_str = config_.fetch_string ("length_unit");
-        lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+        lunit = datatools::units::get_length_unit_from (lunit_str);
       }
 
     if (config_.has_key ("angle_unit"))
       {
         string aunit_str = config_.fetch_string ("angle_unit");
-        aunit = datatools::utils::units::get_angle_unit_from (aunit_str);
+        aunit = datatools::units::get_angle_unit_from (aunit_str);
       }
 
     if (config_.has_key ("r"))
@@ -458,32 +458,32 @@ namespace geomtools {
   /***********************************************************/
 
   void simple_shaped_model::_construct_tube (const string & name_,
-                                             const datatools::utils::properties & config_,
-                                             models_col_t * models_)
+                                             const datatools::properties & config_,
+                                             models_col_type* models_)
   {
     string filled_material_name = material::constants::instance ().MATERIAL_REF_UNKNOWN;
     double lunit = CLHEP::mm;
     double aunit = CLHEP::degree;
     double inner_r, outer_r, z;
-    datatools::utils::invalidate (inner_r);
-    datatools::utils::invalidate (outer_r);
-    datatools::utils::invalidate (z);
+    datatools::invalidate (inner_r);
+    datatools::invalidate (outer_r);
+    datatools::invalidate (z);
 
     string filled_mode_label = filled_utils::FILLED_NONE_LABEL;
 
     if (config_.has_key ("length_unit"))
       {
         string lunit_str = config_.fetch_string ("length_unit");
-        lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+        lunit = datatools::units::get_length_unit_from (lunit_str);
       }
 
     if (config_.has_key ("angle_unit"))
       {
         string aunit_str = config_.fetch_string ("angle_unit");
-        aunit = datatools::utils::units::get_angle_unit_from (aunit_str);
+        aunit = datatools::units::get_angle_unit_from (aunit_str);
       }
 
-    if (! datatools::utils::is_valid (inner_r))
+    if (! datatools::is_valid (inner_r))
       {
         if (config_.has_key ("inner_r"))
           {
@@ -501,7 +501,7 @@ namespace geomtools {
             inner_r *= lunit;
           }
       }
-    if (! datatools::utils::is_valid (inner_r))
+    if (! datatools::is_valid (inner_r))
       {
         ostringstream message;
         message << "simple_boxed_model::_construct_tube: "
@@ -511,7 +511,7 @@ namespace geomtools {
       }
 
 
-    if (! datatools::utils::is_valid (outer_r))
+    if (! datatools::is_valid (outer_r))
       {
         if (config_.has_key ("outer_r"))
           {
@@ -529,7 +529,7 @@ namespace geomtools {
             outer_r *= lunit;
           }
       }
-     if (! datatools::utils::is_valid (outer_r))
+     if (! datatools::is_valid (outer_r))
       {
         ostringstream message;
         message << "simple_boxed_model::_construct_tube: "
@@ -703,8 +703,8 @@ namespace geomtools {
   /*****************************************************/
 
   void simple_shaped_model::_construct_polycone (const string & name_,
-                                                 const datatools::utils::properties & config_,
-                                                 models_col_t * models_)
+                                                 const datatools::properties & config_,
+                                                 models_col_type* models_)
   {
     bool devel = i_model::g_devel;
     if (config_.has_key ("devel"))
@@ -723,20 +723,20 @@ namespace geomtools {
     string filled_mode_label = filled_utils::FILLED_NONE_LABEL;
 
     double z_min, z_max;
-    datatools::utils::invalidate (z_min);
-    datatools::utils::invalidate (z_max);
+    datatools::invalidate (z_min);
+    datatools::invalidate (z_max);
     //string build_mode_label = "points";
 
     if (config_.has_key ("length_unit"))
       {
         string lunit_str = config_.fetch_string ("length_unit");
-        lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+        lunit = datatools::units::get_length_unit_from (lunit_str);
       }
 
     if (config_.has_key ("angle_unit"))
       {
         string aunit_str = config_.fetch_string ("angle_unit");
-        aunit = datatools::utils::units::get_angle_unit_from (aunit_str);
+        aunit = datatools::units::get_angle_unit_from (aunit_str);
       }
 
     /*
@@ -900,8 +900,8 @@ namespace geomtools {
   /*****************************************************/
 
   void simple_shaped_model::_construct_polyhedra (const string & name_,
-                                                  const datatools::utils::properties & config_,
-                                                  models_col_t * models_)
+                                                  const datatools::properties & config_,
+                                                  models_col_type* models_)
   {
     bool devel = i_model::g_devel;
     if (config_.has_key ("devel"))
@@ -922,13 +922,13 @@ namespace geomtools {
     if (config_.has_key ("length_unit"))
       {
         string lunit_str = config_.fetch_string ("length_unit");
-        lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+        lunit = datatools::units::get_length_unit_from (lunit_str);
       }
 
     if (config_.has_key ("angle_unit"))
       {
         string aunit_str = config_.fetch_string ("angle_unit");
-        aunit = datatools::utils::units::get_angle_unit_from (aunit_str);
+        aunit = datatools::units::get_angle_unit_from (aunit_str);
       }
 
     // filled mode:
@@ -1082,7 +1082,7 @@ namespace geomtools {
 
   /*******************************************/
 
-  void simple_shaped_model::_post_construct (datatools::utils::properties & setup_)
+  void simple_shaped_model::_post_construct (datatools::properties & setup_)
   {
     bool devel = i_model::g_devel;
     if (devel)
@@ -1140,7 +1140,7 @@ namespace geomtools {
                                        const string & indent_,
                                        bool inherit_) const
   {
-    namespace du = datatools::utils;
+    using namespace datatools;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     i_model::tree_dump (out_, title_, indent, true);
@@ -1160,7 +1160,7 @@ namespace geomtools {
           out_ << endl;
           ostringstream indent_oss;
           indent_oss << indent;
-          indent_oss << du::i_tree_dumpable::skip_tag;
+          indent_oss << i_tree_dumpable::skip_tag;
           _solid_->tree_dump (out_, "", indent_oss.str ());
         }
       else

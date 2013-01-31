@@ -33,8 +33,8 @@ namespace geomtools {
   subtraction_3d::is_inside (const vector_3d & position_, 
                        double skin_) const
   {
-    const shape_t & sh1 = get_shape1 ();
-    const shape_t & sh2 = get_shape2 ();
+    const shape_type & sh1 = get_shape1 ();
+    const shape_type & sh2 = get_shape2 ();
     const placement & p1 = sh1.get_placement ();
     const placement & p2 = sh2.get_placement ();
     const i_shape_3d & sh3d1 = sh1.get_shape ();
@@ -52,8 +52,8 @@ namespace geomtools {
   {
     vector_3d normal;
     invalidate (normal);
-    const shape_t & sh1 = get_shape1 ();
-    const shape_t & sh2 = get_shape2 ();
+    const shape_type & sh1 = get_shape1 ();
+    const shape_type & sh2 = get_shape2 ();
     const placement & p1 = sh1.get_placement ();
     const placement & p2 = sh2.get_placement ();
     const i_shape_3d & sh3d1 = sh1.get_shape ();
@@ -78,8 +78,8 @@ namespace geomtools {
                                  int mask_, 
                                  double skin_) const
   {
-    const shape_t & sh1 = get_shape1 ();
-    const shape_t & sh2 = get_shape2 ();
+    const shape_type & sh1 = get_shape1 ();
+    const shape_type & sh2 = get_shape2 ();
     const placement & p1 = sh1.get_placement ();
     const placement & p2 = sh2.get_placement ();
     const i_shape_3d & sh3d1 = sh1.get_shape ();
@@ -112,8 +112,8 @@ namespace geomtools {
     if (skin_ > USING_PROPER_SKIN) skin = skin_;
     //else skin = USING_PROPER_SKIN;
     // extract shapes' infos:
-    const shape_t & sh1 = get_shape1 ();
-    const shape_t & sh2 = get_shape2 ();
+    const shape_type & sh1 = get_shape1 ();
+    const shape_type & sh2 = get_shape2 ();
     if (debug)
       {
         sh1.dump (std::clog);

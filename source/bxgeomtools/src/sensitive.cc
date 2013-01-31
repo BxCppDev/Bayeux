@@ -39,53 +39,53 @@ namespace geomtools {
     return key_oss.str ();
   }
 
-  void sensitive::extract (const datatools::utils::properties & source_,
-                           datatools::utils::properties & target_)
+  void sensitive::extract (const datatools::properties & source_,
+                           datatools::properties & target_)
   {
     source_.export_starting_with (target_, sensitive::constants::instance().SENSITIVE_PREFIX);
     return;
   }
 
-  bool sensitive::has_flag (const datatools::utils::properties & config_,
+  bool sensitive::has_flag (const datatools::properties & config_,
                             const string & flag_)
   {
     return (config_.has_flag (sensitive::make_key (flag_)));
   }
 
-  bool sensitive::has_key (const datatools::utils::properties & config_,
+  bool sensitive::has_key (const datatools::properties & config_,
                            const string & key_)
   {
     return (config_.has_key (sensitive::make_key (key_)));
   }
 
-  bool sensitive::is_sensitive (const datatools::utils::properties & config_)
+  bool sensitive::is_sensitive (const datatools::properties & config_)
   {
     return sensitive::has_key (config_, sensitive::constants::instance().SENSITIVE_CATEGORY_PROPERTY);
   }
 
-  string sensitive::get_sensitive_category (const datatools::utils::properties & config_)
+  string sensitive::get_sensitive_category (const datatools::properties & config_)
   {
     return config_.fetch_string (make_key (sensitive::constants::instance().SENSITIVE_CATEGORY_PROPERTY));
   }
 
-  void sensitive::set_sensitive_category (datatools::utils::properties & config_,
+  void sensitive::set_sensitive_category (datatools::properties & config_,
                                           const string & cat_name_)
   {
     config_.update (make_key (sensitive::constants::instance().SENSITIVE_CATEGORY_PROPERTY), cat_name_);
     return;
   }
 
-  bool sensitive::recording_alpha_quenching (const datatools::utils::properties & config_)
+  bool sensitive::recording_alpha_quenching (const datatools::properties & config_)
   {
     return sensitive::has_flag (config_, sensitive::constants::instance().SENSITIVE_RECORD_ALPHA_QUENCHING_FLAG);
   }
 
-  bool sensitive::recording_track_id (const datatools::utils::properties & config_)
+  bool sensitive::recording_track_id (const datatools::properties & config_)
   {
     return sensitive::has_flag (config_, sensitive::constants::instance().SENSITIVE_RECORD_TRACK_ID_FLAG);
   }
 
-  bool sensitive::recording_primary_particle (const datatools::utils::properties & config_)
+  bool sensitive::recording_primary_particle (const datatools::properties & config_)
   {
     return sensitive::has_flag (config_, sensitive::constants::instance().SENSITIVE_RECORD_PRIMARY_PARTICLE_FLAG);
   }

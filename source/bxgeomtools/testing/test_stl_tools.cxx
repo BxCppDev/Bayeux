@@ -14,8 +14,8 @@
 #include <geomtools/gnuplot_i.h>
 #include <geomtools/gnuplot_drawer.h>
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
-#include <datatools/utils/temporary_files.h>
-#include <datatools/utils/utils.h>
+#include <datatools/temporary_files.h>
+#include <datatools/utils.h>
 
 void test_vertex ()
 {
@@ -61,7 +61,7 @@ void test_facet ()
   typedef geomtools::stl::facet_parser<iterator_type> facet_parser_t;
 
   std::string stl_file_path = "${GEOMTOOLS_DATA_DIR}/testing/data/test_stl_one_facet.stl";
-  datatools::utils::fetch_path_with_env (stl_file_path);
+  datatools::fetch_path_with_env (stl_file_path);
   std::cerr << "DEVEL: stl_file_path='" << stl_file_path <<"'\n";
   std::ifstream fin (stl_file_path.c_str (), std::ios::binary);
 
@@ -137,7 +137,7 @@ void test_solid (bool draw_, std::string stlfp_)
     {
       stl_file_path = stlfp_;
     }
-  datatools::utils::fetch_path_with_env (stl_file_path);
+  datatools::fetch_path_with_env (stl_file_path);
   std::cerr << "DEVEL: stl_file_path='" << stl_file_path <<"'\n";
   std::ifstream fin (stl_file_path.c_str (), std::ios::binary);
 
@@ -200,11 +200,11 @@ void test_solid (bool draw_, std::string stlfp_)
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
       if (draw)
         {
-          datatools::utils::temp_file tmp_file;
+          datatools::temp_file tmp_file;
           tmp_file.set_remove_at_destroy (true);
           tmp_file.create ("/tmp", "test_stl_import");
 
-          datatools::utils::temp_file tmp_file_s;
+          datatools::temp_file tmp_file_s;
           tmp_file_s.set_remove_at_destroy (true);
           tmp_file_s.create ("/tmp", "test_stl_import_s");
  

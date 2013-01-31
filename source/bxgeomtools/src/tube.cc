@@ -15,6 +15,36 @@ namespace geomtools {
   using namespace std;  
 
   const std::string tube::TUBE_LABEL = "tube";
+    
+    double tube::get_xmin () const
+    {
+      return -_outer_r_;
+    }
+    
+    double tube::get_xmax () const
+    {
+      return +_outer_r_;
+    }
+    
+    double tube::get_ymin () const
+    {
+      return -_outer_r_;
+    }
+    
+    double tube::get_ymax () const
+    {
+      return +_outer_r_;
+    }
+    
+    double tube::get_zmin () const
+    {
+      return -0.5*_z_;
+    }
+    
+    double tube::get_zmax () const
+    {
+      return +0.5*_z_;
+    }
   
   double tube::get_z () const
   {
@@ -336,18 +366,17 @@ namespace geomtools {
                         const string & indent_, 
                         bool inherit_) const
   {
-    namespace du = datatools::utils;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     i_object_3d::tree_dump (out_, title_, indent_, true);
 
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "R(internal) : " << get_inner_r () / CLHEP::mm << " mm" << endl;
 
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "R(external) : " << get_outer_r () / CLHEP::mm << " mm" << endl;
 
-    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)  
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)  
          << "Z : " << get_z () / CLHEP::mm << " mm" << endl;
     return;
   }

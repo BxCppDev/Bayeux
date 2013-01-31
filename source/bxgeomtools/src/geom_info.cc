@@ -10,13 +10,13 @@ namespace geomtools {
 
   using namespace std;
 
-  const datatools::utils::properties & 
+  const datatools::properties & 
   geom_info::get_properties () const
   {
     return _properties_;
   }
 
-  datatools::utils::properties & 
+  datatools::properties & 
   geom_info::get_properties ()
   {
     return _properties_;

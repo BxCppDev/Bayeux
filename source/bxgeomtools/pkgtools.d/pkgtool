@@ -13,7 +13,7 @@ function my_exit ()
 }
 
 bio_support=1
-python_wrapper_support=1
+python_wrapper_support=0
 
 appname=${APPNAME}
 appversion=0.1
@@ -433,24 +433,18 @@ function do_configure ()
     fi
 
     local additional_options=""
-    if [ ${bio_support} -eq 1 ]; then
-	additional_options="${additional_options}-DGEOMTOOLS_WITH_BIO=${with_bio} "
-    fi
-
-    if [ ${python_wrapper_support} -eq 1 ]; then
-	additional_options="${additional_options}-DGEOMTOOLS_WITH_PYTHON_WRAPPER=${with_python_wrapper} "
-    fi
-
-    #if [ ${with_gnuplot_display} -eq 1 ]; then
     additional_options="${additional_options}-DGEOMTOOLS_WITH_GNUPLOT_DISPLAY=${with_gnuplot_display} "
-    #fi
 
     cd ${the_build_dir}
     cmake  \
 	-DCMAKE_INSTALL_PREFIX:PATH=${install_prefix} \
 	-DCMAKE_BUILD_TYPE:STRING=Release \
+	-DCMAKE_MODULE_PATH=${CADFAEL_SHARE_DIR}/cmake/Modules \
+	-DGEOMTOOLS_WITH_DEBUG=${with_debug} \
+	-DGEOMTOOLS_WITH_BIO=${with_bio} \
 	-DGEOMTOOLS_WITH_DOC=${with_doc} \
 	-DGEOMTOOLS_WITH_TEST=${with_test} \
+	-DGEOMTOOLS_WITH_BASH_SETUP=${with_bash_setup} \
 	${additional_options} \
 	..
     if [ $? -ne 0 ]; then
@@ -739,11 +733,17 @@ function do_uninstall ()
 
 	if [ -f ${the_build_dir}/install_manifest.txt ]; then
 	    pkgtools__msg_notice "Removing all installed files..."
-	    local list_of_entries=$(cat ${the_build_dir}/install_manifest.txt)
-	    for entry in ${list_of_entries}; do
-		if [ -f ${entry} ]; then
+	    local list_of_entries=$(cat ${the_build_dir}/install_manifest.txt | sed -e "s@ @^^^@g" )
+	    for e in ${list_of_entries}; do
+		entry="$(echo ${e} | sed -e 's@\^\^\^@ @g')"
+		if [ -f "${entry}" ]; then
 		    pkgtools__msg_devel "Removing installed file '${entry}'..."
-		    rm -f ${entry}
+		    rm -f "${entry}"
+		elif [ -L "${entry}" ]; then
+		    pkgtools__msg_devel "Removing installed link '${entry}'..."
+		    rm -f "${entry}"
+		else
+		    pkgtools__msg_error "Cannot find file '${entry}' !"
 		fi
 	    done
 	    pkgtools__msg_notice "All installed files have been removed !"

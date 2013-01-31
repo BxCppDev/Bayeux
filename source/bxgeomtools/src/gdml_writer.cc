@@ -2,13 +2,14 @@
 /* gdml_writer.cc 
  */
 
-#include <geomtools/gdml_writer.h>
-#include <geomtools/geomtools_config.h>
+#include <stdexcept>
 
 #include <boost/algorithm/string.hpp>
 
-#include <stdexcept>
-#include <datatools/utils/units.h>
+#include <datatools/units.h>
+
+#include <geomtools/geomtools_config.h>
+#include <geomtools/gdml_writer.h>
 
 namespace geomtools {
 
@@ -83,7 +84,7 @@ namespace geomtools {
         message << "gdml_writer::_get_stream: " 
                 << "Invalid section '" << section_ 
                 << "' !";
-        throw runtime_error (message.str ());           
+        throw logic_error (message.str ());           
       }
     return *(i->second);
   }
@@ -97,7 +98,7 @@ namespace geomtools {
         message << "gdml_writer::_get_stream: " 
                 << "Invalid section '" << section_ 
                 << "' !";
-        throw runtime_error (message.str ());           
+        throw logic_error (message.str ());           
       }
     return *(i->second);
   }
@@ -203,7 +204,7 @@ namespace geomtools {
                                   const string & unit_str_, 
                                   double value_)
   {
-    double unit = datatools::utils::units::get_unit_from (quantity_type_, unit_str_);
+    double unit = datatools::units::get_unit_from (quantity_type_, unit_str_);
     _get_stream (DEFINE_SECTION) << "<quantity" 
                                  << " name=" << '"' << to_html (name_) << '"' 
                                  << " type=" << '"' << quantity_type_ << '"' 
@@ -242,7 +243,7 @@ namespace geomtools {
                                   const string & unit_str_)
   {
     //clog << "DEVEL: gdml_writer::add_position: Entering..." << endl;
-    double unit = datatools::utils::units::get_length_unit_from (unit_str_);
+    double unit = datatools::units::get_length_unit_from (unit_str_);
     _get_stream (DEFINE_SECTION) << "<position" 
                                  << " name=" << '"' << to_html (name_) << '"' 
                                  << " x=" << '"';
@@ -271,14 +272,14 @@ namespace geomtools {
                                   double angle_,
                                   const string & unit_str_)
   {
-    double angle_unit = datatools::utils::units::get_angle_unit_from (unit_str_);
+    double angle_unit = datatools::units::get_angle_unit_from (unit_str_);
     if ((axis_ != "x") && (axis_ != "y") && (axis_ != "z"))
       {
         ostringstream message;
         message << "gdml_writer::add_rotation: " 
                 << "Invalid rotation axis '" << axis_ 
                 << "' for rotation '" << name_ << "' !";
-        throw runtime_error (message.str ());           
+        throw logic_error (message.str ());           
       }
     _get_stream (DEFINE_SECTION) << "<rotation" 
                                  << " name=" << '"' << to_html (name_) << '"' 
@@ -294,7 +295,7 @@ namespace geomtools {
                                   const rotation_3d & rot_, 
                                   const string & unit_str_)
   {
-    double angle_unit = datatools::utils::units::get_angle_unit_from (unit_str_);
+    double angle_unit = datatools::units::get_angle_unit_from (unit_str_);
     _get_stream (DEFINE_SECTION) << "<rotation" 
                                  << " name=" << '"' << to_html (name_) << '"'; 
 
@@ -379,7 +380,7 @@ namespace geomtools {
                     << "Invalid fraction value '" << n 
                     << "' for referenced '" << ref << "' in element '" 
                     << name_ << "' !";
-            throw runtime_error (message.str ());       
+            throw logic_error (message.str ());       
           }
         s += n;
         
@@ -394,7 +395,7 @@ namespace geomtools {
         message << "gdml_writer::add_element: " 
                 << "Invalid fraction sum in element '" 
                 << name_ << "' !";
-        throw runtime_error (message.str ());   
+        throw logic_error (message.str ());   
       }
   
     materials_stream << "</element>" << endl; 
@@ -524,7 +525,7 @@ namespace geomtools {
                     << "Invalid fraction value '" << n 
                     << "' for referenced '" << ref << "' in element '" 
                     << name_ << "' !";
-            throw runtime_error (message.str ());       
+            throw logic_error (message.str ());       
           }
         s += n;
         
@@ -539,7 +540,7 @@ namespace geomtools {
         message << "gdml_writer::add_material: " 
                 << "Invalid fraction sum in material '" 
                 << name_ << "' !";
-        throw runtime_error (message.str ());   
+        throw logic_error (message.str ());   
       }
   
     materials_stream << "</material>" << endl; 
@@ -581,7 +582,7 @@ namespace geomtools {
                     << "Invalid composite value '" << n 
                     << "' for referenced '" << ref << "' in element '" 
                     << name_ << "' !";
-            throw runtime_error (message.str ());       
+            throw logic_error (message.str ());       
           }
         materials_stream << "  <composite" 
                          << " ref=" << '"' << to_html (ref) << '"'
@@ -755,7 +756,7 @@ namespace geomtools {
                                   double x_, double y_, double z_, 
                                   const string & lunit_str_)
   {
-    double lunit = datatools::utils::units::get_length_unit_from (lunit_str_);
+    double lunit = datatools::units::get_length_unit_from (lunit_str_);
 
     ostringstream solids_stream;
     solids_stream << "<" <<  "box"
@@ -792,7 +793,7 @@ namespace geomtools {
                                   double r_,
                                   const string & lunit_str_)
   {
-    double lunit = datatools::utils::units::get_length_unit_from (lunit_str_);
+    double lunit = datatools::units::get_length_unit_from (lunit_str_);
 
     ostringstream solids_stream;
     solids_stream << "<" <<  "orb"
@@ -816,8 +817,8 @@ namespace geomtools {
                                      const string & lunit_str_,
                                      const string & aunit_str_)
   {
-    double lunit = datatools::utils::units::get_length_unit_from (lunit_str_);
-    double aunit = datatools::utils::units::get_angle_unit_from (aunit_str_);
+    double lunit = datatools::units::get_length_unit_from (lunit_str_);
+    double aunit = datatools::units::get_angle_unit_from (aunit_str_);
 
     ostringstream solids_stream;
     solids_stream << "<" <<  "sphere"
@@ -870,8 +871,8 @@ namespace geomtools {
                                    const string & lunit_str_,
                                    const string & aunit_str_)
   {
-    double lunit = datatools::utils::units::get_length_unit_from (lunit_str_);
-    double aunit = datatools::utils::units::get_angle_unit_from (aunit_str_);
+    double lunit = datatools::units::get_length_unit_from (lunit_str_);
+    double aunit = datatools::units::get_angle_unit_from (aunit_str_);
 
     ostringstream solids_stream;
     solids_stream << "<" <<  "tube"
@@ -923,8 +924,8 @@ namespace geomtools {
                                        const string & lunit_str_,
                                        const string & aunit_str_)
   {
-    double lunit = datatools::utils::units::get_length_unit_from (lunit_str_);
-    double aunit = datatools::utils::units::get_angle_unit_from (aunit_str_);
+    double lunit = datatools::units::get_length_unit_from (lunit_str_);
+    double aunit = datatools::units::get_angle_unit_from (aunit_str_);
 
     ostringstream solids_stream;
     solids_stream << "<" <<  "polycone"
@@ -981,8 +982,8 @@ namespace geomtools {
                                         const string & lunit_str_,
                                         const string & aunit_str_)
   {
-    double lunit = datatools::utils::units::get_length_unit_from (lunit_str_);
-    double aunit = datatools::utils::units::get_angle_unit_from (aunit_str_);
+    double lunit = datatools::units::get_length_unit_from (lunit_str_);
+    double aunit = datatools::units::get_angle_unit_from (aunit_str_);
 
     ostringstream solids_stream;
     solids_stream << "<" <<  "polyhedra"
@@ -1071,7 +1072,7 @@ namespace geomtools {
         message << "gdml_writer::add_gdml_boolean: " 
                 << "Invalid boolean solid type '" << boolean_type_ 
                 << "' for solid '" << name_ << "' !";
-        throw runtime_error (message.str ());           
+        throw logic_error (message.str ());           
       }
     ostringstream solids_stream;
     solids_stream << "<" <<  boolean_type_
@@ -1144,7 +1145,7 @@ namespace geomtools {
                                   const string & aunit_str_)
   {
     map<double, pair<double, double> > zplanes;
-    for (polycone::rz_col_t::const_iterator i = p_.points ().begin ();
+    for (polycone::rz_col_type::const_iterator i = p_.points ().begin ();
          i != p_.points ().end ();
          i++)
       {
@@ -1169,7 +1170,7 @@ namespace geomtools {
                                    const string & aunit_str_)
   {
     map<double, pair<double, double> > zplanes;
-    for (polyhedra::rz_col_t::const_iterator i = p_.points ().begin ();
+    for (polyhedra::rz_col_type::const_iterator i = p_.points ().begin ();
          i != p_.points ().end ();
          i++)
       {
@@ -1193,7 +1194,7 @@ namespace geomtools {
   /*
     void gdml_writer::add_solid (const string & name_, 
     const string & solid_type_,
-    const datatools::utils::properties & params_)
+    const datatools::properties & params_)
     {
     if (! gdml_writer::solid_type_is_valid (solid_type_))
     {
@@ -1202,7 +1203,7 @@ namespace geomtools {
     << "Invalid solit type '" << solid_type_ 
     << "' for solid '"
     << name_ << "' !";
-    throw runtime_error (message.str ());               
+    throw logic_error (message.str ());               
     }
     bool has_length = true;
     bool has_angle = false;
@@ -1212,9 +1213,9 @@ namespace geomtools {
     ostringstream solids_stream;
     solids_stream << "<" <<  solid_type_
     << " name=" << '"' << to_html (name_) << '"';
-    datatools::utils::properties::keys_col_t keys;
+    datatools::properties::keys_col_type keys;
     params_.keys (keys);
-    for (datatools::utils::properties::keys_col_t::const_iterator i = keys.begin ();
+    for (datatools::properties::keys_col_type::const_iterator i = keys.begin ();
     i != keys.end ();
     i++)
     {
@@ -1293,7 +1294,7 @@ namespace geomtools {
                                         const string & aunit_str_,
                                         const map<string, string> & aux_)
   {
-    double lunit = datatools::utils::units::get_length_unit_from (lunit_str_);
+    double lunit = datatools::units::get_length_unit_from (lunit_str_);
     _get_stream (STRUCTURE_SECTION) << "<volume" << " name=" << '"' << to_html (name_) << '"' << " >" << endl;
     _get_stream (STRUCTURE_SECTION) << "  <materialref" << " ref=" << '"' << to_html (material_ref_) << '"' << " />" << endl;
     _get_stream (STRUCTURE_SECTION) << "  <solidref   " << " ref=" << '"' << to_html (solid_ref_) << '"' << " />" << endl;
@@ -1525,7 +1526,7 @@ namespace geomtools {
   {
     if (! out_)
       {
-        throw runtime_error ("gdml_writer::full_write: Output stream is invalid !");
+        throw logic_error ("gdml_writer::full_write: Output stream is invalid !");
       }
     bool standalone = false;
     xml_header (out_, version_, encoding_, standalone);
@@ -1581,7 +1582,7 @@ namespace geomtools {
   {
     ofstream fout;
     string filename = filename_;
-    datatools::utils::fetch_path_with_env (filename);
+    datatools::fetch_path_with_env (filename);
     fout.open (filename.c_str ());
     if (! fout)
       {
@@ -1590,7 +1591,7 @@ namespace geomtools {
                 << "Cannot open GDML file '"
                 << filename
                 << "' !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     full_write (fout, version_, encoding_, schema_, xsi_);
     return;

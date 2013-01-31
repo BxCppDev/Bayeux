@@ -14,8 +14,8 @@
  * 
  */
 
-#ifndef __geomtools__stacked_model_h
-#define __geomtools__stacked_model_h 1
+#ifndef GEOMTOOLS_STACKED_MODEL_H_
+#define GEOMTOOLS_STACKED_MODEL_H_ 1
 
 #include <string> 
 #include <iostream>
@@ -29,18 +29,16 @@
 
 namespace geomtools {
 
-  using namespace std;
-
   // define a geometry model with some stacked boxed models along
   // a specific axis (X, Y or Z)
   GEOMTOOLS_BOXED_MODEL_CLASS_DECLARE(stacked_model) 
   {
   public:
 
-    static const string STACKED_PROPERTY_PREFIX;
-    static const string STACKED_MODEL_PROPERTY_PREFIX;
-    static const string STACKED_LABEL_PROPERTY_PREFIX;
-    static const string DEFAULT_STACKED_LABEL_PREFIX;
+    static const std::string STACKED_PROPERTY_PREFIX;
+    static const std::string STACKED_MODEL_PROPERTY_PREFIX;
+    static const std::string STACKED_LABEL_PROPERTY_PREFIX;
+    static const std::string DEFAULT_STACKED_LABEL_PREFIX;
     static const double DEFAULT_MECHANICS_PLAY;
     static const double DEFAULT_NUMERICS_PLAY;
 
@@ -54,7 +52,7 @@ namespace geomtools {
 
     struct stacked_item
     {
-      string           label;
+      std::string           label;
       const i_model *  model;
       placement        placmt;
       physical_volume  phys;
@@ -73,7 +71,7 @@ namespace geomtools {
 
       double get_limit_max () const;
 
-      const string & get_label () const
+      const std::string & get_label () const
       {
         return label;
       }
@@ -91,17 +89,17 @@ namespace geomtools {
       }
     };
 
-    typedef map<int, stacked_item> stacked_dict_t;
-    typedef map<string, int> labels_dict_t;
+    typedef std::map<int, stacked_item> stacked_dict_type;
+    typedef std::map<std::string, int> labels_dict_type;
 
   private:
 
     int _get_stacking_axis_ () const;
-    const string & _get_material_name_ () const;
+    const std::string & _get_material_name_ () const;
 
   public: 
-    const string & get_material_name () const;
-    void set_material_name (const string &);
+    const std::string & get_material_name () const;
+    void set_material_name (const std::string &);
     void set_stacking_axis (int a_);
     int get_stacking_axis () const;
     bool is_stacking_along_x () const;
@@ -112,14 +110,14 @@ namespace geomtools {
     const geomtools::box & get_solid () const;
 
     size_t get_number_of_stacked_models () const;
-    void add_stacked_model (int i_, const i_model &, const string & label_ = "");
-    bool has_stacked_model (const string & label_) const;
+    void add_stacked_model (int i_, const i_model &, const std::string & label_ = "");
+    bool has_stacked_model (const std::string & label_) const;
     const i_model & get_stacked_model (int i_) const;
     const stacked_item & get_stacked_item (int i_) const;
-    const i_model & get_stacked_model (const string & label_) const;
-    const stacked_item & get_stacked_item (const string & label_) const;
-    const labels_dict_t & get_labels () const;
-    const stacked_dict_t & get_models () const;
+    const i_model & get_stacked_model (const std::string & label_) const;
+    const stacked_item & get_stacked_item (const std::string & label_) const;
+    const labels_dict_type & get_labels () const;
+    const stacked_dict_type & get_models () const;
 
   public:
   
@@ -129,30 +127,30 @@ namespace geomtools {
 
   public:
 
-    virtual string get_model_id () const;
+    virtual std::string get_model_id () const;
 
   protected:
   
-    virtual void _at_construct (const string & name_,
-                                const datatools::utils::properties & config_,
-                                models_col_t * models_ = 0);
+    virtual void _at_construct (const std::string & name_,
+                                const datatools::properties & config_,
+                                models_col_type * models_ = 0);
       
   public: 
 
-    virtual void tree_dump (ostream & out_         = clog, 
-                            const string & title_  = "", 
-                            const string & indent_ = "", 
+    virtual void tree_dump (std::ostream & out_         = std::clog, 
+                            const std::string & title_  = "", 
+                            const std::string & indent_ = "", 
                             bool inherit_          = false) const;
 
   private:
 
-    string         _material_name_;
-    int            _stacking_axis_;
-    stacked_dict_t _stacked_models_;
-    labels_dict_t  _labels_;
-    geomtools::box _solid_;
-    double         _numerics_play_;
-    double         _mechanics_play_;
+    std::string       _material_name_;
+    int               _stacking_axis_;
+    stacked_dict_type _stacked_models_;
+    labels_dict_type  _labels_;
+    geomtools::box    _solid_;
+    double            _numerics_play_;
+    double            _mechanics_play_;
 
     // 2011-12-05 FM : add support for additional internal objects :
     // internal items :
@@ -165,6 +163,6 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // __geomtools__stacked_model_h
+#endif // GEOMTOOLS_STACKED_MODEL_H_
 
 // end of stacked_model.h

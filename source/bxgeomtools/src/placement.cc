@@ -9,8 +9,8 @@
 #include <stdexcept>
 #include <limits>
 
-#include <datatools/utils/units.h>
-#include <datatools/utils/utils.h>
+#include <datatools/units.h>
+#include <datatools/utils.h>
 
 namespace geomtools {
 
@@ -499,47 +499,46 @@ namespace geomtools {
                              const string & indent_,
                              bool inherit_) const
   {
-    namespace du = datatools::utils;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     this->i_placement::tree_dump (out_, title_, indent, true);
 
-    out_ << indent << i_tree_dumpable::tag << "Valid : "
+    out_ << indent << datatools::i_tree_dumpable::tag << "Valid : "
          << is_valid ()  << endl;
 
-    out_ << indent << i_tree_dumpable::tag << "Translation : "
+    out_ << indent << datatools::i_tree_dumpable::tag << "Translation : "
          << _translation_  << endl;
 
     if (is_zyz_rotation ())
       {
-        out_ << indent << i_tree_dumpable::tag << "Euler Angles (ZYZ): "
+        out_ << indent << datatools::i_tree_dumpable::tag << "Euler Angles (ZYZ): "
              << (has_angles ()? "Yes": "No") << endl;
         if (has_angles ())
           {
-            out_ << indent << i_tree_dumpable::skip_tag
-                 << i_tree_dumpable::tag << "Phi :   "
+            out_ << indent << datatools::i_tree_dumpable::skip_tag
+                 << datatools::i_tree_dumpable::tag << "Phi :   "
                  << _phi_ / CLHEP::degree << " degree" << endl;
-            out_ << indent << i_tree_dumpable::skip_tag
-                 << i_tree_dumpable::tag << "Theta : "
+            out_ << indent << datatools::i_tree_dumpable::skip_tag
+                 << datatools::i_tree_dumpable::tag << "Theta : "
                  << _theta_ / CLHEP::degree << " degree"  << endl;
-            out_ << indent << i_tree_dumpable::skip_tag
-                 << i_tree_dumpable::last_tag << "Delta : "
+            out_ << indent << datatools::i_tree_dumpable::skip_tag
+                 << datatools::i_tree_dumpable::last_tag << "Delta : "
                  << _delta_ / CLHEP::degree << " degree"  << endl;
           }
       }
     else
       {
-        out_ << indent << i_tree_dumpable::tag << "Rotation axis : "
+        out_ << indent << datatools::i_tree_dumpable::tag << "Rotation axis : "
              << _rotation_axis_ << endl;
-        out_ << indent << i_tree_dumpable::tag << "Rotation angle : "
+        out_ << indent << datatools::i_tree_dumpable::tag << "Rotation angle : "
              << _rotation_angle_ / CLHEP::degree << " degree" << endl;
       }
 
     {
       ostringstream oss_title;
-      oss_title << indent << i_tree_dumpable::tag << "Rotation :";
+      oss_title << indent << datatools::i_tree_dumpable::tag << "Rotation :";
       ostringstream oss_indent;
-      oss_indent << indent << i_tree_dumpable::skip_tag;
+      oss_indent << indent << datatools::i_tree_dumpable::skip_tag;
       geomtools::tree_dump (_rotation_,
                             out_,
                             oss_title.str (),
@@ -548,9 +547,9 @@ namespace geomtools {
 
     {
       ostringstream oss_title;
-      oss_title << indent << i_tree_dumpable::inherit_tag (inherit_) << "Inverse rotation :";
+      oss_title << indent << datatools::i_tree_dumpable::inherit_tag (inherit_) << "Inverse rotation :";
       ostringstream oss_indent;
-      oss_indent << indent << i_tree_dumpable::inherit_skip_tag (inherit_);
+      oss_indent << indent << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
       geomtools::tree_dump (_inverse_rotation_,
                             out_,
                             oss_title.str (),
@@ -653,7 +652,7 @@ namespace geomtools {
               {
                 return false;
               }
-            length_unit = datatools::utils::units::get_length_unit_from (length_unit_str);
+            length_unit = datatools::units::get_length_unit_from (length_unit_str);
           }
         oss >> ws;
       }
@@ -696,7 +695,7 @@ namespace geomtools {
                   {
                     return false;
                   }
-                angle_unit = datatools::utils::units::get_angle_unit_from (angle_unit_str);
+                angle_unit = datatools::units::get_angle_unit_from (angle_unit_str);
               }
             oss >> ws;
           }

@@ -6,7 +6,7 @@
 
 #include <mygsl/min_max.h>
 
-#include <datatools/utils/units.h>
+#include <datatools/units.h>
 
 #include <geomtools/i_boxed_model.h>
 #include <geomtools/physical_volume.h>
@@ -138,8 +138,8 @@ namespace geomtools {
   }
 
   void cylindric_extrusion_boxed_model::_at_construct (const string & name_,
-                                                       const datatools::utils::properties & config_,
-                                                       models_col_t * models_)
+                                                       const datatools::properties & config_,
+                                                       models_col_type * models_)
   {
     bool devel = i_model::g_devel;
     if (devel) clog << "DEVEL: cylindric_extrusion_boxed_model::_at_construct: Entering..." << endl;
@@ -217,7 +217,7 @@ namespace geomtools {
       }
 
     double lunit = CLHEP::mm;
-    lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+    lunit = datatools::units::get_length_unit_from (lunit_str);
 
     mother_x *= lunit;
     mother_y *= lunit;
@@ -313,7 +313,6 @@ namespace geomtools {
                                                    bool inherit_) const
   {
     bool devel = false;
-    namespace du = datatools::utils;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     i_model::tree_dump (out_, title_, indent, true);
@@ -340,7 +339,7 @@ namespace geomtools {
       {
         ostringstream indent_oss;
         indent_oss << indent;
-        indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+        indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
         _extruded_solid_.tree_dump (out_, "", indent_oss.str ());
       }
     }
@@ -362,8 +361,8 @@ namespace geomtools {
                 << "3D-object of '" << obj_.get_shape_name () << "' shape type has not the right type !";
         throw logic_error (message.str ());
       }
-    const i_composite_shape_3d::shape_t & s1 = solid->get_shape1 ();
-    const i_composite_shape_3d::shape_t & s2 = solid->get_shape2 ();
+    const i_composite_shape_3d::shape_type & s1 = solid->get_shape1 ();
+    const i_composite_shape_3d::shape_type & s2 = solid->get_shape2 ();
     const i_shape_3d & sh1 = s1.get_shape ();
     const i_shape_3d & sh2 = s2.get_shape ();
 

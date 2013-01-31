@@ -13,8 +13,8 @@
  * 
  */
 
-#ifndef __geomtools__tube_h
-#define __geomtools__tube_h 1
+#ifndef GEOMTOOLS_TUBE_H_
+#define GEOMTOOLS_TUBE_H_ 1
 
 #include <iostream>
 #include <string>
@@ -49,35 +49,17 @@ namespace geomtools {
   
   public: 
     
-    double get_xmin () const
-    {
-      return -_outer_r_;
-    }
+    double get_xmin () const;
     
-    double get_xmax () const
-    {
-      return +_outer_r_;
-    }
+    double get_xmax () const;
     
-    double get_ymin () const
-    {
-      return -_outer_r_;
-    }
+    double get_ymin () const;
+
+    double get_ymax () const;
     
-    double get_ymax () const
-    {
-      return +_outer_r_;
-    }
+    double get_zmin () const;
     
-    double get_zmin () const
-    {
-      return -0.5*_z_;
-    }
-    
-    double get_zmax () const
-    {
-      return +0.5*_z_;
-    }
+    double get_zmax () const;
 
     double get_z () const;
 
@@ -146,9 +128,9 @@ namespace geomtools {
     friend std::istream & 
     operator>> (std::istream &, tube &);
 
-    virtual void tree_dump (ostream & out_         = clog, 
-                            const string & title_  = "", 
-                            const string & indent_ = "", 
+    virtual void tree_dump (std::ostream & out_         = std::clog, 
+                            const std::string & title_  = "", 
+                            const std::string & indent_ = "", 
                             bool inherit_          = false) const;
 
     virtual void generate_wires (std::list<polyline_3d> &, 
@@ -165,6 +147,6 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // __geomtools__tube_h
+#endif // GEOMTOOLS_TUBE_H_
 
 // end of tube.h

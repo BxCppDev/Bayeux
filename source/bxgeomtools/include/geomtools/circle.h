@@ -59,7 +59,7 @@ namespace geomtools {
     virtual ~circle ();
   
     // methods:
-    virtual string get_shape_name () const;
+    virtual std::string get_shape_name () const;
 
     virtual void tree_dump (std::ostream & a_out = std::clog, 
                             const std::string & a_title = "", 

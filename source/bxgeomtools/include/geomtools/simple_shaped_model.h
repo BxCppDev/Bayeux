@@ -14,8 +14,8 @@
  * 
  */
 
-#ifndef __geomtools__simple_shaped_model_h
-#define __geomtools__simple_shaped_model_h 1
+#ifndef GEOMTOOLS_SIMPLE_SHAPED_MODEL_H_
+#define GEOMTOOLS_SIMPLE_SHAPED_MODEL_H_ 1
 
 #include <string> 
 
@@ -26,8 +26,6 @@
 #include <geomtools/model_with_internal_items_tools.h>
 
 namespace geomtools {
-
-  using namespace std;
 
   class box;
   class cylinder;
@@ -47,9 +45,9 @@ namespace geomtools {
     MWIM & get_internals ();
     const MWIM & get_internals () const;
 
-    const string & get_material_name () const;
-    const string & get_filled_material_name () const;
-    const string & get_shape_name () const;
+    const std::string & get_material_name () const;
+    const std::string & get_filled_material_name () const;
+    const std::string & get_shape_name () const;
 
     const geomtools::box & get_box () const;
     const geomtools::cylinder & get_cylinder () const;
@@ -74,54 +72,54 @@ namespace geomtools {
 
   public:
 
-    virtual string get_model_id () const;
+    virtual std::string get_model_id () const;
 
   protected:
 
-    virtual void _post_construct (datatools::utils::properties & setup_);
+    virtual void _post_construct (datatools::properties & setup_);
   
-    virtual void _at_construct (const string & name_,
-                                const datatools::utils::properties & config_,
-                                models_col_t * models_ = 0);
+    virtual void _at_construct (const std::string & name_,
+                                const datatools::properties & config_,
+                                models_col_type * models_ = 0);
 
   protected:
 
-    virtual void _construct_box (const string & name_,
-                                 const datatools::utils::properties & config_,
-                                 models_col_t * models_);
+    virtual void _construct_box (const std::string & name_,
+                                 const datatools::properties & config_,
+                                 models_col_type * models_);
 
-    virtual void _construct_cylinder (const string & name_,
-                                      const datatools::utils::properties & config_,
-                                      models_col_t * models_);
+    virtual void _construct_cylinder (const std::string & name_,
+                                      const datatools::properties & config_,
+                                      models_col_type * models_);
       
-    virtual void _construct_sphere (const string & name_,
-                                    const datatools::utils::properties & config_,
-                                    models_col_t * models_);
+    virtual void _construct_sphere (const std::string & name_,
+                                    const datatools::properties & config_,
+                                    models_col_type * models_);
       
-    virtual void _construct_tube (const string & name_,
-                                  const datatools::utils::properties & config_,
-                                  models_col_t * models_);
+    virtual void _construct_tube (const std::string & name_,
+                                  const datatools::properties & config_,
+                                  models_col_type * models_);
       
-    virtual void _construct_polycone (const string & name_,
-                                      const datatools::utils::properties & config_,
-                                      models_col_t * models_);
+    virtual void _construct_polycone (const std::string & name_,
+                                      const datatools::properties & config_,
+                                      models_col_type * models_);
 
-    virtual void _construct_polyhedra (const string & name_,
-                                       const datatools::utils::properties & config_,
-                                       models_col_t * models_);
+    virtual void _construct_polyhedra (const std::string & name_,
+                                       const datatools::properties & config_,
+                                       models_col_type * models_);
       
   public: 
 
-    virtual void tree_dump (ostream & out_         = clog, 
-                            const string & title_  = "", 
-                            const string & indent_ = "", 
+    virtual void tree_dump (std::ostream & out_         = std::clog, 
+                            const std::string & title_  = "", 
+                            const std::string & indent_ = "", 
                             bool inherit_          = false) const;
   private:
 
-    string                 _shape_name_;
+    std::string                 _shape_name_;
     int                    _filled_mode_;
-    string                 _material_name_;
-    string                 _filled_material_name_;
+    std::string                 _material_name_;
+    std::string                 _filled_material_name_;
 
     geomtools::box *       _box_;
     geomtools::cylinder *  _cylinder_;
@@ -151,6 +149,6 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // __geomtools__simple_shaped_model_h
+#endif // GEOMTOOLS_SIMPLE_SHAPED_MODEL_H_
 
 // end of simple_shaped_model.h

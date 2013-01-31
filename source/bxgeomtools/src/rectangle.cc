@@ -219,13 +219,12 @@ namespace geomtools {
                         const string & indent_, 
                         bool inherit_) const
   {
-    namespace du = datatools::utils;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     i_object_3d::tree_dump (out_, title_, indent_, true);
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "X : " << get_x () / CLHEP::mm << " mm" << endl;
-    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)  
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)  
          << "Y : " << get_y () / CLHEP::mm << " mm" << endl;
     return;
   }

@@ -15,8 +15,8 @@
  *
  */
 
-#ifndef __geomtools__display_data_h
-#define __geomtools__display_data_h 1
+#ifndef GEOMTOOLS_DISPLAY_DATA_H_
+#define GEOMTOOLS_DISPLAY_DATA_H_ 1
 
 #include <string>
 #include <vector>
@@ -28,10 +28,11 @@
 #include <boost/cstdint.hpp>
 
 // Interfaces :
-#include <datatools/serialization/i_serializable.h>
-#include <datatools/utils/i_tree_dump.h>
-#include <datatools/utils/i_clear.h>
-#include <datatools/utils/properties.h>
+#include <datatools/i_serializable.h>
+#include <datatools/i_tree_dump.h>
+#include <datatools/i_clear.h>
+
+#include <datatools/properties.h>
 
 #include <geomtools/polyline_3d.h>
 
@@ -39,8 +40,8 @@ namespace geomtools {
 
   class display_data :
     DATATOOLS_SERIALIZABLE_CLASS,
-    public datatools::utils::i_tree_dumpable,
-    public datatools::utils::i_clear
+    public datatools::i_tree_dumpable,
+    public datatools::i_clear
   {
   public:
 
@@ -68,7 +69,7 @@ namespace geomtools {
       int32_t                         entry_type;
       std::string                     group;
       std::map<int32_t, display_item> items;
-      datatools::utils::properties    auxiliaries;
+      datatools::properties           auxiliaries;
     public:
       bool is_static () const;
       bool is_framed () const;
@@ -108,9 +109,9 @@ namespace geomtools {
 
     std::map<std::string, display_entry> & grab_entries ();
 
-    const datatools::utils::properties & get_auxiliaries () const;
+    const datatools::properties & get_auxiliaries () const;
 
-    datatools::utils::properties & grab_auxiliaries ();
+    datatools::properties & grab_auxiliaries ();
 
 
     /*** interface i_tree_dumpable ***/
@@ -141,7 +142,7 @@ namespace geomtools {
     std::vector<std::string>             _colors_;
     std::vector<std::string>             _groups_;
     std::map<std::string, display_entry> _entries_;
-    datatools::utils::properties         _auxiliaries_;
+    datatools::properties                _auxiliaries_;
 
     DATATOOLS_SERIALIZATION_DECLARATION();
 
@@ -152,6 +153,6 @@ namespace geomtools {
 #include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT_KEY2(geomtools::display_data, "geomtools::display_data")
 
-#endif //__geomtools__display_data_h_h
+#endif // GEOMTOOLS_DISPLAY_DATA_H_
 
 // end of display_data.h

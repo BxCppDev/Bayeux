@@ -451,14 +451,13 @@ namespace geomtools {
                             const string & a_indent, 
                             bool a_inherit) const
   {
-    namespace du = datatools::utils;
     string indent;
     if (! a_indent.empty ()) indent = a_indent;
     i_object_3d::tree_dump (a_out, a_title, a_indent, true);
 
-    a_out << indent << du::i_tree_dumpable::tag 
+    a_out << indent << datatools::i_tree_dumpable::tag 
           << "Radius : " << get_r () / CLHEP::mm << " mm" << endl;
-    a_out << indent << du::i_tree_dumpable::inherit_tag (a_inherit)  
+    a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)  
           << "Z : " << get_z () / CLHEP::mm << " mm" << endl;
     return;
   }

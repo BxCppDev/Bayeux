@@ -1,16 +1,16 @@
 // -*- mode: c++; -*- 
 //! \file geomtools/i_placement.ipp
 
-#ifndef __geomtools__i_placement_ipp
-#define __geomtools__i_placement_ipp 1
+#ifndef GEOMTOOLS_I_PLACEMENT_IPP_
+#define GEOMTOOLS_I_PLACEMENT_IPP_ 1
 
 #include <boost/archive/archive_exception.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/nvp.hpp>
 
-#include <datatools/serialization/utils.h>
+#include <datatools/utils.h>
 #include <geomtools/i_placement.h>
-#include <datatools/serialization/i_serializable.ipp>
+#include <datatools/i_serializable.ipp>
          
 namespace geomtools {
   
@@ -23,5 +23,5 @@ namespace geomtools {
 
 } // end of namespace geomtools 
 
-#endif // __geomtools__i_placement_ipp
+#endif // GEOMTOOLS_I_PLACEMENT_IPP_
 

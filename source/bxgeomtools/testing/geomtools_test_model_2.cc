@@ -35,8 +35,8 @@ namespace geomtools {
   }
   
   void test_model_2::_at_construct (const string & name_,
-                                    const datatools::utils::properties & config_,
-                                    models_col_t * models_)
+                                    const datatools::properties & config_,
+                                    models_col_type * models_)
   {
     bool devel = i_model::g_devel;
     if (devel) clog << "DEVEL: test_model_2::_at_construct: Entering..." << endl;
@@ -125,7 +125,7 @@ namespace geomtools {
 
     // Sub1:
     {
-      models_col_t::const_iterator found = models_->find (sub1_model_name);
+      models_col_type::const_iterator found = models_->find (sub1_model_name);
       if (found != models_->end ())
         {
           __sub1_model = (dynamic_cast<const test_model_1 *> (found->second));
@@ -142,7 +142,7 @@ namespace geomtools {
 
     // Sub2:
     {
-      models_col_t::const_iterator found = models_->find (sub2_model_name);
+      models_col_type::const_iterator found = models_->find (sub2_model_name);
       if (found != models_->end ())
         {
           __sub2_model = (dynamic_cast<const test_model_1 *> (found->second));
@@ -212,7 +212,6 @@ namespace geomtools {
                                 const string & indent_, 
                                 bool inherit_) const
   {
-     namespace du = datatools::utils;
      string indent;
      if (! indent_.empty ()) indent = indent_;
      i_model::tree_dump (out_, title_, indent, true);
@@ -222,18 +221,18 @@ namespace geomtools {
         // Sub-model #1:
         if (__sub1_model)
           {
-            out_ << indent << i_tree_dumpable::tag 
+            out_ << indent << datatools::i_tree_dumpable::tag 
                  << "Sub model 1 : " << endl;
             {
               ostringstream indent_oss;
               indent_oss << indent;
-              indent_oss << du::i_tree_dumpable::skip_tag;
+              indent_oss << datatools::i_tree_dumpable::skip_tag;
               __sub1_model->tree_dump (out_, "", indent_oss.str ());
             }   
           }
         else
           {
-            out_ << indent << i_tree_dumpable::tag 
+            out_ << indent << datatools::i_tree_dumpable::tag 
                  << "Sub model 1 : " << "<missing>" << endl;
           }
       }
@@ -242,73 +241,73 @@ namespace geomtools {
         // Sub-model #2:
         if (__sub2_model)
           {
-            out_ << indent << i_tree_dumpable::tag 
+            out_ << indent << datatools::i_tree_dumpable::tag 
                  << "Sub model 2 : " << endl;
             {
               ostringstream indent_oss;
               indent_oss << indent;
-              indent_oss << du::i_tree_dumpable::skip_tag;
+              indent_oss << datatools::i_tree_dumpable::skip_tag;
               __sub2_model->tree_dump (out_, "", indent_oss.str ());
             }   
           }
         else
           {
-            out_ << indent << i_tree_dumpable::tag 
+            out_ << indent << datatools::i_tree_dumpable::tag 
                  << "Sub model 2 : " << "<missing>" << endl;
           }
       }
 
       {
-        out_ << indent << i_tree_dumpable::tag 
+        out_ << indent << datatools::i_tree_dumpable::tag 
              << "Placement 1 : " << endl;
         {
           ostringstream indent_oss;
           indent_oss << indent;
-          indent_oss << du::i_tree_dumpable::skip_tag;
+          indent_oss << datatools::i_tree_dumpable::skip_tag;
           __sub1_placement.tree_dump (out_, "", indent_oss.str ());
         }   
       }
 
       {
-        out_ << indent << i_tree_dumpable::tag 
+        out_ << indent << datatools::i_tree_dumpable::tag 
              << "Placement 2 : " << endl;
         {
           ostringstream indent_oss;
           indent_oss << indent;
-          indent_oss << du::i_tree_dumpable::skip_tag;
+          indent_oss << datatools::i_tree_dumpable::skip_tag;
           __sub2_placement.tree_dump (out_, "", indent_oss.str ());
         }   
       }
 
       {
-        out_ << indent << i_tree_dumpable::tag 
+        out_ << indent << datatools::i_tree_dumpable::tag 
              << "Sub physical 1 : " << endl;
         {
           ostringstream indent_oss;
           indent_oss << indent;
-          indent_oss << du::i_tree_dumpable::skip_tag;
+          indent_oss << datatools::i_tree_dumpable::skip_tag;
           __sub1_phys.tree_dump (out_, "", indent_oss.str ());
         }   
       }
 
       {
-        out_ << indent << i_tree_dumpable::tag 
+        out_ << indent << datatools::i_tree_dumpable::tag 
              << "Sub physical 2 : " << endl;
         {
           ostringstream indent_oss;
           indent_oss << indent;
-          indent_oss << du::i_tree_dumpable::skip_tag;
+          indent_oss << datatools::i_tree_dumpable::skip_tag;
           __sub2_phys.tree_dump (out_, "", indent_oss.str ());
         }   
       }
 
       {
-        out_ << indent << i_tree_dumpable::inherit_tag (inherit_) 
+        out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_) 
              << "Solid : " << endl;
         {
           ostringstream indent_oss;
           indent_oss << indent;
-          indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+          indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
           __solid.tree_dump (out_, "", indent_oss.str ());
         }   
       }

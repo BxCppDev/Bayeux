@@ -13,8 +13,8 @@
  * 
  */
 
-#ifndef __geomtools__hexagon_box_h
-#define __geomtools__hexagon_box_h 1
+#ifndef GEOMTOOLS_HEXAGON_BOX_H_
+#define GEOMTOOLS_HEXAGON_BOX_H_ 1
 
 #include <sstream>
 #include <stdexcept>
@@ -147,7 +147,7 @@ namespace geomtools {
     
 } // end of namespace geomtools
 
-#endif // __geomtools__hexagon_box_h
+#endif // GEOMTOOLS_HEXAGON_BOX_H_
 
 // end of hexagon_box.h
 

@@ -130,7 +130,6 @@ namespace geomtools {
                                          const string & indent_,
                                          bool inherit_) const
   {
-    namespace du = datatools::utils;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     if (! title_.empty ())
@@ -138,18 +137,18 @@ namespace geomtools {
         out_ << indent << title_ << endl;
       }
 
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Category  : \"" << category << "\"" << endl;
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Type      : " << type << endl;
     if (! inherits.empty ())
       {
-        out_ << indent << du::i_tree_dumpable::tag
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Inherits  : \"" << inherits << "\"" << endl;
       }
     if (! ancestors.empty ())
       {
-        out_ << indent << du::i_tree_dumpable::tag
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Ancestors ["
              <<  ancestors.size () << "] :";
         for (int i = 0; i < ancestors.size (); i++)
@@ -160,7 +159,7 @@ namespace geomtools {
       }
     if (! extends.empty ())
       {
-        out_ << indent << du::i_tree_dumpable::tag
+        out_ << indent << datatools::i_tree_dumpable::tag
              << "Extends   : \"" << extends << "\" by ["
              <<  extends_by.size () << "] : ";
         for (int i = 0; i < extends_by.size (); i++)
@@ -169,7 +168,7 @@ namespace geomtools {
           }
         out_ << endl;
       }
-    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
          << "Addresses [" << get_depth () << "] :";
     for (int i = 0; i < addresses.size (); i++)
       {
@@ -177,7 +176,7 @@ namespace geomtools {
       }
     out_ << endl;
     /*
-      out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
+      out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
       << "Nbits [" << nbits.size () << "] :";
       for (int i = 0; i < nbits.size (); i++)
       {
@@ -231,12 +230,12 @@ namespace geomtools {
     return;
   }
 
-  const id_mgr::categories_by_type_col_t & id_mgr::categories_by_type () const
+  const id_mgr::categories_by_type_col_type & id_mgr::categories_by_type () const
   {
     return _categories_by_type_;
   }
 
-  const id_mgr::categories_by_name_col_t & id_mgr::categories_by_name () const
+  const id_mgr::categories_by_name_col_type & id_mgr::categories_by_name () const
   {
     return _categories_by_name_;
   }
@@ -254,13 +253,13 @@ namespace geomtools {
     return;
   }
 
-  void id_mgr::initialize (const datatools::utils::multi_properties & mp_)
+  void id_mgr::initialize (const datatools::multi_properties & mp_)
   {
     init_from (mp_);
     return;
   }
 
-  void id_mgr::init_from (const datatools::utils::multi_properties & mp_)
+  void id_mgr::init_from (const datatools::multi_properties & mp_)
   {
     bool devel = g_devel;
     //devel = true;
@@ -280,8 +279,8 @@ namespace geomtools {
         throw logic_error (message.str ());
       }
 
-    using namespace datatools::utils;
-    for (multi_properties::entries_ordered_col_t::const_iterator i =
+    using namespace datatools;
+    for (multi_properties::entries_ordered_col_type::const_iterator i =
            mp_.ordered_entries ().begin ();
          i != mp_.ordered_entries ().end ();
          i++)
@@ -403,7 +402,7 @@ namespace geomtools {
                     clog << "DEVEL: id_mgr::init_from: inherits..." << endl;
                   }
                 string inherits = props.fetch_string ("inherits");
-                categories_by_name_col_t::const_iterator i_inherits
+                categories_by_name_col_type::const_iterator i_inherits
                   = _categories_by_name_.find (inherits);
                 if (devel)
                   {
@@ -432,7 +431,7 @@ namespace geomtools {
                     clog << "DEVEL: id_mgr::init_from: "
                          << "extends category '" << extends << "'" << endl;
                   }
-                categories_by_name_col_t::const_iterator i_extends
+                categories_by_name_col_type::const_iterator i_extends
                   = _categories_by_name_.find (extends);
                 if (i_extends == _categories_by_name_.end ())
                   {
@@ -478,7 +477,7 @@ namespace geomtools {
             cat_entry.dump (clog);
           }
         _categories_by_name_[cat_entry.category] = cat_entry;
-        categories_by_name_col_t::const_iterator i_entry
+        categories_by_name_col_type::const_iterator i_entry
           = _categories_by_name_.find (cat_entry.category);
         _categories_by_type_[cat_entry.type] = &(i_entry->second);
       } // for
@@ -487,9 +486,9 @@ namespace geomtools {
 
   void id_mgr::load (const string & filename_)
   {
-    datatools::utils::multi_properties mp (CATEGORY_KEY_LABEL, TYPE_META_LABEL);
+    datatools::multi_properties mp (CATEGORY_KEY_LABEL, TYPE_META_LABEL);
     string fn = filename_;
-    datatools::utils::fetch_path_with_env (fn);
+    datatools::fetch_path_with_env (fn);
     mp.read (fn);
     init_from (mp);
     return;
@@ -507,7 +506,6 @@ namespace geomtools {
                           const string & indent_,
                           bool inherit_) const
   {
-    namespace du = datatools::utils;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     if (! title_.empty ())
@@ -515,10 +513,10 @@ namespace geomtools {
         out_ << indent << title_ << endl;
       }
 
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Debug  : " <<  _debug_ << endl;
 
-    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
          << "Categories      : ";
     if (_categories_by_name_.size () == 0)
       {
@@ -529,7 +527,7 @@ namespace geomtools {
         out_ << "[" << _categories_by_name_.size () << "]";
       }
     out_ << endl;
-    for (categories_by_name_col_t::const_iterator i = _categories_by_name_.begin ();
+    for (categories_by_name_col_type::const_iterator i = _categories_by_name_.begin ();
          i != _categories_by_name_.end () ;
          i++)
       {
@@ -538,19 +536,19 @@ namespace geomtools {
         out_ << indent;
         ostringstream indent_oss;
         indent_oss << indent;
-        categories_by_name_col_t::const_iterator j = i;
+        categories_by_name_col_type::const_iterator j = i;
         j++;
-        out_ << du::i_tree_dumpable::inherit_skip_tag (inherit_);
-        indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+        out_ << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
+        indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
         if (j == _categories_by_name_.end ())
           {
-            out_ << du::i_tree_dumpable::last_tag;
-            indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+            out_ << datatools::i_tree_dumpable::last_tag;
+            indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
           }
         else
           {
-            out_ << du::i_tree_dumpable::tag;
-            indent_oss << du::i_tree_dumpable::skip_tag;
+            out_ << datatools::i_tree_dumpable::tag;
+            indent_oss << datatools::i_tree_dumpable::skip_tag;
           }
         out_ << "Category : " << '"' << name << '"';
         out_ << endl;
@@ -572,7 +570,7 @@ namespace geomtools {
   const id_mgr::category_info &
   id_mgr::get_category_info (int type_) const
   {
-    categories_by_type_col_t::const_iterator found = _categories_by_type_.find (type_);
+    categories_by_type_col_type::const_iterator found = _categories_by_type_.find (type_);
     if (found == _categories_by_type_.end ())
       {
         ostringstream message;
@@ -585,7 +583,7 @@ namespace geomtools {
 
   uint32_t id_mgr::get_category_type (const string & a_category) const
   {
-    categories_by_name_col_t::const_iterator found
+    categories_by_name_col_type::const_iterator found
       = _categories_by_name_.find (a_category);
     if (found == _categories_by_name_.end ())
       {
@@ -600,7 +598,7 @@ namespace geomtools {
   const id_mgr::category_info &
   id_mgr::get_category_info (const string & name_) const
   {
-    categories_by_name_col_t::const_iterator found = _categories_by_name_.find (name_);
+    categories_by_name_col_type::const_iterator found = _categories_by_name_.find (name_);
     if (found == _categories_by_name_.end ())
       {
         ostringstream message;
@@ -614,7 +612,7 @@ namespace geomtools {
   bool id_mgr::check_inheritance (const geom_id & mother_id_,
                                   const geom_id & id_) const
   {
-    categories_by_type_col_t::const_iterator found
+    categories_by_type_col_type::const_iterator found
       = _categories_by_type_.end ();
 
     // check geom ID:
@@ -712,7 +710,7 @@ namespace geomtools {
   bool id_mgr::has (const geom_id & id_, const string & what_) const
   {
     int id_type = id_.get_type ();
-    categories_by_type_col_t::const_iterator found =
+    categories_by_type_col_type::const_iterator found =
       _categories_by_type_.find (id_type);
     const category_info & ci = *found->second;
     int i = -1;
@@ -729,7 +727,7 @@ namespace geomtools {
   const string & id_mgr::get_category (const geom_id & id_) const
   {
     int id_type = id_.get_type ();
-    categories_by_type_col_t::const_iterator found =
+    categories_by_type_col_type::const_iterator found =
       _categories_by_type_.find (id_type);
     if (found == _categories_by_type_.end ())
       {
@@ -746,7 +744,7 @@ namespace geomtools {
   int id_mgr::get (const geom_id & id_, const string & what_) const
   {
     int id_type = id_.get_type ();
-    categories_by_type_col_t::const_iterator found =
+    categories_by_type_col_type::const_iterator found =
       _categories_by_type_.find (id_type);
     const category_info & ci = *found->second;
     int i = -1;
@@ -776,7 +774,7 @@ namespace geomtools {
   void id_mgr::set (geom_id & id_, const string & what_, uint32_t value_) const
   {
     int id_type = id_.get_type ();
-    categories_by_type_col_t::const_iterator found =
+    categories_by_type_col_type::const_iterator found =
       _categories_by_type_.find (id_type);
     const category_info & ci = *found->second;
     int i = -1;

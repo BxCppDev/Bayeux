@@ -4,9 +4,9 @@
 
 #include <sstream>
 
-#include <geomtools/visibility.h>
+#include <datatools/properties.h>
 
-#include <sstream>
+#include <geomtools/visibility.h>
 
 namespace geomtools {
 
@@ -48,26 +48,26 @@ namespace geomtools {
     return key_oss.str ();
   }
 
-  void visibility::extract (const datatools::utils::properties & source_,
-                            datatools::utils::properties & target_)
+  void visibility::extract (const datatools::properties & source_,
+                            datatools::properties & target_)
   {
     source_.export_starting_with (target_, visibility::constants::instance().VISIBILITY_PREFIX);
     return;
   }
 
-  bool visibility::has_flag (const datatools::utils::properties & config_,
+  bool visibility::has_flag (const datatools::properties & config_,
                              const string & flag_)
   {
     return (config_.has_flag (visibility::make_key (flag_)));
   }
 
-  bool visibility::has_key (const datatools::utils::properties & config_,
+  bool visibility::has_key (const datatools::properties & config_,
                             const string & key_)
   {
     return (config_.has_key (visibility::make_key (key_)));
   }
 
-  bool visibility::is_shown (const datatools::utils::properties & config_)
+  bool visibility::is_shown (const datatools::properties & config_)
   {
     bool shown = true; // default:
     if (visibility::has_flag (config_, visibility::constants::instance().VISIBILITY_HIDDEN_FLAG))
@@ -77,50 +77,50 @@ namespace geomtools {
     return shown;
   }
 
-  bool visibility::is_hidden (const datatools::utils::properties & config_)
+  bool visibility::is_hidden (const datatools::properties & config_)
   {
     return ! visibility::is_shown (config_);
   }
 
-  bool visibility::is_hidden_envelop (const datatools::utils::properties & config_)
+  bool visibility::is_hidden_envelop (const datatools::properties & config_)
   {
     return visibility::has_flag (config_, visibility::constants::instance().VISIBILITY_HIDDEN_ENVELOP_FLAG);
   }
 
-  bool visibility::is_hidden_envelope (const datatools::utils::properties & config_)
+  bool visibility::is_hidden_envelope (const datatools::properties & config_)
   {
     return visibility::has_flag (config_, visibility::constants::instance().VISIBILITY_HIDDEN_ENVELOPE_FLAG);
   }
 
-  bool visibility::is_daughters_shown (const datatools::utils::properties & config_)
+  bool visibility::is_daughters_shown (const datatools::properties & config_)
   {
     return ! visibility::is_daughters_hidden (config_);
   }
 
-  bool visibility::is_daughters_hidden (const datatools::utils::properties & config_)
+  bool visibility::is_daughters_hidden (const datatools::properties & config_)
   {
     return visibility::has_flag (config_, visibility::constants::instance().VISIBILITY_DAUGHTERS_HIDDEN_FLAG);
   }
 
-  bool visibility::has_color (const datatools::utils::properties & config_)
+  bool visibility::has_color (const datatools::properties & config_)
   {
     return visibility::has_key (config_, visibility::constants::instance().VISIBILITY_COLOR_PROPERTY);
   }
 
-  string visibility::get_color (const datatools::utils::properties & config_)
+  string visibility::get_color (const datatools::properties & config_)
   {
     if (! has_color (config_)) return "";
     return config_.fetch_string (visibility::make_key (visibility::constants::instance().VISIBILITY_COLOR_PROPERTY));
   }
 
-  void visibility::set_color (datatools::utils::properties & config_,
+  void visibility::set_color (datatools::properties & config_,
                               const string & color_)
   {
     config_.update (visibility::make_key (visibility::constants::instance().VISIBILITY_COLOR_PROPERTY), color_);
     return;
   }
 
-  bool visibility::is_wired_cylinder (const datatools::utils::properties & config_)
+  bool visibility::is_wired_cylinder (const datatools::properties & config_)
   {
     return visibility::has_flag (config_, visibility::constants::instance().VISIBILITY_WIRED_CYLINDER_FLAG);
   }

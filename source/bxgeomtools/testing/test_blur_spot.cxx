@@ -21,11 +21,11 @@
 #include <geomtools/gnuplot_i.h>
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 
-#include <datatools/serialization/io_factory.h>
+#include <datatools/io_factory.h>
 
 // Some pre-processor guard about Boost I/O usage and linkage :
-#include <datatools/serialization/bio_guard.h>
-#include <geomtools/serialization/bio_guard.h>
+#include <datatools/bio_guard.h>
+#include <geomtools/bio_guard.h>
 
 using namespace std;
 
@@ -163,9 +163,8 @@ int main (int argc_, char ** argv_)
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 
         {
-          namespace ds = datatools::serialization;
-          ds::data_writer writer ("test_blur_spot_io.xml",
-                                  ds::using_multi_archives);
+          datatools::data_writer writer ("test_blur_spot_io.xml",
+                                         datatools::using_multi_archives);
           writer.store (v0);
           writer.store (v1);
           writer.store (v2);
@@ -173,9 +172,8 @@ int main (int argc_, char ** argv_)
         }
 
         {
-          namespace ds = datatools::serialization;
-          ds::data_reader reader ("test_blur_spot_io.xml",
-                                  ds::using_multi_archives);
+          datatools::data_reader reader ("test_blur_spot_io.xml",
+                                         datatools::using_multi_archives);
           while (reader.has_record_tag ())
             {
               clog << "notice: " << "Next..."  << endl; 

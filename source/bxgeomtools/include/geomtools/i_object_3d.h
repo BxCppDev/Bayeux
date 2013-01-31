@@ -14,29 +14,27 @@
  * 
  */
 
-#ifndef __geomtools__i_object_3d_h
-#define __geomtools__i_object_3d_h 1
+#ifndef GEOMTOOLS_I_OBJECT_3D_H_
+#define GEOMTOOLS_I_OBJECT_3D_H_ 1
 
 #include <string>
 #include <iostream>
 #include <sstream>
 
-#include <datatools/utils/properties.h>
-#include <datatools/utils/i_tree_dump.h>
+#include <datatools/properties.h>
+#include <datatools/i_tree_dump.h>
 
 #include <geomtools/utils.h>
 
 namespace geomtools {
 
-  using namespace std;
-
   class box;
 
   class i_object_3d :
-    public datatools::utils::i_tree_dumpable
+    public datatools::i_tree_dumpable
   {
   public:
-    enum dimensional_t
+    enum dimensional_type
       {
         DIMENSIONAL_0 = 0,
         DIMENSIONAL_1 = 1,
@@ -70,9 +68,9 @@ namespace geomtools {
 
     void set_tolerance (double tolerance_);
 
-    datatools::utils::properties & properties ();
+    datatools::properties & properties ();
 
-    const datatools::utils::properties & properties () const;
+    const datatools::properties & properties () const;
 
     virtual std::string get_shape_name () const = 0;
 
@@ -98,7 +96,7 @@ namespace geomtools {
   private:
 
     double _tolerance_; //!< Tolerance to check surface/curve belonging
-    datatools::utils::properties _properties_; //!< List of properties
+    datatools::properties _properties_; //!< List of properties
     void * _user_draw_; //!< An address that may point to some drawing function (may be used by the gnuplot renderer)
 
   public:
@@ -109,7 +107,7 @@ namespace geomtools {
     public:
         
       virtual const i_object_3d * get (const std::string & name_, 
-                                       const datatools::utils::properties & params_) = 0;
+                                       const datatools::properties & params_) = 0;
         
       const i_object_3d * get (const std::string & name_);
         
@@ -119,6 +117,6 @@ namespace geomtools {
     
 } // end of namespace geomtools
 
-#endif // __geomtools__i_object_3d_h
+#endif // GEOMTOOLS_I_OBJECT_3D_H_
 
 // end of i_object_3d.h

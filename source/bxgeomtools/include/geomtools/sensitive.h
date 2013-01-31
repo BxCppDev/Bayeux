@@ -14,12 +14,12 @@
  *
  */
 
-#ifndef __geomtools__sensitive_h
-#define __geomtools__sensitive_h 1
+#ifndef GEOMTOOLS_SENSITIVE_H_
+#define GEOMTOOLS_SENSITIVE_H_ 1
 
 #include <string>
 
-#include <datatools/utils/properties.h>
+#include <datatools/properties.h>
 
 namespace geomtools {
 
@@ -43,33 +43,32 @@ namespace geomtools {
 
     static std::string make_key (const std::string & flag_);
 
-    static void extract (const datatools::utils::properties & source_,
-                         datatools::utils::properties & target_);
+    static void extract (const datatools::properties & source_,
+                         datatools::properties & target_);
 
-    static bool has_flag (const datatools::utils::properties & config_,
+    static bool has_flag (const datatools::properties & config_,
                           const std::string & flag_);
 
-    static bool has_key (const datatools::utils::properties & config_,
+    static bool has_key (const datatools::properties & config_,
                          const std::string & key_);
 
-    static bool is_sensitive (const datatools::utils::properties & config_);
+    static bool is_sensitive (const datatools::properties & config_);
 
-    static std::string get_sensitive_category (const datatools::utils::properties & config_);
+    static std::string get_sensitive_category (const datatools::properties & config_);
 
-    static void set_sensitive_category (datatools::utils::properties & config_,
+    static void set_sensitive_category (datatools::properties & config_,
                                         const std::string & cat_name_);
 
-    static bool recording_alpha_quenching (const datatools::utils::properties & config_);
+    static bool recording_alpha_quenching (const datatools::properties & config_);
 
-    static bool recording_track_id (const datatools::utils::properties & config_);
+    static bool recording_track_id (const datatools::properties & config_);
 
-    static bool recording_primary_particle (const datatools::utils::properties & config_);
+    static bool recording_primary_particle (const datatools::properties & config_);
 
   };
 
-
 }  // end of namespace geomtools
 
-#endif // __geomtools__sensitive_h
+#endif // GEOMTOOLS_SENSITIVE_H_
 
 // end of sensitive.h

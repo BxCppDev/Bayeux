@@ -15,7 +15,7 @@
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 #include <geomtools/box.h>
 
-#include <datatools/utils/temporary_files.h>
+#include <datatools/temporary_files.h>
 
 using namespace std;
 
@@ -77,7 +77,7 @@ int main (int argc_, char ** argv_)
 
       box b (8.0, 4.0, 1.5);
 
-      datatools::utils::temp_file tmp_file;
+      datatools::temp_file tmp_file;
       tmp_file.set_remove_at_destroy (true);
       tmp_file.create ("/tmp", ".test_utils_2_");
  

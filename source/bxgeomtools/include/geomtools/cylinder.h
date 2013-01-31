@@ -25,8 +25,6 @@
 
 namespace geomtools {
 
-  using namespace std;
-
   class cylinder : public i_shape_3d , 
                    public i_stackable,
                    public i_wires_3d_rendering

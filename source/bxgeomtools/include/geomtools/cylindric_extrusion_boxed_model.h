@@ -14,8 +14,8 @@
  *   
  */
 
-#ifndef __geomtools__cylindric_extrusion_boxed_model_h
-#define __geomtools__cylindric_extrusion_boxed_model_h 1
+#ifndef GEOMTOOLS_CYLINDRIC_EXTRUSION_BOXED_MODEL_H_
+#define GEOMTOOLS_CYLINDRIC_EXTRUSION_BOXED_MODEL_H_ 1
 
 #include <iostream>
 #include <string> 
@@ -33,8 +33,6 @@
 
 namespace geomtools {
 
-  using namespace std;
-
   // define a geometry model:
   GEOMTOOLS_MODEL_CLASS_DECLARE (cylindric_extrusion_boxed_model)
   {
@@ -42,8 +40,6 @@ namespace geomtools {
 
     static const std::string LABEL_PROPERTY_PREFIX;
     static const std::string EXTRUSION_LABEL;
-
-  public:
 
     void set_material_name (const std::string &);
 
@@ -66,25 +62,12 @@ namespace geomtools {
     double get_extrusion_radius () const;
 
     const geomtools::i_shape_3d & get_solid () const;
-
-
-  public:
   
     cylindric_extrusion_boxed_model ();
   
     virtual ~cylindric_extrusion_boxed_model ();
 
-  public:
-
-    virtual string get_model_id () const;
-
-  protected:
-  
-    virtual void _at_construct (const std::string & name_,
-                                const datatools::utils::properties & config_,
-                                models_col_t * models_ = 0);
-     
-  public: 
+    virtual std::string get_model_id () const;
 
     virtual void tree_dump (std::ostream & out_         = std::clog, 
                             const std::string & title_  = "", 
@@ -97,6 +80,12 @@ namespace geomtools {
                                             const geomtools::i_object_3d &, 
                                             void * = 0);
 
+  protected:
+  
+    virtual void _at_construct (const std::string & name_,
+                                const datatools::properties & config_,
+                                models_col_type * models_ = 0);
+ 
   private:
 
     std::string      _material_name_;
@@ -120,6 +109,6 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // __geomtools__cylindric_extrusion_boxed_model_h
+#endif // GEOMTOOLS_CYLINDRIC_EXTRUSION_BOXED_MODEL_H_
 
 // end of cylindric_extrusion_boxed_model.h

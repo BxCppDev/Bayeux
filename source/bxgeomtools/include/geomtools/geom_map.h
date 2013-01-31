@@ -15,8 +15,8 @@
  *
  */
 
-#ifndef __geomtools__geom_map_h
-#define __geomtools__geom_map_h 1
+#ifndef GEOMTOOLS_GEOM_MAP_H_
+#define GEOMTOOLS_GEOM_MAP_H_ 1
 
 #include <cstdlib>
 #include <stdexcept>
@@ -51,15 +51,15 @@ namespace geomtools {
 
     const id_mgr & _get_id_manager () const;
 
-    const geom_info_dict_t & _get_geom_infos () const;
+    const geom_info_dict_type & _get_geom_infos () const;
 
-    geom_info_dict_t & _get_geom_infos ();
+    geom_info_dict_type & _get_geom_infos ();
 
   public:
 
     const id_mgr & get_id_manager () const;
 
-    const geom_info_dict_t & get_geom_infos () const;
+    const geom_info_dict_type & get_geom_infos () const;
 
     geom_map ();
 
@@ -133,7 +133,7 @@ namespace geomtools {
 
     geom_id          _invalid_geom_id_; //!< value of a invalid geometry ID
     const id_mgr *   _id_manager_;      //!< the ID manager that knows about geometry categories and their relationship
-    geom_info_dict_t _geom_infos_;      //!< the main dictionary of geometry informations addressed through IDs
+    geom_info_dict_type _geom_infos_;      //!< the main dictionary of geometry informations addressed through IDs
 
     ginfo_collections_with_type_dict_type _geom_infos_with_type_map_;
 
@@ -141,6 +141,6 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // __geomtools__geom_map_h
+#endif // GEOMTOOLS_GEOM_MAP_H_
 
 // end of geom_map.h

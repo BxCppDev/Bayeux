@@ -13,27 +13,25 @@
  * 
  */
 
-#ifndef __geomtools__multiple_items_model_h
-#define __geomtools__multiple_items_model_h 1
+#ifndef GEOMTOOLS_MULTIPLE_ITEMS_MODEL_H_
+#define GEOMTOOLS_MULTIPLE_ITEMS_MODEL_H_ 1
 
 #include <string>
 
-#include <datatools/utils/properties.h>
+#include <datatools/properties.h>
 
 #include <geomtools/i_boxed_model.h>
 #include <geomtools/model_with_internal_items_tools.h>
 #include <geomtools/box.h>
 
 namespace geomtools {
-    
-  using namespace std;  
  
   GEOMTOOLS_BOXED_MODEL_CLASS_DECLARE(multiple_items_model)
   {
 
   private:
 
-    const string & _get_material_name_ () const;
+    const std::string & _get_material_name_ () const;
 
   public: 
 
@@ -43,10 +41,10 @@ namespace geomtools {
     virtual const geomtools::box & get_box () const;
     const box & get_solid () const;
 
-    const string & get_material_name () const;
-    void set_material_name (const string &);
+    const std::string & get_material_name () const;
+    void set_material_name (const std::string &);
      
-    virtual string get_model_id () const;
+    virtual std::string get_model_id () const;
 
   public: 
 
@@ -57,20 +55,20 @@ namespace geomtools {
     virtual ~multiple_items_model ();
 
   public: 
-    virtual void tree_dump (ostream & out_         = clog, 
-                            const string & title_  = "", 
-                            const string & indent_ = "", 
+    virtual void tree_dump (std::ostream & out_         = std::clog, 
+                            const std::string & title_  = "", 
+                            const std::string & indent_ = "", 
                             bool inherit_          = false) const;
 
   protected:
 
-    virtual void _at_construct (const string & label_,
-                                const datatools::utils::properties & config_,
-                                models_col_t * models_ = 0);
+    virtual void _at_construct (const std::string & label_,
+                                const datatools::properties & config_,
+                                models_col_type * models_ = 0);
 
   private:
 
-    string           _material_name_;
+    std::string           _material_name_;
     box              _solid_;
     MWIM             _internals_;
 
@@ -81,6 +79,6 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // __geomtools__multiple_items_model_h
+#endif // GEOMTOOLS_MULTIPLE_ITEMS_MODEL_H_
 
 // end of multiple_items_model.h

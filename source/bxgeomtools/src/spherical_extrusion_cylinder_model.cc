@@ -8,8 +8,8 @@
 #include <sstream>
 #include <stdexcept>
 
-#include <datatools/utils/utils.h>
-#include <datatools/utils/units.h>
+#include <datatools/utils.h>
+#include <datatools/units.h>
 
 namespace geomtools {
 
@@ -38,10 +38,10 @@ namespace geomtools {
   {
     _material_ = "";
     _bottom_ = false;
-    datatools::utils::invalidate (_r_);
-    datatools::utils::invalidate (_z_);
-    datatools::utils::invalidate (_r_extrusion_);
-    datatools::utils::invalidate (_r_sphere_);
+    datatools::invalidate (_r_);
+    datatools::invalidate (_z_);
+    datatools::invalidate (_r_extrusion_);
+    datatools::invalidate (_r_sphere_);
     return;
   }
 
@@ -52,8 +52,8 @@ namespace geomtools {
   }
 
   void spherical_extrusion_cylinder_model::_at_construct (const string & name_,
-                                                          const datatools::utils::properties & config_,
-                                                          geomtools::models_col_t * models_)
+                                                          const datatools::properties & config_,
+                                                          geomtools::models_col_type * models_)
   {
     bool devel = g_devel;
     if (config_.has_flag ("devel"))
@@ -75,7 +75,7 @@ namespace geomtools {
     if (config_.has_key ("length_unit"))
       {
         string lunit_str = config_.fetch_string ("length_unit");
-        lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+        lunit = datatools::units::get_length_unit_from (lunit_str);
       }
 
     if (config_.has_key ("material.ref"))
@@ -263,49 +263,48 @@ namespace geomtools {
                                                       const string & indent_,
                                                       bool inherit_) const
   {
-    namespace du = datatools::utils;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     i_model::tree_dump (out_, title_, indent, true);
 
-    out_ << indent << i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Material : '" << _material_ << "'" << std::endl;
 
     {
       // Mother scintillator box:
-      out_ << indent << i_tree_dumpable::tag
+      out_ << indent << datatools::i_tree_dumpable::tag
            << "Mother cylinder : " << std::endl;
       {
         std::ostringstream indent_oss;
         indent_oss << indent;
-        indent_oss << du::i_tree_dumpable::skip_tag;
+        indent_oss << datatools::i_tree_dumpable::skip_tag;
         _mother_.tree_dump (out_,"",indent_oss.str ());
       }
     }
 
     {
       // Spherical extrusion:
-      out_ << indent << i_tree_dumpable::tag
+      out_ << indent << datatools::i_tree_dumpable::tag
            << "Spherical extrusion : " << std::endl;
       {
         std::ostringstream indent_oss;
         indent_oss << indent;
-        indent_oss << du::i_tree_dumpable::skip_tag;
+        indent_oss << datatools::i_tree_dumpable::skip_tag;
         _extrusion_.tree_dump (out_,"",indent_oss.str ());
       }
     }
 
-    out_ << indent << i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Bottom : '" << _bottom_ << "'" << std::endl;
 
     {
       // Solid:
-      out_ << indent << i_tree_dumpable::inherit_tag (inherit_)
+      out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
            << "Solid : " << std::endl;
       {
         std::ostringstream indent_oss;
         indent_oss << indent;
-        indent_oss << du::i_tree_dumpable::inherit_skip_tag (inherit_);
+        indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
         _solid_.tree_dump (out_,"",indent_oss.str ());
       }
     }
@@ -329,8 +328,8 @@ namespace geomtools {
         throw logic_error (message.str ());
         //return;
       }
-    const i_composite_shape_3d::shape_t & s1 = solid->get_shape1 ();
-    const i_composite_shape_3d::shape_t & s2 = solid->get_shape2 ();
+    const i_composite_shape_3d::shape_type & s1 = solid->get_shape1 ();
+    const i_composite_shape_3d::shape_type & s2 = solid->get_shape2 ();
     const i_shape_3d & sh1 = s1.get_shape ();
     const i_shape_3d & sh2 = s2.get_shape ();
 
@@ -417,8 +416,8 @@ namespace geomtools {
         // extrusion arcs:
         {
           double z = 0.5 * zcyl;
-          gnuplot_draw::polyline_t arc1;
-          gnuplot_draw::polyline_t arc2;
+          gnuplot_draw::polyline_type arc1;
+          gnuplot_draw::polyline_type arc2;
           double theta0 = asin (re / rs);
           size_t nsamples = 20;
           double dt = 2 * theta0 / nsamples;

@@ -13,8 +13,8 @@
  * 
  */
 
-#ifndef __geomtools__multiple_placement_h
-#define __geomtools__multiple_placement_h 1
+#ifndef GEOMTOOLS_MULTIPLE_PLACEMENT_H
+#define GEOMTOOLS_MULTIPLE_PLACEMENT_H 1
 
 #include <iostream>
 #include <string>
@@ -24,14 +24,12 @@
 
 namespace geomtools {
 
-  using namespace std;
-
   class multiple_placement
     : public i_placement
   {
   public:
 
-    typedef vector<placement> placement_col_t;
+    typedef std::vector<placement> placement_col_type;
 
   public:
  
@@ -48,38 +46,38 @@ namespace geomtools {
     placement & get_placement (int index_);
 
   public: 
-    // i_placement interface:
+
     virtual size_t get_number_of_items () const;
    
     virtual void get_placement (int item_, placement & p_) const;
 
-    virtual size_t compute_index_map (vector<uint32_t> & map_, 
+    virtual size_t compute_index_map (std::vector<uint32_t> & map_, 
                                       int item_) const;
 
   public: 
 
-    // ctor:
+    /// Default constructor
     multiple_placement ();
                 
-    // dtor:
+    /// Destructor
     virtual ~multiple_placement ();
 
     virtual void reset ();
 
-    // i_tree_dump interface:
-    virtual void tree_dump (ostream & out_ = clog, 
-                            const string & title_ = "geomutils::multiple_placement", 
-                            const string & indent_ = "", 
+    /// Smart print
+    virtual void tree_dump (std::ostream & out_ = std::clog, 
+                            const std::string & title_ = "geomutils::multiple_placement", 
+                            const std::string & indent_ = "", 
                             bool inherit_ = false) const;
 
   private:
 
-    placement_col_t _placements_;
+    placement_col_type _placements_;
 
   };
 
 } // end of namespace geomtools
 
-#endif // __geomtools__placement_h
+#endif // GEOMTOOLS_MULTIPLE_PLACEMENT_H
 
 // end of placement.h

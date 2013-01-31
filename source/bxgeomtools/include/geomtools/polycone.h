@@ -13,8 +13,8 @@
  * 
  */
 
-#ifndef __geomtools__polycone_h
-#define __geomtools__polycone_h 1
+#ifndef GEOMTOOLS_POLYCONE_H_
+#define GEOMTOOLS_POLYCONE_H_ 1
 
 #include <iostream>
 #include <string>
@@ -26,12 +26,10 @@
 
 namespace geomtools {
 
-  using namespace std;
-
   class polycone : public i_shape_3d, public i_stackable
   {
   public:
-    static const string POLYCONE_LABEL;
+    static const std::string POLYCONE_LABEL;
 
     enum faces_mask_type
       {
@@ -51,46 +49,25 @@ namespace geomtools {
       double rmin, rmax;
     };
 
-    typedef map<double, r_min_max> rz_col_t;
+    typedef std::map<double, r_min_max> rz_col_type;
   
   public:
 
     bool is_extruded () const;
     
-    double get_xmin () const
-    {
-      return -_r_max_;
-    }
+    double get_xmin () const;
     
-    double get_xmax () const
-    {
-      return +_r_max_;
-    }
+    double get_xmax () const;
     
-    double get_ymin () const
-    {
-      return -_r_max_;
-    }
+    double get_ymin () const;
     
-    double get_ymax () const
-    {
-      return +_r_max_;
-    }
+    double get_ymax () const;
     
-    double get_zmin () const
-    {
-      return _z_min_;
-    }
+    double get_zmin () const;
     
-    double get_zmax () const
-    {
-      return _z_max_;
-    }
-
-    double get_z () const
-    {
-      return _z_max_ - _z_min_;
-    }
+    double get_zmax () const;
+    
+    double get_z () const;
 
   private:
 
@@ -104,7 +81,7 @@ namespace geomtools {
     
   public: 
 
-    const rz_col_t & points () const;
+    const rz_col_type & points () const;
 
     // ctor:
     polycone ();
@@ -114,7 +91,7 @@ namespace geomtools {
   
     // methods:
       
-    virtual string get_shape_name () const;
+    virtual std::string get_shape_name () const;
 
     bool is_valid () const;
 
@@ -127,7 +104,7 @@ namespace geomtools {
     void initialize ();
 
 
-    void initialize (const string & filename_);
+    void initialize (const std::string & filename_);
 
     /**
      * Initialize the polycone from data in a file.
@@ -158,11 +135,11 @@ namespace geomtools {
      *  <<<
      *
      */
-    void initialize (const string & filename_, 
+    void initialize (const std::string & filename_, 
                      double zmin_ = std::numeric_limits<double>::quiet_NaN (),
                      double zmax_ = std::numeric_limits<double>::quiet_NaN ());
 
-    void initialize (const datatools::utils::properties & setup_); 
+    void initialize (const datatools::properties & setup_); 
 
   private:
 
@@ -190,7 +167,7 @@ namespace geomtools {
 
     double get_r_max () const;
 
-    double get_parameter ( const string & flag_ ) const;
+    double get_parameter ( const std::string & flag_ ) const;
 
     virtual bool is_inside (const vector_3d &, 
                             double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
@@ -202,23 +179,23 @@ namespace geomtools {
 
     virtual vector_3d get_normal_on_surface (const vector_3d & position_) const;
 
-    friend ostream & operator<< (ostream &, const polycone &);
+    friend std::ostream & operator<< (std::ostream &, const polycone &);
 
-    friend istream & operator>> (istream &, polycone &);
+    friend std::istream & operator>> (std::istream &, polycone &);
       
     virtual bool find_intercept (const vector_3d & from_, 
                                  const vector_3d & direction_,
                                  intercept_t & intercept_,
                                  double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
-    virtual void tree_dump (ostream & out_         = clog, 
-                            const string & title_  = "", 
-                            const string & indent_ = "", 
+    virtual void tree_dump (std::ostream & out_         = std::clog, 
+                            const std::string & title_  = "", 
+                            const std::string & indent_ = "", 
                             bool inherit_          = false) const;
 
   private:
 
-    rz_col_t _points_;
+    rz_col_type _points_;
     double  _top_surface_;
     double  _bottom_surface_;
     double  _outer_side_surface_;
@@ -235,6 +212,6 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // __geomtools__polycone_h
+#endif // GEOMTOOLS_POLYCONE_H_
 
 // end of polycone.h

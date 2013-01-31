@@ -5,8 +5,8 @@
  * for Boost/Serialization layer.
  *
  */
-#ifndef __geomtools__the_serializable_ipp__
-#define __geomtools__the_serializable_ipp__ 1
+#ifndef GEOMTOOLS_THE_SERIALIZABLE_IPP_
+#define GEOMTOOLS_THE_SERIALIZABLE_IPP_
 
 /**********************
  * geomtools::geom_id *
@@ -62,6 +62,6 @@
 
 #include <geomtools/display_data.ipp>
 
-#endif // __geomtools__the_serializable_ipp__
+#endif // GEOMTOOLS_THE_SERIALIZABLE_IPP_
 
 /* end of geomtools::the_serializable.ipp */

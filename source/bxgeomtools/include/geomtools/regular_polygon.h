@@ -13,8 +13,8 @@
  * 
  */
 
-#ifndef __geomtools__regular_polygon_h
-#define __geomtools__regular_polygon_h 1
+#ifndef GEOMTOOLS_REGULAR_POLYGON_H_
+#define GEOMTOOLS_REGULAR_POLYGON_H_ 1
 
 #include <string>
 
@@ -22,13 +22,11 @@
 
 namespace geomtools {
 
-  using namespace std;
-
   class regular_polygon : public i_shape_2d
   {
     
   public:
-    static const string REGULAR_POLYGON_LABEL;
+    static const std::string REGULAR_POLYGON_LABEL;
  
     enum mode_t
       {
@@ -104,7 +102,7 @@ namespace geomtools {
     virtual ~regular_polygon ();
   
     // methods:
-    virtual string get_shape_name () const;
+    virtual std::string get_shape_name () const;
       
     virtual bool is_on_surface (const vector_3d &,
                                 double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const; 
@@ -117,15 +115,15 @@ namespace geomtools {
                                  intercept_t & intercept_,
                                  double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
-    virtual void tree_dump (ostream & out_ = clog, 
-                            const string & title_ = "", 
-                            const string & indent_ = "", 
+    virtual void tree_dump (std::ostream & out_ = std::clog, 
+                            const std::string & title_ = "", 
+                            const std::string & indent_ = "", 
                             bool inherit_= false) const;
  
   };
 
 } // end of namespace geomtools
 
-#endif // __geomtools__regular_polygon_h
+#endif // GEOMTOOLS_REGULAR_POLYGON_H_
 
 // end of regular_polygon.h

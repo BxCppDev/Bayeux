@@ -13,8 +13,8 @@
 #include <fstream>
 #include <limits>
 
-#include <datatools/utils/utils.h>
-#include <datatools/utils/units.h>
+#include <datatools/utils.h>
+#include <datatools/units.h>
 
 #include <geomtools/regular_polygon.h>
 
@@ -24,6 +24,36 @@ namespace geomtools {
   
   const string polyhedra::POLYHEDRA_LABEL = "polyhedra";
 
+  double polyhedra::get_xmin () const
+  {
+    return -_xy_max_;
+  }
+    
+  double polyhedra::get_xmax () const
+  {
+    return +_xy_max_;
+  }
+    
+  double polyhedra::get_ymin () const
+  {
+    return -_xy_max_;
+  }
+    
+  double polyhedra::get_ymax () const
+  {
+    return +_xy_max_;
+  }
+    
+  double polyhedra::get_zmin () const
+  {
+    return _z_min_;
+  }
+    
+  double polyhedra::get_zmax () const
+  {
+    return _z_max_;
+  }
+  
   string polyhedra::get_shape_name () const
   {
     return POLYHEDRA_LABEL;
@@ -72,7 +102,7 @@ namespace geomtools {
     return _r_max_;
   }
 
-  const polyhedra::rz_col_t & polyhedra::points () const
+  const polyhedra::rz_col_type & polyhedra::points () const
   {
     return _points_;
   }
@@ -88,7 +118,7 @@ namespace geomtools {
   {
   }
 
-  void polyhedra::initialize (const datatools::utils::properties & setup_)
+  void polyhedra::initialize (const datatools::properties & setup_)
   {
     string build_mode_label;
     string datafile;
@@ -97,7 +127,7 @@ namespace geomtools {
     if (setup_.has_key ("length_unit"))
       {
         string lunit_str = setup_.fetch_string ("length_unit");
-        lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+        lunit = datatools::units::get_length_unit_from (lunit_str);
       }
 
     if (setup_.has_key ("build_mode"))
@@ -111,7 +141,7 @@ namespace geomtools {
         vector<double> rmins;
         vector<double> rmaxs;
         double rmin;
-        datatools::utils::invalidate (rmin);
+        datatools::invalidate (rmin);
         size_t n_sides;
 
         if (setup_.has_key ("sides"))
@@ -192,7 +222,7 @@ namespace geomtools {
           {
             double a_z = zs[i];
             double a_rmin;
-            if (datatools::utils::is_valid (rmin))
+            if (datatools::is_valid (rmin))
               {
                 a_rmin = rmin;
               }
@@ -219,7 +249,7 @@ namespace geomtools {
                     << "Missing 'datafile' property !";
             throw runtime_error (message.str ());
           }
-        datatools::utils::fetch_path_with_env (datafile);
+        datatools::fetch_path_with_env (datafile);
         this->initialize (datafile);
       }
     else 
@@ -306,7 +336,7 @@ namespace geomtools {
                                   << filename << "' at line " << count << " !";
                           throw runtime_error (message.str ()); 
                         }
-                      length_unit = datatools::utils::units::get_length_unit_from (unit_str);
+                      length_unit = datatools::units::get_length_unit_from (unit_str);
                     }
                   else if (word == "#@ignore_rmin")
                     {
@@ -344,9 +374,9 @@ namespace geomtools {
         {
           istringstream iss (line);
           double z, r1, r2;
-          datatools::utils::invalidate (z);
-          datatools::utils::invalidate (r1);
-          datatools::utils::invalidate (r2);
+          datatools::invalidate (z);
+          datatools::invalidate (r1);
+          datatools::invalidate (r2);
           iss >> z;
           if (! iss)
             {
@@ -372,7 +402,7 @@ namespace geomtools {
             {
               // two columns format:
               r2 = r1;
-              datatools::utils::invalidate (r1);
+              datatools::invalidate (r1);
             }
           else
             {
@@ -380,7 +410,7 @@ namespace geomtools {
                 {
                   // if line ends with a comment: this is two columns format !
                   r2 = r1;
-                  datatools::utils::invalidate (r1);
+                  datatools::invalidate (r1);
                 }
               else 
                 {
@@ -397,11 +427,11 @@ namespace geomtools {
                     }       
                   if (ignore_rmin)
                     {
-                      datatools::utils::invalidate (r1);
+                      datatools::invalidate (r1);
                     }
                 }
             }
-          if (datatools::utils::is_valid (r2) && (r2 < 0.0))
+          if (datatools::is_valid (r2) && (r2 < 0.0))
             {
               ostringstream message;
               message << "polyhedra::initialize: " 
@@ -413,7 +443,7 @@ namespace geomtools {
           tz  = z  * z_factor * length_unit;
           tr1 = r1 * r_factor * length_unit;
           tr2 = r2 * r_factor * length_unit;
-          if (datatools::utils::is_valid (r1))
+          if (datatools::is_valid (r1))
             {
               this->add (tz, tr1, tr2, false);
             }
@@ -500,13 +530,13 @@ namespace geomtools {
     if (! is_valid ()) return;
     _z_min_ = _z_max_ = _r_max_ = _xy_max_ = numeric_limits<double>::quiet_NaN ();  
     double max_radius = numeric_limits<double>::quiet_NaN ();
-    for (rz_col_t::const_iterator i = _points_.begin ();
+    for (rz_col_type::const_iterator i = _points_.begin ();
          i != _points_.end ();
          i++)
       {
         double z    = i->first;
         double rmax = i->second.rmax;
-        if (! datatools::utils::is_valid (_z_min_))
+        if (! datatools::is_valid (_z_min_))
           {
             _z_min_ = z;
           }
@@ -514,7 +544,7 @@ namespace geomtools {
           {
             _z_min_ = z;
           }
-        if (! datatools::utils::is_valid (_z_max_))
+        if (! datatools::is_valid (_z_max_))
           {
             _z_max_ = z;
           }
@@ -522,7 +552,7 @@ namespace geomtools {
           {
             _z_max_ = z;
           }
-        if (! datatools::utils::is_valid (max_radius))
+        if (! datatools::is_valid (max_radius))
           {
             max_radius = rmax;
           }
@@ -541,7 +571,7 @@ namespace geomtools {
         double ys  = _r_max_ * sin (theta);
         double axs = abs (xs);
         double ays = abs (ys);
-        if (! datatools::utils::is_valid (_xy_max_))
+        if (! datatools::is_valid (_xy_max_))
           {
             _xy_max_ = axs;
           }
@@ -579,7 +609,7 @@ namespace geomtools {
         throw runtime_error (message.str ());
       }
     size_t zcount = 0;
-    rz_col_t::const_iterator i = _points_.begin ();
+    rz_col_type::const_iterator i = _points_.begin ();
     for (; i != _points_.end (); i++)
       {
         if (zcount == zplane_index_) 
@@ -609,7 +639,7 @@ namespace geomtools {
     
     // bottom surface:
     {
-      rz_col_t::const_iterator i = _points_.begin ();
+      rz_col_type::const_iterator i = _points_.begin ();
       double z0 = i->first;
       double rmin0 = i->second.rmin;
       double rmax0 = i->second.rmax;
@@ -621,12 +651,12 @@ namespace geomtools {
 
     // outer side surface:
     {
-      rz_col_t::const_iterator i = _points_.begin ();
+      rz_col_type::const_iterator i = _points_.begin ();
       double z0 = i->first;
       double rmin0 = i->second.rmin;
       double rmax0 = i->second.rmax;
       double s = 0.0;
-      rz_col_t::const_iterator j = _points_.begin ();
+      rz_col_type::const_iterator j = _points_.begin ();
       j++;
       while (j != _points_.end ())
         {
@@ -666,12 +696,12 @@ namespace geomtools {
  
     {
       // inner side surface:
-      rz_col_t::const_iterator i = _points_.begin ();
+      rz_col_type::const_iterator i = _points_.begin ();
       double z0 = i->first;
       double rmin0 = i->second.rmin;
       double rmax0 = i->second.rmax;
       double s = 0.0;
-      rz_col_t::const_iterator j = i;
+      rz_col_type::const_iterator j = i;
       j++;
       while (j != _points_.end ())
         {
@@ -713,10 +743,10 @@ namespace geomtools {
     double vint = 0.0;
     // Outer envelope:
     {
-      rz_col_t::const_iterator i = _points_.begin ();
+      rz_col_type::const_iterator i = _points_.begin ();
       double z0 = i->first;
       double rmax0 = i->second.rmax;
-      rz_col_t::const_iterator j = i;
+      rz_col_type::const_iterator j = i;
       j++;
       while (j != _points_.end ())
         {
@@ -739,10 +769,10 @@ namespace geomtools {
 
     // Inner envelope:
     {
-      rz_col_t::const_iterator i = _points_.begin ();
+      rz_col_type::const_iterator i = _points_.begin ();
       double z0 = i->first;
       double rmin0 = i->second.rmin;
-      rz_col_t::const_iterator j = i;
+      rz_col_type::const_iterator j = i;
       j++;
       while (j != _points_.end ())
         {
@@ -773,7 +803,7 @@ namespace geomtools {
   {
     ip_.reset ();
     ip_.set_n_sides (this->get_n_sides ());
-    for (polyhedra::rz_col_t::const_iterator i = _points_.begin ();
+    for (polyhedra::rz_col_type::const_iterator i = _points_.begin ();
          i != _points_.end ();
          i++)
       {
@@ -793,7 +823,7 @@ namespace geomtools {
   {
     op_.reset ();
     op_.set_n_sides (this->get_n_sides ());
-    for (polyhedra::rz_col_t::const_iterator i = _points_.begin ();
+    for (polyhedra::rz_col_type::const_iterator i = _points_.begin ();
          i != _points_.end ();
          i++)
       {
@@ -864,12 +894,12 @@ namespace geomtools {
     double r = hypot (point_.x (), point_.y ());
     if (r > get_r_max () + 0.5 * skin) return false;
     /*
-      for (rz_col_t::const_iterator i = _points_.begin ();
+      for (rz_col_type::const_iterator i = _points_.begin ();
       i != _points_.end ();
       i++)
       {
       double z1 = i->first;
-      rz_col_t::const_iterator j = i;
+      rz_col_type::const_iterator j = i;
       j++;
       if (j == _points_.end ())
       {
@@ -907,12 +937,12 @@ namespace geomtools {
       else if (is_on_surface (position_, FACE_TOP)) normal.set (0.0, 0.0, +1.0); 
       else if (is_on_surface (position_, FACE_SIDE)) 
       {
-      for (rz_col_t::const_iterator i = _points_.begin ();
+      for (rz_col_type::const_iterator i = _points_.begin ();
       i != _points_.end ();
       i++)
       {
       double z1 = i->first;
-      rz_col_t::const_iterator j = i;
+      rz_col_type::const_iterator j = i;
       j++;
       if (j == _points_.end ())
       {
@@ -969,12 +999,12 @@ namespace geomtools {
     
       if (mask & FACE_SIDE) 
       {
-      for (rz_col_t::const_iterator i = _points_.begin ();
+      for (rz_col_type::const_iterator i = _points_.begin ();
       i != _points_.end ();
       i++)
       {
       double z1 = i->first;
-      rz_col_t::const_iterator j = i;
+      rz_col_type::const_iterator j = i;
       j++;
       if (j == _points_.end ())
       {
@@ -1015,7 +1045,7 @@ namespace geomtools {
     out_ << '{' << polyhedra::POLYHEDRA_LABEL;
     out_ << ' ' << p_._n_sides_;
     out_ << ' ' << p_._points_.size ();
-    for (polyhedra::rz_col_t::const_iterator i = p_._points_.begin ();
+    for (polyhedra::rz_col_type::const_iterator i = p_._points_.begin ();
          i != p_._points_.end ();
          i++)
       {
@@ -1084,34 +1114,33 @@ namespace geomtools {
                              const string & indent_, 
                              bool inherit_) const
   {
-    namespace du = datatools::utils;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     i_shape_3d::tree_dump (out_, title_, indent_, true);
 
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "N(sides) : " << get_n_sides () << endl;
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "Z(min) : " << get_z_min () / CLHEP::mm << " mm" << endl;
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "Z(max) : " << get_z_max () / CLHEP::mm << " mm" << endl;
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "R(max) : " << get_r_max () / CLHEP::mm << " mm" << endl;
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "Extruded : " << is_extruded () << endl;
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "Number of points : " << _points_.size () << endl;
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "Volume : " << get_volume () / CLHEP::cm3 << " cm3" << endl;
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "Bottom surface : " << get_surface (FACE_BOTTOM) / CLHEP::cm2 << " cm2" << endl;
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "Top surface : " << get_surface (FACE_TOP) / CLHEP::cm2 << " cm2" << endl;
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "Outer side surface : " << get_surface (FACE_OUTER_SIDE) / CLHEP::cm2 << " cm2" << endl;
-    out_ << indent << du::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag 
          << "Inner side surface : " << get_surface (FACE_INNER_SIDE) / CLHEP::cm2 << " cm2" << endl;
-    out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
          << "Total surface : " << get_surface (FACE_ALL) / CLHEP::cm2 << " cm2" << endl;
     return;
   }

@@ -14,12 +14,13 @@
  * 
  */
 
-#ifndef __geomtools__surrounded_boxed_model_h
-#define __geomtools__surrounded_boxed_model_h 1
+#ifndef GEOMTOOLS_SURROUNDED_BOXED_MODEL_H_
+#define GEOMTOOLS_SURROUNDED_BOXED_MODEL_H_ 1
 
 #include <string> 
 #include <iostream>
 #include <vector>
+#include <map>
 
 #include <geomtools/i_boxed_model.h>
 #include <geomtools/box.h>
@@ -30,28 +31,26 @@
 
 namespace geomtools {
 
-  using namespace std;
-
   // define a geometry model with some surrounded boxed models along
   // a specific axis (X, Y or Z)
   GEOMTOOLS_BOXED_MODEL_CLASS_DECLARE(surrounded_boxed_model) 
   {
   public:
 
-    static const string LABEL_PROPERTY_PREFIX;
-    static const string MODEL_PROPERTY_PREFIX;
-    static const string SURROUNDED_LABEL;
-    static const string SURROUNDING_LABEL;
+    static const std::string LABEL_PROPERTY_PREFIX;
+    static const std::string MODEL_PROPERTY_PREFIX;
+    static const std::string SURROUNDED_LABEL;
+    static const std::string SURROUNDING_LABEL;
 
     struct surrounding_item
     {
-      string           label;
+      std::string           label;
       const i_model *  model;
       placement        placmt;
       physical_volume  phys;
 
     public:
-      const string & get_label () const
+      const std::string & get_label () const
       {
         return label;
       }
@@ -69,12 +68,12 @@ namespace geomtools {
       }
     };
 
-    typedef map<int, surrounding_item> surrounding_dict_t;
-    typedef map<string, int> labels_dict_t;
+    typedef std::map<int, surrounding_item> surrounding_dict_type;
+    typedef std::map<std::string, int> labels_dict_type;
 
   private:
 
-    const string & __get_material_name () const;
+    const std::string & __get_material_name () const;
 
   public: 
 
@@ -82,27 +81,27 @@ namespace geomtools {
     
     void set_debug (bool);
 
-    const string & get_material_name () const;
+    const std::string & get_material_name () const;
 
-    void set_material_name (const string &);
+    void set_material_name (const std::string &);
 
     virtual const geomtools::box & get_box () const;
     const geomtools::box & get_solid () const;
 
-    void set_surrounded_label (const string & label_);
-    const string & get_surrounded_label () const;
+    void set_surrounded_label (const std::string & label_);
+    const std::string & get_surrounded_label () const;
     void set_surrounded_model (const i_model & model_);
     const i_model & get_surrounded_model () const;
 
     size_t get_number_of_surrounding_items () const;
-    bool has_surrounding_model (const string & label_) const;
-    void add_surrounding_model (int pos_, const i_model &, const string & label_ = "");
+    bool has_surrounding_model (const std::string & label_) const;
+    void add_surrounding_model (int pos_, const i_model &, const std::string & label_ = "");
     const i_model & get_surrounding_model (int i_) const;
     const surrounding_item & get_surrounding_item (int i_) const;
-    const i_model & get_surrounding_model (const string & label_) const;
-    const surrounding_item & get_surrounding_item (const string & label_) const;
-    const labels_dict_t & get_surrounding_labels () const;
-    const surrounding_dict_t & get_surrounding_items () const;
+    const i_model & get_surrounding_model (const std::string & label_) const;
+    const surrounding_item & get_surrounding_item (const std::string & label_) const;
+    const labels_dict_type & get_surrounding_labels () const;
+    const surrounding_dict_type & get_surrounding_items () const;
 
   public:
   
@@ -112,35 +111,35 @@ namespace geomtools {
 
   public:
 
-    virtual string get_model_id () const;
+    virtual std::string get_model_id () const;
 
   protected:
   
-    virtual void _at_construct (const string & name_,
-                                const datatools::utils::properties & config_,
-                                models_col_t * models_ = 0);
+    virtual void _at_construct (const std::string & name_,
+                                const datatools::properties & config_,
+                                models_col_type * models_ = 0);
       
   public: 
 
-    virtual void tree_dump (ostream & out_         = clog, 
-                            const string & title_  = "", 
-                            const string & indent_ = "", 
+    virtual void tree_dump (std::ostream & out_         = std::clog, 
+                            const std::string & title_  = "", 
+                            const std::string & indent_ = "", 
                             bool inherit_          = false) const;
  
   private:
 
     bool _debug_;
 
-    vector<string>      _position_labels_;
-    string              _material_name_;
+    std::vector<std::string>      _position_labels_;
+    std::string              _material_name_;
 
     const i_model *     _surrounded_model_;
-    string              _surrounded_label_;
+    std::string              _surrounded_label_;
     placement           _surrounded_placmt_;
     physical_volume     _surrounded_phys_;
 
-    surrounding_dict_t  _surrounding_items_;
-    labels_dict_t       _surrounding_labels_;
+    surrounding_dict_type  _surrounding_items_;
+    labels_dict_type       _surrounding_labels_;
     bool                _centered_x_;
     bool                _centered_y_;
     bool                _centered_z_;
@@ -157,6 +156,6 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // __geomtools__surrounded_boxed_model_h
+#endif // GEOMTOOLS_SURROUNDED_BOXED_MODEL_H_
 
 // end of surrounded_boxed_model.h

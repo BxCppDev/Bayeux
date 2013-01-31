@@ -11,7 +11,7 @@
 #include <limits>
 
 #include <geomtools/tessellation.h>
-#include <datatools/utils/units.h>
+#include <datatools/units.h>
 
 namespace geomtools {
   namespace stl {

@@ -1,12 +1,12 @@
 // -*- mode: c++; -*- 
 /* geomtools::the_serializable.h */
 
-#ifndef __geomtools__the_serializable_h__
-#define __geomtools__the_serializable_h__ 1
+#ifndef GEOMTOOLS_THE_SERIALIZABLE_H_
+#define GEOMTOOLS_THE_SERIALIZABLE_H_ 1
 
-#include <datatools/serialization/archives_instantiation.h>
+#include <datatools/archives_instantiation.h>
 #include <boost/serialization/export.hpp>
-#include <geomtools/serialization/the_serializable.ipp>
+#include <geomtools/the_serializable.ipp>
 
 DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE_ALL(geomtools::vector_2d)
 
@@ -38,6 +38,6 @@ BOOST_CLASS_EXPORT_IMPLEMENT(geomtools::blur_spot)
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(geomtools::display_data)
 BOOST_CLASS_EXPORT_IMPLEMENT(geomtools::display_data) 
 
-#endif // __geomtools__the_serializable_h__
+#endif // GEOMTOOLS_THE_SERIALIZABLE_H_
 
 /* end of geomtools::the_serializable.h */
