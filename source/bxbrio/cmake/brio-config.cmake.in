@@ -20,11 +20,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-----------------------------------------------------------------------
 
+set(brio_DATATOOLS_DIR   @datatools_DIR@)
+
 #-----------------------------------------------------------------------
 # Locate ourselves, since all our config files should have been installed
 # alongside us...
 #
-get_filename_component(_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
+get_filename_component(_brio_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
 #-----------------------------------------------------------------------
 # Include the file listing all the imported targets to make them available
@@ -32,7 +34,8 @@ get_filename_component(_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
 # Protect it with an in-memory variable so that we don't include
 # it twice should multiple calls to find_package be made
 if(NOT brio_LIBDEPS_LOADED)
-  include("${_thisdir}/brio-libraries.cmake")
+  find_package(datatools REQUIRED CONFIG PATHS ${brio_DATATOOLS_DIR} NO_DEFAULT_PATH)
+  include("${_brio_thisdir}/brio-libraries.cmake")
   set(brio_LIBDEPS_LOADED 1)
 endif()
 
@@ -56,7 +59,7 @@ set(brio_THIRD_PARTY_INCLUDE_DIRS
 #-----------------------------------------------------------------------
 # Set brio definitions, include paths and library variables
 #
-get_filename_component(_brio_inc "${_thisdir}/@TO_BRIO_INCLUDEDIR@" ABSOLUTE)
+get_filename_component(_brio_inc "${_brio_thisdir}/@TO_BRIO_INCLUDEDIR@" ABSOLUTE)
 
 set(brio_INCLUDE_DIR "${_brio_inc}" CACHE PATH "Path to brio headers")
 
