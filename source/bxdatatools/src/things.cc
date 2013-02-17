@@ -1,6 +1,6 @@
 /* things.cc
  *
- * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -626,6 +626,57 @@ void things::tree_dump(std::ostream& a_out, const std::string& a_title,
       a_entry.tree_dump(a_out, "", indent_oss.str());
     }
   }
+}
+
+
+datatools::i_serializable & 
+things::grab(const std::string& a_name, 
+             const std::string& a_serial_tag) {
+  dict_type::iterator found = things_.find(a_name);
+  if (found == things_.end()) {
+    std::ostringstream message;
+    message << "datatools::things::grab: No stored object has name '" 
+        << a_name << "' !";
+    throw std::logic_error(message.str());
+  }
+  if (found->second.is_const()) {
+    std::ostringstream message;
+    message << "datatools::things::grab: Object named '" 
+            << a_name << "' is constant !";
+    throw std::logic_error(message.str());
+  }
+  if (! a_serial_tag.empty  ())
+    {
+      if (a_serial_tag != found->second.handle->get_serial_tag())
+        {
+          std::ostringstream message;
+          message << "datatools::things::grab: Object named '" 
+                  << a_name << "' is not a '" << a_serial_tag << "' !";
+        }
+    }
+  return *(found->second.handle);
+}
+
+const datatools::i_serializable & 
+things::get(const std::string& a_name, 
+            const std::string& a_serial_tag) const {
+  dict_type::const_iterator found = things_.find(a_name);
+  if (found == things_.end()) {
+    std::ostringstream message;
+    message << "datatools::things::get: No stored object has name '" 
+            << a_name << "' !";
+    throw std::logic_error(message.str());
+  }
+  if (! a_serial_tag.empty  ())
+    {
+      if (a_serial_tag != found->second.handle->get_serial_tag())
+        {
+          std::ostringstream message;
+          message << "datatools::things::get: Object named '" 
+                  << a_name << "' is not a '" << a_serial_tag << "' !";
+        }
+    }
+  return *(found->second.handle);
 }
 
 }  // end of namespace datatools

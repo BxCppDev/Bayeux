@@ -96,4 +96,7 @@ This is the datatools package ChangeLog
 	* change serialization tag scheme and add backward compatibility support
 	* add documentation
 	* remove unused code
+2013-02-18 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* fix a bug in serial_tag of properties classes
+	* add methods in things
 

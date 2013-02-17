@@ -1,9 +1,9 @@
 /* things.h
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-03-08
- * Last modified : 2012-12-16
+ * Last modified : 2013-02-18
  * 
- * Copyright (C) 2011-2012 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -246,7 +246,12 @@ class things :
   void dump_stderr() const;
 
   void dump_stdout() const;
-
+  
+  datatools::i_serializable & 
+    grab(const std::string& a_name, const std::string& a_serial_tag= "");
+  
+  const datatools::i_serializable & 
+    get(const std::string& a_name, const std::string& a_serial_tag= "") const;
 
  private:
   

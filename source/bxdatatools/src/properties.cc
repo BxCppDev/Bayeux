@@ -32,8 +32,6 @@ namespace datatools {
 
 DATATOOLS_SERIALIZATION_IMPLEMENTATION_ADVANCED(properties,"datatools::properties")
 
-///DATATOOLS_SERIALIZATION_IMPLEMENTATION(properties::data,"datatools::properties::data")
-
 bool properties::g_debug = false;
 
 properties::default_key_validator properties::g_default_key_validator;
