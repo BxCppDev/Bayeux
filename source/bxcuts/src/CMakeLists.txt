@@ -40,6 +40,7 @@ include/cuts/or_cut.h
 include/cuts/reject_cut.h
 include/cuts/xnor_cut.h
 include/cuts/xor_cut.h
+include/cuts/random_cut.h
   )
 list_prepend(cuts_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
 
@@ -103,6 +104,7 @@ or_cut.cc
 reject_cut.cc
 xnor_cut.cc
 xor_cut.cc
+random_cut.cc
   )
 
 #-----------------------------------------------------------------------

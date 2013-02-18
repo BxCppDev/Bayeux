@@ -24,6 +24,7 @@
 ###file(GLOB cuts_tests_programs test_*.cxx)
 set ( cuts_tests_programs
   test_accept_cut.cxx 
+  test_random_cut.cxx 
   test_and_cut.cxx
   test_manager.cxx
 )

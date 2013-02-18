@@ -1,12 +1,12 @@
 // -*- mode: c++ ; -*- 
-// test_accept_cut.cxx
+// test_random_cut.cxx
 
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
-#include <cuts/accept_cut.h>
+#include <cuts/random_cut.h>
 
 using namespace std;
 
@@ -15,7 +15,7 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'cuts::accept_cut'!" << endl; 
+      clog << "Test program for class 'cuts::random_cut'!" << endl; 
   
       bool debug = false;
 
@@ -46,15 +46,26 @@ int main (int argc_, char ** argv_)
           iarg++;
       }
     
-      cuts::accept_cut my_accept_cut;
-      int i;
-      my_accept_cut.set_user_data (&i);
-      int status = my_accept_cut.process ();
-      if (status == cuts::i_cut::ACCEPTED)
-        {
-          clog << "Accepted !" << endl;
-        }
+      datatools::properties config;
+      config.store("seed", 314159);
+      config.store("accept_probability", 0.3);
 
+      cuts::random_cut my_random_cut;
+      my_random_cut.initialize_standalone (config);
+
+      int max_count = 10000;
+      int count = 0;
+      for (int ishoot = 0; ishoot < max_count; ishoot++)
+        {
+          int i;
+          my_random_cut.set_user_data (&i);
+          int status = my_random_cut.process ();
+          if (status == cuts::i_cut::ACCEPTED)
+            {
+              count++;
+            }
+        }
+      clog << "Accepted count=" << count << endl;
 
     }
   catch (exception & x)
@@ -70,4 +81,4 @@ int main (int argc_, char ** argv_)
   return (error_code);
 }
 
-// end of test_accept_cut.cxx
+// end of test_random_cut.cxx
