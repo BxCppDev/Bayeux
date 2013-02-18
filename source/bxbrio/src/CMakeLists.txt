@@ -216,7 +216,7 @@ if(APPLE)
     )
 else()
   install(EXPORT brio-libraries 
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/brio-${brio_VERSION}    COMPONENT Development
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/brio-${brio_VERSION} COMPONENT Development
     )
 endif()
 
