@@ -1,0 +1,50 @@
+// -*- mode: c++; -*- 
+/* dpp_config.h header file 
+ */
+
+#ifndef DPP_DPP_CONFIG_H_
+#define DPP_DPP_CONFIG_H_ 1
+
+/*** dpp versioning information ***/
+
+//  DPP_VERSION % 100        is the patch level
+//  DPP_VERSION / 100 % 1000 is the minor version
+//  DPP_VERSION / 100000     is the major version
+
+#define DPP_VERSION_MAJOR @dpp_VERSION_MAJOR@
+#define DPP_VERSION_MINOR @dpp_VERSION_MINOR@
+#define DPP_PATCH_VERSION @dpp_PATCH_VERSION@
+
+#define DPP_VERSION @_dpp_VERSION_NUMERIC@
+
+//  DPP_LIB_VERSION must be defined to be the same as DPP_VERSION
+//  but as a *string* in the form "x.y[.z]" where x is the major version
+//  number, y is the minor version number, and z is the patch level if not 0.
+
+#define DPP_LIB_VERSION "@dpp_VERSION@"
+
+/***  dpp debug flag ***/
+#cmakedefine01 DPP_WITH_DEBUG
+
+/***  dpp embedded Boost/Serialization based I/O ***/
+//#cmakedefine01 DPP_WITH_BIO
+
+/***  dpp embedded CAMP-based reflection ***/
+//#cmakedefine01 DPP_WITH_REFLECTION
+
+#define DPP_DATATOOLS_LEGACY @_dpp_DATATOOLS_LEGACY@
+
+/*** Trick to address the datatools namespaces ***/
+#if DPP_DATATOOLS_LEGACY == 1
+#define DPP_DU datatools::utils
+#define DPP_DS datatools::service
+#define DPP_DSZ datatools::serialization
+#else
+#define DPP_DU datatools
+#define DPP_DS datatools
+#define DPP_DSZ datatools
+#endif
+
+#endif // DPP_DPP_CONFIG_H_
+
+// end of dpp_config.h

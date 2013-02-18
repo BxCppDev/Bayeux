@@ -1,0 +1,96 @@
+# - Config file for the dpp package
+# It defines the following variables
+#  dpp_INCLUDE_DIRS - include directories for dpp
+#  dpp_LIBRARY      - libraries to link against
+#  dpp_LIBRARIES    - libraries to link against
+#  dpp_WITH_BIO     - flag for Boost/Serialization I/O DLL (a.k.a. 'bio')
+#  dpp_BIO_LIBRARY  - library targets to link against (Boost I/O library)
+#  dpp_WITH_REFLECTION  - flag for reflection DLL
+#  dpp_REFLECTION_LIBRARY - library targets to link against (reflection library)
+
+#-----------------------------------------------------------------------
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#-----------------------------------------------------------------------
+
+# set(dpp_WITH_BIO        @DPP_WITH_BIO@)
+# set(dpp_WITH_REFLECTION @DPP_WITH_REFLECTION@)
+set(dpp_CUTS_DIR   @cuts_DIR@)
+
+#-----------------------------------------------------------------------
+# Locate ourselves, since all our config files should have been installed
+# alongside us...
+#
+get_filename_component(_dpp_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+#-----------------------------------------------------------------------
+# Include the file listing all the imported targets to make them available
+# This is installed in the same location as us...
+# Protect it with an in-memory variable so that we don't include
+# it twice should multiple calls to find_package be made
+if(NOT dpp_LIBDEPS_LOADED)
+  find_package(cuts REQUIRED CONFIG PATHS ${dpp_CUTS_DIR} NO_DEFAULT_PATH)
+  include("${_dpp_thisdir}/dpp-libraries.cmake")
+  set(dpp_LIBDEPS_LOADED 1)
+endif()
+
+#-----------------------------------------------------------------------
+# Set variables pointing to used third party headers and locations.
+# We have to set the headers because dpp exports the headers in
+# its public interface.
+# The locations are set so that clients using those packages (i.e. Boost and
+# ROOT), can re-find them if needed using exact locations (EXPERIMENTAL)
+# e.g:
+#
+#  find_package(dpp)
+#  set(BOOST_ROOT ${dpp_BOOST_ROOT})
+#  find_package(Boost NO_DEFAULT_PATH)
+#
+set(dpp_THIRD_PARTY_INCLUDE_DIRS
+  @cuts_INCLUDE_DIRS@
+  )
+
+# if(dpp_WITH_REFLECTION)
+#   list(INSERT dpp_THIRD_PARTY_INCLUDE_DIRS 0
+#      @CAMP_INCLUDE_DIR@
+#   )
+# endif()
+
+#-----------------------------------------------------------------------
+# Set dpp definitions, include paths and library variables
+#
+get_filename_component(_dpp_inc "${_dpp_thisdir}/@TO_DPP_INCLUDEDIR@" ABSOLUTE)
+
+set(dpp_INCLUDE_DIR "${_dpp_inc}" CACHE PATH "Path to dpp headers")
+
+set(dpp_INCLUDE_DIRS
+  ${dpp_INCLUDE_DIR}
+  ${dpp_THIRD_PARTY_INCLUDE_DIRS}
+  )
+
+#-----------------------------------------------------------------------
+# Set dpp_LIBRARIES variable
+set(dpp_LIBRARY dpp CACHE PATH "Path to dpp library")
+
+# if(dpp_WITH_BIO)
+#   set(dpp_BIO_LIBRARY dpp_bio)
+# endif()
+
+# if(dpp_WITH_REFLECTION)
+#   set(dpp_REFLECTION_LIBRARY dpp_reflection)
+# endif()
+  
+set(dpp_LIBRARIES ${dpp_LIBRARY})
+
+unset(_dpp_inc)
+# end
