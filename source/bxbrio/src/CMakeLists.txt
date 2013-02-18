@@ -41,13 +41,12 @@ list(APPEND brio_PUBLIC_HEADERS ${PROJECT_BINARY_DIR}/include/brio/brio_config.h
 
 #-----------------------------------------------------------------------
 # PRIVATE HEADERS
-
-# - DETAIL headers: Again a list, but we also set their Mac OSX
+## - DETAIL headers: Again a list, but we also set their Mac OSX
 # package location because they are nested...
 set(brio_detail_HEADERS
-    include/brio/detail/base_io.h
-    include/brio/detail/brio_record.h
-    include/brio/detail/TArrayCMod.h
+  include/brio/detail/base_io.h
+  include/brio/detail/brio_record.h
+  include/brio/detail/TArrayCMod.h
   )
 list_prepend(brio_detail_HEADERS "${PROJECT_SOURCE_DIR}/")
 
@@ -55,6 +54,17 @@ set_source_files_properties(${brio_detail_HEADERS}
   PROPERTIES
     MACOSX_PACKAGE_LOCATION Headers/detail
   )
+
+# We have to install the detail header modules separately if brio 
+# isn't built as a Framework.
+if(NOT APPLE)
+  foreach(_module detail)
+    install(FILES ${brio_${_module}_HEADERS}
+      DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/brio/${_module}
+      COMPONENT   Development
+      )
+  endforeach()
+endif()
 
 
 #-----------------------------------------------------------------------
