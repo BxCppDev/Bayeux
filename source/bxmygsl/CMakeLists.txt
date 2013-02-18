@@ -84,6 +84,7 @@ else()
   set (MYGSL_WITH_REFLECTION 0)
 endif ()
 
+
 #-----------------------------------------------------------------------
 # On Apple, we fixup the install prefix to handle installing documentation,
 # support files and so on under the framework's "Resources" directory. 

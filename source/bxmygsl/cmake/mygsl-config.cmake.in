@@ -95,6 +95,7 @@ set(mygsl_LIBRARIES ${mygsl_LIBRARY})
  
 #message(STATUS "mygsl-config.cmake: XXXXX mygsl_LIBRARIES=${mygsl_LIBRARIES}")
 #message(STATUS "mygsl-config.cmake: XXXXX datatools_LIBRARIES=@datatools_LIBRARIES@")
+#message(STATUS "mygsl-config.cmake: XXXXX mygsl_INCLUDE_DIRS=${mygsl_INCLUDE_DIRS}")
 
 unset(_mygsl_inc)
 # end

@@ -76,11 +76,6 @@ list(APPEND mygsl_PUBLIC_HEADERS ${PROJECT_BINARY_DIR}/include/mygsl/mygsl_confi
 #-----------------------------------------------------------------------
 # PRIVATE HEADERS
 
-set_source_files_properties(${mygsl_eos_HEADERS}
-  PROPERTIES
-    MACOSX_PACKAGE_LOCATION Headers/eos
-  )
-
 # - DETAIL headers: Again a list, but we also set their Mac OSX
 # package location because they are nested...
 set(mygsl_detail_HEADERS
@@ -96,7 +91,7 @@ set_source_files_properties(${mygsl_detail_HEADERS}
 # We have to install the detail header modules separately if mygsl 
 # isn't built as a Framework.
 if(NOT APPLE)
-  foreach(_module detail eos)
+  foreach(_module detail)
     install(FILES ${mygsl_${_module}_HEADERS}
       DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/mygsl/${_module}
       COMPONENT   Development
@@ -225,7 +220,7 @@ include_directories(
   ${PROJECT_SOURCE_DIR}/include	
   ${datatools_INCLUDE_DIRS}
   ${GSL_INCLUDE_DIR}
-  )
+ )
 
 if ( MYGSL_WITH_REFLECTION )
   include_directories(
@@ -252,9 +247,16 @@ set_target_properties(mygsl
   )
 
 if ( MYGSL_WITH_REFLECTION )
-  target_link_libraries(mygsl ${datatools_LIBRARIES} ${GSL_LIBRARIES} ${CAMP_LIBRARIES} ${CMAKE_DL_LIBS})
+  target_link_libraries(mygsl 
+    ${datatools_LIBRARIES} 
+    ${GSL_LIBRARIES} 
+    ${CAMP_LIBRARIES} 
+    ${CMAKE_DL_LIBS})
 else ()
-  target_link_libraries(mygsl ${datatools_LIBRARIES} ${GSL_LIBRARIES} ${CMAKE_DL_LIBS})
+  target_link_libraries(mygsl 
+    ${datatools_LIBRARIES} 
+    ${GSL_LIBRARIES} 
+    ${CMAKE_DL_LIBS})
 endif ()
 
 set(MYGSL_TARGETS mygsl)
