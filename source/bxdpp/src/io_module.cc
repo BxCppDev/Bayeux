@@ -178,6 +178,7 @@ namespace dpp {
                 << "Module '" << get_name () << "' : invalid list of filenames !";
         throw std::logic_error (message.str ());
       }
+    _filenames_.dump(std::cerr);
     return;
   }
 
@@ -547,7 +548,8 @@ namespace dpp {
 
   int io_module::_load (DPP_DU::things & a_event_record)
   {
-    // std::cerr << "DEVEL **************** io_module::_load: Entering..." << std::endl;
+    std::cerr << "DEVEL **************** io_module::_load: Entering..." << std::endl;
+    std::cerr << "DEVEL **************** io_module::_load: _filenames_.size () = " << _filenames_.size () << std::endl;
     // attempt to open a source of event records :
     //while ((_bio_source_ == 0) && (_brio_source_ == 0))
     int load_status = OK;
@@ -555,6 +557,7 @@ namespace dpp {
       {
         _file_record_counter_ = 0;
         _file_index_++;
+        std::cerr << "DEVEL **************** io_module::_load: _file_index_ = " << _file_index_ << std::endl;
         if (_file_index_ >= _filenames_.size ())
           {
             std::ostringstream message;
@@ -601,9 +604,13 @@ namespace dpp {
             _source_ = _bio_source_;
           }
         if (! _source_->is_open ()) _source_->open ();
-        // check if we have some records in it :
+        std::cerr << "DEVEL **************** io_module::_load: "
+                  << "Source is open." << std::endl;
+    // check if we have some records in it :
         if (! _source_->has_next_record ())
           {
+            std::cerr << "DEVEL **************** io_module::_load: "
+                      << "NO NEXT RECORD." << std::endl;
             _source_->reset ();
             delete _source_;
             _source_ = 0;
@@ -703,14 +710,24 @@ namespace dpp {
             _bio_source_ = 0;
           }
         _file_record_counter_ = 0;
-        if (_max_files_ > 0)
+        int effective_max_files = _max_files_;
+        if (_max_files_ < 0)
           {
-            if ((_file_index_ + 1) >= _max_files_)
+            if (_filenames_.is_ranged())
+              {
+                effective_max_files = _filenames_.size ();
+              }
+          }
+        if (effective_max_files > 0)
+          {
+            if ((_file_index_ + 1) >= effective_max_files)
               {
                 stop_input = true;
                 std::ostringstream message;
                 message << "dpp::io_module::_load: "
-                        << "Module '" << get_name () << "' has reached the requested maximum number of input file(s) (" << _max_files_ << ") !";
+                        << "Module '" << get_name () 
+                        << "' has reached the requested maximum number of input file(s) ("
+                        << effective_max_files << ") !";
                 std::clog << DPP_DU::io::notice << message.str () << std::endl;
               }
           }
@@ -718,7 +735,9 @@ namespace dpp {
           {
             std::ostringstream message;
             message << "dpp::io_module::_load: "
-                    << "Module '" << get_name () << "' has loaded the last available input file (total is " << _filenames_.size () << " file" << (_filenames_.size ()>1?"":"s") << ")!";
+                    << "Module '" << get_name () 
+                    << "' has loaded the last available input file (total is "
+                    << _filenames_.size () << " file" << (_filenames_.size ()>1?"":"s") << ")!";
             std::clog << DPP_DU::io::notice << message.str () << std::endl;
             stop_input = true;
           }

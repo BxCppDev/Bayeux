@@ -172,7 +172,7 @@ namespace dpp {
   void simple_data_sink::open_file_sink_ ()
   {
     // std::cerr << "DEVEL: simple_data_sink::open_file_sink_: Entering..." << std::endl;
-    namespace ds = datatools::serialization;
+    namespace ds = DPP_DSZ;
     if (boost::filesystem::exists (_sink_record.effective_label))
       {
         std::ostringstream message;
@@ -184,7 +184,7 @@ namespace dpp {
           }
         else
           {
-            std::clog << datatools::utils::io::warning << message.str () << std::endl;
+            std::clog << DPP_DU::io::warning << message.str () << std::endl;
           }
       }
     int mode = 0;

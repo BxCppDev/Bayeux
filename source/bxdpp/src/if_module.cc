@@ -399,7 +399,7 @@ namespace dpp {
                 std::ostringstream message;
                 message << "snemo::core::processing::if_module::initialize: "
                         << "Missing 'else_module' property ! ";
-                std::clog << datatools::utils::io::debug << message.str () << std::endl;
+                std::clog << DPP_DU::io::debug << message.str () << std::endl;
               }
                 
           }

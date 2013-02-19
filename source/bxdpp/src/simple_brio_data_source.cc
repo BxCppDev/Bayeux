@@ -206,7 +206,7 @@ namespace dpp {
 
         // Try to find the 'general info' store :
         if (_brio_file_reader_->has_store_with_serial_tag (brio_common::GENERAL_INFO_STORE_LABEL,
-                                                           datatools::utils::properties::SERIAL_TAG))
+                                                           DPP_DU::properties::SERIAL_TAG))
           {
             // If found, select it:
             _brio_file_reader_->select_store (brio_common::GENERAL_INFO_STORE_LABEL);
@@ -260,8 +260,7 @@ namespace dpp {
     // std::cerr << "DEVEL: simple_brio_data_source::_check_next_record: Entering... " << std::endl;
     _has_next_record = false;
 
-    std::string checked_label = brio_common::EVENT_RECORD_STORE_LABEL;
-    _brio_file_reader_->select_store (checked_label);
+    _brio_file_reader_->select_store (brio_common::EVENT_RECORD_STORE_LABEL);
     if (_brio_file_reader_->has_next ())
       {
         _has_next_record = true;
@@ -280,7 +279,7 @@ namespace dpp {
       }
     if (_source_record.status == source_record::STATUS_CLOSED)
       {
-        std::clog << datatools::utils::io::notice
+        std::clog << DPP_DU::io::notice
              << "dpp::simple_brio_data_source::has_next_record: "
              << "Opening data source..." << std::endl;
         this->simple_brio_data_source::open ();

@@ -22,8 +22,10 @@
  *
  * Description: 
  *
- *   Context service.
- * 
+ *  Context service. A service that provides a general purpose container
+ *  as the repository for transcient and sharable data during the   
+ *  lifetime of a data processing chain.
+ *
  * History: 
  * 
  */

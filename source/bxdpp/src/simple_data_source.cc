@@ -168,7 +168,7 @@ namespace dpp {
 
   void simple_data_source::_open_file_source ()
   {
-    namespace ds = datatools::serialization;
+    namespace ds = DPP_DSZ;
     //cerr << "DEVEL: dpp::simple_data_source::_open_file_source: Entering..." << std::endl;
     if (! boost::filesystem::exists (_source_record.effective_label))
       {
@@ -214,8 +214,7 @@ namespace dpp {
       {
         return;
       }
-    std::string checked_serial_tag = DPP_DU::things::SERIAL_TAG;
-    if (_boost_io_file_reader_->get_record_tag () == checked_serial_tag)
+    if (datatools::check_serial_tag<DPP_DU::things>(_boost_io_file_reader_->get_record_tag ()))
       {
         _has_next_record = true;
         return;
@@ -234,7 +233,7 @@ namespace dpp {
       }
     if (_source_record.status == source_record::STATUS_CLOSED)
       {
-        std::clog << datatools::utils::io::notice
+        std::clog << DPP_DU::io::notice
              << "dpp::simple_data_source::has_next_record: "
              << "Opening data source..." << std::endl;
         this->simple_data_source::open ();

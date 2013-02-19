@@ -79,7 +79,7 @@ namespace dpp {
     if (! _source_record.label.empty ())
       {
         std::ostringstream message;
-        message << "snemo::core::io::i_data_source::set:"
+        message << "dpp::i_data_source::set:"
                 << "A source labelled '" << _source_record.label
                 << "' is already in use !";
         throw std::logic_error (message.str ());
@@ -97,9 +97,9 @@ namespace dpp {
                                     int64_t a_entry)
   {
     std::ostringstream message;
-    message << "snemo::core::io::i_data_source::_load_record: "
+    message << "dpp::i_data_source::_load_record: "
             << "Load by entry number is not supported !";
-    std::cerr << datatools::utils::io::error
+    std::cerr << DPP_DU::io::error
               << message.str () << std::endl;
     return false;
   }
@@ -120,9 +120,9 @@ namespace dpp {
     if (noe <= UNKNOWN_NUMBER_OF_ENTRIES)
       {
         std::ostringstream message;
-        message << "snemo::core::io::i_data_source::get_number_of_entries: "
+        message << "dpp::i_data_source::get_number_of_entries: "
                 << "Cannot determine the number of entries !";
-        std::cerr << datatools::utils::io::error
+        std::cerr << DPP_DU::io::error
                   << message.str () << std::endl;
       }
     return noe;
@@ -152,8 +152,8 @@ namespace dpp {
   {
     if (! can_load_record (a_entry))
       {
-        std::cerr << datatools::utils::io::error
-                  << "snemo::core::io::i_data_source::load_record: "
+        std::cerr << DPP_DU::io::error
+                  << "dpp::i_data_source::load_record: "
                   << "Cannot access a random entry #" << a_entry << " !" 
                   << std::endl;           
         return false;
@@ -167,7 +167,7 @@ namespace dpp {
     if (local_devel)
       {
         std::cerr << "DEVEL: "
-                  << "snemo::core::io::i_data_source::_set_defaults: "
+                  << "dpp::i_data_source::_set_defaults: "
                   << "a_flags == " << a_flags << std::endl;
       }
     _debug_level = 0;
@@ -177,7 +177,7 @@ namespace dpp {
         if (local_devel)
           {
             std::cerr << "DEVEL: debug "
-                      << "snemo::core::io::i_data_source::_set_defaults: "
+                      << "dpp::i_data_source::_set_defaults: "
                       << "a_flags == " << a_flags << std::endl;
           }
       }

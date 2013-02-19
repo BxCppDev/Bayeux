@@ -43,6 +43,8 @@ include/dpp/skip_module.h
 include/dpp/utils.h
 include/dpp/utils_module.h
 include/dpp/dump_module.h
+include/dpp/base_cut.h
+include/dpp/utils_cut.h
   )
 list_prepend(dpp_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
 
@@ -88,6 +90,8 @@ set_source_files_properties(${dpp_eos_HEADERS}
 # SOURCE FILES
 # Pretty basic!
 set(dpp_SOURCES
+base_cut.cc
+utils_cut.cc
 base_module.cc
 brio_common.cc
 chain_module.cc
@@ -219,10 +223,25 @@ set_target_properties(dpp
     PUBLIC_HEADER                         "${dpp_PUBLIC_HEADERS}"
   )
 
+message (STATUS "mygsl_BIO_LIBRARY=${mygsl_BIO_LIBRARY}")
+message (STATUS "datatools_BIO_LIBRARY=${datatools_BIO_LIBRARY}")
 if ( DPP_WITH_REFLECTION )
-  target_link_libraries(dpp ${mygsl_LIBRARIES} ${cuts_LIBRARIES} ${brio_LIBRARIES} ${CAMP_LIBRARIES} ${CMAKE_DL_LIBS})
+  target_link_libraries(dpp 
+    ${mygsl_BIO_LIBRARY}  
+    ${mygsl_LIBRARIES} 
+    ${cuts_LIBRARIES} 
+    ${brio_LIBRARIES} 
+    ${datatools_BIO_LIBRARY}  
+    ${CAMP_LIBRARIES} 
+    ${CMAKE_DL_LIBS})
 else ()
-  target_link_libraries(dpp ${mygsl_LIBRARIES} ${cuts_LIBRARIES} ${brio_LIBRARIES} ${CMAKE_DL_LIBS})
+  target_link_libraries(dpp 
+    ${mygsl_BIO_LIBRARY}  
+    ${mygsl_LIBRARIES} 
+    ${cuts_LIBRARIES} 
+    ${brio_LIBRARIES} 
+    ${datatools_BIO_LIBRARY} 
+    ${CMAKE_DL_LIBS})
 endif ()
 
 set(DPP_TARGETS dpp)

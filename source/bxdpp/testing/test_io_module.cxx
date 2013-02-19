@@ -44,8 +44,8 @@ int main (int argc_, char ** argv_)
 
   std::string input_file;
   std::string output_file;
+  bool test_brio = false;
 
-  //return error_code;
   try
     {
       std::clog << DPP_DU::io::notice
@@ -74,6 +74,10 @@ int main (int argc_, char ** argv_)
                 {
                   max_events = 100;
                 }
+              else if (option == "--test-brio")
+                {
+                  test_brio = true;
+                }
               else
                 {
                   std::clog << DPP_DU::io::warning
@@ -100,9 +104,9 @@ int main (int argc_, char ** argv_)
         input.set_rw_mode (dpp::io_module::RW_MODE_INPUT);
 
         // Only use 1000 input files from the list of files provided below (see below) :
-        //input.set_max_files (1000);
+        input.set_max_files (1000);
 
-        // Only load 57 event records from the full set of input files :
+        // Only load 78 event records from the full set of input files :
         input.set_max_record_total (78);
 
         // Only load 12 event records from each input files (then skip to another file) :
@@ -111,7 +115,11 @@ int main (int argc_, char ** argv_)
         // Configuration to build the list of filenames to be used as the source of event records :
         DPP_DU::properties input_files_config;
         input_files_config.store ("mode", "incremental");
+#if DPP_DATATOOLS_LEGACY == 1
+        input_files_config.store ("incremental.path", "${DPP_DATA_DIR}/testing/legacy_data");
+#else
         input_files_config.store ("incremental.path", "${DPP_DATA_DIR}/testing/data");
+#endif
         input_files_config.store ("incremental.prefix", "data_");
         input_files_config.store ("incremental.extension", "txt.gz");
         input_files_config.store ("incremental.start", 0);
@@ -244,6 +252,8 @@ int main (int argc_, char ** argv_)
               {
                 break;
               }
+
+            error_code = status;
           }
         // Terminate the I/O modules :
         output.reset ();
@@ -252,18 +262,24 @@ int main (int argc_, char ** argv_)
                   << "test_io_module: I/O modules terminated." << std::endl;
 
         std::clog << DPP_DU::io::notice
-                  << "test_io_module: Input event records: " << input_count << std::endl;
+                  << "test_io_module: Input event records  : " << input_count << std::endl;
         std::clog << DPP_DU::io::notice
-                  << "test_io_module: Output event records: " << output_count << std::endl;
+                  << "test_io_module: Output event records : " << output_count << std::endl;
+        std::clog << DPP_DU::io::notice
+                  << "test_io_module: Error status         : " << error_code << std::endl;
 
       }
-      //return error_code;
 
       // Example of usage of the 'simple_brio_data_source' class (reader):
-      {
+      if (test_brio)
+        {
         std::clog << DPP_DU::io::notice
                   << "test_io_module: 'simple_brio_data_source' class example: " << std::endl;
+#if DPP_DATATOOLS_LEGACY == 1
         dpp::simple_brio_data_source sbds ("${DPP_DATA_DIR}/testing/data/data_0.brio");
+#else
+        dpp::simple_brio_data_source sbds ("${DPP_DATA_DIR}/testing/legacy_data/data_0.brio");
+#endif
 
         // generic data source interface:
         dpp::i_data_source & source = sbds;
@@ -302,6 +318,7 @@ int main (int argc_, char ** argv_)
                               << "test_io_module: "
                               << "Couldn't load another entry."
                               << std::endl;
+                    error_code = EXIT_FAILURE;
                   }
               }
           }
@@ -327,7 +344,6 @@ int main (int argc_, char ** argv_)
             indent << DPP_DU::io::notice << "test_io_module: " ;
             ER.tree_dump (std::clog, title.str (), indent.str ());
           }
-
       }
 
     }

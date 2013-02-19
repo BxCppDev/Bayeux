@@ -57,6 +57,8 @@
 #include <datatools/bio_guard.h>
 #endif
 
+#include <mygsl/bio_guard.h>
+
 int main (int argc_, char ** argv_)
 {
   namespace du = DPP_DU;

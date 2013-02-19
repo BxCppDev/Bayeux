@@ -201,7 +201,7 @@ namespace dpp {
 
         if (is_debug ())
           {
-            std::clog << datatools::utils::io::debug
+            std::clog << DPP_DU::io::debug
                       << "dpp::chain_module::process: "
                       << "Processing chained module '" << module_name << "'..." << std::endl;
           }
@@ -256,7 +256,7 @@ namespace dpp {
                     << "Module '" << module_name << "' failed to process event record; message is '"
                     << x.what () << "'";
             append_last_error_message (errmsg.str ());
-            std::clog << datatools::utils::io::error
+            std::clog << DPP_DU::io::error
                       << "dpp::chain_module::process: "
                       << errmsg.str () << std::endl;
             return FATAL;

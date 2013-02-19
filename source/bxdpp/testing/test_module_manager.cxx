@@ -14,7 +14,7 @@
  *
  *  test_module_manager --debug \
  *    --module "chain1" \
- *    ${DP_DATA_DIR}/testing/data/data_0.txt.gz \
+ *    ${DPP_DATA_DIR}/testing/data/data_0.txt.gz \
  *    out.txt.gz
  *
  */

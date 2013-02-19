@@ -8,6 +8,10 @@
 #include <boost/filesystem.hpp>
 
 #include <dpp/dpp_config.h>
+// #include <datatools/datatools_config.h>
+// #if DATATOOLS_WITH_BIO == 1
+// #include <datatools/histogram_pool.ipp>
+// #endif
 
 #if DPP_DATATOOLS_LEGACY == 1
 #include <datatools/serialization/io_factory.h>
@@ -24,6 +28,11 @@
 #include <TFile.h>
 #include <TH1D.h>
 #include <TH2D.h>
+
+#include <mygsl/mygsl_config.h>
+#if MYGSL_WITH_BIO == 1
+#include <mygsl/histogram_pool.ipp>
+#endif
 
 namespace dpp {
 
@@ -85,7 +94,7 @@ namespace dpp {
   }
 
   int histogram_service::initialize (const DPP_DU::properties    & config_,
-                                     datatools::service::service_dict_type & service_dict_)
+                                     DPP_DS::service_dict_type & service_dict_)
   {
     if (is_initialized ())
       {

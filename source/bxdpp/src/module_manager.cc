@@ -552,8 +552,13 @@ namespace dpp {
                            "dpp::module_manager::_load_modules: ",
                            "DEBUG: ");
       }
-    const multi_properties::entries_ordered_col_t & oe = config_.ordered_entries ();
-    for (multi_properties::entries_ordered_col_t::const_iterator i =
+#if DPP_DATATOOLS_LEGACY == 1
+    typedef multi_properties::entries_ordered_col_t col_type;
+#else
+    typedef multi_properties::entries_ordered_col_type col_type;    
+#endif
+    const col_type & oe = config_.ordered_entries ();
+    for (col_type::const_iterator i =
            oe.begin ();
          i != oe.end ();
          ++i)

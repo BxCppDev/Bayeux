@@ -64,7 +64,7 @@ namespace datatools {
 namespace dpp {
 
   /// \brief A service for managing 1D and 2D histograms
-  class histogram_service : public datatools::service::base_service
+  class histogram_service : public DPP_DS::base_service
   {
   public:
 
@@ -86,8 +86,8 @@ namespace dpp {
 
     virtual bool is_initialized () const;
 
-    virtual int initialize (const datatools::utils::properties    & config_,
-                            datatools::service::service_dict_type & service_dict_);
+    virtual int initialize (const DPP_DU::properties    & config_,
+                            DPP_DS::service_dict_type & service_dict_);
 
     virtual int reset ();
 
