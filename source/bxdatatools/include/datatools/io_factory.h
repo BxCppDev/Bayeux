@@ -582,9 +582,11 @@ class data_reader {
   template <typename Data>
   void load_serializable(Data& data,
     typename boost::disable_if< has_bsts<Data> >::type* dummy = 0) {
+    /*
     std::cerr << "DEVEL: " << "load_serializable: Serializable '" 
               << typeid(Data).name ()
               << "' has no BST support !" << '\n'; 
+    */
     this->load(data.get_serial_tag(), data);
   }
 

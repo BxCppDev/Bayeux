@@ -24,6 +24,7 @@
 
 // Standard Library
 #include <string>
+#include <typeinfo>
 
 // Third Party
 // - Boost
@@ -75,6 +76,7 @@ namespace datatools {
 //#warning Activate reflection layer for the 'datatools::i_serializable' class.
 DR_CLASS_INIT(::datatools::i_serializable);
 #endif // DATATOOLS_WITH_REFLECTION
+
 
 
 /******************
@@ -280,8 +282,6 @@ namespace datatools {
   BOOST_SERIALIZATION_BASIC_DECLARATION ()              \
   /**/
 
-
-
 /** Shortcut macro to generate the proper prototype of the
  * Boost serialization method :
  * @param ClassName The class name (without
@@ -412,6 +412,37 @@ namespace datatools {
   DATATOOLS_SERIALIZATION_IMPLEMENTATION (ClassName,ClassSerialTag)     \
   DATATOOLS_SERIALIZATION_FACTORY_IMPLEMENTATION (ClassName,ClassSerialTag) \
   /**/
+
+
+// Utilities for serial tag checking :
+namespace datatools {
+
+  template <typename T>
+  bool check_serial_tag(const std::string stag_, 
+                        const std::string alt_tag_ = "",
+                        typename boost::disable_if< has_bsts<T> >::type* dummy = 0) {
+    if (stag_ == T::SERIAL_TAG) return true;
+    if (! alt_tag_.empty())
+      {
+        if (stag_ == alt_tag_) return true;
+      }
+    return false;
+  }
+  
+  template <typename T>
+  bool check_serial_tag(const std::string stag_, 
+                        const std::string alt_tag_ = "",
+                        typename boost::enable_if< has_bsts<T> >::type* dummy = 0) {
+    if (stag_ == T::SERIAL_TAG) return true;
+    if (stag_ == ::datatools::backward_serial_tag<T> (0)) return true;
+    if (! alt_tag_.empty())
+      {
+        if (stag_ == alt_tag_) return true;
+      }
+    return false;
+  }
+
+}
 
 #endif // DATATOOLS_I_SERIALIZABLE_H_
 

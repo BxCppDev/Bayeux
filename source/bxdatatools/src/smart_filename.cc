@@ -459,7 +459,7 @@ void smart_filename::make_incremental(smart_filename & a_smart_filename,
       index += a_smart_filename.incremental_increment_;
     }
   }
-  a_smart_filename.dump(std::clog);
+  //a_smart_filename.dump(std::clog);
 }
 
 
