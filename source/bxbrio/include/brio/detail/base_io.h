@@ -25,6 +25,7 @@
 //#include <boost/math/nonfinite_num_facets.hpp>
 #include <boost/math/special_functions/nonfinite_num_facets.hpp>
 
+#include <datatools/i_serializable.h>
 #include <datatools/i_tree_dump.h>
 #include <brio/utils.h>
 
@@ -99,6 +100,19 @@ namespace detail {
 
     bool has_store_with_serial_tag (const std::string & label_, const std::string & serial_tag_) const;
 
+    template <class T>
+    bool has_store_with_matching_serial_tag (const std::string & label_) const
+    {
+      store_info_dict_t::const_iterator found = _store_infos.find (label_);
+      if (found == _store_infos.end ()) return false;
+      const store_info & the_si = found->second;
+      if (the_si.has_dedicated_serialization_tag ())
+        {
+          return datatools::check_serial_tag<T>(the_si.get_serialization_tag ());
+        }
+      return false;
+    }
+      
     bool has_mixed_store (const std::string & label_) const;
 
     void select_store (const std::string & label_);
@@ -163,6 +177,7 @@ namespace detail {
     std::locale    *  _locale;         /// I/O locale (for portable streams)
 
   };
+
 
 } // end of namespace detail
 } // end of namespace brio

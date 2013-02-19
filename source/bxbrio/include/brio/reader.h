@@ -166,7 +166,7 @@ namespace brio {
   protected:
 
     virtual void _at_open (const std::string & filename_);
-
+    
     template<class T>
     int _at_load (T & data_, 
                   store_info * ptr_si_, 
@@ -178,18 +178,22 @@ namespace brio {
                     << "Entering..." << std::endl;
         }
       store_info & si = *ptr_si_;
-
+      
       if (_check_serial_tag_)
         {
           // We check if the serialization tag from the store matches the data's one:
-          if (si.has_dedicated_serialization_tag () 
-              && (data_.get_serial_tag () != si.get_serialization_tag ()))
+          if (si.has_dedicated_serialization_tag ())
             {
-              std::ostringstream message;
-              message << "brio::reader::_at_load: "
-                      << "Data serialization tag '" << data_.get_serial_tag () 
-                      << "' does not match source store's serialization tag '" << si.get_serialization_tag () << "' !";
-              throw std::logic_error (message.str ());
+              // 2013-02-19 FM : change the way we check the serial tag :
+              //if (data_.get_serial_tag () != si.get_serialization_tag ())
+              if (! datatools::check_serial_tag<T>(si.get_serialization_tag ()))
+                {
+                  std::ostringstream message;
+                  message << "brio::reader::_at_load: "
+                          << "Data serialization tag '" << data_.get_serial_tag () 
+                          << "' does not match source store's serialization tag '" << si.get_serialization_tag () << "' !";
+                  throw std::logic_error (message.str ());
+                }
             }
         }
       
@@ -267,7 +271,9 @@ namespace brio {
             {
               // check serial tag associated to the buffered binary archive:
               std::string serial_tag = si.record.fSerialTag.Data ();
-              if (data_.get_serial_tag () != serial_tag)
+              // 2013-02-19 FM : change the way we check
+              // if (data_.get_serial_tag () != serial_tag)
+              if (! datatools::check_serial_tag<T>(serial_tag))
                 {
                   std::ostringstream message;
                   message << "brio::reader::_at_load: "
