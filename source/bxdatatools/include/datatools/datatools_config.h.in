@@ -1,6 +1,7 @@
 // -*- mode: c++; -*- 
-/* datatools_config.h header file 
- */
+//! \file   datatools_config.h
+//! \author François Mauger, Ben Morgan
+//! \brief  Describe the datatools API configuration
 
 #ifndef DATATOOLS_DATATOOLS_CONFIG_H_
 #define DATATOOLS_DATATOOLS_CONFIG_H_ 1
@@ -13,7 +14,7 @@
 
 #define DATATOOLS_VERSION_MAJOR @datatools_VERSION_MAJOR@
 #define DATATOOLS_VERSION_MINOR @datatools_VERSION_MINOR@
-#define DATATOOLS_PATCH_VERSION @datatools_VERSION_PATCH@
+#define DATATOOLS_VERSION_PATCH @datatools_VERSION_PATCH@
 
 #define DATATOOLS_VERSION @_datatools_VERSION_NUMERIC@
 
