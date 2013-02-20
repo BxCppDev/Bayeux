@@ -2880,7 +2880,7 @@ void properties::export_to_string_based_dictionary(
 template <>
 bool check_serial_tag<properties>(const std::string stag_, 
                                   const std::string alt_tag_,  
-                                  typename boost::enable_if< has_bsts<properties> >::type* dummy) {
+                                  boost::enable_if< has_bsts<properties> >::type* dummy) {
   if (stag_ == properties::SERIAL_TAG) return true;
   if (stag_ == ::datatools::backward_serial_tag<properties> (0)) return true;
   if (stag_ == "datatools:utils::properties") return true;

@@ -80,12 +80,12 @@ find_package(Boost 1.47 REQUIRED ${Boost_COMPONENTS})
 find_package(CLHEP 2.1.0.1 REQUIRED)
 
 # - CAMP
-if (DATATOOLS_WITH_REFLECTION)
-  set (DATATOOLS_WITH_REFLECTION 1)
+if(DATATOOLS_WITH_REFLECTION)
+  set(DATATOOLS_WITH_REFLECTION 1)
   find_package(CAMP 0.7.1 REQUIRED)
 else()
-  set (DATATOOLS_WITH_REFLECTION 0)
-endif ()
+  set(DATATOOLS_WITH_REFLECTION 0)
+endif()
 
 #-----------------------------------------------------------------------
 # On Apple, we fixup the install prefix to handle installing documentation,
@@ -106,18 +106,18 @@ endif()
 add_subdirectory(src)   
 
 if(DATATOOLS_WITH_DOC)
-  set (DATATOOLS_WITH_DOC 1)
+  set(DATATOOLS_WITH_DOC 1)
   add_subdirectory(doc)
 else()
-  set (DATATOOLS_WITH_DOC 0)
+  set(DATATOOLS_WITH_DOC 0)
 endif()
 
 if(DATATOOLS_WITH_TEST)
-  set (DATATOOLS_WITH_TEST 1)
+  set(DATATOOLS_WITH_TEST 1)
   enable_testing() 
   add_subdirectory(testing)
 else()
-  set (DATATOOLS_WITH_TEST 0)
+  set(DATATOOLS_WITH_TEST 0)
 endif()
 
 #-----------------------------------------------------------------------

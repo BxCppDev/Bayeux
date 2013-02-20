@@ -34,11 +34,11 @@ bool is_valid(double x) {
 }
 
 bool is_infinity(double x) {
-  return isinf (x);
+  return std::isinf(x);
 }
 
 bool is_normal(double x) {
-  return ! is_infinity (x) && is_valid (x);
+  return ! is_infinity(x) && is_valid(x);
 }
 
 
