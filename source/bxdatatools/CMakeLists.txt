@@ -27,9 +27,9 @@ project(datatools)
 # - Versioning
 set(datatools_VERSION_MAJOR 5)
 set(datatools_VERSION_MINOR 0)
-set(datatools_PATCH_VERSION 0)
-set(datatools_VERSION "${datatools_VERSION_MAJOR}.${datatools_VERSION_MINOR}.${datatools_PATCH_VERSION}")
-math(EXPR _datatools_VERSION_NUMERIC "${datatools_VERSION_MAJOR}*100000+${datatools_VERSION_MINOR}*100+${datatools_PATCH_VERSION}")
+set(datatools_VERSION_PATCH 0)
+set(datatools_VERSION "${datatools_VERSION_MAJOR}.${datatools_VERSION_MINOR}.${datatools_VERSION_PATCH}")
+math(EXPR _datatools_VERSION_NUMERIC "${datatools_VERSION_MAJOR}*100000+${datatools_VERSION_MINOR}*100+${datatools_VERSION_PATCH}")
 
 # - Fixup default install prefix on Mac
 if(APPLE AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
