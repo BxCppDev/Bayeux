@@ -21,60 +21,60 @@ endfunction()
 # use a simple listing and then prepend the actual source dir root
 
 set(datatools_PUBLIC_HEADERS
-include/datatools/archives_instantiation.h
-include/datatools/archives_list.h
-include/datatools/base_service.h
-include/datatools/bio_guard.h
-include/datatools/bit_mask.h
-include/datatools/caster_utils.h
-include/datatools/clhep_units.h
-include/datatools/datatools.h
-include/datatools/event_id.h
-include/datatools/factory.h
-include/datatools/factory_macros.h
-include/datatools/handle.h
-include/datatools/handle_macros.h
-include/datatools/handle_pool.h
-include/datatools/i_clear.h
-include/datatools/i_cloneable.h
-include/datatools/i_named.h
-include/datatools/integer_range.h
-include/datatools/io_factory.h
-include/datatools/ioutils.h
-include/datatools/i_predicate.h
-include/datatools/i_serializable.h
-include/datatools/i_tree_dump.h
-include/datatools/library_loader.h
-include/datatools/memory_streambuf.h
-include/datatools/multi_properties.h
-include/datatools/properties.h
-include/datatools/range_tools.h
-include/datatools/real_range.h
-include/datatools/reflection_guard.h
-include/datatools/reflection_macros.h
-include/datatools/safe_serial.h
-include/datatools/serialization_macros.h
-include/datatools/service_macros.h
-include/datatools/service_manager.h
-include/datatools/service_tools.h
-include/datatools/smart_filename.h
-include/datatools/smart_ref.h
-include/datatools/temporary_files.h
-include/datatools/the_introspectable.h
-include/datatools/the_serializable.h
-include/datatools/things.h
-include/datatools/things_macros.h
-include/datatools/time_tools.h
-include/datatools/units.h
-include/datatools/utils.h
-include/datatools/version_check.h
-include/datatools/version_id.h
-include/datatools/i_serializable.ipp
-include/datatools/event_id.ipp
-include/datatools/properties.ipp
-include/datatools/multi_properties.ipp
-include/datatools/things.ipp
-include/datatools/the_serializable.ipp
+  include/datatools/archives_instantiation.h
+  include/datatools/archives_list.h
+  include/datatools/base_service.h
+  include/datatools/bio_guard.h
+  include/datatools/bit_mask.h
+  include/datatools/caster_utils.h
+  include/datatools/clhep_units.h
+  include/datatools/datatools.h
+  include/datatools/event_id.h
+  include/datatools/factory.h
+  include/datatools/factory_macros.h
+  include/datatools/handle.h
+  include/datatools/handle_macros.h
+  include/datatools/handle_pool.h
+  include/datatools/i_clear.h
+  include/datatools/i_cloneable.h
+  include/datatools/i_named.h
+  include/datatools/integer_range.h
+  include/datatools/io_factory.h
+  include/datatools/ioutils.h
+  include/datatools/i_predicate.h
+  include/datatools/i_serializable.h
+  include/datatools/i_tree_dump.h
+  include/datatools/library_loader.h
+  include/datatools/memory_streambuf.h
+  include/datatools/multi_properties.h
+  include/datatools/properties.h
+  include/datatools/range_tools.h
+  include/datatools/real_range.h
+  include/datatools/reflection_guard.h
+  include/datatools/reflection_macros.h
+  include/datatools/safe_serial.h
+  include/datatools/serialization_macros.h
+  include/datatools/service_macros.h
+  include/datatools/service_manager.h
+  include/datatools/service_tools.h
+  include/datatools/smart_filename.h
+  include/datatools/smart_ref.h
+  include/datatools/temporary_files.h
+  include/datatools/the_introspectable.h
+  include/datatools/the_serializable.h
+  include/datatools/things.h
+  include/datatools/things_macros.h
+  include/datatools/time_tools.h
+  include/datatools/units.h
+  include/datatools/utils.h
+  include/datatools/version_check.h
+  include/datatools/version_id.h
+  include/datatools/i_serializable.ipp
+  include/datatools/event_id.ipp
+  include/datatools/properties.ipp
+  include/datatools/multi_properties.ipp
+  include/datatools/things.ipp
+  include/datatools/the_serializable.ipp
   )
 list_prepend(datatools_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
 
@@ -207,34 +207,6 @@ if(NOT APPLE)
     )
 endif()
 
-configure_file(
-    ${PROJECT_SOURCE_DIR}/cmake/datatools-config.in 
-    ${PROJECT_BINARY_DIR}/cmake/datatools-config
-    @ONLY
-    )
-
-install(FILES ${PROJECT_BINARY_DIR}/cmake/datatools-config
-    DESTINATION "${CMAKE_INSTALL_BINDIR}"
-    PERMISSIONS OWNER_READ OWNER_EXECUTE 
-    		GROUP_READ GROUP_EXECUTE 
-                WORLD_READ WORLD_EXECUTE    
-    COMPONENT Development
-    )
-
-if ( DATATOOLS_WITH_BASH_SETUP )
-  configure_file(
-    "${PROJECT_SOURCE_DIR}/cmake/datatools_setup.sh.in"
-    "${PROJECT_BINARY_DIR}/cmake/datatools_setup.sh"
-    @ONLY
-    )
-
-  install(FILES ${PROJECT_BINARY_DIR}/cmake/datatools_setup.sh
-    DESTINATION ${CMAKE_INSTALL_ETCDIR}
-    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
-    COMPONENT Development
-  )
-endif ()
-
 #-----------------------------------------------------------------------
 # BUILD THE DATATOOLS LIBRARY
 #
@@ -245,11 +217,9 @@ include_directories(
   ${Boost_INCLUDE_DIRS}
   )
 
-if ( DATATOOLS_WITH_REFLECTION )
-  include_directories(
-    ${CAMP_INCLUDE_DIR}
-    )
-endif ()
+if(DATATOOLS_WITH_REFLECTION)
+  include_directories(${CAMP_INCLUDE_DIR})
+endif()
 
 add_library(datatools SHARED  
   ${datatools_PUBLIC_HEADERS} 
@@ -270,11 +240,11 @@ set_target_properties(datatools
     PUBLIC_HEADER                         "${datatools_PUBLIC_HEADERS}"
   )
 
-if ( DATATOOLS_WITH_REFLECTION )
+if(DATATOOLS_WITH_REFLECTION)
   target_link_libraries(datatools ${Boost_LIBRARIES} ${CAMP_LIBRARIES} ${CMAKE_DL_LIBS})
-else ()
+else()
   target_link_libraries(datatools ${Boost_LIBRARIES} ${CMAKE_DL_LIBS})
-endif ()
+endif()
 
 set(DATATOOLS_TARGETS datatools)
 
@@ -358,7 +328,8 @@ if(APPLE)
     )
 else()
   install(EXPORT datatools-libraries 
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/datatools-${datatools_VERSION}    COMPONENT Development
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/datatools-${datatools_VERSION}
+    COMPONENT Development
     )
 endif()
 

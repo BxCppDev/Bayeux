@@ -12,8 +12,8 @@ debug=0
 
 function my_exit ()
 {
-    cd ${opwd}
-    exit $1
+  cd ${opwd}
+  exit $1
 }
 
 datatools_system="@CMAKE_SYSTEM_NAME@-@CMAKE_SYSTEM_PROCESSOR@"
@@ -37,25 +37,25 @@ datatools_cmake_config_dir="@CMAKE_INSTALL_PREFIX@/@_datatools_cmake_config_inst
 datatools_version=@datatools_VERSION@
 
 with_bio=0
-if [ "x@DATATOOLS_WITH_BIO@" == "x1" -o "x@DATATOOLS_WITH_BIO@" == "xON" ]; then
-    with_bio=1
+if [ "x@DATATOOLS_WITH_BIO@" == "x1" ]; then
+  with_bio=1
 fi
 
 with_reflection=0
-if [ "x@DATATOOLS_WITH_REFLECTION@" == "x1" -o "x@DATATOOLS_WITH_REFLECTION@" == "xON" ]; then
-    with_reflection=1
+if [ "x@DATATOOLS_WITH_REFLECTION@" == "x1"]; then
+  with_reflection=1
 fi
 
 option="$1"
 shift 1
 
 if [ "x${option}" = "x" ]; then
-    echo "ERROR: ${script_name}: Missing option ! Abort !" 1>&2
-    help=1
+  echo "ERROR: ${script_name}: Missing option ! Abort !" 1>&2
+  help=1
 fi
 
 if [ "x${option}" = "x--help" -o "x${option}" = "x-h" -o "x${option}" = "x-?" ]; then
-    help=1
+  help=1
 fi
 
 function print_help ()
@@ -98,196 +98,183 @@ EOF
 }
 
 if [ ${help} -eq 1 ]; then
-    print_help
-    my_exit 1
+  print_help
+  my_exit 1
 fi
 
 if [ "x${option}" = "x--system" ]; then
-    echo "${datatools_system}"
-    my_exit 0
+  echo "${datatools_system}"
+  my_exit 0
 fi
 
 if [ "x${option}" = "x--prefix" ]; then
-    echo "${datatools_root}"
-    my_exit 0
+  echo "${datatools_root}"
+  my_exit 0
 fi
 
 if [ "x${option}" = "x--version" ]; then
-    echo "${datatools_version}"
-    my_exit 0
+  echo "${datatools_version}"
+  my_exit 0
 fi
 
 if [ "x${option}" = "x--incdir" ]; then
-    echo "${datatools_include_dir}"
-    my_exit 0
+  echo "${datatools_include_dir}"
+  my_exit 0
 fi
 
 if [ "x${option}" = "x--datadir" ]; then
-    echo "${datatools_data_dir}"
-    my_exit 0
+  echo "${datatools_data_dir}"
+  my_exit 0
 fi
 
 if [ "x${option}" = "x--etcdir" ]; then
-    echo "${datatools_etc_dir}"
-    my_exit 0
+  echo "${datatools_etc_dir}"
+  my_exit 0
 fi
 
 if [ "x${option}" = "x--docdir" ]; then
-    echo "${datatools_doc_dir}"
-    my_exit 0
+  echo "${datatools_doc_dir}"
+  my_exit 0
 fi
 
 if [ "x${option}" = "x--cmake-config-dir" ]; then
-    echo "${datatools_cmake_config_dir}"
-    my_exit 0
+  echo "${datatools_cmake_config_dir}"
+  my_exit 0
 fi
 
 if [ "x${option}" = "x--include" ]; then
-    echo "-I${datatools_include_dir} "
-    my_exit 0
+  echo "-I${datatools_include_dir} "
+  my_exit 0
 fi
 
 if [ "x${option}" = "x--cflags" ]; then
-    (
-	echo -n "-fPIC "
-	echo -n "-I${datatools_include_dir} "
-	if [ ${with_reflection} -eq 1 ]; then
- 	    echo -n "`camp-config --cflags` "
-	fi
-	echo -n "`boost-config --cflags serialization iostreams filesystem system program_options` "
-        echo -n "`clhep-config --include` "
-	echo ""
-    ) ###| python @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/pkgtools/mkuniqueflags.py
-    my_exit 0
+  (
+  echo -n "-fPIC "
+  echo -n "-I${datatools_include_dir} "
+  if [ ${with_reflection} -eq 1 ]; then
+    echo -n "`camp-config --cflags` "
+  fi
+  echo -n "`boost-config --cflags serialization iostreams filesystem system program_options` "
+  echo -n "`clhep-config --include` "
+  echo ""
+  ) ###| python @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/pkgtools/mkuniqueflags.py
+  my_exit 0
 fi
 
 if [ "x${option}" = "x--libdir" ]; then
-    echo "${datatools_lib_dir}"
-    my_exit 0
+  echo "${datatools_lib_dir}"
+  my_exit 0
 fi
 
 if [ "x${option}" = "x--bindir" ]; then
-    echo "${datatools_bin_dir}"
-    my_exit 0
+  echo "${datatools_bin_dir}"
+  my_exit 0
 fi
 
 # compute default linkage :
 bio_ldflags=
 bio_ldflags_abs=
 if [ ${with_bio} -eq 1 ]; then
-    bio_ldflags=-ldatatools_bio
-    bio_ldflags_abs=${datatools_lib_dir}/libdatatools_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
+  bio_ldflags=-ldatatools_bio
+  bio_ldflags_abs=${datatools_lib_dir}/libdatatools_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
 fi
 
 reflection_ldflags=
 reflection_ldflags_abs=
 if [ ${with_reflection} -eq 1 ]; then
-    reflection_ldflags=-ldatatools_reflection
-    reflection_ldflags_abs=${datatools_lib_dir}/libdatatools_reflection@CMAKE_SHARED_LIBRARY_SUFFIX@
+  reflection_ldflags=-ldatatools_reflection
+  reflection_ldflags_abs=${datatools_lib_dir}/libdatatools_reflection@CMAKE_SHARED_LIBRARY_SUFFIX@
 fi
 
 ldflags_abs_path=0
 if [ "x${DATATOOLS_LDFLAGS_ABSOLUTE_PATH}" = "x1" ]; then
-    ldflags_abs_path=1
-fi 
-if [ "x${option}" = "x--libs" -o "x${option}" = "x--ldflags" ]; then
-    while [ -n "$1" ]; do
-	lib_option="$1"
-	if [ "x${lib_option}" = "x--without-bio" ]; then
-	    bio_ldflags=
-	    bio_ldflags_abs=
-	elif [ "x${lib_option}" = "x--with-bio" -a ${with_bio} -eq 1 ]; then
-	    bio_ldflags=-ldatatools_bio
-	    bio_ldflags_abs=${datatools_lib_dir}/libdatatools_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
-	elif [ "x${lib_option}" = "x--without-reflection" ]; then
-	    reflection_ldflags=
-	    reflection_ldflags_abs=
-	elif [ "x${lib_option}" = "x--with-reflection" -a ${with_reflection} -eq 1 ]; then
-	    reflection_ldflags=-ldatatools_reflection
-	    reflection_ldflags_abs=${datatools_lib_dir}/libdatatools_reflection@CMAKE_SHARED_LIBRARY_SUFFIX@
-	elif [ "x${lib_option}" = "x--absolute-path" ]; then
-	    ldflags_abs_path=1
-	elif [ "x${lib_option}" = "x--relative-path" ]; then
-	    ldflags_abs_path=0
-	fi
-	shift 1
-    done
+  ldflags_abs_path=1
 fi
+
+if [ "x${option}" = "x--libs" -o "x${option}" = "x--ldflags" ]; then
+  while [ -n "$1" ]; do
+    lib_option="$1"
+    if [ "x${lib_option}" = "x--without-bio" ]; then
+      bio_ldflags=
+      bio_ldflags_abs=
+    elif [ "x${lib_option}" = "x--with-bio" -a ${with_bio} -eq 1 ]; then
+      bio_ldflags=-ldatatools_bio
+      bio_ldflags_abs=${datatools_lib_dir}/libdatatools_bio@CMAKE_SHARED_LIBRARY_SUFFIX@
+    elif [ "x${lib_option}" = "x--without-reflection" ]; then
+      reflection_ldflags=
+      reflection_ldflags_abs=
+    elif [ "x${lib_option}" = "x--with-reflection" -a ${with_reflection} -eq 1 ]; then
+      reflection_ldflags=-ldatatools_reflection
+      reflection_ldflags_abs=${datatools_lib_dir}/libdatatools_reflection@CMAKE_SHARED_LIBRARY_SUFFIX@
+    elif [ "x${lib_option}" = "x--absolute-path" ]; then
+      ldflags_abs_path=1
+    elif [ "x${lib_option}" = "x--relative-path" ]; then
+      ldflags_abs_path=0
+    fi
+    shift 1
+  done
+fi
+
 ldflags_abs_path_option=
 if [ ${ldflags_abs_path} -eq 1 ]; then
-    ldflags_abs_path_option=--absolute-path
+  ldflags_abs_path_option=--absolute-path
 fi
 
 if [ "x${option}" = "x--libs" ]; then
-    if [ ${ldflags_abs_path} -eq 1 ]; then
-	echo -n "${reflection_ldflags_abs} "
-	echo -n "${bio_ldflags_abs} "
-	echo -n "${datatools_lib_dir}/libdatatools@CMAKE_SHARED_LIBRARY_SUFFIX@ "
-    else
-	echo -n "-L${datatools_lib_dir} "
-	echo -n "${reflection_ldflags} "
-	echo -n "${bio_ldflags} "
-	echo -n "-ldatatools "
-    fi
-    echo
-    my_exit 0
+  if [ ${ldflags_abs_path} -eq 1 ]; then
+    echo -n "${reflection_ldflags_abs} "
+    echo -n "${bio_ldflags_abs} "
+    echo -n "${datatools_lib_dir}/libdatatools@CMAKE_SHARED_LIBRARY_SUFFIX@ "
+  else
+    echo -n "-L${datatools_lib_dir} "
+    echo -n "${reflection_ldflags} "
+    echo -n "${bio_ldflags} "
+    echo -n "-ldatatools "
+  fi
+  echo
+  my_exit 0
 fi
 
 if [ "x${option}" = "x--ldflags" ]; then
-    (
-	if [ ${ldflags_abs_path} -eq 1 ]; then
-	    echo -n "${reflection_ldflags_abs} "
-	    echo -n "${bio_ldflags_abs} "
-	    echo -n "${datatools_lib_dir}/libdatatools@CMAKE_SHARED_LIBRARY_SUFFIX@ "
-	else
-	    echo -n "-L${datatools_lib_dir} "
-	    echo -n "${reflection_ldflags} "
-	    echo -n "${bio_ldflags} "
-	    echo -n "-ldatatools "
-	fi
-	if [ ${with_reflection} -eq 1 ]; then
- 	    echo -n "`camp-config --ldflags` "
-	fi
-	echo -n "`boost-config --ldflags serialization iostreams filesystem system program_options` "
-	echo -n "`clhep-config --libs` -lm "
-	echo -n "-ldl "
-	echo ""
-    ) ###| python @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/pkgtools/mkuniqueflags.py -r
-    my_exit 0
+  (
+  if [ ${ldflags_abs_path} -eq 1 ]; then
+    echo -n "${reflection_ldflags_abs} "
+    echo -n "${bio_ldflags_abs} "
+    echo -n "${datatools_lib_dir}/libdatatools@CMAKE_SHARED_LIBRARY_SUFFIX@ "
+  else
+    echo -n "-L${datatools_lib_dir} "
+    echo -n "${reflection_ldflags} "
+    echo -n "${bio_ldflags} "
+    echo -n "-ldatatools "
+  fi
+  if [ ${with_reflection} -eq 1 ]; then
+    echo -n "`camp-config --ldflags` "
+  fi
+  echo -n "`boost-config --ldflags serialization iostreams filesystem system program_options` "
+  echo -n "`clhep-config --libs` -lm "
+  echo -n "-ldl "
+  echo ""
+  ) ###| python @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/pkgtools/mkuniqueflags.py -r
+  my_exit 0
 fi
 
 if [ "x${option}" = "x--with-bio" ]; then
-    echo "${with_bio}"
-    if [ "${with_bio}" = "1" ]; then
-	my_exit 0
-    else
-	my_exit 1
-    fi
+  echo "${with_bio}"
+  if [ "${with_bio}" = "1" ]; then
+    my_exit 0
+  else
+    my_exit 1
+  fi
 fi
 
 if [ "x${option}" = "x--with-reflection" ]; then
-    echo "${with_reflection}"
-    if [ "${with_reflection}" = "1" ]; then
-	my_exit 0
-    else
-	my_exit 1
-    fi
+  echo "${with_reflection}"
+  if [ "${with_reflection}" = "1" ]; then
+    my_exit 0
+  else
+    my_exit 1
+  fi
 fi
-
-# if [ "x${option}" = "x--boost-version" ]; then
-#     echo @Boost_VERSION@
-#     my_exit 0
-# fi
-
-# if [ "x${option}" = "x--clhep-version" ]; then
-#     echo @CLHEP_VERSION@
-#     my_exit 0
-# fi
-
-# if [ "x${option}" = "x--camp-version" ]; then
-#     echo @CAMP_VERSION@
-#     my_exit 0
-#fi
 
 echo "ERROR: ${script_name}: Unknown option !" 1>&2
 print_help

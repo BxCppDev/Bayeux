@@ -39,11 +39,6 @@ endif()
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 include(InstallDirs)
 
-set(_ld_library_path_env "LD_LIBRARY_PATH")
-if(APPLE)
-  set(_ld_library_path_env "DYLD_LIBRARY_PATH")
-endif()
-
 #-----------------------------------------------------------------------
 # Build options
 #
@@ -51,14 +46,6 @@ option(DATATOOLS_WITH_BIO  "Build auxiliary Boost I/O library" ON)
 option(DATATOOLS_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" ON) 
 option(DATATOOLS_WITH_DOC  "Build the datatools documentation" ON)
 option(DATATOOLS_WITH_TEST "Build the datatools test suite"    ON) 
-option(DATATOOLS_WITH_BASH_SETUP "Build the datatools with Bash setup macro" ON) 
-
-if(DATATOOLS_WITH_BIO)
-  set(DATATOOLS_WITH_BIO 1)
-else()
-  set(DATATOOLS_WITH_BIO 0)
-endif()
-
 
 #-----------------------------------------------------------------------
 # Find external packages needed to build
@@ -73,10 +60,7 @@ find_package(CLHEP 2.1.0.1 REQUIRED)
 
 # - CAMP
 if(DATATOOLS_WITH_REFLECTION)
-  set(DATATOOLS_WITH_REFLECTION 1)
   find_package(CAMP 0.7.1 REQUIRED)
-else()
-  set(DATATOOLS_WITH_REFLECTION 0)
 endif()
 
 #-----------------------------------------------------------------------
@@ -98,18 +82,60 @@ endif()
 add_subdirectory(src)   
 
 if(DATATOOLS_WITH_DOC)
-  set(DATATOOLS_WITH_DOC 1)
   add_subdirectory(doc)
-else()
-  set(DATATOOLS_WITH_DOC 0)
 endif()
 
 if(DATATOOLS_WITH_TEST)
-  set(DATATOOLS_WITH_TEST 1)
   enable_testing() 
   add_subdirectory(testing)
-else()
-  set(DATATOOLS_WITH_TEST 0)
+endif()
+
+#-----------------------------------------------------------------------
+# Build the support files
+#-----------------------------------------------------------------------
+# On UNIX platforms, configure and install the shell support scripts
+#
+if(UNIX)
+  # - Normalize exported boolean variables
+  foreach(_ebv BIO REFLECTION)
+    if(DATATOOLS_WITH_${_ebv})
+      set(DATATOOLS_WITH_${_ebv} 1)
+    else()
+      set(DATATOOLS_WITH_${_ebv} 0)
+    endif()
+  endforeach()
+
+  set(_ld_library_path_env "LD_LIBRARY_PATH")
+  if(APPLE)
+    set(_ld_library_path_env "DYLD_LIBRARY_PATH")
+  endif()
+
+  configure_file(
+    ${PROJECT_SOURCE_DIR}/cmake/datatools-config.in 
+    ${PROJECT_BINARY_DIR}/cmake/datatools-config
+    @ONLY
+    )
+
+  install(FILES ${PROJECT_BINARY_DIR}/cmake/datatools-config
+    DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    PERMISSIONS 
+      OWNER_READ OWNER_EXECUTE 
+    	GROUP_READ GROUP_EXECUTE 
+      WORLD_READ WORLD_EXECUTE    
+    COMPONENT Development
+    )
+
+  configure_file(
+    "${PROJECT_SOURCE_DIR}/cmake/datatools_setup.sh.in"
+    "${PROJECT_BINARY_DIR}/cmake/datatools_setup.sh"
+    @ONLY
+    )
+
+  install(FILES ${PROJECT_BINARY_DIR}/cmake/datatools_setup.sh
+    DESTINATION ${CMAKE_INSTALL_ETCDIR}
+    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+    COMPONENT Development
+    )
 endif()
 
 #-----------------------------------------------------------------------
