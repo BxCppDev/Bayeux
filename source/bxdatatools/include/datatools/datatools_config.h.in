@@ -6,31 +6,43 @@
 #ifndef DATATOOLS_DATATOOLS_CONFIG_H_
 #define DATATOOLS_DATATOOLS_CONFIG_H_ 1
 
-/*** datatools versioning information ***/
-
-//  DATATOOLS_VERSION % 100        is the patch level
-//  DATATOOLS_VERSION / 100 % 1000 is the minor version
-//  DATATOOLS_VERSION / 100000     is the major version
-
+// - Compile Time API
+//! Major version number of datatools
 #define DATATOOLS_VERSION_MAJOR @datatools_VERSION_MAJOR@
+
+//! Minor version number of datatools
 #define DATATOOLS_VERSION_MINOR @datatools_VERSION_MINOR@
+
+//! Patch version number of datatools
 #define DATATOOLS_VERSION_PATCH @datatools_VERSION_PATCH@
 
-#define DATATOOLS_VERSION @_datatools_VERSION_NUMERIC@
+//! Encode datatools to ordered integer available at compile time
+#define DATATOOLS_ENCODE_VERSION(major, minor, patch) ( \
+        ((major) * 10000) \
+      + ((minor) *   100) \
+      + ((patch) *     1))
 
-//  DATATOOLS_LIB_VERSION must be defined to be the same as DATATOOLS_VERSION
-//  but as a *string* in the form "x.y[.z]" where x is the major version
-//  number, y is the minor version number, and z is the patch level if not 0.
+//! Integer encoded datatools version available at compile time
+#define DATATOOLS_VERSION DATATOOLS_ENCODE_VERSION( \
+        DATATOOLS_VERSION_MAJOR, \
+        DATATOOLS_VERSION_MINOR, \
+        DATATOOLS_VERSION_PATCH)
 
+//! String encoded full version number, e.g. "1.2.3", available at compile time
 #define DATATOOLS_LIB_VERSION "@datatools_VERSION@"
 
-/***  datatools debug flag ***/
+//! Check current version >= (major, minor, patch) at compile time
+#define DATATOOLS_IS_ATLEAST(major,minor,patch) ( \
+        DATATOOLS_VERSION >= \
+        DATATOOLS_ENCODE_VERSION(major,minor,patch))
+
+//! Evaluates to true if datatools was built with debug information
 #cmakedefine01 DATATOOLS_WITH_DEBUG
 
-/***  datatools embedded Boost/Serialization based I/O ***/
+//! Evaluates to true if datatools was built with Boost I/O support
 #cmakedefine01 DATATOOLS_WITH_BIO
 
-/***  datatools embedded CAMP-based reflection ***/
+//! Evaluates to true if datatools was built with CAMP reflection support
 #cmakedefine01 DATATOOLS_WITH_REFLECTION
 
 #endif // DATATOOLS_DATATOOLS_CONFIG_H_
