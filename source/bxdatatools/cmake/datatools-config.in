@@ -36,11 +36,6 @@ datatools_cmake_config_dir="@CMAKE_INSTALL_PREFIX@/@_datatools_cmake_config_inst
 
 datatools_version=@datatools_VERSION@
 
-with_debug=0
-if [ "x@DATATOOLS_WITH_DEBUG@" == "x1" -o "x@DATATOOLS_WITH_DEBUG@" == "xON" ]; then
-    with_debug=1
-fi
-
 with_bio=0
 if [ "x@DATATOOLS_WITH_BIO@" == "x1" -o "x@DATATOOLS_WITH_BIO@" == "xON" ]; then
     with_bio=1
@@ -259,15 +254,6 @@ if [ "x${option}" = "x--ldflags" ]; then
 	echo ""
     ) ###| python @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/pkgtools/mkuniqueflags.py -r
     my_exit 0
-fi
-
-if [ "x${option}" = "x--with-debug" ]; then
-    echo "${with_debug}"
-    if [ "${with_debug}" = "1" ]; then
-	my_exit 0
-    else
-	my_exit 1
-    fi
 fi
 
 if [ "x${option}" = "x--with-bio" ]; then

@@ -36,9 +36,6 @@
         DATATOOLS_VERSION >= \
         DATATOOLS_ENCODE_VERSION(major,minor,patch))
 
-//! Evaluates to true if datatools was built with debug information
-#cmakedefine01 DATATOOLS_WITH_DEBUG
-
 //! Evaluates to true if datatools was built with Boost I/O support
 #cmakedefine01 DATATOOLS_WITH_BIO
 

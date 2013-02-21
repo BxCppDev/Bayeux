@@ -40,7 +40,7 @@ endif()
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 include(InstallDirs)
 
-set( _ld_library_path_env "LD_LIBRARY_PATH")
+set(_ld_library_path_env "LD_LIBRARY_PATH")
 if(APPLE)
   set(_ld_library_path_env "DYLD_LIBRARY_PATH")
 endif()
@@ -48,24 +48,17 @@ endif()
 #-----------------------------------------------------------------------
 # Build options
 #
-option(DATATOOLS_WITH_DEBUG "Build debug stuff" OFF) 
 option(DATATOOLS_WITH_BIO  "Build auxiliary Boost I/O library" ON) 
 option(DATATOOLS_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" ON) 
 option(DATATOOLS_WITH_DOC  "Build the datatools documentation" ON)
 option(DATATOOLS_WITH_TEST "Build the datatools test suite"    ON) 
 option(DATATOOLS_WITH_BASH_SETUP "Build the datatools with Bash setup macro" ON) 
 
-if (DATATOOLS_WITH_DEBUG)
-  set (DATATOOLS_WITH_DEBUG 1)
-else()
-  set (DATATOOLS_WITH_DEBUG 0)
-endif ()
-
 if(DATATOOLS_WITH_BIO)
-  set (DATATOOLS_WITH_BIO 1)
+  set(DATATOOLS_WITH_BIO 1)
 else()
-  set (DATATOOLS_WITH_BIO 0)
-endif ()
+  set(DATATOOLS_WITH_BIO 0)
+endif()
 
 
 #-----------------------------------------------------------------------

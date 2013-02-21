@@ -464,7 +464,6 @@ function do_configure ()
 	-DCMAKE_BUILD_TYPE:STRING=${build_type} \
 	-DBOOST_ROOT=${BOOST_ROOT_DIR} \
 	-DCMAKE_MODULE_PATH=${CADFAEL_SHARE_DIR}/cmake/Modules \
-	-DDATATOOLS_WITH_DEBUG=${with_debug} \
 	-DDATATOOLS_WITH_BIO=${with_bio} \
 	-DDATATOOLS_WITH_REFLECTION=${with_reflection} \
 	-DDATATOOLS_WITH_DOC=${with_doc} \
