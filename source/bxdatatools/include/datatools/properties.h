@@ -293,6 +293,7 @@ class properties :
   //! \brief Pure abstract class for key validator.
   struct basic_key_validator 
       : public std::unary_function<std::string,bool> {
+    virtual ~basic_key_validator(){}
     virtual bool operator()(const std::string& a_key_arg) const = 0;
   };
 
