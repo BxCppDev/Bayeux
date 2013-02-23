@@ -361,6 +361,7 @@ function do_configure ()
     local with_doc=1
     local with_test=1
     local with_dependency_check=0
+    local with_bash_setup=1
 
     local with_bio=0
     if [ ${bio_support} -eq 1 ]; then
@@ -469,6 +470,7 @@ function do_configure ()
 	-DCMAKE_MODULE_PATH=${CADFAEL_SHARE_DIR}/cmake/Modules \
 	-DMYGSL_WITH_DOC=${with_doc} \
 	-DMYGSL_WITH_TEST=${with_test} \
+	-DMYGSL_WITH_BASH_SETUP=${with_bash_setup} \
 	${additional_options} \
 	..
     if [ $? -ne 0 ]; then
