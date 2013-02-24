@@ -47,7 +47,7 @@ namespace geomtools {
                            | FACE_TOP)
       };  
 
-    /**
+    /*
      * The polyhedra is defined by a list of (z, rmin, rmax) triplets
      * the radius are the tangential radius (radius of the inscribed
      * circles) and not the distance from Z-axis to the corners.

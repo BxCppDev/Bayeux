@@ -262,10 +262,12 @@ namespace geomtools {
 
   void i_model::_post_construct (datatools::properties & setup_)
   {
+    /*
     visibility::extract (setup_, get_logical ().parameters ());
     material::extract (setup_, get_logical ().parameters ());
     sensitive::extract (setup_, get_logical ().parameters ());
     mapping_utils::extract (setup_, get_logical ().parameters ());
+    */
     return;
   }
 

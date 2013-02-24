@@ -8,7 +8,7 @@
  * 
  * Description: 
  *
- *   Geometry model with multiple stacked boxes.
+ *   Abstract interface for stackable shape.
  * 
  * History: 
  * 
@@ -30,6 +30,12 @@ namespace geomtools {
 
   public:
     
+    bool has_xmin() const;
+    bool has_xmax() const;
+    bool has_ymin() const;
+    bool has_ymax() const;
+    bool has_zmin() const;
+    bool has_zmax() const;
     virtual double get_xmin () const = 0;
     virtual double get_xmax () const = 0;
     virtual double get_ymin () const = 0;
@@ -133,7 +139,15 @@ namespace geomtools {
 
   public:
 
+    bool is_valid_x () const;
+
+    bool is_valid_y () const;
+
+    bool is_valid_z () const;
+
     bool is_valid () const;
+
+    bool is_valid_weak () const;
 
     void invalidate ();
 

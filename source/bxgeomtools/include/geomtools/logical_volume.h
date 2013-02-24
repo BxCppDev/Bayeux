@@ -68,6 +68,8 @@ namespace geomtools {
 
     const physicals_col_type & get_physicals () const;
 
+    const physicals_col_type & get_real_physicals () const;
+
     logical_volume ();
 
     logical_volume (const std::string &);
@@ -97,6 +99,17 @@ namespace geomtools {
 
     bool is_replica () const;
 
+    bool is_abstract () const;
+
+    void set_abstract (bool a_);
+
+  private:
+    
+    void _init_defaults_ ();
+   
+    void _at_lock_ ();
+
+    void _compute_real_physicals_ ();
 
   private:
 
@@ -106,6 +119,8 @@ namespace geomtools {
     bool                  _own_shape_;
     const i_shape_3d *    _shape_;
     physicals_col_type    _physicals_;
+    bool                  _abstract_;
+    physicals_col_type    _real_physicals_;
 
   public:
 

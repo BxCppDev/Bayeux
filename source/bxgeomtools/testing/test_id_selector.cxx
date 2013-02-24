@@ -58,27 +58,26 @@ int main (int argc_, char ** argv_)
       if (debug) IDS.dump (clog, "ID selector: ");
 
       for (int i = 0; i < 20; i++)
-	{
-	  // Randomize a geometry ID:
-	  uint32_t module = (uint32_t) (drand48 () * 2);
-	  uint32_t layer = (uint32_t) (drand48 () * 10);
-	  uint32_t strip = (uint32_t) (drand48 () * 12);
-	  uint32_t pad   = (uint32_t) (drand48 () * 8);
-	  geomtools::geom_id gid;
-	  my_id_mgr.make_id ("source_pad", gid);
-	  gid.set_address (module, layer, strip, pad);
-	  
-	  // Check it:
-	  if (IDS.match (gid))
-	    {
-	      clog << "ID=" << gid << " matches the selector rules !" << endl;
-	    }
-	  else
-	    {
-	      clog << "ID=" << gid << " does not match the selector rules !" << endl;
-	    }
-	}
-
+        {
+          // Randomize a geometry ID:
+          uint32_t module = (uint32_t) (drand48 () * 2);
+          uint32_t layer = (uint32_t) (drand48 () * 10);
+          uint32_t strip = (uint32_t) (drand48 () * 12);
+          uint32_t pad   = (uint32_t) (drand48 () * 8);
+          geomtools::geom_id gid;
+          my_id_mgr.make_id ("source_pad", gid);
+          gid.set_address (module, layer, strip, pad);
+          
+          // Check it:
+          if (IDS.match (gid))
+            {
+              clog << "ID=" << gid << " matches the selector rules !" << endl;
+            }
+          else
+            {
+              clog << "ID=" << gid << " does not match the selector rules !" << endl;
+            }
+        }
 
     }
   catch (exception & x)

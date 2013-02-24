@@ -29,7 +29,7 @@ namespace geomtools {
 
   class box : public i_shape_3d ,
               public i_stackable,
-                 public i_wires_3d_rendering
+              public i_wires_3d_rendering
   {
 
   public:

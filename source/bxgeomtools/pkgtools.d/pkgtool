@@ -13,7 +13,6 @@ function my_exit ()
 }
 
 bio_support=1
-python_wrapper_support=0
 
 appname=${APPNAME}
 appversion=0.1
@@ -122,12 +121,6 @@ EOF
       --with-gnuplot-display     : generate Gnuplot-based display tools
       --without-gnuplot-display  : do not generate Gnuplot-based display tools
 EOF
-    if [ ${python_wrapper_support} -eq 1 ]; then
-	cat <<EOF
-      --with-python-wrapper      : generate the Boost/Python wrapper module
-      --without-python-wrapper   : do not generate the Boost/Python wrapper module (default)
-EOF
-    fi
     cat <<EOF
       --with-documentation       : generate documentation material (default)
       --without-documentation    : do not generate documentation material
@@ -333,15 +326,11 @@ function do_configure ()
     local with_doc=1
     local with_test=1
     local with_dependency_check=0
+    local with_bash_setup=1
 
     local with_bio=0
     if [ ${bio_support} -eq 1 ]; then
 	with_bio=1 # default
-    fi
-
-    local with_python_wrapper=0
-    if [ ${python_wrapper_support} -eq 1 ]; then
-	with_python_wrapper=0 # default
     fi
 
     local with_gnuplot_display=1
@@ -378,10 +367,6 @@ function do_configure ()
 	    with_gnuplot_display=1
 	elif [ "${option}" = "--without-gnuplot-display" ]; then
 	    with_gnuplot_display=0
-	elif [ ${python_wrapper_support} -eq 1 -a "${option}" = "--with-python-wrapper" ]; then
-	    with_python_wrapper=1
-	elif [ ${python_wrapper_support} -eq 1 -a "${option}" = "--without-python-wrapper" ]; then
-	    with_python_wrapper=0
 	fi
 	shift 1
     done
@@ -415,9 +400,6 @@ function do_configure ()
     pkgtools__msg_notice "Installation prefix   : '${install_prefix}'"
     pkgtools__msg_notice "With documentation    : '${with_doc}'"
     pkgtools__msg_notice "With test material    : '${with_test}'"
-    if [ ${python_wrapper_support} -eq 1 ]; then
-	pkgtools__msg_notice "With Python wrapper   : '${with_python_wrapper}'"
-    fi
     if [ ${bio_support} -eq 1 ]; then
 	pkgtools__msg_notice "With Boost I/O DLL    : '${with_bio}'"
     fi

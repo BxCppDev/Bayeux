@@ -23,7 +23,37 @@ namespace geomtools {
   const string stackable::STACKABLE_ZMAX_PROPERTY = "zmax";
   const string stackable::STACKABLE_PLAY_PROPERTY = "play";
   const string stackable::STACKABLE_LIMITS_PROPERTY = "limits";
+ 
+  bool i_stackable::has_xmin() const
+  {
+    return datatools::is_valid(get_xmin ());
+  }
 
+  bool i_stackable::has_xmax() const
+  {
+    return datatools::is_valid(get_xmax ());
+  }
+
+  bool i_stackable::has_ymin() const
+  {
+    return datatools::is_valid(get_ymin ());
+  }
+
+  bool i_stackable::has_ymax() const
+  {
+    return datatools::is_valid(get_ymax ());
+  }
+
+  bool i_stackable::has_zmin() const
+  {
+    return datatools::is_valid(get_zmin ());
+  }
+
+  bool i_stackable::has_zmax() const
+  {
+    return datatools::is_valid(get_zmax ());
+  }
+  
   string stackable::make_key (const string & key_)
   {
     ostringstream key_oss;
@@ -215,9 +245,6 @@ namespace geomtools {
 
   bool stackable_data::initialize (const datatools::properties & config_)
   {
-    // datatools::properties stackable_setup;
-    //stackable::extract (config_, stackable_setup);
-
     double lunit = CLHEP::mm;
     
     string length_unit_key = stackable::make_key (stackable::STACKABLE_LENGTH_UNIT_PROPERTY);
@@ -294,15 +321,35 @@ namespace geomtools {
     return is_valid ();
   }
 
-  bool stackable_data::is_valid () const
+  bool stackable_data::is_valid_x () const
   {
     return 
       datatools::is_valid (xmin)
-      && datatools::is_valid (xmax)
-      && datatools::is_valid (ymin)
-      && datatools::is_valid (ymax)
-      && datatools::is_valid (zmin)
+      && datatools::is_valid (xmax);
+  }
+  
+  bool stackable_data::is_valid_y () const
+  {
+    return 
+      datatools::is_valid (ymin)
+      && datatools::is_valid (ymax);
+  }
+  
+  bool stackable_data::is_valid_z () const
+  {
+    return 
+      datatools::is_valid (zmin)
       && datatools::is_valid (zmax);
+  }
+
+  bool stackable_data::is_valid () const
+  {
+    return is_valid_x () && is_valid_y () && is_valid_z ();
+  }
+
+  bool stackable_data::is_valid_weak () const
+  {
+    return is_valid_x () || is_valid_y () || is_valid_z ();
   }
   
   void stackable_data::invalidate ()

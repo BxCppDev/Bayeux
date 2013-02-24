@@ -35,11 +35,11 @@ namespace geomtools {
     static double get_default_skin ();
     static double get_proper_skin ();
 
-    /** Check if a 3D-shape can be stacked using some
+    /* Check if a 3D-shape can be stacked using some
      *  stacking algorithms. There are 2 checks:
-     *  \i check #1: checks if the instance owns a valid 
+     *  check #1: checks if the instance owns a valid 
      *  embedded 'stackable_data' instance.
-     *  \i check #2: if check #1 fails, check if the instance inherits 
+     *  check #2: if check #1 fails, check if the instance inherits 
      *  the 'i_stackable' interface.
      */
     static bool is_stackable (const i_shape_3d &);
@@ -56,7 +56,7 @@ namespace geomtools {
 
     static bool is_zmax_stackable (const i_shape_3d &);
 
-    /** Initialize a 'stackable_data' instance
+    /* Initialize a 'stackable_data' instance
      *  from stackable data attached to the 3D-shape.
      */
     static bool pickup_stackable (const i_shape_3d &, stackable_data &);

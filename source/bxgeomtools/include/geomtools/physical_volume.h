@@ -76,6 +76,12 @@ namespace geomtools {
 
     const logical_volume & get_mother () const;
 
+    bool has_real_mother () const;
+
+    void set_real_mother (const logical_volume &);
+
+    const logical_volume & get_real_mother () const;
+
     physical_volume ();
 
     physical_volume (const std::string & name_);
@@ -108,6 +114,10 @@ namespace geomtools {
                             bool inherit_               = false) const;
   private:
 
+    void _init_defaults_ ();
+
+  private:
+
     std::string            _name_;
     bool                   _locked_;
     datatools::properties  _parameters_;
@@ -116,6 +126,7 @@ namespace geomtools {
     bool                   _own_logical_;
     const logical_volume * _logical_;
     const logical_volume * _mother_;
+    const logical_volume * _real_mother_;
 
   public:
 

@@ -106,7 +106,7 @@ namespace geomtools {
 
     void initialize (const std::string & filename_);
 
-    /**
+    /*
      * Initialize the polycone from data in a file.
      * Format (ASCII) consists in lines with the
      * (Z,Rmax) format or the (Z,Rmin,Rmax) format.

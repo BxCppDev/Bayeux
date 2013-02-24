@@ -44,3 +44,10 @@ This is the geomtools package ChangeLog
 2012-11-29 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
 	* fix bug in helix_3d::get_length()
 	* version: prepare tag 3.2.1 in trunk
+2013-02-24 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* version: prepare tag 4.0.0 in trunk
+	* depend on: datatools pre-5.0.0 (datatools/trunk)
+	* add geometry "manager" class (moved from sngeometry)
+	* add geometry plugin support in the manager class 
+	* add system factory support for manager's geometry plugin
+	* add "mapping_plugin" class

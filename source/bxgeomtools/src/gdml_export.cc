@@ -115,7 +115,7 @@ namespace geomtools {
 
     if (! factory_.is_locked ())
       {
-        throw runtime_error ("gdml_export::export_gdml: Factory is not locked !");
+        throw logic_error ("gdml_export::export_gdml: Factory is not locked !");
       }
     std::ofstream fout;
     std::string gdml_filename = filename_;
@@ -158,7 +158,7 @@ namespace geomtools {
                 << "Cannot find model '"
                 << model_name_
                 << "' !";
-        throw std::runtime_error (message.str ());
+        throw std::logic_error (message.str ());
       }
     const i_model & top_model = *(found->second);
     if (_external_materials_stream_ != 0)
@@ -277,7 +277,7 @@ namespace geomtools {
                 << "Solid type '"
                 << shape_name
                 << "' is not valid !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
      }
     if (! gdml_writer::solid_type_is_supported (shape_name))
       {
@@ -286,7 +286,7 @@ namespace geomtools {
                 << "Solid type '"
                 << shape_name
                 << "' is not supported !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
      }
     bool composite = false;
 
@@ -375,7 +375,7 @@ namespace geomtools {
                     << "Boolean solid type '"
                     << shape_name
                     << "' is not supported yet !";
-            throw runtime_error (message.str ());
+            throw logic_error (message.str ());
           }
       }
     else
@@ -417,7 +417,7 @@ namespace geomtools {
                     << "Simple solid type '"
                     << shape_name
                     << "' is not supported !";
-            throw runtime_error (message.str ());
+            throw logic_error (message.str ());
           }
       }
     _solid_refs_.push_back (solid_name_);
@@ -470,12 +470,15 @@ namespace geomtools {
       }
     else
       {
-        ostringstream message;
-        message << "gdml_export::_export_gdml_logical: "
-                << "Logical volume '"
-                << log_name
-                << "' has no material !";
-        throw runtime_error (message.str ());
+        if (! logical.is_abstract ())
+          {
+            ostringstream message;
+            message << "gdml_export::_export_gdml_logical: "
+                    << "Logical volume '"
+                    << log_name
+                    << "' has no material !";
+            throw logic_error (message.str ());
+          }
       }
 
     bool skip = false;
@@ -524,7 +527,7 @@ namespace geomtools {
         RLP = dynamic_cast<const regular_linear_placement *> (pp);
         if (RLP == 0)
           {
-            throw runtime_error ("gdml_export::_export_gdml_logical: GDML replica support is for 'regular_linear_placement' only !");
+            throw logic_error ("gdml_export::_export_gdml_logical: GDML replica support is for 'regular_linear_placement' only !");
           }
         a_replicavol.volumeref = log_child.get_name ();
         a_replicavol.number = pp->get_number_of_items ();
@@ -717,7 +720,7 @@ namespace geomtools {
                 << "Model '"
                 << model.get_name ()
                 << "' is not constructed !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     _export_gdml_logical (model.get_logical ());
 

@@ -131,7 +131,7 @@ namespace geomtools {
 
   private:
 
-    geom_id          _invalid_geom_id_; //!< value of a invalid geometry ID
+    geom_id          _invalid_geom_id_; //!< value of an invalid geometry ID
     const id_mgr *   _id_manager_;      //!< the ID manager that knows about geometry categories and their relationship
     geom_info_dict_type _geom_infos_;      //!< the main dictionary of geometry informations addressed through IDs
 

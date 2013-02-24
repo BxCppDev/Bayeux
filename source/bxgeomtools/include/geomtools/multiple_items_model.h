@@ -68,7 +68,7 @@ namespace geomtools {
 
   private:
 
-    std::string           _material_name_;
+    std::string      _material_name_;
     box              _solid_;
     MWIM             _internals_;
 

@@ -145,6 +145,29 @@ namespace geomtools {
     return *_logical_;
   }
 
+  bool physical_volume::has_real_mother () const
+  {
+    return _real_mother_ != 0;
+  }
+
+  void physical_volume::set_real_mother (const logical_volume & real_mother_)
+  {
+    _real_mother_ = &real_mother_;
+    //logical_volume & the_real_mother = const_cast<logical_volume &> (real_mother_);
+    //the_real_mother.add_real_physical (*this, this->get_name ());
+    return;
+  }
+
+  const logical_volume & physical_volume::get_real_mother () const
+  {
+    return *_real_mother_;
+  }
+
+  const logical_volume & physical_volume::get_mother () const
+  {
+    return *_mother_;
+  }
+
   bool physical_volume::has_mother () const
   {
     return _mother_ != 0;
@@ -157,8 +180,8 @@ namespace geomtools {
     the_mother.add_physical (*this, this->get_name ());
     return;
   }
-  
-  physical_volume::physical_volume ()
+
+  void physical_volume::_init_defaults_ ()
   {
     _locked_ = false;
     _own_placement_ = false;
@@ -166,19 +189,21 @@ namespace geomtools {
     _own_logical_ = false;
     _logical_ = 0;
     _mother_ = 0;
+    _real_mother_ = 0;
+    return;
+ }
+  
+  physical_volume::physical_volume ()
+  {
+    _init_defaults_ ();
     return;
   }
   
   physical_volume::physical_volume (const string & name_)
   {
-    _locked_ = false;
-    _own_placement_ = false;
-    _placement_ = 0;
-    _own_logical_ = false;
-    _logical_ = 0;
-    _mother_ = 0;
-    set_name (name_);
-    return;
+    _init_defaults_ ();
+     set_name (name_);
+     return;
   }
 
   physical_volume::physical_volume (const string & name_, 
@@ -186,12 +211,7 @@ namespace geomtools {
                                     const logical_volume & mother_,
                                     const i_placement    & placement_)
   {
-    _locked_ = false;
-    _own_placement_ = false;
-    _placement_ = 0;
-    _own_logical_ = false;
-    _logical_ = 0;
-    _mother_ = 0;
+    _init_defaults_ ();
     set_name (name_);
     set_logical (logical_);    
     set_mother (mother_);    
@@ -204,11 +224,7 @@ namespace geomtools {
                                     const logical_volume & mother_,
                                     const i_placement    & placement_)
   {
-    _locked_ = false;
-    _own_placement_ = false;
-    _placement_ = 0;
-    _own_logical_ = false;
-    _logical_ = 0;
+    _init_defaults_ ();
     set_name (name_);
     set_logical (logical_);    
     set_mother (mother_);    
@@ -221,11 +237,7 @@ namespace geomtools {
                                     const logical_volume & mother_,
                                     const i_placement    * placement_)
   {
-    _locked_ = false;
-    _own_placement_ = false;
-    _placement_ = 0;
-    _own_logical_ = false;
-    _logical_ = 0;
+    _init_defaults_ ();
     set_name (name_);
     set_logical (logical_);    
     set_mother (mother_);    

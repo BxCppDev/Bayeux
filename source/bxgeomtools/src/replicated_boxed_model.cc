@@ -26,7 +26,7 @@ namespace geomtools {
 
   void replicated_boxed_model::set_number_of_items (size_t n_)
   {
-    assert_unconstructed ("replicated_boxed_model::set_number_of_items");
+    assert_unconstructed ("geomtools::replicated_boxed_model::set_number_of_items");
     _number_of_items_ = n_;
     return;
   }
@@ -53,17 +53,17 @@ namespace geomtools {
  
   void replicated_boxed_model::set_boxed_model (const i_model & model_)
   {
-    assert_unconstructed ("replicated_boxed_model::set_boxed_model");
+    assert_unconstructed ("geomtools::replicated_boxed_model::set_boxed_model");
 
     // check if model has a logical volume with a box shape:
     const i_shape_3d & shape = model_.get_logical ().get_shape ();
     if (shape.get_shape_name () != box::BOX_LABEL)
       {
         ostringstream message;
-        message << "replicated_boxed_model::set_boxed_model: "
+        message << "geomtools::replicated_boxed_model::set_boxed_model: "
                 << "Model has no 'box' shape ! "
                 << "Found '" << shape.get_shape_name () << "' !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     _boxed_model_ = &model_;
     return;
@@ -130,9 +130,9 @@ namespace geomtools {
     else
       {
         ostringstream message;
-        message << "replicated_boxed_model::_at_construct: "
+        message << "geomtools::replicated_boxed_model::_at_construct: "
                 << "Missing 'replicated.axis' property !"; 
-        throw runtime_error (message.str ());           
+        throw logic_error (message.str ());           
       }
 
     if (config_.has_key ("replicated.number_of_items"))
@@ -146,9 +146,9 @@ namespace geomtools {
     else
       {
         ostringstream message;
-        message << "replicated_boxed_model::_at_construct: "
+        message << "geomtools::replicated_boxed_model::_at_construct: "
                 << "Missing 'replicated.number_of_items' property !"; 
-        throw runtime_error (message.str ());           
+        throw logic_error (message.str ());           
       }
      
     if (config_.has_key ("replicated.model"))
@@ -162,17 +162,17 @@ namespace geomtools {
     else
       {
         ostringstream message;
-        message << "replicated_boxed_model::_at_construct: "
+        message << "geomtools::replicated_boxed_model::_at_construct: "
                 << "Missing 'replicated.model' property !"; 
-        throw runtime_error (message.str ());   
+        throw logic_error (message.str ());   
       }
 
     if (number_of_items == 0)
       {
         ostringstream message;
-        message << "replicated_boxed_model::_at_construct: "
+        message << "geomtools::replicated_boxed_model::_at_construct: "
                 << "Number of items is zero !"; 
-        throw runtime_error (message.str ());   
+        throw logic_error (message.str ());   
       }
 
     set_number_of_items (number_of_items);
@@ -184,17 +184,17 @@ namespace geomtools {
     if (! axis_ok)
       {
         ostringstream message;
-        message << "replicated_boxed_model::_at_construct: "
+        message << "geomtools::replicated_boxed_model::_at_construct: "
                 << "Invalid replicant axis !"; 
-        throw runtime_error (message.str ());   
+        throw logic_error (message.str ());   
       }
 
     if (! models_)
       {
         ostringstream message;
-        message << "replicated_boxed_model::_at_construct: "
+        message << "geomtools::replicated_boxed_model::_at_construct: "
                 << "Missing logicals dictionary !"; 
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     
     // Boxed model:
@@ -208,10 +208,10 @@ namespace geomtools {
       else
         {
           ostringstream message;
-          message << "replicated_boxed_model::_at_construct: "
+          message << "geomtools::replicated_boxed_model::_at_construct: "
                   << "Cannot find model with name '" 
                   << boxed_model_name << "' !";
-          throw runtime_error (message.str ());
+          throw logic_error (message.str ());
         }
     }
     
@@ -248,7 +248,7 @@ namespace geomtools {
     _solid_.set_z (_z_);
     if (! _solid_.is_valid ())
       {
-        throw runtime_error ("replicated_boxed_model::_at_construct: Invalid solid !");
+        throw logic_error ("geomtools::replicated_boxed_model::_at_construct: Invalid solid !");
       }
     get_logical ().set_name (i_model::make_logical_volume_name (name_));
     get_logical ().set_shape (_solid_);

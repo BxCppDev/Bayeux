@@ -1,5 +1,5 @@
 # -*- mode: conf-unix; -*-
-# List of geometry ID categories/types (datatools::utils::multi_properties):
+# List of geometry ID categories/types (datatools::multi_properties):
 
 #@description A sample list of geometry ID categories/types
 #@key_label   "category"

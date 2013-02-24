@@ -14,6 +14,7 @@
 #include <datatools/library_loader.h>
 
 #include <geomtools/geomtools_config.h>
+#include <geomtools/manager.h>
 #include <geomtools/model_factory.h>
 #include <geomtools/id_mgr.h>
 #include <geomtools/mapping.h>
@@ -31,12 +32,10 @@ void print_help ();
 
 int main (int argc_, char ** argv_)
 { 
-  using namespace std;
-
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Check geometry setup" << endl; 
+      std::clog << "Check geometry setup" << std::endl; 
   
       bool debug = false;
       bool devel = false;
@@ -44,6 +43,7 @@ int main (int argc_, char ** argv_)
       std::vector<std::string> LL_dlls;
       std::string LL_config;
  
+      std::string geo_mgr_config_file;
       std::vector<std::string> setup_filenames;
       bool dump_factory = false;
 
@@ -195,6 +195,10 @@ int main (int argc_, char ** argv_)
                 {
                   top_mapping_model_name = argv_[++iarg];
                 }
+             else if (option == "-c" || option == "--manager-config") 
+                {
+                  geo_mgr_config_file = argv_[++iarg];
+                }
               else 
                 { 
                   std::clog << "WARNING: ignoring option '" << option << "'!" << std::endl; 
@@ -224,24 +228,44 @@ int main (int argc_, char ** argv_)
             }
         }
 
-      geomtools::model_factory geometry_factory;
-      geometry_factory.set_debug (debug);
-
-      if (setup_filenames.size () == 0)
+      // Geometry data structures :
+      const geomtools::model_factory * geo_factory_ref = 0;
+      geomtools::manager geo_mgr;
+      geomtools::model_factory geo_factory;
+      bool use_geo_mgr = false;
+          
+      if (!geo_mgr_config_file.empty())
         {
-          throw std::logic_error ("Missing list of geometry models configuration files !");
-        } 
-      for (int i = 0; i  < setup_filenames.size(); i++)
-        {
-          std::string geom_filename = setup_filenames[i];
-          datatools::fetch_path_with_env (geom_filename);
-          geometry_factory.load (geom_filename);
+          geo_mgr.set_debug (debug);
+          datatools::properties geo_mgr_config;
+          datatools::properties::read_config (geo_mgr_config_file, 
+                                              geo_mgr_config); 
+          geo_mgr.initialize (geo_mgr_config);
+          geo_factory_ref = &geo_mgr.get_factory ();
+          use_geo_mgr = true;
         }
-      geometry_factory.lock ();
+      else
+        {
+          geo_factory.set_debug (debug);
+          
+          if (setup_filenames.size () == 0)
+            {
+              throw std::logic_error ("Missing list of geometry models configuration files !");
+            } 
+          for (int i = 0; i  < setup_filenames.size(); i++)
+            {
+              std::string geom_filename = setup_filenames[i];
+              datatools::fetch_path_with_env (geom_filename);
+              geo_factory.load (geom_filename);
+            }
+          geo_factory.lock ();
+          geo_factory_ref = &geo_factory;
+        }
 
+      const geomtools::model_factory & geometry_factory = *geo_factory_ref;
       if (dump_factory) 
         {
-          geometry_factory.tree_dump (clog, "Geometry model factory:");
+          geometry_factory.tree_dump (std::clog, "Geometry model factory:");
         }
       
       // Default model :
@@ -291,7 +315,9 @@ int main (int argc_, char ** argv_)
                   {
                     std::clog << std::endl;
                   }
-                std::clog  << "  " << std::setw (max_width) << std::setiosflags(ios::left) << std::resetiosflags(ios::right) 
+                std::clog  << "  " << std::setw (max_width) 
+                           << std::setiosflags(std::ios::left) 
+                           << std::resetiosflags(std::ios::right) 
                            << i->second->get_name () << "  ";
                 if (long_name)
                   {
@@ -318,7 +344,7 @@ int main (int argc_, char ** argv_)
               while (token_iss)
                 {
                   token.clear ();
-                  token_iss >> token >> ws;
+                  token_iss >> token >> std::ws;
                   if (token == ".q" || token == ".quit")
                     {
                       go_on = false;
@@ -371,56 +397,65 @@ int main (int argc_, char ** argv_)
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 
       // The manager for GID :
-      geomtools::id_mgr  gid_manager;
-      if (! categories_filename.empty ())
+      if (use_geo_mgr)
         {
-          std::string categories_lis = categories_filename;
-          datatools::fetch_path_with_env (categories_lis);
-          gid_manager.load (categories_lis);
+          geo_mgr.get_mapping ().smart_print (std::cout, 
+                                              "GID mapping : ", 
+                                              geomtools::mapping::PRINT_TITLE |
+                                              geomtools::mapping::PRINT_PAGER);
         }
-
-      if (mapping_requested)
+      else
         {
-          std::clog << "NOTICE: " << "Mapping..." << std::endl;
-          
-          // The mapping manager :
-          geomtools::mapping mapping_manager; 
-          mapping_manager.set_id_manager (gid_manager);
-          datatools::properties mapping_config;
-          mapping_config.store ("mapping.max_depth", mapping_max_depth);
-          bool can_exclude_categories = true;
-          if (mapping_only_categories.size ())
+          geomtools::id_mgr gid_manager;
+          if (! categories_filename.empty ())
             {
-              mapping_config.store ("mapping.only_categories", mapping_only_categories);
-              can_exclude_categories = false;
-            }
-          if (can_exclude_categories && mapping_excluded_categories.size ())
+              std::string categories_lis = categories_filename;
+              datatools::fetch_path_with_env (categories_lis);
+              gid_manager.load (categories_lis);
+            }     
+          if (mapping_requested)
             {
-              mapping_config.store ("mapping.excluded_categories", mapping_excluded_categories);
+              std::clog << "NOTICE: " << "Mapping..." << std::endl;
+              
+              // The mapping manager :
+              geomtools::mapping mapping_manager; 
+              mapping_manager.set_id_manager (gid_manager);
+              datatools::properties mapping_config;
+              mapping_config.store ("mapping.max_depth", mapping_max_depth);
+              bool can_exclude_categories = true;
+              if (mapping_only_categories.size ())
+                {
+                  mapping_config.store ("mapping.only_categories", mapping_only_categories);
+                  can_exclude_categories = false;
+                }
+              if (can_exclude_categories && mapping_excluded_categories.size ())
+                {
+                  mapping_config.store ("mapping.excluded_categories", mapping_excluded_categories);
+                }
+              mapping_manager.initialize (mapping_config);
+              if (top_mapping_model_name.empty ())
+                {
+                  top_mapping_model_name = geomtools::model_factory::DEFAULT_WORLD_LABEL;
+                }
+              if (geometry_factory.get_models ().find (top_mapping_model_name) != geometry_factory.get_models ().end ())
+                {
+                  mapping_manager.build_from (geometry_factory, top_mapping_model_name);
+                }
+              else
+                {
+                  std::clog << "WARNING: Cannot find model named '" << top_mapping_model_name << "'" << std::endl;
+                }
+              mapping_manager.smart_print (std::cout, 
+                                           "*** ", 
+                                           geomtools::mapping::PRINT_TITLE |
+                                           geomtools::mapping::PRINT_PAGER);
             }
-          mapping_manager.initialize (mapping_config);
-          if (top_mapping_model_name.empty ())
-            {
-              top_mapping_model_name = geomtools::model_factory::DEFAULT_WORLD_LABEL;
-            }
-          if (geometry_factory.get_models ().find (top_mapping_model_name) != geometry_factory.get_models ().end ())
-            {
-              mapping_manager.build_from (geometry_factory, top_mapping_model_name);
-            }
-          else
-            {
-              std::clog << "WARNING: Cannot find model named '" << top_mapping_model_name << "'" << std::endl;
-            }
-          mapping_manager.smart_print (std::cout, 
-                                       "*** ", 
-                                       geomtools::mapping::PRINT_TITLE |
-                                       geomtools::mapping::PRINT_PAGER);
         }
-
+      
       if (gdml)
         {
           std::clog << "NOTICE: " << "GDML..." << std::endl;
-          ostringstream ext_mat_oss;
+          std::ostringstream ext_mat_oss;
           geomtools::gdml_writer writer;
           {
             writer.add_element ("Hydrogen", 1, "H", 1);
@@ -470,18 +505,18 @@ int main (int argc_, char ** argv_)
               top_mapping_model_name = geomtools::model_factory::DEFAULT_WORLD_LABEL;
             }
           GDML.export_gdml (fgdml, geometry_factory, top_mapping_model_name);
-          clog << "NOTICE: GDML file '" << fgdml << "' has been generated !" << endl;
+          std::clog << "NOTICE: GDML file '" << fgdml << "' has been generated !" << std::endl;
         }
 
     }
-  catch (exception & x)
+  catch (std::exception & x)
     {
-      cerr << "ERROR: " << x.what () << endl; 
+      std::cerr << "ERROR: " << x.what () << std::endl; 
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "ERROR: " << "unexpected error!" << endl; 
+      std::cerr << "ERROR: " << "unexpected error!" << std::endl; 
       error_code = EXIT_FAILURE;
     }
   return (error_code);
@@ -550,6 +585,11 @@ void print_help ()
   std::clog << "   -VM|--visu-model MODEL_NAME :\n";
   std::clog << "                       Visualization shows a specific geometry model\n";
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
+  std::clog << "   -c|--manager-config CONFIG_FILENAME: \n"
+            << "                       Use configuration file for the geometry manager\n";
+  std::clog << "   +G|--with-gdml    : Generate GDML output\n";
+  std::clog << "   -G|--without-gdml : Do not generate GDML output\n";
+  std::clog << "   Without a manager config file: \n";
   std::clog << "   +M|--with-mapping : Build geometry mapping informations\n";
   std::clog << "   -M|--without-mapping : \n"
             << "                       Do not build geometry mapping informations\n";
@@ -563,9 +603,8 @@ void print_help ()
   std::clog << "                       Specify a category to be excluded from the geometry mapping\n";
   std::clog << "   -MT|--mapping-top-model MODEL_NAME : \n"
             << "                       Identify the top-level model for mapping\n";
-  std::clog << "   +G|--with-gdml    : Generate GDML output\n";
-  std::clog << "   -G|--without-gdml : Do not generate GDML output\n";
   std::clog << "Examples:\n\n";
+  std::clog << "  geomtools_check_setup --manager-config ${GEOMTOOLS_DATA_DIR}/testing/config/test-1.0/test_manager.conf \n\n";
   std::clog << "  geomtools_check_setup --mapping-categories setup_categories.lis --mapping-max-depth 3 setup.geom \n\n";
   return;
 }

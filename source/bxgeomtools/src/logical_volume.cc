@@ -24,6 +24,7 @@ namespace geomtools {
 
   void logical_volume::lock ()
   {
+    _at_lock_ ();
     _locked_ = true;
     return;
   }
@@ -133,20 +134,25 @@ namespace geomtools {
     _parameters_.update (material::make_key (material::constants::instance ().MATERIAL_REF_PROPERTY), material_ref_);
     return;
   }
-
-  logical_volume::logical_volume ()
+   
+  void logical_volume::_init_defaults_ ()
   {
     _locked_ = false;
     _own_shape_ = false;
     _shape_ = 0;
+    _abstract_ = false;
+    return;
+  }
+
+  logical_volume::logical_volume ()
+  {
+    _init_defaults_ ();
     return;
   }
 
   logical_volume::logical_volume (const string & name_)
   {
-    _locked_ = false;
-    _own_shape_ = false;
-    _shape_ = 0;
+    _init_defaults_ ();
     set_name (name_);
     return;
   }
@@ -154,9 +160,7 @@ namespace geomtools {
   logical_volume::logical_volume (const string & name_, 
                                   const i_shape_3d & shape_)
   {
-    _locked_ = false;
-    _own_shape_ = false;
-    _shape_ = 0;
+    _init_defaults_ ();
     set_name (name_);
     set_shape (shape_);
     return;
@@ -165,9 +169,7 @@ namespace geomtools {
   logical_volume::logical_volume (const string & name_, 
                                   const i_shape_3d * shape_)
   {
-    _locked_ = false;
-    _own_shape_ = false;
-    _shape_ = 0;
+    _init_defaults_ ();
     set_name (name_);
     set_shape (shape_);    
     return;
@@ -191,6 +193,12 @@ namespace geomtools {
     return _physicals_;
   }
 
+  const logical_volume::physicals_col_type & 
+  logical_volume::get_real_physicals () const
+  {
+    return _real_physicals_;
+  }
+
   const physical_volume & logical_volume::get_physical (const string & name_) const
   {
     physicals_col_type::const_iterator found = _physicals_.find (name_);
@@ -212,7 +220,7 @@ namespace geomtools {
         ostringstream message;
         message << "logical_volume::add_physical: "
                 << "name '" << name_ << "' is already used !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     string name;
     if (name_.empty ())
@@ -225,14 +233,14 @@ namespace geomtools {
       }
     if (name.empty ())
       {
-        throw runtime_error ("logical_volume::add_physical: Missing physical's name !");
+        throw logic_error ("logical_volume::add_physical: Missing physical's name !");
       }
     if (_parameters_.has_flag (HAS_REPLICA_FLAG))
       {
         ostringstream message;
         message << "logical_volume::add_physical: "
                 << "Cannot add more physical volume for a 'replica' already exists !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     if (phys_.get_placement ().is_replica ())
       {
@@ -241,7 +249,7 @@ namespace geomtools {
             ostringstream message;
             message << "logical_volume::add_physical: "
                     << "Cannot add a 'replica' physical volume for other physicals already exist !";
-            throw runtime_error (message.str ());
+            throw logic_error (message.str ());
           }
         _parameters_.store_flag (HAS_REPLICA_FLAG);
       }
@@ -260,6 +268,33 @@ namespace geomtools {
     //return _parameters_.has_flag (HAS_REPLICA_FLAG);
   }
 
+  void logical_volume::set_abstract (bool a_)
+  {
+    _abstract_ = a_;
+    return;
+  }
+
+  bool logical_volume::is_abstract () const
+  {
+    return _abstract_;
+  }
+
+  void logical_volume::_at_lock_ ()
+  {
+    if (! has_material_ref ())
+      {
+        _abstract_ = true;
+      }
+    _compute_real_physicals_ ();
+
+    return;
+  }
+
+    void logical_volume::_compute_real_physicals_ ()
+    {
+      
+    }
+
   void logical_volume::tree_dump (ostream & out_, 
                                   const string & title_, 
                                   const string & indent_, 
@@ -276,6 +311,9 @@ namespace geomtools {
 
     out_ << indent <<  datatools::i_tree_dumpable::tag 
          << "Locked     : " << (_locked_? "Yes": "No") << endl;
+
+    out_ << indent <<  datatools::i_tree_dumpable::tag 
+         << "Abstract   : " << (_abstract_? "Yes": "No") << endl;
 
     {
       out_ << indent << datatools::i_tree_dumpable::tag

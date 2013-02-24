@@ -35,7 +35,7 @@
 namespace geomtools {
 
   /// A blur spot classes
-  /**
+  /*
    *
    *   <---> tolerance
    *     :

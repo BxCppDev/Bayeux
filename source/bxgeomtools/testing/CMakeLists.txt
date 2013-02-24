@@ -71,7 +71,12 @@ set ( geomtools_tests_programs
   test_utils.cxx
   test_gnuplot_draw.cxx
   test_display_data.cxx
+  test_manager.cxx
 )
+
+# set ( geomtools_tests_programs
+#   test_manager.cxx
+# )
 
 ###message (STATUS "geomtools_tests_programs=${geomtools_tests_programs}" )
 list(REMOVE_ITEM geomtools_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)

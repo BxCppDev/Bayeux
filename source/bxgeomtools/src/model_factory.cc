@@ -135,20 +135,13 @@ namespace geomtools {
     bool devel = g_devel || _debug_;
     if (_locked_)
       {
-        throw logic_error ("geomtools::model_factory::init: Factory is locked !");
+        throw logic_error ("geomtools::model_factory::load: Factory is locked !");
       }
-
-    //cerr << "********** DEVEL: geomtools::model_factory::load: Go !" << endl;
-    //_mp_.set_debug (devel);
     _mp_.read (mprop_file_);
-    //cerr << "********** DEVEL: geomtools::model_factory::load: Done !" << endl;
-    //usleep (200);
-
     if (devel)
       {
         _mp_.dump (clog);
       }
-
     return;
   }
 
@@ -156,7 +149,7 @@ namespace geomtools {
   {
     if (_locked_)
       {
-        throw logic_error ("geomtools::model_factory::init: Already locked !");
+        throw logic_error ("geomtools::model_factory::_lock_: Already locked !");
       }
     _construct_ ();
     _mp_.reset ();
@@ -180,7 +173,7 @@ namespace geomtools {
   {
     if (_locked_)
       {
-        throw logic_error ("geomtools::model_factory::init: Already locked !");
+        throw logic_error ("geomtools::model_factory::lock: Already locked !");
       }
     _lock_ ();
     _locked_ = true;
@@ -215,6 +208,20 @@ namespace geomtools {
       }
     _models_.clear ();
     _mp_.reset ();
+    return;
+  }
+
+  /// Add a property prefix to be preserved in logicals
+  void model_factory::add_property_prefix(const std::string & prefix_, int level_)
+  {
+    if (_property_prefixes_.find (prefix_) != _property_prefixes_.end())
+      {
+        std::ostringstream message;
+        message << "geomtools::model_factory::add_property_prefix: " 
+                << "Property prefix to be preserved '" << prefix_<< "' already exists !";
+        throw std::logic_error(message.str());
+       }
+    _property_prefixes_[prefix_] = level_;
     return;
   }
 
@@ -256,36 +263,29 @@ namespace geomtools {
           }
         i_model * model = the_factory ();
         model->construct (model_name, e.get_properties (), &_models_);
+        /*
         e.get_properties ().export_starting_with (model->get_logical ().parameters (),
                                                   visibility::constants::instance().VISIBILITY_PREFIX);
-        _models_[model_name] = model;
-        if (devel)
+        */
+        for (std::map<std::string,int>::const_iterator i = _property_prefixes_.begin ();
+             i != _property_prefixes_.end ();
+             i++)
           {
-            clog << "DEVEL: geomtools::model_factory::_construct_: "
-                 << "ADD MODEL '" << model_name << "'" << endl;
+            e.get_properties ().export_starting_with (model->get_logical ().parameters (),
+                                                      i->first);
+          }
+
+        _models_[model_name] = model;
+        if (is_debug ())
+          {
+            clog << "DEBUG: geomtools::model_factory::_construct_: "
+                 << "Adding model '" << model_name << "'..." << endl;
           }
         string log_name = model->get_logical ().get_name ();
         _logicals_[log_name] = &(model->get_logical ());
-        if (devel) model->tree_dump (clog, "New model is:", "DEVEL: geomtools::model_factory::_construct_: ");
-
-        // model = creator (model_name,
-        //                  e.get_properties (),
-        //                  &_models_);
-        // if (model != 0)
-        //   {
-        //     e.get_properties ().export_starting_with (model->get_logical ().parameters (),
-        //                                               visibility::constants::instance().VISIBILITY_PREFIX);
-        //     _models_[model_name] = model;
-        //     string log_name = model->get_logical ().get_name ();
-        //     _logicals_[log_name] = &(model->get_logical ());
-        //     if (devel) model->tree_dump (clog, "New model is:", "DEVEL: geomtools::model_factory::_construct_: ");
-        //   }
-        // else
-        //   {
-        //     cerr << "ERROR: geomtools::model_factory::_construct_: "
-        //          << "Cannot create model of type \"" << model_type
-        //          << "\" with name \"" << model_name << "\"..." << endl;
-        //   }
+        if (is_debug ()) model->tree_dump (clog, 
+                                           "New model is:", 
+                                           "DEBUG: geomtools::model_factory::_construct_: ");
       }
     if (devel)
       {
@@ -314,6 +314,7 @@ namespace geomtools {
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Locked  : " <<  (_locked_? "Yes": "No") << endl;
 
+    // Configurations: 
     {
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Multi-properties : ";
@@ -330,6 +331,29 @@ namespace geomtools {
       }
     }
 
+    // Logicals: 
+    {
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Logicals : ";
+      if ( _logicals_.size () == 0)
+        {
+          out_ << "<empty>";
+        }
+      else
+        {
+          out_ << "[" << _logicals_.size () << "]";
+        }
+      out_ << endl;
+      for (logical_volume::dict_type::const_iterator i = _logicals_.begin ();
+           i != _logicals_.end ();
+           i++)
+        {
+         const string & key = i->first;
+         const logical_volume * a_logical = i->second;
+        }
+    }
+ 
+    // Models: 
     {
       out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
            << "Models : ";

@@ -50,9 +50,9 @@ namespace geomtools {
     if (_model_ == 0)
       {
         ostringstream message;
-        message << "model_with_internal_items_tools::item_type::get_model: "
+        message << "geomtools::model_with_internal_items_tools::item_type::get_model: "
                 << "Missing model !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     return *_model_;
   }
@@ -88,7 +88,7 @@ namespace geomtools {
     if (label_.length () == 0)
       {
         ostringstream message;
-        message << "model_with_internal_items_tools::has_item: "
+        message << "geomtools::model_with_internal_items_tools::has_item: "
                 << "Empty label !"
                 << endl;
         throw logic_error (message.str ());
@@ -103,7 +103,7 @@ namespace geomtools {
     if (found == _items_.end ())
       {
         ostringstream message;
-        message << "model_with_internal_items_tools::get_item: "
+        message << "geomtools::model_with_internal_items_tools::get_item: "
                 << "No item with label '" << label_ << "'"
                 << endl;
         throw logic_error (message.str ());
@@ -118,10 +118,10 @@ namespace geomtools {
     if (found == _items_.end ())
       {
         ostringstream message;
-        message << "model_with_internal_items_tools::get_item: "
+        message << "geomtools::model_with_internal_items_tools::get_item: "
                 << "No item with label '" << label_ << "' !"
                 << endl;
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     return found->second;
   }
@@ -143,10 +143,10 @@ namespace geomtools {
     if (has_item (label_))
       {
         ostringstream message;
-        message << "model_with_internal_items_tools::add_item: "
+        message << "geomtools::model_with_internal_items_tools::add_item: "
                 << "There is already an item with label '" << label_ << "' !"
                 << endl;
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
       
     {
@@ -217,9 +217,9 @@ namespace geomtools {
     if (! models_)
       {
         ostringstream message;
-        message << "model_with_internal_items_tools::_at_construct: "
+        message << "geomtools::model_with_internal_items_tools::_at_construct: "
                 << "Missing dictionary of models !"; 
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
 
     for (vector<string>::const_iterator i = labels.begin ();
@@ -242,7 +242,7 @@ namespace geomtools {
           else
             {
               ostringstream message;
-              message << "model_with_internal_items_tools::_at_construct: "
+              message << "geomtools::model_with_internal_items_tools::_at_construct: "
                       << "Missing '" << item_placement_oss.str () << "' property !"; 
               throw logic_error (message.str ());
             }
@@ -259,7 +259,7 @@ namespace geomtools {
           if (! res_parsing)
             {
               ostringstream message;
-              message << "model_with_internal_items_tools::_at_construct: "
+              message << "geomtools::model_with_internal_items_tools::_at_construct: "
                       << "Item's placement parsing failed !"; 
               throw logic_error (message.str ());
             }
@@ -276,7 +276,7 @@ namespace geomtools {
           else
             {
               ostringstream message;
-              message << "model_with_internal_items_tools::_at_construct: "
+              message << "geomtools::model_with_internal_items_tools::_at_construct: "
                       << "Missing '" << item_model_key_oss.str () << "' property !"; 
               throw logic_error (message.str ());
             }
@@ -290,7 +290,7 @@ namespace geomtools {
             else
               {
                 ostringstream message;
-                message << "model_with_internal_items_tools::_at_construct: "
+                message << "geomtools::model_with_internal_items_tools::_at_construct: "
                         << "Cannot find model with name '" 
                         << item_model_name << "' !";
                 throw logic_error (message.str ());

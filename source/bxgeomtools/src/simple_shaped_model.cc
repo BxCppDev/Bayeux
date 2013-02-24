@@ -532,7 +532,7 @@ namespace geomtools {
      if (! datatools::is_valid (outer_r))
       {
         ostringstream message;
-        message << "simple_boxed_model::_construct_tube: "
+        message << "geomtools::simple_boxed_model::_construct_tube: "
                 << "Missing tube 'outer_r' property !";
         throw logic_error (message.str ());
       }
@@ -545,7 +545,7 @@ namespace geomtools {
     else
       {
         ostringstream message;
-        message << "simple_boxed_model::_construct_tube: "
+        message << "geomtools::simple_boxed_model::_construct_tube: "
                 << "Missing tube 'z' property !";
         throw logic_error (message.str ());
       }
@@ -569,7 +569,7 @@ namespace geomtools {
         else
           {
             ostringstream message;
-            message << "simple_boxed_model::_construct_tube: "
+            message << "geomtools::simple_boxed_model::_construct_tube: "
                     << "Invalid mode '" << filled_mode_label << "' property !";
             throw logic_error (message.str ());
           }
@@ -629,7 +629,7 @@ namespace geomtools {
           }
         _solid_ = _cylinder_;
         get_logical ().set_material_ref (_material_name_);
-        // if the tube is extruded, add an extruded 'inner' cylinder
+        // if the tube is extruded, add an extrusion 'inner' cylinder
         // within the 'outer' cylinder:
         if (_tube_->is_extruded ())
           {
@@ -694,6 +694,9 @@ namespace geomtools {
             _inner_phys_.set_placement (_inner_placement_);
             _inner_phys_.set_logical (_inner_logical_);
             _inner_phys_.set_mother (this->get_logical ());
+
+            // makes the tube the mother of daughter physical volumes:
+            _daughter_owner_logical_ = &_inner_logical_;
           }
       }
 
@@ -765,7 +768,7 @@ namespace geomtools {
         else
           {
             ostringstream message;
-            message << "simple_boxed_model::_at_construct: "
+            message << "geomtools::simple_boxed_model::_at_construct: "
                     << "Invalid mode '" << filled_mode_label << "' property !";
             throw logic_error (message.str ());
           }
@@ -786,7 +789,7 @@ namespace geomtools {
         else
           {
             ostringstream message;
-            message << "simple_shaped_model::_construct_polycone: "
+            message << "geomtools::simple_shaped_model::_construct_polycone: "
                     << "Missing 'material.filled.ref' property !";
             throw logic_error (message.str ());
           }
@@ -797,7 +800,7 @@ namespace geomtools {
     if (! _polycone_->is_valid ())
       {
         _polycone_->tree_dump (cerr, "Invalid polycone: ", "ERROR:" );
-        throw logic_error ("simple_shaped_model::_construct_polycone: Invalid polycone build parameters !");
+        throw logic_error ("geomtools::simple_shaped_model::_construct_polycone: Invalid polycone build parameters !");
       }
     if (devel)
       {
@@ -818,7 +821,7 @@ namespace geomtools {
         _polycone_->compute_outer_polycone (*envelope_polycone);
         if (! envelope_polycone->is_valid ())
           {
-            throw logic_error ("simple_shaped_model::_construct_polycone: Invalid envelope polycone !");
+            throw logic_error ("geomtools::simple_shaped_model::_construct_polycone: Invalid envelope polycone !");
           }
         _outer_shape_ = envelope_polycone;
         _solid_ = _outer_shape_;
@@ -832,7 +835,7 @@ namespace geomtools {
             if (! inner_pol->is_valid ())
               {
                 delete inner_pol;
-                throw logic_error ("simple_shaped_model::_construct_polycone: Invalid 'inner' polycone dimensions !");
+                throw logic_error ("geomtools::simple_shaped_model::_construct_polycone: Invalid 'inner' polycone dimensions !");
               }
             _inner_shape_ = inner_pol;
             // inner placement for the extrusion:
@@ -860,7 +863,7 @@ namespace geomtools {
         _polycone_->compute_outer_polycone (*outer_polycone);
         if (! outer_polycone->is_valid ())
           {
-            throw logic_error ("simple_shaped_model::_construct_tube: Invalid 'outer' cylinder dimensions !");
+            throw logic_error ("geomtools::simple_shaped_model::_construct_tube: Invalid 'outer' cylinder dimensions !");
           }
         _outer_shape_ = outer_polycone;
         _solid_ = _outer_shape_;
@@ -950,7 +953,7 @@ namespace geomtools {
         else
           {
             ostringstream message;
-            message << "simple_boxed_model::_at_construct: "
+            message << "geomtools::simple_boxed_model::_at_construct: "
                     << "Invalid mode '" << filled_mode_label << "' property !";
             throw logic_error (message.str ());
           }

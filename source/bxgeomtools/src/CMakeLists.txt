@@ -66,6 +66,7 @@ include/geomtools/i_wires_3d_rendering.h
 include/geomtools/line_3d.h
 include/geomtools/logical_volume.h
 include/geomtools/mapping.h
+include/geomtools/mapping_plugin.h
 include/geomtools/mapping_utils.h
 include/geomtools/material.h
 include/geomtools/model_factory.h
@@ -85,6 +86,7 @@ include/geomtools/regular_grid_placement.h
 include/geomtools/regular_linear_placement.h
 include/geomtools/regular_polygon.h
 include/geomtools/replicated_boxed_model.h
+include/geomtools/replicated_model.h
 include/geomtools/rotated_boxed_model.h
 include/geomtools/sensitive.h
 include/geomtools/simple_boxed_model.h
@@ -105,6 +107,8 @@ include/geomtools/union_3d.h
 include/geomtools/units.h
 include/geomtools/utils.h
 include/geomtools/visibility.h
+include/geomtools/manager.h
+include/geomtools/manager_macros.h
 include/geomtools/blur_spot.ipp
 include/geomtools/display_data.ipp
 include/geomtools/geom_id.ipp
@@ -128,16 +132,12 @@ list(APPEND geomtools_PUBLIC_HEADERS ${PROJECT_BINARY_DIR}/include/geomtools/geo
 #-----------------------------------------------------------------------
 # PRIVATE HEADERS
 
-set_source_files_properties(${geomtools_eos_HEADERS}
-  PROPERTIES
-    MACOSX_PACKAGE_LOCATION Headers/eos
-  )
-
 # - DETAIL headers: Again a list, but we also set their Mac OSX
 # package location because they are nested...
 set(geomtools_detail_HEADERS
   include/geomtools/detail/bio_link_guard.h
   include/geomtools/detail/model_tools.h
+  include/geomtools/detail/manager-inl.h
   )
 list_prepend(geomtools_detail_HEADERS "${PROJECT_SOURCE_DIR}/")
 
@@ -149,7 +149,7 @@ set_source_files_properties(${geomtools_detail_HEADERS}
 # We have to install the detail header modules separately if geomtools 
 # isn't built as a Framework.
 if(NOT APPLE)
-  foreach(_module detail eos)
+  foreach(_module detail)
     install(FILES ${geomtools_${_module}_HEADERS}
       DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/geomtools/${_module}
       COMPONENT   Development
@@ -177,6 +177,7 @@ set(geomtools_SOURCES
   i_stackable.cc 
   logical_volume.cc 
   mapping.cc 
+  mapping_plugin.cc 
   mapping_utils.cc  
   model_factory.cc 
   model_with_internal_items_tools.cc 
@@ -201,6 +202,7 @@ set(geomtools_SOURCES
   spherical_extrusion_box_model.cc 
   cylindric_extrusion_boxed_model.cc 
   replicated_boxed_model.cc 
+  replicated_model.cc 
   rotated_boxed_model.cc 
   simple_boxed_model.cc 
   simple_shaped_model.cc 
@@ -232,16 +234,17 @@ set(geomtools_SOURCES
   utils.cc
   gnuplot_draw.cc 
   display_data.cc 
+  manager.cc 
   )
 
-message(STATUS "********** GEOMTOOLS_WITH_GNUPLOT_DISPLAY=${GEOMTOOLS_WITH_GNUPLOT_DISPLAY}")
+#message(STATUS "********** GEOMTOOLS_WITH_GNUPLOT_DISPLAY=${GEOMTOOLS_WITH_GNUPLOT_DISPLAY}")
 if (GEOMTOOLS_WITH_GNUPLOT_DISPLAY)
   list (APPEND geomtools_SOURCES
     ${PROJECT_SOURCE_DIR}/src/gnuplot_i.cc 
     ${PROJECT_SOURCE_DIR}/src/gnuplot_drawer.cc 
     )
 endif ()
-message(STATUS "********** geomtools_SOURCES=${geomtools_SOURCES}")
+#message(STATUS "********** geomtools_SOURCES=${geomtools_SOURCES}")
 
 #-----------------------------------------------------------------------
 # CMAKE RESOURCE FILES

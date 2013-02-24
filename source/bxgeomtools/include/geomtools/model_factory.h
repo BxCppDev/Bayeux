@@ -18,6 +18,7 @@
 
 #include <iostream>
 #include <string>
+#include <map>
 
 #include <datatools/multi_properties.h>
 #include <datatools/i_tree_dump.h>
@@ -72,8 +73,11 @@ namespace geomtools {
     /// Unlock the geometry model factory
     void unlock ();
 
-    /// Rest the factory
+    /// Reset the factory
     void reset ();
+
+    /// Add a property prefix to be preserved in logicals
+    void add_property_prefix(const std::string & prefix_, int = 1);
 
   private:
 
@@ -100,8 +104,9 @@ namespace geomtools {
     bool _locked_;
     bool _debug_;
     datatools::multi_properties _mp_;
-    models_col_type           _models_;
-    logical_volume::dict_type _logicals_;
+    models_col_type             _models_;
+    logical_volume::dict_type   _logicals_;
+    std::map<std::string,int>   _property_prefixes_;
 
   };
 
