@@ -25,7 +25,7 @@
  * \code
  *
  * class Base {
- *   DATATOOLS_FACTORY_INTERFACE(Base)
+ *   DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(Base)
  * };
  *
  * DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(Base)
@@ -54,7 +54,7 @@
 #define DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(BaseType)		\
   DATATOOLS_FACTORY_INTERFACE(BaseType)					\
   public:								\
-  typedef boost::scoped_ptr< factory_register_type > scoped_factory_register_type; \
+  typedef ::boost::scoped_ptr< factory_register_type > scoped_factory_register_type; \
   static factory_register_type& grab_system_factory_register();		\
   static const factory_register_type& get_system_factory_register();	\
   /**/

@@ -31,30 +31,111 @@
 #include <datatools/base_service.h>
 
 namespace datatools {
-
+ 
 dependency_info_type::dependency_info_type() {
   level = DEPENDENCY_STRICT;
 }
 
-
-service_entry::service_entry() {
-  service_status = 0;
-  service_handle.reset();
+uint32_t service_entry::get_service_status() const
+{
+  return service_status;
+}
+ 
+void service_entry::update_service_status(uint32_t bits)
+{
+  service_status |= bits;
+  return;
 }
 
-  /*
-  const datatools::properties & get_service_config () const;
+void service_entry::reset_service_status(uint32_t bits)
+{
+  service_status ^= bits;
+  return;
+}
 
-  void set_service_config (const datatools::properties &);
+const datatools::properties & service_entry::get_service_config () const
+{
+  return service_config;
+}
 
-  const std::string & get_service_id () const;
+datatools::properties & service_entry::grab_service_config ()
+{
+  if (service_status != STATUS_BLANK)
+    {
+      std::ostringstream message;
+      message << "datatools::service_entry::grab_service_config: "
+              << "Cannot modify the configuration of service named '" 
+              << get_service_name () << "' !";
+      throw std::logic_error(message.str());
+    }
+  return service_config;
+}
+  
+void service_entry::set_service_config (const datatools::properties & sc_)
+{
+  if (service_status != STATUS_BLANK)
+    {
+      std::ostringstream message;
+      message << "datatools::service_entry::set_service_config: "
+              << "Cannot modify the configuration of service named '" 
+              << get_service_name () << "' !";
+      throw std::logic_error(message.str());
+    }
+  service_config = sc_; 
+  return;
+}
 
-  void set_service_id (const std::string &);
+const std::string & service_entry::get_service_id () const
+{
+  return service_id;
+}
 
-  const std::string & get_service_name () const;
+void service_entry::set_service_id (const std::string & sid_)
+{
+  if (sid_.empty())
+    {
+      std::ostringstream message;
+      message << "datatools::service_entry::set_service_id: "
+              << "Empty service ID is not allowed !";
+      throw std::logic_error(message.str());
+    }  
+  service_id = sid_;
+}
 
-  */
-  void set_service_name (const std::string &);
+const std::string & service_entry::get_service_name () const
+{
+  return service_name;
+}
+
+void service_entry::set_service_name (const std::string & sn_)
+{
+  if (sn_.empty())
+    {
+      std::ostringstream message;
+      message << "datatools::service_entry::set_service_name: "
+              << "Empty service name is not allowed !";
+      throw std::logic_error(message.str());
+    }
+  service_name = sn_;
+  return; 
+}
+  
+
+const service_handle_type & service_entry::get_service_handle() const
+{
+  return service_handle;
+}
+
+service_handle_type & service_entry::grab_service_handle()
+{
+  return service_handle;
+}
+
+
+service_entry::service_entry() {
+  service_status = STATUS_BLANK;
+  service_handle.reset();
+}
 
 bool service_entry::has_slave(const std::string& name) const {
   dependency_level_dict_type::const_iterator found = service_slaves.find(name);
@@ -81,6 +162,16 @@ bool service_entry::can_be_dropped() const {
   return true;
 }
 
+
+bool service_entry::is_created() const
+{
+  return service_status & STATUS_CREATED;
+}
+
+bool service_entry::is_initialized() const
+{
+  return service_status & STATUS_INITIALIZED;
+}
 
 void service_entry::tree_dump(std::ostream& out, 
                               const std::string& title,

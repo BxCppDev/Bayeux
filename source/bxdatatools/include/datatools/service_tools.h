@@ -72,6 +72,8 @@ struct dependency_info_type {
 typedef std::map<std::string, int> dependency_level_dict_type;
 typedef std::map<std::string, dependency_info_type> service_dependency_dict_type;
 
+class service_manager;
+
 // Record that handles a dynamically allocated service and additional 
 // informations :
 
@@ -85,37 +87,35 @@ class service_entry : public datatools::i_tree_dumpable  {
     STATUS_BROKEN_DEPENDENCY = 0x4
   };
 
-  // WHY ARE THESE PUBLIC?? service_entry has functionality, it's
-  // not just a bag of data...
-  // Either that, or it should be a pImpl of service_manager
-  //
-  std::string  service_name;    //!< The name of the service
-  std::string  service_id;      //!< The ID (type) of the service
-  datatools::properties service_config;  //!< The configuration of the service 
-  uint32_t service_status;  //!< The status of the service
-  service_handle_type service_handle;  //!< The handle for the allocated service
-  service_dependency_dict_type service_masters; //!< The list of services the service depends on (by names)
-  dependency_level_dict_type   service_slaves;  //!< The list of depending services (by names)
-
  public:
 
-  /*
-  const datatools::properties & get_service_config () const;
+  const std::string & get_service_name () const;
 
-  void set_service_config (const datatools::properties &);
+  void set_service_name (const std::string &);
 
   const std::string & get_service_id () const;
 
   void set_service_id (const std::string &);
 
-  const std::string & get_service_name () const;
+  const datatools::properties & get_service_config () const;
 
-  void set_service_name (const std::string &);
-  */
+  datatools::properties & grab_service_config ();
+
+  void set_service_config (const datatools::properties &);
 
   service_entry();
 
   bool can_be_dropped() const;
+
+  uint32_t get_service_status() const;
+
+  void update_service_status(uint32_t);
+
+  void reset_service_status(uint32_t);
+
+  bool is_created() const;
+
+  bool is_initialized() const;
 
   bool has_slave(const std::string& name) const;
 
@@ -126,6 +126,26 @@ class service_entry : public datatools::i_tree_dumpable  {
                          const std::string & indent = "",
                          bool inherit = false) const;
 
+  const service_handle_type & get_service_handle() const;
+
+  service_handle_type & grab_service_handle();
+
+ public: // TO BE CHANGED
+ private: 
+  // WHY ARE THESE PUBLIC?? service_entry has functionality, it's
+  // not just a bag of data...
+  // Either that, or it should be a pImpl of service_manager
+  //
+  std::string  service_name;    //!< The name of the service
+  std::string  service_id;      //!< The ID (type) of the service
+  datatools::properties service_config;  //!< The configuration of the service 
+  uint32_t service_status;  //!< The status of the service
+  service_handle_type service_handle;  //!< The handle for the allocated service
+ public:
+  service_dependency_dict_type service_masters; //!< The list of services the service depends on (by names)
+  dependency_level_dict_type   service_slaves;  //!< The list of depending services (by names)
+
+  //friend class service_manager;
 };
 
 typedef std::map<std::string, service_entry> service_dict_type;

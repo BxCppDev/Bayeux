@@ -337,7 +337,6 @@ function do_configure ()
     local with_reflection=1
     local with_doc=1
     local with_test=1
-    local with_bash_setup=1
     local with_dependency_check=0
     local build_type=
     local cadfael_cmake_config_dir=
@@ -382,10 +381,6 @@ function do_configure ()
 	    with_test=1
 	elif [ "${option}" = "--without-test" ]; then
 	    with_test=0
-	elif [ "${option}" = "--with-bash-setup" ]; then
-	    with_bash_setup=1
-	elif [ "${option}" = "--without-bash-setup" ]; then
-	    with_bash_setup=0
 	elif [ "${option}" = "--with-dependency-check" ]; then
 	    with_dependency_check=1
 	elif [ "${option}" = "--without-dependency-check" ]; then
@@ -438,7 +433,6 @@ function do_configure ()
     pkgtools__msg_notice "With test material    : '${with_test}'"
     pkgtools__msg_notice "With Boost I/O DLL    : '${with_bio}'"
     pkgtools__msg_notice "With CAMP-based reflection DLL : '${with_reflection}'"
-    pkgtools__msg_notice "With Bash setup       : '${with_bash_setup}'"
     pkgtools__msg_notice "With dependency check : '${with_dependency_check}'"
     pkgtools__msg_notice "Build type            : '${build_type}'"
     if [ "x${cadfael_cmake_config_dir}" != "x" ]; then
@@ -462,13 +456,11 @@ function do_configure ()
     cmake \
 	-DCMAKE_INSTALL_PREFIX:PATH=${install_prefix} \
 	-DCMAKE_BUILD_TYPE:STRING=${build_type} \
-	-DBOOST_ROOT=${BOOST_ROOT_DIR} \
 	-DCMAKE_MODULE_PATH=${CADFAEL_SHARE_DIR}/cmake/Modules \
 	-DDATATOOLS_WITH_BIO=${with_bio} \
 	-DDATATOOLS_WITH_REFLECTION=${with_reflection} \
 	-DDATATOOLS_WITH_DOC=${with_doc} \
 	-DDATATOOLS_WITH_TEST=${with_test} \
-	-DDATATOOLS_WITH_BASH_SETUP=${with_bash_setup} \
 	${additional_options} \
 	..
     if [ $? -ne 0 ]; then
@@ -477,6 +469,8 @@ function do_configure ()
 	return 1
     fi
     cd ${the_base_dir}
+
+###	-DBOOST_ROOT=${BOOST_ROOT_DIR} 
 
     __pkgtools__at_function_exit
     return 0

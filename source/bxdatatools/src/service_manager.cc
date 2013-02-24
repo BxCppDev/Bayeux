@@ -205,7 +205,7 @@ void service_manager::reset() {
           std::clog << datatools::io::debug
                     << "datatools::service_manager::reset: "
                     << "Removing service '" 
-                    << entry.service_name 
+                    << entry.get_service_name ()
                     << "'..."
                     << std::endl;
         }
@@ -277,10 +277,15 @@ service_manager::~service_manager () {
 /****************
  *   SERVICES   *
  ****************/
+
 bool service_manager::has(const std::string& name) const {
   return services_.find(name) != services_.end();
 }
 
+bool service_manager::is_initialized(const std::string& name) const {
+  service_dict_type::const_iterator found = services_.find(name);
+  return found != services_.end() && found->second.is_initialized();
+}
 
 // Who needs this (services is an implementation detail....)
 const service_dict_type& service_manager::get_services() const {
@@ -368,15 +373,15 @@ void service_manager::dump_services(std::ostream& out,
       const service_entry& service_record = it->second;
       
       out << "Name : '" << service_name << "' "
-          << "Type : '" << service_record.service_id << "' ";
+          << "Type : '" << service_record.get_service_id () << "' ";
       out << '(';
       int count = 0;
-      if (service_record.service_status & service_entry::STATUS_INITIALIZED) {
+      if (service_record.is_initialized()) {
         out << "initialized";
         count++;
       }
 
-      if (service_record.service_status & service_entry::STATUS_BROKEN_DEPENDENCY) {
+      if (service_record.get_service_status () & service_entry::STATUS_BROKEN_DEPENDENCY) {
         if (count > 0) out << '/',
         out << "broken";
         count++;
@@ -508,7 +513,7 @@ void service_manager::load_service(const std::string& name,
   {
     // Add a new entry :
     service_entry tmp_entry;
-    tmp_entry.service_name = name;
+    tmp_entry.set_service_name(name);
     if (debug) {
       std::clog << datatools::io::debug
                 << "datatools::service_manager::load_service: "
@@ -521,9 +526,9 @@ void service_manager::load_service(const std::string& name,
   }
   // fetch a reference on it and update :
   service_entry& new_entry = services_.find(name)->second;
-  new_entry.service_id     = id;
-  new_entry.service_config = config;
-  new_entry.service_status = service_entry::STATUS_BLANK;
+  new_entry.set_service_id(id);
+  new_entry.set_service_config(config);
+  //new_entry.service_status = service_entry::STATUS_BLANK;
 
   if (debug) {
     std::clog << datatools::io::debug
@@ -544,7 +549,7 @@ void service_manager::load_service(const std::string& name,
   }
 
   // XXX:
-  //the_service_entry.service_handle.get ().fetch_dependencies (the_service_entry.service_masters);
+  //the_service_entry.get_service_handle().get ().fetch_dependencies (the_service_entry.service_masters);
 
   for (service_dependency_dict_type::const_iterator j
        = new_entry.service_masters.begin();
@@ -628,24 +633,24 @@ void service_manager::preload_global_dict() {
 
 
 void service_manager::create_service(service_entry& entry) {
-  if (!(entry.service_status & service_entry::STATUS_CREATED)) {
+  if (!entry.is_created()) {
     if (this->is_debug()) {
       std::clog << datatools::io::debug
                 << "datatools::service_manager::_create_service: "
                 << "Creating service named '"
-                <<  entry.service_name
+                <<  entry.get_service_name()
                 << "'..."
                 << std::endl;
     }
 
     // search for the service's label in the factory dictionary:
-    if (!factory_register_.has(entry.service_id)) {
+    if (!factory_register_.has(entry.get_service_id())) {
       std::ostringstream message;
       message << "datatools::service_manager::_create_service: "
               << "Cannot find service factory with ID '"
-              << entry.service_id 
+              << entry.get_service_id() 
               << "' for service named '"
-              << entry.service_name << "' !";
+              << entry.get_service_name() << "' !";
       throw std::logic_error(message.str());
     }
 
@@ -653,7 +658,7 @@ void service_manager::create_service(service_entry& entry) {
     typedef 
         datatools::base_service::factory_register_type::factory_type       FactoryType;
 
-    const FactoryType& the_factory = factory_register_.get(entry.service_id);
+    const FactoryType& the_factory = factory_register_.get(entry.get_service_id());
 
     base_service* ptr = the_factory();
     // 2012/04/12: XG the initialization mechanism is done 'on
@@ -661,14 +666,14 @@ void service_manager::create_service(service_entry& entry) {
     // ptr->initialize (service_entry_.service_config,
     // _services_);
 
-    entry.service_handle.reset(ptr);
-    entry.service_status |= service_entry::STATUS_CREATED;
+    entry.grab_service_handle().reset(ptr);
+    entry.update_service_status(service_entry::STATUS_CREATED);
 
     if (this->is_debug()) {
       std::clog << datatools::io::debug
                 << "datatools::service_manager::_create_service: "
                 << "Service named '"
-                <<  entry.service_name
+                <<  entry.get_service_name()
                 << "' has been created !"
                 << std::endl;
     }
@@ -678,17 +683,17 @@ void service_manager::create_service(service_entry& entry) {
 
 void service_manager::initialize_service(service_entry& entry) {
   // If not created, first do it :
-  if (!(entry.service_status & service_entry::STATUS_CREATED)) {
+  if (!entry.is_created()) {
     this->create_service(entry);
   }
 
   // If not initialized, do it :
-  if (!(entry.service_status & service_entry::STATUS_INITIALIZED)) {
+  if (!entry.is_initialized()) {
     if (this->is_debug()) {
       std::clog << datatools::io::debug
                 << "datatools::service_manager::initialize_service: "
                 << "Initializing service named '"
-                << entry.service_name
+                << entry.get_service_name()
                 << "'..."
                 << std::endl;
     }
@@ -711,19 +716,19 @@ void service_manager::initialize_service(service_entry& entry) {
     //             << service_entry_.service_name << "' !";
     //     throw logic_error (message.str ());
     //   }
-    base_service& the_service = entry.service_handle.get();
-    the_service.initialize(entry.service_config, services_);
-    entry.service_status |= service_entry::STATUS_INITIALIZED;
+    base_service& the_service = entry.grab_service_handle().grab();
+    the_service.initialize(entry.get_service_config(), services_);
+    entry.update_service_status(service_entry::STATUS_INITIALIZED);
   }
 }
 
 
 void service_manager::reset_service(service_entry& entry) {
-  if (entry.service_status & service_entry::STATUS_INITIALIZED) {
-    base_service& the_service = entry.service_handle.get();
+  if (entry.is_initialized()) {
+    base_service& the_service = entry.grab_service_handle().grab();
     the_service.reset();
 
-    entry.service_status ^= service_entry::STATUS_INITIALIZED;
+    entry.reset_service_status(service_entry::STATUS_INITIALIZED);
 
     for (service_dependency_dict_type::iterator i = entry.service_masters.begin();
          i != entry.service_masters.end();
@@ -733,15 +738,15 @@ void service_manager::reset_service(service_entry& entry) {
       
       if (found != services_.end()) {
         service_entry& the_master_entry = found->second;
-        the_master_entry.remove_slave(entry.service_name);
+        the_master_entry.remove_slave(entry.get_service_name());
         
         if (this->is_debug()) {
           std::clog << datatools::io::debug
                     << "datatools::service_manager::_create_service: "
                     << "Remove slave '"
-                    << entry.service_name
+                    << entry.get_service_name()
                     << "' from master '" 
-                    << the_master_entry.service_name
+                    << the_master_entry.get_service_name()
                     << "' !"
                     << std::endl;
         }

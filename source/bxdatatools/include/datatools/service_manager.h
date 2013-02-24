@@ -120,6 +120,11 @@ class service_manager : public datatools::i_tree_dumpable {
   bool has(const std::string& name) const;
 
   /**  @param name The name of the service to be checked
+   *   @return true if the service is initialized
+   */
+  bool is_initialized(const std::string& name) const;
+
+  /**  @param name The name of the service to be checked
    *   @return true if the service is of the requested type
    */
   template <class T>
@@ -200,63 +205,9 @@ class service_manager : public datatools::i_tree_dumpable {
 };
 
 
-//----------------------------------------------------------------------
-// class service_manager template method implementations.
-// TODO : Refactor into -inl.h file
-
-template <class T>
-bool service_manager::is_a(const std::string& name) const {
-  service_dict_type::const_iterator found = services_.find(name);
-  if (found == services_.end()) {
-    std::ostringstream message;
-    message << "datatools::service_manager::is_a: No service named '" << name << "' !";
-    throw std::logic_error(message.str());
-  }
-
-  const std::type_info& ti = typeid(T);
-  const std::type_info& tf = typeid(found->second.service_handle.get());
-  return (ti == tf);
-}
-
-
-template<class T>
-T& service_manager::get(const std::string& name) {
-  service_dict_type::iterator found = services_.find(name);
-  if (found == services_.end()) {
-    std::ostringstream message;
-    message << "datatools::service_manager::get: "
-        << "No service named '" 
-        << name 
-        << "' !";
-    throw std::logic_error(message.str());
-  }
-  service_entry& entry = found->second;
-  if (!(entry.service_status & service_entry::STATUS_INITIALIZED)) {
-    this->initialize_service(entry);
-  }
-  return dynamic_cast<T&>(entry.service_handle.get());
-}
-
-
-template<class T>
-T& service_manager::grab(const std::string& name) {
-  return this->get<T>(name);
-}
-
-
-template<class T>
-const T& service_manager::get(const std::string& name) const {
-  service_manager* sm = const_cast<service_manager*>(this);
-  return const_cast<T&>(sm->get<T>(name));
-}
-
-
-template <class ServiceClass>
-void service_manager::register_service_type(const std::string& id) {
-  factory_register_.registration(id, boost::factory<ServiceClass*>());
-}
-
 }  // end of namespace datatools
+
+#include <datatools/service_manager-inl.h>
 
 #endif // DATATOOLS_SERVICE_MANAGER_H_
 
