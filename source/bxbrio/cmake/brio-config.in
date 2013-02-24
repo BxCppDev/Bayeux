@@ -37,7 +37,7 @@ brio_cmake_config_dir="@CMAKE_INSTALL_PREFIX@/@_brio_cmake_config_install_dir@"
 brio_version=@brio_VERSION@
 
 with_debug=0
-if [ "x@BRIO_WITH_DEBUG@" == "x1" -o "x@BRIO_WITH_DEBUG@" == "xON" ]; then
+if [ "x@BRIO_WITH_DEBUG@" == "x1" ]; then
     with_debug=1
 fi
 

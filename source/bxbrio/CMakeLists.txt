@@ -51,7 +51,6 @@ endif()
 option(BRIO_WITH_DEBUG "Build debug stuff" OFF) 
 option(BRIO_WITH_DOC  "Build the brio documentation" ON)
 option(BRIO_WITH_TEST "Build the brio test suite"    ON) 
-option(BRIO_WITH_BASH_SETUP "Build the brio with Bash setup macro" ON) 
 
 if (BRIO_WITH_DEBUG)
   set (BRIO_WITH_DEBUG 1)
@@ -91,19 +90,87 @@ endif()
 add_subdirectory(src)   
 
 if(BRIO_WITH_DOC)
-  set (BRIO_WITH_DOC 1)
   add_subdirectory(doc)
-else()
-  set (BRIO_WITH_DOC 0)
 endif ()
 
 if(BRIO_WITH_TEST)
-  set (BRIO_WITH_TEST 1)
   enable_testing() 
   add_subdirectory(testing)
-else()
-  set (BRIO_WITH_TEST 0)
 endif()
+
+#-----------------------------------------------------------------------
+# Build the support files
+#-----------------------------------------------------------------------
+# On UNIX platforms, configure and install the shell support scripts
+#
+if(UNIX)
+  # - Normalize exported boolean variables
+  foreach(_ebv DEBUG)
+    if(BRIO_WITH_${_ebv})
+      set(BRIO_WITH_${_ebv} 1)
+    else()
+      set(BRIO_WITH_${_ebv} 0)
+    endif()
+  endforeach()
+  
+  set(_ld_library_path_env "LD_LIBRARY_PATH")
+  if(APPLE)
+    set(_ld_library_path_env "DYLD_LIBRARY_PATH")
+  endif()
+
+  configure_file(
+    ${PROJECT_SOURCE_DIR}/cmake/brio-config.in 
+    ${PROJECT_BINARY_DIR}/cmake/brio-config
+    @ONLY
+    )
+
+  install(FILES ${PROJECT_BINARY_DIR}/cmake/brio-config
+    DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    PERMISSIONS 
+      OWNER_READ OWNER_EXECUTE 
+    	GROUP_READ GROUP_EXECUTE 
+      WORLD_READ WORLD_EXECUTE    
+    COMPONENT Development
+    )
+
+  configure_file(
+    "${PROJECT_SOURCE_DIR}/cmake/brio_setup.sh.in"
+    "${PROJECT_BINARY_DIR}/cmake/brio_setup.sh"
+    @ONLY
+    )
+
+  install(FILES ${PROJECT_BINARY_DIR}/cmake/brio_setup.sh
+    DESTINATION ${CMAKE_INSTALL_ETCDIR}
+    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+    COMPONENT Development
+    )
+
+endif()
+
+# ----------------------------------------------------------------------------
+# Install resources :
+#
+
+set ( _brio_testing_FULL_LOCAL_PATH 
+      "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/testing" 
+    ) 
+message ( STATUS "${PROJECT_NAME} : brio testing full local path = '${_brio_testing_FULL_LOCAL_PATH}' " )
+
+install ( DIRECTORY ${PROJECT_SOURCE_DIR}/testing
+          DESTINATION ${CMAKE_INSTALL_DATADIR}
+          FILE_PERMISSIONS OWNER_READ OWNER_WRITE
+                           GROUP_READ GROUP_WRITE
+                           WORLD_READ
+          DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE 
+                                GROUP_READ GROUP_WRITE  GROUP_EXECUTE 
+                                WORLD_READ WORLD_EXECUTE
+          PATTERN ".svn" EXCLUDE
+          PATTERN "*~" EXCLUDE
+          PATTERN CMakeLists.txt EXCLUDE
+          PATTERN testDriver.bash EXCLUDE
+          PATTERN run_tests.bash EXCLUDE
+         )
+
 
 #-----------------------------------------------------------------------
 # Package
