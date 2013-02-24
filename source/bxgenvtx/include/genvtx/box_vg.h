@@ -14,8 +14,8 @@
  * 
  */
 
-#ifndef __genvtx__box_vg_h
-#define __genvtx__box_vg_h 1
+#ifndef GENVTX_BOX_VG_H_
+#define GENVTX_BOX_VG_H_ 1
 
 #include <iostream>
 
@@ -99,6 +99,6 @@ namespace genvtx {
 
 } // end of namespace genvtx
 
-#endif // __genvtx__box_vg_h
+#endif // GENVTX_BOX_VG_H_
 
 // end of box_vg.h

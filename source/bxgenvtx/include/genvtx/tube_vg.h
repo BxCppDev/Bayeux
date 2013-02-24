@@ -2,7 +2,7 @@
 /* tube_vg.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-04-04
- * Last modified: 2012-04-04
+ * Last modified: 2013-02-24
  * 
  * License: 
  * 
@@ -14,8 +14,8 @@
  * 
  */
 
-#ifndef __genvtx__tube_vg_h
-#define __genvtx__tube_vg_h 1
+#ifndef GENVTX_TUBE_VG_H_
+#define GENVTX_TUBE_VG_H_ 1
 
 #include <iostream>
 
@@ -24,9 +24,7 @@
 #include <geomtools/cylinder.h>
 
 namespace datatools {
-namespace utils {
   class properties;
-}
 }
 
 namespace genvtx {
@@ -91,6 +89,6 @@ namespace genvtx {
 
 } // end of namespace genvtx
 
-#endif // __genvtx__tube_vg_h
+#endif // GENVTX_TUBE_VG_H_
 
 // end of tube_vg.h

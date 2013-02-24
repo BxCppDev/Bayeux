@@ -8,6 +8,7 @@
 
 #include <genvtx/from_file_vg.h>
 #include <mygsl/rng.h>
+#include <geomtools/gnuplot_draw.h>
 
 using namespace std;
 
@@ -52,8 +53,8 @@ int main (int argc_, char ** argv_)
       mygsl::rng        random (rng_id, rng_seed);
      
       genvtx::from_file_vg vg;
-      vg.set_filename ("${GENVTX_DATA_DIR}/testing/data/test_vertices.data");
-      vg.set_length_unit (CLHEP::cm);
+      vg.set_filename ("${GENVTX_DATA_DIR}/testing/data/test_cylinder_vertices.data");
+      vg.set_length_unit (CLHEP::mm);
       vg.initialize_simple ();
       vg.tree_dump (clog, "From file vertex generator");
 
@@ -67,7 +68,8 @@ int main (int argc_, char ** argv_)
               clog << "End of vertex source file." << endl;
               break;
             }
-          cout << vertex << endl;
+          geomtools::gnuplot_draw::basic_draw_point (cout, vertex, true);
+          //clog << vertex << endl;
         }
 
     }

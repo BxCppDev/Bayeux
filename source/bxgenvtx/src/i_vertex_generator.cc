@@ -7,8 +7,8 @@
 #include <stdexcept>
 #include <sstream>
 
-#include <datatools/utils/properties.h>
-#include <datatools/services/service_manager.h>
+#include <datatools/properties.h>
+#include <datatools/service_manager.h>
 
 namespace genvtx {
 
@@ -16,7 +16,6 @@ namespace genvtx {
 
   // Factory stuff :
   DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(i_vertex_generator,"genvtx::i_vertex_generator/__system__");
-
 
   bool i_vertex_generator::is_debug () const
   {
@@ -89,31 +88,31 @@ namespace genvtx {
   void i_vertex_generator::initialize_simple ()
   {
     if (is_debug ()) std::cerr << "DEBUG: genvtx::i_vertex_generator::initialize_simple: Entering..." << std::endl;
-    datatools::utils::properties dummy_setup;
+    datatools::properties dummy_setup;
     initialize_standalone (dummy_setup);
     return;
   }
 
-  void i_vertex_generator::initialize_standalone (const datatools::utils::properties & setup_)
+  void i_vertex_generator::initialize_standalone (const datatools::properties & setup_)
   {
     if (is_debug ()) std::cerr << "DEBUG: genvtx::i_vertex_generator::initialize_standalone: Entering..." << std::endl;
-    datatools::service::service_manager dummy_srvcmgr;
+    datatools::service_manager dummy_srvcmgr;
     vg_dict_type dummy_dict;
     initialize (setup_, dummy_srvcmgr, dummy_dict);
     return;
   }
    
-  void i_vertex_generator::initialize_with_dictionary_only (const datatools::utils::properties & setup_,
+  void i_vertex_generator::initialize_with_dictionary_only (const datatools::properties & setup_,
                                                             vg_dict_type & dictionary_)
   {
     if (is_debug ()) std::cerr << "DEBUG: genvtx::i_vertex_generator::initialize_with_dictionary_only: Entering..." << std::endl;
-    datatools::service::service_manager dummy_srvcmgr;
+    datatools::service_manager dummy_srvcmgr;
     initialize (setup_, dummy_srvcmgr, dictionary_);
     return;
   }
 
-  void i_vertex_generator::initialize_with_service_only (const datatools::utils::properties & setup_,
-                                                         datatools::service::service_manager & service_manager_)
+  void i_vertex_generator::initialize_with_service_only (const datatools::properties & setup_,
+                                                         datatools::service_manager & service_manager_)
   {
     if (is_debug ()) std::cerr << "DEBUG: genvtx::i_vertex_generator::initialize_with_service_only: Entering..." << std::endl;
     vg_dict_type dummy_dict;
@@ -126,7 +125,7 @@ namespace genvtx {
                                       const std::string & indent_, 
                                       bool inherit_) const
   {
-    namespace du = datatools::utils;
+    namespace du = datatools;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     if (! title_.empty ()) 

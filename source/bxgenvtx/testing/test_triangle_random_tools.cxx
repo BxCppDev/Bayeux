@@ -16,8 +16,8 @@
 #include <geomtools/gnuplot_draw.h>
 #include <geomtools/gnuplot_i.h>
 #include <geomtools/gnuplot_drawer.h>
-#include <datatools/utils/temporary_files.h>
-#include <datatools/utils/utils.h>
+#include <datatools/temporary_files.h>
+#include <datatools/utils.h>
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 
 using namespace std;
@@ -71,7 +71,7 @@ int main (int argc_, char ** argv_)
       unsigned long int rng_seed = 12345;
       mygsl::rng random (rng_id, rng_seed);
 
-      datatools::utils::temp_file tmp_file;
+      datatools::temp_file tmp_file;
       tmp_file.set_remove_at_destroy (true);
       tmp_file.create ("/tmp", "test_trt_");
 

@@ -14,13 +14,8 @@ function do_genvtx_print_info ()
 	echo "${indent}GENVTX_NAME                = '${GENVTX_NAME}'" 1>&2
 	echo "${indent}GENVTX_VERSION             = '${GENVTX_VERSION}'" 1>&2
 	echo "${indent}GENVTX_WITH_DEBUG          = ${GENVTX_WITH_DEBUG}" 1>&2
-	if [ "x0" = "x1" ]; then	
-	    echo "${indent}GENVTX_WITH_BIO            = ${GENVTX_WITH_BIO}" 1>&2
-	fi
-	if [ "x0" = "x1" ]; then	
-	    echo "${indent}GENVTX_WITH_PYTHON_WRAPPER = ${GENVTX_WITH_PYTHON_WRAPPER}" 1>&2
-	    echo "${indent}Python module path = @CMAKE_INSTALL_FULL_PYTHONDIR@" 1>&2
-	fi
+	echo "${indent}GENVTX_WITH_BIO            = ${GENVTX_WITH_BIO}" 1>&2
+	echo "${indent}GENVTX_WITH_REFLECTION     = ${GENVTX_WITH_REFLECTION}" 1>&2
 	echo "${indent}GENVTX_BIN_DIR             = '${GENVTX_BIN_DIR}'"
 	echo "${indent}GENVTX_ETC_DIR             = '${GENVTX_ETC_DIR}'"
 	echo "${indent}GENVTX_LIB_DIR             = '${GENVTX_LIB_DIR}'"
@@ -56,6 +51,28 @@ function do_genvtx_setup ()
 	return 2
     fi 
 
+    if [ "x@GENVTX_WITH_REFLECTION@" = "x1" ]; then
+	which camp-config >/dev/null 2>&1
+	if [ $? -ne 0 ]; then
+	    echo "ERROR: do_genvtx_setup: Cannot find CAMP setup ! Abort !" 1>&2
+	    return 1
+	else
+	    if [ ${verbose} -ne 0 ]; then
+		echo "VERBOSE: do_genvtx_setup: Found CAMP." 1>&2
+	    fi
+	fi
+    fi
+
+    # which clhep-config >/dev/null 2>&1
+    # if [ $? -ne 0 ]; then
+    # 	echo "ERROR: do_genvtx_setup: Cannot find CLHEP setup ! Abort !" 1>&2
+    # 	return 1
+    # else
+    # 	if [ ${verbose} -ne 0 ]; then
+    # 	    echo "VERBOSE: do_genvtx_setup: Found CLHEP." 1>&2
+    # 	fi
+    # fi
+
     which geomtools-config >/dev/null 2>&1
     if [ $? -ne 0 ]; then
 	echo "ERROR: do_genvtx_setup: Cannot find geomtools setup ! Abort !" 1>&2
@@ -65,11 +82,11 @@ function do_genvtx_setup ()
 	    echo "VERBOSE: do_genvtx_setup: Found geomtools." 1>&2
 	fi
     fi
-    
+     
     export GENVTX_ROOT="@CMAKE_INSTALL_PREFIX@"
     export GENVTX_ROOT_DIR="@CMAKE_INSTALL_PREFIX@"
-    export GENVTX_NAME="@genvtx_PACKAGE_NAME@"
-    export GENVTX_VERSION="@genvtx_VERSION_STR@"
+    export GENVTX_NAME="@PROJECT_NAME@"
+    export GENVTX_VERSION="@genvtx_VERSION@"
     export GENVTX_BIN_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@"
     export GENVTX_ETC_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_ETCDIR@"
     export GENVTX_LIB_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@"
@@ -77,13 +94,9 @@ function do_genvtx_setup ()
     export GENVTX_INCLUDE_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_INCLUDEDIR@"
     export GENVTX_DATA_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
     export GENVTX_WITH_DEBUG=@GENVTX_WITH_DEBUG@
-    if [ "x0" = "x1" ]; then	
-	export GENVTX_WITH_BIO=@GENVTX_WITH_BIO@
-    fi
-    if [ "x0" = "x1" ]; then	
-	export GENVTX_WITH_PYTHON_WRAPPER=@GENVTX_WITH_PYTHON_WRAPPER@
-    fi
-    export GENVTX_CMAKE_CONFIG_DIR="@CMAKE_INSTALL_PREFIX@/@genvtx_cmake_config_install_dir@"
+    export GENVTX_WITH_BIO=@GENVTX_WITH_BIO@
+    export GENVTX_WITH_REFLECTION=@GENVTX_WITH_REFLECTION@
+    export GENVTX_CMAKE_CONFIG_DIR="@CMAKE_INSTALL_PREFIX@/@_genvtx_cmake_config_install_dir@"
 
     if [ -n "${PATH}" ]; then
 	export PATH="${GENVTX_BIN_DIR}:${PATH}"
@@ -97,33 +110,6 @@ function do_genvtx_setup ()
 	export @_ld_library_path_env@="${GENVTX_LIB_DIR}"
     fi 
 
-    if [ "x@GENVTX_WITH_PKGCONFIG@" = "xON" -o "x@GENVTX_WITH_PKGCONFIG@" = "x1" ]; then
-	if [ -n "${PKG_CONFIG_PATH}" ]; then 
-            export PKG_CONFIG_PATH="@_genvtx_pkgconfig_install_dir@:${PKG_CONFIG_PATH}"
-	else
-            export PKG_CONFIG_PATH="@_genvtx_pkgconfig_install_dir@"
-	fi
-    fi
-
-    if [ "x0" = "x1" ]; then	
-	if [ "x@GENVTX_WITH_PYTHON_WRAPPER@" = "xON" ]; then
-     	    # update Python path...
-	    if [ -n "${PYTHONPATH}" ]; then 
-		export PYTHONPATH="@CMAKE_INSTALL_FULL_PYTHONDIR@:${PYTHONPATH}"
-	    else
-		export PYTHONPATH="@CMAKE_INSTALL_FULL_PYTHONDIR@"
-	    fi
-	fi
-    fi
-
-    if [ "x@GENVTX_WITH_CMAKE_FIND_MODULE@" = "xON" -o "x@GENVTX_WITH_CMAKE_FIND_MODULE@" = "x1" ]; then
-	if [ -n "${CMAKE_MODULE_PATH}" ]; then 
-            export CMAKE_MODULE_PATH="@CMAKE_INSTALL_PREFIX@/@genvtx_find_module_install_dir@:${CMAKE_MODULE_PATH}"
-	else
-            export CMAKE_MODULE_PATH="@CMAKE_INSTALL_PREFIX@/@genvtx_find_module_install_dir@"
-	fi
-    fi
-
     if [ ${verbose} -gt 1 ]; then
 	do_genvtx_print_info "VERBOSE: do_genvtx_setup"
     fi
@@ -134,8 +120,7 @@ function do_genvtx_setup ()
     return 0
 }
 typeset -fx do_genvtx_setup
-alias genvtx_setup='do_genvtx_setup'
 
-echo "NOTICE: do_genvtx_setup: Please setup genvtx with 'do_genvtx_setup'." 1>&2
+echo "NOTICE: do_genvtx_setup: Please setup 'genvtx' with 'do_genvtx_setup'." 1>&2
 
 # end of genvtx_setup.sh

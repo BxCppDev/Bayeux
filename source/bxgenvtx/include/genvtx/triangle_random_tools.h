@@ -2,7 +2,7 @@
 /* triangle_random_tools.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-09-26
- * Last modified: 2012-09-26
+ * Last modified: 2013-02-24
  * 
  * License: 
  * 
@@ -15,8 +15,8 @@
  *
  */
 
-#ifndef __genvtx__triangle_random_tools_h
-#define __genvtx__triangle_random_tools_h 1
+#ifndef GENVTX_TRIANGLE_RANDOM_TOOLS_H_
+#define GENVTX_TRIANGLE_RANDOM_TOOLS_H_ 1
 
 #include <geomtools/utils.h>
 #include <mygsl/rng.h>
@@ -29,9 +29,8 @@ namespace genvtx {
                            const geomtools::vector_3d & vtx2_, 
                            mygsl::rng & random_);
   
-  
 } // end of namespace genvtx
 
-#endif // __genvtx__triangle_random_tools_h
+#endif // GENVTX_TRIANGLE_RANDOM_TOOLS_H_
 
 // end of triangle_random_tools.h

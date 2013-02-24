@@ -5,7 +5,7 @@
 #include <genvtx/detail/vg_tools.h>
 #include <genvtx/i_vertex_generator.h>
 
-#include <datatools/utils/properties.h>
+#include <datatools/properties.h>
 #include <sstream>
 #include <stdexcept>
 
@@ -17,17 +17,17 @@ namespace genvtx {
   const string vg_tools::SHAPE_REF_PLAIN   = "<plain>";
   const string vg_tools::SHAPE_REF_GETTER  = "<getter>";
 
-  const datatools::utils::properties & vg_entry_type::get_vg_config () const
+  const datatools::properties & vg_entry_type::get_vg_config () const
   {
     return _vg_config_;
   }
 
-  datatools::utils::properties & vg_entry_type::grab_vg_config ()
+  datatools::properties & vg_entry_type::grab_vg_config ()
   {
     return _vg_config_;
   }
 
-  void vg_entry_type::set_vg_config (const datatools::utils::properties & config_)
+  void vg_entry_type::set_vg_config (const datatools::properties & config_)
   {
     _vg_config_ = config_;
     return;
@@ -179,7 +179,7 @@ namespace genvtx {
                                  const std::string & indent_,
                                  bool inherit_) const
   {
-    namespace du = datatools::utils;
+    namespace du = datatools;
     std::string indent;
     if (! indent_.empty ())
       {

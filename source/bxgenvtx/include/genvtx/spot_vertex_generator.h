@@ -2,7 +2,7 @@
 /* spot_vertex_generator.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-12
- * Last modified: 2012-04-27
+ * Last modified: 2013-02-24
  * 
  * License: 
  * 
@@ -13,15 +13,13 @@
  * 
  */
 
-#ifndef __genvtx__spot_vertex_generator_h
-#define __genvtx__spot_vertex_generator_h 1
+#ifndef GENVTX_SPOT_VERTEX_GENERATOR_H_
+#define GENVTX_SPOT_VERTEX_GENERATOR_H_ 1
 
 #include <genvtx/i_vertex_generator.h>
 
 namespace datatools {
-namespace utils {
   class properties;
-}
 }
 
 namespace genvtx {
@@ -61,6 +59,6 @@ namespace genvtx {
 
 } // end of namespace genvtx
 
-#endif // __genvtx__spot_vertex_generator_h
+#endif // GENVTX_SPOT_VERTEX_GENERATOR_H_
 
 // end of spot_vertex_generator.h

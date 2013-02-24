@@ -8,7 +8,7 @@
 
 #include <cstdlib>
 
-#include <datatools/utils/units.h>
+#include <datatools/units.h>
 #include <geomtools/utils.h>
 
 namespace genvtx {
@@ -78,7 +78,7 @@ namespace genvtx {
           }
         else
           {
-            lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+            lunit = datatools::units::get_length_unit_from (lunit_str);
           }
       }
 

@@ -2,10 +2,10 @@
 /* genvtx_config.h header file 
  */
 
-#ifndef __genvtx_genvtx_config_h
-#define __genvtx_genvtx_config_h 1
+#ifndef GENVTX_GENVTX_CONFIG_H_
+#define GENVTX_GENVTX_CONFIG_H_ 1
 
-/*** brio versioning information ***/
+/*** genvtx versioning information ***/
 
 //  GENVTX_VERSION % 100        is the patch level
 //  GENVTX_VERSION / 100 % 1000 is the minor version
@@ -15,27 +15,23 @@
 #define GENVTX_VERSION_MINOR @genvtx_VERSION_MINOR@
 #define GENVTX_PATCH_VERSION @genvtx_PATCH_VERSION@
 
-#define GENVTX_VERSION @genvtx_VERSION_NUMERIC@
+#define GENVTX_VERSION @_genvtx_VERSION_NUMERIC@
 
 //  GENVTX_LIB_VERSION must be defined to be the same as GENVTX_VERSION
 //  but as a *string* in the form "x.y[.z]" where x is the major version
 //  number, y is the minor version number, and z is the patch level if not 0.
 
-#define GENVTX_LIB_VERSION "@genvtx_VERSION_STR@"
+#define GENVTX_LIB_VERSION "@genvtx_VERSION@"
 
-/*** genvtx debug flag ***/
+/***  genvtx debug flag ***/
 #cmakedefine01 GENVTX_WITH_DEBUG
 
-/*** genvtx embedded Boost/Serialization based I/O ***/
-#if x0 == x1
-#cmakedefine01 GENVTX_WITH_BIO 
-#endif
+/***  genvtx embedded Boost/Serialization based I/O ***/
+#cmakedefine01 GENVTX_WITH_BIO
 
-/*** genvtx Boost/Python module ***/
-#if x0 == x1
-#cmakedefine01 GENVTX_WITH_PYTHON_WRAPPER
-#endif
+/***  genvtx embedded CAMP-based reflection ***/
+#cmakedefine01 GENVTX_WITH_REFLECTION
 
-#endif // __genvtx_genvtx_config_h
+#endif // GENVTX_GENVTX_CONFIG_H_
 
 // end of genvtx_config.h

@@ -8,7 +8,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <datatools/utils/units.h>
+#include <datatools/units.h>
 
 namespace genvtx {
  
@@ -194,7 +194,7 @@ namespace genvtx {
         if (configuration_.has_key ("length_unit"))
           {
             std::string lunit_str = configuration_.fetch_string ("length_unit");
-            lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+            lunit = datatools::units::get_length_unit_from (lunit_str);
           }
  
         x *= lunit;
@@ -204,7 +204,7 @@ namespace genvtx {
         if (configuration_.has_key ("angle_unit"))
           {
             std::string aunit_str = configuration_.fetch_string ("angle_unit");
-            aunit = datatools::utils::units::get_angle_unit_from (aunit_str);
+            aunit = datatools::units::get_angle_unit_from (aunit_str);
           }
  
         phi   *= aunit;

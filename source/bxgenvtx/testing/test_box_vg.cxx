@@ -120,7 +120,7 @@ int main (int argc_, char ** argv_)
       if (other)
       {
         genvtx::i_vertex_generator * ivg = 0;
-        datatools::utils::properties config;
+        datatools::properties config;
         config.store ("mode", "surface");
         config.store ("skin_skip",      0.05);
         config.store ("skin_thickness", 0.1);

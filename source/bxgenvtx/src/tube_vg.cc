@@ -7,9 +7,9 @@
 #include <stdexcept>
 #include <sstream>
 
-#include <datatools/utils/units.h>
-#include <datatools/utils/utils.h>
-#include <datatools/utils/properties.h>
+#include <datatools/units.h>
+#include <datatools/utils.h>
+#include <datatools/properties.h>
 
 namespace genvtx {
 
@@ -148,7 +148,7 @@ namespace genvtx {
     if (setup_.has_key ("length_unit"))
       {
         lunit_str = setup_.fetch_string ("length_unit");
-        lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+        lunit = datatools::units::get_length_unit_from (lunit_str);
       }
     
     if (setup_.has_key ("skin_skip"))
@@ -211,15 +211,15 @@ namespace genvtx {
     if (! _tube_.is_valid ())
       {
         double tube_inner_r, tube_outer_r, tube_z;
-        datatools::utils::invalidate (tube_inner_r);
-        datatools::utils::invalidate (tube_outer_r);
-        datatools::utils::invalidate (tube_z);
+        datatools::invalidate (tube_inner_r);
+        datatools::invalidate (tube_outer_r);
+        datatools::invalidate (tube_z);
         double length_unit = CLHEP::millimeter;
         
         if (setup_.has_key ("length_unit"))
           {
             std::string length_unit_str = setup_.fetch_string ("length_unit");
-            length_unit = datatools::utils::units::get_length_unit_from (length_unit_str);
+            length_unit = datatools::units::get_length_unit_from (length_unit_str);
           }
 
         if (setup_.has_key ("tube.inner_r"))
@@ -316,8 +316,8 @@ namespace genvtx {
       {
         _sum_weight_[i] = 0.0;
       } 
-    //datatools::utils::invalidate(_r1_sqr_);
-    //datatools::utils::invalidate(_r2_sqr_);
+    //datatools::invalidate(_r1_sqr_);
+    //datatools::invalidate(_r2_sqr_);
     return;
   }
 
@@ -326,7 +326,7 @@ namespace genvtx {
                                const std::string & indent_, 
                                bool inherit_) const
   {
-    namespace du = datatools::utils;
+    namespace du = datatools;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     i_vertex_generator::tree_dump (out_, title_, indent_, true);

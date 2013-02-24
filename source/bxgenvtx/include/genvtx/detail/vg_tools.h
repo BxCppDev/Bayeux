@@ -12,21 +12,21 @@
  * 
  */
 
-#ifndef __genvtx__detail__vg_tools_h
-#define __genvtx__detail__vg_tools_h 1
+#ifndef GENVTX_DETAIL_VG_TOOLS_H_
+#define GENVTX_DETAIL_VG_TOOLS_H_ 1
 
 #include <iostream>
 #include <string>
 #include <map>
-#include <datatools/utils/handle.h>
-#include <datatools/utils/bit_mask.h>
-#include <datatools/utils/properties.h>
+#include <datatools/handle.h>
+#include <datatools/bit_mask.h>
+#include <datatools/properties.h>
 
 namespace genvtx {
 
   class i_vertex_generator;
 
-  typedef datatools::utils::handle<i_vertex_generator> vg_handle_type;
+  typedef datatools::handle<i_vertex_generator> vg_handle_type;
   //typedef std::map<std::string, vg_handle_type>        vg_dict_type;
  
   class vg_tools
@@ -46,17 +46,17 @@ namespace genvtx {
     enum status_type
       {
         STATUS_BLANK             = 0,
-        STATUS_CREATED           = datatools::utils::bit_mask::bit00,
-        STATUS_INITIALIZED       = datatools::utils::bit_mask::bit01
+        STATUS_CREATED           = datatools::bit_mask::bit00,
+        STATUS_INITIALIZED       = datatools::bit_mask::bit01
       };
 
   public:
 
-    const datatools::utils::properties & get_vg_config () const;
+    const datatools::properties & get_vg_config () const;
 
-    datatools::utils::properties & grab_vg_config ();
+    datatools::properties & grab_vg_config ();
 
-    void set_vg_config (const datatools::utils::properties &);
+    void set_vg_config (const datatools::properties &);
 
     const std::string & get_vg_name () const;
 
@@ -111,12 +111,12 @@ namespace genvtx {
   private:
 
   
-    std::string                  _vg_name_;    //!< The name of the vg
-    std::string                  _vg_id_;      //!< The ID (type) of the vg
-    datatools::utils::properties _vg_config_;  //!< The configuration of the vg 
-    uint32_t                     _vg_status_;  //!< The status of the vg
-    vg_handle_type               _vg_handle_;  //!< The handle for the allocated vg
-    i_vg_manager               * _manager_;    //!< Vertex generator manager
+    std::string           _vg_name_;    //!< The name of the vg
+    std::string           _vg_id_;      //!< The ID (type) of the vg
+    datatools::properties _vg_config_;  //!< The configuration of the vg 
+    uint32_t              _vg_status_;  //!< The status of the vg
+    vg_handle_type        _vg_handle_;  //!< The handle for the allocated vg
+    i_vg_manager        * _manager_;    //!< Vertex generator manager
   };
 
   typedef std::map<std::string, vg_entry_type> vg_dict_type;
@@ -138,6 +138,6 @@ namespace genvtx {
 
 } // end of namespace genvtx
 
-#endif // __genvtx__detail__vg_tools_h
+#endif // GENVTX_DETAIL_VG_TOOLS_H_
 
 // end of vg_tools.h

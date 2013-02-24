@@ -13,8 +13,8 @@
 
 #include <boost/filesystem.hpp>
 
-#include <datatools/utils/utils.h>
-#include <datatools/utils/units.h>
+#include <datatools/utils.h>
+#include <datatools/units.h>
 
 namespace genvtx {
 
@@ -57,7 +57,7 @@ namespace genvtx {
         throw logic_error ("genvtx::from_file_vg::_open_source: Missing source file name !");
       } 
 
-    datatools::utils::fetch_path_with_env (_filename_);
+    datatools::fetch_path_with_env (_filename_);
 
     if (! boost::filesystem::exists (_filename_)) 
       {
@@ -137,7 +137,7 @@ namespace genvtx {
         if (configuration_.has_key ("length_unit"))
           {
             lunit_str = configuration_.fetch_string ("length_unit");
-            lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+            lunit = datatools::units::get_length_unit_from (lunit_str);
           }
         
         set_length_unit (lunit);

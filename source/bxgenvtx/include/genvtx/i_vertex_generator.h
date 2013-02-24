@@ -12,8 +12,8 @@
  * 
  */
 
-#ifndef __genvtx__i_vertex_generator_h
-#define __genvtx__i_vertex_generator_h 1
+#ifndef GENVTX_I_VERTEX_GENERATOR_H_
+#define GENVTX_I_VERTEX_GENERATOR_H_ 1
 
 #include <string>
 #include <iostream>
@@ -22,28 +22,26 @@
 
 #include <geomtools/utils.h>
 #include <geomtools/detail/model_tools.h>
-#include <datatools/factory/factory_macros.h>
-#include <datatools/utils/handle.h>
-#include <datatools/utils/i_tree_dump.h>
+#include <datatools/factory_macros.h>
+#include <datatools/handle.h>
+#include <datatools/i_tree_dump.h>
 
 #include <mygsl/rng.h>
 
 #include <genvtx/detail/vg_tools.h>
 
 namespace datatools {
-  namespace utils {
-    class properties;
-  }}
+  class properties;
+}
 
 namespace datatools {
-  namespace service {
     class service_manager;
-  }}
+}
 
 namespace genvtx {
-
+  
   class i_vertex_generator :
-    public datatools::utils::i_tree_dumpable
+    public datatools::i_tree_dumpable
   {
   
   public: 
@@ -67,14 +65,14 @@ namespace genvtx {
     virtual void initialize_simple ();
 
     /// Initialization from a container of properties
-    virtual void initialize_standalone (const datatools::utils::properties & setup_);
+    virtual void initialize_standalone (const datatools::properties & setup_);
 
     /// Initialization from a container of properties and a service manager
-    virtual void initialize_with_service_only (const datatools::utils::properties & setup_,
-                                               datatools::service::service_manager & service_manager_);
+    virtual void initialize_with_service_only (const datatools::properties & setup_,
+                                               datatools::service_manager & service_manager_);
 
     /// Initialization from a container of properties, a service manager and a dictionnary of vertex generators
-    virtual void initialize_with_dictionary_only (const datatools::utils::properties & setup_,
+    virtual void initialize_with_dictionary_only (const datatools::properties & setup_,
                                                   vg_dict_type & dictionary_);
  
     /// Constructor
@@ -91,8 +89,8 @@ namespace genvtx {
     virtual bool is_initialized () const = 0;
 
     /// Main initialization interface method
-    virtual void initialize (const datatools::utils::properties & setup_,
-                             datatools::service::service_manager & service_manager_,
+    virtual void initialize (const datatools::properties & setup_,
+                             datatools::service_manager & service_manager_,
                              vg_dict_type & dictionary_) = 0;
 
     /// Reset method
@@ -125,6 +123,6 @@ namespace genvtx {
 
 #include <genvtx/vg_macros.h>
 
-#endif // __genvtx__i_vertex_generator_h
+#endif // GENVTX_I_VERTEX_GENERATOR_H_
 
 // end of i_vertex_generator.h

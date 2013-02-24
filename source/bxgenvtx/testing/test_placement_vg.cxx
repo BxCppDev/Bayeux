@@ -10,7 +10,7 @@
 #include <genvtx/box_vg.h>
 #include <mygsl/rng.h>
 #include <genvtx/placement_vg.h>
-#include <datatools/utils/properties.h>
+#include <datatools/properties.h>
 
 using namespace std;
 

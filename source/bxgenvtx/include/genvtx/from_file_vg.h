@@ -13,8 +13,8 @@
  * 
  */
 
-#ifndef __genvtx__from_file_vg_h
-#define __genvtx__from_file_vg_h 1
+#ifndef GENVTX_FROM_FILE_VG_H_
+#define GENVTX_FROM_FILE_VG_H_ 1
 
 #include <fstream>
 #include <string>
@@ -57,9 +57,6 @@ namespace genvtx {
 
     GENVTX_VG_HAS_NEXT_VERTEX_DECLARE();
 
-    // Constructor :
-    //from_file_vg (const std::string & filename_);
-
   private: 
 
     std::string          _filename_;
@@ -78,6 +75,6 @@ namespace genvtx {
 
 } // end of namespace genvtx
 
-#endif // __genvtx__from_file_vg_h
+#endif // GENVTX_FROM_FILE_VG_H_
 
 // end of from_file_vg.h

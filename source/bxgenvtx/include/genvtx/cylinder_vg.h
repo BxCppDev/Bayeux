@@ -14,8 +14,8 @@
  * 
  */
 
-#ifndef __genvtx__cylinder_vg_h
-#define __genvtx__cylinder_vg_h 1
+#ifndef GENVTX_CYLINDER_VG_H_
+#define GENVTX_CYLINDER_VG_H_ 1
 
 #include <iostream>
 
@@ -23,9 +23,7 @@
 #include <geomtools/cylinder.h>
 
 namespace datatools {
-namespace utils {
   class properties;
-}
 }
 
 namespace genvtx {
@@ -90,6 +88,6 @@ namespace genvtx {
 
 } // end of namespace genvtx
 
-#endif // __genvtx__cylinder_vg_h
+#endif // GENVTX_CYLINDER_VG_H_
 
 // end of cylinder_vg.h

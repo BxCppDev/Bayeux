@@ -1,6 +1,6 @@
 ###############################################################################
 ##
-## Copyright (C) 2012 François Mauger, Université de Caen Basse-Normandie, LPC Caen (CNRS/IN2P3)
+## Copyright (C) 2011-2013 François Mauger, Université de Caen Basse-Normandie
 ## Contact: mauger@lpccaen.in2p3.fr
 ##
 ## This file is part of the genvtx library.
@@ -20,7 +20,9 @@
 ##
 ###############################################################################
 
-set ( genvtx_tests_programs_list
+
+###file(GLOB genvtx_tests_programs test_*.cxx)
+set ( genvtx_tests_programs
       test_genvtx.cxx 
       test_spot_vertex_generator.cxx
       test_box_vg.cxx
@@ -30,77 +32,77 @@ set ( genvtx_tests_programs_list
       test_from_file_vg.cxx
       test_triangle_random_tools.cxx
       test_quadrangle_random_tools.cxx
-    )
+)
+
+###message (STATUS "genvtx_tests_programs=${genvtx_tests_programs}" )
+list(REMOVE_ITEM genvtx_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
+if(GENVTX_WITH_REFLECTION)
+  list(APPEND genvtx_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
+endif() 
+
+set(genvtx_tests_programs_list "${genvtx_tests_programs}") 
+list(SORT genvtx_tests_programs_list)
 
 # include files search paths
-include_directories ( ${PROJECT_BINARY_DIR}/include
-                      ${PROJECT_SOURCE_DIR}/include	
-                      ${geomtools_INCLUDE_DIRS}
-                      ${PROJECT_SOURCE_DIR}/testing
-                    )
+include_directories(
+  ${PROJECT_BINARY_DIR}/include
+  ${PROJECT_SOURCE_DIR}/include
+  ${geomtools_INCLUDE_DIRS}
+  ${PROJECT_SOURCE_DIR}/testing
+  )
 
-# linker search paths :
-link_directories ( ${PROJECT_BINARY_DIR}/src )
+set(_test_tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/testing_output")
 
-option ( GENVTX_ALL_TESTS "Perform all possible tests" 1 )
-message ( STATUS "testing: Performing all available tests : ${GENVTX_ALL_TESTS}" )
+execute_process(COMMAND cmake -E remove_directory ${_test_tmp_dir} )
 
-if ( GENVTX_ALL_TESTS )
-  set ( _test_tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/tmp" )
-  execute_process (COMMAND cmake -E remove_directory ${_test_tmp_dir} )
-  foreach ( test_program ${genvtx_tests_programs_list} )
-    get_filename_component ( test_executable ${test_program} NAME_WE )
-    message ( STATUS "testing:  Building test target '${test_executable}'" )
-    add_executable ( ${test_executable} ${test_program} )
-    # define d suffix on windows
-    if (WIN32)
-      set_target_properties ( ${test_executable} PROPERTIES DEBUG_POSTFIX d )
-    endif ()
+foreach(test_program ${genvtx_tests_programs_list})
+  get_filename_component(test_executable ${test_program} NAME_WE)
+  add_executable(${test_executable} ${test_program})
+  # define d suffix on windows
+  if(WIN32)
+    set_target_properties(${test_executable} PROPERTIES DEBUG_POSTFIX d)
+  endif()
 
-    # last thing we have to do is to tell CMake what libraries 
-    # our executable needs,
-    set ( _test_libraries genvtx )
-	 
-    target_link_libraries ( ${test_executable} ${_test_libraries} )
+  set(_test_libraries genvtx) 
 
-    add_test ( NAME ${test_executable}.run
-               COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
-                       --tmp-dir ${_test_tmp_dir}
-                       --data-dir ${PROJECT_SOURCE_DIR} 
-                       --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
-	               run
-             )	 	
+  # # Special bio DLL plugins :
+  # if(datatools_WITH_BIO)
+  #   list(INSERT _test_libraries 0 datatools_bio)
+  # endif() 
+  # if(mygsl_WITH_BIO)
+  #   list(INSERT _test_libraries 0 mygsl_bio )
+  # endif() 
+  # if(GENVTX_WITH_BIO)
+  #   list(INSERT _test_libraries 0 genvtx_bio )
+  # endif() 
 
-  endforeach ()
-  
-  add_custom_target ( clean_test
-                      COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
-                      --data-dir ${PROJECT_SOURCE_DIR} 
-                      --tmp-dir ${_test_tmp_dir}
-                      clean
-                    )
+  # # Special reflection DLL plugins :
+  # if(datatools_WITH_REFLECTION)
+  #   list(INSERT _test_libraries 0 datatools_reflection)
+  # endif() 
+  # if(GENVTX_WITH_REFLECTION)
+  #   list(INSERT _test_libraries 0 genvtx_reflection )
+  # endif() 
 
-endif ()
+  target_link_libraries(${test_executable} ${_test_libraries})
 
-option ( GENVTX_INSTALL_TEST_PROGRAMS "Install test programs" 1 )
-message ( STATUS "testing: Performing all available tests : ${GENVTX_INSTALL_TEST_PROGRAMS}" )
+  add_test(NAME ${test_executable}.run
+    COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
+    --tmp-dir ${_test_tmp_dir}
+    --data-dir ${PROJECT_SOURCE_DIR} 
+    --prefix ${PROJECT_SOURCE_DIR} 
+    --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
+    run
+    )	 
 
-# - Installation :
-if (GENVTX_INSTALL_TEST_PROGRAMS) 
-  set ( _test_install_dir ${CMAKE_INSTALL_DATADIR}/testing )
+  unset(_test_libraries)
+endforeach ()
 
-  file ( GLOB genvtx_tests_config config/test_*.data )
-  install ( FILES ${genvtx_tests_config} 
-     	      DESTINATION ${_test_install_dir}/config  
-             PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ 
-           )
-
-  file ( GLOB genvtx_tests_programs test_*.cxx test_*.gp testDriver.bash)
-  install ( FILES ${genvtx_tests_programs} 
-	    DESTINATION ${_test_install_dir}
-            PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ 
-          )
-
-endif ()
+add_custom_target(clean_test
+  COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
+  --prefix ${PROJECT_SOURCE_DIR} 
+  --tmp-dir ${_test_tmp_dir}
+  clean
+  )
 
 # end of CMakeLists.txt

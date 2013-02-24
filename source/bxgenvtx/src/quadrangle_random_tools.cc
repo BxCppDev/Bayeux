@@ -4,7 +4,7 @@
 
 #include <genvtx/quadrangle_random_tools.h>
 #include <genvtx/triangle_random_tools.h>
-#include <datatools/utils/utils.h>
+#include <datatools/utils.h>
 
 namespace genvtx {
 
@@ -17,11 +17,11 @@ namespace genvtx {
                              double & area012_, double & area230_)
   {
     //geomtools::vector_3d bidon;
-    if (! datatools::utils::is_valid (area012_))
+    if (! datatools::is_valid (area012_))
       {
         area012_ = ((vtx1_-vtx0_).cross (vtx2_-vtx0_)).mag ();
       }
-    if (! datatools::utils::is_valid (area230_))
+    if (! datatools::is_valid (area230_))
       {
         area230_ = ((vtx3_-vtx2_).cross (vtx0_-vtx2_)).mag ();
       }

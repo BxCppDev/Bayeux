@@ -14,8 +14,8 @@
  * 
  */
 
-#ifndef __genvtx__placement_vg_h
-#define __genvtx__placement_vg_h 1
+#ifndef GENVTX_PLACEMENT_VG_H_
+#define GENVTX_PLACEMENT_VG_H_ 1
 
 #include <genvtx/i_vertex_generator.h>
 #include <geomtools/placement.h>
@@ -74,6 +74,6 @@ namespace genvtx {
 
 } // end of namespace genvtx
 
-#endif // __genvtx__placement_vg_h
+#endif //GENVTX_PLACEMENT_VG_H_
 
 // end of placement_vg.h

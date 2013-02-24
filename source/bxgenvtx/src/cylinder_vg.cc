@@ -7,8 +7,8 @@
 #include <stdexcept>
 #include <sstream>
 
-#include <datatools/utils/units.h>
-#include <datatools/utils/properties.h>
+#include <datatools/units.h>
+#include <datatools/properties.h>
 
 namespace genvtx {
 
@@ -145,7 +145,7 @@ namespace genvtx {
     if (setup_.has_key ("length_unit"))
       {
         lunit_str = setup_.fetch_string ("length_unit");
-        lunit = datatools::utils::units::get_length_unit_from (lunit_str);
+        lunit = datatools::units::get_length_unit_from (lunit_str);
       }
     
     if (setup_.has_key ("skin_skip"))
@@ -201,14 +201,14 @@ namespace genvtx {
     if (! _cylinder_.is_valid ())
       {
         double cylinder_r, cylinder_z;
-        datatools::utils::invalidate (cylinder_r);
-        datatools::utils::invalidate (cylinder_z);
+        datatools::invalidate (cylinder_r);
+        datatools::invalidate (cylinder_z);
         double length_unit = CLHEP::millimeter;
         
         if (setup_.has_key ("length_unit"))
           {
             std::string length_unit_str = setup_.fetch_string ("length_unit");
-            length_unit = datatools::utils::units::get_length_unit_from (length_unit_str);
+            length_unit = datatools::units::get_length_unit_from (length_unit_str);
           }
 
         if (setup_.has_key ("cylinder.r"))
@@ -295,7 +295,7 @@ namespace genvtx {
                                const std::string & indent_, 
                                bool inherit_) const
   {
-    namespace du = datatools::utils;
+    namespace du = datatools;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     i_vertex_generator::tree_dump (out_, title_, indent_, true);
