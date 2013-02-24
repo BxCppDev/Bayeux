@@ -2,7 +2,7 @@
 /* oscillating_field.h
  * Author (s):    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-05-22
- * Last modified: 2012-05-22
+ * Last modified: 2013-02-24
  * 
  * License: 
  * 
@@ -17,8 +17,8 @@
 #include <emfield/base_electromagnetic_field.h>
 #include <geomtools/placement.h>
 
-#ifndef __emfield__oscillating_field_h
-#define __emfield__oscillating_field_h 1
+#ifndef EMFIELD_OSCILLATING_FIELD_H_
+#define EMFIELD_OSCILLATING_FIELD_H_ 1
 
 namespace emfield {
  
@@ -56,6 +56,6 @@ namespace emfield {
 
 } // end of namespace emfield
 
-#endif // __emfield__oscillating_field_h
+#endif // EMFIELD_OSCILLATING_FIELD_H_
 
 // end of oscillating_field.h

@@ -17,46 +17,43 @@
 #include <iostream>
 #include <string>
 #include <map>
+
 #include <boost/cstdint.hpp>
-#include <datatools/factory/factory_macros.h>
+
+#include <datatools/factory_macros.h>
 #include <geomtools/utils.h>
-#include <datatools/utils/handle.h>
-#include <datatools/utils/bit_mask.h>
-#include <datatools/utils/i_tree_dump.h>
+#include <datatools/handle.h>
+#include <datatools/bit_mask.h>
+#include <datatools/i_tree_dump.h>
 
-#ifndef __emfield__base_electromagnetic_field_h
-#define __emfield__base_electromagnetic_field_h 1
+#ifndef EMFIELD_BASE_ELECTROMAGNETIC_FIELD_H_
+#define EMFIELD_BASE_ELECTROMAGNETIC_FIELD_H_ 1
 
 namespace datatools {
-  namespace utils {
     class properties;
-  }}
-
-namespace datatools {
-  namespace service {
     class service_manager;
-  }}
+  }
 
 namespace emfield {
 
   class base_electromagnetic_field :
-    public datatools::utils::i_tree_dumpable
+    public datatools::i_tree_dumpable
   {
 
   public:
 
-    typedef datatools::utils::handle<base_electromagnetic_field> handle_type;
-    typedef std::map<std::string, handle_type>                   field_dict_type;
+    typedef datatools::handle<base_electromagnetic_field> handle_type;
+    typedef std::map<std::string, handle_type>            field_dict_type;
 
     enum flag_type
       {
-        DEBUG          = datatools::utils::bit_mask::bit01,
-        ELECTRIC_FIELD = datatools::utils::bit_mask::bit02,
-        MAGNETIC_FIELD = datatools::utils::bit_mask::bit03,
-        ELECTRIC_FIELD_CAN_BE_COMBINED = datatools::utils::bit_mask::bit04,
-        MAGNETIC_FIELD_CAN_BE_COMBINED = datatools::utils::bit_mask::bit05,
-        ELECTRIC_FIELD_IS_TIME_DEPENDENT = datatools::utils::bit_mask::bit06,
-        MAGNETIC_FIELD_IS_TIME_DEPENDENT = datatools::utils::bit_mask::bit07
+        DEBUG          = datatools::bit_mask::bit01,
+        ELECTRIC_FIELD = datatools::bit_mask::bit02,
+        MAGNETIC_FIELD = datatools::bit_mask::bit03,
+        ELECTRIC_FIELD_CAN_BE_COMBINED = datatools::bit_mask::bit04,
+        MAGNETIC_FIELD_CAN_BE_COMBINED = datatools::bit_mask::bit05,
+        ELECTRIC_FIELD_IS_TIME_DEPENDENT = datatools::bit_mask::bit06,
+        MAGNETIC_FIELD_IS_TIME_DEPENDENT = datatools::bit_mask::bit07
      };
     
     enum status_type
@@ -106,18 +103,18 @@ namespace emfield {
                                double time_,
                                geomtools::vector_3d & field_);
     
-    virtual void initialize_standalone (const datatools::utils::properties & setup_);
+    virtual void initialize_standalone (const datatools::properties & setup_);
 
-    virtual void initialize_with_service_only (const datatools::utils::properties & setup_,
-                                               datatools::service::service_manager & service_manager_);
+    virtual void initialize_with_service_only (const datatools::properties & setup_,
+                                               datatools::service_manager & service_manager_);
 
-    virtual void initialize_with_dictionary_only (const datatools::utils::properties & setup_,
+    virtual void initialize_with_dictionary_only (const datatools::properties & setup_,
                                                   field_dict_type & dictionary_);
    
     /*** Minimal interface ***/
 
-    virtual void initialize (const datatools::utils::properties & setup_, 
-                             datatools::service::service_manager & service_manager_,
+    virtual void initialize (const datatools::properties & setup_, 
+                             datatools::service_manager & service_manager_,
                              field_dict_type & dictionary_) = 0;
 
     virtual void reset () = 0;
@@ -157,8 +154,8 @@ namespace emfield {
 
     void _set_magnetic_field_is_time_dependent (bool = true);
 
-    void _parse_basic_parameters (const datatools::utils::properties & setup_,
-                                  datatools::service::service_manager & service_manager_,
+    void _parse_basic_parameters (const datatools::properties & setup_,
+                                  datatools::service_manager & service_manager_,
                                   field_dict_type & dictionary_);
 
   private:
@@ -189,6 +186,6 @@ namespace emfield {
 
 #include <emfield/electromagnetic_field_macros.h>
 
-#endif // __emfield__base_electromagnetic_field_h 1
+#endif // EMFIELD_BASE_ELECTROMAGNETIC_FIELD_H_
 
 // end of base_electromagnetic_field.h

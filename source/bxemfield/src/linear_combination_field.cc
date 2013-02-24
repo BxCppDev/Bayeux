@@ -6,8 +6,8 @@
 
 #include <sstream>
 #include <stdexcept>
-#include <datatools/utils/utils.h>
-#include <datatools/utils/properties.h>
+#include <datatools/utils.h>
+#include <datatools/properties.h>
 
 namespace emfield {
 
@@ -16,7 +16,7 @@ namespace emfield {
 
   linear_combination_field::combined_field_entry::combined_field_entry ()
   {
-    datatools::utils::invalidate (weight);
+    datatools::invalidate (weight);
     return;
   }
 

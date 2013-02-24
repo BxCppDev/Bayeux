@@ -10,8 +10,8 @@
 
 #include <emfield/emfield_config.h>
 #include <emfield/electromagnetic_field_manager.h>
-#include <datatools/utils/properties.h>
-#include <datatools/services/service_manager.h>
+#include <datatools/properties.h>
+#include <datatools/service_manager.h>
 #include <geomtools/gnuplot_i.h>
 #include <emfield/oscillating_field.h>
 
@@ -83,7 +83,7 @@ int main (int argc_, char ** argv_)
 
       
       // This is a blank service manager :
-      datatools::service::service_manager SRVCmgr;
+      datatools::service_manager SRVCmgr;
       SRVCmgr.initialize ();
 
       // This is a EM field manager :
@@ -93,7 +93,7 @@ int main (int argc_, char ** argv_)
       EMFmgr.set_service_manager (SRVCmgr);
      
       // Configuration :
-      datatools::utils::properties EMFmgr_config;
+      datatools::properties EMFmgr_config;
       EMFmgr_config.set_flag ("debug");
       EMFmgr_config.set_flag ("needs_service_manager");
 

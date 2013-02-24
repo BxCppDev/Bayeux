@@ -3,10 +3,10 @@
  */ 
 
 #include <emfield/oscillating_field.h>
-#include <datatools/utils/properties.h>
-#include <datatools/utils/units.h>
-#include <datatools/utils/utils.h>
-#include <datatools/services/service_manager.h>
+#include <datatools/properties.h>
+#include <datatools/units.h>
+#include <datatools/utils.h>
+#include <datatools/service_manager.h>
 #include <geomtools/utils.h>
 #include <cmath>
 
@@ -24,8 +24,8 @@ namespace emfield {
     _set_magnetic_field_can_be_combined (false);
     _set_electric_field_is_time_dependent (true);
     _set_magnetic_field_is_time_dependent (true);
-    datatools::utils::invalidate (_frequency_);
-    datatools::utils::invalidate (_phase_);
+    datatools::invalidate (_frequency_);
+    datatools::invalidate (_phase_);
     return;
   }  
   
@@ -138,8 +138,8 @@ namespace emfield {
         throw std::logic_error (message.str ());
       }
 
-    datatools::utils::invalidate (_frequency_);
-    datatools::utils::invalidate (_phase_);
+    datatools::invalidate (_frequency_);
+    datatools::invalidate (_phase_);
     _field_.reset ();
 
     _set_initialized (false);
@@ -168,13 +168,13 @@ namespace emfield {
     if (setup_.has_key ("phase.unit"))
       {
         std::string phase_unit_str = setup_.fetch_string ("phase.unit");
-        phase_unit = datatools::utils::units::get_angle_unit_from (phase_unit_str);
+        phase_unit = datatools::units::get_angle_unit_from (phase_unit_str);
       }
     
     if (setup_.has_key ("frequency.unit"))
       {
         std::string frequency_unit_str = setup_.fetch_string ("frequency.unit");
-        frequency_unit = datatools::utils::units::get_frequency_unit_from (frequency_unit_str);
+        frequency_unit = datatools::units::get_frequency_unit_from (frequency_unit_str);
       }
 
     // parameters of the placement field:

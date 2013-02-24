@@ -3,10 +3,10 @@
  */ 
 
 #include <emfield/uniform_magnetic_field.h>
-#include <datatools/utils/properties.h>
-#include <datatools/utils/units.h>
-#include <datatools/utils/utils.h>
-#include <datatools/services/service_manager.h>
+#include <datatools/properties.h>
+#include <datatools/units.h>
+#include <datatools/utils.h>
+#include <datatools/service_manager.h>
 
 namespace emfield {
 
@@ -98,7 +98,7 @@ namespace emfield {
     if (setup_.has_key ("magnetic_field.unit"))
       {
         std::string b_unit_str = setup_.fetch_string ("magnetic_field.unit");
-        b_unit = datatools::utils::units::get_magnetic_field_unit_from (b_unit_str);
+        b_unit = datatools::units::get_magnetic_field_unit_from (b_unit_str);
       }
 
     if (setup_.has_flag ("magnetic_field.can_be_combined"))
@@ -128,7 +128,7 @@ namespace emfield {
     if (! geomtools::is_valid (_uniform_magnetic_field_))
       {
         double magfield_amp;
-        datatools::utils::invalidate (magfield_amp);
+        datatools::invalidate (magfield_amp);
         int magfield_axis = geomtools::ROTATION_AXIS_INVALID;
 
         if (setup_.has_key ("magnetic_field.magnitude"))

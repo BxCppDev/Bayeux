@@ -3,10 +3,10 @@
  */ 
 
 #include <emfield/placement_field.h>
-#include <datatools/utils/properties.h>
-#include <datatools/utils/units.h>
-#include <datatools/utils/utils.h>
-#include <datatools/services/service_manager.h>
+#include <datatools/properties.h>
+#include <datatools/units.h>
+#include <datatools/utils.h>
+#include <datatools/service_manager.h>
 #include <geomtools/utils.h>
 
 namespace emfield {
@@ -150,13 +150,13 @@ namespace emfield {
     if (setup_.has_key ("length.unit"))
       {
         std::string length_unit_str = setup_.fetch_string ("length.unit");
-        length_unit = datatools::utils::units::get_length_unit_from (length_unit_str);
+        length_unit = datatools::units::get_length_unit_from (length_unit_str);
       }
     
     if (setup_.has_key ("angle.unit"))
       {
         std::string angle_unit_str = setup_.fetch_string ("angle.unit");
-        angle_unit = datatools::utils::units::get_angle_unit_from (angle_unit_str);
+        angle_unit = datatools::units::get_angle_unit_from (angle_unit_str);
       }
 
     // parameters of the placement field:

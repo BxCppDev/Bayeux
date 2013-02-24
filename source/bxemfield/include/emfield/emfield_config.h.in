@@ -2,8 +2,8 @@
 /* emfield_config.h header file 
  */
 
-#ifndef __emfield_emfield_config_h
-#define __emfield_emfield_config_h 1
+#ifndef EMFIELD_EMFIELD_CONFIG_H_
+#define EMFIELD_EMFIELD_CONFIG_H_ 1
 
 /*** emfield versioning information ***/
 
@@ -15,32 +15,26 @@
 #define EMFIELD_VERSION_MINOR @emfield_VERSION_MINOR@
 #define EMFIELD_PATCH_VERSION @emfield_PATCH_VERSION@
 
-#define EMFIELD_VERSION @emfield_VERSION_NUMERIC@
+#define EMFIELD_VERSION @_emfield_VERSION_NUMERIC@
 
 //  EMFIELD_LIB_VERSION must be defined to be the same as EMFIELD_VERSION
 //  but as a *string* in the form "x.y[.z]" where x is the major version
 //  number, y is the minor version number, and z is the patch level if not 0.
 
-#define EMFIELD_LIB_VERSION "@emfield_VERSION_STR@"
+#define EMFIELD_LIB_VERSION "@emfield_VERSION@"
 
-/*** emfield debug flag ***/
+/***  emfield debug flag ***/
 #cmakedefine01 EMFIELD_WITH_DEBUG
 
-/*** emfield embedded Boost/Serialization based I/O ***/
-#if x0 == x1
-#cmakedefine01 EMFIELD_WITH_BIO 
-#endif
+/***  emfield embedded Boost/Serialization based I/O ***/
+//#cmakedefine01 EMFIELD_WITH_BIO
 
-/*** emfield Boost/Python module ***/
-#if x0 == x1
-#cmakedefine01 EMFIELD_WITH_PYTHON_WRAPPER
-#endif
+/***  emfield embedded CAMP-based reflection ***/
+//#cmakedefine01 EMFIELD_WITH_REFLECTION
 
-/*** emfield with resources ***/
-#if x1 == x1
-#define EMFIELD_DEFAULT_RESOURCES_BASE_DIR "@CMAKE_INSTALL_FULL_DATADIR@"
-#endif
+/***  emfield with Gnuplot display ***/
+#cmakedefine01 EMFIELD_WITH_GNUPLOT_DISPLAY
 
-#endif // __emfield_emfield_config_h
+#endif // EMFIELD_EMFIELD_CONFIG_H_
 
 // end of emfield_config.h

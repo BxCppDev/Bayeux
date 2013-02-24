@@ -2,7 +2,7 @@
 /* uniform_electric_field.h
  * Author (s):    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-04-25
- * Last modified: 2012-04-25
+ * Last modified: 2013-02-24
  * 
  * License: 
  * 
@@ -16,8 +16,8 @@
 
 #include <emfield/base_electromagnetic_field.h>
 
-#ifndef __emfield__uniform_electric_field_h
-#define __emfield__uniform_electric_field_h 1
+#ifndef EMFIELD_UNIFORM_ELECTRIC_FIELD_H_
+#define EMFIELD_UNIFORM_ELECTRIC_FIELD_H_ 1
 
 namespace emfield {
  
@@ -45,6 +45,6 @@ namespace emfield {
 
 } // end of namespace emfield
 
-#endif // __emfield__uniform_electric_field_h
+#endif // EMFIELD_UNIFORM_ELECTRIC_FIELD_H_
 
 // end of uniform_electric_field.h

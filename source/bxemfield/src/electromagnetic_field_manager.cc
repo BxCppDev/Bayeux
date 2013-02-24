@@ -4,9 +4,9 @@
 
 #include <emfield/electromagnetic_field_manager.h>
 
-#include <datatools/utils/properties.h>
-#include <datatools/services/service_manager.h>
-#include <datatools/utils/utils.h>
+#include <datatools/properties.h>
+#include <datatools/service_manager.h>
+#include <datatools/utils.h>
 #include <geomtools/utils.h>
 
 namespace emfield {
@@ -41,7 +41,7 @@ namespace emfield {
     return _service_manager_ != 0;
   }
 
-  void electromagnetic_field_manager::set_service_manager (datatools::service::service_manager & sm_)
+  void electromagnetic_field_manager::set_service_manager (datatools::service_manager & sm_)
   {
     if (is_initialized ())
       {
@@ -77,7 +77,7 @@ namespace emfield {
         throw std::logic_error (message.str ());        
       }
     std::string rules_filename = rules_filename_;
-    datatools::utils::fetch_path_with_env (rules_filename);
+    datatools::fetch_path_with_env (rules_filename);
     _rules_.read (rules_filename);
     return;
   }
@@ -89,13 +89,13 @@ namespace emfield {
       {
         devel = true;
       }
-    for (datatools::utils::multi_properties::entries_ordered_col_t::const_iterator i
+    for (datatools::multi_properties::entries_ordered_col_type::const_iterator i
            = _rules_.ordered_entries ().begin ();
          i != _rules_.ordered_entries ().end ();
          i++)
       {
-        const datatools::utils::multi_properties::entry * ptr_entry = *i;
-        const datatools::utils::multi_properties::entry & e = *ptr_entry;
+        const datatools::multi_properties::entry * ptr_entry = *i;
+        const datatools::multi_properties::entry & e = *ptr_entry;
         std::string field_name = e.get_key ();
         if (_fields_.find (field_name) != _fields_.end ())
           {
@@ -148,12 +148,14 @@ namespace emfield {
     _initialized_ = false;
     _debug_ = flags_ & base_electromagnetic_field::DEBUG;
     _service_manager_ = 0;
-    bool preload = true;
+    _factory_preload_ =  true;
+ 
+    bool preload = _factory_preload_;
     if (preload)
       {
         _factory_register_.import (DATATOOLS_FACTORY_GET_SYSTEM_REGISTER (::emfield::base_electromagnetic_field));
      }
-    return;
+   return;
   }
   
   electromagnetic_field_manager::~electromagnetic_field_manager ()
@@ -165,7 +167,7 @@ namespace emfield {
     return;
   }
 
-  void electromagnetic_field_manager::initialize (const datatools::utils::properties & setup_)
+  void electromagnetic_field_manager::initialize (const datatools::properties & setup_)
   {
     if (is_initialized ())
       {
@@ -183,6 +185,13 @@ namespace emfield {
       {
         set_debug (true);
       }
+
+    /*
+    if (setup_.has_flag ("factory_no_preload"))
+      {
+        _factory_preload_ = false;
+      }
+    */
 
     if (setup_.has_flag ("needs_service_manager"))
       {
@@ -211,7 +220,7 @@ namespace emfield {
             throw std::logic_error (message.str ());        
           }
       }
-
+ 
     // Initialization :
   
     _construct_ ();
@@ -276,7 +285,7 @@ namespace emfield {
                                                  bool inherit_) const
   {
     using namespace std;
-    namespace du = datatools::utils;
+    namespace du = datatools;
     std::string indent;
     if (! indent_.empty ()) indent = indent_;
     if (! title_.empty ())

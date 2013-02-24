@@ -3,10 +3,10 @@
  */ 
 
 #include <emfield/uniform_electric_field.h>
-#include <datatools/utils/properties.h>
-#include <datatools/utils/units.h>
-#include <datatools/utils/utils.h>
-#include <datatools/services/service_manager.h>
+#include <datatools/properties.h>
+#include <datatools/units.h>
+#include <datatools/utils.h>
+#include <datatools/service_manager.h>
 
 namespace emfield {
 
@@ -98,7 +98,7 @@ namespace emfield {
     if (setup_.has_key ("electric_field.unit"))
       {
         std::string e_unit_str = setup_.fetch_string ("electric_field.unit");
-        e_unit = datatools::utils::units::get_electric_field_unit_from (e_unit_str);
+        e_unit = datatools::units::get_electric_field_unit_from (e_unit_str);
       }
 
     if (! geomtools::is_valid (_uniform_electric_field_))
@@ -123,7 +123,7 @@ namespace emfield {
     if (! geomtools::is_valid (_uniform_electric_field_))
       {
         double elecfield_amp;
-        datatools::utils::invalidate (elecfield_amp);
+        datatools::invalidate (elecfield_amp);
         int elecfield_axis = geomtools::ROTATION_AXIS_INVALID;
 
         if (setup_.has_key ("electric_field.magnitude"))

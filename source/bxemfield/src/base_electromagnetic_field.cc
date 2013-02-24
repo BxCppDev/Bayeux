@@ -3,9 +3,9 @@
  */ 
 
 #include <emfield/base_electromagnetic_field.h>
-#include <datatools/utils/properties.h>
-#include <datatools/services/service_manager.h>
-#include <datatools/utils/utils.h>
+#include <datatools/properties.h>
+#include <datatools/service_manager.h>
+#include <datatools/utils.h>
 #include <geomtools/utils.h>
 
 namespace emfield {
@@ -19,7 +19,7 @@ namespace emfield {
                                               bool inherit_) const
   {
     using namespace std;
-    namespace du = datatools::utils;
+    namespace du = datatools;
     std::string indent;
     if (! indent_.empty ()) indent = indent_;
     if (! title_.empty ())
@@ -220,8 +220,8 @@ namespace emfield {
   }
 
 
-  void base_electromagnetic_field::_parse_basic_parameters (const datatools::utils::properties & setup_,
-                                                            datatools::service::service_manager & service_manager_,
+  void base_electromagnetic_field::_parse_basic_parameters (const datatools::properties & setup_,
+                                                            datatools::service_manager & service_manager_,
                                                             field_dict_type & dictionary_)
   {
     if (is_initialized ())
@@ -309,7 +309,7 @@ namespace emfield {
   bool base_electromagnetic_field::position_and_time_are_valid (const geomtools::vector_3d & position_, 
                                                                 double time_) const
   {
-    return geomtools::is_valid (position_) && datatools::utils::is_valid (time_);
+    return geomtools::is_valid (position_) && datatools::is_valid (time_);
   }
 
 
@@ -427,24 +427,24 @@ namespace emfield {
   }
   
 
-  void base_electromagnetic_field::initialize_standalone (const datatools::utils::properties & setup_)
+  void base_electromagnetic_field::initialize_standalone (const datatools::properties & setup_)
   {
-    datatools::service::service_manager dummy_srvcmgr;
+    datatools::service_manager dummy_srvcmgr;
     field_dict_type dummy_dict;
     initialize (setup_, dummy_srvcmgr, dummy_dict);
     return;
   }
    
-  void base_electromagnetic_field::initialize_with_dictionary_only (const datatools::utils::properties & setup_,
+  void base_electromagnetic_field::initialize_with_dictionary_only (const datatools::properties & setup_,
                                                                     field_dict_type & dictionary_)
   {
-    datatools::service::service_manager dummy_srvcmgr;
+    datatools::service_manager dummy_srvcmgr;
     initialize (setup_, dummy_srvcmgr, dictionary_);
     return;
   }
 
-  void base_electromagnetic_field::initialize_with_service_only (const datatools::utils::properties & setup_,
-                                                                 datatools::service::service_manager & service_manager_)
+  void base_electromagnetic_field::initialize_with_service_only (const datatools::properties & setup_,
+                                                                 datatools::service_manager & service_manager_)
   {
     field_dict_type dummy_dict;
     initialize (setup_, service_manager_, dummy_dict);

@@ -14,7 +14,7 @@ function my_exit ()
 
 bio_support=0
 python_wrapper_support=0
-validation_support=1
+#validation_support=1
 testing_support=1
 doc_support=1
 
@@ -32,9 +32,9 @@ if [ ${testing_support} -eq 1 ]; then
     list_of_actions="${list_of_actions} test untest "
 fi
 
-if [ ${validation_support} -eq 1 ]; then
-    list_of_actions="${list_of_actions} validate clean_validate "
-fi
+# if [ ${validation_support} -eq 1 ]; then
+#     list_of_actions="${list_of_actions} validate clean_validate "
+# fi
 
 the_base_dir=$(pwd)
 
@@ -182,12 +182,12 @@ EOF
     untest              : remove/clean post build test material
 EOF
     fi
-    if [ ${validation_support} -eq 1 ]; then
- 	cat <<EOF
-    validate            : run the validation protocol  
-    clean_validate      : clean the material from the validation protocol 
-EOF
-    fi
+#     if [ ${validation_support} -eq 1 ]; then
+#  	cat <<EOF
+#     validate            : run the validation protocol  
+#     clean_validate      : clean the material from the validation protocol 
+# EOF
+#     fi
     cat <<EOF
     reset               : reset the package's source tree  
     list_of_actions     : print the list of available actions
@@ -207,11 +207,11 @@ EOF
     cat <<EOF
     shell> ${appname} install
 EOF
-    if [ ${validation_support} -eq 1 ]; then
-	cat <<EOF
-    shell> ${appname} validate
-EOF
-    fi
+#     if [ ${validation_support} -eq 1 ]; then
+# 	cat <<EOF
+#     shell> ${appname} validate
+# EOF
+#     fi
     return 0
 }
 
@@ -762,60 +762,60 @@ function do_uninstall ()
     return 0
 }
 
-function do_validate ()
-{
-    __pkgtools__at_function_enter do_validate
+# function do_validate ()
+# {
+#     __pkgtools__at_function_enter do_validate
 
-    if [ ! -d ${the_build_dir} ]; then
-	pkgtools__msg_error "Cannot find the build directory ! Please configure and build first !"
-	__pkgtools__at_function_exit
-	return 1	
-    fi
+#     if [ ! -d ${the_build_dir} ]; then
+# 	pkgtools__msg_error "Cannot find the build directory ! Please configure and build first !"
+# 	__pkgtools__at_function_exit
+# 	return 1	
+#     fi
 
-    cd ${the_build_dir}
-    make validation_run
-    if [ $? -ne 0 ]; then
-	pkgtools__msg_error "Cannot validate the '${package_name}' package !"
-	__pkgtools__at_function_exit
-	return 1
-    fi
+#     cd ${the_build_dir}
+#     make validation_run
+#     if [ $? -ne 0 ]; then
+# 	pkgtools__msg_error "Cannot validate the '${package_name}' package !"
+# 	__pkgtools__at_function_exit
+# 	return 1
+#     fi
 
-    make validation_report
-    if [ $? -ne 0 ]; then
-	pkgtools__msg_error "Cannot report the validation of the '${package_name}' package !"
-	__pkgtools__at_function_exit
-	return 1
-    fi
+#     make validation_report
+#     if [ $? -ne 0 ]; then
+# 	pkgtools__msg_error "Cannot report the validation of the '${package_name}' package !"
+# 	__pkgtools__at_function_exit
+# 	return 1
+#     fi
 
-    cd ${the_base_dir}
+#     cd ${the_base_dir}
 
-    __pkgtools__at_function_exit
-    return 0
-}
+#     __pkgtools__at_function_exit
+#     return 0
+# }
 
-function do_clean_validate ()
-{
-    __pkgtools__at_function_enter do_clean_validate
+# function do_clean_validate ()
+# {
+#     __pkgtools__at_function_enter do_clean_validate
 
-    if [ ! -d ${the_build_dir} ]; then
-	pkgtools__msg_error "Cannot find the build directory ! Please configure and build first !"
-	__pkgtools__at_function_exit
-	return 1	
-    fi
+#     if [ ! -d ${the_build_dir} ]; then
+# 	pkgtools__msg_error "Cannot find the build directory ! Please configure and build first !"
+# 	__pkgtools__at_function_exit
+# 	return 1	
+#     fi
 
-    cd ${the_build_dir}
-    make validation_clean
-    if [ $? -ne 0 ]; then
-	pkgtools__msg_error "Cannot clean validation material of the '${package_name}' package !"
-	__pkgtools__at_function_exit
-	return 1
-    fi
+#     cd ${the_build_dir}
+#     make validation_clean
+#     if [ $? -ne 0 ]; then
+# 	pkgtools__msg_error "Cannot clean validation material of the '${package_name}' package !"
+# 	__pkgtools__at_function_exit
+# 	return 1
+#     fi
 
-    cd ${the_base_dir}
+#     cd ${the_base_dir}
 
-    __pkgtools__at_function_exit
-    return 0
-}
+#     __pkgtools__at_function_exit
+#     return 0
+# }
 
 function do_clean ()
 {
@@ -844,12 +844,12 @@ function do_reset ()
 {
     __pkgtools__at_function_enter do_reset
 
-    if [ ${validation_support} -eq 1 ]; then
-	do_clean_validate
-	if [ $? -ne 0 ]; then
-	    pkgtools__msg_warning "Could not clean the validation material from the '${package_name}' package !"
-	fi
-    fi
+    # if [ ${validation_support} -eq 1 ]; then
+    # 	do_clean_validate
+    # 	if [ $? -ne 0 ]; then
+    # 	    pkgtools__msg_warning "Could not clean the validation material from the '${package_name}' package !"
+    # 	fi
+    # fi
 	
     do_uninstall
     if [ $? -ne 0 ]; then
@@ -982,26 +982,26 @@ function main ()
 	fi
     fi
     
-    if [ ${validation_support} -eq 1 ]; then
+    # if [ ${validation_support} -eq 1 ]; then
 
-	if [ "${action_mode}" = "validate" ]; then
-	    do_validate $@
-	    if [ $? -ne 0 ]; then
-		pkgtools__msg_error "Validatation failed !"
-		__pkgtools__at_function_exit
-		return 1
-	    fi
-	fi
+    # 	if [ "${action_mode}" = "validate" ]; then
+    # 	    do_validate $@
+    # 	    if [ $? -ne 0 ]; then
+    # 		pkgtools__msg_error "Validatation failed !"
+    # 		__pkgtools__at_function_exit
+    # 		return 1
+    # 	    fi
+    # 	fi
 	
-	if [ "${action_mode}" = "clean_validate" ]; then
-	    do_clean_validate $@
-	    if [ $? -ne 0 ]; then
-		pkgtools__msg_error "Validatation cleaning failed !"
-		__pkgtools__at_function_exit
-		return 1
-	    fi
-	fi
-    fi
+    # 	if [ "${action_mode}" = "clean_validate" ]; then
+    # 	    do_clean_validate $@
+    # 	    if [ $? -ne 0 ]; then
+    # 		pkgtools__msg_error "Validatation cleaning failed !"
+    # 		__pkgtools__at_function_exit
+    # 		return 1
+    # 	    fi
+    # 	fi
+    # fi
 
     if [ "${action_mode}" = "clean" ]; then
 	do_clean $@
@@ -1052,22 +1052,22 @@ function main ()
 	    return 1
 	fi
 	
-	local run_validation=0
-        while [ -n "$1" ]; do
-	  local option="$1"
-	  if [ "${option}" = "--run-validation" ]; then
-	      run_validation=1
-	  fi
-	  shift 1
-	done
-	if [ ${validation_support} -eq 1 -a ${run_validation} -eq 1 ]; then
-	    do_validate $@
-	    if [ $? -ne 0 ]; then
-		pkgtools__msg_error "Validation failed !"
-		__pkgtools__at_function_exit
-		return 1
-	    fi
-	fi
+	# local run_validation=0
+        # while [ -n "$1" ]; do
+	#   local option="$1"
+	#   if [ "${option}" = "--run-validation" ]; then
+	#       run_validation=1
+	#   fi
+	#   shift 1
+	# done
+	# if [ ${validation_support} -eq 1 -a ${run_validation} -eq 1 ]; then
+	#     do_validate $@
+	#     if [ $? -ne 0 ]; then
+	# 	pkgtools__msg_error "Validation failed !"
+	# 	__pkgtools__at_function_exit
+	# 	return 1
+	#     fi
+	# fi
 	
     fi
    

@@ -2,7 +2,7 @@
 /* linear_combination_field.h
  * Author (s):    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-04-26
- * Last modified: 2012-04-26
+ * Last modified: 2013-04-24
  * 
  * License: 
  * 
@@ -19,18 +19,17 @@
 #include <vector>
 #include <map>
 
-#ifndef __emfield__linear_combination_field_h
-#define __emfield__linear_combination_field_h 1
+#ifndef EMFIELD_LINEAR_COMBINATION_FIELD_H_
+#define EMFIELD_LINEAR_COMBINATION_FIELD_H_ 1
 
 namespace emfield {
  
-  /** Class representing an uniform (in space) and constant (in time) 
-   *  electric field
-   */
+  /// \brief Class representing linear combination of many EM fields
   EMFIELD_CLASS_DECLARE(linear_combination_field) 
   {
   public:
 
+    /// \brief Internal class for linear_combination_field
     struct combined_field_entry
     {
       std::string                             label;
@@ -51,7 +50,7 @@ namespace emfield {
 
   private:
     
-    combined_field_dict_type _combined_fields_;
+    combined_field_dict_type _combined_fields_; /// Dictionnary of combined fields
     
     // Macro to automate the registration of the EM field :
     EMFIELD_REGISTRATION_INTERFACE(linear_combination_field);
@@ -60,6 +59,6 @@ namespace emfield {
 
 } // end of namespace emfield
 
-#endif // __emfield__linear_combination_field_h
+#endif // EMFIELD_LINEAR_COMBINATION_FIELD_H_
 
 // end of linear_combination_field.h

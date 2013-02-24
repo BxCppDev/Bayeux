@@ -1,4 +1,4 @@
-# - Define standard installation directories for the emfield package library
+# - Define standard installation directories for a C/C++ package library
 # Provides install directory variables as defined for GNU software:
 #  http://www.gnu.org/prep/standards/html_node/Directory-Variables.html
 # Inclusion of this module defines the following variables:
@@ -12,12 +12,13 @@
 #  DATADIR          - read-only architecture-independent data (DATAROOTDIR/PROJECT_NAME)
 #  MANDIR           - man documentation (DATAROOTDIR/man)
 #  DOCDIR           - documentation root (DATAROOTDIR/doc/PROJECT_NAME)
-#  ETCDIR           - miscellaneous configuration files (etx)
+#  ETCDIR           - miscellaneous configuration files (etc)
+#
 # Each CMAKE_INSTALL_<dir> value may be passed to the DESTINATION options of
 # install() commands for the corresponding file type.  If the includer does
 # not define a value the above-shown default will be used and the value will
 # appear in the cache for editing by the user.
-# If any of these values are absolute paths, the install of mlvl is regarded as
+# If any of these values are absolute paths, the install of is regarded as
 # non-relocatable, and the variable:
 #  CMAKE_INSTALL_IS_NONRELOCATABLE
 # will be set.
@@ -109,7 +110,7 @@ if(NOT DEFINED CMAKE_INSTALL_LIBDIR)
       AND NOT EXISTS "/etc/debian_version")
     if(NOT DEFINED CMAKE_SIZEOF_VOID_P)
       message(AUTHOR_WARNING
-        "${PROJECT_NAME}: Unable to determine default CMAKE_INSTALL_LIBDIR directory because no target architecture is known. "
+        "Unable to determine default CMAKE_INSTALL_LIBDIR directory because no target architecture is known. "
         "Please enable at least one language before including GNUInstallDirs.")
     else()
       if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
@@ -123,6 +124,7 @@ endif()
 if(NOT DEFINED CMAKE_INSTALL_INCLUDEDIR)
   set(CMAKE_INSTALL_INCLUDEDIR "include" CACHE PATH "C/C++ header files (include)")
 endif()
+
 
 if(NOT DEFINED CMAKE_INSTALL_DATAROOTDIR)
   set(CMAKE_INSTALL_DATAROOTDIR "share" CACHE PATH "read-only architecture-independent data root (share)")
@@ -184,12 +186,3 @@ foreach(dir
     set(CMAKE_INSTALL_IS_NONRELOCATABLE 1)
   endif()
 endforeach()
-
-message ( STATUS "${PROJECT_NAME}: CMake install binary dir        = '${CMAKE_INSTALL_BINDIR}'" )
-message ( STATUS "${PROJECT_NAME}: CMake install library dir       = '${CMAKE_INSTALL_LIBDIR}'" )
-message ( STATUS "${PROJECT_NAME}: CMake install include dir       = '${CMAKE_INSTALL_INCLUDEDIR}'" )
-message ( STATUS "${PROJECT_NAME}: CMake install data root dir     = '${CMAKE_INSTALL_DATAROOTDIR}'" )
-message ( STATUS "${PROJECT_NAME}: CMake install data dir          = '${CMAKE_INSTALL_DATADIR}'" )
-message ( STATUS "${PROJECT_NAME}: CMake install manpages dir      = '${CMAKE_INSTALL_MANDIR}'" )
-message ( STATUS "${PROJECT_NAME}: CMake install documentation dir = '${CMAKE_INSTALL_DOCDIR}'" )
-message ( STATUS "${PROJECT_NAME}: CMake install etc dir           = '${CMAKE_INSTALL_ETCDIR}'" )

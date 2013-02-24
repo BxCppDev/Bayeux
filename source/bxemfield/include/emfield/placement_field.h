@@ -2,7 +2,7 @@
 /* placement_field.h
  * Author (s):    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-04-27
- * Last modified: 2012-04-27
+ * Last modified: 2013-02-24
  * 
  * License: 
  * 
@@ -17,8 +17,8 @@
 #include <emfield/base_electromagnetic_field.h>
 #include <geomtools/placement.h>
 
-#ifndef __emfield__placement_field_h
-#define __emfield__placement_field_h 1
+#ifndef EMFIELD_PLACEMENT_FIELD_H_
+#define EMFIELD_PLACEMENT_FIELD_H_ 1
 
 namespace emfield {
  
@@ -49,6 +49,6 @@ namespace emfield {
 
 } // end of namespace emfield
 
-#endif // __emfield__placement_field_h
+#endif // EMFIELD_PLACEMENT_FIELD_H_
 
 // end of placement_field.h
