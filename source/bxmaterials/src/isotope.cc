@@ -12,7 +12,7 @@
 double endfline_to_double (const std::string & endfline_);
 double ame3line_to_double (const std::string & ame3_line_);
 
-namespace mat {
+namespace materials {
 
   using namespace std;
 
@@ -642,7 +642,7 @@ namespace mat {
                            bool inherit_) const
   {
 
-    namespace du = datatools::utils;
+    namespace du = datatools;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     if (! title_.empty ())
@@ -728,7 +728,7 @@ namespace mat {
     return;
   }
 
-} // end of namespace mat
+} // end of namespace materials
 
 
 //________________________________________________________________________

@@ -17,21 +17,19 @@
  *
  */
 
-#ifndef __materials__material_h
-#define __materials__material_h 1
+#ifndef MATERIALS_MATERIAL_H_
+#define MATERIALS_MATERIAL_H_ 1
 
 #include <iostream>
 #include <string>
 #include <map>
 
-#include <datatools/utils/i_tree_dump.h>
-#include <datatools/utils/properties.h>
+#include <datatools/i_tree_dump.h>
+#include <datatools/properties.h>
 
-namespace mat {
+namespace materials {
 
-  // using namespace std;
-  // using namespace datatools::utils;
-  namespace du = datatools::utils;
+  namespace du = datatools;
 
   class material;
   class element;
@@ -49,9 +47,9 @@ namespace mat {
     bool is_valid () const;
   };
 
-  typedef std::map<std::string, compound_entry>   composition_map_t;
+  typedef std::map<std::string, compound_entry>   composition_map_type;
 
-  class material : public datatools::utils::i_tree_dumpable
+  class material : public datatools::i_tree_dumpable
   {
 
     public:
@@ -76,7 +74,7 @@ namespace mat {
     public:
 
      /* constructor / destructor */
-     material ();          //!< Defaut Constructor
+     material (); //!< Defaut Constructor
 
     //! Normal Constructor.
     /*!
@@ -102,7 +100,7 @@ namespace mat {
 
     bool is_composed_by_fraction_mass () const;
 
-    const composition_map_t &  get_composition () const;   //!<  access to the composition map
+    const composition_map_type &  get_composition () const;   //!<  access to the composition map
 
     const std::string & get_name () const;
 
@@ -168,23 +166,23 @@ namespace mat {
 
    private:
 
-    std::string     _name_;    //!< Name
-    double     _density_; //!< Density
-    double     _mean_z_;  //!< Mean atomic number
-    double     _mean_a_;  //!< Mean mass number
+    std::string _name_;    //!< Name
+    double      _density_; //!< Density
+    double      _mean_z_;  //!< Mean atomic number
+    double      _mean_a_;  //!< Mean mass number
 
     // composition:
 
     proportion_unit_type _proportion_unit_; //!< KP_ATOM (number of atoms by molecule) or KP_MASS (% mass)
-    composition_map_t   _composition_;      //!<  composition of the material [std::map<string, compound_entry>]
+    composition_map_type   _composition_;   //!<  composition of the material [std::map<string, compound_entry>]
 
-    du::properties _properties_;            //!< datatools properties
-    bool       _locked_;                    //!< boolean flags : true when composition is validated & derived properties are computed
+    du::properties _properties_;    //!< datatools properties
+    bool           _locked_;        //!< boolean flags : true when composition is validated & derived properties are computed
 
   };
 
-} // end of namespace mat
+} // end of namespace materials
 
-#endif // __materials__material_h
+#endif // MATERIALS_MATERIAL_H_
 
 // end of material.h

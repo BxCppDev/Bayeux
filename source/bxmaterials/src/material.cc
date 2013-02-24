@@ -11,13 +11,13 @@
 
 #include <vector>
 
-#include <datatools/utils/clhep_units.h>
-#include <datatools/utils/units.h>
+#include <datatools/clhep_units.h>
+#include <datatools/units.h>
 
 #include <materials/isotope.h>
 #include <materials/element.h>
 
-namespace mat {
+namespace materials {
 
   using namespace std;
 
@@ -81,7 +81,7 @@ namespace mat {
   }
 
   //________________________________________________________________________ 
-  const composition_map_t & material::get_composition () const
+  const composition_map_type & material::get_composition () const
   {
     return _composition_;
   }
@@ -427,7 +427,7 @@ namespace mat {
       }
     // compute the sum of weight (fraction of mass):
     double sum_weight = 0.0;
-    for (composition_map_t::const_iterator i 
+    for (composition_map_type::const_iterator i 
            = _composition_.begin (); 
          i != _composition_.end (); 
          i++)
@@ -436,7 +436,7 @@ namespace mat {
         sum_weight += entry.weight;
       }
     // normalize all weights (fraction of mass):
-    for (composition_map_t::iterator i = _composition_.begin (); 
+    for (composition_map_type::iterator i = _composition_.begin (); 
          i != _composition_.end (); 
          i++)
       { 
@@ -493,7 +493,7 @@ namespace mat {
                             const string & indent_,
                             bool inherit_) const
   {
-    namespace du = datatools::utils;
+    namespace du = datatools;
     string indent; 
     if (! indent_.empty ()) indent = indent_;
     if (! title_.empty ()) 
@@ -529,14 +529,14 @@ namespace mat {
             if (_proportion_unit_ == KP_ATOM)
               {  
                 out_ << "(# atoms) "<< endl;    
-                for (composition_map_t::const_iterator i 
+                for (composition_map_type::const_iterator i 
                        = _composition_.begin (); 
                      i != _composition_.end (); 
                      i++)
                   {
                     const string & key = i->first;
                     const compound_entry & entry = i->second;
-                    composition_map_t::const_iterator j = i;
+                    composition_map_type::const_iterator j = i;
                     j++;
                     string atag = du::i_tree_dumpable::TAG;
                     if (j == _composition_.end ()) atag = du::i_tree_dumpable::LAST_TAG;   
@@ -550,14 +550,14 @@ namespace mat {
             if (_proportion_unit_ == KP_MASS) 
               {  
                 out_ << "(% mass)  "<< endl;    
-                for (composition_map_t::const_iterator i 
+                for (composition_map_type::const_iterator i 
                        = _composition_.begin (); 
                      i != _composition_.end (); 
                      i++)
                   {
                     const string & key = i->first;
                     const compound_entry & entry = i->second;
-                    composition_map_t::const_iterator j = i;
+                    composition_map_type::const_iterator j = i;
                     j++;
                     string atag = du::i_tree_dumpable::TAG;
                     if (j == _composition_.end ()) atag = du::i_tree_dumpable::LAST_TAG;   
@@ -603,6 +603,6 @@ namespace mat {
     
   }
 
-} // end of namespace mat
+} // end of namespace materials
 
 // end of material.cc

@@ -8,7 +8,7 @@
 #include <sstream>
 #include <stdexcept>
 
-namespace mat {
+namespace materials {
 
   using namespace std;
 
@@ -65,6 +65,6 @@ namespace mat {
       }
   };
  
-} // end of namespace mat
+} // end of namespace materials
 
 // end of ch_symbol.cc

@@ -3,9 +3,9 @@
  */
 
 #include <materials/factory.h>
-#include <datatools/utils/clhep_units.h>
-#include <datatools/utils/units.h>
-#include <datatools/utils/properties.h>
+#include <datatools/clhep_units.h>
+#include <datatools/units.h>
+#include <datatools/properties.h>
 #include <materials/detail/tools.h>
 #include <materials/isotope.h>
 #include <materials/element.h>
@@ -14,7 +14,7 @@
 #include <stdexcept>
 #include <sstream>
 
-namespace mat {
+namespace materials {
 
   using namespace std;
 
@@ -43,7 +43,7 @@ namespace mat {
   }
   
   isotope * factory::create_isotope (const string & name_, 
-                                     const datatools::utils::properties & config_) const
+                                     const datatools::properties & config_) const
   {
     int z = 0;
     int a = 0;
@@ -100,8 +100,8 @@ namespace mat {
 
   
   element * factory::create_element (const string & name_,
-                                     const datatools::utils::properties & config_, 
-                                     const isotope_dict_t & isotopes_) const
+                                     const datatools::properties & config_, 
+                                     const isotope_dict_type & isotopes_) const
   {
     int z = 0;
     double a = -1.0;     
@@ -158,7 +158,7 @@ namespace mat {
         // add isotopes in element:
         for (int i = 0; i < isotopes.size (); i++)
           { 
-            isotope_dict_t::const_iterator found = isotopes_.find (isotopes[i]);
+            isotope_dict_type::const_iterator found = isotopes_.find (isotopes[i]);
             if (found == isotopes_.end ())
               {
                 ostringstream message;
@@ -175,9 +175,9 @@ namespace mat {
   }
   
   material * factory::create_material (const string & name_, 
-                                       const datatools::utils::properties & config_, 
-                                       const element_dict_t & elements_, 
-                                       const material_dict_t & materials_) const
+                                       const datatools::properties & config_, 
+                                       const element_dict_type & elements_, 
+                                       const material_dict_type & materials_) const
   {
     double density = 1.0;
     double density_unit = material::g_per_cm3;
@@ -202,7 +202,7 @@ namespace mat {
     if (config_.has_key ("density.unit"))
       {
         string density_unit_str =  config_.fetch_string ("density.unit");
-        density_unit = datatools::utils::units::get_density_unit_from (density_unit_str);
+        density_unit = datatools::units::get_density_unit_from (density_unit_str);
       }
 
     if (config_.has_key ("temperature"))
@@ -214,7 +214,7 @@ namespace mat {
     if (config_.has_key ("temperature.unit"))
       {
         string temperature_unit_str =  config_.fetch_string ("temperature.unit");
-        temperature_unit = datatools::utils::units::get_temperature_unit_from (temperature_unit_str);
+        temperature_unit = datatools::units::get_temperature_unit_from (temperature_unit_str);
       }
 
     if (config_.has_key ("pressure"))
@@ -225,7 +225,7 @@ namespace mat {
     if (config_.has_key ("pressure.unit"))
       {
         string pressure_unit_str =  config_.fetch_string ("pressure.unit");
-        pressure_unit = datatools::utils::units::get_pressure_unit_from (pressure_unit_str);
+        pressure_unit = datatools::units::get_pressure_unit_from (pressure_unit_str);
       }
  
     // apply units:
@@ -371,7 +371,7 @@ namespace mat {
           {
             for (int i = 0; i < composition_names.size (); i++)
               { 
-                element_dict_t::const_iterator found = elements_.find (composition_names[i]);
+                element_dict_type::const_iterator found = elements_.find (composition_names[i]);
                 if (found ==  elements_.end ())
                   {
                     ostringstream message;
@@ -400,14 +400,14 @@ namespace mat {
                     delete matl;
                     throw runtime_error (message.str ());       
                   }
-                element_dict_t::const_iterator found = elements_.find (composition_names[i]);
+                element_dict_type::const_iterator found = elements_.find (composition_names[i]);
                 if (found != elements_.end ())
                   {
                     a_elmt = found->second.get_ptr ();
                   }
                 else
                   {
-                    material_dict_t::const_iterator found2 = materials_.find (composition_names[i]);
+                    material_dict_type::const_iterator found2 = materials_.find (composition_names[i]);
                     if (found2 != materials_.end ())
                       {
                         a_matl = found2->second.get_ptr ();
@@ -472,6 +472,6 @@ namespace mat {
     return matl;
   }
  
-} // end of namespace mat
+} // end of namespace materials
 
 // end of factory.cc

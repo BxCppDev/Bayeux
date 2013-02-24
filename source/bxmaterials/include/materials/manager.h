@@ -2,7 +2,7 @@
 /* manager.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-22
- * Last modified: 2010-09-22
+ * Last modified: 2013-02-23
  *
  * License:
  *
@@ -13,8 +13,8 @@
  *
  */
 
-#ifndef __materials__manager_h
-#define __materials__manager_h 1
+#ifndef MATERIALS_MANAGER_H_
+#define MATERIALS_MANAGER_H_ 1
 
 #include <ostream>
 #include <string>
@@ -24,39 +24,29 @@
 #include <materials/isotope.h>
 #include <materials/element.h>
 #include <materials/material.h>
-#include <datatools/utils/multi_properties.h>
+#include <datatools/multi_properties.h>
 #include <geomtools/gdml_writer.h>
 
-namespace mat {
+namespace materials {
 
-  class manager : public datatools::utils::i_tree_dumpable
+  class manager : public datatools::i_tree_dumpable
   {
-  private:
-
-    bool            _debug_;
-    factory         _creator_;
-    isotope_dict_t  _isotopes_;
-    element_dict_t  _elements_;
-    material_dict_t _materials_;
-    std::list<string>    _ordered_materials_;
-    bool            _locked_;
 
   public:
     bool is_debug () const;
     void set_debug (bool);
     bool is_locked () const;
-    const isotope_dict_t & get_isotopes () const;
-    const element_dict_t & get_elements () const;
-    const material_dict_t & get_materials () const;
+    const isotope_dict_type & get_isotopes () const;
+    const element_dict_type & get_elements () const;
+    const material_dict_type & get_materials () const;
 
-  public:
-    // ctor:
+    /// Constructor
     manager ();
 
-    // dtor:
+    /// Destructor
     virtual ~manager ();
 
-    void load (const datatools::utils::multi_properties & config_);
+    void load (const datatools::multi_properties & config_);
 
     void reset ();
 
@@ -66,18 +56,30 @@ namespace mat {
 
     //! Print info
     virtual void tree_dump (std::ostream & out_    = std::clog,
-                            const string & title_  = "",
-                            const string & indent_ = "",
+                            const std::string & title_  = "",
+                            const std::string & indent_ = "",
                             bool inherit_          = false) const;
 
     void export_gdml (geomtools::gdml_writer & gw_) const;
 
     void export_gdml (std::ostream & out_) const;
 
+  private:
+
+    bool               _debug_;
+    factory            _creator_;
+    isotope_dict_type  _isotopes_;
+    element_dict_type  _elements_;
+    material_dict_type _materials_;
+    std::list<std::string>  _ordered_materials_;
+    bool               _locked_;
+
   };
 
-} // end of namespace mat
+} // end of namespace materials
 
-#endif // __materials__manager_h
+namespace mat = materials;
+
+#endif // MATERIALS_MANAGER_H_
 
 // end of manager.h

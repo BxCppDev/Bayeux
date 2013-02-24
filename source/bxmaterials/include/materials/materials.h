@@ -77,11 +77,12 @@
  *
  *  Mainteners:
  *   - Benoit Guillon <guillon@lpccaen.in2p3.fr>
+ *   - François Mauger <mauger@lpccaen.in2p3.fr>
  *
  */
 
-#ifndef __materials__materials_h
-#define __materials__materials_h 1
+#ifndef MATERIALS_MATERIALS_H_
+#define MATERIALS_MATERIALS_H_ 1
 
 #include <materials/ch_symbol.h>
 #include <materials/isotope.h>
@@ -90,15 +91,6 @@
 #include <materials/factory.h>
 #include <materials/manager.h>
 
-//! \namespace materials
-/* The basic materials namespace.
- */
-namespace mat {
-
-  //static bool g_debug = false;
-
-} // end of namespace mat
-
-#endif // __materials__materials_h
+#endif // MATERIALS_MATERIALS_H_
 
 // end of materials.h

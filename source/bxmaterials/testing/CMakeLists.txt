@@ -1,6 +1,6 @@
 ###############################################################################
 ##
-## Copyright (C) 2012 François Mauger, Université de Caen Basse-Normandie, LPC Caen (CNRS/IN2P3)
+## Copyright (C) 2011-2013 François Mauger, Université de Caen Basse-Normandie
 ## Contact: mauger@lpccaen.in2p3.fr
 ##
 ## This file is part of the materials library.
@@ -20,85 +20,88 @@
 ##
 ###############################################################################
 
-set ( materials_tests_programs_list
-      test_materials.cxx
-      test_ch_symbol.cxx
-      test_element.cxx
-      test_factory.cxx
-      test_isotope.cxx
-      test_manager.cxx
-      test_material.cxx
-    )
+
+###file(GLOB materials_tests_programs test_*.cxx)
+set ( materials_tests_programs
+    test_ch_symbol.cxx
+    test_element.cxx
+    test_factory.cxx
+    test_isotope.cxx
+    test_manager.cxx
+    test_material.cxx
+    test_materials.cxx
+    test_materials_geom_plugin.cxx
+)
+
+###message (STATUS "materials_tests_programs=${materials_tests_programs}" )
+list(REMOVE_ITEM materials_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
+if(MATERIALS_WITH_REFLECTION)
+  list(APPEND materials_tests_programs ${CMAKE_CURRENT_SOURCE_DIR}/test_reflection_0.cxx)
+endif() 
+
+set(materials_tests_programs_list "${materials_tests_programs}") 
+list(SORT materials_tests_programs_list)
 
 # include files search paths
-include_directories ( ${PROJECT_BINARY_DIR}/include
-                      ${PROJECT_SOURCE_DIR}/include	
-                      ${PROJECT_SOURCE_DIR}/testing
-                    )
+include_directories(
+  ${PROJECT_BINARY_DIR}/include
+  ${PROJECT_SOURCE_DIR}/include
+  ${geomtools_INCLUDE_DIRS}
+  ${PROJECT_SOURCE_DIR}/testing
+  )
 
-include_directories ( ${geomtools_INCLUDE_DIRS} )
+set(_test_tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/testing_output")
 
-# linker search paths :
-link_directories ( ${PROJECT_BINARY_DIR}/src )
+execute_process(COMMAND cmake -E remove_directory ${_test_tmp_dir} )
 
-option ( MATERIALS_ALL_TESTS "Perform all possible tests" 1 )
-message ( STATUS "testing: Performing all available tests : ${MATERIALS_ALL_TESTS}" )
+foreach(test_program ${materials_tests_programs_list})
+  get_filename_component(test_executable ${test_program} NAME_WE)
+  add_executable(${test_executable} ${test_program})
+  # define d suffix on windows
+  if(WIN32)
+    set_target_properties(${test_executable} PROPERTIES DEBUG_POSTFIX d)
+  endif()
 
-if ( MATERIALS_ALL_TESTS )
-  set ( _test_tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/tmp" )
-  execute_process (COMMAND cmake -E remove_directory ${_test_tmp_dir} )
-  foreach ( test_program ${materials_tests_programs_list} )
-    get_filename_component ( test_executable ${test_program} NAME_WE )
-    message ( STATUS "testing:  Building test target '${test_executable}'" )
-    add_executable ( ${test_executable} ${test_program} )
-    # define d suffix on windows
-    if (WIN32)
-      set_target_properties ( ${test_executable} PROPERTIES DEBUG_POSTFIX d )
-    endif ()
+  set(_test_libraries materials) 
 
-    # last thing we have to do is to tell CMake what libraries 
-    # our executable needs,
-    set ( _test_libraries materials )
-	 
-    target_link_libraries ( ${test_executable} ${_test_libraries} )
+  # # Special bio DLL plugins :
+  # if(datatools_WITH_BIO)
+  #   list(INSERT _test_libraries 0 datatools_bio)
+  # endif() 
+  # if(mygsl_WITH_BIO)
+  #   list(INSERT _test_libraries 0 mygsl_bio )
+  # endif() 
+  # if(MATERIALS_WITH_BIO)
+  #   list(INSERT _test_libraries 0 materials_bio )
+  # endif() 
 
-    add_test ( NAME ${test_executable}.run
-               COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
-                       --tmp-dir ${_test_tmp_dir}
-                       --data-dir ${PROJECT_SOURCE_DIR} 
-                       --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
-	               run
-             )	 	
+  # # Special reflection DLL plugins :
+  # if(datatools_WITH_REFLECTION)
+  #   list(INSERT _test_libraries 0 datatools_reflection)
+  # endif() 
+  # if(MATERIALS_WITH_REFLECTION)
+  #   list(INSERT _test_libraries 0 materials_reflection )
+  # endif() 
 
-  endforeach ()
-  
-  add_custom_target ( clean_test
-                      COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
-                      --tmp-dir ${_test_tmp_dir}
-                      clean
-                    )
+  target_link_libraries(${test_executable} ${_test_libraries})
 
-endif ()
+  add_test(NAME ${test_executable}.run
+    COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
+    --tmp-dir ${_test_tmp_dir}
+    --data-dir ${PROJECT_SOURCE_DIR} 
+    --prefix ${PROJECT_SOURCE_DIR} 
+    --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
+    run
+    )	 
 
-option ( MATERIALS_INSTALL_TEST_PROGRAMS "Install test programs" 1 )
-message ( STATUS "testing: Installing all test programs' source files : ${MATERIALS_INSTALL_TEST_PROGRAMS}" )
+  unset(_test_libraries)
+endforeach ()
 
-# - Installation :
-if (MATERIALS_INSTALL_TEST_PROGRAMS) 
-  set ( _test_install_dir ${CMAKE_INSTALL_DATADIR}/testing )
-
-  file ( GLOB materials_tests_config config/*.def )
-  install ( FILES ${materials_tests_config} 
-     	    DESTINATION ${_test_install_dir}/config  
-            PERMISSIONS OWNER_READ GROUP_READ WORLD_READ 
-          )
-
-  file ( GLOB materials_tests_programs test_*.cxx )
-  install ( FILES ${materials_tests_programs} testDriver.bash
-	    DESTINATION ${_test_install_dir}
-            PERMISSIONS OWNER_READ GROUP_READ WORLD_READ 
-          )
-
-endif ()
+add_custom_target(clean_test
+  COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
+  --prefix ${PROJECT_SOURCE_DIR} 
+  --tmp-dir ${_test_tmp_dir}
+  clean
+  )
 
 # end of CMakeLists.txt

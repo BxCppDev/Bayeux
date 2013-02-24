@@ -31,7 +31,7 @@ int main (int argc_, char ** argv_)
                  {
                    debug = true;
                  }
-	       else 
+               else 
                  { 
                     clog << "warning: ignoring option '" << option << "'!" << endl; 
                  }
@@ -46,13 +46,13 @@ int main (int argc_, char ** argv_)
           iarg++;
       }
     
-      for (int i = 0; i < mat::chemical_symbol::NB_CHEMICAL_SYMBOLS; i++)
-	{
-	  cout << i << " " << mat::chemical_symbol::table[i] << endl;
-	}
+      for (int i = 0; i < materials::chemical_symbol::NB_CHEMICAL_SYMBOLS; i++)
+        {
+          cout << i << " " << materials::chemical_symbol::table[i] << endl;
+        }
 
       string symbol = "H";
-      cout << "Symbol='" << symbol << "' Z=" << mat::chemical_symbol::z_from_symbol (symbol)  << endl;
+      cout << "Symbol='" << symbol << "' Z=" << materials::chemical_symbol::z_from_symbol (symbol)  << endl;
 
     }
   catch (exception & x)

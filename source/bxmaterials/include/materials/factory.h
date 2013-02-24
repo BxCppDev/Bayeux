@@ -2,7 +2,7 @@
 /* factory.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-22
- * Last modified: 2010-09-22
+ * Last modified: 2013-02-23
  * 
  * License: 
  * 
@@ -13,24 +13,18 @@
  * 
  */
 
-#ifndef __materials__factory_h
-#define __materials__factory_h 1
+#ifndef MATERIALS_FACTORY_H_
+#define MATERIALS_FACTORY_H_ 1
 
 #include <string>
 
-// #include <datatools/utils/properties.h>
 #include <materials/detail/tools.h>
-//#include <materials/isotope.h>
-//#include <materials/element.h>
-// #include <materials/material.h>
 
 namespace datatools {
-  namespace utils {
     class properties;
-  }
 }
 
-namespace mat {
+namespace materials {
 
   class isotope;
   class element;
@@ -38,38 +32,37 @@ namespace mat {
 
   class factory
   {
-  private: 
-    bool _debug_;
-
   public: 
     bool is_debug () const;
     void set_debug (bool);
-  
-  public: 
-
-    // ctor:
+ 
+    /// Constructor
     factory ();
 
-    // dtor:
+    /// Destructor
     virtual ~factory ();
   
     isotope * create_isotope (const std::string & name_, 
-                              const datatools::utils::properties & config_) const;
+                              const datatools::properties & config_) const;
   
     element * create_element (const std::string & name_,
-                              const datatools::utils::properties & config_, 
-                              const isotope_dict_t & isotopes_) const;
+                              const datatools::properties & config_, 
+                              const isotope_dict_type & isotopes_) const;
   
     material * create_material (const std::string & name_, 
-                                const datatools::utils::properties & config_, 
-                                const element_dict_t & elements_, 
-                                const material_dict_t & materials_) const;
+                                const datatools::properties & config_, 
+                                const element_dict_type & elements_, 
+                                const material_dict_type & materials_) const;
+    
+  private: 
+
+    bool _debug_; //!< Debug flag
     
 
   };
 
-} // end of namespace mat
+} // end of namespace materials
 
-#endif // __materials__factory_h
+#endif // MATERIALS_FACTORY_H_
 
 // end of factory.h

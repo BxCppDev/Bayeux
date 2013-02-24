@@ -26,15 +26,15 @@ int main (int argc_, char ** argv_)
 
           if (token[0] == '-')
             {
-	      string option = token; 
-	      if ((option == "-d") || (option == "--debug")) 
-		{
-		  debug = true;
-		}
-	      else 
-		{ 
-		  clog << "warning: ignoring option '" << option << "'!" << endl; 
-		}
+              string option = token; 
+              if ((option == "-d") || (option == "--debug")) 
+                {
+                  debug = true;
+                }
+              else 
+                { 
+                  clog << "warning: ignoring option '" << option << "'!" << endl; 
+                }
             }
           else
             {
@@ -44,11 +44,11 @@ int main (int argc_, char ** argv_)
               }
             }
           iarg++;
-	}
+        }
       
       //  my isotope 0 :   
    
-      mat::isotope my_isotope_0;
+      materials::isotope my_isotope_0;
       cerr << endl;
       my_isotope_0.tree_dump ( cout, "my isotope 0");   
      
@@ -64,7 +64,7 @@ int main (int argc_, char ** argv_)
 
       //  my isotope 1 :   
      
-      mat::isotope my_isotope_1("unknown hydrogen-1 (1st excited state)");
+      materials::isotope my_isotope_1("unknown hydrogen-1 (1st excited state)");
       cerr << endl;
       my_isotope_1.tree_dump ( cout, "my isotope 1");   
      
@@ -77,7 +77,7 @@ int main (int argc_, char ** argv_)
 
       //  my isotope 2 :       
 
-      mat::isotope my_isotope_2; 
+      materials::isotope my_isotope_2; 
       my_isotope_2.set_zai(1,2);
       cerr << endl;
       my_isotope_2.tree_dump (cout, "my_isotope 2");  
@@ -88,7 +88,7 @@ int main (int argc_, char ** argv_)
 
       //  my isotope 3 :          
 
-      mat::isotope my_isotope_3("Sodium 22 (ground state)",11,22,0); 
+      materials::isotope my_isotope_3("Sodium 22 (ground state)",11,22,0); 
       my_isotope_3.find_mass();  
       my_isotope_3.find_decay(); 
       cerr << endl;
@@ -97,7 +97,7 @@ int main (int argc_, char ** argv_)
       //  my isotope 4 :       
 
       cerr << endl;
-      mat::isotope my_isotope_4("Tungsten-184","W",184,0);  
+      materials::isotope my_isotope_4("Tungsten-184","W",184,0);  
       my_isotope_4.grab_properties ().store ("class", "transition metal"); 
       my_isotope_4.find_mass();  
       my_isotope_4.find_decay();
@@ -106,7 +106,7 @@ int main (int argc_, char ** argv_)
       //  my isotope 5 :       
       
       cerr << endl;
-      mat::isotope my_isotope_5("Iode-120 (1st excited state)","I",120,1); 
+      materials::isotope my_isotope_5("Iode-120 (1st excited state)","I",120,1); 
       my_isotope_5.find_mass();
       my_isotope_5.find_decay();
       my_isotope_5.grab_properties ().store ("state","solid");
@@ -116,13 +116,13 @@ int main (int argc_, char ** argv_)
 
       cerr << endl;
       try
-	{
-	mat::isotope my_isotope_6("Unknown Sodium-45",11,45,0);  
-	}
+        {
+        materials::isotope my_isotope_6("Unknown Sodium-45",11,45,0);  
+        }
       catch (exception & x)
-	{
-	  clog << "As expected, Sodium-45 is not valid !" << endl;
-	}
+        {
+          clog << "As expected, Sodium-45 is not valid !" << endl;
+        }
 
     }
   catch (exception & x)

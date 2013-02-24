@@ -23,12 +23,12 @@
  *
  */
 
-#ifndef __materials__ch_symbol_h
-#define __materials__ch_symbol_h 1
+#ifndef MATERIALS_CH_SYMBOL_H_
+#define MATERIALS_CH_SYMBOL_H_ 1
 
 #include <string>
 
-namespace mat {
+namespace materials {
 
   class chemical_symbol 
   {
@@ -44,8 +44,8 @@ namespace mat {
 
   };
 
-} // end of namespace mat
+} // end of namespace materials
 
-#endif // __materials__ch_symbol_h
+#endif // MATERIALS_CH_SYMBOL_H_
 
 // end of ch_symbol.h

@@ -8,16 +8,15 @@
  *
  */
  
-#ifndef __materials__isotope_h
-#define __materials__isotope_h 1
+#ifndef MATERIALS_ISOTOPE_H_
+#define MATERIALS_ISOTOPE_H_ 1
 
-#include <datatools/utils/properties.h>
-#include <datatools/utils/i_tree_dump.h>
+#include <datatools/properties.h>
+#include <datatools/i_tree_dump.h>
 
-namespace mat {
+namespace materials {
   
-  //using namespace datatools::utils;
-  namespace du = datatools::utils;
+  namespace du = datatools;
   
   /*! \brief A simple class to handle known isotopes (ZAI) and their basic properties (mass & decays). 
    *    
@@ -43,7 +42,7 @@ namespace mat {
    @version 1.0                  
   */
   
-  class isotope : public datatools::utils::i_tree_dumpable
+  class isotope : public datatools::i_tree_dumpable
   {   
   public:
 
@@ -161,8 +160,8 @@ namespace mat {
                 
   }; // end of class isotope
 
-} // end of namespace mat
+} // end of namespace materials
 
-#endif // __materials__isotope_h
+#endif // MATERIALS_ISOTOPE_H_
 
 // end of isotope.h

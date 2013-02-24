@@ -8,96 +8,94 @@
  *
  */
  
-#ifndef __materials__detail__tools_h
-#define __materials__detail__tools_h 1
+#ifndef MATERIALS_DETAIL_TOOLS_H_
+#define MATERIALS_DETAIL_TOOLS_H_ 1
 
 #include <string>
 #include <map>
 
-namespace mat {
-  
-  using namespace std;
+namespace materials {
  
   template <class T> 
   class smart_ref
   {
   private:
-    bool __owned;
-    T *  __ref;
+    bool _owned_;
+    T *  _ref_;
     
   public:
     
     bool is_owned () const
     {
-      return __owned;
+      return _owned_;
     }
 
     bool has_ref () const
     {
-      return __ref != 0;
+      return _ref_ != 0;
     }
 
     T * get_ptr ()
     {
-      return __ref;
+      return _ref_;
     }
     
     const T * get_ptr () const
     {
-      return __ref;
+      return _ref_;
     }
 
     T & get_ref ()
     {
-      return *__ref;
+      return *_ref_;
     }
     
     const T & get_ref () const
     {
-      return *__ref;
+      return *_ref_;
     }
 
-    smart_ref () : __owned (false), __ref(0)
+    smart_ref () : _owned_ (false), _ref_(0)
     {
     }
     
     virtual ~smart_ref ()
     {
-      if (__ref != 0)
-	{
-	    if (__owned) 
-	      {
-		//cerr << "DEVEL: smart_ref::dtor: Deleting ref..." << endl;
-		delete __ref;
-	      }
-	    else
-	      {
-		//cerr << "DEVEL: smart_ref::dtor: Detaching ref..." << endl;
-	      }
-	    __ref = 0;
-	}
+      if (_ref_ != 0)
+        {
+            if (_owned_) 
+              {
+                //cerr << "DEVEL: smart_ref::dtor: Deleting ref..." << endl;
+                delete _ref_;
+              }
+            else
+              {
+                //cerr << "DEVEL: smart_ref::dtor: Detaching ref..." << endl;
+              }
+            _ref_ = 0;
+        }
     }
     
     void set_ref (T * ref_)
     {
-      if (__ref != 0)
-	{
-	  if (__owned) delete __ref;
-	  __ref = 0;
-	}
-      __ref = ref_;
-      __owned = true;
+      if (_ref_ != 0)
+        {
+          if (_owned_) delete _ref_;
+          _ref_ = 0;
+        }
+      _ref_ = ref_;
+      _owned_ = true;
     }
     
     void set_ref (T & ref_)
     {
-      if (__ref != 0)
-	{
-	  if (__owned) delete __ref;
-	  __ref = 0;
-	}
-      __ref = &ref_;
-      __owned = false;
+      if (_ref_ != 0)
+        {
+          if (_owned_) delete _ref_;
+          _ref_ = 0;
+        }
+      _ref_ = &ref_;
+      _owned_ = false;
     }
   };
 
@@ -105,12 +103,12 @@ namespace mat {
   class element;
   class material;
 
-  typedef map<string, smart_ref<isotope> >  isotope_dict_t;
-  typedef map<string, smart_ref<element> >  element_dict_t;
-  typedef map<string, smart_ref<material> > material_dict_t;
+  typedef std::map<std::string, smart_ref<isotope> >  isotope_dict_type;
+  typedef std::map<std::string, smart_ref<element> >  element_dict_type;
+  typedef std::map<std::string, smart_ref<material> > material_dict_type;
 
-} // end of namespace mat
+} // end of namespace materials
 
-#endif // __materials__detail__tools_h
+#endif // MATERIALS_DETAIL_TOOLS_H_
 
 // end of tools.h

@@ -7,8 +7,8 @@
 #include <exception>
 #include <list>
 
-#include <datatools/utils/utils.h>
-#include <datatools/utils/multi_properties.h>
+#include <datatools/utils.h>
+#include <datatools/multi_properties.h>
 
 #include <materials/manager.h>
 
@@ -33,12 +33,12 @@ int main (int argc_, char ** argv_)
 
           if (token[0] == '-')
             {
-	      if (! parsing_options)
-		{
-		  clog << "warning: ignoring any option after the list of arguments !" << endl; 
-		  break;
-		}
-	      string option = token; 
+              if (! parsing_options)
+                {
+                  clog << "warning: ignoring any option after the list of arguments !" << endl; 
+                  break;
+                }
+              string option = token; 
                if ((option == "-d") || (option == "--debug")) 
                  {
                    debug = true;
@@ -54,35 +54,35 @@ int main (int argc_, char ** argv_)
             }
           else
             {
-	      parsing_options = false;
+              parsing_options = false;
               string argument = token; 
               input_files.push_back (argument);
             }
           iarg++;
       }
 
-      mat::manager my_manager;
+      materials::manager my_manager;
       my_manager.set_debug (debug);
       for (list<string>::iterator i = input_files.begin ();
-	    i != input_files.end ();
-	   i++)
-	{
-	  datatools::utils::multi_properties config ("name", "type");
-	  datatools::utils::fetch_path_with_env (*i);
-	  config.read (*i);
-	  if (debug)
-	    {
-	      clog << "Config file '" << *i << "' : " << endl;
-	      config.tree_dump (clog, "", "DEBUG: ");
-	    }
-	  my_manager.load (config);
-	}
+            i != input_files.end ();
+           i++)
+        {
+          datatools::multi_properties config ("name", "type");
+          datatools::fetch_path_with_env (*i);
+          config.read (*i);
+          if (debug)
+            {
+              clog << "Config file '" << *i << "' : " << endl;
+              config.tree_dump (clog, "", "DEBUG: ");
+            }
+          my_manager.load (config);
+        }
       my_manager.tree_dump (clog, "Material manager: ");
 
       if (generate_gdml)
-	{
-	  my_manager.export_gdml (cout);
-	}
+        {
+          my_manager.export_gdml (cout);
+        }
 
     }
   catch (exception & x)

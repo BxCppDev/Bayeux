@@ -10,5 +10,10 @@
 	* resources/data/std_materials.def: add "std::pfte"
 	Polytetrafluoroethylene (C2F4, PFTE) 
 2012-11-04 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
-	* suppor for "mpt." prefixed properties (Material Properties Table) in factory class
+	* support for "mpt." prefixed properties (Material Properties Table) in factory class
 	* version: prepare tag 3.1.0 in trunk
+2013-02-24 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* version: prepare tag 4.0.0 in trunk
+	* depends on: geomtools pre-4.0.0 (in trunk)
+	* new materials::materials_geom_plugin class for the geomtools::manager plugin system
+	

@@ -13,7 +13,6 @@ function my_exit ()
 }
 
 bio_support=0
-python_wrapper_support=0
 
 appname=${APPNAME}
 appversion=0.1
@@ -116,12 +115,6 @@ EOF
 	cat <<EOF
       --with-bio                 : generate the Boost I/O DLL (default)
       --without-bio              : do not generate the Boost I/O DLL
-EOF
-    fi
-    if [ ${python_wrapper_support} -eq 1 ]; then
-	cat <<EOF
-      --with-python-wrapper      : generate the Boost/Python wrapper module
-      --without-python-wrapper   : do not generate the Boost/Python wrapper module (default)
 EOF
     fi
     cat <<EOF
@@ -329,16 +322,13 @@ function do_configure ()
     local with_doc=1
     local with_test=1
     local with_dependency_check=0
+    local with_bash_setup=1
 
     local with_bio=0
     if [ ${bio_support} -eq 1 ]; then
 	with_bio=1 # default
     fi
 
-    local with_python_wrapper=0
-    if [ ${python_wrapper_support} -eq 1 ]; then
-	with_python_wrapper=0 # default
-    fi
 
     while [ -n "$1" ]; do
 	local option="$1"
@@ -368,10 +358,6 @@ function do_configure ()
 	    with_bio=1
 	elif [ ${bio_support} -eq 1 -a "${option}" = "--without-bio" ]; then
 	    with_bio=0
-	elif [ ${python_wrapper_support} -eq 1 -a "${option}" = "--with-python-wrapper" ]; then
-	    with_python_wrapper=1
-	elif [ ${python_wrapper_support} -eq 1 -a "${option}" = "--without-python-wrapper" ]; then
-	    with_python_wrapper=0
 	fi
 	shift 1
     done
@@ -405,9 +391,6 @@ function do_configure ()
     pkgtools__msg_notice "Installation prefix   : '${install_prefix}'"
     pkgtools__msg_notice "With documentation    : '${with_doc}'"
     pkgtools__msg_notice "With test material    : '${with_test}'"
-    if [ ${python_wrapper_support} -eq 1 ]; then
-	pkgtools__msg_notice "With Python wrapper   : '${with_python_wrapper}'"
-    fi
     if [ ${bio_support} -eq 1 ]; then
 	pkgtools__msg_notice "With Boost I/O DLL    : '${with_bio}'"
     fi
@@ -426,15 +409,16 @@ function do_configure ()
     if [ ${bio_support} -eq 1 ]; then
 	additional_options="${additional_options}-DMATERIALS_WITH_BIO=${with_bio} "
     fi
-    if [ ${python_wrapper_support} -eq 1 ]; then
-	additional_options="${additional_options}-DMATERIALS_WITH_PYTHON_WRAPPER=${with_python_wrapper} "
-    fi
+
     cd ${the_build_dir}
     cmake \
 	-DCMAKE_INSTALL_PREFIX:PATH=${install_prefix} \
 	-DCMAKE_BUILD_TYPE:STRING=Release \
+	-DCMAKE_MODULE_PATH=${CADFAEL_SHARE_DIR}/cmake/Modules \
+	-DMATERIALS_WITH_DEBUG=${with_debug} \
 	-DMATERIALS_WITH_DOC=${with_doc} \
 	-DMATERIALS_WITH_TEST=${with_test} \
+	-DMATERIALS_WITH_BASH_SETUP=${with_bash_setup} \
 	${additional_options} \
 	..
     if [ $? -ne 0 ]; then

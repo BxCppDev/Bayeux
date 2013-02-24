@@ -197,6 +197,12 @@ EOF
 	if [ $? -ne 0 ]; then
 	    return 1
 	fi 
+   elif [ "${exe}" = "test_materials_geom_plugin" ]; then
+	${bin} --gdml --output-dir ${tmp_test_dir} \
+	    >> ${tmp_test_dir}/tests.log 2>&1
+	if [ $? -ne 0 ]; then
+	    return 1
+	fi 
     else
 	${bin} >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then

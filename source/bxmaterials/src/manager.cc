@@ -3,7 +3,7 @@
  */
 
 #include <materials/manager.h>
-#include <datatools/utils/multi_properties.h>
+#include <datatools/multi_properties.h>
 
 #include <materials/isotope.h>
 #include <materials/element.h>
@@ -12,10 +12,10 @@
 #include <stdexcept>
 #include <sstream>
 
-namespace mat {
+namespace materials {
 
   using namespace std;
-  using namespace datatools::utils;
+  using namespace datatools;
 
   bool manager::is_debug () const
   {
@@ -33,17 +33,17 @@ namespace mat {
     return _locked_;
   }
 
-  const isotope_dict_t & manager::get_isotopes () const
+  const isotope_dict_type & manager::get_isotopes () const
   {
     return _isotopes_;
   }
 
-  const element_dict_t & manager::get_elements () const
+  const element_dict_type & manager::get_elements () const
   {
     return _elements_;
   }
 
-  const material_dict_t & manager::get_materials () const
+  const material_dict_type & manager::get_materials () const
   {
     return _materials_;
   }
@@ -79,14 +79,14 @@ namespace mat {
     return;
   }
 
-  void manager::load (const datatools::utils::multi_properties & config_)
+  void manager::load (const datatools::multi_properties & config_)
   {
     if (is_locked ())
       {
         throw runtime_error ("mat::manager::load: Manager is locked !");
       }
 
-    for (multi_properties::entries_ordered_col_t::const_iterator i
+    for (multi_properties::entries_ordered_col_type::const_iterator i
            = config_.ordered_entries ().begin ();
          i != config_.ordered_entries ().end ();
          i++)
@@ -94,7 +94,7 @@ namespace mat {
         multi_properties::entry * e = *i;
         const string & name = e->get_key ();
         const string & type = e->get_meta ();
-        const datatools::utils::properties & props = e->get_properties ();
+        const datatools::properties & props = e->get_properties ();
 
         if (_debug_)
           {
@@ -201,7 +201,7 @@ namespace mat {
                 throw runtime_error (message.str ());
               }
             string alias_material = props.fetch_string ("material");
-            material_dict_t::iterator found = _materials_.find (alias_material);
+            material_dict_type::iterator found = _materials_.find (alias_material);
             if (found == _materials_.end ())
               {
                 ostringstream message;
@@ -234,7 +234,7 @@ namespace mat {
                            const string & indent_,
                            bool inherit_) const
   {
-    namespace du = datatools::utils;
+    namespace du = datatools;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     if (! title_.empty ())
@@ -255,14 +255,14 @@ namespace mat {
       else
         {
           out_ << " [" << _isotopes_.size () << "] :" << endl;
-          for (isotope_dict_t::const_iterator i = _isotopes_.begin ();
+          for (isotope_dict_type::const_iterator i = _isotopes_.begin ();
                i != _isotopes_.end ();
                i++)
             {
               ostringstream indent_oss;
               indent_oss << indent;
               indent_oss << du::i_tree_dumpable::skip_tag;
-              isotope_dict_t::const_iterator j = i;
+              isotope_dict_type::const_iterator j = i;
               j++;
               out_ << indent << du::i_tree_dumpable::skip_tag;;
               if (j != _isotopes_.end ())
@@ -291,14 +291,14 @@ namespace mat {
       else
         {
           out_ << " [" << _elements_.size () << "] :" << endl;
-          for (element_dict_t::const_iterator i = _elements_.begin ();
+          for (element_dict_type::const_iterator i = _elements_.begin ();
                i != _elements_.end ();
                i++)
             {
               ostringstream indent_oss;
               indent_oss << indent;
               indent_oss << du::i_tree_dumpable::skip_tag;
-              element_dict_t::const_iterator j = i;
+              element_dict_type::const_iterator j = i;
               j++;
               out_ << indent << du::i_tree_dumpable::skip_tag;;
               if (j != _elements_.end ())
@@ -327,14 +327,14 @@ namespace mat {
       else
         {
           out_ << " [" << _materials_.size () << "] :" << endl;
-          for (material_dict_t::const_iterator i = _materials_.begin ();
+          for (material_dict_type::const_iterator i = _materials_.begin ();
                i != _materials_.end ();
                i++)
             {
               ostringstream indent_oss;
               indent_oss << indent;
               indent_oss << du::i_tree_dumpable::skip_tag;
-              material_dict_t::const_iterator j = i;
+              material_dict_type::const_iterator j = i;
               j++;
               out_ << indent << du::i_tree_dumpable::skip_tag;;
               if (j != _materials_.end ())
@@ -412,7 +412,7 @@ namespace mat {
   void manager::export_gdml (geomtools::gdml_writer & gw_) const
   {
     // export isotopes:
-    for (isotope_dict_t::const_iterator i = _isotopes_.begin ();
+    for (isotope_dict_type::const_iterator i = _isotopes_.begin ();
          i != _isotopes_.end ();
          i++)
       {
@@ -425,7 +425,7 @@ namespace mat {
       } // end of loop on isotopes
 
     // export elements:
-    for (element_dict_t::const_iterator i = _elements_.begin ();
+    for (element_dict_type::const_iterator i = _elements_.begin ();
          i != _elements_.end ();
          i++)
       {
@@ -433,7 +433,7 @@ namespace mat {
         if (elmt.is_built_by_isotopic_composition ())
           {
             map<string, double> fractions;
-            for (isotope_weight_map_t::const_iterator j
+            for (isotope_weight_map_type::const_iterator j
                    = elmt.get_composition ().begin ();
                  j != elmt.get_composition ().end ();
                  j++)
@@ -457,7 +457,7 @@ namespace mat {
          i++)
       {
         const string & material_name = *i;
-        material_dict_t::const_iterator found
+        material_dict_type::const_iterator found
           = _materials_.find (material_name);
         if (found == _materials_.end ())
           {
@@ -480,9 +480,9 @@ namespace mat {
         // composite by number of atoms:
         if (a_mat.is_composed_by_number_of_atoms ())
           {
-            const composition_map_t & comp = a_mat.get_composition ();
+            const composition_map_type & comp = a_mat.get_composition ();
             map<string, size_t> natoms_map;
-            for (composition_map_t::const_iterator jcomp = comp.begin ();
+            for (composition_map_type::const_iterator jcomp = comp.begin ();
                  jcomp != comp.end ();
                  jcomp++)
               {
@@ -505,9 +505,9 @@ namespace mat {
         // composite by fraction mass:
         if (a_mat.is_composed_by_fraction_mass ())
           {
-            const composition_map_t & comp = a_mat.get_composition ();
+            const composition_map_type & comp = a_mat.get_composition ();
             map<string, double> fractions_map;
-            for (composition_map_t::const_iterator jcomp = comp.begin ();
+            for (composition_map_type::const_iterator jcomp = comp.begin ();
                  jcomp != comp.end ();
                  jcomp++)
               {
@@ -533,6 +533,6 @@ namespace mat {
     return;
   }
 
-} // end of namespace mat
+} // end of namespace materials
 
 // end of manager.cc

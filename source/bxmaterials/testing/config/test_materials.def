@@ -15,7 +15,7 @@ composition.names         : string [1]  = "Hydrogen"
 composition.fraction_mass : real   [1]  =    1.0
 
 [name="air" type="material"]
-#@description Vacuum material
+#@description Air material
 density        : real   = 1.29
 density.unit   : string = "mg/cm3"
 state          : string = "gas"
@@ -86,5 +86,61 @@ state            : string = "solid"
 composition.mode : string = "mean_za"
 mean_z           : real   = 6.0
 mean_a           : real   = 12.0
+
+[name="plexiglass" type="material"]
+#@description Plexiglass material (PMMA = C5H8O2)
+density          : real   = 1.190
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [3]  = "Hydrogen" "Carbon" "Oxygen"
+composition.number_of_atoms : integer [3]  =     8        5        2
+
+[name="polystyrene" type="material"]
+#@description Polystyrene material
+density          : real   = 1.032
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [2]  = "Hydrogen"  "Carbon"
+composition.number_of_atoms : integer [2]  =      8         8
+
+
+[name="iron" type="material"]
+#@description Iron material
+density        : real   = 7.874 
+density.unit   : string = "g/cm3"
+state          : string = "solid"
+composition.mode          : string      = "fraction_mass"
+composition.names         : string [1]  = "Iron"
+composition.fraction_mass : real   [1]  =  1.0
+
+
+[name="mylar" type="material"]
+#@description Mylar material (C10H8O4)
+density          : real   = 1.397
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [3]  = "Hydrogen" "Oxygen"  "Carbon"
+composition.number_of_atoms : integer [3]  =      8        4        10
+
+[name="glass" type="material"]
+#@description glass (Pyrex==borosilicate glass: 80.9%SIO2+12.9%B203+3.8%NA2O+2.2%AL2O3+0.4%K2O BY WEIGHT, also: http://en.wikipedia.org/wiki/Pyrex)
+density          : real   = 2.23
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode          : string      = "fraction_mass"
+composition.names         : string [6]  = "Silicium" "Oxygen" "Boron" "Sodium" "Aluminium" "Potassium" 
+composition.fraction_mass : real   [6]  =  0.377      0.540    0.040   0.028    0.012  0.003
+
+[name="aluminium" type="material"]
+#@description Aluminium material
+density        : real   = 2.70
+density.unit   : string = "g/cm3"
+state          : string = "solid"
+composition.mode          : string      = "fraction_mass"
+composition.names         : string [1]  = "Aluminium"
+composition.fraction_mass : real   [1]  =  1.0
 
 # end

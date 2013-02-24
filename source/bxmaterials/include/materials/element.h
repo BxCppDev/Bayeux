@@ -16,19 +16,19 @@
   \author BG
   @version 0.1
 */
-#ifndef __materials__element_h
-#define __materials__element_h 1
+#ifndef MATERIALS_ELEMENT_H_
+#define MATERIALS_ELEMENT_H_ 1
 
 #include <string>
 //#include <vector>
 #include <map>
 
-#include <datatools/utils/properties.h>
-#include <datatools/utils/i_tree_dump.h>
+#include <datatools/properties.h>
+#include <datatools/i_tree_dump.h>
 
-namespace mat {
+namespace materials {
 
-  namespace du = datatools::utils;
+  namespace du = datatools;
   
   class isotope;
 
@@ -43,9 +43,9 @@ namespace mat {
     bool is_valid () const;
   }; 
 
-  typedef std::map<std::string, iso_entry> isotope_weight_map_t; 
+  typedef std::map<std::string, iso_entry> isotope_weight_map_type; 
 
-  class element : public datatools::utils::i_tree_dumpable
+  class element : public datatools::i_tree_dumpable
   {
   public:
 
@@ -93,7 +93,7 @@ namespace mat {
     std::string     _name_;            //!<  Name
     std::string     _symbol_;          //!<  Chemical symbol of the element 
     int        _z_;               //!<  Number of protons of the element   
-    isotope_weight_map_t   _composition_;  //!<  Isotopic composition of the element [std::map<string,  iso_entry>]
+    isotope_weight_map_type   _composition_;  //!<  Isotopic composition of the element [std::map<string,  iso_entry>]
     double     _molar_mass_;      //!<  Molar mass in [g/mol]     
     du::properties _properties_;      //!<  datatools properties
     bool       _locked_;          //!<  boolean flag : true when composition is validated & derived properties are computed
@@ -143,7 +143,7 @@ namespace mat {
 
     bool is_locked () const {return _locked_;}           //!<  Return true if composition is valid, weights are normalized and molar mass is computed.    
    
-    const isotope_weight_map_t & get_composition () const  
+    const isotope_weight_map_type & get_composition () const  
     {
       return _composition_;
     }
@@ -160,8 +160,8 @@ namespace mat {
 
   }; // end of class element
 
-} // end of namespace mat
+} // end of namespace materials
 
-#endif // __materials__element_h
+#endif // MATERIALS_ELEMENT_H_
 
 // end of element.h

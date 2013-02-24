@@ -248,6 +248,22 @@ a : integer = 235
 #@description The U-238 isotope
 z : integer = 92
 a : integer = 238
+### Potassium
+
+[name="K-39" type="isotope"]
+#@description The K-39 isotope
+z : integer = 19
+a : integer = 39
+
+[name="K-40" type="isotope"]
+#@description The K-40 isotope
+z : integer = 19
+a : integer = 40
+
+[name="K-41" type="isotope"]
+#@description The K-41 isotope
+z : integer = 19
+a : integer = 41
 
 
 # end

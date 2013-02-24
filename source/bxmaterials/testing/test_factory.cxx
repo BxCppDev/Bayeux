@@ -8,7 +8,7 @@
 #include <vector>
 
 #include <materials/factory.h>
-#include <datatools/utils/properties.h>
+#include <datatools/properties.h>
 #include <materials/isotope.h>
 #include <materials/element.h>
 #include <materials/material.h>
@@ -51,46 +51,46 @@ int main (int argc_, char ** argv_)
           iarg++;
       }
  
-      datatools::utils::properties iso_0_conf;
+      datatools::properties iso_0_conf;
       iso_0_conf.store ("z", 1);
       iso_0_conf.store ("a", 1);
       iso_0_conf.store ("i", "GS");
 
-      datatools::utils::properties iso_1_conf;
+      datatools::properties iso_1_conf;
       iso_1_conf.store ("z", 1);
       iso_1_conf.store ("a", 2);
       iso_1_conf.store ("i", "GS");
 
-      datatools::utils::properties iso_2_conf;
+      datatools::properties iso_2_conf;
       iso_2_conf.store ("z", 6);
       iso_2_conf.store ("a", 12);
       iso_2_conf.store ("i", "GS");
 
-      mat::factory my_factory;
+      materials::factory my_factory;
 
-      mat::isotope_dict_t isotopes;
+      materials::isotope_dict_type isotopes;
       {
-        mat::isotope * iso = my_factory.create_isotope ("iso_0", iso_0_conf);
+        materials::isotope * iso = my_factory.create_isotope ("iso_0", iso_0_conf);
         iso->tree_dump (clog, "Isotope 0 from the factory: ");
-        isotopes[iso->get_name ()] = mat::smart_ref<mat::isotope> ();
+        isotopes[iso->get_name ()] = materials::smart_ref<materials::isotope> ();
         isotopes[iso->get_name ()].set_ref (iso);
       }
       {
-        mat::isotope * iso = my_factory.create_isotope ("iso_1", iso_1_conf);
+        materials::isotope * iso = my_factory.create_isotope ("iso_1", iso_1_conf);
         iso->tree_dump (clog, "Isotope 1 from the factory: ");
-        isotopes[iso->get_name ()] = mat::smart_ref<mat::isotope> ();
+        isotopes[iso->get_name ()] = materials::smart_ref<materials::isotope> ();
         isotopes[iso->get_name ()].set_ref (iso);
       }
       {
-        mat::isotope * iso = my_factory.create_isotope ("iso_2", iso_2_conf);
+        materials::isotope * iso = my_factory.create_isotope ("iso_2", iso_2_conf);
         iso->tree_dump (clog, "Isotope 2 from the factory: ");
-        isotopes[iso->get_name ()] = mat::smart_ref<mat::isotope> ();
+        isotopes[iso->get_name ()] = materials::smart_ref<materials::isotope> ();
         isotopes[iso->get_name ()].set_ref (iso);
       }
 
-      mat::element_dict_t elements;
+      materials::element_dict_type elements;
  
-      datatools::utils::properties elmt_1_conf;
+      datatools::properties elmt_1_conf;
       elmt_1_conf.store ("z", 1);
       vector<string> iso_names;
       iso_names.push_back ("iso_0");
@@ -101,17 +101,17 @@ int main (int argc_, char ** argv_)
       elmt_1_conf.store ("isotope.names", iso_names);
       elmt_1_conf.store ("isotope.weights", iso_weights);
       {
-        mat::element * elmt = my_factory.create_element ("elmt_1", 
+        materials::element * elmt = my_factory.create_element ("elmt_1", 
                                                          elmt_1_conf,
                                                          isotopes);
         elmt->tree_dump (clog, "Element 1 from the factory: ");
-        elements[elmt->get_name ()] = mat::smart_ref<mat::element> ();
+        elements[elmt->get_name ()] = materials::smart_ref<materials::element> ();
         elements[elmt->get_name ()].set_ref (elmt);
       }
 
-      mat::material_dict_t materials;
+      materials::material_dict_type materials;
 
-      datatools::utils::properties matl_1_conf;
+      datatools::properties matl_1_conf;
       matl_1_conf.store ("density", 1.0);
       matl_1_conf.store ("density.unit", "g/cm3");
       matl_1_conf.store ("composition.mode", "fraction_mass");
@@ -122,12 +122,12 @@ int main (int argc_, char ** argv_)
       matl_1_conf.store ("composition.names", compounds_names);
       matl_1_conf.store ("composition.fraction_mass", compounds_masses);
       {
-        mat::material * matl = my_factory.create_material ("matl_1", 
+        materials::material * matl = my_factory.create_material ("matl_1", 
                                                            matl_1_conf,
                                                            elements,
                                                            materials);
         matl->tree_dump (clog, "Material 1 from the factory: ");
-        materials[matl->get_name ()] = mat::smart_ref<mat::material> ();
+        materials[matl->get_name ()] = materials::smart_ref<materials::material> ();
         materials[matl->get_name ()].set_ref (matl);
       }
       

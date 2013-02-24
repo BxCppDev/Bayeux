@@ -11,7 +11,7 @@
 #include <materials/isotope.h>
 #include <materials/ch_symbol.h>
 
-namespace mat {
+namespace materials {
 
   using namespace std;
 
@@ -416,7 +416,7 @@ namespace mat {
   {
     double norm =0.;
 
-    for (isotope_weight_map_t::const_iterator i = _composition_.begin ();
+    for (isotope_weight_map_type::const_iterator i = _composition_.begin ();
          i != _composition_.end ();
          i++)
       {
@@ -440,7 +440,7 @@ namespace mat {
             clog << message.str ();
         */
 
-        for (isotope_weight_map_t::iterator i = _composition_.begin ();
+        for (isotope_weight_map_type::iterator i = _composition_.begin ();
              i !=  _composition_.end ();
              i++)
           {
@@ -490,7 +490,7 @@ namespace mat {
   {
     double molar_mass =0.;
 
-    for (isotope_weight_map_t::const_iterator i = _composition_.begin ();
+    for (isotope_weight_map_type::const_iterator i = _composition_.begin ();
          i != _composition_.end ();
          i++)
       {
@@ -509,7 +509,7 @@ namespace mat {
                            const string & indent_,
                            bool inherit_) const
   {
-    namespace du = datatools::utils;
+    namespace du = datatools;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     if (! title_.empty ())
@@ -532,13 +532,13 @@ namespace mat {
     else
       {
         out_ << endl;
-        for (isotope_weight_map_t::const_iterator i = _composition_.begin ();
+        for (isotope_weight_map_type::const_iterator i = _composition_.begin ();
              i !=  _composition_.end ();
              i++)
           {
             const string & key = i->first;
             const iso_entry & entry = i->second;
-            isotope_weight_map_t::const_iterator j = i;
+            isotope_weight_map_type::const_iterator j = i;
             j++;
             string atag = du::i_tree_dumpable::TAG;
             if (j == _composition_.end ()) atag = du::i_tree_dumpable::LAST_TAG;
@@ -579,6 +579,6 @@ namespace mat {
   }
 
 
-} // end of namespace mat
+} // end of namespace materials
 
 // end of element.cc
