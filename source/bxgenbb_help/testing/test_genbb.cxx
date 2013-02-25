@@ -8,7 +8,7 @@
 
 #include <boost/filesystem.hpp>
 
-#include <datatools/utils/utils.h>
+#include <datatools/utils.h>
 
 #include <genbb_help/genbb.h>
 #include <mygsl/rng.h>
@@ -44,7 +44,7 @@ int main (int argc_, char ** argv_)
 
       int seed = 314159;
 
-      datatools::utils::properties config;
+      datatools::properties config;
       if (debug) config.store_flag ("debug");
       if (test) config.store_flag ("test");
       config.store ("seed", seed);
@@ -68,7 +68,7 @@ int main (int argc_, char ** argv_)
       //GBB.set_delete_data_files (false);
       //GBB.set_tmp_base_dir ("/tmp/${USER}");
       string tmp_dir = "/tmp/${USER}/genbb_work.d";
-      datatools::utils::fetch_path_with_env (tmp_dir);
+      datatools::fetch_path_with_env (tmp_dir);
       if (! boost::filesystem::is_directory (tmp_dir))
         {
           if (! boost::filesystem::create_directory (tmp_dir))
@@ -80,7 +80,7 @@ int main (int argc_, char ** argv_)
           
         }
       GBB.set_tmp_dir (tmp_dir);
-      GBB.initialize (config);
+      GBB.initialize_standalone (config);
       if (debug) clog << "debug: " << "Initialized !"<< endl;
 
       // working primary event:

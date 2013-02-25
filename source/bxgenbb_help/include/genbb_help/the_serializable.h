@@ -1,12 +1,12 @@
 // -*- mode: c++; -*- 
 /* genbb_help::the_serializable.h */
 
-#ifndef __genbb_help__the_serializable_h__
-#define __genbb_help__the_serializable_h__ 1
+#ifndef GENBB_HELP_THE_SERIALIZABLE_H_
+#define GENBB_HELP_THE_SERIALIZABLE_H_ 1
 
-#include <datatools/serialization/archives_instantiation.h>
+#include <datatools/archives_instantiation.h>
 #include <boost/serialization/export.hpp>
-#include <genbb_help/serialization/the_serializable.ipp>
+#include <genbb_help/the_serializable.ipp>
 
 /** Information:
  *  For now (2011-09-29), only the genbb::primary_event serializable classe
@@ -29,6 +29,6 @@ DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(genbb::primary_particle)
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(genbb::primary_event)
 BOOST_CLASS_EXPORT_IMPLEMENT(genbb::primary_event) 
 
-#endif // __genbb_help__the_serializable_h__
+#endif // GENBB_HELP_THE_SERIALIZABLE_H_
 
 /* end of genbb_help::the_serializable.h */

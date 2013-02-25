@@ -2,10 +2,10 @@
 /* the_serializable.cc  
  */ 
 
-#include <genbb_help/serialization/the_serializable.h>
+#include <genbb_help/the_serializable.h>
 
 // Load the link guard definition :
-#include <genbb_help/serialization/link_guard.h>
+#include <genbb_help/detail/bio_link_guard.h>
 
 #include <cstdlib>
 #include <iostream>
@@ -13,7 +13,8 @@
 
 // Load the link guard implementation :
 namespace genbb {
-  namespace serialization {
+namespace detail {
+namespace serialization {
 
     bool dynamic_link_guard::_g_devel_ = false;
 
@@ -25,7 +26,7 @@ namespace genbb {
         }
       if (dynamic_link_guard::_g_devel_)
         {
-          std::clog << "genbb::serialization::dynamic_link_guard::CTOR: Ok." << std::endl;
+          std::clog << "genbb::detail::serialization::dynamic_link_guard::CTOR: Ok." << std::endl;
         }
       return;
     }
@@ -34,7 +35,7 @@ namespace genbb {
     {
       if (dynamic_link_guard::_g_devel_)
         {
-          std::clog << "genbb::serialization::dynamic_link_guard::DTOR: Ok." << std::endl;
+          std::clog << "genbb::detail::serialization::dynamic_link_guard::DTOR: Ok." << std::endl;
         }
       return;
     }
@@ -48,12 +49,13 @@ namespace genbb {
         }
       if (dynamic_link_guard::_g_devel_)
         {
-          std::clog << "genbb::serialization::dynamic_link_guard::instance: Ok." << std::endl;
+          std::clog << "genbb::detail::serialization::dynamic_link_guard::instance: Ok." << std::endl;
         }
       return *g_global_guard.get ();
     }
 
-  } // end namespace serialization
+} // end namespace serialization
+} // end namespace detail
 } // end namespace genbb
 
 // end of the_serializable.cc

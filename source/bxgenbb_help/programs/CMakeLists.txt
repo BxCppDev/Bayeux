@@ -20,14 +20,6 @@
 ##
 ###############################################################################
 
-# set ( CMAKE_Fortran_FLAGS 
-#   "${_genbb_help_fortran_definitions}  "
-#   )
-
-# set ( CMAKE_CXX_FLAGS  
-#   "${_genbb_help_fortran_definitions} ${_genbb_help_definitions} "
-#   )
-
 set ( genbb_help_programs_list_Fortran
   decay0.F
   genbb1.F
@@ -95,6 +87,12 @@ foreach ( pro_program ${genbb_help_programs_list_CXX} )
     ${geomtools_LIBRARIES} 
     )
   
+  if ( datatools_WITH_BIO )
+    list ( INSERT _pro_libraries 0 ${datatools_BIO_LIBRARY} ) 
+  endif ()
+  if ( geomtools_WITH_BIO )
+    list ( INSERT _pro_libraries 0 ${geomtools_BIO_LIBRARY} ) 
+  endif ()
   if ( GENBB_HELP_WITH_BIO )
     list ( INSERT _pro_libraries 0 genbb_help_bio ) 
   endif ()

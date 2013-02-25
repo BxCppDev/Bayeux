@@ -9,8 +9,8 @@
 #include <genbb_help/genbb_mgr.h>
 
 // Some pre-processor guard about Boost I/O usage and linkage :
-#include <geomtools/serialization/bio_guard.h>
-#include <genbb_help/serialization/bio_guard.h>
+#include <geomtools/bio_guard.h>
+#include <genbb_help/bio_guard.h>
 
 using namespace std;
 
@@ -52,7 +52,7 @@ int main (int argc_, char ** argv_)
       if (debug) mgr.dump ();
 
       // initialize the manager:
-      mgr.init ();
+      mgr.initialize_simple();
       if (debug) mgr.dump ();
 
       // working primary event:

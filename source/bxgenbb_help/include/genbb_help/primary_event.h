@@ -2,10 +2,10 @@
 /* primary_event.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-11
- * Last modified: 2010-04-11
+ * Last modified: 2013-02-25
  * 
  * License: 
- * Copyright 2007-2011 F. Mauger
+ * Copyright 2007-2013 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,17 +36,17 @@
  *
  */
 
-#ifndef __genbb_help__primary_event_h
-#define __genbb_help__primary_event_h 1
+#ifndef GENBB_HELP_PRIMARY_EVENT_H_
+#define GENBB_HELP_PRIMARY_EVENT_H_ 1
 
 #include <string>
 #include <list>
 
 // Interface base class from datatools to support serialization tools:
-#include <datatools/serialization/i_serializable.h>
+#include <datatools/i_serializable.h>
 
-#include <datatools/utils/units.h>
-#include <datatools/utils/i_tree_dump.h>
+#include <datatools/units.h>
+#include <datatools/i_tree_dump.h>
 
 #include <genbb_help/primary_particle.h>
 
@@ -54,12 +54,12 @@ namespace genbb {
 
   struct primary_event
     : DATATOOLS_SERIALIZABLE_CLASS,
-      public datatools::utils::i_tree_dumpable
+      public datatools::i_tree_dumpable
   {
     
   public:
-    typedef std::list<primary_particle> particles_col_t; // to be removed
-    typedef particles_col_t particles_col_type;
+    typedef std::list<primary_particle> particles_col_type;
+    typedef particles_col_type particles_col_t; // Backward comp.
 
   public:
 
@@ -122,19 +122,17 @@ namespace genbb {
     
   public:
 
-    std::string     label;
-    double          time;
-    particles_col_t particles;
-    std::string     classification;
-    double          genbb_weight;
+    std::string        label;
+    double             time;
+    particles_col_type particles;
+    std::string        classification;
+    double             genbb_weight;
 
-    /* interface i_serializable */
-    DATATOOLS_SERIALIZATION_DECLARATION();
+  //! Support for Boost-based serialization
+  DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(primary_event)
 
-  public:
-
-    // trick to support old tag :
-    static const std::string OLD_SERIAL_TAG;
+  //! Support for backward compatibility serialization tag
+  DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT()
 
   };
 
@@ -143,6 +141,8 @@ namespace genbb {
 #include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT_KEY2(genbb::primary_event, "genbb::primary_event")
 
-#endif // __genbb_help__primary_event_h
+DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::genbb::primary_event)
+
+#endif // GENBB_HELP_PRIMARY_EVENT_H_
 
 // end of primary_event.h

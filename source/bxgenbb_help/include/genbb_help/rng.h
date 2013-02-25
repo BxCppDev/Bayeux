@@ -29,13 +29,13 @@
  * 
  */
 
-#ifndef __genbb_help__rng_h
+#ifndef GENBB_HELP_RNG_H_
+#define GENBB_HELP_RNG_H_
 
 #include <string>
 
 #include <boost/cstdint.hpp>
 #include <boost/scoped_ptr.hpp>
-
 
 namespace mygsl {
   class rng;
@@ -67,6 +67,6 @@ extern "C"
   float rng_shoot_flat ();
 }
 
-#endif // __genbb_help__rng_h
+#endif // GENBB_HELP_RNG_H_
 
 // end of genbb_mgr.h

@@ -28,8 +28,8 @@
  * 
  */
 
-#ifndef __genbb_help__primary_particle_h
-#define __genbb_help__primary_particle_h 1
+#ifndef GENBB_HELP_PRIMARY_PARTICLE_H_
+#define GENBB_HELP_PRIMARY_PARTICLE_H_ 1
 
 #include <cstdlib>
 #include <cmath>
@@ -43,12 +43,12 @@
 // Portable integral types (mandatory):
 #include <boost/cstdint.hpp>
 
-#include <datatools/utils/utils.h>
-#include <datatools/utils/units.h>
-#include <datatools/utils/i_tree_dump.h>
+#include <datatools/utils.h>
+#include <datatools/units.h>
+#include <datatools/i_tree_dump.h>
 
 // Interface base class from datatools to support serialization tools:
-#include <datatools/serialization/i_serializable.h>
+#include <datatools/i_serializable.h>
 
 #include <geomtools/utils.h>
 
@@ -56,7 +56,7 @@ namespace genbb {
 
   struct primary_particle 
     : DATATOOLS_SERIALIZABLE_CLASS,
-      public datatools::utils::i_tree_dumpable 
+      public datatools::i_tree_dumpable 
   {
   public:
     
@@ -175,18 +175,18 @@ namespace genbb {
     geomtools::vector_3d momentum; // CLHEP momentum unit
     geomtools::vector_3d vertex;   // CLHEP position unit
 
-  public:
-
-    // trick to support old tag :
-    static const std::string OLD_SERIAL_TAG;
-
-    /* interface i_serializable */
-    DATATOOLS_SERIALIZATION_DECLARATION();
-
+    //! Support for Boost-based serialization
+    DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(primary_particle)
+    
+    //! Support for backward compatibility serialization tag
+    DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT()
+    
   };
 
 } // end of namespace genbb
 
-#endif // __genbb_help__primary_particle_h
+DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::genbb::primary_particle)
+
+#endif // GENBB_HELP_PRIMARY_PARTICLE_H_
 
 // end of primary_particle.h

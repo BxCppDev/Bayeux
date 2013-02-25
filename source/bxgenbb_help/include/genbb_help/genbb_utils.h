@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef GENBB_HELP__GENBB_UTILS_H_
-#define GENBB_HELP__GENBB_UTILS_H_
+#ifndef GENBB_HELP_GENBB_UTILS_H_
+#define GENBB_HELP_GENBB_UTILS_H_
 
 #include <string>
 #include <vector>
@@ -63,4 +63,4 @@ namespace genbb
 
 }
 
-#endif // GENBB_HELP__GENBB_UTILS_H_
+#endif // GENBB_HELP_GENBB_UTILS_H_

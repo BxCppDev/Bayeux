@@ -1,7 +1,7 @@
 // -*- mode: c++; -*- 
 // genbb_mgr.cc
 /*
- * Copyright 2007-2011 F. Mauger
+ * Copyright 2007-2013 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@
 #include <CLHEP/Units/PhysicalConstants.h>
 #include <CLHEP/Vector/ThreeVector.h>
 
-#include <datatools/utils/utils.h>
+#include <datatools/utils.h>
 #include <boost/algorithm/string/split.hpp> 
 #include <boost/algorithm/string/classification.hpp> 
 #include <geomtools/utils.h>
@@ -153,7 +153,7 @@ namespace genbb {
   void genbb_mgr::_load_next (primary_event & event_, 
                               bool compute_classification_)
   {
-    //provide the preloadedcurrent event:
+    //provide the preloaded current event:
     event_ = _current_;
     if (compute_classification_) 
       {
@@ -183,9 +183,9 @@ namespace genbb {
             if (is_debug ()) clog << "DEVEL: genbb_mgr::_load_next_boost_: filename = '" << filename << "'" << endl;
             return;
           }
-        datatools::utils::fetch_path_with_env (filename);
+        datatools::fetch_path_with_env (filename);
         _reader_.init (filename, 
-                       datatools::serialization::using_multi_archives);
+                       datatools::using_multi_archives);
         _current_filename_ = filename;
         return;
       }
@@ -246,7 +246,7 @@ namespace genbb {
             if (is_debug ()) clog << "DEVEL: genbb_mgr::_load_next_genbb_: Input filename = '" << filename << "'" << endl;
             return;
           }
-        datatools::utils::fetch_path_with_env (filename);
+        datatools::fetch_path_with_env (filename);
         if (is_debug ()) clog << "DEVEL: genbb_mgr::_load_next_genbb_: Input filename = '" << filename << "'" << endl;
         _fin_.close ();
         _fin_.open (filename.c_str ());
@@ -428,27 +428,15 @@ namespace genbb {
     return;
   }
 
-  void genbb_mgr::init ()
-  {
-    if (_initialized_) return;
-    _at_init_ ();
-    _initialized_ = true;
-    return;
-  }
-
   void genbb_mgr::_at_init_ ()
   {
     _load_next_ ();
     return;
   }
 
-  void genbb_mgr::initialize ()
-  {
-    this->init ();
-    return;
-  }
-
-  void genbb_mgr::initialize (const datatools::utils::properties & config_)
+  void genbb_mgr::initialize (const datatools::properties & config_,
+                              datatools::service_manager & service_manager_,
+                              detail::pg_dict_type & dictionary_)
   {
     if (_initialized_) 
       {
@@ -465,10 +453,10 @@ namespace genbb {
         string format = config_.fetch_string ("format");
         set_format (format);
       }
-    else
-      {
-        throw logic_error ("genbb::genbb_mgr::initialize: Missing 'format' of input files !");     
-      }
+    // else
+    //   {
+    //     throw logic_error ("genbb::genbb_mgr::initialize: Missing 'format' of input files !");     
+    //   }
 
     // try to build a list of input filenames from a pattern:
     {
@@ -556,7 +544,7 @@ namespace genbb {
           config_.fetch ("input_files", input_files);
           for (int i = 0; i < input_files.size (); i++)
             {
-              datatools::utils::fetch_path_with_env (input_files[i]);
+              datatools::fetch_path_with_env (input_files[i]);
               set (input_files[i]);
             }
         }

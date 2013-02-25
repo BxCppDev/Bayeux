@@ -23,12 +23,15 @@
 
 #include <genbb_help/genbb_help_config.h>
 
+// Special backward compatibility support for serialization :
+DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_IMPLEMENTATION(genbb::primary_particle,"genbb::primary_particle")
+DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_IMPLEMENTATION(genbb::primary_particle,"__genbb::primary_particle__")
+
 namespace genbb {
 
   using namespace std;
 
-  const string primary_particle::SERIAL_TAG = "genbb::primary_particle";
-  const string primary_particle::OLD_SERIAL_TAG = "__genbb::primary_particle__";
+  DATATOOLS_SERIALIZATION_IMPLEMENTATION_ADVANCED(primary_particle,"genbb::primary_particle")
 
   bool primary_particle::is_valid () const
   {
@@ -173,14 +176,6 @@ namespace genbb {
     return;
   }
 
-  const string & primary_particle::get_serial_tag () const
-  {
-    if (library_config::g_use_old_serialization_tag)
-      {
-        return primary_particle::OLD_SERIAL_TAG;
-     }
-    return primary_particle::SERIAL_TAG;
-  }
 
   double primary_particle::get_charge () const
   {
@@ -209,13 +204,13 @@ namespace genbb {
 
   bool primary_particle::mass_is_known () const
   {
-    return datatools::utils::is_valid (get_mass ());
+    return datatools::is_valid (get_mass ());
   }
 
   double primary_particle::get_mass () const
   {
     double a_mass;
-    datatools::utils::invalidate (a_mass);
+    datatools::invalidate (a_mass);
 
     if (is_positron () || is_electron ())
       {
@@ -285,7 +280,7 @@ namespace genbb {
                                     const std::string & indent_,
                                     bool inherit_) const
   {
-    namespace du = datatools::utils;
+    namespace du = datatools;
     std::string indent;
     if (! indent_.empty ()) indent = indent_;
     if (! title_.empty ())

@@ -1,11 +1,11 @@
-/* genbb_help::serialization::bio_guard.h */
+/* bio_guard.h */
 /* 
  * Description :
  *
  *  Some useful guard macro related to Boost/Serialisation executable 
  *  building and linkage.
  *
- * Copyright (C) 2011-2012 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,33 +28,39 @@
  *
  */ 
 
-#ifndef __genbb_help__serialization__bio_guard_h
-#define __genbb_help__serialization__bio_guard_h 1
+#ifndef GENBB_HELP_BIO_GUARD_H_
+#define GENBB_HELP_BIO_GUARD_H_
 
+// Standard Library
+
+// Third Party
+
+// genbb_help
 #include <genbb_help/genbb_help_config.h>
-#include <genbb_help/serialization/link_guard.h>	
+#include <genbb_help/detail/bio_link_guard.h>	
 
 #if GENBB_HELP_WITH_BIO != 1					
-#warning This executable must be built with its own genbb_help Boost/Serialization code. 
-#include <genbb_help/serialization/the_serializable.h>	
+#warning This executable is built with its own genbb_help Boost/Serialization code. 
+#include <genbb_help/the_serializable.h>				
 #else
-#warning This executable must ensure the genbb Boost/Serialization library is loaded. 
+#warning This executable must ensure the genbb_help Boost/Serialization library is loaded. 
 namespace genbb {
-  namespace serialization {
-    struct bio_guard
-    {
-      bio_guard ()
-      {
-	dynamic_link_guard & dlg = ::genbb::serialization::dynamic_link_guard::instance ();
-	return;
-      }
-      static bio_guard _g_trigger_link_guard_;
-    };
-    bio_guard bio_guard::_g_trigger_link_guard_;
-  } // end namespace serialization
+
+/** \brief Data structure that ensures the invocation of some explicit code
+ *         for genbb_help_bio DLL liking. 
+ */
+struct bio_guard {
+  bio_guard() {
+    genbb::detail::serialization::dynamic_link_guard& dlg 
+      = genbb::detail::serialization::dynamic_link_guard::instance();
+  }
+      
+  static bio_guard _g_trigger_link_guard_;
+};
+
+bio_guard bio_guard::_g_trigger_link_guard_;
+
 } // end namespace genbb
-#endif // GENBB_HELP_WITH_BIO != 1		  				
+#endif // GENBB_HELP_WITH_BIO != 1	
 
-#endif // __genbb_help__serialization__bio_guard_h
-
-/* end of genbb_help::serialization::bio_guard.h */
+#endif // GENBB_HELP_BIO_GUARD_H_

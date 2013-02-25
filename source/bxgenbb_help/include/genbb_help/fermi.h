@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef __genbb_help__fermi_h
-#define __genbb_help__fermi_h 1
+#ifndef GENBB_HELP_FERMI_H_
+#define GENBB_HELP_FERMI_H_ 1
   
 double a_from_z (double z_);
 
@@ -42,6 +42,6 @@ extern "C"
   float fermi_wrap (float * z_, float * e_);
 }
 
-#endif // __genbb_help__fermi_h
+#endif // GENBB_HELP_FERMI_H_
 
 // end of fermi.h

@@ -426,13 +426,15 @@ function do_configure ()
     if [ ${bio_support} -eq 1 ]; then
 	additional_options="${additional_options}-DGENBB_HELP_WITH_BIO=${with_bio} "
     fi
-    if [ ${python_wrapper_support} -eq 1 ]; then
-	additional_options="${additional_options}-DGENBB_HELP_WITH_PYTHON_WRAPPER=${with_python_wrapper} "
-    fi
+    # if [ ${python_wrapper_support} -eq 1 ]; then
+    # 	additional_options="${additional_options}-DGENBB_HELP_WITH_PYTHON_WRAPPER=${with_python_wrapper} "
+    # fi
     cd ${the_build_dir}
     cmake \
 	-DCMAKE_INSTALL_PREFIX:PATH=${install_prefix} \
 	-DCMAKE_BUILD_TYPE:STRING=Release \
+	-DCMAKE_MODULE_PATH=${CADFAEL_SHARE_DIR}/cmake/Modules \
+	-DGENBB_HELP_WITH_BIO=${with_bio} \
 	-DGENBB_HELP_WITH_DOC=${with_doc} \
 	-DGENBB_HELP_WITH_TEST=${with_test} \
 	${additional_options} \

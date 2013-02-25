@@ -1,6 +1,12 @@
 README.txt
 ----------
 
+These  sample files and  are used  during the  testing step  of emfield.
+They are  provided as  is as  examples of some  possible use  of emfield
+classes.
+
+----------------------------------------------------------------------
+
 genbb_help: testing programs and scripts
 
 
@@ -17,4 +23,4 @@ Another test program :
   bash$  ./testing/test_bb0nu_channel_2.sh 
 
 --
-Updated: 2012-07-18
+Updated: 2013-02-25

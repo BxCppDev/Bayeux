@@ -35,22 +35,27 @@
 
 #include <geomtools/utils.h>
 
+// Special backward compatibility support for serialization :
+DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_IMPLEMENTATION(genbb::primary_event,"genbb::primary_event")
+DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_IMPLEMENTATION(genbb::primary_event,"__genbb::primary_event__")
 
 namespace genbb {
 
-  //DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (primary_event_3d,"genbb::primary_event")
+  DATATOOLS_SERIALIZATION_IMPLEMENTATION_ADVANCED(primary_event,"genbb::primary_event")
 
-  const std::string primary_event::SERIAL_TAG     = "genbb::primary_event";
-  const std::string primary_event::OLD_SERIAL_TAG = "__genbb::primary_event__";
+  // //DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (primary_event_3d,"genbb::primary_event")
 
-  const std::string & primary_event::get_serial_tag () const
-  {
-    if (library_config::g_use_old_serialization_tag)
-      {
-        return primary_event::OLD_SERIAL_TAG;
-      }
-    return primary_event::SERIAL_TAG;
-  }
+  // const std::string primary_event::SERIAL_TAG     = "genbb::primary_event";
+  // const std::string primary_event::OLD_SERIAL_TAG = "__genbb::primary_event__";
+
+  // const std::string & primary_event::get_serial_tag () const
+  // {
+  //   if (library_config::g_use_old_serialization_tag)
+  //     {
+  //       return primary_event::OLD_SERIAL_TAG;
+  //     }
+  //   return primary_event::SERIAL_TAG;
+  // }
 
   bool primary_event::is_valid () const
   {
@@ -127,12 +132,12 @@ namespace genbb {
     return genbb_weight == 1.0;
   }
 
-  const primary_event::particles_col_t & primary_event::get_particles () const
+  const primary_event::particles_col_type & primary_event::get_particles () const
   {
     return particles;
   }
 
-  primary_event::particles_col_t & primary_event::get_particles ()
+  primary_event::particles_col_type & primary_event::get_particles ()
   {
     return particles;
   }
@@ -184,7 +189,7 @@ namespace genbb {
     size_t n_gamma = 0;
     size_t n_alpha = 0;
     size_t n_others = 0;
-    for (particles_col_t::const_iterator i = particles.begin ();
+    for (particles_col_type::const_iterator i = particles.begin ();
          i != particles.end ();
          i++)
       {
@@ -211,7 +216,7 @@ namespace genbb {
                                  const std::string & indent_,
                                  bool inherit_) const
   {
-    namespace du = datatools::utils;
+    namespace du = datatools;
     std::string indent;
     if (! indent_.empty ()) indent = indent_;
     if (! title_.empty ())
@@ -225,13 +230,13 @@ namespace genbb {
         out_ << indent << du::i_tree_dumpable::tag << "Time  : " << time / CLHEP::second << " s" << std::endl;
         out_ << indent << du::i_tree_dumpable::tag << "Particles: [" << particles.size () << "]" << std::endl;
         int particle_counter = 0;
-        for (particles_col_t::const_iterator it = particles.begin ();
+        for (particles_col_type::const_iterator it = particles.begin ();
              it != particles.end ();
              it++)
           {
             std::ostringstream indent_oss;
             indent_oss << indent << du::i_tree_dumpable::skip_tag;
-            particles_col_t::const_iterator jt = it;
+            particles_col_type::const_iterator jt = it;
             jt++;
             out_ << indent_ << du::i_tree_dumpable::skip_tag; 
             if (jt == particles.end ())
@@ -282,7 +287,7 @@ namespace genbb {
     geomtools::rotation_3d rot;
     geomtools::create_rotation_3d (rot, phi_, theta_, delta_);
     rot.invert ();
-    for (particles_col_t::iterator i = particles.begin ();
+    for (particles_col_type::iterator i = particles.begin ();
          i != particles.end ();
          i++)
       {

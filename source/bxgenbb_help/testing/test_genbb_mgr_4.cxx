@@ -17,13 +17,13 @@ int main (int argc_, char ** argv_)
 
       int iarg = 1;
       while (iarg < argc_)
-	{
-	  std::string arg = argv_[iarg];
+        {
+          std::string arg = argv_[iarg];
 
-	  if (arg == "-d" || arg == "--debug") debug = true;
+          if (arg == "-d" || arg == "--debug") debug = true;
 
-	  iarg++;
-	}
+          iarg++;
+        }
     
       // set format to Boost archive:
       genbb::genbb_mgr mgr (genbb::genbb_mgr::FORMAT_BOOST);
@@ -35,7 +35,7 @@ int main (int argc_, char ** argv_)
       if (debug) mgr.dump ();
 
       // initialize/lock the manager:
-      mgr.init ();
+      mgr.initialize_simple ();
       if (debug) mgr.dump ();
 
       // working primary event:
@@ -44,11 +44,11 @@ int main (int argc_, char ** argv_)
       size_t count = 0;
       // main loop on primary events source:
       while (mgr.has_next ())
-	{
-	  mgr.load_next (pe);
-	  if (debug) pe.dump ();
-	  count++;
-	}
+        {
+          mgr.load_next (pe);
+          if (debug) pe.dump ();
+          count++;
+        }
       mgr.reset ();
 
       std::clog << "Number of loaded events: " << count << std::endl; 

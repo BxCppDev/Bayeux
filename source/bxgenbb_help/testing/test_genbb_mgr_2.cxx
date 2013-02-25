@@ -14,59 +14,59 @@ int main (int argc_, char ** argv_)
   try
     {
       std::clog << "Hello, this is a sample program for class 'genbb_mgr'!" 
-		<< std::endl; 
+                << std::endl; 
   
       bool debug = false;
 
       int iarg = 1;
       while (iarg < argc_)
-	{
-	  std::string arg = argv_[iarg];
+        {
+          std::string arg = argv_[iarg];
 
-	  if (arg == "-d" || arg == "--debug") debug = true;
+          if (arg == "-d" || arg == "--debug") debug = true;
 
-	  iarg++;
-	}
+          iarg++;
+        }
     
       genbb::genbb_mgr mgr;
       mgr.set ("${GENBB_HELP_DATA_DIR}/testing/data/se82_0nubb_mn.genbb");
       if (debug) mgr.dump ();
-      mgr.init ();
+      mgr.initialize_simple ();
       mgr.dump ();
 
       double me = CLHEP::electron_mass_c2;
       genbb::primary_event pe;
       while (mgr.has_next ())
-	{
-	  mgr.load_next (pe);
-	  if (debug) pe.dump ();
-	  double e_sum = 0.0;
-	  if (debug) std::clog << "debug: me=" 
-			       << me / CLHEP::MeV 
-			       << " MeV" << std::endl;
-	  while (pe.particles.size () > 0)
-	    {
-	      genbb::primary_particle pp = pe.particles.front ();
-	      pe.particles.pop_front ();
-	      if (pp.is_electron ())
-		{
-		  double p = pp.get_momentum ().mag ();
-		  if (debug) std::clog << "debug: p=" 
-				       << p / CLHEP::MeV 
-				       << " MeV" << std::endl;
-		  double w = pp.get_total_energy ();
-		  if (debug) std::clog << "debug: w=" 
-				       << w / CLHEP::MeV 
-				       << " MeV" << std::endl;
-		  double e = pp.get_kinetic_energy ();
-		  if (debug) std::clog << "debug: e=" 
-				       << e / CLHEP::MeV 
-				       << " MeV" << std::endl;
-		  e_sum += e;
-		}
-	    }
-	  std::cout << e_sum << std::endl;
-	}
+        {
+          mgr.load_next (pe);
+          if (debug) pe.dump ();
+          double e_sum = 0.0;
+          if (debug) std::clog << "debug: me=" 
+                               << me / CLHEP::MeV 
+                               << " MeV" << std::endl;
+          while (pe.particles.size () > 0)
+            {
+              genbb::primary_particle pp = pe.particles.front ();
+              pe.particles.pop_front ();
+              if (pp.is_electron ())
+                {
+                  double p = pp.get_momentum ().mag ();
+                  if (debug) std::clog << "debug: p=" 
+                                       << p / CLHEP::MeV 
+                                       << " MeV" << std::endl;
+                  double w = pp.get_total_energy ();
+                  if (debug) std::clog << "debug: w=" 
+                                       << w / CLHEP::MeV 
+                                       << " MeV" << std::endl;
+                  double e = pp.get_kinetic_energy ();
+                  if (debug) std::clog << "debug: e=" 
+                                       << e / CLHEP::MeV 
+                                       << " MeV" << std::endl;
+                  e_sum += e;
+                }
+            }
+          std::cout << e_sum << std::endl;
+        }
       mgr.reset ();
       if (debug) mgr.dump ();
    

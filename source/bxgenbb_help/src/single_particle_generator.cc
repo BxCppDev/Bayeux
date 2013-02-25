@@ -29,13 +29,15 @@
 #include <sstream>
 #include <fstream>
 
-#include <datatools/utils/utils.h>
+#include <datatools/utils.h>
 #include <geomtools/utils.h>
-#include <datatools/utils/units.h>
+#include <datatools/units.h>
 
 namespace genbb {
 
   using namespace std;
+
+  GENBB_PG_REGISTRATION_IMPLEMENT(single_particle_generator,"genbb::single_particle_generator");
 
   void single_particle_generator::_check_locked (const string & where_) const
   {
@@ -120,7 +122,7 @@ namespace genbb {
   double single_particle_generator::get_particle_mass_from_label (const string & particle_name_)
   {
     double mass;
-    datatools::utils::invalidate (mass);
+    datatools::invalidate (mass);
 
     if (particle_name_ == "electron" ||
         particle_name_ == "positron" ||
@@ -239,16 +241,16 @@ namespace genbb {
 
     _particle_name_ = "";
     _particle_type_ = primary_particle::PARTICLE_UNDEFINED;
-    datatools::utils::invalidate (_particle_mass_);
+    datatools::invalidate (_particle_mass_);
 
     _mode_ = MODE_INVALID;
     _mean_energy_ = 0.0;
-    datatools::utils::invalidate (_mean_energy_);
+    datatools::invalidate (_mean_energy_);
     _sigma_energy_ = 0.0;
     _min_energy_ = 0.0;
-    datatools::utils::invalidate (_min_energy_);
+    datatools::invalidate (_min_energy_);
     _max_energy_ = 0.0;
-    datatools::utils::invalidate (_max_energy_);
+    datatools::invalidate (_max_energy_);
 
     // GSL (mygsl::tabulated_function class)
     _spectrum_interpolation_name_ = mygsl::tabulated_function::LINEAR_INTERP_NAME;
@@ -297,13 +299,13 @@ namespace genbb {
 
     _particle_name_ = "";
     _particle_type_ = primary_particle::PARTICLE_UNDEFINED;
-    datatools::utils::invalidate (_particle_mass_);
+    datatools::invalidate (_particle_mass_);
 
     _mean_energy_ = 0.0;
-    datatools::utils::invalidate (_mean_energy_);
+    datatools::invalidate (_mean_energy_);
     _sigma_energy_ = 0.0;
-    datatools::utils::invalidate (_min_energy_);
-    datatools::utils::invalidate (_max_energy_);
+    datatools::invalidate (_min_energy_);
+    datatools::invalidate (_max_energy_);
 
     _vnm_.reset ();
     _energy_spectrum_.reset ();
@@ -329,7 +331,11 @@ namespace genbb {
     return;
   }
 
-  void single_particle_generator::initialize (const datatools::utils::properties & config_)
+  //void single_particle_generator::initialize (const datatools::properties & config_)
+
+  void single_particle_generator::initialize (const datatools::properties & config_,
+                                              datatools::service_manager & service_manager_,
+                                              detail::pg_dict_type & dictionary_)
   {
     if (config_.has_flag ("debug"))
       {
@@ -427,7 +433,7 @@ namespace genbb {
     if (config_.has_key ("energy_unit"))
       {
         string unit_str = config_.fetch_string ("energy_unit");
-        energy_unit = datatools::utils::units::get_energy_unit_from (unit_str);
+        energy_unit = datatools::units::get_energy_unit_from (unit_str);
       }
 
     if (_mode_ == MODE_MONOKINETIC)
@@ -608,7 +614,7 @@ namespace genbb {
   {
     using namespace std;
     string filename = _energy_spectrum_filename_;
-    datatools::utils::fetch_path_with_env (filename);
+    datatools::fetch_path_with_env (filename);
     ifstream ifile (filename.c_str());
     if (! ifile)
       {
@@ -647,7 +653,7 @@ namespace genbb {
                 {
                   string energy_unit_str;
                   lineiss >> energy_unit_str;
-                  energy_unit = datatools::utils::units::get_energy_unit_from (energy_unit_str);
+                  energy_unit = datatools::units::get_energy_unit_from (energy_unit_str);
                 }
               continue;
             }
@@ -718,7 +724,7 @@ namespace genbb {
 
     using namespace std;
     string filename = _energy_spectrum_filename_;
-    datatools::utils::fetch_path_with_env (filename);
+    datatools::fetch_path_with_env (filename);
     ifstream ifile;
     ifile.open (filename.c_str ());
     if (! ifile)
@@ -754,7 +760,7 @@ namespace genbb {
                 {
                   string energy_unit_str;
                   lineiss >> energy_unit_str;
-                  energy_unit = datatools::utils::units::get_energy_unit_from (energy_unit_str);
+                  energy_unit = datatools::units::get_energy_unit_from (energy_unit_str);
                 }
               continue;
             }
@@ -808,7 +814,7 @@ namespace genbb {
   {
     _particle_type_ = primary_particle::get_particle_type_from_label (_particle_name_);
     _particle_mass_ = get_particle_mass_from_label (_particle_name_);
-    if (! datatools::utils::is_valid (_particle_mass_))
+    if (! datatools::is_valid (_particle_mass_))
       {
         throw logic_error ("genbb::single_particle_generator::_at_init_: Particle mass is not defined !");
       }

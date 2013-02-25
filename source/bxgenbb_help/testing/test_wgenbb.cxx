@@ -32,7 +32,7 @@ int main (int argc_, char ** argv_)
           iarg++;
         }
     
-      datatools::utils::properties config;
+      datatools::properties config;
       if (debug) config.store_flag ("debug");
       config.store_flag ("local_prng");
       config.store ("seed", 314159);
@@ -47,7 +47,7 @@ int main (int argc_, char ** argv_)
  
       genbb::wgenbb WGBB;
       WGBB.set_debug (debug);
-      WGBB.initialize (config);
+      WGBB.initialize_standalone (config);
 
       // working primary event:
       genbb::primary_event pe;

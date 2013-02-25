@@ -8,12 +8,12 @@
 
 #include <genbb_help/genbb_mgr.h>
 
-#include <datatools/serialization/io_factory.h>
+#include <datatools/io_factory.h>
 
 // Some pre-processor guard about Boost I/O usage and linkage :
-//#include <datatools/serialization/bio_guard.h>
-//#include <geomtools/serialization/bio_guard.h>
-#include <genbb_help/serialization/bio_guard.h>
+//#include <datatools/bio_guard.h>
+//#include <geomtools/bio_guard.h>
+#include <genbb_help/bio_guard.h>
 
 int main (int argc_, char ** argv_)
 {
@@ -24,13 +24,13 @@ int main (int argc_, char ** argv_)
 
       int iarg = 1;
       while (iarg < argc_)
-	{
-	  std::string arg = argv_[iarg];
+        {
+          std::string arg = argv_[iarg];
 
-	  if (arg == "-d" || arg == "--debug") debug = true;
+          if (arg == "-d" || arg == "--debug") debug = true;
 
-	  iarg++;
-	}
+          iarg++;
+        }
     
       genbb::genbb_mgr mgr;
 
@@ -41,25 +41,25 @@ int main (int argc_, char ** argv_)
       if (debug) mgr.dump ();
 
       // initialize the manager:
-      mgr.init ();
+      mgr.initialize_simple ();
       if (debug) mgr.dump ();
 
       // working primary event:
       genbb::primary_event pe;
 
-      datatools::serialization::data_writer writer;
+      datatools::data_writer writer;
 
       writer.init ("bipo212_123.txt.gz", 
-		   datatools::serialization::using_multi_archives);
+                   datatools::using_multi_archives);
 
       size_t count = 0;
       // main loop on primary events source:
       while (mgr.has_next ())
-	{
-	  mgr.load_next (pe);
-	  writer.store (pe);
-	  count++;
-	}
+        {
+          mgr.load_next (pe);
+          writer.store (pe);
+          count++;
+        }
       mgr.reset ();
 
       std::clog << "Number of loaded events: " << count << std::endl; 

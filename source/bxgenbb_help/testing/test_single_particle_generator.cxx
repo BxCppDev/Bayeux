@@ -38,11 +38,11 @@ int main (int argc_, char ** argv_)
 
           if (token[0] == '-')
             {
-	      string option = token; 
-	      if ((option == "-d") || (option == "--debug")) 
-		{
-		  debug = true;
-		}
+              string option = token; 
+              if ((option == "-d") || (option == "--debug")) 
+                {
+                  debug = true;
+                }
               else if ((option == "-m") || (option == "--many")) 
                  {
                    many = 1;
@@ -57,12 +57,12 @@ int main (int argc_, char ** argv_)
                  }
               else if ((option == "-e") || (option == "--energy-range")) 
                  {
-		   energy_range_mode = true;
+                   energy_range_mode = true;
                  }
-	      else 
-		{ 
-		  clog << "warning: ignoring option '" << option << "'!" << endl; 
-		}
+              else 
+                { 
+                  clog << "warning: ignoring option '" << option << "'!" << endl; 
+                }
             }
           else
             {
@@ -77,7 +77,7 @@ int main (int argc_, char ** argv_)
       genbb::single_particle_generator SPG;
     
       // Build a configuration properties container:
-      datatools::utils::properties config;
+      datatools::properties config;
       if (debug) config.store_flag ("debug");
 
       /* The seed of the random number generator */
@@ -115,16 +115,16 @@ int main (int argc_, char ** argv_)
       config.store ("sigma_energy", 50.0);
 
       if (energy_range_mode)
-	{
-	  config.change ("mode", "energy_range");
-	  config.store ("min_energy", 950.0);
-	  config.store ("max_energy", 1050.0);
-	}
+        {
+          config.change ("mode", "energy_range");
+          config.store ("min_energy", 950.0);
+          config.store ("max_energy", 1050.0);
+        }
 
       if (debug) config.tree_dump (clog, "Configuration: ", "debug: ");
  
       // Configure the event generator:
-      SPG.initialize (config);
+      SPG.initialize_standalone (config);
 
       // Shoot events:
       size_t max_count = 10;
@@ -132,13 +132,13 @@ int main (int argc_, char ** argv_)
       if (many == 2) max_count = 1000;
       genbb::primary_event pe; // working primary event
       for (int i = 0; i < max_count; i++)
-	{
-	  clog << "Count : " << i << endl;
-	  SPG.load_next (pe);
-	  if (debug) pe.dump ();
-	  // Print the kinetic energy from the only particle in each event:
-	  cout << pe.get_particles ().front ().get_kinetic_energy () << endl;
-	}
+        {
+          clog << "Count : " << i << endl;
+          SPG.load_next (pe);
+          if (debug) pe.dump ();
+          // Print the kinetic energy from the only particle in each event:
+          cout << pe.get_particles ().front ().get_kinetic_energy () << endl;
+        }
 
       if (debug) clog << "debug: " << "The end." << endl;
 

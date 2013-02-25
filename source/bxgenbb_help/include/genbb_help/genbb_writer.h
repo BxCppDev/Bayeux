@@ -29,15 +29,13 @@
  * 
  */
 
-#ifndef __genbb_help__genbb_writer_h
-#define __genbb_help__genbb_writer_h 1
+#ifndef GENBB_HELP_GENBB_WRITER_H_
+#define GENBB_HELP_GENBB_WRITER_H_ 1
 
 #include <string>
 #include <iostream>
 
 #include <geomtools/utils.h>
-
-#include <genbb_help/genbb_mgr.h>
 
 namespace genbb {
 
@@ -113,6 +111,6 @@ namespace genbb {
 
 } // end of namespace genbb
 
-#endif // __genbb_help__genbb_writer_h
+#endif // GENBB_HELP_GENBB_WRITER_H_
 
 // end of genbb_writer.h

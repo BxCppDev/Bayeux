@@ -30,8 +30,8 @@
 
 #include <genbb_help/rng.h>
 
-#include <datatools/utils/utils.h>
-#include <datatools/utils/units.h>
+#include <datatools/utils.h>
+#include <datatools/units.h>
 #include <boost/filesystem.hpp>
 #include <genbb_help/genbb_utils.h>
 
@@ -44,6 +44,11 @@ namespace genbb {
   using namespace std;
 
   size_t wgenbb::_g_counter_ = 0;
+
+  bool wgenbb::is_initialized () const
+  {
+    return _initialized_;
+  }
 
   bool wgenbb::is_debug () const
   {
@@ -77,8 +82,8 @@ namespace genbb {
     _decay_dbd_mode_ = DBD_MODE_INVALID;
     _use_local_prng_ = false;
     _seed_ = 0;
-    datatools::utils::invalidate (_energy_min_);
-    datatools::utils::invalidate (_energy_max_);
+    datatools::invalidate (_energy_min_);
+    datatools::invalidate (_energy_max_);
     return;
   }
   
@@ -89,7 +94,6 @@ namespace genbb {
       {
         reset ();
       }
-    //clog << "DEVEL: wgenbb::~wgenbb: Exiting." << endl;
     return;
   }
 
@@ -148,8 +152,8 @@ namespace genbb {
     _decay_dbd_level_ = 0;  
     _decay_dbd_mode_ = DBD_MODE_INVALID;
 
-    datatools::utils::invalidate (_energy_min_);
-    datatools::utils::invalidate (_energy_max_);
+    datatools::invalidate (_energy_min_);
+    datatools::invalidate (_energy_max_);
 
     _seed_ = 0;
     if (! has_external_random ())
@@ -184,7 +188,9 @@ namespace genbb {
     return;
   }
 
-  void wgenbb::initialize (const datatools::utils::properties & config_)
+  void wgenbb::initialize (const datatools::properties & config_,
+                           datatools::service_manager & service_manager_,
+                           detail::pg_dict_type & dictionary_)
   {
     if (_initialized_)
       {
@@ -195,8 +201,8 @@ namespace genbb {
     double energy_unit = CLHEP::MeV;
     double emin = 0.0;
     double emax = -1.0;
-    datatools::utils::invalidate (emin);
-    datatools::utils::invalidate (emax);
+    datatools::invalidate (emin);
+    datatools::invalidate (emax);
 
     if (config_.has_flag ("debug"))
       {
@@ -287,7 +293,7 @@ namespace genbb {
             if (config_.has_key ("energy_unit"))
               {
                 string unit_str = config_.fetch_string ("energy_unit");
-                energy_unit = datatools::utils::units::get_energy_unit_from (unit_str);
+                energy_unit = datatools::units::get_energy_unit_from (unit_str);
               }
 
             if (config_.has_key ("energy_max"))
@@ -315,16 +321,16 @@ namespace genbb {
           }
       }
 
-    if (datatools::utils::is_valid (_energy_min_))
+    if (datatools::is_valid (_energy_min_))
       {
-        if (! datatools::utils::is_valid (_energy_max_))
+        if (! datatools::is_valid (_energy_max_))
           {
             _energy_max_ = utils::DEFAULT_ENERGY_RANGE_MAX;
           }
       }
-    if (datatools::utils::is_valid (_energy_max_))
+    if (datatools::is_valid (_energy_max_))
       {
-        if (! datatools::utils::is_valid (_energy_min_))
+        if (! datatools::is_valid (_energy_min_))
           {
             _energy_min_ = utils::DEFAULT_ENERGY_RANGE_MIN;
           }
@@ -519,13 +525,13 @@ namespace genbb {
          << _decay_dbd_mode_ << endl;
     if (std::find (dbdmwer.begin (), dbdmwer.end (),_decay_dbd_mode_) != dbdmwer.end ())
       {
-        if (datatools::utils::is_valid (_energy_min_))
+        if (datatools::is_valid (_energy_min_))
           {
             clog << "NOTICE: genbb::wgenbb::_init_: Setting energy min to " 
                  << _energy_min_ / CLHEP::MeV << " MeV" << endl;
             enrange.ebb1 = (float) (_energy_min_ / CLHEP::MeV);     
           }
-        if (datatools::utils::is_valid (_energy_max_))
+        if (datatools::is_valid (_energy_max_))
           {
             clog << "NOTICE: genbb::wgenbb::_init_: Setting energy max to "
                  << _energy_max_ / CLHEP::MeV << " MeV" << endl;
@@ -583,11 +589,11 @@ namespace genbb {
     out_ << tag << "decay_dbd_level  : " << _decay_dbd_level_ << endl;
     out_ << tag << "decay_dbd_mode   : " << _decay_dbd_mode_ << endl;
     out_ << tag << "event_count      : " << _event_count_ << endl;
-    if (datatools::utils::is_valid (_energy_min_))
+    if (datatools::is_valid (_energy_min_))
       {
         out_ << tag << "energy_min       : " << _energy_min_ / CLHEP::keV << " keV" << endl;
       }
-    if (datatools::utils::is_valid (_energy_max_))
+    if (datatools::is_valid (_energy_max_))
       {
         out_ << tag << "energy_max       : " << _energy_max_ / CLHEP::keV << " keV" << endl;
       }

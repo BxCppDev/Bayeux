@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef __genbb_help__genbb_commons_h
-#define __genbb_help__genbb_commons_h 1
+#ifndef GENBB_HELP_GENBB_COMMONS_H_
+#define GENBB_HELP_GENBB_COMMONS_H_ 1
 
 #include <iostream>
 #include <string>
@@ -101,6 +101,6 @@ public:
   void reset ();
 };
 
-#endif // __genbb_help__genbb_commons_h
+#endif // GENBB_HELP_GENBB_COMMONS_H_
 
 // end of genbb_commons.h

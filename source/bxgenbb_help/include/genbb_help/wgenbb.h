@@ -2,10 +2,10 @@
 /* wgenbb.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-28
- * Last modified: 2012-06-26
+ * Last modified: 2013-02-25
  * 
  * License: 
- * Copyright 2007-2012 F. Mauger
+ * Copyright 2007-2013 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@
  * 
  */
 
-#ifndef __genbb_help__wgenbb_h
-#define __genbb_help__wgenbb_h 1
+#ifndef GENBB_HELP_WGENBB_H_
+#define GENBB_HELP_WGENBB_H_ 1
 
 #include <iostream>
 
@@ -41,7 +41,7 @@
 
 #include <mygsl/rng.h>
 
-#include <datatools/utils/properties.h>
+#include <datatools/properties.h>
 
 #include <genbb_help/detail/__genbb_help_FC2.h>
 
@@ -75,11 +75,11 @@ namespace genbb {
   public:
 
     enum decay_type_t
-    {
-      DECAY_TYPE_UNDEFINED  = 0,
-      DECAY_TYPE_DBD        = 1,
-      DECAY_TYPE_BACKGROUND = 2
-    };
+      {
+        DECAY_TYPE_UNDEFINED  = 0,
+        DECAY_TYPE_DBD        = 1,
+        DECAY_TYPE_BACKGROUND = 2
+      };
 
     static const unsigned int ISOTOPE_NAME_MAXSIZE = 32;
     static const int DBD_MODE_INVALID = -1;
@@ -110,21 +110,17 @@ namespace genbb {
 
     virtual ~wgenbb ();
 
-    void initialize (const datatools::utils::properties & config_);
+    void dump (std::ostream & = std::clog) const;
 
-    void reset ();
+    virtual void initialize (const datatools::properties & setup_,
+                             datatools::service_manager & service_manager_,
+                             detail::pg_dict_type & dictionary_);
+
+    virtual void reset ();
 
     virtual bool has_next ();
 
-  public:
-
-    void dump (std::ostream & = std::clog) const;
-
-  private:
-
-    void _init_ ();
-
-    void _clean_ ();
+    virtual bool is_initialized () const;
 
   protected:
 
@@ -133,11 +129,15 @@ namespace genbb {
 
   private:
 
+    void _init_ ();
+
+    void _clean_ ();
+
     void _set_decay_isotope_ (const std::string & di_);
 
   private:
 
-    static size_t _g_counter_;
+    static size_t _g_counter_; /// Counter for singletonization
 
     bool   _debug_;
     bool   _initialized_;
@@ -160,6 +160,6 @@ namespace genbb {
 
 } // end of namespace genbb
 
-#endif // __genbb_help__wgenbb_h
+#endif // GENBB_HELP_WGENBB_H_
 
 // end of wgenbb.h

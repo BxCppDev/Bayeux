@@ -22,7 +22,6 @@
 
 #include <genbb_help/genbb_writer.h>
 
-
 #include <cstdlib>
 #include <stdexcept>
 #include <sstream>
@@ -30,8 +29,6 @@
 #include <string>
 #include <list>
 
-//#include <genbb_help/primary_particle.ipp>
-//#include <genbb_help/primary_event.ipp>
 #include <genbb_help/primary_event.h>
 
 #include <CLHEP/Units/SystemOfUnits.h>
@@ -248,7 +245,7 @@ namespace genbb {
     _debug_        = false;
     _seed_         = 314159;
     _npart_        = -1;
-    _part_per_evt_ = 1;
+    _part_per_evt_ =  1;
     _type_         = -1;
     _emin_         = -1.;
     _emax_         = -1.;
@@ -263,7 +260,6 @@ namespace genbb {
   {
     return;
   }
-
 
 } // end of namespace genbb
 

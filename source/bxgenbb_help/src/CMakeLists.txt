@@ -1,198 +1,279 @@
 # - CMakeLists.txt for genbb_help/src subdir
 
-set ( _ld_library_path_env "LD_LIBRARY_PATH" )
-if ( CMAKE_SYSTEM_NAME MATCHES Darwin )
-  set ( _ld_library_path_env "DYLD_LIBRARY_PATH" )
-endif ( CMAKE_SYSTEM_NAME MATCHES Darwin )
+#-----------------------------------------------------------------------
+# function list_prepend(<list> <value>)
+#          Prepend value to each element in list, in place
+function(list_prepend _list _value)
+  set(_tmp_list)
+  foreach(_elem ${${_list}})
+    list(APPEND _tmp_list "${_value}${_elem}")
+  endforeach()
+  set(${_list} ${_tmp_list} PARENT_SCOPE)
+endfunction()
 
-# ----------------------------------------------------------------------------
-# Explicitly list the sources for the library, separating into sources and
-# public headers
-#
+#-----------------------------------------------------------------------
+# Explicitly list the sources for the library, separating into sources,
+# public headers, private headers and resources.
+#-----------------------------------------------------------------------
+# PUBLIC HEADERS
+# Because we're in the awkward position of separate headers and sources,
+# use a simple listing and then prepend the actual source dir root
 
-file ( GLOB genbb_help_f77_PUBLIC_HEADERS
-  ${PROJECT_SOURCE_DIR}/include/genbb_help/*.inc
+file ( GLOB genbb_help_F77_PUBLIC_HEADERS
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/dummy.inc
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/genbb_commons.inc
   ${PROJECT_SOURCE_DIR}/include/genbb_help/fermi.h
   ${PROJECT_SOURCE_DIR}/include/genbb_help/rng.h
-  ${PROJECT_BINARY_DIR}/include/genbb_help/__genbb_help_FC.h
   )
-file ( GLOB genbb_help_f77_SOURCES
-  ${genbb_help_f77_PUBLIC_HEADERS}
+
+file ( GLOB genbb_help_F77_SOURCES
+  ${genbb_help_F77_PUBLIC_HEADERS}
   ${PROJECT_SOURCE_DIR}/src/fermi.cc
   ${PROJECT_SOURCE_DIR}/src/rng.cc
   ${PROJECT_SOURCE_DIR}/src/*.f
   )
 
 file ( GLOB genbb_help_PUBLIC_HEADERS
-  ${PROJECT_SOURCE_DIR}/include/genbb_help/*.h
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/bio_guard.h
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/genbb_commons.h
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/genbb.h
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/genbb_macros.h
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/genbb_mgr.h
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/genbb_utils.h
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/genbb_writer.h
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/i_genbb.h
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/manager.h
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/primary_event.h
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/primary_particle.h
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/single_particle_generator.h
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/the_serializable.h
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/wgenbb.h
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/primary_event.ipp
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/primary_particle.ipp
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/the_serializable.ipp
+  )
+
+# - Add config header
+configure_file(
+  ${PROJECT_SOURCE_DIR}/include/genbb_help/genbb_help_config.h.in
   ${PROJECT_BINARY_DIR}/include/genbb_help/genbb_help_config.h
-  ${PROJECT_BINARY_DIR}/include/genbb_help/__genbb_help_FC.h
-  )
-list ( REMOVE_ITEM genbb_help_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/include/genbb_help/fermi.h" )
-list ( REMOVE_ITEM genbb_help_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/include/genbb_help/rng.h"   )
-
-file ( GLOB genbb_help_ipp_PUBLIC_HEADERS
-  ${PROJECT_SOURCE_DIR}/include/genbb_help/*.ipp
   )
 
-file ( GLOB genbb_help_serialization_PUBLIC_HEADERS
-  ${PROJECT_SOURCE_DIR}/include/genbb_help/serialization/*.h
-  ${PROJECT_SOURCE_DIR}/include/genbb_help/serialization/*.ipp
+list(APPEND genbb_help_PUBLIC_HEADERS 
+     ${PROJECT_BINARY_DIR}/include/genbb_help/genbb_help_config.h)
+
+#-----------------------------------------------------------------------
+# PRIVATE HEADERS
+#  
+
+# - DETAIL headers: Again a list, but we also set their Mac OSX
+# package location because they are nested...
+set(genbb_help_detail_HEADERS
+  include/genbb_help/detail/bio_link_guard.h
+  include/genbb_help/detail/pg_tools.h
+   )
+list_prepend(genbb_help_detail_HEADERS "${PROJECT_SOURCE_DIR}/")
+
+list(APPEND genbb_help_detail_HEADERS ${PROJECT_BINARY_DIR}/include/genbb_help/detail/__genbb_help_FC.h)
+list(APPEND genbb_help_detail_HEADERS ${PROJECT_BINARY_DIR}/include/genbb_help/detail/__genbb_help_FC2.h)
+
+set_source_files_properties(${genbb_help_detail_HEADERS}
+  PROPERTIES
+    MACOSX_PACKAGE_LOCATION Headers/detail
   )
 
-file ( GLOB genbb_help_SOURCES
-  ${PROJECT_SOURCE_DIR}/include/genbb_help/*.h
-  ${PROJECT_BINARY_DIR}/include/genbb_help/genbb_help_config.h
-  ${PROJECT_SOURCE_DIR}/src/*.cc
-  )
+# We have to install the detail header modules separately if genbb_help 
+# isn't built as a Framework.
+if(NOT APPLE)
+  foreach(_module detail)
+    install(FILES ${genbb_help_${_module}_HEADERS}
+      DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genbb_help/${_module}
+      COMPONENT   Development
+      )
+  endforeach()
+endif()
 
-list ( REMOVE_ITEM genbb_help_SOURCES "${PROJECT_SOURCE_DIR}/src/fermi.cc" )
-list ( REMOVE_ITEM genbb_help_SOURCES "${PROJECT_SOURCE_DIR}/src/rng.cc" )
+#-----------------------------------------------------------------------
+# SOURCE FILES
+# Pretty basic!
+set(genbb_help_SOURCES
+      genbb.cc
+      genbb_commons.cc
+      genbb_mgr.cc
+      genbb_utils.cc
+      genbb_writer.cc
+      i_genbb.cc
+      manager.cc
+      pg_tools.cc
+      primary_event.cc
+      primary_particle.cc
+      single_particle_generator.cc
+      wgenbb.cc
+)
 
-# remove this because it go in the BIO DLL :
-list ( REMOVE_ITEM genbb_help_SOURCES "${PROJECT_SOURCE_DIR}/src/the_serializable.cc" )
-
-message ( STATUS "genbb_help_SOURCES=${genbb_help_SOURCES}" )
-
-if ( GENBB_HELP_WITH_BIO )
-  set ( genbb_help_bio_SOURCES 
-    ${PROJECT_SOURCE_DIR}/include/genbb_help/serialization/the_serializable.ipp
-    ${PROJECT_SOURCE_DIR}/include/genbb_help/serialization/the_serializable.h
-    ${PROJECT_SOURCE_DIR}/src/the_serializable.cc )
-  message ( STATUS "genbb_help_bio_SOURCES=${genbb_help_bio_SOURCES}" )
-endif ( GENBB_HELP_WITH_BIO )
-
-include_directories ( ${PROJECT_SOURCE_DIR}/include	
-  ${PROJECT_BINARY_DIR}/include	
-  )
-
-# ---------------------------------------------------------------------------- 
-# Dependencies
+#-----------------------------------------------------------------------
+# CMAKE RESOURCE FILES
+# We do this here because it allows us to to add the config files as
+# resources on Mac. This allows them to be easily imported into the
+# Framework with minimal platform specific commands by adding them
+# as sources of the framework/library.
+# We have to deal with the library depends part of this later because 
+# their generation require the targets to be present...
 #
-include_directories ( ${geomtools_INCLUDE_DIRS} )
+if(APPLE)
+  set(TO_GENBB_HELP_INCLUDEDIR "../..")
+else()
+  file(RELATIVE_PATH TO_GENBB_HELP_INCLUDEDIR 
+    "${CMAKE_INSTALL_FULL_LIBDIR}/cmake/genbb_help-${genbb_help_VERSION}" 
+    "${CMAKE_INSTALL_FULL_INCLUDEDIR}"
+    )
+endif()
 
-if ( GENBB_HELP_WITH_DEBUG )
-  add_definitions ( "-g" )
-endif ()
+set(genbb_help_RESOURCES
+  cmake/genbb_help-config.cmake
+  cmake/genbb_help-config-version.cmake
+  )
+
+foreach(_dtresource ${genbb_help_RESOURCES})
+  configure_file(
+    ${PROJECT_SOURCE_DIR}/${_dtresource}.in 
+    ${PROJECT_BINARY_DIR}/${_dtresource}
+    @ONLY
+    )
+  list(APPEND genbb_help_RESOURCES_INPUTS ${PROJECT_SOURCE_DIR}/${_dtresource}.in)
+  list(APPEND genbb_help_RESOURCES_OUTPUTS ${PROJECT_BINARY_DIR}/${_dtresource})
+endforeach()
+
+set_source_files_properties(${genbb_help_RESOURCES_OUTPUTS}
+  PROPERTIES
+    MACOSX_PACKAGE_LOCATION Resources/CMake
+  )
+
+if(NOT APPLE)
+  install(FILES ${genbb_help_RESOURCES_OUTPUTS}
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/genbb_help-${genbb_help_VERSION}"
+    COMPONENT Development
+    )
+endif()
+
+#-----------------------------------------------------------------------
+# BUILD THE GENBB_HELP LIBRARY
+#
+include_directories(
+  ${PROJECT_BINARY_DIR}/include
+  ${PROJECT_SOURCE_DIR}/include	
+  ${geomtools_INCLUDE_DIRS}
+  )
+
+#if(GENBB_HELP_WITH_REFLECTION)
+#  include_directories(${CAMP_INCLUDE_DIR})
+#endif()
 
 # ----------------------------------------------------------------------------
-# Add the libraries
-#
+# Build the Fortran part of the library :
 
-### add_definitions (CONFIG=Debug;Release;RelWithDebInfo;MinSizeRel
-### -DGEN_OUTFILES)
-### 
-
-# set ( CMAKE_Fortran_FLAGS "${_genbb_help_fortran_definitions}"  )
-
-
-# set ( CMAKE_CXX_FLAGS "${_genbb_help_fortran_definitions} ${_genbb_help_definitions} "  )
-
-# -Dgenbbsub=genbbsub_ 
-# -Dset_genbb_random_seed=set_genbb_random_seed_ 
-# -Dgrndm=grndm_ 
-# -Dgenbb_init_enrange=genbb_init_enrange_ 
-# -Dgenevent=genevent_ 
-# -Denrange=enrange_
-
-# ----------------------------------------------------------------------------
-# Fortran :
-#
-
-add_library ( genbb_help_f77 SHARED  
-  ${genbb_help_f77_PUBLIC_HEADERS} 
-  ${genbb_help_f77_SOURCES}
+add_library(genbb_help_f77 SHARED  
+  ${genbb_help_F77_PUBLIC_HEADERS} 
+  ${genbb_help_F77_SOURCES}
   )
 
-# ----------------------------------------------------------------------------
-# Link dynamic library :
-#
-#set ( _link_libraries ${geomtools_LIBRARIES} )
-set ( _link_libraries ${geomtools_CORE_LIBRARY} )
-
-target_link_libraries ( genbb_help_f77 
-  ${_link_libraries}
+set_target_properties(genbb_help_f77
+  PROPERTIES 
+    FRAMEWORK                             ON
+    MACOSX_FRAMEWORK_IDENTIFIER           org.supernemo.genbb_help
+    MACOSX_FRAMEWORK_BUNDLE_VERSION       ${genbb_help_VERSION}
+    MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${genbb_help_VERSION}
+    VERSION                               ${genbb_help_VERSION}
+    SOVERSION                             ${genbb_help_VERSION_MAJOR}
+    PUBLIC_HEADER                         "${genbb_help_F77_PUBLIC_HEADERS}"
   )
+  
+target_link_libraries(genbb_help_f77 ${geomtools_LIBRARIES} ${CMAKE_DL_LIBS})
+
 
 # ----------------------------------------------------------------------------
-# C++ :
-#
+# Build the C++ part of the library :
 
-add_library ( genbb_help SHARED  
+add_library(genbb_help SHARED  
   ${genbb_help_PUBLIC_HEADERS} 
+  ${genbb_help_detail_HEADERS} 
   ${genbb_help_SOURCES}
+  ${genbb_help_RESOURCES_OUTPUTS}
   )
 
-# Link dynamic library :
-target_link_libraries ( genbb_help
-  genbb_help_f77
+set_target_properties(genbb_help
+  PROPERTIES 
+    FRAMEWORK                             ON
+    MACOSX_FRAMEWORK_IDENTIFIER           org.supernemo.genbb_help
+    MACOSX_FRAMEWORK_BUNDLE_VERSION       ${genbb_help_VERSION}
+    MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${genbb_help_VERSION}
+    VERSION                               ${genbb_help_VERSION}
+    SOVERSION                             ${genbb_help_VERSION_MAJOR}
+    PUBLIC_HEADER                         "${genbb_help_PUBLIC_HEADERS}"
   )
-# ----------------------------------------------------------------------
-# Installation :
+ 
+if(GENBB_HELP_WITH_REFLECTION)
+  target_link_libraries(genbb_help genbb_help_f77 ${CAMP_LIBRARIES} ${CMAKE_DL_LIBS})
+else()
+  target_link_libraries(genbb_help genbb_help_f77 ${CMAKE_DL_LIBS})
+endif()
+
+set(GENBB_HELP_TARGETS genbb_help genbb_help_f77)
+
+#-----------------------------------------------------------------------
+# BUILD THE GENBB_HELP BOOST I/O COMPONENT
+# We build this as a shared library as we can then link to it directly
+# On Mac, we use dynamic_lookup for undefined symbols because we want
+# the lib to act as a plugin.
 #
-
-install ( FILES ${PROJECT_SOURCE_DIR}/scripts/genbb
-  DESTINATION ${CMAKE_INSTALL_BINDIR}
-  PERMISSIONS OWNER_READ OWNER_EXECUTE 
-  GROUP_READ GROUP_EXECUTE 
-  WORLD_READ WORLD_EXECUTE
-  )
-
-install ( TARGETS genbb_help_f77
-  EXPORT  genbb_help-libraries
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT bin
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT bin 
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT devel
-  )
-
-install ( TARGETS genbb_help
-  EXPORT  genbb_help-libraries
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT bin
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT bin 
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT devel
-  )
-
-install ( FILES ${genbb_help_PUBLIC_HEADERS}
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genbb_help
-  )
-
-install ( FILES ${genbb_help_ipp_PUBLIC_HEADERS}
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genbb_help
-  )
-
-install ( FILES ${genbb_help_serialization_PUBLIC_HEADERS}
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genbb_help/serialization
-  )
-
-# - Bio stuff :
-if ( GENBB_HELP_WITH_BIO )
-
-  add_library( genbb_help_bio SHARED 
-    ${genbb_help_PUBLIC_HEADERS} 
-    ${genbb_help_detail_PUBLIC_HEADERS} 
-    ${genbb_help_bio_SOURCES}
+if(GENBB_HELP_WITH_BIO)
+  set(genbb_help_bio_SOURCES
+    include/genbb_help/the_serializable.h
+    include/genbb_help/the_serializable.ipp
+    src/the_serializable.cc
     )
-  set ( _link_libraries  )
+  list_prepend(genbb_help_bio_SOURCES "${PROJECT_SOURCE_DIR}/")
+  
+  add_library(genbb_help_bio SHARED ${genbb_help_bio_SOURCES})
 
-  if ( ${geomtools_WITH_BIO} )
-    list (APPEND _link_libraries ${geomtools_BIO_LIBRARY} ) 
-  endif ()
+  if(APPLE)
+    set_property(TARGET genbb_help_bio APPEND
+      PROPERTY LINK_FLAGS "-undefined dynamic_lookup"
+      )
+  endif()
 
-  # Link dynamic library :
-  target_link_libraries ( genbb_help_bio
-    genbb_help
-    ${_link_libraries}
+  list(APPEND GENBB_HELP_TARGETS genbb_help_bio)
+endif()
+
+#-----------------------------------------------------------------------
+# EXPORT AND INSTALL LIBRARY TARGETS
+# We make use of the full signature 
+install(TARGETS ${GENBB_HELP_TARGETS}
+  EXPORT        genbb_help-libraries
+  RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR} 
+                COMPONENT Runtime
+  LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR} 
+                COMPONENT Runtime
+  FRAMEWORK     DESTINATION ${GENBB_HELP_FRAMEWORK_LOCATION} 
+                COMPONENT Runtime
+  ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR} 
+                COMPONENT Development
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/genbb_help 
+                COMPONENT Development
+  )
+
+# - Install the lib depends file
+# We also need to generate a file for the build tree, but at present
+# we leave this out for simplicity.
+if(APPLE)
+  install(EXPORT genbb_help-libraries 
+    DESTINATION CMake COMPONENT Development
     )
-
-  ###target_link_libraries ( genbb_help_bio LINK_INTERFACE_LIBRARIES "" )
-
-  install ( TARGETS genbb_help_bio
-    EXPORT  genbb_help-libraries
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT bin
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT bin 
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT devel
+else()
+  install(EXPORT genbb_help-libraries 
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/genbb_help-${genbb_help_VERSION}
+    COMPONENT Development
     )
-
-endif ( GENBB_HELP_WITH_BIO )
+endif()
 
 # - end of CMakeLists.txt for genbb_help/src subdir

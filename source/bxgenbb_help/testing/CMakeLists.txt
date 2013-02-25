@@ -1,6 +1,6 @@
 ###############################################################################
 ##
-## Copyright (C) 2012 François Mauger 
+## Copyright (C) 2012-2013 François Mauger 
 ## Contact: mauger@lpccaen.in2p3.fr
 ##
 ## This file is part of the genbb_help library.
@@ -19,14 +19,6 @@
 ## along with genbb_help.  If not, see <http://www.gnu.org/licenses/>.
 ##
 ###############################################################################
-
-# set ( CMAKE_Fortran_FLAGS 
-#   "${_genbb_help_fortran_definitions} "
-#   )
-
-# set ( CMAKE_CXX_FLAGS  
-#   "${_genbb_help_fortran_definitions} ${_genbb_help_definitions} "
-#   )
 
 set ( genbb_help_tests_programs_list_CXX
       test_genbb_help.cxx 
@@ -50,11 +42,14 @@ set ( genbb_help_tests_programs_list_CXX
     )
 
 set ( genbb_help_tests_programs_list_Fortran
-    test_beta.F
-    test_fermi_f.F
-    test_rnd2.F
-    test_rnd.F
+      test_beta.F
+      test_fermi_f.F
+      test_rnd2.F
+      test_rnd.F
     )
+# message ( STATUS "testing: datatools_INCLUDE_DIRS : ${datatools_INCLUDE_DIRS}" )
+# message ( STATUS "testing:     mygsl_INCLUDE_DIRS : ${mygsl_INCLUDE_DIRS}" )
+# message ( STATUS "testing: geomtools_INCLUDE_DIRS : ${geomtools_INCLUDE_DIRS}" )
 
 # include files search paths
 include_directories ( ${PROJECT_SOURCE_DIR}/include	
@@ -71,7 +66,8 @@ message ( STATUS "testing: Performing all available tests : ${GENBB_HELP_ALL_TES
 
 if ( GENBB_HELP_ALL_TESTS )
 
-  set ( _test_tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/tmp" )
+  set(_test_tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/testing_output")
+
   execute_process (COMMAND cmake -E remove_directory ${_test_tmp_dir} )
 
   foreach ( test_program ${genbb_help_tests_programs_list_CXX} )
@@ -90,15 +86,20 @@ if ( GENBB_HELP_ALL_TESTS )
 
     # last thing we have to do is to tell CMake what libraries 
     # our executable needs,
-    # set ( _test_libraries genbb_help genbb_help_f77 )
-    # list ( APPEND _test_libraries ${geomtools_LIBRARIES} )
-    # if ( GENBB_HELP_WITH_BIO )
-    #   list ( INSERT _test_libraries 0 genbb_help_bio ) 
-    # endif ()
     set ( _test_libraries genbb_help )
+
+    # BIO plugin DLLs :
     if ( GENBB_HELP_WITH_BIO )
-      set ( _test_libraries genbb_help_bio )
+      list (APPEND  _test_libraries genbb_help_bio )
     endif ()
+    if ( geomtools_WITH_BIO )
+      list (APPEND  _test_libraries ${geomtools_BIO_LIBRARY} )
+    endif ()
+    if ( datatools_WITH_BIO )
+      list (APPEND  _test_libraries ${datatools_BIO_LIBRARY} )
+    endif ()
+
+    message ( STATUS "testing: Libraries = '${_test_libraries}'" )
 	 
     target_link_libraries ( ${test_executable} ${_test_libraries} )
 
@@ -127,7 +128,7 @@ if ( GENBB_HELP_ALL_TESTS )
     # our executable needs,
     target_link_libraries ( ${test_executable} 
       genbb_help_f77
-      #${geomtools_LIBRARIES} 
+      ${mygsl_LIBRARIES} 
       )
 
     add_test ( NAME ${test_executable}.run
@@ -153,33 +154,5 @@ if ( GENBB_HELP_ALL_TESTS )
 
 endif ()
 
-##set_target_properties(foo PROPERTIES LINKER_LANGUAGE CXX)
-
-option ( GENBB_HELP_INSTALL_TEST_PROGRAMS "Install test programs" 1 )
-message ( STATUS "testing: Installing all test programs' source files : ${GENBB_HELP_INSTALL_TEST_PROGRAMS}" )
-
-# - Installation :
-if (GENBB_HELP_INSTALL_TEST_PROGRAMS) 
-  set ( _test_install_dir ${CMAKE_INSTALL_DATADIR}/testing )
-
-  file ( GLOB genbb_help_tests_config config/*.conf )
-  install ( FILES ${genbb_help_tests_config} 
-     	    DESTINATION ${_test_install_dir}/config  
-            PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ 
-          )
-
-  file ( GLOB genbb_help_tests_data data/*.genbb data/*.txt.gz data/*.data  )
-  install ( FILES ${genbb_help_tests_data} 
-     	    DESTINATION ${_test_install_dir}/data  
-            PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ 
-          )
-
-  file ( GLOB genbb_help_tests_programs test_*.cxx )
-  install ( FILES ${genbb_help_tests_programs} testDriver.bash
-	    DESTINATION ${_test_install_dir}
-            PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ 
-          )
-
-endif ()
 
 # end of CMakeLists.txt

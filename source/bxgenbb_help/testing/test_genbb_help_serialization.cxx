@@ -9,20 +9,20 @@
 
 #include <boost/scoped_ptr.hpp>
 
-#include <datatools/utils/clhep_units.h>
+#include <datatools/clhep_units.h>
 
 // Serializable :
-#include <datatools/utils/things.h>
-#include <datatools/utils/properties.h>
+#include <datatools/things.h>
+#include <datatools/properties.h>
 #include <geomtools/geom_id.h>
 #include <genbb_help/primary_event.h>
 
 // Some pre-processor guards about Boost I/O usage and linkage :
-#include <datatools/serialization/bio_guard.h>
-#include <geomtools/serialization/bio_guard.h>
-#include <genbb_help/serialization/bio_guard.h>
+#include <datatools/bio_guard.h>
+#include <geomtools/bio_guard.h>
+#include <genbb_help/bio_guard.h>
 
-#include <datatools/serialization/io_factory.h>
+#include <datatools/io_factory.h>
 
 using namespace std;
 
@@ -38,7 +38,7 @@ int main (int argc_, char ** argv_)
     {
       {
         // declare the 'bag1' instance as a 'things' container:
-        datatools::utils::things bag1 ("bag1", "A bag with things in it"); 
+        datatools::things bag1 ("bag1", "A bag with things in it"); 
      
         
         if (with_gbio)
@@ -56,7 +56,7 @@ int main (int argc_, char ** argv_)
         
         if (with_dbio)
           {
-            datatools::utils::properties & p1 = bag1.add<datatools::utils::properties> ("p1", "A property store");
+            datatools::properties & p1 = bag1.add<datatools::properties> ("p1", "A property store");
             p1.set_description ("A list of properties");
             p1.store_flag ("fake");
           }
@@ -69,7 +69,7 @@ int main (int argc_, char ** argv_)
           }
 
         string filename = "test_things.txt";
-        namespace ds = datatools::serialization;
+        namespace ds = datatools;
         ds::data_writer writer;
         writer.init (filename, ds::using_multi_archives);
         writer.store (bag1);                                                    
@@ -77,10 +77,10 @@ int main (int argc_, char ** argv_)
         
       {
         // declare the 'bag1' instance as a 'things' container:
-        datatools::utils::things bag1;
+        datatools::things bag1;
 
         string filename = "test_things.txt";
-        namespace ds = datatools::serialization;
+        namespace ds = datatools;
         ds::data_reader reader;
         reader.init (filename, ds::using_multi_archives);
         reader.load (bag1);                                                     

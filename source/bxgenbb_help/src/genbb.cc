@@ -29,7 +29,7 @@
 
 #include <boost/filesystem.hpp>
 
-#include <datatools/utils/utils.h>
+#include <datatools/utils.h>
  
 #include <genbb_help/genbb.h>
 #include <genbb_help/genbb_utils.h>
@@ -310,11 +310,13 @@ namespace genbb {
     return;
   }
 
-  void genbb::initialize (const datatools::utils::properties & config_)
+  void genbb::initialize (const datatools::properties & config_,
+                          datatools::service_manager & service_manager_,
+                          detail::pg_dict_type & dictionary_)
   {
     if (_initialized_)
       {
-        throw logic_error ("genbb::genbb::reset: Object is already initialized !");
+        throw logic_error ("genbb::genbb::initialize: Object is already initialized !");
       }
 
     if (config_.has_flag ("debug"))
@@ -504,7 +506,7 @@ namespace genbb {
               message << "genbb::genbb::initialize: Missing base temporary directory ! ";
               throw logic_error (message.str());
             }
-          datatools::utils::fetch_path_with_env (_tmp_base_dir_);
+          datatools::fetch_path_with_env (_tmp_base_dir_);
           {
             if (! boost::filesystem::is_directory (_tmp_base_dir_))
               {
@@ -536,7 +538,7 @@ namespace genbb {
         }
       else
         {
-          datatools::utils::fetch_path_with_env (_forced_tmp_dir_);
+          datatools::fetch_path_with_env (_forced_tmp_dir_);
           if (_forced_tmp_dir_.length () > (TMP_DIR_BUFSZ - 1))
             {
               ostringstream message;
@@ -722,28 +724,6 @@ namespace genbb {
           throw logic_error (message.str ());
         }
     }
-    /*
-    *_genbb_in_ >> ws >> evnum >> time >> npart;
-    if (! *_genbb_in_)
-      {
-        std::ostringstream message;
-        message << "genbb::genbb::_load_next_genbb_: " 
-                << "Invalid format at line '"
-                << line << "' !";
-        throw logic_error (message.str ());
-            {
-      std::istringstream line_iss (line);
-      line_iss >> ws >> evnum >> time >> npart >> ws;
-      if (! line_iss)
-        {
-          ostringstream message;
-          message << "genbb::genbb_mgr::_load_next_genbb_: Format error !";
-          throw logic_error (message.str ());
-        }
-    }
-
-      }
-    */
     event_.time = time * CLHEP::second;
     event_.set_genbb_weight (_genbb_weight_);
     double part_time = 0.0;
@@ -848,7 +828,7 @@ namespace genbb {
 
     // reset counter:
     _buffer_item_ = 0; 
-    datatools::utils::fetch_path_with_env (_genbb_data_);
+    datatools::fetch_path_with_env (_genbb_data_);
  
     if (_debug_)
       {
@@ -888,15 +868,7 @@ namespace genbb {
                       << "GENBB script : '" << genbb_script << "'."
                       << std::endl;
           }
-        // else
-        //   {
-        //     ostringstream message;
-        //     message << "genbb::genbb::_init_: " 
-        //             << "Cannot find 'GENBB_HELP_GENBB_SCRIPT' environ variable !";
-        //     _clean_ ();
-        //     throw logic_error (message.str());
-        //   }
-        datatools::utils::fetch_path_with_env (genbb_script);
+        datatools::fetch_path_with_env (genbb_script);
         
         unsigned long genbb_seed = grab_random ().uniform_int (0xFFFFFFF);
 

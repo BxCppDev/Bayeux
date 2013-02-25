@@ -30,8 +30,8 @@
  *
  */
 
-#ifndef __genbb_help__single_particle_generator_h
-#define __genbb_help__single_particle_generator_h 1
+#ifndef GENBB_HELP_SINGLE_PARTICLE_GENERATOR_H_
+#define GENBB_HELP_SINGLE_PARTICLE_GENERATOR_H_ 1
 
 #include <string>
 
@@ -42,7 +42,7 @@
 #include <mygsl/von_neumann_method.h>
 #include <mygsl/histogram.h>
 
-#include <datatools/utils/properties.h>
+#include <datatools/properties.h>
 
 namespace genbb {
 
@@ -73,7 +73,6 @@ namespace genbb {
   public:
     bool is_debug () const;
     void set_debug (bool);
-    bool is_initialized () const;
     bool is_randomized_direction () const;
     void set_randomized_direction (bool);
     const std::string & get_particle_name () const;
@@ -99,29 +98,33 @@ namespace genbb {
 
     void set_energy_spectrum_filename (const std::string & filename_);
 
+    /// Constructor
+    single_particle_generator ();
+
+    /// Destrcutor
+    virtual ~single_particle_generator ();
+
+    /// Main initialization interface method
+    virtual void initialize (const datatools::properties & setup_,
+                             datatools::service_manager & service_manager_,
+                             detail::pg_dict_type & dictionary_);
+
+    virtual void reset ();
+
+    virtual bool has_next ();
+    
+    /// Check initialization status
+    virtual bool is_initialized () const;
+
   protected:
+
+    virtual void _load_next (primary_event & event_,
+                             bool compute_classification_ = true);
 
     void _init_energy_spectrum ();
 
     void _init_energy_histo_pdf ();
 
-  public:
-    // ctor:
-    single_particle_generator ();
-
-    // dtor:
-    virtual ~single_particle_generator ();
-
-    void initialize (const datatools::utils::properties & config_);
-
-    void reset ();
-
-    virtual bool has_next ();
-
-  protected:
-
-    virtual void _load_next (primary_event & event_,
-                             bool compute_classification_ = true) ;
   private:
 
     void _at_init_ ();
@@ -158,11 +161,13 @@ namespace genbb {
     bool          _randomized_direction_;
     unsigned long _seed_; //!< Local PRNG's seed
     mygsl::rng    _random_; //!< Local PRNG
+
+    GENBB_PG_REGISTRATION_INTERFACE(single_particle_generator);
  
   };
 
 } // end of namespace genbb
 
-#endif // __genbb_help__single_particle_generator_h
+#endif // GENBB_HELP_SINGLE_PARTICLE_GENERATOR_H_
 
 // end of single_particle_generator.h

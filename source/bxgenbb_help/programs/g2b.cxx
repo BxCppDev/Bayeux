@@ -7,17 +7,17 @@
 #include <exception>
 #include <list>
 
-#include <datatools/utils/utils.h>
-#include <datatools/utils/ioutils.h>
+#include <datatools/utils.h>
+#include <datatools/ioutils.h>
 
 #include <genbb_help/genbb_mgr.h>
 
-#include <datatools/serialization/io_factory.h>
+#include <datatools/io_factory.h>
 
 // Some pre-processor guard about Boost I/O usage and linkage :
-#include <datatools/serialization/bio_guard.h>
-#include <geomtools/serialization/bio_guard.h>
-#include <genbb_help/serialization/bio_guard.h>
+#include <datatools/bio_guard.h>
+#include <geomtools/bio_guard.h>
+#include <genbb_help/bio_guard.h>
 
 using namespace std;
 
@@ -83,26 +83,24 @@ int main (int a_argc, char ** a_argv)
            i++)
         {
           string infile = *i;
-          datatools::utils::expand_path (infile);
-          clog << datatools::utils::io::notice << "Input GENBB file = '" << infile << "'" << endl;
+          datatools::expand_path (infile);
+          clog << datatools::io::notice << "Input GENBB file = '" << infile << "'" << endl;
           mgr.set (infile);
         }
       if (debug) mgr.dump ();
 
-      datatools::utils::expand_path (output_file);
-      clog << datatools::utils::io::notice << "Output Boost file = '" << output_file << "'" << endl;
+      datatools::expand_path (output_file);
+      clog << datatools::io::notice << "Output Boost file = '" << output_file << "'" << endl;
 
       // initialize the manager:
-      mgr.init ();
+      mgr.initialize_simple ();
       if (debug) mgr.dump ();
 
       size_t count = 0;
-      datatools::serialization::data_writer writer;
+      datatools::data_writer writer;
+      writer.init (output_file, datatools::using_multi_archives);
 
-      writer.init (output_file, 
-                   datatools::serialization::using_multi_archives);
-
-       // main loop on primary events source:
+      // main loop on primary events source:
       while (mgr.has_next ())
         {
           // working primary event:
@@ -113,19 +111,19 @@ int main (int a_argc, char ** a_argv)
         }
       mgr.reset ();
 
-      clog << datatools::utils::io::notice << "Number of loaded events: " << count << endl; 
+      clog << datatools::io::notice << "Number of loaded events: " << count << endl; 
       if (debug) mgr.dump ();
    
     }
   catch (exception & x)
     {
-      cerr << datatools::utils::io::error << "g2b: " << x.what () << endl;
+      cerr << datatools::io::error << "g2b: " << x.what () << endl;
       usage (cerr);
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << datatools::utils::io::error << "g2b: " << "Unexpected error !" << endl; 
+      cerr << datatools::io::error << "g2b: " << "Unexpected error !" << endl; 
       usage (cerr);
       error_code = EXIT_FAILURE;
     }

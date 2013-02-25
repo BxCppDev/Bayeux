@@ -5,8 +5,8 @@
  * for Boost/Serialization layer.
  *
  */
-#ifndef __genbb_help__the_serializable_ipp__
-#define __genbb_help__the_serializable_ipp__ 1
+#ifndef GENBB_HELP_THE_SERIALIZABLE_IPP_
+#define GENBB_HELP_THE_SERIALIZABLE_IPP_ 1
 
 /***************************
  * genbb::primary_particle *
@@ -20,6 +20,6 @@
 
 #include <genbb_help/primary_event.ipp>
 
-#endif // __genbb_help__the_serializable_ipp__
+#endif // GENBB_HELP_THE_SERIALIZABLE_IPP_
 
 /* end of genbb_help::the_serializable.ipp */

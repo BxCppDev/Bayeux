@@ -2,10 +2,10 @@
 /* genbb_mgr.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2009-01-19
- * Last modified: 2012-06-22
+ * Last modified: 2013-02-25
  * 
  * License: 
- * Copyright 2007-2012 F. Mauger
+ * Copyright 2007-2013 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +30,8 @@
  * 
  */
 
-#ifndef __genbb_help__genbb_mgr_h
-#define __genbb_help__genbb_mgr_h 1
+#ifndef GENBB_HELP_GENBB_MGR_H_
+#define GENBB_HELP_GENBB_MGR_H_ 1
 
 #include <string>
 #include <list>
@@ -40,8 +40,8 @@
 
 #include <genbb_help/i_genbb.h>
 #include <genbb_help/primary_event.h>
-#include <datatools/serialization/io_factory.h>
-#include <datatools/utils/properties.h>
+#include <datatools/io_factory.h>
+#include <datatools/properties.h>
 
 // Implementation of serialization method for the 'primary_event' 
 // class, implies also <genbb_help/primary_particle.ipp> :
@@ -64,8 +64,6 @@ namespace genbb {
 
   public: 
 
-    bool is_initialized () const;
-
     bool is_debug () const;
 
     void set_debug (bool d_);
@@ -85,24 +83,23 @@ namespace genbb {
     
     /// Destructor
     virtual ~genbb_mgr ();
+
+    void dump (std::ostream & out_ = std::clog) const;
   
     void set (const std::string & filename_);
 
-    void init ();
+    virtual bool is_initialized () const;
 
-    void initialize ();
+    virtual void initialize (const datatools::properties & config_,
+                             datatools::service_manager & service_manager_,
+                             detail::pg_dict_type & dictionary_);
 
-    void initialize (const datatools::utils::properties & config_);
-
-    void reset ();
-
-    void dump (std::ostream & out_ = std::clog) const;
+    virtual void reset ();
 
     virtual bool has_next ();
 
   protected:
 
-    // from 'i_genbb' interface:
     virtual void _load_next (primary_event & event_, 
                              bool compute_classification_ = true);
 
@@ -127,7 +124,7 @@ namespace genbb {
     int            _format_; /// Format of the input file
     std::istream * _in_;     /// Handle to the current input stream
     std::ifstream  _fin_;    /// Current input file stream 
-    datatools::serialization::data_reader _reader_;  /// GENBB event reader
+    datatools::data_reader _reader_;  /// GENBB event reader
     primary_event  _current_;      /// Current primary event 
     double         _genbb_weight_; /// GENBB event weight (for DBD energy range)
 
@@ -135,6 +132,6 @@ namespace genbb {
 
 } // end of namespace genbb
 
-#endif // __genbb_help__genbb_mgr_h
+#endif // GENBB_HELP_GENBB_MGR_H_
 
 // end of genbb_mgr.h

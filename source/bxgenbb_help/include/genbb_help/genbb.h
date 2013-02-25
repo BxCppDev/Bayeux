@@ -5,7 +5,7 @@
  * Last modified: 
  * 
  * License: 
- * Copyright 2007-2012 F. Mauger
+ * Copyright 2007-2013 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +30,8 @@
  * 
  */
 
-#ifndef __genbb_help__genbb_h
-#define __genbb_help__genbb_h 1
+#ifndef GENBB_HELP_GENBB_H_
+#define GENBB_HELP_GENBB_H_ 1
 
 #include <iostream>
 #include <fstream>
@@ -41,7 +41,7 @@
 #include <mygsl/rng.h>
 #include <genbb_help/genbb_utils.h>
 
-#include <datatools/utils/properties.h>
+#include <datatools/properties.h>
 
 namespace genbb {
 
@@ -57,8 +57,6 @@ namespace genbb {
     bool is_debug () const;
  
     void set_debug (bool d_);
-
-    bool is_initialized () const;
 
     void set_delete_conf_file (bool);
 
@@ -93,9 +91,13 @@ namespace genbb {
 
     virtual ~genbb ();
 
-    void initialize (const datatools::utils::properties & config_);
+    virtual bool is_initialized () const;
 
-    void reset ();
+    void initialize (const datatools::properties & setup_,
+                     datatools::service_manager & service_manager_,
+                     detail::pg_dict_type & dictionary_);
+
+    virtual void reset ();
 
     virtual bool has_next ();
 
@@ -106,9 +108,9 @@ namespace genbb {
 
   private:
 
-    void _init_ ();  //> Initialize material associated to a new buffer file
+    void _init_ ();  /// Initialize material associated to a new buffer file
 
-    void _clean_ (); //> Clean material associated to the current buffer file
+    void _clean_ (); /// Clean material associated to the current buffer file
  
   private:
     bool   _initialized_;
@@ -142,7 +144,6 @@ namespace genbb {
     std::string     _genbb_log_;
     std::ofstream   _genbb_conf_file_;
     unsigned long   _seed_;
-    //mygsl::rng    * _external_random_;
     mygsl::rng      _random_;
     double          _genbb_weight_; /// GENBB event weight (for DBD energy range)
 
@@ -150,6 +151,6 @@ namespace genbb {
 
 } // end of namespace genbb
 
-#endif // __genbb_help__genbb_h
+#endif // GENBB_HELP_GENBB_H_
 
 // end of genbb.h

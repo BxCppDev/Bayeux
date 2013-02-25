@@ -25,8 +25,12 @@
 
 #include <genbb_help/i_genbb.h>
 #include <mygsl/rng.h>
+#include <datatools/service_manager.h>
 
 namespace genbb {
+
+  // Factory stuff :
+  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(i_genbb,"genbb::i_genbb/__system__");
  
   i_genbb::i_genbb ()
   {
@@ -96,6 +100,37 @@ namespace genbb {
         throw std::logic_error ("genbb::i_genbb::get_external_random: No available external PRNG !");
       }
     return *_external_random_;
+  }
+
+  void i_genbb::initialize_simple ()
+  {
+    datatools::properties dummy_setup;
+    initialize_standalone (dummy_setup);
+    return;
+  }
+
+  void i_genbb::initialize_standalone (const datatools::properties & setup_)
+  {
+    datatools::service_manager dummy_srvcmgr;
+    detail::pg_dict_type dummy_dict;
+    initialize (setup_, dummy_srvcmgr, dummy_dict);
+    return;
+  }
+   
+  void i_genbb::initialize_with_dictionary_only (const datatools::properties & setup_,
+                                                 detail::pg_dict_type & dictionary_)
+  {
+    datatools::service_manager dummy_srvcmgr;
+    initialize (setup_, dummy_srvcmgr, dictionary_);
+    return;
+  }
+
+  void i_genbb::initialize_with_service_only (const datatools::properties & setup_,
+                                              datatools::service_manager & service_manager_)
+  {
+    detail::pg_dict_type dummy_dict;
+    initialize (setup_, service_manager_, dummy_dict);
+    return;
   }
 
 } // end of namespace genbb

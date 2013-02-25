@@ -14,13 +14,8 @@ function do_genbb_help_print_info ()
 	echo "${indent}GENBB_HELP_NAME                = '${GENBB_HELP_NAME}'" 1>&2
 	echo "${indent}GENBB_HELP_VERSION             = '${GENBB_HELP_VERSION}'" 1>&2
 	echo "${indent}GENBB_HELP_WITH_DEBUG          = ${GENBB_HELP_WITH_DEBUG}" 1>&2
-	if [ "x1" = "x1" ]; then	
-	    echo "${indent}GENBB_HELP_WITH_BIO            = ${GENBB_HELP_WITH_BIO}" 1>&2
-	fi
-	if [ "x0" = "x1" ]; then	
-	    echo "${indent}GENBB_HELP_WITH_PYTHON_WRAPPER = ${GENBB_HELP_WITH_PYTHON_WRAPPER}" 1>&2
-	    echo "${indent}Python module path = @CMAKE_INSTALL_FULL_PYTHONDIR@" 1>&2
-	fi
+        echo "${indent}GENBB_HELP_WITH_BIO            = ${GENBB_HELP_WITH_BIO}" 1>&2
+	# echo "${indent}GENBB_HELP_WITH_REFLECTION     = ${GENBB_HELP_WITH_REFLECTION}" 1>&2
 	echo "${indent}GENBB_HELP_BIN_DIR             = '${GENBB_HELP_BIN_DIR}'"
 	echo "${indent}GENBB_HELP_ETC_DIR             = '${GENBB_HELP_ETC_DIR}'"
 	echo "${indent}GENBB_HELP_LIB_DIR             = '${GENBB_HELP_LIB_DIR}'"
@@ -56,20 +51,32 @@ function do_genbb_help_setup ()
 	return 2
     fi 
 
+    if [ "x@GENBB_HELP_WITH_REFLECTION@" = "x1" ]; then
+	which camp-config >/dev/null 2>&1
+	if [ $? -ne 0 ]; then
+	    echo "ERROR: do_genbb_help_setup: Cannot find CAMP setup ! Abort !" 1>&2
+	    return 1
+	else
+	    if [ ${verbose} -ne 0 ]; then
+		echo "VERBOSE: do_genbb_help_setup: Found CAMP." 1>&2
+	    fi
+	fi
+    fi
+
     which geomtools-config >/dev/null 2>&1
     if [ $? -ne 0 ]; then
-    	echo "ERROR: do_genbb_help_setup: Cannot find geomtools setup ! Abort !" 1>&2
-    	return 1
+	echo "ERROR: do_genbb_help_setup: Cannot find geomtools setup ! Abort !" 1>&2
+	return 1
     else
-    	if [ ${verbose} -ne 0 ]; then
-    	    echo "VERBOSE: do_genbb_help_setup: Found geomtools." 1>&2
-    	fi
+	if [ ${verbose} -ne 0 ]; then
+	    echo "VERBOSE: do_genbb_help_setup: Found geomtools." 1>&2
+	fi
     fi
-    
+     
     export GENBB_HELP_ROOT="@CMAKE_INSTALL_PREFIX@"
     export GENBB_HELP_ROOT_DIR="@CMAKE_INSTALL_PREFIX@"
-    export GENBB_HELP_NAME="@genbb_help_PACKAGE_NAME@"
-    export GENBB_HELP_VERSION="@genbb_help_VERSION_STR@"
+    export GENBB_HELP_NAME="@PROJECT_NAME@"
+    export GENBB_HELP_VERSION="@genbb_help_VERSION@"
     export GENBB_HELP_BIN_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@"
     export GENBB_HELP_ETC_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_ETCDIR@"
     export GENBB_HELP_LIB_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@"
@@ -77,13 +84,9 @@ function do_genbb_help_setup ()
     export GENBB_HELP_INCLUDE_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_INCLUDEDIR@"
     export GENBB_HELP_DATA_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
     export GENBB_HELP_WITH_DEBUG=@GENBB_HELP_WITH_DEBUG@
-    if [ "x1" = "x1" ]; then	
-	export GENBB_HELP_WITH_BIO=@GENBB_HELP_WITH_BIO@
-    fi
-    if [ "x0" = "x1" ]; then	
-	export GENBB_HELP_WITH_PYTHON_WRAPPER=@GENBB_HELP_WITH_PYTHON_WRAPPER@
-    fi
-    export GENBB_HELP_CMAKE_CONFIG_DIR="@CMAKE_INSTALL_PREFIX@/@genbb_help_cmake_config_install_dir@"
+    export GENBB_HELP_WITH_BIO=@GENBB_HELP_WITH_BIO@
+    # export GENBB_HELP_WITH_REFLECTION=@GENBB_HELP_WITH_REFLECTION@
+    export GENBB_HELP_CMAKE_CONFIG_DIR="@CMAKE_INSTALL_PREFIX@/@_genbb_help_cmake_config_install_dir@"
 
     if [ -n "${PATH}" ]; then
 	export PATH="${GENBB_HELP_BIN_DIR}:${PATH}"
@@ -97,33 +100,6 @@ function do_genbb_help_setup ()
 	export @_ld_library_path_env@="${GENBB_HELP_LIB_DIR}"
     fi 
 
-    if [ "x@GENBB_HELP_WITH_PKGCONFIG@" = "xON" -o "x@GENBB_HELP_WITH_PKGCONFIG@" = "x1" ]; then
-	if [ -n "${PKG_CONFIG_PATH}" ]; then 
-            export PKG_CONFIG_PATH="@_genbb_help_pkgconfig_install_dir@:${PKG_CONFIG_PATH}"
-	else
-            export PKG_CONFIG_PATH="@_genbb_help_pkgconfig_install_dir@"
-	fi
-    fi
-
-    if [ "x0" = "x1" ]; then	
-	if [ "x@GENBB_HELP_WITH_PYTHON_WRAPPER@" = "xON" ]; then
-     	    # update Python path...
-	    if [ -n "${PYTHONPATH}" ]; then 
-		export PYTHONPATH="@CMAKE_INSTALL_FULL_PYTHONDIR@:${PYTHONPATH}"
-	    else
-		export PYTHONPATH="@CMAKE_INSTALL_FULL_PYTHONDIR@"
-	    fi
-	fi
-    fi
-
-    if [ "x@GENBB_HELP_WITH_CMAKE_FIND_MODULE@" = "xON" -o "x@GENBB_HELP_WITH_CMAKE_FIND_MODULE@" = "x1" ]; then
-	if [ -n "${CMAKE_MODULE_PATH}" ]; then 
-            export CMAKE_MODULE_PATH="@CMAKE_INSTALL_PREFIX@/@genbb_help_find_module_install_dir@:${CMAKE_MODULE_PATH}"
-	else
-            export CMAKE_MODULE_PATH="@CMAKE_INSTALL_PREFIX@/@genbb_help_find_module_install_dir@"
-	fi
-    fi
-
     if [ ${verbose} -gt 1 ]; then
 	do_genbb_help_print_info "VERBOSE: do_genbb_help_setup"
     fi
@@ -134,8 +110,7 @@ function do_genbb_help_setup ()
     return 0
 }
 typeset -fx do_genbb_help_setup
-alias genbb_help_setup='do_genbb_help_setup'
 
-echo "NOTICE: do_genbb_help_setup: Please setup genbb_help with 'do_genbb_help_setup'." 1>&2
+echo "NOTICE: do_genbb_help_setup: Please setup 'genbb_help' with 'do_genbb_help_setup'." 1>&2
 
 # end of genbb_help_setup.sh
