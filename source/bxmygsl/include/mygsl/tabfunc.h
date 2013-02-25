@@ -22,95 +22,75 @@
 
 #include <mygsl/unary_eval.h>
 
-#include <gsl/gsl_interp.h>
-#include <gsl/gsl_spline.h>
-
 namespace mygsl {
+class tabulated_function : public unary_eval {
+ public:
+  typedef std::map<double,double> points_map_t;
 
-  class tabulated_function : public unary_eval
-  {
-  public:
+  static const std::string LINEAR_INTERP_NAME;
+  static const std::string POLYNOMIAL_INTERP_NAME;
+  static const std::string CSPLINE_INTERP_NAME;
+  static const std::string CSPLINE_PERIODIC_INTERP_NAME;
+  static const std::string AKIMA_INTERP_NAME;
+  static const std::string AKIMA_PERIODIC_INTERP_NAME;
+  static const std::string DEFAULT_INTERP_NAME;
 
-    typedef std::map<double,double> points_map_t;
+  static bool g_debug;
 
-    static const std::string LINEAR_INTERP_NAME;
-    static const std::string POLYNOMIAL_INTERP_NAME;
-    static const std::string CSPLINE_INTERP_NAME;
-    static const std::string CSPLINE_PERIODIC_INTERP_NAME;
-    static const std::string AKIMA_INTERP_NAME;
-    static const std::string AKIMA_PERIODIC_INTERP_NAME;
-    static const std::string DEFAULT_INTERP_NAME;
+ public:
+  tabulated_function(const std::string& interp_name_ = DEFAULT_INTERP_NAME);
+  tabulated_function(const tabulated_function& tab_func_);
+  virtual ~tabulated_function();
+ 
+  tabulated_function& operator=(const tabulated_function& tab_func_);
+  
+  bool is_verbose() const;
+  void set_verbose(bool v_ = true);
+  bool is_valid(double x_) const;
 
-    static bool g_debug;
+  const std::string& interpolator_name() const;
 
-  private:
+  const points_map_t& points() const;
 
-    bool               _verbose_;
-    bool               _table_locked_;
-    std::string        _interpolator_name_;
-    points_map_t       _points_;
-    gsl_spline *       _gs_;
-    gsl_interp_accel * _giacc_;
-    double             _x_min_;
-    double             _x_max_;
+  static const std::string& default_interpolator_name();
 
-  public:
+  static bool interpolator_name_is_valid(const std::string& name_);
 
-    bool is_verbose () const;
+  void scale(double s_);
 
-    void set_verbose (bool v_ = true);
+  size_t size() const;
 
-    bool is_valid (double x_) const;
+  bool is_table_locked() const;
 
-    const std::string & interpolator_name () const;
+  void lock_table(const std::string& interp_name_ = "");
 
-    const points_map_t & points () const;
+  void unlock_table();
 
-    static const std::string & default_interpolator_name ();
+  void relock_table(const std::string& interp_name_ = "");
 
-    static bool interpolator_name_is_valid (const std::string & name_);
+  void add_point(double x_, double y_, bool lock_after_ = false);
+ 
+  double x_min() const;
+  double x_max() const;
 
-    void scale (double s_);
+  void reset();
 
-    size_t size () const;
+  virtual double eval(double x_) const;
 
-    bool is_table_locked () const;
+  virtual void tabfunc_load(std::istream& in_, void * context_ = 0);
 
-    void lock_table (const std::string & interp_name_ = "");
+  virtual void tabfunc_store(std::ostream& out_, void * context_ = 0) const;
 
-    void unlock_table ();
+  void print_points(std::ostream& out_, 
+                    const std::string& header_comment_ = "",
+                    const std::string& footer_comment_ = "") const;
 
-    void relock_table (const std::string & interp_name_ = "");
+ private:
+  struct tabfunc_impl;
+  tabfunc_impl *pImpl;
+};
 
-    void add_point (double x_ , double y_ , bool lock_after_ = false);
-
-    tabulated_function (const std::string & interp_name_ = DEFAULT_INTERP_NAME);
-
-    tabulated_function (const tabulated_function & tab_func_);
-
-    tabulated_function & operator= (const tabulated_function & tab_func_);
-    
-    double x_min () const;
-
-    double x_max () const;
-
-    void reset ();
-
-    virtual ~tabulated_function ();
-
-    virtual double eval (double x_) const;
-
-    virtual void tabfunc_load (std::istream & in_ , void * context_ = 0);
-
-    virtual void tabfunc_store (std::ostream & out_ , void * context_ = 0) const;
-
-    void print_points (std::ostream & out_ , 
-                       const std::string & header_comment_ = "" ,
-                       const std::string & footer_comment_ = "") const;
-
-  };
-
-  typedef tabulated_function tabfunc;
+typedef tabulated_function tabfunc;
 
 } // end of namespace mygsl
 
