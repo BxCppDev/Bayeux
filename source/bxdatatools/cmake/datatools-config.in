@@ -42,7 +42,7 @@ if [ "x@DATATOOLS_WITH_BIO@" == "x1" ]; then
 fi
 
 with_reflection=0
-if [ "x@DATATOOLS_WITH_REFLECTION@" == "x1"]; then
+if [ "x@DATATOOLS_WITH_REFLECTION@" == "x1" ]; then
   with_reflection=1
 fi
 
