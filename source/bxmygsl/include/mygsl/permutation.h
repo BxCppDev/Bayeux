@@ -21,82 +21,68 @@
 #include <iostream>
 #include <string>
 
-#include <gsl/gsl_permutation.h>
-
-//using namespace   std;
-
 namespace mygsl {
+class permutation {
+ public:
+  permutation();
+  permutation(size_t sz_);
+  permutation(const permutation& p_);
 
-  class permutation 
-  {
-  public:
+  virtual ~permutation();
 
-    const size_t * data () const;
+  permutation& operator=(const permutation& p_);
 
-    size_t get (size_t i_) const;
+  permutation& operator++();
 
-    size_t inversions () const;
+  permutation& operator--();
 
-    size_t linear_cycles () const;
+  const size_t* data() const;
 
-    size_t canonical_cycles () const;
+  size_t get(size_t i_) const;
 
-    void swap (size_t i_, size_t j_);
+  size_t inversions() const;
 
-    bool is_initialized () const;
+  size_t linear_cycles() const;
 
-    bool is_valid () const;
+  size_t canonical_cycles() const;
 
-    size_t size () const;
+  void swap(size_t i_, size_t j_);
 
-    permutation ();
+  bool is_initialized() const;
 
-    permutation (size_t sz_);
+  bool is_valid() const;
 
-    permutation (const permutation & p_);
+  size_t size() const;
 
-    virtual ~permutation ();
+  void reset();
 
-    permutation & operator= (const permutation & p_);
+  void init(size_t sz_);
 
-    void reset ();
+  void reverse ();
 
-    void init (size_t sz_);
+  bool inverse(permutation& p_);
 
-    void reverse ();
+  bool canonical_to_linear(permutation& p_);
 
-    bool inverse (permutation & p_);
+  bool linear_to_canonical(permutation& p_);
 
-    bool canonical_to_linear (permutation & p_);
+  bool next();
 
-    bool linear_to_canonical (permutation & p_);
+  bool previous();
 
-    permutation & operator++ ();
+  void print(std::ostream & out_, bool eol_ = false) const;
 
-    permutation & operator-- ();
+  friend std::ostream& operator<<(std::ostream& out_, const permutation& p_);
+  friend std::istream& operator>>(std::istream& in_, permutation& p_);
 
-    bool next ();
+ private:
+  bool _check_() const;
+  void _check_throw_(size_t i_, const std::string& where_) const;
 
-    bool previous ();
-
-    void print (std::ostream & out_, bool eol_ = false) const;
-
-    friend std::ostream & operator<< (std::ostream & out_, const permutation & p_);
-
-    friend std::istream & operator>> (std::istream & in_, permutation & p_);
-
-  private:
-
-    bool _check_ () const;
-
-    void _check_throw_ (size_t i_, const std::string & where_) const;
-
-  private:
-
-    gsl_permutation * _perm_;
-
-
-  };
+ private:
+  struct permutation_impl;
+  permutation_impl *pImpl;
+};
 
 } // end of namespace mygsl
 
