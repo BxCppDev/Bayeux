@@ -122,12 +122,12 @@ extern "C"
       {
         std::clog << "WARNING: " 
                   << "genbb::rng_shoot_reset: " 
-                  << "External PRNG does not use this local seed :" << std::endl;
+                  << "External PRNG does not use this local seed." << std::endl;
         return -1;
       }
     std::clog << "NOTICE: " 
               << "genbb::rng_shoot_reset: " 
-              << "Initialize the static PRNG with seed '" << *seed_ << "'" <<  std::endl;
+              << "Initializing the static PRNG with seed '" << *seed_ << "'" <<  std::endl;
     genbb::rng::init_genbb_external_prng (*seed_);
     return *seed_;
   }

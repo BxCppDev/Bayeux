@@ -16,6 +16,9 @@
 #include <datatools/properties.h>
 #include <datatools/multi_properties.h>
 
+// Mygsl
+#include <mygsl/rng.h>
+
 namespace genbb {
 
   //----------------------------------------------------------------------
@@ -36,6 +39,49 @@ namespace genbb {
     return _initialized_;
   }
 
+
+  bool manager::has_external_random () const
+  {
+    return _external_prng_ != 0;
+  }
+
+  void manager::reset_external_random ()
+  {
+    _external_prng_ = 0;
+    return;
+  }
+
+  void manager::set_external_random (mygsl::rng & r_)
+  {
+    if (! r_.is_initialized ())
+      {
+        std::ostringstream message;
+        message << "genbb::manager::set_external_random: External PRNG is not initialized !";
+        throw std::logic_error (message.str());      
+      }
+    _external_prng_ = &r_;
+    return;
+  }
+  
+
+  mygsl::rng & manager::grab_external_random ()
+  {
+    if (! has_external_random ())
+      {
+        throw std::logic_error ("genbb::manager::grab_external_random: No available external PRNG !");
+      }
+    return *_external_prng_;
+  }
+
+
+  const mygsl::rng & manager::get_external_random () const
+  {
+    if (! has_external_random ())
+      {
+        throw std::logic_error ("genbb::manager::get_external_random: No available external PRNG !");
+      }
+    return *_external_prng_;
+  }
 
   void manager::load(const std::string& name,
                      const std::string& id,
@@ -59,7 +105,6 @@ namespace genbb {
               << "Particle generator manager is already initialized !";
       throw std::logic_error(message.str());
     }
-
 
     for (datatools::multi_properties::entries_ordered_col_type::const_iterator i 
            = config.ordered_entries().begin();
@@ -238,14 +283,58 @@ namespace genbb {
    *   Particle generators   *
    ***************************/
 
+  const i_genbb & manager::get(const std::string& name) const
+  {
+    manager* mgr = const_cast<manager*>(this);
+    return const_cast<i_genbb&>(mgr->grab(name));
+  }
+
+
+  i_genbb & manager::grab(const std::string& name)
+  {
+    detail::pg_dict_type::iterator found = _particle_generators_.find(name);
+    if (found == _particle_generators_.end())
+      {
+        std::ostringstream message;
+        message << "genbb::manager::grab: "
+                << "Particle generator '" 
+                << name 
+                << "' does not exist !";
+        throw std::logic_error(message.str());
+      }
+    detail::pg_entry_type& entry = found->second;
+    if (!entry.is_initialized()) {
+      this->_initialize_pg(entry);
+    }
+    return entry.grab_handle().grab();
+  } 
+
+
   bool manager::has(const std::string& name) const {
     return _particle_generators_.find(name) != _particle_generators_.end();
   }
+
 
   bool manager::is_initialized(const std::string& name) const {
     detail::pg_dict_type::const_iterator found = _particle_generators_.find(name);
     return found != _particle_generators_.end() && found->second.is_initialized();
   }
+
+  void manager::reset(const std::string& name) {
+    detail::pg_dict_type::iterator found = _particle_generators_.find(name);
+    if (found == _particle_generators_.end()) {
+      std::ostringstream message;
+      message << "genbb::manager::can_drop: "
+              << "Particle generator '" 
+              << name 
+              << "' does not exist !";
+      throw std::logic_error(message.str());
+    }
+    detail::pg_entry_type& entry = found->second;
+    this->_reset_pg(entry);
+    return ;
+  }
+
 
   bool manager::can_drop(const std::string& name) const {
     detail::pg_dict_type::const_iterator found = _particle_generators_.find(name);
@@ -258,6 +347,21 @@ namespace genbb {
       throw std::logic_error(message.str());
     }
     return true;
+  }
+
+  const std::string & manager::get_id(const std::string& name) const
+  {
+    detail::pg_dict_type::const_iterator found = _particle_generators_.find(name);
+    if (found == _particle_generators_.end()) {
+      std::ostringstream message;
+      message << "genbb::manager::can_drop: "
+              << "Particle generator '" 
+              << name 
+              << "' does not exist !";
+      throw std::logic_error(message.str());
+    }
+    const detail::pg_entry_type& entry = found->second;
+    return entry.get_id();
   }
 
 
@@ -298,8 +402,8 @@ namespace genbb {
 
 
   void manager::dump_particle_generators(std::ostream& out,
-                              const std::string& title,
-                              const std::string& an_indent) const {
+                                         const std::string& title,
+                                         const std::string& an_indent) const {
     std::string indent;
     if (!an_indent.empty()) indent = an_indent;
 
@@ -337,6 +441,7 @@ namespace genbb {
     return;
   }
 
+
   bool manager::has_pg_type(const std::string& id) const {
     return _factory_register_.has(id);
   }
@@ -346,6 +451,7 @@ namespace genbb {
     _factory_register_.unregistration(id);
     return;
   }
+
 
   void manager::tree_dump(std::ostream& out,
                           const std::string& title,
@@ -467,8 +573,8 @@ namespace genbb {
                 << std::endl;
     }
 
-    this->_create_pg(new_entry);
     if (_force_initialization_at_load_) {
+      //this->_create_pg(new_entry);
       this->_initialize_pg(new_entry);
     }
 
@@ -523,10 +629,20 @@ namespace genbb {
       const FactoryType& the_factory = _factory_register_.get(entry.get_id());
 
       i_genbb* ptr = the_factory();
-
+      
       entry.grab_handle().reset(ptr);
       entry.update_status(detail::pg_entry_type::STATUS_CREATED);
-
+      if (has_external_random() && ptr->can_external_random())
+        {
+          std::clog << datatools::io::notice 
+                    << "genbb::manager::_create_pg: "
+                    << "Set the manager's PRNG for the particle generator '"
+                    <<  entry.get_name()
+                    << "'"
+                    << std::endl;
+          ptr->set_external_random(grab_external_random());
+        }
+      
       if (this->is_debug()) {
         std::clog << datatools::io::debug
                   << "genbb::manager::_create_pg: "

@@ -156,6 +156,8 @@ namespace genbb {
     unsigned long _seed_;           //> PRNG seed (local or global)
     mygsl::rng    _random_;         //> Local PRNG
 
+    GENBB_PG_REGISTRATION_INTERFACE(wgenbb);
+
   };
 
 } // end of namespace genbb

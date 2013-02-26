@@ -42,6 +42,8 @@ namespace genbb {
 
   using namespace std;
 
+  GENBB_PG_REGISTRATION_IMPLEMENT(genbb_mgr,"genbb::genbb_mgr");
+
   const string genbb_mgr::FORMAT_GENBB_LABEL = "genbb";
   const string genbb_mgr::FORMAT_BOOST_LABEL = "boost";
 

@@ -2,10 +2,10 @@
 /* single_particle_generator.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-10-03
- * Last modified: 2010-10-03
+ * Last modified: 2013-02-26
  *
  * License:
- * Copyright 2007-2011 F. Mauger
+ * Copyright 2007-2013 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,7 +101,7 @@ namespace genbb {
     /// Constructor
     single_particle_generator ();
 
-    /// Destrcutor
+    /// Destructor
     virtual ~single_particle_generator ();
 
     /// Main initialization interface method
@@ -159,7 +159,7 @@ namespace genbb {
     mygsl::histogram::pdf     _energy_histo_pdf_;
 
     bool          _randomized_direction_;
-    unsigned long _seed_; //!< Local PRNG's seed
+    unsigned long _seed_;   //!< Local PRNG's seed
     mygsl::rng    _random_; //!< Local PRNG
 
     GENBB_PG_REGISTRATION_INTERFACE(single_particle_generator);

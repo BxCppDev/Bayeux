@@ -43,6 +43,8 @@ namespace genbb {
  
   using namespace std;
 
+  GENBB_PG_REGISTRATION_IMPLEMENT(wgenbb,"genbb::wgenbb");
+
   size_t wgenbb::_g_counter_ = 0;
 
   bool wgenbb::is_initialized () const
@@ -504,7 +506,7 @@ namespace genbb {
   {
     if (_debug_)
       {
-        clog << "debug: " << "genbb::wgenbb::_init_: "
+        clog << "DEBUG: " << "genbb::wgenbb::_init_: "
              << "Entering..."
              << endl;
       }
@@ -521,8 +523,8 @@ namespace genbb {
     enrange.reset ();
     const std::vector<int> & dbdmwer 
       = utils::get_dbd_modes_with_energy_range ();
-    clog << "NOTICE: genbb::wgenbb::_init_: Decay DBD mode : " 
-         << _decay_dbd_mode_ << endl;
+    if (_debug_) clog << "DEBUG: genbb::wgenbb::_init_: Decay DBD mode : " 
+                      << _decay_dbd_mode_ << endl;
     if (std::find (dbdmwer.begin (), dbdmwer.end (),_decay_dbd_mode_) != dbdmwer.end ())
       {
         if (datatools::is_valid (_energy_min_))
@@ -547,8 +549,8 @@ namespace genbb {
       }
     else
       {
-        clog << "NOTICE: genbb::wgenbb::_init_: Not a DBD energy range mode." 
-             << endl;
+        if (_debug_)  clog << "DEBUG: genbb::wgenbb::_init_: Not a DBD energy range mode." 
+                           << endl;
       }
 
     if (! _use_local_prng_)
@@ -571,7 +573,7 @@ namespace genbb {
 
     if (_debug_)
       {
-        clog << "debug: " << "genbb::wgenbb::_init_: "
+        clog << "DEBUG: " << "genbb::wgenbb::_init_: "
              << "Exiting."
              << endl;
       }

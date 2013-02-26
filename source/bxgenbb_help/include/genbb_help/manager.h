@@ -51,6 +51,10 @@
 #include <genbb_help/detail/pg_tools.h>
 #include <genbb_help/i_genbb.h>
 
+namespace mygsl {
+  class rng;
+}
+
 namespace datatools {
   class properties;
   class multi_properties;
@@ -93,6 +97,21 @@ namespace genbb {
     /// Set the debug flag
     void set_debug(bool debug = true);
 
+    /// Check the use of some external PRNG
+    bool has_external_random () const;
+
+    /// Set the external PRNG
+    void set_external_random (mygsl::rng &);
+
+    /// Reset the external PRNG
+    void reset_external_random ();
+
+    /// Return a mutable reference to the external PRNG
+    mygsl::rng & grab_external_random ();
+ 
+    /// Return a non-mutable reference to the external PRNG
+    const mygsl::rng & get_external_random () const;
+
     /// Check the initialization flag
     bool is_initialized() const;
 
@@ -102,11 +121,14 @@ namespace genbb {
     /// Reset the manager
     void reset();
 
+    /// Check if the factory has a given type 
     bool has_pg_type(const std::string& id) const;
 
+    /// Register a given type in the factory
     template <class PgClass>
     void register_pg_type(const std::string& id);
     
+    /// Unregister a given type from the factory
     void unregister_pg_type(const std::string& id);
 
     /**  @param name The name of the PG to be checked
@@ -119,35 +141,33 @@ namespace genbb {
      */
     bool is_initialized(const std::string& name) const;
 
-    /**  @param name The name of the PG to be checked
-     *   @return true if the PG is of the requested type
+    /**  Check if a given PG can be removed
+     *   @param name The name of the PG to be completely removed
      */
-    /* template <class T> */
-    /*   bool is_a(const std::string& name) const; */
+      bool can_drop(const std::string& name) const;
 
-    /** Deprecated, please use the 'grab' method.
-     *  @param name The name of the PG to be checked
-     *  @return a mutable reference to the PG instance requested by name and type
+    /**  @param name The name of the PG to be completely removed
      */
-    /* template<class T> */
-    /*   T& get(const std::string& name); */
+      void drop(const std::string& name);
 
-    /**  Same as the mutable 'get' method
-     *   @param name The name of the PG to be checked
-     *   @return a mutable reference to the PG instance requested by name and type
+    /**  @param name The name of the PG to be reset
      */
-    /* template<class T> */
-    /*   T& grab(const std::string& name); */
+    void reset(const std::string& name);
 
-    /**  @param name The name of the PG to be checked
-     *   @return a const reference to the PG instance requested by name and type
+    /**  @param name The name of the PG to be reset
+     *   @return the registration ID of the PG
      */
-    /* template<class T> */
-    /*   const T& get(const std::string& name) const; */
+    const std::string & get_id(const std::string& name) const; 
 
-    bool can_drop(const std::string& name) const;
+    /**  @param name The name of the PG to be returned
+     *   @return a non-mutable reference to the PG
+     */
+     const i_genbb & get(const std::string& name) const; 
 
-    void drop(const std::string& name);
+    /**  @param name The name of the PG to be returned
+     *   @return a mutable reference to the PG
+     */
+    i_genbb & grab(const std::string& name); 
 
     void load(const std::string& name,
               const std::string& id,
@@ -193,6 +213,8 @@ namespace genbb {
     bool         _debug_;       /// Debug flag
     bool         _preload_;     /// Factory preload flag
     bool         _force_initialization_at_load_; /// Flag for triggering PG initialization at load (rather than first use)
+
+    mygsl::rng * _external_prng_; /// Handle to an external PRNG
 
     i_genbb::factory_register_type _factory_register_; /// Particle generator factory
     detail::pg_dict_type           _particle_generators_; /// Dictionary of particle generators

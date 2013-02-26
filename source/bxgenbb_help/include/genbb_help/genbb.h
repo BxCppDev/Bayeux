@@ -147,6 +147,8 @@ namespace genbb {
     mygsl::rng      _random_;
     double          _genbb_weight_; /// GENBB event weight (for DBD energy range)
 
+    GENBB_PG_REGISTRATION_INTERFACE(genbb);
+ 
   };
 
 } // end of namespace genbb

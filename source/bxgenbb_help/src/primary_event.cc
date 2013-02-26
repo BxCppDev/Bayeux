@@ -137,6 +137,11 @@ namespace genbb {
     return particles;
   }
 
+  primary_event::particles_col_type & primary_event::grab_particles ()
+  {
+    return particles;
+  }
+
   primary_event::particles_col_type & primary_event::get_particles ()
   {
     return particles;

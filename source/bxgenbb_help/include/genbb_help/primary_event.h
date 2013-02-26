@@ -77,9 +77,11 @@ namespace genbb {
 
     bool is_genbb_weighted () const;
 
-    const particles_col_t & get_particles () const;
+    const particles_col_type & get_particles () const;
 
-    particles_col_t & get_particles ();
+    particles_col_type & grab_particles ();
+
+    particles_col_type & get_particles ();
 
     void add_particle (const primary_particle &);
 

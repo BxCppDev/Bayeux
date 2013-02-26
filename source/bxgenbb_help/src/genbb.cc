@@ -40,6 +40,8 @@ namespace genbb {
  
   using namespace std;
 
+  GENBB_PG_REGISTRATION_IMPLEMENT(genbb,"genbb::genbb");
+
   bool genbb::is_initialized () const
   {
     return _initialized_;

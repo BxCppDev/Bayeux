@@ -62,8 +62,6 @@ namespace genbb {
     static const std::string FORMAT_GENBB_LABEL;
     static const std::string FORMAT_BOOST_LABEL;
 
-  public: 
-
     bool is_debug () const;
 
     void set_debug (bool d_);
@@ -117,16 +115,18 @@ namespace genbb {
 
   private:
 
-    bool _debug_;            /// Debug flag
-    bool _initialized_;      /// Initialization flag
-    std::list<std::string> _filenames_; /// List of input files' name
-    std::string    _current_filename_;  /// Current file's name
-    int            _format_; /// Format of the input file
-    std::istream * _in_;     /// Handle to the current input stream
-    std::ifstream  _fin_;    /// Current input file stream 
-    datatools::data_reader _reader_;  /// GENBB event reader
-    primary_event  _current_;      /// Current primary event 
-    double         _genbb_weight_; /// GENBB event weight (for DBD energy range)
+    bool                   _debug_;        /// Debug flag
+    bool                   _initialized_;  /// Initialization flag
+    std::list<std::string> _filenames_;    /// List of input files' name
+    std::string            _current_filename_; /// Current file's name
+    int                    _format_;       /// Format of the input file
+    std::istream *         _in_;           /// Handle to the current input stream
+    std::ifstream          _fin_;          /// Current input file stream 
+    datatools::data_reader _reader_;       /// GENBB event reader
+    primary_event          _current_;      /// Current primary event 
+    double                 _genbb_weight_; /// GENBB event weight (for DBD energy range)
+
+    GENBB_PG_REGISTRATION_INTERFACE(genbb_mgr);
 
   };
 

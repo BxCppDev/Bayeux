@@ -39,6 +39,7 @@ set ( genbb_help_tests_programs_list_CXX
       test_single_particle_generator_3.cxx
       test_single_particle_generator.cxx
       test_wgenbb.cxx
+      test_manager.cxx
     )
 
 set ( genbb_help_tests_programs_list_Fortran
