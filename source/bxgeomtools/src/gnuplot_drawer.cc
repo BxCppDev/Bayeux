@@ -554,7 +554,7 @@ namespace geomtools {
     double dz = _zrange_.max - _zrange_.min;
     double amax = std::max (dx, dy);
     amax = std::max (amax, dz);
-    amax += 1.1;
+    amax *= 1.1;
     _xrange_.min = xyzr->x_range.get_median () - 0.5 * amax;
     _xrange_.max = xyzr->x_range.get_median () + 0.5 * amax;
     _yrange_.min = xyzr->y_range.get_median () - 0.5 * amax;
