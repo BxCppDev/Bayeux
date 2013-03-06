@@ -768,6 +768,9 @@ class properties :
   //! Update a string flag with a given key/name and value
   void update(const std::string& key, const std::string& value);
 
+  //! Update a C-string flag with a given key/name and value
+  void update(const std::string& key, const char* value);
+
   //! Update a string flag with a given key/name and value
   void update_string(const std::string& key, const std::string& value);
 

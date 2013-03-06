@@ -55,7 +55,7 @@ std::string properties::data::get_error_message(int a_error_code) {
   if (a_error_code == ERROR_BADTYPE) return "invalid type";
   if (a_error_code == ERROR_RANGE ) return "invalid index";
   if (a_error_code == ERROR_LOCK  ) return "lock error";
-  return "generic error";
+  return "undocumented error";
 }
 
 
@@ -392,17 +392,21 @@ int properties::data::set_value(double a_value, int a_index) {
 
 int properties::data::set_value(const std::string & a_value, int a_index) {
   if (!this->is_string()) return ERROR_BADTYPE;
-  
+  //std::cerr << "DEVEL: test1 " << '\n';
   if (this->is_locked()) return ERROR_LOCK;
+  //std::cerr << "DEVEL: test2 " << '\n';
   
   if (!this->index_is_valid(a_index)) return ERROR_RANGE;
+  //std::cerr << "DEVEL: test3 " << '\n';
   
   /* special trick to forbid character '\"' in string as
    * it is used as separator for parsing:
    */
   if (this->has_forbidden_char(a_value)) return ERROR_FAILURE;
+  //std::cerr << "DEVEL: test4 " << '\n';
   
   _string_values_[a_index] = a_value;
+  //std::cerr << "DEVEL: test5 " << '\n';
   return ERROR_SUCCESS;
 }
 
@@ -1233,6 +1237,7 @@ void properties::_check_key_(const std::string& prop_key, data **a_data) {
     throw std::logic_error(message.str());
   }
   *a_data = &(iter->second);
+  //iter->second.tree_dump(std::cerr, "properties::_check_key_: ", "DEVEL: ");
 }
 
 
@@ -1455,7 +1460,7 @@ void properties::change_string(const std::string& prop_key,
 }
 
 void properties::change_string_scalar(const std::string& prop_key,
-                               const std::string& value) {
+                                      const std::string& value) {
   this->change(prop_key, value, 0);
 }
 
@@ -1467,13 +1472,15 @@ void properties::change_string_vector(const std::string& prop_key,
 }
 
 void properties::change(const std::string& prop_key, bool value, int index) {
+  //std::cerr << "DEVEL: " 
+  //          << "datatools::properties::change(bool): Entering..." << '\n';
   data *data_ptr = 0;
   this->_check_key_(prop_key, &data_ptr);
 
   int error = data_ptr->set_value(value, index);
   if (error != data::ERROR_SUCCESS) {
     std::ostringstream message;
-    message << "datatools::properties::change: Cannot change value for property '" 
+    message << "datatools::properties::change(bool): Cannot change value for property '" 
             << prop_key << "': "
             << data::get_error_message(error) << "!";
     throw std::logic_error(message.str());
@@ -1482,12 +1489,14 @@ void properties::change(const std::string& prop_key, bool value, int index) {
 
 
 void properties::change(const std::string& prop_key, int value, int index) {
+  // std::cerr << "DEVEL: " 
+  //           << "datatools::properties::change(int): Entering..." << '\n';
   data *data_ptr = 0;
   this->_check_key_(prop_key, &data_ptr);
   int error = data_ptr->set_value(value, index);
   if (error != data::ERROR_SUCCESS) {
     std::ostringstream message;
-    message << "datatools::properties::change: Cannot change value for property '" 
+    message << "datatools::properties::change(int): Cannot change value for property '" 
             << prop_key << "': "
             << data::get_error_message(error) << "!";
     throw std::logic_error(message.str());
@@ -1496,12 +1505,14 @@ void properties::change(const std::string& prop_key, int value, int index) {
 
 
 void properties::change(const std::string& prop_key, double value, int index) {
+  // std::cerr << "DEVEL: " 
+  //           << "datatools::properties::change(double): Entering..." << '\n';
   data *data_ptr = 0;
   this->_check_key_(prop_key, &data_ptr);
   int error = data_ptr->set_value(value, index);
   if (error != data::ERROR_SUCCESS) {
     std::ostringstream message;
-    message << "datatools::properties::change: Cannot change value for property '" 
+    message << "datatools::properties::change(double): Cannot change value for property '" 
             << prop_key << "': "
             << data::get_error_message (error) << "!";
     throw std::logic_error(message.str());
@@ -1511,12 +1522,14 @@ void properties::change(const std::string& prop_key, double value, int index) {
 
 void properties::change(const std::string& prop_key, const std::string& value,
                         int index) {
+  // std::cerr << "DEVEL: " 
+  //           << "datatools::properties::change(string): Entering..." << '\n';
   data *data_ptr = 0;
   this->_check_key_(prop_key, &data_ptr);
   int error = data_ptr->set_value(value, index);
   if (error != data::ERROR_SUCCESS) {
     std::ostringstream message;
-    message << "datatools::properties::change: Cannot change value for property '"
+    message << "datatools::properties::change(string): Cannot change value for property '"
             << prop_key << "': "
             << data::get_error_message(error) << "!";
     throw std::logic_error(message.str());
@@ -1526,6 +1539,8 @@ void properties::change(const std::string& prop_key, const std::string& value,
 
 void properties::change(const std::string& prop_key, const char* value,
                         int index) {
+  // std::cerr << "DEVEL: " 
+  //           << "datatools::properties::change(const char*): Entering..." << '\n';
   std::string tmp = "";
   if (value != 0) tmp = value;
   this->change(prop_key, tmp, index);
@@ -1779,6 +1794,17 @@ void properties::update(const std::string& prop_key, const std::string& value) {
     this->change(prop_key, value);
   } else {
     this->store(prop_key, value);
+  }
+}
+
+
+void properties::update(const std::string& prop_key, const char* value) {
+  std::string tmp = "";
+  if (value != 0) tmp = value;
+  if (this->has_key(prop_key)) {
+    this->change(prop_key, tmp);
+  } else {
+    this->store(prop_key, tmp);
   }
 }
 
