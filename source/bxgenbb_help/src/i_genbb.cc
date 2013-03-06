@@ -23,9 +23,11 @@
 #include <sstream>
 #include <stdexcept>
 
-#include <genbb_help/i_genbb.h>
 #include <mygsl/rng.h>
 #include <datatools/service_manager.h>
+
+#include <genbb_help/i_genbb.h>
+#include <genbb_help/primary_event.h>
 
 namespace genbb {
 

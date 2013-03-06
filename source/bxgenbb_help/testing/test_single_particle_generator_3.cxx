@@ -16,6 +16,7 @@
 #include <exception>
 
 #include <genbb_help/single_particle_generator.h>
+#include <genbb_help/primary_event.h>
 
 using namespace std;
 

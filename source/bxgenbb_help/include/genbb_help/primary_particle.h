@@ -120,9 +120,13 @@ namespace genbb {
 
     const geomtools::vector_3d & get_momentum () const;
 
+    geomtools::vector_3d & grab_momentum ();
+
     void set_vertex (const geomtools::vector_3d & v_);
 
     const geomtools::vector_3d & get_vertex () const;
+
+    geomtools::vector_3d & grab_vertex ();
 
     bool has_vertex () const;
 
@@ -166,14 +170,14 @@ namespace genbb {
    
     static int get_particle_type_from_label (const std::string & a_label);
 
-  public:
+  private:
     
-    int32_t              type;
-    std::string          particle_label;
-    double               mass;     // CLHEP energy unit
-    double               time;     // CLHEP time unit
-    geomtools::vector_3d momentum; // CLHEP momentum unit
-    geomtools::vector_3d vertex;   // CLHEP position unit
+    int32_t              _type_;
+    std::string          _particle_label_;
+    double               _mass_;     // CLHEP energy unit
+    double               _time_;     // CLHEP time unit
+    geomtools::vector_3d _momentum_; // CLHEP momentum unit
+    geomtools::vector_3d _vertex_;   // CLHEP position unit
 
     //! Support for Boost-based serialization
     DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(primary_particle)

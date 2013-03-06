@@ -7,6 +7,7 @@
 #include <exception>
 
 #include <genbb_help/genbb_mgr.h>
+#include <genbb_help/primary_event.h>
 
 int main (int argc_, char ** argv_)
 {

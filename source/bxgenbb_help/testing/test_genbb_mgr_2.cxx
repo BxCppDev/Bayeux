@@ -7,6 +7,7 @@
 #include <exception>
 
 #include <genbb_help/genbb_mgr.h>
+#include <genbb_help/primary_event.h>
 
 int main (int argc_, char ** argv_)
 {
@@ -44,10 +45,10 @@ int main (int argc_, char ** argv_)
           if (debug) std::clog << "debug: me=" 
                                << me / CLHEP::MeV 
                                << " MeV" << std::endl;
-          while (pe.particles.size () > 0)
+          while (pe.get_particles().size () > 0)
             {
-              genbb::primary_particle pp = pe.particles.front ();
-              pe.particles.pop_front ();
+              genbb::primary_particle pp = pe.grab_particles().front ();
+              pe.grab_particles().pop_front ();
               if (pp.is_electron ())
                 {
                   double p = pp.get_momentum ().mag ();

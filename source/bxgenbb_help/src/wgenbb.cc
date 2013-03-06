@@ -34,6 +34,7 @@
 #include <datatools/units.h>
 #include <boost/filesystem.hpp>
 #include <genbb_help/genbb_utils.h>
+#include <genbb_help/primary_event.h>
 
 extern GENEVENT_DEF genevent;
 extern ENRANGE_DEF  enrange;
@@ -423,7 +424,7 @@ namespace genbb {
     int    npart;
 
     evnum = 0;
-    event_.time = genevent.tevst * CLHEP::second;
+    event_.set_time (genevent.tevst * CLHEP::second);
     double part_time = 0.0;
     npart = genevent.npfull;
     /*

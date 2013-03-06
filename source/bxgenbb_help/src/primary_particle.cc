@@ -4,16 +4,16 @@
  * Copyright 2007-2011 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Publi * License as published by
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Publi * License for more details.
+ * General Public License for more details.
  *
- * You should have received a copy of the GNU General Publi * License
+ * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
@@ -29,38 +29,36 @@ DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_IMPLEMENTATION(genbb::primary_pa
 
 namespace genbb {
 
-  using namespace std;
-
   DATATOOLS_SERIALIZATION_IMPLEMENTATION_ADVANCED(primary_particle,"genbb::primary_particle")
 
   bool primary_particle::is_valid () const
   {
-    return type != UNDEF;
+    return _type_ != UNDEF;
   }
 
-  const string & primary_particle::get_particle_label () const
+  const std::string & primary_particle::get_particle_label () const
   {
-    return particle_label;
+    return _particle_label_;
   }
 
-  void primary_particle::set_particle_label (const string & pl_)
+  void primary_particle::set_particle_label (const std::string & pl_)
   {
-    if (type == UNDEF)
+    if (_type_ == UNDEF)
       {
-        particle_label = pl_;
+        _particle_label_ = pl_;
       }
     return;
   }
 
   int primary_particle::get_type () const
   {
-    return type;
+    return _type_;
   }
 
   void  primary_particle::set_type (int type_)
   {
-    type = type_;
-    particle_label = get_particle_label_from_type (type);
+    _type_ = type_;
+    _particle_label_ = get_particle_label_from_type (_type_);
     return;
   }
 
@@ -101,53 +99,63 @@ namespace genbb {
 
   double primary_particle::get_time () const
   {
-    return time;
+    return _time_;
   }
 
   void  primary_particle::set_time (double time_)
   {
-    time = time_;
+    _time_ = time_;
     return;
   }
 
   void primary_particle::set_momentum (const geomtools::vector_3d & v_)
   {
-    momentum = v_;
+    _momentum_ = v_;
     return;
   }
 
   const geomtools::vector_3d & primary_particle::get_momentum () const
   {
-    return momentum;
+    return _momentum_;
+  }
+
+  geomtools::vector_3d & primary_particle::grab_momentum ()
+  {
+    return _momentum_;
   }
 
   void primary_particle::set_vertex (const geomtools::vector_3d & m_)
   {
-    vertex = m_;
+    _vertex_ = m_;
     return;
   }
 
   const geomtools::vector_3d & primary_particle::get_vertex () const
   {
-    return vertex;
+    return _vertex_;
+  }
+
+  geomtools::vector_3d & primary_particle::grab_vertex ()
+  {
+    return _vertex_;
   }
 
   bool primary_particle::has_vertex () const
   {
-    return geomtools::is_valid (vertex);
+    return geomtools::is_valid (_vertex_);
   }
 
   void primary_particle::invalidate_vertex ()
   {
-    geomtools::invalidate_vector_3d (vertex);
+    geomtools::invalidate_vector_3d (_vertex_);
     return;
   }
 
   void primary_particle::reset ()
   {
-    type = UNDEF;
-    time = 0.0;
-    geomtools::invalidate (momentum);
+    _type_ = UNDEF;
+    _time_ = 0.0;
+    geomtools::invalidate (_momentum_);
     this->invalidate_vertex ();
     return;
   }
@@ -164,9 +172,10 @@ namespace genbb {
                                       double time_,
                                       const geomtools::vector_3d & mom_)
   {
-    type = type_;
-    time = time_;
-    momentum = mom_;
+    reset ();
+    _type_ = type_;
+    _time_ = time_;
+    _momentum_ = mom_;
     return;
   }
 
@@ -195,10 +204,9 @@ namespace genbb {
     else if (get_type () == TRITIUM) c = +1.0;
     else if (is_alpha ()) c = +2.0;
     else if (get_type () == HE3) c = +2.0;
-    else
-      {
-        throw logic_error ("primary_particle::get_charge: Unknown particle !");
-      }
+    else {
+      throw std::logic_error ("genbb::primary_particle::get_charge: Unknown particle !");
+    }
     return c;
   }
 
@@ -227,22 +235,22 @@ namespace genbb {
         a_mass = 0.0;
       }
 
-    if (type == NEUTRON)
+    if (_type_ == NEUTRON)
       {
         a_mass = 939.565560 * CLHEP::MeV;
       }
 
-    if (type == PROTON)
+    if (_type_ == PROTON)
       {
         a_mass = 938.272013 * CLHEP::MeV;
       }
 
-    if (type == MUON_PLUS || type == MUON_MINUS)
+    if (_type_ == MUON_PLUS || _type_ == MUON_MINUS)
       {
         a_mass = 105.658369 * CLHEP::MeV;
       }
 
-    if (type == NEUTRINO)
+    if (_type_ == NEUTRINO)
       {
         a_mass = 0.0 * CLHEP::MeV;
       }
@@ -252,15 +260,14 @@ namespace genbb {
 
   double primary_particle::get_beta () const
   {
-    return momentum.mag () / get_total_energy ();
+    return _momentum_.mag () / get_total_energy ();
   }
 
   double primary_particle::get_kinetic_energy () const
   {
-    double the_mass = get_mass ();
-    double kinetic_energy
-      = sqrt (momentum.mag () * momentum.mag () + the_mass * the_mass) 
-      - the_mass;
+    double m = get_mass ();
+    double p = _momentum_.mag ();
+    double kinetic_energy = std::sqrt (p * p + m * m) - m;
     return kinetic_energy;
   }
 
@@ -269,7 +276,7 @@ namespace genbb {
     return get_kinetic_energy () + get_mass ();
   }
 
-  void primary_particle::dump (ostream & out_, const string & indent_) const
+  void primary_particle::dump (std::ostream & out_, const std::string & indent_) const
   {
     tree_dump( out_, "genbb::primary_particle : ", indent_);
     return;
@@ -283,47 +290,46 @@ namespace genbb {
     namespace du = datatools;
     std::string indent;
     if (! indent_.empty ()) indent = indent_;
-    if (! title_.empty ())
-      {
+    if (! title_.empty ()) {
         out_ << indent << title_ << std::endl;
       }
     double mass = get_mass ();
     double energy = get_kinetic_energy ();
 
-    out_ << indent << du::i_tree_dumpable::tag << "Type: " << type;
-    if (type != UNDEF)
+    out_ << indent << du::i_tree_dumpable::tag << "Type: " << _type_;
+    if (_type_ != UNDEF)
       {
-        out_ << " (" << get_particle_label_from_type (type) << ')';
+        out_ << " (" << get_particle_label_from_type (_type_) << ')';
       }
-    out_ << endl;
-    out_ << indent << du::i_tree_dumpable::tag << "Particle label: '" << particle_label << "'"
-         << endl;
-    ostringstream time_oss;
+    out_ << std::endl;
+    out_ << indent << du::i_tree_dumpable::tag << "Particle label: '" << _particle_label_ << "'"
+         << std::endl;
+    std::ostringstream time_oss;
     time_oss.precision (15);
-    time_oss << time / CLHEP::ns;
+    time_oss << _time_ / CLHEP::ns;
     out_ << indent << du::i_tree_dumpable::tag << "Time: " << time_oss.str ()
-         << " ns" << endl;
+         << " ns" << std::endl;
     out_ << indent << du::i_tree_dumpable::tag << "Kinetic energy: " << energy / CLHEP::MeV
-         << " MeV" << endl;
+         << " MeV" << std::endl;
     out_ << indent << du::i_tree_dumpable::tag << "Momentum: "
-         << momentum / CLHEP::MeV
-         << " MeV" << endl;
+         << _momentum_ / CLHEP::MeV
+         << " MeV" << std::endl;
     out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
-         << "Vertex: ";
+         << "_Vertex_: ";
     if (has_vertex ())
       {
-        out_ << vertex / CLHEP::mm
-             << " mm" << endl;
+        out_ << _vertex_ / CLHEP::mm
+             << " mm" << std::endl;
       }
     else
       {
-        out_ << "<no vertex>" << endl;
+        out_ << "<no vertex>" << std::endl;
       }
     
     return;
   }
 
-  string primary_particle::get_label (int type_)
+  std::string primary_particle::get_label (int type_)
   {
     switch (type_)
       {
@@ -346,12 +352,12 @@ namespace genbb {
     return "<unknown>";
   }
 
-  string primary_particle::get_particle_label_from_type (int type_)
+  std::string primary_particle::get_particle_label_from_type (int type_)
   {
     return primary_particle::get_label (type_);
   }
 
-  int primary_particle::get_particle_type_from_label (const string & label_)
+  int primary_particle::get_particle_type_from_label (const std::string & label_)
   {
     if (label_ == "electron" || label_ == "e-")
       {

@@ -7,10 +7,14 @@
 #include <string>
 #include <exception>
 
-#include <genbb_help/genbb_help_config.h>
-#include <genbb_help/manager.h>
+#include <datatools/units.h>
+
 #include <mygsl/rng.h>
 #include <mygsl/histogram.h>
+
+#include <genbb_help/genbb_help_config.h>
+#include <genbb_help/manager.h>
+#include <genbb_help/primary_event.h>
 
 using namespace std;
 

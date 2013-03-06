@@ -32,7 +32,6 @@
 #ifndef GENBB_HELP_I_GENBB_H_
 #define GENBB_HELP_I_GENBB_H_ 1
 
-#include <genbb_help/primary_event.h>
 #include <genbb_help/detail/pg_tools.h>
 
 #include <datatools/factory_macros.h>
@@ -47,6 +46,8 @@ namespace mygsl {
 }
 
 namespace genbb {
+
+  class primary_event;
 
   /// \brief GENBB particle generator abstract base class 
   class i_genbb

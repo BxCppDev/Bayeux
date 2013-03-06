@@ -7,6 +7,7 @@
 #include <exception>
 
 #include <genbb_help/wgenbb.h>
+#include <genbb_help/primary_event.h>
 
 using namespace std;
 

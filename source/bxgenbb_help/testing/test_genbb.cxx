@@ -11,6 +11,7 @@
 #include <datatools/utils.h>
 
 #include <genbb_help/genbb.h>
+#include <genbb_help/primary_event.h>
 #include <mygsl/rng.h>
 
 using namespace std; 
@@ -49,13 +50,13 @@ int main (int argc_, char ** argv_)
       if (test) config.store_flag ("test");
       config.store ("seed", seed);
       if (preserve_data) config.store_flag ("preserve_data_files");
-      config.store ("buffer_size", 10000);
-      config.store ("decay_type", "DBD");
-      config.store ("decay_isotope", "Se82");
+      config.store ("buffer_size",     10000);
+      config.store ("decay_type",      "DBD");
+      config.store ("decay_isotope",   "Se82");
       config.store ("decay_dbd_level", 0);
-      config.store ("decay_dbd_mode", 4);
-      config.store ("energy_min", 2.0);
-      config.store ("energy_max", 4.3);
+      config.store ("decay_dbd_mode",  4);
+      config.store ("energy_min",      2.0);
+      config.store ("energy_max",      4.3);
       if (debug) config.tree_dump (clog, "Configuration: ", "debug: ");
  
       mygsl::rng ran ("taus", seed);

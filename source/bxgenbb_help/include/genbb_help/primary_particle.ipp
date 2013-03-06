@@ -24,28 +24,28 @@ namespace genbb {
       {
         a_ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;    
       }
-    a_ar & boost::serialization::make_nvp ("type", type);
-    if (type == UNDEF)
+    a_ar & boost::serialization::make_nvp ("type", _type_);
+    if (_type_ == UNDEF)
       {
-        a_ar & boost::serialization::make_nvp ("particle_label", particle_label);
+        a_ar & boost::serialization::make_nvp ("particle_label", _particle_label_);
       }
     else
       {
-        particle_label = get_particle_label_from_type (type);
+        _particle_label_ = get_particle_label_from_type (_type_);
       }
-    a_ar & boost::serialization::make_nvp ("time", time);
-    a_ar & boost::serialization::make_nvp ("momentum", momentum);
+    a_ar & boost::serialization::make_nvp ("time", _time_);
+    a_ar & boost::serialization::make_nvp ("momentum", _momentum_);
     if (a_version > 1)
       {
         // vertex attribute was introduced with version 2
-        a_ar & boost::serialization::make_nvp ("vertex", vertex);
+        a_ar & boost::serialization::make_nvp ("vertex", _vertex_);
       }
     else
       {
         // if load from version < 2, use an invalidated vertex attribute.
         if (Archive::is_loading::value)
           {
-            geomtools::invalidate (vertex);
+            geomtools::invalidate (_vertex_);
           }
       }
    return;

@@ -7,6 +7,7 @@
 #include <stdexcept>
 
 #include <genbb_help/genbb_writer.h>
+#include <genbb_help/primary_event.h>
 
 using namespace std;
 
@@ -49,76 +50,76 @@ int main (int a_argc, char ** a_argv)
 
       int iarg = 1;
       while (iarg < a_argc)
-	{
-	  string arg = a_argv[iarg];
-	  if (arg[0] == '-')
-	    {
-	      if (arg == "-d" || arg == "--debug" )
-		{
-		  debug = true;
-		}
-	      else if (arg == "-h" || arg == "--help" )
-		{
-		  usage ( clog );
-		  return 0;
-		}
-	      else if ( arg == "-s" || arg == "--seed" ) 
-		{
-		  ;
-		  if ( ++iarg < a_argc )
-		    seed = atoi ( a_argv[iarg] );
-		}
-	      else if ( arg == "-N") 
-		{
-		  ;
-		  if ( ++iarg < a_argc )
-		    N = atoi ( a_argv[iarg] );
-		}
-	      else if ( arg == "-t" || arg == "--type" ) 
-		{
-		  ;
-		  if (++iarg < a_argc)
-		    type = a_argv[iarg];
-		}
-	      else if ( arg == "-Emin" || arg == "--energy-min") 
-		{
-		  ;
-		  if ( ++iarg < a_argc )
-		    Emin = atof ( a_argv[iarg] );
-		}
-	      else if ( arg == "-Emax" || arg == "--energy-max") 
-		{
-		  ;
-		  if ( ++iarg < a_argc )
-		    Emax = atof ( a_argv[iarg] );
-		}
-	      else if ( arg == "-phi_min" || arg == "--phi-min") 
-		{
-		  ;
-		  if ( ++iarg < a_argc )
-		    phi_min = atof ( a_argv[iarg] );
-		}
-	      else if ( arg == "-phi_max" || arg == "--phi-max") 
-		{
-		  ;
-		  if ( ++iarg < a_argc )
-		    phi_max = atof ( a_argv[iarg] );
-		}
-	      else if (arg == "-o" || arg == "--outfile") 
-		{
-		  ;
-		  if (++iarg < a_argc)
-		    file_out = a_argv[iarg];
-		}
-	    }
-	  iarg++;
-	}
+        {
+          string arg = a_argv[iarg];
+          if (arg[0] == '-')
+            {
+              if (arg == "-d" || arg == "--debug" )
+                {
+                  debug = true;
+                }
+              else if (arg == "-h" || arg == "--help" )
+                {
+                  usage ( clog );
+                  return 0;
+                }
+              else if ( arg == "-s" || arg == "--seed" ) 
+                {
+                  ;
+                  if ( ++iarg < a_argc )
+                    seed = atoi ( a_argv[iarg] );
+                }
+              else if ( arg == "-N") 
+                {
+                  ;
+                  if ( ++iarg < a_argc )
+                    N = atoi ( a_argv[iarg] );
+                }
+              else if ( arg == "-t" || arg == "--type" ) 
+                {
+                  ;
+                  if (++iarg < a_argc)
+                    type = a_argv[iarg];
+                }
+              else if ( arg == "-Emin" || arg == "--energy-min") 
+                {
+                  ;
+                  if ( ++iarg < a_argc )
+                    Emin = atof ( a_argv[iarg] );
+                }
+              else if ( arg == "-Emax" || arg == "--energy-max") 
+                {
+                  ;
+                  if ( ++iarg < a_argc )
+                    Emax = atof ( a_argv[iarg] );
+                }
+              else if ( arg == "-phi_min" || arg == "--phi-min") 
+                {
+                  ;
+                  if ( ++iarg < a_argc )
+                    phi_min = atof ( a_argv[iarg] );
+                }
+              else if ( arg == "-phi_max" || arg == "--phi-max") 
+                {
+                  ;
+                  if ( ++iarg < a_argc )
+                    phi_max = atof ( a_argv[iarg] );
+                }
+              else if (arg == "-o" || arg == "--outfile") 
+                {
+                  ;
+                  if (++iarg < a_argc)
+                    file_out = a_argv[iarg];
+                }
+            }
+          iarg++;
+        }
 
     if ( N < 0 || Emin < 0 || Emax < 0 || 
-	 phi_min < 0 || phi_max > 180. )
+         phi_min < 0 || phi_max > 180. )
       {
-	usage ( clog );
-	return 1;
+        usage ( clog );
+        return 1;
       }
       genbb::genbb_writer writer;
 
@@ -132,18 +133,18 @@ int main (int a_argc, char ** a_argv)
       writer.set_outfile      ( file_out );
 
       if ( type == "electron" || type == "e-" )
-	writer.set_type ( 3 );
+        writer.set_type ( 3 );
       else if ( type == "positron" || type == "e+" )
-	writer.set_type ( 2 );
+        writer.set_type ( 2 );
       else if ( type == "gamma" || type == "g" )
-	writer.set_type ( 1 );
+        writer.set_type ( 1 );
       else if ( type == "alpha" || type == "a" )
-	writer.set_type ( 47 );
+        writer.set_type ( 47 );
       else
-	writer.set_type ( -1 );
+        writer.set_type ( -1 );
 
       if ( debug )
-	writer.dump( clog );
+        writer.dump( clog );
 
       writer.run();
 

@@ -46,6 +46,7 @@
 #include <datatools/i_serializable.h>
 
 #include <datatools/units.h>
+#include <datatools/properties.h>
 #include <datatools/i_tree_dump.h>
 
 #include <genbb_help/primary_particle.h>
@@ -103,6 +104,10 @@ namespace genbb {
 
     double get_total_kinetic_energy () const;
 
+    const datatools::properties & get_auxiliaries () const;
+
+    datatools::properties & grab_auxiliaries ();
+
     /// Constructor 
     primary_event ();
     
@@ -122,13 +127,14 @@ namespace genbb {
                const std::string & a_title,
                const std::string & a_indent) const;
     
-  public:
+  private:
 
-    std::string        label;
-    double             time;
-    particles_col_type particles;
-    std::string        classification;
-    double             genbb_weight;
+    std::string           _label_;
+    double                _time_;
+    particles_col_type    _particles_;
+    std::string           _classification_;
+    double                _genbb_weight_;
+    datatools::properties _auxiliaries_;
 
   //! Support for Boost-based serialization
   DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(primary_event)

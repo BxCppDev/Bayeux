@@ -30,9 +30,11 @@
 #include <boost/filesystem.hpp>
 
 #include <datatools/utils.h>
+#include <datatools/units.h>
  
 #include <genbb_help/genbb.h>
 #include <genbb_help/genbb_utils.h>
+#include <genbb_help/primary_event.h>
 #include <boost/algorithm/string/split.hpp> 
 #include <boost/algorithm/string/classification.hpp> 
 
@@ -726,7 +728,7 @@ namespace genbb {
           throw logic_error (message.str ());
         }
     }
-    event_.time = time * CLHEP::second;
+    event_.set_time (time * CLHEP::second);
     event_.set_genbb_weight (_genbb_weight_);
     double part_time = 0.0;
     for (int i = 0; i < npart; i++)

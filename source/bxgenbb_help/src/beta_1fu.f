@@ -40,7 +40,7 @@ c         tcnuc       - time of creation of nucleus (sec);
 c         thnuc       - nucleus halflife (sec);
 c         c1,c2,c3,c4 - coefficients in correction factor to the spectrum
 c                       shape cf2(e)=(1+c1/w+c2*w+c3*w**2+c4*w**3), 
-c                       where w=e/emass+1, e - kinetic energy of electron.                        .
+c                       where w=e/emass+1, e - kinetic energy of electron.
 c Output: tdnuc               - time of decay of nucleus (sec);
 c         tevst               - time of event's start (sec);
 c         npfull              - current number of particle in event;

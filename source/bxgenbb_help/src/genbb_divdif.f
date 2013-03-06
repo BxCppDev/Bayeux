@@ -21,22 +21,6 @@ c Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 c 
 c
 c
-c$$$c -- Interpolation of a tabulated function
-c$$$c    GSL based functions 
-c$$$ 	real*4 function divdif (f_, a_, n_, x_, degree_)
-c$$$ 	implicit none
-c$$$	real*4 f_
-c$$$	real*4 a_
-c$$$        integer*4 n_
-c$$$        real*4 x_
-c$$$        integer*4 degree_
-c$$$        real*4 res
-c$$$        real*4 divdif_wrap
-c$$$        res = divdif_wrap (f_, a_, n_, x_, degree_)
-c$$$	divdif = res
-c$$$        return
-c$$$        end
-c
 c
 c 2006/src/packlib/kernlib/kernnum/e105fort/divdif.F
 c

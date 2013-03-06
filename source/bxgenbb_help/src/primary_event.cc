@@ -4,16 +4,16 @@
  * Copyright 2007-2011 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Publi * License as published by
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Publi * License for more details.
+ * General Public License for more details.
  * 
- * You should have received a copy of the GNU General Publi * License
+ * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  * Boston, MA 02110-1301, USA.
@@ -30,6 +30,7 @@
 #include <sstream>
 #include <fstream>
 #include <string>
+#include <limits>
 
 #include <boost/cstdint.hpp>
 
@@ -43,40 +44,27 @@ namespace genbb {
 
   DATATOOLS_SERIALIZATION_IMPLEMENTATION_ADVANCED(primary_event,"genbb::primary_event")
 
-  // //DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (primary_event_3d,"genbb::primary_event")
-
-  // const std::string primary_event::SERIAL_TAG     = "genbb::primary_event";
-  // const std::string primary_event::OLD_SERIAL_TAG = "__genbb::primary_event__";
-
-  // const std::string & primary_event::get_serial_tag () const
-  // {
-  //   if (library_config::g_use_old_serialization_tag)
-  //     {
-  //       return primary_event::OLD_SERIAL_TAG;
-  //     }
-  //   return primary_event::SERIAL_TAG;
-  // }
-
   bool primary_event::is_valid () const
   {
-    return time >= 0.;
+    return datatools::is_valid(_time_);
   }
 
   void primary_event::reset ()
   {
     reset_label ();
-    time = -1.;
-    genbb_weight = 1.0;
-    particles.clear ();
+    datatools::invalidate(_time_);
+    _particles_.clear ();
     reset_classification ();
+    _genbb_weight_ = 1.0;
+    _auxiliaries_.clear ();
     return;
   }
 
   double primary_event::get_total_kinetic_energy () const
   {
     double tke = 0.;
-    for (particles_col_t::const_iterator i = particles.begin ();
-         i != particles.end ();
+    for (particles_col_type::const_iterator i = _particles_.begin ();
+         i != _particles_.end ();
          i++)
       {
         const primary_particle & p = *i;
@@ -88,8 +76,8 @@ namespace genbb {
   // ctor:
   primary_event::primary_event ()
   {
-    time = -1.;
-    genbb_weight = 1.0;
+    _time_ = -1.;
+    _genbb_weight_ = 1.0;
     return;
   }
   
@@ -101,13 +89,13 @@ namespace genbb {
 
   void primary_event::set_time (double t_)
   {
-    time = t_;
+    _time_ = t_;
     return;
   }
 
   double primary_event::get_time () const
   {
-    return time;
+    return _time_;
   }
 
   void primary_event::set_genbb_weight (double genbb_weight_)
@@ -115,75 +103,76 @@ namespace genbb {
     if (genbb_weight_ < 0.0)
       {
         std::ostringstream message;
-        message << "genbb::primary_event::set_genbb_weight: Invalid 'genbb_weight' value  (" << genbb_weight_ << " <0) !";
+        message << "genbb::primary_event::set_genbb_weight: " 
+                << "Invalid 'genbb_weight' value  (" << genbb_weight_ << " < 0) !";
         throw std::logic_error (message.str());
       }
-    genbb_weight = genbb_weight_;
+    _genbb_weight_ = genbb_weight_;
     return;
   }
 
   double primary_event::get_genbb_weight () const
   {
-    return genbb_weight;
+    return _genbb_weight_;
   }
 
   bool primary_event::is_genbb_weighted () const
   {
-    return genbb_weight == 1.0;
+    return _genbb_weight_ == 1.0;
   }
 
   const primary_event::particles_col_type & primary_event::get_particles () const
   {
-    return particles;
+    return _particles_;
   }
 
   primary_event::particles_col_type & primary_event::grab_particles ()
   {
-    return particles;
+    return _particles_;
   }
 
   primary_event::particles_col_type & primary_event::get_particles ()
   {
-    return particles;
+    return _particles_;
   }
 
   void primary_event::add_particle (const primary_particle & p_)
   {
-    particles.push_back (p_);
+    _particles_.push_back (p_);
     return;
   }
 
   const std::string & primary_event::get_label () const
   {
-    return label;
+    return _label_;
   }
 
   void primary_event::set_label (const std::string & l_)
   {
-    label = l_;
+    _label_ = l_;
     return;
   }
 
   void primary_event::reset_label ()
   {
-    label = "";
+    _label_ = "";
     return;
   }
 
   const std::string & primary_event::get_classification () const
   {
-    return classification;
+    return _classification_;
   }
 
   void primary_event::set_classification (const std::string & c_)
   {
-    classification = c_;
+    _classification_ = c_;
     return;
   }
 
   void primary_event::reset_classification ()
   {
-    classification = "";
+    _classification_ = "";
     return;
   }
 
@@ -194,8 +183,8 @@ namespace genbb {
     size_t n_gamma = 0;
     size_t n_alpha = 0;
     size_t n_others = 0;
-    for (particles_col_type::const_iterator i = particles.begin ();
-         i != particles.end ();
+    for (particles_col_type::const_iterator i = _particles_.begin ();
+         i != _particles_.end ();
          i++)
       {
         const primary_particle & p = *i;
@@ -231,12 +220,12 @@ namespace genbb {
     out_ << indent << du::i_tree_dumpable::tag << "Valid: " << is_valid () << std::endl;
     if (is_valid ())
       {
-        out_ << indent << du::i_tree_dumpable::tag << "Label : '" << label << "'" << std::endl;
-        out_ << indent << du::i_tree_dumpable::tag << "Time  : " << time / CLHEP::second << " s" << std::endl;
-        out_ << indent << du::i_tree_dumpable::tag << "Particles: [" << particles.size () << "]" << std::endl;
+        out_ << indent << du::i_tree_dumpable::tag << "Label : '" << _label_ << "'" << std::endl;
+        out_ << indent << du::i_tree_dumpable::tag << "Time  : " << _time_ / CLHEP::second << " s" << std::endl;
+        out_ << indent << du::i_tree_dumpable::tag << "Particles: [" << _particles_.size () << "]" << std::endl;
         int particle_counter = 0;
-        for (particles_col_type::const_iterator it = particles.begin ();
-             it != particles.end ();
+        for (particles_col_type::const_iterator it = _particles_.begin ();
+             it != _particles_.end ();
              it++)
           {
             std::ostringstream indent_oss;
@@ -244,7 +233,7 @@ namespace genbb {
             particles_col_type::const_iterator jt = it;
             jt++;
             out_ << indent_ << du::i_tree_dumpable::skip_tag; 
-            if (jt == particles.end ())
+            if (jt == _particles_.end ())
               {
                 out_ << du::i_tree_dumpable::last_tag; 
                 indent_oss << du::i_tree_dumpable::last_skip_tag;
@@ -292,17 +281,28 @@ namespace genbb {
     geomtools::rotation_3d rot;
     geomtools::create_rotation_3d (rot, phi_, theta_, delta_);
     rot.invert ();
-    for (particles_col_type::iterator i = particles.begin ();
-         i != particles.end ();
+    for (particles_col_type::iterator i = _particles_.begin ();
+         i != _particles_.end ();
          i++)
       {
         primary_particle & p = *i;
-        geomtools::vector_3d & momentum = p.momentum;
+        geomtools::vector_3d & momentum = p.grab_momentum();
         geomtools::vector_3d rotated_momentum = rot * momentum;
         momentum = rotated_momentum;
       }
-
     return;
+  }
+
+  const datatools::properties & 
+  primary_event::get_auxiliaries () const
+  {
+    return _auxiliaries_;
+  }
+
+  datatools::properties & 
+  primary_event::grab_auxiliaries ()
+  {
+    return _auxiliaries_;
   }
   
 } // end of namespace genbb

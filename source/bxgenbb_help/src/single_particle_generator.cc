@@ -32,6 +32,7 @@
 #include <datatools/utils.h>
 #include <geomtools/utils.h>
 #include <datatools/units.h>
+#include <genbb_help/primary_event.h>
 
 namespace genbb {
 
@@ -579,7 +580,7 @@ namespace genbb {
     py = 0.0;
     pz = momentum;
 
-    event_.time = 0.0 * CLHEP::second;;
+    event_.set_time (0.0 * CLHEP::second);
     primary_particle pp;
     pp.set_type (_particle_type_);
     pp.set_time (0.0 * CLHEP::second);
