@@ -6,7 +6,9 @@
 #include <sstream>
 #include <string>
 #include <stdexcept>
+#include <limits>
 
+#include <datatools/utils.h>
 #include <datatools/units.h>
 #include <datatools/clhep_units.h>
 

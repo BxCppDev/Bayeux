@@ -19,6 +19,7 @@
 // Standard Library
 #include <string>
 #include <vector>
+#include <limits>
 
 // Third Party
 // - A
@@ -178,7 +179,8 @@ class units {
    */
   static bool find_value_with_unit(const std::string& word, 
                                    double& value, 
-                                   std::string& unit_label);
+                                   std::string& unit_label,
+                                   double default_unit_ = std::numeric_limits<double>::quiet_NaN());
 
  protected:
   //! Exception thrown in case of unrecognized unit symbol.

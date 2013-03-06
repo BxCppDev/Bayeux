@@ -24,6 +24,7 @@
 #include <boost/scoped_ptr.hpp>
 
 // This Project
+#include <datatools/utils.h>
 #include <datatools/clhep_units.h>
 
 
@@ -188,38 +189,48 @@ double units::get_frequency_unit_from(const std::string& word) {
 
 
 double units::get_activity_unit_from(const std::string& word) {
-  if ((word == "Bq")) return 1. / CLHEP::second;
-  if ((word == "mBq")) return 1.e-3 / CLHEP::second;
-  if ((word == "uBq")) return 1.e-6 / CLHEP::second;
-  if ((word == "kBq")) return 1.e+3 / CLHEP::second;
-  if ((word == "MBq")) return 1.e+6 / CLHEP::second;
-  if ((word == "GBq")) return 1.e+9 / CLHEP::second;
+  if ((word == "Bq"))  return CLHEP::becquerel;
+  if ((word == "mBq")) return 1.e-3 * CLHEP::becquerel;
+  if ((word == "uBq")) return 1.e-6 * CLHEP::becquerel;
+  if ((word == "kBq")) return 1.e+3 * CLHEP::becquerel;
+  if ((word == "MBq")) return 1.e+6 * CLHEP::becquerel;
+  if ((word == "GBq")) return 1.e+9 * CLHEP::becquerel;
+  if ((word == "Ci"))  return CLHEP::curie;
+  if ((word == "kCi")) return 1.e3   * CLHEP::curie;
+  if ((word == "MCi")) return 1.e6   * CLHEP::curie;
+  if ((word == "mCi")) return 1.e-3  * CLHEP::curie;
+  if ((word == "uCi")) return 1.e-6  * CLHEP::curie;
+  if ((word == "nCi")) return 1.e-9  * CLHEP::curie;
+  if ((word == "pCi")) return 1.e-12 * CLHEP::curie;
+  if ((word == "dpm")) return CLHEP::becquerel / 60.0;
   throw_bad_unit("activity", word);
   return std::numeric_limits<double>::quiet_NaN();
 }
 
 
 double units::get_volume_activity_unit_from(const std::string& word) {
-  double Bq_per_m3 = CLHEP::becquerel / CLHEP::m3;
+  double Bq_per_m3 = 1. * CLHEP::becquerel / CLHEP::m3;
   if ((word == "Bq/m3"))  return 1.    * Bq_per_m3;
   if ((word == "mBq/m3")) return 1.e-3 * Bq_per_m3;
   if ((word == "uBq/m3")) return 1.e-6 * Bq_per_m3;
   if ((word == "kBq/m3")) return 1.e+3 * Bq_per_m3;
   if ((word == "MBq/m3")) return 1.e+6 * Bq_per_m3;
   if ((word == "GBq/m3")) return 1.e+9 * Bq_per_m3;
-  throw_bad_unit("volume_activity", word);
+  if ((word == "dpm/m3")) return CLHEP::becquerel / 60.0 * Bq_per_m3;
+  throw_bad_unit("volume activity", word);
   return std::numeric_limits<double>::quiet_NaN();
 }
 
 
 double units::get_surface_activity_unit_from(const std::string& word) {
-  double Bq_per_m2 = 1. / CLHEP::second / CLHEP::m2;
+  double Bq_per_m2 = 1. * CLHEP::becquerel / CLHEP::m2;
   if ((word == "Bq/m2"))  return 1.    * Bq_per_m2;
   if ((word == "mBq/m2")) return 1.e-3 * Bq_per_m2;
   if ((word == "uBq/m2")) return 1.e-6 * Bq_per_m2; 
   if ((word == "kBq/m2")) return 1.e+3 * Bq_per_m2;
   if ((word == "MBq/m2")) return 1.e+6 * Bq_per_m2;
   if ((word == "GBq/m2")) return 1.e+9 * Bq_per_m2;
+  if ((word == "dpm/m2")) return CLHEP::becquerel / 60.0 * Bq_per_m2;
   throw_bad_unit("surface activity", word);
   return std::numeric_limits<double>::quiet_NaN();
 }
@@ -227,8 +238,8 @@ double units::get_surface_activity_unit_from(const std::string& word) {
 
 double units::get_electric_charge_unit_from(const std::string& word) {
   if ((word == "C"))  return CLHEP::coulomb;
-  if ((word == "nC"))  return 1.e-9 * CLHEP::coulomb;
-  if ((word == "pC"))  return 1.e-12 * CLHEP::coulomb;
+  if ((word == "nC")) return 1.e-9 * CLHEP::coulomb;
+  if ((word == "pC")) return 1.e-12 * CLHEP::coulomb;
   throw_bad_unit("electric charge", word);
   return std::numeric_limits<double>::quiet_NaN();
 }
@@ -236,22 +247,23 @@ double units::get_electric_charge_unit_from(const std::string& word) {
 
 double units::get_electric_current_unit_from(const std::string& word) {
   if ((word == "A"))  return CLHEP::ampere;
-  if ((word == "mA"))  return CLHEP::milliampere;
-  if ((word == "uA"))  return CLHEP::microampere;
-  if ((word == "nA"))  return CLHEP::nanoampere;
+  if ((word == "mA")) return CLHEP::milliampere;
+  if ((word == "uA")) return CLHEP::microampere;
+  if ((word == "nA")) return CLHEP::nanoampere;
   throw_bad_unit("electric current", word);
   return std::numeric_limits<double>::quiet_NaN();
 }
 
 
 double units::get_mass_activity_unit_from(const std::string& word) {
-  double Bq_per_kg = 1. / CLHEP::second / CLHEP::kg;
-  if ((word == "Bq/kg"))  return 1.    * Bq_per_kg;
+  double Bq_per_kg = 1. * CLHEP::becquerel / CLHEP::kg;
+  if ((word == "Bq/kg"))       return 1.    * Bq_per_kg;
   else if ((word == "mBq/kg")) return 1.e-3 * Bq_per_kg;
   else if ((word == "uBq/kg")) return 1.e-6 * Bq_per_kg; 
   else if ((word == "kBq/kg")) return 1.e+3 * Bq_per_kg;
   else if ((word == "MBq/kg")) return 1.e+6 * Bq_per_kg;
   else if ((word == "GBq/kg")) return 1.e+9 * Bq_per_kg;
+  if ((word == "dpm/kg")) return CLHEP::becquerel / 60.0 * Bq_per_kg;
   else throw_bad_unit("mass activity", word);
   return std::numeric_limits<double>::quiet_NaN();
 }
@@ -304,8 +316,7 @@ double units::get_unit_from(const std::string& unit_type,
   }
   {
     std::ostringstream message;
-    message << "Invalid " << unit_type 
-            << " of unit :'" << unit_str << "' !";
+    message << "Invalid " << unit_type << " of unit :'" << unit_str << "' !";
     throw std::logic_error(message.str());
   }
   return std::numeric_limits<double>::quiet_NaN();
@@ -396,7 +407,8 @@ double units::get_unit(const std::string& unit_str) {
 
 bool units::find_value_with_unit(const std::string& word, 
                                  double& value, 
-                                 std::string& unit_label) {
+                                 std::string& unit_label,
+                                 double default_unit_) {
   value = std::numeric_limits<double>::quiet_NaN();
   unit_label = "";
 
@@ -408,6 +420,7 @@ bool units::find_value_with_unit(const std::string& word,
     message << "datatools::units::find_value_with_unit: Format error while reading a double value !";
     return false;
   }
+  bool use_default_unit = true;
   iss >> std::ws;
   if (!iss.eof()) {
     std::string ustr;
@@ -423,7 +436,12 @@ bool units::find_value_with_unit(const std::string& word,
     
     val *= any_unit_value;
     unit_label = any_unit_label;
+    use_default_unit = false;
   }
+  if (datatools::is_valid(default_unit_) && use_default_unit)
+    {
+      val *= default_unit_;
+    }
   value = val;
   return true;
 }
