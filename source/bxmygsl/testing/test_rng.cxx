@@ -21,7 +21,7 @@ int main (int argc_ , char ** argv_)
       unsigned long int seed   = 12345;
     
       mygsl::rng r;
-      r.init (rng_id,seed);
+      r.initialize (rng_id,seed);
       r.dump (clog);
 
       size_t nshoots = 3;
@@ -33,10 +33,10 @@ int main (int argc_ , char ** argv_)
       cerr << endl;
     
       for (int i = 0; i < nshoots; i++) 
-	{
-	  double ran = r.uniform ();
-	  cout << ran << endl;
-	}
+        {
+          double ran = r.uniform ();
+          cout << ran << endl;
+        }
     
       cerr << "store..." << endl;
       r.store ("test_rng.state");
@@ -46,10 +46,10 @@ int main (int argc_ , char ** argv_)
 
       cerr << endl;
       for (int i = 0; i < nshoots; i++) 
-	{
-	  double ran = r.uniform ();
-	  cout << ran << endl;
-	}
+        {
+          double ran = r.uniform ();
+          cout << ran << endl;
+        }
 
       string sname = "test_rng_full.state";
       ofstream ofstate (sname.c_str ());
@@ -62,10 +62,10 @@ int main (int argc_ , char ** argv_)
 
       cerr << endl;
       for (int i = 0; i < nshoots; i++) 
-	{
-	  double ran = r.uniform ();
-	  cout << ran << endl;
-	}
+        {
+          double ran = r.uniform ();
+          cout << ran << endl;
+        }
 
     }
   catch (exception & x) 

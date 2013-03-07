@@ -74,9 +74,9 @@ namespace mygsl {
 
     void set_seed (unsigned long int seed_ = 0);
 
-    // rng ();
+    rng ();
             
-    rng (const std::string & id_ = "mt19937", unsigned long int seed_ = 0);
+    rng (const std::string & id_, unsigned long int seed_);
 
     void reset ();
       

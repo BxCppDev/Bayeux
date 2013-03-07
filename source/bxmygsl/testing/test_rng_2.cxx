@@ -21,7 +21,7 @@ int main (int argc_ , char ** argv_)
       unsigned long int seed   = 12345;
     
       mygsl::rng r;
-      r.init (rng_id, seed);
+      r.initialize (rng_id, seed);
     
       mygsl::rng::state_buffer_type buffer_init;
       clog << "Storing the initial internal state in some buffer..." << endl;
@@ -36,10 +36,10 @@ int main (int argc_ , char ** argv_)
       clog << "Fire some initial random values : " << endl;
       size_t nshoots = 3;
       for (int i = 0; i < nshoots; i++) 
-	{
-	  double ran = r.uniform ();
-	  cout << ran << endl;
-	}
+        {
+          double ran = r.uniform ();
+          cout << ran << endl;
+        }
     
       clog << "Storing the internal state in some buffer..." << endl;
       mygsl::rng::state_buffer_type buffer;
@@ -48,28 +48,28 @@ int main (int argc_ , char ** argv_)
       clog << "Fire some other values :" << endl;
       nshoots = 5;
       for (int i = 0; i < nshoots; i++) 
-	{
-	  double ran = r.uniform ();
-	  cout << ran << endl;
-	}
+        {
+          double ran = r.uniform ();
+          cout << ran << endl;
+        }
 
       clog << "Restore the internal state from the buffer..." << endl;
       r.from_buffer (buffer);
       clog << "Fire again some values :" << endl;
       for (int i = 0; i < nshoots; i++) 
-	{
-	  double ran = r.uniform ();
-	  cout << ran << endl;
-	}
+        {
+          double ran = r.uniform ();
+          cout << ran << endl;
+        }
 
       clog << "Restore the initial internal state..." << endl;
       r.from_buffer (buffer_init);
       clog << "Fire again some values :" << endl;
       for (int i = 0; i < nshoots; i++) 
-	{
-	  double ran = r.uniform ();
-	  cout << ran << endl;
-	}
+        {
+          double ran = r.uniform ();
+          cout << ran << endl;
+        }
 
     }
   catch (exception & x) 
