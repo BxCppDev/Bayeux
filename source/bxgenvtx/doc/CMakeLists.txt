@@ -1,4 +1,4 @@
-# - Build materials documentation
+# - Build genvtx documentation
 #
 #-----------------------------------------------------------------------
 # Copyright 2012 Ben Morgan <bmorgan.warwick@gmail.com>
