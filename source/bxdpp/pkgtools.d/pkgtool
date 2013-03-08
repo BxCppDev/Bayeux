@@ -432,7 +432,10 @@ function do_configure ()
     cd ${the_build_dir}
     cmake \
 	-DCMAKE_INSTALL_PREFIX:PATH=${install_prefix} \
-	-DCMAKE_MODULE_PATH:PATH=${CMAKE_MODULE_PATH} \
+	-Dbrio_DIR=${BRIO_CMAKE_CONFIG_DIR} \
+	-Dcuts_DIR=${CUTS_CMAKE_CONFIG_DIR} \
+	-Dmygsl_DIR=${MYGSL_CMAKE_CONFIG_DIR} \
+	-DCMAKE_MODULE_PATH:PATH=${CADFAEL_SHARE_DIR}/cmake/Modules:${CMAKE_MODULE_PATH} \
 	-DCMAKE_BUILD_TYPE:STRING=Release \
 	-DDPP_WITH_DOC=${with_doc} \
 	-DDPP_WITH_TEST=${with_test} \
