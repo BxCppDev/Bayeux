@@ -28,7 +28,7 @@ int main (int argc_, char ** argv_)
       bool debug = false;
       bool verbose = false;
       string pg_name;
-      int nevents = 10;
+      int nevents = 10000;
 
       int iarg = 1;
       while (iarg < argc_)
@@ -94,6 +94,7 @@ int main (int argc_, char ** argv_)
         }
       if (PGMgr.has(pg_name))
         {
+          mygsl::histogram hEc(70, 0.0 * CLHEP::keV, 3500.0 * CLHEP::keV);
           std::clog << "NOTICE: " << "Found particle generator named '"
                     << pg_name << "'" << std::endl;
           genbb::i_genbb & PG = PGMgr.grab(pg_name);
@@ -104,12 +105,17 @@ int main (int argc_, char ** argv_)
               genbb::primary_event decay_event;
               PG.load_next(decay_event, false);
               decay_event.set_label (pg_name);
-              decay_event.tree_dump (std::clog, "Generated primary event : ",
-                                     "NOTICE: ");
+              if (count < 1) decay_event.tree_dump (std::clog, "Generated primary event : ",
+                                                    "NOTICE: ");
+              hEc.fill (decay_event.get_particles().front().get_kinetic_energy ());
               count++;
               if (count >= nevents) break;
             }
           PGMgr.reset(pg_name);
+          std::string sname = "electron.hist";
+          std::ofstream ofhist(sname.c_str());
+          hEc.print(ofhist);
+          ofhist.close();
         }
       else
         {
@@ -120,7 +126,7 @@ int main (int argc_, char ** argv_)
       pg_name = "electron_pdf";
       if (PGMgr.has(pg_name))
         {
-          mygsl::histogram hEc(100, 0.0 * CLHEP::keV, 2000.0 * CLHEP::keV);
+          mygsl::histogram hEc(100, 0.0 * CLHEP::keV, 3500.0 * CLHEP::keV);
           std::clog << "NOTICE: " << "Found particle generator named '"
                       << pg_name << "'" << std::endl;
           genbb::i_genbb & PG = PGMgr.grab(pg_name);
@@ -131,12 +137,12 @@ int main (int argc_, char ** argv_)
               genbb::primary_event decay_event;
               PG.load_next(decay_event, false);
               decay_event.set_label (pg_name);
-              hEc.fill (decay_event.get_particles().front(). get_kinetic_energy ());
+              hEc.fill (decay_event.get_particles().front().get_kinetic_energy ());
               count++;
               if (count >= nevents) break;
             }
           PGMgr.reset(pg_name);
-          std::string sname = "electron.hist";
+          std::string sname = "electron_pdf.hist";
           std::ofstream ofhist(sname.c_str());
           hEc.print(ofhist);
           ofhist.close();

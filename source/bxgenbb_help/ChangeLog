@@ -29,8 +29,10 @@
 	* fix for implicit double precision issue for 64bit arch
 2013-03-06 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
 	* pre-release 5.0.0 depends on datatools 5.X,
-	geomtools 4.X,
+	geomtools 4.X...
 	* make attributes private in primary_event and primary_particle classes
 	* add auxiliaries properties in primary_event class, serialization version 4
-	
+	* add direction mode for single_particle_generator
+	* add combined_particle_generator
+
 

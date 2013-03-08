@@ -185,6 +185,10 @@ namespace genbb {
                            const std::string& indent = "",
                            bool inherit              = false) const;
 
+    const datatools::factory_register<i_genbb> & get_factory_register() const;
+
+    datatools::factory_register<i_genbb> & grab_factory_register();
+
   protected:
 
     void _load_pg(const std::string& name,
@@ -216,8 +220,8 @@ namespace genbb {
 
     mygsl::rng * _external_prng_; /// Handle to an external PRNG
 
-    i_genbb::factory_register_type _factory_register_; /// Particle generator factory
-    detail::pg_dict_type           _particle_generators_; /// Dictionary of particle generators
+    datatools::factory_register<i_genbb> _factory_register_;    /// Particle generator factory
+    detail::pg_dict_type                 _particle_generators_; /// Dictionary of particle generators
   };
 
 

@@ -15,6 +15,7 @@
 #include <string>
 #include <exception>
 
+#include <datatools/units.h>
 #include <genbb_help/single_particle_generator.h>
 #include <genbb_help/primary_event.h>
 
@@ -30,6 +31,7 @@ int main (int argc_, char ** argv_)
       bool debug = false;
       int many = 0;
       bool randomized_direction = false;
+      bool cone_direction = false;
       bool energy_range_mode = false;
 
       int iarg = 1;
@@ -55,6 +57,10 @@ int main (int argc_, char ** argv_)
               else if ((option == "-r") || (option == "--randomized-direction")) 
                  {
                    randomized_direction = true;
+                 }
+              else if ((option == "-c") || (option == "--cone-direction")) 
+                 {
+                   cone_direction = true;
                  }
               else if ((option == "-e") || (option == "--energy-range")) 
                  {
@@ -85,7 +91,22 @@ int main (int argc_, char ** argv_)
       config.store ("seed", 314159);
 
       /* Default momentum direction is along the Z axis */
-      config.store ("randomized_direction", randomized_direction);
+      if (randomized_direction)
+        {
+          config.store_flag ("randomized_direction");
+        }
+      else if (cone_direction)
+        {
+          config.store_flag ("cone_direction");
+        } 
+      config.store ("angle_unit", "degree");
+      config.store ("cone.min_angle", 25.0);
+      config.store ("cone.max_angle", 35.0);
+      //config.update ("cone.angle", 10.0);
+      config.store ("cone.axis", "z");
+      config.change ("cone.axis", "30 45 degree");
+      //config.update ("cone.axis", "30 45 degree");
+      config.tree_dump(std::clog, "Event generator configuration : ");
 
       /* Possible values are:
        *   "electron" or "e-"
@@ -138,7 +159,11 @@ int main (int argc_, char ** argv_)
           SPG.load_next (pe);
           if (debug) pe.dump ();
           // Print the kinetic energy from the only particle in each event:
-          cout << pe.get_particles ().front ().get_kinetic_energy () << endl;
+          cout << pe.get_particles ().front ().get_kinetic_energy () 
+               << ' ' << pe.get_particles ().front ().get_momentum().x()
+               << ' ' << pe.get_particles ().front ().get_momentum().y()
+               << ' ' << pe.get_particles ().front ().get_momentum().z()
+               << endl;
         }
 
       if (debug) clog << "debug: " << "The end." << endl;

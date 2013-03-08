@@ -108,6 +108,7 @@ set(genbb_help_SOURCES
       primary_event.cc
       primary_particle.cc
       single_particle_generator.cc
+      combined_particle_generator.cc
       wgenbb.cc
 )
 

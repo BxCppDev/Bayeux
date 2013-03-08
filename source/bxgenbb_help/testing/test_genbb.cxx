@@ -25,7 +25,7 @@ int main (int argc_, char ** argv_)
       bool test = false;
       bool dump = false;
       bool preserve_data = false;
-      size_t max_count = 27000;
+      size_t max_count = 2700;
 
       int iarg = 1;
       while (iarg < argc_)
@@ -50,7 +50,7 @@ int main (int argc_, char ** argv_)
       if (test) config.store_flag ("test");
       config.store ("seed", seed);
       if (preserve_data) config.store_flag ("preserve_data_files");
-      config.store ("buffer_size",     10000);
+      config.store ("buffer_size",     1000);
       config.store ("decay_type",      "DBD");
       config.store ("decay_isotope",   "Se82");
       config.store ("decay_dbd_level", 0);

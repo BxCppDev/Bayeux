@@ -23,11 +23,21 @@
 #include <datatools/bit_mask.h>
 #include <datatools/properties.h>
 #include <datatools/i_tree_dump.h>
+#include <datatools/factory.h>
+
+namespace datatools {
+  class service_manager;
+}
+
+namespace mygsl {
+  class rng;
+}
 
 namespace genbb {
 
   /// Class forward declaration
   class i_genbb;
+  //class i_genbb::factory_register_type;
 
   /// Handle on GENBB particle generator
   typedef datatools::handle<i_genbb> pg_handle_type;
@@ -74,7 +84,11 @@ namespace genbb {
       void set_manager (manager &);
 
       void reset_manager ();
-      
+ 
+      const manager & get_manager() const;
+ 
+      manager & grab_manager();
+
       void set_blank ();
          
       void set_created ();
@@ -104,9 +118,9 @@ namespace genbb {
       pg_handle_type & grab_initialized_handle ();
 
       virtual void tree_dump (std::ostream & out_         = std::clog, 
-			      const std::string & title_  = "",
-			      const std::string & indent_ = "",
-			      bool inherit_               = false) const;
+                              const std::string & title_  = "",
+                              const std::string & indent_ = "",
+                              bool inherit_               = false) const;
 
 
     private:
@@ -121,6 +135,18 @@ namespace genbb {
     };
 
     typedef std::map<std::string, pg_entry_type> pg_dict_type;
+
+    void create(pg_entry_type & entry_, 
+                datatools::factory_register<i_genbb> * factory_,
+                mygsl::rng * external_random_);
+    
+    void initialize(pg_entry_type & entry_,
+                    datatools::service_manager * service_manager_,
+                    detail::pg_dict_type * dictionary_,
+                    datatools::factory_register<i_genbb> * factory_,
+                    mygsl::rng * external_random_);
+
+    void reset(pg_entry_type& entry_);
 
   } // end of namespace detail
 

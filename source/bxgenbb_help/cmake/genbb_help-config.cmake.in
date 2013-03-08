@@ -25,7 +25,7 @@
 
 set(genbb_help_WITH_BIO        @GENBB_HELP_WITH_BIO@)
 set(genbb_help_WITH_REFLECTION @GENBB_HELP_WITH_REFLECTION@)
-set(genbb_help_GEOMTOOLS_DIR       @geomtools_DIR@)
+set(genbb_help_GEOMTOOLS_DIR   @geomtools_DIR@)
 
 #-----------------------------------------------------------------------
 # Locate ourselves, since all our config files should have been installed
@@ -39,7 +39,7 @@ get_filename_component(_genbb_help_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
 # Protect it with an in-memory variable so that we don't include
 # it twice should multiple calls to find_package be made
 if(NOT genbb_help_LIBDEPS_LOADED)
-  find_package(mygsl REQUIRED CONFIG PATHS ${genbb_help_MYGSL_DIR} NO_DEFAULT_PATH)
+  find_package(geomtools REQUIRED CONFIG PATHS ${genbb_help_GEOMTOOLS_DIR} NO_DEFAULT_PATH)
   include("${_genbb_help_thisdir}/genbb_help-libraries.cmake")
   set(genbb_help_LIBDEPS_LOADED 1)
 endif()

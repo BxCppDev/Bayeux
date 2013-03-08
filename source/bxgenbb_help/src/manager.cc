@@ -521,8 +521,18 @@ namespace genbb {
         << "Initialized    : " 
         << this->is_initialized() 
         << std::endl;
+    return;
   }
 
+  const datatools::factory_register<i_genbb> & manager::get_factory_register() const
+  {
+    return _factory_register_;
+  }
+  
+  datatools::factory_register<i_genbb> & manager::grab_factory_register()
+  {
+    return _factory_register_;
+  }
 
   //----------------------------------------------------------------------
   // Protected Interface Definitions
@@ -565,6 +575,7 @@ namespace genbb {
     detail::pg_entry_type& new_entry = _particle_generators_.find(name)->second;
     new_entry.set_id(id);
     new_entry.set_config(config);
+    new_entry.set_manager(*this);
 
     if (debug) {
       std::clog << datatools::io::debug
@@ -611,7 +622,10 @@ namespace genbb {
                   << "'..."
                   << std::endl;
       }
-
+      detail::create(entry,
+                     &_factory_register_, 
+                     (has_external_random() ? &grab_external_random() : 0));
+      /*
       // search for the PG's label in the factory dictionary:
       if (!_factory_register_.has(entry.get_id())) {
         std::ostringstream message;
@@ -651,6 +665,7 @@ namespace genbb {
                   << "' has been created !"
                   << std::endl;
       }
+      */
     }
     return;
   }
@@ -662,6 +677,24 @@ namespace genbb {
       this->_create_pg(entry);
     }
 
+    // If not initialized, do it :
+    if (!entry.is_initialized()) {
+      if (this->is_debug()) {
+        std::clog << datatools::io::debug
+                  << "genbb::manager::_initialize_pg: "
+                  << "Initializing particle generator named '"
+                  <<  entry.get_name()
+                  << "'..."
+                  << std::endl;
+      }
+      detail::initialize(entry,
+                         (has_service_manager() ? _service_mgr_ : 0),
+                         &_particle_generators_,
+                         &_factory_register_, 
+                         (has_external_random()? &grab_external_random() : 0));
+    }
+
+    /*
     // If not initialized, do it :
     if (!entry.is_initialized()) {
       if (this->is_debug()) {
@@ -686,15 +719,13 @@ namespace genbb {
         }
       entry.update_status(detail::pg_entry_type::STATUS_INITIALIZED);
     }
+    */
+    return;
   }
 
 
   void manager::_reset_pg(detail::pg_entry_type& entry) {
-    if (entry.is_initialized()) {
-      i_genbb& the_pg = entry.grab_handle().grab();
-      the_pg.reset();
-      entry.reset_status(detail::pg_entry_type::STATUS_INITIALIZED);
-    }
+    detail::reset(entry);
     return;
   }
 

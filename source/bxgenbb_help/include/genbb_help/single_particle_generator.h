@@ -43,6 +43,8 @@
 #include <mygsl/histogram.h>
 
 #include <datatools/properties.h>
+#include <datatools/units.h>
+#include <geomtools/utils.h>
 
 namespace genbb {
 
@@ -67,14 +69,35 @@ namespace genbb {
         SPECTRUM_MODE_HISTPDF = 1
       };
 
+    enum direction_mode_type
+      {
+        DIRECTION_Z_AXIS     =  0,
+        DIRECTION_RANDOMIZED =  1,
+        DIRECTION_CONE       =  2,
+        DIRECTION_DEFAULT    = DIRECTION_Z_AXIS
+      };
+
   protected:
     void _check_locked (const std::string & where_) const;
 
   public:
     bool is_debug () const;
     void set_debug (bool);
+    void set_direction_mode (int);
+    int get_direction_mode () const;
     bool is_randomized_direction () const;
     void set_randomized_direction (bool);
+    bool is_cone_direction () const;
+    void set_cone_direction (bool);
+    void set_cone_max_angle(double);
+    double get_cone_max_angle() const;
+    void set_cone_min_angle(double);
+    double get_cone_min_angle() const;
+    void set_cone_axis (const geomtools::vector_3d & axis_);
+    void set_z_direction (bool);
+    bool is_z_direction () const;
+    const geomtools::vector_3d & get_cone_axis() const;
+
     const std::string & get_particle_name () const;
     void set_particle_name (const std::string &);
     double get_particle_mass () const;
@@ -83,7 +106,6 @@ namespace genbb {
     virtual bool can_external_random () const;
     const mygsl::rng & get_random () const;
     mygsl::rng & grab_random ();
-    mygsl::rng & get_random (); /// obsolete
  
     int get_mode () const;
     void set_mode (int);
@@ -158,7 +180,10 @@ namespace genbb {
     mygsl::histogram          _energy_histo_;
     mygsl::histogram::pdf     _energy_histo_pdf_;
 
-    bool          _randomized_direction_;
+    int           _direction_mode_; //!< Mode for the direction of emission of the generated particle
+    double        _cone_max_angle_; //!< Maximum angle of the cone of emission along the main emission axis
+    double        _cone_min_angle_; //!< Minimum angle of the cone of emission along the main emission axis
+    geomtools::vector_3d _cone_axis_;
     unsigned long _seed_;   //!< Local PRNG's seed
     mygsl::rng    _random_; //!< Local PRNG
 

@@ -71,16 +71,108 @@ namespace genbb {
     return true;
   }
 
+  void single_particle_generator::set_direction_mode (int dm_)
+  {
+    _direction_mode_ = dm_;
+    return;
+  }
+
   void single_particle_generator::set_randomized_direction (bool rd_)
   {
     _check_locked ("genbb::single_particle_generator::set_randomized_direction");
-    _randomized_direction_ = rd_;
+    if (rd_)
+      {
+        _direction_mode_ = DIRECTION_RANDOMIZED;
+      }
+    else
+      {
+        _direction_mode_ = DIRECTION_DEFAULT;
+      }
     return;
   }
 
   bool single_particle_generator::is_randomized_direction () const
   {
-    return _randomized_direction_;
+    return _direction_mode_ == DIRECTION_RANDOMIZED;
+  }
+
+  void single_particle_generator::set_z_direction (bool zd_)
+  {
+    _check_locked ("genbb::single_particle_generator::set_z_direction");
+    if (zd_)
+      {
+        _direction_mode_ = DIRECTION_Z_AXIS;
+      }
+    else
+      {
+        _direction_mode_ = DIRECTION_DEFAULT;
+      }
+    return;
+  }
+
+  bool single_particle_generator::is_z_direction () const
+  {
+    return _direction_mode_ == DIRECTION_Z_AXIS;
+  }
+
+  void single_particle_generator::set_cone_direction (bool rd_)
+  {
+    _check_locked ("genbb::single_particle_generator::set_cone_direction");
+    if (rd_)
+      {
+        _direction_mode_ = DIRECTION_CONE;
+      }
+    else
+      {
+        _direction_mode_ = DIRECTION_DEFAULT;
+      }
+    return;
+  }
+
+  bool single_particle_generator::is_cone_direction () const
+  {
+    return _direction_mode_ == DIRECTION_CONE;
+  }
+
+  void single_particle_generator::set_cone_max_angle(double ca_)
+  {
+    _cone_max_angle_ = ca_;
+    return;
+  }
+
+  double single_particle_generator::get_cone_max_angle() const
+  {
+    return _cone_max_angle_;
+  }
+
+  void single_particle_generator::set_cone_min_angle(double ca_)
+  {
+    _cone_min_angle_ = ca_;
+    return;
+  }
+
+  double single_particle_generator::get_cone_min_angle() const
+  {
+    return _cone_min_angle_;
+  }
+
+  void single_particle_generator::set_cone_axis (const geomtools::vector_3d & axis_)
+  {
+    if (axis_.mag() == 0.0)
+      {
+        throw std::logic_error("genbb::single_particle_generator::set_cone_axis: Null cone axis !");
+      }
+    if (! geomtools::is_valid(axis_))
+      {
+        throw std::logic_error("genbb::single_particle_generator::set_cone_axis: Invalid cone axis !");
+      }
+    _cone_axis_ = axis_.unit();
+    return;
+  }
+
+  const geomtools::vector_3d & single_particle_generator::get_cone_axis() const
+  {
+    return _cone_axis_;
   }
 
   bool single_particle_generator::is_initialized () const
@@ -255,7 +347,11 @@ namespace genbb {
 
     // GSL (mygsl::tabulated_function class)
     _spectrum_interpolation_name_ = mygsl::tabulated_function::LINEAR_INTERP_NAME;
-    _randomized_direction_ = true;
+
+    _direction_mode_ = DIRECTION_DEFAULT;
+    _cone_max_angle_ = 0.0 * CLHEP::degree;
+    _cone_min_angle_ = 0.0 * CLHEP::degree;
+    _cone_axis_.set(0.0, 0.0, 1.0);
 
     _seed_ = 0;
     return;
@@ -288,11 +384,6 @@ namespace genbb {
       }
     return _random_;
   }
- 
-  mygsl::rng & single_particle_generator::get_random ()
-  {
-    return grab_random ();
-  }
 
   void single_particle_generator::_at_reset_ ()
   {
@@ -313,7 +404,10 @@ namespace genbb {
     _energy_spectrum_filename_ = "";
     _spectrum_interpolation_name_ = mygsl::tabulated_function::LINEAR_INTERP_NAME;
 
-    _randomized_direction_ = true;
+    _direction_mode_ = DIRECTION_DEFAULT;
+    _cone_max_angle_ = 0.0 * CLHEP::degree;
+    _cone_min_angle_ = 0.0 * CLHEP::degree;
+    _cone_axis_.set(0.0, 0.0, 1.0);
 
     if (_random_.is_initialized ())
       {
@@ -331,8 +425,6 @@ namespace genbb {
     _initialized_ = false;
     return;
   }
-
-  //void single_particle_generator::initialize (const datatools::properties & config_)
 
   void single_particle_generator::initialize (const datatools::properties & config_,
                                               datatools::service_manager & service_manager_,
@@ -378,10 +470,83 @@ namespace genbb {
         throw logic_error ("genbb::single_particle_generator::initialize: Missing 'seed' property !");
       }
 
-    if (config_.has_key ("randomized_direction"))
+    if (config_.has_flag ("z_axis_direction"))
       {
-        bool rd = config_.fetch_boolean ("randomized_direction");
-        set_randomized_direction (rd);
+        set_randomized_direction (true);//XX
+      }
+    else if (config_.has_flag ("randomized_direction"))
+      {
+        set_randomized_direction (true);
+      }
+    else if (config_.has_flag ("cone_direction"))
+      {
+        set_cone_direction (true);
+      }
+
+    double angle_unit = CLHEP::degree;
+    if (config_.has_key ("angle_unit"))
+      {
+        std::string angle_unit_str = config_.fetch_string ("angle_unit");
+        angle_unit = datatools::units::get_angle_unit_from (angle_unit_str);
+      }
+    
+    if (is_cone_direction())
+      {
+        if (config_.has_key ("cone.max_angle"))
+          {
+            double cone_max_angle = config_.fetch_real ("cone.max_angle");
+            cone_max_angle *= angle_unit;
+            set_cone_max_angle(cone_max_angle);
+            if (config_.has_key ("cone.min_angle"))
+              {
+                double cone_min_angle = config_.fetch_real ("cone.min_angle");
+                cone_min_angle *= angle_unit;
+                set_cone_min_angle(cone_min_angle);
+              }
+         }
+
+        if (config_.has_key ("cone.axis"))
+          {
+            std::string cone_axis_str = config_.fetch_string ("cone.axis");
+            geomtools::vector_3d cone_axis;
+            if (cone_axis_str == "x" || cone_axis_str == "X")
+              {
+                cone_axis.set (1.0, 0.0, 0.0);
+              }
+            else if (cone_axis_str == "y" || cone_axis_str == "Y")
+              {
+                cone_axis.set (0.0, 1.0, 0.0);
+              }
+            else if (cone_axis_str == "z" || cone_axis_str == "Z")
+              {
+                cone_axis.set (0.0, 0.0, 1.0);
+              }
+            else {
+              double phi, theta;
+              double angle_unit2 = angle_unit;
+              std::string angle_unit2_str;
+              std::istringstream iss(cone_axis_str);
+              iss >> phi >> theta >> ws >> angle_unit2_str;
+              if (angle_unit2_str.empty())
+                {
+                  angle_unit2 = datatools::units::get_angle_unit_from (angle_unit2_str);
+                }
+              
+              if (!iss)
+                {
+                  std::ostringstream message;
+                  message << "genbb::single_particle_generator::initialize: "
+                          << "Invalid format for phi and/or theta angles !";
+                  throw std::logic_error(message.str());
+                }
+              phi *= angle_unit2;
+              theta *= angle_unit2;
+              cone_axis.set(0.0,0.0,1.0);
+              cone_axis.setTheta(theta);
+              cone_axis.setPhi(phi);
+            }
+            set_cone_axis(cone_axis);
+          }
       }
 
     if (config_.has_key ("mode"))
@@ -588,13 +753,24 @@ namespace genbb {
     pp.set_momentum (p);
     event_.add_particle (pp);
 
-    if (_randomized_direction_)
+    if (is_randomized_direction())
       {
         double phi = grab_random ().flat (0.0, 360.0 * CLHEP::degree);
         double cos_theta = grab_random ().flat (-1.0, +1.0);
-        double theta = acos (cos_theta);
+        double theta = std::acos (cos_theta);
         double psi = grab_random ().flat (0.0, 360.0 * CLHEP::degree);
         event_.rotate (phi, theta, psi);
+      }
+    else if (is_cone_direction ())
+      {
+        double phi = grab_random ().flat (0.0, 360.0 * CLHEP::degree);
+        double cos_theta = grab_random ().flat (std::cos(_cone_max_angle_), std::cos(_cone_min_angle_));
+        double theta = std::acos (cos_theta);
+        double psi = grab_random ().flat (0.0, 360.0 * CLHEP::degree);
+        event_.rotate (phi, theta, psi);
+        double theta_dir = _cone_axis_.getTheta();
+        double phi_dir = _cone_axis_.getPhi();
+        event_.rotate (phi_dir, theta_dir, 0.0);
       }
 
     if (compute_classification_)
@@ -819,6 +995,13 @@ namespace genbb {
       {
         throw logic_error ("genbb::single_particle_generator::_at_init_: Particle mass is not defined !");
       }
+    if (_cone_min_angle_ > _cone_max_angle_)
+      {
+            ostringstream message;
+            message << "genbb::single_particle_generator::_at_init_: "
+                    << "Invalid  cone angle range (" << _cone_min_angle_ << ">" << _cone_max_angle_ << ") !";
+            throw out_of_range (message.str ());
+     }
 
     if (_mode_ == MODE_SPECTRUM)
       {

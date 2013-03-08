@@ -45,6 +45,10 @@ Run the particle generator manager :
     __build-Linux-x86_64/testing/test_manager \
     --particle-generator "bkg_Bi212_Po212_from_files"
 
+  bash$ GENBB_HELP_DATA_DIR=$(pwd) \
+    __build-Linux-x86_64/testing/test_manager \
+    --particle-generator "bkgd_model_0"
+
 
 --
 Updated: 2013-02-26
