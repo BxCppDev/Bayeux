@@ -27,6 +27,7 @@ endfunction()
 
 set(geomtools_PUBLIC_HEADERS
 include/geomtools/address_set.h
+include/geomtools/base_hit.h
 include/geomtools/bio_guard.h
 include/geomtools/blur_spot.h
 include/geomtools/box.h
@@ -109,6 +110,7 @@ include/geomtools/utils.h
 include/geomtools/visibility.h
 include/geomtools/manager.h
 include/geomtools/manager_macros.h
+include/geomtools/base_hit.ipp
 include/geomtools/blur_spot.ipp
 include/geomtools/display_data.ipp
 include/geomtools/geom_id.ipp
@@ -161,6 +163,7 @@ endif()
 # SOURCE FILES
 # Pretty basic!
 set(geomtools_SOURCES
+  base_hit.cc 
   blur_spot.cc 
   address_set.cc
   gdml_export.cc 

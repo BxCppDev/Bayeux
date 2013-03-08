@@ -24,6 +24,7 @@
 ###file(GLOB geomtools_tests_programs test_*.cxx)
 set ( geomtools_tests_programs
   test_geomtools.cxx 
+  test_base_hit.cxx 
   test_blur_spot.cxx 
   test_address_set.cxx
   test_box.cxx

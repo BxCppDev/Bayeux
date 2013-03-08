@@ -56,6 +56,12 @@
 
 #include <geomtools/blur_spot.ipp>
 
+/***********************
+ * geomtools::base_hit *
+ ***********************/
+
+#include <geomtools/base_hit.ipp>
+
 /***************************
  * geomtools::display_data *
  ***************************/
