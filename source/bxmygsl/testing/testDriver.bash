@@ -145,6 +145,8 @@ function do_run ()
     if [ ! -d ${tmp_test_dir} ]; then
 	mkdir -p ${tmp_test_dir}
     fi
+    export MYGSL_TMP_TEST_DIR=${tmp_test_dir}
+    echo "NOTICE: ${appname}: MYGSL_TMP_TEST_DIR=${MYGSL_TMP_TEST_DIR}" >&2
     cd ${tmp_test_dir}
  
     cat >> ${tmp_test_dir}/tests.log<<EOF

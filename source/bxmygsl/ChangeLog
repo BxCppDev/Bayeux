@@ -27,6 +27,8 @@ This is the mygsl package ChangeLog
 2013-01-29 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
 	* simplify the CMake build interface
 	* version: prepare tag 4.0.0 in trunk
-	
+2013-03-08 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* add histogram_service class
+
 
 

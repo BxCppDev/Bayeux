@@ -33,6 +33,7 @@ set ( mygsl_tests_programs
   test_histogram.cxx
   test_histogram_2d.cxx
   test_histogram_pool.cxx
+  test_histogram_service.cxx
   test_interval.cxx
   test_ioutils.cxx
   test_linear_regression.cxx

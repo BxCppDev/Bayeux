@@ -76,6 +76,9 @@ find_package(datatools 5.0.0 REQUIRED)
 # - GSL
 find_package(GSL 1.14 REQUIRED)
 
+# - ROOT
+find_package(ROOT 5.26.00 REQUIRED)
+
 # - CAMP
 if (MYGSL_WITH_REFLECTION)
   set (MYGSL_WITH_REFLECTION 1)
