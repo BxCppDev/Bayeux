@@ -39,7 +39,7 @@ get_filename_component(_materials_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
 # Protect it with an in-memory variable so that we don't include
 # it twice should multiple calls to find_package be made
 if(NOT materials_LIBDEPS_LOADED)
-  find_package(materials REQUIRED CONFIG PATHS ${materials_GEOMTOOLS_DIR} NO_DEFAULT_PATH)
+  find_package(geomtools REQUIRED CONFIG PATHS ${materials_GEOMTOOLS_DIR} NO_DEFAULT_PATH)
   include("${_materials_thisdir}/materials-libraries.cmake")
   set(materials_LIBDEPS_LOADED 1)
 endif()
