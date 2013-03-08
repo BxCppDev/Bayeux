@@ -158,7 +158,10 @@ set_target_properties(brio
     PUBLIC_HEADER                         "${brio_PUBLIC_HEADERS}"
   )
 
-target_link_libraries(brio ${datatools_LIBRARIES} ${ROOT_LIBRARIES} ${CMAKE_DL_LIBS})
+target_link_libraries(brio 
+                      ${datatools_LIBRARIES} 
+                      ${ROOT_LIBRARIES} 
+                      ${CMAKE_DL_LIBS})
 
 set(BRIO_TARGETS brio)
 
