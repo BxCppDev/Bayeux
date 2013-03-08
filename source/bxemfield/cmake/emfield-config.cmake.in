@@ -25,7 +25,7 @@
 
 set(emfield_WITH_BIO        @EMFIELD_WITH_BIO@)
 set(emfield_WITH_REFLECTION @EMFIELD_WITH_REFLECTION@)
-set(emfield_GEOMTOOLS_DIR       @geomtools_DIR@)
+set(emfield_GEOMTOOLS_DIR   @geomtools_DIR@)
 
 #-----------------------------------------------------------------------
 # Locate ourselves, since all our config files should have been installed
@@ -39,7 +39,7 @@ get_filename_component(_emfield_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
 # Protect it with an in-memory variable so that we don't include
 # it twice should multiple calls to find_package be made
 if(NOT emfield_LIBDEPS_LOADED)
-  find_package(mygsl REQUIRED CONFIG PATHS ${emfield_MYGSL_DIR} NO_DEFAULT_PATH)
+  find_package(geomtools REQUIRED CONFIG PATHS ${emfield_GEOMTOOLS_DIR} NO_DEFAULT_PATH)
   include("${_emfield_thisdir}/emfield-libraries.cmake")
   set(emfield_LIBDEPS_LOADED 1)
 endif()
