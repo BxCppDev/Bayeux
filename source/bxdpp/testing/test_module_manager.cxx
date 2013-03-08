@@ -25,6 +25,8 @@
 #include <list>
 #include <stdexcept>
 
+#include <boost/foreach.hpp>
+
 #include <dpp/base_module.h>
 #include <dpp/module_macros.h>
 #include <dpp/simple_data_source.h>
@@ -38,12 +40,14 @@
 #include <datatools/utils/utils.h>
 #include <datatools/utils/ioutils.h>
 #include <datatools/serialization/bio_guard.h>
+#include <datatools/utils/library_loader.h>
 #else
 #include <datatools/ioutils.h>
 #include <datatools/properties.h>
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
 #include <datatools/bio_guard.h>
+#include <datatools/library_loader.h>
 #endif
 
 int main (int argc_, char ** argv_)
@@ -62,6 +66,8 @@ int main (int argc_, char ** argv_)
       int    max_events = 0;
       std::string module_name;
       std::string mgr_config;
+      std::string LL_config;
+      std::vector<std::string> LL_dlls;
 
       int iarg = 1;
       while (iarg < argc_)
@@ -91,6 +97,10 @@ int main (int argc_, char ** argv_)
                 {
                   mgr_config = argv_[++iarg];
                 }
+              else if ((option == "-l") || (option == "--load-dll"))
+                {
+                  LL_dlls.push_back(argv_[++iarg]);
+                }
               else
                 {
                   std::clog << DPP_DU::io::warning << "ignoring option '"
@@ -107,6 +117,21 @@ int main (int argc_, char ** argv_)
           iarg++;
         }
 
+      uint32_t LL_flags = DPP_DU::library_loader::allow_unregistered;
+      DPP_DU::library_loader LL (LL_flags, LL_config);
+      BOOST_FOREACH (const std::string & dll_name, LL_dlls)
+        {
+          std::clog << DPP_DU::io::notice << "Loading DLL '"
+                    << dll_name << "'." << std::endl;
+          if (LL.load (dll_name) != EXIT_SUCCESS)
+            {
+              std::ostringstream message;
+              message << "Loading DLL '" << dll_name
+                      << "' fails !";
+              throw std::logic_error (message.str ());
+            }
+        }
+ 
       if (module_name.empty ())
         {
           module_name = "chain1";

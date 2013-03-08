@@ -197,6 +197,7 @@ EOF
 	fi 
     elif [ "${exe}" = "test_module_chain" ]; then
 	${bin} --debug 1 \
+            -l mygsl \
 	    -c ${DPP_DATA_DIR}/testing/config/test_module_manager.conf \
 	    --module-name "chain0" \
 	    -i ${DPP_DATA_DIR}/testing/data/data_0.txt.gz \
@@ -210,6 +211,7 @@ EOF
 	fi 
     elif [ "${exe}" = "test_module_manager" ]; then
 	${bin} --debug \
+            -l mygsl \
 	    --verbose \
 	    --config ${DPP_DATA_DIR}/testing/config/test_module_manager.conf \
 	    --module "chain1" \

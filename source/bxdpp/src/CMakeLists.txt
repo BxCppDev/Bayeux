@@ -26,7 +26,6 @@ include/dpp/brio_common.h
 include/dpp/chain_module.h
 include/dpp/context_service.h
 include/dpp/dummy_module.h
-include/dpp/histogram_service.h
 include/dpp/i_data_processor.h
 include/dpp/i_data_sink.h
 include/dpp/i_data_source.h
@@ -97,7 +96,6 @@ brio_common.cc
 chain_module.cc
 context_service.cc
 dummy_module.cc
-histogram_service.cc
 if_module.cc
 io_module.cc
 module_manager.cc

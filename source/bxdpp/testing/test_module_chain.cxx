@@ -42,6 +42,7 @@
 #include <datatools/utils/ioutils.h>
 #include <datatools/utils/things.h>
 #include <datatools/serialization/bio_guard.h>
+#include <datatools/utils/library_loader.h>
 #else
 #include <datatools/ioutils.h>
 #include <datatools/properties.h>
@@ -50,6 +51,8 @@
 #include <datatools/ioutils.h>
 #include <datatools/ioutils.h>
 #include <datatools/bio_guard.h>
+#include <datatools/base_service.h>
+#include <datatools/library_loader.h>
 #endif
 
 #include <dpp/simple_data_source.h>
@@ -73,6 +76,8 @@ int main (int argc_, char ** argv_)
       std::vector<std::string> input_files;
       std::string output_file;
       int    print_modulo;
+      std::string LL_config;
+      std::vector<std::string> LL_dlls;
 
       po::options_description opts ("Allowed options");
       opts.add_options ()
@@ -101,8 +106,11 @@ int main (int argc_, char ** argv_)
         ("output-file,o", 
          po::value<std::string> (), 
          "set the output file")
+        ("load-dll,l",
+         po::value<std::vector<std::string> > (),
+         "set a DLL to be loaded.")
         ;
-      
+     
       po::positional_options_description args;
       args.add ("input-file", -1);        
 
@@ -113,6 +121,26 @@ int main (int argc_, char ** argv_)
                  .run (), 
                  vm);
       po::notify (vm);  
+
+      if (vm.count ("load-dll"))
+        {
+          LL_dlls = vm["load-dll"].as< std::vector<std::string> > ();
+        }
+
+      uint32_t LL_flags = DPP_DU::library_loader::allow_unregistered;
+      DPP_DU::library_loader LL (LL_flags, LL_config);
+      BOOST_FOREACH (const std::string & dll_name, LL_dlls)
+        {
+          std::clog << DPP_DU::io::notice << "Loading DLL '"
+                    << dll_name << "'." << std::endl;
+          if (LL.load (dll_name) != EXIT_SUCCESS)
+            {
+              std::ostringstream message;
+              message << "Loading DLL '" << dll_name
+                      << "' fails !";
+              throw std::logic_error (message.str ());
+            }
+        }
 
       if (vm.count ("help")) 
         {
@@ -177,6 +205,8 @@ int main (int argc_, char ** argv_)
         {
           print_modulo = 0;
         }
+
+      DATATOOLS_FACTORY_GET_SYSTEM_REGISTER (datatools::base_service).print (std::clog);
 
       // Module manager :
       uint32_t flags = dpp::module_manager::BLANK;     
