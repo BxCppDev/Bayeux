@@ -19,6 +19,7 @@
 
 // This Project
 #include <datatools/utils.h>
+#include <datatools/units.h>
 
 // Support for serialization tag :
 DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_IMPLEMENTATION(::datatools::properties,
@@ -203,6 +204,11 @@ bool properties::data::is_vector() const {
 }
 
 
+bool properties::data::has_explicit_unit() const {
+  return (_flags_ & MASK_EXPLICIT_UNIT) != 0;
+}
+
+
 bool properties::data::is_unlocked() const {
   return (_flags_ & MASK_LOCK) == 0;
 }
@@ -384,11 +390,21 @@ int properties::data::set_value(double a_value, int a_index) {
   if (this->is_locked()) return ERROR_LOCK;
   
   if (!this->index_is_valid(a_index)) return ERROR_RANGE;
-  
+  set_explicit_unit(false);  
   _real_values_[a_index] = a_value;
   return ERROR_SUCCESS;
 }
 
+
+int properties::data::set_explicit_unit(bool xu_)
+{
+  if (! xu_) {
+    _flags_ &= ~MASK_EXPLICIT_UNIT; // force scalar
+  } else {
+    _flags_ |= MASK_EXPLICIT_UNIT; // force vector
+  }
+  return ERROR_SUCCESS;
+}
 
 int properties::data::set_value(const std::string & a_value, int a_index) {
   if (!this->is_string()) return ERROR_BADTYPE;
@@ -551,6 +567,11 @@ void properties::data::tree_dump(std::ostream& a_out,
   } else {
     a_out << " (scalar)";
   }
+  if (this->is_real() && has_explicit_unit())
+    {
+      a_out << " [explicit unit]";
+    }
+  //a_out << ' ' << std::hex << (int) _flags_ << std::dec;
   a_out << std::endl;
 
   if (this->get_size() > 0) {
@@ -571,8 +592,12 @@ void properties::data::tree_dump(std::ostream& a_out,
       if (this->is_integer()) {
         a_out << std::dec << this->get_integer_value(i) << std::endl;
       }
-      a_out.precision(16);
-      if (this->is_real()) a_out << this->get_real_value(i) << std::endl;
+      if (this->is_real()) 
+        {
+          a_out.precision(16);
+          a_out << this->get_real_value(i);
+          a_out << std::endl;
+        }
       
       if (this->is_string()) {
         a_out << '"' << this->get_string_value(i) << '"' << std::endl;
@@ -1293,6 +1318,33 @@ void properties::store(const std::string& prop_key, double value,
   if (lock) _props_[prop_key].lock();
 }
 
+
+bool properties::has_explicit_unit(const std::string& prop_key) const
+{
+  const data *data_ptr = 0;
+  this->_check_key_(prop_key, &data_ptr);
+  if (! data_ptr->is_real()) {
+    std::ostringstream message;
+    message << "datatools::properties::set_explicit_unit: Property '" 
+            << prop_key << "' is not of real type !";
+    throw std::logic_error(message.str());
+  }
+  return data_ptr->has_explicit_unit();
+}
+
+
+void properties::set_explicit_unit(const std::string& prop_key, bool a_explicit_unit)
+{
+  data *data_ptr = 0;
+  this->_check_key_(prop_key, &data_ptr);
+  if (! data_ptr->is_real()) {
+    std::ostringstream message;
+    message << "datatools::properties::set_explicit_unit: Property '" 
+            << prop_key << "' is not of real type !";
+    throw std::logic_error(message.str());
+  }
+  int error = data_ptr->set_explicit_unit(a_explicit_unit);
+}
 
 void properties::store(const std::string& key, const std::string& value,
                         const std::string& description, bool lock) {
@@ -2344,6 +2396,7 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
   std::string prop_config;
   std::string prop_description;
   bool line_goon = false;
+  bool enable_real_with_unit = false;
 
   while (a_in) {
     if (verbose_parsing) {
@@ -2389,7 +2442,6 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
                   << line_in 
                   << "'" << std::endl;
       }
-      _read_line_count_++;
     }
     line_goon = false;
 
@@ -2437,6 +2489,10 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
           std::string token;
 
           iss >> token;
+          if (token == "@end") {
+            break;
+          }
+
           // Maybe we should ensure only one '@config' directive
           // here only warn...
           if (token == "@config") {
@@ -2452,6 +2508,29 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
               a_props.set_description(config_desc);
             }
           }
+
+          //>>>
+          if (token == "@enable_real_with_unit") {
+            /*
+            std::cerr << "DEVEL: " << "datatools::properties::config::read_: "
+                      << "@enable_real_with_unit "
+                      << std::endl;
+            */
+            enable_real_with_unit = true;
+          }
+          if (token == "@disable_real_with_unit") {
+            /*
+            std::cerr << "DEVEL: " << "datatools::properties::config::read_: "
+                      << "@disable_real_with_unit "
+                      << std::endl;
+            */
+            enable_real_with_unit = false;
+          }
+
+          if (token == "@verbose_parsing") {
+            verbose_parsing = true;
+          }
+          //<<<
 
           if (token == "@description") {
             iss >> std::ws;
@@ -2521,11 +2600,22 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
 
           std::string type_str = property_desc_str.substr(desc_pos+1);
           std::string type_str2;
+          std::string type_str3;
+          if (verbose_parsing) {
+            std::cerr << "DEBUG: datatools::properties::config::read_: "
+                      << "type_str='"
+                      << type_str << "'" << std::endl;
+          }
 
           int vec_pos = type_str.find_first_of (OPEN_VECTOR);
           if (vec_pos != (int)type_str.npos) {
             scalar = false;
             type_str2 = type_str.substr(0, vec_pos);
+            if (verbose_parsing) {
+              std::cerr << "DEBUG: datatools::properties::config::read_: "
+                        << "type_str2='"
+                        << type_str2 << "'" << std::endl;
+            }
             std::string vec_str = type_str.substr(vec_pos + 1);
             std::istringstream vec_ss(vec_str);
             vec_ss >> vsize;
@@ -2568,33 +2658,41 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
                       << line << "'  !" ;
               throw std::logic_error(message.str());
             }
+            std::getline(vec_ss, type_str3);
           } else {
             scalar = true;
-            type_str2 =  type_str;
+            type_str2 = type_str;
           }
-
+ 
+          /*
+          std::cerr << "DEVEL: type_str2=" << type_str2 << std::endl;
+          std::cerr << "DEVEL: type_str3=" << type_str3 << std::endl;
+          */
           std::istringstream type_ss(type_str2);
-          std::string token;
-
-          type_ss >> std::ws >> token;
-          if (token == "const") {
+          std::string type_token;
+          
+          type_ss >> std::ws >> type_token >> std::ws;
+          if (type_token == "const") {
+            //std::cerr << "DEVEL: is const" << std::endl;
             locked = true;
-            type_ss >> std::ws >> token;
+            type_token.clear();
+            type_ss >> std::ws >> type_token >> std::ws;
           }
-
-          if  (token == "boolean") {
+ 
+          //std::cerr << "DEVEL: type_token=" << type_token << std::endl;
+          if  (type_token == "boolean") {
             type = properties::data::TYPE_BOOLEAN_SYMBOL;
-          } else if (token == "integer") {
+          } else if (type_token == "integer") {
             type = properties::data::TYPE_INTEGER_SYMBOL;
-          } else if (token == "real") {
+          } else if (type_token == "real") {
             type = properties::data::TYPE_REAL_SYMBOL;
-          } else if (token == "string") {
+          } else if (type_token == "string") {
             type = properties::data::TYPE_STRING_SYMBOL;
           } else {
             std::ostringstream message;
             message << "datatools::properties::config::read_: "
                     << "Invalid type specifier '" 
-                    << token << "' "
+                    << type_token << "' "
                     << "at key '" 
                     << prop_key << "' ";
             if (! a_props.get_description().empty()) {
@@ -2605,6 +2703,138 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
             throw std::logic_error(message.str());
           }
 
+          if (! scalar && ! type_str3.empty())
+            {
+              std::istringstream iss3(type_str3);
+              std::string dummy;
+              iss3 >> std::ws >> dummy;
+              if (! dummy.empty())
+                {
+                  type_ss.clear();
+                  type_ss.str(type_str3);
+                }
+            }
+
+          /// 2013-03-07 FM : add support for embeded unit directives in real property :
+          std::string requested_unit_label;
+          std::string requested_unit_symbol;
+          double      requested_unit;
+          datatools::invalidate(requested_unit);
+          //std::cerr << "DEVEL: enable_real_with_unit=" << enable_real_with_unit << std::endl;
+          std::string token;
+          if (type == properties::data::TYPE_REAL_SYMBOL)
+            {
+              //std::cerr << "DEVEL: TYPE_REAL_SYMBOL/enable_real_with_unit" << std::endl;
+              type_ss >> std::ws >> token >> std::ws;
+              //std::cerr << "DEVEL: TYPE_REAL_SYMBOL/token=" << token << std::endl;
+             
+              if (! token.empty())
+                 {
+                   if (token == "as")
+                     {
+                       type_ss >> std::ws >> requested_unit_label;
+                       //std::cerr << "DEVEL: requested_unit_label=" << requested_unit_label << std::endl;
+                       if (requested_unit_label.empty())
+                         {
+                          std::ostringstream message;
+                           message << "datatools::properties::config::read_: "
+                                   << "Missing unit label (as) for real value with key '" 
+                                   << prop_key 
+                                   << "' at line '" 
+                                   << line << "' !" ;
+                           throw std::logic_error(message.str());
+                         }
+                        if (!units::is_unit_label_valid(requested_unit_label))
+                         {
+                           std::ostringstream message;
+                           message << "datatools::properties::config::read_: "
+                                   << "Invalid unit label '" << requested_unit_label << "' for real value with key '" 
+                                   << prop_key 
+                                   << "' at line '" 
+                                   << line << "' !" ;
+                           throw std::logic_error(message.str());
+                         }
+                        if (verbose_parsing) {
+                          std::cerr << "DEBUG: datatools::properties::config::read_: "
+                                    << "Unit label '"
+                                    << requested_unit_label 
+                                    << "' is valid!" << std::endl;
+                        }
+                     }
+                   else if (token == "in")
+                     {
+                       type_ss >> std::ws >> requested_unit_symbol;
+                       //std::cerr << "DEVEL: requested_unit_symbol=" << requested_unit_symbol << std::endl;
+                       if (requested_unit_symbol.empty())
+                         {
+                          std::ostringstream message;
+                           message << "datatools::properties::config::read_: "
+                                   << "Missing unit symbol (in) for real value with key '" 
+                                   << prop_key 
+                                   << "' at line '" 
+                                   << line << "' !" ;
+                           throw std::logic_error(message.str());
+                         }
+                       // For vectors of real:
+                       if (! scalar)
+                         {
+                           if (!units::find_unit(requested_unit_symbol, requested_unit, requested_unit_label))
+                             {
+                               std::ostringstream message;
+                               message << "datatools::properties::config::read_: "
+                                       << "Invalid unit symbol '" << requested_unit_symbol << "' for real value with key '" 
+                                       << prop_key 
+                                       << "' at line '" 
+                                       << line << "' !" ;
+                               throw std::logic_error(message.str());
+                             }
+                           if (verbose_parsing) {
+                             std::cerr << "DEBUG: datatools::properties::config::read_: "
+                                       << "Unit symbol '"
+                                       << requested_unit_symbol 
+                                       << "' is valid!" << std::endl;
+                           }
+                         }
+                       else
+                         {
+                           std::ostringstream message;
+                           message << "datatools::properties::config::read_: "
+                                   << "Directive 'as " << requested_unit_symbol 
+                                   << "' is not supported for scalar real value with key '" 
+                                   << prop_key 
+                                   << "' at line '" 
+                                   << line << "' !" ;
+                           throw std::logic_error(message.str());                          
+                         }
+                     }
+                   else 
+                     {
+                       std::ostringstream message;
+                       message << "datatools::properties::config::read_: "
+                               << "Unknow directive '" << token 
+                               << "' for real value with key '" 
+                               << prop_key 
+                               << "' at line '" 
+                               << line << "' !" ;
+                       throw std::logic_error(message.str());                          
+                     }
+                 }
+            }
+          if (! enable_real_with_unit)
+            {
+              if(! requested_unit_label.empty()
+                 || ! requested_unit_symbol.empty())
+                {
+                  std::ostringstream message;
+                  message << "datatools::properties::config::read_: "
+                          << "The use of unit directives '" << token 
+                          << "' is not allowed for real value with key '" 
+                          << prop_key 
+                          << "' at line '" 
+                          << line << "' !" ;
+                  throw std::logic_error(message.str());                                          
+                }
+            }
           if (verbose_parsing) {
             std::cerr << "DEBUG: datatools::properties::config::read_: "
                       << "type='"
@@ -2719,19 +2949,116 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
             }
           }
 
+          bool with_explicit_unit = false;
           if (type == properties::data::TYPE_REAL_SYMBOL) {
             if (scalar) {
-              iss >> a_real;
-              if (!iss) {
-                std::ostringstream message;
-                message << "datatools::properties::config::read_: "
-                        << "Cannot read real value for key '" 
-                        << prop_key 
-                        << "' at line '" 
-                        << line 
-                        << "' !" ;
-                throw std::logic_error(message.str());
+              if(enable_real_with_unit)
+                {
+                  //std::cerr << "DEVEL: enable_real_with_unit/scalar real" << std::endl;
+                  // Special mode to accept unit symbol after the real value :
+                  std::string real_word;
+                  iss >> real_word >> std::ws;
+                  if (!iss) {
+                    std::ostringstream message;
+                    message << "datatools::properties::config::read_: "
+                            << "Cannot read value token for key '" 
+                            << prop_key 
+                            << "' at line '" 
+                            << line 
+                            << "' !" ;
+                    throw std::logic_error(message.str());
+                  }
+                  //std::cerr << "DEVEL: enable_real_with_unit/scalar: real_word=" << real_word << std::endl;
+                  std::istringstream iss2(real_word);
+                  iss2 >> a_real >> std::ws;
+                  if (!iss2) {
+                    std::ostringstream message;
+                    message << "datatools::properties::config::read_: "
+                            << "Cannot read real value for key '" 
+                            << prop_key 
+                            << "' at line '" 
+                            << line 
+                            << "' !" ;
+                    throw std::logic_error(message.str());
+                  }
+                  if (! iss.eof())
+                    {
+                      //std::cerr << "DEVEL: enable_real_with_unit/scalar: !EOF " << std::endl;
+                      std::string unit_word;
+                      iss >> unit_word >> std::ws;
+                      //std::cerr << "DEVEL: enable_real_with_unit/scalar: unit_word=" << unit_word << std::endl; 
+                      if (!unit_word.empty() && unit_word[0] != _comment_char_)
+                        {
+                          if (!iss) {
+                            std::ostringstream message;
+                            message << "datatools::properties::config::read_: "
+                                    << "Cannot read unit token for key '" 
+                                    << prop_key 
+                                    << "' at line '" 
+                                    << line 
+                                    << "' !" ;
+                            throw std::logic_error(message.str());
+                          }    
+                          double      unit_value;
+                          std::string unit_label;
+                          bool found_unit = datatools::units::find_unit(unit_word, unit_value, unit_label); 
+                          if (! found_unit)
+                            {
+                              std::ostringstream message;
+                              message << "datatools::properties::config::read_: "
+                                      << "Invalid unit symbol for key '" 
+                                      << prop_key 
+                                      << "' at line '" 
+                                  << line 
+                                      << "' !" ;
+                              throw std::logic_error(message.str());
+                            }
+                          if(!requested_unit_label.empty() && unit_label != requested_unit_label)
+                            {
+                              std::ostringstream message;
+                              message << "datatools::properties::config::read_: "
+                                      << "Unit symbol '" << unit_word << "' in not compatible with requested unit label '"
+                                      << requested_unit_label << "' for real property with key '" 
+                                      << prop_key 
+                                      << "' at line '" 
+                                      << line 
+                                      << "' !" ;
+                              throw std::logic_error(message.str());                          
+                            }
+                          //std::cerr << "DEVEL: enable_real_with_unit/scalar: unit_value=" << unit_value << std::endl;
+                          a_real *= unit_value;
+                          with_explicit_unit = true;
+                        }
+                    }
+                }
+              else {
+                // Standard mode with only the plain real value (no trailing unit)
+                iss >> a_real >> std::ws;
+                if (!iss) {
+                  std::ostringstream message;
+                  message << "datatools::properties::config::read_: "
+                          << "Cannot read real value for key '" 
+                          << prop_key 
+                          << "' at line '" 
+                          << line 
+                          << "' !" ;
+                  throw std::logic_error(message.str());
+                }
+                std::string dummy;
+                iss >> dummy;
+                if (!dummy.empty() && dummy[0] != _comment_char_ )
+                  {
+                    std::ostringstream message;
+                    message << "datatools::properties::config::read_: "
+                            << "Trailing token '" << dummy << "' is not allowed for real value with key '" 
+                            << prop_key 
+                            << "' at line '" 
+                            << line 
+                            << "' !" ;
+                    throw std::logic_error(message.str());
+                  }
               }
+              //std::cerr << "DEVEL: real/scalar: a_real=" << a_real << std::endl;
             } else {
               for (int i = 0; i < vsize; ++i) {
                 double x;
@@ -2745,7 +3072,15 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
                           << line << "' !" ;
                   throw std::logic_error(message.str());
                 }
-                v_reals[i] = x;
+                //std::string requested_unit_label;
+                //std::string requested_unit_symbol;
+                //double      requested_unit;
+                if (enable_real_with_unit && datatools::is_valid(requested_unit))
+                  {
+                    x *= requested_unit;
+                    with_explicit_unit = true;
+                  }
+                v_reals[i] = x; 
               }
             }
           }
@@ -2804,11 +3139,15 @@ void properties::config::read_(std::istream& a_in, properties& a_props) {
           if (type == properties::data::TYPE_STRING_SYMBOL && !scalar) {
             a_props.store(prop_key, v_strings, prop_description, locked);
           }
+          if (type == properties::data::TYPE_REAL_SYMBOL && with_explicit_unit) {
+            a_props.set_explicit_unit(prop_key, true);
+          }
           prop_description = "";
         }
       } // !skip_line
     } // if (! line_goon)
   } // while (*_in)
+  return;
 }
 
 

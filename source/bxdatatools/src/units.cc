@@ -67,6 +67,7 @@ double units::get_volume_unit_from(const std::string& word) {
 
 
 double units::get_time_unit_from(const std::string& word) {
+  if ((word == "fs") || (word == "femtosecond")) return 1.0e-3*CLHEP::picosecond;
   if ((word == "ps") || (word == "picosecond")) return CLHEP::picosecond;
   if ((word == "ns") || (word == "nanosecond")) return CLHEP::nanosecond;
   if ((word == "us") || (word == "microsecond")) return CLHEP::microsecond;
@@ -149,6 +150,7 @@ double units::get_electric_field_unit_from(const std::string& word) {
   throw_bad_unit("electric field", word);
   return std::numeric_limits<double>::quiet_NaN();
 }
+
 
 double units::get_electric_tension_unit_from(const std::string& word) {
   if ((word == "uV")) return 1.e-6 * CLHEP::volt;
@@ -322,6 +324,7 @@ double units::get_unit_from(const std::string& unit_type,
   return std::numeric_limits<double>::quiet_NaN();
 }
 
+
 bool units::is_unit_label_valid(const std::string & unit_label)
 {
   const std::vector<std::string>& vl = get_unit_labels_registry();
@@ -383,7 +386,7 @@ bool units::find_unit(const std::string& unit_str, double& unit_value,
       val = std::numeric_limits<double>::quiet_NaN();
     }
   }
-
+ 
   if (!std::isnormal(val)) {
     unit_label = "";
     unit_value = val;

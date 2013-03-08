@@ -84,6 +84,7 @@ class properties :
     static const int  ERROR_LOCK    = 4;
 
     static const char MASK_TYPE    = 0x7;
+    static const char MASK_EXPLICIT_UNIT = 0x20;
     static const char MASK_LOCK    = 0x40;
     static const char MASK_VECTOR  = 0x80;
 
@@ -167,6 +168,9 @@ class properties :
     /// Check if the data is locked (cannot be modified)
     bool is_locked() const;
 
+    /// Check if the data has been initialized with explicit unit
+    bool has_explicit_unit() const;
+
     /// Check if the data is not locked (can be modified)
     bool is_unlocked() const;
 
@@ -221,6 +225,9 @@ class properties :
     /// Set the real value at a given rank
     int set_value(double, int = 0);
 
+    /// Set the explicit unit flag
+    int set_explicit_unit(bool);
+
     /// Set the string value at a given rank
     int set_value(const std::string&, int = 0);
 
@@ -274,9 +281,10 @@ class properties :
    private:
     std::string _description_;
     /** 8-bits description flags :
-    * Format is : VL000TTT
+    * Format is : VLU00TTT
     *  V   == vector bit
     *  L   == lock bit
+    *  U   == with explicit unit (real)
     *  TTT == type bits
     *  0   == unused
     */
@@ -649,6 +657,12 @@ class properties :
   //! Store a real property with a given key/name and value
   void store_real(const std::string& prop_key, double a_value,
                   const std::string& a_desc = "", bool a_lock = false);
+
+  //! Set flag for explicit unit for a real property with a given key/name
+  void set_explicit_unit(const std::string& prop_key, bool a_explicit_unit = true);
+
+  //! Check flag for explicit unit for a real property with a given key/name
+  bool has_explicit_unit(const std::string& prop_key) const;
 
   //! Store a string property with a given key/name and value
   void store(const std::string& prop_key, const std::string& a_value,
