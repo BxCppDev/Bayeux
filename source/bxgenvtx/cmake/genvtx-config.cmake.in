@@ -25,7 +25,7 @@
 
 set(genvtx_WITH_BIO        @GENVTX_WITH_BIO@)
 set(genvtx_WITH_REFLECTION @GENVTX_WITH_REFLECTION@)
-set(genvtx_GEOMTOOLS_DIR       @geomtools_DIR@)
+set(genvtx_GEOMTOOLS_DIR   @geomtools_DIR@)
 
 #-----------------------------------------------------------------------
 # Locate ourselves, since all our config files should have been installed
@@ -39,7 +39,7 @@ get_filename_component(_genvtx_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
 # Protect it with an in-memory variable so that we don't include
 # it twice should multiple calls to find_package be made
 if(NOT genvtx_LIBDEPS_LOADED)
-  find_package(mygsl REQUIRED CONFIG PATHS ${genvtx_MYGSL_DIR} NO_DEFAULT_PATH)
+  find_package(geomtools REQUIRED CONFIG PATHS ${genvtx_GEOMTOOLS_DIR} NO_DEFAULT_PATH)
   include("${_genvtx_thisdir}/genvtx-libraries.cmake")
   set(genvtx_LIBDEPS_LOADED 1)
 endif()
