@@ -110,6 +110,7 @@ include/geomtools/utils.h
 include/geomtools/visibility.h
 include/geomtools/manager.h
 include/geomtools/manager_macros.h
+include/geomtools/geometry_service.h
 include/geomtools/base_hit.ipp
 include/geomtools/blur_spot.ipp
 include/geomtools/display_data.ipp
@@ -238,6 +239,7 @@ set(geomtools_SOURCES
   gnuplot_draw.cc 
   display_data.cc 
   manager.cc 
+  geometry_service.cc 
   )
 
 #message(STATUS "********** GEOMTOOLS_WITH_GNUPLOT_DISPLAY=${GEOMTOOLS_WITH_GNUPLOT_DISPLAY}")

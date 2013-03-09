@@ -11,7 +11,11 @@ classes.
 Run the test program for the geomtools geometry manager from the 
 "__build-Linux-x86_64" CMake build dir :
 
-bash$ GEOMTOOLS_DATA_DIR=$(pwd) __build-Linux-x86_64/testing/test_manager --visu --gdml
+  bash$ GEOMTOOLS_DATA_DIR=$(pwd) __build-Linux-x86_64/testing/test_manager --visu --gdml
 
+
+Run the test program for the geomtools geometry service : 
+
+  bash$ GEOMTOOLS_DATA_DIR=$(pwd) __build-Linux-x86_64/testing/test_service_manager --visu
 
 --

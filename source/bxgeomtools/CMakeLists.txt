@@ -75,8 +75,7 @@ endif ()
 # - mygsl
 find_package(mygsl 4.0.0 REQUIRED)
 
-
-message ( STATUS "********** CMAKE_MODULE_PATH='${CMAKE_MODULE_PATH}' ")
+###message ( STATUS "********** CMAKE_MODULE_PATH='${CMAKE_MODULE_PATH}' ")
 
 # - CLHEP
 find_package(CLHEP 2.1.0.1 REQUIRED NOMODULE)

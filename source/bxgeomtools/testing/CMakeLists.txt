@@ -73,6 +73,7 @@ set ( geomtools_tests_programs
   test_gnuplot_draw.cxx
   test_display_data.cxx
   test_manager.cxx
+  test_service_manager.cxx
 )
 
 # set ( geomtools_tests_programs
