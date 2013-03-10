@@ -96,12 +96,12 @@ namespace emfield {
     virtual int compute_electromagnetic_field (const geomtools::vector_3d & position_,
                                                double time_,
                                                geomtools::vector_3d & electric_field_, 
-                                               geomtools::vector_3d & magnetic_field_);
+                                               geomtools::vector_3d & magnetic_field_) const;
 
     virtual int compute_field (char what_, 
                                const geomtools::vector_3d & position_,
                                double time_,
-                               geomtools::vector_3d & field_);
+                               geomtools::vector_3d & field_) const;
     
     virtual void initialize_standalone (const datatools::properties & setup_);
 
@@ -124,11 +124,11 @@ namespace emfield {
 
     virtual int compute_electric_field (const geomtools::vector_3d & position_, 
                                         double time_, 
-                                        geomtools::vector_3d & electric_field_);
+                                        geomtools::vector_3d & electric_field_) const;
 
     virtual int compute_magnetic_field (const geomtools::vector_3d & position_, 
                                         double time_, 
-                                        geomtools::vector_3d & magnetic_field_);
+                                        geomtools::vector_3d & magnetic_field_) const;
    
     /// Smart print
     virtual void tree_dump (std::ostream & out_         = std::clog, 

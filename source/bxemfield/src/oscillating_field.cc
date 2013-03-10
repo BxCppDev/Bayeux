@@ -96,9 +96,9 @@ namespace emfield {
       {
         return STATUS_ERROR;
       }
-    int status = _field_.grab ().compute_electric_field (position_, 
-                                                         time_, 
-                                                         electric_field_);
+    int status = _field_.get ().compute_electric_field (position_, 
+                                                        time_, 
+                                                        electric_field_);
     if (status != STATUS_SUCCESS)
       {
         return status;
@@ -117,7 +117,7 @@ namespace emfield {
       {
         return STATUS_ERROR;
       }
-    int status = _field_.grab ().compute_magnetic_field (position_, 
+    int status = _field_.get ().compute_magnetic_field (position_, 
                                                          time_, 
                                                          magnetic_field_);
     if (status != STATUS_SUCCESS)

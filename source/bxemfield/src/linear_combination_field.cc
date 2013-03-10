@@ -105,12 +105,12 @@ namespace emfield {
         return STATUS_ERROR;
       }
     electric_field_.set (0., 0., 0.);
-    for (combined_field_dict_type::iterator i = _combined_fields_.begin ();
+    for (combined_field_dict_type::const_iterator i = _combined_fields_.begin ();
          i != _combined_fields_.end ();
          i++)
       {
-        combined_field_entry & cfe = i->second;
-        base_electromagnetic_field & emf = cfe.field_handle.grab ();
+        const combined_field_entry & cfe = i->second;
+        const base_electromagnetic_field & emf = cfe.field_handle.get ();
         if (emf.is_electric_field ())
           {
             geomtools::vector_3d etmp;
@@ -136,12 +136,12 @@ namespace emfield {
         return STATUS_ERROR;
       }
     magnetic_field_.set (0., 0., 0.);
-    for (combined_field_dict_type::iterator i = _combined_fields_.begin ();
+    for (combined_field_dict_type::const_iterator i = _combined_fields_.begin ();
          i != _combined_fields_.end ();
          i++)
       {
-        combined_field_entry & cfe = i->second;
-        base_electromagnetic_field & emf = cfe.field_handle.grab ();
+        const combined_field_entry & cfe = i->second;
+        const base_electromagnetic_field & emf = cfe.field_handle.get ();
         if (emf.is_magnetic_field ())
           {
             geomtools::vector_3d btmp;

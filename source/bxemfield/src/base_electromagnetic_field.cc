@@ -316,7 +316,7 @@ namespace emfield {
   int base_electromagnetic_field::compute_electromagnetic_field (const geomtools::vector_3d & position_,
                                                                  double time_,
                                                                  geomtools::vector_3d & electric_field_, 
-                                                                 geomtools::vector_3d & magnetic_field_)
+                                                                 geomtools::vector_3d & magnetic_field_) const
   {
     geomtools::invalidate (electric_field_);
     geomtools::invalidate (magnetic_field_);
@@ -348,7 +348,7 @@ namespace emfield {
 
   int base_electromagnetic_field::compute_electric_field (const geomtools::vector_3d & position_, 
                                                           double time_, 
-                                                          geomtools::vector_3d & electric_field_) 
+                                                          geomtools::vector_3d & electric_field_) const
   {
     geomtools::invalidate (electric_field_);
     if (! is_initialized ())
@@ -374,7 +374,7 @@ namespace emfield {
 
   int base_electromagnetic_field::compute_magnetic_field (const geomtools::vector_3d & position_, 
                                                           double time_, 
-                                                          geomtools::vector_3d & magnetic_field_) 
+                                                          geomtools::vector_3d & magnetic_field_) const 
   {
     geomtools::invalidate (magnetic_field_);
     if (! is_initialized ())
@@ -398,7 +398,7 @@ namespace emfield {
   int base_electromagnetic_field::compute_field (char what_, 
                                                  const geomtools::vector_3d & position_,
                                                  double time_,
-                                                 geomtools::vector_3d & field_)
+                                                 geomtools::vector_3d & field_) const
   {
     /*
     if (! position_and_time_are_valid (position_, time_))

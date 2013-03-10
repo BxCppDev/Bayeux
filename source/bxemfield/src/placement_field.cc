@@ -73,9 +73,9 @@ namespace emfield {
     geomtools::vector_3d local_pos;
     _placement_.mother_to_child (position_, local_pos);
     geomtools::vector_3d local_electric_field;
-    int status = _field_.grab ().compute_electric_field (local_pos, 
-                                                         time_, 
-                                                         local_electric_field);
+    int status = _field_.get ().compute_electric_field (local_pos, 
+                                                        time_, 
+                                                        local_electric_field);
     if (status != STATUS_SUCCESS)
       {
         return status;
@@ -97,8 +97,8 @@ namespace emfield {
     geomtools::vector_3d local_pos;
     _placement_.mother_to_child (position_, local_pos);
     geomtools::vector_3d local_magnetic_field;
-    int status = _field_.grab ().compute_magnetic_field (local_pos, 
-                                                         time_, 
+    int status = _field_.get ().compute_magnetic_field (local_pos, 
+                                                        time_, 
                                                          local_magnetic_field);
     if (status != STATUS_SUCCESS)
       {
