@@ -16,19 +16,17 @@
   \author BG
   @version 0.1
 */
+
 #ifndef MATERIALS_ELEMENT_H_
 #define MATERIALS_ELEMENT_H_ 1
 
 #include <string>
-//#include <vector>
 #include <map>
 
 #include <datatools/properties.h>
 #include <datatools/i_tree_dump.h>
 
 namespace materials {
-
-  namespace du = datatools;
   
   class isotope;
 
@@ -50,10 +48,6 @@ namespace materials {
   public:
 
     static const int Z_UNDEFINED = -1;
-
-  protected:
-
-    void _lock_check (const std::string & where_) const;
 
   public:  
 
@@ -86,30 +80,7 @@ namespace materials {
     element (const  std::string & name_, const std::string & symbol_ = "", bool build_ = false); 
 
     virtual ~element ();          //!<  Destructor
-   
-    /* private attribute */    
-  private :   
-    
-    std::string     _name_;            //!<  Name
-    std::string     _symbol_;          //!<  Chemical symbol of the element 
-    int        _z_;               //!<  Number of protons of the element   
-    isotope_weight_map_type   _composition_;  //!<  Isotopic composition of the element [std::map<string,  iso_entry>]
-    double     _molar_mass_;      //!<  Molar mass in [g/mol]     
-    du::properties _properties_;      //!<  datatools properties
-    bool       _locked_;          //!<  boolean flag : true when composition is validated & derived properties are computed
-        
-    /* private set & find methods */    
-  private :       
-     
-    //    void   _init_ ();               //!<  Initialize or reinitialize  Z, symbol, composition, molar mass and lock attribute   
-    void   _norm_weights_ ();       //!<  Normalize sum of weights to unity                          
-    void   _compute_molar_mass_ (); //!<  Compute molar mass in[g/mol]   
-
-    void   _set_molar_mass_ (double molar_mass_);  //!< Set the molar mass in [g/mol]                 
-                 
-    void   _lock_ ();   //!<  Lock the element : boolean flag '_locked_' is set to true when composition is valid & derived properties are computed.              
-    void   _unlock_ (); //!<  Unlock the element - boolean flag '_locked_' is set to false.              
-                                                                                 
+                                                                               
     /* public methods */ 
   public :
     bool   is_built_by_isotopic_composition () const;
@@ -148,9 +119,9 @@ namespace materials {
       return _composition_;
     }
 
-    const du::properties & grab_properties () const {return _properties_;} //!< Get reference of datatools::properties private attribute
+    const datatools::properties & get_properties () const {return _properties_;} //!< Get reference of datatools::properties private attribute
 
-    du::properties & grab_properties () {return _properties_;} //!< Get reference of datatools::properties private attribute
+    datatools::properties & grab_properties () {return _properties_;} //!< Get reference of datatools::properties private attribute
    
     virtual void tree_dump (std::ostream & out_  = std::clog,  
                             const std::string & title_  = "",  
@@ -158,6 +129,35 @@ namespace materials {
                             bool inherit_ = false) const;  //!<  print info virtual method
 
 
+  protected:
+
+    void _lock_check (const std::string & where_) const;
+
+   /* private set & find methods */    
+  private :       
+     
+    //    void   _init_ ();               //!<  Initialize or reinitialize  Z, symbol, composition, molar mass and lock attribute   
+    void   _norm_weights_ ();       //!<  Normalize sum of weights to unity                          
+    
+    void   _compute_molar_mass_ (); //!<  Compute molar mass in[g/mol]   
+
+    void   _set_molar_mass_ (double molar_mass_);  //!< Set the molar mass in [g/mol]                 
+                 
+    void   _lock_ ();   //!<  Lock the element : boolean flag '_locked_' is set to true when composition is valid & derived properties are computed.              
+    
+    void   _unlock_ (); //!<  Unlock the element - boolean flag '_locked_' is set to false.           
+
+    /* private attribute */    
+  private :   
+    
+    std::string             _name_;        //!<  Name
+    std::string             _symbol_;      //!<  Chemical symbol of the element 
+    int                     _z_;           //!<  Number of protons of the element   
+    isotope_weight_map_type _composition_; //!<  Isotopic composition of the element [std::map<string,  iso_entry>]
+    double                  _molar_mass_;  //!<  Molar mass in [g/mol]     
+    datatools::properties   _properties_;  //!<  datatools properties
+    bool                    _locked_;      //!<  boolean flag : true when composition is validated & derived properties are computed
+        
   }; // end of class element
 
 } // end of namespace materials

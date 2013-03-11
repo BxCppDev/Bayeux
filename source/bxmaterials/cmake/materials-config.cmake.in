@@ -25,7 +25,7 @@
 
 set(materials_WITH_BIO        @MATERIALS_WITH_BIO@)
 set(materials_WITH_REFLECTION @MATERIALS_WITH_REFLECTION@)
-set(materials_GEOMTOOLS_DIR   @geomtools_DIR@)
+set(materials_DATATOOLS_DIR   @datatools_DIR@)
 
 #-----------------------------------------------------------------------
 # Locate ourselves, since all our config files should have been installed
@@ -39,7 +39,7 @@ get_filename_component(_materials_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
 # Protect it with an in-memory variable so that we don't include
 # it twice should multiple calls to find_package be made
 if(NOT materials_LIBDEPS_LOADED)
-  find_package(geomtools REQUIRED CONFIG PATHS ${materials_GEOMTOOLS_DIR} NO_DEFAULT_PATH)
+  find_package(datatools REQUIRED CONFIG PATHS ${materials_DATATOOLS_DIR} NO_DEFAULT_PATH)
   include("${_materials_thisdir}/materials-libraries.cmake")
   set(materials_LIBDEPS_LOADED 1)
 endif()

@@ -30,7 +30,6 @@ set ( materials_tests_programs
     test_manager.cxx
     test_material.cxx
     test_materials.cxx
-    test_materials_geom_plugin.cxx
 )
 
 ###message (STATUS "materials_tests_programs=${materials_tests_programs}" )
@@ -46,7 +45,7 @@ list(SORT materials_tests_programs_list)
 include_directories(
   ${PROJECT_BINARY_DIR}/include
   ${PROJECT_SOURCE_DIR}/include
-  ${geomtools_INCLUDE_DIRS}
+  ${datatools_INCLUDE_DIRS}
   ${PROJECT_SOURCE_DIR}/testing
   )
 

@@ -25,7 +25,6 @@
 #include <materials/element.h>
 #include <materials/material.h>
 #include <datatools/multi_properties.h>
-#include <geomtools/gdml_writer.h>
 
 namespace materials {
 
@@ -33,12 +32,20 @@ namespace materials {
   {
 
   public:
+
     bool is_debug () const;
+
     void set_debug (bool);
+
     bool is_locked () const;
+
     const isotope_dict_type & get_isotopes () const;
+
     const element_dict_type & get_elements () const;
+
     const material_dict_type & get_materials () const;
+
+    const std::list<std::string> & get_ordered_materials () const;
 
     /// Constructor
     manager ();
@@ -60,10 +67,6 @@ namespace materials {
                             const std::string & indent_ = "",
                             bool inherit_          = false) const;
 
-    void export_gdml (geomtools::gdml_writer & gw_) const;
-
-    void export_gdml (std::ostream & out_) const;
-
   private:
 
     bool               _debug_;
@@ -78,7 +81,7 @@ namespace materials {
 
 } // end of namespace materials
 
-namespace mat = materials;
+//namespace mat = materials;
 
 #endif // MATERIALS_MANAGER_H_
 

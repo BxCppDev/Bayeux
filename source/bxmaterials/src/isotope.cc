@@ -16,6 +16,17 @@ namespace materials {
 
   using namespace std;
 
+  
+  datatools::properties & isotope::grab_properties ()
+  { 
+    return _properties_; 
+  }
+
+  const datatools::properties & isotope::get_properties () const 
+  {
+    return _properties_; 
+  }
+
   //________________________________________________________________________// ctor
   isotope::isotope ()
   {
@@ -130,7 +141,7 @@ namespace materials {
     if (getenv("MATERIALS_DATA_DIR")==NULL)
       {
         ostringstream message;
-        message << "isotope::_check_za_ : env. variable 'MATERIALS_DATA_DIR'  not found !";
+        message << "materials::isotope::_check_za_ : env. variable 'MATERIALS_DATA_DIR'  not found !";
         throw logic_error (message.str ());
       }
     else
@@ -144,7 +155,7 @@ namespace materials {
     if(! ifstr_tape.is_open ())
       {
         ostringstream message;
-        message << "isotope::_check_za_ : ifstream  '" << tape_name<< "'  not found !";
+        message << "materials::isotope::_check_za_ : ifstream  '" << tape_name<< "'  not found !";
         throw logic_error (message.str ());
       }
 
@@ -168,7 +179,7 @@ namespace materials {
     if(!_is_known_)
       {
         ostringstream message;
-        message<< "isotope::_check_za_: " << get_name ()<<endl;
+        message<< "materials::isotope::_check_za_: " << get_name ()<<endl;
         message << "  -> (Z, A) values : (" << _z_<< ", "<< _a_<< ") not found in database ['" << tape_name<<"'] !"<<endl;
         throw logic_error (message.str ());
       }
@@ -232,7 +243,7 @@ namespace materials {
     if (getenv ("MATERIALS_DATA_DIR") == NULL)
       {
         ostringstream message;
-        message << "isotope::find_mass : env. variable 'MATERIALS_DATA_DIR'  not found !";
+        message << "materials::isotope::find_mass : env. variable 'MATERIALS_DATA_DIR'  not found !";
         throw logic_error (message.str ());
       }
     else
@@ -247,7 +258,7 @@ namespace materials {
     if (! ifstr_tape.is_open ())
       {
         ostringstream message;
-        message << "isotope::find_mass () : ifstream  '" << tape_name << "'  not found !";
+        message << "materials::isotope::find_mass () : ifstream  '" << tape_name << "'  not found !";
         throw logic_error (message.str ());
       }
 
@@ -291,7 +302,7 @@ namespace materials {
     if (! is_za_found)
       {
         ostringstream message;
-        message << "isotope::find_mass: Z A values : '" << _z_ << " " << _a_ << "' not found in '"
+        message << "materials::isotope::find_mass: Z A values : '" << _z_ << " " << _a_ << "' not found in '"
                 << tape_name << "' !";
         throw logic_error (message.str ());
         /*
@@ -370,7 +381,7 @@ namespace materials {
     else
       {
         ostringstream message;
-        message<< "isotope::_set_z_ (): " << get_name ()<<endl;
+        message<< "materials::isotope::_set_z_ (): " << get_name ()<<endl;
         message << "       -> invalid value : '" << _z_<< "' !"<<endl;
         throw logic_error (message.str ());
       }
@@ -390,7 +401,7 @@ namespace materials {
     else
       {
         ostringstream message;
-        message << "isotope::_set_a_ () : Invalid A value : '" << A_ << "' !";
+        message << "materials::isotope::_set_a_ () : Invalid A value : '" << A_ << "' !";
         throw logic_error (message.str ());
       }
     return;
@@ -409,7 +420,7 @@ namespace materials {
     else
       {
         ostringstream message;
-        message << "isotope::_set_i_ () : Invalid I value : '" << I_ << "' !";
+        message << "materials::isotope::_set_i_ () : Invalid I value : '" << I_ << "' !";
         throw logic_error (message.str ());
       }
     return;
@@ -431,7 +442,7 @@ namespace materials {
     if ((mass_ < 0.) || (err_mass_ < 0.))
       {
         ostringstream message;
-        message << "isotope:::_set_mass_ () : Invalid mass (+_ error) values : '" << mass_ << "' '" << err_mass_ << " '!";
+        message << "materials::isotope:::_set_mass_ () : Invalid mass (+_ error) values : '" << mass_ << "' '" << err_mass_ << " '!";
         throw logic_error (message.str ());
       }
     else
@@ -450,7 +461,7 @@ namespace materials {
     if(  half_life_time_ < 0. || err_half_life_time_ < 0. )
       {
         ostringstream message;
-        message << "isotope:::_set_half_life_time_ () : Invalid half_life_time value : '"
+        message << "materials::isotope:::_set_half_life_time_ () : Invalid half_life_time value : '"
                 << half_life_time_  << " +- '"
                 << err_half_life_time_<< "' !";
         throw logic_error (message.str ());
@@ -483,7 +494,7 @@ namespace materials {
     if (getenv("MATERIALS_DATA_DIR")==NULL)
       {
         ostringstream message;
-        message << "isotope::find_decay : env. variable 'MATERIALS_DATA_DIR'  not found !";
+        message << "materials::isotope::find_decay : env. variable 'MATERIALS_DATA_DIR'  not found !";
         throw logic_error (message.str ());
       }
     else
@@ -497,7 +508,7 @@ namespace materials {
     if(!ifstr_tape.is_open ())
       {
         ostringstream message;
-        message << "isotope::find_decay () : ifstream  '" << tape_name<< "'  not founded !";
+        message << "materials::isotope::find_decay () : ifstream  '" << tape_name<< "'  not founded !";
         throw logic_error (message.str ());
       }
 
@@ -526,7 +537,7 @@ namespace materials {
     if(!is_zai_found)
       {
         ostringstream message;
-        message<< "isotope::find_decay: " << get_name ()<<endl;
+        message<< "materials::isotope::find_decay: " << get_name ()<<endl;
         message << "       -> Z A I values : '" << _z_<< " "<< _a_<< " "<<  _i_<< "' not found in '" << tape_name<<"' !"<<endl;
         throw logic_error (message.str ());
       }
@@ -539,7 +550,7 @@ namespace materials {
                 if((endfline_to_double(endf6_line.substr(0, 11)))!=(1000.*get_z ()+get_a ()))
                   {
                     ostringstream message;
-                    message << "isotope::find_decay : zai not consistent !";
+                    message << "materials::isotope::find_decay : zai not consistent !";
                     throw logic_error (message.str ());
                   }
                 else
@@ -556,9 +567,9 @@ namespace materials {
         if (! is_data_found)
           {
             /*  ostringstream message;
-                message << "isotope::find_decay () : 457 data not found in jeff-3.1 for Z A I values : '" << _z_<< " "<< _a_<< " "<<  _i_<< "' !"<< endl;
+                message << "materials::isotope::find_decay () : 457 data not found in jeff-3.1 for Z A I values : '" << _z_<< " "<< _a_<< " "<<  _i_<< "' !"<< endl;
                 throw logic_error (message.str ()); */
-            cerr << "isotope::find_decay () : 457 data not found in jeff-3.1 for Z A I values : '" << _z_<< " "<< _a_<< " "<<  _i_<< "' !"<< endl;
+            cerr << "ERROR: " << "materials::isotope::find_decay () : 457 data not found in jeff-3.1 for Z A I values : '" << _z_<< " "<< _a_<< " "<<  _i_<< "' !"<< endl;
           }
         else
           {

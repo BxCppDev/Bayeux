@@ -32,7 +32,6 @@ include/materials/factory.h
 include/materials/isotope.h
 include/materials/manager.h
 include/materials/material.h
-include/materials/materials_geom_plugin.h
 include/materials/materials.h
   )
 list_prepend(materials_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
@@ -80,7 +79,6 @@ set(materials_SOURCES
     element.cc		
     factory.cc		
     manager.cc
-    materials_geom_plugin.cc
   )
 
 # message(STATUS "********** materials_SOURCES=${materials_SOURCES}")
@@ -165,7 +163,7 @@ endif ()
 include_directories(
   ${PROJECT_BINARY_DIR}/include
   ${PROJECT_SOURCE_DIR}/include	
-  ${geomtools_INCLUDE_DIRS}
+  ${datatools_INCLUDE_DIRS}
   )
 
 if ( MATERIALS_WITH_REFLECTION )
@@ -198,9 +196,9 @@ set_target_properties(materials
 # message (STATUS "DEVEL: CAMP_LIBRARIES=${CAMP_LIBRARIES}")
 
 if ( MATERIALS_WITH_REFLECTION )
-  target_link_libraries(materials ${geomtools_LIBRARIES} ${CLHEP_LIBRARIES} ${CAMP_LIBRARIES} ${CMAKE_DL_LIBS})
+  target_link_libraries(materials ${datatools_LIBRARIES} ${CLHEP_LIBRARIES} ${CAMP_LIBRARIES} ${CMAKE_DL_LIBS})
 else ()
-  target_link_libraries(materials ${geomtools_LIBRARIES} ${CLHEP_LIBRARIES} ${CMAKE_DL_LIBS})
+  target_link_libraries(materials ${datatools_LIBRARIES} ${CLHEP_LIBRARIES} ${CMAKE_DL_LIBS})
 endif ()
 
 set(MATERIALS_TARGETS materials)

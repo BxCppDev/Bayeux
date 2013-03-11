@@ -414,7 +414,7 @@ function do_configure ()
     cmake \
 	-DCMAKE_INSTALL_PREFIX:PATH=${install_prefix} \
 	-DCMAKE_BUILD_TYPE:STRING=Release \
-	-Dgeomtools_DIR=${GEOMTOOLS_CMAKE_CONFIG_DIR} \
+	-Ddatatools_DIR=${DATATOOLS_CMAKE_CONFIG_DIR} \
 	-DCMAKE_MODULE_PATH:PATH="${CADFAEL_SHARE_DIR}/cmake/Modules;${CMAKE_MODULE_PATH}" \
 	-DMATERIALS_WITH_DEBUG=${with_debug} \
 	-DMATERIALS_WITH_DOC=${with_doc} \

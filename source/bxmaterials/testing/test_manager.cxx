@@ -23,7 +23,7 @@ int main (int argc_, char ** argv_)
   
       bool debug = false;
       list<string> input_files;
-      bool generate_gdml = false;
+      //bool generate_gdml = false;
 
       int iarg = 1;
       bool parsing_options = true;
@@ -43,10 +43,10 @@ int main (int argc_, char ** argv_)
                  {
                    debug = true;
                  }
-               else if ((option == "-g") || (option == "--generate-gdml")) 
-                 {
-                   generate_gdml = true;
-                 }
+               // else if ((option == "-g") || (option == "--generate-gdml")) 
+               //   {
+               //     generate_gdml = true;
+               //   }
                else 
                  { 
                     clog << "warning: ignoring option '" << option << "'!" << endl; 
@@ -79,11 +79,12 @@ int main (int argc_, char ** argv_)
         }
       my_manager.tree_dump (clog, "Material manager: ");
 
+      /*
       if (generate_gdml)
         {
           my_manager.export_gdml (cout);
         }
-
+      */
     }
   catch (exception & x)
     {

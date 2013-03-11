@@ -158,7 +158,7 @@ namespace materials {
   /*
     void element::set_symbol (const string & symbol_)
     {
-    _lock_check ("element::set_symbol");
+    _lock_check ("materials::element::set_symbol");
     _symbol_ = symbol_;
     return;
     }
@@ -167,7 +167,7 @@ namespace materials {
   //________________________________________________________________________
   void element::set_name (const string & name_)
   {
-    _lock_check ("element::set_name");
+    _lock_check ("materials::element::set_name");
     _name_ = name_;
     return;
   }
@@ -175,7 +175,7 @@ namespace materials {
   //________________________________________________________________________
   void element::set_z (const string & symbol_)
   {
-    _lock_check ("element::set_z");
+    _lock_check ("materials::element::set_z");
 
     bool is_symbol_found = false;
     int i_Z = 0;
@@ -193,7 +193,7 @@ namespace materials {
     if(! is_symbol_found)
       {
         ostringstream message;
-        message << endl << "element::set_symbol() ; symbol '"
+        message << endl << "materials::element::set_symbol() ; symbol '"
                 << symbol_<< "' not found !" << endl;
         throw logic_error (message.str ());
       }
@@ -204,7 +204,7 @@ namespace materials {
   //________________________________________________________________________
   void element::set_z (const int z_)
   {
-    _lock_check ("element::set_z");
+    _lock_check ("materials::element::set_z");
 
     if ((z_ >= 0) && (z_ <= chemical_symbol::NB_CHEMICAL_SYMBOLS))
       {
@@ -214,7 +214,7 @@ namespace materials {
     else
       {
         ostringstream message;
-        message << "element::__set_z () : Invalid Z value : '" << z_ << "' !";
+        message << "materials::element::__set_z () : Invalid Z value : '" << z_ << "' !";
         throw logic_error (message.str () );
       }
     return;
@@ -223,13 +223,13 @@ namespace materials {
   //________________________________________________________________________
   void element::add_isotope (const isotope & iso_ptr_,  double weight_,  bool owned_)
   {
-    _lock_check ("element::add_isotope");
+    _lock_check ("materials::element::add_isotope");
 
     // 2010-10-11 by FM: not compatible with molar mass manual setting:
     if ((_molar_mass_ > 0.0) && (_composition_.size () == 0))
       {
         ostringstream message;
-        message << "element::add_isotope: Operation not allowed ! Molar mass is set by hand !";
+        message << "materials::element::add_isotope: Operation not allowed ! Molar mass is set by hand !";
         throw logic_error (message.str () );
       }
 
@@ -242,7 +242,7 @@ namespace materials {
             if (_z_ != iso_ptr_.get_z ())
               {
                 ostringstream message;
-                message << "element::add_isotope : Unmatching mother element/daughter isotope Z values !";
+                message << "materials::element::add_isotope : Unmatching mother element/daughter isotope Z values !";
                 throw logic_error (message.str () );
               }
           }
@@ -254,7 +254,7 @@ namespace materials {
     if (! iso_ptr_.is_locked ())
       {
         ostringstream message;
-        message << endl << "element::add_isotope: Isotope '"
+        message << endl << "materials::element::add_isotope: Isotope '"
                 << iso_ptr_.get_name ();
         message << "' is not locked !'";
         throw logic_error (message.str ());
@@ -265,7 +265,7 @@ namespace materials {
     if ( iso_ptr_.get_z () != _z_)
       {
         ostringstream message;
-        message << endl << "element::add_isotope: the Z value '"
+        message << endl << "materials::element::add_isotope: the Z value '"
                 << iso_ptr_.get_z () <<"' of isotope '";
         message << iso_ptr_.get_name ()
                 << "' to be added is not consistant with the Z value '"
@@ -279,7 +279,7 @@ namespace materials {
     if ( weight_ <= 0.)
       {
         ostringstream message;
-        message << endl << "element::add_isotope: weight value '" << weight_ ;
+        message << endl << "materials::element::add_isotope: weight value '" << weight_ ;
         message << "' is not positive !" << endl ;
         throw logic_error (message.str ());
       }
@@ -329,7 +329,7 @@ namespace materials {
       }
     else
       {
-        throw logic_error ("element::build: Missing isotope(s) in the current element ! Not implemented yet !");
+        throw logic_error ("materials::element::build: Missing isotope(s) in the current element ! Not implemented yet !");
         //build_from_nist ();
       }
     _lock_ ();
@@ -347,7 +347,7 @@ namespace materials {
     if (getenv("MATERIALS_DATA_DIR")==NULL)
       {
         ostringstream message;
-        message << "element::build_from_nist : env. variable 'MATERIALS_DATA_DIR'  not found !";
+        message << "materials::element::build_from_nist : env. variable 'MATERIALS_DATA_DIR'  not found !";
         throw logic_error (message.str ());
       }
     else
@@ -361,7 +361,7 @@ namespace materials {
     if(! ifstr_tape.is_open ())
       {
         ostringstream message;
-        message << "element::build_from_nist : ifstream  '"
+        message << "materials::element::build_from_nist : ifstream  '"
                 << tape_name << "'  not open !";
         throw logic_error (message.str ());
       }
@@ -427,7 +427,7 @@ namespace materials {
     if(norm <= 0.)
       {
         ostringstream message;
-        message << endl << "element::_norm_weights_::  sum of weights for isotope '";
+        message << endl << "materials::element::_norm_weights_::  sum of weights for isotope '";
         message << get_name () <<"' is negative!'" <<endl ;
         throw logic_error (message.str ());
       }
@@ -457,13 +457,13 @@ namespace materials {
     if (_composition_.size () > 0)
       {
         ostringstream message;
-        message << "element:::set_molar_mass: Operation not allowed when build mode uses isotopic composition !";
+        message << "materials::element::set_molar_mass: Operation not allowed when build mode uses isotopic composition !";
         throw logic_error (message.str ());
       }
     if (molar_mass_ < 0)
       {
         ostringstream message;
-        message << "element:::set_molar_mass: Invalid mass value : '"
+        message << "materials::element::set_molar_mass: Invalid mass value : '"
                 << molar_mass_ << "' !";
         throw logic_error (message.str ());
       }
@@ -477,7 +477,7 @@ namespace materials {
     if (molar_mass_ < 0)
       {
         ostringstream message;
-        message << endl << "element:::_set_molar_mass_() : Invalid mass value : '"
+        message << endl << "materials::element::_set_molar_mass_() : Invalid mass value : '"
                 << molar_mass_ << "' !" << endl;
         throw logic_error (message.str ());
       }
@@ -502,14 +502,12 @@ namespace materials {
   }
 
 
-
   //________________________________________________________________________
   void element::tree_dump (ostream & out_,
                            const string & title_,
                            const string & indent_,
                            bool inherit_) const
   {
-    namespace du = datatools;
     string indent;
     if (! indent_.empty ()) indent = indent_;
     if (! title_.empty ())
@@ -517,13 +515,13 @@ namespace materials {
         out_ << indent << title_ << endl;
       }
 
-    out_ << indent << i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Name         : \""<< get_name() <<"\"" << endl;
 
-    out_ << indent << i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Chem. symbol : \""<< get_symbol() <<"\"" << endl;
 
-    out_ << indent << du::i_tree_dumpable::tag
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Composition  : ";
     if ( _composition_.size () == 0)
       {
@@ -540,8 +538,8 @@ namespace materials {
             const iso_entry & entry = i->second;
             isotope_weight_map_type::const_iterator j = i;
             j++;
-            string atag = du::i_tree_dumpable::TAG;
-            if (j == _composition_.end ()) atag = du::i_tree_dumpable::LAST_TAG;
+            string atag = datatools::i_tree_dumpable::TAG;
+            if (j == _composition_.end ()) atag = datatools::i_tree_dumpable::LAST_TAG;
             out_  << indent
                   << i_tree_dumpable::skip_tag
                   << atag
@@ -555,7 +553,7 @@ namespace materials {
          << "Molar mass   : " <<  _molar_mass_ << " [g/mol]" << endl;
 
     {
-      out_ << indent << du::i_tree_dumpable::tag
+      out_ << indent << datatools::i_tree_dumpable::tag
            << "Properties   : ";
       if ( _properties_.size () == 0)
         {
@@ -566,7 +564,7 @@ namespace materials {
           out_ << endl;
           ostringstream indent_oss;
           indent_oss << indent;
-          indent_oss << du::i_tree_dumpable::skip_tag;
+          indent_oss << datatools::i_tree_dumpable::skip_tag;
           _properties_.tree_dump (out_, "", indent_oss.str ());
         }
     }

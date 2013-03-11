@@ -16,8 +16,6 @@
 
 namespace materials {
   
-  namespace du = datatools;
-  
   /*! \brief A simple class to handle known isotopes (ZAI) and their basic properties (mass & decays). 
    *    
    *  - Isotope are build with a name and (Z, A, I) attributes :  
@@ -57,7 +55,7 @@ namespace materials {
         ISOMERIC_O     = 3
       };
 
-  public:   /* constructor - destructor */    
+    /* constructor - destructor */    
       
     isotope ();                      //!< Default Constructor   
     isotope (const std::string & name_);  //!< Normal Constructor        
@@ -72,6 +70,88 @@ namespace materials {
              const int i_ = GROUND_STATE, 
              bool build_ = false);  //!< Normal Constructor         
     virtual ~isotope ();            //!< Destructor
+
+    /* public set & find methods */   
+      
+    void set_name (const  std::string & name_);                               //!<  Set the name
+    
+    void set_zai (const  int z_, const int a_, const int i_ = 0);        //!<  Set Z, A, I attributes 
+      
+    void set_mass (const double mass_, const double err_mass_);          //!<  Set the mass in gramm per mol [g/mol] 
+    
+    void find_mass (const  std::string & input_file_name_ = "mass.mas03");    //!<  Search & set the mass from input file (= 'resources/mass.mass03' by default)
+       
+    void set_decay (const double half_life_time_, const double err_half_life_time_=0);  //!<  Set the decay data 
+    
+    void find_decay (const  std::string & input_file_name_ = "JEFF311RDD_ALL.OUT");          //!<  Search & set the decay data from input file (= 'resources/JEFF311RDD_ALL.OUT' by default)           
+  
+    /* const retrieval methods */        
+       
+    const std::string & get_name () const { return _name_; } //!< Return the name 
+    
+    const std::string & get_ch_symbol () const;              //!< Return the chemical symbol        
+    
+    std::string get_zai_name () const;                       //!< Return the zai name : 'ChA(I)'         
+      
+    int get_z () const {return _z_;}          //!< Return Z (number of protons)
+    
+    int get_a () const {return _a_;}          //!< Return A (number of nucleons)
+    
+    int get_i () const {return _i_;}          //!< Return I (isomeric state)     
+      
+    bool is_known () const; //!< Return _is_known_ boolean flag
+      
+    bool has_mass_data ()  const ;                    //!< Return true if mass data have been set properly, false either 
+    
+    double get_mass ( )    const { return _mass_; }     //!<  Return the mass in gramm per mol [g/mol]
+    
+    double get_err_mass () const { return _err_mass_; } //!<  Return the error on the mass in gramm per mol [g/mol]
+      
+    bool has_decay_data () const; //!< Return true if decay data have been set properly, false either  
+    
+    bool is_stable ()     const;  //!< Return true if isotope is stable, false either 
+    
+    double get_half_life_time () const {return _half_life_time_;} //!< Return the half-life time in second [s]
+    
+    double get_err_half_life_time () const {return _err_half_life_time_;} //!< Return the error on half-life time in second [s]
+      
+    bool is_locked ()     const; //!< Return true if isotope is locked (i.e. fully set), false either    
+    
+    void build () ;              //!< Lock the isotope data structure (i.e. invoking)    
+
+    //! Print info      
+    virtual void tree_dump (std::ostream & out_         = std::clog, 
+                            const std::string & title_  = "", 
+                            const std::string & indent_ = "", 
+                            bool inherit_          = false) const;          
+
+    //! Give access to properties 
+    datatools::properties & grab_properties ();
+
+    //! Give access to properties 
+    const datatools::properties & get_properties () const;
+
+  protected:
+
+    void _build (bool use_decay_);
+    
+  private :   /* private set & find methods */
+      
+    void _check_za_ ();       //!<  true is (Z,A) values are founded in file mass.mas03   
+      
+    void _init_ ();           //!<  Initialize attributes according to new (Z, A, I) values   
+      
+    void _set_z_ (const int z_);           //!<  Set Z, the number of protons  : 0 <  Z  <= 119  (check if exist)
+    
+    void _set_a_ (const int a_);           //!<  Set A,the number of nucleons : Z <= A  <= 293
+    
+    void _set_i_ (const int i_);           //!<  Set I, the Isomeric state :  I={0,1,2,3} ={' ','M','N','O'} 
+
+    void _set_name_ (const std::string & name_);   //!< Set the name             
+   
+    void _set_mass_ (const double mass_, const double err_mass_=0);          //!<  Set the mass and its error in gramm per mol [g/mol]       
+      
+    void _set_half_life_time_ (const double half_life_time_ , const double err_half_life_time_);    //!<  Set the half-life time and its error in second [s]     
 
   private :   /* private attributes */   
 
@@ -89,74 +169,7 @@ namespace materials {
       
     bool _is_known_;             //!<  Boolean flag [false by default] = true is (Z,A) values are founded in file mass.mas03
       
-    du::properties _properties_;     //!<  datatools properties         
-    
-  private :   /* private set & find methods */
-      
-    void _check_za_ ();       //!<  true is (Z,A) values are founded in file mass.mas03   
-      
-    void _init_ ();           //!<  Initialize attributes according to new (Z, A, I) values   
-      
-    void _set_z_ (const int z_);           //!<  Set Z, the number of protons  : 0 <  Z  <= 119  (check if exist)
-    void _set_a_ (const int a_);           //!<  Set A,the number of nucleons : Z <= A  <= 293
-    void _set_i_ (const int i_);           //!<  Set I, the Isomeric state :  I={0,1,2,3} ={' ','M','N','O'} 
-
-    void _set_name_ (const std::string & name_);   //!< Set the name             
-   
-    void _set_mass_ (const double mass_, const double err_mass_=0);          //!<  Set the mass and its error in gramm per mol [g/mol]       
-      
-    void _set_half_life_time_ (const double half_life_time_ , const double err_half_life_time_);    //!<  Set the half-life time and its error in second [s]     
-
-  public:   
-
-    /* public set & find methods */   
-      
-    void set_name (const  std::string & name_);                               //!<  Set the name
-    void set_zai (const  int z_, const int a_, const int i_ = 0);        //!<  Set Z, A, I attributes 
-      
-    void set_mass (const double mass_, const double err_mass_);          //!<  Set the mass in gramm per mol [g/mol] 
-    void find_mass (const  std::string & input_file_name_ = "mass.mas03");    //!<  Search & set the mass from input file (= 'resources/mass.mass03' by default)
-       
-    void set_decay (const double half_life_time_, const double err_half_life_time_=0);  //!<  Set the decay data 
-    void find_decay (const  std::string & input_file_name_ = "JEFF311RDD_ALL.OUT");          //!<  Search & set the decay data from input file (= 'resources/JEFF311RDD_ALL.OUT' by default)           
-  
-    /* const retrieval methods */        
-       
-    const std::string & get_name () const { return _name_; } //!< Return the name 
-    const std::string & get_ch_symbol () const;              //!< Return the chemical symbol        
-    std::string get_zai_name () const;                       //!< Return the zai name : 'ChA(I)'         
-      
-    int get_z () const {return _z_;}          //!< Return Z (number of protons)
-    int get_a () const {return _a_;}          //!< Return A (number of nucleons)
-    int get_i () const {return _i_;}          //!< Return I (isomeric state)     
-      
-    bool is_known () const; //!< Return _is_known_ boolean flag
-      
-    bool has_mass_data ()  const ;                    //!< Return true if mass data have been set properly, false either 
-    double get_mass ( )    const { return _mass_; }     //!<  Return the mass in gramm per mol [g/mol]
-    double get_err_mass () const { return _err_mass_; } //!<  Return the error on the mass in gramm per mol [g/mol]
-      
-    bool has_decay_data () const; //!< Return true if decay data have been set properly, false either  
-    bool is_stable ()     const;  //!< Return true if isotope is stable, false either 
-    double get_half_life_time () const {return _half_life_time_;} //!< Return the half-life time in second [s]
-    double get_err_half_life_time () const {return _err_half_life_time_;} //!< Return the error on half-life time in second [s]
-      
-    bool is_locked ()     const; //!< Return true if isotope is locked (i.e. fully set), false either    
-    void build () ;              //!< Lock the isotope data structure (i.e. invoking)    
-
-  protected:
-
-    void _build (bool use_decay_);
-
-  public:
-    //! Print info      
-    virtual void tree_dump (std::ostream & out_         = std::clog, 
-                            const std::string & title_  = "", 
-                            const std::string & indent_ = "", 
-                            bool inherit_          = false) const;          
-
-    //! Give access to properties 
-    du::properties & grab_properties ()     { return _properties_; }
+    datatools::properties _properties_;     //!<  datatools properties         
                 
   }; // end of class isotope
 

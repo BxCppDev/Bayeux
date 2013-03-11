@@ -72,8 +72,8 @@ endif ()
 #-----------------------------------------------------------------------
 # Find external packages needed to build
 #
-# - geomtools
-find_package(geomtools 4.0.0 REQUIRED)
+# - datatools
+find_package(datatools 5.0.0 REQUIRED)
 
 #-----------------------------------------------------------------------
 # On Apple, we fixup the install prefix to handle installing documentation,

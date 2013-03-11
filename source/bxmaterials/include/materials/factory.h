@@ -33,7 +33,9 @@ namespace materials {
   class factory
   {
   public: 
+
     bool is_debug () const;
+
     void set_debug (bool);
  
     /// Constructor
@@ -57,7 +59,6 @@ namespace materials {
   private: 
 
     bool _debug_; //!< Debug flag
-    
 
   };
 

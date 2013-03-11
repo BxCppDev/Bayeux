@@ -158,7 +158,7 @@ if [ "x${option}" = "x--cflags" ]; then
     (
 	echo -n "-fPIC "
 	echo -n "-I${materials_include_dir} "
-        echo -n "`geomtools-config --cflags` "
+        echo -n "`datatools-config --cflags` "
 	if [ ${with_reflection} -eq 1 ]; then
  	    echo -n "`camp-config --cflags` "
 	fi
@@ -251,7 +251,7 @@ if [ "x${option}" = "x--ldflags" ]; then
 	    echo -n "${bio_ldflags} "
 	    echo -n "-lmaterials "
 	fi
-        echo -n "`geomtools-config --ldflags ${ldflags_abs_path_option}` "
+        echo -n "`datatools-config --ldflags ${ldflags_abs_path_option}` "
 	if [ ${with_reflection} -eq 1 ]; then
  	    echo -n "`camp-config --ldflags` "
 	fi

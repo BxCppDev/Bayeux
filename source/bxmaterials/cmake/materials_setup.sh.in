@@ -73,13 +73,13 @@ function do_materials_setup ()
     # 	fi
     # fi
 
-    which geomtools-config >/dev/null 2>&1
+    which datatools-config >/dev/null 2>&1
     if [ $? -ne 0 ]; then
-	echo "ERROR: do_materials_setup: Cannot find geomtools setup ! Abort !" 1>&2
+	echo "ERROR: do_materials_setup: Cannot find datatools setup ! Abort !" 1>&2
 	return 1
     else
 	if [ ${verbose} -ne 0 ]; then
-	    echo "VERBOSE: do_materials_setup: Found geomtools." 1>&2
+	    echo "VERBOSE: do_materials_setup: Found datatools." 1>&2
 	fi
     fi
      
