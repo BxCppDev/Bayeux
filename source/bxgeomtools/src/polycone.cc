@@ -438,7 +438,7 @@ namespace geomtools {
                 ostringstream message;
                 message << "polycone::initialize: "
                         << "'list_of_z' has not enough points !";
-                throw runtime_error (message.str ());
+                throw logic_error (message.str ());
               }
           }
         else
@@ -446,7 +446,7 @@ namespace geomtools {
             ostringstream message;
             message << "polycone::initialize: "
                     << "Missing 'list_of_z' property !";
-            throw runtime_error (message.str ());
+            throw logic_error (message.str ());
           }
 
         if (setup_.has_key ("list_of_rmax"))
@@ -457,7 +457,7 @@ namespace geomtools {
                 ostringstream message;
                 message << "polycone::initialize: "
                         << "'list_of_z' and 'list_of_rmax' have not the same size !";
-                throw runtime_error (message.str ());
+                throw logic_error (message.str ());
                     
               }
           }
@@ -466,7 +466,7 @@ namespace geomtools {
             ostringstream message;
             message << "polycone::initialize: "
                     << "Missing 'list_of_rmax' property !";
-            throw runtime_error (message.str ());
+            throw logic_error (message.str ());
           }
 
         if (setup_.has_key ("list_of_rmin"))
@@ -477,14 +477,16 @@ namespace geomtools {
                 ostringstream message;
                 message << "polycone::initialize: "
                         << "'list_of_rmin' and 'list_of_rmax' have not the same size !";
-                throw runtime_error (message.str ());
+                throw logic_error (message.str ());
                     
               }
           }
         else if (setup_.has_key ("rmin"))
           {
             rmin = setup_.fetch_real ("rmin");
-            rmin *= lunit;
+            if (! setup_.has_explicit_unit ("rmin")) {
+              rmin *= lunit;
+            }
           }
         else
           {
@@ -530,13 +532,17 @@ namespace geomtools {
         if (setup_.has_key ("zmin"))
           {
             zmin = setup_.fetch_real ("zmin");
-            zmin *= lunit;
+            if (! setup_.has_explicit_unit ("zmin")) {
+              zmin *= lunit;
+            }
           }  
 
         if (setup_.has_key ("zmax"))
           {
             zmax = setup_.fetch_real ("zmax");
-            zmax *= lunit;
+            if (! setup_.has_explicit_unit ("zmax")) {
+              zmax *= lunit;
+            }
           }  
 
         datatools::fetch_path_with_env (datafile);
@@ -547,7 +553,7 @@ namespace geomtools {
         ostringstream message;
         message << "polycone::initialize: "
                 << "Invalid build mode '" << build_mode_label << "' !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
 
     return;
@@ -566,16 +572,16 @@ namespace geomtools {
   {
     bool devel = false;
     //devel = true;
-    ifstream ifs;
-    string filename = filename_;
+    std::ifstream ifs;
+    std::string filename = filename_;
     ifs.open (filename.c_str ());
     if (! ifs)
       {
-        ostringstream message;
+        std::ostringstream message;
         message << "polycone::initialize: " 
                 << "Cannot open data file '"
                 << filename << "' !";
-        throw runtime_error (message.str ()); 
+        throw std::runtime_error (message.str ()); 
       }
     size_t count = 0;
     double length_unit = CLHEP::mm;
@@ -612,7 +618,7 @@ namespace geomtools {
                           message << "polycone::initialize: " 
                                   << "Invalid format for the length unit directive in data file '"
                                   << filename << "' at line " << count << " !";
-                          throw runtime_error (message.str ()); 
+                          throw std::logic_error (message.str ()); 
                         }
                       length_unit = datatools::units::get_length_unit_from (unit_str);
                     }
@@ -653,7 +659,7 @@ namespace geomtools {
                           message << "polycone::initialize: " 
                                   << "Invalid format for the skin_thickness directive in data file '"
                                   << filename << "' at line " << count << " !";
-                          throw runtime_error (message.str ()); 
+                          throw logic_error (message.str ()); 
                         }
                     }
                   else if (word == "#@skin_step")
@@ -665,7 +671,7 @@ namespace geomtools {
                           message << "polycone::initialize: " 
                                   << "Invalid format for the skin_thickness directive in data file '"
                                   << filename << "' at line " << count << " !";
-                          throw runtime_error (message.str ()); 
+                          throw logic_error (message.str ()); 
                         }
                     }
                 }
@@ -686,7 +692,7 @@ namespace geomtools {
               message << "polycone::initialize: " 
                       << "Format error for 'z' in data file '"
                       << filename << "' at line " << count << " !";
-              throw runtime_error (message.str ()); 
+              throw logic_error (message.str ()); 
             }
           iss >> r1;
           if (! iss)
@@ -695,7 +701,7 @@ namespace geomtools {
               message << "polycone::initialize: " 
                       << "Format error for 'r1' in data file '"
                       << filename << "' at line " << count << " !";
-              throw runtime_error (message.str ()); 
+              throw logic_error (message.str ()); 
             }
           // try to read a third column:
           string token;

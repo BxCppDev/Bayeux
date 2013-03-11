@@ -128,10 +128,20 @@ namespace geomtools {
     double z;
     string material_name = material::constants::instance ().MATERIAL_REF_UNKNOWN;
     string lunit_str = "mm"; // default unit
+    double lunit = CLHEP::mm;
+
+    if (config_.has_key ("length_unit"))
+      {
+        lunit_str = config_.fetch_string ("length_unit");
+        lunit = datatools::units::get_length_unit_from (lunit_str);
+      }
  
     if (config_.has_key ("x"))
       {
         x = config_.fetch_real ("x");
+        if (! config_.has_explicit_unit ("x")) {
+          x *= lunit;
+        }
       }  
     else
       {
@@ -144,6 +154,9 @@ namespace geomtools {
     if (config_.has_key ("y"))
       {
         y = config_.fetch_real ("y");
+        if (! config_.has_explicit_unit ("y")) {
+          y *= lunit;
+        }
       }
     else
       {
@@ -156,6 +169,9 @@ namespace geomtools {
     if (config_.has_key ("z"))
       {
         z = config_.fetch_real ("z");
+        if (! config_.has_explicit_unit ("z")) {
+          z *= lunit;
+        }
       }
     else
       {
@@ -163,11 +179,6 @@ namespace geomtools {
         message << "simple_boxed_model::_at_construct: "
                 << "Missing 'z' property !";
         throw runtime_error (message.str ());
-      }
-
-    if (config_.has_key ("length_unit"))
-      {
-        lunit_str = config_.fetch_string ("length_unit");
       }
 
     if (config_.has_key ("material.ref"))
@@ -181,14 +192,7 @@ namespace geomtools {
                 << "Missing 'material.ref' property !";
         throw runtime_error (message.str ());
       }
- 
-    double lunit = CLHEP::mm;
-    lunit = datatools::units::get_length_unit_from (lunit_str);
-
-    x *= lunit;
-    y *= lunit;
-    z *= lunit;
-
+    
     set_material_name (material_name);
     set_x (x);
     set_y (y);

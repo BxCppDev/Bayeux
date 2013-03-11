@@ -21,7 +21,7 @@ namespace geomtools {
     const plugin_entry& entry = found->second;
     if (! entry.is_initialized ()) {
       std::clog << "NOTICE: " << "geomtools::manager::is_plugin_a<>: "
-                << "Forcing initialization of the plugin named '" << a_plugin_name 
+                << "Triggering initialization of the plugin named '" << a_plugin_name 
                 << "'..." << std::endl;
       manager * mutable_this = const_cast<manager *>(this);
       plugin_entry& mutable_entry = const_cast<plugin_entry &>(entry);

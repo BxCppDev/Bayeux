@@ -26,6 +26,7 @@
 set(geomtools_WITH_BIO        @GEOMTOOLS_WITH_BIO@)
 set(geomtools_WITH_REFLECTION @GEOMTOOLS_WITH_REFLECTION@)
 set(geomtools_MYGSL_DIR       @mygsl_DIR@)
+set(geomtools_MATERIALS_DIR   @materials_DIR@)
 
 #-----------------------------------------------------------------------
 # Locate ourselves, since all our config files should have been installed
@@ -39,9 +40,10 @@ get_filename_component(_geomtools_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
 # Protect it with an in-memory variable so that we don't include
 # it twice should multiple calls to find_package be made
 if(NOT geomtools_LIBDEPS_LOADED)
-  find_package(mygsl REQUIRED CONFIG PATHS ${geomtools_MYGSL_DIR} NO_DEFAULT_PATH)
-  include("${_geomtools_thisdir}/geomtools-libraries.cmake")
-  set(geomtools_LIBDEPS_LOADED 1)
+   find_package(mygsl REQUIRED CONFIG PATHS ${geomtools_MYGSL_DIR} NO_DEFAULT_PATH)
+   find_package(materials REQUIRED CONFIG PATHS ${geomtools_MATERIALS_DIR} NO_DEFAULT_PATH)
+   include("${_geomtools_thisdir}/geomtools-libraries.cmake")
+   set(geomtools_LIBDEPS_LOADED 1)
 endif()
 
 #-----------------------------------------------------------------------
@@ -58,6 +60,7 @@ endif()
 #
 set(geomtools_THIRD_PARTY_INCLUDE_DIRS
   @mygsl_INCLUDE_DIRS@
+  @materials_INCLUDE_DIRS@
   @CLHEP_INCLUDE_DIRS@
   )
 

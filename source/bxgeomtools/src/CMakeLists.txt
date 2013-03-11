@@ -88,6 +88,7 @@ include/geomtools/regular_linear_placement.h
 include/geomtools/regular_polygon.h
 include/geomtools/replicated_boxed_model.h
 include/geomtools/replicated_model.h
+include/geomtools/grid_model.h
 include/geomtools/rotated_boxed_model.h
 include/geomtools/sensitive.h
 include/geomtools/simple_boxed_model.h
@@ -111,6 +112,8 @@ include/geomtools/visibility.h
 include/geomtools/manager.h
 include/geomtools/manager_macros.h
 include/geomtools/geometry_service.h
+include/geomtools/materials_plugin.h
+include/geomtools/materials_utils.h
 include/geomtools/base_hit.ipp
 include/geomtools/blur_spot.ipp
 include/geomtools/display_data.ipp
@@ -180,6 +183,8 @@ set(geomtools_SOURCES
   i_placement.cc 
   i_stackable.cc 
   logical_volume.cc 
+  materials_plugin.cc 
+  materials_utils.cc 
   mapping.cc 
   mapping_plugin.cc 
   mapping_utils.cc  
@@ -207,6 +212,7 @@ set(geomtools_SOURCES
   cylindric_extrusion_boxed_model.cc 
   replicated_boxed_model.cc 
   replicated_model.cc 
+  grid_model.cc 
   rotated_boxed_model.cc 
   simple_boxed_model.cc 
   simple_shaped_model.cc 
@@ -327,11 +333,11 @@ endif ()
 #-----------------------------------------------------------------------
 # BUILD THE GEOMTOOLS LIBRARY
 #
-#message(STATUS "XXXXXXXXXXXXXXXXXx mygsl_INCLUDE_DIRS=${mygsl_INCLUDE_DIRS}")
 include_directories(
   ${PROJECT_BINARY_DIR}/include
   ${PROJECT_SOURCE_DIR}/include	
   ${mygsl_INCLUDE_DIRS}
+  ${materials_INCLUDE_DIRS}
   ${CLHEP_INCLUDE_DIR}
   )
 
@@ -359,15 +365,20 @@ set_target_properties(geomtools
     PUBLIC_HEADER                         "${geomtools_PUBLIC_HEADERS}"
   )
 
-# message (STATUS "DEVEL: datatools_LIBRARIES=${datatools_LIBRARIES}")
-# message (STATUS "DEVEL: mygsl_LIBRARIES=${mygsl_LIBRARIES}")
-# message (STATUS "DEVEL: CLHEP_LIBRARIES=${CLHEP_LIBRARIES}")
-# message (STATUS "DEVEL: CAMP_LIBRARIES=${CAMP_LIBRARIES}")
 
 if ( GEOMTOOLS_WITH_REFLECTION )
-  target_link_libraries(geomtools ${mygsl_LIBRARIES} ${CLHEP_LIBRARIES} ${CAMP_LIBRARIES} ${CMAKE_DL_LIBS})
+  target_link_libraries(geomtools 
+     ${mygsl_LIBRARIES} 
+     ${materials_LIBRARIES} 
+     ${CLHEP_LIBRARIES} 
+     ${CAMP_LIBRARIES} 
+     ${CMAKE_DL_LIBS})
 else ()
-  target_link_libraries(geomtools ${mygsl_LIBRARIES} ${CLHEP_LIBRARIES} ${CMAKE_DL_LIBS})
+  target_link_libraries(geomtools 
+     ${mygsl_LIBRARIES} 
+     ${materials_LIBRARIES} 
+     ${CLHEP_LIBRARIES} 
+     ${CMAKE_DL_LIBS})
 endif ()
 
 set(GEOMTOOLS_TARGETS geomtools)

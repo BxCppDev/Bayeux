@@ -39,6 +39,8 @@ namespace geomtools {
       };
  
   public:
+
+    virtual size_t get_dimension () const;
  
     virtual bool is_replica () const;
  

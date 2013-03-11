@@ -52,11 +52,14 @@ namespace geomtools {
 
     void add_replica_support (bool s_ = true);
 
+    bool has_fake_materials () const;
+
+    void add_fake_materials(bool);
+
     const datatools::properties & parameters () const;
 
     datatools::properties & parameters ();
 
-  public:
     // ctor:
     gdml_export ();
 
@@ -91,9 +94,10 @@ namespace geomtools {
     datatools::properties _parameters_;
     gdml_writer           _writer_;
     const model_factory * _factory_;
-    std::string       _length_unit_;
-    std::string       _angle_unit_;
-    std::string       _density_unit_;
+    bool                  _fake_materials_;
+    std::string           _length_unit_;
+    std::string           _angle_unit_;
+    std::string           _density_unit_;
     std::list<std::string> _solid_refs_;
     std::list<std::string> _volumes_refs_;
     const std::ostringstream * _external_materials_stream_;

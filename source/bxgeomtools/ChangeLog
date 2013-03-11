@@ -53,3 +53,8 @@ This is the geomtools package ChangeLog
 	* add "mapping_plugin" class
 2013-03-09 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
 	* add "geometry_service" class (from sncore)
+2013-03-11 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* depends on materials 4.X
+	* add "grid_model" class
+	* add "materials_plugin" class
+	* add "materials_utils" stuff (GDML export)

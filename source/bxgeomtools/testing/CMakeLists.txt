@@ -94,6 +94,7 @@ include_directories(
   ${PROJECT_BINARY_DIR}/include
   ${PROJECT_SOURCE_DIR}/include
   ${mygsl_INCLUDE_DIRS}
+  ${materials_INCLUDE_DIRS}
   ${CLHEP_INCLUDE_DIR}
   ${PROJECT_SOURCE_DIR}/testing
   )

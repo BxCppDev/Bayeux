@@ -39,7 +39,10 @@ visibility.hidden           : boolean = 0
 visibility.daughters.hidden : boolean = 0
 
 #@description The list of daughter volumes by labels
-internal_item.labels 	    : string[1] = "vacuum_chamber"
+internal_item.labels : string[3] = \
+  "vacuum_chamber" \
+  "shield_wall_a" \
+  "shield_wall_b"
 
 #@description The model of the "vacuum_chamber" daughter volume
 internal_item.model.vacuum_chamber     : string  = "vessel.model"
@@ -49,6 +52,24 @@ internal_item.placement.vacuum_chamber : string  = "0 0 0 (mm) / x +90 (degree)"
 
 #@description The mapping directives for the "vacuum_chamber" daughter volume
 mapping.daughter_id.vacuum_chamber : string  = "[vessel.gc:chamber=3]"
+
+#@description The model of the "shield_wall_a" daughter volume
+internal_item.model.shield_wall_a     : string  = "shielding_brick_array.model"
+
+#@description The placement of the "vacuum_chamber" daughter volume
+internal_item.placement.shield_wall_a : string  = "-80 0 0 (cm) / z +90 (degree) "
+
+#@description The mapping directives for the "vacuum_chamber" daughter volume
+mapping.daughter_id.shield_wall_a : string  = "[shield_wall.gc:wall=0]"
+
+#@description The model of the "shield_wall_b" daughter volume
+internal_item.model.shield_wall_b     : string  = "shielding_brick_array.model"
+
+#@description The placement of the "vacuum_chamber" daughter volume
+internal_item.placement.shield_wall_b : string  = "+80 0 0 (cm) / z +90 (degree)"
+
+#@description The mapping directives for the "vacuum_chamber" daughter volume
+mapping.daughter_id.shield_wall_b : string  = "[shield_wall.gc:wall=1]"
 
 
 # End of list of multi-properties.

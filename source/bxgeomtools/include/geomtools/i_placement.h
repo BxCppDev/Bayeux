@@ -37,19 +37,20 @@ namespace geomtools {
       public datatools::i_tree_dumpable
   {
   public: 
+
     // ctor:
     i_placement ();
 
     // dtor:
     virtual ~i_placement ();
 
-  public: 
-
     bool is_multiple () const;
- 
-    virtual bool has_only_one_rotation () const;
     
     placement get_placement (int item_) const;
+ 
+    virtual bool has_only_one_rotation () const;
+
+    virtual size_t get_dimension () const = 0;
 
     virtual size_t get_number_of_items () const = 0;
 

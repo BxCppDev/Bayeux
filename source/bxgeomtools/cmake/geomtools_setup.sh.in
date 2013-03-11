@@ -82,6 +82,16 @@ function do_geomtools_setup ()
 	    echo "VERBOSE: do_geomtools_setup: Found mygsl." 1>&2
 	fi
     fi
+
+    which materials-config >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+	echo "ERROR: do_geomtools_setup: Cannot find materials setup ! Abort !" 1>&2
+	return 1
+    else
+	if [ ${verbose} -ne 0 ]; then
+	    echo "VERBOSE: do_geomtools_setup: Found materials." 1>&2
+	fi
+    fi
      
     export GEOMTOOLS_ROOT="@CMAKE_INSTALL_PREFIX@"
     export GEOMTOOLS_ROOT_DIR="@CMAKE_INSTALL_PREFIX@"

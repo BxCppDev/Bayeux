@@ -37,7 +37,7 @@ namespace geomtools {
       message << "rotated_boxed_model::set_boxed_model: "
       << "Model has no 'box' shape ! "
       << "Found '" << shape.get_shape_name () << "' !";
-      throw runtime_error (message.str ());
+      throw std::logic_error (message.str ());
       }
     */
     _boxed_model_ = &model_;
@@ -120,7 +120,7 @@ namespace geomtools {
         ostringstream message;
         message << "rotated_boxed_model::_at_construct: "
                 << "Missing 'rotated.axis' property for model '" << name_ << "' !"; 
-        throw runtime_error (message.str ());           
+        throw std::logic_error (message.str ());           
       }
 
     if (config_.has_key ("rotated.special_angle"))
@@ -131,7 +131,9 @@ namespace geomtools {
     else if (config_.has_key ("rotated.angle"))
       {
         rotation_angle = config_.fetch_real ("rotated.angle");
-        rotation_angle *= aunit;
+        if (! config_.has_explicit_unit ("rotated.angle")) {
+          rotation_angle *= aunit;
+        }
         use_special_angle = false;
       }  
     else 
@@ -139,7 +141,7 @@ namespace geomtools {
         ostringstream message;
         message << "rotated_boxed_model::_at_construct: "
                 << "Missing 'rotated.special_angle' or 'rotation.angle' property for model '" << name_ << "' !"; 
-        throw runtime_error (message.str ());           
+        throw std::logic_error (message.str ());           
       }
      
     if (config_.has_key ("rotated.model"))
@@ -151,7 +153,7 @@ namespace geomtools {
         ostringstream message;
         message << "rotated_boxed_model::_at_construct: "
                 << "Missing 'boxed_model' property for model '" << name_ << "' !"; 
-        throw runtime_error (message.str ());   
+        throw std::logic_error (message.str ());   
       }
 
     rotation_axis = get_rotation_axis_from_label (rotation_axis_label);
@@ -160,7 +162,7 @@ namespace geomtools {
         ostringstream message;
         message << "rotated_boxed_model::_at_construct: "
                 << "Invalid rotation axis for model '" << name_ << "' !"; 
-        throw runtime_error (message.str ());   
+        throw logic_error (message.str ());   
       }
     
     // XXXX
@@ -175,7 +177,7 @@ namespace geomtools {
             message << "rotated_boxed_model::_at_construct: "
                     << "Invalid rotation angle (" 
                     << special_rotation_angle_label << ") for model '" << name_ << "'!"; 
-            throw runtime_error (message.str ());       
+            throw logic_error (message.str ());       
           }
       }
     // arbitrary angles:
@@ -184,7 +186,9 @@ namespace geomtools {
         if (config_.has_key ("x"))
           {
             x = config_.fetch_real ("x");
-            x *= lunit;
+            if (! config_.has_explicit_unit ("x")) {
+              x *= lunit;
+            }
           }
         else
           {
@@ -194,14 +198,16 @@ namespace geomtools {
                 ostringstream message;
                 message << "rotated_boxed_model::_at_construct: "
                         << "Missing 'x' property !";
-                throw runtime_error (message.str ());    
+                throw std::logic_error (message.str ());    
               }
           }
 
         if (config_.has_key ("y"))
           {
             y = config_.fetch_real ("y");
-            y *= lunit;
+            if (! config_.has_explicit_unit ("y")) {
+              y *= lunit;
+            }
           }
         else
           {
@@ -211,14 +217,16 @@ namespace geomtools {
                 ostringstream message;
                 message << "rotated_boxed_model::_at_construct: "
                         << "Missing 'y' property !";
-                throw runtime_error (message.str ());    
+                throw std::logic_error (message.str ());    
               }
           }
         
         if (config_.has_key ("z"))
           {
             z = config_.fetch_real ("z");
-            z *= lunit;
+            if (! config_.has_explicit_unit ("z")) {
+              z *= lunit;
+            }
           }
         else
           {
@@ -228,7 +236,7 @@ namespace geomtools {
                 ostringstream message;
                 message << "rotated_boxed_model::_at_construct: "
                         << "Missing 'z' property !";
-                throw runtime_error (message.str ());    
+                throw std::logic_error (message.str ());    
               }
           }
 
@@ -239,7 +247,7 @@ namespace geomtools {
         ostringstream message;
         message << "rotated_boxed_model::_at_construct: "
                 << "Missing logicals dictionary !"; 
-        throw runtime_error (message.str ());
+        throw std::logic_error (message.str ());
       }
     
     // Boxed model:
@@ -258,7 +266,7 @@ namespace geomtools {
                       << "The rotating model '" 
                       << the_model->get_name () 
                       << "' is not stackable !"; 
-              throw runtime_error (message.str ());
+              throw std::logic_error (message.str ());
             }
           set_boxed_model (*the_model);
         }
@@ -268,7 +276,7 @@ namespace geomtools {
           message << "rotated_boxed_model::_at_construct: "
                   << "Cannot find model with name '" 
                   << boxed_model_name << "' !";
-          throw runtime_error (message.str ());
+          throw std::logic_error (message.str ());
         }
     }
  
@@ -282,7 +290,7 @@ namespace geomtools {
         message << "rotated_boxed_model::_at_construct: "
                 << "Cannot stack '" 
                 << the_shape.get_shape_name () << "' shape !";
-        throw runtime_error (message.str ());
+        throw std::logic_error (message.str ());
       }
     double gxmin = the_SD.get_xmin ();
     double gxmax = the_SD.get_xmax ();
@@ -411,7 +419,7 @@ namespace geomtools {
     _solid_.set_z (z);
     if (! _solid_.is_valid ())
       {
-        throw runtime_error ("rotated_boxed_model::_at_construct: Invalid solid !");
+        throw std::logic_error ("rotated_boxed_model::_at_construct: Invalid solid !");
       }
 
     get_logical ().set_name (i_model::make_logical_volume_name (name_));

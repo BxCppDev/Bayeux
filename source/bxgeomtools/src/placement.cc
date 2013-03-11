@@ -24,6 +24,11 @@ namespace geomtools {
     return false;
   }
 
+  size_t placement::get_dimension () const
+  {
+    return 0;
+  }
+
   bool placement::has_only_one_rotation () const
   {
     return true;

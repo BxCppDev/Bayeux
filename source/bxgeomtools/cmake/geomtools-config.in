@@ -159,6 +159,7 @@ if [ "x${option}" = "x--cflags" ]; then
 	echo -n "-fPIC "
 	echo -n "-I${geomtools_include_dir} "
         echo -n "`mygsl-config --cflags` "
+        echo -n "`materials-config --cflags` "
 	echo -n "`clhep-config --include` "
 	if [ ${with_reflection} -eq 1 ]; then
  	    echo -n "`camp-config --cflags` "
@@ -253,6 +254,7 @@ if [ "x${option}" = "x--ldflags" ]; then
 	    echo -n "-lgeomtools "
 	fi
         echo -n "`mygsl-config --ldflags ${ldflags_abs_path_option}` "
+	echo -n "`materials-config --ldflags ${ldflags_abs_path_option}` "
 	echo -n "`clhep-config --libs` "
 	if [ ${with_reflection} -eq 1 ]; then
  	    echo -n "`camp-config --ldflags` "

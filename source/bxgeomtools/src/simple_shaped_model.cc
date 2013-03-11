@@ -274,12 +274,14 @@ namespace geomtools {
     if (config_.has_key ("x"))
       {
         x = config_.fetch_real ("x");
-        x *= lunit;
+        if (! config_.has_explicit_unit ("x")) {
+          x *= lunit;
+        }
       }
     else
       {
         ostringstream message;
-        message << "simple_boxed_model::_construct_box: "
+        message << "simple_boxed_model::_construct_box "
                 << "Missing box 'x' property !";
         throw logic_error (message.str ());
       }
@@ -287,7 +289,9 @@ namespace geomtools {
     if (config_.has_key ("y"))
       {
         y = config_.fetch_real ("y");
-        y *= lunit;
+        if (! config_.has_explicit_unit ("y")) {
+          y *= lunit;
+        }
       }
     else
       {
@@ -300,7 +304,9 @@ namespace geomtools {
     if (config_.has_key ("z"))
       {
         z = config_.fetch_real ("z");
-        z *= lunit;
+        if (! config_.has_explicit_unit ("z")) {
+          z *= lunit;
+        }
       }
     else
       {
@@ -355,17 +361,23 @@ namespace geomtools {
         if (config_.has_key ("r"))
           {
             r = config_.fetch_real ("r");
-            r *= lunit;
+            if (! config_.has_explicit_unit ("r")) {
+              r *= lunit;
+            }
           }
         else if (config_.has_key ("radius"))
           {
             r = config_.fetch_real ("radius");
-            r *= lunit;
+            if (! config_.has_explicit_unit ("radius")) {
+              r *= lunit;
+            }
           }
         else if (config_.has_key ("diameter"))
           {
             r = 0.5 * config_.fetch_real ("diameter");
-            r *= lunit;
+            if (! config_.has_explicit_unit ("diameter")) {
+              r *= lunit;
+            }
           }
       }
     if (! datatools::is_valid (r))
@@ -379,7 +391,9 @@ namespace geomtools {
     if (config_.has_key ("z"))
       {
         z = config_.fetch_real ("z");
-        z *= lunit;
+        if (! config_.has_explicit_unit ("z")) {
+          z *= lunit;
+        }
       }
     else
       {
@@ -430,7 +444,9 @@ namespace geomtools {
     if (config_.has_key ("r"))
       {
         r = config_.fetch_real ("r");
-        r *= lunit;
+        if (! config_.has_explicit_unit ("r")) {
+          r *= lunit;
+        }
       }
     else
       {
@@ -488,17 +504,23 @@ namespace geomtools {
         if (config_.has_key ("inner_r"))
           {
             inner_r = config_.fetch_real ("inner_r");
-            inner_r *= lunit;
+            if (! config_.has_explicit_unit ("inner_r")) {
+              inner_r *= lunit;
+            }
           }
         else if (config_.has_key ("inner_radius"))
           {
             inner_r = config_.fetch_real ("inner_radius");
-            inner_r *= lunit;
+            if (! config_.has_explicit_unit ("inner_radius")) {
+              inner_r *= lunit;
+            }
           }
         else if (config_.has_key ("inner_diameter"))
           {
             inner_r = 0.5 * config_.fetch_real ("inner_diameter");
-            inner_r *= lunit;
+            if (! config_.has_explicit_unit ("inner_diameter")) {
+              inner_r *= lunit;
+            }
           }
       }
     if (! datatools::is_valid (inner_r))
@@ -510,23 +532,28 @@ namespace geomtools {
         inner_r = 0.0;
       }
 
-
     if (! datatools::is_valid (outer_r))
       {
         if (config_.has_key ("outer_r"))
           {
             outer_r = config_.fetch_real ("outer_r");
-            outer_r *= lunit;
+            if (! config_.has_explicit_unit ("outer_r")) {
+              outer_r *= lunit;
+            }
           }
         else if (config_.has_key ("outer_radius"))
           {
             outer_r = config_.fetch_real ("outer_radius");
-            outer_r *= lunit;
+            if (! config_.has_explicit_unit ("outer_radius")) {
+              outer_r *= lunit;
+            }
           }
         else if (config_.has_key ("outer_diameter"))
           {
             outer_r = 0.5 * config_.fetch_real ("outer_diameter");
-            outer_r *= lunit;
+            if (! config_.has_explicit_unit ("outer_diameter")) {
+              outer_r *= lunit;
+            }
           }
       }
      if (! datatools::is_valid (outer_r))
@@ -540,7 +567,9 @@ namespace geomtools {
     if (config_.has_key ("z"))
       {
         z = config_.fetch_real ("z");
-        z *= lunit;
+        if (! config_.has_explicit_unit ("z")) {
+          z *= lunit;
+        }
       }
     else
       {

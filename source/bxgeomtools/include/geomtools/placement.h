@@ -68,6 +68,9 @@ namespace geomtools {
   public: 
 
     // i_placement interface:
+
+    virtual size_t get_dimension () const;
+
     virtual size_t get_number_of_items () const;
    
     virtual void get_placement (int item_, placement & p_) const;

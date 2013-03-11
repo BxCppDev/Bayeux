@@ -30,7 +30,7 @@ namespace geomtools {
     MATERIAL_REF_PROPERTY = "ref";
     MATERIAL_REF_DEFAULT  = "__default__";
     MATERIAL_REF_UNKNOWN  = "__unknown__";
-    MATERIAL_REF_VACUUM   = "vacuum";
+    MATERIAL_REF_VACUUM   = "__vacuum__";
     MATERIAL_SOLID_FLAG   = "solid";
     MATERIAL_LIQUID_FLAG  = "liquid";
     MATERIAL_GAS_FLAG     = "gas";

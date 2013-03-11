@@ -121,6 +121,7 @@ function do_clean ()
 
 function do_run ()
 {
+    echo "NOTICE: ${appname}: do_run: Entering..." >&2
     opwd=$(pwd)
 
     if [ "x${prefix_test_dir}" != "x" ]; then
@@ -145,7 +146,10 @@ function do_run ()
 	mkdir -p ${tmp_test_dir}
     fi
     cd ${tmp_test_dir}
-    
+
+    export GEOMTOOLS_TMP_DIR=${tmp_test_dir}
+    echo "NOTICE: ${appname}: GEOMTOOLS_TMP_DIR='${GEOMTOOLS_TMP_DIR}'" >&2
+
     cat >> ${tmp_test_dir}/tests.log<<EOF
 
 ****************************************************
@@ -216,7 +220,7 @@ EOF
 	    return 1
 	fi 
     elif [ "${exe}" = "test_manager" ]; then
-	${bin} >> ${tmp_test_dir}/tests.log 2>&1
+	${bin} --plugins --gdml >> ${tmp_test_dir}/tests.log 2>&1
 	if [ $? -ne 0 ]; then
 	    return 1
 	fi 

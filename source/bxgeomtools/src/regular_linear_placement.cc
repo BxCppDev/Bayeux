@@ -10,6 +10,11 @@
 namespace geomtools {
 
   using namespace std;
+
+  size_t regular_linear_placement::get_dimension () const
+  {
+    return 1;
+  }
   
   bool regular_linear_placement::has_only_one_rotation () const
   {
@@ -136,7 +141,7 @@ namespace geomtools {
         ostringstream message;
         message << "regular_linear_placement::compute_index_map: " 
                 << "Invalid item index '" << item_ << "' !" << endl;
-        throw runtime_error (message.str ());
+        throw std::range_error (message.str ());
       }
     map_.clear ();
     map_.push_back (item_);
@@ -154,7 +159,8 @@ namespace geomtools {
 
   bool regular_linear_placement::is_replica () const
   {
-    return _replicant_axis_ != REPLICANT_AXIS_NONE;
+    return _replicant_axis_ != REPLICANT_AXIS_NONE
+      && (!geomtools::is_valid(_step_) || _step_.mag() == 0.0);
   }
  
   // ctor:
@@ -217,7 +223,7 @@ namespace geomtools {
     if (replicant_axis_ == REPLICANT_AXIS_X) set_replicant_step_x (step_);
     else if (replicant_axis_ == REPLICANT_AXIS_Y) set_replicant_step_y (step_);
     else if (replicant_axis_ == REPLICANT_AXIS_Z) set_replicant_step_z (step_);
-    else throw runtime_error ("regular_linear_placement::init: Invalid replicant axis !");
+    else throw std::logic_error ("regular_linear_placement::init: Invalid replicant axis !");
     return;
   }
    

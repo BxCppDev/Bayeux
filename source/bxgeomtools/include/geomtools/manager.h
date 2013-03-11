@@ -304,6 +304,8 @@ namespace geomtools {
     
     void unregister_plugin_type(const std::string& plugin_id);
 
+    //bool has_materials_manager() const;
+
     /// Default constructor
     manager ();
 
@@ -364,6 +366,7 @@ namespace geomtools {
     bool                     _mapping_requested_; //!< flag for building mapping
     geomtools::mapping       _mapping_;           //!< the mapping manager
     std::string              _world_name_;        //!< the name of the 'world' model
+    //const materials::manager * _materials_manager_; //!< Material manager
 
     bool                                _plugins_factory_preload_;  //!< Flagfor preloading of plugins system factory
     bool                                _plugins_force_initialization_at_load_;  //!< Flag to enforce initialization of plugins at load 

@@ -11,6 +11,11 @@
 namespace geomtools {
 
   using namespace std;
+
+  size_t regular_grid_placement::get_dimension () const
+  {
+    return 2;
+  }
   
   bool regular_grid_placement::has_only_one_rotation () const
   {
@@ -153,7 +158,7 @@ namespace geomtools {
         ostringstream message;
         message << "regular_grid_placement::compute_index_map: " 
                 << "Invalid item index '" << item_ << "' !" << endl;
-        throw runtime_error (message.str ());
+        throw std::range_error (message.str ());
       }
     uint32_t nitem = (uint32_t) item_;
     uint32_t icol = nitem % _number_of_columns_;
@@ -184,12 +189,13 @@ namespace geomtools {
     vector_3d trans = p_.get_translation ();
     vector_3d step;
     double x, y, z;
+    bool centered = _centered_;
     if (is_mode_xy ())
       {
         x = (item_ % _number_of_columns_) * _column_step_;
         y = (item_ / _number_of_columns_) * _row_step_;
         z = 0.0;
-        if (_centered_)
+        if (centered)
           {
             x -= 0.5 * (_number_of_columns_ - 1) * _column_step_;
             y -= 0.5 * (_number_of_rows_    - 1) * _row_step_;
@@ -200,7 +206,7 @@ namespace geomtools {
         x = (item_ % _number_of_columns_) * _column_step_;
         z = (item_ / _number_of_columns_) * _row_step_;
         y = 0.0;
-        if (_centered_)
+        if (centered)
           {
             x -= 0.5 * (_number_of_columns_ - 1) * _column_step_;
             z -= 0.5 * (_number_of_rows_    - 1) * _row_step_;
@@ -211,7 +217,7 @@ namespace geomtools {
         y = (item_ % _number_of_columns_) * _column_step_;
         z = (item_ / _number_of_columns_) * _row_step_;
         x = 0.0;
-        if (_centered_)
+        if (centered)
           {
             y -= 0.5 * (_number_of_columns_ - 1) * _column_step_;
             z -= 0.5 * (_number_of_rows_    - 1) * _row_step_;
@@ -247,7 +253,7 @@ namespace geomtools {
   {
     if ((mode_ < MODE_XY) || (mode_ > MODE_XZ))
       {
-        throw runtime_error ("regular_grid_placement: Invalid mode !");
+        throw std::logic_error ("regular_grid_placement: Invalid mode !");
       }
     _mode_ = mode_;
     return;

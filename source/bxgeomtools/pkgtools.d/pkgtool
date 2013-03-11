@@ -422,6 +422,7 @@ function do_configure ()
 	-DCMAKE_INSTALL_PREFIX:PATH=${install_prefix} \
 	-DCMAKE_BUILD_TYPE:STRING=Release \
 	-Dmygsl_DIR=${MYGSL_CMAKE_CONFIG_DIR} \
+	-Dmaterials_DIR=${MATERIALS_CMAKE_CONFIG_DIR} \
 	-DCMAKE_MODULE_PATH="${CADFAEL_SHARE_DIR}/cmake/Modules;${CMAKE_MODULE_PATH}" \
 	-DGEOMTOOLS_WITH_DEBUG=${with_debug} \
 	-DGEOMTOOLS_WITH_BIO=${with_bio} \

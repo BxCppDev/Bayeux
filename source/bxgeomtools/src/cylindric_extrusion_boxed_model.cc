@@ -149,16 +149,19 @@ namespace geomtools {
     double mother_z;
     double extrusion_radius;
     string material_name = material::constants::instance ().MATERIAL_REF_UNKNOWN;
+    double lunit = CLHEP::mm;
     string lunit_str = "mm"; // default unit
 
     if (config_.has_key ("length_unit"))
       {
         lunit_str = config_.fetch_string ("length_unit");
       }
+    lunit = datatools::units::get_length_unit_from (lunit_str);
 
     if (config_.has_key ("x"))
       {
         mother_x = config_.fetch_real ("x");
+        if (! config_.has_explicit_unit ("x")) mother_x *= lunit;
       }
     else
       {
@@ -171,6 +174,7 @@ namespace geomtools {
     if (config_.has_key ("y"))
       {
         mother_y = config_.fetch_real ("y");
+        if (! config_.has_explicit_unit ("y")) mother_y *= lunit;
       }
     else
       {
@@ -183,6 +187,7 @@ namespace geomtools {
     if (config_.has_key ("z"))
       {
         mother_z = config_.fetch_real ("z");
+        if (! config_.has_explicit_unit ("z")) mother_z *= lunit;
       }
     else
       {
@@ -195,6 +200,9 @@ namespace geomtools {
     if (config_.has_key ("extrusion_radius"))
       {
         extrusion_radius = config_.fetch_real ("extrusion_radius");
+        if (! config_.has_explicit_unit ("extrusion_radius")) {
+          extrusion_radius *= lunit;
+        }
       }
     else
       {
@@ -215,14 +223,6 @@ namespace geomtools {
                 << "Missing 'material.ref' property !";
         throw logic_error (message.str ());
       }
-
-    double lunit = CLHEP::mm;
-    lunit = datatools::units::get_length_unit_from (lunit_str);
-
-    mother_x *= lunit;
-    mother_y *= lunit;
-    mother_z *= lunit;
-    extrusion_radius *= lunit;
 
     if (extrusion_radius >= 0.5 * mother_x)
       {

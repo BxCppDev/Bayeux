@@ -149,7 +149,8 @@ namespace geomtools {
       {
         ostringstream message;
         message << "geomtools::i_model::extract_label_from_physical_volume_name: "
-                << "Do not recognize a physical volume name !";
+                << "Do not recognize a physical volume name from '"
+                << physical_volume_name_ << "' !";
         throw logic_error (message.str ());
       }
     return physical_volume_name_.substr (0, pos);

@@ -44,7 +44,7 @@ namespace geomtools {
     : public i_placement 
   {
   public:
-    enum mode_t
+    enum mode_type
       {
         MODE_XY = 0,
         MODE_YZ = 1,
@@ -55,10 +55,6 @@ namespace geomtools {
     static const bool UNCENTERED = false;
 
   public:
- 
-    virtual bool has_only_one_rotation () const;
-
-    bool is_replica () const;
 
     bool is_valid () const;
 
@@ -103,8 +99,6 @@ namespace geomtools {
     void set_number_of_rows (size_t nr_);
 
     void set_number_of_columns (size_t nc_);
-
-    void set_dimensions (size_t nc_, size_t nr_);
  
     size_t get_number_of_rows () const;
  
@@ -115,7 +109,15 @@ namespace geomtools {
     placement get_placement (int col_, int row_) const;
 
   public: 
+
     // i_placement interface:
+
+    virtual bool has_only_one_rotation () const;
+
+    virtual size_t get_dimension () const;
+
+    virtual bool is_replica () const;
+
     virtual size_t get_number_of_items () const;
    
     virtual void get_placement (int item_, placement & p_) const;

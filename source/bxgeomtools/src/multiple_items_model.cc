@@ -178,19 +178,25 @@ namespace geomtools {
     if (config_.has_key ("x"))
       {
         x = config_.fetch_real ("x");
-        x *= lunit;
+        if (! config_.has_explicit_unit ("x")) {
+          x *= lunit;
+        }
       }
 
     if (config_.has_key ("y"))
       {
         y = config_.fetch_real ("y");
-        y *= lunit;
+        if (! config_.has_explicit_unit ("y")) {
+          y *= lunit;
+        }
       }
 
     if (config_.has_key ("z"))
       {
         z = config_.fetch_real ("z");
-        z *= lunit;
+        if (! config_.has_explicit_unit ("z")) {
+          z *= lunit;
+        }
       }
 
     /*** material ***/

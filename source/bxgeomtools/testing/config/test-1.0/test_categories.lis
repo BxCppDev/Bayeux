@@ -48,4 +48,12 @@ by       : string[1] = "dynode"
 [category="pmt_focus_electrode.gc" type="2050"]
 inherits : string[1] = "detector.gc"
 
+[category="shield_wall.gc" type="2060"]
+addresses : string[1] = "wall"
+
+[category="shield_brick.gc" type="2070"]
+extends  : string = "shield_wall.gc"
+by       : string[2] = "column" "row"
+
+
 # end

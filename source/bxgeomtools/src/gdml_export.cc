@@ -76,6 +76,17 @@ namespace geomtools {
     return _parameters_;
   }
 
+  bool gdml_export::has_fake_materials () const
+  {
+    return _fake_materials_;
+  }
+
+  void gdml_export::add_fake_materials(bool fm_)
+  {
+    _fake_materials_ = fm_;
+    return;
+  }
+
   // ctor:
   gdml_export::gdml_export ()
   {
@@ -87,6 +98,7 @@ namespace geomtools {
     _external_materials_stream_ = 0;
     _support_auxiliary_ = true;
     _support_replica_ = false;
+    _fake_materials_ = false;
     return;
   }
 
@@ -126,8 +138,8 @@ namespace geomtools {
         std::ostringstream message;
         message << "gdml_export::export_gdml: "
                 << "Cannot open GDML file '"
-                << filename_
-                << "' !";
+                << filename_ << "' (as '" << gdml_filename 
+                << "') !";
         throw std::runtime_error (message.str ());
       }
     _export_gdml (fout, factory_, model_name_);
@@ -234,18 +246,21 @@ namespace geomtools {
       }
 
     // add a fake material:
-    _writer_.add_material (material::constants::instance ().MATERIAL_REF_DEFAULT,
-                           1.0,
-                           1. * CLHEP::g / CLHEP::cm3,
-                           1.00);
-    _writer_.add_material (material::constants::instance ().MATERIAL_REF_UNKNOWN,
-                           1.0,
-                           1. * CLHEP::g / CLHEP::cm3,
-                           1.00);
-    _writer_.add_material (material::constants::instance ().MATERIAL_REF_VACUUM,
-                           1.0,
-                           1.e-15 * CLHEP::g / CLHEP::cm3,
-                           1.00);
+    if (has_fake_materials())
+      {
+        _writer_.add_material (material::constants::instance ().MATERIAL_REF_DEFAULT,
+                               1.0,
+                               1. * CLHEP::g / CLHEP::cm3,
+                               1.00);
+        _writer_.add_material (material::constants::instance ().MATERIAL_REF_UNKNOWN,
+                               1.0,
+                               1. * CLHEP::g / CLHEP::cm3,
+                               1.00);
+        _writer_.add_material (material::constants::instance ().MATERIAL_REF_VACUUM,
+                               1.0,
+                               1.e-15 * CLHEP::g / CLHEP::cm3,
+                               1.00);
+      }
 
     _writer_.add_setup ("Setup", top_model.get_logical ().get_name ());
 

@@ -35,6 +35,8 @@
 #include <geomtools/manager.h>
 #include <geomtools/manager_macros.h>
 #include <geomtools/mapping.h>
+#include <geomtools/materials_plugin.h>
+#include <geomtools/materials_utils.h>
 
 /* A plugin for the geometry manager which instantiate 
  * a 'mapping' object with its specific mapping rules.
@@ -153,7 +155,7 @@ int main (int argc_, char ** argv_)
       std::string drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
       bool   gdml = false;
       bool   gdml_replica_support = false;
-      bool   use_plugins = true;
+      bool   use_plugins = false;
       bool   force_show = false;
       bool   force_show_envelop = false;
       bool   force_show_children = false;
@@ -199,9 +201,13 @@ int main (int argc_, char ** argv_)
                 {
                   force_show_children = true;
                 }
-              else if ((option == "-p") || (option == "--dump")) 
+              else if ((option == "-D") || (option == "--dump")) 
                 {
                   dump = true;
+                }
+              else if ((option == "-p") || (option == "--plugins")) 
+                {
+                  use_plugins = true;
                 }
               else if ((option == "-g") || (option == "--gdml")) 
                 {
@@ -423,11 +429,30 @@ int main (int argc_, char ** argv_)
           geomtools::gdml_writer material_writer; // GDML writer for materials
           geomtools::gdml_export GDML;            // factory->GDML exporter
 
-          /*
-            std::clog << "Export GDML materials: "<< std::endl;
-            geo_mgr.get_materials_mgr ().export_gdml (material_writer);
-            GDML.attach_external_materials (material_writer.get_stream (geomtools::gdml_writer::MATERIALS_SECTION));
-          */
+ 
+          std::clog << "NOTICE: " << "Accessing the materials driver plugin..." << std::endl;
+
+          const materials::manager * mat_mgr_ref = 0;
+          // Access to a given plugin by name and type :
+          std::string materials_plugin_name = "materials_driver";
+          if (geo_mgr.has_plugin (materials_plugin_name) 
+              && geo_mgr.is_plugin_a<geomtools::materials_plugin>(materials_plugin_name))
+            {
+              std::clog << "NOTICE: " << "Found materials plugin named '" << materials_plugin_name 
+                        << "'" << std::endl;
+              const geomtools::materials_plugin & mgp 
+                = geo_mgr.get_plugin<geomtools::materials_plugin>(materials_plugin_name);
+              const materials::manager & mat_mgr = mgp.get_manager();
+              mat_mgr_ref = &mat_mgr;
+            }
+ 
+          if (mat_mgr_ref != 0)
+            {         
+              std::clog << "NOTICE: " 
+                        << "Export GDML materials from the materials driver plugin: "<< std::endl;
+              geomtools::export_gdml (*mat_mgr_ref, material_writer);
+              GDML.attach_external_materials (material_writer.get_stream (geomtools::gdml_writer::MATERIALS_SECTION));
+            }
 
           GDML.add_auxiliary_support (false);
           GDML.add_replica_support (gdml_replica_support);
@@ -441,9 +466,10 @@ int main (int argc_, char ** argv_)
                                     geomtools::gdml_export::DEFAULT_LENGTH_UNIT);
           GDML.parameters ().store ("angle_unit",   
                                     geomtools::gdml_export::DEFAULT_ANGLE_UNIT);
-          GDML.export_gdml ("test_manager.gdml", 
+          GDML.export_gdml ("${GEOMTOOLS_TMP_DIR}/test_manager.gdml", 
                             geo_mgr.get_factory (), 
                             world_model_name);
+          std::clog << "NOTICE: " << "GDML file '${GEOMTOOLS_TMP_DIR}/test_manager.gdml' has been generated." << std::endl;
         } // GDML
       else
         {
@@ -454,7 +480,7 @@ int main (int argc_, char ** argv_)
         {
           std::clog << "NOTICE: " << "Accessing some plugins..." << std::endl;
 
-          std::string mapping_plugin_name         ;
+          std::string mapping_plugin_name;
 
           // Access to a given plugin by name and type :
           mapping_plugin_name = "mapping_depth_2";
@@ -500,6 +526,17 @@ int main (int argc_, char ** argv_)
               const geomtools::mapping & tm = tp.get_mapping();
               tm.dump_dictionnary(std::clog);
             }
+         
+          mapping_plugin_name = "mapping_only_shield";
+          if (geo_mgr.has_plugin (mapping_plugin_name) 
+              && geo_mgr.is_plugin_a<test_plugin>(mapping_plugin_name))
+            {
+              std::clog << "NOTICE: " << "Found plugin named '" << mapping_plugin_name 
+                        << "'" << std::endl;
+              const test_plugin & tp = geo_mgr.get_plugin<test_plugin>(mapping_plugin_name);
+              const geomtools::mapping & tm = tp.get_mapping();
+              tm.dump_dictionnary(std::clog);
+            }
 
         }
       else
@@ -516,7 +553,7 @@ int main (int argc_, char ** argv_)
     }
   catch (...)
     {
-      std::cerr << "ERROR: " << "unexpected error!" << std::endl; 
+      std::cerr << "ERROR: " << "Unexpected error!" << std::endl; 
       error_code = EXIT_FAILURE;
     }
   return (error_code);

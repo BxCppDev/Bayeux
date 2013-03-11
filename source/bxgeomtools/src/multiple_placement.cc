@@ -11,6 +11,11 @@ namespace geomtools {
 
   using namespace std;
 
+  size_t multiple_placement::get_dimension () const
+  {
+    return 1;
+  }
+
   bool multiple_placement::is_replica () const
   {
     return false;

@@ -397,6 +397,14 @@ namespace geomtools {
   {
     return _id_manager_;
   }
+
+  /*
+  bool manager::has_materials_manager() const
+  {
+    std::string materials_plugin_name = "materials_driver";
+    if ()
+  }
+  */
   
   const manager::plugins_dict_type & manager::get_plugins () const
   {
@@ -498,17 +506,17 @@ namespace geomtools {
     return;
   }
 
-  void manager::initialize (const datatools::properties & config_)
+  void manager::init (const datatools::properties & config_)
   {
-    this->init (config_);
+    this->initialize (config_);
     return;
   }
 
-  void manager::init (const datatools::properties & config_)
+  void manager::initialize (const datatools::properties & config_)
   {
     if (_initialized_)
       {
-        throw std::logic_error ("geomtools::manager::init: Already initialized !");
+        throw std::logic_error ("geomtools::manager::initialize: Already initialized !");
       }
     _pre_init (config_);
     _at_init_ (config_);

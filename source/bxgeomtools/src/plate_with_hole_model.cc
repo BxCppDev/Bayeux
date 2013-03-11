@@ -107,6 +107,9 @@ namespace geomtools {
     if (config_.has_key ("x"))
       {
         x = config_.fetch_real ("x");
+        if (! config_.has_explicit_unit ("x")) {
+          x *= lunit;
+        }
       }
     else
       {
@@ -119,6 +122,9 @@ namespace geomtools {
     if (config_.has_key ("y"))
       {
         y = config_.fetch_real ("y");
+        if (! config_.has_explicit_unit ("y")) {
+          y *= lunit;
+        }
       }
     else
       {
@@ -131,6 +137,9 @@ namespace geomtools {
     if (config_.has_key ("z"))
       {
         z = config_.fetch_real ("z");
+        if (! config_.has_explicit_unit ("z")) {
+          z *= lunit;
+        }
       }
     else
       {
@@ -140,14 +149,12 @@ namespace geomtools {
         throw std::logic_error (message.str ());
       }
 
-    x  *= lunit;
-    y  *= lunit;
-    z  *= lunit;
-
     if (config_.has_key ("r_hole"))
       {
         r_hole = config_.fetch_real ("r_hole");
-        r_hole  *= lunit;
+        if (! config_.has_explicit_unit ("r_hole")) {
+          r_hole  *= lunit;
+        }
       }
     // else
     //   {
@@ -162,6 +169,9 @@ namespace geomtools {
         if (config_.has_key ("x_hole"))
           {
             x_hole = config_.fetch_real ("x_hole");
+            if (! config_.has_explicit_unit ("x_hole")) {
+              x_hole  *= lunit;
+            }
           }
         else
           {
@@ -174,7 +184,10 @@ namespace geomtools {
         if (config_.has_key ("y_hole"))
           {
             y_hole = config_.fetch_real ("y_hole");
-          }
+            if (! config_.has_explicit_unit ("y_hole")) {
+              y_hole  *= lunit;
+            }
+           }
         else
           {
             std::ostringstream message;
@@ -182,20 +195,22 @@ namespace geomtools {
                     << "Missing 'y_hole' property !";
             throw std::logic_error (message.str ());
           }
-        x_hole  *= lunit;
-        y_hole  *= lunit;
       }
     
     if (config_.has_key ("x_pos_hole"))
       {
         x_pos_hole = config_.fetch_real ("x_pos_hole");
-        x_pos_hole *= lunit;
+        if (! config_.has_explicit_unit ("x_pos_hole")) {
+          x_pos_hole  *= lunit;
+        }
       }
     
     if (config_.has_key ("y_pos_hole"))
       {
         y_pos_hole = config_.fetch_real ("y_pos_hole");
-        y_pos_hole  *= lunit;
+        if (! config_.has_explicit_unit ("y_pos_hole")) {
+          y_pos_hole  *= lunit;
+        }
       }
     
     if (devel) std::clog << "DEVEL: geomtools::plate_with_hole_model::_at_construct: Properties are parsed !" << std::endl;

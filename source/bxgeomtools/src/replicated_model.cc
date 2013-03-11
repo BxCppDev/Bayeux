@@ -204,7 +204,9 @@ namespace geomtools {
                   << "Invalid value for 'replicated.step' property !"; 
           throw logic_error (message.str ());   
         }
-        _step_ *= length_unit;
+        if (! config_.has_explicit_unit ("replicated.step")) {
+          _step_ *= length_unit;
+        }
       }  
  
     if (number_of_items == 0)
@@ -292,7 +294,7 @@ namespace geomtools {
     _x_ = dx;
     _y_ = dy;
     _z_ = dz;
-     double x0, y0, z0;
+    double x0, y0, z0;
     x0 = y0 = z0 = 0.0;
     if (replicant_axis_label == "x") 
       {
@@ -348,7 +350,8 @@ namespace geomtools {
     placement basic_p;
     basic_p.set (x0, y0, z0, 0, 0, 0);
     _replica_placement_.set_basic_placement (basic_p);
-    _phys_.set_name (i_model::make_physical_volume_name (replicated_label, get_number_of_items ()));
+    _phys_.set_name (i_model::make_physical_volume_name (replicated_label, 
+                                                         get_number_of_items ()));
     _phys_.set_placement (_replica_placement_);
     _phys_.set_logical (_model_->get_logical ());
     _phys_.set_mother (_logical);

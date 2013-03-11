@@ -33,8 +33,6 @@ namespace geomtools {
 
   public:
  
-    virtual bool is_replica () const;
- 
     bool is_valid () const;
 
     void invalidate ();
@@ -46,6 +44,10 @@ namespace geomtools {
     placement & get_placement (int index_);
 
   public: 
+
+    virtual size_t get_dimension () const;
+ 
+    virtual bool is_replica () const;
 
     virtual size_t get_number_of_items () const;
    
