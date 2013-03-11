@@ -576,7 +576,7 @@ void print_help ()
             << "                       Visualization defaults to YZ view\n";
   std::clog << "   -xz|--visu-view-xz :  \n"
             << "                       Visualization defaults to XZ view\n";
-  std::clog << "   -3d|--visu--view-3d :  \n"
+  std::clog << "   -3d|--visu-view-3d :  \n"
             << "                       Visualization defaults to 3D view\n";
   std::clog << "   +VL|--visu-labels :  \n"
             << "                       Visualization shows axis and labels\n";
