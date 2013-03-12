@@ -53,7 +53,7 @@ int main (int argc_, char ** argv_)
 
       geomtools::id_selector IDS (my_id_mgr);
 
-      string selector_rules = "category=source_pad module={0;1} layer={*} strip={1;2;4;5;10} pad=[3;7]";
+      string selector_rules = "category='source_pad' module={0;1} layer={*} strip={1;2;4;5;10} pad=[3;7]";
       IDS.initialize (selector_rules);
       if (debug) IDS.dump (clog, "ID selector: ");
 

@@ -14,7 +14,6 @@
 
 namespace geomtools {
 
-
   using namespace std;
 
   bool id_selector::is_initialized () const
@@ -80,6 +79,7 @@ namespace geomtools {
       }
     istringstream rules_iss (rules_);
 
+    // Extract the geometry category token :
     string cat_token;
     rules_iss >> cat_token >> ws;
     if (! rules_iss)
@@ -109,6 +109,24 @@ namespace geomtools {
         ostringstream message;
         message << "geomtools::id_selector::initialize: Missing category name label !";
         throw logic_error (message.str ());
+      }
+    if (category[0] == '\'')
+      {
+        if (category.length() < 3)
+          {
+            ostringstream message;
+            message << "geomtools::id_selector::initialize: Invalid quoted category name label '" 
+                    << category << "' !";
+            throw logic_error (message.str ());     
+          }
+        if (category[category.length()-1] != '\'')
+          {
+            ostringstream message;
+            message << "geomtools::id_selector::initialize: Missing end quote for category name label '" 
+                    << category << "' !";
+            throw logic_error (message.str ());     
+          }
+        category = category.substr(1, category.length()-2);
       }
     if (! _id_mgr_->has_category_info (category))
       {
