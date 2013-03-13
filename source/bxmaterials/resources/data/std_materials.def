@@ -1,4 +1,4 @@
-d# -*- mode: conf-unix; -*-
+# -*- mode: conf-unix; -*-
 # List of multi-properties (datatools::utils::multi_properties):
 
 #@description A list of common materials
