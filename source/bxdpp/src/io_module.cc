@@ -22,26 +22,19 @@
 #include <stdexcept>
 #include <sstream>
 
-#include <dpp/io_module.h>
-
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/utils/properties.h>
-#include <datatools/services/service_manager.h>
-#include <datatools/utils/ioutils.h>
-#include <datatools/serialization/io_factory.h>
-#else
 #include <datatools/properties.h>
 #include <datatools/service_manager.h>
 #include <datatools/ioutils.h>
 #include <datatools/io_factory.h>
-#endif
 
+#include <brio/utils.h>
+
+#include <dpp/io_module.h>
 #include <dpp/simple_data_sink.h>
 #include <dpp/simple_data_source.h>
 #include <dpp/simple_brio_data_sink.h>
 #include <dpp/simple_brio_data_source.h>
 #include <dpp/context_service.h>
-#include <brio/utils.h>
 
 namespace dpp {
 
@@ -157,7 +150,7 @@ namespace dpp {
     return;
   }
 
-  void io_module::set_filenames (const DPP_DU::properties & a_setup)
+  void io_module::set_filenames (const datatools::properties & a_setup)
   {
     if (is_initialized ())
       {
@@ -244,8 +237,8 @@ namespace dpp {
   }
 
   // Initialization :
-  void io_module::initialize (const DPP_DU::properties               & a_config,
-                              DPP_DS::service_manager              & a_service_manager,
+  void io_module::initialize (const datatools::properties               & a_config,
+                              datatools::service_manager              & a_service_manager,
                               module_handle_dict_type & a_module_dict)
   {
     if (is_initialized ())
@@ -299,7 +292,7 @@ namespace dpp {
         // std::cerr << "DEVEL **************** io_module::initialize: output specific... " << std::endl;
         if (! _filenames_.is_valid ())
           {
-            DPP_DU::properties output_config;
+            datatools::properties output_config;
             a_config.export_and_rename_starting_with (output_config, "output.", "");
             set_filenames (output_config);
             if (is_debug ())
@@ -354,7 +347,7 @@ namespace dpp {
         if (! _filenames_.is_valid ())
           {
             // std::cerr << "DEVEL **************** io_module::initialize: input specific... " << std::endl;
-            DPP_DU::properties input_config;
+            datatools::properties input_config;
             a_config.export_and_rename_starting_with (input_config, "input.", "");
             set_filenames (input_config);
             if (is_debug ())
@@ -426,7 +419,7 @@ namespace dpp {
                 std::ostringstream message;
                 message << "dpp::io_module::initialize: "
                         << "Service manager has no 'context' service labelled with '" << _Ctx_label_ << "' !";
-                std::cerr << DPP_DU::io::warning << message.str () << std::endl;
+                std::cerr << datatools::io::warning << message.str () << std::endl;
                 //throw std::logic_error (message.str ());
               }
           }
@@ -438,7 +431,7 @@ namespace dpp {
         message << "dpp::io_module::initialize: "
                 << "Module '" << get_name ()
                 << "' has no access to any 'context' service !";
-        std::cerr << DPP_DU::io::warning << message.str () << std::endl;
+        std::cerr << datatools::io::warning << message.str () << std::endl;
         //throw std::logic_error (message.str ());
       }
 
@@ -511,7 +504,7 @@ namespace dpp {
   }
 
   // Processing :
-  int io_module::process (DPP_DU::things & a_event_record)
+  int io_module::process (datatools::things & a_event_record)
   {
     if (! is_initialized ())
       {
@@ -546,7 +539,7 @@ namespace dpp {
     return ERROR;
   }
 
-  int io_module::_load (DPP_DU::things & a_event_record)
+  int io_module::_load (datatools::things & a_event_record)
   {
     std::cerr << "DEVEL **************** io_module::_load: Entering..." << std::endl;
     std::cerr << "DEVEL **************** io_module::_load: _filenames_.size () = " << _filenames_.size () << std::endl;
@@ -564,14 +557,14 @@ namespace dpp {
             message << "dpp::io_module::_load: "
                     << "No more available input data file !";
             //throw std::logic_error (message.str ());
-            std::cerr << DPP_DU::io::error << message.str () << std::endl;
+            std::cerr << datatools::io::error << message.str () << std::endl;
             load_status = FATAL;
             return load_status;
           }
         std::string source_label = _filenames_[_file_index_];
         int mode_guess = 0;
         bool brio_format = false;
-        namespace ds = DPP_DSZ;
+        namespace ds = datatools;
         if (brio::store_info::guess_mode_from_filename (source_label, mode_guess)
             == brio::store_info::SUCCESS)
           {
@@ -588,7 +581,7 @@ namespace dpp {
             message << "dpp::io_module::_load: "
                     << "Cannot guess mode for input data file '" << source_label << "'!";
             //throw std::logic_error (message.str ());
-            std::cerr << DPP_DU::io::error << message.str () << std::endl;
+            std::cerr << datatools::io::error << message.str () << std::endl;
             load_status = FATAL;
             return load_status;
           }
@@ -641,7 +634,7 @@ namespace dpp {
                         << "No more available event record ! This is a bug !";
                 throw std::logic_error (message.str ());
                 /*
-                  std::cerr << DPP_DU::io::error << message.str () << std::endl;
+                  std::cerr << datatools::io::error << message.str () << std::endl;
                   load_status = FATAL;
                   return load_status;
                 */
@@ -675,7 +668,7 @@ namespace dpp {
             std::ostringstream message;
             message << "dpp::io_module::_load: "
                     << "Module '" << get_name () << "' has reached the maximum number of records from the input data source (" << _max_record_total_ << ") !";
-            std::clog << DPP_DU::io::notice << message.str () << std::endl;
+            std::clog << datatools::io::notice << message.str () << std::endl;
             //load_status = ERROR;
           }
       }
@@ -688,7 +681,7 @@ namespace dpp {
             std::ostringstream message;
             message << "dpp::io_module::_load: "
                     << "Module '" << get_name () << "' has reached the maximum number of records from the current input file (" << _max_record_per_file_ << ") !";
-            std::clog << DPP_DU::io::notice << message.str () << std::endl;
+            std::clog << datatools::io::notice << message.str () << std::endl;
           }
       }
 
@@ -728,7 +721,7 @@ namespace dpp {
                         << "Module '" << get_name () 
                         << "' has reached the requested maximum number of input file(s) ("
                         << effective_max_files << ") !";
-                std::clog << DPP_DU::io::notice << message.str () << std::endl;
+                std::clog << datatools::io::notice << message.str () << std::endl;
               }
           }
         if ((_file_index_ + 1) >= _filenames_.size ())
@@ -738,7 +731,7 @@ namespace dpp {
                     << "Module '" << get_name () 
                     << "' has loaded the last available input file (total is "
                     << _filenames_.size () << " file" << (_filenames_.size ()>1?"":"s") << ")!";
-            std::clog << DPP_DU::io::notice << message.str () << std::endl;
+            std::clog << datatools::io::notice << message.str () << std::endl;
             stop_input = true;
           }
       }
@@ -752,7 +745,7 @@ namespace dpp {
     return load_status;
   }
 
-  int io_module::_store (const DPP_DU::things & a_event_record)
+  int io_module::_store (const datatools::things & a_event_record)
   {
     int store_status = OK;
     // std::cerr << "DEVEL **************** io_module::_store: Entering..." << std::endl;
@@ -772,7 +765,7 @@ namespace dpp {
         // std::cerr << "DEVEL **************** io_module::_store: sink_label=" << sink_label << std::endl;
         int mode_guess;
         bool brio_format = false;
-        namespace ds = DPP_DSZ;
+        namespace ds = datatools;
         if (brio::store_info::guess_mode_from_filename (sink_label, mode_guess)
             == brio::store_info::SUCCESS)
           {
@@ -789,7 +782,7 @@ namespace dpp {
             message << "dpp::io_module::_store: "
                     << "Cannot guess mode for output data file '" << sink_label << "'!";
             //throw std::logic_error (message.str ());
-            std::cerr << DPP_DU::io::error << message.str () << std::endl;
+            std::cerr << datatools::io::error << message.str () << std::endl;
             store_status = FATAL;
             return store_status;
           }
@@ -829,7 +822,7 @@ namespace dpp {
                 std::ostringstream message;
                 message << "dpp::io_module::_store: "
                         << "Cannot store the event record ! This is a bug !";
-                std::cerr << DPP_DU::io::error << message.str () << std::endl;
+                std::cerr << datatools::io::error << message.str () << std::endl;
                 store_status = FATAL;
                 return store_status;
               }
@@ -841,7 +834,7 @@ namespace dpp {
             std::ostringstream message;
             message << "dpp::io_module::_store: "
                     << "No available data sink ! This is a bug !";
-            std::cerr << DPP_DU::io::error << message.str () << std::endl;
+            std::cerr << datatools::io::error << message.str () << std::endl;
             store_status = FATAL;
             return store_status;
           }
@@ -859,7 +852,7 @@ namespace dpp {
             std::ostringstream message;
             message << "dpp::io_module::_store: "
                     << "Module '" << get_name () << "' has reached the maximum number of records stored in the output data source (" << _max_record_total_ << ") !";
-            std::clog << DPP_DU::io::notice << message.str () << std::endl;
+            std::clog << datatools::io::notice << message.str () << std::endl;
           }
       }
 
@@ -871,7 +864,7 @@ namespace dpp {
             std::ostringstream message;
             message << "dpp::io_module::_store: "
                     << "Module '" << get_name () << "' has reached the maximum number of records to be stored in the current output file (" << _max_record_per_file_ << ") !";
-            std::clog << DPP_DU::io::notice << message.str () << std::endl;
+            std::clog << datatools::io::notice << message.str () << std::endl;
           }
       }
 
@@ -894,7 +887,7 @@ namespace dpp {
                 std::ostringstream message;
                 message << "dpp::io_module::_store: "
                         << "Module '" << get_name () << "' has reached the requested maximum number of output files (" << _max_files_ << ") !";
-                std::clog << DPP_DU::io::notice << message.str () << std::endl;
+                std::clog << datatools::io::notice << message.str () << std::endl;
               }
           }
         if ((_file_index_ + 1) >= _filenames_.size ())
@@ -903,7 +896,7 @@ namespace dpp {
             std::ostringstream message;
             message << "dpp::io_module::_store: "
                     << "Module '" << get_name () << "' has filled the last requested output file (total is " << _filenames_.size () << " files)!";
-            std::clog << DPP_DU::io::notice << message.str () << std::endl;
+            std::clog << datatools::io::notice << message.str () << std::endl;
           }
       }
 
@@ -921,7 +914,7 @@ namespace dpp {
                              const std::string & a_indent,
                              bool a_inherit) const
   {
-    namespace du = DPP_DU;
+    namespace du = datatools;
     this->base_module::tree_dump (a_out, a_title, a_indent, is_initialized ());
     if (! is_initialized ())
       {

@@ -32,19 +32,6 @@
 /***  dpp embedded CAMP-based reflection ***/
 //#cmakedefine01 DPP_WITH_REFLECTION
 
-#define DPP_DATATOOLS_LEGACY @_dpp_DATATOOLS_LEGACY@
-
-/*** Trick to address the datatools namespaces ***/
-#if DPP_DATATOOLS_LEGACY == 1
-#define DPP_DU datatools::utils
-#define DPP_DS datatools::service
-#define DPP_DSZ datatools::serialization
-#else
-#define DPP_DU datatools
-#define DPP_DS datatools
-#define DPP_DSZ datatools
-#endif
-
 #endif // DPP_DPP_CONFIG_H_
 
 // end of dpp_config.h

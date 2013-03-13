@@ -34,25 +34,14 @@
 
 #include <string>
 
-#include <dpp/dpp_config.h>
-
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/utils/things.h>
-#else
 #include <datatools/things.h>
-#endif
 
+#include <dpp/dpp_config.h>
 #include <dpp/i_data_sink.h>
 
 // forward declaration:
 namespace datatools {
-#if DPP_DATATOOLS_LEGACY == 1
-  namespace serialization {
-#endif
-    class data_writer;
-#if DPP_DATATOOLS_LEGACY == 1
-  }
-#endif
+  class data_writer;
 }
 
 namespace dpp {
@@ -65,7 +54,7 @@ namespace dpp {
     
     virtual void open ();
 
-    virtual bool store_next_record (const DPP_DU::things & a_event_record);
+    virtual bool store_next_record (const datatools::things & a_event_record);
 
     virtual void close ();
 
@@ -89,7 +78,7 @@ namespace dpp {
     
   private: 
 
-    DPP_DSZ::data_writer * _boost_io_file_writer_; 
+    datatools::data_writer * _boost_io_file_writer_; 
       
   };
 

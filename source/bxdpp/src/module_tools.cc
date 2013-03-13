@@ -29,17 +29,17 @@
 
 namespace dpp {
 
-  const DPP_DU::properties & module_entry_type::get_module_config () const
+  const datatools::properties & module_entry_type::get_module_config () const
   {
     return _module_config_;
   }
 
-  DPP_DU::properties & module_entry_type::grab_module_config ()
+  datatools::properties & module_entry_type::grab_module_config ()
   {
     return _module_config_;
   }
 
-  void module_entry_type::set_module_config (const DPP_DU::properties & config_)
+  void module_entry_type::set_module_config (const datatools::properties & config_)
   {
     _module_config_ = config_;
     return;
@@ -194,7 +194,7 @@ namespace dpp {
                                      const std::string & indent_,
                                      bool inherit_) const
   {
-    namespace du = DPP_DU;
+    namespace du = datatools;
     std::string indent;
     if (! indent_.empty ())
       {

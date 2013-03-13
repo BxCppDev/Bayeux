@@ -39,13 +39,8 @@
 
 #include <dpp/dpp_config.h>
 
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/utils/properties.h>
-#include <datatools/utils/things.h>
-#else
 #include <datatools/properties.h>
 #include <datatools/things.h>
-#endif
 
 namespace dpp {
 
@@ -90,7 +85,7 @@ namespace dpp {
     virtual void _check_next_record () = 0;
 
     // Default failing load method :
-    virtual bool _load_record (DPP_DU::things & a_event_record, 
+    virtual bool _load_record (datatools::things & a_event_record, 
                                int64_t a_entry);
 
     // Default failing getter method :
@@ -112,14 +107,14 @@ namespace dpp {
 
     virtual bool has_next_record () = 0;
 
-    virtual bool load_next_record (DPP_DU::things & a_event_record) = 0;
+    virtual bool load_next_record (datatools::things & a_event_record) = 0;
 
     // Default failing load method :
     virtual bool has_number_of_entries () const;
 
     virtual int64_t get_number_of_entries () const;
 
-    virtual bool load_record (DPP_DU::things & a_event_record, int64_t a_entry);
+    virtual bool load_record (datatools::things & a_event_record, int64_t a_entry);
 
     virtual void close () = 0;
 

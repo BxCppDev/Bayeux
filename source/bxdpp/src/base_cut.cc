@@ -7,13 +7,8 @@
 #include <stdexcept>
 #include <sstream>
 
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/utils/properties.h>
-#include <datatools/utils/things.h>
-#else
 #include <datatools/properties.h>
 #include <datatools/things.h>
-#endif
 
 namespace dpp {
 
@@ -40,7 +35,7 @@ namespace dpp {
     return;
   }
 
-  const DPP_DU::things &
+  const datatools::things &
   base_cut::get_event_record () const
   {
     if (! has_user_data ())
@@ -51,18 +46,18 @@ namespace dpp {
         throw std::logic_error (message.str ());
       }
     //      base_cut & const_cut = this
-    const DPP_DU::things * er_ptr = static_cast<const DPP_DU::things *> (this->i_cut::_get_user_data ());
+    const datatools::things * er_ptr = static_cast<const datatools::things *> (this->i_cut::_get_user_data ());
     return *er_ptr;
   }
 
   /*
-    DPP_DU::thing & base_cut::grab_event_record
+    datatools::thing & base_cut::grab_event_record
     () { if (! has_user_data ()) { std::ostringstream message;
     message << "dpp::base_cut::grab_event_record: " << "No event
     record as an embedded user data ! "; throw std::logic_error
     (message.str ()); }
     //      base_cut & const_cut = this
-    DPP_DU::things * er_ptr = static_cast<DPP_DU::things *> (this->i_cut::_get_user_data ());
+    datatools::things * er_ptr = static_cast<datatools::things *> (this->i_cut::_get_user_data ());
     return *er_ptr;
     }
   */

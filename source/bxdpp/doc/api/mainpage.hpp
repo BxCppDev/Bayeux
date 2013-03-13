@@ -13,10 +13,10 @@
  * dpp  (Data  Processing Pipeline)  is  a  C++  program library  that
  * handles  a  data processing  pipeline  model  using the  datatools'
  * things  container  as  the  main  data  model  (event  record)  and
- * facilities from the cuts library.  
+ * facilities from the cuts and brio libraries (selectors and I/O module).  
  *
- * dpp depends on  the cuts, brio, mygsl and  datatools libraries from
- * the Bayeux  software collection and  third party software  from the
+ * dpp depends on  the cuts, brio, mygsl and thus datatools libraries from
+ * the Bayeux  software collection and also on third party software  from the
  * Cadfael software collection (Boost, CLHEP, GSL, ROOT).
  *
  * \section contents_section Contents 

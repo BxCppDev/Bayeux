@@ -19,37 +19,25 @@
  *
  */
 
-#include <dpp/dpp_config.h>
-#include <dpp/simple_brio_data_source.h>
-#include <dpp/brio_common.h>
-
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/utils/utils.h>
-#include <datatools/utils/ioutils.h>
-#include <datatools/utils/things.h>
-#include <datatools/serialization/io_factory.h>
-#else
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
 #include <datatools/things.h>
 #include <datatools/io_factory.h>
-#endif
 
 #include <brio/reader.h>
 
 #if DATATOOLS_WITH_BIO == 0
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/serialization/archives_instantiation.h>
-#include <datatools/utils/things.ipp>
-#else
 #include <datatools/archives_instantiation.h>
 #include <datatools/things.ipp>
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL_IN(datatools::things)
 #endif
-DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL_IN(DPP_DU::things)
-#endif
+
+#include <dpp/dpp_config.h>
+#include <dpp/simple_brio_data_source.h>
+#include <dpp/brio_common.h>
 
 namespace dpp {
 
@@ -206,7 +194,7 @@ namespace dpp {
 
         // Try to find the 'general info' store :
         if (_brio_file_reader_->has_store_with_serial_tag (brio_common::GENERAL_INFO_STORE_LABEL,
-                                                           DPP_DU::properties::SERIAL_TAG))
+                                                           datatools::properties::SERIAL_TAG))
           {
             // If found, select it:
             _brio_file_reader_->select_store (brio_common::GENERAL_INFO_STORE_LABEL);
@@ -216,7 +204,7 @@ namespace dpp {
           }
 
         std::string checked_store = brio_common::EVENT_RECORD_STORE_LABEL;
-        std::string checked_serial_tag = DPP_DU::things::SERIAL_TAG;
+        std::string checked_serial_tag = datatools::things::SERIAL_TAG;
         if (! _brio_file_reader_->has_store_with_serial_tag (checked_store, checked_serial_tag))
           {
             _brio_file_reader_->print_info (std::cerr);
@@ -279,7 +267,7 @@ namespace dpp {
       }
     if (_source_record.status == source_record::STATUS_CLOSED)
       {
-        std::clog << DPP_DU::io::notice
+        std::clog << datatools::io::notice
              << "dpp::simple_brio_data_source::has_next_record: "
              << "Opening data source..." << std::endl;
         this->simple_brio_data_source::open ();
@@ -287,7 +275,7 @@ namespace dpp {
     return _has_next_record;
   }
 
-  bool simple_brio_data_source::_load_record (DPP_DU::things & a_event_record,
+  bool simple_brio_data_source::_load_record (datatools::things & a_event_record,
                                               int64_t a_entry)
   {
     // XXX
@@ -305,7 +293,7 @@ namespace dpp {
     return done;
   }
 
-  bool simple_brio_data_source::load_next_record (DPP_DU::things & a_event_record)
+  bool simple_brio_data_source::load_next_record (datatools::things & a_event_record)
   {
     bool done = false;
     if (! _has_next_record)

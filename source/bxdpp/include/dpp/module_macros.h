@@ -44,14 +44,14 @@
 
 #define DPP_MODULE_INITIALIZE_DECLARE()                       \
   public:                                                     \
-  virtual void initialize (const ::DPP_DU::properties &,      \
-                           ::DPP_DS::service_manager &,       \
+  virtual void initialize (const ::datatools::properties &,   \
+                           ::datatools::service_manager &,    \
                            ::dpp::module_handle_dict_type &); \
   /**/
 
 #define DPP_MODULE_INITIALIZE_IMPLEMENT_HEAD(T,CONF,SERVICE_MANAGER,DICT) \
-  void T::initialize (const ::DPP_DU::properties & CONF,                \
-                      ::DPP_DS::service_manager & SERVICE_MANAGER,      \
+  void T::initialize (const ::datatools::properties & CONF,             \
+                      ::datatools::service_manager & SERVICE_MANAGER,   \
                       ::dpp::module_handle_dict_type & DICT)            \
   /**/
 
@@ -66,11 +66,11 @@
 
 #define DPP_MODULE_PROCESS_DECLARE()            \
   public :                                      \
-  virtual int process (DPP_DU::things &);       \
+  virtual int process (datatools::things &);    \
   /**/
 
 #define DPP_MODULE_PROCESS_IMPLEMENT_HEAD(T,EventRecord)  \
-  int T::process (DPP_DU::things & EventRecord)           \
+  int T::process (datatools::things & EventRecord)        \
   /**/
 
 #define DPP_MODULE_CONSTRUCTOR_DECLARE(T)       \

@@ -41,18 +41,18 @@
 namespace dpp {
 
   /// \brief A manager for data processing modules
-  class module_manager : public DPP_DU::i_tree_dumpable
+  class module_manager : public datatools::i_tree_dumpable
   {
   public:
 
     enum ctor_flag_type
       {
         BLANK             = 0,
-        DEBUG             = DPP_DU::bit_mask::bit00,
-        FACTORY_DEBUG     = DPP_DU::bit_mask::bit01,
-        FACTORY_NOPRELOAD = DPP_DU::bit_mask::bit02,
-        FACTORY_INITIALIZATION_AT_LOAD = DPP_DU::bit_mask::bit03,
-        VERBOSE           = DPP_DU::bit_mask::bit04
+        DEBUG             = datatools::bit_mask::bit00,
+        FACTORY_DEBUG     = datatools::bit_mask::bit01,
+        FACTORY_NOPRELOAD = datatools::bit_mask::bit02,
+        FACTORY_INITIALIZATION_AT_LOAD = datatools::bit_mask::bit03,
+        VERBOSE           = datatools::bit_mask::bit04
       };
 
     bool is_debug () const;
@@ -81,7 +81,7 @@ namespace dpp {
 
     bool is_initialized () const;
 
-    void initialize (const DPP_DU::properties & setup_);
+    void initialize (const datatools::properties & setup_);
 
     void reset ();
 
@@ -91,13 +91,13 @@ namespace dpp {
 
     bool has_service_manager () const;
 
-    const DPP_DS::service_manager & get_service_manager () const;
+    const datatools::service_manager & get_service_manager () const;
 
-    DPP_DS::service_manager & grab_service_manager ();
+    datatools::service_manager & grab_service_manager ();
 
-    void set_service_manager (DPP_DS::service_manager & service_manager_);
+    void set_service_manager (datatools::service_manager & service_manager_);
 
-    void install_service_manager (const DPP_DU::properties & service_manager_configuration_);
+    void install_service_manager (const datatools::properties & service_manager_configuration_);
 
     virtual void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
@@ -106,21 +106,21 @@ namespace dpp {
 
     void load_module (const std::string & module_name_,
                       const std::string & module_id_,
-                      const DPP_DU::properties & module_config_);
+                      const datatools::properties & module_config_);
          
     void create_module (module_entry_type & module_entry_);
         
     void initialize_module (module_entry_type & module_entry_);
  
-    void load_modules (const DPP_DU::multi_properties & modules_config_);
+    void load_modules (const datatools::multi_properties & modules_config_);
        
   protected:
 
     void _load_module (const std::string & module_name_,
                        const std::string & module_id_,
-                       const DPP_DU::properties & module_config_);
+                       const datatools::properties & module_config_);
 
-    void _load_modules (const DPP_DU::multi_properties & modules_config_);
+    void _load_modules (const datatools::multi_properties & modules_config_);
 
     void _create_module (module_entry_type & module_entry_);
         
@@ -150,7 +150,7 @@ namespace dpp {
     base_module::factory_register_type _factory_register_;      //!< Factory register
     module_handle_dict_type            _modules_;               //!< Dictionnary of modules
     bool                               _service_manager_owner_; //!< Owner flag for the embedded service manager
-    DPP_DS::service_manager * _service_manager_;    //!< Handle to the embedded service manager
+    datatools::service_manager * _service_manager_;    //!< Handle to the embedded service manager
 
   };
 

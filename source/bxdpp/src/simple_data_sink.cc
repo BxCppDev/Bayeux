@@ -19,36 +19,23 @@
  *
  */
 
-#include <dpp/dpp_config.h>
-#include <dpp/simple_data_sink.h>
-
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/utils/utils.h>
-#include <datatools/utils/ioutils.h>
-#include <datatools/utils/things.h>
-#include <datatools/serialization/io_factory.h>
-#else
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
 #include <datatools/things.h>
 #include <datatools/io_factory.h>
-#endif
 
 #if DATATOOLS_WITH_BIO == 0
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/serialization/archives_instantiation.h>
-#include <datatools/utils/properties.ipp>
-#include <datatools/utils/things.ipp>
-#else
 #include <datatools/archives_instantiation.h>
 #include <datatools/properties.ipp>
 #include <datatools/things.ipp>
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL_IN(datatools::things)
 #endif
-DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL_IN(DPP_DU::things)
-#endif
+
+#include <dpp/dpp_config.h>
+#include <dpp/simple_data_sink.h>
 
 namespace dpp {
 
@@ -172,7 +159,7 @@ namespace dpp {
   void simple_data_sink::open_file_sink_ ()
   {
     // std::cerr << "DEVEL: simple_data_sink::open_file_sink_: Entering..." << std::endl;
-    namespace ds = DPP_DSZ;
+    namespace ds = datatools;
     if (boost::filesystem::exists (_sink_record.effective_label))
       {
         std::ostringstream message;
@@ -184,7 +171,7 @@ namespace dpp {
           }
         else
           {
-            std::clog << DPP_DU::io::warning << message.str () << std::endl;
+            std::clog << datatools::io::warning << message.str () << std::endl;
           }
       }
     int mode = 0;
@@ -208,7 +195,7 @@ namespace dpp {
     return;
   }
 
-  bool simple_data_sink::store_next_record (const DPP_DU::things & a_event_record)
+  bool simple_data_sink::store_next_record (const datatools::things & a_event_record)
   {
     bool done = false;
     if (_boost_io_file_writer_ != 0)

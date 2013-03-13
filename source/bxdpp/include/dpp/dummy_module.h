@@ -99,8 +99,8 @@ namespace dpp {
      * DPP_MODULE_INTERFACE (dummy_module);
      * \endcode
      */
-    virtual void initialize (const DPP_DU::properties & a_properties,
-                             DPP_DS::service_manager & a_srv_mgr,
+    virtual void initialize (const datatools::properties & a_properties,
+                             datatools::service_manager & a_srv_mgr,
                              module_handle_dict_type & a_mod_dict);
 
     /// Termination method 
@@ -110,7 +110,7 @@ namespace dpp {
      *  \param a_event_record is a mutable reference to the event data model to be processed.
      *  \return the error status of the event data processing
      */
-    virtual int process (DPP_DU::things & a_data_record);  
+    virtual int process (datatools::things & a_data_record);  
 
   private:
 

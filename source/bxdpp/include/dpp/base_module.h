@@ -39,24 +39,6 @@
 #include <dpp/module_tools.h>
 #include <dpp/utils.h>
 
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/utils/bit_mask.h>
-#include <datatools/utils/i_tree_dump.h>
-#include <datatools/factory/factory_macros.h>
-
-/// \brief The datatools library's main namespace
-namespace datatools {
-  namespace utils {
-    // Forward declaration :
-    class properties;
-    class multi_properties;
-  }}
-
-namespace datatools {
-  namespace service {
-    class service_manager;
-  }}
-#else
 #include <datatools/bit_mask.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/factory_macros.h>
@@ -69,14 +51,13 @@ namespace datatools {
 namespace datatools {
   class service_manager;
 }
-#endif
 
 /// \brief The dpp library's main namespace
 namespace dpp {
 
   /// \brief Base processing module (abstract interface)
   class base_module : public i_data_processor,
-                      public DPP_DU::i_tree_dumpable
+                      public datatools::i_tree_dumpable
   {
   public:
 
@@ -86,10 +67,10 @@ namespace dpp {
         OK       = 0,   /// Module has processed normally and processing can go on
         SUCCESS  = OK,  /// idem OK
         CONTINUE = OK,  /// idem OK
-        ERROR    = DPP_DU::bit_mask::bit00, /// Module has met an error (considered as non critical)
+        ERROR    = datatools::bit_mask::bit00, /// Module has met an error (considered as non critical)
         FAILURE  = ERROR,                   /// idem ERROR
-        STOP     = DPP_DU::bit_mask::bit01, /// Module asks for the stop of the processing of the current data model in the current pipeline branch
-        FATAL    = DPP_DU::bit_mask::bit02  /// Module has met an error and requests a total abortion of the processing session
+        STOP     = datatools::bit_mask::bit01, /// Module asks for the stop of the processing of the current data model in the current pipeline branch
+        FATAL    = datatools::bit_mask::bit02  /// Module has met an error and requests a total abortion of the processing session
       };
 
   public:
@@ -140,12 +121,12 @@ namespace dpp {
 
     virtual void initialize_simple ();
 
-    virtual void initialize_standalone (const DPP_DU::properties & a_config);
+    virtual void initialize_standalone (const datatools::properties & a_config);
 
-    virtual void initialize_with_service (const DPP_DU::properties & a_config,
-                                          DPP_DS::service_manager & a_service_manager);
+    virtual void initialize_with_service (const datatools::properties & a_config,
+                                          datatools::service_manager & a_service_manager);
 
-    virtual void initialize_without_service (const DPP_DU::properties & a_config,
+    virtual void initialize_without_service (const datatools::properties & a_config,
                                              module_handle_dict_type & a_module_dictionnary);
 
     /** The main initialization method (post-construction):
@@ -154,15 +135,15 @@ namespace dpp {
      *        to build the current module (used in the framework of a factory)
      * @param a_service_manager a manager for external services
      */
-    virtual void initialize (const DPP_DU::properties & a_config,
-                             DPP_DS::service_manager & a_service_manager,
+    virtual void initialize (const datatools::properties & a_config,
+                             datatools::service_manager & a_service_manager,
                              module_handle_dict_type & a_module_dictionnary) = 0;
 
     /** The main data model processing method
      * @param a_data_model the data model to be processed
      * @return the status code (0=ok)
      */
-    virtual int process (DPP_DU::things & a_data_model) = 0;
+    virtual int process (datatools::things & a_data_model) = 0;
 
     /// The main termination method 
     virtual void reset () = 0;

@@ -22,17 +22,11 @@
 #include <stdexcept>
 #include <sstream>
 
-#include <dpp/chain_module.h>
-
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/utils/properties.h>
-#include <datatools/utils/ioutils.h>
-#include <datatools/utils/things.h>
-#else
 #include <datatools/properties.h>
 #include <datatools/ioutils.h>
 #include <datatools/things.h>
-#endif
+
+#include <dpp/chain_module.h>
 
 namespace dpp {
 
@@ -98,8 +92,8 @@ namespace dpp {
   }
 
   // Initialization :
-  void chain_module::initialize (const DPP_DU::properties & a_config,
-                                 DPP_DS::service_manager & a_service_manager,
+  void chain_module::initialize (const datatools::properties & a_config,
+                                 datatools::service_manager & a_service_manager,
                                  module_handle_dict_type & a_module_dict)
   {
     if (is_initialized ())
@@ -172,7 +166,7 @@ namespace dpp {
   }
 
   // Processing :
-  int chain_module::process (DPP_DU::things & the_data_record)
+  int chain_module::process (datatools::things & the_data_record)
   {
     if (! is_initialized ())
       {
@@ -190,7 +184,7 @@ namespace dpp {
         std::ostringstream message;
         message << "dpp::chain_module::process: "
                 << "number of chained modules=" << _modules_.size () << " ";
-        std::clog << DPP_DU::io::debug << message.str () << std::endl;
+        std::clog << datatools::io::debug << message.str () << std::endl;
       }
     for (module_list_type::iterator i = _modules_.begin ();
          i != _modules_.end ();
@@ -201,7 +195,7 @@ namespace dpp {
 
         if (is_debug ())
           {
-            std::clog << DPP_DU::io::debug
+            std::clog << datatools::io::debug
                       << "dpp::chain_module::process: "
                       << "Processing chained module '" << module_name << "'..." << std::endl;
           }
@@ -225,7 +219,7 @@ namespace dpp {
                 message << "dpp::chain_module::process: "
                         << "module='" << module_name << "' "
                         << "status=" << status;
-                std::clog << DPP_DU::io::debug << message.str () << std::endl;
+                std::clog << datatools::io::debug << message.str () << std::endl;
               }
             if (status & FATAL || status & ERROR)
               {
@@ -256,7 +250,7 @@ namespace dpp {
                     << "Module '" << module_name << "' failed to process event record; message is '"
                     << x.what () << "'";
             append_last_error_message (errmsg.str ());
-            std::clog << DPP_DU::io::error
+            std::clog << datatools::io::error
                       << "dpp::chain_module::process: "
                       << errmsg.str () << std::endl;
             return FATAL;
@@ -272,7 +266,7 @@ namespace dpp {
   {
     this->base_module::tree_dump (a_out, a_title, a_indent, true);
 
-    a_out << a_indent << DPP_DU::i_tree_dumpable::inherit_tag (a_inherit)
+    a_out << a_indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
           << "Chained modules : " << std::endl;
     for (module_list_type::const_iterator i = _modules_.begin ();
          i != _modules_.end ();
@@ -283,19 +277,19 @@ namespace dpp {
         module_handle_type the_handle  = the_entry.handle;
         base_module & a_module         = the_handle.get ();
         std::ostringstream indent_oss;
-        indent_oss << a_indent << DPP_DU::i_tree_dumpable::inherit_skip_tag (a_inherit);
-        a_out << a_indent << DPP_DU::i_tree_dumpable::inherit_skip_tag (a_inherit);
+        indent_oss << a_indent << datatools::i_tree_dumpable::inherit_skip_tag (a_inherit);
+        a_out << a_indent << datatools::i_tree_dumpable::inherit_skip_tag (a_inherit);
         module_list_type::const_iterator j = i;
         j++;
         if (j == _modules_.end ())
           {
-            a_out << DPP_DU::i_tree_dumpable::inherit_tag (a_inherit);
-            indent_oss << DPP_DU::i_tree_dumpable::inherit_skip_tag (a_inherit);
+            a_out << datatools::i_tree_dumpable::inherit_tag (a_inherit);
+            indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (a_inherit);
           }
         else
           {
-            a_out << DPP_DU::i_tree_dumpable::tag;
-            indent_oss << DPP_DU::i_tree_dumpable::skip_tag;
+            a_out << datatools::i_tree_dumpable::tag;
+            indent_oss << datatools::i_tree_dumpable::skip_tag;
           }
         a_out << "Label : " << '"' << module_label << '"' << std::endl;
         a_module.tree_dump (a_out, "", indent_oss.str ());

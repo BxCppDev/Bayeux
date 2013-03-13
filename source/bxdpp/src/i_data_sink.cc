@@ -19,20 +19,15 @@
  *
  */
 
-#include <dpp/i_data_sink.h>
 
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 
-#include <dpp/dpp_config.h>
-
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/utils/utils.h>
-#include <datatools/utils/ioutils.h>
-#else
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
-#endif
+
+#include <dpp/dpp_config.h>
+#include <dpp/i_data_sink.h>
 
 namespace dpp {
 
@@ -98,7 +93,7 @@ namespace dpp {
       }
     _sink_record.label           = a_sink_label;
     std::string effective_label  = a_sink_label;
-    DPP_DU::fetch_path_with_env (effective_label);
+    datatools::fetch_path_with_env (effective_label);
     _sink_record.effective_label = effective_label;
     _sink_record.status          = sink_record::STATUS_CLOSED;
     return;

@@ -22,23 +22,17 @@
 #include <stdexcept>
 #include <sstream>
 
-#include <dpp/if_module.h>
-
 // Access to the service manager functionnalities:
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/services/service_manager.h>
-#include <datatools/utils/things.h>
-#include <datatools/utils/ioutils.h>
-#else
 #include <datatools/service_manager.h>
 #include <datatools/things.h>
 #include <datatools/ioutils.h>
-#endif
 
 // Access to the cut service and its embedded cut manager:
 #include <cuts/cut_service.h>
 #include <cuts/cut_manager.h>
 #include <cuts/i_cut.h>
+
+#include <dpp/if_module.h>
 
 namespace dpp {
 
@@ -217,8 +211,8 @@ namespace dpp {
   }
 
   // Initialization :
-  void if_module::initialize (const DPP_DU::properties  & config_,
-                              DPP_DS::service_manager & service_manager_,
+  void if_module::initialize (const datatools::properties  & config_,
+                              datatools::service_manager & service_manager_,
                               module_handle_dict_type             & module_dict_)
   {
     if (is_initialized ())
@@ -399,7 +393,7 @@ namespace dpp {
                 std::ostringstream message;
                 message << "snemo::core::processing::if_module::initialize: "
                         << "Missing 'else_module' property ! ";
-                std::clog << DPP_DU::io::debug << message.str () << std::endl;
+                std::clog << datatools::io::debug << message.str () << std::endl;
               }
                 
           }
@@ -432,7 +426,7 @@ namespace dpp {
   }
 
   // Processing :
-  int if_module::process (DPP_DU::things & data_record_)
+  int if_module::process (datatools::things & data_record_)
   {
     if (! is_initialized ())
       {
@@ -450,7 +444,7 @@ namespace dpp {
     // Apply the cut algorithm:
     if (is_debug ())
       {
-        std::clog << DPP_DU::io::debug
+        std::clog << datatools::io::debug
                   << "dpp:if_module::process: "
                   << "Checking cut '" << _condition_cut_.label << "'..."
                   << std::endl;
@@ -463,7 +457,7 @@ namespace dpp {
       {
         if (is_debug ())
           {
-            std::clog << DPP_DU::io::debug
+            std::clog << datatools::io::debug
                       << "dpp:if_module::process: "
                       << "Cut '" << _condition_cut_.label << "' was inapplicable."
                       << std::endl;
@@ -474,7 +468,7 @@ namespace dpp {
       {
         if (is_debug ())
           {
-            std::clog << DPP_DU::io::debug
+            std::clog << datatools::io::debug
                       << "dpp:if_module::process: "
                       << "Cut '" << _condition_cut_.label << "' has been checked."
                       << std::endl;
@@ -496,7 +490,7 @@ namespace dpp {
             base_module & the_then_module = _then_module_.handle.get ();
             if (is_debug ())
               {
-                std::clog << DPP_DU::io::debug
+                std::clog << datatools::io::debug
                           << "dpp:if_module::process: "
                           << "Applying module '" << _then_module_.label << "'..."
                           << std::endl;
@@ -510,7 +504,7 @@ namespace dpp {
       {
         if (is_debug ())
           {
-            std::clog << DPP_DU::io::debug
+            std::clog << datatools::io::debug
                       << "dpp:if_module::process: "
                       << "Cut '" << _condition_cut_.label << "' has NOT been checked."
                       << std::endl;
@@ -534,7 +528,7 @@ namespace dpp {
                 base_module & the_else_module = _else_module_.handle.get ();
                 if (is_debug ())
                   {
-                    std::clog << DPP_DU::io::debug
+                    std::clog << datatools::io::debug
                               << "dpp:if_module::process: "
                               << "Applying module '" << _else_module_.label << "'..."
                               << std::endl;
@@ -556,22 +550,22 @@ namespace dpp {
   {
     this->base_module::tree_dump (out_, title_, indent_, true);
 
-    out_ << indent_ << DPP_DU::i_tree_dumpable::tag
+    out_ << indent_ << datatools::i_tree_dumpable::tag
          << "Cut service label : '" << _cut_service_label_ << "'" << std::endl;
 
-    out_ << indent_ << DPP_DU::i_tree_dumpable::tag
+    out_ << indent_ << datatools::i_tree_dumpable::tag
          << "Condition cut     : '" << _condition_cut_.label << "'" << std::endl;
 
-    out_ << indent_ << DPP_DU::i_tree_dumpable::tag
+    out_ << indent_ << datatools::i_tree_dumpable::tag
          << "Then status       : '" << _then_status_ << "'" << std::endl;
 
-    out_ << indent_ << DPP_DU::i_tree_dumpable::tag
+    out_ << indent_ << datatools::i_tree_dumpable::tag
          << "Then module       : '" << _then_module_.label << "'" << std::endl;
 
-    out_ << indent_ << DPP_DU::i_tree_dumpable::tag
+    out_ << indent_ << datatools::i_tree_dumpable::tag
          << "Else status       : '" << _else_status_ << "'" << std::endl;
 
-    out_ << indent_ << DPP_DU::i_tree_dumpable::inherit_tag (inherit_)
+    out_ << indent_ << datatools::i_tree_dumpable::inherit_tag (inherit_)
          << "Else module       : '" << _else_module_.label << "'" <<std:: endl;
 
     return;

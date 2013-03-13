@@ -38,17 +38,11 @@
 
 #include <boost/scoped_ptr.hpp>
 
-#include <dpp/dpp_config.h>
-
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/utils/handle.h>
-#include <datatools/utils/bit_mask.h>
-#include <datatools/utils/properties.h>
-#else
 #include <datatools/handle.h>
 #include <datatools/bit_mask.h>
 #include <datatools/properties.h>
-#endif
+
+#include <dpp/dpp_config.h>
 
 namespace dpp {
 
@@ -56,29 +50,29 @@ namespace dpp {
  
   typedef std::map<std::string, base_module *> module_dict_type;
 
-  typedef DPP_DU::handle<base_module> module_handle_type;
+  typedef datatools::handle<base_module> module_handle_type;
 
   class module_manager;
 
   /// \brief Module record entry class
-  class module_entry_type : public DPP_DU::i_tree_dumpable 
+  class module_entry_type : public datatools::i_tree_dumpable 
   {
   public:
 
     enum status_type
       {
         STATUS_BLANK       = 0,
-        STATUS_CREATED     = DPP_DU::bit_mask::bit00,
-        STATUS_INITIALIZED = DPP_DU::bit_mask::bit01,
+        STATUS_CREATED     = datatools::bit_mask::bit00,
+        STATUS_INITIALIZED = datatools::bit_mask::bit01,
       };
 
   public:
 
-    const DPP_DU::properties & get_module_config () const;
+    const datatools::properties & get_module_config () const;
 
-    DPP_DU::properties & grab_module_config ();
+    datatools::properties & grab_module_config ();
 
-    void set_module_config (const DPP_DU::properties &);
+    void set_module_config (const datatools::properties &);
 
     const std::string & get_module_name () const;
 
@@ -134,7 +128,7 @@ namespace dpp {
 
     std::string        _module_name_;   /// Module name
     std::string        _module_id_;     /// Module class registration ID
-    DPP_DU::properties _module_config_; /// The configuration of the module 
+    datatools::properties _module_config_; /// The configuration of the module 
     uint32_t           _module_status_; /// The status of the module
     module_handle_type _module_handle_; /// The handle for the allocated service
     module_manager *   _manager_;       /// Handle to the module manager

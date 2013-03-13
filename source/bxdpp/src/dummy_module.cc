@@ -24,15 +24,9 @@
 
 #include <dpp/dummy_module.h>
 
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/utils/properties.h>
-#include <datatools/utils/ioutils.h>
-#include <datatools/utils/things.h>
-#else
 #include <datatools/properties.h>
 #include <datatools/ioutils.h>
 #include <datatools/things.h>
-#endif
 
 namespace dpp {
  
@@ -98,8 +92,8 @@ namespace dpp {
   }
 
   // Initialization :
-  void dummy_module::initialize (const DPP_DU::properties & a_config,
-                                 DPP_DS::service_manager & a_service_manager,
+  void dummy_module::initialize (const datatools::properties & a_config,
+                                 datatools::service_manager & a_service_manager,
                                  module_handle_dict_type & a_module_dict)
   {
     if (is_initialized ())
@@ -168,7 +162,7 @@ namespace dpp {
   }
 
   // Processing :
-  int dummy_module::process (DPP_DU::things & the_data_record) 
+  int dummy_module::process (datatools::things & the_data_record) 
   {
     if (! is_initialized ())
       {
@@ -179,14 +173,14 @@ namespace dpp {
       }
 
     if (the_data_record.has (_GP_label_) 
-        && the_data_record.is_a<DPP_DU::properties> (_GP_label_))
+        && the_data_record.is_a<datatools::properties> (_GP_label_))
       {
         // Find the GP bank :
-        DPP_DU::properties & the_gp_bank 
-          = the_data_record.grab<DPP_DU::properties> (_GP_label_);
+        datatools::properties & the_gp_bank 
+          = the_data_record.grab<datatools::properties> (_GP_label_);
         if (is_debug ())
           {
-            std::clog << DPP_DU::io::debug
+            std::clog << datatools::io::debug
                  << "dpp::dummy_module::process: "
                  << "Found the '" << _GP_label_ << "' bank !"
                  << std::endl;
@@ -194,7 +188,7 @@ namespace dpp {
         // Add a string property in it with value '_label_' :
         if (is_debug ())
           {
-            std::clog << DPP_DU::io::debug
+            std::clog << datatools::io::debug
                  << "dpp::dummy_module::process: "
                  << "Adding the '" << _flag_name_ << "' flag property..."
                  << std::endl;
@@ -205,7 +199,7 @@ namespace dpp {
       }
     else
       {
-        std::clog << DPP_DU::io::error
+        std::clog << datatools::io::error
              << "dpp::dummy_module::process: "
              << "Could not find any GP bank !"
              << std::endl;

@@ -108,8 +108,8 @@ namespace dpp {
     /** The module interface can also be declared with the macro :
      *
      * // Initialization method :
-     * virtual void initialize (const DPP_DU::properties  &,
-     *                          DPP_DS::service_manager &,
+     * virtual void initialize (const datatools::properties  &,
+     *                          datatools::service_manager &,
      *                          module_handle_dict_type             &);
      *
      * // Termination method :

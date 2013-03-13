@@ -39,13 +39,8 @@
 
 #include <dpp/dpp_config.h>
 
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/utils/properties.h>
-#include <datatools/utils/things.h>
-#else
 #include <datatools/properties.h>
 #include <datatools/things.h>
-#endif
 
 namespace dpp {
   
@@ -101,7 +96,7 @@ namespace dpp {
 
     virtual void open () = 0;
 
-    virtual bool store_next_record (const DPP_DU::things & a_event_record) = 0;
+    virtual bool store_next_record (const datatools::things & a_event_record) = 0;
 
     virtual void close () = 0;
 

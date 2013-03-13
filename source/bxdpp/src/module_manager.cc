@@ -25,19 +25,11 @@
 #include <dpp/module_manager.h>
 #include <dpp/base_module.h>
 
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/utils/properties.h>
-#include <datatools/utils/multi_properties.h>
-#include <datatools/utils/utils.h>
-#include <datatools/utils/ioutils.h>
-#include <datatools/services/service_manager.h>
-#else
 #include <datatools/properties.h>
 #include <datatools/multi_properties.h>
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
 #include <datatools/service_manager.h>
-#endif
 
 namespace dpp {
 
@@ -66,7 +58,7 @@ namespace dpp {
     bool devel = false;
     if (devel)
       {
-        std::clog << DPP_DU::io::devel
+        std::clog << datatools::io::devel
                   << "dpp::module_manager::_preload_global_dict: "
                   << "Entering..."
                   << std::endl;
@@ -127,7 +119,7 @@ namespace dpp {
     return _service_manager_ != 0;
   }
 
-  const DPP_DS::service_manager &
+  const datatools::service_manager &
   module_manager::get_service_manager () const
   {
     if (! has_service_manager ())
@@ -140,7 +132,7 @@ namespace dpp {
     return *_service_manager_;
   }
 
-  DPP_DS::service_manager &
+  datatools::service_manager &
   module_manager::grab_service_manager ()
   {
     if (! has_service_manager ())
@@ -153,7 +145,7 @@ namespace dpp {
     return *_service_manager_;
   }
 
-  void module_manager::set_service_manager (DPP_DS::service_manager & service_manager_)
+  void module_manager::set_service_manager (datatools::service_manager & service_manager_)
   {
     if (is_initialized ())
       {
@@ -177,11 +169,11 @@ namespace dpp {
     return;
   }
 
-  void module_manager::install_service_manager (const DPP_DU::properties & service_manager_configuration_)
+  void module_manager::install_service_manager (const datatools::properties & service_manager_configuration_)
   {
     if (is_debug ())
       {
-        std::clog << DPP_DU::io::debug
+        std::clog << datatools::io::debug
                   << "dpp::module_manager::install_service_manager: "
                   << "Entering..." << std::endl;
       }
@@ -199,10 +191,10 @@ namespace dpp {
                 << "Module manager has already an embedded service manager !";
         throw std::logic_error (message.str ());
       }
-    _service_manager_ = new DPP_DS::service_manager;
+    _service_manager_ = new datatools::service_manager;
     if (is_verbose ())
       {
-        std::clog << DPP_DU::io::notice
+        std::clog << datatools::io::notice
                   << "dpp::module_manager::install_service_manager: "
                   << "Initializing the embedded service manager..." << std::endl;
       }
@@ -210,7 +202,7 @@ namespace dpp {
     _service_manager_owner_ = true;
     if (is_debug ())
       {
-        std::clog << DPP_DU::io::debug
+        std::clog << datatools::io::debug
                   << "dpp::module_manager::install_service_manager: "
                   << "Exiting." << std::endl;
       }
@@ -222,7 +214,7 @@ namespace dpp {
     return _initialized_;
   }
 
-  void module_manager::initialize (const DPP_DU::properties & setup_)
+  void module_manager::initialize (const datatools::properties & setup_)
   {
     if (is_initialized ())
       {
@@ -267,20 +259,20 @@ namespace dpp {
               = setup_.fetch_string ("service_manager.configuration");
             if (is_verbose ())
               {
-                std::clog << DPP_DU::io::notice
+                std::clog << datatools::io::notice
                           << "dpp::module_manager::initialize: "
                           << "Embeds a service manager setup from file '"
                           << service_manager_configuration_file << "' !" << std::endl;
               }
-            DPP_DU::fetch_path_with_env (service_manager_configuration_file);
-            DPP_DU::properties service_manager_configuration;
-            DPP_DU::properties::read_config (service_manager_configuration_file,
+            datatools::fetch_path_with_env (service_manager_configuration_file);
+            datatools::properties service_manager_configuration;
+            datatools::properties::read_config (service_manager_configuration_file,
                                              service_manager_configuration);
             install_service_manager (service_manager_configuration);
           }
         else
           {
-            std::clog << DPP_DU::io::warning
+            std::clog << datatools::io::warning
                       << "dpp::module_manager::initialize: "
                       << "No service manager configuration property !" << std::endl;
           }
@@ -299,14 +291,14 @@ namespace dpp {
     // Check if some service manager is available :
     if (! has_service_manager ())
       {
-        std::clog << DPP_DU::io::warning
+        std::clog << datatools::io::warning
                   << "dpp::module_manager::initialize: "
                   << "No service manager is available ! "
                   << "This could forbid the use of some modules !" << std::endl;
       }
     else
       {
-        std::clog << DPP_DU::io::notice
+        std::clog << datatools::io::notice
                   << "dpp::module_manager::initialize: "
                   << "We now have a service manager available !" << std::endl;
       }
@@ -320,9 +312,9 @@ namespace dpp {
     for (size_t i = 0; i < modules_configurations.size (); ++i)
       {
         std::string filename = modules_configurations[i];
-        DPP_DU::fetch_path_with_env (filename);
-        DPP_DU::multi_properties configs;
-        std::clog << DPP_DU::io::notice
+        datatools::fetch_path_with_env (filename);
+        datatools::multi_properties configs;
+        std::clog << datatools::io::notice
                   << "dpp::module_manager::initialize: "
                   << "Loading modules from file '"
                   << filename << "'..." << std::endl;
@@ -352,7 +344,7 @@ namespace dpp {
 
     if (is_debug ())
       {
-        std::clog << DPP_DU::io::debug
+        std::clog << datatools::io::debug
                   << "dpp::module_manager::_create_module: "
                   << "Creating module named '"
                   <<  module_entry_.get_module_name ()
@@ -379,7 +371,7 @@ namespace dpp {
 
     if (is_debug ())
       {
-        std::clog << DPP_DU::io::debug
+        std::clog << datatools::io::debug
                   << "dpp::module_manager::_create_module: "
                   << "Module named '"
                   <<  module_entry_.get_module_name ()
@@ -412,7 +404,7 @@ namespace dpp {
       {
         if (is_debug ())
           {
-            std::clog << DPP_DU::io::debug
+            std::clog << datatools::io::debug
                       << "dpp::module_manager::_initialize_module: "
                       << "Initializing module named '"
                       <<  module_entry_.get_module_name ()
@@ -428,7 +420,7 @@ namespace dpp {
           }
         else
           {
-            std::clog << DPP_DU::io::notice
+            std::clog << datatools::io::notice
                       << "dpp::module_manager::_initialize_module: "
                       << "Attempt to initializing module named '"
                       <<  module_entry_.get_module_name ()
@@ -455,12 +447,12 @@ namespace dpp {
 
   void module_manager::_load_module (const std::string & module_name_,
                                      const std::string & module_id_,
-                                     const DPP_DU::properties & module_config_)
+                                     const datatools::properties & module_config_)
   {
     bool debug = is_debug ();
     if (debug)
       {
-        std::clog << DPP_DU::io::debug
+        std::clog << datatools::io::debug
                   << "dpp::module_manager::_load_module: "
                   << "Entering..."
                   << std::endl;
@@ -480,7 +472,7 @@ namespace dpp {
       //dummy_module_entry.set_module_name (module_name_);
       if (debug)
         {
-          std::clog << DPP_DU::io::debug
+          std::clog << datatools::io::debug
                     << "dpp::module_manager::_load_module: "
                     << "Add an entry for module '" << module_name_ << "'..."
                     << std::endl;
@@ -498,7 +490,7 @@ namespace dpp {
     the_module_entry.set_blank ();
     if (debug)
       {
-        std::clog << DPP_DU::io::debug
+        std::clog << datatools::io::debug
                   << "dpp::module_manager::_load_module: "
                   << "Fetch..."
                   << std::endl;
@@ -519,7 +511,7 @@ namespace dpp {
 
     if (debug)
       {
-        std::clog << DPP_DU::io::debug
+        std::clog << datatools::io::debug
                   << "dpp::module_manager::_load_module: "
                   << "Exiting."
                   << std::endl;
@@ -529,7 +521,7 @@ namespace dpp {
 
   void module_manager::load_module (const std::string & module_name_,
                                     const std::string & module_id_,
-                                    const DPP_DU::properties & module_config_)
+                                    const datatools::properties & module_config_)
   {
     if (is_initialized ())
       {
@@ -543,9 +535,9 @@ namespace dpp {
   }
 
 
-  void module_manager::_load_modules (const DPP_DU::multi_properties & config_)
+  void module_manager::_load_modules (const datatools::multi_properties & config_)
   {
-    using namespace DPP_DU;
+    using namespace datatools;
     if (is_debug())
       {
         config_.tree_dump (std::clog,
@@ -565,7 +557,7 @@ namespace dpp {
       {
         const multi_properties::entry & the_entry = **i;
         const std::string & module_name = the_entry.get_key ();
-        std::clog << DPP_DU::io::notice
+        std::clog << datatools::io::notice
                   << "dpp::module_manager::_load_modules: "
                   << "Loading modules '" << module_name << "'..." << std::endl;
         if (has (module_name))
@@ -688,7 +680,7 @@ namespace dpp {
         out_ << indent << title_ << std::endl;
       }
 
-    namespace du = DPP_DU;
+    namespace du = datatools;
 
     out_ << indent << du::i_tree_dumpable::tag
          << "Initialized       : " << is_initialized () << std::endl;

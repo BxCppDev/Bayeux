@@ -23,19 +23,12 @@
 #include <sstream>
 #include <fstream>
 
-#include <dpp/dump_module.h>
-
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/utils/properties.h>
-#include <datatools/utils/ioutils.h>
-#include <datatools/utils/utils.h>
-#include <datatools/utils/things.h>
-#else
 #include <datatools/properties.h>
 #include <datatools/ioutils.h>
 #include <datatools/utils.h>
 #include <datatools/things.h>
-#endif
+
+#include <dpp/dump_module.h>
 
 namespace dpp {
  
@@ -101,8 +94,8 @@ namespace dpp {
   }
 
   // Initialization :
-  void dump_module::initialize (const DPP_DU::properties & a_config,
-                                DPP_DS::service_manager & a_service_manager,
+  void dump_module::initialize (const datatools::properties & a_config,
+                                datatools::service_manager & a_service_manager,
                                 module_handle_dict_type & a_module_dict)
   {
     if (is_initialized ())
@@ -187,7 +180,7 @@ namespace dpp {
         std::ofstream * output_file = new std::ofstream;
         _fout_.reset(output_file);
         _out_ = _fout_.get(); 
-         DPP_DU::fetch_path_with_env (_output_filename_);
+         datatools::fetch_path_with_env (_output_filename_);
         output_file->open (_output_filename_.c_str ());
         if (! *output_file)
           {
@@ -236,7 +229,7 @@ namespace dpp {
   }
 
   // Processing :
-  int dump_module::process (DPP_DU::things & the_event_record) 
+  int dump_module::process (datatools::things & the_event_record) 
   {
     if (! is_initialized ())
       {
@@ -257,7 +250,7 @@ namespace dpp {
     for (int ibank = 0; ibank < bank_labels.size(); ibank++)
       {
         const std::string & bank_label = bank_labels[ibank];
-        const DPP_DSZ::i_serializable & bank = the_event_record.get(bank_label);
+        const datatools::i_serializable & bank = the_event_record.get(bank_label);
         std::string tag = "|-- ";
         std::string tag2 = "|   ";
         if (ibank == bank_labels.size() - 1)
@@ -273,8 +266,8 @@ namespace dpp {
           }
         _grab_output () << " : ";
         _grab_output () << '"' << bank.get_serial_tag () << '"' << std::endl;
-        const DPP_DU::i_tree_dumpable *dumpable 
-          = dynamic_cast<const DPP_DU::i_tree_dumpable*>(&bank);
+        const datatools::i_tree_dumpable *dumpable 
+          = dynamic_cast<const datatools::i_tree_dumpable*>(&bank);
         if (dumpable != 0)
           {
             std::ostringstream indent_oss;
@@ -290,7 +283,7 @@ namespace dpp {
                                const std::string & a_indent,
                                bool a_inherit) const
   {
-    namespace du = DPP_DU;
+    namespace du = datatools;
     this->base_module::tree_dump (a_out, a_title, a_indent, true);
         
     a_out << a_indent << du::i_tree_dumpable::tag

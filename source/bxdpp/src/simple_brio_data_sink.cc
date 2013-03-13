@@ -19,39 +19,26 @@
  *
  */
 
-#include <dpp/dpp_config.h>
-#include <dpp/simple_brio_data_sink.h>
-#include <dpp/brio_common.h>
-
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/utils/utils.h>
-#include <datatools/utils/ioutils.h>
-#include <datatools/utils/things.h>
-#include <datatools/serialization/io_factory.h>
-#else
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
 #include <datatools/things.h>
 #include <datatools/io_factory.h>
-#endif
 
 #include <brio/writer.h>
 
 #if DATATOOLS_WITH_BIO == 0
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/serialization/archives_instantiation.h>
-#include <datatools/utils/properties.ipp>
-#include <datatools/utils/things.ipp>
-#else
 #include <datatools/archives_instantiation.h>
 #include <datatools/properties.ipp>
 #include <datatools/things.ipp>
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL_IN(datatools::things)
 #endif
-DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL_IN(DPP_DU::things)
-#endif
+
+#include <dpp/dpp_config.h>
+#include <dpp/simple_brio_data_sink.h>
+#include <dpp/brio_common.h>
 
 namespace dpp {
 
@@ -179,7 +166,7 @@ namespace dpp {
   void simple_brio_data_sink::_open_file_sink ()
   {
     // std::cerr << "DEVEL: simple_brio_data_sink::_open_file_sink: TEST" << std::endl;
-    namespace ds = DPP_DSZ;
+    namespace ds = datatools;
     if (boost::filesystem::exists (_sink_record.effective_label))
       {
         std::ostringstream message;
@@ -192,7 +179,7 @@ namespace dpp {
           }
         else
           {
-            std::clog << DPP_DU::io::warning << message.str () << std::endl;
+            std::clog << datatools::io::warning << message.str () << std::endl;
           }
       }
     int mode = 0;
@@ -211,10 +198,10 @@ namespace dpp {
         _brio_file_writer_ = new brio::writer;
         _brio_file_writer_->open (_sink_record.effective_label);
         _brio_file_writer_->add_store (brio_common::GENERAL_INFO_STORE_LABEL,
-                                       DPP_DU::properties::SERIAL_TAG,
+                                       datatools::properties::SERIAL_TAG,
                                        32000);
         _brio_file_writer_->add_store (brio_common::EVENT_RECORD_STORE_LABEL,
-                                       DPP_DU::things::SERIAL_TAG,
+                                       datatools::things::SERIAL_TAG,
                                        256000);
         _brio_file_writer_->select_store (brio_common::EVENT_RECORD_STORE_LABEL);
         _brio_file_writer_->print_info (std::clog);
@@ -223,7 +210,7 @@ namespace dpp {
     return;
   }
 
-  bool simple_brio_data_sink::store_next_record (const DPP_DU::things & a_event_record)
+  bool simple_brio_data_sink::store_next_record (const datatools::things & a_event_record)
   {
     bool done = false;
     if (_brio_file_writer_ != 0)
@@ -236,7 +223,7 @@ namespace dpp {
         std::ostringstream message;
         message << "dpp::simple_brio_data_sink::store_next_record: "
                 << "Cannot store the event record ! This is a bug !";
-        std::cerr << DPP_DU::io::error << message.str () << std::endl;
+        std::cerr << datatools::io::error << message.str () << std::endl;
       }
     return done;
   }

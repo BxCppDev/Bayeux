@@ -30,20 +30,6 @@
 #include <boost/foreach.hpp>
 #include <boost/scoped_ptr.hpp>
 
-#include <dpp/base_module.h>
-#include <dpp/dummy_module.h>
-#include <dpp/module_manager.h>
-
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/utils/ioutils.h>
-#include <datatools/utils/properties.h>
-#include <datatools/utils/ioutils.h>
-#include <datatools/utils/utils.h>
-#include <datatools/utils/ioutils.h>
-#include <datatools/utils/things.h>
-#include <datatools/serialization/bio_guard.h>
-#include <datatools/utils/library_loader.h>
-#else
 #include <datatools/ioutils.h>
 #include <datatools/properties.h>
 #include <datatools/things.h>
@@ -53,10 +39,12 @@
 #include <datatools/bio_guard.h>
 #include <datatools/base_service.h>
 #include <datatools/library_loader.h>
-#endif
 
 #include <dpp/simple_data_source.h>
 #include <dpp/simple_data_sink.h>
+#include <dpp/base_module.h>
+#include <dpp/dummy_module.h>
+#include <dpp/module_manager.h>
 
 namespace po = boost::program_options;
 
@@ -127,11 +115,11 @@ int main (int argc_, char ** argv_)
           LL_dlls = vm["load-dll"].as< std::vector<std::string> > ();
         }
 
-      uint32_t LL_flags = DPP_DU::library_loader::allow_unregistered;
-      DPP_DU::library_loader LL (LL_flags, LL_config);
+      uint32_t LL_flags = datatools::library_loader::allow_unregistered;
+      datatools::library_loader LL (LL_flags, LL_config);
       BOOST_FOREACH (const std::string & dll_name, LL_dlls)
         {
-          std::clog << DPP_DU::io::notice << "Loading DLL '"
+          std::clog << datatools::io::notice << "Loading DLL '"
                     << dll_name << "'." << std::endl;
           if (LL.load (dll_name) != EXIT_SUCCESS)
             {
@@ -178,7 +166,7 @@ int main (int argc_, char ** argv_)
       if (vm.count ("module-name"))
         {     
           module_name = vm["module-name"].as<std::string> (); 
-          std::clog << DPP_DU::io::notice << "Using processor module '" 
+          std::clog << datatools::io::notice << "Using processor module '" 
                     << module_name << "'." << std::endl;
         }
       else
@@ -191,7 +179,7 @@ int main (int argc_, char ** argv_)
       if (vm.count ("manager-config"))
         {     
           mgr_config = vm["manager-config"].as<std::string> (); 
-          std::clog << DPP_DU::io::notice << "Using module manager configuration file '" 
+          std::clog << datatools::io::notice << "Using module manager configuration file '" 
                     << mgr_config << "'." << std::endl;
         }
       else
@@ -229,10 +217,10 @@ int main (int argc_, char ** argv_)
           throw std::logic_error (message.str ());
         }
       std::string MM_config_file = mgr_config;   
-      DPP_DU::fetch_path_with_env (MM_config_file);
+      datatools::fetch_path_with_env (MM_config_file);
       std::clog << "Manager config. file : '" << MM_config_file << "'" << std::endl; 
-      DPP_DU::properties MM_config;
-      DPP_DU::properties::read_config (MM_config_file, MM_config);      
+      datatools::properties MM_config;
+      datatools::properties::read_config (MM_config_file, MM_config);      
       MM.initialize (MM_config);
       if (debug) MM.tree_dump (std::clog, "Module manager (initialized) : ", "DEBUG: ");
 
@@ -261,7 +249,7 @@ int main (int argc_, char ** argv_)
       int data_counter = 0;
       BOOST_FOREACH (const std::string & source_label, input_files)
         {
-          if (debug) std::clog << DPP_DU::io::notice 
+          if (debug) std::clog << datatools::io::notice 
                                << "Using data source '" << source_label << "'..." << std::endl;
           uint32_t input_flags;
           if (debug)
@@ -271,20 +259,20 @@ int main (int argc_, char ** argv_)
           dpp::simple_data_source source (source_label, input_flags);
 
           // Loop on the event records from the data source file :
-          if (debug) std::clog << DPP_DU::io::debug 
+          if (debug) std::clog << datatools::io::debug 
                                << "Entering event record loop..." << std::endl;
           while (source.has_next_record ())
             {             
-              DPP_DU::things DR;
-              if (debug) std::clog << DPP_DU::io::debug 
+              datatools::things DR;
+              if (debug) std::clog << datatools::io::debug 
                                    << "Loading next event record..." << std::endl;
               source.load_next_record (DR);
-              if (debug) std::clog << DPP_DU::io::debug 
+              if (debug) std::clog << datatools::io::debug 
                                    << "Processing the event record..." << std::endl;
               int status = the_module.process (DR);
               if (status & dpp::base_module::ERROR)
                 { 
-                  std::cerr << DPP_DU::io::error
+                  std::cerr << datatools::io::error
                             << "Error at processing event record #" 
                             <<  data_counter << std::endl;
                 }
@@ -296,7 +284,7 @@ int main (int argc_, char ** argv_)
 
               if ((print_modulo > 0) &&  (data_counter % print_modulo == 0))
                 {
-                  std::clog << DPP_DU::io::notice << "Event #" << data_counter << "\n";
+                  std::clog << datatools::io::notice << "Event #" << data_counter << "\n";
                 }
               data_counter++;
               if ( (max_number_of_events > 0) && (data_counter == max_number_of_events))
@@ -304,7 +292,7 @@ int main (int argc_, char ** argv_)
                   break;
                 } 
             }
-          if (debug) std::clog << DPP_DU::io::debug 
+          if (debug) std::clog << datatools::io::debug 
                                << "Exiting event record loop." << std::endl;
         } // BOOST_FOREACH
 

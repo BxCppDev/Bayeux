@@ -37,11 +37,7 @@
 #include <dpp/dpp_config.h>
 
 // Data record :
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/utils/things.h>
-#else
 #include <datatools/things.h>
-#endif
 
 namespace dpp {
 
@@ -68,7 +64,7 @@ namespace dpp {
     }
 
     /// Main data record processing method
-    virtual int process (DPP_DU::things & a_data_record) = 0;
+    virtual int process (datatools::things & a_data_record) = 0;
 
   };
 

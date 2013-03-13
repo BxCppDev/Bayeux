@@ -48,23 +48,13 @@
 
 #include <dpp/dpp_config.h>
 
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/utils/things.h>
-#else
 #include <datatools/things.h>
-#endif
 
 #include <dpp/i_data_source.h>
 
 // forward declaration:
 namespace datatools {
-#if DPP_DATATOOLS_LEGACY == 1
-  namespace serialization {
-#endif
-    class data_reader;
-#if DPP_DATATOOLS_LEGACY == 1
-  }
-#endif
+  class data_reader;
 }
 
 namespace dpp {
@@ -79,7 +69,7 @@ namespace dpp {
 
     virtual bool has_next_record ();
 
-    virtual bool load_next_record (DPP_DU::things & a_event_record);
+    virtual bool load_next_record (datatools::things & a_event_record);
 
     virtual void close ();
 
@@ -105,11 +95,11 @@ namespace dpp {
 
     // virtual int64_t _get_number_of_entries () const;
 
-    // virtual bool _load_record (DPP_DU::things & a_event_record, int64_t a_entry);
+    // virtual bool _load_record (datatools::things & a_event_record, int64_t a_entry);
 
   private:
 
-    DPP_DSZ::data_reader * _boost_io_file_reader_;
+    datatools::data_reader * _boost_io_file_reader_;
 
   };
 

@@ -84,15 +84,15 @@ namespace dpp {
      *   \endcode
      */
     // Initialization method :
-    virtual void initialize (const DPP_DU::properties &,
-                             DPP_DS::service_manager &,
+    virtual void initialize (const datatools::properties &,
+                             datatools::service_manager &,
                              module_handle_dict_type &);
 
     // Termination method :
     virtual void reset ();
 
     // Event processing method :
-    virtual int process (DPP_DU::things &);  
+    virtual int process (datatools::things &);  
 
   protected:
 

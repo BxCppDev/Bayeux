@@ -13,8 +13,8 @@ namespace dpp {
   // Registration instantiation macro :
   DPP_MODULE_REGISTRATION_IMPLEMENT(utils_module,"dpp::utils_module");
 
-  void utils_module::initialize (const DPP_DU::properties & a_setup,
-                                 DPP_DS::service_manager & a_service_manager,
+  void utils_module::initialize (const datatools::properties & a_setup,
+                                 datatools::service_manager & a_service_manager,
                                  module_handle_dict_type & a_module_dictionary)
   {
     if (is_initialized ())
@@ -152,13 +152,13 @@ namespace dpp {
     return;
   }
 
-  void utils_module::_process_clear (DPP_DU::things & a_event_record)
+  void utils_module::_process_clear (datatools::things & a_event_record)
   {
     a_event_record.clear ();
     return;
   }
 
-  void utils_module::_process_remove_one_typed_bank (DPP_DU::things & a_event_record)
+  void utils_module::_process_remove_one_typed_bank (datatools::things & a_event_record)
   {
     const std::string & removable_bank_label = _remove_one_typed_bank_label_;
     if (removable_bank_label.empty ())
@@ -189,7 +189,7 @@ namespace dpp {
     return;
   }
 
-  void utils_module::_process_remove_banks (DPP_DU::things & a_event_record)
+  void utils_module::_process_remove_banks (datatools::things & a_event_record)
   {
     for (int i = 0; i < _remove_bank_labels_.size(); i++)
       {
@@ -210,7 +210,7 @@ namespace dpp {
   }
  
   // Processing :
-  int utils_module::process (DPP_DU::things & a_event_record)
+  int utils_module::process (datatools::things & a_event_record)
   {
     if (! is_initialized ())
       {

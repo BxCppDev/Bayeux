@@ -18,19 +18,13 @@
  * Boston, MA 02110-1301, USA.
  *
  */
-
-#include <dpp/i_data_source.h>
-
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/utils/utils.h>
-#include <datatools/utils/ioutils.h>
-#else
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
-#endif
+
+#include <dpp/i_data_source.h>
 
 namespace dpp {
 
@@ -86,20 +80,20 @@ namespace dpp {
       }
     _source_record.label           = a_source_label;
     std::string effective_label         = a_source_label;
-    DPP_DU::fetch_path_with_env (effective_label);
+    datatools::fetch_path_with_env (effective_label);
     _source_record.effective_label = effective_label;
     _source_record.status          = source_record::STATUS_CLOSED;
     _source_record.processed       = false;
     return;
   }
 
-  bool i_data_source::_load_record (DPP_DU::things & a_event_record, 
+  bool i_data_source::_load_record (datatools::things & a_event_record, 
                                     int64_t a_entry)
   {
     std::ostringstream message;
     message << "dpp::i_data_source::_load_record: "
             << "Load by entry number is not supported !";
-    std::cerr << DPP_DU::io::error
+    std::cerr << datatools::io::error
               << message.str () << std::endl;
     return false;
   }
@@ -122,7 +116,7 @@ namespace dpp {
         std::ostringstream message;
         message << "dpp::i_data_source::get_number_of_entries: "
                 << "Cannot determine the number of entries !";
-        std::cerr << DPP_DU::io::error
+        std::cerr << datatools::io::error
                   << message.str () << std::endl;
       }
     return noe;
@@ -147,12 +141,12 @@ namespace dpp {
     return true;
   }
 
-  bool i_data_source::load_record (DPP_DU::things & a_event_record, 
+  bool i_data_source::load_record (datatools::things & a_event_record, 
                                    int64_t a_entry)
   {
     if (! can_load_record (a_entry))
       {
-        std::cerr << DPP_DU::io::error
+        std::cerr << datatools::io::error
                   << "dpp::i_data_source::load_record: "
                   << "Cannot access a random entry #" << a_entry << " !" 
                   << std::endl;           

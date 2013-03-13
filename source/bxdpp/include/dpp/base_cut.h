@@ -39,22 +39,9 @@
 #include <dpp/dpp_config.h>
 
 namespace datatools {
-#if DPP_DATATOOLS_LEGACY == 1
-  namespace utils {
-#endif
-    class properties;
-    class things;
-#if DPP_DATATOOLS_LEGACY == 1
-  }
-#endif
-
-#if DPP_DATATOOLS_LEGACY == 1
-  namespace service {
-#endif
-    class service_manager;
-#if DPP_DATATOOLS_LEGACY == 1
-  }
-#endif
+  class properties;
+  class things;
+  class service_manager;
 }
 
 namespace dpp {
@@ -75,10 +62,10 @@ namespace dpp {
                                 
     CUT_RESET_DECLARE ();
                                
-    const DPP_DU::things & get_event_record () const;
+    const datatools::things & get_event_record () const;
               
     // Does it make sense to access the operand (event record) in mutable mode ? probably no !     
-    // DPP_DU::things & grab_event_record ();
+    // datatools::things & grab_event_record ();
   
   };
         

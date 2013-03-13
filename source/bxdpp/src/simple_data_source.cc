@@ -19,34 +19,22 @@
  *
  */
 
-#include <dpp/dpp_config.h>
-#include <dpp/simple_data_source.h>
-
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/utils/utils.h>
-#include <datatools/utils/ioutils.h>
-#include <datatools/utils/things.h>
-#include <datatools/serialization/io_factory.h>
-#else
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
 #include <datatools/things.h>
 #include <datatools/io_factory.h>
-#endif
 
 #if DATATOOLS_WITH_BIO == 0
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/serialization/archives_instantiation.h>
-#include <datatools/utils/things.ipp>
-#else
 #include <datatools/archives_instantiation.h>
 #include <datatools/things.ipp>
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL_IN(datatools::things)
 #endif
-DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL_IN(DPP_DU::things)
-#endif
+
+#include <dpp/dpp_config.h>
+#include <dpp/simple_data_source.h>
 
 namespace dpp {
 
@@ -168,7 +156,7 @@ namespace dpp {
 
   void simple_data_source::_open_file_source ()
   {
-    namespace ds = DPP_DSZ;
+    namespace ds = datatools;
     //cerr << "DEVEL: dpp::simple_data_source::_open_file_source: Entering..." << std::endl;
     if (! boost::filesystem::exists (_source_record.effective_label))
       {
@@ -214,7 +202,7 @@ namespace dpp {
       {
         return;
       }
-    if (datatools::check_serial_tag<DPP_DU::things>(_boost_io_file_reader_->get_record_tag ()))
+    if (datatools::check_serial_tag<datatools::things>(_boost_io_file_reader_->get_record_tag ()))
       {
         _has_next_record = true;
         return;
@@ -233,7 +221,7 @@ namespace dpp {
       }
     if (_source_record.status == source_record::STATUS_CLOSED)
       {
-        std::clog << DPP_DU::io::notice
+        std::clog << datatools::io::notice
              << "dpp::simple_data_source::has_next_record: "
              << "Opening data source..." << std::endl;
         this->simple_data_source::open ();
@@ -241,7 +229,7 @@ namespace dpp {
     return _has_next_record;
   }
 
-  bool simple_data_source::load_next_record (DPP_DU::things & a_event_record)
+  bool simple_data_source::load_next_record (datatools::things & a_event_record)
   {
     bool done = false;
     if (! _has_next_record)

@@ -2,22 +2,16 @@
 /* utils_cut.cc
  */
 
-#include <dpp/utils_cut.h>
-
 #include <stdexcept>
 #include <sstream>
 
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/utils/properties.h>
-#include <datatools/utils/ioutils.h>
-#include <datatools/utils/things.h>
-#else
+#include <boost/algorithm/string.hpp>
+
 #include <datatools/properties.h>
 #include <datatools/ioutils.h>
 #include <datatools/things.h>
-#endif
 
-#include <boost/algorithm/string.hpp>
+#include <dpp/utils_cut.h>
 
 namespace dpp {
 
@@ -202,7 +196,7 @@ namespace dpp {
 
   CUT_ACCEPT_IMPLEMENT_HEAD (utils_cut)
   {
-    const DPP_DU::things & ER = get_event_record ();
+    const datatools::things & ER = get_event_record ();
 
     // Check if the event record has a bank with a specific
     // name (and optionally a serial tag):
@@ -210,7 +204,7 @@ namespace dpp {
       {
         if (is_debug ())
           {
-            std::clog << DPP_DU::io::debug
+            std::clog << datatools::io::debug
                       << "dpp:utils_cut::_accept: "
                       << "Running HAS_BANK mode..."
                       << std::endl;
@@ -238,7 +232,7 @@ namespace dpp {
       }
     else
       {
-        std::clog << DPP_DU::io::warning
+        std::clog << datatools::io::warning
                   << "dpp:utils_cut::_accept: "
                   << "Unknown mode !"
                   << std::endl;

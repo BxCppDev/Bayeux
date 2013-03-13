@@ -26,17 +26,10 @@
 #include <dpp/base_module.h>
 #include <dpp/module_manager.h>
 
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/utils/properties.h>
-#include <datatools/utils/ioutils.h>
-#include <datatools/utils/utils.h>
-#include <datatools/services/service_manager.h>
-#else
 #include <datatools/properties.h>
 #include <datatools/ioutils.h>
 #include <datatools/utils.h>
 #include <datatools/service_manager.h>
-#endif
 
 namespace dpp {
  
@@ -257,15 +250,15 @@ namespace dpp {
       {
         a_out << indent << a_title << std::endl;
       }  
-    a_out << indent << DPP_DU::i_tree_dumpable::tag 
+    a_out << indent << datatools::i_tree_dumpable::tag 
           << "Module name        : '" << _name << "'" << std::endl;
-    a_out << indent << DPP_DU::i_tree_dumpable::tag 
+    a_out << indent << datatools::i_tree_dumpable::tag 
           << "Module description : '" << _description << "'" << std::endl;
-    a_out << indent << DPP_DU::i_tree_dumpable::tag 
+    a_out << indent << datatools::i_tree_dumpable::tag 
           << "Module version     : '" << _version << "'" << std::endl;
-    a_out << indent << DPP_DU::i_tree_dumpable::tag 
+    a_out << indent << datatools::i_tree_dumpable::tag 
           << "Module debug level : " << _debug_level << std::endl;
-    a_out << indent << DPP_DU::i_tree_dumpable::inherit_tag (a_inherit)
+    a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
           << "Module initialized : " << is_initialized () << std::endl;
         
     return;
@@ -273,33 +266,33 @@ namespace dpp {
   
   void base_module::initialize_simple ()
   {
-    DPP_DU::properties dummy_config;
-    DPP_DS::service_manager dummy_service_manager;
+    datatools::properties dummy_config;
+    datatools::service_manager dummy_service_manager;
     module_handle_dict_type dummy_module_dict;
     initialize (dummy_config, dummy_service_manager, dummy_module_dict);
     return;
   }
    
-  void base_module::initialize_standalone (const DPP_DU::properties & a_config)
+  void base_module::initialize_standalone (const datatools::properties & a_config)
   {
-    DPP_DS::service_manager dummy_service_manager;
+    datatools::service_manager dummy_service_manager;
     module_handle_dict_type dummy_module_dict;
     initialize (a_config, dummy_service_manager, dummy_module_dict);
     return;
   }
    
-  void base_module::initialize_with_service (const DPP_DU::properties & a_config,
-                                             DPP_DS::service_manager & a_service_manager)
+  void base_module::initialize_with_service (const datatools::properties & a_config,
+                                             datatools::service_manager & a_service_manager)
   {
     module_handle_dict_type dummy_module_dict;
     initialize (a_config, a_service_manager, dummy_module_dict);
     return;
   }
    
-  void base_module::initialize_without_service (const DPP_DU::properties & a_config,
+  void base_module::initialize_without_service (const datatools::properties & a_config,
                                                 module_handle_dict_type & a_module_dictionnary)
   {
-    DPP_DS::service_manager dummy_service_manager;
+    datatools::service_manager dummy_service_manager;
     initialize (a_config, dummy_service_manager, a_module_dictionnary);
     return;
   }

@@ -24,19 +24,13 @@
 
 #include <boost/filesystem.hpp>
 
-#include <dpp/dpp_config.h>
-
-#include <dpp/context_service.h>
-
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/utils/multi_properties.h>
-#include <datatools/utils/utils.h>
-#include <datatools/utils/ioutils.h>
-#else
 #include <datatools/multi_properties.h>
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
-#endif
+
+#include <dpp/dpp_config.h>
+#include <dpp/context_service.h>
+
 
 namespace dpp {
 
@@ -65,7 +59,7 @@ namespace dpp {
     return;
   }
     
-  const DPP_DU::multi_properties & 
+  const datatools::multi_properties & 
   context_service::get_store () const     
   {
     if (! is_initialized ())
@@ -78,7 +72,7 @@ namespace dpp {
     return *store_;
   }
 
-  DPP_DU::multi_properties & 
+  datatools::multi_properties & 
   context_service::get_store ()     
   {
     if (! is_initialized ())
@@ -91,13 +85,13 @@ namespace dpp {
     return *store_;
   }
 
-  const DPP_DU::multi_properties &
+  const datatools::multi_properties &
   context_service::operator () () const     
   {
     return get_store ();
   }
     
-  DPP_DU::multi_properties & 
+  datatools::multi_properties & 
   context_service::operator () ()     
   {
     return get_store ();
@@ -108,8 +102,8 @@ namespace dpp {
     return initialized_;
   }
     
-  int context_service::initialize (const DPP_DU::properties & a_config,
-                                   DPP_DS::service_dict_type & a_service_dict)
+  int context_service::initialize (const datatools::properties & a_config,
+                                   datatools::service_dict_type & a_service_dict)
   {
     if (is_initialized ())
       {
@@ -156,12 +150,12 @@ namespace dpp {
           }
       }
 
-    store_ = new DPP_DU::multi_properties;
+    store_ = new datatools::multi_properties;
     store_->set_debug (debug_);
     if (! load_filename_.empty ())
       {
         std::string dummy = load_filename_;
-        DPP_DU::fetch_path_with_env (dummy);
+        datatools::fetch_path_with_env (dummy);
         if (boost::filesystem::exists (dummy))
           {         
             if (is_verbose ())
@@ -171,21 +165,21 @@ namespace dpp {
                         << "Service '" << get_name () 
                         << "' is loading from file '"
                         << load_filename_ << "' !";
-                std::clog << DPP_DU::io::notice 
+                std::clog << datatools::io::notice 
                           << message.str () << std::endl; 
               }
             store_->read (dummy);
             if (! backup_filename_.empty ())
               {
                 std::string dummy2 = backup_filename_;
-                DPP_DU::fetch_path_with_env (dummy2);
+                datatools::fetch_path_with_env (dummy2);
                 if (is_verbose ())
                   {
                     std::ostringstream message;
                     message << "dpp::context_service::initialize: "
                             << "Service '" << get_name () << "' is backuping in file '"
                             << dummy2 << "' !";
-                    std::clog << DPP_DU::io::notice 
+                    std::clog << datatools::io::notice 
                               << message.str () << std::endl;
                   }
                 store_->write (dummy2);
@@ -198,7 +192,7 @@ namespace dpp {
                     << "Service '" << get_name () 
                     << "' cannot load from file '"
                     << dummy << "' !";
-            std::clog << DPP_DU::io::warning 
+            std::clog << datatools::io::warning 
                       << message.str () << std::endl; 
           }
       }
@@ -231,11 +225,11 @@ namespace dpp {
                 message << "dpp::context_service::reset: "
                         << "Service '" << get_name () << "' is storing in file '"
                         << store_filename_ << "' !";
-                std::clog << DPP_DU::io::notice 
+                std::clog << datatools::io::notice 
                           << message.str () << std::endl;
               }
             std::string dummy = store_filename_;
-            DPP_DU::fetch_path_with_env (dummy);
+            datatools::fetch_path_with_env (dummy);
             store_->write (dummy);
           }
         delete store_;
@@ -253,8 +247,8 @@ namespace dpp {
     
   // ctor:
   context_service::context_service () 
-    : DPP_DS::base_service ("dpp::context_service",
-                            "Context service")
+    : datatools::base_service ("dpp::context_service",
+                               "Context service")
   {
     initialized_ = false;
     debug_ = false;
@@ -278,7 +272,7 @@ namespace dpp {
                                    const std::string & a_indent,
                                    bool a_inherit) const
   {
-    namespace du = DPP_DU;
+    namespace du = datatools;
     this->base_service::tree_dump (a_out, a_title, a_indent, true);
 
     a_out << a_indent << du::i_tree_dumpable::tag

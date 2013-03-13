@@ -39,41 +39,29 @@
 #include <dpp/dpp_config.h>
 
 // Service interface :
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/services/base_service.h>
-#include <datatools/services/service_tools.h>
-#include <datatools/services/service_macros.h>
-#else
 #include <datatools/base_service.h>
 #include <datatools/service_tools.h>
 #include <datatools/service_macros.h>
-#endif
 
 namespace datatools {
-#if DPP_DATATOOLS_LEGACY == 1
-  namespace utils {
-#endif
-    class multi_properties;
-#if DPP_DATATOOLS_LEGACY == 1
-  }
-#endif
+  class multi_properties;
 }
 
 namespace dpp {
 
   /// \brief A service that handles a context object store implemented as a datatools' multi_properties container
   class context_service : 
-    public DPP_DS::base_service
+    public datatools::base_service
   {
   public:
     
-    const DPP_DU::multi_properties & get_store () const;
+    const datatools::multi_properties & get_store () const;
 
-    DPP_DU::multi_properties & get_store ();
+    datatools::multi_properties & get_store ();
 
-    const DPP_DU::multi_properties & operator () () const;      
+    const datatools::multi_properties & operator () () const;      
 
-    DPP_DU::multi_properties & operator () ();      
+    datatools::multi_properties & operator () ();      
   
     bool is_debug () const;
 
@@ -85,8 +73,8 @@ namespace dpp {
 
     virtual bool is_initialized () const;
 
-    virtual int initialize (const DPP_DU::properties & a_config,
-                            DPP_DS::service_dict_type & a_service_dict);
+    virtual int initialize (const datatools::properties & a_config,
+                            datatools::service_dict_type & a_service_dict);
 
     virtual int reset ();
     
@@ -109,7 +97,7 @@ namespace dpp {
     bool debug_;
     bool verbose_;
         
-    DPP_DU::multi_properties * store_;
+    datatools::multi_properties * store_;
 
     std::string load_filename_;
     std::string store_filename_;

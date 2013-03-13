@@ -39,13 +39,6 @@
 #include <dpp/base_module.h>
 #include <dpp/module_macros.h>
 
-/*
-namespace datatools {
-  namespace utils {
-    class properties;
-  }}
-*/
-
 namespace dpp {
 
   /// \brief A data processing module to chain children data processing modules

@@ -34,11 +34,7 @@
 
 #include <dpp/base_module.h>    // data processing module abstract base class
 
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/utils/smart_filename.h>
-#else
 #include <datatools/smart_filename.h>
-#endif
 
 namespace dpp {
   
@@ -95,7 +91,7 @@ namespace dpp {
     void set_max_files (int a_max_files);
     void set_max_record_total (int a_max_record_total);
     void set_max_record_per_file (int a_max_record_per_file);
-    void set_filenames (const DPP_DU::properties & a_setup);
+    void set_filenames (const datatools::properties & a_setup);
 
     virtual void tree_dump (std::ostream & a_out         = std::clog,
                             const std::string & a_title  = "",
@@ -106,9 +102,9 @@ namespace dpp {
 
   protected:
 
-    int _load (DPP_DU::things & a_event_record);
+    int _load (datatools::things & a_event_record);
 
-    int _store (const DPP_DU::things & a_event_record);
+    int _store (const datatools::things & a_event_record);
 
     void _set_defaults ();
 
@@ -121,7 +117,7 @@ namespace dpp {
     int _max_record_total_;          //!< Maximum number of event records to be processed
     int _max_files_;                 //!< Maximum number of data files to be processed
 
-    DPP_DU::smart_filename _filenames_; //!< Smart list of data filenames
+    datatools::smart_filename _filenames_; //!< Smart list of data filenames
 
     /* Running/dynamic attributes: */
     bool _terminated_;            //!< Termination flag

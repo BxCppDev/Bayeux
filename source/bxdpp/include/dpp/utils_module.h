@@ -22,13 +22,9 @@
 #include <iostream>
 #include <string>
 
-#include <dpp/base_module.h>
-
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/utils/properties.h>
-#else
 #include <datatools/properties.h>
-#endif
+
+#include <dpp/base_module.h>
 
 namespace dpp {
 
@@ -52,13 +48,13 @@ namespace dpp {
     void _set_defaults ();
 
     /// Special method to clear all banks
-    void _process_clear (DPP_DU::things & a_event_record);
+    void _process_clear (datatools::things & a_event_record);
 
     /// Special method to remove one single bank by label and type (optional)
-    void _process_remove_one_typed_bank (DPP_DU::things & a_event_record);
+    void _process_remove_one_typed_bank (datatools::things & a_event_record);
 
     /// Special method to remove several banks by label (name)
-    void _process_remove_banks (DPP_DU::things & a_event_record);
+    void _process_remove_banks (datatools::things & a_event_record);
 
   public:
 

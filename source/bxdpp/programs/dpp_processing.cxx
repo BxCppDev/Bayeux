@@ -36,33 +36,22 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/program_options.hpp>
 
-#include <dpp/dpp_config.h>
-#include <dpp/base_module.h>
-#include <dpp/io_module.h>
-#include <dpp/module_manager.h>
-
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/utils/ioutils.h>
-#include <datatools/utils/properties.h>
-#include <datatools/utils/things.h>
-#include <datatools/utils/utils.h>
-#include <datatools/utils/library_loader.h>
-#include <datatools/serialization/bio_guard.h>
-#else
 #include <datatools/ioutils.h>
 #include <datatools/properties.h>
 #include <datatools/things.h>
 #include <datatools/utils.h>
 #include <datatools/library_loader.h>
 #include <datatools/bio_guard.h>
-#endif
 
 #include <mygsl/bio_guard.h>
 
+#include <dpp/dpp_config.h>
+#include <dpp/base_module.h>
+#include <dpp/io_module.h>
+#include <dpp/module_manager.h>
+
 int main (int argc_, char ** argv_)
 {
-  namespace du = DPP_DU;
-
   int error_code = EXIT_SUCCESS;
 
   const std::string APP_NAME_PREFIX = "dpp_processing: ";
@@ -111,11 +100,6 @@ int main (int argc_, char ** argv_)
         ("no-max-events,X",
          po::value<bool>(&no_max_events)->zero_tokens()->default_value (false),
          "Do not limit the maximum number of events to be processed.")
-        /*
-          ("module,m",
-          po::value<std::string> (),
-          "set the name of the processing module.")
-        */
         ("module,m",
          po::value<std::vector<std::string> > (),
          "add a module in the pipeline (optionnal).")
@@ -237,7 +221,7 @@ int main (int argc_, char ** argv_)
         }
       else
         {
-          std::clog << du::io::warning << APP_NAME_PREFIX << "No module manager configuration file !\n";
+          std::clog << datatools::io::warning << APP_NAME_PREFIX << "No module manager configuration file !\n";
         }
 
       if (vm.count ("module"))
@@ -247,7 +231,7 @@ int main (int argc_, char ** argv_)
         }
       else
         {
-          std::clog << du::io::warning << APP_NAME_PREFIX << "Missing processing module name !\n";
+          std::clog << datatools::io::warning << APP_NAME_PREFIX << "Missing processing module name !\n";
         }
 
       if (vm.count ("input-file"))
@@ -268,19 +252,19 @@ int main (int argc_, char ** argv_)
 
       if (input_files.size () > 0)
         {
-          std::clog << du::io::notice << APP_NAME_PREFIX << "Input data sources : "
+          std::clog << datatools::io::notice << APP_NAME_PREFIX << "Input data sources : "
                     << input_files.size () << std::endl;
           for (std::vector<std::string>::const_iterator i = input_files.begin ();
                i != input_files.end ();
                i++)
             {
-              std::clog << du::io::notice << APP_NAME_PREFIX << " - source : '"
+              std::clog << datatools::io::notice << APP_NAME_PREFIX << " - source : '"
                         << *i << "'" << std::endl;
             }
         }
       else
         {
-          std::clog << du::io::notice << APP_NAME_PREFIX << "No input data source !" << std::endl;
+          std::clog << datatools::io::notice << APP_NAME_PREFIX << "No input data source !" << std::endl;
           if (max_events <= 0)
             {
               // This is only an error if we decide to enforce the use of
@@ -296,28 +280,28 @@ int main (int argc_, char ** argv_)
 
       if (output_files.size () > 0)
         {
-          std::clog << du::io::notice << APP_NAME_PREFIX << "Output data sinks : "
+          std::clog << datatools::io::notice << APP_NAME_PREFIX << "Output data sinks : "
                     << output_files.size () << std::endl;
           for (std::vector<std::string>::const_iterator i = output_files.begin ();
                i != output_files.end ();
                i++)
             {
-              std::clog << du::io::notice << APP_NAME_PREFIX << " - sink : '"
+              std::clog << datatools::io::notice << APP_NAME_PREFIX << " - sink : '"
                         << *i << "'" << std::endl;
             }
         }
       else
         {
-          std::clog << du::io::notice << APP_NAME_PREFIX << "No output data sink !" << std::endl;
+          std::clog << datatools::io::notice << APP_NAME_PREFIX << "No output data sink !" << std::endl;
         }
 
       /*** end of opts/args parsing ***/
 
-      uint32_t LL_flags = du::library_loader::allow_unregistered;
-      du::library_loader LL (LL_flags, LL_config);
+      uint32_t LL_flags = datatools::library_loader::allow_unregistered;
+      datatools::library_loader LL (LL_flags, LL_config);
       BOOST_FOREACH (const std::string & dll_name, LL_dlls)
         {
-          std::clog << du::io::notice << APP_NAME_PREFIX << "Loading DLL '"
+          std::clog << datatools::io::notice << APP_NAME_PREFIX << "Loading DLL '"
                     << dll_name << "'." << std::endl;
           if (LL.load (dll_name) != EXIT_SUCCESS)
             {
@@ -338,7 +322,7 @@ int main (int argc_, char ** argv_)
       */
       BOOST_FOREACH (const std::string & module_name, module_names)
         {
-          std::clog << du::io::notice << APP_NAME_PREFIX << "Using data processing module '"
+          std::clog << datatools::io::notice << APP_NAME_PREFIX << "Using data processing module '"
                     << module_name << "'." << std::endl;
         }
 
@@ -373,18 +357,18 @@ int main (int argc_, char ** argv_)
           MM.reset (new dpp::module_manager (flags));
           std::string MM_config_file = module_manager_config_file;
           
-          du::fetch_path_with_env (MM_config_file);
-          std::clog << du::io::notice
+          datatools::fetch_path_with_env (MM_config_file);
+          std::clog << datatools::io::notice
                     << APP_NAME_PREFIX << "Manager config. file : '" << MM_config_file << "'" << std::endl;
           
-          du::properties MM_config;
-          du::properties::read_config (MM_config_file,
+          datatools::properties MM_config;
+          datatools::properties::read_config (MM_config_file,
                                        MM_config);
           MM.get ()->initialize (MM_config);
           MM.get ()->tree_dump (std::clog, "Module manager (initialized) : ", "NOTICE: ");
         }
  
-      std::clog << du::io::notice << APP_NAME_PREFIX << "Module to be used : '" << module_name << "'" << std::endl;
+      std::clog << datatools::io::notice << APP_NAME_PREFIX << "Module to be used : '" << module_name << "'" << std::endl;
       std::vector<dpp::base_module*> modules;
  
       for (int i = 0; i < module_names.size (); i++)
@@ -398,7 +382,7 @@ int main (int argc_, char ** argv_)
             }
           else
             {
-              std::clog << du::io::notice
+              std::clog << datatools::io::notice
                         << APP_NAME_PREFIX << "Found module named '" << module_name << "' !" << std::endl;
             }
           dpp::base_module & the_module = MM.get ()->grab (module_name);
@@ -412,7 +396,7 @@ int main (int argc_, char ** argv_)
       if (output_files.size () > 0)
         {
           sink.reset (new dpp::io_module);
-          du::properties sink_config;
+          datatools::properties sink_config;
           sink_config.store ("mode", "output");
           sink_config.store ("output.mode", "list");
           sink_config.store ("output.list.filenames", output_files);
@@ -428,7 +412,7 @@ int main (int argc_, char ** argv_)
       if (input_files.size () > 0)
         {
           source.reset (new dpp::io_module);
-          du::properties source_config;
+          datatools::properties source_config;
           source_config.store ("mode", "input");
           source_config.store ("input.mode", "list");
           source_config.store ("input.list.filenames", input_files);
@@ -440,11 +424,11 @@ int main (int argc_, char ** argv_)
         }
 
       // Loop on the event records from the data source file :
-      if (debug) std::clog << du::io::debug << APP_NAME_PREFIX
+      if (debug) std::clog << datatools::io::debug << APP_NAME_PREFIX
                            << "Entering event record loop..." << std::endl;
 
       
-      //std::list< du::handle<scm::event_record> > ER_pool;
+      //std::list< datatools::handle<scm::event_record> > ER_pool;
 
       // Loop on the event records :
       int event_counter = 0;
@@ -452,11 +436,11 @@ int main (int argc_, char ** argv_)
       while (true)
         {
           bool do_break_event_loop = false;
-          if (debug) std::clog << du::io::debug << APP_NAME_PREFIX
+          if (debug) std::clog << datatools::io::debug << APP_NAME_PREFIX
                                << "Instantiating an event record object..." << std::endl;
 
           // Instantiate a blank event record object :
-          du::things ER;
+          datatools::things ER;
 
           // Manage the source is any (fill the event record from it) :
           if (source)
@@ -468,7 +452,7 @@ int main (int argc_, char ** argv_)
               int input_status = source->process (ER);
               if (input_status != dpp::io_module::OK)
                 {
-                  std::clog << du::io::error
+                  std::clog << datatools::io::error
                             << APP_NAME_PREFIX << "Source of event records had an error !" << std::endl;
                   break;
                 }
@@ -476,11 +460,11 @@ int main (int argc_, char ** argv_)
 
           if ((print_modulo > 0) &&  (event_counter % print_modulo == 0))
             {
-              std::clog << du::io::notice << APP_NAME_PREFIX << "Event #" << event_counter << "\n";
+              std::clog << datatools::io::notice << APP_NAME_PREFIX << "Event #" << event_counter << "\n";
             }
 
           // Process the event using the choosen processing module :
-          if (debug) std::clog << du::io::debug << APP_NAME_PREFIX
+          if (debug) std::clog << datatools::io::debug << APP_NAME_PREFIX
                                << "Processing the event record..." << std::endl;
           int processing_status = dpp::base_module::SUCCESS;
           try
@@ -489,12 +473,12 @@ int main (int argc_, char ** argv_)
                 {
                   dpp::base_module & the_active_module = *active_module_ptr;
                   processing_status = the_active_module.process (ER);
-                  if (debug) std::clog << du::io::debug << APP_NAME_PREFIX
+                  if (debug) std::clog << datatools::io::debug << APP_NAME_PREFIX
                                        << "processing_status==" << processing_status << std::endl;
                   if (processing_status & dpp::base_module::FATAL)
                     {
                       // A fatal error has been met, we break the processing loop :
-                      std::clog << du::io::error << APP_NAME_PREFIX
+                      std::clog << datatools::io::error << APP_NAME_PREFIX
                                 << "Processing of event record #" << event_counter << " met a fatal error. Break !" << std::endl;
                       do_break_event_loop = true;
                       error_code = EXIT_FAILURE;
@@ -503,7 +487,7 @@ int main (int argc_, char ** argv_)
                     {
                       // A non-critical error has been met, we warn and
                       // skip to the next event record :
-                      std::clog << du::io::error << APP_NAME_PREFIX
+                      std::clog << datatools::io::error << APP_NAME_PREFIX
                                 << "Processing of event record #" << event_counter << " failed." << std::endl;
                       if (break_on_error_as_fatal)
                         {
@@ -515,7 +499,7 @@ int main (int argc_, char ** argv_)
                     {
                       if (verbose)
                         {
-                          std::clog << du::io::warning << APP_NAME_PREFIX
+                          std::clog << datatools::io::warning << APP_NAME_PREFIX
                                     << "Processing of event record #" << event_counter << " stopped at some stage." << std::endl;
                         }
                     }
@@ -549,7 +533,7 @@ int main (int argc_, char ** argv_)
                   int output_status = sink->process (ER);
                   if (output_status != dpp::io_module::OK)
                     {
-                      std::clog << du::io::error << APP_NAME_PREFIX << "Error while storing event #" << event_counter << " !" << std::endl;
+                      std::clog << datatools::io::error << APP_NAME_PREFIX << "Error while storing event #" << event_counter << " !" << std::endl;
                     }
                   stored_counter++;
                 }
@@ -558,26 +542,26 @@ int main (int argc_, char ** argv_)
           event_counter++;
           if ((max_events > 0) && (event_counter == max_events))
             {
-              if (debug) std::clog << du::io::debug << APP_NAME_PREFIX
+              if (debug) std::clog << datatools::io::debug << APP_NAME_PREFIX
                                    << "max number of events reached !!!" << std::endl;
               do_break_event_loop = true;
             }
           // break check :
           if (do_break_event_loop)
             {
-              if (debug) std::clog << du::io::debug << APP_NAME_PREFIX
+              if (debug) std::clog << datatools::io::debug << APP_NAME_PREFIX
                                    << "do_break_event_loop !!!" << std::endl;
               break;
             }
         }
 
-      if (debug) std::clog << du::io::debug << APP_NAME_PREFIX
+      if (debug) std::clog << datatools::io::debug << APP_NAME_PREFIX
                            << "Exiting event record loop." << std::endl;
 
-      std::clog << du::io::notice << APP_NAME_PREFIX << "Number of processed events : " << event_counter << "\n";
+      std::clog << datatools::io::notice << APP_NAME_PREFIX << "Number of processed events : " << event_counter << "\n";
       if (sink)
         {
-          std::clog << du::io::notice << APP_NAME_PREFIX << "Number of saved events     : " << stored_counter << "\n";
+          std::clog << datatools::io::notice << APP_NAME_PREFIX << "Number of saved events     : " << stored_counter << "\n";
         }
 
       // Terminate the module manager :
@@ -589,12 +573,12 @@ int main (int argc_, char ** argv_)
     }
   catch (std::exception & x)
     {
-      std::cerr << du::io::error << APP_NAME_PREFIX << x.what () << std::endl;
+      std::cerr << datatools::io::error << APP_NAME_PREFIX << x.what () << std::endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      std::cerr << du::io::error << APP_NAME_PREFIX << "Unexpected error!" << std::endl;
+      std::cerr << datatools::io::error << APP_NAME_PREFIX << "Unexpected error!" << std::endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);

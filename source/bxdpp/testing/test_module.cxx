@@ -24,20 +24,12 @@
 #include <list>
 #include <stdexcept>
 
-#include <dpp/base_module.h>
-
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/utils/ioutils.h>
-#include <datatools/utils/properties.h>
-#include <datatools/utils/things.h>
-#include <datatools/serialization/bio_guard.h>
-#else
 #include <datatools/ioutils.h>
 #include <datatools/properties.h>
 #include <datatools/things.h>
 #include <datatools/bio_guard.h>
-#endif
 
+#include <dpp/base_module.h>
 #include <dpp/simple_data_source.h>
 #include <dpp/simple_data_sink.h>
 
@@ -84,15 +76,15 @@ DPP_MODULE_CLASS_DECLARE(test_module)
   DPP_MODULE_INTERFACE ();
   /*
    * // Initialization method :
-   * virtual void initialize (const DPP_DU::properties & a_config,
-   *                          DPP_DS::service_manager & a_service_manager,
+   * virtual void initialize (const datatools::properties & a_config,
+   *                          datatools::service_manager & a_service_manager,
    *                          module_handle_dict_type & a_module_dictionnary);
    *
    * // Termination method :
    * virtual void reset ();
    *
    * // Event processing method :
-   * virtual int process (DPP_DU::things &);
+   * virtual int process (datatools::things &);
    */
 
  private:
@@ -226,8 +218,8 @@ test_module::~test_module ()
 }
 
 // Initialization :
-void test_module::initialize (const DPP_DU::properties & a_config,
-                              DPP_DS::service_manager & a_service_manager,
+void test_module::initialize (const datatools::properties & a_config,
+                              datatools::service_manager & a_service_manager,
                               dpp::module_handle_dict_type & a_module_dictionnary)
 {
   if (is_initialized ())
@@ -286,7 +278,7 @@ void test_module::reset ()
 }
 
 // Processing :
-int test_module::process (DPP_DU::things & the_data_record)
+int test_module::process (datatools::things & the_data_record)
 {
   if (! is_initialized ())
     {
@@ -296,14 +288,14 @@ int test_module::process (DPP_DU::things & the_data_record)
       throw std::logic_error (message.str ());
     }
   if (the_data_record.has ("Header")
-      && the_data_record.is_a<DPP_DU::properties> ("Header"))
+      && the_data_record.is_a<datatools::properties> ("Header"))
     {
       // Find the event header :
-      DPP_DU::properties & the_properties
-        = the_data_record.grab<DPP_DU::properties> ("Header");
+      datatools::properties & the_properties
+        = the_data_record.grab<datatools::properties> ("Header");
       if (is_debug ())
         {
-          std::clog << DPP_DU::io::debug
+          std::clog << datatools::io::debug
                     << "test_module::at_process_: "
                     << "Found the event header !"
                     << std::endl;
@@ -311,7 +303,7 @@ int test_module::process (DPP_DU::things & the_data_record)
       // Add a string property in it with value '_label_' :
       if (is_debug ())
         {
-          std::clog << DPP_DU::io::debug
+          std::clog << datatools::io::debug
                     << "test_module::at_process_: "
                     << "Adding the 'label' property..."
                     << std::endl;
@@ -320,7 +312,7 @@ int test_module::process (DPP_DU::things & the_data_record)
     }
   else
     {
-      std::clog << DPP_DU::io::error
+      std::clog << datatools::io::error
                 << "test_module::at_process_: "
                 << "Could not find any event header !"
                 << std::endl;
@@ -331,8 +323,8 @@ int test_module::process (DPP_DU::things & the_data_record)
   if (! the_data_record.has ("Test"))
     {
       // Add another data bank :
-      DPP_DU::properties & test_properties
-        = the_data_record.add<DPP_DU::properties> ("Test");
+      datatools::properties & test_properties
+        = the_data_record.add<datatools::properties> ("Test");
       test_properties.store ("library", "dpp");
       test_properties.store ("library.version", DPP_LIB_VERSION);
       test_properties.store ("added_by", "test_module");
@@ -383,7 +375,7 @@ int main (int argc_, char ** argv_)
                 }
               else
                 {
-                  std::clog << DPP_DU::io::warning 
+                  std::clog << datatools::io::warning 
                             << "Ignoring option '" << option << "'!" << std::endl;
                 }
             }
@@ -400,7 +392,7 @@ int main (int argc_, char ** argv_)
                 }
               else
                 {
-                  std::clog << DPP_DU::io::warning 
+                  std::clog << datatools::io::warning 
                             << "Ignoring argument '" << argument << "'!" << std::endl;
                 }
               }
@@ -416,13 +408,13 @@ int main (int argc_, char ** argv_)
           throw std::logic_error ("Missing output sink !");
         }
 
-      std::clog << DPP_DU::io::notice << "Input data source : "
+      std::clog << datatools::io::notice << "Input data source : "
                 << "'" << input_file << "'" << std::endl;
-      std::clog << DPP_DU::io::notice << "Output data source : "
+      std::clog << datatools::io::notice << "Output data source : "
                 << "'" << output_file << "'" << std::endl;
 
       // Setup the configuration parameters of the module:
-      DPP_DU::properties TM_config;
+      datatools::properties TM_config;
       if (debug) TM_config.store_flag ("debug");
       TM_config.store ("label", "TEST");
 
@@ -433,13 +425,13 @@ int main (int argc_, char ** argv_)
       TM.initialize_standalone (TM_config);
 
       // Setup the data output sink :
-      if (debug) std::clog << DPP_DU::io::notice
+      if (debug) std::clog << datatools::io::notice
                            << "Using data sink '" << output_file << "'..." << std::endl;
       dpp::simple_data_sink sink (output_file);
 
 
       // Setup the data source :
-      if (debug) std::clog << DPP_DU::io::notice
+      if (debug) std::clog << datatools::io::notice
                            << "Using data source '" << input_file << "'..." << std::endl;
       dpp::simple_data_source source (input_file);
       source.set_debug_level (debug ? 1: 0);
@@ -449,7 +441,7 @@ int main (int argc_, char ** argv_)
       while (source.has_next_record ())
         {
           // Declare the data record :
-          DPP_DU::things DR;
+          datatools::things DR;
 
           // Loading next event record :
           source.load_next_record (DR);
@@ -458,7 +450,7 @@ int main (int argc_, char ** argv_)
           int status = TM.process (DR);
           if (status != test_module::OK)
             {
-              std::clog << DPP_DU::io::warning
+              std::clog << datatools::io::warning
                         << "test_module: Processing has failed for this event record !" << std::endl;
             }
 

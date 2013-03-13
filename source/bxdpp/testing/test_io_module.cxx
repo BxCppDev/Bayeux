@@ -22,20 +22,12 @@
 #include <list>
 #include <stdexcept>
 
-#include <dpp/io_module.h>
-
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/utils/ioutils.h>
-#include <datatools/utils/properties.h>
-#include <datatools/utils/things.h>
-#include <datatools/serialization/bio_guard.h>
-#else
 #include <datatools/ioutils.h>
 #include <datatools/properties.h>
 #include <datatools/things.h>
 #include <datatools/bio_guard.h>
-#endif
 
+#include <dpp/io_module.h>
 #include <dpp/simple_brio_data_source.h>
 
 int main (int argc_, char ** argv_)
@@ -48,7 +40,7 @@ int main (int argc_, char ** argv_)
 
   try
     {
-      std::clog << DPP_DU::io::notice
+      std::clog << datatools::io::notice
                 << "test_io_module: testing the 'dpp::io_module' class..." << std::endl;
 
       bool debug = false;
@@ -80,14 +72,14 @@ int main (int argc_, char ** argv_)
                 }
               else
                 {
-                  std::clog << DPP_DU::io::warning
+                  std::clog << datatools::io::warning
                             << "test_io_module: ignoring option '" << option << "'!" << std::endl;
                 }
             }
           else
             {
               std::string argument = token;
-              std::clog << DPP_DU::io::warning
+              std::clog << datatools::io::warning
                         << "test_io_module: ignoring argument '" << argument << "'!" << std::endl;
             }
           iarg++;
@@ -95,7 +87,7 @@ int main (int argc_, char ** argv_)
 
       // Example of usage of the 'io_module' class (reader):
       {
-        std::clog << DPP_DU::io::notice
+        std::clog << datatools::io::notice
                   << "test_io_module: 'io_module' class example: " << std::endl;
         // Instantiate an I/O reader module :
         dpp::io_module input;
@@ -113,7 +105,7 @@ int main (int argc_, char ** argv_)
         input.set_max_record_per_file (12);
 
         // Configuration to build the list of filenames to be used as the source of event records :
-        DPP_DU::properties input_files_config;
+        datatools::properties input_files_config;
         input_files_config.store ("mode", "incremental");
 #if DPP_DATATOOLS_LEGACY == 1
         input_files_config.store ("incremental.path", "${DPP_DATA_DIR}/testing/legacy_data");
@@ -130,7 +122,7 @@ int main (int argc_, char ** argv_)
         input.set_filenames (input_files_config);
 
         // General setup of the 'input' module :
-        DPP_DU::properties input_config;
+        datatools::properties input_config;
         input_config.store_flag ("debug");       // Debug flag
         input_config.store ("Ctx_label", "Ctx"); // The unique ID of the 'context' service (is needed)
 
@@ -160,7 +152,7 @@ int main (int argc_, char ** argv_)
         dpp::io_module output;
 
         // General setup of the 'output' module :
-        DPP_DU::properties output_config;
+        datatools::properties output_config;
         output_config.store ("mode", "output");
         //output_config.store_flag ("output.preserve_existing");
         output_config.store ("output.max_record_per_file", 30);
@@ -189,36 +181,36 @@ int main (int argc_, char ** argv_)
         while (! input.is_terminated ())
           {
             // Declare the event record :
-            DPP_DU::things ER;
+            datatools::things ER;
 
             // Loading next event record :
             int status = input.process (ER);
             if (debug)
               {
-                std::clog << DPP_DU::io::debug
+                std::clog << datatools::io::debug
                           << "test_io_module: Input module processing status = " << status << std::endl;
               }
             if (status == dpp::io_module::FATAL)
               {
-                std::clog << DPP_DU::io::error
+                std::clog << datatools::io::error
                           << "test_io_module: Reader had a fatal error !" << std::endl;
                 break;
               }
             else if (status == dpp::io_module::ERROR)
               {
-                std::clog << DPP_DU::io::error
+                std::clog << datatools::io::error
                           << "test_io_module: Reader had an error !" << std::endl;
                 break;
               }
 
             // Here we add two new banks (properties) in the event record :
 
-            DPP_DU::properties & p = ER.add<DPP_DU::properties> ("Info");
+            datatools::properties & p = ER.add<datatools::properties> ("Info");
             p.store_flag ("test");
             p.store ("run_number", 0);
             p.store ("event_number", input_count);
 
-            DPP_DU::properties & p2 = ER.add<DPP_DU::properties> ("MoreInfo");
+            datatools::properties & p2 = ER.add<datatools::properties> ("MoreInfo");
             p2.store_flag ("simulated");
             p2.store ("author", "King Arthur");
             p2.store ("quest",  "The Search for the Holy Grail");
@@ -235,13 +227,13 @@ int main (int argc_, char ** argv_)
                 status = output.process (ER);
                 if (status == dpp::io_module::FATAL)
                   {
-                    std::clog << DPP_DU::io::error
+                    std::clog << datatools::io::error
                               << "test_io_module: Writer had a fatal error !" << std::endl;
                     break;
                   }
                 else if (status == dpp::io_module::ERROR)
                   {
-                    std::clog << DPP_DU::io::error
+                    std::clog << datatools::io::error
                               << "test_io_module: Writer had an error !" << std::endl;
                     break;
                   }
@@ -258,14 +250,14 @@ int main (int argc_, char ** argv_)
         // Terminate the I/O modules :
         output.reset ();
         input.reset ();
-        std::clog << DPP_DU::io::notice
+        std::clog << datatools::io::notice
                   << "test_io_module: I/O modules terminated." << std::endl;
 
-        std::clog << DPP_DU::io::notice
+        std::clog << datatools::io::notice
                   << "test_io_module: Input event records  : " << input_count << std::endl;
-        std::clog << DPP_DU::io::notice
+        std::clog << datatools::io::notice
                   << "test_io_module: Output event records : " << output_count << std::endl;
-        std::clog << DPP_DU::io::notice
+        std::clog << datatools::io::notice
                   << "test_io_module: Error status         : " << error_code << std::endl;
 
       }
@@ -273,7 +265,7 @@ int main (int argc_, char ** argv_)
       // Example of usage of the 'simple_brio_data_source' class (reader):
       if (test_brio)
         {
-        std::clog << DPP_DU::io::notice
+        std::clog << datatools::io::notice
                   << "test_io_module: 'simple_brio_data_source' class example: " << std::endl;
 #if DPP_DATATOOLS_LEGACY == 1
         dpp::simple_brio_data_source sbds ("${DPP_DATA_DIR}/testing/data/data_0.brio");
@@ -285,7 +277,7 @@ int main (int argc_, char ** argv_)
         dpp::i_data_source & source = sbds;
         if (source.has_number_of_entries ())
           {
-            std::clog << DPP_DU::io::notice
+            std::clog << datatools::io::notice
                       << "test_io_module: "
                       << "The number of event records stored in this file is "
                       <<  source.get_number_of_entries ()
@@ -293,14 +285,14 @@ int main (int argc_, char ** argv_)
           }
         if (source.is_sequential ())
           {
-            std::clog << DPP_DU::io::notice
+            std::clog << datatools::io::notice
                       << "test_io_module: "
                       << "This source supports sequential access."
                       << std::endl;
             int count = 0;
             while (source.has_next_record ())
               {
-                DPP_DU::things ER;
+                datatools::things ER;
                 bool ok = source.load_next_record (ER);
                 if (ok)
                   {
@@ -308,13 +300,13 @@ int main (int argc_, char ** argv_)
                     std::ostringstream title;
                     title << "Entry #" << count;
                     std::ostringstream indent;
-                    indent << DPP_DU::io::notice << "test_io_module: " ;
+                    indent << datatools::io::notice << "test_io_module: " ;
                     ER.tree_dump (std::clog, title.str (), indent.str ());
                     ++count;
                   }
                 else
                   {
-                    std::cerr << DPP_DU::io::error
+                    std::cerr << datatools::io::error
                               << "test_io_module: "
                               << "Couldn't load another entry."
                               << std::endl;
@@ -324,7 +316,7 @@ int main (int argc_, char ** argv_)
           }
         if (source.is_random ())
           {
-            std::clog << DPP_DU::io::notice
+            std::clog << datatools::io::notice
                       << "test_io_module: "
                       << "This source supports random access."
                       << std::endl;
@@ -332,16 +324,16 @@ int main (int argc_, char ** argv_)
         int64_t entry = 8;
         if (source.can_load_record (entry))
           {
-            std::clog << DPP_DU::io::notice
+            std::clog << datatools::io::notice
                       << "test_io_module: "
                       << "This source can load entry #" << entry << "."
                       << std::endl;
-            DPP_DU::things ER;
+            datatools::things ER;
             source.load_record (ER, entry);
             std::ostringstream title;
             title << "Entry #" << entry;
             std::ostringstream indent;
-            indent << DPP_DU::io::notice << "test_io_module: " ;
+            indent << datatools::io::notice << "test_io_module: " ;
             ER.tree_dump (std::clog, title.str (), indent.str ());
           }
       }

@@ -77,16 +77,7 @@ find_package(Boost 1.47 QUIET COMPONENTS ${Boost_COMPONENTS} NO_MODULE)
 find_package(Boost 1.47 REQUIRED ${Boost_COMPONENTS})
 
 # - datatools
-#find_package(datatools 4.2.1 REQUIRED)
 find_package(datatools 5.0.0 REQUIRED)
-
-message (STATUS "ddp: datatools_VERSION=${datatools_VERSION}")
-if (datatools_VERSION VERSION_LESS 5.0.0)
-  set(_dpp_DATATOOLS_LEGACY 1)
-else()
-  set(_dpp_DATATOOLS_LEGACY 0)
-endif()
-message (STATUS "ddp: _dpp_DATATOOLS_LEGACY=${_dpp_DATATOOLS_LEGACY}")
 
 # - cuts
 find_package(cuts 4.0.0 REQUIRED)

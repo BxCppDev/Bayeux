@@ -39,20 +39,8 @@
 #include <dpp/base_cut.h>
 
 namespace datatools {
-#if DPP_DATATOOLS_LEGACY == 1
-  namespace utils {
-#endif
     class properties;
-#if DPP_DATATOOLS_LEGACY == 1
-  }
-#endif
-#if DPP_DATATOOLS_LEGACY == 1
-  namespace service {
-#endif
     class service_manager;
-#if DPP_DATATOOLS_LEGACY == 1
-  }
-#endif
 }
 
 namespace dpp {

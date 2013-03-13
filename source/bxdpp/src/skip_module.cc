@@ -22,17 +22,11 @@
 #include <stdexcept>
 #include <sstream>
 
-#include <dpp/skip_module.h>
-
-#if DPP_DATATOOLS_LEGACY == 1
-#include <datatools/utils/properties.h>
-#include <datatools/utils/ioutils.h>
-#include <datatools/utils/things.h>
-#else
 #include <datatools/properties.h>
 #include <datatools/ioutils.h>
 #include <datatools/things.h>
-#endif
+
+#include <dpp/skip_module.h>
 
 namespace dpp {
  
@@ -106,8 +100,8 @@ namespace dpp {
   }
 
   // Initialization :
-  void skip_module::initialize (const DPP_DU::properties & a_config,
-                                DPP_DS::service_manager & a_service_manager,
+  void skip_module::initialize (const datatools::properties & a_config,
+                                datatools::service_manager & a_service_manager,
                                 module_handle_dict_type & a_module_dict)
   {
     if (is_initialized ())
@@ -242,7 +236,7 @@ namespace dpp {
   }
 
   // Processing :
-  int skip_module::process (DPP_DU::things & the_data_record) 
+  int skip_module::process (datatools::things & the_data_record) 
   {
     if (! is_initialized ())
       {
@@ -289,7 +283,7 @@ namespace dpp {
           }
         catch (std::exception & x)
           {
-            std::cerr << DPP_DU::io::error
+            std::cerr << datatools::io::error
                  << "dpp::skip_module::process: "
                  << "Module '" << _module_.label << "' failed to process data record ! "
                  << x.what ()
