@@ -1,5 +1,5 @@
 // -*- mode: c++; -*- 
-/* ch_symbol.h
+/* chemical_symbol.h
  * Author(s):  Benoit Guillon <guillon@lpccaen.in2p3.fr>
  * Creation date: 2008-02-25
  * Last modified: 2008-02-25
@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef MATERIALS_CH_SYMBOL_H_
-#define MATERIALS_CH_SYMBOL_H_ 1
+#ifndef MATERIALS_CHEMICAL_SYMBOL_H_
+#define MATERIALS_CHEMICAL_SYMBOL_H_ 1
 
 #include <string>
 
@@ -46,6 +46,6 @@ namespace materials {
 
 } // end of namespace materials
 
-#endif // MATERIALS_CH_SYMBOL_H_
+#endif // MATERIALS_CHEMICAL_SYMBOL_H_
 
-// end of ch_symbol.h
+// end of chemical_symbol.h

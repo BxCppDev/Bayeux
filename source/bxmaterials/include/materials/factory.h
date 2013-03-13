@@ -21,7 +21,7 @@
 #include <materials/detail/tools.h>
 
 namespace datatools {
-    class properties;
+  class properties;
 }
 
 namespace materials {

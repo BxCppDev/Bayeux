@@ -1,8 +1,8 @@
 // -*- mode: c++ ; -*- 
-/* ch_symbol.cc
+/* chemical_symbol.cc
  */
 
-#include <materials/ch_symbol.h>
+#include <materials/chemical_symbol.h>
 
 #include <iostream>
 #include <sstream>
@@ -24,27 +24,23 @@ namespace materials {
   
   int chemical_symbol::z_from_symbol(const string & symbol_)
   {
-    //clog << "DEVEL: z_from_symbol: symbol='" << symbol_ << "'" << endl;
     bool is_symbol_found = false; 
                                             
     int i_z = 0;
     
     while(!is_symbol_found && i_z < NB_CHEMICAL_SYMBOLS) 
       {
-        //clog << "DEVEL: z_from_symbol: i_z=" << i_z << "   TABLE='" << chemical_symbol::table[i_z] << "'" << endl;
         if (symbol_ == chemical_symbol::table[i_z]) 
           {
             is_symbol_found = true;
-            //clog << "DEVEL: z_from_symbol: YES" << endl;          
           }
         i_z++;
       }
-    //clog << "DEVEL: z_from_symbol: i_z=" << i_z << endl;
       
     if(! is_symbol_found)
       {
         ostringstream message;
-        message << endl << "ch_symbol::z_from_symbol(): '" 
+        message << "materials::chemical_symbol::z_from_symbol: '" 
                 << symbol_ << "' not found !" << endl;
         throw logic_error (message.str ());
       }       
@@ -60,11 +56,11 @@ namespace materials {
     else
       {
         ostringstream message;
-        message << endl<< "mat::ch_symbol::symbol_from_z:  Z value : '" << z_<<"' not tabulated !"<<endl;
+        message << endl<< "materials::chemical_symbol::symbol_from_z:  Z value : '" << z_<<"' not tabulated !"<<endl;
         throw logic_error (message.str ());
       }
   };
  
 } // end of namespace materials
 
-// end of ch_symbol.cc
+// end of chemical_symbol.cc

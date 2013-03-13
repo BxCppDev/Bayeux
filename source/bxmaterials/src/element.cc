@@ -9,7 +9,7 @@
 #include <fstream>
 
 #include <materials/isotope.h>
-#include <materials/ch_symbol.h>
+#include <materials/chemical_symbol.h>
 
 namespace materials {
 

@@ -23,7 +23,7 @@
 
 ###file(GLOB materials_tests_programs test_*.cxx)
 set ( materials_tests_programs
-    test_ch_symbol.cxx
+    test_chemical_symbol.cxx
     test_element.cxx
     test_factory.cxx
     test_isotope.cxx

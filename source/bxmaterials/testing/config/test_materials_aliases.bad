@@ -1,0 +1,14 @@
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::utils::multi_properties):
+
+#@description A sample list of aliases for materials
+#@key_label   "name"
+#@meta_label  "type"
+
+
+###########################
+[name="solid" type="alias"]
+#@description Another alias for metal
+material : string = "metal"
+
+# end

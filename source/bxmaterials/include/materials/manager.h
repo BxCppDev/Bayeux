@@ -24,7 +24,10 @@
 #include <materials/isotope.h>
 #include <materials/element.h>
 #include <materials/material.h>
-#include <datatools/multi_properties.h>
+
+namespace datatools {
+  class multi_properties;
+}
 
 namespace materials {
 
@@ -38,6 +41,16 @@ namespace materials {
     void set_debug (bool);
 
     bool is_locked () const;
+
+    bool is_alias_allow_overload () const;
+
+    void set_alias_allow_overload (bool aao_);
+    
+    bool has_material(const std::string & entry_name_) const;
+
+    bool is_alias(const std::string & entry_name_) const;
+
+    std::string alias_of(const std::string & entry_name_) const;
 
     const isotope_dict_type & get_isotopes () const;
 
@@ -70,13 +83,14 @@ namespace materials {
   private:
 
     bool               _debug_;
+    bool               _locked_;
+    bool               _alias_allow_overload_;
     factory            _creator_;
     isotope_dict_type  _isotopes_;
     element_dict_type  _elements_;
     material_dict_type _materials_;
     std::list<std::string>  _ordered_materials_;
-    bool               _locked_;
-
+ 
   };
 
 } // end of namespace materials

@@ -7,28 +7,18 @@ classes.
 
 ---------------------------------------------------------------------------
 
-From  the build  directory, run  the  test program  for the  materials
-geometry manager with an embeded materials driver plugin :
+From  the build  directory, run  the test_manager program :
 
-bash$ MATERIALS_DATA_DIR=$(pwd) __build-Linux-x86_64/testing/test_materials_geom_plugin --visu --gdml
+bash$ MATERIALS_DATA_DIR=$(pwd) __build-Linux-x86_64/testing/test_manager \
+            --alias-allow-overload \
+            ${MATERIALS_DATA_DIR}/testing/config/test_isotopes.def \
+	    ${MATERIALS_DATA_DIR}/testing/config/test_elements.def \
+	    ${MATERIALS_DATA_DIR}/testing/config/test_materials.def \
+	    ${MATERIALS_DATA_DIR}/testing/config/test_materials_aliases.def \
+	    ${MATERIALS_DATA_DIR}/testing/config/test_materials_aliases.redef 
 
-Note : 
-  This test programs uses the sample geometry setup stored
-  in the '${GEOMTOOLS_DATA_DIR}/testing/config/test-1.0/' directory
-
-  Extract material names from geometry setup files : 
-  
-  bash$ grep "material.*.ref" ${GEOMTOOLS_DATA_DIR}/testing/config/test-1.0/*.geom | cut -d= -f2
-
-  List of materials:
-    "mylar"
-    "polystyrene"
-    "plexiglass"
-    "copper"
-    "glass"
-    "aluminium"
-    "iron"
-    "air"
-    "vacuum"
+try also with one of these additional files:
+	    ${MATERIALS_DATA_DIR}/testing/config/test_materials_aliases.bad
+	    ${MATERIALS_DATA_DIR}/testing/config/test_materials_aliases.bad2
 
 --

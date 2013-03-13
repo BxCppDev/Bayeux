@@ -2,18 +2,16 @@
 /* material.cc
  */
 
-#include <materials/material.h>
-
 #include <cstdlib>
 #include <stdexcept>
 #include <sstream>
 #include <string>
-
 #include <vector>
 
 #include <datatools/clhep_units.h>
 #include <datatools/units.h>
 
+#include <materials/material.h>
 #include <materials/isotope.h>
 #include <materials/element.h>
 
@@ -22,7 +20,7 @@ namespace materials {
   using namespace std;
 
   const double material::g_per_cm3 = CLHEP::g / CLHEP::cm3;
-    
+   
   //________________________________________________________________________
   compound_entry::compound_entry ()
   {
@@ -486,7 +484,7 @@ namespace materials {
       }
     return;
   }
-  
+
   //________________________________________________________________________      
   void material::tree_dump (ostream & out_,  
                             const string & title_,

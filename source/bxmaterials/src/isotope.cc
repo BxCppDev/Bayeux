@@ -7,7 +7,7 @@
 #include <fstream>
 #include <stdexcept>
 #include <sstream>
-#include <materials/ch_symbol.h>
+#include <materials/chemical_symbol.h>
 
 double endfline_to_double (const std::string & endfline_);
 double ame3line_to_double (const std::string & ame3_line_);

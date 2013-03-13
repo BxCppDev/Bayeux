@@ -23,7 +23,7 @@ int main (int argc_, char ** argv_)
   
       bool debug = false;
       list<string> input_files;
-      //bool generate_gdml = false;
+      bool aao = false;
 
       int iarg = 1;
       bool parsing_options = true;
@@ -43,10 +43,10 @@ int main (int argc_, char ** argv_)
                  {
                    debug = true;
                  }
-               // else if ((option == "-g") || (option == "--generate-gdml")) 
-               //   {
-               //     generate_gdml = true;
-               //   }
+               else if ((option == "-aao") || (option == "--alias-allow-overload")) 
+                 {
+                   aao  = true;
+                 }
                else 
                  { 
                     clog << "warning: ignoring option '" << option << "'!" << endl; 
@@ -61,8 +61,11 @@ int main (int argc_, char ** argv_)
           iarg++;
       }
 
-      materials::manager my_manager;
-      my_manager.set_debug (debug);
+      materials::manager MatMgr;
+      MatMgr.set_alias_allow_overload(aao);
+      if (debug) clog << "DEBUG: alias_allow_overload = " 
+                      << MatMgr.is_alias_allow_overload() << "" << endl;
+      MatMgr.set_debug (debug);
       for (list<string>::iterator i = input_files.begin ();
             i != input_files.end ();
            i++)
@@ -75,16 +78,10 @@ int main (int argc_, char ** argv_)
               clog << "Config file '" << *i << "' : " << endl;
               config.tree_dump (clog, "", "DEBUG: ");
             }
-          my_manager.load (config);
+          MatMgr.load (config);
         }
-      my_manager.tree_dump (clog, "Material manager: ");
+      MatMgr.tree_dump (clog, "Material manager: ");
 
-      /*
-      if (generate_gdml)
-        {
-          my_manager.export_gdml (cout);
-        }
-      */
     }
   catch (exception & x)
     {

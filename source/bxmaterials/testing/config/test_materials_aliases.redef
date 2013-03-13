@@ -7,14 +7,7 @@
 
 ##################################
 [name="tracking_gas" type="alias"]
-#@description The alias for tracking gas
-material : string = "hydrogen_gas"
-
-
-###########################
-[name="metal" type="alias"]
-#@description The alias for copper
-material : string = "copper"
-
+#@description Change alias for tracking gas
+material : string = "air"
 
 # end

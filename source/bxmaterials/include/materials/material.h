@@ -56,6 +56,7 @@ namespace materials {
     /*! KP_ATOM (number of atoms by molecule) or KP_MASS (% mass)
      */
 
+ 
     enum proportion_unit_type
       {
         KP_UNDEFINED = -1,
@@ -69,16 +70,17 @@ namespace materials {
 
     static const double g_per_cm3;
 
-    /* constructor / destructor */
+    /// Defaut Constructor
     material (); //!< Defaut Constructor
 
-    //! Normal Constructor.
+    /// Constructor
     /*!
       \param name_ : Name of the material
     */
     material (const std::string & name_);
 
-    virtual ~material ();          //!<  Destructor
+    /// Destructor
+    virtual ~material ();       
 
     bool is_composed_by_mean_z_a () const;
 
@@ -133,6 +135,8 @@ namespace materials {
                             const std::string & indent_ = "",
                             bool inherit_ = false) const;  //!<  print info virtual method
  
+    bool is_alias() const;
+
   private :
 
     void _lock_check_ (const std::string & where_) const;

@@ -26,13 +26,12 @@ endfunction()
 #   )
 
 set(materials_PUBLIC_HEADERS
-include/materials/ch_symbol.h
+include/materials/chemical_symbol.h
 include/materials/element.h
 include/materials/factory.h
 include/materials/isotope.h
 include/materials/manager.h
 include/materials/material.h
-include/materials/materials.h
   )
 list_prepend(materials_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
 
@@ -73,7 +72,7 @@ endif()
 # SOURCE FILES
 # Pretty basic!
 set(materials_SOURCES
-    ch_symbol.cc	
+    chemical_symbol.cc	
     isotope.cc		
     material.cc
     element.cc		

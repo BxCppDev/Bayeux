@@ -1,12 +1,12 @@
 // -*- mode: c++ ; -*- 
-// test_dummy_materials.cxx
+// test_chemical_symbol.cxx
 
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
-#include <materials/ch_symbol.h>
+#include <materials/chemical_symbol.h>
 
 using namespace std;
 
@@ -15,7 +15,7 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'dummy_materials'!" << endl; 
+      clog << "Test program for class 'chemical_symbol' !" << endl; 
   
       bool debug = false;
 
@@ -68,4 +68,4 @@ int main (int argc_, char ** argv_)
   return (error_code);
 }
 
-// end of test_dummy_materials.cxx
+// end of test_chemical_symbol.cxx

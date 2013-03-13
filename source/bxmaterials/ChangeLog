@@ -17,10 +17,14 @@
 	* simplify package organization
 	* depends on: geomtools pre-4.0.0 (in trunk)
 	* new materials::materials_geom_plugin class for the geomtools::manager plugin system
-2013-03-11 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+2013-03-13 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
 	* make materials not dependent on geomtools
 	- depends on datatools 5.X only
 	- remove materials::manager GDML export features
 	- move GDML export features to the geomtools library
 	- move the materials::materials_geom_plugin to the geomtools library
 	- kozmetix
+	- improve material alias support:
+	  * no alias of alias
+	  * no alias in material combined from material
+	  * option allowing alias overwriting from different setup files
