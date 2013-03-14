@@ -34,6 +34,9 @@
 
 #define MATERIALS_DATA_SCHEMA_LOCAL_PATH "@_materials_DATA_SCHEMA_FULL_LOCAL_PATH@"
 
+//! The installation path of the geomtools resource files :
+#define MATERIALS_DATA_INSTALL_DIR "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
+
 #endif // MATERIALS_MATERIALS_CONFIG_H_
 
 // end of materials_config.h
