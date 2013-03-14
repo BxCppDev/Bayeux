@@ -101,6 +101,15 @@ include_directories(
 
 set(_test_tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/testing_output")
 
+set(_geomtools_test_additional_options )
+
+# depends on materials data dir:
+if (DEFINED materials_DATA_DIR
+    AND NOT "x${materials_DATA_DIR}" STREQUAL "x" )
+  list (APPEND _geomtools_test_additional_options --materials-data-dir ${materials_DATA_DIR} )
+  message ( STATUS "${PROJECT_NAME}: testing: Using option '${_geomtools_test_additional_options}'" )
+endif ()
+
 execute_process(COMMAND cmake -E remove_directory ${_test_tmp_dir} )
 
 foreach(test_program ${geomtools_tests_programs_list})
@@ -140,6 +149,7 @@ foreach(test_program ${geomtools_tests_programs_list})
     --data-dir ${PROJECT_SOURCE_DIR} 
     --prefix ${PROJECT_SOURCE_DIR} 
     --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
+     ${_geomtools_test_additional_options}
     run
     )	 
 

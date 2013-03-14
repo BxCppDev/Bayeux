@@ -42,6 +42,9 @@ tmp_test_dir=/tmp/${USER}/geomtools/testing
 prefix_test_dir=
 data_test_dir=
 exe_test=
+# depends on materials data dir:
+materials_data_test_dir=
+
 
 #######################################################
 
@@ -75,6 +78,9 @@ while [ -n "$1" ]; do
 	elif [ "${opt}" = "--exe" ]; then
 	    shift 1
 	    exe_test="$1"
+        elif [ "${opt}" = "--materials-data-dir" ]; then
+            shift 1
+            materials_data_test_dir="$1"
 	else
 	    echo "ERROR: ${appname}: Invalid option '${opt}' !" >&2
 	    my_exit 1
@@ -104,6 +110,7 @@ if [ ${debug} -ne 0 ]; then
     echo "DEBUG: ${appname}: exe_test=${exe_test}" >&2
     echo "DEBUG: ${appname}: prefix_test_dir=${prefix_test_dir}" >&2
     echo "DEBUG: ${appname}: data_test_dir=${data_test_dir}" >&2
+    echo "DEBUG: ${appname}: materials_data_test_dir=${materials_data_test_dir}" >&2
 fi
 
 ##########################################################
@@ -133,13 +140,30 @@ function do_run ()
     fi
 
     if [ "x${GEOMTOOLS_DATA_DIR}" = "x" ]; then
-	echo "ERROR: ${appname}: Missing GEOMTOOLS_DATA_DIR environment variable !"
+	echo "ERROR: ${appname}: Missing GEOMTOOLS_DATA_DIR environment variable !" >&2
 	return 1
     fi
     if [ ! -d ${GEOMTOOLS_DATA_DIR} ]; then
-	echo "ERROR: ${appname}: Directory '${GEOMTOOLS_DATA_DIR}' does not exists !"
+	echo "ERROR: ${appname}: Directory '${GEOMTOOLS_DATA_DIR}' does not exists !" >&2
 	return 1
     fi
+    
+    ###############################
+    # depends on materials data dir:
+    if [ "x${materials_data_test_dir}" != "x" ]; then
+        export MATERIALS_DATA_DIR=${materials_data_test_dir}
+    fi
+    if [ "x${MATERIALS_DATA_DIR}" = "x" ]; then
+        echo "ERROR: ${appname}: Missing MATERIALS_DATA_DIR environment variable !" >&2
+        return 1
+    fi
+    if [ ! -d ${MATERIALS_DATA_DIR} ]; then
+        echo "ERROR: ${appname}: Directory '${MATERIALS_DATA_DIR}' does not exists !" >&2
+        return 1
+    fi
+    echo "NOTICE: ${appname}: Directory MATERIALS_DATA_DIR='${MATERIALS_DATA_DIR}'"  >&2
+
+    #############################
 
     echo "NOTICE: ${appname}: First clean the test temporary directory..." >&2
     if [ ! -d ${tmp_test_dir} ]; then
@@ -159,7 +183,7 @@ geomtools test log file :
 EOF
     bin=${exe_test}
     if [ ! -x ${bin} ]; then
-	echo "ERROR: ${appname}: No '${bin}' exectuable available ! "
+	echo "ERROR: ${appname}: No '${bin}' exectuable available ! " >&2
 	return 1
     fi
     exe=$(basename ${exe_test})
@@ -236,47 +260,47 @@ EOF
 }
 
 function main ()
-    {
-	local action_mode=${the_action_mode}
-	local action_options=${the_action_options}
-
+{
+    local action_mode=${the_action_mode}
+    local action_options=${the_action_options}
+    
     # Some checks...
-	if [ -z "${action_mode}" ]; then
-	    echo "ERROR: ${appname}: Missing action !" >&2
-	    print_usage
+    if [ -z "${action_mode}" ]; then
+	echo "ERROR: ${appname}: Missing action !" >&2
+	print_usage
+	return 1
+    fi
+    
+    # Perform action...    
+    if [ "${action_mode}" = "run" ]; then
+	if [ "x${exe_test}" = "x" ]; then
+	    echo "ERROR: ${appname}: Missing executable name !" >&2
 	    return 1
 	fi
-
-    # Perform action...    
-	if [ "${action_mode}" = "run" ]; then
-	    if [ "x${exe_test}" = "x" ]; then
-		echo "ERROR: ${appname}: Missing executable name !" >&2
-		return 1
-	    fi
-	    do_run $@
-	    if [ $? -ne 0 ]; then
-		echo "ERROR: ${appname}: Running failed !" >&2
-		return 1
-	    fi
+	do_run $@
+	if [ $? -ne 0 ]; then
+	    echo "ERROR: ${appname}: Running failed !" >&2
+	    return 1
 	fi
-	
-	if [ "${action_mode}" = "clean" ]; then
-    	    do_clean $@
-    	    if [ $? -ne 0 ]; then
-    		echo "ERROR: ${appname}: Cleaning failed !" >&2
-    		return 1
-    	    fi
+    fi
+    
+    if [ "${action_mode}" = "clean" ]; then
+    	do_clean $@
+    	if [ $? -ne 0 ]; then
+    	    echo "ERROR: ${appname}: Cleaning failed !" >&2
+    	    return 1
+    	fi
 	fi
-	return 0
-    }
+    return 0
+}
 
 ##########################################################
 
-    main 
-    if [ $? -ne 0 ]; then
-	echo "ERROR: ${appname}: Failure !" >&2
-	my_exit 1
-    fi
-    my_exit 0
+main 
+if [ $? -ne 0 ]; then
+    echo "ERROR: ${appname}: Failure !" >&2
+    my_exit 1
+fi
+my_exit 0
 
 # end of testDriver.bash
