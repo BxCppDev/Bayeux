@@ -8,26 +8,24 @@ namespace geomtools {
   
   using namespace std;
 
-  /*********************************************/
-  // serial tag for datatools::serialization::i_serializable interface :
-  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(display_data::display_item, "geomtools::display_data::display_item")
+  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(display_data::display_item, 
+                                                    "geomtools::display_data::display_item")
 
-      
   display_data::display_item::display_item ()
   {
+    
     return;
   }
       
   void display_data::display_item::reset ()
   {
     frame_info.clear ();
+    style.clear ();
     color.clear ();
     paths.clear ();
     return;
   }
 
-  /*********************************************/
-  // serial tag for datatools::serialization::i_serializable interface :
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(display_data::display_entry, "geomtools::display_data::display_entry")
 
   bool display_data::display_entry::is_static () const
@@ -123,6 +121,7 @@ namespace geomtools {
     _entries_.clear ();
     _groups_.clear ();
     _colors_.clear ();
+    _frames_.clear ();
     _auxiliaries_.clear ();
     return;
   }
@@ -164,6 +163,27 @@ namespace geomtools {
   std::vector<std::string> & display_data::grab_groups ()
   {
     return _groups_;
+  }
+
+  const std::map<int32_t,std::string> & display_data::get_frames () const
+  {
+    return _frames_;
+  }
+
+  std::map<int32_t,std::string> & display_data::grab_frames ()
+  {
+    return _frames_;
+  }
+
+  void display_data::add_frame_info(int frame_index_, const std::string & frame_info_)
+  {
+    std::map<int32_t,std::string>::iterator frame_found =
+      _frames_.find (frame_index_);
+    if (frame_found != _frames_.end())
+      {
+        frame_found->second = frame_info_;
+      }
+    return;
   }
 
   const std::map<std::string, display_data::display_entry> & 
@@ -292,23 +312,64 @@ namespace geomtools {
                 _colors_.push_back (color_);
               }
           }
-         di.color = color_;
+        di.color = color_;
+        std::map<int32_t,std::string>::const_iterator frame_found =
+          _frames_.find (frame_);
+        if (frame_found == _frames_.end())
+          {
+            _frames_[frame_] = std::string("");
+          }
         return di; 
       }
   }
 
+  void display_data::process()
+  {          
+    for (entries_dict_type::const_iterator i
+           = get_entries ().begin ();
+         i != get_entries ().end ();
+         i++)
+      {
+        const std::string & entry_name = i->first;
+        const display_entry & de = i->second;
+        if (de.is_framed ())
+          {
+            for (std::map<int32_t, display_item>::const_iterator j =
+                   de.items.begin();
+                 j != de.items.end();
+                 j++)
+              {
+                int32_t frame_index = j->first;
+                std::map<int32_t,std::string>::const_iterator frame_found =
+                  _frames_.find(frame_index);
+                if (frame_found == _frames_.end())
+                  {
+                    std::ostringstream frame_info_oss;
+                    frame_info_oss << "Frame #" << frame_index;
+                    _frames_[frame_index] = frame_info_oss.str();
+                  }
+              }
+          }
+      }
+    return;
+  }
 
   display_data::display_item & 
   display_data::add_framed_item (const std::string & name_, 
                                  int frame_,
                                  const std::string & group_,
-                                 const std::string & color_)
+                                 const std::string & color_,
+                                 const std::string & frame_info_)
   {
     return _add_item (name_,
                       DISPLAY_FRAMED, 
                       frame_,
                       group_,
                       color_);
+    if (! frame_info_.empty())
+      {
+        add_frame_info(frame_, frame_info_);
+      }
   }
 
   display_data::display_item & 
@@ -344,7 +405,7 @@ namespace geomtools {
     a_out << "Display groups: " << _groups_.size () << std::endl;
     for (int i = 0; i < _groups_.size (); i++)
       {
-        a_out << datatools::i_tree_dumpable::skip_tag;
+        a_out << indent << datatools::i_tree_dumpable::skip_tag;
         if (i + 1  < _groups_.size ())
           a_out << datatools::i_tree_dumpable::tag;
         else
@@ -352,17 +413,35 @@ namespace geomtools {
         a_out << "Group : '" << _groups_[i] << "'" << std::endl;
       }
 
-    // Colors groups:
+    // Display colors:
     a_out << indent << datatools::i_tree_dumpable::tag;
     a_out << "Colors : " << _colors_.size () << std::endl;
     for (int i = 0; i < _colors_.size (); i++)
       {
-        a_out << datatools::i_tree_dumpable::skip_tag;
+        a_out << indent << datatools::i_tree_dumpable::skip_tag;
         if (i + 1  < _colors_.size ())
           a_out << datatools::i_tree_dumpable::tag;
         else
           a_out << datatools::i_tree_dumpable::last_tag;
         a_out << "Color : '" << _colors_[i] << "'" << std::endl;
+      }
+
+    // Display frames:
+    a_out << indent << datatools::i_tree_dumpable::tag;
+    a_out << "Frames : " << _frames_.size () << std::endl;
+    for (std::map<int32_t,std::string>::const_iterator i = _frames_.begin();
+           i != _frames_.end();
+         i++)
+      {
+        a_out << indent << datatools::i_tree_dumpable::skip_tag;
+        std::map<int32_t,std::string>::const_iterator j = i;
+        j++;
+        if (j != _frames_.end())
+          a_out << datatools::i_tree_dumpable::tag;
+        else
+          a_out << datatools::i_tree_dumpable::last_tag;
+        a_out << "Frame " << i->first << " : '"
+              << i->second << "'" << std::endl;
       }
 
     // Display entries:
@@ -391,7 +470,7 @@ namespace geomtools {
           } 
         else
           {
-            a_out << "(framed " << de.items.size () << " steps) ";
+            a_out << "(framed with " << de.items.size () << " steps) ";
           }
         if (! de.group.empty ())
           {

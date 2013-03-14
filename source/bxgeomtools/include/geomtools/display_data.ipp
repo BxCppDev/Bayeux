@@ -26,6 +26,21 @@ namespace geomtools {
                                               const unsigned int version) 
   {
     ar & boost::serialization::make_nvp ("frame_info", frame_info);
+    if (version > 0)
+      {
+        ar & boost::serialization::make_nvp ("style",      style);
+      }
+    else
+      {
+        if (Archive::is_saving::value)
+          {
+            ar & boost::serialization::make_nvp ("style",      style);
+         }
+        else
+          {
+            style.clear();
+          }
+      }
     ar & boost::serialization::make_nvp ("color",      color);
     ar & boost::serialization::make_nvp ("paths",      paths);
     return;
@@ -51,12 +66,32 @@ namespace geomtools {
     ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
     ar & boost::serialization::make_nvp ("groups",      _groups_);
     ar & boost::serialization::make_nvp ("entries",     _entries_);
+    if (version > 0)
+      {
+        ar & boost::serialization::make_nvp ("frames", _frames_);
+      }
+    else
+      {
+        if (Archive::is_saving::value)
+          {
+            ar & boost::serialization::make_nvp ("frames", _frames_);
+          }
+        else
+          {
+            _frames_.clear();
+          }
+      }
     ar & boost::serialization::make_nvp ("colors",      _colors_);
     ar & boost::serialization::make_nvp ("auxiliaries", _auxiliaries_);
     return;
   }
 
 } // end of namespace geomtools
+
+
+#include <boost/serialization/version.hpp>
+BOOST_CLASS_VERSION(geomtools::display_data::display_item, 1)
+BOOST_CLASS_VERSION(geomtools::display_data, 1)
 
 #endif // GEOMTOOLS_DISPLAY_DATA_IPP_
 

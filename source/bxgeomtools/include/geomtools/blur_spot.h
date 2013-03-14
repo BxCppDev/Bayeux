@@ -27,10 +27,13 @@
 #include <datatools/i_serializable.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/properties.h>
+
+#include <mygsl/rng.h>
+
 #include <geomtools/utils.h>
 #include <geomtools/placement.h>
 #include <geomtools/i_object_3d.h>
-#include <mygsl/rng.h>
+#include <geomtools/i_wires_3d_rendering.h>
 
 namespace geomtools {
 
@@ -66,6 +69,7 @@ namespace geomtools {
    */
   class blur_spot
     : DATATOOLS_SERIALIZABLE_CLASS,
+      public i_wires_3d_rendering,
       public datatools::i_tree_dumpable
 
   {
@@ -175,6 +179,11 @@ namespace geomtools {
     /// Set the longitudinal error of the spot along the Z axis
     void set_z_error (double);
 
+    /// Set all errors of the spot
+    void set_errors (double, 
+                     double = std::numeric_limits<double>::quiet_NaN(), 
+                     double = std::numeric_limits<double>::quiet_NaN());
+
     /// Randomize point from the spot region
     template <class Randomizer>
     void randomize_boost (Randomizer & ran_,
@@ -191,6 +200,10 @@ namespace geomtools {
                 double nsigma1_or_tolerance_ = DEFAULT_VALUE,
                 double nsigma2_or_tolerance_ = DEFAULT_VALUE,
                 double nsigma3_or_tolerance_ = DEFAULT_VALUE) const;
+
+    virtual void generate_wires (std::list<polyline_3d> &, 
+                                 const placement &, 
+                                 uint32_t options_ = 0) const;
 
   protected:
 

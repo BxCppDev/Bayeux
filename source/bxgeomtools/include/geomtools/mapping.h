@@ -128,8 +128,8 @@ namespace geomtools {
                                    const geom_id & mother_id_);
 
     void _build_logical_children_2_ (const logical_volume & log_, 
-                                   const placement & mother_world_placement_,
-                                   const std::vector<geom_id> & mother_ids_);
+                                     const placement & mother_world_placement_,
+                                     const std::vector<geom_id> & mother_ids_);
 
   private:
 

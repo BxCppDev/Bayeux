@@ -27,6 +27,7 @@
 #include <geomtools/union_3d.h>
 #include <geomtools/subtraction_3d.h>
 #include <geomtools/intersection_3d.h>
+#include <geomtools/display_data.h>
 
 #include <geomtools/color.h>
 
@@ -1561,6 +1562,93 @@ namespace geomtools {
     return;
   }
 
+  /*
+  void gnuplot_draw::draw_display_data (std::ostream & out_, 
+                                        const vector_3d & position_, 
+                                        const rotation_3d & rotation_,
+                                        const display_data & dd_,
+                                        const std::string & display_rules_)
+  {
+    bool all_colors = true;
+    bool all_groups = true;
+    bool all_names = true;
+    bool frame = false;
+    int frame_number = -1;
+    std::map<std::string,bool> colors;
+    std::map<std::string,bool> groups;
+    std::map<int,bool>         frames;
+ 
+    for (std::vector<std::string>::const_iterator icolor 
+           = dd_.get_colors ().begin ();
+         icolor != dd_.get_colors ().end ();
+         icolor++)
+      {
+        colors[*icolor] = true;
+      }
+ 
+    return;
+  }
+  */
+    
+
+  void gnuplot_draw::draw_display_data (std::ostream & out_, 
+                                        const vector_3d & position_, 
+                                        const rotation_3d & rotation_,
+                                        const display_data & dd_,
+                                        bool static_scene_,
+                                        int frame_index_,
+                                        const std::string & color_,
+                                        const std::string & group_,
+                                        const std::string & name_)
+  {
+    for (geomtools::display_data::entries_dict_type::const_iterator i
+           = dd_.get_entries ().begin ();
+         i != dd_.get_entries ().end ();
+         i++)
+      {
+        const std::string & entry_name = i->first;
+        const geomtools::display_data::display_entry & de = i->second;
+        if (! name_.empty() && entry_name != name_) continue;
+        if (! group_.empty() && de.group != group_) continue;
+        if (static_scene_ && de.is_static ())
+          {
+            const geomtools::display_data::display_item & di = de.get_static_item ();
+            if (color_.empty() || di.color == color_) 
+              {
+                for (std::list<geomtools::polyline_3d>::const_iterator ip = di.paths.begin ();
+                     ip != di.paths.end ();
+                     ip++)
+                  {
+                    const geomtools::polyline_3d & wires = *ip;
+                    geomtools::gnuplot_draw::draw_polyline (out_,
+                                                            position_,
+                                                            rotation_,
+                                                            wires);
+                  }
+              }
+          }
+        if (frame_index_ >= 0 && de.is_framed ())
+          {
+            const geomtools::display_data::display_item & di = de.get_framed_item (frame_index_);
+            if (color_.empty() || di.color == color_) 
+              {
+                for (std::list<geomtools::polyline_3d>::const_iterator ip = di.paths.begin ();
+                     ip != di.paths.end ();
+                     ip++)
+                  {
+                    const geomtools::polyline_3d & wires = *ip;
+                    geomtools::gnuplot_draw::draw_polyline (out_,
+                                                            position_,
+                                                            rotation_,
+                                                            wires);
+                  }
+              }
+          }
+      }
+    
+    return;
+  }
+  
   void gnuplot_draw::draw (ostream & out_, 
                            const i_placement & p_, 
                            const i_object_3d & o_,

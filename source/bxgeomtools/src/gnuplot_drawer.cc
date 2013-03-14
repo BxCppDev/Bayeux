@@ -5,17 +5,22 @@
 #include <geomtools/gnuplot_drawer.h>
 
 #include <stdexcept>
+#include <cstdlib>
 
 #include <datatools/i_tree_dump.h>
 
 #include <geomtools/model_factory.h>
 #include <geomtools/placement.h>
 #include <geomtools/physical_volume.h>
-
 #include <geomtools/color.h>
 #include <geomtools/visibility.h>
 #include <geomtools/gnuplot_draw.h>
 #include <geomtools/gnuplot_i.h>
+#include <geomtools/display_data.h>
+#include <geomtools/geom_id.h>
+#include <geomtools/geom_info.h>
+#include <geomtools/mapping.h>
+#include <geomtools/manager.h>
 
 namespace geomtools {
 
@@ -39,6 +44,9 @@ namespace geomtools {
   const string gnuplot_drawer::FORCE_SHOW_ENVELOP_PROPERTY_NAME  = "visibility.force_show_envelop";
   const string gnuplot_drawer::FORCE_SHOW_CHILDREN_PROPERTY_NAME = "visibility.force_show_children";
 
+  const std::string gnuplot_drawer::WORLD_NAME_KEY = "world_name";
+
+
   bool gnuplot_drawer::g_devel = false;
 
   gnuplot_drawer::cstream::cstream ()
@@ -46,6 +54,64 @@ namespace geomtools {
     oss = 0;
     return;
   }
+
+  /**********************************************************************/
+
+  bool gnuplot_drawer::dd_entry::is_valid() const
+  {
+    return _dd_address_ != 0 && _pl_.is_valid ();
+  }
+ 
+  gnuplot_drawer::dd_entry::dd_entry()
+  {
+    _dd_address_ = 0;
+    return;
+  }
+
+  void gnuplot_drawer::dd_entry::reset()
+  {
+    _dd_address_ = 0;
+    _pl_.reset();
+    return;
+  }
+
+  void gnuplot_drawer::dd_entry::set_placement(const placement & pl_)
+  {
+    _pl_ = pl_;
+    return;
+  }
+
+  void gnuplot_drawer::dd_entry::set_display_data(const display_data & dd_)
+  {
+    _dd_address_ = &dd_;
+    return;
+  }
+  
+  const placement & gnuplot_drawer::dd_entry::get_placement() const
+  {
+    return _pl_;
+  }
+
+  const display_data & gnuplot_drawer::dd_entry::get_display_data() const
+  {
+    return *_dd_address_;
+  }
+  
+  gnuplot_drawer::has_dd_addr::has_dd_addr(const display_data& dd_) : _dd_address_(&dd_) 
+  {
+    return;
+  }
+
+  bool gnuplot_drawer::has_dd_addr::operator()(const dd_entry & dde_) const
+  {
+    if (! dde_.is_valid())
+      {
+        throw std::logic_error ("geomtools::gnuplot_drawer::has_dd_addr::operator(): Invalid dd_entry instance !");
+      }
+    return _dd_address_ == &dde_.get_display_data();
+  }
+ 
+  /**********************************************************************/
 
   gnuplot_drawer::range::range (char axis_)
   {
@@ -87,8 +153,8 @@ namespace geomtools {
       #endif
     */
     clog << endl << "Press [Enter] to continue..." << endl;
-    string s;
-    getline (cin, s);
+    std::string s;
+    std::getline (std::cin, s);
     return;
   }
   
@@ -114,7 +180,7 @@ namespace geomtools {
     return _mode_;
   }
 
-  datatools::properties & gnuplot_drawer::get_properties ()
+  datatools::properties & gnuplot_drawer::grab_properties ()
   {
     return _props_;
   }
@@ -147,6 +213,7 @@ namespace geomtools {
   ostringstream & gnuplot_drawer::_get_stream (const string & section_)
   {
     bool devel = g_devel;
+    //devel = true; // XXX
     if (devel)
       {
         cerr << "DEVEL: gnuplot_drawer::_get_stream: "
@@ -192,6 +259,36 @@ namespace geomtools {
   bool gnuplot_drawer::use_labels () const
   {
     return _labels_;
+  }
+
+  void gnuplot_drawer::add_display_data(const display_data & dd_)
+  {
+    const placement pl;
+    add_display_data(dd_,pl);
+  }
+
+  void gnuplot_drawer::add_display_data(const display_data & dd_, const placement & pl_)
+  {
+    // gnuplot_drawer::has_dd_addr dd_addr_predicate (dd_);
+    // if (std::find_if(_display_data_.begin(),
+    //               _display_data_.end(),
+    //               dd_addr_predicate) == _display_data_.end())
+    //   {
+        {
+          dd_entry dummy;
+          _display_data_.push_back(dummy);
+        }
+        dd_entry & dde = _display_data_.back();
+        dde.set_placement(pl_);
+        dde.set_display_data(dd_);
+    // }
+    return;
+  }
+    
+  void gnuplot_drawer::reset_display_data()
+  {
+    _display_data_.clear();
+    return;
   }
 
   // ctor:
@@ -595,12 +692,12 @@ namespace geomtools {
       }
     usleep (200);
    
-    string view = _view_;
+    std::string view = _view_;
 
     Gnuplot g1 ("lines");       
-    g1.cmd ("set terminal x11 size 500,500");
+    g1.cmd ("set terminal x11 persist size 500,500");
     g1.cmd ("set size ratio -1");
-    ostringstream title_oss;
+    std:ostringstream title_oss;
     title_oss << "Logical '" << name_ << "'";
     g1.set_title (title_oss.str ());
 
@@ -789,7 +886,7 @@ namespace geomtools {
     if (found ==  mf_.get_logicals ().end ())
       {
         ostringstream message;
-        message << "gnuplot_drawer::draw: "
+        message << "geomtools::gnuplot_drawer::draw: "
                 << "Cannot find logical volume with name '" << logical_name_ << "' !"; 
         throw logic_error (message.str ());   
       }
@@ -797,9 +894,91 @@ namespace geomtools {
     draw (log, p_, max_display_level_, log.get_name ());
     return;
   }
-   
+
+  int gnuplot_drawer::draw (const manager & geo_mgr_,
+                            const std::string & what_,
+                            int max_display_level_)
+  {
+    std::string what = what_;
+    if (what.empty())
+      {
+        what = geo_mgr_.get_world_name () ;
+      }
+    if (what.empty())
+      {
+        std::ostringstream message;
+        message << "geomtools::gnuplot_drawer::draw: "
+                << "Missing object label to be displayed !"; 
+        throw std::logic_error (message.str ());   
+      }
+    std::istringstream visu_gid_iss(what);
+    geomtools::geom_id visu_gid;
+    visu_gid_iss >> visu_gid;
+    if (visu_gid_iss)
+      {
+        if (! geo_mgr_.get_mapping().validate_id(visu_gid))
+          {
+            ostringstream message;
+            message << "geomtools::gnuplot_drawer::draw: "
+                    << "Cannot find geometry volume with GID='" << visu_gid << "' in mapping dictionnary !"; 
+            std::cerr << "ERROR: " << message.str() << std::endl;
+            return EXIT_FAILURE;
+          }
+        draw_from_gid (geo_mgr_.get_factory(), 
+                       visu_gid, 
+                       geo_mgr_.get_mapping(), 
+                       max_display_level_);
+      }
+    else
+      {
+        std::clog << "NOTICE: " << "Label '" << what << "' is not a GID !" << std::endl;
+        geomtools::placement visu_placement;
+        const std::string & visu_model_name = what;
+        models_col_type::const_iterator found = geo_mgr_.get_factory ().get_models ().find (visu_model_name);
+        if (found == geo_mgr_.get_factory ().get_models ().end ())
+          {
+            ostringstream message;
+            message << "geomtools::gnuplot_drawer::draw: "
+                    << "Cannot find geometry model with name='" << visu_model_name << "' in the geometry model factory !"; 
+            std::cerr << "ERROR: " << message.str() << std::endl;
+            return EXIT_FAILURE;
+          }
+        draw (geo_mgr_.get_factory (), 
+              visu_model_name, 
+              visu_placement, 
+              max_display_level_);  
+      }
+    return EXIT_SUCCESS;
+  }
+  
+  void gnuplot_drawer::draw_from_gid (const model_factory & mf_,
+                                      const geom_id & gid_,
+                                      const mapping & mapping_,
+                                      int max_display_level_)
+  {
+    if (! mapping_.validate_id(gid_))
+      {
+        ostringstream message;
+        message << "gnuplot_drawer::draw_from_gid: "
+                << "Cannot find object with GID='" << gid_ << "' in the mapping dictionnary !"; 
+        throw logic_error (message.str ());     
+      }
+    const geom_info & ginfo = mapping_.get_geom_info (gid_);
+    const placement & wpl = ginfo.get_world_placement ();
+    const logical_volume & log = ginfo.get_logical ();
+
+    bool draw_dd = true;
+    if (draw_dd)
+      {
+        _draw_display_data(mf_, wpl);
+      }
+
+    draw (log, wpl, max_display_level_, log.get_name ());
+    return;
+  }
+  
   void gnuplot_drawer::draw (const model_factory & mf_,
-                             const string & name_,
+                             const std::string & name_,
                              const placement & p_,
                              int max_display_level_)
   {
@@ -815,12 +994,65 @@ namespace geomtools {
       }
     const i_model & model = *(found->second);
     const geomtools::logical_volume & log = model.get_logical ();
+    
+    bool draw_dd = true;
+    std::string world_name;
+    if (get_properties().has_key(gnuplot_drawer::WORLD_NAME_KEY)
+        && get_properties().is_string(gnuplot_drawer::WORLD_NAME_KEY))
+      {
+        world_name = get_properties().fetch_string(gnuplot_drawer::WORLD_NAME_KEY);
+      }
+    if (world_name.empty())
+      {
+        world_name = geomtools::model_factory::DEFAULT_WORLD_LABEL;
+      }
+    if (draw_dd && (name_ == world_name))
+      {
+        _draw_display_data(mf_, p_);
+      }
 
     draw (log, p_, max_display_level_, log.get_name ());
 
     return;
   }
   
+  void gnuplot_drawer::_draw_display_data (const model_factory & mf_,
+                                          const placement & p_)
+  {
+    std::cerr << "DEVEL: " << "geomtools::gnuplot_drawer::_draw_display_data: "
+              << "Entering..."
+              << std::endl;
+    bool draw_static = true;
+    int draw_frame_index = -1;
+    std::string draw_group;
+    std::string draw_name;
+    for (int idd = 0; idd < _display_data_.size(); idd++)
+      {
+        const display_data & dd = _display_data_[idd].get_display_data();
+        const placement & dd_pl = _display_data_[idd].get_placement();
+        
+        dd.tree_dump(std::cerr, "Display data: ", "DEVEL: ");
+        for (int icolor = 0; icolor < dd.get_colors().size(); icolor++)
+          {
+            const std::string & draw_color = dd.get_colors()[icolor];
+            std::cerr << "DEVEL: " << "geomtools::gnuplot_drawer::_draw_display_data: "
+                      << "Color = " << draw_color
+                      << std::endl;
+            std::ostringstream & colored_out = _get_stream(draw_color);
+            geomtools::gnuplot_draw::draw_display_data(colored_out,
+                                                       dd_pl.get_translation(), 
+                                                       dd_pl.get_rotation(), 
+                                                       dd,
+                                                       draw_static,
+                                                       draw_frame_index,
+                                                       draw_color,
+                                                       draw_group,
+                                                       draw_name);      
+          }
+      }
+    return;
+  }
+
 } // end of namespace geomtools
 
 // end of gnuplot_drawer.cc

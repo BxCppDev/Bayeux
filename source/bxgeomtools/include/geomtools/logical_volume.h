@@ -38,12 +38,6 @@ namespace geomtools {
 
     static const std::string HAS_REPLICA_FLAG;
 
-  private:
-    
-    void _clear_shape_ ();
-
-  public:
-
     bool is_locked () const;
 
     void lock ();
@@ -105,6 +99,8 @@ namespace geomtools {
 
   private:
     
+    void _clear_shape_ ();
+   
     void _init_defaults_ ();
    
     void _at_lock_ ();

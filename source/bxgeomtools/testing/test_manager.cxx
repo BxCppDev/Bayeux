@@ -24,9 +24,13 @@
 #include <iostream> 
 #include <string>
 #include <exception>
+
+#include <boost/shared_ptr.hpp>
  
 #include <datatools/properties.h>
 #include <datatools/utils.h>
+
+#include <mygsl/rng.h>
 
 #include <geomtools/gnuplot_drawer.h>
 #include <geomtools/gdml_export.h>
@@ -37,6 +41,10 @@
 #include <geomtools/mapping.h>
 #include <geomtools/materials_plugin.h>
 #include <geomtools/materials_utils.h>
+
+// For tests:
+#include <geomtools/display_data.h>
+#include <geomtools/blur_spot.h>
 
 /* A plugin for the geometry manager which instantiate 
  * a 'mapping' object with its specific mapping rules.
@@ -150,7 +158,7 @@ int main (int argc_, char ** argv_)
       std::string manager_config_file;
       bool   dump = false;
       bool   visu = false;
-      std::string visu_model_name = "";
+      std::string visu_object_name = "";
       int    visu_depth  = geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT;
       std::string drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
       bool   gdml = false;
@@ -159,13 +167,14 @@ int main (int argc_, char ** argv_)
       bool   force_show = false;
       bool   force_show_envelop = false;
       bool   force_show_children = false;
-
+      bool   add_dd = false;
+      int    nb_dd = 1;
       // parse command line argument:
       int iarg = 1;
       while (iarg < argc_)
         {
           std::string token = argv_[iarg];
- 
+          //std::cerr << "Token = " << token << '\n';
           if (token[0] == '-')
             {
               std::string option = token; 
@@ -224,7 +233,7 @@ int main (int argc_, char ** argv_)
                     {
                       throw std::logic_error ("Missing model name !");
                     }
-                  visu_model_name = s;
+                  visu_object_name = s;
                 }
               else if ((option == "-D") || (option == "--visu-depth")) 
                 {
@@ -260,6 +269,15 @@ int main (int argc_, char ** argv_)
               else if (option == "-3d") 
                 {
                   drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
+                }
+              else if (option == "--add-display-data") 
+                {                 
+                  add_dd = true;
+                }
+              else if (option == "--nb-display-data") 
+                {                 
+                  add_dd = true;
+                  nb_dd = atoi(argv_[++iarg]);
                 }
               else 
                 { 
@@ -308,173 +326,11 @@ int main (int argc_, char ** argv_)
       geo_mgr.initialize (manager_config);
       if (dump) 
         {
-          geo_mgr.get_factory ().tree_dump (std::clog, 
-                                               "A test geometry model factory");
-          geo_mgr.get_id_mgr ().tree_dump (std::clog, 
-                                              "A test geometry ID manager");
+          geo_mgr.get_factory ().tree_dump (std::clog, "The embeded geometry model factory : ");
+          geo_mgr.get_id_mgr ().tree_dump (std::clog, "The embeded GID manager : ");
+          std::clog << "The embeded GID mapping : " << std::endl;
+          geo_mgr.get_mapping ().dump_dictionnary (std::clog);
         }
-
-      if (visu)
-        {
-          while (true)
-            {
-              std::clog << "Models: " << std::endl;
-              int count = 0;
-              for (geomtools::models_col_type::const_iterator i 
-                     = geo_mgr.get_factory ().get_models ().begin ();
-                   i != geo_mgr.get_factory ().get_models ().end ();
-                   i++)
-                {
-                  bool visible = true;
-                  visible = geomtools::visibility::is_shown (i->second->get_logical ().parameters ());
-                  if (force_show)
-                    {
-                      visible = true;
-                    }
-                  if (visible)
-                    {
-                      std::clog << "  " << datatools::io::left 
-                                << datatools::io::width (35) << i->second->get_name ();
-                      count++;
-                      if ((count % 2) == 0) std::clog << std::endl;
-                    }
-                }
-              std::clog << std::endl;
-
-              std::string option_view;
-              if (visu_model_name.empty ())
-                {
-                  std::clog << "Enter the name of the geometry model to display [.q = quit]: ";
-                  std::string line;
-                  std::getline (std::cin, line);
-                  std::istringstream iss (line);
-                  iss >> visu_model_name >> std::ws >> option_view;
-                  std::clog << std::endl;
-                }
-              if (visu_model_name == ".q")
-                {
-                  visu_model_name = "";
-                  break;
-                }
-              if (! option_view.empty ())
-                {
-                  if (option_view == "-xy") 
-                    {
-                      drawer_view = geomtools::gnuplot_drawer::VIEW_2D_XY;
-                    }
-                  else if (option_view == "-xz") 
-                    {
-                      drawer_view = geomtools::gnuplot_drawer::VIEW_2D_XZ;
-                    }
-                  else if (option_view == "-yz") 
-                    {
-                      drawer_view = geomtools::gnuplot_drawer::VIEW_2D_YZ;
-                    }
-                  else if (option_view == "-3d") 
-                    {
-                      drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
-                    }
-                }
-      
-              if (visu_model_name.empty ())
-                {
-                  visu_model_name = "world";
-                }
-              if (debug) 
-                {
-                  std::clog << "DEBUG: " << "visu_model_name : '" << visu_model_name << "'" << std::endl; 
-                }
-              geomtools::placement visu_placement;
-              visu_placement.set (0, 0, 0, 
-                                  0 * CLHEP::degree, 0 * CLHEP::degree, 0 * CLHEP::degree);
-              if (debug) 
-                {
-                  visu_placement.tree_dump (std::clog, "Placement", "DEBUG: ");
-                }
-
-              geomtools::id_mgr::g_devel = devel;
-              geomtools::gnuplot_drawer::g_devel = devel;
-              geomtools::gnuplot_drawer GPD;
-              if (force_show)
-                {
-                  GPD.get_properties ().store (geomtools::gnuplot_drawer::FORCE_SHOW_PROPERTY_NAME, true);
-                }
-              if (force_show_envelop)
-                {
-                  GPD.get_properties ().store (geomtools::gnuplot_drawer::FORCE_SHOW_ENVELOP_PROPERTY_NAME, true);
-                }
-              if (force_show_children)
-                {
-                  GPD.get_properties ().store (geomtools::gnuplot_drawer::FORCE_SHOW_CHILDREN_PROPERTY_NAME, true);
-                }
-              GPD.set_view (drawer_view);
-              GPD.set_mode (geomtools::gnuplot_drawer::MODE_WIRED);
-              GPD.draw (geo_mgr.get_factory (), 
-                        visu_model_name, 
-                        visu_placement, 
-                        visu_depth);
-              visu_model_name = "";
-            }
-        } // visu
-      else
-        {
-          std::clog << "NOTICE: " << "No visu..." << std::endl;
-        }
-
-      if (gdml)
-        {
-          std::string world_model_name = geo_mgr.get_world_name ();
- 
-          geomtools::gdml_export::g_devel = debug;
-          geomtools::gdml_writer material_writer; // GDML writer for materials
-          geomtools::gdml_export GDML;            // factory->GDML exporter
-
- 
-          std::clog << "NOTICE: " << "Accessing the materials driver plugin..." << std::endl;
-
-          const materials::manager * mat_mgr_ref = 0;
-          // Access to a given plugin by name and type :
-          std::string materials_plugin_name = "materials_driver";
-          if (geo_mgr.has_plugin (materials_plugin_name) 
-              && geo_mgr.is_plugin_a<geomtools::materials_plugin>(materials_plugin_name))
-            {
-              std::clog << "NOTICE: " << "Found materials plugin named '" << materials_plugin_name 
-                        << "'" << std::endl;
-              const geomtools::materials_plugin & mgp 
-                = geo_mgr.get_plugin<geomtools::materials_plugin>(materials_plugin_name);
-              const materials::manager & mat_mgr = mgp.get_manager();
-              mat_mgr_ref = &mat_mgr;
-            }
- 
-          if (mat_mgr_ref != 0)
-            {         
-              std::clog << "NOTICE: " 
-                        << "Export GDML materials from the materials driver plugin: "<< std::endl;
-              geomtools::export_gdml (*mat_mgr_ref, material_writer);
-              GDML.attach_external_materials (material_writer.get_stream (geomtools::gdml_writer::MATERIALS_SECTION));
-            }
-
-          GDML.add_auxiliary_support (false);
-          GDML.add_replica_support (gdml_replica_support);
-          GDML.parameters ().store ("xml_version",  
-                                    geomtools::gdml_writer::DEFAULT_XML_VERSION);
-          GDML.parameters ().store ("xml_encoding", 
-                                    geomtools::gdml_writer::DEFAULT_XML_ENCODING);
-          GDML.parameters ().store ("gdml_schema",  
-                                    geomtools::gdml_writer::DEFAULT_GDML_SCHEMA);
-          GDML.parameters ().store ("length_unit",  
-                                    geomtools::gdml_export::DEFAULT_LENGTH_UNIT);
-          GDML.parameters ().store ("angle_unit",   
-                                    geomtools::gdml_export::DEFAULT_ANGLE_UNIT);
-          GDML.export_gdml ("${GEOMTOOLS_TMP_DIR}/test_manager.gdml", 
-                            geo_mgr.get_factory (), 
-                            world_model_name);
-          std::clog << "NOTICE: " << "GDML file '${GEOMTOOLS_TMP_DIR}/test_manager.gdml' has been generated." << std::endl;
-        } // GDML
-      else
-        {
-          std::clog << "NOTICE: " << "No GDML..." << std::endl;
-        } 
 
       if (use_plugins)
         {
@@ -544,6 +400,259 @@ int main (int argc_, char ** argv_)
           std::clog << "NOTICE: " << "Don't use plugins..." << std::endl;
         } 
  
+      if (visu)
+        {
+          while (true)
+            {
+              std::clog << "Models: " << std::endl;
+              int count = 0;
+              for (geomtools::models_col_type::const_iterator i 
+                     = geo_mgr.get_factory ().get_models ().begin ();
+                   i != geo_mgr.get_factory ().get_models ().end ();
+                   i++)
+                {
+                  bool visible = true;
+                  visible = geomtools::visibility::is_shown (i->second->get_logical ().parameters ());
+                  if (force_show)
+                    {
+                      visible = true;
+                    }
+                  if (visible)
+                    {
+                      std::clog << "  " << datatools::io::left 
+                                << datatools::io::width (35) << i->second->get_name ();
+                      count++;
+                      if ((count % 2) == 0) std::clog << std::endl;
+                    }
+                }
+              std::clog << std::endl;
+
+              std::string option_view;
+              if (visu_object_name.empty ())
+                {
+                  std::clog << "Enter the name of the geometry model to display (ex: '"
+                            << geo_mgr.get_world_name () << "') \n";
+                  std::clog << "or the GID of a geometry volume (ex: '[220:3]', '[2020:1.0]') [.q = quit]: ";
+                  std::string line;
+                  std::getline (std::cin, line);
+                  std::istringstream iss (line);
+                  iss >> visu_object_name >> std::ws >> option_view;
+                  std::clog << std::endl;
+                }
+              if (visu_object_name == ".q")
+                {
+                  visu_object_name = "";
+                  break;
+                }
+              if (! option_view.empty ())
+                {
+                  if (option_view == "-xy") 
+                    {
+                      drawer_view = geomtools::gnuplot_drawer::VIEW_2D_XY;
+                    }
+                  else if (option_view == "-xz") 
+                    {
+                      drawer_view = geomtools::gnuplot_drawer::VIEW_2D_XZ;
+                    }
+                  else if (option_view == "-yz") 
+                    {
+                      drawer_view = geomtools::gnuplot_drawer::VIEW_2D_YZ;
+                    }
+                  else if (option_view == "-3d") 
+                    {
+                      drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
+                    }
+                }
+      
+              if (visu_object_name.empty ())
+                {
+                  visu_object_name = "world";
+                }
+              if (debug) 
+                {
+                  std::clog << "DEBUG: " << "visu_object_name : '" << visu_object_name << "'" << std::endl; 
+                }
+              
+              std::vector<boost::shared_ptr<geomtools::display_data> > dd_ptrs;
+
+              geomtools::id_mgr::g_devel = devel;
+              geomtools::gnuplot_drawer::g_devel = devel;
+              geomtools::gnuplot_drawer GPD;
+              GPD.grab_properties().store(geomtools::gnuplot_drawer::WORLD_NAME_KEY,
+                                          geo_mgr.get_world_name ());
+              if (add_dd)
+                {
+                  mygsl::rng prng("taus2", 314159);
+
+                  geomtools::placement dd_pl;
+                  dd_pl.set_translation (0.0, 40.0*CLHEP::cm, 0.0);
+
+ 
+                  double x0, x1, y0, y1, z0, z1;
+                  x0 = -40.0*CLHEP::cm;
+                  x1 = +40.0*CLHEP::cm;
+                  y0 =   0.0*CLHEP::cm;
+                  y1 = +20.0*CLHEP::cm;
+                  z0 =   0.0*CLHEP::cm;
+                  z1 = +35.0*CLHEP::cm;
+
+                  // x0 =   0.0*CLHEP::cm;
+                  // x1 = +25.0*CLHEP::cm;
+                  // y0 = -30.0*CLHEP::cm;
+                  // y1 = -20.0*CLHEP::cm;
+                  // z0 =   0.0*CLHEP::cm;
+                  // z1 = +25.0*CLHEP::cm;
+ 
+                  {
+                    boost::shared_ptr<geomtools::display_data> p;
+                    dd_ptrs.push_back(p);
+                    boost::shared_ptr<geomtools::display_data> & dd_ptr = dd_ptrs[0];
+                    geomtools::box spot_box(x1-x0, y1-y0, z1-z0);
+                    geomtools::display_data * dd = new geomtools::display_data;
+                    geomtools::display_data::display_item & spot_box_DI            
+                      = dd->add_static_item ("spot_box",
+                                             "group::vertex_box",
+                                             "magenta");
+                    geomtools::placement plcmt;
+                    plcmt.set_translation(0.5*(x1+x0), 0.5*(y1+y0), 0.5*(z1+z0));
+                    spot_box.generate_wires (spot_box_DI.paths, plcmt);  
+                    dd_ptr.reset(dd);
+                    GPD.add_display_data (*dd_ptr.get(), dd_pl);
+                  }
+                  
+                  int ndd = nb_dd;
+                  for (int i = 0; i < ndd; i++) {
+                    boost::shared_ptr<geomtools::display_data> p;
+                    dd_ptrs.push_back(p);
+                  }
+
+                  for(int i = 1; i < dd_ptrs.size(); i++)
+                    {
+                      boost::shared_ptr<geomtools::display_data> & dd_ptr = dd_ptrs[i];
+                      geomtools::blur_spot bs(3, 1 *CLHEP::mm);
+                      bs.set_errors(1.*CLHEP::cm,1*CLHEP::cm,1.*CLHEP::cm);
+                      geomtools::display_data * dd = new geomtools::display_data;
+                      std::ostringstream dd_name_oss;
+                      dd_name_oss << "vertex_" << (i-1);
+                      geomtools::display_data::display_item & spot_DI            
+                        = dd->add_static_item (dd_name_oss.str(),
+                                               "group::vertices",
+                                               (prng.uniform() < 0.5 ? "orange" : "blue"));
+                      geomtools::placement plcmt;
+                      if (i == 0)
+                        {
+                          plcmt.set_translation (0.5*(x1+x0)+5.0*CLHEP::cm,
+                                                 0.5*(y1+y0)+10.0*CLHEP::cm,
+                                                 0.5*(z1+z0)+10.0*CLHEP::cm);
+                          plcmt.set_orientation (15.*CLHEP::degree,
+                                                 0.0,
+                                                 0.0);
+                        }
+                      else
+                        {
+                          plcmt.set_translation (prng.flat(x0, x1),
+                                                 prng.flat(y0, y1),
+                                                 prng.flat(z0, z1));
+                          plcmt.set_orientation (prng.flat(0.0, 360.*CLHEP::degree),
+                                                 std::acos(prng.flat(-1.0, +1.0)),
+                                                 0.0);
+                        }
+                      bs.generate_wires (spot_DI.paths, plcmt);  
+                      dd_ptr.reset(dd);
+                      {
+                        GPD.add_display_data (*dd_ptr.get(), dd_pl);
+                      }
+                      dd_ptr.get()->tree_dump (std::clog, 
+                                               dd_name_oss.str(), 
+                                               "Embebed display data : ");
+                    }
+                  std::clog << "Embeded display data : " << dd_ptrs.size() << std::endl;
+                }
+              if (force_show)
+                {
+                  GPD.grab_properties ().store (geomtools::gnuplot_drawer::FORCE_SHOW_PROPERTY_NAME, true);
+                }
+              if (force_show_envelop)
+                {
+                  GPD.grab_properties ().store (geomtools::gnuplot_drawer::FORCE_SHOW_ENVELOP_PROPERTY_NAME, true);
+                }
+              if (force_show_children)
+                {
+                  GPD.grab_properties ().store (geomtools::gnuplot_drawer::FORCE_SHOW_CHILDREN_PROPERTY_NAME, true);
+                }
+              GPD.set_view (drawer_view);
+              GPD.set_mode (geomtools::gnuplot_drawer::MODE_WIRED);
+              int view_code = GPD.draw (geo_mgr, 
+                                        visu_object_name, 
+                                        visu_depth);
+              if (view_code != 0)
+                {
+                  std::cerr << "ERROR: " << "Cannot display the object with label '" 
+                            << visu_object_name << "' !" << std::endl;
+                }
+              visu_object_name = "";
+            }
+        } // visu
+      else
+        {
+          std::clog << "NOTICE: " << "No visu..." << std::endl;
+        }
+
+      if (gdml)
+        {
+          std::string world_model_name = geo_mgr.get_world_name ();
+ 
+          geomtools::gdml_export::g_devel = debug;
+          geomtools::gdml_writer material_writer; // GDML writer for materials
+          geomtools::gdml_export GDML;            // factory->GDML exporter
+
+ 
+          std::clog << "NOTICE: " << "Accessing the materials driver plugin..." << std::endl;
+
+          const materials::manager * mat_mgr_ref = 0;
+          // Access to a given plugin by name and type :
+          std::string materials_plugin_name = "materials_driver";
+          if (geo_mgr.has_plugin (materials_plugin_name) 
+              && geo_mgr.is_plugin_a<geomtools::materials_plugin>(materials_plugin_name))
+            {
+              std::clog << "NOTICE: " << "Found materials plugin named '" << materials_plugin_name 
+                        << "'" << std::endl;
+              const geomtools::materials_plugin & mgp 
+                = geo_mgr.get_plugin<geomtools::materials_plugin>(materials_plugin_name);
+              const materials::manager & mat_mgr = mgp.get_manager();
+              mat_mgr_ref = &mat_mgr;
+            }
+ 
+          if (mat_mgr_ref != 0)
+            {         
+              std::clog << "NOTICE: " 
+                        << "Export GDML materials from the materials driver plugin: "<< std::endl;
+              geomtools::export_gdml (*mat_mgr_ref, material_writer);
+              GDML.attach_external_materials (material_writer.get_stream (geomtools::gdml_writer::MATERIALS_SECTION));
+            }
+
+          GDML.add_auxiliary_support (false);
+          GDML.add_replica_support (gdml_replica_support);
+          GDML.parameters ().store ("xml_version",  
+                                    geomtools::gdml_writer::DEFAULT_XML_VERSION);
+          GDML.parameters ().store ("xml_encoding", 
+                                    geomtools::gdml_writer::DEFAULT_XML_ENCODING);
+          GDML.parameters ().store ("gdml_schema",  
+                                    geomtools::gdml_writer::DEFAULT_GDML_SCHEMA);
+          GDML.parameters ().store ("length_unit",  
+                                    geomtools::gdml_export::DEFAULT_LENGTH_UNIT);
+          GDML.parameters ().store ("angle_unit",   
+                                    geomtools::gdml_export::DEFAULT_ANGLE_UNIT);
+          GDML.export_gdml ("${GEOMTOOLS_TMP_DIR}/test_manager.gdml", 
+                            geo_mgr.get_factory (), 
+                            world_model_name);
+          std::clog << "NOTICE: " << "GDML file '${GEOMTOOLS_TMP_DIR}/test_manager.gdml' has been generated." << std::endl;
+        } // GDML
+      else
+        {
+          std::clog << "NOTICE: " << "No GDML..." << std::endl;
+        } 
+
       std::clog << "NOTICE: " << "The end." << std::endl;
     }
   catch (std::exception & x)

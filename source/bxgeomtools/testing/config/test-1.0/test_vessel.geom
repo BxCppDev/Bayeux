@@ -73,7 +73,7 @@ internal_item.labels : string[2] = "sources" "detector_array"
 internal_item.model.sources       : string  = "source_chain.model"
 
 #@description The placement of the "sources" daughter volume
-internal_item.placement.sources   : string  = "0 0 -50 (cm)"
+internal_item.placement.sources   : string  = "15 30 -50 (cm)"
 
 #@description The model of the "detector_array" daughter volume
 internal_item.model.detector_array     : string  = "detector_array.model"

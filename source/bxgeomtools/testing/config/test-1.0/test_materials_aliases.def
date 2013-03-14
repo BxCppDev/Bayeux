@@ -41,4 +41,8 @@ material : string = "std::polystyrene"
 #@description The alias for vacuum
 material : string = "std::vacuum"
 
+[name="lead" type="alias"]
+#@description The alias for lead
+material : string = "std::lead"
+
 # end

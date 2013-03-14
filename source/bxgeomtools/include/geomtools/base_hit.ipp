@@ -14,32 +14,30 @@
 #include <datatools/properties.ipp>
 
 namespace geomtools {
-
-      using namespace std;
     
-      template<class Archive>
-      void base_hit::serialize (Archive & ar,                
-                                const unsigned int version) 
+  template<class Archive>
+  void base_hit::serialize (Archive & ar,                
+                            const unsigned int version) 
+  {
+    if (version > 0)
       {
-        if (version > 0)
-          {
-            ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-          }
-        ar & boost::serialization::make_nvp ("store",       _store);
-        if (_store & STORE_HIT_ID)
-          {
-            ar & boost::serialization::make_nvp ("hit_id",      _hit_id_);
-          }
-        if (_store & STORE_GEOM_ID)
-          {
-            ar & boost::serialization::make_nvp ("geom_id",     _geom_id_);
-          }
-        if (_store & STORE_AUXILIARIES)
-          {
-            ar & boost::serialization::make_nvp ("auxiliaries", _auxiliaries_);
-          }
-        return;
+        ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
       }
+    ar & boost::serialization::make_nvp ("store",       _store);
+    if (_store & STORE_HIT_ID)
+      {
+        ar & boost::serialization::make_nvp ("hit_id",      _hit_id_);
+      }
+    if (_store & STORE_GEOM_ID)
+      {
+        ar & boost::serialization::make_nvp ("geom_id",     _geom_id_);
+      }
+    if (_store & STORE_AUXILIARIES)
+      {
+        ar & boost::serialization::make_nvp ("auxiliaries", _auxiliaries_);
+      }
+    return;
+  }
  
 } // end of namespace geomtools
 

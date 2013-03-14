@@ -51,9 +51,18 @@ namespace geomtools {
         DISPLAY_FRAMED = 1,
       };
 
+   
+    enum display_style_type
+      {
+        DISPLAY_STYLE_UNDEFINED = -1,
+        DISPLAY_STYLE_WIRES  = 0,
+      };
+
+
     struct display_item
     {
       std::string                       frame_info;
+      std::string                       style;
       std::string                       color;
       std::list<geomtools::polyline_3d> paths;
     public:
@@ -88,13 +97,13 @@ namespace geomtools {
 
     void reset ();
 
-    // ctor:
+    /// Constructor
     display_data ();
 
-    // dtor:
+    // Destructor
     virtual ~display_data ();
 
-    /*** interface i_clear ***/
+    /* interface i_clear */
     virtual void clear ();
 
     const std::vector<std::string> & get_colors () const;
@@ -108,6 +117,12 @@ namespace geomtools {
     const std::map<std::string, display_entry> & get_entries () const;
 
     std::map<std::string, display_entry> & grab_entries ();
+
+    const std::map<int32_t,std::string> & get_frames () const;
+
+    std::map<int32_t,std::string> & grab_frames ();
+
+    void add_frame_info(int frame_index_, const std::string & frame_info_ = 0);
 
     const datatools::properties & get_auxiliaries () const;
 
@@ -127,7 +142,10 @@ namespace geomtools {
     display_item & add_framed_item (const std::string & name_, 
                                     int frame_,
                                     const std::string & group_ = "",
-                                    const std::string & color_ = "");
+                                    const std::string & color_ = "",
+                                    const std::string & frame_info_ = "");
+
+    void process();
 
   protected:
         
@@ -141,6 +159,7 @@ namespace geomtools {
 
     std::vector<std::string>             _colors_;
     std::vector<std::string>             _groups_;
+    std::map<int32_t,std::string>        _frames_;
     std::map<std::string, display_entry> _entries_;
     datatools::properties                _auxiliaries_;
 

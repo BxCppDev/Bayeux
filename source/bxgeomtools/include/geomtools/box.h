@@ -13,8 +13,8 @@
  * 
  */
 
-#ifndef __geomtools__box_h
-#define __geomtools__box_h 1
+#ifndef GEOMTOOLS_BOX_H_
+#define GEOMTOOLS_BOX_H_ 1
 
 #include <sstream>
 #include <stdexcept>
@@ -158,7 +158,7 @@ namespace geomtools {
     
 } // end of namespace geomtools
 
-#endif // __geomtools__box_h
+#endif // GEOMTOOLS_BOX_H_
 
 // end of box.h
 

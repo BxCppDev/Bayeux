@@ -13,8 +13,8 @@
  * 
  */
 
-#ifndef __geomtools__material_h
-#define __geomtools__material_h 1
+#ifndef GEOMTOOLS_MATERIAL_H_
+#define GEOMTOOLS_MATERIAL_H_ 1
 
 #include <iostream>
 #include <iomanip>
@@ -71,6 +71,6 @@ namespace geomtools {
 
 }  // end of namespace geomtools
 
-#endif // __geomtools__material_h
+#endif // GEOMTOOLS_MATERIAL_H_
 
 // end of material.h

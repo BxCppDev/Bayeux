@@ -13,8 +13,8 @@
  * 
  */
 
-#ifndef __geomtools__i_wires_3d_rendering_h
-#define __geomtools__i_wires_3d_rendering_h 1
+#ifndef GEOMTOOLS_I_WIRES_3D_RENDERING_H_
+#define GEOMTOOLS_I_WIRES_3D_RENDERING_H_ 1
 
 #include <list>
 #include <geomtools/polyline_3d.h>
@@ -39,6 +39,6 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // __geomtools__i_wires_3d_rendering_h
+#endif // GEOMTOOLS_I_WIRES_3D_RENDERING_H_
 
 // end of i_wires_3d_rendering.h

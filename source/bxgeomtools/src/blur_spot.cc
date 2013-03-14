@@ -5,6 +5,7 @@
 #include <geomtools/blur_spot.h>
 #include <geomtools/i_object_3d.h>
 #include <datatools/utils.h>
+#include <datatools/clhep_units.h>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
@@ -392,7 +393,7 @@ namespace geomtools {
           }
         return true;  
       }
-     return false;
+    return false;
   }
 
   bool blur_spot::match (const vector_3d & position_, 
@@ -450,40 +451,99 @@ namespace geomtools {
  
   void blur_spot::set_x_error (double x_error_)
   {
-    if (x_error_ > 0.0)
+    if (is_dimension_two() || is_dimension_three())
       {
-        _x_error_ = x_error_;
+        if (x_error_ > 0.0)
+          {
+            _x_error_ = x_error_;
+          }
+        else
+          {
+            datatools::invalidate (_x_error_);
+          }
       }
     else
       {
-        datatools::invalidate (_x_error_);
+        throw std::logic_error("geomtools::blur_spot::set_x_error: Cannot set the X error in dimension 0 or 1");
       }
     return;
   }
  
   void blur_spot::set_y_error (double y_error_)
   {
-    if (y_error_ > 0.0)
+    if (is_dimension_two() || is_dimension_three())
       {
-        _y_error_ = y_error_;
+        if (y_error_ > 0.0)
+          {
+            _y_error_ = y_error_;
+          }
+        else
+          {
+            datatools::invalidate (_y_error_);
+          }
       }
     else
       {
-        datatools::invalidate (_y_error_);
+        throw std::logic_error("geomtools::blur_spot::set_y_error: Cannot set the Y error in dimension 0 or 1");
       }
     return;
   }
    
   void blur_spot::set_z_error (double z_error_)
   {
-    if (z_error_ > 0.0)
+    if (is_dimension_one() || is_dimension_three())
       {
-        _z_error_ = z_error_;
+        if (z_error_ > 0.0)
+          {
+            _z_error_ = z_error_;
+          }
+        else
+          {
+            datatools::invalidate (_z_error_);
+          }
       }
     else
       {
-        datatools::invalidate (_z_error_);
+        throw std::logic_error("geomtools::blur_spot::set_z_error: Cannot set the Z error in dimension 0 or 2");
       }
+    return;
+  }
+
+  /// Set all errors of the spot
+  void blur_spot::set_errors (double err_1_, 
+                              double err_2_, 
+                              double err_3_)
+  {
+    if (is_dimension_one())
+      {
+        set_z_error(err_1_);
+        if (datatools::is_valid(err_2_))
+          {
+            throw std::logic_error("geomtools::blur_spot::set_errors: Cannot set dimension 2 error in dimension 1");
+          }
+        if (datatools::is_valid(err_3_))
+          {
+            throw std::logic_error("geomtools::blur_spot::set_errors: Cannot set dimension 3 error in dimension 1");
+          }
+      }
+    else if (is_dimension_two())
+      {
+        set_x_error(err_1_);
+        set_y_error(err_2_);
+        if (datatools::is_valid(err_3_))
+          {
+            throw std::logic_error("geomtools::blur_spot::set_errors: Cannot set dimension 3 error in dimension 2");
+          }
+      }
+    else if (is_dimension_three())
+      {
+        set_x_error(err_1_);
+        set_y_error(err_2_);
+        set_z_error(err_3_);
+      }
+    else {
+      throw std::logic_error("geomtools::blur_spot::set_errors: Cannot set errors in dimension 0");
+    }
     return;
   }
   
@@ -587,6 +647,127 @@ namespace geomtools {
       _auxiliaries_.tree_dump (out_, "", indent_oss.str ());
     }
 
+    return;
+  }
+  
+  void blur_spot::generate_wires (std::list<polyline_3d> & lpl_,
+                                  const placement & p_, 
+                                  uint32_t options_) const
+  {
+    double dx, dy, dz;
+    dx = _tolerance_;
+    dy = _tolerance_;
+    dz = _tolerance_;
+
+    
+
+    /*
+      std::cerr << "geomtools::blur_spot::generate_wires: "
+      << "tolerance=" << _tolerance_/CLHEP::mm << " mm"
+      << std::endl;
+    */
+    if (is_dimension_zero())
+      {
+      }
+    if (is_dimension_one())
+      {
+        dz = _z_error_;
+      }
+    if (is_dimension_two())
+      {
+        dx = _x_error_;
+        dy = _x_error_;
+      }
+    if (is_dimension_three())
+      {
+        dx = _x_error_;
+        dy = _x_error_;
+        dz = _z_error_;
+      }
+    vector_3d vertexes[3][2];
+    for (int i = 0; i < 3; i++) 
+      {
+        vertexes[i][0].set((i == 0) ? -dx : 0, 
+                           (i == 1) ? -dy : 0,
+                           (i == 2) ? -dz : 0);
+        vertexes[i][1].set((i == 0) ? +dx : 0, 
+                           (i == 1) ? +dy : 0,
+                           (i == 2) ? +dz : 0);
+      }   
+
+    {
+      for (int i = 0; i < 3; i++) {
+        {
+          polyline_3d xpl;
+          lpl_.push_back (xpl);
+        }
+        polyline_3d & pl = lpl_.back ();
+        pl.set_closed (false);
+        vector_3d v1, v;
+        _placement_.child_to_mother (vertexes[0][0], v1);
+        p_.child_to_mother (v1, v);
+        pl.add (v);
+        if (i == 0)
+          {
+            // Workaround to avoid automatic Gnuplot data mesh display mode :
+            // add the middle point of the X segment.
+            vector_3d v0 = 0.5*(vertexes[i][0]+vertexes[i][1]);
+            _placement_.child_to_mother (v0, v1);
+            p_.child_to_mother (v1, v);
+            pl.add (v);            
+          }
+        _placement_.child_to_mother (vertexes[0][1], v1);
+        p_.child_to_mother (v1, v);
+        pl.add (v);      
+      }
+    }
+    
+    if (is_dimension_two() || is_dimension_three())
+      {
+        {
+          polyline_3d xpl;
+          lpl_.push_back (xpl);
+        }
+        polyline_3d & pl = lpl_.back ();
+        pl.set_closed (true);
+        vector_3d v1, v;
+        _placement_.child_to_mother (vertexes[0][0], v1);
+        p_.child_to_mother (v1, v);
+        pl.add (v);      
+        _placement_.child_to_mother (vertexes[1][0], v1);
+        p_.child_to_mother (v1, v);
+        pl.add (v);      
+        _placement_.child_to_mother (vertexes[0][1], v1);
+        p_.child_to_mother (v1, v);
+        pl.add (v);      
+        _placement_.child_to_mother (vertexes[1][1], v1);
+        p_.child_to_mother (v1, v);
+        pl.add (v);      
+      }
+    if (is_dimension_three())
+      {
+        for (int j = 0; j < 2; j++) {
+          {
+            polyline_3d xpl;
+            lpl_.push_back (xpl);
+          }
+          polyline_3d & pl = lpl_.back ();
+          pl.set_closed (true);
+          vector_3d v1, v;
+          _placement_.child_to_mother (vertexes[j][0], v1);
+          p_.child_to_mother (v1, v);
+          pl.add (v);      
+          _placement_.child_to_mother (vertexes[2][0], v1);
+          p_.child_to_mother (v1, v);
+          pl.add (v);      
+          _placement_.child_to_mother (vertexes[j][1], v1);
+          p_.child_to_mother (v1, v);
+          pl.add (v);      
+          _placement_.child_to_mother (vertexes[2][1], v1);
+          p_.child_to_mother (v1, v);
+          pl.add (v);      
+        }
+      }
     return;
   }
 

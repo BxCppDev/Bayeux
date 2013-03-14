@@ -55,7 +55,7 @@ option(GEOMTOOLS_WITH_DOC  "Build the geomtools documentation" ON)
 option(GEOMTOOLS_WITH_TEST "Build the geomtools test suite"    ON) 
 option(GEOMTOOLS_WITH_BASH_SETUP "Build the geomtools with Bash setup macro" ON)
 option(GEOMTOOLS_WITH_GNUPLOT_DISPLAY  "Build the Gnuplot-based display tools" ON )
- 
+option(GEOMTOOLS_WITH_ROOT_DISPLAY  "Allow the ROOT display tools" ON )
 
 if (GEOMTOOLS_WITH_DEBUG)
   set (GEOMTOOLS_WITH_DEBUG 1)
@@ -102,6 +102,13 @@ if(GEOMTOOLS_WITH_GNUPLOT_DISPLAY)
   find_package ( Gnuplot ${_gnuplot_min_version} REQUIRED)
 else()
   set (GEOMTOOLS_WITH_GNUPLOT_DISPLAY 0)
+endif ()
+
+if(GEOMTOOLS_WITH_ROOT_DISPLAY)
+  set (GEOMTOOLS_WITH_ROOT_DISPLAY 1)
+  find_package(ROOT 5.26.00 REQUIRED)
+else()
+  set (GEOMTOOLS_WITH_ROOT_DISPLAY 0)
 endif ()
 
 #-----------------------------------------------------------------------

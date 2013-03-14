@@ -22,6 +22,7 @@
 #include <geomtools/tube.h>
 #include <geomtools/line_3d.h>
 #include <geomtools/polyline_3d.h>
+#include <geomtools/blur_spot.h>
 #include <geomtools/placement.h>
 #include <geomtools/color.h>
 
@@ -60,6 +61,8 @@ int main (int argc_, char ** argv_)
   long seed = 314159;
   bool debug = false;
   bool draw = false;
+  std::string draw_group;
+
   int iarg = 1;
   while (iarg < argc_)
     {
@@ -73,7 +76,12 @@ int main (int argc_, char ** argv_)
         {
           draw = true;
         }
-      
+     else if (arg == "-g" || arg == "--draw-group") 
+        {
+          draw = true;
+          draw_group = argv_[++iarg];
+        }
+       
       iarg++;
     }
   try
@@ -83,6 +91,77 @@ int main (int argc_, char ** argv_)
       // A display data object :
       geomtools::display_data DD;
 
+
+      // Draw a blur spot :
+      {
+        geomtools::blur_spot a_spot (geomtools::blur_spot::DIMENSION_ZERO,
+                                     15.0 * CLHEP::mm);
+        geomtools::display_data::display_item & spot_DI 
+          = DD.add_static_item ("spot",
+                                "group::misc",
+                                "red");
+        // Compute position of the circle :
+        geomtools::placement plcmt;
+        plcmt.set_translation (-10 * CLHEP::cm, +15 * CLHEP::cm, 30 * CLHEP::cm);
+        plcmt.set_orientation (geomtools::AXIS_X, 30.*CLHEP::degree);
+        
+        // Fill the 'wires' structure of this circle :
+        a_spot.generate_wires (spot_DI.paths, plcmt);       
+      }
+
+      // Draw 1D blur spot :
+      {
+        geomtools::blur_spot a_spot (geomtools::blur_spot::DIMENSION_ONE,
+                                     10.0 * CLHEP::mm);
+        a_spot.set_errors(85.0 * CLHEP::mm);
+        geomtools::display_data::display_item & spot_DI 
+          = DD.add_static_item ("spot1",
+                                "group::misc",
+                                "orange");
+        // Compute position of the circle :
+        geomtools::placement plcmt;
+        plcmt.set_translation (-30 * CLHEP::cm, +15 * CLHEP::cm, 20 * CLHEP::cm);
+        plcmt.set_orientation (geomtools::AXIS_X, -15.*CLHEP::degree);
+        
+        // Fill the 'wires' structure of this circle :
+        a_spot.generate_wires (spot_DI.paths, plcmt);       
+      }
+
+      // Draw 2D blur spot :
+      {
+        geomtools::blur_spot a_spot (geomtools::blur_spot::DIMENSION_TWO,
+                                     10.0 * CLHEP::mm);
+        a_spot.set_errors(65.0 * CLHEP::mm, 135.0 * CLHEP::mm);
+        geomtools::display_data::display_item & spot_DI 
+          = DD.add_static_item ("spot2",
+                                "group::misc",
+                                "blue");
+        // Compute position of the circle :
+        geomtools::placement plcmt;
+        plcmt.set_translation (-10 * CLHEP::cm, -15 * CLHEP::cm, -20 * CLHEP::cm);
+        plcmt.set_orientation (geomtools::AXIS_X, -15.*CLHEP::degree);
+        
+        // Fill the 'wires' structure of this circle :
+        a_spot.generate_wires (spot_DI.paths, plcmt);       
+      }
+
+      // Draw 3D blur spot :
+      {
+        geomtools::blur_spot a_spot (geomtools::blur_spot::DIMENSION_THREE,
+                                     10.0 * CLHEP::mm);
+        a_spot.set_errors(65.0 * CLHEP::mm, 65.0 * CLHEP::mm, 100.0 * CLHEP::mm);
+        geomtools::display_data::display_item & spot_DI 
+          = DD.add_static_item ("spot3",
+                                "group::misc",
+                                "green");
+        // Compute position of the circle :
+        geomtools::placement plcmt;
+        plcmt.set_translation (-10 * CLHEP::cm, -35 * CLHEP::cm, -20 * CLHEP::cm);
+        plcmt.set_orientation (geomtools::AXIS_Y, 75.*CLHEP::degree);
+        
+        // Fill the 'wires' structure of this circle :
+        a_spot.generate_wires (spot_DI.paths, plcmt);       
+      }
 
       // Draw a circle :
       {
@@ -216,7 +295,7 @@ int main (int argc_, char ** argv_)
             double x = (10 + (0.5 + i) * 44) * CLHEP::mm;
             double y = 45 * CLHEP::mm + i * 44 * CLHEP::mm;
             double z = (-100 + 20 * i) * CLHEP::mm;
-            double r = (1 + 21 * drand48 ())*CLHEP::mm;
+            double r = (10 + 30 * drand48 ())*CLHEP::mm;
             double dr = 0.5*CLHEP::mm; 
             double dz = 1.5*CLHEP::cm; 
             geomtools::circle gg_hit_circ1 (r+dr);
@@ -247,7 +326,12 @@ int main (int argc_, char ** argv_)
                                     istep,
                                     "group::algo::vertex",
                                     "red");
-            geomtools::circle vertex_circ (1.5 * CLHEP::mm);
+            {
+              std::ostringstream frame_info_oss;
+              frame_info_oss << "Algorithm step #" << istep;
+              DD.add_frame_info (istep,frame_info_oss.str());
+            }
+            geomtools::circle vertex_circ (15.0 * CLHEP::mm);
             // Compute position of the vertex :
             geomtools::vector_3d algo_vertex = true_vertex + (n_algo_steps - istep) * geomtools::vector_3d (4, -3, 6) * CLHEP::cm;
             geomtools::placement plcmt;
@@ -268,14 +352,20 @@ int main (int argc_, char ** argv_)
         {
           geomtools::vector_3d scene_origin (0, 0, 0);
           geomtools::rotation_3d scene_rotation;
-          
-
+ 
+          std::string the_group = draw_group;
+          /*
+          the_group = "group::detector";
+          the_group = "group::algo::vertex";
+          the_group = "group::gg_hits";
+          the_group = "group::misc";
+          */
+          std::string the_name;
           for (int frame_index = 0; frame_index < n_algo_steps; frame_index++)
             {
               datatools::temp_file tmp_file;
               tmp_file.set_remove_at_destroy (true);
               tmp_file.create ("/tmp", "test_display_data_static_");
-              
               int plot_index = 0;
               for (std::vector<std::string>::const_iterator icolor 
                      = DD.get_colors ().begin ();
@@ -288,55 +378,16 @@ int main (int argc_, char ** argv_)
                   // Gnuplot trick : 
                   geomtools::gnuplot_draw::basic_draw_point (tmp_file.out (), scene_origin);
                   tmp_file.out () << std::endl;
-                  
-                  for (geomtools::display_data::entries_dict_type::const_iterator i
-                         = DD.get_entries ().begin ();
-                       i !=  DD.get_entries ().end ();
-                       i++)
-                    {
-                      const std::string & entry_name = i->first;
-                      const geomtools::display_data::display_entry & de = i->second;
-                      if (de.is_static ())
-                        {
-                          std::cerr << "DEVEL: Static display entry '" << entry_name << "' with a unique frame " 
-                                    << "..." << std::endl;
-                          const geomtools::display_data::display_item & di = de.get_static_item ();
-                          if (di.color == the_color)
-                            {
-                              for (std::list<geomtools::polyline_3d>::const_iterator ip = di.paths.begin ();
-                                   ip != di.paths.end ();
-                                   ip++)
-                                {
-                                  const geomtools::polyline_3d & wires = *ip;
-                                  geomtools::gnuplot_draw::draw_polyline (tmp_file.out (),
-                                                                          scene_origin,
-                                                                          scene_rotation,
-                                                                          wires);
-                                }
-                            }
-                          
-                        }
-                      else if (de.is_framed ())
-                        {
-                          std::cerr << "DEVEL: Framed display entry '" << entry_name << "' with frame index " 
-                                    << frame_index  << "..." << std::endl;
-                          const geomtools::display_data::display_item & di = de.get_framed_item (frame_index);
-                          std::cerr << "DEVEL: --> Color '" << di.color << "'..." << std::endl;
-                          if (di.color == the_color)
-                            {
-                               for (std::list<geomtools::polyline_3d>::const_iterator ip = di.paths.begin ();
-                                   ip != di.paths.end ();
-                                   ip++)
-                                {
-                                  const geomtools::polyline_3d & wires = *ip;
-                                  geomtools::gnuplot_draw::draw_polyline (tmp_file.out (),
-                                                                          scene_origin,
-                                                                          scene_rotation,
-                                                                          wires);
-                                }
-                            }
-                        }
-                    }
+ 
+                  geomtools::gnuplot_draw::draw_display_data(tmp_file.out (),
+                                                             scene_origin,
+                                                             scene_rotation,
+                                                             DD,
+                                                             true,
+                                                             frame_index,
+                                                             the_color,
+                                                             the_group,
+                                                             the_name);
                   tmp_file.out () << std::endl << std::endl;
                   plot_index++;
                 }
@@ -348,7 +399,7 @@ int main (int argc_, char ** argv_)
                 { 
                   std::ostringstream title_cmd;
                   title_cmd << "set title '";
-                  title_cmd << "Display data -- Step " << frame_index;
+                  title_cmd << "Display data -- " << DD.get_frames().find(frame_index)->second;
                   title_cmd << " (3D view)";
                   g1.cmd (title_cmd.str ());
                 }

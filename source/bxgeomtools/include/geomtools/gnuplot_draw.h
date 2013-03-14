@@ -42,6 +42,7 @@ namespace geomtools {
   class union_3d;
   class subtraction_3d;
   class intersection_3d;
+  class display_data;
 
   class gnuplot_draw
   {
@@ -309,6 +310,26 @@ namespace geomtools {
                          const vector_3d &, 
                          const rotation_3d &,
                          const subtraction_3d &);
+
+    /*
+    static void 
+    draw_display_data (std::ostream &, 
+                       const vector_3d &, 
+                       const rotation_3d &,
+                       const display_data &,
+                       const std::string & display_rules_);
+    */
+
+    static void 
+    draw_display_data (std::ostream &, 
+                       const vector_3d &, 
+                       const rotation_3d &,
+                       const display_data &,
+                       bool static_scene_ = true,
+                       int frame_index_ = -1,
+                       const std::string & color_ = "",
+                       const std::string & group_ = "",
+                       const std::string & name_ = "");
 
     // draw factory:
      

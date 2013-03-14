@@ -22,11 +22,16 @@
 
 #include <datatools/properties.h>
 
+#include <geomtools/placement.h>
+
 namespace geomtools {
   
-  class placement;
   class model_factory;
   class logical_volume;
+  class display_data;
+  class geom_id;
+  class mapping;
+  class manager;
 
   class gnuplot_drawer 
   {
@@ -49,6 +54,7 @@ namespace geomtools {
     static const std::string FORCE_SHOW_PROPERTY_NAME;
     static const std::string FORCE_SHOW_ENVELOP_PROPERTY_NAME;
     static const std::string FORCE_SHOW_CHILDREN_PROPERTY_NAME;
+    static const std::string WORLD_NAME_KEY;
 
     static void wait_for_key ();
 
@@ -61,14 +67,37 @@ namespace geomtools {
 
       cstream ();
     };
-
     typedef std::map<std::string, cstream> cstreams_col_type;
+
+    class dd_entry
+    {
+    public:
+      dd_entry();
+      void reset();
+      void set_placement(const placement &);
+      void set_display_data(const display_data &);
+      const placement & get_placement() const;
+      const display_data & get_display_data() const;
+      bool is_valid() const;
+    private:
+      placement            _pl_;
+      const display_data * _dd_address_;
+    };
+
+    class has_dd_addr 
+    {
+    public:
+      has_dd_addr(const display_data &);
+      bool operator()(const dd_entry & dde_) const;
+    private:
+      const display_data * _dd_address_;
+    };
+
+    typedef std::vector<dd_entry> dd_col_type;
 
   public:
 
     static bool g_devel;
-
-  public:
 
     void set_view (const std::string & view_);
 
@@ -92,7 +121,7 @@ namespace geomtools {
 
     bool is_initialized () const;
 
-    datatools::properties & get_properties ();
+    datatools::properties & grab_properties ();
 
     const datatools::properties & get_properties () const;
 
@@ -120,6 +149,11 @@ namespace geomtools {
     
   public:
 
+    /// Main display method
+    int draw (const manager & mgr_,
+              const std::string & what_ = "",
+              int max_display_level_ = 0);
+
     void draw (const logical_volume & log_,
                const placement & p_,
                int max_display_level_,
@@ -130,10 +164,29 @@ namespace geomtools {
                const placement & p_,
                int max_display_level_);
 
+    void draw_from_gid (const model_factory & mf_,
+                        const geom_id & gid_,
+                        const mapping & mapping_,
+                        int max_display_level_);
+
     void draw_logical (const model_factory & mf_,
-                       const std::string & model_name_,
+                       const std::string & logical_name_,
                        const placement & p_,
                        int max_display_level_);
+
+    /// Add a display data object in the scene to be drawn
+    void add_display_data(const display_data & dd_);
+
+    /// Add a display data object in the scene to be drawn with a dedicated placement
+    void add_display_data(const display_data & dd_, const placement & pl_);
+    
+    /// Remove all display data formerly added to the scene
+    void reset_display_data();
+
+  protected:
+
+    void _draw_display_data (const model_factory & mf_,
+                             const placement & p_);
 
   public:
 
@@ -150,8 +203,8 @@ namespace geomtools {
 
   private:
 
-    bool             _initialized_;
-    cstreams_col_type   _cstreams_;
+    bool                  _initialized_;
+    cstreams_col_type     _cstreams_;
     datatools::properties _props_;
     std::string _view_;
     bool        _labels_;
@@ -159,6 +212,8 @@ namespace geomtools {
     range _xrange_;
     range _yrange_;
     range _zrange_;
+    //std::vector<const display_data *> _display_data_;
+    dd_col_type _display_data_;
 
   }; // class gnuplot_drawer
   

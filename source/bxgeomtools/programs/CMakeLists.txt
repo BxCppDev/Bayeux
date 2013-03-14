@@ -1,6 +1,6 @@
 ###############################################################################
 ##
-## Copyright (C) 2012 François Mauger 
+## Copyright (C) 2012-2013 François Mauger 
 ## Contact: mauger@lpccaen.in2p3.fr
 ##
 ## This file is part of the geomtools library.
@@ -28,7 +28,12 @@ set ( geomtools_programs_list_CXX
 include_directories ( ${PROJECT_SOURCE_DIR}/include	
   ${PROJECT_BINARY_DIR}/include	
   ${mygsl_INCLUDE_DIRS}
+  ${materials_INCLUDE_DIRS}
   )
+
+if(GEOMTOOLS_WITH_ROOT_DISPLAY)
+include_directories ( ${ROOT_INCLUDE_DIR} )	
+endif() 
 
 # linker search paths :
 link_directories ( ${PROJECT_BINARY_DIR}/src )
@@ -54,7 +59,22 @@ foreach ( pro_program ${geomtools_programs_list_CXX} )
     geomtools 
     ${geomtools_LIBRARIES} 
     )
-  
+   
+  # Special bio DLL plugins :
+  if(datatools_WITH_BIO)
+    list(INSERT _pro_libraries 0 datatools_bio)
+  endif() 
+  if(mygsl_WITH_BIO)
+    list(INSERT _pro_libraries 0 mygsl_bio )
+  endif() 
+  if(GEOMTOOLS_WITH_BIO)
+    list(INSERT _pro_libraries 0 geomtools_bio )
+  endif() 
+
+  if(GEOMTOOLS_WITH_ROOT_DISPLAY)
+    list(APPEND _pro_libraries ${ROOT_LIBRARIES} -lGeom)
+  endif()	
+
   target_link_libraries ( ${pro_executable} ${_pro_libraries} )
   
 endforeach ()
