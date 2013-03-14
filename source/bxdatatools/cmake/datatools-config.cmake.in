@@ -7,6 +7,7 @@
 #  datatools_LIBRARIES    - libraries to link against
 #  datatools_WITH_BIO     - flag for Boost/Serialization I/O DLL (a.k.a. 'bio')
 #  datatools_WITH_REFLECTION  - flag for reflection DLL
+#  datatools_DATA_DIR     - path to resource files (data, testing)
 
 #-----------------------------------------------------------------------
 # This program is free software: you can redistribute it and/or modify
@@ -25,6 +26,7 @@
 
 set(datatools_WITH_BIO        @DATATOOLS_WITH_BIO@)
 set(datatools_WITH_REFLECTION @DATATOOLS_WITH_REFLECTION@)
+set(datatools_DATA_DIR        @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@)
 
 #-----------------------------------------------------------------------
 # Locate ourselves, since all our config files should have been installed
