@@ -1019,9 +1019,11 @@ namespace geomtools {
   void gnuplot_drawer::_draw_display_data (const model_factory & mf_,
                                           const placement & p_)
   {
+    /*
     std::cerr << "DEVEL: " << "geomtools::gnuplot_drawer::_draw_display_data: "
               << "Entering..."
               << std::endl;
+    */
     bool draw_static = true;
     int draw_frame_index = -1;
     std::string draw_group;
@@ -1031,13 +1033,15 @@ namespace geomtools {
         const display_data & dd = _display_data_[idd].get_display_data();
         const placement & dd_pl = _display_data_[idd].get_placement();
         
-        dd.tree_dump(std::cerr, "Display data: ", "DEVEL: ");
+        //dd.tree_dump(std::cerr, "Display data: ", "DEVEL: ");
         for (int icolor = 0; icolor < dd.get_colors().size(); icolor++)
           {
             const std::string & draw_color = dd.get_colors()[icolor];
+            /*
             std::cerr << "DEVEL: " << "geomtools::gnuplot_drawer::_draw_display_data: "
                       << "Color = " << draw_color
                       << std::endl;
+            */
             std::ostringstream & colored_out = _get_stream(draw_color);
             geomtools::gnuplot_draw::draw_display_data(colored_out,
                                                        dd_pl.get_translation(), 
