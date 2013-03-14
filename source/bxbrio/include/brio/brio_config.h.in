@@ -26,6 +26,9 @@
 /***  brio debug flag ***/
 #cmakedefine01 BRIO_WITH_DEBUG
 
+//! The installation path of the brio resource files :
+#define BRIO_DATA_INSTALL_DIR "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
+
 #endif // BRIO_BRIO_CONFIG_H_
 
 // end of brio_config.h

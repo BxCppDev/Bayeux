@@ -4,6 +4,7 @@
 #  brio_LIBRARY      - libraries to link against
 #  brio_LIBRARIES    - libraries to link against
 #  brio_VERSION      - library version
+#  brio_DATA_DIR     - path to resource files (data, testing)
 
 #-----------------------------------------------------------------------
 # This program is free software: you can redistribute it and/or modify
@@ -21,6 +22,7 @@
 #-----------------------------------------------------------------------
 
 set(brio_DATATOOLS_DIR   @datatools_DIR@)
+set(brio_DATA_DIR        @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@)
 
 #-----------------------------------------------------------------------
 # Locate ourselves, since all our config files should have been installed
