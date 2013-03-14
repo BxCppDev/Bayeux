@@ -35,6 +35,9 @@
 /***  emfield with Gnuplot display ***/
 #cmakedefine01 EMFIELD_WITH_GNUPLOT_DISPLAY
 
+//! The installation path of the emfield resource files :
+#define EMFIELD_DATA_INSTALL_DIR "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
+
 #endif // EMFIELD_EMFIELD_CONFIG_H_
 
 // end of emfield_config.h

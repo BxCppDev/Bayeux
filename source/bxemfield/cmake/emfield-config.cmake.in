@@ -25,6 +25,7 @@
 
 set(emfield_WITH_BIO        @EMFIELD_WITH_BIO@)
 set(emfield_WITH_REFLECTION @EMFIELD_WITH_REFLECTION@)
+set(emfield_DATA_DIR        @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@)
 set(emfield_GEOMTOOLS_DIR   @geomtools_DIR@)
 
 #-----------------------------------------------------------------------
