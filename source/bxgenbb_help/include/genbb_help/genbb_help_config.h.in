@@ -35,6 +35,9 @@
 /***  genbb_help with Gnuplot display ***/
 #cmakedefine01 GENBB_HELP_WITH_GNUPLOT_DISPLAY
 
+//! The installation path of the genbb_help resource files :
+#define GENBB_HELP_DATA_INSTALL_DIR "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
+
 #endif // GENBB_HELP_GENBB_HELP_CONFIG_H_
 
 // end of genbb_help_config.h

@@ -26,6 +26,7 @@
 set(genbb_help_WITH_BIO        @GENBB_HELP_WITH_BIO@)
 set(genbb_help_WITH_REFLECTION @GENBB_HELP_WITH_REFLECTION@)
 set(genbb_help_GEOMTOOLS_DIR   @geomtools_DIR@)
+set(genbb_help_DATA_DIR        @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@)
 
 #-----------------------------------------------------------------------
 # Locate ourselves, since all our config files should have been installed

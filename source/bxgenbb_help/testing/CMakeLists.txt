@@ -62,14 +62,25 @@ include_directories ( ${PROJECT_SOURCE_DIR}/include
 # linker search paths :
 link_directories ( ${PROJECT_BINARY_DIR}/src )
 
-option ( GENBB_HELP_ALL_TESTS "Perform all possible tests" ON )
-message ( STATUS "testing: Performing all available tests : ${GENBB_HELP_ALL_TESTS}" )
+set(_test_tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/testing_output")
 
-if ( GENBB_HELP_ALL_TESTS )
 
-  set(_test_tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/testing_output")
+# depends on materials data dir:
+if (DEFINED materials_DATA_DIR
+    AND NOT "x${materials_DATA_DIR}" STREQUAL "x" )
+  list (APPEND _genbb_help_test_additional_options --materials-data-dir ${materials_DATA_DIR} )
+  message ( STATUS "${PROJECT_NAME}: testing: Using option '${_genbb_help_test_additional_options}'" )
+endif ()
 
-  execute_process (COMMAND cmake -E remove_directory ${_test_tmp_dir} )
+# depends on geomtools data dir:
+if (DEFINED geomtools_DATA_DIR
+    AND NOT "x${geomtools_DATA_DIR}" STREQUAL "x" )
+  list (APPEND _genbb_help_test_additional_options --geomtools-data-dir ${geomtools_DATA_DIR} )
+  message ( STATUS "${PROJECT_NAME}: testing: Using option '${_genbb_help_test_additional_options}'" )
+endif ()
+
+
+execute_process (COMMAND cmake -E remove_directory ${_test_tmp_dir} )
 
   foreach ( test_program ${genbb_help_tests_programs_list_CXX} )
     get_filename_component ( test_executable ${test_program} NAME_WE )
@@ -111,6 +122,7 @@ if ( GENBB_HELP_ALL_TESTS )
                        --binary-dir ${PROJECT_BINARY_DIR} 
                        --data-dir ${PROJECT_SOURCE_DIR} 
                        --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
+                       ${_genbb_help_test_additional_options}
 	               run
              )	 	
 
@@ -139,6 +151,7 @@ if ( GENBB_HELP_ALL_TESTS )
                        --binary-dir ${PROJECT_BINARY_DIR} 
                        --data-dir ${PROJECT_SOURCE_DIR} 
                        --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
+                       ${_genbb_help_test_additional_options}
 	               run
              )	 	
 
@@ -152,8 +165,6 @@ if ( GENBB_HELP_ALL_TESTS )
                       --data-dir ${PROJECT_SOURCE_DIR} 
                       clean
                     )
-
-endif ()
 
 
 # end of CMakeLists.txt
