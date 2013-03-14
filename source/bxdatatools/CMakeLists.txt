@@ -30,6 +30,9 @@ set(datatools_VERSION_MINOR 0)
 set(datatools_VERSION_PATCH 0)
 set(datatools_VERSION "${datatools_VERSION_MAJOR}.${datatools_VERSION_MINOR}.${datatools_VERSION_PATCH}")
 
+message ( STATUS "${PROJECT_NAME} : datatools version = '${datatools_VERSION}' " )
+message ( STATUS "${PROJECT_NAME} : CMAKE_MODULE_PATH = '${CMAKE_MODULE_PATH}' " )
+
 # - Fixup default install prefix on Mac
 if(APPLE AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   set(CMAKE_INSTALL_PREFIX "/Library/Frameworks" CACHE PATH "Install path prefix, prepended onto install directories." FORCE)
