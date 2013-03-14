@@ -45,10 +45,17 @@ include(InstallDirs)
 #-----------------------------------------------------------------------
 # Build options
 #
-option(DATATOOLS_WITH_BIO  "Build auxiliary Boost I/O library" ON) 
+#option(DATATOOLS_WITH_DEBUG "Build debug code" OFF) 
+option(DATATOOLS_WITH_BIO   "Build auxiliary Boost I/O library" ON) 
 option(DATATOOLS_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" ON) 
-option(DATATOOLS_WITH_DOC  "Build the datatools documentation" ON)
-option(DATATOOLS_WITH_TEST "Build the datatools test suite"    ON) 
+option(DATATOOLS_WITH_DOC   "Build the datatools documentation" ON)
+option(DATATOOLS_WITH_TEST  "Build the datatools test suite"    ON) 
+ 
+# if(DATATOOLS_WITH_DEBUG)
+#   set(DATATOOLS_WITH_DEBUG 1)
+# else()
+#   set(DATATOOLS_WITH_DEBUG 0)
+# endif()
 
 #-----------------------------------------------------------------------
 # Find external packages needed to build
