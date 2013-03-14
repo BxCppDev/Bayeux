@@ -43,7 +43,7 @@ C.
       real*4    rng_shoot_flat
       !print *, 'grndm: invoking rng_shoot_flat...'
       do i = 1, len_
-         rvec_ (i) = rng_shoot_flat ()
+         rvec_(i) = rng_shoot_flat ()
       end do         
       return
       end
@@ -55,7 +55,7 @@ c Function rnd1 gives random number from 0 to 1 by using the most
 c convenient or available to user random number generator (CERN, IMSL,
 c internal FORTRAN, etc.). Please, choose what you want.
 c VIT, 15.11.2006.
-	real*4 r(1)
+	real*4 r(10) ! fix length to 10 (was 1)
 	call grndm(r,1)
 	! print *, 'DEVEL: rnd1: r(1)=', r(1)
 	rnd1=r(1)
