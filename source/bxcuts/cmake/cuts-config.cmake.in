@@ -5,8 +5,9 @@
 #  cuts_LIBRARIES    - libraries to link against
 #  cuts_WITH_BIO     - flag for Boost/Serialization I/O DLL (a.k.a. 'bio')
 #  cuts_BIO_LIBRARY  - library targets to link against (Boost I/O library)
-#  cuts_WITH_REFLECTION  - flag for reflection DLL
+#  cuts_WITH_REFLECTION    - flag for reflection DLL
 #  cuts_REFLECTION_LIBRARY - library targets to link against (reflection library)
+#  cuts_DATA_DIR     - path to resource files (data, testing)
 
 #-----------------------------------------------------------------------
 # This program is free software: you can redistribute it and/or modify
