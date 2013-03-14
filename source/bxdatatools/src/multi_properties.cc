@@ -558,6 +558,7 @@ void multi_properties::write(const std::string& a_filename,
 void multi_properties::read(const std::string& a_filename,
                             bool a_skip_private) {
   bool devel = false;
+  //devel = true; // XXX
   if (devel) {
     std::clog << "DEVEL: datatools::multi_properties::read: Entering..." << std::endl;
     std::clog << "DEVEL: datatools::multi_properties::read: Filename : '"

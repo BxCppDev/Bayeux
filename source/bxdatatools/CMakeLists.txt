@@ -159,7 +159,6 @@ install ( DIRECTORY ${PROJECT_SOURCE_DIR}/testing
           PATTERN "*~" EXCLUDE
           PATTERN CMakeLists.txt EXCLUDE
           PATTERN testDriver.bash EXCLUDE
-	  PATTERN test_manager.sh EXCLUDE
          )
 
 #
