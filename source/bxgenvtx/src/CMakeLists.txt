@@ -31,6 +31,11 @@ set(genvtx_PUBLIC_HEADERS
   include/genvtx/triangle_random_tools.h
   include/genvtx/tube_vg.h
   include/genvtx/vg_macros.h
+  include/genvtx/utils.h
+  include/genvtx/manager.h
+  include/genvtx/combined_vg.h
+  include/genvtx/box_model_vg.h
+  include/genvtx/cylinder_model_vg.h
   )
 list_prepend(genvtx_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
 
@@ -48,6 +53,7 @@ list(APPEND genvtx_PUBLIC_HEADERS ${PROJECT_BINARY_DIR}/include/genvtx/genvtx_co
 # package location because they are nested...
 set(genvtx_detail_HEADERS
   include/genvtx/detail/vg_tools.h
+  include/genvtx/detail/geom_manager_utils.h
   )
 list_prepend(genvtx_detail_HEADERS "${PROJECT_SOURCE_DIR}/")
 
@@ -71,8 +77,6 @@ endif()
 # SOURCE FILES
 # Pretty basic!
 set(genvtx_SOURCES
-   #factory.cc
-   #manager.cc
    i_vertex_generator.cc
    spot_vertex_generator.cc
    from_file_vg.cc
@@ -83,9 +87,13 @@ set(genvtx_SOURCES
    vg_tools.cc
    triangle_random_tools.cc
    quadrangle_random_tools.cc
+   utils.cc
+   manager.cc
+   combined_vg.cc
+   box_model_vg.cc
+   cylinder_model_vg.cc
+   geom_manager_utils.cc
   )
-
-# message(STATUS "********** genvtx_SOURCES=${genvtx_SOURCES}")
 
 #-----------------------------------------------------------------------
 # CMAKE RESOURCE FILES
@@ -163,7 +171,7 @@ endif ()
 #-----------------------------------------------------------------------
 # BUILD THE GENVTX LIBRARY
 #
-#message(STATUS "XXXXXXXXXXXXXXXXXx mygsl_INCLUDE_DIRS=${mygsl_INCLUDE_DIRS}")
+
 include_directories(
   ${PROJECT_BINARY_DIR}/include
   ${PROJECT_SOURCE_DIR}/include	
@@ -195,9 +203,14 @@ set_target_properties(genvtx
   )
 
 if ( GENVTX_WITH_REFLECTION )
-  target_link_libraries(genvtx ${geomtools_LIBRARIES} ${CAMP_LIBRARIES} ${CMAKE_DL_LIBS})
+  target_link_libraries(genvtx 
+    ${geomtools_LIBRARIES} 
+    ${CAMP_LIBRARIES} 
+    ${CMAKE_DL_LIBS})
 else ()
-  target_link_libraries(genvtx ${geomtools_LIBRARIES} ${CMAKE_DL_LIBS})
+  target_link_libraries(genvtx 
+    ${geomtools_LIBRARIES} 
+    ${CMAKE_DL_LIBS})
 endif ()
 
 set(GENVTX_TARGETS genvtx)

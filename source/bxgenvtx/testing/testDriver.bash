@@ -42,6 +42,10 @@ tmp_test_dir=/tmp/${USER}/genvtx/test
 prefix_test_dir=
 data_test_dir=
 exe_test=
+# depends on materials data dir:
+materials_data_test_dir=
+# depends on geomtools data dir:
+geomtools_data_test_dir=
 
 #######################################################
 
@@ -75,6 +79,12 @@ while [ -n "$1" ]; do
 	elif [ "${opt}" = "--exe" ]; then
 	    shift 1
 	    exe_test="$1"
+        elif [ "${opt}" = "--materials-data-dir" ]; then
+            shift 1
+            materials_data_test_dir="$1"
+        elif [ "${opt}" = "--geomtools-data-dir" ]; then
+            shift 1
+            geomtools_data_test_dir="$1"
 	else
 	    echo "ERROR: ${appname}: Invalid option '${opt}' !" >&2
 	    my_exit 1
@@ -104,6 +114,8 @@ if [ ${debug} -ne 0 ]; then
     echo "DEBUG: ${appname}: exe_test=${exe_test}" >&2
     echo "DEBUG: ${appname}: prefix_test_dir=${prefix_test_dir}" >&2
     echo "DEBUG: ${appname}: data_test_dir=${data_test_dir}" >&2
+    echo "DEBUG: ${appname}: materials_data_test_dir=${materials_data_test_dir}" >&2
+    echo "DEBUG: ${appname}: geomtools_data_test_dir=${geomtools_data_test_dir}" >&2
 fi
 
 ##########################################################
@@ -135,6 +147,39 @@ function do_run ()
 	echo "ERROR: ${appname}: Directory '${GENVTX_DATA_DIR}' does not exists !"
 	return 1
     fi
+    
+    ###############################
+   # depends on materials data dir:
+    if [ "x${materials_data_test_dir}" != "x" ]; then
+        export MATERIALS_DATA_DIR=${materials_data_test_dir}
+    fi
+    if [ "x${MATERIALS_DATA_DIR}" = "x" ]; then
+        echo "ERROR: ${appname}: Missing MATERIALS_DATA_DIR environment variable !" >&2
+        return 1
+    fi
+    if [ ! -d ${MATERIALS_DATA_DIR} ]; then
+        echo "ERROR: ${appname}: Directory '${MATERIALS_DATA_DIR}' does not exists !" >&2
+        return 1
+    fi
+    echo "NOTICE: ${appname}: Directory MATERIALS_DATA_DIR='${MATERIALS_DATA_DIR}'"  >&2
+
+   # depends on geomtools data dir:
+    if [ "x${geomtools_data_test_dir}" != "x" ]; then
+        export GEOMTOOLS_DATA_DIR=${geomtools_data_test_dir}
+    fi
+    if [ "x${GEOMTOOLS_DATA_DIR}" = "x" ]; then
+        echo "ERROR: ${appname}: Missing GEOMTOOLS_DATA_DIR environment variable !" >&2
+        return 1
+    fi
+    if [ ! -d ${GEOMTOOLS_DATA_DIR} ]; then
+        echo "ERROR: ${appname}: Directory '${GEOMTOOLS_DATA_DIR}' does not exists !" >&2
+        return 1
+    fi
+    echo "NOTICE: ${appname}: Directory GEOMTOOLS_DATA_DIR='${GEOMTOOLS_DATA_DIR}'"  >&2
+
+    
+    ###############################
+
     echo "NOTICE: ${appname}: First clean the test temporary directory..." >&2
     if [ ! -d ${tmp_test_dir} ]; then
 	mkdir -p ${tmp_test_dir}

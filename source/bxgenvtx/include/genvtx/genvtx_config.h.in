@@ -32,6 +32,9 @@
 /***  genvtx embedded CAMP-based reflection ***/
 #cmakedefine01 GENVTX_WITH_REFLECTION
 
+//! The installation path of the genvtx resource files :
+#define GENVTX_DATA_INSTALL_DIR "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
+
 #endif // GENVTX_GENVTX_CONFIG_H_
 
 // end of genvtx_config.h

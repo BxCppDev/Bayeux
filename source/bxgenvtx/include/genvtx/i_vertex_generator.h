@@ -2,7 +2,7 @@
 /* i_vertex_generator.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-12
- * Last modified: 2010-02-12
+ * Last modified: 2013-03-10
  * 
  * License: 
  * 
@@ -29,13 +29,15 @@
 #include <mygsl/rng.h>
 
 #include <genvtx/detail/vg_tools.h>
+#include <genvtx/utils.h>
 
 namespace datatools {
   class properties;
+  class service_manager;
 }
 
-namespace datatools {
-    class service_manager;
+namespace geomtools {
+  class manager;
 }
 
 namespace genvtx {
@@ -51,6 +53,36 @@ namespace genvtx {
 
     /// Set the debug flag
     void set_debug (bool debug_);
+
+    bool has_geo_label () const;
+    
+    void set_geo_label (const std::string & geo_label_);
+    
+    const std::string & get_geo_label () const;
+    
+    bool has_geom_setup_requirement () const;
+    
+    void set_geom_setup_requirement (const std::string & geom_setup_requirement_);
+    
+    std::string get_geom_setup_requirement () const;
+    
+    void check_geom_setup_requirement (const geomtools::manager * gmgr_) const;
+    
+
+    /// Check if a geometry manager is attached to the vertex generator
+    bool has_geom_manager () const;
+
+    /// Set a geometry manager
+    void set_geom_manager (const geomtools::manager & gmgr_);
+    
+    /// Get the geometry manager attached to the vertex generator
+    const geomtools::manager & get_geom_manager () const;
+
+    /// Check if some weight info is attached to the vertex generator
+    bool has_total_weight () const;
+
+    /// Get the weight info attached to the vertex generator
+    const weight_info & get_total_weight () const;
 
     /// Check if another vertex is available
     virtual bool has_next_vertex () const;
@@ -81,7 +113,7 @@ namespace genvtx {
     /// Destructor
     virtual ~i_vertex_generator ();
 
-   public: 
+  public: 
 
     /*** Main interface ***/
 
@@ -104,15 +136,31 @@ namespace genvtx {
  
   protected:
 
-    /// Main vertex randomization interface method
-    virtual void _shoot_vertex (mygsl::rng & random_, geomtools::vector_3d & vertex_) = 0;
+    void _reset();
+
+    weight_info & _grab_total_weight ();
+    
+    void _set_total_weight (const weight_info & a_info);
+
+    void _initialize_basics (const datatools::properties & setup_,
+                             datatools::service_manager & service_manager_);
+    
+    void _initialize_geo_manager (const datatools::properties & setup_,
+                                  datatools::service_manager & service_manager_);
 
     /// Guard method
     void _assert_lock (const std::string & where_, const std::string & what_ = "") const;
+    
+    /// Main vertex randomization interface method
+    virtual void _shoot_vertex (mygsl::rng & random_, geomtools::vector_3d & vertex_) = 0;
 
   private:
 
-    bool _debug_; /// Debug flag
+    bool                         _debug_; /// Debug flag
+    std::string                  _geo_label_;    /// The label of the Geometry Service
+    std::string                  _geom_setup_requirement_; /// The requirement ont the requested geometry setup (label and version)
+    const ::geomtools::manager * _geom_manager_; /// Handle to the geometry manager
+    weight_info                  _total_weight_; /// Weighting data
 
     // Factory stuff :
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_vertex_generator);

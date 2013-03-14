@@ -1,0 +1,45 @@
+# -*- mode: conf-unix; -*-
+# List of geometry ID categories/types (datatools::multi_properties):
+
+#@description A sample list of geometry ID categories/types
+#@key_label   "category"
+#@meta_label  "type"
+
+###############
+# Top volumes #
+###############
+
+[category="world" type="0"]
+addresses : string[1] = "world"
+
+
+[category="board.gc"  type="100"]
+addresses : string[1] = "board"
+
+
+[category="board_pcb.gc"  type="200"]
+addresses : string[1] = "board"
+
+
+[category="mezzanine.gc" type="1000"]
+extends  : string = "board.gc"
+by       : string[1] = "daughter"
+
+[category="mezzanine_pcb.gc" type="1200"]
+inherits : string[1] = "mezzanine.gc"
+
+
+[category="fpga.gc" type="2000"]
+inherits : string[1] = "mezzanine.gc"
+
+
+[category="chip.gc" type="2010"]
+extends  : string = "mezzanine.gc"
+by       : string[1] = "slot"
+
+
+[category="capacitor.gc" type="2020"]
+extends  : string = "mezzanine.gc"
+by       : string[1] = "position"
+
+# end

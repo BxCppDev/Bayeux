@@ -6,4 +6,9 @@
         * remove all "using namespace std;" from header files
         * version: prepare tag 3.1.0 in trunk
 	* depends on geomtools 3.1
+2013-03-14 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* depends on materials 4.0.0 (trunk)
+	* add a genvtx::manager class
+	* add box_model_vg and cylinder_model_vg classes
+	* add a test program with visualization
 

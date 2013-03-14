@@ -4,6 +4,7 @@
 
 #include <genvtx/detail/vg_tools.h>
 #include <genvtx/i_vertex_generator.h>
+#include <genvtx/manager.h>
 
 #include <datatools/properties.h>
 #include <sstream>
@@ -90,7 +91,7 @@ namespace genvtx {
     return _manager_ != 0;
   }
   
-  void vg_entry_type::set_manager (i_vg_manager & mgr_)
+  void vg_entry_type::set_manager (::genvtx::manager & mgr_)
   {
     _manager_ = &mgr_;
     return;
@@ -239,16 +240,6 @@ namespace genvtx {
     out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_) 
          << "Manager : " << _manager_ << std::endl;
        
-    return;
-  }
-
-  i_vg_manager::i_vg_manager()
-  {
-    return;
-  }
-
-  i_vg_manager::~i_vg_manager()
-  {
     return;
   }
 

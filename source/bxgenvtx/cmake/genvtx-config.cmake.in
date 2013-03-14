@@ -26,6 +26,7 @@
 set(genvtx_WITH_BIO        @GENVTX_WITH_BIO@)
 set(genvtx_WITH_REFLECTION @GENVTX_WITH_REFLECTION@)
 set(genvtx_GEOMTOOLS_DIR   @geomtools_DIR@)
+set(genvtx_DATA_DIR        @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@)
 
 #-----------------------------------------------------------------------
 # Locate ourselves, since all our config files should have been installed

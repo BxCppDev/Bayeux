@@ -27,7 +27,6 @@ namespace genvtx {
   class i_vertex_generator;
 
   typedef datatools::handle<i_vertex_generator> vg_handle_type;
-  //typedef std::map<std::string, vg_handle_type>        vg_dict_type;
  
   class vg_tools
   {
@@ -37,7 +36,7 @@ namespace genvtx {
     static const std::string SHAPE_REF_GETTER;
   };
 
-  class i_vg_manager;
+  class manager;
 
   class vg_entry_type
   {
@@ -70,7 +69,7 @@ namespace genvtx {
         
     bool has_manager () const;
 
-    void set_manager (i_vg_manager &);
+    void set_manager (genvtx::manager &);
 
     void reset_manager ();
       
@@ -116,25 +115,10 @@ namespace genvtx {
     datatools::properties _vg_config_;  //!< The configuration of the vg 
     uint32_t              _vg_status_;  //!< The status of the vg
     vg_handle_type        _vg_handle_;  //!< The handle for the allocated vg
-    i_vg_manager        * _manager_;    //!< Vertex generator manager
+    ::genvtx::manager   * _manager_;    //!< Vertex generator manager
   };
 
   typedef std::map<std::string, vg_entry_type> vg_dict_type;
-
-  class i_vg_manager 
-  {
-  public:
-
-    i_vg_manager();
-
-    virtual ~i_vg_manager();
-
-    virtual void create_vg (vg_entry_type &) = 0;
-
-    virtual void initialize_vg (vg_entry_type &) = 0;
-
-  };
-
 
 } // end of namespace genvtx
 

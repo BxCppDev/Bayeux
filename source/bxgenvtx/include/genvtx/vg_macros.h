@@ -149,6 +149,13 @@ public:                                         \
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (::genvtx::i_vertex_generator,GENVTX_CLASS_NAME,GENVTX_ID); \
   /**/
 
+#define GENVTX_VG_INITIALIZE_BASICS_INVOKE(Setup,ServiceManager)        \
+  this->::genvtx::i_vertex_generator::_initialize_basics(Setup,ServiceManager); \
+  /**/
+
+#define GENVTX_VG_INITIALIZE_GEO_MANAGER_INVOKE(Setup,ServiceManager)   \
+  this->::genvtx::i_vertex_generator::_initialize_geo_manager(Setup,ServiceManager); \
+
 #endif // GENVTX_VG_MACROS_H_
 
 // end of vg_macros.h
