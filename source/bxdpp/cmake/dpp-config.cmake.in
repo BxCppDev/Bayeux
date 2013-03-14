@@ -28,6 +28,7 @@
 set(dpp_CUTS_DIR   @cuts_DIR@)
 set(dpp_BRIO_DIR   @brio_DIR@)
 set(dpp_MYGSL_DIR  @mygsl_DIR@)
+set(dpp_DATA_DIR   @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@)
 
 #-----------------------------------------------------------------------
 # Locate ourselves, since all our config files should have been installed
