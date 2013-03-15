@@ -47,13 +47,16 @@
 #include <datatools/i_tree_dump.h>
 #include <datatools/bit_mask.h>
 
+// Mygsl
+#include <mygsl/rng.h> // Pseudo random number generator
+
 // genbb_help
 #include <genbb_help/detail/pg_tools.h>
 #include <genbb_help/i_genbb.h>
 
-namespace mygsl {
-  class rng;
-}
+// namespace mygsl {
+//   class rng;
+// }
 
 namespace datatools {
   class properties;
@@ -98,19 +101,31 @@ namespace genbb {
     void set_debug(bool debug = true);
 
     /// Check the use of some external PRNG
-    bool has_external_random () const;
+    bool has_external_prng () const;
 
     /// Set the external PRNG
-    void set_external_random (mygsl::rng &);
+    void set_external_prng (mygsl::rng &);
 
     /// Reset the external PRNG
-    void reset_external_random ();
+    void reset_external_prng ();
 
     /// Return a mutable reference to the external PRNG
-    mygsl::rng & grab_external_random ();
+    mygsl::rng & grab_external_prng ();
  
     /// Return a non-mutable reference to the external PRNG
-    const mygsl::rng & get_external_random () const;
+    const mygsl::rng & get_external_prng () const;
+
+    /// Return a mutable reference to the embeded PRNG
+    mygsl::rng & grab_embeded_prng ();
+ 
+    /// Return a non-mutable reference to the embeded PRNG
+    const mygsl::rng & get_embeded_prng () const;
+
+    /// Return a mutable reference to the active PRNG
+    mygsl::rng & grab_prng ();
+ 
+    /// Return a non-mutable reference to the active PRNG
+    const mygsl::rng & get_prng () const;
 
     /// Check the initialization flag
     bool is_initialized() const;
@@ -203,7 +218,6 @@ namespace genbb {
 
     void _reset_pg(detail::pg_entry_type& entry);
 
-
   private:
 
     /// Set the factory preload flag
@@ -218,7 +232,9 @@ namespace genbb {
     bool         _preload_;     /// Factory preload flag
     bool         _force_initialization_at_load_; /// Flag for triggering PG initialization at load (rather than first use)
 
-    mygsl::rng * _external_prng_; /// Handle to an external PRNG
+    mygsl::rng * _external_prng_;     /// Handle to an external PRNG (supersedes the embeded)
+    long         _embeded_prng_seed_; /// Embeded PRNG seed
+    mygsl::rng   _embeded_prng_;      /// Embeded PRNG
 
     datatools::factory_register<i_genbb> _factory_register_;    /// Particle generator factory
     detail::pg_dict_type                 _particle_generators_; /// Dictionary of particle generators

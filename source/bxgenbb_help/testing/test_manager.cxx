@@ -82,7 +82,7 @@ int main (int argc_, char ** argv_)
       // Particle generator manager :
       genbb::manager PGMgr;
       PGMgr.set_debug(debug);
-      PGMgr.set_external_random(PRNG);
+      PGMgr.set_external_prng(PRNG);
       PGMgr.initialize(config);
       PGMgr.dump_particle_generators(std::clog, 
                                      "List of particle generators: ",

@@ -34,12 +34,15 @@ namespace genbb {
   // Factory stuff :
   DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(i_genbb,"genbb::i_genbb/__system__");
  
+
+  // Constructor
   i_genbb::i_genbb ()
   {
     _external_random_ = 0;
     return;
   }
   
+    /// Destructor
   i_genbb::~i_genbb ()
   {
     return;
@@ -72,7 +75,7 @@ namespace genbb {
   {
     if (! can_external_random ())
       {
-        throw std::logic_error ("genbb::i_genbb::set_external_random: Not allowed !");
+        throw std::logic_error ("genbb::i_genbb::set_external_random: This event generator does not accept external PRNG !");
       }
     if (! r_.is_initialized ())
       {

@@ -89,19 +89,6 @@ namespace genbb {
     return true;
   }
 
-  // void genbb::set_external_random (mygsl::rng & rng_)
-  // {
-  //   if (! rng_.is_initialized ())
-  //     {
-  //       std::ostringstream message;
-  //       message << "genbb::genbb::set_external_random: External radom generator is not initialized !";
-  //       throw logic_error (message.str());      
-  //     }
-  //   _set_external_random (rng);
-  //   return;
-  // }
-
-
   const mygsl::rng & genbb::get_random () const
   {
     if (has_external_random ())

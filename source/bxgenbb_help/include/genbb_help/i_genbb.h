@@ -64,16 +64,22 @@ namespace genbb {
     virtual void load_next (primary_event & event_, 
                             bool compute_classification_ = true);
 
+    /// Check if the generator accepts an external PRNG
     virtual bool can_external_random () const;
 
+    /// Check if the generator uses an external PRNG
     virtual bool has_external_random () const;
 
+    /// Set an external PRNG
     virtual void set_external_random (mygsl::rng &);
 
+    /// Reset an external PRNG
     virtual void reset_external_random ();
 
+    /// Return a mutable reference to the external PRNG
     mygsl::rng & grab_external_random ();
  
+    /// Return a non-mutable reference to the external PRNG
     const mygsl::rng & get_external_random () const;
    
     /// Simple initialization (no external resource)

@@ -40,47 +40,63 @@ namespace genbb {
   }
 
 
-  bool manager::has_external_random () const
+  bool manager::has_external_prng () const
   {
     return _external_prng_ != 0;
   }
 
-  void manager::reset_external_random ()
+  void manager::reset_external_prng ()
   {
     _external_prng_ = 0;
     return;
   }
 
-  void manager::set_external_random (mygsl::rng & r_)
+  void manager::set_external_prng (mygsl::rng & r_)
   {
-    if (! r_.is_initialized ())
-      {
-        std::ostringstream message;
-        message << "genbb::manager::set_external_random: External PRNG is not initialized !";
-        throw std::logic_error (message.str());      
-      }
     _external_prng_ = &r_;
     return;
   }
   
 
-  mygsl::rng & manager::grab_external_random ()
+  mygsl::rng & manager::grab_external_prng ()
   {
-    if (! has_external_random ())
+    if (! has_external_prng ())
       {
-        throw std::logic_error ("genbb::manager::grab_external_random: No available external PRNG !");
+        throw std::logic_error ("genbb::manager::grab_external_prng: No available external PRNG !");
       }
     return *_external_prng_;
   }
 
 
-  const mygsl::rng & manager::get_external_random () const
+  const mygsl::rng & manager::get_external_prng () const
   {
-    if (! has_external_random ())
+    if (! has_external_prng ())
       {
-        throw std::logic_error ("genbb::manager::get_external_random: No available external PRNG !");
+        throw std::logic_error ("genbb::manager::get_external_prng: No available external PRNG !");
       }
     return *_external_prng_;
+  }
+
+  mygsl::rng & manager::grab_embeded_prng ()
+  {
+    return _embeded_prng_;
+  }
+
+  const mygsl::rng & manager::get_embeded_prng () const
+  {
+    return _embeded_prng_;
+  }
+
+  mygsl::rng & manager::grab_prng ()
+  {
+    if (has_external_prng()) return grab_external_prng ();
+    return grab_embeded_prng ();
+  }
+
+  const mygsl::rng & manager::get_prng () const
+  {
+    if (has_external_prng()) return get_external_prng ();
+    return get_embeded_prng ();
   }
 
   void manager::load(const std::string& name,
@@ -88,7 +104,6 @@ namespace genbb {
                      const datatools::properties& config) {
     this->_load_pg(name, id, config);
   }
-
 
   void manager::load(const datatools::multi_properties& config) {
     bool debug = this->is_debug();
@@ -164,6 +179,20 @@ namespace genbb {
       }
     }
 
+    if (has_external_prng())
+      {
+        if (! _external_prng_->is_initialized())
+          {
+            std::ostringstream message;
+            message << "genbb::manager::initialize: "
+                    << "External PRNG is not initialized !";
+            throw std::logic_error(message.str());
+          }
+      }
+    else
+      {
+        _embeded_prng_.initialize("taus2", _embeded_prng_seed_);
+      }
     _initialized_ = true;
     return;
   }
@@ -219,6 +248,11 @@ namespace genbb {
     _factory_register_.reset();
     _force_initialization_at_load_ = false;
     _preload_ = true;
+
+    if (_embeded_prng_.is_initialized())
+      {
+        _embeded_prng_.reset();
+      }
 
     _initialized_ = false;
     if (this->is_debug()) {
@@ -624,48 +658,8 @@ namespace genbb {
       }
       detail::create(entry,
                      &_factory_register_, 
-                     (has_external_random() ? &grab_external_random() : 0));
-      /*
-      // search for the PG's label in the factory dictionary:
-      if (!_factory_register_.has(entry.get_id())) {
-        std::ostringstream message;
-        message << "genbb::manager::_create_pg: "
-                << "Cannot find PG factory with ID '"
-                << entry.get_id() 
-                << "' for particle generator named '"
-                << entry.get_name() << "' !";
-        throw std::logic_error(message.str());
-      }
-
-      typedef 
-        genbb::i_genbb::factory_register_type::factory_type FactoryType;
-
-      const FactoryType& the_factory = _factory_register_.get(entry.get_id());
-
-      i_genbb* ptr = the_factory();
-      
-      entry.grab_handle().reset(ptr);
-      entry.update_status(detail::pg_entry_type::STATUS_CREATED);
-      if (has_external_random() && ptr->can_external_random())
-        {
-          std::clog << datatools::io::notice 
-                    << "genbb::manager::_create_pg: "
-                    << "Set the manager's PRNG for the particle generator '"
-                    <<  entry.get_name()
-                    << "'"
-                    << std::endl;
-          ptr->set_external_random(grab_external_random());
-        }
-      
-      if (this->is_debug()) {
-        std::clog << datatools::io::debug
-                  << "genbb::manager::_create_pg: "
-                  << "Particle generator named '"
-                  <<  entry.get_name()
-                  << "' has been created !"
-                  << std::endl;
-      }
-      */
+                     &grab_prng());
+      //(has_external_prng() ? &grab_external_prng() : 0));
     }
     return;
   }
@@ -690,36 +684,10 @@ namespace genbb {
       detail::initialize(entry,
                          (has_service_manager() ? _service_mgr_ : 0),
                          &_particle_generators_,
-                         &_factory_register_, 
-                         (has_external_random()? &grab_external_random() : 0));
+                         &_factory_register_,
+                         &grab_prng());
+      // (has_external_prng()? &grab_external_prng() : 0));
     }
-
-    /*
-    // If not initialized, do it :
-    if (!entry.is_initialized()) {
-      if (this->is_debug()) {
-        std::clog << datatools::io::debug
-                  << "genbb::manager::_initialize_pg: "
-                  << "Initializing particle generator named '"
-                  << entry.get_name()
-                  << "'..."
-                  << std::endl;
-      }
-      i_genbb& the_pg = entry.grab_handle().grab();
-      if (has_service_manager())
-        {
-          the_pg.initialize(entry.get_config(), 
-                            *_service_mgr_, 
-                            _particle_generators_);
-        }
-      else
-        {
-          the_pg.initialize_with_dictionary_only(entry.get_config(), 
-                                                 _particle_generators_);
-        }
-      entry.update_status(detail::pg_entry_type::STATUS_INITIALIZED);
-    }
-    */
     return;
   }
 
