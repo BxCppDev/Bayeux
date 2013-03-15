@@ -153,7 +153,7 @@ namespace mygsl {
         FILE *urandom;
         urandom = fopen (dev_urandom.c_str (), "r");
         size_t szr = fread (&useed, sizeof (useed), 1, urandom);
-        seed += (int32_t) useed & 0x7FFFFFFFF;
+        seed += (int32_t) useed & 0x7FFFFFFF;
         fclose (urandom);
         if (devel)
           std::cerr << "mygsl::seed_manager::_set_seed_for_seeds: seed="

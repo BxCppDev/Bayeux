@@ -28,8 +28,8 @@
  * 
  */
 
-#ifndef __mygsl__seed_manager_h
-#define __mygsl__seed_manager_h 1
+#ifndef MYGSL_SEED_MANAGER_H_
+#define MYGSL_SEED_MANAGER_H_ 1
 
 #include <iostream>
 #include <map>
@@ -47,7 +47,7 @@ namespace mygsl {
   /** A seed manager instance is responsible to save
    *  a collection of seeds used to initialize a set
    *  of pseudo-random number generators (PRNG). As 
-   *  the PRNGs are all labelled with a name. The 
+   *  the PRNGs are all labelled with a unique name. The 
    *  seed manager uses an internal dictionnary to store 
    *  the seeds. It is possible to force a seed value
    *  for a given PRNG as well as to use a seed determined
@@ -179,7 +179,7 @@ namespace mygsl {
 
 }  // end of namespace mygsl
 
-#endif // __mygsl__seed_manager_h
+#endif // MYGSL_SEED_MANAGER_H_
 
 // end of seed_manager.h
 /*

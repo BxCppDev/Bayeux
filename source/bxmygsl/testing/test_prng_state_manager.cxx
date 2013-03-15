@@ -47,9 +47,9 @@ int main (int argc_, char ** argv_)
           iarg++;
       }
     
-      mygsl::rng r1 ("taus2", 123456);
-      mygsl::rng r2 ("taus2", 314159);
-      mygsl::rng r3 ("taus2", (int) time (0));
+      mygsl::rng r1("taus2", 123456);
+      mygsl::rng r2("taus2", 314159);
+      mygsl::rng r3("taus2", (unsigned long int) time (0));
 
       mygsl::prng_state_manager PSM;
       PSM.set_filename ("test_prng_state_manager.data");

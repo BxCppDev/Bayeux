@@ -1,6 +1,6 @@
 // gsl::rng.h
 /*
- * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,66 +19,80 @@
  *
  */
 
-#ifndef __gsl__rng_h
-#define __gsl__rng_h 1
+#ifndef MYGSL_RNG_H_
+#define MYGSL_RNG_H_ 1
 
 #include <iostream>
 #include <string>
 #include <map>
 #include <vector>
 
+#include <boost/cstdint.hpp>
+
 #include <gsl/gsl_rng.h>
+#include <mygsl/random_utils.h>
+
+namespace datatools {
+  class properties;
+}
 
 namespace mygsl {
-
-  //using   namespace std;
 
   class rng
   {
   public:
-      
-    static bool g_debug;
+ 
+    static const std::string DEFAULT_RNG_ID;   // "taus2"
+    static const std::string DEFAULT_RNG_TYPE; // idem
 
-    static const std::string DEFAULT_RNG_TYPE;
-
-    struct initializer
-    {
-      std::map<std::string, const gsl_rng_type *> dict;
-      initializer ();
-      ~initializer ();
-    };
-      
     typedef std::vector<unsigned char> state_buffer_type;
-
-  private:
-
-    static initializer g_initializer_;
-
-    gsl_rng * _r_;
-
-  public:
 
     static void default_setup ();
 
     static void print_dict (std::ostream &);
 
-  public:
+    static bool is_id_valid(const std::string & id_);
+
+    static bool is_seed_valid(int32_t seed_);
 
     bool is_initialized () const;
 
-    void initialize (const std::string & id_ = "mt19937", 
-                     unsigned long int seed_ = 0);
+    void initialize ();
 
-    void init (const std::string & id_ = "mt19937", 
-               unsigned long int seed_ = 0);
+    void initialize (int32_t seed_);
 
-    void set_seed (unsigned long int seed_ = 0);
+    void initialize (const std::string & id_, int32_t seed_ = 0);
+ 
+    void initialize (const datatools::properties & config_);
+
+    /// Deprecated :
+    void init (const std::string & id_, int32_t seed_ = 0);
+
+    bool is_seed_invalid() const;
+
+    bool is_seed_valid() const;
+
+    bool is_seed_time() const;
+
+    bool is_id_valid() const;
+
+    int32_t get_seed() const;
+
+    void set_seed (int32_t seed_ = 0);
+
+    const std::string & get_id() const;
+
+    void set_id (const std::string & id_ = "");
 
     rng ();
+
+    rng (int32_t seed_, bool init_now_ = true);
             
-    rng (const std::string & id_, unsigned long int seed_);
+    rng (const std::string & id_, int32_t seed_, bool init_now_ = true);
 
     void reset ();
+
+    void clear ();
       
     virtual ~rng ();
 
@@ -140,11 +154,25 @@ namespace mygsl {
     // 2009-11-08 FM: to be used as a functor:
     double operator () (void);
 
+  private:
+   
+    void _init_defaults_();
+     
+    void _initialize_();
+    
+    void _reset_();
+
+  private:
+
+    std::string  _id_;   /// The ID(type) of GSL random number generator algorithm
+    int32_t      _seed_; /// The initial seed set before initialization
+    gsl_rng *    _r_;    /// The internal GSL random number generator
+
   };
   
 }
 
-#endif // __gsl__rng_h
+#endif // MYGSL_RNG_H_
 
 // end of gsl::rng.h
 /*

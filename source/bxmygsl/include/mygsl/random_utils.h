@@ -30,8 +30,8 @@
  * 
  */
 
-#ifndef __mygsl__random_utils_h
-#define __mygsl__random_utils_h 1
+#ifndef MYGSL_RANDOM_UTILS_H_
+#define MYGSL_RANDOM_UTILS_H_ 1
 
 #include <boost/cstdint.hpp>
 
@@ -41,7 +41,6 @@ namespace mygsl {
   /// of pseudo-random number generators (PRNG)
   class random_utils
   {
-
   public:
       
     static const int32_t SEED_INVALID = -1; //!< Constant that represents an invalid seed value
@@ -51,6 +50,6 @@ namespace mygsl {
 
 } // end of namespace mygsl
 
-#endif // __mygsl__random_utils_h
+#endif // MYGSL_RANDOM_UTILS_H_
 
 // end of random_utils.h

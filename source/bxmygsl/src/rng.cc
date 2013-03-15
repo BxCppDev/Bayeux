@@ -1,6 +1,6 @@
 // mygsl::rng.c
 /*
- * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,32 +24,99 @@
 #include <sstream>
 #include <stdexcept>
 #include <string.h>
+#include <ctime>
+
+#include <boost/scoped_ptr.hpp>
+
+#include <gsl/gsl_rng.h>
+#include <gsl/gsl_randist.h>
+ 
+#include <datatools/properties.h>
+#include <datatools/ioutils.h>
 
 #include <mygsl/rng.h>
-
-#include <gsl/gsl_randist.h>
 
 namespace mygsl {
 
   using namespace std;
 
-  bool rng::g_debug = false;
+  /*****************************************************/
 
-  const std::string rng::DEFAULT_RNG_TYPE = "taus2";
-  //const std::string rng::DEFAULT_RNG_TYPE = "mt19937";
-
-  void rng::default_setup ()
+  // PIMPL :
+  struct prng_wrapper
   {
-    gsl_rng_env_setup ();
+    prng_wrapper();
+    ~prng_wrapper();
+    const gsl_rng * get() const;
+    gsl_rng * grab();
+    void reset(gsl_rng * r_ = 0);
+    gsl_rng * _r_; /// The internal GSL random number generator
+  };
+
+  void prng_wrapper::reset(gsl_rng * r_)
+  {
+    if (_r_ == r_) return;
+    if (_r_ != 0)
+      {
+        gsl_rng_free (_r_);
+      }
+    _r_ = r_;
     return;
   }
- 
-  rng::initializer::initializer ()
+
+  const gsl_rng * prng_wrapper::get() const
   {
-    if (g_debug) 
+    return _r_;
+  }
+
+  gsl_rng * prng_wrapper::grab()
+  {
+    return _r_;
+  }
+  
+  prng_wrapper::prng_wrapper()
+  {
+    _r_ = 0;
+    return;
+  }
+
+  prng_wrapper::~prng_wrapper()
+  {
+    reset(0);
+    return;
+  }
+
+  /*****************************************************/
+
+  // PIMPL :
+  struct rng_initializer
+  {
+  public:
+    rng_initializer ();
+    ~rng_initializer ();
+    static rng_initializer & instance();
+  public:
+    std::map<std::string, const gsl_rng_type *> dict;
+  };
+
+  // static 
+  rng_initializer & rng_initializer::instance()
+  {
+    static boost::scoped_ptr<rng_initializer> g_scoped_initializer(0);
+    if (g_scoped_initializer.get() == 0)
       {
-        std::cerr << "DEBUG: rng::initializer::ctor: " 
-                  << "initialize dictionnary." << std::endl;
+        g_scoped_initializer.reset(new rng_initializer);
+      }
+    return *g_scoped_initializer;
+  }
+ 
+  rng_initializer::rng_initializer ()
+  {
+    bool devel = false;
+    if (devel) 
+      {
+        std::cerr << "DEVEL: mygsl::rng_initializer::ctor: " 
+                  << "Initialize dictionnary." << std::endl;
       }
     const gsl_rng_type ** t0 = gsl_rng_types_setup ();
     for (const gsl_rng_type ** t = t0; *t != 0; t++) 
@@ -60,29 +127,54 @@ namespace mygsl {
     return;
   }
 
-  rng::initializer::~initializer ()
+  rng_initializer::~rng_initializer ()
   {
     dict.clear();
     return;
   }
 
-  /*************************/
+  /*****************************************************/
+ 
+  /* Internal state of a generator like "mt19937"
+   * use far more memory than "taus2".
+   */
+  const std::string rng::DEFAULT_RNG_ID = "taus2"; 
+  const std::string rng::DEFAULT_RNG_TYPE = rng::DEFAULT_RNG_ID; 
 
-  void rng::dump (ostream & out_) const
+  void rng::default_setup ()
+  {
+    gsl_rng_env_setup ();
+    return;
+  }
+
+  void rng::dump (std::ostream & out_) const
   {
     out_ << "mygsl::rng::dump: " << endl;
+    out_ << "|-- " << "Initialized   : " << is_initialized () << endl;
+    out_ << "|-- " << "ID            : '" << _id_ << "'" << endl;
+    if (is_initialized ()) out_ << "|-- ";
+    else out_ << "`-- ";
+    out_ << "Seed          : " << _seed_ << endl;
     if (is_initialized ())
       {
-        out_ << "|-- " << "Initialized   : " << is_initialized () << endl;
-        out_ << "|-- " << "PRNG name     : " << name () << endl;
-        out_ << "`-- " << "Internal state size : " << get_internal_state_size ()
+        out_ << "|-- " << "GSL PRNG name : '" << name () << "'" << endl;
+        out_ << "`-- " << "GSL PRNG internal state size : " 
+             << get_internal_state_size ()
              << endl;
       }
-    else
-      {
-        out_ << "`-- " << "Initialized   : " << is_initialized () << endl;
-      }
     return;
+  }
+
+  bool rng::is_id_valid(const std::string &id_)
+  {
+    std::map<std::string,const gsl_rng_type *>::const_iterator found 
+      = rng_initializer::instance().dict.find(id_);
+    return found != rng_initializer::instance().dict.end();
+  }
+
+  bool rng::is_seed_valid(int32_t seed_)
+  {
+    return seed_ >= 0;
   }
 
   bool rng::is_initialized () const
@@ -92,14 +184,15 @@ namespace mygsl {
 
   void rng::print_dict (std::ostream & out_)
   {
-    if (g_debug) 
+    bool devel = false;
+    if (devel) 
       {
-        std::cerr << "Available GSL random number generators: " 
+        std::clog << "Available GSL random number generators: " 
                   << std::endl;
       }
     std::map<std::string,const gsl_rng_type *>::const_iterator i;
-    for (i = rng::g_initializer_.dict.begin (); 
-         i != rng::g_initializer_.dict.end (); 
+    for (i = rng_initializer::instance().dict.begin (); 
+         i != rng_initializer::instance().dict.end (); 
          i++) 
       {
         out_ << i->first << std::endl; 
@@ -107,83 +200,219 @@ namespace mygsl {
     return;
   }
 
-  rng::initializer rng::g_initializer_;
-
-  void rng::set_seed (unsigned long int seed_)
+  const std::string & rng::get_id() const
   {
-    if (_r_ == 0) 
-      {
-        std::ostringstream message;
-        message << "mygsl::rng::set_seed: Generator is not initialized ! Invoke 'rng::init' first !";
-        throw std::logic_error (message.str ());
-      }
-    gsl_rng_set (_r_, seed_);    
+    return _id_;
+  }
+
+  int32_t rng::get_seed() const
+  {
+    return _seed_;
+  }
+
+  void rng::set_id (const std::string & id_)
+  {
+    if (id_.empty()) { 
+      _id_ = DEFAULT_RNG_ID;
+    }
+    else {
+      _id_ = id_;
+    }   
     return;
   }
 
-  void rng::init (const std::string & id_, 
-                  unsigned long int seed_)
+  bool rng::is_id_valid() const
+  {
+    return ::mygsl::rng::is_id_valid(_id_);
+  }
+
+  bool rng::is_seed_time() const
+  {
+    return _seed_ == random_utils::SEED_TIME;
+  }
+
+  bool rng::is_seed_invalid() const
+  {
+    return ! is_seed_valid ();
+  }
+
+  bool rng::is_seed_valid() const
+  {
+    return ::mygsl::rng::is_seed_valid (_seed_);
+  }
+
+  void rng::set_seed (int32_t seed_)
+  {
+    if (seed_ < 0) {
+      _seed_ = random_utils::SEED_INVALID;
+    }
+    else {
+      _seed_ = seed_;
+    }
+    return;
+  }
+
+  void rng::init (const std::string & id_, int32_t seed_)
   {
     this->initialize (id_, seed_);
     return;
   }
   
-  void rng::initialize (const std::string & id_, 
-                        unsigned long int seed_)
+  void rng::initialize ()
+  {
+    _initialize_();
+    return;
+  }
+  
+  void rng::initialize (int32_t seed_)
+  {
+    set_seed(seed_);
+    _initialize_();
+    return;
+  }
+  
+  void rng::initialize (const std::string & id_, int32_t seed_)
+  {
+    set_id(id_);
+    set_seed(seed_);
+    _initialize_();
+    return;
+  }
+ 
+  void rng::initialize (const datatools::properties & config_)
+  {
+    if (_seed_ < 0)
+      {
+        if (config_.has_key("prng.seed"))
+          {
+            int32_t seed = config_.fetch_integer("prng.seed");
+            if (! is_seed_valid (seed)) {
+              std::ostringstream message;
+              message << "mygsl::rng::_initialize_: Invalid seed value '" 
+                      << seed << "' from property '" << "prng.seed" << "' !";
+              throw std::logic_error (message.str ());              
+            }
+            set_seed (seed);
+          }
+      }
+    if (config_.has_key("prng.id"))
+      {
+        const std::string id = config_.fetch_string("prng.id");
+        if (! is_id_valid (id)) {
+          std::ostringstream message;
+          message << "mygsl::rng::_initialize_: Invalid PRND id '" 
+                  << id << "' from property '" << "prng.id" << "' !";
+          throw std::logic_error (message.str ());              
+        }
+        set_id(id);
+      }
+    _initialize_();
+    return;
+  }
+   
+  void rng::_init_defaults_()
+  {
+    _id_   = DEFAULT_RNG_ID;
+    _seed_ = random_utils::SEED_INVALID;
+    return;
+  }
+
+  void rng::_initialize_()
   {
     if (_r_ != 0) 
       {
-        reset ();
+       _reset_ ();
       }
-    if (g_initializer_.dict.find (id_) == g_initializer_.dict.end ()) 
+    if (rng_initializer::instance().dict.find (_id_) == rng_initializer::instance().dict.end ()) 
       {
         std::ostringstream message;
-        message << "mygsl::rng::initialize: Cannot find the '" 
-                << id_ << "' generator!";
+        message << "mygsl::rng::_initialize_: Cannot find the '" 
+                << _id_ << "' generator from the GSL library !";
         throw std::logic_error (message.str ());
       }
-    _r_ = gsl_rng_alloc (g_initializer_.dict[id_]);
+    _r_ = gsl_rng_alloc (rng_initializer::instance().dict[_id_]);
     if (_r_ == 0) 
       {
         std::ostringstream message;
-        message << "mygsl::rng::initialize: Cannot allocate the '" 
-                << id_ << "' generator!";
+        message << "mygsl::rng::initialize: GSL cannot allocate the '" 
+                << _id_ << "' generator!";
         throw std::logic_error (message.str ());
       }
-    gsl_rng_set (_r_, seed_);
-    return;
-  }
-
-  
-  rng::rng ()
-  {
-    _r_ = 0;
-    return;
-  }
-
-  // ctor:
-  rng::rng (const std::string & id_, unsigned long int seed_)
-  {
-    _r_ = 0;
-    init (id_, seed_);
-    return;
-  }
-
-  void rng::reset ()
-  {
-    if (g_debug) 
+    if (_seed_ < 0) 
       {
-        std::clog << "DEBUG: mygsl::rng::reset: " 
-                  << "Entering." << std::endl;
+        std::ostringstream message;
+        message << "mygsl::rng::_initialize_: Invalid seed '" 
+                << _seed_ << "' !";
+        throw std::logic_error (message.str ());
       }
+    if (is_seed_time()) {
+      _seed_ = (int32_t) (time(0) & 0x8FFFFFFF);
+      std::clog << datatools::io::warning
+                << "mygsl::rng::_initialize_: "
+                << "Seed initialized with current time (seed=" << _seed_ << ") ! "
+                << "This may be a problem if multiple PRNGs are initialized within the same second."
+                << std::endl;
+    }
+    unsigned long int gsl_seed = (unsigned long int) _seed_;
+    gsl_rng_set (_r_, gsl_seed);
+    return;
+  }
+
+
+  void rng::_reset_ ()
+  {
     if (_r_ != 0) gsl_rng_free (_r_);
     _r_ = 0;
     return;
   }
    
+
+  rng::rng ()
+  {
+    _init_defaults_();
+    _r_ = 0;
+    return;
+  }
+
+
+  // ctor:
+  rng::rng (int32_t seed_, bool init_)
+  {
+    _init_defaults_();
+    _r_ = 0;
+    set_seed(seed_);
+    if (init_) _initialize_ ();
+    return;
+  }
+
+
+  // ctor:
+  rng::rng (const std::string & id_, int32_t seed_, bool init_)
+  {
+    _init_defaults_();
+    _r_ = 0;
+    set_id(id_);
+    set_seed(seed_);
+    if (init_) _initialize_ ();
+    return;
+  }
+
+  void rng::reset ()
+  {
+    _reset_ ();
+    return;
+  }
+  
+  void rng::clear ()
+  {
+    _reset_();
+    _init_defaults_();
+    return;
+  }
+    
   size_t rng::get_internal_state_size () const
   {
-    if (_r_ == 0)
+    if (! is_initialized())
       {
         std::ostringstream message;
         message << "mygsl::rng::get_internal_state_size: Generator is not initialized !";
@@ -196,13 +425,13 @@ namespace mygsl {
   // dtor:
   rng::~rng ()
   {
-    reset ();
+    if (is_initialized()) reset ();
     return;
   }
 
   unsigned long int rng::get ()
   {
-    return gsl_rng_get (_r_);
+    return (int32_t) gsl_rng_get (_r_);
   }
 
   double rng::uniform ()
@@ -222,7 +451,7 @@ namespace mygsl {
 
   std::string rng::name () const
   {
-    if (_r_ == 0)
+    if (! is_initialized ())
       {
         std::ostringstream message;
         message << "mygsl::rng::name: Generator is not initialized !";
@@ -243,6 +472,12 @@ namespace mygsl {
 
   void rng::store (const std::string & filename_) const
   {
+    if (! is_initialized ())
+      {
+        std::ostringstream message;
+        message << "mygsl::rng::store: Generator is not initialized !";
+        throw std::logic_error (message.str ());  
+      }
     FILE * stream = fopen (filename_.c_str (), "w");
     if (stream == NULL) 
       {
@@ -252,7 +487,7 @@ namespace mygsl {
                 << filename_ << "'!";
         throw std::logic_error (message.str ());
       }
-    int ret=gsl_rng_fwrite (stream, _r_);
+    int ret = gsl_rng_fwrite (stream, _r_);
     if (ret == GSL_EFAILED) 
       {
         std::ostringstream message;
@@ -266,6 +501,12 @@ namespace mygsl {
 
   void rng::load (const std::string & filename_)
   {
+    if (! is_initialized ())
+      {
+        std::ostringstream message;
+        message << "mygsl::rng::load: Generator is not initialized !";
+        throw std::logic_error (message.str ());  
+      }
     FILE * stream = fopen (filename_.c_str (), "r");
     if (stream == NULL) 
       {
@@ -275,7 +516,7 @@ namespace mygsl {
                 << filename_ << "'!";
         throw std::logic_error (message.str ());
       }
-    int ret=gsl_rng_fread (stream, _r_);
+    int ret = gsl_rng_fread (stream, _r_);
     if (ret == GSL_EFAILED)  
       {
         std::ostringstream message;
@@ -297,7 +538,7 @@ namespace mygsl {
 
   void rng::to_buffer (rng::state_buffer_type & buffer_) const
   {
-    if (_r_ == 0) 
+    if (! is_initialized ())
       {
         std::ostringstream message;
         message << "mygsl::rng::to_buffer: Generator is not initialized !";
@@ -322,16 +563,22 @@ namespace mygsl {
 
   void rng::to_stream (std::ostream & out_) const
   {
-    void * state = gsl_rng_state (_r_);
-    size_t n = gsl_rng_size (_r_);
-    const unsigned char * b = (const unsigned char *) state;
-    out_ << this->name () << ' ' << n;
-    for (int i = 0; i < n; i++) 
-      {
+    out_ << _id_ << ' ' << _seed_ << ' ';
+    size_t n = 0;       
+    void * state = 0;
+    if (is_initialized ()) {
+      state = gsl_rng_state (_r_);
+      n = gsl_rng_size (_r_);
+    }
+    out_ << n;
+    if (state != 0) {
+      const unsigned char * b = (const unsigned char *) state;
+      for (int i = 0; i < n; i++) {
         unsigned int c = (unsigned int) *b;
         out_ << ' ' << std::dec << c;
         b++;
       }
+    }
     return;
   }
 
@@ -364,63 +611,38 @@ namespace mygsl {
 
   void rng::from_stream (std::istream & in_) 
   {
-    std::string token;
-    in_ >> token;
-    if (! in_) 
+    if (is_initialized ())
       {
-        throw std::logic_error ("mygsl::rng::from_stream: Cannot read generator name from stream!");      
+        reset();
       }
-    if (g_debug) {
-      std::cerr << "DEBUG: rng::from_stream: name='" 
-                << token << "'" << std::endl;
+    std::string id;
+    int32_t seed;
+    size_t n;
+    in_ >> id >> seed >> n;
+    if (! in_) {
+      throw std::logic_error ("mygsl::rng::from_stream: Cannot read generator parameteres 'ID/seed/n' from stream!");      
     }
-    init (token);
-    int n;
-    in_ >> n;
-    if (! in_) 
-      {
-        throw std::logic_error ("mygsl::rng::from_stream: Cannot read generator size from stream!");      
+    set_id(id);
+    set_seed(seed);
+    if (n > 0) {
+      _initialize_();
+      void * state = gsl_rng_state (_r_);
+      size_t n2 = gsl_rng_size (_r_);
+      if (n != n2) {
+        throw std::logic_error ("mygsl::rng::from_stream: Unmatching size of the PRNG's internal state !");      
       }
-    if (n != gsl_rng_size (_r_)) 
-      {
-        throw std::logic_error ("mygsl::rng::from_stream: Invalid  generator size!");      
-      }
-    if (g_debug) 
-      {
-        std::cerr << "DEBUG: rng::from_stream: n='" 
-                  << n << "'" << std::endl;
-      }
-    //unsigned char * s = 0;
-    //s = new unsigned char[n];
-    const size_t SBUFSZ = 65536;
-    if (n > SBUFSZ)
-      {
-        throw std::logic_error ("mygsl::rng::from_stream: Not enough room to store the PRNG state !");      
-      }
-    unsigned char s[SBUFSZ];
-    unsigned char * ps = s;
-    for (int i = 0; i < n; i++) 
-      {
+      unsigned char * ps = (unsigned char *) state;
+      for (int i = 0; i < (int) n; i++) {
         unsigned int c;
         in_ >> c ;
-        if (! in_) 
-          {
+        if (! in_) {
             throw std::logic_error ("mygsl::rng::from_stream: Cannot read state byte from stream !");      
-          }
-        /*
-          if (g_debug) {
-          std::cerr << "DEBUG: rng::from_stream: i=" 
-          << i << "   c='" 
-          << c << "'" << std::endl;
-          }
-        */
+        }
         *ps = (unsigned char) c;
         ps++;
         in_ >> std::ws;
       }
-    void * state = gsl_rng_state (_r_);
-    memcpy (state, s, n);
-    //delete[] s;
+    }
     return;
   }
   

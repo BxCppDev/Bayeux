@@ -13,11 +13,9 @@ int main (int argc_ , char ** argv_)
 {
   try 
     {
-      mygsl::rng::g_debug = false;
+      mygsl::rng::print_dict (clog);
 
-      if (mygsl::rng::g_debug) mygsl::rng::print_dict (clog);
-
-      string            rng_id = mygsl::rng::DEFAULT_RNG_TYPE;
+      string            rng_id = mygsl::rng::DEFAULT_RNG_ID;
       unsigned long int seed   = 12345;
     
       mygsl::rng r;
