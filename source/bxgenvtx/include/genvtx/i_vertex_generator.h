@@ -2,7 +2,7 @@
 /* i_vertex_generator.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-12
- * Last modified: 2013-03-10
+ * Last modified: 2013-03-15
  * 
  * License: 
  * 
@@ -26,8 +26,6 @@
 #include <datatools/handle.h>
 #include <datatools/i_tree_dump.h>
 
-#include <mygsl/rng.h>
-
 #include <genvtx/detail/vg_tools.h>
 #include <genvtx/utils.h>
 
@@ -38,6 +36,10 @@ namespace datatools {
 
 namespace geomtools {
   class manager;
+}
+
+namespace mygsl {
+  class rng;
 }
 
 namespace genvtx {
@@ -68,6 +70,13 @@ namespace genvtx {
     
     void check_geom_setup_requirement (const geomtools::manager * gmgr_) const;
     
+    bool has_external_prng() const;
+ 
+    void set_external_prng(mygsl::rng & prng_);
+
+    bool has_prng() const;
+
+    mygsl::rng & grab_prng();
 
     /// Check if a geometry manager is attached to the vertex generator
     bool has_geom_manager () const;
@@ -89,6 +98,9 @@ namespace genvtx {
 
     /// Wrapper method for vertex randomization
     void shoot_vertex (mygsl::rng & random_, geomtools::vector_3d & vertex_);
+
+    /// Wrapper method for vertex randomization
+    void shoot_vertex (geomtools::vector_3d & vertex_);
 
     /// Wrapper method for vertex randomization
     geomtools::vector_3d shoot_vertex (mygsl::rng & random_);
@@ -161,6 +173,7 @@ namespace genvtx {
     std::string                  _geom_setup_requirement_; /// The requirement ont the requested geometry setup (label and version)
     const ::geomtools::manager * _geom_manager_; /// Handle to the geometry manager
     weight_info                  _total_weight_; /// Weighting data
+    mygsl::rng                 * _external_prng_; /// Handle to an external PRNG
 
     // Factory stuff :
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_vertex_generator);

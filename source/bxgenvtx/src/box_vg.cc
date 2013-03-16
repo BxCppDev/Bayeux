@@ -10,6 +10,7 @@
 #include <vector>
 
 #include <datatools/units.h>
+#include <mygsl/rng.h>
 
 namespace genvtx {
 

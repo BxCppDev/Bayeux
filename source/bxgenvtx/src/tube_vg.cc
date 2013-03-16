@@ -7,6 +7,8 @@
 #include <stdexcept>
 #include <sstream>
 
+#include <mygsl/rng.h>
+
 #include <datatools/units.h>
 #include <datatools/utils.h>
 #include <datatools/properties.h>

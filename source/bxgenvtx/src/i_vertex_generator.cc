@@ -14,6 +14,8 @@
 #include <datatools/version_check.h>
 #include <datatools/utils.h>
 
+#include <mygsl/rng.h>
+
 #include <geomtools/manager.h>
 #include <geomtools/geometry_service.h>
 
@@ -24,7 +26,7 @@ namespace genvtx {
   using namespace std;
 
   // Factory stuff :
-  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(i_vertex_generator,"genvtx::i_vertex_generator/__system__");
+  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(i_vertex_generator,"genvtx::i_vertex_generator/_system_");
 
   bool i_vertex_generator::is_debug () const
   {
@@ -178,11 +180,37 @@ namespace genvtx {
     return *_geom_manager_;
   }
 
+  bool i_vertex_generator::has_external_prng() const
+  {
+    return _external_prng_ != 0;
+  }
+
+  void i_vertex_generator::set_external_prng(mygsl::rng & prng_)
+  {
+    _external_prng_ = &prng_;
+    return;
+  }
+
+  bool i_vertex_generator::has_prng() const
+  {
+    return has_external_prng();
+  }
+
+  mygsl::rng & i_vertex_generator::grab_prng()
+  {
+    if (! has_external_prng())
+      {
+        throw std::logic_error ("mygsl::i_vertex_generator::shoot_vertex: No available PRNG !");
+     }
+    return *_external_prng_;
+  }
+
   i_vertex_generator::i_vertex_generator ()
   {
     _debug_ = false;
     _geom_manager_ = 0;
     _total_weight_.invalidate ();
+    _external_prng_ = 0;
     return;
   }
 
@@ -194,6 +222,16 @@ namespace genvtx {
   bool i_vertex_generator::has_next_vertex () const
   {
     return true;
+  }
+
+  void i_vertex_generator::shoot_vertex (geomtools::vector_3d & vertex_)
+  {
+    if (_external_prng_ == 0)
+      {
+        throw std::logic_error ("mygsl::i_vertex_generator::shoot_vertex: Missing external PRNG handle !");
+      }
+    shoot_vertex (*_external_prng_, vertex_);
+    return;
   }
 
   void i_vertex_generator::shoot_vertex (mygsl::rng & random_, 
@@ -227,6 +265,8 @@ namespace genvtx {
         string geom_setup_requirement = setup_.fetch_string ("geometry.setup_requirement");
         set_geom_setup_requirement (geom_setup_requirement);
       }
+
+    // Do we need support for embeded PRNG ???
 
     check_geom_setup_requirement (0);
       

@@ -9,6 +9,7 @@
 
 #include <datatools/ioutils.h>
 #include <datatools/units.h>
+#include <mygsl/rng.h>
 
 #include <materials/manager.h>
 

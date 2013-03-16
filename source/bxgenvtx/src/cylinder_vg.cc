@@ -9,6 +9,7 @@
 
 #include <datatools/units.h>
 #include <datatools/properties.h>
+#include <mygsl/rng.h>
 
 namespace genvtx {
 
