@@ -326,8 +326,6 @@ namespace emfield {
         }
     }
    
-
-
     return;
   }
   

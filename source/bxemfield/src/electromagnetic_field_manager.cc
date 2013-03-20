@@ -404,6 +404,7 @@ namespace emfield {
     return found->second.get ();
   }
 
+  /*
   geom_map & electromagnetic_field_manager::grab_geom_map()
   {
     if (!has_geom_map())
@@ -412,6 +413,7 @@ namespace emfield {
       }
     return *_geom_map_.get();
   }
+  */
 
   const geom_map & electromagnetic_field_manager::get_geom_map() const
   {

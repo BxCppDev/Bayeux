@@ -170,7 +170,7 @@ namespace emfield {
 
     const base_electromagnetic_field & get_field (const std::string & field_name_) const;
 
-    geom_map & grab_geom_map();
+    //geom_map & grab_geom_map();
 
     const geom_map & get_geom_map() const;
 
@@ -194,7 +194,7 @@ namespace emfield {
     const geomtools::manager *   _geom_manager_; /// Geometry manager
     datatools::multi_properties  _rules_;     /// Build rules for fields 
     base_electromagnetic_field::field_dict_type _fields_; /// Dictionnary of fields
-    boost::scoped_ptr<geom_map> _geom_map_; /// Geometry vs EM fields map
+    boost::scoped_ptr<geom_map> _geom_map_; /// Geometry/EM field associations map (what field and where ?)
 
   };
 
