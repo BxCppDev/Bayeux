@@ -16,10 +16,14 @@
 
 #include <iostream>
 #include <string>
+
 #include <boost/cstdint.hpp>
-#include <emfield/base_electromagnetic_field.h>
+#include <boost/scoped_ptr.hpp>
+
 #include <datatools/i_tree_dump.h>
 #include <datatools/multi_properties.h>
+
+#include <emfield/base_electromagnetic_field.h>
 
 #ifndef EMFIELD_ELECTROMAGNETIC_FIELD_MANAGER_H_
 #define EMFIELD_ELECTROMAGNETIC_FIELD_MANAGER_H_ 1
@@ -28,7 +32,13 @@ namespace datatools {
   class service_manager;
 }
 
+namespace geomtools {
+  class manager;
+}
+
 namespace emfield {
+
+  class geom_map;
 
   /// \brief Electromagnetic fields manager class
   class electromagnetic_field_manager :
@@ -100,12 +110,12 @@ namespace emfield {
 
     public:
 
-      std::string        _name_;        //!< Name of the emfield
-      std::string        _id_;          //!< The ID (type) of the emfield
-      std::string        _description_; //!< Description of the emfield
-      datatools::properties _config_;   //!< The configuration of the emfield 
-      uint32_t           _status_;      //!< Status of the emfield
-      emfield_handle_type _handle_;      //!< Handle to the emfield
+      std::string           _name_;        //!< Name of the emfield
+      std::string           _id_;          //!< The ID (type) of the emfield
+      std::string           _description_; //!< Description of the emfield
+      datatools::properties _config_;      //!< The configuration of the emfield 
+      uint32_t              _status_;      //!< Status of the emfield
+      emfield_handle_type   _handle_;      //!< Handle to the emfield
 
       friend class manager;
 
@@ -124,6 +134,14 @@ namespace emfield {
     void set_service_manager (datatools::service_manager &);
 
     void reset_service_manager ();
+
+    bool has_geometry_manager() const;
+
+    bool has_geom_map () const;
+
+    void set_geometry_manager(const geomtools::manager &);
+
+    const geomtools::manager & get_geometry_manager() const;
 
     electromagnetic_field_manager (uint32_t flags_ = 0);
 
@@ -152,6 +170,10 @@ namespace emfield {
 
     const base_electromagnetic_field & get_field (const std::string & field_name_) const;
 
+    geom_map & grab_geom_map();
+
+    const geom_map & get_geom_map() const;
+
   protected:
 
     void _set_initialized (bool initialized_);
@@ -160,15 +182,19 @@ namespace emfield {
 
     void _construct_ ();
 
+    void _construct_geomap_ (const datatools::properties & setup_);
+
   private:
 
     bool _factory_preload_; /// Flag to preload the system factory
     base_electromagnetic_field::factory_register_type _factory_register_; /// The factory register for EM field types
     bool     _initialized_;    /// Initialization flag
     bool     _debug_;          /// Debug flag
-    datatools::service_manager *       _service_manager_; /// Service manager
-    datatools::multi_properties          _rules_;     /// Build rules for fields 
-    base_electromagnetic_field::field_dict_type _fields_;    /// Dictionnary of fields
+    datatools::service_manager * _service_manager_; /// Service manager
+    const geomtools::manager *   _geom_manager_; /// Geometry manager
+    datatools::multi_properties  _rules_;     /// Build rules for fields 
+    base_electromagnetic_field::field_dict_type _fields_; /// Dictionnary of fields
+    boost::scoped_ptr<geom_map> _geom_map_; /// Geometry vs EM fields map
 
   };
 

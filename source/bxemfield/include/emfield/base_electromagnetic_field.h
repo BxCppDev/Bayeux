@@ -21,10 +21,11 @@
 #include <boost/cstdint.hpp>
 
 #include <datatools/factory_macros.h>
-#include <geomtools/utils.h>
 #include <datatools/handle.h>
 #include <datatools/bit_mask.h>
 #include <datatools/i_tree_dump.h>
+
+#include <geomtools/utils.h>
 
 #ifndef EMFIELD_BASE_ELECTROMAGNETIC_FIELD_H_
 #define EMFIELD_BASE_ELECTROMAGNETIC_FIELD_H_ 1

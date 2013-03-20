@@ -8,11 +8,14 @@
 #include <string>
 #include <stdexcept>
 
+#include <datatools/properties.h>
+#include <datatools/ioutils.h>
+#include <datatools/service_manager.h>
+
+#include <geomtools/gnuplot_i.h>
+
 #include <emfield/emfield_config.h>
 #include <emfield/electromagnetic_field_manager.h>
-#include <datatools/properties.h>
-#include <datatools/service_manager.h>
-#include <geomtools/gnuplot_i.h>
 #include <emfield/oscillating_field.h>
 
 using namespace std;
@@ -27,6 +30,7 @@ int main (int argc_, char ** argv_)
       bool   debug   = false;
       bool   verbose = false;
       bool   plot    = false;
+      bool   plot2   = false;
       double e_scale = 1.0;
       double b_scale = 1.0;
 
@@ -50,6 +54,10 @@ int main (int argc_, char ** argv_)
                 {
                   plot = true;
                 }
+             else if ((option == "-p2") || (option == "--plot2")) 
+                {
+                  plot2 = true;
+                }
               else if ((option == "-E:10")) 
                 {
                   e_scale /= 10;
@@ -68,40 +76,43 @@ int main (int argc_, char ** argv_)
                 }
               else 
                 { 
-                  clog << "warning: ignoring option '" << option << "'!" << endl; 
+                  clog << "warning: ignoring option '" << option << "' !" 
+                       << endl; 
                 }
             }
           else
             {
               string argument = token; 
               { 
-                clog << "warning: ignoring argument '" << argument << "'!" << endl; 
+                clog << "warning: ignoring argument '" << argument << "' !" 
+                     << endl; 
               }
             } 
           iarg++; 
         }
 
-      
-      // This is a blank service manager :
+      // This is the service manager :
       datatools::service_manager SRVCmgr;
-      SRVCmgr.initialize ();
-
-      // This is a EM field manager :
+      datatools::properties SRVCmgrConfig;
+      std::string SRVCmgrConfigFile = "${EMFIELD_DATA_DIR}/testing/config/test_service_manager.conf";
+      if (debug) clog << datatools::io::debug << "Setup file = " 
+                      << SRVCmgrConfigFile << endl;
+      datatools::fetch_path_with_env(SRVCmgrConfigFile);
+      datatools::properties::read_config(SRVCmgrConfigFile, SRVCmgrConfig);
+      SRVCmgrConfig.tree_dump(std::cerr, "The service manager configuration : ");
+      if (debug) clog << datatools::io::debug << "Initializing the service manager..." << endl;
+      SRVCmgr.initialize(SRVCmgrConfig); // Initialize
+      SRVCmgr.tree_dump(std::cerr, "The service manager : ");
+      
+      // This is the EM fields manager :
       emfield::electromagnetic_field_manager EMFmgr;
-
-      // Attach the service manager :
-      EMFmgr.set_service_manager (SRVCmgr);
-     
-      // Configuration :
-      datatools::properties EMFmgr_config;
-      EMFmgr_config.set_flag ("debug");
-      EMFmgr_config.set_flag ("needs_service_manager");
-
-      // Load a specific set of EM field rules :
-      EMFmgr.load ("${EMFIELD_DATA_DIR}/testing/config/test_emfields.conf");
-
-      // Initialize :
-      EMFmgr.initialize (EMFmgr_config);
+      EMFmgr.set_debug(debug);
+      EMFmgr.set_service_manager (SRVCmgr); // Attach the service manager
+      std::string EMFmgrConfigFile = "${EMFIELD_DATA_DIR}/testing/config/test_manager.conf";
+      datatools::properties EMFmgrConfig;
+      datatools::fetch_path_with_env(EMFmgrConfigFile);
+      datatools::properties::read_config(EMFmgrConfigFile, EMFmgrConfig);
+      EMFmgr.initialize (EMFmgrConfig); // Initialize
       EMFmgr.tree_dump (std::clog, "EM field manager: ");
       
       for (emfield::base_electromagnetic_field::field_dict_type::const_iterator i = EMFmgr.get_fields().begin ();
@@ -111,12 +122,12 @@ int main (int argc_, char ** argv_)
           std::string field_name = i->first;
           std::clog << "\n" << "Field '" << field_name << "' : " << std::endl;
           if (! EMFmgr.has_field (field_name))
-            {
+            { 
               std::ostringstream message;
               message << "No field named '" << field_name << "' !";
               throw std::logic_error (message.str ());
             }
-          emfield::base_electromagnetic_field & the_field = EMFmgr.grab_field (field_name);
+          const emfield::base_electromagnetic_field & the_field = EMFmgr.get_field (field_name);
           
           geomtools::vector_3d position (2.0 * CLHEP::m, -1.0 * CLHEP::m, 0.5 * CLHEP::m);
           double time = 1.3 * CLHEP::second;
@@ -182,7 +193,7 @@ int main (int argc_, char ** argv_)
                   message << "No field named '" << field_name << "' !";
                   throw std::logic_error (message.str ());
                 }
-              emfield::base_electromagnetic_field & the_field = EMFmgr.grab_field (field_name);
+              const emfield::base_electromagnetic_field & the_field = EMFmgr.get_field (field_name);
               double dx = 0.4 * CLHEP::m;
               double dy = 0.4 * CLHEP::m;
               double dz = 0.4 * CLHEP::m;
@@ -246,8 +257,7 @@ int main (int argc_, char ** argv_)
               }
 
             }
-          bool plot2 = true;
-          if (plot2)
+         if (plot2)
             {
               std::string datafile = "field2.data";
               std::ofstream fout (datafile.c_str ());
@@ -354,4 +364,4 @@ int main (int argc_, char ** argv_)
   return (error_code);
 }
 
-// end of test_emfield.cxx
+// end of test_emfield_manager.cxx

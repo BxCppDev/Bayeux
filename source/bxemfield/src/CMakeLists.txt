@@ -30,6 +30,7 @@ set(emfield_PUBLIC_HEADERS
     include/emfield/uniform_electric_field.h
     include/emfield/uniform_magnetic_field.h
     include/emfield/emfield_geom_plugin.h
+    include/emfield/geom_map.h
   )
 list_prepend(emfield_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
 
@@ -77,6 +78,7 @@ set(emfield_SOURCES
     uniform_electric_field.cc
     uniform_magnetic_field.cc
     emfield_geom_plugin.cc
+    geom_map.cc
   )
 
 # message(STATUS "********** emfield_SOURCES=${emfield_SOURCES}")

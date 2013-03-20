@@ -11,7 +11,7 @@ Run test scripts from the '__build-Linux-x86_64' build directory :
 
 bash$ EMFIELD_DATA_DIR=$(pwd) \
   __build-Linux-x86_64/testing/test_emfield_manager \
-  --plot \
+  --plot --plot2 \
   -Ex10 -Ex10 \
   -Bx10 -Bx10
 
