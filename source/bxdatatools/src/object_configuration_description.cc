@@ -3,6 +3,7 @@
 
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/classification.hpp>
+#include <boost/scoped_ptr.hpp>
 
 // Ourselves:
 #include <datatools/object_configuration_description.h>
@@ -1159,7 +1160,6 @@ namespace datatools {
     for (int i = 0; i < _properties_infos_.size(); i++) {
       const configuration_property_description & cpd = _properties_infos_[i];
 
- 
       // Process static property :
       if (cpd.is_static()) {
 
@@ -1230,9 +1230,7 @@ namespace datatools {
             } // word loop 
           } // depender loop
         } // dynamic depender
-
       } // end of static properties
-
     }
 
     if (has_configuration_hints()) {
@@ -1246,6 +1244,8 @@ namespace datatools {
     PC.write_footer(out_, topic_);
     return;
   }
+
+  /*******************************************************************************/
 
 } // namespace datatools
 

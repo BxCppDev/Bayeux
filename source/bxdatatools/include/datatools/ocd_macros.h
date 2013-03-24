@@ -56,5 +56,16 @@
   }}}}                                          \
   /**/
 
+#define DOCD_CLASS_SYSTEM_REGISTRATION(ClassType,ClassId)               \
+  namespace datatools {                                                 \
+    namespace detail {                                                  \
+      namespace ocd {                                                   \
+        system_factory_registrar< ClassType > _ocd_sfr(ClassId);      \
+      }}}                                                               \
+  /**/
+
+#define DOCD_GET_SYSTEM_REGISTRATION()                                  \
+  ::datatools::detail::ocd::ocd_registration::get_system_registration() \
+  /**/
 #endif // DATATOOLS_OCD_MACROS_H_
 

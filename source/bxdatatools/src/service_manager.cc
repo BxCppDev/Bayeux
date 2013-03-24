@@ -773,7 +773,7 @@ void service_manager::set_preload(bool preload) {
  * OCD support *
  ***************/
 
-#include <datatools/object_configuration_description.h>
+#include <datatools/ocd_macros.h>
 
 // OCD support for class '::datatools::service_manager' :
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
@@ -785,7 +785,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
     configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("debug")
       .set_terse_description("Flag to activate debugging output")
-      .set_traits(datatools::properties::data::TYPE_BOOLEAN)
+      .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_long_description(
                             "Superseded by a former call of :              \n"
@@ -798,7 +798,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
     configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("name")
       .set_terse_description("The name of the service manager object")
-      .set_traits(datatools::properties::data::TYPE_STRING)
+      .set_traits(datatools::TYPE_STRING)
       .set_mandatory(true)
       .set_long_description(
                             "Superseded by a former call of :           \n"
@@ -811,7 +811,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
     configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("description")
       .set_terse_description("The embeded description string")
-      .set_traits(datatools::properties::data::TYPE_STRING)
+      .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
       .set_long_description(
                             "Superseded by a former call of :                  \n"
@@ -824,7 +824,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
     configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("services.configuration_files")
       .set_terse_description("A list of configuration file names for embeded services")
-      .set_traits(datatools::properties::data::TYPE_STRING, 
+      .set_traits(datatools::TYPE_STRING, 
                   configuration_property_description::ARRAY)
       .set_mandatory(false)
       .set_path(true)
@@ -853,5 +853,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
+
+DOCD_CLASS_SYSTEM_REGISTRATION(::datatools::service_manager,"datatools::service_manager")
 
 // end of service_manager.cc

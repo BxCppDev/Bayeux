@@ -9,10 +9,9 @@
 
 #include <datatools/datatools_config.h>
 #include <datatools/object_configuration_description.h>
-#include <datatools/service_manager.h>
-#include <datatools/ocd_macros.h>
 #include <datatools/units.h>
 #include <datatools/clhep_units.h>
+
 
 using namespace std;
 
@@ -179,6 +178,10 @@ struct foo {
   double width;
   double weight;
 };
+
+/***************************************************************************/
+
+#include <datatools/ocd_macros.h>
 
 /***************************
  * OCD support : interface *
@@ -362,6 +365,9 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
+DOCD_CLASS_SYSTEM_REGISTRATION(foo,"foo")
+
+#include <datatools/service_manager.h>
 
 int main (int argc_, char ** argv_)
 {
@@ -403,8 +409,7 @@ int main (int argc_, char ** argv_)
             } 
           iarg++; 
         }
- 
- 
+
       {
         clog << endl;
         datatools::object_configuration_description OCD;
@@ -456,6 +461,19 @@ int main (int argc_, char ** argv_)
           std::ofstream fscf ("test_OCD_SM.sample.conf");
           OCD.generate_sample_configuration(fscf, "the configuration of a 'datatools::service_manager' object");
         }
+      }
+ 
+      // Print the list of class ID with OCD system support :
+      DOCD_GET_SYSTEM_REGISTRATION().smart_dump(std::clog, "The OCD system registration : ");
+
+      // Declare an OCD register (prefilled with the OCD system register):
+      datatools::detail::ocd::ocd_registration OCDreg(true);
+      OCDreg.smart_dump(std::clog, "An OCD registration : ");
+
+      if (OCDreg.has_id("foo")) {
+        clog << "Class 'foo' has OCD support." << endl;   
+        const datatools::object_configuration_description & foo_OCD = OCDreg.get("foo");
+        foo_OCD.dump(std::clog, "foo OCD: ");
       }
        
       clog << "The end." << endl;

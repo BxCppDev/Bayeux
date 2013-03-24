@@ -78,6 +78,7 @@ include/datatools/multi_properties.ipp
 include/datatools/things.ipp
 include/datatools/the_serializable.ipp
 include/datatools/object_configuration_description.h
+include/datatools/ocd_macros.h
 include/datatools/types.h
   )
 list_prepend(datatools_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
@@ -117,6 +118,7 @@ set(datatools_detail_HEADERS
   include/datatools/detail/reflection_export.h
   include/datatools/detail/reflection_utils.h
   include/datatools/detail/reflection_version.h
+  include/datatools/detail/ocd_utils.h
   )
 list_prepend(datatools_detail_HEADERS "${PROJECT_SOURCE_DIR}/")
 
@@ -165,6 +167,7 @@ set(datatools_SOURCES
   version_id.cc
   base_service.cc # MUST go at the end....
   object_configuration_description.cc
+  ocd_utils.cc
   types.cc
   )
 

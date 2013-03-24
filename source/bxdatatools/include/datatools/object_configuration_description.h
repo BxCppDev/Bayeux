@@ -231,6 +231,7 @@ private:
   cpd_col_type _properties_infos_; /// Collection of documented properties
   std::string _configuration_hints_; /// Some embeded plain text documentation
   bool        _validation_support_; /// Flag to support validation
+
 };
 
 } // namespace datatools;

@@ -1,5 +1,5 @@
 /* -*- mode: c++; -*- */
-/* datatools::ocd_utils.h */
+/* datatools::detail::ocd_utils.h */
 /* 
  * Description :
  *
@@ -28,10 +28,11 @@
 
 // Standard Library
 #include <string>
+#include <map>
+#include <sstream>
+#include <stdexcept>
 
-namespace datatools {
-  class object_configuration_description;
-}
+#include <datatools/object_configuration_description.h>
 
 namespace datatools {                                                   
   namespace detail {                                                   
@@ -40,7 +41,9 @@ namespace datatools {
       struct loader {};
       template <typename T>
       void implement_load(::datatools::object_configuration_description & ocd_);
-}}}
+    } // namespace ocd
+  } // namespace detail
+} // namespace datatools
 
 #include <boost/utility/enable_if.hpp>
 #include <boost/mpl/has_xxx.hpp>
@@ -50,26 +53,115 @@ BOOST_MPL_HAS_XXX_TRAIT_DEF(load);
 
 namespace datatools {                                                   
 
-template <typename ConfigurableType>
-bool load_ocd(::datatools::object_configuration_description & ocd_,
-              typename boost::disable_if< has_load< ::datatools::detail::ocd::loader<ConfigurableType> > >::type* dummy = 0)
-{
-  //std::cerr << "DEVEL: disable_if ! \n";
-  return false;
-}
+  template <typename ConfigurableType>
+  bool load_ocd(::datatools::object_configuration_description & ocd_,
+                typename boost::disable_if< has_load< ::datatools::detail::ocd::loader<ConfigurableType> > >::type* dummy = 0)
+  {
+    return false;
+  }
 
 
-template <typename ConfigurableType>
-bool load_ocd(::datatools::object_configuration_description & ocd_,
-              typename boost::enable_if< has_load< ::datatools::detail::ocd::loader<ConfigurableType> > >::type* dummy = 0)
-{
-  //std::cerr << "DEVEL: enable_if ! \n";
-  typename ::datatools::detail::ocd::loader<ConfigurableType>::load l;
-  l(ocd_);
-  return true;
-}
+  template <typename ConfigurableType>
+  bool load_ocd(::datatools::object_configuration_description & ocd_,
+                typename boost::enable_if< has_load< ::datatools::detail::ocd::loader<ConfigurableType> > >::type* dummy = 0)
+  {
+    typename ::datatools::detail::ocd::loader<ConfigurableType>::load l;
+    l(ocd_);
+    return true;
+  }
 
-}
+} // namespace datatools
+
+#include <boost/shared_ptr.hpp>
+
+namespace datatools {                                                   
+  namespace detail {                                                   
+    namespace ocd {                                                   
+
+      /// \brief OCD registration container
+      class ocd_registration
+      {
+      public:
+
+        typedef boost::shared_ptr<object_configuration_description> ocd_handle_type;
+
+        struct entry_type {
+          ocd_handle_type handle;
+        };
+
+        typedef std::map<std::string, entry_type> ocd_dict_type; 
+
+        ocd_registration(bool preload_system_registration_ = false);
+
+        ~ocd_registration();
+
+        bool has_id(const std::string & class_id_) const;
+
+        const object_configuration_description & 
+        get(const std::string & class_id_) const;
+
+        template<class T>
+        void registration(const std::string & class_name_, const ocd_handle_type & handle_);
+
+        void smart_dump(std::ostream & out_ = std::clog,
+                        const std::string & title_ = "",
+                        const std::string & indent_ = "") const;
+                 
+        // Access to a static singleton (mutable version) :
+        static ocd_registration & grab_system_registration(); 
+
+        // Access to a static singleton (non-mutable version) :
+        static const ocd_registration & get_system_registration(); 
+
+      protected:
+
+        void _preload_system_registration();
+
+      private:
+
+        ocd_dict_type _dict_; 
+
+      };
+
+
+      template<class T>
+      void ocd_registration::registration(const std::string & class_id_,
+                                          const ocd_handle_type & handle_) {
+        if (has_id(class_id_)) {
+          std::ostringstream message;
+          message << "datatools::detail::ocd::ocd_registration::registration: "
+                  << "Class ID '" << class_id_ << "' is already registered !";
+          throw std::logic_error(message.str());
+        }
+        {
+          entry_type dummy;
+          _dict_[class_id_] = dummy;
+        }
+        entry_type & e = _dict_[class_id_];
+        e.handle = handle_;
+      }
+
+
+      template <class T>
+      class system_factory_registrar
+      {
+      public:
+        system_factory_registrar(const std::string & class_id_) {
+          ocd_registration & ocd_reg = ocd_registration::grab_system_registration();
+          ocd_registration::ocd_handle_type h;
+          h.reset(new object_configuration_description);
+          object_configuration_description & the_ocd = *h.get();
+          bool support = load_ocd<T>(the_ocd);
+          if (support) {
+            ocd_reg.registration<T>(class_id_, h); 
+          }
+        }
+      };
+
+    } // namespace ocd
+  } // namespace detail
+} // namespace datatools
+
 
 #endif // DATATOOLS_DETAIL_OCD_UTILS_H_
 
