@@ -282,7 +282,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
                             "implicit length unit.                       \n"
                             )
       ;
-  }  
+  } 
   
   {
     datatools::configuration_property_description & cpd = ocd_.add_property_info();
