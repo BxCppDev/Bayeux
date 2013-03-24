@@ -139,7 +139,10 @@ class units {
    *     }
    *   \endcode
    */
-   static bool is_unit_label_valid(const std::string & unit_label);
+  static bool is_unit_label_valid(const std::string & unit_label);
+  
+  //! Return the symbol of the default unit associated to a unit label supported by the datatools::units class.
+  static std::string get_default_unit_symbol_from_label(const std::string & unit_label);
 
   //! Find the CLHEP unspecified unit and the associated unit label from a string.
   /**

@@ -99,4 +99,10 @@ This is the datatools package ChangeLog
 2013-02-18 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
 	* fix a bug in serial_tag of properties classes
 	* add methods in things
+2013-03-23 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* add support for 'explicit unit' for real property in
+  	  'datatools::properties' and related ASCII I/O
+	* add support for 'NaN' and '+/-infinity' for real property
+	  in 'datatools::properties and related ASCII I/O
+	* add 'object_configuration_description' class (OCD support)
 

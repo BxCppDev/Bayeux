@@ -8,6 +8,7 @@
 
 #include <datatools/properties.h>
 #include <datatools/io_factory.h>
+#include <datatools/utils.h>
 
 // Some pre-processor guard about Boost I/O usage and linkage :
 #include <datatools/bio_guard.h>
@@ -207,6 +208,14 @@ int main (int argc_, char ** argv_)
       my_dict.dump (clog);
       if (debug) my_dict.tree_dump (clog, "datatools::properties", "DEBUG: ");
       clog << endl;
+
+      double pinf, minf, xnan;
+      datatools::plus_infinity(pinf);
+      datatools::minus_infinity(minf);
+      datatools::invalidate(xnan);
+      my_dict.store ("plus_inf", pinf);
+      my_dict.store ("minus_inf", minf);
+      my_dict.store ("NaN", xnan);
 
       clog << "========================================" << endl;
 

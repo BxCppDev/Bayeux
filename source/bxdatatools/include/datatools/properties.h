@@ -2,11 +2,11 @@
 /* datatools/properties.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-02-19
- * Last modified: 2012-12-20
+ * Last modified: 2013-03-23
  *
  * License:
  *
- * Copyright (C) 2011-2012 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,6 +84,7 @@ class properties :
     static const int  ERROR_LOCK    = 4;
 
     static const char MASK_TYPE    = 0x7;
+    static const char MASK_EXPLICIT_PATH = 0x10;
     static const char MASK_EXPLICIT_UNIT = 0x20;
     static const char MASK_LOCK    = 0x40;
     static const char MASK_VECTOR  = 0x80;
@@ -108,6 +109,10 @@ class properties :
     static const int         DEFAULT_VALUE_INTEGER;
     static const double      DEFAULT_VALUE_REAL;
     static const std::string DEFAULT_VALUE_STRING;
+
+    static const std::string NAN_REAL_REPR;
+    static const std::string PLUS_INF_REAL_REPR;
+    static const std::string MINUS_INF_REAL_REPR;
 
    public:
     typedef std::vector<bool>        vbool;
@@ -147,6 +152,9 @@ class properties :
     /// Check if the data type is valid
     bool has_type() const;
 
+    /// Return type 
+    int get_type() const;
+
     /// Check if the data is a boolean value
     bool is_boolean() const;
 
@@ -159,6 +167,9 @@ class properties :
     /// Check if the data is a string value
     bool is_string() const;
 
+    /// Check if the data is a path string value
+    bool is_path() const;
+
     /// Check if the data is scalar (exactly one value)
     bool is_scalar() const;
 
@@ -168,8 +179,11 @@ class properties :
     /// Check if the data is locked (cannot be modified)
     bool is_locked() const;
 
-    /// Check if the data has been initialized with explicit unit
+    /// Check if the (real only) data has been initialized with explicit unit
     bool has_explicit_unit() const;
+
+    /// Check if the (string only) data has been initialized with explicit path
+    bool is_explicit_path() const;
 
     /// Check if the data is not locked (can be modified)
     bool is_unlocked() const;
@@ -223,16 +237,19 @@ class properties :
     int set_value(int, int = 0);
 
     /// Set the real value at a given rank
-    int set_value(double, int = 0);
+    int set_value(double, int = 0, bool a_explicit_unit = false);
 
     /// Set the explicit unit flag
     int set_explicit_unit(bool);
 
-    /// Set the string value at a given rank
-    int set_value(const std::string&, int = 0);
+    /// Set the explicit path flag
+    int set_explicit_path(bool);
 
     /// Set the string value at a given rank
-    int set_value(const char*, int = 0);
+    int set_value(const std::string&, int = 0, bool a_explicit_path = false);
+
+    /// Set the string value at a given rank
+    int set_value(const char*, int = 0, bool a_explicit_path = false);
 
     /// Get the boolean value by reference stored at a given rank
     int get_value(bool&, int = 0) const;
@@ -281,12 +298,13 @@ class properties :
    private:
     std::string _description_;
     /** 8-bits description flags :
-    * Format is : VLU00TTT
+    * Format is : VLUP0TTT
     *  V   == vector bit
     *  L   == lock bit
-    *  U   == with explicit unit (real)
-    *  TTT == type bits
+    *  U   == explicit unit bit (real)
+    *  P   == path bit (string)
     *  0   == unused
+    *  TTT == type bits
     */
     uint8_t     _flags_;
     vbool       _boolean_values_;
@@ -339,12 +357,15 @@ class properties :
     static const int mode_header_footer = MODE_HEADER_FOOTER;
     static const int mode_bare          = MODE_BARE;
 
-    static const bool write_private_also;
-    static const bool write_public_only;
+    static const bool write_private_also = false;
+    static const bool write_public_only  = true;
+
+    static const bool without_smart_modulo = false;
+    static const bool with_smart_modulo  = true;
 
    public:
     // Constructor
-    config(bool a_use_smart_modulo = true,
+    config(bool a_use_smart_modulo = with_smart_modulo,
            int a_mode = MODE_DEFAULT,
            bool a_write_public_only = write_public_only);
 
@@ -365,6 +386,20 @@ class properties :
 
     /// Utility to parse quoted string token
     static bool read_quoted_string(std::istream&, std::string&);
+
+    /// Write a property data
+    void write_data(std::ostream& a_out,
+                    const std::string & a_data_key, 
+                    const properties::data& a_prop_data, 
+                    const std::string & a_unit_symbol = "", 
+                    const std::string & a_unit_label = "",
+                    const std::string & a_comment = "");
+
+    /// Write header
+    void write_header(std::ostream& a_out, const std::string & topic_ = "");
+
+    /// Write footer
+    void write_footer(std::ostream& a_out, const std::string & topic_ = "");
 
    private:
 
@@ -467,6 +502,9 @@ class properties :
 
   //! Set the list of keys.
   void keys(vkeys&) const;
+
+  //! Access to a non-mutable reference to a property data object
+  const data & get(const std::string& prop_key) const;
 
   //! builds the list of keys (by reference) stored in the map that start with prefix.
   void keys_not_starting_with(vkeys&, const std::string& prefix) const;
@@ -664,6 +702,12 @@ class properties :
   //! Check flag for explicit unit for a real property with a given key/name
   bool has_explicit_unit(const std::string& prop_key) const;
 
+  //! Set flag for explicit path for a string property with a given key/name
+  void set_explicit_path(const std::string& prop_key, bool a_explicit_path = true);
+
+  //! Check flag for explicit path for a string property with a given key/name
+  bool is_explicit_path(const std::string& prop_key) const;
+
   //! Store a string property with a given key/name and value
   void store(const std::string& prop_key, const std::string& a_value,
              const std::string& a_desc = "", bool a_lock = false);
@@ -671,6 +715,10 @@ class properties :
   //! Store a string property with a given key/name and value
   void store_string(const std::string& prop_key, const std::string& a_value,
                     const std::string& a_desc = "", bool a_lock = false);
+
+  //! Store a path property with a given key/name and value
+  void store_path(const std::string& prop_key, const std::string& a_path_value,
+                  const std::string& a_desc = "", bool a_lock = false);
 
   //! Store a string property with a given key/name and value (C style) 
   void store(const std::string& prop_key, const char* a_value,
@@ -691,6 +739,10 @@ class properties :
   //! Store a string vector property with a given key/name and value
   void store(const std::string& prop_key, const data::vstring& a_values,
              const std::string& a_desc = "", bool a_lock = false);
+
+  //! Store a path string vector property with a given key/name and value
+  void store_paths(const std::string& prop_key, const data::vstring& a_path_values,
+                   const std::string& a_desc = "", bool a_lock = false);
 
   //! Change the value of an existing boolean property with a given key/name and index
   void change(const std::string& key, bool value, int index = 0);

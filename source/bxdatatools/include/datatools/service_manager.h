@@ -49,7 +49,6 @@
 #include <datatools/properties.h>
 #include <datatools/bit_mask.h>
 
-
 namespace datatools {
 
 class properties;
@@ -192,6 +191,7 @@ class service_manager : public datatools::i_tree_dumpable {
   void set_preload(bool preload);
 
  private:
+
   bool         initialized_; /// Initialization flag
   std::string  name_; /// Manager's name
   std::string  description_; /// Manager's description
@@ -204,10 +204,15 @@ class service_manager : public datatools::i_tree_dumpable {
   service_dict_type                    services_; /// Dictionary of services
 };
 
-
 }  // end of namespace datatools
 
 #include <datatools/service_manager-inl.h>
+
+/***************
+ * OCD support *
+ ***************/
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(datatools::service_manager)
 
 #endif // DATATOOLS_SERVICE_MANAGER_H_
 

@@ -40,6 +40,7 @@ EOF
 
 tmp_test_dir=/tmp/${USER}/datatools/test
 prefix_test_dir=
+data_test_dir=
 exe_test=
 
 #######################################################
@@ -68,6 +69,9 @@ while [ -n "$1" ]; do
 	elif [ "${opt}" = "--tmp-dir" ]; then
 	    shift 1
 	    tmp_test_dir="$1"
+        elif [ "${opt}" = "--data-dir" ]; then
+            shift 1
+            data_test_dir="$1"
 	elif [ "${opt}" = "--exe" ]; then
 	    shift 1
 	    exe_test="$1"
@@ -99,6 +103,7 @@ if [ ${debug} -ne 0 ]; then
     echo "DEBUG: ${appname}: tmp_test_dir=${tmp_test_dir}" >&2
     echo "DEBUG: ${appname}: exe_test=${exe_test}" >&2
     echo "DEBUG: ${appname}: prefix_test_dir=${prefix_test_dir}" >&2
+    echo "DEBUG: ${appname}: data_test_dir=${data_test_dir}" >&2
 fi
 
 ##########################################################
@@ -164,8 +169,22 @@ function do_run ()
 	echo "ERROR: ${appname}: Missing prefix_test_dir !"
 	return 1
     fi
+
+    if [ "x${data_test_dir}" != "x" ]; then
+        export DATATOOLS_DATA_DIR=${data_test_dir}
+    fi
+
+    if [ "x${DATATOOLS_DATA_DIR}" = "x" ]; then
+        echo "ERROR: ${appname}: Missing DATATOOLS_DATA_DIR environment variable !" >&2
+        return 1
+    fi
+
+    if [ ! -d ${DATATOOLS_DATA_DIR} ]; then
+        echo "ERROR: ${appname}: Directory '${DATATOOLS_DATA_DIR}' does not exists !" >&2
+        return 1
+    fi
     
-    export DATATOOLS_ROOT=${prefix_test_dir}
+    ###export DATATOOLS_ROOT=${prefix_test_dir}
     echo "NOTICE: ${appname}: First clean the test temporary directory..." >&2
     if [ ! -d ${tmp_test_dir} ]; then
 	mkdir -p ${tmp_test_dir}

@@ -257,7 +257,7 @@ int main (int argc_, char ** argv_)
 
         // Load another multi_property container stored in a file :
         datatools::multi_properties SM_services_config_2;
-        string services_conf = "${DATATOOLS_ROOT}/testing/config/test_service_manager.conf";
+        string services_conf = "${DATATOOLS_DATA_DIR}/testing/config/test_service_manager.conf";
         datatools::fetch_path_with_env (services_conf);
         SM_services_config_2.read (services_conf);
         SM.load (SM_services_config_2);

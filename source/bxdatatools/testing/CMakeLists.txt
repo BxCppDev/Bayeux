@@ -1,6 +1,6 @@
 ###############################################################################
 ##
-## Copyright (C) 2011 François Mauger, Université de Caen Basse-Normandie
+## Copyright (C) 2011-2013 François Mauger, Université de Caen Basse-Normandie
 ## Contact: mauger@lpccaen.in2p3.fr
 ##
 ## This file is part of the datatools library.
@@ -65,6 +65,7 @@ foreach(test_program ${datatools_tests_programs_list})
   add_test(NAME ${test_executable}.run
     COMMAND ${PROJECT_SOURCE_DIR}/testing/testDriver.bash 
     --tmp-dir ${_test_tmp_dir}
+    --data-dir ${PROJECT_SOURCE_DIR} 
     --prefix ${PROJECT_SOURCE_DIR} 
     --exe $<TARGET_FILE_DIR:${test_executable}>/$<TARGET_FILE_NAME:${test_executable}>
     run

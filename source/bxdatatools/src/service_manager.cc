@@ -766,6 +766,92 @@ void service_manager::set_preload(bool preload) {
   }
 }
 
-
 }  // end of namespace datatools
 
+
+/***************
+ * OCD support *
+ ***************/
+
+#include <datatools/object_configuration_description.h>
+
+// OCD support for class '::datatools::service_manager' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
+{
+  ocd_.set_class_name ("datatools::service_manager");
+  ocd_.set_class_description ("A generic manager for service objects");
+  
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("debug")
+      .set_terse_description("Flag to activate debugging output")
+      .set_traits(datatools::properties::data::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description(
+                            "Superseded by a former call of :              \n"
+                            "  datatools::service_manager::set_debug(true) \n"
+                            )
+      ;    
+  }
+  
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("name")
+      .set_terse_description("The name of the service manager object")
+      .set_traits(datatools::properties::data::TYPE_STRING)
+      .set_mandatory(true)
+      .set_long_description(
+                            "Superseded by a former call of :           \n"
+                            "  datatools::service_manager::set_name(...)\n"
+                            )
+      ;
+  }
+  
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("description")
+      .set_terse_description("The embeded description string")
+      .set_traits(datatools::properties::data::TYPE_STRING)
+      .set_mandatory(false)
+      .set_long_description(
+                            "Superseded by a former call of :                  \n"
+                            "  datatools::service_manager::set_description(...)\n"
+                            )
+      ;
+  }  
+  
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("services.configuration_files")
+      .set_terse_description("A list of configuration file names for embeded services")
+      .set_traits(datatools::properties::data::TYPE_STRING, 
+                  configuration_property_description::ARRAY)
+      .set_mandatory(false)
+      .set_path(true)
+      .set_long_description(
+                            "A list of filenames from where the manager             \n"
+                            "loads the directives to dynamically instantiate        \n"
+                            "new embeded service objects. The filenames may contains\n"
+                            "some environment variables.                            \n"
+                            "Example:                                               \n"
+                            "  \"${CONFIG_REPOSITORY_DIR}/services.conf\"           \n"
+                            "The target files must use the format of the            \n"
+                            "'datatools::multi_properties' class.                   \n"
+                            "The loading order of the files is critical             \n"
+                            "because some services may depend on other ones         \n"
+                            "which should thus be defined *before* their            \n"
+                            "dependees.                                             \n"
+                            "Extends the instantiation of services triggered by     \n"
+                            "former calls to :                                      \n"
+                            "  datatools::service_manager::load(...)                \n"
+                            )
+    ;
+  }  
+  //ocd_.set_configuration_hints ("Nothing special."); 
+  ocd_.set_validation_support(true);
+  ocd_.lock(); 
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+
+// end of service_manager.cc

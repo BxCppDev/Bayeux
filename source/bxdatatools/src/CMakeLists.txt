@@ -77,6 +77,8 @@ include/datatools/properties.ipp
 include/datatools/multi_properties.ipp
 include/datatools/things.ipp
 include/datatools/the_serializable.ipp
+include/datatools/object_configuration_description.h
+include/datatools/types.h
   )
 list_prepend(datatools_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
 
@@ -162,6 +164,8 @@ set(datatools_SOURCES
   version_check.cc
   version_id.cc
   base_service.cc # MUST go at the end....
+  object_configuration_description.cc
+  types.cc
   )
 
 #-----------------------------------------------------------------------

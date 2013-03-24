@@ -1,0 +1,37 @@
+// -*- mode: c++; -*-
+// types.cc
+// Ourselves 
+#include <datatools/types.h>
+
+#include <boost/scoped_ptr.hpp>
+#include <boost/bimap.hpp>
+
+namespace datatools {
+
+  const boost::bimap< int, std::string > & get_type_to_labels_map()
+  {
+    typedef boost::bimap< int, std::string > bm_type;
+    static boost::scoped_ptr<bm_type> _bmap;
+    if (_bmap.get() == 0) {
+        _bmap.reset(new bm_type);
+        _bmap.get()->insert( bm_type::value_type(TYPE_NONE, "?" ) );
+        _bmap.get()->insert( bm_type::value_type(TYPE_BOOLEAN, "boolean" ) );
+        _bmap.get()->insert( bm_type::value_type(TYPE_INTEGER, "integer" ) );
+        _bmap.get()->insert( bm_type::value_type(TYPE_REAL,    "real" ) );
+        _bmap.get()->insert( bm_type::value_type(TYPE_STRING,  "string" ) );
+      }
+    return *_bmap.get();
+  }
+
+  const std::string get_label_from_type(int type_)
+  {
+    const boost::bimap< int, std::string >::left_const_iterator found
+      = get_type_to_labels_map().left.find(type_);
+    if (found == get_type_to_labels_map().left.end()) {
+      return "?";
+    }
+    return found->second;
+  }
+
+} // namespace datatools
+

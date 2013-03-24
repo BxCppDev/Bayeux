@@ -5,19 +5,89 @@
 
 // Standard Library
 #include <sstream>
+#include <vector>
 
 // Third Party
-// - A
+// - Boost
+#include <boost/algorithm/string/split.hpp> 
+#include <boost/algorithm/string/classification.hpp>
 
 // This Project
+#include <datatools/utils.h>
 
 namespace datatools {
 
+  void print_multi_lines(std::ostream & out_,
+                         const std::string & text_,
+                         const std::string & indent_)
+  {
+    if (text_.empty()) return;
+    std::vector<std::string> lines;
+    boost::split(lines,text_,boost::is_any_of("\n"));
+    for (int il = 0; il < lines.size(); il++) {
+      out_ << indent_ << lines[il];
+      //if (il != lines.size() - 1) 
+      out_ << '\n';
+    }
+    return;
+  }
+
+
 bool io::g_colored_stream_ = false;
 io   io::g_io_;
-
 io::indenter io::indent;
 
+const std::string io::NAN_REAL_REPR = "nan";
+const std::string io::PLUS_INFINITY_REAL_REPR = "inf";
+const std::string io::MINUS_INFINITY_REAL_REPR = "-inf";
+
+// static 
+void io::write_real_number(std::ostream & out_, const double & val_, int precision_)
+{
+  if (datatools::is_normal(val_)) {
+    int oldprec = out_.precision();
+    out_.precision(precision_);
+    out_ << val_;
+    out_.precision(oldprec);
+  }
+  else if (datatools::is_infinity(val_)) {
+    if (val_ > 0) out_ << io::PLUS_INFINITY_REAL_REPR;
+    else out_ << io::MINUS_INFINITY_REAL_REPR;
+  }
+  else {
+    out_ << io::NAN_REAL_REPR;
+  }
+  return;
+}
+
+// static 
+bool io::read_real_number(std::istream & in_, double & val_, bool & normal_)
+{
+  normal_ = false;
+  std::string real_token;
+  in_ >> real_token;
+  if (!in_) {
+    return false;
+  }
+  if (real_token == io::PLUS_INFINITY_REAL_REPR) {
+    datatools::plus_infinity(val_);
+  }
+  else if (real_token == io::MINUS_INFINITY_REAL_REPR) {
+    datatools::minus_infinity(val_);
+  }
+  else if (real_token == io::NAN_REAL_REPR) {
+    datatools::invalidate(val_);
+  }
+  else {
+    std::istringstream iss(real_token);
+    iss >> val_;
+    if (! iss) {
+      return false;
+    }
+    normal_ = true;
+  }
+  return true;
+}
 
 size_t io::indenter::get_width() const {
   return width_;
@@ -65,6 +135,14 @@ std::ostream& operator<<(std::ostream& out, const io::indenter& indent) {
   }
   return out;
 }
+
+  /*
+ostream_manipulator<int> yesno(const bool & yn) {
+  retrun
+}
+
+std::ostream& yesno(std::ostream& os, const bool&)
+  */
 
 
 std::ostream& io::ostream_width(std::ostream& os, const int& n) {

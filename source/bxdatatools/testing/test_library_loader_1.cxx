@@ -62,7 +62,7 @@ int main (int argc_ , char ** argv_)
           libname = "crypto"; // or "curses" ...
         }
 
-      string LL_config = "${DATATOOLS_ROOT}/testing/config/test_library_loader.conf";
+      string LL_config = "${DATATOOLS_DATA_DIR}/testing/config/test_library_loader.conf";
       uint32_t LL_flags = datatools::library_loader::allow_unregistered;
       datatools::library_loader LL (LL_flags, LL_config);
       datatools::library_loader LL2 (LL_flags, LL_config);

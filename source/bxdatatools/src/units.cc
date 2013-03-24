@@ -318,7 +318,8 @@ double units::get_unit_from(const std::string& unit_type,
   }
   {
     std::ostringstream message;
-    message << "Invalid " << unit_type << " of unit :'" << unit_str << "' !";
+    message << "datatools::units::get_unit_from: Invalid "
+            << unit_type << " of unit :'" << unit_str << "' !";
     throw std::logic_error(message.str());
   }
   return std::numeric_limits<double>::quiet_NaN();
@@ -332,6 +333,58 @@ bool units::is_unit_label_valid(const std::string & unit_label)
   return found != vl.end();
 }
 
+std::string units::get_default_unit_symbol_from_label(const std::string & unit_type)
+{
+  if (unit_type == "length") {
+    return "m";
+  } else if (unit_type == "surface") {
+    return "m2";
+  } else if (unit_type == "volume") {
+    return "m3";
+  } else if (unit_type == "time") {
+    return "s";
+  } else if (unit_type == "angle") {
+    return "rad";
+  } else if (unit_type == "solid_angle") {
+    return "steradian";
+  } else if (unit_type == "energy") {
+    return "J";
+  } else if (unit_type == "mass") {
+    return "kg";
+  } else if (unit_type == "pressure") {
+    return "Pa";
+  } else if (unit_type == "magnetic_field") {
+    return "T";
+  } else if (unit_type == "electric_field") {
+    return "V/cm";
+  } else if (unit_type == "electric_tension") {
+    return "V";
+  } else if (unit_type == "temperature") {
+    return "kelvin";
+  } else if (unit_type == "density") {
+    return "g/cm3";
+  } else if (unit_type == "frequency") {
+    return "Hz";
+  } else if (unit_type == "activity") {
+    return "Bq";
+  } else if (unit_type == "surface_activity") {
+    return "Bq/m2";
+  } else if (unit_type == "volume_activity") {
+    return "Bq/m3";
+  } else if (unit_type == "mass_activity") {
+    return "Bq/kg";
+  } else if (unit_type == "electric_charge") {
+    return "C";
+  } else if (unit_type == "electric_current") {
+    return "A";
+  }
+  {
+    std::ostringstream message;
+    message << "datatools::units::get_default_unit_symbol_from_label: Invalid unit label " << unit_type << "' !";
+    throw std::logic_error(message.str());
+  }
+  return "";
+}
 
 const std::vector<std::string>& units::get_unit_labels_registry() {
   static boost::scoped_ptr<std::vector<std::string> > ulabels_ptr(0);

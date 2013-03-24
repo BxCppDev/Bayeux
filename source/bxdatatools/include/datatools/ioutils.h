@@ -5,6 +5,7 @@
 
 // Standard Library
 #include <iostream>
+#include <string>
 
 // Third Party
 // - Boost
@@ -14,6 +15,11 @@
 
 
 namespace datatools {
+
+  void print_multi_lines(std::ostream & out_,
+                         const std::string & text_,
+                         const std::string & indent_ = "");
+
 //----------------------------------------------------------------------
 /*! \brief ostream_manipulator class
  */
@@ -63,26 +69,46 @@ class ostream_manipulator_ref {
  */
 struct io {
  public:
+
+  static const std::string NAN_REAL_REPR; /// A portable representation for a NaN
+  static const std::string PLUS_INFINITY_REAL_REPR; /// A portable representation for +infinity
+  static const std::string MINUS_INFINITY_REAL_REPR; /// A portable representation for -infinity
+  static const int REAL_PRECISION  = 16; /// Default precision for double
+  static const int REAL8_PRECISION = 16; /// Default precision for double
+  static const int REAL4_PRECISION = 8;  /// Default precision for float
+  
   /*! \brief I/O indenter class
    */
   class indenter {
+
    public:
-    // ctor:
+
+    /// Default constructor
     indenter();
 
+    /// Returns the with of each indentation level
     size_t get_width() const;
+
+    /// Returns the current level of indentation
     size_t get_level() const;
 
+    /// Increment indendation level by one unit
     indenter& operator++(int);
+
+    /// Decrement indendation level by one unit
     indenter& operator--(int);
 
     std::ostream& operator()(std::ostream&) const;
+
     indenter& operator()(size_t);
+
     friend std::ostream& operator<<(std::ostream &, const indenter &);
 
    private:
-    size_t width_;
-    size_t level_;
+
+    size_t width_; /// Width of each indentation level
+    size_t level_; /// Current indentation level
+
   };
 
   // io struct
@@ -90,6 +116,15 @@ struct io {
   static indenter indent;
 
  public:
+
+  /// \brief Read a double value from an ASCII stream
+  static bool read_real_number(std::istream & in_, double & val_, bool & normal_);
+
+  /// \brief Write a double value in an ASCII stream
+  static void write_real_number(std::ostream & out_, 
+                                const double & val_, 
+                                int precision_ = REAL_PRECISION);
+
   static bool is_colored();
 
   static void set_colored(bool);
@@ -142,19 +177,22 @@ struct io {
 
   static std::string to_binary(const uint32_t& val, bool show_all = false);
 
+  //static ostream_manipulator<int> yesno(const bool & yn);
+
+  //static std::ostream& yesno(std::ostream& os, const bool&);
 
  private:
-  // ctor:
+  /// \brief Default constructor
   io() {}
 
-  // dtor:
+  /// \brief Default destructor
   ~io() {
     this->set_colored(false);
   }
 
  private:
   static bool g_colored_stream_;
-  static io g_io_;
+  static io   g_io_;
 };
 
 } // namespace datatools
