@@ -18,6 +18,8 @@ namespace mygsl {
 
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(histogram_pool,"mygsl::histogram_pool")
 
+  const std::string histogram_pool::_INITIALIZED_FLAG_KEY_ = "__initialized";
+
   histogram_pool::histogram_entry_type::histogram_entry_type ()
   {
     dimension = HISTOGRAM_DIM_UNDEFINED;
@@ -99,7 +101,7 @@ namespace mygsl {
 
   bool histogram_pool::is_initialized () const
   {
-    return _auxiliaries_.has_flag ("__initialized");
+    return _auxiliaries_.has_flag (_INITIALIZED_FLAG_KEY_);
   }
 
   const std::string & histogram_pool::get_description () const
@@ -280,7 +282,7 @@ namespace mygsl {
             double display_xunit = 1.0;
             if (datatools::units::find_unit(display_xunit_str, display_xunit, display_xunit_type))
               {
-                 if (xunit_type.empty ())
+                if (xunit_type.empty ())
                   {
                     xunit_type = display_xunit_type;
                   }
@@ -373,8 +375,12 @@ namespace mygsl {
                 throw std::logic_error (message.str ());
               }
           }
-        xmin *= xunit;
-        xmax *= xunit;
+        if (! h1_setup_.has_explicit_unit ("min")) {
+          xmin *= xunit;
+        }
+        if (! h1_setup_.has_explicit_unit ("max")) {
+          xmax *= xunit;
+        }
 
         if (h1_setup_.has_key ("number_of_bins"))
           {
@@ -723,12 +729,12 @@ namespace mygsl {
 
     if (! xunit_type.empty ())
       {
-        h2_.grab_auxiliaries ().store ("y.unit.type", xunit_type);
+        h2_.grab_auxiliaries ().store ("x.unit.type", xunit_type);
       }
 
     if (! yunit_type.empty ())
       {
-        h2_.grab_auxiliaries ().store ("x.unit.type", yunit_type);
+        h2_.grab_auxiliaries ().store ("y.unit.type", yunit_type);
       }
 
     if (mode == "regular")
@@ -850,10 +856,19 @@ namespace mygsl {
                 throw std::logic_error (message.str ());
               }
           }
-        xmin *= xunit;
-        xmax *= xunit;
-        ymin *= yunit;
-        ymax *= yunit;
+
+        if (!h2_setup_.has_explicit_unit("x.max")) {
+          xmax *= xunit;
+        }
+        if (!h2_setup_.has_explicit_unit("x.min")) {
+          xmin *= xunit;
+        }
+        if (!h2_setup_.has_explicit_unit("y.min")) {
+          ymin *= yunit;
+        }
+        if (!h2_setup_.has_explicit_unit("y.max")) {
+          ymax *= yunit;
+        }
 
         if (h2_setup_.has_key ("x.number_of_bins"))
           {
@@ -1071,30 +1086,30 @@ namespace mygsl {
 
   void histogram_pool::initialize (const datatools::properties & setup_)
   {
-    if (is_initialized ())
-      {
-        std::ostringstream message;
-        message << "mygsl::histogram_pool::initialize: "
-                << "Pool is already initialized  !";
-        throw std::logic_error (message.str ());
-      }
-    if (setup_.has_key ("description"))
-      {
+    if (is_initialized ()) {
+      std::ostringstream message;
+      message << "mygsl::histogram_pool::initialize: "
+              << "Pool is already initialized  !";
+      throw std::logic_error (message.str ());
+    }
+    
+    if (_description_.empty()) {
+      if (setup_.has_key ("description")) {
         set_description (setup_.fetch_string ("description"));
       }
-
+    }
+    
     std::vector<std::string> histo_setup_filenames;
-    if (setup_.has_key ("histo.setups"))
-      {
-        setup_.fetch ("histo.setups", histo_setup_filenames);
-      }
-
+    if (setup_.has_key ("histo.setups")) {
+      setup_.fetch ("histo.setups", histo_setup_filenames);
+    }
+    
     for (int i = 0; i < histo_setup_filenames.size (); i++)
       {
         load (histo_setup_filenames[i]);
       }
 
-    _auxiliaries_.set_flag ("__initialized");
+    _auxiliaries_.set_flag (_INITIALIZED_FLAG_KEY_);
 
     return;
   }
@@ -1521,7 +1536,526 @@ namespace mygsl {
     return;
   }
 
+} // end of namespace mygsl
+
+/***************
+ * OCD support *
+ ***************/
+
+#include <datatools/ocd_macros.h>
+
+// OCD support for class '::mygsl::histogram_pool' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_pool,ocd_)
+{
+  ocd_.set_class_name ("mygsl::histogram_pool");
+  ocd_.set_class_description ("A pool of histograms");
+  
+   
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("description")
+      .set_terse_description("The embeded description string")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_long_description(
+                            "Superseded by a former call of :                  \n"
+                            "  mygsl::histogram_pool::set_description(...)\n"
+                            )
+      ;
+  }  
+  
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("histo.setups")
+      .set_terse_description("A list of configuration file names for embeded histograms")
+      .set_traits(datatools::TYPE_STRING, 
+                  configuration_property_description::ARRAY)
+      .set_mandatory(false)
+      .set_path(true)
+      .set_long_description(
+                            "A list of filenames from where the histogram pool      \n"
+                            "loads the directives to dynamically instantiate        \n"
+                            "new embeded histogram objects. The filenames may contains\n"
+                            "some environment variables.                            \n"
+                            "Example:                                               \n"
+                            "  \"${CONFIG_REPOSITORY_DIR}/histo_1d.conf\"           \n"
+                            "The target files must use the format of the            \n"
+                            "'datatools::multi_properties' class.                   \n"
+                            "The loading order of the files is critical             \n"
+                            "because some histograms may depend on other ones       \n"
+                            "which should thus be defined *before* their            \n"
+                            "dependers.                                             \n"
+                            "Extends the instantiation of histograms triggered by   \n"
+                            "former calls to :                                      \n"
+                            "  mygsl::histogram_pool::load(...)                     \n"
+                            "See OCD support for 'mygsl::histogram_1d'              \n"
+                            "and 'mygsl::histogram_2d' classes.                     \n"
+                            )
+    ;
+  }  
+
+  ocd_.set_configuration_hints ("The histogram pool uses a 'datatools::properties' object      \n"
+                                "to initialize its behaviour and contents.                     \n"
+                                "                                                              \n"
+                                "Example of configuration for the histogram pool :             \n"
+                                "                                                              \n"
+                                "  description : string = \"The data analysis histogram pool\" \n"
+                                "  histo.setups : string as path = \"histos.conf\"             \n"
+                                "                                                              \n"
+                                "Example of associated file 'histos.conf' for automated        \n"
+                                "construction of four histograms :                             \n"
+                                "                                                              \n"
+                                "  #@description A sample list of setups                       \n"
+                                "  #@key_label   \"name\"                                      \n"
+                                "  #@meta_label  \"type\"                                      \n"
+                                "                                                              \n"
+                                "  [name=\"E1\" type=\"mygsl::histogram_1d\"]                  \n"
+                                "  mode : string = \"regular\"                                 \n"
+                                "  unit : string = \"MeV\"                                     \n"
+                                "  unit.type : string = \"energy\"                             \n"
+                                "  display.xaxis.unit  : string = \"keV\"                      \n"
+                                "  display.xaxis.label : string = \"E1\"                       \n"
+                                "  linear : boolean = 1                                        \n"
+                                "  min : real = 0.0                                            \n"
+                                "  max : real = 3.0                                            \n"
+                                "  number_of_bins : integer = 120                              \n"
+                                "                                                              \n"
+                                "  [name=\"E2\" type=\"mygsl::histogram_1d\"]                  \n"
+                                "  mode : string = \"mimic\"                                   \n"
+                                "  display.xaxis.unit  : string = \"keV\"                      \n"
+                                "  display.xaxis.label : string = \"E2\"                       \n"
+                                "  mimic.histogram_1d  : string = \"E1\"                       \n"                       
+                                "                                                              \n"                    
+                                "  [name=\"E1+E2\" type=\"mygsl::histogram_1d\"]               \n"
+                                "  mode : string = \"mimic\"                                   \n"
+                                "  unit : string = \"keV\"                                     \n"
+                                "  unit.type : string = \"energy\"                             \n"
+                                "  display.xaxis.unit : string = \"MeV\"                       \n"
+                                "  mimic.histogram_1d : string = \"E1\"                        \n"                       
+                                "                                                              \n"                    
+                                "  [name=\"E1xE2\" type=\"mygsl::histogram_2d\"]               \n"
+                                "  mode : string = \"regular\"                                 \n"
+                                "  x.unit : string = \"keV\"                                   \n"
+                                "  x.unit.type : string = \"energy\"                           \n"
+                                "  x.linear : boolean = 1                                      \n"                       
+                                "  x.min : real = 0.0                                          \n"
+                                "  x.max : real = 3.0                                          \n"
+                                "  x.number_of_bins : integer = 120                            \n"
+                                "  display.xaxis.unit  : string = \"keV\"                      \n"
+                                "  display.xaxis.label : string = \"E1\"                       \n"
+                                "  y.unit : string = \"keV\"                                   \n"
+                                "  y.unit.type : string = \"energy\"                           \n"
+                                "  y.linear : boolean = 1                                      \n"                       
+                                "  y.min : real = 0.0                                          \n"
+                                "  y.max : real = 3.0                                          \n"
+                                "  y.number_of_bins : integer = 120                            \n"
+                                "  display.yaxis.unit  : string = \"keV\"                      \n"
+                                "  display.yaxis.label : string = \"E2\"                       \n"
+                                "                                                              \n"
+                                );
+  ocd_.set_validation_support(true);
+  ocd_.lock(); 
+  return;
 }
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+
+
+// OCD support for class '::mygsl::histogram' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram,ocd_)
+{
+  ocd_.set_class_name ("mygsl::histogram_1d");
+  ocd_.set_class_description ("One dimension histogram as built by the 'mygsl::histogram_pool' class");
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("title")
+      .set_terse_description("The histogram title mode")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_long_description("A human friendly title for the histogram (handled by the histogram pool)")
+      ;
+  }  
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("group")
+      .set_terse_description("The name of the group the histogram is assigned to by the histogram pool")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_long_description("The group may be used for selection operations on histograms")
+      ;
+  }  
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("mode")
+      .set_terse_description("The histogram build mode")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_long_description("The mode can take the following values :             \n"
+                            " - \"regular\" (default)                             \n"
+                            " - \"table\"                                         \n"
+                            " - \"mimic\"                                         \n"
+                            )
+      ;
+  }  
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("unit")
+      .set_terse_description("The histogram unit symbol on the X-axis")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_long_description(
+                            "The unit symbol on X-axis should be known from \n"
+                            "the 'datatools::units' module.                 \n"
+                            "Example:                                       \n"
+                            "  unit : string = \"keV\"                      \n"
+                            )
+      ;
+  }  
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("unit.type")
+      .set_terse_description("The histogram physical dimension on the X-axis")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_triggered_by_label("mode", "regular;table")
+      //.set_complex_triggering_conditions(true)
+      .set_long_description(
+                            "The unit type should be known from the 'datatools::units' module. \n"
+                            "The 'unit.type' property should be compatible with the 'unit'     \n"
+                            "property if given previously.                                     \n"
+                            "Example:                                                          \n"
+                            "  unit.type : string = \"energy\"                                 \n"
+                            "This property is only defined for modes 'regular' and 'table'.    \n"
+                            )
+      ;
+  }  
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("display.xaxis.unit")
+      .set_terse_description("The histogram display physical unit on the X-axis")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_triggered_by_label("mode", "regular;table")
+      //.set_complex_triggering_conditions(true)
+      .set_long_description(
+                            "The display unit type should be known from the 'datatools::units' \n"
+                            "module and of the same physical dimension the unit.               \n"
+                            "The 'display.xaxis.unit' property should be compatible with the   \n"
+                            "'unit' property if given previously.                              \n"
+                            "Example:                                                          \n"
+                            "  display.xaxis.unit : string = \"MeV\"                           \n"
+                            "This property is only defined for modes 'regular' and 'table'.    \n"
+                            )
+      ;
+  }  
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("linear")
+      .set_terse_description("The flag for linear regular binning")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_triggered_by_label("mode", "regular")
+      //.set_complex_triggering_conditions(true)
+      .set_long_description(
+                            "The 'linear' flag setups the linear regular binning of the histogram. \n"
+                            "                                                                      \n"
+                            "Example:                                                              \n"
+                            "  linear : boolean = 1                                                \n"
+                            "This property is only defined for mode 'regular'.                     \n"
+                            "This property is not compatible with the 'logarithmic' flag.          \n"
+                            )
+      ;
+  }  
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("logarithmic")
+      .set_terse_description("The flag for logarithmic regular binning")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_triggered_by_label("mode", "regular")
+      //.set_complex_triggering_conditions(true)
+      .set_long_description(
+                            "The 'logarithmic' flag setups the logarithmic regular binning of \n"
+                            "the histogram.                                                   \n"
+                            "Example:                                                         \n"
+                            "  logarithmic : boolean = 1                                      \n"
+                            "This property is only defined for mode 'regular'.                \n"
+                            "This property is not compatible with the 'linear' flag.          \n"
+                            )
+      ;
+  }  
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("min")
+      .set_terse_description("The minimal bound of the histogram")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(false)
+      .set_triggered_by_label("mode", "regular")
+      //.set_complex_triggering_conditions(true)
+      .set_long_description("The 'min' flag setups the lower bound of the regular histogram.  \n"
+                            "Example:                                                         \n"
+                            "  min : real = 0.0                                               \n"
+                            "This property should be lower than the 'max' value.              \n"
+                            "This property is only defined for mode 'regular'.                \n"
+                           )
+      ;
+  }  
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("max")
+      .set_terse_description("The maximal bound of the histogram")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(false)
+      .set_triggered_by_label("mode", "regular")
+      //.set_complex_triggering_conditions(true)
+      .set_long_description("The 'max' flag setups the upper bound of the regular histogram.  \n"
+                            "Example:                                                         \n"
+                            "  max : real = 10.0                                              \n"
+                            "This property should be lower than the 'max' value.              \n"
+                            "This property is only defined for mode 'regular'.                \n"
+                            )
+      ;
+  }  
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("number_of_bins")
+      .set_terse_description("The number of bins of the histogram")
+      .set_traits(datatools::TYPE_INTEGER)
+      .set_mandatory(true)
+      .set_triggered_by_label("mode", "regular")
+      //.set_complex_triggering_conditions(true)
+      .set_long_description(
+                            "The 'number_of_bins' setups the total number of bins.            \n"
+                            "Example:                                                         \n"
+                            " number_of_bins : integer = 20                                   \n"
+                            "This property should be lower than the 'max' value.              \n"
+                            "This property is only defined for mode 'regular'.                \n"
+                            )
+      ;
+  }  
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("bounds")
+      .set_terse_description("The bounds of tabulated bins")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(false)
+      .set_triggered_by_label("mode", "table")
+      //.set_complex_triggering_conditions(true)
+      .set_long_description(
+                            "The 'number_of_bins' setups the total number of bins.            \n"
+                            "Example:                                                         \n"
+                            " number_of_bins : integer = 20                                   \n"
+                            "This property should be lower than the 'max' value.              \n"
+                            "This property is only defined for mode 'table'.                  \n"
+                            )
+      ;
+  }  
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("bounds.file")
+      .set_terse_description("The name of a file that stores the bounds of tabulated bins")
+      .set_traits(datatools::TYPE_STRING)
+      .set_path(true)
+      .set_mandatory(false)
+      .set_triggered_by_label("mode", "table")
+      //.set_complex_triggering_conditions(true)
+      .set_long_description(
+                            "The 'number_of_bins' setups the total number of bins.            \n"
+                            "Example:                                                         \n"
+                            " number_of_bins : integer = 20                                   \n"
+                            "This property should be lower than the 'max' value.              \n"
+                            "This property is only defined for mode 'table'.                  \n"
+                            )
+      ;
+  }  
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("mimic.histogram_1d")
+      .set_terse_description("Build the histogram as the clone of an existing 1D-histogram")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_triggered_by_label("mode", "mimic")
+      //.set_complex_triggering_conditions(true)
+      .set_long_description("Example:                                                         \n"
+                            "  mimic.histogram_1d : string = \"hx\"                           \n"
+                            "This property is only defined for mode 'mimic'.                  \n"
+                            )
+      ;
+  }  
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("mimic.histogram_1d.import_aux")
+      .set_terse_description("A flag to import auxiliary properties from the original 1D-histogram")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_triggered_by_label("mode", "mimic")
+      //.set_complex_triggering_conditions(true)
+      .set_long_description("Example:                                                         \n"
+                            "  mimic.histogram_1d.import_aux : boolean = 1                    \n"
+                            "This property is only defined for mode 'mimic'.                  \n"
+                            )
+      ;
+  }  
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("mimic.histogram_2d")
+      .set_terse_description("Build the histogram as the clone of an existing 2D-histogram")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_triggered_by_label("mode", "mimic")
+      //.set_complex_triggering_conditions(true)
+      .set_long_description("Example:                                                         \n"
+                            "  mimic.histogram_2d : string = \"hxy\"                          \n"
+                            "This property is only defined for mode 'mimic'.                  \n"
+                            )
+      ;
+  }  
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("mimic.histogram_2d.axis")
+      .set_terse_description("Select the axis of the original 2D-histogram to be used")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(true)
+      .set_triggered_by_label("mode", "mimic")
+      //.set_complex_triggering_conditions(true)
+      .set_long_description("Example:                                                         \n"
+                            "  mimic.histogram_2d.axis : string = \"x\"                       \n"
+                            "Possible values are 'x' and 'y'.v                                \n"
+                            "This property is only defined for mode 'mimic'.                  \n"
+                            )
+      ;
+  }  
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("mimic.histogram_2d.import_aux")
+      .set_terse_description("A flag to import auxiliary properties from the original 2D-histogram")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_triggered_by_label("mode", "mimic")
+      //.set_complex_triggering_conditions(true)
+      .set_long_description("Example:                                                         \n"
+                            "  mimic.histogram_2d.import_aux : boolean = 1                    \n"
+                            "This property is only defined for mode 'mimic'.                  \n"
+                            )
+      ;
+  }  
+
+
+  ocd_.set_configuration_hints ("Display properties:                                           \n"
+                                "  All properties the name of which starts with the prefix     \n"
+                                " \"display.\" are preserved and passed to the histogram object.\n"
+                                "                                                              \n"
+                                "Here are typical examples:                                    \n"
+                                "                                                              \n"
+                                "A 1D-histogram with linear regular bins :                     \n"
+                                "  mode : string = \"regular\"                                 \n"
+                                "  unit : string = \"keV\"                                     \n"
+                                "  unit.type : string = \"energy\"                             \n"
+                                "  display.xaxis.unit  : string = \"MeV\"                      \n"
+                                "  display.xaxis.label : string = \"Energy\"                   \n"
+                                "  display.color       : string = \"red\"                      \n"
+                                "  linear : boolean = 1                                        \n"
+                                "  min : real = 0.0                                            \n"
+                                "  max : real = 3000.0                                         \n"
+                                "  number_of_bins : integer = 120                              \n"
+                                "                                                              \n"
+                                "A 1D-histogram build from explicit binning :                  \n"
+                                "  mode : string = \"table\"                                   \n"
+                                "  bounds : real[5] = 0.0 1.0 2.5 4.5 7.0                      \n"
+                                "  unit.type : string = \"energy\"                             \n"
+                                "  display.xaxis.unit : string = \"MeV\"                       \n"
+                                "                                                              \n"
+                                "A 1D-histogram build from a 1D histogram :                    \n"
+                                "  mode : string = \"mimic\"                                   \n"
+                                "  mimic.histogram_1d : string = \"E\"                        \n"
+                                "                                                              \n"
+                                "A 1D-histogram build from the projection of a 2D histogram :  \n"
+                                "  mode : string = \"mimic\"                                   \n"
+                                "  mimic.histogram_2d : string = \"hEx\"                       \n"
+                                "  mimic.histogram_2d.axis : string = \"y\"                    \n"
+                                "                                                              \n"
+                                ); 
+  ocd_.set_validation_support(true);
+  ocd_.lock(); 
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+
+
+// OCD support for class '::mygsl::histogram_2d' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_2d,ocd_)
+{
+  ocd_.set_class_name ("mygsl::histogram_2d");
+  ocd_.set_class_description ("Two dimension histogram as built by the 'mygsl::histogram_pool' class");
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("title")
+      .set_terse_description("The histogram title mode")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_long_description("A human friendly title for the histogram (handled by the histogram pool)")
+      ;
+  }  
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("group")
+      .set_terse_description("The name of the group the histogram is assigned to by the histogram pool")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_long_description("The group may be used for selection operations on histograms")
+      ;
+  }  
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("mode")
+      .set_terse_description("The histogram build mode")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_long_description("The mode can take the following values :             \n"
+                            " - \"regular\" (default)                             \n"
+                            " - \"table\"                                         \n"
+                            " - \"mimic\"                                         \n"
+                            )
+      ;
+  }  
+  
+
+  ocd_.set_configuration_hints ("Display properties:                                             \n"
+                                "  All properties the name of which starts with the prefix       \n"
+                                " \"display.\" are preserved and passed to the histogram object. \n"
+                                "                                                                \n"
+                                "                                                                \n"
+                                );
+
+  ocd_.set_validation_support(true);
+  ocd_.lock(); 
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+
+DOCD_CLASS_SYSTEM_REGISTRATION(::mygsl::histogram_pool,"mygsl::histogram_pool")
+DOCD_CLASS_SYSTEM_REGISTRATION(::mygsl::histogram_1d,  "mygsl::histogram_1d")
+DOCD_CLASS_SYSTEM_REGISTRATION(::mygsl::histogram_2d,  "mygsl::histogram_2d")
 
 // end of mygsl::histogram_pool.cc
 

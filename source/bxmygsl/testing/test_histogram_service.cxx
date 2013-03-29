@@ -18,6 +18,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <list>
 #include <stdexcept>
@@ -143,6 +144,13 @@ int main (int argc_, char ** argv_)
         SM.tree_dump (clog, "Service manager (terminated) : ", "");
       }
 
+      {
+        datatools::object_configuration_description OCD;
+        datatools::load_ocd<mygsl::histogram_service>(OCD);
+        OCD.dump(std::clog, "OCD: ");
+        std::ofstream fscf ("test_OCD_histogram_service.sample.conf");
+        OCD.generate_sample_configuration(fscf, "the configuration of a 'mygsl::histogram_service' object");
+      }
     }
   catch (exception & x)
     {

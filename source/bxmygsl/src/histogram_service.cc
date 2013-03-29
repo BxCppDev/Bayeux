@@ -83,7 +83,7 @@ namespace mygsl {
     return _initialized_;
   }
 
-  int histogram_service::initialize (const datatools::properties    & config_,
+  int histogram_service::initialize (const datatools::properties  & config_,
                                      datatools::service_dict_type & service_dict_)
   {
     if (is_initialized ())
@@ -94,11 +94,13 @@ namespace mygsl {
         throw std::logic_error (message.str ());
       }
 
-    std::string output_file;
-    if (config_.has_key ("output_file"))
+    if (config_.has_key ("output_files"))
       {
-        output_file = config_.fetch_string ("output_file");
-        add_output_file(output_file);
+        std::vector<std::string> output_files;
+        config_.fetch ("output_files", output_files);
+        for (int i = 0; i < output_files.size(); i++) {
+          add_output_file(output_files[i]);
+        }
       }
 
     if (config_.has_flag ("root_export.stats"))
@@ -106,10 +108,17 @@ namespace mygsl {
         _root_export_stats_ = true;
       }
 
+    datatools::properties pool_config;
+    if (config_.has_key ("pool_config")) {
+      std::string pool_config_path = config_.fetch_string("pool_config");
+      datatools::fetch_path_with_env(pool_config_path);
+      datatools::properties::read_config(pool_config_path, pool_config);
+    }
+    else {
+      config_.export_and_rename_starting_with (pool_config, "pool.", "");
+    }
     // Initialize the pool :
-    datatools::properties pool_setup;
-    config_.export_and_rename_starting_with (pool_setup, "pool.", "");
-    _pool_.initialize (pool_setup);
+    _pool_.initialize (pool_config);
 
     _initialized_ = true;
     return EXIT_SUCCESS;
@@ -550,6 +559,88 @@ namespace mygsl {
   }
 
 }  // end of namespace mygsl
+
+/***************
+ * OCD support *
+ ***************/
+
+#include <datatools/ocd_macros.h>
+
+// OCD support for class '::mygsl::histogram_service' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_service,ocd_)
+{
+  ocd_.set_class_name ("mygsl::histogram_service");
+  ocd_.set_class_description ("A service of histograms");
+   
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("pool_config")
+      .set_terse_description("The name of the histogram pool configuration file")
+      .set_traits(datatools::TYPE_STRING)
+      .set_path(true)
+      .set_mandatory(false)
+      .set_long_description("Example:                                                      \n"
+                            "  pool_config : string as path = \"histos_pool.conf\"         \n"
+                            "See dedicated OCD support for class 'mygsl::histogram_pool'.  \n"
+                            )
+      ;
+  }
+   
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("output_files")
+      .set_terse_description("A list of filenames where to store the histograms when the service is closed")
+      .set_traits(datatools::TYPE_STRING, 
+                  datatools::configuration_property_description::ARRAY)
+      .set_path(true)
+      .set_mandatory(false)
+      .set_long_description("Extends former calls of :                          \n"
+                            "  mygsl::histogram_service::add_output_file(...)   \n"
+                            "Supported formats are :                            \n"
+                            " * ROOT (with extension '.root')                   \n"
+                            " * BRIO (with extension '.brio')                   \n"
+                            " * TRIO (with extension '.trio')                   \n"
+                            " * datatools Boost/archive :                       \n"
+                            "   - text   (with extension '.txt' or '.txt.gz')   \n"
+                            "   - XML    (with extension '.xml' or '.xml.gz')   \n"
+                            "   - binary (with extension '.data' or '.data.gz') \n"
+                            "Example :                                          \n"
+                            "  output_files : string[2] = \"histos.data\" \"histos.root\" \n"
+                            )
+      ;
+  }  
+   
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("root_export.stats")
+      .set_terse_description("Flag to save ROOT statistics")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("If the histograms are saved in a ROOT file, \n"
+                            "this flag activates the histograms' statistics box within ROOT.\n"
+                            )
+      ;
+  }  
+  
+  ocd_.set_configuration_hints ("The histogram service uses a 'datatools::properties' object    \n"
+                                "to initialize its behaviour and contents.                      \n"
+                                "                                                               \n"
+                                "If the 'pool_config' path property is not set, all properties  \n"
+                                "the name of which starts with the prefix \"pool.\" are used    \n"
+                                "to initialize the embeded histogram pool object.               \n"
+                                "Example:                                                       \n"
+                                "  pool.description : string = \"Histograms\"                   \n"
+                                "  pool.histo.setups : string[2] = \\                           \n"
+                                "    \"${MYGSL_DATA_DIR}/testing/config/test_histos_1.conf\" \\ \n"
+                                "    \"${MYGSL_DATA_DIR}/testing/config/test_histos_2.conf\"    \n"
+                                "See dedicated OCD support for class 'mygsl::histogram_pool'.   \n"
+                                );
+
+  ocd_.set_validation_support(true);
+  ocd_.lock(); 
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
 
 // end of histogram_service.cc
 /*

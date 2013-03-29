@@ -117,6 +117,12 @@ namespace mygsl {
 
 }  // end of namespace mygsl
 
+/***************
+ * OCD support *
+ ***************/
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(mygsl::histogram_service)
+
 #endif // MYGSL_HISTOGRAM_SERVICE_H_
 
 // end of histogram_service.h

@@ -21,7 +21,6 @@
 #include <mygsl/histogram_2d.h>
 #include <mygsl/histogram_utils.h>
 
-
 namespace mygsl {
 
   class histogram_pool :
@@ -151,6 +150,8 @@ namespace mygsl {
 
   private:
 
+    static const std::string _INITIALIZED_FLAG_KEY_;
+
     std::string           _description_;
     dict_type             _dict_;
     datatools::properties _auxiliaries_;
@@ -160,6 +161,15 @@ namespace mygsl {
   };
 
 } // end of namespace mygsl
+
+
+/***************
+ * OCD support *
+ ***************/
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(mygsl::histogram_pool)
+DOCD_CLASS_DECLARATION(mygsl::histogram)
+DOCD_CLASS_DECLARATION(mygsl::histogram_2d)
 
 #endif // __mygsl__histogram_pool_h
 

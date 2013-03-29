@@ -248,13 +248,70 @@ void test_2 ()
 }
 
 
+void test_3 ()
+{
+  std::clog << "==============> test_3" << std::endl;
+
+  datatools::object_configuration_description OCD;
+  if ( !datatools::load_ocd<mygsl::histogram_pool>(OCD)) {
+    std::clog << "Cannot find OCD support for the 'mygsl::histogram_pool' class."
+              << std::endl;       
+    return;
+  } 
+  OCD.print(std::clog, "*** ");
+  OCD.dump(std::clog, "OCD: ");
+  std::ofstream fscf ("test_OCD_histogram_pool.sample.conf");
+  OCD.generate_sample_configuration(fscf, "the configuration of a 'mygsl::histogram_pool' object");
+    
+  return;
+}
+
+
+void test_4 ()
+{
+  std::clog << "==============> test_4" << std::endl;
+
+  datatools::object_configuration_description OCD;
+  if ( !datatools::load_ocd<mygsl::histogram_1d>(OCD)) {
+    std::clog << "Cannot find OCD support for the 'mygsl::histogram_1d' class."
+              << std::endl;       
+    return;
+  } 
+  OCD.print(std::clog, "*** ");
+  OCD.dump(std::clog, "OCD: ");
+  std::ofstream fscf ("test_OCD_histogram_1d.sample.conf");
+  OCD.generate_sample_configuration(fscf, "the configuration of a 'mygsl::histogram_1d' object");
+    
+  return;
+}
+
+
+void test_5 ()
+{
+  std::clog << "==============> test_5" << std::endl;
+
+  datatools::object_configuration_description OCD;
+  if ( !datatools::load_ocd<mygsl::histogram_2d>(OCD)) {
+    std::clog << "Cannot find OCD support for the 'mygsl::histogram_2d' class."
+              << std::endl;       
+    return;
+  } 
+  OCD.print(std::clog, "*** ");
+  OCD.dump(std::clog, "OCD: ");
+  std::ofstream fscf ("test_OCD_histogram_2d.sample.conf");
+  OCD.generate_sample_configuration(fscf, "the configuration of a 'mygsl::histogram_2d' object");
+    
+  return;
+}
+
+
+
 int main (int argc_, char ** argv_)
 {
   long seed48 = 314159;
   srand48 (seed48);
 
-  try 
-    {
+  try {
       std::clog << "NOTICE: test program for class 'histogram_pool'..." 
                 << std::endl;
 
@@ -263,12 +320,20 @@ int main (int argc_, char ** argv_)
       
       std::clog << "NOTICE: Running test #2..." << std::endl;
       test_2 ();
+      
+      std::clog << "NOTICE: Running test #3..." << std::endl;
+      test_3 ();
+      
+      std::clog << "NOTICE: Running test #4..." << std::endl;
+      test_4 ();
+      
+      std::clog << "NOTICE: Running test #5..." << std::endl;
+      test_5 ();
      
       std::clog << "NOTICE: The end." << std::endl;
 
     }
-  catch(std::exception & x) 
-    {
+  catch(std::exception & x) {
       std::cerr << "ERROR: " << x.what() << std::endl;
       return (EXIT_FAILURE);
     }

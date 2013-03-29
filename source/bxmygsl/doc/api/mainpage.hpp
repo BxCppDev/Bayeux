@@ -10,7 +10,7 @@
  *
  * \section overview_section Overview
  *
- * \t mygsl is a C++ library which provides some wrapper classes for GSL
+ * mygsl is a C++ library which provides some wrapper classes for GSL
  * algorithms as well as other tools/classes related to numerical computing.
  *
  * \section contents_section Contents 
