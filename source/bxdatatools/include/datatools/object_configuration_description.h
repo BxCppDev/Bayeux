@@ -54,14 +54,32 @@ public:
   static const bool MUTABLE = false;
   static const bool CONST = true;
 
+  enum dependency_type {
+    DEP_UNDEFINED = 0,
+    DEP_DYNAMIC = 1,
+    DEP_BY_FLAG = 2,
+    DEP_BY_LABEL = 3,
+  };
+
   struct dependency_entry {
-    dependency_entry();
+  public:
+    bool dynamic() const;
+    bool by_flag() const;
+    bool by_label() const;
     bool is_valid() const;
     bool has_name() const;
     bool has_address() const;
     const std::string & get_name() const;
     const configuration_property_description & ref() const;
-    std::string name;
+    void reset();
+    dependency_entry();
+    ~dependency_entry();
+  public:
+    int type; /// The type of dependency
+    std::string name; /// The name of the dependee property
+    bool triggering_status; /// The triggering value of a flag dependee property (DEP_BY_FLAG)
+    //std::string triggering_label; /// The triggering value of a string dependee property (DEP_BY_LABEL)
+    std::vector<std::string> triggering_labels; /// The triggering value of a string dependee property (DEP_BY_LABEL)
     const configuration_property_description * address;
   };
 
@@ -74,7 +92,10 @@ public:
   configuration_property_description & set_traits(int type_, 
                                                   bool array_ = false, 
                                                   int fixed_size_ = -1);
-  configuration_property_description & set_triggered_by_flag(const std::string &prop_name_);
+  configuration_property_description & set_triggered_by_flag(const std::string &prop_name_,
+                                                             bool triggering_status_ = true);
+  configuration_property_description & set_triggered_by_label(const std::string &prop_name_, 
+                                                              const std::string &labels_);
   configuration_property_description & set_complex_triggering_conditions(bool = true);
   configuration_property_description & set_complex_dependencies(bool = true);
   configuration_property_description & set_explicit_unit(bool = true);
@@ -96,6 +117,7 @@ public:
   bool is_dynamic() const;
   bool is_trigger() const;
   bool is_triggered_by_flag() const;
+  bool is_triggered_by_label() const;
   const std::string & get_name_pattern() const;
   bool has_terse_description() const;
   const std::string & get_terse_description() const;
@@ -115,11 +137,15 @@ public:
   void print(std::ostream &out_, const std::string & indent_ = "") const;
   bool has_complex_triggering_conditions() const;
   bool has_complex_dependencies() const;
+  const dependency_entry & get_triggered_by_label() const;
   const dependency_entry & get_triggered_by_flag() const;
   const dependency_entry & get_dynamic_dependee() const;
   bool has_dynamic_dependers() const;
   unsigned int get_number_of_dynamic_dependers() const;
   const dependency_entry & get_dynamic_depender(int i_) const;
+  unsigned int get_number_of_triggered_dependers() const;
+  const dependency_entry & get_triggered_depender(int i_) const;
+
  
   void dump(std::ostream & out_ = std::clog, 
             const std::string & title_ = "",
@@ -127,25 +153,26 @@ public:
 
 private:
 
-  std::string  _name_pattern_;
-  std::string  _terse_description_;
-  std::string  _long_description_;
-  int          _type_;
-  bool         _const_;
-  bool         _path_;
-  bool         _explicit_unit_;
-  std::string  _unit_label_;
-  std::string  _unit_symbol_;
-  bool         _array_;
-  int          _array_fixed_size_;
-  bool         _mandatory_;
-  bool         _complex_triggering_conditions_;
-  bool         _complex_dependencies_;
-  std::vector<dependency_entry> _dynamic_dependers_;
-  dependency_entry              _dynamic_dependee_;
-  std::vector<dependency_entry> _triggering_;
-  dependency_entry              _triggered_by_flag_;
-
+  std::string  _name_pattern_; /// The name pattern of the property
+  std::string  _terse_description_; /// Terse description of the property
+  std::string  _long_description_; /// Detailed description of the property 
+  int          _type_; /// property's type (BOOLEAN, INTEGER, REAL, STRING)
+  bool         _const_; /// Constness of the property's value
+  bool         _path_; /// Explicit path trait for STRING property
+  bool         _explicit_unit_; /// Explicit unit trait for REAL property
+  std::string  _unit_label_; /// Explicit unit label for REAL property with 'path' trait
+  std::string  _unit_symbol_; /// Explicit unit symbol for REAL property with 'path' trait
+  bool         _array_; /// Array trait (any type)
+  int          _array_fixed_size_; /// Array fixed size (-1 if not fixed)
+  bool         _mandatory_; /// Flag for a mandatory property
+  bool         _complex_triggering_conditions_; /// Flag for complex triggering conditions of the property that cannot be describe through the 'configuration_property_description' mechanism
+  bool         _complex_dependencies_; /// Flag for complex dependencies of the property that cannot be describe through the 'configuration_property_description' mechanism 
+  std::vector<dependency_entry> _dynamic_dependers_; /// List of dynamic properties that depends on this property (static property only)
+  dependency_entry              _dynamic_dependee_; /// Dependee of this property (dynamic property only)
+  std::vector<dependency_entry> _triggering_; /// List of properties triggered by this property
+  dependency_entry              _triggered_by_flag_; /// Flag (BOOLEAN) property this property depends on
+  dependency_entry              _triggered_by_label_; /// Label (STRING) property this property depends on
+ 
   friend class object_configuration_description;
 };
 

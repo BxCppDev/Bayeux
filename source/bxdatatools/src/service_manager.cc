@@ -840,7 +840,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
                             "The loading order of the files is critical             \n"
                             "because some services may depend on other ones         \n"
                             "which should thus be defined *before* their            \n"
-                            "dependees.                                             \n"
+                            "dependers.                                             \n"
                             "Extends the instantiation of services triggered by     \n"
                             "former calls to :                                      \n"
                             "  datatools::service_manager::load(...)                \n"
@@ -854,6 +854,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
 
-DOCD_CLASS_SYSTEM_REGISTRATION(::datatools::service_manager,"datatools::service_manager")
+DOCD_CLASS_SYSTEM_REGISTRATION(datatools::service_manager,"datatools::service_manager")
 
 // end of service_manager.cc

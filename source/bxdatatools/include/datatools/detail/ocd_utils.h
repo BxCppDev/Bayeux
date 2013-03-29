@@ -32,6 +32,8 @@
 #include <sstream>
 #include <stdexcept>
 
+#include <boost/scoped_ptr.hpp>
+
 #include <datatools/object_configuration_description.h>
 
 namespace datatools {                                                   
@@ -141,9 +143,12 @@ namespace datatools {
         e.handle = handle_;
       }
 
+      struct base_system_factory_registrar
+      {
+      };
 
       template <class T>
-      class system_factory_registrar
+      class system_factory_registrar : public base_system_factory_registrar
       {
       public:
         system_factory_registrar(const std::string & class_id_) {
@@ -157,7 +162,11 @@ namespace datatools {
           }
         }
       };
-
+ 
+      template <typename ClassType>                                        
+      struct _ocd_sfr {                                                 
+      };                                                              
+ 
     } // namespace ocd
   } // namespace detail
 } // namespace datatools

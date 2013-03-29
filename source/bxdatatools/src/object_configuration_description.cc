@@ -13,6 +13,21 @@
 
 namespace datatools {
 
+  bool configuration_property_description::dependency_entry::dynamic() const
+  {
+    return type == DEP_DYNAMIC;
+  }
+
+  bool configuration_property_description::dependency_entry::by_flag() const
+  {
+    return type == DEP_BY_FLAG;
+  }
+  
+  bool configuration_property_description::dependency_entry::by_label() const
+  {
+    return type == DEP_BY_LABEL;
+  }
+
   bool configuration_property_description::dependency_entry::has_name() const
   {
     return ! name.empty();
@@ -37,14 +52,34 @@ namespace datatools {
 
   bool configuration_property_description::dependency_entry::is_valid() const
   {
-    return has_name() && has_address();
+    return type != DEP_UNDEFINED && has_name() && has_address();
+  }
+
+  void configuration_property_description::dependency_entry::reset()
+  {
+    type = DEP_UNDEFINED;
+    name.clear();
+    triggering_status = true;
+    triggering_labels.clear();
+    address = 0;
+    return;
   }
 
   configuration_property_description::dependency_entry::dependency_entry()
   {
+    type = DEP_UNDEFINED;
+    triggering_status = true;
     address = 0;
     return;
   }
+
+  configuration_property_description::dependency_entry::~dependency_entry()
+  {
+    reset();
+    return;
+  }
+
+  /***************************************************************/
 
   bool configuration_property_description::is_const() const
   {
@@ -122,11 +157,29 @@ namespace datatools {
   {
     return _dynamic_dependers_.at(i_);
   }
+ 
+  unsigned int 
+  configuration_property_description::get_number_of_triggered_dependers() const
+  {
+    return _triggering_.size();
+  }
+
+  const configuration_property_description::dependency_entry & 
+  configuration_property_description::get_triggered_depender(int i_) const
+  {
+    return _triggering_.at(i_);
+  }
 
   const configuration_property_description::dependency_entry & 
   configuration_property_description::get_triggered_by_flag() const
   {
     return _triggered_by_flag_;
+  }
+
+  const configuration_property_description::dependency_entry & 
+  configuration_property_description::get_triggered_by_label() const
+  {
+    return _triggered_by_label_;
   }
 
   configuration_property_description::configuration_property_description()
@@ -192,6 +245,7 @@ namespace datatools {
               throw std::logic_error(message.str());            
             }
           std::string source_prop_name = str.substr(2,str.length()-3);
+          _dynamic_dependee_.type = DEP_DYNAMIC;
           _dynamic_dependee_.name = source_prop_name;
           _dynamic_dependee_.address = 0;
         }
@@ -222,9 +276,22 @@ namespace datatools {
   }
 
   configuration_property_description & 
-  configuration_property_description::set_triggered_by_flag(const std::string &prop_name_)
+  configuration_property_description::set_triggered_by_flag(const std::string &prop_name_, 
+                                                            bool triggering_status_)
   {
+    _triggered_by_flag_.type = DEP_BY_FLAG;
     _triggered_by_flag_.name = prop_name_;
+    _triggered_by_flag_.triggering_status = triggering_status_;
+    return *this;
+  }
+
+  configuration_property_description & 
+  configuration_property_description::set_triggered_by_label(const std::string & prop_name_, 
+                                                             const std::string & triggering_labels_)
+  {
+    _triggered_by_label_.type = DEP_BY_LABEL;
+    _triggered_by_label_.name = prop_name_;
+    boost::split(_triggered_by_label_.triggering_labels,triggering_labels_,boost::is_any_of(" \t,;"));
     return *this;
   }
 
@@ -328,7 +395,14 @@ namespace datatools {
   
   bool configuration_property_description::is_triggered_by_flag() const
   {
-    return ! _triggered_by_flag_.name.empty();
+    return _triggered_by_flag_.by_flag() && ! _triggered_by_flag_.name.empty();
+  }
+ 
+  bool configuration_property_description::is_triggered_by_label() const
+  {
+    return _triggered_by_label_.by_label() 
+      && ! _triggered_by_label_.name.empty() ;
+    //&& _triggered_by_label_.triggering_labels.size() != 0;
   }
 
   configuration_property_description & 
@@ -578,6 +652,17 @@ namespace datatools {
         }
         out_ << "\n";    
       }
+      if (is_triggered_by_label() && _triggered_by_label_.has_name()) {
+        out_ << indent_ << "|-- " << "Triggered by label : '"  << _triggered_by_label_.name << "'";
+        out_ << " with one of the values in : ";
+        for (int itl = 0; itl < _triggered_by_label_.triggering_labels.size(); itl++) {
+          out_ << " '" << _triggered_by_label_.triggering_labels[itl] << "'";
+        }
+        if (! _triggered_by_label_.has_address()) {
+          out_ << " (no address)";
+        }
+        out_ << "\n";    
+      }
     }
     out_ << indent_ << "`-- " << "Mandatory : '" << _mandatory_ << "'\n";
     return;
@@ -716,7 +801,7 @@ namespace datatools {
  
   void object_configuration_description::_at_lock_()
   {
-    // Establish interdependencies between dependees/dependers properties :
+    // Establish interdependencies between dependees/dependers dynamic properties :
     for (int i = 0; i < _properties_infos_.size(); i++) {
       configuration_property_description & cpd = _properties_infos_[i];
       if (cpd.is_static()) {
@@ -784,7 +869,7 @@ namespace datatools {
       }
     }
 
-    // Establish interdependencies between triggering/triggered properties :
+    // Establish interdependencies between triggering/triggered properties (BY FLAG):
     for (int i = 0; i < _properties_infos_.size(); i++) {
       configuration_property_description & cpd = _properties_infos_[i];
       if (! cpd.is_triggered_by_flag()) {
@@ -816,6 +901,71 @@ namespace datatools {
             throw std::logic_error(message.str());
           }
 
+          // Set the address of the trigger :
+          trigger.address = &cpd2;
+          // Register the depender in the dependee :
+          {
+            configuration_property_description::dependency_entry dummy;
+            cpd2._triggering_.push_back(dummy);
+          }
+          configuration_property_description::dependency_entry & triggered 
+            = cpd2._triggering_.back();
+          triggered.name = cpd.get_name_pattern();
+          triggered.address = &cpd;
+          // Abort the loop :
+          break;
+        }
+      }
+      if (!trigger.has_address()) {
+        std::ostringstream message;
+        message << "datatools::object_configuration_description::_at_lock_: "
+                << "Cannot find trigger property '" 
+                << trigger.name
+                << "' for property with name pattern '" << cpd.get_name_pattern() << "' !";
+        throw std::logic_error(message.str());
+      }
+    }
+
+    // Establish interdependencies between triggering/triggered properties (BY LABEL):
+    for (int i = 0; i < _properties_infos_.size(); i++) {
+      configuration_property_description & cpd = _properties_infos_[i];
+      if (! cpd.is_triggered_by_label()) {
+        continue;
+      }
+      configuration_property_description::dependency_entry & trigger = cpd._triggered_by_label_;
+      bool found_trigger = false;
+      for (int k = 0; k < _properties_infos_.size(); k++) {
+        if (k == i) continue;
+        configuration_property_description & cpd2 = _properties_infos_[k];
+        // std::cerr << "DEVEL: " << "datatools::object_configuration_description::_at_lock_: "
+        //           << "Trigger's name : '" << trigger.name << "' " 
+        //           << "versus checked name : '" << cpd2.get_name_pattern() << "' " 
+        //           << "\n";
+        if (trigger.name == cpd2.get_name_pattern()) {
+          if (cpd2.is_dynamic()) {
+            std::ostringstream message;
+            message << "datatools::object_configuration_description::_at_lock_: "
+                    << "Triggered property with name pattern '" << cpd.get_name_pattern() << "' cannot be triggered by "
+                    << "the dynamic property '" << cpd2.get_name_pattern() << "' !";
+            throw std::logic_error(message.str());
+          }
+
+          if (! cpd2.is_string()) {
+            std::ostringstream message;
+            message << "datatools::object_configuration_description::_at_lock_: "
+                    << "Triggered property with name pattern '" << cpd.get_name_pattern() << "' cannot depend on "
+                    << "the non-string property '" << cpd2.get_name_pattern() << "' !";
+            throw std::logic_error(message.str());
+          }
+
+          if (cpd2.is_path()) {
+           std::ostringstream message;
+            message << "datatools::object_configuration_description::_at_lock_: "
+                    << "Triggered property with name pattern '" << cpd.get_name_pattern() << "' cannot depend on "
+                    << "the path string property '" << cpd2.get_name_pattern() << "' !";
+            throw std::logic_error(message.str());
+          }
+ 
           // Set the address of the trigger :
           trigger.address = &cpd2;
           // Register the depender in the dependee :
@@ -1173,17 +1323,48 @@ namespace datatools {
         // Output :
         const properties::data& a_prop_data = PROP.get(cpd.get_name_pattern());
         out_ << '\n';
+        bool comment = true;
+        if (cpd.is_mandatory()) {
+          comment = false;
+        }
         PC.write_data(out_, 
                       cpd.get_name_pattern(),
                       a_prop_data,
                       cpd.get_unit_symbol(),
                       cpd.get_unit_label(),
-                      cpd.is_mandatory() ? "" : prop_comment_prefix);
+                      comment ? prop_comment_prefix : "");
         
+        bool more = false;
         // Append long description as a trailing comment block :
         if (cpd.has_long_description()) {
+          more = true;
+        }
+
+        if (more) {
           out_ << "#\n# Additional informations : " << '\n';
-          datatools::print_multi_lines(out_, cpd.get_long_description(), "#   ");
+          if (cpd.is_triggered_by_flag()) {
+            out_ << "# " << "This property is exp<ected if flag property '" 
+                 << cpd.get_triggered_by_flag().get_name() << "' is set to '" 
+                 << cpd.get_triggered_by_flag().triggering_status << "'"
+                 << "\n";           
+          }
+          if (cpd.is_triggered_by_label()) {
+            out_ << "# " << "This property ";
+            if (cpd.is_mandatory()) {
+              out_ << " is expected";
+            }
+            else {
+              out_ << " may be set";
+            }
+            out_ << " if string property '" 
+                 << cpd.get_triggered_by_label().get_name() << "' is set to one of these values : \n";
+            for (int itl = 0; itl < cpd.get_triggered_by_label().triggering_labels.size(); itl++) {
+              out_ << "#    '" << cpd.get_triggered_by_label().triggering_labels[itl] << "'\n";
+            }
+          }
+          if (cpd.has_long_description()) {
+            datatools::print_multi_lines(out_, cpd.get_long_description(), "#   ");
+          }
         }
      
         // Append dynamic depender properties :
@@ -1230,6 +1411,14 @@ namespace datatools {
             } // word loop 
           } // depender loop
         } // dynamic depender
+
+        // if (cpd.is_trigger()) {
+        //   for (int itder = 0; itder < cpd.get_number_of_triggered_dependers(); itder++) {
+        //     const configuration_property_description::dependency_entry & tder 
+        //       = cpd.get_triggered_depender(itder);
+        //   }
+        // } // depender loop
+
       } // end of static properties
     }
 

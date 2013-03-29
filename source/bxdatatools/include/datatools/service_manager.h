@@ -1,9 +1,9 @@
 /* service_manager.h
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
- * Last modified : 2012-12-15
+ * Last modified : 2013-03-29
  *
- * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Copyright (C) 2012 Ben Morgan <Ben.Morgan@warwick.ac.uk>
  *
  * This program is free software; you can redistribute it and/or modify

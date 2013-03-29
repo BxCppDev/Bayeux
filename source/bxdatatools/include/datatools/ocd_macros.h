@@ -45,11 +45,11 @@
       }}}                                                               \
   /**/
 
-#define DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(ClassName,OcdId)                \
+#define DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(ClassType,OcdId)                \
   namespace datatools {                                                 \
   namespace detail {                                                    \
   namespace ocd {                                                       \
-  template<> void implement_load< ClassName >(::datatools::object_configuration_description & OcdId) { \
+  template<> void implement_load< ClassType >(::datatools::object_configuration_description & OcdId) { \
   /**/
 
 #define DOCD_CLASS_IMPLEMENT_LOAD_END()         \
@@ -60,7 +60,12 @@
   namespace datatools {                                                 \
     namespace detail {                                                  \
       namespace ocd {                                                   \
-        system_factory_registrar< ClassType > _ocd_sfr(ClassId);      \
+        template <>                                                     \
+        struct _ocd_sfr< ClassType > {                                  \
+          static boost::scoped_ptr<base_system_factory_registrar> reg_; \
+        };                                                              \
+        boost::scoped_ptr<base_system_factory_registrar>                \
+        _ocd_sfr< ClassType >::reg_(new system_factory_registrar< ClassType >(ClassId)); \
       }}}                                                               \
   /**/
 
