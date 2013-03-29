@@ -783,6 +783,164 @@ namespace dpp {
 
 }  // end of namespace dpp
 
+/***************
+ * OCD support *
+ ***************/
+
+#include <datatools/ocd_macros.h>
+
+
+// OCD support for class '::datatools::service_manager' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::module_manager,ocd_)
+{
+  ocd_.set_class_name ("dpp::module_manager");
+  ocd_.set_class_description ("A generic manager for data processing module");
+ 
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("debug")
+      .set_terse_description("Flag to activate debugging output")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("This flag activates debugging output.             \n"
+                            "It is not recommended for a production run.       \n"
+                            )
+      ;    
+  }
+ 
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("verbose")
+      .set_terse_description("Flag to activate verbose output")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("Default: 0                                        \n"
+                            "This flag activates verbose output.               \n"
+                            "It is not recommended for a production run.       \n"
+                            )
+      ;    
+  }
+ 
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("factory.debug")
+      .set_terse_description("Flag to activate debugging output from factory.")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("Default: 0                                                    \n"
+                            "This flag activates debugging output from the data processing \n"
+                            "module embeded factory.                                       \n"
+                            "It is not recommended for a production run.                   \n"
+                            )
+      ;    
+  }
+ 
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("factory.no_preload")
+      .set_terse_description("Flag to inhibit the preloading of registered module factories.")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("Default: 0                                                           \n"
+                            "When set this flag inhibits the automatic loading of data processing \n"
+                            "module factories registered in the 'dpp' library.                    \n"
+                            "Module factories have thus to be 'manually' loaded on user request.  \n"
+                            "This behaviour is not recommended.                                   \n"
+                            )
+      ;    
+  }
+ 
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("factory.initialization_at_load")
+      .set_terse_description("Flag to force the initialization of module when loaded.")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("Default: 0                                                           \n"
+                            "When set this flag triggers the automatic initialization of all      \n"
+                            "data processing modules that are declared and loaded by the manager, \n"
+                            "even if such modules are not used at all through the data processing \n"
+                            "chain.                                                               \n"
+                            "This behaviour is not recommended.                                   \n"
+                            "The default behaviour consists in initializing a module, and allocate\n"
+                            "its internal resources, only if it is really useful.                 \n"
+                            )
+      ;    
+  }
+ 
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("modules.configuration_files")
+      .set_terse_description("The list of module configuration files.")
+      .set_traits(datatools::TYPE_STRING,
+                  datatools::configuration_property_description::ARRAY)
+      .set_path(true)
+      .set_mandatory(false)
+      .set_long_description("Default: empty                                                        \n"
+                            "Each file addressed by this property must follow the format of        \n"
+                            "the 'datatools::multi_properties' class.                              \n"
+                            "The filenames may contain some path environment variable(s).          \n"
+                            "                                                                      \n"
+                            "Example :                                                             \n"
+                            "   modules.configuration_files : string[1] as path = \"modules.conf\" \n"
+                           "                                                                       \n"
+                            "Where the \"modules.conf\" file builds a data processing chain made   \n"
+                            "of two modules, with the following syntax :                           \n"
+                            "                                                                      \n"
+                            "   #@key_label  \"name\"                                             \n"
+                            "   #@meta_label \"type\"                                             \n"
+                            "                                                                     \n"
+                            "   [name=\"output\" type=\"dpp::io_module\"]                         \n"
+                            "   mode : string = \"output\"                                        \n"
+                            "   output.mode : string = \"incremental\"                            \n"
+                            "   output.max_record_per_file   : integer = 10000                    \n"
+                            "   output.incremental.path      : string as path = \"${DATA}/save\"  \n"
+                            "   output.incremental.prefix    : string = \"run_\"                  \n"
+                            "   output.incremental.extension : string = \".data\"                 \n"
+                            "   output.incremental.increment : integer = 1                        \n"
+                            "   output.incremental.start     : integer = 0                        \n"
+                            "   output.incremental.stop      : integer = 100                      \n"
+                            "                                                                     \n"
+                            "   [name=\"dump_in_file\" type=\"dpp::dump_module\"]                 \n"
+                            "   title : string = \"Event record\"                                 \n"
+                            "   output : string = \"file\"                                        \n"
+                            "   output.filename : string as path = \"dump.txt\"                   \n"
+                            "                                                                     \n"
+                            "   [name=\"pipeline\" type=\"dpp::chain_module\"]                    \n"
+                            "   modules : string[2] = \"output\" \"dump_in_file\"                 \n"
+                            "                                                                     \n"
+                            "                                                                     \n"
+                            )
+      ;    
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("service_manager.configuration")
+      .set_terse_description("The configuration file of the service manager.")
+      .set_traits(datatools::TYPE_STRING)
+      .set_path(true)
+      .set_mandatory(false) 
+      .set_long_description("Default: empty                                                        \n"
+                            "This file must follow the format of the 'datatools::properties' class.\n"
+                            "See OCD support for the 'datatools::service_manage' class.            \n"
+                            "This property is superseded by a former call to :                     \n"
+                            "  dpp::module_manager::set_service_manager(...)                       \n"
+                             )
+      ;
+  }
+ 
+  //ocd_.set_configuration_hints ("Nothing special."); 
+  ocd_.set_validation_support(true);
+  ocd_.lock(); 
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+
+DOCD_CLASS_SYSTEM_REGISTRATION(dpp::module_manager,"dpp::module_manager")
+
+
+
 // end of module_manager.cc
 /*
 ** Local Variables: --

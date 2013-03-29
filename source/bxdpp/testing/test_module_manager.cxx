@@ -21,6 +21,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <list>
 #include <stdexcept>
@@ -232,6 +233,13 @@ int main (int argc_, char ** argv_)
 
       // Terminate the module manager :
       MM.reset ();
+
+      {
+       datatools::object_configuration_description OCD;
+       datatools::load_ocd<dpp::module_manager>(OCD);
+       std::ofstream fscf ("test_OCD_module_manager.sample.conf");
+       OCD.generate_sample_configuration(fscf, "the configuration of a 'dpp::module_manager' test object");
+      }
 
     }
   catch (std::exception & x)

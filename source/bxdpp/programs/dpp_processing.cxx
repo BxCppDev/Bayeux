@@ -63,7 +63,7 @@ int main (int argc_, char ** argv_)
       bool   verbose = false;
       bool   break_on_error_as_fatal = false;
       int    print_modulo = 10;
-      bool   simulated_input = false;
+      //bool   simulated_input = false;
       std::string module_manager_config_file;
       std::string module_name;
       std::vector<std::string> module_names;
@@ -91,6 +91,12 @@ int main (int argc_, char ** argv_)
         ("verbose,v",
          po::value<bool>(&verbose)->zero_tokens()->default_value (false),
          "produce verbose logging.")
+        ("load-dll,l",
+         po::value<std::vector<std::string> > (),
+         "set a DLL to be loaded.")
+        ("dlls-config,L",
+         po::value<std::string> (),
+         "set the DLL loader configuration file.")
         ("modulo,%",
          po::value<int> (&print_modulo)->default_value (10),
          "set the modulo event print period.")
@@ -109,24 +115,18 @@ int main (int argc_, char ** argv_)
         ("input-file,i",
          po::value<std::vector<std::string> > (),
          "set an input file (optional).")
-        ("simulated-input,S",
-         po::value<bool> (&simulated_input)->zero_tokens()->default_value (false),
-         "use the plain simulated data format input (from sng4).")
+        // ("simulated-input,S",
+        //  po::value<bool> (&simulated_input)->zero_tokens()->default_value (false),
+        //  "use the plain simulated data format input (from sng4).")
         ("output-file,o",
          po::value<std::vector<std::string> > (),
          "set the output file (optional).")
         ("max-events-per-output-file,O",
          po::value<int> (&max_events_per_output_file)->default_value (0),
          "set the maximum number of event records per output file.")
-        ("save-stopped-events,s",
-         po::value<bool>(&save_stopped_event_records)->zero_tokens()->default_value (false),
-         "produce debug logging.")
-        ("load-dll,l",
-         po::value<std::vector<std::string> > (),
-         "set a DLL to be loaded.")
-        ("dlls-config,L",
-         po::value<std::string> (),
-         "set the DLL loader configuration file.")
+        // ("save-stopped-events,s",
+        //  po::value<bool>(&save_stopped_event_records)->zero_tokens()->default_value (false),
+        //  "produce debug logging.")
         ;
 
       // Describe command line arguments :
@@ -416,10 +416,10 @@ int main (int argc_, char ** argv_)
           source_config.store ("mode", "input");
           source_config.store ("input.mode", "list");
           source_config.store ("input.list.filenames", input_files);
-          if (simulated_input)
-            {
-              source_config.store_flag ("input.plain_simulated");
-            }
+          // if (simulated_input)
+          //   {
+          //     source_config.store_flag ("input.plain_simulated");
+          //   }
           source->initialize_with_service (source_config, MM.get ()->grab_service_manager ());
         }
 

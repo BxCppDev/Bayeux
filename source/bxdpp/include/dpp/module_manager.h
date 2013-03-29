@@ -156,6 +156,12 @@ namespace dpp {
 
 }  // end of namespace dpp
 
+/***************
+ * OCD support *
+ ***************/
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(dpp::module_manager)
+
 #endif // DPP_MODULE_MANAGER_H_
 
 // end of module_manager.h
