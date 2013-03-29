@@ -1343,7 +1343,14 @@ namespace datatools {
         if (more) {
           out_ << "#\n# Additional informations : " << '\n';
           if (cpd.is_triggered_by_flag()) {
-            out_ << "# " << "This property is exp<ected if flag property '" 
+            out_ << "# " << "This property ";
+            if (cpd.is_mandatory()) {
+              out_ << " is expected";
+            }
+            else {
+              out_ << " may be set";
+            }
+            out_ << " if dependee flag property '"            
                  << cpd.get_triggered_by_flag().get_name() << "' is set to '" 
                  << cpd.get_triggered_by_flag().triggering_status << "'"
                  << "\n";           
@@ -1356,7 +1363,7 @@ namespace datatools {
             else {
               out_ << " may be set";
             }
-            out_ << " if string property '" 
+            out_ << " if dependee string property '" 
                  << cpd.get_triggered_by_label().get_name() << "' is set to one of these values : \n";
             for (int itl = 0; itl < cpd.get_triggered_by_label().triggering_labels.size(); itl++) {
               out_ << "#    '" << cpd.get_triggered_by_label().triggering_labels[itl] << "'\n";
