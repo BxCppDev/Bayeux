@@ -1342,8 +1342,14 @@ namespace datatools {
 
         if (more) {
           out_ << "#\n# Additional informations : " << '\n';
+          if (cpd.has_complex_triggering_conditions()) {
+            out_ << "#   " << "This property has complex triggering conditions.";
+          }
+          if (cpd.has_complex_dependencies()) {
+            out_ << "#   " << "This property has complex dependencies.";
+          }
           if (cpd.is_triggered_by_flag()) {
-            out_ << "# " << "This property ";
+            out_ << "#   " << "This property";
             if (cpd.is_mandatory()) {
               out_ << " is expected";
             }
@@ -1356,7 +1362,7 @@ namespace datatools {
                  << "\n";           
           }
           if (cpd.is_triggered_by_label()) {
-            out_ << "# " << "This property ";
+            out_ << "#   " << "This property";
             if (cpd.is_mandatory()) {
               out_ << " is expected";
             }
