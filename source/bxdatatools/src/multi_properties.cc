@@ -686,7 +686,6 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
             }
             std::string tmp;
             std::getline(iss, tmp);
-            
             if (meta_label.empty()) {
               if (!meta_label_.empty()) {
                 std::ostringstream message;
@@ -697,7 +696,6 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
               }
             } else {
               mprop_meta_label = meta_label;
-
               if (meta_label_.empty()) {
                 this->set_meta_label(mprop_meta_label);
               } else {
@@ -712,7 +710,13 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
               }
             }
           }
-          skip_line = true; 
+          skip_line = true;
+          {
+            std::istringstream iss(line);
+            std::string check;
+            iss >> check;
+            if (check.length() > 2 && check.substr(0,2) == "#@") skip_line = false;
+          }
         }
       } // if ( ! skip_line )
 
@@ -736,7 +740,7 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
             throw std::logic_error(message.str());
           }
 
-          if (!properties::config::read_quoted_string(iss, new_key)) {
+          if (! properties::config::read_quoted_string(iss, new_key)) {
             std::ostringstream message;
             message << "datatools::multi_properties::read_impl: "
                     << "Cannot read quoted std::string key value from line '" 

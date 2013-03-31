@@ -2643,8 +2643,11 @@ namespace datatools {
             iss >> std::ws;
 
             std::string token;
-
+            
             iss >> token;
+            // std::cerr << "DEVEL: " << "datatools::properties::config::read_: "
+            //           << "token='" << token << "'"
+            //           << std::endl;
             if (token == "@end") {
               break;
             }
@@ -2667,19 +2670,15 @@ namespace datatools {
 
             //>>>
             if (token == "@enable_real_with_unit") {
-              /*
-                std::cerr << "DEVEL: " << "datatools::properties::config::read_: "
-                << "@enable_real_with_unit "
-                << std::endl;
-              */
+              // std::cerr << "DEVEL: " << "datatools::properties::config::read_: "
+              //           << "@enable_real_with_unit "
+              //           << std::endl;
               enable_real_with_unit = true;
             }
             if (token == "@disable_real_with_unit") {
-              /*
-                std::cerr << "DEVEL: " << "datatools::properties::config::read_: "
-                << "@disable_real_with_unit "
-                << std::endl;
-              */
+              // std::cerr << "DEVEL: " << "datatools::properties::config::read_: "
+              //           << "@disable_real_with_unit "
+              //           << std::endl;
               enable_real_with_unit = false;
             }
 
