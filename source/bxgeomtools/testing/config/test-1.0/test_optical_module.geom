@@ -69,6 +69,9 @@ visibility.hidden : boolean = 0
 #@description The recommended color for the display
 visibility.color  : string  = "cyan"
 
+#@description The 'sensitive' category attached to this detection volume
+sensitive.category  : string  = "scin.sd"
+
 
 ################################################################
 [name="light_guide.model" type="geomtools::simple_shaped_model"]
