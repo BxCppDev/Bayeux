@@ -1148,7 +1148,96 @@ namespace geomtools {
     }
     return;
   }
-  
+
+  void manager::tree_dump(std::ostream& out, 
+                          const std::string& title,
+                          const std::string& a_indent,
+                          bool a_inherit) const 
+  {
+    
+    std::string indent;
+    if (!a_indent.empty()) indent = a_indent;
+    
+    if (!title.empty()) out << indent << title << std::endl;
+
+    out << indent << datatools::i_tree_dumpable::tag 
+        << "Debug     : "
+        << _debug_ 
+        << "" << std::endl;
+
+    out << indent << datatools::i_tree_dumpable::tag 
+        << "Verbose     : " 
+        << _verbose_ 
+        << "" << std::endl;
+
+    out << indent << datatools::i_tree_dumpable::tag 
+        << "Initialized     : " 
+        << _initialized_ 
+        << "" << std::endl;
+
+    out << indent << datatools::i_tree_dumpable::tag 
+        << "Setup label : '" 
+        << _setup_label_ 
+        << "'" << std::endl;
+
+    out << indent << datatools::i_tree_dumpable::tag 
+        << "Setup version : '" 
+        << _setup_version_ 
+        << "'" << std::endl;
+
+    out << indent << datatools::i_tree_dumpable::tag 
+        << "Setup description : '" 
+        << _setup_description_ 
+        << "'" << std::endl;
+
+    out << indent << datatools::i_tree_dumpable::tag 
+        << "Services dictionnary : " 
+        << _services_ 
+        << " " << std::endl;
+
+    out << indent << datatools::i_tree_dumpable::tag 
+        << "Model factory size : " 
+        << _factory_.get_models().size()
+        << " " << std::endl;
+
+    out << indent << datatools::i_tree_dumpable::tag 
+        << "Mapping requested : " 
+        << _mapping_requested_ 
+        << " " << std::endl;
+
+    out << indent << datatools::i_tree_dumpable::tag 
+        << "Mapping size : " 
+        << _mapping_.get_geom_infos ().size()
+        << " " << std::endl;
+
+    out << indent << datatools::i_tree_dumpable::tag 
+        << "World name : " 
+        << _world_name_ 
+        << " " << std::endl;
+
+    out << indent << datatools::i_tree_dumpable::tag 
+        << "Plugins factory preload : " 
+        << _plugins_factory_preload_ 
+        << " " << std::endl;
+
+    out << indent << datatools::i_tree_dumpable::tag 
+        << "Plugins force initialization at load : " 
+        << _plugins_force_initialization_at_load_ 
+        << " " << std::endl;
+
+    // out << indent << datatools::i_tree_dumpable::tag 
+    //     << "Plugins facorty : " 
+    //     << _plugins_factory_register_.size() 
+    //     << " " << std::endl;
+
+    out << indent << datatools::i_tree_dumpable::inherit_tag(a_inherit)
+        << "Plugins : " 
+        << _plugins_.size() 
+        << " " << std::endl;
+
+    return;
+  }
+   
   //----------------------------------------------------------------------
   // Private Interface Definitions
 

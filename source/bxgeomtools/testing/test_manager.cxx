@@ -331,6 +331,7 @@ int main (int argc_, char ** argv_)
           std::clog << "The embeded GID mapping : " << std::endl;
           geo_mgr.get_mapping ().dump_dictionnary (std::clog);
         }
+      geo_mgr.tree_dump (std::clog, "The geometry manager : ");
 
       if (use_plugins)
         {

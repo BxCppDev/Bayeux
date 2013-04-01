@@ -61,7 +61,7 @@ namespace geomtools {
   /// Main geometry manager for the modelisation of various
   /// experimental setups in the framework of the nuclear and particle 
   /// physics experiments.
-  class manager
+  class manager : public datatools::i_tree_dumpable 
   {
   public:
 
@@ -321,6 +321,11 @@ namespace geomtools {
     /// Reset the geometry manager
     void reset ();
 
+    virtual void tree_dump(std::ostream &      out_ = std::clog, 
+                           const std::string & title_  = "",
+                           const std::string & indent_ = "",
+                           bool                inherit_ = false) const;
+    
   protected:
 
     virtual void _pre_init (const datatools::properties & config_);
@@ -359,7 +364,7 @@ namespace geomtools {
     std::string              _setup_version_;     //!< the version tag of the geometry setup
     std::string              _setup_description_; //!< the description of the geometry setup
 
-    datatools::service_dict_type * _services_;    //!< Handle to a distionnary of services
+    datatools::service_dict_type * _services_;    //!< Handle to a dictionnary of services
 
     geomtools::model_factory _factory_;           //!< the factory for geometry models
     geomtools::id_mgr        _id_manager_;        //!< the manager for geometry IDs
