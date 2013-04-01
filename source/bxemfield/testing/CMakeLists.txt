@@ -25,6 +25,7 @@
 set ( emfield_tests_programs
   test_emfield.cxx
   test_emfield_manager.cxx
+  test_emfield_geom_plugin.cxx
 )
 
 ###message (STATUS "emfield_tests_programs=${emfield_tests_programs}" )

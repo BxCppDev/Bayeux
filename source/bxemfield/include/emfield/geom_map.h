@@ -49,14 +49,26 @@ namespace emfield {
  
     struct association_entry
     {
+    public:
       association_entry();
+      inline const std::string & get_label() const { return label; }
+      inline const std::string & get_geom_model_name() const { return geom_model_name; }
+      inline const std::string & get_logical_volume_name() const { return logical_volume_name; }
+      inline bool has_logvol() const { return logvol != 0;}
+      inline const geomtools::logical_volume & get_logvol() const { return *logvol;  }
+      inline const std::string & get_field_name() const { return field_name; }
+      inline bool has_field() const { return field != 0; }
+      inline const emfield::base_electromagnetic_field & get_field() const { return *field; }
+    public:
       std::string label;
       std::string geom_model_name;
       std::string logical_volume_name;
       const geomtools::logical_volume * logvol;
       std::string field_name;
       const emfield::base_electromagnetic_field * field;
+      datatools::properties auxiliaries;
     };
+
     typedef std::map<std::string,association_entry> association_dict_type;
      
     geom_map();
@@ -89,10 +101,10 @@ namespace emfield {
 
     const electromagnetic_field_manager & get_fields_manager() const;
 
-    virtual void tree_dump (std::ostream & out_ = std::clog,
-                            const std::string & title = "",
-                            const std::string & indent_= "",
-                            bool inherit_ = false) const;
+    virtual void tree_dump(std::ostream & out_ = std::clog,
+                           const std::string & title = "",
+                           const std::string & indent_= "",
+                           bool inherit_ = false) const;
 
   protected :
 

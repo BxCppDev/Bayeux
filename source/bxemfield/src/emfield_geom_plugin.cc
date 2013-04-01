@@ -50,11 +50,20 @@ namespace emfield {
         throw std::logic_error(message.str());
       }
 
-    {
+    if (config_.has_key("manager_config")) {
+      std::string mgr_config_file = config_.fetch_string("manager_config");
+      datatools::fetch_path_with_env(mgr_config_file);
+      datatools::properties mgr_config;
+      datatools::properties::read_config(mgr_config_file, mgr_config);
+      _build_manager(mgr_config);
+    }
+    else {
+      datatools::properties mgr_config;
+      config_.export_and_rename_starting_with(mgr_config, "manager.", "");
       std::clog << "NOTICE: " 
                 << "emfield::emfield_geom_plugin::initialize: "
                 << "Building the embeded EM field manager..." << std::endl;
-      _build_manager(config_);
+      _build_manager(mgr_config);
     }
 
     _initialized_ = true;
@@ -72,23 +81,24 @@ namespace emfield {
                   << "Entering..." << std::endl;
       }
 
-    std::vector<std::string> input_files;
-    if (manager_config_.has_key ("emfield.files"))
-      {
-        manager_config_.fetch("emfield.files", input_files);
-      }
-    for (std::vector<std::string>::const_iterator i = input_files.begin ();
-         i != input_files.end ();
-         i++)
-      {
-        std::string filename = *i;
-        datatools::fetch_path_with_env (filename);
-        std::clog << "NOTICE: "
-                  << "emfield::emfield_geom_plugin::_build_manager: " 
-                  << "Loading EM fields file '" << filename << "'..." << std::endl;
-        _manager_.load (filename);
-      }
+    // std::vector<std::string> input_files;
+    // if (manager_config_.has_key ("emfield.files"))
+    //   {
+    //     manager_config_.fetch("emfield.files", input_files);
+    //   }
+    // for (std::vector<std::string>::const_iterator i = input_files.begin ();
+    //      i != input_files.end ();
+    //      i++)
+    //   {
+    //     std::string filename = *i;
+    //     datatools::fetch_path_with_env (filename);
+    //     std::clog << "NOTICE: "
+    //               << "emfield::emfield_geom_plugin::_build_manager: " 
+    //               << "Loading EM fields file '" << filename << "'..." << std::endl;
+    //     _manager_.load (filename);
+    //   }
 
+    _manager_.set_geometry_manager(get_geo_manager());
     _manager_.initialize (manager_config_);
 
     if (devel)
