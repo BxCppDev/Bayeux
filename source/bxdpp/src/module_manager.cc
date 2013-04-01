@@ -940,7 +940,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_END()
 DOCD_CLASS_SYSTEM_REGISTRATION(dpp::module_manager,"dpp::module_manager")
 
 
-
 // end of module_manager.cc
 /*
 ** Local Variables: --

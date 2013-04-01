@@ -171,7 +171,7 @@ namespace dpp {
                 << "Module '" << get_name () << "' : invalid list of filenames !";
         throw std::logic_error (message.str ());
       }
-    _filenames_.dump(std::cerr);
+    //_filenames_.dump(std::cerr);
     return;
   }
 
