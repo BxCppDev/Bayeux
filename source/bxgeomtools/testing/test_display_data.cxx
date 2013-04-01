@@ -117,8 +117,8 @@ int main (int argc_, char ** argv_)
         geomtools::display_data::display_item & spot_DI 
           = DD.add_static_item ("spot1",
                                 "group::misc",
-                                "orange");
-        // Compute position of the circle :
+                                "magenta");
+        // Compute position of the 1D-spot :
         geomtools::placement plcmt;
         plcmt.set_translation (-30 * CLHEP::cm, +15 * CLHEP::cm, 20 * CLHEP::cm);
         plcmt.set_orientation (geomtools::AXIS_X, -15.*CLHEP::degree);

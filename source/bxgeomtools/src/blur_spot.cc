@@ -659,34 +659,27 @@ namespace geomtools {
     dy = _tolerance_;
     dz = _tolerance_;
 
-    
-
     /*
       std::cerr << "geomtools::blur_spot::generate_wires: "
       << "tolerance=" << _tolerance_/CLHEP::mm << " mm"
       << std::endl;
     */
-    if (is_dimension_zero())
-      {
+    if (is_dimension_zero()) {
       }
-    if (is_dimension_one())
-      {
+    if (is_dimension_one()) {
         dz = _z_error_;
       }
-    if (is_dimension_two())
-      {
+    if (is_dimension_two())  {
         dx = _x_error_;
         dy = _x_error_;
       }
-    if (is_dimension_three())
-      {
+    if (is_dimension_three()) {
         dx = _x_error_;
         dy = _x_error_;
         dz = _z_error_;
       }
     vector_3d vertexes[3][2];
-    for (int i = 0; i < 3; i++) 
-      {
+    for (int i = 0; i < 3; i++) {
         vertexes[i][0].set((i == 0) ? -dx : 0, 
                            (i == 1) ? -dy : 0,
                            (i == 2) ? -dz : 0);
@@ -704,11 +697,10 @@ namespace geomtools {
         polyline_3d & pl = lpl_.back ();
         pl.set_closed (false);
         vector_3d v1, v;
-        _placement_.child_to_mother (vertexes[0][0], v1);
+        _placement_.child_to_mother (vertexes[i][0], v1);
         p_.child_to_mother (v1, v);
         pl.add (v);
-        if (i == 0)
-          {
+        if (i == 0) {
             // Workaround to avoid automatic Gnuplot data mesh display mode :
             // add the middle point of the X segment.
             vector_3d v0 = 0.5*(vertexes[i][0]+vertexes[i][1]);
@@ -716,14 +708,13 @@ namespace geomtools {
             p_.child_to_mother (v1, v);
             pl.add (v);            
           }
-        _placement_.child_to_mother (vertexes[0][1], v1);
+        _placement_.child_to_mother (vertexes[i][1], v1);
         p_.child_to_mother (v1, v);
         pl.add (v);      
       }
     }
     
-    if (is_dimension_two() || is_dimension_three())
-      {
+    if (is_dimension_two() || is_dimension_three()) {
         {
           polyline_3d xpl;
           lpl_.push_back (xpl);
@@ -744,8 +735,7 @@ namespace geomtools {
         p_.child_to_mother (v1, v);
         pl.add (v);      
       }
-    if (is_dimension_three())
-      {
+    if (is_dimension_three()) {
         for (int j = 0; j < 2; j++) {
           {
             polyline_3d xpl;
