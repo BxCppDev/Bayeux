@@ -260,9 +260,11 @@ namespace geomtools {
     
     void load_plugin(const std::string& plugin_name_,
                      const std::string& plugin_id_,
-                     const datatools::properties& plugin_config_);
+                     const datatools::properties& plugin_config_, 
+                     bool only_lock_ = false);
     
-    void load_plugins(const datatools::multi_properties& plugin_config_);
+    void load_plugins(const datatools::multi_properties& plugin_config_, 
+                     bool only_lock_ = false);
 
     const plugins_dict_type & get_plugins () const;
 
@@ -325,6 +327,8 @@ namespace geomtools {
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
                            bool                inherit_ = false) const;
+
+    const base_plugin::factory_register_type & get_plugins_factory_register();
     
   protected:
 

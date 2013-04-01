@@ -925,12 +925,21 @@ namespace geomtools {
 
   void manager::load_plugin(const std::string & plugin_name_,
                             const std::string & plugin_id_,
-                            const datatools::properties& plugin_config_) 
+                            const datatools::properties& plugin_config_,
+                            bool only_lock_) 
   {
+    if (only_lock_ && this->is_initialized()) {
+      std::ostringstream message;
+      message << "geomtools::manager::load_plugin: " 
+              << "Geometry manager is already initialized !";
+      throw std::logic_error(message.str());
+    }
+    
     this->_load_plugin(plugin_name_, plugin_id_, plugin_config_);
   }
-
-  void manager::load_plugins(const datatools::multi_properties& plugin_mconfig_) 
+  
+  void manager::load_plugins(const datatools::multi_properties& plugin_mconfig_,
+                             bool only_lock_) 
   {
     bool debug = this->is_debug();
     if (debug) {
@@ -940,7 +949,7 @@ namespace geomtools {
                 << std::endl;
     }
     
-    if (this->is_initialized()) {
+    if (only_lock_ && this->is_initialized()) {
       std::ostringstream message;
       message << "geomtools::manager::load_plugins: " 
               << "Geometry manager is already initialized !";
@@ -1237,7 +1246,13 @@ namespace geomtools {
 
     return;
   }
-   
+
+  const manager::base_plugin::factory_register_type &  
+  manager::get_plugins_factory_register()
+  {
+    return _plugins_factory_register_;
+  }
+    
   //----------------------------------------------------------------------
   // Private Interface Definitions
 
