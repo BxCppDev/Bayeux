@@ -143,8 +143,6 @@ int main (int argc_, char ** argv_)
               geomtools::vector_3d position (x, y, z);
               geomtools::vector_3d magfield;
               field.compute_magnetic_field(position, 0.0, magfield);
-              //std::cerr << "DEVEL: position=" << position/ CLHEP::mm << " mm  ";
-              //std::cerr << "magfield=" << magfield/ CLHEP::gauss << " gauss\n";
               std::ostringstream B_label;
               B_label << "B_" << count++;
               geomtools::display_data::display_item & DI            
@@ -152,9 +150,8 @@ int main (int argc_, char ** argv_)
                                       "group::magfield",
                                       "blue");
               geomtools::blur_spot arrow(geomtools::blur_spot::dimension_one, 0.5 * CLHEP::mm);
-              std::cerr << "|magfield| = " << magfield.mag()/ CLHEP::gauss << " gauss\n";
+              //std::cerr << "|magfield| = " << magfield.mag()/ CLHEP::gauss << " gauss\n";
               arrow.set_errors(magfield.mag() * b_scale * 2.0 * CLHEP::cm / CLHEP::gauss );
-              //arrow.tree_dump(std::cerr, "Arrow : ");
               // Compute placement of the arrow :
               geomtools::placement plcmt;
               plcmt.set_translation (x, y, z);
@@ -162,7 +159,9 @@ int main (int argc_, char ** argv_)
                                      magfield.getTheta(),
                                      0.0);
               arrow.generate_wires (DI.paths, plcmt); 
-            }}}
+            } // for z
+          } // for y
+        } // for x
       }
     }
     if (plot) {
