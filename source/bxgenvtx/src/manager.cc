@@ -309,16 +309,16 @@ namespace genvtx {
     // 2011-02-25 FM : only search for 'seed' property if 'random seed' is not set :
     if (! has_random_seed ())
       {
-        if (config_.has_key ("seed"))
+        if (config_.has_key ("prng_seed"))
           {
-            int rseed = config_.fetch_integer ("seed");
+            int rseed = config_.fetch_integer ("prng_seed");
             set_random_seed (rseed);
           }
       }
 
-    if (config_.has_key ("rng_id"))
+    if (config_.has_key ("prng_id"))
       {
-        rng_id = config_.fetch_string ("rng_id");
+        rng_id = config_.fetch_string ("prng_id");
         set_rng_id (rng_id);
       }
 

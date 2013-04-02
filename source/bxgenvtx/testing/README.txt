@@ -33,6 +33,9 @@ bash$ __build-Linux-x86_64/testing/test_triangle_random_tools --draw
 
 Check the setup of the test_manager program:
 
+Configuration test-1.0 :
+------------------------
+
   bash$ GENVTX_DATA_DIR=$(pwd) \
     geomtools_check_setup \
     --manager-config ${GENVTX_DATA_DIR}/testing/config/test-1.0/geometry/manager.conf \
@@ -78,6 +81,9 @@ List of available vertex generators:
       --many --many --many \
       --dump-gids \
       --visu --tiny 
+
+Configuration test-2.0 :
+------------------------
 
   bash$ GENVTX_DATA_DIR=$(pwd) \
     __build-Linux-x86_64/testing/test_manager \
