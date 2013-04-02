@@ -53,7 +53,7 @@ List of available vertex generators:
 
   bash$ GENVTX_DATA_DIR=$(pwd) \
     __build-Linux-x86_64/testing/test_manager \
-      --vertex-generator "some_mezzanine_pcb_bulk.vg" \
+      --vertex-generator "some_mezzanines_pcb_bulk.vg" \
       --many
 
   bash$ GENVTX_DATA_DIR=$(pwd) \

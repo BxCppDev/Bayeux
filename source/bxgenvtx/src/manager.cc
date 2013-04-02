@@ -104,16 +104,13 @@ namespace genvtx {
 
   void manager::set_random_seed (int rseed_)
   {
-    if (_initialized_)
-      {
+    if (_initialized_) {
         throw std::logic_error ("genvtx::manager::set_random_seed: Operation prohibited ! Manager is locked !");
       }
-    if (rseed_ < 0)
-      {
+    if (rseed_ < 0) {
         _random_seed_ = mygsl::random_utils::SEED_INVALID;
       }
-    else
-      {
+    else {
         _random_seed_ = rseed_;
       }
     return;
@@ -126,8 +123,7 @@ namespace genvtx {
 
   void manager::set_rng_id (const std::string & rng_id_)
   {
-    if (_initialized_)
-      {
+    if (_initialized_) {
         throw std::logic_error ("manager::set_rng_id: Manager is locked ! Operation is not allowed !");
       }
     _rng_id_ = rng_id_;
@@ -141,8 +137,7 @@ namespace genvtx {
 
   const mygsl::rng & manager::get_random () const
   {
-    if (_external_random_ != 0)
-      {
+    if (_external_random_ != 0) {
         return *_external_random_;
       }
     return _random_;
@@ -150,8 +145,7 @@ namespace genvtx {
 
   mygsl::rng & manager::grab_random ()
   {
-    if (_external_random_ != 0)
-      {
+    if (_external_random_ != 0) {
         return *_external_random_;
       }
     return _random_;
@@ -164,8 +158,7 @@ namespace genvtx {
 
   void manager::set_service_manager (datatools::service_manager & sm_)
   {
-    if (_initialized_)
-      {
+    if (_initialized_) {
         throw std::logic_error ("genvtx::manager::set_service_manager: Manager is locked ! Operation is not allowed !");
       }
     _service_manager_ = &sm_;
@@ -174,8 +167,7 @@ namespace genvtx {
 
   datatools::service_manager & manager::grab_service_manager ()
   {
-    if (_service_manager_ == 0)
-      {
+    if (_service_manager_ == 0) {
         throw std::logic_error ("genvtx::manager::grab_service_manager: Missing service manager !");
       }
     return *_service_manager_;
@@ -183,8 +175,7 @@ namespace genvtx {
 
   const datatools::service_manager & manager::get_service_manager () const
   {
-    if (_service_manager_ == 0)
-      {
+    if (_service_manager_ == 0) {
         throw std::logic_error ("genvtx::manager::get_service_manager: Missing service manager !");
       }
     return *_service_manager_;
@@ -197,8 +188,7 @@ namespace genvtx {
 
   void manager::set_geometry_manager (const geomtools::manager & gm_)
   {
-    if (_initialized_)
-      {
+    if (_initialized_) {
         throw std::logic_error ("genvtx::manager::set_geometry_manager: Manager is locked ! Operation is not allowed !");
       }
     _geometry_manager_ = &gm_;
@@ -207,8 +197,7 @@ namespace genvtx {
 
   const geomtools::manager & manager::get_geometry_manager () const
   {
-    if (_geometry_manager_ == 0)
-      {
+    if (_geometry_manager_ == 0) {
         throw std::logic_error ("genvtx::manager::get_geometry_manager: Missing geometry manager !");
       }
     return *_geometry_manager_;
@@ -216,8 +205,7 @@ namespace genvtx {
 
   void manager::set_generator_name (const std::string & gen_name_)
   {
-    if (_initialized_)
-      {
+    if (_initialized_) {
         throw std::logic_error ("genvtx::manager::set_generator_name: Operation prohibited ! Manager is locked !");
       }
     _current_vg_name_ = gen_name_;
@@ -241,7 +229,6 @@ namespace genvtx {
     _debug_ = debug_;
     _initialized_ = false;
 
-
     _rng_id_ = "taus2";
     _random_seed_ = mygsl::random_utils::SEED_INVALID;
     _service_manager_ = 0;
@@ -260,8 +247,7 @@ namespace genvtx {
   // Destructor :
   manager::~manager ()
   {
-    if (_initialized_)
-      {
+    if (_initialized_) {
         reset ();
       }
     return;
@@ -275,8 +261,7 @@ namespace genvtx {
 
   void manager::initialize (const datatools::properties & config_)
   {
-    if (_initialized_)
-      {
+    if (_initialized_) {
         throw std::logic_error ("genvtx::manager::init: Manager is already initialized !");
       }
     std::string rng_id;
@@ -286,29 +271,24 @@ namespace genvtx {
     //std::string geom_setup_version;
     //std::string geom_setup_description;
 
-    if (config_.has_flag ("debug"))
-      {
+    if (config_.has_flag ("debug")) {
         set_debug (true);
       }
 
-    if (config_.has_flag ("debug_vg"))
-      {
+    if (config_.has_flag ("debug_vg")) {
         set_debug_vg (true);
       }
 
-    if (config_.has_flag ("factory.debug"))
-      {
+    if (config_.has_flag ("factory.debug")) {
         set_factory_debug (true);
       }
 
-    if (config_.has_flag ("factory.no_preload"))
-      {
+    if (config_.has_flag ("factory.no_preload")) {
         _factory_preload_ = false;
       }
 
     // 2011-02-25 FM : only search for 'seed' property if 'random seed' is not set :
-    if (! has_random_seed ())
-      {
+    if (! has_random_seed ()) {
         if (config_.has_key ("prng_seed"))
           {
             int rseed = config_.fetch_integer ("prng_seed");
@@ -316,28 +296,23 @@ namespace genvtx {
           }
       }
 
-    if (config_.has_key ("prng_id"))
-      {
+    if (config_.has_key ("prng_id")) {
         rng_id = config_.fetch_string ("prng_id");
         set_rng_id (rng_id);
       }
 
-    if (config_.has_key ("vg_list"))
-      {
+    if (config_.has_key ("vg_list")) {
         config_.fetch ("vg_list", vg_list);
       }
 
     _factory_register_.set_label ("genvtx::manager/factory");
     _factory_register_.set_verbose (_factory_debug_);
-    if (_factory_preload_)
-      {
+    if (_factory_preload_) {
         _factory_register_.import (DATATOOLS_FACTORY_GET_SYSTEM_REGISTER (::genvtx::i_vertex_generator));
       }
 
-    if (! has_generator_name ())
-      {
-        if (config_.has_key ("generator"))
-          {
+    if (! has_generator_name ()) {
+        if (config_.has_key ("generator")) {
             vg_name = config_.fetch_string ("generator");
           }
         // else
@@ -354,8 +329,7 @@ namespace genvtx {
 
     for (std::vector<std::string>::const_iterator i = vg_list.begin ();
          i != vg_list.end ();
-         i++)
-      {
+         i++) {
         std::string filename = *i;
         datatools::fetch_path_with_env (filename);
         datatools::multi_properties configs;
@@ -367,14 +341,12 @@ namespace genvtx {
         _load_vgs (configs);
       }
 
-    if (_external_random_ == 0)
-      {
+    if (_external_random_ == 0) {
         _random_.init (_rng_id_, _random_seed_);
       }
 
     // If available, try to activate the current VG for its name :
-    if (! _current_vg_name_.empty())
-      {
+    if (! _current_vg_name_.empty()) {
         activate_current_vg();
       }
 
@@ -384,8 +356,7 @@ namespace genvtx {
 
   void manager::create_vg (genvtx::vg_entry_type & vg_entry_)
   {
-    if (! vg_entry_.is_created ())
-      {
+    if (! vg_entry_.is_created ()) {
         this->_create_vg (vg_entry_);
       }
     return;
@@ -393,13 +364,11 @@ namespace genvtx {
 
   void manager::_create_vg (genvtx::vg_entry_type & vg_entry_)
   {
-    if (vg_entry_.is_created ())
-      {
+    if (vg_entry_.is_created ()) {
         return;
       }
 
-    if (is_debug ())
-      {
+    if (is_debug ()) {
         std::clog << datatools::io::debug
                   << "genvtx::manager::_create_vg: "
                   << "Creating vertex generator named '"
@@ -409,8 +378,7 @@ namespace genvtx {
       }
 
     // search for the cut's label in the factory dictionary:
-    if (! _factory_register_.has (vg_entry_.get_vg_id ()))
-      {
+    if (! _factory_register_.has (vg_entry_.get_vg_id ())) {
         std::ostringstream message;
         message << "genvtx::manager::_create_vg: "
                 << "Cannot find vertex generator factory with ID '"
@@ -422,8 +390,7 @@ namespace genvtx {
       = _factory_register_.get (vg_entry_.get_vg_id ());
 
     genvtx::i_vertex_generator * vg_ptr = the_factory ();
-    if (vg_ptr == 0)
-      {
+    if (vg_ptr == 0) {
         std::ostringstream message;
         message << "genvtx::manager::_create_vg: "
                 << "Creation of '" << vg_entry_.get_vg_name () << "' vertex generator of type '"
@@ -433,8 +400,7 @@ namespace genvtx {
     vg_entry_.set_ptr (vg_ptr);
     vg_entry_.set_created ();
 
-    if (is_debug ())
-      {
+    if (is_debug ()) {
         std::clog << datatools::io::debug
                   << "genvtx::manager::_create_vg: "
                   << "Vertex generator named '"
@@ -449,8 +415,7 @@ namespace genvtx {
 
   void manager::initialize_vg (genvtx::vg_entry_type & vg_entry_)
   {
-    if (! vg_entry_.is_initialized ())
-      {
+    if (! vg_entry_.is_initialized ()) {
         _initialize_vg (vg_entry_);
       }
     return;
@@ -459,16 +424,13 @@ namespace genvtx {
   void manager::_initialize_vg (genvtx::vg_entry_type & vg_entry_)
   {
     // If not created, first do it :
-    if (! vg_entry_.is_created ())
-      {
+    if (! vg_entry_.is_created ()) {
         _create_vg (vg_entry_);
       }
 
     // If not initialized, do it :
-    if (! vg_entry_.is_initialized ())
-      {
-        if (is_debug ())
-          {
+    if (! vg_entry_.is_initialized ()) {
+        if (is_debug ()) {
             std::clog << datatools::io::debug
                       << "genvtx::_manager::_initialize_vg: "
                       << "Initializing vg named '"
@@ -477,22 +439,18 @@ namespace genvtx {
                       << std::endl;
           }
         genvtx::i_vertex_generator & the_vg = vg_entry_.grab_vg ();
-        if (is_debug_vg ())
-          {
+        if (is_debug_vg ()) {
             the_vg.set_debug (true);
           }
-        if (has_geometry_manager ())
-          {
+        if (has_geometry_manager ()) {
             the_vg.set_geom_manager (get_geometry_manager ());
           }
-        if (has_service_manager ())
-          {
+        if (has_service_manager ()) {
             the_vg.initialize (vg_entry_.get_vg_config (),
                                grab_service_manager (),
                                _vg_store_);
           }
-        else
-          {
+        else {
             the_vg.initialize_with_dictionary_only (vg_entry_.get_vg_config (),
                                                     _vg_store_);
           }
@@ -514,8 +472,7 @@ namespace genvtx {
 
   void manager::_reset_vg (genvtx::vg_entry_type & vg_entry_)
   {
-    if (vg_entry_.is_initialized ())
-      {
+    if (vg_entry_.is_initialized ()) {
         genvtx::i_vertex_generator & the_vg = vg_entry_.grab_vg ();
         the_vg.reset ();
         vg_entry_.set_uninitialized ();
@@ -529,16 +486,14 @@ namespace genvtx {
                           const datatools::properties & vg_config_)
   {
     bool debug = is_debug ();
-    if (debug)
-      {
+    if (debug) {
         std::clog << datatools::io::debug
                   << "genvtx::manager::_load_vg: "
                   << "Entering..."
                   << std::endl;
       }
 
-    if (has_generator (vg_name_))
-      {
+    if (has_generator (vg_name_)) {
         std::ostringstream message;
         message << "genvtx::manager::_load_vg: "
                 << "Vertex generator '" << vg_name_ << "' already exists !";
@@ -548,8 +503,7 @@ namespace genvtx {
     {
       // Add a new entry :
       genvtx::vg_entry_type dummy_vg_entry;
-      if (debug)
-        {
+      if (debug) {
           std::clog << datatools::io::debug
                     << "genvtx::manager::_load_vg: "
                     << "Add an entry for vertex generator '" << vg_name_ << "'..."
@@ -565,8 +519,7 @@ namespace genvtx {
     the_vg_entry.set_vg_id (vg_id_);
     the_vg_entry.set_vg_config (vg_config_);
     the_vg_entry.set_blank ();
-    if (debug)
-      {
+    if (debug) {
         std::clog << datatools::io::debug
                   << "genvtx::manager::_load_vg: "
                   << "Fetch..."
@@ -576,18 +529,15 @@ namespace genvtx {
 
     bool force_initialization_at_load = false;
 
-    if (vg_config_.has_flag ("force_initialization_at_load"))
-      {
+    if (vg_config_.has_flag ("force_initialization_at_load")) {
         force_initialization_at_load = true;
       }
 
-    if (force_initialization_at_load) //|| this->is_initialization_at_load ())
-      {
+    if (force_initialization_at_load) {
         _initialize_vg (the_vg_entry);
       }
 
-    if (debug)
-      {
+    if (debug) {
         std::clog << datatools::io::debug
                   << "genvtx::manager::_load_vg: "
                   << "Exiting."
@@ -600,8 +550,7 @@ namespace genvtx {
                          const std::string & vg_id_,
                          const datatools::properties & vg_config_)
   {
-    if (is_initialized ())
-      {
+    if (is_initialized ()) {
         std::ostringstream message;
         message << "genvtx::manager::load_vg: "
                 << "VG manager is already initialized !";
@@ -614,8 +563,7 @@ namespace genvtx {
   void manager::_load_vgs (const datatools::multi_properties & config_)
   {
     using namespace datatools;
-    if (is_debug())
-      {
+    if (is_debug()) {
         config_.tree_dump (std::clog,
                            "genvtx::manager::_load_vgs: ",
                            "DEBUG: ");
@@ -624,8 +572,7 @@ namespace genvtx {
     for (multi_properties::entries_ordered_col_type::const_iterator i =
            oe.begin ();
          i != oe.end ();
-         ++i)
-      {
+         ++i) {
         const multi_properties::entry & the_entry = **i;
         const std::string & vg_name = the_entry.get_key ();
         std::clog << datatools::io::notice
@@ -686,10 +633,9 @@ namespace genvtx {
 
   void manager::reset ()
   {
-    if (! _initialized_)
-      {
-        throw std::logic_error ("genvtx::manager::reset: Not initialized !");
-      }
+    if (! _initialized_) {
+      throw std::logic_error ("genvtx::manager::reset: Not initialized !");
+    }
     _initialized_ = false;
     _current_vg_.reset ();
     _current_vg_name_ = "";
@@ -711,8 +657,7 @@ namespace genvtx {
   genvtx::vg_handle_type manager::grab_generator (const std::string & vg_name_)
   {
     genvtx::vg_dict_type::iterator found = _vg_store_.find (_current_vg_name_);
-    if (found == _vg_store_.end ())
-      {
+    if (found == _vg_store_.end ()) {
         std::ostringstream message;
         message << "genvtx::manager::grab_generator: "
                 << "Cannot find the '" << vg_name_ << "' from the dictionnary of vertex generators !";
@@ -730,16 +675,13 @@ namespace genvtx {
   void manager::activate_current_vg (const std::string & vg_name_)
   {
     std::string vg_name;
-    if (vg_name_.empty ())
-      {
+    if (vg_name_.empty ()) {
         vg_name = _current_vg_name_;
       }
-    else
-      {
+    else {
         vg_name = vg_name_;
       }
-    if (! has_generator (vg_name))
-      {
+    if (! has_generator (vg_name)) {
         std::ostringstream message;
         message << "genvtx::manager::activate_current_vg: "
                 << "Cannot find the '" << vg_name << "' from the dictionnary of vertex generators !";
@@ -767,8 +709,7 @@ namespace genvtx {
     namespace du = datatools;
     std::string indent;
     if (! indent_.empty ()) indent = indent_;
-    if (! title_.empty ())
-      {
+    if (! title_.empty ()) {
         out_ << indent << title_ << std::endl;
       }
 
@@ -798,17 +739,14 @@ namespace genvtx {
          << "Vertex generators : " << std::endl;
       for (genvtx::vg_dict_type::const_iterator i = _vg_store_.begin();
            i != _vg_store_.end();
-           i++)
-        {
+           i++) {
           genvtx::vg_dict_type::const_iterator j = i;
           j++;
           out_ << indent << du::i_tree_dumpable::skip_tag;
-          if  (j == _vg_store_.end())
-            {
+          if  (j == _vg_store_.end()) {
               out_ << du::i_tree_dumpable::last_tag;
             }
-          else
-            {
+          else {
               out_ << du::i_tree_dumpable::tag;
             }
           const std::string & vg_name = i->first;
@@ -848,12 +786,10 @@ namespace genvtx {
 
   void manager::shoot_vertex (geomtools::vector_3d & vertex_)
   {
-    if (! is_initialized ())
-      {
+    if (! is_initialized ()) {
         throw std::logic_error ("genvtx::manager::shoot_vertex: Generator has not been locked !");
       }
-    if (! has_current_vg ())
-      {
+    if (! has_current_vg ()) {
         activate_current_vg ();
         //throw std::logic_error ("genvtx::manager::shoot_vertex: No vertex generator has been allocated !");
       }
@@ -862,5 +798,144 @@ namespace genvtx {
   }
 
 } // end of namespace genvtx
+
+/***************
+ * OCD support *
+ ***************/
+
+#include <datatools/ocd_macros.h>
+
+
+// OCD support for class '::datatools::service_manager' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genvtx::manager,ocd_)
+{
+  ocd_.set_class_name ("genvtx::manager");
+  ocd_.set_class_description ("A generic manager for vertex generators");
+
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("debug")
+      .set_terse_description("Flag to activate debugging output")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("This flag activates debugging output.             \n"
+                            "It is not recommended for a production run.       \n"
+                            )
+      ;    
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("debug_vg")
+      .set_terse_description("Flag to activate debugging output for vertex generators")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("This flag activates debugging output dedicated to \n"
+                            "vertex generators.                                \n"
+                            "It is not recommended for a production run.       \n"
+                            )
+      ;    
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("factory.debug")
+      .set_terse_description("Flag to activate debugging output for vertex generators factory")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("This flag activates debugging output dedicated to \n"
+                            "the embeded vertex generators factory.            \n"
+                            "It is not recommended for a production run.       \n"
+                            )
+      ;    
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("factory.no_preload")
+      .set_terse_description("Flag to inhibit the preloading of registered vertex generator factories")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("This flag inhibits the preloading of registered vertex \n"
+                            "generator factories at manager's initialization.       \n"
+                            "It is not recommended for a normal usage.              \n"
+                            )
+      ;    
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("prng_seed")
+      .set_terse_description("The seed of the embeded PRNG")
+      .set_traits(datatools::TYPE_INTEGER)
+      .set_mandatory(false)
+      .set_complex_triggering_conditions(true)
+      .set_long_description("This sets the seed of the embeded PRNG. This property    \n"
+                            "is only used if no external PRNG is used by the manager. \n"
+                            "The seed value must be a positive integer.               \n"
+                            )
+      ;    
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("prng_id")
+      .set_terse_description("The type of the embeded PRNG")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_complex_triggering_conditions(true)
+      .set_long_description("This sets the type of the embeded PRNG. This property    \n"
+                            "is only used if no external PRNG is used by the manager. \n"
+                            "The type is chosen from the list of PRNG defined in GSL. \n"
+                            "Default value is 'taus2'.                                \n"
+                            )
+      ;    
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("vg_list")
+      .set_terse_description("The list of files that define vertex generators' build rules")
+      .set_traits(datatools::TYPE_STRING,
+                  datatools::configuration_property_description::ARRAY)
+      .set_path(true)
+      .set_mandatory(false)
+      .set_long_description("This sets the list of files where vertex generators are       \n"
+                            "defined. Each filename can contain some environment variable. \n"
+                            "Example :                                                     \n"
+                            "  vg_list : string[1] as path = \"${VG_CONF_DIR}/vg.conf\"    \n"
+                            "                                                              \n"
+                            "Each file must follow the 'datatools::multi_properties'       \n"
+                            "ASCII file syntax :                                           \n"
+                            "Example :                                                     \n"
+                            "                                                              \n"
+                            "  #@description A list of vertex generators                   \n"
+                            "  #@key_label   \"name\"                                      \n"
+                            "  #@meta_label  \"type\"                                      \n"
+                            "                                                              \n"
+                            "  [name=\"from_everywhere.vg\" type=\"genvtx::box_model_vg\"] \n"
+                            "  debug  : boolean = 0                                        \n"
+                            "  origin : string = \" category='lab.gc' \"                   \n"
+                            "  mode   : string  = \"bulk\"                                 \n"
+                            "                                                              \n"
+                            "  [name=\"from_the_roof.vg\" type=\"genvtx::box_model_vg\"]   \n"
+                            "  debug  : boolean = 0                                        \n"
+                            "  origin : string = \" category='lab.gc' \"                   \n"
+                            "  mode   : string  = \"surface\"                              \n"
+                            "  mode.surface.top : boolean = 1                              \n"
+                            )
+      ;    
+  }
+ 
+
+  //ocd_.set_configuration_hints ("Nothing special."); 
+  ocd_.set_validation_support(true);
+  ocd_.lock(); 
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+
+DOCD_CLASS_SYSTEM_REGISTRATION(genvtx::manager,"genvtx::manager")
 
 // end of manager.cc

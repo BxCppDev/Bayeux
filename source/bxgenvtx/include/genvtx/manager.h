@@ -223,6 +223,12 @@ namespace genvtx {
 } // end of namespace genvtx
 
 
+/***************
+ * OCD support *
+ ***************/
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(genvtx::manager)
+
 #endif // GENVTX_MANAGER_H_
 
 // end of manager.h
