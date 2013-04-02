@@ -121,6 +121,9 @@ namespace genbb {
     /// Return a non-mutable reference to the embeded PRNG
     const mygsl::rng & get_embeded_prng () const;
 
+    /// Set the seed of the embeded PRNG
+    void set_embeded_prng_seed(int seed_);
+
     /// Return a mutable reference to the active PRNG
     mygsl::rng & grab_prng ();
  
@@ -233,7 +236,7 @@ namespace genbb {
     bool         _force_initialization_at_load_; /// Flag for triggering PG initialization at load (rather than first use)
 
     mygsl::rng * _external_prng_;     /// Handle to an external PRNG (supersedes the embeded)
-    long         _embeded_prng_seed_; /// Embeded PRNG seed
+    int          _embeded_prng_seed_; /// Embeded PRNG seed
     mygsl::rng   _embeded_prng_;      /// Embeded PRNG
 
     datatools::factory_register<i_genbb> _factory_register_;    /// Particle generator factory

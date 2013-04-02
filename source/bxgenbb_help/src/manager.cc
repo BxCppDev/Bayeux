@@ -18,6 +18,7 @@
 
 // Mygsl
 #include <mygsl/rng.h>
+#include <mygsl/random_utils.h>
 
 namespace genbb {
 
@@ -97,6 +98,21 @@ namespace genbb {
   {
     if (has_external_prng()) return get_external_prng ();
     return get_embeded_prng ();
+  }
+
+  void manager::set_embeded_prng_seed(int seed_)
+  {
+    if (!_initialized_) {
+      std::ostringstream message;
+      message << "genbb::manager::set_embeded_prng_seed: "
+              << "Manager is already initialized !";
+      throw std::logic_error(message.str());
+    }
+    if (! mygsl::rng::is_seed_valid(seed_)) {
+      throw std::logic_error("genbb::manager::set_embeded_prng_seed: Invalid seed for embeded PRNG !");
+    }
+    _embeded_prng_seed_ = seed_;
+    return;
   }
 
   void manager::load(const std::string& name,
@@ -191,8 +207,14 @@ namespace genbb {
       }
     else
       {
+        if (config.has_key("seed")) {
+          int seed = config.fetch_integer("seed");
+          set_embeded_prng_seed(seed);
+        }
+
         _embeded_prng_.initialize("taus2", _embeded_prng_seed_);
       }
+
     _initialized_ = true;
     return;
   }
@@ -252,7 +274,9 @@ namespace genbb {
     if (_embeded_prng_.is_initialized())
       {
         _embeded_prng_.reset();
+        _embeded_prng_seed_ = mygsl::random_utils::SEED_INVALID;
       }
+    _external_prng_ = 0;
 
     _initialized_ = false;
     if (this->is_debug()) {
@@ -300,6 +324,9 @@ namespace genbb {
     if (flag & NO_PRELOAD) {
       preload = false;
     }
+
+    _external_prng_ = 0;
+    _embeded_prng_seed_ = mygsl::random_utils::SEED_INVALID;
 
     this->_set_preload_(preload);
     return;
