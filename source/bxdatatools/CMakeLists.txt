@@ -61,7 +61,7 @@ option(DATATOOLS_WITH_TEST  "Build the datatools test suite"    ON)
 # Find external packages needed to build
 #
 # - Boost
-set(Boost_COMPONENTS iostreams serialization filesystem system)
+set(Boost_COMPONENTS iostreams serialization filesystem system program_options)
 find_package(Boost 1.47 QUIET COMPONENTS ${Boost_COMPONENTS} NO_MODULE)
 find_package(Boost 1.47 REQUIRED ${Boost_COMPONENTS})
 
@@ -90,6 +90,8 @@ endif()
 # Build the submodules as required
 #
 add_subdirectory(src)   
+
+add_subdirectory(programs)   
 
 if(DATATOOLS_WITH_DOC)
   add_subdirectory(doc)

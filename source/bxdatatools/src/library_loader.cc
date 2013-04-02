@@ -488,10 +488,12 @@ void library_loader::init() {
   }
 
   if (config_filename_.empty()) {
+    /*
     std::clog << "WARNING: " 
               << "datatools::library_loader::_init: "
               << "No library loader config file is available !"
               << std::endl;
+    */
     return;
   }
 

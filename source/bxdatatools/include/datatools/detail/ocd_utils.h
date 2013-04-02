@@ -108,7 +108,9 @@ namespace datatools {
         void smart_dump(std::ostream & out_ = std::clog,
                         const std::string & title_ = "",
                         const std::string & indent_ = "") const;
-                 
+   
+        void compute_ids(std::vector<std::string> &) const;
+              
         // Access to a static singleton (mutable version) :
         static ocd_registration & grab_system_registration(); 
 

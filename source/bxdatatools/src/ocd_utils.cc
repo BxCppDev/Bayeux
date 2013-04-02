@@ -46,7 +46,17 @@ namespace ocd {
     }
     return *found->second.handle.get();
   }
-
+  
+  void ocd_registration::compute_ids(std::vector<std::string> & list_) const
+  {
+    for (ocd_dict_type::const_iterator i = _dict_.begin();
+         i != _dict_.end();
+         i++) {
+      list_.push_back(i->first);
+    }
+    return;
+  }
+ 
   void ocd_registration::smart_dump(std::ostream & out_,
                                     const std::string & title_,
                                     const std::string & indent_) const
