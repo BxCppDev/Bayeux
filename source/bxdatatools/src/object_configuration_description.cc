@@ -542,6 +542,19 @@ namespace datatools {
           out_ << '*';
         out_ << ']';
       }
+      if (is_string() && is_path()) {
+        out_ << " as path";
+      }
+      /*
+      if (is_real()) {
+        if (is_array()) {
+          ///out_ << " as <unit label>";
+        }
+        else {
+          ///out_ << " in <unit symbol>";
+        }
+      }
+      */
       out_ << ") : ";
       if (is_dynamic()) {
         out_ << "[dynamic";
