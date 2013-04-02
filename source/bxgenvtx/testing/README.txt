@@ -63,6 +63,13 @@ List of available vertex generators:
       --vertex-generator "all_capacitors_side.vg" \
       --many --many --many \
       --dump-gids \
+      --visu --tiny --tiny 
+
+  bash$ GENVTX_DATA_DIR=$(pwd) \
+    __build-Linux-x86_64/testing/test_manager \
+      --vertex-generator "all_capacitors_side.vg" \
+      --many --many --many \
+      --dump-gids \
       --visu --visu-object "[1000:6.0]" --tiny --tiny 
 
   bash$ GENVTX_DATA_DIR=$(pwd) \
@@ -72,8 +79,37 @@ List of available vertex generators:
       --dump-gids \
       --visu --tiny 
 
-  
-  
+  bash$ GENVTX_DATA_DIR=$(pwd) \
+    __build-Linux-x86_64/testing/test_manager \
+      --test-2 \
+      --vertex-generator "all_source_bulk.vg" \
+      --many --many \
+      --dump-gids \
+      --visu --tiny 
+
+  bash$ GENVTX_DATA_DIR=$(pwd) \
+    __build-Linux-x86_64/testing/test_manager \
+      --test-2 \
+      --vertex-generator "source_0_bulk.vg" \
+      --many --many \
+      --dump-gids \
+      --visu --tiny 
+
+  bash$ GENVTX_DATA_DIR=$(pwd) \
+    __build-Linux-x86_64/testing/test_manager \
+      --test-2 \
+      --vertex-generator "all_scin_surface.vg" \
+      --many --many --many --many \
+      --dump-gids \
+      --visu --tiny 
+
+  bash$ GENVTX_DATA_DIR=$(pwd) \
+    __build-Linux-x86_64/testing/test_manager \
+      --test-2 \
+      --vertex-generator "special_scin_surface.vg" \
+      --many --many --many --many \
+      --dump-gids \
+      --visu --tiny 
 
 
 --

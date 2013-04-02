@@ -37,6 +37,7 @@ int main (int argc_, char ** argv_)
       std::string visu_object;
       bool dump_gids = false;
       double tiny = 1.0;
+      int test_id = 1;
 
       int iarg = 1;
       while (iarg < argc_)
@@ -79,7 +80,15 @@ int main (int argc_, char ** argv_)
                  {
                    tiny *= 0.5;
                  }
-              else 
+               else if ((option == "-T1") || (option == "--test-1")) 
+                 {
+                   test_id = 1;
+                 }
+               else if ((option == "-T2") || (option == "--test-2")) 
+                 {
+                   test_id = 2;
+                 }
+               else 
                  { 
                     clog << "warning: ignoring option '" << option << "'!" << endl; 
                  }
@@ -96,9 +105,16 @@ int main (int argc_, char ** argv_)
 
       clog << "genvtx version : " << GENVTX_LIB_VERSION << endl;
  
+      // Configuration files :
+      std::string GeoMgrConfigFile = "${GENVTX_DATA_DIR}/testing/config/test-1.0/geometry/manager.conf";
+      std::string VGMgrConfigFile = "${GENVTX_DATA_DIR}/testing/config/test-1.0/vg_mgr.conf";
+      if (test_id == 2) {
+        GeoMgrConfigFile = "${GEOMTOOLS_DATA_DIR}/testing/config/test-1.0/test_manager.conf";
+        VGMgrConfigFile = "${GENVTX_DATA_DIR}/testing/config/test-2.0/vg_mgr.conf";
+      }
+ 
       // Geometry manager :
       geomtools::manager GeoMgr;
-      std::string GeoMgrConfigFile = "${GENVTX_DATA_DIR}/testing/config/test-1.0/geometry/manager.conf";
       datatools::fetch_path_with_env (GeoMgrConfigFile);
       datatools::properties GeoMgrConfig;
       datatools::properties::read_config (GeoMgrConfigFile, GeoMgrConfig); 
@@ -114,7 +130,6 @@ int main (int argc_, char ** argv_)
       VGMgr.set_geometry_manager(GeoMgr);
       VGMgr.set_rng_id("taus");
       VGMgr.set_random_seed(314159);
-      std::string VGMgrConfigFile = "${GENVTX_DATA_DIR}/testing/config/test-1.0/vg_mgr.conf";
       datatools::fetch_path_with_env (VGMgrConfigFile);
       datatools::properties VGMgrConfig;
       datatools::properties::read_config (VGMgrConfigFile, VGMgrConfig); 
