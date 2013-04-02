@@ -1343,10 +1343,10 @@ namespace datatools {
         if (more) {
           out_ << "#\n# Additional informations : " << '\n';
           if (cpd.has_complex_triggering_conditions()) {
-            out_ << "#   " << "This property has complex triggering conditions.";
+            out_ << "#   " << "This property has complex triggering conditions.\n";
           }
           if (cpd.has_complex_dependencies()) {
-            out_ << "#   " << "This property has complex dependencies.";
+            out_ << "#   " << "This property has complex dependencies.\n";
           }
           if (cpd.is_triggered_by_flag()) {
             out_ << "#   " << "This property";
