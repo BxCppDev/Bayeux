@@ -195,6 +195,7 @@ int ocd_manual::_run_list()
   int error_code = EXIT_SUCCESS;
   const datatools::detail::ocd::ocd_registration & ocd_system_reg
     = datatools::detail::ocd::ocd_registration::get_system_registration();
+  //ocd_system_reg.smart_dump(std::cerr, "The OCD system registation : ", "DEVEL: ");
   std::vector<std::string> ids;
   ocd_system_reg.compute_ids(ids);
   std::clog << "List of registered class IDs : " << '\n';
@@ -207,18 +208,24 @@ int ocd_manual::_run_list()
 int ocd_manual::_run_show(const std::string & class_id_) 
 {
   int error_code = EXIT_SUCCESS;
+  const datatools::detail::ocd::ocd_registration & ocd_system_reg
+    = datatools::detail::ocd::ocd_registration::get_system_registration();
+  //ocd_system_reg.smart_dump(std::cerr, "The OCD system registation : ", "DEVEL: ");
 
   if (class_id_.empty()) {
     std::cerr << datatools::io::error << "datatools::ocd_manual::_run_show: Missing class ID !"<< '\n';
     error_code = EXIT_FAILURE;
   }
-  else if (! datatools::detail::ocd::ocd_registration::get_system_registration().has_id(class_id_)){
-    std::cerr << datatools::io::error << "datatools::ocd_manual::_run_show: Class ID '" << class_id_ << "' is not registered in the datatools' OCD system register !"<< '\n';
+  else if (! ocd_system_reg.has_id(class_id_)){
+    std::cerr << datatools::io::error 
+              << "datatools::ocd_manual::_run_show: " 
+              << "Class ID '" << class_id_ 
+              << "' is not registered in the datatools' OCD system register !"<< '\n';
     error_code = EXIT_FAILURE;
   } 
   else {
     const datatools::object_configuration_description & OCD 
-      = datatools::detail::ocd::ocd_registration::get_system_registration().get(class_id_);
+      = ocd_system_reg.get(class_id_);
     OCD.print(std::cout);
   }
 
