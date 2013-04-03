@@ -1,6 +1,7 @@
 // mygsl::histogram_2d.cc
 
 #include <mygsl/histogram_2d.h>
+#include <mygsl/histogram_1d.h>
 
 #include <stdexcept>
 #include <sstream>
@@ -128,6 +129,85 @@ namespace mygsl {
   bool histogram_2d::is_initialized () const
   {
     return _h_ != 0;
+  }
+
+  void histogram_2d::initialize (const histogram_2d & h_,
+                                 const std::vector<std::string> & imported_aux_prefixes_)
+  {
+    if (&h_ == &(*this))
+      {
+        throw std::logic_error ("mygsl::histogram_2d::initialize: Self-reference initialization is forbidden!");
+      }
+    if (! h_.is_initialized ())
+      {
+        throw std::logic_error ("mygsl::histogram_2d::initialize: Invalid 2D-histogram source !");
+      }
+    // Reset internals :
+    if (_h_ != 0)
+      {
+        gsl_histogram2d_free (_h_);
+        _h_ = 0;
+      }
+    reset_counters ();
+    // Steal the internal structure of the source histogram :
+    _x_binning_info_ = h_._x_binning_info_;
+    _y_binning_info_ = h_._y_binning_info_;
+    datatools::properties aux;
+    h_._auxiliaries_.export_starting_with(aux, "unit.");
+    h_._auxiliaries_.export_starting_with(aux, "display.");
+    aux.export_all (_auxiliaries_);
+    for (int i = 0; i < imported_aux_prefixes_.size(); i++)
+      {
+        h_._auxiliaries_.export_starting_with(_auxiliaries_,
+                                              imported_aux_prefixes_[i]);
+      }
+    if (h_._h_ != 0)
+      {
+        _h_ = gsl_histogram2d_clone (h_._h_);
+      }
+    return;
+  }
+
+  void histogram_2d::initialize (const histogram_1d & hx_, const histogram_1d & hy_,
+                                 const std::vector<std::string> & imported_aux_prefixes_)
+  {
+    if (! hx_.is_initialized ())
+      {
+        throw std::logic_error ("mygsl::histogram_2d::initialize: Invalid 1D-histogram source !");
+      }
+    if (! hy_.is_initialized ())
+      {
+        throw std::logic_error ("mygsl::histogram_2d::initialize: Invalid 1D-histogram source !");
+      }
+    // Reset internals :
+    if (_h_ != 0)
+      {
+        gsl_histogram2d_free (_h_);
+        _h_ = 0;
+      }
+    reset_counters ();
+    // Steal the internal structure of the source histogram :
+    _x_binning_info_ = hx_.get_binning_info ();
+    _y_binning_info_ = hy_.get_binning_info ();
+    datatools::properties aux;
+    hx_.get_auxiliaries ().export_and_rename_starting_with(aux, "unit.", "x.unit.");
+    hx_.get_auxiliaries ().export_starting_with(aux, "display.xaxis.");
+    hy_.get_auxiliaries ().export_and_rename_starting_with(aux, "unit.", "y.unit.");
+    hy_.get_auxiliaries ().export_and_rename_starting_with(aux, "display.xaxis.", "display.yaxis.");
+    aux.export_all (_auxiliaries_);
+    for (int i = 0; i < imported_aux_prefixes_.size(); i++)
+      {
+        hx_.get_auxiliaries ().export_starting_with(_auxiliaries_,
+                                                    imported_aux_prefixes_[i]);
+        hy_.get_auxiliaries ().export_starting_with(_auxiliaries_,
+                                                    imported_aux_prefixes_[i]);
+      }
+
+    initialize (hx_.bins (), hx_.min (), hx_.max (),
+                hy_.bins (), hy_.min (), hy_.max (),
+                hx_.is_logarithmic_binning () ? BIN_MODE_LOG : BIN_MODE_LINEAR,
+                hy_.is_logarithmic_binning () ? BIN_MODE_LOG : BIN_MODE_LINEAR);
+    return;
   }
 
   void histogram_2d::initialize (size_t nx_, double xmin_, double xmax_,
@@ -499,7 +579,7 @@ namespace mygsl {
       }
     gsl_histogram2d_accumulate (_h_,x_,y_,weight_);
     increment_counts ();
-    return;
+    return; 
   }
 
   void histogram_2d::fill (double x_ , double y_ , double weight_)

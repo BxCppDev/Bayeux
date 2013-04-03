@@ -68,6 +68,12 @@ namespace mygsl {
     void initialize (const std::vector<double> & xranges_,
                      const std::vector<double> & yranges_);
 
+    void initialize (const histogram & hx_, const histogram & hy_, 
+                     const std::vector<std::string> & imported_aux_prefixes_); 
+    
+    void initialize (const histogram_2d & h_, 
+                     const std::vector<std::string> & imported_aux_prefixes_); 
+
     void init (size_t nx_, double xmin_, double xmax_,
                size_t ny_, double ymin_, double ymax_,
                unsigned int xmode_ = BIN_MODE_LINEAR,
