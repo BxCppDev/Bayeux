@@ -204,5 +204,11 @@ class smart_filename {
 
 }  // end of namespace datatools
 
+/***************
+ * OCD support *
+ ***************/
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(datatools::smart_filename)
+
 #endif // DATATOOLS_SMART_FILENAME_H_
 

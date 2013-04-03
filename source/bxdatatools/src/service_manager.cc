@@ -847,7 +847,20 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
                             )
     ;
   }  
-  //ocd_.set_configuration_hints ("Nothing special."); 
+  
+
+  ocd_.set_configuration_hints ("Configuration example for a 'service_manager' object :        \n"
+                                "                                                              \n"
+                                " | debug : boolean = 0                                        \n"
+                                " | name  : string = \"CoreServices\"                          \n"
+                                " | description  : string = \\                                 \n"
+                                " |   \"Core services manager for data processing\"            \n"
+                                " | services.configuration_files : string[3] as path = \\      \n"
+                                " |   \"${CONFIG_DIR}/database_services.conf\" \\              \n"
+                                " |   \"${CONFIG_DIR}/io_services.conf\" \\                    \n"
+                                " |   \"${CONFIG_DIR}/processing_services.conf\"               \n"
+                                );
+
   ocd_.set_validation_support(true);
   ocd_.lock(); 
   return;
