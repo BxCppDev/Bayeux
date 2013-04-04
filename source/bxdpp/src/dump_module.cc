@@ -180,7 +180,7 @@ namespace dpp {
         std::ofstream * output_file = new std::ofstream;
         _fout_.reset(output_file);
         _out_ = _fout_.get(); 
-         datatools::fetch_path_with_env (_output_filename_);
+        datatools::fetch_path_with_env (_output_filename_);
         output_file->open (_output_filename_.c_str ());
         if (! *output_file)
           {

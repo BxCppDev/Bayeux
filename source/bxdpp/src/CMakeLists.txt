@@ -44,6 +44,7 @@ include/dpp/utils_module.h
 include/dpp/dump_module.h
 include/dpp/base_cut.h
 include/dpp/utils_cut.h
+include/dpp/ocd_support.h
   )
 list_prepend(dpp_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
 
@@ -109,6 +110,7 @@ simple_data_source.cc
 skip_module.cc
 utils_module.cc
 dump_module.cc
+ocd_support.cc
   )
 
 #-----------------------------------------------------------------------
