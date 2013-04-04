@@ -579,9 +579,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_service,ocd_)
       .set_traits(datatools::TYPE_STRING)
       .set_path(true)
       .set_mandatory(false)
-      .set_long_description("Example:                                                      \n"
-                            "  pool_config : string as path = \"histos_pool.conf\"         \n"
-                            "See dedicated OCD support for class 'mygsl::histogram_pool'.  \n"
+      .set_long_description("Example:                                                        \n"
+                            "  |                                                             \n"
+                            "  | pool_config : string as path = \"histos_pool.conf\"         \n"
+                            "  |                                                             \n"
+                            "See dedicated OCD support for class 'mygsl::histogram_pool'.    \n"
                             )
       ;
   }
@@ -605,7 +607,9 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_service,ocd_)
                             "   - XML    (with extension '.xml' or '.xml.gz')   \n"
                             "   - binary (with extension '.data' or '.data.gz') \n"
                             "Example :                                          \n"
-                            "  output_files : string[2] = \"histos.data\" \"histos.root\" \n"
+                            "  |                                                            \n"
+                            "  | output_files : string[2] = \"histos.data\" \"histos.root\" \n"
+                            "  |                                                            \n"
                             )
       ;
   }  
@@ -622,18 +626,21 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_service,ocd_)
       ;
   }  
   
-  ocd_.set_configuration_hints ("The histogram service uses a 'datatools::properties' object    \n"
-                                "to initialize its behaviour and contents.                      \n"
-                                "                                                               \n"
-                                "If the 'pool_config' path property is not set, all properties  \n"
-                                "the name of which starts with the prefix \"pool.\" are used    \n"
-                                "to initialize the embeded histogram pool object.               \n"
-                                "Example:                                                       \n"
-                                "  pool.description : string = \"Histograms\"                   \n"
-                                "  pool.histo.setups : string[2] = \\                           \n"
-                                "    \"${MYGSL_DATA_DIR}/testing/config/test_histos_1.conf\" \\ \n"
-                                "    \"${MYGSL_DATA_DIR}/testing/config/test_histos_2.conf\"    \n"
-                                "See dedicated OCD support for class 'mygsl::histogram_pool'.   \n"
+  ocd_.set_configuration_hints ("The histogram service uses a 'datatools::properties' object      \n"
+                                "to initialize its behaviour and contents.                        \n"
+                                "                                                                 \n"
+                                "If the 'pool_config' path property is not set, all properties    \n"
+                                "the name of which starts with the prefix \"pool.\" are used      \n"
+                                "to initialize the embeded histogram pool object.                 \n"
+                                "Example:                                                         \n"
+                                "  |                                                              \n"
+                                "  | pool.description : string = \"Histograms\"                   \n"
+                                "  | pool.histo.setups : string[2] = \\                           \n"
+                                "  |   \"${MYGSL_DATA_DIR}/testing/config/test_histos_1.conf\" \\ \n"
+                                "  |   \"${MYGSL_DATA_DIR}/testing/config/test_histos_2.conf\"    \n"
+                                "  |                                                              \n"
+                                "See dedicated OCD support for class 'mygsl::histogram_pool' for  \n"
+                                "the description of histogram builing rules.                      \n"
                                 );
 
   ocd_.set_validation_support(true);
