@@ -779,6 +779,126 @@ namespace cuts {
 
 }  // end of namespace cuts
 
+/***************
+ * OCD support *
+ ***************/
+
+#include <datatools/ocd_macros.h>
+
+// OCD support for class '::cuts::cut_manager' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::cut_manager,ocd_)
+{
+  ocd_.set_class_name ("cuts::cut_manager");
+  ocd_.set_class_description ("A cut manager");
+  
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("debug")
+      .set_terse_description("Debug flag")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("This flag activates debug printing.               \n"
+                            )
+      ;
+  }  
+  
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("verbose")
+      .set_terse_description("verbose flag")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("This flag activates verbosity printing.               \n"
+                            )
+      ;
+  }  
+  
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("factory.debug")
+      .set_terse_description("Debug flag dedicated to the embeded cut factory")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("This flag activates debug printing for the embeded  \n"
+                            "cut factory.                                        \n"
+                            )
+      ;
+    
+  }  
+  
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("factory.no_preload")
+      .set_terse_description("Flag to inhibit the preloading of system cut factory")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("When set, this flag inhibits the automatic loading of    \n"
+                            "cut factories registered in the system cut registration. \n"
+                            "Not recommanded for standard usage.                      \n"
+                            )
+      ;
+  }  
+  
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("factory.initialization_at_load")
+      .set_terse_description("Flag to automaticaly initialize cut objects at load")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("When set, this flag triggers the automatic initialization of a   \n"
+                            "cut while it is loaded. The default behaviour consists in        \n"
+                            "initializing a cut if and only if it is effectively used.        \n"
+                            "Not recommanded for standard usage.                              \n"
+                            )
+      ;
+  }  
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("service_manager.configuration")
+      .set_terse_description("The configuration file of the embeded service manager")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_path(true)
+      .set_complex_triggering_conditions(true)
+      .set_long_description("This property indicated the name of the configuration file   \n"
+                            "for the service manager made accessible to the cuts objects. \n"
+                            "It is only used if no external service manager has been      \n"
+                            "defined through the :                                        \n"
+                            "  cuts::cut_manager::set_service_manager(...) method.        \n"
+                            );
+   }  
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("cuts.configuration_files")
+      .set_terse_description("The list of configuration files for embeded cuts")
+      .set_traits(datatools::TYPE_STRING, 
+                  datatools::configuration_property_description::ARRAY)
+      .set_mandatory(false)
+      .set_path(true)
+      .set_complex_triggering_conditions(true)
+      .set_long_description("This property indicated the name of the configuration files       \n"
+                            "that stored the rules to instantiate cuts objects.                \n"
+                            "The filenames may contains some environment variables.            \n"
+                            "Each file must use the format of the 'datatools::multi_properties'\n"
+                            "class.                                                            \n"
+                            "Example :                                                         \n"
+                            "  | cuts.configuration_files : string[3] a path = \\              \n"
+                            "  |   \"${CUTS_CONFIG_DIR}/energy_cuts.conf\" \\                  \n"
+                            "  |   \"${CUTS_CONFIG_DIR}/track_cuts.conf\"  \\                  \n"
+                            "  |   \"${CUTS_CONFIG_DIR}/topologu_cuts.conf\"                   \n"
+                            );
+   }  
+ 
+  ocd_.set_validation_support(true);
+  ocd_.lock(); 
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+
+DOCD_CLASS_SYSTEM_REGISTRATION(::cuts::cut_manager,"cuts::cut_manager")
+
 // end of cut_manager.cc
 /*
 ** Local Variables: --

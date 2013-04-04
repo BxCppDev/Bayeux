@@ -13,3 +13,6 @@
 	* initialize the 4.0.0 version
 	* simplify the package structure
 	* make compatible with datatools 5.0.0
+2013-04-04 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* add OCD support for the cuts::cut_manager class
+

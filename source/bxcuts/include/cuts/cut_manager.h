@@ -185,6 +185,13 @@ namespace cuts {
 
 }  // end of namespace cuts
 
+
+/***************
+ * OCD support *
+ ***************/
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(cuts::cut_manager)
+
 #endif // _CUTS_CUT_MANAGER_H
 
 // end of cut_manager.h

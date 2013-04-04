@@ -265,6 +265,20 @@ int main (int argc_, char ** argv_)
           }
       }
 
+      {
+        datatools::object_configuration_description OCD;
+        if ( datatools::load_ocd<cuts::cut_manager>(OCD)) {   
+          OCD.print(std::clog, "*** ");
+          OCD.dump(std::clog, "OCD: ");
+          std::ofstream fscf ("test_OCD_cut_manager.sample.conf");
+          OCD.generate_sample_configuration(fscf, "the configuration of a 'cuts::cut_manager' object");
+        }
+        else {
+          std::cerr << "ERROR: Cannot find OCD support for the 'cuts::cut_manager' class."
+                    << std::endl;       
+        } 
+       }
+
     }
   catch (exception & x)
     {
