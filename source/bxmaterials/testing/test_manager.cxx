@@ -3,6 +3,7 @@
  
 #include <cstdlib>
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <exception>
 #include <list>
@@ -81,6 +82,20 @@ int main (int argc_, char ** argv_)
           MatMgr.load (config);
         }
       MatMgr.tree_dump (clog, "Material manager: ");
+
+      {
+        datatools::object_configuration_description OCD;
+        if ( datatools::load_ocd<materials::manager>(OCD)) {   
+          OCD.print(std::clog, "*** ");
+          OCD.dump(std::clog, "OCD: ");
+          std::ofstream fscf ("test_OCD_materials_manager.sample.conf");
+          OCD.generate_sample_configuration(fscf, "the configuration of a 'materials::manager' object");
+        }
+        else {
+          std::cerr << "ERROR: Cannot find OCD support for the 'materials::manager' class."
+                    << std::endl;       
+        } 
+      }
 
     }
   catch (exception & x)

@@ -477,4 +477,90 @@ namespace materials {
 
 } // end of namespace materials
 
+
+/****************************************************************/ 
+// OCD support for class '::materials::manager' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::materials::manager,ocd_)
+{
+  ocd_.set_class_name ("materials::manager");
+  ocd_.set_class_description ("A manager for isotopes, elements and materials");
+ 
+
+  ocd_.set_configuration_hints ("A materials manager is configured through a configuration file that  \n"
+                                "obeys the format of 'datatools::multi_properties' setup file.        \n"
+                                "Example :                                                            \n"
+                                "  |                                                                  \n"
+                                "  | #@key_label   \"name\"                                           \n"
+                                "  | #@meta_label  \"type\"                                           \n"
+                                "  |                                                                  \n"
+                                "  | [name=\"H\" type=\"isotope\"]                                    \n"
+                                "  | #@config The H hydrogen isotope                                  \n"
+                                "  | z : integer = 1                                                  \n"
+                                "  | a : integer = 1                                                  \n"
+                                "  |                                                                  \n"
+                                "  | [name=\"D\" type=\"isotope\"]                                    \n"
+                                "  | #@config The deuterium hydrogen isotope                          \n"
+                                "  | z : integer = 1                                                  \n"
+                                "  | a : integer = 2                                                  \n"
+                                "  |                                                                  \n"
+                                "  | [name=\"T\" type=\"isotope\"]                                    \n"
+                                "  | #@config The tritium hydrogen isotope                            \n"
+                                "  | z : integer = 1                                                  \n"
+                                "  | a : integer = 3                                                  \n"
+                                "  |                                                                  \n"
+                                "  | [name=\"O-16\" type=\"isotope\"]                                 \n"
+                                "  | #@config The O-16 oxygen isotope                                 \n"
+                                "  | z : integer = 8                                                  \n"
+                                "  | a : integer = 16                                                 \n"
+                                "  |                                                                  \n"
+                                "  | [name=\"O-17\" type=\"isotope\"]                                 \n"
+                                "  | #@config The O-17 oxygen isotope                                 \n"
+                                "  | z : integer = 8                                                  \n"
+                                "  | a : integer = 17                                                 \n"
+                                "  |                                                                  \n"
+                                "  | [name=\"O-18\" type=\"isotope\"]                                 \n"
+                                "  | #@config The O-18 oxygen isotope                                 \n"
+                                "  | z : integer = 8                                                  \n"
+                                "  | a : integer = 18                                                 \n"
+                                "  |                                                                  \n"
+                                "  | [name=\"Hydrogen\" type=\"element\"]                             \n"
+                                "  | #@description The H natural element                              \n"
+                                "  | z               : integer   = 1                                  \n"
+                                "  | isotope.names   : string[2] = \"H\"   \"D\"                      \n"
+                                "  | isotope.weights : real[2]   = 99.9885 0.0115                     \n"
+                                "  |                                                                  \n"
+                                "  | [name=\"Oxygen\" type=\"element\"]                               \n"
+                                "  | #@description The O natural element                              \n"
+                                "  | z               : integer   = 8                                  \n"
+                                "  | isotope.names   : string[3] = \"O-16\" \"O-17\" \"O-18\"         \n"
+                                "  | isotope.weights : real[3]   =  99.757 0.038  0.205               \n"
+                                "  |                                                                  \n"
+                                "  | [name=\"Water\" type=\"material\"]                               \n"
+                                "  | #@config Water material                                          \n"
+                                "  | density          : real   = 1.0                                  \n"
+                                "  | density.unit     : string = \"g/cm3\"                            \n"
+                                "  | temperature      : real   = 300.                                 \n"
+                                "  | temperature.unit : string = \"kelvin\"                           \n"
+                                "  | pressure         : real   = 1.                                   \n"
+                                "  | pressure.unit    : string = \"bar\"                              \n"
+                                "  | state            : string = \"liquid\"                                \n"
+                                "  | composition.mode            : string       = \"number_of_atoms\"      \n"
+                                "  | composition.names           : string  [2]  = \"Hydrogen\" \"Oxygen\"  \n"
+                                "  | composition.number_of_atoms : integer [2]  =      2        1          \n"
+                                "  | mpt.op.pp        : real [5] = 1.0    2.0  3.0   5.0  10.0             \n"
+                                "  | mpt.op.rindex    : real [5] = 1.33  1.34  1.35  1.40  1.42            \n"
+                                "  |                                                                       \n"
+                                "  | [name=\"Fluid\" type=\"alias\"]                                  \n"
+                                "  | #@config An material alias for water                             \n"
+                                "  | material : string = \"Water\"                                    \n"
+                                "  |                                                                  \n"
+                                );
+
+  ocd_.set_validation_support(false);
+  ocd_.lock(); 
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+DOCD_CLASS_SYSTEM_REGISTRATION(::materials::manager,"materials::manager")
+
 // end of manager.cc

@@ -6,194 +6,194 @@
 #@meta_label  "type"
 
 [name="Hydrogen" type="element"]
-#@description The H natural element
+#@config The H natural element
 z               : integer   = 1
 isotope.names   : string[2] = "H"     "D"
 isotope.weights : real[2]   = 99.9885 0.0115
 
 [name="Helium" type="element"]
-#@description The He natural element
+#@config The He natural element
 z               : integer   = 2
 isotope.names   : string[2] = "He-3"   "He-4"
 isotope.weights : real[2]   = 0.000137 99.999863
 
 [name="Boron" type="element"]
-#@description The B natural element
+#@config The B natural element
 z               : integer   = 5
 isotope.names   : string[2] = "B-10" "B-11"
 isotope.weights : real[2]   =  19.9   80.1
 
 [name="Carbon" type="element"]
-#@description The H natural element
+#@config The H natural element
 z               : integer   = 6
 isotope.names   : string[2] = "C-12" "C-13"
 isotope.weights : real[2]   = 98.93  1.07
 
 [name="Nitrogen" type="element"]
-#@description The Nitrogen natural element
+#@config The Nitrogen natural element
 z               : integer   = 7
 isotope.names   : string[2] = "N-14" "N-15"
 isotope.weights : real[2]   = 99.632 0.368
 
 [name="Oxygen" type="element"]
-#@description The Oxygen natural element
+#@config The Oxygen natural element
 z               : integer   = 8
 isotope.names   : string[3] = "O-16" "O-17" "O-18"
 isotope.weights : real[3]   = 99.757 0.038  0.205
 
 [name="Fluorine" type="element"]
-#@description The Fluorine natural element
+#@config The Fluorine natural element
 z               : integer   = 9
 isotope.names   : string[1] = "F-19"
 isotope.weights : real[1]   = 100
 
 [name="Neon" type="element"]
-#@description The Neon natural element
+#@config The Neon natural element
 z               : integer   = 10
 isotope.names   : string[3] = "Ne-20" "Ne-21" "Ne-22"
 isotope.weights : real[3]   = 90.48   0.27    9.25
 
 [name="Sodium" type="element"]
-#@description The Sodium natural element
+#@config The Sodium natural element
 z               : integer   = 11
 isotope.names   : string[1] = "Na-23"
 isotope.weights : real[1]   = 100.0
 
 [name="Magnesium" type="element"]
-#@description The Magnesium natural element
+#@config The Magnesium natural element
 z               : integer   = 12
 isotope.names   : string[3] = "Mg-24" "Mg-25"  "Mg-26"
 isotope.weights : real[3]   = 78.99   10.00    11.01
 
 [name="Aluminium" type="element"]
-#@description The Aluminium natural element
+#@config The Aluminium natural element
 z               : integer   = 13
 isotope.names   : string[1] = "Al-27"
 isotope.weights : real[1]   = 100.0
 
 [name="Silicium" type="element"]
-#@description The Magnesium natural element
+#@config The Magnesium natural element
 z               : integer   = 14
 isotope.names   : string[3] = "Si-28"  "Si-29"  "Si-30"
 isotope.weights : real[3]   = 92.2297  4.6832   3.0872
 
 [name="Phosphore" type="element"]
-#@description The Phosphore natural element
+#@config The Phosphore natural element
 z               : integer   = 15
 isotope.names   : string[1] = "P-31"
 isotope.weights : real[1]   = 100.0
 
 [name="Argon" type="element"]
-#@description The Argon natural element
+#@config The Argon natural element
 z               : integer   = 18
 isotope.names   : string[3] = "Ar-36"  "Ar-38"  "Ar-40"
 isotope.weights : real[3]   = 0.3365   0.0632   99.6003
 
 [name="Potassium" type="element"]
-#@description The Potassium natural element
+#@config The Potassium natural element
 z               : integer   = 19
 isotope.names   : string[3] = "K-39"   "K-40"   "K-41"
 isotope.weights : real[3]   = 93.2581  0.0117   6.7302
 
 [name="Calcium" type="element"]
-#@description The Calcium natural element
+#@config The Calcium natural element
 z               : integer   = 20
 isotope.names   : string[6] = "Ca-40" "Ca-42" "Ca-43" "Ca-44" "Ca-46" "Ca-48"
 isotope.weights : real[6]   = 96.941  0.647   0.135   2.086   0.004   0.187
 
 [name="Vanadium" type="element"]
-#@description The Vanadium natural element
+#@config The Vanadium natural element
 z               : integer   = 23
 isotope.names   : string[2] = "V-50" "V-51"
 isotope.weights : real[2]   = 0.250  99.750
 
 [name="Chromium" type="element"]
-#@description The Chromium natural element
+#@config The Chromium natural element
 z               : integer   = 24
 isotope.names   : string[4] = "Cr-50" "Cr-52" "Cr-53" "Cr-54"
 isotope.weights : real[4]   = 4.345   83.789  9.501   2.365
 
 [name="Manganese" type="element"]
-#@description The Manganese natural element
+#@config The Manganese natural element
 z               : integer   = 25
 isotope.names   : string[1] = "Mn-55"
 isotope.weights : real[1]   = 100.0
 
 [name="Iron" type="element"]
-#@description The Cu natural element
+#@config The Cu natural element
 z               : integer   = 26
 isotope.names   : string[4] = "Fe-54" "Fe-56" "Fe-57" "Fe-58"
 isotope.weights : real[4]   = 5.845   91.754  2.119   0.282
 
 [name="Cobalt" type="element"]
-#@description The Cobalt natural element
+#@config The Cobalt natural element
 z               : integer   = 27
 isotope.names   : string[1] = "Co-59"
 isotope.weights : real[1]   = 100.0
 
 [name="Nickel" type="element"]
-#@description The Nickel natural element
+#@config The Nickel natural element
 z               : integer   = 28
 isotope.names   : string[5] = "Ni-58" "Ni-60" "Ni-61" "Ni-62" "Ni-64"
 isotope.weights : real[5]   = 68.0769 26.2231 1.1399  3.6345  0.9256
 
 [name="Copper" type="element"]
-#@description The Cu natural element
+#@config The Cu natural element
 z               : integer   = 29
 isotope.names   : string[2] = "Cu-63" "Cu-65"
 #isotope.weights : real[2]   =  69.17   30.83
 isotope.weights : real[2]   =  69.15   30.85
 
 [name="Selenium" type="element"]
-#@description The Selenium natural element
+#@config The Selenium natural element
 z               : integer   = 34
 isotope.names   : string[6] = "Se-74" "Se-76" "Se-77" "Se-78" "Se-80" "Se-82"
 isotope.weights : real[6]   =   0.89    9.37    7.63   23.77   49.61    8.73
 
 # [name="Selenium-82" type="element"]
-# #@description The 82 Selenium enriched element
+# #@config The 82 Selenium enriched element
 # z               : integer   = 34
 # isotope.names   : string[1] = "Se-82"
 # isotope.weights : real[1]   =   1.0
 
 [name="Molybdenum" type="element"]
-#@description The Molybdenum natural element
+#@config The Molybdenum natural element
 z               : integer   = 42
 isotope.names   : string[7] = "Mo-92" "Mo-94" "Mo-95" "Mo-96" "Mo-97" "Mo-98" "Mo-100"
 isotope.weights : real[7]   =  14.77    9.23   15.90   16.68    9.56   24.19    9.67
 
 [name="Neodymimum" type="element"]
-#@description The Neodymium natural element
+#@config The Neodymium natural element
 z               : integer   = 60
 isotope.names   : string[7] = "Nd-142" "Nd-143" "Nd-144" "Nd-145" "Nd-146" "Nd-148" "Nd-150"
 isotope.weights : real[7]   =   27.2     12.2     23.8     8.3      17.2     5.7      5.6
 
 [name="Silver" type="element"]
-#@description The Silver natural element
+#@config The Silver natural element
 z               : integer   = 47
 isotope.names   : string[2] = "Ag-107" "Ag-109"
 isotope.weights : real[2]   =  51.839 48.161
 
 [name="Iodine" type="element"]
-#@description The Iodine natural element
+#@config The Iodine natural element
 z               : integer   = 53
 isotope.names   : string[1] = "I-127"
 isotope.weights : real[1]   =  100
 
 [name="Cesium" type="element"]
-#@description The Cesium natural element
+#@config The Cesium natural element
 z               : integer   = 55
 isotope.names   : string[1] = "Cs-133"
 isotope.weights : real[1]   =  100
 
 [name="Gold" type="element"]
-#@description The Gold natural element
+#@config The Gold natural element
 z               : integer   = 79
 isotope.names   : string[1] = "Au-197"
 isotope.weights : real[1]   =  100
 
 [name="Lead" type="element"]
-#@description The Lead natural element
+#@config The Lead natural element
 z               : integer   = 82
 isotope.names   : string[4] = "Pb-204" "Pb-206" "Pb-207" "Pb-208"
 isotope.weights : real[4]   = 1.4      24.1     22.1     52.4

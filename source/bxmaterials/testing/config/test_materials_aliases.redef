@@ -7,7 +7,7 @@
 
 ##################################
 [name="tracking_gas" type="alias"]
-#@description Change alias for tracking gas
+#@config Change alias for tracking gas
 material : string = "air"
 
 # end

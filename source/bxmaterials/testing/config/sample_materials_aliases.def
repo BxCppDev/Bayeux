@@ -6,19 +6,19 @@
 #@meta_label  "type"
 
 [name="scintillator_1" type="alias"]
-#@description The alias for tracking gas
+#@config The alias for tracking gas
 material : string = "std::polystyrene"
 
 [name="scintillator_2" type="alias"]
-#@description The alias for tracking gas
+#@config The alias for tracking gas
 material : string = "std::PVT"
 
 [name="metal_1" type="alias"]
-#@description The alias for metallic copper material
+#@config The alias for metallic copper material
 material : string = "std::copper"
 
 [name="metal_2" type="alias"]
-#@description The alias for metallic iron material
+#@config The alias for metallic iron material
 material : string = "std::iron"
 
 # end

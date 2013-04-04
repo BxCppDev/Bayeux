@@ -8,7 +8,7 @@
 
 ###########################
 [name="solid" type="alias"]
-#@description Another alias for metal
+#@config Another alias for metal
 material : string = "metal"
 
 # end

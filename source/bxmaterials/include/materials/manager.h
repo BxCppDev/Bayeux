@@ -97,6 +97,12 @@ namespace materials {
 
 //namespace mat = materials;
 
+/***************
+ * OCD support *
+ ***************/
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(materials::manager)
+
 #endif // MATERIALS_MANAGER_H_
 
 // end of manager.h
