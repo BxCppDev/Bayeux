@@ -124,6 +124,12 @@ namespace cuts {
         if (a_configuration.has_key ("cuts"))
           {
             a_configuration.fetch ("cuts", cut_names);
+            if (cut_names.size() == 0) {
+              ostringstream message;
+              message << "cuts::multi_and_cut::initialize: "
+                      << "The 'cuts' property setups an empty list of cuts !";
+              throw logic_error (message.str ());
+            }
           }
         else
           {

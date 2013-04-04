@@ -19,6 +19,8 @@ namespace cuts {
                                   "Random cut",
                                   "1.0")
   {
+    _seed_ = 0;
+    _accept_probability_ = 0.5;
     return;
   }
   

@@ -41,6 +41,7 @@ include/cuts/reject_cut.h
 include/cuts/xnor_cut.h
 include/cuts/xor_cut.h
 include/cuts/random_cut.h
+include/cuts/ocd_support.h
   )
 list_prepend(cuts_PUBLIC_HEADERS "${PROJECT_SOURCE_DIR}/")
 
@@ -105,6 +106,7 @@ reject_cut.cc
 xnor_cut.cc
 xor_cut.cc
 random_cut.cc
+ocd_support.cc
   )
 
 #-----------------------------------------------------------------------

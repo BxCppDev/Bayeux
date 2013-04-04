@@ -111,6 +111,13 @@ namespace cuts {
 
 #endif // _CUTS_CUT_SERVICE_H
 
+
+/***************
+ * OCD support *
+ ***************/
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(cuts::cut_service)
+
 // end of cut_service.h
 /*
 ** Local Variables: --
