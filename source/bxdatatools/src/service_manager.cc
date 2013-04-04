@@ -829,28 +829,31 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
       .set_mandatory(false)
       .set_path(true)
       .set_long_description(
-                            "A list of filenames from where the manager             \n"
-                            "loads the directives to dynamically instantiate        \n"
-                            "new embeded service objects. The filenames may contains\n"
-                            "some environment variables.                            \n"
-                            "Example:                                               \n"
-                            "  \"${CONFIG_REPOSITORY_DIR}/services.conf\"           \n"
-                            "The target files must use the format of the            \n"
-                            "'datatools::multi_properties' class.                   \n"
-                            "The loading order of the files is critical             \n"
-                            "because some services may depend on other ones         \n"
-                            "which should thus be defined *before* their            \n"
-                            "dependers.                                             \n"
-                            "Extends the instantiation of services triggered by     \n"
-                            "former calls to :                                      \n"
-                            "  datatools::service_manager::load(...)                \n"
+                            "A list of filenames from where the manager               \n"
+                            "loads the directives to dynamically instantiate          \n"
+                            "new embeded service objects. The filenames may contains  \n"
+                            "some environment variables.                              \n"
+                            "Example:                                                 \n"
+                            " |                                                       \n"
+                            " | services.configuration_files : string[1] as path = \\ \n"
+                            " |   \"${CONFIG_REPOSITORY_DIR}/services.conf\"          \n"
+                            " |                                                       \n"
+                            "The target files must use the format of the              \n"
+                            "'datatools::multi_properties' class.                     \n"
+                            "The loading order of the files is critical               \n"
+                            "because some services may depend on other ones           \n"
+                            "which should thus be defined *before* their              \n"
+                            "dependers.                                               \n"
+                            "Extends the instantiation of services triggered by       \n"
+                            "former calls to :                                        \n"
+                            "  datatools::service_manager::load(...)                  \n"
                             )
     ;
   }  
   
 
   ocd_.set_configuration_hints ("Configuration example for a 'service_manager' object :        \n"
-                                "                                                              \n"
+                                " |                                                            \n"
                                 " | debug : boolean = 0                                        \n"
                                 " | name  : string = \"CoreServices\"                          \n"
                                 " | description  : string = \\                                 \n"
@@ -859,6 +862,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
                                 " |   \"${CONFIG_DIR}/database_services.conf\" \\              \n"
                                 " |   \"${CONFIG_DIR}/io_services.conf\" \\                    \n"
                                 " |   \"${CONFIG_DIR}/processing_services.conf\"               \n"
+                                " |                                                            \n"
                                 );
 
   ocd_.set_validation_support(true);

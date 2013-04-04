@@ -621,3 +621,74 @@ void library_loader::print(std::ostream& out) const {
 
 } // end of namespace datatools
 
+
+/***************
+ * OCD support *
+ ***************/
+
+#include <datatools/ocd_macros.h>
+
+// OCD support for class '::datatools::library_loader' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::library_loader,ocd_)
+{
+  ocd_.set_class_name ("datatools::library_loader");
+  ocd_.set_class_description ("A shared library (DLL) loader");
+ 
+  ocd_.set_configuration_hints ("A library loader object may load directives from a file that  \n"
+                                "uses the format of the 'datatools::multi_properties' object.  \n"
+                                "Each section corresponds to the loading rules of a specific   \n"
+                                "DLL.                                                          \n"
+                                "Example :                                                     \n"
+                                " |                                                            \n"
+                                " | #@key_label   \"name\"                                     \n"
+                                " | #@meta_label  \"filename\"                                 \n"
+                                " |                                                            \n"
+                                " | # A DLL with fully specified path :                        \n"
+                                " | [name=\"z\" filename=\"\"]                                 \n"
+                                " | #@config The zlib library                                  \n"
+                                " | #@description The full path of the shared library file     \n"
+                                " | full_path : string = \"/usr/lib/libz.so\"                  \n"
+                                " |                                                            \n"
+                                " |                                                            \n"
+                                " | # Another DLL with fully specified path :                  \n"
+                                " | [name=\"crypto\" filename=\"\"]                            \n"
+                                " | #@config The crypto library                                \n"
+                                " | #@description The full path of the shared library file     \n"
+                                " | full_path : string = \"/usr/lib/libcrypto.so\"             \n"
+                                " |                                                            \n"
+                                " |                                                            \n"
+                                " | # Yet another DLL with implicit path from LD_LIBRARY_PATH :\n"
+                                " | [name=\"ssl\" filename=\"\"]                               \n"
+                                " | #@config The libssl library                                \n"
+                                " |                                                            \n"
+                                " |                                                            \n"
+                                " | # A DLL with explicit directory and filename :             \n"
+                                " | [name=\"gsl\" filename=\"\"]                               \n"
+                                " | #@config The GSL library                                   \n"
+                                " | #@description The directory where the shared library file is stored \n"
+                                " | directory : string = \"/usr/lib\"                          \n"
+                                " |                                                            \n"
+                                " | #@description The shared library file                      \n"
+                                " | filename : string = \"libgsl.so\"                          \n"
+                                " |                                                            \n"
+                                " |                                                            \n"
+                                " | # A DLL with explicit filename and autoload at startup :   \n"
+                                " | [name=\"genvtx\" filename=\"libgenvtx.so\"]                \n"
+                                " | #@config The genvtx library                                \n"
+                                " | #@description Automatic loading at startup                 \n"
+                                " | autoload : boolean = 1                                     \n"
+                                " |                                                            \n"
+                                " |                                                            \n"
+                                " | # A DLL with implicit path :                               \n"
+                                " | [name=\"foo\" filename=\"\"]                               \n"
+                                " | #@config The foo library                                   \n"
+                                " |                                                            \n"
+                                );
+
+  ocd_.set_validation_support(false);
+  ocd_.lock(); 
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+
+DOCD_CLASS_SYSTEM_REGISTRATION(datatools::library_loader,"datatools::library_loader")

@@ -47,7 +47,6 @@
 
 namespace datatools {
 
-
 struct library_entry_type;
 
 typedef datatools::handle<library_entry_type> handle_library_entry_type;
@@ -58,13 +57,7 @@ typedef datatools::detail::DynamicLoader::SymbolPointer symbol_ptr;
 
 //! \brief A class used internally by the library_loader class
 struct library_entry_type {
-  std::string name;
-  std::string directory;
-  std::string filename;
-  std::string full_path;
-  std::string version;
-  bool   autoload;
-  int    status;
+
   datatools::detail::DynamicLoader::LibraryHandle handle;
 
   library_entry_type(const std::string& lib_name      = "",
@@ -77,6 +70,16 @@ struct library_entry_type {
   virtual ~library_entry_type();
 
   void print(std::ostream& out = std::clog, const std::string& indent = "") const;
+
+public:
+
+  std::string name;
+  std::string directory;
+  std::string filename;
+  std::string full_path;
+  std::string version;
+  bool   autoload;
+  int    status;
 
 };
 
@@ -96,22 +99,35 @@ class library_loader : boost::noncopyable {
   };
 
  public:
+
+  /// Constructor
   library_loader(uint32_t flags = 0, const std::string& config_file = "");
+
+  /// Destructor
   virtual ~library_loader();
 
+  /// Check debug flag
   bool is_debug() const;
 
+  /// Set debug flag
   void set_debug(bool);
 
+  /// Set the allow unregistered flag
   void set_allow_unregistered(bool);
 
+  /// Check the allow unregistered flag
   bool allowing_unregistered() const;
 
+  /// Check the test flag
   bool is_test() const;
+
+  /// Check if DLL with name is setup
   bool has(const std::string& name) const;
 
+  /// Check if DLL with name is loaded
   bool is_loaded(const std::string& name) const;
 
+  /// Register a DLL
   int registration(const std::string& name,
                    const std::string& directory = "",
                    const std::string& filename  = "",
@@ -119,33 +135,43 @@ class library_loader : boost::noncopyable {
                    const std::string& version   = "",
                    bool autoload = false);
 
+  /// Load a DLL
   int load(const std::string& name,
            const std::string& directory = "",
            const std::string& filename  = "",
            const std::string& full_path = "",
            const std::string& version   = "");
 
+  /// Close a DLL
   int close(const std::string& name);
 
+  /// CLose all DLLs
   int close_all();
 
+  /// Smart print
   void print(std::ostream& out = std::clog) const;
 
   symbol_ptr get_symbol_address(const std::string& name,
                                 const std::string& symbol);
 
  protected:
+  /// Protected initialization
   void init();
 
  private:
   uint32_t    flags_; //!< Flags
-  std::string config_filename_;
+  std::string config_filename_; //!< Name of the configuration file
   handle_library_entry_stack_type stacked_libraries_;
   handle_library_entry_dict_type  libraries_;
 };
 
-
 } // end of namespace datatools
+
+/***************
+ * OCD support *
+ ***************/
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(datatools::library_loader)
 
 #endif // DATATOOLS_UTILS_LIBRARY_LOADER_H_
 

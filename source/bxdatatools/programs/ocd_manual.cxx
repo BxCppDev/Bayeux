@@ -26,17 +26,19 @@ struct ocd_manual_params
 {
   /// Constructor
   ocd_manual_params();
+  /// Reset
   void reset();
+  /// Smart print
   void print(std::ostream & = std::cout) const;
 public:
   bool debug; /// Debug flag
   bool interactive; /// Interactive flag
   std::vector<std::string> dlls; /// List of DLLs to be loaded 
-  std::string dll_loader_config;
-  std::string action;
-  std::string class_id;
-  std::string input_path;
-  std::string output_path;
+  std::string dll_loader_config; /// Configuration file of the DLL loader
+  std::string action; /// The name of the action to invoke
+  std::string class_id; /// The class registration ID
+  std::string input_path; /// Input path
+  std::string output_path; /// Output path
 };
 
 void ocd_manual_params::reset()
@@ -81,10 +83,15 @@ void ocd_manual_params::print(std::ostream & out_) const
 class ocd_manual
 {
 public:
+  /// Constructor
   ocd_manual();
+  /// Check initialization status
   bool is_initialized() const;
+  /// Initialization  
   void initialize(const ocd_manual_params & params_);
+  /// Run
   int run();
+  /// Reset
   void reset();
 protected:
   void _run_interactive();
@@ -96,8 +103,8 @@ protected:
   int _run_validate(const std::string & class_id_, 
                     const std::string & path_);
 private:
-  bool _initialized_;
-  ocd_manual_params _params_;
+  bool _initialized_; /// Initialization flag
+  ocd_manual_params _params_; /// Configuration parameters
 };
 
 ocd_manual::ocd_manual()
