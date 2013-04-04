@@ -277,7 +277,7 @@ int main (int argc_, char ** argv_)
           std::cerr << "ERROR: Cannot find OCD support for the 'cuts::cut_manager' class."
                     << std::endl;       
         } 
-       }
+      }
 
     }
   catch (exception & x)
