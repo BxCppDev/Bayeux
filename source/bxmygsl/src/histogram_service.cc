@@ -649,6 +649,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_service,ocd_)
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
 
+DOCD_CLASS_SYSTEM_REGISTRATION(::mygsl::histogram_service,"mygsl::histogram_service")
+
 // end of histogram_service.cc
 /*
 ** Local Variables: --
