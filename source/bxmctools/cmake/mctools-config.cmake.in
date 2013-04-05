@@ -1,0 +1,126 @@
+# - Config file for the mctools package
+# It defines the following variables
+#  mctools_INCLUDE_DIRS - include directories for mctools
+#  mctools_LIBRARY      - libraries to link against
+#  mctools_BIO_LIBRARY  - library targets to link against (Boost I/O library)
+#  mctools_REFLECTION_LIBRARY - library targets to link against (reflection library)
+#  mctools_LIBRARIES    - libraries to link against
+#  mctools_WITH_BIO     - flag for Boost/Serialization I/O DLL (a.k.a. 'bio')
+#  mctools_WITH_REFLECTION  - flag for reflection DLL
+#  mctools_WITH_G4      - flag for Geant4 interface
+
+#-----------------------------------------------------------------------
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#-----------------------------------------------------------------------
+
+set(mctools_WITH_BIO         @MCTOOLS_WITH_BIO@)
+set(mctools_WITH_REFLECTION  @MCTOOLS_WITH_REFLECTION@)
+set(mctools_DATA_DIR         @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@)
+set(mctools_WITH_G4          @MCTOOLS_WITH_G4@)
+set(mctools_GENVTX_DIR       @genvtx_DIR@)
+set(mctools_GENBB_HELP_DIR   @genbb_help_DIR@)
+set(mctools_EMFIELD_DIR      @emfield_DIR@)
+set(mctools_MATERIALS_DIR    @materials_DIR@)
+set(mctools_DPP_DIR          @dpp_help_DIR@)
+if (MCTOOLS_WITH_G4)
+set(mctools_GEANT4_DIR       @Geant4_DIR@)
+endif()
+
+#-----------------------------------------------------------------------
+# Locate ourselves, since all our config files should have been installed
+# alongside us...
+#
+get_filename_component(_mctools_thisdir "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+#-----------------------------------------------------------------------
+# Include the file listing all the imported targets to make them available
+# This is installed in the same location as us...
+# Protect it with an in-memory variable so that we don't include
+# it twice should multiple calls to find_package be made
+if(NOT mctools_LIBDEPS_LOADED)
+  find_package(genvtx     REQUIRED CONFIG 
+               PATHS ${mctools_GENVTX_DIR} NO_DEFAULT_PATH)
+  find_package(genbb_help REQUIRED CONFIG 
+               PATHS ${mctools_GENBB_HELP_DIR} NO_DEFAULT_PATH)
+  find_package(emfield    REQUIRED CONFIG 
+               PATHS ${mctools_EMFIELD_DIR} NO_DEFAULT_PATH)
+  find_package(materials  REQUIRED CONFIG 
+               PATHS ${mctools_MATERIALS_DIR} NO_DEFAULT_PATH)
+  find_package(dpp        REQUIRED CONFIG 
+               PATHS ${mctools_DPP_DIR} NO_DEFAULT_PATH)
+  include("${_mctools_thisdir}/mctools-libraries.cmake")
+  set(mctools_LIBDEPS_LOADED 1)
+endif()
+
+#-----------------------------------------------------------------------
+# Set variables pointing to used third party headers and locations.
+# We have to set the headers because mctools exports the headers in
+# its public interface.
+# The locations are set so that clients using those packages (i.e. Boost and
+# ROOT), can re-find them if needed using exact locations (EXPERIMENTAL)
+# e.g:
+#
+#  find_package(mctools)
+#  set(BOOST_ROOT ${mctools_BOOST_ROOT})
+#  find_package(Boost NO_DEFAULT_PATH)
+#
+set(mctools_THIRD_PARTY_INCLUDE_DIRS
+  @genvtx_INCLUDE_DIRS@
+  @genbb_help_INCLUDE_DIRS@
+  @emfield_INCLUDE_DIRS@
+  @materials_INCLUDE_DIRS@
+  @dpp_INCLUDE_DIRS@
+  @Geant4_INCLUDE_DIRS@
+  )
+
+if (MCTOOLS_WITH_G4)
+   list(INSERT mctools_THIRD_PARTY_INCLUDE_DIRS 0
+      @Geant4_INCLUDE_DIRS@
+   )
+endif()
+
+# if(mctools_WITH_REFLECTION)
+#   list(INSERT mctools_THIRD_PARTY_INCLUDE_DIRS 0
+#      @CAMP_INCLUDE_DIR@
+#   )
+# endif()
+
+#-----------------------------------------------------------------------
+# Set mctools definitions, include paths and library variables
+#
+get_filename_component(_mctools_inc "${_mctools_thisdir}/@TO_MCTOOLS_INCLUDEDIR@" ABSOLUTE)
+
+set(mctools_INCLUDE_DIR "${_mctools_inc}" CACHE PATH "Path to mctools headers")
+
+set(mctools_INCLUDE_DIRS
+  ${mctools_INCLUDE_DIR}
+  ${mctools_THIRD_PARTY_INCLUDE_DIRS}
+  )
+
+#-----------------------------------------------------------------------
+# Set mctools_LIBRARIES variable
+set(mctools_LIBRARY mctools CACHE PATH "Path to mctools library")
+
+if(mctools_WITH_BIO)
+  set(mctools_BIO_LIBRARY mctools_bio)
+endif()
+
+if(mctools_WITH_REFLECTION)
+  set(mctools_REFLECTION_LIBRARY mctools_reflection)
+endif()
+  
+set(mctools_LIBRARIES ${mctools_LIBRARY})
+
+unset(_mctools_inc)
+# end

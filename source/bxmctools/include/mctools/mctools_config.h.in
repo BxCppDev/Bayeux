@@ -1,0 +1,51 @@
+// -*- mode: c++; -*- 
+/* mctools_config.h header file 
+ */
+
+#ifndef MCTOOLS_MCTOOLS_CONFIG_H_
+#define MCTOOLS_MCTOOLS_CONFIG_H_ 1
+
+/*** mctools versioning information ***/
+
+//  MCTOOLS_VERSION % 100        is the patch level
+//  MCTOOLS_VERSION / 100 % 1000 is the minor version
+//  MCTOOLS_VERSION / 100000     is the major version
+
+#define MCTOOLS_VERSION_MAJOR @mctools_VERSION_MAJOR@
+#define MCTOOLS_VERSION_MINOR @mctools_VERSION_MINOR@
+#define MCTOOLS_PATCH_VERSION @mctools_PATCH_VERSION@
+
+#define MCTOOLS_VERSION @_mctools_VERSION_NUMERIC@
+
+//  MCTOOLS_LIB_VERSION must be defined to be the same as MCTOOLS_VERSION
+//  but as a *string* in the form "x.y[.z]" where x is the major version
+//  number, y is the minor version number, and z is the patch level if not 0.
+
+#define MCTOOLS_LIB_VERSION "@mctools_VERSION@"
+
+/***  mctools debug flag ***/
+#cmakedefine01 MCTOOLS_WITH_DEBUG
+
+/***  mctools embedded Boost/Serialization based I/O ***/
+#cmakedefine01 MCTOOLS_WITH_BIO
+
+/***  mctools embedded CAMP-based reflection ***/
+#cmakedefine01 MCTOOLS_WITH_REFLECTION
+
+/***  mctools embedded G4 interface ***/
+#cmakedefine01 MCTOOLS_WITH_G4
+
+/***  mctools embedded G4 visualization interface ***/
+#cmakedefine01 MCTOOLS_WITH_G4_G4VIS_USE
+
+#if MCTOOLS_WITH_G4_G4VIS_USE == 1
+#define G4VIS_USE 1
+#endif
+
+//! The installation path of the mctools resource files :
+#define MCTOOLS_DATA_INSTALL_DIR "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
+
+#
+#endif // MCTOOLS_MCTOOLS_CONFIG_H_
+
+// end of mctools_config.h
