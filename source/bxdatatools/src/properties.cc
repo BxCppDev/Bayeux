@@ -2552,7 +2552,8 @@ namespace datatools {
     std::string prop_config;
     std::string prop_description;
     bool line_goon = false;
-    bool enable_real_with_unit = false;
+    // 2013-04-05 FM : default is to allow unit directives for real numbers
+    bool enable_real_with_unit = true;
 
     while (a_in) {
       if (verbose_parsing) {
