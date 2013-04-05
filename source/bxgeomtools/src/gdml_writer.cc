@@ -991,12 +991,12 @@ namespace geomtools {
 
     solids_stream << " numsides=" << '"' << num_sides_ << '"';
     
-    if (start_phi_ != 0.0)
-      {
-        solids_stream << " startphi=" << '"';
-        solids_stream.precision (15);
-        solids_stream << start_phi_ / aunit << '"';
-      }
+    // if (start_phi_ != 0.0)
+    // {
+    solids_stream << " startphi=" << '"';
+    solids_stream.precision (15);
+    solids_stream << start_phi_ / aunit << '"';
+    // }
 
     solids_stream << " deltaphi=" << '"';
     solids_stream.precision (15);
