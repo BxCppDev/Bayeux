@@ -12,7 +12,8 @@
 #/vis/viewer/zoomTo 2
 
 #
-/vis/open OGLIX
+#/vis/open OGLIX
+/vis/open OGL
 /vis/viewer/set/viewpointThetaPhi 0 0
 /vis/viewer/zoom 2
 /vis/scene/add/trajectories

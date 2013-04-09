@@ -4,13 +4,23 @@
 
 #include <mctools/step_hit_processor_factory.h>
 
+#include <datatools/properties.h>
 #include <datatools/service_manager.h>
+
 #include <mygsl/rng.h>
+
+#include <geomtools/manager.h>
+#include <geomtools/geometry_service.h>
 
 namespace mctools {
 
   using namespace std;
- 
+
+  bool step_hit_processor_factory::is_initialized () const
+  {
+    return _initialized_;
+  }
+
   bool step_hit_processor_factory::is_debug () const
   {
     return _debug_;
@@ -40,6 +50,10 @@ namespace mctools {
 
   void step_hit_processor_factory::set_external_prng (mygsl::rng & prng_)
   {
+    if (is_initialized()) {
+        throw std::logic_error("mctools::step_hit_processor_factory::set_external_prng: Factory is initialized and locked !");
+      
+    }
     _external_prng_ = &prng_;
     return;
   }
@@ -60,6 +74,9 @@ namespace mctools {
 
   void step_hit_processor_factory::set_geometry_manager (const geomtools::manager & gmgr_)
   {
+    if (is_initialized()) {
+      throw std::logic_error("mctools::step_hit_processor_factory::set_geometry_manager: Factory is initialized and locked !");     
+    }
     _geom_manager_ = &gmgr_;
     return;
   }
@@ -77,6 +94,9 @@ namespace mctools {
 
   void step_hit_processor_factory::set_service_manager (datatools::service_manager & smgr_)
   {
+    if (is_initialized()) {
+      throw std::logic_error("mctools::step_hit_processor_factory::set_service_manager: Factory is initialized and locked !");     
+    }
     _service_manager_ = &smgr_;
     return;
   }
@@ -96,8 +116,68 @@ namespace mctools {
     return _processors_.find (name_) != _processors_.end ();
   }
 
+  void step_hit_processor_factory::initialize(const datatools::properties & config_)
+  {
+    if (is_initialized ()) {
+      throw std::logic_error("mctools::step_hit_processor_factory::initialize: Factory is already initialized !");
+    }
+
+    if (config_.has_flag("debug")) {
+      set_debug(true);
+    }
+
+    if (_description_.empty()) {
+      if (config_.has_key("description")) {
+        set_description(config_.fetch_string("description"));
+      }
+    }
+
+    if (! has_geometry_manager()) {
+      if (has_service_manager()) {
+        if (config_.has_key("services.geometry")) {
+          const std::string & geo_service_label = config_.fetch_string("services.geometry");
+          if (! get_service_manager().has(geo_service_label)) {
+            std::ostringstream message;
+            message << "mctools::step_hit_processor_factory::initialize: "
+                    << "No service with name '" << geo_service_label << "' !";
+            throw std::logic_error(message.str());
+          }
+          if (! get_service_manager().is_a<geomtools::geometry_service> ("geo_service_label")) {
+            std::ostringstream message;
+            message << "mctools::step_hit_processor_factory::initialize: "
+                    << "Service with name '" << geo_service_label << "' is not a geometry service !";
+            throw std::logic_error(message.str());
+          }
+          const geomtools::geometry_service & geo_serv 
+            = get_service_manager().get<geomtools::geometry_service>("geo_service_label");
+          set_geometry_manager(geo_serv.get_geom_manager ());
+        }
+      } 
+    } 
+
+    std::vector<std::string> proc_configs;
+    if (config_.has_key("processors.configuration")) {
+      config_.fetch("processors.configuration", proc_configs);
+    }
+
+    for (int i = 0; i < proc_configs.size(); i++) {
+      std::string filename = proc_configs[i];
+      datatools::fetch_path_with_env(filename);
+      datatools::multi_properties mp;
+      mp.read(filename);
+      load(mp);
+    }
+    
+    _initialized_ = true;
+    return;
+  }
+
   void step_hit_processor_factory::reset ()
   {
+    if (! is_initialized ()) {
+      throw std::logic_error("mctools::step_hit_processor_factory::reset: Factory is not initialized !");
+    }
+    _initialized_ = false;
     _processors_.clear ();
     _handles_.clear ();
     return;
@@ -106,6 +186,7 @@ namespace mctools {
   // Constructor :
   step_hit_processor_factory::step_hit_processor_factory (bool debug_)
   {
+    _initialized_ = false;
     _debug_ = debug_;
  
     _factory_register_.set_label ("mctools::base_step_hit_processor/factory");
@@ -122,7 +203,7 @@ namespace mctools {
   // Destructor :
   step_hit_processor_factory::~step_hit_processor_factory ()
   {
-    reset ();
+    if (is_initialized()) reset ();
     return;
   }
 
@@ -376,5 +457,126 @@ namespace mctools {
   }
 
 } // end of namespace mctools
+
+
+/***************
+ * OCD support *
+ ***************/
+
+#include <datatools/ocd_macros.h>
+
+// OCD support for class '::mctools::step_hit_processor_factory' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mctools::step_hit_processor_factory,ocd_)
+{
+  ocd_.set_class_name ("mctools::step_hit_processor_factory");
+  ocd_.set_class_description ("A factory for Monte-Carlo step hit post-processors");
+   
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("debug")
+      .set_terse_description("The debug flag string")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_long_description("This flag triggers debug printing.      \n"
+                            "Default value is 0.                     \n"
+                            "Not recommended for production run.     \n"
+                            "Example :                               \n"
+                            "  |                                     \n"
+                            "  | debug : boolean : 0                 \n"
+                            "  |                                     \n"
+                            )
+      ;
+  }  
+ 
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("description")
+      .set_terse_description("The embeded description string")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_long_description("Superseded by a former call of :                                \n"
+                            "  mctools::step_hit_processor_factory::set_description(...)     \n"
+                            "Example :                                                       \n"
+                            "  |                                                             \n"
+                            "  | description : string : \"The MC hit processors factory\"    \n"
+                            "  |                                                             \n"
+                            )
+      ;
+  }  
+ 
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("services.geometry")
+      .set_terse_description("The name of the geometry service")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_complex_triggering_conditions(true)
+      .set_long_description("This property is used only if :                      \n"
+                            " - a service manager is set in the factory,          \n"
+                            " - no geometry manager has been set in the factory.  \n"
+                            "Example:                                             \n"
+                            "  |                                                  \n"
+                            "  | services.geometry : string = \"Geo\"             \n"
+                            "  |                                                  \n"
+                            )
+      ;
+  }
+   
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("processors.configuration")
+      .set_terse_description("A list of configuration file names for embeded MC step hit processors")
+      .set_traits(datatools::TYPE_STRING, 
+                  datatools::configuration_property_description::ARRAY)
+      .set_mandatory(false)
+      .set_path(true)
+      .set_long_description("A list of filenames from where the MC step hit processors  \n"
+                            "loads the directives to dynamically instantiate new        \n"
+                            "embeded MC step hit processors objects. The filenames      \n"
+                            "main contain some environment variables.                   \n"
+                            "Example:                                                   \n"
+                            "  |                                                        \n"
+                            "  | processors.configuration : string[1] as path = \\      \n"
+                            "  |    \"${CONFIG_REPOSITORY_DIR}/scin_mc_hit_proc.conf\"  \n"
+                            "  |                                                        \n"
+                            "The target files must use the format of the                \n"
+                            "'datatools::multi_properties' class.                       \n"
+                            "The loading order of the files is critical                 \n"
+                            "because some step hit processors may depend on other       \n"
+                            "ones which should thus be defined *before* their           \n"
+                            "dependers.                                                 \n"
+                            "Extends the instantiation of step hit processors triggered \n"
+                            " by former calls to :                                      \n"
+                            "  myctools::step_hit_processor_factory::load(...)          \n"
+                            )
+      ;
+  }  
+
+  ocd_.set_configuration_hints ("The MC step hit processor factory uses a 'datatools::properties'\n"
+                                "object to initialize its behaviour and contents.                \n"
+                                "                                                                \n"
+                                "Example of configuration :                                      \n"
+                                "  |                                                             \n"
+                                "  | debug        : boolean = 0                                  \n"
+                                "  | description  : string = \"The MC hit processor factory for Geant4\"\n"
+                                "  | services.geometry : string = \"Geo\"                          \n"
+                                "  | processors.configuration : string[2] as path = \\             \n"
+                                "  |    \"${CONFIG_REPOSITORY_DIR}/telescope_mc_hit_proc.conf\" \\ \n"
+                                "  |    \"${CONFIG_REPOSITORY_DIR}/NaI_mc_hit_proc.conf\"          \n"
+                                "  |                                                               \n"
+                                "Each processor configuration file uses the format of the          \n"
+                                "'datatools::multi_properties' class.                              \n"
+                                "See OCD support dedicated to  MC hit processor classes.           \n"
+                                )
+    ;
+
+  ocd_.set_validation_support(true);
+  ocd_.lock(); 
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+
+DOCD_CLASS_SYSTEM_REGISTRATION(::mctools::step_hit_processor_factory,
+                               "mctools::step_hit_processor_factory")
 
 // end of step_hit_processor_factory.cc

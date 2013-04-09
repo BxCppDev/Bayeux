@@ -31,6 +31,7 @@
 #include <mctools/base_step_hit_processor.h>
 
 namespace datatools {
+  class properties;
   class service_manager;
 }
 
@@ -50,6 +51,9 @@ namespace mctools {
     typedef std::map<std::string, base_step_hit_processor *> processor_dict_type;
 
   public:
+
+    /// Check the initialization flag
+    bool is_initialized () const;
 
     /// Check the debug flag
     bool is_debug () const;
@@ -92,6 +96,9 @@ namespace mctools {
 
     /// Get a mutable reference to the PRNG
     mygsl::rng & grab_external_prng();
+
+    /// Initialization method
+    void initialize(const datatools::properties & config_);
 
     /// Reset method
     void reset ();
@@ -138,6 +145,7 @@ namespace mctools {
 
     base_step_hit_processor::factory_register_type _factory_register_; /// The factory register for 'Step Hit Processor' classes
  
+    bool                         _initialized_;     /// Initialized flag
     bool                         _debug_;           /// Debug flag
     std::string                  _description_;     /// Description
     datatools::service_manager * _service_manager_; /// Service manager
@@ -150,6 +158,13 @@ namespace mctools {
 
 
 } // end of namespace mctools
+
+
+/***************
+ * OCD support *
+ ***************/
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(mctools::step_hit_processor_factory)
 
 #endif // MCTOOLS_STEP_HIT_PROCESSOR_FACTORY_H_
 

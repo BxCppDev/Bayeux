@@ -32,9 +32,13 @@
 #include <sstream>
 #include <exception>
 
+#include <boost/foreach.hpp>
+
+#include <datatools/datatools_config.h>
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
 #include <datatools/multi_properties.h>
+#include <datatools/library_loader.h>
 
 #include <mygsl/random_utils.h>
 
@@ -54,6 +58,10 @@
 int main(int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
+
+  std::vector<std::string> dlls; /// List of DLLs to be loaded 
+  std::string dll_loader_config; /// Configuration file of the DLL loader
+
   try {
     std::clog << datatools::io::notice
               << "g4_production: "
@@ -199,6 +207,21 @@ int main(int argc_, char ** argv_)
        ->zero_tokens()
        ->default_value(false),
        "store the run header and footer info\ntogether with the output data file")
+
+      ("dlls-config,L",
+       po::value<std::string> (&dll_loader_config),
+       "set the DLL loader configuration file.      \n"
+       "Example :                                   \n"
+       " --dlls-config dlls.conf                    "
+       )
+      
+      ("load-dll,l",
+       po::value<std::vector<std::string> >(&dlls),
+       "set a DLL to be loaded.                     \n"
+       "Example :                                   \n"
+       " --load-dll G4VisXXX                        "
+       )
+
       ; // end of options' description
 
     // Describe command line arguments :
@@ -299,6 +322,24 @@ int main(int argc_, char ** argv_)
     }
 
     /*** end of opts/args parsing ***/
+
+    datatools::library_loader dll_loader(datatools::library_loader::allow_unregistered, 
+                                         dll_loader_config);
+    if (params.g4_visu) {
+      std::string g4_vis_dll = "G4visXXX";
+      if (std::find(dlls.begin(), dlls.end(), g4_vis_dll) == dlls.end()) {
+        std::clog << "NOTICE: " << "Force the loading of the DLL '" << g4_vis_dll << "' DLL..." << std::endl;
+        dlls.push_back(g4_vis_dll);
+      }
+    }
+    BOOST_FOREACH (const std::string & dll_name, dlls) {
+      std::clog << "NOTICE: " << "Loading DLL '" << dll_name << "'..." << std::endl;
+      if (dll_loader.load (dll_name) != EXIT_SUCCESS) {
+        std::ostringstream message;
+        message << "g4_production: Loading DLL '" << dll_name << "' failed !";
+        throw std::logic_error (message.str ());
+      }
+    }
 
     // Declare the simulation manager:
     mctools::g4::manager sim_manager;
