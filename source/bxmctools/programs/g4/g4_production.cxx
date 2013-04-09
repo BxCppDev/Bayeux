@@ -331,6 +331,11 @@ int main(int argc_, char ** argv_)
         std::clog << "NOTICE: " << "Force the loading of the DLL '" << g4_vis_dll << "' DLL..." << std::endl;
         dlls.push_back(g4_vis_dll);
       }
+      std::string g4_opengl_dll = "G4OpenGL";
+      if (std::find(dlls.begin(), dlls.end(), g4_opengl_dll) == dlls.end()) {
+        std::clog << "NOTICE: " << "Force the loading of the DLL '" << g4_opengl_dll << "' DLL..." << std::endl;
+        dlls.push_back(g4_opengl_dll);
+      }
     }
     BOOST_FOREACH (const std::string & dll_name, dlls) {
       std::clog << "NOTICE: " << "Loading DLL '" << dll_name << "'..." << std::endl;

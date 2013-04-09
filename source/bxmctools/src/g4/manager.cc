@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
 /* manager.cc
- *
+ * 
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -997,7 +997,7 @@ namespace mctools {
                         << seeds_filename << "' to '" << backup_seeds_filename << "'..." << std::endl;
               if (boost::filesystem::exists(backup_seeds_filename))
                 {
-                  std::clog << "WARNING: " << "mctools::g4::manager::_init_seeds: "
+                  std::clog << "NOTICE: " << "mctools::g4::manager::_init_seeds: "
                             << "Deleting old backup Random Number Generators seeds file '"
                             << backup_seeds_filename << "'..." << std::endl;
                   boost::filesystem::remove(backup_seeds_filename);
@@ -1254,9 +1254,9 @@ namespace mctools {
                     << rsf << "'..." << std::endl;
           needs_seed = false;
           if (_mgr_prng_seed_ != mygsl::random_utils::SEED_INVALID) {
-            std::clog << datatools::io::warning
+            std::clog << datatools::io::notice
                       << "mctools::g4::manager::_init_prngs: "
-                      << "Ignoring the given seed for the Random Number Generator initialization !" << std::endl;
+                      << "Ignoring the seed for the Random Number Generator initialization !" << std::endl;
           }
           _mgr_prng_seed_ = mygsl::random_utils::SEED_INVALID;
         }
@@ -1749,7 +1749,7 @@ namespace mctools {
 #ifdef G4VIS_USE
         if (has_g4_visualization()) {
           if (_g4_vis_manager_) {
-            _g4_vis_manager_->SetVerboseLevel("quiet");
+            //_g4_vis_manager_->SetVerboseLevel("quiet");
           }
         }
 #endif
@@ -1784,7 +1784,7 @@ namespace mctools {
           {
             if (_g4_vis_manager_)
               {
-                _g4_vis_manager_->SetVerboseLevel("quiet");
+                //_g4_vis_manager_->SetVerboseLevel("quiet");
               }
           }
 #endif

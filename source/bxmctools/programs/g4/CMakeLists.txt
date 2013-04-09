@@ -49,7 +49,7 @@ foreach ( _mctools_g4_pro_program ${_mctools_g4_programs_list} )
 
   unset ( _mctools_g4_pro_libraries )
   get_filename_component ( _mctools_g4_pro_executable ${_mctools_g4_pro_program} NAME_WE )
-  message ( STATUS "sng4: programs:  Building executable target '${_mctools_g4_pro_executable}'" )
+  message ( STATUS "mctools: g4: programs:  Building executable target '${_mctools_g4_pro_executable}'" )
   add_executable ( ${_mctools_g4_pro_executable} ${_mctools_g4_pro_program} )
   # define d suffix on windows
   if (WIN32)
@@ -83,6 +83,7 @@ foreach ( _mctools_g4_pro_program ${_mctools_g4_programs_list} )
     list ( APPEND _mctools_g4_link_libraries datatools_bio )
   endif ()
 
+  # -Wl,--no-as-needed 
   target_link_libraries ( ${_mctools_g4_pro_executable}
     ${_mctools_g4_link_libraries}
     )

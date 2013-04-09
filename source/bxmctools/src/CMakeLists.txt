@@ -269,9 +269,16 @@ src/g4/tracking_action.cc
   
   add_library(mctools_g4 SHARED ${mctools_g4_SOURCES})
 
+  set(_mctools_g4_additional_libs)
+  if (MCTOOLS_WITH_G4_G4VIS_USE)
+     list(APPEND _mctools_g4_additional_libs G4OpenGL)	  
+  endif()
   target_link_libraries(mctools_g4
                         mctools
-                        ${Geant4_LIBRARIES})
+                        ${Geant4_LIBRARIES} 
+			${_mctools_g4_additional_libs}
+  ) 
+  ### gcc only : -Wl,--no-as-needed G4OpenGL G4visXXX)
 
   if(APPLE)
     set_property(TARGET mctools_g4 APPEND

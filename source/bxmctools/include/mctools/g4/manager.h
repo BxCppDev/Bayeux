@@ -62,7 +62,6 @@ namespace genbb {
 #include <mctools/g4/track_history.h>
 
 #ifdef G4VIS_USE
-#warning ======================== Run with G4VIS_USE ===================
 class G4VisManager;
 #endif // G4VIS_USE
 

@@ -10,14 +10,20 @@
 #/vis/viewer/pan [right-increment] [up-increment] [unit]
 #/vis/viewer/zoom 2
 #/vis/viewer/zoomTo 2
+#/vis/open ATree
+#/vis/ASCIITree/verbose 3
 
 #
-#/vis/open OGLIX
-/vis/open OGL
-/vis/viewer/set/viewpointThetaPhi 0 0
+/vis/open OGLIX
+/vis/viewer/set/viewpointThetaPhi 30 50
 /vis/viewer/zoom 2
+/vis/scene/add/axes 0 0 0 10 cm
+/vis/scene/add/logicalVolume world.log
+/vis/viewer/set/style wireframe
 /vis/scene/add/trajectories
 /tracking/storeTrajectory 1
 /vis/drawVolume
+
+
 
 #

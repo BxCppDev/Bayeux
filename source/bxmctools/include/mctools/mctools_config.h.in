@@ -39,13 +39,15 @@
 #cmakedefine01 MCTOOLS_WITH_G4_G4VIS_USE
 
 #if MCTOOLS_WITH_G4_G4VIS_USE == 1
-#define G4VIS_USE 1
+#cmakedefine G4VIS_USE
+#cmakedefine G4VIS_USE_OPENGLX  
+#cmakedefine G4VIS_USE_OPENGLXM 
+#cmakedefine G4VIS_USE_OPENGLQT 
 #endif
 
 //! The installation path of the mctools resource files :
 #define MCTOOLS_DATA_INSTALL_DIR "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@"
 
-#
 #endif // MCTOOLS_MCTOOLS_CONFIG_H_
 
 // end of mctools_config.h
