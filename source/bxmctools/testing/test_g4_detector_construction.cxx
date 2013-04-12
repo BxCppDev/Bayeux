@@ -68,7 +68,7 @@ int main (int argc_, char ** argv_)
     geo_manager.initialize (gm_setup);
 
     // Additional plugins :
-    std::string mag_field_plugin_file="${EMFIELD_TRUNK_SRC_ROOT}/testing/config/test_emfield_geom_plugin.conf";
+    std::string mag_field_plugin_file="${EMFIELD_DATA_DIR}/testing/config/test_emfield_geom_plugin.conf";
     datatools::fetch_path_with_env(mag_field_plugin_file);
     datatools::multi_properties mag_field_plugin_config;
     mag_field_plugin_config.read(mag_field_plugin_file);
@@ -85,7 +85,7 @@ int main (int argc_, char ** argv_)
     dc_setup.store("gdml.no_validation", false);
     dc_setup.store("gdml.schema_location", "local");
     dc_setup.store("materials.plugin_name", "materials_driver");
-    dc_setup.store("hit_processor_factory.config", 
+    dc_setup.store("hit_processor_factory.config",
                    "${MCTOOLS_DATA_DIR}/testing/config/test_step_hit_processor_factory.conf");
     my_detector_construction.initialize(dc_setup);
     G4VPhysicalVolume * mother = my_detector_construction.Construct ();
