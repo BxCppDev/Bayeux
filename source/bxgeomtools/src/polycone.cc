@@ -1,4 +1,4 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* polycone.cc
  */
 
@@ -15,46 +15,46 @@
 #include <datatools/utils.h>
 #include <datatools/units.h>
 
-#include <mygsl/tabfunc.h>
+#include <mygsl/tabulated_function.h>
 #include <mygsl/numerical_differentiation.h>
 #include <mygsl/interval.h>
 
 namespace geomtools {
- 
+
   using namespace std;
-  
+
   const string polycone::POLYCONE_LABEL = "polycone";
 
   string polycone::get_shape_name () const
   {
     return POLYCONE_LABEL;
   }
-    
+
     double polycone::get_xmin () const
     {
       return -_r_max_;
     }
-    
+
     double polycone::get_xmax () const
     {
       return +_r_max_;
     }
-    
+
     double polycone::get_ymin () const
     {
       return -_r_max_;
     }
-    
+
     double polycone::get_ymax () const
     {
       return +_r_max_;
     }
-    
+
     double polycone::get_zmin () const
     {
       return _z_min_;
     }
-    
+
     double polycone::get_zmax () const
     {
       return _z_max_;
@@ -84,13 +84,13 @@ namespace geomtools {
   {
     return _points_;
   }
- 
+
   // ctor:
   polycone::polycone ()
   {
     reset ();
   }
-  
+
   // dtor:
   polycone::~polycone ()
   {
@@ -130,7 +130,7 @@ namespace geomtools {
     return;
   }
 
-  void polycone::_build_from_envelope_and_skin_ (double skin_thickness_, 
+  void polycone::_build_from_envelope_and_skin_ (double skin_thickness_,
                                                  double skin_step_)
   {
     _build_from_envelope_and_skin_ (skin_thickness_,
@@ -140,7 +140,7 @@ namespace geomtools {
     return;
   }
 
-  void polycone::_build_from_envelope_and_skin_ (double skin_thickness_, 
+  void polycone::_build_from_envelope_and_skin_ (double skin_thickness_,
                                                  double skin_step_,
                                                  double zmin_,
                                                  double zmax_)
@@ -149,7 +149,7 @@ namespace geomtools {
     devel = true;
     double zmin = zmin_;
     double zmax = zmax_;
-    
+
     if (devel)
       {
         clog << "DEVEL: " << "polycone::_build_from_envelope_and_skin_: "
@@ -180,7 +180,7 @@ namespace geomtools {
         double rmax = i->second.rmax;
         tf.add_point (z, rmax);
       }
-    tf.lock_table (); 
+    tf.lock_table ();
     // ofstream f1 ("f1.data");
     // tf.print_points (f1);
 
@@ -199,9 +199,9 @@ namespace geomtools {
         clog << "DEVEL: " << "polycone::_build_from_envelope_and_skin_: "
              << "Building interpolated inner envelope..." << endl;
       }
-    //mygsl::tabulated_function tf2 (interpolation_mode); 
-    mygsl::tabulated_function tf3 (interpolation_mode); 
-    for (mygsl::tabulated_function::points_map_t::const_iterator 
+    //mygsl::tabulated_function tf2 (interpolation_mode);
+    mygsl::tabulated_function tf3 (interpolation_mode);
+    for (mygsl::tabulated_function::points_map_t::const_iterator
            i = tf.points ().begin ();
          i != tf.points ().end ();
          i++)
@@ -227,7 +227,7 @@ namespace geomtools {
     tf3.lock_table ();
     //ofstream f3 ("f3.data");
     //tf3.print_points (f3);
-    
+
     // Manage bounds:
     if (devel)
       {
@@ -235,15 +235,15 @@ namespace geomtools {
              << "Building properly bounded interpolated inner envelope..."
              << endl;
       }
-    mygsl::tabulated_function tf3bis (interpolation_mode); 
-    for (mygsl::tabulated_function::points_map_t::const_iterator 
+    mygsl::tabulated_function tf3bis (interpolation_mode);
+    for (mygsl::tabulated_function::points_map_t::const_iterator
            i = tf.points ().begin ();
          i != tf.points ().end ();
          i++)
       {
         double x = i->first;
         double y;
-        if (tf3.is_valid (x)) 
+        if (tf3.is_valid (x))
           {
             y = tf3 (x);
           }
@@ -251,26 +251,26 @@ namespace geomtools {
           {
             if (x < tf3.x_min ())
               {
-                double df3dx = mygsl::derivative_forward (tf3, tf3.x_min (), 0.05 * dx); 
+                double df3dx = mygsl::derivative_forward (tf3, tf3.x_min (), 0.05 * dx);
                 y = tf3 (tf3.x_min ()) + (x - tf3.x_min ()) * df3dx;
               }
             else //if (x > tf3.x_max ())
               {
-                double df3dx = mygsl::derivative_backward (tf3, tf3.x_max (), 0.05 * dx); 
+                double df3dx = mygsl::derivative_backward (tf3, tf3.x_max (), 0.05 * dx);
                 y = tf3 (tf3.x_max ()) + (x - tf3.x_max ()) * df3dx;
               }
           }
         tf3bis.add_point (x, y, false);
       }
     tf3bis.lock_table ();
-    
+
     if (devel)
       {
         clog << "DEVEL: " << "polycone::_build_from_envelope_and_skin_: "
              << "Building final interpolated outer and inner envelopes with requested Z sampling..." << endl;
       }
-    mygsl::tabulated_function tf_outer ("linear"); 
-    mygsl::tabulated_function tf_inner ("linear"); 
+    mygsl::tabulated_function tf_outer ("linear");
+    mygsl::tabulated_function tf_inner ("linear");
     double z1 = tf.x_min ();
     double z2 = tf.x_max ();
     if (devel) cerr << "DEVEL: " << "polycone::_build_from_envelope_and_skin_: "
@@ -308,7 +308,7 @@ namespace geomtools {
           cerr << "DEVEL: "  << "polycone::_build_from_envelope_and_skin_: "
           << "Loop: z=" << z << endl;
         */
-        if (z >= z2) 
+        if (z >= z2)
           {
             if (devel) cerr << "DEVEL: "  << "polycone::_build_from_envelope_and_skin_: "
                             << "z2 stop" << endl;
@@ -320,7 +320,7 @@ namespace geomtools {
         mygsl::interval domain (tf.x_min (), tf.x_max (), safe);
         double drdz = mygsl::derivative (tf, z, domain);
         dz = dx / sqrt (1.0 + drdz * drdz);
-        if (dz > dx) 
+        if (dz > dx)
           {
             dz = dx;
           }
@@ -365,8 +365,8 @@ namespace geomtools {
     while (! stop);
     // lock interpolators:
     tf_outer.lock_table ();
-    tf_inner.lock_table (); 
-    if (devel) 
+    tf_inner.lock_table ();
+    if (devel)
       {
         cerr << "DEVEL: " << "polycone::_build_from_envelope_and_skin_: "
              << "Locked !" << endl;
@@ -458,7 +458,7 @@ namespace geomtools {
                 message << "polycone::initialize: "
                         << "'list_of_z' and 'list_of_rmax' have not the same size !";
                 throw logic_error (message.str ());
-                    
+
               }
           }
         else
@@ -478,7 +478,7 @@ namespace geomtools {
                 message << "polycone::initialize: "
                         << "'list_of_rmin' and 'list_of_rmax' have not the same size !";
                 throw logic_error (message.str ());
-                    
+
               }
           }
         else if (setup_.has_key ("rmin"))
@@ -492,7 +492,7 @@ namespace geomtools {
           {
             rmin = 0.0 * lunit;
           }
-            
+
         for (int i = 0; i < zs.size (); i++)
           {
             double a_z = zs[i];
@@ -508,7 +508,7 @@ namespace geomtools {
             double a_rmax = rmaxs[i];
             this->add (a_z, a_rmin, a_rmax, false);
           }
-        this->_compute_all_ ();   
+        this->_compute_all_ ();
       }
     else if (build_mode_label == "datafile")
       {
@@ -520,7 +520,7 @@ namespace geomtools {
         if (setup_.has_key ("datafile"))
           {
             datafile = setup_.fetch_string ("datafile");
-          }  
+          }
         else
           {
             ostringstream message;
@@ -535,7 +535,7 @@ namespace geomtools {
             if (! setup_.has_explicit_unit ("zmin")) {
               zmin *= lunit;
             }
-          }  
+          }
 
         if (setup_.has_key ("zmax"))
           {
@@ -543,12 +543,12 @@ namespace geomtools {
             if (! setup_.has_explicit_unit ("zmax")) {
               zmax *= lunit;
             }
-          }  
+          }
 
         datatools::fetch_path_with_env (datafile);
         this->initialize (datafile, zmin, zmax);
       }
-    else 
+    else
       {
         ostringstream message;
         message << "polycone::initialize: "
@@ -567,7 +567,7 @@ namespace geomtools {
     return;
   }
 
-  void polycone::initialize (const string & filename_, 
+  void polycone::initialize (const string & filename_,
                              double zmin_, double zmax_)
   {
     bool devel = false;
@@ -578,10 +578,10 @@ namespace geomtools {
     if (! ifs)
       {
         std::ostringstream message;
-        message << "polycone::initialize: " 
+        message << "polycone::initialize: "
                 << "Cannot open data file '"
                 << filename << "' !";
-        throw std::runtime_error (message.str ()); 
+        throw std::runtime_error (message.str ());
       }
     size_t count = 0;
     double length_unit = CLHEP::mm;
@@ -604,7 +604,7 @@ namespace geomtools {
           string  word;
           iss >> word;
           if (word.empty ()) continue;
-          if (word[0] == '#') 
+          if (word[0] == '#')
             {
               if (word.size () >= 2)
                 {
@@ -615,10 +615,10 @@ namespace geomtools {
                       if (! iss)
                         {
                           ostringstream message;
-                          message << "polycone::initialize: " 
+                          message << "polycone::initialize: "
                                   << "Invalid format for the length unit directive in data file '"
                                   << filename << "' at line " << count << " !";
-                          throw std::logic_error (message.str ()); 
+                          throw std::logic_error (message.str ());
                         }
                       length_unit = datatools::units::get_length_unit_from (unit_str);
                     }
@@ -632,10 +632,10 @@ namespace geomtools {
                       if (! iss)
                         {
                           ostringstream message;
-                          message << "polycone::initialize: " 
+                          message << "polycone::initialize: "
                                   << "Invalid format for the Z-factor directive in data file '"
                                   << filename << "' at line " << count << " !";
-                          throw runtime_error (message.str ()); 
+                          throw runtime_error (message.str ());
                         }
                     }
                   else if (word == "#@r_factor")
@@ -644,10 +644,10 @@ namespace geomtools {
                       if (! iss)
                         {
                           ostringstream message;
-                          message << "polycone::initialize: " 
+                          message << "polycone::initialize: "
                                   << "Invalid format for the R-factor directive in data file '"
                                   << filename << "' at line " << count << " !";
-                          throw runtime_error (message.str ()); 
+                          throw runtime_error (message.str ());
                         }
                     }
                   else if (word == "#@skin_thickness")
@@ -656,10 +656,10 @@ namespace geomtools {
                       if (! iss)
                         {
                           ostringstream message;
-                          message << "polycone::initialize: " 
+                          message << "polycone::initialize: "
                                   << "Invalid format for the skin_thickness directive in data file '"
                                   << filename << "' at line " << count << " !";
-                          throw logic_error (message.str ()); 
+                          throw logic_error (message.str ());
                         }
                     }
                   else if (word == "#@skin_step")
@@ -668,10 +668,10 @@ namespace geomtools {
                       if (! iss)
                         {
                           ostringstream message;
-                          message << "polycone::initialize: " 
+                          message << "polycone::initialize: "
                                   << "Invalid format for the skin_thickness directive in data file '"
                                   << filename << "' at line " << count << " !";
-                          throw logic_error (message.str ()); 
+                          throw logic_error (message.str ());
                         }
                     }
                 }
@@ -689,19 +689,19 @@ namespace geomtools {
           if (! iss)
             {
               ostringstream message;
-              message << "polycone::initialize: " 
+              message << "polycone::initialize: "
                       << "Format error for 'z' in data file '"
                       << filename << "' at line " << count << " !";
-              throw logic_error (message.str ()); 
+              throw logic_error (message.str ());
             }
           iss >> r1;
           if (! iss)
             {
               ostringstream message;
-              message << "polycone::initialize: " 
+              message << "polycone::initialize: "
                       << "Format error for 'r1' in data file '"
                       << filename << "' at line " << count << " !";
-              throw logic_error (message.str ()); 
+              throw logic_error (message.str ());
             }
           // try to read a third column:
           string token;
@@ -720,7 +720,7 @@ namespace geomtools {
                   r2 = r1;
                   datatools::invalidate (r1);
                 }
-              else 
+              else
                 {
                   // try three columns format:
                   istringstream iss2 (token);
@@ -728,11 +728,11 @@ namespace geomtools {
                   if (! iss2)
                     {
                       ostringstream message;
-                      message << "polycone::initialize: " 
+                      message << "polycone::initialize: "
                               << "Format error for 'r2' in data file '"
                               << filename << "' at line " << count << " !";
-                      throw runtime_error (message.str ()); 
-                    }       
+                      throw runtime_error (message.str ());
+                    }
                   if (ignore_rmin)
                     {
                       datatools::invalidate (r1);
@@ -740,21 +740,21 @@ namespace geomtools {
                   else if (datatools::is_valid (skin_thickness))
                     {
                       ostringstream message;
-                      message << "polycone::initialize: " 
+                      message << "polycone::initialize: "
                               << "Invalid format for 'z r2' pair "
                               << "in 'skin_thickness' mode from data file '"
                               << filename << "' at line " << count << " !";
-                      throw runtime_error (message.str ()); 
+                      throw runtime_error (message.str ());
                     }
                 }
             }
           if (datatools::is_valid (r2) && (r2 < 0.0))
             {
               ostringstream message;
-              message << "polycone::initialize: " 
+              message << "polycone::initialize: "
                       << "Invalid value '" << r2 << "' for '2' in data file '"
                       << filename << "' at line " << count << " !";
-              throw runtime_error (message.str ()); 
+              throw runtime_error (message.str ());
             }
           double tz, tr1, tr2;
           tz  = z  * z_factor * length_unit;
@@ -770,7 +770,7 @@ namespace geomtools {
             }
         }
       }
-    this->_compute_all_ ();         
+    this->_compute_all_ ();
 
     if (datatools::is_valid (skin_thickness))
       {
@@ -822,7 +822,7 @@ namespace geomtools {
     if (rmax_ < rmin_)
       {
         ostringstream message;
-        message <<  "polycone::add: " 
+        message <<  "polycone::add: "
                 << "Invalid value for 'rmax==" << rmax_ << "' ! ('rmin==" << rmin_ << "')";
         throw runtime_error (message.str ());
       }
@@ -842,7 +842,7 @@ namespace geomtools {
   {
     return _points_.size () > 1;
   }
-  
+
   void polycone::reset ()
   {
     _points_.clear ();
@@ -871,7 +871,7 @@ namespace geomtools {
   void polycone::_compute_limits_ ()
   {
     if (! is_valid ()) return;
-    _z_min_ = _z_max_ = _r_max_ = numeric_limits<double>::quiet_NaN();    
+    _z_min_ = _z_max_ = _r_max_ = numeric_limits<double>::quiet_NaN();
     for (rz_col_type::const_iterator i = _points_.begin ();
          i != _points_.end ();
          i++)
@@ -910,7 +910,7 @@ namespace geomtools {
   {
     if (! is_valid ()) return;
     //cerr << "DEBUG: polycone::_compute_surfaces_: Entering..." << endl;
-    
+
     // bottom surface:
     {
       rz_col_type::const_iterator i = _points_.begin ();
@@ -940,8 +940,8 @@ namespace geomtools {
           double R1_2 = R1 * R1;
           double R2_2 = R2 * R2;
           double h = abs (z1 - z0);
-          double A = M_PI * (R1_2 + R2_2 + 
-                             sqrt ((R1_2 - R2_2) * (R1_2 - R2_2) 
+          double A = M_PI * (R1_2 + R2_2 +
+                             sqrt ((R1_2 - R2_2) * (R1_2 - R2_2)
                                    + h * h * (R1_2 + R2_2) * (R1_2 + R2_2)));
           s += A;
           // increment:
@@ -976,8 +976,8 @@ namespace geomtools {
           double R1_2 = R1 * R1;
           double R2_2 = R2 * R2;
           double h = abs (z1 - z0);
-          double A = M_PI * (R1_2 + R2_2 + 
-                             sqrt ((R1_2 - R2_2) * (R1_2 - R2_2) 
+          double A = M_PI * (R1_2 + R2_2 +
+                             sqrt ((R1_2 - R2_2) * (R1_2 - R2_2)
                                    + h * h * (R1_2 + R2_2) * (R1_2 + R2_2)));
           s += A;
           // increment:
@@ -988,13 +988,13 @@ namespace geomtools {
         }
       _inner_side_surface_ = s;
       /*
-        cerr << "DEBUG: polycone::_compute_surfaces_: " 
+        cerr << "DEBUG: polycone::_compute_surfaces_: "
         << "_inner_side_surface_==" << _inner_side_surface_ << endl;
       */
     }
     return;
   }
-  
+
   void polycone::_compute_volume_ ()
   {
     if (! is_valid ()) return;
@@ -1056,25 +1056,25 @@ namespace geomtools {
     _volume_ = _outer_volume_ - _inner_volume_;
     return;
   }
- 
+
   double polycone::get_surface (int mask_) const
   {
     double s = 0.0;
     int mask = mask_;
     if (mask_ == (int) ALL_SURFACES) mask = FACE_ALL;
-    if (mask & FACE_INNER_SIDE) 
+    if (mask & FACE_INNER_SIDE)
       {
         s += _inner_side_surface_;
       }
-    if (mask & FACE_OUTER_SIDE) 
+    if (mask & FACE_OUTER_SIDE)
       {
         s += _outer_side_surface_;
       }
-    if (mask & FACE_BOTTOM) 
+    if (mask & FACE_BOTTOM)
       {
         s += _bottom_surface_;
       }
-    if (mask & FACE_TOP) 
+    if (mask & FACE_TOP)
       {
         s += _top_surface_;
       }
@@ -1101,12 +1101,12 @@ namespace geomtools {
     throw runtime_error ("polycone::get_parameter: Unknown parameter flag !");
   }
 
-  bool polycone::is_inside (const vector_3d & point_, 
+  bool polycone::is_inside (const vector_3d & point_,
                             double skin_) const
   {
     double skin = get_skin ();
     if (skin_ > USING_PROPER_SKIN) skin = skin_;
-    
+
     double z = point_.z ();
     if (z > get_z_max () + 0.5 * skin) return false;
     if (z < get_z_min () - 0.5 * skin) return false;
@@ -1136,7 +1136,7 @@ namespace geomtools {
                 return true;
               }
             break;
-          } 
+          }
       }
     return false;
   }
@@ -1150,8 +1150,8 @@ namespace geomtools {
     double y = position_.y ();
     double z = position_.z ();
     if (is_on_surface (position_, FACE_BOTTOM)) normal.set (0.0, 0.0, -1.0);
-    else if (is_on_surface (position_, FACE_TOP)) normal.set (0.0, 0.0, +1.0); 
-    else if (is_on_surface (position_, FACE_OUTER_SIDE)) 
+    else if (is_on_surface (position_, FACE_TOP)) normal.set (0.0, 0.0, +1.0);
+    else if (is_on_surface (position_, FACE_OUTER_SIDE))
       {
         for (rz_col_type::const_iterator i = _points_.begin ();
              i != _points_.end ();
@@ -1177,14 +1177,14 @@ namespace geomtools {
               }
           } // for
       }
-    else if (is_on_surface (position_, FACE_INNER_SIDE)) 
+    else if (is_on_surface (position_, FACE_INNER_SIDE))
       {
         //...
       }
     return normal;
   }
 
-  bool polycone::is_on_surface (const vector_3d & point_ , 
+  bool polycone::is_on_surface (const vector_3d & point_ ,
                                 int    mask_ ,
                                 double skin_) const
   {
@@ -1198,28 +1198,28 @@ namespace geomtools {
     int mask = mask_;
     if (mask_ == (int) ALL_SURFACES) mask = FACE_ALL;
 
-    if (mask & FACE_BOTTOM) 
+    if (mask & FACE_BOTTOM)
       {
         double zbottom = _points_.begin ()->first;
         double rbottom = _points_.begin ()->second.rmax;
-        if ((abs(z - zbottom) < hskin) 
+        if ((abs(z - zbottom) < hskin)
             && (r < (rbottom + hskin))) return true;
-      } 
+      }
 
-    if (mask & FACE_TOP) 
+    if (mask & FACE_TOP)
       {
         double ztop = _points_.rbegin ()->first;
         double rtop = _points_.rbegin ()->second.rmax;
-        if ((abs(z - ztop) < hskin) 
+        if ((abs(z - ztop) < hskin)
             && (r < (rtop + hskin))) return true;
-      } 
+      }
 
-    if (mask & FACE_INNER_SIDE) 
+    if (mask & FACE_INNER_SIDE)
       {
         throw runtime_error ("polycone::is_on_surface: Not implemented yet !");
       }
-    
-    if (mask & FACE_OUTER_SIDE) 
+
+    if (mask & FACE_OUTER_SIDE)
       {
         for (rz_col_type::const_iterator i = _points_.begin ();
              i != _points_.end ();
@@ -1246,13 +1246,13 @@ namespace geomtools {
                     return true;
                   }
                 break;
-              } 
+              }
           }
       }
     return false;
   }
-      
-  bool polycone::find_intercept (const vector_3d & from_, 
+
+  bool polycone::find_intercept (const vector_3d & from_,
                                  const vector_3d & direction_,
                                  intercept_t & intercept_,
                                  double skin_) const
@@ -1283,30 +1283,30 @@ namespace geomtools {
     p_.reset ();
     char c = 0;
     in_.get (c);
-    if (c != '{') 
+    if (c != '{')
       {
         in_.clear (ios_base::failbit);
         return in_;
-      } 
+      }
     string name;
     in_ >> name;
-    if (name != polycone::POLYCONE_LABEL) 
+    if (name != polycone::POLYCONE_LABEL)
       {
         in_.clear (ios_base::failbit);
         return in_;
-      } 
+      }
     size_t n;
     in_ >> n;
     for (int i = 0; i < n; i++)
       {
         double rmin, rmax, z;
         in_ >> z >> rmin >> rmax;
-        if (! in_) 
+        if (! in_)
           {
             in_.clear (ios_base::failbit);
             return in_;
-          } 
-        try 
+          }
+        try
           {
             p_.add (z, rmin, rmax, false);
           }
@@ -1314,51 +1314,51 @@ namespace geomtools {
           {
             p_.reset ();
             in_.clear (ios_base::failbit);
-          }     
+          }
       }
     c = 0;
     in_.get (c);
-    if (c != '}') 
+    if (c != '}')
       {
         in_.clear (ios_base::failbit);
         return in_;
-      } 
+      }
     p_._compute_all_ ();
     return in_;
   }
 
-  void polycone::tree_dump (ostream & out_, 
-                            const string & title_, 
-                            const string & indent_, 
+  void polycone::tree_dump (ostream & out_,
+                            const string & title_,
+                            const string & indent_,
                             bool inherit_) const
   {
     string indent;
     if (! indent_.empty ()) indent = indent_;
     i_object_3d::tree_dump (out_, title_, indent_, true);
 
-    out_ << indent << datatools::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Z(min) : " << get_z_min () / CLHEP::mm << " mm" << endl;
-    out_ << indent << datatools::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Z(max) : " << get_z_max () / CLHEP::mm << " mm" << endl;
-    out_ << indent << datatools::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "R(max) : " << get_r_max () / CLHEP::mm << " mm" << endl;
-    out_ << indent << datatools::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Number of points : " << _points_.size () << endl;
-    out_ << indent << datatools::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Volume : " << get_volume () / CLHEP::cm3 << " cm3" << endl;
-    out_ << indent << datatools::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Bottom surface : " << get_surface (FACE_BOTTOM) / CLHEP::cm2 << " cm2" << endl;
-    out_ << indent << datatools::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Top surface : " << get_surface (FACE_TOP) / CLHEP::cm2 << " cm2" << endl;
-    out_ << indent << datatools::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Outer side surface : " << get_surface (FACE_OUTER_SIDE) / CLHEP::cm2 << " cm2" << endl;
-    out_ << indent << datatools::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Inner side surface : " << get_surface (FACE_INNER_SIDE) / CLHEP::cm2 << " cm2" << endl;
     out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
          << "Total surface : " << get_surface (FACE_ALL) / CLHEP::cm2 << " cm2" << endl;
     return;
   }
-  
+
 } // end of namespace geomtools
 
   // end of polycone.cc
