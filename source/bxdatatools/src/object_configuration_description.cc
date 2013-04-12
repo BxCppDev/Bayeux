@@ -710,6 +710,20 @@ namespace datatools {
   }
 
   object_configuration_description &
+  object_configuration_description::set_class_library(const std::string & cd_)
+  {
+    _class_library_ = cd_;
+    return *this;
+  }
+
+  object_configuration_description &
+  object_configuration_description::set_class_documentation(const std::string & cd_)
+  {
+    _class_documentation_ = cd_;
+    return *this;
+  }
+
+  object_configuration_description &
   object_configuration_description::set_configuration_hints(const std::string & ch_)
   {
     _configuration_hints_ = ch_;
@@ -733,10 +747,30 @@ namespace datatools {
   {
     return _class_description_;
   }
- 
+
+  const std::string & object_configuration_description::get_class_library() const
+  {
+    return _class_library_;
+  }
+
+  const std::string & object_configuration_description::get_class_documentation() const
+  {
+    return _class_documentation_;
+  }
+  
   bool object_configuration_description::has_class_description() const
   {
     return !_class_description_.empty();
+  }
+
+  bool object_configuration_description::has_class_library() const
+  {
+    return !_class_library_.empty();
+  }
+ 
+  bool object_configuration_description::has_class_documentation() const
+  {
+    return !_class_documentation_.empty();
   }
   
   const std::string & object_configuration_description::get_configuration_hints() const
@@ -755,49 +789,66 @@ namespace datatools {
   }
 
   void object_configuration_description::print(std::ostream & out_, 
-                                               const std::string & indent_) const
+                                               const std::string & indent_,
+                                               uint32_t po_flags_) const
   {
     out_ << indent_ << "Class name          : '" << get_class_name () << "'" << std::endl;
     if (has_class_description()) {
       out_ << indent_ << "Class description   : '" << get_class_description () << "'" << std::endl;
     }
-    //out_ << indent_ << "Status              : '" << _locked_ << "'" << std::endl;
-    out_ << indent_ << "Description of configuration properties : " << std::endl;
-    for (int i = 0; i < _properties_infos_.size(); i++) {
-      out_ << indent_ << std::endl;
-      const configuration_property_description & cpd = _properties_infos_[i];
-      cpd.print(out_, indent_ + "  ");
+    if (has_class_library()) {
+      out_ << indent_ << "Class library       : '" << get_class_library () << "'" << std::endl;
+    }
+    if (has_class_documentation()) {
+      out_ << indent_ << "Class documentation : " << std::endl;
+      print_multi_lines(out_, _class_documentation_, indent_ + "  ");
+    }
+    if (po_flags_ & po_no_config) return; 
+    if ( _configuration_properties_infos_.size() > 0) {
+      out_ << indent_ << "Description of configuration properties : " << std::endl;
+      for (int i = 0; i < _configuration_properties_infos_.size(); i++) {
+        out_ << indent_ << std::endl;
+        const configuration_property_description & cpd = _configuration_properties_infos_[i];
+        cpd.print(out_, indent_ + "  ");
+      }
     }
     if (has_configuration_hints()) {
       out_ << indent_ << std::endl;
       out_ << indent_ << "Configuration hints : " << std::endl;
       print_multi_lines(out_, _configuration_hints_, indent_ + "  ");
     }
+    out_ << indent_ << "Validation support : " << _validation_support_ << std::endl;
     return;
   }
 
   unsigned int 
   object_configuration_description::get_number_of_documented_properties() const
   {
-    return _properties_infos_.size();
+    return _configuration_properties_infos_.size();
   }
 
   const configuration_property_description & 
-  object_configuration_description::get_property_info(int i_) const
+  object_configuration_description::get_configuration_property_info(int i_) const
   {
-    return _properties_infos_[i_];
+    return _configuration_properties_infos_[i_];
   }
   
   configuration_property_description & 
-  object_configuration_description::add_property_info()
+  object_configuration_description::add_configuration_property_info()
   {
     {
       configuration_property_description dummy;
-      _properties_infos_.push_back(dummy);
+      _configuration_properties_infos_.push_back(dummy);
     }
-    return _properties_infos_.back();
+    return _configuration_properties_infos_.back();
   }
 
+ 
+  configuration_property_description & 
+  object_configuration_description::add_property_info()
+  {
+    return add_configuration_property_info();
+  }
 
   bool object_configuration_description::is_locked() const
   {
@@ -814,17 +865,26 @@ namespace datatools {
  
   void object_configuration_description::_at_lock_()
   {
+    if (! has_class_library()) {
+      std::ostringstream message;
+      message << "datatools::object_configuration_description::_at_lock_: "
+              << "Missing library for class named '" << get_class_name() << "' !";
+      //throw std::logic_error(message.str());      
+      std::cerr << datatools::io::warning 
+                << message.str() 
+                << std::endl;
+    }
     // Establish interdependencies between dependees/dependers dynamic properties :
-    for (int i = 0; i < _properties_infos_.size(); i++) {
-      configuration_property_description & cpd = _properties_infos_[i];
+    for (int i = 0; i < _configuration_properties_infos_.size(); i++) {
+      configuration_property_description & cpd = _configuration_properties_infos_[i];
       if (cpd.is_static()) {
         continue;
       }
       configuration_property_description::dependency_entry & dde = cpd._dynamic_dependee_;
       bool found_dependency = false;
-      for (int k = 0; k < _properties_infos_.size(); k++) {
+      for (int k = 0; k < _configuration_properties_infos_.size(); k++) {
         if (k == i) continue;
-        configuration_property_description & cpd2 = _properties_infos_[k];
+        configuration_property_description & cpd2 = _configuration_properties_infos_[k];
         // std::cerr << "DEVEL: " << "datatools::object_configuration_description::_at_lock_: "
         //           << "Dependee's name : '" << dde.name << "' " 
         //           << "versus checked name : '" << cpd2.get_name_pattern() << "' " 
@@ -883,16 +943,16 @@ namespace datatools {
     }
 
     // Establish interdependencies between triggering/triggered properties (BY FLAG):
-    for (int i = 0; i < _properties_infos_.size(); i++) {
-      configuration_property_description & cpd = _properties_infos_[i];
+    for (int i = 0; i < _configuration_properties_infos_.size(); i++) {
+      configuration_property_description & cpd = _configuration_properties_infos_[i];
       if (! cpd.is_triggered_by_flag()) {
         continue;
       }
       configuration_property_description::dependency_entry & trigger = cpd._triggered_by_flag_;
       bool found_trigger = false;
-      for (int k = 0; k < _properties_infos_.size(); k++) {
+      for (int k = 0; k < _configuration_properties_infos_.size(); k++) {
         if (k == i) continue;
-        configuration_property_description & cpd2 = _properties_infos_[k];
+        configuration_property_description & cpd2 = _configuration_properties_infos_[k];
         // std::cerr << "DEVEL: " << "datatools::object_configuration_description::_at_lock_: "
         //           << "Trigger's name : '" << trigger.name << "' " 
         //           << "versus checked name : '" << cpd2.get_name_pattern() << "' " 
@@ -940,16 +1000,16 @@ namespace datatools {
     }
 
     // Establish interdependencies between triggering/triggered properties (BY LABEL):
-    for (int i = 0; i < _properties_infos_.size(); i++) {
-      configuration_property_description & cpd = _properties_infos_[i];
+    for (int i = 0; i < _configuration_properties_infos_.size(); i++) {
+      configuration_property_description & cpd = _configuration_properties_infos_[i];
       if (! cpd.is_triggered_by_label()) {
         continue;
       }
       configuration_property_description::dependency_entry & trigger = cpd._triggered_by_label_;
       bool found_trigger = false;
-      for (int k = 0; k < _properties_infos_.size(); k++) {
+      for (int k = 0; k < _configuration_properties_infos_.size(); k++) {
         if (k == i) continue;
-        configuration_property_description & cpd2 = _properties_infos_[k];
+        configuration_property_description & cpd2 = _configuration_properties_infos_[k];
         // std::cerr << "DEVEL: " << "datatools::object_configuration_description::_at_lock_: "
         //           << "Trigger's name : '" << trigger.name << "' " 
         //           << "versus checked name : '" << cpd2.get_name_pattern() << "' " 
@@ -1017,11 +1077,12 @@ namespace datatools {
     out_ << indent_ << "|-- " << "Status : " << (is_locked()?"Locked":"Unlocked") << "'\n";
     out_ << indent_ << "|-- " << "Class name : '" << _class_name_ << "'\n";
     out_ << indent_ << "|-- " << "Class description : '" << _class_description_ << "'\n";
+    out_ << indent_ << "|-- " << "Class documentation : " << _class_documentation_ << "\n";
     out_ << indent_ << "|-- " << "Configuration properties : \n";
-    for (int i = 0; i < _properties_infos_.size(); i++) {
+    for (int i = 0; i < _configuration_properties_infos_.size(); i++) {
       out_ << indent_ << "|   ";
       std::string tag = "|   ";
-      if (i ==  _properties_infos_.size() - 1) {
+      if (i ==  _configuration_properties_infos_.size() - 1) {
         out_ << "`-- ";
         tag = "    ";
       }
@@ -1029,7 +1090,7 @@ namespace datatools {
         out_ << "|-- ";
       }
       out_ << "Configuration property #" << i << " : \n";
-      const configuration_property_description & cpd = _properties_infos_[i];
+      const configuration_property_description & cpd = _configuration_properties_infos_[i];
       cpd.dump(out_, "", indent_ + "|   " + tag);
     }
 
@@ -1153,8 +1214,8 @@ namespace datatools {
       throw std::logic_error("datatools::object_configuration_description::validate: OCD object has no validation support !");
     } 
     // Loop on all documented properties :
-    for (int i = 0; i < _properties_infos_.size(); i++) {
-      const configuration_property_description & cpd = _properties_infos_[i];
+    for (int i = 0; i < _configuration_properties_infos_.size(); i++) {
+      const configuration_property_description & cpd = _configuration_properties_infos_[i];
 
       // Process static properties :
       if (cpd.is_static()) {
@@ -1320,8 +1381,8 @@ namespace datatools {
     out_ << "# Lines starting with '" << '#' << "' are simple comments.\n";
     out_ << '\n';
     
-    for (int i = 0; i < _properties_infos_.size(); i++) {
-      const configuration_property_description & cpd = _properties_infos_[i];
+    for (int i = 0; i < _configuration_properties_infos_.size(); i++) {
+      const configuration_property_description & cpd = _configuration_properties_infos_[i];
 
       // Process static property :
       if (cpd.is_static()) {

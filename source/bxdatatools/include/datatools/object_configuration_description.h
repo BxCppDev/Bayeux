@@ -43,6 +43,7 @@ namespace datatools {
 
 class object_configuration_description;
 
+/// \brief An object that describes the way an objet of a given class can be configured.
 class configuration_property_description
 {
 public:
@@ -177,9 +178,17 @@ private:
 };
 
 
+/// \brief An object that describes the way an objet of a given class can be configured.
 class object_configuration_description
 {
  public:
+
+  /// \brief Print option flags
+  enum po_flags_type 
+    {
+      po_none = 0,
+      po_no_config = 0x1,
+    };
 
   typedef std::vector<configuration_property_description> cpd_col_type;
 
@@ -194,6 +203,12 @@ class object_configuration_description
     set_class_description(const std::string &);
 
   object_configuration_description &
+    set_class_documentation(const std::string &);
+
+  object_configuration_description &
+    set_class_library(const std::string &);
+
+  object_configuration_description &
     set_configuration_hints(const std::string &);
 
   object_configuration_description &
@@ -202,21 +217,32 @@ class object_configuration_description
   const std::string & get_class_name() const;
 
   const std::string & get_class_description() const;
+
+  const std::string & get_class_documentation() const;
+
+  const std::string & get_class_library() const;
  
   bool has_class_description() const;
  
+  bool has_class_library() const;
+
+  bool has_class_documentation() const;
+  
   const std::string & get_configuration_hints() const;
 
   bool has_configuration_hints() const;
 
   bool has_validation_support() const;
 
-  void print(std::ostream & out_, const std::string & indent_ = "") const;
+  void print(std::ostream & out_, const std::string & indent_ = "", uint32_t po_flags_ = 0) const;
 
   unsigned int get_number_of_documented_properties() const;
 
-  const configuration_property_description & get_property_info(int i_) const;
+  const configuration_property_description & get_configuration_property_info(int i_) const;
   
+  configuration_property_description & add_configuration_property_info();
+  
+  /// Obsolete
   configuration_property_description & add_property_info();
 
   bool validate(const datatools::properties & config_,
@@ -252,12 +278,14 @@ private:
   
 private:
 
-  bool        _locked_; /// Lock flag
-  std::string _class_name_; /// The name of the class to be documented
-  std::string _class_description_; /// An optional description string
-  cpd_col_type _properties_infos_; /// Collection of documented properties
-  std::string _configuration_hints_; /// Some embeded plain text documentation
-  bool        _validation_support_; /// Flag to support validation
+  bool         _locked_; /// Lock flag
+  std::string  _class_name_; /// The name of the class to be documented
+  std::string  _class_description_; /// An optional description string
+  std::string  _class_documentation_; /// An optional documentation string
+  std::string  _class_library_;       /// An optional string describing the library the class belongs to
+  cpd_col_type _configuration_properties_infos_; /// Collection of documented properties
+  std::string  _configuration_hints_; /// Some embeded plain text documentation
+  bool         _validation_support_; /// Flag to support validation
 
 };
 

@@ -633,6 +633,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::library_loader,ocd_)
 {
   ocd_.set_class_name ("datatools::library_loader");
   ocd_.set_class_description ("A shared library (DLL) loader");
+  ocd_.set_class_library ("datatools");
+  ocd_.set_class_documentation ("A library loader object is responsible of the dynamic loading\n"
+                                "of shared libraries (DLL).                                   \n"
+                                );
  
   ocd_.set_configuration_hints ("A library loader object may load directives from a file that  \n"
                                 "uses the format of the 'datatools::multi_properties' object.  \n"

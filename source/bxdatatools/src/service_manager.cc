@@ -780,9 +780,27 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
 {
   ocd_.set_class_name ("datatools::service_manager");
   ocd_.set_class_description ("A generic manager for service objects");
+  ocd_.set_class_library ("datatools");
+  ocd_.set_class_documentation ("A service manager is responsible of the instantiation,             \n"
+                                "initialization, management and destruction of various service      \n"
+                                "objects.                                                           \n"
+                                "A service is a special object that fulfils the generic             \n"
+                                "'datatools::base_service' interface. A service is generally        \n"
+                                "dedicated to some special task : description of the geometry,      \n"
+                                "runtime access to a database, management of a dynamic pool of      \n"
+                                "histograms for data analysis... Such service objects are hosted    \n"
+                                "by the service manager which provides a unique counter for         \n"
+                                "end-users and client applications to configure, initialize and     \n"
+                                "access to the functionalities offered by the on-board services.    \n" 
+                                "A service manager can be configured 'manually' from plain C++ code.\n"
+                                "Is is also possible to initialize it through a set of ASCII        \n"
+                                "configuration files, thus dynamically instantiating a list of      \n"
+                                "services with for various embeded functionalities.                 \n"
+                                )
+    ;
   
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("debug")
       .set_terse_description("Flag to activate debugging output")
       .set_traits(datatools::TYPE_BOOLEAN)
@@ -795,7 +813,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
   }
   
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("name")
       .set_terse_description("The name of the service manager object")
       .set_traits(datatools::TYPE_STRING)
@@ -808,7 +826,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
   }
   
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("description")
       .set_terse_description("The embeded description string")
       .set_traits(datatools::TYPE_STRING)
@@ -821,7 +839,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
   }  
   
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("services.configuration_files")
       .set_terse_description("A list of configuration file names for embeded services")
       .set_traits(datatools::TYPE_STRING, 

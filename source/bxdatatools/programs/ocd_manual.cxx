@@ -37,6 +37,7 @@ public:
   std::string dll_loader_config; /// Configuration file of the DLL loader
   std::string action; /// The name of the action to invoke
   std::string class_id; /// The class registration ID
+  std::vector<std::string> action_options; /// The options associated to the action
   std::string input_path; /// Input path
   std::string output_path; /// Output path
 };
@@ -48,6 +49,7 @@ void ocd_manual_params::reset()
   dlls.clear();
   dll_loader_config.clear();
   action.clear();
+  action_options.clear();
   class_id.clear();
   input_path.clear();
   output_path.clear();
@@ -73,6 +75,11 @@ void ocd_manual_params::print(std::ostream & out_) const
   }
   out_ << std::endl;
   out_ << "  Action      = '" << action << "'" << '\n';
+  out_ << "  Action options = ";
+  BOOST_FOREACH (const std::string & action_opt, this->action_options) {
+    out_ << " '" << action_opt << "'";
+  }
+  out_ << std::endl;
   out_ << "  Class ID    = '" << class_id << "'" << '\n';
   out_ << "  Input path  = '" << input_path << "'" << '\n';
   out_ << "  Output path = '" << output_path << "'" << '\n';
@@ -233,7 +240,14 @@ int ocd_manual::_run_show(const std::string & class_id_)
   else {
     const datatools::object_configuration_description & OCD 
       = ocd_system_reg.get(class_id_);
-    OCD.print(std::cout);
+    uint32_t po_flags;
+    if (std::find(_params_.action_options.begin(),
+                  _params_.action_options.end(),
+                  "--no-config") != _params_.action_options.end())
+      {
+        po_flags |= datatools::object_configuration_description::po_no_config;
+      }
+    OCD.print(std::cout, "", po_flags);
   }
 
   return error_code;
@@ -420,10 +434,19 @@ int main (int argc_, char ** argv_)
     args.add ("class-id", 1);
 
     po::variables_map vm;
-    po::store (po::command_line_parser (argc_, argv_)
-               .options (opts)
-               .positional (args)
-               .run (), vm);
+    po::parsed_options parsed = 
+      po::command_line_parser (argc_, argv_)
+      .options (opts)
+      .positional (args)
+      .allow_unregistered()
+      .run ();
+    params.action_options = po::collect_unrecognized(parsed.options, po::include_positional);
+    // po::store (po::command_line_parser (argc_, argv_)
+    //            .options (opts)
+    //            .positional (args)
+    //            .allow_unregistered()
+    //            .run (), vm);
+    po::store (parsed, vm);
     po::notify (vm);
     
     // Fetch the opts/args :
