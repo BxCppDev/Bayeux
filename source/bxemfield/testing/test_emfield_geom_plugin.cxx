@@ -1,6 +1,6 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 // test_emfield_geom_plugin.cxx
- 
+
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -28,8 +28,8 @@ int main (int argc_, char ** argv_)
 
   int error_code = EXIT_SUCCESS;
   try {
-    std::clog << "Test program for the 'emfield::emfield_geom_plugin' class." << std::endl; 
-  
+    std::clog << "Test program for the 'emfield::emfield_geom_plugin' class." << std::endl;
+
     bool   debug   = false;
     bool   verbose = false;
     bool   plot    = false;
@@ -39,7 +39,7 @@ int main (int argc_, char ** argv_)
     while (iarg < argc_) {
       std::string token = argv_[iarg];
       if (token[0] == '-') {
-        std::string option = token; 
+        std::string option = token;
         if ((option == "-d") || (option == "--debug")) {
           debug = true;
         }
@@ -58,23 +58,23 @@ int main (int argc_, char ** argv_)
         else if ((option == "-Bx10")) {
           b_scale *= 10;
         }
-        else { 
-          std::clog << "warning: ignoring option '" << option << "' !" 
-                    << std::endl; 
+        else {
+          std::clog << "warning: ignoring option '" << option << "' !"
+                    << std::endl;
         }
       }
       else {
-        std::string argument = token; 
-        { 
-          std::clog << "warning: ignoring argument '" << argument << "' !" 
-                    << std::endl; 
+        std::string argument = token;
+        {
+          std::clog << "warning: ignoring argument '" << argument << "' !"
+                    << std::endl;
         }
-      } 
-      iarg++; 
+      }
+      iarg++;
     }
 
-    DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(geomtools::manager::base_plugin).tree_dump (std::clog, 
-                                                                                      "System geometry plugin register: ", 
+    DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(geomtools::manager::base_plugin).tree_dump (std::clog,
+                                                                                      "System geometry plugin register: ",
                                                                                       "INFO: ");
 
     // This is the geometry manager :
@@ -82,7 +82,7 @@ int main (int argc_, char ** argv_)
     geo_manager.tree_dump(std::clog, "The geometry manager (uninitialized) : ");
     geo_manager.set_debug (debug);
 
-    std::string mag_field_plugin_file="${EMFIELD_TRUNK_SRC_ROOT}/testing/config/test_emfield_geom_plugin.conf";
+    std::string mag_field_plugin_file="${EMFIELD_DATA_DIR}/testing/config/test_emfield_geom_plugin.conf";
     datatools::fetch_path_with_env(mag_field_plugin_file);
     datatools::multi_properties mag_field_plugins_setup;
     mag_field_plugins_setup.read(mag_field_plugin_file);
@@ -92,21 +92,21 @@ int main (int argc_, char ** argv_)
     datatools::fetch_path_with_env(gm_filename);
     datatools::properties::read_config(gm_filename, gm_setup);
     geo_manager.initialize (gm_setup);
-    // Load additional plugins : 
-    geo_manager.get_plugins_factory_register().tree_dump (std::clog, 
-                                                          "Embeded geometry plugin register: ", 
+    // Load additional plugins :
+    geo_manager.get_plugins_factory_register().tree_dump (std::clog,
+                                                          "Embeded geometry plugin register: ",
                                                           "INFO: ");
     geo_manager.load_plugins(mag_field_plugins_setup);
     geo_manager.tree_dump(std::clog, "The geometry manager with EM fields plugin: ");
 
-    const emfield::electromagnetic_field_manager * EMFmgr_ref = 0;   
+    const emfield::electromagnetic_field_manager * EMFmgr_ref = 0;
     std::string emfield_plugin_name = "fields_driver";
-    if (geo_manager.has_plugin (emfield_plugin_name) 
+    if (geo_manager.has_plugin (emfield_plugin_name)
         && geo_manager.is_plugin_a<emfield::emfield_geom_plugin>(emfield_plugin_name)) {
-      std::clog << "NOTICE: " << "Found plugin named '" 
-                << emfield_plugin_name 
+      std::clog << "NOTICE: " << "Found plugin named '"
+                << emfield_plugin_name
                 << "'" << std::endl;
-      const emfield::emfield_geom_plugin & egp 
+      const emfield::emfield_geom_plugin & egp
         = geo_manager.get_plugin<emfield::emfield_geom_plugin>(emfield_plugin_name);
       const emfield::electromagnetic_field_manager & field_mgr = egp.get_manager();
       field_mgr.tree_dump(std::clog, "The EM field manager : ");
@@ -116,8 +116,8 @@ int main (int argc_, char ** argv_)
     if (EMFmgr_ref == 0) {
       throw std::logic_error("No field manager was extracted from the geometry manager's collection of plugins !");
     }
- 
-     
+
+
     // This is the EM fields manager :
     const emfield::electromagnetic_field_manager & EMFmgr = *EMFmgr_ref;
 
@@ -126,9 +126,9 @@ int main (int argc_, char ** argv_)
     if (EMFmgr.has_geom_map()) {
       const emfield::geom_map & EMFgeomap = EMFmgr.get_geom_map();
       int count = 0;
-      for (emfield::geom_map::association_dict_type::const_iterator i 
+      for (emfield::geom_map::association_dict_type::const_iterator i
              = EMFgeomap.get_associations().begin();
-           i != EMFgeomap.get_associations().end(); 
+           i != EMFgeomap.get_associations().end();
            i++) {
         std::string association_name = i->first;
         //std::cerr << "DEVEL: association = '" << association_name << "'  ";
@@ -145,7 +145,7 @@ int main (int argc_, char ** argv_)
               field.compute_magnetic_field(position, 0.0, magfield);
               std::ostringstream B_label;
               B_label << "B_" << count++;
-              geomtools::display_data::display_item & DI            
+              geomtools::display_data::display_item & DI
                 = DD.add_static_item (B_label.str(),
                                       "group::magfield",
                                       "blue");
@@ -158,7 +158,7 @@ int main (int argc_, char ** argv_)
               plcmt.set_orientation (magfield.getPhi(),
                                      magfield.getTheta(),
                                      0.0);
-              arrow.generate_wires (DI.paths, plcmt); 
+              arrow.generate_wires (DI.paths, plcmt);
             } // for z
           } // for y
         } // for x
@@ -168,7 +168,7 @@ int main (int argc_, char ** argv_)
       int    visu_depth  = geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT;
       std::string drawer_view = geomtools::gnuplot_drawer::VIEW_3D;
       std::string visu_object_name = "world";
-        
+
       geomtools::gnuplot_drawer GPD;
       GPD.grab_properties().store(geomtools::gnuplot_drawer::WORLD_NAME_KEY,
                                   geo_manager.get_world_name ());
@@ -176,20 +176,20 @@ int main (int argc_, char ** argv_)
       GPD.set_mode (geomtools::gnuplot_drawer::MODE_WIRED);
       geomtools::placement DD_pl;
       DD_pl.set_translation(0,0,0);
-      GPD.add_display_data(DD, DD_pl); 
-      int view_code = GPD.draw(geo_manager, 
-                               visu_object_name, 
+      GPD.add_display_data(DD, DD_pl);
+      int view_code = GPD.draw(geo_manager,
+                               visu_object_name,
                                visu_depth);
     }
-      
+
     std::clog << "The end." << std::endl;
   }
-  catch (std::exception & x) { 
-    std::cerr << "error: " << x.what () << std::endl; 
+  catch (std::exception & x) {
+    std::cerr << "error: " << x.what () << std::endl;
     error_code = EXIT_FAILURE;
   }
   catch (...) {
-    std::cerr << "error: " << "unexpected error !" << std::endl; 
+    std::cerr << "error: " << "unexpected error !" << std::endl;
     error_code = EXIT_FAILURE;
   }
   return (error_code);
