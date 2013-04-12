@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // test_library_loader_1.cxx
 
 #include <cstdlib>
@@ -16,26 +16,26 @@ int main (int argc_ , char ** argv_)
   using namespace std;
 
   int error_code = EXIT_SUCCESS;
-  try 
-    { 
-      clog << "Test of the 'datatools::library_loader' class." << endl; 
-  
+  try
+    {
+      clog << "Test of the 'datatools::library_loader' class." << endl;
+
       bool   debug = false;
       bool   test = false;
       string libdir = "";
       string libname = "";
 
       int iarg = 1;
-      while (iarg <  argc_) 
+      while (iarg <  argc_)
         {
           string arg = argv_[iarg];
           if (boost::algorithm::starts_with (arg, "-"))
             {
-              if (arg == "-d" || arg == "--debug") 
+              if (arg == "-d" || arg == "--debug")
                 {
                   debug =  true;
                 }
-             if (arg == "-t" || arg == "--test") 
+             if (arg == "-t" || arg == "--test")
                 {
                   test =  true;
                 }
@@ -47,17 +47,17 @@ int main (int argc_ , char ** argv_)
                   libname = arg;
                 }
               else if (libdir.empty ())
-                { 
+                {
                   libdir = arg;
                 }
-            } 
+            }
           iarg++;
-        } 
- 
+        }
+
       datatools::library_loader::g_devel = debug;
       datatools::library_loader::g_test  = test;
- 
-      if (libname.empty ()) 
+
+      if (libname.empty ())
         {
           libname = "crypto"; // or "curses" ...
         }
@@ -66,10 +66,10 @@ int main (int argc_ , char ** argv_)
       uint32_t LL_flags = datatools::library_loader::allow_unregistered;
       datatools::library_loader LL (LL_flags, LL_config);
       datatools::library_loader LL2 (LL_flags, LL_config);
- 
+
       clog << " Loading 'ssl'..." << endl;
       LL.load ("ssl");
- 
+
       // clog << "Loading 'mygsl'..." << endl;
       // LL.load ("mygsl");
 
@@ -84,9 +84,9 @@ int main (int argc_ , char ** argv_)
 
       clog << "Closing '" << libname << "'..." << endl;
       LL.close (libname);
- 
-      clog << "Loading 'geomtools' (2)..." << endl;
-      LL2.load ("geomtools");
+
+      //clog << "Loading 'geomtools' (2)..." << endl;
+      //LL2.load ("geomtools");
 
       LL2.print (clog);
 
@@ -107,12 +107,12 @@ int main (int argc_ , char ** argv_)
     }
   catch (exception & x)
     {
-      cerr << "error: " << x.what () << endl; 
+      cerr << "error: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error!" << endl; 
+      cerr << "error: " << "unexpected error!" << endl;
       error_code = EXIT_FAILURE;
     }
   return error_code;

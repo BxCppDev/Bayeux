@@ -1,4 +1,4 @@
-// -*- mode: c++; -*- 
+// -*- mode: c++; -*-
 // object_configuration_description.cc
 
 #include <boost/algorithm/string.hpp>
@@ -22,7 +22,7 @@ namespace datatools {
   {
     return type == DEP_BY_FLAG;
   }
-  
+
   bool configuration_property_description::dependency_entry::by_label() const
   {
     return type == DEP_BY_LABEL;
@@ -39,7 +39,7 @@ namespace datatools {
     return name;
   }
 
-  const configuration_property_description & 
+  const configuration_property_description &
   configuration_property_description::dependency_entry::ref() const
   {
     return *address;
@@ -136,7 +136,7 @@ namespace datatools {
     return _complex_dependencies_;
   }
 
-  const configuration_property_description::dependency_entry & 
+  const configuration_property_description::dependency_entry &
   configuration_property_description::get_dynamic_dependee() const
   {
     return _dynamic_dependee_;
@@ -152,31 +152,31 @@ namespace datatools {
     return _dynamic_dependers_.size();
   }
 
-  const configuration_property_description::dependency_entry & 
+  const configuration_property_description::dependency_entry &
   configuration_property_description::get_dynamic_depender(int i_) const
   {
     return _dynamic_dependers_.at(i_);
   }
- 
-  unsigned int 
+
+  unsigned int
   configuration_property_description::get_number_of_triggered_dependers() const
   {
     return _triggering_.size();
   }
 
-  const configuration_property_description::dependency_entry & 
+  const configuration_property_description::dependency_entry &
   configuration_property_description::get_triggered_depender(int i_) const
   {
     return _triggering_.at(i_);
   }
 
-  const configuration_property_description::dependency_entry & 
+  const configuration_property_description::dependency_entry &
   configuration_property_description::get_triggered_by_flag() const
   {
     return _triggered_by_flag_;
   }
 
-  const configuration_property_description::dependency_entry & 
+  const configuration_property_description::dependency_entry &
   configuration_property_description::get_triggered_by_label() const
   {
     return _triggered_by_label_;
@@ -196,7 +196,7 @@ namespace datatools {
     return;
   }
 
-  configuration_property_description & 
+  configuration_property_description &
   configuration_property_description::set_name_pattern(const std::string &np_)
   {
     _name_pattern_ = np_;
@@ -242,7 +242,7 @@ namespace datatools {
                       << "Dependee '" << _dynamic_dependee_.name << "' has already been defined ! "
                       << "Only one dependee is allowed for dynamic property name pattern '" << np_ << "' !"
                 ;
-              throw std::logic_error(message.str());            
+              throw std::logic_error(message.str());
             }
           std::string source_prop_name = str.substr(2,str.length()-3);
           _dynamic_dependee_.type = DEP_DYNAMIC;
@@ -254,29 +254,29 @@ namespace datatools {
     return *this;
   }
 
-  configuration_property_description & 
+  configuration_property_description &
   configuration_property_description::set_terse_description(const std::string &desc_)
   {
     _terse_description_ = desc_;
     return *this;
   }
 
-  configuration_property_description & 
+  configuration_property_description &
   configuration_property_description::set_long_description(const std::string &desc_)
   {
     _long_description_ = desc_;
     return *this;
   }
 
-  configuration_property_description & 
+  configuration_property_description &
   configuration_property_description::set_mandatory(bool m_)
   {
     _mandatory_ = m_;
     return *this;
   }
 
-  configuration_property_description & 
-  configuration_property_description::set_triggered_by_flag(const std::string &prop_name_, 
+  configuration_property_description &
+  configuration_property_description::set_triggered_by_flag(const std::string &prop_name_,
                                                             bool triggering_status_)
   {
     _triggered_by_flag_.type = DEP_BY_FLAG;
@@ -285,8 +285,8 @@ namespace datatools {
     return *this;
   }
 
-  configuration_property_description & 
-  configuration_property_description::set_triggered_by_label(const std::string & prop_name_, 
+  configuration_property_description &
+  configuration_property_description::set_triggered_by_label(const std::string & prop_name_,
                                                              const std::string & triggering_labels_)
   {
     _triggered_by_label_.type = DEP_BY_LABEL;
@@ -295,7 +295,7 @@ namespace datatools {
     return *this;
   }
 
-  configuration_property_description & 
+  configuration_property_description &
   configuration_property_description::set_explicit_unit(bool xu_)
   {
     if (!is_real() && xu_)
@@ -304,20 +304,20 @@ namespace datatools {
         message << "datatools::configuration_property_description::set_name_pattern: "
                 << "Explicit unit is only supported by 'real' properties but the property with name pattern '" << _name_pattern_ << "' is not a 'real' !"
           ;
-        throw std::logic_error(message.str());        
+        throw std::logic_error(message.str());
       }
     _explicit_unit_ = xu_;
     return *this;
   }
 
-  configuration_property_description & 
+  configuration_property_description &
   configuration_property_description::set_const(bool c_)
   {
     _const_ = c_;
     return *this;
   }
 
-  configuration_property_description & 
+  configuration_property_description &
   configuration_property_description::set_path(bool p_)
   {
     if (! is_string()) {
@@ -325,13 +325,13 @@ namespace datatools {
       message << "datatools::configuration_property_description::set_path: "
               << "Explicit PATH is only supported by 'string' properties but the property with name pattern '" << _name_pattern_ << "' is not a string' !"
         ;
-      throw std::logic_error(message.str());        
+      throw std::logic_error(message.str());
     }
     _path_ = p_;
-    return *this;    
+    return *this;
   }
 
-  configuration_property_description & 
+  configuration_property_description &
   configuration_property_description::set_unit_label(const std::string & ul_)
   {
     if (!is_real() && !ul_.empty())
@@ -340,7 +340,7 @@ namespace datatools {
         message << "datatools::configuration_property_description::set_unit_label: "
                 << "Unit label is only supported by 'real' properties but the property with name pattern '" << _name_pattern_ << "' is not a 'real' !"
           ;
-        throw std::logic_error(message.str());        
+        throw std::logic_error(message.str());
       }
     _unit_label_ = ul_;
     if(! ul_.empty()) {
@@ -362,7 +362,7 @@ namespace datatools {
     return _unit_label_;
   }
 
-  configuration_property_description & 
+  configuration_property_description &
   configuration_property_description::set_unit_symbol(const std::string & us_)
   {
     if (!is_real() && !is_array() && !us_.empty())
@@ -371,7 +371,7 @@ namespace datatools {
         message << "datatools::configuration_property_description::set_unit_symbol: "
                 << "Unit symbol is only supported by 'real' array properties but the property with name pattern '" << _name_pattern_ << "' is not a array of 'real' !"
           ;
-        throw std::logic_error(message.str());        
+        throw std::logic_error(message.str());
       }
     _unit_symbol_ = us_;
     if(! us_.empty()) set_explicit_unit(true);
@@ -387,37 +387,37 @@ namespace datatools {
   {
     return _unit_symbol_;
   }
- 
+
   bool configuration_property_description::is_trigger() const
   {
     return _triggering_.size() > 0;
   }
-  
+
   bool configuration_property_description::is_triggered_by_flag() const
   {
     return _triggered_by_flag_.by_flag() && ! _triggered_by_flag_.name.empty();
   }
- 
+
   bool configuration_property_description::is_triggered_by_label() const
   {
-    return _triggered_by_label_.by_label() 
+    return _triggered_by_label_.by_label()
       && ! _triggered_by_label_.name.empty() ;
     //&& _triggered_by_label_.triggering_labels.size() != 0;
   }
 
-  configuration_property_description & 
-  configuration_property_description::set_traits(int type_, 
-                                                 bool array_, 
+  configuration_property_description &
+  configuration_property_description::set_traits(int type_,
+                                                 bool array_,
                                                  int fixed_size_)
   {
-    if (type_ < TYPE_BOOLEAN 
+    if (type_ < TYPE_BOOLEAN
         || type_ > TYPE_STRING)
       {
         std::ostringstream message;
         message << "datatools::configuration_property_description::set_name_pattern: "
                 << "Invalid type for property with name pattern '" << _name_pattern_ << "' !"
           ;
-        throw std::logic_error(message.str());        
+        throw std::logic_error(message.str());
       }
     _type_ = type_;
     _array_ = array_;
@@ -427,42 +427,42 @@ namespace datatools {
         message << "datatools::configuration_property_description::set_name_pattern: "
                 << "Invalid array fixed size directive makes no sense for a scalar property !"
           ;
-        throw std::logic_error(message.str());        
+        throw std::logic_error(message.str());
       }
     _array_fixed_size_ = fixed_size_;
-    
+
     return *this;
   }
 
-  configuration_property_description & 
+  configuration_property_description &
   configuration_property_description::set_complex_triggering_conditions(bool ctc_)
   {
     _complex_triggering_conditions_ = ctc_;
     return *this;
   }
 
-  configuration_property_description & 
+  configuration_property_description &
   configuration_property_description::set_complex_dependencies(bool cd_)
   {
     _complex_dependencies_ = cd_;
     return *this;
   }
-   
+
   bool configuration_property_description::is_static() const
   {
     return ! _dynamic_dependee_.has_name();
   }
-  
+
   bool configuration_property_description::is_dynamic() const
   {
     return ! is_static();
   }
-  
+
   bool configuration_property_description::has_explicit_unit() const
   {
     return _explicit_unit_;
   }
- 
+
   bool configuration_property_description::is_fixed_sized_array() const
   {
     return _array_fixed_size_ >= 0;
@@ -473,13 +473,13 @@ namespace datatools {
     return _array_fixed_size_;
   }
 
-  const std::string & 
+  const std::string &
   configuration_property_description::get_name_pattern() const
   {
     return _name_pattern_;
   }
 
-  const std::string & 
+  const std::string &
   configuration_property_description::get_terse_description() const
   {
     return _terse_description_;
@@ -490,9 +490,9 @@ namespace datatools {
   {
     return !_terse_description_.empty();
   }
-  
 
-  const std::string & 
+
+  const std::string &
   configuration_property_description::get_long_description() const
   {
     return _long_description_;
@@ -524,7 +524,7 @@ namespace datatools {
     return _array_;
   }
 
-  void configuration_property_description::print(std::ostream &out_, 
+  void configuration_property_description::print(std::ostream &out_,
                                                  const std::string & indent_) const
   {
     out_ << indent_ << get_name_pattern() << " ";
@@ -581,7 +581,7 @@ namespace datatools {
   }
 
 
-  void configuration_property_description::dump(std::ostream & out_, 
+  void configuration_property_description::dump(std::ostream & out_,
                                                 const std::string & title_,
                                                 const std::string & indent_) const
   {
@@ -593,7 +593,7 @@ namespace datatools {
     out_ << indent_ << "|   `-- " << "Static : " << is_static() << "\n";
     out_ << indent_ << "|-- " << "Status : '" << (is_valid()?"Valid":"Invalid") << "'\n";
     out_ << indent_ << "|-- " << "Terse description : '" << _terse_description_ << "'\n";
-    out_ << indent_ << "|-- " << "Long description : " 
+    out_ << indent_ << "|-- " << "Long description : "
          << (has_long_description() ? "Yes":"No") << "\n";
     out_ << indent_ << "|-- " << "Type : '" << ::datatools::get_label_from_type (_type_) << "'\n";
     out_ << indent_ << "|-- " << "Const : " << _const_ << "\n";
@@ -627,7 +627,7 @@ namespace datatools {
     }
     else {
       if (is_static() && _dynamic_dependers_.size()) {
-        out_ << indent_ << "|-- " << "Dependers : " << _dynamic_dependers_.size() << "\n";    
+        out_ << indent_ << "|-- " << "Dependers : " << _dynamic_dependers_.size() << "\n";
         for (int i = 0; i < _dynamic_dependers_.size(); i++) {
           out_ << indent_ << "|-- ";
           if (i == _dynamic_dependers_.size() - 1) out_ << "`-- ";
@@ -646,7 +646,7 @@ namespace datatools {
       out_ << indent_ << "|-- " << "Complex triggering conditions : " << _complex_triggering_conditions_ << "\n";
     }
     else if (_triggering_.size()) {
-      out_ << indent_ << "|-- " << "Triggering : " << _triggering_.size() << "\n";    
+      out_ << indent_ << "|-- " << "Triggering : " << _triggering_.size() << "\n";
       for (int i = 0; i < _triggering_.size(); i++) {
         out_ << indent_ << "|-- ";
         if (i == _triggering_.size() - 1) out_ << "`-- ";
@@ -663,7 +663,7 @@ namespace datatools {
         if (! _triggered_by_flag_.has_address()) {
           out_ << " (no address)";
         }
-        out_ << "\n";    
+        out_ << "\n";
       }
       if (is_triggered_by_label() && _triggered_by_label_.has_name()) {
         out_ << indent_ << "|-- " << "Triggered by label : '"  << _triggered_by_label_.name << "'";
@@ -674,7 +674,7 @@ namespace datatools {
         if (! _triggered_by_label_.has_address()) {
           out_ << " (no address)";
         }
-        out_ << "\n";    
+        out_ << "\n";
       }
     }
     out_ << indent_ << "`-- " << "Mandatory : '" << _mandatory_ << "'\n";
@@ -695,7 +695,7 @@ namespace datatools {
     return;
   }
 
-  object_configuration_description & 
+  object_configuration_description &
   object_configuration_description::set_class_name(const std::string & cn_)
   {
     _class_name_ = cn_;
@@ -737,7 +737,7 @@ namespace datatools {
     return *this;
   }
 
-  const std::string & 
+  const std::string &
   object_configuration_description::get_class_name() const
   {
     return _class_name_;
@@ -757,7 +757,7 @@ namespace datatools {
   {
     return _class_documentation_;
   }
-  
+
   bool object_configuration_description::has_class_description() const
   {
     return !_class_description_.empty();
@@ -767,28 +767,28 @@ namespace datatools {
   {
     return !_class_library_.empty();
   }
- 
+
   bool object_configuration_description::has_class_documentation() const
   {
     return !_class_documentation_.empty();
   }
-  
+
   const std::string & object_configuration_description::get_configuration_hints() const
   {
     return _configuration_hints_;
   }
- 
+
   bool object_configuration_description::has_configuration_hints() const
   {
     return !_configuration_hints_.empty();
   }
- 
+
   bool object_configuration_description::has_validation_support() const
   {
     return _validation_support_;
   }
 
-  void object_configuration_description::print(std::ostream & out_, 
+  void object_configuration_description::print(std::ostream & out_,
                                                const std::string & indent_,
                                                uint32_t po_flags_) const
   {
@@ -803,7 +803,7 @@ namespace datatools {
       out_ << indent_ << "Class documentation : " << std::endl;
       print_multi_lines(out_, _class_documentation_, indent_ + "  ");
     }
-    if (po_flags_ & po_no_config) return; 
+    if (po_flags_ & po_no_config) return;
     if ( _configuration_properties_infos_.size() > 0) {
       out_ << indent_ << "Description of configuration properties : " << std::endl;
       for (int i = 0; i < _configuration_properties_infos_.size(); i++) {
@@ -821,19 +821,19 @@ namespace datatools {
     return;
   }
 
-  unsigned int 
+  unsigned int
   object_configuration_description::get_number_of_documented_properties() const
   {
     return _configuration_properties_infos_.size();
   }
 
-  const configuration_property_description & 
+  const configuration_property_description &
   object_configuration_description::get_configuration_property_info(int i_) const
   {
     return _configuration_properties_infos_[i_];
   }
-  
-  configuration_property_description & 
+
+  configuration_property_description &
   object_configuration_description::add_configuration_property_info()
   {
     {
@@ -843,8 +843,8 @@ namespace datatools {
     return _configuration_properties_infos_.back();
   }
 
- 
-  configuration_property_description & 
+
+  configuration_property_description &
   object_configuration_description::add_property_info()
   {
     return add_configuration_property_info();
@@ -862,16 +862,16 @@ namespace datatools {
     _locked_ = true;
     return;
   }
- 
+
   void object_configuration_description::_at_lock_()
   {
     if (! has_class_library()) {
       std::ostringstream message;
       message << "datatools::object_configuration_description::_at_lock_: "
               << "Missing library for class named '" << get_class_name() << "' !";
-      //throw std::logic_error(message.str());      
-      std::cerr << datatools::io::warning 
-                << message.str() 
+      //throw std::logic_error(message.str());
+      std::cerr << datatools::io::warning
+                << message.str()
                 << std::endl;
     }
     // Establish interdependencies between dependees/dependers dynamic properties :
@@ -886,8 +886,8 @@ namespace datatools {
         if (k == i) continue;
         configuration_property_description & cpd2 = _configuration_properties_infos_[k];
         // std::cerr << "DEVEL: " << "datatools::object_configuration_description::_at_lock_: "
-        //           << "Dependee's name : '" << dde.name << "' " 
-        //           << "versus checked name : '" << cpd2.get_name_pattern() << "' " 
+        //           << "Dependee's name : '" << dde.name << "' "
+        //           << "versus checked name : '" << cpd2.get_name_pattern() << "' "
         //           << "\n";
         if (dde.name == cpd2.get_name_pattern()) {
           if (cpd2.is_dynamic()) {
@@ -935,7 +935,7 @@ namespace datatools {
       if (!dde.has_address()) {
         std::ostringstream message;
         message << "datatools::object_configuration_description::_at_lock_: "
-                << "Cannot find dependency '" 
+                << "Cannot find dependency '"
                 << dde.name
                 << "' for dynamic property with name pattern '" << cpd.get_name_pattern() << "' !";
         throw std::logic_error(message.str());
@@ -954,8 +954,8 @@ namespace datatools {
         if (k == i) continue;
         configuration_property_description & cpd2 = _configuration_properties_infos_[k];
         // std::cerr << "DEVEL: " << "datatools::object_configuration_description::_at_lock_: "
-        //           << "Trigger's name : '" << trigger.name << "' " 
-        //           << "versus checked name : '" << cpd2.get_name_pattern() << "' " 
+        //           << "Trigger's name : '" << trigger.name << "' "
+        //           << "versus checked name : '" << cpd2.get_name_pattern() << "' "
         //           << "\n";
         if (trigger.name == cpd2.get_name_pattern()) {
           if (cpd2.is_dynamic()) {
@@ -981,7 +981,7 @@ namespace datatools {
             configuration_property_description::dependency_entry dummy;
             cpd2._triggering_.push_back(dummy);
           }
-          configuration_property_description::dependency_entry & triggered 
+          configuration_property_description::dependency_entry & triggered
             = cpd2._triggering_.back();
           triggered.name = cpd.get_name_pattern();
           triggered.address = &cpd;
@@ -992,7 +992,7 @@ namespace datatools {
       if (!trigger.has_address()) {
         std::ostringstream message;
         message << "datatools::object_configuration_description::_at_lock_: "
-                << "Cannot find trigger property '" 
+                << "Cannot find trigger property '"
                 << trigger.name
                 << "' for property with name pattern '" << cpd.get_name_pattern() << "' !";
         throw std::logic_error(message.str());
@@ -1011,8 +1011,8 @@ namespace datatools {
         if (k == i) continue;
         configuration_property_description & cpd2 = _configuration_properties_infos_[k];
         // std::cerr << "DEVEL: " << "datatools::object_configuration_description::_at_lock_: "
-        //           << "Trigger's name : '" << trigger.name << "' " 
-        //           << "versus checked name : '" << cpd2.get_name_pattern() << "' " 
+        //           << "Trigger's name : '" << trigger.name << "' "
+        //           << "versus checked name : '" << cpd2.get_name_pattern() << "' "
         //           << "\n";
         if (trigger.name == cpd2.get_name_pattern()) {
           if (cpd2.is_dynamic()) {
@@ -1038,7 +1038,7 @@ namespace datatools {
                     << "the path string property '" << cpd2.get_name_pattern() << "' !";
             throw std::logic_error(message.str());
           }
- 
+
           // Set the address of the trigger :
           trigger.address = &cpd2;
           // Register the depender in the dependee :
@@ -1046,7 +1046,7 @@ namespace datatools {
             configuration_property_description::dependency_entry dummy;
             cpd2._triggering_.push_back(dummy);
           }
-          configuration_property_description::dependency_entry & triggered 
+          configuration_property_description::dependency_entry & triggered
             = cpd2._triggering_.back();
           triggered.name = cpd.get_name_pattern();
           triggered.address = &cpd;
@@ -1057,7 +1057,7 @@ namespace datatools {
       if (!trigger.has_address()) {
         std::ostringstream message;
         message << "datatools::object_configuration_description::_at_lock_: "
-                << "Cannot find trigger property '" 
+                << "Cannot find trigger property '"
                 << trigger.name
                 << "' for property with name pattern '" << cpd.get_name_pattern() << "' !";
         throw std::logic_error(message.str());
@@ -1066,7 +1066,7 @@ namespace datatools {
     return;
   }
 
-  void object_configuration_description::dump(std::ostream & out_, 
+  void object_configuration_description::dump(std::ostream & out_,
                                               const std::string & title_,
                                               const std::string & indent_) const
   {
@@ -1099,13 +1099,13 @@ namespace datatools {
     return;
   }
 
-  bool 
+  bool
   object_configuration_description::_validate_static(const configuration_property_description & cpd_,
                                                      const datatools::properties & config_,
                                                      std::string & error_message_) const
   {
     const std::string & prop_name = cpd_.get_name_pattern();
-    // Check if the property is missing : 
+    // Check if the property is missing :
     if (config_.has_key(prop_name)) {
       // Check type trait :
       if (cpd_.has_type()) {
@@ -1115,7 +1115,7 @@ namespace datatools {
       }
     }
     else {
-      // Check if the property is missing : 
+      // Check if the property is missing :
       // If flagged as mandatory :
       if (cpd_.is_mandatory()) {
         if (cpd_.has_complex_triggering_conditions()) {
@@ -1141,11 +1141,11 @@ namespace datatools {
       }
       // As the property does not exist in the container, there is nothing
       // left to check.
-    } // ! has_key    
+    } // ! has_key
     return true;
   }
 
-  bool 
+  bool
   object_configuration_description::_validate_traits(const configuration_property_description & cpd_,
                                                      const datatools::properties & config_,
                                                      std::string & error_message_) const
@@ -1155,7 +1155,7 @@ namespace datatools {
     if (pd.get_type() != cpd_.get_type()) {
       std::ostringstream message_oss;
       message_oss << "Invalid type for property '" << cpd_.get_name_pattern() << "'";
-      message_oss << "; expected type is '" << cpd_.get_type() << "' but found '" 
+      message_oss << "; expected type is '" << cpd_.get_type() << "' but found '"
                   << pd.get_type() << "' !";
       error_message_ = message_oss.str();
       return false;
@@ -1175,7 +1175,7 @@ namespace datatools {
     // Check scalar/array trait :
     if (cpd_.is_array()) {
       if (! pd.is_vector()) {
-        error_message_ = "Invalid array traits for property '" 
+        error_message_ = "Invalid array traits for property '"
           + cpd_.get_name_pattern() + "' !";
         return false;
       }
@@ -1183,9 +1183,9 @@ namespace datatools {
       if (cpd_.is_fixed_sized_array()) {
         if (cpd_.get_array_fixed_size() != pd.get_size()) {
           std::ostringstream message_oss;
-          message_oss << "Expected array size " 
-                      << cpd_.get_array_fixed_size() 
-                      << " for property '" 
+          message_oss << "Expected array size "
+                      << cpd_.get_array_fixed_size()
+                      << " for property '"
                       << cpd_.get_name_pattern() + "' "
                       << "but size=" << pd.get_size() << " was found "
                       << "!";
@@ -1196,10 +1196,10 @@ namespace datatools {
     }
     else {
       if (pd.is_vector()) {
-        error_message_ = "Invalid scalar traits for property '" 
+        error_message_ = "Invalid scalar traits for property '"
           + cpd_.get_name_pattern() + "' !";
         return false;
-      }       
+      }
     } // end of scalar/array trait.
     return true;
   }
@@ -1209,10 +1209,10 @@ namespace datatools {
   {
     if (! is_locked()) {
       throw std::logic_error("datatools::object_configuration_description::validate: OCD object is not locked ! Cannot perform validation !");
-    } 
+    }
     if (!has_validation_support()) {
       throw std::logic_error("datatools::object_configuration_description::validate: OCD object has no validation support !");
-    } 
+    }
     // Loop on all documented properties :
     for (int i = 0; i < _configuration_properties_infos_.size(); i++) {
       const configuration_property_description & cpd = _configuration_properties_infos_[i];
@@ -1224,7 +1224,7 @@ namespace datatools {
         }
       } // end of static properties
       else {
-        const configuration_property_description::dependency_entry & ddee 
+        const configuration_property_description::dependency_entry & ddee
           = cpd.get_dynamic_dependee();
         const configuration_property_description & dee_ref = ddee.ref();
         std::vector<std::string> words;
@@ -1239,7 +1239,7 @@ namespace datatools {
           boost::replace_first(dynprop_name, token, word);
           // std::cerr << "DEVEL: "
           //           << "Searching for '" << dynprop_name << "'"
-          //           << std::endl; 
+          //           << std::endl;
           configuration_property_description temp_cpd = cpd;
           temp_cpd.set_name_pattern (dynprop_name);
           if (temp_cpd.has_type()) {
@@ -1262,13 +1262,13 @@ namespace datatools {
      if (cpd_.is_array()) {
        if (cpd_.is_fixed_sized_array()) {
          array_sz = cpd_.get_array_fixed_size();
-       } 
+       }
      }
      // Boolean :
      if (cpd_.is_boolean()) {
        if (cpd_.is_scalar()) {
-         prop_.store_boolean(cpd_.get_name_pattern(), 
-                             false, 
+         prop_.store_boolean(cpd_.get_name_pattern(),
+                             false,
                              cpd_.get_terse_description(),
                              cpd_.is_const());
        }
@@ -1277,8 +1277,8 @@ namespace datatools {
          for (int ia = 0; ia < array_sz; ia++) {
            v.push_back(false);
          }
-         prop_.store(cpd_.get_name_pattern(), 
-                     v, 
+         prop_.store(cpd_.get_name_pattern(),
+                     v,
                      cpd_.get_terse_description(),
                      cpd_.is_const());
        }
@@ -1286,8 +1286,8 @@ namespace datatools {
      // Integer :
      if (cpd_.is_integer()) {
        if (cpd_.is_scalar()) {
-         prop_.store_integer(cpd_.get_name_pattern(), 
-                             1, 
+         prop_.store_integer(cpd_.get_name_pattern(),
+                             1,
                              cpd_.get_terse_description(),
                              cpd_.is_const());
        }
@@ -1296,8 +1296,8 @@ namespace datatools {
          for (int ia = 0; ia < array_sz; ia++) {
            v.push_back(ia+1);
          }
-         prop_.store(cpd_.get_name_pattern(), 
-                     v, 
+         prop_.store(cpd_.get_name_pattern(),
+                     v,
                      cpd_.get_terse_description(),
                      cpd_.is_const());
        }
@@ -1305,8 +1305,8 @@ namespace datatools {
      // Real :
      if (cpd_.is_real()) {
        if (cpd_.is_scalar()) {
-         prop_.store_real(cpd_.get_name_pattern(), 
-                          1.1, 
+         prop_.store_real(cpd_.get_name_pattern(),
+                          1.1,
                           cpd_.get_terse_description(),
                           cpd_.is_const());
        }
@@ -1315,8 +1315,8 @@ namespace datatools {
          for (int ia = 0; ia < array_sz; ia++) {
            v.push_back(ia*1.1);
          }
-         prop_.store(cpd_.get_name_pattern(), 
-                     v, 
+         prop_.store(cpd_.get_name_pattern(),
+                     v,
                      cpd_.get_terse_description(),
                      cpd_.is_const());
        }
@@ -1333,8 +1333,8 @@ namespace datatools {
          ext = ".data";
        }
        if (cpd_.is_scalar()) {
-         prop_.store_string(cpd_.get_name_pattern(), 
-                            token + ext, 
+         prop_.store_string(cpd_.get_name_pattern(),
+                            token + ext,
                             cpd_.get_terse_description(),
                             cpd_.is_const());
        }
@@ -1342,11 +1342,11 @@ namespace datatools {
          properties::data::vstring v;
          for (int ia = 0; ia < array_sz; ia++) {
            std::ostringstream token_oss;
-           token_oss << token << ia << ext; 
+           token_oss << token << ia << ext;
            v.push_back(token_oss.str());
          }
-         prop_.store(cpd_.get_name_pattern(), 
-                     v, 
+         prop_.store(cpd_.get_name_pattern(),
+                     v,
                      cpd_.get_terse_description(),
                      cpd_.is_const());
        }
@@ -1354,12 +1354,12 @@ namespace datatools {
          prop_.set_explicit_path(cpd_.get_name_pattern(),true);
        }
      }
-        
+
      return;
    }
-  
+
   void
-  object_configuration_description::generate_sample_configuration(std::ostream & out_, 
+  object_configuration_description::generate_sample_configuration(std::ostream & out_,
                                                                   const std::string & topic_) const
   {
     properties PROP;
@@ -1367,20 +1367,20 @@ namespace datatools {
 
     // Not fully implemented yet !!
     properties::config PC(properties::config::with_smart_modulo,
-                          properties::config::mode_header_footer, 
+                          properties::config::mode_header_footer,
                           properties::config::write_private_also);
 
     PC.write_header(out_, topic_);
     const std::string prop_comment_prefix = "### ";
 
     out_ << '\n';
-    out_ << "# Lines starting with '" << prop_comment_prefix 
+    out_ << "# Lines starting with '" << prop_comment_prefix
          << "' indicate optional properties\n"
-         << "# that may be activated under specific conditions.\n"; 
+         << "# that may be activated under specific conditions.\n";
     out_ << "# Lines starting with '" << "#@" << "' are special directives.\n";
     out_ << "# Lines starting with '" << '#' << "' are simple comments.\n";
     out_ << '\n';
-    
+
     for (int i = 0; i < _configuration_properties_infos_.size(); i++) {
       const configuration_property_description & cpd = _configuration_properties_infos_[i];
 
@@ -1401,13 +1401,13 @@ namespace datatools {
         if (cpd.is_mandatory()) {
           comment = false;
         }
-        PC.write_data(out_, 
+        PC.write_data(out_,
                       cpd.get_name_pattern(),
                       a_prop_data,
                       cpd.get_unit_symbol(),
                       cpd.get_unit_label(),
                       comment ? prop_comment_prefix : "");
-        
+
         bool more = false;
         // Append long description as a trailing comment block :
         if (cpd.has_long_description()) {
@@ -1430,10 +1430,10 @@ namespace datatools {
             else {
               out_ << " may be set";
             }
-            out_ << " if dependee flag property '"            
-                 << cpd.get_triggered_by_flag().get_name() << "' is set to '" 
+            out_ << " if dependee flag property '"
+                 << cpd.get_triggered_by_flag().get_name() << "' is set to '"
                  << cpd.get_triggered_by_flag().triggering_status << "'"
-                 << "\n";           
+                 << "\n";
           }
           if (cpd.is_triggered_by_label()) {
             out_ << "#   " << "This property";
@@ -1443,7 +1443,7 @@ namespace datatools {
             else {
               out_ << " may be set";
             }
-            out_ << " if dependee string property '" 
+            out_ << " if dependee string property '"
                  << cpd.get_triggered_by_label().get_name() << "' is set to one of these values : \n";
             for (int itl = 0; itl < cpd.get_triggered_by_label().triggering_labels.size(); itl++) {
               out_ << "#    '" << cpd.get_triggered_by_label().triggering_labels[itl] << "'\n";
@@ -1453,13 +1453,13 @@ namespace datatools {
             datatools::print_multi_lines(out_, cpd.get_long_description(), "#   ");
           }
         }
-     
+
         // Append dynamic depender properties :
         if (cpd.has_dynamic_dependers()) {
           std::vector<std::string> words;
           PROP.fetch(cpd.get_name_pattern(), words);
           for (int idder = 0; idder < cpd.get_number_of_dynamic_dependers(); idder++) {
-            const configuration_property_description::dependency_entry & dder 
+            const configuration_property_description::dependency_entry & dder
               = cpd.get_dynamic_depender(idder);
             //std::cerr << "DEVEL: " << "Depender = '" << dder.get_name() << "' " << '\n';
             for (int iword = 0; iword < words.size(); iword++) {
@@ -1473,35 +1473,35 @@ namespace datatools {
               //std::cerr << "DEVEL: " << "  dynprop_name = '" << dynprop_name << "' " << '\n';
               if (temp_cpd.has_type()) {
                 _generate_static_property(temp_cpd, PROP);
-                
+
                 if (! PROP.has_key(temp_cpd.get_name_pattern())) {
                   // Undocumented property : we pass
                   continue;
                 }
-                
+
                 // Output :
                 const properties::data& a_dyn_prop_data = PROP.get(temp_cpd.get_name_pattern());
                 out_ << '\n';
-                PC.write_data(out_, 
+                PC.write_data(out_,
                               temp_cpd.get_name_pattern(),
                               a_dyn_prop_data,
                               temp_cpd.get_unit_symbol(),
                               temp_cpd.get_unit_label(),
                               temp_cpd.is_mandatory() ? "" : prop_comment_prefix);
-                
+
                 // Append long description as a trailing comment block :
                 if (temp_cpd.has_long_description()) {
                   out_ << "#\n# Additional informations : " << '\n';
                   datatools::print_multi_lines(out_,temp_cpd.get_long_description(), "#   ");
                 } // end of trailing comment block.
               } // has type
-            } // word loop 
+            } // word loop
           } // depender loop
         } // dynamic depender
 
         // if (cpd.is_trigger()) {
         //   for (int itder = 0; itder < cpd.get_number_of_triggered_dependers(); itder++) {
-        //     const configuration_property_description::dependency_entry & tder 
+        //     const configuration_property_description::dependency_entry & tder
         //       = cpd.get_triggered_depender(itder);
         //   }
         // } // depender loop
@@ -1514,8 +1514,8 @@ namespace datatools {
       out_ << "# " << "Special configuration hints : " << '\n';
       out_ << "# " << '\n';
       datatools::print_multi_lines(out_, get_configuration_hints(), "#   ");
-    } 
-    
+    }
+
     out_ << '\n';
     PC.write_footer(out_, topic_);
     return;
