@@ -1,8 +1,8 @@
 // -*- mode: c++; -*- 
-/* mygsl::interval.h
+/* interval.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2009-10-02
- * Last modified: 2009-10-02
+ * Last modified: 2013-04-11
  * 
  * License: 
  * 
@@ -11,6 +11,7 @@
  *
  *   A simple interval [min:max] for double precision values
  *
+ *   Supported bounds schemes are :
  * [0:1]
  * (0:1]
  * [0:1)
@@ -26,18 +27,21 @@
  *
  */
 
-#ifndef __mygsl__interval_h
-#define __mygsl__interval_h 1
+#ifndef MYGSL_INTERVAL_H_
+#define MYGSL_INTERVAL_H_ 1
 
 #include <iostream>
 
-//using   namespace std;
+// Serialization interfaces :
+#include <datatools/i_serializable.h>
 
 namespace mygsl {
 
-  class interval
+  class interval :
+    DATATOOLS_SERIALIZABLE_CLASS
     {
     public:
+
       static const double NO_MIN_VALUE;
       static const double NO_MAX_VALUE;
       static const double NO_VALUE;
@@ -54,14 +58,6 @@ namespace mygsl {
 
       static const bool included;
       static const bool excluded;
-
-    private:
-
-      bool   _min_included_; /// Flag to include the min bound 
-      bool   _max_included_; /// Flag to include the max bound 
-      double _min_; /// Min bound 
-      double _max_; /// Max bound 
-      double _eps_; /// Epsilon 
 
     public:
 
@@ -123,6 +119,8 @@ namespace mygsl {
 
       void set (double min_, double max_, double eps_ = AUTO_EPS);
 
+      bool is_no_limit () const;
+
       bool is_empty () const;
 
       void open ();
@@ -159,10 +157,20 @@ namespace mygsl {
 
       friend std::istream & operator>> (std::istream & in_, interval & i_);
 
+    private:
+
+      bool   _min_included_; /// Flag to include the min bound 
+      bool   _max_included_; /// Flag to include the max bound 
+      double _min_; /// Min bound 
+      double _max_; /// Max bound 
+      double _eps_; /// Epsilon 
+
+      DATATOOLS_SERIALIZATION_DECLARATION();
+
     };
 
 } // end of namespace mygsl
 
-#endif // __mygsl__interval_h
+#endif // MYGSL_INTERVAL_H_
 
-// end of mygsl::interval.h
+// end of interval.h

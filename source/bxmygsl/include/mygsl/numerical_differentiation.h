@@ -14,31 +14,31 @@
  * 
  */
 
-#ifndef __mygsl__numerical_differentiation_h
-#define __mygsl__numerical_differentiation_h 1
+#ifndef MYGSL_NUMERICAL_DIFFERENTIATION_H_
+#define MYGSL_NUMERICAL_DIFFERENTIATION_H_ 1
 
-#include <mygsl/unary_eval.h>
+#include <mygsl/i_unary_function.h>
 #include <mygsl/interval.h>
 
 //using   namespace std;
 
 namespace mygsl {
 
-  double derivative_central (const unary_eval & eval_, double x_, double h_, double & abserr_ );
+  double derivative_central (const i_unary_function & eval_, double x_, double h_, double & abserr_ );
 
-  double derivative_central (const unary_eval & eval_, double x_, double h_);
+  double derivative_central (const i_unary_function & eval_, double x_, double h_);
 
-  double derivative_forward (const unary_eval & eval_, double x_, double h_, double & abserr_ );
+  double derivative_forward (const i_unary_function & eval_, double x_, double h_, double & abserr_ );
 
-  double derivative_forward (const unary_eval & eval_, double x_, double h_);
+  double derivative_forward (const i_unary_function & eval_, double x_, double h_);
 
-  double derivative_backward (const unary_eval & eval_, double x_, double h_, double & abserr_ );
+  double derivative_backward (const i_unary_function & eval_, double x_, double h_, double & abserr_ );
 
-  double derivative_backward (const unary_eval & eval_, double x_, double h_);
+  double derivative_backward (const i_unary_function & eval_, double x_, double h_);
 
-  double derivative (const unary_eval & eval_, double x_, const interval & domain_, double & abserr_);
+  double derivative (const i_unary_function & eval_, double x_, const interval & domain_, double & abserr_);
 
-  double derivative (const unary_eval & eval_, double x_, const interval & domain_);
+  double derivative (const i_unary_function & eval_, double x_, const interval & domain_);
 
   /*****************************************************
    *                                                   *
@@ -148,9 +148,8 @@ namespace mygsl {
                                                        double h_);
 
 
-
 } // end of namespace mygsl
 
-#endif // __mygsl__numerical_differentiation_h
+#endif // MYGSL_NUMERICAL_DIFFERENTIATION_H_
 
 // end of mygsl::numerical_differentiation.h

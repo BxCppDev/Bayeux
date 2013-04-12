@@ -1,4 +1,4 @@
-// mygsl::one_dimensional_root_finding.cc 
+// one_dimensional_root_finding.cc 
 
 #include <mygsl/one_dimensional_root_finding.h>
 
@@ -161,9 +161,9 @@ namespace mygsl {
     _fsolver_type_ = 0;
     _fsolver_ = 0;
     _fdfsolver_ = 0;
-    _eval_f_   = 0;
-    _eval_fdf_ = 0;
-    _eval_numeric_fdf_ = 0;
+    _functor_f_   = 0;
+    _functor_fdf_ = 0;
+    _functor_numeric_fdf_ = 0;
     _status_ = 0;
     _iter_ = 0;
     _max_iter_ = DEFAULT_MAX_ITER;
@@ -197,141 +197,113 @@ namespace mygsl {
     return;
   }
 
-  void one_dimensional_root_solver::init (unary_eval & eval_f_, const string & method_) 
+  void one_dimensional_root_solver::init (const i_unary_function & functor_f_, const string & method_) 
   {
-    if  (_debug_)
-      {
-        clog << "DEBUG: one_dimensional_root_solver::init(1): entering..." << endl;
-      }
-    if (is_initialized ())
-      {
-        reset ();
-      }
-    _eval_numeric_fdf_ = new unary_eval_promoted_with_numeric_derivative (eval_f_);
-    init (*_eval_numeric_fdf_, method_);
+    if (_debug_) {
+      clog << "DEBUG: one_dimensional_root_solver::init(1): entering..." << endl;
+    }
+    if (is_initialized ()) {
+      reset ();
+    }
+    _functor_numeric_fdf_ = new unary_function_promoted_with_numeric_derivative (functor_f_);
+    init (*_functor_numeric_fdf_, method_);
 
-    if (_debug_) 
-      {
-        clog << "one_dimensional_root_solver::init(1): exiting." << endl;
-      }
+    if (_debug_) {
+      clog << "one_dimensional_root_solver::init(1): exiting." << endl;
+    }
     return;
   }
 
-  void one_dimensional_root_solver::init (unary_eval_with_derivative & eval_fdf_, const string & method_)
+  void one_dimensional_root_solver::init (const i_unary_function_with_derivative & functor_fdf_, const string & method_)
   {
-    if (is_initialized ())
-      {
-        reset ();
-      }
-    if (_debug_) 
-      {
-        clog << "DEBUG: one_dimensional_root_solver::init(2): entering..." << endl;
-      }
+    if (is_initialized ()) {
+      reset ();
+    }
+    if (_debug_) {
+      clog << "DEBUG: one_dimensional_root_solver::init(2): entering..." << endl;
+    }
 
-    if (method_ == BISECTION_METHOD_LABEL)
-      {
-        _mode_ = MODE_F;
-        _fsolver_type_ = gsl_root_fsolver_bisection;
-      }
-    else if (method_ == FALSEPOS_METHOD_LABEL)
-      {
-        _mode_ = MODE_F;
-        _fsolver_type_ = gsl_root_fsolver_falsepos;
-      }
-    else if (method_ == BRENT_METHOD_LABEL)
-      {
-        _mode_ = MODE_F;
-        _fsolver_type_ = gsl_root_fsolver_brent;
-      }
-    else if (method_ == NEWTON_METHOD_LABEL)
-      {
-        _mode_ = MODE_FDF;
-        _fdfsolver_type_ = gsl_root_fdfsolver_newton;
-      }
-    else if (method_ == SECANT_METHOD_LABEL)
-      {
-        _mode_ = MODE_FDF;
-        _fdfsolver_type_ = gsl_root_fdfsolver_secant;
-      }
-    else if (method_ == STEFFENSON_METHOD_LABEL)
-      {
-        _mode_ = MODE_FDF;
-        _fdfsolver_type_ = gsl_root_fdfsolver_steffenson;
-      }
-    else 
-      {
-        ostringstream message;
-        message << "one_dimensional_root_solver::init(2): "
-                << "method '" << method_ << "' is not valid!";
-        throw runtime_error (message.str ());
-      }
+    if (method_ == BISECTION_METHOD_LABEL) {
+      _mode_ = MODE_F;
+      _fsolver_type_ = gsl_root_fsolver_bisection;
+    } else if (method_ == FALSEPOS_METHOD_LABEL) {
+      _mode_ = MODE_F;
+      _fsolver_type_ = gsl_root_fsolver_falsepos;
+    } else if (method_ == BRENT_METHOD_LABEL) {
+      _mode_ = MODE_F;
+      _fsolver_type_ = gsl_root_fsolver_brent;
+    } else if (method_ == NEWTON_METHOD_LABEL) {
+      _mode_ = MODE_FDF;
+      _fdfsolver_type_ = gsl_root_fdfsolver_newton;
+    } else if (method_ == SECANT_METHOD_LABEL) {
+      _mode_ = MODE_FDF;
+      _fdfsolver_type_ = gsl_root_fdfsolver_secant;
+    } else if (method_ == STEFFENSON_METHOD_LABEL) {
+      _mode_ = MODE_FDF;
+      _fdfsolver_type_ = gsl_root_fdfsolver_steffenson;
+    } else {
+      ostringstream message;
+      message << "one_dimensional_root_solver::init(2): "
+              << "method '" << method_ << "' is not valid!";
+      throw runtime_error (message.str ());
+    }
 
-    if (_debug_) 
-      {
-        clog << "one_dimensional_root_solver::init(2): method is '"
-             << method_ << "'" << endl;
-      }
+    if (_debug_) {
+      clog << "one_dimensional_root_solver::init(2): method is '"
+           << method_ << "'" << endl;
+    }
 
-    _eval_fdf_ = &eval_fdf_;
+    _functor_fdf_ = &functor_fdf_;
 
     // set functions:
-    if (_mode_ == MODE_F)
-      {
-        _fsolver_ = gsl_root_fsolver_alloc (_fsolver_type_);
-        _function_.function = g_function;
-        _function_.params   = _eval_fdf_;
-      }
-    else
-      {
-        _fdfsolver_ = gsl_root_fdfsolver_alloc (_fdfsolver_type_);
-        _fdfunction_.f   = g_function;
-        _fdfunction_.df  = g_dfunction;
-        _fdfunction_.fdf = g_fdfunction;
-        _fdfunction_.params     = _eval_fdf_;
-      }
+    if (_mode_ == MODE_F) {
+      _fsolver_ = gsl_root_fsolver_alloc (_fsolver_type_);
+      _function_.function = g_function;
+      _function_.params   = static_cast<void*>(const_cast<i_unary_function_with_derivative*>(_functor_fdf_));
+    } else {
+      _fdfsolver_ = gsl_root_fdfsolver_alloc (_fdfsolver_type_);
+      _fdfunction_.f   = g_function;
+      _fdfunction_.df  = g_dfunction;
+      _fdfunction_.fdf = g_fdfunction;
+      _fdfunction_.params = static_cast<void*>(const_cast<i_unary_function_with_derivative*>(_functor_fdf_));
+    }
 
-    if (_debug_) 
-      {
-        clog << "one_dimensional_root_solver::init(2): exiting." << endl;
-      }
+    if (_debug_) {
+      clog << "one_dimensional_root_solver::init(2): exiting." << endl;
+    }
     return;
   }
   
   void one_dimensional_root_solver::reset ()
   {
-    if (_debug_) 
-      {
-        clog << "one_dimensional_root_solver::reset: entering..." << endl;
-      }
-    if (_fsolver_ != 0)
-      {
-        gsl_root_fsolver_free (_fsolver_);
-        _fsolver_ = 0;
-        _fsolver_type_ = 0;
-      }
-    if (_fdfsolver_ != 0)
-      {
-        gsl_root_fdfsolver_free (_fdfsolver_);
-        _fdfsolver_type_ = 0;
-        _fdfsolver_ = 0;
-      }
-    if (_eval_numeric_fdf_ != 0)
-      {
-        delete _eval_numeric_fdf_;
-        _eval_numeric_fdf_ = 0;
-      }
+    if (_debug_) {
+      clog << "one_dimensional_root_solver::reset: entering..." << endl;
+    }
+    if (_fsolver_ != 0) {
+      gsl_root_fsolver_free (_fsolver_);
+      _fsolver_ = 0;
+      _fsolver_type_ = 0;
+    }
+    if (_fdfsolver_ != 0) {
+      gsl_root_fdfsolver_free (_fdfsolver_);
+      _fdfsolver_type_ = 0;
+      _fdfsolver_ = 0;
+    }
+    if (_functor_numeric_fdf_ != 0) {
+      delete _functor_numeric_fdf_;
+      _functor_numeric_fdf_ = 0;
+    }
     _status_ = 0;
     _iter_ = 0;
     _max_iter_ = DEFAULT_MAX_ITER;
     _epsabs_ = DEFAULT_EPSABS;
-    _eval_f_   = 0;
-    _eval_fdf_ = 0;
+    _functor_f_   = 0;
+    _functor_fdf_ = 0;
     _converged_ = false;
     _root_.reset ();
-    if (_debug_) 
-      {
-        clog << "one_dimensional_root_solver::reset: exiting." << endl;
-      }
+    if (_debug_) {
+      clog << "one_dimensional_root_solver::reset: exiting." << endl;
+    }
     return;
 
   }
@@ -340,10 +312,9 @@ namespace mygsl {
                                           double a_,
                                           double b_)
   {
-    if (_debug_) 
-      {
-        clog << "one_dimensional_root_solver::solve: entering..." << endl;
-      }
+    if (_debug_) {
+      clog << "one_dimensional_root_solver::solve: entering..." << endl;
+    }
     int status = 0;
     int iter   = 0;
     _root_.reset ();
@@ -351,130 +322,109 @@ namespace mygsl {
     double x, x0;         // MODE_FDF
     _epsabs_ = epsabs_;
     double epsrel = 0.0;
-    if (_debug_) 
-      {
-        clog << "one_dimensional_root_solver::solve: setting function and starting values..." << endl;
-      }
-    if ((a_ != a_) || (b_ != b_))
-      {
-        throw runtime_error ("one_dimensional_root_solver::solve: Invalid starting interval!");
-      }
-    if (a_ >= b_)
-      {
-        throw runtime_error ("one_dimensional_root_solver::solve: Invalid starting interval!");
-      }
+    if (_debug_) {
+      clog << "one_dimensional_root_solver::solve: setting function and starting values..." << endl;
+    }
+    if ((a_ != a_) || (b_ != b_)) {
+      throw runtime_error ("one_dimensional_root_solver::solve: Invalid starting interval!");
+    }
+    if (a_ >= b_) {
+      throw runtime_error ("one_dimensional_root_solver::solve: Invalid starting interval!");
+    }
     double x_min = a_;
     double x_max = b_;
     //clog << "DEVEL: a = " << x_min << endl;
     //clog << "DEVEL: b = " << x_max << endl;
 
-    if (_mode_ == MODE_F)
-      {
-        x_lo = x_min;
-        x_hi = x_max;
-        gsl_root_fsolver_set (_fsolver_, 
-                              &_function_,
-                              x_lo,
-                              x_hi);
-      }
-    else
-      {
-        x = 0.5 * (x_min + x_max);
-        gsl_root_fdfsolver_set (_fdfsolver_, 
-                                &_fdfunction_,
-                                x);
-      }  
+    if (_mode_ == MODE_F) {
+      x_lo = x_min;
+      x_hi = x_max;
+      gsl_root_fsolver_set (_fsolver_, 
+                            &_function_,
+                            x_lo,
+                            x_hi);
+    } else {
+      x = 0.5 * (x_min + x_max);
+      gsl_root_fdfsolver_set (_fdfsolver_, 
+                              &_fdfunction_,
+                              x);
+    }  
 
     double factor = 1.0;
-    do
-      {
-        iter++;
-        if (_mode_ == MODE_F)
-          {
-            status = gsl_root_fsolver_iterate (_fsolver_);
-            r = gsl_root_fsolver_root (_fsolver_);
-            if ((r < x_min) || (x > x_max))
-              {
-                status = GSL_ERANGE;
-              }
-            else 
-              {
-                x_lo = gsl_root_fsolver_x_lower (_fsolver_);
-                x_hi = gsl_root_fsolver_x_upper (_fsolver_);
-                status = gsl_root_test_interval (x_lo, x_hi, 0, factor * _epsabs_);
-              }
-            _at_step_hook (status, iter, x_lo, x_hi, r);
-          }
-        else
-          {
-            status = gsl_root_fdfsolver_iterate (_fdfsolver_);
-            x0 = x;
-            x = gsl_root_fdfsolver_root (_fdfsolver_);
-            if ((x < x_min) || (x > x_max))
-              {
-                status = GSL_ERANGE;
-              }
-            else
-              {
-                status = gsl_root_test_delta (x, x0, 0, factor * _epsabs_);
-              }
-            _at_step_hook (status, iter, x_min, x_max, x);
-          }
-
-        if ((status == GSL_SUCCESS) || (iter == _max_iter_))
-          {
-            _converged_ = (status == GSL_SUCCESS);
-            if (_mode_ == MODE_F)
-              {
-                _root_.set_value (0.5 * (x_lo + x_hi));
-                _root_.set_error_low (abs (x_lo - x_hi));
-                _root_.set_error_high (abs (x_lo - x_hi));
-              }
-            else
-              {
-                _root_.set_value (0.5 * (x + x0));
-                _root_.set_error_low (0.5 * abs (x - x0));
-                _root_.set_error_high (0.5 * abs (x - x0));
-              }
-            _root_.set_confidence_level (1.0);
-          }
-
-
+    do {
+      iter++;
+      if (_mode_ == MODE_F) {
+        status = gsl_root_fsolver_iterate (_fsolver_);
+        r = gsl_root_fsolver_root (_fsolver_);
+        if ((r < x_min) || (x > x_max)) {
+          status = GSL_ERANGE;
+        } else {
+          x_lo = gsl_root_fsolver_x_lower (_fsolver_);
+          x_hi = gsl_root_fsolver_x_upper (_fsolver_);
+          status = gsl_root_test_interval (x_lo, x_hi, 0, factor * _epsabs_);
+        }
+        _at_step_hook (status, iter, x_lo, x_hi, r);
+      } else {
+        status = gsl_root_fdfsolver_iterate (_fdfsolver_);
+        x0 = x;
+        x = gsl_root_fdfsolver_root (_fdfsolver_);
+        if ((x < x_min) || (x > x_max)) {
+          status = GSL_ERANGE;
+        } else {
+          status = gsl_root_test_delta (x, x0, 0, factor * _epsabs_);
+        }
+        _at_step_hook (status, iter, x_min, x_max, x);
       }
+
+      if ((status == GSL_SUCCESS) || (iter == _max_iter_)) {
+        _converged_ = (status == GSL_SUCCESS);
+        if (_mode_ == MODE_F) {
+          _root_.set_value (0.5 * (x_lo + x_hi));
+          _root_.set_error_low (abs (x_lo - x_hi));
+          _root_.set_error_high (abs (x_lo - x_hi));
+        } else {
+          _root_.set_value (0.5 * (x + x0));
+          _root_.set_error_low (0.5 * abs (x - x0));
+          _root_.set_error_high (0.5 * abs (x - x0));
+        }
+        _root_.set_confidence_level (1.0);
+      }
+
+
+    }
     while ((status == GSL_CONTINUE) && (iter < _max_iter_));
 
     _iter_ = iter;
     _status_ = status;
 
-    if (_debug_) 
-      {
-        clog << "one_dimensional_root_solver::solve: exiting." << endl;
-      }
+    if (_debug_) {
+      clog << "one_dimensional_root_solver::solve: exiting." << endl;
+    }
     return _status_;
   }
   
   double one_dimensional_root_solver::g_function (double x_, void * params_)
   {
-    unary_eval_with_derivative * eval_fdf = static_cast<unary_eval_with_derivative *> (params_);
-    return eval_fdf->eval_f (x_);
+    const i_unary_function_with_derivative * functor_fdf = static_cast<const i_unary_function_with_derivative *>(params_);
+    return functor_fdf->eval_f(x_);
   }
 
   double one_dimensional_root_solver::g_dfunction (double x_, void * params_)
   {
-    unary_eval_with_derivative * eval_fdf = static_cast<unary_eval_with_derivative *> (params_);
-    return eval_fdf->eval_df (x_);
+    const i_unary_function_with_derivative * functor_fdf = static_cast<const i_unary_function_with_derivative *>(params_);
+    return functor_fdf->eval_df(x_);
   }
 
   void one_dimensional_root_solver::g_fdfunction (double x_, void * params_, double * y_, double * dy_)
   {
-    unary_eval_with_derivative * eval_fdf = static_cast<unary_eval_with_derivative *> (params_);
-    *y_  = eval_fdf->eval_f (x_);
-    *dy_ = eval_fdf->eval_df (x_);
+    const i_unary_function_with_derivative * functor_fdf = static_cast<const i_unary_function_with_derivative *>(params_);
+    *y_  = functor_fdf->eval_f(x_);
+    *dy_ = functor_fdf->eval_df(x_);
     return;
   }
 
   // static:
-  best_value one_dimensional_root_solver::solve (unary_eval & func_, 
+  best_value one_dimensional_root_solver::solve (const i_unary_function & func_, 
                                                  double epsabs_, 
                                                  double a_, 
                                                  double b_,
@@ -482,17 +432,16 @@ namespace mygsl {
   {
     mygsl::one_dimensional_root_solver solver;
     solver.init (func_, method_name_);
-    if (solver.solve (epsabs_, a_, b_) == 0)
-      {
-        return solver.get_root ();
-      }
+    if (solver.solve (epsabs_, a_, b_) == 0) {
+      return solver.get_root ();
+    }
     best_value no_root;
     no_root.reset ();
     return no_root;
   }
 
   // static:
-  best_value one_dimensional_root_solver::solve (unary_eval_with_derivative & dfunc_, 
+  best_value one_dimensional_root_solver::solve (const i_unary_function_with_derivative & dfunc_, 
                                                  double epsabs_, 
                                                  double a_, 
                                                  double b_, 
@@ -500,15 +449,14 @@ namespace mygsl {
   {
     mygsl::one_dimensional_root_solver solver;
     solver.init (dfunc_, method_name_);
-    if (solver.solve (epsabs_, a_, b_) == 0)
-      {
-        return solver.get_root ();
-      }
+    if (solver.solve (epsabs_, a_, b_) == 0) {
+      return solver.get_root ();
+    }
     best_value no_root;
     no_root.reset ();
     return no_root;
   }
   
-}
+} // namespace mygsl
 
-// end of mygsl::one_dimensional_root_finding.cc
+// end of one_dimensional_root_finding.cc

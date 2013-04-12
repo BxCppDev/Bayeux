@@ -11,10 +11,9 @@
 #include <gsl/gsl_multimin.h>
 #include <gsl/gsl_vector.h>
 
-#include <mygsl/unary_eval.h>
+#include <mygsl/i_unary_function.h>
 
 namespace mygsl {
-
 
   class multimin_system
   {
@@ -24,18 +23,18 @@ namespace mygsl {
     {
     public:
       enum limit_t
-	{
-	  LIMIT_NO    = 0x0,
-	  LIMIT_MIN   = 0x1,
-	  LIMIT_MAX   = 0x2,
-	  LIMIT_RANGE = LIMIT_MIN|LIMIT_MAX
-	};
+        {
+          LIMIT_NO    = 0x0,
+          LIMIT_MIN   = 0x1,
+          LIMIT_MAX   = 0x2,
+          LIMIT_RANGE = LIMIT_MIN|LIMIT_MAX
+        };
       enum type_t
-	{
-	  TYPE_FREE=0,
-	  TYPE_FIXED=1,
-	  TYPE_AUTO=2
-	};
+        {
+          TYPE_FREE=0,
+          TYPE_FIXED=1,
+          TYPE_AUTO=2
+        };
 
     public:
 
@@ -51,13 +50,13 @@ namespace mygsl {
 
       param_entry ()
       {
-	value=0.1;
-	type =TYPE_FREE;
-	limit=LIMIT_NO;
-	min=0.0;
-	max=1.0;
-	step=0.01;
-	name="parameter";
+        value=0.1;
+        type =TYPE_FREE;
+        limit=LIMIT_NO;
+        min=0.0;
+        max=1.0;
+        step=0.01;
+        name="parameter";
       }
 
     public:
@@ -97,19 +96,19 @@ namespace mygsl {
       void set_value_no_check (double value_);
 
       static param_entry make_param_entry_auto (
-						const std::string & name_);
+                                                const std::string & name_);
 
       static param_entry make_param_entry_fixed (
-						 const std::string & name_ ,
-						 double value_);
+                                                 const std::string & name_ ,
+                                                 double value_);
 
       static param_entry make_param_entry_ranged (
-						  const std::string & name_ ,
-						  double value_ ,
-						  double min_ ,
-						  double max_ ,
-						  double step_ ,
-						  bool fixed_ = false);	
+                                                  const std::string & name_ ,
+                                                  double value_ ,
+                                                  double min_ ,
+                                                  double max_ ,
+                                                  double step_ ,
+                                                  bool fixed_ = false); 
     };
 
     // predicate:
@@ -118,11 +117,11 @@ namespace mygsl {
       std::string _name_;
       param_has_name (const std::string & name_) : _name_ (name_) 
       {
-	return;
+        return;
       }
       bool operator () (const param_entry & pe_)
       {
-	return pe_.name == _name_;
+        return pe_.name == _name_;
       }
     };
 
@@ -131,11 +130,11 @@ namespace mygsl {
     {
       param_is_free ()  
       {
-	return;
+        return;
       }
       bool operator () (const param_entry & pe_)
       {
-	return pe_.is_free ();
+        return pe_.is_free ();
       }
     };
 
@@ -144,11 +143,11 @@ namespace mygsl {
     {
       param_is_fixed ()  
       {
-	return;
+        return;
       }
       bool operator () (const param_entry & pe_)
       {
-	return pe_.is_fixed ();
+        return pe_.is_fixed ();
       }
     };
 
@@ -157,11 +156,11 @@ namespace mygsl {
     {
       param_is_auto ()  
       {
-	return;
+        return;
       }
       bool operator () (const param_entry & pe_)
       {
-	return pe_.is_auto ();
+        return pe_.is_auto ();
       }
     };
 
@@ -244,14 +243,14 @@ namespace mygsl {
     virtual int eval_df (const double * x_ , double * gradient_);
 
     virtual int eval_fdf (const double * x_ , 
-			  double & f_ , 
-			  double * gradient_);
+                          double & f_ , 
+                          double * gradient_);
 
     void to_double_star (double * pars_ , 
-			 size_t dimension_) const;
+                         size_t dimension_) const;
 
     virtual void from_double_star (const double * pars_ , 
-				   size_t dimension_);
+                                   size_t dimension_);
 
     multimin_system ();
 
@@ -272,52 +271,52 @@ namespace mygsl {
     static double multimin_f    (const gsl_vector * v_ , void * params_);
 
     static void   multimin_df   (const gsl_vector * v_ , void * params_ , 
-				 gsl_vector * gradient_);
+                                 gsl_vector * gradient_);
 
     static void   multimin_fdf  (const gsl_vector * v_ , void * params_ ,
-				 double * f_ , gsl_vector * gradient_);
+                                 double * f_ , gsl_vector * gradient_);
 
     static bool name_is_valid (const std::string & name_);
 
     enum mode_t
       {
-	MODE_FDF = 0,
-	MODE_F   = 1
+        MODE_FDF = 0,
+        MODE_F   = 1
       };
      
     enum stopping_t
       {
-	STOPPING_GRADIENT=0,
-	STOPPING_SIZE=1
+        STOPPING_GRADIENT=0,
+        STOPPING_SIZE=1
       };
 
     class at_step_action
     {
-	  
+          
     public:
       virtual void action (int status_ ,
-			   size_t iter_ , 
-			   double * x_ , 
-			   size_t   dim_ ,
-			   double f_) = 0;
+                           size_t iter_ , 
+                           double * x_ , 
+                           size_t   dim_ ,
+                           double f_) = 0;
       void operator () (int status_ ,
-			size_t iter_ , 
-			double * x_ , 
-			size_t   dim_ ,
-			double f_)
+                        size_t iter_ , 
+                        double * x_ , 
+                        size_t   dim_ ,
+                        double f_)
       {
-	action (status_,iter_,x_,dim_,f_);
+        action (status_,iter_,x_,dim_,f_);
       }
-	  
+          
     };
       
     struct default_step_action : public at_step_action
     {
       virtual void action (int status_ ,
-			   size_t iter_ , 
-			   double * x_ , 
-			   size_t   dim_ , 
-			   double f_);
+                           size_t iter_ , 
+                           double * x_ , 
+                           size_t   dim_ , 
+                           double f_);
     };
       
     static default_step_action _default_step_action_;
@@ -369,7 +368,7 @@ namespace mygsl {
     std::string get_name () const;
 
     void init (const std::string & name_ , 
-	       multimin_system & ms_);
+               multimin_system & ms_);
 
     void reset ();
 
@@ -380,10 +379,10 @@ namespace mygsl {
   protected:
 
     void _at_step_hook (int status_ ,
-			size_t iter_ , 
-			double * x_ , 
-			size_t   dim_ , 
-			double f_);
+                        size_t iter_ , 
+                        double * x_ , 
+                        size_t   dim_ , 
+                        double f_);
 
   public:
 

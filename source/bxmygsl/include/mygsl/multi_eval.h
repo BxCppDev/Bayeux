@@ -1,8 +1,8 @@
 // -*- mode: c++; -*- 
-/* mygsl::multi_eval.h
+/* multi_eval.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2009-10-04
- * Last modified: 2009-10-04
+ * Last modified: 2013-04-11
  * 
  * License: 
  * 
@@ -13,18 +13,17 @@
  * 
  */
 
-#ifndef __mygsl__multi_eval_h
-#define __mygsl__multi_eval_h 1
+#ifndef MYGSL_MULTI_EVAL_H_
+#define MYGSL_MULTI_EVAL_H_ 1
 
 #include <vector>
 
-#include <mygsl/unary_eval.h>
+#include <mygsl/i_unary_function.h>
 #include <mygsl/interval.h>
-
-//using  namespace std;
 
 namespace mygsl {
 
+  /// Abstract functor from a R^n space to R
   class multi_eval
   {
   public:
@@ -36,14 +35,6 @@ namespace mygsl {
     multi_eval (size_t dimension_);
 
     virtual ~multi_eval ();
-
-  protected:
-
-    virtual double eval (const double * x_) const = 0;
-
-  private:
-    
-    void _check_dimension_ (size_t dim_) const;
 
   public:
 
@@ -72,13 +63,21 @@ namespace mygsl {
     // to feed the GSL gsl_function interface:
     static double g_function (const double * x_, void * functor_);
 
+  protected:
+
+    virtual double _eval(const double * x_) const = 0;
+
+  private:
+    
+    void _check_dimension_ (size_t dim_) const;
+
   private:
 
     multi_domain _domains_;
     
   };
 
-  class unary_eval_from_multi : public unary_eval
+  class unary_eval_from_multi : public i_unary_function
   {
     
   public:
@@ -107,18 +106,18 @@ namespace mygsl {
 
   protected:
 
-   double eval (double x_) const;
+   double _eval(double x_) const;
 
   private:
 
-    int                _index_;
-    const multi_eval * _multi_eval_;
-    std::vector<double>     _params_;
+    int                 _index_;
+    const multi_eval *  _multi_eval_;
+    std::vector<double> _params_;
 
   };
 
 } // end of namespace mygsl
 
-#endif // __mygsl__multi_eval_h
+#endif // MYGSL_MULTI_EVAL_H_
 
-// end of mygsl::multi_eval.h
+// end of multi_eval.h

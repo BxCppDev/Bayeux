@@ -1,8 +1,8 @@
 // -*- mode: c++; -*-
 // histogram_pool.h
 
-#ifndef __mygsl__histogram_pool_h
-#define __mygsl__histogram_pool_h 1
+#ifndef MYGSL_HISTOGRAM_POOL_H_
+#define MYGSL_HISTOGRAM_POOL_H_ 1
 
 #include <iostream>
 #include <string>
@@ -10,7 +10,6 @@
 #include <vector>
 
 // Serialization interfaces :
-#include <boost/serialization/access.hpp>
 #include <datatools/i_serializable.h>
 
 #include <datatools/properties.h>
@@ -162,7 +161,6 @@ namespace mygsl {
 
 } // end of namespace mygsl
 
-
 /***************
  * OCD support *
  ***************/
@@ -171,6 +169,6 @@ DOCD_CLASS_DECLARATION(mygsl::histogram_pool)
 DOCD_CLASS_DECLARATION(mygsl::histogram)
 DOCD_CLASS_DECLARATION(mygsl::histogram_2d)
 
-#endif // __mygsl__histogram_pool_h
+#endif // MYGSL_HISTOGRAM_POOL_H_
 
 // end of mygsl::histogram_pool.h

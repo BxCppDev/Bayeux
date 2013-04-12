@@ -1,4 +1,4 @@
-// mygsl::one_dimensional_minimization.cc
+// one_dimensional_minimization.cc
 
 #include <mygsl/one_dimensional_minimization.h>
 
@@ -105,12 +105,11 @@ namespace mygsl {
     double a = a_;
     double b = b_;
     double c = c_;
-    if (local_debug) 
-      {
-        std::cerr << "DEBUG: Iteration: " << iter << " (" 
-                  << ((status == GSL_SUCCESS)? "minimum found": "continue") 
-                  << ')' << std::endl;
-      }
+    if (local_debug) {
+      std::cerr << "DEBUG: Iteration: " << iter << " (" 
+                << ((status == GSL_SUCCESS)? "minimum found": "continue") 
+                << ')' << std::endl;
+    }
     std::cout << iter << ' ';
     std::cout.precision (15);
     std::cout << a << ' ';
@@ -132,7 +131,7 @@ namespace mygsl {
     _iter_ = 0;
     _max_iter_ = DEFAULT_MAX_ITER;
     _epsabs_ = DEFAULT_EPSABS;
-    _eval_ = 0;
+    _functor_ = 0;
     _converged_ = false;
     _minimum_value_.reset ();
     _at_step_action_ = 0;
@@ -153,79 +152,73 @@ namespace mygsl {
                                                     double c_)
   {
     if (_debug_) std::clog << "DEBUG: one_dimensional_minimization::_at_step_hook: entering..." << std::endl;
-    if (_at_step_action_ != 0) 
-      {
-        if (_debug_) std::clog << "DEBUG: one_dimensional_minimization::_at_step_hook: _at_step_action_..." << std::endl;
-        (*_at_step_action_) (status_, iter_, a_, b_, c_);
-      }
+    if (_at_step_action_ != 0) {
+      if (_debug_) std::clog << "DEBUG: one_dimensional_minimization::_at_step_hook: _at_step_action_..." << std::endl;
+      (*_at_step_action_) (status_, iter_, a_, b_, c_);
+    }
     if (_debug_) std::clog << "DEBUG: one_dimensional_minimization::_at_step_hook: exiting." << std::endl;
     return;
   }
 
-  void one_dimensional_minimization::init (unary_eval & eval_,
+  void one_dimensional_minimization::init (const i_unary_function & functor_,
                                            const string & method_)
   {
-    if (_debug_) 
-      {
-        clog << "one_dimensional_minimization::init: entering..." << endl;
-      }
-    _eval_ = &eval_;
+    initialize(functor_,method_);
+  }
 
-    if (method_ == GOLDENSECTION_METHOD_LABEL)
-      {
-        _fminimizer_type_ = gsl_min_fminimizer_goldensection;
-      }
-    else if (method_ == BRENT_METHOD_LABEL)
-      {
-        _fminimizer_type_ = gsl_min_fminimizer_brent;
-      }
-    else 
-      {
-        ostringstream message;
-        message << "one_dimensional_minimization::init: "
-                << "method '" << method_ << "' is not valid!";
-        throw runtime_error (message.str ());
-      }
-    if (_debug_) 
-      {
-        clog << "one_dimensional_minimization::init: method is '"
-             << method_ << "'" << endl;
-      }
+  void one_dimensional_minimization::initialize (const i_unary_function & functor_,
+                                                 const string & method_)
+  {
+    if (_debug_) {
+      clog << "one_dimensional_minimization::initialize: entering..." << endl;
+    }
+    _functor_ = &functor_;
+
+    if (method_ == GOLDENSECTION_METHOD_LABEL) {
+      _fminimizer_type_ = gsl_min_fminimizer_goldensection;
+    } else if (method_ == BRENT_METHOD_LABEL) {
+      _fminimizer_type_ = gsl_min_fminimizer_brent;
+    } else {
+      ostringstream message;
+      message << "mygsl::one_dimensional_minimization::initialize: "
+              << "method '" << method_ << "' is not valid!";
+      throw logic_error (message.str ());
+    }
+    if (_debug_) {
+      clog << "mygsl::one_dimensional_minimization::initialize: method is '"
+           << method_ << "'" << endl;
+    }
 
     _function_.function = g_function;
-    _function_.params   = _eval_;
+    _function_.params   = static_cast<void*>(const_cast<i_unary_function*>(_functor_)); //const_cast<void*>(_functor_);
     _fminimizer_ = gsl_min_fminimizer_alloc (_fminimizer_type_);
 
-    if (_debug_) 
-      {
-        clog << "one_dimensional_minimization::init: exiting." << endl;
-      }
+    if (_debug_)  {
+      clog << "mygsl::one_dimensional_minimization::initialize: exiting." << endl;
+    }
     return;
   }
 
   void one_dimensional_minimization::reset ()
   {
-    if (_debug_) 
-      {
-        clog << "one_dimensional_minimization::reset: entering..." << endl;
-      }
-    if (_fminimizer_ != 0) 
-      {
-        gsl_min_fminimizer_free (_fminimizer_);
-        _fminimizer_ = 0;
-      }
+    if (_debug_) {
+      clog << "mygsl::one_dimensional_minimization::reset: entering..." << endl;
+    }
+    if (_fminimizer_ != 0)  {
+      gsl_min_fminimizer_free (_fminimizer_);
+      _fminimizer_ = 0;
+    }
     _fminimizer_type_ = 0;
     _status_ = 0;
     _iter_ = 0;
     _max_iter_ = DEFAULT_MAX_ITER;
     _epsabs_ = DEFAULT_EPSABS;
-    _eval_ = 0;
+    _functor_ = 0;
     _converged_ = false;
     _minimum_value_.reset ();
-    if (_debug_) 
-      {
-        clog << "one_dimensional_minimization::reset: exiting." << endl;
-      }
+    if (_debug_) {
+      clog << "mygsl::one_dimensional_minimization::reset: exiting." << endl;
+    }
     return;
   }
 
@@ -234,10 +227,9 @@ namespace mygsl {
                                               double m_,
                                               double epsabs_)
   {
-    if (_debug_) 
-      {
-        clog << "one_dimensional_minimization::minimize: entering..." << endl;
-      }
+    if (_debug_) {
+      clog << "mygsl::one_dimensional_minimization::minimize: entering..." << endl;
+    }
     int status = 0;
     int iter   = 0;
     _minimum_value_.reset ();
@@ -246,70 +238,62 @@ namespace mygsl {
     double b = b_;
     _epsabs_ = epsabs_;
     double epsrel = 0.0;
-    if (_debug_) 
-      {
-        clog << "one_dimensional_minimization::minimize: setting function and starting values..." << endl;
-      }
+    if (_debug_) {
+      clog << "mygsl::one_dimensional_minimization::minimize: setting function and starting values..." << endl;
+    }
     gsl_min_fminimizer_set (_fminimizer_, 
                             &_function_,
                             m,
                             a,
                             b);
-    if (_debug_) 
-      {
-        clog << "one_dimensional_minimization::minimize: starting iterations..." << endl;
-      }
-    do
-      {
-        iter++;
-        status = gsl_min_fminimizer_iterate (_fminimizer_);
-        m = gsl_min_fminimizer_x_minimum (_fminimizer_);
-        a = gsl_min_fminimizer_x_lower (_fminimizer_);
-        b = gsl_min_fminimizer_x_upper (_fminimizer_);
+    if (_debug_) {
+      clog << "mygsl::one_dimensional_minimization::minimize: starting iterations..." << endl;
+    }
+    do {
+      iter++;
+      status = gsl_min_fminimizer_iterate (_fminimizer_);
+      m = gsl_min_fminimizer_x_minimum (_fminimizer_);
+      a = gsl_min_fminimizer_x_lower (_fminimizer_);
+      b = gsl_min_fminimizer_x_upper (_fminimizer_);
 
-        status = gsl_min_test_interval (a, b, _epsabs_, epsrel);
+      status = gsl_min_test_interval (a, b, _epsabs_, epsrel);
 
-        if ((status == GSL_SUCCESS) || (iter == _max_iter_))
-          {
-            if (status == GSL_SUCCESS)
-              {
-                _converged_ = true;
-                _minimum_value_.set_value (m);
-                _minimum_value_.set_error_low (m - a);
-                _minimum_value_.set_error_high (b - m);
-                _minimum_value_.set_confidence_level (1.0);
-              }
-            else
-              {
-                _converged_ = false;
-                _minimum_value_.set_value (m);
-                _minimum_value_.set_error_low (m - a_);
-                _minimum_value_.set_error_high (b_ - m);
-                _minimum_value_.set_confidence_level (0.0);
-              }
-          }
-        _at_step_hook (status, iter, a, b, m);
+      if ((status == GSL_SUCCESS) || (iter == _max_iter_)) {
+        if (status == GSL_SUCCESS) {
+          _converged_ = true;
+          _minimum_value_.set_value (m);
+          _minimum_value_.set_error_low (m - a);
+          _minimum_value_.set_error_high (b - m);
+          _minimum_value_.set_confidence_level (1.0);
+        } else {
+          _converged_ = false;
+          _minimum_value_.set_value (m);
+          _minimum_value_.set_error_low (m - a_);
+          _minimum_value_.set_error_high (b_ - m);
+          _minimum_value_.set_confidence_level (0.0);
+        }
       }
+      _at_step_hook (status, iter, a, b, m);
+    }
     while ((status == GSL_CONTINUE) && (iter < _max_iter_));
     _iter_ = iter;
     _status_ = status;
-    if (_debug_) 
-      {
-        clog << "one_dimensional_minimization::minimize: exiting." << endl;
-      }
+    if (_debug_) {
+      clog << "mygsl::one_dimensional_minimization::minimize: exiting." << endl;
+    }
     return _status_;
   }
 
   double one_dimensional_minimization::g_function (double x_, 
                                                    void * params_)
   {
-    const unary_eval * func = static_cast<const unary_eval *> (params_);
-    double fx = func->evaluate (x_);
+    const i_unary_function * func = static_cast<const i_unary_function *>(params_);
+    double fx = func->eval (x_);
     return fx;
   }
 
   // static:
-  best_value one_dimensional_minimization::minimize (unary_eval & func_, 
+  best_value one_dimensional_minimization::minimize (const i_unary_function & func_, 
                                                      double a_, 
                                                      double b_,
                                                      double m_,
@@ -318,8 +302,7 @@ namespace mygsl {
   {
     mygsl::one_dimensional_minimization minimizer;
     minimizer.init (func_, method_name_);
-    if (minimizer.minimize (a_, b_, m_, epsabs_) == 0)
-      {
+    if (minimizer.minimize (a_, b_, m_, epsabs_) == 0) {
         return minimizer.get_minimum_value ();
       }
     best_value no_root;
@@ -329,4 +312,4 @@ namespace mygsl {
 
 }
 
-// end of mygsl::one_dimensional_minimization.cc
+// end of one_dimensional_minimization.cc

@@ -1,4 +1,4 @@
-// mygsl::von_neumann_method.cc
+// von_neumann_method.cc
 
 #include <mygsl/von_neumann_method.h>
 
@@ -53,7 +53,7 @@ namespace mygsl {
 
   von_neumann_method::von_neumann_method (double xmin_, 
                                           double xmax_, 
-                                          unary_eval & func_, 
+                                          const i_unary_function & func_, 
                                           double fmax_,
                                           size_t nsamples_,
                                           size_t max_counts_)
@@ -92,7 +92,7 @@ namespace mygsl {
 
   void von_neumann_method::init (double xmin_, 
                                  double xmax_, 
-                                 unary_eval & func_, 
+                                 const i_unary_function & func_, 
                                  double fmax_,
                                  size_t nsamples_,
                                  size_t max_counts_)
@@ -101,24 +101,24 @@ namespace mygsl {
     if (is_initialized ()) 
       {
         ostringstream message;
-        message << "von_neumann_method::init: "
+        message << "mygsl::von_neumann_method::init: "
                 << "Method is already initalized !";
-        throw runtime_error (message.str ());
+        throw logic_error (message.str ());
       }
     if (g_debug)
       {
-        clog << "DEBUG: von_neumann_method::init: Entering..." 
+        clog << "DEBUG: mygsl::von_neumann_method::init: Entering..." 
              << endl;
       }
     if (xmin_ > xmax_)
       {
-        throw runtime_error ("von_neumann_method::init: invalid range!");
+        throw domain_error ("mygsl::von_neumann_method::init: invalid range!");
       }
     _xmin_ = xmin_;
     _xmax_ = xmax_;
     if (max_counts_ < 10)
       {
-        throw runtime_error ("von_neumann_method::init: invalid maximum number of tries!");
+        throw domain_error ("mygsl::von_neumann_method::init: invalid maximum number of tries!");
       }
     _max_counts_ = max_counts_;
     _func_ = &func_;
@@ -131,7 +131,7 @@ namespace mygsl {
       {
         if (g_debug)
           {
-            clog << "DEBUG: von_neumann_method::init: searching for 'f(max)'..." 
+            clog << "DEBUG: mygsl::von_neumann_method::init: searching for 'f(max)'..." 
                  << endl;
           }
         double fmax = -1.0;
@@ -140,7 +140,7 @@ namespace mygsl {
         double dfmax = -1.0;
         if (nsamples_ < 2)
           {
-            throw runtime_error ("von_neumann_method::init: Invalid sampling!");
+            throw domain_error ("mygsl::von_neumann_method::init: Invalid sampling!");
           }
         double dx = (_xmax_ - _xmin_) / nsamples_;
         for (double x = _xmin_;
@@ -167,13 +167,13 @@ namespace mygsl {
         _fmax_ = fmax + dfmax * 2. * dx;
         if (g_debug)
           {
-            clog << "DEBUG: von_neumann_method::init: found 'f(max)' = "
+            clog << "DEBUG: mygsl::von_neumann_method::init: found 'f(max)' = "
                  << _fmax_ << endl;
           }
       }
     if (g_debug)
       {
-        clog << "DEBUG: von_neumann_method::init: Exiting." 
+        clog << "DEBUG: mygsl::von_neumann_method::init: Exiting." 
              << endl;
       }
     return;
@@ -197,7 +197,7 @@ namespace mygsl {
           } 
         if ((max_counts > 0) && (counts > max_counts))
           {
-            throw runtime_error ("von_neumann_method::shoot: maximum number of tries has been reached!");
+            throw domain_error ("mygsl::von_neumann_method::shoot: maximum number of tries has been reached!");
           }
       } 
     return res;
@@ -205,5 +205,5 @@ namespace mygsl {
 
 }
 
-// end of mygsl::von_neumann_method.cc
+// end of von_neumann_method.cc
 

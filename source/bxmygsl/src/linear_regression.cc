@@ -1,4 +1,4 @@
-// mygsl::linear_regression.cc
+// mygsl/linear_regression.cc
 
 #include <mygsl/linear_regression.h>
 
@@ -65,7 +65,7 @@ namespace mygsl {
   {
     if (! is_weighted ()) 
       {
-        throw runtime_error ("linear_regression::fit_data::get_sumsq: Not computed! Use 'get_sumsq'!");
+        throw std::logic_error ("mygsl::linear_regression::fit_data::get_sumsq: Not computed! Use 'get_sumsq'!");
       }
     return chisq;
   }
@@ -74,7 +74,7 @@ namespace mygsl {
   {
     if (is_weighted ()) 
       {
-        throw runtime_error ("linear_regression::fit_data::get_sumsq: Not computed! Use 'get_chisq'!");
+        throw std::logic_error ("mygsl::linear_regression::fit_data::get_sumsq: Not computed! Use 'get_chisq'!");
       }
     return sumsq;
   }
@@ -179,12 +179,11 @@ namespace mygsl {
 
   void linear_regression::init (const vector<datapoint> & p_)
   {
-    if (p_.size () < 3)
-      {
-        ostringstream message;
-        message << "linear_regression::init: Not enough datapoints!";
-        throw runtime_error (message.str ());
-      }
+    if (p_.size () < 3) {
+      std::ostringstream message;
+      message << "mygsl::linear_regression::init: Not enough data points !";
+      throw std::logic_error (message.str ());
+    }
     size_t n = p_.size ();
     _can_weighted_ = true;    
     _delete_ = true;
@@ -193,17 +192,15 @@ namespace mygsl {
     _w_ = new double [n];
     _can_weighted_ = true;
     int count = 0;
-    for (int i = 0; i < n; i++)
-      {
-        _x_[i] = p_[i].x ();
-        _y_[i] = p_[i].y ();
-        if (! p_[i].is_weighted ())
-          {
-            clog << "WARNING: linear_regression::init: Datapoint #" << count << " is not weighted!" << endl;
-            _can_weighted_ = false;
-          }
-        _w_[i] = p_[i].sigma ();
+    for (int i = 0; i < n; i++) {
+      _x_[i] = p_[i].x ();
+      _y_[i] = p_[i].y ();
+      if (! p_[i].is_weighted ()) {
+        clog << "WARNING: linear_regression::init: Datapoint #" << count << " is not weighted!" << endl;
+        _can_weighted_ = false;
       }
+      _w_[i] = p_[i].sigma_y ();
+    }
     _fit_data_.n = n;
     _initialized_ = true;
     return;
@@ -215,12 +212,11 @@ namespace mygsl {
                                 const double * y_, 
                                 const double * w_)
   {
-    if (npoints_ < 3)
-      {
-        ostringstream message;
-        message << "linear_regression::init: Not enough datapoints!";
-        throw runtime_error (message.str ());
-      }
+    if (npoints_ < 3) {
+      std::ostringstream message;
+      message << "mygsl::linear_regression::init: Not enough datapoints!";
+      throw std::logic_error (message.str ());
+    }
     size_t n = npoints_;
     _can_weighted_ = true;    
     _delete_ = false;
@@ -229,19 +225,16 @@ namespace mygsl {
     _w_ = 0;
     _can_weighted_ = false;
     int count = 0;
-    if (w_ != 0)
-      {
-        _w_ = const_cast<double *> (w_);
-        _can_weighted_ = true;
-        for (int i = 0; i < n; i++)
-          {
-            if (isnan (_w_[i]))
-              {
-                clog << "WARNING: linear_regression::init: Datapoint #" << count << " is not weighted!" << endl;
-                _can_weighted_ = false;
-              }
-          }
+    if (w_ != 0) {
+      _w_ = const_cast<double *> (w_);
+      _can_weighted_ = true;
+      for (int i = 0; i < n; i++) {
+        if (isnan (_w_[i])) {
+          clog << "WARNING: linear_regression::init: Datapoint #" << count << " is not weighted!" << endl;
+          _can_weighted_ = false;
+        }
       }
+    }
     _fit_data_.n = n;
     _initialized_ = true;
     return;
@@ -259,32 +252,26 @@ namespace mygsl {
                                 const vector<double> & y_, 
                                 const vector<double> & w_)
   {
-    if (x_.size () < 3)
-      {
-        ostringstream message;
-        message << "linear_regression::init: Not enough datapoints!";
-        throw runtime_error (message.str ());
+    if (x_.size () < 3) {
+      std::ostringstream message;
+      message << "mygsl::linear_regression::init: Not enough datapoints!";
+      throw std::logic_error (message.str ());
+    }
+    if (x_.size () != y_.size ()) {
+      std::ostringstream message;
+      message << "mygsl::linear_regression::init: Data vectors' dimensions do not match!";
+      throw std::logic_error (message.str ());
+    }
+    if (w_.size ()) {
+      if (y_.size () != w_.size ()) {
+        std::ostringstream message;
+        message << "mygsl::linear_regression::init: Error vector's dimension and data vactor do not match!";
+        throw std::logic_error (message.str ());
       }
-    if (x_.size () != y_.size ())
-      {
-        ostringstream message;
-        message << "linear_regression::init: Data vectors' dimensions do not match!";
-        throw runtime_error (message.str ());
-      }
-    if (w_.size ())
-      {
-        if (y_.size () != w_.size ())
-          {
-            ostringstream message;
-            message << "linear_regression::init: Error vector's dimension and data vactor do not match!";
-            throw runtime_error (message.str ());
-          }
-        _can_weighted_ = true;    
-      }
-    else
-      {
-        _can_weighted_ = false;    
-      }
+      _can_weighted_ = true;    
+    } else {
+      _can_weighted_ = false;    
+    }
     size_t n = x_.size ();
 
     // 2009-10-28 FM: std::vector::data() method is not available:
@@ -296,30 +283,26 @@ namespace mygsl {
     _delete_ = true;
     _x_ = new double [n];
     _y_ = new double [n];
-    for (int i = 0; i < n; i++)
-      {
-        _x_[i] = x_[i];
-        _y_[i] = y_[i];
-      }
+    for (int i = 0; i < n; i++) {
+      _x_[i] = x_[i];
+      _y_[i] = y_[i];
+    }
 
     _w_ = 0;
     int count = 0;
-    if (w_.size () != 0)
-      {
-        // 2009-10-28 FM: missing std::vector::data() method:
-        //_w_ = const_cast<double *>(w_.data ());
-        _w_ = new double [n];
-        _can_weighted_ = true;
-        for (int i = 0; i < n; i++)
-          {
-            _w_[i] = w_[i];
-            if (isnan (_w_[i]))
-              {
-                clog << "WARNING: linear_regression::init: Datapoint #" << count << " is not weighted!" << endl;
-                _can_weighted_ = false;
-              }
-          }
+    if (w_.size () != 0) {
+      // 2009-10-28 FM: missing std::vector::data() method:
+      //_w_ = const_cast<double *>(w_.data ());
+      _w_ = new double [n];
+      _can_weighted_ = true;
+      for (int i = 0; i < n; i++) {
+        _w_[i] = w_[i];
+        if (isnan (_w_[i])) {
+          clog << "WARNING: linear_regression::init: Datapoint #" << count << " is not weighted!" << endl;
+          _can_weighted_ = false;
+        }
       }
+    }
     _fit_data_.n = n;
     _initialized_ = true;
   }
@@ -329,22 +312,18 @@ namespace mygsl {
     _initialized_ = false;
     _can_weighted_ = false;
     _fit_data_.reset ();
-    if (_delete_)
-      {
-        if (_x_ != 0) 
-          {
-            delete [] _x_;
-          }
-        if (_y_ != 0) 
-          {
-            delete [] _y_;
-            _y_ = 0;
-          }
-        if (_w_ != 0) 
-          {
-            delete [] _w_;
-          }
+    if (_delete_) {
+      if (_x_ != 0) {
+        delete [] _x_;
       }
+      if (_y_ != 0) {
+        delete [] _y_;
+        _y_ = 0;
+      }
+      if (_w_ != 0) {
+        delete [] _w_;
+      }
+    }
     _delete_ = false;
     _x_ = 0;
     _y_ = 0;
@@ -359,12 +338,11 @@ namespace mygsl {
 
   bool linear_regression::fit_linear ()
   {
-    if (! is_initialized ())
-      {
-        ostringstream message;
-        message << "linear_regression::fit_linear: Not initialized!";
-        throw runtime_error (message.str ());
-      }
+    if (! is_initialized ()) {
+      std::ostringstream message;
+      message << "mygsl::linear_regression::fit_linear: Not initialized!";
+      throw std::logic_error (message.str ());
+    }
 
     int gsl_err =  gsl_fit_linear (_x_, 1,
                                    _y_, 1,
@@ -383,18 +361,16 @@ namespace mygsl {
 
   bool linear_regression::fit_weighted_linear ()
   {
-    if (! is_initialized ())
-      {
-        ostringstream message;
-        message << "linear_regression::fit_linear: Not initialized!";
-        throw runtime_error (message.str ());
-      }
-    if (! _can_weighted_)
-      {
-        ostringstream message;
-        message << "linear_regression::fit_linear: Cannot perform weighted fit!";
-        throw runtime_error (message.str ());
-      }
+    if (! is_initialized ()) {
+      std::ostringstream message;
+      message << "mygsl::linear_regression::fit_linear: Not initialized!";
+      throw std::runtime_error (message.str ());
+    }
+    if (! _can_weighted_) {
+      std::ostringstream message;
+      message << "mygsl::linear_regression::fit_linear: Cannot perform weighted fit!";
+      throw std::logic_error (message.str ());
+    }
     int gsl_err =  gsl_fit_wlinear (_x_, 1,
                                     _w_, 1,
                                     _y_, 1,
@@ -413,12 +389,11 @@ namespace mygsl {
 
   bool linear_regression::fit_linear_no_constant ()
   {
-    if (! is_initialized ())
-      {
-        ostringstream message;
-        message << "linear_regression::fit_linear_no_constant: Not initialized!";
-        throw runtime_error (message.str ());
-      }
+    if (! is_initialized ()) {
+      std::ostringstream message;
+      message << "mygsl::linear_regression::fit_linear_no_constant: Not initialized!";
+      throw std::logic_error (message.str ());
+    }
 
     int gsl_err =  gsl_fit_mul (_x_, 1,
                                 _y_, 1,
@@ -437,18 +412,16 @@ namespace mygsl {
 
   bool linear_regression::fit_weighted_linear_no_constant ()
   {
-    if (! is_initialized ())
-      {
-        ostringstream message;
-        message << "linear_regression::fit_weighted_linear_no_constant: Not initialized!";
-        throw runtime_error (message.str ());
-      }
-    if (! _can_weighted_)
-      {
-        ostringstream message;
-        message << "linear_regression::fit_weighted_linear_no_constant: Cannot perform weighted fit!";
-        throw runtime_error (message.str ());
-      }
+    if (! is_initialized ()) {
+      std::ostringstream message;
+      message << "mygsl::linear_regression::fit_weighted_linear_no_constant: Not initialized!";
+      throw std::logic_error (message.str ());
+    }
+    if (! _can_weighted_) {
+      std::ostringstream message;
+      message << "mygsl::linear_regression::fit_weighted_linear_no_constant: Cannot perform weighted fit!";
+      throw std::logic_error (message.str ());
+    }
     int gsl_err =  gsl_fit_wmul (_x_, 1,
                                  _w_, 1,
                                  _y_, 1,
@@ -469,60 +442,53 @@ namespace mygsl {
                                     double & y_, 
                                     double & y_err_) const
   {
-    if (! is_initialized ())
-      {
-        ostringstream message;
-        message << "linear_regression::eval: Not initialized!";
-        throw runtime_error (message.str ());
-      }
+    if (! is_initialized ()) {
+      std::ostringstream message;
+      message << "mygsl::linear_regression::eval: Not initialized!";
+      throw std::logic_error (message.str ());
+    }
     int gsl_err;
-    if (_fit_data_.has_constant ())
-      {
-        gsl_err = gsl_fit_linear_est (x_,
-                                      _fit_data_.c0, 
-                                      _fit_data_.c1, 
-                                      _fit_data_.cov00, 
-                                      _fit_data_.cov01, 
-                                      _fit_data_.cov11, 
-                                      &y_,
-                                      &y_err_);
-      }
-    else
-      {
-        gsl_err = gsl_fit_mul_est (x_,
-                                   _fit_data_.c1, 
-                                   _fit_data_.cov11, 
-                                   &y_,
-                                   &y_err_);
-      }
-    if (gsl_err != GSL_SUCCESS)
-      {
-        ostringstream message;
-        message << "linear_regression::eval_err: Cannot evaluate value!";
-        throw runtime_error (message.str ());
-      }
+    if (_fit_data_.has_constant ()) {
+      gsl_err = gsl_fit_linear_est (x_,
+                                    _fit_data_.c0, 
+                                    _fit_data_.c1, 
+                                    _fit_data_.cov00, 
+                                    _fit_data_.cov01, 
+                                    _fit_data_.cov11, 
+                                    &y_,
+                                    &y_err_);
+    } else {
+      gsl_err = gsl_fit_mul_est (x_,
+                                 _fit_data_.c1, 
+                                 _fit_data_.cov11, 
+                                 &y_,
+                                 &y_err_);
+    }
+    if (gsl_err != GSL_SUCCESS) {
+      std::ostringstream message;
+      message << "mygsl::linear_regression::eval_err: Cannot evaluate value!";
+      throw std::logic_error (message.str ());
+    }
     return;
   }
 
-  double linear_regression::eval (double x_) const
+  double linear_regression::_eval (double x_) const
   {
-    if (! is_initialized ())
-      {
-        ostringstream message;
-        message << "linear_regression::eval: Not initialized!";
-        throw runtime_error (message.str ());
-      }
-    
+    if (! is_initialized ()) {
+      std::ostringstream message;
+      message << "mygsl::linear_regression::_eval: Not initialized!";
+      throw std::logic_error (message.str ());
+    }
     double y, y_err;
     eval_err (x_, y, y_err);
     return y;
   }
   
-}
+} // namespace mygsl
 
 /* Local Variables: */
 /* mode: c++        */
 /* coding: utf-8    */
 /* End:             */
 
-// end of mygsl::linear_regression.cc
+// end of mygsl/linear_regression.cc

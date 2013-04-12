@@ -1,13 +1,13 @@
 // -*- mode: c++; -*- 
-// test_tabfunc.cxx
+// test_tabulated_function.cxx
 /*
  * Test program for the 'tabulated_function' class
  *
- * shell$ test_tabfunc > test_tabfunc.data
+ * shell$ test_tabulated_function > test_tabulated_function.data
  *
  * gnuplot> plot [0:2][0:1.2] \
- *   'test_tabfunc.data' index 0 w dots, \
- *   'test_tabfunc.data' index 1 w points ps 1 pt 6 lt 3, \
+ *   'test_tabulated_function.data' index 0 w dots, \
+ *   'test_tabulated_function.data' index 1 w points ps 1 pt 6 lt 3, \
  *   cos(x) w lines lt 4
  */
 

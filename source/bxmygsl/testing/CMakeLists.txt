@@ -52,13 +52,13 @@ set ( mygsl_tests_programs
   test_polynomial.cxx
   test_rng_2.cxx
   test_rng.cxx
-  test_tabfunc_2.cxx
-  test_tabfunc_3.cxx
-  test_tabfunc.cxx
-  test_unary_eval.cxx
+  test_tabulated_function_2.cxx
+  test_tabulated_function_3.cxx
+  test_tabulated_function.cxx
   test_von_neumann.cxx
   test_prng_state_manager.cxx
   test_seed_manager.cxx
+  test_i_unary_function.cxx
 )
 
 ###message (STATUS "mygsl_tests_programs=${mygsl_tests_programs}" )

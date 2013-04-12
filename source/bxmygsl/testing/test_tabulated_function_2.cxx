@@ -19,7 +19,7 @@
 #include <cmath>
 #include <vector>
 
-#include <mygsl/test_tabulated_function.h>
+#include <mygsl/tabulated_function.h>
 #include <mygsl/numerical_differentiation.h>
 
 using namespace std;

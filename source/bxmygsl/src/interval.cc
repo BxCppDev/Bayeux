@@ -29,6 +29,8 @@ namespace mygsl {
   const bool interval::included = true;
   const bool interval::excluded = false;
 
+  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(interval,"mygsl::interval")
+
   // ctor:
   interval::interval ()
   {
@@ -299,6 +301,12 @@ namespace mygsl {
     interval i;
     i._eps_ = NO_VALUE;
     return i;
+  }
+
+  bool interval::is_no_limit () const
+  {
+    return _min_ == -numeric_limits<double>::infinity ()
+      && _max_ == +numeric_limits<double>::infinity ();
   }
 
   interval interval::make_no_limit (double eps_)

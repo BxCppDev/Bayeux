@@ -1,4 +1,4 @@
-// mygsl::polynomial.cc
+// mygsl/polynomial.cc
 
 #include <mygsl/polynomial.h>
 
@@ -11,23 +11,30 @@
 #include <gsl/gsl_poly.h>
 
 namespace mygsl {
+
 using namespace std;
 
-size_t polynomial::get_ncoeffs() const {
+DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(polynomial,"mygsl::polynomial")
+    
+bool polynomial::is_valid() const {
+  return _c_.size() > 0;
+}
+
+unsigned int polynomial::get_ncoeffs() const {
   return _c_.size();
 }
 
-size_t polynomial::get_degree() const {
+unsigned int polynomial::get_degree() const {
   return get_ncoeffs() - 1;
 }
 
-double polynomial::get_coeff(size_t i_) const {
+double polynomial::get_coeff(unsigned int i_) const {
   return _c_.at(i_);
 }
 
-void polynomial::set_coeff(size_t i_, double c_) {
+void polynomial::set_coeff(unsigned int i_, double c_) {
   if (i_ > get_degree()) {
-    size_t sz = _c_.size();
+    unsigned int sz = _c_.size();
     _c_.resize(i_ + 1);
     for (int i = sz; i < _c_.size(); ++i) {
       _c_[i] = 0.0;
@@ -36,7 +43,10 @@ void polynomial::set_coeff(size_t i_, double c_) {
   _c_.at(i_) = c_;
 }
 
-polynomial::polynomial(size_t degree_) {
+polynomial::polynomial() {
+}
+
+polynomial::polynomial(unsigned int degree_) {
   _c_.assign(degree_ + 1, 0.0);
   _c_[degree_] = 1.0;
 }
@@ -59,7 +69,7 @@ polynomial::polynomial(double c0_, double c1_, double c2_) {
 }
 
 polynomial::polynomial(const vector<double>& c_) {
-  _c_ = c_;
+  set_coefficients(c_);
 }
 
 polynomial::polynomial(const polynomial& p_) {
@@ -70,8 +80,13 @@ polynomial::~polynomial() {
   _c_.clear();
 }
 
-double polynomial::eval(double x_) const {
-  size_t sz = _c_.size();
+void polynomial::set_coefficients(const std::vector<double>& c_)
+{
+  _c_ = c_;
+}
+
+double polynomial::_eval(double x_) const {
+  unsigned int sz = _c_.size();
   const double * first_arg = 0;
   if (sz > 0) {
     first_arg = &(_c_[0]);
@@ -113,7 +128,7 @@ void polynomial::print(ostream & out_, int format_, bool eol_) const {
   if (eol_) out_ << endl;
 }
 
-bool polynomial::solve_linear(double p0_, double p1_, size_t& nsols_,
+bool polynomial::solve_linear(double p0_, double p1_, unsigned int& nsols_,
                               double &x0_) {
   if (p1_ == 0.0) {
     if (p0_ == 0.0) {
@@ -131,13 +146,13 @@ bool polynomial::solve_linear(double p0_, double p1_, size_t& nsols_,
 }
 
 bool polynomial::solve_quadratic(double p0_, double p1_, double p2_, 
-                                 size_t& nsols_,
+                                 unsigned int& nsols_,
                                  double& x0_, double& x1_) {
   if (p2_ == 0) {
     x1_ = GSL_NAN;
     return solve_linear(p0_, p1_, nsols_, x0_);    
   }
-  nsols_ = (size_t)gsl_poly_solve_quadratic(p2_, p1_, p0_, &x0_, &x1_);
+  nsols_ = (unsigned int)gsl_poly_solve_quadratic(p2_, p1_, p0_, &x0_, &x1_);
   if (nsols_ < 1) x0_ = GSL_NAN;
   
   if (nsols_ < 2) x1_ = GSL_NAN;
@@ -146,9 +161,9 @@ bool polynomial::solve_quadratic(double p0_, double p1_, double p2_,
 } 
 
 bool polynomial::solve_cubic(double p0_, double p1_, double p2_, 
-                             size_t& nsols_,
+                             unsigned int& nsols_,
                              double& x0_, double& x1_, double& x2_) {
-  nsols_ = (size_t)gsl_poly_solve_cubic(p2_, p1_, p0_, &x0_, &x1_, &x2_);
+  nsols_ = (unsigned int)gsl_poly_solve_cubic(p2_, p1_, p0_, &x0_, &x1_, &x2_);
   
   if (nsols_ < 1) x0_ = GSL_NAN;
   
@@ -160,14 +175,14 @@ bool polynomial::solve_cubic(double p0_, double p1_, double p2_,
 }
 
 bool polynomial::solve_cubic(double p0_, double p1_, double p2_, double p3_,
-                             size_t& nsols_,
+                             unsigned int& nsols_,
                              double& x0_, double& x1_, double& x2_) {
   if (p3_ == 0) {
     x2_ = GSL_NAN;  
     return solve_quadratic(p0_, p1_, p2_, nsols_, x0_, x1_);
   }
 
-  nsols_ = (size_t)solve_cubic(p2_/p3_, p1_/p3_, p0_/p3_, nsols_, 
+  nsols_ = (unsigned int)solve_cubic(p2_/p3_, p1_/p3_, p0_/p3_, nsols_, 
                                x0_, x1_, x2_);
   if (nsols_ < 1) x0_ = GSL_NAN;
   
@@ -183,12 +198,14 @@ bool polynomial::solve_cubic(double p0_, double p1_, double p2_, double p3_,
 //
 struct polynomial::solver::solver_impl {
   int    _status_;
-  size_t _sz_;
+  unsigned int _sz_;
   gsl_poly_complex_workspace *_ws_;
 };
 
-polynomial::solver::solver(size_t sz_) {
+polynomial::solver::solver(unsigned int sz_) {
   pImpl = new solver_impl;
+  pImpl->_status_ = 0;
+  pImpl->_ws_ = 0;
   _init_(sz_);
 }
 
@@ -196,7 +213,7 @@ polynomial::solver::~solver() {
   _reset_();
 }
 
-void polynomial::solver::_init_(size_t sz_) {
+void polynomial::solver::_init_(unsigned int sz_) {
   pImpl->_status_ = GSL_EFAILED;
   if (pImpl->_ws_ != 0) {
     if (pImpl->_sz_ >= sz_) {
@@ -221,13 +238,13 @@ void polynomial::solver::_reset_() {
 }
 
 bool polynomial::solver::solve(const polynomial& p_) {
-  size_t deg = p_.get_degree();
+  unsigned int deg = p_.get_degree();
   _init_(deg + 1);
   {
-    throw logic_error("polynomial::solver::solve:  Not implemented yet!");
+    throw logic_error("polynomial::solver::solve: Not implemented yet!");
   }
   return pImpl->_status_ == GSL_SUCCESS;
 }
 
-}
+} // namespace mygsl
 

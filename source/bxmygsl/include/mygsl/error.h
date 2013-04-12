@@ -1,7 +1,7 @@
-// mygsl::error.h
+// mygsl/error.h
 
-#ifndef __mygsl__error_h 
-#define __mygsl__error_h 1
+#ifndef MYGSL_ERROR_H_ 
+#define MYGSL_ERROR_H_ 1
 
 #include <string>
 #include <gsl/gsl_errno.h>
@@ -51,6 +51,6 @@ namespace mygsl {
  
 }
 
-#endif //  __mygsl__error_h
+#endif // MYGSL_ERROR_H_
 
-// end of mygsl::error.h
+// end of mygsl/error.h

@@ -1,19 +1,22 @@
 // -*- mode:c++; -*- 
-// mygsl::datapoint.h
+// datapoint.h
 
-#ifndef __mygsl__datapoint_h 
-#define __mygsl__datapoint_h 1
+#ifndef MYGSL_DATAPOINT_H_ 
+#define MYGSL_DATAPOINT_H_ 1
 
 #include <iostream>
 #include <limits>
 
-#include <mygsl/ioutils.h>
+// Serialization interface :
+#include <datatools/i_serializable.h>
 
-//using namespace   std;
+#include <mygsl/ioutils.h>
 
 namespace mygsl {
 
-  class datapoint
+  /// \brief A (x,y,sigma(y)) triplet
+  class datapoint :
+    DATATOOLS_SERIALIZABLE_CLASS
   {
 
   public:
@@ -22,15 +25,17 @@ namespace mygsl {
 
     datapoint (double x_, 
                double y_, 
-               double sigma_ = std::numeric_limits<double>::quiet_NaN ());
+               double sigma_y_ = std::numeric_limits<double>::quiet_NaN ());
+
+    virtual ~datapoint ();
 
     const double & x () const;
 
     const double & y () const;
 
-    const double & sigma () const;
+    const double & sigma_y () const;
 
-    bool has_sigma () const;
+    bool has_sigma_y () const;
 
     bool is_weighted () const;
 
@@ -45,12 +50,14 @@ namespace mygsl {
 
     double _x_;
     double _y_;
-    double _sigma_;
+    double _sigma_y_;
+
+    DATATOOLS_SERIALIZATION_DECLARATION();
 
   };
 
 }
 
-#endif // __mygsl__datapoint_h
+#endif // MYGSL_DATAPOINT_H_
 
-// end of mygsl::datapoint.h
+// end of datapoint.h

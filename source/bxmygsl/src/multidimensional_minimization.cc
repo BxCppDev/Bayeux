@@ -1,4 +1,4 @@
-// mygsl::multidimensional_minimization.cc
+// multidimensional_minimization.cc
 
 #include <mygsl/multidimensional_minimization.h>
 
@@ -19,8 +19,8 @@ namespace mygsl {
 
   const double multidimensional_minimization_system::DEFAULT_OUT_OF_LIMIT_SLOPE = 1.e10;
 
-  /************************************************************************/
 
+  /************************************************************************/
   void multidimensional_minimization_system::set_numeric_eval_df (bool use_)
   {
     _numeric_eval_df_ = use_;
@@ -65,9 +65,9 @@ namespace mygsl {
     sys->init_params_values ();
 
     double result = numeric_limits<double>::quiet_NaN ();
-    if (sys->_eval_f_MR_ (result) != 0)
+    if (sys->_eval_f_MR_(result) != 0)
       {
-        throw runtime_error ("multidimensional_minimization_system::func_eval_f: Cannot evaluate function!");
+        throw runtime_error ("mygsl::multidimensional_minimization_system::func_eval_f: Cannot evaluate function!");
       }
 
     // restore former 'x' value:
@@ -266,7 +266,7 @@ namespace mygsl {
     size_t fd = get_number_of_free_params ();
     if (dimension_ != fd) 
       {
-        throw std::range_error ("multidimensional_minimization_system::to_double_star: Invalid dimension!");
+        throw std::range_error ("mygsl::multidimensional_minimization_system::to_double_star: Invalid dimension!");
       }
     int i_free = 0;
     for (int i = 0; i < fd; i++) 
@@ -281,7 +281,7 @@ namespace mygsl {
   {
     if (dimension_ != get_number_of_free_params ()) 
       {
-        throw std::range_error ("multidimensional_minimization_system::from_double_star: Invalid dimension!");
+        throw std::range_error ("mygsl::multidimensional_minimization_system::from_double_star: Invalid dimension!");
       }
     for (int i = 0; i < get_number_of_free_params (); i++) 
       { 
@@ -324,6 +324,21 @@ namespace mygsl {
     }
     }
   */
+
+  /************************************************************************/
+
+  multidimensional_minimization_system::func_eval_f_param::func_eval_f_param (int free_param_index_, 
+                                                                              multidimensional_minimization_system & sys_)
+  {
+    free_param_index = free_param_index_;
+    sys = &sys_;
+    return;
+  }
+
+  double multidimensional_minimization_system::func_eval_f_param::_eval (double x_) const 
+  {
+    return func_eval_f_MR(x_, const_cast<func_eval_f_param*> (this));
+  }
 
   void multidimensional_minimization_system::plot_f (const string & prefix_, int mode_) const
   {
@@ -561,7 +576,7 @@ namespace mygsl {
   {
     if (mode_ != MODE_F && mode_ != MODE_FDF) 
       {
-        throw std::runtime_error ("multidimensional_minimization:_set_mode_: Invalid mode!");
+        throw std::runtime_error ("mygsl::multidimensional_minimization:_set_mode_: Invalid mode!");
       }
     _mode_ = mode_;
     return;
@@ -872,8 +887,7 @@ namespace mygsl {
         }
       _at_step_hook (status, iter, x, dim, f);
       _fval_ = f;
-      if ((iter % _modulo_iter_) == 0) 
-        {
+      if ((iter % _modulo_iter_) == 0) {
           clog << "mygsl::multidimensional_minimization::minimize: Iteration #" << iter << " Fval == " << _fval_ << endl;
           _sys_->print_status (clog);
           clog << endl;
@@ -882,8 +896,7 @@ namespace mygsl {
     } while ((status == GSL_CONTINUE) && (iter < _max_iter_)); 
 
     _n_iter_ = iter;
-    if (status == GSL_SUCCESS) 
-      {
+    if (status == GSL_SUCCESS) {
         if (g_debug) std::clog << "multidimensional_minimization::minimize: END" << std::endl;
         _sys_->from_double_star (x, dim);
       }
@@ -891,6 +904,6 @@ namespace mygsl {
     return status;     
   }
 
-}
+} // namespace mygsl
 
-// end of mygsl::multidimensional_minimization.cc
+// end of multidimensional_minimization.cc

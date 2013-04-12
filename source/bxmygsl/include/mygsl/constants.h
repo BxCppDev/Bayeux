@@ -1,7 +1,7 @@
-// mygsl::constants.h
+// constants.h
 
-#ifndef _MYGSL_CONSTANTS_H 
-#define _MYGSL_CONSTANTS_H 1
+#ifndef MYGSL_CONSTANTS_H_ 
+#define MYGSL_CONSTANTS_H_ 1
 
 //! Library general namespace
 namespace mygsl {
@@ -253,11 +253,11 @@ namespace mygsl {
 
 } // end of namespace mygsl
 
-#endif // _MYGSL_CONSTANTS_H
+#endif // MYGSL_CONSTANTS_H_
 
 /* Local Variables: */
 /* mode: c++        */
 /* coding: utf-8    */
 /* End:             */
 
-// end of mygsl::constants.h
+// end of constants.h

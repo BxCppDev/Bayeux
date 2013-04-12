@@ -1,23 +1,19 @@
-// mygsl::best_value.h
+// best_value.h
 // -*- mode: C++; -*-
 
-#ifndef __mygsl__best_value_h
-#define __mygsl__best_value_h 1
+#ifndef MYGSL_BEST_VALUE_H_
+#define MYGSL_BEST_VALUE_H_ 1
 
 #include <iostream>
 
-//using   namespace std;
+// Serialization interfaces :
+#include <datatools/i_serializable.h>
 
 namespace mygsl {
  
-  class best_value
+  class best_value :
+    DATATOOLS_SERIALIZABLE_CLASS
     {
-    private:
-      double __value;
-      double __error_low;
-      double __error_high;
-      double __confidence_level;
-
     public:
 
       operator double ();
@@ -58,15 +54,27 @@ namespace mygsl {
                   double error_low_, 
                   double error_high_,
                   double CL_);
+
+      virtual ~best_value ();
+
+    private:
+
+      double _value_;
+      double _error_low_;
+      double _error_high_;
+      double _confidence_level_;
+
+      DATATOOLS_SERIALIZATION_DECLARATION();
+
     };
 
   std::ostream & operator<< (std::ostream & out_, const best_value & bv_);
 
 } // namespace mygsl
 
-#endif // __mygsl__best_value_h
+#endif // MYGSL_BEST_VALUE_H_
 
-// end of mygsl::best_value.h
+// end of best_value.h
 
 /* Local Variables: */
 /* mode: c++        */

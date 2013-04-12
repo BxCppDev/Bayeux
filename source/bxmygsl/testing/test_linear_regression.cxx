@@ -42,29 +42,29 @@ int main (int argc_ , char ** argv_)
 
       // fill data vectors:
       for (int i = 0; i < (int) npoints; i++)
-	{
-	  double x = r.flat (x_min, x_max);
-	  double y = r.gaussian (a * x + b, y_err);
+        {
+          double x = r.flat (x_min, x_max);
+          double y = r.gaussian (a * x + b, y_err);
 
-	  // first method:
-	  points.push_back (mygsl::datapoint (x, y, y_err));
+          // first method:
+          points.push_back (mygsl::datapoint (x, y, y_err));
 
-	  // second method:
-	  vx.push_back (x);
-	  vy.push_back (y);
-	  vy_err.push_back (y_err);
-	}
+          // second method:
+          vx.push_back (x);
+          vy.push_back (y);
+          vy_err.push_back (y_err);
+        }
 
       sort (points.begin (), points.end (), mygsl::datapoint::comp_by_x);
 
       // draw datapoints:
       for (int i = 0; i < points.size (); i++)
-	{
-	  cout << points[i].x () << ' ' 
-	       << points[i].y () << ' ' 
-	       << points[i].sigma () << endl; 
-	    
-	}
+        {
+          cout << points[i].x () << ' ' 
+               << points[i].y () << ' ' 
+               << points[i].sigma_y () << endl; 
+            
+        }
       cout << endl;
       cout << endl;
 
@@ -72,130 +72,130 @@ int main (int argc_ , char ** argv_)
 
       // draw unweighted fit result:
       if (lr.fit_linear ())
-	{
-	  double dx = 0.1;
-	  for (double x = min (0.0, x_min); x <= (x_max + 0.5 * dx); x += dx)
-	    {
-	      double y;
-	      double y_err;
-	      lr.eval_err (x, y, y_err);
-	      cout << x << ' ' 
-		   << y << ' ' 
-		   << y_err << endl; 
-	      
-	    }
-	  cout << endl;
-	  cout << endl;
-	  
-	  for (int i = 0; i < points.size (); i++)
-	    {
-	      double x = points[i].x ();
-	      double y;
-	      double y_err;
-	      lr.eval_err (x, y, y_err);
-	      cout << x << ' ' 
-		   << y << ' ' 
-		   << y_err << endl; 
-	    }
-	  cout << endl;
-	  cout << endl;
+        {
+          double dx = 0.1;
+          for (double x = min (0.0, x_min); x <= (x_max + 0.5 * dx); x += dx)
+            {
+              double y;
+              double y_err;
+              lr.eval_err (x, y, y_err);
+              cout << x << ' ' 
+                   << y << ' ' 
+                   << y_err << endl; 
+              
+            }
+          cout << endl;
+          cout << endl;
+          
+          for (int i = 0; i < points.size (); i++)
+            {
+              double x = points[i].x ();
+              double y;
+              double y_err;
+              lr.eval_err (x, y, y_err);
+              cout << x << ' ' 
+                   << y << ' ' 
+                   << y_err << endl; 
+            }
+          cout << endl;
+          cout << endl;
 
-	  clog << "Unweighted linear least-squares fit (method 1): " << endl;
-	  clog << "  slope    = " << lr.get_fit_data ().get_slope () 
-	       << " +/- "  <<  lr.get_fit_data ().get_slope_err () 
-	       << endl;
-	  clog << "  constant = " << lr.get_fit_data ().get_constant () 
-	       << " +/- "  <<  lr.get_fit_data ().get_constant_err () 
-	       << endl;
-	  clog << "  sumsq    = " << lr.get_fit_data ().get_sumsq () << endl;
-	  clog << "  ndof     = " << lr.get_fit_data ().get_ndof () << endl;
-	  clog << endl;
-	}
+          clog << "Unweighted linear least-squares fit (method 1): " << endl;
+          clog << "  slope    = " << lr.get_fit_data ().get_slope () 
+               << " +/- "  <<  lr.get_fit_data ().get_slope_err () 
+               << endl;
+          clog << "  constant = " << lr.get_fit_data ().get_constant () 
+               << " +/- "  <<  lr.get_fit_data ().get_constant_err () 
+               << endl;
+          clog << "  sumsq    = " << lr.get_fit_data ().get_sumsq () << endl;
+          clog << "  ndof     = " << lr.get_fit_data ().get_ndof () << endl;
+          clog << endl;
+        }
       else
-	{
-	  cerr << "WARNING: Cannot fit a straight line (ULF)!" << endl;
-	}
+        {
+          cerr << "WARNING: Cannot fit a straight line (ULF)!" << endl;
+        }
 
       // draw weighted fit result:
       if (lr.fit_weighted_linear ())
-	{
-	  double dx = 0.1;
-	  for (double x = min (0.0, x_min); x <= (x_max + 0.5 * dx); x += dx)
-	    {
-	      double y;
-	      double y_err;
-	      lr.eval_err (x, y, y_err);
-	      cout << x << ' ' 
-		   << y << ' ' 
-		   << y_err << endl; 
-	      
-	    }
-	  cout << endl;
-	  cout << endl;
-	  
-	  for (int i = 0; i < points.size (); i++)
-	    {
-	      double x = points[i].x ();
-	      double y;
-	      double y_err;
-	      lr.eval_err (x, y, y_err);
-	      cout << x << ' ' 
-		   << y << ' ' 
-		   << y_err << endl; 
-	    }
-	  cout << endl;
-	  cout << endl;
+        {
+          double dx = 0.1;
+          for (double x = min (0.0, x_min); x <= (x_max + 0.5 * dx); x += dx)
+            {
+              double y;
+              double y_err;
+              lr.eval_err (x, y, y_err);
+              cout << x << ' ' 
+                   << y << ' ' 
+                   << y_err << endl; 
+              
+            }
+          cout << endl;
+          cout << endl;
+          
+          for (int i = 0; i < points.size (); i++)
+            {
+              double x = points[i].x ();
+              double y;
+              double y_err;
+              lr.eval_err (x, y, y_err);
+              cout << x << ' ' 
+                   << y << ' ' 
+                   << y_err << endl; 
+            }
+          cout << endl;
+          cout << endl;
 
-	  clog << "Weighted linear least-squares fit (method 1): " << endl;
-	  clog << "  slope    = " << lr.get_fit_data ().get_slope () 
-	       << " +/- "  <<  lr.get_fit_data ().get_slope_err () 
-	       << endl;
-	  clog << "  constant = " << lr.get_fit_data ().get_constant () 
-	       << " +/- "  <<  lr.get_fit_data ().get_constant_err () 
-	       << endl;
-	  clog << "  chisq    = " << lr.get_fit_data ().get_chisq () << endl;
-	  clog << "  ndof     = " << lr.get_fit_data ().get_ndof () << endl;
-	  clog << "  chisq/ndof = " << lr.get_fit_data ().get_chisq () / lr.get_fit_data ().get_ndof () << endl;
-	  clog << endl;
-	}
+          clog << "Weighted linear least-squares fit (method 1): " << endl;
+          clog << "  slope    = " << lr.get_fit_data ().get_slope () 
+               << " +/- "  <<  lr.get_fit_data ().get_slope_err () 
+               << endl;
+          clog << "  constant = " << lr.get_fit_data ().get_constant () 
+               << " +/- "  <<  lr.get_fit_data ().get_constant_err () 
+               << endl;
+          clog << "  chisq    = " << lr.get_fit_data ().get_chisq () << endl;
+          clog << "  ndof     = " << lr.get_fit_data ().get_ndof () << endl;
+          clog << "  chisq/ndof = " << lr.get_fit_data ().get_chisq () / lr.get_fit_data ().get_ndof () << endl;
+          clog << endl;
+        }
       else
-	{
-	  cerr << "WARNING: Cannot fit a straight line (WLF)!" << endl;
-	}
+        {
+          cerr << "WARNING: Cannot fit a straight line (WLF)!" << endl;
+        }
 
       lr.init (vx, vy, vy_err);
       // draw weighted fit result:
       if (lr.fit_weighted_linear ())
-	{
+        {
 
-	  clog << "Weighted linear least-squares fit (method 2): " << endl;
-	  clog << "  slope    = " << lr.get_fit_data ().get_slope () 
-	       << " +/- "  <<  lr.get_fit_data ().get_slope_err () 
-	       << endl;
-	  clog << "  constant = " << lr.get_fit_data ().get_constant () 
-	       << " +/- "  <<  lr.get_fit_data ().get_constant_err () 
-	       << endl;
-	  clog << "  chisq    = " << lr.get_fit_data ().get_chisq () << endl;
-	  clog << "  ndof     = " << lr.get_fit_data ().get_ndof () << endl;
-	  clog << "  chisq/ndof = " << lr.get_fit_data ().get_chisq () / lr.get_fit_data ().get_ndof () << endl;
-	  clog << endl;
-	}
+          clog << "Weighted linear least-squares fit (method 2): " << endl;
+          clog << "  slope    = " << lr.get_fit_data ().get_slope () 
+               << " +/- "  <<  lr.get_fit_data ().get_slope_err () 
+               << endl;
+          clog << "  constant = " << lr.get_fit_data ().get_constant () 
+               << " +/- "  <<  lr.get_fit_data ().get_constant_err () 
+               << endl;
+          clog << "  chisq    = " << lr.get_fit_data ().get_chisq () << endl;
+          clog << "  ndof     = " << lr.get_fit_data ().get_ndof () << endl;
+          clog << "  chisq/ndof = " << lr.get_fit_data ().get_chisq () / lr.get_fit_data ().get_ndof () << endl;
+          clog << endl;
+        }
 
       lr.init (vx, vy);
       // draw unweighted fit result:
       if (lr.fit_linear ())
-	{
-	  clog << "Unweighted linear least-squares fit (method 2): " << endl;
-	  clog << "  slope    = " << lr.get_fit_data ().get_slope () 
-	       << " +/- "  <<  lr.get_fit_data ().get_slope_err () 
-	       << endl;
-	  clog << "  constant = " << lr.get_fit_data ().get_constant () 
-	       << " +/- "  <<  lr.get_fit_data ().get_constant_err () 
-	       << endl;
-	  clog << "  sumsq    = " << lr.get_fit_data ().get_sumsq () << endl;
-	  clog << "  ndof     = " << lr.get_fit_data ().get_ndof () << endl;
-	  clog << endl;
-	}
+        {
+          clog << "Unweighted linear least-squares fit (method 2): " << endl;
+          clog << "  slope    = " << lr.get_fit_data ().get_slope () 
+               << " +/- "  <<  lr.get_fit_data ().get_slope_err () 
+               << endl;
+          clog << "  constant = " << lr.get_fit_data ().get_constant () 
+               << " +/- "  <<  lr.get_fit_data ().get_constant_err () 
+               << endl;
+          clog << "  sumsq    = " << lr.get_fit_data ().get_sumsq () << endl;
+          clog << "  ndof     = " << lr.get_fit_data ().get_ndof () << endl;
+          clog << endl;
+        }
 
     }
   catch (exception & x)

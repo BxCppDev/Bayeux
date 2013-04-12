@@ -16,15 +16,13 @@
  * 
  */
 
-#ifndef __mygsl__von_neumann_method_h
-#define __mygsl__von_neumann_method_h 1
+#ifndef MYGSL_VON_NEUMANN_METHOD_H_
+#define MYGSL_VON_NEUMANN_METHOD_H_ 1
 
 #include <iostream>
 
 #include <mygsl/rng.h>
-#include <mygsl/unary_eval.h>
-
-//using namespace   std;
+#include <mygsl/i_unary_function.h>
 
 namespace mygsl {
 
@@ -37,16 +35,6 @@ namespace mygsl {
     static const size_t DEFAULT_NSAMPLES   = 1000;
     static const size_t DEFAULT_MAX_COUNTS = 10000;
     static const size_t NO_MAX_COUNTS      = 0;
-
-  private:
-
-    double _xmin_;
-    double _xmax_;
-    double _fmax_;
-    unary_eval * _func_;
-    size_t       _max_counts_;
-
-  public:
 
     bool is_initialized () const;
 
@@ -62,14 +50,14 @@ namespace mygsl {
 
     von_neumann_method (double xmin_, 
                         double xmax_, 
-                        unary_eval & func_, 
+                        const i_unary_function & func_, 
                         double fmax_ = AUTO_FMAX,
                         size_t nsamples_ = DEFAULT_NSAMPLES,
                         size_t max_counts_ = DEFAULT_MAX_COUNTS);
 
     void init (double xmin_, 
                double xmax_, 
-               unary_eval & func_, 
+               const i_unary_function & func_, 
                double fmax_,
                size_t nsamples_ = 0,
                size_t max_counts_ = DEFAULT_MAX_COUNTS);
@@ -80,10 +68,18 @@ namespace mygsl {
 
     void dump (std::ostream & out_ = std::clog) const;
 
+  private:
+
+    double _xmin_;
+    double _xmax_;
+    double _fmax_;
+    const i_unary_function * _func_;
+    size_t _max_counts_;
+
   };
 
 } // end of namespace mygsl
 
-#endif // __mygsl__von_neumann_method_h
+#endif // MYGSL_VON_NEUMANN_METHOD_H_
 
 // end of von_neumann_method.h

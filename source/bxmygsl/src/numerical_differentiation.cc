@@ -13,69 +13,68 @@ namespace mygsl {
 
   using namespace std;
 
-  double derivative_central (const unary_eval & eval_, double x_, double h_, double & abserr_ )
+  double derivative_central (const i_unary_function & eval_, double x_, double h_, double & abserr_ )
   {
     double result, abserr;
     gsl_function func;
-    func.function = unary_eval::g_function;
-    func.params   = const_cast<unary_eval *>(&eval_);
-    if (gsl_deriv_central (&func, x_, h_, &result, &abserr) != 0)
-      {
-        throw runtime_error ("derivative_central: Cannot compute derivative !");
-      }
+    func.function = i_unary_function::g_function;
+    func.params   = const_cast<i_unary_function *>(&eval_);
+    if (gsl_deriv_central (&func, x_, h_, &result, &abserr) != 0) {
+      throw runtime_error ("mygsl::derivative_central: Cannot compute derivative !");
+    }
     abserr_ = abserr;
     return result;
   }
 
-  double derivative_central (const unary_eval & eval_, double x_, double h_)
+  double derivative_central (const i_unary_function & eval_, double x_, double h_)
   {
     double abserr;
     return derivative_central (eval_, x_, h_, abserr);
   }
 
 
-  double derivative_forward (const unary_eval & eval_, double x_, double h_, double & abserr_ )
+  double derivative_forward (const i_unary_function & eval_, double x_, double h_, double & abserr_ )
   {
     double result, abserr;
     gsl_function func;
-    func.function = unary_eval::g_function;
-    func.params   = const_cast<unary_eval *>(&eval_);
+    func.function = i_unary_function::g_function;
+    func.params   = const_cast<i_unary_function *>(&eval_);
     if (gsl_deriv_forward (&func, x_, h_, &result, &abserr) != 0)
       {
-        throw runtime_error ("derivative_forward: Cannot compute derivative !");
+        throw runtime_error ("mygsl::derivative_forward: Cannot compute derivative !");
       }
     abserr_ = abserr;
     return result;
   }
 
-  double derivative_forward (const unary_eval & eval_, double x_, double h_)
+  double derivative_forward (const i_unary_function & eval_, double x_, double h_)
   {
     double abserr;
     return derivative_forward (eval_, x_, h_, abserr);
   }
 
-  double derivative_backward (const unary_eval & eval_, double x_, double h_, double & abserr_ )
+  double derivative_backward (const i_unary_function & eval_, double x_, double h_, double & abserr_ )
   {
     double result, abserr;
     gsl_function func;
-    func.function = unary_eval::g_function;
-    func.params   = const_cast<unary_eval *>(&eval_);
+    func.function = i_unary_function::g_function;
+    func.params   = const_cast<i_unary_function *>(&eval_);
     // 2010-10-12, FM: bug, was invoking 'gsl_deriv_forward'  in place of 'gsl_deriv_backward'
     if (gsl_deriv_backward (&func, x_, h_, &result, &abserr) != 0)
       {
-        throw runtime_error ("derivative_backward: Cannot compute derivative !");
+        throw runtime_error ("mygsl::derivative_backward: Cannot compute derivative !");
       }
     abserr_ = abserr;
     return result;
   }
 
-  double derivative_backward (const unary_eval & eval_, double x_, double h_)
+  double derivative_backward (const i_unary_function & eval_, double x_, double h_)
   {
     double abserr;
     return derivative_backward (eval_, x_, h_, abserr);
   }
 
-  double derivative (const unary_eval & eval_, 
+  double derivative (const i_unary_function & eval_, 
                      double x_, 
                      const interval & domain_, 
                      double & abserr_)
@@ -96,7 +95,7 @@ namespace mygsl {
     else
       {
         ostringstream message;
-        message << "derivative_backward: "
+        message << "mygsl::derivative_backward: "
                 << "Cannot compute derivative for domain is unsafe !"
                 << "Domain is " << domain_ << " and x is " << x_
                 << " !";
@@ -105,7 +104,7 @@ namespace mygsl {
     return 0.0;
   }
 
-  double derivative (const unary_eval & eval_, 
+  double derivative (const i_unary_function & eval_, 
                      double x_, 
                      const interval & domain_)
   {

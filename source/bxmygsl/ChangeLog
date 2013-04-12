@@ -29,6 +29,17 @@ This is the mygsl package ChangeLog
 	* version: prepare tag 4.0.0 in trunk
 2013-03-08 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
 	* add histogram_service class
+2013-04-12 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* major change of the interface
+	* add OCD support for histogram related classes
+	* redesign the interface of unary real function:
+	  - remove the mygsl::unary_eval class and related classes
+	  - add the mygsl::i_unary_function class and related classes
+	  - propagate the modification to other classes
+	* add serialization support for several classes:
+	  - mygsl::best_value
+	  - mygsl::datapoints
+	  - mygsl::polynomial
 
 
 

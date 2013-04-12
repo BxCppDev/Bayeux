@@ -1,8 +1,8 @@
 // -*- mode: c++; -*- 
-// mygsl::one_dimensional_minimization.h
+// one_dimensional_minimization.h
 
-#ifndef __mygsl__one_dimensional_minimization_h
-#define __mygsl__one_dimensional_minimization_h 1
+#ifndef MYGSL_ONE_DIMENSIONAL_MINIMIZATION_H_
+#define MYGSL_ONE_DIMENSIONAL_MINIMIZATION_H_ 1
 
 #include <algorithm>
 #include <iostream>
@@ -14,10 +14,8 @@
 
 #include <gsl/gsl_min.h>
 
-#include <mygsl/unary_eval.h>
+#include <mygsl/i_unary_function.h>
 #include <mygsl/best_value.h>
-
-// using  namespace std;
 
 namespace mygsl {
 
@@ -83,7 +81,11 @@ namespace mygsl {
 
     virtual ~one_dimensional_minimization ();
 
-    void init (unary_eval & eval_, const std::string & method_ = BRENT_METHOD_LABEL);
+    void init (const i_unary_function & functor_, 
+               const std::string & method_ = BRENT_METHOD_LABEL);
+
+    void initialize (const i_unary_function & functor_, 
+                     const std::string & method_ = BRENT_METHOD_LABEL);
 
     void reset ();
 
@@ -104,7 +106,7 @@ namespace mygsl {
 
     static double g_function (double x_, void * params_);
 
-    static best_value minimize (unary_eval & sys_, 
+    static best_value minimize (const i_unary_function & sys_, 
                                 double a_, 
                                 double b_, 
                                 double m_, 
@@ -116,6 +118,7 @@ namespace mygsl {
     static default_step_action _default_step_action_;
 
   private:
+
     bool _debug_;
     const gsl_min_fminimizer_type * _fminimizer_type_;
     gsl_min_fminimizer            * _fminimizer_;
@@ -126,7 +129,7 @@ namespace mygsl {
     size_t _max_iter_;
     double _epsabs_;
     bool   _converged_;
-    unary_eval * _eval_;
+    const i_unary_function * _functor_;
 
     // hook step function:
     at_step_action * _at_step_action_;
@@ -135,6 +138,6 @@ namespace mygsl {
   
 } // namespace mygsl
 
-#endif // __mygsl__one_dimensional_minimization_h
+#endif // MYGSL_ONE_DIMENSIONAL_MINIMIZATION_H_
 
-// end of mygsl::one_dimensional_minimization.h
+// end of one_dimensional_minimization.h

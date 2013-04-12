@@ -1,12 +1,37 @@
 // -*- mode: c++; -*- 
-/* mygsl::the_serializable.ipp */
+/* mygsl/the_serializable.ipp */
 /*
  * This includes the implementation code
  * for Boost/Serialization layer.
  *
  */
-#ifndef __mygsl__the_serializable_ipp__
-#define __mygsl__the_serializable_ipp__ 1
+#ifndef MYGSL_THE_SERIALIZABLE_IPP_
+#define MYGSL_THE_SERIALIZABLE_IPP_ 1
+
+/*********************
+ * mygsl::best_value *
+ *********************/
+#include <mygsl/best_value.ipp>
+
+/********************
+ * mygsl::datapoint *
+ ********************/
+#include <mygsl/datapoint.ipp>
+
+/*******************
+ * mygsl::interval *
+ *******************/
+#include <mygsl/interval.ipp>
+
+/*********************
+ * mygsl::polynomial *
+ *********************/
+#include <mygsl/polynomial.ipp>
+
+/********************
+ * mygsl::histogram *
+ ********************/
+#include <mygsl/histogram.ipp>
 
 /********************
  * mygsl::histogram *
@@ -23,6 +48,6 @@
  *************************/
 #include <mygsl/histogram_pool.ipp>
 
-#endif // __mygsl__the_serializable_ipp__
+#endif // MYGSL_THE_SERIALIZABLE_IPP_
 
-/* end of mygsl::the_serializable.ipp */
+/* end of mygsl/the_serializable.ipp */

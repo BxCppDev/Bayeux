@@ -1,8 +1,8 @@
 // -*- mode: c++; -*-
-// gsl::histogram_2d.h
+// histogram_2d.h
 
-#ifndef __gsl__histogram_2d_h
-#define __gsl__histogram_2d_h 1
+#ifndef MYGSL_HISTOGRAM_2D_H_
+#define MYGSL_HISTOGRAM_2D_H_ 1
 
 #include <gsl/gsl_histogram2d.h>
 #include <gsl/gsl_vector.h>
@@ -12,7 +12,6 @@
 #include <boost/cstdint.hpp>
 
 // Serialization interfaces :
-#include <boost/serialization/access.hpp>
 #include <datatools/i_serializable.h>
 
 #include <datatools/properties.h>
@@ -317,14 +316,12 @@ namespace mygsl {
 
       gsl_histogram2d_pdf * _pdf_;
 
-
     };
-
 
   };
 
 } // end of namespace mygsl
 
-#endif // __gsl__histogram_2d_h
+#endif // MYGSL_HISTOGRAM_2D_H_
 
-// end of gsl::histogram_2d.h
+// end of histogram_2d.h

@@ -1,20 +1,21 @@
-// mygsl::linear_regression.h
+// linear_regression.h
 
-#ifndef __mygsl__linear_regression_h 
-#define __mygsl__linear_regression_h 1
+#ifndef MYGSL_LINEAR_REGRESSION_H_ 
+#define MYGSL_LINEAR_REGRESSION_H_ 1
 
 #include <vector>
-#include <mygsl/unary_eval.h>
+#include <mygsl/i_unary_function.h>
 #include <mygsl/datapoint.h>
 
 namespace mygsl {
  
-  class linear_regression : public unary_eval
+  class linear_regression : public i_unary_function
   {
     class fit_data
     {
 
     public:
+
       fit_data ();
       bool is_valid () const;
       bool is_weighted () const;
@@ -29,6 +30,7 @@ namespace mygsl {
       double get_constant_err () const;
 
     public:
+
       int    status; // 0 == fit results; no fit otherwise
       size_t n;
       bool   weighted;
@@ -44,8 +46,6 @@ namespace mygsl {
     };
 
   public:
-
-    double eval (double x_) const;
 
     void eval_err (double x_, double & y_, double & yerr_) const;
 
@@ -96,6 +96,10 @@ namespace mygsl {
     bool fit_linear_no_constant ();
 
     bool fit_weighted_linear_no_constant ();
+
+  protected:
+
+    virtual double _eval(double x_) const;
       
   private:
 
@@ -111,11 +115,11 @@ namespace mygsl {
 
 }
 
-#endif // __mygsl__linear_regression_h
+#endif // MYGSL_LINEAR_REGRESSION_H_
 
 /* Local Variables: */
 /* mode: c++        */
 /* coding: utf-8    */
 /* End:             */
 
-// end of mygsl::linear_regression.h
+// end of linear_regression.h

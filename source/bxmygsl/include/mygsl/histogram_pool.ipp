@@ -1,8 +1,8 @@
 // -*- mode: c++ ; -*- 
 /* mygsl/histogram_pool.ipp */
 
-#ifndef __mygsl__histogram_pool_ipp
-#define __mygsl__histogram_pool_ipp 1
+#ifndef MYGSL_HISTOGRAM_POOL_IPP_
+#define MYGSL_HISTOGRAM_POOL_IPP_ 1
 
 #include <mygsl/histogram_pool.h>
 #include <string>
@@ -53,7 +53,6 @@ namespace mygsl {
      
 } // end of namespace mygsl
 
-
-#endif // __mygsl__histogram_pool_ipp
+#endif // MYGSL_HISTOGRAM_POOL_IPP_
 
 // end of mygsl/histogram_pool.ipp

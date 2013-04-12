@@ -54,12 +54,15 @@ include/mygsl/prng_state_manager.h
 include/mygsl/random_utils.h
 include/mygsl/rng.h
 include/mygsl/seed_manager.h
-include/mygsl/tabfunc.h
 include/mygsl/tabulated_function.h
 include/mygsl/the_serializable.h
-include/mygsl/unary_eval.h
-include/mygsl/unary_eval_with_derivative.h
 include/mygsl/von_neumann_method.h
+include/mygsl/i_unary_function.h
+include/mygsl/i_unary_function_with_derivative.h
+include/mygsl/best_value.ipp
+include/mygsl/datapoint.ipp
+include/mygsl/interval.ipp
+include/mygsl/polynomial.ipp
 include/mygsl/histogram_2d.ipp
 include/mygsl/histogram.ipp
 include/mygsl/histogram_pool.ipp
@@ -135,10 +138,10 @@ set(mygsl_SOURCES
   random_utils.cc
   rng.cc
   seed_manager.cc
-  tabfunc.cc
-  unary_eval.cc
-  unary_eval_with_derivative.cc
+  tabulated_function.cc
   von_neumann_method.cc
+  i_unary_function.cc
+  i_unary_function_with_derivative.cc
   )
 
 #-----------------------------------------------------------------------

@@ -1,8 +1,8 @@
 // -*- mode: c++; -*-
-// histogram.h
+// mygsl/histogram.h
 
-#ifndef __mygsl__histogram_h
-#define __mygsl__histogram_h 1
+#ifndef MYGSL_HISTOGRAM_H_
+#define MYGSL_HISTOGRAM_H_ 1
 
 #include <gsl/gsl_histogram.h>
 #include <gsl/gsl_vector.h>
@@ -12,7 +12,6 @@
 #include <boost/cstdint.hpp>
 
 // Serialization interfaces :
-#include <boost/serialization/access.hpp>
 #include <datatools/i_serializable.h>
 
 #include <datatools/properties.h>
@@ -268,8 +267,8 @@ namespace mygsl {
 
       void sample (double r_, double & x_);
 
-      template<class _ran_functor_t>
-      double sample (_ran_functor_t & ran_)
+      template<class _ran_functor_type>
+      double sample (_ran_functor_type & ran_)
       {
         return  gsl_histogram_pdf_sample (_pdf_, ran_());
       }
@@ -286,6 +285,6 @@ namespace mygsl {
 
 } // end of namespace mygsl
 
-#endif // __mygsl__histogram_h
+#endif // MYGSL_HISTOGRAM_H_
 
-// end of histogram.h
+// end of mygsl/histogram.h

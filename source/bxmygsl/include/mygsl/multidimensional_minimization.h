@@ -1,7 +1,7 @@
-// mygsl::multidimensional_minimization.h
+// multidimensional_minimization.h
 
-#ifndef __mygsl__multidimensional_minimization_h
-#define __mygsl__multidimensional_minimization_h 1
+#ifndef MYGSL_MULTIDIMENSIONAL_MINIMIZATION_H_
+#define MYGSL_MULTIDIMENSIONAL_MINIMIZATION_H_ 1
 
 #include <string>
 
@@ -10,7 +10,7 @@
 #include <gsl/gsl_deriv.h>
 
 #include <mygsl/error.h>
-#include <mygsl/unary_eval.h>
+#include <mygsl/i_unary_function.h>
 #include <mygsl/multiparameter_system.h>
 
 namespace mygsl {
@@ -20,24 +20,6 @@ namespace mygsl {
     {
     public:
       static const double DEFAULT_OUT_OF_LIMIT_SLOPE;
-
-    private:
-      bool   _numeric_eval_df_;
-      double _out_of_limit_slope_;
-
-    private:
-      int _eval_f_MR_ (double & f_);
-      int _eval_df_MR_ (double * gradient_);
-      int _numerical_eval_df_MR_  (double * gradient_);
-
-    protected:
-
-      // you must provide this method:
-      virtual int _eval_f (double & f_) = 0;
-
-      // you may provide this method;
-      // if not, the '_numerical_eval_df_MR_' method will be used in place:
-      virtual int _eval_df (double * gradient_);
 
     public:
 
@@ -70,30 +52,40 @@ namespace mygsl {
       // dtor:
       virtual ~multidimensional_minimization_system ();
 
-    public:
+      struct func_eval_f_param : public mygsl::i_unary_function
+      {
+      public:
+	func_eval_f_param(int free_param_index_, 
+			  multidimensional_minimization_system & sys_);
+      protected:
+	virtual double _eval(double x_) const;
 
-      struct func_eval_f_param : public mygsl::unary_eval
-        {
-          int free_param_index;
-          multidimensional_minimization_system * sys;
+      public:
+	int free_param_index;
+	multidimensional_minimization_system * sys;
+      };
+      
+      static double func_eval_f_MR(double x_, void * params_);
 
-          func_eval_f_param (int free_param_index_, 
-                             multidimensional_minimization_system & sys_)
-            {
-              free_param_index = free_param_index_;
-              sys = &sys_;
-            }
-        
-          double eval (double x_) const 
-          {
-            return func_eval_f_MR (x_, const_cast<func_eval_f_param*> (this));
-          }
+      void plot_f(const std::string & prefix_, int mode_ = 0) const;
 
-        };
+    protected:
 
-      static double func_eval_f_MR  (double x_, void * params_);
+      // you must provide this method:
+      virtual int _eval_f (double & f_) = 0;
 
-      void plot_f (const std::string & prefix_, int mode_ = 0) const;
+      // you may provide this method;
+      // if not, the '_numerical_eval_df_MR_' method will be used in place:
+      virtual int _eval_df (double * gradient_);
+
+    private:
+      int _eval_f_MR_(double & f_);
+      int _eval_df_MR_(double * gradient_);
+      int _numerical_eval_df_MR_(double * gradient_);
+
+    private:
+      bool   _numeric_eval_df_;
+      double _out_of_limit_slope_;
 
     };
 
@@ -248,6 +240,6 @@ namespace mygsl {
   
 } // namespace mygsl
 
-#endif // __mygsl__multidimensional_minimization_h
+#endif // MYGSL_MULTIDIMENSIONAL_MINIMIZATION_H_
 
-// end of mygsl::multidimensional_minimization.h
+// end of multidimensional_minimization.h
