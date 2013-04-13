@@ -73,7 +73,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::random_cut,ocd_)
   ocd_.set_class_documentation ("not documented yet");
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("seed")
       .set_terse_description("The seed of the internal PRNG")
       .set_traits(datatools::TYPE_INTEGER)
@@ -88,7 +88,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::random_cut,ocd_)
   }
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("accept_probability")
       .set_terse_description("The acceptance probability")
       .set_traits(datatools::TYPE_REAL)
@@ -136,7 +136,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::not_cut,ocd_)
 
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("cut")
       .set_terse_description("The name of a cut to be negated")
       .set_traits(datatools::TYPE_STRING)
@@ -208,7 +208,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::and_cut,ocd_)
 
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("cut_1")
       .set_terse_description("The name of the first cut")
       .set_traits(datatools::TYPE_STRING)
@@ -221,7 +221,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::and_cut,ocd_)
   }
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("cut_2")
       .set_terse_description("The name of the second cut")
       .set_traits(datatools::TYPE_STRING)
@@ -277,7 +277,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::or_cut,ocd_)
 
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("cut_1")
       .set_terse_description("The name of the first cut")
       .set_traits(datatools::TYPE_STRING)
@@ -290,7 +290,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::or_cut,ocd_)
   }
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("cut_2")
       .set_terse_description("The name of the second cut")
       .set_traits(datatools::TYPE_STRING)
@@ -344,7 +344,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::xor_cut,ocd_)
 
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("cut_1")
       .set_terse_description("The name of the first cut")
       .set_traits(datatools::TYPE_STRING)
@@ -357,7 +357,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::xor_cut,ocd_)
   }
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("cut_2")
       .set_terse_description("The name of the second cut")
       .set_traits(datatools::TYPE_STRING)
@@ -418,7 +418,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::nand_cut,ocd_)
 
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("cut_1")
       .set_terse_description("The name of the first cut")
       .set_traits(datatools::TYPE_STRING)
@@ -431,7 +431,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::nand_cut,ocd_)
   }
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("cut_2")
       .set_terse_description("The name of the second cut")
       .set_traits(datatools::TYPE_STRING)
@@ -483,7 +483,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::nor_cut,ocd_)
 
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("cut_1")
       .set_terse_description("The name of the first cut")
       .set_traits(datatools::TYPE_STRING)
@@ -496,7 +496,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::nor_cut,ocd_)
   }
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("cut_2")
       .set_terse_description("The name of the second cut")
       .set_traits(datatools::TYPE_STRING)
@@ -552,7 +552,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::xnor_cut,ocd_)
 
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("cut_1")
       .set_terse_description("The name of the first cut")
       .set_traits(datatools::TYPE_STRING)
@@ -565,7 +565,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::xnor_cut,ocd_)
   }
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("cut_2")
       .set_terse_description("The name of the second cut")
       .set_traits(datatools::TYPE_STRING)
@@ -620,7 +620,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::multi_and_cut,ocd_)
 
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("cuts")
       .set_terse_description("The list of name of the cuts to be combined")
       .set_traits(datatools::TYPE_STRING,
@@ -688,7 +688,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::multi_or_cut,ocd_)
 
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("cuts")
       .set_terse_description("The list of name of the cuts to be combined")
       .set_traits(datatools::TYPE_STRING,
@@ -766,7 +766,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::multi_xor_cut,ocd_)
 
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("cuts")
       .set_terse_description("The list of name of the cuts to be combined")
       .set_traits(datatools::TYPE_STRING,
