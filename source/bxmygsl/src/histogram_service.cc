@@ -431,7 +431,7 @@ namespace mygsl {
         TH1D rootH1d;
         rootH1d.SetDirectory (&orf);
         rootH1d.SetStats (_root_export_stats_);
-        export_to_root (h1d, hname, title_oss.str (), rootH1d, 
+        export_to_root (h1d, hname, title_oss.str (), rootH1d,
                         _root_export_stats_);
         rootH1d.SetDirectory(&orf);
         rootH1d.Write ();
@@ -461,7 +461,7 @@ namespace mygsl {
         TH2D rootH2d;
         rootH2d.SetDirectory (&orf);
         rootH2d.SetStats (_root_export_stats_);
-        export_to_root (h2d, hname, title_oss.str (), rootH2d, 
+        export_to_root (h2d, hname, title_oss.str (), rootH2d,
                         _root_export_stats_);
         rootH2d.SetDirectory(&orf);
         rootH2d.Write ();
@@ -571,9 +571,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_service,ocd_)
 {
   ocd_.set_class_name ("mygsl::histogram_service");
   ocd_.set_class_description ("A service of histograms");
-   
+  ocd_.set_class_library ("mygsl");
+  ocd_.set_class_documentation ("A service that hosts a pool of histograms");
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("pool_config")
       .set_terse_description("The name of the histogram pool configuration file")
       .set_traits(datatools::TYPE_STRING)
@@ -587,12 +589,12 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_service,ocd_)
                             )
       ;
   }
-   
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("output_files")
       .set_terse_description("A list of filenames where to store the histograms when the service is closed")
-      .set_traits(datatools::TYPE_STRING, 
+      .set_traits(datatools::TYPE_STRING,
                   datatools::configuration_property_description::ARRAY)
       .set_path(true)
       .set_mandatory(false)
@@ -612,10 +614,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_service,ocd_)
                             "  |                                                            \n"
                             )
       ;
-  }  
-   
+  }
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("root_export.stats")
       .set_terse_description("Flag to save ROOT statistics")
       .set_traits(datatools::TYPE_BOOLEAN)
@@ -624,8 +626,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_service,ocd_)
                             "this flag activates the histograms' statistics box within ROOT.\n"
                             )
       ;
-  }  
-  
+  }
+
   ocd_.set_configuration_hints ("The histogram service uses a 'datatools::properties' object      \n"
                                 "to initialize its behaviour and contents.                        \n"
                                 "                                                                 \n"
@@ -644,7 +646,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_service,ocd_)
                                 );
 
   ocd_.set_validation_support(true);
-  ocd_.lock(); 
+  ocd_.lock();
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()

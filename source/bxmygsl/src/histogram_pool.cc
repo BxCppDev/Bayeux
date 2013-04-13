@@ -234,10 +234,10 @@ namespace mygsl {
     std::string xunit_type;  // The physical dimension of the X axis binning
     std::string xunit_str;   // The unit symbol of the X axis
     double      xunit = 1.0; // The unit intrinsic value of the X axis
-    
+
     // Store all display properties :
     h1_setup_.export_starting_with (h1_.grab_auxiliaries (), "display.");
- 
+
     // Extract the unit used for X axis bins :
     if (h1_setup_.has_key ("unit"))
       {
@@ -250,7 +250,7 @@ namespace mygsl {
             throw std::logic_error (message.str ());
           }
        }
- 
+
     if (mode == "regular" || mode == "table")
       {
         // Extract the physical dimension for the X axis :
@@ -273,7 +273,7 @@ namespace mygsl {
                 throw std::logic_error (message.str ());
               }
           }
-        
+
         // Extract the optional display unit for X axis and check it :
         if (h1_setup_.has_key ("display.xaxis.unit"))
           {
@@ -587,7 +587,7 @@ namespace mygsl {
     std::string yunit_type;  // The physical dimension of the Y axis binning
     std::string yunit_str;   // The unit symbol of the Y axis
     double      yunit = 1.0; // The unit intrinsic value of the Y axis
-  
+
     // Store all display properties :
     h2_setup_.export_starting_with (h2_.grab_auxiliaries (), "display.");
 
@@ -615,7 +615,7 @@ namespace mygsl {
             throw std::logic_error (message.str ());
           }
       }
- 
+
     if (mode == "regular" || mode == "table")
       {
         // Extract the physical dimension for the X axis :
@@ -659,7 +659,7 @@ namespace mygsl {
                 throw std::logic_error (message.str ());
               }
           }
-         
+
         // Extract the optional display unit for X axis and check it :
         if (h2_setup_.has_key ("display.xaxis.unit"))
           {
@@ -692,7 +692,7 @@ namespace mygsl {
                 h2_.grab_auxiliaries ().update ("display.xaxis.unit", xunit_str);
               }
           }
-        
+
         // Extract the optional display unit for Y axis and check it :
         if (h2_setup_.has_key ("display.yaxis.unit"))
           {
@@ -1091,18 +1091,18 @@ namespace mygsl {
               << "Pool is already initialized  !";
       throw std::logic_error (message.str ());
     }
-    
+
     if (_description_.empty()) {
       if (setup_.has_key ("description")) {
         set_description (setup_.fetch_string ("description"));
       }
     }
-    
+
     std::vector<std::string> histo_setup_filenames;
     if (setup_.has_key ("histo.setups")) {
       setup_.fetch ("histo.setups", histo_setup_filenames);
     }
-    
+
     for (int i = 0; i < histo_setup_filenames.size (); i++)
       {
         load (histo_setup_filenames[i]);
@@ -1548,10 +1548,12 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_pool,ocd_)
 {
   ocd_.set_class_name ("mygsl::histogram_pool");
   ocd_.set_class_description ("A pool of histograms");
-  
-   
+  ocd_.set_class_library ("mygsl");
+  ocd_.set_class_documentation ("not documented yet");
+
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("description")
       .set_terse_description("The embeded description string")
       .set_traits(datatools::TYPE_STRING)
@@ -1561,13 +1563,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_pool,ocd_)
                             "  mygsl::histogram_pool::set_description(...)     \n"
                             )
       ;
-  }  
-  
+  }
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("histo.setups")
       .set_terse_description("A list of configuration file names for embeded histograms")
-      .set_traits(datatools::TYPE_STRING, 
+      .set_traits(datatools::TYPE_STRING,
                   datatools::configuration_property_description::ARRAY)
       .set_mandatory(false)
       .set_path(true)
@@ -1594,7 +1596,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_pool,ocd_)
                             "and 'mygsl::histogram_2d' classes.                     \n"
                             )
     ;
-  }  
+  }
 
   ocd_.set_configuration_hints ("The histogram pool uses a 'datatools::properties' object        \n"
                                 "to initialize its behaviour and contents.                       \n"
@@ -1627,20 +1629,20 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_pool,ocd_)
                                 "  | mode : string = \"mimic\"                                   \n"
                                 "  | display.xaxis.unit  : string = \"keV\"                      \n"
                                 "  | display.xaxis.label : string = \"E2\"                       \n"
-                                "  | mimic.histogram_1d  : string = \"E1\"                       \n"                       
-                                "  |                                                             \n"                    
+                                "  | mimic.histogram_1d  : string = \"E1\"                       \n"
+                                "  |                                                             \n"
                                 "  | [name=\"E1+E2\" type=\"mygsl::histogram_1d\"]               \n"
                                 "  | mode : string = \"mimic\"                                   \n"
                                 "  | unit : string = \"keV\"                                     \n"
                                 "  | unit.type : string = \"energy\"                             \n"
                                 "  | display.xaxis.unit : string = \"MeV\"                       \n"
-                                "  | mimic.histogram_1d : string = \"E1\"                        \n"                       
-                                "  |                                                             \n"                    
+                                "  | mimic.histogram_1d : string = \"E1\"                        \n"
+                                "  |                                                             \n"
                                 "  | [name=\"E1xE2\" type=\"mygsl::histogram_2d\"]               \n"
                                 "  | mode : string = \"regular\"                                 \n"
                                 "  | x.unit : string = \"keV\"                                   \n"
                                 "  | x.unit.type : string = \"energy\"                           \n"
-                                "  | x.linear : boolean = 1                                      \n"                       
+                                "  | x.linear : boolean = 1                                      \n"
                                 "  | x.min : real = 0.0                                          \n"
                                 "  | x.max : real = 3.0                                          \n"
                                 "  | x.number_of_bins : integer = 120                            \n"
@@ -1648,7 +1650,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_pool,ocd_)
                                 "  | display.xaxis.label : string = \"E1\"                       \n"
                                 "  | y.unit : string = \"keV\"                                   \n"
                                 "  | y.unit.type : string = \"energy\"                           \n"
-                                "  | y.linear : boolean = 1                                      \n"                       
+                                "  | y.linear : boolean = 1                                      \n"
                                 "  | y.min : real = 0.0                                          \n"
                                 "  | y.max : real = 3.0                                          \n"
                                 "  | y.number_of_bins : integer = 120                            \n"
@@ -1657,7 +1659,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_pool,ocd_)
                                 "  |                                                              \n"
                                 );
   ocd_.set_validation_support(true);
-  ocd_.lock(); 
+  ocd_.lock();
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
@@ -1668,29 +1670,31 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram,ocd_)
 {
   ocd_.set_class_name ("mygsl::histogram_1d");
   ocd_.set_class_description ("One dimension histogram as built by the 'mygsl::histogram_pool' class");
+  ocd_.set_class_library ("mygsl");
+  ocd_.set_class_documentation ("not documented yet");
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("title")
       .set_terse_description("The histogram title mode")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
       .set_long_description("A human friendly title for the histogram (handled by the histogram pool)")
       ;
-  }  
+  }
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("group")
       .set_terse_description("The name of the group the histogram is assigned to by the histogram pool")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
       .set_long_description("The group may be used for selection operations on histograms")
       ;
-  }  
+  }
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("mode")
       .set_terse_description("The histogram build mode")
       .set_traits(datatools::TYPE_STRING)
@@ -1701,10 +1705,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram,ocd_)
                             " - \"mimic\"                                         \n"
                             )
       ;
-  }  
+  }
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("unit")
       .set_terse_description("The histogram unit symbol on the X-axis")
       .set_traits(datatools::TYPE_STRING)
@@ -1715,10 +1719,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram,ocd_)
                             "  | unit : string = \"keV\"                    \n"
                             )
       ;
-  }  
+  }
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("unit.type")
       .set_terse_description("The histogram physical dimension on the X-axis")
       .set_traits(datatools::TYPE_STRING)
@@ -1734,10 +1738,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram,ocd_)
                             "This property is only defined for modes 'regular' and 'table'.    \n"
                             )
       ;
-  }  
+  }
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("display.xaxis.unit")
       .set_terse_description("The histogram display physical unit on the X-axis")
       .set_traits(datatools::TYPE_STRING)
@@ -1753,10 +1757,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram,ocd_)
                             "This property is only defined for modes 'regular' and 'table'.    \n"
                             )
       ;
-  }  
+  }
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("linear")
       .set_terse_description("The flag for linear regular binning")
       .set_traits(datatools::TYPE_BOOLEAN)
@@ -1770,10 +1774,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram,ocd_)
                             "This property is not compatible with the 'logarithmic' flag.          \n"
                             )
       ;
-  }  
+  }
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("logarithmic")
       .set_terse_description("The flag for logarithmic regular binning")
       .set_traits(datatools::TYPE_BOOLEAN)
@@ -1788,10 +1792,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram,ocd_)
                             "This property is not compatible with the 'linear' flag.          \n"
                             )
       ;
-  }  
+  }
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("min")
       .set_terse_description("The minimal bound of the histogram")
       .set_traits(datatools::TYPE_REAL)
@@ -1804,10 +1808,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram,ocd_)
                             "This property is only defined for mode 'regular'.                \n"
                            )
       ;
-  }  
+  }
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("max")
       .set_terse_description("The maximal bound of the histogram")
       .set_traits(datatools::TYPE_REAL)
@@ -1820,10 +1824,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram,ocd_)
                             "This property is only defined for mode 'regular'.                \n"
                             )
       ;
-  }  
+  }
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("number_of_bins")
       .set_terse_description("The number of bins of the histogram")
       .set_traits(datatools::TYPE_INTEGER)
@@ -1835,13 +1839,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram,ocd_)
                             "This property is only defined for mode 'regular'.                \n"
                             )
       ;
-  }  
+  }
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("bounds")
       .set_terse_description("The bounds of tabulated bins")
-      .set_traits(datatools::TYPE_REAL, 
+      .set_traits(datatools::TYPE_REAL,
                   datatools::configuration_property_description::ARRAY)
       .set_mandatory(false)
       .set_triggered_by_label("mode", "table")
@@ -1852,10 +1856,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram,ocd_)
                             "This property is incompatible with 'bounds.file'.                \n"
                           )
       ;
-  }  
+  }
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("bounds.file")
       .set_terse_description("The name of a file that stores the bounds of tabulated bins")
       .set_traits(datatools::TYPE_STRING)
@@ -1869,10 +1873,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram,ocd_)
                             "This property is incompatible with 'bounds'.                     \n"
                             )
       ;
-  }  
+  }
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("mimic.histogram_1d")
       .set_terse_description("The name of a 1D-histogram to be cloned")
       .set_traits(datatools::TYPE_STRING)
@@ -1883,13 +1887,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram,ocd_)
                             "This property is only defined for mode 'mimic'.                  \n"
                             )
       ;
-  }  
+  }
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("mimic.histogram_1d.import_aux")
       .set_terse_description("The list of prefixes for auxiliary properties to be imported from the cloned 1D-histogram")
-      .set_traits(datatools::TYPE_STRING, 
+      .set_traits(datatools::TYPE_STRING,
                   datatools::configuration_property_description::ARRAY)
       .set_mandatory(false)
       .set_triggered_by_label("mode", "mimic")
@@ -1899,10 +1903,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram,ocd_)
                             "It is used with the 'mimic.histogram_1d' property.               \n"
                             )
       ;
-  }  
+  }
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("mimic.histogram_2d")
       .set_terse_description("The name of a 2D-histogram from which one of the axis is to be cloned")
       .set_traits(datatools::TYPE_STRING)
@@ -1913,10 +1917,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram,ocd_)
                             "This property is only defined for mode 'mimic'.                  \n"
                             )
       ;
-  }  
+  }
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("mimic.histogram_2d.axis")
       .set_terse_description("Select the axis of the original 2D-histogram to be used")
       .set_traits(datatools::TYPE_STRING)
@@ -1929,13 +1933,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram,ocd_)
                             "It is used with the 'mimic.histogram_2d' property.               \n"
                            )
       ;
-  }  
+  }
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("mimic.histogram_2d.import_aux")
       .set_terse_description("The list of prefixes for auxiliary properties to be imported from the cloned 2D-histogram")
-      .set_traits(datatools::TYPE_STRING, 
+      .set_traits(datatools::TYPE_STRING,
                   datatools::configuration_property_description::ARRAY)
       .set_mandatory(false)
       .set_triggered_by_label("mode", "mimic")
@@ -1947,7 +1951,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram,ocd_)
                             "It is used with the 'mimic.histogram_2d' property.               \n"
                              )
       ;
-  }  
+  }
 
   ocd_.set_configuration_hints ("Display properties:                                             \n"
                                 "  All properties the name of which starts with the prefix       \n"
@@ -1998,9 +2002,9 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram,ocd_)
                                 "  | mimic.histogram_2d.axis : string = \"y\"                    \n"
                                 "  |                                                             \n"
                                 "                                                                \n"
-                                ); 
+                                );
   ocd_.set_validation_support(true);
-  ocd_.lock(); 
+  ocd_.lock();
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
@@ -2011,29 +2015,31 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_2d,ocd_)
 {
   ocd_.set_class_name ("mygsl::histogram_2d");
   ocd_.set_class_description ("Two dimension histogram as built by the 'mygsl::histogram_pool' class");
+  ocd_.set_class_library ("mygsl");
+  ocd_.set_class_documentation ("not documented yet");
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("title")
       .set_terse_description("The histogram title mode")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
       .set_long_description("A human friendly title for the histogram (handled by the histogram pool)")
       ;
-  }  
+  }
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("group")
       .set_terse_description("The name of the group the histogram is assigned to by the histogram pool")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
       .set_long_description("The group may be used for selection operations on histograms")
       ;
-  }  
+  }
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("mode")
       .set_terse_description("The histogram build mode")
       .set_traits(datatools::TYPE_STRING)
@@ -2044,8 +2050,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_2d,ocd_)
                             " - \"mimic\"                                         \n"
                             )
       ;
-  }  
-  
+  }
+
 
   ocd_.set_configuration_hints ("Display properties:                                             \n"
                                 "  All properties the name of which starts with the prefix       \n"
@@ -2056,7 +2062,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mygsl::histogram_2d,ocd_)
                                 );
 
   ocd_.set_validation_support(true);
-  ocd_.lock(); 
+  ocd_.lock();
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
