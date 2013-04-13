@@ -1,16 +1,18 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* ocd_support.cc
  */
 
 #include <cuts/ocd_support.h>
 
-/****************************************************************/ 
+/****************************************************************/
 // OCD support for class '::cuts::accept_cut' :
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::accept_cut,ocd_)
 {
   ocd_.set_class_name ("cuts::accept_cut");
   ocd_.set_class_description ("A cut that always accepts");
- 
+  ocd_.set_class_library ("cuts");
+  ocd_.set_class_documentation ("not documented yet");
+
 
   ocd_.set_configuration_hints ("There is no configuration properties associated to this cut.    \n"
                                 "A 'cuts::accept_cut' object can be setup with the following syntax\n"
@@ -25,19 +27,21 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::accept_cut,ocd_)
                                 "  |                                                                  \n"
                                 );
   ocd_.set_validation_support(true);
-  ocd_.lock(); 
+  ocd_.lock();
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
 DOCD_CLASS_SYSTEM_REGISTRATION(::cuts::accept_cut,"cuts::accept_cut")
 
-/****************************************************************/ 
+/****************************************************************/
 // OCD support for class '::cuts::reject_cut' :
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::reject_cut,ocd_)
 {
   ocd_.set_class_name ("cuts::reject_cut");
   ocd_.set_class_description ("A cut that always rejects");
- 
+  ocd_.set_class_library ("cuts");
+  ocd_.set_class_documentation ("not documented yet");
+
 
   ocd_.set_configuration_hints ("There is no configuration properties associated to this cut.    \n"
                                 "A 'cuts::reject_cut' object can be setup with the following syntax\n"
@@ -52,20 +56,22 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::reject_cut,ocd_)
                                 "  |                                                                  \n"
                                 );
   ocd_.set_validation_support(true);
-  ocd_.lock(); 
+  ocd_.lock();
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
 DOCD_CLASS_SYSTEM_REGISTRATION(::cuts::reject_cut,"cuts::reject_cut")
 
 
-/****************************************************************/ 
+/****************************************************************/
 // OCD support for class '::cuts::random_cut' :
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::random_cut,ocd_)
 {
   ocd_.set_class_name ("cuts::random_cut");
   ocd_.set_class_description ("A cut that randomly accepts using some given probability");
- 
+  ocd_.set_class_library ("cuts");
+  ocd_.set_class_documentation ("not documented yet");
+
   {
     configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("seed")
@@ -79,8 +85,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::random_cut,ocd_)
                             "  | seed : integer = 314159                    \n"
                             )
       ;
-  }  
- 
+  }
+
   {
     configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("accept_probability")
@@ -94,7 +100,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::random_cut,ocd_)
                                 "  | accept_probability : real = 0.13       \n"
                             )
       ;
-  }  
+  }
 
   ocd_.set_configuration_hints ("A 'cuts::random_cut' object can be setup with the following syntax     \n"
                                 "in a 'datatools::multi_properties' configuration file :              \n"
@@ -112,21 +118,23 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::random_cut,ocd_)
                                 "  |                                                                  \n"
                                 );
   ocd_.set_validation_support(true);
-  ocd_.lock(); 
+  ocd_.lock();
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
 DOCD_CLASS_SYSTEM_REGISTRATION(::cuts::random_cut,"cuts::random_cut")
 
 
-/****************************************************************/ 
+/****************************************************************/
 // OCD support for class '::cuts::not_cut' :
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::not_cut,ocd_)
 {
   ocd_.set_class_name ("cuts::not_cut");
   ocd_.set_class_description ("A negation cut");
- 
- 
+  ocd_.set_class_library ("cuts");
+  ocd_.set_class_documentation ("not documented yet");
+
+
   {
     configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("cut")
@@ -138,7 +146,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::not_cut,ocd_)
                             "typically done in a cut manager.                       \n"
                             )
       ;
-  }  
+  }
 
   ocd_.set_configuration_hints ("A 'cuts::not_cut' object can be setup with the following syntax      \n"
                                 "in a 'datatools::multi_properties' configuration file :              \n"
@@ -181,7 +189,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::not_cut,ocd_)
                                 );
 
   ocd_.set_validation_support(true);
-  ocd_.lock(); 
+  ocd_.lock();
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
@@ -189,14 +197,16 @@ DOCD_CLASS_SYSTEM_REGISTRATION(::cuts::not_cut,"cuts::not_cut")
 
 
 
-/****************************************************************/ 
+/****************************************************************/
 // OCD support for class '::cuts::and_cut' :
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::and_cut,ocd_)
 {
   ocd_.set_class_name ("cuts::and_cut");
   ocd_.set_class_description ("A logical AND cut combining two cuts");
- 
- 
+  ocd_.set_class_library ("cuts");
+  ocd_.set_class_documentation ("not documented yet");
+
+
   {
     configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("cut_1")
@@ -208,8 +218,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::and_cut,ocd_)
                             "This is typically done in a cut manager.                      \n"
                             )
       ;
-  }  
- 
+  }
+
   {
     configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("cut_2")
@@ -221,7 +231,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::and_cut,ocd_)
                             "This is typically done in a cut manager.                      \n"
                             )
       ;
-  }  
+  }
 
   ocd_.set_configuration_hints ("A 'cuts::and_cut' object can be setup with the following syntax      \n"
                                 "in a 'datatools::multi_properties' configuration file :              \n"
@@ -247,7 +257,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::and_cut,ocd_)
                                 );
 
   ocd_.set_validation_support(true);
-  ocd_.lock(); 
+  ocd_.lock();
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
@@ -256,14 +266,16 @@ DOCD_CLASS_SYSTEM_REGISTRATION(::cuts::and_cut,"cuts::and_cut")
 
 
 
-/****************************************************************/ 
+/****************************************************************/
 // OCD support for class '::cuts::or_cut' :
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::or_cut,ocd_)
 {
   ocd_.set_class_name ("cuts::or_cut");
   ocd_.set_class_description ("A logical OR cut combining two cuts");
- 
- 
+  ocd_.set_class_library ("cuts");
+  ocd_.set_class_documentation ("not documented yet");
+
+
   {
     configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("cut_1")
@@ -275,8 +287,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::or_cut,ocd_)
                             "This is typically done in a cut manager.                      \n"
                             )
       ;
-  }  
- 
+  }
+
   {
     configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("cut_2")
@@ -288,8 +300,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::or_cut,ocd_)
                             "This is typically done in a cut manager.                      \n"
                             )
       ;
-  }  
- 
+  }
+
   ocd_.set_configuration_hints ("A 'cuts::or_cut' object can be setup with the following syntax       \n"
                                 "in a 'datatools::multi_properties' configuration file :              \n"
                                 "Example :                                                            \n"
@@ -313,7 +325,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::or_cut,ocd_)
                                 );
 
   ocd_.set_validation_support(true);
-  ocd_.lock(); 
+  ocd_.lock();
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
@@ -321,14 +333,16 @@ DOCD_CLASS_SYSTEM_REGISTRATION(::cuts::or_cut,"cuts::or_cut")
 
 
 
-/****************************************************************/ 
+/****************************************************************/
 // OCD support for class '::cuts::xor_cut' :
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::xor_cut,ocd_)
 {
   ocd_.set_class_name ("cuts::xor_cut");
   ocd_.set_class_description ("A logical XOR cut combining two cuts");
- 
- 
+  ocd_.set_class_library ("cuts");
+  ocd_.set_class_documentation ("not documented yet");
+
+
   {
     configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("cut_1")
@@ -340,8 +354,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::xor_cut,ocd_)
                             "This is typically done in a cut manager.                      \n"
                             )
       ;
-  }  
- 
+  }
+
   {
     configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("cut_2")
@@ -353,8 +367,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::xor_cut,ocd_)
                             "This is typically done in a cut manager.                      \n"
                             )
       ;
-  }  
- 
+  }
+
   ocd_.set_configuration_hints ("A 'cuts::xor_cut' object can be setup with the following syntax      \n"
                                 "in a 'datatools::multi_properties' configuration file :              \n"
                                 "Example :                                                            \n"
@@ -385,7 +399,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::xor_cut,ocd_)
                                 );
 
   ocd_.set_validation_support(true);
-  ocd_.lock(); 
+  ocd_.lock();
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
@@ -393,14 +407,16 @@ DOCD_CLASS_SYSTEM_REGISTRATION(::cuts::xor_cut,"cuts::xor_cut")
 
 
 
-/****************************************************************/ 
+/****************************************************************/
 // OCD support for class '::cuts::nand_cut' :
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::nand_cut,ocd_)
 {
   ocd_.set_class_name ("cuts::nand_cut");
   ocd_.set_class_description ("A logical NAND cut combining two cuts");
- 
- 
+  ocd_.set_class_library ("cuts");
+  ocd_.set_class_documentation ("not documented yet");
+
+
   {
     configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("cut_1")
@@ -412,8 +428,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::nand_cut,ocd_)
                             "This is typically done in a cut manager.                      \n"
                             )
       ;
-  }  
- 
+  }
+
   {
     configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("cut_2")
@@ -425,7 +441,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::nand_cut,ocd_)
                             "This is typically done in a cut manager.                      \n"
                             )
       ;
-  }  
+  }
 
   ocd_.set_configuration_hints ("A 'cuts::nand_cut' object can be setup with the following syntax     \n"
                                 "in a 'datatools::multi_properties' configuration file :              \n"
@@ -448,7 +464,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::nand_cut,ocd_)
                                 );
 
   ocd_.set_validation_support(true);
-  ocd_.lock(); 
+  ocd_.lock();
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
@@ -456,14 +472,16 @@ DOCD_CLASS_SYSTEM_REGISTRATION(::cuts::nand_cut,"cuts::nand_cut")
 
 
 
-/****************************************************************/ 
+/****************************************************************/
 // OCD support for class '::cuts::nor_cut' :
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::nor_cut,ocd_)
 {
   ocd_.set_class_name ("cuts::nor_cut");
   ocd_.set_class_description ("A logical NOR cut combining two cuts");
- 
- 
+  ocd_.set_class_library ("cuts");
+  ocd_.set_class_documentation ("not documented yet");
+
+
   {
     configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("cut_1")
@@ -475,8 +493,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::nor_cut,ocd_)
                             "This is typically done in a cut manager.                      \n"
                             )
       ;
-  }  
- 
+  }
+
   {
     configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("cut_2")
@@ -488,7 +506,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::nor_cut,ocd_)
                             "This is typically done in a cut manager.                      \n"
                             )
       ;
-  }  
+  }
 
   ocd_.set_configuration_hints ("A 'cuts::nor_cut' object can be setup with the following syntax      \n"
                                 "in a 'datatools::multi_properties' configuration file :              \n"
@@ -514,7 +532,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::nor_cut,ocd_)
                                 );
 
   ocd_.set_validation_support(true);
-  ocd_.lock(); 
+  ocd_.lock();
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
@@ -523,14 +541,16 @@ DOCD_CLASS_SYSTEM_REGISTRATION(::cuts::nor_cut,"cuts::nor_cut")
 
 
 
-/****************************************************************/ 
+/****************************************************************/
 // OCD support for class '::cuts::xnor_cut' :
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::xnor_cut,ocd_)
 {
   ocd_.set_class_name ("cuts::xnor_cut");
   ocd_.set_class_description ("A logical XNOR cut combining two cuts");
- 
- 
+  ocd_.set_class_library ("cuts");
+  ocd_.set_class_documentation ("not documented yet");
+
+
   {
     configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("cut_1")
@@ -542,8 +562,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::xnor_cut,ocd_)
                             "This is typically done in a cut manager.                      \n"
                             )
       ;
-  }  
- 
+  }
+
   {
     configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("cut_2")
@@ -555,7 +575,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::xnor_cut,ocd_)
                             "This is typically done in a cut manager.                      \n"
                             )
       ;
-  }  
+  }
 
   ocd_.set_configuration_hints ("A 'cuts::xnor_cut' object can be setup with the following syntax     \n"
                                 "in a 'datatools::multi_properties' configuration file :              \n"
@@ -581,7 +601,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::xnor_cut,ocd_)
                                 );
 
   ocd_.set_validation_support(true);
-  ocd_.lock(); 
+  ocd_.lock();
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
@@ -589,19 +609,21 @@ DOCD_CLASS_SYSTEM_REGISTRATION(::cuts::xnor_cut,"cuts::xnor_cut")
 
 
 
-/****************************************************************/ 
+/****************************************************************/
 // OCD support for class '::cuts::multi_and_cut' :
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::multi_and_cut,ocd_)
 {
   ocd_.set_class_name ("cuts::multi_and_cut");
   ocd_.set_class_description ("A logical AND cut combining several cuts");
- 
- 
+  ocd_.set_class_library ("cuts");
+  ocd_.set_class_documentation ("not documented yet");
+
+
   {
     configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("cuts")
       .set_terse_description("The list of name of the cuts to be combined")
-      .set_traits(datatools::TYPE_STRING, 
+      .set_traits(datatools::TYPE_STRING,
                   datatools::configuration_property_description::ARRAY)
       .set_mandatory(true)
       .set_long_description("The list of all cuts' names to be combined with a logical AND.\n"
@@ -614,7 +636,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::multi_and_cut,ocd_)
                             "The list of cuts must contains at least one cut name.         \n"
                             )
       ;
-  }  
+  }
 
   ocd_.set_configuration_hints ("A 'cuts::multi_and_cut' object can be setup with the following syntax\n"
                                 "in a 'datatools::multi_properties' configuration file :              \n"
@@ -645,7 +667,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::multi_and_cut,ocd_)
                                 );
 
   ocd_.set_validation_support(true);
-  ocd_.lock(); 
+  ocd_.lock();
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
@@ -655,19 +677,21 @@ DOCD_CLASS_SYSTEM_REGISTRATION(::cuts::multi_and_cut,"cuts::multi_and_cut")
 
 
 
-/****************************************************************/ 
+/****************************************************************/
 // OCD support for class '::cuts::multi_or_cut' :
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::multi_or_cut,ocd_)
 {
   ocd_.set_class_name ("cuts::multi_or_cut");
   ocd_.set_class_description ("A logical OR cut combining several cuts");
- 
- 
+  ocd_.set_class_library ("cuts");
+  ocd_.set_class_documentation ("not documented yet");
+
+
   {
     configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("cuts")
       .set_terse_description("The list of name of the cuts to be combined")
-      .set_traits(datatools::TYPE_STRING, 
+      .set_traits(datatools::TYPE_STRING,
                   datatools::configuration_property_description::ARRAY)
       .set_mandatory(true)
       .set_long_description("The list of all cuts' names to be combined with a logical OR. \n"
@@ -680,7 +704,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::multi_or_cut,ocd_)
                             "The list of cuts must contains at least one cut name.         \n"
                             )
       ;
-  }  
+  }
 
   ocd_.set_configuration_hints ("A 'cuts::multi_or_cut' object can be setup with the following syntax \n"
                                 "in a 'datatools::multi_properties' configuration file :              \n"
@@ -721,7 +745,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::multi_or_cut,ocd_)
                                 );
 
   ocd_.set_validation_support(true);
-  ocd_.lock(); 
+  ocd_.lock();
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
@@ -731,19 +755,21 @@ DOCD_CLASS_SYSTEM_REGISTRATION(::cuts::multi_or_cut,"cuts::multi_or_cut")
 
 
 
-/****************************************************************/ 
+/****************************************************************/
 // OCD support for class '::cuts::multi_xor_cut' :
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::multi_xor_cut,ocd_)
 {
   ocd_.set_class_name ("cuts::multi_xor_cut");
   ocd_.set_class_description ("A logical XOR cut combining several cuts");
- 
- 
+  ocd_.set_class_library ("cuts");
+  ocd_.set_class_documentation ("not documented yet");
+
+
   {
     configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("cuts")
       .set_terse_description("The list of name of the cuts to be combined")
-      .set_traits(datatools::TYPE_STRING, 
+      .set_traits(datatools::TYPE_STRING,
                   datatools::configuration_property_description::ARRAY)
       .set_mandatory(true)
       .set_long_description("The list of all cuts' names to be combined with a logical XOR. \n"
@@ -756,7 +782,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::multi_xor_cut,ocd_)
                             "The list of cuts must contains at least one cut name.         \n"
                             )
       ;
-  }  
+  }
 
   ocd_.set_configuration_hints ("A 'cuts::multi_xor_cut' object can be setup with the following syntax \n"
                                 "in a 'datatools::multi_properties' configuration file :              \n"
@@ -785,7 +811,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::multi_xor_cut,ocd_)
                                 );
 
   ocd_.set_validation_support(true);
-  ocd_.lock(); 
+  ocd_.lock();
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()

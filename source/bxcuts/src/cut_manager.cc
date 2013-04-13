@@ -790,9 +790,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::cut_manager,ocd_)
 {
   ocd_.set_class_name ("cuts::cut_manager");
   ocd_.set_class_description ("A cut manager");
-  
+  ocd_.set_class_library ("cuts");
+  ocd_.set_class_documentation ("not documented yet");
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("debug")
       .set_terse_description("Debug flag")
       .set_traits(datatools::TYPE_BOOLEAN)
@@ -800,10 +802,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::cut_manager,ocd_)
       .set_long_description("This flag activates debug printing.               \n"
                             )
       ;
-  }  
-  
+  }
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("verbose")
       .set_terse_description("verbose flag")
       .set_traits(datatools::TYPE_BOOLEAN)
@@ -811,10 +813,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::cut_manager,ocd_)
       .set_long_description("This flag activates verbosity printing.               \n"
                             )
       ;
-  }  
-  
+  }
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("factory.debug")
       .set_terse_description("Debug flag dedicated to the embeded cut factory")
       .set_traits(datatools::TYPE_BOOLEAN)
@@ -823,11 +825,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::cut_manager,ocd_)
                             "cut factory.                                        \n"
                             )
       ;
-    
-  }  
-  
+
+  }
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("factory.no_preload")
       .set_terse_description("Flag to inhibit the preloading of system cut factory")
       .set_traits(datatools::TYPE_BOOLEAN)
@@ -837,10 +839,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::cut_manager,ocd_)
                             "Not recommanded for standard usage.                      \n"
                             )
       ;
-  }  
-  
+  }
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("factory.initialization_at_load")
       .set_terse_description("Flag to automaticaly initialize cut objects at load")
       .set_traits(datatools::TYPE_BOOLEAN)
@@ -851,10 +853,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::cut_manager,ocd_)
                             "Not recommanded for standard usage.                              \n"
                             )
       ;
-  }  
+  }
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("service_manager.configuration")
       .set_terse_description("The configuration file of the embeded service manager")
       .set_traits(datatools::TYPE_STRING)
@@ -867,13 +869,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::cut_manager,ocd_)
                             "defined through the :                                        \n"
                             "  cuts::cut_manager::set_service_manager(...) method.        \n"
                             );
-   }  
+   }
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("cuts.configuration_files")
       .set_terse_description("The list of configuration files for embeded cuts")
-      .set_traits(datatools::TYPE_STRING, 
+      .set_traits(datatools::TYPE_STRING,
                   datatools::configuration_property_description::ARRAY)
       .set_mandatory(false)
       .set_path(true)
@@ -889,10 +891,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::cut_manager,ocd_)
                             "  |   \"${CUTS_CONFIG_DIR}/track_cuts.conf\"  \\                  \n"
                             "  |   \"${CUTS_CONFIG_DIR}/topologu_cuts.conf\"                   \n"
                             );
-   }  
- 
+   }
+
   ocd_.set_validation_support(true);
-  ocd_.lock(); 
+  ocd_.lock();
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()

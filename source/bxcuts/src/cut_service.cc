@@ -30,21 +30,21 @@
 namespace cuts {
 
   using namespace std;
-  
+
   /** Auto-registration of this service class in a central service Db */
   DATATOOLS_SERVICE_REGISTRATION_IMPLEMENT(cut_service, "cuts::cut_service")
-             
+
   bool cut_service::is_debug () const
   {
     return _debug_;
   }
-  
+
   void cut_service::set_debug (bool a_debug)
   {
     _debug_ = a_debug;
     return;
   }
-  
+
   bool cut_service::owns_cut_manager () const
   {
     return _cut_manager_ != 0 && _owns_manager_;
@@ -75,7 +75,7 @@ namespace cuts {
       }
     return *_cut_manager_;
   }
-  
+
   void cut_service::set_cut_manager (const cut_manager & a_cut_manager)
   {
     if (&a_cut_manager == _cut_manager_)
@@ -91,7 +91,7 @@ namespace cuts {
         delete _cut_manager_;
       }
     _cut_manager_ = 0;
-    _owns_manager_ = false; 
+    _owns_manager_ = false;
     _cut_manager_ = const_cast<cut_manager*> (&a_cut_manager);
     return;
   }
@@ -111,7 +111,7 @@ namespace cuts {
                 << "Service '" << get_name () << "' is already initialized ! ";
         throw std::logic_error (message.str ());
       }
-    
+
     if (a_config.has_flag ("debug"))
       {
         set_debug (true);
@@ -124,7 +124,7 @@ namespace cuts {
             std::string config_filename = a_config.fetch_string ("cut_manager.config");
             datatools::properties cut_manager_config;
             datatools::fetch_path_with_env (config_filename);
-      
+
             datatools::properties::read_config (config_filename,
                                                 cut_manager_config);
             _cut_manager_ = new cut_manager;
@@ -136,10 +136,10 @@ namespace cuts {
          std:: ostringstream message;
           message << "cuts::cut_service::initialize: "
                   << "Missing '" << "cut_manager.config"<< "' property !";
-          throw std::logic_error (message.str ());         
+          throw std::logic_error (message.str ());
         }
       }
- 
+
     return EXIT_SUCCESS;
   }
 
@@ -158,7 +158,7 @@ namespace cuts {
         delete _cut_manager_;
         _cut_manager_ = 0;
       }
-    _owns_manager_ = false; 
+    _owns_manager_ = false;
     return EXIT_SUCCESS;
   }
 
@@ -169,7 +169,7 @@ namespace cuts {
   {
     _debug_ = false;
     _owns_manager_ = false;
-    _cut_manager_ = 0; 
+    _cut_manager_ = 0;
     return;
   }
 
@@ -211,9 +211,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::cut_service,ocd_)
 {
   ocd_.set_class_name ("cuts::cut_service");
   ocd_.set_class_description ("A cut service");
-  
+  ocd_.set_class_library ("cuts");
+  ocd_.set_class_documentation ("not documented yet");
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("debug")
       .set_terse_description("Debug flag")
       .set_traits(datatools::TYPE_BOOLEAN)
@@ -221,11 +223,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::cut_service,ocd_)
       .set_long_description("This flag activates debug printing.               \n"
                             )
       ;
-  }  
+  }
 
-  
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("cut_manager.config")
       .set_terse_description("The name of the configuration file for the embeded cut manager")
       .set_traits(datatools::TYPE_STRING)
@@ -239,7 +241,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::cut_service,ocd_)
                             )
       ;
   }
-  
+
   ocd_.set_configuration_hints ("The cut service uses a 'datatools::properties' object          \n"
                                 "to initialize its behaviour and contents.                      \n"
                                 "                                                               \n"
@@ -263,9 +265,9 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::cut_service,ocd_)
                                 "  | cut_manager.config : string as path = \"my_cut_mgr.conf\"  \n"
                                 "  |                                                            \n"
                                 );
-  
+
   ocd_.set_validation_support(true);
-  ocd_.lock(); 
+  ocd_.lock();
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
