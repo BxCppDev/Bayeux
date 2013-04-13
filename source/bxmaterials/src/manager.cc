@@ -38,7 +38,7 @@ namespace materials {
     _alias_allow_overload_ = aao_;
     return;
   }
-  
+
   bool manager::is_alias_allow_overload () const
   {
     return _alias_allow_overload_;
@@ -227,7 +227,7 @@ namespace materials {
                 else
                   {
                     // Already existing material alias:
-                    if (! is_alias_allow_overload()) 
+                    if (! is_alias_allow_overload())
                       {
                         std::ostringstream message;
                         message << "materials::manager::load: "
@@ -272,7 +272,7 @@ namespace materials {
             _materials_[name] = materials::smart_ref<material> ();
             _materials_[name].set_ref (found->second.grab_ref ());
             _materials_[name].set_alias_of(alias_material);
-            std::list<std::string>::iterator ofound = std::find(_ordered_materials_.begin(),_ordered_materials_.end(), name); 
+            std::list<std::string>::iterator ofound = std::find(_ordered_materials_.begin(),_ordered_materials_.end(), name);
             if (ofound != _ordered_materials_.end())
               {
                 _ordered_materials_.erase(ofound);
@@ -419,8 +419,8 @@ namespace materials {
                   out_ << " (alias of '" << i->second.get_alias_of() << "')";
                   out_ << endl;
                 }
-              else 
-                { 
+              else
+                {
                   if (! i->second.is_owned ())
                     {
                       out_ << " (external)";
@@ -478,13 +478,14 @@ namespace materials {
 } // end of namespace materials
 
 
-/****************************************************************/ 
+/****************************************************************/
 // OCD support for class '::materials::manager' :
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::materials::manager,ocd_)
 {
   ocd_.set_class_name ("materials::manager");
   ocd_.set_class_description ("A manager for isotopes, elements and materials");
- 
+  ocd_.set_class_library ("materials");
+  ocd_.set_class_documentation ("not documented yet");
 
   ocd_.set_configuration_hints ("A materials manager is configured through a configuration file that  \n"
                                 "obeys the format of 'datatools::multi_properties' setup file.        \n"
@@ -557,7 +558,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::materials::manager,ocd_)
                                 );
 
   ocd_.set_validation_support(false);
-  ocd_.lock(); 
+  ocd_.lock();
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
