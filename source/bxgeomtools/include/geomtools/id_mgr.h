@@ -38,6 +38,8 @@ namespace geomtools {
 
     static const std::string CATEGORY_KEY_LABEL;
     static const std::string TYPE_META_LABEL;
+    static const std::string DEFAULT_WORLD_CATEGORY;
+    static const int         WORD_TYPE;
 
     static bool g_devel; /// Global debug flag (for experts only)
 
@@ -47,7 +49,6 @@ namespace geomtools {
      *  - type (unique numerical identifier)
      *  - inheritance (parent category), ancestor (+grand-parents)
      *  - addressing fields with labels
-     *
      */
     class category_info : public datatools::i_tree_dumpable
     {
@@ -258,6 +259,12 @@ namespace geomtools {
   };
 
 } // end of namespace geomtools
+
+/***************
+ * OCD support *
+ ***************/
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(geomtools::id_mgr)
 
 #endif // GEOMTOOLS_ID_MGR_H_
 

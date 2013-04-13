@@ -79,7 +79,7 @@ namespace geomtools {
       }
     return;
   }
-  
+
   // 2012-05-25 FM : add support for loading a file that contains a list of geometry filenames :
   void model_factory::load_geom_list (const std::string & geom_list_file_)
   {
@@ -127,7 +127,7 @@ namespace geomtools {
             break;
           }
       }
-   
+
   }
 
   void model_factory::load (const string & mprop_file_)
@@ -217,7 +217,7 @@ namespace geomtools {
     if (_property_prefixes_.find (prefix_) != _property_prefixes_.end())
       {
         std::ostringstream message;
-        message << "geomtools::model_factory::add_property_prefix: " 
+        message << "geomtools::model_factory::add_property_prefix: "
                 << "Property prefix to be preserved '" << prefix_<< "' already exists !";
         throw std::logic_error(message.str());
        }
@@ -253,7 +253,7 @@ namespace geomtools {
                  << endl;
             continue;
           }
-        const i_model::factory_register_type::factory_type & the_factory 
+        const i_model::factory_register_type::factory_type & the_factory
           = _factory_register_.get (model_type);
         if (devel)
           {
@@ -283,8 +283,8 @@ namespace geomtools {
           }
         string log_name = model->get_logical ().get_name ();
         _logicals_[log_name] = &(model->get_logical ());
-        if (is_debug ()) model->tree_dump (clog, 
-                                           "New model is:", 
+        if (is_debug ()) model->tree_dump (clog,
+                                           "New model is:",
                                            "DEBUG: geomtools::model_factory::_construct_: ");
       }
     if (devel)
@@ -314,7 +314,7 @@ namespace geomtools {
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Locked  : " <<  (_locked_? "Yes": "No") << endl;
 
-    // Configurations: 
+    // Configurations:
     {
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Multi-properties : ";
@@ -331,7 +331,7 @@ namespace geomtools {
       }
     }
 
-    // Logicals: 
+    // Logicals:
     {
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Logicals : ";
@@ -352,8 +352,8 @@ namespace geomtools {
          const logical_volume * a_logical = i->second;
         }
     }
- 
-    // Models: 
+
+    // Models:
     {
       out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
            << "Models : ";
@@ -396,5 +396,43 @@ namespace geomtools {
   }
 
 } // end of namespace geomtools
+
+
+/****************************************************************/
+// OCD support for class '::geomtools::model_factory' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::model_factory,ocd_)
+{
+  ocd_.set_class_name("geomtools::model_factory");
+  ocd_.set_class_library("geomtools");
+  ocd_.set_class_description("A virtual geometry model_factory");
+  ocd_.set_class_documentation("The geometry model factory is the core engine of the\n"
+                               "'geomtools' geometry system. The factory is able to \n"
+                               "load the definitions of many 'geometry models' from \n"
+                               "ASCII configuration files.                          \n"
+                               "A geometry model is a special object that describes \n"
+                               "a geometry volume and itsmain characteristics : shape,\n"
+                               "materials, daughter volumes with their placements, and\n"
+                               "also arbitrary properties that can be used at some point.\n"
+                               "A geometry model must fulfil the interface of the \n"
+                               "'geomtools::i_model' class.                       \n"
+                              );
+
+
+  ocd_.set_configuration_hints("A geometry model factory is configured through some configuration     \n"
+                               "files that obeys the 'datatools::multi_properties' class.             \n"
+                               "Each file contains a list of sections, one section per geometry model.\n"
+                               "A geometry model object describes a possibly complex geometry volume  \n"
+                               "with its shape, materials, daughter volumes and many other attributes \n"
+                               "that can be used for various tasks (ex: display, GID mapping).        \n"
+                               "A geometry model is dynamically instantiated and initialized/constructed\n"
+                               "by the geometry factory.                                                \n"
+                               );
+
+  ocd_.set_validation_support(false);
+  ocd_.lock();
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+DOCD_CLASS_SYSTEM_REGISTRATION(::geomtools::model_factory,"geomtools::model_factory")
 
 // end of model_factory.cc

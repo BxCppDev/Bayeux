@@ -9,7 +9,6 @@
 
 namespace geomtools {
 
-
   using namespace std;  
  
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (geom_id,"geomtools::geom_id")
@@ -37,21 +36,16 @@ namespace geomtools {
   void geom_id::set_depth (size_t depth_)
   {
     size_t sz = _addresses_.size ();
-    if (depth_ > sz)
-      {
-        for (int i = sz; i < depth_; i++)
-          {
-            _addresses_.push_back (INVALID_ADDRESS);
-          }
+    if (depth_ > sz) {
+      for (int i = sz; i < depth_; i++) {
+        _addresses_.push_back (INVALID_ADDRESS);
       }
-    else 
-      {
-        _addresses_.resize (depth_);
-        for (int i = sz; i < depth_; i++)
-          {
-            _addresses_.push_back (INVALID_ADDRESS);
-          }
+    } else {
+      _addresses_.resize (depth_);
+      for (int i = sz; i < depth_; i++) {
+        _addresses_.push_back (INVALID_ADDRESS);
       }
+    }
     return;
   }
 
@@ -67,35 +61,27 @@ namespace geomtools {
 
   void geom_id::reset_address ()
   {
-    for (int i = 0; i < _addresses_.size (); i++)
-      {  
-        _addresses_.at (i) = geom_id::INVALID_ADDRESS;
-      }
+    for (int i = 0; i < _addresses_.size (); i++) {  
+      _addresses_.at (i) = geom_id::INVALID_ADDRESS;
+    }
     return;
   }
   
   void geom_id::set (int i_, uint32_t val_)
   {
-    if (i_ < 0) 
-      {
-        throw logic_error ("geom_id::set: Invalid sub-address index !");
+    if (i_ < 0) {
+      throw logic_error ("geomtools::geom_id::set: Invalid sub-address index !");
+    } else {
+      if (i_ < _addresses_.size ()) {
+        _addresses_[i_] = val_;
+      } else {
+        for (int j = _addresses_.size (); j <= i_; j++) {  
+          uint32_t v = geom_id::INVALID_ADDRESS;
+          _addresses_.push_back (v);
+        }
+        _addresses_[i_] = val_;
       }
-    else 
-      {
-        if (i_ < _addresses_.size ()) 
-          {
-            _addresses_[i_] = val_;
-          }
-        else
-          {
-            for (int j = _addresses_.size (); j <= i_; j++)
-              {  
-                uint32_t v = geom_id::INVALID_ADDRESS;
-                _addresses_.push_back (v);
-              }
-            _addresses_[i_] = val_;
-          }
-      }
+    }
     return;
   }
 
@@ -199,30 +185,6 @@ namespace geomtools {
                  si7_, 
                  si8_, 
                  si9_);
-    /* 
-       if (type_ == INVALID_TYPE) return;
-       _type_ = type_;
-       if (si0_ == INVALID_ADDRESS) return;
-       _addresses_.push_back (si0_);
-       if (si1_ == INVALID_ADDRESS) return;
-       _addresses_.push_back (si1_);
-       if (si2_ == INVALID_ADDRESS) return;
-       _addresses_.push_back (si2_);
-       if (si3_ == INVALID_ADDRESS) return;
-       _addresses_.push_back (si3_);
-       if (si4_ == INVALID_ADDRESS) return;
-       _addresses_.push_back (si4_);
-       if (si5_ == INVALID_ADDRESS) return;
-       _addresses_.push_back (si5_);
-       if (si6_ == INVALID_ADDRESS) return;
-       _addresses_.push_back (si6_);
-       if (si7_ == INVALID_ADDRESS) return;
-       _addresses_.push_back (si7_);
-       if (si8_ == INVALID_ADDRESS) return;
-       _addresses_.push_back (si8_);
-       if (si9_ == INVALID_ADDRESS) return;
-       _addresses_.push_back (si9_);
-    */
     return;
   }
   
@@ -244,67 +206,55 @@ namespace geomtools {
   void geom_id::invalidate ()
   {
     _type_ = INVALID_TYPE;
-    for (int i = 0; i < _addresses_.size(); i++)
-      {
-        _addresses_[i] = INVALID_ADDRESS;
-      }
+    for (int i = 0; i < _addresses_.size(); i++) {
+      _addresses_[i] = INVALID_ADDRESS;
+    }
     return;
   }
     
   bool geom_id::is_valid () const
   {
-    if (_type_ == INVALID_TYPE)
-      {
+    if (_type_ == INVALID_TYPE) {
+      return false;
+    }
+    if (_addresses_.size () == 0) {
+      return false;
+    }
+    for (int i = 0; i < _addresses_.size (); i++) {
+      if (_addresses_[i] == INVALID_ADDRESS) {
         return false;
       }
-    if (_addresses_.size () == 0)
-      {
-        return false;
-      }
-    for (int i = 0; i < _addresses_.size (); i++)
-      {
-        if (_addresses_[i] == INVALID_ADDRESS)
-          {
-            return false;
-          }
-      }
+    }
     return true;
   }
     
   bool geom_id::is_complete () const
   {
-    if (_type_ == INVALID_TYPE)
-      {
+    if (_type_ == INVALID_TYPE) {
+      return false;
+    }
+    if (_addresses_.size () == 0) {
+      return false;
+    }
+    for (int i = 0; i < _addresses_.size (); i++) {
+      if (_addresses_[i] == INVALID_ADDRESS) {
         return false;
       }
-   if (_addresses_.size () == 0)
-      {
+      if (_addresses_[i] == ANY_ADDRESS) {
         return false;
       }
-    for (int i = 0; i < _addresses_.size (); i++)
-      {
-        if (_addresses_[i] == INVALID_ADDRESS)
-          {
-            return false;
-          }
-        if (_addresses_[i] == ANY_ADDRESS)
-          {
-            return false;
-          }
-      }
+    }
     return true;
   }
 
   void geom_id::inherits_from (const geom_id & source_)
   {
-    if (this->_addresses_.size () < source_._addresses_.size ())
-      {
-        throw logic_error ("geom_id::inherits_from: Incompatible address depth !");
-      }
-    for (int i = 0; i < source_._addresses_.size (); i++) 
-      {
-        set (i, source_._addresses_[i]);
-      }
+    if (this->_addresses_.size () < source_._addresses_.size ()) {
+      throw logic_error ("geomtools::geom_id::inherits_from: Incompatible address depth !");
+    }
+    for (int i = 0; i < source_._addresses_.size (); i++) {
+      set (i, source_._addresses_[i]);
+    }
     return;
   }
 
@@ -312,7 +262,7 @@ namespace geomtools {
   {
     if (this->_addresses_.size () < target_._addresses_.size ())
       {
-        throw logic_error ("geom_id::extract: Incompatible address depth !");
+        throw logic_error ("geomtools::geom_id::extract: Incompatible address depth !");
       }
     for (int i = 0; i < target_._addresses_.size (); i++) 
       {
@@ -331,35 +281,26 @@ namespace geomtools {
   {
     out_ << geom_id::IO_ID_OPEN;
 
-    if (id_._type_ != geom_id::INVALID_TYPE) 
-      {
-        out_ << id_._type_;
-      }
-    else 
-      {
-        out_ << geom_id::IO_TYPE_INVALID;
-      }
+    if (id_._type_ != geom_id::INVALID_TYPE) {
+      out_ << id_._type_;
+    } else {
+      out_ << geom_id::IO_TYPE_INVALID;
+    }
 
     out_ << geom_id::IO_ID_SEPARATOR;
-    for (int i = 0; i < id_._addresses_.size (); i++) 
-      {
-        if (id_._addresses_[i] == geom_id::INVALID_ADDRESS) 
-          {
-            out_ << geom_id::IO_ADDRESS_INVALID;
-          }
-        else if (id_._addresses_[i] == geom_id::ANY_ADDRESS) 
-          {
-            out_ << geom_id::IO_ADDRESS_ANY;
-          }
-        else 
-          {
-            out_ << id_._addresses_[i];
-          }
-        if (i < id_._addresses_.size () - 1)
-          {
-            out_ << geom_id::IO_ADDRESS_SEPARATOR;
-          }
+    for (int i = 0; i < id_._addresses_.size (); i++) {
+      if (id_._addresses_[i] == geom_id::INVALID_ADDRESS) {
+        out_ << geom_id::IO_ADDRESS_INVALID;
+      } else if (id_._addresses_[i] == geom_id::ANY_ADDRESS) 
+        {
+          out_ << geom_id::IO_ADDRESS_ANY;
+        } else {
+        out_ << id_._addresses_[i];
       }
+      if (i < id_._addresses_.size () - 1) {
+        out_ << geom_id::IO_ADDRESS_SEPARATOR;
+      }
+    }
     out_ << geom_id::IO_ID_CLOSE;
     return out_;
   }
@@ -367,39 +308,30 @@ namespace geomtools {
   istream & operator>> (istream & in_, geom_id & id_)
   {
     char open = in_.peek ();
-    if (in_.eof ())
-      {
-        return in_;
-      }
-    if (open != geom_id::IO_ID_OPEN)
-      {
-        in_.setstate (ios::failbit);
-        return in_;
-      }
-    else
-      {
-        in_.get ();
-      }
+    if (in_.eof ()) {
+      return in_;
+    }
+    if (open != geom_id::IO_ID_OPEN) {
+      in_.setstate (ios::failbit);
+      return in_;
+    } else {
+      in_.get ();
+    }
 
     char check = in_.peek ();
-    if (in_.eof ())
-      {
-        in_.setstate (ios::failbit);
+    if (in_.eof ()){
+      in_.setstate (ios::failbit);
+      return in_;
+    } 
+    if (check != geom_id::IO_TYPE_INVALID) {
+      in_ >> id_._type_;
+      if (! in_) {
         return in_;
-      } 
-    if (check != geom_id::IO_TYPE_INVALID)
-      {
-        in_ >> id_._type_;
-        if (! in_)
-          {
-            return in_;
-          }
       }
-    else
-      {
-        id_._type_ = geom_id::INVALID_TYPE;
-        in_.get ();
-      }
+    } else {
+      id_._type_ = geom_id::INVALID_TYPE;
+      in_.get ();
+    }
 
     char separator = in_.peek ();
     if (in_.eof ())

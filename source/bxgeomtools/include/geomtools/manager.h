@@ -193,7 +193,6 @@ namespace geomtools {
       plugin_handle_type _handle_;      //!< Handle to the plugin
 
       friend class manager;
-
     };
 
     bool is_debug () const;
@@ -240,17 +239,15 @@ namespace geomtools {
 
     const geomtools::model_factory & get_factory () const;
 
-    geomtools::model_factory & get_factory ();
-
     geomtools::model_factory & grab_factory ();
 
     const geomtools::id_mgr & get_id_mgr () const;
 
     geomtools::id_mgr & grab_id_mgr ();
 
-    geomtools::id_mgr & get_id_mgr ();
-
     const geomtools::mapping & get_mapping () const;
+
+    geomtools::mapping & grab_mapping ();
 
     /* Plugins management */
 
@@ -305,8 +302,6 @@ namespace geomtools {
     void register_plugin_type(const std::string& plugin_id);
     
     void unregister_plugin_type(const std::string& plugin_id);
-
-    //bool has_materials_manager() const;
 
     /// Default constructor
     manager ();
@@ -385,6 +380,12 @@ namespace geomtools {
   };
 
 } // end of namespace geomtools
+
+/***************
+ * OCD support *
+ ***************/
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(geomtools::manager)
 
 #include <geomtools/detail/manager-inl.h>
 

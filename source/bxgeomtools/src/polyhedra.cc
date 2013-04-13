@@ -64,7 +64,7 @@ namespace geomtools {
     if (n_sides_ < MIN_NUMBER_OF_SIDES)
       {
         ostringstream message;
-        message << "polyhedra::set_n_sides: " 
+        message << "geomtools::polyhedra::set_n_sides: " 
                 << "Invalid number of sides '" << n_sides_ << "'" << endl;
         throw runtime_error (message.str ());
       }
@@ -150,7 +150,7 @@ namespace geomtools {
             if (ns < MIN_NUMBER_OF_SIDES)
               {
                 ostringstream message;
-                message << "polyhedra::initialize: "
+                message << "geomtools::polyhedra::initialize: "
                         << "'sides' is not large enough !";
                 throw runtime_error (message.str ());
               }
@@ -163,7 +163,7 @@ namespace geomtools {
             if (zs.size () < 2)
               {
                 ostringstream message;
-                message << "polyhedra::initialize: "
+                message << "geomtools::polyhedra::initialize: "
                         << "'list_of_z' has not enough points !";
                 throw runtime_error (message.str ());
               }
@@ -171,7 +171,7 @@ namespace geomtools {
         else
           {
             ostringstream message;
-            message << "polyhedra::initialize: "
+            message << "geomtools::polyhedra::initialize: "
                     << "Missing 'list_of_z' property !";
             throw runtime_error (message.str ());
           }
@@ -182,7 +182,7 @@ namespace geomtools {
             if (rmaxs.size () != zs.size ())
               {
                 ostringstream message;
-                message << "polyhedra::initialize: "
+                message << "geomtools::polyhedra::initialize: "
                         << "'list_of_z' and 'list_of_rmax' have not the same size !";
                 throw runtime_error (message.str ());               
               }
@@ -190,7 +190,7 @@ namespace geomtools {
         else
           {
             ostringstream message;
-            message << "polyhedra::initialize: "
+            message << "geomtools::polyhedra::initialize: "
                     << "Missing 'list_of_rmax' property !";
             throw runtime_error (message.str ());
           }
@@ -201,7 +201,7 @@ namespace geomtools {
             if (rmins.size () != zs.size ())
               {
                 ostringstream message;
-                message << "polyhedra::initialize: "
+                message << "geomtools::polyhedra::initialize: "
                         << "'list_of_rmin' and 'list_of_rmax' have not the same size !";
                 throw runtime_error (message.str ());
                     
@@ -247,7 +247,7 @@ namespace geomtools {
         else
           {
             ostringstream message;
-            message << "polyhedra::initialize: "
+            message << "geomtools::polyhedra::initialize: "
                     << "Missing 'datafile' property !";
             throw runtime_error (message.str ());
           }
@@ -257,7 +257,7 @@ namespace geomtools {
     else 
       {
         ostringstream message;
-        message << "polyhedra::initialize: "
+        message << "geomtools::polyhedra::initialize: "
                 << "Invalid build mode '" << build_mode_label << "' !";
         throw runtime_error (message.str ());
       }
@@ -276,7 +276,7 @@ namespace geomtools {
     if (! ifs)
       {
         ostringstream message;
-        message << "polyhedra::initialize: " 
+        message << "geomtools::polyhedra::initialize: " 
                 << "Cannot open data file '"
                 << filename << "' !";
         throw runtime_error (message.str ()); 
@@ -310,7 +310,7 @@ namespace geomtools {
                       if (! iss)
                         {
                           ostringstream message;
-                          message << "polyhedra::initialize: " 
+                          message << "geomtools::polyhedra::initialize: " 
                                   << "Invalid format for the number of sides directive in data file '"
                                   << filename << "' at line " << count << " !";
                           throw runtime_error (message.str ()); 
@@ -318,7 +318,7 @@ namespace geomtools {
                       if (ns < MIN_NUMBER_OF_SIDES)
                         {
                           ostringstream message;
-                          message << "polyhedra::initialize: " 
+                          message << "geomtools::polyhedra::initialize: " 
                                   << "Number of sides is not large enough in data file '"
                                   << filename << "' at line " << count << " !";
                           throw runtime_error (message.str ()); 
@@ -333,7 +333,7 @@ namespace geomtools {
                       if (! iss)
                         {
                           ostringstream message;
-                          message << "polyhedra::initialize: " 
+                          message << "geomtools::polyhedra::initialize: " 
                                   << "Invalid format for the length unit directive in data file '"
                                   << filename << "' at line " << count << " !";
                           throw runtime_error (message.str ()); 
@@ -350,7 +350,7 @@ namespace geomtools {
                       if (! iss)
                         {
                           ostringstream message;
-                          message << "polyhedra::initialize: " 
+                          message << "geomtools::polyhedra::initialize: " 
                                   << "Invalid format for the Z-factor directive in data file '"
                                   << filename << "' at line " << count << " !";
                           throw runtime_error (message.str ()); 
@@ -362,7 +362,7 @@ namespace geomtools {
                       if (! iss)
                         {
                           ostringstream message;
-                          message << "polyhedra::initialize: " 
+                          message << "geomtools::polyhedra::initialize: " 
                                   << "Invalid format for the R-factor directive in data file '"
                                   << filename << "' at line " << count << " !";
                           throw runtime_error (message.str ()); 
@@ -383,7 +383,7 @@ namespace geomtools {
           if (! iss)
             {
               ostringstream message;
-              message << "polyhedra::initialize: " 
+              message << "geomtools::polyhedra::initialize: " 
                       << "Format error for 'z' in data file '"
                       << filename << "' at line " << count << " !";
               throw runtime_error (message.str ()); 
@@ -392,7 +392,7 @@ namespace geomtools {
           if (! iss)
             {
               ostringstream message;
-              message << "polyhedra::initialize: " 
+              message << "geomtools::polyhedra::initialize: " 
                       << "Format error for 'r1' in data file '"
                       << filename << "' at line " << count << " !";
               throw runtime_error (message.str ()); 
@@ -422,7 +422,7 @@ namespace geomtools {
                   if (! iss2)
                     {
                       ostringstream message;
-                      message << "polyhedra::initialize: " 
+                      message << "geomtools::polyhedra::initialize: " 
                               << "Format error for 'r2' in data file '"
                               << filename << "' at line " << count << " !";
                       throw runtime_error (message.str ()); 
@@ -436,7 +436,7 @@ namespace geomtools {
           if (datatools::is_valid (r2) && (r2 < 0.0))
             {
               ostringstream message;
-              message << "polyhedra::initialize: " 
+              message << "geomtools::polyhedra::initialize: " 
                       << "Invalid value '" << r2 << "' for '2' in data file '"
                       << filename << "' at line " << count << " !";
               throw runtime_error (message.str ()); 
@@ -471,7 +471,7 @@ namespace geomtools {
   {
     if (rmax_ < 0.0)
       {
-        throw runtime_error ("polyhedra::add: Invalid negative 'rmax' !");
+        throw runtime_error ("geomtools::polyhedra::add: Invalid negative 'rmax' !");
       }
     r_min_max RMM;
     RMM.rmin = 0.0;
@@ -488,11 +488,11 @@ namespace geomtools {
   {
     if (rmin_ < 0.0)
       {
-        throw runtime_error ("polyhedra::add: Invalid negative 'rmin' !");
+        throw runtime_error ("geomtools::polyhedra::add: Invalid negative 'rmin' !");
       }
     if (rmax_ < rmin_)
       {
-        throw runtime_error ("polyhedra::add: Invalid value for 'rmax' !");
+        throw runtime_error ("geomtools::polyhedra::add: Invalid value for 'rmax' !");
       }
     r_min_max RMM;
     if (rmin_ > 0.0) _extruded_ = true;
@@ -599,14 +599,14 @@ namespace geomtools {
     if ((zplane_index_ < 0)  || (zplane_index_ > _points_.size ()))
       {
         ostringstream message;
-        message << "polyhedra::get_corner: "
+        message << "geomtools::polyhedra::get_corner: "
                 << "Invalid Z-plane index (" << zplane_index_ << ") !";
         throw runtime_error (message.str ());
       }
     if ((corner_index_ < 0)  || (corner_index_ > _n_sides_))
       {
         ostringstream message;
-        message << "polyhedra::get_corner: "
+        message << "geomtools::polyhedra::get_corner: "
                 << "Invalid corner index (" << corner_index_ << ") !";
         throw runtime_error (message.str ());
       }
@@ -880,13 +880,13 @@ namespace geomtools {
     if ( flag_ == "surface.outer_side" ) return get_surface (FACE_OUTER_SIDE);
     if ( flag_ == "surface" ) return get_surface (FACE_ALL);
 
-    throw runtime_error ("polyhedra::get_parameter: Unknown flag!");
+    throw runtime_error ("geomtools::polyhedra::get_parameter: Unknown flag!");
   }
 
   bool polyhedra::is_inside (const vector_3d & point_, 
                              double skin_) const
   {
-    throw runtime_error ("polyhedra::is_inside: Not implemented yet !");
+    throw runtime_error ("geomtools::polyhedra::is_inside: Not implemented yet !");
     double skin = get_skin ();
     if (skin_ > USING_PROPER_SKIN) skin = skin_;
     
@@ -928,7 +928,7 @@ namespace geomtools {
 
   vector_3d polyhedra::get_normal_on_surface (const vector_3d & position_) const
   {
-    throw runtime_error ("polyhedra::get_normal_on_surface: Not implemented yet !");
+    throw runtime_error ("geomtools::polyhedra::get_normal_on_surface: Not implemented yet !");
     vector_3d normal;
     invalidate (normal);
     /*
@@ -971,7 +971,7 @@ namespace geomtools {
                                  int    mask_ ,
                                  double skin_) const
   {
-    throw runtime_error ("polyhedra::is_on_surface: Not implemented yet !");
+    throw runtime_error ("geomtools::polyhedra::is_on_surface: Not implemented yet !");
     double skin = get_skin ();
     if (skin_ > USING_PROPER_SKIN) skin = skin_;
 
@@ -1038,7 +1038,7 @@ namespace geomtools {
                                   intercept_t & intercept_,
                                   double skin_) const
   {
-    throw runtime_error ("polyhedra::find_intercept: Not implemented yet !");
+    throw runtime_error ("geomtools::polyhedra::find_intercept: Not implemented yet !");
     return false;
   }
 

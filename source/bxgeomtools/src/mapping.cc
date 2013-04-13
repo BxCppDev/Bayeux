@@ -166,8 +166,8 @@ namespace geomtools {
       }
 
     /*
-    config_.tree_dump(std::cerr, "Mapping configuration : ", 
-                      "DEBUG: geomtools::mapping::initialize: ");
+      config_.tree_dump(std::cerr, "Mapping configuration : ", 
+      "DEBUG: geomtools::mapping::initialize: ");
     */
 
     if (config_.has_flag ("mapping.debug"))
@@ -176,10 +176,10 @@ namespace geomtools {
         set_debug (true);
       }
 
-   if (config_.has_flag ("mapping.no_world_mapping"))
-     {
-       _world_mapping_ = false; 
-     }
+    if (config_.has_flag ("mapping.no_world_mapping"))
+      {
+        _world_mapping_ = false; 
+      }
 
     set_build_mode(BUILD_MODE_STRICT_MOTHERSHIP);
     if (config_.has_key ("mapping.build_mode"))
@@ -190,9 +190,9 @@ namespace geomtools {
             set_build_mode(BUILD_MODE_STRICT_MOTHERSHIP);
           }
         /*
-        else if (build_mode == "lazy_mothership")
+          else if (build_mode == "lazy_mothership")
           {
-            set_build_mode(BUILD_MODE_LAZY_MOTHERSHIP);
+          set_build_mode(BUILD_MODE_LAZY_MOTHERSHIP);
           }
         */
         else 
@@ -240,9 +240,9 @@ namespace geomtools {
       }
 
     /*
-    std::cerr << "DEVEL: " 
-              << "geomtools::mapping::initialize: "
-              << "****** DONE ******" << std::endl;
+      std::cerr << "DEVEL: " 
+      << "geomtools::mapping::initialize: "
+      << "****** DONE ******" << std::endl;
     */
 
     _initialized_ = true;
@@ -298,11 +298,11 @@ namespace geomtools {
       {
         _initialized_ = true;
         //throw logic_error ("geomtools::mapping::build_from: Not initialized !");
-     }
+      }
     
     if (! factory_.is_locked ())
       {
-         throw logic_error ("geomtools::mapping::build_from: Factory is not locked !");
+        throw logic_error ("geomtools::mapping::build_from: Factory is not locked !");
       }
 
     _factory_ = &factory_;
@@ -466,19 +466,17 @@ namespace geomtools {
   {
     bool devel = g_devel;
 
-    if (devel)
-      {
-        clog << datatools::io::devel
-             << "geomtools::mapping::_build_: Entering..." << endl;
-      }
-    string world_cat_name = "world";
-    if (! _get_id_manager ().has_category_info (world_cat_name))
-      {
-        ostringstream message;
-        message << "geomtools::mapping::_build_: Unknown category '"
-                << world_cat_name << "' !";
-        throw logic_error (message.str ());
-      }
+    if (devel) {
+      clog << datatools::io::devel
+           << "geomtools::mapping::_build_: Entering..." << endl;
+    }
+    string world_cat_name = id_mgr:: DEFAULT_WORLD_CATEGORY;
+    if (! _get_id_manager ().has_category_info (world_cat_name)) {
+      ostringstream message;
+      message << "geomtools::mapping::_build_: Unknown category '"
+              << world_cat_name << "' !";
+      throw logic_error (message.str ());
+    }
     {
       const id_mgr::category_info & world_cat_info
         = _get_id_manager ().get_category_info (world_cat_name);
@@ -486,12 +484,11 @@ namespace geomtools {
       geom_id world_id;
       world_cat_info.create (world_id);
       world_id.set_address (0);
-      if (devel)
-        {
-          clog << datatools::io::devel
-               <<  "geomtools::mapping::_build_:"<< "World ID = " << world_id << ' '
-               << (world_id.is_valid () ? "[Valid]": "[Invalid]")<< endl;
-        }
+      if (devel) {
+        clog << datatools::io::devel
+             <<  "geomtools::mapping::_build_:"<< "World ID = " << world_id << ' '
+             << (world_id.is_valid () ? "[Valid]": "[Invalid]")<< endl;
+      }
       placement top_placement (vector_3d (0.0, 0.0, 0.0),
                                0,
                                0.0);
@@ -505,27 +502,22 @@ namespace geomtools {
       //dump_dictionnary (clog);
 
       // Add world volume mapping info :
-      if (_world_mapping_)
-        {
-          _get_geom_infos ()[world_id] = world_gi;
-        }
-      if (is_build_mode_strict_mothership ())
-        {
-          _build_logical_children_ (*_top_logical_, top_placement, world_id);
-        }
-      else if (is_build_mode_lazy_mothership ())
-        {
-          std::vector<geom_id> parent_ids;
-          parent_ids.push_back(world_id);
-          _build_logical_children_2_ (*_top_logical_, top_placement, parent_ids);
-        }
+      if (_world_mapping_)  {
+        _get_geom_infos ()[world_id] = world_gi;
+      }
+      if (is_build_mode_strict_mothership ()) {
+        _build_logical_children_ (*_top_logical_, top_placement, world_id);
+      } else if (is_build_mode_lazy_mothership ()) {
+        std::vector<geom_id> parent_ids;
+        parent_ids.push_back(world_id);
+        _build_logical_children_2_ (*_top_logical_, top_placement, parent_ids);
+      }
     }
     //dump_dictionnary (clog);
-    if (devel)
-      {
-        clog << datatools::io::devel
-             << "geomtools::mapping::_build_: Exiting." << endl;
-      }
+    if (devel) {
+      clog << datatools::io::devel
+           << "geomtools::mapping::_build_: Exiting." << endl;
+    }
     return;
   }
 
@@ -551,11 +543,11 @@ namespace geomtools {
         return;
       }
     /*
-    if (devel)
+      if (devel)
       {
-        log.parameters ().tree_dump (clog,
-                                     "***** logical's parameters *****",
-                                     "DEVEL: ");
+      log.parameters ().tree_dump (clog,
+      "***** logical's parameters *****",
+      "DEVEL: ");
       }
     */
 
@@ -809,7 +801,7 @@ namespace geomtools {
                      << phys_name << "' " << endl;
               }
           }
-       if (devel) clog << datatools::io::devel << _indenter_
+if (devel) clog << datatools::io::devel << _indenter_
                         << "Daughter category info = '"
                         << daughter_category_info << "' " << endl;
 

@@ -112,6 +112,12 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
+/***************
+ * OCD support *
+ ***************/
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(geomtools::model_factory)
+
 #endif // GEOMTOOLS_MODEL_FACTORY_H_
 
 // end of model_factory.h
