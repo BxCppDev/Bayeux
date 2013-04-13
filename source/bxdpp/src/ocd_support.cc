@@ -1,18 +1,19 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* ocd_support.cc
  */
 
 #include <dpp/ocd_support.h>
 
-/****************************************************************/ 
+/****************************************************************/
 // OCD support for class '::dpp::dump_module' :
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::dump_module,ocd_)
 {
   ocd_.set_class_name ("dpp::dump_module");
+  ocd_.set_class_library ("dpp");
   ocd_.set_class_description ("A module that dumps the structure of the 'things' data record");
- 
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("debug")
       .set_terse_description("The debug flag")
       .set_traits(datatools::TYPE_BOOLEAN)
@@ -25,10 +26,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::dump_module,ocd_)
                             "  |                                            \n"
                             )
       ;
-  }  
- 
+  }
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("title")
       .set_terse_description("The title of the dump")
       .set_traits(datatools::TYPE_STRING)
@@ -41,10 +42,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::dump_module,ocd_)
                             "  |                                            \n"
                             )
       ;
-  }  
- 
+  }
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("indent")
       .set_terse_description("The indent string of the dump")
       .set_traits(datatools::TYPE_STRING)
@@ -57,10 +58,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::dump_module,ocd_)
                             "  |                                            \n"
                            )
       ;
-  }  
- 
+  }
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("output")
       .set_terse_description("The output stream of the dump")
       .set_traits(datatools::TYPE_STRING)
@@ -77,10 +78,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::dump_module,ocd_)
                             "  |                                             \n"
                            )
       ;
-  }  
- 
+  }
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("output.filename")
       .set_terse_description("The name of the output file")
       .set_traits(datatools::TYPE_STRING)
@@ -97,7 +98,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::dump_module,ocd_)
                             "  |                                                            \n"
                            )
       ;
-  }  
+  }
 
   ocd_.set_configuration_hints ("A 'dpp::dump_module' object can be setup with the following syntax    \n"
                                 "in a 'datatools::multi_properties' configuration file, typically from \n"
@@ -119,7 +120,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::dump_module,ocd_)
                                 );
 
   ocd_.set_validation_support(true);
-  ocd_.lock(); 
+  ocd_.lock();
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
@@ -127,15 +128,16 @@ DOCD_CLASS_SYSTEM_REGISTRATION(::dpp::dump_module,"dpp::dump_module")
 
 
 
-/****************************************************************/ 
+/****************************************************************/
 // OCD support for class '::dpp::chain_module' :
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::chain_module,ocd_)
 {
   ocd_.set_class_name ("dpp::chain_module");
+  ocd_.set_class_library ("dpp");
   ocd_.set_class_description ("A module that chains several data processing modules");
- 
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("debug")
       .set_terse_description("The debug flag")
       .set_traits(datatools::TYPE_BOOLEAN)
@@ -148,10 +150,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::chain_module,ocd_)
                             "  |                                            \n"
                             )
       ;
-  }  
- 
+  }
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("modules")
       .set_terse_description("The list of names of the modules to be chained")
       .set_traits(datatools::TYPE_STRING,
@@ -168,7 +170,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::chain_module,ocd_)
                             "  |                                            \n"
                             )
       ;
-  }  
+  }
 
   ocd_.set_configuration_hints ("A 'dpp::chain_module' object can be setup with the following syntax   \n"
                                 "in a 'datatools::multi_properties' configuration file, typically from \n"
@@ -191,23 +193,24 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::chain_module,ocd_)
                                 );
 
   ocd_.set_validation_support(true);
-  ocd_.lock(); 
+  ocd_.lock();
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
 DOCD_CLASS_SYSTEM_REGISTRATION(::dpp::chain_module,"dpp::chain_module")
- 
 
 
-/****************************************************************/ 
+
+/****************************************************************/
 // OCD support for class '::dpp::if_module' :
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::if_module,ocd_)
 {
   ocd_.set_class_name ("dpp::if_module");
+  ocd_.set_class_library ("dpp");
   ocd_.set_class_description ("A module that conditionnaly process data processing modules");
- 
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("debug")
       .set_terse_description("The debug flag")
       .set_traits(datatools::TYPE_BOOLEAN)
@@ -220,10 +223,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::if_module,ocd_)
                             "  |                                            \n"
                             )
       ;
-  }  
- 
+  }
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("cut_service.label")
       .set_terse_description("The name of the cut service")
       .set_traits(datatools::TYPE_STRING)
@@ -238,10 +241,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::if_module,ocd_)
                             "  |                                            \n"
                             )
       ;
-  }  
- 
+  }
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("condition_cut")
       .set_terse_description("The name of the cut used as a condition")
       .set_traits(datatools::TYPE_STRING)
@@ -255,10 +258,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::if_module,ocd_)
                             "  |                                               \n"
                             )
       ;
-  }  
- 
+  }
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("then_status")
       .set_terse_description("The strategy used when the condition is fulfilled")
       .set_traits(datatools::TYPE_STRING)
@@ -275,10 +278,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::if_module,ocd_)
                             "property.                                             \n"
                             )
       ;
-  }  
+  }
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("else_status")
       .set_terse_description("The strategy used when the condition is not fulfilled")
       .set_traits(datatools::TYPE_STRING)
@@ -295,10 +298,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::if_module,ocd_)
                             "property.                                             \n"
                             )
       ;
-  }  
- 
+  }
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("then_module")
       .set_terse_description("The name of the module used when the condition is fulfilled")
       .set_traits(datatools::TYPE_STRING)
@@ -314,10 +317,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::if_module,ocd_)
                             "property.                                             \n"
                            )
       ;
-  }  
- 
+  }
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("else_module")
       .set_terse_description("The name of the module used when the condition is not fulfilled")
       .set_traits(datatools::TYPE_STRING)
@@ -333,7 +336,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::if_module,ocd_)
                             "property.                                             \n"
                            )
       ;
-  }  
+  }
 
   ocd_.set_configuration_hints ("A 'dpp::if_module' object can be setup with the following syntax   \n"
                                 "in a 'datatools::multi_properties' configuration file, typically from \n"
@@ -362,22 +365,23 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::if_module,ocd_)
                                 );
 
   ocd_.set_validation_support(true);
-  ocd_.lock(); 
+  ocd_.lock();
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
 DOCD_CLASS_SYSTEM_REGISTRATION(::dpp::if_module,"dpp::if_module")
- 
- 
 
 
-/****************************************************************/ 
+
+
+/****************************************************************/
 // OCD support for class '::dpp::io_module' :
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::io_module,ocd_)
 {
   ocd_.set_class_name ("dpp::io_module");
+  ocd_.set_class_library ("dpp");
   ocd_.set_class_description ("An input/ouput module able to load/store data record in/from files");
- 
+
 
   ocd_.set_configuration_hints ("A 'dpp::io_module' object can be setup with the following syntax      \n"
                                 "in a 'datatools::multi_properties' configuration file, typically from \n"
@@ -390,7 +394,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::io_module,ocd_)
                                 "  | #@meta_label  \"type\"                                            \n"
                                 "  |                                                                   \n"
                                 "  | [name=\"load_data\" type=\"dpp::io_module\"]                      \n"
-                                "  | #@config An input data processing chain                           \n"
+                                "  | #@config An input data processing module                          \n"
                                 "  | debug                       : boolean = 0                         \n"
                                 "  | mode                        : string = \"input\"                  \n"
                                 "  | input.preserve_existing     : boolean = 1                         \n"
@@ -406,7 +410,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::io_module,ocd_)
                                 "  | input.incremental.stop      : integer = 10                        \n"
                                 "  |                                                                   \n"
                                 "  | [name=\"store_data\" type=\"dpp::io_module\"]                     \n"
-                                "  | #@config An output data processing chain                          \n"
+                                "  | #@config An output data processing module                         \n"
                                 "  | debug                        : boolean = 0                        \n"
                                 "  | mode                         : string = \"output\"                \n"
                                 "  | output.preserve_existing     : boolean = 1                        \n"
@@ -424,11 +428,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::io_module,ocd_)
                                 );
 
   ocd_.set_validation_support(true);
-  ocd_.lock(); 
+  ocd_.lock();
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
 DOCD_CLASS_SYSTEM_REGISTRATION(::dpp::io_module,"dpp::io_module")
- 
+
 
 // end of ocd_support.cc

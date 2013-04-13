@@ -547,7 +547,7 @@ namespace dpp {
 #if DPP_DATATOOLS_LEGACY == 1
     typedef multi_properties::entries_ordered_col_t col_type;
 #else
-    typedef multi_properties::entries_ordered_col_type col_type;    
+    typedef multi_properties::entries_ordered_col_type col_type;
 #endif
     const col_type & oe = config_.ordered_entries ();
     for (col_type::const_iterator i =
@@ -790,14 +790,30 @@ namespace dpp {
 #include <datatools/ocd_macros.h>
 
 
-// OCD support for class '::datatools::service_manager' :
+// OCD support for class '::datatools::module_manager' :
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::module_manager,ocd_)
 {
   ocd_.set_class_name ("dpp::module_manager");
+  ocd_.set_class_library ("dpp");
   ocd_.set_class_description ("A generic manager for data processing module");
- 
+  ocd_.set_class_documentation ("The data processing module manager is responsible of the   \n"
+                                "instantiation, initialization, usage and destruction of    \n"
+                                "an arbitrary collection of 'data processing modules'.      \n"
+                                "A data processing module is able to perform a special task \n"
+                                "on a data structure implemented through an object of the   \n"
+                                "'datatools::things' class.                                 \n"
+                                "Each data processing module fulfils the 'dpp::base_module' \n"
+                                "interface and is defined from a set of parametrization rules.\n"
+                                "The modules are stored in a special dictionnary within the \n"
+                                "manager. One can access and use a module from its unique key.\n"
+                                "The modules can also be organized and processed along a data\n"
+                                "queue, thus providing a full data processing pipeline.     \n"
+                                "Several generic high-level modules are also provided in    \n"
+                                "the 'dpp' library."
+                                );
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("debug")
       .set_terse_description("Flag to activate debugging output")
       .set_traits(datatools::TYPE_BOOLEAN)
@@ -805,11 +821,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::module_manager,ocd_)
       .set_long_description("This flag activates debugging output.             \n"
                             "It is not recommended for a production run.       \n"
                             )
-      ;    
+      ;
   }
- 
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("verbose")
       .set_terse_description("Flag to activate verbose output")
       .set_traits(datatools::TYPE_BOOLEAN)
@@ -818,11 +834,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::module_manager,ocd_)
                             "This flag activates verbose output.               \n"
                             "It is not recommended for a production run.       \n"
                             )
-      ;    
+      ;
   }
- 
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("factory.debug")
       .set_terse_description("Flag to activate debugging output from factory.")
       .set_traits(datatools::TYPE_BOOLEAN)
@@ -832,11 +848,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::module_manager,ocd_)
                             "module embeded factory.                                       \n"
                             "It is not recommended for a production run.                   \n"
                             )
-      ;    
+      ;
   }
- 
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("factory.no_preload")
       .set_terse_description("Flag to inhibit the preloading of registered module factories.")
       .set_traits(datatools::TYPE_BOOLEAN)
@@ -847,11 +863,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::module_manager,ocd_)
                             "Module factories have thus to be 'manually' loaded on user request.  \n"
                             "This behaviour is not recommended.                                   \n"
                             )
-      ;    
+      ;
   }
- 
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("factory.initialization_at_load")
       .set_terse_description("Flag to force the initialization of module when loaded.")
       .set_traits(datatools::TYPE_BOOLEAN)
@@ -865,11 +881,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::module_manager,ocd_)
                             "The default behaviour consists in initializing a module, and allocate\n"
                             "its internal resources, only if it is really useful.                 \n"
                             )
-      ;    
+      ;
   }
- 
+
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("modules.configuration_files")
       .set_terse_description("The list of module configuration files.")
       .set_traits(datatools::TYPE_STRING,
@@ -913,16 +929,16 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::module_manager,ocd_)
                             "  |                                                                   \n"
                             "                                                                      \n"
                             )
-      ;    
+      ;
   }
 
   {
-    configuration_property_description & cpd = ocd_.add_property_info();
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("service_manager.configuration")
       .set_terse_description("The configuration file of the service manager.")
       .set_traits(datatools::TYPE_STRING)
       .set_path(true)
-      .set_mandatory(false) 
+      .set_mandatory(false)
       .set_long_description("Default: empty                                                        \n"
                             "This file must follow the format of the 'datatools::properties' class.\n"
                             "See OCD support for the 'datatools::service_manage' class.            \n"
@@ -931,10 +947,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::module_manager,ocd_)
                              )
       ;
   }
- 
-  //ocd_.set_configuration_hints ("Nothing special."); 
+
+  //ocd_.set_configuration_hints ("Nothing special.");
   ocd_.set_validation_support(true);
-  ocd_.lock(); 
+  ocd_.lock();
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
