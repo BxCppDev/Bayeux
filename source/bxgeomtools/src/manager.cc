@@ -623,6 +623,15 @@ namespace geomtools {
       config_.fetch ("factory.preserved_property_prefixes", factory_preserved_property_prefixes);
     }
 
+    if (config_.has_key ("world_name")) {
+      world_name = config_.fetch_string ("world_name");
+      set_world_name (world_name);
+    }
+
+    if (config_.has_flag ("build_mapping")) {
+      set_mapping_requested (true);
+    }
+
     if (debug) {
       std::clog << datatools::io::debug
                 << "geomtools::manager::_at_init_: Properties are parsed..." << std::endl;
@@ -745,15 +754,6 @@ namespace geomtools {
       _id_manager_.tree_dump (std::clog,
                               "Geometry manager's ID manager:",
                               "DEBUG: geomtools::manager::_at_init_: ");
-    }
-
-    if (config_.has_key ("world_name")) {
-      world_name = config_.fetch_string ("world_name");
-      set_world_name (world_name);
-    }
-
-    if (config_.has_flag ("build_mapping")) {
-      set_mapping_requested (true);
     }
 
     // Setup mapping:
@@ -1263,16 +1263,18 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
                                "framework. It hosts four components :                       \n"
                                "a) A factory of geometry models, which is responsible of the\n"
                                "   construction of the full hierarchy of geometry volumes,  \n"
-                               "   compatible with the GDML hierarchical scheme.            \n"
+                               "   compatible with the GDML hierarchical scheme (and thus   \n"
+                               "   Geant4).                                                 \n"
                                "b) A manager for geometry IDs (GID), which describes the    \n"
                                "   relationships between some geometry volumes in the geometry\n"
-                               "   hierarchy and propose an addressing scheme of such volumes\n"
+                               "   hierarchy and the addressing scheme of such volumes      \n"
                                "   based on geometry IDs ('geomtools::geom_id' class).      \n"
                                "c) A mapping object which is responsible of a lookup-table  \n"
                                "   that allows to access fundamental informations about some\n"
                                "   volume in the setup, given its unique GID and obeying the\n"
                                "   numbering scheme setup by the GID manager.               \n"
-                               "d) A manager for geometry plugins.  \n"
+                               "d) A manager for geometry plugins which allows to dynamically\n"
+                               "   add new geometry-related functionnalities to the manager.\n"
                                );
 {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
@@ -1341,7 +1343,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
-    cpd.set_name_pattern("setup description")
+    cpd.set_name_pattern("setup_description")
       .set_terse_description("The description string of the virtual geometry setup")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
@@ -1636,14 +1638,43 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
       ;
   }
 
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("plugins.configuration_files")
+      .set_terse_description("A list of files that contains geometry plugins' definitions")
+      .set_traits(datatools::TYPE_STRING,
+                  datatools::configuration_property_description::ARRAY)
+      .set_path(true)
+      .set_mandatory(false)
+      .set_long_description("Each of the addressed files contains rules that define geometry       \n"
+                            "plugins. The files use the format of the 'datatools::multi_properties'\n"
+                            "class. The filenames may contain environment variables.               \n"
+                            "Example :                                                             \n"
+                            "  |                                                                   \n"
+                            "  | plugins.configuration_files : string[2] as path =      \\         \n"
+                            "  |   \"${CONFIG_REPOSITORY_DIR}/geom/mapping_plugins.lis\"  \\       \n"
+                            "  |   \"${CONFIG_REPOSITORY_DIR}/geom/mag_field_plugin.lis\"          \n"
+                            "  |                                                                   \n"
+                            "Here some plugins with embeded dedicated mappingonbjects are defined  \n"
+                            "in the 'mapping_plugins.lis' file :                                   \n"
+                            "  |                                                                   \n"
+                            "  | #@description List of geometry plugins                            \n"
+                            "  | #@key_label   \"name\"                                            \n"
+                            "  | #@meta_label  \"type\"                                            \n"
+                            "  |                                                                   \n"
+                            "  | [name=\"mapping_no_screw\" type=\"geomtools::mapping_plugin\"]    \n"
+                            "  | mapping.excluded_categories : string [1] = \"screw.gc\"           \n"
+                            "  |                                                                   \n"
+                            "The 'geomtools::mapping_plugin' is provided by the 'geomtools'        \n"
+                            "library.                                                              \n"
+                            )
+      ;
+  }
+
   ocd_.set_configuration_hints("A geometry manager is configured through a configuration file that  \n"
                                "obeys the format of 'datatools::properties' setup file.             \n"
-                               "Example :                                                           \n"
-                               "  |                                                                 \n"
-                               "  |                                                                 \n"
+                               "Example : to be done.                                               \n"
                                );
-
-
 
   ocd_.set_validation_support(true);
   ocd_.lock();
