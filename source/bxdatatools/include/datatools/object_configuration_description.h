@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
 /* object_configuration_description.h */
-/* 
+/*
  * Description :
  *
  *  Classes describing configuration properties for complex objects
@@ -21,10 +21,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
- */ 
+ */
 
 #ifndef DATATOOLS_OBJECT_CONFIGURATION_DESCRIPTION_H_
 #define DATATOOLS_OBJECT_CONFIGURATION_DESCRIPTION_H_
@@ -90,12 +90,12 @@ public:
   configuration_property_description & set_terse_description(const std::string &desc_);
   configuration_property_description & set_long_description(const std::string &desc_);
   configuration_property_description & set_mandatory(bool m_ = true);
-  configuration_property_description & set_traits(int type_, 
-                                                  bool array_ = false, 
+  configuration_property_description & set_traits(int type_,
+                                                  bool array_ = false,
                                                   int fixed_size_ = -1);
   configuration_property_description & set_triggered_by_flag(const std::string &prop_name_,
                                                              bool triggering_status_ = true);
-  configuration_property_description & set_triggered_by_label(const std::string &prop_name_, 
+  configuration_property_description & set_triggered_by_label(const std::string &prop_name_,
                                                               const std::string &labels_);
   configuration_property_description & set_complex_triggering_conditions(bool = true);
   configuration_property_description & set_complex_dependencies(bool = true);
@@ -147,8 +147,8 @@ public:
   unsigned int get_number_of_triggered_dependers() const;
   const dependency_entry & get_triggered_depender(int i_) const;
 
- 
-  void dump(std::ostream & out_ = std::clog, 
+
+  void dump(std::ostream & out_ = std::clog,
             const std::string & title_ = "",
             const std::string & indent_ = "") const;
 
@@ -156,7 +156,7 @@ private:
 
   std::string  _name_pattern_; /// The name pattern of the property
   std::string  _terse_description_; /// Terse description of the property
-  std::string  _long_description_; /// Detailed description of the property 
+  std::string  _long_description_; /// Detailed description of the property
   int          _type_; /// property's type (BOOLEAN, INTEGER, REAL, STRING)
   bool         _const_; /// Constness of the property's value
   bool         _path_; /// Explicit path trait for STRING property
@@ -167,13 +167,13 @@ private:
   int          _array_fixed_size_; /// Array fixed size (-1 if not fixed)
   bool         _mandatory_; /// Flag for a mandatory property
   bool         _complex_triggering_conditions_; /// Flag for complex triggering conditions of the property that cannot be describe through the 'configuration_property_description' mechanism
-  bool         _complex_dependencies_; /// Flag for complex dependencies of the property that cannot be describe through the 'configuration_property_description' mechanism 
+  bool         _complex_dependencies_; /// Flag for complex dependencies of the property that cannot be describe through the 'configuration_property_description' mechanism
   std::vector<dependency_entry> _dynamic_dependers_; /// List of dynamic properties that depends on this property (static property only)
   dependency_entry              _dynamic_dependee_; /// Dependee of this property (dynamic property only)
   std::vector<dependency_entry> _triggering_; /// List of properties triggered by this property
   dependency_entry              _triggered_by_flag_; /// Flag (BOOLEAN) property this property depends on
   dependency_entry              _triggered_by_label_; /// Label (STRING) property this property depends on
- 
+
   friend class object_configuration_description;
 };
 
@@ -184,10 +184,19 @@ class object_configuration_description
  public:
 
   /// \brief Print option flags
-  enum po_flags_type 
+  enum po_flags_type
     {
       po_none = 0,
       po_no_config = 0x1,
+    };
+
+  /// \brief Skeleton/sample generator option flags
+  enum sgo_flags_type
+    {
+      sgo_none = 0,
+      sgo_no_add_infos = 0x1,
+      sgo_no_config_hints = 0x2,
+      sgo_minimal = sgo_no_add_infos | sgo_no_config_hints
     };
 
   typedef std::vector<configuration_property_description> cpd_col_type;
@@ -196,7 +205,7 @@ class object_configuration_description
 
   object_configuration_description();
 
-  object_configuration_description & 
+  object_configuration_description &
     set_class_name(const std::string &);
 
   object_configuration_description &
@@ -221,13 +230,13 @@ class object_configuration_description
   const std::string & get_class_documentation() const;
 
   const std::string & get_class_library() const;
- 
+
   bool has_class_description() const;
- 
+
   bool has_class_library() const;
 
   bool has_class_documentation() const;
-  
+
   const std::string & get_configuration_hints() const;
 
   bool has_configuration_hints() const;
@@ -239,23 +248,24 @@ class object_configuration_description
   unsigned int get_number_of_documented_properties() const;
 
   const configuration_property_description & get_configuration_property_info(int i_) const;
-  
+
   configuration_property_description & add_configuration_property_info();
-  
+
   /// Obsolete
   configuration_property_description & add_property_info();
 
   bool validate(const datatools::properties & config_,
                 std::string & error_message_) const;
 
-  void generate_sample_configuration(std::ostream & out_, 
-                                     const std::string & topic_ = "") const;
+  void generate_sample_configuration(std::ostream & out_,
+                                     const std::string & topic_ = "",
+                                     uint32_t sgo_flags_ = 0) const;
 
   bool is_locked() const;
 
   void lock();
 
-  void dump(std::ostream & out_ = std::clog, 
+  void dump(std::ostream & out_ = std::clog,
             const std::string & title_ = "",
             const std::string & indent_ = "") const;
 
@@ -275,7 +285,7 @@ protected:
 private:
 
   void _at_lock_();
-  
+
 private:
 
   bool         _locked_; /// Lock flag

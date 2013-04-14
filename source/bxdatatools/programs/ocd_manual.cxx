@@ -1,6 +1,6 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 // ocd_manual.cxx
- 
+
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -33,7 +33,7 @@ struct ocd_manual_params
 public:
   bool debug; /// Debug flag
   bool interactive; /// Interactive flag
-  std::vector<std::string> dlls; /// List of DLLs to be loaded 
+  std::vector<std::string> dlls; /// List of DLLs to be loaded
   std::string dll_loader_config; /// Configuration file of the DLL loader
   std::string action; /// The name of the action to invoke
   std::string class_id; /// The class registration ID
@@ -94,7 +94,7 @@ public:
   ocd_manual();
   /// Check initialization status
   bool is_initialized() const;
-  /// Initialization  
+  /// Initialization
   void initialize(const ocd_manual_params & params_);
   /// Run
   int run();
@@ -105,9 +105,9 @@ protected:
   int _run_action();
   int _run_list();
   int _run_show(const std::string & class_id_);
-  int _run_generate_skeleton(const std::string & class_id_, 
+  int _run_generate_skeleton(const std::string & class_id_,
                              const std::string & path_ = "");
-  int _run_validate(const std::string & class_id_, 
+  int _run_validate(const std::string & class_id_,
                     const std::string & path_);
 private:
   bool _initialized_; /// Initialization flag
@@ -125,11 +125,11 @@ bool ocd_manual::is_initialized() const
   return _initialized_;
 }
 
-void ocd_manual::initialize(const ocd_manual_params & params_) 
+void ocd_manual::initialize(const ocd_manual_params & params_)
 {
   _params_ = params_;
 
-  datatools::library_loader dll_loader(datatools::library_loader::allow_unregistered, 
+  datatools::library_loader dll_loader(datatools::library_loader::allow_unregistered,
                                        _params_.dll_loader_config);
   BOOST_FOREACH (const std::string & dll_name, _params_.dlls) {
     if (_params_.debug) {
@@ -153,7 +153,7 @@ void ocd_manual::reset()
   return;
 }
 
-int ocd_manual::run() 
+int ocd_manual::run()
 {
   int error_code = EXIT_SUCCESS;
   if (! _initialized_) {
@@ -170,15 +170,15 @@ int ocd_manual::run()
   return error_code;
 }
 
-void ocd_manual::_run_interactive() 
+void ocd_manual::_run_interactive()
 {
-  std::cerr << datatools::io::warning 
+  std::cerr << datatools::io::warning
             << "datatools::ocd_manual::_run_interactive: Not implemented yet !"
             << std::endl;
   return;
 }
 
-int ocd_manual::_run_action() 
+int ocd_manual::_run_action()
 {
   int error_code = EXIT_SUCCESS;
 
@@ -195,7 +195,7 @@ int ocd_manual::_run_action()
     error_code = _run_validate(_params_.class_id, _params_.input_path);
   }
   else {
-    std::cerr << datatools::io::error 
+    std::cerr << datatools::io::error
               << "datatools::ocd_manual::_run_action: Unknown action '" << _params_.action  << "' !"
               << std::endl;
     error_code = EXIT_FAILURE;
@@ -204,7 +204,7 @@ int ocd_manual::_run_action()
   return error_code;
 }
 
-int ocd_manual::_run_list() 
+int ocd_manual::_run_list()
 {
   int error_code = EXIT_SUCCESS;
   const datatools::detail::ocd::ocd_registration & ocd_system_reg
@@ -219,7 +219,7 @@ int ocd_manual::_run_list()
   return error_code;
 }
 
-int ocd_manual::_run_show(const std::string & class_id_) 
+int ocd_manual::_run_show(const std::string & class_id_)
 {
   int error_code = EXIT_SUCCESS;
   const datatools::detail::ocd::ocd_registration & ocd_system_reg
@@ -231,19 +231,19 @@ int ocd_manual::_run_show(const std::string & class_id_)
     error_code = EXIT_FAILURE;
   }
   else if (! ocd_system_reg.has_id(class_id_)){
-    std::cerr << datatools::io::error 
-              << "datatools::ocd_manual::_run_show: " 
-              << "Class ID '" << class_id_ 
+    std::cerr << datatools::io::error
+              << "datatools::ocd_manual::_run_show: "
+              << "Class ID '" << class_id_
               << "' is not registered in the datatools' OCD system register !"<< '\n';
     error_code = EXIT_FAILURE;
-  } 
+  }
   else {
-    const datatools::object_configuration_description & OCD 
+    const datatools::object_configuration_description & OCD
       = ocd_system_reg.get(class_id_);
-    uint32_t po_flags;
+    uint32_t po_flags = 0;
     if (std::find(_params_.action_options.begin(),
                   _params_.action_options.end(),
-                  "--no-config") != _params_.action_options.end())
+                  "--no-configuration-infos") != _params_.action_options.end())
       {
         po_flags |= datatools::object_configuration_description::po_no_config;
       }
@@ -252,8 +252,8 @@ int ocd_manual::_run_show(const std::string & class_id_)
 
   return error_code;
 }
- 
-int ocd_manual::_run_generate_skeleton(const std::string & class_id_, 
+
+int ocd_manual::_run_generate_skeleton(const std::string & class_id_,
                                        const std::string & skeleton_path_)
 {
   int error_code = EXIT_SUCCESS;
@@ -265,12 +265,23 @@ int ocd_manual::_run_generate_skeleton(const std::string & class_id_,
   else if (! datatools::detail::ocd::ocd_registration::get_system_registration().has_id(class_id_)){
     std::cerr << datatools::io::error << "datatools::ocd_manual::_run_generate_skeleton: Class ID '" << class_id_ << "' is not registered in the datatools' OCD system register !"<< '\n';
     error_code = EXIT_FAILURE;
-  } 
+  }
   else {
-    const datatools::object_configuration_description & OCD 
+    uint32_t sgo_flags = 0;
+    if (std::find(_params_.action_options.begin(),
+                  _params_.action_options.end(),
+                  "--no-additional-infos") != _params_.action_options.end()) {
+      sgo_flags |= datatools::object_configuration_description::sgo_no_add_infos;
+    }
+    if (std::find(_params_.action_options.begin(),
+                  _params_.action_options.end(),
+                  "--no-configuration-hints") != _params_.action_options.end()) {
+      sgo_flags |= datatools::object_configuration_description::sgo_no_config_hints;
+    }
+    const datatools::object_configuration_description & OCD
       = datatools::detail::ocd::ocd_registration::get_system_registration().get(class_id_);
     if (skeleton_path_.empty()) {
-      OCD.generate_sample_configuration(std::cout);
+      OCD.generate_sample_configuration(std::cout, "", sgo_flags);
     }
     else {
       std::string skeleton_path = skeleton_path_;
@@ -283,11 +294,11 @@ int ocd_manual::_run_generate_skeleton(const std::string & class_id_,
         std::ofstream fout(skeleton_path.c_str());
         if (!fout) {
           std::cerr << datatools::io::error
-                    << "datatools::ocd_manual::_run_generate_skeleton: " 
+                    << "datatools::ocd_manual::_run_generate_skeleton: "
                     << "Cannot open file '" << skeleton_path << "' !"<< '\n';
           error_code = EXIT_FAILURE;
         }
-        OCD.generate_sample_configuration(fout);
+        OCD.generate_sample_configuration(fout, "", sgo_flags);
       }
     }
   }
@@ -295,7 +306,7 @@ int ocd_manual::_run_generate_skeleton(const std::string & class_id_,
   return error_code;
 }
 
-int ocd_manual::_run_validate(const std::string & class_id_, 
+int ocd_manual::_run_validate(const std::string & class_id_,
                               const std::string & setup_path_)
 {
   int error_code = EXIT_SUCCESS;
@@ -307,7 +318,7 @@ int ocd_manual::_run_validate(const std::string & class_id_,
   else if (! datatools::detail::ocd::ocd_registration::get_system_registration().has_id(class_id_)){
     std::cerr << datatools::io::error << "datatools::ocd_manual::_run_validate: Class ID '" << class_id_ << "' is not registered in the datatools' OCD system register !"<< '\n';
     error_code = EXIT_FAILURE;
-  } 
+  }
   else if (setup_path_.empty()) {
     std::cerr << datatools::io::error << "datatools::ocd_manual::_run_validate: Input filename is missing !"<< '\n';
     error_code = EXIT_FAILURE;
@@ -317,28 +328,28 @@ int ocd_manual::_run_validate(const std::string & class_id_,
     datatools::fetch_path_with_env(setup_path);
     if (! boost::filesystem::exists(setup_path)) {
       std::cerr << datatools::io::error << "datatools::ocd_manual::_run_validate: File '" << setup_path << "' does not exist !"<< '\n';
-      error_code = EXIT_FAILURE;   
+      error_code = EXIT_FAILURE;
     }
     else {
       datatools::properties setup;
       datatools::properties::read_config(setup_path, setup);
-      const datatools::object_configuration_description & OCD 
+      const datatools::object_configuration_description & OCD
         = datatools::detail::ocd::ocd_registration::get_system_registration().get(class_id_);
       if (! OCD.has_validation_support()) {
         std::cerr << datatools::io::error << "datatools::ocd_manual::_run_validate: Class '" << class_id_ << "' has no validation support !"<< '\n';
-        error_code = EXIT_FAILURE;   
+        error_code = EXIT_FAILURE;
       }
       else {
         std::string error_message;
         if (! OCD.validate(setup, error_message)) {
           std::cerr << datatools::io::error
-                    << "datatools::ocd_manual::_run_validate: " 
+                    << "datatools::ocd_manual::_run_validate: "
                     << "Cannot validate setup file '" << setup_path << "' for class '"
                     << class_id_ << "' ! Reason is '" << error_message << "' !"<< '\n';
           error_code = EXIT_FAILURE;
         }
         std::clog << "File '" << setup_path << "' is validated for class '"
-                  << class_id_ << "'." << '\n';  
+                  << class_id_ << "'." << '\n';
       }
     }
   }
@@ -358,22 +369,22 @@ int main (int argc_, char ** argv_)
   try {
     namespace po = boost::program_options;
     po::options_description opts ("Allowed options ");
- 
+
     opts.add_options ()
 
       ("help,h", "produce help message")
-      
+
       ("debug,d",
        po::value<bool>(&params.debug)
        ->zero_tokens()
        ->default_value (false),
        "produce debug logging")
-     
+
       ("interactive,I",
        po::value<bool>(&params.interactive)
        ->zero_tokens()
        ->default_value (false),
-       "run in interactive mode (not implemented)")     
+       "run in interactive mode (not implemented)")
 
       ("dlls-config,L",
        po::value<std::string> (&params.dll_loader_config),
@@ -381,7 +392,7 @@ int main (int argc_, char ** argv_)
        "Example :                                   \n"
        " --dlls-config dlls.conf                    "
        )
-      
+
       ("load-dll,l",
        po::value<std::vector<std::string> >(&params.dlls),
        "set a DLL to be loaded.                     \n"
@@ -397,7 +408,7 @@ int main (int argc_, char ** argv_)
        )
 
       ("action,a",
-       po::value<std::string> (&params.action),          
+       po::value<std::string> (&params.action),
        "define the action to be performed.                \n"
        "Actions:                                          \n"
        " list     : list the registered classes by ID     \n"
@@ -416,7 +427,7 @@ int main (int argc_, char ** argv_)
        "            Needs '--class-id CLASS_ID' option.   \n"
        "            Needs '--input-file INPUT_FILE'       \n"
        "            option.                               "
-       )          
+       )
 
       ("input-file,i",
        po::value<std::string> (&params.input_path),
@@ -425,16 +436,16 @@ int main (int argc_, char ** argv_)
       ("output-file,o",
        po::value<std::string> (&params.output_path),
        "set the name of an output filename.")
-         
+
       ; // end of options' description
-    
-    
+
+
     // Describe command line arguments :
     po::positional_options_description args;
     args.add ("class-id", 1);
 
     po::variables_map vm;
-    po::parsed_options parsed = 
+    po::parsed_options parsed =
       po::command_line_parser (argc_, argv_)
       .options (opts)
       .positional (args)
@@ -448,7 +459,7 @@ int main (int argc_, char ** argv_)
     //            .run (), vm);
     po::store (parsed, vm);
     po::notify (vm);
-    
+
     // Fetch the opts/args :
     if (vm.count ("help")) {
       std::cout << "\nocd_manual -- Object Configuration Description Manual" << std::endl;
@@ -464,18 +475,24 @@ int main (int argc_, char ** argv_)
       std::cout << "                                                                  " << std::endl;
       std::cout << "  ocd_manual --action list                                        " << std::endl;
       std::cout << "                                                                  " << std::endl;
-      std::cout << "  ocd_manual -l genvtx --action list                              " << std::endl;
+      std::cout << "  ocd_manual --load-dll genvtx --action list                      " << std::endl;
       std::cout << "                                                                  " << std::endl;
-      std::cout << "  ocd_manual -c datatools::service_manager --action show          " << std::endl;
+      std::cout << "  ocd_manual --class-id datatools::service_manager \\             " << std::endl
+                << "             --action show [--no-configuration-infos]             " << std::endl;
       std::cout << "                                                                  " << std::endl;
-      std::cout << "  ocd_manual -c datatools::service_manager --action skeleton --output-file sm.conf " << std::endl;
+      std::cout << "  ocd_manual --class-id datatools::service_manager \\             " << std::endl
+                << "             --action skeleton                     \\             " << std::endl
+                << "             [--no-additional-infos]               \\             " << std::endl
+                << "             [--no-configuration-hints]            \\             " << std::endl
+                << "             --output-file sm.conf                                " << std::endl;
       std::cout << "                                                                  " << std::endl;
-      std::cout << "  ocd_manual -c datatools::service_manager --action validate --input-file sm.conf " << std::endl;
+      std::cout << "  ocd_manual --class-id datatools::service_manager \\             " << std::endl
+                << "             --action validate --input-file sm.conf               " << std::endl;
       std::cout << "                                                                  " << std::endl;
       std::cout << std::endl;
       return (1);
     }
-   
+
     if (params.debug) params.print(std::cerr);
 
     datatools::ocd_manual ocdm;
@@ -484,12 +501,12 @@ int main (int argc_, char ** argv_)
     ocdm.reset();
 
   }
-  catch (std::exception & x) { 
-    std::cerr << "error: " << x.what () << std::endl; 
+  catch (std::exception & x) {
+    std::cerr << "error: " << x.what () << std::endl;
     error_code = EXIT_FAILURE;
   }
   catch (...) {
-    std::cerr << "error: " << "unexpected error !" << std::endl; 
+    std::cerr << "error: " << "unexpected error !" << std::endl;
     error_code = EXIT_FAILURE;
   }
   return (error_code);

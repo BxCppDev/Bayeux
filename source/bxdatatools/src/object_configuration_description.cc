@@ -1360,7 +1360,8 @@ namespace datatools {
 
   void
   object_configuration_description::generate_sample_configuration(std::ostream & out_,
-                                                                  const std::string & topic_) const
+                                                                  const std::string & topic_,
+                                                                  uint32_t sgo_flags_) const
   {
     properties PROP;
     PROP.set_description (std::string("Sample configuration for class ") + get_class_name());
@@ -1490,10 +1491,12 @@ namespace datatools {
                               temp_cpd.is_mandatory() ? "" : prop_comment_prefix);
 
                 // Append long description as a trailing comment block :
-                if (temp_cpd.has_long_description()) {
-                  out_ << "#\n# Additional informations : " << '\n';
-                  datatools::print_multi_lines(out_,temp_cpd.get_long_description(), "#   ");
-                } // end of trailing comment block.
+                if (! (sgo_flags_ & sgo_no_add_infos)) {
+                  if (temp_cpd.has_long_description()) {
+                    out_ << "#\n# Additional informations : " << '\n';
+                    datatools::print_multi_lines(out_,temp_cpd.get_long_description(), "#   ");
+                  } // end of trailing comment block.
+                }
               } // has type
             } // word loop
           } // depender loop
@@ -1509,11 +1512,13 @@ namespace datatools {
       } // end of static properties
     }
 
-    if (has_configuration_hints()) {
-      out_ << '\n';
-      out_ << "# " << "Special configuration hints : " << '\n';
-      out_ << "# " << '\n';
-      datatools::print_multi_lines(out_, get_configuration_hints(), "#   ");
+    if (! (sgo_flags_ & sgo_no_config_hints)) {
+      if (has_configuration_hints()) {
+        out_ << '\n';
+        out_ << "# " << "Special configuration hints : " << '\n';
+        out_ << "# " << '\n';
+        datatools::print_multi_lines(out_, get_configuration_hints(), "#   ");
+      }
     }
 
     out_ << '\n';
