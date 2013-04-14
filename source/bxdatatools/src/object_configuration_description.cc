@@ -1415,7 +1415,7 @@ namespace datatools {
           more = true;
         }
 
-        if (more) {
+        if (more and ! (sgo_flags_ & sgo_no_add_infos)) {
           out_ << "#\n# Additional informations : " << '\n';
           if (cpd.has_complex_triggering_conditions()) {
             out_ << "#   " << "This property has complex triggering conditions.\n";
