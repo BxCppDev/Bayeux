@@ -4,7 +4,7 @@
 # Copyright (c) 2011-2012 Ben Morgan <Ben.Morgan@warwick.ac.uk>
 # Copyright (c) 2011 University of Warwick
 #
-# Copyright (c) 2012 François Mauger <mauger@lpccaen.in2p3.fr>
+# Copyright (c) 2012-2013 François Mauger <mauger@lpccaen.in2p3.fr>
 # Copyright (c) 2012 LPC Caen, Université de Caen Basse-Normandie
 #
 # All rights reserved.
@@ -138,11 +138,13 @@ set ( BAYEUX_KNOWN_COMPONENTS
 	"brio" 
 	"mygsl" 
 	"cuts" 
+	"dpp" 
+	"materials" 
 	"geomtools" 
 	"genvtx" 
-	"materials" 
 	"genbb_help" 
 	"emfield" 
+	"mctools" 
 	"trackfit" 
 	)
 
@@ -178,13 +180,15 @@ set ( BAYEUX_COMPONENTS_SVN_BRANCHES_SUBDIR "branches" )
 set    ( BAYEUX_WITH_DATATOOLS  1 )
 option ( BAYEUX_WITH_BRIO       "Build brio"         1 )
 option ( BAYEUX_WITH_MYGSL      "Build mygsl"        1 )
-option ( BAYEUX_WITH_GEOMTOOLS  "Build geomtools"    1 )
 option ( BAYEUX_WITH_CUTS       "Build cuts"         1 )
+option ( BAYEUX_WITH_DPP        "Build dpp"          1 )
 option ( BAYEUX_WITH_MATERIALS  "Build materials"    1 )
+option ( BAYEUX_WITH_GEOMTOOLS  "Build geomtools"    1 )
 option ( BAYEUX_WITH_GENVTX     "Build genvtx"       1 )
 option ( BAYEUX_WITH_GENBB_HELP "Build genbb_help"   1 )
 option ( BAYEUX_WITH_EMFIELD    "Build emfield"      1 )
 option ( BAYEUX_WITH_TRACKFIT   "Build trackfit"     1 )
+option ( BAYEUX_WITH_MCTOOLS    "Build mctools"      0 )
 
 option ( BAYEUX_WITH_BIO        "Build BIO support"      ON  )
 option ( BAYEUX_WITH_DOCS       "Build docs"             ON  )
@@ -216,45 +220,53 @@ message ( STATUS "${PROJECT_NAME}: Bayeux with validation     : '${BAYEUX_WITH_V
 set ( BAYEUX_DATATOOLS_MINIMAL_TAG_VERSION  "4.0.0"  )
 set ( BAYEUX_BRIO_MINIMAL_TAG_VERSION       "3.0.0"  )
 set ( BAYEUX_MYGSL_MINIMAL_TAG_VERSION      "3.0.0"  )
-set ( BAYEUX_GEOMTOOLS_MINIMAL_TAG_VERSION  "3.0.0"  )
 set ( BAYEUX_CUTS_MINIMAL_TAG_VERSION       "3.0.0"  )
+set ( BAYEUX_DPP_MINIMAL_TAG_VERSION        "0.1.0"  )
 set ( BAYEUX_MATERIALS_MINIMAL_TAG_VERSION  "3.0.0"  )
+set ( BAYEUX_GEOMTOOLS_MINIMAL_TAG_VERSION  "3.0.0"  )
 set ( BAYEUX_GENVTX_MINIMAL_TAG_VERSION     "3.0.0"  )
 set ( BAYEUX_GENBB_HELP_MINIMAL_TAG_VERSION "4.0.0"  )
 set ( BAYEUX_EMFIELD_MINIMAL_TAG_VERSION    "0.1.0"  )
 set ( BAYEUX_TRACKFIT_MINIMAL_TAG_VERSION   "2.0.1"  )
+set ( BAYEUX_MCTOOLS_MINIMAL_TAG_VERSION    "0.1.0"  )
 
 
 # Default configuration (0.9.5) :
 if ( BAYEUX_CONFIG STREQUAL "default" OR BAYEUX_CONFIG STREQUAL ${Bayeux_VERSION} )
   message ( STATUS "${PROJECT_NAME}: Bayeux 'default/${Bayeux_VERSION}' configuration...") 
 
-  set ( BAYEUX_DATATOOLS_VERSION  "4.2.0"  )
-  set ( BAYEUX_DATATOOLS_PATH     "tags/datatools-4.2.0"  )
+  set ( BAYEUX_DATATOOLS_VERSION  "5.0.0"  )
+  set ( BAYEUX_DATATOOLS_PATH     "tags/datatools-5.0.0"  )
 
-  set ( BAYEUX_BRIO_VERSION       "3.2.0"  )
-  set ( BAYEUX_BRIO_PATH          "tags/brio-3.2.0"  )
+  set ( BAYEUX_BRIO_VERSION       "4.0.0"  )
+  set ( BAYEUX_BRIO_PATH          "tags/brio-4.0.0"  )
 
-  set ( BAYEUX_MYGSL_VERSION      "3.2.1"  )
-  set ( BAYEUX_MYGSL_PATH         "tags/mygsl-3.2.1"  )
+  set ( BAYEUX_MYGSL_VERSION      "4.0.0"  )
+  set ( BAYEUX_MYGSL_PATH         "tags/mygsl-4.0.0"  )
 
-  set ( BAYEUX_CUTS_VERSION       "3.1.1"  )
-  set ( BAYEUX_CUTS_PATH          "tags/cuts-3.1.1"  )
+  set ( BAYEUX_CUTS_VERSION       "4.0.0"  )
+  set ( BAYEUX_CUTS_PATH          "tags/cuts-4.0.0"  )
+ 
+  set ( BAYEUX_DPP_VERSION        "0.1.0"  )
+  set ( BAYEUX_DPP_PATH           "tags/dpp-0.1.0"  )
 
-  set ( BAYEUX_GEOMTOOLS_VERSION  "3.2.1"  )
-  set ( BAYEUX_GEOMTOOLS_PATH     "tags/geomtools-3.2.1"  )
+  set ( BAYEUX_MATERIALS_VERSION  "4.0.0"  )
+  set ( BAYEUX_MATERIALS_PATH     "tags/materials-4.0.0"  )
 
-  set ( BAYEUX_MATERIALS_VERSION  "3.2.0"  )
-  set ( BAYEUX_MATERIALS_PATH     "tags/materials-3.2.0"  )
+  set ( BAYEUX_GEOMTOOLS_VERSION  "4.0.0"  )
+  set ( BAYEUX_GEOMTOOLS_PATH     "tags/geomtools-4.0.0"  )
 
-  set ( BAYEUX_GENVTX_VERSION     "3.1.1"  )
-  set ( BAYEUX_GENVTX_PATH        "tags/genvtx-3.1.1"  )
+  set ( BAYEUX_GENVTX_VERSION     "4.0.0"  )
+  set ( BAYEUX_GENVTX_PATH        "tags/genvtx-4.0.0"  )
 
-  set ( BAYEUX_GENBB_HELP_VERSION "4.1.1"  )
-  set ( BAYEUX_GENBB_HELP_PATH    "tags/genbb_help-4.1.1"  )
+  set ( BAYEUX_GENBB_HELP_VERSION "5.0.0"  )
+  set ( BAYEUX_GENBB_HELP_PATH    "tags/genbb_help-5.0.0"  )
 
   set ( BAYEUX_EMFIELD_VERSION    "0.1.0"  )
-  set ( BAYEUX_EMFIELD_PATH       "tags/emfield-0.1.0"  )
+  set ( BAYEUX_EMFIELD_PATH       "tags/emfield-1.0.0"  )
+
+  set ( BAYEUX_MCTOOLS_VERSION    "0.1.0"  )
+  set ( BAYEUX_MCTOOLS_PATH       "tags/mctools-0.1.0"  )
 
   set ( BAYEUX_TRACKFIT_VERSION   "2.1.0"  )
   set ( BAYEUX_TRACKFIT_PATH      "tags/trackfit-2.1.0"  )
@@ -463,12 +475,14 @@ elseif ( BAYEUX_CONFIG STREQUAL "trunk" )
   set ( BAYEUX_DATATOOLS_PATH  "trunk" )
   set ( BAYEUX_BRIO_PATH       "trunk" )
   set ( BAYEUX_MYGSL_PATH      "trunk" )
-  set ( BAYEUX_GEOMTOOLS_PATH  "trunk" )
   set ( BAYEUX_CUTS_PATH       "trunk" )
+  set ( BAYEUX_DPP_PATH        "trunk" )
   set ( BAYEUX_MATERIALS_PATH  "trunk" )
+  set ( BAYEUX_GEOMTOOLS_PATH  "trunk" )
   set ( BAYEUX_GENVTX_PATH     "trunk" )
   set ( BAYEUX_GENBB_HELP_PATH "trunk" )
   set ( BAYEUX_EMFIELD_PATH    "trunk" )
+  set ( BAYEUX_MCTOOLS_PATH    "trunk" )
   set ( BAYEUX_TRACKFIT_PATH   "trunk" )
 
 elseif ( BAYEUX_CONFIG STREQUAL "user" )
@@ -610,31 +624,71 @@ if ( BAYEUX_WITH_EMFIELD )
   endif ()
 endif ()
 
-if    ( BAYEUX_WITH_TRACKFIT )
-  set ( BAYEUX_WITH_GEOMTOOLS 1 )
-endif ( BAYEUX_WITH_TRACKFIT )
+if ( BAYEUX_CONFIG VERSION_LESS "0.9.5")
+  if    ( BAYEUX_WITH_TRACKFIT )
+    set ( BAYEUX_WITH_GEOMTOOLS 1 )
+  endif ( BAYEUX_WITH_TRACKFIT )
 
-if    ( BAYEUX_WITH_EMFIELD )
-  set ( BAYEUX_WITH_GEOMTOOLS 1 )
-endif ( BAYEUX_WITH_EMFIELD )
+  if    ( BAYEUX_WITH_EMFIELD )
+    set ( BAYEUX_WITH_GEOMTOOLS 1 )
+  endif ( BAYEUX_WITH_EMFIELD )
 
-if    ( BAYEUX_WITH_MATERIALS )
-  set ( BAYEUX_WITH_GEOMTOOLS 1 )
-endif ( BAYEUX_WITH_MATERIALS )
+  if    ( BAYEUX_WITH_MATERIALS )
+    set ( BAYEUX_WITH_GEOMTOOLS 1 )
+  endif ( BAYEUX_WITH_MATERIALS )
 
-if    ( BAYEUX_WITH_GENVTX )
-  set ( BAYEUX_WITH_GEOMTOOLS 1 )
-endif ( BAYEUX_WITH_GENVTX )
+  if    ( BAYEUX_WITH_GENVTX )
+    set ( BAYEUX_WITH_GEOMTOOLS 1 )
+  endif ( BAYEUX_WITH_GENVTX )
 
-if    ( BAYEUX_WITH_GENBB_HELP )
-  set ( BAYEUX_WITH_GEOMTOOLS 1 )
-endif ( BAYEUX_WITH_GENBB_HELP )
+  if    ( BAYEUX_WITH_GENBB_HELP )
+    set ( BAYEUX_WITH_GEOMTOOLS 1 )
+  endif ( BAYEUX_WITH_GENBB_HELP )
 
-if    ( BAYEUX_WITH_GEOMTOOLS )
-  set ( BAYEUX_WITH_MYGSL 1 )
-endif ( BAYEUX_WITH_GEOMTOOLS )
- 
-# -------------------------------------------------------------------------
+  if    ( BAYEUX_WITH_GEOMTOOLS )
+    set ( BAYEUX_WITH_MYGSL 1 )
+  endif ( BAYEUX_WITH_GEOMTOOLS )
+
+else()
+
+  if    ( BAYEUX_WITH_MCTOOLS )
+    set ( BAYEUX_WITH_GEOMTOOLS 1 )
+    set ( BAYEUX_WITH_DPP 1 )
+    set ( BAYEUX_WITH_GENVTX 1 )
+    set ( BAYEUX_WITH_GENBB_HELP 1 )
+    set ( BAYEUX_WITH_EMFIELD 1 )
+  endif ( BAYEUX_WITH_MCTOOLS )
+
+  if    ( BAYEUX_WITH_TRACKFIT )
+    set ( BAYEUX_WITH_GEOMTOOLS 1 )
+  endif ( BAYEUX_WITH_TRACKFIT )
+
+  if    ( BAYEUX_WITH_EMFIELD )
+    set ( BAYEUX_WITH_GEOMTOOLS 1 )
+  endif ( BAYEUX_WITH_EMFIELD )
+
+  if    ( BAYEUX_WITH_GENBB_HELP )
+    set ( BAYEUX_WITH_GEOMTOOLS 1 )
+  endif ( BAYEUX_WITH_GENBB_HELP )
+
+  if    ( BAYEUX_WITH_GENVTX )
+    set ( BAYEUX_WITH_GEOMTOOLS 1 )
+  endif ( BAYEUX_WITH_GENVTX )
+
+  if    ( BAYEUX_WITH_GEOMTOOLS )
+    set ( BAYEUX_WITH_MATERIALS 1 )
+    set ( BAYEUX_WITH_MYGSL 1 )
+  endif ( BAYEUX_WITH_GEOMTOOLS )
+
+  if    ( BAYEUX_WITH_DPP )
+    set ( BAYEUX_WITH_BRIO 1 )
+    set ( BAYEUX_WITH_MYGSL 1 )
+    set ( BAYEUX_WITH_CUTS 1 )
+  endif ( BAYEUX_WITH_DPP )
+
+endif()
+
+## -------------------------------------------------------------------------
 # -- NOW ADD EXTERNAL PACKAGES --
 # -------------------------------------------------------------------------
 
@@ -643,12 +697,14 @@ message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_DATATOOLS  = ${BAYEUX_WITH_DAT
 message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_MYGSL      = ${BAYEUX_WITH_MYGSL}"      )
 message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_BRIO       = ${BAYEUX_WITH_BRIO}"       )
 message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_CUTS       = ${BAYEUX_WITH_CUTS}"       )
+message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_DPP        = ${BAYEUX_WITH_DPP}"       )
+message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_MATERIALS  = ${BAYEUX_WITH_MATERIALS}"  )
 message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_GEOMTOOLS  = ${BAYEUX_WITH_GEOMTOOLS}"  )
 message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_GENVTX     = ${BAYEUX_WITH_GENVTX}"     )
-message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_MATERIALS  = ${BAYEUX_WITH_MATERIALS}"  )
 message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_GENBB_HELP = ${BAYEUX_WITH_GENBB_HELP}" )
 message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_EMFIELD    = ${BAYEUX_WITH_EMFIELD}" )
 message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_TRACKFIT   = ${BAYEUX_WITH_TRACKFIT}" )
+message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_MCTOOLS    = ${BAYEUX_WITH_MCTOOLS}" )
 
 set ( BAYEUX_COMPONENTS "" )
 
@@ -660,6 +716,7 @@ foreach ( component ${BAYEUX_KNOWN_COMPONENTS} )
 endforeach ()
 message ( STATUS "${PROJECT_NAME}: BAYEUX_COMPONENTS : '${BAYEUX_COMPONENTS}'" )
 
+if ( BAYEUX_CONFIG VERSION_LESS "0.9.5" or BAYEUX_CONFIG VERSION_EQUAL "legacy")
 include ( BayeuxDatatools  )
 include ( BayeuxBrio       )
 include ( BayeuxMygsl      )
@@ -670,7 +727,20 @@ include ( BayeuxGenvtx     )
 include ( BayeuxGenbb_help )
 include ( BayeuxEmfield    )
 include ( BayeuxTrackfit   )
-
+else()
+include ( BayeuxDatatools  )
+include ( BayeuxBrio       )
+include ( BayeuxMygsl      )
+include ( BayeuxCuts       )
+include ( BayeuxDpp-0.9.5        )
+include ( BayeuxMaterials-0.9.5  )
+include ( BayeuxGeomtools-0.9.5  )
+include ( BayeuxGenvtx     )
+include ( BayeuxGenbb_help )
+include ( BayeuxEmfield    )
+include ( BayeuxMctools    )
+include ( BayeuxTrackfit-0.9.5   )
+endif()
 # -------------------------------------------------------------------------
 # - Bash setup script :
 #
