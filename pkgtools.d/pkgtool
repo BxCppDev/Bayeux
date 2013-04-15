@@ -56,7 +56,7 @@ the_default_download_dir=${HOME}/Download
 the_default_install_prefix=${the_base_dir}/__install-$(pkgtools__get_sys)
 the_build_dir=
 the_download_dir=
-known_bayeux_configs="default 0.9.4 0.9.3 0.9.2 0.9.1 0.9.0 last_tags legacy trunk user"
+known_bayeux_configs="default 0.9.5 0.9.4 0.9.3 0.9.2 0.9.1 0.9.0 legacy user"
 
 pkgtools__msg_not_using_quiet
 pkgtools__msg_not_using_verbose
@@ -110,10 +110,12 @@ function print_usage ()
       Options :
 
       Directory/path management :
-      --workspace-dir [LARGE CAPACITY DOWNLOAD/BUILD/INSTALL DIRECTORY] :
+      --bayeux-label [BXLABEL]     set a specific label BXLABEL for naming the installation path
+                                   Example: --bayeux-label "legacy" used with : --config "legacy"
+      --workspace-dir [LARGE CAPACITY DOWNLOAD BUILD INSTALL DIRECTORY] :
                                    set the base directory for build and/or download
                                    and/or install Bayeux; this directory must have a typical
-                                   500 MB available to process the full Bayeux's installation.
+                                   500 MB available to process the full Bayeux' installation.
       --install-prefix [INSTALLATION BASE DIRECTORY] :
                                    set the Bayeux's installation base directory
                                    (may need special privilege : /opt, /usr/local)
@@ -135,10 +137,10 @@ function print_usage ()
                                    "X.Y.Z"     use a specific configuration
                                    "default"   use the default combination
                                    "legacy"    use the current legacy version
-                                   "trunk"     use the current trunk version
-                                   "last_tags" use last tagged version
                                    "user"      use a specific user configuration
                                                file (see below)
+      --legacy                   : shortcut for :
+                                   ' --config "legacy" --bayeux-label "legacy" '
       --user-config-file [CONFIG_FILE] : configuration file for "user" config
                                          Example: the 'install_bayeux_dev0.lis'
                                          from the Bayeux 'doc/' directory
@@ -215,12 +217,6 @@ function print_usage ()
       shell> ${appname} configure \\
         --workspace-dir /scratch/\${USER}/software/Bayeux-legacy \\
         --config legacy --bayeux-label legacy
-
-    or, for a 'trunk' installation (presumably stable) :
-
-      shell> ${appname} configure \\
-        --workspace-dir /scratch/\${USER}/software/Bayeux-trunk \\
-        --config trunk --bayeux-label trunk
 
     or, for a 'user' installation (presumably experimental) :
 
@@ -441,7 +437,6 @@ function do_configure ()
     local with_brio=1
     local with_mygsl=1
     local with_cuts=1
-    local with_dpp=1
     local with_materials=1
     local with_geomtools=1
     local bayeux_geomtools_with_gnuplot_display=1
@@ -450,7 +445,6 @@ function do_configure ()
     local with_genbb_help=1
     local with_emfield=1
     local with_trackfit=1
-    local with_mctools=0
 
     local with_bio=1
     local with_python_wrapper=0
@@ -497,9 +491,6 @@ function do_configure ()
 	elif [ "${option}" = "--config" ]; then
 	    shift 1
 	    requested_bayeux_config="$1"
-	elif [ "${option}" = "--trunk" ]; then
-	    requested_bayeux_config="trunk"
-	    bayeux_label="trunk"
 	elif [ "${option}" = "--legacy" ]; then
 	    requested_bayeux_config="legacy"
 	    bayeux_label="legacy"
@@ -649,9 +640,10 @@ function do_configure ()
 	    return 1
 	fi
     fi
+    pkgtools__msg_notice "Bayeux validated configuration is : '${validated_bayeux_config}'"
 
     local using_workspace=0
-    bayeux_tag=${bayeux_version}
+    bayeux_tag=${validated_bayeux_config}
     if [ "x${bayeux_label}" != "x" ]; then
 	bayeux_tag=${bayeux_label}
     fi
@@ -743,15 +735,13 @@ function do_configure ()
     pkgtools__msg_notice "Install brio          : '${with_brio}'"
     pkgtools__msg_notice "Install mygsl         : '${with_mygsl}'"
     pkgtools__msg_notice "Install cuts          : '${with_cuts}'"
-    pkgtools__msg_notice "Install dpp           : '${with_dpp}'"
-    pkgtools__msg_notice "Install materials     : '${with_materials}'"
     pkgtools__msg_notice "Install geomtools     : '${with_geomtools}'"
     pkgtools__msg_notice "\`-- Build Gnuplot based display : ${bayeux_geomtools_with_gnuplot_display}"
+    pkgtools__msg_notice "Install materials     : '${with_materials}'"
     pkgtools__msg_notice "Install genvtx        : '${with_genvtx}'"
     pkgtools__msg_notice "Install genbb_help    : '${with_genbb_help}'"
     pkgtools__msg_notice "Install emfield       : '${with_emfield}'"
     pkgtools__msg_notice "Install trackfit      : '${with_trackfit}'"
-    pkgtools__msg_notice "Install mctools       : '${with_mctools}'"
 
     pkgtools__msg_notice "With documentation    : '${with_doc}'"
     pkgtools__msg_notice "With test material    : '${with_test}'"
@@ -813,24 +803,23 @@ function do_configure ()
 
 	pkgtools__msg_debug "cmake_more_options = '${cmake_more_options}'"
 
+###	    -DBAYEUX_ALT_EP_BASE=${alternative_build_dir}
+
 	cmake \
 	    -DCMAKE_INSTALL_PREFIX:PATH=${install_prefix} \
 	    -DCMAKE_BUILD_TYPE:STRING=${build_type} \
 	    -DBAYEUX_DOWNLOAD_DIR:PATH=${download_dir} \
 	    -DBAYEUX_BUILD_DIR:PATH=${ep_build_dir} \
-	    -DBAYEUX_ALT_EP_BASE=${alternative_build_dir} \
-            -DBAYEUX_CONFIG:STRING=${validated_bayeux_config} \
+           -DBAYEUX_CONFIG:STRING=${validated_bayeux_config} \
             -DBAYEUX_WITH_BRIO=${with_brio} \
             -DBAYEUX_WITH_CUTS=${with_cuts} \
             -DBAYEUX_WITH_MYGSL=${with_mygsl} \
-            -DBAYEUX_WITH_DPP=${with_dpp} \
-            -DBAYEUX_WITH_MATERIALS=${with_materials} \
             -DBAYEUX_WITH_GEOMTOOLS=${with_geomtools} \
-	    -DBAYEUX_GEOMTOOLS_WITH_GNUPLOT_DISPLAY=${bayeux_geomtools_with_gnuplot_display} \
+ 	    -DBAYEUX_GEOMTOOLS_WITH_GNUPLOT_DISPLAY=${bayeux_geomtools_with_gnuplot_display} \
+            -DBAYEUX_WITH_MATERIALS=${with_materials} \
             -DBAYEUX_WITH_GENVTX=${with_genvtx} \
             -DBAYEUX_WITH_GENBB_HELP=${with_genbb_help} \
             -DBAYEUX_WITH_EMFIELD=${with_emfield} \
-            -DBAYEUX_WITH_MCTOOLS=${with_mctools} \
             -DBAYEUX_WITH_TRACKFIT=${with_trackfit} \
 	    -DBAYEUX_WITH_DOCS=${with_doc} \
 	    -DBAYEUX_WITH_TESTS=${with_test} \

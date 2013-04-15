@@ -45,6 +45,11 @@ set ( CMAKE_MODULE_PATH
 include ( Config )
 include ( InstallDirs )
 
+set(BAYEUX_LEGACY_MAX_VERSION "0.9.99")
+if ( ${BAYEUX_CONFIG} VERSION_GREATER ${BAYEUX_LEGACY_MAX_VERSION})
+    message( FATAL_ERROR "${PROJECT_NAME}: Bayeux version '${BAYEUX_CONFIG} > ${BAYEUX_LEGACY_MAX_VERSION}' is nnot supported !" )
+endif( )
+
 set ( _is_apple 0 )
 if ( APPLE )
    set ( _is_apple 1 )
@@ -98,7 +103,7 @@ if (DEFINED CADFAEL_DIR AND NOT "x${CADFAEL_DIR}" STREQUAL "x" )
   message ( STATUS "${PROJECT_NAME}: Attempt to find explicitly Cadfael from '${CADFAEL_DIR}'" )
   if (NOT EXISTS ${CADFAEL_DIR} )
     message ( FATAL_ERROR "${PROJECT_NAME}: Cadfael directory '${CADFAEL_DIR}' does not exist !" )
-  endif ()   
+  endif ()
   set ( Cadfael_DIR ${CADFAEL_DIR} )
   set ( CMAKE_MODULE_PATH
         ${Cadfael_DIR}
@@ -133,47 +138,42 @@ endif ()
 
 # -----------------------------------------------
 
-set ( BAYEUX_KNOWN_COMPONENTS 
-      	"datatools" 
-	"brio" 
-	"mygsl" 
-	"cuts" 
-	"dpp" 
-	"materials" 
-	"geomtools" 
-	"genvtx" 
-	"genbb_help" 
-	"emfield" 
-	"mctools" 
-	"trackfit" 
+set ( BAYEUX_KNOWN_COMPONENTS
+      	"datatools"
+	"brio"
+	"mygsl"
+	"cuts"
+	"geomtools"
+	"materials"
+	"genvtx"
+	"genbb_help"
+	"emfield"
+	"trackfit"
 	)
 
-set ( BAYEUX_KNOWN_CONFIGS 
+set ( BAYEUX_KNOWN_CONFIGS
        "legacy"
-       "trunk"
        "${Bayeux_VERSION}"
        "0.9.4"
        "0.9.3"
        "0.9.2"
        "0.9.1"
        "0.9.0"
-       "last_tags"
        "user"
        "default"
-    )  
+    )
 
 set ( DEFAULT_BAYEUX_CONFIG "default" )
 
 if ( NOT DEFINED BAYEUX_CONFIG OR "x${BAYEUX_CONFIG}" STREQUAL "x" )
    set ( BAYEUX_CONFIG "${DEFAULT_BAYEUX_CONFIG}" )
-endif () 
+endif ()
 
 # -----------------------------------------------
 # Optional components :
 #
 
 set ( BAYEUX_COMPONENTS_SVN_BASE_URL https://nemo.lpc-caen.in2p3.fr/svn/ )
-set ( BAYEUX_COMPONENTS_SVN_TRUNK_SUBDIR    "trunk"    )
 set ( BAYEUX_COMPONENTS_SVN_TAGS_SUBDIR     "tags"     )
 set ( BAYEUX_COMPONENTS_SVN_BRANCHES_SUBDIR "branches" )
 
@@ -181,14 +181,12 @@ set    ( BAYEUX_WITH_DATATOOLS  1 )
 option ( BAYEUX_WITH_BRIO       "Build brio"         1 )
 option ( BAYEUX_WITH_MYGSL      "Build mygsl"        1 )
 option ( BAYEUX_WITH_CUTS       "Build cuts"         1 )
-option ( BAYEUX_WITH_DPP        "Build dpp"          1 )
 option ( BAYEUX_WITH_MATERIALS  "Build materials"    1 )
 option ( BAYEUX_WITH_GEOMTOOLS  "Build geomtools"    1 )
 option ( BAYEUX_WITH_GENVTX     "Build genvtx"       1 )
 option ( BAYEUX_WITH_GENBB_HELP "Build genbb_help"   1 )
 option ( BAYEUX_WITH_EMFIELD    "Build emfield"      1 )
 option ( BAYEUX_WITH_TRACKFIT   "Build trackfit"     1 )
-option ( BAYEUX_WITH_MCTOOLS    "Build mctools"      0 )
 
 option ( BAYEUX_WITH_BIO        "Build BIO support"      ON  )
 option ( BAYEUX_WITH_DOCS       "Build docs"             ON  )
@@ -221,52 +219,44 @@ set ( BAYEUX_DATATOOLS_MINIMAL_TAG_VERSION  "4.0.0"  )
 set ( BAYEUX_BRIO_MINIMAL_TAG_VERSION       "3.0.0"  )
 set ( BAYEUX_MYGSL_MINIMAL_TAG_VERSION      "3.0.0"  )
 set ( BAYEUX_CUTS_MINIMAL_TAG_VERSION       "3.0.0"  )
-set ( BAYEUX_DPP_MINIMAL_TAG_VERSION        "0.1.0"  )
 set ( BAYEUX_MATERIALS_MINIMAL_TAG_VERSION  "3.0.0"  )
 set ( BAYEUX_GEOMTOOLS_MINIMAL_TAG_VERSION  "3.0.0"  )
 set ( BAYEUX_GENVTX_MINIMAL_TAG_VERSION     "3.0.0"  )
 set ( BAYEUX_GENBB_HELP_MINIMAL_TAG_VERSION "4.0.0"  )
 set ( BAYEUX_EMFIELD_MINIMAL_TAG_VERSION    "0.1.0"  )
 set ( BAYEUX_TRACKFIT_MINIMAL_TAG_VERSION   "2.0.1"  )
-set ( BAYEUX_MCTOOLS_MINIMAL_TAG_VERSION    "0.1.0"  )
-
 
 # Default configuration (0.9.5) :
 if ( BAYEUX_CONFIG STREQUAL "default" OR BAYEUX_CONFIG STREQUAL ${Bayeux_VERSION} )
-  message ( STATUS "${PROJECT_NAME}: Bayeux 'default/${Bayeux_VERSION}' configuration...") 
+  message ( STATUS "${PROJECT_NAME}: Bayeux 'default/${Bayeux_VERSION}' configuration...")
 
-  set ( BAYEUX_DATATOOLS_VERSION  "5.0.0"  )
-  set ( BAYEUX_DATATOOLS_PATH     "tags/datatools-5.0.0"  )
+  # 2012-12-02:
+  set ( BAYEUX_DATATOOLS_VERSION  "4.2.0"  )
+  set ( BAYEUX_DATATOOLS_PATH     "tags/datatools-4.2.0"  )
 
-  set ( BAYEUX_BRIO_VERSION       "4.0.0"  )
-  set ( BAYEUX_BRIO_PATH          "tags/brio-4.0.0"  )
+  set ( BAYEUX_BRIO_VERSION       "3.2.0"  )
+  set ( BAYEUX_BRIO_PATH          "tags/brio-3.2.0"  )
 
-  set ( BAYEUX_MYGSL_VERSION      "4.0.0"  )
-  set ( BAYEUX_MYGSL_PATH         "tags/mygsl-4.0.0"  )
+  set ( BAYEUX_MYGSL_VERSION      "3.2.1"  )
+  set ( BAYEUX_MYGSL_PATH         "tags/mygsl-3.2.1"  )
 
-  set ( BAYEUX_CUTS_VERSION       "4.0.0"  )
-  set ( BAYEUX_CUTS_PATH          "tags/cuts-4.0.0"  )
- 
-  set ( BAYEUX_DPP_VERSION        "0.1.0"  )
-  set ( BAYEUX_DPP_PATH           "tags/dpp-0.1.0"  )
+  set ( BAYEUX_CUTS_VERSION       "3.1.1"  )
+  set ( BAYEUX_CUTS_PATH          "tags/cuts-3.1.1"  )
 
-  set ( BAYEUX_MATERIALS_VERSION  "4.0.0"  )
-  set ( BAYEUX_MATERIALS_PATH     "tags/materials-4.0.0"  )
+  set ( BAYEUX_GEOMTOOLS_VERSION  "3.2.1"  )
+  set ( BAYEUX_GEOMTOOLS_PATH     "tags/geomtools-3.2.1"  )
 
-  set ( BAYEUX_GEOMTOOLS_VERSION  "4.0.0"  )
-  set ( BAYEUX_GEOMTOOLS_PATH     "tags/geomtools-4.0.0"  )
+  set ( BAYEUX_MATERIALS_VERSION  "3.2.0"  )
+  set ( BAYEUX_MATERIALS_PATH     "tags/materials-3.2.0"  )
 
-  set ( BAYEUX_GENVTX_VERSION     "4.0.0"  )
-  set ( BAYEUX_GENVTX_PATH        "tags/genvtx-4.0.0"  )
+  set ( BAYEUX_GENVTX_VERSION     "3.1.1"  )
+  set ( BAYEUX_GENVTX_PATH        "tags/genvtx-3.1.1"  )
 
-  set ( BAYEUX_GENBB_HELP_VERSION "5.0.0"  )
-  set ( BAYEUX_GENBB_HELP_PATH    "tags/genbb_help-5.0.0"  )
+  set ( BAYEUX_GENBB_HELP_VERSION "4.1.1"  )
+  set ( BAYEUX_GENBB_HELP_PATH    "tags/genbb_help-4.1.1"  )
 
   set ( BAYEUX_EMFIELD_VERSION    "0.1.0"  )
-  set ( BAYEUX_EMFIELD_PATH       "tags/emfield-1.0.0"  )
-
-  set ( BAYEUX_MCTOOLS_VERSION    "0.1.0"  )
-  set ( BAYEUX_MCTOOLS_PATH       "tags/mctools-0.1.0"  )
+  set ( BAYEUX_EMFIELD_PATH       "tags/emfield-0.1.0"  )
 
   set ( BAYEUX_TRACKFIT_VERSION   "2.1.0"  )
   set ( BAYEUX_TRACKFIT_PATH      "tags/trackfit-2.1.0"  )
@@ -392,7 +382,7 @@ elseif ( BAYEUX_CONFIG STREQUAL 0.9.1 )
 
 elseif ( BAYEUX_CONFIG STREQUAL 0.9.0 )
 
-  message ( STATUS "${PROJECT_NAME}: Bayeux '0.9.0' configuration...") 
+  message ( STATUS "${PROJECT_NAME}: Bayeux '0.9.0' configuration...")
 
   set ( BAYEUX_DATATOOLS_VERSION  "4.0.0"  )
   set ( BAYEUX_DATATOOLS_PATH     "tags/datatools-4.0.0"  )
@@ -418,45 +408,44 @@ elseif ( BAYEUX_CONFIG STREQUAL 0.9.0 )
   set ( BAYEUX_GENBB_HELP_VERSION "4.0.0"  )
   set ( BAYEUX_GENBB_HELP_PATH    "tags/genbb_help-4.0.0"  )
 
-elseif ( BAYEUX_CONFIG STREQUAL "last_tags" )
-
-  foreach ( component ${BAYEUX_KNOWN_COMPONENTS} )
-     string ( TOUPPER "${component}" component_upper )
-     execute_process(COMMAND svn ls ${BAYEUX_COMPONENTS_SVN_BASE_URL}/${component}/${BAYEUX_COMPONENTS_SVN_TAGS_SUBDIR}/
-                     TIMEOUT 15
-                     RESULT_VARIABLE _${component}_list_of_tags_error_code
-                     OUTPUT_VARIABLE _${component}_list_of_tags_out
-                     ERROR_VARIABLE  _${component}_list_of_tags_err
-                     ) 
-     if ( NOT ${_${component}_list_of_tags_error_code} EQUAL 0 )
-       message ( FATAL_ERROR "${PROJECT_NAME}: Cannot find the list of available tags for the Bayeux component : '${component}' !") 
-     endif ()
-     ###message ( STATUS "${PROJECT_NAME}: List of available tags for '${component}' : \n${_${component}_list_of_tags_out}" ) 
-     execute_process(COMMAND echo ${_${component}_list_of_tags_out} 
-                     COMMAND sort 
-                     COMMAND tail -1 
-                     COMMAND tr -d '/' 
-                     COMMAND tr -d '[[:space:]]' 
-                     RESULT_VARIABLE _${component}_last_tag_out_error_code
-                     OUTPUT_VARIABLE _${component}_last_tag_out
-                    )
-     if ( NOT ${_${component}_last_tag_out_error_code} EQUAL 0 )
-       message ( FATAL_ERROR "${PROJECT_NAME}: Cannot find the last available tag for the Bayeux component : '${component}' !") 
-     endif ()
-     if ( "x${_${component}_last_tag_out}" STREQUAL "x" )
-       message ( FATAL_ERROR "${PROJECT_NAME}: Cannot determine the last available tag for the Bayeux component : '${component}' !") 
-     endif ()
-     message ( STATUS "${PROJECT_NAME}:   Last available ${component} tag is : '${_${component}_last_tag_out}' " ) 
-     message ( STATUS "${PROJECT_NAME}:   Minimal supported ${component} tag version is : '${component}-${BAYEUX_${component_upper}_MINIMAL_TAG_VERSION}' " ) 
-     if ( "${_${component}_last_tag_out}" STRLESS "${component}-${BAYEUX_${component_upper}_MINIMAL_TAG_VERSION}" )
-       message ( FATAL_ERROR "${PROJECT_NAME}: Unsupported tag '${_${component}_last_tag_out}' for the Bayeux component : '${component}' !")       
-     endif ()  
-     set ( BAYEUX_${component_upper}_PATH    "tags/${_${component}_last_tag_out}"  )
-     message ( STATUS "${PROJECT_NAME}: Using last tag '${_${component}_last_tag_out}' for the Bayeux component : '${component}'")       
-  endforeach  ()
-
+# elseif ( BAYEUX_CONFIG STREQUAL "last_tags" )
+#   foreach ( component ${BAYEUX_KNOWN_COMPONENTS} )
+#      string ( TOUPPER "${component}" component_upper )
+#      execute_process(COMMAND svn ls ${BAYEUX_COMPONENTS_SVN_BASE_URL}/${component}/${BAYEUX_COMPONENTS_SVN_TAGS_SUBDIR}/
+#                      TIMEOUT 15
+#                      RESULT_VARIABLE _${component}_list_of_tags_error_code
+#                      OUTPUT_VARIABLE _${component}_list_of_tags_out
+#                      ERROR_VARIABLE  _${component}_list_of_tags_err
+#                      )
+#      if ( NOT ${_${component}_list_of_tags_error_code} EQUAL 0 )
+#        message ( FATAL_ERROR "${PROJECT_NAME}: Cannot find the list of available tags for the Bayeux component : '${component}' !")
+#      endif ()
+#      ###message ( STATUS "${PROJECT_NAME}: List of available tags for '${component}' : \n${_${component}_list_of_tags_out}" )
+#      execute_process(COMMAND echo ${_${component}_list_of_tags_out}
+#                      COMMAND sort
+#                      COMMAND tail -1
+#                      COMMAND tr -d '/'
+#                      COMMAND tr -d '[[:space:]]'
+#                      RESULT_VARIABLE _${component}_last_tag_out_error_code
+#                      OUTPUT_VARIABLE _${component}_last_tag_out
+#                     )
+#      if ( NOT ${_${component}_last_tag_out_error_code} EQUAL 0 )
+#        message ( FATAL_ERROR "${PROJECT_NAME}: Cannot find the last available tag for the Bayeux component : '${component}' !")
+#      endif ()
+#      if ( "x${_${component}_last_tag_out}" STREQUAL "x" )
+#        message ( FATAL_ERROR "${PROJECT_NAME}: Cannot determine the last available tag for the Bayeux component : '${component}' !")
+#      endif ()
+#      message ( STATUS "${PROJECT_NAME}:   Last available ${component} tag is : '${_${component}_last_tag_out}' " )
+#      message ( STATUS "${PROJECT_NAME}:   Minimal supported ${component} tag version is : '${component}-${BAYEUX_${component_upper}_MINIMAL_TAG_VERSION}' " )
+#      if ( "${_${component}_last_tag_out}" STRLESS "${component}-${BAYEUX_${component_upper}_MINIMAL_TAG_VERSION}" )
+#        message ( FATAL_ERROR "${PROJECT_NAME}: Unsupported tag '${_${component}_last_tag_out}' for the Bayeux component : '${component}' !")
+#      endif ()
+#      set ( BAYEUX_${component_upper}_PATH    "tags/${_${component}_last_tag_out}"  )
+#      message ( STATUS "${PROJECT_NAME}: Using last tag '${_${component}_last_tag_out}' for the Bayeux component : '${component}'")
+#   endforeach  ()
+#
 elseif ( BAYEUX_CONFIG STREQUAL "legacy" )
-  message ( STATUS "${PROJECT_NAME}: Bayeux 'legacy' configuration...") 
+  message ( STATUS "${PROJECT_NAME}: Bayeux 'legacy' configuration...")
 
   set ( BAYEUX_DATATOOLS_PATH  "branches/legacy" )
   set ( BAYEUX_BRIO_PATH       "branches/legacy" )
@@ -469,59 +458,43 @@ elseif ( BAYEUX_CONFIG STREQUAL "legacy" )
   set ( BAYEUX_EMFIELD_PATH    "branches/legacy" )
   set ( BAYEUX_TRACKFIT_PATH   "branches/legacy" )
 
-elseif ( BAYEUX_CONFIG STREQUAL "trunk" )
-  message ( STATUS "${PROJECT_NAME}: Bayeux 'trunk' configuration...") 
-
-  set ( BAYEUX_DATATOOLS_PATH  "trunk" )
-  set ( BAYEUX_BRIO_PATH       "trunk" )
-  set ( BAYEUX_MYGSL_PATH      "trunk" )
-  set ( BAYEUX_CUTS_PATH       "trunk" )
-  set ( BAYEUX_DPP_PATH        "trunk" )
-  set ( BAYEUX_MATERIALS_PATH  "trunk" )
-  set ( BAYEUX_GEOMTOOLS_PATH  "trunk" )
-  set ( BAYEUX_GENVTX_PATH     "trunk" )
-  set ( BAYEUX_GENBB_HELP_PATH "trunk" )
-  set ( BAYEUX_EMFIELD_PATH    "trunk" )
-  set ( BAYEUX_MCTOOLS_PATH    "trunk" )
-  set ( BAYEUX_TRACKFIT_PATH   "trunk" )
-
 elseif ( BAYEUX_CONFIG STREQUAL "user" )
-  message ( STATUS "${PROJECT_NAME}: Bayeux 'user' configuration...") 
+  message ( STATUS "${PROJECT_NAME}: Bayeux 'user' configuration...")
 
   if (DEFINED BAYEUX_USER_CONFIG_FILE AND NOT "x${BAYEUX_USER_CONFIG_FILE}" STREQUAL "x" )
-    message ( STATUS "${PROJECT_NAME}: User configuration file...") 
+    message ( STATUS "${PROJECT_NAME}: User configuration file...")
     if ( NOT EXISTS ${BAYEUX_USER_CONFIG_FILE} )
-      message ( FATAL_ERROR "${PROJECT_NAME}: User configuration file '${BAYEUX_USER_CONFIG_FILE}' does not exist !") 
+      message ( FATAL_ERROR "${PROJECT_NAME}: User configuration file '${BAYEUX_USER_CONFIG_FILE}' does not exist !")
     endif  ()
-    message ( STATUS "${PROJECT_NAME}: Parsing user configuration file...") 
+    message ( STATUS "${PROJECT_NAME}: Parsing user configuration file...")
     foreach ( component ${BAYEUX_KNOWN_COMPONENTS} )
       string ( TOUPPER "${component}" component_upper )
       file ( STRINGS ${BAYEUX_USER_CONFIG_FILE} _component_directive
              REGEX "^${component}@"
            )
-      message ( STATUS "${PROJECT_NAME}: User directive for component '${component}' : '${_component_directive}' ") 
+      message ( STATUS "${PROJECT_NAME}: User directive for component '${component}' : '${_component_directive}' ")
       if ( _component_directive STREQUAL "" )
         set ( BAYEUX_WITH_${component_upper} 0 )
-      else () 
+      else ()
         if ( NOT DEFINED BAYEUX_WITH_${component_upper} OR BAYEUX_WITH_${component_upper} )
           set ( BAYEUX_WITH_${component_upper} 1 )
 	  string ( REPLACE "${component}@" ""
-                   _component_path 
-	           ${_component_directive} 
+                   _component_path
+	           ${_component_directive}
 	         )
 	  string ( STRIP "${_component_path}" _component_path )
-          message ( STATUS "${PROJECT_NAME}: Parsed ${component} path : ${_component_path}") 
-	       
+          message ( STATUS "${PROJECT_NAME}: Parsed ${component} path : ${_component_path}")
+
           if ( "${_component_directive}" STREQUAL "${_component_path}" )
-             message ( FATAL_ERROR "${PROJECT_NAME}: Invalid directive for component '${component}'" ) 
-          endif ()  
+             message ( FATAL_ERROR "${PROJECT_NAME}: Invalid directive for component '${component}'" )
+          endif ()
           set ( BAYEUX_${component_upper}_PATH ${_component_path} )
         endif ()
       endif ()
-      message ( STATUS "${PROJECT_NAME}: Bayeux user configuration mode : BAYEUX_WITH_${component_upper}") 
+      message ( STATUS "${PROJECT_NAME}: Bayeux user configuration mode : BAYEUX_WITH_${component_upper}")
     endforeach ()
   else ()
-    message ( FATAL_ERROR "${PROJECT_NAME}: Missing user configuration file ! Please use : '-DBAYEUX_USER_CONFIG_FILE:PATH=<somefile>' !") 
+    message ( FATAL_ERROR "${PROJECT_NAME}: Missing user configuration file ! Please use : '-DBAYEUX_USER_CONFIG_FILE:PATH=<somefile>' !")
   endif ()
 endif ()
 
@@ -547,7 +520,7 @@ foreach ( component ${BAYEUX_KNOWN_COMPONENTS} )
        set ( _bayeux_component_version ${_bayeux_component_version_key} )
      else ()
        set ( _bayeux_component_version ${_bayeux_component_path_key} )
-     endif ()  
+     endif ()
      message ( STATUS "${PROJECT_NAME}: This configuration will install '${component}' from '${${_bayeux_component_path_key}}'" )
   endif ()
   set ( BAYEUX_WITH_${component_upper} ${_bayeux_install_component} )
@@ -562,7 +535,8 @@ if ( _bayeux_special_1 )
       set ( _${component}_path "${BAYEUX_${component_upper}_PATH}" )
       message ( STATUS "${PROJECT_NAME}: ${component} path label = '${_${component}_path}'" )
       if ( ${_${component}_path} STREQUAL "trunk" )
-	set ( _${component}_versioned_path "${component}-trunk" )
+        message ( FATAL_ERROR "${PROJECT_NAME}: ${component} path label = '${_${component}_path}' is not supported" )
+	#set ( _${component}_versioned_path "${component}-trunk" )
       else ()
 	string ( REGEX REPLACE "/" "__"
           _${component}_versioned_path
@@ -612,7 +586,7 @@ endif ()
 # set ( _svn_password "${SVN_NEMO_PASSWORD}" )
 
 set ( _install_prefix ${CMAKE_INSTALL_PREFIX} )
- 
+
 # -------------------------------------------------------------------------
 # - Ensure proper dependencies between Bayeux components :
 #
@@ -649,43 +623,6 @@ if ( BAYEUX_CONFIG VERSION_LESS "0.9.5")
     set ( BAYEUX_WITH_MYGSL 1 )
   endif ( BAYEUX_WITH_GEOMTOOLS )
 
-else()
-
-  if    ( BAYEUX_WITH_MCTOOLS )
-    set ( BAYEUX_WITH_GEOMTOOLS 1 )
-    set ( BAYEUX_WITH_DPP 1 )
-    set ( BAYEUX_WITH_GENVTX 1 )
-    set ( BAYEUX_WITH_GENBB_HELP 1 )
-    set ( BAYEUX_WITH_EMFIELD 1 )
-  endif ( BAYEUX_WITH_MCTOOLS )
-
-  if    ( BAYEUX_WITH_TRACKFIT )
-    set ( BAYEUX_WITH_GEOMTOOLS 1 )
-  endif ( BAYEUX_WITH_TRACKFIT )
-
-  if    ( BAYEUX_WITH_EMFIELD )
-    set ( BAYEUX_WITH_GEOMTOOLS 1 )
-  endif ( BAYEUX_WITH_EMFIELD )
-
-  if    ( BAYEUX_WITH_GENBB_HELP )
-    set ( BAYEUX_WITH_GEOMTOOLS 1 )
-  endif ( BAYEUX_WITH_GENBB_HELP )
-
-  if    ( BAYEUX_WITH_GENVTX )
-    set ( BAYEUX_WITH_GEOMTOOLS 1 )
-  endif ( BAYEUX_WITH_GENVTX )
-
-  if    ( BAYEUX_WITH_GEOMTOOLS )
-    set ( BAYEUX_WITH_MATERIALS 1 )
-    set ( BAYEUX_WITH_MYGSL 1 )
-  endif ( BAYEUX_WITH_GEOMTOOLS )
-
-  if    ( BAYEUX_WITH_DPP )
-    set ( BAYEUX_WITH_BRIO 1 )
-    set ( BAYEUX_WITH_MYGSL 1 )
-    set ( BAYEUX_WITH_CUTS 1 )
-  endif ( BAYEUX_WITH_DPP )
-
 endif()
 
 ## -------------------------------------------------------------------------
@@ -697,14 +634,12 @@ message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_DATATOOLS  = ${BAYEUX_WITH_DAT
 message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_MYGSL      = ${BAYEUX_WITH_MYGSL}"      )
 message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_BRIO       = ${BAYEUX_WITH_BRIO}"       )
 message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_CUTS       = ${BAYEUX_WITH_CUTS}"       )
-message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_DPP        = ${BAYEUX_WITH_DPP}"       )
-message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_MATERIALS  = ${BAYEUX_WITH_MATERIALS}"  )
 message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_GEOMTOOLS  = ${BAYEUX_WITH_GEOMTOOLS}"  )
 message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_GENVTX     = ${BAYEUX_WITH_GENVTX}"     )
+message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_MATERIALS  = ${BAYEUX_WITH_MATERIALS}"  )
 message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_GENBB_HELP = ${BAYEUX_WITH_GENBB_HELP}" )
 message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_EMFIELD    = ${BAYEUX_WITH_EMFIELD}" )
 message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_TRACKFIT   = ${BAYEUX_WITH_TRACKFIT}" )
-message ( STATUS "${PROJECT_NAME}:  o BAYEUX_WITH_MCTOOLS    = ${BAYEUX_WITH_MCTOOLS}" )
 
 set ( BAYEUX_COMPONENTS "" )
 
@@ -716,7 +651,14 @@ foreach ( component ${BAYEUX_KNOWN_COMPONENTS} )
 endforeach ()
 message ( STATUS "${PROJECT_NAME}: BAYEUX_COMPONENTS : '${BAYEUX_COMPONENTS}'" )
 
-if ( BAYEUX_CONFIG VERSION_LESS "0.9.5" or BAYEUX_CONFIG VERSION_EQUAL "legacy")
+message ( STATUS "${PROJECT_NAME}: Checking configuration '${BAYEUX_CONFIG}'..." )
+if ( ${BAYEUX_CONFIG} STREQUAL "legacy" )
+  message ( STATUS "${PROJECT_NAME}: It is '${BAYEUX_CONFIG}'." )
+endif()
+
+if ( BAYEUX_CONFIG STREQUAL "trunk" OR (BAYEUX_CONFIG VERSION_GREATER BAYEUX_LEGACY_MAX_VERSION AND NOT BAYEUX_CONFIG STREQUAL "legacy"))
+  message (FATAL_ERROR "${PROJECT_NAME}: Configuration '${BAYEUX_CONFIG}' is not supported !")
+else()
 include ( BayeuxDatatools  )
 include ( BayeuxBrio       )
 include ( BayeuxMygsl      )
@@ -727,20 +669,8 @@ include ( BayeuxGenvtx     )
 include ( BayeuxGenbb_help )
 include ( BayeuxEmfield    )
 include ( BayeuxTrackfit   )
-else()
-include ( BayeuxDatatools  )
-include ( BayeuxBrio       )
-include ( BayeuxMygsl      )
-include ( BayeuxCuts       )
-include ( BayeuxDpp-0.9.5        )
-include ( BayeuxMaterials-0.9.5  )
-include ( BayeuxGeomtools-0.9.5  )
-include ( BayeuxGenvtx     )
-include ( BayeuxGenbb_help )
-include ( BayeuxEmfield    )
-include ( BayeuxMctools    )
-include ( BayeuxTrackfit-0.9.5   )
 endif()
+
 # -------------------------------------------------------------------------
 # - Bash setup script :
 #

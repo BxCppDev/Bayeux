@@ -9,21 +9,21 @@
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation, either version 3 of the License, or
 ## (at your option) any later version.
-## 
+##
 ## Bayeux is distributed in the hope that it will be useful,
 ## but WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
-## 
+##
 ## You should have received a copy of the GNU General Public License
 ## along with Bayeux.  If not, see <http://www.gnu.org/licenses/>.
 ##
 ###############################################################################
 
 # setup version numbers
-set ( Bayeux_VERSION_MAJOR 0 ) # do not remove the spaces 
+set ( Bayeux_VERSION_MAJOR 0 ) # do not remove the spaces
 set ( Bayeux_VERSION_MINOR 9 ) # they are used by external scripts
-set ( Bayeux_PATCH_VERSION 5 ) # to extract the version number
+set ( Bayeux_PATCH_VERSION 5 ) # to extract the version number (<100)
 
 set ( Bayeux_VERSION_STR "${Bayeux_VERSION_MAJOR}.${Bayeux_VERSION_MINOR}.${Bayeux_PATCH_VERSION}" )
 math ( EXPR Bayeux_VERSION_NUMERIC "${Bayeux_VERSION_MAJOR}*100000+${Bayeux_VERSION_MINOR}*100+${Bayeux_PATCH_VERSION}" )

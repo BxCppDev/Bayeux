@@ -2,45 +2,72 @@
 TO BE DONE.
 
 
-== Examples == 
+== Examples ==
 
 
-Configure :
+1 - Configure :
+---------------
+
+All libraries :
 {{{
-bash$ ./pkgtools.d/pkgtool configure \
-  --workspace-dir /scratch/sw/Bayeux \
+bash$ ./pkgtools.d/pkgtool configure --config "0.9.4" \
+    --workspace-dir /scratch/sw/Bayeux/Binary \
 }}}
 
-All libraries but genbb_help :
+
+All libraries but 'trackfit :
 {{{
-bash$ ./pkgtools.d/pkgtool configure --config "0.9.0" --workspace-dir /scratch/sw/Bayeux --with-all --without-genbb_help 
+bash$ ./pkgtools.d/pkgtool configure --config "0.9.4" \
+    --workspace-dir /scratch/sw/Bayeux/Binary \
+    --with-all --without-trackfit
 }}}
 
 
 Only datatools :
 {{{
-bash$ ./pkgtools.d/pkgtool configure \
-  --user-config-file "examples/bayeux_config_1.lis" \
-  --workspace-dir /scratch/sw/Bayeux \
-  --with-none 
+bash$ ./pkgtools.d/pkgtool configure --config "0.9.4" \
+  --workspace-dir /scratch/sw/Bayeux/Binary \
+  --with-none
 }}}
 
-Only datatools and mygsl :
+
+Only datatools and mygsl, using special download/build/install
+directories :
 {{{
-bash$ ./pkgtools.d/pkgtool configure \
-  --install-prefix     /scratch/sw/Bayeux/Bayeux-0.9.0/install \
-  --ep-build-directory /scratch/sw/Bayeux/Bayeux-0.9.0/build \
-  --download-directory /scratch/sw/Download \
+bash$ ./pkgtools.d/pkgtool configure --config "0.9.4" \
+  --install-prefix     /scratch/sw/Bayeux/Binary/Bayeux-0.9.4/install \
+  --ep-build-directory /scratch/sw/Bayeux/Binary/Bayeux-0.9.4/build \
+  --download-directory /scratch/sw/Bayeux/Download \
   --with-none \
-  --with-mygsl 
+  --with-mygsl
 }}}
 
-Build:
+
+All libraries in their development branches (could be unstable) :
+{{{
+bash$ ./pkgtools.d/pkgtool configure --config "legacy" \
+    --bayeux-label "legacy" \
+    --workspace-dir /scratch/sw/Bayeux/Binary \
+}}}
+
+2 - Build:
+----------
+
 {{{
 bash$ ./pkgtools.d/pkgtool build --number-of-tasks 2
 }}}
 
-Installation :
+3 - Installation :
+------------------
+
 {{{
 bash$ ./pkgtools.d/pkgtool install
+}}}
+
+4 - Setup :
+-----------
+
+{{{
+bash$ source /scratch/sw/Bayeux/Binary/Bayeux-0.9.4/Install-Linux-x86_64/etc/bayeux_setup.sh
+bash$ do_bayeux_all_setup
 }}}

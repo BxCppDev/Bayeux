@@ -33,16 +33,16 @@ function do_bayeux_setup ()
 
 	local _bayeux_bash_setup_script="@Cadfael_BASH_SETUP_SCRIPT@"
 	local _bayeux_bash_setup_function="@Cadfael_BASH_SETUP_FUNCTION@"
-	
+
 	if [ -n ${_bayeux_bash_setup_script} -a "x${BAYEUX_PRE_SETUP_SCRIPT}" = "x" ]; then
 	    export BAYEUX_PRE_SETUP_SCRIPT=${_bayeux_bash_setup_script}
 	fi
-	
+
 	if [ -n ${_bayeux_bash_setup_function} -a "x${BAYEUX_PRE_SETUP_FUNCTION}" = "x" ]; then
 	    export BAYEUX_PRE_SETUP_FUNCTION=${_bayeux_bash_setup_function}
 	fi
     fi
-    
+
     if [ -n "${BAYEUX_PRE_SETUP_SCRIPT}" ]; then
 	if [ -f ${BAYEUX_PRE_SETUP_SCRIPT} ]; then
 	    echo "ERROR: do_bayeux_setup: Bayeux pre-setup script '${BAYEUX_PRE_SETUP_SCRIPT}' does not exist !" 1>&2
@@ -60,7 +60,7 @@ function do_bayeux_setup ()
 	    return 1
 	else
 	    echo "NOTICE: do_bayeux_setup: Calling Bayeux pre-setup function '${BAYEUX_PRE_SETUP_FUNCTION}'..." 1>&2
-	    ${BAYEUX_PRE_SETUP_FUNCTION}	
+	    ${BAYEUX_PRE_SETUP_FUNCTION}
 	fi
     fi
 
@@ -68,22 +68,23 @@ function do_bayeux_setup ()
     export BAYEUX_INSTALL_PREFIX="${BAYEUX_PREFIX}"
     export BAYEUX_ROOT_DIR="${BAYEUX_PREFIX}"
     export BAYEUX_VERSION="@Bayeux_VERSION_STR@"
+    export BAYEUX_CONFIG="@BAYEUX_CONFIG@"
     export BAYEUX_INCLUDE_DIR="${BAYEUX_PREFIX}/@CMAKE_INSTALL_INCLUDEDIR@"
     export BAYEUX_LIB_DIR="${BAYEUX_PREFIX}/@CMAKE_INSTALL_LIBDIR@"
     export BAYEUX_BIN_DIR="${BAYEUX_PREFIX}/@CMAKE_INSTALL_BINDIR@"
     export BAYEUX_SHARE_DIR="${BAYEUX_PREFIX}/@CMAKE_INSTALL_DATAROOTDIR@"
     export BAYEUX_ETC_DIR="${BAYEUX_PREFIX}/@CMAKE_INSTALL_ETCDIR@"
     export BAYEUX_COMPONENTS=$(echo "@BAYEUX_COMPONENTS@" | tr ';' ':')
- 
+
     if [ -n "${PATH}" ]; then
-        export PATH="${BAYEUX_BIN_DIR}:${PATH}"   
+        export PATH="${BAYEUX_BIN_DIR}:${PATH}"
     else
         export PATH="${BAYEUX_BIN_DIR}"
     fi
-    
+
     if [ ${is_apple} -eq 0 ]; then
         if [ -n "${LD_LIBRARY_PATH}" ]; then
-            export LD_LIBRARY_PATH="${BAYEUX_LIB_DIR}:${LD_LIBRARY_PATH}"   
+            export LD_LIBRARY_PATH="${BAYEUX_LIB_DIR}:${LD_LIBRARY_PATH}"
         else
             export LD_LIBRARY_PATH="${BAYEUX_LIB_DIR}"
         fi
@@ -92,11 +93,11 @@ function do_bayeux_setup ()
             export DYLD_LIBRARY_PATH="${BAYEUX_LIB_DIR}:${DYLD_LIBRARY_PATH}"
         else
             export DYLD_LIBRARY_PATH="${BAYEUX_LIB_DIR}"
-        fi      
+        fi
     fi
 
     # if [ -n "${MANPATH}" ]; then
-    #     export MANPATH="${BAYEUX_SHARE_DIR}/man:${MANPATH}"   
+    #     export MANPATH="${BAYEUX_SHARE_DIR}/man:${MANPATH}"
     # else
     #     export MANPATH="${BAYEUX_SHARE_DIR}/man"
     # fi
@@ -138,7 +139,7 @@ function do_bayeux_all_setup ()
     for component in ${bayeux_components}; do
 	local lower_component=$(echo "${component}" | tr "A-Z" "a-z")
 	echo "NOTICE: do_bayeux_all_setup: Setup Bayeux's component '${component}'..." 1>&2
-	eval "do_${lower_component}_setup" 
+	eval "do_${lower_component}_setup"
 	if [ $? -ne 0 ]; then
 	    echo "ERROR: do_bayeux_all_setup: Cannot setup '${component}'..." 1>&2
 	    return 1
@@ -164,7 +165,7 @@ function do_bayeux_help ()
 }
 typeset -fx do_bayeux_help
 
-do_bayeux_help 
+do_bayeux_help
 
 echo "NOTICE: bayeux_setup.sh: Exiting." 1>&2
 
