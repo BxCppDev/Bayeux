@@ -57,7 +57,7 @@ namespace genbb {
     _external_prng_ = &r_;
     return;
   }
-  
+
 
   mygsl::rng & manager::grab_external_prng ()
   {
@@ -132,12 +132,12 @@ namespace genbb {
 
     if (this->is_initialized()) {
       std::ostringstream message;
-      message << "manager::load: " 
+      message << "manager::load: "
               << "Particle generator manager is already initialized !";
       throw std::logic_error(message.str());
     }
 
-    for (datatools::multi_properties::entries_ordered_col_type::const_iterator i 
+    for (datatools::multi_properties::entries_ordered_col_type::const_iterator i
            = config.ordered_entries().begin();
          i != config.ordered_entries().end();
          ++i) {
@@ -147,9 +147,9 @@ namespace genbb {
       if (debug) {
         std::clog << datatools::io::debug
                   << "genbb::manager::load: "
-                  << "Configuration for pg named '" 
+                  << "Configuration for pg named '"
                   << pg_name << "' "
-                  << " with ID '" 
+                  << " with ID '"
                   << pg_id << "'..."
                   << std::endl;
       }
@@ -245,7 +245,7 @@ namespace genbb {
         if (this->is_debug()) {
           std::clog << datatools::io::debug
                     << "genbb::manager::reset: "
-                    << "Removing particle generator '" 
+                    << "Removing particle generator '"
                     << entry.get_name ()
                     << "'..."
                     << std::endl;
@@ -288,7 +288,7 @@ namespace genbb {
     return;
   }
 
-  
+
   bool manager::has_service_manager() const
   {
     return _service_mgr_ != 0;
@@ -299,7 +299,7 @@ namespace genbb {
     _service_mgr_ = 0;
     return;
   }
-  
+
   void manager::set_service_manager (datatools::service_manager & service_mgr_)
   {
     _service_mgr_ = &service_mgr_;
@@ -309,7 +309,7 @@ namespace genbb {
   // Constructor :
   manager::manager(uint32_t flag)
     : _factory_register_("genbb::i_genbb/pg_factory",
-                        flag & VERBOSE ? 
+                        flag & VERBOSE ?
                         i_genbb::factory_register_type::verbose : 0) {
     _service_mgr_ = 0;
     _initialized_ = false;
@@ -358,8 +358,8 @@ namespace genbb {
       {
         std::ostringstream message;
         message << "genbb::manager::grab: "
-                << "Particle generator '" 
-                << name 
+                << "Particle generator '"
+                << name
                 << "' does not exist !";
         throw std::logic_error(message.str());
       }
@@ -368,7 +368,7 @@ namespace genbb {
       this->_initialize_pg(entry);
     }
     return entry.grab_handle().grab();
-  } 
+  }
 
 
   bool manager::has(const std::string& name) const {
@@ -386,8 +386,8 @@ namespace genbb {
     if (found == _particle_generators_.end()) {
       std::ostringstream message;
       message << "genbb::manager::can_drop: "
-              << "Particle generator '" 
-              << name 
+              << "Particle generator '"
+              << name
               << "' does not exist !";
       throw std::logic_error(message.str());
     }
@@ -402,8 +402,8 @@ namespace genbb {
     if (found == _particle_generators_.end()) {
       std::ostringstream message;
       message << "genbb::manager::can_drop: "
-              << "Particle generator '" 
-              << name 
+              << "Particle generator '"
+              << name
               << "' does not exist !";
       throw std::logic_error(message.str());
     }
@@ -416,8 +416,8 @@ namespace genbb {
     if (found == _particle_generators_.end()) {
       std::ostringstream message;
       message << "genbb::manager::can_drop: "
-              << "Particle generator '" 
-              << name 
+              << "Particle generator '"
+              << name
               << "' does not exist !";
       throw std::logic_error(message.str());
     }
@@ -431,8 +431,8 @@ namespace genbb {
     if (found == _particle_generators_.end()) {
       std::ostringstream message;
       message << "genbb::manager::drop: "
-              << "Particle generator '" 
-              << name 
+              << "Particle generator '"
+              << name
               << "' does not exist !";
       throw std::logic_error(message.str());
     }
@@ -441,7 +441,7 @@ namespace genbb {
     // if (!found->second.can_be_dropped()) {
     //   std::ostringstream message;
     //   message << "genbb::manager::drop: "
-    //           << "Particle generator '" 
+    //           << "Particle generator '"
     //           << name
     //           << "' cannot be dropped !";
     //   throw std::logic_error(message.str());
@@ -450,8 +450,8 @@ namespace genbb {
     if (this->is_debug()) {
       std::clog << datatools::io::debug
                 << "genbb::manager::drop: "
-                << "Reset & remove particle generator '" 
-                << name 
+                << "Reset & remove particle generator '"
+                << name
                 << "' !"
                 << std::endl;
     }
@@ -486,7 +486,7 @@ namespace genbb {
         }
         const std::string& pg_name = it->first;
         const detail::pg_entry_type& pg_record = it->second;
-      
+
         out << "Name : '" << pg_name << "' "
             << "Type : '" << pg_record.get_id () << "' ";
         out << '(';
@@ -524,17 +524,17 @@ namespace genbb {
     if (!title.empty()) out << indent << title << std::endl;
 
     out << indent << i_tree_dumpable::tag
-        << "Debug          : " 
+        << "Debug          : "
         << _debug_ << std::endl;
 
     out << indent << i_tree_dumpable::tag
-        << "Preload        : " 
-        << _preload_ 
+        << "Preload        : "
+        << _preload_
         << std::endl;
 
     out << indent << i_tree_dumpable::tag
-        << "Force initialization : " 
-        << _force_initialization_at_load_ 
+        << "Force initialization : "
+        << _force_initialization_at_load_
         << std::endl;
 
     out << indent << i_tree_dumpable::tag
@@ -579,8 +579,8 @@ namespace genbb {
     }
 
     out << indent << i_tree_dumpable::inherit_tag(inherit)
-        << "Initialized    : " 
-        << this->is_initialized() 
+        << "Initialized    : "
+        << this->is_initialized()
         << std::endl;
     return;
   }
@@ -589,7 +589,7 @@ namespace genbb {
   {
     return _factory_register_;
   }
-  
+
   datatools::factory_register<i_genbb> & manager::grab_factory_register()
   {
     return _factory_register_;
@@ -612,7 +612,7 @@ namespace genbb {
     if (this->has(name)) {
       std::ostringstream message;
       message << "genbb::manager::_load_pg: "
-              << "Particle generator '" 
+              << "Particle generator '"
               << name
               << "' already exists !";
       throw std::logic_error(message.str());
@@ -625,8 +625,8 @@ namespace genbb {
       if (debug) {
         std::clog << datatools::io::debug
                   << "genbb::manager::_load_pg: "
-                  << "Add an entry for particle generator '" 
-                  << name 
+                  << "Add an entry for particle generator '"
+                  << name
                   << "'..."
                   << std::endl;
       }
@@ -684,7 +684,7 @@ namespace genbb {
                   << std::endl;
       }
       detail::create(entry,
-                     &_factory_register_, 
+                     &_factory_register_,
                      &grab_prng());
       //(has_external_prng() ? &grab_external_prng() : 0));
     }
@@ -739,3 +739,78 @@ namespace genbb {
 
 }  // end of namespace genbb
 
+
+/***************
+ * OCD support *
+ ***************/
+
+#include <datatools/ocd_macros.h>
+
+// OCD support for class '::genbb::manager' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::manager,ocd_)
+{
+  ocd_.set_class_name ("genbb::manager");
+  ocd_.set_class_description ("A generic manager for event generators");
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("debug")
+      .set_terse_description("Flag to activate debugging output")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("Superseded by a former call of :              \n"
+                            "  genbb::manager::set_debug(true)             \n"
+                            )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("seed")
+      .set_terse_description("Embeded PRNG's seed")
+      .set_traits(datatools::TYPE_INTEGER)
+      .set_mandatory(false)
+      .set_complex_triggering_conditions(true)
+      .set_long_description("The seed of the embeded PRNG.                 \n"
+                            "Not used if some external PRNG is used.       \n"
+                            )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("generators.configuration_files")
+      .set_terse_description("A list of configuration file names for event generators")
+      .set_traits(datatools::TYPE_STRING,
+                  configuration_property_description::ARRAY)
+      .set_mandatory(false)
+      .set_path(true)
+      .set_long_description("A list of filenames from where the manager                  \n"
+                            "loads the directives to dynamically instantiate             \n"
+                            "new event generators. The filenames may contains            \n"
+                            "some environment variables.                                 \n"
+                            "Example:                                                    \n"
+                            "  |                                                         \n"
+                            "  | generators.configuration_files : string[1] as path = \\ \n"
+                            "  |   \"${CONFIG_REPOSITORY_DIR}/eg.conf\"                  \n"
+                            "  |                                                         \n"
+                            "The target files must use the format of the                 \n"
+                            "'datatools::multi_properties' class.                        \n"
+                            "The loading order of the files is critical                  \n"
+                            "because some generators may depend on other ones            \n"
+                            "which should thus be defined *before* their                 \n"
+                            "dependers.                                                  \n"
+                          )
+      ;
+  }
+
+  //ocd_.set_configuration_hints ("Nothing special.");
+  ocd_.set_validation_support(true);
+  ocd_.lock();
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+
+DOCD_CLASS_SYSTEM_REGISTRATION(genbb::manager,"genbb::manager")
+
+// end of manager.cc

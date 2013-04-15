@@ -249,7 +249,13 @@ void manager::register_pg_type(const std::string& id) {
   _factory_register_.registration(id, boost::factory<PgClass*>());
 }
 
-}  // end of namespace datatools
+}  // end of namespace genbb
+
+/***************
+ * OCD support *
+ ***************/
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(genbb::manager)
 
 #endif // GENBB_HELP_MANAGER_H_
 
