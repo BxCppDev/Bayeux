@@ -31,6 +31,7 @@ if (MCTOOLS_WITH_G4)
    list(APPEND mctools_tests_programs
      test_g4_prng.cxx
      test_g4_detector_construction.cxx
+     test_g4_manager.cxx
    )
 endif()
 

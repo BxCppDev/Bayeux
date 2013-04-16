@@ -47,7 +47,7 @@ if [ "x@MCTOOLS_WITH_BIO@" == "x1" ]; then
 fi
 
 with_reflection=0
-if [ "x@MCTOOLS_WITH_REFLECTION@" == "x1"" ]; then
+if [ "x@MCTOOLS_WITH_REFLECTION@" == "x1" ]; then
     with_reflection=1
 fi
 with_g4=0
@@ -88,7 +88,7 @@ Known values for OPTION are:
   --cflags              print include path pre-processor flags with dependencies
   --libs    [option]    print library linking information, without dependencies
   --ldflags [option]
-    Options: 
+    Options:
     --relative-path     use relative DLL path (default)
     --absolute-path     use absolute DLL path
     --with-bio          with linkage against the 'libmctools_bio@CMAKE_SHARED_LIBRARY_SUFFIX@' DLL (default)
@@ -206,7 +206,7 @@ fi
 ldflags_abs_path=0
 if [ "x${MCTOOLS_LDFLAGS_ABSOLUTE_PATH}" = "x1" ]; then
     ldflags_abs_path=1
-fi 
+fi
 if [ "x${option}" = "x--libs" -o "x${option}" = "x--ldflags" ]; then
     while [ -n "$1" ]; do
 	lib_option="$1"

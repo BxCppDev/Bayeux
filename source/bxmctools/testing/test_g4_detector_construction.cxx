@@ -86,7 +86,7 @@ int main (int argc_, char ** argv_)
     dc_setup.store("gdml.schema_location", "local");
     dc_setup.store("materials.plugin_name", "materials_driver");
     dc_setup.store("hit_processor_factory.config",
-                   "${MCTOOLS_DATA_DIR}/testing/config/test_step_hit_processor_factory.conf");
+                   "${MCTOOLS_DATA_DIR}/testing/config/g4/test-1.0/step_hit_processor_factory.conf");
     my_detector_construction.initialize(dc_setup);
     G4VPhysicalVolume * mother = my_detector_construction.Construct ();
 
