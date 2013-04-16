@@ -25,7 +25,7 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(emfield)
 
 # - Versioning
-set(emfield_VERSION_MAJOR 4)
+set(emfield_VERSION_MAJOR 1)
 set(emfield_VERSION_MINOR 0)
 set(emfield_PATCH_VERSION 0)
 set(emfield_VERSION "${emfield_VERSION_MAJOR}.${emfield_VERSION_MINOR}.${emfield_PATCH_VERSION}")
@@ -48,14 +48,14 @@ endif()
 #-----------------------------------------------------------------------
 # Build options
 #
-option(EMFIELD_WITH_DEBUG "Build debug stuff" OFF) 
-# option(EMFIELD_WITH_BIO  "Build auxiliary Boost I/O library" OFF) 
-# option(EMFIELD_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" OFF) 
+option(EMFIELD_WITH_DEBUG "Build debug stuff" OFF)
+# option(EMFIELD_WITH_BIO  "Build auxiliary Boost I/O library" OFF)
+# option(EMFIELD_WITH_REFLECTION  "Build auxiliary CAMP-based reflection library" OFF)
 option(EMFIELD_WITH_DOC  "Build the emfield documentation" ON)
-option(EMFIELD_WITH_TEST "Build the emfield test suite"    ON) 
+option(EMFIELD_WITH_TEST "Build the emfield test suite"    ON)
 option(EMFIELD_WITH_BASH_SETUP "Build the emfield with Bash setup macro" ON)
 option(EMFIELD_WITH_GNUPLOT_DISPLAY  "Build the Gnuplot-based display tools" ON )
- 
+
 
 if (EMFIELD_WITH_DEBUG)
   set (EMFIELD_WITH_DEBUG 1)
@@ -83,7 +83,7 @@ find_package(geomtools 4.0.0 REQUIRED)
 
 #-----------------------------------------------------------------------
 # On Apple, we fixup the install prefix to handle installing documentation,
-# support files and so on under the framework's "Resources" directory. 
+# support files and so on under the framework's "Resources" directory.
 # This follows the pattern used in CMake to fixup their app bundle
 # NB: THIS REQUIRES SOME FIXES IN CPACKAGING (see CMake's Qt dialog
 # packaging).
@@ -97,7 +97,7 @@ endif()
 #-----------------------------------------------------------------------
 # Build the submodules as required
 #
-add_subdirectory(src)   
+add_subdirectory(src)
 
 if(EMFIELD_WITH_DOC)
   set (EMFIELD_WITH_DOC 1)
@@ -108,7 +108,7 @@ endif()
 
 if(EMFIELD_WITH_TEST)
   set (EMFIELD_WITH_TEST 1)
-  enable_testing() 
+  enable_testing()
   add_subdirectory(testing)
 else()
   set (EMFIELD_WITH_TEST 0)
@@ -118,9 +118,9 @@ endif()
 # Install resources :
 #
 
-set ( _emfield_TESTING_FULL_LOCAL_PATH 
-      "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/testing" 
-    ) 
+set ( _emfield_TESTING_FULL_LOCAL_PATH
+      "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/testing"
+    )
 message ( STATUS "${PROJECT_NAME} : emfield testing full local path = '${_emfield_TESTING_FULL_LOCAL_PATH}' " )
 
 install ( DIRECTORY ${PROJECT_SOURCE_DIR}/testing
@@ -128,8 +128,8 @@ install ( DIRECTORY ${PROJECT_SOURCE_DIR}/testing
           FILE_PERMISSIONS OWNER_READ OWNER_WRITE
                            GROUP_READ GROUP_WRITE
                            WORLD_READ
-          DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE 
-                                GROUP_READ GROUP_WRITE  GROUP_EXECUTE 
+          DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                                GROUP_READ GROUP_WRITE  GROUP_EXECUTE
                                 WORLD_READ WORLD_EXECUTE
           PATTERN 		".svn" EXCLUDE
           PATTERN "*~" EXCLUDE
