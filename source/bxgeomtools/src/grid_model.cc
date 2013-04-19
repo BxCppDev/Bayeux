@@ -1,11 +1,11 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* grid_model.cc
  */
 
 #include <geomtools/grid_model.h>
 
 #include <exception>
-#include <limits> 
+#include <limits>
 
 #include <geomtools/physical_volume.h>
 #include <geomtools/visibility.h>
@@ -14,12 +14,12 @@
 namespace geomtools {
 
   using namespace std;
-  
+
   const geomtools::box & grid_model::get_box () const
   {
     return _solid_;
   }
-  
+
   const geomtools::box & grid_model::get_solid () const
   {
     return _solid_;
@@ -34,27 +34,27 @@ namespace geomtools {
   {
     return _number_of_items_[i_];
   }
-  
+
   double grid_model::get_step (int i_) const
   {
     return _step_[i_];
   }
-  
+
   double grid_model::get_x () const
   {
     return _x_;
   }
-  
+
   double grid_model::get_y () const
   {
     return _y_;
   }
-  
+
   double grid_model::get_z () const
   {
     return _z_;
   }
- 
+
   void grid_model::set_model (const i_model & model_)
   {
     assert_unconstructed ("geomtools::grid_model::set_model");
@@ -76,12 +76,12 @@ namespace geomtools {
   {
     return *_model_;
   }
- 
+
   string grid_model::get_model_id () const
   {
     return "geomtools::grid_model";
   }
-  
+
   grid_model::grid_model () : i_boxed_model ()
   {
     _model_ = 0;
@@ -94,12 +94,12 @@ namespace geomtools {
     _step_[1] = numeric_limits<double>::quiet_NaN ();
     return;
   }
-  
+
   grid_model::~grid_model ()
   {
     return;
   }
-  
+
   void grid_model::_at_construct (const string & name_,
                                               const datatools::properties & config_,
                                               models_col_type * models_)
@@ -132,29 +132,29 @@ namespace geomtools {
                     << "Cannot build the stackable data !";
             throw logic_error (message.str ());
           }
-      }  
+      }
 
     if (config_.has_key ("length_unit"))
       {
         string lunit_str = config_.fetch_string ("length_unit");
         length_unit = datatools::units::get_length_unit_from (lunit_str);
       }
- 
+
     if (config_.has_key ("grid.daughter_label"))
       {
         grid_daughter_label = config_.fetch_string ("grid.daughter_label");
-      }  
+      }
 
     if (config_.has_key ("grid.plane"))
       {
         grid_plane_label = config_.fetch_string ("grid.plane");
-      }  
+      }
     else
       {
         std::ostringstream message;
         message << "geomtools::grid_model::_at_construct: "
-                << "Missing 'grid.plane' property !"; 
-        throw std::logic_error (message.str ());           
+                << "Missing 'grid.plane' property !";
+        throw std::logic_error (message.str ());
       }
 
     if (grid_plane_label == "xy") {
@@ -162,21 +162,21 @@ namespace geomtools {
       // Numbers of steps :
       if (config_.has_key ("grid.x.number_of_items")) {
         number_of_items[0] = config_.fetch_integer ("grid.x.number_of_items");
-      }  
+      }
       else {
         ostringstream message;
         message << "geomtools::grid_model::_at_construct: "
-                << "Missing 'grid.x.number_of_items' property !"; 
-        throw logic_error (message.str ());           
+                << "Missing 'grid.x.number_of_items' property !";
+        throw logic_error (message.str ());
       }
       if (config_.has_key ("grid.y.number_of_items")) {
         number_of_items[1] = config_.fetch_integer ("grid.y.number_of_items");
-      }  
+      }
       else {
         ostringstream message;
         message << "geomtools::grid_model::_at_construct: "
-                << "Missing 'grid.y.number_of_items' property !"; 
-        throw logic_error (message.str ());           
+                << "Missing 'grid.y.number_of_items' property !";
+        throw logic_error (message.str ());
       }
 
       // Steps :
@@ -185,32 +185,32 @@ namespace geomtools {
         if (step[0] <= 0.0 ) {
           ostringstream message;
           message << "geomtools::grid_model::_at_construct: "
-                  << "Invalid value for 'grid.x.step' property !"; 
-          throw logic_error (message.str ());   
+                  << "Invalid value for 'grid.x.step' property !";
+          throw logic_error (message.str ());
         }
         if (! config_.has_explicit_unit ("grid.x.step")) step[0] *= length_unit;
-      }  
+      }
       else {
         ostringstream message;
         message << "geomtools::grid_model::_at_construct: "
-                << "Missing 'grid.x.step' property !"; 
-        throw logic_error (message.str ());           
+                << "Missing 'grid.x.step' property !";
+        throw logic_error (message.str ());
       }
       if (config_.has_key ("grid.y.step")) {
         step[1] = config_.fetch_real ("grid.y.step");
         if (step[1] <= 0.0 ) {
           ostringstream message;
           message << "geomtools::grid_model::_at_construct: "
-                  << "Invalid value for 'grid.y.step' property !"; 
-          throw logic_error (message.str ());   
+                  << "Invalid value for 'grid.y.step' property !";
+          throw logic_error (message.str ());
         }
         if (! config_.has_explicit_unit ("grid.y.step")) step[1] *= length_unit;
-      }  
+      }
       else {
         ostringstream message;
         message << "geomtools::grid_model::_at_construct: "
-                << "Missing 'grid.z.step' property !"; 
-        throw logic_error (message.str ());           
+                << "Missing 'grid.z.step' property !";
+        throw logic_error (message.str ());
       }
 
     }
@@ -219,23 +219,23 @@ namespace geomtools {
       // Numbers of steps :
       if (config_.has_key ("grid.x.number_of_items")) {
         number_of_items[0] = config_.fetch_integer ("grid.x.number_of_items");
-      }  
+      }
       else {
         ostringstream message;
         message << "geomtools::grid_model::_at_construct: "
-                << "Missing 'grid.x.number_of_items' property !"; 
-        throw logic_error (message.str ());           
+                << "Missing 'grid.x.number_of_items' property !";
+        throw logic_error (message.str ());
       }
       if (config_.has_key ("grid.z.number_of_items")) {
         number_of_items[1] = config_.fetch_integer ("grid.z.number_of_items");
-      }  
+      }
       else {
         ostringstream message;
         message << "geomtools::grid_model::_at_construct: "
-                << "Missing 'grid.z.number_of_items' property !"; 
-        throw logic_error (message.str ());           
+                << "Missing 'grid.z.number_of_items' property !";
+        throw logic_error (message.str ());
       }
-     
+
       // Steps :
       if (config_.has_key ("grid.x.step"))
         {
@@ -243,16 +243,16 @@ namespace geomtools {
           if (step[0] <= 0.0 ) {
             ostringstream message;
             message << "geomtools::grid_model::_at_construct: "
-                    << "Invalid value for 'grid.x.step' property !"; 
-            throw logic_error (message.str ());   
+                    << "Invalid value for 'grid.x.step' property !";
+            throw logic_error (message.str ());
           }
           if (! config_.has_explicit_unit ("grid.x.step")) step[0] *= length_unit;
-        }  
+        }
       else {
         ostringstream message;
         message << "geomtools::grid_model::_at_construct: "
-                << "Missing 'grid.x.step' property !"; 
-        throw logic_error (message.str ());           
+                << "Missing 'grid.x.step' property !";
+        throw logic_error (message.str ());
       }
      if (config_.has_key ("grid.z.step"))
         {
@@ -260,16 +260,16 @@ namespace geomtools {
           if (step[1] <= 0.0 ) {
             ostringstream message;
             message << "geomtools::grid_model::_at_construct: "
-                    << "Invalid value for 'grid.z.step' property !"; 
-            throw logic_error (message.str ());   
+                    << "Invalid value for 'grid.z.step' property !";
+            throw logic_error (message.str ());
           }
           if (! config_.has_explicit_unit ("grid.z.step")) step[1] *= length_unit;
-        }  
+        }
       else {
         ostringstream message;
         message << "geomtools::grid_model::_at_construct: "
-                << "Missing 'grid.z.step' property !"; 
-        throw logic_error (message.str ());           
+                << "Missing 'grid.z.step' property !";
+        throw logic_error (message.str ());
       }
 
     }
@@ -278,23 +278,23 @@ namespace geomtools {
       // Numbers of steps :
       if (config_.has_key ("grid.y.number_of_items")) {
         number_of_items[0] = config_.fetch_integer ("grid.y.number_of_items");
-      }  
+      }
       else {
         ostringstream message;
         message << "geomtools::grid_model::_at_construct: "
-                << "Missing 'grid.y.number_of_items' property !"; 
-        throw logic_error (message.str ());           
+                << "Missing 'grid.y.number_of_items' property !";
+        throw logic_error (message.str ());
       }
       if (config_.has_key ("grid.z.number_of_items")) {
         number_of_items[1] = config_.fetch_integer ("grid.z.number_of_items");
-      }  
+      }
       else {
         ostringstream message;
         message << "geomtools::grid_model::_at_construct: "
-                << "Missing 'grid.z.number_of_items' property !"; 
-        throw logic_error (message.str ());           
+                << "Missing 'grid.z.number_of_items' property !";
+        throw logic_error (message.str ());
       }
-    
+
       // Steps :
       if (config_.has_key ("grid.y.step"))
         {
@@ -302,16 +302,16 @@ namespace geomtools {
           if (step[0] <= 0.0 ) {
             ostringstream message;
             message << "geomtools::grid_model::_at_construct: "
-                    << "Invalid value for 'grid.y.step' property !"; 
-            throw logic_error (message.str ());   
+                    << "Invalid value for 'grid.y.step' property !";
+            throw logic_error (message.str ());
           }
           if (! config_.has_explicit_unit ("grid.y.step")) step[0] *= length_unit;
-        }  
+        }
       else {
         ostringstream message;
         message << "geomtools::grid_model::_at_construct: "
-                << "Missing 'grid.y.step' property !"; 
-        throw logic_error (message.str ());           
+                << "Missing 'grid.y.step' property !";
+        throw logic_error (message.str ());
       }
      if (config_.has_key ("grid.z.step"))
         {
@@ -319,16 +319,16 @@ namespace geomtools {
           if (step[1] <= 0.0 ) {
             ostringstream message;
             message << "geomtools::grid_model::_at_construct: "
-                    << "Invalid value for 'grid.z.step' property !"; 
-            throw logic_error (message.str ());   
+                    << "Invalid value for 'grid.z.step' property !";
+            throw logic_error (message.str ());
           }
           if (! config_.has_explicit_unit ("grid.z.step")) step[1] *= length_unit;
-        }  
+        }
       else {
         ostringstream message;
         message << "geomtools::grid_model::_at_construct: "
-                << "Missing 'grid.z.step' property !"; 
-        throw logic_error (message.str ());           
+                << "Missing 'grid.z.step' property !";
+        throw logic_error (message.str ());
       }
 
     }
@@ -336,20 +336,20 @@ namespace geomtools {
       {
         ostringstream message;
         message << "geomtools::grid_model::_at_construct: "
-                << "Invalid grid plane label '" << grid_plane_label << "' property !"; 
-        throw logic_error (message.str ());           
+                << "Invalid grid plane label '" << grid_plane_label << "' property !";
+        throw logic_error (message.str ());
       }
-    
+
     if (config_.has_key ("grid.model"))
       {
         model_name = config_.fetch_string ("grid.model");
-      }  
+      }
     else
       {
         ostringstream message;
         message << "geomtools::grid_model::_at_construct: "
-                << "Missing 'grid.model' property !"; 
-        throw logic_error (message.str ());   
+                << "Missing 'grid.model' property !";
+        throw logic_error (message.str ());
       }
 
     _grid_plane_label_ = grid_plane_label;
@@ -358,16 +358,16 @@ namespace geomtools {
       {
         ostringstream message;
         message << "geomtools::grid_model::_at_construct: "
-                << "Number of items on first axis is zero !"; 
-        throw logic_error (message.str ());   
+                << "Number of items on first axis is zero !";
+        throw logic_error (message.str ());
       }
- 
+
     if (number_of_items[1] == 0)
       {
         ostringstream message;
         message << "geomtools::grid_model::_at_construct: "
-                << "Number of items on second axis is zero !"; 
-        throw logic_error (message.str ());   
+                << "Number of items on second axis is zero !";
+        throw logic_error (message.str ());
       }
 
     _number_of_items_[0] = number_of_items[0];
@@ -379,13 +379,13 @@ namespace geomtools {
       {
         ostringstream message;
         message << "geomtools::grid_model::_at_construct: "
-                << "Missing logicals dictionary !"; 
+                << "Missing logicals dictionary !";
         throw logic_error (message.str ());
       }
-    
+
     // Stackable model:
     {
-      models_col_type::const_iterator found = 
+      models_col_type::const_iterator found =
         models_->find (model_name);
       if (found != models_->end ())
         {
@@ -395,7 +395,7 @@ namespace geomtools {
         {
           ostringstream message;
           message << "geomtools::grid_model::_at_construct: "
-                  << "Cannot find model with name '" 
+                  << "Cannot find model with name '"
                   << model_name << "' !";
           throw logic_error (message.str ());
         }
@@ -413,7 +413,7 @@ namespace geomtools {
     dz = sd.get_zmax () - sd.get_zmin ();
     if (_sd_.is_valid_weak())
       {
-        if (_grid_plane_label_ == "xy") 
+        if (_grid_plane_label_ == "xy")
           {
             if (_sd_.is_valid_x())
               {
@@ -424,7 +424,7 @@ namespace geomtools {
                 dy = _sd_.get_ymax () - _sd_.get_ymin ();
               }
           }
-        if (_grid_plane_label_ == "xz") 
+        if (_grid_plane_label_ == "xz")
           {
             if (_sd_.is_valid_x())
               {
@@ -435,7 +435,7 @@ namespace geomtools {
                 dz = _sd_.get_zmax () - _sd_.get_zmin ();
               }
           }
-        if (_grid_plane_label_ == "yz") 
+        if (_grid_plane_label_ == "yz")
           {
             if (_sd_.is_valid_y())
               {
@@ -453,7 +453,7 @@ namespace geomtools {
     double x0, y0, z0;
     x0 = y0 = z0 = 0.0;
     _grid_placement_.set_centered (false);
-    if (_grid_plane_label_ == "xy") 
+    if (_grid_plane_label_ == "xy")
       {
         _grid_placement_.set_mode (regular_grid_placement::MODE_XY);
         double step_x = dx;
@@ -469,7 +469,7 @@ namespace geomtools {
         _y_ = dy + step_y * (get_number_of_items (1) - 1);
         y0 = -0.5 * _y_ + 0.5 * dy;
       }
-    if (_grid_plane_label_ == "xz") 
+    if (_grid_plane_label_ == "xz")
       {
         _grid_placement_.set_mode (regular_grid_placement::MODE_XZ);
         double step_x = dx;
@@ -485,7 +485,7 @@ namespace geomtools {
         _z_ = dz + step_z * (get_number_of_items (1) - 1);
         z0 = -0.5 * _z_ + 0.5 * dz;
       }
-    if (_grid_plane_label_ == "yz") 
+    if (_grid_plane_label_ == "yz")
       {
         _grid_placement_.set_mode (regular_grid_placement::MODE_YZ);
         double step_y = dy;
@@ -503,6 +503,45 @@ namespace geomtools {
       }
     _grid_placement_.set_number_of_columns (get_number_of_items (0));
     _grid_placement_.set_number_of_rows (get_number_of_items (1));
+
+    if (config_.has_key ("x"))
+      {
+        double x = config_.fetch_real ("x");
+        if (! config_.has_explicit_unit ("x")) x *= length_unit;
+        if (x < _x_ ) {
+          std::ostringstream message;
+          message << "geomtools::grid_model::_at_construct: "
+                  << "Value for 'x' property is too small (<" << _x_ / CLHEP::mm << " mm) !";
+          throw logic_error (message.str ());
+        }
+        _x_ = x;
+      }
+
+    if (config_.has_key ("y"))
+      {
+        double y = config_.fetch_real ("y");
+        if (! config_.has_explicit_unit ("y")) y *= length_unit;
+        if (y < _y_ ) {
+          std::ostringstream message;
+          message << "geomtools::grid_model::_at_construct: "
+                  << "Value for 'y' property is too small (<" << _y_ / CLHEP::mm << " mm) !";
+          throw logic_error (message.str ());
+        }
+        _y_ = y;
+      }
+
+    if (config_.has_key ("z"))
+      {
+        double z = config_.fetch_real ("z");
+        if (! config_.has_explicit_unit ("z")) z *= length_unit;
+        if (z < _z_ ) {
+          std::ostringstream message;
+          message << "geomtools::grid_model::_at_construct: "
+                  << "Value for 'z' property is too small (<" << _z_ / CLHEP::mm << " mm) !";
+          throw logic_error (message.str ());
+        }
+        _z_ = z;
+      }
 
     _solid_.reset ();
     _solid_.set_x (_x_);
@@ -528,8 +567,8 @@ namespace geomtools {
     placement basic_p;
     basic_p.set (x0, y0, z0, 0, 0, 0);
     _grid_placement_.set_basic_placement (basic_p);
-    _phys_.set_name (i_model::make_physical_volume_name (_grid_daughter_label_, 
-                                                         get_number_of_items (0), 
+    _phys_.set_name (i_model::make_physical_volume_name (_grid_daughter_label_,
+                                                         get_number_of_items (0),
                                                          get_number_of_items (1)));
     _phys_.set_placement (_grid_placement_);
     _phys_.set_logical (_model_->get_logical ());
@@ -539,58 +578,58 @@ namespace geomtools {
     return;
   }
 
-  void grid_model::tree_dump (ostream & out_, 
-                                          const string & title_ , 
-                                          const string & indent_, 
+  void grid_model::tree_dump (ostream & out_,
+                                          const string & title_ ,
+                                          const string & indent_,
                                           bool inherit_) const
   {
     string indent;
     if (! indent_.empty ()) indent = indent_;
     i_model::tree_dump (out_, title_, indent, true);
 
-    out_ << indent << datatools::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "X : " << get_x () / CLHEP::mm << " mm" << endl;
 
-    out_ << indent << datatools::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Y : " << get_y () / CLHEP::mm << " mm" << endl;
 
-    out_ << indent << datatools::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Z : " << get_z () / CLHEP::mm << " mm" << endl;
 
-    out_ << indent << datatools::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Grid label      : '" << _grid_plane_label_ << "'" << endl;
 
-    out_ << indent << datatools::i_tree_dumpable::tag 
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Grid dimensions : " << _number_of_items_[0] << 'x'  << _number_of_items_[1] << endl;
 
     {
-      out_ << indent << datatools::i_tree_dumpable::tag 
+      out_ << indent << datatools::i_tree_dumpable::tag
            << "Grid placement (box) : " << endl;
       {
         ostringstream indent_oss;
         indent_oss << indent;
         indent_oss << datatools::i_tree_dumpable::skip_tag;
         _grid_placement_.tree_dump (out_, "", indent_oss.str ());
-      }   
+      }
     }
-     
+
     {
-      out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_) 
+      out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
            << "Solid : " << endl;
       {
         ostringstream indent_oss;
         indent_oss << indent;
         indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
         _solid_.tree_dump (out_, "", indent_oss.str ());
-      }   
+      }
     }
 
     return;
   }
 
-  // registration :   
+  // registration :
   GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(grid_model,"geomtools::grid_model");
-      
+
 } // end of namespace geomtools
 
 // end of grid_model.cc

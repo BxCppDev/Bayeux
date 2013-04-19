@@ -1,7 +1,7 @@
 # -*- mode: conf-unix; -*-
 # List of multi-properties (datatools::multi_properties):
 
-#@description The geometry models that compose the source 
+#@description The geometry models that compose the source
 
 #@key_label   "name"
 #@meta_label  "type"
@@ -63,13 +63,22 @@ grid.x.step : real = 21
 #@description The number of columns (X axis)
 grid.z.step : real = 10.5
 
-#@description The name of the geometry model 
+#@description Force the X dimension of the grid enclosing box volume (X axis)
+x : real = 165 cm
+
+#@description Force the Y dimension of the grid enclosing box volume (Y axis)
+y : real = 7 cm
+
+#@description Force the Z dimension of the grid enclosing box volume (Z axis)
+z : real = 130 cm
+
+#@description The name of the geometry model
 grid.model : string = "brick.model"
 
 #@description The name of the material
 material.ref : string = "vacuum"
 
-#@description The name of the geometry model 
+#@description The name of the geometry model
 grid.daughter_label : string = "bricks"
 
 #@description The mapping directives for the "endcap0" daughter volume
