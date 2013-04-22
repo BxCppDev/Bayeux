@@ -275,12 +275,20 @@ function do_check ()
 	pkgtools__msg_notice "Found datatools $(datatools-config --version) !"
     fi
 
-    which mygsl-config > /dev/null 2>&1
+    which root-config > /dev/null 2>&1
     if [ $? -ne 0 ]; then
-	missing_material="${missing_material}mygsl "
-	pkgtools__msg_warning "Cannot find mygsl !"
+	missing_material="${missing_material}Root "
+	pkgtools__msg_warning "Cannot find Root !"
     else
-	pkgtools__msg_notice "Found mygsl $(mygsl-config --version) !"
+	pkgtools__msg_notice "Found Root $(root-config --version) !"
+    fi
+
+    which cmake > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+	missing_material_alt="${missing_material_alt}CMake "
+	pkgtools__msg_warning "Cannot find CMake !"
+    else
+	pkgtools__msg_notice "Found CMake $(cmake --version 2>&1) !"
     fi
 
     which doxygen > /dev/null 2>&1
