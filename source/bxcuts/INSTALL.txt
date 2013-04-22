@@ -8,16 +8,16 @@ cuts installation instructions:
 Instructions to setup dependencies...
 
 cuts depends on the following libraries and/or programs :
- - ...
- - ...
- 
+ - datatools >= 5.0.0 (from Bayeux)
+
+
 
 2- Plain CMake installation :
 -----------------------------
 
-Change to the cuts base directory :
+Change to the cuts source base directory :
 {{{
-bash$ cd <cuts base dir>
+bash$ cd <cuts_source_base_dir>
 }}}
 
 Create a 'build' directory :
@@ -33,6 +33,7 @@ Note: you must choose a directory where you have write access.
 bash$ cmake \
    -DCMAKE_INSTALL_PREFIX:PATH=${HOME}/software \
    -DCMAKE_BUILD_TYPE:STRING=Release \
+   -Ddatatools_DIR=<path_to_datatools_cmake_config_dir> \
    ..
 }}}
 
@@ -45,7 +46,7 @@ This prints :
 
 -- Configuring done
 -- Generating done
--- Build files have been written to: <cuts base dir>/build
+-- Build files have been written to: <cuts_source_base_dir>/build
 }}}
 
 Build :
@@ -83,9 +84,9 @@ bash$ rm -fr build
 3 - Production CMake installation using the 'pkgtool' wrapper :
 ---------------------------------------------------------------
 
-Change to the cuts base directory :
+Change to the cuts source base directory :
 {{{
-bash$ cd <cuts base dir>
+bash$ cd <cuts_source_base_dir>
 }}}
 
 Getting help :
@@ -114,7 +115,7 @@ bash$ ./pkgtools.d/pkgtool reset
 }}}
 
 
-4 - Setup : 
+4 - Setup :
 -----------
 
 The following instructions applies to the bash shell.
@@ -134,7 +135,7 @@ NOTICE: do_cuts_setup: Setup cuts done.
 
 Use cuts :
 {{{
-bash$ which cuts-config 
+bash$ which cuts-config
 /home/<login>/software/bin/cuts-config
 bash$ cuts-config --version
 0.1.0
@@ -146,9 +147,9 @@ bash$ cuts-config --ldflags
 
 --
 François Mauger <mauger@lpccaen.in2p3.fr>
-Updated: 2012-01-31
+Updated: 2013-04-22
 
 
- 
+
 
 
