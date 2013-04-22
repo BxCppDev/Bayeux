@@ -1,9 +1,9 @@
 /* datatools/library_loader.h */
 /* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-30
- * Last modified : 2011-06-30
+ * Last modified : 2013-04-19
  *
- * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,9 @@
  *  A shared library loader facility (base on kwsys).
  *
  */
-#ifndef DATATOOLS_UTILS_LIBRARY_LOADER_H_
-#define DATATOOLS_UTILS_LIBRARY_LOADER_H_
+#ifndef DATATOOLS_LIBRARY_LOADER_H_
+#define DATATOOLS_LIBRARY_LOADER_H_
+
 // Standard Library
 #include <iostream>
 #include <list>
@@ -167,11 +168,25 @@ class library_loader : boost::noncopyable {
 
 } // end of namespace datatools
 
+#define DATATOOLS_DLL_FORCE_LOAD(DllName,FromWhere)			\
+  {									\
+    ::datatools::library_loader LL_(::datatools::library_loader::allow_unregistered); \
+    int load_status = LL_.load(DllName);				\
+    if (load_status != EXIT_SUCCESS) {					\
+      std::ostringstream message;					\
+      message << FromWhere << ": "					\
+	      << "Automatic loading of library '"			\
+	      << DllName << "' failed !";				\
+      throw std::logic_error(message.str());				\
+    }									\
+  }									\
+  /**/
+
 /***************
  * OCD support *
  ***************/
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(datatools::library_loader)
 
-#endif // DATATOOLS_UTILS_LIBRARY_LOADER_H_
+#endif // DATATOOLS_LIBRARY_LOADER_H_
 
